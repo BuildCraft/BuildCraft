@@ -17,7 +17,6 @@ import net.minecraft.util.Icon;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import org.lwjgl.opengl.GL11;
 
@@ -75,14 +74,16 @@ public class FluidRenderer {
 	public static ResourceLocation getFluidSheet(Fluid liquid) {
 		return BLOCK_TEXTURE;
 	}
-	
-	public static void colorFluid(FluidStack fluidstack){
-	    if(fluidstack== null) return;
-	    int color = fluidstack.getFluid().getColor(fluidstack);
-            float red = (float) (color >> 16 & 255) / 255.0F;
-            float green = (float) (color >> 8 & 255) / 255.0F;
-            float blue = (float) (color & 255) / 255.0F;
-            GL11.glColor4f(red, green, blue, 1);
+
+	public static void setColorForFluidStack(FluidStack fluidstack) {
+		if (fluidstack == null)
+			return;
+		
+		int color = fluidstack.getFluid().getColor(fluidstack);
+		float red = (float) (color >> 16 & 255) / 255.0F;
+		float green = (float) (color >> 8 & 255) / 255.0F;
+		float blue = (float) (color & 255) / 255.0F;
+		GL11.glColor4f(red, green, blue, 1);
 	}
 
 	public static int[] getFluidDisplayLists(FluidStack fluidStack, World world, boolean flowing) {
@@ -114,11 +115,7 @@ public class FluidRenderer {
 		GL11.glDisable(GL11.GL_LIGHTING);
 		GL11.glDisable(GL11.GL_BLEND);
 		GL11.glDisable(GL11.GL_CULL_FACE);
-		int color = fluid.getColor(fluidStack);
-		float c1 = (float) (color >> 16 & 255) / 255.0F;
-		float c2 = (float) (color >> 8 & 255) / 255.0F;
-		float c3 = (float) (color & 255) / 255.0F;
-		GL11.glColor4f(c1, c2, c3, 1);
+
 		for (int s = 0; s < DISPLAY_STAGES; ++s) {
 			diplayLists[s] = GLAllocation.generateDisplayLists(1);
 			GL11.glNewList(diplayLists[s], 4864 /*GL_COMPILE*/);

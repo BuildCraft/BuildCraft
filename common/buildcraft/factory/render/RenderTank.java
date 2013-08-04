@@ -39,7 +39,7 @@ public class RenderTank extends TileEntitySpecialRenderer {
 		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
 		func_110628_a(FluidRenderer.getFluidSheet(liquid));
-		FluidRenderer.colorFluid(liquid);
+		FluidRenderer.setColorForFluidStack(liquid);
                 
 		GL11.glTranslatef((float) x + 0.125F, (float) y, (float) z + 0.125F);
 		GL11.glScalef(0.75F, 0.999F, 0.75F);
