@@ -10,6 +10,7 @@ package buildcraft.transport.render;
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftCore.RenderMode;
 import buildcraft.BuildCraftTransport;
+import buildcraft.core.render.FluidRenderer;
 import buildcraft.core.render.RenderEntityBlock;
 import buildcraft.core.render.RenderEntityBlock.BlockInterface;
 import buildcraft.core.utils.EnumColor;
