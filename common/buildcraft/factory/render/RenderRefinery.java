@@ -182,6 +182,7 @@ public class RenderRefinery extends TileEntitySpecialRenderer implements IInvent
 
 				if (list1 != null) {
 					func_110628_a(FluidRenderer.getFluidSheet(liquid1));
+					FluidRenderer.colorFluid(liquid1);
 					GL11.glCallList(list1[(int) ((float) liquid1.amount / (float) TileRefinery.LIQUID_PER_SLOT * (FluidRenderer.DISPLAY_STAGES - 1))]);
 				}
 			}
