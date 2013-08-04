@@ -180,7 +180,6 @@ public class BuildCraftEnergy {
 		}
 
 		// Buckets
-		MinecraftForge.EVENT_BUS.register(BucketHandler.INSTANCE);
 
 		if (blockOil != null && bucketOilId > 0) {
 			bucketOil = new ItemBucketBuildcraft(bucketOilId, blockOil.blockID);
@@ -195,6 +194,10 @@ public class BuildCraftEnergy {
 			LanguageRegistry.addName(bucketFuel, "Fuel Bucket");
 			FluidContainerRegistry.registerFluidContainer(FluidRegistry.getFluidStack("fuel", FluidContainerRegistry.BUCKET_VOLUME), new ItemStack(bucketFuel), new ItemStack(Item.bucketEmpty));
 		}
+		
+		BucketHandler.INSTANCE.buckets.put(blockOil, bucketOil);
+		BucketHandler.INSTANCE.buckets.put(blockFuel, bucketFuel);
+		MinecraftForge.EVENT_BUS.register(BucketHandler.INSTANCE);
 
 		RefineryRecipes.addRecipe(new FluidStack(fluidOil, 1), new FluidStack(fluidFuel, 1), 12, 1);
 
