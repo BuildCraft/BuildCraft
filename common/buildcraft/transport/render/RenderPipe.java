@@ -111,7 +111,7 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 			d.sideHorizontal[s] = GLAllocation.generateDisplayLists(1);
 			GL11.glNewList(d.sideHorizontal[s], 4864 /* GL_COMPILE */);
 
-                        GL11.glColor4f(c1, c2, c3, 1);
+			GL11.glColor4f(c1, c2, c3, 1);
 
 			block.minX = 0.0F;
 			block.minZ = Utils.pipeMinPos + 0.01F;
@@ -131,7 +131,7 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 			d.sideVertical[s] = GLAllocation.generateDisplayLists(1);
 			GL11.glNewList(d.sideVertical[s], 4864 /* GL_COMPILE */);
 
-                        GL11.glColor4f(c1, c2, c3, 1);
+			GL11.glColor4f(c1, c2, c3, 1);
                         
 			block.minY = Utils.pipeMaxPos - 0.01;
 			block.maxY = 1;
@@ -151,7 +151,7 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 			d.centerHorizontal[s] = GLAllocation.generateDisplayLists(1);
 			GL11.glNewList(d.centerHorizontal[s], 4864 /* GL_COMPILE */);
 
-                        GL11.glColor4f(c1, c2, c3, 1);
+			GL11.glColor4f(c1, c2, c3, 1);
 
 			block.minX = Utils.pipeMinPos + 0.01;
 			block.minZ = Utils.pipeMinPos + 0.01;
@@ -171,7 +171,7 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 			d.centerVertical[s] = GLAllocation.generateDisplayLists(1);
 			GL11.glNewList(d.centerVertical[s], 4864 /* GL_COMPILE */);
 
-                        GL11.glColor4f(c1, c2, c3, 1);
+			GL11.glColor4f(c1, c2, c3, 1);
 
 			block.minY = Utils.pipeMinPos + 0.01;
 			block.maxY = Utils.pipeMaxPos - 0.01;
