@@ -184,8 +184,8 @@ public abstract class GuiAdvancedInterface extends GuiBuildCraft {
 
 		@Override
 		public void drawSprite(int cornerX, int cornerY) {
-                    if(fluid != null)
-                        FluidRenderer.colorFluid(new FluidStack(fluid,100)); // Lacks FluidStack to properly function Please revise.
+			if(fluid != null)
+				FluidRenderer.colorFluid(new FluidStack(fluid,100)); // Lacks FluidStack to properly function Please revise.
 		    super.drawSprite(cornerX, cornerY);
 		}
 
