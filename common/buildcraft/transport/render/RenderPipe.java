@@ -93,11 +93,11 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 		}
 		block.texture = fluid.getStillIcon();
 
-                int color = fluid.getColor();
+		int color = fluid.getColor();
                 
-        float c1 = (float) (color >> 16 & 255) / 255.0F;
-        float c2 = (float) (color >> 8 & 255) / 255.0F;
-        float c3 = (float) (color & 255) / 255.0F;
+		float c1 = (float) (color >> 16 & 255) / 255.0F;
+		float c2 = (float) (color >> 8 & 255) / 255.0F;
+		float c3 = (float) (color & 255) / 255.0F;
 
 		float size = Utils.pipeMaxPos - Utils.pipeMinPos;
 
