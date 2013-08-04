@@ -368,6 +368,7 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 					default:
 				}
 				func_110628_a(TextureMap.field_110575_b);
+				FluidRenderer.colorFluid(liquid);
 				GL11.glCallList(list);
 				GL11.glPopMatrix();
 			}
@@ -382,7 +383,8 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 				int stage = (int) ((float) liquid.amount / (float) (trans.getCapacity()) * (LIQUID_STAGES - 1));
 
 				func_110628_a(TextureMap.field_110575_b);
-
+				FluidRenderer.colorFluid(liquid);
+				
 				if (above) {
 					GL11.glCallList(d.centerVertical[stage]);
 				}
