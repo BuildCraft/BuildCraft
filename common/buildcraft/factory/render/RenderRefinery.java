@@ -207,6 +207,7 @@ public class RenderRefinery extends TileEntitySpecialRenderer implements IInvent
 					GL11.glPushMatrix();
 					GL11.glTranslatef(1, 0, 0.5F);
 					func_110628_a(FluidRenderer.getFluidSheet(liquidResult));
+					FluidRenderer.colorFluid(liquidResult);
 					GL11.glCallList(list3[(int) ((float) liquidResult.amount / (float) TileRefinery.LIQUID_PER_SLOT * (FluidRenderer.DISPLAY_STAGES - 1))]);
 					GL11.glPopMatrix();
 				}
