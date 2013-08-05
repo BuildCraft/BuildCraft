@@ -11,6 +11,7 @@ import buildcraft.core.render.RenderEntityBlock.BlockInterface;
 import java.util.HashMap;
 import java.util.Map;
 import net.minecraft.block.Block;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.util.Icon;
@@ -32,21 +33,6 @@ public class FluidRenderer {
 	public static final int DISPLAY_STAGES = 100;
 	private static final BlockInterface liquidBlock = new BlockInterface();
 
-	public static class MissingFluidTextureException extends RuntimeException {
-
-		private final Fluid fluid;
-
-		public MissingFluidTextureException(Fluid fluid) {
-			super();
-			this.fluid = fluid;
-		}
-
-		@Override
-		public String getMessage() {
-			return String.format("Fluid %s has no icon. Please contact the author of the mod the fluid came from.", fluid.getName());
-		}
-	}
-
 	public static Icon getFluidTexture(FluidStack fluidStack, boolean flowing) {
 		if (fluidStack == null) {
 			return null;
@@ -60,7 +46,7 @@ public class FluidRenderer {
 		}
 		Icon icon = flowing ? fluid.getFlowingIcon() : fluid.getStillIcon();
 		if (icon == null) {
-			throw new MissingFluidTextureException(fluid);
+			icon = ((TextureMap) Minecraft.getMinecraft().func_110434_K().func_110581_b(TextureMap.field_110575_b)).func_110572_b("missingno");
 		}
 		return icon;
 	}
@@ -78,7 +64,7 @@ public class FluidRenderer {
 	public static void setColorForFluidStack(FluidStack fluidstack) {
 		if (fluidstack == null)
 			return;
-		
+
 		int color = fluidstack.getFluid().getColor(fluidstack);
 		float red = (float) (color >> 16 & 255) / 255.0F;
 		float green = (float) (color >> 8 & 255) / 255.0F;

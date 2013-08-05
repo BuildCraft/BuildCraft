@@ -307,8 +307,8 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 
 		boolean needsRender = false;
 		for (int i = 0; i < 7; ++i) {
-			FluidStack liquid = trans.renderCache[i];
-			if (liquid != null && liquid.amount > 0) {
+			FluidStack fluidStack = trans.renderCache[i];
+			if (fluidStack != null && fluidStack.amount > 0) {
 				needsRender = true;
 				break;
 			}
@@ -331,16 +331,16 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 		boolean sides = false, above = false;
 
 		for (int i = 0; i < 6; ++i) {
-			FluidStack liquid = trans.renderCache[i];
+			FluidStack fluidStack = trans.renderCache[i];
 
-			if (liquid != null && liquid.amount > 0) {
-				DisplayFluidList d = getListFromBuffer(liquid, pipe.container.worldObj);
+			if (fluidStack != null && fluidStack.amount > 0) {
+				DisplayFluidList d = getListFromBuffer(fluidStack, pipe.container.worldObj);
 
 				if (d == null) {
 					continue;
 				}
 
-				int stage = (int) ((float) liquid.amount / (float) (trans.getCapacity()) * (LIQUID_STAGES - 1));
+				int stage = (int) ((float) fluidStack.amount / (float) (trans.getCapacity()) * (LIQUID_STAGES - 1));
 
 				GL11.glPushMatrix();
 				int list = 0;
@@ -369,22 +369,22 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 					default:
 				}
 				func_110628_a(TextureMap.field_110575_b);
-				FluidRenderer.setColorForFluidStack(liquid);
+				FluidRenderer.setColorForFluidStack(fluidStack);
 				GL11.glCallList(list);
 				GL11.glPopMatrix();
 			}
 		}
 		// CENTER
-		FluidStack liquid = trans.renderCache[ForgeDirection.UNKNOWN.ordinal()];
+		FluidStack fluidStack = trans.renderCache[ForgeDirection.UNKNOWN.ordinal()];
 
-		if (liquid != null && liquid.amount > 0) {
-			DisplayFluidList d = getListFromBuffer(liquid, pipe.container.worldObj);
+		if (fluidStack != null && fluidStack.amount > 0) {
+			DisplayFluidList d = getListFromBuffer(fluidStack, pipe.container.worldObj);
 
 			if (d != null) {
-				int stage = (int) ((float) liquid.amount / (float) (trans.getCapacity()) * (LIQUID_STAGES - 1));
+				int stage = (int) ((float) fluidStack.amount / (float) (trans.getCapacity()) * (LIQUID_STAGES - 1));
 
 				func_110628_a(TextureMap.field_110575_b);
-				FluidRenderer.setColorForFluidStack(liquid);
+				FluidRenderer.setColorForFluidStack(fluidStack);
 				
 				if (above) {
 					GL11.glCallList(d.centerVertical[stage]);
