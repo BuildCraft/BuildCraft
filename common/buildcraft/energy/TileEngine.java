@@ -17,6 +17,7 @@ import buildcraft.api.power.PowerHandler;
 import buildcraft.api.power.PowerHandler.PowerReceiver;
 import buildcraft.api.power.PowerHandler.Type;
 import buildcraft.api.transport.IPipeConnection;
+import buildcraft.api.transport.IPipeTile.PipeType;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.TileBuffer;
 import buildcraft.core.TileBuildCraft;
@@ -498,7 +499,7 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 	}
 
 	@Override
-	public boolean isPipeConnected(ForgeDirection with) {
+	public boolean overridePipeConnection(PipeType type, ForgeDirection with) {
 		return with != orientation;
 	}
 

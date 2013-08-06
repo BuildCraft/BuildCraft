@@ -7,6 +7,7 @@
  */
 package buildcraft.energy;
 
+import buildcraft.api.transport.IPipeTile.PipeType;
 import buildcraft.core.proxy.CoreProxy;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.ForgeDirection;
@@ -84,7 +85,7 @@ public class TileEngineWood extends TileEngine {
 	}
 
 	@Override
-	public boolean isPipeConnected(ForgeDirection with) {
+	public boolean overridePipeConnection(PipeType type, ForgeDirection with) {
 		return false;
 	}
 

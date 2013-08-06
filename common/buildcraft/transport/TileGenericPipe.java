@@ -18,6 +18,7 @@ import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.power.PowerHandler;
 import buildcraft.api.power.PowerHandler.PowerReceiver;
 import buildcraft.api.transport.IPipe;
+import buildcraft.api.transport.IPipeConnection;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.ISolidSideTile;
 import buildcraft.core.DefaultProps;
@@ -435,34 +436,35 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 	}
 
 	/**
-	 * Checks if this tile is connected to another tile
+	 * Checks if this tile can connect to another tile
 	 *
 	 * @param with - The other Tile
 	 * @param side - The orientation to get to the other tile ('with')
 	 * @return true if pipes are considered connected
 	 */
-	protected boolean arePipesConnected(TileEntity with, ForgeDirection side) {
-		Pipe pipe1 = pipe;
-
+	protected boolean canPipeConnect(TileEntity with, ForgeDirection side) {
 		if (hasPlug(side))
 			return false;
 
-		if (!BlockGenericPipe.isValid(pipe1))
+		if (!BlockGenericPipe.isValid(pipe))
 			return false;
+		
+		if(with instanceof IPipeConnection)
+			return ((IPipeConnection)with).overridePipeConnection(pipe.transport.getPipeType(), side.getOpposite());
 
 		if (with instanceof TileGenericPipe) {
 			if (((TileGenericPipe) with).hasPlug(side.getOpposite()))
 				return false;
-			Pipe pipe2 = ((TileGenericPipe) with).pipe;
+			Pipe otherPipe = ((TileGenericPipe) with).pipe;
 
-			if (!BlockGenericPipe.isValid(pipe2))
+			if (!BlockGenericPipe.isValid(otherPipe))
 				return false;
 
-			if (!pipe2.canPipeConnect(this, side.getOpposite()))
+			if (!otherPipe.canPipeConnect(this, side.getOpposite()))
 				return false;
 		}
 
-		return pipe1 != null ? pipe1.canPipeConnect(with, side) : false;
+		return pipe.canPipeConnect(with, side);
 	}
 
 	private void computeConnections() {
@@ -474,9 +476,8 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 				TileBuffer t = cache[side.ordinal()];
 				t.refresh();
 
-				if (t.getTile() != null) {
-					pipeConnectionsBuffer[side.ordinal()] = arePipesConnected(t.getTile(), side);
-				}
+				if (t.getTile() != null)
+					pipeConnectionsBuffer[side.ordinal()] = canPipeConnect(t.getTile(), side);
 			}
 		}
 	}

@@ -295,7 +295,7 @@ public class PipeTransportItems extends PipeTransport {
 	public boolean canReceivePipeObjects(ForgeDirection o, TravelingItem item) {
 		TileEntity entity = container.getTile(o);
 
-		if (!Utils.checkPipesConnections(entity, container))
+		if (!container.isPipeConnected(o))
 			return false;
 
 		if (entity instanceof TileGenericPipe) {
