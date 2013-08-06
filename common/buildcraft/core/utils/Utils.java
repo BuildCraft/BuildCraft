@@ -11,6 +11,7 @@ import buildcraft.BuildCraftCore;
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.core.LaserKind;
 import buildcraft.api.core.Position;
+import buildcraft.api.transport.IPipeConnection;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.IPipeTile.PipeType;
 import buildcraft.core.BlockIndex;
@@ -377,7 +378,7 @@ public class Utils {
 			return false;
 		}
 
-		if (!(tile1 instanceof IPipeTile) && !(tile2 instanceof IPipeTile)) {
+		if (!(tile1 instanceof IPipeConnection) && !(tile2 instanceof IPipeConnection)) {
 			return false;
 		}
 
@@ -397,11 +398,11 @@ public class Utils {
 			o = ForgeDirection.SOUTH;
 		}
 
-		if (tile1 instanceof IPipeTile && !((IPipeTile) tile1).isPipeConnected(o)) {
+		if (tile1 instanceof IPipeConnection && !((IPipeConnection) tile1).isPipeConnected(o)) {
 			return false;
 		}
 
-		if (tile2 instanceof IPipeTile && !((IPipeTile) tile2).isPipeConnected(o.getOpposite())) {
+		if (tile2 instanceof IPipeConnection && !((IPipeConnection) tile2).isPipeConnected(o.getOpposite())) {
 			return false;
 		}
 
