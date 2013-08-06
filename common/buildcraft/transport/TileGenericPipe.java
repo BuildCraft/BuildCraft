@@ -95,9 +95,8 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 		if (pipe != null) {
 			nbt.setInteger("pipeId", pipe.itemID);
 			pipe.writeToNBT(nbt);
-		} else {
+		} else
 			nbt.setInteger("pipeId", coreState.pipeId);
-		}
 
 		for (int i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
 			nbt.setInteger("facadeBlocks[" + i + "]", facadeBlocks[i]);
@@ -114,9 +113,9 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 		coreState.pipeId = nbt.getInteger("pipeId");
 		pipe = BlockGenericPipe.createPipe(coreState.pipeId);
 
-		if (pipe != null) {
+		if (pipe != null)
 			pipe.readFromNBT(nbt);
-		} else {
+		else {
 			BuildCraftCore.bcLog.log(Level.WARNING, "Pipe failed to load from NBT at {0},{1},{2}", new Object[]{xCoord, yCoord, zCoord});
 			deletePipe = true;
 		}
@@ -133,9 +132,8 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 	public void invalidate() {
 		initialized = false;
 		tileBuffer = null;
-		if (pipe != null) {
+		if (pipe != null)
 			pipe.invalidate();
-		}
 		super.invalidate();
 	}
 
@@ -144,25 +142,22 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 		super.validate();
 		tileBuffer = null;
 		bindPipe();
-		if (pipe != null) {
+		if (pipe != null)
 			pipe.validate();
-		}
 	}
 	public boolean initialized = false;
 
 	@Override
 	public void updateEntity() {
 
-		if (deletePipe) {
+		if (deletePipe)
 			worldObj.setBlockToAir(xCoord, yCoord, zCoord);
-		}
 
 		if (pipe == null)
 			return;
 
-		if (!initialized) {
+		if (!initialized)
 			initialize(pipe);
-		}
 
 		if (!BlockGenericPipe.isValid(pipe))
 			return;
@@ -182,13 +177,11 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 
 		PowerReceiver provider = getPowerReceiver(null);
 
-		if (provider != null) {
+		if (provider != null)
 			provider.update();
-		}
 
-		if (pipe != null) {
+		if (pipe != null)
 			pipe.updateEntity();
-		}
 	}
 
 	// PRECONDITION: worldObj must not be null
@@ -272,12 +265,10 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 		for (ForgeDirection o : ForgeDirection.VALID_DIRECTIONS) {
 			TileEntity tile = getTile(o);
 
-			if (tile instanceof ITileBufferHolder) {
+			if (tile instanceof ITileBufferHolder)
 				((ITileBufferHolder) tile).blockCreated(o, BuildCraftTransport.genericPipeBlock.blockID, this);
-			}
-			if (tile instanceof TileGenericPipe) {
+			if (tile instanceof TileGenericPipe)
 				((TileGenericPipe) tile).scheduleNeighborChange();
-			}
 		}
 
 		bindPipe();
@@ -321,9 +312,8 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 
 	@Override
 	public void doWork(PowerHandler workProvider) {
-		if (BlockGenericPipe.isValid(pipe) && pipe instanceof IPowerReceptor) {
+		if (BlockGenericPipe.isValid(pipe) && pipe instanceof IPowerReceptor)
 			((IPowerReceptor) pipe).doWork(workProvider);
-		}
 	}
 
 	public void scheduleNeighborChange() {
@@ -356,9 +346,8 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 	/* SMP */
 	public void handleDescriptionPacket(PipeRenderStatePacket packet) {
 		if (worldObj.isRemote) {
-			if (pipe == null && packet.getPipeId() != 0) {
+			if (pipe == null && packet.getPipeId() != 0)
 				initialize(BlockGenericPipe.createPipe(packet.getPipeId()));
-			}
 			renderState = packet.getRenderState();
 			worldObj.markBlockForRenderUpdate(xCoord, yCoord, zCoord);
 		}
@@ -369,21 +358,18 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 		bindPipe();
 
 		PacketTileState packet = new PacketTileState(this.xCoord, this.yCoord, this.zCoord);
-		if (pipe != null && pipe.gate != null) {
+		if (pipe != null && pipe.gate != null)
 			coreState.gateKind = pipe.gate.kind.ordinal();
-		} else {
+		else
 			coreState.gateKind = 0;
-		}
 
-		if (pipe != null && pipe.transport != null) {
+		if (pipe != null && pipe.transport != null)
 			pipe.transport.sendDescriptionPacket();
-		}
 
 		packet.addStateForSerialization((byte) 0, coreState);
 		packet.addStateForSerialization((byte) 1, renderState);
-		if (pipe instanceof IClientState) {
+		if (pipe instanceof IClientState)
 			packet.addStateForSerialization((byte) 2, (IClientState) pipe);
-		}
 		return packet.getPacket();
 	}
 
@@ -448,9 +434,12 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 
 		if (!BlockGenericPipe.isValid(pipe))
 			return false;
-		
-		if(with instanceof IPipeConnection)
-			return ((IPipeConnection)with).overridePipeConnection(pipe.transport.getPipeType(), side.getOpposite());
+
+		if (with instanceof IPipeConnection) {
+			IPipeConnection.ConnectOverride override = ((IPipeConnection) with).overridePipeConnection(pipe.transport.getPipeType(), side.getOpposite());
+			if (override != IPipeConnection.ConnectOverride.DEFAULT)
+				return override == IPipeConnection.ConnectOverride.CONNECT ? true : false;
+		}
 
 		if (with instanceof TileGenericPipe) {
 			if (((TileGenericPipe) with).hasPlug(side.getOpposite()))
@@ -497,9 +486,8 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 
 	@Override
 	public void onChunkUnload() {
-		if (pipe != null) {
+		if (pipe != null)
 			pipe.onChunkUnload();
-		}
 	}
 
 	/**
@@ -560,9 +548,8 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 		if (this.facadeBlocks[direction.ordinal()] == blockid)
 			return false;
 
-		if (hasFacade(direction)) {
+		if (hasFacade(direction))
 			dropFacadeItem(direction);
-		}
 
 		this.facadeBlocks[direction.ordinal()] = blockid;
 		this.facadeMeta[direction.ordinal()] = meta;
@@ -629,13 +616,11 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 
 		switch (stateId) {
 			case 0:
-				if (pipe == null && coreState.pipeId != 0) {
+				if (pipe == null && coreState.pipeId != 0)
 					initialize(BlockGenericPipe.createPipe(coreState.pipeId));
-				}
 				if (pipe != null && coreState.gateKind != GateKind.None.ordinal()) {
-					if (pipe.gate == null) {
+					if (pipe.gate == null)
 						pipe.gate = new GateVanilla(pipe);
-					}
 					pipe.gate.kind = GateKind.values()[coreState.gateKind];
 				}
 				break;
@@ -659,10 +644,9 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 		if (hasFacade(side))
 			return true;
 
-		if (BlockGenericPipe.isValid(pipe) && pipe instanceof ISolidSideTile) {
+		if (BlockGenericPipe.isValid(pipe) && pipe instanceof ISolidSideTile)
 			if (((ISolidSideTile) pipe).isSolidOnSide(side))
 				return true;
-		}
 		return false;
 	}
 
@@ -698,9 +682,8 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 
 	public int getBlockId() {
 		Block block = getBlockType();
-		if (block != null) {
+		if (block != null)
 			return block.blockID;
-		}
 		return 0;
 	}
 

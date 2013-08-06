@@ -97,24 +97,22 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 
 	protected EnergyStage computeEnergyStage() {
 		float energyLevel = getHeatLevel();
-		if (energyLevel < 0.25f) {
+		if (energyLevel < 0.25f)
 			return EnergyStage.BLUE;
-		} else if (energyLevel < 0.5f) {
+		else if (energyLevel < 0.5f)
 			return EnergyStage.GREEN;
-		} else if (energyLevel < 0.75f) {
+		else if (energyLevel < 0.75f)
 			return EnergyStage.YELLOW;
-		} else if (energyLevel < 1f) {
+		else if (energyLevel < 1f)
 			return EnergyStage.RED;
-		} else {
+		else
 			return EnergyStage.OVERHEAT;
-		}
 	}
 
 	public final EnergyStage getEnergyStage() {
 		if (CoreProxy.proxy.isSimulating(worldObj)) {
-			if (energyStage == EnergyStage.OVERHEAT) {
+			if (energyStage == EnergyStage.OVERHEAT)
 				return energyStage;
-			}
 			EnergyStage newStage = computeEnergyStage();
 
 			if (energyStage != newStage) {
@@ -143,9 +141,8 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 	}
 
 	public float getPistonSpeed() {
-		if (CoreProxy.proxy.isSimulating(worldObj)) {
+		if (CoreProxy.proxy.isSimulating(worldObj))
 			return Math.max(0.16f * getHeatLevel(), 0.01f);
-		}
 		switch (getEnergyStage()) {
 			case BLUE:
 				return 0.02F;
@@ -172,9 +169,8 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 					progressPart = 0;
 					progress = 0;
 				}
-			} else if (this.isPumping) {
+			} else if (this.isPumping)
 				progressPart = 1;
-			}
 
 			return;
 		}
@@ -194,21 +190,17 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 				progress = 0;
 				progressPart = 0;
 			}
-		} else if (isRedstonePowered && isActive()) {
-			if (isPoweredTile(tile, orientation)) {
+		} else if (isRedstonePowered && isActive())
+			if (isPoweredTile(tile, orientation))
 				if (getPowerToExtract() > 0) {
 					progressPart = 1;
 					setPumping(true);
-				} else {
+				} else
 					setPumping(false);
-				}
-			} else {
+			else
 				setPumping(false);
-			}
-
-		} else {
+		else
 			setPumping(false);
-		}
 
 		// Uncomment for constant power
 //		if (isRedstonePowered && isActive()) {
@@ -248,13 +240,11 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 	}
 
 	protected void engineUpdate() {
-		if (!isRedstonePowered) {
-			if (energy >= 1) {
+		if (!isRedstonePowered)
+			if (energy >= 1)
 				energy -= 1;
-			} else if (energy < 1) {
+			else if (energy < 1)
 				energy = 0;
-			}
-		}
 	}
 
 	public boolean isActive() {
@@ -295,9 +285,8 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 		progress = data.getFloat("progress");
 		energy = data.getFloat("energyF");
 		NBTBase tag = data.getTag("heat");
-		if (tag instanceof NBTTagFloat) {
+		if (tag instanceof NBTTagFloat)
 			heat = data.getFloat("heat");
-		}
 		inv.readFromNBT(data);
 	}
 
@@ -415,9 +404,8 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 			worldObj.setBlockToAir(xCoord, yCoord, zCoord);
 		}
 
-		if (energy > getMaxEnergy()) {
+		if (energy > getMaxEnergy())
 			energy = getMaxEnergy();
-		}
 	}
 
 	public float extractEnergy(float min, float max, boolean doExtract) {
@@ -426,11 +414,10 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 
 		float actualMax;
 
-		if (max > maxEnergyExtracted()) {
+		if (max > maxEnergyExtracted())
 			actualMax = maxEnergyExtracted();
-		} else {
+		else
 			actualMax = max;
-		}
 
 		if (actualMax < min)
 			return 0;
@@ -439,23 +426,20 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 
 		if (energy >= actualMax) {
 			extracted = actualMax;
-			if (doExtract) {
+			if (doExtract)
 				energy -= actualMax;
-			}
 		} else {
 			extracted = energy;
-			if (doExtract) {
+			if (doExtract)
 				energy = 0;
-			}
 		}
 
 		return extracted;
 	}
 
 	public boolean isPoweredTile(TileEntity tile, ForgeDirection side) {
-		if (tile instanceof IPowerReceptor) {
+		if (tile instanceof IPowerReceptor)
 			return ((IPowerReceptor) tile).getPowerReceiver(side.getOpposite()) != null;
-		}
 
 		return false;
 	}
@@ -499,8 +483,12 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 	}
 
 	@Override
-	public boolean overridePipeConnection(PipeType type, ForgeDirection with) {
-		return with != orientation;
+	public ConnectOverride overridePipeConnection(PipeType type, ForgeDirection with) {
+		if (type == PipeType.POWER)
+			return ConnectOverride.DEFAULT;
+		if (with == orientation)
+			return ConnectOverride.DISCONNECT;
+		return ConnectOverride.DEFAULT;
 	}
 
 	@Override

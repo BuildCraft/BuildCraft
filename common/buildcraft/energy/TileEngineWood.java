@@ -43,22 +43,20 @@ public class TileEngineWood extends TileEngine {
 	@Override
 	protected EnergyStage computeEnergyStage() {
 		float energyLevel = getEnergyLevel();
-		if (energyLevel < 0.25f) {
+		if (energyLevel < 0.25f)
 			return EnergyStage.BLUE;
-		} else if (energyLevel < 0.5f) {
+		else if (energyLevel < 0.5f)
 			return EnergyStage.GREEN;
-		} else if (energyLevel < 0.75f) {
+		else if (energyLevel < 0.75f)
 			return EnergyStage.YELLOW;
-		} else {
+		else
 			return EnergyStage.RED;
-		}
 	}
 
 	@Override
 	public float getPistonSpeed() {
-		if (CoreProxy.proxy.isSimulating(worldObj)) {
+		if (CoreProxy.proxy.isSimulating(worldObj))
 			return Math.max(0.8f * getHeatLevel(), 0.01f);
-		}
 		switch (getEnergyStage()) {
 			case BLUE:
 				return 0.01F;
@@ -77,16 +75,14 @@ public class TileEngineWood extends TileEngine {
 	public void engineUpdate() {
 		super.engineUpdate();
 
-		if (isRedstonePowered) {
-			if (worldObj.getWorldTime() % 20 == 0) {
+		if (isRedstonePowered)
+			if (worldObj.getWorldTime() % 20 == 0)
 				addEnergy(1);
-			}
-		}
 	}
 
 	@Override
-	public boolean overridePipeConnection(PipeType type, ForgeDirection with) {
-		return false;
+	public ConnectOverride overridePipeConnection(PipeType type, ForgeDirection with) {
+		return ConnectOverride.DISCONNECT;
 	}
 
 	@Override
