@@ -125,7 +125,7 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IPowe
 			simpleAnimationIterate();
 			return;
 
-		} else if (CoreProxy.proxy.isSimulating(worldObj) && updateNetworkTime.markTimeIfDelay(2 * BuildCraftCore.updateFactor)) {
+		} else if (CoreProxy.proxy.isSimulating(worldObj) && updateNetworkTime.markTimeIfDelay(worldObj, 2 * BuildCraftCore.updateFactor)) {
 			sendNetworkUpdate();
 		}
 
@@ -156,7 +156,7 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IPowe
 			decreaseAnimation();
 		}
 
-		if (!time.markTimeIfDelay(currentRecipe.delay))
+		if (!time.markTimeIfDelay(worldObj, currentRecipe.delay))
 			return;
 
 		float energyUsed = powerHandler.useEnergy(currentRecipe.energy, currentRecipe.energy, true);
@@ -350,7 +350,7 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IPowe
 		}
 
 		if (doFill && used > 0) {
-			updateNetworkTime.markTime();
+			updateNetworkTime.markTime(worldObj);
 			sendNetworkUpdate();
 		}
 

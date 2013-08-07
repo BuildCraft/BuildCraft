@@ -51,31 +51,28 @@ public class BlockLaser extends BlockContainer {
 	}
 
 	@Override
-	public TileEntity createTileEntity(World world, int meta) {
+	public TileEntity createNewTileEntity(World world) {
 		return new TileLaser();
 	}
 
 	@Override
-	public TileEntity createNewTileEntity(World world) {
-		return null;
-	}
-
-	@Override
-	public Icon getIcon(int side, int meta) {
-		if (side == ForgeDirection.getOrientation(meta).getOpposite().ordinal())
+	public Icon getIcon(int i, int j) {
+		if (i == ForgeDirection.values()[j].getOpposite().ordinal())
 			return textureBottom;
-		else if (side == meta)
+		else if (i == j)
 			return textureTop;
 		else
 			return textureSide;
+
 	}
 
 	@Override
 	public int onBlockPlaced(World world, int x, int y, int z, int side, float par6, float par7, float par8, int meta) {
 		super.onBlockPlaced(world, x, y, z, side, par6, par7, par8, meta);
 
-		if (side <= 6)
+		if (side <= 6) {
 			meta = side;
+		}
 
 		return meta;
 	}

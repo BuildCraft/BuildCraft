@@ -7,27 +7,32 @@
  */
 package buildcraft.api.core;
 
+import net.minecraft.world.World;
+
 public class SafeTimeTracker {
 
-	public static long worldTime;
-	private long lastMark = worldTime;
+	private long lastMark = Long.MIN_VALUE;
 	private long duration = -1;
+
 	/**
 	 * Return true if a given delay has passed since last time marked was called
 	 * successfully.
 	 */
-	public boolean markTimeIfDelay(long delay) {
-		long timePassed = worldTime - lastMark;
-		if (timePassed >= delay) {
-			duration = timePassed;
-			lastMark = worldTime;
-			return true;
-		}
-		if (worldTime < lastMark) {
-			lastMark = worldTime;
+	public boolean markTimeIfDelay(World world, long delay) {
+		if (world == null)
 			return false;
-		}
-		return false;
+
+		long currentTime = world.getWorldTime();
+
+		if (currentTime < lastMark) {
+			lastMark = currentTime;
+			return false;
+		} else if (lastMark + delay <= currentTime) {
+			duration = currentTime - lastMark;
+			lastMark = currentTime;
+			return true;
+		} else
+			return false;
 
 	}
 
@@ -35,7 +40,7 @@ public class SafeTimeTracker {
 		return duration > 0 ? duration : 0;
 	}
 
-	public void markTime() {
-		lastMark = worldTime;
+	public void markTime(World world) {
+		lastMark = world.getWorldTime();
 	}
 }

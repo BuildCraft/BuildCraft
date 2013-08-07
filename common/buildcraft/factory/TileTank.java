@@ -47,7 +47,7 @@ public class TileTank extends TileBuildCraft implements IFluidHandler {
 			moveFluidBelow();
 		}
 		
-		if (hasUpdate && tracker.markTimeIfDelay(2 * BuildCraftCore.updateFactor)) {
+		if (hasUpdate && tracker.markTimeIfDelay(worldObj, 2 * BuildCraftCore.updateFactor)) {
 			sendNetworkUpdate();
 			hasUpdate = false;
 		}

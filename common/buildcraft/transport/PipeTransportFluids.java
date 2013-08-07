@@ -194,7 +194,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 
 		moveFluids();
 
-		if (tracker.markTimeIfDelay(BuildCraftCore.updateFactor)) {
+		if (tracker.markTimeIfDelay(container.worldObj, BuildCraftCore.updateFactor)) {
 
 			boolean init = false;
 			if (++clientSyncCounter > BuildCraftCore.longUpdateFactor) {

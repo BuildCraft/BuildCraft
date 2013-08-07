@@ -184,7 +184,7 @@ public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor
 
 	private BlockIndex getNextIndexToPump(boolean remove) {
 		if (pumpLayerQueues.isEmpty()) {
-			if (timer.markTimeIfDelay(REBUID_DELAY)) {
+			if (timer.markTimeIfDelay(worldObj, REBUID_DELAY)) {
 				rebuildQueue();
 			}
 			return null;
