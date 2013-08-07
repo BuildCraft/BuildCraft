@@ -71,7 +71,7 @@ public final class PowerHandler {
 			return current;
 		}
 	}
-	public static final PerditionCalculator DEFUALT_PERDITION = new PerditionCalculator();
+	public static final PerditionCalculator DEFAULT_PERDITION = new PerditionCalculator();
 	private float minEnergyReceived;
 	private float maxEnergyReceived;
 	private float maxEnergyStored;
@@ -90,6 +90,7 @@ public final class PowerHandler {
 		this.receptor = receptor;
 		this.type = type;
 		this.receiver = new PowerReceiver();
+		this.perdition = DEFAULT_PERDITION;
 	}
 
 	public PowerReceiver getPowerReceiver() {
@@ -162,7 +163,7 @@ public final class PowerHandler {
 	 */
 	public void setPerdition(PerditionCalculator perdition) {
 		if (perdition == null)
-			perdition = DEFUALT_PERDITION;
+			perdition = DEFAULT_PERDITION;
 		this.perdition = perdition;
 	}
 
@@ -191,7 +192,7 @@ public final class PowerHandler {
 			if (newEnergy == 0 || newEnergy < energyStored)
 				energyStored = newEnergy;
 			else
-				energyStored = DEFUALT_PERDITION.applyPerdition(this, energyStored, perditionTracker.durationOfLastDelay());
+				energyStored = DEFAULT_PERDITION.applyPerdition(this, energyStored, perditionTracker.durationOfLastDelay());
 			validateEnergy();
 		}
 	}
