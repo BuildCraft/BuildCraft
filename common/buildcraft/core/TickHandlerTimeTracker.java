@@ -1,7 +1,6 @@
 package buildcraft.core;
 
 import buildcraft.api.core.SafeTimeTracker;
-import buildcraft.api.core.TickLimiter;
 import cpw.mods.fml.common.ITickHandler;
 import cpw.mods.fml.common.TickType;
 import java.util.EnumSet;
@@ -11,9 +10,7 @@ public class TickHandlerTimeTracker implements ITickHandler {
 
 	@Override
 	public void tickStart(EnumSet<TickType> type, Object... tickData) {
-		long worldTime = ((World) tickData[0]).getWorldTime();
-		SafeTimeTracker.worldTime = worldTime;
-		TickLimiter.worldTime = worldTime;
+		SafeTimeTracker.worldTime = ((World) tickData[0]).getWorldTime();
 	}
 
 	@Override

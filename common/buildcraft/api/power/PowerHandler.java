@@ -7,7 +7,7 @@
  */
 package buildcraft.api.power;
 
-import buildcraft.api.core.TickLimiter;
+import buildcraft.api.core.SafeTimeTracker;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.ForgeDirection;
 
@@ -77,9 +77,9 @@ public final class PowerHandler {
 	private float maxEnergyStored;
 	private float activationEnergy;
 	private float energyStored = 0;
-	private final TickLimiter doWorkLimiter = new TickLimiter();
-	private final TickLimiter sourcesLimiter = new TickLimiter();
-	private final TickLimiter perditionLimiter = new TickLimiter();
+	private final SafeTimeTracker doWorkTracker = new SafeTimeTracker();
+	private final SafeTimeTracker sourcesTracker = new SafeTimeTracker();
+	private final SafeTimeTracker perditionTracker = new SafeTimeTracker();
 	public final int[] powerSources = new int[6];
 	public final IPowerReceptor receptor;
 	private PerditionCalculator perdition;
@@ -180,33 +180,32 @@ public final class PowerHandler {
 	 * design around this though if you are aware of the limitations.
 	 */
 	public void update() {
-		if (receptor.getWorld().isRemote)
-			return;
 		applyPerdition();
 		applyWork();
 		validateEnergy();
 	}
 
 	private void applyPerdition() {
-		if (energyStored > 0 && perditionLimiter.canTick()) {
-			float newEnergy = perdition.applyPerdition(this, energyStored, perditionLimiter.timeSinceLastTick());
-			if (newEnergy < energyStored || newEnergy == 0)
+		if (perditionTracker.markTimeIfDelay(1) && energyStored > 0) {
+			float newEnergy = perdition.applyPerdition(this, energyStored, perditionTracker.durationOfLastDelay());
+			if (newEnergy == 0 || newEnergy < energyStored)
 				energyStored = newEnergy;
 			else
-				energyStored = DEFUALT_PERDITION.applyPerdition(this, energyStored, perditionLimiter.timeSinceLastTick());
+				energyStored = DEFUALT_PERDITION.applyPerdition(this, energyStored, perditionTracker.durationOfLastDelay());
 			validateEnergy();
 		}
 	}
 
 	private void applyWork() {
-		if (energyStored >= activationEnergy && doWorkLimiter.canTick())
-			receptor.doWork(this);
+		if (energyStored >= activationEnergy)
+			if (doWorkTracker.markTimeIfDelay(1))
+				receptor.doWork(this);
 	}
 
 	private void updateSources(ForgeDirection source) {
-		if (sourcesLimiter.canTick())
+		if (sourcesTracker.markTimeIfDelay(1))
 			for (int i = 0; i < 6; ++i) {
-				powerSources[i] -= sourcesLimiter.timeSinceLastTick();
+				powerSources[i] -= sourcesTracker.durationOfLastDelay();
 				if (powerSources[i] < 0)
 					powerSources[i] = 0;
 			}
