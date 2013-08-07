@@ -1,12 +1,10 @@
 /**
- * Copyright (c) SpaceToad, 2011
- * http://www.mod-buildcraft.com
+ * Copyright (c) SpaceToad, 2011 http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License
+ * 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-
 package buildcraft.silicon;
 
 import buildcraft.core.CreativeTabBuildCraft;
@@ -24,8 +22,8 @@ import net.minecraftforge.common.ForgeDirection;
 
 public class BlockLaser extends BlockContainer {
 
-    @SideOnly(Side.CLIENT)
-    private Icon textureTop, textureBottom, textureSide;
+	@SideOnly(Side.CLIENT)
+	private Icon textureTop, textureBottom, textureSide;
 
 	public BlockLaser(int i) {
 		super(i, Material.iron);
@@ -53,33 +51,36 @@ public class BlockLaser extends BlockContainer {
 	}
 
 	@Override
-	public TileEntity createNewTileEntity(World var1) {
-		return new TileLaser();
+	public TileEntity createTileEntity(World world, int meta) {
+		return new TileLaserStandard();
 	}
 
 	@Override
-	public Icon getIcon(int i, int j) {
-		if (i == ForgeDirection.values()[j].getOpposite().ordinal())
+	public TileEntity createNewTileEntity(World world) {
+		return null;
+	}
+
+	@Override
+	public Icon getIcon(int side, int meta) {
+		if (side == ForgeDirection.getOrientation(meta).getOpposite().ordinal())
 			return textureBottom;
-		else if (i == j)
+		else if (side == meta)
 			return textureTop;
 		else
 			return textureSide;
-
 	}
 
 	@Override
 	public int onBlockPlaced(World world, int x, int y, int z, int side, float par6, float par7, float par8, int meta) {
 		super.onBlockPlaced(world, x, y, z, side, par6, par7, par8, meta);
 
-		if (side <= 6) {
+		if (side <= 6)
 			meta = side;
-		}
 
 		return meta;
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@SuppressWarnings({"unchecked", "rawtypes"})
 	@Override
 	public void addCreativeItems(ArrayList itemList) {
 		itemList.add(new ItemStack(this));
@@ -87,10 +88,9 @@ public class BlockLaser extends BlockContainer {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void registerIcons(IconRegister par1IconRegister)
-	{
-	    textureTop = par1IconRegister.registerIcon("buildcraft:laser_top");
-        textureBottom = par1IconRegister.registerIcon("buildcraft:laser_bottom");
-        textureSide = par1IconRegister.registerIcon("buildcraft:laser_side");
+	public void registerIcons(IconRegister par1IconRegister) {
+		textureTop = par1IconRegister.registerIcon("buildcraft:laser_top");
+		textureBottom = par1IconRegister.registerIcon("buildcraft:laser_bottom");
+		textureSide = par1IconRegister.registerIcon("buildcraft:laser_side");
 	}
 }

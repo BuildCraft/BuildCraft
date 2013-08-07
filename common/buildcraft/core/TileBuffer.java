@@ -35,28 +35,26 @@ public final class TileBuffer {
 	public final void refresh() {
 		tile = null;
 		blockID = 0;
-		if (!loadUnloaded && !world.blockExists(x, y, z)) {
+		if (!loadUnloaded && !world.blockExists(x, y, z))
 			return;
-		}
 		blockID = world.getBlockId(this.x, this.y, this.z);
 
 		Block block = Block.blocksList[blockID];
-		if (block != null && block.hasTileEntity(world.getBlockMetadata(this.x, this.y, this.z))) {
+		if (block != null && block.hasTileEntity(world.getBlockMetadata(this.x, this.y, this.z)))
 			tile = world.getBlockTileEntity(this.x, this.y, this.z);
-		}
 	}
 
 	public void set(int blockID, TileEntity tile) {
 		this.blockID = blockID;
 		this.tile = tile;
-		tracker.markTime(world);
+		tracker.markTime();
 	}
 
 	public int getBlockID() {
 		if (tile != null && !tile.isInvalid())
 			return blockID;
 
-		if (tracker.markTimeIfDelay(world, 20)) {
+		if (tracker.markTimeIfDelay(20)) {
 			refresh();
 
 			if (tile != null && !tile.isInvalid())
@@ -70,7 +68,7 @@ public final class TileBuffer {
 		if (tile != null && !tile.isInvalid())
 			return tile;
 
-		if (tracker.markTimeIfDelay(world, 20)) {
+		if (tracker.markTimeIfDelay(20)) {
 			refresh();
 
 			if (tile != null && !tile.isInvalid())

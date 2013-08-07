@@ -134,7 +134,7 @@ public abstract class Pipe<T extends PipeTransport> implements IPipe, IDropContr
 		if (container.worldObj.isRemote)
 			return;
 
-		if (actionTracker.markTimeIfDelay(container.worldObj, 10)) {
+		if (actionTracker.markTimeIfDelay(10)) {
 			resolveActions();
 		}
 

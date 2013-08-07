@@ -23,7 +23,7 @@ public final class PowerHandler {
 				case STORAGE:
 					return true;
 				default:
-				    return false;
+					return false;
 			}
 		}
 
@@ -33,7 +33,7 @@ public final class PowerHandler {
 				case STORAGE:
 					return true;
 				default:
-				    return false;
+					return false;
 			}
 		}
 	}
@@ -49,9 +49,8 @@ public final class PowerHandler {
 		}
 
 		public PerditionCalculator(float powerLoss) {
-			if (powerLoss < MIN_POWERLOSS) {
+			if (powerLoss < MIN_POWERLOSS)
 				powerLoss = MIN_POWERLOSS;
-			}
 			this.powerLoss = powerLoss;
 		}
 
@@ -67,9 +66,8 @@ public final class PowerHandler {
 		 */
 		public float applyPerdition(PowerHandler powerHandler, float current, long ticksPassed) {
 			current -= powerLoss * ticksPassed;
-			if (current < 0) {
+			if (current < 0)
 				current = 0;
-			}
 			return current;
 		}
 	}
@@ -137,9 +135,8 @@ public final class PowerHandler {
 	 * being common.
 	 */
 	public void configure(float minEnergyReceived, float maxEnergyReceived, float activationEnergy, float maxStoredEnergy) {
-		if (minEnergyReceived > maxEnergyReceived) {
+		if (minEnergyReceived > maxEnergyReceived)
 			maxEnergyReceived = minEnergyReceived;
-		}
 		this.minEnergyReceived = minEnergyReceived;
 		this.maxEnergyReceived = maxEnergyReceived;
 		this.maxEnergyStored = maxStoredEnergy;
@@ -164,12 +161,12 @@ public final class PowerHandler {
 	 * @param perdition
 	 */
 	public void setPerdition(PerditionCalculator perdition) {
+		if (perdition == null)
+			perdition = DEFUALT_PERDITION;
 		this.perdition = perdition;
 	}
 
 	public PerditionCalculator getPerdition() {
-		if (perdition == null)
-			return DEFUALT_PERDITION;
 		return perdition;
 	}
 
@@ -189,34 +186,29 @@ public final class PowerHandler {
 	}
 
 	private void applyPerdition() {
-		if (perditionTracker.markTimeIfDelay(receptor.getWorld(), 1) && energyStored > 0) {
-			float newEnergy = getPerdition().applyPerdition(this, energyStored, perditionTracker.durationOfLastDelay());
-			if (newEnergy == 0 || newEnergy < energyStored) {
+		if (perditionTracker.markTimeIfDelay(1) && energyStored > 0) {
+			float newEnergy = perdition.applyPerdition(this, energyStored, perditionTracker.durationOfLastDelay());
+			if (newEnergy == 0 || newEnergy < energyStored)
 				energyStored = newEnergy;
-			} else {
+			else
 				energyStored = DEFUALT_PERDITION.applyPerdition(this, energyStored, perditionTracker.durationOfLastDelay());
-			}
 			validateEnergy();
 		}
 	}
 
 	private void applyWork() {
-		if (energyStored >= activationEnergy) {
-			if (doWorkTracker.markTimeIfDelay(receptor.getWorld(), 1)) {
+		if (energyStored >= activationEnergy)
+			if (doWorkTracker.markTimeIfDelay(1))
 				receptor.doWork(this);
-			}
-		}
 	}
 
 	private void updateSources(ForgeDirection source) {
-		if (sourcesTracker.markTimeIfDelay(receptor.getWorld(), 1)) {
+		if (sourcesTracker.markTimeIfDelay(1))
 			for (int i = 0; i < 6; ++i) {
 				powerSources[i] -= sourcesTracker.durationOfLastDelay();
-				if (powerSources[i] < 0) {
+				if (powerSources[i] < 0)
 					powerSources[i] = 0;
-				}
 			}
-		}
 
 		if (source != null)
 			powerSources[source.ordinal()] = 10;
@@ -236,19 +228,16 @@ public final class PowerHandler {
 
 		float result = 0;
 
-		if (energyStored >= min) {
+		if (energyStored >= min)
 			if (energyStored <= max) {
 				result = energyStored;
-				if (doUse) {
+				if (doUse)
 					energyStored = 0;
-				}
 			} else {
 				result = max;
-				if (doUse) {
+				if (doUse)
 					energyStored -= max;
-				}
 			}
-		}
 
 		validateEnergy();
 
@@ -325,13 +314,11 @@ public final class PowerHandler {
 		 */
 		public float receiveEnergy(Type source, final float quantity, ForgeDirection from) {
 			float used = quantity;
-			if (source == Type.ENGINE) {
-				if (used < minEnergyReceived) {
+			if (source == Type.ENGINE)
+				if (used < minEnergyReceived)
 					return 0;
-				} else if (used > maxEnergyReceived) {
+				else if (used > maxEnergyReceived)
 					used = maxEnergyReceived;
-				}
-			}
 
 			updateSources(from);
 
@@ -339,9 +326,8 @@ public final class PowerHandler {
 
 			applyWork();
 
-			if (source == Type.ENGINE && type.eatsEngineExcess()) {
+			if (source == Type.ENGINE && type.eatsEngineExcess())
 				return Math.min(quantity, maxEnergyReceived);
-			}
 
 			return used;
 		}
@@ -377,11 +363,9 @@ public final class PowerHandler {
 	}
 
 	private void validateEnergy() {
-		if (energyStored < 0) {
+		if (energyStored < 0)
 			energyStored = 0;
-		}
-		if (energyStored > maxEnergyStored) {
+		if (energyStored > maxEnergyStored)
 			energyStored = maxEnergyStored;
-		}
 	}
 }

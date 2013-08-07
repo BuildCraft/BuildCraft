@@ -24,7 +24,7 @@ public class TilePollution extends TileEntity {
 	public void updateEntity() {
 		if (!init) {
 			init = true;
-			timeTracker.markTime(worldObj);
+			timeTracker.markTime();
 			BlockIndex index = new BlockIndex(xCoord, yCoord, zCoord);
 
 			if (BuildCraftEnergy.saturationStored.containsKey(index)) {
@@ -33,7 +33,7 @@ public class TilePollution extends TileEntity {
 				saturation = 1;
 			}
 		} else {
-			if (timeTracker.markTimeIfDelay(worldObj, 20)) {
+			if (timeTracker.markTimeIfDelay(20)) {
 				// int remaining = BuildCraftEnergy.createPollution(worldObj,
 				// xCoord, yCoord, zCoord, saturation);
 				//

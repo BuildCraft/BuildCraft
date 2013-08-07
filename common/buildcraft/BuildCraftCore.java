@@ -26,6 +26,7 @@ import buildcraft.core.ItemSpring;
 import buildcraft.core.ItemWrench;
 import buildcraft.core.SpringPopulate;
 import buildcraft.core.TickHandlerCoreClient;
+import buildcraft.core.TickHandlerTimeTracker;
 import buildcraft.core.Version;
 import buildcraft.core.blueprints.BptItem;
 import buildcraft.core.network.EntityIds;
@@ -299,7 +300,8 @@ public class BuildCraftCore {
 		BuildCraftAPI.softBlocks[Block.vine.blockID] = true;
 		BuildCraftAPI.softBlocks[Block.fire.blockID] = true;
 		TickRegistry.registerTickHandler(new TickHandlerCoreClient(), Side.CLIENT);
-
+		TickRegistry.registerTickHandler(new TickHandlerTimeTracker(), Side.CLIENT);
+		TickRegistry.registerTickHandler(new TickHandlerTimeTracker(), Side.SERVER);
 	}
 
     @EventHandler

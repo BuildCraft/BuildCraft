@@ -245,7 +245,7 @@ public class PipeTransportPower extends PipeTransport {
 			}
 		}
 
-		if (tracker.markTimeIfDelay(container.worldObj, 2 * BuildCraftCore.updateFactor)) {
+		if (tracker.markTimeIfDelay(2 * BuildCraftCore.updateFactor)) {
 			PacketPowerUpdate packet = new PacketPowerUpdate(container.xCoord, container.yCoord, container.zCoord);
 
 			double displayFactor = MAX_DISPLAY / 1024.0;
