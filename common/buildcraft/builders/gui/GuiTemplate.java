@@ -1,34 +1,31 @@
 /**
- * Copyright (c) SpaceToad, 2011
- * http://www.mod-buildcraft.com
+ * Copyright (c) SpaceToad, 2011 http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License
+ * 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-
 package buildcraft.builders.gui;
-
-import java.util.Date;
-
-import net.minecraft.inventory.IInventory;
-
-import org.lwjgl.opengl.GL11;
 
 import buildcraft.builders.TileArchitect;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.gui.GuiBuildCraft;
 import buildcraft.core.network.PacketIds;
 import buildcraft.core.network.PacketPayload;
+import buildcraft.core.network.PacketPayloadArrays;
 import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.StringUtils;
+import java.util.Date;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.util.ResourceLocation;
+import org.lwjgl.opengl.GL11;
 
 public class GuiTemplate extends GuiBuildCraft {
 
+	private static final ResourceLocation TEXTURE = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_GUI + "/template_gui.png");
 	IInventory playerInventory;
 	TileArchitect template;
-
 	boolean editMode = false;
 
 	public GuiTemplate(IInventory playerInventory, TileArchitect template) {
@@ -54,8 +51,8 @@ public class GuiTemplate extends GuiBuildCraft {
 
 	@Override
 	protected void drawGuiContainerBackgroundLayer(float f, int x, int y) {
-        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-		mc.renderEngine.bindTexture(DefaultProps.TEXTURE_PATH_GUI + "/template_gui.png");
+		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+		mc.renderEngine.func_110577_a(TEXTURE);
 		int j = (width - xSize) / 2;
 		int k = (height - ySize) / 2;
 		drawTexturedModalRect(j, k, 0, 0, xSize, ySize);
@@ -87,8 +84,8 @@ public class GuiTemplate extends GuiBuildCraft {
 				editMode = false;
 				return;
 			}
-			PacketPayload payload = new PacketPayload();
-			payload.intPayload = new int[] { c };
+			PacketPayloadArrays payload = new PacketPayloadArrays();
+			payload.intPayload = new int[]{c};
 			PacketUpdate packet = new PacketUpdate(PacketIds.ARCHITECT_NAME, template.xCoord, template.yCoord, template.zCoord, payload);
 			CoreProxy.proxy.sendToServer(packet.getPacket());
 		} else {

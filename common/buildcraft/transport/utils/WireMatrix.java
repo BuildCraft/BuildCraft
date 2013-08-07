@@ -1,12 +1,11 @@
 package buildcraft.transport.utils;
 
+import buildcraft.api.transport.IPipe;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.BitSet;
-
 import net.minecraftforge.common.ForgeDirection;
-import buildcraft.api.transport.IPipe;
 
 public class WireMatrix {
 
@@ -77,7 +76,7 @@ public class WireMatrix {
 
 		for (int i = 0; i < IPipe.WireColor.values().length; i++) {
 			_wires[i].writeData(data);
-			data.writeInt(_wireIconIndex[i]);
+			data.writeByte(_wireIconIndex[i]);
 		}
 	}
 
@@ -85,7 +84,7 @@ public class WireMatrix {
 		_bitSetCodec.decode(data.readByte(), _hasWire);
 		for (int i = 0; i < IPipe.WireColor.values().length; i++) {
 			_wires[i].readData(data);
-			_wireIconIndex[i] = data.readInt();
+			_wireIconIndex[i] = data.readByte();
 		}
 	}
 }

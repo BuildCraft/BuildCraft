@@ -7,38 +7,41 @@
  */
 package buildcraft.energy.render;
 
+import buildcraft.BuildCraftCore;
+import buildcraft.BuildCraftCore.RenderMode;
+import buildcraft.core.DefaultProps;
+import buildcraft.core.IInventoryRenderer;
+import buildcraft.energy.TileEngine;
+import buildcraft.energy.TileEngine.EnergyStage;
+import net.minecraft.client.model.ModelBase;
+import net.minecraft.client.model.ModelRenderer;
+import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
+import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.common.ForgeDirection;
 import static net.minecraftforge.common.ForgeDirection.DOWN;
 import static net.minecraftforge.common.ForgeDirection.EAST;
 import static net.minecraftforge.common.ForgeDirection.NORTH;
 import static net.minecraftforge.common.ForgeDirection.SOUTH;
 import static net.minecraftforge.common.ForgeDirection.UP;
 import static net.minecraftforge.common.ForgeDirection.WEST;
-import net.minecraft.client.model.ModelBase;
-import net.minecraft.client.model.ModelRenderer;
-import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
-import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.ForgeDirection;
-
 import org.lwjgl.opengl.GL11;
-
-import buildcraft.BuildCraftCore;
-import buildcraft.BuildCraftCore.RenderMode;
-import buildcraft.core.DefaultProps;
-import buildcraft.core.IInventoryRenderer;
-import buildcraft.energy.Engine;
-import buildcraft.energy.Engine.EnergyStage;
-import buildcraft.energy.IEngineProvider;
 
 public class RenderEngine extends TileEntitySpecialRenderer implements IInventoryRenderer {
 
+	private static final ResourceLocation CHAMBER_TEXTURE = new ResourceLocation(DefaultProps.TEXTURE_PATH_BLOCKS + "/chamber.png");
+	private static final ResourceLocation TRUNK_BLUE_TEXTURE = new ResourceLocation(DefaultProps.TEXTURE_PATH_BLOCKS + "/trunk_blue.png");
+	private static final ResourceLocation TRUNK_GREEN_TEXTURE = new ResourceLocation(DefaultProps.TEXTURE_PATH_BLOCKS + "/trunk_green.png");
+	private static final ResourceLocation TRUNK_YELLOW_TEXTURE = new ResourceLocation(DefaultProps.TEXTURE_PATH_BLOCKS + "/trunk_yellow.png");
+	private static final ResourceLocation TRUNK_RED_TEXTURE = new ResourceLocation(DefaultProps.TEXTURE_PATH_BLOCKS + "/trunk_red.png");
 	private ModelBase model = new ModelBase() {
 	};
 	private ModelRenderer box;
 	private ModelRenderer trunk;
 	private ModelRenderer movingBox;
 	private ModelRenderer chamber;
-	private String baseTexture;
+	private ResourceLocation baseTexture;
 	private static final float[] angleMap = new float[6];
 
 	static {
@@ -78,7 +81,7 @@ public class RenderEngine extends TileEntitySpecialRenderer implements IInventor
 		chamber.rotationPointZ = 8F;
 	}
 
-	public RenderEngine(String baseTexture) {
+	public RenderEngine(ResourceLocation baseTexture) {
 		this();
 		this.baseTexture = baseTexture;
 		setTileEntityRenderer(TileEntityRenderer.instance);
@@ -86,20 +89,20 @@ public class RenderEngine extends TileEntitySpecialRenderer implements IInventor
 
 	@Override
 	public void inventoryRender(double x, double y, double z, float f, float f1) {
-		render(EnergyStage.Blue, 0.25F, ForgeDirection.UP, baseTexture, x, y, z);
+		render(EnergyStage.BLUE, 0.25F, ForgeDirection.UP, baseTexture, x, y, z);
 	}
 
 	@Override
 	public void renderTileEntityAt(TileEntity tileentity, double x, double y, double z, float f) {
 
-		Engine engine = ((IEngineProvider) tileentity).getEngine();
+		TileEngine engine = ((TileEngine) tileentity);
 
 		if (engine != null) {
 			render(engine.getEnergyStage(), engine.progress, engine.orientation, engine.getTextureFile(), x, y, z);
 		}
 	}
 
-	private void render(EnergyStage energy, float progress, ForgeDirection orientation, String baseTexture, double x, double y, double z) {
+	private void render(EnergyStage energy, float progress, ForgeDirection orientation, ResourceLocation baseTexture, double x, double y, double z) {
 
 		if (BuildCraftCore.render == RenderMode.NoDynamic) {
 			return;
@@ -124,8 +127,8 @@ public class RenderEngine extends TileEntitySpecialRenderer implements IInventor
 
 		float translatefact = step / 16;
 
-		float[] angle = {0, 0, 0};
-		float[] translate = {orientation.offsetX, orientation.offsetY, orientation.offsetZ};
+		float[] angle = { 0, 0, 0 };
+		float[] translate = { orientation.offsetX, orientation.offsetY, orientation.offsetZ };
 
 		switch (orientation) {
 			case EAST:
@@ -158,7 +161,7 @@ public class RenderEngine extends TileEntitySpecialRenderer implements IInventor
 
 		float factor = (float) (1.0 / 16.0);
 
-		bindTextureByName(baseTexture);
+		func_110628_a(baseTexture);
 
 		box.render(factor);
 
@@ -166,7 +169,7 @@ public class RenderEngine extends TileEntitySpecialRenderer implements IInventor
 		movingBox.render(factor);
 		GL11.glTranslatef(-translate[0] * translatefact, -translate[1] * translatefact, -translate[2] * translatefact);
 
-		bindTextureByName(DefaultProps.TEXTURE_PATH_BLOCKS + "/chamber.png");
+		func_110628_a(CHAMBER_TEXTURE);
 
 		float chamberf = 2F / 16F;
 
@@ -179,24 +182,24 @@ public class RenderEngine extends TileEntitySpecialRenderer implements IInventor
 			GL11.glTranslatef(-translate[0] * chamberf, -translate[1] * chamberf, -translate[2] * chamberf);
 		}
 
-		String texture = "";
+		ResourceLocation texture;
 
 		switch (energy) {
-			case Blue:
-				texture = DefaultProps.TEXTURE_PATH_BLOCKS + "/trunk_blue.png";
+			case BLUE:
+				texture = TRUNK_BLUE_TEXTURE;
 				break;
-			case Green:
-				texture = DefaultProps.TEXTURE_PATH_BLOCKS + "/trunk_green.png";
+			case GREEN:
+				texture = TRUNK_GREEN_TEXTURE;
 				break;
-			case Yellow:
-				texture = DefaultProps.TEXTURE_PATH_BLOCKS + "/trunk_yellow.png";
+			case YELLOW:
+				texture = TRUNK_YELLOW_TEXTURE;
 				break;
 			default:
-				texture = DefaultProps.TEXTURE_PATH_BLOCKS + "/trunk_red.png";
+				texture = TRUNK_RED_TEXTURE;
 				break;
 		}
 
-		bindTextureByName(texture);
+		func_110628_a(texture);
 
 		trunk.render(factor);
 

@@ -1,67 +1,59 @@
 /**
- * Copyright (c) SpaceToad, 2011
- * http://www.mod-buildcraft.com
+ * Copyright (c) SpaceToad, 2011 http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License
+ * 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
 package buildcraft.transport.pipes;
 
+import buildcraft.BuildCraftTransport;
+import buildcraft.api.inventory.ISelectiveInventory;
+import buildcraft.api.inventory.ISpecialInventory;
+import buildcraft.core.GuiIds;
+import buildcraft.core.inventory.SimpleInventory;
+import buildcraft.core.network.IClientState;
+import buildcraft.core.proxy.CoreProxy;
+import buildcraft.core.utils.Utils;
+import buildcraft.transport.BlockGenericPipe;
+import buildcraft.transport.PipeIconProvider;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
-import buildcraft.BuildCraftTransport;
-import buildcraft.api.inventory.ISelectiveInventory;
-import buildcraft.api.inventory.ISpecialInventory;
-import buildcraft.core.GuiIds;
-import buildcraft.core.network.IClientState;
-import buildcraft.core.proxy.CoreProxy;
-import buildcraft.core.inventory.SimpleInventory;
-import buildcraft.core.utils.Utils;
-import buildcraft.transport.BlockGenericPipe;
-import buildcraft.transport.PipeIconProvider;
-import buildcraft.transport.PipeTransportItems;
 
 public class PipeItemsEmerald extends PipeItemsWood implements IClientState {
 
 	private SimpleInventory filters = new SimpleInventory(9, "Filters", 1);
 	private int currentFilter = 0;
 
-	protected PipeItemsEmerald(int itemID, PipeTransportItems transport) {
-		super(transport, new PipeLogicEmerald(), itemID);
-
-		standardIconIndex = PipeIconProvider.PipeItemsEmerald_Standard;
-		solidIconIndex = PipeIconProvider.PipeAllEmerald_Solid;
-	}
-
 	public PipeItemsEmerald(int itemID) {
-		this(itemID, new PipeTransportItems());
+		super(itemID);
+
+		standardIconIndex = PipeIconProvider.TYPE.PipeItemsEmerald_Standard.ordinal();
+		solidIconIndex = PipeIconProvider.TYPE.PipeAllEmerald_Solid.ordinal();
 	}
 
 	@Override
-	public boolean blockActivated(World world, int x, int y, int z, EntityPlayer entityplayer) {
+	public boolean blockActivated(EntityPlayer entityplayer) {
 		if (entityplayer.getCurrentEquippedItem() != null && entityplayer.getCurrentEquippedItem().itemID < Block.blocksList.length) {
 			if (Block.blocksList[entityplayer.getCurrentEquippedItem().itemID] instanceof BlockGenericPipe) {
 				return false;
 			}
 		}
 
-		if (super.blockActivated(worldObj, x, y, z, entityplayer)) {
+		if (super.blockActivated(entityplayer)) {
 			return true;
 		}
 
 		if (!CoreProxy.proxy.isRenderWorld(container.worldObj)) {
-			entityplayer.openGui(BuildCraftTransport.instance, GuiIds.PIPE_EMERALD_ITEM, worldObj, x, y, z);
+			entityplayer.openGui(BuildCraftTransport.instance, GuiIds.PIPE_EMERALD_ITEM, container.worldObj, container.xCoord, container.yCoord, container.zCoord);
 		}
 
 		return true;
@@ -77,47 +69,47 @@ public class PipeItemsEmerald extends PipeItemsWood implements IClientState {
 
 		/* ISELECTIVEINVENTORY */
 		if (inventory instanceof ISelectiveInventory) {
-			ItemStack[] stacks = ((ISelectiveInventory) inventory).extractItem(new ItemStack[]{getCurrentFilter()}, false, doRemove, from, (int) getPowerProvider().getEnergyStored());
+			ItemStack[] stacks = ((ISelectiveInventory) inventory).extractItem(new ItemStack[]{getCurrentFilter()}, false, doRemove, from, (int) powerHandler.getEnergyStored());
 			if (doRemove) {
 				for (ItemStack stack : stacks) {
 					if (stack != null) {
-						getPowerProvider().useEnergy(stack.stackSize, stack.stackSize, true);
+						powerHandler.useEnergy(stack.stackSize, stack.stackSize, true);
 					}
 				}
 				incrementFilter();
 			}
 			return stacks;
 
-		/* ISPECIALINVENTORY */
+			/* ISPECIALINVENTORY */
 		} else if (inventory instanceof ISpecialInventory) {
-				ItemStack[] stacks = ((ISpecialInventory) inventory).extractItem(false, from, (int) getPowerProvider().getEnergyStored());
-				if (stacks != null) {
-					for (ItemStack stack : stacks) {
-						if(stack == null)
-							continue;
+			ItemStack[] stacks = ((ISpecialInventory) inventory).extractItem(false, from, (int) powerHandler.getEnergyStored());
+			if (stacks != null) {
+				for (ItemStack stack : stacks) {
+					if (stack == null)
+						continue;
 
-						boolean matches = false;
-						for (int i = 0; i < filters.getSizeInventory(); i++) {
-							ItemStack filter = filters.getStackInSlot(i);
-							if (filter != null && filter.isItemEqual(stack)) {
-								matches = true;
-								break;
-							}
-						}
-						if (!matches) {
-							return null;
+					boolean matches = false;
+					for (int i = 0; i < filters.getSizeInventory(); i++) {
+						ItemStack filter = filters.getStackInSlot(i);
+						if (filter != null && filter.isItemEqual(stack)) {
+							matches = true;
+							break;
 						}
 					}
-					if (doRemove) {
-						stacks = ((ISpecialInventory) inventory).extractItem(true, from, (int) getPowerProvider().getEnergyStored());
-						for (ItemStack stack : stacks) {
-							if (stack != null) {
-								getPowerProvider().useEnergy(stack.stackSize, stack.stackSize, true);
-							}
+					if (!matches) {
+						return null;
+					}
+				}
+				if (doRemove) {
+					stacks = ((ISpecialInventory) inventory).extractItem(true, from, (int) powerHandler.getEnergyStored());
+					for (ItemStack stack : stacks) {
+						if (stack != null) {
+							powerHandler.useEnergy(stack.stackSize, stack.stackSize, true);
 						}
 					}
 				}
-				return stacks;
+			}
+			return stacks;
 
 		} else {
 
@@ -168,7 +160,7 @@ public class PipeItemsEmerald extends PipeItemsWood implements IClientState {
 				}
 				if (doRemove) {
 					incrementFilter();
-					return inventory.decrStackSize(i, (int) getPowerProvider().useEnergy(1, stack.stackSize, true));
+					return inventory.decrStackSize(i, (int) powerHandler.useEnergy(1, stack.stackSize, true));
 				} else {
 					return stack;
 				}
@@ -208,8 +200,8 @@ public class PipeItemsEmerald extends PipeItemsWood implements IClientState {
 			readFromNBT((NBTTagCompound) nbt);
 		}
 	}
-	
-	public IInventory getFilters(){
+
+	public IInventory getFilters() {
 		return filters;
 	}
 }

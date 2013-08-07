@@ -1,14 +1,13 @@
 package buildcraft.core.render;
 
+import buildcraft.api.core.Position;
+import buildcraft.core.EntityLaser;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.entity.Entity;
-
+import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
-
-import buildcraft.api.core.Position;
-import buildcraft.core.EntityLaser;
 
 public class RenderLaser extends Render {
 
@@ -38,7 +37,8 @@ public class RenderLaser extends Render {
 			return;
 
 		GL11.glPushMatrix();
-		GL11.glDisable(2896 /* GL_LIGHTING */);
+		GL11.glPushAttrib(GL11.GL_ENABLE_BIT);
+		GL11.glDisable(GL11.GL_LIGHTING);
 
 		Position offset = laser.renderOffset();
 		GL11.glTranslated(x + offset.x, y + offset.y, z + offset.z);
@@ -46,7 +46,7 @@ public class RenderLaser extends Render {
 		GL11.glRotatef((float) laser.angleZ, 0, 1, 0);
 		GL11.glRotatef((float) laser.angleY, 0, 0, 1);
 
-		renderManager.renderEngine.bindTexture(laser.getTexture());
+		renderManager.renderEngine.func_110577_a(laser.getTexture());
 
 		float factor = (float) (1.0 / 16.0);
 
@@ -65,16 +65,20 @@ public class RenderLaser extends Render {
 
 		iterate(laser);
 
+		GL11.glPopAttrib();
 		GL11.glPopMatrix();
 
 	}
 
 	protected void iterate(EntityLaser laser) {
-
 	}
 
 	protected ModelRenderer getBox(EntityLaser laser) {
 		return box;
 	}
 
+	@Override
+	protected ResourceLocation func_110775_a(Entity entity) {
+		return ((EntityLaser) entity).getTexture();
+	}
 }

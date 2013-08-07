@@ -7,31 +7,23 @@
  */
 package buildcraft.energy;
 
+import buildcraft.BuildCraftCore;
+import buildcraft.core.CreativeTabBuildCraft;
+import buildcraft.core.IItemPipe;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import java.util.List;
 import java.util.Random;
-
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Icon;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
-import buildcraft.BuildCraftCore;
-import buildcraft.BuildCraftEnergy;
-import buildcraft.api.tools.IToolWrench;
-import buildcraft.core.CreativeTabBuildCraft;
-import buildcraft.core.GuiIds;
-import buildcraft.core.IItemPipe;
-import buildcraft.core.liquids.LiquidUtils;
-import buildcraft.core.proxy.CoreProxy;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraftforge.liquids.LiquidContainerRegistry;
 
 public class BlockEngine extends BlockContainer {
 
@@ -71,15 +63,20 @@ public class BlockEngine extends BlockContainer {
 	}
 
 	@Override
-	public TileEntity createNewTileEntity(World var1) {
-		return new TileEngine();
+	public TileEntity createTileEntity(World world, int metadata) {
+		if (metadata == 1)
+			return new TileEngineStone();
+		else if (metadata == 2)
+			return new TileEngineIron();
+		else
+			return new TileEngineWood();
 	}
 
 	@Override
 	public boolean isBlockSolidOnSide(World world, int x, int y, int z, ForgeDirection side) {
 		TileEntity tile = world.getBlockTileEntity(x, y, z);
 		if (tile instanceof TileEngine) {
-			return ForgeDirection.getOrientation(((TileEngine) tile).orientation).getOpposite() == side;
+			return ((TileEngine) tile).orientation.getOpposite() == side;
 		}
 		return false;
 	}
@@ -95,6 +92,15 @@ public class BlockEngine extends BlockContainer {
 	}
 
 	@Override
+	public boolean rotateBlock(World world, int x, int y, int z, ForgeDirection axis) {
+		TileEntity tile = world.getBlockTileEntity(x, y, z);
+		if (tile instanceof TileEngine) {
+			return ((TileEngine) tile).switchOrientation();
+		}
+		return false;
+	}
+
+	@Override
 	public boolean onBlockActivated(World world, int i, int j, int k, EntityPlayer player, int side, float par7, float par8, float par9) {
 
 		TileEngine tile = (TileEngine) world.getBlockTileEntity(i, j, k);
@@ -103,50 +109,15 @@ public class BlockEngine extends BlockContainer {
 		if (player.isSneaking())
 			return false;
 
-		// Switch orientation if whacked with a wrench.
-		Item equipped = player.getCurrentEquippedItem() != null ? player.getCurrentEquippedItem().getItem() : null;
-		if (equipped instanceof IToolWrench && ((IToolWrench) equipped).canWrench(player, i, j, k)) {
-
-			tile.switchOrientation();
-			((IToolWrench) equipped).wrenchUsed(player, i, j, k);
-			return true;
-
-		} else {
-
-			// Do not open guis when having a pipe in hand
-			if (player.getCurrentEquippedItem() != null) {
-				if (player.getCurrentEquippedItem().getItem() instanceof IItemPipe) {
-					return false;
-				}
-				if (tile.engine instanceof EngineIron) {
-					ItemStack current = player.getCurrentEquippedItem();
-					if (current != null && current.itemID != Item.bucketEmpty.itemID) {
-						if (CoreProxy.proxy.isSimulating(world)) {
-							if (LiquidUtils.handleRightClick(tile, ForgeDirection.getOrientation(side), player, true, false)) {
-								return true;
-							}
-						} else {
-							if (LiquidContainerRegistry.isContainer(current)) {
-								return true;
-							}
-						}
-					}
-				}
+		// Do not open guis when having a pipe in hand
+		if (player.getCurrentEquippedItem() != null) {
+			if (player.getCurrentEquippedItem().getItem() instanceof IItemPipe) {
+				return false;
 			}
+		}
 
-			if (tile.engine instanceof EngineStone) {
-				if (!CoreProxy.proxy.isRenderWorld(tile.worldObj)) {
-					player.openGui(BuildCraftEnergy.instance, GuiIds.ENGINE_STONE, world, i, j, k);
-				}
-				return true;
-
-			} else if (tile.engine instanceof EngineIron) {
-				if (!CoreProxy.proxy.isRenderWorld(tile.worldObj)) {
-					player.openGui(BuildCraftEnergy.instance, GuiIds.ENGINE_IRON, world, i, j, k);
-				}
-				return true;
-			}
-
+		if (tile instanceof TileEngine) {
+			return ((TileEngine) tile).onBlockActivated(player, ForgeDirection.getOrientation(side));
 		}
 
 		return false;
@@ -155,7 +126,7 @@ public class BlockEngine extends BlockContainer {
 	@Override
 	public void onPostBlockPlaced(World world, int x, int y, int z, int par5) {
 		TileEngine tile = (TileEngine) world.getBlockTileEntity(x, y, z);
-		tile.orientation = ForgeDirection.UP.ordinal();
+		tile.orientation = ForgeDirection.UP;
 		tile.switchOrientation();
 	}
 
@@ -214,5 +185,10 @@ public class BlockEngine extends BlockContainer {
 			default:
 				return null;
 		}
+	}
+
+	@Override
+	public TileEntity createNewTileEntity(World world) {
+		return null;
 	}
 }

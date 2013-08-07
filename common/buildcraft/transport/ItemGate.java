@@ -1,12 +1,5 @@
 package buildcraft.transport;
 
-import java.util.List;
-
-import net.minecraft.client.renderer.texture.IconRegister;
-import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.Icon;
-import buildcraft.api.core.IIconProvider;
 import buildcraft.api.gates.ActionManager;
 import buildcraft.api.gates.IAction;
 import buildcraft.api.gates.ITrigger;
@@ -14,6 +7,11 @@ import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.ItemBuildCraft;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import java.util.List;
+import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.Icon;
 
 public class ItemGate extends ItemBuildCraft {
 
@@ -115,18 +113,12 @@ public class ItemGate extends ItemBuildCraft {
 	public void registerIcons(IconRegister iconRegister)
 	{
 
-		for (IAction action : ActionManager.actions){
-			if (action == null) continue;
-			IIconProvider ip = action.getIconProvider();
-			if (ip == null) throw new RuntimeException("Action " + action.getClass().toString() + " does not return an IIconProvider. This is not a buildcraft bug!");
-			ip.registerIcons(iconRegister);
+		for (IAction action : ActionManager.actions.values()){
+			action.registerIcons(iconRegister);
 		}
 
-		for (ITrigger trigger : ActionManager.triggers){
-			if (trigger == null) continue;
-			IIconProvider ip = trigger.getIconProvider();
-			if (ip == null) throw new RuntimeException("Trigger " + trigger.getClass().toString() + " does not return an IIconProvider. This is not a buildcraft bug!");
-			ip.registerIcons(iconRegister);
+		for (ITrigger trigger : ActionManager.triggers.values()){
+			trigger.registerIcons(iconRegister);
 		}
 
 		icons = new Icon[ItemGate.MAX];

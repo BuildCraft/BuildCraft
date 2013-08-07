@@ -1,16 +1,17 @@
 package buildcraft.core;
 
+import buildcraft.api.tools.IToolWrench;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
-import buildcraft.api.tools.IToolWrench;
 
 public class ItemWrench extends ItemBuildCraft implements IToolWrench {
 
 	public ItemWrench(int i) {
 		super(i);
+		setFull3D();
 	}
 
 	@Override
@@ -31,6 +32,7 @@ public class ItemWrench extends ItemBuildCraft implements IToolWrench {
 
 	@Override
 	public void wrenchUsed(EntityPlayer player, int x, int y, int z) {
+		player.swingItem();
 	}
 
 	@Override

@@ -13,7 +13,7 @@ import net.minecraftforge.common.ForgeDirection;
 
 public interface IPipeTransportPowerHook {
 
-	public double receiveEnergy(ForgeDirection from, double val);
+	public float receiveEnergy(ForgeDirection from, float val);
 
-	public void requestEnergy(ForgeDirection from, int i);
+	public void requestEnergy(ForgeDirection from, float amount);
 }

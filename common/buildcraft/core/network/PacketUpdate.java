@@ -7,11 +7,9 @@ import java.io.IOException;
 public class PacketUpdate extends BuildCraftPacket {
 
 	private int packetId;
-
 	public int posX;
 	public int posY;
 	public int posZ;
-
 	public PacketPayload payload;
 
 	public PacketUpdate() {
@@ -44,28 +42,12 @@ public class PacketUpdate extends BuildCraftPacket {
 		data.writeInt(posY);
 		data.writeInt(posZ);
 
-		// No payload means no data
-		if (payload == null) {
-			data.writeInt(0);
-			data.writeInt(0);
-			data.writeInt(0);
-			return;
+		if (payload != null) {
+			data.writeByte(payload.getType().ordinal());
+			payload.writeData(data);
+		} else {
+			data.writeByte(0);
 		}
-
-		data.writeInt(payload.intPayload.length);
-		data.writeInt(payload.floatPayload.length);
-		data.writeInt(payload.stringPayload.length);
-
-		for (int intData : payload.intPayload) {
-			data.writeInt(intData);
-		}
-		for (float floatData : payload.floatPayload) {
-			data.writeFloat(floatData);
-		}
-		for (String stringData : payload.stringPayload) {
-			data.writeUTF(stringData);
-		}
-
 	}
 
 	@Override
@@ -75,27 +57,16 @@ public class PacketUpdate extends BuildCraftPacket {
 		posY = data.readInt();
 		posZ = data.readInt();
 
-		payload = new PacketPayload();
+		byte type = data.readByte();
 
-		payload.intPayload = new int[data.readInt()];
-		payload.floatPayload = new float[data.readInt()];
-		payload.stringPayload = new String[data.readInt()];
+		payload = PacketPayload.makePayload(type);
 
-		for (int i = 0; i < payload.intPayload.length; i++) {
-			payload.intPayload[i] = data.readInt();
-		}
-		for (int i = 0; i < payload.floatPayload.length; i++) {
-			payload.floatPayload[i] = data.readFloat();
-		}
-		for (int i = 0; i < payload.stringPayload.length; i++) {
-			payload.stringPayload[i] = data.readUTF();
-		}
-
+		if (payload != null)
+			payload.readData(data);
 	}
 
 	@Override
 	public int getID() {
 		return packetId;
 	}
-
 }

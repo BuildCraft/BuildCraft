@@ -1,5 +1,7 @@
 package buildcraft.core.triggers;
 
+import java.util.Locale;
+
 
 public class ActionMachineControl extends BCAction {
 
@@ -9,8 +11,8 @@ public class ActionMachineControl extends BCAction {
 
 	Mode mode;
 
-	public ActionMachineControl(int id, Mode mode) {
-		super(id);
+	public ActionMachineControl(int legacyId, Mode mode) {
+		super(legacyId, "buildcraft.machine." + mode.name().toLowerCase(Locale.ENGLISH));
 
 		this.mode = mode;
 	}

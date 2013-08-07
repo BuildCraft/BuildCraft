@@ -1,20 +1,26 @@
 /**
- * Copyright (c) SpaceToad, 2011
- * http://www.mod-buildcraft.com
+ * Copyright (c) SpaceToad, 2011 http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License
+ * 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-
 package buildcraft.builders;
 
+import buildcraft.BuildCraftBuilders;
+import buildcraft.api.core.Position;
+import buildcraft.api.tools.IToolWrench;
+import buildcraft.core.CreativeTabBuildCraft;
+import buildcraft.core.GuiIds;
+import buildcraft.core.proxy.CoreProxy;
+import buildcraft.core.utils.Utils;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import java.util.ArrayList;
-
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IconRegister;
-import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -22,14 +28,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Icon;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
-import buildcraft.BuildCraftBuilders;
-import buildcraft.api.core.Position;
-import buildcraft.api.tools.IToolWrench;
-import buildcraft.core.GuiIds;
-import buildcraft.core.proxy.CoreProxy;
-import buildcraft.core.utils.Utils;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 public class BlockBuilder extends BlockContainer {
 
@@ -40,7 +38,7 @@ public class BlockBuilder extends BlockContainer {
 	public BlockBuilder(int i) {
 		super(i, Material.iron);
 		setHardness(0.7F);
-		//setCreativeTab(CreativeTabBuildCraft.tabBuildCraft);
+		setCreativeTab(CreativeTabBuildCraft.tabBuildCraft);
 	}
 
 	@Override
@@ -57,10 +55,10 @@ public class BlockBuilder extends BlockContainer {
 			return blockTextureFront;
 
 		switch (i) {
-		case 1:
-			return blockTextureTop;
-		default:
-			return blockTextureSide;
+			case 1:
+				return blockTextureTop;
+			default:
+				return blockTextureSide;
 		}
 	}
 
@@ -77,19 +75,19 @@ public class BlockBuilder extends BlockContainer {
 			int meta = world.getBlockMetadata(i, j, k);
 
 			switch (ForgeDirection.values()[meta]) {
-			case WEST:
-				world.setBlockMetadataWithNotify(i, j, k, ForgeDirection.SOUTH.ordinal(),0);
-				break;
-			case EAST:
-				world.setBlockMetadataWithNotify(i, j, k, ForgeDirection.NORTH.ordinal(),0);
-				break;
-			case NORTH:
-				world.setBlockMetadataWithNotify(i, j, k, ForgeDirection.WEST.ordinal(),0);
-				break;
-			case SOUTH:
-			default:
-				world.setBlockMetadataWithNotify(i, j, k, ForgeDirection.EAST.ordinal(),0);
-				break;
+				case WEST:
+					world.setBlockMetadataWithNotify(i, j, k, ForgeDirection.SOUTH.ordinal(), 0);
+					break;
+				case EAST:
+					world.setBlockMetadataWithNotify(i, j, k, ForgeDirection.NORTH.ordinal(), 0);
+					break;
+				case NORTH:
+					world.setBlockMetadataWithNotify(i, j, k, ForgeDirection.WEST.ordinal(), 0);
+					break;
+				case SOUTH:
+				default:
+					world.setBlockMetadataWithNotify(i, j, k, ForgeDirection.EAST.ordinal(), 0);
+					break;
 			}
 
 			world.markBlockForUpdate(i, j, k);
@@ -106,11 +104,11 @@ public class BlockBuilder extends BlockContainer {
 	}
 
 	@Override
-	public void onBlockPlacedBy(World world, int i, int j, int k, EntityLiving entityliving, ItemStack stack) {
+	public void onBlockPlacedBy(World world, int i, int j, int k, EntityLivingBase entityliving, ItemStack stack) {
 		super.onBlockPlacedBy(world, i, j, k, entityliving, stack);
 		ForgeDirection orientation = Utils.get2dOrientation(new Position(entityliving.posX, entityliving.posY, entityliving.posZ), new Position(i, j, k));
 
-		world.setBlockMetadataWithNotify(i, j, k, orientation.getOpposite().ordinal(),1);
+		world.setBlockMetadataWithNotify(i, j, k, orientation.getOpposite().ordinal(), 1);
 	}
 
 	@Override
@@ -119,7 +117,7 @@ public class BlockBuilder extends BlockContainer {
 		super.breakBlock(world, x, y, z, par5, par6);
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@SuppressWarnings({"unchecked", "rawtypes"})
 	@Override
 	public void addCreativeItems(ArrayList itemList) {
 		itemList.add(new ItemStack(this));
@@ -127,10 +125,9 @@ public class BlockBuilder extends BlockContainer {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void registerIcons(IconRegister par1IconRegister)
-	{
-	    blockTextureTop = par1IconRegister.registerIcon("buildcraft:builder_top");
-	    blockTextureSide = par1IconRegister.registerIcon("buildcraft:builder_side");
-	    blockTextureFront = par1IconRegister.registerIcon("buildcraft:builder_front");
+	public void registerIcons(IconRegister par1IconRegister) {
+		blockTextureTop = par1IconRegister.registerIcon("buildcraft:builder_top");
+		blockTextureSide = par1IconRegister.registerIcon("buildcraft:builder_side");
+		blockTextureFront = par1IconRegister.registerIcon("buildcraft:builder_front");
 	}
 }

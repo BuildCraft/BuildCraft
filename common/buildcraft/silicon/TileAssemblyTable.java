@@ -1,12 +1,17 @@
 package buildcraft.silicon;
 
 import buildcraft.api.gates.IAction;
-
+import buildcraft.api.recipes.AssemblyRecipe;
+import buildcraft.core.DefaultProps;
+import buildcraft.core.IMachine;
+import buildcraft.core.inventory.StackHelper;
+import buildcraft.core.network.PacketIds;
+import buildcraft.core.network.PacketNBT;
+import buildcraft.core.proxy.CoreProxy;
+import buildcraft.core.utils.Utils;
+import cpw.mods.fml.common.FMLCommonHandler;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
-
-import cpw.mods.fml.common.FMLCommonHandler;
-
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
@@ -17,17 +22,8 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.ForgeDirection;
-import buildcraft.api.recipes.AssemblyRecipe;
-import buildcraft.api.transport.IPipeConnection;
-import buildcraft.core.DefaultProps;
-import buildcraft.core.IMachine;
-import buildcraft.core.inventory.StackHelper;
-import buildcraft.core.network.PacketIds;
-import buildcraft.core.network.PacketNBT;
-import buildcraft.core.proxy.CoreProxy;
-import buildcraft.core.utils.Utils;
 
-public class TileAssemblyTable extends TileEntity implements IMachine, IInventory, IPipeConnection, ILaserTarget {
+public class TileAssemblyTable extends TileEntity implements IMachine, IInventory, ILaserTarget {
 
 	ItemStack[] items = new ItemStack[12];
 	LinkedHashSet<AssemblyRecipe> plannedOutput = new LinkedHashSet<AssemblyRecipe>();
@@ -42,6 +38,7 @@ public class TileAssemblyTable extends TileEntity implements IMachine, IInventor
 
 		public boolean select;
 		public ItemStack stack;
+
 		public NBTTagCompound getNBT() {
 			NBTTagCompound nbt = new NBTTagCompound();
 			nbt.setBoolean("s", select);
@@ -50,12 +47,12 @@ public class TileAssemblyTable extends TileEntity implements IMachine, IInventor
 			nbt.setCompoundTag("i", itemNBT);
 			return nbt;
 		}
+
 		public void fromNBT(NBTTagCompound nbt) {
 			select = nbt.getBoolean("s");
 			NBTTagCompound itemNBT = nbt.getCompoundTag("i");
 			stack = ItemStack.loadItemStackFromNBT(itemNBT);
 		}
-
 	}
 
 	public LinkedList<AssemblyRecipe> getPotentialOutputs() {
@@ -132,11 +129,10 @@ public class TileAssemblyTable extends TileEntity implements IMachine, IInventor
 				}
 
 				ItemStack remaining = currentRecipe.output.copy();
-				ItemStack added = Utils.addToRandomInventory(remaining, worldObj, xCoord, yCoord, zCoord);
-				remaining.stackSize -= added.stackSize;
+				remaining.stackSize -= Utils.addToRandomInventoryAround(worldObj, xCoord, yCoord, zCoord, remaining);
 
 				if (remaining.stackSize > 0) {
-					Utils.addToRandomPipeEntry(this, ForgeDirection.UNKNOWN, remaining);
+					remaining.stackSize -= Utils.addToRandomPipeAround(worldObj, xCoord, yCoord, zCoord, ForgeDirection.UNKNOWN, remaining);
 				}
 
 				if (remaining.stackSize > 0) {
@@ -345,11 +341,6 @@ public class TileAssemblyTable extends TileEntity implements IMachine, IInventor
 		setCurrentRecipe(null);
 	}
 
-	@Override
-	public boolean isPipeConnected(ForgeDirection with) {
-		return true;
-	}
-
 	public void handleSelectionMessage(SelectionMessage message) {
 		for (AssemblyRecipe recipe : AssemblyRecipe.assemblyRecipes) {
 			if (recipe.output.isItemEqual(message.stack) && ItemStack.areItemStackTagsEqual(recipe.output, message.stack)) {
@@ -437,7 +428,7 @@ public class TileAssemblyTable extends TileEntity implements IMachine, IInventor
 	}
 
 	@Override
-	public boolean manageLiquids() {
+	public boolean manageFluids() {
 		return false;
 	}
 
@@ -490,8 +481,13 @@ public class TileAssemblyTable extends TileEntity implements IMachine, IInventor
 	}
 
 	@Override
-	public boolean isStackValidForSlot(int i, ItemStack itemstack) {
+	public boolean isItemValidForSlot(int i, ItemStack itemstack) {
 		// TODO Auto-generated method stub
 		return true;
+	}
+
+	@Override
+	public boolean isInvalidTarget() {
+		return isInvalid();
 	}
 }

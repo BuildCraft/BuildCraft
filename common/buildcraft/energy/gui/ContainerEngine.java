@@ -1,21 +1,19 @@
-/** 
- * Copyright (c) SpaceToad, 2011
- * http://www.mod-buildcraft.com
- * 
- * BuildCraft is distributed under the terms of the Minecraft Mod Public 
- * License 1.0, or MMPL. Please check the contents of the license located in
+/**
+ * Copyright (c) SpaceToad, 2011 http://www.mod-buildcraft.com
+ *
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License
+ * 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-
 package buildcraft.energy.gui;
 
+import buildcraft.core.gui.BuildCraftContainer;
+import buildcraft.energy.TileEngine;
+import buildcraft.energy.TileEngineStone;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.ICrafting;
 import net.minecraft.inventory.Slot;
-import buildcraft.core.gui.BuildCraftContainer;
-import buildcraft.energy.EngineStone;
-import buildcraft.energy.TileEngine;
 
 public class ContainerEngine extends BuildCraftContainer {
 
@@ -26,7 +24,7 @@ public class ContainerEngine extends BuildCraftContainer {
 
 		engine = tileEngine;
 
-		if (tileEngine.engine instanceof EngineStone) {
+		if (tileEngine instanceof TileEngineStone) {
 			addSlotToContainer(new Slot(tileEngine, 0, 80, 41));
 		} else {
 			addSlotToContainer(new Slot(tileEngine, 0, 52, 41));
@@ -49,15 +47,13 @@ public class ContainerEngine extends BuildCraftContainer {
 		super.detectAndSendChanges();
 
 		for (int i = 0; i < crafters.size(); i++) {
-			engine.engine.sendGUINetworkData(this, (ICrafting) crafters.get(i));
+			engine.sendGUINetworkData(this, (ICrafting) crafters.get(i));
 		}
 	}
 
 	@Override
 	public void updateProgressBar(int i, int j) {
-		if (engine.engine != null) {
-			engine.engine.getGUINetworkData(i, j);
-		}
+		engine.getGUINetworkData(i, j);
 	}
 
 	public boolean isUsableByPlayer(EntityPlayer entityplayer) {

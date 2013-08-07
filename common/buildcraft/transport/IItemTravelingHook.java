@@ -4,10 +4,18 @@ import net.minecraft.tileentity.TileEntity;
 
 public interface IItemTravelingHook {
 
-	public void drop(PipeTransportItems pipe, EntityData data);
+	public void drop(PipeTransportItems transport, TravelingItem item);
 
-	public void centerReached(PipeTransportItems pipe, EntityData data);
+	public void centerReached(PipeTransportItems transport, TravelingItem item);
 
-	public void endReached(PipeTransportItems pipe, EntityData data, TileEntity tile);
+	/**
+	 * Overrides default handling of what occurs when an Item reaches the end of the pipe.
+	 * 
+	 * @param transport
+	 * @param item
+	 * @param tile
+	 * @return false if the transport code should handle the item normally, true if its been handled
+	 */
+	public boolean endReached(PipeTransportItems transport, TravelingItem item, TileEntity tile);
 
 }

@@ -1,11 +1,10 @@
 package buildcraft.core.utils;
 
+import buildcraft.core.proxy.CoreProxy;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.LinkedList;
 import java.util.Properties;
-
-import buildcraft.core.proxy.CoreProxy;
 
 /**
  * Simple mod localization class.

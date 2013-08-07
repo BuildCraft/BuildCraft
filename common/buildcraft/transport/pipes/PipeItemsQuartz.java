@@ -7,25 +7,24 @@
  */
 package buildcraft.transport.pipes;
 
-import java.util.LinkedList;
-
-import net.minecraftforge.common.ForgeDirection;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.core.Position;
-import buildcraft.api.transport.IPipedItem;
 import buildcraft.core.utils.Utils;
 import buildcraft.transport.IPipeTransportItemsHook;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportItems;
+import buildcraft.transport.TravelingItem;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import java.util.LinkedList;
+import net.minecraftforge.common.ForgeDirection;
 
 public class PipeItemsQuartz extends Pipe implements IPipeTransportItemsHook {
 
 	public PipeItemsQuartz(int itemID) {
-		super(new PipeTransportItems(), new PipeLogicQuartz(), itemID);
+		super(new PipeTransportItems(), itemID);
 
 	}
 
@@ -37,11 +36,11 @@ public class PipeItemsQuartz extends Pipe implements IPipeTransportItemsHook {
 
 	@Override
 	public int getIconIndex(ForgeDirection direction) {
-		return PipeIconProvider.PipeItemsQuartz;
+		return PipeIconProvider.TYPE.PipeItemsQuartz.ordinal();
 	}
 
 	@Override
-	public void readjustSpeed(IPipedItem item) {
+	public void readjustSpeed(TravelingItem item) {
 		if (item.getSpeed() > Utils.pipeNormalSpeed) {
 			item.setSpeed(item.getSpeed() - Utils.pipeNormalSpeed / 4.0F);
 		}
@@ -52,11 +51,11 @@ public class PipeItemsQuartz extends Pipe implements IPipeTransportItemsHook {
 	}
 
 	@Override
-	public LinkedList<ForgeDirection> filterPossibleMovements(LinkedList<ForgeDirection> possibleOrientations, Position pos, IPipedItem item) {
+	public LinkedList<ForgeDirection> filterPossibleMovements(LinkedList<ForgeDirection> possibleOrientations, Position pos, TravelingItem item) {
 		return possibleOrientations;
 	}
 
 	@Override
-	public void entityEntered(IPipedItem item, ForgeDirection orientation) {
+	public void entityEntered(TravelingItem item, ForgeDirection orientation) {
 	}
 }

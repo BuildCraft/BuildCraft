@@ -1,18 +1,21 @@
 package buildcraft.factory.network;
 
+import buildcraft.core.network.PacketIds;
+import buildcraft.core.network.PacketPayload;
+import buildcraft.core.network.PacketPayloadStream;
+import buildcraft.core.network.PacketUpdate;
+import buildcraft.factory.TileRefinery;
+import cpw.mods.fml.common.network.IPacketHandler;
+import cpw.mods.fml.common.network.Player;
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
-
+import java.io.IOException;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.INetworkManager;
 import net.minecraft.network.packet.Packet250CustomPayload;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
-import buildcraft.core.network.PacketIds;
-import buildcraft.core.network.PacketUpdate;
-import buildcraft.factory.TileRefinery;
-import cpw.mods.fml.common.network.IPacketHandler;
-import cpw.mods.fml.common.network.Player;
+import net.minecraftforge.fluids.FluidRegistry;
 
 public class PacketHandlerFactory implements IPacketHandler {
 
@@ -26,10 +29,10 @@ public class PacketHandlerFactory implements IPacketHandler {
 
 			switch (packetID) {
 
-			case PacketIds.REFINERY_FILTER_SET:
-				packetU.readData(data);
-				onRefinerySelect((EntityPlayer) player, packetU);
-				break;
+				case PacketIds.REFINERY_FILTER_SET:
+					packetU.readData(data);
+					onRefinerySelect((EntityPlayer) player, packetU);
+					break;
 
 			}
 
@@ -50,14 +53,14 @@ public class PacketHandlerFactory implements IPacketHandler {
 		return (TileRefinery) tile;
 	}
 
-	private void onRefinerySelect(EntityPlayer playerEntity, PacketUpdate packet) {
+	private void onRefinerySelect(EntityPlayer playerEntity, PacketUpdate packet) throws IOException {
 
 		TileRefinery tile = getRefinery(playerEntity.worldObj, packet.posX, packet.posY, packet.posZ);
-		if (tile == null)
+		if (tile == null || packet.payload == null)
 			return;
+	
+		DataInputStream stream = ((PacketPayloadStream)packet.payload).stream;
 
-		tile.setFilter(packet.payload.intPayload[0], packet.payload.intPayload[1], packet.payload.intPayload[2]);
-
+		tile.setFilter(stream.readByte(), FluidRegistry.getFluid(stream.readShort()));
 	}
-
 }

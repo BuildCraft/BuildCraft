@@ -3,21 +3,22 @@
     <!-- Properties -->
     
     <property name="build.dir"           value="build"/>
-	<property name="src.dir"			 value="buildcraft.mc15" />
-	<property name="lang.dir"			 value="buildcraft.localization" />
-	<property name="resource.dir"		 value="mc.devel" />
+    <property name="src.dir"			 value="buildcraft.mc15" />
+    <property name="lang.dir"			 value="buildcraft.localization" />
+    <property name="resource.dir"		 value="mc.devel" />
     
     <property name="classes.dir"         value="${build.dir}/classes"/>
     <property name="jar.dir"             value="${build.dir}/dist"/>
           
-	<property name="forge.dir"			value="${build.dir}/forge" />
-	<property name="mcp.dir"			value="${forge.dir}/mcp" />
+    <property name="forge.dir"			value="${build.dir}/forge" />
+    <property name="mcp.dir"			value="${forge.dir}/mcp" />
 
     <property name="clientsrc.dir"       value="${mcp.dir}/src/minecraft"/>
-          
-	<property name="mc.version"			 value="1.5.2"/>
-    <property name="forge.version"		 value="7.8.0.710"/>
-    <property name="bc.version"          value="3.7.2"/>
+
+    <property name="mc.version"			 value="1.6.2"/>
+    <property name="forge.version"		 value="9.10.0.807"/>
+    <property name="bc.version"          value="4.0.0"/>
+    
     <property name="bc.version.full"     value="${bc.version}"/>
     
     <echo message="Starting build for ${bc.version.full}"/>
@@ -30,13 +31,13 @@
     
     <target name="setup">
         
-		<!-- Pull localizations -->
-		<echo message="Pulling localizations..." />
-		<exec dir="${lang.dir}" executable="git" osfamily="windows" failonerror="true">
-			<arg line="pull" />
-		</exec>
+        <!-- Pull localizations -->
+        <echo message="Pulling localizations..." />
+        <exec dir="${lang.dir}" executable="git" osfamily="windows" failonerror="true">
+            <arg line="pull" />
+        </exec>
 		
-		<echo message="Unpacking Forge..." />
+        <echo message="Unpacking Forge..." />
         <unzip dest="${build.dir}">
             <fileset dir="${resource.dir}">
                 <include name="minecraftforge-src-${mc.version}-${forge.version}.zip"/>
@@ -46,7 +47,7 @@
         <chmod file="${forge.dir}/install.sh" perm="+x"/>
 		
         <!-- Install forge -->
-		<echo message="Installing Forge..." />
+        <echo message="Installing Forge..." />
         <exec dir="${forge.dir}" executable="cmd" osfamily="windows">
             <arg line="/c install.cmd"/>
         </exec>
@@ -55,8 +56,8 @@
             <arg value="install.sh" />
         </exec>
 
-		<!-- Set build number -->
-		<buildnumber file="${src.dir}/buildcraft_resources/build.number"/>
+        <!-- Set build number -->
+        <buildnumber file="${src.dir}/buildcraft_resources/build.number"/>
 		
         <!-- Copy BC source -->
         <copy todir="${clientsrc.dir}">
@@ -65,7 +66,7 @@
             </fileset>
             <filterset>
                 <filter token="VERSION" value="${bc.version.full}" />
-           		<filter token="BUILD_NUMBER" value="${build.number}" />
+                <filter token="BUILD_NUMBER" value="${build.number}" />
             </filterset>
         </copy>
         
@@ -100,35 +101,35 @@
         <copy todir="${classes.dir}/client">
             <fileset dir="${src.dir}/buildcraft_resources">
                 <exclude name="build.xml"/>
-            	<exclude name="build.number"/>
-        	</fileset>
+                <exclude name="build.number"/>
+            </fileset>
         </copy>
         <copy todir="${classes.dir}/client" overwrite="true" failonerror="true">
             <fileset dir="${src.dir}/buildcraft_resources">
                 <include name="mcmod.info"/>
             </fileset>
-           	<filterset>
-        		<filter token="VERSION" value="${bc.version.full} (${build.number})" />
+            <filterset>
+                <filter token="VERSION" value="${bc.version.full} (${build.number})" />
             </filterset>
         </copy>
 
-    	<!-- Copy localizations -->
-    	<copy todir="${classes.dir}/client">
-    		<fileset dir="${lang.dir}">
+        <!-- Copy localizations -->
+        <copy todir="${classes.dir}/client">
+            <fileset dir="${lang.dir}">
                 <exclude name="README.md"/>
-    		</fileset>
-    	</copy>
+            </fileset>
+        </copy>
         
     </target>
     
     <target name="package" depends="compile">
         
         <jar destfile="${jar.dir}/buildcraft-A-${bc.version.full}.jar" basedir="${classes.dir}/client"/>
-		<copy todir="${jar.dir}/changelog">
-			<fileset dir="${src.dir}/buildcraft_resources/changelog">
-				<include name="*" />
-			</fileset>
-		</copy>
+        <copy todir="${jar.dir}/changelog">
+            <fileset dir="${src.dir}/buildcraft_resources/changelog">
+                <include name="*" />
+            </fileset>
+        </copy>
 
     </target>
     

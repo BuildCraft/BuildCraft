@@ -9,14 +9,13 @@
 
 package buildcraft.transport.blueprints;
 
-import java.util.LinkedList;
-
-import net.minecraft.inventory.IInventory;
-import net.minecraft.item.ItemStack;
 import buildcraft.api.blueprints.BptBlockUtils;
 import buildcraft.api.blueprints.BptSlotInfo;
 import buildcraft.api.blueprints.IBptContext;
 import buildcraft.core.blueprints.BptItem;
+import java.util.LinkedList;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.item.ItemStack;
 
 public class BptItemPipeEmerald extends BptItem {
 

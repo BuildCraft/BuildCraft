@@ -7,10 +7,16 @@
  */
 package buildcraft.core.proxy;
 
+import buildcraft.api.core.LaserKind;
+import buildcraft.core.EntityBlock;
+import buildcraft.core.ItemBlockBuildCraft;
+import buildcraft.core.network.BuildCraftPacket;
+import cpw.mods.fml.common.Loader;
+import cpw.mods.fml.common.SidedProxy;
+import cpw.mods.fml.common.registry.GameRegistry;
 import java.io.File;
 import java.util.List;
 import java.util.Random;
-
 import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
@@ -24,16 +30,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ChatMessageComponent;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.World;
 import net.minecraftforge.oredict.ShapedOreRecipe;
-import buildcraft.api.core.LaserKind;
-import buildcraft.core.EntityBlock;
-import buildcraft.core.ItemBlockBuildCraft;
-import buildcraft.core.network.BuildCraftPacket;
-import cpw.mods.fml.common.Loader;
-import cpw.mods.fml.common.SidedProxy;
-import cpw.mods.fml.common.registry.GameRegistry;
 
 public class CoreProxy {
 
@@ -101,7 +101,7 @@ public class CoreProxy {
 	public void registerBlock(Block block) {
 		registerBlock(block, ItemBlockBuildCraft.class);
 	}
-	
+
 	public void registerBlock(Block block, Class<? extends ItemBlock> item) {
 		GameRegistry.registerBlock(block, item, block.getUnlocalizedName().replace("tile.", ""));
 	}
@@ -120,12 +120,12 @@ public class CoreProxy {
 	}
 
 	@SuppressWarnings("unchecked")
-	public void addCraftingRecipe(ItemStack result, Object[] recipe) {
+	public void addCraftingRecipe(ItemStack result, Object... recipe) {
 		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(result, recipe));
 		//GameRegistry.addRecipe(result, recipe);
 	}
 
-	public void addShapelessRecipe(ItemStack result, Object[] recipe) {
+	public void addShapelessRecipe(ItemStack result, Object... recipe) {
 		GameRegistry.addShapelessRecipe(result, recipe);
 	}
 
@@ -149,11 +149,6 @@ public class CoreProxy {
 	public void sendToServer(Packet packet) {
 	}
 
-	/* FILE SYSTEM */
-	public File getBuildCraftBase() {
-		return new File("./");
-	}
-
 	public int addCustomTexture(String pathToTexture) {
 		return 0;
 	}
@@ -174,9 +169,9 @@ public class CoreProxy {
 	}
 
 	private EntityPlayer createNewPlayer(World world) {
-		EntityPlayer player = new EntityPlayer(world) {
+		EntityPlayer player = new EntityPlayer(world, "[BuildCraft]") {
 			@Override
-			public void sendChatToPlayer(String var1) {
+			public void sendChatToPlayer(ChatMessageComponent var1) {
 			}
 
 			@Override
@@ -189,14 +184,13 @@ public class CoreProxy {
 				return null;
 			}
 		};
-		player.username = "[BuildCraft]";
 		return player;
 	}
 
 	private EntityPlayer createNewPlayer(World world, int x, int y, int z) {
-		EntityPlayer player = new EntityPlayer(world) {
+		EntityPlayer player = new EntityPlayer(world, "[BuildCraft]") {
 			@Override
-			public void sendChatToPlayer(String var1) {
+			public void sendChatToPlayer(ChatMessageComponent var1) {
 			}
 
 			@Override
@@ -209,7 +203,6 @@ public class CoreProxy {
 				return null;
 			}
 		};
-		player.username = "[BuildCraft]";
 		player.posX = x;
 		player.posY = y;
 		player.posZ = z;

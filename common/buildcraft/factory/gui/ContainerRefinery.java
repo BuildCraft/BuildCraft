@@ -1,24 +1,25 @@
 /**
- * Copyright (c) SpaceToad, 2011
- * http://www.mod-buildcraft.com
+ * Copyright (c) SpaceToad, 2011 http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License
+ * 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
 package buildcraft.factory.gui;
 
+import buildcraft.core.gui.BuildCraftContainer;
+import buildcraft.core.network.PacketIds;
+import buildcraft.core.network.PacketPayloadStream;
+import buildcraft.core.network.PacketUpdate;
+import buildcraft.core.proxy.CoreProxy;
+import buildcraft.factory.TileRefinery;
+import java.io.DataOutputStream;
+import java.io.IOException;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.ICrafting;
 import net.minecraft.inventory.Slot;
-import net.minecraft.item.ItemStack;
-import buildcraft.core.gui.BuildCraftContainer;
-import buildcraft.core.network.PacketIds;
-import buildcraft.core.network.PacketPayload;
-import buildcraft.core.network.PacketUpdate;
-import buildcraft.core.proxy.CoreProxy;
-import buildcraft.factory.TileRefinery;
+import net.minecraftforge.fluids.Fluid;
 
 public class ContainerRefinery extends BuildCraftContainer {
 
@@ -46,35 +47,29 @@ public class ContainerRefinery extends BuildCraftContainer {
 	}
 
 	/* SETTING AND GETTING FILTERS */
-	/**
-	 * @param slot
-	 *            @ param liquidId param liquidMeta (for future use)
-	 */
-	public void setFilter(int slot, int liquidId, int liquidMeta) {
+	public void setFilter(final int slot, final Fluid filter) {
 
-		refinery.setFilter(slot, liquidId, liquidMeta);
+		refinery.setFilter(slot, filter);
 
 		if (CoreProxy.proxy.isRenderWorld(refinery.worldObj)) {
-			PacketPayload payload = new PacketPayload(3, 0, 0);
-			payload.intPayload[0] = slot;
-			payload.intPayload[1] = liquidId;
-			payload.intPayload[2] = liquidMeta;
+			PacketPayloadStream payload = new PacketPayloadStream(new PacketPayloadStream.StreamWriter() {
+				@Override
+				public void writeData(DataOutputStream data) throws IOException {
+					data.writeByte(slot);
+					data.writeShort(filter != null ? filter.getID() : -1);
+				}
+			});
 			CoreProxy.proxy.sendToServer(new PacketUpdate(PacketIds.REFINERY_FILTER_SET, refinery.xCoord, refinery.yCoord, refinery.zCoord, payload)
 					.getPacket());
 		}
 	}
 
-	public ItemStack getFilter(int slot) {
-		int liquidId = refinery.getFilter(slot);
-		int liquidMeta = refinery.getFilterMeta(slot);
-		if (liquidId > 0)
-			return new ItemStack(liquidId, 0, liquidMeta);
-		else
-			return null;
+	public Fluid getFilter(int slot) {
+		return refinery.getFilter(slot);
 	}
 
 	/* GUI DISPLAY UPDATES */
-	// @Override Client side only
+	@Override
 	public void updateProgressBar(int i, int j) {
 		refinery.getGUINetworkData(i, j);
 	}

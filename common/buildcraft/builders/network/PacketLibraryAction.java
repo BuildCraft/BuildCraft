@@ -1,10 +1,9 @@
 package buildcraft.builders.network;
 
+import buildcraft.core.network.PacketCoordinates;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-
-import buildcraft.core.network.PacketCoordinates;
 
 public class PacketLibraryAction extends PacketCoordinates {
 

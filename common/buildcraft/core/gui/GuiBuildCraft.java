@@ -1,26 +1,25 @@
 package buildcraft.core.gui;
 
-import java.util.ArrayList;
-
-import net.minecraft.client.gui.inventory.GuiContainer;
-import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Icon;
-
-import org.lwjgl.opengl.GL11;
-
 import buildcraft.core.DefaultProps;
 import buildcraft.core.gui.buttons.GuiBetterButton;
 import buildcraft.core.gui.slots.SlotBase;
 import buildcraft.core.gui.tooltips.ToolTip;
 import buildcraft.core.gui.tooltips.ToolTipLine;
 import buildcraft.core.utils.SessionVars;
+import java.util.ArrayList;
+import net.minecraft.client.gui.inventory.GuiContainer;
+import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Icon;
+import net.minecraft.util.ResourceLocation;
+import org.lwjgl.opengl.GL11;
 
 public abstract class GuiBuildCraft extends GuiContainer {
 
+	public static final ResourceLocation LEDGER_TEXTURE = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_GUI + "/ledger.png");
 	// / LEDGERS
 	protected LedgerManager ledgerManager = new LedgerManager(this);
 
@@ -210,7 +209,7 @@ public abstract class GuiBuildCraft extends GuiContainer {
 
 			GL11.glColor4f(colorR, colorG, colorB, 1.0F);
 
-			mc.renderEngine.bindTexture(DefaultProps.TEXTURE_PATH_GUI + "/ledger.png");
+			mc.renderEngine.func_110577_a(LEDGER_TEXTURE);
 			drawTexturedModalRect(x, y, 0, 256 - currentHeight, 4, currentHeight);
 			drawTexturedModalRect(x + 4, y, 256 - currentWidth + 4, 0, currentWidth - 4, 4);
 			// Add in top left corner again

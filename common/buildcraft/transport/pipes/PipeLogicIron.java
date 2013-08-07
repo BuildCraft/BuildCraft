@@ -1,31 +1,29 @@
 /**
- * Copyright (c) SpaceToad, 2011
- * http://www.mod-buildcraft.com
+ * Copyright (c) SpaceToad, 2011 http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License
+ * 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-
 package buildcraft.transport.pipes;
 
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.item.Item;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.ForgeDirection;
-import net.minecraftforge.liquids.ITankContainer;
 import buildcraft.api.tools.IToolWrench;
-import buildcraft.api.transport.IPipeEntry;
 import buildcraft.transport.Pipe;
-import buildcraft.transport.TileGenericPipe;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
+import net.minecraftforge.common.ForgeDirection;
 
-public class PipeLogicIron extends PipeLogic {
+public abstract class PipeLogicIron {
 
-	boolean lastPower = false;
+	private boolean lastPower = false;
+	protected final Pipe pipe;
 
-	public void switchPower() {
-		boolean currentPower = worldObj.isBlockIndirectlyGettingPowered(xCoord, yCoord, zCoord);
+	public PipeLogicIron(Pipe pipe) {
+		this.pipe = pipe;
+	}
+
+	public void switchOnRedstone() {
+		boolean currentPower = pipe.container.worldObj.isBlockIndirectlyGettingPowered(pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord);
 
 		if (currentPower != lastPower) {
 			switchPosition();
@@ -34,60 +32,43 @@ public class PipeLogicIron extends PipeLogic {
 		}
 	}
 
-	public void switchPosition() {
-		int metadata = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
+	private void switchPosition() {
+		int meta = pipe.container.getBlockMetadata();
 
-		int nextMetadata = metadata;
-
-		for (int l = 0; l < 6; ++l) {
-			nextMetadata++;
-
-			if (nextMetadata > 5) {
-				nextMetadata = 0;
-			}
-
-			TileEntity tile = container.getTile(ForgeDirection.values()[nextMetadata]);
-
-			if (tile instanceof TileGenericPipe) {
-				Pipe pipe = ((TileGenericPipe) tile).pipe;
-				if (pipe.logic instanceof PipeLogicWood || pipe instanceof PipeStructureCobblestone) {
-					continue;
-				}
-			}
-
-			if (tile instanceof IPipeEntry || tile instanceof IInventory || tile instanceof ITankContainer || tile instanceof TileGenericPipe) {
-
-				worldObj.setBlockMetadataWithNotify(xCoord, yCoord, zCoord, nextMetadata,0);
-				container.scheduleRenderUpdate();
+		for (int i = meta + 1; i <= meta + 6; ++i) {
+			ForgeDirection facing = ForgeDirection.getOrientation(i % 6);
+			if (setFacing(facing)) {
 				return;
 			}
 		}
 	}
 
-	@Override
-	public void initialize() {
-		super.initialize();
+	protected abstract boolean isValidFacing(ForgeDirection facing);
 
-		lastPower = worldObj.isBlockIndirectlyGettingPowered(xCoord, yCoord, zCoord);
+	public void initialize() {
+		lastPower = pipe.container.worldObj.isBlockIndirectlyGettingPowered(pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord);
 	}
 
-	@Override
 	public void onBlockPlaced() {
-		super.onBlockPlaced();
-
-		worldObj.setBlockMetadataWithNotify(xCoord, yCoord, zCoord, 1,0);
+		pipe.container.worldObj.setBlockMetadataWithNotify(pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord, 1, 3);
 		switchPosition();
 	}
 
-	@Override
-	public boolean blockActivated(EntityPlayer entityplayer) {
-		super.blockActivated(entityplayer);
+	public boolean setFacing(ForgeDirection facing) {
+		if (isValidFacing(facing) && facing.ordinal() != pipe.container.getBlockMetadata()) {
+			pipe.container.worldObj.setBlockMetadataWithNotify(pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord, facing.ordinal(), 3);
+			pipe.container.scheduleRenderUpdate();
+			return true;
+		}
+		return false;
+	}
 
+	public boolean blockActivated(EntityPlayer entityplayer) {
 		Item equipped = entityplayer.getCurrentEquippedItem() != null ? entityplayer.getCurrentEquippedItem().getItem() : null;
-		if (equipped instanceof IToolWrench && ((IToolWrench) equipped).canWrench(entityplayer, this.xCoord, this.yCoord, this.zCoord)) {
+		if (equipped instanceof IToolWrench && ((IToolWrench) equipped).canWrench(entityplayer, pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord)) {
 			switchPosition();
-			worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
-			((IToolWrench) equipped).wrenchUsed(entityplayer, this.xCoord, this.yCoord, this.zCoord);
+			pipe.container.worldObj.markBlockForUpdate(pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord);
+			((IToolWrench) equipped).wrenchUsed(entityplayer, pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord);
 
 			return true;
 		}
@@ -95,16 +76,7 @@ public class PipeLogicIron extends PipeLogic {
 		return false;
 	}
 
-	@Override
-	public void onNeighborBlockChange(int blockId) {
-		super.onNeighborBlockChange(blockId);
-
-		switchPower();
-	}
-
-	@Override
 	public boolean outputOpen(ForgeDirection to) {
-		return to.ordinal() == worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
+		return to.ordinal() == pipe.container.getBlockMetadata();
 	}
-
 }

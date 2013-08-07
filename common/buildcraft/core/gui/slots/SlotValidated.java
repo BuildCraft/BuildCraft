@@ -1,6 +1,6 @@
 /*
  * Copyright (c) CovertJaguar, 2011 http://railcraft.info
- * 
+ *
  * This code is the property of CovertJaguar
  * and may only be used with explicit written
  * permission unless otherwise specified on the
@@ -24,6 +24,6 @@ public class SlotValidated extends Slot {
 
 	@Override
 	public boolean isItemValid(ItemStack itemStack) {
-		return inventory.isStackValidForSlot(this.getSlotIndex(), itemStack);
+		return inventory.isItemValidForSlot(this.getSlotIndex(), itemStack);
 	}
 }

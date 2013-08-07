@@ -1,11 +1,19 @@
 package buildcraft.transport;
 
+import buildcraft.BuildCraftTransport;
+import buildcraft.api.recipes.AssemblyRecipe;
+import buildcraft.core.CreativeTabBuildCraft;
+import buildcraft.core.ItemBuildCraft;
+import buildcraft.core.proxy.CoreProxy;
+import com.google.common.base.Strings;
+import com.google.common.collect.Sets;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
-
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.creativetab.CreativeTabs;
@@ -18,17 +26,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
-import buildcraft.BuildCraftTransport;
-import buildcraft.api.recipes.AssemblyRecipe;
-import buildcraft.core.CreativeTabBuildCraft;
-import buildcraft.core.ItemBuildCraft;
-import buildcraft.core.proxy.CoreProxy;
-
-import com.google.common.base.Strings;
-import com.google.common.collect.Sets;
-
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 public class ItemFacade extends ItemBuildCraft {
 
@@ -64,7 +61,7 @@ public class ItemFacade extends ItemBuildCraft {
 		return "item.Facade";
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@SuppressWarnings({"unchecked", "rawtypes"})
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void getSubItems(int par1, CreativeTabs par2CreativeTabs, List itemList) {
@@ -109,13 +106,15 @@ public class ItemFacade extends ItemBuildCraft {
 					continue;
 				}
 
-				if (!(b.blockID == 20)) { // Explicitly allow glass
-					if (b.blockID == 7 // Bedrock
-							|| b.blockID == 2 // Grass block
-							|| b.blockID == 18 // Oak leaves
-							|| b.blockID == 19 // Sponge
-							|| b.blockID == 95 // Locked chest
-							) {
+				if (!(b.blockID == 20)) {	//Explicitly allow glass
+					if (b.blockID == 7 //Bedrock
+							|| b.blockID == 2 //Grass block
+							|| b.blockID == 18 //Oak leaves
+							|| b.blockID == 19 //Sponge
+							|| b.blockID == 95 //Locked chest
+							|| b.blockID == Block.redstoneLampIdle.blockID
+							|| b.blockID == Block.redstoneLampActive.blockID
+							|| b.blockID == Block.pumpkinLantern.blockID) {
 						continue;
 					}
 					if (!b.isOpaqueCube() || b.hasTileEntity(0) || !b.renderAsNormalBlock()) {
@@ -164,7 +163,7 @@ public class ItemFacade extends ItemBuildCraft {
 		facade6.stackSize = 6;
 
 		// 3 Structurepipes + this block makes 6 facades
-		AssemblyRecipe.assemblyRecipes.add(new AssemblyRecipe(new ItemStack[] { new ItemStack(BuildCraftTransport.pipeStructureCobblestone, 3), itemStack },
+		AssemblyRecipe.assemblyRecipes.add(new AssemblyRecipe(new ItemStack[]{new ItemStack(BuildCraftTransport.pipeStructureCobblestone, 3), itemStack},
 				8000, facade6));
 		if (itemStack.itemID < Block.blocksList.length && Block.blocksList[itemStack.itemID] != null) {
 			Block bl = Block.blocksList[itemStack.itemID];
@@ -178,11 +177,10 @@ public class ItemFacade extends ItemBuildCraft {
 			}
 		}
 	}
-
 	private static final ItemStack NO_MATCH = new ItemStack(0, 0, 0);
 
 	public class FacadeRecipe implements IRecipe {
-		
+
 		@Override
 		public boolean matches(InventoryCrafting inventorycrafting, World world) {
 			ItemStack slotmatch = null;
@@ -241,7 +239,6 @@ public class ItemFacade extends ItemBuildCraft {
 		public ItemStack getRecipeOutput() {
 			return null;
 		}
-
 	}
 
 	@Override

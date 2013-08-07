@@ -1,19 +1,18 @@
 package buildcraft.transport.render;
 
+import buildcraft.BuildCraftTransport;
+import buildcraft.core.utils.Utils;
+import buildcraft.transport.ItemPipe;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Icon;
 import net.minecraftforge.client.IItemRenderer;
-
 import org.lwjgl.opengl.GL11;
-
-import buildcraft.BuildCraftTransport;
-import buildcraft.core.utils.Utils;
-import buildcraft.transport.ItemPipe;
 
 public class PipeItemRenderer implements IItemRenderer {
 
@@ -25,7 +24,8 @@ public class PipeItemRenderer implements IItemRenderer {
 		Block block = BuildCraftTransport.genericPipeBlock;
 		Icon icon = ((ItemPipe) Item.itemsList[item.itemID]).getIconFromDamage(0);
 
-		if (icon == null) icon = Minecraft.getMinecraft().renderEngine.getMissingIcon(0);
+		if (icon == null)
+			icon = ((TextureMap) Minecraft.getMinecraft().func_110434_K().func_110581_b(TextureMap.field_110575_b)).func_110572_b("missingno");
 
 		block.setBlockBounds(Utils.pipeMinPos, 0.0F, Utils.pipeMinPos, Utils.pipeMaxPos, 1.0F, Utils.pipeMaxPos);
 		block.setBlockBoundsForItemRender();
@@ -60,21 +60,22 @@ public class PipeItemRenderer implements IItemRenderer {
 		block.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
 	}
 
-	/** IItemRenderer implementation **/
-
+	/**
+	 * IItemRenderer implementation *
+	 */
 	@Override
 	public boolean handleRenderType(ItemStack item, ItemRenderType type) {
 		switch (type) {
-		case ENTITY:
-			return true;
-		case EQUIPPED:
-			return true;
-		case EQUIPPED_FIRST_PERSON: 
-			return true;
-		case INVENTORY:
-			return true;
-		default:
-			return false;
+			case ENTITY:
+				return true;
+			case EQUIPPED:
+				return true;
+			case EQUIPPED_FIRST_PERSON:
+				return true;
+			case INVENTORY:
+				return true;
+			default:
+				return false;
 		}
 	}
 
@@ -86,20 +87,19 @@ public class PipeItemRenderer implements IItemRenderer {
 	@Override
 	public void renderItem(ItemRenderType type, ItemStack item, Object... data) {
 		switch (type) {
-		case ENTITY:
-			renderPipeItem((RenderBlocks) data[0], item, -0.5f, -0.5f, -0.5f);
-			break;
-		case EQUIPPED:
-			renderPipeItem((RenderBlocks) data[0], item, -0.4f, 0.50f, 0.35f);
-			break;
-		case EQUIPPED_FIRST_PERSON: 
-			renderPipeItem((RenderBlocks) data[0], item, -0.4f, 0.50f, 0.35f);
-			break;
-		case INVENTORY:
-			renderPipeItem((RenderBlocks) data[0], item, -0.5f, -0.5f, -0.5f);
-			break;
-		default:
+			case ENTITY:
+				renderPipeItem((RenderBlocks) data[0], item, -0.5f, -0.5f, -0.5f);
+				break;
+			case EQUIPPED:
+				renderPipeItem((RenderBlocks) data[0], item, -0.4f, 0.50f, 0.35f);
+				break;
+			case EQUIPPED_FIRST_PERSON:
+				renderPipeItem((RenderBlocks) data[0], item, -0.4f, 0.50f, 0.35f);
+				break;
+			case INVENTORY:
+				renderPipeItem((RenderBlocks) data[0], item, -0.5f, -0.5f, -0.5f);
+				break;
+			default:
 		}
 	}
-
 }

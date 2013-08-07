@@ -7,24 +7,41 @@
  */
 package buildcraft.api.power;
 
+import buildcraft.api.power.PowerHandler.PowerReceiver;
+import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
 
+/**
+ * This interface should be implemented by any Tile Entity that wishes to be
+ * able to receive power.
+ *
+ * @author CovertJaguar <http://www.railcraft.info/>
+ */
 public interface IPowerReceptor {
 
-	public void setPowerProvider(IPowerProvider provider);
-
-	public IPowerProvider getPowerProvider();
-
-	public void doWork();
-
 	/**
-	 * Used to request power from pipes. The return cannot be relied on to be
-	 * anything more than a approximate guide to the power needed. When
-	 * transferring power, you much check the return value of
-	 * PowerProvider.receiverEnergy().
+	 * Get the PowerReceiver for this side of the block. You can return the same
+	 * PowerReceiver for all sides or one for each side.
 	 *
-	 * @param from
+	 * You should NOT return null to this method unless you mean to NEVER
+	 * receive power from that side. Returning null, after previous returning a
+	 * PowerReceiver, will most likely cause pipe connections to derp out and
+	 * engines to eventually explode.
+	 *
+	 * @param side
 	 * @return
 	 */
-	public int powerRequest(ForgeDirection from);
+	public PowerReceiver getPowerReceiver(ForgeDirection side);
+
+	/**
+	 * Call back from the PowerHandler that is called when the stored power
+	 * exceeds the activation power.
+	 *
+	 * It can be triggered by update() calls or power modification calls.
+	 *
+	 * @param workProvider
+	 */
+	public void doWork(PowerHandler workProvider);
+
+	public World getWorld();
 }

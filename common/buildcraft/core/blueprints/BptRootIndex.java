@@ -9,6 +9,7 @@
 
 package buildcraft.core.blueprints;
 
+import buildcraft.core.proxy.CoreProxy;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -18,8 +19,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.TreeMap;
-
-import buildcraft.core.proxy.CoreProxy;
 
 public class BptRootIndex {
 
@@ -34,7 +33,7 @@ public class BptRootIndex {
 	public int maxBpt = 0;
 
 	public BptRootIndex(String filename) throws IOException {
-		baseDir = new File(CoreProxy.proxy.getBuildCraftBase(), "blueprints/");
+		baseDir = new File("./", "blueprints/");
 		file = new File(baseDir, filename);
 		baseDir.mkdir();
 

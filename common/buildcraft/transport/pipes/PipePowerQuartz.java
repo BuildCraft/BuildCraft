@@ -7,7 +7,6 @@
  */
 package buildcraft.transport.pipes;
 
-import net.minecraftforge.common.ForgeDirection;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.transport.Pipe;
@@ -15,12 +14,13 @@ import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportPower;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraftforge.common.ForgeDirection;
 
-public class PipePowerQuartz extends Pipe {
+public class PipePowerQuartz extends Pipe<PipeTransportPower> {
 
 	public PipePowerQuartz(int itemID) {
-		super(new PipeTransportPower(), new PipeLogicStone(), itemID);
-		((PipeTransportPower) transport).initFromPipe(getClass());
+		super(new PipeTransportPower(), itemID);
+		transport.initFromPipe(getClass());
 	}
 
 	@Override
@@ -31,6 +31,6 @@ public class PipePowerQuartz extends Pipe {
 
 	@Override
 	public int getIconIndex(ForgeDirection direction) {
-		return PipeIconProvider.PipePowerQuartz;
+		return PipeIconProvider.TYPE.PipePowerQuartz.ordinal();
 	}
 }

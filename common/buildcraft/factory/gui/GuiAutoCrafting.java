@@ -8,17 +8,17 @@
 package buildcraft.factory.gui;
 
 import buildcraft.core.DefaultProps;
-import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.world.World;
-
-import org.lwjgl.opengl.GL11;
-
 import buildcraft.core.gui.GuiBuildCraft;
 import buildcraft.core.utils.StringUtils;
 import buildcraft.factory.TileAutoWorkbench;
+import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.World;
+import org.lwjgl.opengl.GL11;
 
 public class GuiAutoCrafting extends GuiBuildCraft {
 
+    public static final ResourceLocation gui = new ResourceLocation("buildcraft",DefaultProps.TEXTURE_PATH_GUI + "/autobench.png");
 	private TileAutoWorkbench bench;
 
 	public GuiAutoCrafting(InventoryPlayer inventoryplayer, World world, TileAutoWorkbench tile) {
@@ -30,7 +30,7 @@ public class GuiAutoCrafting extends GuiBuildCraft {
 	public void onGuiClosed() {
 		super.onGuiClosed();
 		if (this.mc.thePlayer != null) {
-			inventorySlots.onCraftGuiClosed(mc.thePlayer);
+			inventorySlots.onContainerClosed(mc.thePlayer);
 		}
 	}
 
@@ -44,7 +44,7 @@ public class GuiAutoCrafting extends GuiBuildCraft {
 	@Override
 	protected void drawGuiContainerBackgroundLayer(float f, int mouseX, int mouseY) {
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-		mc.renderEngine.bindTexture(DefaultProps.TEXTURE_PATH_GUI + "/autobench.png");
+		mc.renderEngine.func_110577_a(gui);
 		int x = (width - xSize) / 2;
 		int y = (height - ySize) / 2;
 		drawTexturedModalRect(x, y, 0, 0, xSize, ySize);

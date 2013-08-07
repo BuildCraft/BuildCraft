@@ -9,13 +9,12 @@
 
 package buildcraft.core.network;
 
+import buildcraft.BuildCraftCore;
+import buildcraft.core.ByteBuffer;
 import java.lang.reflect.Field;
 import java.lang.reflect.Type;
 import java.util.LinkedList;
 import java.util.TreeMap;
-
-import buildcraft.BuildCraftCore;
-import buildcraft.core.ByteBuffer;
 
 public class ClassMapping {
 

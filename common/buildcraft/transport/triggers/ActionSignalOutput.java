@@ -12,13 +12,14 @@ package buildcraft.transport.triggers;
 import buildcraft.api.transport.IPipe;
 import buildcraft.core.triggers.ActionTriggerIconProvider;
 import buildcraft.core.triggers.BCAction;
+import java.util.Locale;
 
 public class ActionSignalOutput extends BCAction {
 
 	public IPipe.WireColor color;
 
 	public ActionSignalOutput(int id, IPipe.WireColor color) {
-		super(id);
+		super(id, "buildcraft.pipe.wire.output." + color.name().toLowerCase(Locale.ENGLISH));
 
 		this.color = color;
 	}

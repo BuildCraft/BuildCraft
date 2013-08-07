@@ -7,32 +7,32 @@
  */
 package buildcraft.factory;
 
+import buildcraft.BuildCraftCore;
+import buildcraft.BuildCraftFactory;
+import buildcraft.api.gates.IAction;
+import buildcraft.api.power.IPowerReceptor;
+import buildcraft.api.power.PowerHandler;
+import buildcraft.api.power.PowerHandler.PowerReceiver;
+import buildcraft.api.power.PowerHandler.Type;
+import buildcraft.core.IMachine;
+import buildcraft.core.TileBuildCraft;
+import buildcraft.core.utils.BlockUtil;
+import buildcraft.core.utils.Utils;
 import java.util.List;
-
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
-import buildcraft.BuildCraftCore;
-import buildcraft.BuildCraftFactory;
-import buildcraft.api.gates.IAction;
-import buildcraft.api.power.IPowerProvider;
-import buildcraft.api.power.IPowerReceptor;
-import buildcraft.api.power.PowerFramework;
-import buildcraft.api.transport.IPipeConnection;
-import buildcraft.core.IMachine;
-import buildcraft.core.utils.BlockUtil;
-import buildcraft.core.utils.Utils;
 
-public class TileMiningWell extends TileMachine implements IMachine, IPowerReceptor, IPipeConnection {
+public class TileMiningWell extends TileBuildCraft implements IMachine, IPowerReceptor {
 
 	boolean isDigging = true;
-	IPowerProvider powerProvider;
+	private PowerHandler powerHandler;
 
 	public TileMiningWell() {
-		powerProvider = PowerFramework.currentFramework.createPowerProvider();
-		powerProvider.configure(50, 100, 100, 60, 1000);
-		powerProvider.configurePowerPerdition(1, 1);
+		powerHandler = new PowerHandler(this, Type.MACHINE);
+		powerHandler.configure(100, 100, 60, 1000);
+		powerHandler.configurePowerPerdition(1, 1);
 	}
 
 	/**
@@ -40,8 +40,8 @@ public class TileMiningWell extends TileMachine implements IMachine, IPowerRecep
 	 * bedrock, lava or goes below 0, it's considered done.
 	 */
 	@Override
-	public void doWork() {
-		if (powerProvider.useEnergy(60, 60, true) != 60)
+	public void doWork(PowerHandler workProvider) {
+		if (powerHandler.useEnergy(60, 60, true) != 60)
 			return;
 
 		World world = worldObj;
@@ -57,13 +57,13 @@ public class TileMiningWell extends TileMachine implements IMachine, IPowerRecep
 			return;
 		}
 
-		int blockId = world.getBlockId(xCoord, depth, zCoord);
+		boolean wasAir = world.isAirBlock(xCoord, depth, zCoord);
 
 		List<ItemStack> stacks = BlockUtil.getItemStackFromBlock(worldObj, xCoord, depth, zCoord);
 
 		world.setBlock(xCoord, depth, zCoord, BuildCraftFactory.plainPipeBlock.blockID);
 
-		if (blockId == 0)
+		if (wasAir)
 			return;
 
 		if (stacks == null || stacks.isEmpty())
@@ -71,13 +71,12 @@ public class TileMiningWell extends TileMachine implements IMachine, IPowerRecep
 
 		for (ItemStack stack : stacks) {
 
-			ItemStack added = Utils.addToRandomInventory(stack, worldObj, xCoord, yCoord, zCoord);
-			stack.stackSize -= added.stackSize;
-			if (stack.stackSize <= 0) {
+			stack.stackSize -= Utils.addToRandomInventoryAround(worldObj, xCoord, yCoord, zCoord, stack);
+			if (stack.stackSize <= 0)
 				continue;
-			}
 
-			if (Utils.addToRandomPipeEntry(this, ForgeDirection.UNKNOWN, stack) && stack.stackSize <= 0)
+			stack.stackSize -= Utils.addToRandomPipeAround(worldObj, xCoord, yCoord, zCoord, ForgeDirection.UNKNOWN, stack);
+			if (stack.stackSize <= 0)
 				continue;
 
 			// Throw the object away.
@@ -114,27 +113,17 @@ public class TileMiningWell extends TileMachine implements IMachine, IPowerRecep
 	}
 
 	@Override
-	public void setPowerProvider(IPowerProvider provider) {
-		powerProvider = provider;
+	public PowerReceiver getPowerReceiver(ForgeDirection side) {
+		return powerHandler.getPowerReceiver();
 	}
 
 	@Override
-	public IPowerProvider getPowerProvider() {
-		return powerProvider;
-	}
-
-	@Override
-	public boolean manageLiquids() {
+	public boolean manageFluids() {
 		return false;
 	}
 
 	@Override
 	public boolean manageSolids() {
-		return true;
-	}
-
-	@Override
-	public boolean isPipeConnected(ForgeDirection with) {
 		return true;
 	}
 

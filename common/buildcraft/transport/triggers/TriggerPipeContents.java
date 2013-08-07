@@ -7,32 +7,46 @@
  */
 package buildcraft.transport.triggers;
 
-import net.minecraftforge.common.ForgeDirection;
-import net.minecraftforge.liquids.ILiquidTank;
-import net.minecraftforge.liquids.LiquidContainerRegistry;
-import net.minecraftforge.liquids.LiquidStack;
 import buildcraft.api.gates.ITriggerParameter;
-import buildcraft.core.triggers.ActionTriggerIconProvider;
 import buildcraft.core.triggers.BCTrigger;
 import buildcraft.core.utils.StringUtils;
-import buildcraft.transport.EntityData;
 import buildcraft.transport.ITriggerPipe;
 import buildcraft.transport.Pipe;
+import buildcraft.transport.PipeTransportFluids;
 import buildcraft.transport.PipeTransportItems;
-import buildcraft.transport.PipeTransportLiquids;
 import buildcraft.transport.PipeTransportPower;
+import buildcraft.transport.TravelingItem;
 import buildcraft.transport.pipes.PipePowerWood;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.util.Icon;
+import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.fluids.FluidContainerRegistry;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidTankInfo;
 
 public class TriggerPipeContents extends BCTrigger implements ITriggerPipe {
 
 	public enum Kind {
 
-		Empty, ContainsItems, ContainsLiquids, ContainsEnergy, RequestsEnergy, TooMuchEnergy
+		Empty("buildcraft.pipe.contents.empty"),
+		ContainsItems("buildcraft.pipe.contents.containsItems"),
+		ContainsFluids("buildcraft.pipe.contents.containsFluids"),
+		ContainsEnergy("buildcraft.pipe.contents.containsEnergy"),
+		RequestsEnergy("buildcraft.pipe.contents.requestsEnergy"),
+		TooMuchEnergy("buildcraft.pipe.contents.tooMuchEnergy");
+		private Icon icon;
+		public final String tag;
+
+		private Kind(String tag) {
+			this.tag = tag;
+		}
 	};
 	Kind kind;
 
 	public TriggerPipeContents(int id, Kind kind) {
-		super(id);
+		super(id, kind.tag);
 		this.kind = kind;
 	}
 
@@ -40,7 +54,7 @@ public class TriggerPipeContents extends BCTrigger implements ITriggerPipe {
 	public boolean hasParameter() {
 		switch (kind) {
 			case ContainsItems:
-			case ContainsLiquids:
+			case ContainsFluids:
 				return true;
 			default:
 				return false;
@@ -55,8 +69,8 @@ public class TriggerPipeContents extends BCTrigger implements ITriggerPipe {
 				return StringUtils.localize("gate.pipe.empty");
 			case ContainsItems:
 				return StringUtils.localize("gate.pipe.containsItems");
-			case ContainsLiquids:
-				return StringUtils.localize("gate.pipe.containsLiquids");
+			case ContainsFluids:
+				return StringUtils.localize("gate.pipe.containsFluids");
 			case ContainsEnergy:
 				return StringUtils.localize("gate.pipe.containsEnergy");
 			case RequestsEnergy:
@@ -74,36 +88,36 @@ public class TriggerPipeContents extends BCTrigger implements ITriggerPipe {
 			PipeTransportItems transportItems = (PipeTransportItems) pipe.transport;
 
 			if (kind == Kind.Empty)
-				return transportItems.travelingEntities.isEmpty();
+				return transportItems.items.isEmpty();
 			else if (kind == Kind.ContainsItems)
 				if (parameter != null && parameter.getItem() != null) {
-					for (EntityData data : transportItems.travelingEntities.values()) {
-						if (data.item.getItemStack().itemID == parameter.getItem().itemID
-								&& data.item.getItemStack().getItemDamage() == parameter.getItem().getItemDamage())
+					for (TravelingItem item : transportItems.items) {
+						if (item.getItemStack().itemID == parameter.getItem().itemID
+								&& item.getItemStack().getItemDamage() == parameter.getItem().getItemDamage())
 							return true;
 					}
 				} else
-					return !transportItems.travelingEntities.isEmpty();
-		} else if (pipe.transport instanceof PipeTransportLiquids) {
-			PipeTransportLiquids transportLiquids = (PipeTransportLiquids) pipe.transport;
+					return !transportItems.items.isEmpty();
+		} else if (pipe.transport instanceof PipeTransportFluids) {
+			PipeTransportFluids transportFluids = (PipeTransportFluids) pipe.transport;
 
-			LiquidStack searchedLiquid = null;
+			FluidStack searchedFluid = null;
 
 			if (parameter != null && parameter.getItem() != null) {
-				searchedLiquid = LiquidContainerRegistry.getLiquidForFilledItem(parameter.getItem());
+				searchedFluid = FluidContainerRegistry.getFluidForFilledItem(parameter.getItem());
 			}
 
 			if (kind == Kind.Empty) {
-				for (ILiquidTank b : transportLiquids.getTanks(ForgeDirection.UNKNOWN)) {
-					if (b.getLiquid() != null && b.getLiquid().amount != 0)
+				for (FluidTankInfo b : transportFluids.getTankInfo(ForgeDirection.UNKNOWN)) {
+					if (b.fluid != null && b.fluid.amount != 0)
 						return false;
 				}
 
 				return true;
 			} else {
-				for (ILiquidTank b : transportLiquids.getTanks(ForgeDirection.UNKNOWN)) {
-					if (b.getLiquid() != null && b.getLiquid().amount != 0)
-						if (searchedLiquid == null || searchedLiquid.isLiquidEqual(b.getLiquid()))
+				for (FluidTankInfo b : transportFluids.getTankInfo(ForgeDirection.UNKNOWN)) {
+					if (b.fluid != null && b.fluid.amount != 0)
+						if (searchedFluid == null || searchedFluid.isFluidEqual(b.fluid))
 							return true;
 				}
 
@@ -140,22 +154,18 @@ public class TriggerPipeContents extends BCTrigger implements ITriggerPipe {
 	}
 
 	@Override
-	public int getIconIndex() {
-		switch (kind) {
-			case Empty:
-				return ActionTriggerIconProvider.Trigger_PipeContents_Empty;
-			case ContainsItems:
-				return ActionTriggerIconProvider.Trigger_PipeContents_ContainsItems;
-			case ContainsLiquids:
-				return ActionTriggerIconProvider.Trigger_PipeContents_ContainsLiquid;
-			case ContainsEnergy:
-				return ActionTriggerIconProvider.Trigger_PipeContents_ContainsEnergy;
-			case RequestsEnergy:
-				return ActionTriggerIconProvider.Trigger_PipeContents_RequestsEnergy;
-			case TooMuchEnergy:
-			default:
-				return ActionTriggerIconProvider.Trigger_PipeContents_TooMuchEnergy;
+	public Icon getIcon() {
+		return kind.icon;
+	}
 
-		}
+	@Override
+	@SideOnly(Side.CLIENT)
+	public void registerIcons(IconRegister iconRegister) {
+		Kind.Empty.icon = iconRegister.registerIcon("buildcraft:triggers/trigger_pipecontents_empty");
+		Kind.ContainsItems.icon = iconRegister.registerIcon("buildcraft:triggers/trigger_pipecontents_containsitems");
+		Kind.ContainsFluids.icon = iconRegister.registerIcon("buildcraft:triggers/trigger_pipecontents_containsliquid");
+		Kind.ContainsEnergy.icon = iconRegister.registerIcon("buildcraft:triggers/trigger_pipecontents_containsenergy");
+		Kind.RequestsEnergy.icon = iconRegister.registerIcon("buildcraft:triggers/trigger_pipecontents_requestsenergy");
+		Kind.TooMuchEnergy.icon = iconRegister.registerIcon("buildcraft:triggers/trigger_pipecontents_toomuchenergy");
 	}
 }

@@ -3,12 +3,11 @@ package buildcraft.transport.utils;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-
 import net.minecraftforge.common.ForgeDirection;
 
 public class TextureMatrix {
 
-	private final int[] _iconIndexes = new int[ForgeDirection.values().length];
+	private final int[] _iconIndexes = new int[7];
 
 	private boolean dirty = false;
 
@@ -32,14 +31,14 @@ public class TextureMatrix {
 	}
 
 	public void writeData(DataOutputStream data) throws IOException {
-		for (int i = 0; i < ForgeDirection.values().length; i++) {
-			data.writeInt(_iconIndexes[i]);
+		for (int i = 0; i < _iconIndexes.length; i++) {
+			data.writeByte(_iconIndexes[i]);
 		}
 	}
 
 	public void readData(DataInputStream data) throws IOException {
-		for (int i = 0; i < ForgeDirection.values().length; i++) {
-			_iconIndexes[i] = data.readInt();
+		for (int i = 0; i < _iconIndexes.length; i++) {
+			_iconIndexes[i] = data.readByte();
 		}
 	}
 }

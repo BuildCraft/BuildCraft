@@ -11,6 +11,9 @@
  */
 package buildcraft.transport.render;
 
+import buildcraft.core.utils.Utils;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.particle.EntityFX;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
@@ -19,12 +22,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
-
 import org.lwjgl.opengl.GL11;
-
-import buildcraft.core.utils.Utils;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 //import net.minecraft.client.particle.EntityPickupFX; 
 
 @SideOnly(Side.CLIENT)

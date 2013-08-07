@@ -9,23 +9,6 @@
 
 package buildcraft.core.proxy;
 
-import java.io.File;
-import java.util.List;
-
-import net.minecraft.block.Block;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.WorldClient;
-import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.item.EntityItem;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.packet.Packet;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ChunkCoordinates;
-import net.minecraft.util.StringTranslate;
-import net.minecraft.world.World;
 import buildcraft.BuildCraftCore;
 import buildcraft.api.core.LaserKind;
 import buildcraft.core.EntityBlock;
@@ -43,14 +26,32 @@ import buildcraft.transport.render.TileEntityPickupFX;
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
+import java.io.File;
+import java.util.List;
+import net.minecraft.block.Block;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.WorldClient;
+import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.network.packet.Packet;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ChatMessageComponent;
+import net.minecraft.util.ChunkCoordinates;
+import net.minecraft.world.World;
 
 public class CoreProxyClient extends CoreProxy {
 
 	/* INSTANCES */
+	@Override
 	public Object getClient() {
 		return FMLClientHandler.instance().getClient();
 	}
 
+	@Override
 	public World getClientWorld() {
 		return FMLClientHandler.instance().getClient().theWorld;
 	}
@@ -67,6 +68,7 @@ public class CoreProxyClient extends CoreProxy {
 
 	/* WRAPPER */
 	@SuppressWarnings("rawtypes")
+	@Override
 	public void feedSubBlocks(int id, CreativeTabs tab, List itemList) {
 		if (Block.blocksList[id] == null)
 			return;
@@ -77,7 +79,7 @@ public class CoreProxyClient extends CoreProxy {
 	/* LOCALIZATION */
 	@Override
 	public String getCurrentLanguage() {
-		return StringTranslate.getInstance().getCurrentLanguage();
+		return Minecraft.getMinecraft().func_135016_M().func_135041_c().func_135034_a();
 	}
 
 	@Override
@@ -119,7 +121,7 @@ public class CoreProxyClient extends CoreProxy {
 
 	@Override
 	public void initializeEntityRendering() {
-		RenderingRegistry.registerEntityRenderingHandler(EntityBlock.class, new RenderEntityBlock());
+		RenderingRegistry.registerEntityRenderingHandler(EntityBlock.class, RenderEntityBlock.INSTANCE);
 		RenderingRegistry.registerEntityRenderingHandler(EntityPowerLaser.class, new RenderLaser());
 		RenderingRegistry.registerEntityRenderingHandler(EntityEnergyLaser.class, new RenderEnergyLaser());
 		RenderingRegistry.registerEntityRenderingHandler(EntityRobot.class, new RenderRobot());
@@ -131,11 +133,6 @@ public class CoreProxyClient extends CoreProxy {
 		FMLClientHandler.instance().getClient().getNetHandler().addToSendQueue(packet);
 	}
 
-	/* FILE SYSTEM */
-	public File getBuildCraftBase() {
-		return Minecraft.getMinecraftDir();
-	}
-
 	/* BUILDCRAFT PLAYER */
 	@Override
 	public String playerName() {
@@ -143,9 +140,9 @@ public class CoreProxyClient extends CoreProxy {
 	}
 
 	private EntityPlayer createNewPlayer(World world) {
-		EntityPlayer player = new EntityPlayer(world) {
+		EntityPlayer player = new EntityPlayer(world, "[BuildCraft]") {
 			@Override
-			public void sendChatToPlayer(String var1) {
+			public void sendChatToPlayer(ChatMessageComponent var1) {
 			}
 
 			@Override
@@ -158,7 +155,6 @@ public class CoreProxyClient extends CoreProxy {
 				return null;
 			}
 		};
-		player.username = "[BuildCraft]";
 		return player;
 	}
 
@@ -170,7 +166,7 @@ public class CoreProxyClient extends CoreProxy {
 
 		return CoreProxy.buildCraftPlayer;
 	}
-	
+
 	@Override
 	public EntityBlock newEntityBlock(World world, double i, double j,	double k, double iSize, double jSize, double kSize, LaserKind laserKind) {
 		EntityBlock eb = super.newEntityBlock(world, i, j, k, iSize, jSize, kSize, laserKind);

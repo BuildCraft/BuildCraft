@@ -21,18 +21,13 @@ public class DefaultProps {
 	public static int NETWORK_UPDATE_RANGE = 128;
 	public static int PIPE_CONTENTS_RENDER_DIST = 24;
 
-	public static String TEXTURE_PATH_GUI = "/gfx/buildcraft/gui";
-	public static String TEXTURE_PATH_BLOCKS = "/gfx/buildcraft/blocks";
-	public static String TEXTURE_PATH_ENTITIES = "/gfx/buildcraft/entities";
-
-	public static String TEXTURE_BLOCKS = TEXTURE_PATH_BLOCKS + "/blocks.png";
-	public static String TEXTURE_ITEMS = "/gfx/buildcraft/items/items.png";
-	public static String TEXTURE_ICONS = TEXTURE_PATH_GUI + "/icons.png";
-	public static String TEXTURE_TRIGGERS = TEXTURE_PATH_GUI + "/triggers.png";
+	public static String TEXTURE_PATH_GUI = "textures/gui";
+	public static String TEXTURE_PATH_BLOCKS = "buildcraft:textures/blocks";
+	public static String TEXTURE_PATH_ENTITIES = "textures/entities";
 
 	public static final String DEFAULT_LANGUAGE = "en_US";
 
-	public static String PUMP_DIMENSION_LIST = "+/*/*,+/-1/Lava";
+	public static String PUMP_DIMENSION_LIST = "+/*/*,+/-1/lava";
 
 	public static int WOODEN_GEAR_ID = 19100;
 	public static int STONE_GEAR_ID = 19101;
@@ -42,7 +37,6 @@ public class DefaultProps {
 	public static int TEMPLATE_ITEM_ID = 19105;
 	public static int WRENCH_ID = 19106;
 	public static int BUCKET_OIL_ID = 19107;
-	public static int FUEL_ID = 19108;
 	public static int PIPE_WATERPROOF_ID = 19109;
 	public static int BUCKET_FUEL_ID = 19110;
 	public static int GATE_ID = 19111;
@@ -67,6 +61,8 @@ public class DefaultProps {
 	public static int PIPE_ITEMS_OBSIDIAN_ID = 19166;
 	public static int PIPE_ITEMS_EMERALD_ID = 19167;
 	public static int PIPE_ITEMS_QUARTZ_ID = 19168;
+	public static int PIPE_ITEMS_LAPIS_ID = 19169;
+	public static int PIPE_ITEMS_DAIZULI_ID = 19170;
 
 	public static int PIPE_LIQUIDS_WOOD_ID = 19180;
 	public static int PIPE_LIQUIDS_COBBLESTONE_ID = 19181;
@@ -77,6 +73,8 @@ public class DefaultProps {
 	public static int PIPE_LIQUIDS_OBSIDIAN_ID = 19186;
 	public static int PIPE_LIQUIDS_EMERALD_ID = 19187;
 	public static int PIPE_LIQUIDS_QUARTZ_ID = 19188;
+	public static int PIPE_LIQUIDS_LAPIS_ID = 19189;
+	public static int PIPE_LIQUIDS_DIAZULI_ID = 19110;
 
 	public static int PIPE_POWER_WOOD_ID = 19200;
 	public static int PIPE_POWER_COBBLESTONE_ID = 19201;
@@ -87,6 +85,8 @@ public class DefaultProps {
 	public static int PIPE_POWER_OBSIDIAN_ID = 19206;
 	public static int PIPE_POWER_EMERALD_ID = 19207;
 	public static int PIPE_POWER_QUARTZ_ID = 19208;
+	public static int PIPE_POWER_LAPIS_ID = 19209;
+	public static int PIPE_POWER_DIAZULI_ID = 19210;
 
 	public static int PIPE_ITEMS_VOID_ID = 19220;
 	public static int PIPE_LIQUIDS_VOID_ID = 19221;
@@ -113,15 +113,17 @@ public class DefaultProps {
 	public static int ASSEMBLY_TABLE_ID = 1517;
 	public static int PATH_MARKER_ID = 1518;
 	public static int HOPPER_ID = 1519;
-	public static int OIL_MOVING_ID = 1520;
-	public static int OIL_STILL_ID = 1521;
 	public static int SPRING_ID = 1522;
-	public static int FILTERED_BUFFER = 1523;
+	public static int FILTERED_BUFFER_ID = 1523;
+	public static int FLOOD_GATE_ID = 1524;
+	
+	public static int OIL_ID = 1530;
+	public static int FUEL_ID = 1531;
 
 	public static boolean CURRENT_CONTINUOUS = false;
 	public static double PIPES_DURABILITY = 0.25D;
 	public static boolean FILLER_DESTROY = false;
-	
+
 	public static final int FILLER_LIFESPAN_TOUGH = 20;
 	public static final int FILLER_LIFESPAN_NORMAL = 6000;
 
@@ -170,4 +172,6 @@ public class DefaultProps {
 	public static int ACTION_ENERGY_PULSER = 9;
 	public static int ACTION_SINGLE_ENERGY_PULSE = 10;
 
+	public static int BIOME_OIL_OCEAN = 160;
+	public static int BIOME_OIL_DESERT = 161;
 }

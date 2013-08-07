@@ -1,25 +1,12 @@
 /**
- * Copyright (c) SpaceToad, 2011
- * http://www.mod-buildcraft.com
+ * Copyright (c) SpaceToad, 2011 http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License
+ * 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-
 package buildcraft.transport.gui;
 
-import java.util.Iterator;
-import java.util.LinkedList;
-
-import net.minecraft.block.Block;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.ICrafting;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.Slot;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.ForgeDirection;
 import buildcraft.api.core.Position;
 import buildcraft.api.gates.ActionManager;
 import buildcraft.api.gates.IAction;
@@ -31,18 +18,28 @@ import buildcraft.core.gui.BuildCraftContainer;
 import buildcraft.core.network.PacketCoordinates;
 import buildcraft.core.network.PacketIds;
 import buildcraft.core.network.PacketPayload;
+import buildcraft.core.network.PacketPayloadArrays;
 import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.transport.Pipe;
+import java.util.Iterator;
+import java.util.LinkedList;
+import net.minecraft.block.Block;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.ICrafting;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.Slot;
+import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.common.ForgeDirection;
 
 public class ContainerGateInterface extends BuildCraftContainer {
 
 	IInventory playerIInventory;
 	Pipe pipe;
-
 	private final LinkedList<ITrigger> _potentialTriggers = new LinkedList<ITrigger>();
 	private final LinkedList<IAction> _potentialActions = new LinkedList<IAction>();
-
 	private boolean isSynchronized = false;
 	private boolean isNetInitialized = false;
 	public boolean[] triggerState = new boolean[8];
@@ -66,35 +63,34 @@ public class ContainerGateInterface extends BuildCraftContainer {
 
 		// Do not attempt to create a list of potential actions and triggers on
 		// the client.
-		if (!CoreProxy.proxy.isRenderWorld(pipe.worldObj)) {
+		if (!CoreProxy.proxy.isRenderWorld(pipe.container.worldObj)) {
 			_potentialActions.addAll(pipe.getActions());
 			_potentialTriggers.addAll(ActionManager.getPipeTriggers(pipe));
 
-			TileEntity ptile = pipe.worldObj.getBlockTileEntity(pipe.xCoord, pipe.yCoord, pipe.zCoord);
-			if (ptile instanceof IOverrideDefaultTriggers) {
-				_potentialTriggers.addAll(((IOverrideDefaultTriggers) ptile).getTriggers());
+			if (pipe.container instanceof IOverrideDefaultTriggers) {
+				_potentialTriggers.addAll(((IOverrideDefaultTriggers) pipe.container).getTriggers());
 			}
 
 			for (ForgeDirection o : ForgeDirection.VALID_DIRECTIONS) {
-				Position pos = new Position(pipe.xCoord, pipe.yCoord, pipe.zCoord, o);
-				pos.moveForwards(1.0);
-				TileEntity tile = pipe.worldObj.getBlockTileEntity((int) pos.x, (int) pos.y, (int) pos.z);
-				int blockID = pipe.worldObj.getBlockId((int) pos.x, (int) pos.y, (int) pos.z);
+				TileEntity tile = pipe.container.getTile(o);
+				int blockID = pipe.container.getBlockId(o);
 				Block block = Block.blocksList[blockID];
 
 				LinkedList<ITrigger> nearbyTriggers = ActionManager.getNeighborTriggers(block, tile);
 
-				for (ITrigger t : nearbyTriggers)
+				for (ITrigger t : nearbyTriggers) {
 					if (!_potentialTriggers.contains(t)) {
 						_potentialTriggers.add(t);
 					}
+				}
 
 				LinkedList<IAction> nearbyActions = ActionManager.getNeighborActions(block, tile);
 
-				for (IAction a : nearbyActions)
+				for (IAction a : nearbyActions) {
 					if (!_potentialActions.contains(a)) {
 						_potentialActions.add(a);
 					}
+				}
 			}
 		}
 	}
@@ -104,10 +100,12 @@ public class ContainerGateInterface extends BuildCraftContainer {
 		return true;
 	}
 
-	/** CLIENT SIDE **/
-
 	/**
-	 * Marks client side gate container as needing to be synchronized with the server.
+	 * CLIENT SIDE *
+	 */
+	/**
+	 * Marks client side gate container as needing to be synchronized with the
+	 * server.
 	 */
 	public void markDirty() {
 		isSynchronized = false;
@@ -115,111 +113,101 @@ public class ContainerGateInterface extends BuildCraftContainer {
 
 	/**
 	 * Clears list of potential actions and refills it according to packet.
-	 * 
+	 *
 	 * @param packet
 	 */
 	public void updateActions(PacketUpdate packet) {
-
 		_potentialActions.clear();
-		int length = packet.payload.intPayload[0];
+		PacketPayloadArrays payload = (PacketPayloadArrays) packet.payload;
+		int length = payload.intPayload[0];
 
 		for (int i = 0; i < length; i++) {
-			_potentialActions.add(ActionManager.actions[packet.payload.intPayload[i + 1]]);
+			_potentialActions.add(ActionManager.actions.get(payload.stringPayload[i]));
 		}
-
 	}
 
 	/**
 	 * Clears list of potential triggers and refills it according to packet.
-	 * 
+	 *
 	 * @param packet
 	 */
 	public void updateTriggers(PacketUpdate packet) {
 		_potentialTriggers.clear();
-		int length = packet.payload.intPayload[0];
+		PacketPayloadArrays payload = (PacketPayloadArrays) packet.payload;
+		int length = payload.intPayload[0];
 
 		for (int i = 0; i < length; i++) {
-			_potentialTriggers.add(ActionManager.triggers[packet.payload.intPayload[i + 1]]);
+			_potentialTriggers.add(ActionManager.triggers.get(payload.stringPayload[i]));
 		}
 	}
 
 	/**
 	 * Sets the currently selected actions and triggers according to packet.
-	 * 
+	 *
 	 * @param packet
 	 */
-	public void setSelection(PacketUpdate packet) {
-		PacketPayload payload = packet.payload;
+	public void setSelection(PacketUpdate packet, boolean notify) {
+		PacketPayloadArrays payload = (PacketPayloadArrays) packet.payload;
 		int position = payload.intPayload[0];
 
-		if (payload.intPayload[1] >= 0 && payload.intPayload[1] < ActionManager.triggers.length) {
-			setTrigger(position, ActionManager.triggers[payload.intPayload[1]], false);
-			// System.out.println("Trigger["+ position + "]: " +
-			// pipe.activatedTriggers[position].getDescription());
-		} else {
-			setTrigger(position, null, false);
-			// System.out.println("Trigger["+ position + "] clear!");
-		}
+		setTrigger(position, ActionManager.triggers.get(payload.stringPayload[0]), notify);
+		setAction(position, ActionManager.actions.get(payload.stringPayload[1]), notify);
 
-		if (payload.intPayload[2] >= 0 && payload.intPayload[2] < ActionManager.actions.length) {
-			setAction(position, ActionManager.actions[payload.intPayload[2]], false);
-			// System.out.println("Action["+ position + "]: " +
-			// pipe.activatedActions[position].getDescription());
-		} else {
-			setAction(position, null, false);
-			// System.out.println("Action["+ position + "] clear!");
-		}
-
-		int itemID = payload.intPayload[3];
+		int itemID = payload.intPayload[1];
 		if (itemID <= 0) {
-			setTriggerParameter(position, null, false);
+			setTriggerParameter(position, null, notify);
 			return;
 		}
 
 		ITriggerParameter param = new TriggerParameter();
-		param.set(new ItemStack(itemID, payload.intPayload[4], payload.intPayload[5]));
-		setTriggerParameter(position, param, false);
+		param.set(new ItemStack(itemID, payload.intPayload[2], payload.intPayload[3]));
+		setTriggerParameter(position, param, notify);
 	}
 
-	public void sendSelectionChange(int position) {
-		PacketPayload payload = new PacketPayload(6, 0, 0);
+	private PacketPayload getSelectionPayload(int position) {
+		PacketPayloadArrays payload = new PacketPayloadArrays(4, 0, 2);
 
 		payload.intPayload[0] = position;
 
-		if (pipe.activatedTriggers[position] != null) {
-			payload.intPayload[1] = pipe.activatedTriggers[position].getId();
+		if (pipe.gate.triggers[position] != null) {
+			payload.stringPayload[0] = pipe.gate.triggers[position].getUniqueTag();
 		} else {
-			payload.intPayload[1] = -1;
+			payload.stringPayload[0] = "";
 		}
 
-		if (pipe.activatedActions[position] != null) {
-			payload.intPayload[2] = pipe.activatedActions[position].getId();
+		if (pipe.gate.actions[position] != null) {
+			payload.stringPayload[1] = pipe.gate.actions[position].getUniqueTag();
 		} else {
-			payload.intPayload[2] = -1;
+			payload.stringPayload[1] = "";
 		}
 
-		if (pipe.triggerParameters[position] != null && pipe.triggerParameters[position].getItemStack() != null) {
-			payload.intPayload[3] = pipe.triggerParameters[position].getItemStack().itemID;
-			payload.intPayload[4] = pipe.triggerParameters[position].getItemStack().stackSize;
-			payload.intPayload[5] = pipe.triggerParameters[position].getItemStack().getItemDamage();
+		if (pipe.gate.triggerParameters[position] != null && pipe.gate.triggerParameters[position].getItemStack() != null) {
+			payload.intPayload[1] = pipe.gate.triggerParameters[position].getItemStack().itemID;
+			payload.intPayload[2] = pipe.gate.triggerParameters[position].getItemStack().stackSize;
+			payload.intPayload[3] = pipe.gate.triggerParameters[position].getItemStack().getItemDamage();
 		}
 
-		CoreProxy.proxy.sendToServer(new PacketUpdate(PacketIds.GATE_SELECTION_CHANGE, pipe.xCoord, pipe.yCoord, pipe.zCoord, payload).getPacket());
+		return payload;
+	}
+
+	public void sendSelectionChange(int position) {
+		CoreProxy.proxy.sendToServer(new PacketUpdate(PacketIds.GATE_SELECTION_CHANGE, pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord, getSelectionPayload(position)).getPacket());
 	}
 
 	/**
-	 * Initializes the list of triggers and actions on the gate and (re-)requests the current selection on the gate if needed.
+	 * Initializes the list of triggers and actions on the gate and
+	 * (re-)requests the current selection on the gate if needed.
 	 */
 	public void synchronize() {
 
-		if (!isNetInitialized && CoreProxy.proxy.isRenderWorld(pipe.worldObj)) {
+		if (!isNetInitialized && CoreProxy.proxy.isRenderWorld(pipe.container.worldObj)) {
 			isNetInitialized = true;
-			CoreProxy.proxy.sendToServer(new PacketCoordinates(PacketIds.GATE_REQUEST_INIT, pipe.xCoord, pipe.yCoord, pipe.zCoord).getPacket());
+			CoreProxy.proxy.sendToServer(new PacketCoordinates(PacketIds.GATE_REQUEST_INIT, pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord).getPacket());
 		}
 
-		if (!isSynchronized && CoreProxy.proxy.isRenderWorld(pipe.worldObj)) {
+		if (!isSynchronized && CoreProxy.proxy.isRenderWorld(pipe.container.worldObj)) {
 			isSynchronized = true;
-			CoreProxy.proxy.sendToServer(new PacketCoordinates(PacketIds.GATE_REQUEST_SELECTION, pipe.xCoord, pipe.yCoord, pipe.zCoord).getPacket());
+			CoreProxy.proxy.sendToServer(new PacketCoordinates(PacketIds.GATE_REQUEST_SELECTION, pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord).getPacket());
 		}
 	}
 
@@ -233,12 +221,16 @@ public class ContainerGateInterface extends BuildCraftContainer {
 		}
 	}
 
-	/** SERVER SIDE **/
+	/**
+	 * SERVER SIDE *
+	 */
 	private int calculateTriggerState() {
+		if (pipe.gate == null)
+			return 0;
 		int state = 0;
 		for (int i = 0; i < triggerState.length; i++) {
-			if (pipe.activatedTriggers[i] != null) {
-				triggerState[i] = isNearbyTriggerActive(pipe.activatedTriggers[i], pipe.getTriggerParameter(i));
+			if (pipe.gate.triggers[i] != null) {
+				triggerState[i] = isNearbyTriggerActive(pipe.gate.triggers[i], pipe.gate.getTriggerParameter(i));
 			}
 			state |= triggerState[i] ? 0x01 << i : 0x0;
 		}
@@ -265,56 +257,23 @@ public class ContainerGateInterface extends BuildCraftContainer {
 		sendSelection(player);
 	}
 
-	public void handleSelectionChange(PacketUpdate packet) {
-		PacketPayload payload = packet.payload;
-		int position = payload.intPayload[0];
-
-		if (payload.intPayload[1] >= 0 && payload.intPayload[1] < ActionManager.triggers.length) {
-			setTrigger(position, ActionManager.triggers[payload.intPayload[1]], true);
-			// System.out.println("Trigger["+ position + "]: " +
-			// pipe.activatedTriggers[position].getDescription());
-		} else {
-			setTrigger(position, null, true);
-			// System.out.println("Trigger["+ position + "] clear!");
-		}
-
-		if (payload.intPayload[2] >= 0 && payload.intPayload[2] < ActionManager.actions.length) {
-			setAction(position, ActionManager.actions[payload.intPayload[2]], true);
-			// System.out.println("Action["+ position + "]: " +
-			// pipe.activatedActions[position].getDescription());
-		} else {
-			setAction(position, null, true);
-			// System.out.println("Action["+ position + "] clear!");
-		}
-
-		int itemID = payload.intPayload[3];
-		if (itemID <= 0) {
-			setTriggerParameter(position, null, true);
-			return;
-		}
-
-		ITriggerParameter param = new TriggerParameter();
-		param.set(new ItemStack(itemID, payload.intPayload[4], payload.intPayload[5]));
-		setTriggerParameter(position, param, true);
-	}
-
 	/**
 	 * Sends the list of potential actions to the client
-	 * 
+	 *
 	 * @param player
 	 */
 	private void sendActions(EntityPlayer player) {
 
 		// Compose update packet
 		int length = _potentialActions.size();
-		PacketPayload payload = new PacketPayload(length + 1, 0, 0);
+		PacketPayloadArrays payload = new PacketPayloadArrays(1, 0, length);
 
 		payload.intPayload[0] = length;
 		for (int i = 0; i < length; i++) {
-			payload.intPayload[i + 1] = _potentialActions.get(i).getId();
+			payload.stringPayload[i] = _potentialActions.get(i).getUniqueTag();
 		}
 
-		PacketUpdate packet = new PacketUpdate(PacketIds.GATE_ACTIONS, pipe.xCoord, pipe.yCoord, pipe.zCoord, payload);
+		PacketUpdate packet = new PacketUpdate(PacketIds.GATE_ACTIONS, pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord, payload);
 
 		// Send to player
 		CoreProxy.proxy.sendToPlayer(player, packet);
@@ -322,21 +281,21 @@ public class ContainerGateInterface extends BuildCraftContainer {
 
 	/**
 	 * Sends the list of potential triggers to the client
-	 * 
+	 *
 	 * @param player
 	 */
 	private void sendTriggers(EntityPlayer player) {
 
 		// Compose update packet
 		int length = _potentialTriggers.size();
-		PacketPayload payload = new PacketPayload(length + 1, 0, 0);
+		PacketPayloadArrays payload = new PacketPayloadArrays(1, 0, length);
 
 		payload.intPayload[0] = length;
 		for (int i = 0; i < length; i++) {
-			payload.intPayload[i + 1] = _potentialTriggers.get(i).getId();
+			payload.stringPayload[i] = _potentialTriggers.get(i).getUniqueTag();
 		}
 
-		PacketUpdate packet = new PacketUpdate(PacketIds.GATE_TRIGGERS, pipe.xCoord, pipe.yCoord, pipe.zCoord, payload);
+		PacketUpdate packet = new PacketUpdate(PacketIds.GATE_TRIGGERS, pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord, payload);
 
 		// Send to player
 		CoreProxy.proxy.sendToPlayer(player, packet);
@@ -344,7 +303,7 @@ public class ContainerGateInterface extends BuildCraftContainer {
 
 	/**
 	 * Sends the current selection on the gate to the client.
-	 * 
+	 *
 	 * @param player
 	 */
 	public void sendSelection(EntityPlayer player) {
@@ -352,54 +311,34 @@ public class ContainerGateInterface extends BuildCraftContainer {
 			return;
 		int positions = 0;
 		switch (pipe.gate.kind) {
-		case Single:
-			positions = 1;
-			break;
-		case AND_2:
-		case OR_2:
-			positions = 2;
-			break;
-		case AND_3:
-		case OR_3:
-			positions = 4;
-			break;
-		case OR_4:
-		case AND_4:
-		default:
-			positions = 8;
-			break;
+			case Single:
+				positions = 1;
+				break;
+			case AND_2:
+			case OR_2:
+				positions = 2;
+				break;
+			case AND_3:
+			case OR_3:
+				positions = 4;
+				break;
+			case OR_4:
+			case AND_4:
+			default:
+				positions = 8;
+				break;
 		}
 
 		for (int position = 0; position < positions; position++) {
-			PacketPayload payload = new PacketPayload(6, 0, 0);
-
-			payload.intPayload[0] = position;
-
-			if (pipe.activatedTriggers[position] != null) {
-				payload.intPayload[1] = pipe.activatedTriggers[position].getId();
-			} else {
-				payload.intPayload[1] = -1;
-			}
-
-			if (pipe.activatedActions[position] != null) {
-				payload.intPayload[2] = pipe.activatedActions[position].getId();
-			} else {
-				payload.intPayload[2] = -1;
-			}
-
-			if (pipe.triggerParameters[position] != null && pipe.triggerParameters[position].getItemStack() != null) {
-				payload.intPayload[3] = pipe.triggerParameters[position].getItemStack().itemID;
-				payload.intPayload[4] = pipe.triggerParameters[position].getItemStack().stackSize;
-				payload.intPayload[5] = pipe.triggerParameters[position].getItemStack().getItemDamage();
-			}
-
-			CoreProxy.proxy.sendToPlayer(player, new PacketUpdate(PacketIds.GATE_SELECTION, pipe.xCoord, pipe.yCoord, pipe.zCoord, payload));
+			CoreProxy.proxy.sendToPlayer(player, new PacketUpdate(PacketIds.GATE_SELECTION, pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord, getSelectionPayload(position)));
 		}
 
 		// System.out.println("Sending current selection to player");
 	}
 
-	/** TRIGGERS **/
+	/**
+	 * TRIGGERS *
+	 */
 	public boolean hasTriggers() {
 		return _potentialTriggers.size() > 0;
 	}
@@ -417,34 +356,36 @@ public class ContainerGateInterface extends BuildCraftContainer {
 	}
 
 	public boolean isNearbyTriggerActive(ITrigger trigger, ITriggerParameter parameter) {
-		return pipe.isNearbyTriggerActive(trigger, parameter);
+		return pipe.gate.isNearbyTriggerActive(trigger, parameter);
 	}
 
 	public void setTrigger(int position, ITrigger trigger, boolean notify) {
-		pipe.setTrigger(position, trigger);
-		if (CoreProxy.proxy.isRenderWorld(pipe.worldObj) && notify) {
+		pipe.gate.setTrigger(position, trigger);
+		if (CoreProxy.proxy.isRenderWorld(pipe.container.worldObj) && notify) {
 			sendSelectionChange(position);
 		}
 	}
 
 	public void setTriggerParameter(int position, ITriggerParameter parameter, boolean notify) {
-		pipe.setTriggerParameter(position, parameter);
-		if (CoreProxy.proxy.isRenderWorld(pipe.worldObj) && notify) {
+		pipe.gate.setTriggerParameter(position, parameter);
+		if (CoreProxy.proxy.isRenderWorld(pipe.container.worldObj) && notify) {
 			sendSelectionChange(position);
 		}
 	}
 
-	/** ACTIONS **/
+	/**
+	 * ACTIONS *
+	 */
 	public boolean hasActions() {
-		return _potentialActions.size() > 0;
+		return !_potentialActions.isEmpty();
 	}
 
 	public IAction getFirstAction() {
-		return _potentialActions.size() > 0 ? _potentialActions.getFirst() : null;
+		return _potentialActions.peekFirst();
 	}
 
 	public IAction getLastAction() {
-		return _potentialActions.size() > 0 ? _potentialActions.getLast() : null;
+		return _potentialActions.peekLast();
 	}
 
 	public Iterator<IAction> getActionIterator(boolean descending) {
@@ -452,14 +393,16 @@ public class ContainerGateInterface extends BuildCraftContainer {
 	}
 
 	public void setAction(int position, IAction action, boolean notify) {
-		pipe.setAction(position, action);
-		if (CoreProxy.proxy.isRenderWorld(pipe.worldObj) && notify) {
+		pipe.gate.setAction(position, action);
+		if (CoreProxy.proxy.isRenderWorld(pipe.container.worldObj) && notify) {
 			sendSelectionChange(position);
 		}
 	}
 
-	/** GATE INFORMATION **/
-	public String getGateGuiFile() {
+	/**
+	 * GATE INFORMATION *
+	 */
+	public ResourceLocation getGateGuiFile() {
 		return pipe.gate.getGuiFile();
 	}
 
@@ -470,5 +413,4 @@ public class ContainerGateInterface extends BuildCraftContainer {
 	public String getGateName() {
 		return pipe.gate.getName();
 	}
-
 }

@@ -1,16 +1,18 @@
 /**
- * Copyright (c) SpaceToad, 2011
- * http://www.mod-buildcraft.com
+ * Copyright (c) SpaceToad, 2011 http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License
+ * 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-
 package buildcraft.factory;
 
+import buildcraft.BuildCraftCore;
+import buildcraft.core.CreativeTabBuildCraft;
+import buildcraft.core.utils.Utils;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import java.util.ArrayList;
-
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IconRegister;
@@ -21,21 +23,16 @@ import net.minecraft.util.Icon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
-import net.minecraftforge.liquids.LiquidContainerRegistry;
-import net.minecraftforge.liquids.LiquidStack;
-import buildcraft.BuildCraftCore;
-import buildcraft.core.CreativeTabBuildCraft;
-import buildcraft.core.utils.Utils;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraftforge.fluids.FluidContainerRegistry;
+import net.minecraftforge.fluids.FluidStack;
 
 public class BlockTank extends BlockContainer {
 
 	private Icon textureStackedSide;
-    private Icon textureBottomSide;
-    private Icon textureTop;
+	private Icon textureBottomSide;
+	private Icon textureTop;
 
-    public BlockTank(int i) {
+	public BlockTank(int i) {
 		super(i, Material.glass);
 		setBlockBounds(0.125F, 0F, 0.125F, 0.875F, 1F, 0.875F);
 		setHardness(0.5F);
@@ -64,26 +61,26 @@ public class BlockTank extends BlockContainer {
 	@Override
 	@SideOnly(Side.CLIENT)
 	public Icon getIcon(int par1, int par2) {
-		switch(par1){
-		case 0:
-		case 1:
-			return textureTop;
-		default:
-			return textureBottomSide;
+		switch (par1) {
+			case 0:
+			case 1:
+				return textureTop;
+			default:
+				return textureBottomSide;
 		}
 	}
 
-	@SuppressWarnings({ "all" })
+	@SuppressWarnings({"all"})
 	public Icon getBlockTexture(IBlockAccess iblockaccess, int i, int j, int k, int l) {
 		switch (l) {
-		case 0:
-		case 1:
-			return textureTop;
-		default:
-			if (iblockaccess.getBlockId(i, j - 1, k) == blockID)
-				return textureStackedSide;
-			else
-				return textureBottomSide;
+			case 0:
+			case 1:
+				return textureTop;
+			default:
+				if (iblockaccess.getBlockId(i, j - 1, k) == blockID)
+					return textureStackedSide;
+				else
+					return textureBottomSide;
 		}
 	}
 
@@ -93,7 +90,7 @@ public class BlockTank extends BlockContainer {
 		ItemStack current = entityplayer.inventory.getCurrentItem();
 		if (current != null) {
 
-			LiquidStack liquid = LiquidContainerRegistry.getLiquidForFilledItem(current);
+			FluidStack liquid = FluidContainerRegistry.getFluidForFilledItem(current);
 
 			TileTank tank = (TileTank) world.getBlockTileEntity(i, j, k);
 
@@ -110,11 +107,11 @@ public class BlockTank extends BlockContainer {
 				// Handle empty containers
 			} else {
 
-				LiquidStack available = tank.getTanks(ForgeDirection.UNKNOWN)[0].getLiquid();
+				FluidStack available = tank.getTankInfo(ForgeDirection.UNKNOWN)[0].fluid;
 				if (available != null) {
-					ItemStack filled = LiquidContainerRegistry.fillLiquidContainer(available, current);
+					ItemStack filled = FluidContainerRegistry.fillFluidContainer(available, current);
 
-					liquid = LiquidContainerRegistry.getLiquidForFilledItem(filled);
+					liquid = FluidContainerRegistry.getFluidForFilledItem(filled);
 
 					if (liquid != null) {
 						if (!BuildCraftCore.debugMode && !entityplayer.capabilities.isCreativeMode) {
@@ -139,7 +136,14 @@ public class BlockTank extends BlockContainer {
 		return false;
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@Override
+	public boolean shouldSideBeRendered(IBlockAccess world, int x, int y, int z, int side) {
+		if (side <= 1)
+			return world.getBlockId(x, y, z) != blockID;
+		return super.shouldSideBeRendered(world, x, y, z, side);
+	}
+
+	@SuppressWarnings({"unchecked", "rawtypes"})
 	@Override
 	public void addCreativeItems(ArrayList itemList) {
 		itemList.add(new ItemStack(this));
@@ -147,11 +151,9 @@ public class BlockTank extends BlockContainer {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void registerIcons(IconRegister par1IconRegister)
-	{
-	    textureStackedSide = par1IconRegister.registerIcon("buildcraft:tank_stacked_side");
-        textureBottomSide = par1IconRegister.registerIcon("buildcraft:tank_bottom_side");
-        textureTop = par1IconRegister.registerIcon("buildcraft:tank_top");
+	public void registerIcons(IconRegister par1IconRegister) {
+		textureStackedSide = par1IconRegister.registerIcon("buildcraft:tank_stacked_side");
+		textureBottomSide = par1IconRegister.registerIcon("buildcraft:tank_bottom_side");
+		textureTop = par1IconRegister.registerIcon("buildcraft:tank_top");
 	}
-
 }

@@ -17,6 +17,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.packet.Packet3Chat;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.ChatMessageComponent;
 import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraftforge.common.ForgeChunkManager;
 import net.minecraftforge.common.ForgeChunkManager.Ticket;
@@ -27,15 +28,15 @@ import buildcraft.BuildCraftFactory;
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.core.LaserKind;
 import buildcraft.api.gates.IAction;
-import buildcraft.api.power.IPowerProvider;
 import buildcraft.api.power.IPowerReceptor;
-import buildcraft.api.power.PowerFramework;
-import buildcraft.api.transport.IPipeConnection;
+import buildcraft.api.power.PowerHandler;
+import buildcraft.api.power.PowerHandler.PowerReceiver;
 import buildcraft.core.Box;
 import buildcraft.core.DefaultAreaProvider;
 import buildcraft.core.EntityRobot;
 import buildcraft.core.IBuilderInventory;
 import buildcraft.core.IMachine;
+import buildcraft.core.TileBuildCraft;
 import buildcraft.core.blueprints.BptBlueprint;
 import buildcraft.core.blueprints.BptBuilderBase;
 import buildcraft.core.blueprints.BptBuilderBlueprint;
@@ -51,7 +52,7 @@ import com.google.common.collect.Sets;
 import cpw.mods.fml.common.network.PacketDispatcher;
 import cpw.mods.fml.common.network.Player;
 
-public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor, IPipeConnection, IBuilderInventory {
+public class TileQuarry extends TileBuildCraft implements IMachine, IPowerReceptor, IBuilderInventory {
 
 	public @TileNetworkData
 	Box box = new Box();
@@ -68,18 +69,18 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 	public EntityRobot builder;
 	BptBuilderBase bluePrintBuilder;
 	public EntityMechanicalArm arm;
-	public IPowerProvider powerProvider;
+	public PowerHandler powerHandler;
 	boolean isDigging = false;
 	public static final int MAX_ENERGY = 15000;
 
 	public TileQuarry() {
-		powerProvider = PowerFramework.currentFramework.createPowerProvider();
+		powerHandler = new PowerHandler(this, PowerHandler.Type.MACHINE);
 		initPowerProvider();
 	}
 
 	private void initPowerProvider() {
-		powerProvider.configure(20, 50, 100, 25, MAX_ENERGY);
-		powerProvider.configurePowerPerdition(2, 1);
+		powerHandler.configure(50, 100, 25, MAX_ENERGY);
+		powerHandler.configurePowerPerdition(2, 1);
 	}
 
 	public void createUtilsIfNeeded() {
@@ -146,9 +147,9 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 		}
 		super.updateEntity();
 		if (inProcess) {
-			float energyToUse = 2 + powerProvider.getEnergyStored() / 500;
+			float energyToUse = 2 + powerHandler.getEnergyStored() / 500;
 
-			float energy = powerProvider.useEnergy(energyToUse, energyToUse, true);
+			float energy = powerHandler.useEnergy(energyToUse, energyToUse, true);
 
 			if (energy > 0) {
 				moveHead(0.1 + energy / 200F);
@@ -189,16 +190,14 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 	}
 
 	@Override
-	public void doWork() {
+	public void doWork(PowerHandler workProvider) {
 	}
 
 	protected void buildFrame() {
 
-		powerProvider.configure(20, 50, 100, 25, MAX_ENERGY);
-		if (powerProvider.useEnergy(25, 25, true) != 25)
+		powerHandler.configure(50, 100, 25, MAX_ENERGY);
+		if (powerHandler.useEnergy(25, 25, true) != 25)
 			return;
-
-		powerProvider.getTimeTracker().markTime(worldObj);
 
 		if (builder == null) {
 			builder = new EntityRobot(worldObj, box);
@@ -211,8 +210,8 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 	}
 
 	protected void dig() {
-		powerProvider.configure(20, 100, 500, 60, MAX_ENERGY);
-		if (powerProvider.useEnergy(60, 60, true) != 60)
+		powerHandler.configure(100, 500, 60, MAX_ENERGY);
+		if (powerHandler.useEnergy(60, 60, true) != 60)
 			return;
 
 		if (!findTarget(true)) {
@@ -336,7 +335,7 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 	public void readFromNBT(NBTTagCompound nbttagcompound) {
 		super.readFromNBT(nbttagcompound);
 
-		PowerFramework.currentFramework.loadPowerProvider(this, nbttagcompound);
+		powerHandler.readFromNBT(nbttagcompound);
 		initPowerProvider();
 
 		if (nbttagcompound.hasKey("box")) {
@@ -374,7 +373,7 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 	public void writeToNBT(NBTTagCompound nbttagcompound) {
 		super.writeToNBT(nbttagcompound);
 
-		PowerFramework.currentFramework.savePowerProvider(this, nbttagcompound);
+		powerHandler.writeToNBT(nbttagcompound);
 
 		nbttagcompound.setInteger("targetX", targetX);
 		nbttagcompound.setInteger("targetY", targetY);
@@ -402,7 +401,6 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 		int blockId = worldObj.getBlockId(i, j, k);
 
 		if (isQuarriableBlock(i, j, k)) {
-			powerProvider.getTimeTracker().markTime(worldObj);
 
 			// Share this with mining well!
 
@@ -443,12 +441,11 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 
 	private void mineStack(ItemStack stack) {
 		// First, try to add to a nearby chest
-		ItemStack added = Utils.addToRandomInventory(stack, worldObj, xCoord, yCoord, zCoord);
-		stack.stackSize -= added.stackSize;
+		stack.stackSize -= Utils.addToRandomInventoryAround(worldObj, xCoord, yCoord, zCoord, stack);
 
 		// Second, try to add to adjacent pipes
 		if (stack.stackSize > 0) {
-			Utils.addToRandomPipeEntry(this, ForgeDirection.UNKNOWN, stack);
+			stack.stackSize -= Utils.addToRandomPipeAround(worldObj, xCoord, yCoord, zCoord, ForgeDirection.UNKNOWN, stack);
 		}
 
 		// Lastly, throw the object away
@@ -516,8 +513,8 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 			isAlive = false;
 			if (placedBy != null && CoreProxy.proxy.isSimulating(worldObj)) {
 				PacketDispatcher.sendPacketToPlayer(
-						new Packet3Chat(String.format("[BUILDCRAFT] The quarry at %d, %d, %d will not work because there are no more chunkloaders available",
-						xCoord, yCoord, zCoord)), (Player) placedBy);
+						new Packet3Chat(ChatMessageComponent.func_111066_d(String.format("[BUILDCRAFT] The quarry at %d, %d, %d will not work because there are no more chunkloaders available",
+						xCoord, yCoord, zCoord))), (Player) placedBy);
 			}
 			sendNetworkUpdate();
 			return;
@@ -545,8 +542,8 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 		if (xSize < 3 || zSize < 3 || ((xSize * zSize) >> 8) >= chunkTicket.getMaxChunkListDepth()) {
 			if (placedBy != null) {
 				PacketDispatcher.sendPacketToPlayer(
-						new Packet3Chat(String.format("Quarry size is outside of chunkloading bounds or too small %d %d (%d)", xSize, zSize,
-						chunkTicket.getMaxChunkListDepth())), (Player) placedBy);
+						new Packet3Chat(ChatMessageComponent.func_111066_d(String.format("Quarry size is outside of chunkloading bounds or too small %d %d (%d)", xSize, zSize,
+						chunkTicket.getMaxChunkListDepth()))), (Player) placedBy);
 			}
 			a = new DefaultAreaProvider(xCoord, yCoord, zCoord, xCoord + 10, yCoord + 4, zCoord + 10);
 
@@ -667,28 +664,17 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 	}
 
 	@Override
-	public void setPowerProvider(IPowerProvider provider) {
-		powerProvider = provider;
-
+	public PowerReceiver getPowerReceiver(ForgeDirection side) {
+		return powerHandler.getPowerReceiver();
 	}
 
 	@Override
-	public IPowerProvider getPowerProvider() {
-		return powerProvider;
-	}
-
-	@Override
-	public boolean manageLiquids() {
+	public boolean manageFluids() {
 		return false;
 	}
 
 	@Override
 	public boolean manageSolids() {
-		return true;
-	}
-
-	@Override
-	public boolean isPipeConnected(ForgeDirection with) {
 		return true;
 	}
 
@@ -727,7 +713,7 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 	}
 
 	@Override
-	public boolean isStackValidForSlot(int i, ItemStack itemstack) {
+	public boolean isItemValidForSlot(int i, ItemStack itemstack) {
 		return false;
 	}
 
@@ -846,7 +832,7 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 		}
 		if (placedBy != null) {
 			PacketDispatcher.sendPacketToPlayer(
-					new Packet3Chat(String.format("[BUILDCRAFT] The quarry at %d %d %d will keep %d chunks loaded", xCoord, yCoord, zCoord, chunks.size())),
+					new Packet3Chat(ChatMessageComponent.func_111066_d(String.format("[BUILDCRAFT] The quarry at %d %d %d will keep %d chunks loaded", xCoord, yCoord, zCoord, chunks.size()))),
 					(Player) placedBy);
 		}
 		sendNetworkUpdate();

@@ -7,10 +7,6 @@
  */
 package buildcraft.builders;
 
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.common.ForgeDirection;
 import buildcraft.BuildCraftCore;
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.core.LaserKind;
@@ -18,22 +14,28 @@ import buildcraft.api.filler.FillerManager;
 import buildcraft.api.filler.IFillerPattern;
 import buildcraft.api.gates.IAction;
 import buildcraft.api.gates.IActionReceptor;
-import buildcraft.api.power.IPowerProvider;
 import buildcraft.api.power.IPowerReceptor;
-import buildcraft.api.power.PowerFramework;
+import buildcraft.api.power.PowerHandler;
+import buildcraft.api.power.PowerHandler.PowerReceiver;
+import buildcraft.api.power.PowerHandler.Type;
 import buildcraft.core.Box;
 import buildcraft.core.IMachine;
+import buildcraft.core.TileBuildCraft;
 import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.network.TileNetworkData;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.triggers.ActionMachineControl;
 import buildcraft.core.triggers.ActionMachineControl.Mode;
 import buildcraft.core.utils.Utils;
-import buildcraft.factory.TileMachine;
+import java.io.IOException;
 import net.minecraft.block.Block;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ISidedInventory;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.common.ForgeDirection;
 
-public class TileFiller extends TileMachine implements ISidedInventory, IPowerReceptor, IMachine, IActionReceptor {
+public class TileFiller extends TileBuildCraft implements ISidedInventory, IPowerReceptor, IMachine, IActionReceptor {
 
 	private static int[] SLOTS_GRID = Utils.createSlotArray(0, 9);
 	private static int[] SLOTS_INPUT = Utils.createSlotArray(9, 27);
@@ -46,18 +48,18 @@ public class TileFiller extends TileMachine implements ISidedInventory, IPowerRe
 	public IFillerPattern currentPattern;
 	boolean forceDone = false;
 	private ItemStack contents[];
-	IPowerProvider powerProvider;
+	private PowerHandler powerHandler;
 	private ActionMachineControl.Mode lastMode = ActionMachineControl.Mode.Unknown;
 
 	public TileFiller() {
 		contents = new ItemStack[getSizeInventory()];
-		powerProvider = PowerFramework.currentFramework.createPowerProvider();
+		powerHandler = new PowerHandler(this, Type.MACHINE);
 		initPowerProvider();
 	}
 
 	private void initPowerProvider() {
-		powerProvider.configure(20, 25, 50, 25, 100);
-		powerProvider.configurePowerPerdition(1, 1);
+		powerHandler.configure(30, 50, 25, 100);
+		powerHandler.configurePowerPerdition(1, 1);
 	}
 
 	@Override
@@ -95,20 +97,20 @@ public class TileFiller extends TileMachine implements ISidedInventory, IPowerRe
 				return;
 		}
 
-		if (powerProvider.getEnergyStored() >= 25) {
-			doWork();
+		if (powerHandler.getEnergyStored() >= 25) {
+			doWork(powerHandler);
 		}
 	}
 
 	@Override
-	public void doWork() {
+	public void doWork(PowerHandler workProvider) {
 		if (CoreProxy.proxy.isRenderWorld(worldObj))
 			return;
 
 		if (lastMode == Mode.Off)
 			return;
 
-		if (powerProvider.useEnergy(25, 25, true) < 25)
+		if (powerHandler.useEnergy(25, 25, true) < 25)
 			return;
 
 		if (box.isInitialized() && currentPattern != null && !done) {
@@ -137,8 +139,8 @@ public class TileFiller extends TileMachine implements ISidedInventory, IPowerRe
 			}
 		}
 
-		if (powerProvider.getEnergyStored() >= 25) {
-			doWork();
+		if (powerHandler.getEnergyStored() >= 25) {
+			doWork(workProvider);
 		}
 	}
 
@@ -295,7 +297,7 @@ public class TileFiller extends TileMachine implements ISidedInventory, IPowerRe
 	}
 
 	@Override
-	public void handleDescriptionPacket(PacketUpdate packet) {
+	public void handleDescriptionPacket(PacketUpdate packet) throws IOException {
 		boolean initialized = box.isInitialized();
 
 		super.handleDescriptionPacket(packet);
@@ -309,7 +311,7 @@ public class TileFiller extends TileMachine implements ISidedInventory, IPowerRe
 	}
 
 	@Override
-	public void handleUpdatePacket(PacketUpdate packet) {
+	public void handleUpdatePacket(PacketUpdate packet) throws IOException {
 		boolean initialized = box.isInitialized();
 
 		super.handleUpdatePacket(packet);
@@ -323,13 +325,8 @@ public class TileFiller extends TileMachine implements ISidedInventory, IPowerRe
 	}
 
 	@Override
-	public void setPowerProvider(IPowerProvider provider) {
-		powerProvider = provider;
-	}
-
-	@Override
-	public IPowerProvider getPowerProvider() {
-		return powerProvider;
+	public PowerReceiver getPowerReceiver(ForgeDirection side) {
+		return powerHandler.getPowerReceiver();
 	}
 
 	@Override
@@ -338,7 +335,7 @@ public class TileFiller extends TileMachine implements ISidedInventory, IPowerRe
 	}
 
 	@Override
-	public boolean manageLiquids() {
+	public boolean manageFluids() {
 		return false;
 	}
 
@@ -372,7 +369,7 @@ public class TileFiller extends TileMachine implements ISidedInventory, IPowerRe
 	}
 
 	@Override
-	public boolean isStackValidForSlot(int slot, ItemStack stack) {
+	public boolean isItemValidForSlot(int slot, ItemStack stack) {
 		if (slot < 9) {
 			if (getStackInSlot(slot) != null)
 				return false;
@@ -391,7 +388,7 @@ public class TileFiller extends TileMachine implements ISidedInventory, IPowerRe
 
 	@Override
 	public boolean canInsertItem(int slot, ItemStack stack, int side) {
-		return isStackValidForSlot(slot, stack);
+		return isItemValidForSlot(slot, stack);
 	}
 
 	@Override

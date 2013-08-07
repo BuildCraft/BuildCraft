@@ -7,7 +7,6 @@
  */
 package buildcraft.transport.pipes;
 
-import net.minecraftforge.common.ForgeDirection;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.transport.Pipe;
@@ -15,12 +14,13 @@ import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportPower;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraftforge.common.ForgeDirection;
 
-public class PipePowerGold extends Pipe {
+public class PipePowerGold extends Pipe<PipeTransportPower> {
 
 	public PipePowerGold(int itemID) {
-		super(new PipeTransportPower(), new PipeLogicGold(), itemID);
-		((PipeTransportPower) transport).initFromPipe(getClass());
+		super(new PipeTransportPower(), itemID);
+		transport.initFromPipe(getClass());
 	}
 
 	@Override
@@ -31,6 +31,6 @@ public class PipePowerGold extends Pipe {
 
 	@Override
 	public int getIconIndex(ForgeDirection direction) {
-		return PipeIconProvider.PipePowerGold;
+		return PipeIconProvider.TYPE.PipePowerGold.ordinal();
 	}
 }

@@ -7,14 +7,6 @@
  */
 package buildcraft.transport;
 
-import java.util.logging.Level;
-
-import net.minecraft.block.Block;
-import net.minecraft.client.renderer.texture.IconRegister;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.Icon;
-import net.minecraft.world.World;
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
@@ -24,6 +16,13 @@ import buildcraft.core.ItemBuildCraft;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import java.util.List;
+import java.util.logging.Level;
+import net.minecraft.block.Block;
+import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.Icon;
+import net.minecraft.world.World;
 
 public class ItemPipe extends ItemBuildCraft implements IItemPipe {
 
@@ -69,7 +68,7 @@ public class ItemPipe extends ItemBuildCraft implements IItemPipe {
 
 		if (itemstack.stackSize == 0)
 			return false;
-		if (entityplayer.canCurrentToolHarvestBlock(i, j, k) && world.canPlaceEntityOnSide(blockID, i, j, k, false, side, entityplayer, itemstack)) {
+		if (world.canPlaceEntityOnSide(blockID, i, j, k, false, side, entityplayer, itemstack)) {
 
 			Pipe pipe = BlockGenericPipe.createPipe(itemID);
 			if (pipe == null) {

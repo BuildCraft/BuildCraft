@@ -9,13 +9,12 @@
 
 package buildcraft.transport.blueprints;
 
-import java.util.LinkedList;
-
-import net.minecraft.item.ItemStack;
-import net.minecraftforge.common.ForgeDirection;
 import buildcraft.api.blueprints.BptSlotInfo;
 import buildcraft.api.blueprints.IBptContext;
 import buildcraft.core.blueprints.BptItem;
+import java.util.LinkedList;
+import net.minecraft.item.ItemStack;
+import net.minecraftforge.common.ForgeDirection;
 
 public class BptItemPipeIron extends BptItem {
 

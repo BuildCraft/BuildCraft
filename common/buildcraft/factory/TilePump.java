@@ -7,55 +7,67 @@
  */
 package buildcraft.factory;
 
+import buildcraft.BuildCraftCore;
+import buildcraft.BuildCraftFactory;
+import buildcraft.api.core.SafeTimeTracker;
+import buildcraft.api.gates.IAction;
+import buildcraft.api.power.IPowerReceptor;
+import buildcraft.api.power.PowerHandler;
+import buildcraft.api.power.PowerHandler.PowerReceiver;
+import buildcraft.api.power.PowerHandler.Type;
+import buildcraft.core.BlockIndex;
+import buildcraft.core.EntityBlock;
+import buildcraft.core.IMachine;
+import buildcraft.core.TileBuffer;
+import buildcraft.core.TileBuildCraft;
+import buildcraft.core.liquids.SingleUseTank;
+import buildcraft.core.network.PacketPayload;
+import buildcraft.core.network.PacketPayloadStream;
+import buildcraft.core.network.PacketUpdate;
+import buildcraft.core.proxy.CoreProxy;
+import buildcraft.core.utils.BlockUtil;
+import buildcraft.core.utils.Utils;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.util.Deque;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Set;
 import java.util.TreeMap;
-import java.util.TreeSet;
-
-import net.minecraft.block.Block;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.ForgeDirection;
-import net.minecraftforge.liquids.ILiquidTank;
-import net.minecraftforge.liquids.ITankContainer;
-import net.minecraftforge.liquids.LiquidContainerRegistry;
-import net.minecraftforge.liquids.LiquidStack;
-import net.minecraftforge.liquids.LiquidTank;
-import buildcraft.BuildCraftCore;
-import buildcraft.BuildCraftFactory;
-import buildcraft.api.core.Position;
-import buildcraft.api.gates.IAction;
-import buildcraft.api.power.IPowerProvider;
-import buildcraft.api.power.IPowerReceptor;
-import buildcraft.api.power.PowerFramework;
-import buildcraft.core.BlockIndex;
-import buildcraft.core.EntityBlock;
-import buildcraft.core.IMachine;
-import buildcraft.core.network.PacketPayload;
-import buildcraft.core.network.PacketUpdate;
-import buildcraft.core.proxy.CoreProxy;
-import buildcraft.core.utils.Utils;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidContainerRegistry;
+import net.minecraftforge.fluids.FluidRegistry;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidTankInfo;
+import net.minecraftforge.fluids.IFluidHandler;
 
-public class TilePump extends TileMachine implements IMachine, IPowerReceptor, ITankContainer {
+public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor, IFluidHandler {
 
-	public static int MAX_LIQUID = LiquidContainerRegistry.BUCKET_VOLUME;
+	public static int REBUID_DELAY = 512;
+	public static int MAX_LIQUID = FluidContainerRegistry.BUCKET_VOLUME * 16;
 	EntityBlock tube;
-	private TreeMap<Integer, LinkedList<BlockIndex>> blocksToPump = new TreeMap<Integer, LinkedList<BlockIndex>>();
-	LiquidTank tank;
+	private TreeMap<Integer, Deque<BlockIndex>> pumpLayerQueues = new TreeMap<Integer, Deque<BlockIndex>>();
+	SingleUseTank tank;
 	double tubeY = Double.NaN;
 	int aimY = 0;
-	private IPowerProvider powerProvider;
+	private PowerHandler powerHandler;
+	private TileBuffer[] tileBuffer = null;
+	private SafeTimeTracker timer = new SafeTimeTracker();
+	private int tick = Utils.RANDOM.nextInt();
 
 	public TilePump() {
-		powerProvider = PowerFramework.currentFramework.createPowerProvider();
+		powerHandler = new PowerHandler(this, Type.MACHINE);
 		initPowerProvider();
-		tank = new LiquidTank(MAX_LIQUID);
+		tank = new SingleUseTank("tank", MAX_LIQUID);
 	}
 
 	private void initPowerProvider() {
-		powerProvider.configure(20, 1, 8, 10, 100);
-		powerProvider.configurePowerPerdition(1, 100);
+		powerHandler.configure(1, 15, 10, 100);
+		powerHandler.configurePowerPerdition(1, 100);
 	}
 
 	// TODO, manage this by different levels (pump what's above first...)
@@ -66,79 +78,83 @@ public class TilePump extends TileMachine implements IMachine, IPowerReceptor, I
 		if (tube == null)
 			return;
 
-		if (!CoreProxy.proxy.isRenderWorld(worldObj)) {
-			if (tube.posY - aimY > 0.01) {
-				tubeY = tube.posY - 0.01;
 
-				setTubePosition();
+		if (CoreProxy.proxy.isRenderWorld(worldObj))
+			return;		
+		
+		pushToConsumers();
 
-				if (CoreProxy.proxy.isSimulating(worldObj)) {
-					sendNetworkUpdate();
-				}
+		if (tube.posY - aimY > 0.01) {
+			tubeY = tube.posY - 0.01;
+			setTubePosition();
+			sendNetworkUpdate();
+			return;
+		}
 
-				return;
-			}
+		tick++;
+		if (tick % 16 != 0)
+			return;
 
-			if (tank.getLiquid() == null || tank.getLiquid().amount <= 0) {
-				BlockIndex index = getNextIndexToPump(false);
+		BlockIndex index = getNextIndexToPump(false);
 
-				if (isPumpableLiquid(index)) {
-					LiquidStack liquidToPump = Utils.liquidFromBlockId(worldObj.getBlockId(index.i, index.j, index.k));
+		FluidStack fluidToPump = index != null ? BlockUtil.drainBlock(worldObj, index.x, index.y, index.z, false) : null;
+		if (fluidToPump != null) {
+			if (isFluidAllowed(fluidToPump.getFluid()) && tank.fill(fluidToPump, false) == fluidToPump.amount) {
 
-					if (tank.fill(liquidToPump, false) == liquidToPump.amount) {
+				if (powerHandler.useEnergy(10, 10, true) == 10) {
+					index = getNextIndexToPump(true);
 
-						if (powerProvider.useEnergy(10, 10, true) == 10) {
-							index = getNextIndexToPump(true);
-
-							if (liquidToPump.itemID != Block.waterStill.blockID || BuildCraftCore.consumeWaterSources) {
-								worldObj.setBlock(index.i, index.j, index.k, 0);
-							}
-
-							tank.fill(liquidToPump, true);
-
-							if (CoreProxy.proxy.isSimulating(worldObj)) {
-								sendNetworkUpdate();
-							}
-						}
+					if (fluidToPump.getFluid() != FluidRegistry.WATER || BuildCraftCore.consumeWaterSources) {
+						BlockUtil.drainBlock(worldObj, index.x, index.y, index.z, true);
 					}
-				} else {
-					if (worldObj.getWorldTime() % 100 == 0) {
-						// TODO: improve that decision
 
-						initializePumpFromPosition(xCoord, aimY, zCoord);
+					tank.fill(fluidToPump, true);
+				}
+			}
+		} else {
+			if (tick % 128 == 0) {
+				// TODO: improve that decision
 
-						if (getNextIndexToPump(false) == null) {
-							for (int y = yCoord - 1; y > 0; --y) {
-								if (isLiquid(new BlockIndex(xCoord, y, zCoord))) {
-									aimY = y;
-									return;
-								} else if (!worldObj.isAirBlock(xCoord, y, zCoord)) {
-									return;
-								}
-							}
+				rebuildQueue();
+
+				if (getNextIndexToPump(false) == null) {
+					for (int y = yCoord - 1; y > 0; --y) {
+						if (isPumpableFluid(xCoord, y, zCoord)) {
+							aimY = y;
+							return;
+						} else if (!worldObj.isAirBlock(xCoord, y, zCoord)) {
+							return;
 						}
 					}
 				}
 			}
 		}
+	}
 
-		LiquidStack liquid = tank.getLiquid();
-		if (liquid != null && liquid.amount >= 0) {
-			for (int i = 0; i < 6; ++i) {
-				Position p = new Position(xCoord, yCoord, zCoord, ForgeDirection.values()[i]);
-				p.moveForwards(1);
+	private void pushToConsumers() {
+		FluidStack fluidStack = tank.getFluid();
+		if (fluidStack != null && fluidStack.amount > 0) {
+			for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
+				TileEntity tile = getTile(side);
 
-				TileEntity tile = worldObj.getBlockTileEntity((int) p.x, (int) p.y, (int) p.z);
-
-				if (tile instanceof ITankContainer) {
-					int moved = ((ITankContainer) tile).fill(p.orientation.getOpposite(), liquid, true);
-					tank.drain(moved, true);
-					if (liquid.amount <= 0) {
-						break;
+				if (tile instanceof IFluidHandler) {
+					int moved = ((IFluidHandler) tile).fill(side.getOpposite(), fluidStack, true);
+					if (moved > 0) {
+						tank.drain(moved, true);
+						fluidStack = tank.getFluid();
+						if (fluidStack == null || fluidStack.amount <= 0) {
+							break;
+						}
 					}
 				}
 			}
 		}
+	}
+
+	private TileEntity getTile(ForgeDirection side) {
+		if (tileBuffer == null)
+			tileBuffer = TileBuffer.makeBuffer(worldObj, xCoord, yCoord, zCoord, false);
+		return tileBuffer[side.ordinal()].getTile();
 	}
 
 	@Override
@@ -167,202 +183,183 @@ public class TilePump extends TileMachine implements IMachine, IPowerReceptor, I
 	}
 
 	private BlockIndex getNextIndexToPump(boolean remove) {
-		LinkedList<BlockIndex> topLayer = null;
-
-		int topLayerHeight = 0;
-
-		for (Integer layer : blocksToPump.keySet()) {
-			if (layer > topLayerHeight && blocksToPump.get(layer).size() != 0) {
-				topLayerHeight = layer;
-				topLayer = blocksToPump.get(layer);
+		if (pumpLayerQueues.isEmpty()) {
+			if (timer.markTimeIfDelay(worldObj, REBUID_DELAY)) {
+				rebuildQueue();
 			}
+			return null;
 		}
+
+		Deque<BlockIndex> topLayer = pumpLayerQueues.lastEntry().getValue();
 
 		if (topLayer != null) {
+			if (topLayer.isEmpty())
+				pumpLayerQueues.pollLastEntry();
 			if (remove) {
-				BlockIndex index = topLayer.pop();
-
-				if (topLayer.size() == 0) {
-					blocksToPump.remove(topLayerHeight);
-				}
-
+				BlockIndex index = topLayer.pollLast();
 				return index;
-			} else
-				return topLayer.getLast();
-		} else
-			return null;
-	}
-
-	private void initializePumpFromPosition(int x, int y, int z) {
-		int liquidId = 0;
-
-		Set<BlockIndex> markedBlocks = new HashSet<BlockIndex>();
-		TreeSet<BlockIndex> lastFound = new TreeSet<BlockIndex>();
-
-		if (!blocksToPump.containsKey(y)) {
-			blocksToPump.put(y, new LinkedList<BlockIndex>());
+			}
+			return topLayer.peekLast();
 		}
 
-		LinkedList<BlockIndex> pumpList = blocksToPump.get(y);
+		return null;
+	}
 
-		liquidId = worldObj.getBlockId(x, y, z);
+	private Deque<BlockIndex> getLayerQueue(int layer) {
+		Deque<BlockIndex> pumpQueue = pumpLayerQueues.get(layer);
+		if (pumpQueue == null) {
+			pumpQueue = new LinkedList<BlockIndex>();
+			pumpLayerQueues.put(layer, pumpQueue);
+		}
+		return pumpQueue;
+	}
 
-		if (!isLiquid(new BlockIndex(x, y, z)))
+	public void rebuildQueue() {
+		pumpLayerQueues.clear();
+		int x = xCoord;
+		int y = aimY;
+		int z = zCoord;
+		Fluid pumpingFluid = BlockUtil.getFluid(worldObj.getBlockId(x, y, z));
+		if (pumpingFluid == null)
 			return;
 
-		addToPumpIfLiquid(new BlockIndex(x, y, z), markedBlocks, lastFound, pumpList, liquidId);
+		if (pumpingFluid != tank.getAcceptedFluid() && tank.getAcceptedFluid() != null)
+			return;
 
-		long timeoutTime = System.currentTimeMillis() + 1000;
+		Set<BlockIndex> visitedBlocks = new HashSet<BlockIndex>();
+		Deque<BlockIndex> fluidsFound = new LinkedList<BlockIndex>();
 
-		while (lastFound.size() > 0) {
-			TreeSet<BlockIndex> visitIteration = new TreeSet<BlockIndex>(lastFound);
-			lastFound.clear();
+		queueForPumping(x, y, z, visitedBlocks, fluidsFound, pumpingFluid);
 
-			for (BlockIndex index : visitIteration) {
-				addToPumpIfLiquid(new BlockIndex(index.i + 1, index.j, index.k), markedBlocks, lastFound, pumpList, liquidId);
-				addToPumpIfLiquid(new BlockIndex(index.i - 1, index.j, index.k), markedBlocks, lastFound, pumpList, liquidId);
-				addToPumpIfLiquid(new BlockIndex(index.i, index.j, index.k + 1), markedBlocks, lastFound, pumpList, liquidId);
-				addToPumpIfLiquid(new BlockIndex(index.i, index.j, index.k - 1), markedBlocks, lastFound, pumpList, liquidId);
+//		long timeoutTime = System.nanoTime() + 10000;
 
-				if (!blocksToPump.containsKey(index.j + 1)) {
-					blocksToPump.put(index.j + 1, new LinkedList<BlockIndex>());
-				}
+		while (!fluidsFound.isEmpty()) {
+			Deque<BlockIndex> fluidsToExpand = fluidsFound;
+			fluidsFound = new LinkedList<BlockIndex>();
 
-				pumpList = blocksToPump.get(index.j + 1);
+			for (BlockIndex index : fluidsToExpand) {
+				queueForPumping(index.x, index.y + 1, index.z, visitedBlocks, fluidsFound, pumpingFluid);
+				queueForPumping(index.x + 1, index.y, index.z, visitedBlocks, fluidsFound, pumpingFluid);
+				queueForPumping(index.x - 1, index.y, index.z, visitedBlocks, fluidsFound, pumpingFluid);
+				queueForPumping(index.x, index.y, index.z + 1, visitedBlocks, fluidsFound, pumpingFluid);
+				queueForPumping(index.x, index.y, index.z - 1, visitedBlocks, fluidsFound, pumpingFluid);
 
-				addToPumpIfLiquid(new BlockIndex(index.i, index.j + 1, index.k), markedBlocks, lastFound, pumpList, liquidId);
-
-				if (System.currentTimeMillis() > timeoutTime)
-					return;
+//				if (System.nanoTime() > timeoutTime)
+//					return;
 			}
 		}
 	}
 
-	public void addToPumpIfLiquid(BlockIndex index, Set<BlockIndex> markedBlocks, TreeSet<BlockIndex> lastFound, LinkedList<BlockIndex> pumpList,
-			int liquidId) {
-
-		if (liquidId != worldObj.getBlockId(index.i, index.j, index.k))
-			return;
-
-		if (markedBlocks.add(index)) {
-			if ((index.i - xCoord) * (index.i - xCoord) + (index.k - zCoord) * (index.k - zCoord) > 64 * 64)
+	public void queueForPumping(int x, int y, int z, Set<BlockIndex> visitedBlocks, Deque<BlockIndex> fluidsFound, Fluid pumpingFluid) {
+		BlockIndex index = new BlockIndex(x, y, z);
+		if (visitedBlocks.add(index)) {
+			if ((x - xCoord) * (x - xCoord) + (z - zCoord) * (z - zCoord) > 64 * 64)
 				return;
 
-			if (isPumpableLiquid(index)) {
-				pumpList.push(index);
+			int blockId = worldObj.getBlockId(x, y, z);
+			if (BlockUtil.getFluid(blockId) == pumpingFluid) {
+				fluidsFound.add(index);
 			}
-
-			if (isLiquid(index)) {
-				lastFound.add(index);
+			if (canDrainBlock(blockId, x, y, z, pumpingFluid)) {
+				getLayerQueue(y).add(index);
 			}
 		}
 	}
 
-	private boolean isPumpableLiquid(BlockIndex index) {
-		return isLiquid(index) && worldObj.getBlockMetadata(index.i, index.j, index.k) == 0;
+	private boolean isPumpableFluid(int x, int y, int z) {
+		Fluid fluid = BlockUtil.getFluid(worldObj.getBlockId(x, y, z));
+		if (fluid == null)
+			return false;
+		if (!isFluidAllowed(fluid))
+			return false;
+		return true;
 	}
 
-	private boolean isLiquid(BlockIndex index) {
-		if (index == null)
+	private boolean canDrainBlock(int blockId, int x, int y, int z, Fluid fluid) {
+		if (!isFluidAllowed(fluid))
 			return false;
 
-		LiquidStack liquid = Utils.liquidFromBlockId(worldObj.getBlockId(index.i, index.j, index.k));
-		if (liquid == null)
+		FluidStack fluidStack = BlockUtil.drainBlock(blockId, worldObj, x, y, z, false);
+		if (fluidStack == null || fluidStack.amount <= 0)
 			return false;
 
-		return BuildCraftFactory.pumpDimensionList.isLiquidAllowed(liquid, worldObj.provider.dimensionId);
+		return fluidStack.getFluid() == fluid;
+	}
+
+	private boolean isFluidAllowed(Fluid fluid) {
+		return BuildCraftFactory.pumpDimensionList.isFluidAllowed(fluid, worldObj.provider.dimensionId);
 	}
 
 	@Override
-	public void readFromNBT(NBTTagCompound nbttagcompound) {
-		super.readFromNBT(nbttagcompound);
+	public void readFromNBT(NBTTagCompound data) {
+		super.readFromNBT(data);
 
-		if (nbttagcompound.hasKey("internalLiquid")) {
-			tank.setLiquid(new LiquidStack(nbttagcompound.getInteger("liquidId"), nbttagcompound.getInteger("internalLiquid")));
-		} else if (nbttagcompound.hasKey("tank")) {
-			tank.setLiquid(LiquidStack.loadLiquidStackFromNBT(nbttagcompound.getCompoundTag("tank")));
-		}
-		aimY = nbttagcompound.getInteger("aimY");
+		powerHandler.readFromNBT(data);
+		tank.readFromNBT(data);
 
-		tubeY = nbttagcompound.getFloat("tubeY");
+		aimY = data.getInteger("aimY");
+		tubeY = data.getFloat("tubeY");
 
-		PowerFramework.currentFramework.loadPowerProvider(this, nbttagcompound);
 		initPowerProvider();
 	}
 
 	@Override
-	public void writeToNBT(NBTTagCompound nbttagcompound) {
-		super.writeToNBT(nbttagcompound);
+	public void writeToNBT(NBTTagCompound data) {
+		super.writeToNBT(data);
 
-		PowerFramework.currentFramework.savePowerProvider(this, nbttagcompound);
+		powerHandler.writeToNBT(data);
+		tank.writeToNBT(data);
 
-		if (tank.getLiquid() != null) {
-			nbttagcompound.setTag("tank", tank.getLiquid().writeToNBT(new NBTTagCompound()));
-		}
-
-		nbttagcompound.setInteger("aimY", aimY);
+		data.setInteger("aimY", aimY);
 
 		if (tube != null) {
-			nbttagcompound.setFloat("tubeY", (float) tube.posY);
+			data.setFloat("tubeY", (float) tube.posY);
 		} else {
-			nbttagcompound.setFloat("tubeY", yCoord);
+			data.setFloat("tubeY", yCoord);
 		}
 	}
 
 	@Override
 	public boolean isActive() {
-		return isPumpableLiquid(getNextIndexToPump(false));
+		BlockIndex next = getNextIndexToPump(false);
+		return isPumpableFluid(next.x, next.y, next.z);
 	}
 
 	@Override
-	public void setPowerProvider(IPowerProvider provider) {
-		powerProvider = provider;
+	public PowerReceiver getPowerReceiver(ForgeDirection side) {
+		return powerHandler.getPowerReceiver();
 	}
 
 	@Override
-	public IPowerProvider getPowerProvider() {
-		return powerProvider;
-	}
-
-	@Override
-	public void doWork() {
+	public void doWork(PowerHandler workProvider) {
 	}
 
 	@Override
 	public PacketPayload getPacketPayload() {
-		PacketPayload payload = new PacketPayload(4, 1, 0);
-		if (tank.getLiquid() != null) {
-			payload.intPayload[0] = tank.getLiquid().itemID;
-			payload.intPayload[1] = tank.getLiquid().itemMeta;
-			payload.intPayload[2] = tank.getLiquid().amount;
-		} else {
-			payload.intPayload[0] = 0;
-			payload.intPayload[1] = 0;
-			payload.intPayload[2] = 0;
-		}
-		payload.intPayload[3] = aimY;
-		payload.floatPayload[0] = (float) tubeY;
+		PacketPayloadStream payload = new PacketPayloadStream(new PacketPayloadStream.StreamWriter() {
+			@Override
+			public void writeData(DataOutputStream data) throws IOException {
+				data.writeInt(aimY);
+				data.writeFloat((float) tubeY);
+			}
+		});
 
 		return payload;
 	}
 
 	@Override
-	public void handleDescriptionPacket(PacketUpdate packet) {
-		handleUpdatePacket(packet);
+	public void handleUpdatePacket(PacketUpdate packet) throws IOException {
+		PacketPayloadStream payload = (PacketPayloadStream) packet.payload;
+		DataInputStream data = payload.stream;
+		aimY = data.readInt();
+		tubeY = data.readFloat();
+
+		setTubePosition();
 	}
 
 	@Override
-	public void handleUpdatePacket(PacketUpdate packet) {
-		if (packet.payload.intPayload[0] > 0) {
-			tank.setLiquid(new LiquidStack(packet.payload.intPayload[0], packet.payload.intPayload[2], packet.payload.intPayload[1]));
-		} else {
-			tank.setLiquid(null);
-		}
-
-		aimY = packet.payload.intPayload[3];
-		tubeY = packet.payload.floatPayload[0];
-
-		setTubePosition();
+	public void handleDescriptionPacket(PacketUpdate packet) throws IOException {
+		handleUpdatePacket(packet);
 	}
 
 	private void setTubePosition() {
@@ -382,18 +379,25 @@ public class TilePump extends TileMachine implements IMachine, IPowerReceptor, I
 	}
 
 	@Override
+	public void validate() {
+		tileBuffer = null;
+		super.validate();
+	}
+
+	@Override
 	public void destroy() {
+		tileBuffer = null;
+		pumpLayerQueues.clear();
 		if (tube != null) {
 			CoreProxy.proxy.removeEntity(tube);
 			tube = null;
 			tubeY = Double.NaN;
 			aimY = 0;
-			blocksToPump.clear();
 		}
 	}
 
 	@Override
-	public boolean manageLiquids() {
+	public boolean manageFluids() {
 		return true;
 	}
 
@@ -407,39 +411,37 @@ public class TilePump extends TileMachine implements IMachine, IPowerReceptor, I
 		return false;
 	}
 
-	// ITankContainer implementation.
+	// IFluidHandler implementation.
 	@Override
-	public int fill(ForgeDirection from, LiquidStack resource, boolean doFill) {
+	public int fill(ForgeDirection from, FluidStack resource, boolean doFill) {
 		// not acceptable
 		return 0;
 	}
 
 	@Override
-	public int fill(int tankIndex, LiquidStack resource, boolean doFill) {
-		// not acceptable
-		return 0;
+	public FluidStack drain(ForgeDirection from, int maxDrain, boolean doDrain) {
+		return tank.drain(maxDrain, doDrain);
 	}
 
 	@Override
-	public LiquidStack drain(ForgeDirection from, int maxDrain, boolean doDrain) {
-		return drain(0, maxDrain, doDrain);
+	public FluidStack drain(ForgeDirection from, FluidStack resource, boolean doDrain) {
+		if (resource != null && !resource.isFluidEqual(tank.getFluid()))
+			return null;
+		return drain(from, resource.amount, doDrain);
 	}
 
 	@Override
-	public LiquidStack drain(int tankIndex, int maxDrain, boolean doDrain) {
-		if (tankIndex == 0)
-			return tank.drain(maxDrain, doDrain);
-
-		return null;
+	public boolean canFill(ForgeDirection from, Fluid fluid) {
+		return false;
 	}
 
 	@Override
-	public ILiquidTank[] getTanks(ForgeDirection direction) {
-		return new ILiquidTank[]{tank};
+	public boolean canDrain(ForgeDirection from, Fluid fluid) {
+		return true;
 	}
 
 	@Override
-	public ILiquidTank getTank(ForgeDirection direction, LiquidStack type) {
-		return tank;
+	public FluidTankInfo[] getTankInfo(ForgeDirection from) {
+		return new FluidTankInfo[]{tank.getInfo()};
 	}
 }

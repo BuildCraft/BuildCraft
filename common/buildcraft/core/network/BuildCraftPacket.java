@@ -1,13 +1,12 @@
 package buildcraft.core.network;
 
+import buildcraft.core.DefaultProps;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.Packet250CustomPayload;
-import buildcraft.core.DefaultProps;
 
 public abstract class BuildCraftPacket {
 

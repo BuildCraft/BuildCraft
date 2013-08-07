@@ -1,12 +1,5 @@
 package buildcraft.builders;
 
-import java.io.IOException;
-import java.util.ArrayList;
-
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import buildcraft.BuildCraftBuilders;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.blueprints.BptBase;
@@ -14,6 +7,12 @@ import buildcraft.core.blueprints.BptPlayerIndex;
 import buildcraft.core.network.TileNetworkData;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
+import java.io.IOException;
+import java.util.ArrayList;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 
 public class TileBlueprintLibrary extends TileBuildCraft implements IInventory {
 	public static final int COMMAND_NEXT = 1, COMMAND_PREV = 2, COMMAND_LOCK_UPDATE = 3, COMMAND_DELETE = 4;
@@ -227,9 +226,9 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory {
 	public int getInventoryStackLimit() {
 		return 64;
 	}
-	
+
 	@Override
-	public boolean isStackValidForSlot(int i, ItemStack itemstack) {
+	public boolean isItemValidForSlot(int i, ItemStack itemstack) {
 		// TODO Auto-generated method stub
 		return false;
 	}

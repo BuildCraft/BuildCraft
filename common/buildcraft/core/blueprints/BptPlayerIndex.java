@@ -1,5 +1,6 @@
 package buildcraft.core.blueprints;
 
+import buildcraft.core.proxy.CoreProxy;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -10,8 +11,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.TreeMap;
 
-import buildcraft.core.proxy.CoreProxy;
-
 public class BptPlayerIndex {
 
 	private TreeMap<String, File> bluePrintsFile = new TreeMap<String, File>();
@@ -20,7 +19,7 @@ public class BptPlayerIndex {
 	private File file;
 
 	public BptPlayerIndex(String filename, BptRootIndex rootIndex) throws IOException {
-		baseDir = new File(CoreProxy.proxy.getBuildCraftBase(), "blueprints/");
+		baseDir = new File("./", "blueprints/");
 		file = new File(baseDir, filename);
 		baseDir.mkdir();
 

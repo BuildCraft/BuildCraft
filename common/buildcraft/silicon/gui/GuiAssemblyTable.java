@@ -9,15 +9,6 @@
 
 package buildcraft.silicon.gui;
 
-import java.util.Iterator;
-import java.util.LinkedList;
-
-import net.minecraft.client.Minecraft;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.item.ItemStack;
-
-import org.lwjgl.opengl.GL11;
-
 import buildcraft.BuildCraftCore;
 import buildcraft.api.recipes.AssemblyRecipe;
 import buildcraft.core.CoreIconProvider;
@@ -30,9 +21,16 @@ import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.StringUtils;
 import buildcraft.silicon.TileAssemblyTable;
 import buildcraft.silicon.TileAssemblyTable.SelectionMessage;
+import java.util.Iterator;
+import java.util.LinkedList;
+import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
+import org.lwjgl.opengl.GL11;
 
 public class GuiAssemblyTable extends GuiAdvancedInterface {
-
+    private static final ResourceLocation TEXTURE = new ResourceLocation("buildcraft",DefaultProps.TEXTURE_PATH_GUI + "/assembly_table.png");
 	TileAssemblyTable assemblyTable;
 
 	class AssemblyLedger extends Ledger {
@@ -52,7 +50,7 @@ public class GuiAssemblyTable extends GuiAdvancedInterface {
 			drawBackground(x, y);
 
 			// Draw icon
-			Minecraft.getMinecraft().renderEngine.bindTexture("/gui/items.png");
+            mc.renderEngine.func_110577_a(TextureMap.field_110576_c);
 			drawIcon(BuildCraftCore.iconProvider.getIcon(CoreIconProvider.ENERGY), x + 3, y + 4);
 
 			if (!isFullyOpened())
@@ -143,7 +141,7 @@ public class GuiAssemblyTable extends GuiAdvancedInterface {
 	@Override
 	protected void drawGuiContainerBackgroundLayer(float f, int x, int y) {
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-		mc.renderEngine.bindTexture(DefaultProps.TEXTURE_PATH_GUI + "/assembly_table.png");
+		mc.renderEngine.func_110577_a(TEXTURE);
 		int cornerX = (width - xSize) / 2;
 		int cornerY = (height - ySize) / 2;
 		drawTexturedModalRect(cornerX, cornerY, 0, 0, xSize, ySize);

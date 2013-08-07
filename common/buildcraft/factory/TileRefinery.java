@@ -7,6 +7,26 @@
  */
 package buildcraft.factory;
 
+import buildcraft.BuildCraftCore;
+import buildcraft.api.core.SafeTimeTracker;
+import buildcraft.api.gates.IAction;
+import buildcraft.api.power.IPowerReceptor;
+import buildcraft.api.power.PowerHandler;
+import buildcraft.api.power.PowerHandler.PowerReceiver;
+import buildcraft.api.power.PowerHandler.Type;
+import buildcraft.api.recipes.RefineryRecipes;
+import buildcraft.api.recipes.RefineryRecipes.Recipe;
+import buildcraft.core.IMachine;
+import buildcraft.core.TileBuildCraft;
+import buildcraft.core.liquids.Tank;
+import buildcraft.core.liquids.TankManager;
+import buildcraft.core.network.PacketPayload;
+import buildcraft.core.network.PacketPayloadStream;
+import buildcraft.core.network.PacketUpdate;
+import buildcraft.core.proxy.CoreProxy;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.ICrafting;
@@ -14,51 +34,36 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.ForgeDirection;
-import net.minecraftforge.liquids.ILiquidTank;
-import net.minecraftforge.liquids.ITankContainer;
-import net.minecraftforge.liquids.LiquidContainerRegistry;
-import net.minecraftforge.liquids.LiquidStack;
-import net.minecraftforge.liquids.LiquidTank;
-import buildcraft.BuildCraftCore;
-import buildcraft.api.core.SafeTimeTracker;
-import buildcraft.api.gates.IAction;
-import buildcraft.api.power.IPowerProvider;
-import buildcraft.api.power.IPowerReceptor;
-import buildcraft.api.power.PowerFramework;
-import buildcraft.api.recipes.RefineryRecipe;
-import buildcraft.core.IMachine;
-import buildcraft.core.network.PacketPayload;
-import buildcraft.core.network.PacketUpdate;
-import buildcraft.core.proxy.CoreProxy;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidContainerRegistry;
+import net.minecraftforge.fluids.FluidRegistry;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidTankInfo;
+import net.minecraftforge.fluids.IFluidHandler;
 
-public class TileRefinery extends TileMachine implements ITankContainer, IPowerReceptor, IInventory, IMachine {
+public class TileRefinery extends TileBuildCraft implements IFluidHandler, IPowerReceptor, IInventory, IMachine {
 
-	private int[] filters = new int[2];
-	private int[] filtersMeta = new int[2];
-	public static int LIQUID_PER_SLOT = LiquidContainerRegistry.BUCKET_VOLUME * 4;
-	public LiquidTank ingredient1 = new LiquidTank(LIQUID_PER_SLOT);
-	public LiquidTank ingredient2 = new LiquidTank(LIQUID_PER_SLOT);
-	public LiquidTank result = new LiquidTank(LIQUID_PER_SLOT);
+	private Fluid[] filters = new Fluid[2];
+	public static int LIQUID_PER_SLOT = FluidContainerRegistry.BUCKET_VOLUME * 4;
+	public Tank tank1 = new Tank("tank1", LIQUID_PER_SLOT);
+	public Tank tank2 = new Tank("tank2", LIQUID_PER_SLOT);
+	public Tank result = new Tank("result", LIQUID_PER_SLOT);
+	public TankManager tankManager = new TankManager(tank1, tank2, result);
 	public float animationSpeed = 1;
 	private int animationStage = 0;
 	SafeTimeTracker time = new SafeTimeTracker();
 	SafeTimeTracker updateNetworkTime = new SafeTimeTracker();
-	IPowerProvider powerProvider;
+	private PowerHandler powerHandler;
 	private boolean isActive;
 
 	public TileRefinery() {
-		powerProvider = PowerFramework.currentFramework.createPowerProvider();
+		powerHandler = new PowerHandler(this, Type.MACHINE);
 		initPowerProvider();
-
-		filters[0] = 0;
-		filters[1] = 0;
-		filtersMeta[0] = 0;
-		filtersMeta[1] = 0;
 	}
 
 	private void initPowerProvider() {
-		powerProvider.configure(20, 25, 100, 25, 1000);
-		powerProvider.configurePowerPerdition(1, 1);
+		powerHandler.configure(25, 100, 25, 1000);
+		powerHandler.configurePowerPerdition(1, 1);
 	}
 
 	@Override
@@ -91,7 +96,7 @@ public class TileRefinery extends TileMachine implements ITankContainer, IPowerR
 	}
 
 	@Override
-	public boolean isStackValidForSlot(int i, ItemStack itemstack) {
+	public boolean isItemValidForSlot(int i, ItemStack itemstack) {
 		return false;
 	}
 
@@ -106,17 +111,12 @@ public class TileRefinery extends TileMachine implements ITankContainer, IPowerR
 	}
 
 	@Override
-	public void setPowerProvider(IPowerProvider provider) {
-		powerProvider = provider;
+	public PowerReceiver getPowerReceiver(ForgeDirection side) {
+		return powerHandler.getPowerReceiver();
 	}
 
 	@Override
-	public IPowerProvider getPowerProvider() {
-		return powerProvider;
-	}
-
-	@Override
-	public void doWork() {
+	public void doWork(PowerHandler workProvider) {
 	}
 
 	@Override
@@ -131,21 +131,14 @@ public class TileRefinery extends TileMachine implements ITankContainer, IPowerR
 
 		isActive = false;
 
-		RefineryRecipe currentRecipe = null;
-
-		currentRecipe = RefineryRecipe.findRefineryRecipe(ingredient1.getLiquid(), ingredient2.getLiquid());
+		Recipe currentRecipe = RefineryRecipes.findRefineryRecipe(tank1.getFluid(), tank2.getFluid());
 
 		if (currentRecipe == null) {
 			decreaseAnimation();
 			return;
 		}
 
-		if (result.getLiquid() != null && result.getLiquid().amount != 0 && !result.getLiquid().isLiquidEqual(currentRecipe.result)) {
-			decreaseAnimation();
-			return;
-		}
-
-		if (result.fill(currentRecipe.result, false) != currentRecipe.result.amount) {
+		if (result.fill(currentRecipe.result.copy(), false) != currentRecipe.result.amount) {
 			decreaseAnimation();
 			return;
 		}
@@ -157,7 +150,7 @@ public class TileRefinery extends TileMachine implements ITankContainer, IPowerR
 
 		isActive = true;
 
-		if (powerProvider.getEnergyStored() >= currentRecipe.energy) {
+		if (powerHandler.getEnergyStored() >= currentRecipe.energy) {
 			increaseAnimation();
 		} else {
 			decreaseAnimation();
@@ -166,7 +159,7 @@ public class TileRefinery extends TileMachine implements ITankContainer, IPowerR
 		if (!time.markTimeIfDelay(worldObj, currentRecipe.delay))
 			return;
 
-		float energyUsed = powerProvider.useEnergy(currentRecipe.energy, currentRecipe.energy, true);
+		float energyUsed = powerHandler.useEnergy(currentRecipe.energy, currentRecipe.energy, true);
 
 		if (energyUsed != 0) {
 			if (consumeInput(currentRecipe.ingredient1) && consumeInput(currentRecipe.ingredient2)) {
@@ -175,23 +168,23 @@ public class TileRefinery extends TileMachine implements ITankContainer, IPowerR
 		}
 	}
 
-	private boolean containsInput(LiquidStack liquid) {
-		if (liquid == null)
+	private boolean containsInput(FluidStack ingredient) {
+		if (ingredient == null)
 			return true;
 
-		return (ingredient1.getLiquid() != null && ingredient1.getLiquid().containsLiquid(liquid))
-				|| (ingredient2.getLiquid() != null && ingredient2.getLiquid().containsLiquid(liquid));
+		return (tank1.getFluid() != null && tank1.getFluid().containsFluid(ingredient))
+				|| (tank2.getFluid() != null && tank2.getFluid().containsFluid(ingredient));
 	}
 
-	private boolean consumeInput(LiquidStack liquid) {
+	private boolean consumeInput(FluidStack liquid) {
 		if (liquid == null)
 			return true;
 
-		if (ingredient1.getLiquid() != null && ingredient1.getLiquid().containsLiquid(liquid)) {
-			ingredient1.drain(liquid.amount, true);
+		if (tank1.getFluid() != null && tank1.getFluid().containsFluid(liquid)) {
+			tank1.drain(liquid.amount, true);
 			return true;
-		} else if (ingredient2.getLiquid() != null && ingredient2.getLiquid().containsLiquid(liquid)) {
-			ingredient2.drain(liquid.amount, true);
+		} else if (tank2.getFluid() != null && tank2.getFluid().containsFluid(liquid)) {
+			tank2.drain(liquid.amount, true);
 			return true;
 		}
 
@@ -204,7 +197,7 @@ public class TileRefinery extends TileMachine implements ITankContainer, IPowerR
 	}
 
 	@Override
-	public boolean manageLiquids() {
+	public boolean manageFluids() {
 		return true;
 	}
 
@@ -213,81 +206,36 @@ public class TileRefinery extends TileMachine implements ITankContainer, IPowerR
 		return true;
 	}
 
-	// for compatibility
-	private LiquidStack readSlotNBT(NBTTagCompound nbttagcompound) {
-		int liquidId = nbttagcompound.getInteger("liquidId");
-		int quantity = 0;
-		int liquidMeta = 0;
-
-		if (liquidId != 0) {
-			quantity = nbttagcompound.getInteger("quantity");
-			liquidMeta = nbttagcompound.getInteger("liquidMeta");
-		} else {
-			quantity = 0;
-		}
-
-		if (quantity > 0)
-			return new LiquidStack(liquidId, quantity, liquidMeta);
-
-		return null;
-	}
-
 	@Override
-	public void readFromNBT(NBTTagCompound nbttagcompound) {
-		super.readFromNBT(nbttagcompound);
+	public void readFromNBT(NBTTagCompound data) {
+		super.readFromNBT(data);
 
-		if (nbttagcompound.hasKey("slot1")) {
-			ingredient1.setLiquid(readSlotNBT(nbttagcompound.getCompoundTag("slot1")));
-			ingredient2.setLiquid(readSlotNBT(nbttagcompound.getCompoundTag("slot2")));
-			result.setLiquid(readSlotNBT(nbttagcompound.getCompoundTag("result")));
-		} else {
-			if (nbttagcompound.hasKey("ingredient1")) {
-				ingredient1.setLiquid(LiquidStack.loadLiquidStackFromNBT(nbttagcompound.getCompoundTag("ingredient1")));
-			}
-			if (nbttagcompound.hasKey("ingredient2")) {
-				ingredient2.setLiquid(LiquidStack.loadLiquidStackFromNBT(nbttagcompound.getCompoundTag("ingredient2")));
-			}
-			if (nbttagcompound.hasKey("result")) {
-				result.setLiquid(LiquidStack.loadLiquidStackFromNBT(nbttagcompound.getCompoundTag("result")));
-			}
-		}
+		tankManager.readFromNBT(data);
 
-		animationStage = nbttagcompound.getInteger("animationStage");
-		animationSpeed = nbttagcompound.getFloat("animationSpeed");
+		animationStage = data.getInteger("animationStage");
+		animationSpeed = data.getFloat("animationSpeed");
 
-		PowerFramework.currentFramework.loadPowerProvider(this, nbttagcompound);
+		powerHandler.readFromNBT(data);
 		initPowerProvider();
 
-		filters[0] = nbttagcompound.getInteger("filters_0");
-		filters[1] = nbttagcompound.getInteger("filters_1");
-		filtersMeta[0] = nbttagcompound.getInteger("filtersMeta_0");
-		filtersMeta[1] = nbttagcompound.getInteger("filtersMeta_1");
+		filters[0] = FluidRegistry.getFluid(data.getString("filter0"));
+		filters[1] = FluidRegistry.getFluid(data.getString("filter1"));
 	}
 
 	@Override
-	public void writeToNBT(NBTTagCompound nbttagcompound) {
-		super.writeToNBT(nbttagcompound);
+	public void writeToNBT(NBTTagCompound data) {
+		super.writeToNBT(data);
 
-		if (ingredient1.getLiquid() != null) {
-			nbttagcompound.setTag("ingredient1", ingredient1.getLiquid().writeToNBT(new NBTTagCompound()));
-		}
+		tankManager.writeToNBT(data);
 
-		if (ingredient2.getLiquid() != null) {
-			nbttagcompound.setTag("ingredient2", ingredient2.getLiquid().writeToNBT(new NBTTagCompound()));
-		}
+		data.setInteger("animationStage", animationStage);
+		data.setFloat("animationSpeed", animationSpeed);
+		powerHandler.writeToNBT(data);
 
-		if (result.getLiquid() != null) {
-			nbttagcompound.setTag("result", result.getLiquid().writeToNBT(new NBTTagCompound()));
-		}
-
-		nbttagcompound.setInteger("animationStage", animationStage);
-		nbttagcompound.setFloat("animationSpeed", animationSpeed);
-		PowerFramework.currentFramework.savePowerProvider(this, nbttagcompound);
-
-		nbttagcompound.setInteger("filters_0", filters[0]);
-		nbttagcompound.setInteger("filters_1", filters[1]);
-		nbttagcompound.setInteger("filtersMeta_0", filtersMeta[0]);
-		nbttagcompound.setInteger("filtersMeta_1", filtersMeta[1]);
+		if (filters[0] != null)
+			data.setString("filter0", filters[0].getName());
+		if (filters[1] != null)
+			data.setString("filter1", filters[1].getName());
 	}
 
 	public int getAnimationStage() {
@@ -347,17 +295,12 @@ public class TileRefinery extends TileMachine implements ITankContainer, IPowerR
 	public void closeChest() {
 	}
 
-	public void setFilter(int number, int liquidId, int liquidMeta) {
-		filters[number] = liquidId;
-		filtersMeta[number] = liquidMeta;
+	public void setFilter(int number, Fluid fluid) {
+		filters[number] = fluid;
 	}
 
-	public int getFilter(int number) {
+	public Fluid getFilter(int number) {
 		return filters[number];
-	}
-
-	public int getFilterMeta(int number) {
-		return filtersMeta[number];
 	}
 
 	@Override
@@ -366,50 +309,44 @@ public class TileRefinery extends TileMachine implements ITankContainer, IPowerR
 	}
 
 	/* SMP GUI */
-	public void getGUINetworkData(int i, int j) {
-		switch (i) {
+	public void getGUINetworkData(int id, int data) {
+		switch (id) {
 			case 0:
-				filters[0] = j;
+				filters[0] = FluidRegistry.getFluid(data);
 				break;
 			case 1:
-				filters[1] = j;
-				break;
-			case 2:
-				filtersMeta[0] = j;
-				break;
-			case 3:
-				filtersMeta[1] = j;
+				filters[1] = FluidRegistry.getFluid(data);
 				break;
 		}
 	}
 
 	public void sendGUINetworkData(Container container, ICrafting iCrafting) {
-		iCrafting.sendProgressBarUpdate(container, 0, filters[0]);
-		iCrafting.sendProgressBarUpdate(container, 1, filters[1]);
-		iCrafting.sendProgressBarUpdate(container, 2, filtersMeta[0]);
-		iCrafting.sendProgressBarUpdate(container, 3, filtersMeta[1]);
+		if (filters[0] != null)
+			iCrafting.sendProgressBarUpdate(container, 0, filters[0].getID());
+		if (filters[1] != null)
+			iCrafting.sendProgressBarUpdate(container, 1, filters[1].getID());
 	}
 
 	/* ITANKCONTAINER */
 	@Override
-	public int fill(ForgeDirection from, LiquidStack resource, boolean doFill) {
+	public int fill(ForgeDirection from, FluidStack resource, boolean doFill) {
 		int used = 0;
-		LiquidStack resourceUsing = resource.copy();
+		FluidStack resourceUsing = resource.copy();
 
-		if (filters[0] != 0 || filters[1] != 0) {
-			if (filters[0] == resource.itemID && filtersMeta[0] == resource.itemMeta) {
-				used += ingredient1.fill(resourceUsing, doFill);
+		if (filters[0] != null || filters[1] != null) {
+			if (filters[0] == resource.getFluid()) {
+				used += tank1.fill(resourceUsing, doFill);
 			}
 
 			resourceUsing.amount -= used;
 
-			if (filters[1] == resource.itemID && filtersMeta[1] == resource.itemMeta) {
-				used += ingredient2.fill(resourceUsing, doFill);
+			if (filters[1] == resource.getFluid()) {
+				used += tank2.fill(resourceUsing, doFill);
 			}
 		} else {
-			used += ingredient1.fill(resourceUsing, doFill);
+			used += tank1.fill(resourceUsing, doFill);
 			resourceUsing.amount -= used;
-			used += ingredient2.fill(resourceUsing, doFill);
+			used += tank2.fill(resourceUsing, doFill);
 		}
 
 		if (doFill && used > 0) {
@@ -421,137 +358,49 @@ public class TileRefinery extends TileMachine implements ITankContainer, IPowerR
 	}
 
 	@Override
-	public int fill(int tankIndex, LiquidStack resource, boolean doFill) {
-
-		if (tankIndex == 0 && resource.itemID == filters[0] && resource.itemMeta == filtersMeta[0])
-			return ingredient1.fill(resource, doFill);
-		if (tankIndex == 1 && resource.itemID == filters[1] && resource.itemMeta == filtersMeta[1])
-			return ingredient2.fill(resource, doFill);
-		return 0;
+	public FluidStack drain(ForgeDirection from, int maxEmpty, boolean doDrain) {
+		return result.drain(maxEmpty, doDrain);
 	}
 
 	@Override
-	public LiquidStack drain(ForgeDirection from, int maxEmpty, boolean doDrain) {
-		return drain(2, maxEmpty, doDrain);
+	public FluidStack drain(ForgeDirection from, FluidStack resource, boolean doDrain) {
+		if (resource == null || !resource.isFluidEqual(result.getFluid()))
+			return null;
+		return drain(from, resource.amount, doDrain);
 	}
 
 	@Override
-	public LiquidStack drain(int tankIndex, int maxEmpty, boolean doDrain) {
-		if (tankIndex == 2)
-			return result.drain(maxEmpty, doDrain);
-
-		return null;
-	}
-
-	@Override
-	public ILiquidTank[] getTanks(ForgeDirection direction) {
-		return new ILiquidTank[]{ingredient1, ingredient2, result};
-	}
-
-	@Override
-	public ILiquidTank getTank(ForgeDirection direction, LiquidStack type) {
-		ForgeDirection dir = ForgeDirection.getOrientation(worldObj.getBlockMetadata(xCoord, yCoord, zCoord));
-
-		switch (direction) {
-			case NORTH:
-				switch (dir) {
-					case WEST:
-						return ingredient2;
-					case EAST:
-						return ingredient1;
-					default:
-						return null;
-				}
-			case SOUTH:
-				switch (dir) {
-					case WEST:
-						return ingredient1;
-					case EAST:
-						return ingredient2;
-					default:
-						return null;
-				}
-			case EAST:
-				switch (dir) {
-					case NORTH:
-						return ingredient2;
-					case SOUTH:
-						return ingredient1;
-					default:
-						return null;
-				}
-			case WEST:
-				switch (dir) {
-					case NORTH:
-						return ingredient1;
-					case SOUTH:
-						return ingredient2;
-					default:
-						return null;
-				}
-			case DOWN:
-				return result;
-			default:
-				return null;
-		}
+	public FluidTankInfo[] getTankInfo(ForgeDirection direction) {
+		return tankManager.getTankInfo(direction);
 	}
 
 	// Network
 	@Override
 	public PacketPayload getPacketPayload() {
-		PacketPayload payload = new PacketPayload(9, 1, 0);
-		if (ingredient1.getLiquid() != null) {
-			payload.intPayload[0] = ingredient1.getLiquid().itemID;
-			payload.intPayload[1] = ingredient1.getLiquid().itemMeta;
-			payload.intPayload[2] = ingredient1.getLiquid().amount;
-		} else {
-			payload.intPayload[0] = 0;
-			payload.intPayload[1] = 0;
-			payload.intPayload[2] = 0;
-		}
-		if (ingredient2.getLiquid() != null) {
-			payload.intPayload[3] = ingredient2.getLiquid().itemID;
-			payload.intPayload[4] = ingredient2.getLiquid().itemMeta;
-			payload.intPayload[5] = ingredient2.getLiquid().amount;
-		} else {
-			payload.intPayload[3] = 0;
-			payload.intPayload[4] = 0;
-			payload.intPayload[5] = 0;
-		}
-		if (result.getLiquid() != null) {
-			payload.intPayload[6] = result.getLiquid().itemID;
-			payload.intPayload[7] = result.getLiquid().itemMeta;
-			payload.intPayload[8] = result.getLiquid().amount;
-		} else {
-			payload.intPayload[6] = 0;
-			payload.intPayload[7] = 0;
-			payload.intPayload[8] = 0;
-		}
-		payload.floatPayload[0] = animationSpeed;
-
+		PacketPayload payload = new PacketPayloadStream(new PacketPayloadStream.StreamWriter() {
+			@Override
+			public void writeData(DataOutputStream data) throws IOException {
+				data.writeFloat(animationSpeed);
+				tankManager.writeData(data);
+			}
+		});
 		return payload;
 	}
 
 	@Override
-	public void handleUpdatePacket(PacketUpdate packet) {
-		if (packet.payload.intPayload[0] > 0) {
-			ingredient1.setLiquid(new LiquidStack(packet.payload.intPayload[0], packet.payload.intPayload[2], packet.payload.intPayload[1]));
-		} else {
-			ingredient1.setLiquid(null);
-		}
+	public void handleUpdatePacket(PacketUpdate packet) throws IOException {
+		DataInputStream stream = ((PacketPayloadStream) packet.payload).stream;
+		animationSpeed = stream.readFloat();
+		tankManager.readData(stream);
+	}
 
-		if (packet.payload.intPayload[3] > 0) {
-			ingredient2.setLiquid(new LiquidStack(packet.payload.intPayload[3], packet.payload.intPayload[5], packet.payload.intPayload[4]));
-		} else {
-			ingredient2.setLiquid(null);
-		}
+	@Override
+	public boolean canFill(ForgeDirection from, Fluid fluid) {
+		return true;
+	}
 
-		if (packet.payload.intPayload[6] > 0) {
-			result.setLiquid(new LiquidStack(packet.payload.intPayload[6], packet.payload.intPayload[8], packet.payload.intPayload[7]));
-		} else {
-			result.setLiquid(null);
-		}
-
-		animationSpeed = packet.payload.floatPayload[0];
+	@Override
+	public boolean canDrain(ForgeDirection from, Fluid fluid) {
+		return true;
 	}
 }

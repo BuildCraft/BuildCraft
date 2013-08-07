@@ -9,15 +9,6 @@
 
 package buildcraft.factory;
 
-import java.util.ArrayList;
-
-import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IconRegister;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Icon;
-import net.minecraft.world.World;
 import buildcraft.BuildCraftFactory;
 import buildcraft.core.BlockBuildCraft;
 import buildcraft.core.GuiIds;
@@ -25,6 +16,14 @@ import buildcraft.core.IItemPipe;
 import buildcraft.core.proxy.CoreProxy;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import java.util.ArrayList;
+import net.minecraft.block.material.Material;
+import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Icon;
+import net.minecraft.world.World;
 
 public class BlockAutoWorkbench extends BlockBuildCraft {
 
