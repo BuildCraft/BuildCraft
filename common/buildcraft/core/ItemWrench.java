@@ -11,6 +11,7 @@ public class ItemWrench extends ItemBuildCraft implements IToolWrench {
 
 	public ItemWrench(int i) {
 		super(i);
+		setFull3D();
 	}
 
 	@Override

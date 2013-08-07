@@ -138,6 +138,7 @@ public class RenderEngine extends TileEntitySpecialRenderer implements IInventor
 				break;
 			case SOUTH:
 			case NORTH:
+			default:
 				angle[0] = angleMap[orientation.ordinal()];
 				break;
 		}

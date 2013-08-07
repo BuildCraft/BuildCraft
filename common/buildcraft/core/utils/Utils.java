@@ -11,6 +11,7 @@ import buildcraft.BuildCraftCore;
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.core.LaserKind;
 import buildcraft.api.core.Position;
+import buildcraft.api.transport.IPipeConnection;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.IPipeTile.PipeType;
 import buildcraft.core.BlockIndex;
@@ -373,45 +374,34 @@ public class Utils {
 	}
 
 	public static boolean checkPipesConnections(TileEntity tile1, TileEntity tile2) {
-		if (tile1 == null || tile2 == null) {
+		if (tile1 == null || tile2 == null)
 			return false;
-		}
 
-		if (!(tile1 instanceof IPipeTile) && !(tile2 instanceof IPipeTile)) {
+		if (!(tile1 instanceof IPipeTile) && !(tile2 instanceof IPipeTile))
 			return false;
-		}
 
 		ForgeDirection o = ForgeDirection.UNKNOWN;
 
-		if (tile1.xCoord - 1 == tile2.xCoord) {
+		if (tile1.xCoord - 1 == tile2.xCoord)
 			o = ForgeDirection.WEST;
-		} else if (tile1.xCoord + 1 == tile2.xCoord) {
+		else if (tile1.xCoord + 1 == tile2.xCoord)
 			o = ForgeDirection.EAST;
-		} else if (tile1.yCoord - 1 == tile2.yCoord) {
+		else if (tile1.yCoord - 1 == tile2.yCoord)
 			o = ForgeDirection.DOWN;
-		} else if (tile1.yCoord + 1 == tile2.yCoord) {
+		else if (tile1.yCoord + 1 == tile2.yCoord)
 			o = ForgeDirection.UP;
-		} else if (tile1.zCoord - 1 == tile2.zCoord) {
+		else if (tile1.zCoord - 1 == tile2.zCoord)
 			o = ForgeDirection.NORTH;
-		} else if (tile1.zCoord + 1 == tile2.zCoord) {
+		else if (tile1.zCoord + 1 == tile2.zCoord)
 			o = ForgeDirection.SOUTH;
-		}
 
-		if (tile1 instanceof IPipeTile && !((IPipeTile) tile1).isPipeConnected(o)) {
+		if (tile1 instanceof IPipeTile && !((IPipeTile) tile1).isPipeConnected(o))
 			return false;
-		}
 
-		if (tile2 instanceof IPipeTile && !((IPipeTile) tile2).isPipeConnected(o.getOpposite())) {
+		if (tile2 instanceof IPipeTile && !((IPipeTile) tile2).isPipeConnected(o.getOpposite()))
 			return false;
-		}
 
 		return true;
-	}
-
-	public static boolean checkPipesConnections(IBlockAccess blockAccess, TileEntity tile1, int x2, int y2, int z2) {
-		TileEntity tile2 = blockAccess.getBlockTileEntity(x2, y2, z2);
-
-		return checkPipesConnections(tile1, tile2);
 	}
 
 	public static boolean checkLegacyPipesConnections(IBlockAccess blockAccess, int x1, int y1, int z1, int x2, int y2, int z2) {

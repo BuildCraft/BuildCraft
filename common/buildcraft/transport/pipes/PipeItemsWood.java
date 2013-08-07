@@ -179,6 +179,9 @@ public class PipeItemsWood extends Pipe<PipeTransportItems> implements IPowerRec
 	}
 
 	public ItemStack checkExtractGeneric(ISidedInventory inventory, boolean doRemove, ForgeDirection from) {
+		if(inventory == null)
+			return null;
+		
 		for (int k : inventory.getAccessibleSlotsFromSide(from.ordinal())) {
 			ItemStack slot = inventory.getStackInSlot(k);
 

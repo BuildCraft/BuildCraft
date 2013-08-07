@@ -13,6 +13,7 @@ import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.EnumColor;
 import java.util.EnumSet;
 import net.minecraft.entity.item.EntityItem;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -22,6 +23,7 @@ import net.minecraftforge.common.ForgeDirection;
 
 public class TravelingItem {
 
+	public static final InsertionHandler DEFAULT_INSERTION_HANDLER = new InsertionHandler();
 	private static int maxId = 0;
 	protected float speed = 0.01F;
 	protected ItemStack item;
@@ -34,6 +36,7 @@ public class TravelingItem {
 	public ForgeDirection output = ForgeDirection.UNKNOWN;
 	public final EnumSet<ForgeDirection> blacklist = EnumSet.noneOf(ForgeDirection.class);
 	private NBTTagCompound extraData;
+	private InsertionHandler insertionHandler = DEFAULT_INSERTION_HANDLER;
 
 	/* CONSTRUCTORS */
 	public TravelingItem() {
@@ -97,6 +100,16 @@ public class TravelingItem {
 
 	public boolean hasExtraData() {
 		return extraData != null;
+	}
+
+	public void setInsetionHandler(InsertionHandler handler) {
+		if (handler == null)
+			return;
+		this.insertionHandler = handler;
+	}
+
+	public InsertionHandler getInsertionHandler() {
+		return insertionHandler;
 	}
 
 	public void reset() {
@@ -170,7 +183,7 @@ public class TravelingItem {
 	public float getEntityBrightness(float f) {
 		int i = MathHelper.floor_double(xCoord);
 		int j = MathHelper.floor_double(zCoord);
-		if (container.worldObj.blockExists(i, 128 / 2, j)) {
+		if (container != null && container.worldObj.blockExists(i, 128 / 2, j)) {
 			double d = 0.66000000000000003D;
 			int k = MathHelper.floor_double(yCoord + d);
 			return container.worldObj.getLightBrightness(i, k, j);
@@ -181,15 +194,7 @@ public class TravelingItem {
 	public boolean isCorrupted() {
 		return getItemStack() == null || getItemStack().stackSize <= 0 || Item.itemsList[getItemStack().itemID] == null;
 	}
-
-	/**
-	 * @return the can this item be moved into this specific inventory type.
-	 * (basic BuildCraft PipedItems always return true)
-	 */
-	public boolean canSinkTo(TileEntity entity) {
-		return true;
-	}
-
+	
 	@Override
 	public int hashCode() {
 		int hash = 7;
@@ -207,5 +212,12 @@ public class TravelingItem {
 		if (this.id != other.id)
 			return false;
 		return true;
+	}
+
+	public static class InsertionHandler {
+
+		public boolean canInsertItem(TravelingItem item, IInventory inv) {
+			return true;
+		}
 	}
 }

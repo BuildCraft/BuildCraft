@@ -57,13 +57,13 @@ public class TileMiningWell extends TileBuildCraft implements IMachine, IPowerRe
 			return;
 		}
 
-		int blockId = world.getBlockId(xCoord, depth, zCoord);
+		boolean wasAir = world.isAirBlock(xCoord, depth, zCoord);
 
 		List<ItemStack> stacks = BlockUtil.getItemStackFromBlock(worldObj, xCoord, depth, zCoord);
 
 		world.setBlock(xCoord, depth, zCoord, BuildCraftFactory.plainPipeBlock.blockID);
 
-		if (blockId == 0)
+		if (wasAir)
 			return;
 
 		if (stacks == null || stacks.isEmpty())

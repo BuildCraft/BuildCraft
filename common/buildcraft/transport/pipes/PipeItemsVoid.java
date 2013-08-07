@@ -50,6 +50,7 @@ public class PipeItemsVoid extends Pipe<PipeTransportItems> implements IItemTrav
 	}
 
 	@Override
-	public void endReached(PipeTransportItems pipe, TravelingItem item, TileEntity tile) {
+	public boolean endReached(PipeTransportItems pipe, TravelingItem item, TileEntity tile) {
+		return false;
 	}
 }

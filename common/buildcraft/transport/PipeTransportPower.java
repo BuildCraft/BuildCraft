@@ -108,15 +108,15 @@ public class PipeTransportPower extends PipeTransport {
 	}
 
 	private void updateTiles() {
-		for (int i = 0; i < 6; ++i) {
-			TileEntity tile = container.getTile(ForgeDirection.VALID_DIRECTIONS[i]);
-			if (Utils.checkPipesConnections(tile, container)) {
-				tiles[i] = tile;
+		for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
+			TileEntity tile = container.getTile(side);
+			if (container.isPipeConnected(side)) {
+				tiles[side.ordinal()] = tile;
 			} else {
-				tiles[i] = null;
-				internalPower[i] = 0;
-				internalNextPower[i] = 0;
-				displayPower[i] = 0;
+				tiles[side.ordinal()] = null;
+				internalPower[side.ordinal()] = 0;
+				internalNextPower[side.ordinal()] = 0;
+				displayPower[side.ordinal()] = 0;
 			}
 		}
 	}

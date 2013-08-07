@@ -144,6 +144,7 @@ public class TriggerPipeContents extends BCTrigger implements ITriggerPipe {
 				case RequestsEnergy:
 					PipePowerWood wood = (PipePowerWood) pipe;
 					return wood.requestsPower();
+				default:
 				case TooMuchEnergy:
 					return transportPower.isOverloaded();
 			}

@@ -18,7 +18,6 @@ import org.lwjgl.opengl.GL11;
 public class GuiEmeraldPipe extends GuiBuildCraft {
 
 	private static final ResourceLocation TEXTURE = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_GUI + "/filter_2.png");
-
 	IInventory playerInventory;
 	IInventory filterInventory;
 

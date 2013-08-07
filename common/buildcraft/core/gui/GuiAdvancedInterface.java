@@ -9,6 +9,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.Icon;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidStack;
 
 import org.lwjgl.opengl.GL11;
 
@@ -180,6 +181,13 @@ public abstract class GuiAdvancedInterface extends GuiBuildCraft {
 
 		public FluidSlot(int x, int y) {
 			super(x, y);
+		}
+
+		@Override
+		public void drawSprite(int cornerX, int cornerY) {
+			if (fluid != null)
+				FluidRenderer.setColorForFluidStack(new FluidStack(fluid, 100));
+			super.drawSprite(cornerX, cornerY);
 		}
 
 		@Override

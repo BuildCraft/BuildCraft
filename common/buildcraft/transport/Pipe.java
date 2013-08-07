@@ -325,7 +325,7 @@ public abstract class Pipe<T extends PipeTransport> implements IPipe, IDropContr
 			ForgeDirection o = ForgeDirection.getOrientation(side).getOpposite();
 			TileEntity tile = container.getTile(o);
 
-			if (tile instanceof TileGenericPipe && Utils.checkPipesConnections(this.container, tile))
+			if (tile instanceof TileGenericPipe && container.isPipeConnected(o))
 				return 0;
 
 			return 15;
@@ -477,13 +477,12 @@ public abstract class Pipe<T extends PipeTransport> implements IPipe, IDropContr
 		ForgeDirection target_orientation = ForgeDirection.UNKNOWN;
 
 		for (ForgeDirection o : ForgeDirection.VALID_DIRECTIONS) {
-			if (Utils.checkPipesConnections(container.getTile(o), container)) {
+			if (container.isPipeConnected(o)) {
 
 				Connections_num++;
 
-				if (Connections_num == 1) {
+				if (Connections_num == 1)
 					target_orientation = o;
-				}
 			}
 		}
 

@@ -34,7 +34,7 @@ public class TileLaser extends TileBuildCraft implements IPowerReceptor, IAction
 	private final SafeTimeTracker searchTracker = new SafeTimeTracker();
 	private final SafeTimeTracker networkTracker = new SafeTimeTracker();
 	private ILaserTarget laserTarget;
-	private PowerHandler powerHandler;
+	protected PowerHandler powerHandler;
 	private int nextNetworkUpdate = 3;
 	private int nextLaserUpdate = 10;
 	private int nextLaserSearch = 100;
@@ -94,16 +94,25 @@ public class TileLaser extends TileBuildCraft implements IPowerReceptor, IAction
 		}
 
 		// Consume power and transfer it to the table.
-		float power = powerHandler.useEnergy(0, 4, true);
+		float power = powerHandler.useEnergy(0, getMaxPowerSent(), true);
 		laserTarget.receiveLaserEnergy(power);
 
 		if (laser != null) {
 			laser.pushPower(power);
 		}
+		
+		onPowerSent(power);
 
 		sendNetworkUpdate();
 	}
 
+	protected float getMaxPowerSent(){
+		return 4;
+	}
+
+	protected void onPowerSent(float power) {
+	}
+	
 	protected boolean canFindTable() {
 		return searchTracker.markTimeIfDelay(worldObj, nextLaserSearch);
 	}

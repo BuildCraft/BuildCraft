@@ -295,14 +295,14 @@ public class PipeTransportItems extends PipeTransport {
 	public boolean canReceivePipeObjects(ForgeDirection o, TravelingItem item) {
 		TileEntity entity = container.getTile(o);
 
-		if (!Utils.checkPipesConnections(entity, container))
+		if (!container.isPipeConnected(o))
 			return false;
 
 		if (entity instanceof TileGenericPipe) {
 			TileGenericPipe pipe = (TileGenericPipe) entity;
 
 			return pipe.pipe.transport instanceof PipeTransportItems;
-		} else if (entity instanceof IInventory && item.canSinkTo(entity))
+		} else if (entity instanceof IInventory && item.getInsertionHandler().canInsertItem(item, (IInventory) entity))
 			if (Transactor.getTransactorFor(entity).add(item.getItemStack(), o.getOpposite(), false).stackSize > 0)
 				return true;
 
@@ -363,12 +363,13 @@ public class PipeTransportItems extends PipeTransport {
 			} else if (!item.toCenter && endReached(item)) {
 				TileEntity tile = container.getTile(item.output);
 
+				boolean handleItem = true;
 				if (travelHook != null) {
-					travelHook.endReached(this, item, tile);
+					handleItem = !travelHook.endReached(this, item, tile);
 				}
 
 				// If the item has not been scheduled to removal by the hook
-				if (items.scheduleRemoval(item)) {
+				if (handleItem && items.scheduleRemoval(item)) {
 					handleTileReached(item, tile);
 				}
 
@@ -394,9 +395,10 @@ public class PipeTransportItems extends PipeTransport {
 			// NOOP
 		} else if (tile instanceof IInventory) {
 			if (!CoreProxy.proxy.isRenderWorld(container.worldObj)) {
-				ItemStack added = Transactor.getTransactorFor(tile).add(item.getItemStack(), item.output.getOpposite(), true);
-
-				item.getItemStack().stackSize -= added.stackSize;
+				if (item.getInsertionHandler().canInsertItem(item, (IInventory) tile)) {
+					ItemStack added = Transactor.getTransactorFor(tile).add(item.getItemStack(), item.output.getOpposite(), true);
+					item.getItemStack().stackSize -= added.stackSize;
+				}
 
 				if (item.getItemStack().stackSize > 0) {
 					reverseItem(item);

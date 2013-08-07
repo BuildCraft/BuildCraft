@@ -182,6 +182,7 @@ public class RenderRefinery extends TileEntitySpecialRenderer implements IInvent
 
 				if (list1 != null) {
 					func_110628_a(FluidRenderer.getFluidSheet(liquid1));
+					FluidRenderer.setColorForFluidStack(liquid1);
 					GL11.glCallList(list1[(int) ((float) liquid1.amount / (float) TileRefinery.LIQUID_PER_SLOT * (FluidRenderer.DISPLAY_STAGES - 1))]);
 				}
 			}
@@ -193,6 +194,7 @@ public class RenderRefinery extends TileEntitySpecialRenderer implements IInvent
 					GL11.glPushMatrix();
 					GL11.glTranslatef(0, 0, 1);
 					func_110628_a(FluidRenderer.getFluidSheet(liquid2));
+					FluidRenderer.setColorForFluidStack(liquid2);
 					GL11.glCallList(list2[(int) ((float) liquid2.amount / (float) TileRefinery.LIQUID_PER_SLOT * (FluidRenderer.DISPLAY_STAGES - 1))]);
 					GL11.glPopMatrix();
 				}
@@ -206,6 +208,7 @@ public class RenderRefinery extends TileEntitySpecialRenderer implements IInvent
 					GL11.glPushMatrix();
 					GL11.glTranslatef(1, 0, 0.5F);
 					func_110628_a(FluidRenderer.getFluidSheet(liquidResult));
+					FluidRenderer.setColorForFluidStack(liquidResult);
 					GL11.glCallList(list3[(int) ((float) liquidResult.amount / (float) TileRefinery.LIQUID_PER_SLOT * (FluidRenderer.DISPLAY_STAGES - 1))]);
 					GL11.glPopMatrix();
 				}

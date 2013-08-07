@@ -171,7 +171,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 	public boolean canReceiveFluid(ForgeDirection o) {
 		TileEntity entity = container.getTile(o);
 
-		if (!Utils.checkPipesConnections(container, entity))
+		if (!container.isPipeConnected(o))
 			return false;
 
 		if (entity instanceof TileGenericPipe) {
@@ -481,7 +481,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 		super.onNeighborBlockChange(blockId);
 
 		for (ForgeDirection direction : directions) {
-			if (!Utils.checkPipesConnections(container.getTile(orientations[direction.ordinal()]), container)) {
+			if (!container.isPipeConnected(direction)) {
 				internalTanks[direction.ordinal()].reset();
 				transferState[direction.ordinal()] = TransferState.None;
 				renderCache[direction.ordinal()] = null;
