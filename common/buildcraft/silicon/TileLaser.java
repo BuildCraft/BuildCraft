@@ -27,7 +27,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.ForgeDirection;
 
-public abstract class TileLaser extends TileBuildCraft implements IPowerReceptor, IActionReceptor, IMachine {
+public class TileLaser extends TileBuildCraft implements IPowerReceptor, IActionReceptor, IMachine {
 
 	private EntityEnergyLaser laser = null;
 	private final SafeTimeTracker laserTickTracker = new SafeTimeTracker();
@@ -102,7 +102,9 @@ public abstract class TileLaser extends TileBuildCraft implements IPowerReceptor
 		sendNetworkUpdate();
 	}
 
-	protected abstract float getMaxPowerSent();
+	protected float getMaxPowerSent(){
+		return 4;
+	}
 
 	protected void onPowerSent(float power) {
 	}

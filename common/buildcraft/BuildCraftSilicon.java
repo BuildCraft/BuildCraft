@@ -22,7 +22,6 @@ import buildcraft.silicon.SiliconProxy;
 import buildcraft.silicon.TileAdvancedCraftingTable;
 import buildcraft.silicon.TileAssemblyTable;
 import buildcraft.silicon.TileLaser;
-import buildcraft.silicon.TileLaserStandard;
 import buildcraft.silicon.network.PacketHandlerSilicon;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
@@ -75,7 +74,7 @@ public class BuildCraftSilicon {
 	@EventHandler
 	public void init(FMLInitializationEvent evt) {
 		NetworkRegistry.instance().registerGuiHandler(instance, new GuiHandler());
-		CoreProxy.proxy.registerTileEntity(TileLaserStandard.class, "net.minecraft.src.buildcraft.factory.TileLaser");
+		CoreProxy.proxy.registerTileEntity(TileLaser.class, "net.minecraft.src.buildcraft.factory.TileLaser");
 		CoreProxy.proxy.registerTileEntity(TileAssemblyTable.class, "net.minecraft.src.buildcraft.factory.TileAssemblyTable");
 		CoreProxy.proxy.registerTileEntity(TileAdvancedCraftingTable.class, "net.minecraft.src.buildcraft.factory.TileAssemblyAdvancedWorkbench");
 

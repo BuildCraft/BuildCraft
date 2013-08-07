@@ -52,7 +52,7 @@ public class BlockLaser extends BlockContainer {
 
 	@Override
 	public TileEntity createTileEntity(World world, int meta) {
-		return new TileLaserStandard();
+		return new TileLaser();
 	}
 
 	@Override
