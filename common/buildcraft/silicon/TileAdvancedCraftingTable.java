@@ -349,7 +349,7 @@ public class TileAdvancedCraftingTable extends TileEntity implements IInventory,
 				output.stackSize -= Utils.addToRandomInventoryAround(worldObj, xCoord, yCoord, zCoord, output);
 			}
 			if (output.stackSize > 0) {
-				Utils.dropItems(worldObj, output, xCoord, yCoord + 1, zCoord);
+				InvUtils.dropItems(worldObj, output, xCoord, yCoord + 1, zCoord);
 			}
 		}
 	}

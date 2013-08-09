@@ -25,10 +25,10 @@ import buildcraft.core.DefaultProps;
 import buildcraft.core.IDropControlInventory;
 import buildcraft.core.ITileBufferHolder;
 import buildcraft.core.TileBuffer;
+import buildcraft.core.inventory.InvUtils;
 import buildcraft.core.network.IClientState;
 import buildcraft.core.network.ISyncedTile;
 import buildcraft.core.network.PacketTileState;
-import buildcraft.core.utils.Utils;
 import buildcraft.transport.Gate.GateKind;
 import buildcraft.transport.network.PipeRenderStatePacket;
 import cpw.mods.fml.relauncher.Side;
@@ -565,7 +565,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 	}
 
 	private void dropFacadeItem(ForgeDirection direction) {
-		Utils.dropItems(worldObj, ItemFacade.getStack(this.facadeBlocks[direction.ordinal()], this.facadeMeta[direction.ordinal()]), this.xCoord, this.yCoord, this.zCoord);
+		InvUtils.dropItems(worldObj, ItemFacade.getStack(this.facadeBlocks[direction.ordinal()], this.facadeMeta[direction.ordinal()]), this.xCoord, this.yCoord, this.zCoord);
 	}
 
 	public void dropFacade(ForgeDirection direction) {
@@ -663,7 +663,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 			return;
 
 		plugs[side.ordinal()] = false;
-		Utils.dropItems(worldObj, new ItemStack(BuildCraftTransport.plugItem), this.xCoord, this.yCoord, this.zCoord);
+		InvUtils.dropItems(worldObj, new ItemStack(BuildCraftTransport.plugItem), this.xCoord, this.yCoord, this.zCoord);
 		worldObj.notifyBlockChange(this.xCoord, this.yCoord, this.zCoord, getBlockId());
 		scheduleNeighborChange(); //To force recalculation of connections
 		scheduleRenderUpdate();
