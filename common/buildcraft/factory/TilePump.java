@@ -58,6 +58,7 @@ public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor
 	private TileBuffer[] tileBuffer = null;
 	private SafeTimeTracker timer = new SafeTimeTracker();
 	private int tick = Utils.RANDOM.nextInt();
+        private int numFluidBlocksFound = 0;
 
 	public TilePump() {
 		powerHandler = new PowerHandler(this, Type.MACHINE);
@@ -102,9 +103,9 @@ public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor
 			if (isFluidAllowed(fluidToPump.getFluid()) && tank.fill(fluidToPump, false) == fluidToPump.amount) {
 
 				if (powerHandler.useEnergy(10, 10, true) == 10) {
-					index = getNextIndexToPump(true);
 
-					if (fluidToPump.getFluid() != FluidRegistry.WATER || BuildCraftCore.consumeWaterSources) {
+					if (fluidToPump.getFluid() != FluidRegistry.WATER || BuildCraftCore.consumeWaterSources || numFluidBlocksFound < 9) {
+						index = getNextIndexToPump(true);
 						BlockUtil.drainBlock(worldObj, index.x, index.y, index.z, true);
 					}
 
@@ -215,6 +216,7 @@ public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor
 	}
 
 	public void rebuildQueue() {
+		numFluidBlocksFound = 0;
 		pumpLayerQueues.clear();
 		int x = xCoord;
 		int y = aimY;
@@ -243,6 +245,9 @@ public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor
 				queueForPumping(index.x - 1, index.y, index.z, visitedBlocks, fluidsFound, pumpingFluid);
 				queueForPumping(index.x, index.y, index.z + 1, visitedBlocks, fluidsFound, pumpingFluid);
 				queueForPumping(index.x, index.y, index.z - 1, visitedBlocks, fluidsFound, pumpingFluid);
+                                
+				if (pumpingFluid == FluidRegistry.WATER && !BuildCraftCore.consumeWaterSources && numFluidBlocksFound >= 9)
+					return;
 
 //				if (System.nanoTime() > timeoutTime)
 //					return;
@@ -262,6 +267,7 @@ public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor
 			}
 			if (canDrainBlock(blockId, x, y, z, pumpingFluid)) {
 				getLayerQueue(y).add(index);
+				numFluidBlocksFound++;
 			}
 		}
 	}
