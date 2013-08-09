@@ -22,7 +22,7 @@ public class SafeTimeTracker {
 		if (world == null)
 			return false;
 
-		long currentTime = world.getWorldTime();
+		long currentTime = world.getTotalWorldTime();
 
 		if (currentTime < lastMark) {
 			lastMark = currentTime;
@@ -41,6 +41,6 @@ public class SafeTimeTracker {
 	}
 
 	public void markTime(World world) {
-		lastMark = world.getWorldTime();
+		lastMark = world.getTotalWorldTime();
 	}
 }
