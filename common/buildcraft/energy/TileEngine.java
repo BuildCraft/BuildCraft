@@ -21,10 +21,10 @@ import buildcraft.api.transport.IPipeTile.PipeType;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.TileBuffer;
 import buildcraft.core.TileBuildCraft;
+import buildcraft.core.inventory.InvUtils;
 import buildcraft.core.inventory.SimpleInventory;
 import buildcraft.core.network.TileNetworkData;
 import buildcraft.core.proxy.CoreProxy;
-import buildcraft.core.utils.Utils;
 import buildcraft.energy.gui.ContainerEngine;
 import java.util.LinkedList;
 import net.minecraft.entity.player.EntityPlayer;
@@ -360,7 +360,7 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 	}
 
 	public void delete() {
-		Utils.dropItems(worldObj, inv, xCoord, yCoord, zCoord);
+		InvUtils.dropItems(worldObj, inv, xCoord, yCoord, zCoord);
 	}
 
 	@Override

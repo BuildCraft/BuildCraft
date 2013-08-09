@@ -1,15 +1,18 @@
-package buildcraft.core.liquids;
+package buildcraft.core.fluids;
 
+import buildcraft.core.TileBuffer;
 import buildcraft.core.utils.Utils;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidHandler;
+import net.minecraftforge.fluids.IFluidTank;
 
 /**
  *
@@ -71,5 +74,24 @@ public class FluidUtils {
 		if (fluid == FluidRegistry.LAVA)
 			return moving ? Block.lavaMoving.blockID : Block.lavaStill.blockID;
 		return fluid.getBlockID();
+	}
+
+	public static void pushFluidToConsumers(IFluidTank tank, int flowCap, TileBuffer[] tileBuffer) {
+		int amountToPush = flowCap;
+		for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
+			FluidStack fluidStack = tank.drain(amountToPush, false);
+			if (fluidStack != null && fluidStack.amount > 0) {
+				TileEntity tile = tileBuffer[side.ordinal()].getTile();
+				if (tile instanceof IFluidHandler) {
+					int used = ((IFluidHandler) tile).fill(side.getOpposite(), fluidStack, true);
+					if (used > 0) {
+						amountToPush -= used;
+						tank.drain(used, true);
+						if (amountToPush <= 0)
+							return;
+					}
+				}
+			}
+		}
 	}
 }

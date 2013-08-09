@@ -20,7 +20,8 @@ import buildcraft.core.EntityBlock;
 import buildcraft.core.IMachine;
 import buildcraft.core.TileBuffer;
 import buildcraft.core.TileBuildCraft;
-import buildcraft.core.liquids.SingleUseTank;
+import buildcraft.core.fluids.FluidUtils;
+import buildcraft.core.fluids.SingleUseTank;
 import buildcraft.core.network.PacketPayload;
 import buildcraft.core.network.PacketPayloadStream;
 import buildcraft.core.network.PacketUpdate;
@@ -133,23 +134,9 @@ public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor
 	}
 
 	private void pushToConsumers() {
-		FluidStack fluidStack = tank.getFluid();
-		if (fluidStack != null && fluidStack.amount > 0) {
-			for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
-				TileEntity tile = getTile(side);
-
-				if (tile instanceof IFluidHandler) {
-					int moved = ((IFluidHandler) tile).fill(side.getOpposite(), fluidStack, true);
-					if (moved > 0) {
-						tank.drain(moved, true);
-						fluidStack = tank.getFluid();
-						if (fluidStack == null || fluidStack.amount <= 0) {
-							break;
-						}
-					}
-				}
-			}
-		}
+		if(tileBuffer == null)
+			tileBuffer = TileBuffer.makeBuffer(worldObj, xCoord, yCoord, zCoord, false);
+		FluidUtils.pushFluidToConsumers(tank, 400, tileBuffer);
 	}
 
 	private TileEntity getTile(ForgeDirection side) {

@@ -16,6 +16,7 @@ import buildcraft.api.gates.ITrigger;
 import buildcraft.api.gates.TriggerParameter;
 import buildcraft.api.transport.IPipe;
 import buildcraft.core.IDropControlInventory;
+import buildcraft.core.inventory.InvUtils;
 import buildcraft.core.network.TilePacketWrapper;
 import buildcraft.core.utils.Utils;
 import cpw.mods.fml.relauncher.Side;
@@ -374,7 +375,7 @@ public abstract class Pipe<T extends PipeTransport> implements IPipe, IDropContr
 	}
 
 	public void dropItem(ItemStack stack) {
-		Utils.dropItems(container.worldObj, stack, container.xCoord, container.yCoord, container.zCoord);
+		InvUtils.dropItems(container.worldObj, stack, container.xCoord, container.yCoord, container.zCoord);
 	}
 
 	public void onBlockRemoval() {

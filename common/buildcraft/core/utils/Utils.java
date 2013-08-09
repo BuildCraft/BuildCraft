@@ -11,7 +11,6 @@ import buildcraft.BuildCraftCore;
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.core.LaserKind;
 import buildcraft.api.core.Position;
-import buildcraft.api.transport.IPipeConnection;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.IPipeTile.PipeType;
 import buildcraft.core.BlockIndex;
@@ -20,6 +19,7 @@ import buildcraft.core.IDropControlInventory;
 import buildcraft.core.IFramePipeConnection;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.inventory.ITransactor;
+import buildcraft.core.inventory.InvUtils;
 import buildcraft.core.inventory.Transactor;
 import buildcraft.core.network.ISynchronizedTile;
 import buildcraft.core.network.PacketUpdate;
@@ -32,7 +32,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 import net.minecraft.block.Block;
-import net.minecraft.entity.item.EntityItem;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryLargeChest;
 import net.minecraft.item.ItemStack;
@@ -160,32 +159,6 @@ public class Utils {
 			return pipeEntry.injectItem(stack, true, pipeDirections.get(choice));
 		}
 		return 0;
-	}
-
-	/* STACK DROPS */
-	public static void dropItems(World world, ItemStack stack, int i, int j, int k) {
-		if (stack.stackSize <= 0) {
-			return;
-		}
-
-		float f1 = 0.7F;
-		double d = (world.rand.nextFloat() * f1) + (1.0F - f1) * 0.5D;
-		double d1 = (world.rand.nextFloat() * f1) + (1.0F - f1) * 0.5D;
-		double d2 = (world.rand.nextFloat() * f1) + (1.0F - f1) * 0.5D;
-		EntityItem entityitem = new EntityItem(world, i + d, j + d1, k + d2, stack);
-		entityitem.delayBeforeCanPickup = 10;
-
-		world.spawnEntityInWorld(entityitem);
-	}
-
-	public static void dropItems(World world, IInventory inventory, int i, int j, int k) {
-		for (int l = 0; l < inventory.getSizeInventory(); ++l) {
-			ItemStack items = inventory.getStackInSlot(l);
-
-			if (items != null && items.stackSize > 0) {
-				dropItems(world, inventory.getStackInSlot(l).copy(), i, j, k);
-			}
-		}
 	}
 
 	public static TileEntity getTile(World world, Position pos, ForgeDirection step) {
@@ -364,7 +337,8 @@ public class Utils {
 
 		if (tile instanceof IInventory && !CoreProxy.proxy.isRenderWorld(world)) {
 			if (!(tile instanceof IDropControlInventory) || ((IDropControlInventory) tile).doDrop()) {
-				dropItems(world, (IInventory) tile, i, j, k);
+				InvUtils.dropItems(world, (IInventory) tile, i, j, k);
+				InvUtils.wipeInventory((IInventory)tile);
 			}
 		}
 
