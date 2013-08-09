@@ -8,6 +8,7 @@
 package buildcraft.factory;
 
 import buildcraft.core.TileBuildCraft;
+import buildcraft.core.inventory.InvUtils;
 import buildcraft.core.inventory.InventoryConcatenator;
 import buildcraft.core.inventory.InventoryIterator;
 import buildcraft.core.inventory.InventoryIterator.IInvSlot;
@@ -80,12 +81,6 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
 		public ChunkCoordinates getPlayerCoordinates() {
 			return null;
 		}
-	}
-
-	@Override
-	public void destroy() {
-		super.destroy();
-		Utils.dropItems(worldObj, craftMatrix, xCoord, yCoord, zCoord);
 	}
 
 	@Override
@@ -268,7 +263,7 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
 			ItemStack stack = slot.getStackInSlot();
 			if (stack != null) {
 				slot.setStackInSlot(null);
-				Utils.dropItems(worldObj, stack, xCoord, yCoord + 1, zCoord);
+				InvUtils.dropItems(worldObj, stack, xCoord, yCoord + 1, zCoord);
 			}
 		}
 	}
