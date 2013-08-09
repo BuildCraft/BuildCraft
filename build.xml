@@ -18,13 +18,8 @@
 
 	<property name="mcpsrc.dir" value="${mcp.dir}/src"/>
 
-<<<<<<< HEAD
-	<property name="mc.version" value="1.5.2"/>
-	<property name="forge.version" value="7.8.1.738"/>
-=======
 	<property name="mc.version" value="1.6.2"/>
 	<property name="forge.version" value="9.10.0.800"/>
->>>>>>> mc16
 	<!--	<property name="project.version" value="0.0.0"/>-->
 
 	<property name="buildcraft.name" value="buildcraft"/>
