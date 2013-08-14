@@ -54,7 +54,7 @@ public class PipeTransportPower extends PipeTransport {
 	public short[] clientDisplayPower = new short[6];
 	public int overload;
 	private int[] powerQuery = new int[6];
-	private int[] nextPowerQuery = new int[6];
+	public int[] nextPowerQuery = new int[6];
 	private long currentDate;
 	private float[] internalPower = new float[6];
 	public float[] internalNextPower = new float[6];
