@@ -315,7 +315,12 @@ public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor
 	@Override
 	public boolean isActive() {
 		BlockIndex next = getNextIndexToPump(false);
-		return isPumpableFluid(next.x, next.y, next.z);
+		
+		if (next != null) {
+			return isPumpableFluid(next.x, next.y, next.z);
+		}
+		
+		return false;
 	}
 
 	@Override
