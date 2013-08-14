@@ -95,6 +95,12 @@ public class BlockGenericPipe extends BlockContainer {
 	public boolean renderAsNormalBlock() {
 		return false;
 	}
+	
+	@Override
+	@SideOnly(Side.CLIENT)
+	public boolean shouldSideBeRendered(IBlockAccess blockAccess, int x, int y, int z, int side) {
+		return true;
+	}
 
 	@Override
 	public boolean isBlockSolidOnSide(World world, int x, int y, int z, ForgeDirection side) {
