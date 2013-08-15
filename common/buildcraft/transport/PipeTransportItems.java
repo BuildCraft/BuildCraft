@@ -254,12 +254,11 @@ public class PipeTransportItems extends PipeTransport {
 	public ForgeDirection resolveDestination(TravelingItem data) {
 		LinkedList<ForgeDirection> listOfPossibleMovements = getPossibleMovements(data);
 
-		if (listOfPossibleMovements.size() == 0)
+		if (listOfPossibleMovements.isEmpty())
 			return ForgeDirection.UNKNOWN;
-		else {
-			int i = container.worldObj.rand.nextInt(listOfPossibleMovements.size());
-			return listOfPossibleMovements.get(i);
-		}
+
+		int i = container.worldObj.rand.nextInt(listOfPossibleMovements.size());
+		return listOfPossibleMovements.get(i);
 	}
 
 	/**
@@ -272,13 +271,13 @@ public class PipeTransportItems extends PipeTransport {
 		item.blacklist.add(item.input.getOpposite());
 
 		for (ForgeDirection o : ForgeDirection.VALID_DIRECTIONS) {
-			if (!item.blacklist.contains(o) && container.pipe.outputOpen(o))
-				if (canReceivePipeObjects(o, item)) {
-					result.add(o);
-				}
+			if(item.blacklist.contains(o))
+				continue;
+			if (container.pipe.outputOpen(o) && canReceivePipeObjects(o, item))
+				result.add(o);
 		}
 
-		if (result.size() == 0 && allowBouncing) {
+		if (allowBouncing && result.isEmpty()) {
 			if (canReceivePipeObjects(item.input.getOpposite(), item)) {
 				result.add(item.input.getOpposite());
 			}
@@ -394,7 +393,7 @@ public class PipeTransportItems extends PipeTransport {
 		if (passToNextPipe(item, tile)) {
 			// NOOP
 		} else if (tile instanceof IInventory) {
-			if (!CoreProxy.proxy.isRenderWorld(container.worldObj)) {
+			if (CoreProxy.proxy.isSimulating(container.worldObj)) {
 				if (item.getInsertionHandler().canInsertItem(item, (IInventory) tile)) {
 					ItemStack added = Transactor.getTransactorFor(tile).add(item.getItemStack(), item.output.getOpposite(), true);
 					item.getItemStack().stackSize -= added.stackSize;

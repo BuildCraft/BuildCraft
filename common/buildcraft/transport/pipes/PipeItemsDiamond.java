@@ -12,6 +12,7 @@ import buildcraft.api.core.IIconProvider;
 import buildcraft.api.core.Position;
 import buildcraft.core.GuiIds;
 import buildcraft.core.inventory.SimpleInventory;
+import buildcraft.core.inventory.StackHelper;
 import buildcraft.core.network.IClientState;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.transport.BlockGenericPipe;
@@ -29,7 +30,6 @@ import java.util.LinkedList;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
@@ -101,27 +101,22 @@ public class PipeItemsDiamond extends Pipe<PipeTransportItems> implements IPipeT
 			// to use that filter is higher, this is why there are
 			// no breaks here.
 			for (int slot = 0; slot < 9; ++slot) {
-				ItemStack stack = getFilters().getStackInSlot(dir.ordinal() * 9 + slot);
+				ItemStack filter = getFilters().getStackInSlot(dir.ordinal() * 9 + slot);
 
-				if (stack != null) {
+				if (filter != null)
 					foundFilter = true;
-				}
 
-				if (stack != null && stack.itemID == item.getItemStack().itemID)
-					if ((Item.itemsList[item.getItemStack().itemID].isDamageable())) {
-						filteredOrientations.add(dir);
-					} else if (stack.getItemDamage() == item.getItemStack().getItemDamage()) {
-						filteredOrientations.add(dir);
-					}
+				if (StackHelper.instance().isMatchingItem(filter, item.getItemStack(), true, false))
+					filteredOrientations.add(dir);
+
 			}
-			if (!foundFilter) {
+			if (!foundFilter)
 				defaultOrientations.add(dir);
-			}
 		}
-		if (filteredOrientations.size() != 0)
+		if (!filteredOrientations.isEmpty())
 			return filteredOrientations;
-		else
-			return defaultOrientations;
+		
+		return defaultOrientations;
 	}
 
 	@Override
