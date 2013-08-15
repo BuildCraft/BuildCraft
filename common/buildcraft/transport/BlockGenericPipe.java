@@ -566,8 +566,8 @@ public class BlockGenericPipe extends BlockContainer {
 
 	/* Wrappers ************************************************************ */
 	@Override
-	public void onNeighborBlockChange(World world, int x, int y, int z, int l) {
-		super.onNeighborBlockChange(world, x, y, z, l);
+	public void onNeighborBlockChange(World world, int x, int y, int z, int id) {
+		super.onNeighborBlockChange(world, x, y, z, id);
 
 		Pipe pipe = getPipe(world, x, y, z);
 
