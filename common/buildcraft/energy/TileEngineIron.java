@@ -40,7 +40,7 @@ public class TileEngineIron extends TileEngine implements IFluidHandler {
 
 	public static int MAX_LIQUID = FluidContainerRegistry.BUCKET_VOLUME * 10;
 	public static float HEAT_PER_MJ = 0.0023F;
-	public static float COOLDOWN_RATE = 0.005F;
+	public static float COOLDOWN_RATE = 0.01F;
 	int burnTime = 0;
 	private Tank tankFuel;
 	private Tank tankCoolant;
