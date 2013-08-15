@@ -1,9 +1,9 @@
 package buildcraft.silicon;
 
-import net.minecraft.item.ItemBlock;
+import buildcraft.core.ItemBlockBuildCraft;
 import net.minecraft.item.ItemStack;
 
-public class ItemLaserTable extends ItemBlock {
+public class ItemLaserTable extends ItemBlockBuildCraft {
 	public ItemLaserTable(int par1) {
 		super(par1);
 		setMaxDamage(0);
@@ -12,7 +12,7 @@ public class ItemLaserTable extends ItemBlock {
 
 	@Override
 	public String getUnlocalizedName(ItemStack par1ItemStack) {
-		return par1ItemStack.getItemDamage() == 0 ? "block.assemblyTableBlock" : "block.assemblyWorkbenchBlock";
+		return par1ItemStack.getItemDamage() == 0 ? "tile.assemblyTableBlock" : "tile.assemblyWorkbenchBlock";
 	}
 
 	@Override
