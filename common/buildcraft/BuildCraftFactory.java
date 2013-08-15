@@ -306,6 +306,16 @@ public class BuildCraftFactory {
 					'I', Item.ingotIron,
 					'C', Block.chest,
 					'G', BuildCraftCore.stoneGearItem);
+
+		if (floodGateBlock != null)
+			CoreProxy.proxy.addCraftingRecipe(new ItemStack(floodGateBlock),
+					"IGI",
+					"FTF",
+					"IFI",
+					'I', Item.ingotIron,
+					'T', tankBlock != null ? tankBlock : Block.glass,
+					'G', BuildCraftCore.ironGearItem,
+					'F', new ItemStack(Block.fenceIron));
 	}
 
 	@ForgeSubscribe
