@@ -175,6 +175,7 @@ public class PipeWorldRenderer implements ISimpleBlockRenderingHandler {
 		}
 
 		state.currentTexture = icons.getIcon(state.textureMatrix.getTextureIndex(ForgeDirection.UNKNOWN));
+		block.setBlockBounds(minSize, minSize, minSize, maxSize, maxSize, maxSize);
 		renderblocks.setRenderBounds(minSize, minSize, minSize, maxSize, maxSize, maxSize);
 		if (!west)
 			renderTwoWayXFace(renderblocks, block, state.currentTexture, x, y, z, minSize, minSize, maxSize, maxSize, minSize);

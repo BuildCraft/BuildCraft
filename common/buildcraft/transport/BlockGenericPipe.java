@@ -97,12 +97,6 @@ public class BlockGenericPipe extends BlockContainer {
 	}
 	
 	@Override
-	@SideOnly(Side.CLIENT)
-	public boolean shouldSideBeRendered(IBlockAccess blockAccess, int x, int y, int z, int side) {
-		return true;
-	}
-
-	@Override
 	public boolean isBlockSolidOnSide(World world, int x, int y, int z, ForgeDirection side) {
 		TileEntity tile = world.getBlockTileEntity(x, y, z);
 		if (tile instanceof ISolidSideTile) {
