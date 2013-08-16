@@ -43,8 +43,7 @@ public class PipeItemsDaizuli extends Pipe<PipeTransportItems> implements IPipeT
 	private int color = EnumColor.WHITE.ordinal();
 	private PipeLogicIron logic = new PipeLogicIron(this) {
 		@Override
-		protected boolean isValidFacing(ForgeDirection facing) {
-			TileEntity tile = pipe.container.getTile(facing);
+		protected boolean isValidConnectingTile(TileEntity tile) {
 			if (tile instanceof TileGenericPipe) {
 				Pipe otherPipe = ((TileGenericPipe) tile).pipe;
 				if (otherPipe instanceof PipeItemsWood)

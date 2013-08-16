@@ -377,7 +377,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 		// TODO Auto-generated method stub
 	}
 
-	private TileBuffer[] getTileCache() {
+	public TileBuffer[] getTileCache() {
 		if (tileBuffer == null && pipe != null)
 			tileBuffer = TileBuffer.makeBuffer(worldObj, xCoord, yCoord, zCoord, pipe.transport.delveIntoUnloadedChunks());
 		return tileBuffer;
