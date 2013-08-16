@@ -79,7 +79,7 @@ public class PipeWorldRenderer implements ISimpleBlockRenderingHandler {
 		return target;
 	}
 
-	private void renderAllFaceExeptAxe(RenderBlocks renderblocks, Block block, Icon icon, int x, int y, int z, char axe) {
+	private void renderAllFaceExeptAxe(RenderBlocks renderblocks, BlockGenericPipe block, Icon icon, int x, int y, int z, char axe) {
 		float minX = (float) renderblocks.renderMinX;
 		float minY = (float) renderblocks.renderMinY;
 		float minZ = (float) renderblocks.renderMinZ;
@@ -100,22 +100,28 @@ public class PipeWorldRenderer implements ISimpleBlockRenderingHandler {
 		}
 	}
 
-	private void renderTwoWayXFace(RenderBlocks renderblocks, Block block, Icon icon, int xCoord, int yCoord, int zCoord, float minY, float minZ, float maxY, float maxZ, float x) {
+	private void renderTwoWayXFace(RenderBlocks renderblocks, BlockGenericPipe block, Icon icon, int xCoord, int yCoord, int zCoord, float minY, float minZ, float maxY, float maxZ, float x) {
 		renderblocks.setRenderBounds(x, minY, minZ, x, maxY, maxZ);
+		block.setRenderAxis('x');
 		renderblocks.renderStandardBlock(block, xCoord, yCoord, zCoord);
+		block.setRenderAxis('a');
 	}
 
-	private void renderTwoWayYFace(RenderBlocks renderblocks, Block block, Icon icon, int xCoord, int yCoord, int zCoord, float minX, float minZ, float maxX, float maxZ, float y) {
+	private void renderTwoWayYFace(RenderBlocks renderblocks, BlockGenericPipe block, Icon icon, int xCoord, int yCoord, int zCoord, float minX, float minZ, float maxX, float maxZ, float y) {
 		renderblocks.setRenderBounds(minX, y, minZ, maxX, y, maxZ);
+		block.setRenderAxis('y');
 		renderblocks.renderStandardBlock(block, xCoord, yCoord, zCoord);
+		block.setRenderAxis('a');
 	}
 
-	private void renderTwoWayZFace(RenderBlocks renderblocks, Block block, Icon icon, int xCoord, int yCoord, int zCoord, float minX, float minY, float maxX, float maxY, float z) {
+	private void renderTwoWayZFace(RenderBlocks renderblocks, BlockGenericPipe block, Icon icon, int xCoord, int yCoord, int zCoord, float minX, float minY, float maxX, float maxY, float z) {
 		renderblocks.setRenderBounds(minX, minY, z, maxX, maxY, z);
+		block.setRenderAxis('z');
 		renderblocks.renderStandardBlock(block, xCoord, yCoord, zCoord);
+		block.setRenderAxis('a');
 	}
 
-	public void renderPipe(RenderBlocks renderblocks, IBlockAccess iblockaccess, Block block, IPipeRenderState renderState, int x, int y, int z) {
+	public void renderPipe(RenderBlocks renderblocks, IBlockAccess iblockaccess, BlockGenericPipe block, IPipeRenderState renderState, int x, int y, int z) {
 
 		float minSize = Utils.pipeMinPos;
 		float maxSize = Utils.pipeMaxPos;
@@ -560,7 +566,7 @@ public class PipeWorldRenderer implements ISimpleBlockRenderingHandler {
 
 		if (tile instanceof IPipeRenderState) {
 			IPipeRenderState pipeTile = (IPipeRenderState) tile;
-			renderPipe(renderer, world, block, pipeTile, x, y, z);
+			renderPipe(renderer, world, (BlockGenericPipe) block, pipeTile, x, y, z);
 		}
 		return true;
 	}
