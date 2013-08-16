@@ -149,19 +149,23 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 
 	@Override
 	public void updateEntity() {
-		if (worldObj.isRemote)
-			return;
+		if (!worldObj.isRemote) {
+			if (deletePipe)
+				worldObj.setBlockToAir(xCoord, yCoord, zCoord);
 
-		if (deletePipe)
-			worldObj.setBlockToAir(xCoord, yCoord, zCoord);
+			if (pipe == null)
+				return;
 
-		if (pipe == null)
-			return;
-
-		if (!initialized)
-			initialize(pipe);
+			if (!initialized)
+				initialize(pipe);
+		}
 
 		if (!BlockGenericPipe.isValid(pipe))
+			return;
+
+		pipe.updateEntity();
+
+		if (worldObj.isRemote)
 			return;
 
 		if (blockNeighborChange) {
@@ -177,12 +181,8 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 		}
 
 		PowerReceiver provider = getPowerReceiver(null);
-
 		if (provider != null)
 			provider.update();
-
-		if (pipe != null)
-			pipe.updateEntity();
 	}
 
 	// PRECONDITION: worldObj must not be null
@@ -608,7 +608,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 			case 0:
 				if (pipe == null && coreState.pipeId != 0)
 					initialize(BlockGenericPipe.createPipe(coreState.pipeId));
-				
+
 				if (pipe != null && coreState.gateKind != GateKind.None.ordinal()) {
 					if (pipe.gate == null)
 						pipe.gate = new GateVanilla(pipe);
