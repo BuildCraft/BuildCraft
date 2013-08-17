@@ -1,6 +1,8 @@
 package buildcraft.core;
 
 import buildcraft.api.tools.IToolWrench;
+import java.util.HashSet;
+import java.util.Set;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -8,10 +10,15 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
 
 public class ItemWrench extends ItemBuildCraft implements IToolWrench {
+	
+	private final Set<Block> bannedRotations = new HashSet<Block>();
 
 	public ItemWrench(int i) {
 		super(i);
 		setFull3D();
+		bannedRotations.add(Block.lever);
+		bannedRotations.add(Block.stoneButton);
+		bannedRotations.add(Block.woodenButton);
 	}
 
 	@Override
@@ -21,7 +28,10 @@ public class ItemWrench extends ItemBuildCraft implements IToolWrench {
 		
 		int blockId = world.getBlockId(x, y, z);
 		Block block = Block.blocksList[blockId];
-		if (block != null && block.blockID != Block.lever.blockID && block.rotateBlock(world, x, y, z, ForgeDirection.getOrientation(side))) {
+		if(bannedRotations.contains(block))
+			return false;
+		
+		if (block != null && block.rotateBlock(world, x, y, z, ForgeDirection.getOrientation(side))) {
 			player.swingItem();
 			return !world.isRemote;
 		}
