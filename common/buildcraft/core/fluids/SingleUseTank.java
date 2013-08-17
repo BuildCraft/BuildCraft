@@ -30,18 +30,22 @@ public class SingleUseTank extends Tank {
 	public int fill(FluidStack resource, boolean doFill) {
 		if (resource == null)
 			return 0;
-		if (acceptedFluid == null)
+		if (doFill && acceptedFluid == null)
 			acceptedFluid = resource.getFluid();
-		if (acceptedFluid != resource.getFluid())
-			return 0;
-		return super.fill(resource, doFill);
+		if (acceptedFluid == null || acceptedFluid == resource.getFluid())
+			return super.fill(resource, doFill);
+		return 0;
 	}
 
 	public void reset() {
 		acceptedFluid = null;
 	}
-	
-	public Fluid getAcceptedFluid(){
+
+	public void setAcceptedFluid(Fluid fluid) {
+		this.acceptedFluid = fluid;
+	}
+
+	public Fluid getAcceptedFluid() {
 		return acceptedFluid;
 	}
 

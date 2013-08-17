@@ -76,7 +76,7 @@ public class GuiRefinery extends GuiAdvancedInterface {
 
 		if (position >= 0 && position < 2) {
 			if (k == 0) {
-				if (!this.isShiftKeyDown()) {
+				if (!isShiftKeyDown()) {
 					FluidStack liquid = FluidContainerRegistry.getFluidForFilledItem(mc.thePlayer.inventory.getItemStack());
 
 					if (liquid == null) {
@@ -84,7 +84,6 @@ public class GuiRefinery extends GuiAdvancedInterface {
 					}
 
 					container.setFilter(position, liquid.getFluid());
-					return;
 				} else {
 					container.setFilter(position, null);
 				}

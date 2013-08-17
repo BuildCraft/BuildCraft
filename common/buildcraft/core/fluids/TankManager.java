@@ -28,19 +28,19 @@ import net.minecraftforge.fluids.IFluidHandler;
  *
  * @author CovertJaguar <http://www.railcraft.info/>
  */
-public class TankManager extends ForwardingList<Tank> implements IFluidHandler, List<Tank> {
+public class TankManager<T extends Tank> extends ForwardingList<T> implements IFluidHandler, List<T> {
 
-	private List<Tank> tanks = new ArrayList<Tank>();
+	private List<T> tanks = new ArrayList<T>();
 
 	public TankManager() {
 	}
 
-	public TankManager(Tank... tanks) {
+	public TankManager(T... tanks) {
 		addAll(Arrays.asList(tanks));
 	}
 
 	@Override
-	protected List<Tank> delegate() {
+	protected List<T> delegate() {
 		return tanks;
 	}
 

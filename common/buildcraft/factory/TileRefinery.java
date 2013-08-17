@@ -18,6 +18,7 @@ import buildcraft.api.recipes.RefineryRecipes;
 import buildcraft.api.recipes.RefineryRecipes.Recipe;
 import buildcraft.core.IMachine;
 import buildcraft.core.TileBuildCraft;
+import buildcraft.core.fluids.SingleUseTank;
 import buildcraft.core.fluids.Tank;
 import buildcraft.core.fluids.TankManager;
 import buildcraft.core.network.PacketPayload;
@@ -43,12 +44,11 @@ import net.minecraftforge.fluids.IFluidHandler;
 
 public class TileRefinery extends TileBuildCraft implements IFluidHandler, IPowerReceptor, IInventory, IMachine {
 
-	private Fluid[] filters = new Fluid[2];
 	public static int LIQUID_PER_SLOT = FluidContainerRegistry.BUCKET_VOLUME * 4;
-	public Tank tank1 = new Tank("tank1", LIQUID_PER_SLOT);
-	public Tank tank2 = new Tank("tank2", LIQUID_PER_SLOT);
-	public Tank result = new Tank("result", LIQUID_PER_SLOT);
-	public TankManager tankManager = new TankManager(tank1, tank2, result);
+	public SingleUseTank tank1 = new SingleUseTank("tank1", LIQUID_PER_SLOT);
+	public SingleUseTank tank2 = new SingleUseTank("tank2", LIQUID_PER_SLOT);
+	public SingleUseTank result = new SingleUseTank("result", LIQUID_PER_SLOT);
+	public TankManager<SingleUseTank> tankManager = new TankManager<SingleUseTank>(tank1, tank2, result);
 	public float animationSpeed = 1;
 	private int animationStage = 0;
 	SafeTimeTracker time = new SafeTimeTracker();
@@ -124,10 +124,10 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IPowe
 		if (CoreProxy.proxy.isRenderWorld(worldObj)) {
 			simpleAnimationIterate();
 			return;
-
-		} else if (CoreProxy.proxy.isSimulating(worldObj) && updateNetworkTime.markTimeIfDelay(worldObj, 2 * BuildCraftCore.updateFactor)) {
-			sendNetworkUpdate();
 		}
+
+		if (updateNetworkTime.markTimeIfDelay(worldObj, BuildCraftCore.updateFactor))
+			sendNetworkUpdate();
 
 		isActive = false;
 
@@ -217,9 +217,6 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IPowe
 
 		powerHandler.readFromNBT(data);
 		initPowerProvider();
-
-		filters[0] = FluidRegistry.getFluid(data.getString("filter0"));
-		filters[1] = FluidRegistry.getFluid(data.getString("filter1"));
 	}
 
 	@Override
@@ -231,11 +228,6 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IPowe
 		data.setInteger("animationStage", animationStage);
 		data.setFloat("animationSpeed", animationSpeed);
 		powerHandler.writeToNBT(data);
-
-		if (filters[0] != null)
-			data.setString("filter0", filters[0].getName());
-		if (filters[1] != null)
-			data.setString("filter1", filters[1].getName());
 	}
 
 	public int getAnimationStage() {
@@ -295,12 +287,18 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IPowe
 	public void closeChest() {
 	}
 
+	public void resetFilters() {
+		for (SingleUseTank tank : tankManager) {
+			tank.setAcceptedFluid(null);
+		}
+	}
+
 	public void setFilter(int number, Fluid fluid) {
-		filters[number] = fluid;
+		tankManager.get(number).setAcceptedFluid(fluid);
 	}
 
 	public Fluid getFilter(int number) {
-		return filters[number];
+		return tankManager.get(number).getAcceptedFluid();
 	}
 
 	@Override
@@ -312,19 +310,19 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IPowe
 	public void getGUINetworkData(int id, int data) {
 		switch (id) {
 			case 0:
-				filters[0] = FluidRegistry.getFluid(data);
+				setFilter(0, FluidRegistry.getFluid(data));
 				break;
 			case 1:
-				filters[1] = FluidRegistry.getFluid(data);
+				setFilter(1, FluidRegistry.getFluid(data));
 				break;
 		}
 	}
 
 	public void sendGUINetworkData(Container container, ICrafting iCrafting) {
-		if (filters[0] != null)
-			iCrafting.sendProgressBarUpdate(container, 0, filters[0].getID());
-		if (filters[1] != null)
-			iCrafting.sendProgressBarUpdate(container, 1, filters[1].getID());
+		if (getFilter(0) != null)
+			iCrafting.sendProgressBarUpdate(container, 0, getFilter(0).getID());
+		if (getFilter(1) != null)
+			iCrafting.sendProgressBarUpdate(container, 1, getFilter(1).getID());
 	}
 
 	/* ITANKCONTAINER */
@@ -333,26 +331,9 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IPowe
 		int used = 0;
 		FluidStack resourceUsing = resource.copy();
 
-		if (filters[0] != null || filters[1] != null) {
-			if (filters[0] == resource.getFluid()) {
-				used += tank1.fill(resourceUsing, doFill);
-			}
-
-			resourceUsing.amount -= used;
-
-			if (filters[1] == resource.getFluid()) {
-				used += tank2.fill(resourceUsing, doFill);
-			}
-		} else {
-			used += tank1.fill(resourceUsing, doFill);
-			resourceUsing.amount -= used;
-			used += tank2.fill(resourceUsing, doFill);
-		}
-
-		if (doFill && used > 0) {
-			updateNetworkTime.markTime(worldObj);
-			sendNetworkUpdate();
-		}
+		used += tank1.fill(resourceUsing, doFill);
+		resourceUsing.amount -= used;
+		used += tank2.fill(resourceUsing, doFill);
 
 		return used;
 	}
