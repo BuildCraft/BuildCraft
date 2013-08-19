@@ -30,12 +30,12 @@ import buildcraft.core.network.IClientState;
 import buildcraft.core.network.ISyncedTile;
 import buildcraft.core.network.PacketTileState;
 import buildcraft.transport.Gate.GateKind;
-import buildcraft.transport.network.PipeRenderStatePacket;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.logging.Level;
 import net.minecraft.block.Block;
@@ -149,21 +149,26 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 
 	@Override
 	public void updateEntity() {
+		if (!worldObj.isRemote) {
+			if (deletePipe)
+				worldObj.setBlockToAir(xCoord, yCoord, zCoord);
 
-		if (deletePipe)
-			worldObj.setBlockToAir(xCoord, yCoord, zCoord);
+			if (pipe == null)
+				return;
 
-		if (pipe == null)
-			return;
-
-		if (!initialized)
-			initialize(pipe);
+			if (!initialized)
+				initialize(pipe);
+		}
 
 		if (!BlockGenericPipe.isValid(pipe))
 			return;
 
-		if (blockNeighborChange) {
+		pipe.updateEntity();
 
+		if (worldObj.isRemote)
+			return;
+
+		if (blockNeighborChange) {
 			computeConnections();
 			pipe.onNeighborBlockChange(0);
 			blockNeighborChange = false;
@@ -176,21 +181,12 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 		}
 
 		PowerReceiver provider = getPowerReceiver(null);
-
 		if (provider != null)
 			provider.update();
-
-		if (pipe != null)
-			pipe.updateEntity();
 	}
 
 	// PRECONDITION: worldObj must not be null
 	private void refreshRenderState() {
-
-		// Only done on server/SSP
-		if (worldObj.isRemote)
-			return;
-
 		// Pipe connections;
 		for (ForgeDirection o : ForgeDirection.VALID_DIRECTIONS) {
 			renderState.pipeConnectionMatrix.setConnected(o, this.pipeConnectionsBuffer[o.ordinal()]);
@@ -344,15 +340,6 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 	}
 
 	/* SMP */
-	public void handleDescriptionPacket(PipeRenderStatePacket packet) {
-		if (worldObj.isRemote) {
-			if (pipe == null && packet.getPipeId() != 0)
-				initialize(BlockGenericPipe.createPipe(packet.getPipeId()));
-			renderState = packet.getRenderState();
-			worldObj.markBlockForRenderUpdate(xCoord, yCoord, zCoord);
-		}
-	}
-
 	@Override
 	public Packet getDescriptionPacket() {
 		bindPipe();
@@ -390,7 +377,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 		// TODO Auto-generated method stub
 	}
 
-	private TileBuffer[] getTileCache() {
+	public TileBuffer[] getTileCache() {
 		if (tileBuffer == null && pipe != null)
 			tileBuffer = TileBuffer.makeBuffer(worldObj, xCoord, yCoord, zCoord, pipe.transport.delveIntoUnloadedChunks());
 		return tileBuffer;
@@ -429,6 +416,9 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 	 * @return true if pipes are considered connected
 	 */
 	protected boolean canPipeConnect(TileEntity with, ForgeDirection side) {
+		if (with == null)
+			return false;
+
 		if (hasPlug(side))
 			return false;
 
@@ -458,21 +448,21 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 
 	private void computeConnections() {
 		TileBuffer[] cache = getTileCache();
-		if (cache != null) {
-			pipeConnectionsBuffer = new boolean[6];
+		if (cache == null)
+			return;
 
-			for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
-				TileBuffer t = cache[side.ordinal()];
-				t.refresh();
+		for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
+			TileBuffer t = cache[side.ordinal()];
+			t.refresh();
 
-				if (t.getTile() != null)
-					pipeConnectionsBuffer[side.ordinal()] = canPipeConnect(t.getTile(), side);
-			}
+			pipeConnectionsBuffer[side.ordinal()] = canPipeConnect(t.getTile(), side);
 		}
 	}
 
 	@Override
 	public boolean isPipeConnected(ForgeDirection with) {
+		if (worldObj.isRemote)
+			return renderState.pipeConnectionMatrix.isConnected(with);
 		return pipeConnectionsBuffer[with.ordinal()];
 	}
 
@@ -618,6 +608,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 			case 0:
 				if (pipe == null && coreState.pipeId != 0)
 					initialize(BlockGenericPipe.createPipe(coreState.pipeId));
+
 				if (pipe != null && coreState.gateKind != GateKind.None.ordinal()) {
 					if (pipe.gate == null)
 						pipe.gate = new GateVanilla(pipe);

@@ -13,7 +13,7 @@ import buildcraft.api.core.Position;
 import buildcraft.api.tools.IToolWrench;
 import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.GuiIds;
-import buildcraft.core.proxy.CoreProxy;
+import buildcraft.core.fluids.FluidUtils;
 import buildcraft.core.utils.Utils;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -29,8 +29,11 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Icon;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
+import static net.minecraftforge.common.ForgeDirection.EAST;
+import static net.minecraftforge.common.ForgeDirection.NORTH;
+import static net.minecraftforge.common.ForgeDirection.SOUTH;
+import static net.minecraftforge.common.ForgeDirection.WEST;
 import net.minecraftforge.fluids.FluidContainerRegistry;
-import net.minecraftforge.fluids.FluidStack;
 
 public class BlockRefinery extends BlockContainer {
 
@@ -77,53 +80,54 @@ public class BlockRefinery extends BlockContainer {
 	}
 
 	@Override
-	public boolean onBlockActivated(World world, int i, int j, int k, EntityPlayer entityplayer, int par6, float par7, float par8, float par9) {
-		// Drop through if the player is sneaking
-		if (entityplayer.isSneaking()) {
+	public boolean rotateBlock(World world, int x, int y, int z, ForgeDirection axis) {
+		int meta = world.getBlockMetadata(x, y, z);
+
+		switch (ForgeDirection.getOrientation(meta)) {
+			case WEST:
+				world.setBlockMetadataWithNotify(x, y, z, ForgeDirection.SOUTH.ordinal(), 3);
+				break;
+			case EAST:
+				world.setBlockMetadataWithNotify(x, y, z, ForgeDirection.NORTH.ordinal(), 3);
+				break;
+			case NORTH:
+				world.setBlockMetadataWithNotify(x, y, z, ForgeDirection.WEST.ordinal(), 3);
+				break;
+			case SOUTH:
+			default:
+				world.setBlockMetadataWithNotify(x, y, z, ForgeDirection.EAST.ordinal(), 3);
+				break;
+		}
+		world.markBlockForUpdate(x, y, z);
+		return true;
+	}
+
+	@Override
+	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float hitX, float hitY, float hitZ) {
+		TileEntity tile = world.getBlockTileEntity(x, y, z);
+
+		if (!(tile instanceof TileRefinery))
 			return false;
+
+		ItemStack current = player.getCurrentEquippedItem();
+		Item equipped = current != null ? current.getItem() : null;
+		if (player.isSneaking() && equipped instanceof IToolWrench && ((IToolWrench) equipped).canWrench(player, x, y, z)) {
+			((TileRefinery)tile).resetFilters();
+			((IToolWrench) equipped).wrenchUsed(player, x, y, z);
+			return true;
 		}
 
-		Item equipped = entityplayer.getCurrentEquippedItem() != null ? entityplayer.getCurrentEquippedItem().getItem() : null;
-		if (equipped instanceof IToolWrench && ((IToolWrench) equipped).canWrench(entityplayer, i, j, k)) {
-
-			int meta = world.getBlockMetadata(i, j, k);
-
-			switch (ForgeDirection.values()[meta]) {
-				case WEST:
-					world.setBlockMetadataWithNotify(i, j, k, ForgeDirection.SOUTH.ordinal(), 0);
-					break;
-				case EAST:
-					world.setBlockMetadataWithNotify(i, j, k, ForgeDirection.NORTH.ordinal(), 0);
-					break;
-				case NORTH:
-					world.setBlockMetadataWithNotify(i, j, k, ForgeDirection.WEST.ordinal(), 0);
-					break;
-				case SOUTH:
-				default:
-					world.setBlockMetadataWithNotify(i, j, k, ForgeDirection.EAST.ordinal(), 0);
-					break;
-			}
-			((IToolWrench) equipped).wrenchUsed(entityplayer, i, j, k);
-			world.markBlockForUpdate(i, j, k);
-			return true;
-		} else {
-
-			FluidStack liquid = FluidContainerRegistry.getFluidForFilledItem(entityplayer.getCurrentEquippedItem());
-
-			if (liquid != null) {
-				int qty = ((TileRefinery) world.getBlockTileEntity(i, j, k)).fill(ForgeDirection.UNKNOWN, liquid, true);
-
-				if (qty != 0 && !BuildCraftCore.debugMode && !entityplayer.capabilities.isCreativeMode) {
-					entityplayer.inventory.setInventorySlotContents(entityplayer.inventory.currentItem,
-							Utils.consumeItem(entityplayer.inventory.getCurrentItem()));
-				}
-
+		if (current != null && current.itemID != Item.bucketEmpty.itemID) {
+			if (!world.isRemote) {
+				if (FluidUtils.handleRightClick((TileRefinery) tile, ForgeDirection.getOrientation(side), player, true, false))
+					return true;
+			} else if (FluidContainerRegistry.isContainer(current)) {
 				return true;
 			}
 		}
 
-		if (!CoreProxy.proxy.isRenderWorld(world)) {
-			entityplayer.openGui(BuildCraftFactory.instance, GuiIds.REFINERY, world, i, j, k);
+		if (!world.isRemote) {
+			player.openGui(BuildCraftFactory.instance, GuiIds.REFINERY, world, x, y, z);
 		}
 
 		return true;

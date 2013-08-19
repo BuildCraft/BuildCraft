@@ -54,7 +54,7 @@ public class PipeTransportPower extends PipeTransport {
 	public short[] clientDisplayPower = new short[6];
 	public int overload;
 	private int[] powerQuery = new int[6];
-	private int[] nextPowerQuery = new int[6];
+	public int[] nextPowerQuery = new int[6];
 	private long currentDate;
 	private float[] internalPower = new float[6];
 	public float[] internalNextPower = new float[6];
@@ -336,7 +336,7 @@ public class PipeTransportPower extends PipeTransport {
 	public void requestEnergy(ForgeDirection from, float amount) {
 		step();
 		if (this.container.pipe instanceof IPipeTransportPowerHook) {
-			((IPipeTransportPowerHook) this.container.pipe).requestEnergy(from, amount);
+			nextPowerQuery[from.ordinal()] += ((IPipeTransportPowerHook) this.container.pipe).requestEnergy(from, amount);
 		} else {
 			nextPowerQuery[from.ordinal()] += amount;
 		}

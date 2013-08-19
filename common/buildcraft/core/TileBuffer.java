@@ -80,6 +80,12 @@ public final class TileBuffer {
 		return null;
 	}
 
+	public boolean exists() {
+		if(tile != null && !tile.isInvalid())
+			return true;
+		return world.blockExists(x, y, z);
+	}
+
 	public static TileBuffer[] makeBuffer(World world, int x, int y, int z, boolean loadUnloaded) {
 		TileBuffer[] buffer = new TileBuffer[6];
 		for (int i = 0; i < 6; i++) {

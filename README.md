@@ -11,6 +11,7 @@ features or change existing behaviour or balance, please discuss it with Sengir 
 If you don't, we might assume that you are using latest-greatest and waste a bunch of time trying to reproduce 
 a problem that might have fixed been already. Such things makes for very grumpy devs. Grumpy devs spend 
 less time coding and more time doing stuff that makes them less grumpy.
+* If the issues occurs on a server, be sure it's a vanilla forge server and <b>not</b> a mcpc+ server.
 
 #### Frequently reported
 * java.lang.AbstractMethodError - Incompatibility between BC/Forge/Mod using BC API. Usually not a BC issue

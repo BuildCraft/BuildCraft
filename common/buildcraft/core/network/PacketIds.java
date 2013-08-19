@@ -3,7 +3,7 @@ package buildcraft.core.network;
 public class PacketIds {
 
 	public static final int TILE_UPDATE = 0;
-	public static final int PIPE_DESCRIPTION = 1;
+//	public static final int PIPE_DESCRIPTION = 1;
 	public static final int PIPE_CONTENTS = 2;
 	public static final int PIPE_LIQUID = 3;
 	public static final int PIPE_POWER = 4;

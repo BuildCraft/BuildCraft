@@ -43,11 +43,6 @@ public class PacketHandlerTransport implements IPacketHandler {
 				PacketFluidUpdate packetFluid = new PacketFluidUpdate();
 				packetFluid.readData(data);
 				break;
-			case PacketIds.PIPE_DESCRIPTION:
-				PipeRenderStatePacket descPacket = new PipeRenderStatePacket();
-				descPacket.readData(data);
-				onPipeDescription((EntityPlayer) player, descPacket);
-				break;
 			case PacketIds.PIPE_CONTENTS:
 				PacketPipeTransportContent packetC = new PacketPipeTransportContent();
 				packetC.readData(data);
@@ -170,30 +165,6 @@ public class PacketHandlerTransport implements IPacketHandler {
 			return;
 
 		((PipeTransportItems)pipe.pipe.transport).handleNBTPacket(packet);
-	}
-
-	/**
-	 * Handles a pipe description packet. (Creates the pipe object client side if needed.)
-	 * 
-	 * @param descPacket
-	 */
-	private void onPipeDescription(EntityPlayer player, PipeRenderStatePacket descPacket) {
-		World world = player.worldObj;
-
-		if (!world.blockExists(descPacket.posX, descPacket.posY, descPacket.posZ))
-			return;
-
-		TileEntity entity = world.getBlockTileEntity(descPacket.posX, descPacket.posY, descPacket.posZ);
-		if (entity == null)
-			return;
-		// entity = new TileGenericPipeProxy();
-		// world.setBlockTileEntity(descPacket.posX, descPacket.posY, descPacket.posZ, entity);
-
-		if (!(entity instanceof TileGenericPipe))
-			return;
-
-		TileGenericPipe tile = (TileGenericPipe) entity;
-		tile.handleDescriptionPacket(descPacket);
 	}
 
 	/**

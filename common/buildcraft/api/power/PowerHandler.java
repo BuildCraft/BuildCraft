@@ -315,6 +315,7 @@ public final class PowerHandler {
 		 * @return
 		 */
 		public float powerRequest() {
+			update();
 			return Math.min(maxEnergyReceived, maxEnergyStored - energyStored);
 		}
 

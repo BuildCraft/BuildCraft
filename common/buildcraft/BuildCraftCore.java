@@ -153,7 +153,7 @@ public class BuildCraftCore {
 
 	public static boolean loadDefaultRecipes = true;
 	public static boolean forcePneumaticPower = true;
-	public static boolean consumeWaterSources = true;
+	public static boolean consumeWaterSources = false;
 
 	public static BptItem[] itemBptProps = new BptItem[Item.itemsList.length];
 
@@ -222,8 +222,11 @@ public class BuildCraftCore {
 			Property diamondGearId = BuildCraftCore.mainConfiguration.getItem("diamondGearItem.id", DefaultProps.DIAMOND_GEAR_ID);
 			Property modifyWorldProp = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "modifyWorld", true);
 			modifyWorldProp.comment = "set to false if BuildCraft should not generate custom blocks (e.g. oil)";
-
 			modifyWorld = modifyWorldProp.getBoolean(true);
+
+			Property consumeWater = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "consumeWater", consumeWaterSources);
+			consumeWaterSources = consumeWater.getBoolean(consumeWaterSources);
+			consumeWater.comment = "set to true if the Pump should consume water";
 
 			if(BuildCraftCore.modifyWorld) {
 				springBlock = new BlockSpring(springId.getInt()).setUnlocalizedName("eternalSpring");

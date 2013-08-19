@@ -194,7 +194,7 @@ public class BuildCraftEnergy {
 			LanguageRegistry.addName(bucketFuel, "Fuel Bucket");
 			FluidContainerRegistry.registerFluidContainer(FluidRegistry.getFluidStack("fuel", FluidContainerRegistry.BUCKET_VOLUME), new ItemStack(bucketFuel), new ItemStack(Item.bucketEmpty));
 		}
-		
+
 		BucketHandler.INSTANCE.buckets.put(blockOil, bucketOil);
 		BucketHandler.INSTANCE.buckets.put(blockFuel, bucketFuel);
 		MinecraftForge.EVENT_BUS.register(BucketHandler.INSTANCE);
@@ -238,8 +238,8 @@ public class BuildCraftEnergy {
 	@SideOnly(Side.CLIENT)
 	public void textureHook(TextureStitchEvent.Post event) {
 		if (event.map.textureType == 0) {
-			buildcraftFluidOil.setIcons(blockOil.getBlockTextureFromSide(1));
-			buildcraftFluidFuel.setIcons(blockFuel.getBlockTextureFromSide(1));
+			buildcraftFluidOil.setIcons(blockOil.getBlockTextureFromSide(1), blockOil.getBlockTextureFromSide(2));
+			buildcraftFluidFuel.setIcons(blockFuel.getBlockTextureFromSide(1), blockFuel.getBlockTextureFromSide(2));
 		}
 	}
 

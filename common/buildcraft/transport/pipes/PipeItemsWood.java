@@ -16,6 +16,7 @@ import buildcraft.api.power.PowerHandler;
 import buildcraft.api.power.PowerHandler.PowerReceiver;
 import buildcraft.api.power.PowerHandler.Type;
 import buildcraft.api.transport.PipeManager;
+import buildcraft.core.TileBuffer;
 import buildcraft.transport.TravelingItem;
 import buildcraft.core.inventory.InventoryWrapper;
 import buildcraft.core.utils.Utils;
@@ -38,8 +39,7 @@ public class PipeItemsWood extends Pipe<PipeTransportItems> implements IPowerRec
 	protected int solidIconIndex = PipeIconProvider.TYPE.PipeAllWood_Solid.ordinal();
 	private PipeLogicWood logic = new PipeLogicWood(this) {
 		@Override
-		protected boolean isValidFacing(ForgeDirection facing) {
-			TileEntity tile = pipe.container.getTile(facing);
+		protected boolean isValidConnectingTile(TileEntity tile) {
 			if (!(tile instanceof IInventory))
 				return false;
 			if (!PipeManager.canExtractItems(pipe, tile.worldObj, tile.xCoord, tile.yCoord, tile.zCoord))
@@ -136,7 +136,7 @@ public class PipeItemsWood extends Pipe<PipeTransportItems> implements IPowerRec
 
 				entityPos.moveForwards(0.6);
 
-				TravelingItem entity = new TravelingItem( entityPos.x, entityPos.y, entityPos.z, stack);
+				TravelingItem entity = new TravelingItem(entityPos.x, entityPos.y, entityPos.z, stack);
 
 				transport.injectItem(entity, entityPos.orientation);
 			}
@@ -179,9 +179,9 @@ public class PipeItemsWood extends Pipe<PipeTransportItems> implements IPowerRec
 	}
 
 	public ItemStack checkExtractGeneric(ISidedInventory inventory, boolean doRemove, ForgeDirection from) {
-		if(inventory == null)
+		if (inventory == null)
 			return null;
-		
+
 		for (int k : inventory.getAccessibleSlotsFromSide(from.ordinal())) {
 			ItemStack slot = inventory.getStackInSlot(k);
 

@@ -5,7 +5,7 @@
 	<dirname property="imported.basedir" file="${ant.file.BuildCraft}"/>
 	<property name="build.dir" value="build"/>
 	<property name="src.dir" value="${imported.basedir}"/>
-	<property name="lang.dir" value="../buildcraft.localization"/>
+	<property name="lang.dir" value="${imported.basedir}/../buildcraft.localization"/>
 	<property name="resources.dir" value="${imported.basedir}/buildcraft_resources"/>
 
 	<property name="download.dir" value="download"/>
