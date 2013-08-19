@@ -9,6 +9,7 @@ package buildcraft.factory.render;
 
 import buildcraft.core.DefaultProps;
 import buildcraft.core.IInventoryRenderer;
+import buildcraft.core.fluids.Tank;
 import buildcraft.core.render.FluidRenderer;
 import buildcraft.factory.TileRefinery;
 import net.minecraft.client.model.ModelBase;
@@ -183,7 +184,7 @@ public class RenderRefinery extends TileEntitySpecialRenderer implements IInvent
 				if (list1 != null) {
 					func_110628_a(FluidRenderer.getFluidSheet(liquid1));
 					FluidRenderer.setColorForFluidStack(liquid1);
-					GL11.glCallList(list1[(int) ((float) liquid1.amount / (float) TileRefinery.LIQUID_PER_SLOT * (FluidRenderer.DISPLAY_STAGES - 1))]);
+					GL11.glCallList(list1[getDisplayListIndex(tile.tank1)]);
 				}
 			}
 
@@ -195,7 +196,7 @@ public class RenderRefinery extends TileEntitySpecialRenderer implements IInvent
 					GL11.glTranslatef(0, 0, 1);
 					func_110628_a(FluidRenderer.getFluidSheet(liquid2));
 					FluidRenderer.setColorForFluidStack(liquid2);
-					GL11.glCallList(list2[(int) ((float) liquid2.amount / (float) TileRefinery.LIQUID_PER_SLOT * (FluidRenderer.DISPLAY_STAGES - 1))]);
+					GL11.glCallList(list2[getDisplayListIndex(tile.tank2)]);
 					GL11.glPopMatrix();
 				}
 			}
@@ -209,7 +210,7 @@ public class RenderRefinery extends TileEntitySpecialRenderer implements IInvent
 					GL11.glTranslatef(1, 0, 0.5F);
 					func_110628_a(FluidRenderer.getFluidSheet(liquidResult));
 					FluidRenderer.setColorForFluidStack(liquidResult);
-					GL11.glCallList(list3[(int) ((float) liquidResult.amount / (float) TileRefinery.LIQUID_PER_SLOT * (FluidRenderer.DISPLAY_STAGES - 1))]);
+					GL11.glCallList(list3[getDisplayListIndex(tile.result)]);
 					GL11.glPopMatrix();
 				}
 			}
@@ -218,5 +219,9 @@ public class RenderRefinery extends TileEntitySpecialRenderer implements IInvent
 
 		GL11.glPopAttrib();
 		GL11.glPopMatrix();
+	}
+
+	private int getDisplayListIndex(Tank tank) {
+		return Math.min((int) ((float) tank.getFluidAmount() / (float) tank.getCapacity() * (FluidRenderer.DISPLAY_STAGES - 1)), FluidRenderer.DISPLAY_STAGES - 1);
 	}
 }
