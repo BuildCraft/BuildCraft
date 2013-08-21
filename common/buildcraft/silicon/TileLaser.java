@@ -39,6 +39,7 @@ public class TileLaser extends TileBuildCraft implements IPowerReceptor, IAction
 	private int nextLaserUpdate = 10;
 	private int nextLaserSearch = 100;
 	private ActionMachineControl.Mode lastMode = ActionMachineControl.Mode.Unknown;
+	private static final PowerHandler.PerditionCalculator PERDITION = new PowerHandler.PerditionCalculator(0.5F);
 
 	public TileLaser() {
 		powerHandler = new PowerHandler(this, Type.MACHINE);
@@ -47,7 +48,7 @@ public class TileLaser extends TileBuildCraft implements IPowerReceptor, IAction
 
 	private void initPowerProvider() {
 		powerHandler.configure(25, 150, 25, 1000);
-		powerHandler.configurePowerPerdition(1, 1);
+		powerHandler.setPerdition(PERDITION);
 	}
 
 	@Override
