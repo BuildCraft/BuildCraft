@@ -270,14 +270,14 @@ public class PipeWorldRenderer implements ISimpleBlockRenderingHandler {
 				if (state.pipeConnectionMatrix.isConnected(direction)) {
 					float[][] rotated = deepClone(zeroState);
 					rotated[2][0] = 0.0F;
-					rotated[2][1] = Utils.pipeMinPos;
+					rotated[2][1] = Utils.pipeMinPos - zFightOffset;
 					rotated[1][0] -= zFightOffset / 2;
 					transform(rotated, direction);
 					renderblocks.setRenderBounds(rotated[0][0], rotated[1][0], rotated[2][0], rotated[0][1], rotated[1][1], rotated[2][1]);
 					renderblocks.renderStandardBlock(block, x, y, z);
 
 					rotated = deepClone(zeroState);
-					rotated[2][0] = Utils.pipeMaxPos;
+					rotated[2][0] = Utils.pipeMaxPos + zFightOffset;
 					rotated[1][0] -= zFightOffset / 2;
 					transform(rotated, direction);
 					renderblocks.setRenderBounds(rotated[0][0], rotated[1][0], rotated[2][0], rotated[0][1], rotated[1][1], rotated[2][1]);
@@ -285,14 +285,14 @@ public class PipeWorldRenderer implements ISimpleBlockRenderingHandler {
 
 					rotated = deepClone(zeroState);
 					rotated[0][0] = 0.0F;
-					rotated[0][1] = Utils.pipeMinPos;
+					rotated[0][1] = Utils.pipeMinPos - zFightOffset;
 					rotated[1][1] -= zFightOffset;
 					transform(rotated, direction);
 					renderblocks.setRenderBounds(rotated[0][0], rotated[1][0], rotated[2][0], rotated[0][1], rotated[1][1], rotated[2][1]);
 					renderblocks.renderStandardBlock(block, x, y, z);
 
 					rotated = deepClone(zeroState);
-					rotated[0][0] = Utils.pipeMaxPos;
+					rotated[0][0] = Utils.pipeMaxPos + zFightOffset;
 					rotated[0][1] = 1F;
 					rotated[1][1] -= zFightOffset;
 					transform(rotated, direction);
