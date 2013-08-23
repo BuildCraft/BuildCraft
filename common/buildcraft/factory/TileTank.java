@@ -191,7 +191,9 @@ public class TileTank extends TileBuildCraft implements IFluidHandler {
 
 	@Override
 	public FluidStack drain(ForgeDirection from, FluidStack resource, boolean doDrain) {
-		if (resource != null && !resource.isFluidEqual(tank.getFluid()))
+		if (resource == null)
+			return null;
+		if (!resource.isFluidEqual(tank.getFluid()))
 			return null;
 		return drain(from, resource.amount, doDrain);
 	}
