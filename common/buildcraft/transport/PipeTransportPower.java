@@ -7,6 +7,13 @@
  */
 package buildcraft.transport;
 
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraftforge.common.ForgeDirection;
 import buildcraft.BuildCraftCore;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.gates.ITrigger;
@@ -17,7 +24,6 @@ import buildcraft.api.power.PowerHandler.Type;
 import buildcraft.api.transport.IPipeTile.PipeType;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.proxy.CoreProxy;
-import buildcraft.core.utils.Utils;
 import buildcraft.transport.network.PacketPowerUpdate;
 import buildcraft.transport.pipes.PipePowerCobblestone;
 import buildcraft.transport.pipes.PipePowerDiamond;
@@ -25,12 +31,6 @@ import buildcraft.transport.pipes.PipePowerGold;
 import buildcraft.transport.pipes.PipePowerQuartz;
 import buildcraft.transport.pipes.PipePowerStone;
 import buildcraft.transport.pipes.PipePowerWood;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.ForgeDirection;
 
 public class PipeTransportPower extends PipeTransport {
 
@@ -278,8 +278,8 @@ public class PipeTransportPower extends PipeTransport {
 	}
 
 	private void step() {
-		if (currentDate != container.worldObj.getWorldTime()) {
-			currentDate = container.worldObj.getWorldTime();
+		if (currentDate != container.worldObj.getTotalWorldTime()) {
+			currentDate = container.worldObj.getTotalWorldTime();
 
 			powerQuery = nextPowerQuery;
 			nextPowerQuery = new int[6];
@@ -344,7 +344,7 @@ public class PipeTransportPower extends PipeTransport {
 
 	@Override
 	public void initialize() {
-		currentDate = container.worldObj.getWorldTime();
+		currentDate = container.worldObj.getTotalWorldTime();
 	}
 
 	@Override
