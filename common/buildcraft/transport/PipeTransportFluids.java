@@ -7,16 +7,8 @@
  */
 package buildcraft.transport;
 
-import buildcraft.BuildCraftCore;
-import buildcraft.api.core.SafeTimeTracker;
-import buildcraft.api.gates.ITrigger;
-import buildcraft.api.transport.IPipeTile.PipeType;
-import buildcraft.core.DefaultProps;
-import buildcraft.core.IMachine;
-import buildcraft.core.proxy.CoreProxy;
-import buildcraft.core.utils.Utils;
-import buildcraft.transport.network.PacketFluidUpdate;
 import java.util.BitSet;
+
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.ForgeDirection;
@@ -28,6 +20,14 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
+import buildcraft.BuildCraftCore;
+import buildcraft.api.core.SafeTimeTracker;
+import buildcraft.api.gates.ITrigger;
+import buildcraft.api.transport.IPipeTile.PipeType;
+import buildcraft.core.DefaultProps;
+import buildcraft.core.IMachine;
+import buildcraft.core.proxy.CoreProxy;
+import buildcraft.transport.network.PacketFluidUpdate;
 
 public class PipeTransportFluids extends PipeTransport implements IFluidHandler {
 
@@ -330,7 +330,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 	}
 
 	private void moveFluids() {
-		short newTimeSlot = (short) (container.worldObj.getWorldTime() % travelDelay);
+		short newTimeSlot = (short) (container.worldObj.getTotalWorldTime() % travelDelay);
 
 		short outputCount = computeCurrentConnectionStatesAndTickFlows(newTimeSlot);
 		moveFromPipe(outputCount);
