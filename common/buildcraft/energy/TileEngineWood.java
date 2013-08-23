@@ -7,10 +7,10 @@
  */
 package buildcraft.energy;
 
-import buildcraft.api.transport.IPipeTile.PipeType;
-import buildcraft.core.proxy.CoreProxy;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.ForgeDirection;
+import buildcraft.api.transport.IPipeTile.PipeType;
+import buildcraft.core.proxy.CoreProxy;
 
 public class TileEngineWood extends TileEngine {
 
@@ -76,7 +76,7 @@ public class TileEngineWood extends TileEngine {
 		super.engineUpdate();
 
 		if (isRedstonePowered)
-			if (worldObj.getWorldTime() % 20 == 0)
+			if (worldObj.getTotalWorldTime() % 20 == 0)
 				addEnergy(1);
 	}
 
