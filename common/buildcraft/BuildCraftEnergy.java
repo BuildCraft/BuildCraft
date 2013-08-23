@@ -137,6 +137,7 @@ public class BuildCraftEnergy {
 		LanguageRegistry.addName(new ItemStack(engineBlock, 1, 0), "Redstone Engine");
 		LanguageRegistry.addName(new ItemStack(engineBlock, 1, 1), "Steam Engine");
 		LanguageRegistry.addName(new ItemStack(engineBlock, 1, 2), "Combustion Engine");
+		LanguageRegistry.addName(new ItemStack(engineBlock, 1, 3), "Creative Engine");
 
 
 		// Oil and fuel

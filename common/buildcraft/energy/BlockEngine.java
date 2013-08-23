@@ -30,6 +30,7 @@ public class BlockEngine extends BlockContainer {
 	private static Icon woodTexture;
 	private static Icon stoneTexture;
 	private static Icon ironTexture;
+	private static Icon bedrockTexture;
 
 	public BlockEngine(int i) {
 		super(i, Material.iron);
@@ -55,6 +56,7 @@ public class BlockEngine extends BlockContainer {
 		woodTexture = par1IconRegister.registerIcon("buildcraft:engineWoodBottom");
 		stoneTexture = par1IconRegister.registerIcon("buildcraft:engineStoneBottom");
 		ironTexture = par1IconRegister.registerIcon("buildcraft:engineIronBottom");
+		bedrockTexture = par1IconRegister.registerIcon("buildcraft:engineBedrockBottom");
 	}
 
 	@Override
@@ -64,12 +66,14 @@ public class BlockEngine extends BlockContainer {
 
 	@Override
 	public TileEntity createTileEntity(World world, int metadata) {
+		if(metadata == 0)
+			return new TileEngineWood();
 		if (metadata == 1)
 			return new TileEngineStone();
 		else if (metadata == 2)
 			return new TileEngineIron();
 		else
-			return new TileEngineWood();
+			return new TileEngineBedrock();
 	}
 
 	@Override
@@ -161,6 +165,7 @@ public class BlockEngine extends BlockContainer {
 		itemList.add(new ItemStack(this, 1, 0));
 		itemList.add(new ItemStack(this, 1, 1));
 		itemList.add(new ItemStack(this, 1, 2));
+		itemList.add(new ItemStack(this, 1, 3));
 	}
 
 	@Override
@@ -182,6 +187,8 @@ public class BlockEngine extends BlockContainer {
 				return stoneTexture;
 			case 2:
 				return ironTexture;
+			case 3:
+				return bedrockTexture;
 			default:
 				return null;
 		}
