@@ -62,7 +62,7 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IPowe
 	}
 
 	private void initPowerProvider() {
-		powerHandler.configure(25, 100, 25, 1000);
+		powerHandler.configure(50, 150, 25, 1000);
 		powerHandler.configurePowerPerdition(1, 1);
 	}
 

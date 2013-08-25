@@ -41,20 +41,28 @@ public class Tank extends FluidTank {
 	}
 
 	@Override
-	public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
+	public final NBTTagCompound writeToNBT(NBTTagCompound nbt) {
 		NBTTagCompound tankData = new NBTTagCompound();
 		super.writeToNBT(tankData);
+		writeTankToNBT(tankData);
 		nbt.setCompoundTag(name, tankData);
 		return nbt;
 	}
 
 	@Override
-	public FluidTank readFromNBT(NBTTagCompound nbt) {
+	public final FluidTank readFromNBT(NBTTagCompound nbt) {
 		if (nbt.hasKey(name)) {
 			NBTTagCompound tankData = nbt.getCompoundTag(name);
 			super.readFromNBT(tankData);
+			readTankFromNBT(tankData);
 		}
 		return this;
+	}
+
+	public void writeTankToNBT(NBTTagCompound nbt) {
+	}
+
+	public void readTankFromNBT(NBTTagCompound nbt) {
 	}
 
 	public ToolTip getToolTip() {
