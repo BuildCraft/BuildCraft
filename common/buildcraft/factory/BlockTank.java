@@ -71,6 +71,7 @@ public class BlockTank extends BlockContainer {
 	}
 
 	@SuppressWarnings({"all"})
+	@Override
 	public Icon getBlockTexture(IBlockAccess iblockaccess, int i, int j, int k, int l) {
 		switch (l) {
 			case 0:

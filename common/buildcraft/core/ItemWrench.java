@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.Set;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockButton;
+import net.minecraft.block.BlockChest;
 import net.minecraft.block.BlockLever;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -20,6 +21,7 @@ public class ItemWrench extends ItemBuildCraft implements IToolWrench {
 		setFull3D();
 		shiftRotations.add(BlockLever.class);
 		shiftRotations.add(BlockButton.class);
+		shiftRotations.add(BlockChest.class);
 	}
 
 	private boolean isShiftRotation(Class<? extends Block> cls) {
