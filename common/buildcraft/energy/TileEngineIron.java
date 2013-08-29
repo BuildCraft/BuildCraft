@@ -43,7 +43,7 @@ public class TileEngineIron extends TileEngine implements IFluidHandler {
 	public static int MAX_LIQUID = FluidContainerRegistry.BUCKET_VOLUME * 10;
 	public static float HEAT_PER_MJ = 0.0023F;
 	public static float COOLDOWN_RATE = 0.05F;
-	public static float MAX_COOLING = 0.1F;
+	public static int MAX_COOLANT_PER_TICK = 40;
 	int burnTime = 0;
 	private Tank tankFuel;
 	private Tank tankCoolant;
@@ -217,19 +217,22 @@ public class TileEngineIron extends TileEngine implements IFluidHandler {
 
 	private void coolEngine(float idealHeat) {
 		float extraHeat = heat - idealHeat;
-		extraHeat = Math.min(MAX_COOLING, extraHeat);
 
 		FluidStack coolant = this.tankCoolant.getFluid();
+		if (coolant == null)
+			return;
+
+		int coolantAmount = Math.min(MAX_COOLANT_PER_TICK, coolant.amount);
 		Coolant currentCoolant = IronEngineCoolant.getCoolant(coolant);
 		if (currentCoolant != null) {
 			float cooling = currentCoolant.getDegreesCoolingPerMB(heat);
 			cooling /= getBiomeTempScalar();
-			if (coolant.amount * cooling > extraHeat) {
-				coolant.amount -= Math.round(extraHeat / cooling);
+			if (coolantAmount * cooling > extraHeat) {
+				tankCoolant.drain(Math.round(extraHeat / cooling), true);
 				heat -= extraHeat;
 			} else {
-				heat -= coolant.amount * cooling;
-				tankCoolant.setFluid(null);
+				tankCoolant.drain(coolantAmount, true);
+				heat -= coolantAmount * cooling;
 			}
 		}
 	}
