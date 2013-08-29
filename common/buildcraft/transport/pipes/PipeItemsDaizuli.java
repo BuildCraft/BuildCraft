@@ -102,9 +102,11 @@ public class PipeItemsDaizuli extends Pipe<PipeTransportItems> implements IPipeT
 
 	@Override
 	public int getIconIndex(ForgeDirection direction) {
+		if (direction == ForgeDirection.UNKNOWN)
+			return standardIconIndex + color;
 		if (container != null && container.getBlockMetadata() == direction.ordinal())
-			return solidIconIndex;
-		return standardIconIndex + color;
+			return standardIconIndex + color;
+		return solidIconIndex;
 	}
 
 	@Override

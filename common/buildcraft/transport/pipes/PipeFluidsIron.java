@@ -83,14 +83,10 @@ public class PipeFluidsIron extends Pipe<PipeTransportFluids> {
 	public int getIconIndex(ForgeDirection direction) {
 		if (direction == ForgeDirection.UNKNOWN)
 			return standardIconIndex;
-		else {
-			int metadata = container.getBlockMetadata();
+		if (container != null && container.getBlockMetadata() == direction.ordinal())
+			return standardIconIndex;
+		return solidIconIndex;
 
-			if (metadata == direction.ordinal())
-				return solidIconIndex;
-			else
-				return standardIconIndex;
-		}
 	}
 
 	@Override
