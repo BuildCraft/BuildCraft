@@ -21,6 +21,7 @@ import buildcraft.core.fluids.Tank;
 import buildcraft.core.fluids.TankManager;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
+import static buildcraft.energy.TileEngine.MIN_HEAT;
 import buildcraft.energy.gui.ContainerEngine;
 import java.util.LinkedList;
 import net.minecraft.entity.player.EntityPlayer;
@@ -29,6 +30,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
@@ -40,7 +42,8 @@ public class TileEngineIron extends TileEngine implements IFluidHandler {
 
 	public static int MAX_LIQUID = FluidContainerRegistry.BUCKET_VOLUME * 10;
 	public static float HEAT_PER_MJ = 0.0023F;
-	public static float COOLDOWN_RATE = 0.01F;
+	public static float COOLDOWN_RATE = 0.05F;
+	public static float MAX_COOLING = 0.1F;
 	int burnTime = 0;
 	private Tank tankFuel;
 	private Tank tankCoolant;
@@ -48,11 +51,12 @@ public class TileEngineIron extends TileEngine implements IFluidHandler {
 	private Fuel currentFuel = null;
 	public int penaltyCooling = 0;
 	boolean lastPowered = false;
+	private BiomeGenBase biomeCache;
 
 	public TileEngineIron() {
 		super(1);
 		tankFuel = new Tank("tankFuel", MAX_LIQUID);
-		tankCoolant = new Tank("tankCoolant",MAX_LIQUID);
+		tankCoolant = new Tank("tankCoolant", MAX_LIQUID);
 		tankManager.add(tankFuel);
 		tankManager.add(tankCoolant);
 	}
@@ -111,6 +115,21 @@ public class TileEngineIron extends TileEngine implements IFluidHandler {
 		}
 	}
 
+	private float getBiomeTempScalar() {
+		if (biomeCache == null)
+			biomeCache = worldObj.getBiomeGenForCoords(xCoord, zCoord);
+		float tempScalar = biomeCache.temperature - 1.0F;
+		tempScalar *= 0.5F;
+		tempScalar += 1.0F;
+		return tempScalar;
+	}
+
+	@Override
+	public void invalidate() {
+		super.invalidate();
+		biomeCache = null;
+	}
+
 	@Override
 	public boolean isBurning() {
 		FluidStack fuel = tankFuel.getFluid();
@@ -148,13 +167,13 @@ public class TileEngineIron extends TileEngine implements IFluidHandler {
 				}
 				currentOutput = currentFuel.powerPerCycle; // Comment out for constant power
 				addEnergy(currentFuel.powerPerCycle);
-				heat += currentFuel.powerPerCycle * HEAT_PER_MJ;
+				heat += currentFuel.powerPerCycle * HEAT_PER_MJ * getBiomeTempScalar();
 			}
 		} else if (penaltyCooling <= 0) {
 			if (lastPowered) {
 				lastPowered = false;
-				penaltyCooling = 30 * 20;
-				// 30 sec of penalty on top of the cooling
+				penaltyCooling = 10;
+				// 10 tick of penalty on top of the cooling
 			}
 		}
 	}
@@ -169,7 +188,7 @@ public class TileEngineIron extends TileEngine implements IFluidHandler {
 		final ItemStack stack = getStackInSlot(0);
 		if (stack != null) {
 			FluidStack liquid = FluidContainerRegistry.getFluidForFilledItem(stack);
-			if (liquid == null && heat > IDEAL_HEAT) {
+			if (liquid == null && heat > MIN_HEAT * 2) {
 				liquid = IronEngineCoolant.getFluidCoolant(stack);
 			}
 
@@ -181,34 +200,37 @@ public class TileEngineIron extends TileEngine implements IFluidHandler {
 			}
 		}
 
-		if (heat > IDEAL_HEAT) {
-			float extraHeat = heat - IDEAL_HEAT;
-
-			FluidStack coolant = this.tankCoolant.getFluid();
-			Coolant currentCoolant = IronEngineCoolant.getCoolant(coolant);
-			if (currentCoolant != null) {
-				float cooling = currentCoolant.getDegreesCoolingPerMB(heat);
-				if (coolant.amount * cooling > extraHeat) {
-					coolant.amount -= Math.round(extraHeat / cooling);
-					heat = IDEAL_HEAT;
-				} else {
-					heat -= coolant.amount * cooling;
-					tankCoolant.setFluid(null);
-				}
-			}
-		}
-
 		if (heat > MIN_HEAT && (penaltyCooling > 0 || !isRedstonePowered)) {
 			heat -= COOLDOWN_RATE;
-
+			coolEngine(MIN_HEAT);
+			getEnergyStage();
+		} else if (heat > IDEAL_HEAT) {
+			coolEngine(IDEAL_HEAT);
 		}
 
-		if (heat <= MIN_HEAT) {
-			heat = MIN_HEAT;
-		}
-
-		if (heat <= MIN_HEAT && penaltyCooling > 0) {
+		if (heat <= MIN_HEAT && penaltyCooling > 0)
 			penaltyCooling--;
+
+		if (heat <= MIN_HEAT)
+			heat = MIN_HEAT;
+	}
+
+	private void coolEngine(float idealHeat) {
+		float extraHeat = heat - idealHeat;
+		extraHeat = Math.min(MAX_COOLING, extraHeat);
+
+		FluidStack coolant = this.tankCoolant.getFluid();
+		Coolant currentCoolant = IronEngineCoolant.getCoolant(coolant);
+		if (currentCoolant != null) {
+			float cooling = currentCoolant.getDegreesCoolingPerMB(heat);
+			cooling /= getBiomeTempScalar();
+			if (coolant.amount * cooling > extraHeat) {
+				coolant.amount -= Math.round(extraHeat / cooling);
+				heat -= extraHeat;
+			} else {
+				heat -= coolant.amount * cooling;
+				tankCoolant.setFluid(null);
+			}
 		}
 	}
 
