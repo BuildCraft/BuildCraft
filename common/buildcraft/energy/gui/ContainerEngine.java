@@ -7,19 +7,19 @@
  */
 package buildcraft.energy.gui;
 
-import buildcraft.core.gui.BuildCraftContainer;
-import buildcraft.energy.TileEngine;
-import buildcraft.energy.TileEngineStone;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.ICrafting;
 import net.minecraft.inventory.Slot;
+import buildcraft.core.gui.BuildCraftContainer;
+import buildcraft.energy.TileEngineStone;
+import buildcraft.energy.TileEngineWithInventory;
 
 public class ContainerEngine extends BuildCraftContainer {
 
-	protected TileEngine engine;
+	protected TileEngineWithInventory engine;
 
-	public ContainerEngine(InventoryPlayer inventoryplayer, TileEngine tileEngine) {
+	public ContainerEngine(InventoryPlayer inventoryplayer, TileEngineWithInventory tileEngine) {
 		super(tileEngine.getSizeInventory());
 
 		engine = tileEngine;

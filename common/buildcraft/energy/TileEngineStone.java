@@ -7,14 +7,8 @@
  */
 package buildcraft.energy;
 
-import buildcraft.BuildCraftCore;
-import buildcraft.BuildCraftEnergy;
-import buildcraft.api.gates.ITrigger;
-import buildcraft.core.GuiIds;
-import buildcraft.core.proxy.CoreProxy;
-import buildcraft.core.utils.Utils;
-import buildcraft.energy.gui.ContainerEngine;
 import java.util.LinkedList;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ICrafting;
 import net.minecraft.item.ItemStack;
@@ -22,8 +16,15 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntityFurnace;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.ForgeDirection;
+import buildcraft.BuildCraftCore;
+import buildcraft.BuildCraftEnergy;
+import buildcraft.api.gates.ITrigger;
+import buildcraft.core.GuiIds;
+import buildcraft.core.proxy.CoreProxy;
+import buildcraft.core.utils.Utils;
+import buildcraft.energy.gui.ContainerEngine;
 
-public class TileEngineStone extends TileEngine {
+public class TileEngineStone extends TileEngineWithInventory {
 
 	final float MAX_OUTPUT = 1f;
 	final float MIN_OUTPUT = MAX_OUTPUT / 3;

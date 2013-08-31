@@ -7,24 +7,26 @@
  */
 package buildcraft.energy.gui;
 
-import buildcraft.core.DefaultProps;
-import buildcraft.core.utils.StringUtils;
-import buildcraft.energy.TileEngine;
-import buildcraft.energy.TileEngineIron;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.util.Icon;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
+
 import org.lwjgl.opengl.GL11;
+
+import buildcraft.core.DefaultProps;
+import buildcraft.core.utils.StringUtils;
+import buildcraft.energy.TileEngineIron;
+import buildcraft.energy.TileEngineWithInventory;
 
 public class GuiCombustionEngine extends GuiEngine {
 
 	private static final ResourceLocation TEXTURE = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_GUI + "/combustion_engine_gui.png");
 	private static final ResourceLocation BLOCK_TEXTURE = TextureMap.field_110575_b;
 
-	public GuiCombustionEngine(InventoryPlayer inventoryplayer, TileEngine tileEngine) {
+	public GuiCombustionEngine(InventoryPlayer inventoryplayer, TileEngineWithInventory tileEngine) {
 		super(new ContainerEngine(inventoryplayer, tileEngine), tileEngine);
 	}
 

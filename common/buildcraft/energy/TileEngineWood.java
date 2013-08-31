@@ -16,10 +16,6 @@ public class TileEngineWood extends TileEngine {
 
 	public static final float OUTPUT = 0.05F;
 
-	public TileEngineWood() {
-		super(0);
-	}
-
 	@Override
 	public ResourceLocation getTextureFile() {
 		return WOOD_TEXTURE;

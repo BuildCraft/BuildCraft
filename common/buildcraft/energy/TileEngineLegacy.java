@@ -7,7 +7,6 @@
  */
 package buildcraft.energy;
 
-import buildcraft.core.DefaultProps;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
@@ -22,10 +21,6 @@ import net.minecraft.util.ResourceLocation;
 public class TileEngineLegacy extends TileEngine {
 
 	private NBTTagCompound nbt;
-
-	public TileEngineLegacy() {
-		super(0);
-	}
 
 	@Override
 	public void updateEntity() {
