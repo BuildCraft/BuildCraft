@@ -9,6 +9,23 @@
 package buildcraft;
 
 
+import java.io.File;
+import java.util.TreeMap;
+import java.util.logging.Logger;
+
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockFluid;
+import net.minecraft.entity.EntityList;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.Icon;
+import net.minecraftforge.client.event.TextureStitchEvent;
+import net.minecraftforge.common.Configuration;
+import net.minecraftforge.common.IPlantable;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.Property;
+import net.minecraftforge.event.ForgeSubscribe;
+import net.minecraftforge.fluids.IFluidBlock;
 import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.gates.ActionManager;
@@ -60,22 +77,6 @@ import cpw.mods.fml.common.registry.LanguageRegistry;
 import cpw.mods.fml.common.registry.TickRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import java.io.File;
-import java.util.TreeMap;
-import java.util.logging.Logger;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockFluid;
-import net.minecraft.entity.EntityList;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.Icon;
-import net.minecraftforge.client.event.TextureStitchEvent;
-import net.minecraftforge.common.Configuration;
-import net.minecraftforge.common.IPlantable;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.Property;
-import net.minecraftforge.event.ForgeSubscribe;
-import net.minecraftforge.fluids.IFluidBlock;
 
 @Mod(name = "BuildCraft", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Core", acceptedMinecraftVersions = "[1.6,1.7)", dependencies = "required-after:Forge@[9.10.0.800,)")
 @NetworkMod(channels = { DefaultProps.NET_CHANNEL_NAME }, packetHandler = PacketHandler.class, clientSideRequired = true, serverSideRequired = true)
@@ -89,6 +90,7 @@ public class BuildCraftCore {
 	public static boolean debugMode = false;
 	public static boolean modifyWorld = false;
 	public static boolean trackNetworkUsage = false;
+	public static boolean colorBlindMode = false;
 
 	public static boolean dropBrokenBlocks = true; // Set to false to prevent the filler from dropping broken blocks.
 
@@ -251,6 +253,10 @@ public class BuildCraftCore {
 			LanguageRegistry.addName(diamondGearItem, "Diamond Gear");
 			CoreProxy.proxy.registerItem(diamondGearItem);
 
+			Property colorBlindProp = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "client.colorblindmode", false);
+			colorBlindProp.comment = "Set to true to enable alternate textures";
+			colorBlindMode = colorBlindProp.getBoolean(false);
+			
 			MinecraftForge.EVENT_BUS.register(this);
 
 		} finally {
