@@ -173,7 +173,11 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IPowe
 			return true;
 
 		return (tank1.getFluid() != null && tank1.getFluid().containsFluid(ingredient))
-				|| (tank2.getFluid() != null && tank2.getFluid().containsFluid(ingredient));
+				|| (tank2.getFluid() != null && tank2.getFluid().containsFluid(ingredient))
+				|| (tank1.getFluid() != null && tank2.getFluid() != null
+					&& tank1.getFluid().isFluidEqual(tank2.getFluid())
+					&& tank1.getFluid().isFluidEqual(liquid)
+					&& tank1.getFluidAmount() + tank2.getFluidAmount() >= liquid.amount);
 	}
 
 	private boolean consumeInput(FluidStack liquid) {
@@ -185,6 +189,12 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IPowe
 			return true;
 		} else if (tank2.getFluid() != null && tank2.getFluid().containsFluid(liquid)) {
 			tank2.drain(liquid.amount, true);
+			return true;
+		} else if (tank1.getFluid() != null && tank2.getFluid() != null
+			&& tank1.getFluid().isFluidEqual(tank2.getFluid())
+			&& tank1.getFluid().isFluidEqual(liquid)
+			&& tank1.getFluidAmount() + tank2.getFluidAmount() >= liquid.amount) {
+			tank2.drain(liquid.amount - tank1.drain(liquid.amount, true), true);
 			return true;
 		}
 
@@ -203,7 +213,7 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IPowe
 
 	@Override
 	public boolean manageSolids() {
-		return true;
+		return false;
 	}
 
 	@Override
