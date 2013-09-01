@@ -573,9 +573,12 @@ public class PipeTransportItems extends PipeTransport {
 			if (BlockGenericPipe.isValid(pipe2) && !(pipe2.transport instanceof PipeTransportItems))
 				return false;
 		}
-		
-		if(tile instanceof ISidedInventory)
-			return ((ISidedInventory)tile).getAccessibleSlotsFromSide(side.getOpposite().ordinal()).length > 0;
+
+		if (tile instanceof ISidedInventory) {
+			int[] slots = ((ISidedInventory) tile).getAccessibleSlotsFromSide(side.getOpposite().ordinal());
+			return slots != null && slots.length > 0;
+		}
+
 		return tile instanceof TileGenericPipe || tile instanceof ISpecialInventory || (tile instanceof IInventory && ((IInventory) tile).getSizeInventory() > 0)
 				|| (tile instanceof IMachine && ((IMachine) tile).manageSolids());
 	}
