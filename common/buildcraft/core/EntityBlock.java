@@ -65,13 +65,13 @@ public class EntityBlock extends Entity {
 		setPosition(posX + d, posY + d1, posZ + d2);
 	}
 
-	public void setBrightness(int brightness) {
-		this.brightness = brightness;
+	public void setBrightness(int par1) {
+		this.brightness = par1;
 	}
 
 	@Override
 	protected void entityInit() {
-		// TODO Auto-generated method stub
+		
 	}
 
 	@Override
