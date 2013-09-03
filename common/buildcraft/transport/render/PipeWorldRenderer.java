@@ -552,7 +552,28 @@ public class PipeWorldRenderer implements ISimpleBlockRenderingHandler {
 	}
 
 	private boolean shouldRenderNormalPipeSide(PipeRenderState state, ForgeDirection direction) {
-		return !state.pipeConnectionMatrix.isConnected(direction) && state.facadeMatrix.getFacadeBlockId(direction) == 0 && !state.plugMatrix.isConnected(direction);
+		return !state.pipeConnectionMatrix.isConnected(direction) && state.facadeMatrix.getFacadeBlockId(direction) == 0 && !state.plugMatrix.isConnected(direction) && !isOpenOrientation(state, direction);
+	}
+
+	public boolean isOpenOrientation(PipeRenderState state, ForgeDirection direction) {
+		int connections = 0;
+
+		ForgeDirection targetOrientation = ForgeDirection.UNKNOWN;
+
+		for (ForgeDirection o : ForgeDirection.VALID_DIRECTIONS) {
+			if (state.pipeConnectionMatrix.isConnected(o)) {
+
+				connections++;
+
+				if (connections == 1)
+					targetOrientation = o;
+			}
+		}
+
+		if (connections > 1 || connections == 0)
+			return false;
+
+		return targetOrientation.getOpposite() == direction;
 	}
 
 	@Override

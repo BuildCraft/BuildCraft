@@ -14,6 +14,9 @@ import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.power.PowerHandler;
 import buildcraft.api.power.PowerHandler.PowerReceiver;
 import buildcraft.api.power.PowerHandler.Type;
+import buildcraft.core.inventory.ITransactor;
+import buildcraft.core.inventory.Transactor;
+import buildcraft.core.inventory.filters.StackFilter;
 import buildcraft.transport.TravelingItem;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
@@ -22,12 +25,12 @@ import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportItems;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import java.util.Arrays;
 import java.util.List;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.item.EntityMinecartChest;
 import net.minecraft.entity.projectile.EntityArrow;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.AxisAlignedBB;
@@ -35,6 +38,7 @@ import net.minecraftforge.common.ForgeDirection;
 
 public class PipeItemsObsidian extends Pipe<PipeTransportItems> implements IPowerReceptor {
 
+	private static final PowerHandler.PerditionCalculator PERDITION = new PowerHandler.PerditionCalculator(0.5F);
 	private PowerHandler powerHandler;
 	private int[] entitiesDropped;
 	private int entitiesDroppedIndex = 0;
@@ -43,14 +47,11 @@ public class PipeItemsObsidian extends Pipe<PipeTransportItems> implements IPowe
 		super(new PipeTransportItems(), itemID);
 
 		entitiesDropped = new int[32];
-
-		for (int i = 0; i < entitiesDropped.length; ++i) {
-			entitiesDropped[i] = -1;
-		}
+		Arrays.fill(entitiesDropped, -1);
 
 		powerHandler = new PowerHandler(this, Type.MACHINE);
 		powerHandler.configure(1, 64, 1, 256);
-		powerHandler.configurePowerPerdition(1, 1);
+		powerHandler.setPerdition(PERDITION);
 	}
 
 	@Override
@@ -138,71 +139,51 @@ public class PipeItemsObsidian extends Pipe<PipeTransportItems> implements IPowe
 		Position min = p1.min(p2);
 		Position max = p1.max(p2);
 
-		return AxisAlignedBB.getBoundingBox(min.x, min.y, min.z, max.x, max.y, max.z);
+		return AxisAlignedBB.getAABBPool().getAABB(min.x, min.y, min.z, max.x, max.y, max.z);
 	}
 
 	@Override
 	public void doWork(PowerHandler workProvider) {
 		for (int j = 1; j < 5; ++j) {
-			if (trySucc(j))
+			if (suckItem(j))
 				return;
 		}
-
-		powerHandler.useEnergy(1, 1, true);
 	}
 
-	private boolean trySucc(int distance) {
+	private boolean suckItem(int distance) {
 		AxisAlignedBB box = getSuckingBox(getOpenOrientation(), distance);
 
 		if (box == null)
 			return false;
 
 		@SuppressWarnings("rawtypes")
-		List list = container.worldObj.getEntitiesWithinAABB(Entity.class, box);
+		List<Entity> discoveredEntities = (List<Entity>) container.worldObj.getEntitiesWithinAABB(Entity.class, box);
 
-		for (int g = 0; g < list.size(); g++) {
-			if (list.get(g) instanceof Entity) {
-				Entity entity = (Entity) list.get(g);
+		for (Entity entity : discoveredEntities) {
+			if (canSuck(entity, distance)) {
+				pullItemIntoPipe(entity, distance);
+				return true;
+			}
 
-				if (canSuck(entity, distance)) {
-					pullItemIntoPipe(entity, distance);
-					return true;
-				}
-
-				if (distance == 1 && list.get(g) instanceof EntityMinecartChest) {
-					EntityMinecartChest cart = (EntityMinecartChest) list.get(g);
-					if (!cart.isDead) {
-						ItemStack stack = checkExtractGeneric(cart, true, getOpenOrientation());
-						if (stack != null && powerHandler.useEnergy(1, 1, true) == 1) {
-							EntityItem entityitem = new EntityItem(container.worldObj, cart.posX, cart.posY + 0.3F, cart.posZ, stack);
-							entityitem.delayBeforeCanPickup = 10;
-							container.worldObj.spawnEntityInWorld(entityitem);
-							pullItemIntoPipe(entityitem, 1);
-							return true;
-						}
+			if (distance == 1 && entity instanceof EntityMinecartChest) {
+				EntityMinecartChest cart = (EntityMinecartChest) entity;
+				if (!cart.isDead) {
+					ITransactor trans = Transactor.getTransactorFor(cart);
+					ForgeDirection openOrientation = getOpenOrientation();
+					ItemStack stack = trans.remove(StackFilter.ALL, openOrientation, false);
+					if (stack != null && powerHandler.useEnergy(1, 1, true) == 1) {
+						trans.remove(StackFilter.ALL, openOrientation, true);
+						EntityItem entityitem = new EntityItem(container.worldObj, cart.posX, cart.posY + 0.3F, cart.posZ, stack);
+						entityitem.delayBeforeCanPickup = 10;
+						container.worldObj.spawnEntityInWorld(entityitem);
+						pullItemIntoPipe(entityitem, 1);
+						return true;
 					}
 				}
 			}
 		}
 
 		return false;
-	}
-
-	public ItemStack checkExtractGeneric(IInventory inventory, boolean doRemove, ForgeDirection from) {
-		for (int k = 0; k < inventory.getSizeInventory(); ++k) {
-			if (inventory.getStackInSlot(k) != null && inventory.getStackInSlot(k).stackSize > 0) {
-
-				ItemStack slot = inventory.getStackInSlot(k);
-
-				if (slot != null && slot.stackSize > 0)
-					if (doRemove)
-						return inventory.decrStackSize(k, 1);
-					else
-						return slot;
-			}
-		}
-
-		return null;
 	}
 
 	public void pullItemIntoPipe(Entity entity, int distance) {
@@ -281,12 +262,9 @@ public class PipeItemsObsidian extends Pipe<PipeTransportItems> implements IPowe
 			return powerHandler.useEnergy(1, distance, false) >= distance;
 		} else if (entity instanceof EntityArrow) {
 			EntityArrow arrow = (EntityArrow) entity;
-			if (arrow.canBePickedUp == 1)
-				return powerHandler.useEnergy(1, distance, false) >= distance;
-			else
-				return false;
-		} else
-			return false;
+			return arrow.canBePickedUp == 1 && powerHandler.useEnergy(1, distance, false) >= distance;
+		}
+		return false;
 	}
 
 	@Override
