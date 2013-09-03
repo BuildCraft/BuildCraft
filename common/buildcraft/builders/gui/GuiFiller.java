@@ -19,7 +19,7 @@ import org.lwjgl.opengl.GL11;
 public class GuiFiller extends GuiBuildCraft {
 
 	private static final ResourceLocation TEXTURE = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_GUI + "/filler.png");
-	private static final ResourceLocation BLOCK_TEXTURE = TextureMap.field_110575_b;
+	private static final ResourceLocation BLOCK_TEXTURE = TextureMap.locationBlocksTexture;
 	IInventory playerInventory;
 	TileFiller filler;
 
@@ -47,12 +47,12 @@ public class GuiFiller extends GuiBuildCraft {
 	protected void drawGuiContainerBackgroundLayer(float f, int x, int y) {
 
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-		mc.renderEngine.func_110577_a(TEXTURE);
+		mc.renderEngine.bindTexture(TEXTURE);
 
 		drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
 
 		if (filler.currentPattern != null) {
-			mc.renderEngine.func_110577_a(BLOCK_TEXTURE);
+			mc.renderEngine.bindTexture(BLOCK_TEXTURE);
 			drawTexturedModelRectFromIcon(guiLeft + patternSymbolX, guiTop + patternSymbolY, filler.currentPattern.getTexture(), 16, 16);
 		}
 

@@ -209,7 +209,7 @@ public abstract class GuiBuildCraft extends GuiContainer {
 
 			GL11.glColor4f(colorR, colorG, colorB, 1.0F);
 
-			mc.renderEngine.func_110577_a(LEDGER_TEXTURE);
+			mc.renderEngine.bindTexture(LEDGER_TEXTURE);
 			drawTexturedModalRect(x, y, 0, 256 - currentHeight, 4, currentHeight);
 			drawTexturedModalRect(x + 4, y, 256 - currentWidth + 4, 0, currentWidth - 4, 4);
 			// Add in top left corner again

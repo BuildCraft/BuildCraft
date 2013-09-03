@@ -13,7 +13,7 @@ import net.minecraft.util.ResourceLocation;
 
 public abstract class GuiEngine extends GuiBuildCraft {
 
-	private static final ResourceLocation ITEM_TEXTURE = TextureMap.field_110576_c;
+	private static final ResourceLocation ITEM_TEXTURE = TextureMap.locationItemsTexture;
 
 	protected class EngineLedger extends Ledger {
 
@@ -35,7 +35,7 @@ public abstract class GuiEngine extends GuiBuildCraft {
 			drawBackground(x, y);
 
 			// Draw icon
-			Minecraft.getMinecraft().renderEngine.func_110577_a(ITEM_TEXTURE);
+			Minecraft.getMinecraft().renderEngine.bindTexture(ITEM_TEXTURE);
 			drawIcon(BuildCraftCore.iconProvider.getIcon(CoreIconProvider.ENERGY), x + 3, y + 4);
 
 			if (!isFullyOpened())

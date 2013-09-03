@@ -64,10 +64,10 @@ public class GuiBuilder extends GuiAdvancedInterface {
 		int realXSize = 0;
 
 		if (builder.isBuildingBlueprint()) {
-			mc.renderEngine.func_110577_a(BLUEPRINT_TEXTURE);
+			mc.renderEngine.bindTexture(BLUEPRINT_TEXTURE);
 			realXSize = 256;
 		} else {
-			mc.renderEngine.func_110577_a(TEXTURE);
+			mc.renderEngine.bindTexture(TEXTURE);
 			realXSize = 176;
 		}
 

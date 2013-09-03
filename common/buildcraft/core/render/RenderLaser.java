@@ -46,7 +46,7 @@ public class RenderLaser extends Render {
 		GL11.glRotatef((float) laser.angleZ, 0, 1, 0);
 		GL11.glRotatef((float) laser.angleY, 0, 0, 1);
 
-		renderManager.renderEngine.func_110577_a(laser.getTexture());
+		renderManager.renderEngine.bindTexture(laser.getTexture());
 
 		float factor = (float) (1.0 / 16.0);
 
@@ -78,7 +78,7 @@ public class RenderLaser extends Render {
 	}
 
 	@Override
-	protected ResourceLocation func_110775_a(Entity entity) {
+	protected ResourceLocation getEntityTexture(Entity entity) {
 		return ((EntityLaser) entity).getTexture();
 	}
 }

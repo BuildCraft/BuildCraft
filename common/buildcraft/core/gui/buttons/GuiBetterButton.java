@@ -57,7 +57,7 @@ public class GuiBetterButton extends GuiButton {
 	}
 
 	protected void bindButtonTextures(Minecraft minecraft) {
-		minecraft.renderEngine.func_110577_a(BUTTON_TEXTURES);
+		minecraft.renderEngine.bindTexture(BUTTON_TEXTURES);
 	}
 
 	@Override

@@ -24,7 +24,7 @@ public class RenderEntityBlock extends Render {
 	public static RenderEntityBlock INSTANCE = new RenderEntityBlock();
 
 	@Override
-	protected ResourceLocation func_110775_a(Entity entity) {
+	protected ResourceLocation getEntityTexture(Entity entity) {
 		throw new UnsupportedOperationException("Not supported yet.");
 	}
 
@@ -67,7 +67,7 @@ public class RenderEntityBlock extends Render {
 		World world = entity.worldObj;
 		BlockInterface util = new BlockInterface();
 		util.texture = entity.texture;
-		func_110776_a(TextureMap.field_110575_b);
+		bindTexture(TextureMap.locationBlocksTexture);
 
 		for (int iBase = 0; iBase < entity.iSize; ++iBase) {
 			for (int jBase = 0; jBase < entity.jSize; ++jBase) {

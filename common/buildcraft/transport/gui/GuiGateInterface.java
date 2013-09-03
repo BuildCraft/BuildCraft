@@ -239,7 +239,7 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 		ResourceLocation texture = _container.getGateGuiFile();
 		
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-		mc.renderEngine.func_110577_a(texture);
+		mc.renderEngine.bindTexture(texture);
 
 		int cornerX = (width - xSize) / 2;
 		int cornerY = (height - ySize) / 2;
@@ -255,18 +255,18 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 				if (_container.getGateOrdinal() >= GateKind.AND_3.ordinal()) {
 
 					if (_container.triggerState[triggerTracker++]) {
-						mc.renderEngine.func_110577_a(texture);
+						mc.renderEngine.bindTexture(texture);
 
 						drawTexturedModalRect(cornerX + slot.x + 35, cornerY + slot.y + 6, 176, 18, 18, 4);
 					}
 
 					if (trigger == null || !trigger.hasParameter()) {
-						mc.renderEngine.func_110577_a(texture);
+						mc.renderEngine.bindTexture(texture);
 
 						drawTexturedModalRect(cornerX + slot.x + 17, cornerY + slot.y - 1, 176, 0, 18, 18);
 					}
 				} else if (_container.triggerState[triggerTracker++]) {
-					mc.renderEngine.func_110577_a(texture);
+					mc.renderEngine.bindTexture(texture);
 
 					drawTexturedModalRect(cornerX + slot.x + 17, cornerY + slot.y + 6, 176, 18, 18, 4);
 				}

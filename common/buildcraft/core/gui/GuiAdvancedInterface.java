@@ -36,7 +36,7 @@ public abstract class GuiAdvancedInterface extends GuiBuildCraft {
 		}
 
 		public ResourceLocation getTexture() {
-			return TextureMap.field_110576_c;
+			return TextureMap.locationItemsTexture;
 		}
 
 		public ItemStack getItemStack() {
@@ -54,7 +54,7 @@ public abstract class GuiAdvancedInterface extends GuiBuildCraft {
 			if (getItemStack() != null) {
 				drawStack(getItemStack());
 			} else if (getIcon() != null) {
-				mc.renderEngine.func_110577_a(getTexture());
+				mc.renderEngine.bindTexture(getTexture());
 				//System.out.printf("Drawing advanced sprite %s (%d,%d) at %d %d\n", getIcon().getIconName(), getIcon().getOriginX(),getIcon().getOriginY(),cornerX + x, cornerY + y);
 				drawTexturedModelRectFromIcon(cornerX + x, cornerY + y, getIcon(), 16, 16);
 			}

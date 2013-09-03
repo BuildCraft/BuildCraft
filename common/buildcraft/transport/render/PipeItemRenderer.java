@@ -25,7 +25,7 @@ public class PipeItemRenderer implements IItemRenderer {
 		Icon icon = ((ItemPipe) Item.itemsList[item.itemID]).getIconFromDamage(0);
 
 		if (icon == null)
-			icon = ((TextureMap) Minecraft.getMinecraft().func_110434_K().func_110581_b(TextureMap.field_110575_b)).func_110572_b("missingno");
+			icon = ((TextureMap) Minecraft.getMinecraft().getTextureManager().getTexture(TextureMap.locationBlocksTexture)).getAtlasSprite("missingno");
 
 		block.setBlockBounds(Utils.pipeMinPos, 0.0F, Utils.pipeMinPos, Utils.pipeMaxPos, 1.0F, Utils.pipeMaxPos);
 		block.setBlockBoundsForItemRender();

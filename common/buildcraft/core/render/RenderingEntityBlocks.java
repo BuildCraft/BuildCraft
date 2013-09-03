@@ -16,7 +16,7 @@ import org.lwjgl.opengl.GL11;
 
 public class RenderingEntityBlocks implements ISimpleBlockRenderingHandler {
 
-	private static final ResourceLocation BLOCK_TEXTURE = TextureMap.field_110575_b;
+	private static final ResourceLocation BLOCK_TEXTURE = TextureMap.locationBlocksTexture;
 
 	public static class EntityRenderIndex {
 
@@ -96,7 +96,7 @@ public class RenderingEntityBlocks implements ISimpleBlockRenderingHandler {
 		if (block.getRenderType() == BuildCraftCore.blockByEntityModel) {
 			// renderblocks.renderStandardBlock(block, i, j, k);
 		} else if (block.getRenderType() == BuildCraftCore.legacyPipeModel) {
-			Minecraft.getMinecraft().renderEngine.func_110577_a(BLOCK_TEXTURE);
+			Minecraft.getMinecraft().renderEngine.bindTexture(BLOCK_TEXTURE);
 			legacyPipeRender(renderer, world, x, y, z, block, modelId);
 
 		}

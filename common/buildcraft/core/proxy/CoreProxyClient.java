@@ -79,7 +79,7 @@ public class CoreProxyClient extends CoreProxy {
 	/* LOCALIZATION */
 	@Override
 	public String getCurrentLanguage() {
-		return Minecraft.getMinecraft().func_135016_M().func_135041_c().func_135034_a();
+		return Minecraft.getMinecraft().getLanguageManager().getCurrentLanguage().getLanguageCode();
 	}
 
 	@Override

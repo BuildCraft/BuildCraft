@@ -39,7 +39,7 @@ public class GuiFilteredBuffer extends GuiContainer {
 	protected void drawGuiContainerBackgroundLayer(float f, int x, int y) {
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 
-		mc.renderEngine.func_110577_a(TEXTURE);
+		mc.renderEngine.bindTexture(TEXTURE);
 		int cornerX = (width - xSize) / 2;
 		int cornerY = (height - ySize) / 2;
 

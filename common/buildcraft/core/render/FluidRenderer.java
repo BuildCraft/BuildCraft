@@ -27,7 +27,7 @@ import org.lwjgl.opengl.GL11;
  */
 public class FluidRenderer {
 
-	private static final ResourceLocation BLOCK_TEXTURE = TextureMap.field_110575_b;
+	private static final ResourceLocation BLOCK_TEXTURE = TextureMap.locationBlocksTexture;
 	private static Map<Fluid, int[]> flowingRenderCache = new HashMap<Fluid, int[]>();
 	private static Map<Fluid, int[]> stillRenderCache = new HashMap<Fluid, int[]>();
 	public static final int DISPLAY_STAGES = 100;
@@ -46,7 +46,7 @@ public class FluidRenderer {
 		}
 		Icon icon = flowing ? fluid.getFlowingIcon() : fluid.getStillIcon();
 		if (icon == null) {
-			icon = ((TextureMap) Minecraft.getMinecraft().func_110434_K().func_110581_b(TextureMap.field_110575_b)).func_110572_b("missingno");
+			icon = ((TextureMap) Minecraft.getMinecraft().getTextureManager().getTexture(TextureMap.locationBlocksTexture)).getAtlasSprite("missingno");
 		}
 		return icon;
 	}

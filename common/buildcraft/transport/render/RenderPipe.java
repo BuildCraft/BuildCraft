@@ -273,7 +273,7 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 
 		GL11.glTranslatef((float) x, (float) y, (float) z);
 
-		func_110628_a(TextureMap.field_110575_b);
+		bindTexture(TextureMap.locationBlocksTexture);
 
 		int[] displayList = pow.overload > 0 ? displayPowerListOverload : displayPowerList;
 
@@ -368,7 +368,7 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 						break;
 					default:
 				}
-				func_110628_a(TextureMap.field_110575_b);
+				bindTexture(TextureMap.locationBlocksTexture);
 				FluidRenderer.setColorForFluidStack(fluidStack);
 				GL11.glCallList(list);
 				GL11.glPopMatrix();
@@ -383,7 +383,7 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 			if (d != null) {
 				int stage = (int) ((float) fluidStack.amount / (float) (trans.getCapacity()) * (LIQUID_STAGES - 1));
 
-				func_110628_a(TextureMap.field_110575_b);
+				bindTexture(TextureMap.locationBlocksTexture);
 				FluidRenderer.setColorForFluidStack(fluidStack);
 				
 				if (above) {
@@ -445,7 +445,7 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 		dummyEntityItem.setEntityItemStack(itemstack);
 		customRenderItem.doRenderItem(dummyEntityItem, 0, 0, 0, 0, 0);
 		if (color != null) {
-			func_110628_a(TextureMap.field_110575_b);
+			bindTexture(TextureMap.locationBlocksTexture);
 			BlockInterface block = new BlockInterface();
 
 			block.texture = PipeIconProvider.TYPE.ItemBox.getIcon();

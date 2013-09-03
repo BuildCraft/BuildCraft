@@ -998,7 +998,7 @@ public class BlockGenericPipe extends BlockContainer {
 		}
 
 		EntityDiggingFX fx = new EntityDiggingFX(worldObj, px, py, pz, 0.0D, 0.0D, 0.0D, block, sideHit, worldObj.getBlockMetadata(x, y, z));
-		fx.func_110125_a(icon);
+		fx.setParticleIcon(icon);
 		effectRenderer.addEffect(fx.applyColourMultiplier(x, y, z).multiplyVelocity(0.2F).multipleParticleScaleBy(0.6F));
 		return true;
 	}
@@ -1035,7 +1035,7 @@ public class BlockGenericPipe extends BlockContainer {
 					double pz = z + (k + 0.5D) / (double) its;
 					int random = rand.nextInt(6);
 					EntityDiggingFX fx = new EntityDiggingFX(worldObj, px, py, pz, px - x - 0.5D, py - y - 0.5D, pz - z - 0.5D, BuildCraftTransport.genericPipeBlock, random, meta);
-					fx.func_110125_a(icon);
+					fx.setParticleIcon(icon);
 					effectRenderer.addEffect(fx.applyColourMultiplier(x, y, z));
 				}
 			}
