@@ -21,6 +21,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.EnumSkyBlock;
 import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
@@ -35,18 +36,25 @@ public class TileTank extends TileBuildCraft implements IFluidHandler {
 	public final TankManager tankManager = new TankManager(tank);
 	public boolean hasUpdate = false;
 	public SafeTimeTracker tracker = new SafeTimeTracker();
+	private int prevLightValue = 0;
 
 	/* UPDATING */
 	@Override
 	public void updateEntity() {
-		if (CoreProxy.proxy.isRenderWorld(worldObj)) 
+		if (CoreProxy.proxy.isRenderWorld(worldObj)) {
+			int lightValue = getFluidLightLevel();
+			if (prevLightValue != lightValue) {
+				prevLightValue = lightValue;
+				worldObj.updateLightByType(EnumSkyBlock.Block, xCoord, yCoord, zCoord);
+			}
 			return;
-		
+		}
+
 		// Have liquid flow down into tanks below if any.
 		if (tank.getFluid() != null) {
 			moveFluidBelow();
 		}
-		
+
 		if (hasUpdate && tracker.markTimeIfDelay(worldObj, 2 * BuildCraftCore.updateFactor)) {
 			sendNetworkUpdate();
 			hasUpdate = false;
@@ -241,5 +249,10 @@ public class TileTank extends TileBuildCraft implements IFluidHandler {
 	@Override
 	public boolean canDrain(ForgeDirection from, Fluid fluid) {
 		return false;
+	}
+
+	public int getFluidLightLevel() {
+		FluidStack tankFluid = tank.getFluid();
+		return tankFluid == null ? 0 : tankFluid.getFluid().getLuminosity(tankFluid);
 	}
 }
