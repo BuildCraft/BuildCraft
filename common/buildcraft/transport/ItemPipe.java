@@ -121,12 +121,16 @@ public class ItemPipe extends ItemBuildCraft implements IItemPipe {
 	}
 
 	@Override
+	@SideOnly(Side.CLIENT)
 	public void addInformation(ItemStack stack, EntityPlayer player, List list, boolean advanced) {
 		super.addInformation(stack, player, list, advanced);
 		Class<? extends Pipe> pipe = BlockGenericPipe.pipes.get(itemID);
-		Integer capacity = PipeTransportPower.powerCapacities.get(pipe);
-		if (capacity != null) {
-			list.add(String.format("%d MJ/t", capacity));
+		String toolTip = PipeToolTipManager.getToolTip(pipe);
+		if (toolTip != null) {
+			String[] tips = toolTip.split("\\n");
+			for (String tip : tips) {
+				list.add(tip);
+			}
 		}
 	}
 }
