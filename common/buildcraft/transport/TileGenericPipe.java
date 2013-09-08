@@ -30,6 +30,8 @@ import buildcraft.core.network.IClientState;
 import buildcraft.core.network.ISyncedTile;
 import buildcraft.core.network.PacketTileState;
 import buildcraft.transport.Gate.GateKind;
+import buildcraft.transport.pipes.PipeFluidsSandstone;
+import buildcraft.transport.pipes.PipeItemsSandstone;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import java.io.DataInputStream;
@@ -424,12 +426,17 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 
 		if (!BlockGenericPipe.isValid(pipe))
 			return false;
-
-		if (with instanceof IPipeConnection) {
-			IPipeConnection.ConnectOverride override = ((IPipeConnection) with).overridePipeConnection(pipe.transport.getPipeType(), side.getOpposite());
-			if (override != IPipeConnection.ConnectOverride.DEFAULT)
-				return override == IPipeConnection.ConnectOverride.CONNECT ? true : false;
-		}
+		
+		boolean isSandstonePipe = false;
+		if(pipe instanceof PipeItemsSandstone || pipe instanceof PipeFluidsSandstone)
+			isSandstonePipe = true;
+		
+		if(!isSandstonePipe)
+			if (with instanceof IPipeConnection) {
+				IPipeConnection.ConnectOverride override = ((IPipeConnection) with).overridePipeConnection(pipe.transport.getPipeType(), side.getOpposite());
+				if (override != IPipeConnection.ConnectOverride.DEFAULT)
+					return override == IPipeConnection.ConnectOverride.CONNECT ? true : false;
+			}
 
 		if (with instanceof TileGenericPipe) {
 			if (((TileGenericPipe) with).hasPlug(side.getOpposite()))
