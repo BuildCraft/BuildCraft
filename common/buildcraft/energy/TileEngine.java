@@ -27,6 +27,7 @@ import buildcraft.api.power.PowerHandler;
 import buildcraft.api.power.PowerHandler.PowerReceiver;
 import buildcraft.api.power.PowerHandler.Type;
 import buildcraft.api.transport.IPipeConnection;
+import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.IPipeTile.PipeType;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.TileBuffer;
@@ -57,7 +58,6 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 	public float progress;
 	public float energy;
 	public float heat = MIN_HEAT;
-
 	//
 	public @TileNetworkData
 	EnergyStage energyStage = EnergyStage.BLUE;
@@ -66,11 +66,11 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 	public @TileNetworkData
 	boolean isPumping = false; // Used for SMP synch
 
-	public TileEngine(){
+	public TileEngine() {
 		powerHandler = new PowerHandler(this, Type.ENGINE);
 		powerHandler.configurePowerPerdition(1, 100);
 	}
-	
+
 	@Override
 	public void initialize() {
 		if (!CoreProxy.proxy.isRenderWorld(worldObj)) {
@@ -254,7 +254,21 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 		sendNetworkUpdate();
 	}
 
-	public boolean switchOrientation() {
+	public boolean isOrientationValid() {
+		Position pos = new Position(xCoord, yCoord, zCoord, orientation);
+		pos.moveForwards(1);
+		TileEntity tile = worldObj.getBlockTileEntity((int) pos.x, (int) pos.y, (int) pos.z);
+
+		return isPoweredTile(tile, orientation);
+	}
+
+	public boolean switchOrientation(boolean preferPipe) {
+		if (preferPipe && switchOrientation_do(true))
+			return true;
+		return switchOrientation_do(false);
+	}
+
+	private boolean switchOrientation_do(boolean pipesOnly) {
 		for (int i = orientation.ordinal() + 1; i <= orientation.ordinal() + 6; ++i) {
 			ForgeDirection o = ForgeDirection.VALID_DIRECTIONS[i % 6];
 
@@ -262,7 +276,7 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 			pos.moveForwards(1);
 			TileEntity tile = worldObj.getBlockTileEntity((int) pos.x, (int) pos.y, (int) pos.z);
 
-			if (isPoweredTile(tile, o)) {
+			if ((!pipesOnly || tile instanceof IPipeTile) && isPoweredTile(tile, o)) {
 				orientation = o;
 				worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
 				worldObj.notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord, worldObj.getBlockId(xCoord, yCoord, zCoord));
@@ -320,10 +334,8 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 		iCrafting.sendProgressBarUpdate(containerEngine, 2, Math.round(currentOutput * 10));
 		iCrafting.sendProgressBarUpdate(containerEngine, 3, Math.round(heat * 100));
 	}
-	
 
 	public void delete() {
-
 	}
 
 	/* STATE INFORMATION */
