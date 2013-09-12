@@ -72,6 +72,7 @@ public class TileQuarry extends TileBuildCraft implements IMachine, IPowerRecept
 	public PowerHandler powerHandler;
 	boolean isDigging = false;
 	public static final int MAX_ENERGY = 15000;
+	private static final PowerHandler.PerditionCalculator PERDITION = new PowerHandler.PerditionCalculator(2 * BuildCraftFactory.miningMultiplier);
 
 	public TileQuarry() {
 		powerHandler = new PowerHandler(this, PowerHandler.Type.MACHINE);
@@ -79,8 +80,9 @@ public class TileQuarry extends TileBuildCraft implements IMachine, IPowerRecept
 	}
 
 	private void initPowerProvider() {
-		powerHandler.configure(50, 100, 25, MAX_ENERGY);
-		powerHandler.configurePowerPerdition(2, 1);
+		float mj = 25 * BuildCraftFactory.miningMultiplier;
+		powerHandler.configure(50 * BuildCraftFactory.miningMultiplier, 100 * BuildCraftFactory.miningMultiplier, mj, MAX_ENERGY * BuildCraftFactory.miningMultiplier);
+		powerHandler.setPerdition(PERDITION);
 	}
 
 	public void createUtilsIfNeeded() {
@@ -194,9 +196,9 @@ public class TileQuarry extends TileBuildCraft implements IMachine, IPowerRecept
 	}
 
 	protected void buildFrame() {
-
-		powerHandler.configure(50, 100, 25, MAX_ENERGY);
-		if (powerHandler.useEnergy(25, 25, true) != 25)
+		float mj = 25 * BuildCraftFactory.miningMultiplier;
+		powerHandler.configure(50 * BuildCraftFactory.miningMultiplier, 100 * BuildCraftFactory.miningMultiplier, mj, MAX_ENERGY * BuildCraftFactory.miningMultiplier);
+		if (powerHandler.useEnergy(mj, mj, true) != mj)
 			return;
 
 		if (builder == null) {
@@ -210,8 +212,10 @@ public class TileQuarry extends TileBuildCraft implements IMachine, IPowerRecept
 	}
 
 	protected void dig() {
-		powerHandler.configure(100, 500, 60, MAX_ENERGY);
-		if (powerHandler.useEnergy(60, 60, true) != 60)
+		powerHandler.configure(100 * BuildCraftFactory.miningMultiplier, 500 * BuildCraftFactory.miningMultiplier, BuildCraftFactory.MINING_MJ_COST_PER_BLOCK, MAX_ENERGY * BuildCraftFactory.miningMultiplier);
+
+		float mj = BuildCraftFactory.MINING_MJ_COST_PER_BLOCK * BuildCraftFactory.miningMultiplier;
+		if (powerHandler.useEnergy(mj, mj, true) != mj)
 			return;
 
 		if (!findTarget(true)) {
@@ -278,7 +282,7 @@ public class TileQuarry extends TileBuildCraft implements IMachine, IPowerRecept
 
 		Integer[][] columnHeights = new Integer[bluePrintBuilder.bluePrint.sizeX - 2][bluePrintBuilder.bluePrint.sizeZ - 2];
 		boolean[][] blockedColumns = new boolean[bluePrintBuilder.bluePrint.sizeX - 2][bluePrintBuilder.bluePrint.sizeZ - 2];
-		for (int searchY = yCoord + 3; searchY >= 0; --searchY) {
+		for (int searchY = yCoord + 3; searchY >= 1 && searchY >= yCoord - BuildCraftFactory.miningDepth; --searchY) {
 			int startX, endX, incX;
 
 			if (searchY % 2 == 0) {

@@ -31,7 +31,9 @@ public class TileMiningWell extends TileBuildCraft implements IMachine, IPowerRe
 
 	public TileMiningWell() {
 		powerHandler = new PowerHandler(this, Type.MACHINE);
-		powerHandler.configure(100, 100, 60, 1000);
+
+		float mj = BuildCraftFactory.MINING_MJ_COST_PER_BLOCK * BuildCraftFactory.miningMultiplier;
+		powerHandler.configure(100 * BuildCraftFactory.miningMultiplier, 100 * BuildCraftFactory.miningMultiplier, mj, 1000 * BuildCraftFactory.miningMultiplier);
 		powerHandler.configurePowerPerdition(1, 1);
 	}
 
@@ -41,7 +43,8 @@ public class TileMiningWell extends TileBuildCraft implements IMachine, IPowerRe
 	 */
 	@Override
 	public void doWork(PowerHandler workProvider) {
-		if (powerHandler.useEnergy(60, 60, true) != 60)
+		float mj = BuildCraftFactory.MINING_MJ_COST_PER_BLOCK * BuildCraftFactory.miningMultiplier;
+		if (powerHandler.useEnergy(mj, mj, true) != mj)
 			return;
 
 		World world = worldObj;
@@ -52,7 +55,7 @@ public class TileMiningWell extends TileBuildCraft implements IMachine, IPowerRe
 			depth = depth - 1;
 		}
 
-		if (depth < 1 || !BlockUtil.canChangeBlock(world, xCoord, depth, zCoord)) {
+		if (depth < 1 || depth < yCoord - BuildCraftFactory.miningDepth || !BlockUtil.canChangeBlock(world, xCoord, depth, zCoord)) {
 			isDigging = false;
 			return;
 		}

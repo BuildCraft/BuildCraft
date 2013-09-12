@@ -17,18 +17,25 @@ import net.minecraft.util.Icon;
 import net.minecraft.world.World;
 
 public class FactoryProxyClient extends FactoryProxy {
-	public static Icon pumpTexture;
-    public static Icon drillTexture;
-    public static Icon drillHeadTexture;
 
-    @Override
+	public static Icon pumpTexture;
+	public static Icon drillTexture;
+	public static Icon drillHeadTexture;
+
+	@Override
 	public void initializeTileEntities() {
 		super.initializeTileEntities();
-		ClientRegistry.bindTileEntitySpecialRenderer(TileTank.class, new RenderTank());
-		ClientRegistry.bindTileEntitySpecialRenderer(TileRefinery.class, new RenderRefinery());
-		RenderingEntityBlocks.blockByEntityRenders.put(new EntityRenderIndex(BuildCraftFactory.refineryBlock, 0), new RenderRefinery());
 
-		if (!BuildCraftFactory.hopperDisabled) {
+		if (BuildCraftFactory.tankBlock != null) {
+			ClientRegistry.bindTileEntitySpecialRenderer(TileTank.class, new RenderTank());
+		}
+
+		if (BuildCraftFactory.refineryBlock != null) {
+			ClientRegistry.bindTileEntitySpecialRenderer(TileRefinery.class, new RenderRefinery());
+			RenderingEntityBlocks.blockByEntityRenders.put(new EntityRenderIndex(BuildCraftFactory.refineryBlock, 0), new RenderRefinery());
+		}
+
+		if (BuildCraftFactory.hopperBlock != null) {
 			ClientRegistry.bindTileEntitySpecialRenderer(TileHopper.class, new RenderHopper());
 			RenderingEntityBlocks.blockByEntityRenders.put(new EntityRenderIndex(BuildCraftFactory.hopperBlock, 0), new RenderHopper());
 		}
@@ -53,26 +60,23 @@ public class FactoryProxyClient extends FactoryProxy {
 	}
 
 	@Override
-	public EntityBlock newPumpTube(World w)
-	{
-	    EntityBlock eb = super.newPumpTube(w);
-	    eb.texture = pumpTexture;
-	    return eb;
+	public EntityBlock newPumpTube(World w) {
+		EntityBlock eb = super.newPumpTube(w);
+		eb.texture = pumpTexture;
+		return eb;
 	}
 
 	@Override
-	public EntityBlock newDrill(World w, double i, double j, double k, double l, double d, double e)
-	{
-	    EntityBlock eb = super.newDrill(w, i, j, k, l, d, e);
-        eb.texture = drillTexture;
-        return eb;
+	public EntityBlock newDrill(World w, double i, double j, double k, double l, double d, double e) {
+		EntityBlock eb = super.newDrill(w, i, j, k, l, d, e);
+		eb.texture = drillTexture;
+		return eb;
 	}
 
 	@Override
-    public EntityBlock newDrillHead(World w, double i, double j, double k, double l, double d, double e)
-    {
-        EntityBlock eb = super.newDrillHead(w, i, j, k, l, d, e);
-        eb.texture = drillHeadTexture;
-        return eb;
-    }
+	public EntityBlock newDrillHead(World w, double i, double j, double k, double l, double d, double e) {
+		EntityBlock eb = super.newDrillHead(w, i, j, k, l, d, e);
+		eb.texture = drillHeadTexture;
+		return eb;
+	}
 }
