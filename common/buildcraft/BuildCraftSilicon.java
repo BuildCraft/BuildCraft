@@ -11,6 +11,7 @@ import buildcraft.api.bptblocks.BptBlockInventory;
 import buildcraft.api.bptblocks.BptBlockRotateMeta;
 import buildcraft.api.recipes.AssemblyRecipe;
 import buildcraft.core.DefaultProps;
+import buildcraft.core.InterModComms;
 import buildcraft.core.ItemRedstoneChipset;
 import buildcraft.core.Version;
 import buildcraft.core.proxy.CoreProxy;
@@ -27,6 +28,7 @@ import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
+import cpw.mods.fml.common.event.FMLInterModComms;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkMod;
 import cpw.mods.fml.common.network.NetworkRegistry;
@@ -224,4 +226,9 @@ public class BuildCraftSilicon {
 		CoreProxy.proxy.addName(new ItemStack(BuildCraftTransport.pipeGateAutarchic, 1, 6), "Autarchic Diamond OR Gate");
 
 	}
+	
+	@EventHandler
+    public void processIMCRequests(FMLInterModComms.IMCEvent event) {
+        InterModComms.processIMC(event);
+    }
 }

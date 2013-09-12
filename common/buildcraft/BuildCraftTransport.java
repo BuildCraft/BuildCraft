@@ -15,6 +15,7 @@ import buildcraft.api.transport.IPipe;
 import buildcraft.api.transport.PipeManager;
 import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.DefaultProps;
+import buildcraft.core.InterModComms;
 import buildcraft.core.ItemBuildCraft;
 import buildcraft.core.Version;
 import buildcraft.core.proxy.CoreProxy;
@@ -84,7 +85,7 @@ import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
-import cpw.mods.fml.common.event.FMLInterModComms;
+import cpw.mods.fml.common.event.FMLInterModComms.IMCEvent;
 import cpw.mods.fml.common.event.FMLInterModComms.IMCMessage;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
@@ -443,26 +444,8 @@ public class BuildCraftTransport {
 	}
 
 	@EventHandler
-	public void processIMCRequests(FMLInterModComms.IMCEvent event) {
-		Splitter splitter = Splitter.on("@").trimResults();
-		for (IMCMessage m : event.getMessages()) {
-			if ("add-facade".equals(m.key)) {
-				String[] array = Iterables.toArray(splitter.split(m.getStringValue()), String.class);
-				if (array.length != 2) {
-					Logger.getLogger("Buildcraft").log(Level.INFO,
-							String.format("Received an invalid add-facade request %s from mod %s", m.getStringValue(), m.getSender()));
-					continue;
-				}
-				Integer blId = Ints.tryParse(array[0]);
-				Integer metaId = Ints.tryParse(array[1]);
-				if (blId == null || metaId == null) {
-					Logger.getLogger("Buildcraft").log(Level.INFO,
-							String.format("Received an invalid add-facade request %s from mod %s", m.getStringValue(), m.getSender()));
-					continue;
-				}
-				ItemFacade.addFacade(new ItemStack(blId, 1, metaId));
-			}
-		}
+	public void processIMCRequests(IMCEvent event) {
+	    InterModComms.processIMC(event);
 	}
 
 	public static Item buildPipe(int defaultID, Class<? extends Pipe> clas, String descr, Object... ingredients) {

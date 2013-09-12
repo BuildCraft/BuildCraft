@@ -13,6 +13,7 @@ import buildcraft.api.recipes.RefineryRecipes;
 import buildcraft.core.BlockIndex;
 import buildcraft.core.BlockSpring;
 import buildcraft.core.DefaultProps;
+import buildcraft.core.InterModComms;
 import buildcraft.core.Version;
 import buildcraft.core.network.PacketHandler;
 import buildcraft.core.proxy.CoreProxy;
@@ -44,8 +45,6 @@ import cpw.mods.fml.common.registry.LanguageRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import java.util.TreeMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.item.Item;
@@ -253,40 +252,10 @@ public class BuildCraftEnergy {
 			Character.valueOf('g'), Block.glass, Character.valueOf('G'), BuildCraftCore.ironGearItem, Character.valueOf('p'), Block.pistonBase});
 	}
 
-	@Mod.IMCCallback
+	@EventHandler
 	public void processIMCRequests(FMLInterModComms.IMCEvent event) {
-		for (FMLInterModComms.IMCMessage m : event.getMessages()) {
-			if (m.key.equals("oil-lake-biome")) {
-				try {
-					String biomeID = m.getStringValue().trim();
-					int id = Integer.valueOf(biomeID);
-					if (id >= BiomeGenBase.biomeList.length) {
-						throw new IllegalArgumentException("Biome ID must be less than " + BiomeGenBase.biomeList.length);
-					}
-					OilPopulate.INSTANCE.surfaceDepositBiomes.add(id);
-				} catch (Exception ex) {
-					Logger.getLogger("Buildcraft").log(Level.WARNING,
-							String.format("Received an invalid oil-lake-biome request %s from mod %s", m.getStringValue(), m.getSender()));
-				}
-				Logger.getLogger("Buildcraft").log(Level.INFO,
-						String.format("Received an successfull oil-lake-biome request %s from mod %s", m.getStringValue(), m.getSender()));
-			} else if (m.key.equals("oil-gen-exclude")) {
-				try {
-					String biomeID = m.getStringValue().trim();
-					int id = Integer.valueOf(biomeID);
-					if (id >= BiomeGenBase.biomeList.length) {
-						throw new IllegalArgumentException("Biome ID must be less than " + BiomeGenBase.biomeList.length);
-					}
-					OilPopulate.INSTANCE.excludedBiomes.add(id);
-				} catch (Exception ex) {
-					Logger.getLogger("Buildcraft").log(Level.WARNING,
-							String.format("Received an invalid oil-gen-exclude request %s from mod %s", m.getStringValue(), m.getSender()));
-				}
-				Logger.getLogger("Buildcraft").log(Level.INFO,
-						String.format("Received an successfull oil-gen-exclude request %s from mod %s", m.getStringValue(), m.getSender()));
-			}
-		}
-	}
+        InterModComms.processIMC(event);
+    }
 	// public static int createPollution (World world, int i, int j, int k, int
 	// saturation) {
 	// int remainingSaturation = saturation;

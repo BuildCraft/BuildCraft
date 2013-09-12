@@ -38,6 +38,7 @@ import buildcraft.core.DefaultProps;
 import buildcraft.core.EntityEnergyLaser;
 import buildcraft.core.EntityPowerLaser;
 import buildcraft.core.EntityRobot;
+import buildcraft.core.InterModComms;
 import buildcraft.core.ItemBuildCraft;
 import buildcraft.core.ItemSpring;
 import buildcraft.core.ItemWrench;
@@ -67,6 +68,7 @@ import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
+import cpw.mods.fml.common.event.FMLInterModComms;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerStartingEvent;
@@ -341,4 +343,9 @@ public class BuildCraftCore {
 		GameRegistry.addRecipe(new ItemStack(goldGearItem), " I ", "IGI", " I ", Character.valueOf('I'), Item.ingotGold, Character.valueOf('G'), ironGearItem);
 		GameRegistry.addRecipe(new ItemStack(diamondGearItem), " I ", "IGI", " I ", Character.valueOf('I'), Item.diamond, Character.valueOf('G'), goldGearItem);
 	}
+	
+	@EventHandler
+    public void processIMCRequests(FMLInterModComms.IMCEvent event) {
+        InterModComms.processIMC(event);
+    }
 }
