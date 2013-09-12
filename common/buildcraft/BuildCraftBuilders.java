@@ -56,6 +56,7 @@ import buildcraft.builders.TileMarker;
 import buildcraft.builders.TilePathMarker;
 import buildcraft.builders.network.PacketHandlerBuilders;
 import buildcraft.core.DefaultProps;
+import buildcraft.core.InterModComms;
 import buildcraft.core.Version;
 import buildcraft.core.blueprints.BptPlayerIndex;
 import buildcraft.core.blueprints.BptRootIndex;
@@ -64,6 +65,7 @@ import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
+import cpw.mods.fml.common.event.FMLInterModComms;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerStoppingEvent;
 import cpw.mods.fml.common.network.NetworkMod;
@@ -331,6 +333,11 @@ public class BuildCraftBuilders {
 		FillerManager.registry.addRecipe(new FillerFillPyramid(), new Object[]{"   ", " b ", "bbb", 'g', Block.glass, 'b', Block.brick});
 		FillerManager.registry.addRecipe(new FillerFillStairs(), new Object[]{"  b", " bb", "bbb", 'g', Block.glass, 'b', Block.brick});
 	}
+	
+	@EventHandler
+    public void processIMCRequests(FMLInterModComms.IMCEvent event) {
+        InterModComms.processIMC(event);
+    }
 
 	public static BptPlayerIndex getPlayerIndex(String name) {
 		BptRootIndex rootIndex = getBptRootIndex();
