@@ -7,6 +7,20 @@
  */
 package buildcraft;
 
+import java.io.IOException;
+import java.util.LinkedList;
+import java.util.TreeMap;
+
+import net.minecraft.block.Block;
+import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.client.event.TextureStitchEvent;
+import net.minecraftforge.common.Configuration;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.Property;
+import net.minecraftforge.event.ForgeSubscribe;
 import buildcraft.api.blueprints.BptBlock;
 import buildcraft.api.bptblocks.BptBlockBed;
 import buildcraft.api.bptblocks.BptBlockCustomStack;
@@ -74,338 +88,311 @@ import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import java.io.IOException;
-import java.util.LinkedList;
-import java.util.TreeMap;
-import net.minecraft.block.Block;
-import net.minecraft.client.renderer.texture.TextureMap;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.client.event.TextureStitchEvent;
-import net.minecraftforge.common.Configuration;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.Property;
-import net.minecraftforge.event.ForgeSubscribe;
 
 @Mod(name = "BuildCraft Builders", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Builders", dependencies = DefaultProps.DEPENDENCY_CORE)
-@NetworkMod(channels = {DefaultProps.NET_CHANNEL_NAME}, packetHandler = PacketHandlerBuilders.class, clientSideRequired = true, serverSideRequired = true)
+@NetworkMod(channels = { DefaultProps.NET_CHANNEL_NAME }, packetHandler = PacketHandlerBuilders.class, clientSideRequired = true, serverSideRequired = true)
 public class BuildCraftBuilders {
 
-	public static final int LIBRARY_PAGE_SIZE = 12;
-	public static final int MAX_BLUEPRINTS_NAME_SIZE = 14;
-	public static BlockMarker markerBlock;
-	public static BlockPathMarker pathMarkerBlock;
-	public static BlockFiller fillerBlock;
-	public static BlockBuilder builderBlock;
-	public static BlockArchitect architectBlock;
-	public static BlockBlueprintLibrary libraryBlock;
-	public static ItemBptTemplate templateItem;
-	public static ItemBptBluePrint blueprintItem;
-	public static boolean fillerDestroy;
-	public static int fillerLifespanTough;
-	public static int fillerLifespanNormal;
-	private static BptRootIndex rootBptIndex;
-	public static TreeMap<String, BptPlayerIndex> playerLibrary = new TreeMap<String, BptPlayerIndex>();
-	private static LinkedList<IBuilderHook> hooks = new LinkedList<IBuilderHook>();
-	@Instance("BuildCraft|Builders")
-	public static BuildCraftBuilders instance;
+    public static final int LIBRARY_PAGE_SIZE = 12;
+    public static final int MAX_BLUEPRINTS_NAME_SIZE = 14;
+    public static BlockMarker markerBlock;
+    public static BlockPathMarker pathMarkerBlock;
+    public static BlockFiller fillerBlock;
+    public static BlockBuilder builderBlock;
+    public static BlockArchitect architectBlock;
+    public static BlockBlueprintLibrary libraryBlock;
+    public static ItemBptTemplate templateItem;
+    public static ItemBptBluePrint blueprintItem;
+    public static boolean fillerDestroy;
+    public static int fillerLifespanTough;
+    public static int fillerLifespanNormal;
+    private static BptRootIndex rootBptIndex;
+    public static TreeMap<String, BptPlayerIndex> playerLibrary = new TreeMap<String, BptPlayerIndex>();
+    private static LinkedList<IBuilderHook> hooks = new LinkedList<IBuilderHook>();
+    @Instance("BuildCraft|Builders")
+    public static BuildCraftBuilders instance;
 
-	@EventHandler
-	public void load(FMLInitializationEvent evt) {
-		// Create filler registry
-		FillerManager.registry = new FillerRegistry();
+    @EventHandler
+    public void load(FMLInitializationEvent evt) {
+        // Create filler registry
+        FillerManager.registry = new FillerRegistry();
 
-		// Register gui handler
-		NetworkRegistry.instance().registerGuiHandler(instance, new GuiHandler());
+        // Register gui handler
+        NetworkRegistry.instance().registerGuiHandler(instance, new GuiHandler());
 
-		// Register save handler
-		MinecraftForge.EVENT_BUS.register(new EventHandlerBuilders());
+        // Register save handler
+        MinecraftForge.EVENT_BUS.register(new EventHandlerBuilders());
 
-		new BptBlock(0); // default bpt block
+        new BptBlock(0); // default bpt block
 
-		new BptBlockIgnore(Block.snow.blockID);
-		new BptBlockIgnore(Block.tallGrass.blockID);
-		new BptBlockIgnore(Block.ice.blockID);
-		new BptBlockIgnore(Block.pistonExtension.blockID);
+        new BptBlockIgnore(Block.snow.blockID);
+        new BptBlockIgnore(Block.tallGrass.blockID);
+        new BptBlockIgnore(Block.ice.blockID);
+        new BptBlockIgnore(Block.pistonExtension.blockID);
 
-		new BptBlockDirt(Block.dirt.blockID);
-		new BptBlockDirt(Block.grass.blockID);
-		new BptBlockDirt(Block.tilledField.blockID);
+        new BptBlockDirt(Block.dirt.blockID);
+        new BptBlockDirt(Block.grass.blockID);
+        new BptBlockDirt(Block.tilledField.blockID);
 
-		new BptBlockDelegate(Block.torchRedstoneIdle.blockID, Block.torchRedstoneActive.blockID);
-		new BptBlockDelegate(Block.furnaceBurning.blockID, Block.furnaceIdle.blockID);
-		new BptBlockDelegate(Block.pistonMoving.blockID, Block.pistonBase.blockID);
+        new BptBlockDelegate(Block.torchRedstoneIdle.blockID, Block.torchRedstoneActive.blockID);
+        new BptBlockDelegate(Block.furnaceBurning.blockID, Block.furnaceIdle.blockID);
+        new BptBlockDelegate(Block.pistonMoving.blockID, Block.pistonBase.blockID);
 
-		new BptBlockWallSide(Block.torchWood.blockID);
-		new BptBlockWallSide(Block.torchRedstoneActive.blockID);
+        new BptBlockWallSide(Block.torchWood.blockID);
+        new BptBlockWallSide(Block.torchRedstoneActive.blockID);
 
-		new BptBlockRotateMeta(Block.ladder.blockID, new int[]{2, 5, 3, 4}, true);
-		new BptBlockRotateMeta(Block.fenceGate.blockID, new int[]{0, 1, 2, 3}, true);
+        new BptBlockRotateMeta(Block.ladder.blockID, new int[] { 2, 5, 3, 4 }, true);
+        new BptBlockRotateMeta(Block.fenceGate.blockID, new int[] { 0, 1, 2, 3 }, true);
 
-		new BptBlockRotateInventory(Block.furnaceIdle.blockID, new int[]{2, 5, 3, 4}, true);
-		new BptBlockRotateInventory(Block.chest.blockID, new int[]{2, 5, 3, 4}, true);
-		new BptBlockRotateInventory(Block.lockedChest.blockID, new int[]{2, 5, 3, 4}, true);
-		new BptBlockRotateInventory(Block.dispenser.blockID, new int[]{2, 5, 3, 4}, true);
+        new BptBlockRotateInventory(Block.furnaceIdle.blockID, new int[] { 2, 5, 3, 4 }, true);
+        new BptBlockRotateInventory(Block.chest.blockID, new int[] { 2, 5, 3, 4 }, true);
+        new BptBlockRotateInventory(Block.lockedChest.blockID, new int[] { 2, 5, 3, 4 }, true);
+        new BptBlockRotateInventory(Block.dispenser.blockID, new int[] { 2, 5, 3, 4 }, true);
 
-		new BptBlockInventory(Block.brewingStand.blockID);
+        new BptBlockInventory(Block.brewingStand.blockID);
 
-		new BptBlockRotateMeta(Block.vine.blockID, new int[]{1, 4, 8, 2}, false);
-		new BptBlockRotateMeta(Block.trapdoor.blockID, new int[]{0, 1, 2, 3}, false);
+        new BptBlockRotateMeta(Block.vine.blockID, new int[] { 1, 4, 8, 2 }, false);
+        new BptBlockRotateMeta(Block.trapdoor.blockID, new int[] { 0, 1, 2, 3 }, false);
 
-		new BptBlockLever(Block.woodenButton.blockID);
-		new BptBlockLever(Block.stoneButton.blockID);
-		new BptBlockLever(Block.lever.blockID);
+        new BptBlockLever(Block.woodenButton.blockID);
+        new BptBlockLever(Block.stoneButton.blockID);
+        new BptBlockLever(Block.lever.blockID);
 
-		new BptBlockCustomStack(Block.stone.blockID, new ItemStack(Block.stone));
-		new BptBlockCustomStack(Block.redstoneWire.blockID, new ItemStack(Item.redstone));
-		// FIXME: Not sure what this has become
-		// new BptBlockCustomStack(Block.stairDouble.blockID, new ItemStack(Block.stairSingle, 2));
-		new BptBlockCustomStack(Block.cake.blockID, new ItemStack(Item.cake));
-		new BptBlockCustomStack(Block.crops.blockID, new ItemStack(Item.seeds));
-		new BptBlockCustomStack(Block.pumpkinStem.blockID, new ItemStack(Item.pumpkinSeeds));
-		new BptBlockCustomStack(Block.melonStem.blockID, new ItemStack(Item.melonSeeds));
-		new BptBlockCustomStack(Block.glowStone.blockID, new ItemStack(Block.glowStone));
+        new BptBlockCustomStack(Block.stone.blockID, new ItemStack(Block.stone));
+        new BptBlockCustomStack(Block.redstoneWire.blockID, new ItemStack(Item.redstone));
+        // FIXME: Not sure what this has become
+        // new BptBlockCustomStack(Block.stairDouble.blockID, new ItemStack(Block.stairSingle, 2));
+        new BptBlockCustomStack(Block.cake.blockID, new ItemStack(Item.cake));
+        new BptBlockCustomStack(Block.crops.blockID, new ItemStack(Item.seeds));
+        new BptBlockCustomStack(Block.pumpkinStem.blockID, new ItemStack(Item.pumpkinSeeds));
+        new BptBlockCustomStack(Block.melonStem.blockID, new ItemStack(Item.melonSeeds));
+        new BptBlockCustomStack(Block.glowStone.blockID, new ItemStack(Block.glowStone));
 
-		new BptBlockRedstoneRepeater(Block.redstoneRepeaterActive.blockID);
-		new BptBlockRedstoneRepeater(Block.redstoneRepeaterIdle.blockID);
+        new BptBlockRedstoneRepeater(Block.redstoneRepeaterActive.blockID);
+        new BptBlockRedstoneRepeater(Block.redstoneRepeaterIdle.blockID);
 
-		new BptBlockFluid(Block.waterStill.blockID, new ItemStack(Item.bucketWater));
-		new BptBlockFluid(Block.waterMoving.blockID, new ItemStack(Item.bucketWater));
-		new BptBlockFluid(Block.lavaStill.blockID, new ItemStack(Item.bucketLava));
-		new BptBlockFluid(Block.lavaMoving.blockID, new ItemStack(Item.bucketLava));
+        new BptBlockFluid(Block.waterStill.blockID, new ItemStack(Item.bucketWater));
+        new BptBlockFluid(Block.waterMoving.blockID, new ItemStack(Item.bucketWater));
+        new BptBlockFluid(Block.lavaStill.blockID, new ItemStack(Item.bucketLava));
+        new BptBlockFluid(Block.lavaMoving.blockID, new ItemStack(Item.bucketLava));
 
-		new BptBlockIgnoreMeta(Block.rail.blockID);
-		new BptBlockIgnoreMeta(Block.railPowered.blockID);
-		new BptBlockIgnoreMeta(Block.railDetector.blockID);
-		new BptBlockIgnoreMeta(Block.thinGlass.blockID);
+        new BptBlockIgnoreMeta(Block.rail.blockID);
+        new BptBlockIgnoreMeta(Block.railPowered.blockID);
+        new BptBlockIgnoreMeta(Block.railDetector.blockID);
+        new BptBlockIgnoreMeta(Block.thinGlass.blockID);
 
-		new BptBlockPiston(Block.pistonBase.blockID);
-		new BptBlockPiston(Block.pistonStickyBase.blockID);
+        new BptBlockPiston(Block.pistonBase.blockID);
+        new BptBlockPiston(Block.pistonStickyBase.blockID);
 
-		new BptBlockPumpkin(Block.pumpkinLantern.blockID);
+        new BptBlockPumpkin(Block.pumpkinLantern.blockID);
 
-		new BptBlockStairs(Block.stairsCobblestone.blockID);
-		new BptBlockStairs(Block.stairsWoodOak.blockID);
-		new BptBlockStairs(Block.stairsNetherBrick.blockID);
-		new BptBlockStairs(Block.stairsBrick.blockID);
-		new BptBlockStairs(Block.stairsStoneBrick.blockID);
+        new BptBlockStairs(Block.stairsCobblestone.blockID);
+        new BptBlockStairs(Block.stairsWoodOak.blockID);
+        new BptBlockStairs(Block.stairsNetherBrick.blockID);
+        new BptBlockStairs(Block.stairsBrick.blockID);
+        new BptBlockStairs(Block.stairsStoneBrick.blockID);
 
-		new BptBlockDoor(Block.doorWood.blockID, new ItemStack(Item.doorWood));
-		new BptBlockDoor(Block.doorIron.blockID, new ItemStack(Item.doorIron));
+        new BptBlockDoor(Block.doorWood.blockID, new ItemStack(Item.doorWood));
+        new BptBlockDoor(Block.doorIron.blockID, new ItemStack(Item.doorIron));
 
-		new BptBlockBed(Block.bed.blockID);
+        new BptBlockBed(Block.bed.blockID);
 
-		new BptBlockSign(Block.signWall.blockID, true);
-		new BptBlockSign(Block.signPost.blockID, false);
+        new BptBlockSign(Block.signWall.blockID, true);
+        new BptBlockSign(Block.signPost.blockID, false);
 
-		// BUILDCRAFT BLOCKS
+        // BUILDCRAFT BLOCKS
 
-		new BptBlockRotateInventory(architectBlock.blockID, new int[]{2, 5, 3, 4}, true);
-		new BptBlockRotateInventory(builderBlock.blockID, new int[]{2, 5, 3, 4}, true);
+        new BptBlockRotateInventory(architectBlock.blockID, new int[] { 2, 5, 3, 4 }, true);
+        new BptBlockRotateInventory(builderBlock.blockID, new int[] { 2, 5, 3, 4 }, true);
 
-		new BptBlockInventory(libraryBlock.blockID);
+        new BptBlockInventory(libraryBlock.blockID);
 
-		new BptBlockWallSide(markerBlock.blockID);
-		new BptBlockWallSide(pathMarkerBlock.blockID);
-		new BptBlockFiller(fillerBlock.blockID);
+        new BptBlockWallSide(markerBlock.blockID);
+        new BptBlockWallSide(pathMarkerBlock.blockID);
+        new BptBlockFiller(fillerBlock.blockID);
 
-		if (BuildCraftCore.loadDefaultRecipes) {
-			loadRecipes();
-		}
+        if (BuildCraftCore.loadDefaultRecipes) {
+            loadRecipes();
+        }
 
-	}
+    }
 
-	@EventHandler
-	public void initialize(FMLPreInitializationEvent evt) {
-		Property templateItemId = BuildCraftCore.mainConfiguration.getItem("templateItem.id", DefaultProps.TEMPLATE_ITEM_ID);
-		Property blueprintItemId = BuildCraftCore.mainConfiguration.getItem("blueprintItem.id", DefaultProps.BLUEPRINT_ITEM_ID);
-		Property markerId = BuildCraftCore.mainConfiguration.getBlock("marker.id", DefaultProps.MARKER_ID);
-		Property pathMarkerId = BuildCraftCore.mainConfiguration.getBlock("pathMarker.id", DefaultProps.PATH_MARKER_ID);
-		Property fillerId = BuildCraftCore.mainConfiguration.getBlock("filler.id", DefaultProps.FILLER_ID);
-		Property builderId = BuildCraftCore.mainConfiguration.getBlock("builder.id", DefaultProps.BUILDER_ID);
-		Property architectId = BuildCraftCore.mainConfiguration.getBlock("architect.id", DefaultProps.ARCHITECT_ID);
-		Property libraryId = BuildCraftCore.mainConfiguration.getBlock("blueprintLibrary.id", DefaultProps.BLUEPRINT_LIBRARY_ID);
+    @EventHandler
+    public void initialize(FMLPreInitializationEvent evt) {
+        Property templateItemId = BuildCraftCore.mainConfiguration.getItem("templateItem.id", DefaultProps.TEMPLATE_ITEM_ID);
+        Property blueprintItemId = BuildCraftCore.mainConfiguration.getItem("blueprintItem.id", DefaultProps.BLUEPRINT_ITEM_ID);
+        Property markerId = BuildCraftCore.mainConfiguration.getBlock("marker.id", DefaultProps.MARKER_ID);
+        Property pathMarkerId = BuildCraftCore.mainConfiguration.getBlock("pathMarker.id", DefaultProps.PATH_MARKER_ID);
+        Property fillerId = BuildCraftCore.mainConfiguration.getBlock("filler.id", DefaultProps.FILLER_ID);
+        Property builderId = BuildCraftCore.mainConfiguration.getBlock("builder.id", DefaultProps.BUILDER_ID);
+        Property architectId = BuildCraftCore.mainConfiguration.getBlock("architect.id", DefaultProps.ARCHITECT_ID);
+        Property libraryId = BuildCraftCore.mainConfiguration.getBlock("blueprintLibrary.id", DefaultProps.BLUEPRINT_LIBRARY_ID);
 
-		Property fillerDestroyProp = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "filler.destroy", DefaultProps.FILLER_DESTROY);
-		fillerDestroyProp.comment = "If true, Filler will destroy blocks instead of breaking them.";
-		fillerDestroy = fillerDestroyProp.getBoolean(DefaultProps.FILLER_DESTROY);
+        Property fillerDestroyProp = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "filler.destroy", DefaultProps.FILLER_DESTROY);
+        fillerDestroyProp.comment = "If true, Filler will destroy blocks instead of breaking them.";
+        fillerDestroy = fillerDestroyProp.getBoolean(DefaultProps.FILLER_DESTROY);
 
-		Property fillerLifespanToughProp = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "filler.lifespan.tough", DefaultProps.FILLER_LIFESPAN_TOUGH);
-		fillerLifespanToughProp.comment = "Lifespan in ticks of items dropped by the filler from 'tough' blocks (those that can't be broken by hand)";
-		fillerLifespanTough = fillerLifespanToughProp.getInt(DefaultProps.FILLER_LIFESPAN_TOUGH);
+        Property fillerLifespanToughProp = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "filler.lifespan.tough", DefaultProps.FILLER_LIFESPAN_TOUGH);
+        fillerLifespanToughProp.comment = "Lifespan in ticks of items dropped by the filler from 'tough' blocks (those that can't be broken by hand)";
+        fillerLifespanTough = fillerLifespanToughProp.getInt(DefaultProps.FILLER_LIFESPAN_TOUGH);
 
-		Property fillerLifespanNormalProp = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "filler.lifespan.other", DefaultProps.FILLER_LIFESPAN_NORMAL);
-		fillerLifespanNormalProp.comment = "Lifespan in ticks of items dropped by the filler from non-tough blocks (those that can be broken by hand)";
-		fillerLifespanNormal = fillerLifespanNormalProp.getInt(DefaultProps.FILLER_LIFESPAN_NORMAL);
+        Property fillerLifespanNormalProp = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "filler.lifespan.other", DefaultProps.FILLER_LIFESPAN_NORMAL);
+        fillerLifespanNormalProp.comment = "Lifespan in ticks of items dropped by the filler from non-tough blocks (those that can be broken by hand)";
+        fillerLifespanNormal = fillerLifespanNormalProp.getInt(DefaultProps.FILLER_LIFESPAN_NORMAL);
 
-		templateItem = new ItemBptTemplate(templateItemId.getInt());
-		templateItem.setUnlocalizedName("templateItem");
-		LanguageRegistry.addName(templateItem, "Template");
+        templateItem = new ItemBptTemplate(templateItemId.getInt());
+        templateItem.setUnlocalizedName("templateItem");
+        LanguageRegistry.addName(templateItem, "Template");
 
-		blueprintItem = new ItemBptBluePrint(blueprintItemId.getInt());
-		blueprintItem.setUnlocalizedName("blueprintItem");
-		LanguageRegistry.addName(blueprintItem, "Blueprint");
+        blueprintItem = new ItemBptBluePrint(blueprintItemId.getInt());
+        blueprintItem.setUnlocalizedName("blueprintItem");
+        LanguageRegistry.addName(blueprintItem, "Blueprint");
 
-		markerBlock = new BlockMarker(markerId.getInt());
-		CoreProxy.proxy.registerBlock(markerBlock.setUnlocalizedName("markerBlock"));
-		CoreProxy.proxy.addName(markerBlock, "Land Mark");
+        markerBlock = new BlockMarker(markerId.getInt());
+        CoreProxy.proxy.registerBlock(markerBlock.setUnlocalizedName("markerBlock"));
+        CoreProxy.proxy.addName(markerBlock, "Land Mark");
 
-		pathMarkerBlock = new BlockPathMarker(pathMarkerId.getInt());
-		CoreProxy.proxy.registerBlock(pathMarkerBlock.setUnlocalizedName("pathMarkerBlock"));
-		CoreProxy.proxy.addName(pathMarkerBlock, "Path Mark");
+        pathMarkerBlock = new BlockPathMarker(pathMarkerId.getInt());
+        CoreProxy.proxy.registerBlock(pathMarkerBlock.setUnlocalizedName("pathMarkerBlock"));
+        CoreProxy.proxy.addName(pathMarkerBlock, "Path Mark");
 
-		fillerBlock = new BlockFiller(fillerId.getInt());
-		CoreProxy.proxy.registerBlock(fillerBlock.setUnlocalizedName("fillerBlock"));
-		CoreProxy.proxy.addName(fillerBlock, "Filler");
+        fillerBlock = new BlockFiller(fillerId.getInt());
+        CoreProxy.proxy.registerBlock(fillerBlock.setUnlocalizedName("fillerBlock"));
+        CoreProxy.proxy.addName(fillerBlock, "Filler");
 
-		builderBlock = new BlockBuilder(builderId.getInt());
-		CoreProxy.proxy.registerBlock(builderBlock.setUnlocalizedName("builderBlock"));
-		CoreProxy.proxy.addName(builderBlock, "Builder");
+        builderBlock = new BlockBuilder(builderId.getInt());
+        CoreProxy.proxy.registerBlock(builderBlock.setUnlocalizedName("builderBlock"));
+        CoreProxy.proxy.addName(builderBlock, "Builder");
 
-		architectBlock = new BlockArchitect(architectId.getInt());
-		CoreProxy.proxy.registerBlock(architectBlock.setUnlocalizedName("architectBlock"));
-		CoreProxy.proxy.addName(architectBlock, "Architect Table");
+        architectBlock = new BlockArchitect(architectId.getInt());
+        CoreProxy.proxy.registerBlock(architectBlock.setUnlocalizedName("architectBlock"));
+        CoreProxy.proxy.addName(architectBlock, "Architect Table");
 
-		libraryBlock = new BlockBlueprintLibrary(libraryId.getInt());
-		CoreProxy.proxy.registerBlock(libraryBlock.setUnlocalizedName("libraryBlock"));
-		CoreProxy.proxy.addName(libraryBlock, "Blueprint Library");
+        libraryBlock = new BlockBlueprintLibrary(libraryId.getInt());
+        CoreProxy.proxy.registerBlock(libraryBlock.setUnlocalizedName("libraryBlock"));
+        CoreProxy.proxy.addName(libraryBlock, "Blueprint Library");
 
-		GameRegistry.registerTileEntity(TileMarker.class, "Marker");
-		GameRegistry.registerTileEntity(TileFiller.class, "Filler");
-		GameRegistry.registerTileEntity(TileBuilder.class, "net.minecraft.src.builders.TileBuilder");
-		GameRegistry.registerTileEntity(TileArchitect.class, "net.minecraft.src.builders.TileTemplate");
-		GameRegistry.registerTileEntity(TilePathMarker.class, "net.minecraft.src.builders.TilePathMarker");
-		GameRegistry.registerTileEntity(TileBlueprintLibrary.class, "net.minecraft.src.builders.TileBlueprintLibrary");
+        GameRegistry.registerTileEntity(TileMarker.class, "Marker");
+        GameRegistry.registerTileEntity(TileFiller.class, "Filler");
+        GameRegistry.registerTileEntity(TileBuilder.class, "net.minecraft.src.builders.TileBuilder");
+        GameRegistry.registerTileEntity(TileArchitect.class, "net.minecraft.src.builders.TileTemplate");
+        GameRegistry.registerTileEntity(TilePathMarker.class, "net.minecraft.src.builders.TilePathMarker");
+        GameRegistry.registerTileEntity(TileBlueprintLibrary.class, "net.minecraft.src.builders.TileBlueprintLibrary");
 
-		if (BuildCraftCore.mainConfiguration.hasChanged()) {
-			BuildCraftCore.mainConfiguration.save();
-		}
+        if (BuildCraftCore.mainConfiguration.hasChanged()) {
+            BuildCraftCore.mainConfiguration.save();
+        }
 
-		MinecraftForge.EVENT_BUS.register(this);
+        MinecraftForge.EVENT_BUS.register(this);
 
-		// public static final Block music;
-		// public static final Block cloth;
-		// public static final Block tilledField;
-		// public static final BlockPortal portal;
-		// public static final Block trapdoor;
+        // public static final Block music;
+        // public static final Block cloth;
+        // public static final Block tilledField;
+        // public static final BlockPortal portal;
+        // public static final Block trapdoor;
 
-		// STANDARD BLOCKS
-	}
+        // STANDARD BLOCKS
+    }
 
-	public static void loadRecipes() {
+    public static void loadRecipes() {
 
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(templateItem, 1), new Object[]{"ppp", "pip", "ppp", Character.valueOf('i'),
-			new ItemStack(Item.dyePowder, 1, 0), Character.valueOf('p'), Item.paper});
+        CoreProxy.proxy.addCraftingRecipe(new ItemStack(templateItem), "ppp", "pip", "ppp", 'i', new ItemStack(Item.dyePowder, 1, 0), 'p', Item.paper);
 
-//		CoreProxy.proxy.addCraftingRecipe(new ItemStack(blueprintItem, 1), new Object[]{"ppp", "pip", "ppp", Character.valueOf('i'),
-//			new ItemStack(Item.dyePowder, 1, 4), Character.valueOf('p'), Item.paper});
+        CoreProxy.proxy.addCraftingRecipe(new ItemStack(markerBlock), "l ", "r ", 'l', new ItemStack(Item.dyePowder, 1, 4), 'r', Block.torchRedstoneActive);
 
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(markerBlock, 1), new Object[]{"l ", "r ", Character.valueOf('l'),
-			new ItemStack(Item.dyePowder, 1, 4), Character.valueOf('r'), Block.torchRedstoneActive});
+        CoreProxy.proxy.addCraftingRecipe(new ItemStack(fillerBlock), "btb", "ycy", "gCg", 'b', new ItemStack(Item.dyePowder, 1, 0), 't', markerBlock, 'y', new ItemStack(Item.dyePowder, 1, 11), 'c', Block.workbench, 'g', BuildCraftCore.goldGearItem, 'C', Block.chest);
 
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(pathMarkerBlock, 1), new Object[]{"l ", "r ", Character.valueOf('l'),
-			new ItemStack(Item.dyePowder, 1, 2), Character.valueOf('r'), Block.torchRedstoneActive});
+        /*
+         * Builder has been disabled since 3.4.2. Why keep the recipes?
+         * CoreProxy.proxy.addCraftingRecipe(new ItemStack(builderBlock), "btb", "ycy", "gCg", 'b', new ItemStack(Item.dyePowder, 1, 0), 't', markerBlock, 'y', new ItemStack(Item.dyePowder, 1, 11), 'c', Block.workbench, 'g', BuildCraftCore.diamondGearItem, 'C', Block.chest);
+         * CoreProxy.proxy.addCraftingRecipe(new ItemStack(pathMarkerBlock), "l ", "r ", 'l', new ItemStack(Item.dyePowder, 1, 2), 'r', Block.torchRedstoneActive);
+         * CoreProxy.proxy.addCraftingRecipe(new ItemStack(architectBlock),"btb", "ycy", "gCg", Character.valueOf('b'), new ItemStack(Item.dyePowder, 1, 0), Character.valueOf('t'), markerBlock, Character.valueOf('y'), new ItemStack(Item.dyePowder, 1, 11), Character.valueOf('c'), Block.workbench, Character.valueOf('g'),BuildCraftCore.diamondGearItem, Character.valueOf('C'), new ItemStack(templateItem, 1));
+         * CoreProxy.proxy.addCraftingRecipe(new ItemStack(libraryBlock), "bbb", "bBb", "bbb", Character.valueOf('b'), new ItemStack(blueprintItem), Character.valueOf('B'), Block.bookShelf);
+         * CoreProxy.proxy.addCraftingRecipe(new ItemStack(blueprintItem, 1), new Object[]{"ppp", "pip", "ppp", Character.valueOf('i'), new ItemStack(Item.dyePowder, 1, 4), Character.valueOf('p'), Item.paper});
+         */
 
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(fillerBlock, 1), new Object[]{"btb", "ycy", "gCg", Character.valueOf('b'),
-			new ItemStack(Item.dyePowder, 1, 0), Character.valueOf('t'), markerBlock, Character.valueOf('y'), new ItemStack(Item.dyePowder, 1, 11),
-			Character.valueOf('c'), Block.workbench, Character.valueOf('g'), BuildCraftCore.goldGearItem, Character.valueOf('C'), Block.chest});
+        // / INIT FILLER PATTERNS
+        FillerManager.registry.addRecipe(new FillerFillAll(), new Object[] { "bbb", "bbb", "bbb", 'g', Block.glass, 'b', Block.brick });
+        FillerManager.registry.addRecipe(new FillerFlattener(), new Object[] { "ggg", "bbb", "bbb", 'g', Block.glass, 'b', Block.brick });
+        FillerManager.registry.addRecipe(new FillerHorizon(), new Object[] { "ggg", "ggg", "bbb", 'g', Block.glass, 'b', Block.brick });
+        FillerManager.registry.addRecipe(new FillerRemover(), new Object[] { "ggg", "ggg", "ggg", 'g', Block.glass, 'b', Block.brick });
+        FillerManager.registry.addRecipe(new FillerFillWalls(), new Object[] { "bbb", "b b", "bbb", 'g', Block.glass, 'b', Block.brick });
+        FillerManager.registry.addRecipe(new FillerFillPyramid(), new Object[] { "   ", " b ", "bbb", 'g', Block.glass, 'b', Block.brick });
+        FillerManager.registry.addRecipe(new FillerFillStairs(), new Object[] { "  b", " bb", "bbb", 'g', Block.glass, 'b', Block.brick });
+    }
 
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(builderBlock, 1), new Object[]{"btb", "ycy", "gCg", Character.valueOf('b'),
-			new ItemStack(Item.dyePowder, 1, 0), Character.valueOf('t'), markerBlock, Character.valueOf('y'), new ItemStack(Item.dyePowder, 1, 11),
-			Character.valueOf('c'), Block.workbench, Character.valueOf('g'), BuildCraftCore.diamondGearItem, Character.valueOf('C'), Block.chest});
-
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(architectBlock, 1), new Object[]{"btb", "ycy", "gCg", Character.valueOf('b'),
-			new ItemStack(Item.dyePowder, 1, 0), Character.valueOf('t'), markerBlock, Character.valueOf('y'), new ItemStack(Item.dyePowder, 1, 11),
-			Character.valueOf('c'), Block.workbench, Character.valueOf('g'), BuildCraftCore.diamondGearItem, Character.valueOf('C'),
-			new ItemStack(templateItem, 1)});
-
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(libraryBlock, 1), new Object[]{"bbb", "bBb", "bbb", Character.valueOf('b'),
-			new ItemStack(blueprintItem), Character.valueOf('B'), Block.bookShelf});
-
-
-		// / INIT FILLER PATTERNS
-		FillerManager.registry.addRecipe(new FillerFillAll(), new Object[]{"bbb", "bbb", "bbb", 'g', Block.glass, 'b', Block.brick});
-		FillerManager.registry.addRecipe(new FillerFlattener(), new Object[]{"ggg", "bbb", "bbb", 'g', Block.glass, 'b', Block.brick});
-		FillerManager.registry.addRecipe(new FillerHorizon(), new Object[]{"ggg", "ggg", "bbb", 'g', Block.glass, 'b', Block.brick});
-		FillerManager.registry.addRecipe(new FillerRemover(), new Object[]{"ggg", "ggg", "ggg", 'g', Block.glass, 'b', Block.brick});
-		FillerManager.registry.addRecipe(new FillerFillWalls(), new Object[]{"bbb", "b b", "bbb", 'g', Block.glass, 'b', Block.brick});
-		FillerManager.registry.addRecipe(new FillerFillPyramid(), new Object[]{"   ", " b ", "bbb", 'g', Block.glass, 'b', Block.brick});
-		FillerManager.registry.addRecipe(new FillerFillStairs(), new Object[]{"  b", " bb", "bbb", 'g', Block.glass, 'b', Block.brick});
-	}
-	
-	@EventHandler
+    @EventHandler
     public void processIMCRequests(FMLInterModComms.IMCEvent event) {
         InterModComms.processIMC(event);
     }
 
-	public static BptPlayerIndex getPlayerIndex(String name) {
-		BptRootIndex rootIndex = getBptRootIndex();
+    public static BptPlayerIndex getPlayerIndex(String name) {
+        BptRootIndex rootIndex = getBptRootIndex();
 
-		if (!playerLibrary.containsKey(name)) {
-			try {
-				playerLibrary.put(name, new BptPlayerIndex(name + ".list", rootIndex));
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
+        if (!playerLibrary.containsKey(name)) {
+            try {
+                playerLibrary.put(name, new BptPlayerIndex(name + ".list", rootIndex));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
 
-		return playerLibrary.get(name);
-	}
+        return playerLibrary.get(name);
+    }
 
-	public static BptRootIndex getBptRootIndex() {
-		if (rootBptIndex == null) {
-			try {
-				rootBptIndex = new BptRootIndex("index.txt");
-				rootBptIndex.loadIndex();
+    public static BptRootIndex getBptRootIndex() {
+        if (rootBptIndex == null) {
+            try {
+                rootBptIndex = new BptRootIndex("index.txt");
+                rootBptIndex.loadIndex();
 
-				for (IBuilderHook hook : hooks) {
-					hook.rootIndexInitialized(rootBptIndex);
-				}
+                for (IBuilderHook hook : hooks) {
+                    hook.rootIndexInitialized(rootBptIndex);
+                }
 
-				rootBptIndex.importNewFiles();
+                rootBptIndex.importNewFiles();
 
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
 
-		return rootBptIndex;
-	}
+        return rootBptIndex;
+    }
 
-	public static ItemStack getBptItemStack(int id, int damage, String name) {
-		ItemStack stack = new ItemStack(id, 1, damage);
-		NBTTagCompound nbt = new NBTTagCompound();
-		if (name != null && !"".equals(name)) {
-			nbt.setString("BptName", name);
-			stack.setTagCompound(nbt);
-		}
-		return stack;
-	}
+    public static ItemStack getBptItemStack(int id, int damage, String name) {
+        ItemStack stack = new ItemStack(id, 1, damage);
+        NBTTagCompound nbt = new NBTTagCompound();
+        if (name != null && !"".equals(name)) {
+            nbt.setString("BptName", name);
+            stack.setTagCompound(nbt);
+        }
+        return stack;
+    }
 
-	public static void addHook(IBuilderHook hook) {
-		if (!hooks.contains(hook)) {
-			hooks.add(hook);
-		}
-	}
+    public static void addHook(IBuilderHook hook) {
+        if (!hooks.contains(hook)) {
+            hooks.add(hook);
+        }
+    }
 
-	@EventHandler
-	public void ServerStop(FMLServerStoppingEvent event) {
-		TilePathMarker.clearAvailableMarkersList();
-	}
+    @EventHandler
+    public void ServerStop(FMLServerStoppingEvent event) {
+        TilePathMarker.clearAvailableMarkersList();
+    }
 
-	@ForgeSubscribe
-	@SideOnly(Side.CLIENT)
-	public void loadTextures(TextureStitchEvent.Pre evt) {
-		if (evt.map.textureType == 0) {
-			TextureMap terrainMap = evt.map;
-			BuilderProxyClient.fillerFillAllTexture = terrainMap.registerIcon("buildcraft:fillerPatterns/fillAll");
-			BuilderProxyClient.fillerClearTexture = terrainMap.registerIcon("buildcraft:fillerPatterns/clear");
-			BuilderProxyClient.fillerWallsTexture = terrainMap.registerIcon("buildcraft:fillerPatterns/walls");
-			BuilderProxyClient.fillerStairsTexture = terrainMap.registerIcon("buildcraft:fillerPatterns/stairs");
-			BuilderProxyClient.fillerFlattenTexture = terrainMap.registerIcon("buildcraft:fillerPatterns/flatten");
-			BuilderProxyClient.fillerHorizonTexture = terrainMap.registerIcon("buildcraft:fillerPatterns/horizon");
-			BuilderProxyClient.fillerPyramidTexture = terrainMap.registerIcon("buildcraft:fillerPatterns/pyramid");
-		}
-	}
+    @ForgeSubscribe
+    @SideOnly(Side.CLIENT)
+    public void loadTextures(TextureStitchEvent.Pre evt) {
+        if (evt.map.textureType == 0) {
+            TextureMap terrainMap = evt.map;
+            BuilderProxyClient.fillerFillAllTexture = terrainMap.registerIcon("buildcraft:fillerPatterns/fillAll");
+            BuilderProxyClient.fillerClearTexture = terrainMap.registerIcon("buildcraft:fillerPatterns/clear");
+            BuilderProxyClient.fillerWallsTexture = terrainMap.registerIcon("buildcraft:fillerPatterns/walls");
+            BuilderProxyClient.fillerStairsTexture = terrainMap.registerIcon("buildcraft:fillerPatterns/stairs");
+            BuilderProxyClient.fillerFlattenTexture = terrainMap.registerIcon("buildcraft:fillerPatterns/flatten");
+            BuilderProxyClient.fillerHorizonTexture = terrainMap.registerIcon("buildcraft:fillerPatterns/horizon");
+            BuilderProxyClient.fillerPyramidTexture = terrainMap.registerIcon("buildcraft:fillerPatterns/pyramid");
+        }
+    }
 }
