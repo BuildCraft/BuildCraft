@@ -17,6 +17,7 @@ import buildcraft.api.gates.ITrigger;
 import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.power.PowerHandler;
 import buildcraft.api.power.PowerHandler.PowerReceiver;
+import buildcraft.api.transport.IFixedConnection;
 import buildcraft.api.transport.IPipe;
 import buildcraft.api.transport.IPipeConnection;
 import buildcraft.api.transport.IPipeTile;
@@ -425,11 +426,12 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 		if (!BlockGenericPipe.isValid(pipe))
 			return false;
 
-		if (with instanceof IPipeConnection) {
-			IPipeConnection.ConnectOverride override = ((IPipeConnection) with).overridePipeConnection(pipe.transport.getPipeType(), side.getOpposite());
-			if (override != IPipeConnection.ConnectOverride.DEFAULT)
-				return override == IPipeConnection.ConnectOverride.CONNECT ? true : false;
-		}
+		if(!(pipe instanceof IFixedConnection))
+			if (with instanceof IPipeConnection) {
+				IPipeConnection.ConnectOverride override = ((IPipeConnection) with).overridePipeConnection(pipe.transport.getPipeType(), side.getOpposite());
+				if (override != IPipeConnection.ConnectOverride.DEFAULT)
+					return override == IPipeConnection.ConnectOverride.CONNECT ? true : false;
+			}
 
 		if (with instanceof TileGenericPipe) {
 			if (((TileGenericPipe) with).hasPlug(side.getOpposite()))
