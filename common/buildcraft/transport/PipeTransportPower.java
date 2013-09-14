@@ -321,14 +321,15 @@ public class PipeTransportPower extends PipeTransport {
 
 		step();
 		if (this.container.pipe instanceof IPipeTransportPowerHook) {
-			return ((IPipeTransportPowerHook) this.container.pipe).receiveEnergy(from, val);
-		} else {
-			internalNextPower[from.ordinal()] += val;
+			float ret = ((IPipeTransportPowerHook) this.container.pipe).receiveEnergy(from, val);
+			if (ret >= 0)
+				return ret;
+		}
+		internalNextPower[from.ordinal()] += val;
 
-			if (internalNextPower[from.ordinal()] > maxPower) {
-				val -= internalNextPower[from.ordinal()] - maxPower;
-				internalNextPower[from.ordinal()] = maxPower;
-			}
+		if (internalNextPower[from.ordinal()] > maxPower) {
+			val -= internalNextPower[from.ordinal()] - maxPower;
+			internalNextPower[from.ordinal()] = maxPower;
 		}
 		return val;
 	}
