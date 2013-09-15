@@ -7,18 +7,19 @@
  */
 package buildcraft.transport.pipes;
 
+import net.minecraft.tileentity.TileEntity;
+import net.minecraftforge.common.ForgeDirection;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
+import buildcraft.transport.IPipeConnectionForced;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportItems;
 import buildcraft.transport.TileGenericPipe;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.ForgeDirection;
 
-public class PipeItemsSandstone extends Pipe {
+public class PipeItemsSandstone extends Pipe implements IPipeConnectionForced {
 
 	public PipeItemsSandstone(int itemID) {
 		super(new PipeTransportItems(), itemID);
@@ -38,5 +39,10 @@ public class PipeItemsSandstone extends Pipe {
 	@Override
 	public boolean canPipeConnect(TileEntity tile, ForgeDirection side) {
 		return (tile instanceof TileGenericPipe) && super.canPipeConnect(tile, side);
+	}
+
+	@Override
+	public boolean ignoreConnectionOverrides(ForgeDirection with) {
+		return true;
 	}
 }
