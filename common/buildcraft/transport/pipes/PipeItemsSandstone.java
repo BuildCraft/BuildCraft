@@ -9,6 +9,7 @@ package buildcraft.transport.pipes;
 
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
+import buildcraft.api.transport.IFixedConnection;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportItems;
@@ -18,7 +19,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.ForgeDirection;
 
-public class PipeItemsSandstone extends Pipe {
+public class PipeItemsSandstone extends Pipe implements IFixedConnection {
 
 	public PipeItemsSandstone(int itemID) {
 		super(new PipeTransportItems(), itemID);
