@@ -35,7 +35,6 @@ import cpw.mods.fml.relauncher.SideOnly;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.logging.Level;
 import net.minecraft.block.Block;
@@ -140,6 +139,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 	@Override
 	public void validate() {
 		super.validate();
+		initialized = false;
 		tileBuffer = null;
 		bindPipe();
 		if (pipe != null)

@@ -54,7 +54,7 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 	protected PowerHandler powerHandler;
 	public float currentOutput = 0;
 	public boolean isRedstonePowered = false;
-	public TileBuffer[] tileCache;
+	private TileBuffer[] tileCache;
 	public float progress;
 	public float energy;
 	public float heat = MIN_HEAT;
@@ -74,7 +74,6 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 	@Override
 	public void initialize() {
 		if (!CoreProxy.proxy.isRenderWorld(worldObj)) {
-			tileCache = TileBuffer.makeBuffer(worldObj, xCoord, yCoord, zCoord, true);
 			powerHandler.configure(minEnergyReceived(), maxEnergyReceived(), 1, getMaxEnergy());
 			checkRedstonePower();
 		}
@@ -173,7 +172,7 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 		updateHeatLevel();
 		engineUpdate();
 
-		TileEntity tile = tileCache[orientation.ordinal()].getTile();
+		TileEntity tile = getTileBuffer(orientation).getTile();
 
 		if (progressPart != 0) {
 			progress += getPistonSpeed();
@@ -206,14 +205,14 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 	}
 
 	private float getPowerToExtract() {
-		TileEntity tile = tileCache[orientation.ordinal()].getTile();
+		TileEntity tile = getTileBuffer(orientation).getTile();
 		PowerReceiver receptor = ((IPowerReceptor) tile).getPowerReceiver(orientation.getOpposite());
 		return extractEnergy(receptor.getMinEnergyReceived(), receptor.getMaxEnergyReceived(), false); // Comment out for constant power
 //		return extractEnergy(0, getActualOutput(), false); // Uncomment for constant power
 	}
 
 	private void sendPower() {
-		TileEntity tile = tileCache[orientation.ordinal()].getTile();
+		TileEntity tile = getTileBuffer(orientation).getTile();
 		if (isPoweredTile(tile, orientation)) {
 			PowerReceiver receptor = ((IPowerReceptor) tile).getPowerReceiver(orientation.getOpposite());
 
@@ -255,10 +254,7 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 	}
 
 	public boolean isOrientationValid() {
-		Position pos = new Position(xCoord, yCoord, zCoord, orientation);
-		pos.moveForwards(1);
-		TileEntity tile = worldObj.getBlockTileEntity((int) pos.x, (int) pos.y, (int) pos.z);
-
+		TileEntity tile = getTileBuffer(orientation).getTile();
 		return isPoweredTile(tile, orientation);
 	}
 
@@ -272,9 +268,7 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 		for (int i = orientation.ordinal() + 1; i <= orientation.ordinal() + 6; ++i) {
 			ForgeDirection o = ForgeDirection.VALID_DIRECTIONS[i % 6];
 
-			Position pos = new Position(xCoord, yCoord, zCoord, o);
-			pos.moveForwards(1);
-			TileEntity tile = worldObj.getBlockTileEntity((int) pos.x, (int) pos.y, (int) pos.z);
+			TileEntity tile = getTileBuffer(o).getTile();
 
 			if ((!pipesOnly || tile instanceof IPipeTile) && isPoweredTile(tile, o)) {
 				orientation = o;
@@ -285,6 +279,26 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 			}
 		}
 		return false;
+	}
+
+	public TileBuffer getTileBuffer(ForgeDirection side) {
+		if (tileCache == null)
+			tileCache = TileBuffer.makeBuffer(worldObj, xCoord, yCoord, zCoord, false);
+		return tileCache[side.ordinal()];
+	}
+
+	@Override
+	public void invalidate() {
+		super.invalidate();
+		tileCache = null;
+	}
+
+	@Override
+	public void validate() {
+		super.validate();
+		tileCache = null;
+		if (!isOrientationValid())
+			switchOrientation(true);
 	}
 
 	@Override
