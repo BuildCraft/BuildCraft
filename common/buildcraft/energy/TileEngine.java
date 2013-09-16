@@ -54,6 +54,7 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 	protected PowerHandler powerHandler;
 	public float currentOutput = 0;
 	public boolean isRedstonePowered = false;
+	private boolean checkOrienation = false;
 	private TileBuffer[] tileCache;
 	public float progress;
 	public float energy;
@@ -167,6 +168,12 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 				progressPart = 1;
 
 			return;
+		}
+
+		if (checkOrienation) {
+			checkOrienation = false;
+			if (!isOrientationValid())
+				switchOrientation(true);
 		}
 
 		updateHeatLevel();
@@ -291,14 +298,14 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 	public void invalidate() {
 		super.invalidate();
 		tileCache = null;
+		checkOrienation = true;
 	}
 
 	@Override
 	public void validate() {
 		super.validate();
 		tileCache = null;
-		if (!isOrientationValid())
-			switchOrientation(true);
+		checkOrienation = true;
 	}
 
 	@Override
