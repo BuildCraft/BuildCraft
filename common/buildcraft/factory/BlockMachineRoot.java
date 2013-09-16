@@ -21,6 +21,7 @@ public abstract class BlockMachineRoot extends BlockContainer {
 	protected BlockMachineRoot(int i, Material material) {
 		super(i, material);
 		setCreativeTab(CreativeTabBuildCraft.tabBuildCraft);
+		setHardness(5F);
 	}
 
 	@Override

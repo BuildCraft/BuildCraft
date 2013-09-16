@@ -32,7 +32,7 @@ public class BlockAutoWorkbench extends BlockBuildCraft {
 
 	public BlockAutoWorkbench(int i) {
 		super(i, Material.wood);
-		setHardness(1.0F);
+		setHardness(3.0F);
 	}
 
 	@Override

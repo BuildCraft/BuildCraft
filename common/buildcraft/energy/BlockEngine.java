@@ -34,7 +34,7 @@ public class BlockEngine extends BlockContainer {
 	public BlockEngine(int i) {
 		super(i, Material.iron);
 
-		setHardness(0.5F);
+		setHardness(5F);
 		setCreativeTab(CreativeTabBuildCraft.tabBuildCraft);
 		setUnlocalizedName("engineBlock");
 	}

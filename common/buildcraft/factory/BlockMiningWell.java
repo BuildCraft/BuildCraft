@@ -31,7 +31,7 @@ public class BlockMiningWell extends BlockMachineRoot {
 	public BlockMiningWell(int i) {
 		super(i, Material.ground);
 
-		setHardness(1.5F);
+		setHardness(5F);
 		setResistance(10F);
 		setStepSound(soundStoneFootstep);
 	}
