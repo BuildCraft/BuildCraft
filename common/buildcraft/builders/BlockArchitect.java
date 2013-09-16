@@ -41,7 +41,7 @@ public class BlockArchitect extends BlockContainer {
 
 	public BlockArchitect(int i) {
 		super(i, Material.iron);
-		setHardness(0.5F);
+		setHardness(5F);
 		//setCreativeTab(CreativeTabBuildCraft.tabBuildCraft);
 	}
 

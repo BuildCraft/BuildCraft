@@ -36,7 +36,7 @@ public class BlockQuarry extends BlockMachineRoot {
 	public BlockQuarry(int i) {
 		super(i, Material.iron);
 
-		setHardness(1.5F);
+		setHardness(10F);
 		setResistance(10F);
 		setStepSound(soundStoneFootstep);
 	}
