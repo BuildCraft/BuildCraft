@@ -86,6 +86,10 @@ public abstract class Pipe<T extends PipeTransport> implements IPipe, IDropContr
 		Pipe otherPipe;
 		if (tile instanceof TileGenericPipe) {
 			otherPipe = ((TileGenericPipe) tile).pipe;
+
+			if (!BlockGenericPipe.isFullyDefined(otherPipe))
+				return false;
+
 			if (!PipeConnectionBans.canPipesConnect(getClass(), otherPipe.getClass()))
 				return false;
 		}
