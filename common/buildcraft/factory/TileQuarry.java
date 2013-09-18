@@ -11,6 +11,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import net.minecraft.block.Block;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -259,15 +260,22 @@ public class TileQuarry extends TileBuildCraft implements IMachine, IPowerRecept
 		if (!columnVisitListIsUpdated) { // nextTarget may not be accurate, at least search the target column for changes
 			for (int y = nextTarget[1] + 1; y < yCoord + 3; y++) {
 				int blockID = worldObj.getBlockId(nextTarget[0], y, nextTarget[2]);
-
-				if (BlockUtil.canChangeBlock(blockID, worldObj, nextTarget[0], y, nextTarget[2]) && !BlockUtil.isSoftBlock(blockID, worldObj, nextTarget[0], y, nextTarget[2])) {
+				if (BlockUtil.isAnObstructingBlock(blockID, worldObj, nextTarget[0], y, nextTarget[2]) || !BlockUtil.isSoftBlock(blockID, worldObj, nextTarget[0], y, nextTarget[2])) {
 					createColumnVisitList();
-					nextTarget = visitList.removeFirst();
-
+					columnVisitListIsUpdated = true;
+					nextTarget = null;
 					break;
 				}
 			}
 		}
+        if (columnVisitListIsUpdated && nextTarget == null && !visitList.isEmpty())
+        {
+            nextTarget = visitList.removeFirst();
+        }
+        else if (columnVisitListIsUpdated && nextTarget == null)
+        {
+            return false;
+        }
 
 		setTarget(nextTarget[0], nextTarget[1] + 1, nextTarget[2]);
 
@@ -316,8 +324,10 @@ public class TileQuarry extends TileBuildCraft implements IMachine, IPowerRecept
 						if (height == null)
 							columnHeights[searchX][searchZ] = height = worldObj.getHeightValue(bx, bz);
 
-						if (height < by)
-							continue;
+						if (height > 0 && height < by && worldObj.provider.dimensionId != -1)
+						{
+                            continue;
+						}
 
 						int blockID = worldObj.getBlockId(bx, by, bz);
 
@@ -326,6 +336,11 @@ public class TileQuarry extends TileBuildCraft implements IMachine, IPowerRecept
 						} else if (!BlockUtil.isSoftBlock(blockID, worldObj, bx, by, bz)) {
 							visitList.add(new int[]{bx, by, bz});
 						}
+                        if (height == 0 && !worldObj.isAirBlock(bx, by, bz))
+                        {
+                            columnHeights[searchX][searchZ] = by;
+                        }
+                        
 						// Stop at two planes - generally any obstructions will have been found and will force a recompute prior to this
 						if (visitList.size() > bluePrintBuilder.bluePrint.sizeZ * bluePrintBuilder.bluePrint.sizeX * 2)
 							return;
