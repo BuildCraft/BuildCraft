@@ -45,7 +45,7 @@ public class GuiEmeraldPipe extends GuiBuildCraft {
 		super.initGui();
 
 		this.buttonList.clear();
-		this.button = new GuiMultiButton(0, this.guiLeft + this.xSize - (80 + 4), this.guiTop + 2, 80, this.pipe.getStateController().copy());
+		this.button = new GuiMultiButton(0, this.guiLeft + this.xSize - (80 + 6), this.guiTop + 34, 80, this.pipe.getStateController().copy());
 		this.buttonList.add(this.button);
 	}
 
