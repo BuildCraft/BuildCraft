@@ -46,6 +46,7 @@ import buildcraft.core.ITileBufferHolder;
 import buildcraft.core.TileBuffer;
 import buildcraft.core.inventory.InvUtils;
 import buildcraft.core.network.IClientState;
+import buildcraft.core.network.IGuiReturnHandler;
 import buildcraft.core.network.ISyncedTile;
 import buildcraft.core.network.PacketTileState;
 import buildcraft.transport.Gate.GateKind;
@@ -53,7 +54,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFluidHandler, IPipeTile, IOverrideDefaultTriggers, ITileBufferHolder,
-		IDropControlInventory, IPipeRenderState, ISyncedTile, ISolidSideTile {
+		IDropControlInventory, IPipeRenderState, ISyncedTile, ISolidSideTile, IGuiReturnHandler {
 
 	private class CoreState implements IClientState {
 
@@ -692,5 +693,17 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 
 	public void markBlockForUpdate() {
 		worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+	}
+
+	@Override
+	public void writeGuiData(DataOutputStream data) throws IOException {
+		if (BlockGenericPipe.isValid(pipe) && pipe instanceof IGuiReturnHandler)
+			((IGuiReturnHandler) pipe).writeGuiData(data);
+	}
+
+	@Override
+	public void readGuiData(DataInputStream data, EntityPlayer sender) throws IOException {
+		if (BlockGenericPipe.isValid(pipe) && pipe instanceof IGuiReturnHandler)
+			((IGuiReturnHandler) pipe).readGuiData(data, sender);
 	}
 }

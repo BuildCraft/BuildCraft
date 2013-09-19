@@ -7,26 +7,57 @@
  */
 package buildcraft.transport.gui;
 
-import buildcraft.core.DefaultProps;
-import buildcraft.core.gui.GuiBuildCraft;
-import buildcraft.core.utils.StringUtils;
-import buildcraft.transport.pipes.PipeItemsEmerald;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.util.ResourceLocation;
+
 import org.lwjgl.opengl.GL11;
+
+import buildcraft.core.DefaultProps;
+import buildcraft.core.gui.GuiBuildCraft;
+import buildcraft.core.gui.buttons.GuiMultiButton;
+import buildcraft.core.network.PacketGuiReturn;
+import buildcraft.core.proxy.CoreProxy;
+import buildcraft.core.utils.StringUtils;
+import buildcraft.transport.pipes.PipeItemsEmerald;
 
 public class GuiEmeraldPipe extends GuiBuildCraft {
 
 	private static final ResourceLocation TEXTURE = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_GUI + "/filter_2.png");
+	private GuiMultiButton button;
+
 	IInventory playerInventory;
 	IInventory filterInventory;
+	PipeItemsEmerald pipe;
 
 	public GuiEmeraldPipe(IInventory playerInventory, PipeItemsEmerald pipe) {
 		super(new ContainerEmeraldPipe(playerInventory, pipe), pipe.getFilters());
+
+		this.pipe = pipe;
 		this.playerInventory = playerInventory;
 		this.filterInventory = pipe.getFilters();
+
 		xSize = 175;
 		ySize = 132;
+	}
+
+	@Override
+	public void initGui() {
+		super.initGui();
+
+		this.buttonList.clear();
+		this.button = new GuiMultiButton(0, this.guiLeft + this.xSize - (80 + 4), this.guiTop + 2, 80, this.pipe.getStateController().copy());
+		this.buttonList.add(this.button);
+	}
+
+	@Override
+	public void onGuiClosed() {
+		if (CoreProxy.proxy.isRenderWorld(pipe.getWorld())) {
+			pipe.getStateController().setCurrentState(button.getController().getCurrentState());
+			PacketGuiReturn pkt = new PacketGuiReturn(pipe.getContainer());
+			pkt.sendPacket();
+		}
+
+		super.onGuiClosed();
 	}
 
 	@Override
