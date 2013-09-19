@@ -7,6 +7,16 @@
  */
 package buildcraft;
 
+import java.util.LinkedList;
+
+import net.minecraft.block.Block;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
+import net.minecraft.item.ItemStack;
+import net.minecraft.world.World;
+import net.minecraftforge.common.Configuration;
+import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.Property;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.gates.ActionManager;
 import buildcraft.api.recipes.AssemblyRecipe;
@@ -42,6 +52,7 @@ import buildcraft.transport.blueprints.BptItemPipeIron;
 import buildcraft.transport.blueprints.BptItemPipeWooden;
 import buildcraft.transport.network.PacketHandlerTransport;
 import buildcraft.transport.pipes.PipeFluidsCobblestone;
+import buildcraft.transport.pipes.PipeFluidsDiamond;
 import buildcraft.transport.pipes.PipeFluidsEmerald;
 import buildcraft.transport.pipes.PipeFluidsGold;
 import buildcraft.transport.pipes.PipeFluidsIron;
@@ -78,32 +89,17 @@ import buildcraft.transport.triggers.TriggerFilteredBufferInventoryLevel;
 import buildcraft.transport.triggers.TriggerPipeContents;
 import buildcraft.transport.triggers.TriggerPipeContents.Kind;
 import buildcraft.transport.triggers.TriggerPipeSignal;
-import com.google.common.base.Splitter;
-import com.google.common.collect.Iterables;
-import com.google.common.primitives.Ints;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLInterModComms.IMCEvent;
-import cpw.mods.fml.common.event.FMLInterModComms.IMCMessage;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkMod;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
-import java.util.LinkedList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import net.minecraft.block.Block;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemBlock;
-import net.minecraft.item.ItemStack;
-import net.minecraft.world.World;
-import net.minecraftforge.common.Configuration;
-import net.minecraftforge.common.ForgeDirection;
-import net.minecraftforge.common.Property;
 
 @Mod(version = Version.VERSION, modid = "BuildCraft|Transport", name = "Buildcraft Transport", dependencies = DefaultProps.DEPENDENCY_CORE)
 @NetworkMod(channels = {DefaultProps.NET_CHANNEL_NAME}, packetHandler = PacketHandlerTransport.class)
@@ -139,6 +135,7 @@ public class BuildCraftTransport {
 	public static Item pipeFluidsVoid;
 	public static Item pipeFluidsSandstone;
 	public static Item pipeFluidsEmerald;
+	public static Item pipeFluidsDiamond;
 	public static Item pipePowerWood;
 	public static Item pipePowerCobblestone;
 	public static Item pipePowerStone;
@@ -298,7 +295,8 @@ public class BuildCraftTransport {
 			pipeFluidsEmerald = buildPipe(DefaultProps.PIPE_LIQUIDS_EMERALD_ID, PipeFluidsEmerald.class, "Emerald Waterproof Pipe", pipeWaterproof, pipeItemsEmerald);
 			pipeFluidsSandstone = buildPipe(DefaultProps.PIPE_LIQUIDS_SANDSTONE_ID, PipeFluidsSandstone.class, "Sandstone Waterproof Pipe", pipeWaterproof, pipeItemsSandstone);
 			pipeFluidsVoid = buildPipe(DefaultProps.PIPE_LIQUIDS_VOID_ID, PipeFluidsVoid.class, "Void Waterproof Pipe", pipeWaterproof, pipeItemsVoid);
-
+			pipeFluidsDiamond = buildPipe(DefaultProps.PIPE_LIQUIDS_DIAMOND_ID, PipeFluidsDiamond.class, "Diamond Waterproof Pipe", pipeWaterproof, pipeItemsDiamond);
+			
 			pipePowerWood = buildPipe(DefaultProps.PIPE_POWER_WOOD_ID, PipePowerWood.class, "Wooden Conductive Pipe", Item.redstone, pipeItemsWood);
 			pipePowerCobblestone = buildPipe(DefaultProps.PIPE_POWER_COBBLESTONE_ID, PipePowerCobblestone.class, "Cobblestone Conductive Pipe", Item.redstone, pipeItemsCobblestone);
 			pipePowerStone = buildPipe(DefaultProps.PIPE_POWER_STONE_ID, PipePowerStone.class, "Stone Conductive Pipe", Item.redstone, pipeItemsStone);

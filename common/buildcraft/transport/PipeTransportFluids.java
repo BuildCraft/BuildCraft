@@ -373,19 +373,21 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 			testStack.amount = flowRate;
 			// Move liquid from the center to the output sides
 			for (ForgeDirection direction : directions) {
-				if (transferState[direction.ordinal()] == TransferState.Output) {
-					int available = internalTanks[direction.ordinal()].fill(testStack, false);
-					int ammountToPush = (int) (available / (double) flowRate / outputCount * Math.min(flowRate, totalAvailable));
-					if (ammountToPush < 1) {
-						ammountToPush++;
-					}
-
-					FluidStack liquidToPush = internalTanks[ForgeDirection.UNKNOWN.ordinal()].drain(ammountToPush, false);
-					if (liquidToPush != null) {
-						int filled = internalTanks[direction.ordinal()].fill(liquidToPush, true);
-						internalTanks[ForgeDirection.UNKNOWN.ordinal()].drain(filled, true);
-						if (filled > 0)
-							FluidEvent.fireEvent(new FluidMotionEvent(liquidToPush, container.worldObj, container.xCoord, container.yCoord, container.zCoord));
+				if (!(this.container.pipe instanceof IPipeTransportFluidsFilter) || ((IPipeTransportFluidsFilter) this.container.pipe).filterPossibleMovements(direction, testStack)) {
+					if (transferState[direction.ordinal()] == TransferState.Output) {
+						int available = internalTanks[direction.ordinal()].fill(testStack, false);
+						int ammountToPush = (int) (available / (double) flowRate / outputCount * Math.min(flowRate, totalAvailable));
+						if (ammountToPush < 1) {
+							ammountToPush++;
+						}
+	
+						FluidStack liquidToPush = internalTanks[ForgeDirection.UNKNOWN.ordinal()].drain(ammountToPush, false);
+						if (liquidToPush != null) {
+							int filled = internalTanks[direction.ordinal()].fill(liquidToPush, true);
+							internalTanks[ForgeDirection.UNKNOWN.ordinal()].drain(filled, true);
+							if (filled > 0)
+								FluidEvent.fireEvent(new FluidMotionEvent(liquidToPush, container.worldObj, container.xCoord, container.yCoord, container.zCoord));
+						}
 					}
 				}
 			}
