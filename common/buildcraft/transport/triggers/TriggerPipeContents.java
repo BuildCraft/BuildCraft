@@ -129,14 +129,14 @@ public class TriggerPipeContents extends BCTrigger implements ITriggerPipe {
 			switch (kind) {
 				case Empty:
 					for (double s : transportPower.displayPower) {
-						if (s > 0)
+						if (s > 1e-4)
 							return false;
 					}
 
 					return true;
 				case ContainsEnergy:
 					for (double s : transportPower.displayPower) {
-						if (s > 0)
+						if (s > 1e-4)
 							return true;
 					}
 
