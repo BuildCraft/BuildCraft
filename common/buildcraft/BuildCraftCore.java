@@ -339,8 +339,7 @@ public class BuildCraftCore {
 	        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(wrenchItem), new Object[]{"I I", " G ", " I ", Character.valueOf('I'), "ingotIron", Character.valueOf('G'), stoneGearItem}));
 	        
 	        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(woodenGearItem), new Object[]{" S ", "S S", " S ", Character.valueOf('S'), "stickWood"}));
-		GameRegistry.addRecipe(new ItemStack(stoneGearItem), " I ", "IGI", " I ", Character.valueOf('I'), Block.cobblestone, Character.valueOf('G'),
-				woodenGearItem);
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(stoneGearItem), new Object[]{" I ", "IGI", " I ", Character.valueOf('I'), "cobblestone", Character.valueOf('G'), woodenGearItem}));
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ironGearItem), new Object[]{" I ", "IGI", " I ", Character.valueOf('I'), "ingotIron", Character.valueOf('G'), stoneGearItem}));
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(goldGearItem), new Object[]{" I ", "IGI", " I ", Character.valueOf('I'), "ingotGold", Character.valueOf('G'), ironGearItem}));
 		GameRegistry.addRecipe(new ItemStack(diamondGearItem), " I ", "IGI", " I ", Character.valueOf('I'), Item.diamond, Character.valueOf('G'), goldGearItem);
