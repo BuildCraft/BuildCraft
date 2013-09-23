@@ -168,8 +168,6 @@ public class BuildCraftCore {
     @EventHandler
 	public void loadConfiguration(FMLPreInitializationEvent evt) {
 
-		Version.check();
-
 		bcLog.setParent(FMLLog.getLogger());
 		bcLog.info("Starting BuildCraft " + Version.getVersion());
 		bcLog.info("Copyright (c) SpaceToad, 2011");
@@ -178,6 +176,12 @@ public class BuildCraftCore {
 		mainConfiguration = new BuildCraftConfiguration(new File(evt.getModConfigurationDirectory(), "buildcraft/main.conf"));
 		try {
 			mainConfiguration.load();
+			
+			Property updateCheck = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "update.check", true);
+			updateCheck.comment = "set to true for version check on startup";
+			if (updateCheck.getBoolean(true)) {
+				Version.check();
+			}
 
 			Property continuousCurrent = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "current.continuous",
 					DefaultProps.CURRENT_CONTINUOUS);
