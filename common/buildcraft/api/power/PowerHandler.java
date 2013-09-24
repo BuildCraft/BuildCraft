@@ -82,6 +82,17 @@ public final class PowerHandler {
 			}
 			return current;
 		}
+
+		/**
+		 * Taxes a flat rate on all incoming power.
+		 * 
+		 * Defaults to 0% tax rate.
+		 * 
+		 * @return percent of input to tax
+		 */
+		public float getTaxPercent() {
+			return 0;
+		}
 	}
 	public static final PerditionCalculator DEFAULT_PERDITION = new PerditionCalculator();
 	private float minEnergyReceived;
@@ -347,6 +358,8 @@ public final class PowerHandler {
 			}
 
 			updateSources(from);
+			
+			used -= used * getPerdition().getTaxPercent();
 
 			used = addEnergy(used);
 
