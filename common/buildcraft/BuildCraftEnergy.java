@@ -248,7 +248,7 @@ public class BuildCraftEnergy {
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(engineBlock, 1, 0),
 				new Object[]{"www", " g ", "GpG", Character.valueOf('w'), "plankWood", Character.valueOf('g'), Block.glass, Character.valueOf('G'),
 			BuildCraftCore.woodenGearItem, Character.valueOf('p'), Block.pistonBase});
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(engineBlock, 1, 1), new Object[]{"www", " g ", "GpG", Character.valueOf('w'), Block.cobblestone,
+		CoreProxy.proxy.addCraftingRecipe(new ItemStack(engineBlock, 1, 1), new Object[]{"www", " g ", "GpG", Character.valueOf('w'), "cobblestone",
 			Character.valueOf('g'), Block.glass, Character.valueOf('G'), BuildCraftCore.stoneGearItem, Character.valueOf('p'), Block.pistonBase});
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(engineBlock, 1, 2), new Object[]{"www", " g ", "GpG", Character.valueOf('w'), Item.ingotIron,
 			Character.valueOf('g'), Block.glass, Character.valueOf('G'), BuildCraftCore.ironGearItem, Character.valueOf('p'), Block.pistonBase});
