@@ -15,8 +15,8 @@ import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.power.PowerHandler;
 import buildcraft.api.power.PowerHandler.PowerReceiver;
 import buildcraft.api.power.PowerHandler.Type;
+import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.PipeManager;
-import buildcraft.core.TileBuffer;
 import buildcraft.transport.TravelingItem;
 import buildcraft.core.inventory.InventoryWrapper;
 import buildcraft.core.utils.Utils;
@@ -40,6 +40,8 @@ public class PipeItemsWood extends Pipe<PipeTransportItems> implements IPowerRec
 	private PipeLogicWood logic = new PipeLogicWood(this) {
 		@Override
 		protected boolean isValidConnectingTile(TileEntity tile) {
+			if (tile instanceof IPipeTile)
+				return false;
 			if (!(tile instanceof IInventory))
 				return false;
 			if (!PipeManager.canExtractItems(pipe, tile.worldObj, tile.xCoord, tile.yCoord, tile.zCoord))
