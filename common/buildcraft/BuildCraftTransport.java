@@ -44,6 +44,7 @@ import buildcraft.transport.network.PacketHandlerTransport;
 import buildcraft.transport.pipes.PipeFluidsCobblestone;
 import buildcraft.transport.pipes.PipeFluidsEmerald;
 import buildcraft.transport.pipes.PipeFluidsGold;
+import buildcraft.transport.pipes.PipeFluidsGoldIron;
 import buildcraft.transport.pipes.PipeFluidsIron;
 import buildcraft.transport.pipes.PipeFluidsSandstone;
 import buildcraft.transport.pipes.PipeFluidsStone;
@@ -136,6 +137,7 @@ public class BuildCraftTransport {
 	public static Item pipeFluidsStone;
 	public static Item pipeFluidsIron;
 	public static Item pipeFluidsGold;
+	public static Item pipeFluidsGoldIron;
 	public static Item pipeFluidsVoid;
 	public static Item pipeFluidsSandstone;
 	public static Item pipeFluidsEmerald;
@@ -295,7 +297,8 @@ public class BuildCraftTransport {
 			pipeFluidsStone = buildPipe(DefaultProps.PIPE_LIQUIDS_STONE_ID, PipeFluidsStone.class, "Stone Waterproof Pipe", pipeWaterproof, pipeItemsStone);
 			pipeFluidsIron = buildPipe(DefaultProps.PIPE_LIQUIDS_IRON_ID, PipeFluidsIron.class, "Iron Waterproof Pipe", pipeWaterproof, pipeItemsIron);
 			pipeFluidsGold = buildPipe(DefaultProps.PIPE_LIQUIDS_GOLD_ID, PipeFluidsGold.class, "Golden Waterproof Pipe", pipeWaterproof, pipeItemsGold);
-			pipeFluidsEmerald = buildPipe(DefaultProps.PIPE_LIQUIDS_EMERALD_ID, PipeFluidsEmerald.class, "Emerald Waterproof Pipe", pipeWaterproof, pipeItemsEmerald);
+			pipeFluidsGoldIron = buildPipe(DefaultProps.PIPE_LIQUIDS_IRON_ID, PipeFluidsGoldIron.class, "Golden Iron Waterproof Pipe", pipeFluidsIron, pipeFluidsGold);
+			pipeFluidsEmerald = buildPipe(DefaultProps.PIPE_LIQUIDS_EMERALD_ID, PipeFluidsEmerald.class, "Emerald Waterproof Pipe", pipeFluidsIron, pipeItemsEmerald);
 			pipeFluidsSandstone = buildPipe(DefaultProps.PIPE_LIQUIDS_SANDSTONE_ID, PipeFluidsSandstone.class, "Sandstone Waterproof Pipe", pipeWaterproof, pipeItemsSandstone);
 			pipeFluidsVoid = buildPipe(DefaultProps.PIPE_LIQUIDS_VOID_ID, PipeFluidsVoid.class, "Void Waterproof Pipe", pipeWaterproof, pipeItemsVoid);
 
