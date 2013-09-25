@@ -160,9 +160,9 @@ public class DefaultProps {
 	public static int TRIGGER_INVENTORY_LEVEL_BELOW25 = 31;
 	public static int TRIGGER_INVENTORY_LEVEL_BELOW50 = 32;
 	public static int TRIGGER_INVENTORY_LEVEL_BELOW75 = 33;
-	public static int TRIGGER_TIMER_FIVE = 34;
-	public static int TRIGGER_TIMER_FIFTEEN = 35;
-	public static int TRIGGER_TIMER_THIRTY = 36;
+	public static int TRIGGER_TIMER_SHORT = 34;
+	public static int TRIGGER_TIMER_MEDIUM = 35;
+	public static int TRIGGER_TIMER_LONG = 36;
 
 	public static int ACTION_REDSTONE = 1;
 	public static int ACTION_RED_SIGNAL = 2;

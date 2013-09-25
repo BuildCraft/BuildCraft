@@ -262,9 +262,9 @@ public class GateVanilla extends Gate {
 		}
 		
 		if (pipe.gate.kind == GateKind.AND_5 || pipe.gate.kind == GateKind.OR_5) {
-			list.add(BuildCraftTransport.triggerTimerFive);
-			list.add(BuildCraftTransport.triggerTimerFifteen);
-			list.add(BuildCraftTransport.triggerTimerThirty);
+			list.add(BuildCraftTransport.triggerTimerShort);
+			list.add(BuildCraftTransport.triggerTimerMedium);
+			list.add(BuildCraftTransport.triggerTimerLong);
 		}
 
 	}

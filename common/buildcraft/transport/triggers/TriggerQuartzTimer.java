@@ -5,6 +5,7 @@ import java.util.Locale;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
+import buildcraft.BuildCraftSilicon;
 import buildcraft.api.gates.ITriggerParameter;
 import buildcraft.core.triggers.ActionTriggerIconProvider;
 import buildcraft.core.triggers.BCTrigger;
@@ -14,7 +15,7 @@ import buildcraft.transport.Pipe;
 public class TriggerQuartzTimer extends BCTrigger implements ITriggerPipe {
 	
 	public enum Time {
-		FiveSeconds, FifteenSeconds, ThirtySeconds
+		Short, Medium, Long
 	}
 	
 	public Time time;
@@ -30,24 +31,24 @@ public class TriggerQuartzTimer extends BCTrigger implements ITriggerPipe {
 	@Override
 	public int getIconIndex() {
 		switch (time) {
-			case FiveSeconds:
-				return ActionTriggerIconProvider.Trigger_Timer_Five;
-			case FifteenSeconds:
-				return ActionTriggerIconProvider.Trigger_Timer_Fifteen;
+			case Short:
+				return ActionTriggerIconProvider.Trigger_Timer_Short;
+			case Medium:
+				return ActionTriggerIconProvider.Trigger_Timer_Medium;
 			default:
-				return ActionTriggerIconProvider.Trigger_Timer_Thirty;
+				return ActionTriggerIconProvider.Trigger_Timer_Long;
 		}
 	}
 	
 	@Override
 	public String getDescription() {
 		switch (time) {
-			case FiveSeconds:
-				return "5 Second Timer";
-			case FifteenSeconds:
-				return "15 Second Timer";
+			case Short:
+				return BuildCraftSilicon.timerIntervalShort + " Second Timer";
+			case Medium:
+				return BuildCraftSilicon.timerIntervalMedium + " Second Timer";
 			default:
-				return "30 Second Timer";
+				return BuildCraftSilicon.timerIntervalLong + " Second Timer";
 		}
 	}
 	
@@ -60,12 +61,12 @@ public class TriggerQuartzTimer extends BCTrigger implements ITriggerPipe {
 	public boolean isTriggerActive(Pipe pipe, ITriggerParameter parameter) {
 		long worldTime = pipe.getWorld().getWorldTime();
 		
-		if (time == Time.FiveSeconds) {
-			delay = 100;
-		} else if (time == Time.FifteenSeconds) {
-			delay = 300;
+		if (time == Time.Short) {
+			delay = BuildCraftSilicon.timerIntervalShort * 20; // Multiply the seconds by 20 to convert to ticks
+		} else if (time == Time.Medium) {
+			delay = BuildCraftSilicon.timerIntervalMedium * 20;
 		} else {
-			delay = 600;
+			delay = BuildCraftSilicon.timerIntervalLong * 20;
 		}
 		
 		if (Math.abs(worldTime - lastPulseTime) >= delay) {

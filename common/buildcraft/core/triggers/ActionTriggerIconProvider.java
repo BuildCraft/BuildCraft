@@ -47,9 +47,9 @@ public class ActionTriggerIconProvider implements IIconProvider {
 	public static final int Trigger_Inventory_Below25 			= 33;
 	public static final int Trigger_Inventory_Below50 			= 34;
 	public static final int Trigger_Inventory_Below75 			= 35;
-	public static final int Trigger_Timer_Five					= 36;
-	public static final int Trigger_Timer_Fifteen				= 37;
-	public static final int Trigger_Timer_Thirty				= 38;
+	public static final int Trigger_Timer_Short					= 36;
+	public static final int Trigger_Timer_Medium				= 37;
+	public static final int Trigger_Timer_Long					= 38;
 
 	public static final int MAX 								= 39;
 
@@ -107,9 +107,9 @@ public class ActionTriggerIconProvider implements IIconProvider {
 		icons[ActionTriggerIconProvider.Trigger_Inventory_Below25] = iconRegister.registerIcon("buildcraft:triggers/trigger_inventory_below25");
 		icons[ActionTriggerIconProvider.Trigger_Inventory_Below50] = iconRegister.registerIcon("buildcraft:triggers/trigger_inventory_below50");
 		icons[ActionTriggerIconProvider.Trigger_Inventory_Below75] = iconRegister.registerIcon("buildcraft:triggers/trigger_inventory_below75");
-		icons[ActionTriggerIconProvider.Trigger_Timer_Five] = iconRegister.registerIcon("buildcraft:triggers/trigger_timer_five");
-		icons[ActionTriggerIconProvider.Trigger_Timer_Fifteen] = iconRegister.registerIcon("buildcraft:triggers/trigger_timer_fifteen");
-		icons[ActionTriggerIconProvider.Trigger_Timer_Thirty] = iconRegister.registerIcon("buildcraft:triggers/trigger_timer_thirty");
+		icons[ActionTriggerIconProvider.Trigger_Timer_Short] = iconRegister.registerIcon("buildcraft:triggers/trigger_timer_short");
+		icons[ActionTriggerIconProvider.Trigger_Timer_Medium] = iconRegister.registerIcon("buildcraft:triggers/trigger_timer_medium");
+		icons[ActionTriggerIconProvider.Trigger_Timer_Long] = iconRegister.registerIcon("buildcraft:triggers/trigger_timer_long");
 	}
 
 }

@@ -169,9 +169,9 @@ public class BuildCraftTransport {
 	public static BCTrigger triggerInventoryBelow25 = new TriggerFilteredBufferInventoryLevel(DefaultProps.TRIGGER_INVENTORY_LEVEL_BELOW25, TriggerFilteredBufferInventoryLevel.State.Below25);
 	public static BCTrigger triggerInventoryBelow50 = new TriggerFilteredBufferInventoryLevel(DefaultProps.TRIGGER_INVENTORY_LEVEL_BELOW50, TriggerFilteredBufferInventoryLevel.State.Below50);
 	public static BCTrigger triggerInventoryBelow75 = new TriggerFilteredBufferInventoryLevel(DefaultProps.TRIGGER_INVENTORY_LEVEL_BELOW75, TriggerFilteredBufferInventoryLevel.State.Below75);
-	public static BCTrigger triggerTimerFive = new TriggerQuartzTimer(DefaultProps.TRIGGER_TIMER_FIVE, TriggerQuartzTimer.Time.FiveSeconds);
-	public static BCTrigger triggerTimerFifteen = new TriggerQuartzTimer(DefaultProps.TRIGGER_TIMER_FIFTEEN, TriggerQuartzTimer.Time.FifteenSeconds);
-	public static BCTrigger triggerTimerThirty = new TriggerQuartzTimer(DefaultProps.TRIGGER_TIMER_THIRTY, TriggerQuartzTimer.Time.ThirtySeconds);
+	public static BCTrigger triggerTimerShort = new TriggerQuartzTimer(DefaultProps.TRIGGER_TIMER_SHORT, TriggerQuartzTimer.Time.Short);
+	public static BCTrigger triggerTimerMedium = new TriggerQuartzTimer(DefaultProps.TRIGGER_TIMER_MEDIUM, TriggerQuartzTimer.Time.Medium);
+	public static BCTrigger triggerTimerLong = new TriggerQuartzTimer(DefaultProps.TRIGGER_TIMER_LONG, TriggerQuartzTimer.Time.Long);
 	public static BCAction actionRedSignal = new ActionSignalOutput(DefaultProps.ACTION_RED_SIGNAL, IPipe.WireColor.Red);
 	public static BCAction actionBlueSignal = new ActionSignalOutput(DefaultProps.ACTION_BLUE_SIGNAL, IPipe.WireColor.Blue);
 	public static BCAction actionGreenSignal = new ActionSignalOutput(DefaultProps.ACTION_GREEN_SIGNAL, IPipe.WireColor.Green);
