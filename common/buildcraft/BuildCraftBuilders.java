@@ -295,33 +295,33 @@ public class BuildCraftBuilders {
 
 	public static void loadRecipes() {
 
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(templateItem, 1), new Object[]{"ppp", "pip", "ppp", Character.valueOf('i'),
-			new ItemStack(Item.dyePowder, 1, 0), Character.valueOf('p'), Item.paper});
+		CoreProxy.proxy.addCraftingRecipe(new ItemStack(templateItem, 1), new Object[]{"ppp", "pip", "ppp", 'i',
+			new ItemStack(Item.dyePowder, 1, 0), 'p', Item.paper});
 
-//		CoreProxy.proxy.addCraftingRecipe(new ItemStack(blueprintItem, 1), new Object[]{"ppp", "pip", "ppp", Character.valueOf('i'),
-//			new ItemStack(Item.dyePowder, 1, 4), Character.valueOf('p'), Item.paper});
+//		CoreProxy.proxy.addCraftingRecipe(new ItemStack(blueprintItem, 1), new Object[]{"ppp", "pip", "ppp", 'i',
+//			new ItemStack(Item.dyePowder, 1, 4), 'p', Item.paper});
 
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(markerBlock, 1), new Object[]{"l ", "r ", Character.valueOf('l'),
-			new ItemStack(Item.dyePowder, 1, 4), Character.valueOf('r'), Block.torchRedstoneActive});
+		CoreProxy.proxy.addCraftingRecipe(new ItemStack(markerBlock, 1), new Object[]{"l ", "r ", 'l',
+			new ItemStack(Item.dyePowder, 1, 4), 'r', Block.torchRedstoneActive});
 
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(pathMarkerBlock, 1), new Object[]{"l ", "r ", Character.valueOf('l'),
-			new ItemStack(Item.dyePowder, 1, 2), Character.valueOf('r'), Block.torchRedstoneActive});
+		CoreProxy.proxy.addCraftingRecipe(new ItemStack(pathMarkerBlock, 1), new Object[]{"l ", "r ", 'l',
+			new ItemStack(Item.dyePowder, 1, 2), 'r', Block.torchRedstoneActive});
 
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(fillerBlock, 1), new Object[]{"btb", "ycy", "gCg", Character.valueOf('b'),
-			new ItemStack(Item.dyePowder, 1, 0), Character.valueOf('t'), markerBlock, Character.valueOf('y'), new ItemStack(Item.dyePowder, 1, 11),
-			Character.valueOf('c'), Block.workbench, Character.valueOf('g'), BuildCraftCore.goldGearItem, Character.valueOf('C'), Block.chest});
+		CoreProxy.proxy.addCraftingRecipe(new ItemStack(fillerBlock, 1), new Object[]{"btb", "ycy", "gCg", 'b',
+			new ItemStack(Item.dyePowder, 1, 0), 't', markerBlock, 'y', new ItemStack(Item.dyePowder, 1, 11),
+			'c', Block.workbench, 'g', BuildCraftCore.goldGearItem, 'C', Block.chest});
 
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(builderBlock, 1), new Object[]{"btb", "ycy", "gCg", Character.valueOf('b'),
-			new ItemStack(Item.dyePowder, 1, 0), Character.valueOf('t'), markerBlock, Character.valueOf('y'), new ItemStack(Item.dyePowder, 1, 11),
-			Character.valueOf('c'), Block.workbench, Character.valueOf('g'), BuildCraftCore.diamondGearItem, Character.valueOf('C'), Block.chest});
+		CoreProxy.proxy.addCraftingRecipe(new ItemStack(builderBlock, 1), new Object[]{"btb", "ycy", "gCg", 'b',
+			new ItemStack(Item.dyePowder, 1, 0), 't', markerBlock, 'y', new ItemStack(Item.dyePowder, 1, 11),
+			'c', Block.workbench, 'g', BuildCraftCore.diamondGearItem, 'C', Block.chest});
 
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(architectBlock, 1), new Object[]{"btb", "ycy", "gCg", Character.valueOf('b'),
-			new ItemStack(Item.dyePowder, 1, 0), Character.valueOf('t'), markerBlock, Character.valueOf('y'), new ItemStack(Item.dyePowder, 1, 11),
-			Character.valueOf('c'), Block.workbench, Character.valueOf('g'), BuildCraftCore.diamondGearItem, Character.valueOf('C'),
+		CoreProxy.proxy.addCraftingRecipe(new ItemStack(architectBlock, 1), new Object[]{"btb", "ycy", "gCg", 'b',
+			new ItemStack(Item.dyePowder, 1, 0), 't', markerBlock, 'y', new ItemStack(Item.dyePowder, 1, 11),
+			'c', Block.workbench, 'g', BuildCraftCore.diamondGearItem, 'C',
 			new ItemStack(templateItem, 1)});
 
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(libraryBlock, 1), new Object[]{"bbb", "bBb", "bbb", Character.valueOf('b'),
-			new ItemStack(blueprintItem), Character.valueOf('B'), Block.bookShelf});
+		CoreProxy.proxy.addCraftingRecipe(new ItemStack(libraryBlock, 1), new Object[]{"bbb", "bBb", "bbb", 'b',
+			new ItemStack(blueprintItem), 'B', Block.bookShelf});
 
 
 		// / INIT FILLER PATTERNS

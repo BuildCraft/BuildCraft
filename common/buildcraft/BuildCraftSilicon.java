@@ -93,14 +93,14 @@ public class BuildCraftSilicon {
 	public static void loadRecipes() {
 
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(laserBlock),
-				new Object[]{"ORR", "DDR", "ORR", Character.valueOf('O'), Block.obsidian, Character.valueOf('R'), Item.redstone, Character.valueOf('D'),
+				new Object[]{"ORR", "DDR", "ORR", 'O', Block.obsidian, 'R', Item.redstone, 'D',
 			Item.diamond,});
 
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(assemblyTableBlock, 1, 0), new Object[]{"ORO", "ODO", "OGO", Character.valueOf('O'), Block.obsidian,
-			Character.valueOf('R'), Item.redstone, Character.valueOf('D'), Item.diamond, Character.valueOf('G'), BuildCraftCore.diamondGearItem,});
+		CoreProxy.proxy.addCraftingRecipe(new ItemStack(assemblyTableBlock, 1, 0), new Object[]{"ORO", "ODO", "OGO", 'O', Block.obsidian,
+			'R', Item.redstone, 'D', Item.diamond, 'G', BuildCraftCore.diamondGearItem,});
 
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(assemblyTableBlock, 1, 1), new Object[]{"OWO", "OCO", "ORO", Character.valueOf('O'), Block.obsidian,
-			Character.valueOf('W'), Block.workbench, Character.valueOf('C'), Block.chest, Character.valueOf('R'), new ItemStack(redstoneChipset, 1, 0),});
+		CoreProxy.proxy.addCraftingRecipe(new ItemStack(assemblyTableBlock, 1, 1), new Object[]{"OWO", "OCO", "ORO", 'O', Block.obsidian,
+			'W', Block.workbench, 'C', Block.chest, 'R', new ItemStack(redstoneChipset, 1, 0),});
 		// Add reverse recipies for all gates
 
 		// Iron
