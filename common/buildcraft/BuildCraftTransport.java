@@ -76,6 +76,7 @@ import buildcraft.transport.triggers.ActionSignalOutput;
 import buildcraft.transport.triggers.ActionSingleEnergyPulse;
 import buildcraft.transport.triggers.TriggerFilteredBufferInventoryLevel;
 import buildcraft.transport.triggers.TriggerPipeContents;
+import buildcraft.transport.triggers.TriggerQuartzTimer;
 import buildcraft.transport.triggers.TriggerPipeContents.Kind;
 import buildcraft.transport.triggers.TriggerPipeSignal;
 import com.google.common.base.Splitter;
@@ -168,6 +169,9 @@ public class BuildCraftTransport {
 	public static BCTrigger triggerInventoryBelow25 = new TriggerFilteredBufferInventoryLevel(DefaultProps.TRIGGER_INVENTORY_LEVEL_BELOW25, TriggerFilteredBufferInventoryLevel.State.Below25);
 	public static BCTrigger triggerInventoryBelow50 = new TriggerFilteredBufferInventoryLevel(DefaultProps.TRIGGER_INVENTORY_LEVEL_BELOW50, TriggerFilteredBufferInventoryLevel.State.Below50);
 	public static BCTrigger triggerInventoryBelow75 = new TriggerFilteredBufferInventoryLevel(DefaultProps.TRIGGER_INVENTORY_LEVEL_BELOW75, TriggerFilteredBufferInventoryLevel.State.Below75);
+	public static BCTrigger triggerTimerFive = new TriggerQuartzTimer(DefaultProps.TRIGGER_TIMER_FIVE, TriggerQuartzTimer.Time.FiveSeconds);
+	public static BCTrigger triggerTimerFifteen = new TriggerQuartzTimer(DefaultProps.TRIGGER_TIMER_FIFTEEN, TriggerQuartzTimer.Time.FifteenSeconds);
+	public static BCTrigger triggerTimerThirty = new TriggerQuartzTimer(DefaultProps.TRIGGER_TIMER_THIRTY, TriggerQuartzTimer.Time.ThirtySeconds);
 	public static BCAction actionRedSignal = new ActionSignalOutput(DefaultProps.ACTION_RED_SIGNAL, IPipe.WireColor.Red);
 	public static BCAction actionBlueSignal = new ActionSignalOutput(DefaultProps.ACTION_BLUE_SIGNAL, IPipe.WireColor.Blue);
 	public static BCAction actionGreenSignal = new ActionSignalOutput(DefaultProps.ACTION_GREEN_SIGNAL, IPipe.WireColor.Green);

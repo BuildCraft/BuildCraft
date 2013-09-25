@@ -47,8 +47,11 @@ public class ActionTriggerIconProvider implements IIconProvider {
 	public static final int Trigger_Inventory_Below25 			= 33;
 	public static final int Trigger_Inventory_Below50 			= 34;
 	public static final int Trigger_Inventory_Below75 			= 35;
+	public static final int Trigger_Timer_Five					= 36;
+	public static final int Trigger_Timer_Fifteen				= 37;
+	public static final int Trigger_Timer_Thirty				= 38;
 
-	public static final int MAX 								= 36;
+	public static final int MAX 								= 39;
 
 
 	@SideOnly(Side.CLIENT)
@@ -104,6 +107,9 @@ public class ActionTriggerIconProvider implements IIconProvider {
 		icons[ActionTriggerIconProvider.Trigger_Inventory_Below25] = iconRegister.registerIcon("buildcraft:triggers/trigger_inventory_below25");
 		icons[ActionTriggerIconProvider.Trigger_Inventory_Below50] = iconRegister.registerIcon("buildcraft:triggers/trigger_inventory_below50");
 		icons[ActionTriggerIconProvider.Trigger_Inventory_Below75] = iconRegister.registerIcon("buildcraft:triggers/trigger_inventory_below75");
+		icons[ActionTriggerIconProvider.Trigger_Timer_Five] = iconRegister.registerIcon("buildcraft:triggers/trigger_timer_five");
+		icons[ActionTriggerIconProvider.Trigger_Timer_Fifteen] = iconRegister.registerIcon("buildcraft:triggers/trigger_timer_fifteen");
+		icons[ActionTriggerIconProvider.Trigger_Timer_Thirty] = iconRegister.registerIcon("buildcraft:triggers/trigger_timer_thirty");
 	}
 
 }
