@@ -122,11 +122,10 @@ public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor
 				if (getNextIndexToPump(false) == null) {
 					for (int y = yCoord - 1; y > 0; --y) {
 						if (isPumpableFluid(xCoord, y, zCoord)) {
+							aimY = y;
 							if (tank.getAcceptedFluid() != null && BlockUtil.getFluid(worldObj.getBlockId(xCoord, y, zCoord)) == tank.getAcceptedFluid()) {
-								aimY = y;
 								return;
 							} else if (tank.getAcceptedFluid() == null) {
-								aimY = y;
 								return;
 							}
 						} else if (!worldObj.isAirBlock(xCoord, y, zCoord)) {
