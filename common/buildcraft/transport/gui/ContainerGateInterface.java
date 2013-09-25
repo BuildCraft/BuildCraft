@@ -320,16 +320,14 @@ public class ContainerGateInterface extends BuildCraftContainer {
 				break;
 			case AND_3:
 			case OR_3:
+			case AND_5:
+			case OR_5:
 				positions = 4;
 				break;
 			case OR_4:
 			case AND_4:
-				positions = 8;
-				break;
-			case OR_5:
-			case AND_5:
 			default:
-				positions = 16;
+				positions = 8;
 				break;
 		}
 

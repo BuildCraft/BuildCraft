@@ -11,13 +11,15 @@ import buildcraft.core.triggers.BCTrigger;
 import buildcraft.transport.ITriggerPipe;
 import buildcraft.transport.Pipe;
 
-public class TriggerQuartzTimer extends BCTrigger {
+public class TriggerQuartzTimer extends BCTrigger implements ITriggerPipe {
 	
 	public enum Time {
 		FiveSeconds, FifteenSeconds, ThirtySeconds
 	}
 	
 	public Time time;
+	public long lastPulseTime;
+	public int delay;
 
 	public TriggerQuartzTimer(int legacyId, Time time) {
 		super(legacyId, "buildcraft.timer." + time.name().toLowerCase(Locale.ENGLISH));
@@ -50,26 +52,28 @@ public class TriggerQuartzTimer extends BCTrigger {
 	}
 	
 	@Override
-	public boolean isTriggerActive(ForgeDirection side, TileEntity tile, ITriggerParameter parameter) {
-		System.out.println("isTriggerActive");
-		long worldTime = tile.worldObj.getWorldTime();
-		int divisor;
+	public boolean hasParameter() {
+		return false;
+	}
+
+	@Override
+	public boolean isTriggerActive(Pipe pipe, ITriggerParameter parameter) {
+		long worldTime = pipe.getWorld().getWorldTime();
 		
-		switch (time) {  // Sets the divisor to the time required in ticks
-			case FiveSeconds:
-				divisor = 100;
-			case FifteenSeconds:
-				divisor = 300;
-			default:
-				divisor = 600;
+		if (time == Time.FiveSeconds) {
+			delay = 100;
+		} else if (time == Time.FifteenSeconds) {
+			delay = 300;
+		} else {
+			delay = 600;
 		}
 		
-		if (worldTime % divisor == 0) {
+		if (Math.abs(worldTime - lastPulseTime) >= delay) {
+			lastPulseTime = worldTime;
 			return true;
 		} else {
 			return false;
 		}
-		
 	}
 
 }
