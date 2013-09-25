@@ -59,7 +59,7 @@ public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor
 	private TileBuffer[] tileBuffer = null;
 	private SafeTimeTracker timer = new SafeTimeTracker();
 	private int tick = Utils.RANDOM.nextInt();
-        private int numFluidBlocksFound = 0;
+	private int numFluidBlocksFound = 0;
 
 	public TilePump() {
 		powerHandler = new PowerHandler(this, Type.MACHINE);
@@ -122,8 +122,13 @@ public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor
 				if (getNextIndexToPump(false) == null) {
 					for (int y = yCoord - 1; y > 0; --y) {
 						if (isPumpableFluid(xCoord, y, zCoord)) {
-							aimY = y;
-							return;
+							if (tank.getAcceptedFluid() != null && BlockUtil.getFluid(worldObj.getBlockId(xCoord, y, zCoord)) == tank.getAcceptedFluid()) {
+								aimY = y;
+								return;
+							} else if (tank.getAcceptedFluid() == null) {
+								aimY = y;
+								return;
+							}
 						} else if (!worldObj.isAirBlock(xCoord, y, zCoord)) {
 							return;
 						}
