@@ -246,12 +246,12 @@ public class BuildCraftEnergy {
 
 	public static void loadRecipes() {
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(engineBlock, 1, 0),
-				new Object[]{"www", " g ", "GpG", Character.valueOf('w'), "plankWood", Character.valueOf('g'), Block.glass, Character.valueOf('G'),
-			BuildCraftCore.woodenGearItem, Character.valueOf('p'), Block.pistonBase});
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(engineBlock, 1, 1), new Object[]{"www", " g ", "GpG", Character.valueOf('w'), Block.cobblestone,
-			Character.valueOf('g'), Block.glass, Character.valueOf('G'), BuildCraftCore.stoneGearItem, Character.valueOf('p'), Block.pistonBase});
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(engineBlock, 1, 2), new Object[]{"www", " g ", "GpG", Character.valueOf('w'), Item.ingotIron,
-			Character.valueOf('g'), Block.glass, Character.valueOf('G'), BuildCraftCore.ironGearItem, Character.valueOf('p'), Block.pistonBase});
+				new Object[]{"www", " g ", "GpG", 'w', "plankWood", 'g', Block.glass, 'G',
+			BuildCraftCore.woodenGearItem, 'p', Block.pistonBase});
+		CoreProxy.proxy.addCraftingRecipe(new ItemStack(engineBlock, 1, 1), new Object[]{"www", " g ", "GpG", 'w', "cobblestone",
+			'g', Block.glass, 'G', BuildCraftCore.stoneGearItem, 'p', Block.pistonBase});
+		CoreProxy.proxy.addCraftingRecipe(new ItemStack(engineBlock, 1, 2), new Object[]{"www", " g ", "GpG", 'w', Item.ingotIron,
+			'g', Block.glass, 'G', BuildCraftCore.ironGearItem, 'p', Block.pistonBase});
 	}
 
 	@EventHandler

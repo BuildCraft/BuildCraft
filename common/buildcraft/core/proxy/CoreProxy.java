@@ -34,6 +34,7 @@ import net.minecraft.util.ChatMessageComponent;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.World;
 import net.minecraftforge.oredict.ShapedOreRecipe;
+import net.minecraftforge.oredict.ShapelessOreRecipe;
 
 public class CoreProxy {
 
@@ -126,7 +127,8 @@ public class CoreProxy {
 	}
 
 	public void addShapelessRecipe(ItemStack result, Object... recipe) {
-		GameRegistry.addShapelessRecipe(result, recipe);
+	        CraftingManager.getInstance().getRecipeList().add(new ShapelessOreRecipe(result, recipe));
+	        //GameRegistry.addShapelessRecipe(result, recipe);
 	}
 
 	public void sendToPlayers(Packet packet, World world, int x, int y, int z, int maxDistance) {
