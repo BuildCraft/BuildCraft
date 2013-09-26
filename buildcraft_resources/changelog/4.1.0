@@ -1,0 +1,17 @@
+
+#4.1.0
+
+- New: Added Iron Kinesis Pipe.  (CovertJaguar)
+- New: Added Non-Round Robin mode to Emerald Item Pipe. (Flow86)
+- New: Pipes have tool tips now. (CovertJaguar)
+- New: Added config option for update check (Prototik)
+- New: Added config option for Oil Well proclivity. (sadris)
+- New: Added config options for various Quarry/Mining Well tweaks/nerfs. (CovertJaguar)
+- New: Added config options for Colorblind mode. (Krapht)
+- Change: Reworked Combustion Engine heat mechanics. (CovertJaguar)
+- Fix: Fixed Quarries in the Nether (cpw)
+- Fix: Autarchic Gate single pulses are now more reliable. (cpw)
+- Fix: Laser's hadWork trigger should work correctly now. (CovertJaguar)
+- Fix: Refineries no longer forget their filters. (CovertJaguar)
+- Fix: Pumps can now pump Oil out of Oceans again. (CovertJaguar)
+- And: Various other small fixes/tweaks.
