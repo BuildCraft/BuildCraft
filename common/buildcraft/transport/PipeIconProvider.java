@@ -91,6 +91,14 @@ public class PipeIconProvider implements IIconProvider {
 		PipePowerCobblestone("pipePowerCobblestone"),
 		PipePowerWood_Standard("pipePowerWood_standard"),
 		//
+		PipePowerIronM2("pipePowerIronM2"),
+		PipePowerIronM4("pipePowerIronM4"),
+		PipePowerIronM8("pipePowerIronM8"),
+		PipePowerIronM16("pipePowerIronM16"),
+		PipePowerIronM32("pipePowerIronM32"),
+		PipePowerIronM64("pipePowerIronM64"),
+		PipePowerIronM128("pipePowerIronM128"),
+		//
 		Power_Normal("texture_cyan"),
 		Power_Overload("texture_red_lit"),
 		Stripes("pipeStripes"),
@@ -101,11 +109,11 @@ public class PipeIconProvider implements IIconProvider {
 		private final String iconTagColorBlind;
 		private Icon icon;
 
-		private TYPE(String iconTag, String IconTagColorBlind){
+		private TYPE(String iconTag, String IconTagColorBlind) {
 			this.iconTag = iconTag;
 			this.iconTagColorBlind = IconTagColorBlind;
 		}
-		
+
 		private TYPE(String iconTag) {
 			this(iconTag, iconTag);
 		}

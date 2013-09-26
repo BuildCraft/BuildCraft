@@ -132,12 +132,12 @@ public enum EnumColor {
 	}
 
 	public EnumColor getNext() {
-		EnumColor next = VALUES[(ordinal() + 1) % (VALUES.length - 1)];
+		EnumColor next = VALUES[(ordinal() + 1) % VALUES.length];
 		return next;
 	}
 
 	public EnumColor getPrevious() {
-		EnumColor previous = VALUES[(ordinal() + VALUES.length - 2) % (VALUES.length - 1)];
+		EnumColor previous = VALUES[(ordinal() + VALUES.length - 1) % VALUES.length];
 		return previous;
 	}
 

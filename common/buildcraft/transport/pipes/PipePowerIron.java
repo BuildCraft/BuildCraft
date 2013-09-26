@@ -9,16 +9,19 @@ package buildcraft.transport.pipes;
 
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
+import buildcraft.api.gates.IAction;
 import buildcraft.api.tools.IToolWrench;
 import buildcraft.core.utils.StringUtils;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportPower;
+import buildcraft.transport.triggers.ActionPowerLimiter;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import java.util.LinkedList;
+import java.util.Map;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
-import net.minecraft.util.ChatMessageComponent;
 import net.minecraftforge.common.ForgeDirection;
 
 public class PipePowerIron extends Pipe<PipeTransportPower> {
@@ -27,19 +30,19 @@ public class PipePowerIron extends Pipe<PipeTransportPower> {
 
 		M2(2), M4(4), M8(8), M16(16), M32(32), M64(64), M128(128);
 		public static final PowerMode[] VALUES = values();
-		private final int maxPower;
+		public final int maxPower;
 
 		private PowerMode(int max) {
 			this.maxPower = max;
 		}
 
 		public PowerMode getNext() {
-			PowerMode next = VALUES[(ordinal() + 1) % (VALUES.length - 1)];
+			PowerMode next = VALUES[(ordinal() + 1) % VALUES.length];
 			return next;
 		}
 
 		public PowerMode getPrevious() {
-			PowerMode previous = VALUES[(ordinal() + VALUES.length - 2) % (VALUES.length - 1)];
+			PowerMode previous = VALUES[(ordinal() + VALUES.length - 1) % VALUES.length];
 			return previous;
 		}
 
@@ -72,7 +75,8 @@ public class PipePowerIron extends Pipe<PipeTransportPower> {
 			} else {
 				setMode(getMode().getNext());
 			}
-			player.addChatMessage(String.format(StringUtils.localize("chat.pipe.power.iron.mode"), getMode().maxPower));
+			if (getWorld().isRemote)
+				player.addChatMessage(String.format(StringUtils.localize("chat.pipe.power.iron.mode"), getMode().maxPower));
 
 			((IToolWrench) equipped).wrenchUsed(player, container.xCoord, container.yCoord, container.zCoord);
 			return true;
@@ -103,5 +107,26 @@ public class PipePowerIron extends Pipe<PipeTransportPower> {
 	@SideOnly(Side.CLIENT)
 	public IIconProvider getIconProvider() {
 		return BuildCraftTransport.instance.pipeIconProvider;
+	}
+
+	@Override
+	protected void actionsActivated(Map<IAction, Boolean> actions) {
+		super.actionsActivated(actions);
+
+		for (Map.Entry<IAction, Boolean> action : actions.entrySet()) {
+			if (action.getKey() instanceof ActionPowerLimiter && action.getValue() == Boolean.TRUE) {
+				setMode(((ActionPowerLimiter) action.getKey()).limit);
+				break;
+			}
+		}
+	}
+
+	@Override
+	public LinkedList<IAction> getActions() {
+		LinkedList<IAction> action = super.getActions();
+		for (PowerMode mode : PowerMode.VALUES) {
+			action.add(BuildCraftTransport.actionPowerLimiter[mode.ordinal()]);
+		}
+		return action;
 	}
 }

@@ -125,12 +125,7 @@ public class ItemPipe extends ItemBuildCraft implements IItemPipe {
 	public void addInformation(ItemStack stack, EntityPlayer player, List list, boolean advanced) {
 		super.addInformation(stack, player, list, advanced);
 		Class<? extends Pipe> pipe = BlockGenericPipe.pipes.get(itemID);
-		String toolTip = PipeToolTipManager.getToolTip(pipe);
-		if (toolTip != null) {
-			String[] tips = toolTip.split("\\n");
-			for (String tip : tips) {
-				list.add(tip);
-			}
-		}
+		List<String> toolTip = PipeToolTipManager.getToolTip(pipe);
+		list.addAll(toolTip);
 	}
 }

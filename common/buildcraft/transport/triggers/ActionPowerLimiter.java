@@ -8,25 +8,25 @@
 package buildcraft.transport.triggers;
 
 import buildcraft.core.triggers.BCAction;
+import buildcraft.transport.pipes.PipePowerIron.PowerMode;
 import java.util.Locale;
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.util.Icon;
-import net.minecraftforge.common.ForgeDirection;
 
-public class ActionPipeDirection extends BCAction {
+public class ActionPowerLimiter extends BCAction {
 
 	private Icon icon;
-	public final ForgeDirection direction;
+	public final PowerMode limit;
 
-	public ActionPipeDirection(int id, ForgeDirection direction) {
-		super(id, "buildcraft.pipe.dir." + direction.name().toLowerCase(Locale.ENGLISH));
+	public ActionPowerLimiter(int id, PowerMode limit) {
+		super(id, "buildcraft.power.limiter." + limit.name().toLowerCase(Locale.ENGLISH));
 
-		this.direction = direction;
+		this.limit = limit;
 	}
 
 	@Override
 	public String getDescription() {
-		return direction.name().substring(0, 1) + direction.name().substring(1).toLowerCase(Locale.ENGLISH) + " Pipe Direction";
+		return limit.maxPower + " MJ/t Limit";
 	}
 
 	@Override
@@ -36,6 +36,6 @@ public class ActionPipeDirection extends BCAction {
 
 	@Override
 	public void registerIcons(IconRegister iconRegister) {
-		icon = iconRegister.registerIcon("buildcraft:triggers/trigger_dir_" + direction.name().toLowerCase(Locale.ENGLISH));
+		icon = iconRegister.registerIcon("buildcraft:triggers/trigger_limiter_" + limit.name().toLowerCase(Locale.ENGLISH));
 	}
 }

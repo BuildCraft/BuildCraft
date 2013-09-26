@@ -64,6 +64,22 @@ public class Localization {
 
 		return mappings.getProperty(key, defaultMappings.getProperty(key, key));
 	}
+	
+	public static synchronized boolean hasKey(String key) {
+        if (getCurrentLanguage() == null) {
+            return false;
+        }
+		if (!getCurrentLanguage().equals(loadedLanguage)) {
+			defaultMappings.clear();
+			mappings.clear();
+			for (modInfo mInfo : mods) {
+				load(mInfo.modName, mInfo.defaultLanguage);
+			}
+			loadedLanguage = getCurrentLanguage();
+		}
+
+		return mappings.getProperty(key, defaultMappings.getProperty(key)) != null;
+	}
 
 	private static void load(String path, String default_language) {
 		InputStream langStream = null;

@@ -28,6 +28,7 @@ import buildcraft.transport.network.PacketPowerUpdate;
 import buildcraft.transport.pipes.PipePowerCobblestone;
 import buildcraft.transport.pipes.PipePowerDiamond;
 import buildcraft.transport.pipes.PipePowerGold;
+import buildcraft.transport.pipes.PipePowerIron;
 import buildcraft.transport.pipes.PipePowerQuartz;
 import buildcraft.transport.pipes.PipePowerStone;
 import buildcraft.transport.pipes.PipePowerWood;
@@ -44,6 +45,7 @@ public class PipeTransportPower extends PipeTransport {
 		powerCapacities.put(PipePowerStone.class, 16);
 		powerCapacities.put(PipePowerWood.class, 32);
 		powerCapacities.put(PipePowerQuartz.class, 64);
+		powerCapacities.put(PipePowerIron.class, 128);
 		powerCapacities.put(PipePowerGold.class, 256);
 		powerCapacities.put(PipePowerDiamond.class, 1024);
 	}
@@ -325,11 +327,17 @@ public class PipeTransportPower extends PipeTransport {
 			if (ret >= 0)
 				return ret;
 		}
-		internalNextPower[from.ordinal()] += val;
+		int side = from.ordinal();
+		if (internalNextPower[side] > maxPower)
+			return 0;
 
-		if (internalNextPower[from.ordinal()] > maxPower) {
-			val -= internalNextPower[from.ordinal()] - maxPower;
-			internalNextPower[from.ordinal()] = maxPower;
+		internalNextPower[side] += val;
+
+		if (internalNextPower[side] > maxPower) {
+			val -= internalNextPower[side] - maxPower;
+			internalNextPower[side] = maxPower;
+			if (val < 0)
+				val = 0;
 		}
 		return val;
 	}
