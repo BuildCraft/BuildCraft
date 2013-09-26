@@ -27,7 +27,7 @@ public class EnergyPulser {
 			return;
 
 		if (!singlePulse || !hasPulsed) {
-			powerReceptor.getPowerReceiver(null).receiveEnergy(Type.GATE, Math.min(1 << (pulseCount - 1), 64), ForgeDirection.WEST);
+			powerReceptor.getPowerReceiver(null).receiveEnergy(Type.GATE, Math.min(1 << (pulseCount - 1), 64) *1.01f, ForgeDirection.WEST);
 			hasPulsed = true;
 		}
 	}

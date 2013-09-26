@@ -54,7 +54,7 @@ public class PipeItemsWood extends Pipe<PipeTransportItems> implements IPowerRec
 		super(new PipeTransportItems(), itemID);
 
 		powerHandler = new PowerHandler(this, Type.MACHINE);
-		powerHandler.configure(1, 64, 1, 64);
+		powerHandler.configure(1, 64.1f, 1, 64.1f);
 		powerHandler.configurePowerPerdition(0, 0);
 	}
 
