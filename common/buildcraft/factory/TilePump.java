@@ -36,6 +36,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Set;
 import java.util.TreeMap;
+import net.minecraft.block.material.Material;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.ForgeDirection;
@@ -59,7 +60,7 @@ public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor
 	private TileBuffer[] tileBuffer = null;
 	private SafeTimeTracker timer = new SafeTimeTracker();
 	private int tick = Utils.RANDOM.nextInt();
-        private int numFluidBlocksFound = 0;
+	private int numFluidBlocksFound = 0;
 
 	public TilePump() {
 		powerHandler = new PowerHandler(this, Type.MACHINE);
@@ -82,8 +83,8 @@ public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor
 
 
 		if (CoreProxy.proxy.isRenderWorld(worldObj))
-			return;		
-		
+			return;
+
 		pushToConsumers();
 
 		if (tube.posY - aimY > 0.01) {
@@ -124,7 +125,7 @@ public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor
 						if (isPumpableFluid(xCoord, y, zCoord)) {
 							aimY = y;
 							return;
-						} else if (!worldObj.isAirBlock(xCoord, y, zCoord)) {
+						} else if (isBlocked(xCoord, y, zCoord)) {
 							return;
 						}
 					}
@@ -133,8 +134,13 @@ public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor
 		}
 	}
 
+	private boolean isBlocked(int x, int y, int z) {
+		Material mat = worldObj.getBlockMaterial(x, y, z);
+		return mat.blocksMovement();
+	}
+
 	private void pushToConsumers() {
-		if(tileBuffer == null)
+		if (tileBuffer == null)
 			tileBuffer = TileBuffer.makeBuffer(worldObj, xCoord, yCoord, zCoord, false);
 		FluidUtils.pushFluidToConsumers(tank, 400, tileBuffer);
 	}
@@ -232,7 +238,7 @@ public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor
 				queueForPumping(index.x - 1, index.y, index.z, visitedBlocks, fluidsFound, pumpingFluid);
 				queueForPumping(index.x, index.y, index.z + 1, visitedBlocks, fluidsFound, pumpingFluid);
 				queueForPumping(index.x, index.y, index.z - 1, visitedBlocks, fluidsFound, pumpingFluid);
-                                
+
 				if (pumpingFluid == FluidRegistry.WATER && !BuildCraftCore.consumeWaterSources && numFluidBlocksFound >= 9)
 					return;
 
@@ -264,6 +270,8 @@ public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor
 		if (fluid == null)
 			return false;
 		if (!isFluidAllowed(fluid))
+			return false;
+		if (tank.getAcceptedFluid() != null && tank.getAcceptedFluid() != fluid)
 			return false;
 		return true;
 	}
@@ -315,11 +323,11 @@ public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor
 	@Override
 	public boolean isActive() {
 		BlockIndex next = getNextIndexToPump(false);
-		
+
 		if (next != null) {
 			return isPumpableFluid(next.x, next.y, next.z);
 		}
-		
+
 		return false;
 	}
 
