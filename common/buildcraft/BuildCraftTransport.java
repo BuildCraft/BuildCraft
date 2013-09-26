@@ -278,8 +278,8 @@ public class BuildCraftTransport {
 			// Fixing retro-compatiblity
 			pipeItemsWood = buildPipe(DefaultProps.PIPE_ITEMS_WOOD_ID, PipeItemsWood.class, "Wooden Transport Pipe", "plankWood", Block.glass, "plankWood");
 			pipeItemsEmerald = buildPipe(DefaultProps.PIPE_ITEMS_EMERALD_ID, PipeItemsEmerald.class, "Emerald Transport Pipe", Item.emerald, Block.glass, Item.emerald);
-			pipeItemsCobblestone = buildPipe(DefaultProps.PIPE_ITEMS_COBBLESTONE_ID, PipeItemsCobblestone.class, "Cobblestone Transport Pipe", Block.cobblestone, Block.glass, Block.cobblestone);
-			pipeItemsStone = buildPipe(DefaultProps.PIPE_ITEMS_STONE_ID, PipeItemsStone.class, "Stone Transport Pipe", Block.stone, Block.glass, Block.stone);
+			pipeItemsCobblestone = buildPipe(DefaultProps.PIPE_ITEMS_COBBLESTONE_ID, PipeItemsCobblestone.class, "Cobblestone Transport Pipe", "cobblestone", Block.glass, "cobblestone");
+			pipeItemsStone = buildPipe(DefaultProps.PIPE_ITEMS_STONE_ID, PipeItemsStone.class, "Stone Transport Pipe", "stone", Block.glass, "stone");
 			pipeItemsQuartz = buildPipe(DefaultProps.PIPE_ITEMS_QUARTZ_ID, PipeItemsQuartz.class, "Quartz Transport Pipe", Block.blockNetherQuartz, Block.glass, Block.blockNetherQuartz);
 			pipeItemsIron = buildPipe(DefaultProps.PIPE_ITEMS_IRON_ID, PipeItemsIron.class, "Iron Transport Pipe", Item.ingotIron, Block.glass, Item.ingotIron);
 			pipeItemsGold = buildPipe(DefaultProps.PIPE_ITEMS_GOLD_ID, PipeItemsGold.class, "Golden Transport Pipe", Item.ingotGold, Block.glass, Item.ingotGold);
@@ -428,15 +428,15 @@ public class BuildCraftTransport {
 		// Add pipe recipes
 		for (PipeRecipe pipe : pipeRecipes) {
 			if (pipe.isShapeless) {
-				GameRegistry.addShapelessRecipe(pipe.result, pipe.input);
+			        CoreProxy.proxy.addShapelessRecipe(pipe.result, pipe.input);
 			} else {
 				CoreProxy.proxy.addCraftingRecipe(pipe.result, pipe.input);
 			}
 		}
 
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(filteredBufferBlock, 1),
-				new Object[]{"wdw", "wcw", "wpw", Character.valueOf('w'), "plankWood", Character.valueOf('d'),
-			BuildCraftTransport.pipeItemsDiamond, Character.valueOf('c'), Block.chest, Character.valueOf('p'),
+				new Object[]{"wdw", "wcw", "wpw", 'w', "plankWood", 'd',
+			BuildCraftTransport.pipeItemsDiamond, 'c', Block.chest, 'p',
 			Block.pistonBase});
 
 		//Facade turning helper
@@ -463,7 +463,7 @@ public class BuildCraftTransport {
 
 		if (ingredients.length == 3) {
 			recipe.result = new ItemStack(res, 8);
-			recipe.input = new Object[]{"ABC", Character.valueOf('A'), ingredients[0], Character.valueOf('B'), ingredients[1], Character.valueOf('C'), ingredients[2]};
+			recipe.input = new Object[]{"ABC", 'A', ingredients[0], 'B', ingredients[1], 'C', ingredients[2]};
 
 			pipeRecipes.add(recipe);
 		} else if (ingredients.length == 2) {
