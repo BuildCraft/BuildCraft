@@ -6,6 +6,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
 import buildcraft.BuildCraftSilicon;
+import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.gates.ITriggerParameter;
 import buildcraft.core.triggers.ActionTriggerIconProvider;
 import buildcraft.core.triggers.BCTrigger;
@@ -19,13 +20,14 @@ public class TriggerQuartzTimer extends BCTrigger implements ITriggerPipe {
 	}
 	
 	public Time time;
-	public long lastPulseTime;
-	public int delay;
+	public SafeTimeTracker pulseTracker;
+	public long delay;
 
 	public TriggerQuartzTimer(int legacyId, Time time) {
 		super(legacyId, "buildcraft.timer." + time.name().toLowerCase(Locale.ENGLISH));
 		
 		this.time = time;
+		pulseTracker = new SafeTimeTracker();
 	}
 	
 	@Override
@@ -59,7 +61,6 @@ public class TriggerQuartzTimer extends BCTrigger implements ITriggerPipe {
 
 	@Override
 	public boolean isTriggerActive(Pipe pipe, ITriggerParameter parameter) {
-		long worldTime = pipe.getWorld().getWorldTime();
 		
 		if (time == Time.Short) {
 			delay = BuildCraftSilicon.timerIntervalShort * 20; // Multiply the seconds by 20 to convert to ticks
@@ -69,12 +70,7 @@ public class TriggerQuartzTimer extends BCTrigger implements ITriggerPipe {
 			delay = BuildCraftSilicon.timerIntervalLong * 20;
 		}
 		
-		if (Math.abs(worldTime - lastPulseTime) >= delay) {
-			lastPulseTime = worldTime;
-			return true;
-		} else {
-			return false;
-		}
+		return pulseTracker.markTimeIfDelay(pipe.getWorld(), delay);
 	}
 
 }
