@@ -52,7 +52,7 @@ public class ActionTriggerIconProvider implements IIconProvider {
 
 
 	@SideOnly(Side.CLIENT)
-	private Icon[] icons;
+	private final Icon[] icons = new Icon[MAX];
 	
 	private ActionTriggerIconProvider(){}
 
@@ -65,8 +65,6 @@ public class ActionTriggerIconProvider implements IIconProvider {
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void registerIcons(IconRegister iconRegister) {
-		icons = new Icon[MAX];
-
 		icons[ActionTriggerIconProvider.Action_MachineControl_On] = iconRegister.registerIcon("buildcraft:triggers/action_machinecontrol_on");
 		icons[ActionTriggerIconProvider.Action_MachineControl_Off] = iconRegister.registerIcon("buildcraft:triggers/action_machinecontrol_off");
 		icons[ActionTriggerIconProvider.Action_MachineControl_Loop] = iconRegister.registerIcon("buildcraft:triggers/action_machinecontrol_loop");
