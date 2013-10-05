@@ -434,7 +434,7 @@ public class TileQuarry extends TileBuildCraft implements IMachine, IPowerRecept
 			}
 
 			worldObj.playAuxSFXAtEntity(null, 2001, i, j, k, blockId + (worldObj.getBlockMetadata(i, j, k) << 12));
-			worldObj.setBlock(i, j, k, 0);
+			worldObj.setBlockToAir(i, j, k);
 		}
 
 		// Collect any lost items laying around
