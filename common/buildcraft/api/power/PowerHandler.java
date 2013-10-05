@@ -11,6 +11,24 @@ import buildcraft.api.core.SafeTimeTracker;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.ForgeDirection;
 
+/**
+ * The PowerHandler is similar to FluidTank in that it holds your power and
+ * allows standardized interaction between machines.
+ *
+ * To receive power to your machine you needs create an instance of PowerHandler
+ * and implement IPowerReceptor on the TileEntity.
+ *
+ * If you plan emit power, you need only implement IPowerEmitter. You do not
+ * need a PowerHandler. Engines have a PowerHandler because they can also
+ * receive power from other Engines.
+ * 
+ * See TileRefinery for a simple example of a power using machine.
+ *
+ * @see IPowerReceptor
+ * @see IPowerEmitter
+ *
+ * @author CovertJaguar <http://www.railcraft.info/>
+ */
 public final class PowerHandler {
 
 	public static enum Type {
@@ -85,9 +103,9 @@ public final class PowerHandler {
 
 		/**
 		 * Taxes a flat rate on all incoming power.
-		 * 
+		 *
 		 * Defaults to 0% tax rate.
-		 * 
+		 *
 		 * @return percent of input to tax
 		 */
 		public float getTaxPercent() {
@@ -168,6 +186,16 @@ public final class PowerHandler {
 		this.activationEnergy = activationEnergy;
 	}
 
+	/**
+	 * Allows you define perdition in terms of loss/ticks.
+	 *
+	 * This function is mostly for legacy implementations. See
+	 * PerditionCalculator for more complex perdition formulas.
+	 *
+	 * @param powerLoss
+	 * @param powerLossRegularity
+	 * @see PerditionCalculator
+	 */
 	public void configurePowerPerdition(int powerLoss, int powerLossRegularity) {
 		if (powerLoss == 0 || powerLossRegularity == 0) {
 			perdition = new PerditionCalculator(0);
@@ -343,6 +371,8 @@ public final class PowerHandler {
 		/**
 		 * Add power to the PowerReceiver from an external source.
 		 *
+		 * IPowerEmitters are responsible for calling this themselves.
+		 *
 		 * @param quantity
 		 * @param from
 		 * @return the amount of power used
@@ -358,7 +388,7 @@ public final class PowerHandler {
 			}
 
 			updateSources(from);
-			
+
 			used -= used * getPerdition().getTaxPercent();
 
 			used = addEnergy(used);
