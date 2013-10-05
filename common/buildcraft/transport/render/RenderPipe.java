@@ -269,7 +269,9 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 		PipeTransportPower pow = pipe.transport;
 
 		GL11.glPushMatrix();
-		GL11.glDisable(2896 /* GL_LIGHTING */);
+		GL11.glPushAttrib(GL11.GL_ENABLE_BIT);
+		GL11.glDisable(GL11.GL_LIGHTING);
+//		GL11.glEnable(GL11.GL_BLEND);
 
 		GL11.glTranslatef((float) x, (float) y, (float) z);
 
@@ -277,17 +279,18 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 
 		int[] displayList = pow.overload > 0 ? displayPowerListOverload : displayPowerList;
 
-		for (int i = 0; i < 6; ++i) {
+		for (int side = 0; side < 6; ++side) {
 			GL11.glPushMatrix();
 
 			GL11.glTranslatef(0.5F, 0.5F, 0.5F);
-			GL11.glRotatef(angleY[i], 0, 1, 0);
-			GL11.glRotatef(angleZ[i], 0, 0, 1);
+			GL11.glRotatef(angleY[side], 0, 1, 0);
+			GL11.glRotatef(angleZ[side], 0, 0, 1);
+			float scale = 1.0F - side * 0.0001F;
+			GL11.glScalef(scale, scale, scale);
 			GL11.glTranslatef(-0.5F, -0.5F, -0.5F);
 
-			if (pow.clientDisplayPower[i] >= 1.0) {
-				short stage = pow.clientDisplayPower[i];
-
+			short stage = pow.clientDisplayPower[side];
+			if (stage >= 1) {
 				if (stage < displayList.length) {
 					GL11.glCallList(displayList[stage]);
 				} else {
@@ -298,7 +301,7 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 			GL11.glPopMatrix();
 		}
 
-		GL11.glEnable(2896 /* GL_LIGHTING */);
+		GL11.glPopAttrib();
 		GL11.glPopMatrix();
 	}
 
@@ -385,7 +388,7 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 
 				bindTexture(TextureMap.locationBlocksTexture);
 				FluidRenderer.setColorForFluidStack(fluidStack);
-				
+
 				if (above) {
 					GL11.glCallList(d.centerVertical[stage]);
 				}
