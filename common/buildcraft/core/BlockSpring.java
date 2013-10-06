@@ -92,6 +92,12 @@ public class BlockSpring extends Block {
 		world.setBlock(x, y + 1, z, spring.liquidBlock.blockID);
 	}
 
+	// Prevents updates on chunk generation
+	@Override
+	public boolean func_82506_l() {
+		return false;
+	}
+
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void registerIcons(IconRegister par1IconRegister) {
