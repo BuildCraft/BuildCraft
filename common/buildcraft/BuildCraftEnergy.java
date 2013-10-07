@@ -204,8 +204,8 @@ public class BuildCraftEnergy {
 
 		// Iron Engine Fuels
 //		IronEngineFuel.addFuel("lava", 1, 20000);
-		IronEngineFuel.addFuel("oil", 3, 20000);
-		IronEngineFuel.addFuel("fuel", 6, 100000);
+		IronEngineFuel.addFuel("oil", 3, 5000);
+		IronEngineFuel.addFuel("fuel", 6, 25000);
 
 		// Iron Engine Coolants
 		IronEngineCoolant.addCoolant(FluidRegistry.getFluid("water"), 0.0023F);
