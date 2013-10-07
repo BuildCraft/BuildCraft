@@ -108,6 +108,9 @@ public class BuildCraftEnergy {
 		int oilOceanBiomeId = BuildCraftCore.mainConfiguration.get("biomes", "oilOcean", DefaultProps.BIOME_OIL_OCEAN).getInt(DefaultProps.BIOME_OIL_OCEAN);
 		canOilBurn = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "burnOil", true, "Can oil burn?").getBoolean(true);
 		oilWellScalar = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "oilWellGenerationRate", 1.0, "Probability of oil well generation").getDouble(1.0);
+
+		double fuelOilMultiplier = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "fuel.oil.combustion", 1.0F, "adjust energy value of Oil in Combustion Engines").getDouble(1.0F);
+		double fuelFuelMultiplier = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "fuel.fuel.combustion", 1.0F, "adjust energy value of Fuel in Combustion Engines").getDouble(1.0F);
 		BuildCraftCore.mainConfiguration.save();
 
 		class BiomeIdException extends RuntimeException {
@@ -204,8 +207,8 @@ public class BuildCraftEnergy {
 
 		// Iron Engine Fuels
 //		IronEngineFuel.addFuel("lava", 1, 20000);
-		IronEngineFuel.addFuel("oil", 3, 5000);
-		IronEngineFuel.addFuel("fuel", 6, 25000);
+		IronEngineFuel.addFuel("oil", 3, (int) (5000 * fuelOilMultiplier));
+		IronEngineFuel.addFuel("fuel", 6, (int) (25000 * fuelFuelMultiplier));
 
 		// Iron Engine Coolants
 		IronEngineCoolant.addCoolant(FluidRegistry.getFluid("water"), 0.0023F);
@@ -256,8 +259,8 @@ public class BuildCraftEnergy {
 
 	@EventHandler
 	public void processIMCRequests(FMLInterModComms.IMCEvent event) {
-        InterModComms.processIMC(event);
-    }
+		InterModComms.processIMC(event);
+	}
 	// public static int createPollution (World world, int i, int j, int k, int
 	// saturation) {
 	// int remainingSaturation = saturation;
