@@ -35,7 +35,6 @@ import buildcraft.api.gates.ITrigger;
 import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.power.PowerHandler;
 import buildcraft.api.power.PowerHandler.PowerReceiver;
-import buildcraft.transport.IPipeConnectionForced;
 import buildcraft.api.transport.IPipe;
 import buildcraft.api.transport.IPipeConnection;
 import buildcraft.api.transport.IPipeTile;
@@ -52,6 +51,8 @@ import buildcraft.core.network.PacketTileState;
 import buildcraft.transport.Gate.GateKind;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.server.management.PlayerInstance;
+import net.minecraft.world.WorldServer;
 
 public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFluidHandler, IPipeTile, IOverrideDefaultTriggers, ITileBufferHolder,
 		IDropControlInventory, IPipeRenderState, ISyncedTile, ISolidSideTile, IGuiReturnHandler {
@@ -80,6 +81,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 	public boolean[] pipeConnectionsBuffer = new boolean[6];
 	public SafeTimeTracker networkSyncTracker = new SafeTimeTracker();
 	public Pipe pipe;
+	private boolean sendClientUpdate = false;
 	private boolean blockNeighborChange = false;
 	private boolean refreshRenderState = false;
 	private boolean pipeBound = false;
@@ -186,6 +188,17 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 		PowerReceiver provider = getPowerReceiver(null);
 		if (provider != null)
 			provider.update();
+
+		if (sendClientUpdate) {
+			sendClientUpdate = false;
+			if (worldObj instanceof WorldServer) {
+				WorldServer world = (WorldServer) worldObj;
+				PlayerInstance playerInstance = world.getPlayerManager().getOrCreateChunkWatcher(xCoord >> 4, zCoord >> 4, false);
+				if (playerInstance != null) {
+					playerInstance.sendToAllPlayersWatchingChunk(getDescriptionPacket());
+				}
+			}
+		}
 	}
 
 	// PRECONDITION: worldObj must not be null
@@ -244,8 +257,8 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 		}
 
 		if (renderState.isDirty()) {
-			markBlockForUpdate();
 			renderState.clean();
+			sendUpdateToClient();
 		}
 	}
 
@@ -363,6 +376,10 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 		return packet.getPacket();
 	}
 
+	public void sendUpdateToClient() {
+		sendClientUpdate = true;
+	}
+
 	@Override
 	public LinkedList<ITrigger> getTriggers() {
 		LinkedList<ITrigger> result = new LinkedList<ITrigger>();
@@ -428,12 +445,12 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 		if (!BlockGenericPipe.isValid(pipe))
 			return false;
 
-		if(!(pipe instanceof IPipeConnectionForced) || !((IPipeConnectionForced) pipe).ignoreConnectionOverrides(side))
+		if (!(pipe instanceof IPipeConnectionForced) || !((IPipeConnectionForced) pipe).ignoreConnectionOverrides(side))
 			if (with instanceof IPipeConnection) {
 				IPipeConnection.ConnectOverride override = ((IPipeConnection) with).overridePipeConnection(pipe.transport.getPipeType(), side.getOpposite());
 				if (override != IPipeConnection.ConnectOverride.DEFAULT)
 					return override == IPipeConnection.ConnectOverride.CONNECT ? true : false;
-				}
+			}
 
 		if (with instanceof TileGenericPipe) {
 			if (((TileGenericPipe) with).hasPlug(side.getOpposite()))
@@ -618,9 +635,16 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 						pipe.gate = new GateVanilla(pipe);
 					pipe.gate.kind = GateKind.values()[coreState.gateKind];
 				}
+				worldObj.markBlockForRenderUpdate(xCoord, yCoord, zCoord);
 				break;
+			case 1: {
+				if (renderState.needsRenderUpdate()) {
+					worldObj.markBlockForRenderUpdate(xCoord, yCoord, zCoord);
+					renderState.clean();
+				}
+				break;
+			}
 		}
-		worldObj.markBlockForRenderUpdate(xCoord, yCoord, zCoord);
 	}
 
 	@Override
@@ -690,11 +714,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 	public boolean isUseableByPlayer(EntityPlayer player) {
 		return worldObj.getBlockTileEntity(xCoord, yCoord, zCoord) == this;
 	}
-
-	public void markBlockForUpdate() {
-		worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
-	}
-
+	
 	@Override
 	public void writeGuiData(DataOutputStream data) throws IOException {
 		if (BlockGenericPipe.isValid(pipe) && pipe instanceof IGuiReturnHandler)

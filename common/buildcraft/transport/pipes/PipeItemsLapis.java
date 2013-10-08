@@ -77,7 +77,6 @@ public class PipeItemsLapis extends Pipe<PipeTransportItems> implements IItemTra
 		if (color.ordinal() != container.getBlockMetadata()) {
 			container.worldObj.setBlockMetadataWithNotify(container.xCoord, container.yCoord, container.zCoord, color.ordinal(), 3);
 			container.scheduleRenderUpdate();
-			container.markBlockForUpdate();
 		}
 	}
 

@@ -42,7 +42,7 @@ import buildcraft.api.transport.ISolidSideTile;
 import buildcraft.core.BlockIndex;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
-import buildcraft.transport.render.PipeWorldRenderer;
+import buildcraft.transport.render.PipeRendererWorld;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -167,7 +167,7 @@ public class BlockGenericPipe extends BlockContainer {
 				super.addCollisionBoxesToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
 			}
 
-			float facadeThickness = PipeWorldRenderer.facadeThickness;
+			float facadeThickness = PipeRendererWorld.facadeThickness;
 
 			if (tileG.hasFacade(ForgeDirection.EAST)) {
 				setBlockBounds(1 - facadeThickness, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);

@@ -7,7 +7,7 @@
  */
 package buildcraft.core.render;
 
-import buildcraft.core.render.RenderEntityBlock.BlockInterface;
+import buildcraft.core.render.RenderEntityBlock.RenderInfo;
 import java.util.HashMap;
 import java.util.Map;
 import net.minecraft.block.Block;
@@ -31,7 +31,7 @@ public class FluidRenderer {
 	private static Map<Fluid, int[]> flowingRenderCache = new HashMap<Fluid, int[]>();
 	private static Map<Fluid, int[]> stillRenderCache = new HashMap<Fluid, int[]>();
 	public static final int DISPLAY_STAGES = 100;
-	private static final BlockInterface liquidBlock = new BlockInterface();
+	private static final RenderInfo liquidBlock = new RenderInfo();
 
 	public static Icon getFluidTexture(FluidStack fluidStack, boolean flowing) {
 		if (fluidStack == null) {

@@ -3,23 +3,23 @@ package buildcraft.transport;
 import buildcraft.BuildCraftTransport;
 import buildcraft.transport.render.FacadeItemRenderer;
 import buildcraft.transport.render.PipeItemRenderer;
-import buildcraft.transport.render.PipeWorldRenderer;
+import buildcraft.transport.render.PipeRendererWorld;
 import buildcraft.transport.render.PlugItemRenderer;
-import buildcraft.transport.render.RenderPipe;
+import buildcraft.transport.render.PipeRendererTESR;
 import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.client.MinecraftForgeClient;
 
 public class TransportProxyClient extends TransportProxy {
 	public final static PipeItemRenderer pipeItemRenderer = new PipeItemRenderer();
-	public final static PipeWorldRenderer pipeWorldRenderer = new PipeWorldRenderer();
+	public final static PipeRendererWorld pipeWorldRenderer = new PipeRendererWorld();
 	public final static FacadeItemRenderer facadeItemRenderer = new FacadeItemRenderer();
 	public final static PlugItemRenderer plugItemRenderer = new PlugItemRenderer();
 
 	@Override
 	public void registerTileEntities() {
 		super.registerTileEntities();
-		RenderPipe rp = new RenderPipe();
+		PipeRendererTESR rp = new PipeRendererTESR();
 		ClientRegistry.bindTileEntitySpecialRenderer(TileDummyGenericPipe.class, rp);
 		ClientRegistry.bindTileEntitySpecialRenderer(TileDummyGenericPipe2.class, rp);
 		ClientRegistry.bindTileEntitySpecialRenderer(TileGenericPipe.class, rp);

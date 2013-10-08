@@ -8,9 +8,8 @@ import net.minecraftforge.common.ForgeDirection;
 
 public class ConnectionMatrix {
 
-	private final BitSet _connected = new BitSet(ForgeDirection.VALID_DIRECTIONS.length);
+	private BitSet _connected = new BitSet(ForgeDirection.VALID_DIRECTIONS.length);
 	private final BitSetCodec _bitSetCodec = new BitSetCodec();
-
 	private boolean dirty = false;
 
 	public boolean isConnected(ForgeDirection direction) {
@@ -18,7 +17,7 @@ public class ConnectionMatrix {
 	}
 
 	public void setConnected(ForgeDirection direction, boolean value) {
-		if (_connected.get(direction.ordinal()) != value){
+		if (_connected.get(direction.ordinal()) != value) {
 			_connected.set(direction.ordinal(), value);
 			dirty = true;
 		}
@@ -37,6 +36,11 @@ public class ConnectionMatrix {
 	}
 
 	public void readData(DataInputStream data) throws IOException {
-		_bitSetCodec.decode(data.readByte(), _connected);
+		BitSet connection = new BitSet(ForgeDirection.VALID_DIRECTIONS.length);
+		_bitSetCodec.decode(data.readByte(), connection);
+		if (!_connected.equals(connection)) {
+			_connected = connection;
+			dirty = true;
+		}
 	}
 }

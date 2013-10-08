@@ -72,7 +72,6 @@ public class PipeItemsDaizuli extends Pipe<PipeTransportItems> implements IPipeT
 		if (color != c.ordinal()) {
 			this.color = c.ordinal();
 			container.scheduleRenderUpdate();
-			container.markBlockForUpdate();
 		}
 	}
 

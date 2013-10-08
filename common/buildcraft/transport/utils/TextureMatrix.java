@@ -8,7 +8,6 @@ import net.minecraftforge.common.ForgeDirection;
 public class TextureMatrix {
 
 	private final int[] _iconIndexes = new int[7];
-
 	private boolean dirty = false;
 
 	public int getTextureIndex(ForgeDirection direction) {
@@ -38,7 +37,11 @@ public class TextureMatrix {
 
 	public void readData(DataInputStream data) throws IOException {
 		for (int i = 0; i < _iconIndexes.length; i++) {
-			_iconIndexes[i] = data.readByte();
+			int icon = data.readByte();
+			if (_iconIndexes[i] != icon) {
+				_iconIndexes[i] = icon;
+				dirty = true;
+			}
 		}
 	}
 }

@@ -2,8 +2,6 @@ package buildcraft.transport.render;
 
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
-import buildcraft.api.transport.IPipe;
-import buildcraft.api.transport.IPipe.WireColor;
 import buildcraft.core.utils.Utils;
 import buildcraft.transport.BlockGenericPipe;
 import buildcraft.transport.IPipeRenderState;
@@ -20,7 +18,7 @@ import net.minecraft.util.Icon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.common.ForgeDirection;
 
-public class PipeWorldRenderer implements ISimpleBlockRenderingHandler {
+public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
 
 	public static final float facadeThickness = 1F / 16F;
 
@@ -197,31 +195,6 @@ public class PipeWorldRenderer implements ISimpleBlockRenderingHandler {
 
 		renderblocks.setRenderBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
 
-		if (state.wireMatrix.hasWire(WireColor.Red)) {
-			state.currentTexture = BuildCraftTransport.instance.wireIconProvider.getIcon(state.wireMatrix.getWireIconIndex(WireColor.Red));
-
-			pipeWireRender(renderblocks, block, state, Utils.pipeMinPos, Utils.pipeMaxPos, Utils.pipeMinPos, IPipe.WireColor.Red, x, y, z);
-		}
-
-		if (state.wireMatrix.hasWire(WireColor.Blue)) {
-			state.currentTexture = BuildCraftTransport.instance.wireIconProvider.getIcon(state.wireMatrix.getWireIconIndex(WireColor.Blue));
-			pipeWireRender(renderblocks, block, state, Utils.pipeMaxPos, Utils.pipeMaxPos, Utils.pipeMaxPos, IPipe.WireColor.Blue, x, y, z);
-		}
-
-		if (state.wireMatrix.hasWire(WireColor.Green)) {
-			state.currentTexture = BuildCraftTransport.instance.wireIconProvider.getIcon(state.wireMatrix.getWireIconIndex(WireColor.Green));
-			pipeWireRender(renderblocks, block, state, Utils.pipeMaxPos, Utils.pipeMinPos, Utils.pipeMinPos, IPipe.WireColor.Green, x, y, z);
-		}
-
-		if (state.wireMatrix.hasWire(WireColor.Yellow)) {
-			state.currentTexture = BuildCraftTransport.instance.wireIconProvider.getIcon(state.wireMatrix.getWireIconIndex(WireColor.Yellow));
-			pipeWireRender(renderblocks, block, state, Utils.pipeMinPos, Utils.pipeMinPos, Utils.pipeMaxPos, IPipe.WireColor.Yellow, x, y, z);
-		}
-
-		if (state.hasGate()) {
-			pipeGateRender(renderblocks, block, state, x, y, z);
-		}
-
 		pipeFacadeRenderer(renderblocks, block, state, x, y, z);
 		pipePlugRenderer(renderblocks, block, state, x, y, z);
 
@@ -390,190 +363,6 @@ public class PipeWorldRenderer implements ISimpleBlockRenderingHandler {
 			}
 		}
 
-	}
-
-	private void pipeWireRender(RenderBlocks renderblocks, Block block, PipeRenderState state, float cx, float cy, float cz, IPipe.WireColor color, int x,
-			int y, int z) {
-
-		float minX = Utils.pipeMinPos;
-		float minY = Utils.pipeMinPos;
-		float minZ = Utils.pipeMinPos;
-
-		float maxX = Utils.pipeMaxPos;
-		float maxY = Utils.pipeMaxPos;
-		float maxZ = Utils.pipeMaxPos;
-
-		boolean foundX = false, foundY = false, foundZ = false;
-
-		if (state.wireMatrix.isWireConnected(color, ForgeDirection.WEST)) {
-			minX = 0;
-			foundX = true;
-		}
-
-		if (state.wireMatrix.isWireConnected(color, ForgeDirection.EAST)) {
-			maxX = 1;
-			foundX = true;
-		}
-
-		if (state.wireMatrix.isWireConnected(color, ForgeDirection.DOWN)) {
-			minY = 0;
-			foundY = true;
-		}
-
-		if (state.wireMatrix.isWireConnected(color, ForgeDirection.UP)) {
-			maxY = 1;
-			foundY = true;
-		}
-
-		if (state.wireMatrix.isWireConnected(color, ForgeDirection.NORTH)) {
-			minZ = 0;
-			foundZ = true;
-		}
-
-		if (state.wireMatrix.isWireConnected(color, ForgeDirection.SOUTH)) {
-			maxZ = 1;
-			foundZ = true;
-		}
-
-		boolean center = false;
-
-		if (minX == 0 && maxX != 1 && (foundY || foundZ))
-			if (cx == Utils.pipeMinPos) {
-				maxX = Utils.pipeMinPos;
-			} else {
-				center = true;
-			}
-
-		if (minX != 0 && maxX == 1 && (foundY || foundZ))
-			if (cx == Utils.pipeMaxPos) {
-				minX = Utils.pipeMaxPos;
-			} else {
-				center = true;
-			}
-
-		if (minY == 0 && maxY != 1 && (foundX || foundZ))
-			if (cy == Utils.pipeMinPos) {
-				maxY = Utils.pipeMinPos;
-			} else {
-				center = true;
-			}
-
-		if (minY != 0 && maxY == 1 && (foundX || foundZ))
-			if (cy == Utils.pipeMaxPos) {
-				minY = Utils.pipeMaxPos;
-			} else {
-				center = true;
-			}
-
-		if (minZ == 0 && maxZ != 1 && (foundX || foundY))
-			if (cz == Utils.pipeMinPos) {
-				maxZ = Utils.pipeMinPos;
-			} else {
-				center = true;
-			}
-
-		if (minZ != 0 && maxZ == 1 && (foundX || foundY))
-			if (cz == Utils.pipeMaxPos) {
-				minZ = Utils.pipeMaxPos;
-			} else {
-				center = true;
-			}
-
-		boolean found = foundX || foundY || foundZ;
-
-		// Z render
-
-		if (minZ != Utils.pipeMinPos || maxZ != Utils.pipeMaxPos || !found) {
-			renderblocks.setRenderBounds(cx == Utils.pipeMinPos ? cx - 0.05F : cx, cy == Utils.pipeMinPos ? cy - 0.05F : cy, minZ, cx == Utils.pipeMinPos ? cx
-					: cx + 0.05F, cy == Utils.pipeMinPos ? cy : cy + 0.05F, maxZ);
-			renderblocks.renderStandardBlock(block, x, y, z);
-		}
-
-		// X render
-
-		if (minX != Utils.pipeMinPos || maxX != Utils.pipeMaxPos || !found) {
-			renderblocks.setRenderBounds(minX, cy == Utils.pipeMinPos ? cy - 0.05F : cy, cz == Utils.pipeMinPos ? cz - 0.05F : cz, maxX, cy == Utils.pipeMinPos ? cy
-					: cy + 0.05F, cz == Utils.pipeMinPos ? cz : cz + 0.05F);
-			renderblocks.renderStandardBlock(block, x, y, z);
-		}
-
-		// Y render
-
-		if (minY != Utils.pipeMinPos || maxY != Utils.pipeMaxPos || !found) {
-			renderblocks.setRenderBounds(cx == Utils.pipeMinPos ? cx - 0.05F : cx, minY, cz == Utils.pipeMinPos ? cz - 0.05F : cz, cx == Utils.pipeMinPos ? cx
-					: cx + 0.05F, maxY, cz == Utils.pipeMinPos ? cz : cz + 0.05F);
-			renderblocks.renderStandardBlock(block, x, y, z);
-		}
-
-		if (center || !found) {
-			renderblocks.setRenderBounds(cx == Utils.pipeMinPos ? cx - 0.05F : cx, cy == Utils.pipeMinPos ? cy - 0.05F : cy, cz == Utils.pipeMinPos ? cz - 0.05F : cz,
-					cx == Utils.pipeMinPos ? cx : cx + 0.05F, cy == Utils.pipeMinPos ? cy : cy + 0.05F, cz == Utils.pipeMinPos ? cz : cz + 0.05F);
-			renderblocks.renderStandardBlock(block, x, y, z);
-		}
-
-	}
-
-	private void pipeGateRender(RenderBlocks renderblocks, Block block, PipeRenderState state, int x, int y, int z) {
-
-		state.currentTexture = BuildCraftTransport.instance.gateIconProvider.getIcon(state.getGateIconIndex());
-
-		float min = Utils.pipeMinPos + 0.05F;
-		float max = Utils.pipeMaxPos - 0.05F;
-
-		if (shouldRenderNormalPipeSide(state, ForgeDirection.WEST)) {
-			renderblocks.setRenderBounds(Utils.pipeMinPos - 0.10F, min, min, Utils.pipeMinPos + 0.001F, max, max);
-			renderblocks.renderStandardBlock(block, x, y, z);
-		}
-
-		if (shouldRenderNormalPipeSide(state, ForgeDirection.EAST)) {
-			renderblocks.setRenderBounds(Utils.pipeMaxPos + 0.001F, min, min, Utils.pipeMaxPos + 0.10F, max, max);
-			renderblocks.renderStandardBlock(block, x, y, z);
-		}
-
-		if (shouldRenderNormalPipeSide(state, ForgeDirection.DOWN)) {
-			renderblocks.setRenderBounds(min, Utils.pipeMinPos - 0.10F, min, max, Utils.pipeMinPos + 0.001F, max);
-			renderblocks.renderStandardBlock(block, x, y, z);
-		}
-
-		if (shouldRenderNormalPipeSide(state, ForgeDirection.UP)) {
-			renderblocks.setRenderBounds(min, Utils.pipeMaxPos + 0.001F, min, max, Utils.pipeMaxPos + 0.10F, max);
-			renderblocks.renderStandardBlock(block, x, y, z);
-		}
-
-		if (shouldRenderNormalPipeSide(state, ForgeDirection.NORTH)) {
-			renderblocks.setRenderBounds(min, min, Utils.pipeMinPos - 0.10F, max, max, Utils.pipeMinPos + 0.001F);
-			renderblocks.renderStandardBlock(block, x, y, z);
-		}
-
-		if (shouldRenderNormalPipeSide(state, ForgeDirection.SOUTH)) {
-			renderblocks.setRenderBounds(min, min, Utils.pipeMaxPos + 0.001F, max, max, Utils.pipeMaxPos + 0.10F);
-			renderblocks.renderStandardBlock(block, x, y, z);
-		}
-	}
-
-	private boolean shouldRenderNormalPipeSide(PipeRenderState state, ForgeDirection direction) {
-		return !state.pipeConnectionMatrix.isConnected(direction) && state.facadeMatrix.getFacadeBlockId(direction) == 0 && !state.plugMatrix.isConnected(direction) && !isOpenOrientation(state, direction);
-	}
-
-	public boolean isOpenOrientation(PipeRenderState state, ForgeDirection direction) {
-		int connections = 0;
-
-		ForgeDirection targetOrientation = ForgeDirection.UNKNOWN;
-
-		for (ForgeDirection o : ForgeDirection.VALID_DIRECTIONS) {
-			if (state.pipeConnectionMatrix.isConnected(o)) {
-
-				connections++;
-
-				if (connections == 1)
-					targetOrientation = o;
-			}
-		}
-
-		if (connections > 1 || connections == 0)
-			return false;
-
-		return targetOrientation.getOpposite() == direction;
 	}
 
 	@Override

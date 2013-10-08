@@ -16,14 +16,11 @@ public class PipeRenderState implements IClientState {
 
 	private boolean hasGate = false;
 	private int gateIconIndex = 0;
-
 	public final ConnectionMatrix pipeConnectionMatrix = new ConnectionMatrix();
 	public final TextureMatrix textureMatrix = new TextureMatrix();
 	public final WireMatrix wireMatrix = new WireMatrix();
 	public final ConnectionMatrix plugMatrix = new ConnectionMatrix();
-
 	public final FacadeMatrix facadeMatrix = new FacadeMatrix();
-
 	private boolean dirty = true;
 
 	/*
@@ -58,12 +55,16 @@ public class PipeRenderState implements IClientState {
 		dirty = false;
 		pipeConnectionMatrix.clean();
 		textureMatrix.clean();
-		wireMatrix.clean();
 		facadeMatrix.clean();
+		wireMatrix.clean();
 	}
 
 	public boolean isDirty() {
 		return dirty || pipeConnectionMatrix.isDirty() || textureMatrix.isDirty() || wireMatrix.isDirty() || facadeMatrix.isDirty() || plugMatrix.isDirty();
+	}
+
+	public boolean needsRenderUpdate() {
+		return pipeConnectionMatrix.isDirty() || textureMatrix.isDirty() || facadeMatrix.isDirty() || plugMatrix.isDirty();
 	}
 
 	@Override
