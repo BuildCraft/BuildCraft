@@ -32,7 +32,7 @@ public class AssemblyRecipe {
 					continue;
 				}
 
-				if (item.isItemEqual(in)) {
+				if (StackHelper.instance().isCraftingEquivalent(in, item, true)) {
 					found += item.stackSize; // Adds quantity of stack to amount
 												// found
 				}
