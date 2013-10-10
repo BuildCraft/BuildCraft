@@ -28,7 +28,6 @@ import org.lwjgl.opengl.GL11;
 public class FluidRenderer {
 
 	private static final ResourceLocation BLOCK_TEXTURE = TextureMap.locationBlocksTexture;
-	private static final ResourceLocation ITEM_TEXTURE = TextureMap.locationItemsTexture;
 	private static Map<Fluid, int[]> flowingRenderCache = new HashMap<Fluid, int[]>();
 	private static Map<Fluid, int[]> stillRenderCache = new HashMap<Fluid, int[]>();
 	public static final int DISPLAY_STAGES = 100;
@@ -59,10 +58,7 @@ public class FluidRenderer {
 	}
 
 	public static ResourceLocation getFluidSheet(Fluid liquid) {
-		if (liquid.canBePlacedInWorld())
 		return BLOCK_TEXTURE;
-		else
-		return ITEM_TEXTURE;
 	}
 
 	public static void setColorForFluidStack(FluidStack fluidstack) {
