@@ -570,6 +570,8 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 	}
 
 	public boolean hasFacade(ForgeDirection direction) {
+		if (direction == null || direction == ForgeDirection.UNKNOWN)
+			return false;
 		if (this.worldObj.isRemote)
 			return renderState.facadeMatrix.getFacadeBlockId(direction) != 0;
 		return (this.facadeBlocks[direction.ordinal()] != 0);
@@ -579,16 +581,17 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 		InvUtils.dropItems(worldObj, ItemFacade.getStack(this.facadeBlocks[direction.ordinal()], this.facadeMeta[direction.ordinal()]), this.xCoord, this.yCoord, this.zCoord);
 	}
 
-	public void dropFacade(ForgeDirection direction) {
-		if (this.worldObj.isRemote)
-			return;
+	public boolean dropFacade(ForgeDirection direction) {
 		if (!hasFacade(direction))
-			return;
-		dropFacadeItem(direction);
-		this.facadeBlocks[direction.ordinal()] = 0;
-		this.facadeMeta[direction.ordinal()] = 0;
-		worldObj.notifyBlockChange(this.xCoord, this.yCoord, this.zCoord, getBlockId());
-		scheduleRenderUpdate();
+			return false;
+		if (!worldObj.isRemote) {
+			dropFacadeItem(direction);
+			this.facadeBlocks[direction.ordinal()] = 0;
+			this.facadeMeta[direction.ordinal()] = 0;
+			worldObj.notifyBlockChange(this.xCoord, this.yCoord, this.zCoord, getBlockId());
+			scheduleRenderUpdate();
+		}
+		return true;
 	}
 
 	/**
@@ -677,15 +680,17 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 		return plugs[side.ordinal()];
 	}
 
-	public void removeAndDropPlug(ForgeDirection side) {
+	public boolean removeAndDropPlug(ForgeDirection side) {
 		if (!hasPlug(side))
-			return;
-
-		plugs[side.ordinal()] = false;
-		InvUtils.dropItems(worldObj, new ItemStack(BuildCraftTransport.plugItem), this.xCoord, this.yCoord, this.zCoord);
-		worldObj.notifyBlockChange(this.xCoord, this.yCoord, this.zCoord, getBlockId());
-		scheduleNeighborChange(); //To force recalculation of connections
-		scheduleRenderUpdate();
+			return false;
+		if (!worldObj.isRemote) {
+			plugs[side.ordinal()] = false;
+			InvUtils.dropItems(worldObj, new ItemStack(BuildCraftTransport.plugItem), this.xCoord, this.yCoord, this.zCoord);
+			worldObj.notifyBlockChange(this.xCoord, this.yCoord, this.zCoord, getBlockId());
+			scheduleNeighborChange(); //To force recalculation of connections
+			scheduleRenderUpdate();
+		}
+		return true;
 	}
 
 	public boolean addPlug(ForgeDirection forgeDirection) {
@@ -714,7 +719,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 	public boolean isUseableByPlayer(EntityPlayer player) {
 		return worldObj.getBlockTileEntity(xCoord, yCoord, zCoord) == this;
 	}
-	
+
 	@Override
 	public void writeGuiData(DataOutputStream data) throws IOException {
 		if (BlockGenericPipe.isValid(pipe) && pipe instanceof IGuiReturnHandler)

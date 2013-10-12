@@ -313,28 +313,28 @@ public class BuildCraftTransport {
 			// 1, 0), Block.glass, new ItemStack(Item.dyePowder, 1, 11));
 
 			Property redPipeWireId = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_ITEM, "redPipeWire.id", DefaultProps.RED_PIPE_WIRE);
-			redPipeWire = new ItemBuildCraft(redPipeWireId.getInt());
+			redPipeWire = new ItemBuildCraft(redPipeWireId.getInt()).setPassSneakClick(true);
 			redPipeWire.setUnlocalizedName("redPipeWire");
 			LanguageRegistry.addName(redPipeWire, "Red Pipe Wire");
 			AssemblyRecipe.assemblyRecipes.add(new AssemblyRecipe(new ItemStack[]{new ItemStack(Item.dyePowder, 1, 1), new ItemStack(Item.redstone, 1),
 				new ItemStack(Item.ingotIron, 1)}, 500, new ItemStack(redPipeWire, 8)));
 
 			Property bluePipeWireId = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_ITEM, "bluePipeWire.id", DefaultProps.BLUE_PIPE_WIRE);
-			bluePipeWire = new ItemBuildCraft(bluePipeWireId.getInt());
+			bluePipeWire = new ItemBuildCraft(bluePipeWireId.getInt()).setPassSneakClick(true);
 			bluePipeWire.setUnlocalizedName("bluePipeWire");
 			LanguageRegistry.addName(bluePipeWire, "Blue Pipe Wire");
 			AssemblyRecipe.assemblyRecipes.add(new AssemblyRecipe(new ItemStack[]{new ItemStack(Item.dyePowder, 1, 4), new ItemStack(Item.redstone, 1),
 				new ItemStack(Item.ingotIron, 1)}, 500, new ItemStack(bluePipeWire, 8)));
 
 			Property greenPipeWireId = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_ITEM, "greenPipeWire.id", DefaultProps.GREEN_PIPE_WIRE);
-			greenPipeWire = new ItemBuildCraft(greenPipeWireId.getInt());
+			greenPipeWire = new ItemBuildCraft(greenPipeWireId.getInt()).setPassSneakClick(true);
 			greenPipeWire.setUnlocalizedName("greenPipeWire");
 			LanguageRegistry.addName(greenPipeWire, "Green Pipe Wire");
 			AssemblyRecipe.assemblyRecipes.add(new AssemblyRecipe(new ItemStack[]{new ItemStack(Item.dyePowder, 1, 2), new ItemStack(Item.redstone, 1),
 				new ItemStack(Item.ingotIron, 1)}, 500, new ItemStack(greenPipeWire, 8)));
 
 			Property yellowPipeWireId = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_ITEM, "yellowPipeWire.id", DefaultProps.YELLOW_PIPE_WIRE);
-			yellowPipeWire = new ItemBuildCraft(yellowPipeWireId.getInt());
+			yellowPipeWire = new ItemBuildCraft(yellowPipeWireId.getInt()).setPassSneakClick(true);
 			yellowPipeWire.setUnlocalizedName("yellowPipeWire");
 			LanguageRegistry.addName(yellowPipeWire, "Yellow Pipe Wire");
 			AssemblyRecipe.assemblyRecipes.add(new AssemblyRecipe(new ItemStack[]{new ItemStack(Item.dyePowder, 1, 11), new ItemStack(Item.redstone, 1),

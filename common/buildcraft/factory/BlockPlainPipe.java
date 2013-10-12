@@ -9,8 +9,8 @@
 
 package buildcraft.factory;
 
+import buildcraft.core.CoreConstants;
 import buildcraft.core.IFramePipeConnection;
-import buildcraft.core.utils.Utils;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import java.util.ArrayList;
@@ -26,13 +26,13 @@ public class BlockPlainPipe extends Block implements IFramePipeConnection {
 	public BlockPlainPipe(int i) {
 		super(i, Material.glass);
 
-		minX = Utils.pipeMinPos;
+		minX = CoreConstants.PIPE_MIN_POS;
 		minY = 0.0;
-		minZ = Utils.pipeMinPos;
+		minZ = CoreConstants.PIPE_MIN_POS;
 
-		maxX = Utils.pipeMaxPos;
+		maxX = CoreConstants.PIPE_MAX_POS;
 		maxY = 1.0;
-		maxZ = Utils.pipeMaxPos;
+		maxZ = CoreConstants.PIPE_MAX_POS;
 	}
 
 	@Override

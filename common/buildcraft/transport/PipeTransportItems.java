@@ -19,10 +19,10 @@ import buildcraft.core.inventory.Transactor;
 import buildcraft.core.network.PacketIds;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.BlockUtil;
-import buildcraft.core.utils.Utils;
 import buildcraft.transport.network.PacketPipeTransportContent;
 import buildcraft.transport.network.PacketPipeTransportNBT;
 import buildcraft.transport.network.PacketSimpleId;
+import buildcraft.transport.utils.TransportUtils;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.ForwardingSet;
 import com.google.common.collect.HashBiMap;
@@ -134,12 +134,12 @@ public class PipeTransportItems extends PipeTransport {
 	public void defaultReajustSpeed(TravelingItem item) {
 		float speed = item.getSpeed();
 
-		if (speed > Utils.pipeNormalSpeed) {
-			speed -= Utils.pipeNormalSpeed;
+		if (speed > TransportConstants.PIPE_NORMAL_SPEED) {
+			speed -= TransportConstants.PIPE_NORMAL_SPEED;
 		}
 
-		if (speed < Utils.pipeNormalSpeed) {
-			speed = Utils.pipeNormalSpeed;
+		if (speed < TransportConstants.PIPE_NORMAL_SPEED) {
+			speed = TransportConstants.PIPE_NORMAL_SPEED;
 		}
 
 		item.setSpeed(speed);
@@ -159,7 +159,7 @@ public class PipeTransportItems extends PipeTransport {
 		z = Math.min(z, container.zCoord + 0.99);
 
 		if (item.input != ForgeDirection.UP && item.input != ForgeDirection.DOWN) {
-			y = container.yCoord + Utils.getPipeFloorOf(item.getItemStack());
+			y = container.yCoord + TransportUtils.getPipeFloorOf(item.getItemStack());
 		}
 
 		item.setPosition(x, y, z);
@@ -338,7 +338,7 @@ public class PipeTransportItems extends PipeTransport {
 				item.toCenter = false;
 
 				// Reajusting to the middle
-				item.setPosition(container.xCoord + 0.5, container.yCoord + Utils.getPipeFloorOf(item.getItemStack()), container.zCoord + 0.5);
+				item.setPosition(container.xCoord + 0.5, container.yCoord + TransportUtils.getPipeFloorOf(item.getItemStack()), container.zCoord + 0.5);
 
 				if (item.output == ForgeDirection.UNKNOWN) {
 					if (travelHook != null) {
@@ -421,7 +421,7 @@ public class PipeTransportItems extends PipeTransport {
 
 	protected boolean middleReached(TravelingItem item) {
 		float middleLimit = item.getSpeed() * 1.01F;
-		return (Math.abs(container.xCoord + 0.5 - item.xCoord) < middleLimit && Math.abs(container.yCoord + Utils.getPipeFloorOf(item.getItemStack()) - item.yCoord) < middleLimit && Math
+		return (Math.abs(container.xCoord + 0.5 - item.xCoord) < middleLimit && Math.abs(container.yCoord + TransportUtils.getPipeFloorOf(item.getItemStack()) - item.yCoord) < middleLimit && Math
 				.abs(container.zCoord + 0.5 - item.zCoord) < middleLimit);
 	}
 

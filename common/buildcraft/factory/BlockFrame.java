@@ -10,6 +10,7 @@
 package buildcraft.factory;
 
 import buildcraft.BuildCraftCore;
+import buildcraft.core.CoreConstants;
 import buildcraft.core.IFramePipeConnection;
 import buildcraft.core.utils.Utils;
 import cpw.mods.fml.relauncher.Side;
@@ -69,7 +70,7 @@ public class BlockFrame extends Block implements IFramePipeConnection {
 
 	@Override
 	public AxisAlignedBB getCollisionBoundingBoxFromPool(World world, int i, int j, int k) {
-		float xMin = Utils.pipeMinPos, xMax = Utils.pipeMaxPos, yMin = Utils.pipeMinPos, yMax = Utils.pipeMaxPos, zMin = Utils.pipeMinPos, zMax = Utils.pipeMaxPos;
+		float xMin = CoreConstants.PIPE_MIN_POS, xMax = CoreConstants.PIPE_MAX_POS, yMin = CoreConstants.PIPE_MIN_POS, yMax = CoreConstants.PIPE_MAX_POS, zMin = CoreConstants.PIPE_MIN_POS, zMax = CoreConstants.PIPE_MAX_POS;
 
 		if (Utils.checkLegacyPipesConnections(world, i, j, k, i - 1, j, k)) {
 			xMin = 0.0F;
@@ -107,36 +108,36 @@ public class BlockFrame extends Block implements IFramePipeConnection {
 	@SuppressWarnings("rawtypes")
 	@Override
 	public void addCollisionBoxesToList(World world, int i, int j, int k, AxisAlignedBB axisalignedbb, List arraylist, Entity par7Entity) {
-		setBlockBounds(Utils.pipeMinPos, Utils.pipeMinPos, Utils.pipeMinPos, Utils.pipeMaxPos, Utils.pipeMaxPos, Utils.pipeMaxPos);
+		setBlockBounds(CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MAX_POS, CoreConstants.PIPE_MAX_POS, CoreConstants.PIPE_MAX_POS);
 		super.addCollisionBoxesToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
 
 		if (Utils.checkLegacyPipesConnections(world, i, j, k, i - 1, j, k)) {
-			setBlockBounds(0.0F, Utils.pipeMinPos, Utils.pipeMinPos, Utils.pipeMaxPos, Utils.pipeMaxPos, Utils.pipeMaxPos);
+			setBlockBounds(0.0F, CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MAX_POS, CoreConstants.PIPE_MAX_POS, CoreConstants.PIPE_MAX_POS);
 			super.addCollisionBoxesToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
 		}
 
 		if (Utils.checkLegacyPipesConnections(world, i, j, k, i + 1, j, k)) {
-			setBlockBounds(Utils.pipeMinPos, Utils.pipeMinPos, Utils.pipeMinPos, 1.0F, Utils.pipeMaxPos, Utils.pipeMaxPos);
+			setBlockBounds(CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MIN_POS, 1.0F, CoreConstants.PIPE_MAX_POS, CoreConstants.PIPE_MAX_POS);
 			super.addCollisionBoxesToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
 		}
 
 		if (Utils.checkLegacyPipesConnections(world, i, j, k, i, j - 1, k)) {
-			setBlockBounds(Utils.pipeMinPos, 0.0F, Utils.pipeMinPos, Utils.pipeMaxPos, Utils.pipeMaxPos, Utils.pipeMaxPos);
+			setBlockBounds(CoreConstants.PIPE_MIN_POS, 0.0F, CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MAX_POS, CoreConstants.PIPE_MAX_POS, CoreConstants.PIPE_MAX_POS);
 			super.addCollisionBoxesToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
 		}
 
 		if (Utils.checkLegacyPipesConnections(world, i, j, k, i, j + 1, k)) {
-			setBlockBounds(Utils.pipeMinPos, Utils.pipeMinPos, Utils.pipeMinPos, Utils.pipeMaxPos, 1.0F, Utils.pipeMaxPos);
+			setBlockBounds(CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MAX_POS, 1.0F, CoreConstants.PIPE_MAX_POS);
 			super.addCollisionBoxesToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
 		}
 
 		if (Utils.checkLegacyPipesConnections(world, i, j, k, i, j, k - 1)) {
-			setBlockBounds(Utils.pipeMinPos, Utils.pipeMinPos, 0.0F, Utils.pipeMaxPos, Utils.pipeMaxPos, Utils.pipeMaxPos);
+			setBlockBounds(CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MIN_POS, 0.0F, CoreConstants.PIPE_MAX_POS, CoreConstants.PIPE_MAX_POS, CoreConstants.PIPE_MAX_POS);
 			super.addCollisionBoxesToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
 		}
 
 		if (Utils.checkLegacyPipesConnections(world, i, j, k, i, j, k + 1)) {
-			setBlockBounds(Utils.pipeMinPos, Utils.pipeMinPos, Utils.pipeMinPos, Utils.pipeMaxPos, Utils.pipeMaxPos, 1.0F);
+			setBlockBounds(CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MAX_POS, CoreConstants.PIPE_MAX_POS, 1.0F);
 			super.addCollisionBoxesToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
 		}
 
@@ -145,7 +146,7 @@ public class BlockFrame extends Block implements IFramePipeConnection {
 
 	@Override
 	public MovingObjectPosition collisionRayTrace(World world, int i, int j, int k, Vec3 vec3d, Vec3 vec3d1) {
-		float xMin = Utils.pipeMinPos, xMax = Utils.pipeMaxPos, yMin = Utils.pipeMinPos, yMax = Utils.pipeMaxPos, zMin = Utils.pipeMinPos, zMax = Utils.pipeMaxPos;
+		float xMin = CoreConstants.PIPE_MIN_POS, xMax = CoreConstants.PIPE_MAX_POS, yMin = CoreConstants.PIPE_MIN_POS, yMax = CoreConstants.PIPE_MAX_POS, zMin = CoreConstants.PIPE_MIN_POS, zMax = CoreConstants.PIPE_MAX_POS;
 
 		if (Utils.checkLegacyPipesConnections(world, i, j, k, i - 1, j, k)) {
 			xMin = 0.0F;

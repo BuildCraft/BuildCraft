@@ -71,30 +71,30 @@ public class ItemFacade extends ItemBuildCraft {
 		}
 	}
 
-	@Override
-	public boolean onItemUseFirst(ItemStack stack, EntityPlayer player, World worldObj, int x, int y, int z, int side, float hitX, float hitY, float hitZ) {
-		if (worldObj.isRemote)
-			return false;
-		TileEntity tile = worldObj.getBlockTileEntity(x, y, z);
-		if (!(tile instanceof TileGenericPipe))
-			return false;
-		TileGenericPipe pipeTile = (TileGenericPipe) tile;
-
-		if (player.isSneaking()) { // Strip facade
-			if (!pipeTile.hasFacade(ForgeDirection.VALID_DIRECTIONS[side]))
-				return false;
-			pipeTile.dropFacade(ForgeDirection.VALID_DIRECTIONS[side]);
-			return true;
-		} else {
-			if (((TileGenericPipe) tile).addFacade(ForgeDirection.values()[side], ItemFacade.getBlockId(stack), ItemFacade.getMetaData(stack))) {
-				if (!player.capabilities.isCreativeMode) {
-					stack.stackSize--;
-				}
-				return true;
-			}
-			return false;
-		}
-	}
+//	@Override
+//	public boolean onItemUseFirst(ItemStack stack, EntityPlayer player, World worldObj, int x, int y, int z, int side, float hitX, float hitY, float hitZ) {
+//		if (worldObj.isRemote)
+//			return false;
+//		TileEntity tile = worldObj.getBlockTileEntity(x, y, z);
+//		if (!(tile instanceof TileGenericPipe))
+//			return false;
+//		TileGenericPipe pipeTile = (TileGenericPipe) tile;
+//
+//		if (player.isSneaking()) { // Strip facade
+//			if (!pipeTile.hasFacade(ForgeDirection.VALID_DIRECTIONS[side]))
+//				return false;
+//			pipeTile.dropFacade(ForgeDirection.VALID_DIRECTIONS[side]);
+//			return true;
+//		} else {
+//			if (((TileGenericPipe) tile).addFacade(ForgeDirection.values()[side], ItemFacade.getBlockId(stack), ItemFacade.getMetaData(stack))) {
+//				if (!player.capabilities.isCreativeMode) {
+//					stack.stackSize--;
+//				}
+//				return true;
+//			}
+//			return false;
+//		}
+//	}
 
 	public static void initialize() {
 		for (Field f : Block.class.getDeclaredFields()) {

@@ -2,12 +2,14 @@ package buildcraft.transport.render;
 
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
-import buildcraft.core.utils.Utils;
+import buildcraft.core.CoreConstants;
 import buildcraft.transport.BlockGenericPipe;
 import buildcraft.transport.IPipeRenderState;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeRenderState;
+import buildcraft.transport.TransportConstants;
 import buildcraft.transport.TransportProxy;
+import buildcraft.core.utils.MatrixTranformations;
 import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
@@ -20,62 +22,8 @@ import net.minecraftforge.common.ForgeDirection;
 
 public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
 
-	public static final float facadeThickness = 1F / 16F;
 
-	/**
-	 * Mirrors the array on the Y axis by calculating offsets from 0.5F
-	 *
-	 * @param targetArray
-	 */
-	private void mirrorY(float[][] targetArray) {
-		float temp = targetArray[1][0];
-		targetArray[1][0] = (targetArray[1][1] - 0.5F) * -1F + 0.5F; // 1 -> 0.5F -> -0.5F -> 0F
-		targetArray[1][1] = (temp - 0.5F) * -1F + 0.5F; // 0 -> -0.5F -> 0.5F -> 1F
-	}
 
-	/**
-	 * Shifts the coordinates around effectivly rotating something. Zero state
-	 * is DOWN then -> NORTH -> WEST Note - To obtain Pos, do a mirrorY() before
-	 * rotating
-	 *
-	 * @param targetArray the array that should be rotated
-	 */
-	private void rotate(float[][] targetArray) {
-		for (int i = 0; i < 2; i++) {
-			float temp = targetArray[2][i];
-			targetArray[2][i] = targetArray[1][i];
-			targetArray[1][i] = targetArray[0][i];
-			targetArray[0][i] = temp;
-		}
-	}
-
-	/**
-	 * @param targetArray the array that should be transformed
-	 * @param direction
-	 */
-	private void transform(float[][] targetArray, ForgeDirection direction) {
-		if ((direction.ordinal() & 0x1) == 1) {
-			mirrorY(targetArray);
-		}
-
-		for (int i = 0; i < (direction.ordinal() >> 1); i++) {
-			rotate(targetArray);
-		}
-	}
-
-	/**
-	 * Clones both dimensions of a float[][]
-	 *
-	 * @param source the float[][] to deepClone
-	 * @return
-	 */
-	private float[][] deepClone(float[][] source) {
-		float[][] target = source.clone();
-		for (int i = 0; i < target.length; i++) {
-			target[i] = source[i].clone();
-		}
-		return target;
-	}
 
 	private void renderAllFaceExeptAxe(RenderBlocks renderblocks, BlockGenericPipe block, Icon icon, int x, int y, int z, char axe) {
 		float minX = (float) renderblocks.renderMinX;
@@ -121,8 +69,8 @@ public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
 
 	public void renderPipe(RenderBlocks renderblocks, IBlockAccess iblockaccess, BlockGenericPipe block, IPipeRenderState renderState, int x, int y, int z) {
 
-		float minSize = Utils.pipeMinPos;
-		float maxSize = Utils.pipeMaxPos;
+		float minSize = CoreConstants.PIPE_MIN_POS;
+		float maxSize = CoreConstants.PIPE_MAX_POS;
 
 		PipeRenderState state = renderState.getRenderState();
 		IIconProvider icons = renderState.getPipeIcons();
@@ -210,7 +158,7 @@ public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
 		zeroState[0][1] = 1.0F + zFightOffset / 2;
 		// Y START - END
 		zeroState[1][0] = 0.0F - zFightOffset;
-		zeroState[1][1] = facadeThickness;
+		zeroState[1][1] = TransportConstants.FACADE_THICKNESS;
 		// Z START - END
 		zeroState[2][0] = 0.0F;
 		zeroState[2][1] = 1.0F;
@@ -241,39 +189,39 @@ public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
 
 				// Hollow facade
 				if (state.pipeConnectionMatrix.isConnected(direction)) {
-					float[][] rotated = deepClone(zeroState);
+					float[][] rotated = MatrixTranformations.deepClone(zeroState);
 					rotated[2][0] = 0.0F;
-					rotated[2][1] = Utils.pipeMinPos - zFightOffset;
+					rotated[2][1] = CoreConstants.PIPE_MIN_POS - zFightOffset;
 					rotated[1][0] -= zFightOffset / 2;
-					transform(rotated, direction);
+					MatrixTranformations.transform(rotated, direction);
 					renderblocks.setRenderBounds(rotated[0][0], rotated[1][0], rotated[2][0], rotated[0][1], rotated[1][1], rotated[2][1]);
 					renderblocks.renderStandardBlock(block, x, y, z);
 
-					rotated = deepClone(zeroState);
-					rotated[2][0] = Utils.pipeMaxPos + zFightOffset;
+					rotated = MatrixTranformations.deepClone(zeroState);
+					rotated[2][0] = CoreConstants.PIPE_MAX_POS + zFightOffset;
 					rotated[1][0] -= zFightOffset / 2;
-					transform(rotated, direction);
+					MatrixTranformations.transform(rotated, direction);
 					renderblocks.setRenderBounds(rotated[0][0], rotated[1][0], rotated[2][0], rotated[0][1], rotated[1][1], rotated[2][1]);
 					renderblocks.renderStandardBlock(block, x, y, z);
 
-					rotated = deepClone(zeroState);
+					rotated = MatrixTranformations.deepClone(zeroState);
 					rotated[0][0] = 0.0F;
-					rotated[0][1] = Utils.pipeMinPos - zFightOffset;
+					rotated[0][1] = CoreConstants.PIPE_MIN_POS - zFightOffset;
 					rotated[1][1] -= zFightOffset;
-					transform(rotated, direction);
+					MatrixTranformations.transform(rotated, direction);
 					renderblocks.setRenderBounds(rotated[0][0], rotated[1][0], rotated[2][0], rotated[0][1], rotated[1][1], rotated[2][1]);
 					renderblocks.renderStandardBlock(block, x, y, z);
 
-					rotated = deepClone(zeroState);
-					rotated[0][0] = Utils.pipeMaxPos + zFightOffset;
+					rotated = MatrixTranformations.deepClone(zeroState);
+					rotated[0][0] = CoreConstants.PIPE_MAX_POS + zFightOffset;
 					rotated[0][1] = 1F;
 					rotated[1][1] -= zFightOffset;
-					transform(rotated, direction);
+					MatrixTranformations.transform(rotated, direction);
 					renderblocks.setRenderBounds(rotated[0][0], rotated[1][0], rotated[2][0], rotated[0][1], rotated[1][1], rotated[2][1]);
 					renderblocks.renderStandardBlock(block, x, y, z);
 				} else { // Solid facade
-					float[][] rotated = deepClone(zeroState);
-					transform(rotated, direction);
+					float[][] rotated = MatrixTranformations.deepClone(zeroState);
+					MatrixTranformations.transform(rotated, direction);
 					renderblocks.setRenderBounds(rotated[0][0], rotated[1][0], rotated[2][0], rotated[0][1], rotated[1][1], rotated[2][1]);
 					renderblocks.renderStandardBlock(block, x, y, z);
 				}
@@ -292,21 +240,21 @@ public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
 		}
 
 		// X START - END
-		zeroState[0][0] = Utils.pipeMinPos;
-		zeroState[0][1] = Utils.pipeMaxPos;
+		zeroState[0][0] = CoreConstants.PIPE_MIN_POS;
+		zeroState[0][1] = CoreConstants.PIPE_MAX_POS;
 		// Y START - END
-		zeroState[1][0] = facadeThickness;
-		zeroState[1][1] = Utils.pipeMinPos;
+		zeroState[1][0] = TransportConstants.FACADE_THICKNESS;
+		zeroState[1][1] = CoreConstants.PIPE_MIN_POS;
 		// Z START - END
-		zeroState[2][0] = Utils.pipeMinPos;
-		zeroState[2][1] = Utils.pipeMaxPos;
+		zeroState[2][0] = CoreConstants.PIPE_MIN_POS;
+		zeroState[2][1] = CoreConstants.PIPE_MAX_POS;
 
 		state.currentTexture = BuildCraftTransport.instance.pipeIconProvider.getIcon(PipeIconProvider.TYPE.PipeStructureCobblestone.ordinal()); // Structure Pipe
 
 		for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
 			if (state.facadeMatrix.getFacadeBlockId(direction) != 0 && !state.pipeConnectionMatrix.isConnected(direction)) {
-				float[][] rotated = deepClone(zeroState);
-				transform(rotated, direction);
+				float[][] rotated = MatrixTranformations.deepClone(zeroState);
+				MatrixTranformations.transform(rotated, direction);
 
 				renderblocks.setRenderBounds(rotated[0][0], rotated[1][0], rotated[2][0], rotated[0][1], rotated[1][1], rotated[2][1]);
 				renderblocks.renderStandardBlock(block, x, y, z);
@@ -333,8 +281,8 @@ public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
 
 		for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
 			if (state.plugMatrix.isConnected(direction)) {
-				float[][] rotated = deepClone(zeroState);
-				transform(rotated, direction);
+				float[][] rotated = MatrixTranformations.deepClone(zeroState);
+				MatrixTranformations.transform(rotated, direction);
 
 				renderblocks.setRenderBounds(rotated[0][0], rotated[1][0], rotated[2][0], rotated[0][1], rotated[1][1], rotated[2][1]);
 				renderblocks.renderStandardBlock(block, x, y, z);
@@ -355,8 +303,8 @@ public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
 
 		for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
 			if (state.plugMatrix.isConnected(direction)) {
-				float[][] rotated = deepClone(zeroState);
-				transform(rotated, direction);
+				float[][] rotated = MatrixTranformations.deepClone(zeroState);
+				MatrixTranformations.transform(rotated, direction);
 
 				renderblocks.setRenderBounds(rotated[0][0], rotated[1][0], rotated[2][0], rotated[0][1], rotated[1][1], rotated[2][1]);
 				renderblocks.renderStandardBlock(block, x, y, z);

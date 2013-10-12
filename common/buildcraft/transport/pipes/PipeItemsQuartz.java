@@ -10,11 +10,11 @@ package buildcraft.transport.pipes;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.core.Position;
-import buildcraft.core.utils.Utils;
 import buildcraft.transport.IPipeTransportItemsHook;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportItems;
+import buildcraft.transport.TransportConstants;
 import buildcraft.transport.TravelingItem;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -41,12 +41,12 @@ public class PipeItemsQuartz extends Pipe implements IPipeTransportItemsHook {
 
 	@Override
 	public void readjustSpeed(TravelingItem item) {
-		if (item.getSpeed() > Utils.pipeNormalSpeed) {
-			item.setSpeed(item.getSpeed() - Utils.pipeNormalSpeed / 4.0F);
+		if (item.getSpeed() > TransportConstants.PIPE_NORMAL_SPEED) {
+			item.setSpeed(item.getSpeed() - TransportConstants.PIPE_NORMAL_SPEED / 4.0F);
 		}
 
-		if (item.getSpeed() < Utils.pipeNormalSpeed) {
-			item.setSpeed(Utils.pipeNormalSpeed);
+		if (item.getSpeed() < TransportConstants.PIPE_NORMAL_SPEED) {
+			item.setSpeed(TransportConstants.PIPE_NORMAL_SPEED);
 		}
 	}
 

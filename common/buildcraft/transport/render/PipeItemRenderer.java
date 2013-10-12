@@ -1,7 +1,7 @@
 package buildcraft.transport.render;
 
 import buildcraft.BuildCraftTransport;
-import buildcraft.core.utils.Utils;
+import buildcraft.core.CoreConstants;
 import buildcraft.transport.ItemPipe;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
@@ -27,7 +27,7 @@ public class PipeItemRenderer implements IItemRenderer {
 		if (icon == null)
 			icon = ((TextureMap) Minecraft.getMinecraft().getTextureManager().getTexture(TextureMap.locationBlocksTexture)).getAtlasSprite("missingno");
 
-		block.setBlockBounds(Utils.pipeMinPos, 0.0F, Utils.pipeMinPos, Utils.pipeMaxPos, 1.0F, Utils.pipeMaxPos);
+		block.setBlockBounds(CoreConstants.PIPE_MIN_POS, 0.0F, CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MAX_POS, 1.0F, CoreConstants.PIPE_MAX_POS);
 		block.setBlockBoundsForItemRender();
 		render.setRenderBoundsFromBlock(block);
 

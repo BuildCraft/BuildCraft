@@ -46,6 +46,7 @@ public class ItemGate extends ItemBuildCraft {
 		setHasSubtypes(true);
 		setMaxDamage(0);
 		setCreativeTab(CreativeTabBuildCraft.tabBuildCraft);
+		setPassSneakClick(true);
 	}
 
 	@SuppressWarnings({ "all" })

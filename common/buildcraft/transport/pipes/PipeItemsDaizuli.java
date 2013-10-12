@@ -14,12 +14,12 @@ import buildcraft.api.gates.IAction;
 import buildcraft.api.tools.IToolWrench;
 import buildcraft.core.network.TileNetworkData;
 import buildcraft.core.utils.EnumColor;
-import buildcraft.core.utils.Utils;
 import buildcraft.transport.IPipeTransportItemsHook;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportItems;
 import buildcraft.transport.TileGenericPipe;
+import buildcraft.transport.TransportConstants;
 import buildcraft.transport.TravelingItem;
 import buildcraft.transport.triggers.ActionPipeColor;
 import buildcraft.transport.triggers.ActionPipeDirection;
@@ -140,12 +140,12 @@ public class PipeItemsDaizuli extends Pipe<PipeTransportItems> implements IPipeT
 
 	@Override
 	public void readjustSpeed(TravelingItem item) {
-		if (item.getSpeed() > Utils.pipeNormalSpeed)
-			item.setSpeed(item.getSpeed() - Utils.pipeNormalSpeed / 4.0F);
+		if (item.getSpeed() > TransportConstants.PIPE_NORMAL_SPEED)
+			item.setSpeed(item.getSpeed() - TransportConstants.PIPE_NORMAL_SPEED / 4.0F);
 
 
-		if (item.getSpeed() < Utils.pipeNormalSpeed)
-			item.setSpeed(Utils.pipeNormalSpeed);
+		if (item.getSpeed() < TransportConstants.PIPE_NORMAL_SPEED)
+			item.setSpeed(TransportConstants.PIPE_NORMAL_SPEED);
 	}
 
 	@Override

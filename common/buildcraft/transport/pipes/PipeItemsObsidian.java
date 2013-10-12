@@ -19,10 +19,10 @@ import buildcraft.core.inventory.Transactor;
 import buildcraft.core.inventory.filters.StackFilter;
 import buildcraft.transport.TravelingItem;
 import buildcraft.core.proxy.CoreProxy;
-import buildcraft.core.utils.Utils;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportItems;
+import buildcraft.transport.utils.TransportUtils;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import java.util.Arrays;
@@ -226,7 +226,7 @@ public class PipeItemsObsidian extends Pipe<PipeTransportItems> implements IPowe
 				CoreProxy.proxy.removeEntity(entity);
 			}
 
-			TravelingItem passive = new TravelingItem(container.xCoord + 0.5, container.yCoord + Utils.getPipeFloorOf(stack), container.zCoord + 0.5, stack);
+			TravelingItem passive = new TravelingItem(container.xCoord + 0.5, container.yCoord + TransportUtils.getPipeFloorOf(stack), container.zCoord + 0.5, stack);
 
 			passive.setSpeed((float) speed);
 

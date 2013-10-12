@@ -12,11 +12,11 @@ import buildcraft.BuildCraftCore.RenderMode;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.transport.IPipe;
 import buildcraft.api.transport.IPipe.WireColor;
+import buildcraft.core.CoreConstants;
 import buildcraft.core.render.FluidRenderer;
 import buildcraft.core.render.RenderEntityBlock;
 import buildcraft.core.render.RenderEntityBlock.RenderInfo;
 import buildcraft.core.utils.EnumColor;
-import buildcraft.core.utils.Utils;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeRenderState;
@@ -98,7 +98,7 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 		}
 		block.texture = fluid.getStillIcon();
 
-		float size = Utils.pipeMaxPos - Utils.pipeMinPos;
+		float size = CoreConstants.PIPE_MAX_POS - CoreConstants.PIPE_MIN_POS;
 
 		// render size
 
@@ -111,12 +111,12 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 			GL11.glNewList(d.sideHorizontal[s], 4864 /* GL_COMPILE */);
 
 			block.minX = 0.0F;
-			block.minZ = Utils.pipeMinPos + 0.01F;
+			block.minZ = CoreConstants.PIPE_MIN_POS + 0.01F;
 
 			block.maxX = block.minX + size / 2F + 0.01F;
 			block.maxZ = block.minZ + size - 0.02F;
 
-			block.minY = Utils.pipeMinPos + 0.01F;
+			block.minY = CoreConstants.PIPE_MIN_POS + 0.01F;
 			block.maxY = block.minY + (size - 0.02F) * ratio;
 
 			RenderEntityBlock.INSTANCE.renderBlock(block, world, 0, 0, 0, false, true);
@@ -128,7 +128,7 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 			d.sideVertical[s] = GLAllocation.generateDisplayLists(1);
 			GL11.glNewList(d.sideVertical[s], 4864 /* GL_COMPILE */);
 
-			block.minY = Utils.pipeMaxPos - 0.01;
+			block.minY = CoreConstants.PIPE_MAX_POS - 0.01;
 			block.maxY = 1;
 
 			block.minX = 0.5 - (size / 2 - 0.01) * ratio;
@@ -146,13 +146,13 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 			d.centerHorizontal[s] = GLAllocation.generateDisplayLists(1);
 			GL11.glNewList(d.centerHorizontal[s], 4864 /* GL_COMPILE */);
 
-			block.minX = Utils.pipeMinPos + 0.01;
-			block.minZ = Utils.pipeMinPos + 0.01;
+			block.minX = CoreConstants.PIPE_MIN_POS + 0.01;
+			block.minZ = CoreConstants.PIPE_MIN_POS + 0.01;
 
 			block.maxX = block.minX + size - 0.02;
 			block.maxZ = block.minZ + size - 0.02;
 
-			block.minY = Utils.pipeMinPos + 0.01;
+			block.minY = CoreConstants.PIPE_MIN_POS + 0.01;
 			block.maxY = block.minY + (size - 0.02F) * ratio;
 
 			RenderEntityBlock.INSTANCE.renderBlock(block, world, 0, 0, 0, false, true);
@@ -164,8 +164,8 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 			d.centerVertical[s] = GLAllocation.generateDisplayLists(1);
 			GL11.glNewList(d.centerVertical[s], 4864 /* GL_COMPILE */);
 
-			block.minY = Utils.pipeMinPos + 0.01;
-			block.maxY = Utils.pipeMaxPos - 0.01;
+			block.minY = CoreConstants.PIPE_MIN_POS + 0.01;
+			block.maxY = CoreConstants.PIPE_MAX_POS - 0.01;
 
 			block.minX = 0.5 - (size / 2 - 0.02) * ratio;
 			block.maxX = 0.5 + (size / 2 - 0.02) * ratio;
@@ -192,7 +192,7 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 		RenderInfo block = new RenderInfo();
 		block.texture = BuildCraftTransport.instance.pipeIconProvider.getIcon(PipeIconProvider.TYPE.Power_Normal.ordinal());
 
-		float size = Utils.pipeMaxPos - Utils.pipeMinPos;
+		float size = CoreConstants.PIPE_MAX_POS - CoreConstants.PIPE_MIN_POS;
 
 		for (int s = 0; s < POWER_STAGES; ++s) {
 			displayPowerList[s] = GLAllocation.generateDisplayLists(1);
@@ -218,7 +218,7 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 
 		block.texture = BuildCraftTransport.instance.pipeIconProvider.getIcon(PipeIconProvider.TYPE.Power_Overload.ordinal());
 
-		size = Utils.pipeMaxPos - Utils.pipeMinPos;
+		size = CoreConstants.PIPE_MAX_POS - CoreConstants.PIPE_MIN_POS;
 
 		for (int s = 0; s < POWER_STAGES; ++s) {
 			displayPowerListOverload[s] = GLAllocation.generateDisplayLists(1);
@@ -273,19 +273,19 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 		PipeRenderState state = pipe.getRenderState();
 
 		if (state.wireMatrix.hasWire(WireColor.Red)) {
-			pipeWireRender(pipe, Utils.pipeMinPos, Utils.pipeMaxPos, Utils.pipeMinPos, IPipe.WireColor.Red, x, y, z);
+			pipeWireRender(pipe, CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MAX_POS, CoreConstants.PIPE_MIN_POS, IPipe.WireColor.Red, x, y, z);
 		}
 
 		if (state.wireMatrix.hasWire(WireColor.Blue)) {
-			pipeWireRender(pipe, Utils.pipeMaxPos, Utils.pipeMaxPos, Utils.pipeMaxPos, IPipe.WireColor.Blue, x, y, z);
+			pipeWireRender(pipe, CoreConstants.PIPE_MAX_POS, CoreConstants.PIPE_MAX_POS, CoreConstants.PIPE_MAX_POS, IPipe.WireColor.Blue, x, y, z);
 		}
 
 		if (state.wireMatrix.hasWire(WireColor.Green)) {
-			pipeWireRender(pipe, Utils.pipeMaxPos, Utils.pipeMinPos, Utils.pipeMinPos, IPipe.WireColor.Green, x, y, z);
+			pipeWireRender(pipe, CoreConstants.PIPE_MAX_POS, CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MIN_POS, IPipe.WireColor.Green, x, y, z);
 		}
 
 		if (state.wireMatrix.hasWire(WireColor.Yellow)) {
-			pipeWireRender(pipe, Utils.pipeMinPos, Utils.pipeMinPos, Utils.pipeMaxPos, IPipe.WireColor.Yellow, x, y, z);
+			pipeWireRender(pipe, CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MAX_POS, IPipe.WireColor.Yellow, x, y, z);
 		}
 
 		if (state.hasGate()) {
@@ -297,13 +297,13 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 
 		PipeRenderState state = pipe.getRenderState();
 
-		float minX = Utils.pipeMinPos;
-		float minY = Utils.pipeMinPos;
-		float minZ = Utils.pipeMinPos;
+		float minX = CoreConstants.PIPE_MIN_POS;
+		float minY = CoreConstants.PIPE_MIN_POS;
+		float minZ = CoreConstants.PIPE_MIN_POS;
 
-		float maxX = Utils.pipeMaxPos;
-		float maxY = Utils.pipeMaxPos;
-		float maxZ = Utils.pipeMaxPos;
+		float maxX = CoreConstants.PIPE_MAX_POS;
+		float maxY = CoreConstants.PIPE_MAX_POS;
+		float maxZ = CoreConstants.PIPE_MAX_POS;
 
 		boolean foundX = false, foundY = false, foundZ = false;
 
@@ -340,43 +340,43 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 		boolean center = false;
 
 		if (minX == 0 && maxX != 1 && (foundY || foundZ))
-			if (cx == Utils.pipeMinPos) {
-				maxX = Utils.pipeMinPos;
+			if (cx == CoreConstants.PIPE_MIN_POS) {
+				maxX = CoreConstants.PIPE_MIN_POS;
 			} else {
 				center = true;
 			}
 
 		if (minX != 0 && maxX == 1 && (foundY || foundZ))
-			if (cx == Utils.pipeMaxPos) {
-				minX = Utils.pipeMaxPos;
+			if (cx == CoreConstants.PIPE_MAX_POS) {
+				minX = CoreConstants.PIPE_MAX_POS;
 			} else {
 				center = true;
 			}
 
 		if (minY == 0 && maxY != 1 && (foundX || foundZ))
-			if (cy == Utils.pipeMinPos) {
-				maxY = Utils.pipeMinPos;
+			if (cy == CoreConstants.PIPE_MIN_POS) {
+				maxY = CoreConstants.PIPE_MIN_POS;
 			} else {
 				center = true;
 			}
 
 		if (minY != 0 && maxY == 1 && (foundX || foundZ))
-			if (cy == Utils.pipeMaxPos) {
-				minY = Utils.pipeMaxPos;
+			if (cy == CoreConstants.PIPE_MAX_POS) {
+				minY = CoreConstants.PIPE_MAX_POS;
 			} else {
 				center = true;
 			}
 
 		if (minZ == 0 && maxZ != 1 && (foundX || foundY))
-			if (cz == Utils.pipeMinPos) {
-				maxZ = Utils.pipeMinPos;
+			if (cz == CoreConstants.PIPE_MIN_POS) {
+				maxZ = CoreConstants.PIPE_MIN_POS;
 			} else {
 				center = true;
 			}
 
 		if (minZ != 0 && maxZ == 1 && (foundX || foundY))
-			if (cz == Utils.pipeMaxPos) {
-				minZ = Utils.pipeMaxPos;
+			if (cz == CoreConstants.PIPE_MAX_POS) {
+				minZ = CoreConstants.PIPE_MAX_POS;
 			} else {
 				center = true;
 			}
@@ -389,10 +389,16 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 		GL11.glDisable(GL11.GL_BLEND);
 		GL11.glEnable(GL11.GL_CULL_FACE);
 		RenderHelper.disableStandardItemLighting();
-		
+
 		GL11.glColor3f(1, 1, 1);
-		GL11.glTranslatef((float) x, (float) y, (float) z);	
-		
+		GL11.glTranslatef((float) x, (float) y, (float) z);
+
+		float scale = 1.001f;
+		GL11.glTranslatef(0.5F, 0.5F, 0.5F);
+		GL11.glScalef(scale, scale, scale);
+		GL11.glTranslatef(-0.5F, -0.5F, -0.5F);
+
+
 		bindTexture(TextureMap.locationBlocksTexture);
 
 		RenderInfo box = new RenderInfo();
@@ -400,36 +406,36 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 
 		// Z render
 
-		if (minZ != Utils.pipeMinPos || maxZ != Utils.pipeMaxPos || !found) {
-			box.setBounds(cx == Utils.pipeMinPos ? cx - 0.05F : cx, cy == Utils.pipeMinPos ? cy - 0.05F : cy, minZ, cx == Utils.pipeMinPos ? cx
-					: cx + 0.05F, cy == Utils.pipeMinPos ? cy : cy + 0.05F, maxZ);
+		if (minZ != CoreConstants.PIPE_MIN_POS || maxZ != CoreConstants.PIPE_MAX_POS || !found) {
+			box.setBounds(cx == CoreConstants.PIPE_MIN_POS ? cx - 0.05F : cx, cy == CoreConstants.PIPE_MIN_POS ? cy - 0.05F : cy, minZ, cx == CoreConstants.PIPE_MIN_POS ? cx
+					: cx + 0.05F, cy == CoreConstants.PIPE_MIN_POS ? cy : cy + 0.05F, maxZ);
 			RenderEntityBlock.INSTANCE.renderBlock(box, pipe.worldObj, 0, 0, 0, pipe.xCoord, pipe.yCoord, pipe.zCoord, true, true);
 		}
 
 		// X render
 
-		if (minX != Utils.pipeMinPos || maxX != Utils.pipeMaxPos || !found) {
-			box.setBounds(minX, cy == Utils.pipeMinPos ? cy - 0.05F : cy, cz == Utils.pipeMinPos ? cz - 0.05F : cz, maxX, cy == Utils.pipeMinPos ? cy
-					: cy + 0.05F, cz == Utils.pipeMinPos ? cz : cz + 0.05F);
+		if (minX != CoreConstants.PIPE_MIN_POS || maxX != CoreConstants.PIPE_MAX_POS || !found) {
+			box.setBounds(minX, cy == CoreConstants.PIPE_MIN_POS ? cy - 0.05F : cy, cz == CoreConstants.PIPE_MIN_POS ? cz - 0.05F : cz, maxX, cy == CoreConstants.PIPE_MIN_POS ? cy
+					: cy + 0.05F, cz == CoreConstants.PIPE_MIN_POS ? cz : cz + 0.05F);
 			RenderEntityBlock.INSTANCE.renderBlock(box, pipe.worldObj, 0, 0, 0, pipe.xCoord, pipe.yCoord, pipe.zCoord, true, true);
 		}
 
 		// Y render
 
-		if (minY != Utils.pipeMinPos || maxY != Utils.pipeMaxPos || !found) {
-			box.setBounds(cx == Utils.pipeMinPos ? cx - 0.05F : cx, minY, cz == Utils.pipeMinPos ? cz - 0.05F : cz, cx == Utils.pipeMinPos ? cx
-					: cx + 0.05F, maxY, cz == Utils.pipeMinPos ? cz : cz + 0.05F);
+		if (minY != CoreConstants.PIPE_MIN_POS || maxY != CoreConstants.PIPE_MAX_POS || !found) {
+			box.setBounds(cx == CoreConstants.PIPE_MIN_POS ? cx - 0.05F : cx, minY, cz == CoreConstants.PIPE_MIN_POS ? cz - 0.05F : cz, cx == CoreConstants.PIPE_MIN_POS ? cx
+					: cx + 0.05F, maxY, cz == CoreConstants.PIPE_MIN_POS ? cz : cz + 0.05F);
 			RenderEntityBlock.INSTANCE.renderBlock(box, pipe.worldObj, 0, 0, 0, pipe.xCoord, pipe.yCoord, pipe.zCoord, true, true);
 		}
 
 		if (center || !found) {
-			box.setBounds(cx == Utils.pipeMinPos ? cx - 0.05F : cx, cy == Utils.pipeMinPos ? cy - 0.05F : cy, cz == Utils.pipeMinPos ? cz - 0.05F : cz,
-					cx == Utils.pipeMinPos ? cx : cx + 0.05F, cy == Utils.pipeMinPos ? cy : cy + 0.05F, cz == Utils.pipeMinPos ? cz : cz + 0.05F);
+			box.setBounds(cx == CoreConstants.PIPE_MIN_POS ? cx - 0.05F : cx, cy == CoreConstants.PIPE_MIN_POS ? cy - 0.05F : cy, cz == CoreConstants.PIPE_MIN_POS ? cz - 0.05F : cz,
+					cx == CoreConstants.PIPE_MIN_POS ? cx : cx + 0.05F, cy == CoreConstants.PIPE_MIN_POS ? cy : cy + 0.05F, cz == CoreConstants.PIPE_MIN_POS ? cz : cz + 0.05F);
 			RenderEntityBlock.INSTANCE.renderBlock(box, pipe.worldObj, 0, 0, 0, pipe.xCoord, pipe.yCoord, pipe.zCoord, true, true);
 		}
-		
+
 		RenderHelper.enableStandardItemLighting();
-		
+
 		GL11.glPopAttrib();
 		GL11.glPopMatrix();
 	}
@@ -442,7 +448,7 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 		GL11.glEnable(GL11.GL_CULL_FACE);
 //		GL11.glDisable(GL11.GL_TEXTURE_2D);
 		RenderHelper.disableStandardItemLighting();
-		
+
 		GL11.glColor3f(1, 1, 1);
 		GL11.glTranslatef((float) x, (float) y, (float) z);
 
@@ -450,42 +456,42 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 
 		PipeRenderState state = pipe.getRenderState();
 
-		float min = Utils.pipeMinPos + 0.05F;
-		float max = Utils.pipeMaxPos - 0.05F;
+		float min = CoreConstants.PIPE_MIN_POS + 0.05F;
+		float max = CoreConstants.PIPE_MAX_POS - 0.05F;
 
 		RenderInfo box = new RenderInfo();
 		box.texture = BuildCraftTransport.instance.gateIconProvider.getIcon(state.getGateIconIndex());
 
 		if (shouldRenderNormalPipeSide(state, ForgeDirection.WEST)) {
-			box.setBounds(Utils.pipeMinPos - 0.10F, min, min, Utils.pipeMinPos + 0.001F, max, max);
+			box.setBounds(CoreConstants.PIPE_MIN_POS - 0.10F, min, min, CoreConstants.PIPE_MIN_POS + 0.001F, max, max);
 			RenderEntityBlock.INSTANCE.renderBlock(box, pipe.worldObj, 0, 0, 0, pipe.xCoord, pipe.yCoord, pipe.zCoord, true, true);
 		}
 
 		if (shouldRenderNormalPipeSide(state, ForgeDirection.EAST)) {
-			box.setBounds(Utils.pipeMaxPos + 0.001F, min, min, Utils.pipeMaxPos + 0.10F, max, max);
+			box.setBounds(CoreConstants.PIPE_MAX_POS + 0.001F, min, min, CoreConstants.PIPE_MAX_POS + 0.10F, max, max);
 			RenderEntityBlock.INSTANCE.renderBlock(box, pipe.worldObj, 0, 0, 0, pipe.xCoord, pipe.yCoord, pipe.zCoord, true, true);
 		}
 
 		if (shouldRenderNormalPipeSide(state, ForgeDirection.DOWN)) {
-			box.setBounds(min, Utils.pipeMinPos - 0.10F, min, max, Utils.pipeMinPos + 0.001F, max);
+			box.setBounds(min, CoreConstants.PIPE_MIN_POS - 0.10F, min, max, CoreConstants.PIPE_MIN_POS + 0.001F, max);
 			RenderEntityBlock.INSTANCE.renderBlock(box, pipe.worldObj, 0, 0, 0, pipe.xCoord, pipe.yCoord, pipe.zCoord, true, true);
 		}
 
 		if (shouldRenderNormalPipeSide(state, ForgeDirection.UP)) {
-			box.setBounds(min, Utils.pipeMaxPos + 0.001F, min, max, Utils.pipeMaxPos + 0.10F, max);
+			box.setBounds(min, CoreConstants.PIPE_MAX_POS + 0.001F, min, max, CoreConstants.PIPE_MAX_POS + 0.10F, max);
 			RenderEntityBlock.INSTANCE.renderBlock(box, pipe.worldObj, 0, 0, 0, pipe.xCoord, pipe.yCoord, pipe.zCoord, true, true);
 		}
 
 		if (shouldRenderNormalPipeSide(state, ForgeDirection.NORTH)) {
-			box.setBounds(min, min, Utils.pipeMinPos - 0.10F, max, max, Utils.pipeMinPos + 0.001F);
+			box.setBounds(min, min, CoreConstants.PIPE_MIN_POS - 0.10F, max, max, CoreConstants.PIPE_MIN_POS + 0.001F);
 			RenderEntityBlock.INSTANCE.renderBlock(box, pipe.worldObj, 0, 0, 0, pipe.xCoord, pipe.yCoord, pipe.zCoord, true, true);
 		}
 
 		if (shouldRenderNormalPipeSide(state, ForgeDirection.SOUTH)) {
-			box.setBounds(min, min, Utils.pipeMaxPos + 0.001F, max, max, Utils.pipeMaxPos + 0.10F);
+			box.setBounds(min, min, CoreConstants.PIPE_MAX_POS + 0.001F, max, max, CoreConstants.PIPE_MAX_POS + 0.10F);
 			RenderEntityBlock.INSTANCE.renderBlock(box, pipe.worldObj, 0, 0, 0, pipe.xCoord, pipe.yCoord, pipe.zCoord, true, true);
 		}
-		
+
 		RenderHelper.enableStandardItemLighting();
 
 		GL11.glPopAttrib();

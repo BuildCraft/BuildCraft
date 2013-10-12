@@ -365,6 +365,30 @@ public abstract class Pipe<T extends PipeTransport> implements IPipe, IDropContr
 		return gate != null;
 	}
 
+	public boolean hasGate(ForgeDirection side) {
+		if (!hasGate())
+			return false;
+		if (container.hasFacade(side))
+			return false;
+		if (container.hasPlug(side))
+			return false;
+		
+		int connections = 0;
+		ForgeDirection targetOrientation = ForgeDirection.UNKNOWN;
+		for (ForgeDirection o : ForgeDirection.VALID_DIRECTIONS) {
+			if (container.isPipeConnected(o)) {
+				connections++;
+				if (connections == 1)
+					targetOrientation = o;
+			}
+		}
+
+		if (connections > 1 || connections == 0)
+			return true;
+
+		return targetOrientation.getOpposite() != side;
+	}
+
 	protected void notifyBlocksOfNeighborChange(ForgeDirection side) {
 		container.worldObj.notifyBlocksOfNeighborChange(container.xCoord + side.offsetX, container.yCoord + side.offsetY, container.zCoord + side.offsetZ, BuildCraftTransport.genericPipeBlock.blockID);
 	}

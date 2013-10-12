@@ -11,7 +11,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import net.minecraft.block.Block;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -33,6 +32,7 @@ import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.power.PowerHandler;
 import buildcraft.api.power.PowerHandler.PowerReceiver;
 import buildcraft.core.Box;
+import buildcraft.core.CoreConstants;
 import buildcraft.core.DefaultAreaProvider;
 import buildcraft.core.EntityRobot;
 import buildcraft.core.IBuilderInventory;
@@ -128,9 +128,9 @@ public class TileQuarry extends TileBuildCraft implements IMachine, IPowerRecept
 
 	private void createArm() {
 
-		worldObj.spawnEntityInWorld(new EntityMechanicalArm(worldObj, box.xMin + Utils.pipeMaxPos, yCoord + bluePrintBuilder.bluePrint.sizeY - 1
-				+ Utils.pipeMinPos, box.zMin + Utils.pipeMaxPos, bluePrintBuilder.bluePrint.sizeX - 2 + Utils.pipeMinPos * 2, bluePrintBuilder.bluePrint.sizeZ
-				- 2 + Utils.pipeMinPos * 2, this));
+		worldObj.spawnEntityInWorld(new EntityMechanicalArm(worldObj, box.xMin + CoreConstants.PIPE_MAX_POS, yCoord + bluePrintBuilder.bluePrint.sizeY - 1
+				+ CoreConstants.PIPE_MIN_POS, box.zMin + CoreConstants.PIPE_MAX_POS, bluePrintBuilder.bluePrint.sizeX - 2 + CoreConstants.PIPE_MIN_POS * 2, bluePrintBuilder.bluePrint.sizeZ
+				- 2 + CoreConstants.PIPE_MIN_POS * 2, this));
 	}
 
 	// Callback from the arm once it's created
