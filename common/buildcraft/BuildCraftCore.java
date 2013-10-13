@@ -242,27 +242,27 @@ public class BuildCraftCore {
 			woodenGearItem = (new ItemBuildCraft(woodenGearId.getInt())).setUnlocalizedName("woodenGearItem");
 			LanguageRegistry.addName(woodenGearItem, "Wooden Gear");
 			CoreProxy.proxy.registerItem(woodenGearItem);
-			OreDictionary.registerOre("gearWooden", new ItemStack(woodenGearItem,1,0));
+			OreDictionary.registerOre("gearWood", new ItemStack(woodenGearItem));
 
 			stoneGearItem = (new ItemBuildCraft(stoneGearId.getInt())).setUnlocalizedName("stoneGearItem");
 			LanguageRegistry.addName(stoneGearItem, "Stone Gear");
 			CoreProxy.proxy.registerItem(stoneGearItem);
-			OreDictionary.registerOre("gearStone", new ItemStack(stoneGearItem,1,0));
+			OreDictionary.registerOre("gearStone", new ItemStack(stoneGearItem));
 
 			ironGearItem = (new ItemBuildCraft(ironGearId.getInt())).setUnlocalizedName("ironGearItem");
 			LanguageRegistry.addName(ironGearItem, "Iron Gear");
 			CoreProxy.proxy.registerItem(ironGearItem);
-			OreDictionary.registerOre("gearIron", new ItemStack(ironGearItem,1,0));
+			OreDictionary.registerOre("gearIron", new ItemStack(ironGearItem));
 			
 			goldGearItem = (new ItemBuildCraft(goldenGearId.getInt())).setUnlocalizedName("goldGearItem");
 			LanguageRegistry.addName(goldGearItem, "Gold Gear");
 			CoreProxy.proxy.registerItem(goldGearItem);
-			OreDictionary.registerOre("gearGold", new ItemStack(goldGearItem,1,0));
+			OreDictionary.registerOre("gearGold", new ItemStack(goldGearItem));
 
 			diamondGearItem = (new ItemBuildCraft(diamondGearId.getInt())).setUnlocalizedName("diamondGearItem");
 			LanguageRegistry.addName(diamondGearItem, "Diamond Gear");
 			CoreProxy.proxy.registerItem(diamondGearItem);
-			OreDictionary.registerOre("gearDiamond", new ItemStack(diamondGearItem,1,0));
+			OreDictionary.registerOre("gearDiamond", new ItemStack(diamondGearItem));
 
 			Property colorBlindProp = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "client.colorblindmode", false);
 			colorBlindProp.comment = "Set to true to enable alternate textures";
