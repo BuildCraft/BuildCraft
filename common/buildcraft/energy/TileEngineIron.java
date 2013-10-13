@@ -45,8 +45,8 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
 	public static float COOLDOWN_RATE = 0.05F;
 	public static int MAX_COOLANT_PER_TICK = 40;
 	int burnTime = 0;
-	private Tank tankFuel;
-	private Tank tankCoolant;
+	private Tank tankFuel = new Tank("tankFuel", MAX_LIQUID, this);
+	private Tank tankCoolant = new Tank("tankCoolant", MAX_LIQUID, this);
 	private TankManager tankManager = new TankManager();
 	private Fuel currentFuel = null;
 	public int penaltyCooling = 0;
@@ -55,8 +55,6 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
 
 	public TileEngineIron() {
 		super(1);
-		tankFuel = new Tank("tankFuel", MAX_LIQUID);
-		tankCoolant = new Tank("tankCoolant", MAX_LIQUID);
 		tankManager.add(tankFuel);
 		tankManager.add(tankCoolant);
 	}

@@ -32,7 +32,7 @@ import net.minecraftforge.fluids.IFluidHandler;
 
 public class TileTank extends TileBuildCraft implements IFluidHandler {
 
-	public final Tank tank = new Tank("tank", FluidContainerRegistry.BUCKET_VOLUME * 16);
+	public final Tank tank = new Tank("tank", FluidContainerRegistry.BUCKET_VOLUME * 16, this);
 	public final TankManager tankManager = new TankManager(tank);
 	public boolean hasUpdate = false;
 	public SafeTimeTracker tracker = new SafeTimeTracker();

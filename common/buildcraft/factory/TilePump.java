@@ -54,7 +54,7 @@ public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor
 	public static int MAX_LIQUID = FluidContainerRegistry.BUCKET_VOLUME * 16;
 	EntityBlock tube;
 	private TreeMap<Integer, Deque<BlockIndex>> pumpLayerQueues = new TreeMap<Integer, Deque<BlockIndex>>();
-	SingleUseTank tank;
+	SingleUseTank tank = new SingleUseTank("tank", MAX_LIQUID, this);
 	double tubeY = Double.NaN;
 	int aimY = 0;
 	private PowerHandler powerHandler;
@@ -66,7 +66,6 @@ public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor
 	public TilePump() {
 		powerHandler = new PowerHandler(this, Type.MACHINE);
 		initPowerProvider();
-		tank = new SingleUseTank("tank", MAX_LIQUID);
 	}
 
 	private void initPowerProvider() {

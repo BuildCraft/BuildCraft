@@ -36,7 +36,7 @@ public class TileFloodGate extends TileBuildCraft implements IFluidHandler {
 	private final TreeMap<Integer, Deque<BlockIndex>> pumpLayerQueues = new TreeMap<Integer, Deque<BlockIndex>>();
 	private final Set<BlockIndex> visitedBlocks = new HashSet<BlockIndex>();
 	private Deque<BlockIndex> fluidsFound = new LinkedList<BlockIndex>();
-	private final Tank tank;
+	private final Tank tank = new Tank("tank", MAX_LIQUID, this);
 	private int rebuildDelay;
 	private int tick = Utils.RANDOM.nextInt();
 	private boolean powered = false;
@@ -53,7 +53,6 @@ public class TileFloodGate extends TileBuildCraft implements IFluidHandler {
 	}
 
 	public TileFloodGate() {
-		tank = new Tank("tank", MAX_LIQUID);
 	}
 
 	@Override
