@@ -15,12 +15,12 @@ import buildcraft.core.IFramePipeConnection;
 import buildcraft.core.utils.Utils;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.AxisAlignedBB;
@@ -188,8 +188,8 @@ public class BlockFrame extends Block implements IFramePipeConnection {
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
-	public void addCreativeItems(ArrayList itemList) {
-		itemList.add(new ItemStack(this));
+	public void getSubBlocks(int id, CreativeTabs tab, List list) {
+		list.add(new ItemStack(this));
 	}
 
 	@Override
