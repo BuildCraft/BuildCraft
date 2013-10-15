@@ -94,10 +94,12 @@ public final class PowerHandler {
 		 * @return
 		 */
 		public float applyPerdition(PowerHandler powerHandler, float current, long ticksPassed) {
+//			float prev = current;
 			current -= powerLoss * ticksPassed;
 			if (current < 0) {
 				current = 0;
 			}
+//			powerHandler.totalLostPower += prev - current;
 			return current;
 		}
 
@@ -126,6 +128,11 @@ public final class PowerHandler {
 	private PerditionCalculator perdition;
 	private final PowerReceiver receiver;
 	private final Type type;
+	// Debug
+//	private double totalLostPower = 0;
+//	private double totalReceivedPower = 0;
+//	private double totalUsedPower = 0;
+//	private long startTime = -1;
 
 	public PowerHandler(IPowerReceptor receptor, Type type) {
 		this.receptor = receptor;
@@ -235,6 +242,13 @@ public final class PowerHandler {
 	 * design around this though if you are aware of the limitations.
 	 */
 	public void update() {
+//		if (startTime == -1)
+//			startTime = receptor.getWorld().getTotalWorldTime();
+//		else {
+//			long duration = receptor.getWorld().getTotalWorldTime() - startTime;
+//			System.out.printf("Power Stats: %s - Stored: %.2f Gained: %.2f - %.2f/t Lost: %.2f - %.2f/t Used: %.2f - %.2f/t%n", receptor.getClass().getSimpleName(), energyStored, totalReceivedPower, totalReceivedPower / duration, totalLostPower, totalLostPower / duration, totalUsedPower, totalUsedPower / duration);
+//		}
+
 		applyPerdition();
 		applyWork();
 		validateEnergy();
@@ -302,6 +316,9 @@ public final class PowerHandler {
 		}
 
 		validateEnergy();
+
+//		if (doUse)
+//			totalUsedPower += result;
 
 		return result;
 	}
@@ -396,8 +413,10 @@ public final class PowerHandler {
 			applyWork();
 
 			if (source == Type.ENGINE && type.eatsEngineExcess()) {
-				return Math.min(quantity, maxEnergyReceived);
+				used = Math.min(quantity, maxEnergyReceived);
 			}
+
+//			totalReceivedPower += used;
 
 			return used;
 		}
