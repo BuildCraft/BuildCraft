@@ -140,7 +140,7 @@ public class GateVanilla extends Gate {
 	 * @param k
 	 */
 	@Override
-	public void dropGate() {
+	public ItemStack getGateItem() {
 
 		int gateDamage;
 		switch (kind) {
@@ -175,7 +175,7 @@ public class GateVanilla extends Gate {
 			gateItem = BuildCraftTransport.pipeGate;
 		}
 
-		pipe.dropItem(new ItemStack(gateItem, 1, gateDamage));
+		return new ItemStack(gateItem, 1, gateDamage);
 
 	}
 
