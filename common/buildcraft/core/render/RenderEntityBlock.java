@@ -206,7 +206,7 @@ public class RenderEntityBlock extends Render {
 			tessellator.setBrightness(brightness);
 			tessellator.setColorOpaque_F(lightBottom * light, lightBottom * light, lightBottom * light);
 		} else {
-			tessellator.setColorOpaque_F(1.0F, 1.0F, 1.0F);
+//			tessellator.setColorOpaque_F(1.0F, 1.0F, 1.0F);
 			if (info.brightness >= 0)
 				tessellator.setBrightness(info.brightness);
 		}
