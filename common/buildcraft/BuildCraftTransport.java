@@ -269,7 +269,6 @@ public class BuildCraftTransport {
 
 			pipeWaterproof = new ItemBuildCraft(pipeWaterproofId.getInt());
 			pipeWaterproof.setUnlocalizedName("pipeWaterproof");
-			pipeWaterproof.setCreativeTab(CreativeTabBuildCraft.tabBuildCraft);
 			LanguageRegistry.addName(pipeWaterproof, "Pipe Waterproof");
 			genericPipeBlock = new BlockGenericPipe(genericPipeId.getInt());
 			CoreProxy.proxy.registerBlock(genericPipeBlock.setUnlocalizedName("pipeBlock"), ItemBlock.class);

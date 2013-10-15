@@ -27,7 +27,7 @@ public abstract class ItemBptBase extends ItemBuildCraft {
 		super(i);
 
 		maxStackSize = 1;
-		setCreativeTab(CreativeTabBuildCraft.tabBuildCraft);
+		setCreativeTab(CreativeTabBuildCraft.MACHINES.get());
 	}
 
 	@SuppressWarnings({ "all" })

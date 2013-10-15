@@ -27,7 +27,7 @@ public class BlockLaserTable extends BlockContainer {
 
 		setBlockBounds(0, 0, 0, 1, 9F / 16F, 1);
 		setHardness(10F);
-		setCreativeTab(CreativeTabBuildCraft.tabBuildCraft);
+		setCreativeTab(CreativeTabBuildCraft.MACHINES.get());
 	}
 
 	@Override

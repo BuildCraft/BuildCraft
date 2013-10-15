@@ -17,15 +17,12 @@ import java.util.Set;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
-import net.minecraftforge.common.ForgeDirection;
 
 public class ItemFacade extends ItemBuildCraft {
 
@@ -36,7 +33,7 @@ public class ItemFacade extends ItemBuildCraft {
 
 		setHasSubtypes(true);
 		setMaxDamage(0);
-		setCreativeTab(CreativeTabBuildCraft.tabBuildCraft);
+		setCreativeTab(CreativeTabBuildCraft.FACADES.get());
 	}
 
 	@Override

@@ -45,7 +45,7 @@ public class BlockSpring extends Block {
 		setStepSound(soundStoneFootstep);
 		disableStats();
 		setTickRandomly(true);
-		setCreativeTab(CreativeTabBuildCraft.tabBuildCraft);
+		setCreativeTab(CreativeTabBuildCraft.MACHINES.get());
 	}
 
 	@Override

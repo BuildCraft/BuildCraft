@@ -10,7 +10,6 @@ package buildcraft.transport;
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
-import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.IItemPipe;
 import buildcraft.core.ItemBuildCraft;
 import cpw.mods.fml.relauncher.Side;
@@ -32,7 +31,6 @@ public class ItemPipe extends ItemBuildCraft implements IItemPipe {
 
 	protected ItemPipe(int i) {
 		super(i);
-		setCreativeTab(CreativeTabBuildCraft.tabBuildCraft);
 	}
 
 	@Override
