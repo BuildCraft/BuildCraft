@@ -691,7 +691,7 @@ public class BlockGenericPipe extends BlockContainer {
 			return true;
 		if (player.isSneaking()) {
 			RaytraceResult rayTraceResult = doRayTrace(world, x, y, z, player);
-			if (rayTraceResult != null && rayTraceResult.hitPart == Part.Facade) {
+			if (rayTraceResult != null && rayTraceResult.hitPart == Part.Gate) {
 				if (stripGate(pipe))
 					return true;
 			}
