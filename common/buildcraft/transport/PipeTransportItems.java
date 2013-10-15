@@ -278,15 +278,15 @@ public class PipeTransportItems extends PipeTransport {
 				result.add(o);
 		}
 
+		if (this.container.pipe instanceof IPipeTransportItemsHook) {
+			Position pos = new Position(container.xCoord, container.yCoord, container.zCoord, item.input);
+			result = ((IPipeTransportItemsHook) this.container.pipe).filterPossibleMovements(result, pos, item);
+		}
+		
 		if (allowBouncing && result.isEmpty()) {
 			if (canReceivePipeObjects(item.input.getOpposite(), item)) {
 				result.add(item.input.getOpposite());
 			}
-		}
-
-		if (this.container.pipe instanceof IPipeTransportItemsHook) {
-			Position pos = new Position(container.xCoord, container.yCoord, container.zCoord, item.input);
-			result = ((IPipeTransportItemsHook) this.container.pipe).filterPossibleMovements(result, pos, item);
 		}
 
 		return result;
