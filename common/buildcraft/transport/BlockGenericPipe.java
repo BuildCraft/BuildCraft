@@ -576,6 +576,23 @@ public class BlockGenericPipe extends BlockContainer {
 			return pipe.itemID;
 	}
 
+	@SideOnly(Side.CLIENT)
+	@Override
+	public ItemStack getPickBlock(MovingObjectPosition target, World world, int x, int y, int z) {
+		RaytraceResult rayTraceResult = doRayTrace(world, x, y, z, Minecraft.getMinecraft().thePlayer);
+
+		if (rayTraceResult != null && rayTraceResult.boundingBox != null) {
+			switch (rayTraceResult.hitPart) {
+			case Gate:
+				Pipe pipe = getPipe(world, x, y, z);
+				return pipe.gate.getGateItem();
+			case Plug:
+				return new ItemStack(BuildCraftTransport.plugItem);
+			}
+		}
+		return super.getPickBlock(target, world, x, y, z);
+	}
+
 	/* Wrappers ************************************************************ */
 	@Override
 	public void onNeighborBlockChange(World world, int x, int y, int z, int id) {
@@ -691,7 +708,7 @@ public class BlockGenericPipe extends BlockContainer {
 			return true;
 		if (player.isSneaking()) {
 			RaytraceResult rayTraceResult = doRayTrace(world, x, y, z, player);
-			if (rayTraceResult != null && rayTraceResult.hitPart == Part.Facade) {
+			if (rayTraceResult != null && rayTraceResult.hitPart == Part.Gate) {
 				if (stripGate(pipe))
 					return true;
 			}

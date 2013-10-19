@@ -22,7 +22,7 @@ public class ItemBuildCraft extends Item {
 
 	public ItemBuildCraft(int i) {
 		super(i);
-		setCreativeTab(CreativeTabBuildCraft.tabBuildCraft);
+		setCreativeTab(CreativeTabBuildCraft.MACHINES.get());
 	}
 
 	@Override

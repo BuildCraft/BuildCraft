@@ -17,15 +17,12 @@ import java.util.Set;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
-import net.minecraftforge.common.ForgeDirection;
 
 public class ItemFacade extends ItemBuildCraft {
 
@@ -36,7 +33,7 @@ public class ItemFacade extends ItemBuildCraft {
 
 		setHasSubtypes(true);
 		setMaxDamage(0);
-		setCreativeTab(CreativeTabBuildCraft.tabBuildCraft);
+		setCreativeTab(CreativeTabBuildCraft.FACADES.get());
 	}
 
 	@Override
@@ -219,13 +216,13 @@ public class ItemFacade extends ItemBuildCraft {
 				Block bl = Block.blocksList[blockId];
 				// No Meta
 				if (bl != null && bl.getRenderType() == 31 && (blockMeta & 0xC) == 0)
-					return getStack(blockId, (blockMeta & 0x3) | 4);
+					return getStack(bl, (blockMeta & 0x3) | 4);
 				// Meta | 4 = true
 				if (bl != null && bl.getRenderType() == 31 && (blockMeta & 0x8) == 0)
-					return getStack(blockId, (blockMeta & 0x3) | 8);
+					return getStack(bl, (blockMeta & 0x3) | 8);
 				// Meta | 8 = true
 				if (bl != null && bl.getRenderType() == 31 && (blockMeta & 0x4) == 0)
-					return getStack(blockId, (blockMeta & 0x3));
+					return getStack(bl, (blockMeta & 0x3));
 			}
 			return null;
 		}
@@ -253,6 +250,10 @@ public class ItemFacade extends ItemBuildCraft {
 		return 0;
 	}
 
+	public static ItemStack getStack(Block block, int metadata) {
+		return getStack(block.blockID, metadata);
+	}
+	
 	public static ItemStack getStack(int blockID, int metadata) {
 		ItemStack stack = new ItemStack(BuildCraftTransport.facadeItem, 1, 0);
 		NBTTagCompound nbt = new NBTTagCompound("tag");

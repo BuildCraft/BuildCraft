@@ -49,7 +49,16 @@ public class BlockBuildcraftFluid extends BlockFluidClassic {
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void registerIcons(IconRegister iconRegister) {
-		this.theIcon = new Icon[]{iconRegister.registerIcon("buildcraft:" + fluidName + "_still"), iconRegister.registerIcon("buildcraft:" + fluidName + "_flow")};
+		this.theIcon = new Icon[] { iconRegister.registerIcon("buildcraft:" + fluidName + "_still"), iconRegister.registerIcon("buildcraft:" + fluidName + "_flow") };
+	}
+
+	@Override
+	public void onNeighborBlockChange(World world, int x, int y, int z, int blockId) {
+		super.onNeighborBlockChange(world, x, y, z, blockId);
+		if (flammable && world.provider.dimensionId == -1) {
+			world.newExplosion(null, x, y, z, 4F, true, true);
+			world.setBlockToAir(x, y, z);
+		}
 	}
 
 	public BlockBuildcraftFluid setFlammable(boolean flammable) {
@@ -82,13 +91,13 @@ public class BlockBuildcraftFluid extends BlockFluidClassic {
 		return flammable && flammability == 0;
 	}
 
-	public BlockBuildcraftFluid setParticleColor(float particleRed, float particleGreen, float particleBlue){
+	public BlockBuildcraftFluid setParticleColor(float particleRed, float particleGreen, float particleBlue) {
 		this.particleRed = particleRed;
 		this.particleGreen = particleGreen;
 		this.particleBlue = particleBlue;
 		return this;
 	}
-	
+
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void randomDisplayTick(World world, int x, int y, int z, Random rand) {
@@ -98,21 +107,23 @@ public class BlockBuildcraftFluid extends BlockFluidClassic {
 			double px = (double) ((float) x + rand.nextFloat());
 			double py = (double) y - 1.05D;
 			double pz = (double) ((float) z + rand.nextFloat());
-			
+
 			EntityFX fx = new EntityDropParticleFX(world, px, py, pz, particleRed, particleGreen, particleBlue);
 			FMLClientHandler.instance().getClient().effectRenderer.addEffect(fx);
 		}
 	}
-	
+
 	@Override
 	public boolean canDisplace(IBlockAccess world, int x, int y, int z) {
-		if (world.getBlockMaterial(x,  y,  z).isLiquid()) return false;
+		if (world.getBlockMaterial(x, y, z).isLiquid())
+			return false;
 		return super.canDisplace(world, x, y, z);
 	}
-	
+
 	@Override
 	public boolean displaceIfPossible(World world, int x, int y, int z) {
-		if (world.getBlockMaterial(x,  y,  z).isLiquid()) return false;
+		if (world.getBlockMaterial(x, y, z).isLiquid())
+			return false;
 		return super.displaceIfPossible(world, x, y, z);
 	}
 }

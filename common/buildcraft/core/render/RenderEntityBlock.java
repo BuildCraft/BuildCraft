@@ -164,7 +164,7 @@ public class RenderEntityBlock extends Render {
 					lightZ = (int) (Math.floor(entity.posZ) + kBase);
 
 					GL11.glDisable(2896 /* GL_LIGHTING */);
-					renderBlock(util, world, lightX, lightY, lightZ, false, true);
+					renderBlock(util, world, 0, 0, 0, lightX, lightY, lightZ, false, true);
 					GL11.glEnable(2896 /* GL_LIGHTING */);
 					GL11.glPopMatrix();
 
@@ -206,7 +206,7 @@ public class RenderEntityBlock extends Render {
 			tessellator.setBrightness(brightness);
 			tessellator.setColorOpaque_F(lightBottom * light, lightBottom * light, lightBottom * light);
 		} else {
-			tessellator.setColorOpaque_F(1.0F, 1.0F, 1.0F);
+//			tessellator.setColorOpaque_F(1.0F, 1.0F, 1.0F);
 			if (info.brightness >= 0)
 				tessellator.setBrightness(info.brightness);
 		}

@@ -153,7 +153,11 @@ public abstract class Gate {
 	// / UPDATING
 	public abstract void update();
 
-	public abstract void dropGate();
+	public abstract ItemStack getGateItem();
+
+	public void dropGate() {
+		pipe.dropItem(getGateItem());
+	}
 
 	public void resetGate() {
 		if (broadcastRedstone) {

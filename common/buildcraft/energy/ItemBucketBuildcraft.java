@@ -22,7 +22,7 @@ public class ItemBucketBuildcraft extends ItemBucket {
 
 	public ItemBucketBuildcraft(int i, int blockId) {
 		super(i, blockId);
-		setCreativeTab(CreativeTabBuildCraft.tabBuildCraft);
+		setCreativeTab(CreativeTabBuildCraft.MACHINES.get());
 		setContainerItem(Item.bucketEmpty);
 	}
 
