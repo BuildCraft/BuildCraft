@@ -3,6 +3,7 @@ package buildcraft.factory;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import net.minecraftforge.fluids.Fluid;
 
 public class PumpDimensionList {
@@ -34,7 +35,7 @@ public class PumpDimensionList {
 			else
 				e.dimID = Integer.parseInt(dimIDString);
 
-			e.fluidName = entryString.substring(i + 1);
+			e.fluidName = entryString.substring(i + 1).toLowerCase(Locale.ENGLISH);
 			if(e.fluidName.equals("*"))
 				e.matchAnyFluid = true;
 

@@ -165,7 +165,7 @@ public class BuildCraftFactory {
 		pumpList.comment = "Allows admins to whitelist or blacklist pumping of specific fluids in specific dimensions.\n"
 				+ "Eg. \"-/-1/Lava\" will disable lava in the nether. \"-/*/Lava\" will disable lava in any dimension. \"+/0/*\" will enable any fluid in the overworld.\n"
 				+ "Entries are comma seperated, banned fluids have precedence over allowed ones."
-				+ "Default is \"+/*/*,+/-1/Lava\" - the second redundant entry (\"+/-1/Lava\") is there to show the format.";
+				+ "Default is \"+/*/*,+/-1/Lava\" - the second redundant entry (\"+/-1/lava\") is there to show the format.";
 		pumpDimensionList = new PumpDimensionList(pumpList.getString());
 
 		int miningWellId = BuildCraftCore.mainConfiguration.getBlock("miningWell.id", DefaultProps.MINING_WELL_ID).getInt(DefaultProps.MINING_WELL_ID);
