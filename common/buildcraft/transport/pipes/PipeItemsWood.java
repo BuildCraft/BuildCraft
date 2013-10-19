@@ -105,7 +105,8 @@ public class PipeItemsWood extends Pipe<PipeTransportItems> implements IPowerRec
 		if (powerHandler.getEnergyStored() <= 0)
 			return;
 
-		extractItems();
+		if (transport.getNumberOfStacks() < PipeTransportItems.MAX_PIPE_STACKS)
+			extractItems();
 		powerHandler.setEnergy(0);
 	}
 
@@ -154,7 +155,7 @@ public class PipeItemsWood extends Pipe<PipeTransportItems> implements IPowerRec
 
 		/* ISPECIALINVENTORY */
 		if (inventory instanceof ISpecialInventory) {
-			ItemStack[] stacks = ((ISpecialInventory) inventory).extractItem(doRemove, from, (int) powerHandler.getEnergyStored());
+			ItemStack[] stacks = ((ISpecialInventory) inventory).extractItem(doRemove, from, Math.min((int) powerHandler.getEnergyStored(), PipeTransportItems.MAX_PIPE_ITEMS - transport.getNumberOfItems()));
 			if (stacks != null && doRemove) {
 				for (ItemStack stack : stacks) {
 					if (stack != null) {

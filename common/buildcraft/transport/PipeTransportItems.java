@@ -272,7 +272,7 @@ public class PipeTransportItems extends PipeTransport {
 		item.blacklist.add(item.input.getOpposite());
 
 		for (ForgeDirection o : ForgeDirection.VALID_DIRECTIONS) {
-			if(item.blacklist.contains(o))
+			if (item.blacklist.contains(o))
 				continue;
 			if (container.pipe.outputOpen(o) && canReceivePipeObjects(o, item))
 				result.add(o);
@@ -282,7 +282,7 @@ public class PipeTransportItems extends PipeTransport {
 			Position pos = new Position(container.xCoord, container.yCoord, container.zCoord, item.input);
 			result = ((IPipeTransportItemsHook) this.container.pipe).filterPossibleMovements(result, pos, item);
 		}
-		
+
 		if (allowBouncing && result.isEmpty()) {
 			if (canReceivePipeObjects(item.input.getOpposite(), item)) {
 				result.add(item.input.getOpposite());
@@ -555,8 +555,18 @@ public class PipeTransportItems extends PipeTransport {
 		PacketDispatcher.sendPacketToAllAround(container.xCoord, container.yCoord, container.zCoord, DefaultProps.PIPE_CONTENTS_RENDER_DIST, dimension, createItemPacket(data));
 	}
 
-	public int getNumberOfItems() {
+	public int getNumberOfStacks() {
 		return items.size();
+	}
+
+	public int getNumberOfItems() {
+		int num = 0;
+		for (TravelingItem item : items) {
+			if (item.getItemStack() == null)
+				continue;
+			num += item.getItemStack().stackSize;
+		}
+		return num;
 	}
 
 	public void onDropped(EntityItem item) {
