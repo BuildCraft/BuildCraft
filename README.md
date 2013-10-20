@@ -16,7 +16,6 @@ a problem that might have fixed been already. Such things makes for very grumpy 
 less time coding and more time doing stuff that makes them less grumpy.
 * If the issues occurs on a server, be sure it's a vanilla forge server and <b>not</b> a mcpc+ server.
 * Issues with any logs mentioning Optifine will be closed on sight! Remove Optifine before reporting any issue.
-* Issues with any logs mentioning MineFactoryReloaded or PowerCrystalsCore will be closed on sight! They are modifying our code using core mods!
 
 #### Frequently reported
 * java.lang.AbstractMethodError - Incompatibility between BC/Forge/Mod using BC API. Usually not a BC issue
