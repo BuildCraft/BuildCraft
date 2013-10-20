@@ -89,16 +89,6 @@ public class FacadeRenderHelper {
 				rotated[2][1] - zOffsets[side.ordinal()]);
 	}
 
-	private static void setRenderBoundsAlt(RenderBlocks renderblocks, float[][] rotated, ForgeDirection side) {
-		renderblocks.setRenderBounds(
-				rotated[0][0],
-				rotated[1][0] + yOffsets[side.ordinal()],
-				rotated[2][0],
-				rotated[0][1],
-				rotated[1][1] + yOffsets[side.ordinal()],
-				rotated[2][1]);
-	}
-
 	public static void pipeFacadeRenderer(RenderBlocks renderblocks, BlockGenericPipe block, PipeRenderState state, int x, int y, int z) {
 		state.textureArray = new Icon[6];
 
