@@ -1,6 +1,7 @@
 package buildcraft.transport;
 
 import buildcraft.BuildCraftTransport;
+import buildcraft.api.core.Position;
 import buildcraft.api.recipes.AssemblyRecipe;
 import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.ItemBuildCraft;
@@ -17,12 +18,15 @@ import java.util.Set;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+import net.minecraftforge.common.ForgeDirection;
 
 public class ItemFacade extends ItemBuildCraft {
 
@@ -68,30 +72,26 @@ public class ItemFacade extends ItemBuildCraft {
 		}
 	}
 
-//	@Override
-//	public boolean onItemUseFirst(ItemStack stack, EntityPlayer player, World worldObj, int x, int y, int z, int side, float hitX, float hitY, float hitZ) {
-//		if (worldObj.isRemote)
-//			return false;
-//		TileEntity tile = worldObj.getBlockTileEntity(x, y, z);
-//		if (!(tile instanceof TileGenericPipe))
-//			return false;
-//		TileGenericPipe pipeTile = (TileGenericPipe) tile;
-//
-//		if (player.isSneaking()) { // Strip facade
-//			if (!pipeTile.hasFacade(ForgeDirection.VALID_DIRECTIONS[side]))
-//				return false;
-//			pipeTile.dropFacade(ForgeDirection.VALID_DIRECTIONS[side]);
-//			return true;
-//		} else {
-//			if (((TileGenericPipe) tile).addFacade(ForgeDirection.values()[side], ItemFacade.getBlockId(stack), ItemFacade.getMetaData(stack))) {
-//				if (!player.capabilities.isCreativeMode) {
-//					stack.stackSize--;
-//				}
-//				return true;
-//			}
-//			return false;
-//		}
-//	}
+	@Override
+	public boolean onItemUse(ItemStack stack, EntityPlayer player, World worldObj, int x, int y, int z, int side, float hitX, float hitY, float hitZ) {
+		if (worldObj.isRemote)
+			return false;
+		Position pos = new Position(x, y, z, ForgeDirection.getOrientation(side));
+		pos.moveForwards(1.0);
+
+		TileEntity tile = worldObj.getBlockTileEntity((int) pos.x, (int) pos.y, (int) pos.z);
+		if (!(tile instanceof TileGenericPipe))
+			return false;
+		TileGenericPipe pipeTile = (TileGenericPipe) tile;
+
+		if (pipeTile.addFacade(ForgeDirection.getOrientation(side).getOpposite(), ItemFacade.getBlockId(stack), ItemFacade.getMetaData(stack))) {
+			if (!player.capabilities.isCreativeMode) {
+				stack.stackSize--;
+			}
+			return true;
+		}
+		return false;
+	}
 
 	public static void initialize() {
 		for (Field f : Block.class.getDeclaredFields()) {
@@ -253,7 +253,7 @@ public class ItemFacade extends ItemBuildCraft {
 	public static ItemStack getStack(Block block, int metadata) {
 		return getStack(block.blockID, metadata);
 	}
-	
+
 	public static ItemStack getStack(int blockID, int metadata) {
 		ItemStack stack = new ItemStack(BuildCraftTransport.facadeItem, 1, 0);
 		NBTTagCompound nbt = new NBTTagCompound("tag");

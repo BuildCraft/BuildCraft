@@ -81,11 +81,12 @@ public class BlockGenericPipe extends BlockContainer {
 	private static final ForgeDirection[] DIR_VALUES = ForgeDirection.values();
 	private static Random rand = new Random();
 	private boolean skippedFirstIconRegister;
-	private char renderAxis = 'a';
+	private boolean[] renderSide = new boolean[6];
 
 	/* Defined subprograms ************************************************* */
 	public BlockGenericPipe(int i) {
 		super(i, Material.glass);
+		setRenderAllSides();
 	}
 
 	@Override
@@ -114,19 +115,33 @@ public class BlockGenericPipe extends BlockContainer {
 	}
 
 	public void setRenderAxis(char axis) {
-		this.renderAxis = axis;
+		Arrays.fill(renderSide, false);
+		if (axis == 'x') {
+			renderSide[4] = true;
+			renderSide[5] = true;
+		}
+		if (axis == 'y') {
+			renderSide[0] = true;
+			renderSide[1] = true;
+		}
+		if (axis == 'z') {
+			renderSide[2] = true;
+			renderSide[3] = true;
+		}
+	}
+
+	public final void setRenderAllSides() {
+		Arrays.fill(renderSide, true);
+	}
+
+	public void setRenderSide(ForgeDirection side, boolean render) {
+		renderSide[side.ordinal()] = render;
 	}
 
 	@Override
 	@SideOnly(Side.CLIENT)
 	public boolean shouldSideBeRendered(IBlockAccess blockAccess, int x, int y, int z, int side) {
-		if (renderAxis == 'x')
-			return side == 4 || side == 5;
-		if (renderAxis == 'y')
-			return side == 0 || side == 1;
-		if (renderAxis == 'z')
-			return side == 2 || side == 3;
-		return true;
+		return renderSide[side];
 	}
 
 	@Override
@@ -583,11 +598,11 @@ public class BlockGenericPipe extends BlockContainer {
 
 		if (rayTraceResult != null && rayTraceResult.boundingBox != null) {
 			switch (rayTraceResult.hitPart) {
-			case Gate:
-				Pipe pipe = getPipe(world, x, y, z);
-				return pipe.gate.getGateItem();
-			case Plug:
-				return new ItemStack(BuildCraftTransport.plugItem);
+				case Gate:
+					Pipe pipe = getPipe(world, x, y, z);
+					return pipe.gate.getGateItem();
+				case Plug:
+					return new ItemStack(BuildCraftTransport.plugItem);
 			}
 		}
 		return super.getPickBlock(target, world, x, y, z);
@@ -772,15 +787,17 @@ public class BlockGenericPipe extends BlockContainer {
 	}
 
 	private boolean addOrStripFacade(World world, int x, int y, int z, EntityPlayer player, ForgeDirection side, Pipe pipe) {
+		RaytraceResult rayTraceResult = doRayTrace(world, x, y, z, player);
 		if (player.isSneaking()) {
-			RaytraceResult rayTraceResult = doRayTrace(world, x, y, z, player);
 			if (rayTraceResult != null && rayTraceResult.hitPart == Part.Facade) {
 				if (stripFacade(pipe, rayTraceResult.sideHit))
 					return true;
 			}
 		}
-		if (addFacade(player, pipe, side))
-			return true;
+		if (rayTraceResult != null && rayTraceResult.hitPart == Part.Pipe) {
+			if (addFacade(player, pipe, rayTraceResult.sideHit != null && rayTraceResult.sideHit != ForgeDirection.UNKNOWN ? rayTraceResult.sideHit : side))
+				return true;
+		}
 		return false;
 	}
 
@@ -874,11 +891,13 @@ public class BlockGenericPipe extends BlockContainer {
 	@SuppressWarnings({"all"})
 	@SideOnly(Side.CLIENT)
 	@Override
-	public Icon getBlockTexture(IBlockAccess iblockaccess, int i, int j, int k, int l) {
+	public Icon getBlockTexture(IBlockAccess iblockaccess, int x, int y, int z, int side) {
 
-		TileEntity tile = iblockaccess.getBlockTileEntity(i, j, k);
+		TileEntity tile = iblockaccess.getBlockTileEntity(x, y, z);
 		if (!(tile instanceof IPipeRenderState))
 			return null;
+		if (((IPipeRenderState) tile).getRenderState().textureArray != null)
+			return ((IPipeRenderState) tile).getRenderState().textureArray[side];
 		return ((IPipeRenderState) tile).getRenderState().currentTexture;
 
 		// Pipe pipe = getPipe(iblockaccess, i, j, k);

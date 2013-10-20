@@ -28,6 +28,8 @@ public class PipeRenderState implements IClientState {
 	 */
 	@SideOnly(Side.CLIENT)
 	public Icon currentTexture;
+	@SideOnly(Side.CLIENT)
+	public Icon[] textureArray;
 
 	public void setHasGate(boolean value) {
 		if (hasGate != value) {

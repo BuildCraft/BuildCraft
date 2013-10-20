@@ -8,14 +8,12 @@
  */
 package buildcraft.transport;
 
-import net.minecraft.item.ItemStack;
-
 /**
  *
  * @author CovertJaguar <http://www.railcraft.info/>
  */
 public class TransportConstants {
 
-	public static final float FACADE_THICKNESS = 1F / 16F;
+	public static final float FACADE_THICKNESS = 2F / 16F;
 	public static final float PIPE_NORMAL_SPEED = 0.01F;
 }

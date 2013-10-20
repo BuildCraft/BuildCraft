@@ -22,9 +22,6 @@ import net.minecraftforge.common.ForgeDirection;
 
 public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
 
-
-
-
 	private void renderAllFaceExeptAxe(RenderBlocks renderblocks, BlockGenericPipe block, Icon icon, int x, int y, int z, char axe) {
 		float minX = (float) renderblocks.renderMinX;
 		float minY = (float) renderblocks.renderMinY;
@@ -148,27 +145,60 @@ public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
 
 	}
 
-	private void pipeFacadeRenderer(RenderBlocks renderblocks, Block block, PipeRenderState state, int x, int y, int z) {
+	private void pipeFacadeRenderer(RenderBlocks renderblocks, BlockGenericPipe block, PipeRenderState state, int x, int y, int z) {
 
 		float zFightOffset = 1F / 4096F;
 
 		float[][] zeroState = new float[3][2];
 		// X START - END
-		zeroState[0][0] = 0.0F - zFightOffset / 2;
-		zeroState[0][1] = 1.0F + zFightOffset / 2;
+		zeroState[0][0] = 0.0F;
+		zeroState[0][1] = 1.0F;
 		// Y START - END
-		zeroState[1][0] = 0.0F - zFightOffset;
+		zeroState[1][0] = 0.0F;
 		zeroState[1][1] = TransportConstants.FACADE_THICKNESS;
 		// Z START - END
 		zeroState[2][0] = 0.0F;
 		zeroState[2][1] = 1.0F;
+
+		float[] xOffsets = new float[6];
+		xOffsets[0] = zFightOffset;
+		xOffsets[1] = zFightOffset;
+		xOffsets[2] = 0;
+		xOffsets[3] = 0;
+		xOffsets[4] = 0;
+		xOffsets[5] = 0;
+
+		float[] yOffsets = new float[6];
+		yOffsets[0] = 0;
+		yOffsets[1] = 0;
+		yOffsets[2] = zFightOffset;
+		yOffsets[3] = zFightOffset;
+		yOffsets[4] = 0;
+		yOffsets[5] = 0;
+
+		float[] zOffsets = new float[6];
+		zOffsets[0] = zFightOffset;
+		zOffsets[1] = zFightOffset;
+		zOffsets[2] = 0;
+		zOffsets[3] = 0;
+		zOffsets[4] = 0;
+		zOffsets[5] = 0;
+
+		state.textureArray = new Icon[6];
 
 		for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
 			int facadeId = state.facadeMatrix.getFacadeBlockId(direction);
 			if (facadeId != 0) {
 				Block renderBlock = Block.blocksList[facadeId];
 				int renderMeta = state.facadeMatrix.getFacadeMetaId(direction);
-				state.currentTexture = renderBlock.getIcon(direction.ordinal(), renderMeta);
+
+				for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
+					state.textureArray[side.ordinal()] = renderBlock.getIcon(side.ordinal(), renderMeta);
+					if (side == direction || side == direction.getOpposite())
+						block.setRenderSide(side, true);
+					else
+						block.setRenderSide(side, state.facadeMatrix.getFacadeBlockId(side) == 0);
+				}
 
 				try {
 					BlockGenericPipe.facadeRenderColor = Item.itemsList[state.facadeMatrix.getFacadeBlockId(direction)].getColorFromItemStack(new ItemStack(facadeId, 1, renderMeta), 0);
@@ -190,16 +220,18 @@ public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
 				// Hollow facade
 				if (state.pipeConnectionMatrix.isConnected(direction)) {
 					float[][] rotated = MatrixTranformations.deepClone(zeroState);
+					rotated[0][0] = CoreConstants.PIPE_MIN_POS - zFightOffset;
+					rotated[0][1] = CoreConstants.PIPE_MAX_POS + zFightOffset;
 					rotated[2][0] = 0.0F;
 					rotated[2][1] = CoreConstants.PIPE_MIN_POS - zFightOffset;
-					rotated[1][0] -= zFightOffset / 2;
 					MatrixTranformations.transform(rotated, direction);
 					renderblocks.setRenderBounds(rotated[0][0], rotated[1][0], rotated[2][0], rotated[0][1], rotated[1][1], rotated[2][1]);
 					renderblocks.renderStandardBlock(block, x, y, z);
 
 					rotated = MatrixTranformations.deepClone(zeroState);
+					rotated[0][0] = CoreConstants.PIPE_MIN_POS - zFightOffset;
+					rotated[0][1] = CoreConstants.PIPE_MAX_POS + zFightOffset;
 					rotated[2][0] = CoreConstants.PIPE_MAX_POS + zFightOffset;
-					rotated[1][0] -= zFightOffset / 2;
 					MatrixTranformations.transform(rotated, direction);
 					renderblocks.setRenderBounds(rotated[0][0], rotated[1][0], rotated[2][0], rotated[0][1], rotated[1][1], rotated[2][1]);
 					renderblocks.renderStandardBlock(block, x, y, z);
@@ -207,7 +239,6 @@ public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
 					rotated = MatrixTranformations.deepClone(zeroState);
 					rotated[0][0] = 0.0F;
 					rotated[0][1] = CoreConstants.PIPE_MIN_POS - zFightOffset;
-					rotated[1][1] -= zFightOffset;
 					MatrixTranformations.transform(rotated, direction);
 					renderblocks.setRenderBounds(rotated[0][0], rotated[1][0], rotated[2][0], rotated[0][1], rotated[1][1], rotated[2][1]);
 					renderblocks.renderStandardBlock(block, x, y, z);
@@ -215,14 +246,20 @@ public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
 					rotated = MatrixTranformations.deepClone(zeroState);
 					rotated[0][0] = CoreConstants.PIPE_MAX_POS + zFightOffset;
 					rotated[0][1] = 1F;
-					rotated[1][1] -= zFightOffset;
 					MatrixTranformations.transform(rotated, direction);
 					renderblocks.setRenderBounds(rotated[0][0], rotated[1][0], rotated[2][0], rotated[0][1], rotated[1][1], rotated[2][1]);
 					renderblocks.renderStandardBlock(block, x, y, z);
 				} else { // Solid facade
 					float[][] rotated = MatrixTranformations.deepClone(zeroState);
 					MatrixTranformations.transform(rotated, direction);
-					renderblocks.setRenderBounds(rotated[0][0], rotated[1][0], rotated[2][0], rotated[0][1], rotated[1][1], rotated[2][1]);
+
+					renderblocks.setRenderBounds(
+							rotated[0][0] + xOffsets[direction.ordinal()],
+							rotated[1][0] + yOffsets[direction.ordinal()],
+							rotated[2][0] + zOffsets[direction.ordinal()],
+							rotated[0][1] + xOffsets[direction.ordinal()],
+							rotated[1][1] + yOffsets[direction.ordinal()],
+							rotated[2][1] + zOffsets[direction.ordinal()]);
 					renderblocks.renderStandardBlock(block, x, y, z);
 				}
 
@@ -238,6 +275,9 @@ public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
 
 			BlockGenericPipe.facadeRenderColor = -1;
 		}
+
+		state.textureArray = null;
+		block.setRenderAllSides();
 
 		// X START - END
 		zeroState[0][0] = CoreConstants.PIPE_MIN_POS;
