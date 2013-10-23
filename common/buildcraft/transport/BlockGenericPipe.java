@@ -794,7 +794,7 @@ public class BlockGenericPipe extends BlockContainer {
 					return true;
 			}
 		}
-		if (rayTraceResult != null && rayTraceResult.hitPart == Part.Pipe) {
+		if (rayTraceResult != null && (rayTraceResult.hitPart == Part.Pipe || rayTraceResult.hitPart == Part.Gate)) {
 			if (addFacade(player, pipe, rayTraceResult.sideHit != null && rayTraceResult.sideHit != ForgeDirection.UNKNOWN ? rayTraceResult.sideHit : side))
 				return true;
 		}
@@ -824,7 +824,7 @@ public class BlockGenericPipe extends BlockContainer {
 					return true;
 			}
 		}
-		if (rayTraceResult != null && rayTraceResult.hitPart == Part.Pipe) {
+		if (rayTraceResult != null && (rayTraceResult.hitPart == Part.Pipe || rayTraceResult.hitPart == Part.Gate)) {
 			if (addPlug(player, pipe, rayTraceResult.sideHit != null && rayTraceResult.sideHit != ForgeDirection.UNKNOWN ? rayTraceResult.sideHit : side))
 				return true;
 		}
