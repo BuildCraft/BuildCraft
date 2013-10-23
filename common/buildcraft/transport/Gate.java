@@ -251,7 +251,6 @@ public abstract class Gate {
 
 		for (int i = 0; i < oldBroadcastSignal.length; ++i) {
 			if (oldBroadcastSignal[i] != broadcastSignal[i]) {
-				// worldObj.markBlockNeedsUpdate(container.xCoord, container.yCoord, zCoord);
 				pipe.container.scheduleRenderUpdate();
 				pipe.updateSignalState();
 				break;

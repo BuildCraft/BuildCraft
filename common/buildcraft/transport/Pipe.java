@@ -139,15 +139,11 @@ public abstract class Pipe<T extends PipeTransport> implements IPipe, IDropContr
 		if (container.worldObj.isRemote)
 			return;
 
-		if (actionTracker.markTimeIfDelay(container.worldObj, 10)) {
-			resolveActions();
-		}
-
 		// Update the gate if we have any
 		if (gate != null) {
+			gate.resolveActions();
 			gate.update();
 		}
-
 	}
 
 	private void internalUpdate() {
@@ -297,9 +293,7 @@ public abstract class Pipe<T extends PipeTransport> implements IPipe, IDropContr
 			internalUpdateScheduled = true;
 
 			if (oldSignal == 0) {
-				// worldObj.markBlockNeedsUpdate(container.xCoord, container.yCoord, zCoord);
 				container.scheduleRenderUpdate();
-
 			}
 
 			return true;
@@ -372,7 +366,7 @@ public abstract class Pipe<T extends PipeTransport> implements IPipe, IDropContr
 			return false;
 		if (container.hasPlug(side))
 			return false;
-		
+
 		int connections = 0;
 		ForgeDirection targetOrientation = ForgeDirection.UNKNOWN;
 		for (ForgeDirection o : ForgeDirection.VALID_DIRECTIONS) {
@@ -456,13 +450,6 @@ public abstract class Pipe<T extends PipeTransport> implements IPipe, IDropContr
 		gate.resetGate();
 		gate = null;
 		container.scheduleRenderUpdate();
-	}
-
-	private void resolveActions() {
-		if (!hasGate())
-			return;
-
-		gate.resolveActions();
 	}
 
 	protected void actionsActivated(Map<IAction, Boolean> actions) {
