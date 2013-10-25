@@ -29,6 +29,9 @@ public class DefaultTriggerProvider implements ITriggerProvider {
 			res.add(BuildCraftCore.triggerContainsInventory);
 			res.add(BuildCraftCore.triggerSpaceInventory);
 			res.add(BuildCraftCore.triggerFullInventory);
+			res.add(BuildCraftCore.triggerInventoryBelow25);
+			res.add(BuildCraftCore.triggerInventoryBelow50);
+			res.add(BuildCraftCore.triggerInventoryBelow75);
 		}
 
 		if (tile instanceof IFluidHandler) {

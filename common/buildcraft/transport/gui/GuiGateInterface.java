@@ -136,7 +136,7 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 		public ItemStack getItemStack() {
 			ITriggerParameter parameter = pipe.gate.getTriggerParameter(slot);
 			if (parameter != null)
-				return parameter.getItem();
+				return parameter.getItemStack();
 			else
 				return null;
 		}
