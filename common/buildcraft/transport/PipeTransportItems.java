@@ -7,7 +7,6 @@
  */
 package buildcraft.transport;
 
-import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.Position;
 import buildcraft.api.gates.ITrigger;
@@ -18,6 +17,7 @@ import buildcraft.core.IMachine;
 import buildcraft.core.inventory.Transactor;
 import buildcraft.core.network.PacketIds;
 import buildcraft.core.proxy.CoreProxy;
+import buildcraft.core.utils.BCLog;
 import buildcraft.core.utils.BlockUtil;
 import buildcraft.transport.network.PacketPipeTransportContent;
 import buildcraft.transport.network.PacketPipeTransportNBT;
@@ -196,7 +196,7 @@ public class PipeTransportItems extends PipeTransport {
 			}
 
 			if (items.size() > MAX_PIPE_STACKS) {
-				BuildCraftCore.bcLog.log(Level.WARNING, String.format("Pipe exploded at %d,%d,%d because it had too many stacks: %d", container.xCoord, container.yCoord, container.zCoord, items.size()));
+				BCLog.logger.log(Level.WARNING, String.format("Pipe exploded at %d,%d,%d because it had too many stacks: %d", container.xCoord, container.yCoord, container.zCoord, items.size()));
 				destroyPipe();
 				return;
 			}
@@ -209,7 +209,7 @@ public class PipeTransportItems extends PipeTransport {
 			}
 
 			if (numItems > MAX_PIPE_ITEMS) {
-				BuildCraftCore.bcLog.log(Level.WARNING, String.format("Pipe exploded at %d,%d,%d because it had too many items: %d", container.xCoord, container.yCoord, container.zCoord, numItems));
+				BCLog.logger.log(Level.WARNING, String.format("Pipe exploded at %d,%d,%d because it had too many items: %d", container.xCoord, container.yCoord, container.zCoord, numItems));
 				destroyPipe();
 			}
 		}

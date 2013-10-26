@@ -29,13 +29,18 @@ public class TriggerInventoryLevel extends BCTrigger {
 	public TriggerInventoryLevel(TriggerType type) {
 		super(0, "buildcraft.inventorylevel." + type.name().toLowerCase(Locale.ENGLISH));
 		this.type = type;
-		
+
 		// Legacy migration code
 		ActionManager.triggers.put("buildcraft.filteredBuffer." + type.name().toLowerCase(Locale.ENGLISH), this);
 	}
 
 	@Override
 	public boolean hasParameter() {
+		return true;
+	}
+
+	@Override
+	public boolean requiresParameter() {
 		return true;
 	}
 

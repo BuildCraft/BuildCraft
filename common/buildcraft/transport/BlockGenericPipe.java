@@ -34,7 +34,6 @@ import net.minecraft.util.Vec3;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
-import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.tools.IToolWrench;
 import buildcraft.api.transport.IPipe;
@@ -42,6 +41,7 @@ import buildcraft.api.transport.ISolidSideTile;
 import buildcraft.core.BlockIndex;
 import buildcraft.core.CoreConstants;
 import buildcraft.core.proxy.CoreProxy;
+import buildcraft.core.utils.BCLog;
 import buildcraft.core.utils.Utils;
 import buildcraft.core.utils.MatrixTranformations;
 import cpw.mods.fml.common.registry.GameRegistry;
@@ -1001,11 +1001,11 @@ public class BlockGenericPipe extends BlockContainer {
 			if (pipe != null)
 				return pipe.getConstructor(int.class).newInstance(key);
 			else {
-				BuildCraftCore.bcLog.warning("Detected pipe with unknown key (" + key + "). Did you remove a buildcraft addon?");
+				BCLog.logger.warning("Detected pipe with unknown key (" + key + "). Did you remove a buildcraft addon?");
 			}
 
 		} catch (Throwable t) {
-			BuildCraftCore.bcLog.warning("Failed to create pipe with (" + key + "). No valid constructor found. Possibly a item ID conflit.");
+			BCLog.logger.warning("Failed to create pipe with (" + key + "). No valid constructor found. Possibly a item ID conflit.");
 		}
 
 		return null;

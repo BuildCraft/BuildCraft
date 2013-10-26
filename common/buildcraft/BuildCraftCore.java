@@ -63,6 +63,7 @@ import buildcraft.core.triggers.TriggerFluidContainer;
 import buildcraft.core.triggers.TriggerInventory;
 import buildcraft.core.triggers.TriggerInventoryLevel;
 import buildcraft.core.triggers.TriggerMachine;
+import buildcraft.core.utils.BCLog;
 import buildcraft.core.utils.Localization;
 import buildcraft.transport.triggers.TriggerRedstoneInput;
 import cpw.mods.fml.common.FMLLog;
@@ -165,18 +166,13 @@ public class BuildCraftCore {
 
 	public static BptItem[] itemBptProps = new BptItem[Item.itemsList.length];
 
-	public static final Logger bcLog = Logger.getLogger("Buildcraft");
-
 	@Instance("BuildCraft|Core")
 	public static BuildCraftCore instance;
 
     @EventHandler
 	public void loadConfiguration(FMLPreInitializationEvent evt) {
 
-		bcLog.setParent(FMLLog.getLogger());
-		bcLog.info("Starting BuildCraft " + Version.getVersion());
-		bcLog.info("Copyright (c) SpaceToad, 2011");
-		bcLog.info("http://www.mod-buildcraft.com");
+		BCLog.initLog();
 		
 		mainConfiguration = new BuildCraftConfiguration(new File(evt.getModConfigurationDirectory(), "buildcraft/main.conf"));
 		try {

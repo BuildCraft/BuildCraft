@@ -48,6 +48,7 @@ import buildcraft.core.network.IClientState;
 import buildcraft.core.network.IGuiReturnHandler;
 import buildcraft.core.network.ISyncedTile;
 import buildcraft.core.network.PacketTileState;
+import buildcraft.core.utils.BCLog;
 import buildcraft.transport.Gate.GateKind;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -120,7 +121,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 		if (pipe != null)
 			pipe.readFromNBT(nbt);
 		else {
-			BuildCraftCore.bcLog.log(Level.WARNING, "Pipe failed to load from NBT at {0},{1},{2}", new Object[]{xCoord, yCoord, zCoord});
+			BCLog.logger.log(Level.WARNING, "Pipe failed to load from NBT at {0},{1},{2}", new Object[]{xCoord, yCoord, zCoord});
 			deletePipe = true;
 		}
 
@@ -267,7 +268,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 		this.blockType = getBlockType();
 
 		if (pipe == null) {
-			BuildCraftCore.bcLog.log(Level.WARNING, "Pipe failed to initialize at {0},{1},{2}, deleting", new Object[]{xCoord, yCoord, zCoord});
+			BCLog.logger.log(Level.WARNING, "Pipe failed to initialize at {0},{1},{2}, deleting", new Object[]{xCoord, yCoord, zCoord});
 			worldObj.setBlockToAir(xCoord, yCoord, zCoord);
 			return;
 		}

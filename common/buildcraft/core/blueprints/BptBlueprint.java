@@ -9,7 +9,6 @@
 
 package buildcraft.core.blueprints;
 
-import buildcraft.BuildCraftCore;
 import buildcraft.api.blueprints.BlockSignature;
 import buildcraft.api.blueprints.BlueprintManager;
 import buildcraft.api.blueprints.BptBlock;
@@ -17,6 +16,7 @@ import buildcraft.api.blueprints.BptSlotInfo;
 import buildcraft.api.blueprints.IBptContext;
 import buildcraft.api.blueprints.ItemSignature;
 import buildcraft.core.IBptContributor;
+import buildcraft.core.utils.BCLog;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -76,7 +76,7 @@ public class BptBlueprint extends BptBase {
 		} catch (Throwable t) {
 			// Defensive code against errors in implementers
 			t.printStackTrace();
-			BuildCraftCore.bcLog.throwing("BptBlueprint", "readFromWorld", t);
+			BCLog.logger.throwing("BptBlueprint", "readFromWorld", t);
 
 		}
 	}

@@ -16,7 +16,6 @@ import java.util.List;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
-import buildcraft.BuildCraftCore;
 import buildcraft.api.blueprints.BptSlotInfo;
 import buildcraft.api.core.Position;
 import buildcraft.core.blueprints.BptBuilderBase;
@@ -24,6 +23,7 @@ import buildcraft.core.blueprints.BptContext;
 import buildcraft.core.blueprints.BptSlot;
 import buildcraft.core.blueprints.BptSlot.Mode;
 import buildcraft.core.proxy.CoreProxy;
+import buildcraft.core.utils.BCLog;
 import buildcraft.core.utils.BlockUtil;
 
 import com.google.common.io.ByteArrayDataInput;
@@ -230,7 +230,7 @@ public class EntityRobot extends Entity implements IEntityAdditionalSpawnData {
 							} catch (Throwable t) {
 								// Defensive code against errors in implementers
 								t.printStackTrace();
-								BuildCraftCore.bcLog.throwing("EntityRobot", "update", t);
+								BCLog.logger.throwing("EntityRobot", "update", t);
 							}
 						}
 					}

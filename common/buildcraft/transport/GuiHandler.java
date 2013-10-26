@@ -1,7 +1,7 @@
 package buildcraft.transport;
 
-import buildcraft.BuildCraftCore;
 import buildcraft.core.GuiIds;
+import buildcraft.core.utils.BCLog;
 import buildcraft.transport.gui.ContainerDiamondPipe;
 import buildcraft.transport.gui.ContainerEmeraldPipe;
 import buildcraft.transport.gui.ContainerFilteredBuffer;
@@ -55,7 +55,7 @@ public class GuiHandler implements IGuiHandler {
 					return null;
 			}
 		} catch (Exception ex) {
-			BuildCraftCore.bcLog.log(Level.SEVERE, "Failed to open GUI", ex);
+			BCLog.logger.log(Level.SEVERE, "Failed to open GUI", ex);
 		}
 		return null;
 	}
@@ -95,7 +95,7 @@ public class GuiHandler implements IGuiHandler {
 					return null;
 			}
 		} catch (Exception ex) {
-			BuildCraftCore.bcLog.log(Level.SEVERE, "Failed to open GUI", ex);
+			BCLog.logger.log(Level.SEVERE, "Failed to open GUI", ex);
 		}
 		return null;
 	}
