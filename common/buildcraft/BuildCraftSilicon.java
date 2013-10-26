@@ -32,6 +32,7 @@ import cpw.mods.fml.common.event.FMLInterModComms;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkMod;
 import cpw.mods.fml.common.network.NetworkRegistry;
+import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
@@ -70,6 +71,7 @@ public class BuildCraftSilicon {
 
 		redstoneChipset = new ItemRedstoneChipset(redstoneChipsetId.getInt());
 		redstoneChipset.setUnlocalizedName("redstoneChipset");
+		CoreProxy.proxy.registerItem(redstoneChipset);
 
 	}
 
