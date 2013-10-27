@@ -7,142 +7,82 @@ import buildcraft.transport.BlockGenericPipe;
 import buildcraft.transport.IPipeRenderState;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeRenderState;
-import buildcraft.transport.TransportConstants;
 import buildcraft.transport.TransportProxy;
 import buildcraft.core.utils.MatrixTranformations;
+
 import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
+
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Icon;
 import net.minecraft.world.IBlockAccess;
+
 import net.minecraftforge.common.ForgeDirection;
 
 public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
-
-	private void renderAllFaceExeptAxe(RenderBlocks renderblocks, BlockGenericPipe block, Icon icon, int x, int y, int z, char axe) {
-		float minX = (float) renderblocks.renderMinX;
-		float minY = (float) renderblocks.renderMinY;
-		float minZ = (float) renderblocks.renderMinZ;
-		float maxX = (float) renderblocks.renderMaxX;
-		float maxY = (float) renderblocks.renderMaxY;
-		float maxZ = (float) renderblocks.renderMaxZ;
-		if (axe != 'x') {
-			renderTwoWayXFace(renderblocks, block, icon, x, y, z, minY, minZ, maxY, maxZ, minX);
-			renderTwoWayXFace(renderblocks, block, icon, x, y, z, minY, minZ, maxY, maxZ, maxX);
-		}
-		if (axe != 'y') {
-			renderTwoWayYFace(renderblocks, block, icon, x, y, z, minX, minZ, maxX, maxZ, minY);
-			renderTwoWayYFace(renderblocks, block, icon, x, y, z, minX, minZ, maxX, maxZ, maxY);
-		}
-		if (axe != 'z') {
-			renderTwoWayZFace(renderblocks, block, icon, x, y, z, minX, minY, maxX, maxY, minZ);
-			renderTwoWayZFace(renderblocks, block, icon, x, y, z, minX, minY, maxX, maxY, maxZ);
-		}
-	}
-
-	private void renderTwoWayXFace(RenderBlocks renderblocks, BlockGenericPipe block, Icon icon, int xCoord, int yCoord, int zCoord, float minY, float minZ, float maxY, float maxZ, float x) {
-		renderblocks.setRenderBounds(x, minY, minZ, x, maxY, maxZ);
-		block.setRenderAxis('x');
-		renderblocks.renderStandardBlock(block, xCoord, yCoord, zCoord);
-		block.setRenderAxis('a');
-	}
-
-	private void renderTwoWayYFace(RenderBlocks renderblocks, BlockGenericPipe block, Icon icon, int xCoord, int yCoord, int zCoord, float minX, float minZ, float maxX, float maxZ, float y) {
-		renderblocks.setRenderBounds(minX, y, minZ, maxX, y, maxZ);
-		block.setRenderAxis('y');
-		renderblocks.renderStandardBlock(block, xCoord, yCoord, zCoord);
-		block.setRenderAxis('a');
-	}
-
-	private void renderTwoWayZFace(RenderBlocks renderblocks, BlockGenericPipe block, Icon icon, int xCoord, int yCoord, int zCoord, float minX, float minY, float maxX, float maxY, float z) {
-		renderblocks.setRenderBounds(minX, minY, z, maxX, maxY, z);
-		block.setRenderAxis('z');
-		renderblocks.renderStandardBlock(block, xCoord, yCoord, zCoord);
-		block.setRenderAxis('a');
-	}
-
 	public void renderPipe(RenderBlocks renderblocks, IBlockAccess iblockaccess, BlockGenericPipe block, IPipeRenderState renderState, int x, int y, int z) {
-
-		float minSize = CoreConstants.PIPE_MIN_POS;
-		float maxSize = CoreConstants.PIPE_MAX_POS;
-
 		PipeRenderState state = renderState.getRenderState();
 		IIconProvider icons = renderState.getPipeIcons();
 		if (icons == null)
 			return;
 
-		boolean west = false;
-		boolean east = false;
-		boolean down = false;
-		boolean up = false;
-		boolean north = false;
-		boolean south = false;
+		int connectivity = state.pipeConnectionMatrix.getMask();
+		float[] dim = new float[6];
 
-		if (state.pipeConnectionMatrix.isConnected(ForgeDirection.WEST)) {
-			state.currentTexture = icons.getIcon(state.textureMatrix.getTextureIndex(ForgeDirection.WEST));
-			renderblocks.setRenderBounds(0.0F, minSize, minSize, minSize, maxSize, maxSize);
-			renderAllFaceExeptAxe(renderblocks, block, state.currentTexture, x, y, z, 'x');
-			west = true;
+		// render the unconnected pipe faces of the center block (if any)
+
+		if (connectivity != 0x3f) { // note: 0x3f = 0x111111 = all sides
+			resetToCenterDimensions(dim);
+
+			state.currentTexture = icons.getIcon(state.textureMatrix.getTextureIndex(ForgeDirection.UNKNOWN));
+			renderTwoWayBlock(renderblocks, block, x, y, z, dim, connectivity ^ 0x3f);
 		}
 
-		if (state.pipeConnectionMatrix.isConnected(ForgeDirection.EAST)) {
-			state.currentTexture = icons.getIcon(state.textureMatrix.getTextureIndex(ForgeDirection.EAST));
-			renderblocks.setRenderBounds(maxSize, minSize, minSize, 1.0F, maxSize, maxSize);
-			renderAllFaceExeptAxe(renderblocks, block, state.currentTexture, x, y, z, 'x');
-			east = true;
-		}
+		// render the connecting pipe faces
 
-		if (state.pipeConnectionMatrix.isConnected(ForgeDirection.DOWN)) {
-			state.currentTexture = icons.getIcon(state.textureMatrix.getTextureIndex(ForgeDirection.DOWN));
-			renderblocks.setRenderBounds(minSize, 0.0F, minSize, maxSize, minSize, maxSize);
-			renderAllFaceExeptAxe(renderblocks, block, state.currentTexture, x, y, z, 'y');
-			down = true;
-		}
+		for (int dir = 0; dir < 6; dir++) {
+			int mask = 1 << dir;
+			if ((connectivity & mask) == 0) continue; // no connection towards dir
 
-		if (state.pipeConnectionMatrix.isConnected(ForgeDirection.UP)) {
-			state.currentTexture = icons.getIcon(state.textureMatrix.getTextureIndex(ForgeDirection.UP));
-			renderblocks.setRenderBounds(minSize, maxSize, minSize, maxSize, 1.0F, maxSize);
-			renderAllFaceExeptAxe(renderblocks, block, state.currentTexture, x, y, z, 'y');
-			up = true;
-		}
+			// center piece offsets
+			resetToCenterDimensions(dim);
 
-		if (state.pipeConnectionMatrix.isConnected(ForgeDirection.NORTH)) {
-			state.currentTexture = icons.getIcon(state.textureMatrix.getTextureIndex(ForgeDirection.NORTH));
-			renderblocks.setRenderBounds(minSize, minSize, 0.0F, maxSize, maxSize, minSize);
-			renderAllFaceExeptAxe(renderblocks, block, state.currentTexture, x, y, z, 'z');
-			north = true;
-		}
+			// extend block towards dir as it's connected to there
+			dim[dir / 2] = dir % 2 == 0 ? 0 : CoreConstants.PIPE_MAX_POS;
+			dim[dir / 2 + 3] = dir % 2 == 0 ? CoreConstants.PIPE_MIN_POS : 1;
 
-		if (state.pipeConnectionMatrix.isConnected(ForgeDirection.SOUTH)) {
-			state.currentTexture = icons.getIcon(state.textureMatrix.getTextureIndex(ForgeDirection.SOUTH));
-			renderblocks.setRenderBounds(minSize, minSize, maxSize, maxSize, maxSize, 1.0F);
-			renderAllFaceExeptAxe(renderblocks, block, state.currentTexture, x, y, z, 'z');
-			south = true;
-		}
+			// the mask points to all faces perpendicular to dir, i.e. dirs 0+1 -> mask 111100, 1+2 -> 110011, 3+5 -> 001111
+			int renderMask = (3 << (dir / 2 * 2)) ^ 0x3f;
 
-		state.currentTexture = icons.getIcon(state.textureMatrix.getTextureIndex(ForgeDirection.UNKNOWN));
-		renderblocks.setRenderBounds(minSize, minSize, minSize, maxSize, maxSize, maxSize);
-		if (!west)
-			renderTwoWayXFace(renderblocks, block, state.currentTexture, x, y, z, minSize, minSize, maxSize, maxSize, minSize);
-		if (!east)
-			renderTwoWayXFace(renderblocks, block, state.currentTexture, x, y, z, minSize, minSize, maxSize, maxSize, maxSize);
-		if (!down)
-			renderTwoWayYFace(renderblocks, block, state.currentTexture, x, y, z, minSize, minSize, maxSize, maxSize, minSize);
-		if (!up)
-			renderTwoWayYFace(renderblocks, block, state.currentTexture, x, y, z, minSize, minSize, maxSize, maxSize, maxSize);
-		if (!north)
-			renderTwoWayZFace(renderblocks, block, state.currentTexture, x, y, z, minSize, minSize, maxSize, maxSize, minSize);
-		if (!south)
-			renderTwoWayZFace(renderblocks, block, state.currentTexture, x, y, z, minSize, minSize, maxSize, maxSize, maxSize);
+			// render sub block
+			state.currentTexture = icons.getIcon(state.textureMatrix.getTextureIndex(ForgeDirection.VALID_DIRECTIONS[dir]));
+
+			renderTwoWayBlock(renderblocks, block, x, y, z, dim, renderMask);
+		}
 
 		renderblocks.setRenderBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
 
 		pipeFacadeRenderer(renderblocks, block, state, x, y, z);
 		pipePlugRenderer(renderblocks, block, state, x, y, z);
+	}
 
+	private void resetToCenterDimensions(float[] dim) {
+		for (int i = 0; i < 3; i++) dim[i] = CoreConstants.PIPE_MIN_POS;
+		for (int i = 3; i < 6; i++) dim[i] = CoreConstants.PIPE_MAX_POS;
+	}
+
+	/**
+	 * Render a block with normal and inverted vertex order so back face culling doesn't have any effect.
+	 */
+	private void renderTwoWayBlock(RenderBlocks renderblocks, BlockGenericPipe block, int x, int y, int z, float[] dim, int mask) {
+		assert mask != 0;
+
+		block.setRenderMask(mask);
+		renderblocks.setRenderBounds(dim[2], dim[0], dim[1], dim[5], dim[3], dim[4]);
+		renderblocks.renderStandardBlock(block, x, y, z);
+		block.setRenderMask((mask & 0x15) << 1 | (mask & 0x2a) >> 1); // pairwise swapped mask
+		renderblocks.setRenderBounds(dim[5], dim[3], dim[4], dim[2], dim[0], dim[1]);
+		renderblocks.renderStandardBlock(block, x, y, z);
 	}
 
 	private void pipeFacadeRenderer(RenderBlocks renderblocks, BlockGenericPipe block, PipeRenderState state, int x, int y, int z) {

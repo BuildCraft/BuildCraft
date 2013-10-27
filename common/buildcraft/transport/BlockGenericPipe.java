@@ -81,7 +81,7 @@ public class BlockGenericPipe extends BlockContainer {
 	private static final ForgeDirection[] DIR_VALUES = ForgeDirection.values();
 	private static Random rand = new Random();
 	private boolean skippedFirstIconRegister;
-	private boolean[] renderSide = new boolean[6];
+	private int renderMask = 0;
 
 	/* Defined subprograms ************************************************* */
 	public BlockGenericPipe(int i) {
@@ -114,34 +114,26 @@ public class BlockGenericPipe extends BlockContainer {
 		return false;
 	}
 
-	public void setRenderAxis(char axis) {
-		Arrays.fill(renderSide, false);
-		if (axis == 'x') {
-			renderSide[4] = true;
-			renderSide[5] = true;
-		}
-		if (axis == 'y') {
-			renderSide[0] = true;
-			renderSide[1] = true;
-		}
-		if (axis == 'z') {
-			renderSide[2] = true;
-			renderSide[3] = true;
-		}
+	public void setRenderMask(int mask) {
+		renderMask = mask;
 	}
 
 	public final void setRenderAllSides() {
-		Arrays.fill(renderSide, true);
+		renderMask = 0x3f;
 	}
 
 	public void setRenderSide(ForgeDirection side, boolean render) {
-		renderSide[side.ordinal()] = render;
+		if (render) {
+			renderMask |= 1 << side.ordinal();
+		} else {
+			renderMask &= ~(1 << side.ordinal());
+		}
 	}
 
 	@Override
 	@SideOnly(Side.CLIENT)
 	public boolean shouldSideBeRendered(IBlockAccess blockAccess, int x, int y, int z, int side) {
-		return renderSide[side];
+		return (renderMask & (1 << side)) != 0;
 	}
 
 	@Override
@@ -1100,27 +1092,27 @@ public class BlockGenericPipe extends BlockContainer {
 		double pz = z + rand.nextDouble() * (block.getBlockBoundsMaxZ() - block.getBlockBoundsMinZ() - (b * 2.0F)) + b + block.getBlockBoundsMinZ();
 
 		if (sideHit == 0) {
-			py = (double) y + block.getBlockBoundsMinY() - (double) b;
+			py = y + block.getBlockBoundsMinY() - b;
 		}
 
 		if (sideHit == 1) {
-			py = (double) y + block.getBlockBoundsMaxY() + (double) b;
+			py = y + block.getBlockBoundsMaxY() + b;
 		}
 
 		if (sideHit == 2) {
-			pz = (double) z + block.getBlockBoundsMinZ() - (double) b;
+			pz = z + block.getBlockBoundsMinZ() - b;
 		}
 
 		if (sideHit == 3) {
-			pz = (double) z + block.getBlockBoundsMaxZ() + (double) b;
+			pz = z + block.getBlockBoundsMaxZ() + b;
 		}
 
 		if (sideHit == 4) {
-			px = (double) x + block.getBlockBoundsMinX() - (double) b;
+			px = x + block.getBlockBoundsMinX() - b;
 		}
 
 		if (sideHit == 5) {
-			px = (double) x + block.getBlockBoundsMaxX() + (double) b;
+			px = x + block.getBlockBoundsMaxX() + b;
 		}
 
 		EntityDiggingFX fx = new EntityDiggingFX(worldObj, px, py, pz, 0.0D, 0.0D, 0.0D, block, sideHit, worldObj.getBlockMetadata(x, y, z));
@@ -1156,9 +1148,9 @@ public class BlockGenericPipe extends BlockContainer {
 		for (int i = 0; i < its; ++i) {
 			for (int j = 0; j < its; ++j) {
 				for (int k = 0; k < its; ++k) {
-					double px = x + (i + 0.5D) / (double) its;
-					double py = y + (j + 0.5D) / (double) its;
-					double pz = z + (k + 0.5D) / (double) its;
+					double px = x + (i + 0.5D) / its;
+					double py = y + (j + 0.5D) / its;
+					double pz = z + (k + 0.5D) / its;
 					int random = rand.nextInt(6);
 					EntityDiggingFX fx = new EntityDiggingFX(worldObj, px, py, pz, px - x - 0.5D, py - y - 0.5D, pz - z - 0.5D, BuildCraftTransport.genericPipeBlock, random, meta);
 					fx.setParticleIcon(icon);
