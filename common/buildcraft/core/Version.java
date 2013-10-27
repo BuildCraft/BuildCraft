@@ -86,7 +86,7 @@ public class Version implements Runnable {
 			String line;
 			String mcVersion = CoreProxy.proxy.getMinecraftVersion();
 			while ((line = reader.readLine()) != null) {
-				if (line.startsWith(mcVersion)) {
+				if (mcVersion.matches(line)) {
 					if (line.contains(DefaultProps.MOD)) {
 
 						String[] tokens = line.split(":");
