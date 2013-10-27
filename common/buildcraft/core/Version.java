@@ -86,13 +86,11 @@ public class Version implements Runnable {
 			String line;
 			String mcVersion = CoreProxy.proxy.getMinecraftVersion();
 			while ((line = reader.readLine()) != null) {
-				if (mcVersion.matches(line)) {
-					if (line.contains(DefaultProps.MOD)) {
-
-						String[] tokens = line.split(":");
-						recommendedVersion = tokens[2];
-
-						if (line.endsWith(VERSION)) {
+				String[] tokens = line.split(":");
+				if (mcVersion.matches(tokens[0])) {
+					if (DefaultProps.MOD.matches(tokens[1])) {
+						if (VERSION.matches(tokens[2])) {
+							recommendedVersion = tokens[2];
 							BCLog.logger.finer("Using the latest version [" + getVersion() + "] for Minecraft " + mcVersion);
 							currentVersion = EnumUpdateState.CURRENT;
 							return;
