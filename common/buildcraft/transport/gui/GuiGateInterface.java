@@ -1,12 +1,10 @@
 /**
- * Copyright (c) SpaceToad, 2011
- * http://www.mod-buildcraft.com
+ * Copyright (c) SpaceToad, 2011 http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License
+ * 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-
 package buildcraft.transport.gui;
 
 import buildcraft.api.gates.IAction;
@@ -28,9 +26,7 @@ import org.lwjgl.opengl.GL11;
 public class GuiGateInterface extends GuiAdvancedInterface {
 
 	IInventory playerInventory;
-
 	private final ContainerGateInterface _container;
-
 	private int nbEntries;
 
 	class TriggerSlot extends AdvancedSlot {
@@ -54,15 +50,15 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 				return "";
 		}
 
-        @SideOnly(Side.CLIENT)
-        @Override
-        public Icon getIcon() {
-        	ITrigger trigger = pipe.gate.getTrigger(slot);
-        	if (trigger != null)
-        		return trigger.getIcon();
-        	else
-        		return null;
-        }
+		@SideOnly(Side.CLIENT)
+		@Override
+		public Icon getIcon() {
+			ITrigger trigger = pipe.gate.getTrigger(slot);
+			if (trigger != null)
+				return trigger.getIcon();
+			else
+				return null;
+		}
 
 		@Override
 		public boolean isDefined() {
@@ -152,8 +148,8 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 		_container = (ContainerGateInterface) this.inventorySlots;
 
 		this.playerInventory = playerInventory;
-		xSize = 175;
-		ySize = 207;
+		xSize = 176;
+		ySize = pipe.gate.getGuiHeight();
 
 		int position = 0;
 
@@ -161,34 +157,34 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 			nbEntries = 1;
 
 			slots = new AdvancedSlot[2];
-			slots[0] = new TriggerSlot(65, 54, pipe, 0);
-			slots[1] = new ActionSlot(99, 54, pipe, 0);
+			slots[0] = new TriggerSlot(62, 26, pipe, 0);
+			slots[1] = new ActionSlot(98, 26, pipe, 0);
 		} else if (pipe.gate.kind == GateKind.AND_2 || pipe.gate.kind == GateKind.OR_2) {
 			nbEntries = 2;
 
 			slots = new AdvancedSlot[4];
 
-			slots[0] = new TriggerSlot(65, 46, pipe, 0);
-			slots[1] = new TriggerSlot(65, 64, pipe, 1);
-			slots[2] = new ActionSlot(99, 46, pipe, 0);
-			slots[3] = new ActionSlot(99, 64, pipe, 1);
+			slots[0] = new TriggerSlot(62, 26, pipe, 0);
+			slots[1] = new TriggerSlot(62, 44, pipe, 1);
+			slots[2] = new ActionSlot(98, 26, pipe, 0);
+			slots[3] = new ActionSlot(98, 44, pipe, 1);
 		} else if (pipe.gate.kind == GateKind.AND_3 || pipe.gate.kind == GateKind.OR_3) {
 			nbEntries = 4;
 
 			slots = new AdvancedSlot[12];
 
 			for (int k = 0; k < 4; ++k) {
-				slots[position] = new TriggerSlot(60, 36 + 18 * k, pipe, position);
+				slots[position] = new TriggerSlot(53, 26 + 18 * k, pipe, position);
 				position++;
 			}
 
 			for (int k = 0; k < 4; ++k) {
-				slots[position] = new ActionSlot(112, 36 + 18 * k, pipe, position - 4);
+				slots[position] = new ActionSlot(107, 26 + 18 * k, pipe, position - 4);
 				position++;
 			}
 
 			for (int k = 0; k < 4; ++k) {
-				slots[position] = new TriggerParameterSlot(78, 36 + 18 * k, pipe, position - 8);
+				slots[position] = new TriggerParameterSlot(71, 26 + 18 * k, pipe, position - 8);
 				position++;
 
 			}
@@ -198,23 +194,23 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 			slots = new AdvancedSlot[24];
 
 			for (int k = 0; k < 4; ++k) {
-				slots[position] = new TriggerSlot(8, 36 + 18 * k, pipe, position);
+				slots[position] = new TriggerSlot(8, 26 + 18 * k, pipe, position);
 				position++;
-				slots[position] = new TriggerSlot(100, 36 + 18 * k, pipe, position);
-				position++;
-			}
-
-			for (int k = 0; k < 4; ++k) {
-				slots[position] = new ActionSlot(60, 36 + 18 * k, pipe, position - 8);
-				position++;
-				slots[position] = new ActionSlot(152, 36 + 18 * k, pipe, position - 8);
+				slots[position] = new TriggerSlot(98, 26 + 18 * k, pipe, position);
 				position++;
 			}
 
 			for (int k = 0; k < 4; ++k) {
-				slots[position] = new TriggerParameterSlot(26, 36 + 18 * k, pipe, position - 16);
+				slots[position] = new ActionSlot(62, 26 + 18 * k, pipe, position - 8);
 				position++;
-				slots[position] = new TriggerParameterSlot(118, 36 + 18 * k, pipe, position - 16);
+				slots[position] = new ActionSlot(152, 26 + 18 * k, pipe, position - 8);
+				position++;
+			}
+
+			for (int k = 0; k < 4; ++k) {
+				slots[position] = new TriggerParameterSlot(26, 26 + 18 * k, pipe, position - 16);
+				position++;
+				slots[position] = new TriggerParameterSlot(116, 26 + 18 * k, pipe, position - 16);
 				position++;
 			}
 		}
@@ -225,7 +221,7 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 	protected void drawGuiContainerForegroundLayer(int par1, int par2) {
 		String name = _container.getGateName();
 
-		fontRenderer.drawString(name, getCenteredOffset(name), 15, 0x404040);
+		fontRenderer.drawString(name, getCenteredOffset(name), 10, 0x404040);
 		fontRenderer.drawString(StringUtils.localize("gui.inventory"), 8, ySize - 97, 0x404040);
 
 		drawForegroundSelection(par1, par2);
@@ -235,10 +231,10 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 	protected void drawGuiContainerBackgroundLayer(float f, int x, int y) {
 
 		_container.synchronize();
-		
+
 		ResourceLocation texture = _container.getGateGuiFile();
-		
-        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+
+		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 		mc.renderEngine.bindTexture(texture);
 
 		int cornerX = (width - xSize) / 2;

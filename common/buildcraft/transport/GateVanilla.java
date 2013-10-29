@@ -322,4 +322,17 @@ public class GateVanilla extends Gate {
 		else
 			return TEXTURE4;
 	}
+
+	@Override
+	public int getGuiHeight() {
+		switch (kind) {
+			case Single:
+				return 146;
+			case AND_2:
+			case OR_2:
+				return 164;
+			default:
+				return 200;
+		}
+	}
 }

@@ -288,6 +288,10 @@ public abstract class Gate {
 
 	public abstract ResourceLocation getGuiFile();
 
+	public int getGuiHeight() {
+		return 207;
+	}
+
 	public static boolean isGateItem(ItemStack stack) {
 		return stack.itemID == BuildCraftTransport.pipeGate.itemID || stack.itemID == BuildCraftTransport.pipeGateAutarchic.itemID;
 	}

@@ -62,14 +62,14 @@ public class ContainerGateInterface extends BuildCraftContainer {
 		super(0);
 		this.playerIInventory = playerInventory;
 
-		for (int l = 0; l < 3; l++) {
-			for (int k1 = 0; k1 < 9; k1++) {
-				addSlotToContainer(new Slot(playerInventory, k1 + l * 9 + 9, 8 + k1 * 18, 123 + l * 18));
+		for (int y = 0; y < 3; y++) {
+			for (int x = 0; x < 9; x++) {
+				addSlotToContainer(new Slot(playerInventory, x + y * 9 + 9, 8 + x * 18, pipe.gate.getGuiHeight() - 84 + y * 18));
 			}
 		}
 
-		for (int i1 = 0; i1 < 9; i1++) {
-			addSlotToContainer(new Slot(playerInventory, i1, 8 + i1 * 18, 181));
+		for (int x = 0; x < 9; x++) {
+			addSlotToContainer(new Slot(playerInventory, x, 8 + x * 18, pipe.gate.getGuiHeight() - 26));
 		}
 
 		this.pipe = pipe;
