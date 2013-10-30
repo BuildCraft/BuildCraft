@@ -66,7 +66,7 @@ public class TriggerFluidContainer extends BCTrigger {
 				searchedFluid.amount = 1;
 			}
 
-			FluidTankInfo[] liquids = container.getTankInfo(ForgeDirection.UNKNOWN);
+			FluidTankInfo[] liquids = container.getTankInfo(side);
 			if (liquids == null || liquids.length == 0)
 				return false;
 
