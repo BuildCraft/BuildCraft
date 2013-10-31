@@ -11,7 +11,6 @@ package buildcraft;
 
 import java.io.File;
 import java.util.TreeMap;
-import java.util.logging.Logger;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFluid;
@@ -66,7 +65,6 @@ import buildcraft.core.triggers.TriggerMachine;
 import buildcraft.core.utils.BCLog;
 import buildcraft.core.utils.Localization;
 import buildcraft.transport.triggers.TriggerRedstoneInput;
-import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
