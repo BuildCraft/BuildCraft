@@ -7,7 +7,6 @@
  */
 package buildcraft.api.power;
 
-import buildcraft.api.power.PowerHandler.PowerReceiver;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
 
@@ -31,7 +30,7 @@ public interface IPowerReceptor {
 	 * @param side
 	 * @return
 	 */
-	public PowerReceiver getPowerReceiver(ForgeDirection side);
+	public PowerHandler.PowerReceiver getPowerReceiver(ForgeDirection side);
 
 	/**
 	 * Call back from the PowerHandler that is called when the stored power
