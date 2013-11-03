@@ -7,6 +7,20 @@
  */
 package buildcraft;
 
+import java.util.List;
+
+import net.minecraft.block.Block;
+import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.world.World;
+import net.minecraftforge.client.event.TextureStitchEvent;
+import net.minecraftforge.common.Configuration;
+import net.minecraftforge.common.ForgeChunkManager;
+import net.minecraftforge.common.ForgeChunkManager.Ticket;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.Property;
+import net.minecraftforge.event.ForgeSubscribe;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.InterModComms;
 import buildcraft.core.Version;
@@ -16,6 +30,7 @@ import buildcraft.factory.BlockAutoWorkbench;
 import buildcraft.factory.BlockFloodGate;
 import buildcraft.factory.BlockFrame;
 import buildcraft.factory.BlockHopper;
+import buildcraft.factory.BlockLiquidHopper;
 import buildcraft.factory.BlockMiningWell;
 import buildcraft.factory.BlockPlainPipe;
 import buildcraft.factory.BlockPump;
@@ -33,13 +48,16 @@ import buildcraft.factory.PumpDimensionList;
 import buildcraft.factory.TileAutoWorkbench;
 import buildcraft.factory.TileFloodGate;
 import buildcraft.factory.TileHopper;
+import buildcraft.factory.TileLiquidHopper;
 import buildcraft.factory.TileMiningWell;
 import buildcraft.factory.TilePump;
 import buildcraft.factory.TileQuarry;
 import buildcraft.factory.TileRefinery;
 import buildcraft.factory.TileTank;
 import buildcraft.factory.network.PacketHandlerFactory;
+
 import com.google.common.collect.Lists;
+
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
@@ -51,19 +69,6 @@ import cpw.mods.fml.common.network.NetworkMod;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import java.util.List;
-import net.minecraft.block.Block;
-import net.minecraft.client.renderer.texture.TextureMap;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.world.World;
-import net.minecraftforge.client.event.TextureStitchEvent;
-import net.minecraftforge.common.Configuration;
-import net.minecraftforge.common.ForgeChunkManager;
-import net.minecraftforge.common.ForgeChunkManager.Ticket;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.Property;
-import net.minecraftforge.event.ForgeSubscribe;
 
 @Mod(name = "BuildCraft Factory", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Factory", dependencies = DefaultProps.DEPENDENCY_CORE)
 @NetworkMod(channels = {DefaultProps.NET_CHANNEL_NAME}, packetHandler = PacketHandlerFactory.class, clientSideRequired = true, serverSideRequired = true)
@@ -80,6 +85,7 @@ public class BuildCraftFactory {
 	public static BlockTank tankBlock;
 	public static BlockRefinery refineryBlock;
 	public static BlockHopper hopperBlock;
+	public static BlockLiquidHopper liquidHopperBlock;
 	public static boolean allowMining = true;
 	public static boolean quarryOneTimeUse = false;
 	public static float miningMultiplier = 1;
@@ -139,6 +145,7 @@ public class BuildCraftFactory {
 		CoreProxy.proxy.registerTileEntity(TileTank.class, "net.minecraft.src.buildcraft.factory.TileTank");
 		CoreProxy.proxy.registerTileEntity(TileRefinery.class, "net.minecraft.src.buildcraft.factory.Refinery");
 		CoreProxy.proxy.registerTileEntity(TileHopper.class, "net.minecraft.src.buildcraft.factory.TileHopper");
+		CoreProxy.proxy.registerTileEntity(TileLiquidHopper.class, "net.minecraft.src.buildcraft.factory.TileLiquidHopper");
 
 		FactoryProxy.proxy.initializeTileEntities();
 
@@ -178,6 +185,7 @@ public class BuildCraftFactory {
 		int tankId = BuildCraftCore.mainConfiguration.getBlock("tank.id", DefaultProps.TANK_ID).getInt(DefaultProps.TANK_ID);
 		int refineryId = BuildCraftCore.mainConfiguration.getBlock("refinery.id", DefaultProps.REFINERY_ID).getInt(DefaultProps.REFINERY_ID);
 		int hopperId = BuildCraftCore.mainConfiguration.getBlock("hopper.id", DefaultProps.HOPPER_ID).getInt(DefaultProps.HOPPER_ID);
+		int liquidHopperId = BuildCraftCore.mainConfiguration.getBlock("liquidhopper.id", DefaultProps.LIQUIDHOPPER_ID).getInt(DefaultProps.LIQUIDHOPPER_ID);
 
 		if (BuildCraftCore.mainConfiguration.hasChanged()) {
 			BuildCraftCore.mainConfiguration.save();
@@ -233,6 +241,11 @@ public class BuildCraftFactory {
 			CoreProxy.proxy.registerBlock(hopperBlock.setUnlocalizedName("blockHopper"));
 			CoreProxy.proxy.addName(hopperBlock, "Hopper");
 		}
+		if (liquidHopperId > 0) {
+            liquidHopperBlock = new BlockLiquidHopper(liquidHopperId);
+            CoreProxy.proxy.registerBlock(liquidHopperBlock.setUnlocalizedName("blockLiquidHopper"));
+            CoreProxy.proxy.addName(hopperBlock, "Liquid Hopper");
+        }
 
 		FactoryProxy.proxy.initializeEntityRenders();
 		if (BuildCraftCore.mainConfiguration.hasChanged()) {
@@ -320,6 +333,16 @@ public class BuildCraftFactory {
 					'I', Item.ingotIron,
 					'C', Block.chest,
 					'G', BuildCraftCore.stoneGearItem);
+		
+		if (hopperBlock != null)
+            CoreProxy.proxy.addCraftingRecipe(new ItemStack(hopperBlock),
+                    "ICI",
+                    "IGI",
+                    " c ",
+                    'I', Item.ingotIron,
+                    'C', Block.chest,
+                    'G', BuildCraftCore.stoneGearItem,
+                    'c', Item.clay);
 
 		if (floodGateBlock != null)
 			CoreProxy.proxy.addCraftingRecipe(new ItemStack(floodGateBlock),

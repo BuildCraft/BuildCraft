@@ -1,5 +1,9 @@
 package buildcraft.factory;
 
+import java.lang.reflect.Method;
+
+import net.minecraft.util.Icon;
+import net.minecraft.world.World;
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftFactory;
 import buildcraft.core.EntityBlock;
@@ -8,13 +12,11 @@ import buildcraft.core.render.RenderingEntityBlocks;
 import buildcraft.core.render.RenderingEntityBlocks.EntityRenderIndex;
 import buildcraft.factory.gui.GuiAutoCrafting;
 import buildcraft.factory.render.RenderHopper;
+import buildcraft.factory.render.RenderLiquidHopper;
 import buildcraft.factory.render.RenderRefinery;
 import buildcraft.factory.render.RenderTank;
 import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.client.registry.RenderingRegistry;
-import java.lang.reflect.Method;
-import net.minecraft.util.Icon;
-import net.minecraft.world.World;
 
 public class FactoryProxyClient extends FactoryProxy {
 
@@ -39,6 +41,11 @@ public class FactoryProxyClient extends FactoryProxy {
 			ClientRegistry.bindTileEntitySpecialRenderer(TileHopper.class, new RenderHopper());
 			RenderingEntityBlocks.blockByEntityRenders.put(new EntityRenderIndex(BuildCraftFactory.hopperBlock, 0), new RenderHopper());
 		}
+		
+		if (BuildCraftFactory.liquidHopperBlock != null) {
+            ClientRegistry.bindTileEntitySpecialRenderer(TileLiquidHopper.class, new RenderLiquidHopper());
+            RenderingEntityBlocks.blockByEntityRenders.put(new EntityRenderIndex(BuildCraftFactory.liquidHopperBlock, 0), new RenderLiquidHopper());
+        }
 
 	}
 

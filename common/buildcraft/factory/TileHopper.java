@@ -14,7 +14,7 @@ import buildcraft.core.proxy.CoreProxy;
 
 public class TileHopper extends TileBuildCraft implements IInventory {
 
-	private final SimpleInventory _inventory = new SimpleInventory(4, "Hopper", 64);
+	protected SimpleInventory _inventory = new SimpleInventory(4, "Hopper", 64);
 
 	@Override
 	public void readFromNBT(NBTTagCompound nbtTagCompound) {

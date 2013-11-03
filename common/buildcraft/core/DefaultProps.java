@@ -113,6 +113,7 @@ public class DefaultProps {
 	public static int ASSEMBLY_TABLE_ID = 1517;
 	public static int PATH_MARKER_ID = 1518;
 	public static int HOPPER_ID = 1519;
+	public static int LIQUIDHOPPER_ID = 1520;
 	public static int SPRING_ID = 1522;
 	public static int FILTERED_BUFFER_ID = 1523;
 	public static int FLOOD_GATE_ID = 1524;
