@@ -24,6 +24,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.world.EnumGameType;
 import net.minecraft.world.World;
 
+@SuppressWarnings("deprecation")
 public class BptBuilderBlueprint extends BptBuilderBase {
 
 	LinkedList<BptSlot> clearList = new LinkedList<BptSlot>();

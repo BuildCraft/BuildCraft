@@ -23,7 +23,7 @@ public class TransportProxy {
 		
 	}
 
-	public void setIconProviderFromPipe(ItemPipe item, Pipe dummyPipe) {
+	public void setIconProviderFromPipe(ItemPipe item, Pipe<?> dummyPipe) {
 		
 	}
 

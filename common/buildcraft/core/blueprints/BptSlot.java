@@ -7,6 +7,7 @@ import java.util.LinkedList;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
+@SuppressWarnings("deprecation")
 public class BptSlot extends BptSlotInfo {
 
 	public enum Mode {

@@ -9,7 +9,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraftforge.common.ForgeDirection;
 
-public class PipeStructureCobblestone extends Pipe {
+public class PipeStructureCobblestone extends Pipe<PipeTransportStructure> {
 
 	public PipeStructureCobblestone(int itemID) {
 		super(new PipeTransportStructure(), itemID);

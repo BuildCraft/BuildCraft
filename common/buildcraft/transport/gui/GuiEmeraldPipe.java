@@ -40,6 +40,7 @@ public class GuiEmeraldPipe extends GuiBuildCraft {
 		ySize = 132;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void initGui() {
 		super.initGui();

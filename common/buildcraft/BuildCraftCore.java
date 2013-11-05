@@ -201,8 +201,8 @@ public class BuildCraftCore {
 				itemLifespan = 100;
 			}
 
-			Property powerFrameworkClass = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "power.framework",
-					"buildcraft.energy.PneumaticPowerFramework");
+//			Property powerFrameworkClass = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "power.framework",
+//					"buildcraft.energy.PneumaticPowerFramework");
 
 			Property factor = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "network.updateFactor", 10);
 			factor.comment = "increasing this number will decrease network update frequency, useful for overloaded servers";

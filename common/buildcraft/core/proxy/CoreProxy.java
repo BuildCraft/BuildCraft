@@ -14,7 +14,6 @@ import buildcraft.core.network.BuildCraftPacket;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.registry.GameRegistry;
-import java.io.File;
 import java.util.List;
 import java.util.Random;
 import net.minecraft.block.Block;
@@ -126,6 +125,7 @@ public class CoreProxy {
 		//GameRegistry.addRecipe(result, recipe);
 	}
 
+	@SuppressWarnings("unchecked")
 	public void addShapelessRecipe(ItemStack result, Object... recipe) {
 	        CraftingManager.getInstance().getRecipeList().add(new ShapelessOreRecipe(result, recipe));
 	        //GameRegistry.addShapelessRecipe(result, recipe);

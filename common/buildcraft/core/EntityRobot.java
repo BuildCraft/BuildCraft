@@ -31,6 +31,7 @@ import com.google.common.io.ByteArrayDataOutput;
 
 import cpw.mods.fml.common.registry.IEntityAdditionalSpawnData;
 
+@SuppressWarnings("deprecation")
 public class EntityRobot extends Entity implements IEntityAdditionalSpawnData {
 
 	private Box box;

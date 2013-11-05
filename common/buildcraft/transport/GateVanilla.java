@@ -23,11 +23,11 @@ public class GateVanilla extends Gate {
 
 	private EnergyPulser pulser;
 
-	public GateVanilla(Pipe pipe) {
+	public GateVanilla(Pipe<?> pipe) {
 		super(pipe);
 	}
 
-	public GateVanilla(Pipe pipe, ItemStack stack) {
+	public GateVanilla(Pipe<?> pipe, ItemStack stack) {
 		super(pipe, stack);
 
 		if (stack.itemID == BuildCraftTransport.pipeGateAutarchic.itemID) {
@@ -120,7 +120,7 @@ public class GateVanilla extends Gate {
 	 * @param pipe
 	 * @return
 	 */
-	private boolean addEnergyPulser(Pipe pipe) {
+	private boolean addEnergyPulser(Pipe<?> pipe) {
 		if (!(pipe instanceof IPowerReceptor) || pipe instanceof PipePowerWood) {
 			pulser = new EnergyPulser(null);
 			return false;

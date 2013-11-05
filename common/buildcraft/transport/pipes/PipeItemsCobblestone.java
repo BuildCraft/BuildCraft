@@ -16,7 +16,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraftforge.common.ForgeDirection;
 
-public class PipeItemsCobblestone extends Pipe {
+public class PipeItemsCobblestone extends Pipe<PipeTransportItems> {
 
 	public PipeItemsCobblestone(int itemID) {
 		super(new PipeTransportItems(), itemID);

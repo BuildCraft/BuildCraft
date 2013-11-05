@@ -9,10 +9,8 @@
 
 package buildcraft.core.blueprints;
 
-import buildcraft.BuildCraftCore;
 import buildcraft.core.Box;
 import buildcraft.core.Version;
-import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.BCLog;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -25,6 +23,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 
+@SuppressWarnings("deprecation")
 public abstract class BptBase {
 
 	BptSlot contents[][][];

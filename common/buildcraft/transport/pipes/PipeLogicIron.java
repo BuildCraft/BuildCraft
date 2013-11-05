@@ -18,9 +18,9 @@ import net.minecraftforge.common.ForgeDirection;
 public abstract class PipeLogicIron {
 
 	private boolean lastPower = false;
-	protected final Pipe pipe;
+	protected final Pipe<?> pipe;
 
-	public PipeLogicIron(Pipe pipe) {
+	public PipeLogicIron(Pipe<?> pipe) {
 		this.pipe = pipe;
 	}
 

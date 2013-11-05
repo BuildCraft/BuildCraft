@@ -28,7 +28,7 @@ public class PipeFluidsIron extends Pipe<PipeTransportFluids> {
 		@Override
 		protected boolean isValidConnectingTile(TileEntity tile) {
 			if (tile instanceof TileGenericPipe) {
-				Pipe otherPipe = ((TileGenericPipe) tile).pipe;
+				Pipe<?> otherPipe = ((TileGenericPipe) tile).pipe;
 				if (otherPipe instanceof PipeFluidsWood || otherPipe instanceof PipeStructureCobblestone)
 					return false;
 				if (otherPipe.transport instanceof PipeTransportFluids)

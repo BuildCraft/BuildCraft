@@ -21,7 +21,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 import java.util.LinkedList;
 import net.minecraftforge.common.ForgeDirection;
 
-public class PipeItemsQuartz extends Pipe implements IPipeTransportItemsHook {
+public class PipeItemsQuartz extends Pipe<PipeTransportItems> implements IPipeTransportItemsHook {
 
 	public PipeItemsQuartz(int itemID) {
 		super(new PipeTransportItems(), itemID);

@@ -31,10 +31,10 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 
 	class TriggerSlot extends AdvancedSlot {
 
-		Pipe pipe;
+		Pipe<?> pipe;
 		int slot;
 
-		public TriggerSlot(int x, int y, Pipe pipe, int slot) {
+		public TriggerSlot(int x, int y, Pipe<?> pipe, int slot) {
 			super(x, y);
 
 			this.pipe = pipe;
@@ -72,10 +72,10 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 
 	class ActionSlot extends AdvancedSlot {
 
-		Pipe pipe;
+		Pipe<?> pipe;
 		int slot;
 
-		public ActionSlot(int x, int y, Pipe pipe, int slot) {
+		public ActionSlot(int x, int y, Pipe<?> pipe, int slot) {
 			super(x, y);
 
 			this.pipe = pipe;
@@ -113,10 +113,10 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 
 	class TriggerParameterSlot extends AdvancedSlot {
 
-		Pipe pipe;
+		Pipe<?> pipe;
 		int slot;
 
-		public TriggerParameterSlot(int x, int y, Pipe pipe, int slot) {
+		public TriggerParameterSlot(int x, int y, Pipe<?> pipe, int slot) {
 			super(x, y);
 
 			this.pipe = pipe;
@@ -142,7 +142,7 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 		}
 	}
 
-	public GuiGateInterface(IInventory playerInventory, Pipe pipe) {
+	public GuiGateInterface(IInventory playerInventory, Pipe<?> pipe) {
 		super(new ContainerGateInterface(playerInventory, pipe), null);
 
 		_container = (ContainerGateInterface) this.inventorySlots;

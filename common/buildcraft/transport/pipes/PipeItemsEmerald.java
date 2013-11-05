@@ -67,7 +67,7 @@ public class PipeItemsEmerald extends PipeItemsWood implements IClientState, IGu
 		}
 	}
 
-	private final MultiButtonController stateController = MultiButtonController.getController(ButtonState.BLOCKING.ordinal(), ButtonState.values());
+	private final MultiButtonController<ButtonState> stateController = MultiButtonController.getController(ButtonState.BLOCKING.ordinal(), ButtonState.values());
 	private final SimpleInventory filters = new SimpleInventory(9, "Filters", 1);
 	private int currentFilter = 0;
 
@@ -259,7 +259,7 @@ public class PipeItemsEmerald extends PipeItemsWood implements IClientState, IGu
 		return filters;
 	}
 
-	public MultiButtonController getStateController() {
+	public MultiButtonController<ButtonState> getStateController() {
 		return stateController;
 	}
 

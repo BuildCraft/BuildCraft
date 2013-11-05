@@ -19,7 +19,7 @@ import buildcraft.transport.TileGenericPipe;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-public class PipeItemsSandstone extends Pipe implements IPipeConnectionForced {
+public class PipeItemsSandstone extends Pipe<PipeTransportItems> implements IPipeConnectionForced {
 
 	public PipeItemsSandstone(int itemID) {
 		super(new PipeTransportItems(), itemID);

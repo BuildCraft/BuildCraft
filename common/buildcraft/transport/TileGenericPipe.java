@@ -81,7 +81,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 	private TileBuffer[] tileBuffer;
 	public boolean[] pipeConnectionsBuffer = new boolean[6];
 	public SafeTimeTracker networkSyncTracker = new SafeTimeTracker();
-	public Pipe pipe;
+	public Pipe<?> pipe;
 	private boolean sendClientUpdate = false;
 	private boolean blockNeighborChange = false;
 	private boolean refreshRenderState = false;
@@ -263,7 +263,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 		}
 	}
 
-	public void initialize(Pipe pipe) {
+	public void initialize(Pipe<?> pipe) {
 
 		this.blockType = getBlockType();
 
@@ -456,7 +456,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 		if (with instanceof TileGenericPipe) {
 			if (((TileGenericPipe) with).hasPlug(side.getOpposite()))
 				return false;
-			Pipe otherPipe = ((TileGenericPipe) with).pipe;
+			Pipe<?> otherPipe = ((TileGenericPipe) with).pipe;
 
 			if (!BlockGenericPipe.isValid(otherPipe))
 				return false;

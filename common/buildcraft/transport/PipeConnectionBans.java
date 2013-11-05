@@ -25,8 +25,10 @@ import com.google.common.collect.SetMultimap;
  *
  * @author CovertJaguar <http://www.railcraft.info/>
  */
+@SuppressWarnings("unchecked")
 public class PipeConnectionBans {
 
+	@SuppressWarnings("rawtypes")
 	private static final SetMultimap<Class<? extends Pipe>, Class<? extends Pipe>> connectionBans = HashMultimap.create();
 
 	static {
@@ -57,6 +59,7 @@ public class PipeConnectionBans {
 	 *
 	 * @param types
 	 */
+	@SuppressWarnings("rawtypes")
 	public static void banConnection(Class<? extends Pipe>... types) {
 		if (types.length == 0)
 			return;
@@ -73,6 +76,7 @@ public class PipeConnectionBans {
 		}
 	}
 
+	@SuppressWarnings("rawtypes")
 	public static boolean canPipesConnect(Class<? extends Pipe> type1, Class<? extends Pipe> type2) {
 		return !connectionBans.containsEntry(type1, type2);
 	}

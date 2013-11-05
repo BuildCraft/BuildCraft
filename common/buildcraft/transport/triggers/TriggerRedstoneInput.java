@@ -37,13 +37,13 @@ public class TriggerRedstoneInput extends BCTrigger implements ITriggerPipe {
 	}
 
 	@Override
-	public boolean isTriggerActive(Pipe pipe, ITriggerParameter parameter) {
+	public boolean isTriggerActive(Pipe<?> pipe, ITriggerParameter parameter) {
 		if (active)
 			return isBeingPowered(pipe);
 		return !isBeingPowered(pipe);
 	}
 
-	private boolean isBeingPowered(Pipe pipe) {
+	private boolean isBeingPowered(Pipe<?> pipe) {
 		return pipe.container.worldObj.isBlockIndirectlyGettingPowered(pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord);
 	}
 

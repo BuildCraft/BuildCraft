@@ -33,6 +33,7 @@ import buildcraft.transport.pipes.PipePowerQuartz;
 import buildcraft.transport.pipes.PipePowerStone;
 import buildcraft.transport.pipes.PipePowerWood;
 
+@SuppressWarnings("rawtypes")
 public class PipeTransportPower extends PipeTransport {
 
 	private static final short MAX_DISPLAY = 100;

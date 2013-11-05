@@ -175,7 +175,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 			return false;
 
 		if (entity instanceof TileGenericPipe) {
-			Pipe pipe = ((TileGenericPipe) entity).pipe;
+			Pipe<?> pipe = ((TileGenericPipe) entity).pipe;
 
 			if (pipe == null || !pipe.inputOpen(o.getOpposite()))
 				return false;
@@ -492,7 +492,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 	@Override
 	public boolean canPipeConnect(TileEntity tile, ForgeDirection side) {
 		if (tile instanceof TileGenericPipe) {
-			Pipe pipe2 = ((TileGenericPipe) tile).pipe;
+			Pipe<?> pipe2 = ((TileGenericPipe) tile).pipe;
 			if (BlockGenericPipe.isValid(pipe2) && !(pipe2.transport instanceof PipeTransportFluids))
 				return false;
 		}

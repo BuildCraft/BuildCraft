@@ -15,6 +15,7 @@ import java.util.LinkedList;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
+@SuppressWarnings("deprecation")
 public class BptBuilderTemplate extends BptBuilderBase {
 
 	LinkedList<BptSlot> clearList = new LinkedList<BptSlot>();

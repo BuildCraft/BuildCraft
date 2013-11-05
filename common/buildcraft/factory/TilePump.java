@@ -39,7 +39,6 @@ import java.util.Set;
 import java.util.TreeMap;
 import net.minecraft.block.material.Material;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
@@ -143,12 +142,6 @@ public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor
 		if (tileBuffer == null)
 			tileBuffer = TileBuffer.makeBuffer(worldObj, xCoord, yCoord, zCoord, false);
 		FluidUtils.pushFluidToConsumers(tank, 400, tileBuffer);
-	}
-
-	private TileEntity getTile(ForgeDirection side) {
-		if (tileBuffer == null)
-			tileBuffer = TileBuffer.makeBuffer(worldObj, xCoord, yCoord, zCoord, false);
-		return tileBuffer[side.ordinal()].getTile();
 	}
 
 	@Override

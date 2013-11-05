@@ -14,6 +14,7 @@ import buildcraft.api.blueprints.IBptContext;
 import java.util.LinkedList;
 import net.minecraft.item.ItemStack;
 
+@SuppressWarnings("deprecation")
 public class BptItem {
 
 	public void addRequirements(BptSlotInfo slot, LinkedList<ItemStack> requirements) {

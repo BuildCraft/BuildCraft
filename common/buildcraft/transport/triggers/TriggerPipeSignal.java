@@ -62,7 +62,7 @@ public class TriggerPipeSignal extends BCTrigger implements ITriggerPipe {
 	}
 
 	@Override
-	public boolean isTriggerActive(Pipe pipe, ITriggerParameter parameter) {
+	public boolean isTriggerActive(Pipe<?> pipe, ITriggerParameter parameter) {
 		if (active)
 			return pipe.signalStrength[color.ordinal()] > 0;
 		else

@@ -17,13 +17,11 @@ import net.minecraft.inventory.Slot;
 public class ContainerDiamondPipe extends BuildCraftContainer {
 
 	private final PipeItemsDiamond pipe;
-	private final IInventory playerInv;
 	private final IInventory filterInv;
 
 	public ContainerDiamondPipe(IInventory playerInventory, PipeItemsDiamond pipe) {
 		super(pipe.getFilters().getSizeInventory());
 		this.pipe = pipe;
-		this.playerInv = playerInventory;
 		this.filterInv = pipe.getFilters();
 
 		for (int y = 0; y < 6; y++) {

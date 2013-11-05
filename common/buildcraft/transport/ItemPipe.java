@@ -33,6 +33,7 @@ public class ItemPipe extends ItemBuildCraft implements IItemPipe {
 		super(i);
 	}
 
+	@SuppressWarnings("rawtypes")
 	@Override
 	public boolean onItemUse(ItemStack itemstack, EntityPlayer entityplayer, World world, int i, int j, int k, int side, float par8, float par9, float par10) {
 		int blockID = BuildCraftTransport.genericPipeBlock.blockID;
@@ -118,6 +119,7 @@ public class ItemPipe extends ItemBuildCraft implements IItemPipe {
 		return 0;
 	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void addInformation(ItemStack stack, EntityPlayer player, List list, boolean advanced) {

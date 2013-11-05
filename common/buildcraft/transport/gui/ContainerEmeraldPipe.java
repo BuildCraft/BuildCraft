@@ -17,13 +17,11 @@ import net.minecraft.inventory.Slot;
 public class ContainerEmeraldPipe extends BuildCraftContainer {
 
 	private final PipeItemsEmerald pipe;
-	private final IInventory playerInv;
 	private final IInventory filterInv;
 
 	public ContainerEmeraldPipe(IInventory playerInventory, PipeItemsEmerald pipe) {
 		super(pipe.getFilters().getSizeInventory());
 		this.pipe = pipe;
-		this.playerInv = playerInventory;
 		this.filterInv = pipe.getFilters();
 
 		for (int i = 0; i < 9; i++) {

@@ -243,6 +243,9 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 		}
 	}
 
+	@SuppressWarnings({
+			"unchecked", "incomplete-switch"
+		})
 	@Override
 	public void renderTileEntityAt(TileEntity tileentity, double x, double y, double z, float f) {
 
@@ -258,13 +261,13 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 
 		switch (pipe.getPipeType()) {
 			case ITEM:
-				renderSolids(pipe.pipe, x, y, z);
+				renderSolids((Pipe<PipeTransportItems>) pipe.pipe, x, y, z);
 				break;
 			case FLUID:
-				renderFluids(pipe.pipe, x, y, z);
+				renderFluids((Pipe<PipeTransportFluids>) pipe.pipe, x, y, z);
 				break;
 			case POWER:
-				renderPower(pipe.pipe, x, y, z);
+				renderPower((Pipe<PipeTransportPower>) pipe.pipe, x, y, z);
 				break;
 		}
 	}

@@ -35,6 +35,7 @@ public class TankManager<T extends Tank> extends ForwardingList<T> implements IF
 	public TankManager() {
 	}
 
+	@SafeVarargs
 	public TankManager(T... tanks) {
 		addAll(Arrays.asList(tanks));
 	}
