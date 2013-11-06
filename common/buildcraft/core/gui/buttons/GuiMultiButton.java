@@ -16,9 +16,9 @@ import cpw.mods.fml.relauncher.SideOnly;
 @SideOnly(Side.CLIENT)
 public class GuiMultiButton extends GuiBetterButton {
 
-	private final MultiButtonController control;
+	private final MultiButtonController<?> control;
 
-	public GuiMultiButton(int id, int x, int y, int width, MultiButtonController control) {
+	public GuiMultiButton(int id, int x, int y, int width, MultiButtonController<?> control) {
 		super(id, x, y, width, StandardButtonTextureSets.LARGE_BUTTON, "");
 		this.control = control;
 	}
@@ -68,7 +68,7 @@ public class GuiMultiButton extends GuiBetterButton {
 		return pressed;
 	}
 
-	public MultiButtonController getController() {
+	public MultiButtonController<?> getController() {
 		return control;
 	}
 

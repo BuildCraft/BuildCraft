@@ -19,7 +19,7 @@ public class PipeTriggerProvider implements ITriggerProvider {
 
 		LinkedList<ITrigger> result = new LinkedList<ITrigger>();
 
-		Pipe pipe = (Pipe) iPipe;
+		Pipe<?> pipe = (Pipe<?>) iPipe;
 
 		if (pipe.hasGate()) {
 			pipe.gate.addTrigger(result);

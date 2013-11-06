@@ -13,6 +13,6 @@ import buildcraft.api.gates.ITriggerParameter;
 
 public interface ITriggerPipe {
 
-	public boolean isTriggerActive(Pipe pipe, ITriggerParameter parameter);
+	public boolean isTriggerActive(Pipe<?> pipe, ITriggerParameter parameter);
 
 }

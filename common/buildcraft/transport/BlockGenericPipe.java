@@ -224,6 +224,7 @@ public class BlockGenericPipe extends BlockContainer {
 		setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
 	}
 
+	@SuppressWarnings("incomplete-switch")
 	@SideOnly(Side.CLIENT)
 	@Override
 	public AxisAlignedBB getSelectedBoundingBoxFromPool(World world, int x, int y, int z) {
@@ -290,7 +291,7 @@ public class BlockGenericPipe extends BlockContainer {
 		if (tileG == null)
 			return null;
 
-		Pipe pipe = tileG.pipe;
+		Pipe<?> pipe = tileG.pipe;
 
 		if (!isValid(pipe))
 			return null;
@@ -473,7 +474,7 @@ public class BlockGenericPipe extends BlockContainer {
 		return AxisAlignedBB.getAABBPool().getAABB(bounds[0][0], bounds[1][0], bounds[2][0], bounds[0][1], bounds[1][1], bounds[2][1]);
 	}
 
-	public static void removePipe(Pipe pipe) {
+	public static void removePipe(Pipe<?> pipe) {
 		if (pipe == null)
 			return;
 
@@ -516,7 +517,7 @@ public class BlockGenericPipe extends BlockContainer {
 
 		int count = quantityDropped(metadata, fortune, world.rand);
 		for (int i = 0; i < count; i++) {
-			Pipe pipe = getPipe(world, x, y, z);
+			Pipe<?> pipe = getPipe(world, x, y, z);
 
 			if (pipe == null) {
 				pipe = pipeRemoved.get(new BlockIndex(x, y, z));
@@ -549,7 +550,7 @@ public class BlockGenericPipe extends BlockContainer {
 				continue;
 			}
 
-			Pipe pipe = getPipe(world, i, j, k);
+			Pipe<?> pipe = getPipe(world, i, j, k);
 
 			if (pipe == null) {
 				pipe = pipeRemoved.get(new BlockIndex(i, j, k));
@@ -575,7 +576,7 @@ public class BlockGenericPipe extends BlockContainer {
 	@SideOnly(Side.CLIENT)
 	@Override
 	public int idPicked(World world, int i, int j, int k) {
-		Pipe pipe = getPipe(world, i, j, k);
+		Pipe<?> pipe = getPipe(world, i, j, k);
 
 		if (pipe == null)
 			return 0;
@@ -583,6 +584,7 @@ public class BlockGenericPipe extends BlockContainer {
 			return pipe.itemID;
 	}
 
+	@SuppressWarnings("incomplete-switch")
 	@SideOnly(Side.CLIENT)
 	@Override
 	public ItemStack getPickBlock(MovingObjectPosition target, World world, int x, int y, int z) {
@@ -591,7 +593,7 @@ public class BlockGenericPipe extends BlockContainer {
 		if (rayTraceResult != null && rayTraceResult.boundingBox != null) {
 			switch (rayTraceResult.hitPart) {
 				case Gate:
-					Pipe pipe = getPipe(world, x, y, z);
+					Pipe<?> pipe = getPipe(world, x, y, z);
 					return pipe.gate.getGateItem();
 				case Plug:
 					return new ItemStack(BuildCraftTransport.plugItem);
@@ -605,7 +607,7 @@ public class BlockGenericPipe extends BlockContainer {
 	public void onNeighborBlockChange(World world, int x, int y, int z, int id) {
 		super.onNeighborBlockChange(world, x, y, z, id);
 
-		Pipe pipe = getPipe(world, x, y, z);
+		Pipe<?> pipe = getPipe(world, x, y, z);
 
 		if (isValid(pipe)) {
 			pipe.container.scheduleNeighborChange();
@@ -615,7 +617,7 @@ public class BlockGenericPipe extends BlockContainer {
 	@Override
 	public int onBlockPlaced(World world, int x, int y, int z, int side, float par6, float par7, float par8, int meta) {
 		super.onBlockPlaced(world, x, y, z, side, par6, par7, par8, meta);
-		Pipe pipe = getPipe(world, x, y, z);
+		Pipe<?> pipe = getPipe(world, x, y, z);
 
 		if (isValid(pipe)) {
 			pipe.onBlockPlaced();
@@ -627,7 +629,7 @@ public class BlockGenericPipe extends BlockContainer {
 	@Override
 	public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase placer, ItemStack stack) {
 		super.onBlockPlacedBy(world, x, y, z, placer, stack);
-		Pipe pipe = getPipe(world, x, y, z);
+		Pipe<?> pipe = getPipe(world, x, y, z);
 
 		if (isValid(pipe)) {
 			pipe.onBlockPlacedBy(placer);
@@ -640,7 +642,7 @@ public class BlockGenericPipe extends BlockContainer {
 
 		world.notifyBlocksOfNeighborChange(x, y, z, BuildCraftTransport.genericPipeBlock.blockID);
 
-		Pipe pipe = getPipe(world, x, y, z);
+		Pipe<?> pipe = getPipe(world, x, y, z);
 
 		if (isValid(pipe)) {
 			ItemStack currentItem = player.getCurrentEquippedItem();
@@ -710,7 +712,7 @@ public class BlockGenericPipe extends BlockContainer {
 		return false;
 	}
 
-	private boolean addOrStripGate(World world, int x, int y, int z, EntityPlayer player, Pipe pipe) {
+	private boolean addOrStripGate(World world, int x, int y, int z, EntityPlayer player, Pipe<?> pipe) {
 		if (addGate(player, pipe))
 			return true;
 		if (player.isSneaking()) {
@@ -723,7 +725,7 @@ public class BlockGenericPipe extends BlockContainer {
 		return false;
 	}
 
-	private boolean addGate(EntityPlayer player, Pipe pipe) {
+	private boolean addGate(EntityPlayer player, Pipe<?> pipe) {
 		if (!pipe.hasGate()) {
 			pipe.gate = Gate.makeGate(pipe, player.getCurrentEquippedItem());
 			if (!player.capabilities.isCreativeMode) {
@@ -735,7 +737,7 @@ public class BlockGenericPipe extends BlockContainer {
 		return false;
 	}
 
-	private boolean stripGate(Pipe pipe) {
+	private boolean stripGate(Pipe<?> pipe) {
 		if (pipe.hasGate()) {
 			if (!CoreProxy.proxy.isRenderWorld(pipe.container.worldObj)) {
 				pipe.gate.dropGate();
@@ -746,7 +748,7 @@ public class BlockGenericPipe extends BlockContainer {
 		return false;
 	}
 
-	private boolean addOrStripWire(EntityPlayer player, Pipe pipe, IPipe.WireColor color) {
+	private boolean addOrStripWire(EntityPlayer player, Pipe<?> pipe, IPipe.WireColor color) {
 		if (addWire(pipe, color)) {
 			if (!player.capabilities.isCreativeMode) {
 				player.getCurrentEquippedItem().splitStack(1);
@@ -756,7 +758,7 @@ public class BlockGenericPipe extends BlockContainer {
 		return player.isSneaking() && stripWire(pipe, color);
 	}
 
-	private boolean addWire(Pipe pipe, IPipe.WireColor color) {
+	private boolean addWire(Pipe<?> pipe, IPipe.WireColor color) {
 		if (!pipe.wireSet[color.ordinal()]) {
 			pipe.wireSet[color.ordinal()] = true;
 			pipe.signalStrength[color.ordinal()] = 0;
@@ -766,7 +768,7 @@ public class BlockGenericPipe extends BlockContainer {
 		return false;
 	}
 
-	private boolean stripWire(Pipe pipe, IPipe.WireColor color) {
+	private boolean stripWire(Pipe<?> pipe, IPipe.WireColor color) {
 		if (pipe.wireSet[color.ordinal()]) {
 			if (!CoreProxy.proxy.isRenderWorld(pipe.container.worldObj)) {
 				dropWire(color, pipe);
@@ -778,7 +780,7 @@ public class BlockGenericPipe extends BlockContainer {
 		return false;
 	}
 
-	private boolean addOrStripFacade(World world, int x, int y, int z, EntityPlayer player, ForgeDirection side, Pipe pipe) {
+	private boolean addOrStripFacade(World world, int x, int y, int z, EntityPlayer player, ForgeDirection side, Pipe<?> pipe) {
 		RaytraceResult rayTraceResult = doRayTrace(world, x, y, z, player);
 		if (player.isSneaking()) {
 			if (rayTraceResult != null && rayTraceResult.hitPart == Part.Facade) {
@@ -793,7 +795,7 @@ public class BlockGenericPipe extends BlockContainer {
 		return false;
 	}
 
-	private boolean addFacade(EntityPlayer player, Pipe pipe, ForgeDirection side) {
+	private boolean addFacade(EntityPlayer player, Pipe<?> pipe, ForgeDirection side) {
 		ItemStack stack = player.getCurrentEquippedItem();
 		if (pipe.container.addFacade(side, ItemFacade.getBlockId(stack), ItemFacade.getMetaData(stack))) {
 			if (!player.capabilities.isCreativeMode) {
@@ -804,11 +806,11 @@ public class BlockGenericPipe extends BlockContainer {
 		return false;
 	}
 
-	private boolean stripFacade(Pipe pipe, ForgeDirection side) {
+	private boolean stripFacade(Pipe<?> pipe, ForgeDirection side) {
 		return pipe.container.dropFacade(side);
 	}
 
-	private boolean addOrStripPlug(World world, int x, int y, int z, EntityPlayer player, ForgeDirection side, Pipe pipe) {
+	private boolean addOrStripPlug(World world, int x, int y, int z, EntityPlayer player, ForgeDirection side, Pipe<?> pipe) {
 		RaytraceResult rayTraceResult = doRayTrace(world, x, y, z, player);
 		if (player.isSneaking()) {
 			if (rayTraceResult != null && rayTraceResult.hitPart == Part.Plug) {
@@ -823,7 +825,7 @@ public class BlockGenericPipe extends BlockContainer {
 		return false;
 	}
 
-	private boolean addPlug(EntityPlayer player, Pipe pipe, ForgeDirection side) {
+	private boolean addPlug(EntityPlayer player, Pipe<?> pipe, ForgeDirection side) {
 		ItemStack stack = player.getCurrentEquippedItem();
 		if (pipe.container.addPlug(side)) {
 			if (!player.capabilities.isCreativeMode) {
@@ -834,11 +836,11 @@ public class BlockGenericPipe extends BlockContainer {
 		return false;
 	}
 
-	private boolean stripPlug(Pipe pipe, ForgeDirection side) {
+	private boolean stripPlug(Pipe<?> pipe, ForgeDirection side) {
 		return pipe.container.removeAndDropPlug(side);
 	}
 
-	private boolean stripEquipment(World world, int x, int y, int z, EntityPlayer player, Pipe pipe) {
+	private boolean stripEquipment(World world, int x, int y, int z, EntityPlayer player, Pipe<?> pipe) {
 		// Try to strip facades first
 		RaytraceResult rayTraceResult = doRayTrace(world, x, y, z, player);
 		if (rayTraceResult != null && rayTraceResult.hitPart == Part.Facade) {
@@ -860,7 +862,7 @@ public class BlockGenericPipe extends BlockContainer {
 	 *
 	 * @param color
 	 */
-	private void dropWire(IPipe.WireColor color, Pipe pipe) {
+	private void dropWire(IPipe.WireColor color, Pipe<?> pipe) {
 
 		Item wireItem;
 		switch (color) {
@@ -910,7 +912,7 @@ public class BlockGenericPipe extends BlockContainer {
 	public void onEntityCollidedWithBlock(World world, int i, int j, int k, Entity entity) {
 		super.onEntityCollidedWithBlock(world, i, j, k, entity);
 
-		Pipe pipe = getPipe(world, i, j, k);
+		Pipe<?> pipe = getPipe(world, i, j, k);
 
 		if (isValid(pipe)) {
 			pipe.onEntityCollidedWithBlock(entity);
@@ -919,7 +921,7 @@ public class BlockGenericPipe extends BlockContainer {
 
 	@Override
 	public boolean canConnectRedstone(IBlockAccess world, int x, int y, int z, int side) {
-		Pipe pipe = getPipe(world, x, y, z);
+		Pipe<?> pipe = getPipe(world, x, y, z);
 
 		if (isValid(pipe))
 			return pipe.canConnectRedstone();
@@ -929,7 +931,7 @@ public class BlockGenericPipe extends BlockContainer {
 
 	@Override
 	public int isProvidingStrongPower(IBlockAccess iblockaccess, int x, int y, int z, int l) {
-		Pipe pipe = getPipe(iblockaccess, x, y, z);
+		Pipe<?> pipe = getPipe(iblockaccess, x, y, z);
 
 		if (isValid(pipe))
 			return pipe.isPoweringTo(l);
@@ -944,7 +946,7 @@ public class BlockGenericPipe extends BlockContainer {
 
 	@Override
 	public int isProvidingWeakPower(IBlockAccess world, int i, int j, int k, int l) {
-		Pipe pipe = getPipe(world, i, j, k);
+		Pipe<?> pipe = getPipe(world, i, j, k);
 
 		if (isValid(pipe))
 			return pipe.isIndirectlyPoweringTo(l);
@@ -963,10 +965,13 @@ public class BlockGenericPipe extends BlockContainer {
 	}
 
 	/* Registration ******************************************************** */
+	@SuppressWarnings("rawtypes")
 	public static Map<Integer, Class<? extends Pipe>> pipes = new HashMap<Integer, Class<? extends Pipe>>();
 	static long lastRemovedDate = -1;
+	@SuppressWarnings("rawtypes")
 	public static Map<BlockIndex, Pipe> pipeRemoved = new HashMap<BlockIndex, Pipe>();
 
+	@SuppressWarnings("rawtypes")
 	public static ItemPipe registerPipe(int key, Class<? extends Pipe> clas) {
 		ItemPipe item = new ItemPipe(key);
 		item.setUnlocalizedName("buildcraftPipe." + clas.getSimpleName().toLowerCase(Locale.ENGLISH));
@@ -974,7 +979,7 @@ public class BlockGenericPipe extends BlockContainer {
 
 		pipes.put(item.itemID, clas);
 
-		Pipe dummyPipe = createPipe(item.itemID);
+		Pipe<?> dummyPipe = createPipe(item.itemID);
 		if (dummyPipe != null) {
 			item.setPipeIconIndex(dummyPipe.getIconIndexForItem());
 			TransportProxy.proxy.setIconProviderFromPipe(item, dummyPipe);
@@ -986,6 +991,7 @@ public class BlockGenericPipe extends BlockContainer {
 		return pipes.containsKey(key);
 	}
 
+	@SuppressWarnings("rawtypes")
 	public static Pipe createPipe(int key) {
 
 		try {
@@ -1003,7 +1009,7 @@ public class BlockGenericPipe extends BlockContainer {
 		return null;
 	}
 
-	public static boolean placePipe(Pipe pipe, World world, int i, int j, int k, int blockId, int meta) {
+	public static boolean placePipe(Pipe<?> pipe, World world, int i, int j, int k, int blockId, int meta) {
 		if (world.isRemote)
 			return true;
 
@@ -1018,7 +1024,7 @@ public class BlockGenericPipe extends BlockContainer {
 		return placed;
 	}
 
-	public static Pipe getPipe(IBlockAccess blockAccess, int i, int j, int k) {
+	public static Pipe<?> getPipe(IBlockAccess blockAccess, int i, int j, int k) {
 
 		TileEntity tile = blockAccess.getBlockTileEntity(i, j, k);
 
@@ -1028,11 +1034,11 @@ public class BlockGenericPipe extends BlockContainer {
 		return ((TileGenericPipe) tile).pipe;
 	}
 
-	public static boolean isFullyDefined(Pipe pipe) {
+	public static boolean isFullyDefined(Pipe<?> pipe) {
 		return pipe != null && pipe.transport != null;
 	}
 
-	public static boolean isValid(Pipe pipe) {
+	public static boolean isValid(Pipe<?> pipe) {
 		return isFullyDefined(pipe);
 	}
 
@@ -1046,7 +1052,7 @@ public class BlockGenericPipe extends BlockContainer {
 		BuildCraftTransport.instance.gateIconProvider.registerIcons(iconRegister);
 		BuildCraftTransport.instance.wireIconProvider.registerIcons(iconRegister);
 		for (int i : pipes.keySet()) {
-			Pipe dummyPipe = createPipe(i);
+			Pipe<?> dummyPipe = createPipe(i);
 			if (dummyPipe != null) {
 				dummyPipe.getIconProvider().registerIcons(iconRegister);
 			}
@@ -1077,7 +1083,7 @@ public class BlockGenericPipe extends BlockContainer {
 		int y = target.blockY;
 		int z = target.blockZ;
 
-		Pipe pipe = getPipe(worldObj, x, y, z);
+		Pipe<?> pipe = getPipe(worldObj, x, y, z);
 		if (pipe == null)
 			return false;
 
@@ -1138,7 +1144,7 @@ public class BlockGenericPipe extends BlockContainer {
 	@SideOnly(Side.CLIENT)
 	@Override
 	public boolean addBlockDestroyEffects(World worldObj, int x, int y, int z, int meta, EffectRenderer effectRenderer) {
-		Pipe pipe = getPipe(worldObj, x, y, z);
+		Pipe<?> pipe = getPipe(worldObj, x, y, z);
 		if (pipe == null)
 			return false;
 

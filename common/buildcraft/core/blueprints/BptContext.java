@@ -16,6 +16,7 @@ import buildcraft.core.Box;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
+@SuppressWarnings("deprecation")
 public class BptContext implements IBptContext {
 
 	private BptBlueprint bpt;

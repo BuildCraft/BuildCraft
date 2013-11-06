@@ -21,6 +21,7 @@ import java.util.Map;
  *
  * @author CovertJaguar <http://www.railcraft.info/>
  */
+@SuppressWarnings("rawtypes")
 @SideOnly(Side.CLIENT)
 public class PipeToolTipManager {
 

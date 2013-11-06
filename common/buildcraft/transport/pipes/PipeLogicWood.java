@@ -18,9 +18,9 @@ import net.minecraftforge.common.ForgeDirection;
 
 public abstract class PipeLogicWood {
 
-	protected final Pipe pipe;
+	protected final Pipe<?> pipe;
 
-	public PipeLogicWood(Pipe pipe) {
+	public PipeLogicWood(Pipe<?> pipe) {
 		this.pipe = pipe;
 	}
 

@@ -150,13 +150,13 @@ public class PipeItemsObsidian extends Pipe<PipeTransportItems> implements IPowe
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	private boolean suckItem(int distance) {
 		AxisAlignedBB box = getSuckingBox(getOpenOrientation(), distance);
 
 		if (box == null)
 			return false;
 
-		@SuppressWarnings("rawtypes")
 		List<Entity> discoveredEntities = (List<Entity>) container.worldObj.getEntitiesWithinAABB(Entity.class, box);
 
 		for (Entity entity : discoveredEntities) {

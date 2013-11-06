@@ -4,6 +4,7 @@ import buildcraft.api.blueprints.BptSlotInfo;
 import buildcraft.core.blueprints.BptBase;
 import net.minecraft.tileentity.TileEntity;
 
+@SuppressWarnings("deprecation")
 public interface IBptContributor {
 
 	public void saveToBluePrint(TileEntity builder, BptBase bluePrint, BptSlotInfo slot);

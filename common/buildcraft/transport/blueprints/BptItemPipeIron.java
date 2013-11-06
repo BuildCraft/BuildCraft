@@ -16,6 +16,7 @@ import java.util.LinkedList;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.ForgeDirection;
 
+@SuppressWarnings("deprecation")
 public class BptItemPipeIron extends BptItem {
 
 	public BptItemPipeIron() {

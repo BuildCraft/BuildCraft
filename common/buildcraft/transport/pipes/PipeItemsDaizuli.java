@@ -45,7 +45,7 @@ public class PipeItemsDaizuli extends Pipe<PipeTransportItems> implements IPipeT
 		@Override
 		protected boolean isValidConnectingTile(TileEntity tile) {
 			if (tile instanceof TileGenericPipe) {
-				Pipe otherPipe = ((TileGenericPipe) tile).pipe;
+				Pipe<?> otherPipe = ((TileGenericPipe) tile).pipe;
 				if (otherPipe instanceof PipeItemsWood)
 					return false;
 				if (otherPipe.transport instanceof PipeTransportItems)

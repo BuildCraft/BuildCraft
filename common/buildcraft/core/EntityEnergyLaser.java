@@ -8,7 +8,6 @@
 package buildcraft.core;
 
 import buildcraft.api.core.Position;
-import static buildcraft.core.EntityLaser.LASER_TEXTURES;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 

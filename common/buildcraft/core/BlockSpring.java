@@ -48,6 +48,7 @@ public class BlockSpring extends Block {
 		setCreativeTab(CreativeTabBuildCraft.MACHINES.get());
 	}
 
+	@SuppressWarnings({	"unchecked", "rawtypes"	})
 	@Override
 	public void getSubBlocks(int id, CreativeTabs tab, List list) {
 		for (EnumSpring type : EnumSpring.VALUES) {

@@ -4,7 +4,6 @@ import buildcraft.core.DefaultProps;
 import buildcraft.core.gui.buttons.GuiBetterButton;
 import buildcraft.core.gui.slots.IPhantomSlot;
 import buildcraft.core.gui.slots.SlotBase;
-import buildcraft.core.gui.slots.SlotPhantom;
 import buildcraft.core.gui.tooltips.ToolTip;
 import buildcraft.core.gui.tooltips.ToolTipLine;
 import buildcraft.core.utils.SessionVars;

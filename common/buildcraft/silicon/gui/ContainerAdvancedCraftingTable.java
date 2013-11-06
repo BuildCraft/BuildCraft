@@ -55,7 +55,6 @@ public class ContainerAdvancedCraftingTable extends BuildCraftContainer {
 		return workbench.isUseableByPlayer(var1);
 	}
 
-	@SuppressWarnings("rawtypes")
 	@Override
 	public void detectAndSendChanges() {
 		super.detectAndSendChanges();

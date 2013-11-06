@@ -31,6 +31,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 
+@SuppressWarnings("deprecation")
 public class BptBlueprint extends BptBase {
 
 	private int[] idMapping = new int[Item.itemsList.length];

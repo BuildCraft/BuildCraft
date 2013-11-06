@@ -17,6 +17,7 @@ import java.util.LinkedList;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 
+@SuppressWarnings("deprecation")
 public class BptItemPipeEmerald extends BptItem {
 
 	public BptItemPipeEmerald() {

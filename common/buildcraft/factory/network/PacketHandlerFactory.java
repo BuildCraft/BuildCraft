@@ -1,7 +1,6 @@
 package buildcraft.factory.network;
 
 import buildcraft.core.network.PacketIds;
-import buildcraft.core.network.PacketPayload;
 import buildcraft.core.network.PacketPayloadStream;
 import buildcraft.core.network.PacketUpdate;
 import buildcraft.factory.TileRefinery;

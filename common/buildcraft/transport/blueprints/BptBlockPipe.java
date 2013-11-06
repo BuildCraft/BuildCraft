@@ -15,8 +15,6 @@ import buildcraft.api.blueprints.BlockSignature;
 import buildcraft.api.blueprints.BptBlock;
 import buildcraft.api.blueprints.BptSlotInfo;
 import buildcraft.api.blueprints.IBptContext;
-import buildcraft.api.gates.ActionManager;
-import buildcraft.api.gates.TriggerParameter;
 import buildcraft.core.Version;
 import buildcraft.transport.BlockGenericPipe;
 import buildcraft.transport.GateVanilla;
@@ -71,7 +69,7 @@ public class BptBlockPipe extends BptBlock {
 
 	@Override
 	public boolean isValid(BptSlotInfo slot, IBptContext context) {
-		Pipe pipe = BlockGenericPipe.getPipe(context.world(), slot.x, slot.y, slot.z);
+		Pipe<?> pipe = BlockGenericPipe.getPipe(context.world(), slot.x, slot.y, slot.z);
 
 		if (BlockGenericPipe.isValid(pipe))
 			return pipe.itemID == slot.cpt.getInteger("pipeId");
@@ -92,7 +90,7 @@ public class BptBlockPipe extends BptBlock {
 	public void buildBlock(BptSlotInfo slot, IBptContext context) {
 		int pipeId = slot.cpt.getInteger("pipeId");
 
-		Pipe pipe = BlockGenericPipe.createPipe(pipeId);
+		Pipe<?> pipe = BlockGenericPipe.createPipe(pipeId);
 
 		for (int i = 0; i < pipe.wireSet.length; ++i)
 			if (slot.cpt.hasKey("wire" + i)) {
@@ -139,7 +137,7 @@ public class BptBlockPipe extends BptBlock {
 
 	@Override
 	public void initializeFromWorld(BptSlotInfo bptSlot, IBptContext context, int x, int y, int z) {
-		Pipe pipe = BlockGenericPipe.getPipe(context.world(), x, y, z);
+		Pipe<?> pipe = BlockGenericPipe.getPipe(context.world(), x, y, z);
 
 		if (BlockGenericPipe.isValid(pipe)) {
 			bptSlot.cpt.setInteger("pipeId", pipe.itemID);

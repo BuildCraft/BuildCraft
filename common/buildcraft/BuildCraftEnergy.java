@@ -60,6 +60,7 @@ import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 
+@SuppressWarnings("deprecation")
 @Mod(name = "BuildCraft Energy", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Energy", dependencies = DefaultProps.DEPENDENCY_CORE)
 @NetworkMod(channels = {DefaultProps.NET_CHANNEL_NAME}, packetHandler = PacketHandler.class, clientSideRequired = true, serverSideRequired = true)
 public class BuildCraftEnergy {
@@ -114,6 +115,8 @@ public class BuildCraftEnergy {
 		BuildCraftCore.mainConfiguration.save();
 
 		class BiomeIdException extends RuntimeException {
+
+			private static final long serialVersionUID = 1L;
 
 			public BiomeIdException(String biome, int id) {
 				super(String.format("You have a Biome Id conflict at %d for %s", id, biome));

@@ -16,6 +16,7 @@ import java.util.LinkedList;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.ForgeDirection;
 
+@SuppressWarnings("deprecation")
 public class BptItemPipeWooden extends BptItem {
 
 	public BptItemPipeWooden() {

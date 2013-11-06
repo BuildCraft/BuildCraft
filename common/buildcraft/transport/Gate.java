@@ -55,7 +55,7 @@ public abstract class Gate {
 
 		None, AND, OR
 	}
-	protected Pipe pipe;
+	protected Pipe<?> pipe;
 	public GateKind kind;
 	public ITrigger[] triggers = new ITrigger[8];
 	public ITriggerParameter[] triggerParameters = new ITriggerParameter[8];
@@ -64,11 +64,11 @@ public abstract class Gate {
 	public boolean broadcastRedstone = false;
 
 	// / CONSTRUCTOR
-	public Gate(Pipe pipe) {
+	public Gate(Pipe<?> pipe) {
 		this.pipe = pipe;
 	}
 
-	public Gate(Pipe pipe, ItemStack stack) {
+	public Gate(Pipe<?> pipe, ItemStack stack) {
 
 		this.pipe = pipe;
 		kind = GateKind.getKindFromDamage(stack);
@@ -296,13 +296,13 @@ public abstract class Gate {
 		return stack.itemID == BuildCraftTransport.pipeGate.itemID || stack.itemID == BuildCraftTransport.pipeGateAutarchic.itemID;
 	}
 
-	public static Gate makeGate(Pipe pipe, NBTTagCompound data) {
+	public static Gate makeGate(Pipe<?> pipe, NBTTagCompound data) {
 		Gate gate = new GateVanilla(pipe);
 		gate.readFromNBT(data);
 		return gate;
 	}
 
-	public static Gate makeGate(Pipe pipe, ItemStack stack) {
+	public static Gate makeGate(Pipe<?> pipe, ItemStack stack) {
 		return new GateVanilla(pipe, stack);
 	}
 }

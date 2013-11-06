@@ -9,7 +9,6 @@
 
 package buildcraft.core.blueprints;
 
-import buildcraft.core.proxy.CoreProxy;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;

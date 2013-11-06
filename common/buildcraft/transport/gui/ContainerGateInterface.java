@@ -40,6 +40,7 @@ import net.minecraftforge.common.ForgeDirection;
 public class ContainerGateInterface extends BuildCraftContainer {
 
 	IInventory playerIInventory;
+	@SuppressWarnings("rawtypes")
 	Pipe pipe;
 	private final NavigableSet<ITrigger> _potentialTriggers = new TreeSet<ITrigger>(new Comparator<ITrigger>() {
 		@Override
@@ -58,6 +59,9 @@ public class ContainerGateInterface extends BuildCraftContainer {
 	public boolean[] triggerState = new boolean[8];
 	private int lastTriggerState = 0;
 
+	@SuppressWarnings({
+			"rawtypes", "unchecked"
+		})
 	public ContainerGateInterface(IInventory playerInventory, Pipe pipe) {
 		super(0);
 		this.playerIInventory = playerInventory;

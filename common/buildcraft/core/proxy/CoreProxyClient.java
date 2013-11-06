@@ -26,7 +26,6 @@ import buildcraft.transport.render.TileEntityPickupFX;
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
-import java.io.File;
 import java.util.List;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;

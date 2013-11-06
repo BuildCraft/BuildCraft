@@ -23,7 +23,6 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
@@ -83,8 +82,6 @@ public class PipeFluidsWood extends Pipe<PipeTransportFluids> implements IPowerR
 	public void doWork(PowerHandler workProvider) {
 		if (powerHandler.getEnergyStored() <= 0)
 			return;
-
-		World w = container.worldObj;
 
 		int meta = container.getBlockMetadata();
 

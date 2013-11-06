@@ -579,7 +579,7 @@ public class PipeTransportItems extends PipeTransport {
 	@Override
 	public boolean canPipeConnect(TileEntity tile, ForgeDirection side) {
 		if (tile instanceof TileGenericPipe) {
-			Pipe pipe2 = ((TileGenericPipe) tile).pipe;
+			Pipe<?> pipe2 = ((TileGenericPipe) tile).pipe;
 			if (BlockGenericPipe.isValid(pipe2) && !(pipe2.transport instanceof PipeTransportItems))
 				return false;
 		}
