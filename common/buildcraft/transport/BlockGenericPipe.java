@@ -1010,9 +1010,9 @@ public class BlockGenericPipe extends BlockContainer {
 		boolean placed = world.setBlock(i, j, k, blockId, meta, 1);
 
 		if (placed) {
-
 			TileGenericPipe tile = (TileGenericPipe) world.getBlockTileEntity(i, j, k);
 			tile.initialize(pipe);
+			tile.sendUpdateToClient();
 		}
 
 		return placed;
