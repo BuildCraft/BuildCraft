@@ -242,10 +242,12 @@ public class BuildCraftBuilders {
 		templateItem = new ItemBptTemplate(templateItemId.getInt());
 		templateItem.setUnlocalizedName("templateItem");
 		LanguageRegistry.addName(templateItem, "Template");
+		CoreProxy.proxy.registerItem(templateItem);
 
 		blueprintItem = new ItemBptBluePrint(blueprintItemId.getInt());
 		blueprintItem.setUnlocalizedName("blueprintItem");
 		LanguageRegistry.addName(blueprintItem, "Blueprint");
+		CoreProxy.proxy.registerItem(blueprintItem);
 
 		markerBlock = new BlockMarker(markerId.getInt());
 		CoreProxy.proxy.registerBlock(markerBlock.setUnlocalizedName("markerBlock"));
@@ -333,11 +335,11 @@ public class BuildCraftBuilders {
 		FillerManager.registry.addRecipe(new FillerFillPyramid(), new Object[]{"   ", " b ", "bbb", 'g', Block.glass, 'b', Block.brick});
 		FillerManager.registry.addRecipe(new FillerFillStairs(), new Object[]{"  b", " bb", "bbb", 'g', Block.glass, 'b', Block.brick});
 	}
-	
+
 	@EventHandler
-    public void processIMCRequests(FMLInterModComms.IMCEvent event) {
-        InterModComms.processIMC(event);
-    }
+	public void processIMCRequests(FMLInterModComms.IMCEvent event) {
+		InterModComms.processIMC(event);
+	}
 
 	public static BptPlayerIndex getPlayerIndex(String name) {
 		BptRootIndex rootIndex = getBptRootIndex();

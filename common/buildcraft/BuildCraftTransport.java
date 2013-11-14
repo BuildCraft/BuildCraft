@@ -264,7 +264,9 @@ public class BuildCraftTransport {
 
 			pipeWaterproof = new ItemBuildCraft(pipeWaterproofId.getInt());
 			pipeWaterproof.setUnlocalizedName("pipeWaterproof");
-			LanguageRegistry.addName(pipeWaterproof, "Pipe Waterproof");
+			LanguageRegistry.addName(pipeWaterproof, "Pipe Sealant");
+			CoreProxy.proxy.registerItem(pipeWaterproof);
+			
 			genericPipeBlock = new BlockGenericPipe(genericPipeId.getInt());
 			CoreProxy.proxy.registerBlock(genericPipeBlock.setUnlocalizedName("pipeBlock"), ItemBlock.class);
 
@@ -310,6 +312,7 @@ public class BuildCraftTransport {
 			redPipeWire = new ItemBuildCraft(redPipeWireId.getInt()).setPassSneakClick(true);
 			redPipeWire.setUnlocalizedName("redPipeWire");
 			LanguageRegistry.addName(redPipeWire, "Red Pipe Wire");
+			CoreProxy.proxy.registerItem(redPipeWire);
 			AssemblyRecipe.assemblyRecipes.add(new AssemblyRecipe(new ItemStack[]{new ItemStack(Item.dyePowder, 1, 1), new ItemStack(Item.redstone, 1),
 				new ItemStack(Item.ingotIron, 1)}, 500, new ItemStack(redPipeWire, 8)));
 
@@ -317,6 +320,7 @@ public class BuildCraftTransport {
 			bluePipeWire = new ItemBuildCraft(bluePipeWireId.getInt()).setPassSneakClick(true);
 			bluePipeWire.setUnlocalizedName("bluePipeWire");
 			LanguageRegistry.addName(bluePipeWire, "Blue Pipe Wire");
+			CoreProxy.proxy.registerItem(bluePipeWire);
 			AssemblyRecipe.assemblyRecipes.add(new AssemblyRecipe(new ItemStack[]{new ItemStack(Item.dyePowder, 1, 4), new ItemStack(Item.redstone, 1),
 				new ItemStack(Item.ingotIron, 1)}, 500, new ItemStack(bluePipeWire, 8)));
 
@@ -324,6 +328,7 @@ public class BuildCraftTransport {
 			greenPipeWire = new ItemBuildCraft(greenPipeWireId.getInt()).setPassSneakClick(true);
 			greenPipeWire.setUnlocalizedName("greenPipeWire");
 			LanguageRegistry.addName(greenPipeWire, "Green Pipe Wire");
+			CoreProxy.proxy.registerItem(greenPipeWire);
 			AssemblyRecipe.assemblyRecipes.add(new AssemblyRecipe(new ItemStack[]{new ItemStack(Item.dyePowder, 1, 2), new ItemStack(Item.redstone, 1),
 				new ItemStack(Item.ingotIron, 1)}, 500, new ItemStack(greenPipeWire, 8)));
 
@@ -331,25 +336,30 @@ public class BuildCraftTransport {
 			yellowPipeWire = new ItemBuildCraft(yellowPipeWireId.getInt()).setPassSneakClick(true);
 			yellowPipeWire.setUnlocalizedName("yellowPipeWire");
 			LanguageRegistry.addName(yellowPipeWire, "Yellow Pipe Wire");
+			CoreProxy.proxy.registerItem(yellowPipeWire);
 			AssemblyRecipe.assemblyRecipes.add(new AssemblyRecipe(new ItemStack[]{new ItemStack(Item.dyePowder, 1, 11), new ItemStack(Item.redstone, 1),
 				new ItemStack(Item.ingotIron, 1)}, 500, new ItemStack(yellowPipeWire, 8)));
 
 			Property pipeGateId = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_ITEM, "pipeGate.id", DefaultProps.GATE_ID);
 			pipeGate = new ItemGate(pipeGateId.getInt(), 0);
 			pipeGate.setUnlocalizedName("pipeGate");
+			CoreProxy.proxy.registerItem(pipeGate);
 
 			Property pipeGateAutarchicId = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_ITEM, "pipeGateAutarchic.id",
 					DefaultProps.GATE_AUTARCHIC_ID);
 			pipeGateAutarchic = new ItemGate(pipeGateAutarchicId.getInt(), 1);
 			pipeGateAutarchic.setUnlocalizedName("pipeGateAutarchic");
+			CoreProxy.proxy.registerItem(pipeGateAutarchic);
 
 			Property pipeFacadeId = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_ITEM, "pipeFacade.id", DefaultProps.PIPE_FACADE_ID);
 			facadeItem = new ItemFacade(pipeFacadeId.getInt());
 			facadeItem.setUnlocalizedName("pipeFacade");
+			CoreProxy.proxy.registerItem(facadeItem);
 
 			Property pipePlugId = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_ITEM, "pipePlug.id", DefaultProps.PIPE_PLUG_ID);
 			plugItem = new ItemPlug(pipePlugId.getInt());
 			plugItem.setUnlocalizedName("pipePlug");
+			CoreProxy.proxy.registerItem(plugItem);
 
 			Property filteredBufferId = BuildCraftCore.mainConfiguration.getBlock("filteredBuffer.id", DefaultProps.FILTERED_BUFFER_ID);
 			filteredBufferBlock = new BlockFilteredBuffer(filteredBufferId.getInt());

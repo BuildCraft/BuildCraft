@@ -189,6 +189,7 @@ public class BuildCraftEnergy {
 			bucketOil = new ItemBucketBuildcraft(bucketOilId, blockOil.blockID);
 			bucketOil.setUnlocalizedName("bucketOil").setContainerItem(Item.bucketEmpty);
 			LanguageRegistry.addName(bucketOil, "Oil Bucket");
+			CoreProxy.proxy.registerItem(bucketOil);
 			FluidContainerRegistry.registerFluidContainer(FluidRegistry.getFluidStack("oil", FluidContainerRegistry.BUCKET_VOLUME), new ItemStack(bucketOil), new ItemStack(Item.bucketEmpty));
 		}
 
@@ -196,6 +197,7 @@ public class BuildCraftEnergy {
 			bucketFuel = new ItemBucketBuildcraft(bucketFuelId, blockFuel.blockID);
 			bucketFuel.setUnlocalizedName("bucketFuel").setContainerItem(Item.bucketEmpty);
 			LanguageRegistry.addName(bucketFuel, "Fuel Bucket");
+			CoreProxy.proxy.registerItem(bucketFuel);
 			FluidContainerRegistry.registerFluidContainer(FluidRegistry.getFluidStack("fuel", FluidContainerRegistry.BUCKET_VOLUME), new ItemStack(bucketFuel), new ItemStack(Item.bucketEmpty));
 		}
 
