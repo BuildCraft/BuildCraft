@@ -13,6 +13,7 @@ import buildcraft.api.recipes.RefineryRecipes;
 import buildcraft.core.BlockIndex;
 import buildcraft.core.BlockSpring;
 import buildcraft.core.DefaultProps;
+import buildcraft.core.InterModComms;
 import buildcraft.core.Version;
 import buildcraft.core.network.PacketHandler;
 import buildcraft.core.proxy.CoreProxy;
@@ -44,8 +45,6 @@ import cpw.mods.fml.common.registry.LanguageRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import java.util.TreeMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.item.Item;
@@ -81,6 +80,7 @@ public class BuildCraftEnergy {
 	public static Item bucketFuel;
 	public static Item fuel;
 	public static boolean canOilBurn;
+	public static double oilWellScalar;
 	public static TreeMap<BlockIndex, Integer> saturationStored = new TreeMap<BlockIndex, Integer>();
 	public static BCTrigger triggerBlueEngineHeat = new TriggerEngineHeat(DefaultProps.TRIGGER_BLUE_ENGINE_HEAT, EnergyStage.BLUE, "buildcraft.engine.stage.blue");
 	public static BCTrigger triggerGreenEngineHeat = new TriggerEngineHeat(DefaultProps.TRIGGER_GREEN_ENGINE_HEAT, EnergyStage.GREEN, "buildcraft.engine.stage.green");
@@ -107,6 +107,10 @@ public class BuildCraftEnergy {
 		int oilDesertBiomeId = BuildCraftCore.mainConfiguration.get("biomes", "oilDesert", DefaultProps.BIOME_OIL_DESERT).getInt(DefaultProps.BIOME_OIL_DESERT);
 		int oilOceanBiomeId = BuildCraftCore.mainConfiguration.get("biomes", "oilOcean", DefaultProps.BIOME_OIL_OCEAN).getInt(DefaultProps.BIOME_OIL_OCEAN);
 		canOilBurn = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "burnOil", true, "Can oil burn?").getBoolean(true);
+		oilWellScalar = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "oilWellGenerationRate", 1.0, "Probability of oil well generation").getDouble(1.0);
+
+		double fuelOilMultiplier = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "fuel.oil.combustion", 1.0F, "adjust energy value of Oil in Combustion Engines").getDouble(1.0F);
+		double fuelFuelMultiplier = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "fuel.fuel.combustion", 1.0F, "adjust energy value of Fuel in Combustion Engines").getDouble(1.0F);
 		BuildCraftCore.mainConfiguration.save();
 
 		class BiomeIdException extends RuntimeException {
@@ -185,6 +189,7 @@ public class BuildCraftEnergy {
 			bucketOil = new ItemBucketBuildcraft(bucketOilId, blockOil.blockID);
 			bucketOil.setUnlocalizedName("bucketOil").setContainerItem(Item.bucketEmpty);
 			LanguageRegistry.addName(bucketOil, "Oil Bucket");
+			CoreProxy.proxy.registerItem(bucketOil);
 			FluidContainerRegistry.registerFluidContainer(FluidRegistry.getFluidStack("oil", FluidContainerRegistry.BUCKET_VOLUME), new ItemStack(bucketOil), new ItemStack(Item.bucketEmpty));
 		}
 
@@ -192,6 +197,7 @@ public class BuildCraftEnergy {
 			bucketFuel = new ItemBucketBuildcraft(bucketFuelId, blockFuel.blockID);
 			bucketFuel.setUnlocalizedName("bucketFuel").setContainerItem(Item.bucketEmpty);
 			LanguageRegistry.addName(bucketFuel, "Fuel Bucket");
+			CoreProxy.proxy.registerItem(bucketFuel);
 			FluidContainerRegistry.registerFluidContainer(FluidRegistry.getFluidStack("fuel", FluidContainerRegistry.BUCKET_VOLUME), new ItemStack(bucketFuel), new ItemStack(Item.bucketEmpty));
 		}
 
@@ -202,9 +208,9 @@ public class BuildCraftEnergy {
 		RefineryRecipes.addRecipe(new FluidStack(fluidOil, 1), new FluidStack(fluidFuel, 1), 12, 1);
 
 		// Iron Engine Fuels
-		IronEngineFuel.addFuel("lava", 1, 20000);
-		IronEngineFuel.addFuel("oil", 3, 20000);
-		IronEngineFuel.addFuel("fuel", 6, 100000);
+//		IronEngineFuel.addFuel("lava", 1, 20000);
+		IronEngineFuel.addFuel("oil", 3, (int) (5000 * fuelOilMultiplier));
+		IronEngineFuel.addFuel("fuel", 6, (int) (25000 * fuelFuelMultiplier));
 
 		// Iron Engine Coolants
 		IronEngineCoolant.addCoolant(FluidRegistry.getFluid("water"), 0.0023F);
@@ -245,47 +251,17 @@ public class BuildCraftEnergy {
 
 	public static void loadRecipes() {
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(engineBlock, 1, 0),
-				new Object[]{"www", " g ", "GpG", Character.valueOf('w'), "plankWood", Character.valueOf('g'), Block.glass, Character.valueOf('G'),
-			BuildCraftCore.woodenGearItem, Character.valueOf('p'), Block.pistonBase});
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(engineBlock, 1, 1), new Object[]{"www", " g ", "GpG", Character.valueOf('w'), Block.cobblestone,
-			Character.valueOf('g'), Block.glass, Character.valueOf('G'), BuildCraftCore.stoneGearItem, Character.valueOf('p'), Block.pistonBase});
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(engineBlock, 1, 2), new Object[]{"www", " g ", "GpG", Character.valueOf('w'), Item.ingotIron,
-			Character.valueOf('g'), Block.glass, Character.valueOf('G'), BuildCraftCore.ironGearItem, Character.valueOf('p'), Block.pistonBase});
+				new Object[]{"www", " g ", "GpG", 'w', "plankWood", 'g', Block.glass, 'G',
+			BuildCraftCore.woodenGearItem, 'p', Block.pistonBase});
+		CoreProxy.proxy.addCraftingRecipe(new ItemStack(engineBlock, 1, 1), new Object[]{"www", " g ", "GpG", 'w', "cobblestone",
+			'g', Block.glass, 'G', BuildCraftCore.stoneGearItem, 'p', Block.pistonBase});
+		CoreProxy.proxy.addCraftingRecipe(new ItemStack(engineBlock, 1, 2), new Object[]{"www", " g ", "GpG", 'w', Item.ingotIron,
+			'g', Block.glass, 'G', BuildCraftCore.ironGearItem, 'p', Block.pistonBase});
 	}
 
-	@Mod.IMCCallback
+	@EventHandler
 	public void processIMCRequests(FMLInterModComms.IMCEvent event) {
-		for (FMLInterModComms.IMCMessage m : event.getMessages()) {
-			if (m.key.equals("oil-lake-biome")) {
-				try {
-					String biomeID = m.getStringValue().trim();
-					int id = Integer.valueOf(biomeID);
-					if (id >= BiomeGenBase.biomeList.length) {
-						throw new IllegalArgumentException("Biome ID must be less than " + BiomeGenBase.biomeList.length);
-					}
-					OilPopulate.INSTANCE.surfaceDepositBiomes.add(id);
-				} catch (Exception ex) {
-					Logger.getLogger("Buildcraft").log(Level.WARNING,
-							String.format("Received an invalid oil-lake-biome request %s from mod %s", m.getStringValue(), m.getSender()));
-				}
-				Logger.getLogger("Buildcraft").log(Level.INFO,
-						String.format("Received an successfull oil-lake-biome request %s from mod %s", m.getStringValue(), m.getSender()));
-			} else if (m.key.equals("oil-gen-exclude")) {
-				try {
-					String biomeID = m.getStringValue().trim();
-					int id = Integer.valueOf(biomeID);
-					if (id >= BiomeGenBase.biomeList.length) {
-						throw new IllegalArgumentException("Biome ID must be less than " + BiomeGenBase.biomeList.length);
-					}
-					OilPopulate.INSTANCE.excludedBiomes.add(id);
-				} catch (Exception ex) {
-					Logger.getLogger("Buildcraft").log(Level.WARNING,
-							String.format("Received an invalid oil-gen-exclude request %s from mod %s", m.getStringValue(), m.getSender()));
-				}
-				Logger.getLogger("Buildcraft").log(Level.INFO,
-						String.format("Received an successfull oil-gen-exclude request %s from mod %s", m.getStringValue(), m.getSender()));
-			}
-		}
+		InterModComms.processIMC(event);
 	}
 	// public static int createPollution (World world, int i, int j, int k, int
 	// saturation) {

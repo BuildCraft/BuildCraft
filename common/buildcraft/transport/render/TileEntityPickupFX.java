@@ -11,7 +11,7 @@
  */
 package buildcraft.transport.render;
 
-import buildcraft.core.utils.Utils;
+import buildcraft.transport.utils.TransportUtils;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.particle.EntityFX;
@@ -42,7 +42,7 @@ public class TileEntityPickupFX extends EntityFX
         this.entityToPickUp = par2Entity;
         this.entityPickingUp = par3Entity;
         this.maxAge = 3;
-        this.yOffs = Utils.getPipeFloorOf(par2Entity.getEntityItem());
+        this.yOffs = TransportUtils.getPipeFloorOf(par2Entity.getEntityItem());
     }
 
     @Override

@@ -2,7 +2,9 @@ package buildcraft.core.gui;
 
 import buildcraft.core.DefaultProps;
 import buildcraft.core.gui.buttons.GuiBetterButton;
+import buildcraft.core.gui.slots.IPhantomSlot;
 import buildcraft.core.gui.slots.SlotBase;
+import buildcraft.core.gui.slots.SlotPhantom;
 import buildcraft.core.gui.tooltips.ToolTip;
 import buildcraft.core.gui.tooltips.ToolTipLine;
 import buildcraft.core.utils.SessionVars;
@@ -209,7 +211,7 @@ public abstract class GuiBuildCraft extends GuiContainer {
 
 			GL11.glColor4f(colorR, colorG, colorB, 1.0F);
 
-			mc.renderEngine.func_110577_a(LEDGER_TEXTURE);
+			mc.renderEngine.bindTexture(LEDGER_TEXTURE);
 			drawTexturedModalRect(x, y, 0, 256 - currentHeight, 4, currentHeight);
 			drawTexturedModalRect(x + 4, y, 256 - currentWidth + 4, 0, currentWidth - 4, 4);
 			// Add in top left corner again
@@ -333,6 +335,23 @@ public abstract class GuiBuildCraft extends GuiContainer {
 
 		// / Handle ledger clicks
 		ledgerManager.handleMouseClicked(par1, par2, mouseButton);
+	}
+
+	@Override
+	protected void mouseClickMove(int x, int y, int mouseButton, long time) {
+		Slot slot = getSlotAtPosition(x, y);
+		if (mouseButton == 1 && slot instanceof IPhantomSlot)
+			return;
+		super.mouseClickMove(x, y, mouseButton, time);
+	}
+
+	public Slot getSlotAtPosition(int x, int y) {
+		for (int slotIndex = 0; slotIndex < this.inventorySlots.inventorySlots.size(); ++slotIndex) {
+			Slot slot = (Slot) this.inventorySlots.inventorySlots.get(slotIndex);
+			if (isMouseOverSlot(slot, x, y))
+				return slot;
+		}
+		return null;
 	}
 
 	private void drawToolTips(ToolTip toolTips, int mouseX, int mouseY) {

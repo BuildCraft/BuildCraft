@@ -86,6 +86,10 @@ public abstract class Pipe<T extends PipeTransport> implements IPipe, IDropContr
 		Pipe otherPipe;
 		if (tile instanceof TileGenericPipe) {
 			otherPipe = ((TileGenericPipe) tile).pipe;
+
+			if (!BlockGenericPipe.isFullyDefined(otherPipe))
+				return false;
+
 			if (!PipeConnectionBans.canPipesConnect(getClass(), otherPipe.getClass()))
 				return false;
 		}
@@ -135,15 +139,11 @@ public abstract class Pipe<T extends PipeTransport> implements IPipe, IDropContr
 		if (container.worldObj.isRemote)
 			return;
 
-		if (actionTracker.markTimeIfDelay(container.worldObj, 10)) {
-			resolveActions();
-		}
-
 		// Update the gate if we have any
 		if (gate != null) {
+			gate.resolveActions();
 			gate.update();
 		}
-
 	}
 
 	private void internalUpdate() {
@@ -293,9 +293,7 @@ public abstract class Pipe<T extends PipeTransport> implements IPipe, IDropContr
 			internalUpdateScheduled = true;
 
 			if (oldSignal == 0) {
-				// worldObj.markBlockNeedsUpdate(container.xCoord, container.yCoord, zCoord);
 				container.scheduleRenderUpdate();
-
 			}
 
 			return true;
@@ -359,6 +357,30 @@ public abstract class Pipe<T extends PipeTransport> implements IPipe, IDropContr
 	@Override
 	public boolean hasGate() {
 		return gate != null;
+	}
+
+	public boolean hasGate(ForgeDirection side) {
+		if (!hasGate())
+			return false;
+		if (container.hasFacade(side))
+			return false;
+		if (container.hasPlug(side))
+			return false;
+
+		int connections = 0;
+		ForgeDirection targetOrientation = ForgeDirection.UNKNOWN;
+		for (ForgeDirection o : ForgeDirection.VALID_DIRECTIONS) {
+			if (container.isPipeConnected(o)) {
+				connections++;
+				if (connections == 1)
+					targetOrientation = o;
+			}
+		}
+
+		if (connections > 1 || connections == 0)
+			return true;
+
+		return targetOrientation.getOpposite() != side;
 	}
 
 	protected void notifyBlocksOfNeighborChange(ForgeDirection side) {
@@ -428,13 +450,6 @@ public abstract class Pipe<T extends PipeTransport> implements IPipe, IDropContr
 		gate.resetGate();
 		gate = null;
 		container.scheduleRenderUpdate();
-	}
-
-	private void resolveActions() {
-		if (!hasGate())
-			return;
-
-		gate.resolveActions();
 	}
 
 	protected void actionsActivated(Map<IAction, Boolean> actions) {

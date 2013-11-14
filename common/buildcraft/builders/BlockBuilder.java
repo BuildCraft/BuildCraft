@@ -37,8 +37,8 @@ public class BlockBuilder extends BlockContainer {
 
 	public BlockBuilder(int i) {
 		super(i, Material.iron);
-		setHardness(0.7F);
-		setCreativeTab(CreativeTabBuildCraft.tabBuildCraft);
+		setHardness(5F);
+		setCreativeTab(CreativeTabBuildCraft.MACHINES.get());
 	}
 
 	@Override

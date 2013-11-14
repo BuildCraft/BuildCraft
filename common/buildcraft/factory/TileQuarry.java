@@ -20,6 +20,7 @@ import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.power.PowerHandler;
 import buildcraft.api.power.PowerHandler.PowerReceiver;
 import buildcraft.core.Box;
+import buildcraft.core.CoreConstants;
 import buildcraft.core.DefaultAreaProvider;
 import buildcraft.core.EntityRobot;
 import buildcraft.core.IBuilderInventory;
@@ -73,6 +74,7 @@ public class TileQuarry extends TileBuildCraft implements IMachine, IPowerRecept
 	public PowerHandler powerHandler;
 	boolean isDigging = false;
 	public static final int MAX_ENERGY = 15000;
+	private static final PowerHandler.PerditionCalculator PERDITION = new PowerHandler.PerditionCalculator(2 * BuildCraftFactory.miningMultiplier);
 
 	public TileQuarry() {
 		powerHandler = new PowerHandler(this, PowerHandler.Type.MACHINE);
@@ -80,8 +82,9 @@ public class TileQuarry extends TileBuildCraft implements IMachine, IPowerRecept
 	}
 
 	private void initPowerProvider() {
-		powerHandler.configure(50, 100, 25, MAX_ENERGY);
-		powerHandler.configurePowerPerdition(2, 1);
+		float mj = 25 * BuildCraftFactory.miningMultiplier;
+		powerHandler.configure(50 * BuildCraftFactory.miningMultiplier, 100 * BuildCraftFactory.miningMultiplier, mj, MAX_ENERGY * BuildCraftFactory.miningMultiplier);
+		powerHandler.setPerdition(PERDITION);
 	}
 
 	public void createUtilsIfNeeded() {
@@ -126,9 +129,9 @@ public class TileQuarry extends TileBuildCraft implements IMachine, IPowerRecept
 
 	private void createArm() {
 
-		worldObj.spawnEntityInWorld(new EntityMechanicalArm(worldObj, box.xMin + Utils.pipeMaxPos, yCoord + blueprintBuilder.blueprint.sizeY - 1
-				+ Utils.pipeMinPos, box.zMin + Utils.pipeMaxPos, blueprintBuilder.blueprint.sizeX - 2 + Utils.pipeMinPos * 2, blueprintBuilder.blueprint.sizeZ
-				- 2 + Utils.pipeMinPos * 2, this));
+		worldObj.spawnEntityInWorld(new EntityMechanicalArm(worldObj, box.xMin + CoreConstants.PIPE_MAX_POS, yCoord + blueprintBuilder.blueprint.sizeY - 1
+				+ CoreConstants.PIPE_MIN_POS, box.zMin + CoreConstants.PIPE_MAX_POS, blueprintBuilder.blueprint.sizeX - 2 + CoreConstants.PIPE_MIN_POS * 2, blueprintBuilder.blueprint.sizeZ
+				- 2 + CoreConstants.PIPE_MIN_POS * 2, this));
 	}
 
 	// Callback from the arm once it's created
@@ -192,11 +195,12 @@ public class TileQuarry extends TileBuildCraft implements IMachine, IPowerRecept
 	}
 
 	protected void buildFrame() {
-
 		if (!blueprintIterator.hasNext())
 			return;
 
-		if (powerHandler.useEnergy(25, 25, false) != 25)
+		float mj = 25 * BuildCraftFactory.miningMultiplier;
+		powerHandler.configure(50 * BuildCraftFactory.miningMultiplier, 100 * BuildCraftFactory.miningMultiplier, mj, MAX_ENERGY * BuildCraftFactory.miningMultiplier);
+		if (powerHandler.useEnergy(mj, mj, true) != mj)
 			return;
 
 		if (builder == null) {
@@ -215,8 +219,10 @@ public class TileQuarry extends TileBuildCraft implements IMachine, IPowerRecept
 	}
 
 	protected void dig() {
-		powerHandler.configure(100, 500, 60, MAX_ENERGY);
-		if (powerHandler.useEnergy(60, 60, true) != 60)
+		powerHandler.configure(100 * BuildCraftFactory.miningMultiplier, 500 * BuildCraftFactory.miningMultiplier, BuildCraftFactory.MINING_MJ_COST_PER_BLOCK, MAX_ENERGY * BuildCraftFactory.miningMultiplier);
+
+		float mj = BuildCraftFactory.MINING_MJ_COST_PER_BLOCK * BuildCraftFactory.miningMultiplier;
+		if (powerHandler.useEnergy(mj, mj, true) != mj)
 			return;
 
 		if (!findTarget(true)) {
@@ -260,15 +266,22 @@ public class TileQuarry extends TileBuildCraft implements IMachine, IPowerRecept
 		if (!columnVisitListIsUpdated) { // nextTarget may not be accurate, at least search the target column for changes
 			for (int y = nextTarget[1] + 1; y < yCoord + 3; y++) {
 				int blockID = worldObj.getBlockId(nextTarget[0], y, nextTarget[2]);
-
-				if (BlockUtil.canChangeBlock(blockID, worldObj, nextTarget[0], y, nextTarget[2]) && !BlockUtil.isSoftBlock(blockID, worldObj, nextTarget[0], y, nextTarget[2])) {
+				if (BlockUtil.isAnObstructingBlock(blockID, worldObj, nextTarget[0], y, nextTarget[2]) || !BlockUtil.isSoftBlock(blockID, worldObj, nextTarget[0], y, nextTarget[2])) {
 					createColumnVisitList();
-					nextTarget = visitList.removeFirst();
-
+					columnVisitListIsUpdated = true;
+					nextTarget = null;
 					break;
 				}
 			}
 		}
+        if (columnVisitListIsUpdated && nextTarget == null && !visitList.isEmpty())
+        {
+            nextTarget = visitList.removeFirst();
+        }
+        else if (columnVisitListIsUpdated && nextTarget == null)
+        {
+            return false;
+        }
 
 		setTarget(nextTarget[0], nextTarget[1] + 1, nextTarget[2]);
 
@@ -317,8 +330,10 @@ public class TileQuarry extends TileBuildCraft implements IMachine, IPowerRecept
 						if (height == null)
 							columnHeights[searchX][searchZ] = height = worldObj.getHeightValue(bx, bz);
 
-						if (height < by)
-							continue;
+						if (height > 0 && height < by && worldObj.provider.dimensionId != -1)
+						{
+                            continue;
+						}
 
 						int blockID = worldObj.getBlockId(bx, by, bz);
 
@@ -327,6 +342,11 @@ public class TileQuarry extends TileBuildCraft implements IMachine, IPowerRecept
 						} else if (!BlockUtil.isSoftBlock(blockID, worldObj, bx, by, bz)) {
 							visitList.add(new int[]{bx, by, bz});
 						}
+                        if (height == 0 && !worldObj.isAirBlock(bx, by, bz))
+                        {
+                            columnHeights[searchX][searchZ] = by;
+                        }
+                        
 						// Stop at two planes - generally any obstructions will have been found and will force a recompute prior to this
 						if (visitList.size() > blueprintBuilder.blueprint.sizeZ * blueprintBuilder.blueprint.sizeX * 2)
 							return;
@@ -420,7 +440,7 @@ public class TileQuarry extends TileBuildCraft implements IMachine, IPowerRecept
 			}
 
 			worldObj.playAuxSFXAtEntity(null, 2001, i, j, k, blockId + (worldObj.getBlockMetadata(i, j, k) << 12));
-			worldObj.setBlock(i, j, k, 0);
+			worldObj.setBlockToAir(i, j, k);
 		}
 
 		// Collect any lost items laying around
@@ -518,7 +538,7 @@ public class TileQuarry extends TileBuildCraft implements IMachine, IPowerRecept
 			isAlive = false;
 			if (placedBy != null && CoreProxy.proxy.isSimulating(worldObj)) {
 				PacketDispatcher.sendPacketToPlayer(
-						new Packet3Chat(ChatMessageComponent.func_111066_d(String.format("[BUILDCRAFT] The quarry at %d, %d, %d will not work because there are no more chunkloaders available",
+						new Packet3Chat(ChatMessageComponent.createFromText(String.format("[BUILDCRAFT] The quarry at %d, %d, %d will not work because there are no more chunkloaders available",
 						xCoord, yCoord, zCoord))), (Player) placedBy);
 			}
 			sendNetworkUpdate();
@@ -547,7 +567,7 @@ public class TileQuarry extends TileBuildCraft implements IMachine, IPowerRecept
 		if (xSize < 3 || zSize < 3 || ((xSize * zSize) >> 8) >= chunkTicket.getMaxChunkListDepth()) {
 			if (placedBy != null) {
 				PacketDispatcher.sendPacketToPlayer(
-						new Packet3Chat(ChatMessageComponent.func_111066_d(String.format("Quarry size is outside of chunkloading bounds or too small %d %d (%d)", xSize, zSize,
+						new Packet3Chat(ChatMessageComponent.createFromText(String.format("Quarry size is outside of chunkloading bounds or too small %d %d (%d)", xSize, zSize,
 						chunkTicket.getMaxChunkListDepth()))), (Player) placedBy);
 			}
 			a = new DefaultAreaProvider(xCoord, yCoord, zCoord, xCoord + 10, yCoord + 4, zCoord + 10);
@@ -830,7 +850,7 @@ public class TileQuarry extends TileBuildCraft implements IMachine, IPowerRecept
 		}
 		if (placedBy != null) {
 			PacketDispatcher.sendPacketToPlayer(
-					new Packet3Chat(ChatMessageComponent.func_111066_d(String.format("[BUILDCRAFT] The quarry at %d %d %d will keep %d chunks loaded", xCoord, yCoord, zCoord, chunks.size()))),
+					new Packet3Chat(ChatMessageComponent.createFromText(String.format("[BUILDCRAFT] The quarry at %d %d %d will keep %d chunks loaded", xCoord, yCoord, zCoord, chunks.size()))),
 					(Player) placedBy);
 		}
 		sendNetworkUpdate();

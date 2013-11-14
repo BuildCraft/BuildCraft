@@ -9,10 +9,11 @@ package buildcraft.core.triggers;
 
 import buildcraft.api.gates.ITriggerParameter;
 import buildcraft.api.inventory.ISpecialInventory;
-import buildcraft.core.inventory.InventoryWrapper;
+import buildcraft.core.inventory.InventoryIterator;
+import buildcraft.core.inventory.InventoryIterator.IInvSlot;
+import buildcraft.core.inventory.StackHelper;
 import java.util.Locale;
 import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.ForgeDirection;
@@ -58,7 +59,7 @@ public class TriggerInventory extends BCTrigger {
 		ItemStack searchedStack = null;
 
 		if (parameter != null) {
-			searchedStack = parameter.getItem();
+			searchedStack = parameter.getItemStack();
 		}
 
 		if (tile instanceof ISpecialInventory) {
@@ -82,34 +83,21 @@ public class TriggerInventory extends BCTrigger {
 		}
 
 		if (tile instanceof IInventory) {
-			ISidedInventory inv = InventoryWrapper.getWrappedInventory(tile);
-			int invSize = inv.getSizeInventory();
-
-			if (invSize <= 0)
-				return false;
-
+			boolean hasSlots = false;
 			boolean foundItems = false;
 			boolean foundSpace = false;
 
-			for (int i : inv.getAccessibleSlotsFromSide(side.ordinal())) {
-				ItemStack stack = inv.getStackInSlot(i);
-
-				boolean slotEmpty = stack == null || stack.stackSize == 0;
-
-				if (searchedStack == null) {
-					foundItems |= !slotEmpty;
-				} else if (!slotEmpty) {
-					foundItems |= stack.isItemEqual(searchedStack);
-				}
-
-				if (slotEmpty) {
-					foundSpace = true;
-				} else if (searchedStack != null) {
-					if (stack.stackSize < stack.getMaxStackSize() && stack.isItemEqual(searchedStack)) {
-						foundSpace = true;
-					}
-				}
+			for (IInvSlot slot : InventoryIterator.getIterable((IInventory) tile, side)) {
+				hasSlots = true;
+				ItemStack stack = slot.getStackInSlot();
+				
+				foundItems |= stack != null && (searchedStack == null || StackHelper.instance().canStacksMerge(stack, searchedStack));
+				foundSpace |= (stack == null || (StackHelper.instance().canStacksMerge(stack, searchedStack) && stack.stackSize < stack.getMaxStackSize())) 
+						&& (searchedStack == null || slot.canPutStackInSlot(searchedStack));
 			}
+			
+			if(!hasSlots)
+				return false;
 
 			switch (state) {
 				case Empty:

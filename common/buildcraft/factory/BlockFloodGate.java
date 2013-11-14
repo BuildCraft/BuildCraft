@@ -32,7 +32,7 @@ public class BlockFloodGate extends BlockContainer {
 	public BlockFloodGate(int i) {
 		super(i, Material.iron);
 		setHardness(5F);
-		setCreativeTab(CreativeTabBuildCraft.tabBuildCraft);
+		setCreativeTab(CreativeTabBuildCraft.MACHINES.get());
 	}
 
 	@Override

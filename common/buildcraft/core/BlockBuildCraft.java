@@ -14,7 +14,7 @@ public abstract class BlockBuildCraft extends BlockContainer {
 	protected BlockBuildCraft(int id, Material material) {
 		super(id, material);
 		this.rand = new Random();
-		setCreativeTab(CreativeTabBuildCraft.tabBuildCraft);
+		setCreativeTab(CreativeTabBuildCraft.MACHINES.get());
 	}
 
 	@Override

@@ -35,7 +35,7 @@ public class RenderRobot extends Render {
 		GL11.glDisable(2896 /* GL_LIGHTING */);
 		GL11.glTranslated(x, y, z);
 
-		renderManager.renderEngine.func_110577_a(TEXTURE);
+		renderManager.renderEngine.bindTexture(TEXTURE);
 
 		float factor = (float) (1.0 / 16.0);
 
@@ -47,7 +47,7 @@ public class RenderRobot extends Render {
 	}
 
 	@Override
-	protected ResourceLocation func_110775_a(Entity entity) {
+	protected ResourceLocation getEntityTexture(Entity entity) {
 		return TEXTURE;
 	}
 }

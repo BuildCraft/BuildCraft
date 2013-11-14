@@ -1,10 +1,11 @@
 package buildcraft.transport;
 
+import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.util.Icon;
+import buildcraft.BuildCraftCore;
 import buildcraft.api.core.IIconProvider;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraft.client.renderer.texture.IconRegister;
-import net.minecraft.util.Icon;
 
 public class PipeIconProvider implements IIconProvider {
 
@@ -19,7 +20,7 @@ public class PipeIconProvider implements IIconProvider {
 		PipeItemsDiamond_Up("pipeItemsDiamond_up"),
 		PipeItemsDiamond_North("pipeItemsDiamond_north"),
 		PipeItemsDiamond_South("pipeItemsDiamond_south"),
-		PipeItemsDiamond_West("pipeItemsDiamond_west"),
+		PipeItemsDiamond_West("pipeItemsDiamond_west", "pipeItemsDiamond_west_cb"),
 		PipeItemsDiamond_East("pipeItemsDiamond_east"),
 		//
 		PipeItemsLapis_Black("pipeItemsLapis_black"),
@@ -90,6 +91,14 @@ public class PipeIconProvider implements IIconProvider {
 		PipePowerCobblestone("pipePowerCobblestone"),
 		PipePowerWood_Standard("pipePowerWood_standard"),
 		//
+		PipePowerIronM2("pipePowerIronM2"),
+		PipePowerIronM4("pipePowerIronM4"),
+		PipePowerIronM8("pipePowerIronM8"),
+		PipePowerIronM16("pipePowerIronM16"),
+		PipePowerIronM32("pipePowerIronM32"),
+		PipePowerIronM64("pipePowerIronM64"),
+		PipePowerIronM128("pipePowerIronM128"),
+		//
 		Power_Normal("texture_cyan"),
 		Power_Overload("texture_red_lit"),
 		Stripes("pipeStripes"),
@@ -97,14 +106,20 @@ public class PipeIconProvider implements IIconProvider {
 		ItemBox("itemBox");
 		public static final TYPE[] VALUES = values();
 		private final String iconTag;
+		private final String iconTagColorBlind;
 		private Icon icon;
 
-		private TYPE(String iconTag) {
+		private TYPE(String iconTag, String IconTagColorBlind) {
 			this.iconTag = iconTag;
+			this.iconTagColorBlind = IconTagColorBlind;
+		}
+
+		private TYPE(String iconTag) {
+			this(iconTag, iconTag);
 		}
 
 		private void registerIcon(IconRegister iconRegister) {
-			icon = iconRegister.registerIcon("buildcraft:" + iconTag);
+			icon = iconRegister.registerIcon("buildcraft:" + (BuildCraftCore.colorBlindMode ? iconTagColorBlind : iconTag));
 		}
 
 		public Icon getIcon() {

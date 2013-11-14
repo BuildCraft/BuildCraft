@@ -47,9 +47,6 @@ import net.minecraftforge.common.ForgeDirection;
 public class Utils {
 
 	public static final Random RANDOM = new Random();
-	public static final float pipeMinPos = 0.25F;
-	public static final float pipeMaxPos = 0.75F;
-	public static float pipeNormalSpeed = 0.01F;
 	private static final List<ForgeDirection> directions = new ArrayList<ForgeDirection>(Arrays.asList(ForgeDirection.VALID_DIRECTIONS));
 
 	/* IINVENTORY HELPERS */
@@ -78,14 +75,6 @@ public class Utils {
 		}
 		return 0;
 
-	}
-
-	/**
-	 * Depending on the kind of item in the pipe, set the floor at a different
-	 * level to optimize graphical aspect.
-	 */
-	public static float getPipeFloorOf(ItemStack item) {
-		return pipeMinPos;
 	}
 
 	public static ForgeDirection get2dOrientation(Position pos1, Position pos2) {
@@ -338,7 +327,7 @@ public class Utils {
 		if (tile instanceof IInventory && !CoreProxy.proxy.isRenderWorld(world)) {
 			if (!(tile instanceof IDropControlInventory) || ((IDropControlInventory) tile).doDrop()) {
 				InvUtils.dropItems(world, (IInventory) tile, i, j, k);
-				InvUtils.wipeInventory((IInventory)tile);
+				InvUtils.wipeInventory((IInventory) tile);
 			}
 		}
 

@@ -9,7 +9,7 @@
 
 package buildcraft.core.blueprints;
 
-import buildcraft.BuildCraftCore;
+import buildcraft.core.utils.BCLog;
 
 public class BptError extends Exception {
 
@@ -21,7 +21,7 @@ public class BptError extends Exception {
 	public BptError(String str) {
 		super(str);
 
-		BuildCraftCore.bcLog.fine("BLUEPRINT ERROR:" + str);
+		BCLog.logger.fine("BLUEPRINT ERROR:" + str);
 
 	}
 

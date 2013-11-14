@@ -8,6 +8,7 @@
 package buildcraft.core.render;
 
 import buildcraft.core.EntityBlock;
+import java.util.Arrays;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.Render;
@@ -20,15 +21,15 @@ import net.minecraft.world.World;
 import org.lwjgl.opengl.GL11;
 
 public class RenderEntityBlock extends Render {
-	
+
 	public static RenderEntityBlock INSTANCE = new RenderEntityBlock();
 
 	@Override
-	protected ResourceLocation func_110775_a(Entity entity) {
+	protected ResourceLocation getEntityTexture(Entity entity) {
 		throw new UnsupportedOperationException("Not supported yet.");
 	}
 
-	public static class BlockInterface {
+	public static class RenderInfo {
 
 		public double minX;
 		public double minY;
@@ -38,16 +39,80 @@ public class RenderEntityBlock extends Render {
 		public double maxZ;
 		public Block baseBlock = Block.sand;
 		public Icon texture = null;
+		public Icon[] textureArray = null;
+		public boolean[] renderSide = new boolean[6];
+		public float light = -1f;
+		public int brightness = -1;
 
-		public Icon getBlockTextureFromSide(int i) {
-			if (texture == null)
-				return baseBlock.getBlockTextureFromSide(i);
-			else
-				return texture;
+		public RenderInfo() {
+			setRenderAllSides();
+		}
+
+		public RenderInfo(Block template, Icon[] texture) {
+			this();
+			this.baseBlock = template;
+			this.textureArray = texture;
+		}
+
+		public RenderInfo(float minX, float minY, float minZ, float maxX, float maxY, float maxZ) {
+			this();
+			setBounds(minX, minY, minZ, maxX, maxY, maxZ);
 		}
 
 		public float getBlockBrightness(IBlockAccess iblockaccess, int i, int j, int k) {
 			return baseBlock.getBlockBrightness(iblockaccess, i, j, k);
+		}
+
+		public final void setBounds(double minX, double minY, double minZ, double maxX, double maxY, double maxZ) {
+			this.minX = minX;
+			this.minY = minY;
+			this.minZ = minZ;
+			this.maxX = maxX;
+			this.maxY = maxY;
+			this.maxZ = maxZ;
+		}
+
+		public final void setRenderSingleSide(int side) {
+			Arrays.fill(renderSide, false);
+			renderSide[side] = true;
+		}
+
+		public final void setRenderAllSides() {
+			Arrays.fill(renderSide, true);
+		}
+
+		public void rotate() {
+			double temp = minX;
+			minX = minZ;
+			minZ = temp;
+
+			temp = maxX;
+			maxX = maxZ;
+			maxZ = temp;
+		}
+
+		public void reverseX() {
+			double temp = minX;
+			minX = 1 - maxX;
+			maxX = 1 - temp;
+		}
+
+		public void reverseZ() {
+			double temp = minZ;
+			minZ = 1 - maxZ;
+			maxZ = 1 - temp;
+		}
+
+		public Icon getBlockTextureFromSide(int i) {
+			if (texture != null)
+				return texture;
+			if (textureArray == null || textureArray.length == 0)
+				return baseBlock.getBlockTextureFromSide(i);
+			else {
+				if (i >= textureArray.length)
+					i = 0;
+				return textureArray[i];
+			}
 		}
 	}
 
@@ -65,9 +130,9 @@ public class RenderEntityBlock extends Render {
 
 		shadowSize = entity.shadowSize;
 		World world = entity.worldObj;
-		BlockInterface util = new BlockInterface();
+		RenderInfo util = new RenderInfo();
 		util.texture = entity.texture;
-		func_110776_a(TextureMap.field_110575_b);
+		bindTexture(TextureMap.locationBlocksTexture);
 
 		for (int iBase = 0; iBase < entity.iSize; ++iBase) {
 			for (int jBase = 0; jBase < entity.jSize; ++jBase) {
@@ -99,7 +164,7 @@ public class RenderEntityBlock extends Render {
 					lightZ = (int) (Math.floor(entity.posZ) + kBase);
 
 					GL11.glDisable(2896 /* GL_LIGHTING */);
-					renderBlock(util, world, lightX, lightY, lightZ, false, true);
+					renderBlock(util, world, 0, 0, 0, lightX, lightY, lightZ, false, true);
 					GL11.glEnable(2896 /* GL_LIGHTING */);
 					GL11.glPopMatrix();
 
@@ -108,92 +173,169 @@ public class RenderEntityBlock extends Render {
 		}
 	}
 
-	public void renderBlock(BlockInterface block, IBlockAccess blockAccess, int i, int j, int k, boolean doLight, boolean doTessellating) {
-		float f = 0.5F;
-		float f1 = 1.0F;
-		float f2 = 0.8F;
-		float f3 = 0.6F;
+	public void renderBlock(RenderInfo info, IBlockAccess blockAccess, int x, int y, int z, boolean doLight, boolean doTessellating) {
+		renderBlock(info, blockAccess, x, y, z, x, y, z, doLight, doTessellating);
+	}
 
-		renderBlocks.renderMaxX = block.maxX;
-		renderBlocks.renderMinX = block.minX;
-		renderBlocks.renderMaxY = block.maxY;
-		renderBlocks.renderMinY = block.minY;
-		renderBlocks.renderMaxZ = block.maxZ;
-		renderBlocks.renderMinZ = block.minZ;
-		renderBlocks.enableAO = false;
-
+	public void renderBlock(RenderInfo info, IBlockAccess blockAccess, double x, double y, double z, int lightX, int lightY, int lightZ, boolean doLight, boolean doTessellating) {
+		float lightBottom = 0.5F;
+		float lightTop = 1.0F;
+		float lightEastWest = 0.8F;
+		float lightNorthSouth = 0.6F;
 
 		Tessellator tessellator = Tessellator.instance;
 
-		if (doTessellating) {
+		if (blockAccess == null)
+			doLight = false;
+
+		if (doTessellating && !tessellator.isDrawing)
 			tessellator.startDrawingQuads();
-		}
 
-		float f4 = 0, f5 = 0;
-
+		float light = 0;
 		if (doLight) {
-			f4 = block.getBlockBrightness(blockAccess, i, j, k);
-			f5 = block.getBlockBrightness(blockAccess, i, j, k);
-			if (f5 < f4) {
-				f5 = f4;
-			}
-			tessellator.setColorOpaque_F(f * f5, f * f5, f * f5);
+			if (info.light < 0) {
+				light = info.baseBlock.getBlockBrightness(blockAccess, (int) lightX, (int) lightY, (int) lightZ);
+				light = light + ((1.0f - light) * 0.4f);
+			} else
+				light = info.light;
+			int brightness = 0;
+			if (info.brightness < 0)
+				brightness = info.baseBlock.getMixedBrightnessForBlock(blockAccess, lightX, lightY, lightZ);
+			else
+				brightness = info.brightness;
+			tessellator.setBrightness(brightness);
+			tessellator.setColorOpaque_F(lightBottom * light, lightBottom * light, lightBottom * light);
+		} else {
+//			tessellator.setColorOpaque_F(1.0F, 1.0F, 1.0F);
+			if (info.brightness >= 0)
+				tessellator.setBrightness(info.brightness);
 		}
 
-		renderBlocks.renderFaceYNeg(null, 0, 0, 0, block.getBlockTextureFromSide(0));
+		renderBlocks.setRenderBounds(info.minX, info.minY, info.minZ, info.maxX, info.maxY, info.maxZ);
 
-		if (doLight) {
-			f5 = block.getBlockBrightness(blockAccess, i, j, k);
-			if (f5 < f4) {
-				f5 = f4;
-			}
-			tessellator.setColorOpaque_F(f1 * f5, f1 * f5, f1 * f5);
-		}
+		if (info.renderSide[0])
+			renderBlocks.renderFaceYNeg(info.baseBlock, x, y, z, info.getBlockTextureFromSide(0));
 
-		renderBlocks.renderFaceYPos(null, 0, 0, 0, block.getBlockTextureFromSide(1));
+		if (doLight)
+			tessellator.setColorOpaque_F(lightTop * light, lightTop * light, lightTop * light);
 
-		if (doLight) {
-			f5 = block.getBlockBrightness(blockAccess, i, j, k);
-			if (f5 < f4) {
-				f5 = f4;
-			}
-			tessellator.setColorOpaque_F(f2 * f5, f2 * f5, f2 * f5);
-		}
+		if (info.renderSide[1])
+			renderBlocks.renderFaceYPos(info.baseBlock, x, y, z, info.getBlockTextureFromSide(1));
 
-		renderBlocks.renderFaceZNeg(null, 0, 0, 0, block.getBlockTextureFromSide(2));
+		if (doLight)
+			tessellator.setColorOpaque_F(lightEastWest * light, lightEastWest * light, lightEastWest * light);
 
-		if (doLight) {
-			f5 = block.getBlockBrightness(blockAccess, i, j, k);
-			if (f5 < f4) {
-				f5 = f4;
-			}
-			tessellator.setColorOpaque_F(f2 * f5, f2 * f5, f2 * f5);
-		}
+		if (info.renderSide[2])
+			renderBlocks.renderFaceZNeg(info.baseBlock, x, y, z, info.getBlockTextureFromSide(2));
 
-		renderBlocks.renderFaceZPos(null, 0, 0, 0, block.getBlockTextureFromSide(3));
+		if (doLight)
+			tessellator.setColorOpaque_F(lightEastWest * light, lightEastWest * light, lightEastWest * light);
 
-		if (doLight) {
-			f5 = block.getBlockBrightness(blockAccess, i, j, k);
-			if (f5 < f4) {
-				f5 = f4;
-			}
-			tessellator.setColorOpaque_F(f3 * f5, f3 * f5, f3 * f5);
-		}
+		if (info.renderSide[3])
+			renderBlocks.renderFaceZPos(info.baseBlock, x, y, z, info.getBlockTextureFromSide(3));
 
-		renderBlocks.renderFaceXNeg(null, 0, 0, 0, block.getBlockTextureFromSide(4));
+		if (doLight)
+			tessellator.setColorOpaque_F(lightNorthSouth * light, lightNorthSouth * light, lightNorthSouth * light);
 
-		if (doLight) {
-			f5 = block.getBlockBrightness(blockAccess, i, j, k);
-			if (f5 < f4) {
-				f5 = f4;
-			}
-			tessellator.setColorOpaque_F(f3 * f5, f3 * f5, f3 * f5);
-		}
+		if (info.renderSide[4])
+			renderBlocks.renderFaceXNeg(info.baseBlock, x, y, z, info.getBlockTextureFromSide(4));
 
-		renderBlocks.renderFaceXPos(null, 0, 0, 0, block.getBlockTextureFromSide(5));
+		if (doLight)
+			tessellator.setColorOpaque_F(lightNorthSouth * light, lightNorthSouth * light, lightNorthSouth * light);
 
-		if (doTessellating) {
+		if (info.renderSide[5])
+			renderBlocks.renderFaceXPos(info.baseBlock, x, y, z, info.getBlockTextureFromSide(5));
+
+		if (doTessellating && tessellator.isDrawing)
 			tessellator.draw();
-		}
 	}
+//
+//	public void renderBlock(RenderInfo block, IBlockAccess blockAccess, int i, int j, int k, boolean doLight, boolean doTessellating) {
+//		float f = 0.5F;
+//		float f1 = 1.0F;
+//		float f2 = 0.8F;
+//		float f3 = 0.6F;
+//
+//		renderBlocks.renderMaxX = block.maxX;
+//		renderBlocks.renderMinX = block.minX;
+//		renderBlocks.renderMaxY = block.maxY;
+//		renderBlocks.renderMinY = block.minY;
+//		renderBlocks.renderMaxZ = block.maxZ;
+//		renderBlocks.renderMinZ = block.minZ;
+//		renderBlocks.enableAO = false;
+//
+//
+//		Tessellator tessellator = Tessellator.instance;
+//
+//		if (doTessellating) {
+//			tessellator.startDrawingQuads();
+//		}
+//
+//		float f4 = 0, f5 = 0;
+//
+//		if (doLight) {
+//			f4 = block.getBlockBrightness(blockAccess, i, j, k);
+//			f5 = block.getBlockBrightness(blockAccess, i, j, k);
+//			if (f5 < f4) {
+//				f5 = f4;
+//			}
+//			tessellator.setColorOpaque_F(f * f5, f * f5, f * f5);
+//		}
+//
+//		renderBlocks.renderFaceYNeg(null, 0, 0, 0, block.getBlockTextureFromSide(0));
+//
+//		if (doLight) {
+//			f5 = block.getBlockBrightness(blockAccess, i, j, k);
+//			if (f5 < f4) {
+//				f5 = f4;
+//			}
+//			tessellator.setColorOpaque_F(f1 * f5, f1 * f5, f1 * f5);
+//		}
+//
+//		renderBlocks.renderFaceYPos(null, 0, 0, 0, block.getBlockTextureFromSide(1));
+//
+//		if (doLight) {
+//			f5 = block.getBlockBrightness(blockAccess, i, j, k);
+//			if (f5 < f4) {
+//				f5 = f4;
+//			}
+//			tessellator.setColorOpaque_F(f2 * f5, f2 * f5, f2 * f5);
+//		}
+//
+//		renderBlocks.renderFaceZNeg(null, 0, 0, 0, block.getBlockTextureFromSide(2));
+//
+//		if (doLight) {
+//			f5 = block.getBlockBrightness(blockAccess, i, j, k);
+//			if (f5 < f4) {
+//				f5 = f4;
+//			}
+//			tessellator.setColorOpaque_F(f2 * f5, f2 * f5, f2 * f5);
+//		}
+//
+//		renderBlocks.renderFaceZPos(null, 0, 0, 0, block.getBlockTextureFromSide(3));
+//
+//		if (doLight) {
+//			f5 = block.getBlockBrightness(blockAccess, i, j, k);
+//			if (f5 < f4) {
+//				f5 = f4;
+//			}
+//			tessellator.setColorOpaque_F(f3 * f5, f3 * f5, f3 * f5);
+//		}
+//
+//		renderBlocks.renderFaceXNeg(null, 0, 0, 0, block.getBlockTextureFromSide(4));
+//
+//		if (doLight) {
+//			f5 = block.getBlockBrightness(blockAccess, i, j, k);
+//			if (f5 < f4) {
+//				f5 = f4;
+//			}
+//			tessellator.setColorOpaque_F(f3 * f5, f3 * f5, f3 * f5);
+//		}
+//
+//		renderBlocks.renderFaceXPos(null, 0, 0, 0, block.getBlockTextureFromSide(5));
+//
+//		if (doTessellating) {
+//			tessellator.draw();
+//		}
+//	}
 }

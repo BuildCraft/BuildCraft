@@ -7,19 +7,10 @@
  */
 package buildcraft.transport.pipes;
 
-import buildcraft.BuildCraftTransport;
-import buildcraft.api.inventory.ISelectiveInventory;
-import buildcraft.api.inventory.ISpecialInventory;
-import buildcraft.core.GuiIds;
-import buildcraft.core.inventory.SimpleInventory;
-import buildcraft.core.network.IClientState;
-import buildcraft.core.proxy.CoreProxy;
-import buildcraft.core.utils.Utils;
-import buildcraft.transport.BlockGenericPipe;
-import buildcraft.transport.PipeIconProvider;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
@@ -27,10 +18,57 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.ForgeDirection;
+import buildcraft.BuildCraftTransport;
+import buildcraft.api.inventory.ISelectiveInventory;
+import buildcraft.api.inventory.ISpecialInventory;
+import buildcraft.core.GuiIds;
+import buildcraft.core.gui.buttons.IButtonTextureSet;
+import buildcraft.core.gui.buttons.IMultiButtonState;
+import buildcraft.core.gui.buttons.MultiButtonController;
+import buildcraft.core.gui.buttons.StandardButtonTextureSets;
+import buildcraft.core.gui.tooltips.ToolTip;
+import buildcraft.core.gui.tooltips.ToolTipLine;
+import buildcraft.core.inventory.SimpleInventory;
+import buildcraft.core.network.IClientState;
+import buildcraft.core.network.IGuiReturnHandler;
+import buildcraft.core.proxy.CoreProxy;
+import buildcraft.core.utils.StringUtils;
+import buildcraft.core.utils.Utils;
+import buildcraft.transport.BlockGenericPipe;
+import buildcraft.transport.PipeIconProvider;
 
-public class PipeItemsEmerald extends PipeItemsWood implements IClientState {
+public class PipeItemsEmerald extends PipeItemsWood implements IClientState, IGuiReturnHandler {
 
-	private SimpleInventory filters = new SimpleInventory(9, "Filters", 1);
+	public static enum ButtonState implements IMultiButtonState {
+		BLOCKING("gui.pipes.emerald.blocking"), NONBLOCKING("gui.pipes.emerald.nonblocking");
+
+		private final String label;
+		private final ToolTip tip;
+
+		private ButtonState(String label) {
+			this.label = label;
+			tip = new ToolTip();
+			tip.add(new ToolTipLine(label + ".tip"));
+		}
+
+		@Override
+		public String getLabel() {
+			return StringUtils.localize(this.label);
+		}
+
+		@Override
+		public IButtonTextureSet getTextureSet() {
+			return StandardButtonTextureSets.SMALL_BUTTON;
+		}
+
+		@Override
+		public ToolTip getToolTip() {
+			return this.tip;
+		}
+	}
+
+	private final MultiButtonController stateController = MultiButtonController.getController(ButtonState.BLOCKING.ordinal(), ButtonState.values());
+	private final SimpleInventory filters = new SimpleInventory(9, "Filters", 1);
 	private int currentFilter = 0;
 
 	public PipeItemsEmerald(int itemID) {
@@ -68,8 +106,9 @@ public class PipeItemsEmerald extends PipeItemsWood implements IClientState {
 	public ItemStack[] checkExtract(IInventory inventory, boolean doRemove, ForgeDirection from) {
 
 		/* ISELECTIVEINVENTORY */
+		// non blocking mode is not implemented for ISelectiveInventory yet
 		if (inventory instanceof ISelectiveInventory) {
-			ItemStack[] stacks = ((ISelectiveInventory) inventory).extractItem(new ItemStack[]{getCurrentFilter()}, false, doRemove, from, (int) powerHandler.getEnergyStored());
+			ItemStack[] stacks = ((ISelectiveInventory) inventory).extractItem(new ItemStack[] { getCurrentFilter() }, false, doRemove, from, (int) powerHandler.getEnergyStored());
 			if (doRemove) {
 				for (ItemStack stack : stacks) {
 					if (stack != null) {
@@ -81,6 +120,7 @@ public class PipeItemsEmerald extends PipeItemsWood implements IClientState {
 			return stacks;
 
 			/* ISPECIALINVENTORY */
+			// non blocking mode is not needed for ISpecialInventory since its not round robin anyway
 		} else if (inventory instanceof ISpecialInventory) {
 			ItemStack[] stacks = ((ISpecialInventory) inventory).extractItem(false, from, (int) powerHandler.getEnergyStored());
 			if (stacks != null) {
@@ -117,8 +157,18 @@ public class PipeItemsEmerald extends PipeItemsWood implements IClientState {
 			IInventory inv = Utils.getInventory(inventory);
 			ItemStack result = checkExtractGeneric(inv, doRemove, from);
 
+			// check through every filter once if non-blocking
+			if (doRemove && stateController.getButtonState() == ButtonState.NONBLOCKING && result == null) {
+				int count = 1;
+				while (result == null && count < filters.getSizeInventory()) {
+					incrementFilter();
+					result = checkExtractGeneric(inv, doRemove, from);
+					count++;
+				}
+			}
+
 			if (result != null) {
-				return new ItemStack[]{result};
+				return new ItemStack[] { result };
 			}
 		}
 
@@ -176,6 +226,8 @@ public class PipeItemsEmerald extends PipeItemsWood implements IClientState {
 		super.readFromNBT(nbt);
 		filters.readFromNBT(nbt);
 		currentFilter = nbt.getInteger("currentFilter");
+
+		stateController.readFromNBT(nbt, "state");
 	}
 
 	@Override
@@ -183,6 +235,8 @@ public class PipeItemsEmerald extends PipeItemsWood implements IClientState {
 		super.writeToNBT(nbt);
 		filters.writeToNBT(nbt);
 		nbt.setInteger("currentFilter", currentFilter);
+
+		stateController.writeToNBT(nbt, "state");
 	}
 
 	// ICLIENTSTATE
@@ -203,5 +257,19 @@ public class PipeItemsEmerald extends PipeItemsWood implements IClientState {
 
 	public IInventory getFilters() {
 		return filters;
+	}
+
+	public MultiButtonController getStateController() {
+		return stateController;
+	}
+
+	@Override
+	public void writeGuiData(DataOutputStream data) throws IOException {
+		data.writeByte(stateController.getCurrentState());
+	}
+
+	@Override
+	public void readGuiData(DataInputStream data, EntityPlayer sender) throws IOException {
+		stateController.setCurrentState(data.readByte());
 	}
 }

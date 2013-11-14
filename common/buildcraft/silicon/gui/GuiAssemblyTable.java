@@ -50,7 +50,7 @@ public class GuiAssemblyTable extends GuiAdvancedInterface {
 			drawBackground(x, y);
 
 			// Draw icon
-            mc.renderEngine.func_110577_a(TextureMap.field_110576_c);
+            mc.renderEngine.bindTexture(TextureMap.locationItemsTexture);
 			drawIcon(BuildCraftCore.iconProvider.getIcon(CoreIconProvider.ENERGY), x + 3, y + 4);
 
 			if (!isFullyOpened())
@@ -141,7 +141,7 @@ public class GuiAssemblyTable extends GuiAdvancedInterface {
 	@Override
 	protected void drawGuiContainerBackgroundLayer(float f, int x, int y) {
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-		mc.renderEngine.func_110577_a(TEXTURE);
+		mc.renderEngine.bindTexture(TEXTURE);
 		int cornerX = (width - xSize) / 2;
 		int cornerY = (height - ySize) / 2;
 		drawTexturedModalRect(cornerX, cornerY, 0, 0, xSize, ySize);

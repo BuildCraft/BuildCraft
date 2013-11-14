@@ -13,6 +13,7 @@ import buildcraft.BuildCraftCore;
 import buildcraft.core.Box;
 import buildcraft.core.Version;
 import buildcraft.core.proxy.CoreProxy;
+import buildcraft.core.utils.BCLog;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -81,7 +82,7 @@ public abstract class BptBase {
 						} catch (Throwable t) {
 							// Defensive code against errors in implementers
 							t.printStackTrace();
-							BuildCraftCore.bcLog.throwing("BptBase", "rotateLeft", t);
+							BCLog.logger.throwing("BptBase", "rotateLeft", t);
 						}
 					}
 				}

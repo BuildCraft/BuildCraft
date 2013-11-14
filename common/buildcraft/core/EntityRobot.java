@@ -7,10 +7,13 @@
  */
 package buildcraft.core;
 
+
 import buildcraft.BuildCraftCore;
-import buildcraft.builders.blueprints.BlueprintBuilder.SchematicBuilder;
 import buildcraft.api.core.Position;
+import buildcraft.builders.blueprints.BlueprintBuilder.SchematicBuilder;
+import buildcraft.core.blueprints.BptSlot.Mode;
 import buildcraft.core.proxy.CoreProxy;
+import buildcraft.core.utils.BCLog;
 import buildcraft.core.utils.BlockUtil;
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteArrayDataOutput;
@@ -182,6 +185,7 @@ public class EntityRobot extends Entity implements IEntityAdditionalSpawnData {
 				targets.pop();
 			} else if (BlockUtil.canChangeBlock(worldObj, target.getX(), target.getY(), target.getZ())) {
 				//System.out.printf("RobotChanging %d %d %d %s\n",target.x, target.y, target.z, target.mode);
+				
 				if (!worldObj.isAirBlock(target.getX(), target.getY(), target.getZ())) {
 					BlockUtil.breakBlock(worldObj, target.getX(), target.getY(), target.getZ());
 				} else {
@@ -193,7 +197,7 @@ public class EntityRobot extends Entity implements IEntityAdditionalSpawnData {
 						targets.pop();
 						// Defensive code against errors in implementers
 						t.printStackTrace();
-						BuildCraftCore.bcLog.throwing("EntityRobot", "update", t);
+						BCLog.logger.throwing("EntityRobot", "update", t);
 					}
 					if (!target.isComplete()) {
 						targets.addLast(target);

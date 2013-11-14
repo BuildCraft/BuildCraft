@@ -153,7 +153,11 @@ public abstract class Gate {
 	// / UPDATING
 	public abstract void update();
 
-	public abstract void dropGate();
+	public abstract ItemStack getGateItem();
+
+	public void dropGate() {
+		pipe.dropItem(getGateItem());
+	}
 
 	public void resetGate() {
 		if (broadcastRedstone) {
@@ -247,7 +251,6 @@ public abstract class Gate {
 
 		for (int i = 0; i < oldBroadcastSignal.length; ++i) {
 			if (oldBroadcastSignal[i] != broadcastSignal[i]) {
-				// worldObj.markBlockNeedsUpdate(container.xCoord, container.yCoord, zCoord);
 				pipe.container.scheduleRenderUpdate();
 				pipe.updateSignalState();
 				break;
@@ -284,6 +287,10 @@ public abstract class Gate {
 	public abstract int getTextureIconIndex(boolean isSignalActive);
 
 	public abstract ResourceLocation getGuiFile();
+
+	public int getGuiHeight() {
+		return 207;
+	}
 
 	public static boolean isGateItem(ItemStack stack) {
 		return stack.itemID == BuildCraftTransport.pipeGate.itemID || stack.itemID == BuildCraftTransport.pipeGateAutarchic.itemID;

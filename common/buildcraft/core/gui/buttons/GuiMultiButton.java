@@ -1,13 +1,16 @@
 package buildcraft.core.gui.buttons;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
+
 import org.lwjgl.opengl.GL11;
 
+import buildcraft.core.gui.tooltips.ToolTip;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
 /**
- *
+ * 
  * @author CovertJaguar <railcraft.wikispaces.com>
  */
 @SideOnly(Side.CLIENT)
@@ -67,5 +70,14 @@ public class GuiMultiButton extends GuiBetterButton {
 
 	public MultiButtonController getController() {
 		return control;
+	}
+
+	@Override
+	public ToolTip getToolTip() {
+		ToolTip tip = this.control.getButtonState().getToolTip();
+		if (tip != null) {
+			return tip;
+		}
+		return super.getToolTip();
 	}
 }

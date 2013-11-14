@@ -65,6 +65,11 @@ public abstract class BCTrigger implements ITrigger {
 	}
 
 	@Override
+	public boolean requiresParameter() {
+		return false;
+	}
+
+	@Override
 	public String getDescription() {
 		return "";
 	}

@@ -22,7 +22,7 @@ public class RenderVoid extends Render {
 	}
 
 	@Override
-	protected ResourceLocation func_110775_a(Entity entity) {
+	protected ResourceLocation getEntityTexture(Entity entity) {
 		throw new UnsupportedOperationException("Not supported yet.");
 	}
 

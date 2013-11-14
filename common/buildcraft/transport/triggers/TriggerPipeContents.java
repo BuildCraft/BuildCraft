@@ -90,10 +90,10 @@ public class TriggerPipeContents extends BCTrigger implements ITriggerPipe {
 			if (kind == Kind.Empty)
 				return transportItems.items.isEmpty();
 			else if (kind == Kind.ContainsItems)
-				if (parameter != null && parameter.getItem() != null) {
+				if (parameter != null && parameter.getItemStack()!= null) {
 					for (TravelingItem item : transportItems.items) {
-						if (item.getItemStack().itemID == parameter.getItem().itemID
-								&& item.getItemStack().getItemDamage() == parameter.getItem().getItemDamage())
+						if (item.getItemStack().itemID == parameter.getItemStack().itemID
+								&& item.getItemStack().getItemDamage() == parameter.getItemStack().getItemDamage())
 							return true;
 					}
 				} else
@@ -103,8 +103,8 @@ public class TriggerPipeContents extends BCTrigger implements ITriggerPipe {
 
 			FluidStack searchedFluid = null;
 
-			if (parameter != null && parameter.getItem() != null) {
-				searchedFluid = FluidContainerRegistry.getFluidForFilledItem(parameter.getItem());
+			if (parameter != null && parameter.getItemStack() != null) {
+				searchedFluid = FluidContainerRegistry.getFluidForFilledItem(parameter.getItemStack());
 			}
 
 			if (kind == Kind.Empty) {
@@ -129,14 +129,14 @@ public class TriggerPipeContents extends BCTrigger implements ITriggerPipe {
 			switch (kind) {
 				case Empty:
 					for (double s : transportPower.displayPower) {
-						if (s > 0)
+						if (s > 1e-4)
 							return false;
 					}
 
 					return true;
 				case ContainsEnergy:
 					for (double s : transportPower.displayPower) {
-						if (s > 0)
+						if (s > 1e-4)
 							return true;
 					}
 

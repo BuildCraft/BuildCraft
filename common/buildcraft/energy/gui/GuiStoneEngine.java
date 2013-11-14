@@ -7,18 +7,21 @@
  */
 package buildcraft.energy.gui;
 
+import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.util.ResourceLocation;
+
+import org.lwjgl.opengl.GL11;
+
 import buildcraft.core.DefaultProps;
 import buildcraft.core.utils.StringUtils;
 import buildcraft.energy.TileEngine;
-import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.util.ResourceLocation;
-import org.lwjgl.opengl.GL11;
+import buildcraft.energy.TileEngineWithInventory;
 
 public class GuiStoneEngine extends GuiEngine {
 
 	private static final ResourceLocation TEXTURE = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_GUI + "/steam_engine_gui.png");
 
-	public GuiStoneEngine(InventoryPlayer inventoryplayer, TileEngine tileEngine) {
+	public GuiStoneEngine(InventoryPlayer inventoryplayer, TileEngineWithInventory tileEngine) {
 		super(new ContainerEngine(inventoryplayer, tileEngine), tileEngine);
 	}
 
@@ -33,7 +36,7 @@ public class GuiStoneEngine extends GuiEngine {
 	@Override
 	protected void drawGuiContainerBackgroundLayer(float f, int x, int y) {
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-		mc.renderEngine.func_110577_a(TEXTURE);
+		mc.renderEngine.bindTexture(TEXTURE);
 		int j = (width - xSize) / 2;
 		int k = (height - ySize) / 2;
 		drawTexturedModalRect(j, k, 0, 0, xSize, ySize);

@@ -7,6 +7,24 @@
  */
 package buildcraft.transport;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.util.LinkedList;
+import java.util.logging.Level;
+
+import net.minecraft.block.Block;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.packet.Packet;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
+import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidTankInfo;
+import net.minecraftforge.fluids.IFluidHandler;
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
@@ -27,32 +45,18 @@ import buildcraft.core.ITileBufferHolder;
 import buildcraft.core.TileBuffer;
 import buildcraft.core.inventory.InvUtils;
 import buildcraft.core.network.IClientState;
+import buildcraft.core.network.IGuiReturnHandler;
 import buildcraft.core.network.ISyncedTile;
 import buildcraft.core.network.PacketTileState;
+import buildcraft.core.utils.BCLog;
 import buildcraft.transport.Gate.GateKind;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.logging.Level;
-import net.minecraft.block.Block;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.packet.Packet;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.World;
-import net.minecraftforge.common.ForgeDirection;
-import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidTankInfo;
-import net.minecraftforge.fluids.IFluidHandler;
+import net.minecraft.server.management.PlayerInstance;
+import net.minecraft.world.WorldServer;
 
 public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFluidHandler, IPipeTile, IOverrideDefaultTriggers, ITileBufferHolder,
-		IDropControlInventory, IPipeRenderState, ISyncedTile, ISolidSideTile {
+		IDropControlInventory, IPipeRenderState, ISyncedTile, ISolidSideTile, IGuiReturnHandler {
 
 	private class CoreState implements IClientState {
 
@@ -78,6 +82,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 	public boolean[] pipeConnectionsBuffer = new boolean[6];
 	public SafeTimeTracker networkSyncTracker = new SafeTimeTracker();
 	public Pipe pipe;
+	private boolean sendClientUpdate = false;
 	private boolean blockNeighborChange = false;
 	private boolean refreshRenderState = false;
 	private boolean pipeBound = false;
@@ -116,7 +121,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 		if (pipe != null)
 			pipe.readFromNBT(nbt);
 		else {
-			BuildCraftCore.bcLog.log(Level.WARNING, "Pipe failed to load from NBT at {0},{1},{2}", new Object[]{xCoord, yCoord, zCoord});
+			BCLog.logger.log(Level.WARNING, "Pipe failed to load from NBT at {0},{1},{2}", new Object[]{xCoord, yCoord, zCoord});
 			deletePipe = true;
 		}
 
@@ -140,6 +145,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 	@Override
 	public void validate() {
 		super.validate();
+		initialized = false;
 		tileBuffer = null;
 		bindPipe();
 		if (pipe != null)
@@ -183,6 +189,17 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 		PowerReceiver provider = getPowerReceiver(null);
 		if (provider != null)
 			provider.update();
+
+		if (sendClientUpdate) {
+			sendClientUpdate = false;
+			if (worldObj instanceof WorldServer) {
+				WorldServer world = (WorldServer) worldObj;
+				PlayerInstance playerInstance = world.getPlayerManager().getOrCreateChunkWatcher(xCoord >> 4, zCoord >> 4, false);
+				if (playerInstance != null) {
+					playerInstance.sendToAllPlayersWatchingChunk(getDescriptionPacket());
+				}
+			}
+		}
 	}
 
 	// PRECONDITION: worldObj must not be null
@@ -241,8 +258,8 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 		}
 
 		if (renderState.isDirty()) {
-			markBlockForUpdate();
 			renderState.clean();
+			sendUpdateToClient();
 		}
 	}
 
@@ -251,7 +268,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 		this.blockType = getBlockType();
 
 		if (pipe == null) {
-			BuildCraftCore.bcLog.log(Level.WARNING, "Pipe failed to initialize at {0},{1},{2}, deleting", new Object[]{xCoord, yCoord, zCoord});
+			BCLog.logger.log(Level.WARNING, "Pipe failed to initialize at {0},{1},{2}, deleting", new Object[]{xCoord, yCoord, zCoord});
 			worldObj.setBlockToAir(xCoord, yCoord, zCoord);
 			return;
 		}
@@ -360,6 +377,10 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 		return packet.getPacket();
 	}
 
+	public void sendUpdateToClient() {
+		sendClientUpdate = true;
+	}
+
 	@Override
 	public LinkedList<ITrigger> getTriggers() {
 		LinkedList<ITrigger> result = new LinkedList<ITrigger>();
@@ -425,11 +446,12 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 		if (!BlockGenericPipe.isValid(pipe))
 			return false;
 
-		if (with instanceof IPipeConnection) {
-			IPipeConnection.ConnectOverride override = ((IPipeConnection) with).overridePipeConnection(pipe.transport.getPipeType(), side.getOpposite());
-			if (override != IPipeConnection.ConnectOverride.DEFAULT)
-				return override == IPipeConnection.ConnectOverride.CONNECT ? true : false;
-		}
+		if (!(pipe instanceof IPipeConnectionForced) || !((IPipeConnectionForced) pipe).ignoreConnectionOverrides(side))
+			if (with instanceof IPipeConnection) {
+				IPipeConnection.ConnectOverride override = ((IPipeConnection) with).overridePipeConnection(pipe.transport.getPipeType(), side.getOpposite());
+				if (override != IPipeConnection.ConnectOverride.DEFAULT)
+					return override == IPipeConnection.ConnectOverride.CONNECT ? true : false;
+			}
 
 		if (with instanceof TileGenericPipe) {
 			if (((TileGenericPipe) with).hasPlug(side.getOpposite()))
@@ -549,6 +571,8 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 	}
 
 	public boolean hasFacade(ForgeDirection direction) {
+		if (direction == null || direction == ForgeDirection.UNKNOWN)
+			return false;
 		if (this.worldObj.isRemote)
 			return renderState.facadeMatrix.getFacadeBlockId(direction) != 0;
 		return (this.facadeBlocks[direction.ordinal()] != 0);
@@ -558,16 +582,17 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 		InvUtils.dropItems(worldObj, ItemFacade.getStack(this.facadeBlocks[direction.ordinal()], this.facadeMeta[direction.ordinal()]), this.xCoord, this.yCoord, this.zCoord);
 	}
 
-	public void dropFacade(ForgeDirection direction) {
-		if (this.worldObj.isRemote)
-			return;
+	public boolean dropFacade(ForgeDirection direction) {
 		if (!hasFacade(direction))
-			return;
-		dropFacadeItem(direction);
-		this.facadeBlocks[direction.ordinal()] = 0;
-		this.facadeMeta[direction.ordinal()] = 0;
-		worldObj.notifyBlockChange(this.xCoord, this.yCoord, this.zCoord, getBlockId());
-		scheduleRenderUpdate();
+			return false;
+		if (!worldObj.isRemote) {
+			dropFacadeItem(direction);
+			this.facadeBlocks[direction.ordinal()] = 0;
+			this.facadeMeta[direction.ordinal()] = 0;
+			worldObj.notifyBlockChange(this.xCoord, this.yCoord, this.zCoord, getBlockId());
+			scheduleRenderUpdate();
+		}
+		return true;
 	}
 
 	/**
@@ -614,9 +639,16 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 						pipe.gate = new GateVanilla(pipe);
 					pipe.gate.kind = GateKind.values()[coreState.gateKind];
 				}
+				worldObj.markBlockForRenderUpdate(xCoord, yCoord, zCoord);
 				break;
+			case 1: {
+				if (renderState.needsRenderUpdate()) {
+					worldObj.markBlockForRenderUpdate(xCoord, yCoord, zCoord);
+					renderState.clean();
+				}
+				break;
+			}
 		}
-		worldObj.markBlockForRenderUpdate(xCoord, yCoord, zCoord);
 	}
 
 	@Override
@@ -649,15 +681,17 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 		return plugs[side.ordinal()];
 	}
 
-	public void removeAndDropPlug(ForgeDirection side) {
+	public boolean removeAndDropPlug(ForgeDirection side) {
 		if (!hasPlug(side))
-			return;
-
-		plugs[side.ordinal()] = false;
-		InvUtils.dropItems(worldObj, new ItemStack(BuildCraftTransport.plugItem), this.xCoord, this.yCoord, this.zCoord);
-		worldObj.notifyBlockChange(this.xCoord, this.yCoord, this.zCoord, getBlockId());
-		scheduleNeighborChange(); //To force recalculation of connections
-		scheduleRenderUpdate();
+			return false;
+		if (!worldObj.isRemote) {
+			plugs[side.ordinal()] = false;
+			InvUtils.dropItems(worldObj, new ItemStack(BuildCraftTransport.plugItem), this.xCoord, this.yCoord, this.zCoord);
+			worldObj.notifyBlockChange(this.xCoord, this.yCoord, this.zCoord, getBlockId());
+			scheduleNeighborChange(); //To force recalculation of connections
+			scheduleRenderUpdate();
+		}
+		return true;
 	}
 
 	public boolean addPlug(ForgeDirection forgeDirection) {
@@ -687,7 +721,15 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 		return worldObj.getBlockTileEntity(xCoord, yCoord, zCoord) == this;
 	}
 
-	public void markBlockForUpdate() {
-		worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+	@Override
+	public void writeGuiData(DataOutputStream data) throws IOException {
+		if (BlockGenericPipe.isValid(pipe) && pipe instanceof IGuiReturnHandler)
+			((IGuiReturnHandler) pipe).writeGuiData(data);
+	}
+
+	@Override
+	public void readGuiData(DataInputStream data, EntityPlayer sender) throws IOException {
+		if (BlockGenericPipe.isValid(pipe) && pipe instanceof IGuiReturnHandler)
+			((IGuiReturnHandler) pipe).readGuiData(data, sender);
 	}
 }

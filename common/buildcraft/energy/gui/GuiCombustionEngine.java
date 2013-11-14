@@ -7,24 +7,26 @@
  */
 package buildcraft.energy.gui;
 
-import buildcraft.core.DefaultProps;
-import buildcraft.core.utils.StringUtils;
-import buildcraft.energy.TileEngine;
-import buildcraft.energy.TileEngineIron;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.util.Icon;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
+
 import org.lwjgl.opengl.GL11;
+
+import buildcraft.core.DefaultProps;
+import buildcraft.core.utils.StringUtils;
+import buildcraft.energy.TileEngineIron;
+import buildcraft.energy.TileEngineWithInventory;
 
 public class GuiCombustionEngine extends GuiEngine {
 
 	private static final ResourceLocation TEXTURE = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_GUI + "/combustion_engine_gui.png");
-	private static final ResourceLocation BLOCK_TEXTURE = TextureMap.field_110575_b;
+	private static final ResourceLocation BLOCK_TEXTURE = TextureMap.locationBlocksTexture;
 
-	public GuiCombustionEngine(InventoryPlayer inventoryplayer, TileEngine tileEngine) {
+	public GuiCombustionEngine(InventoryPlayer inventoryplayer, TileEngineWithInventory tileEngine) {
 		super(new ContainerEngine(inventoryplayer, tileEngine), tileEngine);
 	}
 
@@ -39,7 +41,7 @@ public class GuiCombustionEngine extends GuiEngine {
 	@Override
 	protected void drawGuiContainerBackgroundLayer(float f, int x, int y) {
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-		mc.renderEngine.func_110577_a(TEXTURE);
+		mc.renderEngine.bindTexture(TEXTURE);
 		int j = (width - xSize) / 2;
 		int k = (height - ySize) / 2;
 		drawTexturedModalRect(j, k, 0, 0, xSize, ySize);
@@ -66,7 +68,7 @@ public class GuiCombustionEngine extends GuiEngine {
 		if (fluid != null && fluid.getStillIcon() != null) {
 			liquidIcon = fluid.getStillIcon();
 		}
-		mc.renderEngine.func_110577_a(BLOCK_TEXTURE);
+		mc.renderEngine.bindTexture(BLOCK_TEXTURE);
 
 		if (liquidIcon != null) {
 			while (true) {
@@ -89,7 +91,7 @@ public class GuiCombustionEngine extends GuiEngine {
 			}
 		}
 
-		mc.renderEngine.func_110577_a(TEXTURE);
+		mc.renderEngine.bindTexture(TEXTURE);
 		drawTexturedModalRect(j + col, k + line, 176, 0, 16, 60);
 	}
 }

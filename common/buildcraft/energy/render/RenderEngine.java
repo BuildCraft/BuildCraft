@@ -161,7 +161,7 @@ public class RenderEngine extends TileEntitySpecialRenderer implements IInventor
 
 		float factor = (float) (1.0 / 16.0);
 
-		func_110628_a(baseTexture);
+		bindTexture(baseTexture);
 
 		box.render(factor);
 
@@ -169,7 +169,7 @@ public class RenderEngine extends TileEntitySpecialRenderer implements IInventor
 		movingBox.render(factor);
 		GL11.glTranslatef(-translate[0] * translatefact, -translate[1] * translatefact, -translate[2] * translatefact);
 
-		func_110628_a(CHAMBER_TEXTURE);
+		bindTexture(CHAMBER_TEXTURE);
 
 		float chamberf = 2F / 16F;
 
@@ -199,7 +199,7 @@ public class RenderEngine extends TileEntitySpecialRenderer implements IInventor
 				break;
 		}
 
-		func_110628_a(texture);
+		bindTexture(texture);
 
 		trunk.render(factor);
 

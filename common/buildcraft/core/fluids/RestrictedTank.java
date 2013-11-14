@@ -8,6 +8,7 @@
  */
 package buildcraft.core.fluids;
 
+import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 
@@ -19,8 +20,8 @@ public class RestrictedTank extends Tank {
 
 	private final Fluid[] acceptedFluids;
 
-	public RestrictedTank(String name, int capacity, Fluid... acceptedFluids) {
-		super(name, capacity);
+	public RestrictedTank(String name, int capacity, TileEntity tile, Fluid... acceptedFluids) {
+		super(name, capacity, tile);
 		this.acceptedFluids = acceptedFluids;
 	}
 

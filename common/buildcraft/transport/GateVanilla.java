@@ -140,7 +140,7 @@ public class GateVanilla extends Gate {
 	 * @param k
 	 */
 	@Override
-	public void dropGate() {
+	public ItemStack getGateItem() {
 
 		int gateDamage;
 		switch (kind) {
@@ -175,7 +175,7 @@ public class GateVanilla extends Gate {
 			gateItem = BuildCraftTransport.pipeGate;
 		}
 
-		pipe.dropItem(new ItemStack(gateItem, 1, gateDamage));
+		return new ItemStack(gateItem, 1, gateDamage);
 
 	}
 
@@ -321,5 +321,18 @@ public class GateVanilla extends Gate {
 			return TEXTURE3;
 		else
 			return TEXTURE4;
+	}
+
+	@Override
+	public int getGuiHeight() {
+		switch (kind) {
+			case Single:
+				return 146;
+			case AND_2:
+			case OR_2:
+				return 164;
+			default:
+				return 200;
+		}
 	}
 }

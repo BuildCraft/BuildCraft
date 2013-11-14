@@ -15,8 +15,8 @@ import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.power.PowerHandler;
 import buildcraft.api.power.PowerHandler.PowerReceiver;
 import buildcraft.api.power.PowerHandler.Type;
+import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.PipeManager;
-import buildcraft.core.TileBuffer;
 import buildcraft.transport.TravelingItem;
 import buildcraft.core.inventory.InventoryWrapper;
 import buildcraft.core.utils.Utils;
@@ -40,6 +40,8 @@ public class PipeItemsWood extends Pipe<PipeTransportItems> implements IPowerRec
 	private PipeLogicWood logic = new PipeLogicWood(this) {
 		@Override
 		protected boolean isValidConnectingTile(TileEntity tile) {
+			if (tile instanceof IPipeTile)
+				return false;
 			if (!(tile instanceof IInventory))
 				return false;
 			if (!PipeManager.canExtractItems(pipe, tile.worldObj, tile.xCoord, tile.yCoord, tile.zCoord))
@@ -52,7 +54,7 @@ public class PipeItemsWood extends Pipe<PipeTransportItems> implements IPowerRec
 		super(new PipeTransportItems(), itemID);
 
 		powerHandler = new PowerHandler(this, Type.MACHINE);
-		powerHandler.configure(1, 64, 1, 64);
+		powerHandler.configure(1, 64.1f, 1, 64.1f);
 		powerHandler.configurePowerPerdition(0, 0);
 	}
 
@@ -103,7 +105,8 @@ public class PipeItemsWood extends Pipe<PipeTransportItems> implements IPowerRec
 		if (powerHandler.getEnergyStored() <= 0)
 			return;
 
-		extractItems();
+		if (transport.getNumberOfStacks() < PipeTransportItems.MAX_PIPE_STACKS)
+			extractItems();
 		powerHandler.setEnergy(0);
 	}
 
@@ -152,7 +155,7 @@ public class PipeItemsWood extends Pipe<PipeTransportItems> implements IPowerRec
 
 		/* ISPECIALINVENTORY */
 		if (inventory instanceof ISpecialInventory) {
-			ItemStack[] stacks = ((ISpecialInventory) inventory).extractItem(doRemove, from, (int) powerHandler.getEnergyStored());
+			ItemStack[] stacks = ((ISpecialInventory) inventory).extractItem(doRemove, from, Math.min((int) powerHandler.getEnergyStored(), PipeTransportItems.MAX_PIPE_ITEMS - transport.getNumberOfItems()));
 			if (stacks != null && doRemove) {
 				for (ItemStack stack : stacks) {
 					if (stack != null) {

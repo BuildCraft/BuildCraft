@@ -56,10 +56,10 @@ public class RenderHopper extends TileEntitySpecialRenderer implements IInventor
 		GL11.glDisable(GL11.GL_LIGHTING);
 
 		GL11.glTranslated(x, y, z);
-		func_110628_a(HOPPER_TEXTURE);
+		bindTexture(HOPPER_TEXTURE);
 		top.render((float) (1.0 / 16.0));
 		bottom.render((float) (1.0 / 16.0));
-		func_110628_a(HOPPER_MIDDLE_TEXTURE);
+		bindTexture(HOPPER_MIDDLE_TEXTURE);
 		middle.render(Tessellator.instance, 1F / 16F);
 
 		GL11.glEnable(GL11.GL_LIGHTING);

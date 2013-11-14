@@ -26,8 +26,8 @@ public class BlockLaserTable extends BlockContainer {
 		super(i, Material.iron);
 
 		setBlockBounds(0, 0, 0, 1, 9F / 16F, 1);
-		setHardness(0.5F);
-		setCreativeTab(CreativeTabBuildCraft.tabBuildCraft);
+		setHardness(10F);
+		setCreativeTab(CreativeTabBuildCraft.MACHINES.get());
 	}
 
 	@Override

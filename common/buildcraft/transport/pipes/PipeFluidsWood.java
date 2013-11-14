@@ -13,8 +13,8 @@ import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.power.PowerHandler;
 import buildcraft.api.power.PowerHandler.PowerReceiver;
 import buildcraft.api.power.PowerHandler.Type;
+import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.PipeManager;
-import buildcraft.core.TileBuffer;
 import buildcraft.core.network.TileNetworkData;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
@@ -41,6 +41,8 @@ public class PipeFluidsWood extends Pipe<PipeTransportFluids> implements IPowerR
 	private PipeLogicWood logic = new PipeLogicWood(this) {
 		@Override
 		protected boolean isValidConnectingTile(TileEntity tile) {
+			if(tile instanceof IPipeTile)
+				return false;
 			if (!(tile instanceof IFluidHandler))
 				return false;
 			if (!PipeManager.canExtractFluids(pipe, tile.worldObj, tile.xCoord, tile.yCoord, tile.zCoord))

@@ -82,7 +82,7 @@ public abstract class PipeLogicIron {
 		Item equipped = entityplayer.getCurrentEquippedItem() != null ? entityplayer.getCurrentEquippedItem().getItem() : null;
 		if (equipped instanceof IToolWrench && ((IToolWrench) equipped).canWrench(entityplayer, pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord)) {
 			switchPosition();
-			pipe.container.worldObj.markBlockForUpdate(pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord);
+			pipe.container.scheduleRenderUpdate();
 			((IToolWrench) equipped).wrenchUsed(entityplayer, pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord);
 
 			return true;

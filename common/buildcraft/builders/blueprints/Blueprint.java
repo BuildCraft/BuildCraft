@@ -10,6 +10,7 @@ package buildcraft.builders.blueprints;
 import buildcraft.BuildCraftCore;
 import buildcraft.api.builder.BlockHandler;
 import buildcraft.core.inventory.StackHelper;
+import buildcraft.core.utils.BCLog;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -78,8 +79,8 @@ public class Blueprint {
 				setSchematic(x, y, z, schematic);
 			}
 		} catch (Throwable error) {
-			BuildCraftCore.bcLog.severe(String.format("Error while trying to save block [%s:%d] to blueprint, skipping.", block.getUnlocalizedName(), block.blockID));
-			BuildCraftCore.bcLog.throwing(getClass().getCanonicalName(), "setBlock", error);
+			BCLog.logger.severe(String.format("Error while trying to save block [%s:%d] to blueprint, skipping.", block.getUnlocalizedName(), block.blockID));
+			BCLog.logger.throwing(getClass().getCanonicalName(), "setBlock", error);
 		}
 	}
 
@@ -94,8 +95,8 @@ public class Blueprint {
 				setSchematic(x, y, z, schematic);
 			}
 		} catch (Throwable error) {
-			BuildCraftCore.bcLog.severe(String.format("Error while trying to save item [%s:%d] to blueprint, skipping.", item.getItem().getUnlocalizedName(), item.itemID));
-			BuildCraftCore.bcLog.throwing(getClass().getCanonicalName(), "setBlock", error);
+			BCLog.logger.severe(String.format("Error while trying to save item [%s:%d] to blueprint, skipping.", item.getItem().getUnlocalizedName(), item.itemID));
+			BCLog.logger.throwing(getClass().getCanonicalName(), "setBlock", error);
 		}
 	}
 

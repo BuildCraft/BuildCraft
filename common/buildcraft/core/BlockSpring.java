@@ -45,7 +45,7 @@ public class BlockSpring extends Block {
 		setStepSound(soundStoneFootstep);
 		disableStats();
 		setTickRandomly(true);
-		setCreativeTab(CreativeTabBuildCraft.tabBuildCraft);
+		setCreativeTab(CreativeTabBuildCraft.MACHINES.get());
 	}
 
 	@Override
@@ -90,6 +90,12 @@ public class BlockSpring extends Block {
 			return;
 		}
 		world.setBlock(x, y + 1, z, spring.liquidBlock.blockID);
+	}
+
+	// Prevents updates on chunk generation
+	@Override
+	public boolean func_82506_l() {
+		return false;
 	}
 
 	@Override

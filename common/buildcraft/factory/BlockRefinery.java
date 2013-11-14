@@ -42,8 +42,8 @@ public class BlockRefinery extends BlockContainer {
 	public BlockRefinery(int i) {
 		super(i, Material.iron);
 
-		setHardness(0.5F);
-		setCreativeTab(CreativeTabBuildCraft.tabBuildCraft);
+		setHardness(5F);
+		setCreativeTab(CreativeTabBuildCraft.MACHINES.get());
 	}
 
 	@Override

@@ -13,12 +13,12 @@ import buildcraft.api.core.Position;
 import buildcraft.api.gates.IAction;
 import buildcraft.api.tools.IToolWrench;
 import buildcraft.core.utils.EnumColor;
-import buildcraft.core.utils.Utils;
 import buildcraft.transport.IItemTravelingHook;
 import buildcraft.transport.IPipeTransportItemsHook;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportItems;
+import buildcraft.transport.TransportConstants;
 import buildcraft.transport.TravelingItem;
 import buildcraft.transport.triggers.ActionPipeColor;
 import cpw.mods.fml.relauncher.Side;
@@ -77,7 +77,6 @@ public class PipeItemsLapis extends Pipe<PipeTransportItems> implements IItemTra
 		if (color.ordinal() != container.getBlockMetadata()) {
 			container.worldObj.setBlockMetadataWithNotify(container.xCoord, container.yCoord, container.zCoord, color.ordinal(), 3);
 			container.scheduleRenderUpdate();
-			container.markBlockForUpdate();
 		}
 	}
 
@@ -97,12 +96,12 @@ public class PipeItemsLapis extends Pipe<PipeTransportItems> implements IItemTra
 
 	@Override
 	public void readjustSpeed(TravelingItem item) {
-		if (item.getSpeed() > Utils.pipeNormalSpeed) {
-			item.setSpeed(item.getSpeed() - Utils.pipeNormalSpeed / 4.0F);
+		if (item.getSpeed() > TransportConstants.PIPE_NORMAL_SPEED) {
+			item.setSpeed(item.getSpeed() - TransportConstants.PIPE_NORMAL_SPEED / 4.0F);
 		}
 
-		if (item.getSpeed() < Utils.pipeNormalSpeed) {
-			item.setSpeed(Utils.pipeNormalSpeed);
+		if (item.getSpeed() < TransportConstants.PIPE_NORMAL_SPEED) {
+			item.setSpeed(TransportConstants.PIPE_NORMAL_SPEED);
 		}
 	}
 

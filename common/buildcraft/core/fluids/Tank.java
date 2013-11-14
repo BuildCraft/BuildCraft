@@ -12,6 +12,7 @@ import buildcraft.core.gui.tooltips.ToolTip;
 import buildcraft.core.gui.tooltips.ToolTipLine;
 import java.util.Locale;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidTank;
 
@@ -23,9 +24,10 @@ public class Tank extends FluidTank {
 
 	private final String name;
 
-	public Tank(String name, int capacity) {
+	public Tank(String name, int capacity, TileEntity tile) {
 		super(capacity);
 		this.name = name;
+		this.tile = tile;
 	}
 
 	public boolean isEmpty() {
@@ -41,20 +43,28 @@ public class Tank extends FluidTank {
 	}
 
 	@Override
-	public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
+	public final NBTTagCompound writeToNBT(NBTTagCompound nbt) {
 		NBTTagCompound tankData = new NBTTagCompound();
 		super.writeToNBT(tankData);
+		writeTankToNBT(tankData);
 		nbt.setCompoundTag(name, tankData);
 		return nbt;
 	}
 
 	@Override
-	public FluidTank readFromNBT(NBTTagCompound nbt) {
+	public final FluidTank readFromNBT(NBTTagCompound nbt) {
 		if (nbt.hasKey(name)) {
 			NBTTagCompound tankData = nbt.getCompoundTag(name);
 			super.readFromNBT(tankData);
+			readTankFromNBT(tankData);
 		}
 		return this;
+	}
+
+	public void writeTankToNBT(NBTTagCompound nbt) {
+	}
+
+	public void readTankFromNBT(NBTTagCompound nbt) {
 	}
 
 	public ToolTip getToolTip() {

@@ -1,6 +1,7 @@
 package buildcraft.core.render;
 
 import buildcraft.BuildCraftCore;
+import buildcraft.core.CoreConstants;
 import buildcraft.core.IInventoryRenderer;
 import buildcraft.core.utils.Utils;
 import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
@@ -16,7 +17,7 @@ import org.lwjgl.opengl.GL11;
 
 public class RenderingEntityBlocks implements ISimpleBlockRenderingHandler {
 
-	private static final ResourceLocation BLOCK_TEXTURE = TextureMap.field_110575_b;
+	private static final ResourceLocation BLOCK_TEXTURE = TextureMap.locationBlocksTexture;
 
 	public static class EntityRenderIndex {
 
@@ -57,7 +58,7 @@ public class RenderingEntityBlocks implements ISimpleBlockRenderingHandler {
 		} else if (block.getRenderType() == BuildCraftCore.legacyPipeModel) {
 			Tessellator tessellator = Tessellator.instance;
 
-			block.setBlockBounds(Utils.pipeMinPos, 0.0F, Utils.pipeMinPos, Utils.pipeMaxPos, 1.0F, Utils.pipeMaxPos);
+			block.setBlockBounds(CoreConstants.PIPE_MIN_POS, 0.0F, CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MAX_POS, 1.0F, CoreConstants.PIPE_MAX_POS);
 			renderer.setRenderBoundsFromBlock(block);
 			block.setBlockBoundsForItemRender();
 			GL11.glTranslatef(-0.5F, -0.5F, -0.5F);
@@ -96,7 +97,7 @@ public class RenderingEntityBlocks implements ISimpleBlockRenderingHandler {
 		if (block.getRenderType() == BuildCraftCore.blockByEntityModel) {
 			// renderblocks.renderStandardBlock(block, i, j, k);
 		} else if (block.getRenderType() == BuildCraftCore.legacyPipeModel) {
-			Minecraft.getMinecraft().renderEngine.func_110577_a(BLOCK_TEXTURE);
+			Minecraft.getMinecraft().renderEngine.bindTexture(BLOCK_TEXTURE);
 			legacyPipeRender(renderer, world, x, y, z, block, modelId);
 
 		}
@@ -116,8 +117,8 @@ public class RenderingEntityBlocks implements ISimpleBlockRenderingHandler {
 
 	/* LEGACY PIPE RENDERING and quarry frames! */
 	private void legacyPipeRender(RenderBlocks renderblocks, IBlockAccess iblockaccess, int i, int j, int k, Block block, int l) {
-		float minSize = Utils.pipeMinPos;
-		float maxSize = Utils.pipeMaxPos;
+		float minSize = CoreConstants.PIPE_MIN_POS;
+		float maxSize = CoreConstants.PIPE_MAX_POS;
 
 		block.setBlockBounds(minSize, minSize, minSize, maxSize, maxSize, maxSize);
 		renderblocks.setRenderBoundsFromBlock(block);

@@ -34,8 +34,8 @@ public class BlockEngine extends BlockContainer {
 	public BlockEngine(int i) {
 		super(i, Material.iron);
 
-		setHardness(0.5F);
-		setCreativeTab(CreativeTabBuildCraft.tabBuildCraft);
+		setHardness(5F);
+		setCreativeTab(CreativeTabBuildCraft.MACHINES.get());
 		setUnlocalizedName("engineBlock");
 	}
 
@@ -95,7 +95,7 @@ public class BlockEngine extends BlockContainer {
 	public boolean rotateBlock(World world, int x, int y, int z, ForgeDirection axis) {
 		TileEntity tile = world.getBlockTileEntity(x, y, z);
 		if (tile instanceof TileEngine) {
-			return ((TileEngine) tile).switchOrientation();
+			return ((TileEngine) tile).switchOrientation(false);
 		}
 		return false;
 	}
@@ -127,7 +127,8 @@ public class BlockEngine extends BlockContainer {
 	public void onPostBlockPlaced(World world, int x, int y, int z, int par5) {
 		TileEngine tile = (TileEngine) world.getBlockTileEntity(x, y, z);
 		tile.orientation = ForgeDirection.UP;
-		tile.switchOrientation();
+		if (!tile.isOrientationValid())
+			tile.switchOrientation(true);
 	}
 
 	@Override

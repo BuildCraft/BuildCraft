@@ -9,6 +9,23 @@
 package buildcraft;
 
 
+import java.io.File;
+import java.util.TreeMap;
+
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockFluid;
+import net.minecraft.entity.EntityList;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.Icon;
+import net.minecraftforge.client.event.TextureStitchEvent;
+import net.minecraftforge.common.Configuration;
+import net.minecraftforge.common.IPlantable;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.Property;
+import net.minecraftforge.event.ForgeSubscribe;
+import net.minecraftforge.oredict.OreDictionary;
+import net.minecraftforge.fluids.IFluidBlock;
 import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.gates.ActionManager;
@@ -22,6 +39,7 @@ import buildcraft.core.DefaultProps;
 import buildcraft.core.EntityEnergyLaser;
 import buildcraft.core.EntityPowerLaser;
 import buildcraft.core.EntityRobot;
+import buildcraft.core.InterModComms;
 import buildcraft.core.ItemBuildCraft;
 import buildcraft.core.ItemSpring;
 import buildcraft.core.ItemWrench;
@@ -43,42 +61,27 @@ import buildcraft.core.triggers.DefaultActionProvider;
 import buildcraft.core.triggers.DefaultTriggerProvider;
 import buildcraft.core.triggers.TriggerFluidContainer;
 import buildcraft.core.triggers.TriggerInventory;
+import buildcraft.core.triggers.TriggerInventoryLevel;
 import buildcraft.core.triggers.TriggerMachine;
+import buildcraft.core.utils.BCLog;
 import buildcraft.core.utils.Localization;
 import buildcraft.transport.triggers.TriggerRedstoneInput;
-import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
+import cpw.mods.fml.common.event.FMLInterModComms;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.common.network.NetworkMod;
 import cpw.mods.fml.common.registry.EntityRegistry;
-import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
 import cpw.mods.fml.common.registry.TickRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import java.io.File;
-import java.util.TreeMap;
-import java.util.logging.Logger;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockFluid;
-import net.minecraft.entity.EntityList;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.Icon;
-import net.minecraftforge.client.event.TextureStitchEvent;
-import net.minecraftforge.common.Configuration;
-import net.minecraftforge.common.IPlantable;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.Property;
-import net.minecraftforge.event.ForgeSubscribe;
-import net.minecraftforge.fluids.IFluidBlock;
 
-@Mod(name = "BuildCraft", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Core", dependencies = "required-after:Forge@[9.10.0.800,)")
+@Mod(name = "BuildCraft", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Core", acceptedMinecraftVersions = "[1.6,1.7)", dependencies = "required-after:Forge@[9.10.0.800,)")
 @NetworkMod(channels = { DefaultProps.NET_CHANNEL_NAME }, packetHandler = PacketHandler.class, clientSideRequired = true, serverSideRequired = true)
 public class BuildCraftCore {
 	public static enum RenderMode {
@@ -90,6 +93,7 @@ public class BuildCraftCore {
 	public static boolean debugMode = false;
 	public static boolean modifyWorld = false;
 	public static boolean trackNetworkUsage = false;
+	public static boolean colorBlindMode = false;
 
 	public static boolean dropBrokenBlocks = true; // Set to false to prevent the filler from dropping broken blocks.
 
@@ -145,6 +149,10 @@ public class BuildCraftCore {
 	public static BCTrigger triggerFullFluid = new TriggerFluidContainer(DefaultProps.TRIGGER_FULL_LIQUID, TriggerFluidContainer.State.Full);
 	public static BCTrigger triggerRedstoneActive = new TriggerRedstoneInput(DefaultProps.TRIGGER_REDSTONE_ACTIVE, true);
 	public static BCTrigger triggerRedstoneInactive = new TriggerRedstoneInput(DefaultProps.TRIGGER_REDSTONE_INACTIVE, false);
+	
+	public static BCTrigger triggerInventoryBelow25 = new TriggerInventoryLevel(TriggerInventoryLevel.TriggerType.BELOW_25);
+	public static BCTrigger triggerInventoryBelow50 = new TriggerInventoryLevel(TriggerInventoryLevel.TriggerType.BELOW_50);
+	public static BCTrigger triggerInventoryBelow75 = new TriggerInventoryLevel(TriggerInventoryLevel.TriggerType.BELOW_75);
 
 	public static BCAction actionRedstone = new ActionRedstoneOutput(DefaultProps.ACTION_REDSTONE);
 	public static BCAction actionOn = new ActionMachineControl(DefaultProps.ACTION_ON, Mode.On);
@@ -157,25 +165,24 @@ public class BuildCraftCore {
 
 	public static BptItem[] itemBptProps = new BptItem[Item.itemsList.length];
 
-	public static final Logger bcLog = Logger.getLogger("Buildcraft");
-
 	@Instance("BuildCraft|Core")
 	public static BuildCraftCore instance;
 
     @EventHandler
 	public void loadConfiguration(FMLPreInitializationEvent evt) {
 
-		Version.check();
-
-		bcLog.setParent(FMLLog.getLogger());
-		bcLog.info("Starting BuildCraft " + Version.getVersion());
-		bcLog.info("Copyright (c) SpaceToad, 2011");
-		bcLog.info("http://www.mod-buildcraft.com");
+		BCLog.initLog();
 		
 		BlueprintDatabase.configFolder = evt.getModConfigurationDirectory();
 		mainConfiguration = new BuildCraftConfiguration(new File(evt.getModConfigurationDirectory(), "buildcraft/main.conf"));
 		try {
 			mainConfiguration.load();
+			
+			Property updateCheck = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "update.check", true);
+			updateCheck.comment = "set to true for version check on startup";
+			if (updateCheck.getBoolean(true)) {
+				Version.check();
+			}
 
 			Property continuousCurrent = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "current.continuous",
 					DefaultProps.CURRENT_CONTINUOUS);
@@ -236,23 +243,32 @@ public class BuildCraftCore {
 			woodenGearItem = (new ItemBuildCraft(woodenGearId.getInt())).setUnlocalizedName("woodenGearItem");
 			LanguageRegistry.addName(woodenGearItem, "Wooden Gear");
 			CoreProxy.proxy.registerItem(woodenGearItem);
+			OreDictionary.registerOre("gearWood", new ItemStack(woodenGearItem));
 
 			stoneGearItem = (new ItemBuildCraft(stoneGearId.getInt())).setUnlocalizedName("stoneGearItem");
 			LanguageRegistry.addName(stoneGearItem, "Stone Gear");
 			CoreProxy.proxy.registerItem(stoneGearItem);
+			OreDictionary.registerOre("gearStone", new ItemStack(stoneGearItem));
 
 			ironGearItem = (new ItemBuildCraft(ironGearId.getInt())).setUnlocalizedName("ironGearItem");
 			LanguageRegistry.addName(ironGearItem, "Iron Gear");
 			CoreProxy.proxy.registerItem(ironGearItem);
-
+			OreDictionary.registerOre("gearIron", new ItemStack(ironGearItem));
+			
 			goldGearItem = (new ItemBuildCraft(goldenGearId.getInt())).setUnlocalizedName("goldGearItem");
 			LanguageRegistry.addName(goldGearItem, "Gold Gear");
 			CoreProxy.proxy.registerItem(goldGearItem);
+			OreDictionary.registerOre("gearGold", new ItemStack(goldGearItem));
 
 			diamondGearItem = (new ItemBuildCraft(diamondGearId.getInt())).setUnlocalizedName("diamondGearItem");
 			LanguageRegistry.addName(diamondGearItem, "Diamond Gear");
 			CoreProxy.proxy.registerItem(diamondGearItem);
+			OreDictionary.registerOre("gearDiamond", new ItemStack(diamondGearItem));
 
+			Property colorBlindProp = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "client.colorblindmode", false);
+			colorBlindProp.comment = "Set to true to enable alternate textures";
+			colorBlindMode = colorBlindProp.getBoolean(false);
+			
 			MinecraftForge.EVENT_BUS.register(this);
 
 		} finally {
@@ -329,12 +345,17 @@ public class BuildCraftCore {
 	}
 
 	public void loadRecipes() {
-		GameRegistry.addRecipe(new ItemStack(wrenchItem), "I I", " G ", " I ", Character.valueOf('I'), Item.ingotIron, Character.valueOf('G'), stoneGearItem);
-		GameRegistry.addRecipe(new ItemStack(woodenGearItem), " S ", "S S", " S ", Character.valueOf('S'), Item.stick);
-		GameRegistry.addRecipe(new ItemStack(stoneGearItem), " I ", "IGI", " I ", Character.valueOf('I'), Block.cobblestone, Character.valueOf('G'),
+	        CoreProxy.proxy.addCraftingRecipe(new ItemStack(wrenchItem), "I I", " G ", " I ", 'I', Item.ingotIron, 'G', stoneGearItem);
+		CoreProxy.proxy.addCraftingRecipe(new ItemStack(woodenGearItem), " S ", "S S", " S ", 'S', "stickWood");
+		CoreProxy.proxy.addCraftingRecipe(new ItemStack(stoneGearItem), " I ", "IGI", " I ", 'I', "cobblestone", 'G',
 				woodenGearItem);
-		GameRegistry.addRecipe(new ItemStack(ironGearItem), " I ", "IGI", " I ", Character.valueOf('I'), Item.ingotIron, Character.valueOf('G'), stoneGearItem);
-		GameRegistry.addRecipe(new ItemStack(goldGearItem), " I ", "IGI", " I ", Character.valueOf('I'), Item.ingotGold, Character.valueOf('G'), ironGearItem);
-		GameRegistry.addRecipe(new ItemStack(diamondGearItem), " I ", "IGI", " I ", Character.valueOf('I'), Item.diamond, Character.valueOf('G'), goldGearItem);
+		CoreProxy.proxy.addCraftingRecipe(new ItemStack(ironGearItem), " I ", "IGI", " I ", 'I', Item.ingotIron, 'G', stoneGearItem);
+		CoreProxy.proxy.addCraftingRecipe(new ItemStack(goldGearItem), " I ", "IGI", " I ", 'I', Item.ingotGold, 'G', ironGearItem);
+		CoreProxy.proxy.addCraftingRecipe(new ItemStack(diamondGearItem), " I ", "IGI", " I ", 'I', Item.diamond, 'G', goldGearItem);
 	}
+	
+	@EventHandler
+    public void processIMCRequests(FMLInterModComms.IMCEvent event) {
+        InterModComms.processIMC(event);
+    }
 }

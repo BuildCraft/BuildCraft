@@ -7,12 +7,11 @@
  */
 package buildcraft.transport;
 
-import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
-import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.IItemPipe;
 import buildcraft.core.ItemBuildCraft;
+import buildcraft.core.utils.BCLog;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import java.util.List;
@@ -32,7 +31,6 @@ public class ItemPipe extends ItemBuildCraft implements IItemPipe {
 
 	protected ItemPipe(int i) {
 		super(i);
-		setCreativeTab(CreativeTabBuildCraft.tabBuildCraft);
 	}
 
 	@Override
@@ -72,7 +70,7 @@ public class ItemPipe extends ItemBuildCraft implements IItemPipe {
 
 			Pipe pipe = BlockGenericPipe.createPipe(itemID);
 			if (pipe == null) {
-				BuildCraftCore.bcLog.log(Level.WARNING, "Pipe failed to create during placement at {0},{1},{2}", new Object[]{i, j, k});
+				BCLog.logger.log(Level.WARNING, "Pipe failed to create during placement at {0},{1},{2}", new Object[]{i, j, k});
 				return true;
 			}
 			if (BlockGenericPipe.placePipe(pipe, world, i, j, k, blockID, 0)) {
@@ -121,12 +119,11 @@ public class ItemPipe extends ItemBuildCraft implements IItemPipe {
 	}
 
 	@Override
+	@SideOnly(Side.CLIENT)
 	public void addInformation(ItemStack stack, EntityPlayer player, List list, boolean advanced) {
 		super.addInformation(stack, player, list, advanced);
 		Class<? extends Pipe> pipe = BlockGenericPipe.pipes.get(itemID);
-		Integer capacity = PipeTransportPower.powerCapacities.get(pipe);
-		if (capacity != null) {
-			list.add(String.format("%d MJ/t", capacity));
-		}
+		List<String> toolTip = PipeToolTipManager.getToolTip(pipe);
+		list.addAll(toolTip);
 	}
 }

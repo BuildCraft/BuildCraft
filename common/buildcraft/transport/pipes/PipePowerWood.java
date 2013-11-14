@@ -13,6 +13,8 @@ import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.power.PowerHandler;
 import buildcraft.api.power.PowerHandler.PowerReceiver;
 import buildcraft.api.power.PowerHandler.Type;
+import buildcraft.api.transport.IPipeTile;
+import buildcraft.transport.IPipeTransportPowerHook;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportPower;
@@ -21,8 +23,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.ForgeDirection;
 
-
-public class PipePowerWood extends Pipe<PipeTransportPower> implements IPowerReceptor {
+public class PipePowerWood extends Pipe<PipeTransportPower> implements IPowerReceptor, IPipeTransportPowerHook {
 
 	private PowerHandler powerHandler;
 	protected int standardIconIndex = PipeIconProvider.TYPE.PipePowerWood_Standard.ordinal();
@@ -39,7 +40,7 @@ public class PipePowerWood extends Pipe<PipeTransportPower> implements IPowerRec
 	}
 
 	private void initPowerProvider() {
-		powerHandler.configure(2, 250, 1, 1500);
+		powerHandler.configure(2, 500, 1, 1500);
 		powerHandler.configurePowerPerdition(1, 10);
 	}
 
@@ -108,9 +109,9 @@ public class PipePowerWood extends Pipe<PipeTransportPower> implements IPowerRec
 
 			float energyUsable = powerHandler.useEnergy(0, energyToRemove, false);
 
-			float energySend = transport.receiveEnergy(o, energyUsable);
-			if (energySend > 0) {
-				powerHandler.useEnergy(0, energySend, true);
+			float energySent = transport.receiveEnergy(o, energyUsable);
+			if (energySent > 0) {
+				powerHandler.useEnergy(0, energySent, true);
 			}
 		}
 	}
@@ -144,5 +145,18 @@ public class PipePowerWood extends Pipe<PipeTransportPower> implements IPowerRec
 		for (int i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
 			powerSources[i] = data.getBoolean("powerSources[" + i + "]");
 		}
+	}
+
+	@Override
+	public float receiveEnergy(ForgeDirection from, float val) {
+		return -1;
+	}
+
+	@Override
+	public float requestEnergy(ForgeDirection from, float amount) {
+		if (container.getTile(from) instanceof IPipeTile) {
+			return amount;
+		}
+		return 0;
 	}
 }

@@ -1,7 +1,7 @@
 package buildcraft.transport.render;
 
 import buildcraft.BuildCraftTransport;
-import buildcraft.core.utils.Utils;
+import buildcraft.core.CoreConstants;
 import buildcraft.transport.ItemFacade;
 import buildcraft.transport.PipeIconProvider;
 import net.minecraft.block.Block;
@@ -11,6 +11,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Icon;
 import net.minecraftforge.client.IItemRenderer;
+import static net.minecraftforge.client.IItemRenderer.ItemRenderType.EQUIPPED_FIRST_PERSON;
 import org.lwjgl.opengl.GL11;
 
 public class FacadeItemRenderer implements IItemRenderer {
@@ -72,7 +73,7 @@ public class FacadeItemRenderer implements IItemRenderer {
 		block = BuildCraftTransport.genericPipeBlock;
 		Icon textureID = BuildCraftTransport.instance.pipeIconProvider.getIcon(PipeIconProvider.TYPE.PipeStructureCobblestone.ordinal()); // Structure pipe
 
-		block.setBlockBounds(Utils.pipeMinPos, Utils.pipeMinPos, Utils.pipeMinPos, Utils.pipeMaxPos, Utils.pipeMaxPos, Utils.pipeMaxPos - 1F / 16F);
+		block.setBlockBounds(CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MAX_POS, CoreConstants.PIPE_MAX_POS, CoreConstants.PIPE_MAX_POS - 1F / 16F);
 		block.setBlockBoundsForItemRender();
 		render.setRenderBoundsFromBlock(block);
 		GL11.glTranslatef(translateX, translateY, translateZ + 0.25F);
@@ -112,6 +113,8 @@ public class FacadeItemRenderer implements IItemRenderer {
 				return true;
 			case EQUIPPED:
 				return true;
+			case EQUIPPED_FIRST_PERSON:
+				return true;
 			case INVENTORY:
 				return true;
 			default:
@@ -133,6 +136,7 @@ public class FacadeItemRenderer implements IItemRenderer {
 				renderFacadeItem((RenderBlocks) data[0], item, -0.6F, 0f, -0.6F);
 				break;
 			case EQUIPPED:
+			case EQUIPPED_FIRST_PERSON:
 				renderFacadeItem((RenderBlocks) data[0], item, 0F, 0F, 0f);
 				break;
 			case INVENTORY:

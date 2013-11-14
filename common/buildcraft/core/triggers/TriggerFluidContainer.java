@@ -58,15 +58,15 @@ public class TriggerFluidContainer extends BCTrigger {
 
 			FluidStack searchedFluid = null;
 
-			if (parameter != null && parameter.getItem() != null) {
-				searchedFluid = FluidContainerRegistry.getFluidForFilledItem(parameter.getItem());
+			if (parameter != null && parameter.getItemStack() != null) {
+				searchedFluid = FluidContainerRegistry.getFluidForFilledItem(parameter.getItemStack());
 			}
 
 			if (searchedFluid != null) {
 				searchedFluid.amount = 1;
 			}
 
-			FluidTankInfo[] liquids = container.getTankInfo(ForgeDirection.UNKNOWN);
+			FluidTankInfo[] liquids = container.getTankInfo(side);
 			if (liquids == null || liquids.length == 0)
 				return false;
 

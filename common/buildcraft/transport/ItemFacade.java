@@ -1,6 +1,7 @@
 package buildcraft.transport;
 
 import buildcraft.BuildCraftTransport;
+import buildcraft.api.core.Position;
 import buildcraft.api.recipes.AssemblyRecipe;
 import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.ItemBuildCraft;
@@ -36,7 +37,7 @@ public class ItemFacade extends ItemBuildCraft {
 
 		setHasSubtypes(true);
 		setMaxDamage(0);
-		setCreativeTab(CreativeTabBuildCraft.tabBuildCraft);
+		setCreativeTab(CreativeTabBuildCraft.FACADES.get());
 	}
 
 	@Override
@@ -72,28 +73,24 @@ public class ItemFacade extends ItemBuildCraft {
 	}
 
 	@Override
-	public boolean onItemUseFirst(ItemStack stack, EntityPlayer player, World worldObj, int x, int y, int z, int side, float hitX, float hitY, float hitZ) {
+	public boolean onItemUse(ItemStack stack, EntityPlayer player, World worldObj, int x, int y, int z, int side, float hitX, float hitY, float hitZ) {
 		if (worldObj.isRemote)
 			return false;
-		TileEntity tile = worldObj.getBlockTileEntity(x, y, z);
+		Position pos = new Position(x, y, z, ForgeDirection.getOrientation(side));
+		pos.moveForwards(1.0);
+
+		TileEntity tile = worldObj.getBlockTileEntity((int) pos.x, (int) pos.y, (int) pos.z);
 		if (!(tile instanceof TileGenericPipe))
 			return false;
 		TileGenericPipe pipeTile = (TileGenericPipe) tile;
 
-		if (player.isSneaking()) { // Strip facade
-			if (!pipeTile.hasFacade(ForgeDirection.VALID_DIRECTIONS[side]))
-				return false;
-			pipeTile.dropFacade(ForgeDirection.VALID_DIRECTIONS[side]);
-			return true;
-		} else {
-			if (((TileGenericPipe) tile).addFacade(ForgeDirection.values()[side], ItemFacade.getBlockId(stack), ItemFacade.getMetaData(stack))) {
-				if (!player.capabilities.isCreativeMode) {
-					stack.stackSize--;
-				}
-				return true;
+		if (pipeTile.addFacade(ForgeDirection.getOrientation(side).getOpposite(), ItemFacade.getBlockId(stack), ItemFacade.getMetaData(stack))) {
+			if (!player.capabilities.isCreativeMode) {
+				stack.stackSize--;
 			}
-			return false;
+			return true;
 		}
+		return false;
 	}
 
 	public static void initialize() {
@@ -126,7 +123,7 @@ public class ItemFacade extends ItemBuildCraft {
 					Set<String> names = Sets.newHashSet();
 					for (int meta = 0; meta <= 15; meta++) {
 						ItemStack is = new ItemStack(b, 1, meta);
-						if (!Strings.isNullOrEmpty(is.getItemName()) && names.add(is.getItemName())) {
+						if (!Strings.isNullOrEmpty(is.getUnlocalizedName()) && names.add(is.getUnlocalizedName())) {
 							ItemFacade.addFacade(is);
 						}
 					}
@@ -219,13 +216,13 @@ public class ItemFacade extends ItemBuildCraft {
 				Block bl = Block.blocksList[blockId];
 				// No Meta
 				if (bl != null && bl.getRenderType() == 31 && (blockMeta & 0xC) == 0)
-					return getStack(blockId, (blockMeta & 0x3) | 4);
+					return getStack(bl, (blockMeta & 0x3) | 4);
 				// Meta | 4 = true
 				if (bl != null && bl.getRenderType() == 31 && (blockMeta & 0x8) == 0)
-					return getStack(blockId, (blockMeta & 0x3) | 8);
+					return getStack(bl, (blockMeta & 0x3) | 8);
 				// Meta | 8 = true
 				if (bl != null && bl.getRenderType() == 31 && (blockMeta & 0x4) == 0)
-					return getStack(blockId, (blockMeta & 0x3));
+					return getStack(bl, (blockMeta & 0x3));
 			}
 			return null;
 		}
@@ -251,6 +248,10 @@ public class ItemFacade extends ItemBuildCraft {
 	@SideOnly(Side.CLIENT)
 	public int getSpriteNumber() {
 		return 0;
+	}
+
+	public static ItemStack getStack(Block block, int metadata) {
+		return getStack(block.blockID, metadata);
 	}
 
 	public static ItemStack getStack(int blockID, int metadata) {

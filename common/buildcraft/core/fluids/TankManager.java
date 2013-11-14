@@ -112,7 +112,7 @@ public class TankManager<T extends Tank> extends ForwardingList<T> implements IF
 	public void writeData(DataOutputStream data) throws IOException {
 		for (Tank tank : tanks) {
 			FluidStack fluidStack = tank.getFluid();
-			if (fluidStack != null) {
+			if (fluidStack != null && fluidStack.getFluid() != null) {
 				data.writeShort(fluidStack.getFluid().getID());
 				data.writeInt(fluidStack.amount);
 			} else {

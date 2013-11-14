@@ -1,13 +1,13 @@
 package buildcraft.energy;
 
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
 import buildcraft.core.GuiIds;
 import buildcraft.energy.gui.ContainerEngine;
 import buildcraft.energy.gui.GuiCombustionEngine;
 import buildcraft.energy.gui.GuiStoneEngine;
 import cpw.mods.fml.common.network.IGuiHandler;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.World;
 
 public class GuiHandler implements IGuiHandler {
 
@@ -18,10 +18,10 @@ public class GuiHandler implements IGuiHandler {
 			return null;
 
 		TileEntity tile = world.getBlockTileEntity(x, y, z);
-		if (!(tile instanceof TileEngine))
+		if (!(tile instanceof TileEngineWithInventory))
 			return null;
 
-		TileEngine engine = (TileEngine) tile;
+		TileEngineWithInventory engine = (TileEngineWithInventory) tile;
 
 		switch (ID) {
 
@@ -43,10 +43,10 @@ public class GuiHandler implements IGuiHandler {
 			return null;
 
 		TileEntity tile = world.getBlockTileEntity(x, y, z);
-		if (!(tile instanceof TileEngine))
+		if (!(tile instanceof TileEngineWithInventory))
 			return null;
 
-		TileEngine engine = (TileEngine) tile;
+		TileEngineWithInventory engine = (TileEngineWithInventory) tile;
 
 		switch (ID) {
 

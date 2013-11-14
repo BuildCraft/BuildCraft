@@ -45,9 +45,9 @@ import net.minecraftforge.fluids.IFluidHandler;
 public class TileRefinery extends TileBuildCraft implements IFluidHandler, IPowerReceptor, IInventory, IMachine {
 
 	public static int LIQUID_PER_SLOT = FluidContainerRegistry.BUCKET_VOLUME * 4;
-	public SingleUseTank tank1 = new SingleUseTank("tank1", LIQUID_PER_SLOT);
-	public SingleUseTank tank2 = new SingleUseTank("tank2", LIQUID_PER_SLOT);
-	public SingleUseTank result = new SingleUseTank("result", LIQUID_PER_SLOT);
+	public SingleUseTank tank1 = new SingleUseTank("tank1", LIQUID_PER_SLOT, this);
+	public SingleUseTank tank2 = new SingleUseTank("tank2", LIQUID_PER_SLOT, this);
+	public SingleUseTank result = new SingleUseTank("result", LIQUID_PER_SLOT, this);
 	public TankManager<SingleUseTank> tankManager = new TankManager<SingleUseTank>(tank1, tank2, result);
 	public float animationSpeed = 1;
 	private int animationStage = 0;
@@ -62,7 +62,7 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IPowe
 	}
 
 	private void initPowerProvider() {
-		powerHandler.configure(25, 100, 25, 1000);
+		powerHandler.configure(50, 150, 25, 1000);
 		powerHandler.configurePowerPerdition(1, 1);
 	}
 

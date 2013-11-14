@@ -27,8 +27,8 @@ public class BlockLaser extends BlockContainer {
 
 	public BlockLaser(int i) {
 		super(i, Material.iron);
-		setHardness(0.5F);
-		setCreativeTab(CreativeTabBuildCraft.tabBuildCraft);
+		setHardness(10F);
+		setCreativeTab(CreativeTabBuildCraft.MACHINES.get());
 	}
 
 	@Override

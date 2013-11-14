@@ -9,7 +9,7 @@
 
 package buildcraft.silicon;
 
-import buildcraft.core.utils.Utils;
+import buildcraft.core.CoreConstants;
 import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
@@ -121,7 +121,7 @@ public class SiliconRenderBlock implements ISimpleBlockRenderingHandler {
 
 	@Override
 	public void renderInventoryBlock(Block block, int i, int j, RenderBlocks renderblocks) {
-		block.setBlockBounds(Utils.pipeMinPos, 0.0F, Utils.pipeMinPos, Utils.pipeMaxPos, 1.0F, Utils.pipeMaxPos);
+		block.setBlockBounds(CoreConstants.PIPE_MIN_POS, 0.0F, CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MAX_POS, 1.0F, CoreConstants.PIPE_MAX_POS);
 		GL11.glTranslatef(-0.5F, -0.5F, -0.5F);
 
 		block.setBlockBounds(0.0F, 0.0F, 0.0F, 1, 4F / 16F, 1);

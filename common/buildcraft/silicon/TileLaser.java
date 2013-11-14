@@ -23,6 +23,7 @@ import buildcraft.core.TileBuildCraft;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.triggers.ActionMachineControl;
 import java.util.LinkedList;
+import java.util.List;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.ForgeDirection;
@@ -39,6 +40,7 @@ public class TileLaser extends TileBuildCraft implements IPowerReceptor, IAction
 	private int nextLaserUpdate = 10;
 	private int nextLaserSearch = 100;
 	private ActionMachineControl.Mode lastMode = ActionMachineControl.Mode.Unknown;
+	private static final PowerHandler.PerditionCalculator PERDITION = new PowerHandler.PerditionCalculator(0.5F);
 
 	public TileLaser() {
 		powerHandler = new PowerHandler(this, Type.MACHINE);
@@ -47,7 +49,7 @@ public class TileLaser extends TileBuildCraft implements IPowerReceptor, IAction
 
 	private void initPowerProvider() {
 		powerHandler.configure(25, 150, 25, 1000);
-		powerHandler.configurePowerPerdition(1, 1);
+		powerHandler.setPerdition(PERDITION);
 	}
 
 	@Override
@@ -56,12 +58,6 @@ public class TileLaser extends TileBuildCraft implements IPowerReceptor, IAction
 
 		if (!CoreProxy.proxy.isSimulating(worldObj))
 			return;
-
-		// Disable the laser and do nothing if no energy is available.
-		if (powerHandler.getEnergyStored() == 0) {
-			removeLaser();
-			return;
-		}
 
 		// If a gate disabled us, remove laser and do nothing.
 		if (lastMode == ActionMachineControl.Mode.Off) {
@@ -78,6 +74,12 @@ public class TileLaser extends TileBuildCraft implements IPowerReceptor, IAction
 		// If we still don't have a valid table or the existing has
 		// become invalid, we disable the laser and do nothing.
 		if (!isValidTable()) {
+			removeLaser();
+			return;
+		}
+
+		// Disable the laser and do nothing if no energy is available.
+		if (powerHandler.getEnergyStored() == 0) {
 			removeLaser();
 			return;
 		}
@@ -100,19 +102,19 @@ public class TileLaser extends TileBuildCraft implements IPowerReceptor, IAction
 		if (laser != null) {
 			laser.pushPower(power);
 		}
-		
+
 		onPowerSent(power);
 
 		sendNetworkUpdate();
 	}
 
-	protected float getMaxPowerSent(){
+	protected float getMaxPowerSent() {
 		return 4;
 	}
 
 	protected void onPowerSent(float power) {
 	}
-	
+
 	protected boolean canFindTable() {
 		return searchTracker.markTimeIfDelay(worldObj, nextLaserSearch);
 	}
@@ -161,7 +163,7 @@ public class TileLaser extends TileBuildCraft implements IPowerReceptor, IAction
 				break;
 		}
 
-		LinkedList<BlockIndex> targets = new LinkedList<BlockIndex>();
+		List<BlockIndex> targets = new LinkedList<BlockIndex>();
 
 		for (int x = minX; x <= maxX; ++x) {
 			for (int y = minY; y <= maxY; ++y) {
@@ -180,7 +182,7 @@ public class TileLaser extends TileBuildCraft implements IPowerReceptor, IAction
 			}
 		}
 
-		if (targets.size() == 0)
+		if (targets.isEmpty())
 			return;
 
 		BlockIndex b = targets.get(worldObj.rand.nextInt(targets.size()));
@@ -279,7 +281,7 @@ public class TileLaser extends TileBuildCraft implements IPowerReceptor, IAction
 
 	@Override
 	public boolean isActive() {
-		return laser != null;
+		return isValidTable();
 	}
 
 	@Override

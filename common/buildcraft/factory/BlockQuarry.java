@@ -1,12 +1,10 @@
 /**
- * Copyright (c) SpaceToad, 2011
- * http://www.mod-buildcraft.com
+ * Copyright (c) SpaceToad, 2011 http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License
+ * 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-
 package buildcraft.factory;
 
 import buildcraft.BuildCraftFactory;
@@ -38,7 +36,7 @@ public class BlockQuarry extends BlockMachineRoot {
 	public BlockQuarry(int i) {
 		super(i, Material.iron);
 
-		setHardness(1.5F);
+		setHardness(10F);
 		setResistance(10F);
 		setStepSound(soundStoneFootstep);
 	}
@@ -49,7 +47,7 @@ public class BlockQuarry extends BlockMachineRoot {
 
 		ForgeDirection orientation = Utils.get2dOrientation(new Position(entityliving.posX, entityliving.posY, entityliving.posZ), new Position(i, j, k));
 
-		world.setBlockMetadataWithNotify(i, j, k, orientation.getOpposite().ordinal(),1);
+		world.setBlockMetadataWithNotify(i, j, k, orientation.getOpposite().ordinal(), 1);
 		if (entityliving instanceof EntityPlayer) {
 			TileQuarry tq = (TileQuarry) world.getBlockTileEntity(i, j, k);
 			tq.placedBy = (EntityPlayer) entityliving;
@@ -62,14 +60,14 @@ public class BlockQuarry extends BlockMachineRoot {
 		if (j == 0 && i == 3)
 			return textureFront;
 
-		if (i == j && i>1) // Front can't be top or bottom.
+		if (i == j && i > 1) // Front can't be top or bottom.
 			return textureFront;
 
 		switch (i) {
-		case 1:
-			return textureTop;
-		default:
-			return textureSide;
+			case 1:
+				return textureTop;
+			default:
+				return textureSide;
 		}
 	}
 
@@ -91,25 +89,25 @@ public class BlockQuarry extends BlockMachineRoot {
 		int meta = world.getBlockMetadata(i, j, k);
 
 		if ((meta & 8) == 0) {
-			world.setBlockMetadataWithNotify(i, j, k, meta | 8,0);
+			world.setBlockMetadataWithNotify(i, j, k, meta | 8, 0);
 
 			ForgeDirection[] dirs = ForgeDirection.VALID_DIRECTIONS;
 
 			for (ForgeDirection dir : dirs) {
 				switch (dir) {
-				case UP:
-					searchFrames(world, i, j + 1, k);
-				case DOWN:
-					searchFrames(world, i, j - 1, k);
-				case SOUTH:
-					searchFrames(world, i, j, k + 1);
-				case NORTH:
-					searchFrames(world, i, j, k - 1);
-				case EAST:
-					searchFrames(world, i + 1, j, k);
-				case WEST:
-				default:
-					searchFrames(world, i - 1, j, k);
+					case UP:
+						searchFrames(world, i, j + 1, k);
+					case DOWN:
+						searchFrames(world, i, j - 1, k);
+					case SOUTH:
+						searchFrames(world, i, j, k + 1);
+					case NORTH:
+						searchFrames(world, i, j, k - 1);
+					case EAST:
+						searchFrames(world, i + 1, j, k);
+					case WEST:
+					default:
+						searchFrames(world, i - 1, j, k);
 				}
 			}
 		}
@@ -117,8 +115,16 @@ public class BlockQuarry extends BlockMachineRoot {
 
 	private void markFrameForDecay(World world, int x, int y, int z) {
 		if (world.getBlockId(x, y, z) == BuildCraftFactory.frameBlock.blockID) {
-			world.setBlockMetadataWithNotify(x, y, z, 1,0);
+			world.setBlockMetadataWithNotify(x, y, z, 1, 0);
 		}
+	}
+
+	@Override
+	public ArrayList<ItemStack> getBlockDropped(World world, int x, int y, int z, int metadata, int fortune) {
+		if (BuildCraftFactory.quarryOneTimeUse) {
+			return new ArrayList<ItemStack>();
+		}
+		return super.getBlockDropped(world, x, y, z, metadata, fortune);
 	}
 
 	@Override
@@ -214,7 +220,7 @@ public class BlockQuarry extends BlockMachineRoot {
 		return false;
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@SuppressWarnings({"unchecked", "rawtypes"})
 	@Override
 	public void addCreativeItems(ArrayList itemList) {
 		itemList.add(new ItemStack(this));
@@ -222,10 +228,9 @@ public class BlockQuarry extends BlockMachineRoot {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void registerIcons(IconRegister par1IconRegister)
-	{
-	    textureSide = par1IconRegister.registerIcon("buildcraft:quarry_side");
-        textureTop = par1IconRegister.registerIcon("buildcraft:quarry_top");
-        textureFront = par1IconRegister.registerIcon("buildcraft:quarry_front");
+	public void registerIcons(IconRegister par1IconRegister) {
+		textureSide = par1IconRegister.registerIcon("buildcraft:quarry_side");
+		textureTop = par1IconRegister.registerIcon("buildcraft:quarry_top");
+		textureFront = par1IconRegister.registerIcon("buildcraft:quarry_front");
 	}
 }

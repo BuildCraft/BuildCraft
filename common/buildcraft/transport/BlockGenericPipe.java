@@ -7,24 +7,13 @@
  */
 package buildcraft.transport;
 
-import buildcraft.BuildCraftCore;
-import buildcraft.BuildCraftTransport;
-import buildcraft.api.tools.IToolWrench;
-import buildcraft.api.transport.IPipe;
-import buildcraft.api.transport.ISolidSideTile;
-import buildcraft.core.BlockIndex;
-import buildcraft.core.proxy.CoreProxy;
-import buildcraft.core.utils.Utils;
-import buildcraft.transport.render.PipeWorldRenderer;
-import cpw.mods.fml.common.registry.GameRegistry;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
@@ -45,31 +34,59 @@ import net.minecraft.util.Vec3;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
+import buildcraft.BuildCraftTransport;
+import buildcraft.api.tools.IToolWrench;
+import buildcraft.api.transport.IPipe;
+import buildcraft.api.transport.ISolidSideTile;
+import buildcraft.core.BlockIndex;
+import buildcraft.core.CoreConstants;
+import buildcraft.core.proxy.CoreProxy;
+import buildcraft.core.utils.BCLog;
+import buildcraft.core.utils.Utils;
+import buildcraft.core.utils.MatrixTranformations;
+import cpw.mods.fml.common.registry.GameRegistry;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+import java.util.Arrays;
+import net.minecraft.client.Minecraft;
 
 public class BlockGenericPipe extends BlockContainer {
 
 	static enum Part {
 
 		Pipe,
-		Gate
+		Gate,
+		Facade,
+		Plug
 	}
 
 	static class RaytraceResult {
 
-		RaytraceResult(Part hitPart, MovingObjectPosition movingObjectPosition) {
+		RaytraceResult(Part hitPart, MovingObjectPosition movingObjectPosition, AxisAlignedBB boundingBox, ForgeDirection side) {
 			this.hitPart = hitPart;
 			this.movingObjectPosition = movingObjectPosition;
+			this.boundingBox = boundingBox;
+			this.sideHit = side;
 		}
-		public Part hitPart;
-		public MovingObjectPosition movingObjectPosition;
+		public final Part hitPart;
+		public final MovingObjectPosition movingObjectPosition;
+		public final AxisAlignedBB boundingBox;
+		public final ForgeDirection sideHit;
+
+		@Override
+		public String toString() {
+			return String.format("RayTraceResult: %s, %s", hitPart == null ? "null" : hitPart.name(), boundingBox == null ? "null" : boundingBox.toString());
+		}
 	}
+	private static final ForgeDirection[] DIR_VALUES = ForgeDirection.values();
 	private static Random rand = new Random();
 	private boolean skippedFirstIconRegister;
-	private char renderAxis = 'a';
+	private int renderMask = 0;
 
 	/* Defined subprograms ************************************************* */
 	public BlockGenericPipe(int i) {
 		super(i, Material.glass);
+		setRenderAllSides();
 	}
 
 	@Override
@@ -97,20 +114,26 @@ public class BlockGenericPipe extends BlockContainer {
 		return false;
 	}
 
-	public void setRenderAxis(char axis) {
-		this.renderAxis = axis;
+	public void setRenderMask(int mask) {
+		renderMask = mask;
+	}
+
+	public final void setRenderAllSides() {
+		renderMask = 0x3f;
+	}
+
+	public void setRenderSide(ForgeDirection side, boolean render) {
+		if (render) {
+			renderMask |= 1 << side.ordinal();
+		} else {
+			renderMask &= ~(1 << side.ordinal());
+		}
 	}
 
 	@Override
 	@SideOnly(Side.CLIENT)
 	public boolean shouldSideBeRendered(IBlockAccess blockAccess, int x, int y, int z, int side) {
-		if (renderAxis == 'x')
-			return side == 4 || side == 5;
-		if (renderAxis == 'y')
-			return side == 0 || side == 1;
-		if (renderAxis == 'z')
-			return side == 2 || side == 3;
-		return true;
+		return (renderMask & (1 << side)) != 0;
 	}
 
 	@Override
@@ -129,7 +152,7 @@ public class BlockGenericPipe extends BlockContainer {
 	@SuppressWarnings("rawtypes")
 	@Override
 	public void addCollisionBoxesToList(World world, int i, int j, int k, AxisAlignedBB axisalignedbb, List arraylist, Entity par7Entity) {
-		setBlockBounds(Utils.pipeMinPos, Utils.pipeMinPos, Utils.pipeMinPos, Utils.pipeMaxPos, Utils.pipeMaxPos, Utils.pipeMaxPos);
+		setBlockBounds(CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MAX_POS, CoreConstants.PIPE_MAX_POS, CoreConstants.PIPE_MAX_POS);
 		super.addCollisionBoxesToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
 
 		TileEntity tile1 = world.getBlockTileEntity(i, j, k);
@@ -137,36 +160,36 @@ public class BlockGenericPipe extends BlockContainer {
 			TileGenericPipe tileG = (TileGenericPipe) tile1;
 
 			if (tileG.isPipeConnected(ForgeDirection.WEST)) {
-				setBlockBounds(0.0F, Utils.pipeMinPos, Utils.pipeMinPos, Utils.pipeMaxPos, Utils.pipeMaxPos, Utils.pipeMaxPos);
+				setBlockBounds(0.0F, CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MAX_POS, CoreConstants.PIPE_MAX_POS, CoreConstants.PIPE_MAX_POS);
 				super.addCollisionBoxesToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
 			}
 
 			if (tileG.isPipeConnected(ForgeDirection.EAST)) {
-				setBlockBounds(Utils.pipeMinPos, Utils.pipeMinPos, Utils.pipeMinPos, 1.0F, Utils.pipeMaxPos, Utils.pipeMaxPos);
+				setBlockBounds(CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MIN_POS, 1.0F, CoreConstants.PIPE_MAX_POS, CoreConstants.PIPE_MAX_POS);
 				super.addCollisionBoxesToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
 			}
 
 			if (tileG.isPipeConnected(ForgeDirection.DOWN)) {
-				setBlockBounds(Utils.pipeMinPos, 0.0F, Utils.pipeMinPos, Utils.pipeMaxPos, Utils.pipeMaxPos, Utils.pipeMaxPos);
+				setBlockBounds(CoreConstants.PIPE_MIN_POS, 0.0F, CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MAX_POS, CoreConstants.PIPE_MAX_POS, CoreConstants.PIPE_MAX_POS);
 				super.addCollisionBoxesToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
 			}
 
 			if (tileG.isPipeConnected(ForgeDirection.UP)) {
-				setBlockBounds(Utils.pipeMinPos, Utils.pipeMinPos, Utils.pipeMinPos, Utils.pipeMaxPos, 1.0F, Utils.pipeMaxPos);
+				setBlockBounds(CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MAX_POS, 1.0F, CoreConstants.PIPE_MAX_POS);
 				super.addCollisionBoxesToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
 			}
 
 			if (tileG.isPipeConnected(ForgeDirection.NORTH)) {
-				setBlockBounds(Utils.pipeMinPos, Utils.pipeMinPos, 0.0F, Utils.pipeMaxPos, Utils.pipeMaxPos, Utils.pipeMaxPos);
+				setBlockBounds(CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MIN_POS, 0.0F, CoreConstants.PIPE_MAX_POS, CoreConstants.PIPE_MAX_POS, CoreConstants.PIPE_MAX_POS);
 				super.addCollisionBoxesToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
 			}
 
 			if (tileG.isPipeConnected(ForgeDirection.SOUTH)) {
-				setBlockBounds(Utils.pipeMinPos, Utils.pipeMinPos, Utils.pipeMinPos, Utils.pipeMaxPos, Utils.pipeMaxPos, 1.0F);
+				setBlockBounds(CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MAX_POS, CoreConstants.PIPE_MAX_POS, 1.0F);
 				super.addCollisionBoxesToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
 			}
 
-			float facadeThickness = PipeWorldRenderer.facadeThickness;
+			float facadeThickness = TransportConstants.FACADE_THICKNESS;
 
 			if (tileG.hasFacade(ForgeDirection.EAST)) {
 				setBlockBounds(1 - facadeThickness, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
@@ -201,61 +224,29 @@ public class BlockGenericPipe extends BlockContainer {
 		setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
 	}
 
+	@SideOnly(Side.CLIENT)
 	@Override
-	public AxisAlignedBB getSelectedBoundingBoxFromPool(World world, int i, int j, int k) {
-		float xMin = Utils.pipeMinPos, xMax = Utils.pipeMaxPos, yMin = Utils.pipeMinPos, yMax = Utils.pipeMaxPos, zMin = Utils.pipeMinPos, zMax = Utils.pipeMaxPos;
+	public AxisAlignedBB getSelectedBoundingBoxFromPool(World world, int x, int y, int z) {
+		RaytraceResult rayTraceResult = doRayTrace(world, x, y, z, Minecraft.getMinecraft().thePlayer);
 
-		TileEntity tile1 = world.getBlockTileEntity(i, j, k);
-
-		if (tile1 instanceof TileGenericPipe) {
-			TileGenericPipe tileG = (TileGenericPipe) tile1;
-			if (tileG.isPipeConnected(ForgeDirection.WEST) || tileG.hasFacade(ForgeDirection.WEST)) {
-				xMin = 0.0F;
+		if (rayTraceResult != null && rayTraceResult.boundingBox != null) {
+			AxisAlignedBB box = rayTraceResult.boundingBox;
+			switch (rayTraceResult.hitPart) {
+				case Gate:
+				case Plug: {
+					float scale = 0.001F;
+					box = box.expand(scale, scale, scale);
+					break;
+				}
+				case Pipe: {
+					float scale = 0.08F;
+					box = box.expand(scale, scale, scale);
+					break;
+				}
 			}
-
-			if (tileG.isPipeConnected(ForgeDirection.EAST) || tileG.hasFacade(ForgeDirection.EAST)) {
-				xMax = 1.0F;
-			}
-
-			if (tileG.isPipeConnected(ForgeDirection.DOWN) || tileG.hasFacade(ForgeDirection.DOWN)) {
-				yMin = 0.0F;
-			}
-
-			if (tileG.isPipeConnected(ForgeDirection.UP) || tileG.hasFacade(ForgeDirection.UP)) {
-				yMax = 1.0F;
-			}
-
-			if (tileG.isPipeConnected(ForgeDirection.NORTH) || tileG.hasFacade(ForgeDirection.NORTH)) {
-				zMin = 0.0F;
-			}
-
-			if (tileG.isPipeConnected(ForgeDirection.SOUTH) || tileG.hasFacade(ForgeDirection.SOUTH)) {
-				zMax = 1.0F;
-			}
-
-			if (tileG.hasFacade(ForgeDirection.EAST) || tileG.hasFacade(ForgeDirection.WEST)) {
-				yMin = 0.0F;
-				yMax = 1.0F;
-				zMin = 0.0F;
-				zMax = 1.0F;
-			}
-
-			if (tileG.hasFacade(ForgeDirection.UP) || tileG.hasFacade(ForgeDirection.DOWN)) {
-				xMin = 0.0F;
-				xMax = 1.0F;
-				zMin = 0.0F;
-				zMax = 1.0F;
-			}
-
-			if (tileG.hasFacade(ForgeDirection.SOUTH) || tileG.hasFacade(ForgeDirection.NORTH)) {
-				xMin = 0.0F;
-				xMax = 1.0F;
-				yMin = 0.0F;
-				yMax = 1.0F;
-			}
+			return box.getOffsetBoundingBox(x, y, z);
 		}
-
-		return AxisAlignedBB.getBoundingBox((double) i + xMin, (double) j + yMin, (double) k + zMin, (double) i + xMax, (double) j + yMax, (double) k + zMax);
+		return super.getSelectedBoundingBoxFromPool(world, x, y, z).expand(-0.85F, -0.85F, -0.85F);
 	}
 
 	@Override
@@ -290,8 +281,6 @@ public class BlockGenericPipe extends BlockContainer {
 	}
 
 	private RaytraceResult doRayTrace(World world, int x, int y, int z, Vec3 origin, Vec3 direction) {
-		float xMin = Utils.pipeMinPos, xMax = Utils.pipeMaxPos, yMin = Utils.pipeMinPos, yMax = Utils.pipeMaxPos, zMin = Utils.pipeMinPos, zMax = Utils.pipeMaxPos;
-
 		TileEntity pipeTileEntity = world.getBlockTileEntity(x, y, z);
 
 		TileGenericPipe tileG = null;
@@ -310,96 +299,60 @@ public class BlockGenericPipe extends BlockContainer {
 		 * pipe hits along x, y, and z axis, gate (all 6 sides) [and
 		 * wires+facades]
 		 */
-		MovingObjectPosition[] hits = new MovingObjectPosition[9];
+		MovingObjectPosition[] hits = new MovingObjectPosition[25];
+		AxisAlignedBB[] boxes = new AxisAlignedBB[25];
+		ForgeDirection[] sideHit = new ForgeDirection[25];
+		Arrays.fill(sideHit, ForgeDirection.UNKNOWN);
 
-		boolean needAxisCheck = false;
-		boolean needCenterCheck = true;
+		// pipe
 
-		// check along the x axis
-
-		if (tileG.isPipeConnected(ForgeDirection.WEST)) {
-			xMin = 0.0F;
-			needAxisCheck = true;
-		}
-
-		if (tileG.isPipeConnected(ForgeDirection.WEST)) {
-			xMax = 1.0F;
-			needAxisCheck = true;
-		}
-
-		if (needAxisCheck) {
-			setBlockBounds(xMin, yMin, zMin, xMax, yMax, zMax);
-
-			hits[0] = super.collisionRayTrace(world, x, y, z, origin, direction);
-			xMin = Utils.pipeMinPos;
-			xMax = Utils.pipeMaxPos;
-			needAxisCheck = false;
-			needCenterCheck = false; // center already checked through this axis
-		}
-
-		// check along the y axis
-
-		if (tileG.isPipeConnected(ForgeDirection.DOWN)) {
-			yMin = 0.0F;
-			needAxisCheck = true;
-		}
-
-		if (tileG.isPipeConnected(ForgeDirection.UP)) {
-			yMax = 1.0F;
-			needAxisCheck = true;
-		}
-
-		if (needAxisCheck) {
-			setBlockBounds(xMin, yMin, zMin, xMax, yMax, zMax);
-
-			hits[1] = super.collisionRayTrace(world, x, y, z, origin, direction);
-			yMin = Utils.pipeMinPos;
-			yMax = Utils.pipeMaxPos;
-			needAxisCheck = false;
-			needCenterCheck = false; // center already checked through this axis
-		}
-
-		// check along the z axis
-
-		if (tileG.isPipeConnected(ForgeDirection.NORTH)) {
-			zMin = 0.0F;
-			needAxisCheck = true;
-		}
-
-		if (tileG.isPipeConnected(ForgeDirection.SOUTH)) {
-			zMax = 1.0F;
-			needAxisCheck = true;
-		}
-
-		if (needAxisCheck) {
-			setBlockBounds(xMin, yMin, zMin, xMax, yMax, zMax);
-
-			hits[2] = super.collisionRayTrace(world, x, y, z, origin, direction);
-			zMin = Utils.pipeMinPos;
-			zMax = Utils.pipeMaxPos;
-			needAxisCheck = false;
-			needCenterCheck = false; // center already checked through this axis
-		}
-
-		// check center (only if no axis were checked/the pipe has no connections)
-
-		if (needCenterCheck) {
-			setBlockBounds(xMin, yMin, zMin, xMax, yMax, zMax);
-
-			hits[0] = super.collisionRayTrace(world, x, y, z, origin, direction);
+		for (ForgeDirection side : DIR_VALUES) {
+			if (side == ForgeDirection.UNKNOWN || tileG.isPipeConnected(side)) {
+				AxisAlignedBB bb = getPipeBoundingBox(side);
+				setBlockBounds(bb);
+				boxes[side.ordinal()] = bb;
+				hits[side.ordinal()] = super.collisionRayTrace(world, x, y, z, origin, direction);
+				sideHit[side.ordinal()] = side;
+			}
 		}
 
 		// gates
 
-		if (pipe.hasGate()) {
-			for (int side = 0; side < 6; side++) {
-				setBlockBoundsToGate(ForgeDirection.VALID_DIRECTIONS[side]);
-
-				hits[3 + side] = super.collisionRayTrace(world, x, y, z, origin, direction);
+		for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
+			if (pipe.hasGate(side)) {
+				AxisAlignedBB bb = getGateBoundingBox(side);
+				setBlockBounds(bb);
+				boxes[7 + side.ordinal()] = bb;
+				hits[7 + side.ordinal()] = super.collisionRayTrace(world, x, y, z, origin, direction);
+				sideHit[7 + side.ordinal()] = side;
 			}
 		}
 
-		// TODO: check wires, facades
+		// facades
+
+		for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
+			if (tileG.hasFacade(side)) {
+				AxisAlignedBB bb = getFacadeBoundingBox(side);
+				setBlockBounds(bb);
+				boxes[13 + side.ordinal()] = bb;
+				hits[13 + side.ordinal()] = super.collisionRayTrace(world, x, y, z, origin, direction);
+				sideHit[13 + side.ordinal()] = side;
+			}
+		}
+
+		// plugs
+
+		for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
+			if (tileG.hasPlug(side)) {
+				AxisAlignedBB bb = getPlugBoundingBox(side);
+				setBlockBounds(bb);
+				boxes[19 + side.ordinal()] = bb;
+				hits[19 + side.ordinal()] = super.collisionRayTrace(world, x, y, z, origin, direction);
+				sideHit[19 + side.ordinal()] = side;
+			}
+		}
+
+		// TODO: check wires
 
 		// get closest hit
 
@@ -428,41 +381,96 @@ public class BlockGenericPipe extends BlockContainer {
 		} else {
 			Part hitPart;
 
-			if (minIndex < 3) {
+			if (minIndex < 7) {
 				hitPart = Part.Pipe;
-			} else {
+			} else if (minIndex < 13) {
 				hitPart = Part.Gate;
+			} else if (minIndex < 19) {
+				hitPart = Part.Facade;
+			} else {
+				hitPart = Part.Plug;
 			}
 
-			return new RaytraceResult(hitPart, hits[minIndex]);
+			return new RaytraceResult(hitPart, hits[minIndex], boxes[minIndex], sideHit[minIndex]);
 		}
 	}
 
-	private void setBlockBoundsToGate(ForgeDirection dir) {
-		float min = Utils.pipeMinPos + 0.05F;
-		float max = Utils.pipeMaxPos - 0.05F;
+	private void setBlockBounds(AxisAlignedBB bb) {
+		setBlockBounds((float) bb.minX, (float) bb.minY, (float) bb.minZ, (float) bb.maxX, (float) bb.maxY, (float) bb.maxZ);
+	}
 
-		switch (dir) {
-			case DOWN:
-				setBlockBounds(min, Utils.pipeMinPos - 0.10F, min, max, Utils.pipeMinPos, max);
-				break;
-			case UP:
-				setBlockBounds(min, Utils.pipeMaxPos, min, max, Utils.pipeMaxPos + 0.10F, max);
-				break;
-			case NORTH:
-				setBlockBounds(min, min, Utils.pipeMinPos - 0.10F, max, max, Utils.pipeMinPos);
-				break;
-			case SOUTH:
-				setBlockBounds(min, min, Utils.pipeMaxPos, max, max, Utils.pipeMaxPos + 0.10F);
-				break;
-			case WEST:
-				setBlockBounds(Utils.pipeMinPos - 0.10F, min, min, Utils.pipeMinPos, max, max);
-				break;
-			default:
-			case EAST:
-				setBlockBounds(Utils.pipeMaxPos, min, min, Utils.pipeMaxPos + 0.10F, max, max);
-				break;
+	private AxisAlignedBB getGateBoundingBox(ForgeDirection side) {
+		float min = CoreConstants.PIPE_MIN_POS + 0.05F;
+		float max = CoreConstants.PIPE_MAX_POS - 0.05F;
+
+		float[][] bounds = new float[3][2];
+		// X START - END
+		bounds[0][0] = min;
+		bounds[0][1] = max;
+		// Y START - END
+		bounds[1][0] = CoreConstants.PIPE_MIN_POS - 0.10F;
+		bounds[1][1] = CoreConstants.PIPE_MIN_POS;
+		// Z START - END
+		bounds[2][0] = min;
+		bounds[2][1] = max;
+
+		MatrixTranformations.transform(bounds, side);
+		return AxisAlignedBB.getAABBPool().getAABB(bounds[0][0], bounds[1][0], bounds[2][0], bounds[0][1], bounds[1][1], bounds[2][1]);
+	}
+
+	private AxisAlignedBB getFacadeBoundingBox(ForgeDirection side) {
+		float[][] bounds = new float[3][2];
+		// X START - END
+		bounds[0][0] = 0.0F;
+		bounds[0][1] = 1.0F;
+		// Y START - END
+		bounds[1][0] = 0.0F;
+		bounds[1][1] = TransportConstants.FACADE_THICKNESS;
+		// Z START - END
+		bounds[2][0] = 0.0F;
+		bounds[2][1] = 1.0F;
+
+		MatrixTranformations.transform(bounds, side);
+		return AxisAlignedBB.getAABBPool().getAABB(bounds[0][0], bounds[1][0], bounds[2][0], bounds[0][1], bounds[1][1], bounds[2][1]);
+	}
+
+	private AxisAlignedBB getPlugBoundingBox(ForgeDirection side) {
+		float[][] bounds = new float[3][2];
+		// X START - END
+		bounds[0][0] = 0.25F;
+		bounds[0][1] = 0.75F;
+		// Y START - END
+		bounds[1][0] = 0.125F;
+		bounds[1][1] = 0.251F;
+		// Z START - END
+		bounds[2][0] = 0.25F;
+		bounds[2][1] = 0.75F;
+
+		MatrixTranformations.transform(bounds, side);
+		return AxisAlignedBB.getAABBPool().getAABB(bounds[0][0], bounds[1][0], bounds[2][0], bounds[0][1], bounds[1][1], bounds[2][1]);
+	}
+
+	private AxisAlignedBB getPipeBoundingBox(ForgeDirection side) {
+		float min = CoreConstants.PIPE_MIN_POS;
+		float max = CoreConstants.PIPE_MAX_POS;
+
+		if (side == ForgeDirection.UNKNOWN) {
+			return AxisAlignedBB.getAABBPool().getAABB(min, min, min, max, max, max);
 		}
+
+		float[][] bounds = new float[3][2];
+		// X START - END
+		bounds[0][0] = min;
+		bounds[0][1] = max;
+		// Y START - END
+		bounds[1][0] = 0;
+		bounds[1][1] = min;
+		// Z START - END
+		bounds[2][0] = min;
+		bounds[2][1] = max;
+
+		MatrixTranformations.transform(bounds, side);
+		return AxisAlignedBB.getAABBPool().getAABB(bounds[0][0], bounds[1][0], bounds[2][0], bounds[0][1], bounds[1][1], bounds[2][1]);
 	}
 
 	public static void removePipe(Pipe pipe) {
@@ -482,8 +490,8 @@ public class BlockGenericPipe extends BlockContainer {
 		int y = pipe.container.yCoord;
 		int z = pipe.container.zCoord;
 
-		if (lastRemovedDate != world.getWorldTime()) {
-			lastRemovedDate = world.getWorldTime();
+		if (lastRemovedDate != world.getTotalWorldTime()) {
+			lastRemovedDate = world.getTotalWorldTime();
 			pipeRemoved.clear();
 		}
 
@@ -575,6 +583,23 @@ public class BlockGenericPipe extends BlockContainer {
 			return pipe.itemID;
 	}
 
+	@SideOnly(Side.CLIENT)
+	@Override
+	public ItemStack getPickBlock(MovingObjectPosition target, World world, int x, int y, int z) {
+		RaytraceResult rayTraceResult = doRayTrace(world, x, y, z, Minecraft.getMinecraft().thePlayer);
+
+		if (rayTraceResult != null && rayTraceResult.boundingBox != null) {
+			switch (rayTraceResult.hitPart) {
+				case Gate:
+					Pipe pipe = getPipe(world, x, y, z);
+					return pipe.gate.getGateItem();
+				case Plug:
+					return new ItemStack(BuildCraftTransport.plugItem);
+			}
+		}
+		return super.getPickBlock(target, world, x, y, z);
+	}
+
 	/* Wrappers ************************************************************ */
 	@Override
 	public void onNeighborBlockChange(World world, int x, int y, int z, int id) {
@@ -618,91 +643,65 @@ public class BlockGenericPipe extends BlockContainer {
 		Pipe pipe = getPipe(world, x, y, z);
 
 		if (isValid(pipe)) {
+			ItemStack currentItem = player.getCurrentEquippedItem();
 
-			// / Right click while sneaking without wrench to strip equipment
+			// Right click while sneaking with empty hand to strip equipment
 			// from the pipe.
-			if (player.isSneaking()
-					&& (player.getCurrentEquippedItem() == null || !(player.getCurrentEquippedItem().getItem() instanceof IToolWrench))) {
-
-				if (pipe.hasGate() || pipe.isWired())
-					return stripEquipment(pipe);
-
-			} else if (player.getCurrentEquippedItem() == null) {
+			if (player.isSneaking() && currentItem == null) {
+				if (stripEquipment(world, x, y, z, player, pipe))
+					return true;
+			} else if (currentItem == null) {
 				// Fall through the end of the test
-			} else if (player.getCurrentEquippedItem().itemID == Item.sign.itemID)
+			} else if (currentItem.itemID == Item.sign.itemID)
 				// Sign will be placed anyway, so lets show the sign gui
 				return false;
-			else if (player.getCurrentEquippedItem().getItem() instanceof ItemPipe)
+			else if (currentItem.getItem() instanceof ItemPipe)
 				return false;
-			else if (player.getCurrentEquippedItem().getItem() instanceof IToolWrench)
+			else if (currentItem.getItem() instanceof IToolWrench)
 				// Only check the instance at this point. Call the IToolWrench
 				// interface callbacks for the individual pipe/logic calls
 				return pipe.blockActivated(player);
-			else if (player.getCurrentEquippedItem().getItem() == BuildCraftTransport.redPipeWire) {
-				if (!pipe.wireSet[IPipe.WireColor.Red.ordinal()]) {
-					pipe.wireSet[IPipe.WireColor.Red.ordinal()] = true;
-					if (!player.capabilities.isCreativeMode) {
-						player.getCurrentEquippedItem().splitStack(1);
-					}
-					pipe.signalStrength[IPipe.WireColor.Red.ordinal()] = 0;
-					pipe.container.scheduleNeighborChange();
+			else if (currentItem.getItem() == BuildCraftTransport.redPipeWire) {
+				if (addOrStripWire(player, pipe, IPipe.WireColor.Red)) {
 					return true;
 				}
-			} else if (player.getCurrentEquippedItem().getItem() == BuildCraftTransport.bluePipeWire) {
-				if (!pipe.wireSet[IPipe.WireColor.Blue.ordinal()]) {
-					pipe.wireSet[IPipe.WireColor.Blue.ordinal()] = true;
-					if (!player.capabilities.isCreativeMode) {
-						player.getCurrentEquippedItem().splitStack(1);
-					}
-					pipe.signalStrength[IPipe.WireColor.Blue.ordinal()] = 0;
-					pipe.container.scheduleNeighborChange();
+			} else if (currentItem.getItem() == BuildCraftTransport.bluePipeWire) {
+				if (addOrStripWire(player, pipe, IPipe.WireColor.Blue)) {
 					return true;
 				}
-			} else if (player.getCurrentEquippedItem().getItem() == BuildCraftTransport.greenPipeWire) {
-				if (!pipe.wireSet[IPipe.WireColor.Green.ordinal()]) {
-					pipe.wireSet[IPipe.WireColor.Green.ordinal()] = true;
-					if (!player.capabilities.isCreativeMode) {
-						player.getCurrentEquippedItem().splitStack(1);
-					}
-					pipe.signalStrength[IPipe.WireColor.Green.ordinal()] = 0;
-					pipe.container.scheduleNeighborChange();
+			} else if (currentItem.getItem() == BuildCraftTransport.greenPipeWire) {
+				if (addOrStripWire(player, pipe, IPipe.WireColor.Green)) {
 					return true;
 				}
-			} else if (player.getCurrentEquippedItem().getItem() == BuildCraftTransport.yellowPipeWire) {
-				if (!pipe.wireSet[IPipe.WireColor.Yellow.ordinal()]) {
-					pipe.wireSet[IPipe.WireColor.Yellow.ordinal()] = true;
-					if (!player.capabilities.isCreativeMode) {
-						player.getCurrentEquippedItem().splitStack(1);
-					}
-					pipe.signalStrength[IPipe.WireColor.Yellow.ordinal()] = 0;
-					pipe.container.scheduleNeighborChange();
+			} else if (currentItem.getItem() == BuildCraftTransport.yellowPipeWire) {
+				if (addOrStripWire(player, pipe, IPipe.WireColor.Yellow)) {
 					return true;
 				}
-			} else if (player.getCurrentEquippedItem().itemID == BuildCraftTransport.pipeGate.itemID
-					|| player.getCurrentEquippedItem().itemID == BuildCraftTransport.pipeGateAutarchic.itemID)
-				if (!pipe.hasGate()) {
-
-					pipe.gate = Gate.makeGate(pipe, player.getCurrentEquippedItem());
-					if (!player.capabilities.isCreativeMode) {
-						player.getCurrentEquippedItem().splitStack(1);
-					}
-					pipe.container.scheduleRenderUpdate();
+			} else if (currentItem.getItem() instanceof ItemGate) {
+				if (addOrStripGate(world, x, y, z, player, pipe)) {
+					return true;
+				}
+			} else if (currentItem.getItem() instanceof ItemPlug) {
+				if (addOrStripPlug(world, x, y, z, player, ForgeDirection.getOrientation(side), pipe)) {
+					return true;
+				}
+			} else if (currentItem.getItem() instanceof ItemFacade)
+				if (addOrStripFacade(world, x, y, z, player, ForgeDirection.getOrientation(side), pipe)) {
 					return true;
 				}
 
-			boolean openGateGui = false;
+			boolean clickedOnGate = false;
 
 			if (pipe.hasGate()) {
 				RaytraceResult rayTraceResult = doRayTrace(world, x, y, z, player);
 
 				if (rayTraceResult != null && rayTraceResult.hitPart == Part.Gate) {
-					openGateGui = true;
+					clickedOnGate = true;
 				}
 			}
 
-			if (openGateGui) {
+			if (clickedOnGate) {
 				pipe.gate.openGui(player);
-
 				return true;
 			} else
 				return pipe.blockActivated(player);
@@ -711,22 +710,32 @@ public class BlockGenericPipe extends BlockContainer {
 		return false;
 	}
 
-	private boolean stripEquipment(Pipe pipe) {
-
-		// Try to strip wires first, starting with yellow.
-		for (IPipe.WireColor color : IPipe.WireColor.values()) {
-			if (pipe.wireSet[color.reverse().ordinal()]) {
-				if (!CoreProxy.proxy.isRenderWorld(pipe.container.worldObj)) {
-					dropWire(color.reverse(), pipe);
-				}
-				pipe.wireSet[color.reverse().ordinal()] = false;
-				// pipe.worldObj.markBlockNeedsUpdate(pipe.xCoord, pipe.yCoord, pipe.zCoord);
-				pipe.container.scheduleRenderUpdate();
-				return true;
+	private boolean addOrStripGate(World world, int x, int y, int z, EntityPlayer player, Pipe pipe) {
+		if (addGate(player, pipe))
+			return true;
+		if (player.isSneaking()) {
+			RaytraceResult rayTraceResult = doRayTrace(world, x, y, z, player);
+			if (rayTraceResult != null && rayTraceResult.hitPart == Part.Gate) {
+				if (stripGate(pipe))
+					return true;
 			}
 		}
+		return false;
+	}
 
-		// Try to strip gate next
+	private boolean addGate(EntityPlayer player, Pipe pipe) {
+		if (!pipe.hasGate()) {
+			pipe.gate = Gate.makeGate(pipe, player.getCurrentEquippedItem());
+			if (!player.capabilities.isCreativeMode) {
+				player.getCurrentEquippedItem().splitStack(1);
+			}
+			pipe.container.scheduleRenderUpdate();
+			return true;
+		}
+		return false;
+	}
+
+	private boolean stripGate(Pipe pipe) {
 		if (pipe.hasGate()) {
 			if (!CoreProxy.proxy.isRenderWorld(pipe.container.worldObj)) {
 				pipe.gate.dropGate();
@@ -734,8 +743,116 @@ public class BlockGenericPipe extends BlockContainer {
 			pipe.resetGate();
 			return true;
 		}
-
 		return false;
+	}
+
+	private boolean addOrStripWire(EntityPlayer player, Pipe pipe, IPipe.WireColor color) {
+		if (addWire(pipe, color)) {
+			if (!player.capabilities.isCreativeMode) {
+				player.getCurrentEquippedItem().splitStack(1);
+			}
+			return true;
+		}
+		return player.isSneaking() && stripWire(pipe, color);
+	}
+
+	private boolean addWire(Pipe pipe, IPipe.WireColor color) {
+		if (!pipe.wireSet[color.ordinal()]) {
+			pipe.wireSet[color.ordinal()] = true;
+			pipe.signalStrength[color.ordinal()] = 0;
+			pipe.container.scheduleNeighborChange();
+			return true;
+		}
+		return false;
+	}
+
+	private boolean stripWire(Pipe pipe, IPipe.WireColor color) {
+		if (pipe.wireSet[color.ordinal()]) {
+			if (!CoreProxy.proxy.isRenderWorld(pipe.container.worldObj)) {
+				dropWire(color, pipe);
+			}
+			pipe.wireSet[color.ordinal()] = false;
+			pipe.container.scheduleRenderUpdate();
+			return true;
+		}
+		return false;
+	}
+
+	private boolean addOrStripFacade(World world, int x, int y, int z, EntityPlayer player, ForgeDirection side, Pipe pipe) {
+		RaytraceResult rayTraceResult = doRayTrace(world, x, y, z, player);
+		if (player.isSneaking()) {
+			if (rayTraceResult != null && rayTraceResult.hitPart == Part.Facade) {
+				if (stripFacade(pipe, rayTraceResult.sideHit))
+					return true;
+			}
+		}
+		if (rayTraceResult != null && (rayTraceResult.hitPart == Part.Pipe || rayTraceResult.hitPart == Part.Gate)) {
+			if (addFacade(player, pipe, rayTraceResult.sideHit != null && rayTraceResult.sideHit != ForgeDirection.UNKNOWN ? rayTraceResult.sideHit : side))
+				return true;
+		}
+		return false;
+	}
+
+	private boolean addFacade(EntityPlayer player, Pipe pipe, ForgeDirection side) {
+		ItemStack stack = player.getCurrentEquippedItem();
+		if (pipe.container.addFacade(side, ItemFacade.getBlockId(stack), ItemFacade.getMetaData(stack))) {
+			if (!player.capabilities.isCreativeMode) {
+				stack.stackSize--;
+			}
+			return true;
+		}
+		return false;
+	}
+
+	private boolean stripFacade(Pipe pipe, ForgeDirection side) {
+		return pipe.container.dropFacade(side);
+	}
+
+	private boolean addOrStripPlug(World world, int x, int y, int z, EntityPlayer player, ForgeDirection side, Pipe pipe) {
+		RaytraceResult rayTraceResult = doRayTrace(world, x, y, z, player);
+		if (player.isSneaking()) {
+			if (rayTraceResult != null && rayTraceResult.hitPart == Part.Plug) {
+				if (stripPlug(pipe, rayTraceResult.sideHit))
+					return true;
+			}
+		}
+		if (rayTraceResult != null && (rayTraceResult.hitPart == Part.Pipe || rayTraceResult.hitPart == Part.Gate)) {
+			if (addPlug(player, pipe, rayTraceResult.sideHit != null && rayTraceResult.sideHit != ForgeDirection.UNKNOWN ? rayTraceResult.sideHit : side))
+				return true;
+		}
+		return false;
+	}
+
+	private boolean addPlug(EntityPlayer player, Pipe pipe, ForgeDirection side) {
+		ItemStack stack = player.getCurrentEquippedItem();
+		if (pipe.container.addPlug(side)) {
+			if (!player.capabilities.isCreativeMode) {
+				stack.stackSize--;
+			}
+			return true;
+		}
+		return false;
+	}
+
+	private boolean stripPlug(Pipe pipe, ForgeDirection side) {
+		return pipe.container.removeAndDropPlug(side);
+	}
+
+	private boolean stripEquipment(World world, int x, int y, int z, EntityPlayer player, Pipe pipe) {
+		// Try to strip facades first
+		RaytraceResult rayTraceResult = doRayTrace(world, x, y, z, player);
+		if (rayTraceResult != null && rayTraceResult.hitPart == Part.Facade) {
+			if (stripFacade(pipe, rayTraceResult.sideHit))
+				return true;
+		}
+
+		// Try to strip wires second, starting with yellow.
+		for (IPipe.WireColor color : IPipe.WireColor.values()) {
+			if (stripWire(pipe, color))
+				return true;
+		}
+
+		return stripGate(pipe);
 	}
 
 	/**
@@ -766,11 +883,13 @@ public class BlockGenericPipe extends BlockContainer {
 	@SuppressWarnings({"all"})
 	@SideOnly(Side.CLIENT)
 	@Override
-	public Icon getBlockTexture(IBlockAccess iblockaccess, int i, int j, int k, int l) {
+	public Icon getBlockTexture(IBlockAccess iblockaccess, int x, int y, int z, int side) {
 
-		TileEntity tile = iblockaccess.getBlockTileEntity(i, j, k);
+		TileEntity tile = iblockaccess.getBlockTileEntity(x, y, z);
 		if (!(tile instanceof IPipeRenderState))
 			return null;
+		if (((IPipeRenderState) tile).getRenderState().textureArray != null)
+			return ((IPipeRenderState) tile).getRenderState().textureArray[side];
 		return ((IPipeRenderState) tile).getRenderState().currentTexture;
 
 		// Pipe pipe = getPipe(iblockaccess, i, j, k);
@@ -874,11 +993,11 @@ public class BlockGenericPipe extends BlockContainer {
 			if (pipe != null)
 				return pipe.getConstructor(int.class).newInstance(key);
 			else {
-				BuildCraftCore.bcLog.warning("Detected pipe with unknown key (" + key + "). Did you remove a buildcraft addon?");
+				BCLog.logger.warning("Detected pipe with unknown key (" + key + "). Did you remove a buildcraft addon?");
 			}
 
 		} catch (Throwable t) {
-			BuildCraftCore.bcLog.warning("Failed to create pipe with (" + key + "). No valid constructor found. Possibly a item ID conflit.");
+			BCLog.logger.warning("Failed to create pipe with (" + key + "). No valid constructor found. Possibly a item ID conflit.");
 		}
 
 		return null;
@@ -891,9 +1010,9 @@ public class BlockGenericPipe extends BlockContainer {
 		boolean placed = world.setBlock(i, j, k, blockId, meta, 1);
 
 		if (placed) {
-
 			TileGenericPipe tile = (TileGenericPipe) world.getBlockTileEntity(i, j, k);
 			tile.initialize(pipe);
+			tile.sendUpdateToClient();
 		}
 
 		return placed;
@@ -973,31 +1092,31 @@ public class BlockGenericPipe extends BlockContainer {
 		double pz = z + rand.nextDouble() * (block.getBlockBoundsMaxZ() - block.getBlockBoundsMinZ() - (b * 2.0F)) + b + block.getBlockBoundsMinZ();
 
 		if (sideHit == 0) {
-			py = (double) y + block.getBlockBoundsMinY() - (double) b;
+			py = y + block.getBlockBoundsMinY() - b;
 		}
 
 		if (sideHit == 1) {
-			py = (double) y + block.getBlockBoundsMaxY() + (double) b;
+			py = y + block.getBlockBoundsMaxY() + b;
 		}
 
 		if (sideHit == 2) {
-			pz = (double) z + block.getBlockBoundsMinZ() - (double) b;
+			pz = z + block.getBlockBoundsMinZ() - b;
 		}
 
 		if (sideHit == 3) {
-			pz = (double) z + block.getBlockBoundsMaxZ() + (double) b;
+			pz = z + block.getBlockBoundsMaxZ() + b;
 		}
 
 		if (sideHit == 4) {
-			px = (double) x + block.getBlockBoundsMinX() - (double) b;
+			px = x + block.getBlockBoundsMinX() - b;
 		}
 
 		if (sideHit == 5) {
-			px = (double) x + block.getBlockBoundsMaxX() + (double) b;
+			px = x + block.getBlockBoundsMaxX() + b;
 		}
 
 		EntityDiggingFX fx = new EntityDiggingFX(worldObj, px, py, pz, 0.0D, 0.0D, 0.0D, block, sideHit, worldObj.getBlockMetadata(x, y, z));
-		fx.func_110125_a(icon);
+		fx.setParticleIcon(icon);
 		effectRenderer.addEffect(fx.applyColourMultiplier(x, y, z).multiplyVelocity(0.2F).multipleParticleScaleBy(0.6F));
 		return true;
 	}
@@ -1029,12 +1148,12 @@ public class BlockGenericPipe extends BlockContainer {
 		for (int i = 0; i < its; ++i) {
 			for (int j = 0; j < its; ++j) {
 				for (int k = 0; k < its; ++k) {
-					double px = x + (i + 0.5D) / (double) its;
-					double py = y + (j + 0.5D) / (double) its;
-					double pz = z + (k + 0.5D) / (double) its;
+					double px = x + (i + 0.5D) / its;
+					double py = y + (j + 0.5D) / its;
+					double pz = z + (k + 0.5D) / its;
 					int random = rand.nextInt(6);
 					EntityDiggingFX fx = new EntityDiggingFX(worldObj, px, py, pz, px - x - 0.5D, py - y - 0.5D, pz - z - 0.5D, BuildCraftTransport.genericPipeBlock, random, meta);
-					fx.func_110125_a(icon);
+					fx.setParticleIcon(icon);
 					effectRenderer.addEffect(fx.applyColourMultiplier(x, y, z));
 				}
 			}

@@ -16,6 +16,7 @@ import buildcraft.api.power.PowerHandler;
 import buildcraft.api.power.PowerHandler.PowerReceiver;
 import buildcraft.api.power.PowerHandler.Type;
 import buildcraft.core.BlockIndex;
+import buildcraft.core.CoreConstants;
 import buildcraft.core.EntityBlock;
 import buildcraft.core.IMachine;
 import buildcraft.core.TileBuffer;
@@ -36,6 +37,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Set;
 import java.util.TreeMap;
+import net.minecraft.block.material.Material;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.ForgeDirection;
@@ -52,19 +54,18 @@ public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor
 	public static int MAX_LIQUID = FluidContainerRegistry.BUCKET_VOLUME * 16;
 	EntityBlock tube;
 	private TreeMap<Integer, Deque<BlockIndex>> pumpLayerQueues = new TreeMap<Integer, Deque<BlockIndex>>();
-	SingleUseTank tank;
+	SingleUseTank tank = new SingleUseTank("tank", MAX_LIQUID, this);
 	double tubeY = Double.NaN;
 	int aimY = 0;
 	private PowerHandler powerHandler;
 	private TileBuffer[] tileBuffer = null;
 	private SafeTimeTracker timer = new SafeTimeTracker();
 	private int tick = Utils.RANDOM.nextInt();
-        private int numFluidBlocksFound = 0;
+	private int numFluidBlocksFound = 0;
 
 	public TilePump() {
 		powerHandler = new PowerHandler(this, Type.MACHINE);
 		initPowerProvider();
-		tank = new SingleUseTank("tank", MAX_LIQUID);
 	}
 
 	private void initPowerProvider() {
@@ -82,8 +83,8 @@ public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor
 
 
 		if (CoreProxy.proxy.isRenderWorld(worldObj))
-			return;		
-		
+			return;
+
 		pushToConsumers();
 
 		if (tube.posY - aimY > 0.01) {
@@ -124,7 +125,7 @@ public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor
 						if (isPumpableFluid(xCoord, y, zCoord)) {
 							aimY = y;
 							return;
-						} else if (!worldObj.isAirBlock(xCoord, y, zCoord)) {
+						} else if (isBlocked(xCoord, y, zCoord)) {
 							return;
 						}
 					}
@@ -133,8 +134,13 @@ public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor
 		}
 	}
 
+	private boolean isBlocked(int x, int y, int z) {
+		Material mat = worldObj.getBlockMaterial(x, y, z);
+		return mat.blocksMovement();
+	}
+
 	private void pushToConsumers() {
-		if(tileBuffer == null)
+		if (tileBuffer == null)
 			tileBuffer = TileBuffer.makeBuffer(worldObj, xCoord, yCoord, zCoord, false);
 		FluidUtils.pushFluidToConsumers(tank, 400, tileBuffer);
 	}
@@ -232,7 +238,7 @@ public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor
 				queueForPumping(index.x - 1, index.y, index.z, visitedBlocks, fluidsFound, pumpingFluid);
 				queueForPumping(index.x, index.y, index.z + 1, visitedBlocks, fluidsFound, pumpingFluid);
 				queueForPumping(index.x, index.y, index.z - 1, visitedBlocks, fluidsFound, pumpingFluid);
-                                
+
 				if (pumpingFluid == FluidRegistry.WATER && !BuildCraftCore.consumeWaterSources && numFluidBlocksFound >= 9)
 					return;
 
@@ -264,6 +270,8 @@ public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor
 		if (fluid == null)
 			return false;
 		if (!isFluidAllowed(fluid))
+			return false;
+		if (tank.getAcceptedFluid() != null && tank.getAcceptedFluid() != fluid)
 			return false;
 		return true;
 	}
@@ -315,11 +323,11 @@ public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor
 	@Override
 	public boolean isActive() {
 		BlockIndex next = getNextIndexToPump(false);
-		
+
 		if (next != null) {
 			return isPumpableFluid(next.x, next.y, next.z);
 		}
-		
+
 		return false;
 	}
 
@@ -362,11 +370,11 @@ public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor
 
 	private void setTubePosition() {
 		if (tube != null) {
-			tube.iSize = Utils.pipeMaxPos - Utils.pipeMinPos;
-			tube.kSize = Utils.pipeMaxPos - Utils.pipeMinPos;
+			tube.iSize = CoreConstants.PIPE_MAX_POS - CoreConstants.PIPE_MIN_POS;
+			tube.kSize = CoreConstants.PIPE_MAX_POS - CoreConstants.PIPE_MIN_POS;
 			tube.jSize = yCoord - tube.posY;
 
-			tube.setPosition(xCoord + Utils.pipeMinPos, tubeY, zCoord + Utils.pipeMinPos);
+			tube.setPosition(xCoord + CoreConstants.PIPE_MIN_POS, tubeY, zCoord + CoreConstants.PIPE_MIN_POS);
 		}
 	}
 

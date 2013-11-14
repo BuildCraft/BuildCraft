@@ -74,6 +74,14 @@ public class BlockUtil {
 		return canChangeBlock(world.getBlockId(x, y, z), world, x, y, z);
 	}
 
+	public static boolean isAnObstructingBlock(int blockID, World world, int x, int y, int z) {
+		Block block = Block.blocksList[blockID];
+
+		if (blockID == 0 || block == null || block.isAirBlock(world, x, y, z))
+			return false;
+		return true;
+	}
+
 	public static boolean canChangeBlock(int blockID, World world, int x, int y, int z) {
 		Block block = Block.blocksList[blockID];
 

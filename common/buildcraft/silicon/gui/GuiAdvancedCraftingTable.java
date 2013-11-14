@@ -35,7 +35,7 @@ public class GuiAdvancedCraftingTable extends GuiBuildCraft {
 			drawBackground(x, y);
 
 			// Draw icon
-			Minecraft.getMinecraft().renderEngine.func_110577_a(TextureMap.field_110576_c);
+			Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.locationItemsTexture);
 			drawIcon(BuildCraftCore.iconProvider.getIcon(CoreIconProvider.ENERGY), x + 3, y + 4);
 
 			if (!isFullyOpened())
@@ -76,7 +76,7 @@ public class GuiAdvancedCraftingTable extends GuiBuildCraft {
 	@Override
 	protected void drawGuiContainerBackgroundLayer(float f, int mouseX, int mouseY) {
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-		mc.renderEngine.func_110577_a(gui);
+		mc.renderEngine.bindTexture(gui);
 		int cornerX = (width - xSize) / 2;
 		int cornerY = (height - ySize) / 2;
 		drawTexturedModalRect(cornerX, cornerY, 0, 0, xSize, ySize);

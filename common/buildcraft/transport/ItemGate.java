@@ -3,7 +3,6 @@ package buildcraft.transport;
 import buildcraft.api.gates.ActionManager;
 import buildcraft.api.gates.IAction;
 import buildcraft.api.gates.ITrigger;
-import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.ItemBuildCraft;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -45,7 +44,7 @@ public class ItemGate extends ItemBuildCraft {
 
 		setHasSubtypes(true);
 		setMaxDamage(0);
-		setCreativeTab(CreativeTabBuildCraft.tabBuildCraft);
+		setPassSneakClick(true);
 	}
 
 	@SuppressWarnings({ "all" })

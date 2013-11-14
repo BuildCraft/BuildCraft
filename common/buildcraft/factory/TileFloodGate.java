@@ -24,6 +24,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
+import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
@@ -35,7 +36,7 @@ public class TileFloodGate extends TileBuildCraft implements IFluidHandler {
 	private final TreeMap<Integer, Deque<BlockIndex>> pumpLayerQueues = new TreeMap<Integer, Deque<BlockIndex>>();
 	private final Set<BlockIndex> visitedBlocks = new HashSet<BlockIndex>();
 	private Deque<BlockIndex> fluidsFound = new LinkedList<BlockIndex>();
-	private final Tank tank;
+	private final Tank tank = new Tank("tank", MAX_LIQUID, this);
 	private int rebuildDelay;
 	private int tick = Utils.RANDOM.nextInt();
 	private boolean powered = false;
@@ -52,7 +53,6 @@ public class TileFloodGate extends TileBuildCraft implements IFluidHandler {
 	}
 
 	public TileFloodGate() {
-		tank = new Tank("tank", MAX_LIQUID);
 	}
 
 	@Override
@@ -68,7 +68,16 @@ public class TileFloodGate extends TileBuildCraft implements IFluidHandler {
 		tick++;
 		if (tick % 16 == 0) {
 			FluidStack fluidtoFill = tank.drain(FluidContainerRegistry.BUCKET_VOLUME, false);
-			if (fluidtoFill != null && fluidtoFill.amount == FluidContainerRegistry.BUCKET_VOLUME && fluidtoFill.getFluid() != null && fluidtoFill.getFluid().canBePlacedInWorld()) {
+			if (fluidtoFill != null && fluidtoFill.amount == FluidContainerRegistry.BUCKET_VOLUME) {
+				Fluid fluid = fluidtoFill.getFluid();
+				if (fluid == null || !fluid.canBePlacedInWorld())
+					return;
+
+				if (fluid == FluidRegistry.WATER && worldObj.provider.dimensionId == -1) {
+					tank.drain(FluidContainerRegistry.BUCKET_VOLUME, true);
+					return;
+				}
+
 				if (tick % REBUILD_DELAY[rebuildDelay] == 0) {
 					rebuildDelay++;
 					if (rebuildDelay >= REBUILD_DELAY.length)
@@ -77,7 +86,7 @@ public class TileFloodGate extends TileBuildCraft implements IFluidHandler {
 				}
 				BlockIndex index = getNextIndexToFill(true);
 
-				if (index != null && placeFluid(index.x, index.y, index.z, fluidtoFill.getFluid())) {
+				if (index != null && placeFluid(index.x, index.y, index.z, fluid)) {
 					tank.drain(FluidContainerRegistry.BUCKET_VOLUME, true);
 					rebuildDelay = 0;
 				}

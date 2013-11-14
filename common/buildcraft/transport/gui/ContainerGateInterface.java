@@ -7,7 +7,6 @@
  */
 package buildcraft.transport.gui;
 
-import buildcraft.api.core.Position;
 import buildcraft.api.gates.ActionManager;
 import buildcraft.api.gates.IAction;
 import buildcraft.api.gates.IOverrideDefaultTriggers;
@@ -21,9 +20,13 @@ import buildcraft.core.network.PacketPayload;
 import buildcraft.core.network.PacketPayloadArrays;
 import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.proxy.CoreProxy;
+import buildcraft.core.utils.BCLog;
+import buildcraft.transport.Gate;
 import buildcraft.transport.Pipe;
+import java.util.Comparator;
 import java.util.Iterator;
-import java.util.LinkedList;
+import java.util.NavigableSet;
+import java.util.TreeSet;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ICrafting;
@@ -38,8 +41,18 @@ public class ContainerGateInterface extends BuildCraftContainer {
 
 	IInventory playerIInventory;
 	Pipe pipe;
-	private final LinkedList<ITrigger> _potentialTriggers = new LinkedList<ITrigger>();
-	private final LinkedList<IAction> _potentialActions = new LinkedList<IAction>();
+	private final NavigableSet<ITrigger> _potentialTriggers = new TreeSet<ITrigger>(new Comparator<ITrigger>() {
+		@Override
+		public int compare(ITrigger o1, ITrigger o2) {
+			return o1.getUniqueTag().compareTo(o2.getUniqueTag());
+		}
+	});
+	private final NavigableSet<IAction> _potentialActions = new TreeSet<IAction>(new Comparator<IAction>() {
+		@Override
+		public int compare(IAction o1, IAction o2) {
+			return o1.getUniqueTag().compareTo(o2.getUniqueTag());
+		}
+	});
 	private boolean isSynchronized = false;
 	private boolean isNetInitialized = false;
 	public boolean[] triggerState = new boolean[8];
@@ -49,14 +62,14 @@ public class ContainerGateInterface extends BuildCraftContainer {
 		super(0);
 		this.playerIInventory = playerInventory;
 
-		for (int l = 0; l < 3; l++) {
-			for (int k1 = 0; k1 < 9; k1++) {
-				addSlotToContainer(new Slot(playerInventory, k1 + l * 9 + 9, 8 + k1 * 18, 123 + l * 18));
+		for (int y = 0; y < 3; y++) {
+			for (int x = 0; x < 9; x++) {
+				addSlotToContainer(new Slot(playerInventory, x + y * 9 + 9, 8 + x * 18, pipe.gate.getGuiHeight() - 84 + y * 18));
 			}
 		}
 
-		for (int i1 = 0; i1 < 9; i1++) {
-			addSlotToContainer(new Slot(playerInventory, i1, 8 + i1 * 18, 181));
+		for (int x = 0; x < 9; x++) {
+			addSlotToContainer(new Slot(playerInventory, x, 8 + x * 18, pipe.gate.getGuiHeight() - 26));
 		}
 
 		this.pipe = pipe;
@@ -75,20 +88,19 @@ public class ContainerGateInterface extends BuildCraftContainer {
 				TileEntity tile = pipe.container.getTile(o);
 				int blockID = pipe.container.getBlockId(o);
 				Block block = Block.blocksList[blockID];
+				_potentialTriggers.addAll(ActionManager.getNeighborTriggers(block, tile));
+				_potentialActions.addAll(ActionManager.getNeighborActions(block, tile));
+			}
 
-				LinkedList<ITrigger> nearbyTriggers = ActionManager.getNeighborTriggers(block, tile);
-
-				for (ITrigger t : nearbyTriggers) {
-					if (!_potentialTriggers.contains(t)) {
-						_potentialTriggers.add(t);
-					}
-				}
-
-				LinkedList<IAction> nearbyActions = ActionManager.getNeighborActions(block, tile);
-
-				for (IAction a : nearbyActions) {
-					if (!_potentialActions.contains(a)) {
-						_potentialActions.add(a);
+			if (getGateOrdinal() < Gate.GateKind.AND_3.ordinal()) {
+				Iterator<ITrigger> it = _potentialTriggers.iterator();
+				while (it.hasNext()) {
+					ITrigger trigger = it.next();
+					try {
+						if (trigger.requiresParameter())
+							it.remove();
+					} catch (Throwable error) {
+						BCLog.logErrorAPI("Buildcraft", error, trigger.getClass());
 					}
 				}
 			}
@@ -269,8 +281,9 @@ public class ContainerGateInterface extends BuildCraftContainer {
 		PacketPayloadArrays payload = new PacketPayloadArrays(1, 0, length);
 
 		payload.intPayload[0] = length;
-		for (int i = 0; i < length; i++) {
-			payload.stringPayload[i] = _potentialActions.get(i).getUniqueTag();
+		int i = 0;
+		for (IAction action : _potentialActions) {
+			payload.stringPayload[i++] = action.getUniqueTag();
 		}
 
 		PacketUpdate packet = new PacketUpdate(PacketIds.GATE_ACTIONS, pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord, payload);
@@ -291,8 +304,9 @@ public class ContainerGateInterface extends BuildCraftContainer {
 		PacketPayloadArrays payload = new PacketPayloadArrays(1, 0, length);
 
 		payload.intPayload[0] = length;
-		for (int i = 0; i < length; i++) {
-			payload.stringPayload[i] = _potentialTriggers.get(i).getUniqueTag();
+		int i = 0;
+		for (ITrigger trigger : _potentialTriggers) {
+			payload.stringPayload[i++] = trigger.getUniqueTag();
 		}
 
 		PacketUpdate packet = new PacketUpdate(PacketIds.GATE_TRIGGERS, pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord, payload);
@@ -344,11 +358,15 @@ public class ContainerGateInterface extends BuildCraftContainer {
 	}
 
 	public ITrigger getFirstTrigger() {
-		return _potentialTriggers.size() > 0 ? _potentialTriggers.getFirst() : null;
+		if (_potentialTriggers.isEmpty())
+			return null;
+		return _potentialTriggers.first();
 	}
 
 	public ITrigger getLastTrigger() {
-		return _potentialTriggers.size() > 0 ? _potentialTriggers.getLast() : null;
+		if (_potentialTriggers.isEmpty())
+			return null;
+		return _potentialTriggers.last();
 	}
 
 	public Iterator<ITrigger> getTriggerIterator(boolean descending) {
@@ -381,11 +399,15 @@ public class ContainerGateInterface extends BuildCraftContainer {
 	}
 
 	public IAction getFirstAction() {
-		return _potentialActions.peekFirst();
+		if (_potentialActions.isEmpty())
+			return null;
+		return _potentialActions.first();
 	}
 
 	public IAction getLastAction() {
-		return _potentialActions.peekLast();
+		if (_potentialActions.isEmpty())
+			return null;
+		return _potentialActions.last();
 	}
 
 	public Iterator<IAction> getActionIterator(boolean descending) {
@@ -406,7 +428,7 @@ public class ContainerGateInterface extends BuildCraftContainer {
 		return pipe.gate.getGuiFile();
 	}
 
-	public int getGateOrdinal() {
+	public final int getGateOrdinal() {
 		return pipe.gate.kind.ordinal();
 	}
 

@@ -7,20 +7,31 @@
  */
 package buildcraft.transport.gui;
 
+import net.minecraft.inventory.IInventory;
+import net.minecraft.util.ResourceLocation;
+
+import org.lwjgl.opengl.GL11;
+
+import buildcraft.BuildCraftCore;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.gui.GuiBuildCraft;
 import buildcraft.core.utils.StringUtils;
 import buildcraft.transport.pipes.PipeItemsDiamond;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.util.ResourceLocation;
-import org.lwjgl.opengl.GL11;
 
 public class GuiDiamondPipe extends GuiBuildCraft {
 
-	private static final ResourceLocation TEXTURE = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_GUI + "/filter.png");
+	private static final ResourceLocation TEXTURE;
 	IInventory playerInventory;
 	IInventory filterInventory;
 
+	static {
+		if (!BuildCraftCore.colorBlindMode){
+			TEXTURE = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_GUI + "/filter.png");
+		} else {
+			TEXTURE = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_GUI + "/filter_cb.png");
+		}
+	}
+	
 	public GuiDiamondPipe(IInventory playerInventory, PipeItemsDiamond pipe) {
 		super(new ContainerDiamondPipe(playerInventory, pipe), pipe.getFilters());
 		this.playerInventory = playerInventory;
@@ -38,7 +49,7 @@ public class GuiDiamondPipe extends GuiBuildCraft {
 	@Override
 	protected void drawGuiContainerBackgroundLayer(float f, int x, int y) {
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-		mc.renderEngine.func_110577_a(TEXTURE);
+		mc.renderEngine.bindTexture(TEXTURE);
 		int j = (width - xSize) / 2;
 		int k = (height - ySize) / 2;
 		drawTexturedModalRect(j, k, 0, 0, xSize, ySize);

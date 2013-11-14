@@ -23,6 +23,7 @@ import net.minecraft.util.Icon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
 
@@ -36,7 +37,7 @@ public class BlockTank extends BlockContainer {
 		super(i, Material.glass);
 		setBlockBounds(0.125F, 0F, 0.125F, 0.875F, 1F, 0.875F);
 		setHardness(0.5F);
-		setCreativeTab(CreativeTabBuildCraft.tabBuildCraft);
+		setCreativeTab(CreativeTabBuildCraft.MACHINES.get());
 	}
 
 	@Override
@@ -71,6 +72,7 @@ public class BlockTank extends BlockContainer {
 	}
 
 	@SuppressWarnings({"all"})
+	@Override
 	public Icon getBlockTexture(IBlockAccess iblockaccess, int i, int j, int k, int l) {
 		switch (l) {
 			case 0:
@@ -155,5 +157,15 @@ public class BlockTank extends BlockContainer {
 		textureStackedSide = par1IconRegister.registerIcon("buildcraft:tank_stacked_side");
 		textureBottomSide = par1IconRegister.registerIcon("buildcraft:tank_bottom_side");
 		textureTop = par1IconRegister.registerIcon("buildcraft:tank_top");
+	}
+
+	@Override
+	public int getLightValue(IBlockAccess world, int x, int y, int z) {
+		TileEntity tile = world.getBlockTileEntity(x, y, z);
+		if (tile instanceof TileTank) {
+			TileTank tank = (TileTank) tile;
+			return tank.getFluidLightLevel();
+		}
+		return super.getLightValue(world, x, y, z);
 	}
 }

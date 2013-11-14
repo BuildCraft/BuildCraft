@@ -11,6 +11,7 @@ import buildcraft.api.bptblocks.BptBlockInventory;
 import buildcraft.api.bptblocks.BptBlockRotateMeta;
 import buildcraft.api.recipes.AssemblyRecipe;
 import buildcraft.core.DefaultProps;
+import buildcraft.core.InterModComms;
 import buildcraft.core.ItemRedstoneChipset;
 import buildcraft.core.Version;
 import buildcraft.core.proxy.CoreProxy;
@@ -27,6 +28,7 @@ import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
+import cpw.mods.fml.common.event.FMLInterModComms;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkMod;
 import cpw.mods.fml.common.network.NetworkRegistry;
@@ -40,7 +42,7 @@ import net.minecraftforge.common.Property;
 @NetworkMod(channels = {DefaultProps.NET_CHANNEL_NAME}, packetHandler = PacketHandlerSilicon.class, clientSideRequired = true, serverSideRequired = true)
 public class BuildCraftSilicon {
 
-	public static Item redstoneChipset;
+	public static ItemRedstoneChipset redstoneChipset;
 	public static BlockLaser laserBlock;
 	public static BlockLaserTable assemblyTableBlock;
 	@Instance("BuildCraft|Silicon")
@@ -68,7 +70,8 @@ public class BuildCraftSilicon {
 
 		redstoneChipset = new ItemRedstoneChipset(redstoneChipsetId.getInt());
 		redstoneChipset.setUnlocalizedName("redstoneChipset");
-
+		CoreProxy.proxy.registerItem(redstoneChipset);
+		redstoneChipset.registerItemStacks();
 	}
 
 	@EventHandler
@@ -91,14 +94,14 @@ public class BuildCraftSilicon {
 	public static void loadRecipes() {
 
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(laserBlock),
-				new Object[]{"ORR", "DDR", "ORR", Character.valueOf('O'), Block.obsidian, Character.valueOf('R'), Item.redstone, Character.valueOf('D'),
+				new Object[]{"ORR", "DDR", "ORR", 'O', Block.obsidian, 'R', Item.redstone, 'D',
 			Item.diamond,});
 
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(assemblyTableBlock, 1, 0), new Object[]{"ORO", "ODO", "OGO", Character.valueOf('O'), Block.obsidian,
-			Character.valueOf('R'), Item.redstone, Character.valueOf('D'), Item.diamond, Character.valueOf('G'), BuildCraftCore.diamondGearItem,});
+		CoreProxy.proxy.addCraftingRecipe(new ItemStack(assemblyTableBlock, 1, 0), new Object[]{"ORO", "ODO", "OGO", 'O', Block.obsidian,
+			'R', Item.redstone, 'D', Item.diamond, 'G', BuildCraftCore.diamondGearItem,});
 
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(assemblyTableBlock, 1, 1), new Object[]{"OWO", "OCO", "ORO", Character.valueOf('O'), Block.obsidian,
-			Character.valueOf('W'), Block.workbench, Character.valueOf('C'), Block.chest, Character.valueOf('R'), new ItemStack(redstoneChipset, 1, 0),});
+		CoreProxy.proxy.addCraftingRecipe(new ItemStack(assemblyTableBlock, 1, 1), new Object[]{"OWO", "OCO", "ORO", 'O', Block.obsidian,
+			'W', Block.workbench, 'C', Block.chest, 'R', new ItemStack(redstoneChipset, 1, 0),});
 		// Add reverse recipies for all gates
 
 		// Iron
@@ -224,4 +227,9 @@ public class BuildCraftSilicon {
 		CoreProxy.proxy.addName(new ItemStack(BuildCraftTransport.pipeGateAutarchic, 1, 6), "Autarchic Diamond OR Gate");
 
 	}
+	
+	@EventHandler
+    public void processIMCRequests(FMLInterModComms.IMCEvent event) {
+        InterModComms.processIMC(event);
+    }
 }

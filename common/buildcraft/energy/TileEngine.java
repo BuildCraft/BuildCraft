@@ -7,8 +7,17 @@
  */
 package buildcraft.energy;
 
+import java.util.LinkedList;
+
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.ICrafting;
+import net.minecraft.nbt.NBTBase;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagFloat;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.common.ForgeDirection;
 import buildcraft.BuildCraftEnergy;
-import buildcraft.api.core.Position;
 import buildcraft.api.gates.IOverrideDefaultTriggers;
 import buildcraft.api.gates.ITrigger;
 import buildcraft.api.power.IPowerEmitter;
@@ -17,28 +26,16 @@ import buildcraft.api.power.PowerHandler;
 import buildcraft.api.power.PowerHandler.PowerReceiver;
 import buildcraft.api.power.PowerHandler.Type;
 import buildcraft.api.transport.IPipeConnection;
+import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.IPipeTile.PipeType;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.TileBuffer;
 import buildcraft.core.TileBuildCraft;
-import buildcraft.core.inventory.InvUtils;
-import buildcraft.core.inventory.SimpleInventory;
 import buildcraft.core.network.TileNetworkData;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.energy.gui.ContainerEngine;
-import java.util.LinkedList;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.ICrafting;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTBase;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagFloat;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.ForgeDirection;
 
-public abstract class TileEngine extends TileBuildCraft implements IPowerReceptor, IPowerEmitter, IInventory, IOverrideDefaultTriggers, IPipeConnection {
+public abstract class TileEngine extends TileBuildCraft implements IPowerReceptor, IPowerEmitter, IOverrideDefaultTriggers, IPipeConnection {
 
 	public static final ResourceLocation WOOD_TEXTURE = new ResourceLocation(DefaultProps.TEXTURE_PATH_BLOCKS + "/base_wood.png");
 	public static final ResourceLocation STONE_TEXTURE = new ResourceLocation(DefaultProps.TEXTURE_PATH_BLOCKS + "/base_stone.png");
@@ -56,11 +53,11 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 	protected PowerHandler powerHandler;
 	public float currentOutput = 0;
 	public boolean isRedstonePowered = false;
-	public TileBuffer[] tileCache;
+	private boolean checkOrienation = false;
+	private TileBuffer[] tileCache;
 	public float progress;
 	public float energy;
 	public float heat = MIN_HEAT;
-	private final SimpleInventory inv;
 	//
 	public @TileNetworkData
 	EnergyStage energyStage = EnergyStage.BLUE;
@@ -69,17 +66,14 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 	public @TileNetworkData
 	boolean isPumping = false; // Used for SMP synch
 
-	public TileEngine(int invSize) {
+	public TileEngine() {
 		powerHandler = new PowerHandler(this, Type.ENGINE);
 		powerHandler.configurePowerPerdition(1, 100);
-
-		inv = new SimpleInventory(invSize, "Engine", 64);
 	}
 
 	@Override
 	public void initialize() {
 		if (!CoreProxy.proxy.isRenderWorld(worldObj)) {
-			tileCache = TileBuffer.makeBuffer(worldObj, xCoord, yCoord, zCoord, true);
 			powerHandler.configure(minEnergyReceived(), maxEnergyReceived(), 1, getMaxEnergy());
 			checkRedstonePower();
 		}
@@ -175,10 +169,21 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 			return;
 		}
 
+		if (checkOrienation) {
+			checkOrienation = false;
+			if (!isOrientationValid())
+				switchOrientation(true);
+		}
+		
+		if (!isRedstonePowered)
+			if (energy > 1)
+				energy--;
+
 		updateHeatLevel();
+		getEnergyStage();
 		engineUpdate();
 
-		TileEntity tile = tileCache[orientation.ordinal()].getTile();
+		TileEntity tile = getTileBuffer(orientation).getTile();
 
 		if (progressPart != 0) {
 			progress += getPistonSpeed();
@@ -211,14 +216,14 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 	}
 
 	private float getPowerToExtract() {
-		TileEntity tile = tileCache[orientation.ordinal()].getTile();
+		TileEntity tile = getTileBuffer(orientation).getTile();
 		PowerReceiver receptor = ((IPowerReceptor) tile).getPowerReceiver(orientation.getOpposite());
 		return extractEnergy(receptor.getMinEnergyReceived(), receptor.getMaxEnergyReceived(), false); // Comment out for constant power
 //		return extractEnergy(0, getActualOutput(), false); // Uncomment for constant power
 	}
 
 	private void sendPower() {
-		TileEntity tile = tileCache[orientation.ordinal()].getTile();
+		TileEntity tile = getTileBuffer(orientation).getTile();
 		if (isPoweredTile(tile, orientation)) {
 			PowerReceiver receptor = ((IPowerReceptor) tile).getPowerReceiver(orientation.getOpposite());
 
@@ -259,15 +264,24 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 		sendNetworkUpdate();
 	}
 
-	public boolean switchOrientation() {
+	public boolean isOrientationValid() {
+		TileEntity tile = getTileBuffer(orientation).getTile();
+		return isPoweredTile(tile, orientation);
+	}
+
+	public boolean switchOrientation(boolean preferPipe) {
+		if (preferPipe && switchOrientation_do(true))
+			return true;
+		return switchOrientation_do(false);
+	}
+
+	private boolean switchOrientation_do(boolean pipesOnly) {
 		for (int i = orientation.ordinal() + 1; i <= orientation.ordinal() + 6; ++i) {
 			ForgeDirection o = ForgeDirection.VALID_DIRECTIONS[i % 6];
 
-			Position pos = new Position(xCoord, yCoord, zCoord, o);
-			pos.moveForwards(1);
-			TileEntity tile = worldObj.getBlockTileEntity((int) pos.x, (int) pos.y, (int) pos.z);
+			TileEntity tile = getTileBuffer(o).getTile();
 
-			if (isPoweredTile(tile, o)) {
+			if ((!pipesOnly || tile instanceof IPipeTile) && isPoweredTile(tile, o)) {
 				orientation = o;
 				worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
 				worldObj.notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord, worldObj.getBlockId(xCoord, yCoord, zCoord));
@@ -276,6 +290,26 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 			}
 		}
 		return false;
+	}
+
+	public TileBuffer getTileBuffer(ForgeDirection side) {
+		if (tileCache == null)
+			tileCache = TileBuffer.makeBuffer(worldObj, xCoord, yCoord, zCoord, false);
+		return tileCache[side.ordinal()];
+	}
+
+	@Override
+	public void invalidate() {
+		super.invalidate();
+		tileCache = null;
+		checkOrienation = true;
+	}
+
+	@Override
+	public void validate() {
+		super.validate();
+		tileCache = null;
+		checkOrienation = true;
 	}
 
 	@Override
@@ -287,7 +321,6 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 		NBTBase tag = data.getTag("heat");
 		if (tag instanceof NBTTagFloat)
 			heat = data.getFloat("heat");
-		inv.readFromNBT(data);
 	}
 
 	@Override
@@ -297,7 +330,6 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 		data.setFloat("progress", progress);
 		data.setFloat("energyF", energy);
 		data.setFloat("heat", heat);
-		inv.writeToNBT(data);
 	}
 
 	public void getGUINetworkData(int id, int value) {
@@ -327,55 +359,8 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 		iCrafting.sendProgressBarUpdate(containerEngine, 2, Math.round(currentOutput * 10));
 		iCrafting.sendProgressBarUpdate(containerEngine, 3, Math.round(heat * 100));
 	}
-	/* IINVENTORY IMPLEMENTATION */
-
-	@Override
-	public int getSizeInventory() {
-		return inv.getSizeInventory();
-	}
-
-	@Override
-	public ItemStack getStackInSlot(int slot) {
-		return inv.getStackInSlot(slot);
-	}
-
-	@Override
-	public ItemStack decrStackSize(int slot, int amount) {
-		return inv.decrStackSize(slot, amount);
-	}
-
-	@Override
-	public ItemStack getStackInSlotOnClosing(int slot) {
-		return inv.getStackInSlotOnClosing(slot);
-	}
-
-	@Override
-	public void setInventorySlotContents(int slot, ItemStack itemstack) {
-		inv.setInventorySlotContents(slot, itemstack);
-	}
-
-	@Override
-	public boolean isItemValidForSlot(int i, ItemStack itemstack) {
-		return true;
-	}
 
 	public void delete() {
-		InvUtils.dropItems(worldObj, inv, xCoord, yCoord, zCoord);
-	}
-
-	@Override
-	public String getInvName() {
-		return "Engine";
-	}
-
-	@Override
-	public int getInventoryStackLimit() {
-		return 64;
-	}
-
-	@Override
-	public boolean isUseableByPlayer(EntityPlayer entityplayer) {
-		return worldObj.getBlockTileEntity(xCoord, yCoord, zCoord) == this;
 	}
 
 	/* STATE INFORMATION */
@@ -442,14 +427,6 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 			return ((IPowerReceptor) tile).getPowerReceiver(side.getOpposite()) != null;
 
 		return false;
-	}
-
-	@Override
-	public void openChest() {
-	}
-
-	@Override
-	public void closeChest() {
 	}
 
 	public abstract float getMaxEnergy();
