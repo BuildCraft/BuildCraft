@@ -7,10 +7,12 @@
  */
 package buildcraft.builders.blueprints;
 
-import buildcraft.BuildCraftCore;
+import buildcraft.BuildCraftBuilders;
 import buildcraft.api.builder.BlockHandler;
 import buildcraft.core.inventory.StackHelper;
 import buildcraft.core.utils.BCLog;
+import buildcraft.core.utils.NBTUtils;
+import buildcraft.factory.TileQuarry;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -238,5 +240,16 @@ public class Blueprint {
 	 */
 	public void setCreator(String creator) {
 		this.creator = creator;
+	}
+
+	public void rotateLeft() {
+		anchorOrientation = anchorOrientation.getRotation(ForgeDirection.DOWN);
+	}
+
+	public ItemStack getBlueprintItem() {
+		ItemStack blueprint = new ItemStack(BuildCraftBuilders.blueprintItem, 1, 1);
+		NBTTagCompound nbt = NBTUtils.getItemData(blueprint);
+		NBTUtils.writeUUID(nbt, "blueprint", uuid);
+		return blueprint;
 	}
 }

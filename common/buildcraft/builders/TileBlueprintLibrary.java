@@ -192,7 +192,7 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory {
 		stack[i] = itemstack;
 
 		if (i == 0) {
-			if (stack[0] != null && stack[0].getItem() instanceof ItemBptBase) {
+			if (stack[0] != null && stack[0].getItem() instanceof ItemBlueprint) {
 				progressIn = 1;
 			} else {
 				progressIn = 0;
@@ -200,7 +200,7 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory {
 		}
 
 		if (i == 2) {
-			if (stack[2] != null && stack[2].getItem() instanceof ItemBptBase) {
+			if (stack[2] != null && stack[2].getItem() instanceof ItemBlueprint) {
 				progressOut = 1;
 			} else {
 				progressOut = 0;

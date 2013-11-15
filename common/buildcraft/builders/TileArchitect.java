@@ -7,16 +7,13 @@
  */
 package buildcraft.builders;
 
-
 import buildcraft.BuildCraftBuilders;
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.core.LaserKind;
 import buildcraft.builders.blueprints.Blueprint;
+import buildcraft.builders.blueprints.BlueprintDatabase;
 import buildcraft.core.Box;
 import buildcraft.core.TileBuildCraft;
-import buildcraft.core.blueprints.BptBase;
-import buildcraft.core.blueprints.BptBlueprint;
-import buildcraft.core.blueprints.BptContext;
 import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.network.TileNetworkData;
 import buildcraft.core.proxy.CoreProxy;
@@ -30,7 +27,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.ForgeDirection;
 
-
 public class TileArchitect extends TileBuildCraft implements IInventory {
 
 	public @TileNetworkData
@@ -40,9 +36,6 @@ public class TileArchitect extends TileBuildCraft implements IInventory {
 	public int computingTime = 0;
 	public @TileNetworkData
 	String name = "";
-	// Use that field to avoid creating several times the same template if
-	// they're the same!
-	private int lastBptId = 0;
 
 	@Override
 	public void updateEntity() {
@@ -52,7 +45,7 @@ public class TileArchitect extends TileBuildCraft implements IInventory {
 			if (computingTime < 200) {
 				computingTime++;
 			} else {
-				createBpt();
+				createBlueprint();
 			}
 		}
 	}
@@ -78,100 +71,85 @@ public class TileArchitect extends TileBuildCraft implements IInventory {
 		sendNetworkUpdate();
 	}
 
-	public void createBpt() {
+	public void createBlueprint() {
 		if (!box.isInitialized() || items[1] != null)
 			return;
 
-		BptBase result;
-		BptContext context = null;
+		Blueprint blueprint;
 
-		if (items[0].getItem() instanceof ItemBptTemplate) {
-			result = createBptTemplate();
-			context = new BptContext(worldObj, null, box);
+		if (items[0].getItem() instanceof ItemBlueprintTemplate) {
+			blueprint = createMaskBlueprint(box);
 		} else {
-			result = createBptBlueprint();
-			context = new BptContext(worldObj, (BptBlueprint) result, box);
+			blueprint = createStandardBlueprint(box);
 		}
 
 		if (!name.equals("")) {
-			result.setName(name);
+			blueprint.setName(name);
 		}
 
-		result.anchorX = xCoord - box.xMin;
-		result.anchorY = yCoord - box.yMin;
-		result.anchorZ = zCoord - box.zMin;
+		blueprint.anchorX = xCoord - box.xMin;
+		blueprint.anchorY = yCoord - box.yMin;
+		blueprint.anchorZ = zCoord - box.zMin;
 
-		ForgeDirection o = ForgeDirection.values()[worldObj.getBlockMetadata(xCoord, yCoord, zCoord)].getOpposite();
+		ForgeDirection o = ForgeDirection.getOrientation(worldObj.getBlockMetadata(xCoord, yCoord, zCoord)).getOpposite();
 
-		if (o == ForgeDirection.EAST) {
-			// Do nothing
-		} else if (o == ForgeDirection.SOUTH) {
-			result.rotateLeft(context);
-			result.rotateLeft(context);
-			result.rotateLeft(context);
-		} else if (o == ForgeDirection.WEST) {
-			result.rotateLeft(context);
-			result.rotateLeft(context);
-		} else if (o == ForgeDirection.NORTH) {
-			result.rotateLeft(context);
-		}
+//		if (o == ForgeDirection.NORTH) {
+//			// Do nothing
+//		} else if (o == ForgeDirection.SOUTH) {
+//			blueprint.rotateLeft();
+//			blueprint.rotateLeft();
+//			blueprint.rotateLeft();
+//		} else if (o == ForgeDirection.WEST) {
+//			blueprint.rotateLeft();
+//			blueprint.rotateLeft();
+//		} else if (o == ForgeDirection.NORTH) {
+//			blueprint.rotateLeft();
+//		}
 
-		ItemStack stack;
-		if (result.equals(BuildCraftBuilders.getBptRootIndex().getBluePrint(lastBptId))) {
-			result = BuildCraftBuilders.getBptRootIndex().getBluePrint(lastBptId);
-			stack = BuildCraftBuilders.getBptItemStack(items[0].itemID, lastBptId, result.getName());
-		} else {
-			int bptId = BuildCraftBuilders.getBptRootIndex().storeBluePrint(result);
-			stack = BuildCraftBuilders.getBptItemStack(items[0].itemID, bptId, result.getName());
-			lastBptId = bptId;
-		}
-
-		setInventorySlotContents(1, stack);
+		BlueprintDatabase.addBlueprint(blueprint);
+		
+		setInventorySlotContents(1, blueprint.getBlueprintItem());
 		setInventorySlotContents(0, null);
 	}
 
-	public BptBase createBptTemplate() {
-		int mask1 = 1;
-		int mask0 = 0;
-
-		if (worldObj.isBlockIndirectlyGettingPowered(xCoord, yCoord, zCoord)) {
-			mask1 = 0;
-			mask0 = 1;
-		}
-
+	private Blueprint createMaskBlueprint(Box box) {
 		Blueprint blueprint = new Blueprint(box.sizeX(), box.sizeY(), box.sizeZ());
 
 		for (int x = box.xMin; x <= box.xMax; ++x) {
 			for (int y = box.yMin; y <= box.yMax; ++y) {
 				for (int z = box.zMin; z <= box.zMax; ++z) {
-					if (!worldObj.isAirBlock(x, y, z)) {
-						Block block = Block.blocksList[worldObj.getBlockId(x, y, z)];
-						if (block != null) {
-							blueprint.setSchematic(x - box.xMin, y - box.yMin, z - box.zMin, worldObj, block);
-						}
-					}
+					if (worldObj.isAirBlock(x, y, z))
+						continue;
+					Block block = Block.blocksList[worldObj.getBlockId(x, y, z)];
+					if (block == null)
+						continue;
+
+					blueprint.setSchematic(x - box.xMin, y - box.yMin, z - box.zMin, worldObj, block);
 				}
 			}
 		}
 
-//		return blueprint;
-		return null;
+		return blueprint;
 	}
 
-	private BptBase createBptBlueprint() {
-		BptBlueprint result = new BptBlueprint(box.sizeX(), box.sizeY(), box.sizeZ());
-
-		BptContext context = new BptContext(worldObj, result, box);
+	private Blueprint createStandardBlueprint(Box box) {
+		Blueprint blueprint = new Blueprint(box.sizeX(), box.sizeY(), box.sizeZ());
 
 		for (int x = box.xMin; x <= box.xMax; ++x) {
 			for (int y = box.yMin; y <= box.yMax; ++y) {
 				for (int z = box.zMin; z <= box.zMax; ++z) {
-					result.readFromWorld(context, this, x, y, z);
+					if (worldObj.isAirBlock(x, y, z))
+						continue;
+					Block block = Block.blocksList[worldObj.getBlockId(x, y, z)];
+					if (block == null)
+						continue;
+
+					blueprint.setSchematic(x - box.xMin, y - box.yMin, z - box.zMin, worldObj, block);
 				}
 			}
 		}
 
-		return result;
+		return blueprint;
 	}
 
 	public void handleClientInput(char c) {
@@ -243,9 +221,8 @@ public class TileArchitect extends TileBuildCraft implements IInventory {
 	}
 
 	@Override
-	public boolean isItemValidForSlot(int i, ItemStack itemstack) {
-		// TODO Auto-generated method stub
-		return false;
+	public boolean isItemValidForSlot(int slot, ItemStack stack) {
+		return slot == 0 && stack != null && stack.getItem() == BuildCraftBuilders.blueprintItem;
 	}
 
 	@Override
@@ -257,7 +234,6 @@ public class TileArchitect extends TileBuildCraft implements IInventory {
 	public void readFromNBT(NBTTagCompound nbttagcompound) {
 		super.readFromNBT(nbttagcompound);
 
-		lastBptId = nbttagcompound.getInteger("lastTemplateId");
 		computingTime = nbttagcompound.getInteger("computingTime");
 		isComputing = nbttagcompound.getBoolean("isComputing");
 
@@ -282,7 +258,6 @@ public class TileArchitect extends TileBuildCraft implements IInventory {
 	public void writeToNBT(NBTTagCompound nbttagcompound) {
 		super.writeToNBT(nbttagcompound);
 
-		nbttagcompound.setInteger("lastTemplateId", lastBptId);
 		nbttagcompound.setInteger("computingTime", computingTime);
 		nbttagcompound.setBoolean("isComputing", isComputing);
 
@@ -323,7 +298,7 @@ public class TileArchitect extends TileBuildCraft implements IInventory {
 		if (!box.isInitialized())
 			return;
 		else if (!isComputing) {
-			if (items[0] != null && items[0].getItem() instanceof ItemBptBase && items[1] == null) {
+			if (items[0] != null && items[0].getItem() instanceof ItemBlueprint && items[1] == null) {
 				isComputing = true;
 				computingTime = 0;
 			} else {
@@ -331,7 +306,7 @@ public class TileArchitect extends TileBuildCraft implements IInventory {
 				computingTime = 0;
 			}
 		} else {
-			if (items[0] == null || !(items[0].getItem() instanceof ItemBptBase)) {
+			if (items[0] == null || !(items[0].getItem() instanceof ItemBlueprint)) {
 				isComputing = false;
 				computingTime = 0;
 			}

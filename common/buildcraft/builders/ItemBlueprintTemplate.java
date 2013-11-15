@@ -5,9 +5,11 @@ import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.util.Icon;
 
-public class ItemBptTemplate extends ItemBptBase {
+public class ItemBlueprintTemplate extends ItemBlueprint {
+
 	private Icon usedTemplate;
-	public ItemBptTemplate(int i) {
+
+	public ItemBlueprintTemplate(int i) {
 		super(i);
 	}
 
@@ -21,8 +23,7 @@ public class ItemBptTemplate extends ItemBptBase {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void registerIcons(IconRegister par1IconRegister)
-	{
+	public void registerIcons(IconRegister par1IconRegister) {
 		itemIcon = par1IconRegister.registerIcon("buildcraft:template_clean");
 		usedTemplate = par1IconRegister.registerIcon("buildcraft:template_used");
 	}

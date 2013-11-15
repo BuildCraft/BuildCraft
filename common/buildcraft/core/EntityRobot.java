@@ -8,10 +8,8 @@
 package buildcraft.core;
 
 
-import buildcraft.BuildCraftCore;
 import buildcraft.api.core.Position;
 import buildcraft.builders.blueprints.BlueprintBuilder.SchematicBuilder;
-import buildcraft.core.blueprints.BptSlot.Mode;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.BCLog;
 import buildcraft.core.utils.BlockUtil;

@@ -46,8 +46,8 @@ import buildcraft.builders.FillerRegistry;
 import buildcraft.builders.FillerRemover;
 import buildcraft.builders.GuiHandler;
 import buildcraft.builders.IBuilderHook;
-import buildcraft.builders.ItemBptBluePrint;
-import buildcraft.builders.ItemBptTemplate;
+import buildcraft.builders.ItemBlueprintStandard;
+import buildcraft.builders.ItemBlueprintTemplate;
 import buildcraft.builders.TileArchitect;
 import buildcraft.builders.TileBlueprintLibrary;
 import buildcraft.builders.TileBuilder;
@@ -100,8 +100,8 @@ public class BuildCraftBuilders {
 	public static BlockBuilder builderBlock;
 	public static BlockArchitect architectBlock;
 	public static BlockBlueprintLibrary libraryBlock;
-	public static ItemBptTemplate templateItem;
-	public static ItemBptBluePrint blueprintItem;
+	public static ItemBlueprintTemplate templateItem;
+	public static ItemBlueprintStandard blueprintItem;
 	public static boolean fillerDestroy;
 	public static int fillerLifespanTough;
 	public static int fillerLifespanNormal;
@@ -239,12 +239,12 @@ public class BuildCraftBuilders {
 		fillerLifespanNormalProp.comment = "Lifespan in ticks of items dropped by the filler from non-tough blocks (those that can be broken by hand)";
 		fillerLifespanNormal = fillerLifespanNormalProp.getInt(DefaultProps.FILLER_LIFESPAN_NORMAL);
 
-		templateItem = new ItemBptTemplate(templateItemId.getInt());
+		templateItem = new ItemBlueprintTemplate(templateItemId.getInt());
 		templateItem.setUnlocalizedName("templateItem");
 		LanguageRegistry.addName(templateItem, "Template");
 		CoreProxy.proxy.registerItem(templateItem);
 
-		blueprintItem = new ItemBptBluePrint(blueprintItemId.getInt());
+		blueprintItem = new ItemBlueprintStandard(blueprintItemId.getInt());
 		blueprintItem.setUnlocalizedName("blueprintItem");
 		LanguageRegistry.addName(blueprintItem, "Blueprint");
 		CoreProxy.proxy.registerItem(blueprintItem);
@@ -300,8 +300,8 @@ public class BuildCraftBuilders {
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(templateItem, 1), new Object[]{"ppp", "pip", "ppp", 'i',
 			new ItemStack(Item.dyePowder, 1, 0), 'p', Item.paper});
 
-//		CoreProxy.proxy.addCraftingRecipe(new ItemStack(blueprintItem, 1), new Object[]{"ppp", "pip", "ppp", 'i',
-//			new ItemStack(Item.dyePowder, 1, 4), 'p', Item.paper});
+		CoreProxy.proxy.addCraftingRecipe(new ItemStack(blueprintItem, 1), new Object[]{"ppp", "pip", "ppp", 'i',
+			new ItemStack(Item.dyePowder, 1, 4), 'p', Item.paper});
 
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(markerBlock, 1), new Object[]{"l ", "r ", 'l',
 			new ItemStack(Item.dyePowder, 1, 4), 'r', Block.torchRedstoneActive});

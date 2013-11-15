@@ -32,6 +32,8 @@ public class BlueprintDatabase {
 	private static Map<UUID, Blueprint> blueprints = new HashMap<UUID, Blueprint>();
 
 	public static Blueprint getBlueprint(UUID uuid) {
+		if(uuid == null)
+			return null;
 		Blueprint blueprint = blueprints.get(uuid);
 		if (blueprint == null) {
 			blueprint = loadBlueprint(uuid);
