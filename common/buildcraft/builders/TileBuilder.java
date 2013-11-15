@@ -20,12 +20,14 @@ import buildcraft.core.EntityRobot;
 import buildcraft.core.IBuilderInventory;
 import buildcraft.core.IMachine;
 import buildcraft.core.TileBuildCraft;
+import buildcraft.core.inventory.InventoryMapper;
 import buildcraft.core.inventory.SimpleInventory;
 import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.network.TileNetworkData;
 import java.io.IOException;
 import java.util.ListIterator;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.ForgeDirection;
@@ -42,6 +44,7 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 	private ListIterator<BlueprintBuilder.SchematicBuilder> blueprintIterator;
 	private boolean builderDone = false;
 	private SimpleInventory inv = new SimpleInventory(28, "Builder", 64);
+	private IInventory invStock = new InventoryMapper(inv, 1, 27);
 	private Blueprint blueprint;
 
 	public TileBuilder() {
@@ -105,7 +108,7 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 				case EAST:
 					blueprintOrientation = blueprintOrientation.getRotation(DOWN);
 			}
-			blueprintBuilder = new BlueprintBuilder(blueprint, worldObj, xCoord, yCoord, zCoord, blueprintOrientation, null);
+			blueprintBuilder = new BlueprintBuilder(blueprint, worldObj, xCoord, yCoord, zCoord, blueprintOrientation, invStock);
 			blueprintIterator = blueprintBuilder.getBuilders().listIterator();
 			box.initialize(blueprintBuilder);
 			box.reorder();

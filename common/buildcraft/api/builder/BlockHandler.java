@@ -153,7 +153,7 @@ public class BlockHandler {
 		return cost;
 	}
 
-	private boolean areItemsEqual(ItemStack stack1, ItemStack stack2) {
+	protected final boolean areItemsEqual(ItemStack stack1, ItemStack stack2) {
 		if (stack1 == null || stack2 == null)
 			return false;
 		if (!stack1.isItemEqual(stack2))
