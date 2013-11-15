@@ -207,7 +207,6 @@ public class Box implements IBox {
 
 	@Override
 	public void createLasers(World world, LaserKind kind) {
-
 		if (lasers == null) {
 			lasers = Utils.createLaserBox(world, xMin, yMin, zMin, xMax, yMax, zMax, kind);
 		}

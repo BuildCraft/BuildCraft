@@ -91,20 +91,7 @@ public class TileArchitect extends TileBuildCraft implements IInventory {
 		blueprint.anchorY = yCoord - box.yMin;
 		blueprint.anchorZ = zCoord - box.zMin;
 
-		ForgeDirection o = ForgeDirection.getOrientation(worldObj.getBlockMetadata(xCoord, yCoord, zCoord)).getOpposite();
-
-//		if (o == ForgeDirection.NORTH) {
-//			// Do nothing
-//		} else if (o == ForgeDirection.SOUTH) {
-//			blueprint.rotateLeft();
-//			blueprint.rotateLeft();
-//			blueprint.rotateLeft();
-//		} else if (o == ForgeDirection.WEST) {
-//			blueprint.rotateLeft();
-//			blueprint.rotateLeft();
-//		} else if (o == ForgeDirection.NORTH) {
-//			blueprint.rotateLeft();
-//		}
+		blueprint.anchorOrientation = ForgeDirection.getOrientation(worldObj.getBlockMetadata(xCoord, yCoord, zCoord));
 
 		BlueprintDatabase.addBlueprint(blueprint);
 		

@@ -17,13 +17,13 @@ import net.minecraft.world.World;
 
 public abstract class BptBuilderBase implements IAreaProvider {
 
-	public BptBase bluePrint;
+	public BptBase blueprint;
 	int x, y, z;
 	public boolean done;
 	protected BptContext context;
 
 	public BptBuilderBase(BptBase bluePrint, World world, int x, int y, int z) {
-		this.bluePrint = bluePrint;
+		this.blueprint = bluePrint;
 		this.x = x;
 		this.y = y;
 		this.z = z;
@@ -43,32 +43,32 @@ public abstract class BptBuilderBase implements IAreaProvider {
 
 	@Override
 	public int xMin() {
-		return x - bluePrint.anchorX;
+		return x - blueprint.anchorX;
 	}
 
 	@Override
 	public int yMin() {
-		return y - bluePrint.anchorY;
+		return y - blueprint.anchorY;
 	}
 
 	@Override
 	public int zMin() {
-		return z - bluePrint.anchorZ;
+		return z - blueprint.anchorZ;
 	}
 
 	@Override
 	public int xMax() {
-		return x + bluePrint.sizeX - bluePrint.anchorX - 1;
+		return x + blueprint.sizeX - blueprint.anchorX - 1;
 	}
 
 	@Override
 	public int yMax() {
-		return y + bluePrint.sizeY - bluePrint.anchorY - 1;
+		return y + blueprint.sizeY - blueprint.anchorY - 1;
 	}
 
 	@Override
 	public int zMax() {
-		return z + bluePrint.sizeZ - bluePrint.anchorZ - 1;
+		return z + blueprint.sizeZ - blueprint.anchorZ - 1;
 	}
 
 	@Override

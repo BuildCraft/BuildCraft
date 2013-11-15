@@ -23,13 +23,13 @@ import buildcraft.core.TileBuildCraft;
 import buildcraft.core.inventory.SimpleInventory;
 import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.network.TileNetworkData;
-import buildcraft.core.proxy.CoreProxy;
 import java.io.IOException;
 import java.util.ListIterator;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.ForgeDirection;
+import static net.minecraftforge.common.ForgeDirection.*;
 
 public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IPowerReceptor, IMachine {
 
@@ -40,8 +40,9 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 	private EntityRobot builderRobot;
 	private BlueprintBuilder blueprintBuilder;
 	private ListIterator<BlueprintBuilder.SchematicBuilder> blueprintIterator;
-	private boolean builderDone = true;
+	private boolean builderDone = false;
 	private SimpleInventory inv = new SimpleInventory(28, "Builder", 64);
+	private Blueprint blueprint;
 
 	public TileBuilder() {
 		super();
@@ -50,24 +51,23 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 	}
 
 	@Override
-	public void initialize() {
-		super.initialize();
+	public void updateEntity() {
+		super.updateEntity();
 
-		if (CoreProxy.proxy.isRenderWorld(worldObj))
+		if (worldObj.isRemote)
 			return;
 
-
+		setupBuilder();
 	}
 
 	@Override
 	public void doWork(PowerHandler workProvider) {
-		if (CoreProxy.proxy.isRenderWorld(worldObj))
+		if (worldObj.isRemote)
 			return;
 
-//		if (builderDone)
-//			return;
+		if (builderDone)
+			return;
 
-		initializeBuilder();
 		build();
 	}
 
@@ -80,22 +80,60 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 		return blueprintBuilder;
 	}
 
-	private void initializeBuilder() {
-		Blueprint blueprint = getBlueprint();
-		if (blueprintBuilder == null && blueprint != null) {
-			box.initialize(xCoord + 1, yCoord, zCoord + 1, xCoord + 1 + blueprint.sizeX, yCoord + blueprint.sizeY, zCoord + 1 + blueprint.sizeZ);
-			box.createLasers(worldObj, LaserKind.Stripes);
-			blueprintBuilder = new BlueprintBuilder(blueprint, worldObj, xCoord + 1, yCoord, zCoord + 1, ForgeDirection.NORTH, null);
+	private void setupBuilder() {
+		Blueprint newBlueprint = getBlueprint();
+		if (blueprint != newBlueprint) {
+			blueprint = newBlueprint;
+			reset();
+			builderDone = false;
+		}
+		if (!builderDone && blueprintBuilder == null && blueprint != null) {
+			ForgeDirection blueprintOrientation = NORTH;
+			switch (ForgeDirection.getOrientation(getBlockMetadata())) {
+				case WEST:
+					blueprintOrientation = blueprintOrientation.getRotation(UP);
+				case SOUTH:
+					blueprintOrientation = blueprintOrientation.getRotation(UP);
+				case EAST:
+					blueprintOrientation = blueprintOrientation.getRotation(UP);
+			}
+			switch (blueprint.anchorOrientation) {
+				case WEST:
+					blueprintOrientation = blueprintOrientation.getRotation(DOWN);
+				case SOUTH:
+					blueprintOrientation = blueprintOrientation.getRotation(DOWN);
+				case EAST:
+					blueprintOrientation = blueprintOrientation.getRotation(DOWN);
+			}
+			blueprintBuilder = new BlueprintBuilder(blueprint, worldObj, xCoord, yCoord, zCoord, blueprintOrientation, null);
 			blueprintIterator = blueprintBuilder.getBuilders().listIterator();
-		} else if (blueprint == null) {
-			box.deleteLasers();
-			box.reset();
-			blueprintBuilder = null;
-			blueprintIterator = null;
+			box.initialize(blueprintBuilder);
+			box.reorder();
+			sendNetworkUpdate();
+		}
+
+		if (!hasWorkScheduled()) {
+			reset();
+			builderDone = true;
 		}
 	}
 
-	protected void build() {
+	private void reset() {
+		box.reset();
+		blueprintBuilder = null;
+		blueprintIterator = null;
+		killRobot();
+		sendNetworkUpdate();
+	}
+
+	private void killRobot() {
+		if (builderRobot != null) {
+			builderRobot.setDead();
+			builderRobot = null;
+		}
+	}
+
+	private void build() {
 		if (blueprintBuilder == null)
 			return;
 
@@ -122,6 +160,10 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 				}
 			}
 		}
+	}
+
+	public boolean hasWorkScheduled() {
+		return (blueprintIterator != null && blueprintIterator.hasNext()) || (builderRobot != null && !builderRobot.done());
 	}
 
 	@Override
@@ -182,7 +224,7 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 			box.initialize(nbt.getCompoundTag("box"));
 		}
 
-		builderDone = nbt.getBoolean("done");
+		builderDone = nbt.getBoolean("builderDone");
 	}
 
 	@Override
@@ -197,7 +239,7 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 			nbt.setTag("box", boxStore);
 		}
 
-		nbt.setBoolean("done", builderDone);
+		nbt.setBoolean("builderDone", builderDone);
 	}
 
 	@Override
@@ -225,24 +267,20 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 
 	@Override
 	public void handleDescriptionPacket(PacketUpdate packet) throws IOException {
-		boolean initialized = box.isInitialized();
-
 		super.handleDescriptionPacket(packet);
-
-		if (!initialized && box.isInitialized()) {
+		if (box.isInitialized())
 			box.createLasers(worldObj, LaserKind.Stripes);
-		}
+		else
+			box.deleteLasers();
 	}
 
 	@Override
 	public void handleUpdatePacket(PacketUpdate packet) throws IOException {
-		boolean initialized = box.isInitialized();
-
 		super.handleUpdatePacket(packet);
-
-		if (!initialized && box.isInitialized()) {
+		if (box.isInitialized())
 			box.createLasers(worldObj, LaserKind.Stripes);
-		}
+		else
+			box.deleteLasers();
 	}
 
 	@Override
@@ -251,29 +289,6 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 
 	@Override
 	public void closeChest() {
-	}
-
-	@Override
-	public void updateEntity() {
-
-		super.updateEntity();
-
-		if (blueprintBuilder == null && box.isInitialized() && (builderRobot == null || builderRobot.done())) {
-
-			box.deleteLasers();
-			box.reset();
-
-			if (CoreProxy.proxy.isSimulating(worldObj)) {
-				sendNetworkUpdate();
-			}
-
-			return;
-		}
-
-		if (!box.isInitialized() && blueprintBuilder == null && builderRobot != null) {
-			builderRobot.setDead();
-			builderRobot = null;
-		}
 	}
 
 	@Override

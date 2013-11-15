@@ -9,6 +9,7 @@
 package buildcraft.builders.blueprints;
 
 import buildcraft.api.builder.BlockHandler;
+import buildcraft.api.core.IAreaProvider;
 import buildcraft.builders.blueprints.BlueprintBuilder.SchematicBuilder;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -24,7 +25,7 @@ import static net.minecraftforge.common.ForgeDirection.EAST;
  *
  * @author CovertJaguar <http://www.railcraft.info/>
  */
-public class BlueprintBuilder {
+public class BlueprintBuilder implements IAreaProvider {
 
 	public final Blueprint blueprint;
 	public final ForgeDirection orientation;
@@ -38,9 +39,9 @@ public class BlueprintBuilder {
 		this.blueprint = blueprint;
 		this.orientation = orientation;
 		this.worldObj = world;
-		this.x = x;
-		this.y = y;
-		this.z = z;
+		this.x = translateX(x, -blueprint.anchorX, -blueprint.anchorZ);
+		this.y = y - blueprint.anchorY;
+		this.z = translateZ(z, -blueprint.anchorX, -blueprint.anchorZ);
 		this.inv = inv;
 		this.buildList = blueprint.getBuildList();
 		builders = new ArrayList<SchematicBuilder>(buildList.size());
@@ -55,6 +56,66 @@ public class BlueprintBuilder {
 		return Collections.unmodifiableList(builders);
 	}
 
+	@Override
+	public int xMin() {
+		return x;
+	}
+
+	@Override
+	public int yMin() {
+		return y;
+	}
+
+	@Override
+	public int zMin() {
+		return z;
+	}
+
+	@Override
+	public int xMax() {
+		return translateX(x, blueprint.sizeX - 1, blueprint.sizeZ - 1);
+	}
+
+	@Override
+	public int yMax() {
+		return y + blueprint.sizeY - 1;
+	}
+
+	@Override
+	public int zMax() {
+		return translateZ(z, blueprint.sizeX - 1, blueprint.sizeZ - 1);
+	}
+
+	@Override
+	public void removeFromWorld() {
+	}
+
+	private int translateX(int corner, int x, int z) {
+		switch (orientation) {
+			case SOUTH:
+				return corner - x;
+			case EAST:
+				return corner - z;
+			case WEST:
+				return corner + z;
+			default:
+				return corner + x;
+		}
+	}
+
+	private int translateZ(int corner, int x, int z) {
+		switch (orientation) {
+			case SOUTH:
+				return corner - z;
+			case EAST:
+				return corner + x;
+			case WEST:
+				return corner - x;
+			default:
+				return corner + z;
+		}
+	}
+
 	public class SchematicBuilder {
 
 		public final Schematic schematic;
@@ -67,16 +128,7 @@ public class BlueprintBuilder {
 		}
 
 		public int getX() {
-			switch (orientation) {
-				case SOUTH:
-					return x - schematic.x;
-				case EAST:
-					return x - schematic.z;
-				case WEST:
-					return x + schematic.z;
-				default:
-					return x + schematic.x;
-			}
+			return translateX(x, schematic.x, schematic.z);
 		}
 
 		public int getY() {
@@ -84,16 +136,7 @@ public class BlueprintBuilder {
 		}
 
 		public int getZ() {
-			switch (orientation) {
-				case SOUTH:
-					return z - schematic.z;
-				case EAST:
-					return z + schematic.x;
-				case WEST:
-					return z - schematic.x;
-				default:
-					return z + schematic.z;
-			}
+			return translateZ(z, schematic.x, schematic.z);
 		}
 
 		public boolean blockExists() {
