@@ -2,7 +2,6 @@ package buildcraft.api.recipes;
 
 import java.util.LinkedList;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.oredict.OreDictionary;
 
 public class AssemblyRecipe {
 
@@ -36,16 +35,6 @@ public class AssemblyRecipe {
 				if (item.isItemEqual(in)) {
 					found += item.stackSize; // Adds quantity of stack to amount
 												// found
-				} else {
-					int oreID = OreDictionary.getOreID(in); 
-					if (oreID >= 0) {
-						for (ItemStack oreItem : OreDictionary.getOres(oreID)) {
-							if(OreDictionary.itemMatches(oreItem, item, false)) {
-								found += item.stackSize;
-								break;
-							}
-						}
-					}
 				}
 			}
 
