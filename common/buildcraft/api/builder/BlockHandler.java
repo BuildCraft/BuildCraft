@@ -18,6 +18,9 @@ import net.minecraftforge.common.ForgeDirection;
  * BlockHandlers are used to serialize blocks for saving/loading from
  * Blueprints.
  *
+ * To implement your own, you should extend this class and override the
+ * functions as needed.
+ *
  * @author CovertJaguar <http://www.railcraft.info/>
  */
 public class BlockHandler {

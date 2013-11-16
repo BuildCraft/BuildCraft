@@ -29,6 +29,7 @@ public abstract class ItemBlueprint extends ItemBuildCraft {
 
 	@Override
 	public void addInformation(ItemStack stack, EntityPlayer player, List list, boolean advanced) {
+		// TODO: This code will break in SMP, put name and creator in NBT
 		Blueprint blueprint = getBlueprint(stack);
 		if (blueprint != null) {
 			list.add(String.format(StringUtils.localize("item.blueprint.name"), blueprint.getName()));
