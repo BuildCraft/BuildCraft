@@ -18,7 +18,7 @@ public class BlockSpring extends Block {
 	public enum EnumSpring {
 
 		WATER(5, -1, Block.waterStill),
-		OIL(6000, 32, null); // Set in BuildCraftEnergy
+		OIL(6000, 8, null); // Set in BuildCraftEnergy
 		public static final EnumSpring[] VALUES = values();
 		public final int tickRate, chance;
 		public Block liquidBlock;
