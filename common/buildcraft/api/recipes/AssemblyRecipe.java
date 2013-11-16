@@ -40,7 +40,7 @@ public class AssemblyRecipe {
 					int oreID = OreDictionary.getOreID(in); 
 					if (oreID >= 0) {
 						for (ItemStack oreItem : OreDictionary.getOres(oreID)) {
-							if(OreDictionary.itemMatches(oreItem, item, false)) {
+							if(OreDictionary.itemMatches(oreItem, item, true)) {
 								found += item.stackSize;
 								break;
 							}
