@@ -55,6 +55,8 @@ public abstract class PipeLogicIron {
 			return true;
 
 		TileEntity tile = tileBuffer[side.ordinal()].getTile();
+		if ((pipe.container.hasPlug(side)) || (tile != null && tile instanceof TileGenericPipe && ((TileGenericPipe)tile).pipe.container.hasPlug(side.getOpposite())))
+			return false;
 		return isValidConnectingTile(tile);
 	}
 
