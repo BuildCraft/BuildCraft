@@ -313,32 +313,24 @@ public class BuildCraftTransport {
 			redPipeWire.setUnlocalizedName("redPipeWire");
 			LanguageRegistry.addName(redPipeWire, "Red Pipe Wire");
 			CoreProxy.proxy.registerItem(redPipeWire);
-			AssemblyRecipe.assemblyRecipes.add(new AssemblyRecipe(new ItemStack[]{new ItemStack(Item.dyePowder, 1, 1), new ItemStack(Item.redstone, 1),
-				new ItemStack(Item.ingotIron, 1)}, 500, new ItemStack(redPipeWire, 8)));
 
 			Property bluePipeWireId = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_ITEM, "bluePipeWire.id", DefaultProps.BLUE_PIPE_WIRE);
 			bluePipeWire = new ItemBuildCraft(bluePipeWireId.getInt()).setPassSneakClick(true);
 			bluePipeWire.setUnlocalizedName("bluePipeWire");
 			LanguageRegistry.addName(bluePipeWire, "Blue Pipe Wire");
 			CoreProxy.proxy.registerItem(bluePipeWire);
-			AssemblyRecipe.assemblyRecipes.add(new AssemblyRecipe(new ItemStack[]{new ItemStack(Item.dyePowder, 1, 4), new ItemStack(Item.redstone, 1),
-				new ItemStack(Item.ingotIron, 1)}, 500, new ItemStack(bluePipeWire, 8)));
 
 			Property greenPipeWireId = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_ITEM, "greenPipeWire.id", DefaultProps.GREEN_PIPE_WIRE);
 			greenPipeWire = new ItemBuildCraft(greenPipeWireId.getInt()).setPassSneakClick(true);
 			greenPipeWire.setUnlocalizedName("greenPipeWire");
 			LanguageRegistry.addName(greenPipeWire, "Green Pipe Wire");
 			CoreProxy.proxy.registerItem(greenPipeWire);
-			AssemblyRecipe.assemblyRecipes.add(new AssemblyRecipe(new ItemStack[]{new ItemStack(Item.dyePowder, 1, 2), new ItemStack(Item.redstone, 1),
-				new ItemStack(Item.ingotIron, 1)}, 500, new ItemStack(greenPipeWire, 8)));
 
 			Property yellowPipeWireId = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_ITEM, "yellowPipeWire.id", DefaultProps.YELLOW_PIPE_WIRE);
 			yellowPipeWire = new ItemBuildCraft(yellowPipeWireId.getInt()).setPassSneakClick(true);
 			yellowPipeWire.setUnlocalizedName("yellowPipeWire");
 			LanguageRegistry.addName(yellowPipeWire, "Yellow Pipe Wire");
 			CoreProxy.proxy.registerItem(yellowPipeWire);
-			AssemblyRecipe.assemblyRecipes.add(new AssemblyRecipe(new ItemStack[]{new ItemStack(Item.dyePowder, 1, 11), new ItemStack(Item.redstone, 1),
-				new ItemStack(Item.ingotIron, 1)}, 500, new ItemStack(yellowPipeWire, 8)));
 
 			Property pipeGateId = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_ITEM, "pipeGate.id", DefaultProps.GATE_ID);
 			pipeGate = new ItemGate(pipeGateId.getInt(), 0);
@@ -365,9 +357,6 @@ public class BuildCraftTransport {
 			filteredBufferBlock = new BlockFilteredBuffer(filteredBufferId.getInt());
 			CoreProxy.proxy.registerBlock(filteredBufferBlock.setUnlocalizedName("filteredBufferBlock"));
 			CoreProxy.proxy.addName(filteredBufferBlock, "Filtered Buffer");
-
-			AssemblyRecipe.assemblyRecipes.add(new AssemblyRecipe(new ItemStack[]{new ItemStack(pipeStructureCobblestone)}, 1000, new ItemStack(plugItem, 8)));
-
 		} finally {
 			BuildCraftCore.mainConfiguration.save();
 		}
@@ -449,6 +438,17 @@ public class BuildCraftTransport {
 
 		//Facade turning helper
 		GameRegistry.addRecipe(facadeItem.new FacadeRecipe());
+
+		// Assembly table recipes, moved from PreInit phase to Init, all mods should be done adding to the OreDictionary by now
+		AssemblyRecipe.assemblyRecipes.add(new AssemblyRecipe(new Object[]{"dyeRed", 1, new ItemStack(Item.redstone, 1),
+			new ItemStack(Item.ingotIron, 1)}, 500, new ItemStack(redPipeWire, 8)));
+		AssemblyRecipe.assemblyRecipes.add(new AssemblyRecipe(new Object[]{"dyeBlue", 1, new ItemStack(Item.redstone, 1),
+			new ItemStack(Item.ingotIron, 1)}, 500, new ItemStack(bluePipeWire, 8)));
+		AssemblyRecipe.assemblyRecipes.add(new AssemblyRecipe(new Object[]{"dyeGreen", 1, new ItemStack(Item.redstone, 1),
+			new ItemStack(Item.ingotIron, 1)}, 500, new ItemStack(greenPipeWire, 8)));
+		AssemblyRecipe.assemblyRecipes.add(new AssemblyRecipe(new Object[]{"dyeYellow", 1, new ItemStack(Item.redstone, 1),
+			new ItemStack(Item.ingotIron, 1)}, 500, new ItemStack(yellowPipeWire, 8)));
+		AssemblyRecipe.assemblyRecipes.add(new AssemblyRecipe(new ItemStack[]{new ItemStack(pipeStructureCobblestone)}, 1000, new ItemStack(plugItem, 8)));
 	}
 
 	@EventHandler
