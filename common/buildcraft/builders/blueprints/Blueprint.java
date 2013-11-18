@@ -75,6 +75,10 @@ public class Blueprint {
 		}
 	}
 
+	protected BlueprintMeta getMeta() {
+		return meta;
+	}
+
 	public BlueprintId getId() {
 		return meta.getId();
 	}

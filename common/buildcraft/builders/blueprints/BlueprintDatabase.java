@@ -38,14 +38,39 @@ import net.minecraft.nbt.NBTTagCompound;
  * @author CovertJaguar <http://www.railcraft.info/>
  */
 public class BlueprintDatabase {
+	/**
+	 * Initialize the blueprint database.
+	 * 
+	 * @param configDir config directory to read the blueprints from.
+	 */
 	public static void init(File configDir) {
 		blueprintFolder = new File(new File(configDir, "buildcraft"), "blueprints");
 
 		if (!blueprintFolder.exists()) blueprintFolder.mkdirs();
 
-		loadIndex();
+		loadIndex(); // TODO: load index in a thread
 	}
 
+	// TODO: server: send ids to the client on connect, mby full meta
+	// TODO: client: send missing blueprints to the server after receiving the server's ids
+
+	/**
+	 * Get a list with the metadata for all available blueprints.
+	 * 
+	 * @return meta data iterable
+	 */
+	public static Iterable<BlueprintMeta> getList() {
+		return blueprintMetas.values();
+	}
+
+	/**
+	 * Get a specific blueprint by id.
+	 * 
+	 * @note The blueprint will be loaded as needed.
+	 * 
+	 * @param id blueprint id
+	 * @return blueprint or null if it can't be retrieved
+	 */
 	public static Blueprint get(BlueprintId id) {
 		Blueprint ret = blueprints.get(id);
 
@@ -59,12 +84,23 @@ public class BlueprintDatabase {
 		return ret;
 	}
 
+	/**
+	 * Add a blueprint to the database and save it to disk.
+	 * 
+	 * @param blueprint blueprint to add
+	 * @return id for the added blueprint
+	 */
 	public static BlueprintId add(Blueprint blueprint) {
 		BlueprintId id = save(blueprint);
 
 		blueprint.setId(id);
 
+		BlueprintMeta prevValue = blueprintMetas.put(id, blueprint.getMeta());
 		blueprints.put(id, blueprint);
+
+		if (prevValue != null) {
+			// TODO: duplicate entry, shouldn't happen
+		}
 
 		return id;
 	}
