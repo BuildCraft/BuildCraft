@@ -51,7 +51,6 @@ import net.minecraftforge.common.ForgeChunkManager;
 import net.minecraftforge.common.ForgeChunkManager.Ticket;
 import net.minecraftforge.common.ForgeChunkManager.Type;
 import net.minecraftforge.common.ForgeDirection;
-import static net.minecraftforge.common.ForgeDirection.*;
 
 public class TileQuarry extends TileBuildCraft implements IMachine, IPowerReceptor, IBuilderInventory {
 
@@ -274,14 +273,14 @@ public class TileQuarry extends TileBuildCraft implements IMachine, IPowerRecept
 				}
 			}
 		}
-        if (columnVisitListIsUpdated && nextTarget == null && !visitList.isEmpty())
-        {
-            nextTarget = visitList.removeFirst();
-        }
-        else if (columnVisitListIsUpdated && nextTarget == null)
-        {
-            return false;
-        }
+		if (columnVisitListIsUpdated && nextTarget == null && !visitList.isEmpty())
+		{
+			nextTarget = visitList.removeFirst();
+		}
+		else if (columnVisitListIsUpdated && nextTarget == null)
+		{
+			return false;
+		}
 
 		setTarget(nextTarget[0], nextTarget[1] + 1, nextTarget[2]);
 
@@ -332,7 +331,7 @@ public class TileQuarry extends TileBuildCraft implements IMachine, IPowerRecept
 
 						if (height > 0 && height < by && worldObj.provider.dimensionId != -1)
 						{
-                            continue;
+							continue;
 						}
 
 						int blockID = worldObj.getBlockId(bx, by, bz);
@@ -342,11 +341,11 @@ public class TileQuarry extends TileBuildCraft implements IMachine, IPowerRecept
 						} else if (!BlockUtil.isSoftBlock(blockID, worldObj, bx, by, bz)) {
 							visitList.add(new int[]{bx, by, bz});
 						}
-                        if (height == 0 && !worldObj.isAirBlock(bx, by, bz))
-                        {
-                            columnHeights[searchX][searchZ] = by;
-                        }
-                        
+						if (height == 0 && !worldObj.isAirBlock(bx, by, bz))
+						{
+							columnHeights[searchX][searchZ] = by;
+						}
+
 						// Stop at two planes - generally any obstructions will have been found and will force a recompute prior to this
 						if (visitList.size() > blueprintBuilder.blueprint.sizeZ * blueprintBuilder.blueprint.sizeX * 2)
 							return;
@@ -539,7 +538,7 @@ public class TileQuarry extends TileBuildCraft implements IMachine, IPowerRecept
 			if (placedBy != null && CoreProxy.proxy.isSimulating(worldObj)) {
 				PacketDispatcher.sendPacketToPlayer(
 						new Packet3Chat(ChatMessageComponent.createFromText(String.format("[BUILDCRAFT] The quarry at %d, %d, %d will not work because there are no more chunkloaders available",
-						xCoord, yCoord, zCoord))), (Player) placedBy);
+								xCoord, yCoord, zCoord))), (Player) placedBy);
 			}
 			sendNetworkUpdate();
 			return;
@@ -568,7 +567,7 @@ public class TileQuarry extends TileBuildCraft implements IMachine, IPowerRecept
 			if (placedBy != null) {
 				PacketDispatcher.sendPacketToPlayer(
 						new Packet3Chat(ChatMessageComponent.createFromText(String.format("Quarry size is outside of chunkloading bounds or too small %d %d (%d)", xSize, zSize,
-						chunkTicket.getMaxChunkListDepth()))), (Player) placedBy);
+								chunkTicket.getMaxChunkListDepth()))), (Player) placedBy);
 			}
 			a = new DefaultAreaProvider(xCoord, yCoord, zCoord, xCoord + 10, yCoord + 4, zCoord + 10);
 
@@ -592,23 +591,23 @@ public class TileQuarry extends TileBuildCraft implements IMachine, IPowerRecept
 			ForgeDirection o = ForgeDirection.values()[worldObj.getBlockMetadata(xCoord, yCoord, zCoord)].getOpposite();
 
 			switch (o) {
-				case EAST:
-					xMin = xCoord + 1;
-					zMin = zCoord - 4 - 1;
-					break;
-				case WEST:
-					xMin = xCoord - 9 - 2;
-					zMin = zCoord - 4 - 1;
-					break;
-				case SOUTH:
-					xMin = xCoord - 4 - 1;
-					zMin = zCoord + 1;
-					break;
-				case NORTH:
-				default:
-					xMin = xCoord - 4 - 1;
-					zMin = zCoord - 9 - 2;
-					break;
+			case EAST:
+				xMin = xCoord + 1;
+				zMin = zCoord - 4 - 1;
+				break;
+			case WEST:
+				xMin = xCoord - 9 - 2;
+				zMin = zCoord - 4 - 1;
+				break;
+			case SOUTH:
+				xMin = xCoord - 4 - 1;
+				zMin = zCoord + 1;
+				break;
+			case NORTH:
+			default:
+				xMin = xCoord - 4 - 1;
+				zMin = zCoord - 9 - 2;
+				break;
 			}
 
 			box.initialize(xMin, yCoord, zMin, xMin + xSize - 1, yCoord + ySize - 1, zMin + zSize - 1);
@@ -619,7 +618,7 @@ public class TileQuarry extends TileBuildCraft implements IMachine, IPowerRecept
 	}
 
 	private void initializeBlueprintBuilder() {
-		Blueprint blueprint = new Blueprint(box.sizeX(), box.sizeY(), box.sizeZ());
+		Blueprint blueprint = Blueprint.create(box.sizeX(), box.sizeY(), box.sizeZ());
 
 		for (int it = 0; it < 2; it++) {
 			for (int i = 0; i < blueprint.sizeX; ++i) {

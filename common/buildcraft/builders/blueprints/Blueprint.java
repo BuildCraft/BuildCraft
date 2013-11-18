@@ -13,16 +13,18 @@ import buildcraft.core.inventory.StackHelper;
 import buildcraft.core.utils.BCLog;
 import buildcraft.core.utils.NBTUtils;
 import buildcraft.factory.TileQuarry;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.UUID;
+
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.world.World;
+
 import net.minecraftforge.common.ForgeDirection;
 
 /**
@@ -30,42 +32,82 @@ import net.minecraftforge.common.ForgeDirection;
  * world.
  *
  * @author CovertJaguar <http://www.railcraft.info/>
+ * @author Player
  */
 public class Blueprint {
-
-	private final String version = "Blueprint-2.0";
-	private final UUID uuid;
-	private String name;
-	private String creator;
+	private BlueprintMeta meta;
 	private final Schematic[][][] schematics;
 	public final int sizeX, sizeY, sizeZ;
 	public int anchorX, anchorY, anchorZ;
 	public ForgeDirection anchorOrientation = ForgeDirection.NORTH;
 	private List<ItemStack> costs;
 
-	public Blueprint(int sizeX, int sizeY, int sizeZ) {
-		this(sizeX, sizeY, sizeZ, UUID.randomUUID());
+	public static Blueprint create(int sizeX, int sizeY, int sizeZ) {
+		return new Blueprint(new BlueprintMeta(), sizeX, sizeY, sizeZ);
 	}
 
-	private Blueprint(int sizeX, int sizeY, int sizeZ, UUID uuid) {
-		this.uuid = uuid;
+	private Blueprint(BlueprintMeta meta, int sizeX, int sizeY, int sizeZ) {
+		this.meta = meta;
+
 		this.sizeX = sizeX;
 		this.sizeY = sizeY;
 		this.sizeZ = sizeZ;
+
 		schematics = new Schematic[sizeX][sizeY][sizeZ];
 	}
 
+	protected Blueprint(BlueprintMeta meta, NBTTagCompound nbt) {
+		this(meta, nbt.getInteger("sizeX"),
+				nbt.getInteger("sizeY"),
+				nbt.getInteger("sizeZ"));
+
+		anchorX = nbt.getInteger("anchorX");
+		anchorY = nbt.getInteger("anchorY");
+		anchorZ = nbt.getInteger("anchorZ");
+
+		anchorOrientation = ForgeDirection.getOrientation(nbt.getByte("anchorOrientation"));
+
+		NBTTagList blockList = nbt.getTagList("blocks");
+		for (int i = 0; i < blockList.tagCount(); i++) {
+			NBTTagCompound blockNBT = (NBTTagCompound) blockList.tagAt(i);
+			Schematic schematic = Schematic.createSchematicFromNBT(blockNBT);
+			schematics[schematic.x][schematic.y][schematic.z] = schematic;
+		}
+	}
+
+	public BlueprintId getId() {
+		return meta.getId();
+	}
+
+	protected void setId(BlueprintId id) {
+		meta.setId(id);
+	}
+
 	public String getName() {
-		return name;
+		return meta.getName();
 	}
 
 	public void setName(String name) {
-		this.name = name;
+		meta.setName(name);
+	}
+
+	/**
+	 * @return the creator
+	 */
+	public String getCreator() {
+		return meta.getCreator();
+	}
+
+	/**
+	 * @param creator the creator to set
+	 */
+	public void setCreator(String creator) {
+		meta.setCreator(creator);
 	}
 
 	private void setSchematic(int x, int y, int z, Schematic schematic) {
-		if (schematic == null)
-			return;
+		if (getId() != null) throw new IllegalStateException("modifying finalized blueprint");
+
 		schematic.x = x;
 		schematic.y = y;
 		schematic.z = z;
@@ -124,10 +166,6 @@ public class Blueprint {
 		return schematics[x][y][z];
 	}
 
-	public UUID getUUID() {
-		return uuid;
-	}
-
 	/**
 	 * Returns a list of all blocks in the Blueprint in the order they should be
 	 * built.
@@ -174,7 +212,10 @@ public class Blueprint {
 	}
 
 	public void writeToNBT(NBTTagCompound nbt) {
+		meta.writeToNBT(nbt);
+
 		NBTTagList blockList = new NBTTagList();
+
 		for (int y = 0; y < sizeY; y++) {
 			for (int x = 0; x < sizeX; x++) {
 				for (int z = 0; z < sizeZ; z++) {
@@ -186,12 +227,8 @@ public class Blueprint {
 				}
 			}
 		}
+
 		nbt.setTag("blocks", blockList);
-		nbt.setLong("uuidMost", uuid.getMostSignificantBits());
-		nbt.setLong("uuidLeast", uuid.getLeastSignificantBits());
-		nbt.setString("name", name);
-		nbt.setString("version", version);
-		nbt.setString("creator", creator);
 		nbt.setInteger("sizeX", sizeX);
 		nbt.setInteger("sizeY", sizeY);
 		nbt.setInteger("sizeZ", sizeZ);
@@ -201,46 +238,7 @@ public class Blueprint {
 		nbt.setByte("anchorOrientation", (byte) anchorOrientation.ordinal());
 	}
 
-	public static Blueprint readFromNBT(NBTTagCompound nbt) {
-		long most = nbt.getLong("uuidMost");
-		long least = nbt.getLong("uuidLeast");
-		int sizeX = nbt.getInteger("sizeX");
-		int sizeY = nbt.getInteger("sizeY");
-		int sizeZ = nbt.getInteger("sizeZ");
 
-		Blueprint blueprint = new Blueprint(sizeX, sizeY, sizeZ, new UUID(most, least));
-
-		blueprint.name = nbt.getString("name");
-		blueprint.creator = nbt.getString("creator");
-
-		blueprint.anchorX = nbt.getInteger("anchorX");
-		blueprint.anchorY = nbt.getInteger("anchorY");
-		blueprint.anchorZ = nbt.getInteger("anchorZ");
-
-		blueprint.anchorOrientation = ForgeDirection.getOrientation(nbt.getByte("anchorOrientation"));
-
-		NBTTagList blockList = nbt.getTagList("blocks");
-		for (int i = 0; i < blockList.tagCount(); i++) {
-			NBTTagCompound blockNBT = (NBTTagCompound) blockList.tagAt(i);
-			Schematic schematic = Schematic.createSchematicFromNBT(blockNBT);
-			blueprint.schematics[schematic.x][schematic.y][schematic.z] = schematic;
-		}
-		return blueprint;
-	}
-
-	/**
-	 * @return the creator
-	 */
-	public String getCreator() {
-		return creator;
-	}
-
-	/**
-	 * @param creator the creator to set
-	 */
-	public void setCreator(String creator) {
-		this.creator = creator;
-	}
 
 	public void rotateLeft() {
 		anchorOrientation = anchorOrientation.getRotation(ForgeDirection.DOWN);
@@ -249,7 +247,7 @@ public class Blueprint {
 	public ItemStack getBlueprintItem() {
 		ItemStack blueprint = new ItemStack(BuildCraftBuilders.blueprintItem, 1, 1);
 		NBTTagCompound nbt = NBTUtils.getItemData(blueprint);
-		NBTUtils.writeUUID(nbt, "blueprint", uuid);
+		nbt.setByteArray("blueprint", getId().toRawId());
 		return blueprint;
 	}
 }

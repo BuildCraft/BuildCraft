@@ -122,15 +122,15 @@ public class BuildCraftCore {
 
 	@SideOnly(Side.CLIENT)
 	public static Icon redLaserTexture;
-    @SideOnly(Side.CLIENT)
+	@SideOnly(Side.CLIENT)
 	public static Icon blueLaserTexture;
-    @SideOnly(Side.CLIENT)
+	@SideOnly(Side.CLIENT)
 	public static Icon stripesLaserTexture;
-    @SideOnly(Side.CLIENT)
+	@SideOnly(Side.CLIENT)
 	public static Icon transparentTexture;
 
-    @SideOnly(Side.CLIENT)
-    public static IIconProvider iconProvider;
+	@SideOnly(Side.CLIENT)
+	public static IIconProvider iconProvider;
 
 	public static int blockByEntityModel;
 	public static int legacyPipeModel;
@@ -149,7 +149,7 @@ public class BuildCraftCore {
 	public static BCTrigger triggerFullFluid = new TriggerFluidContainer(DefaultProps.TRIGGER_FULL_LIQUID, TriggerFluidContainer.State.Full);
 	public static BCTrigger triggerRedstoneActive = new TriggerRedstoneInput(DefaultProps.TRIGGER_REDSTONE_ACTIVE, true);
 	public static BCTrigger triggerRedstoneInactive = new TriggerRedstoneInput(DefaultProps.TRIGGER_REDSTONE_INACTIVE, false);
-	
+
 	public static BCTrigger triggerInventoryBelow25 = new TriggerInventoryLevel(TriggerInventoryLevel.TriggerType.BELOW_25);
 	public static BCTrigger triggerInventoryBelow50 = new TriggerInventoryLevel(TriggerInventoryLevel.TriggerType.BELOW_50);
 	public static BCTrigger triggerInventoryBelow75 = new TriggerInventoryLevel(TriggerInventoryLevel.TriggerType.BELOW_75);
@@ -168,16 +168,17 @@ public class BuildCraftCore {
 	@Instance("BuildCraft|Core")
 	public static BuildCraftCore instance;
 
-    @EventHandler
+	@EventHandler
 	public void loadConfiguration(FMLPreInitializationEvent evt) {
 
 		BCLog.initLog();
-		
-		BlueprintDatabase.configFolder = evt.getModConfigurationDirectory();
+
+		BlueprintDatabase.init(evt.getModConfigurationDirectory());
+
 		mainConfiguration = new BuildCraftConfiguration(new File(evt.getModConfigurationDirectory(), "buildcraft/main.conf"));
 		try {
 			mainConfiguration.load();
-			
+
 			Property updateCheck = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "update.check", true);
 			updateCheck.comment = "set to true for version check on startup";
 			if (updateCheck.getBoolean(true)) {
@@ -254,7 +255,7 @@ public class BuildCraftCore {
 			LanguageRegistry.addName(ironGearItem, "Iron Gear");
 			CoreProxy.proxy.registerItem(ironGearItem);
 			OreDictionary.registerOre("gearIron", new ItemStack(ironGearItem));
-			
+
 			goldGearItem = (new ItemBuildCraft(goldenGearId.getInt())).setUnlocalizedName("goldGearItem");
 			LanguageRegistry.addName(goldGearItem, "Gold Gear");
 			CoreProxy.proxy.registerItem(goldGearItem);
@@ -268,7 +269,7 @@ public class BuildCraftCore {
 			Property colorBlindProp = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "client.colorblindmode", false);
 			colorBlindProp.comment = "Set to true to enable alternate textures";
 			colorBlindMode = colorBlindProp.getBoolean(false);
-			
+
 			MinecraftForge.EVENT_BUS.register(this);
 
 		} finally {
@@ -278,8 +279,8 @@ public class BuildCraftCore {
 		}
 	}
 
-    @EventHandler
-    public void initialize(FMLInitializationEvent evt) {
+	@EventHandler
+	public void initialize(FMLInitializationEvent evt) {
 		// MinecraftForge.registerConnectionHandler(new ConnectionHandler());
 		ActionManager.registerTriggerProvider(new DefaultTriggerProvider());
 		ActionManager.registerActionProvider(new DefaultActionProvider());
@@ -323,8 +324,8 @@ public class BuildCraftCore {
 
 	}
 
-    @EventHandler
-    public void serverStarting(FMLServerStartingEvent event) {
+	@EventHandler
+	public void serverStarting(FMLServerStartingEvent event) {
 		event.registerServerCommand(new CommandBuildCraft());
 	}
 
@@ -336,16 +337,16 @@ public class BuildCraftCore {
 			iconProvider.registerIcons(event.map);
 			ActionTriggerIconProvider.INSTANCE.registerIcons(event.map);
 		} else if (event.map.textureType == 0) {
-	        BuildCraftCore.redLaserTexture = event.map.registerIcon("buildcraft:blockRedLaser");
-	        BuildCraftCore.blueLaserTexture = event.map.registerIcon("buildcraft:blockBlueLaser");
-	        BuildCraftCore.stripesLaserTexture = event.map.registerIcon("buildcraft:blockStripesLaser");
-	        BuildCraftCore.transparentTexture = event.map.registerIcon("buildcraft:blockTransparentLaser");
+			BuildCraftCore.redLaserTexture = event.map.registerIcon("buildcraft:blockRedLaser");
+			BuildCraftCore.blueLaserTexture = event.map.registerIcon("buildcraft:blockBlueLaser");
+			BuildCraftCore.stripesLaserTexture = event.map.registerIcon("buildcraft:blockStripesLaser");
+			BuildCraftCore.transparentTexture = event.map.registerIcon("buildcraft:blockTransparentLaser");
 		}
 
 	}
 
 	public void loadRecipes() {
-	        CoreProxy.proxy.addCraftingRecipe(new ItemStack(wrenchItem), "I I", " G ", " I ", 'I', Item.ingotIron, 'G', stoneGearItem);
+		CoreProxy.proxy.addCraftingRecipe(new ItemStack(wrenchItem), "I I", " G ", " I ", 'I', Item.ingotIron, 'G', stoneGearItem);
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(woodenGearItem), " S ", "S S", " S ", 'S', "stickWood");
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(stoneGearItem), " I ", "IGI", " I ", 'I', "cobblestone", 'G',
 				woodenGearItem);
@@ -353,9 +354,9 @@ public class BuildCraftCore {
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(goldGearItem), " I ", "IGI", " I ", 'I', Item.ingotGold, 'G', ironGearItem);
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(diamondGearItem), " I ", "IGI", " I ", 'I', Item.diamond, 'G', goldGearItem);
 	}
-	
+
 	@EventHandler
-    public void processIMCRequests(FMLInterModComms.IMCEvent event) {
-        InterModComms.processIMC(event);
-    }
+	public void processIMCRequests(FMLInterModComms.IMCEvent event) {
+		InterModComms.processIMC(event);
+	}
 }

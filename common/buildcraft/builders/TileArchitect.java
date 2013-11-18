@@ -93,14 +93,14 @@ public class TileArchitect extends TileBuildCraft implements IInventory {
 
 		blueprint.anchorOrientation = ForgeDirection.getOrientation(worldObj.getBlockMetadata(xCoord, yCoord, zCoord));
 
-		BlueprintDatabase.addBlueprint(blueprint);
-		
+		BlueprintDatabase.add(blueprint);
+
 		setInventorySlotContents(1, blueprint.getBlueprintItem());
 		setInventorySlotContents(0, null);
 	}
 
 	private Blueprint createMaskBlueprint(Box box) {
-		Blueprint blueprint = new Blueprint(box.sizeX(), box.sizeY(), box.sizeZ());
+		Blueprint blueprint = Blueprint.create(box.sizeX(), box.sizeY(), box.sizeZ());
 
 		for (int x = box.xMin; x <= box.xMax; ++x) {
 			for (int y = box.yMin; y <= box.yMax; ++y) {
@@ -120,7 +120,7 @@ public class TileArchitect extends TileBuildCraft implements IInventory {
 	}
 
 	private Blueprint createStandardBlueprint(Box box) {
-		Blueprint blueprint = new Blueprint(box.sizeX(), box.sizeY(), box.sizeZ());
+		Blueprint blueprint = Blueprint.create(box.sizeX(), box.sizeY(), box.sizeZ());
 
 		for (int x = box.xMin; x <= box.xMax; ++x) {
 			for (int y = box.yMin; y <= box.yMax; ++y) {

@@ -8,127 +8,225 @@
  */
 package buildcraft.builders.blueprints;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-import java.util.UUID;
+import java.util.WeakHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
+
 import net.minecraft.nbt.CompressedStreamTools;
+import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 
 /**
  *
+ * @author Player
  * @author CovertJaguar <http://www.railcraft.info/>
  */
 public class BlueprintDatabase {
+	public static void init(File configDir) {
+		blueprintFolder = new File(new File(configDir, "buildcraft"), "blueprints");
 
-	public static File configFolder;
-	private static Map<UUID, Blueprint> blueprints = new HashMap<UUID, Blueprint>();
+		if (!blueprintFolder.exists()) blueprintFolder.mkdirs();
 
-	public static Blueprint getBlueprint(UUID uuid) {
-		if(uuid == null)
-			return null;
-		Blueprint blueprint = blueprints.get(uuid);
-		if (blueprint == null) {
-			blueprint = loadBlueprint(uuid);
-			addBlueprint(blueprint);
+		loadIndex();
+	}
+
+	public static Blueprint get(BlueprintId id) {
+		Blueprint ret = blueprints.get(id);
+
+		if (ret == null) {
+			BlueprintMeta meta = blueprintMetas.get(id);
+			if (meta == null) return null; // no meta -> no bpt as well
+
+			ret = load(meta);
 		}
-		return blueprint;
+
+		return ret;
 	}
 
-	public static void addBlueprint(Blueprint blueprint) {
-		if (blueprint == null)
-			return;
-		blueprints.put(blueprint.getUUID(), blueprint);
+	public static BlueprintId add(Blueprint blueprint) {
+		BlueprintId id = save(blueprint);
+
+		blueprint.setId(id);
+
+		blueprints.put(id, blueprint);
+
+		return id;
 	}
 
-	private static File getBlueprintFolder() {
-		File blueprintFolder = new File(configFolder, "buildcraft/blueprints/");
-		if (!blueprintFolder.exists()) {
-			blueprintFolder.mkdirs();
-		}
-		return blueprintFolder;
-	}
-
-	private static String uuidToString(UUID uuid) {
-		return String.format(Locale.ENGLISH, "%x%x", uuid.getMostSignificantBits(), uuid.getLeastSignificantBits());
-	}
-
-	public static void saveBlueprint(Blueprint blueprint) {
+	private static BlueprintId save(Blueprint blueprint) {
 		NBTTagCompound nbt = new NBTTagCompound();
 		blueprint.writeToNBT(nbt);
 
-		File blueprintFile = new File(getBlueprintFolder(), String.format(Locale.ENGLISH, "%x%x-%s.nbt", uuidToString(blueprint.getUUID()), blueprint.getName()));
-
-		if (blueprintFile.exists())
-			return;
+		ByteArrayOutputStream bos = new ByteArrayOutputStream();
+		DataOutputStream os = new DataOutputStream(bos);
 
 		try {
-			CompressedStreamTools.write(nbt, blueprintFile);
-		} catch (IOException ex) {
-			Logger.getLogger("Buildcraft").log(Level.SEVERE, String.format("Failed to save Blueprint file: %s %s", blueprintFile.getName(), ex.getMessage()));
+			NBTBase.writeNamedTag(nbt, os);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
 		}
+
+		byte[] data = bos.toByteArray();
+
+		BlueprintId id = BlueprintId.generate(data);
+
+		File blueprintFile = new File(blueprintFolder, String.format(Locale.ENGLISH, "%s-%s.nbt", id.toString(), blueprint.getName()));
+
+		if (!blueprintFile.exists()) {
+			OutputStream gzOs = null;
+			try {
+				gzOs = new GZIPOutputStream(new FileOutputStream(blueprintFile));
+
+				gzOs.write(data);
+
+				CompressedStreamTools.write(nbt, blueprintFile);
+			} catch (IOException ex) {
+				Logger.getLogger("Buildcraft").log(Level.SEVERE, String.format("Failed to save Blueprint file: %s %s", blueprintFile.getName(), ex.getMessage()));
+			} finally {
+				try {
+					if (gzOs != null) gzOs.close();
+				} catch (IOException e) { }
+			}
+		}
+
+		return id;
 	}
 
-	public static void saveBlueprints() {
-		for (Blueprint blueprint : blueprints.values()) {
-			saveBlueprint(blueprint);
-		}
-	}
-
-	private static Blueprint loadBlueprint(final UUID uuid) {
+	private static void loadIndex() {
 		FilenameFilter filter = new FilenameFilter() {
-			private String uuidString = uuidToString(uuid);
-
 			@Override
 			public boolean accept(File dir, String name) {
-				return name.startsWith(uuidString);
+				return name.endsWith(fileExt);
 			}
 		};
 
-		NBTTagCompound nbt = null;
-		File blueprintFolder = getBlueprintFolder();
 		for (File blueprintFile : blueprintFolder.listFiles(filter)) {
+			RawBlueprint rawBlueprint = load(blueprintFile);
+
+			if (rawBlueprint == null) {
+				// TODO: delete?
+				continue;
+			}
+
+			BlueprintMeta meta;
+
 			try {
-				nbt = CompressedStreamTools.read(blueprintFile);
-				break;
-			} catch (IOException ex) {
-				Logger.getLogger("Buildcraft").log(Level.SEVERE, String.format("Failed to load Blueprint file: %s %s", blueprintFile.getName(), ex.getMessage()));
+				meta = new BlueprintMeta(rawBlueprint.id, rawBlueprint.nbt);
+			} catch (Exception e) {
+				// TODO: delete?
+				continue;
+			}
+
+			// TODO: check if the filename is matching id+name
+
+			BlueprintMeta prevValue = blueprintMetas.put(meta.getId(), meta);
+
+			if (prevValue != null) {
+				// TODO: duplicate entry, handle
 			}
 		}
+	}
 
-		if (nbt == null) {
+	private static Blueprint load(final BlueprintMeta meta) {
+		FilenameFilter filter = new FilenameFilter() {
+			String prefix = meta.getId().toString();
+
+			@Override
+			public boolean accept(File dir, String name) {
+				return name.endsWith(fileExt) && name.startsWith(prefix);
+			}
+		};
+
+		for (File blueprintFile : blueprintFolder.listFiles(filter)) {
+			RawBlueprint rawBlueprint = load(blueprintFile);
+
+			if (rawBlueprint == null) {
+				continue;
+			}
+
+			Blueprint blueprint;
+
+			try {
+				blueprint = new Blueprint(meta, rawBlueprint.nbt);
+			} catch (Exception e) {
+				// TODO: delete?
+				continue;
+			}
+
+			blueprints.put(blueprint.getId(), blueprint);
+
+			return blueprint;
+		}
+
+		return null;
+	}
+
+	private static RawBlueprint load(File file) {
+		InputStream fileIs = null;
+		ByteArrayOutputStream decompressedStream;
+
+		try {
+			fileIs = new GZIPInputStream(new FileInputStream(file), bufferSize);
+			decompressedStream = new ByteArrayOutputStream(bufferSize * 4);
+			byte buffer[] = new byte[bufferSize];
+			int len;
+
+			while ((len = fileIs.read(buffer)) != -1) {
+				decompressedStream.write(buffer, 0, len);
+			}
+		} catch (IOException e) {
+			Logger.getLogger("Buildcraft").log(Level.SEVERE, String.format("Failed to load Blueprint file: %s %s", file.getName(), e.getMessage()));
+			return null;
+		} finally {
+			try {
+				fileIs.close();
+			} catch (IOException e) {}
+		}
+
+		byte[] data = decompressedStream.toByteArray();
+		BlueprintId id = BlueprintId.generate(data);
+
+		DataInputStream dataIs = new DataInputStream(new ByteArrayInputStream(data));
+		NBTTagCompound nbt;
+
+		try {
+			nbt = CompressedStreamTools.read(dataIs);
+		} catch (IOException e) {
 			return null;
 		}
-		return Blueprint.readFromNBT(nbt);
+
+		return new RawBlueprint(id, nbt);
 	}
 
-	public static void loadBlueprints() {
-		FilenameFilter filter = new FilenameFilter() {
-			@Override
-			public boolean accept(File dir, String name) {
-				return name.endsWith(".nbt");
-			}
-		};
-		File blueprintFolder = getBlueprintFolder();
-		for (File blueprintFile : blueprintFolder.listFiles(filter)) {
-			try {
-				NBTTagCompound nbt = CompressedStreamTools.read(blueprintFile);
-				addBlueprint(Blueprint.readFromNBT(nbt));
-			} catch (IOException ex) {
-				Logger.getLogger("Buildcraft").log(Level.SEVERE, String.format("Failed to load Blueprint file: %s %s", blueprintFile.getName(), ex.getMessage()));
-			}
+	private static class RawBlueprint {
+		RawBlueprint(BlueprintId id, NBTTagCompound nbt) {
+			this.id = id;
+			this.nbt = nbt;
 		}
+
+		final BlueprintId id;
+		final NBTTagCompound nbt;
 	}
 
-	@SideOnly(Side.CLIENT)
-	public static void sendBlueprintsToServer() {
-		// TODO
-	}
+	private static final int bufferSize = 8192;
+	private static final String fileExt = ".bpt";
+	private static File blueprintFolder;
+	private static Map<BlueprintId, BlueprintMeta> blueprintMetas = new HashMap<BlueprintId, BlueprintMeta>();
+	private static Map<BlueprintId, Blueprint> blueprints = new WeakHashMap<BlueprintId, Blueprint>();
 }
