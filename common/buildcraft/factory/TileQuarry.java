@@ -7,10 +7,12 @@
  */
 package buildcraft.factory;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import net.minecraft.block.Block;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -23,6 +25,7 @@ import net.minecraftforge.common.ForgeChunkManager;
 import net.minecraftforge.common.ForgeChunkManager.Ticket;
 import net.minecraftforge.common.ForgeChunkManager.Type;
 import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.event.ForgeEventFactory;
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftFactory;
 import buildcraft.api.core.IAreaProvider;
@@ -424,14 +427,21 @@ public class TileQuarry extends TileBuildCraft implements IMachine, IPowerRecept
 			// Share this with mining well!
 
 			List<ItemStack> stacks = BlockUtil.getItemStackFromBlock(worldObj, i, j, k);
-
-			if (stacks != null) {
-				for (ItemStack s : stacks) {
-					if (s != null) {
-						mineStack(s);
-					}
-				}
-			}
+			
+			
+			/* Mod compatibility.  Call HarvestDropsEvent to let any mods using it affect our drop list like they would with a regular tool. */
+			// -DemoXin
+			ArrayList<ItemStack> dropList = new ArrayList<ItemStack>(stacks);
+			float dropChance = ForgeEventFactory.fireBlockHarvesting(dropList, worldObj, Block.blocksList[blockId], i, j, k, worldObj.getBlockMetadata(i, j, k), 0, 1.0F, false, null);
+            
+            for (ItemStack s : stacks)
+            {
+                if (worldObj.rand.nextFloat() <= dropChance)
+                {
+                	mineStack(s);
+                }
+            }
+            /* End HarvestDropsEvent patch */
 
 			worldObj.playAuxSFXAtEntity(null, 2001, i, j, k, blockId + (worldObj.getBlockMetadata(i, j, k) << 12));
 			worldObj.setBlockToAir(i, j, k);
