@@ -266,7 +266,7 @@ public class BuildCraftTransport {
 			pipeWaterproof.setUnlocalizedName("pipeWaterproof");
 			LanguageRegistry.addName(pipeWaterproof, "Pipe Sealant");
 			CoreProxy.proxy.registerItem(pipeWaterproof);
-			
+
 			genericPipeBlock = new BlockGenericPipe(genericPipeId.getInt());
 			CoreProxy.proxy.registerBlock(genericPipeBlock.setUnlocalizedName("pipeBlock"), ItemBlock.class);
 
@@ -411,7 +411,7 @@ public class BuildCraftTransport {
 		for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
 			actionPipeDirection[direction.ordinal()] = new ActionPipeDirection(-1, direction);
 		}
-		
+
 		for (PowerMode limit : PowerMode.VALUES) {
 			actionPowerLimiter[limit.ordinal()] = new ActionPowerLimiter(-1, limit);
 		}
@@ -425,7 +425,7 @@ public class BuildCraftTransport {
 		// Add pipe recipes
 		for (PipeRecipe pipe : pipeRecipes) {
 			if (pipe.isShapeless) {
-			        CoreProxy.proxy.addShapelessRecipe(pipe.result, pipe.input);
+				CoreProxy.proxy.addShapelessRecipe(pipe.result, pipe.input);
 			} else {
 				CoreProxy.proxy.addCraftingRecipe(pipe.result, pipe.input);
 			}
@@ -440,20 +440,16 @@ public class BuildCraftTransport {
 		GameRegistry.addRecipe(facadeItem.new FacadeRecipe());
 
 		// Assembly table recipes, moved from PreInit phase to Init, all mods should be done adding to the OreDictionary by now
-		AssemblyRecipe.assemblyRecipes.add(new AssemblyRecipe(new Object[]{"dyeRed", 1, new ItemStack(Item.redstone, 1),
-			new ItemStack(Item.ingotIron, 1)}, 500, new ItemStack(redPipeWire, 8)));
-		AssemblyRecipe.assemblyRecipes.add(new AssemblyRecipe(new Object[]{"dyeBlue", 1, new ItemStack(Item.redstone, 1),
-			new ItemStack(Item.ingotIron, 1)}, 500, new ItemStack(bluePipeWire, 8)));
-		AssemblyRecipe.assemblyRecipes.add(new AssemblyRecipe(new Object[]{"dyeGreen", 1, new ItemStack(Item.redstone, 1),
-			new ItemStack(Item.ingotIron, 1)}, 500, new ItemStack(greenPipeWire, 8)));
-		AssemblyRecipe.assemblyRecipes.add(new AssemblyRecipe(new Object[]{"dyeYellow", 1, new ItemStack(Item.redstone, 1),
-			new ItemStack(Item.ingotIron, 1)}, 500, new ItemStack(yellowPipeWire, 8)));
+		AssemblyRecipe.assemblyRecipes.add(new AssemblyRecipe(500, new ItemStack(redPipeWire, 8), "dyeRed", 1, new ItemStack(Item.redstone), new ItemStack(Item.ingotIron)));
+		AssemblyRecipe.assemblyRecipes.add(new AssemblyRecipe(500, new ItemStack(bluePipeWire, 8), "dyeBlue", 1, new ItemStack(Item.redstone), new ItemStack(Item.ingotIron)));
+		AssemblyRecipe.assemblyRecipes.add(new AssemblyRecipe(500, new ItemStack(greenPipeWire, 8), "dyeGreen", 1, new ItemStack(Item.redstone), new ItemStack(Item.ingotIron)));
+		AssemblyRecipe.assemblyRecipes.add(new AssemblyRecipe(500, new ItemStack(yellowPipeWire, 8), "dyeYellow", 1, new ItemStack(Item.redstone), new ItemStack(Item.ingotIron)));
 		AssemblyRecipe.assemblyRecipes.add(new AssemblyRecipe(new ItemStack[]{new ItemStack(pipeStructureCobblestone)}, 1000, new ItemStack(plugItem, 8)));
 	}
 
 	@EventHandler
 	public void processIMCRequests(IMCEvent event) {
-	    InterModComms.processIMC(event);
+		InterModComms.processIMC(event);
 	}
 
 	public static Item buildPipe(int defaultID, Class<? extends Pipe> clas, String descr, Object... ingredients) {

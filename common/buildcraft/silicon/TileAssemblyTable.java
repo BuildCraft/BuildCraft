@@ -4,12 +4,16 @@ import buildcraft.api.gates.IAction;
 import buildcraft.api.recipes.AssemblyRecipe;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.IMachine;
+import buildcraft.core.inventory.ITransactor;
 import buildcraft.core.inventory.StackHelper;
+import buildcraft.core.inventory.Transactor;
+import buildcraft.core.inventory.filters.ArrayStackFilter;
 import buildcraft.core.network.PacketIds;
 import buildcraft.core.network.PacketNBT;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
 import cpw.mods.fml.common.FMLCommonHandler;
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import net.minecraft.entity.item.EntityItem;
@@ -99,34 +103,7 @@ public class TileAssemblyTable extends TileEntity implements IMachine, IInventor
 
 			if (currentRecipe.canBeDone(items)) {
 
-				for (ItemStack in : currentRecipe.input) {
-					if (in == null) {
-						continue; // Optimisation, reduces calculation for a null ingredient
-					}
-
-					int found = 0; // Amount of ingredient found in inventory
-
-					for (int i = 0; i < items.length; ++i) {
-						if (items[i] == null) {
-							continue; // Broken out of large if statement, increases clarity
-						}
-
-						if (StackHelper.instance().isCraftingEquivalent(in, items[i], true)) {
-
-							int supply = items[i].stackSize;
-							int toBeFound = in.stackSize - found;
-
-							if (supply >= toBeFound) {
-								found += decrStackSize(i, toBeFound).stackSize; // Adds the amount of ingredient taken (in this case the total still needed)
-							} else {
-								found += decrStackSize(i, supply).stackSize; // Adds the amount of ingredient taken (in this case the total in that slot)
-							}
-							if (found >= in.stackSize) {
-								break; // Breaks out of the for loop when the required amount of ingredient has been taken
-							}
-						}
-					}
-				}
+				useItems();
 
 				ItemStack remaining = currentRecipe.output.copy();
 				remaining.stackSize -= Utils.addToRandomInventoryAround(worldObj, xCoord, yCoord, zCoord, remaining);
@@ -142,6 +119,30 @@ public class TileAssemblyTable extends TileEntity implements IMachine, IInventor
 				}
 
 				setNextCurrentRecipe();
+			}
+		}
+	}
+
+	private void useItems() {
+		ITransactor tran = Transactor.getTransactorFor(this);
+		Object[] input = currentRecipe.input;
+		for (int i = 0; i < input.length; i++) {
+			if (input[i] instanceof ItemStack) {
+				ItemStack requirement = (ItemStack) input[i];
+				for (int num = 0; num < requirement.stackSize; num++) {
+					tran.remove(new ArrayStackFilter(requirement), ForgeDirection.UNKNOWN, true);
+				}
+			} else if (input[i] instanceof ArrayList) {
+				ArrayList<ItemStack> oreList = (ArrayList<ItemStack>) input[i];
+				int required = (Integer) input[i + 1];
+				for (ItemStack ore : oreList) {
+					for (int num = 0; num < required; num++) {
+						if (tran.remove(new ArrayStackFilter(ore), ForgeDirection.UNKNOWN, true) != null)
+							required--;
+					}
+					if (required <= 0)
+						break;
+				}
 			}
 		}
 	}
