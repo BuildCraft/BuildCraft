@@ -9,19 +9,55 @@ package buildcraft.core.gui;
 
 import buildcraft.core.gui.slots.IPhantomSlot;
 import buildcraft.core.gui.slots.SlotBase;
+import buildcraft.core.gui.widgets.Widget;
 import buildcraft.core.inventory.StackHelper;
+import java.util.ArrayList;
+import java.util.List;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
+import net.minecraft.inventory.ICrafting;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 
 public abstract class BuildCraftContainer extends Container {
 
+	private List<Widget> widgets = new ArrayList<Widget>();
 	private int inventorySize;
 
 	public BuildCraftContainer(int inventorySize) {
 		this.inventorySize = inventorySize;
+	}
+
+	public List<Widget> getWidgets() {
+		return widgets;
+	}
+
+	public void addSlot(Slot slot) {
+		addSlotToContainer(slot);
+	}
+
+	public void addWidget(Widget widget) {
+		widget.addToContainer(this);
+		widgets.add(widget);
+	}
+
+	@Override
+	public void addCraftingToCrafters(ICrafting player) {
+		super.addCraftingToCrafters(player);
+		for (Widget widget : widgets) {
+			widget.initWidget(player);
+		}
+	}
+
+	@Override
+	public void detectAndSendChanges() {
+		super.detectAndSendChanges();
+		for (Widget widget : widgets) {
+			for (ICrafting player : (List<ICrafting>) crafters) {
+				widget.updateWidget(player);
+			}
+		}
 	}
 
 	@Override

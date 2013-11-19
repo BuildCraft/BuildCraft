@@ -7,28 +7,55 @@
  */
 package buildcraft.builders.gui;
 
+import buildcraft.api.filler.FillerManager;
 import buildcraft.builders.TileFiller;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.gui.GuiBuildCraft;
+import buildcraft.core.gui.GuiTools;
+import buildcraft.core.gui.buttons.GuiBetterButton;
+import buildcraft.core.gui.buttons.StandardButtonTextureSets;
+import buildcraft.core.network.PacketGuiReturn;
 import buildcraft.core.utils.StringUtils;
-import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.client.gui.GuiButton;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.util.ResourceLocation;
-import org.lwjgl.opengl.GL11;
 
 public class GuiFiller extends GuiBuildCraft {
 
 	private static final ResourceLocation TEXTURE = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_GUI + "/filler.png");
-	private static final ResourceLocation BLOCK_TEXTURE = TextureMap.locationBlocksTexture;
 	IInventory playerInventory;
 	TileFiller filler;
 
 	public GuiFiller(IInventory playerInventory, TileFiller filler) {
-		super(new ContainerFiller(playerInventory, filler), filler);
+		super(new ContainerFiller(playerInventory, filler), filler, TEXTURE);
 		this.playerInventory = playerInventory;
 		this.filler = filler;
 		xSize = 175;
 		ySize = 240;
+	}
+
+	@Override
+	public void initGui() {
+		super.initGui();
+		buttonList.clear();
+		int w = (width - xSize) / 2;
+		int h = (height - ySize) / 2;
+
+		buttonList.add(new GuiBetterButton(0, w + 80 - 18, h + 30, 10, StandardButtonTextureSets.LEFT_BUTTON, ""));
+		buttonList.add(new GuiBetterButton(1, w + 80 + 16 + 8, h + 30, 10, StandardButtonTextureSets.RIGHT_BUTTON, ""));
+	}
+
+	@Override
+	protected void actionPerformed(GuiButton button) {
+		super.actionPerformed(button);
+
+		if (button.id == 0)
+			filler.currentPattern = FillerManager.registry.getPreviousPattern(filler.currentPattern);
+		if (button.id == 1)
+			filler.currentPattern = FillerManager.registry.getNextPattern(filler.currentPattern);
+
+		PacketGuiReturn pkt = new PacketGuiReturn(filler);
+		pkt.sendPacket();
 	}
 
 	@Override
@@ -37,58 +64,6 @@ public class GuiFiller extends GuiBuildCraft {
 		fontRenderer.drawString(title, getCenteredOffset(title), 6, 0x404040);
 		fontRenderer.drawString(StringUtils.localize("gui.filling.resources"), 8, 74, 0x404040);
 		fontRenderer.drawString(StringUtils.localize("gui.inventory"), 8, 142, 0x404040);
-
-		if (filler.currentPattern != null) {
-			drawForegroundSelection(filler.currentPattern.getName());
-		}
+		GuiTools.drawCenteredString(fontRenderer, filler.currentPattern.getDisplayName(), 56);
 	}
-
-	@Override
-	protected void drawGuiContainerBackgroundLayer(float f, int x, int y) {
-
-		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-		mc.renderEngine.bindTexture(TEXTURE);
-
-		drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
-
-		if (filler.currentPattern != null) {
-			mc.renderEngine.bindTexture(BLOCK_TEXTURE);
-			drawTexturedModelRectFromIcon(guiLeft + patternSymbolX, guiTop + patternSymbolY, filler.currentPattern.getTexture(), 16, 16);
-		}
-
-	}
-
-	public boolean intersectsWith(int i, int j) {
-
-		if (i >= patternSymbolX && i <= patternSymbolX + 16 && j >= patternSymbolY && j <= patternSymbolY + 16)
-			return true;
-
-		return false;
-	}
-
-	protected void drawForegroundSelection(String tag) {
-
-		if (!intersectsWith(lastX - guiLeft, lastY - guiTop))
-			return;
-
-		if (tag.length() > 0) {
-			int i2 = (lastX - guiLeft) + 12;
-			int k2 = lastY - guiTop - 12;
-			int l2 = fontRenderer.getStringWidth(tag);
-			drawGradientRect(i2 - 3, k2 - 3, i2 + l2 + 3, k2 + 8 + 3, 0xc0000000, 0xc0000000);
-			fontRenderer.drawStringWithShadow(tag, i2, k2, -1);
-		}
-	}
-
-	@Override
-	protected void mouseMovedOrUp(int i, int j, int k) {
-		super.mouseMovedOrUp(i, j, k);
-
-		lastX = i;
-		lastY = j;
-	}
-	private int lastX = 0;
-	private int lastY = 0;
-	public final int patternSymbolX = 125;
-	public final int patternSymbolY = 34;
 }

@@ -11,12 +11,14 @@ import buildcraft.api.gates.IAction;
 import buildcraft.api.gates.ITrigger;
 import buildcraft.api.gates.ITriggerParameter;
 import buildcraft.core.gui.GuiAdvancedInterface;
+import buildcraft.core.triggers.BCAction;
 import buildcraft.core.utils.StringUtils;
 import buildcraft.transport.Gate.GateKind;
 import buildcraft.transport.Pipe;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import java.util.Iterator;
+import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Icon;
@@ -102,6 +104,17 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 		}
 
 		@Override
+		public ResourceLocation getTexture() {
+			IAction action = pipe.gate.getAction(slot);
+			if (action instanceof BCAction) {
+				BCAction bcAction = (BCAction) action;
+				if (bcAction.getTextureMap() == 0)
+					return TextureMap.locationBlocksTexture;
+			}
+			return super.getTexture();
+		}
+
+		@Override
 		public boolean isDefined() {
 			return pipe.gate.getAction(slot) != null;
 		}
@@ -143,7 +156,7 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 	}
 
 	public GuiGateInterface(IInventory playerInventory, Pipe pipe) {
-		super(new ContainerGateInterface(playerInventory, pipe), null);
+		super(new ContainerGateInterface(playerInventory, pipe), null, null);
 
 		_container = (ContainerGateInterface) this.inventorySlots;
 

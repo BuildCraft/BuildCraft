@@ -57,8 +57,8 @@ public abstract class GuiEngine extends GuiBuildCraft {
 		}
 	}
 
-	public GuiEngine(BuildCraftContainer container, IInventory inventory) {
-		super(container, inventory);
+	public GuiEngine(BuildCraftContainer container, IInventory inventory, ResourceLocation texture) {
+		super(container, inventory, texture);
 	}
 
 	@Override

@@ -27,7 +27,7 @@ public class GuiCombustionEngine extends GuiEngine {
 	private static final ResourceLocation BLOCK_TEXTURE = TextureMap.locationBlocksTexture;
 
 	public GuiCombustionEngine(InventoryPlayer inventoryplayer, TileEngineWithInventory tileEngine) {
-		super(new ContainerEngine(inventoryplayer, tileEngine), tileEngine);
+		super(new ContainerEngine(inventoryplayer, tileEngine), tileEngine, TEXTURE);
 	}
 
 	@Override
@@ -40,11 +40,9 @@ public class GuiCombustionEngine extends GuiEngine {
 
 	@Override
 	protected void drawGuiContainerBackgroundLayer(float f, int x, int y) {
-		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-		mc.renderEngine.bindTexture(TEXTURE);
+		super.drawGuiContainerBackgroundLayer(f, x, y);
 		int j = (width - xSize) / 2;
 		int k = (height - ySize) / 2;
-		drawTexturedModalRect(j, k, 0, 0, xSize, ySize);
 
 		TileEngineIron engine = (TileEngineIron) tile;
 

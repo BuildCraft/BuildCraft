@@ -1,12 +1,10 @@
 /**
- * Copyright (c) SpaceToad, 2011
- * http://www.mod-buildcraft.com
+ * Copyright (c) SpaceToad, 2011 http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License
+ * 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-
 package buildcraft.core;
 
 import buildcraft.api.core.IAreaProvider;
@@ -16,6 +14,9 @@ import buildcraft.api.core.Position;
 import buildcraft.core.network.TileNetworkData;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.nbt.NBTTagCompound;
@@ -27,7 +28,6 @@ public class Box implements IBox {
 	int xMin, yMin, zMin, xMax, yMax, zMax;
 	public @TileNetworkData
 	boolean initialized;
-
 	private EntityBlock lasers[];
 
 	public Box() {
@@ -57,8 +57,8 @@ public class Box implements IBox {
 		this.xMax = xMax;
 		this.yMax = yMax;
 		this.zMax = zMax;
-		initialized = !(xMin == Integer.MAX_VALUE || yMin == Integer.MAX_VALUE || zMin == Integer.MAX_VALUE || xMax == Integer.MAX_VALUE ||
-		                yMax == Integer.MAX_VALUE || zMax == Integer.MAX_VALUE );
+		initialized = !(xMin == Integer.MAX_VALUE || yMin == Integer.MAX_VALUE || zMin == Integer.MAX_VALUE || xMax == Integer.MAX_VALUE
+				|| yMax == Integer.MAX_VALUE || zMax == Integer.MAX_VALUE);
 	}
 
 	public void initialize(Box box) {
@@ -225,6 +225,30 @@ public class Box implements IBox {
 		}
 	}
 
+	public void writeToStream(DataOutputStream stream) throws IOException {
+		stream.writeBoolean(initialized);
+		
+		stream.writeInt(xMin);
+		stream.writeInt(yMin);
+		stream.writeInt(zMin);
+
+		stream.writeInt(xMax);
+		stream.writeInt(yMax);
+		stream.writeInt(zMax);
+	}
+
+	public void readFromStream(DataInputStream stream) throws IOException {
+		initialized = stream.readBoolean();
+		
+		xMin = stream.readInt();
+		yMin = stream.readInt();
+		zMin = stream.readInt();
+
+		xMax = stream.readInt();
+		yMax = stream.readInt();
+		zMax = stream.readInt();
+	}
+
 	public void writeToNBT(NBTTagCompound nbttagcompound) {
 
 		nbttagcompound.setInteger("xMin", xMin);
@@ -240,5 +264,4 @@ public class Box implements IBox {
 	public String toString() {
 		return "{" + xMin + ", " + xMax + "}, {" + yMin + ", " + yMax + "}, {" + zMin + ", " + zMax + "}";
 	}
-
 }

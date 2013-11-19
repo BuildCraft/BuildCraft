@@ -28,7 +28,7 @@ public class GuiRefinery extends GuiAdvancedInterface {
 	ContainerRefinery container;
 
 	public GuiRefinery(InventoryPlayer inventory, TileRefinery refinery) {
-		super(new ContainerRefinery(inventory, refinery), refinery);
+		super(new ContainerRefinery(inventory, refinery), refinery, TEXTURE);
 
 		xSize = 175;
 		ySize = 207;

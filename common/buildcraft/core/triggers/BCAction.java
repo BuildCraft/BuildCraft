@@ -35,7 +35,7 @@ public abstract class BCAction implements IAction {
 		return this.legacyId;
 	}
 
-	public int getIconIndex(){
+	public int getIconIndex() {
 		return 0;
 	}
 
@@ -43,6 +43,10 @@ public abstract class BCAction implements IAction {
 	@SideOnly(Side.CLIENT)
 	public Icon getIcon() {
 		return ActionTriggerIconProvider.INSTANCE.getIcon(getIconIndex());
+	}
+
+	public int getTextureMap() {
+		return 1;
 	}
 
 	@Override
