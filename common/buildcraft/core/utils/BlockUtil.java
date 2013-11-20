@@ -65,8 +65,7 @@ public class BlockUtil {
 
 	public static void breakBlock(World world, int x, int y, int z, int forcedLifespan) {
 		if (!world.isAirBlock(x, y, z) && BuildCraftCore.dropBrokenBlocks && !world.isRemote && world.getGameRules().getGameRuleBooleanValue("doTileDrops")) {
-			int blockId = world.getBlockId(x, y, z);
-			List<ItemStack> items = Block.blocksList[blockId].getBlockDropped(world, x, y, z, world.getBlockMetadata(x, y, z), 0);
+			List<ItemStack> items = getItemStackFromBlock(world, x, y, z);
 
 			for (ItemStack item : items) {
 				float var = 0.7F;
