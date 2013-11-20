@@ -44,10 +44,8 @@ public class BlockUtil {
 
 		int meta = world.getBlockMetadata(i, j, k);
 
-		// Proper HarvestDropsEvent posting patch
-		// -DemoXin
 		ArrayList<ItemStack> dropsList = block.getBlockDropped(world, i, j, k, meta, 0);
-		float dropChance = ForgeEventFactory.fireBlockHarvesting(dropsList, world, block, i, j, k, world.getBlockMetadata(i, j, k), 0, 1.0F, false, null);
+		float dropChance = ForgeEventFactory.fireBlockHarvesting(dropsList, world, block, i, j, k, meta, 0, 1.0F, false, null);
         
 		ArrayList<ItemStack> returnList = new ArrayList<ItemStack>();
         for (ItemStack s : dropsList)
@@ -59,7 +57,6 @@ public class BlockUtil {
         }
 
 		return returnList;
-		// End HarvestDropsEvent fix
 	}
 
 	public static void breakBlock(World world, int x, int y, int z) {
