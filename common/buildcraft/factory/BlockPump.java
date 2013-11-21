@@ -83,6 +83,15 @@ public class BlockPump extends BlockContainer {
 		return false;
 	}
 
+	@Override
+	public void onNeighborBlockChange(World world, int x, int y, int z, int id) {
+		super.onNeighborBlockChange(world, x, y, z, id);
+		TileEntity tile = world.getBlockTileEntity(x, y, z);
+		if (tile instanceof TilePump) {
+			((TilePump) tile).onNeighborBlockChange(id);
+		}
+	}
+
 	@SuppressWarnings({"unchecked", "rawtypes"})
 	@Override
 	public void addCreativeItems(ArrayList itemList) {
