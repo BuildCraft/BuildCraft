@@ -1,5 +1,6 @@
 package buildcraft.silicon;
 
+import buildcraft.api.power.ILaserTarget;
 import buildcraft.BuildCraftCore;
 import buildcraft.api.gates.IAction;
 import buildcraft.api.gates.IActionReceptor;
@@ -413,8 +414,8 @@ public class TileAdvancedCraftingTable extends TileEntity implements IInventory,
 	}
 
 	@Override
-	public boolean hasCurrentWork() {
-		return craftable && !justCrafted && lastMode != ActionMachineControl.Mode.Off;
+	public boolean requiresLaserEnergy() {
+		return craftable && !justCrafted && lastMode != ActionMachineControl.Mode.Off && storedEnergy < REQUIRED_POWER * 10;
 	}
 
 	@Override
@@ -440,7 +441,7 @@ public class TileAdvancedCraftingTable extends TileEntity implements IInventory,
 
 	@Override
 	public boolean isActive() {
-		return hasCurrentWork();
+		return requiresLaserEnergy();
 	}
 
 	@Override

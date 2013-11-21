@@ -1,5 +1,6 @@
 package buildcraft.silicon;
 
+import buildcraft.api.power.ILaserTarget;
 import buildcraft.api.gates.IAction;
 import buildcraft.api.recipes.AssemblyRecipe;
 import buildcraft.core.DefaultProps;
@@ -69,12 +70,6 @@ public class TileAssemblyTable extends TileEntity implements IMachine, IInventor
 		}
 
 		return result;
-	}
-
-	@Override
-	public void receiveLaserEnergy(float energy) {
-		energyStored += energy;
-		recentEnergy[tick] += energy;
 	}
 
 	@Override
@@ -456,8 +451,14 @@ public class TileAssemblyTable extends TileEntity implements IMachine, IInventor
 	}
 
 	@Override
-	public boolean hasCurrentWork() {
-		return currentRecipe != null;
+	public boolean requiresLaserEnergy() {
+		return currentRecipe != null && energyStored < currentRequiredEnergy * 5F;
+	}
+
+	@Override
+	public void receiveLaserEnergy(float energy) {
+		energyStored += energy;
+		recentEnergy[tick] += energy;
 	}
 
 	@Override
