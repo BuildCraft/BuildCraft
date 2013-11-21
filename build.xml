@@ -130,7 +130,7 @@
 	</target>
 	<target name="copy-src" depends="clean-src,initialize-version">
 		<!-- Copy sources -->
-		<copy todir="${mcpsrc.dir}/minecraft" verbose="true">
+		<copy todir="${mcpsrc.dir}/minecraft" verbose="false">
 			<fileset dir="${src.dir}/common"/>
 			<filterset>
 				<filter token="VERSION" value="${project.complete.version}" />
@@ -169,10 +169,30 @@
 		<!-- Reobfuscate -->
 		<exec dir="${mcp.dir}" executable="cmd" osfamily="windows">
 			<arg line="/c reobfuscate_srg.bat"/>
+			<redirector>
+				<outputfilterchain>
+					<linecontains negate="true">
+						<contains value="> New"/>
+					</linecontains>
+					<linecontains negate="true">
+						<contains value="> Outputted"/>
+					</linecontains>
+				</outputfilterchain>
+			</redirector>
 		</exec>
 
 		<exec dir="${mcp.dir}" executable="sh" osfamily="unix">
 			<arg value="reobfuscate_srg.sh"/>
+			<redirector>
+				<outputfilterchain>
+					<linecontains negate="true">
+						<contains value="> New"/>
+					</linecontains>
+					<linecontains negate="true">
+						<contains value="> Outputted"/>
+					</linecontains>
+				</outputfilterchain>
+			</redirector>
 		</exec>
 
 		<!-- Copy classes -->
