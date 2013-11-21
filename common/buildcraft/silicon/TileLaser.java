@@ -7,6 +7,7 @@
  */
 package buildcraft.silicon;
 
+import buildcraft.api.power.ILaserTarget;
 import buildcraft.BuildCraftCore;
 import buildcraft.api.core.Position;
 import buildcraft.api.core.SafeTimeTracker;
@@ -125,7 +126,7 @@ public class TileLaser extends TileBuildCraft implements IPowerReceptor, IAction
 
 	protected boolean isValidTable() {
 
-		if (laserTarget == null || laserTarget.isInvalidTarget() || !laserTarget.hasCurrentWork())
+		if (laserTarget == null || laserTarget.isInvalidTarget() || !laserTarget.requiresLaserEnergy())
 			return false;
 
 		return true;
@@ -163,7 +164,7 @@ public class TileLaser extends TileBuildCraft implements IPowerReceptor, IAction
 				break;
 		}
 
-		List<BlockIndex> targets = new LinkedList<BlockIndex>();
+		List<ILaserTarget> targets = new LinkedList<ILaserTarget>();
 
 		for (int x = minX; x <= maxX; ++x) {
 			for (int y = minY; y <= maxY; ++y) {
@@ -173,8 +174,8 @@ public class TileLaser extends TileBuildCraft implements IPowerReceptor, IAction
 					if (tile instanceof ILaserTarget) {
 
 						ILaserTarget table = (ILaserTarget) tile;
-						if (table.hasCurrentWork()) {
-							targets.add(new BlockIndex(x, y, z));
+						if (table.requiresLaserEnergy()) {
+							targets.add(table);
 						}
 					}
 
@@ -185,8 +186,7 @@ public class TileLaser extends TileBuildCraft implements IPowerReceptor, IAction
 		if (targets.isEmpty())
 			return;
 
-		BlockIndex b = targets.get(worldObj.rand.nextInt(targets.size()));
-		laserTarget = (ILaserTarget) worldObj.getBlockTileEntity(b.x, b.y, b.z);
+		laserTarget = targets.get(worldObj.rand.nextInt(targets.size()));
 	}
 
 	protected void createLaser() {

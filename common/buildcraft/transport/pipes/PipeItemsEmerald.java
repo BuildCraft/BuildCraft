@@ -40,15 +40,12 @@ import buildcraft.transport.PipeIconProvider;
 public class PipeItemsEmerald extends PipeItemsWood implements IClientState, IGuiReturnHandler {
 
 	public static enum ButtonState implements IMultiButtonState {
-		BLOCKING("gui.pipes.emerald.blocking"), NONBLOCKING("gui.pipes.emerald.nonblocking");
 
+		BLOCKING("gui.pipes.emerald.blocking"), NONBLOCKING("gui.pipes.emerald.nonblocking");
 		private final String label;
-		private final ToolTip tip;
 
 		private ButtonState(String label) {
 			this.label = label;
-			tip = new ToolTip();
-			tip.add(new ToolTipLine(label + ".tip"));
 		}
 
 		@Override
@@ -65,8 +62,14 @@ public class PipeItemsEmerald extends PipeItemsWood implements IClientState, IGu
 		public ToolTip getToolTip() {
 			return this.tip;
 		}
+		private final ToolTip tip = new ToolTip(500) {
+			@Override
+			public void refresh() {
+				clear();
+				tip.add(new ToolTipLine(StringUtils.localize(label + ".tip")));
+			}
+		};
 	}
-
 	private final MultiButtonController stateController = MultiButtonController.getController(ButtonState.BLOCKING.ordinal(), ButtonState.values());
 	private final SimpleInventory filters = new SimpleInventory(9, "Filters", 1);
 	private int currentFilter = 0;
@@ -108,7 +111,7 @@ public class PipeItemsEmerald extends PipeItemsWood implements IClientState, IGu
 		/* ISELECTIVEINVENTORY */
 		// non blocking mode is not implemented for ISelectiveInventory yet
 		if (inventory instanceof ISelectiveInventory) {
-			ItemStack[] stacks = ((ISelectiveInventory) inventory).extractItem(new ItemStack[] { getCurrentFilter() }, false, doRemove, from, (int) powerHandler.getEnergyStored());
+			ItemStack[] stacks = ((ISelectiveInventory) inventory).extractItem(new ItemStack[]{getCurrentFilter()}, false, doRemove, from, (int) powerHandler.getEnergyStored());
 			if (doRemove) {
 				for (ItemStack stack : stacks) {
 					if (stack != null) {
@@ -168,7 +171,7 @@ public class PipeItemsEmerald extends PipeItemsWood implements IClientState, IGu
 			}
 
 			if (result != null) {
-				return new ItemStack[] { result };
+				return new ItemStack[]{result};
 			}
 		}
 
