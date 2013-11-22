@@ -71,9 +71,9 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
 				return false;
 			}
 			ItemStack current = player.getCurrentEquippedItem();
-			if (current != null && current.itemID != Item.bucketEmpty.itemID) {
+			if (current != null) {
 				if (CoreProxy.proxy.isSimulating(worldObj)) {
-					if (FluidUtils.handleRightClick(this, side, player, true, false)) {
+					if (FluidUtils.handleRightClick(this, side, player, true, true)) {
 						return true;
 					}
 				} else {
@@ -320,18 +320,23 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
 	/* ITANKCONTAINER */
 	@Override
 	public FluidStack drain(ForgeDirection from, int maxDrain, boolean doDrain) {
-		return null;
+		return tankFuel.drain(maxDrain, doDrain);
 	}
 
 	@Override
 	public FluidStack drain(ForgeDirection from, FluidStack resource, boolean doDrain) {
+		if (resource == null)
+			return null;
+		if (tankCoolant.getFluidType() == resource.getFluid())
+			return tankCoolant.drain(resource.amount, doDrain);
+		if (tankFuel.getFluidType() == resource.getFluid())
+			return tankFuel.drain(resource.amount, doDrain);
 		return null;
 	}
 
 	@Override
 	public boolean canDrain(ForgeDirection from, Fluid fluid) {
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	@Override
