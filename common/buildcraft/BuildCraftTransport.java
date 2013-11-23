@@ -54,6 +54,7 @@ import buildcraft.transport.pipes.PipeItemsDiamond;
 import buildcraft.transport.pipes.PipeItemsEmerald;
 import buildcraft.transport.pipes.PipeItemsGold;
 import buildcraft.transport.pipes.PipeItemsIron;
+import buildcraft.transport.pipes.PipeItemsLogemerald;
 import buildcraft.transport.pipes.PipeItemsLapis;
 import buildcraft.transport.pipes.PipeItemsObsidian;
 import buildcraft.transport.pipes.PipeItemsQuartz;
@@ -71,6 +72,7 @@ import buildcraft.transport.pipes.PipePowerStone;
 import buildcraft.transport.pipes.PipePowerWood;
 import buildcraft.transport.pipes.PipeStructureCobblestone;
 import buildcraft.transport.triggers.ActionEnergyPulser;
+import buildcraft.transport.triggers.ActionExtractionPreset;
 import buildcraft.transport.triggers.ActionPipeColor;
 import buildcraft.transport.triggers.ActionPipeDirection;
 import buildcraft.transport.triggers.ActionPowerLimiter;
@@ -126,6 +128,7 @@ public class BuildCraftTransport {
 	public static Item pipeItemsDaizuli;
 	public static Item pipeItemsVoid;
 	public static Item pipeItemsSandstone;
+	public static Item pipeItemsLogemerald;
 	public static Item pipeFluidsWood;
 	public static Item pipeFluidsCobblestone;
 	public static Item pipeFluidsStone;
@@ -170,11 +173,17 @@ public class BuildCraftTransport {
 	public static BCAction[] actionPipeColor = new BCAction[16];
 	public static BCAction[] actionPipeDirection = new BCAction[16];
 	public static BCAction[] actionPowerLimiter = new BCAction[7];
-	@Instance("BuildCraft|Transport")
-	public static BuildCraftTransport instance;
+	public static BCAction actionExtractionPresetRed = new ActionExtractionPreset(-1, EnumColor.RED);
+	public static BCAction actionExtractionPresetBlue = new ActionExtractionPreset(-1, EnumColor.BLUE);
+	public static BCAction actionExtractionPresetGreen = new ActionExtractionPreset(-1, EnumColor.GREEN);
+	public static BCAction actionExtractionPresetYellow = new ActionExtractionPreset(-1, EnumColor.YELLOW);
+	
 	public IIconProvider pipeIconProvider = new PipeIconProvider();
 	public IIconProvider gateIconProvider = new GateIconProvider();
 	public IIconProvider wireIconProvider = new WireIconProvider();
+	
+	@Instance("BuildCraft|Transport")
+	public static BuildCraftTransport instance;
 
 	private static class PipeRecipe {
 
@@ -270,7 +279,6 @@ public class BuildCraftTransport {
 			genericPipeBlock = new BlockGenericPipe(genericPipeId.getInt());
 			CoreProxy.proxy.registerBlock(genericPipeBlock.setUnlocalizedName("pipeBlock"), ItemBlock.class);
 
-			// Fixing retro-compatiblity
 			pipeItemsWood = buildPipe(DefaultProps.PIPE_ITEMS_WOOD_ID, PipeItemsWood.class, "Wooden Transport Pipe", "plankWood", Block.glass, "plankWood");
 			pipeItemsEmerald = buildPipe(DefaultProps.PIPE_ITEMS_EMERALD_ID, PipeItemsEmerald.class, "Emerald Transport Pipe", Item.emerald, Block.glass, Item.emerald);
 			pipeItemsCobblestone = buildPipe(DefaultProps.PIPE_ITEMS_COBBLESTONE_ID, PipeItemsCobblestone.class, "Cobblestone Transport Pipe", "cobblestone", Block.glass, "cobblestone");
@@ -284,7 +292,8 @@ public class BuildCraftTransport {
 			pipeItemsDaizuli = buildPipe(DefaultProps.PIPE_ITEMS_DAIZULI_ID, PipeItemsDaizuli.class, "Daizuli Transport Pipe", Block.blockLapis, Block.glass, Item.diamond);
 			pipeItemsSandstone = buildPipe(DefaultProps.PIPE_ITEMS_SANDSTONE_ID, PipeItemsSandstone.class, "Sandstone Transport Pipe", Block.sandStone, Block.glass, Block.sandStone);
 			pipeItemsVoid = buildPipe(DefaultProps.PIPE_ITEMS_VOID_ID, PipeItemsVoid.class, "Void Transport Pipe", "dyeBlack", Block.glass, Item.redstone);
-
+			pipeItemsLogemerald = buildPipe(DefaultProps.PIPE_ITEMS_LOGEMERALD_ID, PipeItemsLogemerald.class, "Logemerald Transport Pipe", "logWood", Block.glass, Item.emerald);
+			
 			pipeFluidsWood = buildPipe(DefaultProps.PIPE_LIQUIDS_WOOD_ID, PipeFluidsWood.class, "Wooden Waterproof Pipe", pipeWaterproof, pipeItemsWood);
 			pipeFluidsCobblestone = buildPipe(DefaultProps.PIPE_LIQUIDS_COBBLESTONE_ID, PipeFluidsCobblestone.class, "Cobblestone Waterproof Pipe", pipeWaterproof, pipeItemsCobblestone);
 			pipeFluidsStone = buildPipe(DefaultProps.PIPE_LIQUIDS_STONE_ID, PipeFluidsStone.class, "Stone Waterproof Pipe", pipeWaterproof, pipeItemsStone);
@@ -367,7 +376,7 @@ public class BuildCraftTransport {
 		// Register connection handler
 		// MinecraftForge.registerConnectionHandler(new ConnectionHandler());
 
-		// Register gui handler
+		// Register GUI handler
 		// MinecraftForge.setGuiHandler(mod_BuildCraftTransport.instance, new GuiHandler());
 
 		TransportProxy.proxy.registerTileEntities();
