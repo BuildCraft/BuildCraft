@@ -62,17 +62,20 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 
 		public int pipeId = -1;
 		public int gateKind = 0;
+		public boolean pulser = false;
 
 		@Override
 		public void writeData(DataOutputStream data) throws IOException {
 			data.writeInt(pipeId);
 			data.writeInt(gateKind);
+			data.writeBoolean(pulser);
 		}
 
 		@Override
 		public void readData(DataInputStream data) throws IOException {
 			pipeId = data.readInt();
 			gateKind = data.readInt();
+			pulser = data.readBoolean();
 		}
 	}
 	private PipeRenderState renderState = new PipeRenderState();
@@ -362,10 +365,13 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 		bindPipe();
 
 		PacketTileState packet = new PacketTileState(this.xCoord, this.yCoord, this.zCoord);
-		if (pipe != null && pipe.gate != null)
+		if (pipe != null && pipe.gate != null) {
 			coreState.gateKind = pipe.gate.kind.ordinal();
-		else
+			coreState.pulser = pipe.gate instanceof GateVanilla && ((GateVanilla)pipe.gate).hasPulser() ? true : false;
+		} else {
 			coreState.gateKind = 0;
+			coreState.pulser = false;
+		}
 
 		if (pipe != null && pipe.transport != null)
 			pipe.transport.sendDescriptionPacket();
@@ -635,8 +641,13 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 					initialize(BlockGenericPipe.createPipe(coreState.pipeId));
 
 				if (pipe != null && coreState.gateKind != GateKind.None.ordinal()) {
-					if (pipe.gate == null)
-						pipe.gate = new GateVanilla(pipe);
+					if (pipe.gate == null) {
+						if (coreState.pulser) {
+							pipe.gate = new GateVanilla(pipe, new ItemStack(BuildCraftTransport.pipeGateAutarchic, 1, coreState.gateKind));
+						} else {
+							pipe.gate = new GateVanilla(pipe);
+						}
+					}
 					pipe.gate.kind = GateKind.values()[coreState.gateKind];
 				}
 				worldObj.markBlockForRenderUpdate(xCoord, yCoord, zCoord);
