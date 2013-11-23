@@ -5,44 +5,88 @@
  * 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-package buildcraft.builders;
+package buildcraft.builders.filler.pattern;
 
 import buildcraft.BuildCraftBuilders;
 import buildcraft.api.core.IBox;
 import buildcraft.api.filler.IFillerPattern;
+import buildcraft.api.filler.IPatternIterator;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.BlockUtil;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import buildcraft.core.utils.StringUtils;
+import java.util.HashSet;
+import java.util.Set;
+import net.minecraft.block.Block;
+import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Icon;
 import net.minecraft.world.World;
+import net.minecraftforge.common.ForgeDirection;
 
 public abstract class FillerPattern implements IFillerPattern {
 
-	protected int id;
+	public static final Set<FillerPattern> patterns = new HashSet<FillerPattern>();
+	private final String tag;
+	private Icon icon;
+
+	public FillerPattern(String tag) {
+		this.tag = tag;
+		patterns.add(this);
+	}
 
 	/**
 	 * stackToPlace contains the next item that can be place in the world. Null
 	 * if there is none. IteratePattern is responsible to decrementing the stack
 	 * size if needed. Return true when the iteration process is finished.
 	 */
-	@Override
-	public abstract boolean iteratePattern(TileEntity tile, IBox box, ItemStack stackToPlace);
-
-	@SideOnly(Side.CLIENT)
-	@Override
-	public abstract Icon getTexture();
-
-	@Override
-	public void setId(int id) {
-		this.id = id;
+	public boolean iteratePattern(TileEntity tile, IBox box, ItemStack stackToPlace) {
+		return true;
 	}
 
 	@Override
-	public int getId() {
-		return this.id;
+	public String getDisplayName() {
+		return StringUtils.localize("fillerpattern." + tag);
+	}
+
+	@Override
+	public String getUniqueTag() {
+		return "buildcraft:" + tag;
+	}
+
+	public void registerIcon(IconRegister iconRegister) {
+		icon = iconRegister.registerIcon("buildcraft:fillerPatterns/" + tag);
+	}
+
+	@Override
+	public Icon getIcon() {
+		return icon;
+	}
+
+	@Override
+	public String toString() {
+		return "Pattern: " + getUniqueTag();
+	}
+
+	@Override
+	public IPatternIterator createPatternIterator(TileEntity tile, IBox box, ForgeDirection orientation) {
+		return new PatternIterator(tile, box);
+	}
+
+	protected class PatternIterator implements IPatternIterator {
+
+		private final IBox box;
+		private final TileEntity tile;
+
+		public PatternIterator(TileEntity tile, IBox box) {
+			this.box = box;
+			this.tile = tile;
+		}
+
+		@Override
+		public boolean iteratePattern(ItemStack stackToPlace) {
+			return FillerPattern.this.iteratePattern(tile, box, stackToPlace);
+		}
 	}
 
 	/**
@@ -51,7 +95,7 @@ public abstract class FillerPattern implements IFillerPattern {
 	 * Return false if the process failed.
 	 *
 	 */
-	public boolean fill(int xMin, int yMin, int zMin, int xMax, int yMax, int zMax, ItemStack stackToPlace, World world) {
+	public static boolean fill(int xMin, int yMin, int zMin, int xMax, int yMax, int zMax, ItemStack stackToPlace, World world) {
 		boolean found = false;
 		int lastX = 0, lastY = 0, lastZ = 0;
 
@@ -85,12 +129,11 @@ public abstract class FillerPattern implements IFillerPattern {
 	 * Return false if is the process failed.
 	 *
 	 */
-	public boolean empty(int xMin, int yMin, int zMin, int xMax, int yMax, int zMax, World world) {
-		boolean found = false;
+	public static boolean empty(int xMin, int yMin, int zMin, int xMax, int yMax, int zMax, World world) {
 		int lastX = Integer.MAX_VALUE, lastY = Integer.MAX_VALUE, lastZ = Integer.MAX_VALUE;
 
 		for (int y = yMax; y >= yMin; y--) {
-			found = false;
+			boolean found = false;
 			for (int x = xMin; x <= xMax; ++x) {
 				for (int z = zMin; z <= zMax; ++z) {
 					if (!BlockUtil.canChangeBlock(world, x, y, z))
@@ -125,7 +168,7 @@ public abstract class FillerPattern implements IFillerPattern {
 	 *
 	 * Return false if is the process failed.
 	 */
-	public boolean flatten(int xMin, int yMin, int zMin, int xMax, int yMax, int zMax, World world, ItemStack stackToPlace) {
+	public static boolean flatten(int xMin, int yMin, int zMin, int xMax, int yMax, int zMax, World world, ItemStack stackToPlace) {
 		int lastX = Integer.MAX_VALUE, lastY = Integer.MAX_VALUE, lastZ = Integer.MAX_VALUE;
 
 		boolean found = false;
@@ -151,7 +194,10 @@ public abstract class FillerPattern implements IFillerPattern {
 		return found;
 	}
 
-	private void breakBlock(World world, int x, int y, int z) {
+	private static void breakBlock(World world, int x, int y, int z) {
+		Block block = Block.blocksList[world.getBlockId(x, y, z)];
+		if (block != null)
+			world.playSoundEffect(x + 0.5F, y + 0.5F, z + 0.5F, block.stepSound.getPlaceSound(), (block.stepSound.getVolume() + 1.0F) / 2.0F, block.stepSound.getPitch() * 0.8F);
 		if (BuildCraftBuilders.fillerDestroy) {
 			world.setBlockToAir(x, y, z);
 		} else if (BlockUtil.isToughBlock(world, x, y, z)) {

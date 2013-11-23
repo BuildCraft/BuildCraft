@@ -337,7 +337,7 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 					box.reset();
 
 					/*
-					 box.initialize(bluePrintBuilder);
+					 box.preInit(bluePrintBuilder);
 					 box.createLasers(worldObj, LaserKind.Stripes);
 					 */
 				}

@@ -21,12 +21,17 @@ public class InventoryIterator {
 		if (inv instanceof ISidedInventory) {
 			return new InventoryIteratorSided((ISidedInventory) inv, side);
 		}
-		
+
 		return new InventoryIteratorSimple(inv);
 	}
 
 	public interface IInvSlot {
-		
+
+		/**
+		 * Returns the slot number of the underlying Inventory.
+		 *
+		 * @return the slot number
+		 */
 		int getIndex();
 
 		boolean canPutStackInSlot(ItemStack stack);

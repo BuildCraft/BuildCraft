@@ -12,53 +12,57 @@ import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.core.LaserKind;
 import buildcraft.api.filler.FillerManager;
 import buildcraft.api.filler.IFillerPattern;
+import buildcraft.api.filler.IPatternIterator;
 import buildcraft.api.gates.IAction;
 import buildcraft.api.gates.IActionReceptor;
 import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.power.PowerHandler;
 import buildcraft.api.power.PowerHandler.PowerReceiver;
 import buildcraft.api.power.PowerHandler.Type;
+import buildcraft.builders.filler.pattern.PatternFill;
+import buildcraft.builders.triggers.ActionFiller;
 import buildcraft.core.Box;
 import buildcraft.core.IMachine;
 import buildcraft.core.TileBuildCraft;
+import buildcraft.core.inventory.InventoryIterator;
+import buildcraft.core.inventory.InventoryIterator.IInvSlot;
+import buildcraft.core.inventory.SimpleInventory;
+import buildcraft.core.network.IGuiReturnHandler;
+import buildcraft.core.network.PacketPayload;
+import buildcraft.core.network.PacketPayloadStream;
 import buildcraft.core.network.PacketUpdate;
-import buildcraft.core.network.TileNetworkData;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.triggers.ActionMachineControl;
 import buildcraft.core.triggers.ActionMachineControl.Mode;
 import buildcraft.core.utils.Utils;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
-import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.ISidedInventory;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.ForgeDirection;
 
-public class TileFiller extends TileBuildCraft implements ISidedInventory, IPowerReceptor, IMachine, IActionReceptor {
+public class TileFiller extends TileBuildCraft implements IInventory, IPowerReceptor, IMachine, IActionReceptor, IGuiReturnHandler {
 
-	private static int[] SLOTS_GRID = Utils.createSlotArray(0, 9);
-	private static int[] SLOTS_INPUT = Utils.createSlotArray(9, 27);
-	public @TileNetworkData
-	Box box = new Box();
-	public @TileNetworkData
-	int currentPatternId = 0;
-	public @TileNetworkData
-	boolean done = true;
-	public IFillerPattern currentPattern;
-	boolean forceDone = false;
-	private ItemStack contents[];
+	public IFillerPattern currentPattern = PatternFill.INSTANCE;
+	private static int POWER_USAGE = 25;
+	private final Box box = new Box();
+	private boolean done = false;
+	private IPatternIterator patternIterator;
 	private PowerHandler powerHandler;
 	private ActionMachineControl.Mode lastMode = ActionMachineControl.Mode.Unknown;
+	private SimpleInventory inv = new SimpleInventory(27, "Filler", 64);
 
 	public TileFiller() {
-		contents = new ItemStack[getSizeInventory()];
+		inv.addListener(this);
 		powerHandler = new PowerHandler(this, Type.MACHINE);
 		initPowerProvider();
 	}
 
 	private void initPowerProvider() {
-		powerHandler.configure(30, 50, 25, 100);
+		powerHandler.configure(30, POWER_USAGE * 2, POWER_USAGE, POWER_USAGE * 4);
 		powerHandler.configurePowerPerdition(1, 1);
 	}
 
@@ -82,23 +86,15 @@ public class TileFiller extends TileBuildCraft implements ISidedInventory, IPowe
 				sendNetworkUpdate();
 			}
 		}
-
-		computeRecipe();
 	}
 
 	@Override
 	public void updateEntity() {
 		super.updateEntity();
-
 		if (done) {
 			if (lastMode == Mode.Loop) {
 				done = false;
-			} else
-				return;
-		}
-
-		if (powerHandler.getEnergyStored() >= 25) {
-			doWork(powerHandler);
+			}
 		}
 	}
 
@@ -106,132 +102,68 @@ public class TileFiller extends TileBuildCraft implements ISidedInventory, IPowe
 	public void doWork(PowerHandler workProvider) {
 		if (CoreProxy.proxy.isRenderWorld(worldObj))
 			return;
-
+		if (done)
+			return;
 		if (lastMode == Mode.Off)
 			return;
-
-		if (powerHandler.useEnergy(25, 25, true) < 25)
+		if (powerHandler.useEnergy(POWER_USAGE, POWER_USAGE, false) != POWER_USAGE)
+			return;
+		if (!box.isInitialized())
 			return;
 
-		if (box.isInitialized() && currentPattern != null && !done) {
-			ItemStack stack = null;
-			int stackId = 0;
+		if (patternIterator == null)
+			patternIterator = currentPattern.createPatternIterator(this, box, ForgeDirection.NORTH);
 
-			for (int s = 9; s < getSizeInventory(); ++s) {
-				if (getStackInSlot(s) != null && getStackInSlot(s).stackSize > 0) {
+		ItemStack stackToUse = null;
+		int slotNum = 0;
 
-					stack = contents[s];
-					stackId = s;
-
-					break;
-				}
-			}
-
-			done = currentPattern.iteratePattern(this, box, stack);
-
-			if (stack != null && stack.stackSize == 0) {
-				contents[stackId] = null;
-			}
-
-			if (done) {
-				worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
-				sendNetworkUpdate();
+		for (IInvSlot slot : InventoryIterator.getIterable(inv, ForgeDirection.UNKNOWN)) {
+			ItemStack stack = slot.getStackInSlot();
+			if (stack != null && stack.stackSize > 0) {
+				stackToUse = stack;
+				slotNum = slot.getIndex();
+				break;
 			}
 		}
 
-		if (powerHandler.getEnergyStored() >= 25) {
+		done = patternIterator.iteratePattern(stackToUse);
+		powerHandler.useEnergy(POWER_USAGE, POWER_USAGE, true);
+
+		if (stackToUse != null && stackToUse.stackSize <= 0) {
+			setInventorySlotContents(slotNum, null);
+		}
+
+		if (done) {
+			patternIterator = null;
+			sendNetworkUpdate();
+		} else if (powerHandler.getEnergyStored() >= POWER_USAGE) {
 			doWork(workProvider);
 		}
 	}
 
 	@Override
 	public final int getSizeInventory() {
-		return 36;
+		return inv.getSizeInventory();
 	}
 
 	@Override
-	public ItemStack getStackInSlot(int i) {
-		return contents[i];
-	}
-
-	public void computeRecipe() {
-		if (CoreProxy.proxy.isRenderWorld(worldObj))
-			return;
-
-		IFillerPattern newPattern = FillerManager.registry.findMatchingRecipe(this);
-
-		if (newPattern == currentPattern)
-			return;
-
-		currentPattern = newPattern;
-
-		if (currentPattern == null || forceDone) {
-			done = lastMode != Mode.Loop;
-			forceDone = false;
-		} else {
-			done = false;
-		}
-
-		if (worldObj != null) {
-			worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
-		}
-
-		if (currentPattern == null) {
-			currentPatternId = 0;
-		} else {
-			currentPatternId = currentPattern.getId();
-		}
-
-		if (CoreProxy.proxy.isSimulating(worldObj)) {
-			sendNetworkUpdate();
-		}
+	public ItemStack getStackInSlot(int slot) {
+		return inv.getStackInSlot(slot);
 	}
 
 	@Override
-	public ItemStack decrStackSize(int i, int j) {
-		if (contents[i] != null) {
-			if (contents[i].stackSize <= j) {
-				ItemStack itemstack = contents[i];
-				contents[i] = null;
-				// onInventoryChanged();
-
-				computeRecipe();
-
-				return itemstack;
-			}
-
-			ItemStack itemstack1 = contents[i].splitStack(j);
-
-			if (contents[i].stackSize == 0) {
-				contents[i] = null;
-			}
-			// onInventoryChanged();
-
-			computeRecipe();
-
-			return itemstack1;
-		} else
-			return null;
+	public ItemStack decrStackSize(int slot, int amount) {
+		return inv.decrStackSize(slot, amount);
 	}
 
 	@Override
-	public void setInventorySlotContents(int i, ItemStack itemstack) {
-		contents[i] = itemstack;
-		if (itemstack != null && itemstack.stackSize > getInventoryStackLimit()) {
-			itemstack.stackSize = getInventoryStackLimit();
-		}
-
-		computeRecipe();
-		// onInventoryChanged();
+	public void setInventorySlotContents(int slot, ItemStack stack) {
+		inv.setInventorySlotContents(slot, stack);
 	}
 
 	@Override
 	public ItemStack getStackInSlotOnClosing(int slot) {
-		if (contents[slot] == null)
-			return null;
-		ItemStack toReturn = contents[slot];
-		contents[slot] = null;
-		return toReturn;
+		return inv.getStackInSlotOnClosing(slot);
 	}
 
 	@Override
@@ -240,40 +172,44 @@ public class TileFiller extends TileBuildCraft implements ISidedInventory, IPowe
 	}
 
 	@Override
-	public void readFromNBT(NBTTagCompound nbttagcompound) {
-		super.readFromNBT(nbttagcompound);
+	public void readFromNBT(NBTTagCompound nbt) {
+		super.readFromNBT(nbt);
 
-		Utils.readStacksFromNBT(nbttagcompound, "Items", contents);
+		inv.readFromNBT(nbt);
 
-		if (nbttagcompound.hasKey("box")) {
-			box.initialize(nbttagcompound.getCompoundTag("box"));
-		}
+		if (nbt.hasKey("pattern"))
+			currentPattern = FillerManager.registry.getPattern(nbt.getString("pattern"));
 
-		done = nbttagcompound.getBoolean("done");
-		lastMode = Mode.values()[nbttagcompound.getByte("lastMode")];
+		if (currentPattern == null)
+			currentPattern = PatternFill.INSTANCE;
 
-		forceDone = done;
+		if (nbt.hasKey("box"))
+			box.initialize(nbt.getCompoundTag("box"));
+
+		done = nbt.getBoolean("done");
+		lastMode = Mode.values()[nbt.getByte("lastMode")];
 	}
 
 	@Override
-	public void writeToNBT(NBTTagCompound nbttagcompound) {
-		super.writeToNBT(nbttagcompound);
+	public void writeToNBT(NBTTagCompound nbt) {
+		super.writeToNBT(nbt);
 
-		Utils.writeStacksToNBT(nbttagcompound, "Items", contents);
+		inv.writeToNBT(nbt);
 
-		if (box != null) {
-			NBTTagCompound boxStore = new NBTTagCompound();
-			box.writeToNBT(boxStore);
-			nbttagcompound.setTag("box", boxStore);
-		}
+		if (currentPattern != null)
+			nbt.setString("pattern", currentPattern.getUniqueTag());
 
-		nbttagcompound.setBoolean("done", done);
-		nbttagcompound.setByte("lastMode", (byte) lastMode.ordinal());
+		NBTTagCompound boxStore = new NBTTagCompound();
+		box.writeToNBT(boxStore);
+		nbt.setTag("box", boxStore);
+
+		nbt.setBoolean("done", done);
+		nbt.setByte("lastMode", (byte) lastMode.ordinal());
 	}
 
 	@Override
 	public int getInventoryStackLimit() {
-		return 64;
+		return inv.getInventoryStackLimit();
 	}
 
 	@Override
@@ -291,37 +227,52 @@ public class TileFiller extends TileBuildCraft implements ISidedInventory, IPowe
 
 	@Override
 	public void destroy() {
-		if (box != null) {
-			box.deleteLasers();
+		box.deleteLasers();
+	}
+
+	public void setPattern(IFillerPattern pattern) {
+		if (pattern != null && currentPattern != pattern) {
+			currentPattern = pattern;
+			patternIterator = null;
+			done = false;
+			sendNetworkUpdate();
+		}
+	}
+
+	@Override
+	public PacketPayload getPacketPayload() {
+		PacketPayloadStream payload = new PacketPayloadStream(new PacketPayloadStream.StreamWriter() {
+			@Override
+			public void writeData(DataOutputStream data) throws IOException {
+				box.writeToStream(data);
+				data.writeBoolean(done);
+				data.writeUTF(currentPattern.getUniqueTag());
+			}
+		});
+
+		return payload;
+	}
+
+	public void handlePacketPayload(DataInputStream data) throws IOException {
+		boolean initialized = box.isInitialized();
+		box.readFromStream(data);
+		done = data.readBoolean();
+		setPattern(FillerManager.registry.getPattern(data.readUTF()));
+
+		worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+		if (!initialized && box.isInitialized()) {
+			box.createLasers(worldObj, LaserKind.Stripes);
 		}
 	}
 
 	@Override
 	public void handleDescriptionPacket(PacketUpdate packet) throws IOException {
-		boolean initialized = box.isInitialized();
-
-		super.handleDescriptionPacket(packet);
-
-		currentPattern = FillerManager.registry.getPattern(currentPatternId);
-		worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
-
-		if (!initialized && box.isInitialized()) {
-			box.createLasers(worldObj, LaserKind.Stripes);
-		}
+		handlePacketPayload(((PacketPayloadStream) packet.payload).stream);
 	}
 
 	@Override
 	public void handleUpdatePacket(PacketUpdate packet) throws IOException {
-		boolean initialized = box.isInitialized();
-
-		super.handleUpdatePacket(packet);
-
-		currentPattern = FillerManager.registry.getPattern(currentPatternId);
-		worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
-
-		if (!initialized && box.isInitialized()) {
-			box.createLasers(worldObj, LaserKind.Stripes);
-		}
+		handlePacketPayload(((PacketPayloadStream) packet.payload).stream);
 	}
 
 	@Override
@@ -360,6 +311,9 @@ public class TileFiller extends TileBuildCraft implements ISidedInventory, IPowe
 			lastMode = ActionMachineControl.Mode.Off;
 		} else if (action == BuildCraftCore.actionLoop) {
 			lastMode = ActionMachineControl.Mode.Loop;
+		} else if (action instanceof ActionFiller) {
+			ActionFiller actFill = (ActionFiller) action;
+			setPattern(actFill.pattern);
 		}
 	}
 
@@ -370,29 +324,22 @@ public class TileFiller extends TileBuildCraft implements ISidedInventory, IPowe
 
 	@Override
 	public boolean isItemValidForSlot(int slot, ItemStack stack) {
-		if (slot < 9) {
-			if (getStackInSlot(slot) != null)
-				return false;
-			return stack.itemID == Block.brick.blockID || stack.itemID == Block.glass.blockID;
-		}
 		return true;
 	}
 
 	@Override
-	public int[] getAccessibleSlotsFromSide(int side) {
-		if (ForgeDirection.UP.ordinal() == side) {
-			return SLOTS_GRID;
-		}
-		return SLOTS_INPUT;
+	public void writeGuiData(DataOutputStream data) throws IOException {
+		data.writeUTF(currentPattern.getUniqueTag());
 	}
 
 	@Override
-	public boolean canInsertItem(int slot, ItemStack stack, int side) {
-		return isItemValidForSlot(slot, stack);
-	}
-
-	@Override
-	public boolean canExtractItem(int slot, ItemStack stack, int side) {
-		return true;
+	public void readGuiData(DataInputStream data, EntityPlayer player) throws IOException {
+		IFillerPattern prev = currentPattern;
+		currentPattern = FillerManager.registry.getPattern(data.readUTF());
+		if (currentPattern == null)
+			currentPattern = PatternFill.INSTANCE;
+		if (prev != currentPattern)
+			done = false;
+		sendNetworkUpdate();
 	}
 }

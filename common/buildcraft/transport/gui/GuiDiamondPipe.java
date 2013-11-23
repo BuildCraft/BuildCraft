@@ -33,7 +33,7 @@ public class GuiDiamondPipe extends GuiBuildCraft {
 	}
 	
 	public GuiDiamondPipe(IInventory playerInventory, PipeItemsDiamond pipe) {
-		super(new ContainerDiamondPipe(playerInventory, pipe), pipe.getFilters());
+		super(new ContainerDiamondPipe(playerInventory, pipe), pipe.getFilters(), TEXTURE);
 		this.playerInventory = playerInventory;
 		this.filterInventory = pipe.getFilters();
 		xSize = 175;

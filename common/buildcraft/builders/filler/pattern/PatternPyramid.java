@@ -1,22 +1,21 @@
 /**
- * Copyright (c) SpaceToad, 2011
- * http://www.mod-buildcraft.com
+ * Copyright (c) SpaceToad, 2011 http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License
+ * 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-
-package buildcraft.builders;
+package buildcraft.builders.filler.pattern;
 
 import buildcraft.api.core.IBox;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Icon;
 
-public class FillerFillPyramid extends FillerPattern {
+public class PatternPyramid extends FillerPattern {
+
+	public PatternPyramid() {
+		super("pyramid");
+	}
 
 	@Override
 	public boolean iteratePattern(TileEntity tile, IBox box, ItemStack stackToPlace) {
@@ -58,16 +57,4 @@ public class FillerFillPyramid extends FillerPattern {
 
 		return true;
 	}
-
-	@Override
-    @SideOnly(Side.CLIENT)
-	public Icon getTexture() {
-		return BuilderProxyClient.fillerPyramidTexture;
-	}
-
-	@Override
-	public String getName() {
-		return "Pyramid";
-	}
-
 }
