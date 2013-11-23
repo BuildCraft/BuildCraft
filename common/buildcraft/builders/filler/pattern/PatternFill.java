@@ -1,22 +1,27 @@
 /**
- * Copyright (c) SpaceToad, 2011
- * http://www.mod-buildcraft.com
+ * Copyright (c) SpaceToad, 2011 http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License
+ * 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-
-package buildcraft.builders;
+package buildcraft.builders.filler.pattern;
 
 import buildcraft.api.core.IBox;
+import buildcraft.builders.BuilderProxyClient;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Icon;
 
-public class FillerFillAll extends FillerPattern {
+public class PatternFill extends FillerPattern {
+
+	public static final PatternFill INSTANCE = new PatternFill();
+
+	private PatternFill() {
+		super("fill");
+	}
 
 	@Override
 	public boolean iteratePattern(TileEntity tile, IBox box, ItemStack stackToPlace) {
@@ -29,17 +34,6 @@ public class FillerFillAll extends FillerPattern {
 		int zMax = (int) box.pMax().z;
 
 		return !fill(xMin, yMin, zMin, xMax, yMax, zMax, stackToPlace, tile.worldObj);
-	}
-
-	@Override
-	@SideOnly(Side.CLIENT)
-	public Icon getTexture() {
-		return BuilderProxyClient.fillerFillAllTexture;
-	}
-
-	@Override
-	public String getName() {
-		return "Fill";
 	}
 
 }

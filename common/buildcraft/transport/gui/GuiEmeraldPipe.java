@@ -30,7 +30,7 @@ public class GuiEmeraldPipe extends GuiBuildCraft {
 	PipeItemsEmerald pipe;
 
 	public GuiEmeraldPipe(IInventory playerInventory, PipeItemsEmerald pipe) {
-		super(new ContainerEmeraldPipe(playerInventory, pipe), pipe.getFilters());
+		super(new ContainerEmeraldPipe(playerInventory, pipe), pipe.getFilters(), TEXTURE);
 
 		this.pipe = pipe;
 		this.playerInventory = playerInventory;

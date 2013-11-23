@@ -18,11 +18,11 @@ import org.lwjgl.opengl.GL11;
 
 public class GuiAutoCrafting extends GuiBuildCraft {
 
-    public static final ResourceLocation gui = new ResourceLocation("buildcraft",DefaultProps.TEXTURE_PATH_GUI + "/autobench.png");
+    public static final ResourceLocation TEXTURE = new ResourceLocation("buildcraft",DefaultProps.TEXTURE_PATH_GUI + "/autobench.png");
 	private TileAutoWorkbench bench;
 
 	public GuiAutoCrafting(InventoryPlayer inventoryplayer, World world, TileAutoWorkbench tile) {
-		super(new ContainerAutoWorkbench(inventoryplayer, tile), tile);
+		super(new ContainerAutoWorkbench(inventoryplayer, tile), tile, TEXTURE);
 		this.bench = tile;
 	}
 
@@ -44,7 +44,7 @@ public class GuiAutoCrafting extends GuiBuildCraft {
 	@Override
 	protected void drawGuiContainerBackgroundLayer(float f, int mouseX, int mouseY) {
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-		mc.renderEngine.bindTexture(gui);
+		mc.renderEngine.bindTexture(TEXTURE);
 		int x = (width - xSize) / 2;
 		int y = (height - ySize) / 2;
 		drawTexturedModalRect(x, y, 0, 0, xSize, ySize);

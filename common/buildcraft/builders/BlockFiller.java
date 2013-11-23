@@ -56,29 +56,25 @@ public class BlockFiller extends BlockContainer {
 
 	}
 
-	@SuppressWarnings({ "all" })
-	public Icon getBlockTexture(IBlockAccess iblockaccess, int i, int j, int k, int l) {
-		int m = iblockaccess.getBlockMetadata(i, j, k);
-
-		if (iblockaccess == null)
-			return getIcon(i, m);
-
-		TileEntity tile = iblockaccess.getBlockTileEntity(i, j, k);
+	@Override
+	public Icon getBlockTexture(IBlockAccess world, int x, int y, int z, int side) {
+		int m = world.getBlockMetadata(x, y, z);
+		TileEntity tile = world.getBlockTileEntity(x, y, z);
 
 		if (tile != null && tile instanceof TileFiller) {
 			TileFiller filler = (TileFiller) tile;
-			if (l == 1 || l == 0) {
+			if (side == 1 || side == 0) {
 				if (!filler.isActive())
 					return textureTopOff;
 				else
 					return textureTopOn;
 			} else if (filler.currentPattern != null)
-				return filler.currentPattern.getTexture();
+				return filler.currentPattern.getIcon();
 			else
 				return textureSides;
 		}
 
-		return getIcon(l, m);
+		return getIcon(side, m);
 	}
 
 	@Override
