@@ -16,10 +16,13 @@ import buildcraft.core.gui.GuiBuildCraft;
 import buildcraft.core.utils.StringUtils;
 import buildcraft.transport.pipes.PipeItemsEmzuli;
 
+/**
+ *
+ * @author SandGrainOne
+ */
 public class GuiEmzuliPipe extends GuiBuildCraft {
 
 	private static final ResourceLocation TEXTURE = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_GUI + "/pipe_emzuli.png");
-
 	IInventory filterInventory;
 	PipeItemsEmzuli pipe;
 

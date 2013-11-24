@@ -32,6 +32,10 @@ import net.minecraft.inventory.ICrafting;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 
+/**
+ *
+ * @author SandGrainOne
+ */
 public class ContainerEmzuliPipe extends BuildCraftContainer {
 
 	private final PipeItemsEmzuli pipe;

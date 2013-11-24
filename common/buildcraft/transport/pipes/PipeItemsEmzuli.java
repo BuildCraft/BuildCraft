@@ -25,7 +25,6 @@ import buildcraft.api.inventory.ISelectiveInventory;
 import buildcraft.api.inventory.ISpecialInventory;
 import buildcraft.core.GuiIds;
 import buildcraft.core.inventory.SimpleInventory;
-import buildcraft.core.inventory.StackHelper;
 import buildcraft.core.network.IGuiReturnHandler;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.EnumColor;
@@ -33,12 +32,15 @@ import buildcraft.core.utils.Utils;
 import buildcraft.transport.BlockGenericPipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.TravelingItem;
-import buildcraft.transport.pipes.events.PipeEventItem;
 import buildcraft.transport.triggers.ActionExtractionPreset;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
+/**
+ *
+ * @author SandGrainOne
+ */
 public class PipeItemsEmzuli extends PipeItemsWood implements IGuiReturnHandler {
 
 	public final byte[] slotColors = new byte[4];
