@@ -119,17 +119,13 @@ public class PipeItemsDaizuli extends Pipe<PipeTransportItems> {
 	}
 
 	public void eventHandler(PipeEventItem.FindDest event) {
-		LinkedList<ForgeDirection> newMovements = new LinkedList<ForgeDirection>();
-		EnumColor c = getColor();
-		for (ForgeDirection dir : event.destinations) {
-			if (event.item.color == c) {
-				if (dir.ordinal() == container.getBlockMetadata())
-					newMovements.add(dir);
-			} else if (dir.ordinal() != container.getBlockMetadata()) {
-				newMovements.add(dir);
-			}
+		ForgeDirection output = ForgeDirection.getOrientation(container.getBlockMetadata());
+		if (event.item.color == getColor() && event.destinations.contains(output)) {
+			event.destinations.clear();
+			event.destinations.add(output);
+			return;
 		}
-		event.destinations.retainAll(newMovements);
+		event.destinations.remove(output);
 	}
 
 	public void eventHandler(PipeEventItem.AdjustSpeed event) {
