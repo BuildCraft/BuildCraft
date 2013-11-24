@@ -529,6 +529,7 @@ public class PipeTransportItems extends PipeTransport {
 
 		item.setSpeed(packet.getSpeed());
 
+		item.toCenter = true;
 		item.input = packet.getInputOrientation();
 		item.output = packet.getOutputOrientation();
 		item.color = packet.getColor();
