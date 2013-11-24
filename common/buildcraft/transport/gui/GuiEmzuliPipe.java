@@ -10,43 +10,33 @@ package buildcraft.transport.gui;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.util.ResourceLocation;
 
-import org.lwjgl.opengl.GL11;
 
 import buildcraft.core.DefaultProps;
 import buildcraft.core.gui.GuiBuildCraft;
 import buildcraft.core.utils.StringUtils;
-import buildcraft.transport.pipes.PipeItemsLogemerald;
+import buildcraft.transport.pipes.PipeItemsEmzuli;
 
-public class GuiLogemeraldPipe extends GuiBuildCraft {
+public class GuiEmzuliPipe extends GuiBuildCraft {
 
-	private static final ResourceLocation TEXTURE = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_GUI + "/logemerald_pipe_gui.png");
+	private static final ResourceLocation TEXTURE = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_GUI + "/pipe_emzuli.png");
 
 	IInventory filterInventory;
-	PipeItemsLogemerald logemeraldPipe;
+	PipeItemsEmzuli pipe;
 
-	public GuiLogemeraldPipe(IInventory playerInventory, PipeItemsLogemerald pipe) {
-		super(new ContainerLogemeraldPipe(playerInventory, pipe), pipe.getFilters());
+	public GuiEmzuliPipe(IInventory playerInventory, PipeItemsEmzuli pipe) {
+		super(new ContainerEmzuliPipe(playerInventory, pipe), pipe.getFilters(), TEXTURE);
 
-		logemeraldPipe = pipe;
+		this.pipe = pipe;
 		filterInventory = pipe.getFilters();
 
-		xSize = 175;
+		xSize = 176;
 		ySize = 166;
 	}
 
 	@Override
 	protected void drawGuiContainerForegroundLayer(int par1, int par2) {
-		String title = StringUtils.localize("gui.pipes.logemerald.title");
+		String title = StringUtils.localize("gui.pipes.emzuli.title");
 		fontRenderer.drawString(title, (xSize - fontRenderer.getStringWidth(title)) / 2, 6, 0x404040);
 		fontRenderer.drawString(StringUtils.localize("gui.inventory"), 8, ySize - 93, 0x404040);
-	}
-
-	@Override
-	protected void drawGuiContainerBackgroundLayer(float f, int x, int y) {
-		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-		mc.renderEngine.bindTexture(TEXTURE);
-		int j = (width - xSize) / 2;
-		int k = (height - ySize) / 2;
-		drawTexturedModalRect(j, k, 0, 0, xSize, ySize);
 	}
 }

@@ -37,27 +37,32 @@ public class PacketHandler implements IPacketHandler {
 			int packetID = data.read();
 			switch (packetID) {
 				case PacketIds.TILE_UPDATE: {
-					PacketTileUpdate packetT = new PacketTileUpdate();
-					packetT.readData(data);
-					onTileUpdate((EntityPlayer) player, packetT);
+					PacketTileUpdate pkt = new PacketTileUpdate();
+					pkt.readData(data);
+					onTileUpdate((EntityPlayer) player, pkt);
 					break;
 				}
 
 				case PacketIds.STATE_UPDATE: {
-					PacketTileState inPacket = new PacketTileState();
-					inPacket.readData(data);
+					PacketTileState pkt = new PacketTileState();
+					pkt.readData(data);
 					World world = ((EntityPlayer) player).worldObj;
-					TileEntity tile = world.getBlockTileEntity(inPacket.posX, inPacket.posY, inPacket.posZ);
+					TileEntity tile = world.getBlockTileEntity(pkt.posX, pkt.posY, pkt.posZ);
 					if (tile instanceof ISyncedTile) {
-						inPacket.applyStates(data, (ISyncedTile) tile);
+						pkt.applyStates(data, (ISyncedTile) tile);
 					}
 					break;
 				}
 
 				case PacketIds.GUI_RETURN: {
-					PacketGuiReturn packet1 = new PacketGuiReturn((EntityPlayer) player);
-					packet1.readData(data);
-					// onGuiReturn((EntityPlayer) player, packet1);
+					PacketGuiReturn pkt = new PacketGuiReturn((EntityPlayer) player);
+					pkt.readData(data);
+					break;
+				}
+
+				case PacketIds.GUI_WIDGET: {
+					PacketGuiWidget pkt = new PacketGuiWidget();
+					pkt.readData(data);
 					break;
 				}
 			}

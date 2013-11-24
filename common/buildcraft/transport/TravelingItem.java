@@ -12,6 +12,7 @@ import buildcraft.api.core.Position;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.EnumColor;
 import java.util.EnumSet;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
@@ -102,7 +103,14 @@ public class TravelingItem {
 		return extraData != null;
 	}
 
+	@Deprecated
 	public void setInsetionHandler(InsertionHandler handler) {
+		if (handler == null)
+			return;
+		this.insertionHandler = handler;
+	}
+
+	public void setInsertionHandler(InsertionHandler handler) {
 		if (handler == null)
 			return;
 		this.insertionHandler = handler;
@@ -157,25 +165,30 @@ public class TravelingItem {
 			data.setTag("extraData", extraData);
 	}
 
-	public EntityItem toEntityItem(ForgeDirection dir) {
+	public EntityItem toEntityItem() {
 		if (container != null && !CoreProxy.proxy.isRenderWorld(container.worldObj)) {
 			if (getItemStack().stackSize <= 0)
 				return null;
 
-			Position motion = new Position(0, 0, 0, dir);
+			Position motion = new Position(0, 0, 0, output);
 			motion.moveForwards(0.1 + getSpeed() * 2F);
 
-			EntityItem entityitem = new EntityItem(container.worldObj, xCoord, yCoord, zCoord, getItemStack());
+			ItemStack stack = getItemStack();
+			EntityItem entity = new EntityItem(container.worldObj, xCoord, yCoord, zCoord, getItemStack());
+			if (stack.getItem().hasCustomEntity(stack)) {
+				Entity e = stack.getItem().createEntity(container.worldObj, entity, stack);
+				if (e instanceof EntityItem)
+					entity = (EntityItem) e;
+			}
 
-			entityitem.lifespan = BuildCraftCore.itemLifespan;
-			entityitem.delayBeforeCanPickup = 10;
+			entity.lifespan = BuildCraftCore.itemLifespan;
+			entity.delayBeforeCanPickup = 10;
 
 			float f3 = 0.00F + container.worldObj.rand.nextFloat() * 0.04F - 0.02F;
-			entityitem.motionX = (float) container.worldObj.rand.nextGaussian() * f3 + motion.x;
-			entityitem.motionY = (float) container.worldObj.rand.nextGaussian() * f3 + motion.y;
-			entityitem.motionZ = (float) container.worldObj.rand.nextGaussian() * f3 + +motion.z;
-			container.worldObj.spawnEntityInWorld(entityitem);
-			return entityitem;
+			entity.motionX = (float) container.worldObj.rand.nextGaussian() * f3 + motion.x;
+			entity.motionY = (float) container.worldObj.rand.nextGaussian() * f3 + motion.y;
+			entity.motionZ = (float) container.worldObj.rand.nextGaussian() * f3 + +motion.z;
+			return entity;
 		}
 		return null;
 	}
@@ -194,7 +207,7 @@ public class TravelingItem {
 	public boolean isCorrupted() {
 		return getItemStack() == null || getItemStack().stackSize <= 0 || Item.itemsList[getItemStack().itemID] == null;
 	}
-	
+
 	@Override
 	public int hashCode() {
 		int hash = 7;

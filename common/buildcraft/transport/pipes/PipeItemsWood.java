@@ -139,11 +139,15 @@ public class PipeItemsWood extends Pipe<PipeTransportItems> implements IPowerRec
 
 				entityPos.moveForwards(0.6);
 
-				TravelingItem entity = new TravelingItem(entityPos.x, entityPos.y, entityPos.z, stack);
+				TravelingItem entity = makeItem(entityPos.x, entityPos.y, entityPos.z, stack);
 
 				transport.injectItem(entity, entityPos.orientation);
 			}
 		}
+	}
+
+	protected TravelingItem makeItem(double x, double y, double z, ItemStack stack) {
+		return new TravelingItem(x, y, z, stack);
 	}
 
 	/**

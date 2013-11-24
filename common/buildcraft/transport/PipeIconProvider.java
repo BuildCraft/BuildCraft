@@ -15,6 +15,7 @@ public class PipeIconProvider implements IIconProvider {
 		//
 		PipeItemsCobbleStone("pipeItemsCobblestone"),
 		//
+		PipeItemsDiamond_Item("pipeItemsDiamond_item"),
 		PipeItemsDiamond_Center("pipeItemsDiamond_center"),
 		PipeItemsDiamond_Down("pipeItemsDiamond_down"),
 		PipeItemsDiamond_Up("pipeItemsDiamond_up"),
@@ -64,8 +65,8 @@ public class PipeIconProvider implements IIconProvider {
 		PipeItemsEmerald_Standard("pipeItemsEmerald_standard"),
 		PipeAllEmerald_Solid("pipeAllEmerald_solid"),
 		//
-		PipeItemsLogemerald_Standard("pipeItemsLogemerald_standard"),
-		PipeAllLogemerald_Solid("pipeAllLogemerald_solid"),
+		PipeItemsEmzuli_Standard("pipeItemsEmzuli_standard"),
+		PipeAllEmzuli_Solid("pipeAllEmzuli_solid"),
 		//
 		PipeItemsGold("pipeItemsGold"),
 		//

@@ -54,7 +54,7 @@ import buildcraft.transport.pipes.PipeItemsDiamond;
 import buildcraft.transport.pipes.PipeItemsEmerald;
 import buildcraft.transport.pipes.PipeItemsGold;
 import buildcraft.transport.pipes.PipeItemsIron;
-import buildcraft.transport.pipes.PipeItemsLogemerald;
+import buildcraft.transport.pipes.PipeItemsEmzuli;
 import buildcraft.transport.pipes.PipeItemsLapis;
 import buildcraft.transport.pipes.PipeItemsObsidian;
 import buildcraft.transport.pipes.PipeItemsQuartz;
@@ -128,7 +128,7 @@ public class BuildCraftTransport {
 	public static Item pipeItemsDaizuli;
 	public static Item pipeItemsVoid;
 	public static Item pipeItemsSandstone;
-	public static Item pipeItemsLogemerald;
+	public static Item pipeItemsEmzuli;
 	public static Item pipeFluidsWood;
 	public static Item pipeFluidsCobblestone;
 	public static Item pipeFluidsStone;
@@ -292,7 +292,7 @@ public class BuildCraftTransport {
 			pipeItemsDaizuli = buildPipe(DefaultProps.PIPE_ITEMS_DAIZULI_ID, PipeItemsDaizuli.class, "Daizuli Transport Pipe", Block.blockLapis, Block.glass, Item.diamond);
 			pipeItemsSandstone = buildPipe(DefaultProps.PIPE_ITEMS_SANDSTONE_ID, PipeItemsSandstone.class, "Sandstone Transport Pipe", Block.sandStone, Block.glass, Block.sandStone);
 			pipeItemsVoid = buildPipe(DefaultProps.PIPE_ITEMS_VOID_ID, PipeItemsVoid.class, "Void Transport Pipe", "dyeBlack", Block.glass, Item.redstone);
-			pipeItemsLogemerald = buildPipe(DefaultProps.PIPE_ITEMS_LOGEMERALD_ID, PipeItemsLogemerald.class, "Logemerald Transport Pipe", "logWood", Block.glass, Item.emerald);
+			pipeItemsEmzuli = buildPipe(DefaultProps.PIPE_ITEMS_EMZULI_ID, PipeItemsEmzuli.class, "Emzuli Transport Pipe", Block.blockLapis, Block.glass, Item.emerald);
 			
 			pipeFluidsWood = buildPipe(DefaultProps.PIPE_LIQUIDS_WOOD_ID, PipeFluidsWood.class, "Wooden Waterproof Pipe", pipeWaterproof, pipeItemsWood);
 			pipeFluidsCobblestone = buildPipe(DefaultProps.PIPE_LIQUIDS_COBBLESTONE_ID, PipeFluidsCobblestone.class, "Cobblestone Waterproof Pipe", pipeWaterproof, pipeItemsCobblestone);

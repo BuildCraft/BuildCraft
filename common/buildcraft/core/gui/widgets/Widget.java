@@ -13,6 +13,8 @@ import buildcraft.core.gui.tooltips.IToolTipProvider;
 import buildcraft.core.gui.tooltips.ToolTip;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import java.io.DataInputStream;
+import java.io.IOException;
 import net.minecraft.inventory.ICrafting;
 
 /**
@@ -50,8 +52,20 @@ public class Widget implements IToolTipProvider {
 	}
 
 	@SideOnly(Side.CLIENT)
-	public boolean mouseClicked(int mouseX, int mouseY, int button) {
+	public boolean handleMouseClick(int mouseX, int mouseY, int mouseButton) {
 		return false;
+	}
+
+	@SideOnly(Side.CLIENT)
+	public void handleMouseRelease(int mouseX, int mouseY, int eventType) {
+	}
+
+	@SideOnly(Side.CLIENT)
+	public void handleMouseMove(int mouseX, int mouseY, int mouseButton, long time) {
+	}
+
+	@SideOnly(Side.CLIENT)
+	public void handleClientPacketData(DataInputStream data) throws IOException {
 	}
 
 	@SideOnly(Side.CLIENT)

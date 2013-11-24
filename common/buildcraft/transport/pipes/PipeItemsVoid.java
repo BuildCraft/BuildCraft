@@ -9,21 +9,18 @@ package buildcraft.transport.pipes;
 
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
-import buildcraft.transport.IItemTravelingHook;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportItems;
-import buildcraft.transport.TravelingItem;
+import buildcraft.transport.pipes.events.PipeEventItem;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.ForgeDirection;
 
-public class PipeItemsVoid extends Pipe<PipeTransportItems> implements IItemTravelingHook {
+public class PipeItemsVoid extends Pipe<PipeTransportItems> {
 
 	public PipeItemsVoid(int itemID) {
 		super(new PipeTransportItems(), itemID);
-		transport.travelHook = this;
 	}
 
 	@Override
@@ -37,20 +34,11 @@ public class PipeItemsVoid extends Pipe<PipeTransportItems> implements IItemTrav
 		return PipeIconProvider.TYPE.PipeItemsVoid.ordinal();
 	}
 
-	// This is called if the void pipe is only connected to one pipe
-	@Override
-	public void drop(PipeTransportItems pipe, TravelingItem item) {
-		item.getItemStack().stackSize = 0;
+	public void handleEvent(PipeEventItem.DropItem event) {
+		event.entity = null;
 	}
 
-	// This is called when the void pipe is connected to multiple pipes
-	@Override
-	public void centerReached(PipeTransportItems pipe, TravelingItem item) {
-		transport.items.scheduleRemoval(item);
-	}
-
-	@Override
-	public boolean endReached(PipeTransportItems pipe, TravelingItem item, TileEntity tile) {
-		return false;
+	public void handleEvent(PipeEventItem.ReachedCenter event) {
+		transport.items.scheduleRemoval(event.item);
 	}
 }

@@ -9,18 +9,17 @@ package buildcraft.transport.pipes;
 
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
-import buildcraft.api.core.Position;
 import buildcraft.api.gates.IAction;
 import buildcraft.api.tools.IToolWrench;
 import buildcraft.core.network.TileNetworkData;
 import buildcraft.core.utils.EnumColor;
-import buildcraft.transport.IPipeTransportItemsHook;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportItems;
 import buildcraft.transport.TileGenericPipe;
 import buildcraft.transport.TransportConstants;
 import buildcraft.transport.TravelingItem;
+import buildcraft.transport.pipes.events.PipeEventItem;
 import buildcraft.transport.triggers.ActionPipeColor;
 import buildcraft.transport.triggers.ActionPipeDirection;
 import cpw.mods.fml.relauncher.Side;
@@ -35,12 +34,12 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.ForgeDirection;
 
-public class PipeItemsDaizuli extends Pipe<PipeTransportItems> implements IPipeTransportItemsHook {
+public class PipeItemsDaizuli extends Pipe<PipeTransportItems> {
 
 	private int standardIconIndex = PipeIconProvider.TYPE.PipeItemsDaizuli_Black.ordinal();
 	private int solidIconIndex = PipeIconProvider.TYPE.PipeAllDaizuli_Solid.ordinal();
 	@TileNetworkData
-	private int color = EnumColor.WHITE.ordinal();
+	private int color = EnumColor.BLACK.ordinal();
 	private PipeLogicIron logic = new PipeLogicIron(this) {
 		@Override
 		protected boolean isValidConnectingTile(TileEntity tile) {
@@ -119,33 +118,31 @@ public class PipeItemsDaizuli extends Pipe<PipeTransportItems> implements IPipeT
 		return true;
 	}
 
-	@Override
-	public LinkedList<ForgeDirection> filterPossibleMovements(LinkedList<ForgeDirection> possibleOrientations, Position pos, TravelingItem item) {
+	public void eventHandler(PipeEventItem.FindDest event) {
 		LinkedList<ForgeDirection> newMovements = new LinkedList<ForgeDirection>();
 		EnumColor c = getColor();
-		for (ForgeDirection dir : possibleOrientations) {
-			if (item.color == c) {
+		for (ForgeDirection dir : event.destinations) {
+			if (event.item.color == c) {
 				if (dir.ordinal() == container.getBlockMetadata())
 					newMovements.add(dir);
 			} else if (dir.ordinal() != container.getBlockMetadata()) {
 				newMovements.add(dir);
 			}
 		}
-		return newMovements;
+		event.destinations.retainAll(newMovements);
 	}
 
-	@Override
-	public void entityEntered(TravelingItem item, ForgeDirection orientation) {
-	}
+	public void eventHandler(PipeEventItem.AdjustSpeed event) {
+		event.handled = true;
+		TravelingItem item = event.item;
 
-	@Override
-	public void readjustSpeed(TravelingItem item) {
-		if (item.getSpeed() > TransportConstants.PIPE_NORMAL_SPEED)
+		if (item.getSpeed() > TransportConstants.PIPE_NORMAL_SPEED) {
 			item.setSpeed(item.getSpeed() - TransportConstants.PIPE_NORMAL_SPEED / 4.0F);
+		}
 
-
-		if (item.getSpeed() < TransportConstants.PIPE_NORMAL_SPEED)
+		if (item.getSpeed() < TransportConstants.PIPE_NORMAL_SPEED) {
 			item.setSpeed(TransportConstants.PIPE_NORMAL_SPEED);
+		}
 	}
 
 	@Override
