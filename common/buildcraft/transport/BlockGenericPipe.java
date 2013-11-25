@@ -40,10 +40,14 @@ import buildcraft.api.transport.IPipe;
 import buildcraft.api.transport.ISolidSideTile;
 import buildcraft.core.BlockIndex;
 import buildcraft.core.CoreConstants;
+import buildcraft.core.network.PacketIds;
+import buildcraft.core.network.PacketPayloadArrays;
+import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.BCLog;
 import buildcraft.core.utils.Utils;
 import buildcraft.core.utils.MatrixTranformations;
+import cpw.mods.fml.common.network.PacketDispatcher;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -1012,6 +1016,12 @@ public class BlockGenericPipe extends BlockContainer {
 		if (placed) {
 			TileGenericPipe tile = (TileGenericPipe) world.getBlockTileEntity(i, j, k);
 			tile.initialize(pipe);
+
+			PacketPayloadArrays pipeInfo = new PacketPayloadArrays(2, 0, 0);
+			pipeInfo.intPayload[0] = blockId;
+			pipeInfo.intPayload[1] = meta;
+			PacketDispatcher.sendPacketToAllAround(tile.xCoord, tile.yCoord, tile.zCoord, 128, tile.worldObj.provider.dimensionId, new PacketUpdate(PacketIds.PIPE_CREATE, tile.xCoord, tile.yCoord, tile.zCoord, pipeInfo).getPacket());
+
 			tile.sendUpdateToClient();
 		}
 
