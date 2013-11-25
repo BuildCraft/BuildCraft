@@ -2,6 +2,7 @@ package buildcraft.transport.network;
 
 import buildcraft.core.network.PacketCoordinates;
 import buildcraft.core.network.PacketIds;
+import buildcraft.core.network.PacketPayloadArrays;
 import buildcraft.core.network.PacketSlotChange;
 import buildcraft.core.network.PacketUpdate;
 import buildcraft.transport.PipeTransportItems;
@@ -42,6 +43,14 @@ public class PacketHandlerTransport implements IPacketHandler {
 			case PacketIds.PIPE_LIQUID:
 				PacketFluidUpdate packetFluid = new PacketFluidUpdate();
 				packetFluid.readData(data);
+				break;
+			case PacketIds.PIPE_CREATE:
+				packet.readData(data);
+				if (player != null && player instanceof EntityPlayer) {
+					if (((EntityPlayer)player).worldObj.isAirBlock(packet.posX, packet.posY, packet.posZ)) {
+						((EntityPlayer)player).worldObj.setBlock(packet.posX, packet.posY, packet.posZ, ((PacketPayloadArrays)packet.payload).intPayload[0], ((PacketPayloadArrays)packet.payload).intPayload[1], 1);
+					}
+				}
 				break;
 			case PacketIds.PIPE_CONTENTS:
 				PacketPipeTransportContent packetC = new PacketPipeTransportContent();
