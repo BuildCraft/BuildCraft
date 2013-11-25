@@ -158,6 +158,9 @@ public class DefaultProps {
 	public static int TRIGGER_RED_ENGINE_HEAT = 28;
 	public static int TRIGGER_PIPE_REQUESTS_ENERGY = 29;
 	public static int TRIGGER_PIPE_TOO_MUCH_ENERGY = 30;
+	public static int TRIGGER_TIMER_SHORT = 31;
+	public static int TRIGGER_TIMER_MEDIUM = 32;
+	public static int TRIGGER_TIMER_LONG = 33;
 
 	public static int ACTION_REDSTONE = 1;
 	public static int ACTION_RED_SIGNAL = 2;

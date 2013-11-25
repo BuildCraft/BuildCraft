@@ -29,8 +29,14 @@ public class ItemGate extends ItemBuildCraft {
 	public static final int Autarchic_Gate_Gold_Or				= 11;
 	public static final int Autarchic_Gate_Diamond_And			= 12;
 	public static final int Autarchic_Gate_Diamond_Or			= 13;
+	
+	public static final int Gate_Quartz_And						= 14;
+	public static final int Gate_Quartz_Or						= 15;
+	
+	public static final int Autarchic_Gate_Quartz_And			= 16;
+	public static final int Autarchic_Gate_Quartz_Or			= 17;
 
-	public static final int MAX									= 14;
+	public static final int MAX									= 18;
 
 	private int series;
 
@@ -65,8 +71,12 @@ public class ItemGate extends ItemBuildCraft {
 				return icons[ItemGate.Gate_Gold_Or];
 			case 5:
 				return icons[ItemGate.Gate_Diamond_And];
-			default:
+			case 6:
 				return icons[ItemGate.Gate_Diamond_Or];
+			case 7:
+				return icons[ItemGate.Gate_Quartz_And];
+			default:
+				return icons[ItemGate.Gate_Quartz_Or];
 			}
 		} else if (series == 1){
 			switch (i) {
@@ -82,8 +92,12 @@ public class ItemGate extends ItemBuildCraft {
 				return icons[ItemGate.Autarchic_Gate_Gold_Or];
 			case 5:
 				return icons[ItemGate.Autarchic_Gate_Diamond_And];
-			default:
+			case 6:
 				return icons[ItemGate.Autarchic_Gate_Diamond_Or];
+			case 7:
+				return icons[ItemGate.Autarchic_Gate_Quartz_And];
+			default:
+				return icons[ItemGate.Autarchic_Gate_Quartz_Or];
 			}
 		}
 		return null;
@@ -105,6 +119,8 @@ public class ItemGate extends ItemBuildCraft {
 		itemList.add(new ItemStack(this, 1, 4));
 		itemList.add(new ItemStack(this, 1, 5));
 		itemList.add(new ItemStack(this, 1, 6));
+		itemList.add(new ItemStack(this, 1, 7));
+		itemList.add(new ItemStack(this, 1, 8));
 	}
 
 	@Override
@@ -136,7 +152,13 @@ public class ItemGate extends ItemBuildCraft {
 		icons[ItemGate.Autarchic_Gate_Gold_Or] = iconRegister.registerIcon("buildcraft:autarchic_gate_gold_or");
 		icons[ItemGate.Autarchic_Gate_Diamond_And] = iconRegister.registerIcon("buildcraft:autarchic_gate_diamond_and");
 		icons[ItemGate.Autarchic_Gate_Diamond_Or] = iconRegister.registerIcon("buildcraft:autarchic_gate_diamond_or");
-
-
+		
+		icons[ItemGate.Gate_Quartz_And] = iconRegister.registerIcon("buildcraft:gate_quartz_and");
+		icons[ItemGate.Gate_Quartz_Or] = iconRegister.registerIcon("buildcraft:gate_quartz_or");
+		
+		icons[ItemGate.Autarchic_Gate_Quartz_And] = iconRegister.registerIcon("buildcraft:autarchic_gate_quartz_and");
+		icons[ItemGate.Autarchic_Gate_Quartz_Or] = iconRegister.registerIcon("buildcraft:autarchic_gate_quartz_or");
+		
+		
 	}
 }
