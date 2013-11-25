@@ -157,7 +157,7 @@ public enum EnumColor {
 		return NAMES[ordinal()];
 	}
 
-	public String getTranslatedName() {
+	public String getLocalizedName() {
 		return StringUtils.localize(getTag());
 	}
 

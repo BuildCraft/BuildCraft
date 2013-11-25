@@ -25,27 +25,35 @@ import buildcraft.api.inventory.ISelectiveInventory;
 import buildcraft.api.inventory.ISpecialInventory;
 import buildcraft.core.GuiIds;
 import buildcraft.core.inventory.SimpleInventory;
+import buildcraft.core.network.IGuiReturnHandler;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.EnumColor;
 import buildcraft.core.utils.Utils;
 import buildcraft.transport.BlockGenericPipe;
 import buildcraft.transport.PipeIconProvider;
-import buildcraft.transport.pipes.PipeItemsEmerald.ButtonState;
+import buildcraft.transport.TravelingItem;
 import buildcraft.transport.triggers.ActionExtractionPreset;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 
-public class PipeItemsLogemerald extends PipeItemsWood {
+/**
+ *
+ * @author SandGrainOne
+ */
+public class PipeItemsEmzuli extends PipeItemsWood implements IGuiReturnHandler {
 
+	public final byte[] slotColors = new byte[4];
 	private final SimpleInventory filters = new SimpleInventory(4, "Filters", 1);
-
-	private BitSet activeFlags = new BitSet(4);
-	private int filterCount = filters.getSizeInventory();
+	private final BitSet activeFlags = new BitSet(4);
+	private final int filterCount = filters.getSizeInventory();
 	private int currentFilter = 0;
 
-	public PipeItemsLogemerald(int itemID) {
+	public PipeItemsEmzuli(int itemID) {
 		super(itemID);
 
-		standardIconIndex = PipeIconProvider.TYPE.PipeItemsLogemerald_Standard.ordinal();
-		solidIconIndex = PipeIconProvider.TYPE.PipeAllLogemerald_Solid.ordinal();
+		standardIconIndex = PipeIconProvider.TYPE.PipeItemsEmzuli_Standard.ordinal();
+		solidIconIndex = PipeIconProvider.TYPE.PipeAllEmzuli_Solid.ordinal();
 	}
 
 	@Override
@@ -66,7 +74,16 @@ public class PipeItemsLogemerald extends PipeItemsWood {
 
 		return true;
 	}
-	
+
+	@Override
+	protected TravelingItem makeItem(double x, double y, double z, ItemStack stack) {
+		TravelingItem item = super.makeItem(x, y, z, stack);
+		int color = slotColors[currentFilter % filterCount];
+		if (color > 0)
+			item.color = EnumColor.fromId(color - 1);
+		return item;
+	}
+
 	/**
 	 * Return the itemstack that can be if something can be extracted from this
 	 * inventory, null if none. On certain cases, the extractable slot depends
@@ -75,19 +92,19 @@ public class PipeItemsLogemerald extends PipeItemsWood {
 	@Override
 	public ItemStack[] checkExtract(IInventory inventory, boolean doRemove, ForgeDirection from) {
 
-		if (activeFlags.isEmpty()){
+		if (activeFlags.isEmpty()) {
 			return null;
 		}
-		
+
 		incrementFilter();
 
-		if (filters.getStackInSlot(currentFilter % filterCount) == null || !activeFlags.get(currentFilter % filterCount)){
+		if (filters.getStackInSlot(currentFilter % filterCount) == null || !activeFlags.get(currentFilter % filterCount)) {
 			return null;
 		}
-		
+
 		/* ISELECTIVEINVENTORY */
 		if (inventory instanceof ISelectiveInventory) {
-			ItemStack[] stacks = ((ISelectiveInventory) inventory).extractItem(new ItemStack[] { getCurrentFilter() }, false, doRemove, from, (int) powerHandler.getEnergyStored());
+			ItemStack[] stacks = ((ISelectiveInventory) inventory).extractItem(new ItemStack[]{getCurrentFilter()}, false, doRemove, from, (int) powerHandler.getEnergyStored());
 			if (doRemove) {
 				for (ItemStack stack : stacks) {
 					if (stack != null) {
@@ -133,9 +150,9 @@ public class PipeItemsLogemerald extends PipeItemsWood {
 			// This is a generic inventory
 			IInventory inv = Utils.getInventory(inventory);
 			ItemStack result = checkExtractGeneric(inv, doRemove, from);
-						
+
 			if (result != null) {
-				return new ItemStack[] { result };
+				return new ItemStack[]{result};
 			}
 		}
 
@@ -171,11 +188,11 @@ public class PipeItemsLogemerald extends PipeItemsWood {
 	public IInventory getFilters() {
 		return filters;
 	}
-	
+
 	@Override
 	protected void actionsActivated(Map<IAction, Boolean> actions) {
 		super.actionsActivated(actions);
-		
+
 		activeFlags.clear();
 
 		for (Entry<IAction, Boolean> action : actions.entrySet()) {
@@ -186,28 +203,28 @@ public class PipeItemsLogemerald extends PipeItemsWood {
 	}
 
 	private void setActivePreset(EnumColor color) {
-		switch (color){
-		case RED:
-			activeFlags.set(0);
-			break;
-		case BLUE:
-			activeFlags.set(1);
-			break;
-		case GREEN:
-			activeFlags.set(2);
-			break;
-		case YELLOW:
-			activeFlags.set(3);
-			break;
-		default:
-			break;
+		switch (color) {
+			case RED:
+				activeFlags.set(0);
+				break;
+			case BLUE:
+				activeFlags.set(1);
+				break;
+			case GREEN:
+				activeFlags.set(2);
+				break;
+			case YELLOW:
+				activeFlags.set(3);
+				break;
+			default:
+				break;
 		}
 	}
 
 	@Override
 	public LinkedList<IAction> getActions() {
 		LinkedList<IAction> result = super.getActions();
-		
+
 		result.add(BuildCraftTransport.actionExtractionPresetRed);
 		result.add(BuildCraftTransport.actionExtractionPresetBlue);
 		result.add(BuildCraftTransport.actionExtractionPresetGreen);
@@ -217,10 +234,23 @@ public class PipeItemsLogemerald extends PipeItemsWood {
 	}
 
 	@Override
+	public void writeGuiData(DataOutputStream paramDataOutputStream) throws IOException {
+	}
+
+	@Override
+	public void readGuiData(DataInputStream data, EntityPlayer paramEntityPlayer) throws IOException {
+		byte slot = data.readByte();
+		slotColors[slot] = data.readByte();
+	}
+
+	@Override
 	public void readFromNBT(NBTTagCompound nbt) {
 		super.readFromNBT(nbt);
 		filters.readFromNBT(nbt);
 		currentFilter = nbt.getInteger("currentFilter");
+		for (int slot = 0; slot < slotColors.length; slot++) {
+			slotColors[slot] = nbt.getByte("slotColors[" + slot + "]");
+		}
 	}
 
 	@Override
@@ -228,19 +258,22 @@ public class PipeItemsLogemerald extends PipeItemsWood {
 		super.writeToNBT(nbt);
 		filters.writeToNBT(nbt);
 		nbt.setInteger("currentFilter", currentFilter);
+		for (int slot = 0; slot < slotColors.length; slot++) {
+			nbt.setByte("slotColors[" + slot + "]", slotColors[slot]);
+		}
 	}
-	
+
 	private void incrementFilter() {
 		int count = 0;
 		currentFilter++;
-		
+
 		while (!(filters.getStackInSlot(currentFilter % filterCount) != null && activeFlags.get(currentFilter % filterCount)) && count < filterCount) {
 			currentFilter++;
 			count++;
 		}
 	}
 
-	private ItemStack getCurrentFilter() {		
+	private ItemStack getCurrentFilter() {
 		return filters.getStackInSlot(currentFilter % filters.getSizeInventory());
 	}
 }

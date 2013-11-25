@@ -36,6 +36,7 @@ public class PacketIds {
 	public static final int SELECTION_ADVANCED_WORKBENCH = 71;
 
 	public static final int GUI_RETURN = 80;
+	public static final int GUI_WIDGET = 81;
 
 	public static final int STATE_UPDATE = 100;
 }

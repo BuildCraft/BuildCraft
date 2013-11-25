@@ -97,7 +97,7 @@ public abstract class GuiBuildCraft extends GuiContainer {
 	@Override
 	protected void drawGuiContainerBackgroundLayer(float f, int mouseX, int mouseY) {
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-		mc.renderEngine.bindTexture(texture);
+		bindTexture(texture);
 		int x = (width - xSize) / 2;
 		int y = (height - ySize) / 2;
 		drawTexturedModalRect(x, y, 0, 0, xSize, ySize);
@@ -108,6 +108,7 @@ public abstract class GuiBuildCraft extends GuiContainer {
 		for (Widget widget : container.getWidgets()) {
 			if (widget.hidden)
 				continue;
+			bindTexture(texture);
 			widget.draw(this, x, y, mX, mY);
 		}
 	}
@@ -138,19 +139,51 @@ public abstract class GuiBuildCraft extends GuiContainer {
 
 	// / MOUSE CLICKS
 	@Override
-	protected void mouseClicked(int par1, int par2, int mouseButton) {
-		super.mouseClicked(par1, par2, mouseButton);
+	protected void mouseClicked(int mouseX, int mouseY, int mouseButton) {
+		int mX = mouseX - guiLeft;
+		int mY = mouseY - guiTop;
+
+		for (Widget widget : container.getWidgets()) {
+			if (widget.hidden)
+				continue;
+			if (!widget.isMouseOver(mX, mY))
+				continue;
+			if (widget.handleMouseClick(mX, mY, mouseButton))
+				return;
+		}
+		super.mouseClicked(mouseX, mouseY, mouseButton);
 
 		// / Handle ledger clicks
-		ledgerManager.handleMouseClicked(par1, par2, mouseButton);
+		ledgerManager.handleMouseClicked(mouseX, mouseY, mouseButton);
 	}
 
 	@Override
-	protected void mouseClickMove(int x, int y, int mouseButton, long time) {
-		Slot slot = getSlotAtPosition(x, y);
+	protected void mouseClickMove(int mouseX, int mouseY, int mouseButton, long time) {
+		int mX = mouseX - guiLeft;
+		int mY = mouseY - guiTop;
+		for (Widget widget : container.getWidgets()) {
+			if (widget.hidden)
+				continue;
+			widget.handleMouseMove(mX, mY, mouseButton, time);
+		}
+
+		Slot slot = getSlotAtPosition(mouseX, mouseY);
 		if (mouseButton == 1 && slot instanceof IPhantomSlot)
 			return;
-		super.mouseClickMove(x, y, mouseButton, time);
+		super.mouseClickMove(mouseX, mouseY, mouseButton, time);
+	}
+
+	@Override
+	protected void mouseMovedOrUp(int mouseX, int mouseY, int eventType) {
+		super.mouseMovedOrUp(mouseX, mouseY, eventType);
+
+		int mX = mouseX - guiLeft;
+		int mY = mouseY - guiTop;
+		for (Widget widget : container.getWidgets()) {
+			if (widget.hidden)
+				continue;
+			widget.handleMouseRelease(mX, mY, eventType);
+		}
 	}
 
 	public Slot getSlotAtPosition(int x, int y) {

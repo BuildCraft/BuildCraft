@@ -22,6 +22,8 @@ import buildcraft.core.proxy.CoreProxy;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportItems;
+import buildcraft.transport.pipes.events.PipeEvent;
+import buildcraft.transport.pipes.events.PipeEventItem;
 import buildcraft.transport.utils.TransportUtils;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -234,15 +236,12 @@ public class PipeItemsObsidian extends Pipe<PipeTransportItems> implements IPowe
 		}
 	}
 
-	@Override
-	public void onDropped(EntityItem item) {
-		if (entitiesDroppedIndex + 1 >= entitiesDropped.length) {
+	public void eventHandler(PipeEventItem.DropItem event) {
+		if (entitiesDroppedIndex + 1 >= entitiesDropped.length)
 			entitiesDroppedIndex = 0;
-		} else {
+		else
 			entitiesDroppedIndex++;
-		}
-
-		entitiesDropped[entitiesDroppedIndex] = item.entityId;
+		entitiesDropped[entitiesDroppedIndex] = event.entity.entityId;
 	}
 
 	public boolean canSuck(Entity entity, int distance) {

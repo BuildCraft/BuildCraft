@@ -14,7 +14,7 @@ import net.minecraft.world.World;
 public abstract interface IGuiReturnHandler {
 	public World getWorld();
 
-	public void writeGuiData(DataOutputStream paramDataOutputStream) throws IOException;
+	public void writeGuiData(DataOutputStream data) throws IOException;
 
-	public void readGuiData(DataInputStream paramDataInputStream, EntityPlayer paramEntityPlayer) throws IOException;
+	public void readGuiData(DataInputStream data, EntityPlayer player) throws IOException;
 }

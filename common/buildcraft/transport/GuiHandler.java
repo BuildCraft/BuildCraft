@@ -6,15 +6,15 @@ import buildcraft.transport.gui.ContainerDiamondPipe;
 import buildcraft.transport.gui.ContainerEmeraldPipe;
 import buildcraft.transport.gui.ContainerFilteredBuffer;
 import buildcraft.transport.gui.ContainerGateInterface;
-import buildcraft.transport.gui.ContainerLogemeraldPipe;
+import buildcraft.transport.gui.ContainerEmzuliPipe;
 import buildcraft.transport.gui.GuiDiamondPipe;
 import buildcraft.transport.gui.GuiEmeraldPipe;
 import buildcraft.transport.gui.GuiFilteredBuffer;
 import buildcraft.transport.gui.GuiGateInterface;
-import buildcraft.transport.gui.GuiLogemeraldPipe;
+import buildcraft.transport.gui.GuiEmzuliPipe;
 import buildcraft.transport.pipes.PipeItemsDiamond;
 import buildcraft.transport.pipes.PipeItemsEmerald;
-import buildcraft.transport.pipes.PipeItemsLogemerald;
+import buildcraft.transport.pipes.PipeItemsEmzuli;
 import cpw.mods.fml.common.network.IGuiHandler;
 import java.util.logging.Level;
 import net.minecraft.entity.player.EntityPlayer;
@@ -52,7 +52,7 @@ public class GuiHandler implements IGuiHandler {
 					return new ContainerEmeraldPipe(player.inventory, (PipeItemsEmerald) pipe.pipe);
 
 				case GuiIds.PIPE_LOGEMERALD_ITEM:
-					return new ContainerLogemeraldPipe(player.inventory, (PipeItemsLogemerald) pipe.pipe);
+					return new ContainerEmzuliPipe(player.inventory, (PipeItemsEmzuli) pipe.pipe);
 
 				case GuiIds.GATES:
 					if (pipe.pipe.hasGate())
@@ -96,7 +96,7 @@ public class GuiHandler implements IGuiHandler {
 					return new GuiEmeraldPipe(player.inventory, (PipeItemsEmerald) pipe.pipe);
 
 				case GuiIds.PIPE_LOGEMERALD_ITEM:
-					return new GuiLogemeraldPipe(player.inventory, (PipeItemsLogemerald) pipe.pipe);
+					return new GuiEmzuliPipe(player.inventory, (PipeItemsEmzuli) pipe.pipe);
 
 				case GuiIds.GATES:
 					if (pipe.pipe.hasGate())

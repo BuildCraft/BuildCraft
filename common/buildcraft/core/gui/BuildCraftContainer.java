@@ -11,6 +11,11 @@ import buildcraft.core.gui.slots.IPhantomSlot;
 import buildcraft.core.gui.slots.SlotBase;
 import buildcraft.core.gui.widgets.Widget;
 import buildcraft.core.inventory.StackHelper;
+import buildcraft.core.network.PacketGuiWidget;
+import cpw.mods.fml.common.network.PacketDispatcher;
+import cpw.mods.fml.common.network.Player;
+import java.io.DataInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.entity.player.EntityPlayer;
@@ -40,6 +45,15 @@ public abstract class BuildCraftContainer extends Container {
 	public void addWidget(Widget widget) {
 		widget.addToContainer(this);
 		widgets.add(widget);
+	}
+
+	public void sendWidgetDataToClient(Widget widget, ICrafting player, byte[] data) {
+		PacketGuiWidget pkt = new PacketGuiWidget(windowId, widgets.indexOf(widget), data);
+		PacketDispatcher.sendPacketToPlayer(pkt.getPacket(), (Player) player);
+	}
+
+	public void handleWidgetClientData(int widgetId, DataInputStream data) throws IOException {
+		widgets.get(widgetId).handleClientPacketData(data);
 	}
 
 	@Override

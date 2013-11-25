@@ -9,6 +9,7 @@ package buildcraft.transport.triggers;
 
 import buildcraft.core.triggers.BCAction;
 import buildcraft.core.utils.EnumColor;
+import buildcraft.core.utils.StringUtils;
 import java.util.Locale;
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.util.Icon;
@@ -26,7 +27,7 @@ public class ActionPipeColor extends BCAction {
 
 	@Override
 	public String getDescription() {
-		return color.getName() + " Pipe Color";
+		return String.format(StringUtils.localize("gate.pipe.item.color"), color.getLocalizedName());
 	}
 
 	@Override
