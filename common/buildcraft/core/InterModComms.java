@@ -38,19 +38,23 @@ public class InterModComms {
 
     public static void processFacadeIMC(IMCEvent event, IMCMessage m) {
         try {
-            Splitter splitter = Splitter.on("@").trimResults();
+            if (m.isStringMessage()) {
+                Splitter splitter = Splitter.on("@").trimResults();
 
-            String[] array = Iterables.toArray(splitter.split(m.getStringValue()), String.class);
-            if (array.length != 2) {
-                Logger.getLogger("Buildcraft").log(Level.INFO, String.format("Received an invalid add-facade request %s from mod %s", m.getStringValue(), m.getSender()));
-            } else {
-                Integer blId = Ints.tryParse(array[0]);
-                Integer metaId = Ints.tryParse(array[1]);
-                if (blId == null || metaId == null) {
+                String[] array = Iterables.toArray(splitter.split(m.getStringValue()), String.class);
+                if (array.length != 2) {
                     Logger.getLogger("Buildcraft").log(Level.INFO, String.format("Received an invalid add-facade request %s from mod %s", m.getStringValue(), m.getSender()));
                 } else {
-                    ItemFacade.addFacade(new ItemStack(blId, 1, metaId));
+                    Integer blId = Ints.tryParse(array[0]);
+                    Integer metaId = Ints.tryParse(array[1]);
+                    if (blId == null || metaId == null) {
+                        Logger.getLogger("Buildcraft").log(Level.INFO, String.format("Received an invalid add-facade request %s from mod %s", m.getStringValue(), m.getSender()));
+                    } else {
+                        ItemFacade.addFacade(new ItemStack(blId, 1, metaId));
+                    }
                 }
+            } else if (m.isItemStackMessage()) {
+                ItemFacade.addFacade(m.getItemStackValue());
             }
         } catch (Exception ex) {
 
