@@ -1007,7 +1007,7 @@ public class BlockGenericPipe extends BlockContainer {
 		if (world.isRemote)
 			return true;
 
-		boolean placed = world.setBlock(i, j, k, blockId, meta, 1);
+		boolean placed = world.setBlock(i, j, k, blockId, meta, 3);
 
 		if (placed) {
 			TileGenericPipe tile = (TileGenericPipe) world.getBlockTileEntity(i, j, k);
