@@ -19,7 +19,6 @@ import buildcraft.api.recipes.RefineryRecipes.Recipe;
 import buildcraft.core.IMachine;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.fluids.SingleUseTank;
-import buildcraft.core.fluids.Tank;
 import buildcraft.core.fluids.TankManager;
 import buildcraft.core.network.PacketPayload;
 import buildcraft.core.network.PacketPayloadStream;

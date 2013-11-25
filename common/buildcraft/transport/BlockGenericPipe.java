@@ -15,7 +15,6 @@ import java.util.Map;
 import java.util.Random;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.particle.EffectRenderer;
 import net.minecraft.client.particle.EntityDiggingFX;
@@ -38,6 +37,7 @@ import buildcraft.BuildCraftTransport;
 import buildcraft.api.tools.IToolWrench;
 import buildcraft.api.transport.IPipe;
 import buildcraft.api.transport.ISolidSideTile;
+import buildcraft.core.BlockBuildCraft;
 import buildcraft.core.BlockIndex;
 import buildcraft.core.CoreConstants;
 import buildcraft.core.proxy.CoreProxy;
@@ -50,7 +50,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 import java.util.Arrays;
 import net.minecraft.client.Minecraft;
 
-public class BlockGenericPipe extends BlockContainer {
+public class BlockGenericPipe extends BlockBuildCraft {
 
 	static enum Part {
 
@@ -79,7 +79,6 @@ public class BlockGenericPipe extends BlockContainer {
 		}
 	}
 	private static final ForgeDirection[] DIR_VALUES = ForgeDirection.values();
-	private static Random rand = new Random();
 	private boolean skippedFirstIconRegister;
 	private int renderMask = 0;
 

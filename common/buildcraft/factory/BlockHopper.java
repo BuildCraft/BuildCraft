@@ -23,7 +23,6 @@ public class BlockHopper extends BlockBuildCraft {
 
 	public BlockHopper(int blockId) {
 		super(blockId, Material.iron);
-		setHardness(5F);
 	}
 
 	@Override

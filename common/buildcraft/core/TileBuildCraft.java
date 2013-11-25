@@ -19,6 +19,10 @@ import buildcraft.core.utils.Utils;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
@@ -32,6 +36,7 @@ public abstract class TileBuildCraft extends TileEntity implements ISynchronized
 	private final TilePacketWrapper descriptionPacket;
 	private final TilePacketWrapper updatePacket;
 	private boolean init = false;
+	private String owner = "[BuildCraft]";
 
 	public TileBuildCraft() {
 		if (!updateWrappers.containsKey(this.getClass())) {
@@ -45,6 +50,10 @@ public abstract class TileBuildCraft extends TileEntity implements ISynchronized
 		updatePacket = updateWrappers.get(this.getClass());
 		descriptionPacket = descriptionWrappers.get(this.getClass());
 
+	}
+
+	public String getOwner() {
+		return owner;
 	}
 
 	@Override
@@ -68,6 +77,11 @@ public abstract class TileBuildCraft extends TileEntity implements ISynchronized
 
 	public void initialize() {
 		Utils.handleBufferedDescription(this);
+	}
+
+	public void onBlockPlacedBy(EntityLivingBase entity, ItemStack stack) {
+		if (entity instanceof EntityPlayer)
+			owner = ((EntityPlayer) entity).username;
 	}
 
 	public void destroy() {
@@ -108,6 +122,19 @@ public abstract class TileBuildCraft extends TileEntity implements ISynchronized
 
 	@Override
 	public void postPacketHandling(PacketUpdate packet) {
+	}
+
+	@Override
+	public void writeToNBT(NBTTagCompound nbt) {
+		super.writeToNBT(nbt);
+		nbt.setString("owner", owner);
+	}
+
+	@Override
+	public void readFromNBT(NBTTagCompound nbt) {
+		super.readFromNBT(nbt);
+		if (nbt.hasKey("owner"))
+			owner = nbt.getString("owner");
 	}
 
 	public boolean isInvNameLocalized() {

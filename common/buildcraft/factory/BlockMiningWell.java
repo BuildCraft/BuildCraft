@@ -11,6 +11,7 @@ package buildcraft.factory;
 
 import buildcraft.BuildCraftFactory;
 import buildcraft.api.core.Position;
+import buildcraft.core.BlockBuildCraft;
 import buildcraft.core.utils.Utils;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -24,7 +25,7 @@ import net.minecraft.util.Icon;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
 
-public class BlockMiningWell extends BlockMachineRoot {
+public class BlockMiningWell extends BlockBuildCraft {
 
 	Icon textureFront, textureSides, textureBack, textureTop;
 
