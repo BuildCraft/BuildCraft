@@ -11,7 +11,9 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.ICrafting;
 import net.minecraft.inventory.Slot;
+import net.minecraft.item.ItemStack;
 import buildcraft.core.gui.BuildCraftContainer;
+import buildcraft.energy.TileEngineIron;
 import buildcraft.energy.TileEngineStone;
 import buildcraft.energy.TileEngineWithInventory;
 
@@ -48,6 +50,15 @@ public class ContainerEngine extends BuildCraftContainer {
 
 		for (int i = 0; i < crafters.size(); i++) {
 			engine.sendGUINetworkData(this, (ICrafting) crafters.get(i));
+		}
+	}
+	
+	@Override
+	public void putStackInSlot(int i, ItemStack stack) {
+		if(engine instanceof TileEngineIron && (i == 19 || i == 20)) {
+			((TileEngineIron) engine).getGUINetworkDataStack(i, stack);
+		} else {
+			super.putStackInSlot(i, stack);
 		}
 	}
 

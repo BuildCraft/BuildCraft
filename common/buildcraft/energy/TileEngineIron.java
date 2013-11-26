@@ -302,6 +302,21 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
 				break;
 		}
 	}
+	
+	public void getGUINetworkDataStack(int id, ItemStack stack) {
+		switch(id) {
+		case 19:
+			if(tankFuel.getFluid() != null) {
+				tankFuel.getFluid().tag = stack.stackTagCompound;
+			}
+			break;
+		case 20:
+			if(tankCoolant.getFluid() != null) {
+				tankCoolant.getFluid().tag = stack.stackTagCompound;
+			}
+			break;
+		}
+	}
 
 	@Override
 	public void sendGUINetworkData(ContainerEngine containerEngine, ICrafting iCrafting) {
@@ -310,6 +325,16 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
 		iCrafting.sendProgressBarUpdate(containerEngine, 16, tankCoolant.getFluid() != null ? tankCoolant.getFluid().fluidID : 0);
 		iCrafting.sendProgressBarUpdate(containerEngine, 17, tankFuel.getFluid() != null ? tankFuel.getFluid().amount : 0);
 		iCrafting.sendProgressBarUpdate(containerEngine, 18, tankCoolant.getFluid() != null ? tankCoolant.getFluid().amount : 0);
+		if(tankFuel.getFluid() != null && tankFuel.getFluid().tag != null) {
+			ItemStack stack = new ItemStack(1, 1, 0);
+			stack.setTagCompound(tankFuel.getFluid().tag);
+			iCrafting.sendSlotContents(containerEngine, 19, stack);
+		}
+		if(tankCoolant.getFluid() != null && tankCoolant.getFluid().tag != null) {
+			ItemStack stack = new ItemStack(1, 1, 0);
+			stack.setTagCompound(tankCoolant.getFluid().tag);
+			iCrafting.sendSlotContents(containerEngine, 20, stack);
+		}
 	}
 
 	@Override

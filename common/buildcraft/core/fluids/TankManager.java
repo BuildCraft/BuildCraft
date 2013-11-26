@@ -17,6 +17,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
@@ -115,6 +117,10 @@ public class TankManager<T extends Tank> extends ForwardingList<T> implements IF
 			if (fluidStack != null && fluidStack.getFluid() != null) {
 				data.writeShort(fluidStack.getFluid().getID());
 				data.writeInt(fluidStack.amount);
+				data.writeBoolean(fluidStack.tag != null);
+				if(fluidStack.tag != null) {
+					NBTBase.writeNamedTag(fluidStack.tag, data);
+				}
 			} else {
 				data.writeShort(-1);
 			}
@@ -125,10 +131,15 @@ public class TankManager<T extends Tank> extends ForwardingList<T> implements IF
 	public void readData(DataInputStream data) throws IOException {
 		for (Tank tank : tanks) {
 			int fluidId = data.readShort();
-			if (fluidId > 0)
-				tank.setFluid(new FluidStack(fluidId, data.readInt()));
-			else
+			if (fluidId > 0) {
+				FluidStack fluidStack = new FluidStack(fluidId, data.readInt());
+				if(data.readBoolean()) {
+					fluidStack.tag = (NBTTagCompound) NBTBase.readNamedTag(data);
+				}
+				tank.setFluid(fluidStack);
+			} else {
 				tank.setFluid(null);
+			}
 		}
 	}
 }
