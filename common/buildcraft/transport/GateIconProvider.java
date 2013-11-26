@@ -38,7 +38,18 @@ public class GateIconProvider implements IIconProvider {
 	public static final int Gate_Autarchic_Diamond_Or_Dark 	= 26;
 	public static final int Gate_Autarchic_Diamond_Or_Lit 	= 27;	
 	
-	public static final int MAX								= 28;
+	public static final int Gate_Quartz_And_Dark			= 28;
+	public static final int Gate_Quartz_And_Lit				= 29;
+	public static final int Gate_Quartz_Or_Dark				= 30;
+	public static final int Gate_Quartz_Or_Lit				= 31;
+	
+	public static final int Gate_Autarchic_Quartz_And_Dark	= 32;
+	public static final int Gate_Autarchic_Quartz_And_Lit	= 33;
+	public static final int Gate_Autarchic_Quartz_Or_Dark	= 34;
+	public static final int Gate_Autarchic_Quartz_Or_Lit	= 35;
+	
+	
+	public static final int MAX								= 36;
 
 	@SideOnly(Side.CLIENT)
 	private Icon[] icons;
@@ -83,6 +94,16 @@ public class GateIconProvider implements IIconProvider {
 		icons[GateIconProvider.Gate_Autarchic_Diamond_And_Lit] = iconRegister.registerIcon("buildcraft:gate_autarchic_diamond_and_lit");
 		icons[GateIconProvider.Gate_Autarchic_Diamond_Or_Dark] = iconRegister.registerIcon("buildcraft:gate_autarchic_diamond_or_dark");
 		icons[GateIconProvider.Gate_Autarchic_Diamond_Or_Lit] = iconRegister.registerIcon("buildcraft:gate_autarchic_diamond_or_lit");	
+		
+		icons[GateIconProvider.Gate_Quartz_And_Dark] = iconRegister.registerIcon("buildcraft:gate_quartz_and_dark");
+		icons[GateIconProvider.Gate_Quartz_And_Lit] = iconRegister.registerIcon("buildcraft:gate_quartz_and_lit");
+		icons[GateIconProvider.Gate_Quartz_Or_Dark] = iconRegister.registerIcon("buildcraft:gate_quartz_or_dark");
+		icons[GateIconProvider.Gate_Quartz_Or_Lit] = iconRegister.registerIcon("buildcraft:gate_quartz_or_lit");
+		
+		icons[GateIconProvider.Gate_Autarchic_Quartz_And_Dark] = iconRegister.registerIcon("buildcraft:gate_autarchic_quartz_and_dark");
+		icons[GateIconProvider.Gate_Autarchic_Quartz_And_Lit] = iconRegister.registerIcon("buildcraft:gate_autarchic_quartz_and_lit");
+		icons[GateIconProvider.Gate_Autarchic_Quartz_Or_Dark] = iconRegister.registerIcon("buildcraft:gate_autarchic_quartz_or_dark");
+		icons[GateIconProvider.Gate_Autarchic_Quartz_Or_Lit] = iconRegister.registerIcon("buildcraft:gate_autarchic_quartz_or_lit");
 	}
 
 }

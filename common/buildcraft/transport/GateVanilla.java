@@ -88,16 +88,20 @@ public class GateVanilla extends Gate {
 				return StringUtils.localize("item.pipeGate.0");
 			case AND_2:
 				return StringUtils.localize("item.pipeGate.1");
-			case AND_3:
-				return StringUtils.localize("item.pipeGate.3");
-			case AND_4:
-				return StringUtils.localize("item.pipeGate.5");
 			case OR_2:
 				return StringUtils.localize("item.pipeGate.2");
+			case AND_3:
+				return StringUtils.localize("item.pipeGate.3");
 			case OR_3:
 				return StringUtils.localize("item.pipeGate.4");
+			case AND_4:
+				return StringUtils.localize("item.pipeGate.5");
 			case OR_4:
 				return StringUtils.localize("item.pipeGate.6");
+			case AND_5:
+				return StringUtils.localize("item.pipeGate.7");
+			case OR_5:
+				return StringUtils.localize("item.pipeGate.8");
 			default:
 				return "";
 		}
@@ -106,9 +110,9 @@ public class GateVanilla extends Gate {
 
 	@Override
 	public GateConditional getConditional() {
-		if (kind == GateKind.OR_2 || kind == GateKind.OR_3 || kind == GateKind.OR_4)
+		if (kind == GateKind.OR_2 || kind == GateKind.OR_3 || kind == GateKind.OR_4 || kind ==  GateKind.OR_5)
 			return GateConditional.OR;
-		else if (kind == GateKind.AND_2 || kind == GateKind.AND_3 || kind == GateKind.AND_4)
+		else if (kind == GateKind.AND_2 || kind == GateKind.AND_3 || kind == GateKind.AND_4 || kind == GateKind.AND_5)
 			return GateConditional.AND;
 		else
 			return GateConditional.None;
@@ -163,8 +167,12 @@ public class GateVanilla extends Gate {
 				gateDamage = 5;
 				break;
 			case OR_4:
-			default:
 				gateDamage = 6;
+			case AND_5:
+				gateDamage = 7;
+				break;
+			default:
+				gateDamage = 8;
 				break;
 		}
 
@@ -252,6 +260,12 @@ public class GateVanilla extends Gate {
 			list.add(BuildCraftTransport.triggerYellowSignalActive);
 			list.add(BuildCraftTransport.triggerYellowSignalInactive);
 		}
+		
+		if (pipe.gate.kind == GateKind.AND_5 || pipe.gate.kind == GateKind.OR_5) {
+			list.add(BuildCraftTransport.triggerTimerShort);
+			list.add(BuildCraftTransport.triggerTimerMedium);
+			list.add(BuildCraftTransport.triggerTimerLong);
+		}
 
 	}
 
@@ -282,6 +296,10 @@ public class GateVanilla extends Gate {
 					return isGateActive ? GateIconProvider.Gate_Diamond_And_Lit : GateIconProvider.Gate_Diamond_And_Dark;
 				case OR_4:
 					return isGateActive ? GateIconProvider.Gate_Diamond_Or_Lit : GateIconProvider.Gate_Diamond_Or_Dark;
+				case AND_5:
+					return isGateActive ? GateIconProvider.Gate_Quartz_And_Lit : GateIconProvider.Gate_Quartz_And_Dark;
+				case OR_5:
+					return isGateActive ? GateIconProvider.Gate_Quartz_Or_Lit : GateIconProvider.Gate_Quartz_Or_Dark;
 			}
 		} else {
 			switch (kind) {
@@ -301,6 +319,10 @@ public class GateVanilla extends Gate {
 					return isGateActive ? GateIconProvider.Gate_Autarchic_Diamond_And_Lit : GateIconProvider.Gate_Autarchic_Diamond_And_Dark;
 				case OR_4:
 					return isGateActive ? GateIconProvider.Gate_Autarchic_Diamond_Or_Lit : GateIconProvider.Gate_Autarchic_Diamond_Or_Dark;
+				case AND_5:
+					return isGateActive ? GateIconProvider.Gate_Autarchic_Quartz_And_Lit : GateIconProvider.Gate_Autarchic_Quartz_And_Dark;
+				case OR_5:
+					return isGateActive ? GateIconProvider.Gate_Autarchic_Quartz_Or_Lit : GateIconProvider.Gate_Autarchic_Quartz_Or_Dark;
 			}
 		}
 
@@ -317,7 +339,7 @@ public class GateVanilla extends Gate {
 			return TEXTURE1;
 		else if (kind == GateKind.AND_2 || kind == GateKind.OR_2)
 			return TEXTURE2;
-		else if (kind == GateKind.AND_3 || kind == GateKind.OR_3)
+		else if (kind == GateKind.AND_3 || kind == GateKind.OR_3 || kind == GateKind.AND_5 || kind == GateKind.OR_5)
 			return TEXTURE3;
 		else
 			return TEXTURE4;
