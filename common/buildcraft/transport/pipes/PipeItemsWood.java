@@ -129,6 +129,8 @@ public class PipeItemsWood extends Pipe<PipeTransportItems> implements IPowerRec
 			if (extracted == null)
 				return;
 
+			tile.onInventoryChanged();
+
 			for (ItemStack stack : extracted) {
 				if (stack == null || stack.stackSize == 0) {
 					powerHandler.useEnergy(1, 1, true);
