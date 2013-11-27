@@ -86,6 +86,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 	public BlockGenericPipe(int i) {
 		super(i, Material.glass);
 		setRenderAllSides();
+		setCreativeTab(null);
 	}
 
 	@Override
