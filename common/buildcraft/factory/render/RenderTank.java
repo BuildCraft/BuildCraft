@@ -41,8 +41,9 @@ public class RenderTank extends TileEntitySpecialRenderer {
 		bindTexture(FluidRenderer.getFluidSheet(liquid));
 		FluidRenderer.setColorForFluidStack(liquid);
                 
-		GL11.glTranslatef((float) x + 0.125F, (float) y, (float) z + 0.125F);
+		GL11.glTranslatef((float) x + 0.125F, (float) y + 0.5F, (float) z + 0.125F);
 		GL11.glScalef(0.75F, 0.999F, 0.75F);
+		GL11.glTranslatef(0, -0.5F, 0);
 
 		GL11.glCallList(displayList[(int) ((float) liquid.amount / (float) (tank.tank.getCapacity()) * (FluidRenderer.DISPLAY_STAGES - 1))]);
 
