@@ -786,7 +786,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 					return true;
 			}
 		}
-		if (rayTraceResult != null && (rayTraceResult.hitPart == Part.Pipe || rayTraceResult.hitPart == Part.Gate)) {
+		if (rayTraceResult != null && (rayTraceResult.hitPart != Part.Facade)) {
 			if (addFacade(player, pipe, rayTraceResult.sideHit != null && rayTraceResult.sideHit != ForgeDirection.UNKNOWN ? rayTraceResult.sideHit : side))
 				return true;
 		}
