@@ -5,15 +5,13 @@ package buildcraft.core.network;
  */
 public class IndexInPayload {
 
-	public IndexInPayload(int intIndex, int floatIndex, int stringIndex, int itemStackIndex) {
+	public IndexInPayload(int intIndex, int floatIndex, int stringIndex) {
 		this.intIndex = intIndex;
 		this.floatIndex = floatIndex;
 		this.stringIndex = stringIndex;
-		this.itemStackIndex = itemStackIndex;
 	}
 
 	public int intIndex = 0;
 	public int floatIndex = 0;
 	public int stringIndex = 0;
-	public int itemStackIndex = 0;
 }

@@ -25,20 +25,14 @@ public class PacketPayloadArrays extends PacketPayload {
 	public int[] intPayload = new int[0];
 	public float[] floatPayload = new float[0];
 	public String[] stringPayload = new String[0];
-	public ItemStack[] itemStackPayload = new ItemStack[0];
 
 	public PacketPayloadArrays() {
 	}
 	
 	public PacketPayloadArrays(int intSize, int floatSize, int stringSize) {
-		this(intSize, floatSize, stringSize, 0);
-	}
-
-	public PacketPayloadArrays(int intSize, int floatSize, int stringSize, int itemStackSize) {
 		intPayload = new int[intSize];
 		floatPayload = new float[floatSize];
 		stringPayload = new String[stringSize];
-		itemStackPayload = new ItemStack[itemStackSize];
 	}
 
 	public void append(PacketPayloadArrays other) {
@@ -66,7 +60,7 @@ public class PacketPayloadArrays extends PacketPayload {
 
 	public void splitTail(IndexInPayload index) {
 		PacketPayloadArrays payload = new PacketPayloadArrays(intPayload.length - index.intIndex, floatPayload.length - index.floatIndex, stringPayload.length
-				- index.stringIndex, itemStackPayload.length - index.itemStackIndex);
+				- index.stringIndex);
 
 		if (intPayload.length > 0) {
 			System.arraycopy(intPayload, index.intIndex, payload.intPayload, 0, payload.intPayload.length);
@@ -84,7 +78,6 @@ public class PacketPayloadArrays extends PacketPayload {
 		data.writeInt(intPayload.length);
 		data.writeInt(floatPayload.length);
 		data.writeInt(stringPayload.length);
-		data.writeInt(itemStackPayload.length);
 
 		for (int intData : intPayload) {
 			data.writeInt(intData);
@@ -95,9 +88,6 @@ public class PacketPayloadArrays extends PacketPayload {
 		for (String stringData : stringPayload) {
 			data.writeUTF(stringData);
 		}
-		for(ItemStack stack : itemStackPayload) {
-			Packet.writeItemStack(stack, data);
-		}
 	}
 
 	@Override
@@ -105,7 +95,6 @@ public class PacketPayloadArrays extends PacketPayload {
 		intPayload = new int[data.readInt()];
 		floatPayload = new float[data.readInt()];
 		stringPayload = new String[data.readInt()];
-		itemStackPayload = new ItemStack[data.readInt()];
 
 		for (int i = 0; i < intPayload.length; i++) {
 			intPayload[i] = data.readInt();
@@ -115,9 +104,6 @@ public class PacketPayloadArrays extends PacketPayload {
 		}
 		for (int i = 0; i < stringPayload.length; i++) {
 			stringPayload[i] = data.readUTF();
-		}
-		for(int i = 0; i < itemStackPayload.length; i++) {
-			itemStackPayload[i] = Packet.readItemStack(data);
 		}
 	}
 

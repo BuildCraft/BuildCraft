@@ -18,21 +18,28 @@ import buildcraft.core.network.PacketCoordinates;
 import buildcraft.core.network.PacketIds;
 import buildcraft.core.network.PacketPayload;
 import buildcraft.core.network.PacketPayloadArrays;
+import buildcraft.core.network.PacketPayloadStream;
 import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.BCLog;
 import buildcraft.transport.Gate;
 import buildcraft.transport.Pipe;
+
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.NavigableSet;
 import java.util.TreeSet;
+
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ICrafting;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.packet.Packet;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.ForgeDirection;
@@ -159,42 +166,53 @@ public class ContainerGateInterface extends BuildCraftContainer {
 	 * @param packet
 	 */
 	public void setSelection(PacketUpdate packet, boolean notify) {
-		PacketPayloadArrays payload = (PacketPayloadArrays) packet.payload;
-		int position = payload.intPayload[0];
-
-		setTrigger(position, ActionManager.triggers.get(payload.stringPayload[0]), notify);
-		setAction(position, ActionManager.actions.get(payload.stringPayload[1]), notify);
-
-		ItemStack parameter = payload.itemStackPayload[0];
-		if(parameter != null) {
-			ITriggerParameter param = new TriggerParameter();
-			param.set(parameter);
-			setTriggerParameter(position, param, notify);
-		} else {
-			setTriggerParameter(position, null, notify);
+		try {
+			PacketPayloadStream payload = (PacketPayloadStream) packet.payload;
+			DataInputStream data = payload.stream;
+			
+			int position = data.readInt();
+	
+			setTrigger(position, ActionManager.triggers.get(data.readUTF()), notify);
+			setAction(position, ActionManager.actions.get(data.readUTF()), notify);
+	
+			ItemStack parameter = Packet.readItemStack(data);
+			if(parameter != null) {
+				ITriggerParameter param = new TriggerParameter();
+				param.set(parameter);
+				setTriggerParameter(position, param, notify);
+			} else {
+				setTriggerParameter(position, null, notify);
+			}
+		} catch(IOException e) {
+			e.printStackTrace();
 		}
 	}
+	
+	private PacketPayload getSelectionPayload(final int position) {
+		PacketPayloadStream payload = new PacketPayloadStream(new PacketPayloadStream.StreamWriter() {
+			@Override
+			public void writeData(DataOutputStream data) throws IOException {
+				data.writeInt(position);
+				
+				if (pipe.gate.triggers[position] != null) {
+					data.writeUTF(pipe.gate.triggers[position].getUniqueTag());
+				} else {
+					data.writeUTF("");
+				}
 
-	private PacketPayload getSelectionPayload(int position) {
-		PacketPayloadArrays payload = new PacketPayloadArrays(1, 0, 2, 1);
+				if (pipe.gate.actions[position] != null) {
+					data.writeUTF(pipe.gate.actions[position].getUniqueTag());
+				} else {
+					data.writeUTF("");
+				}
 
-		payload.intPayload[0] = position;
-
-		if (pipe.gate.triggers[position] != null) {
-			payload.stringPayload[0] = pipe.gate.triggers[position].getUniqueTag();
-		} else {
-			payload.stringPayload[0] = "";
-		}
-
-		if (pipe.gate.actions[position] != null) {
-			payload.stringPayload[1] = pipe.gate.actions[position].getUniqueTag();
-		} else {
-			payload.stringPayload[1] = "";
-		}
-
-		if (pipe.gate.triggerParameters[position] != null && pipe.gate.triggerParameters[position].getItemStack() != null) {
-			payload.itemStackPayload[0] =  pipe.gate.triggerParameters[position].getItemStack().copy();
-		}
+				if (pipe.gate.triggerParameters[position] != null && pipe.gate.triggerParameters[position].getItemStack() != null) {
+					Packet.writeItemStack(pipe.gate.triggerParameters[position].getItemStack().copy(), data);
+				} else {
+					Packet.writeItemStack(null, data);
+				}
+			}
+		});
 
 		return payload;
 	}
