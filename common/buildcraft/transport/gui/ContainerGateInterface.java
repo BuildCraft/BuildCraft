@@ -165,19 +165,18 @@ public class ContainerGateInterface extends BuildCraftContainer {
 		setTrigger(position, ActionManager.triggers.get(payload.stringPayload[0]), notify);
 		setAction(position, ActionManager.actions.get(payload.stringPayload[1]), notify);
 
-		int itemID = payload.intPayload[1];
-		if (itemID <= 0) {
+		ItemStack parameter = payload.itemStackPayload[0];
+		if(parameter != null) {
+			ITriggerParameter param = new TriggerParameter();
+			param.set(parameter);
+			setTriggerParameter(position, param, notify);
+		} else {
 			setTriggerParameter(position, null, notify);
-			return;
 		}
-
-		ITriggerParameter param = new TriggerParameter();
-		param.set(new ItemStack(itemID, payload.intPayload[2], payload.intPayload[3]));
-		setTriggerParameter(position, param, notify);
 	}
 
 	private PacketPayload getSelectionPayload(int position) {
-		PacketPayloadArrays payload = new PacketPayloadArrays(4, 0, 2);
+		PacketPayloadArrays payload = new PacketPayloadArrays(1, 0, 2, 1);
 
 		payload.intPayload[0] = position;
 
@@ -194,9 +193,7 @@ public class ContainerGateInterface extends BuildCraftContainer {
 		}
 
 		if (pipe.gate.triggerParameters[position] != null && pipe.gate.triggerParameters[position].getItemStack() != null) {
-			payload.intPayload[1] = pipe.gate.triggerParameters[position].getItemStack().itemID;
-			payload.intPayload[2] = pipe.gate.triggerParameters[position].getItemStack().stackSize;
-			payload.intPayload[3] = pipe.gate.triggerParameters[position].getItemStack().getItemDamage();
+			payload.itemStackPayload[0] =  pipe.gate.triggerParameters[position].getItemStack().copy();
 		}
 
 		return payload;
