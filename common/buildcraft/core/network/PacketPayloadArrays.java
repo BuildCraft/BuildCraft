@@ -8,10 +8,13 @@
  */
 package buildcraft.core.network;
 
-import buildcraft.core.utils.Utils;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+
+import net.minecraft.item.ItemStack;
+import net.minecraft.network.packet.Packet;
+import buildcraft.core.utils.Utils;
 
 /**
  *
@@ -25,7 +28,7 @@ public class PacketPayloadArrays extends PacketPayload {
 
 	public PacketPayloadArrays() {
 	}
-
+	
 	public PacketPayloadArrays(int intSize, int floatSize, int stringSize) {
 		intPayload = new int[intSize];
 		floatPayload = new float[floatSize];
