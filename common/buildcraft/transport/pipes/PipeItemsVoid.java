@@ -34,11 +34,11 @@ public class PipeItemsVoid extends Pipe<PipeTransportItems> {
 		return PipeIconProvider.TYPE.PipeItemsVoid.ordinal();
 	}
 
-	public void handleEvent(PipeEventItem.DropItem event) {
+	public void eventHandler(PipeEventItem.DropItem event) {
 		event.entity = null;
 	}
 
-	public void handleEvent(PipeEventItem.ReachedCenter event) {
+	public void eventHandler(PipeEventItem.ReachedCenter event) {
 		transport.items.scheduleRemoval(event.item);
 	}
 }
