@@ -19,6 +19,7 @@ import buildcraft.core.network.PacketIds;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.BCLog;
 import buildcraft.core.utils.BlockUtil;
+import buildcraft.core.utils.MathUtils;
 import buildcraft.transport.network.PacketPipeTransportContent;
 import buildcraft.transport.network.PacketPipeTransportNBT;
 import buildcraft.transport.network.PacketSimpleId;
@@ -33,12 +34,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
-import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
@@ -47,6 +48,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.MathHelper;
 import net.minecraftforge.common.ForgeDirection;
 
 public class PipeTransportItems extends PipeTransport {
@@ -151,17 +153,9 @@ public class PipeTransportItems extends PipeTransport {
 	}
 
 	private void readjustPosition(TravelingItem item) {
-		double x = item.xCoord;
-		double y = item.yCoord;
-		double z = item.zCoord;
-
-		x = Math.max(x, container.xCoord + 0.01);
-		y = Math.max(y, container.yCoord + 0.01);
-		z = Math.max(z, container.zCoord + 0.01);
-
-		x = Math.min(x, container.xCoord + 0.99);
-		y = Math.min(y, container.yCoord + 0.99);
-		z = Math.min(z, container.zCoord + 0.99);
+		double x = MathUtils.clamp(item.xCoord, container.xCoord + 0.01, container.xCoord + 0.99);
+		double y = MathUtils.clamp(item.yCoord, container.yCoord + 0.01, container.yCoord + 0.99);
+		double z = MathUtils.clamp(item.zCoord, container.zCoord + 0.01, container.zCoord + 0.99);
 
 		if (item.input != ForgeDirection.UP && item.input != ForgeDirection.DOWN) {
 			y = container.yCoord + TransportUtils.getPipeFloorOf(item.getItemStack());
@@ -284,9 +278,10 @@ public class PipeTransportItems extends PipeTransport {
 
 		item.blacklist.add(item.input.getOpposite());
 
-		for (ForgeDirection o : ForgeDirection.VALID_DIRECTIONS) {
-			if (item.blacklist.contains(o))
-				continue;
+		EnumSet<ForgeDirection> sides = EnumSet.complementOf(item.blacklist);
+		sides.remove(ForgeDirection.UNKNOWN);
+
+		for (ForgeDirection o : sides) {
 			if (container.pipe.outputOpen(o) && canReceivePipeObjects(o, item))
 				result.add(o);
 		}
