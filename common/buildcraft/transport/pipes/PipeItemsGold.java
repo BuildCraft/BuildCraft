@@ -36,9 +36,9 @@ public class PipeItemsGold extends Pipe {
 		return PipeIconProvider.TYPE.PipeItemsGold.ordinal();
 	}
 
-	public void handleEvent(PipeEventItem.AdjustSpeed event) {
+	public void eventHandler(PipeEventItem.AdjustSpeed event) {
 		event.handled = true;
 		TravelingItem item = event.item;
-		item.setSpeed(Math.min(Math.max(TransportConstants.PIPE_NORMAL_SPEED, item.getSpeed()) * 2f, TransportConstants.PIPE_NORMAL_SPEED * 20F));
+		item.setSpeed(Math.min(Math.max(TransportConstants.PIPE_NORMAL_SPEED, item.getSpeed()) * 4f, TransportConstants.PIPE_NORMAL_SPEED * 20F));
 	}
 }
