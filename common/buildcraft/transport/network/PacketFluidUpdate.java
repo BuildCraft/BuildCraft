@@ -17,6 +17,7 @@ import net.minecraftforge.fluids.FluidStack;
 public class PacketFluidUpdate extends PacketCoordinates {
 
 	public FluidStack[] renderCache = new FluidStack[ForgeDirection.values().length];
+	public int[] colorRenderCache = new int[ForgeDirection.values().length];
 	public BitSet delta;
 
 	public PacketFluidUpdate(int xCoord, int yCoord, int zCoord) {
@@ -53,6 +54,7 @@ public class PacketFluidUpdate extends PacketCoordinates {
 		PipeTransportFluids transLiq = ((PipeTransportFluids) pipe.pipe.transport);
 
 		renderCache = transLiq.renderCache;
+		colorRenderCache = transLiq.colorRenderCache;
 
 		byte[] dBytes = new byte[3];
 		data.read(dBytes);
@@ -63,7 +65,8 @@ public class PacketFluidUpdate extends PacketCoordinates {
 		for (ForgeDirection dir : ForgeDirection.values()) {
 			if (delta.get(dir.ordinal() * 3 + 0)) {
 			    int amt = renderCache[dir.ordinal()] != null ? renderCache[dir.ordinal()].amount : 0;
-				renderCache[dir.ordinal()] = new FluidStack(data.readInt(),amt);
+				renderCache[dir.ordinal()] = new FluidStack(data.readInt(), amt);
+				colorRenderCache[dir.ordinal()] = data.readInt();
 			}
 			if (delta.get(dir.ordinal() * 3 + 2)) {
 			    if (renderCache[dir.ordinal()] == null) {
@@ -88,8 +91,10 @@ public class PacketFluidUpdate extends PacketCoordinates {
 			if (delta.get(dir.ordinal() * 3 + 0)) {
 				if (liquid != null) {
 					data.writeInt(liquid.fluidID);
+					data.writeInt(colorRenderCache[dir.ordinal()]);
 				} else {
 					data.writeInt(0);
+					data.writeInt(0xFFFFFF);
 				}
 			}
 			if (delta.get(dir.ordinal() * 3 + 2)) {

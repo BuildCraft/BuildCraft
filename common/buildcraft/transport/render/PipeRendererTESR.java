@@ -597,6 +597,7 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 			int i = side.ordinal();
 
 			FluidStack fluidStack = trans.renderCache[i];
+			int color = trans.colorRenderCache[i];
 
 			if (fluidStack == null || fluidStack.amount <= 0)
 				continue;
@@ -638,12 +639,16 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 				default:
 			}
 			bindTexture(TextureMap.locationBlocksTexture);
-			FluidRenderer.setColorForFluidStack(fluidStack);
+			float red = (float) (color >> 16 & 255) / 255.0F;
+			float green = (float) (color >> 8 & 255) / 255.0F;
+			float blue = (float) (color & 255) / 255.0F;
+			GL11.glColor4f(red, green, blue, 1.0F);
 			GL11.glCallList(list);
 			GL11.glPopMatrix();
 		}
 		// CENTER
 		FluidStack fluidStack = trans.renderCache[ForgeDirection.UNKNOWN.ordinal()];
+		int color = trans.colorRenderCache[ForgeDirection.UNKNOWN.ordinal()];
 
 		if (fluidStack != null && fluidStack.amount > 0) {
 			DisplayFluidList d = getListFromBuffer(fluidStack, pipe.container.worldObj);
@@ -652,7 +657,10 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 				int stage = (int) ((float) fluidStack.amount / (float) (trans.getCapacity()) * (LIQUID_STAGES - 1));
 
 				bindTexture(TextureMap.locationBlocksTexture);
-				FluidRenderer.setColorForFluidStack(fluidStack);
+				float red = (float) (color >> 16 & 255) / 255.0F;
+				float green = (float) (color >> 8 & 255) / 255.0F;
+				float blue = (float) (color & 255) / 255.0F;
+				GL11.glColor4f(red, green, blue, 1.0F);
 
 				if (above) {
 					GL11.glCallList(d.centerVertical[stage]);

@@ -141,6 +141,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 	public short travelDelay = 12;
 	public short flowRate = 10;
 	public FluidStack[] renderCache = new FluidStack[orientations.length];
+	public int[] colorRenderCache = new int[orientations.length];
 	public final PipeSection[] internalTanks = new PipeSection[orientations.length];
 	private final TransferState[] transferState = new TransferState[directions.length];
 	private final int[] inputPerTick = new int[directions.length];
@@ -229,6 +230,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 		}
 
 		FluidStack[] renderCache = this.renderCache.clone();
+		int[] colorRenderCache = this.colorRenderCache.clone();
 
 		for (ForgeDirection dir : orientations) {
 			FluidStack current = internalTanks[dir.ordinal()].getFluid();
@@ -241,6 +243,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 			if (prev == null && current != null) {
 				changed = true;
 				renderCache[dir.ordinal()] = current.copy();
+				colorRenderCache[dir.ordinal()] = current.getFluid().getColor(current);
 				delta.set(dir.ordinal() * 3 + 0);
 				delta.set(dir.ordinal() * 3 + 1);
 				delta.set(dir.ordinal() * 3 + 2);
@@ -250,6 +253,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 			if (prev != null && current == null) {
 				changed = true;
 				renderCache[dir.ordinal()] = null;
+				colorRenderCache[dir.ordinal()] = 0xFFFFFF;
 				delta.set(dir.ordinal() * 3 + 0);
 				delta.set(dir.ordinal() * 3 + 1);
 				delta.set(dir.ordinal() * 3 + 2);
@@ -259,6 +263,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 			if (!prev.equals(current) || initPacket) {
 				changed = true;
 				renderCache[dir.ordinal()] = current;
+				colorRenderCache[dir.ordinal()] = current.getFluid().getColor(current);
 				delta.set(dir.ordinal() * 3 + 0);
 				delta.set(dir.ordinal() * 3 + 1);
 			}
@@ -278,11 +283,13 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 
 		if (persistChange) {
 			this.renderCache = renderCache;
+			this.colorRenderCache = colorRenderCache;
 		}
 
 		if (changed || initPacket) {
 			PacketFluidUpdate packet = new PacketFluidUpdate(container.xCoord, container.yCoord, container.zCoord, initPacket);
 			packet.renderCache = renderCache;
+			packet.colorRenderCache = colorRenderCache;
 			packet.delta = delta;
 			return packet;
 		}
@@ -485,6 +492,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 				internalTanks[direction.ordinal()].reset();
 				transferState[direction.ordinal()] = TransferState.None;
 				renderCache[direction.ordinal()] = null;
+				colorRenderCache[direction.ordinal()] = 0xFFFFFF;
 			}
 		}
 	}
