@@ -67,6 +67,13 @@ public abstract class Pipe<T extends PipeTransport> implements IPipe, IDropContr
 		transport.setTile((TileGenericPipe) tile);
 	}
 
+//	public final void handlePipeEvent(PipeEvent event) {
+//		try {
+//			Method method = getClass().getDeclaredMethod("eventHandler", event.getClass());
+//			method.invoke(this, event);
+//		} catch (Exception ex) {
+//		}
+//	}
 	private static class EventHandler {
 
 		public final Method method;
@@ -83,21 +90,26 @@ public abstract class Pipe<T extends PipeTransport> implements IPipe, IDropContr
 			eventHandlers.put(getClass(), handlerMap);
 		}
 		EventHandler handler = handlerMap.get(event.getClass());
-		if (handler == null) {
-			try {
-				Method method = getClass().getDeclaredMethod("eventHandler", event.getClass());
-				handler = new EventHandler(method);
-			} catch (Exception ex) {
-				handler = new EventHandler(null);
-			}
-			handlerMap.put(event.getClass(), handler);
-		}
+		if (handler == null)
+			handler = makeEventHandler(event, handlerMap);
 		if (handler.method == null)
 			return;
 		try {
 			handler.method.invoke(this, event);
 		} catch (Exception ex) {
 		}
+	}
+
+	private EventHandler makeEventHandler(PipeEvent event, Map<Class<? extends PipeEvent>, EventHandler> handlerMap) {
+		EventHandler handler;
+		try {
+			Method method = getClass().getDeclaredMethod("eventHandler", event.getClass());
+			handler = new EventHandler(method);
+		} catch (Exception ex) {
+			handler = new EventHandler(null);
+		}
+		handlerMap.put(event.getClass(), handler);
+		return handler;
 	}
 
 	public boolean blockActivated(EntityPlayer entityplayer) {
