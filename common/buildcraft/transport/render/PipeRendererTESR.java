@@ -593,49 +593,54 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 
 		boolean sides = false, above = false;
 
-		for (int i = 0; i < 6; ++i) {
+		for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
+			int i = side.ordinal();
+
 			FluidStack fluidStack = trans.renderCache[i];
 
-			if (fluidStack != null && fluidStack.amount > 0) {
-				DisplayFluidList d = getListFromBuffer(fluidStack, pipe.container.worldObj);
+			if (fluidStack == null || fluidStack.amount <= 0)
+				continue;
 
-				if (d == null) {
-					continue;
-				}
+			if (!pipe.container.isPipeConnected(side))
+				continue;
 
-				int stage = (int) ((float) fluidStack.amount / (float) (trans.getCapacity()) * (LIQUID_STAGES - 1));
+			DisplayFluidList d = getListFromBuffer(fluidStack, pipe.container.worldObj);
 
-				GL11.glPushMatrix();
-				int list = 0;
+			if (d == null)
+				continue;
 
-				switch (ForgeDirection.VALID_DIRECTIONS[i]) {
-					case UP:
-						above = true;
-						list = d.sideVertical[stage];
-						break;
-					case DOWN:
-						GL11.glTranslatef(0, -0.75F, 0);
-						list = d.sideVertical[stage];
-						break;
-					case EAST:
-					case WEST:
-					case SOUTH:
-					case NORTH:
-						sides = true;
-						// Yes, this is kind of ugly, but was easier than transform the coordinates above.
-						GL11.glTranslatef(0.5F, 0.0F, 0.5F);
-						GL11.glRotatef(angleY[i], 0, 1, 0);
-						GL11.glRotatef(angleZ[i], 0, 0, 1);
-						GL11.glTranslatef(-0.5F, 0.0F, -0.5F);
-						list = d.sideHorizontal[stage];
-						break;
-					default:
-				}
-				bindTexture(TextureMap.locationBlocksTexture);
-				FluidRenderer.setColorForFluidStack(fluidStack);
-				GL11.glCallList(list);
-				GL11.glPopMatrix();
+			int stage = (int) ((float) fluidStack.amount / (float) (trans.getCapacity()) * (LIQUID_STAGES - 1));
+
+			GL11.glPushMatrix();
+			int list = 0;
+
+			switch (ForgeDirection.VALID_DIRECTIONS[i]) {
+				case UP:
+					above = true;
+					list = d.sideVertical[stage];
+					break;
+				case DOWN:
+					GL11.glTranslatef(0, -0.75F, 0);
+					list = d.sideVertical[stage];
+					break;
+				case EAST:
+				case WEST:
+				case SOUTH:
+				case NORTH:
+					sides = true;
+					// Yes, this is kind of ugly, but was easier than transform the coordinates above.
+					GL11.glTranslatef(0.5F, 0.0F, 0.5F);
+					GL11.glRotatef(angleY[i], 0, 1, 0);
+					GL11.glRotatef(angleZ[i], 0, 0, 1);
+					GL11.glTranslatef(-0.5F, 0.0F, -0.5F);
+					list = d.sideHorizontal[stage];
+					break;
+				default:
 			}
+			bindTexture(TextureMap.locationBlocksTexture);
+			FluidRenderer.setColorForFluidStack(fluidStack);
+			GL11.glCallList(list);
+			GL11.glPopMatrix();
 		}
 		// CENTER
 		FluidStack fluidStack = trans.renderCache[ForgeDirection.UNKNOWN.ordinal()];
