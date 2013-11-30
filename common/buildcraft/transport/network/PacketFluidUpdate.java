@@ -9,6 +9,9 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.BitSet;
+
+import net.minecraft.nbt.NBTBase;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
@@ -63,7 +66,11 @@ public class PacketFluidUpdate extends PacketCoordinates {
 		for (ForgeDirection dir : ForgeDirection.values()) {
 			if (delta.get(dir.ordinal() * 3 + 0)) {
 			    int amt = renderCache[dir.ordinal()] != null ? renderCache[dir.ordinal()].amount : 0;
-				renderCache[dir.ordinal()] = new FluidStack(data.readInt(),amt);
+			    FluidStack fluidStack = new FluidStack(data.readInt(), amt);
+			    if(data.readBoolean()) {
+					fluidStack.tag = (NBTTagCompound) NBTBase.readNamedTag(data);
+				}
+				renderCache[dir.ordinal()] = fluidStack;
 			}
 			if (delta.get(dir.ordinal() * 3 + 2)) {
 			    if (renderCache[dir.ordinal()] == null) {
@@ -84,12 +91,16 @@ public class PacketFluidUpdate extends PacketCoordinates {
 
 		for (ForgeDirection dir : ForgeDirection.values()) {
 			FluidStack liquid = renderCache[dir.ordinal()];
-
 			if (delta.get(dir.ordinal() * 3 + 0)) {
 				if (liquid != null) {
 					data.writeInt(liquid.fluidID);
+					data.writeBoolean(liquid.tag != null);
+					if(liquid.tag != null) {
+						NBTBase.writeNamedTag(liquid.tag, data);
+					}
 				} else {
 					data.writeInt(0);
+					data.writeBoolean(false);
 				}
 			}
 			if (delta.get(dir.ordinal() * 3 + 2)) {
