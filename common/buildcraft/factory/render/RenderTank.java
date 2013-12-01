@@ -22,6 +22,7 @@ public class RenderTank extends TileEntitySpecialRenderer {
 		TileTank tank = ((TileTank) tileentity);
 
 		FluidStack liquid = tank.tank.getFluid();
+		int color = tank.tank.colorRenderCache;
 		if (liquid == null || liquid.amount <= 0) {
 			return;
 		}
@@ -39,7 +40,10 @@ public class RenderTank extends TileEntitySpecialRenderer {
 		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
 		bindTexture(FluidRenderer.getFluidSheet(liquid));
-		FluidRenderer.setColorForFluidStack(liquid);
+		float red = (float) (color >> 16 & 255) / 255.0F;
+		float green = (float) (color >> 8 & 255) / 255.0F;
+		float blue = (float) (color & 255) / 255.0F;
+		GL11.glColor4f(red, green, blue, 1.0F);
                 
 		GL11.glTranslatef((float) x + 0.125F, (float) y + 0.5F, (float) z + 0.125F);
 		GL11.glScalef(0.75F, 0.999F, 0.75F);
