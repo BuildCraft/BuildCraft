@@ -9,6 +9,7 @@ package buildcraft.transport.pipes;
 
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
+import buildcraft.core.utils.MathUtils;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportItems;
@@ -39,6 +40,6 @@ public class PipeItemsGold extends Pipe {
 	public void eventHandler(PipeEventItem.AdjustSpeed event) {
 		event.handled = true;
 		TravelingItem item = event.item;
-		item.setSpeed(Math.min(Math.max(TransportConstants.PIPE_NORMAL_SPEED, item.getSpeed()) * 4f, TransportConstants.PIPE_NORMAL_SPEED * 20F));
+		item.setSpeed(MathUtils.clamp(item.getSpeed() * 4F, TransportConstants.PIPE_NORMAL_SPEED * 4F, TransportConstants.PIPE_NORMAL_SPEED * 20F));
 	}
 }

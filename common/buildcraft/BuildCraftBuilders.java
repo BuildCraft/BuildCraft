@@ -27,6 +27,7 @@ import buildcraft.api.bptblocks.BptBlockSign;
 import buildcraft.api.bptblocks.BptBlockStairs;
 import buildcraft.api.bptblocks.BptBlockWallSide;
 import buildcraft.api.filler.FillerManager;
+import buildcraft.api.filler.IFillerPattern;
 import buildcraft.api.gates.ActionManager;
 import buildcraft.builders.BlockArchitect;
 import buildcraft.builders.BlockBlueprintLibrary;
@@ -34,7 +35,6 @@ import buildcraft.builders.BlockBuilder;
 import buildcraft.builders.BlockFiller;
 import buildcraft.builders.BlockMarker;
 import buildcraft.builders.BlockPathMarker;
-import buildcraft.builders.BuilderProxyClient;
 import buildcraft.builders.EventHandlerBuilders;
 import buildcraft.builders.filler.pattern.PatternFill;
 import buildcraft.builders.filler.pattern.PatternPyramid;
@@ -64,12 +64,12 @@ import buildcraft.core.Version;
 import buildcraft.core.blueprints.BptPlayerIndex;
 import buildcraft.core.blueprints.BptRootIndex;
 import buildcraft.core.proxy.CoreProxy;
+import buildcraft.core.utils.BCLog;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLInterModComms;
-import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerStoppingEvent;
 import cpw.mods.fml.common.network.NetworkMod;
@@ -82,7 +82,6 @@ import java.io.IOException;
 import java.util.LinkedList;
 import java.util.TreeMap;
 import net.minecraft.block.Block;
-import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -288,16 +287,21 @@ public class BuildCraftBuilders {
 		MinecraftForge.EVENT_BUS.register(this);
 
 		// Create filler registry
-		FillerManager.registry = new FillerRegistry();
+		try {
+			FillerManager.registry = new FillerRegistry();
 
-		// INIT FILLER PATTERNS
-		FillerManager.registry.addPattern(PatternFill.INSTANCE);
-		FillerManager.registry.addPattern(new PatternFlatten());
-		FillerManager.registry.addPattern(new PatternHorizon());
-		FillerManager.registry.addPattern(new PatternClear());
-		FillerManager.registry.addPattern(new PatternBox());
-		FillerManager.registry.addPattern(new PatternPyramid());
-		FillerManager.registry.addPattern(new PatternStairs());
+			// INIT FILLER PATTERNS
+			FillerManager.registry.addPattern(PatternFill.INSTANCE);
+			FillerManager.registry.addPattern(new PatternFlatten());
+			FillerManager.registry.addPattern(new PatternHorizon());
+			FillerManager.registry.addPattern(new PatternClear());
+			FillerManager.registry.addPattern(new PatternBox());
+			FillerManager.registry.addPattern(new PatternPyramid());
+			FillerManager.registry.addPattern(new PatternStairs());
+		} catch (Error error) {
+			BCLog.logErrorAPI("Buildcraft", error, IFillerPattern.class);
+			throw error;
+		}
 
 		ActionManager.registerActionProvider(new BuildersActionProvider());
 	}

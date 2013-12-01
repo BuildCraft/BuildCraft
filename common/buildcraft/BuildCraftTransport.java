@@ -8,6 +8,7 @@
 package buildcraft;
 
 import buildcraft.api.core.IIconProvider;
+import buildcraft.api.filler.IFillerPattern;
 import buildcraft.api.gates.ActionManager;
 import buildcraft.api.recipes.AssemblyRecipe;
 import buildcraft.api.transport.IExtractionHandler;
@@ -20,6 +21,7 @@ import buildcraft.core.Version;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.triggers.BCAction;
 import buildcraft.core.triggers.BCTrigger;
+import buildcraft.core.utils.BCLog;
 import buildcraft.core.utils.EnumColor;
 import buildcraft.transport.BlockFilteredBuffer;
 import buildcraft.transport.BlockGenericPipe;
@@ -177,11 +179,9 @@ public class BuildCraftTransport {
 	public static BCAction actionExtractionPresetBlue = new ActionExtractionPreset(-1, EnumColor.BLUE);
 	public static BCAction actionExtractionPresetGreen = new ActionExtractionPreset(-1, EnumColor.GREEN);
 	public static BCAction actionExtractionPresetYellow = new ActionExtractionPreset(-1, EnumColor.YELLOW);
-	
 	public IIconProvider pipeIconProvider = new PipeIconProvider();
 	public IIconProvider gateIconProvider = new GateIconProvider();
 	public IIconProvider wireIconProvider = new WireIconProvider();
-	
 	@Instance("BuildCraft|Transport")
 	public static BuildCraftTransport instance;
 
@@ -293,7 +293,7 @@ public class BuildCraftTransport {
 			pipeItemsSandstone = buildPipe(DefaultProps.PIPE_ITEMS_SANDSTONE_ID, PipeItemsSandstone.class, "Sandstone Transport Pipe", Block.sandStone, Block.glass, Block.sandStone);
 			pipeItemsVoid = buildPipe(DefaultProps.PIPE_ITEMS_VOID_ID, PipeItemsVoid.class, "Void Transport Pipe", "dyeBlack", Block.glass, Item.redstone);
 			pipeItemsEmzuli = buildPipe(DefaultProps.PIPE_ITEMS_EMZULI_ID, PipeItemsEmzuli.class, "Emzuli Transport Pipe", Block.blockLapis, Block.glass, Item.emerald);
-			
+
 			pipeFluidsWood = buildPipe(DefaultProps.PIPE_LIQUIDS_WOOD_ID, PipeFluidsWood.class, "Wooden Waterproof Pipe", pipeWaterproof, pipeItemsWood);
 			pipeFluidsCobblestone = buildPipe(DefaultProps.PIPE_LIQUIDS_COBBLESTONE_ID, PipeFluidsCobblestone.class, "Cobblestone Waterproof Pipe", pipeWaterproof, pipeItemsCobblestone);
 			pipeFluidsStone = buildPipe(DefaultProps.PIPE_LIQUIDS_STONE_ID, PipeFluidsStone.class, "Stone Waterproof Pipe", pipeWaterproof, pipeItemsStone);
@@ -449,11 +449,15 @@ public class BuildCraftTransport {
 		GameRegistry.addRecipe(facadeItem.new FacadeRecipe());
 
 		// Assembly table recipes, moved from PreInit phase to Init, all mods should be done adding to the OreDictionary by now
-		AssemblyRecipe.assemblyRecipes.add(new AssemblyRecipe(500, new ItemStack(redPipeWire, 8), "dyeRed", 1, new ItemStack(Item.redstone), new ItemStack(Item.ingotIron)));
-		AssemblyRecipe.assemblyRecipes.add(new AssemblyRecipe(500, new ItemStack(bluePipeWire, 8), "dyeBlue", 1, new ItemStack(Item.redstone), new ItemStack(Item.ingotIron)));
-		AssemblyRecipe.assemblyRecipes.add(new AssemblyRecipe(500, new ItemStack(greenPipeWire, 8), "dyeGreen", 1, new ItemStack(Item.redstone), new ItemStack(Item.ingotIron)));
-		AssemblyRecipe.assemblyRecipes.add(new AssemblyRecipe(500, new ItemStack(yellowPipeWire, 8), "dyeYellow", 1, new ItemStack(Item.redstone), new ItemStack(Item.ingotIron)));
-		AssemblyRecipe.assemblyRecipes.add(new AssemblyRecipe(new ItemStack[]{new ItemStack(pipeStructureCobblestone)}, 1000, new ItemStack(plugItem, 8)));
+		try {
+			AssemblyRecipe.assemblyRecipes.add(new AssemblyRecipe(500, new ItemStack(redPipeWire, 8), "dyeRed", 1, new ItemStack(Item.redstone), new ItemStack(Item.ingotIron)));
+			AssemblyRecipe.assemblyRecipes.add(new AssemblyRecipe(500, new ItemStack(bluePipeWire, 8), "dyeBlue", 1, new ItemStack(Item.redstone), new ItemStack(Item.ingotIron)));
+			AssemblyRecipe.assemblyRecipes.add(new AssemblyRecipe(500, new ItemStack(greenPipeWire, 8), "dyeGreen", 1, new ItemStack(Item.redstone), new ItemStack(Item.ingotIron)));
+			AssemblyRecipe.assemblyRecipes.add(new AssemblyRecipe(500, new ItemStack(yellowPipeWire, 8), "dyeYellow", 1, new ItemStack(Item.redstone), new ItemStack(Item.ingotIron)));
+			AssemblyRecipe.assemblyRecipes.add(new AssemblyRecipe(new ItemStack[]{new ItemStack(pipeStructureCobblestone)}, 1000, new ItemStack(plugItem, 8)));
+		} catch (Error error) {
+			BCLog.logErrorAPI("Buildcraft", error, AssemblyRecipe.class);
+		}
 	}
 
 	@EventHandler
