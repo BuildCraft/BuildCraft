@@ -23,6 +23,7 @@ import net.minecraftforge.fluids.FluidTank;
 public class Tank extends FluidTank {
 
 	private final String name;
+	public int colorRenderCache = 0xFFFFFF;
 
 	public Tank(String name, int capacity, TileEntity tile) {
 		super(capacity);
