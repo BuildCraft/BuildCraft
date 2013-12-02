@@ -81,6 +81,7 @@ import buildcraft.transport.triggers.ActionPowerLimiter;
 import buildcraft.transport.triggers.ActionSignalOutput;
 import buildcraft.transport.triggers.ActionSingleEnergyPulse;
 import buildcraft.transport.triggers.TriggerPipeContents;
+import buildcraft.transport.triggers.TriggerQuartzTimer;
 import buildcraft.transport.triggers.TriggerPipeContents.Kind;
 import buildcraft.transport.triggers.TriggerPipeSignal;
 import cpw.mods.fml.common.Mod;
@@ -166,6 +167,9 @@ public class BuildCraftTransport {
 	public static BCTrigger triggerGreenSignalInactive = new TriggerPipeSignal(DefaultProps.TRIGGER_GREEN_SIGNAL_INACTIVE, false, IPipe.WireColor.Green);
 	public static BCTrigger triggerYellowSignalActive = new TriggerPipeSignal(DefaultProps.TRIGGER_YELLOW_SIGNAL_ACTIVE, true, IPipe.WireColor.Yellow);
 	public static BCTrigger triggerYellowSignalInactive = new TriggerPipeSignal(DefaultProps.TRIGGER_YELLOW_SIGNAL_INACTIVE, false, IPipe.WireColor.Yellow);
+	public static BCTrigger triggerTimerShort = new TriggerQuartzTimer(DefaultProps.TRIGGER_TIMER_SHORT, TriggerQuartzTimer.Time.Short);
+	public static BCTrigger triggerTimerMedium = new TriggerQuartzTimer(DefaultProps.TRIGGER_TIMER_MEDIUM, TriggerQuartzTimer.Time.Medium);
+	public static BCTrigger triggerTimerLong = new TriggerQuartzTimer(DefaultProps.TRIGGER_TIMER_LONG, TriggerQuartzTimer.Time.Long);
 	public static BCAction actionRedSignal = new ActionSignalOutput(DefaultProps.ACTION_RED_SIGNAL, IPipe.WireColor.Red);
 	public static BCAction actionBlueSignal = new ActionSignalOutput(DefaultProps.ACTION_BLUE_SIGNAL, IPipe.WireColor.Blue);
 	public static BCAction actionGreenSignal = new ActionSignalOutput(DefaultProps.ACTION_GREEN_SIGNAL, IPipe.WireColor.Green);
