@@ -1,16 +1,13 @@
 /**
- * Copyright (c) SpaceToad, 2011
- * http://www.mod-buildcraft.com
+ * Copyright (c) SpaceToad, 2011 http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License
+ * 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-
 package buildcraft.silicon.gui;
 
 import buildcraft.BuildCraftCore;
-import buildcraft.api.recipes.AssemblyRecipe;
 import buildcraft.core.CoreIconProvider;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.gui.GuiAdvancedInterface;
@@ -19,10 +16,11 @@ import buildcraft.core.network.PacketIds;
 import buildcraft.core.network.PacketNBT;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.StringUtils;
+import buildcraft.core.recipes.AssemblyRecipeManager.AssemblyRecipe;
 import buildcraft.silicon.TileAssemblyTable;
 import buildcraft.silicon.TileAssemblyTable.SelectionMessage;
 import java.util.Iterator;
-import java.util.LinkedList;
+import java.util.List;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
@@ -30,10 +28,12 @@ import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 
 public class GuiAssemblyTable extends GuiAdvancedInterface {
-    private static final ResourceLocation TEXTURE = new ResourceLocation("buildcraft",DefaultProps.TEXTURE_PATH_GUI + "/assembly_table.png");
+
+	private static final ResourceLocation TEXTURE = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_GUI + "/assembly_table.png");
 	TileAssemblyTable assemblyTable;
 
 	class AssemblyLedger extends Ledger {
+
 		int headerColour = 0xe1c92f;
 		int subheaderColour = 0xaaafb8;
 		int textColour = 0x000000;
@@ -50,7 +50,7 @@ public class GuiAssemblyTable extends GuiAdvancedInterface {
 			drawBackground(x, y);
 
 			// Draw icon
-            mc.renderEngine.bindTexture(TextureMap.locationItemsTexture);
+			mc.renderEngine.bindTexture(TextureMap.locationItemsTexture);
 			drawIcon(BuildCraftCore.iconProvider.getIcon(CoreIconProvider.ENERGY), x + 3, y + 4);
 
 			if (!isFullyOpened())
@@ -70,7 +70,6 @@ public class GuiAssemblyTable extends GuiAdvancedInterface {
 		public String getTooltip() {
 			return String.format("%3.2f MJ/t", assemblyTable.getRecentEnergyAverage() / 100.0f);
 		}
-
 	}
 
 	class RecipeSlot extends AdvancedSlot {
@@ -84,7 +83,7 @@ public class GuiAssemblyTable extends GuiAdvancedInterface {
 		@Override
 		public ItemStack getItemStack() {
 			if (this.recipe != null)
-				return this.recipe.output;
+				return this.recipe.getOutput();
 			else
 				return null;
 		}
@@ -118,15 +117,16 @@ public class GuiAssemblyTable extends GuiAdvancedInterface {
 	}
 
 	public void updateRecipes() {
-		LinkedList<AssemblyRecipe> potentialRecipes = assemblyTable.getPotentialOutputs();
+		List<AssemblyRecipe> potentialRecipes = assemblyTable.getPotentialOutputs();
 		Iterator<AssemblyRecipe> cur = potentialRecipes.iterator();
 
-		for (int p = 0; p < 8; ++p)
+		for (int p = 0; p < 8; ++p) {
 			if (cur.hasNext()) {
 				((RecipeSlot) slots[p]).recipe = cur.next();
 			} else {
 				((RecipeSlot) slots[p]).recipe = null;
 			}
+		}
 	}
 
 	@Override
@@ -140,7 +140,7 @@ public class GuiAssemblyTable extends GuiAdvancedInterface {
 
 	@Override
 	protected void drawGuiContainerBackgroundLayer(float f, int x, int y) {
-        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 		mc.renderEngine.bindTexture(TEXTURE);
 		int cornerX = (width - xSize) / 2;
 		int cornerY = (height - ySize) / 2;

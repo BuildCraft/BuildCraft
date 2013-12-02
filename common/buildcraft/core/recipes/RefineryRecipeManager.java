@@ -5,33 +5,40 @@
  * 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-package buildcraft.api.recipes;
+package buildcraft.core.recipes;
 
+import buildcraft.api.recipes.IRefineryRecipeManager;
+import buildcraft.api.recipes.IRefineryRecipeManager.IRefineryRecipe;
 import com.google.common.base.Objects;
 import java.util.Collections;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import net.minecraftforge.fluids.FluidStack;
 
-public final class RefineryRecipes {
+public final class RefineryRecipeManager implements IRefineryRecipeManager {
 
-	private static SortedSet<Recipe> recipes = new TreeSet<Recipe>();
+	public static final RefineryRecipeManager INSTANCE = new RefineryRecipeManager();
+	private SortedSet<RefineryRecipe> recipes = new TreeSet<RefineryRecipe>();
 
-	public static void addRecipe(FluidStack ingredient, FluidStack result, int energy, int delay) {
+	@Override
+	public void addRecipe(FluidStack ingredient, FluidStack result, int energy, int delay) {
 		addRecipe(ingredient, null, result, energy, delay);
 	}
 
-	public static void addRecipe(FluidStack ingredient1, FluidStack ingredient2, FluidStack result, int energy, int delay) {
-		Recipe recipe = new Recipe(ingredient1, ingredient2, result, energy, delay);
+	@Override
+	public void addRecipe(FluidStack ingredient1, FluidStack ingredient2, FluidStack result, int energy, int delay) {
+		RefineryRecipe recipe = new RefineryRecipe(ingredient1, ingredient2, result, energy, delay);
 		recipes.add(recipe);
 	}
 
-	public static SortedSet<Recipe> getRecipes() {
+	@Override
+	public SortedSet<RefineryRecipe> getRecipes() {
 		return Collections.unmodifiableSortedSet(recipes);
 	}
 
-	public static Recipe findRefineryRecipe(FluidStack liquid1, FluidStack liquid2) {
-		for (Recipe recipe : recipes) {
+	@Override
+	public RefineryRecipe findRefineryRecipe(FluidStack liquid1, FluidStack liquid2) {
+		for (RefineryRecipe recipe : recipes) {
 			if (recipe.matches(liquid1, liquid2))
 				return recipe;
 		}
@@ -39,25 +46,25 @@ public final class RefineryRecipes {
 		return null;
 	}
 
-	private RefineryRecipes() {
+	private RefineryRecipeManager() {
 	}
 
-	public static final class Recipe implements Comparable<Recipe> {
+	public static final class RefineryRecipe implements IRefineryRecipe, Comparable<RefineryRecipe> {
 
 		public final FluidStack ingredient1;
 		public final FluidStack ingredient2;
 		public final FluidStack result;
-		public final int energy;
-		public final int delay;
+		public final int energyCost;
+		public final int timeRequired;
 
-		private Recipe(FluidStack ingredient1, FluidStack ingredient2, FluidStack result, int energy, int delay) {
+		private RefineryRecipe(FluidStack ingredient1, FluidStack ingredient2, FluidStack result, int energy, int delay) {
 			if (ingredient1 == null)
 				throw new IllegalArgumentException("First Ingredient cannot be null!");
 			this.ingredient1 = ingredient1;
 			this.ingredient2 = ingredient2;
 			this.result = result;
-			this.energy = energy;
-			this.delay = delay;
+			this.energyCost = energy;
+			this.timeRequired = delay;
 		}
 
 		public boolean matches(FluidStack liquid1, FluidStack liquid2) {
@@ -90,7 +97,7 @@ public final class RefineryRecipes {
 		// We consider non-null < null in order that one-ingredient recipe is checked after
 		// the failure of matching two-ingredient recipes which include that liquid.
 		@Override
-		public int compareTo(Recipe other) {
+		public int compareTo(RefineryRecipe other) {
 			if (other == null)
 				return -1;
 			else if (ingredient1.getFluid() != other.ingredient1.getFluid())
@@ -112,15 +119,40 @@ public final class RefineryRecipes {
 		// equals() should be consistent with compareTo().
 		@Override
 		public boolean equals(Object obj) {
-			return obj instanceof Recipe
-					&& Objects.equal(ingredient1, ((Recipe) obj).ingredient1)
-					&& Objects.equal(ingredient2, ((Recipe) obj).ingredient2);
+			return obj instanceof RefineryRecipe
+					&& Objects.equal(ingredient1, ((RefineryRecipe) obj).ingredient1)
+					&& Objects.equal(ingredient2, ((RefineryRecipe) obj).ingredient2);
 		}
 
 		// hashCode() should be overridden because equals() was overridden.
 		@Override
 		public int hashCode() {
 			return Objects.hashCode(ingredient1, ingredient2);
+		}
+
+		@Override
+		public FluidStack getIngredient1() {
+			return ingredient1;
+		}
+
+		@Override
+		public FluidStack getIngredient2() {
+			return ingredient2;
+		}
+
+		@Override
+		public FluidStack getResult() {
+			return result;
+		}
+
+		@Override
+		public int getEnergyCost() {
+			return energyCost;
+		}
+
+		@Override
+		public int getTimeRequired() {
+			return timeRequired;
 		}
 	}
 }

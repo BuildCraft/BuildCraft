@@ -21,7 +21,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.ForgeDirection;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.gates.IAction;
-import buildcraft.api.inventory.ISelectiveInventory;
 import buildcraft.api.inventory.ISpecialInventory;
 import buildcraft.core.GuiIds;
 import buildcraft.core.inventory.SimpleInventory;
@@ -103,19 +102,20 @@ public class PipeItemsEmzuli extends PipeItemsWood implements IGuiReturnHandler 
 		}
 
 		/* ISELECTIVEINVENTORY */
-		if (inventory instanceof ISelectiveInventory) {
-			ItemStack[] stacks = ((ISelectiveInventory) inventory).extractItem(new ItemStack[]{getCurrentFilter()}, false, doRemove, from, (int) powerHandler.getEnergyStored());
-			if (doRemove) {
-				for (ItemStack stack : stacks) {
-					if (stack != null) {
-						powerHandler.useEnergy(stack.stackSize, stack.stackSize, true);
-					}
-				}
-			}
-			return stacks;
+//		if (inventory instanceof ISelectiveInventory) {
+//			ItemStack[] stacks = ((ISelectiveInventory) inventory).extractItem(new ItemStack[]{getCurrentFilter()}, false, doRemove, from, (int) powerHandler.getEnergyStored());
+//			if (doRemove) {
+//				for (ItemStack stack : stacks) {
+//					if (stack != null) {
+//						powerHandler.useEnergy(stack.stackSize, stack.stackSize, true);
+//					}
+//				}
+//			}
+//			return stacks;
+//		} else 
 
 			/* ISPECIALINVENTORY */
-		} else if (inventory instanceof ISpecialInventory) {
+		if (inventory instanceof ISpecialInventory) {
 			ItemStack[] stacks = ((ISpecialInventory) inventory).extractItem(false, from, (int) powerHandler.getEnergyStored());
 			if (stacks != null) {
 				for (ItemStack stack : stacks) {

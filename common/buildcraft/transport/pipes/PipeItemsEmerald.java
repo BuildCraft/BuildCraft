@@ -19,7 +19,6 @@ import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.ForgeDirection;
 import buildcraft.BuildCraftTransport;
-import buildcraft.api.inventory.ISelectiveInventory;
 import buildcraft.api.inventory.ISpecialInventory;
 import buildcraft.core.GuiIds;
 import buildcraft.core.gui.buttons.IButtonTextureSet;
@@ -108,23 +107,24 @@ public class PipeItemsEmerald extends PipeItemsWood implements IClientState, IGu
 	@Override
 	public ItemStack[] checkExtract(IInventory inventory, boolean doRemove, ForgeDirection from) {
 
-		/* ISELECTIVEINVENTORY */
+		// ISELECTIVEINVENTORY
 		// non blocking mode is not implemented for ISelectiveInventory yet
-		if (inventory instanceof ISelectiveInventory) {
-			ItemStack[] stacks = ((ISelectiveInventory) inventory).extractItem(new ItemStack[]{getCurrentFilter()}, false, doRemove, from, (int) powerHandler.getEnergyStored());
-			if (doRemove) {
-				for (ItemStack stack : stacks) {
-					if (stack != null) {
-						powerHandler.useEnergy(stack.stackSize, stack.stackSize, true);
-					}
-				}
-				incrementFilter();
-			}
-			return stacks;
+//		if (inventory instanceof ISelectiveInventory) {
+//			ItemStack[] stacks = ((ISelectiveInventory) inventory).extractItem(new ItemStack[]{getCurrentFilter()}, false, doRemove, from, (int) powerHandler.getEnergyStored());
+//			if (doRemove) {
+//				for (ItemStack stack : stacks) {
+//					if (stack != null) {
+//						powerHandler.useEnergy(stack.stackSize, stack.stackSize, true);
+//					}
+//				}
+//				incrementFilter();
+//			}
+//			return stacks;
+//		} else 
 
-			/* ISPECIALINVENTORY */
-			// non blocking mode is not needed for ISpecialInventory since its not round robin anyway
-		} else if (inventory instanceof ISpecialInventory) {
+		// ISPECIALINVENTORY
+		// non blocking mode is not needed for ISpecialInventory since its not round robin anyway
+		if (inventory instanceof ISpecialInventory) {
 			ItemStack[] stacks = ((ISpecialInventory) inventory).extractItem(false, from, (int) powerHandler.getEnergyStored());
 			if (stacks != null) {
 				for (ItemStack stack : stacks) {

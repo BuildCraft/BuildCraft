@@ -1,16 +1,14 @@
 /**
- * Copyright (c) SpaceToad, 2011
- * http://www.mod-buildcraft.com
+ * Copyright (c) SpaceToad, 2011 http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License
+ * 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-
 package buildcraft.factory.gui;
 
-import buildcraft.api.recipes.RefineryRecipes;
-import buildcraft.api.recipes.RefineryRecipes.Recipe;
+import buildcraft.core.recipes.RefineryRecipeManager;
+import buildcraft.core.recipes.RefineryRecipeManager.RefineryRecipe;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.gui.GuiAdvancedInterface;
 import buildcraft.core.utils.StringUtils;
@@ -89,7 +87,7 @@ public class GuiRefinery extends GuiAdvancedInterface {
 				}
 			} else {
 				TileRefinery ref = (TileRefinery) this.tile;
-				
+
 				if (position == 0)
 					container.setFilter(position, ref.tank1.getFluidType());
 				else if (position == 1)
@@ -116,7 +114,7 @@ public class GuiRefinery extends GuiAdvancedInterface {
 			liquid1 = new FluidStack(filter1, FluidContainerRegistry.BUCKET_VOLUME);
 		}
 
-		Recipe recipe = RefineryRecipes.findRefineryRecipe(liquid0, liquid1);
+		RefineryRecipe recipe = RefineryRecipeManager.INSTANCE.findRefineryRecipe(liquid0, liquid1);
 
 		if (recipe != null) {
 			((FluidSlot) slots[2]).fluid = recipe.result.getFluid();
@@ -124,5 +122,4 @@ public class GuiRefinery extends GuiAdvancedInterface {
 			((FluidSlot) slots[2]).fluid = null;
 		}
 	}
-
 }

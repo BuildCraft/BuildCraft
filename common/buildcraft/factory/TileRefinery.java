@@ -14,8 +14,8 @@ import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.power.PowerHandler;
 import buildcraft.api.power.PowerHandler.PowerReceiver;
 import buildcraft.api.power.PowerHandler.Type;
-import buildcraft.api.recipes.RefineryRecipes;
-import buildcraft.api.recipes.RefineryRecipes.Recipe;
+import buildcraft.core.recipes.RefineryRecipeManager;
+import buildcraft.core.recipes.RefineryRecipeManager.RefineryRecipe;
 import buildcraft.core.IMachine;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.fluids.SingleUseTank;
@@ -130,7 +130,7 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IPowe
 
 		isActive = false;
 
-		Recipe currentRecipe = RefineryRecipes.findRefineryRecipe(tank1.getFluid(), tank2.getFluid());
+		RefineryRecipe currentRecipe = RefineryRecipeManager.INSTANCE.findRefineryRecipe(tank1.getFluid(), tank2.getFluid());
 
 		if (currentRecipe == null) {
 			decreaseAnimation();
@@ -149,16 +149,16 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IPowe
 
 		isActive = true;
 
-		if (powerHandler.getEnergyStored() >= currentRecipe.energy) {
+		if (powerHandler.getEnergyStored() >= currentRecipe.energyCost) {
 			increaseAnimation();
 		} else {
 			decreaseAnimation();
 		}
 
-		if (!time.markTimeIfDelay(worldObj, currentRecipe.delay))
+		if (!time.markTimeIfDelay(worldObj, currentRecipe.timeRequired))
 			return;
 
-		float energyUsed = powerHandler.useEnergy(currentRecipe.energy, currentRecipe.energy, true);
+		float energyUsed = powerHandler.useEnergy(currentRecipe.energyCost, currentRecipe.energyCost, true);
 
 		if (energyUsed != 0) {
 			if (consumeInput(currentRecipe.ingredient1) && consumeInput(currentRecipe.ingredient2)) {

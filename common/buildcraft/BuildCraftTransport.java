@@ -10,7 +10,8 @@ package buildcraft;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.filler.IFillerPattern;
 import buildcraft.api.gates.ActionManager;
-import buildcraft.api.recipes.AssemblyRecipe;
+import buildcraft.api.recipes.BuildcraftRecipes;
+import buildcraft.core.recipes.AssemblyRecipeManager;
 import buildcraft.api.transport.IExtractionHandler;
 import buildcraft.api.transport.IPipe;
 import buildcraft.api.transport.PipeManager;
@@ -450,13 +451,13 @@ public class BuildCraftTransport {
 
 		// Assembly table recipes, moved from PreInit phase to Init, all mods should be done adding to the OreDictionary by now
 		try {
-			AssemblyRecipe.assemblyRecipes.add(new AssemblyRecipe(500, new ItemStack(redPipeWire, 8), "dyeRed", 1, new ItemStack(Item.redstone), new ItemStack(Item.ingotIron)));
-			AssemblyRecipe.assemblyRecipes.add(new AssemblyRecipe(500, new ItemStack(bluePipeWire, 8), "dyeBlue", 1, new ItemStack(Item.redstone), new ItemStack(Item.ingotIron)));
-			AssemblyRecipe.assemblyRecipes.add(new AssemblyRecipe(500, new ItemStack(greenPipeWire, 8), "dyeGreen", 1, new ItemStack(Item.redstone), new ItemStack(Item.ingotIron)));
-			AssemblyRecipe.assemblyRecipes.add(new AssemblyRecipe(500, new ItemStack(yellowPipeWire, 8), "dyeYellow", 1, new ItemStack(Item.redstone), new ItemStack(Item.ingotIron)));
-			AssemblyRecipe.assemblyRecipes.add(new AssemblyRecipe(new ItemStack[]{new ItemStack(pipeStructureCobblestone)}, 1000, new ItemStack(plugItem, 8)));
+			BuildcraftRecipes.assemblyTable.addRecipe(500, new ItemStack(redPipeWire, 8), "dyeRed", 1, new ItemStack(Item.redstone), new ItemStack(Item.ingotIron));
+			BuildcraftRecipes.assemblyTable.addRecipe(500, new ItemStack(bluePipeWire, 8), "dyeBlue", 1, new ItemStack(Item.redstone), new ItemStack(Item.ingotIron));
+			BuildcraftRecipes.assemblyTable.addRecipe(500, new ItemStack(greenPipeWire, 8), "dyeGreen", 1, new ItemStack(Item.redstone), new ItemStack(Item.ingotIron));
+			BuildcraftRecipes.assemblyTable.addRecipe(500, new ItemStack(yellowPipeWire, 8), "dyeYellow", 1, new ItemStack(Item.redstone), new ItemStack(Item.ingotIron));
+			BuildcraftRecipes.assemblyTable.addRecipe(1000, new ItemStack(plugItem, 8), new ItemStack(pipeStructureCobblestone));
 		} catch (Error error) {
-			BCLog.logErrorAPI("Buildcraft", error, AssemblyRecipe.class);
+			BCLog.logErrorAPI("Buildcraft", error, BuildcraftRecipes.class);
 		}
 	}
 
