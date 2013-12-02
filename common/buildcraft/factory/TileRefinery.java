@@ -54,6 +54,7 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IPowe
 	SafeTimeTracker updateNetworkTime = new SafeTimeTracker();
 	private PowerHandler powerHandler;
 	private boolean isActive;
+	public int[] filterColorRenderCache = new int[2];
 
 	public TileRefinery() {
 		powerHandler = new PowerHandler(this, Type.MACHINE);
@@ -216,6 +217,12 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IPowe
 
 		powerHandler.readFromNBT(data);
 		initPowerProvider();
+		
+		if(data.hasKey("filterColorRenderCache")) {
+			filterColorRenderCache = data.getIntArray("filterColorRenderCache");
+		} else {
+			filterColorRenderCache = new int[]{0xFFFFFF, 0xFFFFFF};
+		}
 	}
 
 	@Override
@@ -227,6 +234,8 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IPowe
 		data.setInteger("animationStage", animationStage);
 		data.setFloat("animationSpeed", animationSpeed);
 		powerHandler.writeToNBT(data);
+		
+		data.setIntArray("filterColorRenderCache", filterColorRenderCache);
 	}
 
 	public int getAnimationStage() {
@@ -314,14 +323,24 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IPowe
 			case 1:
 				setFilter(1, FluidRegistry.getFluid(data));
 				break;
+			case 2:
+				filterColorRenderCache[0] = data;
+				break;
+			case 3:
+				filterColorRenderCache[1] = data;
+				break;
 		}
 	}
 
 	public void sendGUINetworkData(Container container, ICrafting iCrafting) {
-		if (getFilter(0) != null)
+		if (getFilter(0) != null) {
 			iCrafting.sendProgressBarUpdate(container, 0, getFilter(0).getID());
-		if (getFilter(1) != null)
+			iCrafting.sendProgressBarUpdate(container, 2, filterColorRenderCache[0]);
+		}
+		if (getFilter(1) != null) {
 			iCrafting.sendProgressBarUpdate(container, 1, getFilter(1).getID());
+			iCrafting.sendProgressBarUpdate(container, 3, filterColorRenderCache[1]);
+		}
 	}
 
 	/* ITANKCONTAINER */
