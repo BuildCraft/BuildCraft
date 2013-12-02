@@ -27,7 +27,7 @@ public abstract class Gate {
 
 	public static enum GateKind {
 
-		None, Single, AND_2, OR_2, AND_3, OR_3, AND_4, OR_4;
+		None, Single, AND_2, OR_2, AND_3, OR_3, AND_4, OR_4, AND_5, OR_5;
 
 		public static GateKind getKindFromDamage(ItemStack itemstack) {
 			switch (itemstack.getItemDamage()) {
@@ -45,6 +45,10 @@ public abstract class Gate {
 					return AND_4;
 				case 6:
 					return OR_4;
+				case 7:
+					return AND_5;
+				case 8:
+					return OR_5;
 				default:
 					return None;
 			}

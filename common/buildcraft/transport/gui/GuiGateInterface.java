@@ -181,7 +181,7 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 			slots[1] = new TriggerSlot(62, 44, pipe, 1);
 			slots[2] = new ActionSlot(98, 26, pipe, 0);
 			slots[3] = new ActionSlot(98, 44, pipe, 1);
-		} else if (pipe.gate.kind == GateKind.AND_3 || pipe.gate.kind == GateKind.OR_3) {
+		} else if (pipe.gate.kind == GateKind.AND_3 || pipe.gate.kind == GateKind.OR_3 || pipe.gate.kind == GateKind.AND_5 || pipe.gate.kind == GateKind.OR_5) {
 			nbEntries = 4;
 
 			slots = new AdvancedSlot[12];
