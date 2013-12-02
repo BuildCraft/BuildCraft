@@ -11,7 +11,6 @@ import java.util.LinkedList;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ICrafting;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
@@ -45,8 +44,8 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
 	public static float COOLDOWN_RATE = 0.05F;
 	public static int MAX_COOLANT_PER_TICK = 40;
 	int burnTime = 0;
-	private Tank tankFuel = new Tank("tankFuel", MAX_LIQUID, this);
-	private Tank tankCoolant = new Tank("tankCoolant", MAX_LIQUID, this);
+	public Tank tankFuel = new Tank("tankFuel", MAX_LIQUID, this);
+	public Tank tankCoolant = new Tank("tankCoolant", MAX_LIQUID, this);
 	private TankManager tankManager = new TankManager();
 	private Fuel currentFuel = null;
 	public int penaltyCooling = 0;
@@ -292,13 +291,21 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
 					tankFuel.getFluid().amount = value;
 				}
 				break;
-			// Fluid coolant amount
+			// Fluid Coolant amount
 			case 18:
 				if (tankCoolant.getFluid() == null) {
 					tankCoolant.setFluid(new FluidStack(0, value));
 				} else {
 					tankCoolant.getFluid().amount = value;
 				}
+				break;
+			//Fluid Fuel color
+			case 19:
+				tankFuel.colorRenderCache = value;
+				break;
+			//Fluid Coolant color
+			case 20:
+				tankCoolant.colorRenderCache = value;
 				break;
 		}
 	}
@@ -310,6 +317,8 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
 		iCrafting.sendProgressBarUpdate(containerEngine, 16, tankCoolant.getFluid() != null ? tankCoolant.getFluid().fluidID : 0);
 		iCrafting.sendProgressBarUpdate(containerEngine, 17, tankFuel.getFluid() != null ? tankFuel.getFluid().amount : 0);
 		iCrafting.sendProgressBarUpdate(containerEngine, 18, tankCoolant.getFluid() != null ? tankCoolant.getFluid().amount : 0);
+		iCrafting.sendProgressBarUpdate(containerEngine, 19, tankFuel.colorRenderCache);
+		iCrafting.sendProgressBarUpdate(containerEngine, 20, tankCoolant.colorRenderCache);
 	}
 
 	@Override
