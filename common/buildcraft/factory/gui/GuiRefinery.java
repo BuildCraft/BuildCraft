@@ -84,8 +84,10 @@ public class GuiRefinery extends GuiAdvancedInterface {
 					}
 
 					container.setFilter(position, liquid.getFluid());
+					container.refinery.filterColorRenderCache[position] = liquid.getFluid().getColor(liquid);
 				} else {
 					container.setFilter(position, null);
+					container.refinery.filterColorRenderCache[position] = 0xFFFFFF;
 				}
 			} else {
 				TileRefinery ref = (TileRefinery) this.tile;
@@ -104,7 +106,9 @@ public class GuiRefinery extends GuiAdvancedInterface {
 		Fluid filter1 = container.getFilter(1);
 
 		((FluidSlot) slots[0]).fluid = filter0;
+		((FluidSlot) slots[0]).colorRenderCache = container.refinery.filterColorRenderCache[0];
 		((FluidSlot) slots[1]).fluid = filter1;
+		((FluidSlot) slots[1]).colorRenderCache = container.refinery.filterColorRenderCache[1];
 
 		FluidStack liquid0 = null;
 		FluidStack liquid1 = null;
@@ -120,8 +124,10 @@ public class GuiRefinery extends GuiAdvancedInterface {
 
 		if (recipe != null) {
 			((FluidSlot) slots[2]).fluid = recipe.result.getFluid();
+			((FluidSlot) slots[2]).colorRenderCache = recipe.result.getFluid().getColor(recipe.result);
 		} else {
 			((FluidSlot) slots[2]).fluid = null;
+			((FluidSlot) slots[2]).colorRenderCache = 0xFFFFFF;
 		}
 	}
 
