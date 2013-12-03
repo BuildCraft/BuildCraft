@@ -1,6 +1,5 @@
 package buildcraft.core.gui;
 
-import buildcraft.core.render.FluidRenderer;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.texture.TextureMap;
@@ -9,9 +8,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.Icon;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidStack;
 
 import org.lwjgl.opengl.GL11;
+
+import buildcraft.core.render.FluidRenderer;
 
 public abstract class GuiAdvancedInterface extends GuiBuildCraft {
 
@@ -172,12 +172,13 @@ public abstract class GuiAdvancedInterface extends GuiBuildCraft {
 	}
 
 	/**
-	 * For the refinery, a king of phantom slot for fluid.
+	 * For the refinery, a kind of phantom slot for fluid.
 	 */
 	//TODO Get this class working well (Now it's just here to let the refinery compil)
 	public class FluidSlot extends AdvancedSlot {
 
 		public Fluid fluid;
+		public int colorRenderCache;
 
 		public FluidSlot(int x, int y) {
 			super(x, y);
@@ -185,8 +186,12 @@ public abstract class GuiAdvancedInterface extends GuiBuildCraft {
 
 		@Override
 		public void drawSprite(int cornerX, int cornerY) {
-			if (fluid != null)
-				FluidRenderer.setColorForFluidStack(new FluidStack(fluid, 100));
+			if (fluid != null) {
+				float red = (float) (colorRenderCache >> 16 & 255) / 255.0F;
+				float green = (float) (colorRenderCache >> 8 & 255) / 255.0F;
+				float blue = (float) (colorRenderCache & 255) / 255.0F;
+				GL11.glColor4f(red, green, blue, 1);
+			}
 			super.drawSprite(cornerX, cornerY);
 		}
 
