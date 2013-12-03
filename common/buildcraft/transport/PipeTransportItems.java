@@ -16,39 +16,32 @@ import buildcraft.core.DefaultProps;
 import buildcraft.core.IMachine;
 import buildcraft.core.inventory.Transactor;
 import buildcraft.core.network.PacketIds;
-import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.BCLog;
 import buildcraft.core.utils.BlockUtil;
 import buildcraft.core.utils.MathUtils;
-import buildcraft.transport.network.PacketPipeTransportContent;
-import buildcraft.transport.network.PacketPipeTransportNBT;
-import buildcraft.transport.network.PacketSimpleId;
+import buildcraft.transport.network.PacketPipeTransportTraveler;
+import buildcraft.transport.network.PacketPipeTransportItemStackRequest;
 import buildcraft.transport.pipes.events.PipeEventItem;
 import buildcraft.transport.utils.TransportUtils;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.ForwardingSet;
 import com.google.common.collect.HashBiMap;
 import cpw.mods.fml.common.network.PacketDispatcher;
-import cpw.mods.fml.common.network.Player;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.network.packet.Packet;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.MathHelper;
 import net.minecraftforge.common.ForgeDirection;
 
 public class PipeTransportItems extends PipeTransport {
@@ -62,22 +55,22 @@ public class PipeTransportItems extends PipeTransport {
 
 	public class TravelerSet extends ForwardingSet<TravelingItem> {
 
-		private final BiMap<Integer, TravelingItem> delegate = HashBiMap.create();
+		private final HashSet<TravelingItem> delegate = new HashSet<TravelingItem>();
 		private final Set<TravelingItem> toLoad = new HashSet<TravelingItem>();
 		private final Set<TravelingItem> toRemove = new HashSet<TravelingItem>();
 		private int delay = 0;
 
 		@Override
 		protected Set<TravelingItem> delegate() {
-			return delegate.values();
+			return delegate;
 		}
 
 		@Override
 		public boolean add(TravelingItem item) {
-			if (delegate.containsValue(item))
+			if (delegate.contains(item))
 				return false;
 			item.setContainer(container);
-			delegate.put(item.id, item);
+			delegate.add(item);
 			return true;
 		}
 
@@ -88,10 +81,6 @@ public class PipeTransportItems extends PipeTransport {
 				changed |= add(item);
 			}
 			return changed;
-		}
-
-		public TravelingItem get(int id) {
-			return delegate.get(id);
 		}
 
 		private void scheduleLoad(TravelingItem item) {
@@ -119,6 +108,15 @@ public class PipeTransportItems extends PipeTransport {
 		private void performRemoval() {
 			removeAll(toRemove);
 			toRemove.clear();
+		}
+
+		public void purgeCorruptedItems() {
+			Iterator<TravelingItem> it = iterator();
+			while (it.hasNext()) {
+				TravelingItem item = it.next();
+				if (item.isCorrupted())
+					it.remove();
+			}
 		}
 	};
 
@@ -193,11 +191,10 @@ public class PipeTransportItems extends PipeTransport {
 		items.add(item);
 
 		if (!container.worldObj.isRemote) {
-			sendItemPacket(item);
+			sendTravelerPacket(item, false);
 
-			if (items.size() > BuildCraftTransport.groupItemsTrigger) {
+			if (items.size() > BuildCraftTransport.groupItemsTrigger)
 				groupEntities();
-			}
 
 			if (items.size() > MAX_PIPE_STACKS) {
 				BCLog.logger.log(Level.WARNING, String.format("Pipe exploded at %d,%d,%d because it had too many stacks: %d", container.xCoord, container.yCoord, container.zCoord, items.size()));
@@ -255,9 +252,8 @@ public class PipeTransportItems extends PipeTransport {
 
 		items.unscheduleRemoval(item);
 
-		if (!container.worldObj.isRemote) {
-			sendItemPacket(item);
-		}
+		if (!container.worldObj.isRemote)
+			sendTravelerPacket(item, true);
 	}
 
 	public ForgeDirection resolveDestination(TravelingItem data) {
@@ -329,13 +325,11 @@ public class PipeTransportItems extends PipeTransport {
 	private void moveSolids() {
 		items.performLoad();
 		items.performRemoval();
+		
+		if(!container.worldObj.isRemote)
+			items.purgeCorruptedItems();
 
 		for (TravelingItem item : items) {
-			if (item.isCorrupted()) {
-				items.scheduleRemoval(item);
-				continue;
-			}
-
 			if (item.getContainer() != this.container) {
 				items.scheduleRemoval(item);
 				continue;
@@ -400,7 +394,7 @@ public class PipeTransportItems extends PipeTransport {
 		if (passToNextPipe(item, tile)) {
 			// NOOP
 		} else if (tile instanceof IInventory) {
-			if (CoreProxy.proxy.isSimulating(container.worldObj)) {
+			if (!container.worldObj.isRemote) {
 				if (item.getInsertionHandler().canInsertItem(item, (IInventory) tile)) {
 					ItemStack added = Transactor.getTransactorFor(tile).add(item.getItemStack(), item.output.getOpposite(), true);
 					item.getItemStack().stackSize -= added.stackSize;
@@ -457,12 +451,10 @@ public class PipeTransportItems extends PipeTransport {
 			try {
 				NBTTagCompound dataTag = (NBTTagCompound) nbttaglist.tagAt(j);
 
-				TravelingItem item = new TravelingItem();
-				item.readFromNBT(dataTag);
+				TravelingItem item = TravelingItem.make(dataTag);
 
-				if (item.isCorrupted()) {
+				if (item.isCorrupted())
 					continue;
-				}
 
 				items.scheduleLoad(item);
 			} catch (Throwable t) {
@@ -495,29 +487,17 @@ public class PipeTransportItems extends PipeTransport {
 	 *
 	 * @param packet
 	 */
-	public void handleItemPacket(PacketPipeTransportContent packet) {
-
-		if (packet.getID() != PacketIds.PIPE_CONTENTS)
-			return;
-
-		TravelingItem item = items.get(packet.getTravellingItemId());
+	public void handleTravelerPacket(PacketPipeTransportTraveler packet) {
+		TravelingItem item = TravelingItem.clientCache.get(packet.getTravelingEntityId());
 		if (item == null) {
-			item = new TravelingItem(packet.getTravellingItemId());
-			items.add(item);
+			item = TravelingItem.make(packet.getTravelingEntityId());
 		}
 
-		if (item.getItemStack() == null) {
-			item.setItemStack(new ItemStack(packet.getItemId(), packet.getStackSize(), packet.getItemDamage()));
-			if (packet.hasNBT()) {
-				PacketDispatcher.sendPacketToServer(new PacketSimpleId(PacketIds.REQUEST_ITEM_NBT, container.xCoord, container.yCoord, container.zCoord, packet.getTravellingItemId()).getPacket());
-			}
-		} else {
-			if (item.getItemStack().itemID != packet.getItemId() || item.getItemStack().stackSize != packet.getStackSize() || item.getItemStack().getItemDamage() != packet.getItemDamage() || item.getItemStack().hasTagCompound() != packet.hasNBT()) {
-				item.setItemStack(new ItemStack(packet.getItemId(), packet.getStackSize(), packet.getItemDamage()));
-				if (packet.hasNBT()) {
-					PacketDispatcher.sendPacketToServer(new PacketSimpleId(PacketIds.REQUEST_ITEM_NBT, container.xCoord, container.yCoord, container.zCoord, packet.getTravellingItemId()).getPacket());
-				}
-			}
+		if (item.getContainer() != container)
+			items.add(item);
+
+		if (packet.forceStackRefresh() || item.getItemStack() == null) {
+			PacketDispatcher.sendPacketToServer(new PacketPipeTransportItemStackRequest(packet.getTravelingEntityId()).getPacket());
 		}
 
 		item.setPosition(packet.getItemX(), packet.getItemY(), packet.getItemZ());
@@ -528,42 +508,13 @@ public class PipeTransportItems extends PipeTransport {
 		item.input = packet.getInputOrientation();
 		item.output = packet.getOutputOrientation();
 		item.color = packet.getColor();
+
 	}
 
-	/**
-	 * Handles the NBT tag Request from player of the id
-	 */
-	public void handleNBTRequestPacket(EntityPlayer player, int entityId) {
-		TravelingItem item = items.get(entityId);
-		if (item == null || item.item == null || item.getItemStack() == null)
-			return;
-		PacketDispatcher.sendPacketToPlayer(new PacketPipeTransportNBT(PacketIds.PIPE_ITEM_NBT, container.xCoord, container.yCoord, container.zCoord, entityId, item.getItemStack().getTagCompound()).getPacket(), (Player) player);
-	}
-
-	/**
-	 * Handles the Item NBT tag information of the packet
-	 */
-	public void handleNBTPacket(PacketPipeTransportNBT packet) {
-		TravelingItem item = items.get(packet.getEntityId());
-		if (item == null || item.item == null || item.getItemStack() == null)
-			return;
-		item.getItemStack().setTagCompound(packet.getTagCompound());
-	}
-
-	/**
-	 * Creates a packet describing a stack of items inside a pipe.
-	 *
-	 * @param data
-	 * @return
-	 */
-	public Packet createItemPacket(TravelingItem data) {
-		PacketPipeTransportContent packet = new PacketPipeTransportContent(data);
-		return packet.getPacket();
-	}
-
-	private void sendItemPacket(TravelingItem data) {
+	private void sendTravelerPacket(TravelingItem data, boolean forceStackRefresh) {
+		PacketPipeTransportTraveler packet = new PacketPipeTransportTraveler(data, forceStackRefresh);
 		int dimension = container.worldObj.provider.dimensionId;
-		PacketDispatcher.sendPacketToAllAround(container.xCoord, container.yCoord, container.zCoord, DefaultProps.PIPE_CONTENTS_RENDER_DIST, dimension, createItemPacket(data));
+		PacketDispatcher.sendPacketToAllAround(container.xCoord, container.yCoord, container.zCoord, DefaultProps.PIPE_CONTENTS_RENDER_DIST, dimension, packet.getPacket());
 	}
 
 	public int getNumberOfStacks() {
@@ -609,92 +560,12 @@ public class PipeTransportItems extends PipeTransport {
 	 * nbt and no contribution controlling them
 	 */
 	public void groupEntities() {
-		// determine groupable entities
-		List<TravelingItem> entities = new ArrayList<TravelingItem>();
-
 		for (TravelingItem item : items) {
-			if (!item.hasExtraData() && item.getItemStack().stackSize < item.getItemStack().getMaxStackSize()) {
-				entities.add(item);
-			}
-		}
-
-		if (entities.isEmpty())
-			return; // nothing groupable
-
-		// sort the groupable entities to have all entities with the same id:dmg next to each other (contiguous range)
-		Collections.sort(entities, new Comparator<TravelingItem>() {
-			@Override
-			public int compare(TravelingItem a, TravelingItem b) {
-				// the item id is always less than 2^15 so the int won't overflow
-				int itemA = (a.getItemStack().itemID << 16) | a.getItemStack().getItemDamage();
-				int itemB = (b.getItemStack().itemID << 16) | b.getItemStack().getItemDamage();
-
-				return itemA - itemB;
-			}
-		});
-
-		// group the entities
-		int matchStart = 0;
-		int lastId = (entities.get(0).getItemStack().itemID << 16) | entities.get(0).getItemStack().getItemDamage();
-
-		for (int i = 1; i < entities.size(); i++) {
-			int id = (entities.get(i).getItemStack().itemID << 16) | entities.get(i).getItemStack().getItemDamage();
-
-			if (id != lastId) {
-				// merge within the last matching ID range
-				groupEntityRange(entities, matchStart, i);
-
-				// start of the next matching ID range
-				matchStart = i;
-				lastId = id;
-			}
-		}
-
-		// merge last matching ID range
-		groupEntityRange(entities, matchStart, entities.size());
-	}
-
-	/**
-	 * Group a range of items with matching IDs (item id + meta/dmg)
-	 *
-	 * @param entities entity list to group
-	 * @param start start index (inclusive)
-	 * @param end end index (exclusive)
-	 */
-	private void groupEntityRange(List<TravelingItem> entities, int start, int end) {
-		for (int j = start; j < end; j++) {
-			TravelingItem target = entities.get(j);
-			if (target == null)
+			if (item.isCorrupted())
 				continue;
-
-			for (int k = j + 1; k < end; k++) {
-				TravelingItem source = entities.get(k);
-				if (source == null)
-					continue;
-
-				// only merge if the ItemStack tags match
-				if (ItemStack.areItemStackTagsEqual(source.getItemStack(), target.getItemStack())) {
-					// merge source to target
-					int amount = source.getItemStack().stackSize;
-					int space = target.getItemStack().getMaxStackSize() - target.getItemStack().stackSize;
-
-					if (amount <= space) {
-						// source fits completely into target
-						target.getItemStack().stackSize += amount;
-
-						items.remove(source);
-						entities.set(k, null);
-					} else {
-						target.getItemStack().stackSize += space;
-
-						source.getItemStack().stackSize -= space;
-					}
-
-					if (amount >= space) {
-						// target not usable for further additions, no need to check more sources
-						break;
-					}
-				}
+			for (TravelingItem otherItem : items) {
+				if (item.tryMergeInto(otherItem))
+					break;
 			}
 		}
 	}
@@ -704,7 +575,8 @@ public class PipeTransportItems extends PipeTransport {
 		groupEntities();
 
 		for (TravelingItem item : items) {
-			container.pipe.dropItem(item.getItemStack());
+			if (!item.isCorrupted())
+				container.pipe.dropItem(item.getItemStack());
 		}
 
 		items.clear();

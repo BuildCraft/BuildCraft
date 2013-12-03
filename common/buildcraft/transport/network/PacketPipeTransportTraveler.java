@@ -10,30 +10,28 @@ import java.io.IOException;
 import net.minecraft.util.MathHelper;
 import net.minecraftforge.common.ForgeDirection;
 
-public class PacketPipeTransportContent extends BuildCraftPacket {
+public class PacketPipeTransportTraveler extends BuildCraftPacket {
 
 	private TravelingItem item;
+	private boolean forceStackRefresh;
 	private int entityId;
 	private ForgeDirection input;
 	private ForgeDirection output;
-	private int itemId;
-	private byte stackSize;
-	private int itemDamage;
 	private EnumColor color;
 	private float itemX;
 	private float itemY;
 	private float itemZ;
 	private float speed;
-	private boolean hasNBT;
 	public int posX;
 	public int posY;
 	public int posZ;
 
-	public PacketPipeTransportContent() {
+	public PacketPipeTransportTraveler() {
 	}
 
-	public PacketPipeTransportContent(TravelingItem item) {
+	public PacketPipeTransportTraveler(TravelingItem item, boolean forceStackRefresh) {
 		this.item = item;
+		this.forceStackRefresh = forceStackRefresh;
 	}
 
 	@Override
@@ -47,14 +45,11 @@ public class PacketPipeTransportContent extends BuildCraftPacket {
 		data.writeByte((byte) item.input.ordinal());
 		data.writeByte((byte) item.output.ordinal());
 
-		data.writeShort(item.getItemStack().itemID);
-		data.writeByte((byte) item.getItemStack().stackSize);
-		data.writeShort(item.getItemStack().getItemDamage());
-
 		data.writeByte(item.color != null ? item.color.ordinal() : -1);
 
 		data.writeFloat(item.getSpeed());
-		data.writeBoolean(item.getItemStack().hasTagCompound());
+
+		data.writeBoolean(forceStackRefresh);
 	}
 
 	@Override
@@ -72,19 +67,16 @@ public class PacketPipeTransportContent extends BuildCraftPacket {
 		this.input = ForgeDirection.getOrientation(data.readByte());
 		this.output = ForgeDirection.getOrientation(data.readByte());
 
-		this.itemId = data.readShort();
-		this.stackSize = data.readByte();
-		this.itemDamage = data.readShort();
-
 		byte c = data.readByte();
 		if (c != -1)
 			this.color = EnumColor.fromId(c);
 
 		this.speed = data.readFloat();
-		this.hasNBT = data.readBoolean();
+
+		this.forceStackRefresh = data.readBoolean();
 	}
 
-	public int getTravellingItemId() {
+	public int getTravelingEntityId() {
 		return entityId;
 	}
 
@@ -94,18 +86,6 @@ public class PacketPipeTransportContent extends BuildCraftPacket {
 
 	public ForgeDirection getOutputOrientation() {
 		return output;
-	}
-
-	public int getItemId() {
-		return itemId;
-	}
-
-	public int getStackSize() {
-		return stackSize;
-	}
-
-	public int getItemDamage() {
-		return itemDamage;
 	}
 
 	public EnumColor getColor() {
@@ -128,12 +108,12 @@ public class PacketPipeTransportContent extends BuildCraftPacket {
 		return speed;
 	}
 
-	public boolean hasNBT() {
-		return hasNBT;
+	public boolean forceStackRefresh() {
+		return forceStackRefresh;
 	}
 
 	@Override
 	public int getID() {
-		return PacketIds.PIPE_CONTENTS;
+		return PacketIds.PIPE_TRAVELER;
 	}
 }

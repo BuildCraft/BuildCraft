@@ -102,6 +102,9 @@ public class PipeItemsWood extends Pipe<PipeTransportItems> implements IPowerRec
 
 	@Override
 	public void doWork(PowerHandler workProvider) {
+		if(container.worldObj.isRemote)
+			return;
+		
 		if (powerHandler.getEnergyStored() <= 0)
 			return;
 
@@ -149,7 +152,7 @@ public class PipeItemsWood extends Pipe<PipeTransportItems> implements IPowerRec
 	}
 
 	protected TravelingItem makeItem(double x, double y, double z, ItemStack stack) {
-		return new TravelingItem(x, y, z, stack);
+		return TravelingItem.make(x, y, z, stack);
 	}
 
 	/**

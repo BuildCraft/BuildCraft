@@ -10,7 +10,6 @@ package buildcraft;
 import buildcraft.api.bptblocks.BptBlockInventory;
 import buildcraft.api.bptblocks.BptBlockRotateMeta;
 import buildcraft.api.recipes.BuildcraftRecipes;
-import buildcraft.core.recipes.AssemblyRecipeManager;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.InterModComms;
 import buildcraft.core.ItemRedstoneChipset;
