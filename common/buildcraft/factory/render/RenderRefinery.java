@@ -70,6 +70,7 @@ public class RenderRefinery extends TileEntitySpecialRenderer implements IInvent
 
 	private void render(TileRefinery tile, double x, double y, double z) {
 		FluidStack liquid1 = null, liquid2 = null, liquidResult = null;
+		int color1 = 0xFFFFFF, color2 = 0xFFFFFF, colorResult = 0xFFFFFF;
 
 		float anim = 0;
 		int angle = 0;
@@ -77,14 +78,17 @@ public class RenderRefinery extends TileEntitySpecialRenderer implements IInvent
 		if (tile != null) {
 			if (tile.tank1.getFluid() != null) {
 				liquid1 = tile.tank1.getFluid();
+				color1 = tile.tank1.colorRenderCache;
 			}
 
 			if (tile.tank2.getFluid() != null) {
 				liquid2 = tile.tank2.getFluid();
+				color2 = tile.tank2.colorRenderCache;
 			}
 
 			if (tile.result.getFluid() != null) {
 				liquidResult = tile.result.getFluid();
+				colorResult = tile.result.colorRenderCache;
 			}
 
 			anim = tile.getAnimationStage();
@@ -183,7 +187,10 @@ public class RenderRefinery extends TileEntitySpecialRenderer implements IInvent
 
 				if (list1 != null) {
 					bindTexture(FluidRenderer.getFluidSheet(liquid1));
-					FluidRenderer.setColorForFluidStack(liquid1);
+					float red = (float) (color1 >> 16 & 255) / 255.0F;
+					float green = (float) (color1 >> 8 & 255) / 255.0F;
+					float blue = (float) (color1 & 255) / 255.0F;
+					GL11.glColor4f(red, green, blue, 1.0F);
 					GL11.glCallList(list1[getDisplayListIndex(tile.tank1)]);
 				}
 			}
@@ -195,7 +202,10 @@ public class RenderRefinery extends TileEntitySpecialRenderer implements IInvent
 					GL11.glPushMatrix();
 					GL11.glTranslatef(0, 0, 1);
 					bindTexture(FluidRenderer.getFluidSheet(liquid2));
-					FluidRenderer.setColorForFluidStack(liquid2);
+					float red = (float) (color2 >> 16 & 255) / 255.0F;
+					float green = (float) (color2 >> 8 & 255) / 255.0F;
+					float blue = (float) (color2 & 255) / 255.0F;
+					GL11.glColor4f(red, green, blue, 1.0F);
 					GL11.glCallList(list2[getDisplayListIndex(tile.tank2)]);
 					GL11.glPopMatrix();
 				}
@@ -209,7 +219,10 @@ public class RenderRefinery extends TileEntitySpecialRenderer implements IInvent
 					GL11.glPushMatrix();
 					GL11.glTranslatef(1, 0, 0.5F);
 					bindTexture(FluidRenderer.getFluidSheet(liquidResult));
-					FluidRenderer.setColorForFluidStack(liquidResult);
+					float red = (float) (colorResult >> 16 & 255) / 255.0F;
+					float green = (float) (colorResult >> 8 & 255) / 255.0F;
+					float blue = (float) (colorResult & 255) / 255.0F;
+					GL11.glColor4f(red, green, blue, 1.0F);
 					GL11.glCallList(list3[getDisplayListIndex(tile.result)]);
 					GL11.glPopMatrix();
 				}
