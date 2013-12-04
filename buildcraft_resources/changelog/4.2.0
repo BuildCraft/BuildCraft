@@ -1,0 +1,18 @@
+
+#4.2.0
+
+- New: Added Emzuli Pipe, a Gate controlled Extraction Pipe. (SandGrainOne/CovertJaguar)
+- Change: Fillers no longer have a "crafting" grid, and can be controlled via Gates. (CovertJaguar)
+- Change: Oil Springs produce 4x as much Oil as before. (CovertJaguar)
+- Change: Pumps can be disabled by applying a Redstone signal. (CovertJaguar)
+- Change: Allow draining of Fuel from Combustion Engines. (CovertJaguar)
+- Change: Renamed Lapis Pipe to Lazuli Pipe. (CovertJaguar)
+- Fix: Register all remaining Items properly with FML so that they will survive a 1.6->1.7 world upgrade. (CovertJaguar)
+- Fix: Players can now see pipes placed by other players. (CovertJaguar)
+- Fix: Block Harvesting now calls the appropriate new Forge Events. (DemoXin)
+- Fix: Fixed Oil and Fuel Fluid localizations. (CovertJaguar)
+- Fix: Diazuli Pipe should now better handle overflow situations similar to how the Diamond Pipe works. (CovertJaguar)
+- API: Added API package and dependency information for new FML features. Should reduce API conflicts going forward. (cpw)
+- API: Rewrote Filler Pattern API. (CovertJaguar)
+- API: Added a new function to the Assembly Table recipe API that supports the Ore Dictionary. (taelnia/CovertJaguar)
+- API: Moved ILaserTarget to the API so that addons can now create blocks that accept power from Lasers. (CovertJaguar)

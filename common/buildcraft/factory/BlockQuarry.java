@@ -10,6 +10,7 @@ package buildcraft.factory;
 import buildcraft.BuildCraftFactory;
 import buildcraft.api.core.Position;
 import buildcraft.api.tools.IToolWrench;
+import buildcraft.core.BlockBuildCraft;
 import buildcraft.core.Box;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
@@ -27,7 +28,7 @@ import net.minecraft.util.Icon;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
 
-public class BlockQuarry extends BlockMachineRoot {
+public class BlockQuarry extends BlockBuildCraft {
 
 	Icon textureTop;
 	Icon textureFront;
@@ -38,7 +39,7 @@ public class BlockQuarry extends BlockMachineRoot {
 
 		setHardness(10F);
 		setResistance(10F);
-		setStepSound(soundStoneFootstep);
+		setStepSound(soundAnvilFootstep);
 	}
 
 	@Override

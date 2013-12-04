@@ -115,6 +115,7 @@ public class TankManager<T extends Tank> extends ForwardingList<T> implements IF
 			if (fluidStack != null && fluidStack.getFluid() != null) {
 				data.writeShort(fluidStack.getFluid().getID());
 				data.writeInt(fluidStack.amount);
+				data.writeInt(fluidStack.getFluid().getColor(fluidStack));
 			} else {
 				data.writeShort(-1);
 			}
@@ -125,10 +126,13 @@ public class TankManager<T extends Tank> extends ForwardingList<T> implements IF
 	public void readData(DataInputStream data) throws IOException {
 		for (Tank tank : tanks) {
 			int fluidId = data.readShort();
-			if (fluidId > 0)
+			if (fluidId > 0) {
 				tank.setFluid(new FluidStack(fluidId, data.readInt()));
-			else
+				tank.colorRenderCache = data.readInt();
+			} else {
 				tank.setFluid(null);
+				tank.colorRenderCache = 0xFFFFFF;
+			}
 		}
 	}
 }

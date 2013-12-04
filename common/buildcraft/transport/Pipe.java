@@ -19,15 +19,16 @@ import buildcraft.core.IDropControlInventory;
 import buildcraft.core.inventory.InvUtils;
 import buildcraft.core.network.TilePacketWrapper;
 import buildcraft.core.utils.Utils;
+import buildcraft.transport.pipes.events.PipeEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Random;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -47,6 +48,7 @@ public abstract class Pipe<T extends PipeTransport> implements IPipe, IDropContr
 	@SuppressWarnings("rawtypes")
 	private static Map<Class, TilePacketWrapper> networkWrappers = new HashMap<Class, TilePacketWrapper>();
 	public SafeTimeTracker actionTracker = new SafeTimeTracker();
+	private static Map<Class<? extends Pipe>, Map<Class<? extends PipeEvent>, EventHandler>> eventHandlers = new HashMap<Class<? extends Pipe>, Map<Class<? extends PipeEvent>, EventHandler>>();
 
 	public Pipe(T transport, int itemID) {
 		this.transport = transport;
@@ -63,6 +65,51 @@ public abstract class Pipe<T extends PipeTransport> implements IPipe, IDropContr
 		this.container = (TileGenericPipe) tile;
 
 		transport.setTile((TileGenericPipe) tile);
+	}
+
+//	public final void handlePipeEvent(PipeEvent event) {
+//		try {
+//			Method method = getClass().getDeclaredMethod("eventHandler", event.getClass());
+//			method.invoke(this, event);
+//		} catch (Exception ex) {
+//		}
+//	}
+	private static class EventHandler {
+
+		public final Method method;
+
+		public EventHandler(Method method) {
+			this.method = method;
+		}
+	}
+
+	public final void handlePipeEvent(PipeEvent event) {
+		Map<Class<? extends PipeEvent>, EventHandler> handlerMap = eventHandlers.get(getClass());
+		if (handlerMap == null) {
+			handlerMap = new HashMap<Class<? extends PipeEvent>, EventHandler>();
+			eventHandlers.put(getClass(), handlerMap);
+		}
+		EventHandler handler = handlerMap.get(event.getClass());
+		if (handler == null)
+			handler = makeEventHandler(event, handlerMap);
+		if (handler.method == null)
+			return;
+		try {
+			handler.method.invoke(this, event);
+		} catch (Exception ex) {
+		}
+	}
+
+	private EventHandler makeEventHandler(PipeEvent event, Map<Class<? extends PipeEvent>, EventHandler> handlerMap) {
+		EventHandler handler;
+		try {
+			Method method = getClass().getDeclaredMethod("eventHandler", event.getClass());
+			handler = new EventHandler(method);
+		} catch (Exception ex) {
+			handler = new EventHandler(null);
+		}
+		handlerMap.put(event.getClass(), handler);
+		return handler;
 	}
 
 	public boolean blockActivated(EntityPlayer entityplayer) {
@@ -479,9 +526,6 @@ public abstract class Pipe<T extends PipeTransport> implements IPipe, IDropContr
 
 	public void dropContents() {
 		transport.dropContents();
-	}
-
-	public void onDropped(EntityItem item) {
 	}
 
 	/**

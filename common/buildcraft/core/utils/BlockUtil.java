@@ -10,8 +10,12 @@ package buildcraft.core.utils;
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftEnergy;
 import buildcraft.api.core.BuildCraftAPI;
+import buildcraft.core.proxy.CoreProxy;
 import cpw.mods.fml.common.FMLCommonHandler;
+
+import java.util.ArrayList;
 import java.util.List;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFluid;
 import net.minecraft.entity.item.EntityItem;
@@ -22,11 +26,13 @@ import net.minecraft.network.packet.Packet60Explosion;
 import net.minecraft.world.ChunkPosition;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
+import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidBlock;
+
 
 public class BlockUtil {
 
@@ -41,7 +47,19 @@ public class BlockUtil {
 
 		int meta = world.getBlockMetadata(i, j, k);
 
-		return block.getBlockDropped(world, i, j, k, meta, 0);
+		ArrayList<ItemStack> dropsList = block.getBlockDropped(world, i, j, k, meta, 0);
+		float dropChance = ForgeEventFactory.fireBlockHarvesting(dropsList, world, block, i, j, k, meta, 0, 1.0F, false, CoreProxy.proxy.getBuildCraftPlayer(world));
+        
+		ArrayList<ItemStack> returnList = new ArrayList<ItemStack>();
+        for (ItemStack s : dropsList)
+        {
+            if (world.rand.nextFloat() <= dropChance)
+            {
+            	returnList.add(s);
+            }
+        }
+
+		return returnList;
 	}
 
 	public static void breakBlock(World world, int x, int y, int z) {
@@ -50,8 +68,7 @@ public class BlockUtil {
 
 	public static void breakBlock(World world, int x, int y, int z, int forcedLifespan) {
 		if (!world.isAirBlock(x, y, z) && BuildCraftCore.dropBrokenBlocks && !world.isRemote && world.getGameRules().getGameRuleBooleanValue("doTileDrops")) {
-			int blockId = world.getBlockId(x, y, z);
-			List<ItemStack> items = Block.blocksList[blockId].getBlockDropped(world, x, y, z, world.getBlockMetadata(x, y, z), 0);
+			List<ItemStack> items = getItemStackFromBlock(world, x, y, z);
 
 			for (ItemStack item : items) {
 				float var = 0.7F;

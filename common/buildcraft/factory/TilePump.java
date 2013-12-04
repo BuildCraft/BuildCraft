@@ -62,6 +62,7 @@ public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor
 	private SafeTimeTracker timer = new SafeTimeTracker();
 	private int tick = Utils.RANDOM.nextInt();
 	private int numFluidBlocksFound = 0;
+	private boolean powered = false;
 
 	public TilePump() {
 		powerHandler = new PowerHandler(this, Type.MACHINE);
@@ -73,19 +74,26 @@ public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor
 		powerHandler.configurePowerPerdition(1, 100);
 	}
 
-	// TODO, manage this by different levels (pump what's above first...)
 	@Override
 	public void updateEntity() {
 		super.updateEntity();
 
-		if (tube == null)
-			return;
+		if (powered) {
+			pumpLayerQueues.clear();
+			destroyTube();
+		} else
+			createTube();
 
-
-		if (CoreProxy.proxy.isRenderWorld(worldObj))
+		if (worldObj.isRemote)
 			return;
 
 		pushToConsumers();
+		
+		if(powered)
+			return;
+		
+		if(tube == null)
+			return;
 
 		if (tube.posY - aimY > 0.01) {
 			tubeY = tube.posY - 0.01;
@@ -134,6 +142,15 @@ public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor
 		}
 	}
 
+	public void onNeighborBlockChange(int id) {
+		boolean p = worldObj.isBlockIndirectlyGettingPowered(xCoord, yCoord, zCoord);
+		if (powered != p) {
+			powered = p;
+			if(!worldObj.isRemote)
+				sendNetworkUpdate();
+		}
+	}
+
 	private boolean isBlocked(int x, int y, int z) {
 		Material mat = worldObj.getBlockMaterial(x, y, z);
 		return mat.blocksMovement();
@@ -151,28 +168,37 @@ public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor
 		return tileBuffer[side.ordinal()].getTile();
 	}
 
-	@Override
-	public void initialize() {
-		tube = FactoryProxy.proxy.newPumpTube(worldObj);
+	private void createTube() {
+		if (tube == null) {
+			tube = FactoryProxy.proxy.newPumpTube(worldObj);
 
-		if (!Double.isNaN(tubeY)) {
-			tube.posY = tubeY;
-		} else {
-			tube.posY = yCoord;
+			if (!Double.isNaN(tubeY)) {
+				tube.posY = tubeY;
+			} else {
+				tube.posY = yCoord;
+			}
+
+			tubeY = tube.posY;
+
+			if (aimY == 0) {
+				aimY = yCoord;
+			}
+
+			setTubePosition();
+
+			worldObj.spawnEntityInWorld(tube);
+
+			if (!worldObj.isRemote)
+				sendNetworkUpdate();
 		}
+	}
 
-		tubeY = tube.posY;
-
-		if (aimY == 0) {
-			aimY = yCoord;
-		}
-
-		setTubePosition();
-
-		worldObj.spawnEntityInWorld(tube);
-
-		if (CoreProxy.proxy.isSimulating(worldObj)) {
-			sendNetworkUpdate();
+	private void destroyTube() {
+		if (tube != null) {
+			CoreProxy.proxy.removeEntity(tube);
+			tube = null;
+			tubeY = Double.NaN;
+			aimY = 0;
 		}
 	}
 
@@ -298,6 +324,8 @@ public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor
 		powerHandler.readFromNBT(data);
 		tank.readFromNBT(data);
 
+		powered = data.getBoolean("powered");
+
 		aimY = data.getInteger("aimY");
 		tubeY = data.getFloat("tubeY");
 
@@ -310,6 +338,8 @@ public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor
 
 		powerHandler.writeToNBT(data);
 		tank.writeToNBT(data);
+
+		data.setBoolean("powered", powered);
 
 		data.setInteger("aimY", aimY);
 
@@ -347,6 +377,7 @@ public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor
 			public void writeData(DataOutputStream data) throws IOException {
 				data.writeInt(aimY);
 				data.writeFloat((float) tubeY);
+				data.writeBoolean(powered);
 			}
 		});
 
@@ -359,6 +390,7 @@ public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor
 		DataInputStream data = payload.stream;
 		aimY = data.readInt();
 		tubeY = data.readFloat();
+		powered = data.readBoolean();
 
 		setTubePosition();
 	}
@@ -394,12 +426,7 @@ public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor
 	public void destroy() {
 		tileBuffer = null;
 		pumpLayerQueues.clear();
-		if (tube != null) {
-			CoreProxy.proxy.removeEntity(tube);
-			tube = null;
-			tubeY = Double.NaN;
-			aimY = 0;
-		}
+		destroyTube();
 	}
 
 	@Override
@@ -431,7 +458,9 @@ public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor
 
 	@Override
 	public FluidStack drain(ForgeDirection from, FluidStack resource, boolean doDrain) {
-		if (resource != null && !resource.isFluidEqual(tank.getFluid()))
+		if (resource == null)
+			return null;
+		if (!resource.isFluidEqual(tank.getFluid()))
 			return null;
 		return drain(from, resource.amount, doDrain);
 	}

@@ -190,7 +190,7 @@ public abstract class Gate {
 		boolean[] oldBroadcastSignal = broadcastSignal;
 
 		broadcastRedstone = false;
-		broadcastSignal = new boolean[]{false, false, false, false};
+		broadcastSignal = new boolean[4];
 
 		// Tell the gate to prepare for resolving actions. (Disable pulser)
 		startResolution();

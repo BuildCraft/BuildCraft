@@ -22,7 +22,7 @@ public class GuiStoneEngine extends GuiEngine {
 	private static final ResourceLocation TEXTURE = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_GUI + "/steam_engine_gui.png");
 
 	public GuiStoneEngine(InventoryPlayer inventoryplayer, TileEngineWithInventory tileEngine) {
-		super(new ContainerEngine(inventoryplayer, tileEngine), tileEngine);
+		super(new ContainerEngine(inventoryplayer, tileEngine), tileEngine, TEXTURE);
 	}
 
 	@Override

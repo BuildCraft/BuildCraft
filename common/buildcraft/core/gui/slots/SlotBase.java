@@ -7,6 +7,7 @@
  */
 package buildcraft.core.gui.slots;
 
+import buildcraft.core.gui.tooltips.IToolTipProvider;
 import buildcraft.core.gui.tooltips.ToolTip;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
@@ -15,7 +16,7 @@ import net.minecraft.inventory.Slot;
  *
  * @author CovertJaguar <http://www.railcraft.info>
  */
-public class SlotBase extends Slot {
+public class SlotBase extends Slot implements IToolTipProvider {
 
 	private ToolTip toolTips;
 
@@ -30,6 +31,7 @@ public class SlotBase extends Slot {
 	/**
 	 * @return the toolTips
 	 */
+	@Override
 	public ToolTip getToolTip() {
 		return toolTips;
 	}
@@ -39,5 +41,15 @@ public class SlotBase extends Slot {
 	 */
 	public void setToolTips(ToolTip toolTips) {
 		this.toolTips = toolTips;
+	}
+
+	@Override
+	public boolean isToolTipVisible() {
+		return getStack() == null;
+	}
+
+	@Override
+	public boolean isMouseOver(int mouseX, int mouseY) {
+		return mouseX >= xDisplayPosition && mouseX <= xDisplayPosition + 16 && mouseY >= yDisplayPosition && mouseY <= yDisplayPosition + 16;
 	}
 }

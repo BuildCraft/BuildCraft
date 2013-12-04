@@ -1,6 +1,7 @@
 package buildcraft.core.gui.buttons;
 
 import buildcraft.core.DefaultProps;
+import buildcraft.core.gui.tooltips.IToolTipProvider;
 import buildcraft.core.gui.tooltips.ToolTip;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -15,7 +16,7 @@ import org.lwjgl.opengl.GL11;
  * @author CovertJaguar <railcraft.wikispaces.com>
  */
 @SideOnly(Side.CLIENT)
-public class GuiBetterButton extends GuiButton {
+public class GuiBetterButton extends GuiButton implements IToolTipProvider {
 
 	public static final ResourceLocation BUTTON_TEXTURES = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_GUI + "/buttons.png");
 	protected final IButtonTextureSet texture;
@@ -80,11 +81,22 @@ public class GuiBetterButton extends GuiButton {
 		drawCenteredString(fontrenderer, displayString, xPosition + width / 2, yPosition + (h - 8) / 2, getTextColor(mouseOver));
 	}
 
+	@Override
 	public ToolTip getToolTip() {
 		return toolTip;
 	}
 
 	public void setToolTip(ToolTip tips) {
 		this.toolTip = tips;
+	}
+
+	@Override
+	public boolean isToolTipVisible() {
+		return drawButton;
+	}
+
+	@Override
+	public boolean isMouseOver(int mouseX, int mouseY) {
+		return isMouseOverButton(mouseX, mouseY);
 	}
 }

@@ -8,6 +8,7 @@
 package buildcraft;
 
 import buildcraft.api.core.IIconProvider;
+import buildcraft.api.filler.IFillerPattern;
 import buildcraft.api.gates.ActionManager;
 import buildcraft.api.recipes.AssemblyRecipe;
 import buildcraft.api.transport.IExtractionHandler;
@@ -20,6 +21,7 @@ import buildcraft.core.Version;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.triggers.BCAction;
 import buildcraft.core.triggers.BCTrigger;
+import buildcraft.core.utils.BCLog;
 import buildcraft.core.utils.EnumColor;
 import buildcraft.transport.BlockFilteredBuffer;
 import buildcraft.transport.BlockGenericPipe;
@@ -54,6 +56,7 @@ import buildcraft.transport.pipes.PipeItemsDiamond;
 import buildcraft.transport.pipes.PipeItemsEmerald;
 import buildcraft.transport.pipes.PipeItemsGold;
 import buildcraft.transport.pipes.PipeItemsIron;
+import buildcraft.transport.pipes.PipeItemsEmzuli;
 import buildcraft.transport.pipes.PipeItemsLapis;
 import buildcraft.transport.pipes.PipeItemsObsidian;
 import buildcraft.transport.pipes.PipeItemsQuartz;
@@ -71,6 +74,7 @@ import buildcraft.transport.pipes.PipePowerStone;
 import buildcraft.transport.pipes.PipePowerWood;
 import buildcraft.transport.pipes.PipeStructureCobblestone;
 import buildcraft.transport.triggers.ActionEnergyPulser;
+import buildcraft.transport.triggers.ActionExtractionPreset;
 import buildcraft.transport.triggers.ActionPipeColor;
 import buildcraft.transport.triggers.ActionPipeDirection;
 import buildcraft.transport.triggers.ActionPowerLimiter;
@@ -126,6 +130,7 @@ public class BuildCraftTransport {
 	public static Item pipeItemsDaizuli;
 	public static Item pipeItemsVoid;
 	public static Item pipeItemsSandstone;
+	public static Item pipeItemsEmzuli;
 	public static Item pipeFluidsWood;
 	public static Item pipeFluidsCobblestone;
 	public static Item pipeFluidsStone;
@@ -170,11 +175,15 @@ public class BuildCraftTransport {
 	public static BCAction[] actionPipeColor = new BCAction[16];
 	public static BCAction[] actionPipeDirection = new BCAction[16];
 	public static BCAction[] actionPowerLimiter = new BCAction[7];
-	@Instance("BuildCraft|Transport")
-	public static BuildCraftTransport instance;
+	public static BCAction actionExtractionPresetRed = new ActionExtractionPreset(-1, EnumColor.RED);
+	public static BCAction actionExtractionPresetBlue = new ActionExtractionPreset(-1, EnumColor.BLUE);
+	public static BCAction actionExtractionPresetGreen = new ActionExtractionPreset(-1, EnumColor.GREEN);
+	public static BCAction actionExtractionPresetYellow = new ActionExtractionPreset(-1, EnumColor.YELLOW);
 	public IIconProvider pipeIconProvider = new PipeIconProvider();
 	public IIconProvider gateIconProvider = new GateIconProvider();
 	public IIconProvider wireIconProvider = new WireIconProvider();
+	@Instance("BuildCraft|Transport")
+	public static BuildCraftTransport instance;
 
 	private static class PipeRecipe {
 
@@ -266,11 +275,10 @@ public class BuildCraftTransport {
 			pipeWaterproof.setUnlocalizedName("pipeWaterproof");
 			LanguageRegistry.addName(pipeWaterproof, "Pipe Sealant");
 			CoreProxy.proxy.registerItem(pipeWaterproof);
-			
+
 			genericPipeBlock = new BlockGenericPipe(genericPipeId.getInt());
 			CoreProxy.proxy.registerBlock(genericPipeBlock.setUnlocalizedName("pipeBlock"), ItemBlock.class);
 
-			// Fixing retro-compatiblity
 			pipeItemsWood = buildPipe(DefaultProps.PIPE_ITEMS_WOOD_ID, PipeItemsWood.class, "Wooden Transport Pipe", "plankWood", Block.glass, "plankWood");
 			pipeItemsEmerald = buildPipe(DefaultProps.PIPE_ITEMS_EMERALD_ID, PipeItemsEmerald.class, "Emerald Transport Pipe", Item.emerald, Block.glass, Item.emerald);
 			pipeItemsCobblestone = buildPipe(DefaultProps.PIPE_ITEMS_COBBLESTONE_ID, PipeItemsCobblestone.class, "Cobblestone Transport Pipe", "cobblestone", Block.glass, "cobblestone");
@@ -284,6 +292,7 @@ public class BuildCraftTransport {
 			pipeItemsDaizuli = buildPipe(DefaultProps.PIPE_ITEMS_DAIZULI_ID, PipeItemsDaizuli.class, "Daizuli Transport Pipe", Block.blockLapis, Block.glass, Item.diamond);
 			pipeItemsSandstone = buildPipe(DefaultProps.PIPE_ITEMS_SANDSTONE_ID, PipeItemsSandstone.class, "Sandstone Transport Pipe", Block.sandStone, Block.glass, Block.sandStone);
 			pipeItemsVoid = buildPipe(DefaultProps.PIPE_ITEMS_VOID_ID, PipeItemsVoid.class, "Void Transport Pipe", "dyeBlack", Block.glass, Item.redstone);
+			pipeItemsEmzuli = buildPipe(DefaultProps.PIPE_ITEMS_EMZULI_ID, PipeItemsEmzuli.class, "Emzuli Transport Pipe", Block.blockLapis, Block.glass, Item.emerald);
 
 			pipeFluidsWood = buildPipe(DefaultProps.PIPE_LIQUIDS_WOOD_ID, PipeFluidsWood.class, "Wooden Waterproof Pipe", pipeWaterproof, pipeItemsWood);
 			pipeFluidsCobblestone = buildPipe(DefaultProps.PIPE_LIQUIDS_COBBLESTONE_ID, PipeFluidsCobblestone.class, "Cobblestone Waterproof Pipe", pipeWaterproof, pipeItemsCobblestone);
@@ -313,32 +322,24 @@ public class BuildCraftTransport {
 			redPipeWire.setUnlocalizedName("redPipeWire");
 			LanguageRegistry.addName(redPipeWire, "Red Pipe Wire");
 			CoreProxy.proxy.registerItem(redPipeWire);
-			AssemblyRecipe.assemblyRecipes.add(new AssemblyRecipe(new ItemStack[]{new ItemStack(Item.dyePowder, 1, 1), new ItemStack(Item.redstone, 1),
-				new ItemStack(Item.ingotIron, 1)}, 500, new ItemStack(redPipeWire, 8)));
 
 			Property bluePipeWireId = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_ITEM, "bluePipeWire.id", DefaultProps.BLUE_PIPE_WIRE);
 			bluePipeWire = new ItemBuildCraft(bluePipeWireId.getInt()).setPassSneakClick(true);
 			bluePipeWire.setUnlocalizedName("bluePipeWire");
 			LanguageRegistry.addName(bluePipeWire, "Blue Pipe Wire");
 			CoreProxy.proxy.registerItem(bluePipeWire);
-			AssemblyRecipe.assemblyRecipes.add(new AssemblyRecipe(new ItemStack[]{new ItemStack(Item.dyePowder, 1, 4), new ItemStack(Item.redstone, 1),
-				new ItemStack(Item.ingotIron, 1)}, 500, new ItemStack(bluePipeWire, 8)));
 
 			Property greenPipeWireId = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_ITEM, "greenPipeWire.id", DefaultProps.GREEN_PIPE_WIRE);
 			greenPipeWire = new ItemBuildCraft(greenPipeWireId.getInt()).setPassSneakClick(true);
 			greenPipeWire.setUnlocalizedName("greenPipeWire");
 			LanguageRegistry.addName(greenPipeWire, "Green Pipe Wire");
 			CoreProxy.proxy.registerItem(greenPipeWire);
-			AssemblyRecipe.assemblyRecipes.add(new AssemblyRecipe(new ItemStack[]{new ItemStack(Item.dyePowder, 1, 2), new ItemStack(Item.redstone, 1),
-				new ItemStack(Item.ingotIron, 1)}, 500, new ItemStack(greenPipeWire, 8)));
 
 			Property yellowPipeWireId = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_ITEM, "yellowPipeWire.id", DefaultProps.YELLOW_PIPE_WIRE);
 			yellowPipeWire = new ItemBuildCraft(yellowPipeWireId.getInt()).setPassSneakClick(true);
 			yellowPipeWire.setUnlocalizedName("yellowPipeWire");
 			LanguageRegistry.addName(yellowPipeWire, "Yellow Pipe Wire");
 			CoreProxy.proxy.registerItem(yellowPipeWire);
-			AssemblyRecipe.assemblyRecipes.add(new AssemblyRecipe(new ItemStack[]{new ItemStack(Item.dyePowder, 1, 11), new ItemStack(Item.redstone, 1),
-				new ItemStack(Item.ingotIron, 1)}, 500, new ItemStack(yellowPipeWire, 8)));
 
 			Property pipeGateId = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_ITEM, "pipeGate.id", DefaultProps.GATE_ID);
 			pipeGate = new ItemGate(pipeGateId.getInt(), 0);
@@ -365,9 +366,6 @@ public class BuildCraftTransport {
 			filteredBufferBlock = new BlockFilteredBuffer(filteredBufferId.getInt());
 			CoreProxy.proxy.registerBlock(filteredBufferBlock.setUnlocalizedName("filteredBufferBlock"));
 			CoreProxy.proxy.addName(filteredBufferBlock, "Filtered Buffer");
-
-			AssemblyRecipe.assemblyRecipes.add(new AssemblyRecipe(new ItemStack[]{new ItemStack(pipeStructureCobblestone)}, 1000, new ItemStack(plugItem, 8)));
-
 		} finally {
 			BuildCraftCore.mainConfiguration.save();
 		}
@@ -378,7 +376,7 @@ public class BuildCraftTransport {
 		// Register connection handler
 		// MinecraftForge.registerConnectionHandler(new ConnectionHandler());
 
-		// Register gui handler
+		// Register GUI handler
 		// MinecraftForge.setGuiHandler(mod_BuildCraftTransport.instance, new GuiHandler());
 
 		TransportProxy.proxy.registerTileEntities();
@@ -422,7 +420,7 @@ public class BuildCraftTransport {
 		for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
 			actionPipeDirection[direction.ordinal()] = new ActionPipeDirection(-1, direction);
 		}
-		
+
 		for (PowerMode limit : PowerMode.VALUES) {
 			actionPowerLimiter[limit.ordinal()] = new ActionPowerLimiter(-1, limit);
 		}
@@ -436,7 +434,7 @@ public class BuildCraftTransport {
 		// Add pipe recipes
 		for (PipeRecipe pipe : pipeRecipes) {
 			if (pipe.isShapeless) {
-			        CoreProxy.proxy.addShapelessRecipe(pipe.result, pipe.input);
+				CoreProxy.proxy.addShapelessRecipe(pipe.result, pipe.input);
 			} else {
 				CoreProxy.proxy.addCraftingRecipe(pipe.result, pipe.input);
 			}
@@ -449,11 +447,22 @@ public class BuildCraftTransport {
 
 		//Facade turning helper
 		GameRegistry.addRecipe(facadeItem.new FacadeRecipe());
+
+		// Assembly table recipes, moved from PreInit phase to Init, all mods should be done adding to the OreDictionary by now
+		try {
+			AssemblyRecipe.assemblyRecipes.add(new AssemblyRecipe(500, new ItemStack(redPipeWire, 8), "dyeRed", 1, new ItemStack(Item.redstone), new ItemStack(Item.ingotIron)));
+			AssemblyRecipe.assemblyRecipes.add(new AssemblyRecipe(500, new ItemStack(bluePipeWire, 8), "dyeBlue", 1, new ItemStack(Item.redstone), new ItemStack(Item.ingotIron)));
+			AssemblyRecipe.assemblyRecipes.add(new AssemblyRecipe(500, new ItemStack(greenPipeWire, 8), "dyeGreen", 1, new ItemStack(Item.redstone), new ItemStack(Item.ingotIron)));
+			AssemblyRecipe.assemblyRecipes.add(new AssemblyRecipe(500, new ItemStack(yellowPipeWire, 8), "dyeYellow", 1, new ItemStack(Item.redstone), new ItemStack(Item.ingotIron)));
+			AssemblyRecipe.assemblyRecipes.add(new AssemblyRecipe(new ItemStack[]{new ItemStack(pipeStructureCobblestone)}, 1000, new ItemStack(plugItem, 8)));
+		} catch (Error error) {
+			BCLog.logErrorAPI("Buildcraft", error, AssemblyRecipe.class);
+		}
 	}
 
 	@EventHandler
 	public void processIMCRequests(IMCEvent event) {
-	    InterModComms.processIMC(event);
+		InterModComms.processIMC(event);
 	}
 
 	public static Item buildPipe(int defaultID, Class<? extends Pipe> clas, String descr, Object... ingredients) {

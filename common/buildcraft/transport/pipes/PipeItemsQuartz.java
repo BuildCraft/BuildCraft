@@ -9,19 +9,17 @@ package buildcraft.transport.pipes;
 
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
-import buildcraft.api.core.Position;
-import buildcraft.transport.IPipeTransportItemsHook;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportItems;
 import buildcraft.transport.TransportConstants;
 import buildcraft.transport.TravelingItem;
+import buildcraft.transport.pipes.events.PipeEventItem;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import java.util.LinkedList;
 import net.minecraftforge.common.ForgeDirection;
 
-public class PipeItemsQuartz extends Pipe implements IPipeTransportItemsHook {
+public class PipeItemsQuartz extends Pipe {
 
 	public PipeItemsQuartz(int itemID) {
 		super(new PipeTransportItems(), itemID);
@@ -39,8 +37,10 @@ public class PipeItemsQuartz extends Pipe implements IPipeTransportItemsHook {
 		return PipeIconProvider.TYPE.PipeItemsQuartz.ordinal();
 	}
 
-	@Override
-	public void readjustSpeed(TravelingItem item) {
+	public void eventHandler(PipeEventItem.AdjustSpeed event) {
+		event.handled = true;
+		TravelingItem item = event.item;
+
 		if (item.getSpeed() > TransportConstants.PIPE_NORMAL_SPEED) {
 			item.setSpeed(item.getSpeed() - TransportConstants.PIPE_NORMAL_SPEED / 4.0F);
 		}
@@ -48,14 +48,5 @@ public class PipeItemsQuartz extends Pipe implements IPipeTransportItemsHook {
 		if (item.getSpeed() < TransportConstants.PIPE_NORMAL_SPEED) {
 			item.setSpeed(TransportConstants.PIPE_NORMAL_SPEED);
 		}
-	}
-
-	@Override
-	public LinkedList<ForgeDirection> filterPossibleMovements(LinkedList<ForgeDirection> possibleOrientations, Position pos, TravelingItem item) {
-		return possibleOrientations;
-	}
-
-	@Override
-	public void entityEntered(TravelingItem item, ForgeDirection orientation) {
 	}
 }

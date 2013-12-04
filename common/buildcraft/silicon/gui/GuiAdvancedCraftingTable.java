@@ -15,7 +15,7 @@ import org.lwjgl.opengl.GL11;
 
 public class GuiAdvancedCraftingTable extends GuiBuildCraft {
 
-	public static final ResourceLocation gui = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_GUI + "/assembly_advancedworkbench.png");
+	public static final ResourceLocation TEXTURE = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_GUI + "/assembly_advancedworkbench.png");
 
 	class AssemblyWorkbenchLedger extends Ledger {
 
@@ -59,7 +59,7 @@ public class GuiAdvancedCraftingTable extends GuiBuildCraft {
 	TileAdvancedCraftingTable workbench;
 
 	public GuiAdvancedCraftingTable(InventoryPlayer playerInventory, TileAdvancedCraftingTable advancedWorkbench) {
-		super(new ContainerAdvancedCraftingTable(playerInventory, advancedWorkbench), advancedWorkbench);
+		super(new ContainerAdvancedCraftingTable(playerInventory, advancedWorkbench), advancedWorkbench, TEXTURE);
 		this.workbench = advancedWorkbench;
 		xSize = 175;
 		ySize = 240;
@@ -76,7 +76,7 @@ public class GuiAdvancedCraftingTable extends GuiBuildCraft {
 	@Override
 	protected void drawGuiContainerBackgroundLayer(float f, int mouseX, int mouseY) {
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-		mc.renderEngine.bindTexture(gui);
+		mc.renderEngine.bindTexture(TEXTURE);
 		int cornerX = (width - xSize) / 2;
 		int cornerY = (height - ySize) / 2;
 		drawTexturedModalRect(cornerX, cornerY, 0, 0, xSize, ySize);

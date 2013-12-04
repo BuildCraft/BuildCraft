@@ -47,6 +47,9 @@ public abstract class PipeLogicIron {
 
 
 	private boolean isValidFacing(ForgeDirection side) {
+		if (!pipe.container.isPipeConnected(side))
+			return false;
+
 		TileBuffer[] tileBuffer = pipe.container.getTileCache();
 		if (tileBuffer == null)
 			return true;

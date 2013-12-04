@@ -19,9 +19,11 @@ import buildcraft.core.network.PacketIds;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.BCLog;
 import buildcraft.core.utils.BlockUtil;
+import buildcraft.core.utils.MathUtils;
 import buildcraft.transport.network.PacketPipeTransportContent;
 import buildcraft.transport.network.PacketPipeTransportNBT;
 import buildcraft.transport.network.PacketSimpleId;
+import buildcraft.transport.pipes.events.PipeEventItem;
 import buildcraft.transport.utils.TransportUtils;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.ForwardingSet;
@@ -32,12 +34,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
-import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
@@ -46,6 +48,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.MathHelper;
 import net.minecraftforge.common.ForgeDirection;
 
 public class PipeTransportItems extends PipeTransport {
@@ -125,9 +128,13 @@ public class PipeTransportItems extends PipeTransport {
 	}
 
 	public void readjustSpeed(TravelingItem item) {
-		if (container.pipe instanceof IPipeTransportItemsHook)
+		if (container.pipe instanceof IPipeTransportItemsHook) {
 			((IPipeTransportItemsHook) container.pipe).readjustSpeed(item);
-		else
+			return;
+		}
+		PipeEventItem.AdjustSpeed event = new PipeEventItem.AdjustSpeed(item);
+		container.pipe.handlePipeEvent(event);
+		if (!event.handled)
 			defaultReajustSpeed(item);
 	}
 
@@ -146,17 +153,9 @@ public class PipeTransportItems extends PipeTransport {
 	}
 
 	private void readjustPosition(TravelingItem item) {
-		double x = item.xCoord;
-		double y = item.yCoord;
-		double z = item.zCoord;
-
-		x = Math.max(x, container.xCoord + 0.01);
-		y = Math.max(y, container.yCoord + 0.01);
-		z = Math.max(z, container.zCoord + 0.01);
-
-		x = Math.min(x, container.xCoord + 0.99);
-		y = Math.min(y, container.yCoord + 0.99);
-		z = Math.min(z, container.zCoord + 0.99);
+		double x = MathUtils.clamp(item.xCoord, container.xCoord + 0.01, container.xCoord + 0.99);
+		double y = MathUtils.clamp(item.yCoord, container.yCoord + 0.01, container.yCoord + 0.99);
+		double z = MathUtils.clamp(item.zCoord, container.zCoord + 0.01, container.zCoord + 0.99);
 
 		if (item.input != ForgeDirection.UP && item.input != ForgeDirection.DOWN) {
 			y = container.yCoord + TransportUtils.getPipeFloorOf(item.getItemStack());
@@ -174,8 +173,6 @@ public class PipeTransportItems extends PipeTransport {
 		item.reset();
 		item.input = inputOrientation;
 
-		items.add(item);
-
 		readjustSpeed(item);
 		readjustPosition(item);
 
@@ -187,6 +184,13 @@ public class PipeTransportItems extends PipeTransport {
 		if (container.pipe instanceof IPipeTransportItemsHook) {
 			((IPipeTransportItemsHook) container.pipe).entityEntered(item, inputOrientation);
 		}
+
+		PipeEventItem.Entered event = new PipeEventItem.Entered(item);
+		container.pipe.handlePipeEvent(event);
+		if (event.cancelled)
+			return;
+
+		items.add(item);
 
 		if (!container.worldObj.isRemote) {
 			sendItemPacket(item);
@@ -231,8 +235,6 @@ public class PipeTransportItems extends PipeTransport {
 			// stage, avoid adding it to the pipe to avoid further exceptions.
 			return;
 
-		items.unscheduleRemoval(item);
-
 		item.toCenter = true;
 		item.input = item.output.getOpposite();
 
@@ -246,6 +248,12 @@ public class PipeTransportItems extends PipeTransport {
 		if (container.pipe instanceof IPipeTransportItemsHook) {
 			((IPipeTransportItemsHook) container.pipe).entityEntered(item, item.input);
 		}
+		PipeEventItem.Entered event = new PipeEventItem.Entered(item);
+		container.pipe.handlePipeEvent(event);
+		if (event.cancelled)
+			return;
+
+		items.unscheduleRemoval(item);
 
 		if (!container.worldObj.isRemote) {
 			sendItemPacket(item);
@@ -253,27 +261,27 @@ public class PipeTransportItems extends PipeTransport {
 	}
 
 	public ForgeDirection resolveDestination(TravelingItem data) {
-		LinkedList<ForgeDirection> listOfPossibleMovements = getPossibleMovements(data);
+		List<ForgeDirection> validDestinations = getPossibleMovements(data);
 
-		if (listOfPossibleMovements.isEmpty())
+		if (validDestinations.isEmpty())
 			return ForgeDirection.UNKNOWN;
 
-		int i = container.worldObj.rand.nextInt(listOfPossibleMovements.size());
-		return listOfPossibleMovements.get(i);
+		return validDestinations.get(0);
 	}
 
 	/**
 	 * Returns a list of all possible movements, that is to say adjacent
 	 * implementers of IPipeEntry or TileEntityChest.
 	 */
-	public LinkedList<ForgeDirection> getPossibleMovements(TravelingItem item) {
+	public List<ForgeDirection> getPossibleMovements(TravelingItem item) {
 		LinkedList<ForgeDirection> result = new LinkedList<ForgeDirection>();
 
 		item.blacklist.add(item.input.getOpposite());
 
-		for (ForgeDirection o : ForgeDirection.VALID_DIRECTIONS) {
-			if (item.blacklist.contains(o))
-				continue;
+		EnumSet<ForgeDirection> sides = EnumSet.complementOf(item.blacklist);
+		sides.remove(ForgeDirection.UNKNOWN);
+
+		for (ForgeDirection o : sides) {
 			if (container.pipe.outputOpen(o) && canReceivePipeObjects(o, item))
 				result.add(o);
 		}
@@ -282,12 +290,16 @@ public class PipeTransportItems extends PipeTransport {
 			Position pos = new Position(container.xCoord, container.yCoord, container.zCoord, item.input);
 			result = ((IPipeTransportItemsHook) this.container.pipe).filterPossibleMovements(result, pos, item);
 		}
+		PipeEventItem.FindDest event = new PipeEventItem.FindDest(item, result);
+		container.pipe.handlePipeEvent(event);
 
 		if (allowBouncing && result.isEmpty()) {
 			if (canReceivePipeObjects(item.input.getOpposite(), item)) {
 				result.add(item.input.getOpposite());
 			}
 		}
+
+		Collections.shuffle(result);
 
 		return result;
 	}
@@ -341,29 +353,23 @@ public class PipeTransportItems extends PipeTransport {
 				item.setPosition(container.xCoord + 0.5, container.yCoord + TransportUtils.getPipeFloorOf(item.getItemStack()), container.zCoord + 0.5);
 
 				if (item.output == ForgeDirection.UNKNOWN) {
-					if (travelHook != null) {
-						travelHook.drop(this, item);
-					}
-
-					EntityItem dropped = null;
-
-					if (items.scheduleRemoval(item)) {
-						dropped = item.toEntityItem(item.input);
-					}
-
-					if (dropped != null) {
-						onDropped(dropped);
-					}
+					if (items.scheduleRemoval(item))
+						dropItem(item);
 				} else {
 					if (travelHook != null) {
 						travelHook.centerReached(this, item);
 					}
+					PipeEventItem.ReachedCenter event = new PipeEventItem.ReachedCenter(item);
+					container.pipe.handlePipeEvent(event);
 				}
 
 			} else if (!item.toCenter && endReached(item)) {
 				TileEntity tile = container.getTile(item.output);
 
-				boolean handleItem = true;
+				PipeEventItem.ReachedEnd event = new PipeEventItem.ReachedEnd(item, tile);
+				container.pipe.handlePipeEvent(event);
+				boolean handleItem = !event.handled;
+
 				if (travelHook != null) {
 					handleItem = !travelHook.endReached(this, item, tile);
 				}
@@ -404,19 +410,23 @@ public class PipeTransportItems extends PipeTransport {
 					reverseItem(item);
 				}
 			}
-		} else {
-			if (travelHook != null) {
-				travelHook.drop(this, item);
-			}
+		} else
+			dropItem(item);
+	}
 
-			EntityItem dropped = item.toEntityItem(item.output);
+	private void dropItem(TravelingItem item) {
+		if (container.worldObj.isRemote)
+			return;
 
-			if (dropped != null) {
-				// On SMP, the client side doesn't actually drops
-				// items
-				onDropped(dropped);
-			}
+		if (travelHook != null) {
+			travelHook.drop(this, item);
 		}
+
+		PipeEventItem.DropItem event = new PipeEventItem.DropItem(item, item.toEntityItem());
+		container.pipe.handlePipeEvent(event);
+		if (event.entity == null)
+			return;
+		container.worldObj.spawnEntityInWorld(event.entity);
 	}
 
 	protected boolean middleReached(TravelingItem item) {
@@ -514,6 +524,7 @@ public class PipeTransportItems extends PipeTransport {
 
 		item.setSpeed(packet.getSpeed());
 
+		item.toCenter = true;
 		item.input = packet.getInputOrientation();
 		item.output = packet.getOutputOrientation();
 		item.color = packet.getColor();
@@ -567,10 +578,6 @@ public class PipeTransportItems extends PipeTransport {
 			num += item.getItemStack().stackSize;
 		}
 		return num;
-	}
-
-	public void onDropped(EntityItem item) {
-		this.container.pipe.onDropped(item);
 	}
 
 	protected void neighborChange() {
