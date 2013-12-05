@@ -8,10 +8,8 @@
 package buildcraft;
 
 import buildcraft.api.core.IIconProvider;
-import buildcraft.api.filler.IFillerPattern;
 import buildcraft.api.gates.ActionManager;
 import buildcraft.api.recipes.BuildcraftRecipes;
-import buildcraft.core.recipes.AssemblyRecipeManager;
 import buildcraft.api.transport.IExtractionHandler;
 import buildcraft.api.transport.IPipe;
 import buildcraft.api.transport.PipeManager;
@@ -29,7 +27,7 @@ import buildcraft.transport.BlockGenericPipe;
 import buildcraft.transport.GateIconProvider;
 import buildcraft.transport.GuiHandler;
 import buildcraft.transport.ItemFacade;
-import buildcraft.transport.ItemGate;
+import buildcraft.transport.gates.ItemGate;
 import buildcraft.transport.ItemPipe;
 import buildcraft.transport.ItemPlug;
 import buildcraft.transport.Pipe;
@@ -42,6 +40,8 @@ import buildcraft.transport.blueprints.BptItemPipeDiamond;
 import buildcraft.transport.blueprints.BptItemPipeEmerald;
 import buildcraft.transport.blueprints.BptItemPipeIron;
 import buildcraft.transport.blueprints.BptItemPipeWooden;
+import buildcraft.transport.gates.GateExpansionPulsar;
+import buildcraft.transport.gates.GateExpansions;
 import buildcraft.transport.network.PacketHandlerTransport;
 import buildcraft.transport.pipes.PipeFluidsCobblestone;
 import buildcraft.transport.pipes.PipeFluidsEmerald;
@@ -114,7 +114,6 @@ public class BuildCraftTransport {
 	public static float pipeDurability;
 	public static Item pipeWaterproof;
 	public static Item pipeGate;
-	public static Item pipeGateAutarchic;
 	public static Item redPipeWire;
 	public static Item bluePipeWire;
 	public static Item greenPipeWire;
@@ -267,6 +266,8 @@ public class BuildCraftTransport {
 
 			PipeManager.registerExtractionHandler(new ExtractionHandler(excludedItemBlocks, excludedFluidBlocks));
 
+			GateExpansions.registerExpansion(GateExpansionPulsar.INSTANCE);
+
 			Property groupItemsTriggerProp = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "pipes.groupItemsTrigger", 32);
 			groupItemsTriggerProp.comment = "when reaching this amount of objects in a pipes, items will be automatically grouped";
 			groupItemsTrigger = groupItemsTriggerProp.getInt();
@@ -347,15 +348,9 @@ public class BuildCraftTransport {
 			CoreProxy.proxy.registerItem(yellowPipeWire);
 
 			Property pipeGateId = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_ITEM, "pipeGate.id", DefaultProps.GATE_ID);
-			pipeGate = new ItemGate(pipeGateId.getInt(), 0);
+			pipeGate = new ItemGate(pipeGateId.getInt());
 			pipeGate.setUnlocalizedName("pipeGate");
 			CoreProxy.proxy.registerItem(pipeGate);
-
-			Property pipeGateAutarchicId = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_ITEM, "pipeGateAutarchic.id",
-					DefaultProps.GATE_AUTARCHIC_ID);
-			pipeGateAutarchic = new ItemGate(pipeGateAutarchicId.getInt(), 1);
-			pipeGateAutarchic.setUnlocalizedName("pipeGateAutarchic");
-			CoreProxy.proxy.registerItem(pipeGateAutarchic);
 
 			Property pipeFacadeId = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_ITEM, "pipeFacade.id", DefaultProps.PIPE_FACADE_ID);
 			facadeItem = new ItemFacade(pipeFacadeId.getInt());

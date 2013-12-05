@@ -29,7 +29,7 @@ import buildcraft.energy.ItemBucketBuildcraft;
 import buildcraft.energy.ItemEngine;
 import buildcraft.energy.BucketHandler;
 import buildcraft.energy.TileEngine.EnergyStage;
-import buildcraft.energy.TriggerEngineHeat;
+import buildcraft.energy.triggers.TriggerEngineHeat;
 import buildcraft.energy.worldgen.BiomeGenOilDesert;
 import buildcraft.energy.worldgen.BiomeGenOilOcean;
 import buildcraft.energy.worldgen.BiomeInitializer;

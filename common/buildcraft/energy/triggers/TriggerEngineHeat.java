@@ -5,11 +5,12 @@
  * 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-package buildcraft.energy;
+package buildcraft.energy.triggers;
 
 import buildcraft.api.gates.ITriggerParameter;
 import buildcraft.core.triggers.BCTrigger;
 import buildcraft.core.utils.StringUtils;
+import buildcraft.energy.TileEngine;
 import buildcraft.energy.TileEngine.EnergyStage;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -34,13 +35,13 @@ public class TriggerEngineHeat extends BCTrigger {
 	public String getDescription() {
 		switch (stage) {
 			case BLUE:
-				return StringUtils.localize("gate.engine.blue");
+				return StringUtils.localize("gate.trigger.engine.blue");
 			case GREEN:
-				return StringUtils.localize("gate.engine.green");
+				return StringUtils.localize("gate.trigger.engine.green");
 			case YELLOW:
-				return StringUtils.localize("gate.engine.yellow");
+				return StringUtils.localize("gate.trigger.engine.yellow");
 			default:
-				return StringUtils.localize("gate.engine.red");
+				return StringUtils.localize("gate.trigger.engine.red");
 		}
 	}
 

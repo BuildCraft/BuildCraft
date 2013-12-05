@@ -13,7 +13,6 @@ import buildcraft.api.gates.ITriggerParameter;
 import buildcraft.core.gui.GuiAdvancedInterface;
 import buildcraft.core.triggers.BCAction;
 import buildcraft.core.utils.StringUtils;
-import buildcraft.transport.Gate.GateKind;
 import buildcraft.transport.Pipe;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -29,7 +28,8 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 
 	IInventory playerInventory;
 	private final ContainerGateInterface _container;
-	private int nbEntries;
+	private final Pipe pipe;
+	private int numSlots;
 
 	class TriggerSlot extends AdvancedSlot {
 
@@ -159,31 +159,27 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 		super(new ContainerGateInterface(playerInventory, pipe), null, null);
 
 		_container = (ContainerGateInterface) this.inventorySlots;
+		this.pipe = pipe;
 
 		this.playerInventory = playerInventory;
 		xSize = 176;
-		ySize = pipe.gate.getGuiHeight();
+		ySize = pipe.gate.material.guiHeight;
 
 		int position = 0;
+		numSlots = pipe.gate.material.numSlots;
 
-		if (pipe.gate.kind == GateKind.Single) {
-			nbEntries = 1;
-
+		if (numSlots == 1) {
 			slots = new AdvancedSlot[2];
 			slots[0] = new TriggerSlot(62, 26, pipe, 0);
 			slots[1] = new ActionSlot(98, 26, pipe, 0);
-		} else if (pipe.gate.kind == GateKind.AND_2 || pipe.gate.kind == GateKind.OR_2) {
-			nbEntries = 2;
-
+		} else if (numSlots == 2) {
 			slots = new AdvancedSlot[4];
 
 			slots[0] = new TriggerSlot(62, 26, pipe, 0);
 			slots[1] = new TriggerSlot(62, 44, pipe, 1);
 			slots[2] = new ActionSlot(98, 26, pipe, 0);
 			slots[3] = new ActionSlot(98, 44, pipe, 1);
-		} else if (pipe.gate.kind == GateKind.AND_3 || pipe.gate.kind == GateKind.OR_3 || pipe.gate.kind == GateKind.AND_5 || pipe.gate.kind == GateKind.OR_5) {
-			nbEntries = 4;
-
+		} else if (numSlots == 4) {
 			slots = new AdvancedSlot[12];
 
 			for (int k = 0; k < 4; ++k) {
@@ -201,9 +197,7 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 				position++;
 
 			}
-		} else if (pipe.gate.kind == GateKind.AND_4 || pipe.gate.kind == GateKind.OR_4) {
-			nbEntries = 8;
-
+		} else if (numSlots == 8) {
 			slots = new AdvancedSlot[24];
 
 			for (int k = 0; k < 4; ++k) {
@@ -261,7 +255,7 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 			if (slot instanceof TriggerSlot) {
 				ITrigger trigger = ((TriggerSlot) slot).getTrigger();
 
-				if (_container.getGateOrdinal() >= GateKind.AND_3.ordinal()) {
+				if (pipe.gate.material.hasParameterSlot) {
 
 					if (_container.triggerState[triggerTracker++]) {
 						mc.renderEngine.bindTexture(texture);
@@ -333,7 +327,7 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 
 			_container.setTrigger(position, changed, true);
 
-			if (_container.getGateOrdinal() >= GateKind.AND_3.ordinal()) {
+			if (pipe.gate.material.hasParameterSlot) {
 				_container.setTriggerParameter(position, null, true);
 			}
 		} else if (slot instanceof ActionSlot) {
@@ -366,16 +360,16 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 				}
 			}
 
-			_container.setAction(position - nbEntries, changed, true);
+			_container.setAction(position - numSlots, changed, true);
 		} else if (slot instanceof TriggerParameterSlot) {
-			TriggerSlot trigger = (TriggerSlot) slots[position - nbEntries * 2];
+			TriggerSlot trigger = (TriggerSlot) slots[position - numSlots * 2];
 
 			if (trigger.isDefined() && trigger.getTrigger().hasParameter()) {
 				ITriggerParameter param = trigger.getTrigger().createParameter();
 
 				if (param != null) {
 					param.set(mc.thePlayer.inventory.getItemStack());
-					_container.setTriggerParameter(position - nbEntries * 2, param, true);
+					_container.setTriggerParameter(position - numSlots * 2, param, true);
 				}
 			}
 		}

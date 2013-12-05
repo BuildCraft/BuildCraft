@@ -19,6 +19,7 @@ import buildcraft.core.IDropControlInventory;
 import buildcraft.core.inventory.InvUtils;
 import buildcraft.core.network.TilePacketWrapper;
 import buildcraft.core.utils.Utils;
+import buildcraft.transport.gates.GateFactory;
 import buildcraft.transport.pipes.events.PipeEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -189,7 +190,7 @@ public abstract class Pipe<T extends PipeTransport> implements IPipe, IDropContr
 		// Update the gate if we have any
 		if (gate != null) {
 			gate.resolveActions();
-			gate.update();
+			gate.tick();
 		}
 	}
 
@@ -200,7 +201,7 @@ public abstract class Pipe<T extends PipeTransport> implements IPipe, IDropContr
 	public void writeToNBT(NBTTagCompound data) {
 		transport.writeToNBT(data);
 
-		// Save pulser if any
+		// Save gate if any
 		if (gate != null) {
 			NBTTagCompound gateNBT = new NBTTagCompound();
 			gate.writeToNBT(gateNBT);
@@ -215,17 +216,10 @@ public abstract class Pipe<T extends PipeTransport> implements IPipe, IDropContr
 	public void readFromNBT(NBTTagCompound data) {
 		transport.readFromNBT(data);
 
-		// Load pulser if any
+		// Load gate if any
 		if (data.hasKey("Gate")) {
 			NBTTagCompound gateNBT = data.getCompoundTag("Gate");
-			gate = Gate.makeGate(this, gateNBT);
-		} else if (data.hasKey("gateKind")) {
-			// Legacy implementation
-			Gate.GateKind kind = Gate.GateKind.values()[data.getInteger("gateKind")];
-			if (kind != Gate.GateKind.None) {
-				gate = new GateVanilla(this);
-				gate.kind = kind;
-			}
+			gate = GateFactory.makeGate(this, gateNBT);
 		}
 
 		for (int i = 0; i < 4; ++i) {

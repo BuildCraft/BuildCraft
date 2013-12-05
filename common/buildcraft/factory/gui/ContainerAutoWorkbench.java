@@ -11,6 +11,7 @@ import buildcraft.core.gui.BuildCraftContainer;
 import buildcraft.core.gui.slots.SlotOutput;
 import buildcraft.core.gui.slots.SlotUntouchable;
 import buildcraft.core.gui.slots.SlotWorkbench;
+import buildcraft.core.inventory.InvUtils;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.StringUtils;
 import buildcraft.core.utils.Utils;
@@ -39,7 +40,7 @@ public class ContainerAutoWorkbench extends BuildCraftContainer {
 			public void setInventorySlotContents(int slot, ItemStack stack) {
 				super.setInventorySlotContents(slot, stack);
 				if (stack != null && tile.isLast() && CoreProxy.proxy.isRenderWorld(tile.worldObj)) {
-					Utils.addItemToolTip(stack, "tip", EnumChatFormatting.YELLOW + StringUtils.localize("gui.clickcraft"));
+					InvUtils.addItemToolTip(stack, "tip", EnumChatFormatting.YELLOW + StringUtils.localize("gui.clickcraft"));
 				}
 			}
 		};

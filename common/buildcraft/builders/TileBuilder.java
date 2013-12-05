@@ -29,6 +29,7 @@ import buildcraft.core.blueprints.BptBuilderBase;
 import buildcraft.core.blueprints.BptBuilderBlueprint;
 import buildcraft.core.blueprints.BptBuilderTemplate;
 import buildcraft.core.blueprints.BptContext;
+import buildcraft.core.inventory.InvUtils;
 import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.network.TileNetworkData;
 import buildcraft.core.proxy.CoreProxy;
@@ -447,7 +448,7 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 	public void readFromNBT(NBTTagCompound nbttagcompound) {
 		super.readFromNBT(nbttagcompound);
 
-		Utils.readStacksFromNBT(nbttagcompound, "Items", items);
+		InvUtils.readStacksFromNBT(nbttagcompound, "Items", items);
 
 		if (nbttagcompound.hasKey("box")) {
 			box.initialize(nbttagcompound.getCompoundTag("box"));
@@ -470,7 +471,7 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 	public void writeToNBT(NBTTagCompound nbttagcompound) {
 		super.writeToNBT(nbttagcompound);
 
-		Utils.writeStacksToNBT(nbttagcompound, "Items", items);
+		InvUtils.writeStacksToNBT(nbttagcompound, "Items", items);
 
 		if (box.isInitialized()) {
 			NBTTagCompound boxStore = new NBTTagCompound();

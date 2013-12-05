@@ -49,37 +49,38 @@ import buildcraft.core.network.IGuiReturnHandler;
 import buildcraft.core.network.ISyncedTile;
 import buildcraft.core.network.PacketTileState;
 import buildcraft.core.utils.BCLog;
-import buildcraft.transport.Gate.GateKind;
+import buildcraft.transport.gates.GateDefinition;
+import buildcraft.transport.gates.GateFactory;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.server.management.PlayerInstance;
 import net.minecraft.world.WorldServer;
 
 public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFluidHandler, IPipeTile, IOverrideDefaultTriggers, ITileBufferHolder,
-		IDropControlInventory, IPipeRenderState, ISyncedTile, ISolidSideTile, IGuiReturnHandler {
+		IDropControlInventory, ISyncedTile, ISolidSideTile, IGuiReturnHandler {
 
-	private class CoreState implements IClientState {
+	public class CoreState implements IClientState {
 
 		public int pipeId = -1;
-		public int gateKind = 0;
-		public boolean pulser = false;
+		public int gateMaterial = -1;
+		public int gateLogic = -1;
 
 		@Override
 		public void writeData(DataOutputStream data) throws IOException {
 			data.writeInt(pipeId);
-			data.writeInt(gateKind);
-			data.writeBoolean(pulser);
+			data.writeByte(gateMaterial);
+			data.writeByte(gateLogic);
 		}
 
 		@Override
 		public void readData(DataInputStream data) throws IOException {
 			pipeId = data.readInt();
-			gateKind = data.readInt();
-			pulser = data.readBoolean();
+			gateMaterial = data.readByte();
+			gateLogic = data.readByte();
 		}
 	}
-	private PipeRenderState renderState = new PipeRenderState();
-	private CoreState coreState = new CoreState();
+	public final PipeRenderState renderState = new PipeRenderState();
+	public final CoreState coreState = new CoreState();
 	private boolean deletePipe = false;
 	private TileBuffer[] tileBuffer;
 	public boolean[] pipeConnectionsBuffer = new boolean[6];
@@ -120,7 +121,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 	public void readFromNBT(NBTTagCompound nbt) {
 		super.readFromNBT(nbt);
 		redstonePowered = nbt.getBoolean("redstonePowered");
-		
+
 		coreState.pipeId = nbt.getInteger("pipeId");
 		pipe = BlockGenericPipe.createPipe(coreState.pipeId);
 
@@ -249,8 +250,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 		}
 
 		// Gate Textures
-		renderState.setHasGate(pipe.hasGate());
-		renderState.setGateIconIndex(!pipe.hasGate() ? 0 : pipe.gate.getTextureIconIndex(pipe.gate.isGateActive()));
+		renderState.setIsGateLit(pipe.gate != null ? pipe.gate.isGateActive() : false);
 
 		// Facades
 		for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
@@ -369,11 +369,11 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 
 		PacketTileState packet = new PacketTileState(this.xCoord, this.yCoord, this.zCoord);
 		if (pipe != null && pipe.gate != null) {
-			coreState.gateKind = pipe.gate.kind.ordinal();
-			coreState.pulser = pipe.gate instanceof GateVanilla && ((GateVanilla)pipe.gate).hasPulser() ? true : false;
+			coreState.gateMaterial = pipe.gate.material.ordinal();
+			coreState.gateLogic = pipe.gate.logic.ordinal();
 		} else {
-			coreState.gateKind = 0;
-			coreState.pulser = false;
+			coreState.gateMaterial = -1;
+			coreState.gateLogic = -1;
 		}
 
 		if (pipe != null && pipe.transport != null)
@@ -604,15 +604,6 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 		return true;
 	}
 
-	/**
-	 * IPipeRenderState implementation *
-	 */
-	@Override
-	public PipeRenderState getRenderState() {
-		return renderState;
-	}
-
-	@Override
 	@SideOnly(Side.CLIENT)
 	public IIconProvider getPipeIcons() {
 		if (pipe == null)
@@ -643,16 +634,14 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 				if (pipe == null && coreState.pipeId != 0)
 					initialize(BlockGenericPipe.createPipe(coreState.pipeId));
 
-				if (pipe != null && coreState.gateKind != GateKind.None.ordinal()) {
-					if (pipe.gate == null) {
-						if (coreState.pulser) {
-							pipe.gate = new GateVanilla(pipe, new ItemStack(BuildCraftTransport.pipeGateAutarchic, 1, coreState.gateKind));
-						} else {
-							pipe.gate = new GateVanilla(pipe);
-						}
-					}
-					pipe.gate.kind = GateKind.values()[coreState.gateKind];
-				}
+				if (pipe == null)
+					break;
+
+				if (coreState.gateMaterial == -1)
+					pipe.gate = null;
+				else if (pipe.gate == null)
+					pipe.gate = GateFactory.makeGate(pipe, GateDefinition.GateMaterial.fromOrdinal(coreState.gateMaterial), GateDefinition.GateLogic.fromOrdinal(coreState.gateLogic));
+
 				worldObj.markBlockForRenderUpdate(xCoord, yCoord, zCoord);
 				break;
 			case 1: {

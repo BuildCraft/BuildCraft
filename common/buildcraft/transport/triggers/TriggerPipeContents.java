@@ -66,17 +66,17 @@ public class TriggerPipeContents extends BCTrigger implements ITriggerPipe {
 
 		switch (kind) {
 			case Empty:
-				return StringUtils.localize("gate.pipe.empty");
+				return StringUtils.localize("gate.trigger.pipe.empty");
 			case ContainsItems:
-				return StringUtils.localize("gate.pipe.containsItems");
+				return StringUtils.localize("gate.trigger.pipe.containsItems");
 			case ContainsFluids:
-				return StringUtils.localize("gate.pipe.containsFluids");
+				return StringUtils.localize("gate.trigger.pipe.containsFluids");
 			case ContainsEnergy:
-				return StringUtils.localize("gate.pipe.containsEnergy");
+				return StringUtils.localize("gate.trigger.pipe.containsEnergy");
 			case RequestsEnergy:
-				return StringUtils.localize("gate.pipe.requestsEnergy");
+				return StringUtils.localize("gate.trigger.pipe.requestsEnergy");
 			case TooMuchEnergy:
-				return StringUtils.localize("gate.pipe.tooMuchEnergy");
+				return StringUtils.localize("gate.trigger.pipe.tooMuchEnergy");
 		}
 
 		return "";

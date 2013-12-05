@@ -33,6 +33,7 @@ import buildcraft.core.IItemPipe;
 import buildcraft.core.fluids.FluidUtils;
 import buildcraft.core.fluids.Tank;
 import buildcraft.core.fluids.TankManager;
+import buildcraft.core.inventory.InvUtils;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
 import buildcraft.energy.gui.ContainerEngine;
@@ -192,7 +193,7 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
 			if (liquid != null) {
 				if (fill(ForgeDirection.UNKNOWN, liquid, false) == liquid.amount) {
 					fill(ForgeDirection.UNKNOWN, liquid, true);
-					setInventorySlotContents(0, Utils.consumeItem(stack));
+					setInventorySlotContents(0, InvUtils.consumeItem(stack));
 				}
 			}
 		}

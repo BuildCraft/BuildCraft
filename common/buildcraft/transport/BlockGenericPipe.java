@@ -7,6 +7,7 @@
  */
 package buildcraft.transport;
 
+import buildcraft.transport.gates.ItemGate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -44,6 +45,8 @@ import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.BCLog;
 import buildcraft.core.utils.Utils;
 import buildcraft.core.utils.MatrixTranformations;
+import buildcraft.transport.gates.GateDefinition;
+import buildcraft.transport.gates.GateFactory;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -726,7 +729,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 
 	private boolean addGate(EntityPlayer player, Pipe pipe) {
 		if (!pipe.hasGate()) {
-			pipe.gate = Gate.makeGate(pipe, player.getCurrentEquippedItem());
+			pipe.gate = GateFactory.makeGate(pipe, player.getCurrentEquippedItem());
 			if (!player.capabilities.isCreativeMode) {
 				player.getCurrentEquippedItem().splitStack(1);
 			}
@@ -885,26 +888,12 @@ public class BlockGenericPipe extends BlockBuildCraft {
 	@SideOnly(Side.CLIENT)
 	@Override
 	public Icon getBlockTexture(IBlockAccess iblockaccess, int x, int y, int z, int side) {
-
 		TileEntity tile = iblockaccess.getBlockTileEntity(x, y, z);
-		if (!(tile instanceof IPipeRenderState))
+		if (!(tile instanceof TileGenericPipe))
 			return null;
-		if (((IPipeRenderState) tile).getRenderState().textureArray != null)
-			return ((IPipeRenderState) tile).getRenderState().textureArray[side];
-		return ((IPipeRenderState) tile).getRenderState().currentTexture;
-
-		// Pipe pipe = getPipe(iblockaccess, i, j, k);
-		// if (!isValid(pipe)) {
-		// CoreProxy.BindTexture(DefaultProps.TEXTURE_BLOCKS);
-		// return 0;
-		// }
-		// int pipeTexture = pipe.getPipeTexture();
-		// if (pipeTexture > 255) {
-		// CoreProxy.BindTexture(DefaultProps.TEXTURE_EXTERNAL);
-		// return pipeTexture - 256;
-		// }
-		// CoreProxy.BindTexture(DefaultProps.TEXTURE_BLOCKS);
-		// return pipeTexture;
+		if (((TileGenericPipe) tile).renderState.textureArray != null)
+			return ((TileGenericPipe) tile).renderState.textureArray[side];
+		return ((TileGenericPipe) tile).renderState.currentTexture;
 	}
 
 	@Override
@@ -1051,6 +1040,14 @@ public class BlockGenericPipe extends BlockBuildCraft {
 			if (dummyPipe != null) {
 				dummyPipe.getIconProvider().registerIcons(iconRegister);
 			}
+		}
+
+		for (GateDefinition.GateMaterial material : GateDefinition.GateMaterial.VALUES) {
+			material.registerBlockIcon(iconRegister);
+		}
+
+		for (GateDefinition.GateLogic logic : GateDefinition.GateLogic.VALUES) {
+			logic.registerBlockIcon(iconRegister);
 		}
 	}
 

@@ -146,28 +146,28 @@ public class BuildCraftSilicon {
 			new ItemStack(BuildCraftTransport.pipeGate, 1, 8)});
 
 		// Iron - Autarchic
-		CoreProxy.proxy.addShapelessRecipe(new ItemStack(BuildCraftTransport.pipeGateAutarchic, 1, 2), new Object[]{new ItemStack(redstoneChipset, 1, 0),
-			new ItemStack(BuildCraftTransport.pipeGateAutarchic, 1, 1)});
-		CoreProxy.proxy.addShapelessRecipe(new ItemStack(BuildCraftTransport.pipeGateAutarchic, 1, 1), new Object[]{new ItemStack(redstoneChipset, 1, 0),
-			new ItemStack(BuildCraftTransport.pipeGateAutarchic, 1, 2)});
-
-		// Gold - Autarchic
-		CoreProxy.proxy.addShapelessRecipe(new ItemStack(BuildCraftTransport.pipeGateAutarchic, 1, 4), new Object[]{new ItemStack(redstoneChipset, 1, 0),
-			new ItemStack(BuildCraftTransport.pipeGateAutarchic, 1, 3)});
-		CoreProxy.proxy.addShapelessRecipe(new ItemStack(BuildCraftTransport.pipeGateAutarchic, 1, 3), new Object[]{new ItemStack(redstoneChipset, 1, 0),
-			new ItemStack(BuildCraftTransport.pipeGateAutarchic, 1, 4)});
-
-		// Diamond - Autarchic
-		CoreProxy.proxy.addShapelessRecipe(new ItemStack(BuildCraftTransport.pipeGateAutarchic, 1, 6), new Object[]{new ItemStack(redstoneChipset, 1, 0),
-			new ItemStack(BuildCraftTransport.pipeGateAutarchic, 1, 5)});
-		CoreProxy.proxy.addShapelessRecipe(new ItemStack(BuildCraftTransport.pipeGateAutarchic, 1, 5), new Object[]{new ItemStack(redstoneChipset, 1, 0),
-			new ItemStack(BuildCraftTransport.pipeGateAutarchic, 1, 6)});
-
-		// Quartz - Autarchic
-		CoreProxy.proxy.addShapelessRecipe(new ItemStack(BuildCraftTransport.pipeGateAutarchic, 1, 8), new Object[]{new ItemStack(redstoneChipset, 1, 0),
-			new ItemStack(BuildCraftTransport.pipeGateAutarchic, 1, 7)});
-		CoreProxy.proxy.addShapelessRecipe(new ItemStack(BuildCraftTransport.pipeGateAutarchic, 1, 7), new Object[]{new ItemStack(redstoneChipset, 1, 0),
-			new ItemStack(BuildCraftTransport.pipeGateAutarchic, 1, 8)});
+//		CoreProxy.proxy.addShapelessRecipe(new ItemStack(BuildCraftTransport.pipeGateAutarchic, 1, 2), new Object[]{new ItemStack(redstoneChipset, 1, 0),
+//			new ItemStack(BuildCraftTransport.pipeGateAutarchic, 1, 1)});
+//		CoreProxy.proxy.addShapelessRecipe(new ItemStack(BuildCraftTransport.pipeGateAutarchic, 1, 1), new Object[]{new ItemStack(redstoneChipset, 1, 0),
+//			new ItemStack(BuildCraftTransport.pipeGateAutarchic, 1, 2)});
+//
+//		// Gold - Autarchic
+//		CoreProxy.proxy.addShapelessRecipe(new ItemStack(BuildCraftTransport.pipeGateAutarchic, 1, 4), new Object[]{new ItemStack(redstoneChipset, 1, 0),
+//			new ItemStack(BuildCraftTransport.pipeGateAutarchic, 1, 3)});
+//		CoreProxy.proxy.addShapelessRecipe(new ItemStack(BuildCraftTransport.pipeGateAutarchic, 1, 3), new Object[]{new ItemStack(redstoneChipset, 1, 0),
+//			new ItemStack(BuildCraftTransport.pipeGateAutarchic, 1, 4)});
+//
+//		// Diamond - Autarchic
+//		CoreProxy.proxy.addShapelessRecipe(new ItemStack(BuildCraftTransport.pipeGateAutarchic, 1, 6), new Object[]{new ItemStack(redstoneChipset, 1, 0),
+//			new ItemStack(BuildCraftTransport.pipeGateAutarchic, 1, 5)});
+//		CoreProxy.proxy.addShapelessRecipe(new ItemStack(BuildCraftTransport.pipeGateAutarchic, 1, 5), new Object[]{new ItemStack(redstoneChipset, 1, 0),
+//			new ItemStack(BuildCraftTransport.pipeGateAutarchic, 1, 6)});
+//
+//		// Quartz - Autarchic
+//		CoreProxy.proxy.addShapelessRecipe(new ItemStack(BuildCraftTransport.pipeGateAutarchic, 1, 8), new Object[]{new ItemStack(redstoneChipset, 1, 0),
+//			new ItemStack(BuildCraftTransport.pipeGateAutarchic, 1, 7)});
+//		CoreProxy.proxy.addShapelessRecipe(new ItemStack(BuildCraftTransport.pipeGateAutarchic, 1, 7), new Object[]{new ItemStack(redstoneChipset, 1, 0),
+//			new ItemStack(BuildCraftTransport.pipeGateAutarchic, 1, 8)});
 
 		// / REDSTONE CHIPSETS
 		CoreProxy.proxy.addName(new ItemStack(redstoneChipset, 1, 0), "Redstone Chipset");
@@ -192,13 +192,13 @@ public class BuildCraftSilicon {
 		CoreProxy.proxy.addName(new ItemStack(BuildCraftTransport.pipeGate, 1, 2), "Iron OR Gate");
 		CoreProxy.proxy.addName(new ItemStack(BuildCraftTransport.pipeGate, 1, 4), "Gold OR Gate");
 		CoreProxy.proxy.addName(new ItemStack(BuildCraftTransport.pipeGate, 1, 6), "Diamond OR Gate");
-		CoreProxy.proxy.addName(new ItemStack(BuildCraftTransport.pipeGateAutarchic, 1, 0), "Autarchic Gate");
-		CoreProxy.proxy.addName(new ItemStack(BuildCraftTransport.pipeGateAutarchic, 1, 1), "Autarchic Iron AND Gate");
-		CoreProxy.proxy.addName(new ItemStack(BuildCraftTransport.pipeGateAutarchic, 1, 3), "Autarchic Gold AND Gate");
-		CoreProxy.proxy.addName(new ItemStack(BuildCraftTransport.pipeGateAutarchic, 1, 5), "Autarchic Diamond AND Gate");
-		CoreProxy.proxy.addName(new ItemStack(BuildCraftTransport.pipeGateAutarchic, 1, 2), "Autarchic Iron OR Gate");
-		CoreProxy.proxy.addName(new ItemStack(BuildCraftTransport.pipeGateAutarchic, 1, 4), "Autarchic Gold OR Gate");
-		CoreProxy.proxy.addName(new ItemStack(BuildCraftTransport.pipeGateAutarchic, 1, 6), "Autarchic Diamond OR Gate");
+//		CoreProxy.proxy.addName(new ItemStack(BuildCraftTransport.pipeGateAutarchic, 1, 0), "Autarchic Gate");
+//		CoreProxy.proxy.addName(new ItemStack(BuildCraftTransport.pipeGateAutarchic, 1, 1), "Autarchic Iron AND Gate");
+//		CoreProxy.proxy.addName(new ItemStack(BuildCraftTransport.pipeGateAutarchic, 1, 3), "Autarchic Gold AND Gate");
+//		CoreProxy.proxy.addName(new ItemStack(BuildCraftTransport.pipeGateAutarchic, 1, 5), "Autarchic Diamond AND Gate");
+//		CoreProxy.proxy.addName(new ItemStack(BuildCraftTransport.pipeGateAutarchic, 1, 2), "Autarchic Iron OR Gate");
+//		CoreProxy.proxy.addName(new ItemStack(BuildCraftTransport.pipeGateAutarchic, 1, 4), "Autarchic Gold OR Gate");
+//		CoreProxy.proxy.addName(new ItemStack(BuildCraftTransport.pipeGateAutarchic, 1, 6), "Autarchic Diamond OR Gate");
 
 
 //		BuildcraftRecipes.assemblyTable.addRecipe(new ItemStack(BuildCraftTransport.pipeGate, 1, 0), 20000, new ItemStack(redstoneChipset, 1, 0));

@@ -9,6 +9,7 @@ package buildcraft.factory;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.core.CreativeTabBuildCraft;
+import buildcraft.core.inventory.InvUtils;
 import buildcraft.core.utils.Utils;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -101,7 +102,7 @@ public class BlockTank extends BlockContainer {
 				int qty = tank.fill(ForgeDirection.UNKNOWN, liquid, true);
 
 				if (qty != 0 && !BuildCraftCore.debugMode && !entityplayer.capabilities.isCreativeMode) {
-					entityplayer.inventory.setInventorySlotContents(entityplayer.inventory.currentItem, Utils.consumeItem(current));
+					entityplayer.inventory.setInventorySlotContents(entityplayer.inventory.currentItem, InvUtils.consumeItem(current));
 				}
 
 				return true;
@@ -121,10 +122,10 @@ public class BlockTank extends BlockContainer {
 								if (!entityplayer.inventory.addItemStackToInventory(filled))
 									return false;
 								else {
-									entityplayer.inventory.setInventorySlotContents(entityplayer.inventory.currentItem, Utils.consumeItem(current));
+									entityplayer.inventory.setInventorySlotContents(entityplayer.inventory.currentItem, InvUtils.consumeItem(current));
 								}
 							} else {
-								entityplayer.inventory.setInventorySlotContents(entityplayer.inventory.currentItem, Utils.consumeItem(current));
+								entityplayer.inventory.setInventorySlotContents(entityplayer.inventory.currentItem, InvUtils.consumeItem(current));
 								entityplayer.inventory.setInventorySlotContents(entityplayer.inventory.currentItem, filled);
 							}
 						}

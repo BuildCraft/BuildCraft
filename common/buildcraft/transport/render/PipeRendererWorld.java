@@ -4,11 +4,11 @@ import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.core.CoreConstants;
 import buildcraft.transport.BlockGenericPipe;
-import buildcraft.transport.IPipeRenderState;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeRenderState;
 import buildcraft.transport.TransportProxy;
 import buildcraft.core.utils.MatrixTranformations;
+import buildcraft.transport.TileGenericPipe;
 
 import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
 
@@ -20,9 +20,10 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.common.ForgeDirection;
 
 public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
-	public void renderPipe(RenderBlocks renderblocks, IBlockAccess iblockaccess, BlockGenericPipe block, IPipeRenderState renderState, int x, int y, int z) {
-		PipeRenderState state = renderState.getRenderState();
-		IIconProvider icons = renderState.getPipeIcons();
+
+	public void renderPipe(RenderBlocks renderblocks, IBlockAccess iblockaccess, BlockGenericPipe block, TileGenericPipe tile, int x, int y, int z) {
+		PipeRenderState state = tile.renderState;
+		IIconProvider icons = tile.getPipeIcons();
 		if (icons == null)
 			return;
 
@@ -42,7 +43,8 @@ public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
 
 		for (int dir = 0; dir < 6; dir++) {
 			int mask = 1 << dir;
-			if ((connectivity & mask) == 0) continue; // no connection towards dir
+			if ((connectivity & mask) == 0)
+				continue; // no connection towards dir
 
 			// center piece offsets
 			resetToCenterDimensions(dim);
@@ -67,12 +69,17 @@ public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
 	}
 
 	private void resetToCenterDimensions(float[] dim) {
-		for (int i = 0; i < 3; i++) dim[i] = CoreConstants.PIPE_MIN_POS;
-		for (int i = 3; i < 6; i++) dim[i] = CoreConstants.PIPE_MAX_POS;
+		for (int i = 0; i < 3; i++) {
+			dim[i] = CoreConstants.PIPE_MIN_POS;
+		}
+		for (int i = 3; i < 6; i++) {
+			dim[i] = CoreConstants.PIPE_MAX_POS;
+		}
 	}
 
 	/**
-	 * Render a block with normal and inverted vertex order so back face culling doesn't have any effect.
+	 * Render a block with normal and inverted vertex order so back face culling
+	 * doesn't have any effect.
 	 */
 	private void renderTwoWayBlock(RenderBlocks renderblocks, BlockGenericPipe block, int x, int y, int z, float[] dim, int mask) {
 		assert mask != 0;
@@ -149,8 +156,8 @@ public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
 	public boolean renderWorldBlock(IBlockAccess world, int x, int y, int z, Block block, int modelId, RenderBlocks renderer) {
 		TileEntity tile = world.getBlockTileEntity(x, y, z);
 
-		if (tile instanceof IPipeRenderState) {
-			IPipeRenderState pipeTile = (IPipeRenderState) tile;
+		if (tile instanceof TileGenericPipe) {
+			TileGenericPipe pipeTile = (TileGenericPipe) tile;
 			renderPipe(renderer, world, (BlockGenericPipe) block, pipeTile, x, y, z);
 		}
 		return true;

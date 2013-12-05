@@ -5,6 +5,7 @@ import buildcraft.api.power.ILaserTarget;
 import buildcraft.api.gates.IAction;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.IMachine;
+import buildcraft.core.inventory.InvUtils;
 import buildcraft.core.network.PacketIds;
 import buildcraft.core.network.PacketNBT;
 import buildcraft.core.proxy.CoreProxy;
@@ -190,7 +191,7 @@ public class TileAssemblyTable extends TileEntity implements IMachine, IInventor
 	public void readFromNBT(NBTTagCompound nbt) {
 		super.readFromNBT(nbt);
 
-		Utils.readStacksFromNBT(nbt, "items", items);
+		InvUtils.readStacksFromNBT(nbt, "items", items);
 
 		energyStored = nbt.getFloat("energyStored");
 
@@ -225,7 +226,7 @@ public class TileAssemblyTable extends TileEntity implements IMachine, IInventor
 	public void writeToNBT(NBTTagCompound nbt) {
 		super.writeToNBT(nbt);
 
-		Utils.writeStacksToNBT(nbt, "items", items);
+		InvUtils.writeStacksToNBT(nbt, "items", items);
 
 		nbt.setFloat("energyStored", energyStored);
 

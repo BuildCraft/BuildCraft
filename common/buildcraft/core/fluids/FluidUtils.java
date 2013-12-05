@@ -1,6 +1,7 @@
 package buildcraft.core.fluids;
 
 import buildcraft.core.TileBuffer;
+import buildcraft.core.inventory.InvUtils;
 import buildcraft.core.utils.Utils;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
@@ -34,7 +35,7 @@ public class FluidUtils {
 
 				if (used > 0) {
 					if (!player.capabilities.isCreativeMode) {
-						player.inventory.setInventorySlotContents(player.inventory.currentItem, Utils.consumeItem(current));
+						player.inventory.setInventorySlotContents(player.inventory.currentItem, InvUtils.consumeItem(current));
 					}
 					return true;
 				}
@@ -52,10 +53,10 @@ public class FluidUtils {
 							if (!player.inventory.addItemStackToInventory(filled)) {
 								return false;
 							} else {
-								player.inventory.setInventorySlotContents(player.inventory.currentItem, Utils.consumeItem(current));
+								player.inventory.setInventorySlotContents(player.inventory.currentItem, InvUtils.consumeItem(current));
 							}
 						} else {
-							player.inventory.setInventorySlotContents(player.inventory.currentItem, Utils.consumeItem(current));
+							player.inventory.setInventorySlotContents(player.inventory.currentItem, InvUtils.consumeItem(current));
 							player.inventory.setInventorySlotContents(player.inventory.currentItem, filled);
 						}
 
