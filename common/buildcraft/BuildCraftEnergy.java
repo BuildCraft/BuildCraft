@@ -147,7 +147,7 @@ public class BuildCraftEnergy {
 
 		// Oil and fuel
 		buildcraftFluidOil = new BCFluid("oil").setDensity(800).setViscosity(1500);
-		
+
 		FluidRegistry.registerFluid(buildcraftFluidOil);
 		fluidOil = FluidRegistry.getFluid("oil");
 
@@ -168,8 +168,7 @@ public class BuildCraftEnergy {
 		}
 
 		if (blockOil != null) {
-			Property oilSpringsProp = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "oilSprings", true);
-			spawnOilSprings = oilSpringsProp.getBoolean(true);
+			spawnOilSprings = BuildCraftCore.mainConfiguration.get("worldgen", "oilSprings", true).getBoolean(true);
 			BlockSpring.EnumSpring.OIL.canGen = spawnOilSprings;
 			BlockSpring.EnumSpring.OIL.liquidBlock = blockOil;
 		}

@@ -7,6 +7,7 @@
  */
 package buildcraft;
 
+import static buildcraft.BuildCraftEnergy.spawnOilSprings;
 import java.io.File;
 import java.util.TreeMap;
 
@@ -186,9 +187,6 @@ public class BuildCraftCore {
 				itemLifespan = 100;
 			}
 
-			Property powerFrameworkClass = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "power.framework",
-					"buildcraft.energy.PneumaticPowerFramework");
-
 			Property factor = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "network.updateFactor", 10);
 			factor.comment = "increasing this number will decrease network update frequency, useful for overloaded servers";
 			updateFactor = factor.getInt(10);
@@ -203,7 +201,7 @@ public class BuildCraftCore {
 			LanguageRegistry.addName(wrenchItem, "Wrench");
 			CoreProxy.proxy.registerItem(wrenchItem);
 
-			Property springId = BuildCraftCore.mainConfiguration.getBlock("springBlock.id", DefaultProps.SPRING_ID);
+			int springId = BuildCraftCore.mainConfiguration.getBlock("springBlock.id", DefaultProps.SPRING_ID).getInt(DefaultProps.SPRING_ID);
 
 			Property woodenGearId = BuildCraftCore.mainConfiguration.getItem("woodenGearItem.id", DefaultProps.WOODEN_GEAR_ID);
 			Property stoneGearId = BuildCraftCore.mainConfiguration.getItem("stoneGearItem.id", DefaultProps.STONE_GEAR_ID);
@@ -214,14 +212,15 @@ public class BuildCraftCore {
 			modifyWorldProp.comment = "set to false if BuildCraft should not generate custom blocks (e.g. oil)";
 			modifyWorld = modifyWorldProp.getBoolean(true);
 
+			if (BuildCraftCore.modifyWorld && springId > 0) {
+				BlockSpring.EnumSpring.WATER.canGen = BuildCraftCore.mainConfiguration.get("worldgen", "waterSpring", true).getBoolean(true);
+				springBlock = new BlockSpring(springId).setUnlocalizedName("eternalSpring");
+				CoreProxy.proxy.registerBlock(springBlock, ItemSpring.class);
+			}
+
 			Property consumeWater = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "consumeWater", consumeWaterSources);
 			consumeWaterSources = consumeWater.getBoolean(consumeWaterSources);
 			consumeWater.comment = "set to true if the Pump should consume water";
-
-			if (BuildCraftCore.modifyWorld) {
-				springBlock = new BlockSpring(springId.getInt()).setUnlocalizedName("eternalSpring");
-				CoreProxy.proxy.registerBlock(springBlock, ItemSpring.class);
-			}
 
 			woodenGearItem = (new ItemBuildCraft(woodenGearId.getInt())).setUnlocalizedName("woodenGearItem");
 			LanguageRegistry.addName(woodenGearItem, "Wooden Gear");
