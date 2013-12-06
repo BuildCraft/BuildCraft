@@ -14,8 +14,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
-import net.minecraftforge.fluids.FluidEvent;
-import net.minecraftforge.fluids.FluidEvent.FluidMotionEvent;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.FluidTankInfo;
@@ -361,8 +359,8 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 						internalTanks[o.ordinal()].drain(filled, true);
 						if (filled <= 0) {
 							outputTTL[o.ordinal()]--;
-						} else
-							FluidEvent.fireEvent(new FluidMotionEvent(liquidToPush, container.worldObj, container.xCoord, container.yCoord, container.zCoord));
+						} 
+//						else FluidEvent.fireEvent(new FluidMotionEvent(liquidToPush, container.worldObj, container.xCoord, container.yCoord, container.zCoord));
 					}
 				}
 			}
@@ -391,8 +389,8 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 					if (liquidToPush != null) {
 						int filled = internalTanks[direction.ordinal()].fill(liquidToPush, true);
 						internalTanks[ForgeDirection.UNKNOWN.ordinal()].drain(filled, true);
-						if (filled > 0)
-							FluidEvent.fireEvent(new FluidMotionEvent(liquidToPush, container.worldObj, container.xCoord, container.yCoord, container.zCoord));
+//						if (filled > 0)
+//							FluidEvent.fireEvent(new FluidMotionEvent(liquidToPush, container.worldObj, container.xCoord, container.yCoord, container.zCoord));
 					}
 				}
 			}
@@ -436,8 +434,8 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 				if (liquidToPush != null) {
 					int filled = internalTanks[ForgeDirection.UNKNOWN.ordinal()].fill(liquidToPush, true);
 					internalTanks[dir.ordinal()].drain(filled, true);
-					if (filled > 0)
-						FluidEvent.fireEvent(new FluidMotionEvent(liquidToPush, container.worldObj, container.xCoord, container.yCoord, container.zCoord));
+//					if (filled > 0)
+//						FluidEvent.fireEvent(new FluidMotionEvent(liquidToPush, container.worldObj, container.xCoord, container.yCoord, container.zCoord));
 				}
 			}
 		}
