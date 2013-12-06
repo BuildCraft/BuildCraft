@@ -62,15 +62,14 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 
 		@Override
 		public FluidStack drain(int maxDrain, boolean doDrain) {
-			int maxToDrain = Math.min(maxDrain, Math.min(flowRate, getAvailable()));
-			if (maxToDrain < 0)
+			int maxToDrain = getAvailable();
+			if (maxToDrain > maxDrain)
+				maxToDrain = maxDrain;
+			if (maxToDrain > flowRate)
+				maxToDrain = flowRate;
+			if (maxToDrain <= 0)
 				return null;
-
-			FluidStack drained = super.drain(maxToDrain, doDrain);
-			if (drained == null)
-				return null;
-
-			return drained;
+			return super.drain(maxToDrain, doDrain);
 		}
 
 		public void moveFluids() {
@@ -88,7 +87,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 		}
 
 		public int getAvailable() {
-			int all = this.getFluid() != null ? this.getFluid().amount : 0;
+			int all = getFluidAmount();
 			for (short slot : incomming) {
 				all -= slot;
 			}
@@ -359,7 +358,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 						internalTanks[o.ordinal()].drain(filled, true);
 						if (filled <= 0) {
 							outputTTL[o.ordinal()]--;
-						} 
+						}
 //						else FluidEvent.fireEvent(new FluidMotionEvent(liquidToPush, container.worldObj, container.xCoord, container.yCoord, container.zCoord));
 					}
 				}
