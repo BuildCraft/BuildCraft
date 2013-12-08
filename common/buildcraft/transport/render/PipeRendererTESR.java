@@ -16,6 +16,7 @@ import buildcraft.core.CoreConstants;
 import buildcraft.core.render.RenderEntityBlock;
 import buildcraft.core.render.RenderEntityBlock.RenderInfo;
 import buildcraft.core.utils.EnumColor;
+import buildcraft.core.utils.GL;
 import buildcraft.core.utils.MatrixTranformations;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
@@ -665,10 +666,7 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 				default:
 			}
 			bindTexture(TextureMap.locationBlocksTexture);
-			float red = (float) (color >> 16 & 255) / 255.0F;
-			float green = (float) (color >> 8 & 255) / 255.0F;
-			float blue = (float) (color & 255) / 255.0F;
-			GL11.glColor4f(red, green, blue, 1.0F);
+			GL.color(color);
 			GL11.glCallList(list);
 			GL11.glPopMatrix();
 		}
@@ -683,10 +681,7 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 				int stage = (int) ((float) fluidStack.amount / (float) (trans.getCapacity()) * (LIQUID_STAGES - 1));
 
 				bindTexture(TextureMap.locationBlocksTexture);
-				float red = (float) (color >> 16 & 255) / 255.0F;
-				float green = (float) (color >> 8 & 255) / 255.0F;
-				float blue = (float) (color & 255) / 255.0F;
-				GL11.glColor4f(red, green, blue, 1.0F);
+				GL.color(color);
 
 				if (above) {
 					GL11.glCallList(d.centerVertical[stage]);
@@ -766,11 +761,7 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 			block.minX = min;
 			block.maxX = max;
 
-			int cHex = color.getLightHex();
-			float r = (float) (cHex >> 16 & 0xff) / 255F;
-			float g = (float) (cHex >> 8 & 0xff) / 255F;
-			float b = (float) (cHex & 0xff) / 255F;
-			GL11.glColor4f(r, g, b, 1.0F);
+			GL.color(color.getLightHex());
 			RenderEntityBlock.INSTANCE.renderBlock(block, null, 0, 0, 0, false, true);
 		}
 		GL11.glPopMatrix();
