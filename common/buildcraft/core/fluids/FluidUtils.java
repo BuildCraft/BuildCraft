@@ -36,6 +36,7 @@ public class FluidUtils {
 				if (used > 0) {
 					if (!player.capabilities.isCreativeMode) {
 						player.inventory.setInventorySlotContents(player.inventory.currentItem, InvUtils.consumeItem(current));
+						player.inventory.onInventoryChanged();
 					}
 					return true;
 				}
@@ -50,14 +51,14 @@ public class FluidUtils {
 					if (liquid != null) {
 
 						if (current.stackSize > 1) {
-							if (!player.inventory.addItemStackToInventory(filled)) {
+							if (!player.inventory.addItemStackToInventory(filled))
 								return false;
-							} else {
-								player.inventory.setInventorySlotContents(player.inventory.currentItem, InvUtils.consumeItem(current));
-							}
+							player.inventory.setInventorySlotContents(player.inventory.currentItem, InvUtils.consumeItem(current));
+							player.inventory.onInventoryChanged();
 						} else {
 							player.inventory.setInventorySlotContents(player.inventory.currentItem, InvUtils.consumeItem(current));
 							player.inventory.setInventorySlotContents(player.inventory.currentItem, filled);
+							player.inventory.onInventoryChanged();
 						}
 
 						tank.drain(side, liquid.amount, true);
