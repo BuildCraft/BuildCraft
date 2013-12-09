@@ -360,9 +360,6 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 		iCrafting.sendProgressBarUpdate(containerEngine, 3, Math.round(heat * 100));
 	}
 
-	public void delete() {
-	}
-
 	/* STATE INFORMATION */
 	public abstract boolean isBurning();
 
