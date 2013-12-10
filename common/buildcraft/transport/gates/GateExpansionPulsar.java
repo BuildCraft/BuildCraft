@@ -8,12 +8,13 @@
  */
 package buildcraft.transport.gates;
 
+import buildcraft.api.gates.GateExpansionController;
+import buildcraft.api.gates.IGateExpansion;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.gates.IAction;
 import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.power.PowerHandler;
 import buildcraft.api.power.PowerHandler.Type;
-import buildcraft.core.utils.StringUtils;
 import buildcraft.transport.triggers.ActionEnergyPulser;
 import buildcraft.transport.triggers.ActionSingleEnergyPulse;
 import java.util.List;
@@ -25,21 +26,12 @@ import net.minecraftforge.common.ForgeDirection;
  *
  * @author CovertJaguar <http://www.railcraft.info/>
  */
-public class GateExpansionPulsar implements IGateExpansion {
+public class GateExpansionPulsar extends GateExpansionBuildcraft implements IGateExpansion {
 
 	public static GateExpansionPulsar INSTANCE = new GateExpansionPulsar();
 
 	private GateExpansionPulsar() {
-	}
-
-	@Override
-	public String getUniqueIdentifier() {
-		return "buildcraft:pulsar";
-	}
-
-	@Override
-	public String getDisplayName() {
-		return StringUtils.localize("gate.expansion.pulsar");
+		super("pulsar");
 	}
 
 	@Override

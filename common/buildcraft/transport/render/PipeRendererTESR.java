@@ -10,6 +10,7 @@ package buildcraft.transport.render;
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftCore.RenderMode;
 import buildcraft.BuildCraftTransport;
+import buildcraft.api.gates.GateExpansionController;
 import buildcraft.api.transport.IPipe;
 import buildcraft.api.transport.IPipe.WireColor;
 import buildcraft.core.CoreConstants;
@@ -461,6 +462,10 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 		Icon materialIcon = pipe.pipe.gate.material.getIconBlock();
 		if (materialIcon != null)
 			renderGate(pipe, materialIcon, 1);
+
+		for (GateExpansionController expansion : pipe.pipe.gate.expansions) {
+			renderGate(pipe, expansion.getType().getOverlayBlock(), 2);
+		}
 
 		RenderHelper.enableStandardItemLighting();
 

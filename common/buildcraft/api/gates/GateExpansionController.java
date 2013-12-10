@@ -6,10 +6,8 @@
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-package buildcraft.transport.gates;
+package buildcraft.api.gates;
 
-import buildcraft.api.gates.IAction;
-import buildcraft.api.gates.ITrigger;
 import java.util.List;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;

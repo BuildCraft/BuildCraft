@@ -13,7 +13,7 @@ import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.triggers.ActionRedstoneOutput;
 import buildcraft.transport.gates.GateDefinition.GateLogic;
 import buildcraft.transport.gates.GateDefinition.GateMaterial;
-import buildcraft.transport.gates.GateExpansionController;
+import buildcraft.api.gates.GateExpansionController;
 import buildcraft.transport.gates.ItemGate;
 import buildcraft.transport.triggers.ActionSignalOutput;
 import com.google.common.collect.HashMultiset;

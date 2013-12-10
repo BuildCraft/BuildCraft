@@ -6,9 +6,11 @@
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-package buildcraft.transport.gates;
+package buildcraft.api.gates;
 
+import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Icon;
 
 /**
  *
@@ -21,4 +23,12 @@ public interface IGateExpansion {
 	String getDisplayName();
 
 	GateExpansionController makeController(TileEntity pipeTile);
+
+	void registerBlockOverlay(IconRegister iconRegister);
+
+	void registerItemOverlay(IconRegister iconRegister);
+
+	Icon getOverlayBlock();
+
+	Icon getOverlayItem();
 }

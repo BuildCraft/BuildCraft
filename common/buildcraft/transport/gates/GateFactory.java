@@ -8,6 +8,8 @@
  */
 package buildcraft.transport.gates;
 
+import buildcraft.api.gates.GateExpansionController;
+import buildcraft.api.gates.IGateExpansion;
 import buildcraft.transport.Gate;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.gates.GateDefinition.GateLogic;
@@ -29,7 +31,13 @@ public class GateFactory {
 		if (stack == null || stack.stackSize <= 0 || !(stack.getItem() instanceof ItemGate))
 			return null;
 
-		return makeGate(pipe, ItemGate.getMaterial(stack), ItemGate.getLogic(stack));
+		Gate gate = makeGate(pipe, ItemGate.getMaterial(stack), ItemGate.getLogic(stack));
+
+		for (IGateExpansion expansion : ItemGate.getInstalledExpansions(stack)) {
+			gate.expansions.add(expansion.makeController(pipe.container));
+		}
+
+		return gate;
 	}
 
 	public static Gate makeGate(Pipe pipe, NBTTagCompound nbt) {

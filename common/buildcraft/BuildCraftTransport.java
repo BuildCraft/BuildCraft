@@ -41,7 +41,7 @@ import buildcraft.transport.blueprints.BptItemPipeEmerald;
 import buildcraft.transport.blueprints.BptItemPipeIron;
 import buildcraft.transport.blueprints.BptItemPipeWooden;
 import buildcraft.transport.gates.GateExpansionPulsar;
-import buildcraft.transport.gates.GateExpansions;
+import buildcraft.api.gates.GateExpansions;
 import buildcraft.transport.network.PacketHandlerTransport;
 import buildcraft.transport.pipes.PipeFluidsCobblestone;
 import buildcraft.transport.pipes.PipeFluidsEmerald;

@@ -1,5 +1,6 @@
 package buildcraft.transport.render;
 
+import buildcraft.api.gates.IGateExpansion;
 import buildcraft.transport.gates.ItemGate;
 import java.util.Random;
 import net.minecraft.item.ItemStack;
@@ -56,6 +57,10 @@ public class GateItemRenderer implements IItemRenderer {
 		renderLayerIn3D(ItemGate.getLogic(stack).getIconItem());
 		GL11.glScalef(1, 1, 1.05f);
 		renderLayerIn3D(ItemGate.getMaterial(stack).getIconItem());
+
+		for (IGateExpansion expansion : ItemGate.getInstalledExpansions(stack)) {
+			renderLayerIn3D(expansion.getOverlayItem());
+		}
 
 		GL11.glPopMatrix();
 	}
@@ -145,11 +150,18 @@ public class GateItemRenderer implements IItemRenderer {
 		GL11.glDisable(GL11.GL_LIGHTING);
 		Icon icon = ItemGate.getLogic(stack).getIconItem();
 		renderItem.renderIcon(0, 0, icon, 16, 16);
+
+		if (type == ItemRenderType.ENTITY)
+			GL11.glTranslatef(0, 0, -0.01f);
+
 		icon = ItemGate.getMaterial(stack).getIconItem();
-		if (icon != null) {
-			if (type == ItemRenderType.ENTITY)
-				GL11.glTranslatef(0, 0, -0.01f);
+		if (icon != null)
 			renderItem.renderIcon(0, 0, icon, 16, 16);
+
+		for (IGateExpansion expansion : ItemGate.getInstalledExpansions(stack)) {
+			icon = expansion.getOverlayItem();
+			if (icon != null)
+				renderItem.renderIcon(0, 0, icon, 16, 16);
 		}
 		GL11.glEnable(GL11.GL_LIGHTING);
 		GL11.glPopMatrix();

@@ -35,6 +35,8 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
 import buildcraft.BuildCraftTransport;
+import buildcraft.api.gates.GateExpansions;
+import buildcraft.api.gates.IGateExpansion;
 import buildcraft.api.tools.IToolWrench;
 import buildcraft.api.transport.IPipe;
 import buildcraft.api.transport.ISolidSideTile;
@@ -1049,6 +1051,11 @@ public class BlockGenericPipe extends BlockBuildCraft {
 		for (GateDefinition.GateLogic logic : GateDefinition.GateLogic.VALUES) {
 			logic.registerBlockIcon(iconRegister);
 		}
+
+		for (IGateExpansion expansion : GateExpansions.expansions.values()) {
+			expansion.registerBlockOverlay(iconRegister);
+		}
+
 	}
 
 	@Override
