@@ -8,7 +8,6 @@
 package buildcraft.core.render;
 
 import buildcraft.core.render.RenderEntityBlock.RenderInfo;
-import buildcraft.core.utils.GL;
 import java.util.HashMap;
 import java.util.Map;
 import net.minecraft.block.Block;
@@ -67,7 +66,7 @@ public class FluidRenderer {
 			return;
 
 		int color = fluidstack.getFluid().getColor(fluidstack);
-		GL.color(color);
+		RenderUtils.setGLColorFromInt(color);
 	}
 
 	public static int[] getFluidDisplayLists(FluidStack fluidStack, World world, boolean flowing) {

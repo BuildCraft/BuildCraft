@@ -11,7 +11,7 @@ import buildcraft.core.DefaultProps;
 import buildcraft.core.IInventoryRenderer;
 import buildcraft.core.fluids.Tank;
 import buildcraft.core.render.FluidRenderer;
-import buildcraft.core.utils.GL;
+import buildcraft.core.render.RenderUtils;
 import buildcraft.factory.TileRefinery;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
@@ -188,7 +188,7 @@ public class RenderRefinery extends TileEntitySpecialRenderer implements IInvent
 
 				if (list1 != null) {
 					bindTexture(FluidRenderer.getFluidSheet(liquid1));
-					GL.color(color1);
+					RenderUtils.setGLColorFromInt(color1);
 					GL11.glCallList(list1[getDisplayListIndex(tile.tank1)]);
 				}
 			}
@@ -200,7 +200,7 @@ public class RenderRefinery extends TileEntitySpecialRenderer implements IInvent
 					GL11.glPushMatrix();
 					GL11.glTranslatef(0, 0, 1);
 					bindTexture(FluidRenderer.getFluidSheet(liquid2));
-					GL.color(color2);
+					RenderUtils.setGLColorFromInt(color2);
 					GL11.glCallList(list2[getDisplayListIndex(tile.tank2)]);
 					GL11.glPopMatrix();
 				}
@@ -214,7 +214,7 @@ public class RenderRefinery extends TileEntitySpecialRenderer implements IInvent
 					GL11.glPushMatrix();
 					GL11.glTranslatef(1, 0, 0.5F);
 					bindTexture(FluidRenderer.getFluidSheet(liquidResult));
-					GL.color(colorResult);
+					RenderUtils.setGLColorFromInt(colorResult);
 					GL11.glCallList(list3[getDisplayListIndex(tile.result)]);
 					GL11.glPopMatrix();
 				}

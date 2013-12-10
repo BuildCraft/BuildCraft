@@ -6,7 +6,7 @@ import buildcraft.core.gui.tooltips.IToolTipProvider;
 import buildcraft.core.gui.tooltips.ToolTip;
 import buildcraft.core.gui.tooltips.ToolTipLine;
 import buildcraft.core.gui.widgets.Widget;
-import buildcraft.core.utils.GL;
+import buildcraft.core.render.RenderUtils;
 import buildcraft.core.utils.SessionVars;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -438,7 +438,7 @@ public abstract class GuiBuildCraft extends GuiContainer {
 
 		protected void drawBackground(int x, int y) {
 
-			GL.color(overlayColor);
+			RenderUtils.setGLColorFromInt(overlayColor);
 
 			mc.renderEngine.bindTexture(LEDGER_TEXTURE);
 			drawTexturedModalRect(x, y, 0, 256 - currentHeight, 4, currentHeight);

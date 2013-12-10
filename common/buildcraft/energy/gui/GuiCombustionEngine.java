@@ -17,7 +17,7 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.fluids.Tank;
-import buildcraft.core.utils.GL;
+import buildcraft.core.render.RenderUtils;
 import buildcraft.core.utils.StringUtils;
 import buildcraft.energy.TileEngineIron;
 import buildcraft.energy.TileEngineWithInventory;
@@ -68,7 +68,7 @@ public class GuiCombustionEngine extends GuiEngine {
 			liquidIcon = fluid.getStillIcon();
 		}
 		mc.renderEngine.bindTexture(BLOCK_TEXTURE);
-		GL.color(tank.colorRenderCache);
+		RenderUtils.setGLColorFromInt(tank.colorRenderCache);
 
 		if (liquidIcon != null) {
 			while (true) {

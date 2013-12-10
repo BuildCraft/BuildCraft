@@ -20,9 +20,6 @@ import net.minecraft.util.Icon;
 
 public class ItemGate extends ItemBuildCraft {
 
-	@SideOnly(Side.CLIENT)
-	private Icon[] icons;
-
 	public ItemGate(int id) {
 		super(id);
 		setHasSubtypes(false);
@@ -104,11 +101,6 @@ public class ItemGate extends ItemBuildCraft {
 
 	@Override
 	public Icon getIconIndex(ItemStack stack) {
-		return getIcon(stack, 0);
-	}
-
-	@Override
-	public Icon getIcon(ItemStack stack, int pass) {
 		return getLogic(stack).getIconItem();
 	}
 

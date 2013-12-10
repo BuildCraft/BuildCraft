@@ -11,7 +11,7 @@ import net.minecraftforge.fluids.Fluid;
 
 import org.lwjgl.opengl.GL11;
 
-import buildcraft.core.utils.GL;
+import buildcraft.core.render.RenderUtils;
 import buildcraft.core.render.FluidRenderer;
 
 public abstract class GuiAdvancedInterface extends GuiBuildCraft {
@@ -188,7 +188,7 @@ public abstract class GuiAdvancedInterface extends GuiBuildCraft {
 		@Override
 		public void drawSprite(int cornerX, int cornerY) {
 			if (fluid != null) {
-				GL.color(colorRenderCache);
+				RenderUtils.setGLColorFromInt(colorRenderCache);
 			}
 			super.drawSprite(cornerX, cornerY);
 		}

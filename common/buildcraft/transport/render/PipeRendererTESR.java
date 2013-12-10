@@ -16,7 +16,7 @@ import buildcraft.core.CoreConstants;
 import buildcraft.core.render.RenderEntityBlock;
 import buildcraft.core.render.RenderEntityBlock.RenderInfo;
 import buildcraft.core.utils.EnumColor;
-import buildcraft.core.utils.GL;
+import buildcraft.core.render.RenderUtils;
 import buildcraft.core.utils.MatrixTranformations;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
@@ -456,7 +456,11 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 
 		bindTexture(TextureMap.locationBlocksTexture);
 
-		renderGate(pipe, pipe.pipe.gate.logic.getIconDark());
+		renderGate(pipe, pipe.pipe.gate.logic.getIconDark(), 0);
+
+		Icon materialIcon = pipe.pipe.gate.material.getIconBlock();
+		if (materialIcon != null)
+			renderGate(pipe, materialIcon, 1);
 
 		RenderHelper.enableStandardItemLighting();
 
@@ -464,9 +468,8 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 		GL11.glPopMatrix();
 	}
 
-	private void renderGate(TileGenericPipe tile, Icon icon) {
-		float min = CoreConstants.PIPE_MIN_POS + 0.05F;
-		float max = CoreConstants.PIPE_MAX_POS - 0.05F;
+	private void renderGate(TileGenericPipe tile, Icon icon, int layer) {
+
 
 		PipeRenderState state = tile.renderState;
 
@@ -474,12 +477,15 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 		box.texture = icon;
 
 		float[][] zeroState = new float[3][2];
+		float min = CoreConstants.PIPE_MIN_POS + 0.05F;
+		float max = CoreConstants.PIPE_MAX_POS - 0.05F;
+
 		// X START - END
 		zeroState[0][0] = min;
 		zeroState[0][1] = max;
 		// Y START - END
 		zeroState[1][0] = CoreConstants.PIPE_MIN_POS - 0.10F;
-		zeroState[1][1] = CoreConstants.PIPE_MIN_POS + 0.001F;
+		zeroState[1][1] = CoreConstants.PIPE_MIN_POS + 0.001F + 0.01F * layer;
 		// Z START - END
 		zeroState[2][0] = min;
 		zeroState[2][1] = max;
@@ -489,40 +495,12 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 				float[][] rotated = MatrixTranformations.deepClone(zeroState);
 				MatrixTranformations.transform(rotated, direction);
 
+				if (layer != 0)
+					box.setRenderSingleSide(direction.ordinal());
 				box.setBounds(rotated[0][0], rotated[1][0], rotated[2][0], rotated[0][1], rotated[1][1], rotated[2][1]);
 				RenderEntityBlock.INSTANCE.renderBlock(box, tile.worldObj, 0, 0, 0, tile.xCoord, tile.yCoord, tile.zCoord, true, true);
 			}
 		}
-
-//		if (shouldRenderNormalPipeSide(state, ForgeDirection.WEST)) {
-//			box.setBounds(CoreConstants.PIPE_MIN_POS - 0.10F, min, min, CoreConstants.PIPE_MIN_POS + 0.001F, max, max);
-//			RenderEntityBlock.INSTANCE.renderBlock(box, tile.worldObj, 0, 0, 0, tile.xCoord, tile.yCoord, tile.zCoord, true, true);
-//		}
-//
-//		if (shouldRenderNormalPipeSide(state, ForgeDirection.EAST)) {
-//			box.setBounds(CoreConstants.PIPE_MAX_POS + 0.001F, min, min, CoreConstants.PIPE_MAX_POS + 0.10F, max, max);
-//			RenderEntityBlock.INSTANCE.renderBlock(box, tile.worldObj, 0, 0, 0, tile.xCoord, tile.yCoord, tile.zCoord, true, true);
-//		}
-//
-//		if (shouldRenderNormalPipeSide(state, ForgeDirection.DOWN)) {
-//			box.setBounds(min, CoreConstants.PIPE_MIN_POS - 0.10F, min, max, CoreConstants.PIPE_MIN_POS + 0.001F, max);
-//			RenderEntityBlock.INSTANCE.renderBlock(box, tile.worldObj, 0, 0, 0, tile.xCoord, tile.yCoord, tile.zCoord, true, true);
-//		}
-//
-//		if (shouldRenderNormalPipeSide(state, ForgeDirection.UP)) {
-//			box.setBounds(min, CoreConstants.PIPE_MAX_POS + 0.001F, min, max, CoreConstants.PIPE_MAX_POS + 0.10F, max);
-//			RenderEntityBlock.INSTANCE.renderBlock(box, tile.worldObj, 0, 0, 0, tile.xCoord, tile.yCoord, tile.zCoord, true, true);
-//		}
-//
-//		if (shouldRenderNormalPipeSide(state, ForgeDirection.NORTH)) {
-//			box.setBounds(min, min, CoreConstants.PIPE_MIN_POS - 0.10F, max, max, CoreConstants.PIPE_MIN_POS + 0.001F);
-//			RenderEntityBlock.INSTANCE.renderBlock(box, tile.worldObj, 0, 0, 0, tile.xCoord, tile.yCoord, tile.zCoord, true, true);
-//		}
-//
-//		if (shouldRenderNormalPipeSide(state, ForgeDirection.SOUTH)) {
-//			box.setBounds(min, min, CoreConstants.PIPE_MAX_POS + 0.001F, max, max, CoreConstants.PIPE_MAX_POS + 0.10F);
-//			RenderEntityBlock.INSTANCE.renderBlock(box, tile.worldObj, 0, 0, 0, tile.xCoord, tile.yCoord, tile.zCoord, true, true);
-//		}
 	}
 
 	private boolean shouldRenderNormalPipeSide(PipeRenderState state, ForgeDirection direction) {
@@ -624,7 +602,6 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 			int i = side.ordinal();
 
 			FluidStack fluidStack = trans.renderCache[i];
-			int color = trans.colorRenderCache[i];
 
 			if (fluidStack == null || fluidStack.amount <= 0)
 				continue;
@@ -666,13 +643,12 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 				default:
 			}
 			bindTexture(TextureMap.locationBlocksTexture);
-			GL.color(color);
+			RenderUtils.setGLColorFromInt(trans.colorRenderCache[i]);
 			GL11.glCallList(list);
 			GL11.glPopMatrix();
 		}
 		// CENTER
 		FluidStack fluidStack = trans.renderCache[ForgeDirection.UNKNOWN.ordinal()];
-		int color = trans.colorRenderCache[ForgeDirection.UNKNOWN.ordinal()];
 
 		if (fluidStack != null && fluidStack.amount > 0) {
 			DisplayFluidList d = getListFromBuffer(fluidStack, pipe.container.worldObj);
@@ -681,7 +657,7 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 				int stage = (int) ((float) fluidStack.amount / (float) (trans.getCapacity()) * (LIQUID_STAGES - 1));
 
 				bindTexture(TextureMap.locationBlocksTexture);
-				GL.color(color);
+				RenderUtils.setGLColorFromInt(trans.colorRenderCache[ForgeDirection.UNKNOWN.ordinal()]);
 
 				if (above) {
 					GL11.glCallList(d.centerVertical[stage]);
@@ -761,7 +737,7 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 			block.minX = min;
 			block.maxX = max;
 
-			GL.color(color.getLightHex());
+			RenderUtils.setGLColorFromInt(color.getLightHex());
 			RenderEntityBlock.INSTANCE.renderBlock(block, null, 0, 0, 0, false, true);
 		}
 		GL11.glPopMatrix();

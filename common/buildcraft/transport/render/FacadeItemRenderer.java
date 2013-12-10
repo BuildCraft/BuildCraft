@@ -2,7 +2,7 @@ package buildcraft.transport.render;
 
 import buildcraft.BuildCraftTransport;
 import buildcraft.core.CoreConstants;
-import buildcraft.core.utils.GL;
+import buildcraft.core.render.RenderUtils;
 import buildcraft.transport.ItemFacade;
 import buildcraft.transport.PipeIconProvider;
 import net.minecraft.block.Block;
@@ -24,7 +24,7 @@ public class FacadeItemRenderer implements IItemRenderer {
 
 		try {
 			int color = Item.itemsList[decodedBlockId].getColorFromItemStack(new ItemStack(decodedBlockId, 1, decodedMeta), 0);
-			GL.color(color);
+			RenderUtils.setGLColorFromInt(color);
 		} catch (Throwable error) {
 		}
 
