@@ -265,7 +265,7 @@ public class TileAdvancedCraftingTable extends TileEntity implements IInventory,
 			internalInventoryCrafting = new InternalInventoryCrafting();
 			internalPlayer = new InternalPlayer();
 			craftSlot = new SlotCrafting(internalPlayer, internalInventoryCrafting, craftResult, 0, 0, 0);
-			updateCraftingResults();
+			updateRecipe();
 		}
 		if (!CoreProxy.proxy.isSimulating(worldObj)) {
 			return;
@@ -273,25 +273,18 @@ public class TileAdvancedCraftingTable extends TileEntity implements IInventory,
 		if (lastMode == ActionMachineControl.Mode.Off) {
 			return;
 		}
-		updateCraftingResults();
-		findIngredients();
+		updateRecipe();
+		searchNeighborsForIngredients();
+		locateAndBindIngredients();
+		updateRecipeOutputDisplay();
 		justCrafted = false;
 		tick++;
 		tick = tick % recentEnergy.length;
 		recentEnergy[tick] = 0.0f;
-		if (craftResult.getStackInSlot(0) != null) {
-			internalInventoryCrafting.tempStacks = new InventoryCopy(storageSlots).getItemStacks();
-			internalInventoryCrafting.hitCount = new int[internalInventoryCrafting.tempStacks.length];
-			if (hasIngredients() && InvUtils.isRoomForStack(craftResult.getStackInSlot(0), ForgeDirection.UP, invOutput)) {
-				if (storedEnergy >= getRequiredEnergy()) {
-					craftItem();
-					justCrafted = true;
-				}
-			} else {
-				craftable = false;
-				internalInventoryCrafting.tempStacks = null;
-				internalInventoryCrafting.hitCount = null;
-				storedEnergy = 0;
+		if (canCraftAndOutput()) {
+			if (storedEnergy >= getRequiredEnergy()) {
+				craftItem();
+				justCrafted = true;
 			}
 		} else {
 			craftable = false;
@@ -301,7 +294,18 @@ public class TileAdvancedCraftingTable extends TileEntity implements IInventory,
 		}
 	}
 
-	private boolean hasIngredients() {
+	private boolean canCraftAndOutput() {
+		if (!hasIngredients())
+			return false;
+		ItemStack output = getRecipeOutput();
+		if (output == null)
+			return false;
+		return InvUtils.isRoomForStack(output, ForgeDirection.UP, invOutput);
+	}
+
+	private void locateAndBindIngredients() {
+		internalInventoryCrafting.tempStacks = new InventoryCopy(storageSlots).getItemStacks();
+		internalInventoryCrafting.hitCount = new int[internalInventoryCrafting.tempStacks.length];
 		ItemStack[] tempStorage = internalInventoryCrafting.tempStacks;
 		for (int j = 0; j < craftingSlots.getSizeInventory(); j++) {
 			if (craftingSlots.getStackInSlot(j) == null) {
@@ -319,15 +323,18 @@ public class TileAdvancedCraftingTable extends TileEntity implements IInventory,
 					break;
 				}
 			}
-			if (!matchedStorage) {
-				return false;
-			}
+			if (!matchedStorage)
+				return;
 		}
-		return currentRecipe.matches(internalInventoryCrafting, worldObj);
+	}
+
+	private boolean hasIngredients() {
+		return currentRecipe != null && currentRecipe.matches(internalInventoryCrafting, worldObj);
 	}
 
 	private void craftItem() {
-		craftSlot.onPickupFromSlot(internalPlayer, craftResult.getStackInSlot(0));
+		ItemStack recipeOutput = getRecipeOutput();
+		craftSlot.onPickupFromSlot(internalPlayer, recipeOutput);
 		ItemStack[] tempStorage = internalInventoryCrafting.tempStacks;
 		for (int i = 0; i < tempStorage.length; i++) {
 			if (tempStorage[i] != null && tempStorage[i].stackSize <= 0) {
@@ -336,7 +343,7 @@ public class TileAdvancedCraftingTable extends TileEntity implements IInventory,
 			storageSlots.getItemStacks()[i] = tempStorage[i];
 		}
 		storedEnergy -= getRequiredEnergy();
-		List<ItemStack> outputs = Lists.newArrayList(craftResult.getStackInSlot(0).copy());
+		List<ItemStack> outputs = Lists.newArrayList(recipeOutput.copy());
 		for (int i = 0; i < internalPlayer.inventory.mainInventory.length; i++) {
 			if (internalPlayer.inventory.mainInventory[i] != null) {
 				outputs.add(internalPlayer.inventory.mainInventory[i]);
@@ -354,7 +361,7 @@ public class TileAdvancedCraftingTable extends TileEntity implements IInventory,
 		}
 	}
 
-	private void findIngredients() {
+	private void searchNeighborsForIngredients() {
 		if (cache == null) {
 			cache = TileBuffer.makeBuffer(worldObj, xCoord, yCoord, zCoord, false);
 		}
@@ -380,14 +387,14 @@ public class TileAdvancedCraftingTable extends TileEntity implements IInventory,
 
 	public void updateCraftingMatrix(int slot, ItemStack stack) {
 		craftingSlots.setInventorySlotContents(slot, stack);
-		updateCraftingResults();
+		updateRecipe();
 		if (CoreProxy.proxy.isRenderWorld(worldObj)) {
 			PacketSlotChange packet = new PacketSlotChange(PacketIds.ADVANCED_WORKBENCH_SETSLOT, xCoord, yCoord, zCoord, slot, stack);
 			CoreProxy.proxy.sendToServer(packet.getPacket());
 		}
 	}
 
-	private void updateCraftingResults() {
+	private void updateRecipe() {
 		if (internalInventoryCrafting == null) {
 			return;
 		}
@@ -395,14 +402,29 @@ public class TileAdvancedCraftingTable extends TileEntity implements IInventory,
 		if (this.currentRecipe == null || !this.currentRecipe.matches(internalInventoryCrafting, worldObj)) {
 			currentRecipe = CraftingHelper.findMatchingRecipe(internalInventoryCrafting, worldObj);
 		}
-
-		ItemStack resultStack = null;
-		if (currentRecipe != null) {
-			resultStack = currentRecipe.getCraftingResult(internalInventoryCrafting);
-		}
-		craftResult.setInventorySlotContents(0, resultStack);
 		internalInventoryCrafting.recipeUpdate(false);
 		onInventoryChanged();
+	}
+
+	private void updateRecipeOutputDisplay() {
+		if (internalInventoryCrafting == null || currentRecipe == null) {
+			return;
+		}
+		ItemStack resultStack = getRecipeOutput();
+		if (resultStack == null) {
+			internalInventoryCrafting.recipeUpdate(true);
+			resultStack = getRecipeOutput();
+			internalInventoryCrafting.recipeUpdate(false);
+		}
+		craftResult.setInventorySlotContents(0, resultStack);
+		onInventoryChanged();
+	}
+
+	private ItemStack getRecipeOutput() {
+		if (internalInventoryCrafting == null || currentRecipe == null) {
+			return null;
+		}
+		return currentRecipe.getCraftingResult(internalInventoryCrafting);
 	}
 
 	public IInventory getCraftingSlots() {
