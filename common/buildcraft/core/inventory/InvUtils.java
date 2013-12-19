@@ -89,10 +89,9 @@ public class InvUtils {
 	}
 
 	/* STACK DROPS */
-	public static void dropItems(World world, ItemStack stack, int i, int j, int k) {
-		if (stack.stackSize <= 0) {
-			return;
-		}
+    public static void dropItems(World world, ItemStack stack, int i, int j, int k) {
+		if (stack == null || stack.stackSize <= 0)
+			return;	
 
 		float f1 = 0.7F;
 		double d = (world.rand.nextFloat() * f1) + (1.0F - f1) * 0.5D;

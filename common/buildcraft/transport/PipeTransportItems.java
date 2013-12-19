@@ -15,26 +15,18 @@ import buildcraft.api.transport.IPipeTile.PipeType;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.IMachine;
 import buildcraft.core.inventory.Transactor;
-import buildcraft.core.network.PacketIds;
 import buildcraft.core.utils.BCLog;
 import buildcraft.core.utils.BlockUtil;
 import buildcraft.core.utils.MathUtils;
-import buildcraft.transport.network.PacketPipeTransportTraveler;
 import buildcraft.transport.network.PacketPipeTransportItemStackRequest;
+import buildcraft.transport.network.PacketPipeTransportTraveler;
 import buildcraft.transport.pipes.events.PipeEventItem;
 import buildcraft.transport.utils.TransportUtils;
-import com.google.common.collect.BiMap;
-import com.google.common.collect.ForwardingSet;
-import com.google.common.collect.HashBiMap;
 import cpw.mods.fml.common.network.PacketDispatcher;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 import java.util.logging.Level;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
@@ -51,74 +43,7 @@ public class PipeTransportItems extends PipeTransport {
 	public boolean allowBouncing = false;
 	// TODO: generalize the use of this hook in particular for obsidian pipe
 	public IItemTravelingHook travelHook;
-	public final TravelerSet items = new TravelerSet();
-
-	public class TravelerSet extends ForwardingSet<TravelingItem> {
-
-		private final HashSet<TravelingItem> delegate = new HashSet<TravelingItem>();
-		private final Set<TravelingItem> toLoad = new HashSet<TravelingItem>();
-		private final Set<TravelingItem> toRemove = new HashSet<TravelingItem>();
-		private int delay = 0;
-
-		@Override
-		protected Set<TravelingItem> delegate() {
-			return delegate;
-		}
-
-		@Override
-		public boolean add(TravelingItem item) {
-			if (delegate.contains(item))
-				return false;
-			item.setContainer(container);
-			delegate.add(item);
-			return true;
-		}
-
-		@Override
-		public boolean addAll(Collection<? extends TravelingItem> collection) {
-			boolean changed = false;
-			for (TravelingItem item : collection) {
-				changed |= add(item);
-			}
-			return changed;
-		}
-
-		private void scheduleLoad(TravelingItem item) {
-			delay = 10;
-			toLoad.add(item);
-		}
-
-		private void performLoad() {
-			if (delay > 0) {
-				delay--;
-				return;
-			}
-			addAll(toLoad);
-			toLoad.clear();
-		}
-
-		public boolean scheduleRemoval(TravelingItem item) {
-			return toRemove.add(item);
-		}
-
-		public boolean unscheduleRemoval(TravelingItem item) {
-			return toRemove.remove(item);
-		}
-
-		private void performRemoval() {
-			removeAll(toRemove);
-			toRemove.clear();
-		}
-
-		public void purgeCorruptedItems() {
-			Iterator<TravelingItem> it = iterator();
-			while (it.hasNext()) {
-				TravelingItem item = it.next();
-				if (item.isCorrupted())
-					it.remove();
-			}
-		}
-	};
+	public final TravelerSet items = new TravelerSet(this);
 
 	@Override
 	public PipeType getPipeType() {
@@ -323,12 +248,12 @@ public class PipeTransportItems extends PipeTransport {
 	}
 
 	private void moveSolids() {
-		items.performLoad();
-		items.performRemoval();
+		items.flush();
 		
-		if(!container.worldObj.isRemote)
+		if (!container.worldObj.isRemote)
 			items.purgeCorruptedItems();
 
+		items.iterating = true;
 		for (TravelingItem item : items) {
 			if (item.getContainer() != this.container) {
 				items.scheduleRemoval(item);
@@ -375,8 +300,8 @@ public class PipeTransportItems extends PipeTransport {
 
 			}
 		}
-
-		items.performRemoval();
+		items.iterating = false;
+		items.flush();
 	}
 
 	private boolean passToNextPipe(TravelingItem item, TileEntity tile) {

@@ -48,8 +48,7 @@ public class SimpleInventory implements IInventory, INBTTagable {
 				return result;
 			}
 			ItemStack stack = _contents[slotId];
-			_contents[slotId] = null;
-			onInventoryChanged();
+			setInventorySlotContents(slotId, null);
 			return stack;
 		}
 		return null;
@@ -60,7 +59,7 @@ public class SimpleInventory implements IInventory, INBTTagable {
 		if (slotId >= _contents.length) {
 			return;
 		}
-		this._contents[slotId] = itemstack;
+		_contents[slotId] = itemstack;
 
 		if (itemstack != null && itemstack.stackSize > this.getInventoryStackLimit()) {
 			itemstack.stackSize = this.getInventoryStackLimit();
@@ -115,7 +114,7 @@ public class SimpleInventory implements IInventory, INBTTagable {
 				index = slot.getByte("Slot");
 			}
 			if (index >= 0 && index < _contents.length) {
-				_contents[index] = ItemStack.loadItemStackFromNBT(slot);
+				setInventorySlotContents(index, ItemStack.loadItemStackFromNBT(slot));
 			}
 		}
 	}
@@ -149,7 +148,7 @@ public class SimpleInventory implements IInventory, INBTTagable {
 		}
 
 		ItemStack stackToTake = this._contents[slotId];
-		this._contents[slotId] = null;
+		setInventorySlotContents(slotId, null);
 		return stackToTake;
 	}
 
