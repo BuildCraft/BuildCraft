@@ -25,20 +25,14 @@ import buildcraft.transport.network.PacketPipeTransportNBT;
 import buildcraft.transport.network.PacketSimpleId;
 import buildcraft.transport.pipes.events.PipeEventItem;
 import buildcraft.transport.utils.TransportUtils;
-import com.google.common.collect.BiMap;
-import com.google.common.collect.ForwardingSet;
-import com.google.common.collect.HashBiMap;
 import cpw.mods.fml.common.network.PacketDispatcher;
 import cpw.mods.fml.common.network.Player;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.EnumSet;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 import java.util.logging.Level;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
@@ -48,7 +42,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.MathHelper;
 import net.minecraftforge.common.ForgeDirection;
 
 public class PipeTransportItems extends PipeTransport {
@@ -58,69 +51,7 @@ public class PipeTransportItems extends PipeTransport {
 	public boolean allowBouncing = false;
 	// TODO: generalize the use of this hook in particular for obsidian pipe
 	public IItemTravelingHook travelHook;
-	public final TravelerSet items = new TravelerSet();
-
-	public class TravelerSet extends ForwardingSet<TravelingItem> {
-
-		private final BiMap<Integer, TravelingItem> delegate = HashBiMap.create();
-		private final Set<TravelingItem> toLoad = new HashSet<TravelingItem>();
-		private final Set<TravelingItem> toRemove = new HashSet<TravelingItem>();
-		private int delay = 0;
-
-		@Override
-		protected Set<TravelingItem> delegate() {
-			return delegate.values();
-		}
-
-		@Override
-		public boolean add(TravelingItem item) {
-			if (delegate.containsValue(item))
-				return false;
-			item.setContainer(container);
-			delegate.put(item.id, item);
-			return true;
-		}
-
-		@Override
-		public boolean addAll(Collection<? extends TravelingItem> collection) {
-			boolean changed = false;
-			for (TravelingItem item : collection) {
-				changed |= add(item);
-			}
-			return changed;
-		}
-
-		public TravelingItem get(int id) {
-			return delegate.get(id);
-		}
-
-		private void scheduleLoad(TravelingItem item) {
-			delay = 10;
-			toLoad.add(item);
-		}
-
-		private void performLoad() {
-			if (delay > 0) {
-				delay--;
-				return;
-			}
-			addAll(toLoad);
-			toLoad.clear();
-		}
-
-		public boolean scheduleRemoval(TravelingItem item) {
-			return toRemove.add(item);
-		}
-
-		public boolean unscheduleRemoval(TravelingItem item) {
-			return toRemove.remove(item);
-		}
-
-		private void performRemoval() {
-			removeAll(toRemove);
-			toRemove.clear();
-		}
-	};
+	public final TravelerSet items = new TravelerSet(this);
 
 	@Override
 	public PipeType getPipeType() {
@@ -190,7 +121,7 @@ public class PipeTransportItems extends PipeTransport {
 		if (event.cancelled)
 			return;
 
-		items.add(item);
+		items.scheduleAdd(item);
 
 		if (!container.worldObj.isRemote) {
 			sendItemPacket(item);
@@ -327,20 +258,9 @@ public class PipeTransportItems extends PipeTransport {
 	}
 
 	private void moveSolids() {
-		items.performLoad();
-		items.performRemoval();
+		items.flush();
 
 		for (TravelingItem item : items) {
-			if (item.isCorrupted()) {
-				items.scheduleRemoval(item);
-				continue;
-			}
-
-			if (item.getContainer() != this.container) {
-				items.scheduleRemoval(item);
-				continue;
-			}
-
 			Position motion = new Position(0, 0, 0, item.toCenter ? item.input : item.output);
 			motion.moveForwards(item.getSpeed());
 
@@ -382,7 +302,7 @@ public class PipeTransportItems extends PipeTransport {
 			}
 		}
 
-		items.performRemoval();
+		items.removeScheduledItems();
 	}
 
 	private boolean passToNextPipe(TravelingItem item, TileEntity tile) {
@@ -503,7 +423,7 @@ public class PipeTransportItems extends PipeTransport {
 		TravelingItem item = items.get(packet.getTravellingItemId());
 		if (item == null) {
 			item = new TravelingItem(packet.getTravellingItemId());
-			items.add(item);
+			items.scheduleAdd(item);
 		}
 
 		if (item.getItemStack() == null) {
@@ -682,7 +602,7 @@ public class PipeTransportItems extends PipeTransport {
 						// source fits completely into target
 						target.getItemStack().stackSize += amount;
 
-						items.remove(source);
+						items.scheduleRemoval(source);
 						entities.set(k, null);
 					} else {
 						target.getItemStack().stackSize += space;
