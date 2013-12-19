@@ -45,6 +45,8 @@ import static net.minecraftforge.common.ForgeDirection.EAST;
 import static net.minecraftforge.common.ForgeDirection.NORTH;
 import static net.minecraftforge.common.ForgeDirection.SOUTH;
 import static net.minecraftforge.common.ForgeDirection.WEST;
+import net.minecraftforge.oredict.OreDictionary;
+import org.bouncycastle.util.Arrays;
 
 public class TileAdvancedCraftingTable extends TileEntity implements IInventory, ILaserTarget, IMachine, IActionReceptor, ISidedInventory {
 
@@ -53,6 +55,23 @@ public class TileAdvancedCraftingTable extends TileEntity implements IInventory,
 		@Override
 		public boolean canInteractWith(EntityPlayer var1) {
 			return false;
+		}
+	}
+
+	private final class CraftingGrid extends SimpleInventory {
+
+		public int[] oreIDs = new int[9];
+
+		public CraftingGrid() {
+			super(9, "CraftingSlots", 1);
+			Arrays.fill(oreIDs, -1);
+		}
+
+		@Override
+		public void setInventorySlotContents(int slotId, ItemStack itemstack) {
+			super.setInventorySlotContents(slotId, itemstack);
+			if (TileAdvancedCraftingTable.this.worldObj == null || !TileAdvancedCraftingTable.this.worldObj.isRemote)
+				oreIDs[slotId] = itemstack == null ? -1 : OreDictionary.getOreID(itemstack);
 		}
 	}
 
@@ -141,7 +160,7 @@ public class TileAdvancedCraftingTable extends TileEntity implements IInventory,
 	private InternalInventoryCrafting internalInventoryCrafting;
 
 	public TileAdvancedCraftingTable() {
-		craftingSlots = new SimpleInventory(9, "CraftingSlots", 1);
+		craftingSlots = new CraftingGrid();
 		storageSlots = new SimpleInventory(24, "StorageSlots", 64);
 		storageSlots.addListener(this);
 		invInput = new InventoryMapper(storageSlots, 0, 15);
@@ -151,7 +170,7 @@ public class TileAdvancedCraftingTable extends TileEntity implements IInventory,
 	private static final int[] SLOTS = Utils.createSlotArray(0, 24);
 	private static final EnumSet<ForgeDirection> SEARCH_SIDES = EnumSet.of(DOWN, NORTH, SOUTH, EAST, WEST);
 	private static final float REQUIRED_POWER = 500F;
-	private final SimpleInventory craftingSlots;
+	private final CraftingGrid craftingSlots;
 	private final SimpleInventory storageSlots;
 	private final InventoryMapper invInput;
 	private final InventoryMapper invOutput;
@@ -267,12 +286,10 @@ public class TileAdvancedCraftingTable extends TileEntity implements IInventory,
 			craftSlot = new SlotCrafting(internalPlayer, internalInventoryCrafting, craftResult, 0, 0, 0);
 			updateRecipe();
 		}
-		if (!CoreProxy.proxy.isSimulating(worldObj)) {
+		if (!CoreProxy.proxy.isSimulating(worldObj))
 			return;
-		}
-		if (lastMode == ActionMachineControl.Mode.Off) {
+		if (lastMode == ActionMachineControl.Mode.Off)
 			return;
-		}
 		updateRecipe();
 		searchNeighborsForIngredients();
 		locateAndBindIngredients();
@@ -306,26 +323,37 @@ public class TileAdvancedCraftingTable extends TileEntity implements IInventory,
 	private void locateAndBindIngredients() {
 		internalInventoryCrafting.tempStacks = new InventoryCopy(storageSlots).getItemStacks();
 		internalInventoryCrafting.hitCount = new int[internalInventoryCrafting.tempStacks.length];
-		ItemStack[] tempStorage = internalInventoryCrafting.tempStacks;
-		for (int j = 0; j < craftingSlots.getSizeInventory(); j++) {
-			if (craftingSlots.getStackInSlot(j) == null) {
-				internalInventoryCrafting.bindings[j] = -1;
+		ItemStack[] inputSlots = internalInventoryCrafting.tempStacks;
+		for (int gridSlot = 0; gridSlot < craftingSlots.getSizeInventory(); gridSlot++) {
+			internalInventoryCrafting.bindings[gridSlot] = -1;
+			if (craftingSlots.getStackInSlot(gridSlot) == null)
 				continue;
-			}
-			boolean matchedStorage = false;
-			for (int i = 0; i < tempStorage.length; i++) {
-				if (tempStorage[i] != null && StackHelper.instance().isCraftingEquivalent(craftingSlots.getStackInSlot(j), tempStorage[i], true)
-						&& internalInventoryCrafting.hitCount[i] < tempStorage[i].stackSize
-						&& internalInventoryCrafting.hitCount[i] < tempStorage[i].getMaxStackSize()) {
-					internalInventoryCrafting.bindings[j] = i;
-					internalInventoryCrafting.hitCount[i]++;
-					matchedStorage = true;
+			boolean foundMatch = false;
+			for (int inputSlot = 0; inputSlot < inputSlots.length; inputSlot++) {
+				if (!isMatchingIngredient(gridSlot, inputSlot))
+					continue;
+				if (internalInventoryCrafting.hitCount[inputSlot] < inputSlots[inputSlot].stackSize
+						&& internalInventoryCrafting.hitCount[inputSlot] < inputSlots[inputSlot].getMaxStackSize()) {
+					internalInventoryCrafting.bindings[gridSlot] = inputSlot;
+					internalInventoryCrafting.hitCount[inputSlot]++;
+					foundMatch = true;
 					break;
 				}
 			}
-			if (!matchedStorage)
+			if (!foundMatch)
 				return;
 		}
+	}
+
+	private boolean isMatchingIngredient(int gridSlot, int inputSlot) {
+		ItemStack inputStack = internalInventoryCrafting.tempStacks[inputSlot];
+		if (inputStack == null)
+			return false;
+		if (StackHelper.instance().isMatchingItem(craftingSlots.getStackInSlot(gridSlot), inputStack, true, false))
+			return true;
+		if (StackHelper.instance().isCraftingEquivalent(craftingSlots.oreIDs[gridSlot], inputStack))
+			return true;
+		return false;
 	}
 
 	private boolean hasIngredients() {
@@ -408,6 +436,7 @@ public class TileAdvancedCraftingTable extends TileEntity implements IInventory,
 
 	private void updateRecipeOutputDisplay() {
 		if (internalInventoryCrafting == null || currentRecipe == null) {
+			craftResult.setInventorySlotContents(0, null);
 			return;
 		}
 		ItemStack resultStack = getRecipeOutput();
