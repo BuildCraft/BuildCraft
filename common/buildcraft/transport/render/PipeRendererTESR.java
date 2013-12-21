@@ -11,8 +11,6 @@ import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftCore.RenderMode;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.gates.GateExpansionController;
-import buildcraft.api.transport.IPipe;
-import buildcraft.api.transport.IPipe.WireColor;
 import buildcraft.core.CoreConstants;
 import buildcraft.core.render.RenderEntityBlock;
 import buildcraft.core.render.RenderEntityBlock.RenderInfo;
@@ -20,6 +18,7 @@ import buildcraft.core.utils.EnumColor;
 import buildcraft.core.render.RenderUtils;
 import buildcraft.core.utils.MatrixTranformations;
 import buildcraft.transport.Pipe;
+import buildcraft.api.transport.PipeWire;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeRenderState;
 import buildcraft.transport.PipeTransportFluids;
@@ -27,6 +26,7 @@ import buildcraft.transport.PipeTransportItems;
 import buildcraft.transport.PipeTransportPower;
 import buildcraft.transport.TileGenericPipe;
 import buildcraft.transport.TravelingItem;
+import buildcraft.api.transport.PipeWire;
 import com.google.common.collect.Maps;
 import java.util.HashMap;
 import net.minecraft.block.Block;
@@ -275,20 +275,20 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 	private void renderGatesWires(TileGenericPipe pipe, double x, double y, double z) {
 		PipeRenderState state = pipe.renderState;
 
-		if (state.wireMatrix.hasWire(WireColor.Red)) {
-			pipeWireRender(pipe, CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MAX_POS, CoreConstants.PIPE_MIN_POS, IPipe.WireColor.Red, x, y, z);
+		if (state.wireMatrix.hasWire(PipeWire.Red)) {
+			pipeWireRender(pipe, CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MAX_POS, CoreConstants.PIPE_MIN_POS, PipeWire.Red, x, y, z);
 		}
 
-		if (state.wireMatrix.hasWire(WireColor.Blue)) {
-			pipeWireRender(pipe, CoreConstants.PIPE_MAX_POS, CoreConstants.PIPE_MAX_POS, CoreConstants.PIPE_MAX_POS, IPipe.WireColor.Blue, x, y, z);
+		if (state.wireMatrix.hasWire(PipeWire.Blue)) {
+			pipeWireRender(pipe, CoreConstants.PIPE_MAX_POS, CoreConstants.PIPE_MAX_POS, CoreConstants.PIPE_MAX_POS, PipeWire.Blue, x, y, z);
 		}
 
-		if (state.wireMatrix.hasWire(WireColor.Green)) {
-			pipeWireRender(pipe, CoreConstants.PIPE_MAX_POS, CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MIN_POS, IPipe.WireColor.Green, x, y, z);
+		if (state.wireMatrix.hasWire(PipeWire.Green)) {
+			pipeWireRender(pipe, CoreConstants.PIPE_MAX_POS, CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MIN_POS, PipeWire.Green, x, y, z);
 		}
 
-		if (state.wireMatrix.hasWire(WireColor.Yellow)) {
-			pipeWireRender(pipe, CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MAX_POS, IPipe.WireColor.Yellow, x, y, z);
+		if (state.wireMatrix.hasWire(PipeWire.Yellow)) {
+			pipeWireRender(pipe, CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MAX_POS, PipeWire.Yellow, x, y, z);
 		}
 
 		if (pipe.pipe.gate != null) {
@@ -296,7 +296,7 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 		}
 	}
 
-	private void pipeWireRender(TileGenericPipe pipe, float cx, float cy, float cz, IPipe.WireColor color, double x, double y, double z) {
+	private void pipeWireRender(TileGenericPipe pipe, float cx, float cy, float cz, PipeWire color, double x, double y, double z) {
 
 		PipeRenderState state = pipe.renderState;
 

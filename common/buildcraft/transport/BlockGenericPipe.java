@@ -7,6 +7,7 @@
  */
 package buildcraft.transport;
 
+import buildcraft.api.transport.PipeWire;
 import buildcraft.transport.gates.ItemGate;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -38,8 +39,6 @@ import buildcraft.BuildCraftTransport;
 import buildcraft.api.gates.GateExpansions;
 import buildcraft.api.gates.IGateExpansion;
 import buildcraft.api.tools.IToolWrench;
-import buildcraft.api.transport.IPipe;
-import buildcraft.api.transport.ISolidSideTile;
 import buildcraft.core.BlockBuildCraft;
 import buildcraft.core.BlockIndex;
 import buildcraft.core.CoreConstants;
@@ -668,19 +667,19 @@ public class BlockGenericPipe extends BlockBuildCraft {
 				// interface callbacks for the individual pipe/logic calls
 				return pipe.blockActivated(player);
 			else if (currentItem.getItem() == BuildCraftTransport.redPipeWire) {
-				if (addOrStripWire(player, pipe, IPipe.WireColor.Red)) {
+				if (addOrStripWire(player, pipe, PipeWire.Red)) {
 					return true;
 				}
 			} else if (currentItem.getItem() == BuildCraftTransport.bluePipeWire) {
-				if (addOrStripWire(player, pipe, IPipe.WireColor.Blue)) {
+				if (addOrStripWire(player, pipe, PipeWire.Blue)) {
 					return true;
 				}
 			} else if (currentItem.getItem() == BuildCraftTransport.greenPipeWire) {
-				if (addOrStripWire(player, pipe, IPipe.WireColor.Green)) {
+				if (addOrStripWire(player, pipe, PipeWire.Green)) {
 					return true;
 				}
 			} else if (currentItem.getItem() == BuildCraftTransport.yellowPipeWire) {
-				if (addOrStripWire(player, pipe, IPipe.WireColor.Yellow)) {
+				if (addOrStripWire(player, pipe, PipeWire.Yellow)) {
 					return true;
 				}
 			} else if (currentItem.getItem() instanceof ItemGate) {
@@ -752,7 +751,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 		return false;
 	}
 
-	private boolean addOrStripWire(EntityPlayer player, Pipe pipe, IPipe.WireColor color) {
+	private boolean addOrStripWire(EntityPlayer player, Pipe pipe, PipeWire color) {
 		if (addWire(pipe, color)) {
 			if (!player.capabilities.isCreativeMode) {
 				player.getCurrentEquippedItem().splitStack(1);
@@ -762,7 +761,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 		return player.isSneaking() && stripWire(pipe, color);
 	}
 
-	private boolean addWire(Pipe pipe, IPipe.WireColor color) {
+	private boolean addWire(Pipe pipe, PipeWire color) {
 		if (!pipe.wireSet[color.ordinal()]) {
 			pipe.wireSet[color.ordinal()] = true;
 			pipe.signalStrength[color.ordinal()] = 0;
@@ -772,7 +771,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 		return false;
 	}
 
-	private boolean stripWire(Pipe pipe, IPipe.WireColor color) {
+	private boolean stripWire(Pipe pipe, PipeWire color) {
 		if (pipe.wireSet[color.ordinal()]) {
 			if (!CoreProxy.proxy.isRenderWorld(pipe.container.worldObj)) {
 				dropWire(color, pipe);
@@ -853,7 +852,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 		}
 
 		// Try to strip wires second, starting with yellow.
-		for (IPipe.WireColor color : IPipe.WireColor.values()) {
+		for (PipeWire color : PipeWire.values()) {
 			if (stripWire(pipe, color))
 				return true;
 		}
@@ -866,7 +865,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 	 *
 	 * @param color
 	 */
-	private void dropWire(IPipe.WireColor color, Pipe pipe) {
+	private void dropWire(PipeWire color, Pipe pipe) {
 
 		Item wireItem;
 		switch (color) {

@@ -1,5 +1,6 @@
 package buildcraft.transport;
 
+import buildcraft.api.transport.PipeWire;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.gates.ActionManager;
 import buildcraft.api.gates.IAction;
@@ -7,7 +8,6 @@ import buildcraft.api.gates.IActionReceptor;
 import buildcraft.api.gates.ITrigger;
 import buildcraft.api.gates.ITriggerParameter;
 import buildcraft.api.gates.TriggerParameter;
-import buildcraft.api.transport.IPipe;
 import buildcraft.core.GuiIds;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.triggers.ActionRedstoneOutput;
@@ -261,22 +261,22 @@ public final class Gate {
 	// / TRIGGERS
 	public void addTrigger(List<ITrigger> list) {
 
-		if (pipe.wireSet[IPipe.WireColor.Red.ordinal()] && material == GateMaterial.IRON) {
+		if (pipe.wireSet[PipeWire.Red.ordinal()] && material == GateMaterial.IRON) {
 			list.add(BuildCraftTransport.triggerRedSignalActive);
 			list.add(BuildCraftTransport.triggerRedSignalInactive);
 		}
 
-		if (pipe.wireSet[IPipe.WireColor.Blue.ordinal()] && material == GateMaterial.IRON) {
+		if (pipe.wireSet[PipeWire.Blue.ordinal()] && material == GateMaterial.IRON) {
 			list.add(BuildCraftTransport.triggerBlueSignalActive);
 			list.add(BuildCraftTransport.triggerBlueSignalInactive);
 		}
 
-		if (pipe.wireSet[IPipe.WireColor.Green.ordinal()] && material == GateMaterial.GOLD) {
+		if (pipe.wireSet[PipeWire.Green.ordinal()] && material == GateMaterial.GOLD) {
 			list.add(BuildCraftTransport.triggerGreenSignalActive);
 			list.add(BuildCraftTransport.triggerGreenSignalInactive);
 		}
 
-		if (pipe.wireSet[IPipe.WireColor.Yellow.ordinal()] && material == GateMaterial.DIAMOND) {
+		if (pipe.wireSet[PipeWire.Yellow.ordinal()] && material == GateMaterial.DIAMOND) {
 			list.add(BuildCraftTransport.triggerYellowSignalActive);
 			list.add(BuildCraftTransport.triggerYellowSignalInactive);
 		}
@@ -295,16 +295,16 @@ public final class Gate {
 
 	// / ACTIONS
 	public void addActions(List<IAction> list) {
-		if (pipe.wireSet[IPipe.WireColor.Red.ordinal()] && material == GateMaterial.IRON)
+		if (pipe.wireSet[PipeWire.Red.ordinal()] && material == GateMaterial.IRON)
 			list.add(BuildCraftTransport.actionRedSignal);
 
-		if (pipe.wireSet[IPipe.WireColor.Blue.ordinal()] && material == GateMaterial.IRON)
+		if (pipe.wireSet[PipeWire.Blue.ordinal()] && material == GateMaterial.IRON)
 			list.add(BuildCraftTransport.actionBlueSignal);
 
-		if (pipe.wireSet[IPipe.WireColor.Green.ordinal()] && material == GateMaterial.GOLD)
+		if (pipe.wireSet[PipeWire.Green.ordinal()] && material == GateMaterial.GOLD)
 			list.add(BuildCraftTransport.actionGreenSignal);
 
-		if (pipe.wireSet[IPipe.WireColor.Yellow.ordinal()] && material == GateMaterial.DIAMOND)
+		if (pipe.wireSet[PipeWire.Yellow.ordinal()] && material == GateMaterial.DIAMOND)
 			list.add(BuildCraftTransport.actionYellowSignal);
 
 

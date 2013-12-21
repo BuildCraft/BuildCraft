@@ -7,6 +7,7 @@
  */
 package buildcraft.transport;
 
+import buildcraft.api.transport.PipeWire;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -35,10 +36,8 @@ import buildcraft.api.gates.ITrigger;
 import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.power.PowerHandler;
 import buildcraft.api.power.PowerHandler.PowerReceiver;
-import buildcraft.api.transport.IPipe;
 import buildcraft.api.transport.IPipeConnection;
 import buildcraft.api.transport.IPipeTile;
-import buildcraft.api.transport.ISolidSideTile;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.IDropControlInventory;
 import buildcraft.core.ITileBufferHolder;
@@ -223,7 +222,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 		}
 
 		// WireState
-		for (IPipe.WireColor color : IPipe.WireColor.values()) {
+		for (PipeWire color : PipeWire.values()) {
 			renderState.wireMatrix.setWire(color, pipe.wireSet[color.ordinal()]);
 			for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
 				renderState.wireMatrix.setWireConnected(color, direction, pipe.isWireConnectedTo(this.getTile(direction), color));
@@ -310,11 +309,6 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 			coreState.pipeId = pipe.itemID;
 			pipeBound = true;
 		}
-	}
-
-	@Override
-	public IPipe getPipe() {
-		return pipe;
 	}
 
 	public boolean isInitialized() {
@@ -495,6 +489,13 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 		if (worldObj.isRemote)
 			return renderState.pipeConnectionMatrix.isConnected(with);
 		return pipeConnectionsBuffer[with.ordinal()];
+	}
+
+	@Override
+	public boolean isWireActive(PipeWire wire) {
+		if (pipe == null)
+			return false;
+		return pipe.signalStrength[wire.ordinal()] > 0;
 	}
 
 	@Override

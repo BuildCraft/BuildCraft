@@ -7,6 +7,7 @@
  */
 package buildcraft.transport;
 
+import buildcraft.api.transport.PipeWire;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.core.SafeTimeTracker;
@@ -14,7 +15,6 @@ import buildcraft.api.gates.ActionManager;
 import buildcraft.api.gates.IAction;
 import buildcraft.api.gates.ITrigger;
 import buildcraft.api.gates.TriggerParameter;
-import buildcraft.api.transport.IPipe;
 import buildcraft.core.IDropControlInventory;
 import buildcraft.core.inventory.InvUtils;
 import buildcraft.core.network.TilePacketWrapper;
@@ -37,8 +37,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
 
-public abstract class Pipe<T extends PipeTransport> implements IPipe, IDropControlInventory {
-
+public abstract class Pipe<T extends PipeTransport> implements IDropControlInventory {
 	public int[] signalStrength = new int[]{0, 0, 0, 0};
 	public TileGenericPipe container;
 	public final T transport;
@@ -252,7 +251,7 @@ public abstract class Pipe<T extends PipeTransport> implements IPipe, IDropContr
 		initialized = true;
 	}
 
-	private void readNearbyPipesSignal(WireColor color) {
+	private void readNearbyPipesSignal(PipeWire color) {
 		boolean foundBiggerSignal = false;
 
 		for (ForgeDirection o : ForgeDirection.VALID_DIRECTIONS) {
@@ -288,12 +287,12 @@ public abstract class Pipe<T extends PipeTransport> implements IPipe, IDropContr
 	}
 
 	public void updateSignalState() {
-		for (IPipe.WireColor c : IPipe.WireColor.values()) {
+		for (PipeWire c : PipeWire.values()) {
 			updateSignalStateForColor(c);
 		}
 	}
 
-	private void updateSignalStateForColor(IPipe.WireColor color) {
+	private void updateSignalStateForColor(PipeWire color) {
 		if (!wireSet[color.ordinal()])
 			return;
 
@@ -323,7 +322,7 @@ public abstract class Pipe<T extends PipeTransport> implements IPipe, IDropContr
 		}
 	}
 
-	private boolean receiveSignal(int signal, IPipe.WireColor color) {
+	private boolean receiveSignal(int signal, PipeWire color) {
 		if (container.worldObj == null)
 			return false;
 
@@ -382,7 +381,7 @@ public abstract class Pipe<T extends PipeTransport> implements IPipe, IDropContr
 
 	// / @Override TODO: should be in IPipe
 	public boolean isWired() {
-		for (WireColor color : WireColor.values()) {
+		for (PipeWire color : PipeWire.values()) {
 			if (isWired(color))
 				return true;
 		}
@@ -390,12 +389,10 @@ public abstract class Pipe<T extends PipeTransport> implements IPipe, IDropContr
 		return false;
 	}
 
-	@Override
-	public boolean isWired(WireColor color) {
+	public boolean isWired(PipeWire color) {
 		return wireSet[color.ordinal()];
 	}
 
-	@Override
 	public boolean hasGate() {
 		return gate != null;
 	}
@@ -442,19 +439,19 @@ public abstract class Pipe<T extends PipeTransport> implements IPipe, IDropContr
 	}
 
 	public void onBlockRemoval() {
-		if (wireSet[IPipe.WireColor.Red.ordinal()]) {
+		if (wireSet[PipeWire.Red.ordinal()]) {
 			dropItem(new ItemStack(BuildCraftTransport.redPipeWire));
 		}
 
-		if (wireSet[IPipe.WireColor.Blue.ordinal()]) {
+		if (wireSet[PipeWire.Blue.ordinal()]) {
 			dropItem(new ItemStack(BuildCraftTransport.bluePipeWire));
 		}
 
-		if (wireSet[IPipe.WireColor.Green.ordinal()]) {
+		if (wireSet[PipeWire.Green.ordinal()]) {
 			dropItem(new ItemStack(BuildCraftTransport.greenPipeWire));
 		}
 
-		if (wireSet[IPipe.WireColor.Yellow.ordinal()]) {
+		if (wireSet[PipeWire.Yellow.ordinal()]) {
 			dropItem(new ItemStack(BuildCraftTransport.yellowPipeWire));
 		}
 
@@ -496,13 +493,11 @@ public abstract class Pipe<T extends PipeTransport> implements IPipe, IDropContr
 	protected void actionsActivated(Map<IAction, Boolean> actions) {
 	}
 
-	@Override
 	public TileGenericPipe getContainer() {
 		return container;
 	}
 
-	@Override
-	public boolean isWireConnectedTo(TileEntity tile, WireColor color) {
+	public boolean isWireConnectedTo(TileEntity tile, PipeWire color) {
 		if (!(tile instanceof TileGenericPipe))
 			return false;
 

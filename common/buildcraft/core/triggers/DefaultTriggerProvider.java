@@ -4,7 +4,7 @@ import buildcraft.BuildCraftCore;
 import buildcraft.api.gates.IOverrideDefaultTriggers;
 import buildcraft.api.gates.ITrigger;
 import buildcraft.api.gates.ITriggerProvider;
-import buildcraft.api.transport.IPipe;
+import buildcraft.api.transport.IPipeTile;
 import buildcraft.core.IMachine;
 import java.util.LinkedList;
 import net.minecraft.block.Block;
@@ -58,7 +58,7 @@ public class DefaultTriggerProvider implements ITriggerProvider {
 	}
 
 	@Override
-	public LinkedList<ITrigger> getPipeTriggers(IPipe pipe) {
+	public LinkedList<ITrigger> getPipeTriggers(IPipeTile pipe) {
 		return null;
 	}
 }

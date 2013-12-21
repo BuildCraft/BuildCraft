@@ -1,6 +1,6 @@
 package buildcraft.api.gates;
 
-import buildcraft.api.transport.IPipe;
+import buildcraft.api.transport.IPipeTile;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
@@ -71,7 +71,7 @@ public class ActionManager {
 		return actions;
 	}
 
-	public static LinkedList<ITrigger> getPipeTriggers(IPipe pipe) {
+	public static LinkedList<ITrigger> getPipeTriggers(IPipeTile pipe) {
 		LinkedList<ITrigger> triggers = new LinkedList<ITrigger>();
 
 		for (ITriggerProvider provider : triggerProviders) {

@@ -1,4 +1,4 @@
-package buildcraft.api.transport;
+package buildcraft.transport;
 
 import net.minecraftforge.common.ForgeDirection;
 
