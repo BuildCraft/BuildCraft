@@ -43,6 +43,7 @@ import buildcraft.transport.gates.GateExpansionPulsar;
 import buildcraft.api.gates.GateExpansions;
 import buildcraft.api.transport.PipeWire;
 import buildcraft.transport.network.PacketHandlerTransport;
+import buildcraft.transport.network.TransportConnectionHandler;
 import buildcraft.transport.pipes.PipeFluidsCobblestone;
 import buildcraft.transport.pipes.PipeFluidsEmerald;
 import buildcraft.transport.pipes.PipeFluidsGold;
@@ -107,7 +108,7 @@ import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.common.Property;
 
 @Mod(version = Version.VERSION, modid = "BuildCraft|Transport", name = "Buildcraft Transport", dependencies = DefaultProps.DEPENDENCY_CORE)
-@NetworkMod(channels = {DefaultProps.NET_CHANNEL_NAME}, packetHandler = PacketHandlerTransport.class)
+@NetworkMod(channels = {DefaultProps.NET_CHANNEL_NAME}, packetHandler = PacketHandlerTransport.class, connectionHandler = TransportConnectionHandler.class)
 public class BuildCraftTransport {
 
 	public static BlockGenericPipe genericPipeBlock;

@@ -1051,7 +1051,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 			logic.registerBlockIcon(iconRegister);
 		}
 
-		for (IGateExpansion expansion : GateExpansions.expansions.values()) {
+		for (IGateExpansion expansion : GateExpansions.getExpansions()) {
 			expansion.registerBlockOverlay(iconRegister);
 		}
 

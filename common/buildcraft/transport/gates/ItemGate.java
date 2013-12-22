@@ -89,7 +89,7 @@ public class ItemGate extends ItemBuildCraft {
 			NBTTagList expansionList = nbt.getTagList("ex");
 			for (int i = 0; i < expansionList.tagCount(); i++) {
 				NBTTagString exTag = (NBTTagString) expansionList.tagAt(i);
-				IGateExpansion ex = GateExpansions.expansions.get(exTag.data);
+				IGateExpansion ex = GateExpansions.getExpansion(exTag.data);
 				if (ex != null)
 					expansions.add(ex);
 			}
@@ -111,8 +111,8 @@ public class ItemGate extends ItemBuildCraft {
 		NBTTagCompound nbt = InvUtils.getItemData(stack);
 		nbt.setByte("mat", (byte) gate.material.ordinal());
 		nbt.setByte("logic", (byte) gate.logic.ordinal());
-		for (GateExpansionController expansion : gate.expansions) {
-			addGateExpansion(stack, expansion.getType());
+		for (IGateExpansion expansion : gate.expansions.keySet()) {
+			addGateExpansion(stack, expansion);
 		}
 		return stack;
 	}
@@ -131,7 +131,7 @@ public class ItemGate extends ItemBuildCraft {
 				if (material == GateMaterial.REDSTONE && logic == GateLogic.OR)
 					continue;
 				ItemStack stack = makeGateItem(material, logic);
-				for (IGateExpansion exp : GateExpansions.expansions.values()) {
+				for (IGateExpansion exp : GateExpansions.getExpansions()) {
 					addGateExpansion(stack, exp);
 				}
 				itemList.add(stack);
@@ -164,7 +164,7 @@ public class ItemGate extends ItemBuildCraft {
 			logic.registerItemIcon(iconRegister);
 		}
 
-		for (IGateExpansion expansion : GateExpansions.expansions.values()) {
+		for (IGateExpansion expansion : GateExpansions.getExpansions()) {
 			expansion.registerItemOverlay(iconRegister);
 		}
 

@@ -31,6 +31,9 @@ import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.core.Position;
 import buildcraft.api.core.SafeTimeTracker;
+import buildcraft.api.gates.GateExpansionController;
+import buildcraft.api.gates.GateExpansions;
+import buildcraft.api.gates.IGateExpansion;
 import buildcraft.api.gates.IOverrideDefaultTriggers;
 import buildcraft.api.gates.ITrigger;
 import buildcraft.api.power.IPowerReceptor;
@@ -52,6 +55,8 @@ import buildcraft.transport.gates.GateDefinition;
 import buildcraft.transport.gates.GateFactory;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import java.util.HashSet;
+import java.util.Set;
 import net.minecraft.server.management.PlayerInstance;
 import net.minecraft.world.WorldServer;
 
@@ -63,12 +68,17 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 		public int pipeId = -1;
 		public int gateMaterial = -1;
 		public int gateLogic = -1;
+		public final Set<Byte> expansions = new HashSet<Byte>();
 
 		@Override
 		public void writeData(DataOutputStream data) throws IOException {
 			data.writeInt(pipeId);
 			data.writeByte(gateMaterial);
 			data.writeByte(gateLogic);
+			data.writeByte(expansions.size());
+			for (Byte expansion : expansions) {
+				data.writeByte(expansion);
+			}
 		}
 
 		@Override
@@ -76,6 +86,11 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 			pipeId = data.readInt();
 			gateMaterial = data.readByte();
 			gateLogic = data.readByte();
+			expansions.clear();
+			int numExp = data.readByte();
+			for (int i = 0; i < numExp; i++) {
+				expansions.add(data.readByte());
+			}
 		}
 	}
 	public final PipeRenderState renderState = new PipeRenderState();
@@ -89,6 +104,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 	private boolean blockNeighborChange = false;
 	private boolean refreshRenderState = false;
 	private boolean pipeBound = false;
+	private boolean resyncGateExpansions = false;
 	public boolean redstonePowered = false;
 	private int[] facadeBlocks = new int[ForgeDirection.VALID_DIRECTIONS.length];
 	private int[] facadeMeta = new int[ForgeDirection.VALID_DIRECTIONS.length];
@@ -123,6 +139,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 
 		coreState.pipeId = nbt.getInteger("pipeId");
 		pipe = BlockGenericPipe.createPipe(coreState.pipeId);
+		bindPipe();	
 
 		if (pipe != null)
 			pipe.readFromNBT(nbt);
@@ -177,8 +194,11 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 
 		pipe.updateEntity();
 
-		if (worldObj.isRemote)
+		if (worldObj.isRemote) {
+			if (resyncGateExpansions)
+				syncGateExpansions();
 			return;
+		}
 
 		if (blockNeighborChange) {
 			computeConnections();
@@ -362,9 +382,13 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 		bindPipe();
 
 		PacketTileState packet = new PacketTileState(this.xCoord, this.yCoord, this.zCoord);
+		coreState.expansions.clear();
 		if (pipe != null && pipe.gate != null) {
 			coreState.gateMaterial = pipe.gate.material.ordinal();
 			coreState.gateLogic = pipe.gate.logic.ordinal();
+			for (IGateExpansion ex : pipe.gate.expansions.keySet()) {
+				coreState.expansions.add(GateExpansions.getServerExpansionID(ex.getUniqueIdentifier()));
+			}
 		} else {
 			coreState.gateMaterial = -1;
 			coreState.gateLogic = -1;
@@ -643,6 +667,8 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 				else if (pipe.gate == null)
 					pipe.gate = GateFactory.makeGate(pipe, GateDefinition.GateMaterial.fromOrdinal(coreState.gateMaterial), GateDefinition.GateLogic.fromOrdinal(coreState.gateLogic));
 
+				syncGateExpansions();
+
 				worldObj.markBlockForRenderUpdate(xCoord, yCoord, zCoord);
 				break;
 			case 1: {
@@ -651,6 +677,21 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 					renderState.clean();
 				}
 				break;
+			}
+		}
+	}
+
+	private void syncGateExpansions() {
+		resyncGateExpansions = false;
+		if (pipe.gate != null && !coreState.expansions.isEmpty()) {
+			for (byte id : coreState.expansions) {
+				IGateExpansion ex = GateExpansions.getExpansionClient(id);
+				if (ex != null) {
+					if (!pipe.gate.expansions.containsKey(ex))
+						pipe.gate.addGateExpansion(ex);
+				} else {
+					resyncGateExpansions = true;
+				}
 			}
 		}
 	}

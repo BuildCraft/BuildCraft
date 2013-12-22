@@ -14,18 +14,20 @@ import buildcraft.core.triggers.ActionRedstoneOutput;
 import buildcraft.transport.gates.GateDefinition.GateLogic;
 import buildcraft.transport.gates.GateDefinition.GateMaterial;
 import buildcraft.api.gates.GateExpansionController;
+import buildcraft.api.gates.IGateExpansion;
 import buildcraft.transport.gates.ItemGate;
 import buildcraft.transport.triggers.ActionSignalOutput;
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
 import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Multiset;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.ForgeDirection;
 
@@ -34,7 +36,7 @@ public final class Gate {
 	public final Pipe pipe;
 	public final GateMaterial material;
 	public final GateLogic logic;
-	public final Set<GateExpansionController> expansions = new HashSet<GateExpansionController>();
+	public final BiMap<IGateExpansion, GateExpansionController> expansions = HashBiMap.create();
 	public ITrigger[] triggers = new ITrigger[8];
 	public ITriggerParameter[] triggerParameters = new ITriggerParameter[8];
 	public IAction[] actions = new IAction[8];
@@ -72,10 +74,25 @@ public final class Gate {
 		return triggerParameters[position];
 	}
 
+	public void addGateExpansion(IGateExpansion expansion) {
+		if (!expansions.containsKey(expansion))
+			expansions.put(expansion, expansion.makeController(pipe.container));
+	}
+
 	// / SAVING & LOADING
 	public void writeToNBT(NBTTagCompound data) {
 		data.setString("material", material.name());
 		data.setString("logic", logic.name());
+		NBTTagList exList = new NBTTagList();
+		for(GateExpansionController con : expansions.values()){
+			NBTTagCompound conNBT = new NBTTagCompound();
+			conNBT.setString("type", con.getType().getUniqueIdentifier());
+			NBTTagCompound conData = new NBTTagCompound();
+			con.writeToNBT(conData);
+			conNBT.setTag("data", conData);
+			exList.appendTag(conNBT);
+		}
+		data.setTag("expansions", exList);
 
 		for (int i = 0; i < 8; ++i) {
 			if (triggers[i] != null)
@@ -122,7 +139,7 @@ public final class Gate {
 
 	// / UPDATING
 	public void tick() {
-		for (GateExpansionController expansion : expansions) {
+		for (GateExpansionController expansion : expansions.values()) {
 			expansion.tick();
 		}
 	}
@@ -155,7 +172,7 @@ public final class Gate {
 	}
 
 	public void startResolution() {
-		for (GateExpansionController expansion : expansions) {
+		for (GateExpansionController expansion : expansions.values()) {
 			expansion.startResolution();
 		}
 	}
@@ -234,7 +251,7 @@ public final class Gate {
 	}
 
 	public boolean resolveAction(IAction action, int count) {
-		for (GateExpansionController expansion : expansions) {
+		for (GateExpansionController expansion : expansions.values()) {
 			if (expansion.resolveAction(action, count))
 				return true;
 		}
@@ -281,7 +298,7 @@ public final class Gate {
 			list.add(BuildCraftTransport.triggerYellowSignalInactive);
 		}
 
-		for (GateExpansionController expansion : expansions) {
+		for (GateExpansionController expansion : expansions.values()) {
 			expansion.addTriggers(list);
 		}
 
@@ -308,7 +325,7 @@ public final class Gate {
 			list.add(BuildCraftTransport.actionYellowSignal);
 
 
-		for (GateExpansionController expansion : expansions) {
+		for (GateExpansionController expansion : expansions.values()) {
 			expansion.addActions(list);
 		}
 	}
