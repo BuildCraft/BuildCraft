@@ -23,7 +23,6 @@ import buildcraft.core.utils.BCLog;
 import buildcraft.core.utils.EnumColor;
 import buildcraft.transport.BlockFilteredBuffer;
 import buildcraft.transport.BlockGenericPipe;
-import buildcraft.transport.GateIconProvider;
 import buildcraft.transport.GuiHandler;
 import buildcraft.transport.ItemFacade;
 import buildcraft.transport.gates.ItemGate;
@@ -185,7 +184,6 @@ public class BuildCraftTransport {
 	public static BCAction actionExtractionPresetGreen = new ActionExtractionPreset(-1, EnumColor.GREEN);
 	public static BCAction actionExtractionPresetYellow = new ActionExtractionPreset(-1, EnumColor.YELLOW);
 	public IIconProvider pipeIconProvider = new PipeIconProvider();
-	public IIconProvider gateIconProvider = new GateIconProvider();
 	public IIconProvider wireIconProvider = new WireIconProvider();
 	@Instance("BuildCraft|Transport")
 	public static BuildCraftTransport instance;

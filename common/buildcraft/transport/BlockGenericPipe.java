@@ -1034,7 +1034,6 @@ public class BlockGenericPipe extends BlockBuildCraft {
 			skippedFirstIconRegister = true;
 			return;
 		}
-		BuildCraftTransport.instance.gateIconProvider.registerIcons(iconRegister);
 		BuildCraftTransport.instance.wireIconProvider.registerIcons(iconRegister);
 		for (int i : pipes.keySet()) {
 			Pipe dummyPipe = createPipe(i);
