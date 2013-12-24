@@ -1,6 +1,5 @@
 package buildcraft.core.inventory;
 
-import buildcraft.core.utils.Utils;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
@@ -34,7 +33,7 @@ public abstract class InventoryWrapper implements ISidedInventory {
 		if(inventory instanceof ISidedInventory)
 			return (ISidedInventory)inventory;
 		else if(inventory instanceof IInventory)
-			return new InventoryWrapperSimple(Utils.getInventory((IInventory)inventory));
+			return new InventoryWrapperSimple(InvUtils.getInventory((IInventory)inventory));
 		else
 			return null;
 	}

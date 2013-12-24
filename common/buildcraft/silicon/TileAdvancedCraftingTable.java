@@ -402,7 +402,7 @@ public class TileAdvancedCraftingTable extends TileEntity implements IInventory,
 				for (ForgeDirection side : SEARCH_SIDES) {
 					TileEntity tile = cache[side.ordinal()].getTile();
 					if (tile instanceof IInventory) {
-						IInventory inv = Utils.getInventory(((IInventory) tile));
+						IInventory inv = InvUtils.getInventory(((IInventory) tile));
 						ItemStack result = InvUtils.moveOneItem(inv, side.getOpposite(), invInput, side, filter);
 						if (result != null) {
 							return;

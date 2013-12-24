@@ -13,7 +13,7 @@ class InventoryIteratorSimple implements Iterable<IInvSlot> {
 	private final IInventory inv;
 
 	InventoryIteratorSimple(IInventory inv) {
-		this.inv = inv;
+		this.inv = InvUtils.getInventory(inv);
 	}
 
 	@Override

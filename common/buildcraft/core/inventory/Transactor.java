@@ -1,7 +1,6 @@
 package buildcraft.core.inventory;
 
 import buildcraft.api.inventory.ISpecialInventory;
-import buildcraft.core.utils.Utils;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
@@ -25,7 +24,7 @@ public abstract class Transactor implements ITransactor {
 		else if (object instanceof ISidedInventory)
 			return new TransactorSimple((ISidedInventory) object);
 		else if (object instanceof IInventory)
-			return new TransactorSimple(Utils.getInventory((IInventory) object));
+			return new TransactorSimple(InvUtils.getInventory((IInventory) object));
 
 		return null;
 	}
