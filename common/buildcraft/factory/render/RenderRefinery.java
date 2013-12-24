@@ -11,6 +11,7 @@ import buildcraft.core.DefaultProps;
 import buildcraft.core.IInventoryRenderer;
 import buildcraft.core.fluids.Tank;
 import buildcraft.core.render.FluidRenderer;
+import buildcraft.core.render.RenderUtils;
 import buildcraft.factory.TileRefinery;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
@@ -187,10 +188,7 @@ public class RenderRefinery extends TileEntitySpecialRenderer implements IInvent
 
 				if (list1 != null) {
 					bindTexture(FluidRenderer.getFluidSheet(liquid1));
-					float red = (float) (color1 >> 16 & 255) / 255.0F;
-					float green = (float) (color1 >> 8 & 255) / 255.0F;
-					float blue = (float) (color1 & 255) / 255.0F;
-					GL11.glColor4f(red, green, blue, 1.0F);
+					RenderUtils.setGLColorFromInt(color1);
 					GL11.glCallList(list1[getDisplayListIndex(tile.tank1)]);
 				}
 			}
@@ -202,10 +200,7 @@ public class RenderRefinery extends TileEntitySpecialRenderer implements IInvent
 					GL11.glPushMatrix();
 					GL11.glTranslatef(0, 0, 1);
 					bindTexture(FluidRenderer.getFluidSheet(liquid2));
-					float red = (float) (color2 >> 16 & 255) / 255.0F;
-					float green = (float) (color2 >> 8 & 255) / 255.0F;
-					float blue = (float) (color2 & 255) / 255.0F;
-					GL11.glColor4f(red, green, blue, 1.0F);
+					RenderUtils.setGLColorFromInt(color2);
 					GL11.glCallList(list2[getDisplayListIndex(tile.tank2)]);
 					GL11.glPopMatrix();
 				}
@@ -219,10 +214,7 @@ public class RenderRefinery extends TileEntitySpecialRenderer implements IInvent
 					GL11.glPushMatrix();
 					GL11.glTranslatef(1, 0, 0.5F);
 					bindTexture(FluidRenderer.getFluidSheet(liquidResult));
-					float red = (float) (colorResult >> 16 & 255) / 255.0F;
-					float green = (float) (colorResult >> 8 & 255) / 255.0F;
-					float blue = (float) (colorResult & 255) / 255.0F;
-					GL11.glColor4f(red, green, blue, 1.0F);
+					RenderUtils.setGLColorFromInt(colorResult);
 					GL11.glCallList(list3[getDisplayListIndex(tile.result)]);
 					GL11.glPopMatrix();
 				}

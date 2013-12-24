@@ -4,6 +4,7 @@ import buildcraft.BuildCraftBuilders;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.blueprints.BptBase;
 import buildcraft.core.blueprints.BptPlayerIndex;
+import buildcraft.core.inventory.InvUtils;
 import buildcraft.core.network.TileNetworkData;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
@@ -150,7 +151,7 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory {
 		owner = nbttagcompound.getString("owner");
 		locked = nbttagcompound.getBoolean("locked");
 
-		Utils.readStacksFromNBT(nbttagcompound, "stack", stack);
+		InvUtils.readStacksFromNBT(nbttagcompound, "stack", stack);
 	}
 
 	@Override
@@ -160,7 +161,7 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory {
 		nbttagcompound.setString("owner", owner);
 		nbttagcompound.setBoolean("locked", locked);
 
-		Utils.writeStacksToNBT(nbttagcompound, "stack", stack);
+		InvUtils.writeStacksToNBT(nbttagcompound, "stack", stack);
 	}
 
 	@Override

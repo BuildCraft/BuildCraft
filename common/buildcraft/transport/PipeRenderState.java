@@ -14,7 +14,7 @@ import net.minecraft.util.Icon;
 
 public class PipeRenderState implements IClientState {
 
-	private boolean hasGate = false;
+	private boolean isGateLit = false;
 	private int gateIconIndex = 0;
 	public final ConnectionMatrix pipeConnectionMatrix = new ConnectionMatrix();
 	public final TextureMatrix textureMatrix = new TextureMatrix();
@@ -31,26 +31,15 @@ public class PipeRenderState implements IClientState {
 	@SideOnly(Side.CLIENT)
 	public Icon[] textureArray;
 
-	public void setHasGate(boolean value) {
-		if (hasGate != value) {
-			hasGate = value;
+	public void setIsGateLit(boolean value) {
+		if (isGateLit != value) {
+			isGateLit = value;
 			dirty = true;
 		}
 	}
 
-	public boolean hasGate() {
-		return hasGate;
-	}
-
-	public void setGateIconIndex(int value) {
-		if (gateIconIndex != value) {
-			gateIconIndex = value;
-			dirty = true;
-		}
-	}
-
-	public int getGateIconIndex() {
-		return gateIconIndex;
+	public boolean isGateLit() {
+		return isGateLit;
 	}
 
 	public void clean() {
@@ -72,7 +61,7 @@ public class PipeRenderState implements IClientState {
 
 	@Override
 	public void writeData(DataOutputStream data) throws IOException {
-		data.writeBoolean(hasGate);
+		data.writeBoolean(isGateLit);
 		data.writeInt(gateIconIndex);
 		pipeConnectionMatrix.writeData(data);
 		textureMatrix.writeData(data);
@@ -83,7 +72,7 @@ public class PipeRenderState implements IClientState {
 
 	@Override
 	public void readData(DataInputStream data) throws IOException {
-		hasGate = data.readBoolean();
+		isGateLit = data.readBoolean();
 		gateIconIndex = data.readInt();
 		pipeConnectionMatrix.readData(data);
 		textureMatrix.readData(data);

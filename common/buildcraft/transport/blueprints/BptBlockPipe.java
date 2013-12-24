@@ -19,7 +19,6 @@ import buildcraft.api.gates.ActionManager;
 import buildcraft.api.gates.TriggerParameter;
 import buildcraft.core.Version;
 import buildcraft.transport.BlockGenericPipe;
-import buildcraft.transport.GateVanilla;
 import buildcraft.transport.Pipe;
 import java.util.LinkedList;
 import net.minecraft.block.Block;
@@ -55,14 +54,14 @@ public class BptBlockPipe extends BptBlock {
 			requirements.add(new ItemStack(BuildCraftTransport.yellowPipeWire));
 		}
 
-		if (slot.cpt.hasKey("gate")) {
-			int gateId = slot.cpt.getInteger("gate");
-			if (slot.cpt.hasKey("hasPulser") && slot.cpt.getBoolean("hasPulser")) {
-				requirements.add(new ItemStack(BuildCraftTransport.pipeGateAutarchic, 1, gateId - 1));
-			} else {
-				requirements.add(new ItemStack(BuildCraftTransport.pipeGate, 1, gateId - 1));
-			}
-		}
+//		if (slot.cpt.hasKey("gate")) {
+//			int gateId = slot.cpt.getInteger("gate");
+//			if (slot.cpt.hasKey("hasPulser") && slot.cpt.getBoolean("hasPulser")) {
+//				requirements.add(new ItemStack(BuildCraftTransport.pipeGateAutarchic, 1, gateId - 1));
+//			} else {
+//				requirements.add(new ItemStack(BuildCraftTransport.pipeGate, 1, gateId - 1));
+//			}
+//		}
 
 		if (BuildCraftCore.itemBptProps[pipeId] != null) {
 			BuildCraftCore.itemBptProps[pipeId].addRequirements(slot, requirements);
@@ -99,36 +98,36 @@ public class BptBlockPipe extends BptBlock {
 				pipe.wireSet[i] = true;
 			}
 
-		if (slot.cpt.hasKey("gate")) {
-			// / TODO: Does not save/load custom gates
-			int gateId = slot.cpt.getInteger("gate");
-			GateVanilla newGate;
-			if (slot.cpt.hasKey("hasPulser") && slot.cpt.getBoolean("hasPulser")) {
-				newGate = new GateVanilla(pipe, new ItemStack(BuildCraftTransport.pipeGateAutarchic, 1, gateId - 1));
-			} else {
-				newGate = new GateVanilla(pipe, new ItemStack(BuildCraftTransport.pipeGate, 1, gateId - 1));
-			}
-			pipe.gate = newGate;
-
-			for (int i = 0; i < 8; ++i) {
-				if (slot.cpt.hasKey("trigger" + i)) {
-//					pipe.gate.actions[i] = ActionManager.triggers[slot.cpt.getInteger("trigger" + i)];
-				}
-
-				if (slot.cpt.hasKey("triggerParameter" + i)) {
-					ItemStack s = ItemStack.loadItemStackFromNBT((NBTTagCompound) slot.cpt.getTag("triggerParameter" + i));
-
-					if (s != null) {
-//						pipe.triggerParameters[i] = new TriggerParameter();
-//						pipe.triggerParameters[i].set(s);
-					}
-				}
-
-				if (slot.cpt.hasKey("action" + i)) {
-//					pipe.activatedActions[i] = ActionManager.actions[slot.cpt.getInteger("action" + i)];
-				}
-			}
-		}
+//		if (slot.cpt.hasKey("gate")) {
+//			// / TODO: Does not save/load custom gates
+//			int gateId = slot.cpt.getInteger("gate");
+//			GateVanilla newGate;
+//			if (slot.cpt.hasKey("hasPulser") && slot.cpt.getBoolean("hasPulser")) {
+//				newGate = new GateVanilla(pipe, new ItemStack(BuildCraftTransport.pipeGateAutarchic, 1, gateId - 1));
+//			} else {
+//				newGate = new GateVanilla(pipe, new ItemStack(BuildCraftTransport.pipeGate, 1, gateId - 1));
+//			}
+//			pipe.gate = newGate;
+//
+//			for (int i = 0; i < 8; ++i) {
+//				if (slot.cpt.hasKey("trigger" + i)) {
+////					pipe.gate.actions[i] = ActionManager.triggers[slot.cpt.getInteger("trigger" + i)];
+//				}
+//
+//				if (slot.cpt.hasKey("triggerParameter" + i)) {
+//					ItemStack s = ItemStack.loadItemStackFromNBT((NBTTagCompound) slot.cpt.getTag("triggerParameter" + i));
+//
+//					if (s != null) {
+////						pipe.triggerParameters[i] = new TriggerParameter();
+////						pipe.triggerParameters[i].set(s);
+//					}
+//				}
+//
+//				if (slot.cpt.hasKey("action" + i)) {
+////					pipe.activatedActions[i] = ActionManager.actions[slot.cpt.getInteger("action" + i)];
+//				}
+//			}
+//		}
 
 		BlockGenericPipe.placePipe(pipe, context.world(), slot.x, slot.y, slot.z, slot.blockId, slot.meta);
 
@@ -150,29 +149,29 @@ public class BptBlockPipe extends BptBlock {
 				}
 
 			// / TODO: Does not save/load custom gates
-			if (pipe.hasGate()) {
-				bptSlot.cpt.setInteger("gate", pipe.gate.kind.ordinal());
-				if (pipe.gate instanceof GateVanilla) {
-					bptSlot.cpt.setBoolean("hasPulser", ((GateVanilla) pipe.gate).hasPulser());
-				}
-
-				for (int i = 0; i < 8; ++i) {
-//					if (pipe.activatedTriggers[i] != null) {
-//						bptSlot.cpt.setInteger("trigger" + i, pipe.activatedTriggers[i].getId());
-//					}
+//			if (pipe.hasGate()) {
+//				bptSlot.cpt.setInteger("gate", pipe.gate.kind.ordinal());
+//				if (pipe.gate instanceof GateVanilla) {
+//					bptSlot.cpt.setBoolean("hasPulser", ((GateVanilla) pipe.gate).hasPulser());
+//				}
 //
-//					if (pipe.triggerParameters[i] != null) {
-//						NBTTagCompound subCpt = new NBTTagCompound();
-//						pipe.triggerParameters[i].getItemStack().writeToNBT(subCpt);
-//
-//						bptSlot.cpt.setTag("triggerParameter" + i, subCpt);
-//					}
-//
-//					if (pipe.activatedActions[i] != null) {
-//						bptSlot.cpt.setInteger("action" + i, pipe.activatedActions[i].getId());
-//					}
-				}
-			}
+//				for (int i = 0; i < 8; ++i) {
+////					if (pipe.activatedTriggers[i] != null) {
+////						bptSlot.cpt.setInteger("trigger" + i, pipe.activatedTriggers[i].getId());
+////					}
+////
+////					if (pipe.triggerParameters[i] != null) {
+////						NBTTagCompound subCpt = new NBTTagCompound();
+////						pipe.triggerParameters[i].getItemStack().writeToNBT(subCpt);
+////
+////						bptSlot.cpt.setTag("triggerParameter" + i, subCpt);
+////					}
+////
+////					if (pipe.activatedActions[i] != null) {
+////						bptSlot.cpt.setInteger("action" + i, pipe.activatedActions[i].getId());
+////					}
+//				}
+//			}
 
 			if (BuildCraftCore.itemBptProps[pipe.itemID] != null) {
 				BuildCraftCore.itemBptProps[pipe.itemID].initializeFromWorld(bptSlot, context, x, y, z);

@@ -98,6 +98,17 @@ public class StackHelper {
 		return false;
 	}
 
+	public boolean isCraftingEquivalent(int oreID, ItemStack comparison) {
+		if (oreID >= 0) {
+			for (ItemStack itemstack : OreDictionary.getOres(oreID)) {
+				if (comparison.itemID == itemstack.itemID && (itemstack.getItemDamage() == OreDictionary.WILDCARD_VALUE || comparison.getItemDamage() == itemstack.getItemDamage()))
+					return true;
+			}
+		}
+
+		return false;
+	}
+
 	/**
 	 * Compares item id, damage and NBT. Accepts wildcard damage. Ignores damage
 	 * entirely if the item doesn't have subtypes.

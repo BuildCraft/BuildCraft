@@ -228,11 +228,11 @@ public class PipeItemsObsidian extends Pipe<PipeTransportItems> implements IPowe
 				CoreProxy.proxy.removeEntity(entity);
 			}
 
-			TravelingItem passive = new TravelingItem(container.xCoord + 0.5, container.yCoord + TransportUtils.getPipeFloorOf(stack), container.zCoord + 0.5, stack);
+			TravelingItem item = TravelingItem.make(container.xCoord + 0.5, container.yCoord + TransportUtils.getPipeFloorOf(stack), container.zCoord + 0.5, stack);
 
-			passive.setSpeed((float) speed);
+			item.setSpeed((float) speed);
 
-			transport.injectItem(passive, orientation);
+			transport.injectItem(item, orientation);
 		}
 	}
 

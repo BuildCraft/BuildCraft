@@ -9,7 +9,8 @@ package buildcraft;
 
 import buildcraft.api.fuels.IronEngineCoolant;
 import buildcraft.api.fuels.IronEngineFuel;
-import buildcraft.api.recipes.RefineryRecipes;
+import buildcraft.api.recipes.BuildcraftRecipes;
+import buildcraft.core.recipes.RefineryRecipeManager;
 import buildcraft.core.BlockIndex;
 import buildcraft.core.BlockSpring;
 import buildcraft.core.DefaultProps;
@@ -28,7 +29,7 @@ import buildcraft.energy.ItemBucketBuildcraft;
 import buildcraft.energy.ItemEngine;
 import buildcraft.energy.BucketHandler;
 import buildcraft.energy.TileEngine.EnergyStage;
-import buildcraft.energy.TriggerEngineHeat;
+import buildcraft.energy.triggers.TriggerEngineHeat;
 import buildcraft.energy.worldgen.BiomeGenOilDesert;
 import buildcraft.energy.worldgen.BiomeGenOilOcean;
 import buildcraft.energy.worldgen.BiomeInitializer;
@@ -81,7 +82,7 @@ public class BuildCraftEnergy {
 	public static Item bucketFuel;
 	public static Item fuel;
 	public static boolean canOilBurn;
-	public static double oilWellScalar;
+	public static double oilWellScalar = 1.0;
 	public static TreeMap<BlockIndex, Integer> saturationStored = new TreeMap<BlockIndex, Integer>();
 	public static BCTrigger triggerBlueEngineHeat = new TriggerEngineHeat(DefaultProps.TRIGGER_BLUE_ENGINE_HEAT, EnergyStage.BLUE, "buildcraft.engine.stage.blue");
 	public static BCTrigger triggerGreenEngineHeat = new TriggerEngineHeat(DefaultProps.TRIGGER_GREEN_ENGINE_HEAT, EnergyStage.GREEN, "buildcraft.engine.stage.green");
@@ -146,7 +147,7 @@ public class BuildCraftEnergy {
 
 		// Oil and fuel
 		buildcraftFluidOil = new BCFluid("oil").setDensity(800).setViscosity(1500);
-		
+
 		FluidRegistry.registerFluid(buildcraftFluidOil);
 		fluidOil = FluidRegistry.getFluid("oil");
 
@@ -167,8 +168,7 @@ public class BuildCraftEnergy {
 		}
 
 		if (blockOil != null) {
-			Property oilSpringsProp = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "oilSprings", true);
-			spawnOilSprings = oilSpringsProp.getBoolean(true);
+			spawnOilSprings = BuildCraftCore.mainConfiguration.get("worldgen", "oilSprings", true).getBoolean(true);
 			BlockSpring.EnumSpring.OIL.canGen = spawnOilSprings;
 			BlockSpring.EnumSpring.OIL.liquidBlock = blockOil;
 		}
@@ -207,7 +207,7 @@ public class BuildCraftEnergy {
 		BucketHandler.INSTANCE.buckets.put(blockFuel, bucketFuel);
 		MinecraftForge.EVENT_BUS.register(BucketHandler.INSTANCE);
 
-		RefineryRecipes.addRecipe(new FluidStack(fluidOil, 1), new FluidStack(fluidFuel, 1), 12, 1);
+		BuildcraftRecipes.refinery.addRecipe(new FluidStack(fluidOil, 1), new FluidStack(fluidFuel, 1), 12, 1);
 
 		// Iron Engine Fuels
 //		IronEngineFuel.addFuel("lava", 1, 20000);

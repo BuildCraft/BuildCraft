@@ -8,19 +8,19 @@
 package buildcraft.transport.triggers;
 
 import buildcraft.api.gates.ITriggerParameter;
-import buildcraft.api.transport.IPipe;
 import buildcraft.core.triggers.ActionTriggerIconProvider;
 import buildcraft.core.triggers.BCTrigger;
-import buildcraft.transport.ITriggerPipe;
+import buildcraft.transport.IPipeTrigger;
 import buildcraft.transport.Pipe;
+import buildcraft.api.transport.PipeWire;
 import java.util.Locale;
 
-public class TriggerPipeSignal extends BCTrigger implements ITriggerPipe {
+public class TriggerPipeSignal extends BCTrigger implements IPipeTrigger {
 
 	boolean active;
-	IPipe.WireColor color;
+	PipeWire color;
 
-	public TriggerPipeSignal(int legacyId, boolean active, IPipe.WireColor color) {
+	public TriggerPipeSignal(int legacyId, boolean active, PipeWire color) {
 		super(legacyId, "buildcraft.pipe.wire.input." + color.name().toLowerCase(Locale.ENGLISH) + (active ? ".active" : ".inactive"));
 
 		this.active = active;

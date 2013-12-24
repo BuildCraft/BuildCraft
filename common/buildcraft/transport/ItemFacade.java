@@ -2,7 +2,7 @@ package buildcraft.transport;
 
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.Position;
-import buildcraft.api.recipes.AssemblyRecipe;
+import buildcraft.api.recipes.BuildcraftRecipes;
 import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.ItemBuildCraft;
 import buildcraft.core.proxy.CoreProxy;
@@ -160,8 +160,7 @@ public class ItemFacade extends ItemBuildCraft {
 		facade6.stackSize = 6;
 
 		// 3 Structurepipes + this block makes 6 facades
-		AssemblyRecipe.assemblyRecipes.add(new AssemblyRecipe(new ItemStack[]{new ItemStack(BuildCraftTransport.pipeStructureCobblestone, 3), itemStack},
-				8000, facade6));
+		BuildcraftRecipes.assemblyTable.addRecipe(8000, facade6, new ItemStack(BuildCraftTransport.pipeStructureCobblestone, 3), itemStack);
 		if (itemStack.itemID < Block.blocksList.length && Block.blocksList[itemStack.itemID] != null) {
 			Block bl = Block.blocksList[itemStack.itemID];
 

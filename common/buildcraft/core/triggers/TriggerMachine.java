@@ -7,12 +7,13 @@
  */
 package buildcraft.core.triggers;
 
+import buildcraft.api.gates.ITileTrigger;
 import buildcraft.api.gates.ITriggerParameter;
 import buildcraft.core.IMachine;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.ForgeDirection;
 
-public class TriggerMachine extends BCTrigger {
+public class TriggerMachine extends BCTrigger implements ITileTrigger {
 
 	boolean active;
 

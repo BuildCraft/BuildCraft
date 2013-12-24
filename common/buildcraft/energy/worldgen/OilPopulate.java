@@ -168,18 +168,18 @@ public class OilPopulate {
 			}
 			generateSurfaceDeposit(world, rand, biome, wellX, groundLevel, wellZ, lakeRadius);
 
+			boolean makeSpring = type == GenType.LARGE && BuildCraftEnergy.spawnOilSprings && BuildCraftCore.springBlock != null && (BuildCraftCore.debugMode || rand.nextDouble() <= 0.25);
+
 			// Generate Spout
 			int baseY;
-			if (type == GenType.LARGE && BuildCraftEnergy.spawnOilSprings && (BuildCraftCore.debugMode || rand.nextDouble() <= 0.25)) {
+			if (makeSpring) {
 				baseY = 0;
 			} else {
 				baseY = wellY;
 			}
 
-			if (world.getBlockId(wellX, baseY, wellZ) == Block.bedrock.blockID) {
-				if (BuildCraftEnergy.spawnOilSprings) {
-					world.setBlock(wellX, baseY, wellZ, BuildCraftCore.springBlock.blockID, 1, 3);
-				}
+			if (makeSpring && world.getBlockId(wellX, baseY, wellZ) == Block.bedrock.blockID) {
+				world.setBlock(wellX, baseY, wellZ, BuildCraftCore.springBlock.blockID, 1, 3);
 			}
 			for (int y = baseY + 1; y <= maxHeight; ++y) {
 				world.setBlock(wellX, y, wellZ, BuildCraftEnergy.blockOil.blockID);

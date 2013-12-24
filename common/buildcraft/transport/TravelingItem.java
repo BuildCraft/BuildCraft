@@ -9,9 +9,14 @@ package buildcraft.transport;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.api.core.Position;
+import buildcraft.core.inventory.StackHelper;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.EnumColor;
+import com.google.common.collect.MapMaker;
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.relauncher.Side;
 import java.util.EnumSet;
+import java.util.Map;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.inventory.IInventory;
@@ -22,13 +27,15 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.MathHelper;
 import net.minecraftforge.common.ForgeDirection;
 
-public class TravelingItem {
+public final class TravelingItem {
 
+	public static final TravelingItemCache serverCache = new TravelingItemCache();
+	public static final TravelingItemCache clientCache = new TravelingItemCache();
 	public static final InsertionHandler DEFAULT_INSERTION_HANDLER = new InsertionHandler();
 	private static int maxId = 0;
 	protected float speed = 0.01F;
-	protected ItemStack item;
-	protected TileEntity container;
+	private ItemStack itemStack;
+	private TileEntity container;
 	public double xCoord, yCoord, zCoord;
 	public final int id;
 	public boolean toCenter = true;
@@ -40,20 +47,39 @@ public class TravelingItem {
 	private InsertionHandler insertionHandler = DEFAULT_INSERTION_HANDLER;
 
 	/* CONSTRUCTORS */
-	public TravelingItem() {
-		this(maxId < Short.MAX_VALUE ? ++maxId : (maxId = Short.MIN_VALUE));
-	}
-
-	public TravelingItem(int id) {
+	private TravelingItem(int id) {
 		this.id = id;
 	}
 
-	public TravelingItem(double x, double y, double z, ItemStack stack) {
-		this();
-		this.xCoord = x;
-		this.yCoord = y;
-		this.zCoord = z;
-		this.item = stack.copy();
+	public static TravelingItem make(int id) {
+		TravelingItem item = new TravelingItem(id);
+		getCache().cache(item);
+		return item;
+	}
+
+	public static TravelingItem make() {
+		return make(maxId < Short.MAX_VALUE ? ++maxId : (maxId = Short.MIN_VALUE));
+	}
+
+	public static TravelingItem make(double x, double y, double z, ItemStack stack) {
+		TravelingItem item = make();
+		item.xCoord = x;
+		item.yCoord = y;
+		item.zCoord = z;
+		item.itemStack = stack.copy();
+		return item;
+	}
+
+	public static TravelingItem make(NBTTagCompound nbt) {
+		TravelingItem item = make();
+		item.readFromNBT(nbt);
+		return item;
+	}
+
+	public static TravelingItemCache getCache() {
+		if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT)
+			return clientCache;
+		return serverCache;
 	}
 
 	/* GETTING & SETTING */
@@ -78,11 +104,11 @@ public class TravelingItem {
 	}
 
 	public ItemStack getItemStack() {
-		return item;
+		return itemStack;
 	}
 
 	public void setItemStack(ItemStack item) {
-		this.item = item;
+		this.itemStack = item;
 	}
 
 	public TileEntity getContainer() {
@@ -128,7 +154,7 @@ public class TravelingItem {
 	}
 
 	/* SAVING & LOADING */
-	public void readFromNBT(NBTTagCompound data) {
+	private void readFromNBT(NBTTagCompound data) {
 		setPosition(data.getDouble("x"), data.getDouble("y"), data.getDouble("z"));
 
 		setSpeed(data.getFloat("speed"));
@@ -151,9 +177,9 @@ public class TravelingItem {
 		data.setDouble("y", yCoord);
 		data.setDouble("z", zCoord);
 		data.setFloat("speed", getSpeed());
-		NBTTagCompound nbttagcompound2 = new NBTTagCompound();
-		getItemStack().writeToNBT(nbttagcompound2);
-		data.setCompoundTag("Item", nbttagcompound2);
+		NBTTagCompound itemStackTag = new NBTTagCompound();
+		getItemStack().writeToNBT(itemStackTag);
+		data.setCompoundTag("Item", itemStackTag);
 
 		data.setBoolean("toCenter", toCenter);
 		data.setInteger("input", input.ordinal());
@@ -205,7 +231,38 @@ public class TravelingItem {
 	}
 
 	public boolean isCorrupted() {
-		return getItemStack() == null || getItemStack().stackSize <= 0 || Item.itemsList[getItemStack().itemID] == null;
+		return itemStack == null || itemStack.stackSize <= 0 || Item.itemsList[itemStack.itemID] == null;
+	}
+
+	public boolean canBeGroupedWith(TravelingItem otherItem) {
+		if(otherItem == this)
+			return false;
+		if (toCenter != otherItem.toCenter)
+			return false;
+		if (output != otherItem.output)
+			return false;
+		if (color != otherItem.color)
+			return false;
+		if (hasExtraData() || otherItem.hasExtraData())
+			return false;
+		if (insertionHandler != DEFAULT_INSERTION_HANDLER)
+			return false;
+		if (!blacklist.equals(otherItem.blacklist))
+			return false;
+		if (otherItem.isCorrupted())
+			return false;
+		return StackHelper.instance().canStacksMerge(itemStack, otherItem.itemStack);
+	}
+
+	public boolean tryMergeInto(TravelingItem otherItem) {
+		if (!canBeGroupedWith(otherItem))
+			return false;
+		if (StackHelper.instance().mergeStacks(itemStack, otherItem.itemStack, false) == itemStack.stackSize) {
+			StackHelper.instance().mergeStacks(itemStack, otherItem.itemStack, true);
+			itemStack.stackSize = 0;
+			return true;
+		}
+		return false;
 	}
 
 	@Override
@@ -227,10 +284,28 @@ public class TravelingItem {
 		return true;
 	}
 
+	@Override
+	public String toString() {
+		return "TravelingItem: " + id;
+	}
+
 	public static class InsertionHandler {
 
 		public boolean canInsertItem(TravelingItem item, IInventory inv) {
 			return true;
+		}
+	}
+
+	public static class TravelingItemCache {
+
+		private final Map<Integer, TravelingItem> itemCache = new MapMaker().weakValues().makeMap();
+
+		public void cache(TravelingItem item) {
+			itemCache.put(item.id, item);
+		}
+
+		public TravelingItem get(int id) {
+			return itemCache.get(id);
 		}
 	}
 }

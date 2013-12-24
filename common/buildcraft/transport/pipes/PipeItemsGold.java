@@ -40,6 +40,6 @@ public class PipeItemsGold extends Pipe {
 	public void eventHandler(PipeEventItem.AdjustSpeed event) {
 		event.handled = true;
 		TravelingItem item = event.item;
-		item.setSpeed(MathUtils.clamp(item.getSpeed() * 4F, TransportConstants.PIPE_NORMAL_SPEED * 4F, TransportConstants.PIPE_NORMAL_SPEED * 20F));
+		item.setSpeed(MathUtils.clamp(item.getSpeed() * 4F, TransportConstants.PIPE_NORMAL_SPEED * 4F, TransportConstants.PIPE_NORMAL_SPEED * 15F));
 	}
 }

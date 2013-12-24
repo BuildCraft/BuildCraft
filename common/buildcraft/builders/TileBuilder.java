@@ -20,6 +20,7 @@ import buildcraft.core.EntityRobot;
 import buildcraft.core.IBuilderInventory;
 import buildcraft.core.IMachine;
 import buildcraft.core.TileBuildCraft;
+import buildcraft.core.inventory.InvUtils;
 import buildcraft.core.inventory.InventoryMapper;
 import buildcraft.core.inventory.SimpleInventory;
 import buildcraft.core.network.PacketUpdate;

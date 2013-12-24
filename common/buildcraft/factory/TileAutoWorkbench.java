@@ -127,12 +127,12 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
 	public void readFromNBT(NBTTagCompound data) {
 		super.readFromNBT(data);
 		resultInv.readFromNBT(data);
-		Utils.readInvFromNBT(craftMatrix, "matrix", data);
+		InvUtils.readInvFromNBT(craftMatrix, "matrix", data);
 
 		// Legacy Code
 		if (data.hasKey("stackList")) {
 			ItemStack[] stacks = new ItemStack[9];
-			Utils.readStacksFromNBT(data, "stackList", stacks);
+			InvUtils.readStacksFromNBT(data, "stackList", stacks);
 			for (int i = 0; i < 9; i++) {
 				craftMatrix.setInventorySlotContents(i, stacks[i]);
 			}
@@ -143,7 +143,7 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
 	public void writeToNBT(NBTTagCompound data) {
 		super.writeToNBT(data);
 		resultInv.writeToNBT(data);
-		Utils.writeInvToNBT(craftMatrix, "matrix", data);
+		InvUtils.writeInvToNBT(craftMatrix, "matrix", data);
 	}
 
 	public ItemStack findRecipeOutput() {

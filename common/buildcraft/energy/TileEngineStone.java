@@ -20,6 +20,7 @@ import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftEnergy;
 import buildcraft.api.gates.ITrigger;
 import buildcraft.core.GuiIds;
+import buildcraft.core.inventory.InvUtils;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
 import buildcraft.energy.gui.ContainerEngine;
@@ -77,7 +78,7 @@ public class TileEngineStone extends TileEngineWithInventory {
 			burnTime = totalBurnTime = getItemBurnTime(getStackInSlot(0));
 
 			if (burnTime > 0) {
-				setInventorySlotContents(0, Utils.consumeItem(getStackInSlot(0)));
+				setInventorySlotContents(0, InvUtils.consumeItem(getStackInSlot(0)));
 			}
 		}
 	}

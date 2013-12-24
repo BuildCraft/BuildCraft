@@ -14,8 +14,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
-import net.minecraftforge.fluids.FluidEvent;
-import net.minecraftforge.fluids.FluidEvent.FluidMotionEvent;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.FluidTankInfo;
@@ -64,15 +62,14 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 
 		@Override
 		public FluidStack drain(int maxDrain, boolean doDrain) {
-			int maxToDrain = Math.min(maxDrain, Math.min(flowRate, getAvailable()));
-			if (maxToDrain < 0)
+			int maxToDrain = getAvailable();
+			if (maxToDrain > maxDrain)
+				maxToDrain = maxDrain;
+			if (maxToDrain > flowRate)
+				maxToDrain = flowRate;
+			if (maxToDrain <= 0)
 				return null;
-
-			FluidStack drained = super.drain(maxToDrain, doDrain);
-			if (drained == null)
-				return null;
-
-			return drained;
+			return super.drain(maxToDrain, doDrain);
 		}
 
 		public void moveFluids() {
@@ -90,7 +87,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 		}
 
 		public int getAvailable() {
-			int all = this.getFluid() != null ? this.getFluid().amount : 0;
+			int all = getFluidAmount();
 			for (short slot : incomming) {
 				all -= slot;
 			}
@@ -219,13 +216,13 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 	private PacketFluidUpdate computeFluidUpdate(boolean initPacket, boolean persistChange) {
 
 		boolean changed = false;
-		BitSet delta = new BitSet(21);
+		BitSet delta = new BitSet(PacketFluidUpdate.FLUID_DATA_NUM * ForgeDirection.VALID_DIRECTIONS.length);
 
 		if (initClient > 0) {
 			initClient--;
 			if (initClient == 1) {
 				changed = true;
-				delta.set(0, 21);
+				delta.set(0, PacketFluidUpdate.FLUID_DATA_NUM * ForgeDirection.VALID_DIRECTIONS.length);
 			}
 		}
 
@@ -236,36 +233,34 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 			FluidStack current = internalTanks[dir.ordinal()].getFluid();
 			FluidStack prev = renderCache[dir.ordinal()];
 
-			if (prev == null && current == null) {
+			if (current != null && current.getFluid() == null)
+				continue;
+
+			if (prev == null && current == null)
+				continue;
+
+			if (prev == null ^ current == null) {
+				changed = true;
+				if (current != null) {
+					renderCache[dir.ordinal()] = current.copy();
+					colorRenderCache[dir.ordinal()] = current.getFluid().getColor(current);
+				} else {
+					renderCache[dir.ordinal()] = null;
+					colorRenderCache[dir.ordinal()] = 0xFFFFFF;
+				}
+				delta.set(dir.ordinal() * PacketFluidUpdate.FLUID_DATA_NUM + PacketFluidUpdate.FLUID_ID_BIT);
+				delta.set(dir.ordinal() * PacketFluidUpdate.FLUID_DATA_NUM + PacketFluidUpdate.FLUID_AMOUNT_BIT);
 				continue;
 			}
 
-			if (prev == null && current != null) {
-				changed = true;
-				renderCache[dir.ordinal()] = current.copy();
-				colorRenderCache[dir.ordinal()] = current.getFluid().getColor(current);
-				delta.set(dir.ordinal() * 3 + 0);
-				delta.set(dir.ordinal() * 3 + 1);
-				delta.set(dir.ordinal() * 3 + 2);
+			if (prev == null || current == null)
 				continue;
-			}
-
-			if (prev != null && current == null) {
-				changed = true;
-				renderCache[dir.ordinal()] = null;
-				colorRenderCache[dir.ordinal()] = 0xFFFFFF;
-				delta.set(dir.ordinal() * 3 + 0);
-				delta.set(dir.ordinal() * 3 + 1);
-				delta.set(dir.ordinal() * 3 + 2);
-				continue;
-			}
 
 			if (!prev.equals(current) || initPacket) {
 				changed = true;
 				renderCache[dir.ordinal()] = current;
 				colorRenderCache[dir.ordinal()] = current.getFluid().getColor(current);
-				delta.set(dir.ordinal() * 3 + 0);
-				delta.set(dir.ordinal() * 3 + 1);
+				delta.set(dir.ordinal() * PacketFluidUpdate.FLUID_DATA_NUM + PacketFluidUpdate.FLUID_ID_BIT);
 			}
 
 			int displayQty = (prev.amount * 4 + current.amount) / 5;
@@ -277,7 +272,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 			if (prev.amount != displayQty || initPacket) {
 				changed = true;
 				renderCache[dir.ordinal()].amount = displayQty;
-				delta.set(dir.ordinal() * 3 + 2);
+				delta.set(dir.ordinal() * PacketFluidUpdate.FLUID_DATA_NUM + PacketFluidUpdate.FLUID_AMOUNT_BIT);
 			}
 		}
 
@@ -361,8 +356,8 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 						internalTanks[o.ordinal()].drain(filled, true);
 						if (filled <= 0) {
 							outputTTL[o.ordinal()]--;
-						} else
-							FluidEvent.fireEvent(new FluidMotionEvent(liquidToPush, container.worldObj, container.xCoord, container.yCoord, container.zCoord));
+						}
+//						else FluidEvent.fireEvent(new FluidMotionEvent(liquidToPush, container.worldObj, container.xCoord, container.yCoord, container.zCoord));
 					}
 				}
 			}
@@ -391,8 +386,8 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 					if (liquidToPush != null) {
 						int filled = internalTanks[direction.ordinal()].fill(liquidToPush, true);
 						internalTanks[ForgeDirection.UNKNOWN.ordinal()].drain(filled, true);
-						if (filled > 0)
-							FluidEvent.fireEvent(new FluidMotionEvent(liquidToPush, container.worldObj, container.xCoord, container.yCoord, container.zCoord));
+//						if (filled > 0)
+//							FluidEvent.fireEvent(new FluidMotionEvent(liquidToPush, container.worldObj, container.xCoord, container.yCoord, container.zCoord));
 					}
 				}
 			}
@@ -436,8 +431,8 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 				if (liquidToPush != null) {
 					int filled = internalTanks[ForgeDirection.UNKNOWN.ordinal()].fill(liquidToPush, true);
 					internalTanks[dir.ordinal()].drain(filled, true);
-					if (filled > 0)
-						FluidEvent.fireEvent(new FluidMotionEvent(liquidToPush, container.worldObj, container.xCoord, container.yCoord, container.zCoord));
+//					if (filled > 0)
+//						FluidEvent.fireEvent(new FluidMotionEvent(liquidToPush, container.worldObj, container.xCoord, container.yCoord, container.zCoord));
 				}
 			}
 		}

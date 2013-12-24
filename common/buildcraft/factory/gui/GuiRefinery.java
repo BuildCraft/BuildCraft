@@ -1,16 +1,14 @@
 /**
- * Copyright (c) SpaceToad, 2011
- * http://www.mod-buildcraft.com
+ * Copyright (c) SpaceToad, 2011 http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License
+ * 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-
 package buildcraft.factory.gui;
 
-import buildcraft.api.recipes.RefineryRecipes;
-import buildcraft.api.recipes.RefineryRecipes.Recipe;
+import buildcraft.core.recipes.RefineryRecipeManager;
+import buildcraft.core.recipes.RefineryRecipeManager.RefineryRecipe;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.gui.GuiAdvancedInterface;
 import buildcraft.core.utils.StringUtils;
@@ -84,12 +82,14 @@ public class GuiRefinery extends GuiAdvancedInterface {
 					}
 
 					container.setFilter(position, liquid.getFluid());
+					container.refinery.tankManager.get(position).colorRenderCache = liquid.getFluid().getColor(liquid);
 				} else {
 					container.setFilter(position, null);
+					container.refinery.tankManager.get(position).colorRenderCache = 0xFFFFFF;
 				}
 			} else {
 				TileRefinery ref = (TileRefinery) this.tile;
-				
+
 				if (position == 0)
 					container.setFilter(position, ref.tank1.getFluidType());
 				else if (position == 1)
@@ -104,7 +104,9 @@ public class GuiRefinery extends GuiAdvancedInterface {
 		Fluid filter1 = container.getFilter(1);
 
 		((FluidSlot) slots[0]).fluid = filter0;
+		((FluidSlot) slots[0]).colorRenderCache = container.refinery.tank1.colorRenderCache;
 		((FluidSlot) slots[1]).fluid = filter1;
+		((FluidSlot) slots[1]).colorRenderCache = container.refinery.tank2.colorRenderCache;
 
 		FluidStack liquid0 = null;
 		FluidStack liquid1 = null;
@@ -116,13 +118,13 @@ public class GuiRefinery extends GuiAdvancedInterface {
 			liquid1 = new FluidStack(filter1, FluidContainerRegistry.BUCKET_VOLUME);
 		}
 
-		Recipe recipe = RefineryRecipes.findRefineryRecipe(liquid0, liquid1);
+		RefineryRecipe recipe = RefineryRecipeManager.INSTANCE.findRefineryRecipe(liquid0, liquid1);
 
 		if (recipe != null) {
 			((FluidSlot) slots[2]).fluid = recipe.result.getFluid();
+			((FluidSlot) slots[2]).colorRenderCache = recipe.result.getFluid().getColor(recipe.result);
 		} else {
 			((FluidSlot) slots[2]).fluid = null;
 		}
 	}
-
 }

@@ -9,14 +9,14 @@ package buildcraft.transport.triggers;
 
 import buildcraft.api.gates.ITriggerParameter;
 import buildcraft.core.triggers.BCTrigger;
-import buildcraft.transport.ITriggerPipe;
+import buildcraft.transport.IPipeTrigger;
 import buildcraft.transport.Pipe;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.util.Icon;
 
-public class TriggerRedstoneInput extends BCTrigger implements ITriggerPipe {
+public class TriggerRedstoneInput extends BCTrigger implements IPipeTrigger {
 
 	boolean active;
 	@SideOnly(Side.CLIENT)

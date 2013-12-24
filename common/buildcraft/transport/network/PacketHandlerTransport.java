@@ -34,76 +34,84 @@ public class PacketHandlerTransport implements IPacketHandler {
 
 			PacketUpdate packet = new PacketUpdate();
 			switch (packetID) {
-			case PacketIds.PIPE_POWER:
-				PacketPowerUpdate packetPower = new PacketPowerUpdate();
-				packetPower.readData(data);
-				onPacketPower((EntityPlayer) player, packetPower);
-				break;
-			case PacketIds.PIPE_LIQUID:
-				PacketFluidUpdate packetFluid = new PacketFluidUpdate();
-				packetFluid.readData(data);
-				break;
-			case PacketIds.PIPE_CONTENTS:
-				PacketPipeTransportContent packetC = new PacketPipeTransportContent();
-				packetC.readData(data);
-				onPipeContentUpdate((EntityPlayer) player, packetC);
-				break;
-			case PacketIds.GATE_ACTIONS:
-				packet.readData(data);
-				onGateActions((EntityPlayer) player, packet);
-				break;
-			case PacketIds.GATE_TRIGGERS:
-				packet.readData(data);
-				onGateTriggers((EntityPlayer) player, packet);
-				break;
-			case PacketIds.GATE_SELECTION:
-				packet.readData(data);
-				onGateSelection((EntityPlayer) player, packet);
-				break;
-			case PacketIds.PIPE_ITEM_NBT:
-				PacketPipeTransportNBT packetD = new PacketPipeTransportNBT();
-				packetD.readData(data);
-				onPipeContentNBT((EntityPlayer) player, packetD);
-				break;
+				case PacketIds.PIPE_POWER:
+					PacketPowerUpdate packetPower = new PacketPowerUpdate();
+					packetPower.readData(data);
+					onPacketPower((EntityPlayer) player, packetPower);
+					break;
+				case PacketIds.PIPE_LIQUID:
+					PacketFluidUpdate packetFluid = new PacketFluidUpdate();
+					packetFluid.readData(data);
+					break;
+				case PacketIds.PIPE_TRAVELER: {
+					PacketPipeTransportTraveler pkt = new PacketPipeTransportTraveler();
+					pkt.readData(data);
+					onPipeTravelerUpdate((EntityPlayer) player, pkt);
+					break;
+				}
+				case PacketIds.GATE_ACTIONS:
+					packet.readData(data);
+					onGateActions((EntityPlayer) player, packet);
+					break;
+				case PacketIds.GATE_TRIGGERS:
+					packet.readData(data);
+					onGateTriggers((EntityPlayer) player, packet);
+					break;
+				case PacketIds.GATE_SELECTION:
+					packet.readData(data);
+					onGateSelection((EntityPlayer) player, packet);
+					break;
+				case PacketIds.PIPE_ITEMSTACK: {
+					PacketPipeTransportItemStack pkt = new PacketPipeTransportItemStack();
+					pkt.readData(data);
+					break;
+				}
+				case PacketIds.PIPE_GATE_EXPANSION_MAP: {
+					PacketGateExpansionMap pkt = new PacketGateExpansionMap();
+					pkt.readData(data);
+					break;
+				}
 
-			/** SERVER SIDE **/
-			case PacketIds.DIAMOND_PIPE_SELECT: {
-				PacketSlotChange packet1 = new PacketSlotChange();
-				packet1.readData(data);
-				onDiamondPipeSelect((EntityPlayer) player, packet1);
-				break;
-			}
+				/**
+				 * SERVER SIDE *
+				 */
+				case PacketIds.DIAMOND_PIPE_SELECT: {
+					PacketSlotChange packet1 = new PacketSlotChange();
+					packet1.readData(data);
+					onDiamondPipeSelect((EntityPlayer) player, packet1);
+					break;
+				}
 
-			case PacketIds.EMERALD_PIPE_SELECT: {
-				PacketSlotChange packet1 = new PacketSlotChange();
-				packet1.readData(data);
-				onEmeraldPipeSelect((EntityPlayer) player, packet1);
-				break;
-			}
+				case PacketIds.EMERALD_PIPE_SELECT: {
+					PacketSlotChange packet1 = new PacketSlotChange();
+					packet1.readData(data);
+					onEmeraldPipeSelect((EntityPlayer) player, packet1);
+					break;
+				}
 
-			case PacketIds.GATE_REQUEST_INIT:
-				PacketCoordinates packetU = new PacketCoordinates();
-				packetU.readData(data);
-				onGateInitRequest((EntityPlayer) player, packetU);
-				break;
+				case PacketIds.GATE_REQUEST_INIT:
+					PacketCoordinates packetU = new PacketCoordinates();
+					packetU.readData(data);
+					onGateInitRequest((EntityPlayer) player, packetU);
+					break;
 
-			case PacketIds.GATE_REQUEST_SELECTION:
-				PacketCoordinates packetS = new PacketCoordinates();
-				packetS.readData(data);
-				onGateSelectionRequest((EntityPlayerMP) player, packetS);
-				break;
+				case PacketIds.GATE_REQUEST_SELECTION:
+					PacketCoordinates packetS = new PacketCoordinates();
+					packetS.readData(data);
+					onGateSelectionRequest((EntityPlayerMP) player, packetS);
+					break;
 
-			case PacketIds.GATE_SELECTION_CHANGE:
-				PacketUpdate packet3 = new PacketUpdate();
-				packet3.readData(data);
-				onGateSelectionChange((EntityPlayerMP) player, packet3);
-				break;
-				
-			case PacketIds.REQUEST_ITEM_NBT:
-				PacketSimpleId packet4 = new PacketSimpleId();
-				packet4.readData(data);
-				onItemNBTRequest((EntityPlayerMP) player, packet4);
-				break;
+				case PacketIds.GATE_SELECTION_CHANGE:
+					PacketUpdate packet3 = new PacketUpdate();
+					packet3.readData(data);
+					onGateSelectionChange((EntityPlayerMP) player, packet3);
+					break;
+
+				case PacketIds.PIPE_ITEMSTACK_REQUEST: {
+					PacketPipeTransportItemStackRequest pkt = new PacketPipeTransportItemStackRequest(player);
+					pkt.readData(data);
+					break;
+				}
 			}
 
 		} catch (Exception ex) {
@@ -113,7 +121,7 @@ public class PacketHandlerTransport implements IPacketHandler {
 
 	/**
 	 * Handles received list of potential actions on a gate
-	 * 
+	 *
 	 * @param packet
 	 */
 	private void onGateActions(EntityPlayer player, PacketUpdate packet) {
@@ -127,7 +135,7 @@ public class PacketHandlerTransport implements IPacketHandler {
 
 	/**
 	 * Handles received list of potential triggers on a gate.
-	 * 
+	 *
 	 * @param packet
 	 */
 	private void onGateTriggers(EntityPlayer player, PacketUpdate packet) {
@@ -141,7 +149,7 @@ public class PacketHandlerTransport implements IPacketHandler {
 
 	/**
 	 * Handles received current gate selection on a gate
-	 * 
+	 *
 	 * @param packet
 	 */
 	private void onGateSelection(EntityPlayer player, PacketUpdate packet) {
@@ -153,26 +161,12 @@ public class PacketHandlerTransport implements IPacketHandler {
 		((ContainerGateInterface) container).setSelection(packet, false);
 	}
 
-	private void onPipeContentNBT(EntityPlayer player, PacketPipeTransportNBT packet) {
-		TileGenericPipe pipe = getPipe(player.worldObj, packet.posX, packet.posY, packet.posZ);
-		if (pipe == null)
-			return;
-
-		if (pipe.pipe == null)
-			return;
-
-		if (!(pipe.pipe.transport instanceof PipeTransportItems))
-			return;
-
-		((PipeTransportItems)pipe.pipe.transport).handleNBTPacket(packet);
-	}
-
 	/**
 	 * Updates items in a pipe.
-	 * 
+	 *
 	 * @param packet
 	 */
-	private void onPipeContentUpdate(EntityPlayer player, PacketPipeTransportContent packet) {
+	private void onPipeTravelerUpdate(EntityPlayer player, PacketPipeTransportTraveler packet) {
 		World world = player.worldObj;
 
 		if (!world.blockExists(packet.posX, packet.posY, packet.posZ))
@@ -189,12 +183,12 @@ public class PacketHandlerTransport implements IPacketHandler {
 		if (!(pipe.pipe.transport instanceof PipeTransportItems))
 			return;
 
-		((PipeTransportItems) pipe.pipe.transport).handleItemPacket(packet);
+		((PipeTransportItems) pipe.pipe.transport).handleTravelerPacket(packet);
 	}
 
 	/**
 	 * Updates the display power on a power pipe
-	 * 
+	 *
 	 * @param packetPower
 	 */
 	private void onPacketPower(EntityPlayer player, PacketPowerUpdate packetPower) {
@@ -217,11 +211,12 @@ public class PacketHandlerTransport implements IPacketHandler {
 
 	}
 
-	/******************** SERVER ******************** **/
-
+	/**
+	 * ****************** SERVER ******************** *
+	 */
 	/**
 	 * Handles selection changes on a gate.
-	 * 
+	 *
 	 * @param playerEntity
 	 * @param packet
 	 */
@@ -234,7 +229,7 @@ public class PacketHandlerTransport implements IPacketHandler {
 
 	/**
 	 * Handles gate gui (current) selection requests.
-	 * 
+	 *
 	 * @param playerEntity
 	 * @param packet
 	 */
@@ -247,7 +242,7 @@ public class PacketHandlerTransport implements IPacketHandler {
 
 	/**
 	 * Handles received gate gui initialization requests.
-	 * 
+	 *
 	 * @param playerEntity
 	 * @param packet
 	 */
@@ -260,7 +255,7 @@ public class PacketHandlerTransport implements IPacketHandler {
 
 	/**
 	 * Retrieves pipe at specified coordinates if any.
-	 * 
+	 *
 	 * @param world
 	 * @param x
 	 * @param y
@@ -280,7 +275,7 @@ public class PacketHandlerTransport implements IPacketHandler {
 
 	/**
 	 * Handles selection changes on diamond pipe guis.
-	 * 
+	 *
 	 * @param player
 	 * @param packet
 	 */
@@ -294,10 +289,10 @@ public class PacketHandlerTransport implements IPacketHandler {
 
 		((PipeItemsDiamond) pipe.pipe).getFilters().setInventorySlotContents(packet.slot, packet.stack);
 	}
-	
+
 	/**
 	 * Handles selection changes on emerald pipe guis.
-	 * 
+	 *
 	 * @param player
 	 * @param packet
 	 */
@@ -310,24 +305,5 @@ public class PacketHandlerTransport implements IPacketHandler {
 			return;
 
 		((PipeItemsEmerald) pipe.pipe).getFilters().setInventorySlotContents(packet.slot, packet.stack);
-	}
-
-	/**
-	 * Handles the client request for tag data
-	 * @param player
-	 * @param packet
-	 */
-	private void onItemNBTRequest(EntityPlayerMP player, PacketSimpleId packet) {
-		TileGenericPipe pipe = getPipe(player.worldObj, packet.posX, packet.posY, packet.posZ);
-		if (pipe == null)
-			return;
-
-		if (pipe.pipe == null)
-			return;
-
-		if (!(pipe.pipe.transport instanceof PipeTransportItems))
-			return;
-
-		((PipeTransportItems) pipe.pipe.transport).handleNBTRequestPacket(player, packet.entityId);
 	}
 }

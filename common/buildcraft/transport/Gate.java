@@ -1,5 +1,6 @@
 package buildcraft.transport;
 
+import buildcraft.api.transport.PipeWire;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.gates.ActionManager;
 import buildcraft.api.gates.IAction;
@@ -7,56 +8,36 @@ import buildcraft.api.gates.IActionReceptor;
 import buildcraft.api.gates.ITrigger;
 import buildcraft.api.gates.ITriggerParameter;
 import buildcraft.api.gates.TriggerParameter;
-import buildcraft.core.network.PacketPayload;
-import buildcraft.core.network.PacketPayloadArrays;
+import buildcraft.core.GuiIds;
+import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.triggers.ActionRedstoneOutput;
+import buildcraft.transport.gates.GateDefinition.GateLogic;
+import buildcraft.transport.gates.GateDefinition.GateMaterial;
+import buildcraft.api.gates.GateExpansionController;
+import buildcraft.api.gates.IGateExpansion;
+import buildcraft.api.gates.ITileTrigger;
+import buildcraft.transport.gates.ItemGate;
 import buildcraft.transport.triggers.ActionSignalOutput;
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
 import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Multiset;
 import java.util.HashMap;
-import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.ForgeDirection;
 
-public abstract class Gate {
+public final class Gate {
 
-	public static enum GateKind {
-
-		None, Single, AND_2, OR_2, AND_3, OR_3, AND_4, OR_4;
-
-		public static GateKind getKindFromDamage(ItemStack itemstack) {
-			switch (itemstack.getItemDamage()) {
-				case 0:
-					return Single;
-				case 1:
-					return AND_2;
-				case 2:
-					return OR_2;
-				case 3:
-					return AND_3;
-				case 4:
-					return OR_3;
-				case 5:
-					return AND_4;
-				case 6:
-					return OR_4;
-				default:
-					return None;
-			}
-		}
-	}
-
-	public static enum GateConditional {
-
-		None, AND, OR
-	}
-	protected Pipe pipe;
-	public GateKind kind;
+	public final Pipe pipe;
+	public final GateMaterial material;
+	public final GateLogic logic;
+	public final BiMap<IGateExpansion, GateExpansionController> expansions = HashBiMap.create();
 	public ITrigger[] triggers = new ITrigger[8];
 	public ITriggerParameter[] triggerParameters = new ITriggerParameter[8];
 	public IAction[] actions = new IAction[8];
@@ -64,14 +45,10 @@ public abstract class Gate {
 	public boolean broadcastRedstone = false;
 
 	// / CONSTRUCTOR
-	public Gate(Pipe pipe) {
+	public Gate(Pipe pipe, GateMaterial material, GateLogic logic) {
 		this.pipe = pipe;
-	}
-
-	public Gate(Pipe pipe, ItemStack stack) {
-
-		this.pipe = pipe;
-		kind = GateKind.getKindFromDamage(stack);
+		this.material = material;
+		this.logic = logic;
 	}
 
 	public void setTrigger(int position, ITrigger trigger) {
@@ -98,9 +75,25 @@ public abstract class Gate {
 		return triggerParameters[position];
 	}
 
+	public void addGateExpansion(IGateExpansion expansion) {
+		if (!expansions.containsKey(expansion))
+			expansions.put(expansion, expansion.makeController(pipe.container));
+	}
+
 	// / SAVING & LOADING
 	public void writeToNBT(NBTTagCompound data) {
-		data.setInteger("Kind", kind.ordinal());
+		data.setString("material", material.name());
+		data.setString("logic", logic.name());
+		NBTTagList exList = new NBTTagList();
+		for (GateExpansionController con : expansions.values()) {
+			NBTTagCompound conNBT = new NBTTagCompound();
+			conNBT.setString("type", con.getType().getUniqueIdentifier());
+			NBTTagCompound conData = new NBTTagCompound();
+			con.writeToNBT(conData);
+			conNBT.setTag("data", conData);
+			exList.appendTag(conNBT);
+		}
+		data.setTag("expansions", exList);
 
 		for (int i = 0; i < 8; ++i) {
 			if (triggers[i] != null)
@@ -121,8 +114,6 @@ public abstract class Gate {
 	}
 
 	public void readFromNBT(NBTTagCompound data) {
-		kind = Gate.GateKind.values()[data.getInteger("Kind")];
-
 		for (int i = 0; i < 8; ++i) {
 			if (data.hasKey("trigger[" + i + "]"))
 				triggers[i] = ActionManager.triggers.get(data.getString("trigger[" + i + "]"));
@@ -140,20 +131,23 @@ public abstract class Gate {
 		broadcastRedstone = data.getBoolean("redstoneState");
 	}
 
-	// / SMP
-	public PacketPayload toPayload() {
-		PacketPayloadArrays payload = new PacketPayloadArrays(1, 0, 0);
-		payload.intPayload[0] = kind.ordinal();
-		return payload;
+	// GUI
+	public void openGui(EntityPlayer player) {
+		if (!CoreProxy.proxy.isRenderWorld(player.worldObj)) {
+			player.openGui(BuildCraftTransport.instance, GuiIds.GATES, pipe.container.worldObj, pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord);
+		}
 	}
 
-	// GUI
-	public abstract void openGui(EntityPlayer player);
-
 	// / UPDATING
-	public abstract void update();
+	public void tick() {
+		for (GateExpansionController expansion : expansions.values()) {
+			expansion.tick();
+		}
+	}
 
-	public abstract ItemStack getGateItem();
+	public ItemStack getGateItem() {
+		return ItemGate.makeGateItem(this);
+	}
 
 	public void dropGate() {
 		pipe.dropItem(getGateItem());
@@ -165,11 +159,6 @@ public abstract class Gate {
 			pipe.updateNeighbors(true);
 		}
 	}
-
-	// / INFORMATION
-	public abstract String getName();
-
-	public abstract GateConditional getConditional();
 
 	public boolean isGateActive() {
 		for (boolean b : broadcastSignal) {
@@ -183,7 +172,11 @@ public abstract class Gate {
 		return broadcastRedstone;
 	}
 
-	public abstract void startResolution();
+	public void startResolution() {
+		for (GateExpansionController expansion : expansions.values()) {
+			expansion.startResolution();
+		}
+	}
 
 	public void resolveActions() {
 		boolean oldBroadcastRedstone = broadcastRedstone;
@@ -208,7 +201,7 @@ public abstract class Gate {
 				actionCount.add(action);
 				if (!activeActions.containsKey(action)) {
 					activeActions.put(action, isNearbyTriggerActive(trigger, parameter));
-				} else if (getConditional() == GateConditional.AND) {
+				} else if (logic == GateLogic.AND) {
 					activeActions.put(action, activeActions.get(action) && isNearbyTriggerActive(trigger, parameter));
 				} else {
 					activeActions.put(action, activeActions.get(action) || isNearbyTriggerActive(trigger, parameter));
@@ -258,51 +251,92 @@ public abstract class Gate {
 		}
 	}
 
-	public abstract boolean resolveAction(IAction action, int count);
+	public boolean resolveAction(IAction action, int count) {
+		for (GateExpansionController expansion : expansions.values()) {
+			if (expansion.resolveAction(action, count))
+				return true;
+		}
+		return false;
+	}
 
 	public boolean isNearbyTriggerActive(ITrigger trigger, ITriggerParameter parameter) {
-		if (trigger instanceof ITriggerPipe)
-			return ((ITriggerPipe) trigger).isTriggerActive(pipe, parameter);
-		else if (trigger != null) {
+		if (trigger == null)
+			return false;
+
+		if (trigger instanceof IPipeTrigger)
+			return ((IPipeTrigger) trigger).isTriggerActive(pipe, parameter);
+
+		if (trigger instanceof ITileTrigger) {
 			for (ForgeDirection o : ForgeDirection.VALID_DIRECTIONS) {
 				TileEntity tile = pipe.container.getTile(o);
-
 				if (tile != null && !(tile instanceof TileGenericPipe)) {
-					if (trigger.isTriggerActive(o.getOpposite(), tile, parameter))
+					if (((ITileTrigger) trigger).isTriggerActive(o.getOpposite(), tile, parameter))
 						return true;
 				}
 			}
+			return false;
+		}
+
+		for (GateExpansionController expansion : expansions.values()) {
+			if (expansion.isTriggerActive(trigger, parameter))
+				return true;
 		}
 
 		return false;
 	}
 
 	// / TRIGGERS
-	public abstract void addTrigger(LinkedList<ITrigger> list);
+	public void addTrigger(List<ITrigger> list) {
+
+		if (pipe.wireSet[PipeWire.Red.ordinal()] && material == GateMaterial.IRON) {
+			list.add(BuildCraftTransport.triggerRedSignalActive);
+			list.add(BuildCraftTransport.triggerRedSignalInactive);
+		}
+
+		if (pipe.wireSet[PipeWire.Blue.ordinal()] && material == GateMaterial.IRON) {
+			list.add(BuildCraftTransport.triggerBlueSignalActive);
+			list.add(BuildCraftTransport.triggerBlueSignalInactive);
+		}
+
+		if (pipe.wireSet[PipeWire.Green.ordinal()] && material == GateMaterial.GOLD) {
+			list.add(BuildCraftTransport.triggerGreenSignalActive);
+			list.add(BuildCraftTransport.triggerGreenSignalInactive);
+		}
+
+		if (pipe.wireSet[PipeWire.Yellow.ordinal()] && material == GateMaterial.DIAMOND) {
+			list.add(BuildCraftTransport.triggerYellowSignalActive);
+			list.add(BuildCraftTransport.triggerYellowSignalInactive);
+		}
+
+		for (GateExpansionController expansion : expansions.values()) {
+			expansion.addTriggers(list);
+		}
+
+//		if (pipe.gate.kind == GateKind.AND_5 || pipe.gate.kind == GateKind.OR_5) {
+//			list.add(BuildCraftTransport.triggerTimerShort);
+//			list.add(BuildCraftTransport.triggerTimerMedium);
+//			list.add(BuildCraftTransport.triggerTimerLong);
+//		}
+
+	}
 
 	// / ACTIONS
-	public abstract void addActions(LinkedList<IAction> list);
+	public void addActions(List<IAction> list) {
+		if (pipe.wireSet[PipeWire.Red.ordinal()] && material == GateMaterial.IRON)
+			list.add(BuildCraftTransport.actionRedSignal);
 
-	// / TEXTURES
-	public abstract int getTextureIconIndex(boolean isSignalActive);
+		if (pipe.wireSet[PipeWire.Blue.ordinal()] && material == GateMaterial.IRON)
+			list.add(BuildCraftTransport.actionBlueSignal);
 
-	public abstract ResourceLocation getGuiFile();
+		if (pipe.wireSet[PipeWire.Green.ordinal()] && material == GateMaterial.GOLD)
+			list.add(BuildCraftTransport.actionGreenSignal);
 
-	public int getGuiHeight() {
-		return 207;
-	}
+		if (pipe.wireSet[PipeWire.Yellow.ordinal()] && material == GateMaterial.DIAMOND)
+			list.add(BuildCraftTransport.actionYellowSignal);
 
-	public static boolean isGateItem(ItemStack stack) {
-		return stack.itemID == BuildCraftTransport.pipeGate.itemID || stack.itemID == BuildCraftTransport.pipeGateAutarchic.itemID;
-	}
 
-	public static Gate makeGate(Pipe pipe, NBTTagCompound data) {
-		Gate gate = new GateVanilla(pipe);
-		gate.readFromNBT(data);
-		return gate;
-	}
-
-	public static Gate makeGate(Pipe pipe, ItemStack stack) {
-		return new GateVanilla(pipe, stack);
+		for (GateExpansionController expansion : expansions.values()) {
+			expansion.addActions(list);
+		}
 	}
 }

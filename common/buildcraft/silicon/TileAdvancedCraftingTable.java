@@ -45,6 +45,8 @@ import static net.minecraftforge.common.ForgeDirection.EAST;
 import static net.minecraftforge.common.ForgeDirection.NORTH;
 import static net.minecraftforge.common.ForgeDirection.SOUTH;
 import static net.minecraftforge.common.ForgeDirection.WEST;
+import net.minecraftforge.oredict.OreDictionary;
+import org.bouncycastle.util.Arrays;
 
 public class TileAdvancedCraftingTable extends TileEntity implements IInventory, ILaserTarget, IMachine, IActionReceptor, ISidedInventory {
 
@@ -53,6 +55,23 @@ public class TileAdvancedCraftingTable extends TileEntity implements IInventory,
 		@Override
 		public boolean canInteractWith(EntityPlayer var1) {
 			return false;
+		}
+	}
+
+	private final class CraftingGrid extends SimpleInventory {
+
+		public int[] oreIDs = new int[9];
+
+		public CraftingGrid() {
+			super(9, "CraftingSlots", 1);
+			Arrays.fill(oreIDs, -1);
+		}
+
+		@Override
+		public void setInventorySlotContents(int slotId, ItemStack itemstack) {
+			super.setInventorySlotContents(slotId, itemstack);
+			if (TileAdvancedCraftingTable.this.worldObj == null || !TileAdvancedCraftingTable.this.worldObj.isRemote)
+				oreIDs[slotId] = itemstack == null ? -1 : OreDictionary.getOreID(itemstack);
 		}
 	}
 
@@ -141,7 +160,7 @@ public class TileAdvancedCraftingTable extends TileEntity implements IInventory,
 	private InternalInventoryCrafting internalInventoryCrafting;
 
 	public TileAdvancedCraftingTable() {
-		craftingSlots = new SimpleInventory(9, "CraftingSlots", 1);
+		craftingSlots = new CraftingGrid();
 		storageSlots = new SimpleInventory(24, "StorageSlots", 64);
 		storageSlots.addListener(this);
 		invInput = new InventoryMapper(storageSlots, 0, 15);
@@ -151,7 +170,7 @@ public class TileAdvancedCraftingTable extends TileEntity implements IInventory,
 	private static final int[] SLOTS = Utils.createSlotArray(0, 24);
 	private static final EnumSet<ForgeDirection> SEARCH_SIDES = EnumSet.of(DOWN, NORTH, SOUTH, EAST, WEST);
 	private static final float REQUIRED_POWER = 500F;
-	private final SimpleInventory craftingSlots;
+	private final CraftingGrid craftingSlots;
 	private final SimpleInventory storageSlots;
 	private final InventoryMapper invInput;
 	private final InventoryMapper invOutput;
@@ -265,33 +284,24 @@ public class TileAdvancedCraftingTable extends TileEntity implements IInventory,
 			internalInventoryCrafting = new InternalInventoryCrafting();
 			internalPlayer = new InternalPlayer();
 			craftSlot = new SlotCrafting(internalPlayer, internalInventoryCrafting, craftResult, 0, 0, 0);
-			updateCraftingResults();
+			updateRecipe();
 		}
-		if (!CoreProxy.proxy.isSimulating(worldObj)) {
+		if (!CoreProxy.proxy.isSimulating(worldObj))
 			return;
-		}
-		if (lastMode == ActionMachineControl.Mode.Off) {
+		if (lastMode == ActionMachineControl.Mode.Off)
 			return;
-		}
-		updateCraftingResults();
-		findIngredients();
+		updateRecipe();
+		searchNeighborsForIngredients();
+		locateAndBindIngredients();
+		updateRecipeOutputDisplay();
 		justCrafted = false;
 		tick++;
 		tick = tick % recentEnergy.length;
 		recentEnergy[tick] = 0.0f;
-		if (craftResult.getStackInSlot(0) != null) {
-			internalInventoryCrafting.tempStacks = new InventoryCopy(storageSlots).getItemStacks();
-			internalInventoryCrafting.hitCount = new int[internalInventoryCrafting.tempStacks.length];
-			if (hasIngredients() && InvUtils.isRoomForStack(craftResult.getStackInSlot(0), ForgeDirection.UP, invOutput)) {
-				if (storedEnergy >= getRequiredEnergy()) {
-					craftItem();
-					justCrafted = true;
-				}
-			} else {
-				craftable = false;
-				internalInventoryCrafting.tempStacks = null;
-				internalInventoryCrafting.hitCount = null;
-				storedEnergy = 0;
+		if (canCraftAndOutput()) {
+			if (storedEnergy >= getRequiredEnergy()) {
+				craftItem();
+				justCrafted = true;
 			}
 		} else {
 			craftable = false;
@@ -301,33 +311,58 @@ public class TileAdvancedCraftingTable extends TileEntity implements IInventory,
 		}
 	}
 
-	private boolean hasIngredients() {
-		ItemStack[] tempStorage = internalInventoryCrafting.tempStacks;
-		for (int j = 0; j < craftingSlots.getSizeInventory(); j++) {
-			if (craftingSlots.getStackInSlot(j) == null) {
-				internalInventoryCrafting.bindings[j] = -1;
+	private boolean canCraftAndOutput() {
+		if (!hasIngredients())
+			return false;
+		ItemStack output = getRecipeOutput();
+		if (output == null)
+			return false;
+		return InvUtils.isRoomForStack(output, ForgeDirection.UP, invOutput);
+	}
+
+	private void locateAndBindIngredients() {
+		internalInventoryCrafting.tempStacks = new InventoryCopy(storageSlots).getItemStacks();
+		internalInventoryCrafting.hitCount = new int[internalInventoryCrafting.tempStacks.length];
+		ItemStack[] inputSlots = internalInventoryCrafting.tempStacks;
+		for (int gridSlot = 0; gridSlot < craftingSlots.getSizeInventory(); gridSlot++) {
+			internalInventoryCrafting.bindings[gridSlot] = -1;
+			if (craftingSlots.getStackInSlot(gridSlot) == null)
 				continue;
-			}
-			boolean matchedStorage = false;
-			for (int i = 0; i < tempStorage.length; i++) {
-				if (tempStorage[i] != null && StackHelper.instance().isCraftingEquivalent(craftingSlots.getStackInSlot(j), tempStorage[i], true)
-						&& internalInventoryCrafting.hitCount[i] < tempStorage[i].stackSize
-						&& internalInventoryCrafting.hitCount[i] < tempStorage[i].getMaxStackSize()) {
-					internalInventoryCrafting.bindings[j] = i;
-					internalInventoryCrafting.hitCount[i]++;
-					matchedStorage = true;
+			boolean foundMatch = false;
+			for (int inputSlot = 0; inputSlot < inputSlots.length; inputSlot++) {
+				if (!isMatchingIngredient(gridSlot, inputSlot))
+					continue;
+				if (internalInventoryCrafting.hitCount[inputSlot] < inputSlots[inputSlot].stackSize
+						&& internalInventoryCrafting.hitCount[inputSlot] < inputSlots[inputSlot].getMaxStackSize()) {
+					internalInventoryCrafting.bindings[gridSlot] = inputSlot;
+					internalInventoryCrafting.hitCount[inputSlot]++;
+					foundMatch = true;
 					break;
 				}
 			}
-			if (!matchedStorage) {
-				return false;
-			}
+			if (!foundMatch)
+				return;
 		}
-		return currentRecipe.matches(internalInventoryCrafting, worldObj);
+	}
+
+	private boolean isMatchingIngredient(int gridSlot, int inputSlot) {
+		ItemStack inputStack = internalInventoryCrafting.tempStacks[inputSlot];
+		if (inputStack == null)
+			return false;
+		if (StackHelper.instance().isMatchingItem(craftingSlots.getStackInSlot(gridSlot), inputStack, true, false))
+			return true;
+		if (StackHelper.instance().isCraftingEquivalent(craftingSlots.oreIDs[gridSlot], inputStack))
+			return true;
+		return false;
+	}
+
+	private boolean hasIngredients() {
+		return currentRecipe != null && currentRecipe.matches(internalInventoryCrafting, worldObj);
 	}
 
 	private void craftItem() {
-		craftSlot.onPickupFromSlot(internalPlayer, craftResult.getStackInSlot(0));
+		ItemStack recipeOutput = getRecipeOutput();
+		craftSlot.onPickupFromSlot(internalPlayer, recipeOutput);
 		ItemStack[] tempStorage = internalInventoryCrafting.tempStacks;
 		for (int i = 0; i < tempStorage.length; i++) {
 			if (tempStorage[i] != null && tempStorage[i].stackSize <= 0) {
@@ -336,7 +371,7 @@ public class TileAdvancedCraftingTable extends TileEntity implements IInventory,
 			storageSlots.getItemStacks()[i] = tempStorage[i];
 		}
 		storedEnergy -= getRequiredEnergy();
-		List<ItemStack> outputs = Lists.newArrayList(craftResult.getStackInSlot(0).copy());
+		List<ItemStack> outputs = Lists.newArrayList(recipeOutput.copy());
 		for (int i = 0; i < internalPlayer.inventory.mainInventory.length; i++) {
 			if (internalPlayer.inventory.mainInventory[i] != null) {
 				outputs.add(internalPlayer.inventory.mainInventory[i]);
@@ -354,7 +389,7 @@ public class TileAdvancedCraftingTable extends TileEntity implements IInventory,
 		}
 	}
 
-	private void findIngredients() {
+	private void searchNeighborsForIngredients() {
 		if (cache == null) {
 			cache = TileBuffer.makeBuffer(worldObj, xCoord, yCoord, zCoord, false);
 		}
@@ -367,7 +402,7 @@ public class TileAdvancedCraftingTable extends TileEntity implements IInventory,
 				for (ForgeDirection side : SEARCH_SIDES) {
 					TileEntity tile = cache[side.ordinal()].getTile();
 					if (tile instanceof IInventory) {
-						IInventory inv = Utils.getInventory(((IInventory) tile));
+						IInventory inv = InvUtils.getInventory(((IInventory) tile));
 						ItemStack result = InvUtils.moveOneItem(inv, side.getOpposite(), invInput, side, filter);
 						if (result != null) {
 							return;
@@ -380,14 +415,14 @@ public class TileAdvancedCraftingTable extends TileEntity implements IInventory,
 
 	public void updateCraftingMatrix(int slot, ItemStack stack) {
 		craftingSlots.setInventorySlotContents(slot, stack);
-		updateCraftingResults();
+		updateRecipe();
 		if (CoreProxy.proxy.isRenderWorld(worldObj)) {
 			PacketSlotChange packet = new PacketSlotChange(PacketIds.ADVANCED_WORKBENCH_SETSLOT, xCoord, yCoord, zCoord, slot, stack);
 			CoreProxy.proxy.sendToServer(packet.getPacket());
 		}
 	}
 
-	private void updateCraftingResults() {
+	private void updateRecipe() {
 		if (internalInventoryCrafting == null) {
 			return;
 		}
@@ -395,14 +430,30 @@ public class TileAdvancedCraftingTable extends TileEntity implements IInventory,
 		if (this.currentRecipe == null || !this.currentRecipe.matches(internalInventoryCrafting, worldObj)) {
 			currentRecipe = CraftingHelper.findMatchingRecipe(internalInventoryCrafting, worldObj);
 		}
-
-		ItemStack resultStack = null;
-		if (currentRecipe != null) {
-			resultStack = currentRecipe.getCraftingResult(internalInventoryCrafting);
-		}
-		craftResult.setInventorySlotContents(0, resultStack);
 		internalInventoryCrafting.recipeUpdate(false);
 		onInventoryChanged();
+	}
+
+	private void updateRecipeOutputDisplay() {
+		if (internalInventoryCrafting == null || currentRecipe == null) {
+			craftResult.setInventorySlotContents(0, null);
+			return;
+		}
+		ItemStack resultStack = getRecipeOutput();
+		if (resultStack == null) {
+			internalInventoryCrafting.recipeUpdate(true);
+			resultStack = getRecipeOutput();
+			internalInventoryCrafting.recipeUpdate(false);
+		}
+		craftResult.setInventorySlotContents(0, resultStack);
+		onInventoryChanged();
+	}
+
+	private ItemStack getRecipeOutput() {
+		if (internalInventoryCrafting == null || currentRecipe == null) {
+			return null;
+		}
+		return currentRecipe.getCraftingResult(internalInventoryCrafting);
 	}
 
 	public IInventory getCraftingSlots() {

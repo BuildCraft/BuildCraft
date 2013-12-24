@@ -27,7 +27,7 @@ public class ActionPipeColor extends BCAction {
 
 	@Override
 	public String getDescription() {
-		return String.format(StringUtils.localize("gate.pipe.item.color"), color.getLocalizedName());
+		return String.format(StringUtils.localize("gate.action.pipe.item.color"), color.getLocalizedName());
 	}
 
 	@Override

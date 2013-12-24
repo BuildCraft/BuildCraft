@@ -7,6 +7,7 @@
  */
 package buildcraft.core.triggers;
 
+import buildcraft.api.gates.ITileTrigger;
 import buildcraft.api.gates.ITriggerParameter;
 import buildcraft.api.inventory.ISpecialInventory;
 import buildcraft.core.inventory.InventoryIterator;
@@ -18,7 +19,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.ForgeDirection;
 
-public class TriggerInventory extends BCTrigger {
+public class TriggerInventory extends BCTrigger implements ITileTrigger {
 
 	public enum State {
 

@@ -7,6 +7,8 @@
  */
 package buildcraft.transport;
 
+import buildcraft.api.transport.PipeWire;
+import buildcraft.transport.gates.ItemGate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -34,9 +36,9 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
 import buildcraft.BuildCraftTransport;
+import buildcraft.api.gates.GateExpansions;
+import buildcraft.api.gates.IGateExpansion;
 import buildcraft.api.tools.IToolWrench;
-import buildcraft.api.transport.IPipe;
-import buildcraft.api.transport.ISolidSideTile;
 import buildcraft.core.BlockBuildCraft;
 import buildcraft.core.BlockIndex;
 import buildcraft.core.CoreConstants;
@@ -44,6 +46,8 @@ import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.BCLog;
 import buildcraft.core.utils.Utils;
 import buildcraft.core.utils.MatrixTranformations;
+import buildcraft.transport.gates.GateDefinition;
+import buildcraft.transport.gates.GateFactory;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -663,19 +667,19 @@ public class BlockGenericPipe extends BlockBuildCraft {
 				// interface callbacks for the individual pipe/logic calls
 				return pipe.blockActivated(player);
 			else if (currentItem.getItem() == BuildCraftTransport.redPipeWire) {
-				if (addOrStripWire(player, pipe, IPipe.WireColor.Red)) {
+				if (addOrStripWire(player, pipe, PipeWire.Red)) {
 					return true;
 				}
 			} else if (currentItem.getItem() == BuildCraftTransport.bluePipeWire) {
-				if (addOrStripWire(player, pipe, IPipe.WireColor.Blue)) {
+				if (addOrStripWire(player, pipe, PipeWire.Blue)) {
 					return true;
 				}
 			} else if (currentItem.getItem() == BuildCraftTransport.greenPipeWire) {
-				if (addOrStripWire(player, pipe, IPipe.WireColor.Green)) {
+				if (addOrStripWire(player, pipe, PipeWire.Green)) {
 					return true;
 				}
 			} else if (currentItem.getItem() == BuildCraftTransport.yellowPipeWire) {
-				if (addOrStripWire(player, pipe, IPipe.WireColor.Yellow)) {
+				if (addOrStripWire(player, pipe, PipeWire.Yellow)) {
 					return true;
 				}
 			} else if (currentItem.getItem() instanceof ItemGate) {
@@ -726,7 +730,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 
 	private boolean addGate(EntityPlayer player, Pipe pipe) {
 		if (!pipe.hasGate()) {
-			pipe.gate = Gate.makeGate(pipe, player.getCurrentEquippedItem());
+			pipe.gate = GateFactory.makeGate(pipe, player.getCurrentEquippedItem());
 			if (!player.capabilities.isCreativeMode) {
 				player.getCurrentEquippedItem().splitStack(1);
 			}
@@ -747,7 +751,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 		return false;
 	}
 
-	private boolean addOrStripWire(EntityPlayer player, Pipe pipe, IPipe.WireColor color) {
+	private boolean addOrStripWire(EntityPlayer player, Pipe pipe, PipeWire color) {
 		if (addWire(pipe, color)) {
 			if (!player.capabilities.isCreativeMode) {
 				player.getCurrentEquippedItem().splitStack(1);
@@ -757,7 +761,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 		return player.isSneaking() && stripWire(pipe, color);
 	}
 
-	private boolean addWire(Pipe pipe, IPipe.WireColor color) {
+	private boolean addWire(Pipe pipe, PipeWire color) {
 		if (!pipe.wireSet[color.ordinal()]) {
 			pipe.wireSet[color.ordinal()] = true;
 			pipe.signalStrength[color.ordinal()] = 0;
@@ -767,7 +771,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 		return false;
 	}
 
-	private boolean stripWire(Pipe pipe, IPipe.WireColor color) {
+	private boolean stripWire(Pipe pipe, PipeWire color) {
 		if (pipe.wireSet[color.ordinal()]) {
 			if (!CoreProxy.proxy.isRenderWorld(pipe.container.worldObj)) {
 				dropWire(color, pipe);
@@ -848,7 +852,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 		}
 
 		// Try to strip wires second, starting with yellow.
-		for (IPipe.WireColor color : IPipe.WireColor.values()) {
+		for (PipeWire color : PipeWire.values()) {
 			if (stripWire(pipe, color))
 				return true;
 		}
@@ -861,7 +865,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 	 *
 	 * @param color
 	 */
-	private void dropWire(IPipe.WireColor color, Pipe pipe) {
+	private void dropWire(PipeWire color, Pipe pipe) {
 
 		Item wireItem;
 		switch (color) {
@@ -885,26 +889,12 @@ public class BlockGenericPipe extends BlockBuildCraft {
 	@SideOnly(Side.CLIENT)
 	@Override
 	public Icon getBlockTexture(IBlockAccess iblockaccess, int x, int y, int z, int side) {
-
 		TileEntity tile = iblockaccess.getBlockTileEntity(x, y, z);
-		if (!(tile instanceof IPipeRenderState))
+		if (!(tile instanceof TileGenericPipe))
 			return null;
-		if (((IPipeRenderState) tile).getRenderState().textureArray != null)
-			return ((IPipeRenderState) tile).getRenderState().textureArray[side];
-		return ((IPipeRenderState) tile).getRenderState().currentTexture;
-
-		// Pipe pipe = getPipe(iblockaccess, i, j, k);
-		// if (!isValid(pipe)) {
-		// CoreProxy.BindTexture(DefaultProps.TEXTURE_BLOCKS);
-		// return 0;
-		// }
-		// int pipeTexture = pipe.getPipeTexture();
-		// if (pipeTexture > 255) {
-		// CoreProxy.BindTexture(DefaultProps.TEXTURE_EXTERNAL);
-		// return pipeTexture - 256;
-		// }
-		// CoreProxy.BindTexture(DefaultProps.TEXTURE_BLOCKS);
-		// return pipeTexture;
+		if (((TileGenericPipe) tile).renderState.textureArray != null)
+			return ((TileGenericPipe) tile).renderState.textureArray[side];
+		return ((TileGenericPipe) tile).renderState.currentTexture;
 	}
 
 	@Override
@@ -1044,7 +1034,6 @@ public class BlockGenericPipe extends BlockBuildCraft {
 			skippedFirstIconRegister = true;
 			return;
 		}
-		BuildCraftTransport.instance.gateIconProvider.registerIcons(iconRegister);
 		BuildCraftTransport.instance.wireIconProvider.registerIcons(iconRegister);
 		for (int i : pipes.keySet()) {
 			Pipe dummyPipe = createPipe(i);
@@ -1052,6 +1041,19 @@ public class BlockGenericPipe extends BlockBuildCraft {
 				dummyPipe.getIconProvider().registerIcons(iconRegister);
 			}
 		}
+
+		for (GateDefinition.GateMaterial material : GateDefinition.GateMaterial.VALUES) {
+			material.registerBlockIcon(iconRegister);
+		}
+
+		for (GateDefinition.GateLogic logic : GateDefinition.GateLogic.VALUES) {
+			logic.registerBlockIcon(iconRegister);
+		}
+
+		for (IGateExpansion expansion : GateExpansions.getExpansions()) {
+			expansion.registerBlockOverlay(iconRegister);
+		}
+
 	}
 
 	@Override
