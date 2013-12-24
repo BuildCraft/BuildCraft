@@ -6,58 +6,57 @@ import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.util.Icon;
 
+/**
+ * Don't put new Trigger Icons in here please, put them in the Trigger classes
+ * like the TriggerQuartzTimer. This class will go away someday.
+ *
+ * @author CovertJaguar <http://www.railcraft.info/>
+ */
 public class ActionTriggerIconProvider implements IIconProvider {
-	
+
 	public static ActionTriggerIconProvider INSTANCE = new ActionTriggerIconProvider();
-
-	public static final int Action_MachineControl_On 			=  0;
-	public static final int Action_MachineControl_Off 			=  1;
-	public static final int Action_MachineControl_Loop 			=  2;
-
-	public static final int Trigger_EngineHeat_Blue 			=  3;
-	public static final int Trigger_EngineHeat_Green 			=  4;
-	public static final int Trigger_EngineHeat_Yellow 			=  5;
-	public static final int Trigger_EngineHeat_Red 				=  6;
-	public static final int Trigger_Inventory_Empty 			=  7;
-	public static final int Trigger_Inventory_Contains 			=  8;
-	public static final int Trigger_Inventory_Space 			=  9;
-	public static final int Trigger_Inventory_Full 				= 10;
-	public static final int Trigger_FluidContainer_Empty 		= 11;
-	public static final int Trigger_FluidContainer_Contains	= 12;
-	public static final int Trigger_FluidContainer_Space 		= 13;
-	public static final int Trigger_FluidContainer_Full 		= 14;
-	public static final int Trigger_Machine_Active 				= 15;
-	public static final int Trigger_Machine_Inactive 			= 16;
-	public static final int Trigger_PipeContents_Empty 			= 17;
-	public static final int Trigger_PipeContents_ContainsItems 	= 18;
+	public static final int Action_MachineControl_On = 0;
+	public static final int Action_MachineControl_Off = 1;
+	public static final int Action_MachineControl_Loop = 2;
+	public static final int Trigger_EngineHeat_Blue = 3;
+	public static final int Trigger_EngineHeat_Green = 4;
+	public static final int Trigger_EngineHeat_Yellow = 5;
+	public static final int Trigger_EngineHeat_Red = 6;
+	public static final int Trigger_Inventory_Empty = 7;
+	public static final int Trigger_Inventory_Contains = 8;
+	public static final int Trigger_Inventory_Space = 9;
+	public static final int Trigger_Inventory_Full = 10;
+	public static final int Trigger_FluidContainer_Empty = 11;
+	public static final int Trigger_FluidContainer_Contains = 12;
+	public static final int Trigger_FluidContainer_Space = 13;
+	public static final int Trigger_FluidContainer_Full = 14;
+	public static final int Trigger_Machine_Active = 15;
+	public static final int Trigger_Machine_Inactive = 16;
+	public static final int Trigger_PipeContents_Empty = 17;
+	public static final int Trigger_PipeContents_ContainsItems = 18;
 	public static final int Trigger_PipeContents_ContainsFluid = 19;
 	public static final int Trigger_PipeContents_ContainsEnergy = 20;
-	public static final int Trigger_PipeSignal_Red_Active 		= 21;
-	public static final int Trigger_PipeSignal_Blue_Active 		= 22;
-	public static final int Trigger_PipeSignal_Green_Active 	= 23;
-	public static final int Trigger_PipeSignal_Yellow_Active 	= 24;
-	public static final int Trigger_PipeSignal_Red_Inactive 	= 25;
-	public static final int Trigger_PipeSignal_Blue_Inactive 	= 26;
-	public static final int Trigger_PipeSignal_Green_Inactive 	= 27;
-	public static final int Trigger_PipeSignal_Yellow_Inactive 	= 28;
-	public static final int Trigger_RedstoneInput_Active 		= 29;
-	public static final int Trigger_RedstoneInput_Inactive 		= 30;
-	public static final int Trigger_PipeContents_RequestsEnergy	= 31;
-	public static final int Trigger_PipeContents_TooMuchEnergy	= 32;
-	public static final int Trigger_Inventory_Below25 			= 33;
-	public static final int Trigger_Inventory_Below50 			= 34;
-	public static final int Trigger_Inventory_Below75 			= 35;
-	public static final int Trigger_Timer_Short					= 36;
-	public static final int Trigger_Timer_Medium				= 37;
-	public static final int Trigger_Timer_Long					= 38;
-
-	public static final int MAX 								= 39;
-
-
+	public static final int Trigger_PipeSignal_Red_Active = 21;
+	public static final int Trigger_PipeSignal_Blue_Active = 22;
+	public static final int Trigger_PipeSignal_Green_Active = 23;
+	public static final int Trigger_PipeSignal_Yellow_Active = 24;
+	public static final int Trigger_PipeSignal_Red_Inactive = 25;
+	public static final int Trigger_PipeSignal_Blue_Inactive = 26;
+	public static final int Trigger_PipeSignal_Green_Inactive = 27;
+	public static final int Trigger_PipeSignal_Yellow_Inactive = 28;
+	public static final int Trigger_RedstoneInput_Active = 29;
+	public static final int Trigger_RedstoneInput_Inactive = 30;
+	public static final int Trigger_PipeContents_RequestsEnergy = 31;
+	public static final int Trigger_PipeContents_TooMuchEnergy = 32;
+	public static final int Trigger_Inventory_Below25 = 33;
+	public static final int Trigger_Inventory_Below50 = 34;
+	public static final int Trigger_Inventory_Below75 = 35;
+	public static final int MAX = 39;
 	@SideOnly(Side.CLIENT)
 	private final Icon[] icons = new Icon[MAX];
-	
-	private ActionTriggerIconProvider(){}
+
+	private ActionTriggerIconProvider() {
+	}
 
 	@Override
 	@SideOnly(Side.CLIENT)
@@ -105,9 +104,5 @@ public class ActionTriggerIconProvider implements IIconProvider {
 		icons[ActionTriggerIconProvider.Trigger_Inventory_Below25] = iconRegister.registerIcon("buildcraft:triggers/trigger_inventory_below25");
 		icons[ActionTriggerIconProvider.Trigger_Inventory_Below50] = iconRegister.registerIcon("buildcraft:triggers/trigger_inventory_below50");
 		icons[ActionTriggerIconProvider.Trigger_Inventory_Below75] = iconRegister.registerIcon("buildcraft:triggers/trigger_inventory_below75");
-		icons[ActionTriggerIconProvider.Trigger_Timer_Short] = iconRegister.registerIcon("buildcraft:triggers/trigger_timer_short");
-		icons[ActionTriggerIconProvider.Trigger_Timer_Medium] = iconRegister.registerIcon("buildcraft:triggers/trigger_timer_medium");
-		icons[ActionTriggerIconProvider.Trigger_Timer_Long] = iconRegister.registerIcon("buildcraft:triggers/trigger_timer_long");
 	}
-
 }

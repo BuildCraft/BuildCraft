@@ -18,8 +18,8 @@ public class ActionPowerLimiter extends BCAction {
 	private Icon icon;
 	public final PowerMode limit;
 
-	public ActionPowerLimiter(int id, PowerMode limit) {
-		super(id, "buildcraft.power.limiter." + limit.name().toLowerCase(Locale.ENGLISH));
+	public ActionPowerLimiter(PowerMode limit) {
+		super("buildcraft.power.limiter." + limit.name().toLowerCase(Locale.ENGLISH));
 
 		this.limit = limit;
 	}

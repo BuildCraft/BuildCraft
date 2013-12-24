@@ -9,6 +9,7 @@ package buildcraft.transport.triggers;
 
 import buildcraft.core.triggers.BCAction;
 import buildcraft.core.utils.EnumColor;
+import buildcraft.core.utils.StringUtils;
 import java.util.Locale;
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.util.Icon;
@@ -18,15 +19,15 @@ public class ActionExtractionPreset extends BCAction {
 	private Icon icon;
 	public final EnumColor color;
 
-	public ActionExtractionPreset(int id, EnumColor color) {
-		super(id, "buildcraft.extraction.preset." + color.getTag());
+	public ActionExtractionPreset(EnumColor color) {
+		super("buildcraft.extraction.preset." + color.getTag());
 
 		this.color = color;
 	}
 
 	@Override
 	public String getDescription() {
-		return color.getName() + " Extraction Preset";
+		return String.format(StringUtils.localize("gate.action.extraction"), color.getName());
 	}
 
 	@Override

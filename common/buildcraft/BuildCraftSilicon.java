@@ -36,7 +36,6 @@ import cpw.mods.fml.common.registry.LanguageRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.common.Configuration;
 import net.minecraftforge.common.Property;
 
 @Mod(name = "BuildCraft Silicon", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Silicon", dependencies = DefaultProps.DEPENDENCY_TRANSPORT)
@@ -46,10 +45,6 @@ public class BuildCraftSilicon {
 	public static ItemRedstoneChipset redstoneChipset;
 	public static BlockLaser laserBlock;
 	public static BlockLaserTable assemblyTableBlock;
-
-	public static int timerIntervalShort;
-	public static int timerIntervalMedium;
-	public static int timerIntervalLong;
 
 	@Instance("BuildCraft|Silicon")
 	public static BuildCraftSilicon instance;
@@ -61,13 +56,6 @@ public class BuildCraftSilicon {
 		Property assemblyTableId = BuildCraftCore.mainConfiguration.getBlock("assemblyTable.id", DefaultProps.ASSEMBLY_TABLE_ID);
 
 		Property redstoneChipsetId = BuildCraftCore.mainConfiguration.getItem("redstoneChipset.id", DefaultProps.REDSTONE_CHIPSET);
-
-		Property timerIntervalShort = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "timerShortInterval", 2);
-		timerIntervalShort.comment = "sets the 'short' duration of the quartz gate timer (default: 2 seconds)";
-		Property timerIntervalMedium = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "timerMediumInterval", 5);
-		timerIntervalMedium.comment = "sets the 'medium' duration of the quartz gate timer (default: 5 seconds)";
-		Property timerIntervalLong = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "timerLongInterval", 10);
-		timerIntervalLong.comment = "sets the 'long' duration of the quartz gate timer (default: 10 seconds)";
 
 		BuildCraftCore.mainConfiguration.save();
 
@@ -85,10 +73,6 @@ public class BuildCraftSilicon {
 		redstoneChipset.setUnlocalizedName("redstoneChipset");
 		CoreProxy.proxy.registerItem(redstoneChipset);
 		redstoneChipset.registerItemStacks();
-
-		this.timerIntervalShort = timerIntervalShort.getInt();
-		this.timerIntervalMedium = timerIntervalMedium.getInt();
-		this.timerIntervalLong = timerIntervalLong.getInt();
 	}
 
 	@EventHandler

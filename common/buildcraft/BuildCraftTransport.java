@@ -41,6 +41,7 @@ import buildcraft.transport.blueprints.BptItemPipeWooden;
 import buildcraft.transport.gates.GateExpansionPulsar;
 import buildcraft.api.gates.GateExpansions;
 import buildcraft.api.transport.PipeWire;
+import buildcraft.transport.gates.GateExpansionTimer;
 import buildcraft.transport.network.PacketHandlerTransport;
 import buildcraft.transport.network.TransportConnectionHandler;
 import buildcraft.transport.pipes.PipeFluidsCobblestone;
@@ -82,7 +83,8 @@ import buildcraft.transport.triggers.ActionPowerLimiter;
 import buildcraft.transport.triggers.ActionSignalOutput;
 import buildcraft.transport.triggers.ActionSingleEnergyPulse;
 import buildcraft.transport.triggers.TriggerPipeContents;
-import buildcraft.transport.triggers.TriggerQuartzTimer;
+import buildcraft.transport.triggers.TriggerClockTimer;
+import buildcraft.transport.triggers.TriggerClockTimer.Time;
 import buildcraft.transport.triggers.TriggerPipeContents.Kind;
 import buildcraft.transport.triggers.TriggerPipeSignal;
 import cpw.mods.fml.common.Mod;
@@ -167,9 +169,7 @@ public class BuildCraftTransport {
 	public static BCTrigger triggerGreenSignalInactive = new TriggerPipeSignal(DefaultProps.TRIGGER_GREEN_SIGNAL_INACTIVE, false, PipeWire.Green);
 	public static BCTrigger triggerYellowSignalActive = new TriggerPipeSignal(DefaultProps.TRIGGER_YELLOW_SIGNAL_ACTIVE, true, PipeWire.Yellow);
 	public static BCTrigger triggerYellowSignalInactive = new TriggerPipeSignal(DefaultProps.TRIGGER_YELLOW_SIGNAL_INACTIVE, false, PipeWire.Yellow);
-	public static BCTrigger triggerTimerShort = new TriggerQuartzTimer(DefaultProps.TRIGGER_TIMER_SHORT, TriggerQuartzTimer.Time.Short);
-	public static BCTrigger triggerTimerMedium = new TriggerQuartzTimer(DefaultProps.TRIGGER_TIMER_MEDIUM, TriggerQuartzTimer.Time.Medium);
-	public static BCTrigger triggerTimerLong = new TriggerQuartzTimer(DefaultProps.TRIGGER_TIMER_LONG, TriggerQuartzTimer.Time.Long);
+	public static BCTrigger[] triggerTimer = new TriggerClockTimer[TriggerClockTimer.Time.VALUES.length];
 	public static BCAction actionRedSignal = new ActionSignalOutput(DefaultProps.ACTION_RED_SIGNAL, PipeWire.Red);
 	public static BCAction actionBlueSignal = new ActionSignalOutput(DefaultProps.ACTION_BLUE_SIGNAL, PipeWire.Blue);
 	public static BCAction actionGreenSignal = new ActionSignalOutput(DefaultProps.ACTION_GREEN_SIGNAL, PipeWire.Green);
@@ -179,10 +179,10 @@ public class BuildCraftTransport {
 	public static BCAction[] actionPipeColor = new BCAction[16];
 	public static BCAction[] actionPipeDirection = new BCAction[16];
 	public static BCAction[] actionPowerLimiter = new BCAction[7];
-	public static BCAction actionExtractionPresetRed = new ActionExtractionPreset(-1, EnumColor.RED);
-	public static BCAction actionExtractionPresetBlue = new ActionExtractionPreset(-1, EnumColor.BLUE);
-	public static BCAction actionExtractionPresetGreen = new ActionExtractionPreset(-1, EnumColor.GREEN);
-	public static BCAction actionExtractionPresetYellow = new ActionExtractionPreset(-1, EnumColor.YELLOW);
+	public static BCAction actionExtractionPresetRed = new ActionExtractionPreset(EnumColor.RED);
+	public static BCAction actionExtractionPresetBlue = new ActionExtractionPreset(EnumColor.BLUE);
+	public static BCAction actionExtractionPresetGreen = new ActionExtractionPreset(EnumColor.GREEN);
+	public static BCAction actionExtractionPresetYellow = new ActionExtractionPreset(EnumColor.YELLOW);
 	public IIconProvider pipeIconProvider = new PipeIconProvider();
 	public IIconProvider wireIconProvider = new WireIconProvider();
 	@Instance("BuildCraft|Transport")
@@ -266,6 +266,7 @@ public class BuildCraftTransport {
 			PipeManager.registerExtractionHandler(new ExtractionHandler(excludedItemBlocks, excludedFluidBlocks));
 
 			GateExpansions.registerExpansion(GateExpansionPulsar.INSTANCE);
+			GateExpansions.registerExpansion(GateExpansionTimer.INSTANCE);
 
 			Property groupItemsTriggerProp = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "pipes.groupItemsTrigger", 32);
 			groupItemsTriggerProp.comment = "when reaching this amount of objects in a pipes, items will be automatically grouped";
@@ -412,16 +413,20 @@ public class BuildCraftTransport {
 	public void postInit(FMLPostInitializationEvent evt) {
 		ItemFacade.initialize();
 
+		for (Time time : TriggerClockTimer.Time.VALUES) {
+			triggerTimer[time.ordinal()] = new TriggerClockTimer(time);
+		}
+
 		for (EnumColor color : EnumColor.VALUES) {
-			actionPipeColor[color.ordinal()] = new ActionPipeColor(-1, color);
+			actionPipeColor[color.ordinal()] = new ActionPipeColor(color);
 		}
 
 		for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
-			actionPipeDirection[direction.ordinal()] = new ActionPipeDirection(-1, direction);
+			actionPipeDirection[direction.ordinal()] = new ActionPipeDirection(direction);
 		}
 
 		for (PowerMode limit : PowerMode.VALUES) {
-			actionPowerLimiter[limit.ordinal()] = new ActionPowerLimiter(-1, limit);
+			actionPowerLimiter[limit.ordinal()] = new ActionPowerLimiter(limit);
 		}
 	}
 

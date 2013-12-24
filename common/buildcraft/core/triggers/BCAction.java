@@ -19,6 +19,15 @@ public abstract class BCAction implements IAction {
 	protected final int legacyId;
 	protected final String uniqueTag;
 
+	public BCAction(String uniqueTag) {
+		this(-1, uniqueTag);
+	}
+
+	/**
+	 * 
+	 * @param legacyId this should be -1 for new Actions
+	 * @param uniqueTag 
+	 */
 	public BCAction(int legacyId, String uniqueTag) {
 		this.legacyId = legacyId;
 		this.uniqueTag = uniqueTag;
