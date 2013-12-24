@@ -33,7 +33,6 @@ import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidBlock;
 
-
 public class BlockUtil {
 
 	public static List<ItemStack> getItemStackFromBlock(World world, int i, int j, int k) {
@@ -49,15 +48,13 @@ public class BlockUtil {
 
 		ArrayList<ItemStack> dropsList = block.getBlockDropped(world, i, j, k, meta, 0);
 		float dropChance = ForgeEventFactory.fireBlockHarvesting(dropsList, world, block, i, j, k, meta, 0, 1.0F, false, CoreProxy.proxy.getBuildCraftPlayer(world));
-        
+
 		ArrayList<ItemStack> returnList = new ArrayList<ItemStack>();
-        for (ItemStack s : dropsList)
-        {
-            if (world.rand.nextFloat() <= dropChance)
-            {
-            	returnList.add(s);
-            }
-        }
+		for (ItemStack s : dropsList) {
+			if (world.rand.nextFloat() <= dropChance) {
+				returnList.add(s);
+			}
+		}
 
 		return returnList;
 	}
@@ -87,16 +84,16 @@ public class BlockUtil {
 		world.setBlock(x, y, z, 0);
 	}
 
-	public static boolean canChangeBlock(World world, int x, int y, int z) {
-		return canChangeBlock(world.getBlockId(x, y, z), world, x, y, z);
-	}
-
 	public static boolean isAnObstructingBlock(int blockID, World world, int x, int y, int z) {
 		Block block = Block.blocksList[blockID];
 
 		if (blockID == 0 || block == null || block.isAirBlock(world, x, y, z))
 			return false;
 		return true;
+	}
+
+	public static boolean canChangeBlock(World world, int x, int y, int z) {
+		return canChangeBlock(world.getBlockId(x, y, z), world, x, y, z);
 	}
 
 	public static boolean canChangeBlock(int blockID, World world, int x, int y, int z) {

@@ -2,18 +2,15 @@ package buildcraft.transport.triggers;
 
 import java.util.Locale;
 
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.World;
-import net.minecraftforge.common.ForgeDirection;
 import buildcraft.BuildCraftSilicon;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.gates.ITriggerParameter;
 import buildcraft.core.triggers.ActionTriggerIconProvider;
 import buildcraft.core.triggers.BCTrigger;
-import buildcraft.transport.ITriggerPipe;
+import buildcraft.transport.IPipeTrigger;
 import buildcraft.transport.Pipe;
 
-public class TriggerQuartzTimer extends BCTrigger implements ITriggerPipe {
+public class TriggerQuartzTimer extends BCTrigger implements IPipeTrigger {
 	
 	public enum Time {
 		Short, Medium, Long
@@ -46,11 +43,11 @@ public class TriggerQuartzTimer extends BCTrigger implements ITriggerPipe {
 	public String getDescription() {
 		switch (time) {
 			case Short:
-				return BuildCraftSilicon.timerIntervalShort + " Second Timer";
+				return BuildCraftSilicon.timerIntervalShort + " Localize Me!";
 			case Medium:
-				return BuildCraftSilicon.timerIntervalMedium + " Second Timer";
+				return BuildCraftSilicon.timerIntervalMedium + " Localize Me!";
 			default:
-				return BuildCraftSilicon.timerIntervalLong + " Second Timer";
+				return BuildCraftSilicon.timerIntervalLong + " Localize Me!";
 		}
 	}
 	

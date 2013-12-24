@@ -10,7 +10,7 @@ package buildcraft.transport.triggers;
 import buildcraft.api.gates.ITriggerParameter;
 import buildcraft.core.triggers.BCTrigger;
 import buildcraft.core.utils.StringUtils;
-import buildcraft.transport.ITriggerPipe;
+import buildcraft.transport.IPipeTrigger;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeTransportFluids;
 import buildcraft.transport.PipeTransportItems;
@@ -26,7 +26,7 @@ import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 
-public class TriggerPipeContents extends BCTrigger implements ITriggerPipe {
+public class TriggerPipeContents extends BCTrigger implements IPipeTrigger {
 
 	public enum Kind {
 

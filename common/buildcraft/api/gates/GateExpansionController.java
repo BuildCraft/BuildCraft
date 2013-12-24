@@ -44,6 +44,10 @@ public abstract class GateExpansionController {
 		return false;
 	}
 
+	public boolean isTriggerActive(ITrigger trigger, ITriggerParameter parameter) {
+		return false;
+	}
+
 	public void addTriggers(List<ITrigger> list) {
 	}
 

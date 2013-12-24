@@ -15,6 +15,7 @@ import buildcraft.transport.gates.GateDefinition.GateLogic;
 import buildcraft.transport.gates.GateDefinition.GateMaterial;
 import buildcraft.api.gates.GateExpansionController;
 import buildcraft.api.gates.IGateExpansion;
+import buildcraft.api.gates.ITileTrigger;
 import buildcraft.transport.gates.ItemGate;
 import buildcraft.transport.triggers.ActionSignalOutput;
 import com.google.common.collect.BiMap;
@@ -84,7 +85,7 @@ public final class Gate {
 		data.setString("material", material.name());
 		data.setString("logic", logic.name());
 		NBTTagList exList = new NBTTagList();
-		for(GateExpansionController con : expansions.values()){
+		for (GateExpansionController con : expansions.values()) {
 			NBTTagCompound conNBT = new NBTTagCompound();
 			conNBT.setString("type", con.getType().getUniqueIdentifier());
 			NBTTagCompound conData = new NBTTagCompound();
@@ -259,17 +260,26 @@ public final class Gate {
 	}
 
 	public boolean isNearbyTriggerActive(ITrigger trigger, ITriggerParameter parameter) {
-		if (trigger instanceof ITriggerPipe)
-			return ((ITriggerPipe) trigger).isTriggerActive(pipe, parameter);
-		else if (trigger != null) {
+		if (trigger == null)
+			return false;
+
+		if (trigger instanceof IPipeTrigger)
+			return ((IPipeTrigger) trigger).isTriggerActive(pipe, parameter);
+
+		if (trigger instanceof ITileTrigger) {
 			for (ForgeDirection o : ForgeDirection.VALID_DIRECTIONS) {
 				TileEntity tile = pipe.container.getTile(o);
-
 				if (tile != null && !(tile instanceof TileGenericPipe)) {
-					if (trigger.isTriggerActive(o.getOpposite(), tile, parameter))
+					if (((ITileTrigger) trigger).isTriggerActive(o.getOpposite(), tile, parameter))
 						return true;
 				}
 			}
+			return false;
+		}
+
+		for (GateExpansionController expansion : expansions.values()) {
+			if (expansion.isTriggerActive(trigger, parameter))
+				return true;
 		}
 
 		return false;

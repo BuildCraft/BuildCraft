@@ -7,6 +7,7 @@
  */
 package buildcraft.core.triggers;
 
+import buildcraft.api.gates.ITileTrigger;
 import buildcraft.api.gates.ITriggerParameter;
 import java.util.Locale;
 import net.minecraft.tileentity.TileEntity;
@@ -16,7 +17,7 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
 
-public class TriggerFluidContainer extends BCTrigger {
+public class TriggerFluidContainer extends BCTrigger implements ITileTrigger {
 
 	public enum State {
 

@@ -7,6 +7,7 @@
  */
 package buildcraft.energy.triggers;
 
+import buildcraft.api.gates.ITileTrigger;
 import buildcraft.api.gates.ITriggerParameter;
 import buildcraft.core.triggers.BCTrigger;
 import buildcraft.core.utils.StringUtils;
@@ -19,7 +20,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Icon;
 import net.minecraftforge.common.ForgeDirection;
 
-public class TriggerEngineHeat extends BCTrigger {
+public class TriggerEngineHeat extends BCTrigger implements ITileTrigger {
 
 	public EnergyStage stage;
 	@SideOnly(Side.CLIENT)

@@ -14,9 +14,7 @@ import buildcraft.api.gates.TriggerParameter;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.renderer.texture.IconRegister;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Icon;
-import net.minecraftforge.common.ForgeDirection;
 
 /**
  * This class has to be implemented to create new triggers kinds to BuildCraft
@@ -72,11 +70,6 @@ public abstract class BCTrigger implements ITrigger {
 	@Override
 	public String getDescription() {
 		return "";
-	}
-
-	@Override
-	public boolean isTriggerActive(ForgeDirection side, TileEntity tile, ITriggerParameter parameter) {
-		return false;
 	}
 
 	@Override
