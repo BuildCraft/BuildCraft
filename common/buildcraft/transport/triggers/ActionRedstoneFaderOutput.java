@@ -8,34 +8,38 @@
 package buildcraft.transport.triggers;
 
 import buildcraft.core.triggers.BCAction;
-import java.util.Locale;
+import buildcraft.core.utils.StringUtils;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.util.Icon;
-import net.minecraftforge.common.ForgeDirection;
 
-public class ActionPipeDirection extends BCAction {
+public class ActionRedstoneFaderOutput extends BCAction {
 
+	public final int level;
+	@SideOnly(Side.CLIENT)
 	private Icon icon;
-	public final ForgeDirection direction;
 
-	public ActionPipeDirection(ForgeDirection direction) {
-		super("buildcraft:pipe.dir." + direction.name().toLowerCase(Locale.ENGLISH), "buildcraft.pipe.dir." + direction.name().toLowerCase(Locale.ENGLISH));
+	public ActionRedstoneFaderOutput(int level) {
+		super(String.format("buildcraft:redstone.output.%02d", level));
 
-		this.direction = direction;
+		this.level = level;
 	}
 
 	@Override
 	public String getDescription() {
-		return direction.name().substring(0, 1) + direction.name().substring(1).toLowerCase(Locale.ENGLISH) + " Pipe Direction";
+		return String.format(StringUtils.localize("gate.trigger.redstone.input.level"), level);
 	}
 
 	@Override
+	@SideOnly(Side.CLIENT)
 	public Icon getIcon() {
 		return icon;
 	}
 
 	@Override
+	@SideOnly(Side.CLIENT)
 	public void registerIcons(IconRegister iconRegister) {
-		icon = iconRegister.registerIcon("buildcraft:triggers/trigger_dir_" + direction.name().toLowerCase(Locale.ENGLISH));
+		icon = iconRegister.registerIcon(String.format("buildcraft:triggers/redstone_%02d", level));
 	}
 }

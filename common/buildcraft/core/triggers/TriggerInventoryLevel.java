@@ -7,32 +7,36 @@
  */
 package buildcraft.core.triggers;
 
-import buildcraft.api.gates.ActionManager;
 import buildcraft.api.gates.ITileTrigger;
 import buildcraft.api.gates.ITriggerParameter;
 import buildcraft.core.inventory.InventoryIterator;
 import buildcraft.core.inventory.InventoryIterator.IInvSlot;
 import buildcraft.core.inventory.StackHelper;
+import buildcraft.core.utils.StringUtils;
 import java.util.Locale;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.ForgeDirection;
 
-public class TriggerInventoryLevel extends BCTrigger implements ITileTrigger{
+public class TriggerInventoryLevel extends BCTrigger implements ITileTrigger {
 
 	public enum TriggerType {
 
-		BELOW_25, BELOW_50, BELOW_75
+		BELOW_25(0.25F), BELOW_50(0.5F), BELOW_75(0.75F);
+		public final float level;
+
+		private TriggerType(float level) {
+			this.level = level;
+		}
 	};
 	public TriggerType type;
 
 	public TriggerInventoryLevel(TriggerType type) {
-		super(0, "buildcraft.inventorylevel." + type.name().toLowerCase(Locale.ENGLISH));
+		super("buildcraft:inventorylevel." + type.name().toLowerCase(Locale.ENGLISH),
+				"buildcraft.inventorylevel." + type.name().toLowerCase(Locale.ENGLISH),
+				"buildcraft.filteredBuffer." + type.name().toLowerCase(Locale.ENGLISH));
 		this.type = type;
-
-		// Legacy migration code
-		ActionManager.triggers.put("buildcraft.filteredBuffer." + type.name().toLowerCase(Locale.ENGLISH), this);
 	}
 
 	@Override
@@ -47,14 +51,7 @@ public class TriggerInventoryLevel extends BCTrigger implements ITileTrigger{
 
 	@Override
 	public String getDescription() {
-		switch (type) {
-			case BELOW_25:
-				return "Contains < 25%";
-			case BELOW_50:
-				return "Contains < 50%";
-			default:
-				return "Contains < 75%";
-		}
+		return String.format(StringUtils.localize("gate.trigger.inventorylevel.below"), (int) (type.level * 100));
 	}
 
 	@Override
@@ -80,15 +77,7 @@ public class TriggerInventoryLevel extends BCTrigger implements ITileTrigger{
 
 			if (stackSpace > 0) {
 				float percentage = (float) foundItems / ((float) stackSpace * (float) searchStack.getMaxStackSize());
-
-				switch (type) {
-					case BELOW_25:
-						return percentage < 0.25f;
-					case BELOW_50:
-						return percentage < 0.5f;
-					default:
-						return percentage < 0.75f;
-				}
+				return percentage < type.level;
 			}
 
 		}

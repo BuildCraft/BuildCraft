@@ -14,6 +14,7 @@ package buildcraft.api.transport;
  */
 public enum PipeWire {
 	Red, Blue, Green, Yellow;
+	public static final PipeWire[] VALUES = values();
 
 	public PipeWire reverse() {
 		switch (this) {

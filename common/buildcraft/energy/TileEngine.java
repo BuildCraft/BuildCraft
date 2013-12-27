@@ -43,7 +43,8 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 
 	public enum EnergyStage {
 
-		BLUE, GREEN, YELLOW, RED, OVERHEAT
+		BLUE, GREEN, YELLOW, RED, OVERHEAT;
+		public static final EnergyStage[] VALUES = values();
 	}
 	public static final float MIN_HEAT = 20;
 	public static final float IDEAL_HEAT = 100;
@@ -174,7 +175,7 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 			if (!isOrientationValid())
 				switchOrientation(true);
 		}
-		
+
 		if (!isRedstonePowered)
 			if (energy > 1)
 				energy--;

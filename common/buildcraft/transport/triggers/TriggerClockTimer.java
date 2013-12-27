@@ -14,23 +14,23 @@ public class TriggerClockTimer extends BCTrigger {
 		SHORT(5), MEDIUM(10), LONG(15);
 		public static final Time[] VALUES = values();
 		public final int delay;
-		private Icon icon;
 
 		private Time(int delay) {
 			this.delay = delay;
 		}
 	}
 	public final Time time;
+	private Icon icon;
 
 	public TriggerClockTimer(Time time) {
-		super(-1, "buildcraft.timer." + time.name().toLowerCase(Locale.ENGLISH));
+		super("buildcraft:timer." + time.name().toLowerCase(Locale.ENGLISH));
 
 		this.time = time;
 	}
 
 	@Override
 	public Icon getIcon() {
-		return time.icon;
+		return icon;
 	}
 
 	@Override
@@ -39,14 +39,7 @@ public class TriggerClockTimer extends BCTrigger {
 	}
 
 	@Override
-	public boolean hasParameter() {
-		return false;
-	}
-
-	@Override
 	public void registerIcons(IconRegister iconRegister) {
-		Time.SHORT.icon = iconRegister.registerIcon("buildcraft:triggers/trigger_timer_short");
-		Time.MEDIUM.icon = iconRegister.registerIcon("buildcraft:triggers/trigger_timer_medium");
-		Time.LONG.icon = iconRegister.registerIcon("buildcraft:triggers/trigger_timer_long");
+		icon = iconRegister.registerIcon("buildcraft:triggers/trigger_timer_" + time.name().toLowerCase(Locale.ENGLISH));
 	}
 }

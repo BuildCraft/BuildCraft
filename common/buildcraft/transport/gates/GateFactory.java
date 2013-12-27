@@ -88,6 +88,7 @@ public class GateFactory {
 		}
 
 		Gate gate = makeGate(pipe, material, logic);
+		gate.readFromNBT(nbt);
 
 		if (nbt.hasKey("Pulser")) {
 			NBTTagCompound pulsarTag = nbt.getCompoundTag("Pulser");

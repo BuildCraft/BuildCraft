@@ -20,7 +20,7 @@ public class ActionExtractionPreset extends BCAction {
 	public final EnumColor color;
 
 	public ActionExtractionPreset(EnumColor color) {
-		super("buildcraft.extraction.preset." + color.getTag());
+		super("buildcraft:extraction.preset." + color.getTag(), "buildcraft.extraction.preset." + color.getTag());
 
 		this.color = color;
 	}

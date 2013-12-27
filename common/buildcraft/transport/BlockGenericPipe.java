@@ -613,7 +613,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 
 		if (isValid(pipe)) {
 			pipe.container.scheduleNeighborChange();
-			pipe.container.redstonePowered = world.isBlockIndirectlyGettingPowered(x, y, z);
+			pipe.container.redstoneInput = world.getBlockPowerInput(x, y, z);
 		}
 	}
 

@@ -105,7 +105,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 	private boolean refreshRenderState = false;
 	private boolean pipeBound = false;
 	private boolean resyncGateExpansions = false;
-	public boolean redstonePowered = false;
+	public int redstoneInput = 0;
 	private int[] facadeBlocks = new int[ForgeDirection.VALID_DIRECTIONS.length];
 	private int[] facadeMeta = new int[ForgeDirection.VALID_DIRECTIONS.length];
 	private boolean[] plugs = new boolean[ForgeDirection.VALID_DIRECTIONS.length];
@@ -116,7 +116,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 	@Override
 	public void writeToNBT(NBTTagCompound nbt) {
 		super.writeToNBT(nbt);
-		nbt.setBoolean("redstonePowered", redstonePowered);
+		nbt.setByte("redstoneInput", (byte)redstoneInput);
 
 		if (pipe != null) {
 			nbt.setInteger("pipeId", pipe.itemID);
@@ -135,7 +135,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 	@Override
 	public void readFromNBT(NBTTagCompound nbt) {
 		super.readFromNBT(nbt);
-		redstonePowered = nbt.getBoolean("redstonePowered");
+		redstoneInput = nbt.getByte("redstoneInput");
 
 		coreState.pipeId = nbt.getInteger("pipeId");
 		pipe = BlockGenericPipe.createPipe(coreState.pipeId);

@@ -32,7 +32,7 @@ public final class GateDefinition {
 
 	public static enum GateMaterial {
 
-		REDSTONE("gate_interface_1.png", 146, 1, false), IRON("gate_interface_2.png", 164, 2, true), GOLD("gate_interface_3.png", 200, 4, true), DIAMOND("gate_interface_4.png", 200, 8, true);
+		REDSTONE("gate_interface_1.png", 146, 1, false), IRON("gate_interface_2.png", 164, 2, false), GOLD("gate_interface_3.png", 200, 4, true), DIAMOND("gate_interface_4.png", 200, 8, true);
 		public static final GateMaterial[] VALUES = values();
 		public final ResourceLocation guiFile;
 		public final int guiHeight;

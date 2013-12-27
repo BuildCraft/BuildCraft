@@ -2,11 +2,12 @@ package buildcraft.transport.triggers;
 
 import buildcraft.core.triggers.ActionTriggerIconProvider;
 import buildcraft.core.triggers.BCAction;
+import buildcraft.core.utils.StringUtils;
 
-public class ActionEnergyPulser extends BCAction {
+public class ActionEnergyPulsar extends BCAction {
 
-	public ActionEnergyPulser(int legacyId) {
-		super(legacyId, "buildcraft.pulser.constant");
+	public ActionEnergyPulsar() {
+		super("buildcraft:pulsar.constant", "buildcraft.pulser.constant");
 	}
 
 	@Override
@@ -16,7 +17,7 @@ public class ActionEnergyPulser extends BCAction {
 	
 	@Override
 	public String getDescription() {
-		return "Energy Pulser";
+		return StringUtils.localize("gate.action.pulsar.constant");
 	}
 
 }
