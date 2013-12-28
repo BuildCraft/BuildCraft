@@ -264,22 +264,17 @@ public class BlockGenericPipe extends BlockBuildCraft {
 		}
 	}
 
-	private RaytraceResult doRayTrace(World world, int x, int y, int z, EntityPlayer entityPlayer) {
-		double pitch = Math.toRadians(entityPlayer.rotationPitch);
-		double yaw = Math.toRadians(entityPlayer.rotationYaw);
-
-		double dirX = -Math.sin(yaw) * Math.cos(pitch);
-		double dirY = -Math.sin(pitch);
-		double dirZ = Math.cos(yaw) * Math.cos(pitch);
-
+	private RaytraceResult doRayTrace(World world, int x, int y, int z, EntityPlayer player) {
 		double reachDistance = 5;
 
-		if (entityPlayer instanceof EntityPlayerMP) {
-			reachDistance = ((EntityPlayerMP) entityPlayer).theItemInWorldManager.getBlockReachDistance();
+		if (player instanceof EntityPlayerMP) {
+			reachDistance = ((EntityPlayerMP) player).theItemInWorldManager.getBlockReachDistance();
 		}
 
-		Vec3 origin = Vec3.fakePool.getVecFromPool(entityPlayer.posX, entityPlayer.posY + 1.62 - entityPlayer.yOffset, entityPlayer.posZ);
-		Vec3 direction = origin.addVector(dirX * reachDistance, dirY * reachDistance, dirZ * reachDistance);
+		double eyeHeight = world.isRemote ? player.getEyeHeight() - player.getDefaultEyeHeight() : player.getEyeHeight();
+		Vec3 lookVec = player.getLookVec();
+		Vec3 origin = world.getWorldVec3Pool().getVecFromPool(player.posX, player.posY + eyeHeight, player.posZ);
+		Vec3 direction = origin.addVector(lookVec.xCoord * reachDistance, lookVec.yCoord * reachDistance, lookVec.zCoord * reachDistance);
 
 		return doRayTrace(world, x, y, z, origin, direction);
 	}

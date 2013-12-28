@@ -7,12 +7,17 @@
  */
 package buildcraft.transport.pipes;
 
+import java.util.LinkedList;
+import java.util.Map;
+
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
+import buildcraft.api.gates.IAction;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportFluids;
 import buildcraft.transport.TileGenericPipe;
+import buildcraft.transport.triggers.ActionPipeDirection;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.entity.player.EntityPlayer;
@@ -89,6 +94,28 @@ public class PipeFluidsIron extends Pipe<PipeTransportFluids> {
 
 	}
 
+	@Override
+	protected void actionsActivated(Map<IAction, Boolean> actions) {
+		super.actionsActivated(actions);
+
+		for (Map.Entry<IAction, Boolean> action : actions.entrySet()) {
+			if (action.getKey() instanceof ActionPipeDirection && action.getValue() != null && action.getValue()) {
+				logic.setFacing(((ActionPipeDirection) action.getKey()).direction);
+				break;
+			}
+		}
+	}
+
+	@Override
+	public LinkedList<IAction> getActions() {
+		LinkedList<IAction> action = super.getActions();
+		for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
+			if (container.isPipeConnected(direction))
+				action.add(BuildCraftTransport.actionPipeDirection[direction.ordinal()]);
+		}
+		return action;
+	}
+	
 	@Override
 	public boolean canConnectRedstone() {
 		return true;
