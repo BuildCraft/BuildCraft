@@ -58,9 +58,9 @@ public class GuiAssemblyTable extends GuiAdvancedInterface {
 
 			fontRenderer.drawStringWithShadow(StringUtils.localize("gui.energy"), x + 22, y + 8, headerColour);
 			fontRenderer.drawStringWithShadow(StringUtils.localize("gui.assemblyCurrentRequired") + ":", x + 22, y + 20, subheaderColour);
-			fontRenderer.drawString(String.format("%2.1f MJ", assemblyTable.getRequiredEnergy()), x + 22, y + 32, textColour);
+			fontRenderer.drawString(String.format("%2.1f MJ", assemblyTable.clientRequiredEnergy), x + 22, y + 32, textColour);
 			fontRenderer.drawStringWithShadow(StringUtils.localize("gui.stored") + ":", x + 22, y + 44, subheaderColour);
-			fontRenderer.drawString(String.format("%2.1f MJ", assemblyTable.getStoredEnergy()), x + 22, y + 56, textColour);
+			fontRenderer.drawString(String.format("%2.1f MJ", assemblyTable.getEnergy()), x + 22, y + 56, textColour);
 			fontRenderer.drawStringWithShadow(StringUtils.localize("gui.assemblyRate") + ":", x + 22, y + 68, subheaderColour);
 			fontRenderer.drawString(String.format("%3.2f MJ/t", assemblyTable.getRecentEnergyAverage() / 100.0f), x + 22, y + 80, textColour);
 
@@ -158,9 +158,9 @@ public class GuiAssemblyTable extends GuiAdvancedInterface {
 			}
 		}
 
-		int height = (int) assemblyTable.getCompletionRatio(70);
+		int h = (int) assemblyTable.getCompletionRatio(70);
 
-		drawTexturedModalRect(cornerX + 95, cornerY + 36 + 70 - height, 176, 18, 4, height);
+		drawTexturedModalRect(cornerX + 95, cornerY + 36 + 70 - h, 176, 18, 4, h);
 
 		drawBackgroundSlots();
 	}

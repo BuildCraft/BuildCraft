@@ -48,7 +48,7 @@ import static net.minecraftforge.common.ForgeDirection.WEST;
 import net.minecraftforge.oredict.OreDictionary;
 import org.bouncycastle.util.Arrays;
 
-public class TileAdvancedCraftingTable extends TileEntity implements IInventory, ILaserTarget, IMachine, IActionReceptor, ISidedInventory {
+public class TileAdvancedCraftingTable extends TileLaserTableBase implements IInventory, ILaserTarget, IMachine, IActionReceptor, ISidedInventory {
 
 	private final class InternalInventoryCraftingContainer extends Container {
 
@@ -175,12 +175,8 @@ public class TileAdvancedCraftingTable extends TileEntity implements IInventory,
 	private final InventoryMapper invInput;
 	private final InventoryMapper invOutput;
 	private SlotCrafting craftSlot;
-	private float storedEnergy;
-	private float[] recentEnergy = new float[20];
 	private boolean craftable;
 	private boolean justCrafted;
-	private int tick;
-	private int recentEnergyAverage;
 	private InternalPlayer internalPlayer;
 	private IRecipe currentRecipe;
 	private ActionMachineControl.Mode lastMode = ActionMachineControl.Mode.Unknown;
@@ -216,7 +212,6 @@ public class TileAdvancedCraftingTable extends TileEntity implements IInventory,
 		super.writeToNBT(data);
 		storageSlots.writeToNBT(data, "StorageSlots");
 		craftingSlots.writeToNBT(data);
-		data.setFloat("StoredEnergy", storedEnergy);
 	}
 
 	@Override
@@ -224,7 +219,6 @@ public class TileAdvancedCraftingTable extends TileEntity implements IInventory,
 		super.readFromNBT(data);
 		storageSlots.readFromNBT(data, "StorageSlots");
 		craftingSlots.readFromNBT(data);
-		storedEnergy = data.getFloat("StoredEnergy");
 	}
 
 	@Override
@@ -256,20 +250,13 @@ public class TileAdvancedCraftingTable extends TileEntity implements IInventory,
 	public void closeChest() {
 	}
 
-	public int getRecentEnergyAverage() {
-		return recentEnergyAverage;
-	}
-
-	public float getStoredEnergy() {
-		return storedEnergy;
-	}
-
-	public float getRequiredEnergy() {
+	@Override
+	public double getRequiredEnergy() {
 		return craftResult.getStackInSlot(0) != null ? REQUIRED_POWER : 0f;
 	}
 
 	public int getProgressScaled(int i) {
-		return (int) ((storedEnergy * i) / REQUIRED_POWER);
+		return (int) ((getEnergy() * i) / REQUIRED_POWER);
 	}
 
 	@Override
@@ -295,11 +282,8 @@ public class TileAdvancedCraftingTable extends TileEntity implements IInventory,
 		locateAndBindIngredients();
 		updateRecipeOutputDisplay();
 		justCrafted = false;
-		tick++;
-		tick = tick % recentEnergy.length;
-		recentEnergy[tick] = 0.0f;
 		if (canCraftAndOutput()) {
-			if (storedEnergy >= getRequiredEnergy()) {
+			if (getEnergy() >= getRequiredEnergy()) {
 				craftItem();
 				justCrafted = true;
 			}
@@ -307,7 +291,7 @@ public class TileAdvancedCraftingTable extends TileEntity implements IInventory,
 			craftable = false;
 			internalInventoryCrafting.tempStacks = null;
 			internalInventoryCrafting.hitCount = null;
-			storedEnergy = 0;
+			setEnergy(0);
 		}
 	}
 
@@ -370,7 +354,7 @@ public class TileAdvancedCraftingTable extends TileEntity implements IInventory,
 			}
 			storageSlots.getItemStacks()[i] = tempStorage[i];
 		}
-		storedEnergy -= getRequiredEnergy();
+		subtractEnergy(getRequiredEnergy());
 		List<ItemStack> outputs = Lists.newArrayList(recipeOutput.copy());
 		for (int i = 0; i < internalPlayer.inventory.mainInventory.length; i++) {
 			if (internalPlayer.inventory.mainInventory[i] != null) {
@@ -465,29 +449,8 @@ public class TileAdvancedCraftingTable extends TileEntity implements IInventory,
 	}
 
 	@Override
-	public boolean requiresLaserEnergy() {
-		return craftable && !justCrafted && lastMode != ActionMachineControl.Mode.Off && storedEnergy < REQUIRED_POWER * 10;
-	}
-
-	@Override
-	public void receiveLaserEnergy(float energy) {
-		storedEnergy += energy;
-		recentEnergy[tick] += energy;
-	}
-
-	@Override
-	public int getXCoord() {
-		return xCoord;
-	}
-
-	@Override
-	public int getYCoord() {
-		return yCoord;
-	}
-
-	@Override
-	public int getZCoord() {
-		return zCoord;
+	public boolean canCraft() {
+		return craftable && !justCrafted && lastMode != ActionMachineControl.Mode.Off;
 	}
 
 	@Override
@@ -508,38 +471,6 @@ public class TileAdvancedCraftingTable extends TileEntity implements IInventory,
 	@Override
 	public boolean allowAction(IAction action) {
 		return action == BuildCraftCore.actionOn || action == BuildCraftCore.actionOff;
-	}
-
-	public void getGUINetworkData(int id, int data) {
-		int currentStored = (int) (storedEnergy * 100.0);
-		switch (id) {
-			case 1:
-				currentStored = (currentStored & 0xFFFF0000) | (data & 0xFFFF);
-				storedEnergy = (currentStored / 100.0f);
-				break;
-			case 3:
-				currentStored = (currentStored & 0xFFFF) | ((data & 0xFFFF) << 16);
-				storedEnergy = (currentStored / 100.0f);
-				break;
-			case 4:
-				recentEnergyAverage = recentEnergyAverage & 0xFFFF0000 | (data & 0xFFFF);
-				break;
-			case 5:
-				recentEnergyAverage = (recentEnergyAverage & 0xFFFF) | ((data & 0xFFFF) << 16);
-				break;
-		}
-	}
-
-	public void sendGUINetworkData(Container container, ICrafting iCrafting) {
-		int currentStored = (int) (storedEnergy * 100.0);
-		int lRecentEnergy = 0;
-		for (int i = 0; i < recentEnergy.length; i++) {
-			lRecentEnergy += (int) (recentEnergy[i] * 100.0 / (recentEnergy.length - 1));
-		}
-		iCrafting.sendProgressBarUpdate(container, 1, currentStored & 0xFFFF);
-		iCrafting.sendProgressBarUpdate(container, 3, (currentStored >>> 16) & 0xFFFF);
-		iCrafting.sendProgressBarUpdate(container, 4, lRecentEnergy & 0xFFFF);
-		iCrafting.sendProgressBarUpdate(container, 5, (lRecentEnergy >>> 16) & 0xFFFF);
 	}
 
 	@Override
@@ -575,10 +506,5 @@ public class TileAdvancedCraftingTable extends TileEntity implements IInventory,
 		} else if (action == BuildCraftCore.actionOff) {
 			lastMode = ActionMachineControl.Mode.Off;
 		}
-	}
-
-	@Override
-	public boolean isInvalidTarget() {
-		return isInvalid();
 	}
 }

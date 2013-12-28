@@ -43,9 +43,9 @@ public class GuiAdvancedCraftingTable extends GuiBuildCraft {
 
 			fontRenderer.drawStringWithShadow(StringUtils.localize("gui.energy"), x + 22, y + 8, headerColour);
 			fontRenderer.drawStringWithShadow(StringUtils.localize("gui.assemblyCurrentRequired") + ":", x + 22, y + 20, subheaderColour);
-			fontRenderer.drawString(String.format("%2.1f MJ", workbench.getRequiredEnergy()), x + 22, y + 32, textColour);
+			fontRenderer.drawString(String.format("%2.1f MJ", workbench.clientRequiredEnergy), x + 22, y + 32, textColour);
 			fontRenderer.drawStringWithShadow(StringUtils.localize("gui.stored") + ":", x + 22, y + 44, subheaderColour);
-			fontRenderer.drawString(String.format("%2.1f MJ", workbench.getStoredEnergy()), x + 22, y + 56, textColour);
+			fontRenderer.drawString(String.format("%2.1f MJ", workbench.getEnergy()), x + 22, y + 56, textColour);
 			fontRenderer.drawStringWithShadow(StringUtils.localize("gui.assemblyRate") + ":", x + 22, y + 68, subheaderColour);
 			fontRenderer.drawString(String.format("%3.2f MJ/t", workbench.getRecentEnergyAverage() / 100.0f), x + 22, y + 80, textColour);
 
@@ -80,7 +80,7 @@ public class GuiAdvancedCraftingTable extends GuiBuildCraft {
 		int cornerX = (width - xSize) / 2;
 		int cornerY = (height - ySize) / 2;
 		drawTexturedModalRect(cornerX, cornerY, 0, 0, xSize, ySize);
-		if (workbench.getStoredEnergy() > 0) {
+		if (workbench.getEnergy() > 0) {
 			int progress = workbench.getProgressScaled(24);
 			drawTexturedModalRect(cornerX + 93, cornerY + 32, 176, 0, progress + 1, 18);
 		}
