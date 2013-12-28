@@ -66,6 +66,7 @@ import buildcraft.core.triggers.TriggerMachine;
 import buildcraft.core.utils.BCLog;
 import buildcraft.core.utils.Localization;
 import buildcraft.core.recipes.AssemblyRecipeManager;
+import buildcraft.core.recipes.IntegrationRecipeManager;
 import buildcraft.core.triggers.TriggerRedstoneInput;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
@@ -156,6 +157,7 @@ public class BuildCraftCore {
 		BCLog.initLog();
 
 		BuildcraftRecipes.assemblyTable = AssemblyRecipeManager.INSTANCE;
+		BuildcraftRecipes.integrationTable = IntegrationRecipeManager.INSTANCE;
 		BuildcraftRecipes.refinery = RefineryRecipeManager.INSTANCE;
 
 		mainConfiguration = new BuildCraftConfiguration(new File(evt.getModConfigurationDirectory(), "buildcraft/main.conf"));

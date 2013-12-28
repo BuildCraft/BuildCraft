@@ -6,18 +6,21 @@
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-package buildcraft.api.recipes;
+package buildcraft.silicon;
 
 /**
  *
  * @author CovertJaguar <http://www.railcraft.info/>
  */
-public final class BuildcraftRecipes {
+public class TileIntegrationTable extends TileLaserTableBase {
 
-	public static IAssemblyRecipeManager assemblyTable;
-	public static IIntegrationRecipeManager integrationTable;
-	public static IRefineryRecipeManager refinery;
+	@Override
+	public double getRequiredEnergy() {
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
 
-	private BuildcraftRecipes() {
+	@Override
+	public boolean canCraft() {
+		throw new UnsupportedOperationException("Not supported yet.");
 	}
 }
