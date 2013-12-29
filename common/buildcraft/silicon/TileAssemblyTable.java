@@ -154,7 +154,7 @@ public class TileAssemblyTable extends TileLaserTableBase implements IMachine, I
 
 	@Override
 	public boolean isUseableByPlayer(EntityPlayer entityplayer) {
-		return worldObj.getBlockTileEntity(xCoord, yCoord, zCoord) == this;
+		return worldObj.getBlockTileEntity(xCoord, yCoord, zCoord) == this && !isInvalid();
 	}
 
 	@Override

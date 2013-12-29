@@ -24,11 +24,15 @@ public interface IIntegrationRecipeManager {
 
 		double getEnergyCost();
 
-		boolean isValidInput(ItemStack stack);
+		boolean isValidInputA(ItemStack inputA);
 
-		ItemStack getOutputForInput(ItemStack stack);
+		boolean isValidInputB(ItemStack inputB);
 
-		ItemStack[] getExampleInputs();
+		ItemStack getOutputForInputs(ItemStack inputA, ItemStack inputB);
+
+		ItemStack[] getExampleInputsA();
+
+		ItemStack[] getExampleInputsB();
 	}
 
 	/**
