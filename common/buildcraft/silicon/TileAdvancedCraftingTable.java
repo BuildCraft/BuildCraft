@@ -21,13 +21,13 @@ import buildcraft.core.network.PacketSlotChange;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.triggers.ActionMachineControl;
 import buildcraft.core.utils.CraftingHelper;
+import buildcraft.core.utils.StringUtils;
 import buildcraft.core.utils.Utils;
 import com.google.common.collect.Lists;
 import java.util.EnumSet;
 import java.util.List;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
-import net.minecraft.inventory.ICrafting;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.inventory.InventoryCraftResult;
@@ -161,17 +161,15 @@ public class TileAdvancedCraftingTable extends TileLaserTableBase implements IIn
 
 	public TileAdvancedCraftingTable() {
 		craftingSlots = new CraftingGrid();
-		storageSlots = new SimpleInventory(24, "StorageSlots", 64);
-		storageSlots.addListener(this);
-		invInput = new InventoryMapper(storageSlots, 0, 15);
-		invOutput = new InventoryMapper(storageSlots, 15, 9);
+		inv.addListener(this);
+		invInput = new InventoryMapper(inv, 0, 15);
+		invOutput = new InventoryMapper(inv, 15, 9);
 		craftResult = new InventoryCraftResult();
 	}
 	private static final int[] SLOTS = Utils.createSlotArray(0, 24);
 	private static final EnumSet<ForgeDirection> SEARCH_SIDES = EnumSet.of(DOWN, NORTH, SOUTH, EAST, WEST);
 	private static final float REQUIRED_POWER = 500F;
 	private final CraftingGrid craftingSlots;
-	private final SimpleInventory storageSlots;
 	private final InventoryMapper invInput;
 	private final InventoryMapper invOutput;
 	private SlotCrafting craftSlot;
@@ -183,71 +181,37 @@ public class TileAdvancedCraftingTable extends TileLaserTableBase implements IIn
 	private TileBuffer[] cache;
 
 	@Override
-	public int getSizeInventory() {
-		return storageSlots.getSizeInventory();
-	}
-
-	@Override
-	public ItemStack getStackInSlot(int slot) {
-		return storageSlots.getStackInSlot(slot);
-	}
-
-	@Override
-	public ItemStack decrStackSize(int slot, int amount) {
-		return storageSlots.decrStackSize(slot, amount);
-	}
-
-	@Override
-	public ItemStack getStackInSlotOnClosing(int slot) {
-		return storageSlots.getStackInSlotOnClosing(slot);
-	}
-
-	@Override
-	public void setInventorySlotContents(int slot, ItemStack stack) {
-		storageSlots.setInventorySlotContents(slot, stack);
-	}
-
-	@Override
 	public void writeToNBT(NBTTagCompound data) {
 		super.writeToNBT(data);
-		storageSlots.writeToNBT(data, "StorageSlots");
-		craftingSlots.writeToNBT(data);
+		craftingSlots.writeToNBT(data, "craftingSlots");
 	}
 
 	@Override
 	public void readFromNBT(NBTTagCompound data) {
 		super.readFromNBT(data);
-		storageSlots.readFromNBT(data, "StorageSlots");
-		craftingSlots.readFromNBT(data);
+		if (data.hasKey("StorageSlots"))
+			inv.readFromNBT(data, "StorageSlots");
+
+		if (data.hasKey("items"))
+			craftingSlots.readFromNBT(data);
+		else
+			craftingSlots.readFromNBT(data, "craftingSlots");
+	}
+
+	@Override
+	public int getSizeInventory() {
+		return 24;
 	}
 
 	@Override
 	public String getInvName() {
-		return "AdvancedWorkbench";
+		return StringUtils.localize("tile.assemblyWorkbenchBlock");
 	}
 
 	@Override
 	public void onInventoryChanged() {
 		super.onInventoryChanged();
 		craftable = craftResult.getStackInSlot(0) != null;
-	}
-
-	@Override
-	public int getInventoryStackLimit() {
-		return storageSlots.getInventoryStackLimit();
-	}
-
-	@Override
-	public boolean isUseableByPlayer(EntityPlayer player) {
-		return worldObj.getBlockTileEntity(xCoord, yCoord, zCoord) == this;
-	}
-
-	@Override
-	public void openChest() {
-	}
-
-	@Override
-	public void closeChest() {
 	}
 
 	@Override
@@ -305,7 +269,7 @@ public class TileAdvancedCraftingTable extends TileLaserTableBase implements IIn
 	}
 
 	private void locateAndBindIngredients() {
-		internalInventoryCrafting.tempStacks = new InventoryCopy(storageSlots).getItemStacks();
+		internalInventoryCrafting.tempStacks = new InventoryCopy(inv).getItemStacks();
 		internalInventoryCrafting.hitCount = new int[internalInventoryCrafting.tempStacks.length];
 		ItemStack[] inputSlots = internalInventoryCrafting.tempStacks;
 		for (int gridSlot = 0; gridSlot < craftingSlots.getSizeInventory(); gridSlot++) {
@@ -352,7 +316,7 @@ public class TileAdvancedCraftingTable extends TileLaserTableBase implements IIn
 			if (tempStorage[i] != null && tempStorage[i].stackSize <= 0) {
 				tempStorage[i] = null;
 			}
-			storageSlots.getItemStacks()[i] = tempStorage[i];
+			inv.getItemStacks()[i] = tempStorage[i];
 		}
 		subtractEnergy(getRequiredEnergy());
 		List<ItemStack> outputs = Lists.newArrayList(recipeOutput.copy());

@@ -22,6 +22,7 @@ import buildcraft.silicon.ItemLaserTable;
 import buildcraft.silicon.SiliconProxy;
 import buildcraft.silicon.TileAdvancedCraftingTable;
 import buildcraft.silicon.TileAssemblyTable;
+import buildcraft.silicon.TileIntegrationTable;
 import buildcraft.silicon.TileLaser;
 import buildcraft.silicon.network.PacketHandlerSilicon;
 import cpw.mods.fml.common.Mod;
@@ -68,6 +69,7 @@ public class BuildCraftSilicon {
 
 		LanguageRegistry.addName(new ItemStack(assemblyTableBlock, 0, 0), "Assembly Table");
 		LanguageRegistry.addName(new ItemStack(assemblyTableBlock, 0, 1), "Advanced Crafting Table");
+		LanguageRegistry.addName(new ItemStack(assemblyTableBlock, 0, 2), "Integration Table");
 
 		redstoneChipset = new ItemRedstoneChipset(redstoneChipsetId.getInt());
 		redstoneChipset.setUnlocalizedName("redstoneChipset");
@@ -81,6 +83,7 @@ public class BuildCraftSilicon {
 		CoreProxy.proxy.registerTileEntity(TileLaser.class, "net.minecraft.src.buildcraft.factory.TileLaser");
 		CoreProxy.proxy.registerTileEntity(TileAssemblyTable.class, "net.minecraft.src.buildcraft.factory.TileAssemblyTable");
 		CoreProxy.proxy.registerTileEntity(TileAdvancedCraftingTable.class, "net.minecraft.src.buildcraft.factory.TileAssemblyAdvancedWorkbench");
+		CoreProxy.proxy.registerTileEntity(TileIntegrationTable.class, "net.minecraft.src.buildcraft.factory.TileIntegrationTable");
 
 		new BptBlockRotateMeta(laserBlock.blockID, new int[]{2, 5, 3, 4}, true);
 		new BptBlockInventory(assemblyTableBlock.blockID);

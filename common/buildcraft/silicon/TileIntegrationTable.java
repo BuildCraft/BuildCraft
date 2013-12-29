@@ -15,11 +15,11 @@ import buildcraft.core.inventory.InventoryMapper;
 import buildcraft.core.inventory.SimpleInventory;
 import buildcraft.core.inventory.StackHelper;
 import buildcraft.core.inventory.Transactor;
+import buildcraft.core.utils.StringUtils;
 import buildcraft.core.utils.Utils;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.ForgeDirection;
 
 /**
@@ -28,15 +28,19 @@ import net.minecraftforge.common.ForgeDirection;
  */
 public class TileIntegrationTable extends TileLaserTableBase implements ISidedInventory {
 
+	public static final int SLOT_INPUT_A = 0;
+	public static final int SLOT_INPUT_B = 1;
+	public static final int SLOT_OUTPUT = 2;
 	private static final int CYCLE_LENGTH = 32;
-	private static final int SLOT_INPUT_A = 0;
-	private static final int SLOT_INPUT_B = 1;
-	private static final int SLOT_OUTPUT = 2;
 	private static final int[] SLOTS = Utils.createSlotArray(0, 3);
 	private int tick = 0;
-	private SimpleInventory inv = new SimpleInventory(3, "integration", 64);
+	private SimpleInventory invRecipeOutput = new SimpleInventory(1, "integrationOutput", 64);
 	private InventoryMapper invOutput = new InventoryMapper(inv, SLOT_OUTPUT, 1, false);
 	private IIntegrationRecipe currentRecipe;
+	
+	public IInventory getRecipeOutput(){
+		return invRecipeOutput;
+	}
 
 	@Override
 	public void updateEntity() {
@@ -51,8 +55,14 @@ public class TileIntegrationTable extends TileLaserTableBase implements ISidedIn
 
 		currentRecipe = findMatchingRecipe();
 
-		if (currentRecipe == null)
+		if (currentRecipe == null) {
+			setEnergy(0);
 			return;
+		}		
+		
+		ItemStack inputA = inv.getStackInSlot(SLOT_INPUT_A);
+		ItemStack inputB = inv.getStackInSlot(SLOT_INPUT_B);
+		invRecipeOutput.setInventorySlotContents(0, currentRecipe.getOutputForInputs(inputA, inputB));
 
 		if (getEnergy() >= currentRecipe.getEnergyCost())
 			tryCraftItem();
@@ -101,21 +111,15 @@ public class TileIntegrationTable extends TileLaserTableBase implements ISidedIn
 		return 0;
 	}
 
+	public int getProgressScaled(int i) {
+		if(currentRecipe == null)
+			return 0;
+		return (int) ((getEnergy() * i) / currentRecipe.getEnergyCost());
+	}
+
 	@Override
 	public boolean canCraft() {
 		return currentRecipe != null;
-	}
-
-	@Override
-	public void writeToNBT(NBTTagCompound nbt) {
-		super.writeToNBT(nbt);
-		inv.writeToNBT(nbt);
-	}
-
-	@Override
-	public void readFromNBT(NBTTagCompound nbt) {
-		super.readFromNBT(nbt);
-		inv.readFromNBT(nbt);
 	}
 
 	@Override
@@ -130,16 +134,18 @@ public class TileIntegrationTable extends TileLaserTableBase implements ISidedIn
 	}
 
 	private boolean isValidInputA(ItemStack stack) {
+		ItemStack inputB = inv.getStackInSlot(SLOT_INPUT_B);
 		for (IIntegrationRecipe recipe : BuildcraftRecipes.integrationTable.getRecipes()) {
-			if (recipe.isValidInputA(stack))
+			if (recipe.isValidInputA(stack) && (inputB == null || recipe.isValidInputB(inputB)))
 				return true;
 		}
 		return false;
 	}
 
 	private boolean isValidInputB(ItemStack stack) {
+		ItemStack inputA = inv.getStackInSlot(SLOT_INPUT_A);
 		for (IIntegrationRecipe recipe : BuildcraftRecipes.integrationTable.getRecipes()) {
-			if (recipe.isValidInputB(stack))
+			if (recipe.isValidInputB(stack) && (inputA == null || recipe.isValidInputA(inputA)))
 				return true;
 		}
 		return false;
@@ -162,49 +168,11 @@ public class TileIntegrationTable extends TileLaserTableBase implements ISidedIn
 
 	@Override
 	public int getSizeInventory() {
-		return inv.getSizeInventory();
-	}
-
-	@Override
-	public ItemStack getStackInSlot(int slot) {
-		return inv.getStackInSlot(slot);
-	}
-
-	@Override
-	public ItemStack decrStackSize(int slot, int amount) {
-		return inv.decrStackSize(slot, amount);
-	}
-
-	@Override
-	public ItemStack getStackInSlotOnClosing(int slot) {
-		return null;
-	}
-
-	@Override
-	public void setInventorySlotContents(int slot, ItemStack stack) {
-		inv.setInventorySlotContents(slot, stack);
+		return 3;
 	}
 
 	@Override
 	public String getInvName() {
-		return "Integration Table";
-	}
-
-	@Override
-	public int getInventoryStackLimit() {
-		return inv.getInventoryStackLimit();
-	}
-
-	@Override
-	public boolean isUseableByPlayer(EntityPlayer player) {
-		return worldObj.getBlockTileEntity(xCoord, yCoord, zCoord) == this && !isInvalid();
-	}
-
-	@Override
-	public void openChest() {
-	}
-
-	@Override
-	public void closeChest() {
+		return StringUtils.localize("tile.integrationTableBlock");
 	}
 }

@@ -10,24 +10,29 @@ package buildcraft.silicon;
 
 import buildcraft.api.power.ILaserTarget;
 import buildcraft.core.TileBuildCraft;
+import buildcraft.core.inventory.SimpleInventory;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.ICrafting;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
 /**
  *
  * @author CovertJaguar <http://www.railcraft.info/>
  */
-public abstract class TileLaserTableBase extends TileBuildCraft implements ILaserTarget {
+public abstract class TileLaserTableBase extends TileBuildCraft implements ILaserTarget, IInventory {
 
 	public double clientRequiredEnergy = 0;
+	protected SimpleInventory inv = new SimpleInventory(getSizeInventory(), "inv", 64);
 	private double[] recentEnergy = new double[20];
 	private double energy = 0;
 	private int tick = 0;
 	private int recentEnergyAverage;
 
 	@Override
-	public void updateEntity() { // WARNING: run only server-side, see canUpdate()
+	public void updateEntity() {
 		tick++;
 		tick = tick % recentEnergy.length;
 		recentEnergy[tick] = 0.0f;
@@ -97,17 +102,56 @@ public abstract class TileLaserTableBase extends TileBuildCraft implements ILase
 	}
 
 	@Override
-	public void readFromNBT(NBTTagCompound nbt) {
-		super.readFromNBT(nbt);
-		energy = nbt.getDouble("energy");
+	public ItemStack getStackInSlot(int slot) {
+		return inv.getStackInSlot(slot);
+	}
+
+	@Override
+	public ItemStack decrStackSize(int slot, int amount) {
+		return inv.decrStackSize(slot, amount);
+	}
+
+	@Override
+	public ItemStack getStackInSlotOnClosing(int slot) {
+		return null;
+	}
+
+	@Override
+	public void setInventorySlotContents(int slot, ItemStack stack) {
+		inv.setInventorySlotContents(slot, stack);
+	}
+
+	@Override
+	public int getInventoryStackLimit() {
+		return inv.getInventoryStackLimit();
+	}
+
+	@Override
+	public boolean isUseableByPlayer(EntityPlayer player) {
+		return worldObj.getBlockTileEntity(xCoord, yCoord, zCoord) == this && !isInvalid();
+	}
+
+	@Override
+	public void openChest() {
+	}
+
+	@Override
+	public void closeChest() {
 	}
 
 	@Override
 	public void writeToNBT(NBTTagCompound nbt) {
 		super.writeToNBT(nbt);
+		inv.writeToNBT(nbt, "inv");
 		nbt.setDouble("energy", energy);
 	}
-	/* SMP GUI */
+
+	@Override
+	public void readFromNBT(NBTTagCompound nbt) {
+		super.readFromNBT(nbt);
+		inv.readFromNBT(nbt, "inv");
+		energy = nbt.getDouble("energy");
+	}
 
 	public void getGUINetworkData(int i, int j) {
 		int currentStored = (int) (energy * 100.0);

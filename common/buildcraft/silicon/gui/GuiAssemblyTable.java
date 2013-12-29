@@ -21,6 +21,7 @@ import buildcraft.silicon.TileAssemblyTable;
 import buildcraft.silicon.TileAssemblyTable.SelectionMessage;
 import java.util.Iterator;
 import java.util.List;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
@@ -30,15 +31,14 @@ import org.lwjgl.opengl.GL11;
 public class GuiAssemblyTable extends GuiAdvancedInterface {
 
 	private static final ResourceLocation TEXTURE = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_GUI + "/assembly_table.png");
-	TileAssemblyTable assemblyTable;
 
-	class AssemblyLedger extends Ledger {
+	private class LaserTableLedger extends Ledger {
 
 		int headerColour = 0xe1c92f;
 		int subheaderColour = 0xaaafb8;
 		int textColour = 0x000000;
 
-		public AssemblyLedger() {
+		public LaserTableLedger() {
 			maxHeight = 94;
 			overlayColor = 0xd46c1f;
 		}
@@ -50,7 +50,7 @@ public class GuiAssemblyTable extends GuiAdvancedInterface {
 			drawBackground(x, y);
 
 			// Draw icon
-			mc.renderEngine.bindTexture(TextureMap.locationItemsTexture);
+			Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.locationItemsTexture);
 			drawIcon(BuildCraftCore.iconProvider.getIcon(CoreIconProvider.ENERGY), x + 3, y + 4);
 
 			if (!isFullyOpened())
@@ -58,19 +58,20 @@ public class GuiAssemblyTable extends GuiAdvancedInterface {
 
 			fontRenderer.drawStringWithShadow(StringUtils.localize("gui.energy"), x + 22, y + 8, headerColour);
 			fontRenderer.drawStringWithShadow(StringUtils.localize("gui.assemblyCurrentRequired") + ":", x + 22, y + 20, subheaderColour);
-			fontRenderer.drawString(String.format("%2.1f MJ", assemblyTable.clientRequiredEnergy), x + 22, y + 32, textColour);
+			fontRenderer.drawString(String.format("%2.1f MJ", table.clientRequiredEnergy), x + 22, y + 32, textColour);
 			fontRenderer.drawStringWithShadow(StringUtils.localize("gui.stored") + ":", x + 22, y + 44, subheaderColour);
-			fontRenderer.drawString(String.format("%2.1f MJ", assemblyTable.getEnergy()), x + 22, y + 56, textColour);
+			fontRenderer.drawString(String.format("%2.1f MJ", table.getEnergy()), x + 22, y + 56, textColour);
 			fontRenderer.drawStringWithShadow(StringUtils.localize("gui.assemblyRate") + ":", x + 22, y + 68, subheaderColour);
-			fontRenderer.drawString(String.format("%3.2f MJ/t", assemblyTable.getRecentEnergyAverage() / 100.0f), x + 22, y + 80, textColour);
+			fontRenderer.drawString(String.format("%3.2f MJ/t", table.getRecentEnergyAverage() / 100.0f), x + 22, y + 80, textColour);
 
 		}
 
 		@Override
 		public String getTooltip() {
-			return String.format("%3.2f MJ/t", assemblyTable.getRecentEnergyAverage() / 100.0f);
+			return String.format("%3.2f MJ/t", table.getRecentEnergyAverage() / 100.0f);
 		}
 	}
+	private final TileAssemblyTable table;
 
 	class RecipeSlot extends AdvancedSlot {
 
@@ -92,7 +93,7 @@ public class GuiAssemblyTable extends GuiAdvancedInterface {
 	public GuiAssemblyTable(IInventory playerInventory, TileAssemblyTable assemblyTable) {
 		super(new ContainerAssemblyTable(playerInventory, assemblyTable), assemblyTable, TEXTURE);
 
-		this.assemblyTable = assemblyTable;
+		this.table = assemblyTable;
 		xSize = 175;
 		ySize = 207;
 
@@ -117,7 +118,7 @@ public class GuiAssemblyTable extends GuiAdvancedInterface {
 	}
 
 	public void updateRecipes() {
-		List<AssemblyRecipe> potentialRecipes = assemblyTable.getPotentialOutputs();
+		List<AssemblyRecipe> potentialRecipes = table.getPotentialOutputs();
 		Iterator<AssemblyRecipe> cur = potentialRecipes.iterator();
 
 		for (int p = 0; p < 8; ++p) {
@@ -151,14 +152,14 @@ public class GuiAssemblyTable extends GuiAdvancedInterface {
 		for (int s = 0; s < slots.length; ++s) {
 			RecipeSlot slot = (RecipeSlot) slots[s];
 
-			if (assemblyTable.isAssembling(slot.recipe)) {
+			if (table.isAssembling(slot.recipe)) {
 				drawTexturedModalRect(cornerX + slot.x, cornerY + slot.y, 196, 1, 16, 16);
-			} else if (assemblyTable.isPlanned(slot.recipe)) {
+			} else if (table.isPlanned(slot.recipe)) {
 				drawTexturedModalRect(cornerX + slot.x, cornerY + slot.y, 177, 1, 16, 16);
 			}
 		}
 
-		int h = (int) assemblyTable.getCompletionRatio(70);
+		int h = (int) table.getCompletionRatio(70);
 
 		drawTexturedModalRect(cornerX + 95, cornerY + 36 + 70 - h, 176, 18, 4, h);
 
@@ -182,19 +183,19 @@ public class GuiAssemblyTable extends GuiAdvancedInterface {
 
 			SelectionMessage message = new SelectionMessage();
 
-			if (assemblyTable.isPlanned(slot.recipe)) {
-				assemblyTable.cancelPlanOutput(slot.recipe);
+			if (table.isPlanned(slot.recipe)) {
+				table.cancelPlanOutput(slot.recipe);
 				message.select = false;
 			} else {
-				assemblyTable.planOutput(slot.recipe);
+				table.planOutput(slot.recipe);
 				message.select = true;
 			}
 
 			message.stack = slot.recipe.output;
 
-			if (CoreProxy.proxy.isRenderWorld(assemblyTable.worldObj)) {
+			if (CoreProxy.proxy.isRenderWorld(table.worldObj)) {
 
-				PacketNBT packet = new PacketNBT(PacketIds.SELECTION_ASSEMBLY, message.getNBT(), assemblyTable.xCoord, assemblyTable.yCoord, assemblyTable.zCoord);
+				PacketNBT packet = new PacketNBT(PacketIds.SELECTION_ASSEMBLY, message.getNBT(), table.xCoord, table.yCoord, table.zCoord);
 
 				CoreProxy.proxy.sendToServer(packet.getPacket());
 			}
@@ -205,6 +206,6 @@ public class GuiAssemblyTable extends GuiAdvancedInterface {
 	@Override
 	protected void initLedgers(IInventory inventory) {
 		super.initLedgers(inventory);
-		ledgerManager.add(new AssemblyLedger());
+		ledgerManager.add(new LaserTableLedger());
 	}
 }

@@ -4,12 +4,12 @@ import buildcraft.core.recipes.AssemblyRecipeManager;
 import buildcraft.api.gates.IAction;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.IMachine;
-import buildcraft.core.inventory.InvUtils;
 import buildcraft.core.network.PacketIds;
 import buildcraft.core.network.PacketNBT;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
 import buildcraft.core.recipes.AssemblyRecipeManager.AssemblyRecipe;
+import buildcraft.core.utils.StringUtils;
 import cpw.mods.fml.common.FMLCommonHandler;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -25,7 +25,6 @@ import net.minecraftforge.common.ForgeDirection;
 
 public class TileAssemblyTable extends TileLaserTableBase implements IMachine, IInventory {
 
-	ItemStack[] items = new ItemStack[12];
 	Set<AssemblyRecipe> plannedOutput = new LinkedHashSet<AssemblyRecipe>();
 	public AssemblyRecipe currentRecipe;
 
@@ -106,26 +105,12 @@ public class TileAssemblyTable extends TileLaserTableBase implements IMachine, I
 	/* IINVENTORY */
 	@Override
 	public int getSizeInventory() {
-		return items.length;
+		return 12;
 	}
 
 	@Override
-	public ItemStack getStackInSlot(int i) {
-		return items[i];
-	}
-
-	@Override
-	public ItemStack decrStackSize(int i, int j) {
-		ItemStack stack = items[i].splitStack(j);
-		if (items[i].stackSize == 0) {
-			items[i] = null;
-		}
-		return stack;
-	}
-
-	@Override
-	public void setInventorySlotContents(int i, ItemStack itemstack) {
-		items[i] = itemstack;
+	public void setInventorySlotContents(int slot, ItemStack stack) {
+		super.setInventorySlotContents(slot, stack);
 
 		if (currentRecipe == null) {
 			setNextCurrentRecipe();
@@ -133,43 +118,13 @@ public class TileAssemblyTable extends TileLaserTableBase implements IMachine, I
 	}
 
 	@Override
-	public ItemStack getStackInSlotOnClosing(int slot) {
-		if (this.items[slot] == null)
-			return null;
-
-		ItemStack stackToTake = this.items[slot];
-		this.items[slot] = null;
-		return stackToTake;
-	}
-
-	@Override
 	public String getInvName() {
-		return "Assembly Table";
-	}
-
-	@Override
-	public int getInventoryStackLimit() {
-		return 64;
-	}
-
-	@Override
-	public boolean isUseableByPlayer(EntityPlayer entityplayer) {
-		return worldObj.getBlockTileEntity(xCoord, yCoord, zCoord) == this && !isInvalid();
-	}
-
-	@Override
-	public void openChest() {
-	}
-
-	@Override
-	public void closeChest() {
+		return StringUtils.localize("tile.assemblyTableBlock");
 	}
 
 	@Override
 	public void readFromNBT(NBTTagCompound nbt) {
 		super.readFromNBT(nbt);
-
-		InvUtils.readStacksFromNBT(nbt, "items", items);
 
 		NBTTagList list = nbt.getTagList("planned");
 
@@ -201,8 +156,6 @@ public class TileAssemblyTable extends TileLaserTableBase implements IMachine, I
 	@Override
 	public void writeToNBT(NBTTagCompound nbt) {
 		super.writeToNBT(nbt);
-
-		InvUtils.writeStacksToNBT(nbt, "items", items);
 
 		NBTTagList list = new NBTTagList();
 
@@ -356,7 +309,7 @@ public class TileAssemblyTable extends TileLaserTableBase implements IMachine, I
 	}
 
 	@Override
-	public boolean isItemValidForSlot(int i, ItemStack itemstack) {
+	public boolean isItemValidForSlot(int slot, ItemStack stack) {
 		return true;
 	}
 }
