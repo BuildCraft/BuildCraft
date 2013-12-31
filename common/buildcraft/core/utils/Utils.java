@@ -158,43 +158,6 @@ public class Utils {
 		return world.getBlockTileEntity((int) tmp.x, (int) tmp.y, (int) tmp.z);
 	}
 
-	/**
-	 * Ensures that the given inventory is the full inventory, i.e. takes double
-	 * chests into account.
-	 *
-	 * @param inv
-	 * @return Modified inventory if double chest, unmodified otherwise.
-	 */
-	public static IInventory getInventory(IInventory inv) {
-		if (inv instanceof TileEntityChest) {
-			TileEntityChest chest = (TileEntityChest) inv;
-
-			TileEntityChest adjacent = null;
-
-			if (chest.adjacentChestXNeg != null) {
-				adjacent = chest.adjacentChestXNeg;
-			}
-
-			if (chest.adjacentChestXPos != null) {
-				adjacent = chest.adjacentChestXPos;
-			}
-
-			if (chest.adjacentChestZNeg != null) {
-				adjacent = chest.adjacentChestZNeg;
-			}
-
-			if (chest.adjacentChestZPosition != null) {
-				adjacent = chest.adjacentChestZPosition;
-			}
-
-			if (adjacent != null) {
-				return new InventoryLargeChest("", inv, adjacent);
-			}
-			return inv;
-		}
-		return inv;
-	}
-
 	public static IAreaProvider getNearbyAreaProvider(World world, int i, int j, int k) {
 		TileEntity a1 = world.getBlockTileEntity(i + 1, j, k);
 		TileEntity a2 = world.getBlockTileEntity(i - 1, j, k);

@@ -1,11 +1,11 @@
 package buildcraft.transport;
 
-import buildcraft.BuildCraftTransport;
 import buildcraft.api.gates.IOverrideDefaultTriggers;
 import buildcraft.api.gates.ITrigger;
 import buildcraft.api.gates.ITriggerProvider;
-import buildcraft.api.transport.IPipe;
+import buildcraft.api.transport.IPipeTile;
 import buildcraft.transport.pipes.PipePowerWood;
+import buildcraft.transport.triggers.TriggerPipeContents;
 import java.util.LinkedList;
 import net.minecraft.block.Block;
 import net.minecraft.tileentity.TileEntity;
@@ -13,31 +13,36 @@ import net.minecraft.tileentity.TileEntity;
 public class PipeTriggerProvider implements ITriggerProvider {
 
 	@Override
-	public LinkedList<ITrigger> getPipeTriggers(IPipe iPipe) {
-		if (iPipe instanceof IOverrideDefaultTriggers)
-			return ((IOverrideDefaultTriggers) iPipe).getTriggers();
-
+	public LinkedList<ITrigger> getPipeTriggers(IPipeTile tile) {
 		LinkedList<ITrigger> result = new LinkedList<ITrigger>();
+		Pipe pipe = null;
+		if (tile instanceof TileGenericPipe)
+			pipe = ((TileGenericPipe) tile).pipe;
+		if (pipe == null)
+			return result;
+		if (pipe instanceof IOverrideDefaultTriggers)
+			return ((IOverrideDefaultTriggers) pipe).getTriggers();
 
-		Pipe pipe = (Pipe) iPipe;
-
-		if (pipe.hasGate()) {
+		if (pipe.hasGate())
 			pipe.gate.addTrigger(result);
-		}
 
-		if (pipe.transport instanceof PipeTransportItems) {
-			result.add(BuildCraftTransport.triggerPipeEmpty);
-			result.add(BuildCraftTransport.triggerPipeItems);
-		} else if (pipe.transport instanceof PipeTransportPower) {
-			result.add(BuildCraftTransport.triggerPipeEmpty);
-			result.add(BuildCraftTransport.triggerPipeContainsEnergy);
-			result.add(BuildCraftTransport.triggerPipeTooMuchEnergy);
-			if (pipe instanceof PipePowerWood) {
-				result.add(BuildCraftTransport.triggerPipeRequestsEnergy);
-			}
-		} else if (pipe.transport instanceof PipeTransportFluids) {
-			result.add(BuildCraftTransport.triggerPipeEmpty);
-			result.add(BuildCraftTransport.triggerPipeFluids);
+		switch (tile.getPipeType()) {
+			case ITEM:
+				result.add(TriggerPipeContents.PipeContents.empty.trigger);
+				result.add(TriggerPipeContents.PipeContents.containsItems.trigger);
+				break;
+			case FLUID:
+				result.add(TriggerPipeContents.PipeContents.empty.trigger);
+				result.add(TriggerPipeContents.PipeContents.containsFluids.trigger);
+				break;
+			case POWER:
+				result.add(TriggerPipeContents.PipeContents.empty.trigger);
+				result.add(TriggerPipeContents.PipeContents.containsEnergy.trigger);
+				result.add(TriggerPipeContents.PipeContents.tooMuchEnergy.trigger);
+				if (pipe instanceof PipePowerWood) {
+					result.add(TriggerPipeContents.PipeContents.requestsEnergy.trigger);
+				}
+				break;
 		}
 
 		return result;

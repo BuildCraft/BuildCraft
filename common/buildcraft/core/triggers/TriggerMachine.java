@@ -7,27 +7,26 @@
  */
 package buildcraft.core.triggers;
 
+import buildcraft.api.gates.ITileTrigger;
 import buildcraft.api.gates.ITriggerParameter;
 import buildcraft.core.IMachine;
+import buildcraft.core.utils.StringUtils;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.ForgeDirection;
 
-public class TriggerMachine extends BCTrigger {
+public class TriggerMachine extends BCTrigger implements ITileTrigger {
 
 	boolean active;
 
-	public TriggerMachine(int legacyId, boolean active) {
-		super(legacyId, "buildcraft.work." + (active ? "scheduled" : "done"));
+	public TriggerMachine(boolean active) {
+		super("buildcraft:work." + (active ? "scheduled" : "done"), "buildcraft.work." + (active ? "scheduled" : "done"));
 
 		this.active = active;
 	}
 
 	@Override
 	public String getDescription() {
-		if (active)
-			return "Work Scheduled";
-		else
-			return "Work Done";
+		return StringUtils.localize("gate.trigger.machine." + (active ? "scheduled" : "done"));
 	}
 
 	@Override

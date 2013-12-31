@@ -8,12 +8,16 @@
  */
 package buildcraft.transport.gates;
 
+import buildcraft.api.gates.GateExpansionController;
+import buildcraft.api.gates.GateExpansions;
+import buildcraft.api.gates.IGateExpansion;
 import buildcraft.transport.Gate;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.gates.GateDefinition.GateLogic;
 import buildcraft.transport.gates.GateDefinition.GateMaterial;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 
 /**
  *
@@ -29,7 +33,13 @@ public class GateFactory {
 		if (stack == null || stack.stackSize <= 0 || !(stack.getItem() instanceof ItemGate))
 			return null;
 
-		return makeGate(pipe, ItemGate.getMaterial(stack), ItemGate.getLogic(stack));
+		Gate gate = makeGate(pipe, ItemGate.getMaterial(stack), ItemGate.getLogic(stack));
+
+		for (IGateExpansion expansion : ItemGate.getInstalledExpansions(stack)) {
+			gate.addGateExpansion(expansion);
+		}
+
+		return gate;
 	}
 
 	public static Gate makeGate(Pipe pipe, NBTTagCompound nbt) {
@@ -78,12 +88,24 @@ public class GateFactory {
 		}
 
 		Gate gate = makeGate(pipe, material, logic);
+		gate.readFromNBT(nbt);
 
 		if (nbt.hasKey("Pulser")) {
 			NBTTagCompound pulsarTag = nbt.getCompoundTag("Pulser");
 			GateExpansionController pulsarCon = GateExpansionPulsar.INSTANCE.makeController(pipe.container);
 			pulsarCon.readFromNBT(pulsarTag);
-			gate.expansions.add(pulsarCon);
+			gate.expansions.put(GateExpansionPulsar.INSTANCE, pulsarCon);
+		}
+
+		NBTTagList exList = nbt.getTagList("expansions");
+		for (int i = 0; i < exList.tagCount(); i++) {
+			NBTTagCompound conNBT = (NBTTagCompound) exList.tagAt(i);
+			IGateExpansion ex = GateExpansions.getExpansion(conNBT.getString("type"));
+			if (ex != null) {
+				GateExpansionController con = ex.makeController(pipe.container);
+				con.readFromNBT(conNBT.getCompoundTag("data"));
+				gate.expansions.put(ex, con);
+			}
 		}
 
 		return gate;

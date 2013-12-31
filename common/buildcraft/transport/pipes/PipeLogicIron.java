@@ -45,7 +45,6 @@ public abstract class PipeLogicIron {
 		}
 	}
 
-
 	private boolean isValidFacing(ForgeDirection side) {
 		if (!pipe.container.isPipeConnected(side))
 			return false;
@@ -73,7 +72,7 @@ public abstract class PipeLogicIron {
 	}
 
 	public boolean setFacing(ForgeDirection facing) {
-		if (isValidFacing(facing) && facing.ordinal() != pipe.container.getBlockMetadata()) {
+		if (facing.ordinal() != pipe.container.getBlockMetadata() && isValidFacing(facing)) {
 			pipe.container.worldObj.setBlockMetadataWithNotify(pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord, facing.ordinal(), 3);
 			pipe.container.scheduleRenderUpdate();
 			return true;

@@ -11,7 +11,6 @@ import buildcraft.api.core.IIconProvider;
 import buildcraft.api.gates.ActionManager;
 import buildcraft.api.recipes.BuildcraftRecipes;
 import buildcraft.api.transport.IExtractionHandler;
-import buildcraft.api.transport.IPipe;
 import buildcraft.api.transport.PipeManager;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.InterModComms;
@@ -24,7 +23,6 @@ import buildcraft.core.utils.BCLog;
 import buildcraft.core.utils.EnumColor;
 import buildcraft.transport.BlockFilteredBuffer;
 import buildcraft.transport.BlockGenericPipe;
-import buildcraft.transport.GateIconProvider;
 import buildcraft.transport.GuiHandler;
 import buildcraft.transport.ItemFacade;
 import buildcraft.transport.gates.ItemGate;
@@ -41,8 +39,12 @@ import buildcraft.transport.blueprints.BptItemPipeEmerald;
 import buildcraft.transport.blueprints.BptItemPipeIron;
 import buildcraft.transport.blueprints.BptItemPipeWooden;
 import buildcraft.transport.gates.GateExpansionPulsar;
-import buildcraft.transport.gates.GateExpansions;
+import buildcraft.api.gates.GateExpansions;
+import buildcraft.api.transport.PipeWire;
+import buildcraft.transport.gates.GateExpansionRedstoneFader;
+import buildcraft.transport.gates.GateExpansionTimer;
 import buildcraft.transport.network.PacketHandlerTransport;
+import buildcraft.transport.network.TransportConnectionHandler;
 import buildcraft.transport.pipes.PipeFluidsCobblestone;
 import buildcraft.transport.pipes.PipeFluidsEmerald;
 import buildcraft.transport.pipes.PipeFluidsGold;
@@ -74,7 +76,7 @@ import buildcraft.transport.pipes.PipePowerQuartz;
 import buildcraft.transport.pipes.PipePowerStone;
 import buildcraft.transport.pipes.PipePowerWood;
 import buildcraft.transport.pipes.PipeStructureCobblestone;
-import buildcraft.transport.triggers.ActionEnergyPulser;
+import buildcraft.transport.triggers.ActionEnergyPulsar;
 import buildcraft.transport.triggers.ActionExtractionPreset;
 import buildcraft.transport.triggers.ActionPipeColor;
 import buildcraft.transport.triggers.ActionPipeDirection;
@@ -82,9 +84,12 @@ import buildcraft.transport.triggers.ActionPowerLimiter;
 import buildcraft.transport.triggers.ActionSignalOutput;
 import buildcraft.transport.triggers.ActionSingleEnergyPulse;
 import buildcraft.transport.triggers.TriggerPipeContents;
-import buildcraft.transport.triggers.TriggerQuartzTimer;
-import buildcraft.transport.triggers.TriggerPipeContents.Kind;
+import buildcraft.transport.triggers.TriggerClockTimer;
+import buildcraft.transport.triggers.TriggerClockTimer.Time;
+import buildcraft.transport.triggers.TriggerPipeContents.PipeContents;
 import buildcraft.transport.triggers.TriggerPipeSignal;
+import buildcraft.transport.triggers.TriggerRedstoneFaderInput;
+import buildcraft.transport.triggers.ActionRedstoneFaderOutput;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
@@ -107,7 +112,7 @@ import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.common.Property;
 
 @Mod(version = Version.VERSION, modid = "BuildCraft|Transport", name = "Buildcraft Transport", dependencies = DefaultProps.DEPENDENCY_CORE)
-@NetworkMod(channels = {DefaultProps.NET_CHANNEL_NAME}, packetHandler = PacketHandlerTransport.class)
+@NetworkMod(channels = {DefaultProps.NET_CHANNEL_NAME}, packetHandler = PacketHandlerTransport.class, connectionHandler = TransportConnectionHandler.class)
 public class BuildCraftTransport {
 
 	public static BlockGenericPipe genericPipeBlock;
@@ -153,38 +158,23 @@ public class BuildCraftTransport {
 	// public static Item pipeItemsStipes;
 	public static Item pipeStructureCobblestone;
 	public static int groupItemsTrigger;
-	public static BCTrigger triggerPipeEmpty = new TriggerPipeContents(DefaultProps.TRIGGER_PIPE_EMPTY, Kind.Empty);
-	public static BCTrigger triggerPipeItems = new TriggerPipeContents(DefaultProps.TRIGGER_PIPE_ITEMS, Kind.ContainsItems);
-	public static BCTrigger triggerPipeFluids = new TriggerPipeContents(DefaultProps.TRIGGER_PIPE_LIQUIDS, Kind.ContainsFluids);
-	public static BCTrigger triggerPipeContainsEnergy = new TriggerPipeContents(DefaultProps.TRIGGER_PIPE_CONTAINS_ENERGY, Kind.ContainsEnergy);
-	public static BCTrigger triggerPipeRequestsEnergy = new TriggerPipeContents(DefaultProps.TRIGGER_PIPE_REQUESTS_ENERGY, Kind.RequestsEnergy);
-	public static BCTrigger triggerPipeTooMuchEnergy = new TriggerPipeContents(DefaultProps.TRIGGER_PIPE_TOO_MUCH_ENERGY, Kind.TooMuchEnergy);
-	public static BCTrigger triggerRedSignalActive = new TriggerPipeSignal(DefaultProps.TRIGGER_RED_SIGNAL_ACTIVE, true, IPipe.WireColor.Red);
-	public static BCTrigger triggerRedSignalInactive = new TriggerPipeSignal(DefaultProps.TRIGGER_RED_SIGNAL_INACTIVE, false, IPipe.WireColor.Red);
-	public static BCTrigger triggerBlueSignalActive = new TriggerPipeSignal(DefaultProps.TRIGGER_BLUE_SIGNAL_ACTIVE, true, IPipe.WireColor.Blue);
-	public static BCTrigger triggerBlueSignalInactive = new TriggerPipeSignal(DefaultProps.TRIGGER_BLUE_SIGNAL_INACTIVE, false, IPipe.WireColor.Blue);
-	public static BCTrigger triggerGreenSignalActive = new TriggerPipeSignal(DefaultProps.TRIGGER_GREEN_SIGNAL_ACTIVE, true, IPipe.WireColor.Green);
-	public static BCTrigger triggerGreenSignalInactive = new TriggerPipeSignal(DefaultProps.TRIGGER_GREEN_SIGNAL_INACTIVE, false, IPipe.WireColor.Green);
-	public static BCTrigger triggerYellowSignalActive = new TriggerPipeSignal(DefaultProps.TRIGGER_YELLOW_SIGNAL_ACTIVE, true, IPipe.WireColor.Yellow);
-	public static BCTrigger triggerYellowSignalInactive = new TriggerPipeSignal(DefaultProps.TRIGGER_YELLOW_SIGNAL_INACTIVE, false, IPipe.WireColor.Yellow);
-	public static BCTrigger triggerTimerShort = new TriggerQuartzTimer(DefaultProps.TRIGGER_TIMER_SHORT, TriggerQuartzTimer.Time.Short);
-	public static BCTrigger triggerTimerMedium = new TriggerQuartzTimer(DefaultProps.TRIGGER_TIMER_MEDIUM, TriggerQuartzTimer.Time.Medium);
-	public static BCTrigger triggerTimerLong = new TriggerQuartzTimer(DefaultProps.TRIGGER_TIMER_LONG, TriggerQuartzTimer.Time.Long);
-	public static BCAction actionRedSignal = new ActionSignalOutput(DefaultProps.ACTION_RED_SIGNAL, IPipe.WireColor.Red);
-	public static BCAction actionBlueSignal = new ActionSignalOutput(DefaultProps.ACTION_BLUE_SIGNAL, IPipe.WireColor.Blue);
-	public static BCAction actionGreenSignal = new ActionSignalOutput(DefaultProps.ACTION_GREEN_SIGNAL, IPipe.WireColor.Green);
-	public static BCAction actionYellowSignal = new ActionSignalOutput(DefaultProps.ACTION_YELLOW_SIGNAL, IPipe.WireColor.Yellow);
-	public static BCAction actionEnergyPulser = new ActionEnergyPulser(DefaultProps.ACTION_ENERGY_PULSER);
-	public static BCAction actionSingleEnergyPulse = new ActionSingleEnergyPulse(DefaultProps.ACTION_SINGLE_ENERGY_PULSE);
+	public static BCTrigger[] triggerPipe = new BCTrigger[PipeContents.values().length];
+	public static BCTrigger[] triggerPipeWireActive = new BCTrigger[PipeWire.values().length];
+	public static BCTrigger[] triggerPipeWireInactive = new BCTrigger[PipeWire.values().length];
+	public static BCTrigger[] triggerTimer = new BCTrigger[TriggerClockTimer.Time.VALUES.length];
+	public static BCTrigger[] triggerRedstoneLevel = new BCTrigger[15];
+	public static BCAction[] actionPipeWire = new ActionSignalOutput[PipeWire.values().length];
+	public static BCAction actionEnergyPulser = new ActionEnergyPulsar();
+	public static BCAction actionSingleEnergyPulse = new ActionSingleEnergyPulse();
 	public static BCAction[] actionPipeColor = new BCAction[16];
 	public static BCAction[] actionPipeDirection = new BCAction[16];
 	public static BCAction[] actionPowerLimiter = new BCAction[7];
-	public static BCAction actionExtractionPresetRed = new ActionExtractionPreset(-1, EnumColor.RED);
-	public static BCAction actionExtractionPresetBlue = new ActionExtractionPreset(-1, EnumColor.BLUE);
-	public static BCAction actionExtractionPresetGreen = new ActionExtractionPreset(-1, EnumColor.GREEN);
-	public static BCAction actionExtractionPresetYellow = new ActionExtractionPreset(-1, EnumColor.YELLOW);
+	public static BCAction[] actionRedstoneLevel  = new BCAction[15];
+	public static BCAction actionExtractionPresetRed = new ActionExtractionPreset(EnumColor.RED);
+	public static BCAction actionExtractionPresetBlue = new ActionExtractionPreset(EnumColor.BLUE);
+	public static BCAction actionExtractionPresetGreen = new ActionExtractionPreset(EnumColor.GREEN);
+	public static BCAction actionExtractionPresetYellow = new ActionExtractionPreset(EnumColor.YELLOW);
 	public IIconProvider pipeIconProvider = new PipeIconProvider();
-	public IIconProvider gateIconProvider = new GateIconProvider();
 	public IIconProvider wireIconProvider = new WireIconProvider();
 	@Instance("BuildCraft|Transport")
 	public static BuildCraftTransport instance;
@@ -267,6 +257,8 @@ public class BuildCraftTransport {
 			PipeManager.registerExtractionHandler(new ExtractionHandler(excludedItemBlocks, excludedFluidBlocks));
 
 			GateExpansions.registerExpansion(GateExpansionPulsar.INSTANCE);
+			GateExpansions.registerExpansion(GateExpansionTimer.INSTANCE);
+			GateExpansions.registerExpansion(GateExpansionRedstoneFader.INSTANCE);
 
 			Property groupItemsTriggerProp = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "pipes.groupItemsTrigger", 32);
 			groupItemsTriggerProp.comment = "when reaching this amount of objects in a pipes, items will be automatically grouped";
@@ -413,16 +405,35 @@ public class BuildCraftTransport {
 	public void postInit(FMLPostInitializationEvent evt) {
 		ItemFacade.initialize();
 
+		for (PipeContents kind : PipeContents.values()) {
+			triggerPipe[kind.ordinal()] = new TriggerPipeContents(kind);
+		}
+
+		for (PipeWire wire : PipeWire.values()) {
+			triggerPipeWireActive[wire.ordinal()] = new TriggerPipeSignal(true, wire);
+			triggerPipeWireInactive[wire.ordinal()] = new TriggerPipeSignal(false, wire);
+			actionPipeWire[wire.ordinal()] = new ActionSignalOutput(wire);
+		}
+
+		for (Time time : TriggerClockTimer.Time.VALUES) {
+			triggerTimer[time.ordinal()] = new TriggerClockTimer(time);
+		}
+
+		for (int level = 0; level < triggerRedstoneLevel.length; level++) {
+			triggerRedstoneLevel[level] = new TriggerRedstoneFaderInput(level + 1);
+			actionRedstoneLevel[level] = new ActionRedstoneFaderOutput(level + 1);
+		}
+
 		for (EnumColor color : EnumColor.VALUES) {
-			actionPipeColor[color.ordinal()] = new ActionPipeColor(-1, color);
+			actionPipeColor[color.ordinal()] = new ActionPipeColor(color);
 		}
 
 		for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
-			actionPipeDirection[direction.ordinal()] = new ActionPipeDirection(-1, direction);
+			actionPipeDirection[direction.ordinal()] = new ActionPipeDirection(direction);
 		}
 
 		for (PowerMode limit : PowerMode.VALUES) {
-			actionPowerLimiter[limit.ordinal()] = new ActionPowerLimiter(-1, limit);
+			actionPowerLimiter[limit.ordinal()] = new ActionPowerLimiter(limit);
 		}
 	}
 

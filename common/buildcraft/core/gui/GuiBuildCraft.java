@@ -6,10 +6,12 @@ import buildcraft.core.gui.tooltips.IToolTipProvider;
 import buildcraft.core.gui.tooltips.ToolTip;
 import buildcraft.core.gui.tooltips.ToolTipLine;
 import buildcraft.core.gui.widgets.Widget;
+import buildcraft.core.render.RenderUtils;
 import buildcraft.core.utils.SessionVars;
 import java.util.ArrayList;
 import java.util.Collection;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -41,6 +43,10 @@ public abstract class GuiBuildCraft extends GuiContainer {
 		}
 
 		initLedgers(inventory);
+	}
+
+	public FontRenderer getFontRenderer() {
+		return fontRenderer;
 	}
 
 	protected void initLedgers(IInventory inventory) {
@@ -437,11 +443,7 @@ public abstract class GuiBuildCraft extends GuiContainer {
 
 		protected void drawBackground(int x, int y) {
 
-			float colorR = (overlayColor >> 16 & 255) / 255.0F;
-			float colorG = (overlayColor >> 8 & 255) / 255.0F;
-			float colorB = (overlayColor & 255) / 255.0F;
-
-			GL11.glColor4f(colorR, colorG, colorB, 1.0F);
+			RenderUtils.setGLColorFromInt(overlayColor);
 
 			mc.renderEngine.bindTexture(LEDGER_TEXTURE);
 			drawTexturedModalRect(x, y, 0, 256 - currentHeight, 4, currentHeight);

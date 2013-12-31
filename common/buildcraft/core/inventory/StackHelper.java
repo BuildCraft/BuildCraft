@@ -87,10 +87,21 @@ public class StackHelper {
 		if (oreDictionary) {
 			int idBase = OreDictionary.getOreID(base);
 			if (idBase >= 0) {
-				for(ItemStack itemstack : OreDictionary.getOres(idBase)) {
-	                if(comparison.itemID == itemstack.itemID && (itemstack.getItemDamage() == OreDictionary.WILDCARD_VALUE || comparison.getItemDamage() == itemstack.getItemDamage()))
-	                	return true;
+				for (ItemStack itemstack : OreDictionary.getOres(idBase)) {
+					if (comparison.itemID == itemstack.itemID && (itemstack.getItemDamage() == OreDictionary.WILDCARD_VALUE || comparison.getItemDamage() == itemstack.getItemDamage()))
+						return true;
 				}
+			}
+		}
+
+		return false;
+	}
+
+	public boolean isCraftingEquivalent(int oreID, ItemStack comparison) {
+		if (oreID >= 0) {
+			for (ItemStack itemstack : OreDictionary.getOres(oreID)) {
+				if (comparison.itemID == itemstack.itemID && (itemstack.getItemDamage() == OreDictionary.WILDCARD_VALUE || comparison.getItemDamage() == itemstack.getItemDamage()))
+					return true;
 			}
 		}
 

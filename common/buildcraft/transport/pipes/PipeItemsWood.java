@@ -17,9 +17,9 @@ import buildcraft.api.power.PowerHandler.PowerReceiver;
 import buildcraft.api.power.PowerHandler.Type;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.PipeManager;
+import buildcraft.core.inventory.InvUtils;
 import buildcraft.transport.TravelingItem;
 import buildcraft.core.inventory.InventoryWrapper;
-import buildcraft.core.utils.Utils;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportItems;
@@ -175,7 +175,7 @@ public class PipeItemsWood extends Pipe<PipeTransportItems> implements IPowerRec
 			return stacks;
 		} else {
 
-			IInventory inv = Utils.getInventory(inventory);
+			IInventory inv = InvUtils.getInventory(inventory);
 			ItemStack result = checkExtractGeneric(inv, doRemove, from);
 
 			if (result != null)

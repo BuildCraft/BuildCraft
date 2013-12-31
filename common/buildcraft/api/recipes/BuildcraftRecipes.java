@@ -15,6 +15,7 @@ package buildcraft.api.recipes;
 public final class BuildcraftRecipes {
 
 	public static IAssemblyRecipeManager assemblyTable;
+	public static IIntegrationRecipeManager integrationTable;
 	public static IRefineryRecipeManager refinery;
 
 	private BuildcraftRecipes() {

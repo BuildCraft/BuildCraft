@@ -7,6 +7,7 @@
  */
 package buildcraft.transport;
 
+import buildcraft.api.transport.PipeWire;
 import buildcraft.transport.gates.ItemGate;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -35,9 +36,9 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
 import buildcraft.BuildCraftTransport;
+import buildcraft.api.gates.GateExpansions;
+import buildcraft.api.gates.IGateExpansion;
 import buildcraft.api.tools.IToolWrench;
-import buildcraft.api.transport.IPipe;
-import buildcraft.api.transport.ISolidSideTile;
 import buildcraft.core.BlockBuildCraft;
 import buildcraft.core.BlockIndex;
 import buildcraft.core.CoreConstants;
@@ -266,22 +267,17 @@ public class BlockGenericPipe extends BlockBuildCraft {
 		}
 	}
 
-	private RaytraceResult doRayTrace(World world, int x, int y, int z, EntityPlayer entityPlayer) {
-		double pitch = Math.toRadians(entityPlayer.rotationPitch);
-		double yaw = Math.toRadians(entityPlayer.rotationYaw);
-
-		double dirX = -Math.sin(yaw) * Math.cos(pitch);
-		double dirY = -Math.sin(pitch);
-		double dirZ = Math.cos(yaw) * Math.cos(pitch);
-
+	private RaytraceResult doRayTrace(World world, int x, int y, int z, EntityPlayer player) {
 		double reachDistance = 5;
 
-		if (entityPlayer instanceof EntityPlayerMP) {
-			reachDistance = ((EntityPlayerMP) entityPlayer).theItemInWorldManager.getBlockReachDistance();
+		if (player instanceof EntityPlayerMP) {
+			reachDistance = ((EntityPlayerMP) player).theItemInWorldManager.getBlockReachDistance();
 		}
 
-		Vec3 origin = Vec3.fakePool.getVecFromPool(entityPlayer.posX, entityPlayer.posY + 1.62 - entityPlayer.yOffset, entityPlayer.posZ);
-		Vec3 direction = origin.addVector(dirX * reachDistance, dirY * reachDistance, dirZ * reachDistance);
+		double eyeHeight = world.isRemote ? player.getEyeHeight() - player.getDefaultEyeHeight() : player.getEyeHeight();
+		Vec3 lookVec = player.getLookVec();
+		Vec3 origin = world.getWorldVec3Pool().getVecFromPool(player.posX, player.posY + eyeHeight, player.posZ);
+		Vec3 direction = origin.addVector(lookVec.xCoord * reachDistance, lookVec.yCoord * reachDistance, lookVec.zCoord * reachDistance);
 
 		return doRayTrace(world, x, y, z, origin, direction);
 	}
@@ -615,7 +611,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 
 		if (isValid(pipe)) {
 			pipe.container.scheduleNeighborChange();
-			pipe.container.redstonePowered = world.isBlockIndirectlyGettingPowered(x, y, z);
+			pipe.container.redstoneInput = world.getBlockPowerInput(x, y, z);
 		}
 	}
 
@@ -669,19 +665,19 @@ public class BlockGenericPipe extends BlockBuildCraft {
 				// interface callbacks for the individual pipe/logic calls
 				return pipe.blockActivated(player);
 			else if (currentItem.getItem() == BuildCraftTransport.redPipeWire) {
-				if (addOrStripWire(player, pipe, IPipe.WireColor.Red)) {
+				if (addOrStripWire(player, pipe, PipeWire.Red)) {
 					return true;
 				}
 			} else if (currentItem.getItem() == BuildCraftTransport.bluePipeWire) {
-				if (addOrStripWire(player, pipe, IPipe.WireColor.Blue)) {
+				if (addOrStripWire(player, pipe, PipeWire.Blue)) {
 					return true;
 				}
 			} else if (currentItem.getItem() == BuildCraftTransport.greenPipeWire) {
-				if (addOrStripWire(player, pipe, IPipe.WireColor.Green)) {
+				if (addOrStripWire(player, pipe, PipeWire.Green)) {
 					return true;
 				}
 			} else if (currentItem.getItem() == BuildCraftTransport.yellowPipeWire) {
-				if (addOrStripWire(player, pipe, IPipe.WireColor.Yellow)) {
+				if (addOrStripWire(player, pipe, PipeWire.Yellow)) {
 					return true;
 				}
 			} else if (currentItem.getItem() instanceof ItemGate) {
@@ -753,7 +749,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 		return false;
 	}
 
-	private boolean addOrStripWire(EntityPlayer player, Pipe pipe, IPipe.WireColor color) {
+	private boolean addOrStripWire(EntityPlayer player, Pipe pipe, PipeWire color) {
 		if (addWire(pipe, color)) {
 			if (!player.capabilities.isCreativeMode) {
 				player.getCurrentEquippedItem().splitStack(1);
@@ -763,7 +759,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 		return player.isSneaking() && stripWire(pipe, color);
 	}
 
-	private boolean addWire(Pipe pipe, IPipe.WireColor color) {
+	private boolean addWire(Pipe pipe, PipeWire color) {
 		if (!pipe.wireSet[color.ordinal()]) {
 			pipe.wireSet[color.ordinal()] = true;
 			pipe.signalStrength[color.ordinal()] = 0;
@@ -773,7 +769,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 		return false;
 	}
 
-	private boolean stripWire(Pipe pipe, IPipe.WireColor color) {
+	private boolean stripWire(Pipe pipe, PipeWire color) {
 		if (pipe.wireSet[color.ordinal()]) {
 			if (!CoreProxy.proxy.isRenderWorld(pipe.container.worldObj)) {
 				dropWire(color, pipe);
@@ -854,7 +850,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 		}
 
 		// Try to strip wires second, starting with yellow.
-		for (IPipe.WireColor color : IPipe.WireColor.values()) {
+		for (PipeWire color : PipeWire.values()) {
 			if (stripWire(pipe, color))
 				return true;
 		}
@@ -867,7 +863,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 	 *
 	 * @param color
 	 */
-	private void dropWire(IPipe.WireColor color, Pipe pipe) {
+	private void dropWire(PipeWire color, Pipe pipe) {
 
 		Item wireItem;
 		switch (color) {
@@ -1036,7 +1032,6 @@ public class BlockGenericPipe extends BlockBuildCraft {
 			skippedFirstIconRegister = true;
 			return;
 		}
-		BuildCraftTransport.instance.gateIconProvider.registerIcons(iconRegister);
 		BuildCraftTransport.instance.wireIconProvider.registerIcons(iconRegister);
 		for (int i : pipes.keySet()) {
 			Pipe dummyPipe = createPipe(i);
@@ -1052,6 +1047,11 @@ public class BlockGenericPipe extends BlockBuildCraft {
 		for (GateDefinition.GateLogic logic : GateDefinition.GateLogic.VALUES) {
 			logic.registerBlockIcon(iconRegister);
 		}
+
+		for (IGateExpansion expansion : GateExpansions.getExpansions()) {
+			expansion.registerBlockOverlay(iconRegister);
+		}
+
 	}
 
 	@Override

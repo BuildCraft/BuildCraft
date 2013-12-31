@@ -2,13 +2,11 @@ package buildcraft.transport.render;
 
 import buildcraft.BuildCraftTransport;
 import buildcraft.core.CoreConstants;
-import buildcraft.transport.ItemPipe;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.TextureMap;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Icon;
 import net.minecraftforge.client.IItemRenderer;
@@ -22,7 +20,7 @@ public class PipeItemRenderer implements IItemRenderer {
 		Tessellator tessellator = Tessellator.instance;
 
 		Block block = BuildCraftTransport.genericPipeBlock;
-		Icon icon = ((ItemPipe) Item.itemsList[item.itemID]).getIconFromDamage(0);
+		Icon icon = item.getItem().getIconFromDamage(0);
 
 		if (icon == null)
 			icon = ((TextureMap) Minecraft.getMinecraft().getTextureManager().getTexture(TextureMap.locationBlocksTexture)).getAtlasSprite("missingno");

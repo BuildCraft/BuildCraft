@@ -7,12 +7,6 @@ import net.minecraft.util.Icon;
 
 public interface IAction {
 
-	/**
-	 * Return your ID from the old API here, this is only used to convert old
-	 * saves to the new format.
-	 */
-	int getLegacyId();
-
 	String getUniqueTag();
 
 	@SideOnly(Side.CLIENT)

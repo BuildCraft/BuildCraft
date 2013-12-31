@@ -9,6 +9,7 @@ public class PacketIds {
 	public static final int PIPE_POWER = 4;
 	public static final int PIPE_ITEMSTACK_REQUEST = 5;
 	public static final int PIPE_ITEMSTACK = 6;
+	public static final int PIPE_GATE_EXPANSION_MAP = 7;
 
 	public static final int SELECTION_ASSEMBLY_GET = 20;
 	/** Packet sent to server when a recipe is clicked on in the assembly table */

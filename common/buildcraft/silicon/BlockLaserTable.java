@@ -19,8 +19,8 @@ import net.minecraft.world.World;
 
 public class BlockLaserTable extends BlockContainer {
 
-    @SideOnly(Side.CLIENT)
-    private Icon[][] icons;
+	@SideOnly(Side.CLIENT)
+	private Icon[][] icons;
 
 	public BlockLaserTable(int i) {
 		super(i, Material.iron);
@@ -64,14 +64,22 @@ public class BlockLaserTable extends BlockContainer {
 	}
 
 	@Override
-	public Icon getIcon(int i, int j) {
-	    int s = i > 1 ? 2 : i;
-	    return icons[j][s];
+	public Icon getIcon(int side, int meta) {
+		int s = side > 1 ? 2 : side;
+		return icons[meta][s];
 	}
 
 	@Override
 	public TileEntity createTileEntity(World world, int metadata) {
-		return metadata == 0 ? new TileAssemblyTable() : new TileAdvancedCraftingTable();
+		switch (metadata) {
+			case 0:
+				return new TileAssemblyTable();
+			case 1:
+				return new TileAdvancedCraftingTable();
+			case 2:
+				return new TileIntegrationTable();
+		}
+		return null;
 	}
 
 	@Override
@@ -84,26 +92,33 @@ public class BlockLaserTable extends BlockContainer {
 		return par1;
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@SuppressWarnings({"rawtypes", "unchecked"})
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void getSubBlocks(int par1, CreativeTabs par2CreativeTabs, List par3List) {
 		par3List.add(new ItemStack(this, 1, 0));
 		par3List.add(new ItemStack(this, 1, 1));
+		par3List.add(new ItemStack(this, 1, 2));
 	}
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void registerIcons(IconRegister par1IconRegister)
-	{
-	    icons = new Icon[2][];
-	    icons[0] = new Icon[3];
-	    icons[1] = new Icon[3];
-        icons[0][0] = par1IconRegister.registerIcon("buildcraft:assemblytable_bottom");
-        icons[1][0] = par1IconRegister.registerIcon("buildcraft:advworkbenchtable_bottom");
-	    icons[0][1] = par1IconRegister.registerIcon("buildcraft:assemblytable_top");
-        icons[1][1] = par1IconRegister.registerIcon("buildcraft:advworkbenchtable_top");
-        icons[0][2] = par1IconRegister.registerIcon("buildcraft:assemblytable_side");
-        icons[1][2] = par1IconRegister.registerIcon("buildcraft:advworkbenchtable_side");
+	public void registerIcons(IconRegister par1IconRegister) {
+		icons = new Icon[3][];
+		icons[0] = new Icon[3];
+		icons[1] = new Icon[3];
+		icons[2] = new Icon[3];
+
+		icons[0][0] = par1IconRegister.registerIcon("buildcraft:assemblytable_bottom");
+		icons[0][1] = par1IconRegister.registerIcon("buildcraft:assemblytable_top");
+		icons[0][2] = par1IconRegister.registerIcon("buildcraft:assemblytable_side");
+
+		icons[1][0] = par1IconRegister.registerIcon("buildcraft:advworkbenchtable_bottom");
+		icons[1][1] = par1IconRegister.registerIcon("buildcraft:advworkbenchtable_top");
+		icons[1][2] = par1IconRegister.registerIcon("buildcraft:advworkbenchtable_side");
+
+		icons[2][0] = par1IconRegister.registerIcon("buildcraft:integrationtable_bottom");
+		icons[2][1] = par1IconRegister.registerIcon("buildcraft:integrationtable_top");
+		icons[2][2] = par1IconRegister.registerIcon("buildcraft:integrationtable_side");
 	}
 }

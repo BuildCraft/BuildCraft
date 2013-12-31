@@ -5,10 +5,12 @@ import buildcraft.core.inventory.filters.ArrayStackFilter;
 import buildcraft.core.inventory.filters.IStackFilter;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.InventoryLargeChest;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
+import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
 
@@ -90,9 +92,8 @@ public class InvUtils {
 
 	/* STACK DROPS */
 	public static void dropItems(World world, ItemStack stack, int i, int j, int k) {
-		if (stack.stackSize <= 0) {
+		if (stack == null || stack.stackSize <= 0)
 			return;
-		}
 
 		float f1 = 0.7F;
 		double d = (world.rand.nextFloat() * f1) + (1.0F - f1) * 0.5D;
@@ -205,5 +206,42 @@ public class InvUtils {
 
 			return stack;
 		}
+	}
+
+	/**
+	 * Ensures that the given inventory is the full inventory, i.e. takes double
+	 * chests into account.
+	 *
+	 * @param inv
+	 * @return Modified inventory if double chest, unmodified otherwise.
+	 */
+	public static IInventory getInventory(IInventory inv) {
+		if (inv instanceof TileEntityChest) {
+			TileEntityChest chest = (TileEntityChest) inv;
+
+			TileEntityChest adjacent = null;
+
+			if (chest.adjacentChestXNeg != null) {
+				adjacent = chest.adjacentChestXNeg;
+			}
+
+			if (chest.adjacentChestXPos != null) {
+				adjacent = chest.adjacentChestXPos;
+			}
+
+			if (chest.adjacentChestZNeg != null) {
+				adjacent = chest.adjacentChestZNeg;
+			}
+
+			if (chest.adjacentChestZPosition != null) {
+				adjacent = chest.adjacentChestZPosition;
+			}
+
+			if (adjacent != null) {
+				return new InventoryLargeChest("", inv, adjacent);
+			}
+			return inv;
+		}
+		return inv;
 	}
 }

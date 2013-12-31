@@ -8,20 +8,22 @@
 package buildcraft.transport.triggers;
 
 import buildcraft.api.gates.ITriggerParameter;
-import buildcraft.api.transport.IPipe;
 import buildcraft.core.triggers.ActionTriggerIconProvider;
 import buildcraft.core.triggers.BCTrigger;
-import buildcraft.transport.ITriggerPipe;
+import buildcraft.transport.IPipeTrigger;
 import buildcraft.transport.Pipe;
+import buildcraft.api.transport.PipeWire;
+import buildcraft.core.utils.StringUtils;
 import java.util.Locale;
 
-public class TriggerPipeSignal extends BCTrigger implements ITriggerPipe {
+public class TriggerPipeSignal extends BCTrigger implements IPipeTrigger {
 
 	boolean active;
-	IPipe.WireColor color;
+	PipeWire color;
 
-	public TriggerPipeSignal(int legacyId, boolean active, IPipe.WireColor color) {
-		super(legacyId, "buildcraft.pipe.wire.input." + color.name().toLowerCase(Locale.ENGLISH) + (active ? ".active" : ".inactive"));
+	public TriggerPipeSignal(boolean active, PipeWire color) {
+		super("buildcraft:pipe.wire.input." + color.name().toLowerCase(Locale.ENGLISH) + (active ? ".active" : ".inactive"),
+				"buildcraft.pipe.wire.input." + color.name().toLowerCase(Locale.ENGLISH) + (active ? ".active" : ".inactive"));
 
 		this.active = active;
 		this.color = color;
@@ -34,31 +36,7 @@ public class TriggerPipeSignal extends BCTrigger implements ITriggerPipe {
 
 	@Override
 	public String getDescription() {
-		if (active) {
-			switch (color) {
-				case Red:
-					return "Red Pipe Signal On";
-				case Blue:
-					return "Blue Pipe Signal On";
-				case Green:
-					return "Green Pipe Signal On";
-				case Yellow:
-					return "Yellow Pipe Signal On";
-			}
-		} else {
-			switch (color) {
-				case Red:
-					return "Red Pipe Signal Off";
-				case Blue:
-					return "Blue Pipe Signal Off";
-				case Green:
-					return "Green Pipe Signal Off";
-				case Yellow:
-					return "Yellow Pipe Signal Off";
-			}
-		}
-
-		return "";
+		return String.format(StringUtils.localize("gate.trigger.pipe.wire." + (active ? "active" : "inactive")), StringUtils.localize("color." + color.name().toLowerCase(Locale.ENGLISH)));
 	}
 
 	@Override

@@ -27,6 +27,7 @@ import buildcraft.core.gui.buttons.MultiButtonController;
 import buildcraft.core.gui.buttons.StandardButtonTextureSets;
 import buildcraft.core.gui.tooltips.ToolTip;
 import buildcraft.core.gui.tooltips.ToolTipLine;
+import buildcraft.core.inventory.InvUtils;
 import buildcraft.core.inventory.SimpleInventory;
 import buildcraft.core.network.IClientState;
 import buildcraft.core.network.IGuiReturnHandler;
@@ -157,7 +158,7 @@ public class PipeItemsEmerald extends PipeItemsWood implements IClientState, IGu
 		} else {
 
 			// This is a generic inventory
-			IInventory inv = Utils.getInventory(inventory);
+			IInventory inv = InvUtils.getInventory(inventory);
 			ItemStack result = checkExtractGeneric(inv, doRemove, from);
 
 			// check through every filter once if non-blocking

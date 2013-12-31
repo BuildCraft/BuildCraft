@@ -66,6 +66,11 @@ public class PacketHandlerTransport implements IPacketHandler {
 					pkt.readData(data);
 					break;
 				}
+				case PacketIds.PIPE_GATE_EXPANSION_MAP: {
+					PacketGateExpansionMap pkt = new PacketGateExpansionMap();
+					pkt.readData(data);
+					break;
+				}
 
 				/**
 				 * SERVER SIDE *

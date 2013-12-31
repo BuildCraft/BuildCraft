@@ -7,7 +7,9 @@
  */
 package buildcraft.core.triggers;
 
+import buildcraft.api.gates.ITileTrigger;
 import buildcraft.api.gates.ITriggerParameter;
+import buildcraft.core.utils.StringUtils;
 import java.util.Locale;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.ForgeDirection;
@@ -16,7 +18,7 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
 
-public class TriggerFluidContainer extends BCTrigger {
+public class TriggerFluidContainer extends BCTrigger implements ITileTrigger {
 
 	public enum State {
 
@@ -24,8 +26,8 @@ public class TriggerFluidContainer extends BCTrigger {
 	};
 	public State state;
 
-	public TriggerFluidContainer(int legacyId, State state) {
-		super(legacyId, "buildcraft.fluid." + state.name().toLowerCase(Locale.ENGLISH));
+	public TriggerFluidContainer(State state) {
+		super("buildcraft:fluid." + state.name().toLowerCase(Locale.ENGLISH), "buildcraft.fluid." + state.name().toLowerCase(Locale.ENGLISH));
 		this.state = state;
 	}
 
@@ -39,16 +41,7 @@ public class TriggerFluidContainer extends BCTrigger {
 
 	@Override
 	public String getDescription() {
-		switch (state) {
-			case Empty:
-				return "Tank Empty";
-			case Contains:
-				return "Fluid in Tank";
-			case Space:
-				return "Space for Fluid";
-			default:
-				return "Tank Full";
-		}
+		return StringUtils.localize("gate.trigger.fluid." + state.name().toLowerCase(Locale.ENGLISH));
 	}
 
 	@Override

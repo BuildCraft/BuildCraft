@@ -84,7 +84,7 @@ public class ContainerGateInterface extends BuildCraftContainer {
 		// the client.
 		if (!CoreProxy.proxy.isRenderWorld(pipe.container.worldObj)) {
 			_potentialActions.addAll(pipe.getActions());
-			_potentialTriggers.addAll(ActionManager.getPipeTriggers(pipe));
+			_potentialTriggers.addAll(ActionManager.getPipeTriggers(pipe.container));
 
 			if (pipe.container instanceof IOverrideDefaultTriggers) {
 				_potentialTriggers.addAll(((IOverrideDefaultTriggers) pipe.container).getTriggers());

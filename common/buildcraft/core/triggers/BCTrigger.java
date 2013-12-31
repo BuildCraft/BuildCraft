@@ -14,9 +14,7 @@ import buildcraft.api.gates.TriggerParameter;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.renderer.texture.IconRegister;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Icon;
-import net.minecraftforge.common.ForgeDirection;
 
 /**
  * This class has to be implemented to create new triggers kinds to BuildCraft
@@ -25,23 +23,25 @@ import net.minecraftforge.common.ForgeDirection;
  */
 public abstract class BCTrigger implements ITrigger {
 
-	protected final int legacyId;
 	protected final String uniqueTag;
 
-	public BCTrigger(int legacyId, String uniqueTag) {
-		this.legacyId = legacyId;
-		this.uniqueTag = uniqueTag;
-		ActionManager.registerTrigger(this);
+	/**
+	 * UniqueTag accepts multiple possible tags, use this feature to migrate to
+	 * more standardized tags if needed, otherwise just pass a single string.
+	 * The first passed string will be the one used when saved to disk.
+	 *
+	 * @param uniqueTag
+	 */
+	public BCTrigger(String... uniqueTag) {
+		this.uniqueTag = uniqueTag[0];
+		for (String tag : uniqueTag) {
+			ActionManager.triggers.put(tag, this);
+		}
 	}
 
 	@Override
 	public String getUniqueTag() {
 		return uniqueTag;
-	}
-
-	@Override
-	public int getLegacyId() {
-		return this.legacyId;
 	}
 
 	public int getIconIndex() {
@@ -72,11 +72,6 @@ public abstract class BCTrigger implements ITrigger {
 	@Override
 	public String getDescription() {
 		return "";
-	}
-
-	@Override
-	public boolean isTriggerActive(ForgeDirection side, TileEntity tile, ITriggerParameter parameter) {
-		return false;
 	}
 
 	@Override
