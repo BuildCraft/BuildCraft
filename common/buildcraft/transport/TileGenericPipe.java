@@ -112,7 +112,19 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 
 	public TileGenericPipe() {
 	}
-
+	
+	// Immibis' Microblocks hooks
+	private boolean ImmibisMicroblocks_TransformableTileEntityMarker;
+	
+	private void ImmibisMicroblocks_onMicroblocksChanged() {
+		this.blockNeighborChange = true;
+	}
+	
+	private boolean ImmibisMicroblocks_isSideOpen(int side) {
+		return true;
+	}
+	// End of Immibis' Microblocks hooks
+	
 	@Override
 	public void writeToNBT(NBTTagCompound nbt) {
 		super.writeToNBT(nbt);
@@ -467,7 +479,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 		if (with == null)
 			return false;
 
-		if (hasPlug(side))
+		if (hasPlug(side) || !ImmibisMicroblocks_isSideOpen(side.ordinal()))
 			return false;
 
 		if (!BlockGenericPipe.isValid(pipe))
@@ -483,6 +495,10 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 		if (with instanceof TileGenericPipe) {
 			if (((TileGenericPipe) with).hasPlug(side.getOpposite()))
 				return false;
+			
+			if (!((TileGenericPipe) with).ImmibisMicroblocks_isSideOpen(side.getOpposite().ordinal()))
+				return false;
+			
 			Pipe otherPipe = ((TileGenericPipe) with).pipe;
 
 			if (!BlockGenericPipe.isValid(otherPipe))

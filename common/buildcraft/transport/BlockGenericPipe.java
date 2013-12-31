@@ -86,6 +86,9 @@ public class BlockGenericPipe extends BlockBuildCraft {
 	private boolean skippedFirstIconRegister;
 	private int renderMask = 0;
 
+	// Immibis' Microblocks hook
+	private boolean ImmibisMicroblocks_TransformableBlockMarker;
+	
 	/* Defined subprograms ************************************************* */
 	public BlockGenericPipe(int i) {
 		super(i, Material.glass);
