@@ -4,16 +4,18 @@ import buildcraft.api.gates.GateExpansions;
 import buildcraft.api.gates.IGateExpansion;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.gates.ActionManager;
-import buildcraft.api.gates.GateExpansionController;
 import buildcraft.api.gates.IAction;
 import buildcraft.api.gates.ITrigger;
 import buildcraft.core.ItemBuildCraft;
 import buildcraft.core.inventory.InvUtils;
+import buildcraft.core.utils.Localization;
 import buildcraft.transport.Gate;
 import buildcraft.transport.gates.GateDefinition.GateLogic;
 import buildcraft.transport.gates.GateDefinition.GateMaterial;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -28,6 +30,10 @@ import net.minecraft.util.Icon;
 
 public class ItemGate extends ItemBuildCraft {
 
+	private static final String NBT_TAG_MAT = "mat";
+	private static final String NBT_TAG_LOGIC = "logic";
+	private static final String NBT_TAG_EX = "ex";
+
 	public ItemGate(int id) {
 		super(id);
 		setHasSubtypes(false);
@@ -41,27 +47,37 @@ public class ItemGate extends ItemBuildCraft {
 		return InvUtils.getItemData(stack);
 	}
 
+	public static void setMaterial(ItemStack stack, GateMaterial material) {
+		NBTTagCompound nbt = InvUtils.getItemData(stack);
+		nbt.setByte(NBT_TAG_MAT, (byte) material.ordinal());
+	}
+
 	public static GateMaterial getMaterial(ItemStack stack) {
 		NBTTagCompound nbt = getNBT(stack);
 		if (nbt == null)
 			return GateMaterial.REDSTONE;
-		return GateMaterial.fromOrdinal(nbt.getByte("mat"));
+		return GateMaterial.fromOrdinal(nbt.getByte(NBT_TAG_MAT));
 	}
 
 	public static GateLogic getLogic(ItemStack stack) {
 		NBTTagCompound nbt = getNBT(stack);
 		if (nbt == null)
 			return GateLogic.AND;
-		return GateLogic.fromOrdinal(nbt.getByte("logic"));
+		return GateLogic.fromOrdinal(nbt.getByte(NBT_TAG_LOGIC));
+	}
+
+	public static void setLogic(ItemStack stack, GateLogic logic) {
+		NBTTagCompound nbt = InvUtils.getItemData(stack);
+		nbt.setByte(NBT_TAG_LOGIC, (byte) logic.ordinal());
 	}
 
 	public static void addGateExpansion(ItemStack stack, IGateExpansion expansion) {
 		NBTTagCompound nbt = getNBT(stack);
 		if (nbt == null)
 			return;
-		NBTTagList expansionList = nbt.getTagList("ex");
-		expansionList.appendTag(new NBTTagString("ex", expansion.getUniqueIdentifier()));
-		nbt.setTag("ex", expansionList);
+		NBTTagList expansionList = nbt.getTagList(NBT_TAG_EX);
+		expansionList.appendTag(new NBTTagString("", expansion.getUniqueIdentifier()));
+		nbt.setTag(NBT_TAG_EX, expansionList);
 	}
 
 	public static boolean hasGateExpansion(ItemStack stack, IGateExpansion expansion) {
@@ -69,7 +85,7 @@ public class ItemGate extends ItemBuildCraft {
 		if (nbt == null)
 			return false;
 		try {
-			NBTTagList expansionList = nbt.getTagList("ex");
+			NBTTagList expansionList = nbt.getTagList(NBT_TAG_EX);
 			for (int i = 0; i < expansionList.tagCount(); i++) {
 				NBTTagString ex = (NBTTagString) expansionList.tagAt(i);
 				if (ex.data.equals(expansion.getUniqueIdentifier()))
@@ -86,7 +102,7 @@ public class ItemGate extends ItemBuildCraft {
 		if (nbt == null)
 			return expansions;
 		try {
-			NBTTagList expansionList = nbt.getTagList("ex");
+			NBTTagList expansionList = nbt.getTagList(NBT_TAG_EX);
 			for (int i = 0; i < expansionList.tagCount(); i++) {
 				NBTTagString exTag = (NBTTagString) expansionList.tagAt(i);
 				IGateExpansion ex = GateExpansions.getExpansion(exTag.data);
@@ -101,16 +117,16 @@ public class ItemGate extends ItemBuildCraft {
 	public static ItemStack makeGateItem(GateMaterial material, GateLogic logic) {
 		ItemStack stack = new ItemStack(BuildCraftTransport.pipeGate);
 		NBTTagCompound nbt = InvUtils.getItemData(stack);
-		nbt.setByte("mat", (byte) material.ordinal());
-		nbt.setByte("logic", (byte) logic.ordinal());
+		nbt.setByte(NBT_TAG_MAT, (byte) material.ordinal());
+		nbt.setByte(NBT_TAG_LOGIC, (byte) logic.ordinal());
 		return stack;
 	}
 
 	public static ItemStack makeGateItem(Gate gate) {
 		ItemStack stack = new ItemStack(BuildCraftTransport.pipeGate);
 		NBTTagCompound nbt = InvUtils.getItemData(stack);
-		nbt.setByte("mat", (byte) gate.material.ordinal());
-		nbt.setByte("logic", (byte) gate.logic.ordinal());
+		nbt.setByte(NBT_TAG_MAT, (byte) gate.material.ordinal());
+		nbt.setByte(NBT_TAG_LOGIC, (byte) gate.logic.ordinal());
 		for (IGateExpansion expansion : gate.expansions.keySet()) {
 			addGateExpansion(stack, expansion);
 		}
@@ -139,11 +155,29 @@ public class ItemGate extends ItemBuildCraft {
 		}
 	}
 
+	public static ItemStack[] getGateVarients() {
+		ArrayList<ItemStack> gates = new ArrayList<ItemStack>();
+		for (GateMaterial material : GateMaterial.VALUES) {
+			for (GateLogic logic : GateLogic.VALUES) {
+				if (material == GateMaterial.REDSTONE && logic == GateLogic.OR)
+					continue;
+				gates.add(makeGateItem(material, logic));
+			}
+		}
+		return gates.toArray(new ItemStack[gates.size()]);
+	}
+
 	@Override
 	public void addInformation(ItemStack stack, EntityPlayer player, List list, boolean adv) {
 		super.addInformation(stack, player, list, adv);
-		for (IGateExpansion expansion : getInstalledExpansions(stack)) {
-			list.add(expansion.getDisplayName());
+		list.add("§9§o" + Localization.get("tip.gate.wires"));
+		list.add(Localization.get("tip.gate.wires." + getMaterial(stack).getTag()));
+		Set<IGateExpansion> expansions = getInstalledExpansions(stack);
+		if (!expansions.isEmpty()) {
+			list.add("§9§o" + Localization.get("tip.gate.expansions"));
+			for (IGateExpansion expansion : expansions) {
+				list.add(expansion.getDisplayName());
+			}
 		}
 	}
 

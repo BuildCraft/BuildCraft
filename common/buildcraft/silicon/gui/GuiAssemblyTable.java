@@ -159,7 +159,7 @@ public class GuiAssemblyTable extends GuiAdvancedInterface {
 			}
 		}
 
-		int h = (int) table.getCompletionRatio(70);
+		int h = table.getProgressScaled(70);
 
 		drawTexturedModalRect(cornerX + 95, cornerY + 36 + 70 - h, 176, 18, 4, h);
 

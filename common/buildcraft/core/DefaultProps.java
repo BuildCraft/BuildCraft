@@ -40,10 +40,7 @@ public class DefaultProps {
 	public static int PIPE_WATERPROOF_ID = 19109;
 	public static int BUCKET_FUEL_ID = 19110;
 	public static int GATE_ID = 19111;
-	public static int RED_PIPE_WIRE = 19113;
-	public static int BLUE_PIPE_WIRE = 19114;
-	public static int GREEN_PIPE_WIRE = 19115;
-	public static int YELLOW_PIPE_WIRE = 19116;
+	public static int PIPE_WIRE = 19113;
 	public static int REDSTONE_CHIPSET = 19117;
 	public static int BLUEPRINT_ITEM_ID = 19118;
 

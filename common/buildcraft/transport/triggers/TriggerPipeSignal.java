@@ -51,24 +51,24 @@ public class TriggerPipeSignal extends BCTrigger implements IPipeTrigger {
 	public int getIconIndex() {
 		if (active) {
 			switch (color) {
-				case Red:
+				case RED:
 					return ActionTriggerIconProvider.Trigger_PipeSignal_Red_Active;
-				case Blue:
+				case BLUE:
 					return ActionTriggerIconProvider.Trigger_PipeSignal_Blue_Active;
-				case Green:
+				case GREEN:
 					return ActionTriggerIconProvider.Trigger_PipeSignal_Green_Active;
-				case Yellow:
+				case YELLOW:
 					return ActionTriggerIconProvider.Trigger_PipeSignal_Yellow_Active;
 			}
 		} else {
 			switch (color) {
-				case Red:
+				case RED:
 					return ActionTriggerIconProvider.Trigger_PipeSignal_Red_Inactive;
-				case Blue:
+				case BLUE:
 					return ActionTriggerIconProvider.Trigger_PipeSignal_Blue_Inactive;
-				case Green:
+				case GREEN:
 					return ActionTriggerIconProvider.Trigger_PipeSignal_Green_Inactive;
-				case Yellow:
+				case YELLOW:
 					return ActionTriggerIconProvider.Trigger_PipeSignal_Yellow_Inactive;
 			}
 		}

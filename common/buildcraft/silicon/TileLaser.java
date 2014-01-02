@@ -17,7 +17,6 @@ import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.power.PowerHandler;
 import buildcraft.api.power.PowerHandler.PowerReceiver;
 import buildcraft.api.power.PowerHandler.Type;
-import buildcraft.core.BlockIndex;
 import buildcraft.core.EntityEnergyLaser;
 import buildcraft.core.IMachine;
 import buildcraft.core.TileBuildCraft;
@@ -31,6 +30,7 @@ import net.minecraftforge.common.ForgeDirection;
 
 public class TileLaser extends TileBuildCraft implements IPowerReceptor, IActionReceptor, IMachine {
 
+	private static final float LASER_OFFSET = 2.0F / 16.0F;
 	private EntityEnergyLaser laser = null;
 	private final SafeTimeTracker laserTickTracker = new SafeTimeTracker();
 	private final SafeTimeTracker searchTracker = new SafeTimeTracker();
@@ -133,7 +133,7 @@ public class TileLaser extends TileBuildCraft implements IPowerReceptor, IAction
 	}
 
 	protected void findTable() {
-		int meta = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
+		int meta = getBlockMetadata();
 
 		int minX = xCoord - 5;
 		int minY = yCoord - 5;
@@ -142,7 +142,7 @@ public class TileLaser extends TileBuildCraft implements IPowerReceptor, IAction
 		int maxY = yCoord + 5;
 		int maxZ = zCoord + 5;
 
-		switch (ForgeDirection.values()[meta]) {
+		switch (ForgeDirection.getOrientation(meta)) {
 			case WEST:
 				maxX = xCoord;
 				break;
@@ -197,29 +197,29 @@ public class TileLaser extends TileBuildCraft implements IPowerReceptor, IAction
 
 	protected void updateLaser() {
 
-		int meta = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
+		int meta = getBlockMetadata();
 		double px = 0, py = 0, pz = 0;
 
-		switch (ForgeDirection.values()[meta]) {
+		switch (ForgeDirection.getOrientation(meta)) {
 
 			case WEST:
-				px = -0.3;
+				px = -LASER_OFFSET;
 				break;
 			case EAST:
-				px = 0.3;
+				px = LASER_OFFSET;
 				break;
 			case DOWN:
-				py = -0.3;
+				py = -LASER_OFFSET;
 				break;
 			case UP:
-				py = 0.3;
+				py = LASER_OFFSET;
 				break;
 			case NORTH:
-				pz = -0.3;
+				pz = -LASER_OFFSET;
 				break;
 			case SOUTH:
 			default:
-				pz = 0.3;
+				pz = LASER_OFFSET;
 				break;
 		}
 

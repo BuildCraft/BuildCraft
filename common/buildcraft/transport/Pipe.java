@@ -36,6 +36,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
 
 public abstract class Pipe<T extends PipeTransport> implements IDropControlInventory {
+
 	public int[] signalStrength = new int[]{0, 0, 0, 0};
 	public TileGenericPipe container;
 	public final T transport;
@@ -423,20 +424,9 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 	}
 
 	public void onBlockRemoval() {
-		if (wireSet[PipeWire.Red.ordinal()]) {
-			dropItem(new ItemStack(BuildCraftTransport.redPipeWire));
-		}
-
-		if (wireSet[PipeWire.Blue.ordinal()]) {
-			dropItem(new ItemStack(BuildCraftTransport.bluePipeWire));
-		}
-
-		if (wireSet[PipeWire.Green.ordinal()]) {
-			dropItem(new ItemStack(BuildCraftTransport.greenPipeWire));
-		}
-
-		if (wireSet[PipeWire.Yellow.ordinal()]) {
-			dropItem(new ItemStack(BuildCraftTransport.yellowPipeWire));
+		for (PipeWire pipeWire : PipeWire.VALUES) {
+			if (wireSet[pipeWire.ordinal()])
+				dropItem(pipeWire.getStack());
 		}
 
 		if (hasGate()) {

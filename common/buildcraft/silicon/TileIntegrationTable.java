@@ -37,8 +37,9 @@ public class TileIntegrationTable extends TileLaserTableBase implements ISidedIn
 	private SimpleInventory invRecipeOutput = new SimpleInventory(1, "integrationOutput", 64);
 	private InventoryMapper invOutput = new InventoryMapper(inv, SLOT_OUTPUT, 1, false);
 	private IIntegrationRecipe currentRecipe;
-	
-	public IInventory getRecipeOutput(){
+	private boolean canCraft = false;
+
+	public IInventory getRecipeOutput() {
 		return invRecipeOutput;
 	}
 
@@ -52,20 +53,35 @@ public class TileIntegrationTable extends TileLaserTableBase implements ISidedIn
 		tick++;
 		if (tick % CYCLE_LENGTH != 0)
 			return;
+		
+		canCraft = false;
 
 		currentRecipe = findMatchingRecipe();
 
 		if (currentRecipe == null) {
 			setEnergy(0);
 			return;
-		}		
-		
+		}
+
 		ItemStack inputA = inv.getStackInSlot(SLOT_INPUT_A);
 		ItemStack inputB = inv.getStackInSlot(SLOT_INPUT_B);
-		invRecipeOutput.setInventorySlotContents(0, currentRecipe.getOutputForInputs(inputA, inputB));
+		ItemStack output = currentRecipe.getOutputForInputs(inputA, inputB);
+		invRecipeOutput.setInventorySlotContents(0, output);
 
-		if (getEnergy() >= currentRecipe.getEnergyCost())
-			tryCraftItem();
+		if (!isRoomForOutput(output)) {
+			setEnergy(0);
+			return;
+		}
+
+		canCraft = true;
+
+		if (getEnergy() >= currentRecipe.getEnergyCost()) {
+			setEnergy(0);
+			inv.decrStackSize(SLOT_INPUT_A, 1);
+			inv.decrStackSize(SLOT_INPUT_B, 1);
+			ITransactor trans = Transactor.getTransactorFor(invOutput);
+			trans.add(output, ForgeDirection.UP, true);
+		}
 	}
 
 	private IIntegrationRecipe findMatchingRecipe() {
@@ -77,21 +93,6 @@ public class TileIntegrationTable extends TileLaserTableBase implements ISidedIn
 				return recipe;
 		}
 		return null;
-	}
-
-	private void tryCraftItem() {
-		ItemStack inputA = inv.getStackInSlot(SLOT_INPUT_A);
-		ItemStack inputB = inv.getStackInSlot(SLOT_INPUT_B);
-		ItemStack output = currentRecipe.getOutputForInputs(inputA, inputB);
-
-		if (isRoomForOutput(output)) {
-			setEnergy(0);
-			inv.decrStackSize(SLOT_INPUT_A, 1);
-			inv.decrStackSize(SLOT_INPUT_B, 1);
-			ITransactor trans = Transactor.getTransactorFor(invOutput);
-			trans.add(output, ForgeDirection.UP, true);
-		}
-
 	}
 
 	private boolean isRoomForOutput(ItemStack output) {
@@ -108,18 +109,12 @@ public class TileIntegrationTable extends TileLaserTableBase implements ISidedIn
 		if (currentRecipe != null) {
 			return currentRecipe.getEnergyCost();
 		}
-		return 0;
-	}
-
-	public int getProgressScaled(int i) {
-		if(currentRecipe == null)
-			return 0;
-		return (int) ((getEnergy() * i) / currentRecipe.getEnergyCost());
+		return 0.0;
 	}
 
 	@Override
 	public boolean canCraft() {
-		return currentRecipe != null;
+		return canCraft;
 	}
 
 	@Override

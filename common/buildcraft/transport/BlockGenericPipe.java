@@ -661,20 +661,20 @@ public class BlockGenericPipe extends BlockBuildCraft {
 				// Only check the instance at this point. Call the IToolWrench
 				// interface callbacks for the individual pipe/logic calls
 				return pipe.blockActivated(player);
-			else if (currentItem.getItem() == BuildCraftTransport.redPipeWire) {
-				if (addOrStripWire(player, pipe, PipeWire.Red)) {
+			else if (PipeWire.RED.isPipeWire(currentItem)) {
+				if (addOrStripWire(player, pipe, PipeWire.RED)) {
 					return true;
 				}
-			} else if (currentItem.getItem() == BuildCraftTransport.bluePipeWire) {
-				if (addOrStripWire(player, pipe, PipeWire.Blue)) {
+			} else if (PipeWire.BLUE.isPipeWire(currentItem)) {
+				if (addOrStripWire(player, pipe, PipeWire.BLUE)) {
 					return true;
 				}
-			} else if (currentItem.getItem() == BuildCraftTransport.greenPipeWire) {
-				if (addOrStripWire(player, pipe, PipeWire.Green)) {
+			} else if (PipeWire.GREEN.isPipeWire(currentItem)) {
+				if (addOrStripWire(player, pipe, PipeWire.GREEN)) {
 					return true;
 				}
-			} else if (currentItem.getItem() == BuildCraftTransport.yellowPipeWire) {
-				if (addOrStripWire(player, pipe, PipeWire.Yellow)) {
+			} else if (PipeWire.YELLOW.isPipeWire(currentItem)) {
+				if (addOrStripWire(player, pipe, PipeWire.YELLOW)) {
 					return true;
 				}
 			} else if (currentItem.getItem() instanceof ItemGate) {
@@ -858,26 +858,10 @@ public class BlockGenericPipe extends BlockBuildCraft {
 	/**
 	 * Drops a pipe wire item of the passed color.
 	 *
-	 * @param color
+	 * @param pipeWire
 	 */
-	private void dropWire(PipeWire color, Pipe pipe) {
-
-		Item wireItem;
-		switch (color) {
-			case Red:
-				wireItem = BuildCraftTransport.redPipeWire;
-				break;
-			case Blue:
-				wireItem = BuildCraftTransport.bluePipeWire;
-				break;
-			case Green:
-				wireItem = BuildCraftTransport.greenPipeWire;
-				break;
-			default:
-				wireItem = BuildCraftTransport.yellowPipeWire;
-		}
-		pipe.dropItem(new ItemStack(wireItem));
-
+	private void dropWire(PipeWire pipeWire, Pipe pipe) {
+		pipe.dropItem(pipeWire.getStack());
 	}
 
 	@SuppressWarnings({"all"})

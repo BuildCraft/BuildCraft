@@ -10,20 +10,16 @@
 package buildcraft.transport.blueprints;
 
 import buildcraft.BuildCraftCore;
-import buildcraft.BuildCraftTransport;
 import buildcraft.api.blueprints.BlockSignature;
 import buildcraft.api.blueprints.BptBlock;
 import buildcraft.api.blueprints.BptSlotInfo;
 import buildcraft.api.blueprints.IBptContext;
-import buildcraft.api.gates.ActionManager;
-import buildcraft.api.gates.TriggerParameter;
 import buildcraft.core.Version;
 import buildcraft.transport.BlockGenericPipe;
 import buildcraft.transport.Pipe;
 import java.util.LinkedList;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 
 @Deprecated
 public class BptBlockPipe extends BptBlock {
@@ -38,21 +34,21 @@ public class BptBlockPipe extends BptBlock {
 
 		requirements.add(new ItemStack(pipeId, 1, 0));
 
-		if (slot.cpt.hasKey("wire0")) {
-			requirements.add(new ItemStack(BuildCraftTransport.redPipeWire));
-		}
-
-		if (slot.cpt.hasKey("wire1")) {
-			requirements.add(new ItemStack(BuildCraftTransport.bluePipeWire));
-		}
-
-		if (slot.cpt.hasKey("wire2")) {
-			requirements.add(new ItemStack(BuildCraftTransport.greenPipeWire));
-		}
-
-		if (slot.cpt.hasKey("wire3")) {
-			requirements.add(new ItemStack(BuildCraftTransport.yellowPipeWire));
-		}
+//		if (slot.cpt.hasKey("wire0")) {
+//			requirements.add(new ItemStack(BuildCraftTransport.pipeWire));
+//		}
+//
+//		if (slot.cpt.hasKey("wire1")) {
+//			requirements.add(new ItemStack(BuildCraftTransport.bluePipeWire));
+//		}
+//
+//		if (slot.cpt.hasKey("wire2")) {
+//			requirements.add(new ItemStack(BuildCraftTransport.greenPipeWire));
+//		}
+//
+//		if (slot.cpt.hasKey("wire3")) {
+//			requirements.add(new ItemStack(BuildCraftTransport.yellowPipeWire));
+//		}
 
 //		if (slot.cpt.hasKey("gate")) {
 //			int gateId = slot.cpt.getInteger("gate");

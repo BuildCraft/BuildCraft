@@ -250,16 +250,16 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 			boolean lit = pipe.signalStrength[color.ordinal()] > 0;
 
 			switch (color) {
-				case Red:
+				case RED:
 					renderState.wireMatrix.setWireIndex(color, lit ? WireIconProvider.Texture_Red_Lit : WireIconProvider.Texture_Red_Dark);
 					break;
-				case Blue:
+				case BLUE:
 					renderState.wireMatrix.setWireIndex(color, lit ? WireIconProvider.Texture_Blue_Lit : WireIconProvider.Texture_Blue_Dark);
 					break;
-				case Green:
+				case GREEN:
 					renderState.wireMatrix.setWireIndex(color, lit ? WireIconProvider.Texture_Green_Lit : WireIconProvider.Texture_Green_Dark);
 					break;
-				case Yellow:
+				case YELLOW:
 					renderState.wireMatrix.setWireIndex(color, lit ? WireIconProvider.Texture_Yellow_Lit : WireIconProvider.Texture_Yellow_Dark);
 					break;
 				default:

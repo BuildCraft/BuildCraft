@@ -31,13 +31,13 @@ public class ActionSignalOutput extends BCAction {
 	@Override
 	public int getIconIndex() {
 		switch (color) {
-			case Red:
+			case RED:
 				return ActionTriggerIconProvider.Trigger_PipeSignal_Red_Active;
-			case Blue:
+			case BLUE:
 				return ActionTriggerIconProvider.Trigger_PipeSignal_Blue_Active;
-			case Green:
+			case GREEN:
 				return ActionTriggerIconProvider.Trigger_PipeSignal_Green_Active;
-			case Yellow:
+			case YELLOW:
 			default:
 				return ActionTriggerIconProvider.Trigger_PipeSignal_Yellow_Active;
 		}

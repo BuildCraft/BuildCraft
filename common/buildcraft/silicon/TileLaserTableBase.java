@@ -56,12 +56,12 @@ public abstract class TileLaserTableBase extends TileBuildCraft implements ILase
 
 	public abstract double getRequiredEnergy();
 
-	public double getCompletionRatio(float ratio) {
-		if (!canCraft())
+	public int getProgressScaled(int ratio) {
+		if (clientRequiredEnergy == 0.0)
 			return 0;
 		if (energy >= clientRequiredEnergy)
 			return ratio;
-		return energy / clientRequiredEnergy * ratio;
+		return (int) (energy / clientRequiredEnergy * ratio);
 	}
 
 	public int getRecentEnergyAverage() {
@@ -77,7 +77,7 @@ public abstract class TileLaserTableBase extends TileBuildCraft implements ILase
 
 	@Override
 	public void receiveLaserEnergy(float energy) {
-		energy += energy;
+		this.energy += energy;
 		recentEnergy[tick] += energy;
 	}
 
@@ -153,31 +153,31 @@ public abstract class TileLaserTableBase extends TileBuildCraft implements ILase
 		energy = nbt.getDouble("energy");
 	}
 
-	public void getGUINetworkData(int i, int j) {
+	public void getGUINetworkData(int id, int data) {
 		int currentStored = (int) (energy * 100.0);
 		int requiredEnergy = (int) (clientRequiredEnergy * 100.0);
-		switch (i) {
+		switch (id) {
 			case 0:
-				requiredEnergy = (requiredEnergy & 0xFFFF0000) | (j & 0xFFFF);
+				requiredEnergy = (requiredEnergy & 0xFFFF0000) | (data & 0xFFFF);
 				clientRequiredEnergy = (requiredEnergy / 100.0f);
 				break;
 			case 1:
-				currentStored = (currentStored & 0xFFFF0000) | (j & 0xFFFF);
+				currentStored = (currentStored & 0xFFFF0000) | (data & 0xFFFF);
 				energy = (currentStored / 100.0f);
 				break;
 			case 2:
-				requiredEnergy = (requiredEnergy & 0xFFFF) | ((j & 0xFFFF) << 16);
+				requiredEnergy = (requiredEnergy & 0xFFFF) | ((data & 0xFFFF) << 16);
 				clientRequiredEnergy = (requiredEnergy / 100.0f);
 				break;
 			case 3:
-				currentStored = (currentStored & 0xFFFF) | ((j & 0xFFFF) << 16);
+				currentStored = (currentStored & 0xFFFF) | ((data & 0xFFFF) << 16);
 				energy = (currentStored / 100.0f);
 				break;
 			case 4:
-				recentEnergyAverage = recentEnergyAverage & 0xFFFF0000 | (j & 0xFFFF);
+				recentEnergyAverage = recentEnergyAverage & 0xFFFF0000 | (data & 0xFFFF);
 				break;
 			case 5:
-				recentEnergyAverage = (recentEnergyAverage & 0xFFFF) | ((j & 0xFFFF) << 16);
+				recentEnergyAverage = (recentEnergyAverage & 0xFFFF) | ((data & 0xFFFF) << 16);
 				break;
 		}
 	}
