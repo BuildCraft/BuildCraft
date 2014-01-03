@@ -8,6 +8,7 @@ import buildcraft.core.inventory.Transactor;
 import buildcraft.core.inventory.filters.ArrayStackFilter;
 import java.util.LinkedList;
 import java.util.List;
+import net.minecraft.block.Block;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -45,10 +46,16 @@ public class AssemblyRecipeManager implements IAssemblyRecipeManager {
 			for (int i = 0; i < inputs.length; i++) {
 				if (inputs[i] instanceof String)
 					processedInput[i] = OreDictionary.getOres((String) inputs[i]);
-				if (inputs[i] instanceof Item)
-					processedInput[i] = new ItemStack((Item) inputs[i]);
-				else
+				else if (inputs[i] instanceof ItemStack)
 					processedInput[i] = inputs[i];
+				else if (inputs[i] instanceof Item)
+					processedInput[i] = new ItemStack((Item) inputs[i]);
+				else if (inputs[i] instanceof Block)
+					processedInput[i] = new ItemStack((Block) inputs[i], 1, OreDictionary.WILDCARD_VALUE);
+				else if (inputs[i] instanceof Integer)
+					processedInput[i] = inputs[i];
+				else
+					throw new IllegalArgumentException("Unknown Object passed to recipe!");
 			}
 		}
 

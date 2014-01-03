@@ -105,7 +105,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 	private boolean refreshRenderState = false;
 	private boolean pipeBound = false;
 	private boolean resyncGateExpansions = false;
-	public boolean redstonePowered = false;
+	public int redstoneInput = 0;
 	private int[] facadeBlocks = new int[ForgeDirection.VALID_DIRECTIONS.length];
 	private int[] facadeMeta = new int[ForgeDirection.VALID_DIRECTIONS.length];
 	private boolean[] plugs = new boolean[ForgeDirection.VALID_DIRECTIONS.length];
@@ -116,7 +116,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 	@Override
 	public void writeToNBT(NBTTagCompound nbt) {
 		super.writeToNBT(nbt);
-		nbt.setBoolean("redstonePowered", redstonePowered);
+		nbt.setByte("redstoneInput", (byte)redstoneInput);
 
 		if (pipe != null) {
 			nbt.setInteger("pipeId", pipe.itemID);
@@ -135,7 +135,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 	@Override
 	public void readFromNBT(NBTTagCompound nbt) {
 		super.readFromNBT(nbt);
-		redstonePowered = nbt.getBoolean("redstonePowered");
+		redstoneInput = nbt.getByte("redstoneInput");
 
 		coreState.pipeId = nbt.getInteger("pipeId");
 		pipe = BlockGenericPipe.createPipe(coreState.pipeId);
@@ -250,16 +250,16 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 			boolean lit = pipe.signalStrength[color.ordinal()] > 0;
 
 			switch (color) {
-				case Red:
+				case RED:
 					renderState.wireMatrix.setWireIndex(color, lit ? WireIconProvider.Texture_Red_Lit : WireIconProvider.Texture_Red_Dark);
 					break;
-				case Blue:
+				case BLUE:
 					renderState.wireMatrix.setWireIndex(color, lit ? WireIconProvider.Texture_Blue_Lit : WireIconProvider.Texture_Blue_Dark);
 					break;
-				case Green:
+				case GREEN:
 					renderState.wireMatrix.setWireIndex(color, lit ? WireIconProvider.Texture_Green_Lit : WireIconProvider.Texture_Green_Dark);
 					break;
-				case Yellow:
+				case YELLOW:
 					renderState.wireMatrix.setWireIndex(color, lit ? WireIconProvider.Texture_Yellow_Lit : WireIconProvider.Texture_Yellow_Dark);
 					break;
 				default:

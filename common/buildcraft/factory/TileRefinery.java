@@ -158,7 +158,7 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IPowe
 		if (!time.markTimeIfDelay(worldObj, currentRecipe.timeRequired))
 			return;
 
-		float energyUsed = powerHandler.useEnergy(currentRecipe.energyCost, currentRecipe.energyCost, true);
+		double energyUsed = powerHandler.useEnergy(currentRecipe.energyCost, currentRecipe.energyCost, true);
 
 		if (energyUsed != 0) {
 			if (consumeInput(currentRecipe.ingredient1) && consumeInput(currentRecipe.ingredient2)) {

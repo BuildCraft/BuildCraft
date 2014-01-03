@@ -11,17 +11,12 @@ package buildcraft.transport.gates;
 import buildcraft.api.gates.GateExpansionController;
 import buildcraft.api.gates.IGateExpansion;
 import buildcraft.BuildCraftTransport;
-import buildcraft.api.gates.IAction;
 import buildcraft.api.gates.ITrigger;
-import buildcraft.api.power.IPowerReceptor;
-import buildcraft.api.power.PowerHandler;
-import buildcraft.api.power.PowerHandler.Type;
-import buildcraft.transport.triggers.ActionEnergyPulser;
-import buildcraft.transport.triggers.ActionSingleEnergyPulse;
+import buildcraft.api.gates.ITriggerParameter;
+import buildcraft.transport.triggers.TriggerClockTimer;
+import buildcraft.transport.triggers.TriggerClockTimer.Time;
 import java.util.List;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.ForgeDirection;
 
 /**
  *
@@ -42,101 +37,58 @@ public class GateExpansionTimer extends GateExpansionBuildcraft implements IGate
 
 	private class GateExpansionControllerTimer extends GateExpansionController {
 
-		private boolean isActive;
-		private boolean singlePulse;
-		private boolean hasPulsed;
-		private int pulseCount;
-		private int tick;
+		private class Timer {
+
+			private static final int ACTIVE_TIME = 5;
+			private final TriggerClockTimer.Time time;
+			private int clock;
+
+			public Timer(TriggerClockTimer.Time time) {
+				this.time = time;
+			}
+
+			public void tick() {
+				if (clock > -ACTIVE_TIME)
+					clock--;
+				else
+					clock = time.delay * 20 + ACTIVE_TIME;
+			}
+
+			public boolean isActive() {
+				return clock < 0;
+			}
+		}
+		private final Timer[] timers = new Timer[TriggerClockTimer.Time.VALUES.length];
 
 		public GateExpansionControllerTimer(TileEntity pipeTile) {
 			super(GateExpansionTimer.this, pipeTile);
-		}
-
-		@Override
-		public void startResolution() {
-			if (isActive()) {
-				disablePulse();
+			for (TriggerClockTimer.Time time : TriggerClockTimer.Time.VALUES) {
+				timers[time.ordinal()] = new Timer(time);
 			}
 		}
 
 		@Override
-		public boolean resolveAction(IAction action, int count) {
-
-			if (action instanceof ActionEnergyPulser) {
-				enablePulse(count);
-				return true;
-			} else if (action instanceof ActionSingleEnergyPulse) {
-				enableSinglePulse(count);
-				return true;
+		public boolean isTriggerActive(ITrigger trigger, ITriggerParameter parameter) {
+			if (trigger instanceof TriggerClockTimer) {
+				TriggerClockTimer timerTrigger = (TriggerClockTimer) trigger;
+				return timers[timerTrigger.time.ordinal()].isActive();
 			}
-			return false;
+			return super.isTriggerActive(trigger, parameter);
 		}
 
 		@Override
 		public void addTriggers(List<ITrigger> list) {
 			super.addTriggers(list);
-			list.add(BuildCraftTransport.triggerTimerShort);
-			list.add(BuildCraftTransport.triggerTimerMedium);
-			list.add(BuildCraftTransport.triggerTimerLong);
+			for (Time time : TriggerClockTimer.Time.VALUES) {
+				list.add(BuildCraftTransport.triggerTimer[time.ordinal()]);
+			}
 		}
 
 		@Override
 		public void tick() {
-			if (!isActive && hasPulsed)
-				hasPulsed = false;
-
-			PowerHandler.PowerReceiver powerReceptor = ((IPowerReceptor) pipeTile).getPowerReceiver(ForgeDirection.UNKNOWN);
-
-			if (powerReceptor == null || !isActive || tick++ % 10 != 0)
-				return;
-
-			if (!singlePulse || !hasPulsed) {
-				powerReceptor.receiveEnergy(Type.GATE, Math.min(1 << (pulseCount - 1), 64) * 1.01f, ForgeDirection.WEST);
-				hasPulsed = true;
+			for (Timer timer : timers) {
+				timer.tick();
 			}
-		}
-
-		private void enableSinglePulse(int count) {
-			singlePulse = true;
-			isActive = true;
-			pulseCount = count;
-		}
-
-		private void enablePulse(int count) {
-			isActive = true;
-			singlePulse = false;
-			pulseCount = count;
-		}
-
-		private void disablePulse() {
-			if (!isActive) {
-				hasPulsed = false;
-			}
-			isActive = false;
-			pulseCount = 0;
-		}
-
-		@Override
-		public boolean isActive() {
-			return isActive;
-		}
-
-		@Override
-		public void writeToNBT(NBTTagCompound nbt) {
-			nbt.setBoolean("singlePulse", singlePulse);
-			nbt.setBoolean("isActive", isActive);
-			nbt.setBoolean("hasPulsed", hasPulsed);
-			nbt.setInteger("pulseCount", pulseCount);
-			nbt.setInteger("tick", tick);
-		}
-
-		@Override
-		public void readFromNBT(NBTTagCompound nbt) {
-			isActive = nbt.getBoolean("isActive");
-			singlePulse = nbt.getBoolean("singlePulse");
-			hasPulsed = nbt.getBoolean("hasPulsed");
-			pulseCount = nbt.getInteger("pulseCount");
-			tick = nbt.getInteger("tick");
 		}
 	}
 }

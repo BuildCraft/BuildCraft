@@ -28,18 +28,18 @@ public class TileEngineWood extends TileEngine {
 	}
 
 	@Override
-	public float minEnergyReceived() {
+	public double minEnergyReceived() {
 		return 0;
 	}
 
 	@Override
-	public float maxEnergyReceived() {
+	public double maxEnergyReceived() {
 		return 50;
 	}
 
 	@Override
 	protected EnergyStage computeEnergyStage() {
-		float energyLevel = getEnergyLevel();
+		double energyLevel = getEnergyLevel();
 		if (energyLevel < 0.25f)
 			return EnergyStage.BLUE;
 		else if (energyLevel < 0.5f)
@@ -91,17 +91,17 @@ public class TileEngineWood extends TileEngine {
 	}
 
 	@Override
-	public float getMaxEnergy() {
+	public double getMaxEnergy() {
 		return 100;
 	}
 
 	@Override
-	public float getCurrentOutput() {
+	public double getCurrentOutput() {
 		return OUTPUT;
 	}
 
 	@Override
-	public float maxEnergyExtracted() {
+	public double maxEnergyExtracted() {
 		return 1 + PowerHandler.PerditionCalculator.MIN_POWERLOSS;
 	}
 }

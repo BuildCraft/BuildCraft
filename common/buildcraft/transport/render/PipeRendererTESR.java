@@ -276,20 +276,20 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 	private void renderGatesWires(TileGenericPipe pipe, double x, double y, double z) {
 		PipeRenderState state = pipe.renderState;
 
-		if (state.wireMatrix.hasWire(PipeWire.Red)) {
-			pipeWireRender(pipe, CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MAX_POS, CoreConstants.PIPE_MIN_POS, PipeWire.Red, x, y, z);
+		if (state.wireMatrix.hasWire(PipeWire.RED)) {
+			pipeWireRender(pipe, CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MAX_POS, CoreConstants.PIPE_MIN_POS, PipeWire.RED, x, y, z);
 		}
 
-		if (state.wireMatrix.hasWire(PipeWire.Blue)) {
-			pipeWireRender(pipe, CoreConstants.PIPE_MAX_POS, CoreConstants.PIPE_MAX_POS, CoreConstants.PIPE_MAX_POS, PipeWire.Blue, x, y, z);
+		if (state.wireMatrix.hasWire(PipeWire.BLUE)) {
+			pipeWireRender(pipe, CoreConstants.PIPE_MAX_POS, CoreConstants.PIPE_MAX_POS, CoreConstants.PIPE_MAX_POS, PipeWire.BLUE, x, y, z);
 		}
 
-		if (state.wireMatrix.hasWire(PipeWire.Green)) {
-			pipeWireRender(pipe, CoreConstants.PIPE_MAX_POS, CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MIN_POS, PipeWire.Green, x, y, z);
+		if (state.wireMatrix.hasWire(PipeWire.GREEN)) {
+			pipeWireRender(pipe, CoreConstants.PIPE_MAX_POS, CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MIN_POS, PipeWire.GREEN, x, y, z);
 		}
 
-		if (state.wireMatrix.hasWire(PipeWire.Yellow)) {
-			pipeWireRender(pipe, CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MAX_POS, PipeWire.Yellow, x, y, z);
+		if (state.wireMatrix.hasWire(PipeWire.YELLOW)) {
+			pipeWireRender(pipe, CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MAX_POS, PipeWire.YELLOW, x, y, z);
 		}
 
 		if (pipe.pipe.gate != null) {

@@ -1,11 +1,11 @@
 package buildcraft.transport;
 
-import buildcraft.BuildCraftTransport;
 import buildcraft.api.gates.IOverrideDefaultTriggers;
 import buildcraft.api.gates.ITrigger;
 import buildcraft.api.gates.ITriggerProvider;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.transport.pipes.PipePowerWood;
+import buildcraft.transport.triggers.TriggerPipeContents;
 import java.util.LinkedList;
 import net.minecraft.block.Block;
 import net.minecraft.tileentity.TileEntity;
@@ -28,19 +28,19 @@ public class PipeTriggerProvider implements ITriggerProvider {
 
 		switch (tile.getPipeType()) {
 			case ITEM:
-				result.add(BuildCraftTransport.triggerPipeEmpty);
-				result.add(BuildCraftTransport.triggerPipeItems);
+				result.add(TriggerPipeContents.PipeContents.empty.trigger);
+				result.add(TriggerPipeContents.PipeContents.containsItems.trigger);
 				break;
 			case FLUID:
-				result.add(BuildCraftTransport.triggerPipeEmpty);
-				result.add(BuildCraftTransport.triggerPipeFluids);
+				result.add(TriggerPipeContents.PipeContents.empty.trigger);
+				result.add(TriggerPipeContents.PipeContents.containsFluids.trigger);
 				break;
 			case POWER:
-				result.add(BuildCraftTransport.triggerPipeEmpty);
-				result.add(BuildCraftTransport.triggerPipeContainsEnergy);
-				result.add(BuildCraftTransport.triggerPipeTooMuchEnergy);
+				result.add(TriggerPipeContents.PipeContents.empty.trigger);
+				result.add(TriggerPipeContents.PipeContents.containsEnergy.trigger);
+				result.add(TriggerPipeContents.PipeContents.tooMuchEnergy.trigger);
 				if (pipe instanceof PipePowerWood) {
-					result.add(BuildCraftTransport.triggerPipeRequestsEnergy);
+					result.add(TriggerPipeContents.PipeContents.requestsEnergy.trigger);
 				}
 				break;
 		}

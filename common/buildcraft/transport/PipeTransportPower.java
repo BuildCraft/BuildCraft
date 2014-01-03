@@ -162,7 +162,7 @@ public class PipeTransportPower extends PipeTransport {
 						PowerReceiver prov = getReceiverOnSide(ForgeDirection.VALID_DIRECTIONS[j]);
 						if (prov != null && prov.powerRequest() > 0) {
 							watts = (internalPower[i] / totalPowerQuery) * powerQuery[j];
-							watts = prov.receiveEnergy(Type.PIPE, watts, ForgeDirection.VALID_DIRECTIONS[j].getOpposite());
+							watts = (float) prov.receiveEnergy(Type.PIPE, watts, ForgeDirection.VALID_DIRECTIONS[j].getOpposite());
 							internalPower[i] -= watts;
 						} else if (tiles[j] instanceof TileGenericPipe) {
 							watts = (internalPower[i] / totalPowerQuery) * powerQuery[j];
@@ -202,7 +202,7 @@ public class PipeTransportPower extends PipeTransport {
 		for (int i = 0; i < 6; ++i) {
 			PowerReceiver prov = getReceiverOnSide(ForgeDirection.VALID_DIRECTIONS[i]);
 			if (prov != null) {
-				float request = prov.powerRequest();
+				float request = (float) prov.powerRequest();
 
 				if (request > 0) {
 					requestEnergy(ForgeDirection.VALID_DIRECTIONS[i], request);

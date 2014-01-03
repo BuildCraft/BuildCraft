@@ -92,7 +92,7 @@ public class PipePowerWood extends Pipe<PipeTransportPower> implements IPowerRec
 			return;
 		}
 
-		float energyToRemove;
+		double energyToRemove;
 
 		if (powerHandler.getEnergyStored() > 40) {
 			energyToRemove = powerHandler.getEnergyStored() / 40 + 4;
@@ -107,7 +107,7 @@ public class PipePowerWood extends Pipe<PipeTransportPower> implements IPowerRec
 			if (!powerSources[o.ordinal()])
 				continue;
 
-			float energyUsable = powerHandler.useEnergy(0, energyToRemove, false);
+			float energyUsable = (float) powerHandler.useEnergy(0, energyToRemove, false);
 
 			float energySent = transport.receiveEnergy(o, energyUsable);
 			if (energySent > 0) {

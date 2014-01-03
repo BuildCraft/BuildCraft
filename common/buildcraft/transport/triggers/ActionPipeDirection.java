@@ -18,8 +18,8 @@ public class ActionPipeDirection extends BCAction {
 	private Icon icon;
 	public final ForgeDirection direction;
 
-	public ActionPipeDirection(int id, ForgeDirection direction) {
-		super(id, "buildcraft.pipe.dir." + direction.name().toLowerCase(Locale.ENGLISH));
+	public ActionPipeDirection(ForgeDirection direction) {
+		super("buildcraft:pipe.dir." + direction.name().toLowerCase(Locale.ENGLISH), "buildcraft.pipe.dir." + direction.name().toLowerCase(Locale.ENGLISH));
 
 		this.direction = direction;
 	}

@@ -334,12 +334,6 @@ public class TileFiller extends TileBuildCraft implements IInventory, IPowerRece
 
 	@Override
 	public void readGuiData(DataInputStream data, EntityPlayer player) throws IOException {
-		IFillerPattern prev = currentPattern;
-		currentPattern = FillerManager.registry.getPattern(data.readUTF());
-		if (currentPattern == null)
-			currentPattern = PatternFill.INSTANCE;
-		if (prev != currentPattern)
-			done = false;
-		sendNetworkUpdate();
+		setPattern(FillerManager.registry.getPattern(data.readUTF()));
 	}
 }

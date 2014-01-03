@@ -19,8 +19,8 @@ public class ActionPipeColor extends BCAction {
 	private Icon icon;
 	public final EnumColor color;
 
-	public ActionPipeColor(int id, EnumColor color) {
-		super(id, "buildcraft.pipe." + color.getTag());
+	public ActionPipeColor(EnumColor color) {
+		super("buildcraft:pipe.color." + color.getTag(), "buildcraft.pipe." + color.getTag());
 
 		this.color = color;
 	}

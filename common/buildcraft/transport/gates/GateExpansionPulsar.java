@@ -15,7 +15,7 @@ import buildcraft.api.gates.IAction;
 import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.power.PowerHandler;
 import buildcraft.api.power.PowerHandler.Type;
-import buildcraft.transport.triggers.ActionEnergyPulser;
+import buildcraft.transport.triggers.ActionEnergyPulsar;
 import buildcraft.transport.triggers.ActionSingleEnergyPulse;
 import java.util.List;
 import net.minecraft.nbt.NBTTagCompound;
@@ -61,7 +61,7 @@ public class GateExpansionPulsar extends GateExpansionBuildcraft implements IGat
 		@Override
 		public boolean resolveAction(IAction action, int count) {
 
-			if (action instanceof ActionEnergyPulser) {
+			if (action instanceof ActionEnergyPulsar) {
 				enablePulse(count);
 				return true;
 			} else if (action instanceof ActionSingleEnergyPulse) {

@@ -8,6 +8,7 @@
 package buildcraft.core.triggers;
 
 import buildcraft.api.gates.ActionManager;
+import static buildcraft.api.gates.ActionManager.actions;
 import buildcraft.api.gates.IAction;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -16,23 +17,25 @@ import net.minecraft.util.Icon;
 
 public abstract class BCAction implements IAction {
 
-	protected final int legacyId;
 	protected final String uniqueTag;
 
-	public BCAction(int legacyId, String uniqueTag) {
-		this.legacyId = legacyId;
-		this.uniqueTag = uniqueTag;
-		ActionManager.registerAction(this);
+	/**
+	 * UniqueTag accepts multiple possible tags, use this feature to migrate to
+	 * more standardized tags if needed, otherwise just pass a single string.
+	 * The first passed string will be the one used when saved to disk.
+	 *
+	 * @param uniqueTag
+	 */
+	public BCAction(String... uniqueTag) {
+		this.uniqueTag = uniqueTag[0];
+		for (String tag : uniqueTag) {
+			ActionManager.actions.put(tag, this);
+		}
 	}
 
 	@Override
 	public String getUniqueTag() {
 		return uniqueTag;
-	}
-
-	@Override
-	public int getLegacyId() {
-		return this.legacyId;
 	}
 
 	public int getIconIndex() {

@@ -9,6 +9,7 @@ package buildcraft.transport.triggers;
 
 import buildcraft.api.gates.ITriggerParameter;
 import buildcraft.core.triggers.BCTrigger;
+import buildcraft.core.utils.StringUtils;
 import buildcraft.transport.IPipeTrigger;
 import buildcraft.transport.Pipe;
 import cpw.mods.fml.relauncher.Side;
@@ -16,50 +17,37 @@ import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.util.Icon;
 
-public class TriggerRedstoneInput extends BCTrigger implements IPipeTrigger {
+public class TriggerRedstoneFaderInput extends BCTrigger implements IPipeTrigger {
 
-	boolean active;
+	public final int level;
 	@SideOnly(Side.CLIENT)
-	private Icon iconActive, iconInactive;
+	private Icon icon;
 
-	public TriggerRedstoneInput(int legacyId, boolean active) {
-		super(legacyId, active ? "buildcraft.redtone.input.active" : "buildcraft.redtone.input.inactive");
+	public TriggerRedstoneFaderInput(int level) {
+		super(String.format("buildcraft:redtone.input.%02d", level));
 
-		this.active = active;
+		this.level = level;
 	}
 
 	@Override
 	public String getDescription() {
-		if (active)
-			return "Redstone Signal On";
-		else
-			return "Redstone Signal Off";
+		return String.format(StringUtils.localize("gate.trigger.redstone.input.level"), level);
 	}
 
 	@Override
 	public boolean isTriggerActive(Pipe pipe, ITriggerParameter parameter) {
-		if (active)
-			return isBeingPowered(pipe);
-		return !isBeingPowered(pipe);
-	}
-
-	private boolean isBeingPowered(Pipe pipe) {
-		return pipe.container.redstonePowered;
+		return pipe.container.redstoneInput == level;
 	}
 
 	@Override
 	@SideOnly(Side.CLIENT)
 	public Icon getIcon() {
-		if (active)
-			return iconActive;
-		else
-			return iconInactive;
+		return icon;
 	}
 
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void registerIcons(IconRegister iconRegister) {
-		iconActive = iconRegister.registerIcon("buildcraft:triggers/trigger_redstoneinput_active");
-		iconInactive = iconRegister.registerIcon("buildcraft:triggers/trigger_redstoneinput_inactive");
+		icon = iconRegister.registerIcon(String.format("buildcraft:triggers/redstone_%02d", level));
 	}
 }

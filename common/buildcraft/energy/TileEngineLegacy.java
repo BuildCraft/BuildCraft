@@ -47,12 +47,12 @@ public class TileEngineLegacy extends TileEngine {
 	}
 
 	@Override
-	public float getMaxEnergy() {
+	public double getMaxEnergy() {
 		return 1;
 	}
 
 	@Override
-	public float maxEnergyReceived() {
+	public double maxEnergyReceived() {
 		return 0;
 	}
 
@@ -72,12 +72,12 @@ public class TileEngineLegacy extends TileEngine {
 	}
 
 	@Override
-	public float getCurrentOutput() {
+	public double getCurrentOutput() {
 		return 1;
 	}
 
 	@Override
-	public float maxEnergyExtracted() {
+	public double maxEnergyExtracted() {
 		return 1;
 	}
 }

@@ -16,7 +16,7 @@ public class ActionFiller extends BCAction {
 	public final IFillerPattern pattern;
 
 	public ActionFiller(IFillerPattern pattern) {
-		super(0, "filler:" + pattern.getUniqueTag());
+		super("filler:" + pattern.getUniqueTag());
 		this.pattern = pattern;
 	}
 

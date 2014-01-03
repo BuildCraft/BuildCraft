@@ -264,22 +264,17 @@ public class BlockGenericPipe extends BlockBuildCraft {
 		}
 	}
 
-	private RaytraceResult doRayTrace(World world, int x, int y, int z, EntityPlayer entityPlayer) {
-		double pitch = Math.toRadians(entityPlayer.rotationPitch);
-		double yaw = Math.toRadians(entityPlayer.rotationYaw);
-
-		double dirX = -Math.sin(yaw) * Math.cos(pitch);
-		double dirY = -Math.sin(pitch);
-		double dirZ = Math.cos(yaw) * Math.cos(pitch);
-
+	private RaytraceResult doRayTrace(World world, int x, int y, int z, EntityPlayer player) {
 		double reachDistance = 5;
 
-		if (entityPlayer instanceof EntityPlayerMP) {
-			reachDistance = ((EntityPlayerMP) entityPlayer).theItemInWorldManager.getBlockReachDistance();
+		if (player instanceof EntityPlayerMP) {
+			reachDistance = ((EntityPlayerMP) player).theItemInWorldManager.getBlockReachDistance();
 		}
 
-		Vec3 origin = Vec3.fakePool.getVecFromPool(entityPlayer.posX, entityPlayer.posY + 1.62 - entityPlayer.yOffset, entityPlayer.posZ);
-		Vec3 direction = origin.addVector(dirX * reachDistance, dirY * reachDistance, dirZ * reachDistance);
+		double eyeHeight = world.isRemote ? player.getEyeHeight() - player.getDefaultEyeHeight() : player.getEyeHeight();
+		Vec3 lookVec = player.getLookVec();
+		Vec3 origin = world.getWorldVec3Pool().getVecFromPool(player.posX, player.posY + eyeHeight, player.posZ);
+		Vec3 direction = origin.addVector(lookVec.xCoord * reachDistance, lookVec.yCoord * reachDistance, lookVec.zCoord * reachDistance);
 
 		return doRayTrace(world, x, y, z, origin, direction);
 	}
@@ -613,7 +608,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 
 		if (isValid(pipe)) {
 			pipe.container.scheduleNeighborChange();
-			pipe.container.redstonePowered = world.isBlockIndirectlyGettingPowered(x, y, z);
+			pipe.container.redstoneInput = world.getBlockPowerInput(x, y, z);
 		}
 	}
 
@@ -666,20 +661,20 @@ public class BlockGenericPipe extends BlockBuildCraft {
 				// Only check the instance at this point. Call the IToolWrench
 				// interface callbacks for the individual pipe/logic calls
 				return pipe.blockActivated(player);
-			else if (currentItem.getItem() == BuildCraftTransport.redPipeWire) {
-				if (addOrStripWire(player, pipe, PipeWire.Red)) {
+			else if (PipeWire.RED.isPipeWire(currentItem)) {
+				if (addOrStripWire(player, pipe, PipeWire.RED)) {
 					return true;
 				}
-			} else if (currentItem.getItem() == BuildCraftTransport.bluePipeWire) {
-				if (addOrStripWire(player, pipe, PipeWire.Blue)) {
+			} else if (PipeWire.BLUE.isPipeWire(currentItem)) {
+				if (addOrStripWire(player, pipe, PipeWire.BLUE)) {
 					return true;
 				}
-			} else if (currentItem.getItem() == BuildCraftTransport.greenPipeWire) {
-				if (addOrStripWire(player, pipe, PipeWire.Green)) {
+			} else if (PipeWire.GREEN.isPipeWire(currentItem)) {
+				if (addOrStripWire(player, pipe, PipeWire.GREEN)) {
 					return true;
 				}
-			} else if (currentItem.getItem() == BuildCraftTransport.yellowPipeWire) {
-				if (addOrStripWire(player, pipe, PipeWire.Yellow)) {
+			} else if (PipeWire.YELLOW.isPipeWire(currentItem)) {
+				if (addOrStripWire(player, pipe, PipeWire.YELLOW)) {
 					return true;
 				}
 			} else if (currentItem.getItem() instanceof ItemGate) {
@@ -863,26 +858,10 @@ public class BlockGenericPipe extends BlockBuildCraft {
 	/**
 	 * Drops a pipe wire item of the passed color.
 	 *
-	 * @param color
+	 * @param pipeWire
 	 */
-	private void dropWire(PipeWire color, Pipe pipe) {
-
-		Item wireItem;
-		switch (color) {
-			case Red:
-				wireItem = BuildCraftTransport.redPipeWire;
-				break;
-			case Blue:
-				wireItem = BuildCraftTransport.bluePipeWire;
-				break;
-			case Green:
-				wireItem = BuildCraftTransport.greenPipeWire;
-				break;
-			default:
-				wireItem = BuildCraftTransport.yellowPipeWire;
-		}
-		pipe.dropItem(new ItemStack(wireItem));
-
+	private void dropWire(PipeWire pipeWire, Pipe pipe) {
+		pipe.dropItem(pipeWire.getStack());
 	}
 
 	@SuppressWarnings({"all"})

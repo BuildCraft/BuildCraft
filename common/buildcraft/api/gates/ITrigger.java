@@ -8,11 +8,11 @@ import net.minecraft.util.Icon;
 public interface ITrigger {
 
 	/**
-	 * Return your ID from the old API here, this is only used to convert old
-	 * saves to the new format.
+	 * Every trigger needs a unique tag, it should be in the format of
+	 * "<modid>:<name>".
+	 *
+	 * @return the unique id
 	 */
-	int getLegacyId();
-
 	String getUniqueTag();
 
 	@SideOnly(Side.CLIENT)

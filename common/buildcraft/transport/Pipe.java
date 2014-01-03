@@ -11,10 +11,8 @@ import buildcraft.api.transport.PipeWire;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.core.SafeTimeTracker;
-import buildcraft.api.gates.ActionManager;
 import buildcraft.api.gates.IAction;
 import buildcraft.api.gates.ITrigger;
-import buildcraft.api.gates.TriggerParameter;
 import buildcraft.core.IDropControlInventory;
 import buildcraft.core.inventory.InvUtils;
 import buildcraft.core.network.TilePacketWrapper;
@@ -38,6 +36,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
 
 public abstract class Pipe<T extends PipeTransport> implements IDropControlInventory {
+
 	public int[] signalStrength = new int[]{0, 0, 0, 0};
 	public TileGenericPipe container;
 	public final T transport;
@@ -224,20 +223,6 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 		for (int i = 0; i < 4; ++i) {
 			wireSet[i] = data.getBoolean("wireSet[" + i + "]");
 		}
-
-		// Legacy update code
-		if (hasGate()) {
-			for (int i = 0; i < 8; ++i) {
-				if (data.hasKey("trigger[" + i + "]"))
-					gate.triggers[i] = ActionManager.getTriggerFromLegacyId(data.getInteger("trigger[" + i + "]"));
-				if (data.hasKey("action[" + i + "]"))
-					gate.actions[i] = ActionManager.getActionFromLegacyId(data.getInteger("action[" + i + "]"));
-				if (data.hasKey("triggerParameters[" + i + "]")) {
-					gate.triggerParameters[i] = new TriggerParameter();
-					gate.triggerParameters[i].readFromNBT(data.getCompoundTag("triggerParameters[" + i + "]"));
-				}
-			}
-		}
 	}
 	private boolean initialized = false;
 
@@ -360,14 +345,14 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 	}
 
 	public int isPoweringTo(int side) {
-		if (gate != null && gate.isEmittingRedstone()) {
+		if (gate != null && gate.getRedstoneOutput() > 0) {
 			ForgeDirection o = ForgeDirection.getOrientation(side).getOpposite();
 			TileEntity tile = container.getTile(o);
 
 			if (tile instanceof TileGenericPipe && container.isPipeConnected(o))
 				return 0;
 
-			return 15;
+			return gate.getRedstoneOutput();
 		}
 		return 0;
 	}
@@ -439,20 +424,9 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 	}
 
 	public void onBlockRemoval() {
-		if (wireSet[PipeWire.Red.ordinal()]) {
-			dropItem(new ItemStack(BuildCraftTransport.redPipeWire));
-		}
-
-		if (wireSet[PipeWire.Blue.ordinal()]) {
-			dropItem(new ItemStack(BuildCraftTransport.bluePipeWire));
-		}
-
-		if (wireSet[PipeWire.Green.ordinal()]) {
-			dropItem(new ItemStack(BuildCraftTransport.greenPipeWire));
-		}
-
-		if (wireSet[PipeWire.Yellow.ordinal()]) {
-			dropItem(new ItemStack(BuildCraftTransport.yellowPipeWire));
+		for (PipeWire pipeWire : PipeWire.VALUES) {
+			if (wireSet[pipeWire.ordinal()])
+				dropItem(pipeWire.getStack());
 		}
 
 		if (hasGate()) {

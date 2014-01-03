@@ -11,6 +11,7 @@ import buildcraft.core.utils.SessionVars;
 import java.util.ArrayList;
 import java.util.Collection;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -42,6 +43,10 @@ public abstract class GuiBuildCraft extends GuiContainer {
 		}
 
 		initLedgers(inventory);
+	}
+
+	public FontRenderer getFontRenderer() {
+		return fontRenderer;
 	}
 
 	protected void initLedgers(IInventory inventory) {
