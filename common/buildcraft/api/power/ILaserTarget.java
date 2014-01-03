@@ -28,7 +28,7 @@ public interface ILaserTarget {
 	 *
 	 * @param energy
 	 */
-	void receiveLaserEnergy(float energy);
+	void receiveLaserEnergy(double energy);
 
 	/**
 	 * Return true if the Tile Entity object is no longer a valid target. For

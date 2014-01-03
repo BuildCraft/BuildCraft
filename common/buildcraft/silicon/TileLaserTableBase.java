@@ -76,7 +76,7 @@ public abstract class TileLaserTableBase extends TileBuildCraft implements ILase
 	}
 
 	@Override
-	public void receiveLaserEnergy(float energy) {
+	public void receiveLaserEnergy(double energy) {
 		this.energy += energy;
 		recentEnergy[tick] += energy;
 	}

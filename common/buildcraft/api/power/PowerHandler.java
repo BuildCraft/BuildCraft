@@ -65,7 +65,7 @@ public final class PowerHandler {
 
 		public static final float DEFAULT_POWERLOSS = 1F;
 		public static final float MIN_POWERLOSS = 0.01F;
-		private final float powerLoss;
+		private final double powerLoss;
 
 		public PerditionCalculator() {
 			powerLoss = DEFAULT_POWERLOSS;
@@ -76,7 +76,7 @@ public final class PowerHandler {
 		 *
 		 * @param powerLoss power loss per tick
 		 */
-		public PerditionCalculator(float powerLoss) {
+		public PerditionCalculator(double powerLoss) {
 			if (powerLoss < MIN_POWERLOSS) {
 				powerLoss = MIN_POWERLOSS;
 			}
@@ -93,7 +93,7 @@ public final class PowerHandler {
 		 * @param ticksPassed ticks since the last time this function was called
 		 * @return
 		 */
-		public float applyPerdition(PowerHandler powerHandler, float current, long ticksPassed) {
+		public double applyPerdition(PowerHandler powerHandler, double current, long ticksPassed) {
 //			float prev = current;
 			current -= powerLoss * ticksPassed;
 			if (current < 0) {
@@ -110,16 +110,16 @@ public final class PowerHandler {
 		 *
 		 * @return percent of input to tax
 		 */
-		public float getTaxPercent() {
+		public double getTaxPercent() {
 			return 0;
 		}
 	}
 	public static final PerditionCalculator DEFAULT_PERDITION = new PerditionCalculator();
-	private float minEnergyReceived;
-	private float maxEnergyReceived;
-	private float maxEnergyStored;
-	private float activationEnergy;
-	private float energyStored = 0;
+	private double minEnergyReceived;
+	private double maxEnergyReceived;
+	private double maxEnergyStored;
+	private double activationEnergy;
+	private double energyStored = 0;
 	private final SafeTimeTracker doWorkTracker = new SafeTimeTracker();
 	private final SafeTimeTracker sourcesTracker = new SafeTimeTracker();
 	private final SafeTimeTracker perditionTracker = new SafeTimeTracker();
@@ -145,23 +145,23 @@ public final class PowerHandler {
 		return receiver;
 	}
 
-	public float getMinEnergyReceived() {
+	public double getMinEnergyReceived() {
 		return minEnergyReceived;
 	}
 
-	public float getMaxEnergyReceived() {
+	public double getMaxEnergyReceived() {
 		return maxEnergyReceived;
 	}
 
-	public float getMaxEnergyStored() {
+	public double getMaxEnergyStored() {
 		return maxEnergyStored;
 	}
 
-	public float getActivationEnergy() {
+	public double getActivationEnergy() {
 		return activationEnergy;
 	}
 
-	public float getEnergyStored() {
+	public double getEnergyStored() {
 		return energyStored;
 	}
 
@@ -183,7 +183,7 @@ public final class PowerHandler {
 	 * store. Values tend to range between 100 and 5000. With 1000 and 1500
 	 * being common.
 	 */
-	public void configure(float minEnergyReceived, float maxEnergyReceived, float activationEnergy, float maxStoredEnergy) {
+	public void configure(double minEnergyReceived, double maxEnergyReceived, double activationEnergy, double maxStoredEnergy) {
 		if (minEnergyReceived > maxEnergyReceived) {
 			maxEnergyReceived = minEnergyReceived;
 		}
@@ -256,7 +256,7 @@ public final class PowerHandler {
 
 	private void applyPerdition() {
 		if (perditionTracker.markTimeIfDelay(receptor.getWorld(), 1) && energyStored > 0) {
-			float newEnergy = getPerdition().applyPerdition(this, energyStored, perditionTracker.durationOfLastDelay());
+			double newEnergy = getPerdition().applyPerdition(this, energyStored, perditionTracker.durationOfLastDelay());
 			if (newEnergy == 0 || newEnergy < energyStored)
 				energyStored = newEnergy;
 			else
@@ -296,10 +296,10 @@ public final class PowerHandler {
 	 * @param doUse
 	 * @return amount used
 	 */
-	public float useEnergy(float min, float max, boolean doUse) {
+	public double useEnergy(double min, double max, boolean doUse) {
 		applyPerdition();
 
-		float result = 0;
+		double result = 0;
 
 		if (energyStored >= min) {
 			if (energyStored <= max) {
@@ -329,7 +329,7 @@ public final class PowerHandler {
 
 	public void readFromNBT(NBTTagCompound data, String tag) {
 		NBTTagCompound nbt = data.getCompoundTag(tag);
-		energyStored = nbt.getFloat("storedEnergy");
+		energyStored = nbt.getDouble("energyStored");
 	}
 
 	public void writeToNBT(NBTTagCompound data) {
@@ -338,7 +338,7 @@ public final class PowerHandler {
 
 	public void writeToNBT(NBTTagCompound data, String tag) {
 		NBTTagCompound nbt = new NBTTagCompound();
-		nbt.setFloat("storedEnergy", energyStored);
+		nbt.setDouble("energyStored", energyStored);
 		data.setCompoundTag(tag, nbt);
 	}
 
@@ -347,23 +347,23 @@ public final class PowerHandler {
 		private PowerReceiver() {
 		}
 
-		public float getMinEnergyReceived() {
+		public double getMinEnergyReceived() {
 			return minEnergyReceived;
 		}
 
-		public float getMaxEnergyReceived() {
+		public double getMaxEnergyReceived() {
 			return maxEnergyReceived;
 		}
 
-		public float getMaxEnergyStored() {
+		public double getMaxEnergyStored() {
 			return maxEnergyStored;
 		}
 
-		public float getActivationEnergy() {
+		public double getActivationEnergy() {
 			return activationEnergy;
 		}
 
-		public float getEnergyStored() {
+		public double getEnergyStored() {
 			return energyStored;
 		}
 
@@ -380,7 +380,7 @@ public final class PowerHandler {
 		 *
 		 * @return
 		 */
-		public float powerRequest() {
+		public double powerRequest() {
 			update();
 			return Math.min(maxEnergyReceived, maxEnergyStored - energyStored);
 		}
@@ -394,8 +394,8 @@ public final class PowerHandler {
 		 * @param from
 		 * @return the amount of power used
 		 */
-		public float receiveEnergy(Type source, final float quantity, ForgeDirection from) {
-			float used = quantity;
+		public double receiveEnergy(Type source, final double quantity, ForgeDirection from) {
+			double used = quantity;
 			if (source == Type.ENGINE) {
 				if (used < minEnergyReceived) {
 					return 0;
@@ -426,7 +426,7 @@ public final class PowerHandler {
 	 *
 	 * @return the amount the power changed by
 	 */
-	public float addEnergy(float quantity) {
+	public double addEnergy(double quantity) {
 		energyStored += quantity;
 
 		if (energyStored > maxEnergyStored) {
@@ -442,7 +442,7 @@ public final class PowerHandler {
 		return quantity;
 	}
 
-	public void setEnergy(float quantity) {
+	public void setEnergy(double quantity) {
 		this.energyStored = quantity;
 		validateEnergy();
 	}

@@ -150,9 +150,9 @@ public class TileQuarry extends TileBuildCraft implements IMachine, IPowerRecept
 		}
 		super.updateEntity();
 		if (inProcess) {
-			float energyToUse = 2 + powerHandler.getEnergyStored() / 500;
+			double energyToUse = 2 + powerHandler.getEnergyStored() / 500;
 
-			float energy = powerHandler.useEnergy(energyToUse, energyToUse, true);
+			double energy = powerHandler.useEnergy(energyToUse, energyToUse, true);
 
 			if (energy > 0) {
 				moveHead(0.1 + energy / 200F);

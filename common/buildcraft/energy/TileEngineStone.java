@@ -22,7 +22,7 @@ import buildcraft.api.gates.ITrigger;
 import buildcraft.core.GuiIds;
 import buildcraft.core.inventory.InvUtils;
 import buildcraft.core.proxy.CoreProxy;
-import buildcraft.core.utils.Utils;
+import buildcraft.core.utils.MathUtils;
 import buildcraft.energy.gui.ContainerEngine;
 
 public class TileEngineStone extends TileEngineWithInventory {
@@ -32,10 +32,10 @@ public class TileEngineStone extends TileEngineWithInventory {
 	final float TARGET_OUTPUT = 0.375f;
 	final float kp = 1f;
 	final float ki = 0.05f;
-	final float eLimit = (MAX_OUTPUT - MIN_OUTPUT) / ki;
+	final double eLimit = (MAX_OUTPUT - MIN_OUTPUT) / ki;
 	int burnTime = 0;
 	int totalBurnTime = 0;
-	float esum = 0;
+	double esum = 0;
 
 	public TileEngineStone() {
 		super(1);
@@ -69,7 +69,7 @@ public class TileEngineStone extends TileEngineWithInventory {
 		if (burnTime > 0) {
 			burnTime--;
 
-			float output = getCurrentOutput();
+			double output = getCurrentOutput();
 			currentOutput = output; // Comment out for constant power
 			addEnergy(output);
 		}
@@ -131,25 +131,25 @@ public class TileEngineStone extends TileEngineWithInventory {
 	}
 
 	@Override
-	public float maxEnergyReceived() {
+	public double maxEnergyReceived() {
 		return 200;
 	}
 
 	@Override
-	public float maxEnergyExtracted() {
+	public double maxEnergyExtracted() {
 		return 100;
 	}
 
 	@Override
-	public float getMaxEnergy() {
+	public double getMaxEnergy() {
 		return 1000;
 	}
 
 	@Override
-	public float getCurrentOutput() {
-		float e = TARGET_OUTPUT * getMaxEnergy() - energy;
-		esum = Math.min(Math.max(esum + e, -eLimit), eLimit);
-		return Math.min(Math.max(e * kp + esum * ki, MIN_OUTPUT), MAX_OUTPUT);
+	public double getCurrentOutput() {
+		double e = TARGET_OUTPUT * getMaxEnergy() - energy;
+		esum = MathUtils.clamp(esum + e, -eLimit, eLimit);
+		return MathUtils.clamp(e * kp + esum * ki, MIN_OUTPUT, MAX_OUTPUT);
 	}
 
 	@Override

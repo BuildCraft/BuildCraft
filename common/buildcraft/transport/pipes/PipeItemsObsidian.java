@@ -207,7 +207,7 @@ public class PipeItemsObsidian extends Pipe<PipeTransportItems> implements IPowe
 
 				CoreProxy.proxy.obsidianPipePickup(container.worldObj, item, this.container);
 
-				float energyUsed = powerHandler.useEnergy(distance, contained.stackSize * distance, true);
+				double energyUsed = powerHandler.useEnergy(distance, contained.stackSize * distance, true);
 
 				if (distance == 0 || energyUsed / distance == contained.stackSize) {
 					stack = contained;

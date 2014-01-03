@@ -16,9 +16,9 @@ public class EntityEnergyLaser extends EntityLaser {
 
 	public static final short POWER_AVERAGING = 100;
 	public int displayStage = 0;
-	private final float power[] = new float[POWER_AVERAGING];
+	private final double power[] = new double[POWER_AVERAGING];
 	private int powerIndex = 0;
-	private float powerAverage = 0;
+	private double powerAverage = 0;
 
 	public EntityEnergyLaser(World world) {
 		super(world);
@@ -28,7 +28,7 @@ public class EntityEnergyLaser extends EntityLaser {
 		super(world, head, tail);
 	}
 
-	public void pushPower(float received) {
+	public void pushPower(double received) {
 
 		powerAverage -= power[powerIndex];
 		powerAverage += received;
@@ -40,7 +40,7 @@ public class EntityEnergyLaser extends EntityLaser {
 		}
 	}
 
-	public float getPowerAverage() {
+	public double getPowerAverage() {
 		return powerAverage / POWER_AVERAGING;
 	}
 

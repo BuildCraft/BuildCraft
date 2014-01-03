@@ -97,7 +97,7 @@ public class TileLaser extends TileBuildCraft implements IPowerReceptor, IAction
 		}
 
 		// Consume power and transfer it to the table.
-		float power = powerHandler.useEnergy(0, getMaxPowerSent(), true);
+		double power = powerHandler.useEnergy(0, getMaxPowerSent(), true);
 		laserTarget.receiveLaserEnergy(power);
 
 		if (laser != null) {
@@ -113,7 +113,7 @@ public class TileLaser extends TileBuildCraft implements IPowerReceptor, IAction
 		return 4;
 	}
 
-	protected void onPowerSent(float power) {
+	protected void onPowerSent(double power) {
 	}
 
 	protected boolean canFindTable() {
