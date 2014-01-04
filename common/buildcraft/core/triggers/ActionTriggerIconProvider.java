@@ -8,7 +8,7 @@ import net.minecraft.util.Icon;
 
 /**
  * Don't put new Trigger Icons in here please, put them in the Trigger classes
- * like the TriggerQuartzTimer. This class will go away someday.
+ * like the #TriggerClockTimer. This class will go away someday.
  *
  * @author CovertJaguar <http://www.railcraft.info/>
  */

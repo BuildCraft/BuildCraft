@@ -61,6 +61,7 @@ public class PipeTransportPower extends PipeTransport {
 	private float[] internalPower = new float[6];
 	public float[] internalNextPower = new float[6];
 	public int maxPower = 8;
+	private double highestPower;
 	SafeTimeTracker tracker = new SafeTimeTracker();
 
 	public PipeTransportPower() {
@@ -181,7 +182,7 @@ public class PipeTransportPower extends PipeTransport {
 			}
 		}
 
-		double highestPower = 0;
+		highestPower = 0;
 		for (int i = 0; i < 6; i++) {
 			displayPower[i] = (prevDisplayPower[i] * (DISPLAY_SMOOTHING - 1.0F) + displayPower[i]) / DISPLAY_SMOOTHING;
 			if (displayPower[i] > highestPower) {
@@ -309,18 +310,6 @@ public class PipeTransportPower extends PipeTransport {
 	 * Power Pipes or a subclass thereof.
 	 */
 	public float receiveEnergy(ForgeDirection from, float val) {
-
-		// Keep this in reserve for if too many idiots start bypassing the API
-		// Verify that it is BC calling this method. 
-		// If its someone else take all their power and run!
-		// Note: This should be safe for PipePowerWood subclasses, aka custom input pipes.
-//		StackTraceElement[] stackTrace = (new Throwable()).getStackTrace();
-//		String caller = stackTrace[1].getClassName();
-//		if (!caller.equals("buildcraft.transport.PipeTransportPower")
-//				&& !caller.equals("buildcraft.transport.pipes.PipePowerWood")) {
-//			 return val;
-//		}
-
 		step();
 		if (this.container.pipe instanceof IPipeTransportPowerHook) {
 			float ret = ((IPipeTransportPowerHook) this.container.pipe).receiveEnergy(from, val);
@@ -393,5 +382,34 @@ public class PipeTransportPower extends PipeTransport {
 	public void handlePowerPacket(PacketPowerUpdate packetPower) {
 		clientDisplayPower = packetPower.displayPower;
 		overload = packetPower.overload ? OVERLOAD_TICKS : 0;
+	}
+
+	/**
+	 * This can be use to provide a rough estimate of how much power is flowing
+	 * through a pipe. Measured in MJ/t.
+	 *
+	 * @return MJ/t
+	 */
+	public double getCurrentPowerTransferRate() {
+		return highestPower;
+	}
+
+	/**
+	 * This can be use to provide a rough estimate of how much power is
+	 * contained in a pipe. Measured in MJ.
+	 * 
+	 * Max should be around (throughput * internalPower.length * 2), ie 112 MJ for a Cobblestone Pipe.
+	 *
+	 * @return MJ
+	 */
+	public double getCurrentPowerAmount() {
+		double amount = 0.0;
+		for (double d : internalPower) {
+			amount += d;
+		}
+		for (double d : internalNextPower) {
+			amount += d;
+		}
+		return amount;
 	}
 }

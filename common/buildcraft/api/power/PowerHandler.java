@@ -21,7 +21,7 @@ import net.minecraftforge.common.ForgeDirection;
  * If you plan emit power, you need only implement IPowerEmitter. You do not
  * need a PowerHandler. Engines have a PowerHandler because they can also
  * receive power from other Engines.
- * 
+ *
  * See TileRefinery for a simple example of a power using machine.
  *
  * @see IPowerReceptor
@@ -94,12 +94,10 @@ public final class PowerHandler {
 		 * @return
 		 */
 		public double applyPerdition(PowerHandler powerHandler, double current, long ticksPassed) {
-//			float prev = current;
 			current -= powerLoss * ticksPassed;
 			if (current < 0) {
 				current = 0;
 			}
-//			powerHandler.totalLostPower += prev - current;
 			return current;
 		}
 
@@ -115,6 +113,9 @@ public final class PowerHandler {
 		}
 	}
 	public static final PerditionCalculator DEFAULT_PERDITION = new PerditionCalculator();
+	public static final double ROLLING_AVERAGE_WEIGHT = 100.0;
+	public static final double ROLLING_AVERAGE_NUMERATOR = ROLLING_AVERAGE_WEIGHT - 1;
+	public static final double ROLLING_AVERAGE_DENOMINATOR  = 1.0 / ROLLING_AVERAGE_WEIGHT;
 	private double minEnergyReceived;
 	private double maxEnergyReceived;
 	private double maxEnergyStored;
@@ -128,11 +129,10 @@ public final class PowerHandler {
 	private PerditionCalculator perdition;
 	private final PowerReceiver receiver;
 	private final Type type;
-	// Debug
-//	private double totalLostPower = 0;
-//	private double totalReceivedPower = 0;
-//	private double totalUsedPower = 0;
-//	private long startTime = -1;
+	// Tracking
+	private double averageLostPower = 0;
+	private double averageReceivedPower = 0;
+	private double averageUsedPower = 0;
 
 	public PowerHandler(IPowerReceptor receptor, Type type) {
 		this.receptor = receptor;
@@ -242,13 +242,6 @@ public final class PowerHandler {
 	 * design around this though if you are aware of the limitations.
 	 */
 	public void update() {
-//		if (startTime == -1)
-//			startTime = receptor.getWorld().getTotalWorldTime();
-//		else {
-//			long duration = receptor.getWorld().getTotalWorldTime() - startTime;
-//			System.out.printf("Power Stats: %s - Stored: %.2f Gained: %.2f - %.2f/t Lost: %.2f - %.2f/t Used: %.2f - %.2f/t%n", receptor.getClass().getSimpleName(), energyStored, totalReceivedPower, totalReceivedPower / duration, totalLostPower, totalLostPower / duration, totalUsedPower, totalUsedPower / duration);
-//		}
-
 		applyPerdition();
 		applyWork();
 		validateEnergy();
@@ -256,12 +249,15 @@ public final class PowerHandler {
 
 	private void applyPerdition() {
 		if (perditionTracker.markTimeIfDelay(receptor.getWorld(), 1) && energyStored > 0) {
+			double prev = energyStored;
 			double newEnergy = getPerdition().applyPerdition(this, energyStored, perditionTracker.durationOfLastDelay());
 			if (newEnergy == 0 || newEnergy < energyStored)
 				energyStored = newEnergy;
 			else
 				energyStored = DEFAULT_PERDITION.applyPerdition(this, energyStored, perditionTracker.durationOfLastDelay());
 			validateEnergy();
+
+			averageLostPower = (averageLostPower * ROLLING_AVERAGE_NUMERATOR + (prev - energyStored)) * ROLLING_AVERAGE_DENOMINATOR;
 		}
 	}
 
@@ -317,8 +313,8 @@ public final class PowerHandler {
 
 		validateEnergy();
 
-//		if (doUse)
-//			totalUsedPower += result;
+		if (doUse)
+			averageUsedPower = (averageUsedPower * ROLLING_AVERAGE_NUMERATOR + result) * ROLLING_AVERAGE_DENOMINATOR;
 
 		return result;
 	}
@@ -365,6 +361,18 @@ public final class PowerHandler {
 
 		public double getEnergyStored() {
 			return energyStored;
+		}
+
+		public double getAveragePowerReceived() {
+			return averageReceivedPower;
+		}
+
+		public double getAveragePowerUsed() {
+			return averageUsedPower;
+		}
+
+		public double getAveragePowerLost() {
+			return averageLostPower;
 		}
 
 		public Type getType() {
@@ -416,7 +424,7 @@ public final class PowerHandler {
 				used = Math.min(quantity, maxEnergyReceived);
 			}
 
-//			totalReceivedPower += used;
+			averageReceivedPower = (averageReceivedPower * ROLLING_AVERAGE_NUMERATOR + used) * ROLLING_AVERAGE_DENOMINATOR;
 
 			return used;
 		}

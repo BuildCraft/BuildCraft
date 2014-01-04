@@ -458,7 +458,13 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 
 		bindTexture(TextureMap.locationBlocksTexture);
 
-		renderGate(pipe, pipe.pipe.gate.logic.getIconDark(), 0);
+		Icon iconLogic;
+		if (pipe.pipe.gate.isGateActive())
+			iconLogic = pipe.pipe.gate.logic.getIconLit();
+		else
+			iconLogic = pipe.pipe.gate.logic.getIconDark();
+
+		renderGate(pipe, iconLogic, 0);
 
 		Icon materialIcon = pipe.pipe.gate.material.getIconBlock();
 		if (materialIcon != null)
