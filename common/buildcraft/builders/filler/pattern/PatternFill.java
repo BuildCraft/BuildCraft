@@ -8,12 +8,8 @@
 package buildcraft.builders.filler.pattern;
 
 import buildcraft.api.core.IBox;
-import buildcraft.builders.BuilderProxyClient;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Icon;
 
 public class PatternFill extends FillerPattern {
 
