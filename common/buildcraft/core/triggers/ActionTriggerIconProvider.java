@@ -17,7 +17,7 @@ public class ActionTriggerIconProvider implements IIconProvider {
 	public static ActionTriggerIconProvider INSTANCE = new ActionTriggerIconProvider();
 	public static final int Action_MachineControl_On = 0;
 	public static final int Action_MachineControl_Off = 1;
-	public static final int Action_MachineControl_Loop = 2;
+	public static final int Action_MachineControl_Loop = 2;	
 	public static final int Trigger_EngineHeat_Blue = 3;
 	public static final int Trigger_EngineHeat_Green = 4;
 	public static final int Trigger_EngineHeat_Yellow = 5;
@@ -51,6 +51,8 @@ public class ActionTriggerIconProvider implements IIconProvider {
 	public static final int Trigger_Inventory_Below25 = 33;
 	public static final int Trigger_Inventory_Below50 = 34;
 	public static final int Trigger_Inventory_Below75 = 35;
+	public static final int Action_Pulsar = 36;
+	public static final int Action_Single_Pulsar = 37;
 	public static final int MAX = 39;
 	@SideOnly(Side.CLIENT)
 	private final Icon[] icons = new Icon[MAX];
@@ -104,5 +106,7 @@ public class ActionTriggerIconProvider implements IIconProvider {
 		icons[ActionTriggerIconProvider.Trigger_Inventory_Below25] = iconRegister.registerIcon("buildcraft:triggers/trigger_inventory_below25");
 		icons[ActionTriggerIconProvider.Trigger_Inventory_Below50] = iconRegister.registerIcon("buildcraft:triggers/trigger_inventory_below50");
 		icons[ActionTriggerIconProvider.Trigger_Inventory_Below75] = iconRegister.registerIcon("buildcraft:triggers/trigger_inventory_below75");
+		icons[ActionTriggerIconProvider.Action_Pulsar] = iconRegister.registerIcon("buildcraft:triggers/action_pulsar");
+		icons[ActionTriggerIconProvider.Action_Single_Pulsar] = iconRegister.registerIcon("buildcraft:triggers/action_single_pulsar");
 	}
 }

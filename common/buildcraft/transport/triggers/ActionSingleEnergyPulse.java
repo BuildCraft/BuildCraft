@@ -12,7 +12,7 @@ public class ActionSingleEnergyPulse extends BCAction {
 
 	@Override
 	public int getIconIndex() {
-		return ActionTriggerIconProvider.Trigger_Machine_Active;
+		return ActionTriggerIconProvider.Action_Single_Pulsar;
 	}
 
 	@Override
