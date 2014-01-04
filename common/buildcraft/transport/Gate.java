@@ -23,6 +23,7 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Multiset;
+import java.util.BitSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -42,7 +43,8 @@ public final class Gate {
 	public ITrigger[] triggers = new ITrigger[8];
 	public ITriggerParameter[] triggerParameters = new ITriggerParameter[8];
 	public IAction[] actions = new IAction[8];
-	public boolean broadcastSignal[] = new boolean[4];
+	public BitSet broadcastSignal = new BitSet(PipeWire.VALUES.length);
+	public BitSet prevBroadcastSignal = new BitSet(PipeWire.VALUES.length);
 	public int redstoneOutput = 0;
 
 	// / CONSTRUCTOR
@@ -108,8 +110,8 @@ public final class Gate {
 			}
 		}
 
-		for (int i = 0; i < 4; ++i) {
-			data.setBoolean("wireState[" + i + "]", broadcastSignal[i]);
+		for (PipeWire wire : PipeWire.VALUES) {
+			data.setBoolean("wireState[" + wire.ordinal() + "]", broadcastSignal.get(wire.ordinal()));
 		}
 		data.setByte("redstoneOutput", (byte) redstoneOutput);
 	}
@@ -126,8 +128,8 @@ public final class Gate {
 			}
 		}
 
-		for (int i = 0; i < 4; ++i) {
-			broadcastSignal[i] = data.getBoolean("wireState[" + i + "]");
+		for (PipeWire wire : PipeWire.VALUES) {
+			broadcastSignal.set(wire.ordinal(), data.getBoolean("wireState[" + wire.ordinal() + "]"));
 		}
 		redstoneOutput = data.getByte("redstoneOutput");
 	}
@@ -162,11 +164,12 @@ public final class Gate {
 	}
 
 	public boolean isGateActive() {
-		for (boolean b : broadcastSignal) {
-			if (b)
+		for (GateExpansionController expansion : expansions.values()) {
+			if (expansion.isActive())
 				return true;
 		}
-		return redstoneOutput > 0;
+		return redstoneOutput > 0 || !broadcastSignal.isEmpty();
+
 	}
 
 	public int getRedstoneOutput() {
@@ -181,10 +184,12 @@ public final class Gate {
 
 	public void resolveActions() {
 		int oldRedstoneOutput = redstoneOutput;
-		boolean[] oldBroadcastSignal = broadcastSignal;
-
 		redstoneOutput = 0;
-		broadcastSignal = new boolean[4];
+
+		BitSet temp = prevBroadcastSignal;
+		temp.clear();
+		prevBroadcastSignal = broadcastSignal;
+		broadcastSignal = temp;
 
 		// Tell the gate to prepare for resolving actions. (Disable pulser)
 		startResolution();
@@ -225,7 +230,7 @@ public final class Gate {
 				} else if (action instanceof ActionRedstoneFaderOutput) {
 					redstoneOutput = ((ActionRedstoneFaderOutput) action).level;
 				} else if (action instanceof ActionSignalOutput) {
-					broadcastSignal[((ActionSignalOutput) action).color.ordinal()] = true;
+					broadcastSignal.set(((ActionSignalOutput) action).color.ordinal());
 				} else {
 					for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
 						TileEntity tile = pipe.container.getTile(side);
@@ -246,12 +251,9 @@ public final class Gate {
 			pipe.updateNeighbors(true);
 		}
 
-		for (int i = 0; i < oldBroadcastSignal.length; ++i) {
-			if (oldBroadcastSignal[i] != broadcastSignal[i]) {
-				pipe.container.scheduleRenderUpdate();
-				pipe.updateSignalState();
-				break;
-			}
+		if (!prevBroadcastSignal.equals(broadcastSignal)) {
+			pipe.container.scheduleRenderUpdate();
+			pipe.updateSignalState();
 		}
 	}
 

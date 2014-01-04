@@ -277,30 +277,30 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 		}
 	}
 
-	private void updateSignalStateForColor(PipeWire color) {
-		if (!wireSet[color.ordinal()])
+	private void updateSignalStateForColor(PipeWire wire) {
+		if (!wireSet[wire.ordinal()])
 			return;
 
 		// STEP 1: compute internal signal strength
 
-		if (gate != null && gate.broadcastSignal[color.ordinal()]) {
-			receiveSignal(255, color);
+		if (gate != null && gate.broadcastSignal.get(wire.ordinal())) {
+			receiveSignal(255, wire);
 		} else {
-			readNearbyPipesSignal(color);
+			readNearbyPipesSignal(wire);
 		}
 
 		// STEP 2: transmit signal in nearby blocks
 
-		if (signalStrength[color.ordinal()] > 1) {
+		if (signalStrength[wire.ordinal()] > 1) {
 			for (ForgeDirection o : ForgeDirection.VALID_DIRECTIONS) {
 				TileEntity tile = container.getTile(o);
 
 				if (tile instanceof TileGenericPipe) {
 					TileGenericPipe tilePipe = (TileGenericPipe) tile;
 
-					if (BlockGenericPipe.isFullyDefined(tilePipe.pipe) && tilePipe.pipe.wireSet[color.ordinal()])
-						if (isWireConnectedTo(tile, color)) {
-							tilePipe.pipe.receiveSignal(signalStrength[color.ordinal()] - 1, color);
+					if (BlockGenericPipe.isFullyDefined(tilePipe.pipe) && tilePipe.pipe.wireSet[wire.ordinal()])
+						if (isWireConnectedTo(tile, wire)) {
+							tilePipe.pipe.receiveSignal(signalStrength[wire.ordinal()] - 1, wire);
 						}
 				}
 			}
