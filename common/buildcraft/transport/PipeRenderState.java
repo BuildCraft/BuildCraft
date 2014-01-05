@@ -15,6 +15,7 @@ import net.minecraft.util.Icon;
 public class PipeRenderState implements IClientState {
 
 	private boolean isGateLit = false;
+	private boolean isGatePulsing = false;
 	private int gateIconIndex = 0;
 	public final ConnectionMatrix pipeConnectionMatrix = new ConnectionMatrix();
 	public final TextureMatrix textureMatrix = new TextureMatrix();
@@ -42,6 +43,17 @@ public class PipeRenderState implements IClientState {
 		return isGateLit;
 	}
 
+	public void setIsGatePulsing(boolean value) {
+		if (isGatePulsing != value) {
+			isGatePulsing = value;
+			dirty = true;
+		}
+	}
+
+	public boolean isGatePulsing() {
+		return isGatePulsing;
+	}
+
 	public void clean() {
 		dirty = false;
 		pipeConnectionMatrix.clean();
@@ -62,6 +74,7 @@ public class PipeRenderState implements IClientState {
 	@Override
 	public void writeData(DataOutputStream data) throws IOException {
 		data.writeBoolean(isGateLit);
+		data.writeBoolean(isGatePulsing);
 		data.writeInt(gateIconIndex);
 		pipeConnectionMatrix.writeData(data);
 		textureMatrix.writeData(data);
@@ -73,6 +86,7 @@ public class PipeRenderState implements IClientState {
 	@Override
 	public void readData(DataInputStream data) throws IOException {
 		isGateLit = data.readBoolean();
+		isGatePulsing = data.readBoolean();
 		gateIconIndex = data.readInt();
 		pipeConnectionMatrix.readData(data);
 		textureMatrix.readData(data);

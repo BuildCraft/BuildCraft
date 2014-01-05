@@ -181,14 +181,16 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 			internalUpdateScheduled = false;
 		}
 
-		// Do not try to update gates client side.
-		if (container.worldObj.isRemote)
-			return;
-
 		// Update the gate if we have any
 		if (gate != null) {
-			gate.resolveActions();
-			gate.tick();
+			if (container.worldObj.isRemote) {
+				// on client, only update the graphical pulse if needed
+				gate.updatePulse();
+			} else {
+				// on server, do the internal gate update
+				gate.resolveActions();
+				gate.tick();
+			}
 		}
 	}
 

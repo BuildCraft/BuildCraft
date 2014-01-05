@@ -139,7 +139,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 
 		coreState.pipeId = nbt.getInteger("pipeId");
 		pipe = BlockGenericPipe.createPipe(coreState.pipeId);
-		bindPipe();	
+		bindPipe();
 
 		if (pipe != null)
 			pipe.readFromNBT(nbt);
@@ -268,8 +268,9 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 			}
 		}
 
-		// Gate Textures
+		// Gate Textures and movement
 		renderState.setIsGateLit(pipe.gate != null ? pipe.gate.isGateActive() : false);
+		renderState.setIsGatePulsing(pipe.gate != null ? pipe.gate.isGatePulsing(): false);
 
 		// Facades
 		for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {

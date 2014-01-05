@@ -19,14 +19,17 @@ import buildcraft.api.gates.ITileTrigger;
 import buildcraft.transport.gates.ItemGate;
 import buildcraft.transport.triggers.ActionRedstoneFaderOutput;
 import buildcraft.transport.triggers.ActionSignalOutput;
+
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Multiset;
+
 import java.util.BitSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -46,6 +49,14 @@ public final class Gate {
 	public BitSet broadcastSignal = new BitSet(PipeWire.VALUES.length);
 	public BitSet prevBroadcastSignal = new BitSet(PipeWire.VALUES.length);
 	public int redstoneOutput = 0;
+
+	/**
+	 * this is the internal pulsing state of the gate. Intended to be managed
+	 * by the server side only, the client is supposed to be referring to the
+	 * state of the renderer, and update moveStage accordingly.
+	 */
+	public boolean isPulsing = false;
+	private float pulseStage = 0;
 
 	// / CONSTRUCTOR
 	public Gate(Pipe pipe, GateMaterial material, GateLogic logic) {
@@ -141,6 +152,21 @@ public final class Gate {
 		}
 	}
 
+	/**
+	 *  This code is aimed at being active on the client only, and moves
+	 *  the internal position of the gate. There's no need to do that
+	 *  or to synchronize that with the server as this is only for animation.
+	 */
+	public void updatePulse () {
+		if (pipe.container.renderState.isGatePulsing () || pulseStage > 0.11F) {
+			// if it is moving, or is still in a moved state, then complete
+			// the current movement
+			pulseStage = (pulseStage + 0.01F) % 1F;
+		} else {
+			pulseStage = 0;
+		}
+	}
+
 	// / UPDATING
 	public void tick() {
 		for (GateExpansionController expansion : expansions.values()) {
@@ -169,7 +195,10 @@ public final class Gate {
 				return true;
 		}
 		return redstoneOutput > 0 || !broadcastSignal.isEmpty();
+	}
 
+	public boolean isGatePulsing() {
+		return isPulsing;
 	}
 
 	public int getRedstoneOutput() {
@@ -317,5 +346,16 @@ public final class Gate {
 		for (GateExpansionController expansion : expansions.values()) {
 			expansion.addActions(list);
 		}
+	}
+
+	public void setPulsing (boolean pulsing) {
+		if (pulsing != isPulsing) {
+			isPulsing = pulsing;
+			pipe.container.scheduleRenderUpdate();
+		}
+	}
+
+	public float getPulseStage () {
+		return pulseStage;
 	}
 }
