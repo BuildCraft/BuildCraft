@@ -114,9 +114,11 @@ public class DefaultProps {
 	public static int SPRING_ID = 1522;
 	public static int FILTERED_BUFFER_ID = 1523;
 	public static int FLOOD_GATE_ID = 1524;
-	
+
 	public static int OIL_ID = 1530;
 	public static int FUEL_ID = 1531;
+
+	public static int PING_PONG_ID = 1532;
 
 	public static boolean CURRENT_CONTINUOUS = false;
 	public static double PIPES_DURABILITY = 0.25D;

@@ -40,4 +40,6 @@ public class PacketIds {
 	public static final int GUI_WIDGET = 81;
 
 	public static final int STATE_UPDATE = 100;
+
+	public static final int RPC = 110;
 }

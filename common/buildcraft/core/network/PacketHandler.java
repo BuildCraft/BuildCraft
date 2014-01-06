@@ -11,6 +11,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import cpw.mods.fml.common.network.IPacketHandler;
 import cpw.mods.fml.common.network.Player;
+import cpw.mods.fml.repackage.com.nothome.delta.DebugDiffWriter;
 
 public class PacketHandler implements IPacketHandler {
 
@@ -63,6 +64,22 @@ public class PacketHandler implements IPacketHandler {
 				case PacketIds.GUI_WIDGET: {
 					PacketGuiWidget pkt = new PacketGuiWidget();
 					pkt.readData(data);
+					break;
+				}
+
+				case PacketIds.RPC: {
+					PacketRPC rpc = new PacketRPC();
+					rpc.sender = (EntityPlayer) player;
+
+					int x = data.readInt();
+					int y = data.readInt();
+					int z = data.readInt();
+
+					World world = ((EntityPlayer) player).worldObj;
+					TileEntity tile = world.getBlockTileEntity(x, y, z);
+
+					rpc.setTile (tile);
+					rpc.readData(data);
 					break;
 				}
 			}
