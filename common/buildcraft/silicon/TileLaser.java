@@ -32,14 +32,11 @@ public class TileLaser extends TileBuildCraft implements IPowerReceptor, IAction
 
 	private static final float LASER_OFFSET = 2.0F / 16.0F;
 	private EntityEnergyLaser laser = null;
-	private final SafeTimeTracker laserTickTracker = new SafeTimeTracker();
-	private final SafeTimeTracker searchTracker = new SafeTimeTracker();
-	private final SafeTimeTracker networkTracker = new SafeTimeTracker();
+	private final SafeTimeTracker laserTickTracker = new SafeTimeTracker(10);
+	private final SafeTimeTracker searchTracker = new SafeTimeTracker(100, 100);
+	private final SafeTimeTracker networkTracker = new SafeTimeTracker(3);
 	private ILaserTarget laserTarget;
 	protected PowerHandler powerHandler;
-	private int nextNetworkUpdate = 3;
-	private int nextLaserUpdate = 10;
-	private int nextLaserSearch = 100;
 	private ActionMachineControl.Mode lastMode = ActionMachineControl.Mode.Unknown;
 	private static final PowerHandler.PerditionCalculator PERDITION = new PowerHandler.PerditionCalculator(0.5F);
 
@@ -66,11 +63,10 @@ public class TileLaser extends TileBuildCraft implements IPowerReceptor, IAction
 			return;
 		}
 
-		// Check for available tables if none is linked to this laser.
-		if (!isValidTable())
-			if (canFindTable()) {
-				findTable();
-			}
+		// Check for any available tables at a regular basis
+		if (canFindTable()) {
+			findTable();
+		}
 
 		// If we still don't have a valid table or the existing has
 		// become invalid, we disable the laser and do nothing.
@@ -117,11 +113,11 @@ public class TileLaser extends TileBuildCraft implements IPowerReceptor, IAction
 	}
 
 	protected boolean canFindTable() {
-		return searchTracker.markTimeIfDelay(worldObj, nextLaserSearch);
+		return searchTracker.markTimeIfDelay(worldObj);
 	}
 
 	protected boolean canUpdateLaser() {
-		return laserTickTracker.markTimeIfDelay(worldObj, nextLaserUpdate);
+		return laserTickTracker.markTimeIfDelay(worldObj);
 	}
 
 	protected boolean isValidTable() {
@@ -235,7 +231,6 @@ public class TileLaser extends TileBuildCraft implements IPowerReceptor, IAction
 	}
 
 	protected void removeLaser() {
-
 		if (laser != null) {
 			laser.setDead();
 			laser = null;
@@ -253,7 +248,7 @@ public class TileLaser extends TileBuildCraft implements IPowerReceptor, IAction
 
 	@Override
 	public void sendNetworkUpdate() {
-		if (networkTracker.markTimeIfDelay(worldObj, nextNetworkUpdate)) {
+		if (networkTracker.markTimeIfDelay(worldObj)) {
 			super.sendNetworkUpdate();
 		}
 	}

@@ -1,7 +1,7 @@
 /*
  * Copyright (c) SpaceToad, 2011-2012
  * http://www.mod-buildcraft.com
- * 
+ *
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -15,9 +15,12 @@ import buildcraft.api.gates.IAction;
 import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.power.PowerHandler;
 import buildcraft.api.power.PowerHandler.Type;
+import buildcraft.transport.TileGenericPipe;
 import buildcraft.transport.triggers.ActionEnergyPulsar;
 import buildcraft.transport.triggers.ActionSingleEnergyPulse;
+
 import java.util.List;
+
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.ForgeDirection;
@@ -41,6 +44,7 @@ public class GateExpansionPulsar extends GateExpansionBuildcraft implements IGat
 
 	private class GateExpansionControllerPulsar extends GateExpansionController {
 
+		private static final int PULSE_PERIOD = 10;
 		private boolean isActive;
 		private boolean singlePulse;
 		private boolean hasPulsed;
@@ -49,6 +53,12 @@ public class GateExpansionPulsar extends GateExpansionBuildcraft implements IGat
 
 		public GateExpansionControllerPulsar(TileEntity pipeTile) {
 			super(GateExpansionPulsar.this, pipeTile);
+
+			// by default, initialize tick so that not all gates created at
+			// one single moment would do the work at the same time. This
+			// spreads a bit work load. Note, this is not a problem for
+			// existing gates since tick is stored in NBT
+			tick = (int) Math.random() * PULSE_PERIOD;
 		}
 
 		@Override
@@ -60,7 +70,6 @@ public class GateExpansionPulsar extends GateExpansionBuildcraft implements IGat
 
 		@Override
 		public boolean resolveAction(IAction action, int count) {
-
 			if (action instanceof ActionEnergyPulsar) {
 				enablePulse(count);
 				return true;
@@ -83,14 +92,24 @@ public class GateExpansionPulsar extends GateExpansionBuildcraft implements IGat
 			if (!isActive && hasPulsed)
 				hasPulsed = false;
 
+			if (tick++ % PULSE_PERIOD != 0) {
+				// only do the treatement once every period
+				return;
+			}
+
+			if (!isActive) {
+				((TileGenericPipe) pipeTile).pipe.gate.setPulsing(false);
+				return;
+			}
+
 			PowerHandler.PowerReceiver powerReceptor = ((IPowerReceptor) pipeTile).getPowerReceiver(ForgeDirection.UNKNOWN);
 
-			if (powerReceptor == null || !isActive || tick++ % 10 != 0)
-				return;
-
-			if (!singlePulse || !hasPulsed) {
+			if (powerReceptor != null && (!singlePulse || !hasPulsed)) {
+				((TileGenericPipe) pipeTile).pipe.gate.setPulsing(true);
 				powerReceptor.receiveEnergy(Type.GATE, Math.min(1 << (pulseCount - 1), 64) * 1.01f, ForgeDirection.WEST);
 				hasPulsed = true;
+			} else {
+				((TileGenericPipe) pipeTile).pipe.gate.setPulsing(true);
 			}
 		}
 

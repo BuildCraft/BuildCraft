@@ -28,8 +28,11 @@ import buildcraft.transport.PipeTransportPower;
 import buildcraft.transport.TileGenericPipe;
 import buildcraft.transport.TravelingItem;
 import buildcraft.api.transport.PipeWire;
+
 import com.google.common.collect.Maps;
+
 import java.util.HashMap;
+
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.client.renderer.RenderHelper;
@@ -41,11 +44,13 @@ import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Icon;
+import net.minecraft.util.Timer;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
+
 import org.lwjgl.opengl.GL11;
 
 public class PipeRendererTESR extends TileEntitySpecialRenderer {
@@ -270,6 +275,9 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 			case POWER:
 				renderPower(pipe.pipe, x, y, z);
 				break;
+			case STRUCTURE:
+				// no object to render in a structure pipe;
+				break;
 		}
 	}
 
@@ -459,51 +467,76 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 		bindTexture(TextureMap.locationBlocksTexture);
 
 		Icon iconLogic;
-		if (pipe.pipe.gate.isGateActive())
+		if (pipe.renderState.isGateLit())
 			iconLogic = pipe.pipe.gate.logic.getIconLit();
 		else
 			iconLogic = pipe.pipe.gate.logic.getIconDark();
 
-		renderGate(pipe, iconLogic, 0);
+		float translateCenter = 0; 
+				
+		// Render base gate		
+		renderGate(pipe, iconLogic, 0, 0.1F, 0, 0);
+		
+		float pulseStage = pipe.pipe.gate.getPulseStage() * 2F;
+		
+		if (pipe.renderState.isGatePulsing() || pulseStage != 0) {
+			// Render pulsing gate
+			float amplitude = 0.10F;
+			float start = 0.01F;			
+		
+			if (pulseStage < 1) {
+				translateCenter = (pulseStage * amplitude) + start;
+			} else {
+				translateCenter = amplitude - ((pulseStage - 1F) * amplitude) + start;
+			}
+		
+			renderGate(pipe, iconLogic, 0, 0.13F, translateCenter, translateCenter);
+		}
 
 		Icon materialIcon = pipe.pipe.gate.material.getIconBlock();
 		if (materialIcon != null)
-			renderGate(pipe, materialIcon, 1);
+			renderGate(pipe, materialIcon, 1, 0.13F, translateCenter, translateCenter);
 
 		for (IGateExpansion expansion : pipe.pipe.gate.expansions.keySet()) {
-			renderGate(pipe, expansion.getOverlayBlock(), 2);
-		}
-
+			renderGate(pipe, expansion.getOverlayBlock(), 2, 0.13F, translateCenter, translateCenter);
+		}		
+		
 		RenderHelper.enableStandardItemLighting();
 
 		GL11.glPopAttrib();
 		GL11.glPopMatrix();
 	}
 
-	private void renderGate(TileGenericPipe tile, Icon icon, int layer) {
-
-
+	private void renderGate(TileGenericPipe tile, Icon icon, int layer, float trim, float translateCenter, float extraDepth) {
 		PipeRenderState state = tile.renderState;
 
 		RenderInfo box = new RenderInfo();
 		box.texture = icon;
 
 		float[][] zeroState = new float[3][2];
-		float min = CoreConstants.PIPE_MIN_POS + 0.05F;
-		float max = CoreConstants.PIPE_MAX_POS - 0.05F;
+		float min = CoreConstants.PIPE_MIN_POS + trim / 2F;
+		float max = CoreConstants.PIPE_MAX_POS - trim / 2F;
 
 		// X START - END
 		zeroState[0][0] = min;
 		zeroState[0][1] = max;
 		// Y START - END
-		zeroState[1][0] = CoreConstants.PIPE_MIN_POS - 0.10F;
-		zeroState[1][1] = CoreConstants.PIPE_MIN_POS + 0.001F + 0.01F * layer;
+		zeroState[1][0] = CoreConstants.PIPE_MIN_POS - 0.10F - 0.001F * layer;
+		zeroState[1][1] = CoreConstants.PIPE_MIN_POS + 0.001F + 0.01F * layer + extraDepth;
 		// Z START - END
 		zeroState[2][0] = min;
 		zeroState[2][1] = max;
-
+		
 		for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
 			if (shouldRenderNormalPipeSide(state, direction)) {
+				GL11.glPushMatrix();
+				
+				float xt = direction.offsetX * translateCenter, 
+						yt = direction.offsetY * translateCenter, 
+						zt = direction.offsetZ * translateCenter;
+								
+				GL11.glTranslatef(xt, yt, zt);					
+				
 				float[][] rotated = MatrixTranformations.deepClone(zeroState);
 				MatrixTranformations.transform(rotated, direction);
 
@@ -511,10 +544,12 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 					box.setRenderSingleSide(direction.ordinal());
 				box.setBounds(rotated[0][0], rotated[1][0], rotated[2][0], rotated[0][1], rotated[1][1], rotated[2][1]);
 				RenderEntityBlock.INSTANCE.renderBlock(box, tile.worldObj, 0, 0, 0, tile.xCoord, tile.yCoord, tile.zCoord, true, true);
+				
+				GL11.glPopMatrix();
 			}
-		}
+		}				
 	}
-
+		
 	private boolean shouldRenderNormalPipeSide(PipeRenderState state, ForgeDirection direction) {
 		return !state.pipeConnectionMatrix.isConnected(direction) && state.facadeMatrix.getFacadeBlockId(direction) == 0 && !state.plugMatrix.isConnected(direction) && !isOpenOrientation(state, direction);
 	}
