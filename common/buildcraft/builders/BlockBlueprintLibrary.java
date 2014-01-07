@@ -10,11 +10,14 @@
 package buildcraft.builders;
 
 import buildcraft.BuildCraftBuilders;
+import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.GuiIds;
 import buildcraft.core.proxy.CoreProxy;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+
 import java.util.ArrayList;
+
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IconRegister;
@@ -32,7 +35,7 @@ public class BlockBlueprintLibrary extends BlockContainer {
 
     public BlockBlueprintLibrary(int i) {
 		super(i, Material.wood);
-		//setCreativeTab(CreativeTabBuildCraft.MACHINES.get());
+		setCreativeTab(CreativeTabBuildCraft.MACHINES.get());
 		setHardness(5F);
 	}
 

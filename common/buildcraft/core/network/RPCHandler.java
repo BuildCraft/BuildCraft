@@ -4,6 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -63,11 +64,13 @@ public class RPCHandler {
 					} else if (formals [j].equals(String.class)) {
 						// accepted
 					} else if (formals [j].equals(RPCMessageInfo.class)) {
+
 						// accepted
 						// FIXME: only if last one
 					} else {
-						throw new RuntimeException
-						("parameter type " + formals [j].getName() + " not supported in RPC.");
+						// all other will be serialized
+						//throw new RuntimeException
+						//("parameter type " + formals [j].getName() + " not supported in RPC.");
 					}
 				}
 			}
@@ -144,6 +147,8 @@ public class RPCHandler {
 					data.writeInt((Integer) actuals [i]);
 				} else if (formals [i].equals(String.class)) {
 					data.writeUTF((String) actuals [i]);
+				} else {
+					//data.write
 				}
 			}
 

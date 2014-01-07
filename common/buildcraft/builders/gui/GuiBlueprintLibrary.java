@@ -9,23 +9,23 @@ package buildcraft.builders.gui;
 
 import buildcraft.BuildCraftBuilders;
 import buildcraft.builders.TileBlueprintLibrary;
-import buildcraft.builders.network.PacketLibraryAction;
+import buildcraft.builders.blueprints.BlueprintMeta;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.blueprints.BptPlayerIndex;
 import buildcraft.core.gui.GuiBuildCraft;
 import buildcraft.core.network.PacketIds;
 import buildcraft.core.network.PacketPayload;
-import buildcraft.core.network.PacketPayloadArrays;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.StringUtils;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
+
 import org.lwjgl.opengl.GL11;
 
 public class GuiBlueprintLibrary extends GuiBuildCraft {
 
-	private static final ResourceLocation TEXTURE = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_GUI + "/template_gui.png");
+	private static final ResourceLocation TEXTURE = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_GUI + "/library_r.png");
 	EntityPlayer player;
 	TileBlueprintLibrary library;
 	ContainerBlueprintLibrary container;
@@ -42,6 +42,7 @@ public class GuiBlueprintLibrary extends GuiBuildCraft {
 		container = (ContainerBlueprintLibrary) inventorySlots;
 
 		index = BuildCraftBuilders.getPlayerIndex(player.username);
+		library.updateCurrentNames();
 	}
 	private GuiButton nextPageButton;
 	private GuiButton prevPageButton;
@@ -67,11 +68,11 @@ public class GuiBlueprintLibrary extends GuiBuildCraft {
 
 		lockButton = new GuiButton(3, j + 127, k + 114, 40, 20, StringUtils.localize("gui.lock"));
 		buttonList.add(lockButton);
-		if (library.locked) {
+		/*if (library.locked) {
 			lockButton.displayString = StringUtils.localize("gui.unlock");
 		} else {
 			lockButton.displayString = StringUtils.localize("gui.lock");
-		}
+		}*/
 	}
 
 	@Override
@@ -82,21 +83,20 @@ public class GuiBlueprintLibrary extends GuiBuildCraft {
 		fontRenderer.drawString(title, getCenteredOffset(title), 6, 0x404040);
 
 		int c = 0;
-		String[] currentNames = library.currentNames;
-		for (int i = 0; i < currentNames.length; i++) {
-			String name = currentNames[i];
-			if (name == null) {
-				break;
-			}
+		for (String bpt : library.currentBlueprint) {
+			//String name = currentNames[i];
+
+			String name = bpt;
+
 			if (name.length() > BuildCraftBuilders.MAX_BLUEPRINTS_NAME_SIZE) {
 				name = name.substring(0, BuildCraftBuilders.MAX_BLUEPRINTS_NAME_SIZE);
 			}
 
-			if (i == library.selected) {
+			/*if (i == library.selected) {
 				int l1 = 8;
 				int i2 = 24;
 				drawGradientRect(l1, i2 + 9 * c, l1 + 88, i2 + 9 * (c + 1), 0x80ffffff, 0x80ffffff);
-			}
+			}*/
 
 			fontRenderer.drawString(name, 9, 25 + 9 * c, 0x404040);
 			c++;
@@ -121,16 +121,16 @@ public class GuiBlueprintLibrary extends GuiBuildCraft {
 
 	@Override
 	public void updateScreen() {
-		if (library.locked) {
+		/*if (library.locked) {
 			lockButton.displayString = StringUtils.localize("gui.unlock");
 		} else {
 			lockButton.displayString = StringUtils.localize("gui.lock");
-		}
+		}*/
 	}
 
 	@Override
 	protected void actionPerformed(GuiButton button) {
-		PacketLibraryAction packet = new PacketLibraryAction(PacketIds.LIBRARY_ACTION, library.xCoord, library.yCoord, library.zCoord);
+		/*PacketLibraryAction packet = new PacketLibraryAction(PacketIds.LIBRARY_ACTION, library.xCoord, library.yCoord, library.zCoord);
 		if (button == nextPageButton) {
 			packet.actionId = TileBlueprintLibrary.COMMAND_NEXT;
 		} else if (button == prevPageButton) {
@@ -140,7 +140,7 @@ public class GuiBlueprintLibrary extends GuiBuildCraft {
 		} else if (deleteButton != null && button == deleteButton) {
 			packet.actionId = TileBlueprintLibrary.COMMAND_DELETE;
 		}
-		CoreProxy.proxy.sendToServer(packet.getPacket());
+		CoreProxy.proxy.sendToServer(packet.getPacket());*/
 	}
 
 	@Override
@@ -157,13 +157,13 @@ public class GuiBlueprintLibrary extends GuiBuildCraft {
 			int ySlot = (y - 24) / 9;
 
 			if (ySlot >= 0 && ySlot <= 11) {
-				if (ySlot < library.currentNames.length) {
+				/*if (ySlot < library.currentNames.length) {
 					PacketPayloadArrays payload = new PacketPayloadArrays();
 					payload.intPayload = new int[]{ySlot};
 					PacketLibraryAction packet = new PacketLibraryAction(PacketIds.LIBRARY_SELECT, library.xCoord, library.yCoord, library.zCoord);
 					packet.actionId = ySlot;
 					CoreProxy.proxy.sendToServer(packet.getPacket());
-				}
+				}*/
 			}
 		}
 	}

@@ -324,7 +324,7 @@ public class BuildCraftBuilders {
 			new ItemStack(Item.dyePowder, 1, 0), 't', markerBlock, 'y', new ItemStack(Item.dyePowder, 1, 11),
 			'c', Block.workbench, 'g', BuildCraftCore.goldGearItem, 'C', Block.chest});
 
-//		CoreProxy.proxy.addCraftingRecipe(new ItemStack(builderBlock, 1), new Object[]{"btb", "ycy", "gCg", 'b',
+		//		CoreProxy.proxy.addCraftingRecipe(new ItemStack(builderBlock, 1), new Object[]{"btb", "ycy", "gCg", 'b',
 //			new ItemStack(Item.dyePowder, 1, 0), 't', markerBlock, 'y', new ItemStack(Item.dyePowder, 1, 11),
 //			'c', Block.workbench, 'g', BuildCraftCore.diamondGearItem, 'C', Block.chest});
 
@@ -333,8 +333,8 @@ public class BuildCraftBuilders {
 //			'c', Block.workbench, 'g', BuildCraftCore.diamondGearItem, 'C',
 //			new ItemStack(templateItem, 1)});
 
-//		CoreProxy.proxy.addCraftingRecipe(new ItemStack(libraryBlock, 1), new Object[]{"bbb", "bBb", "bbb", 'b',
-//			new ItemStack(blueprintItem), 'B', Block.bookShelf});
+		CoreProxy.proxy.addCraftingRecipe(new ItemStack(libraryBlock, 1), new Object[]{"bbb", "bBb", "bbb", 'b',
+			new ItemStack(blueprintItem), 'B', Block.bookShelf});
 	}
 
 	@EventHandler

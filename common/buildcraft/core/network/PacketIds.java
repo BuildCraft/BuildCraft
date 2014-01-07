@@ -30,7 +30,8 @@ public class PacketIds {
 	public static final int REFINERY_FILTER_SET = 50;
 
 	public static final int ARCHITECT_NAME = 60;
-	public static final int LIBRARY_ACTION = 61;
+	// Trying to replace all library actions by RPC
+	//public static final int LIBRARY_ACTION = 61;
 	public static final int LIBRARY_SELECT = 62;
 
 	public static final int ADVANCED_WORKBENCH_SETSLOT = 70;

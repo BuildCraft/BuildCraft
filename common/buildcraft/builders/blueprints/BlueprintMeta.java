@@ -1,14 +1,25 @@
 package buildcraft.builders.blueprints;
 
+import buildcraft.core.network.TileNetworkData;
 import net.minecraft.nbt.NBTTagCompound;
 
 public class BlueprintMeta {
-	private final String version = "Blueprint-2.0";
-	private BlueprintId id;
-	private String name;
-	private String creator;
 
-	protected BlueprintMeta() {
+	@TileNetworkData
+	public final String version = "Blueprint-2.0";
+
+	/**
+	 * FIXME: The format of id is not completely supported yet. To improve...
+	 */
+	private BlueprintId id;
+
+	@TileNetworkData
+	public String name;
+
+	@TileNetworkData
+	public String creator;
+
+	public BlueprintMeta() {
 	}
 
 	protected BlueprintMeta(BlueprintId id, NBTTagCompound nbt) {

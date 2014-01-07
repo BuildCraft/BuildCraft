@@ -98,7 +98,6 @@ public class BuildCraftCore {
 	public static RenderMode render = RenderMode.Full;
 	public static boolean debugMode = false;
 	public static boolean modifyWorld = false;
-	public static boolean trackNetworkUsage = false;
 	public static boolean colorBlindMode = false;
 	public static boolean dropBrokenBlocks = true; // Set to false to prevent the filler from dropping broken blocks.
 	public static int itemLifespan = 1200;
@@ -181,9 +180,6 @@ public class BuildCraftCore {
 					DefaultProps.CURRENT_CONTINUOUS);
 			continuousCurrent.comment = "set to true for allowing machines to be driven by continuous current";
 			continuousCurrentModel = continuousCurrent.getBoolean(DefaultProps.CURRENT_CONTINUOUS);
-
-			Property trackNetwork = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "trackNetworkUsage", false);
-			trackNetworkUsage = trackNetwork.getBoolean(false);
 
 			Property dropBlock = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "dropBrokenBlocks", true);
 			dropBlock.comment = "set to false to prevent fillers from dropping blocks.";

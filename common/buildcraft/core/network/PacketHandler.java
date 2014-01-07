@@ -3,6 +3,7 @@ package buildcraft.core.network;
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.INetworkManager;
@@ -33,8 +34,8 @@ public class PacketHandler implements IPacketHandler {
 	@Override
 	public void onPacketData(INetworkManager manager, Packet250CustomPayload packet, Player player) {
 		DataInputStream data = new DataInputStream(new ByteArrayInputStream(packet.data));
-		try {
 
+		try {
 			int packetID = data.read();
 			switch (packetID) {
 				case PacketIds.TILE_UPDATE: {

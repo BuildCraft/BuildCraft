@@ -17,13 +17,13 @@ import buildcraft.core.gui.BuildCraftContainer;
 import buildcraft.core.network.PacketCoordinates;
 import buildcraft.core.network.PacketIds;
 import buildcraft.core.network.PacketPayload;
-import buildcraft.core.network.PacketPayloadArrays;
 import buildcraft.core.network.PacketPayloadStream;
 import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.gates.GateDefinition;
 
+import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -132,11 +132,16 @@ public class ContainerGateInterface extends BuildCraftContainer {
 	 */
 	public void updateActions(PacketUpdate packet) {
 		_potentialActions.clear();
-		PacketPayloadArrays payload = (PacketPayloadArrays) packet.payload;
-		int length = payload.intPayload[0];
+		PacketPayloadStream payload = (PacketPayloadStream) packet.payload;
+		try {
+			int length = payload.stream.readInt();
 
-		for (int i = 0; i < length; i++) {
-			_potentialActions.add(ActionManager.actions.get(payload.stringPayload[i]));
+			for (int i = 0; i < length; i++) {
+				_potentialActions.add(ActionManager.actions.get(payload.stream.readUTF()));
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 
@@ -147,11 +152,18 @@ public class ContainerGateInterface extends BuildCraftContainer {
 	 */
 	public void updateTriggers(PacketUpdate packet) {
 		_potentialTriggers.clear();
-		PacketPayloadArrays payload = (PacketPayloadArrays) packet.payload;
-		int length = payload.intPayload[0];
+		PacketPayloadStream payload = (PacketPayloadStream) packet.payload;
 
-		for (int i = 0; i < length; i++) {
-			_potentialTriggers.add(ActionManager.triggers.get(payload.stringPayload[i]));
+		try {
+			int length = payload.stream.readInt();
+
+			for (int i = 0; i < length; i++) {
+				String trigger = payload.stream.readUTF();
+				_potentialTriggers.add(ActionManager.triggers.get(trigger));
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 
@@ -287,14 +299,21 @@ public class ContainerGateInterface extends BuildCraftContainer {
 	private void sendActions(EntityPlayer player) {
 
 		// Compose update packet
-		int length = _potentialActions.size();
-		PacketPayloadArrays payload = new PacketPayloadArrays(1, 0, length);
 
-		payload.intPayload[0] = length;
-		int i = 0;
-		for (IAction action : _potentialActions) {
-			payload.stringPayload[i++] = action.getUniqueTag();
-		}
+		PacketPayloadStream payload = new PacketPayloadStream(
+				new PacketPayloadStream.StreamWriter() {
+					@Override
+					public void writeData(DataOutputStream data)
+							throws IOException {
+
+						int length = _potentialActions.size();
+						data.writeInt(length);
+
+						for (IAction action : _potentialActions) {
+							data.writeUTF(action.getUniqueTag());
+						}
+					}
+				});
 
 		PacketUpdate packet = new PacketUpdate(PacketIds.GATE_ACTIONS, pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord, payload);
 
@@ -309,15 +328,20 @@ public class ContainerGateInterface extends BuildCraftContainer {
 	 */
 	private void sendTriggers(EntityPlayer player) {
 
-		// Compose update packet
-		int length = _potentialTriggers.size();
-		PacketPayloadArrays payload = new PacketPayloadArrays(1, 0, length);
+		PacketPayloadStream payload = new PacketPayloadStream(
+				new PacketPayloadStream.StreamWriter() {
+					@Override
+					public void writeData(DataOutputStream data)
+							throws IOException {
 
-		payload.intPayload[0] = length;
-		int i = 0;
-		for (ITrigger trigger : _potentialTriggers) {
-			payload.stringPayload[i++] = trigger.getUniqueTag();
-		}
+						int length = _potentialTriggers.size();
+						data.writeInt(length);
+
+						for (ITrigger trigger : _potentialTriggers) {
+							data.writeUTF(trigger.getUniqueTag());
+						}
+					}
+				});
 
 		PacketUpdate packet = new PacketUpdate(PacketIds.GATE_TRIGGERS, pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord, payload);
 

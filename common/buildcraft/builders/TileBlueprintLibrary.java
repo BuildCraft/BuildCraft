@@ -1,23 +1,36 @@
 package buildcraft.builders;
 
 import buildcraft.BuildCraftBuilders;
+import buildcraft.builders.blueprints.BlueprintMeta;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.blueprints.BptBase;
 import buildcraft.core.blueprints.BptPlayerIndex;
 import buildcraft.core.inventory.InvUtils;
+import buildcraft.core.network.RPC;
+import buildcraft.core.network.RPCHandler;
+import buildcraft.core.network.RPCMessageInfo;
+import buildcraft.core.network.RPCSide;
 import buildcraft.core.network.TileNetworkData;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
+
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedList;
+
+import com.google.common.io.ByteStreams;
+
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+import paulscode.sound.Library;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
 public class TileBlueprintLibrary extends TileBuildCraft implements IInventory {
-	public static final int COMMAND_NEXT = 1, COMMAND_PREV = 2, COMMAND_LOCK_UPDATE = 3, COMMAND_DELETE = 4;
-
 	public ItemStack[] stack = new ItemStack[4];
 
 	public int progressIn = 0;
@@ -27,26 +40,18 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory {
 
 	private ArrayList<BptBase> currentPage;
 
-	public @TileNetworkData(staticSize = BuildCraftBuilders.LIBRARY_PAGE_SIZE)
-	String[] currentNames = new String[BuildCraftBuilders.LIBRARY_PAGE_SIZE];
-	public @TileNetworkData
-	int selected = -1;
+	public LinkedList <String> currentBlueprint = new LinkedList <String> ();
 
-	public @TileNetworkData
+	int selected = -1;
 	boolean locked = false;
 
 	public TileBlueprintLibrary() {
-		for (int i = 0; i < currentNames.length; i++) {
-			currentNames[i] = "";
-		}
+
 	}
 
 	@Override
 	public void initialize() {
 		super.initialize();
-		if (CoreProxy.proxy.isSimulating(worldObj)) {
-			setCurrentPage(getNextPage(null));
-		}
 	}
 
 	public ArrayList<BptBase> getNextPage(String after) {
@@ -97,15 +102,25 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory {
 		return result;
 	}
 
+	@SideOnly (Side.CLIENT)
 	public void updateCurrentNames() {
-		currentNames = new String[BuildCraftBuilders.LIBRARY_PAGE_SIZE];
-		for (int i = 0; i < currentPage.size(); i++) {
-			currentNames[i] = currentPage.get(i).getName();
+		currentBlueprint.clear();
+		RPCHandler.rpcServer(this, "fetchPage", 1);
+	}
+
+	@RPC (RPCSide.SERVER)
+	public void fetchPage (int pageId, RPCMessageInfo info) {
+		for (int i = 0; i < BuildCraftBuilders.LIBRARY_PAGE_SIZE; ++i) {
+			BlueprintMeta dummyMeta = new BlueprintMeta ();
+			dummyMeta.name = "Blueprint #" + i;
+
+			RPCHandler.rpcPlayer(this, "receiveBlueprintMeta", info.sender, dummyMeta.name);
 		}
-		for (int i = currentPage.size(); i < currentNames.length; i++) {
-			currentNames[i] = "";
-		}
-		sendNetworkUpdate();
+	}
+
+	@RPC (RPCSide.CLIENT)
+	public void receiveBlueprintMeta (String meta) {
+		currentBlueprint.add(meta);
 	}
 
 	public ArrayList<BptBase> getCurrentPage() {
