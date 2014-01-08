@@ -115,7 +115,9 @@ public class ContainerGateInterface extends BuildCraftContainer {
 	}
 
 	@Override
-	public boolean canInteractWith(EntityPlayer entityplayer) {
+	public boolean canInteractWith(EntityPlayer player) {
+		if (pipe == null || pipe.gate == null)
+			return false;
 		return true;
 	}
 
@@ -169,31 +171,31 @@ public class ContainerGateInterface extends BuildCraftContainer {
 		try {
 			PacketPayloadStream payload = (PacketPayloadStream) packet.payload;
 			DataInputStream data = payload.stream;
-			
+
 			int position = data.readInt();
-	
+
 			setTrigger(position, ActionManager.triggers.get(data.readUTF()), notify);
 			setAction(position, ActionManager.actions.get(data.readUTF()), notify);
-	
+
 			ItemStack parameter = Packet.readItemStack(data);
-			if(parameter != null) {
+			if (parameter != null) {
 				ITriggerParameter param = new TriggerParameter();
 				param.set(parameter);
 				setTriggerParameter(position, param, notify);
 			} else {
 				setTriggerParameter(position, null, notify);
 			}
-		} catch(IOException e) {
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
-	
+
 	private PacketPayload getSelectionPayload(final int position) {
 		PacketPayloadStream payload = new PacketPayloadStream(new PacketPayloadStream.StreamWriter() {
 			@Override
 			public void writeData(DataOutputStream data) throws IOException {
 				data.writeInt(position);
-				
+
 				if (pipe.gate.triggers[position] != null) {
 					data.writeUTF(pipe.gate.triggers[position].getUniqueTag());
 				} else {
@@ -389,10 +391,14 @@ public class ContainerGateInterface extends BuildCraftContainer {
 	}
 
 	public boolean isNearbyTriggerActive(ITrigger trigger, ITriggerParameter parameter) {
+		if (pipe.gate == null)
+			return false;
 		return pipe.gate.isNearbyTriggerActive(trigger, parameter);
 	}
 
 	public void setTrigger(int position, ITrigger trigger, boolean notify) {
+		if (pipe.gate == null)
+			return;
 		pipe.gate.setTrigger(position, trigger);
 		if (CoreProxy.proxy.isRenderWorld(pipe.container.worldObj) && notify) {
 			sendSelectionChange(position);
@@ -400,6 +406,8 @@ public class ContainerGateInterface extends BuildCraftContainer {
 	}
 
 	public void setTriggerParameter(int position, ITriggerParameter parameter, boolean notify) {
+		if (pipe.gate == null)
+			return;
 		pipe.gate.setTriggerParameter(position, parameter);
 		if (CoreProxy.proxy.isRenderWorld(pipe.container.worldObj) && notify) {
 			sendSelectionChange(position);
