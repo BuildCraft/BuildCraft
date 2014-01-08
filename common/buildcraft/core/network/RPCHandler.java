@@ -14,8 +14,6 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.TreeMap;
 
-import org.apache.commons.lang3.ArrayUtils;
-
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.proxy.CoreProxyClient;
 import cpw.mods.fml.client.FMLClientHandler;
@@ -24,6 +22,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.client.MinecraftForgeClient;
+import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.MinecraftForge;
 
 /**
@@ -37,12 +36,22 @@ public class RPCHandler {
 			new TreeMap <String, RPCHandler> ();
 
 	private Map<String, Integer> methodsMap = new TreeMap<String, Integer>();
-	private Method [] methods;
+
+	class MethodMapping {
+		Method method;
+		Class [] parameters;
+		ClassMapping [] mappings;
+		boolean hasInfo = false;
+	}
+
+	private MethodMapping [] methods;
 
 	public RPCHandler (Class c) {
-		methods = c.getMethods();
+		Method [] sortedMethods = c.getMethods();
 
-		Arrays.sort(methods, new Comparator <Method> () {
+		LinkedList <MethodMapping> mappings = new LinkedList<MethodMapping>();
+
+		Arrays.sort(sortedMethods, new Comparator <Method> () {
 			@Override
 			public int compare(Method o1, Method o2) {
 				return o1.getName().compareTo(o2.getName());
@@ -51,32 +60,33 @@ public class RPCHandler {
 
 		LinkedList <Method> rpcMethods = new LinkedList<Method>();
 
-		for (int i = 0; i < methods.length; ++i) {
-			if (methods [i].getAnnotation (RPC.class) != null) {
-				methodsMap.put(methods [i].getName(), rpcMethods.size());
-				rpcMethods.add(methods [i]);
+		for (int i = 0; i < sortedMethods.length; ++i) {
+			if (sortedMethods [i].getAnnotation (RPC.class) != null) {
+				methodsMap.put(sortedMethods [i].getName(), rpcMethods.size());
+				rpcMethods.add(sortedMethods [i]);
 
-				Class formals [] = methods [i].getParameterTypes();
+				MethodMapping mapping = new MethodMapping();
+				mapping.method = sortedMethods [i];
+				mapping.parameters = sortedMethods [i].getParameterTypes();
+				mapping.mappings = new ClassMapping [mapping.parameters.length];
 
-				for (int j = 0; i < formals.length; ++i) {
-					if (formals [j].equals(int.class)) {
+				for (int j = 0; j < mapping.parameters.length; ++j) {
+					if (mapping.parameters [j].equals(int.class)) {
 						// accepted
-					} else if (formals [j].equals(String.class)) {
+					} else if (mapping.parameters [j].equals(String.class)) {
 						// accepted
-					} else if (formals [j].equals(RPCMessageInfo.class)) {
-
-						// accepted
-						// FIXME: only if last one
+					} else if (mapping.parameters [j].equals(RPCMessageInfo.class)) {
+						mapping.hasInfo = true;
 					} else {
-						// all other will be serialized
-						//throw new RuntimeException
-						//("parameter type " + formals [j].getName() + " not supported in RPC.");
+						mapping.mappings [j] = ClassMapping.get(mapping.parameters [j]);
 					}
 				}
+
+				mappings.add(mapping);
 			}
 		}
 
-		methods = rpcMethods.toArray(new Method [rpcMethods.size()]);
+		methods = mappings.toArray(new MethodMapping [mappings.size()]);
 	}
 
 	public static void rpcServer (TileEntity tile, String method, Object ... actuals) {
@@ -117,25 +127,26 @@ public class RPCHandler {
 		}
 
 		int methodIndex = methodsMap.get(method);
-		Method m = methods [methodIndex];
-		Class formals [] = m.getParameterTypes();
+		MethodMapping m = methods [methodIndex];
+		Class formals [] = m.parameters;
 
-		boolean hasSpecialMessageInfo = formals.length > 0 && formals [formals.length - 1].equals(RPCMessageInfo.class);
-
-		int expectedParameters = hasSpecialMessageInfo ? formals.length - 1 : formals.length;
+		int expectedParameters = m.hasInfo ? formals.length - 1 : formals.length;
 
 		if (expectedParameters != actuals.length) {
 			// We accept formals + 1 as an argument, in order to support the
 			// special last argument RPCMessageInfo
 
 			throw new RuntimeException(getClass().getName() + "." + method
-					+ " expects " + m.getParameterTypes().length + "parameters, not " + actuals.length);
+					+ " expects " + m.parameters.length + "parameters, not " + actuals.length);
 		}
 
 		ByteArrayOutputStream bytes = new ByteArrayOutputStream();
 		DataOutputStream data = new DataOutputStream(bytes);
 
 		try {
+			// In order to save space on message, we assuming dimensions ids
+			// small. Maybe worth using a varint instead
+			data.writeShort(tile.worldObj.provider.dimensionId);
 			data.writeInt(tile.xCoord);
 			data.writeInt(tile.yCoord);
 			data.writeInt(tile.zCoord);
@@ -148,12 +159,18 @@ public class RPCHandler {
 				} else if (formals [i].equals(String.class)) {
 					data.writeUTF((String) actuals [i]);
 				} else {
-					//data.write
+					m.mappings [i].setData(actuals [i], data);
 				}
 			}
 
 			data.flush();
 		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -164,28 +181,29 @@ public class RPCHandler {
 		try {
 			short methodIndex = data.readShort();
 
-			Method m = methods [methodIndex];
-			Class formals [] = m.getParameterTypes();
+			MethodMapping m = methods [methodIndex];
+			Class formals [] = m.parameters;
 
 			Object [] actuals = new Object [formals.length];
 
-			boolean hasSpecialMessageInfo = formals.length > 0 && formals [formals.length - 1].equals(RPCMessageInfo.class);
-
-			int expectedParameters = hasSpecialMessageInfo ? formals.length - 1 : formals.length;
+			int expectedParameters = m.hasInfo ? formals.length - 1 : formals.length;
 
 			for (int i = 0; i < expectedParameters; ++i) {
 				if (formals [i].equals(int.class)) {
 					actuals [i] = data.readInt();
 				} else if (formals [i].equals(String.class)) {
 					actuals [i] = data.readUTF();
+				} else {
+					actuals [i] = formals [i].newInstance();
+					m.mappings [i].updateFromData(actuals [i], data);
 				}
 			}
 
-			if (hasSpecialMessageInfo) {
+			if (m.hasInfo) {
 				actuals [actuals.length - 1] = info;
 			}
 
-			m.invoke(tile, actuals);
+			m.method.invoke(tile, actuals);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -196,6 +214,9 @@ public class RPCHandler {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (InvocationTargetException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InstantiationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

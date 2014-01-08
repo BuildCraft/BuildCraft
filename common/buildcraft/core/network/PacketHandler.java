@@ -10,6 +10,7 @@ import net.minecraft.network.INetworkManager;
 import net.minecraft.network.packet.Packet250CustomPayload;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+import net.minecraftforge.common.DimensionManager;
 import cpw.mods.fml.common.network.IPacketHandler;
 import cpw.mods.fml.common.network.Player;
 import cpw.mods.fml.repackage.com.nothome.delta.DebugDiffWriter;
@@ -72,15 +73,30 @@ public class PacketHandler implements IPacketHandler {
 					PacketRPC rpc = new PacketRPC();
 					rpc.sender = (EntityPlayer) player;
 
-					int x = data.readInt();
-					int y = data.readInt();
-					int z = data.readInt();
+					int dimId = data.readShort();
+					World world = null;
 
-					World world = ((EntityPlayer) player).worldObj;
-					TileEntity tile = world.getBlockTileEntity(x, y, z);
+					if (!rpc.sender.worldObj.isRemote) {
+						// if this is a server, then get the world
 
-					rpc.setTile (tile);
-					rpc.readData(data);
+						world = DimensionManager.getProvider(dimId).worldObj;
+					} else if (rpc.sender.worldObj.provider.dimensionId == dimId) {
+						// if the player is on this world, then synchronize things
+
+						world = rpc.sender.worldObj;
+					}
+
+					if (world != null) {
+						int x = data.readInt();
+						int y = data.readInt();
+						int z = data.readInt();
+
+						TileEntity tile = world.getBlockTileEntity(x, y, z);
+
+						rpc.setTile (tile);
+						rpc.readData(data);
+					}
+
 					break;
 				}
 			}

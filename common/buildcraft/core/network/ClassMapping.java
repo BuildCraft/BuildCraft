@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Type;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.TreeMap;
 
 /**
@@ -65,6 +66,7 @@ public class ClassMapping {
 	private LinkedList<Field> enumFields = new LinkedList<Field>();
 	private LinkedList<ClassMapping> objectFields = new LinkedList<ClassMapping>();
 
+	private LinkedList<Field> byteArrayFields = new LinkedList<Field>();
 	private LinkedList<Field> doubleArrayFields = new LinkedList<Field>();
 	private LinkedList<Field> shortArrayFields = new LinkedList<Field>();
 	private LinkedList<Field> intArrayFields = new LinkedList<Field>();
@@ -75,6 +77,8 @@ public class ClassMapping {
 	private Field field;
 
 	private Class<? extends Object> clas;
+
+	private static Map <String, ClassMapping> classes = new TreeMap <String, ClassMapping> ();
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public ClassMapping(final Class<? extends Object> c) {
@@ -122,7 +126,9 @@ public class ClassMapping {
 					Class fieldClass = (Class) t;
 					Class cptClass = fieldClass.getComponentType();
 
-					if (cptClass.equals(double.class)) {
+					if (cptClass.equals(byte.class)) {
+						byteArrayFields.add(f);
+					} else if (cptClass.equals(double.class)) {
 						doubleArrayFields.add(f);
 					} else if (cptClass.equals(short.class)) {
 						shortArrayFields.add(f);
@@ -182,7 +188,14 @@ public class ClassMapping {
 		}
 
 		for (Field f : stringFields) {
-			data.writeUTF((String) f.get(obj));
+			String s = (String) f.get(obj);
+
+			if (s == null) {
+				data.writeBoolean(false);
+			} else {
+				data.writeBoolean(true);
+				data.writeUTF(s);
+			}
 		}
 
 		for (ClassMapping c : objectFields) {
@@ -193,6 +206,18 @@ public class ClassMapping {
 			} else {
 				data.writeBoolean(true);
 				c.setData(cpt, data);
+			}
+		}
+
+		for (Field f : byteArrayFields) {
+			byte [] val = (byte[]) f.get(obj);
+
+			if (val == null) {
+				data.writeBoolean(false);
+			} else {
+				data.writeBoolean(true);
+				data.writeInt(val.length);
+				data.write(val);
 			}
 		}
 
@@ -316,7 +341,9 @@ public class ClassMapping {
 		}
 
 		for (Field f : stringFields) {
-			f.set(obj, data.readUTF());
+			if (data.readBoolean()) {
+				f.set(obj, data.readUTF());
+			}
 		}
 
 		for (ClassMapping c : objectFields) {
@@ -326,6 +353,17 @@ public class ClassMapping {
 				// WARNING! Because we consider the object to exist already,
 				// we perform the following. What if it's not the case?
 				c.updateFromData(c.field.get(obj), data);
+			}
+		}
+
+		for (Field f : byteArrayFields) {
+			if (data.readBoolean()) {
+				int length = data.readInt();
+				byte[] tmp = new byte [length];
+				data.read(tmp);
+				f.set(obj, tmp);
+			} else {
+				f.set(obj, null);
 			}
 		}
 
@@ -417,5 +455,13 @@ public class ClassMapping {
 				}
 			}
 		}
+	}
+
+	public static ClassMapping get (Class clas) {
+		if (!classes.containsKey(clas.getCanonicalName())) {
+			classes.put(clas.getCanonicalName(), new ClassMapping(clas));
+		}
+
+		return classes.get(clas.getCanonicalName());
 	}
 }

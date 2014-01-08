@@ -114,13 +114,13 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory {
 			BlueprintMeta dummyMeta = new BlueprintMeta ();
 			dummyMeta.name = "Blueprint #" + i;
 
-			RPCHandler.rpcPlayer(this, "receiveBlueprintMeta", info.sender, dummyMeta.name);
+			RPCHandler.rpcPlayer(this, "receiveBlueprintMeta", info.sender, dummyMeta);
 		}
 	}
 
 	@RPC (RPCSide.CLIENT)
-	public void receiveBlueprintMeta (String meta) {
-		currentBlueprint.add(meta);
+	public void receiveBlueprintMeta (BlueprintMeta meta) {
+		currentBlueprint.add(meta.name);
 	}
 
 	public ArrayList<BptBase> getCurrentPage() {

@@ -5,11 +5,11 @@ import net.minecraft.nbt.NBTTagCompound;
 
 public class BlueprintMeta {
 
-	@TileNetworkData
 	public final String version = "Blueprint-2.0";
 
 	/**
-	 * FIXME: The format of id is not completely supported yet. To improve...
+	 * FIXME: The format of id is not completely supported by the serialiser
+	 * yet. To improve...
 	 */
 	private BlueprintId id;
 
