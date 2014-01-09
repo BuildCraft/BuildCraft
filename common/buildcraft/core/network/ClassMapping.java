@@ -335,17 +335,17 @@ public class ClassMapping {
 	 *
 	 * Market primitive arrays will be re-created in the destination object
 	 * after the primitive array of the source object. This means that array
-	 * references are not preserved by the proccess. TODO if an array is null
+	 * references are not preserved by the proccess. If an array is null
 	 * in the source array and not in the destination one, it will be turned to
 	 * null.
 	 *
 	 * Market object will be synchronized - that it we do not create new
 	 * instances in the destination object if they are already there but rather
-	 * recursively synchronize values. TODO if destination is null and not
+	 * recursively synchronize values. If destination is null and not
 	 * source, the destination will get the instance created. If destination is
 	 * not null and source is, the destination will get truned to null.
 	 *
-	 * Market object arrays will be synchronized - not re-created. TODO if if
+	 * Market object arrays will be synchronized - not re-created. If
 	 * destination is null and not source, the destination will get the instance
 	 * created. If destination is not null and source is, the destination will
 	 * get turned to null. The same behavior applies to the contents of the
@@ -353,9 +353,12 @@ public class ClassMapping {
 	 * and will lead to an exception - so if the array needs to change on the
 	 * destination it needs to be set to null first.
 	 *
-	 * WARNING - class instantiation will be done after the field type, not
+	 * WARNINGS
+	 *
+	 * - class instantiation will be done after the field type, not
 	 * the actual type used in serialization. Generally speaking, this system
 	 * is not robust to polymorphism
+	 * - only public non-final fields can be serialized
 	 */
 	@SuppressWarnings("rawtypes")
 	public void updateFromData(Object obj, DataInputStream data) throws IllegalArgumentException,
