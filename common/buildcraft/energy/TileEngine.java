@@ -29,7 +29,7 @@ import buildcraft.api.transport.IPipeTile.PipeType;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.TileBuffer;
 import buildcraft.core.TileBuildCraft;
-import buildcraft.core.network.TileNetworkData;
+import buildcraft.core.network.NetworkData;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.energy.gui.ContainerEngine;
 
@@ -58,11 +58,11 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 	public double energy;
 	public float heat = MIN_HEAT;
 	//
-	public @TileNetworkData
+	public @NetworkData
 	EnergyStage energyStage = EnergyStage.BLUE;
-	public @TileNetworkData
+	public @NetworkData
 	ForgeDirection orientation = ForgeDirection.UP;
-	public @TileNetworkData
+	public @NetworkData
 	boolean isPumping = false; // Used for SMP synch
 
 	public TileEngine() {

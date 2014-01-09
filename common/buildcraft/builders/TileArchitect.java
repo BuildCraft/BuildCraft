@@ -15,7 +15,7 @@ import buildcraft.builders.blueprints.BlueprintDatabase;
 import buildcraft.core.Box;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.network.PacketUpdate;
-import buildcraft.core.network.TileNetworkData;
+import buildcraft.core.network.NetworkData;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
 import java.io.IOException;
@@ -29,12 +29,12 @@ import net.minecraftforge.common.ForgeDirection;
 
 public class TileArchitect extends TileBuildCraft implements IInventory {
 
-	public @TileNetworkData
+	public @NetworkData
 	Box box = new Box();
 	private ItemStack items[] = new ItemStack[2];
 	private boolean isComputing = false;
 	public int computingTime = 0;
-	public @TileNetworkData
+	public @NetworkData
 	String name = "";
 
 	@Override

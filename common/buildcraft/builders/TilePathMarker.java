@@ -5,7 +5,7 @@ import buildcraft.core.BlockIndex;
 import buildcraft.core.EntityLaser;
 import buildcraft.core.EntityPowerLaser;
 import buildcraft.core.network.PacketUpdate;
-import buildcraft.core.network.TileNetworkData;
+import buildcraft.core.network.NetworkData;
 import buildcraft.core.proxy.CoreProxy;
 import java.io.IOException;
 import java.util.Iterator;
@@ -20,7 +20,7 @@ public class TilePathMarker extends TileMarker {
 	public EntityLaser lasers[] = new EntityLaser[2];
 	public int x0, y0, z0, x1, y1, z1;
 	public boolean loadLink0 = false, loadLink1 = false;
-	public @TileNetworkData
+	public @NetworkData
 	boolean tryingToConnect = false;
 	public TilePathMarker links[] = new TilePathMarker[2];
 	public static int searchSize = 64; // TODO: this should be moved to default props

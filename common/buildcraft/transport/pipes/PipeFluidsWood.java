@@ -15,7 +15,7 @@ import buildcraft.api.power.PowerHandler.PowerReceiver;
 import buildcraft.api.power.PowerHandler.Type;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.PipeManager;
-import buildcraft.core.network.TileNetworkData;
+import buildcraft.core.network.NetworkData;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportFluids;
@@ -31,7 +31,7 @@ import net.minecraftforge.fluids.IFluidHandler;
 
 public class PipeFluidsWood extends Pipe<PipeTransportFluids> implements IPowerReceptor {
 
-	public @TileNetworkData
+	public @NetworkData
 	int liquidToExtract;
 	private PowerHandler powerHandler;
 	protected int standardIconIndex = PipeIconProvider.TYPE.PipeFluidsWood_Standard.ordinal();

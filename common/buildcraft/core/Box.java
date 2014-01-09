@@ -11,7 +11,7 @@ import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.core.IBox;
 import buildcraft.api.core.LaserKind;
 import buildcraft.api.core.Position;
-import buildcraft.core.network.TileNetworkData;
+import buildcraft.core.network.NetworkData;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
 import java.io.DataInputStream;
@@ -24,9 +24,9 @@ import net.minecraft.world.World;
 
 public class Box implements IBox {
 
-	public @TileNetworkData
+	public @NetworkData
 	int xMin, yMin, zMin, xMax, yMax, zMax;
-	public @TileNetworkData
+	public @NetworkData
 	boolean initialized;
 	private EntityBlock lasers[];
 

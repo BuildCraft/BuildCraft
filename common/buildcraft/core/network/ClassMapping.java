@@ -154,7 +154,7 @@ public class ClassMapping {
 	}
 
 	private boolean isSynchronizedField(Field f) {
-		TileNetworkData updateAnnotation = f.getAnnotation(TileNetworkData.class);
+		NetworkData updateAnnotation = f.getAnnotation(NetworkData.class);
 
 		return updateAnnotation != null;
 	}
@@ -291,30 +291,75 @@ public class ClassMapping {
 				data.writeInt(val.length);
 
 				for (int i = 0; i < val.length; ++i) {
-					data.writeUTF(val [i]);
+					if (val [i] == null) {
+						data.writeBoolean(false);
+					} else {
+						data.writeBoolean(true);
+						data.writeUTF(val [i]);
+					}
 				}
 			}
 		}
 
 		for (ClassMapping c : objectArrayFields) {
-			TileNetworkData updateAnnotation = c.field.getAnnotation(TileNetworkData.class);
+			NetworkData updateAnnotation = c.field.getAnnotation(NetworkData.class);
 
 			Object[] cpts = (Object[]) c.field.get(obj);
 
-			for (int i = 0; i < cpts.length; ++i)
-				if (cpts[i] == null) {
-					data.writeBoolean(false);
-				} else {
-					data.writeBoolean(true);
-					data.writeInt(cpts.length);
-					c.setData(cpts[i], data);
-				}
+			if (cpts == null) {
+				data.writeBoolean(false);
+			} else {
+				data.writeBoolean(true);
+				data.writeInt(cpts.length);
+
+				for (int i = 0; i < cpts.length; ++i)
+					if (cpts[i] == null) {
+						data.writeBoolean(false);
+					} else {
+						data.writeBoolean(true);
+						c.setData(cpts[i], data);
+					}
+			}
 		}
 	}
 
+	/**
+	 * This class will update data in an object from a stream. Public data
+	 * market #NetworkData will get synchronized. The following rules will
+	 * apply:
+	 *
+	 * In the following description, we consider strings as primitive objects.
+	 *
+	 * Market primitives data will be directly updated on the destination
+	 * object after the value of the source object
+	 *
+	 * Market primitive arrays will be re-created in the destination object
+	 * after the primitive array of the source object. This means that array
+	 * references are not preserved by the proccess. TODO if an array is null
+	 * in the source array and not in the destination one, it will be turned to
+	 * null.
+	 *
+	 * Market object will be synchronized - that it we do not create new
+	 * instances in the destination object if they are already there but rather
+	 * recursively synchronize values. TODO if destination is null and not
+	 * source, the destination will get the instance created. If destination is
+	 * not null and source is, the destination will get truned to null.
+	 *
+	 * Market object arrays will be synchronized - not re-created. TODO if if
+	 * destination is null and not source, the destination will get the instance
+	 * created. If destination is not null and source is, the destination will
+	 * get turned to null. The same behavior applies to the contents of the
+	 * array. Trying to synchronize two arrays of different size is an error
+	 * and will lead to an exception - so if the array needs to change on the
+	 * destination it needs to be set to null first.
+	 *
+	 * WARNING - class instantiation will be done after the field type, not
+	 * the actual type used in serialization. Generally speaking, this system
+	 * is not robust to polymorphism
+	 */
 	@SuppressWarnings("rawtypes")
 	public void updateFromData(Object obj, DataInputStream data) throws IllegalArgumentException,
-			IllegalAccessException, IOException {
+			IllegalAccessException, IOException, InstantiationException {
 
 		for (Field f : shortFields) {
 			f.setShort(obj, data.readShort());
@@ -343,16 +388,21 @@ public class ClassMapping {
 		for (Field f : stringFields) {
 			if (data.readBoolean()) {
 				f.set(obj, data.readUTF());
+			} else {
+				f.set(obj, null);
 			}
 		}
 
 		for (ClassMapping c : objectFields) {
-			boolean isNull = data.readBoolean();
+			if (data.readBoolean()) {
+				if (c.field.get(obj) == null) {
+					c.field.set
+					(obj, c.field.getDeclaringClass().newInstance());
+				}
 
-			if (!isNull) {
-				// WARNING! Because we consider the object to exist already,
-				// we perform the following. What if it's not the case?
 				c.updateFromData(c.field.get(obj), data);
+			} else {
+				c.updateFromData(c.field.get(obj), null);
 			}
 		}
 
@@ -433,7 +483,11 @@ public class ClassMapping {
 				String [] tmp = new String [length];
 
 				for (int i = 0; i < tmp.length; ++i) {
-					tmp [i] = data.readUTF();
+					if (data.readBoolean()) {
+						tmp [i] = data.readUTF();
+					} else {
+						tmp [i] = null;
+					}
 				}
 
 				f.set(obj, tmp);
@@ -445,14 +499,29 @@ public class ClassMapping {
 		for (ClassMapping c : objectArrayFields) {
 			Object[] cpts = (Object[]) c.field.get(obj);
 
-			for (int i = 0; i < cpts.length; ++i) {
-				boolean isNull = data.readBoolean();
+			if (data.readBoolean()) {
+				int serializedSize = data.readInt();
 
-				if (!isNull) {
-					// WARNING! Because we consider the object to exist already,
-					// we perform the following. What if it's not the case?
-					c.updateFromData(cpts[i], data);
+				if (serializedSize != cpts.length) {
+					throw new IOException
+					("Expected size doesn't match serialized size on object array");
 				}
+
+				for (int i = 0; i < cpts.length; ++i) {
+					boolean isNull = data.readBoolean();
+
+					if (!isNull) {
+						if (cpts [i] == null) {
+							cpts [i] = c.field.getDeclaringClass().getComponentType().newInstance();
+						}
+
+						c.updateFromData(cpts[i], data);
+					} else {
+						cpts [i] = null;
+					}
+				}
+			} else {
+				c.field.set(obj, null);
 			}
 		}
 	}

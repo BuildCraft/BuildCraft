@@ -16,7 +16,7 @@ import buildcraft.api.core.Position;
 import buildcraft.core.EntityBlock;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.network.PacketUpdate;
-import buildcraft.core.network.TileNetworkData;
+import buildcraft.core.network.NetworkData;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
 import net.minecraft.nbt.NBTTagCompound;
@@ -28,7 +28,7 @@ public class TileMarker extends TileBuildCraft implements IAreaProvider {
 
 	public static class TileWrapper {
 
-		public @TileNetworkData
+		public @NetworkData
 		int x, y, z;
 
 		public TileWrapper() {
@@ -73,20 +73,20 @@ public class TileMarker extends TileBuildCraft implements IAreaProvider {
 			return vectO.isSet();
 		}
 
-		public @TileNetworkData
+		public @NetworkData
 		TileWrapper vectO = new TileWrapper();
-		public @TileNetworkData
+		public @NetworkData
 		TileWrapper[] vect = { new TileWrapper(), new TileWrapper(), new TileWrapper() };
-		public @TileNetworkData
+		public @NetworkData
 		int xMin, yMin, zMin, xMax, yMax, zMax;
 	}
 
-	public @TileNetworkData
+	public @NetworkData
 	Origin origin = new Origin();
 
 	private EntityBlock[] lasers;
 	private EntityBlock[] signals;
-	public @TileNetworkData
+	public @NetworkData
 	boolean showSignals = false;
 
 	public void updateSignals() {

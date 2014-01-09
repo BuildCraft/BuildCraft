@@ -15,8 +15,6 @@ import java.lang.annotation.RetentionPolicy;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
-//FIXME: Given the usage of this in RPCs, this should be renamed, e.g.
-//NetworkData
-public @interface TileNetworkData {
+public @interface NetworkData {
 
 }

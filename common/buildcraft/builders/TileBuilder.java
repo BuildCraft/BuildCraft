@@ -24,7 +24,7 @@ import buildcraft.core.inventory.InvUtils;
 import buildcraft.core.inventory.InventoryMapper;
 import buildcraft.core.inventory.SimpleInventory;
 import buildcraft.core.network.PacketUpdate;
-import buildcraft.core.network.TileNetworkData;
+import buildcraft.core.network.NetworkData;
 import java.io.IOException;
 import java.util.ListIterator;
 import net.minecraft.entity.player.EntityPlayer;
@@ -37,7 +37,7 @@ import static net.minecraftforge.common.ForgeDirection.*;
 public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IPowerReceptor, IMachine {
 
 	private static final int SLOT_BLUEPRINT = 0;
-	public @TileNetworkData
+	public @NetworkData
 	Box box = new Box();
 	private PowerHandler powerHandler;
 	private EntityRobot builderRobot;

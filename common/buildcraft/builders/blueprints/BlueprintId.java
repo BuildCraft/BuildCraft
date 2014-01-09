@@ -4,7 +4,12 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 
+import buildcraft.core.network.NetworkData;
+
 public final class BlueprintId {
+	@NetworkData
+	public byte[] id;
+
 	public static BlueprintId generate(byte[] data) {
 		try {
 			MessageDigest digest = MessageDigest.getInstance("SHA-256");
@@ -20,6 +25,9 @@ public final class BlueprintId {
 		if (id.length != 32) return null;
 
 		return new BlueprintId(id);
+	}
+
+	public BlueprintId() {
 	}
 
 	private BlueprintId(byte[] id) {
@@ -59,6 +67,4 @@ public final class BlueprintId {
 	private char toHex(int i) {
 		return (char) (i < 10 ? '0' + i : 'a' - 10 + i);
 	}
-
-	private final byte[] id;
 }

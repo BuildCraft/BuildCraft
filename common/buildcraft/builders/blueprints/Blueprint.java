@@ -10,6 +10,7 @@ package buildcraft.builders.blueprints;
 import buildcraft.BuildCraftBuilders;
 import buildcraft.api.builder.BlockHandler;
 import buildcraft.core.inventory.StackHelper;
+import buildcraft.core.network.NetworkData;
 import buildcraft.core.utils.BCLog;
 import buildcraft.core.utils.NBTUtils;
 import buildcraft.factory.TileQuarry;
@@ -24,7 +25,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.world.World;
-
 import net.minecraftforge.common.ForgeDirection;
 
 /**
@@ -35,11 +35,23 @@ import net.minecraftforge.common.ForgeDirection;
  * @author Player
  */
 public class Blueprint {
-	private BlueprintMeta meta;
+
+	@NetworkData
+	public BlueprintMeta meta;
+
+	// TODO: may need additional support from the serialization system
 	private final Schematic[][][] schematics;
-	public final int sizeX, sizeY, sizeZ;
+
+	@NetworkData
+	public int sizeX, sizeY, sizeZ;
+
+	@NetworkData
 	public int anchorX, anchorY, anchorZ;
+
+	// TODO: may need additional support from the serialization system
 	public ForgeDirection anchorOrientation = ForgeDirection.NORTH;
+
+	// TODO: may need additional support from the serialization system
 	private List<ItemStack> costs;
 
 	public static Blueprint create(int sizeX, int sizeY, int sizeZ) {

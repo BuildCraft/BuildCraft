@@ -27,7 +27,7 @@ import buildcraft.core.IBuilderInventory;
 import buildcraft.core.IMachine;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.network.PacketUpdate;
-import buildcraft.core.network.TileNetworkData;
+import buildcraft.core.network.NetworkData;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.BlockUtil;
 import buildcraft.core.utils.Utils;
@@ -54,17 +54,17 @@ import net.minecraftforge.common.ForgeDirection;
 
 public class TileQuarry extends TileBuildCraft implements IMachine, IPowerReceptor, IBuilderInventory {
 
-	public @TileNetworkData
+	public @NetworkData
 	Box box = new Box();
-	public @TileNetworkData
+	public @NetworkData
 	boolean inProcess = false;
-	public @TileNetworkData
+	public @NetworkData
 	int targetX, targetY, targetZ;
-	public @TileNetworkData
+	public @NetworkData
 	double headPosX, headPosY, headPosZ;
-	public @TileNetworkData
+	public @NetworkData
 	double speed = 0.03;
-	public @TileNetworkData
+	public @NetworkData
 	boolean builderDone = false;
 	public EntityRobot builder;
 	private BlueprintBuilder blueprintBuilder;
@@ -122,7 +122,7 @@ public class TileQuarry extends TileBuildCraft implements IMachine, IPowerRecept
 	private boolean movingVertically;
 	private double headTrajectory;
 	private Ticket chunkTicket;
-	public @TileNetworkData
+	public @NetworkData
 	boolean isAlive;
 	public EntityPlayer placedBy;
 

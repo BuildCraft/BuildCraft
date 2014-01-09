@@ -11,7 +11,7 @@ import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.gates.IAction;
 import buildcraft.api.tools.IToolWrench;
-import buildcraft.core.network.TileNetworkData;
+import buildcraft.core.network.NetworkData;
 import buildcraft.core.utils.EnumColor;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
@@ -38,7 +38,7 @@ public class PipeItemsDaizuli extends Pipe<PipeTransportItems> {
 
 	private int standardIconIndex = PipeIconProvider.TYPE.PipeItemsDaizuli_Black.ordinal();
 	private int solidIconIndex = PipeIconProvider.TYPE.PipeAllDaizuli_Solid.ordinal();
-	@TileNetworkData
+	@NetworkData
 	private int color = EnumColor.BLACK.ordinal();
 	private PipeLogicIron logic = new PipeLogicIron(this) {
 		@Override
