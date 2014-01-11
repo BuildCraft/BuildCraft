@@ -97,6 +97,7 @@ public class Utils {
 	 * FIXME This is only kept here for the purpose of get3dOrientation, which
 	 * should probably be removed following the same principles
 	 */
+	@Deprecated
 	private static ForgeDirection get2dOrientation(Position pos1, Position pos2) {
 		double Dx = pos1.x - pos2.x;
 		double Dz = pos1.z - pos2.z;
