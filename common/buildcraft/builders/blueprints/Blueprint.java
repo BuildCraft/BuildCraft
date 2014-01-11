@@ -39,9 +39,7 @@ public class Blueprint {
 	@NetworkData
 	public BlueprintMeta meta;
 
-	// TODO: may need additional support from the serialization system:
-	// Schematic is an abstract class, the actual objects to serialize
-	// are sub classes
+	@NetworkData
 	private final Schematic[][][] schematics;
 
 	@NetworkData

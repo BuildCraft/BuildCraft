@@ -19,7 +19,10 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.WeakHashMap;
@@ -40,7 +43,7 @@ import net.minecraft.nbt.NBTTagCompound;
 public class BlueprintDatabase {
 	/**
 	 * Initialize the blueprint database.
-	 * 
+	 *
 	 * @param configDir config directory to read the blueprints from.
 	 */
 	public static void init(File configDir) {
@@ -56,7 +59,7 @@ public class BlueprintDatabase {
 
 	/**
 	 * Get a list with the metadata for all available blueprints.
-	 * 
+	 *
 	 * @return meta data iterable
 	 */
 	public static Iterable<BlueprintMeta> getList() {
@@ -64,10 +67,39 @@ public class BlueprintDatabase {
 	}
 
 	/**
+	 * Return a list of blueprint on a given page.
+	 *
+	 * FIXME: This returns blueprints in no particular order. We probably want
+	 * to have an ordered list of blueprint instead
+	 */
+	public static List <BlueprintMeta> getPage (int pageId, int pageSize) {
+		List <BlueprintMeta> result = new ArrayList<BlueprintMeta>();
+
+		int start = pageId * pageSize;
+		int stop = (pageId + 1) * pageSize;
+
+		int i = 0;
+
+		for (BlueprintMeta meta : blueprintMetas.values()) {
+			i++;
+
+			if (i >= stop) {
+				break;
+			}
+
+			if (i >= start) {
+				result.add (meta);
+			}
+		}
+
+		return result;
+	}
+
+	/**
 	 * Get a specific blueprint by id.
-	 * 
+	 *
 	 * @note The blueprint will be loaded as needed.
-	 * 
+	 *
 	 * @param id blueprint id
 	 * @return blueprint or null if it can't be retrieved
 	 */
@@ -86,7 +118,7 @@ public class BlueprintDatabase {
 
 	/**
 	 * Add a blueprint to the database and save it to disk.
-	 * 
+	 *
 	 * @param blueprint blueprint to add
 	 * @return id for the added blueprint
 	 */

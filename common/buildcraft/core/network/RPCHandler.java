@@ -4,26 +4,18 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.TreeMap;
 
 import buildcraft.core.proxy.CoreProxy;
-import buildcraft.core.proxy.CoreProxyClient;
-import cpw.mods.fml.client.FMLClientHandler;
-import cpw.mods.fml.common.network.Player;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.network.packet.Packet;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.client.MinecraftForgeClient;
-import net.minecraftforge.common.DimensionManager;
-import net.minecraftforge.common.MinecraftForge;
 
 /**
  * This is a first implementation of a RPC connector, using the regular tile
@@ -112,6 +104,26 @@ public class RPCHandler {
 
 		if (packet != null) {
 			CoreProxy.proxy.sendToPlayer(player, packet);
+		}
+	}
+
+	public static void rpcBroadcastPlayers (TileEntity tile, String method, int maxDistance, Object ... actuals) {
+		if (!handlers.containsKey(tile.getClass().getName())) {
+			handlers.put (tile.getClass().getName(), new RPCHandler (tile.getClass()));
+		}
+
+		PacketRPC packet = handlers.get (tile.getClass().getName()).createRCPPacket(tile, method, actuals);
+
+		if (packet != null) {
+			for (Object o : tile.worldObj.playerEntities) {
+				EntityPlayerMP player = (EntityPlayerMP) o;
+
+				if (Math.abs(player.posX - tile.xCoord) <= maxDistance
+						&& Math.abs(player.posY - tile.yCoord) <= maxDistance
+						&& Math.abs(player.posZ - tile.zCoord) <= maxDistance) {
+					CoreProxy.proxy.sendToPlayer(player, packet);
+				}
+			}
 		}
 	}
 
@@ -210,19 +222,16 @@ public class RPCHandler {
 
 			m.method.invoke(tile, actuals);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IllegalArgumentException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (InvocationTargetException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (InstantiationException e) {
-			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
 

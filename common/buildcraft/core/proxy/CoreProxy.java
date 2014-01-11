@@ -54,7 +54,10 @@ public class CoreProxy {
 		return null;
 	}
 
-	/* SIMULATION */
+	/**
+	 * Return true if this world is holding the actual game simulation, that is
+	 * for example if this is the server world.
+	 */
 	public boolean isSimulating(World world) {
 		return !world.isRemote;
 	}

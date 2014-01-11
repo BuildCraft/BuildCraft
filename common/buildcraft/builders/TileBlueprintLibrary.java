@@ -1,6 +1,7 @@
 package buildcraft.builders;
 
 import buildcraft.BuildCraftBuilders;
+import buildcraft.builders.blueprints.BlueprintDatabase;
 import buildcraft.builders.blueprints.BlueprintMeta;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.blueprints.BptBase;
@@ -10,21 +11,15 @@ import buildcraft.core.network.RPC;
 import buildcraft.core.network.RPCHandler;
 import buildcraft.core.network.RPCMessageInfo;
 import buildcraft.core.network.RPCSide;
-import buildcraft.core.network.NetworkData;
 import buildcraft.core.proxy.CoreProxy;
-import buildcraft.core.utils.Utils;
 
-import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
-
-import com.google.common.io.ByteStreams;
+import java.util.List;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import paulscode.sound.Library;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
@@ -105,20 +100,20 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory {
 	@SideOnly (Side.CLIENT)
 	public void updateCurrentNames() {
 		currentBlueprint.clear();
-		RPCHandler.rpcServer(this, "fetchPage", 1);
+		RPCHandler.rpcServer(this, "fetchPage", 0);
 	}
 
 	@RPC (RPCSide.SERVER)
 	public void fetchPage (int pageId, RPCMessageInfo info) {
-		for (int i = 0; i < BuildCraftBuilders.LIBRARY_PAGE_SIZE; ++i) {
-			BlueprintMeta dummyMeta = new BlueprintMeta ();
-			dummyMeta.name = "Blueprint #" + i;
+		List <BlueprintMeta> metas = BlueprintDatabase.getPage(pageId, 12);
 
-			RPCHandler.rpcPlayer(this, "receiveBlueprintMeta", info.sender, dummyMeta);
+		for (BlueprintMeta meta : metas) {
+			RPCHandler.rpcPlayer(this, "receiveBlueprintMeta", info.sender, meta);
 		}
 	}
 
 	@RPC (RPCSide.CLIENT)
+	// TODO: It would be more efficient to get directly a list or an array here
 	public void receiveBlueprintMeta (BlueprintMeta meta) {
 		currentBlueprint.add(meta.name);
 	}

@@ -13,10 +13,12 @@ import buildcraft.api.core.LaserKind;
 import buildcraft.builders.blueprints.Blueprint;
 import buildcraft.builders.blueprints.BlueprintDatabase;
 import buildcraft.core.Box;
+import buildcraft.core.DefaultProps;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.network.NetworkData;
 import buildcraft.core.network.RPC;
+import buildcraft.core.network.RPCHandler;
 import buildcraft.core.network.RPCSide;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
@@ -144,7 +146,7 @@ public class TileArchitect extends TileBuildCraft implements IInventory {
 		return blueprint;
 	}
 
-	@RPC
+	@RPC (RPCSide.SERVER)
 	public void handleClientInput(char c) {
 		if (c == 8) {
 			if (name.length() > 0) {
@@ -155,7 +157,13 @@ public class TileArchitect extends TileBuildCraft implements IInventory {
 				name += c;
 			}
 		}
-		sendNetworkUpdate();
+
+		RPCHandler.rpcBroadcastPlayers(this, "setName", DefaultProps.NETWORK_UPDATE_RANGE, name);
+	}
+
+	@RPC
+	public void setName (String name) {
+		this.name = name;
 	}
 
 	@Override
