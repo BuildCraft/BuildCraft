@@ -74,7 +74,7 @@ public class BlockRefinery extends BlockContainer {
 	public void onBlockPlacedBy(World world, int i, int j, int k, EntityLivingBase entityliving, ItemStack stack) {
 		super.onBlockPlacedBy(world, i, j, k, entityliving, stack);
 
-		ForgeDirection orientation = Utils.get2dOrientation(new Position(entityliving.posX, entityliving.posY, entityliving.posZ), new Position(i, j, k));
+		ForgeDirection orientation = Utils.get2dOrientation(entityliving);
 
 		world.setBlockMetadataWithNotify(i, j, k, orientation.getOpposite().ordinal(), 1);
 	}

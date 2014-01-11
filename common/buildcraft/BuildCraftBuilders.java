@@ -42,6 +42,7 @@ import buildcraft.builders.filler.pattern.PatternStairs;
 import buildcraft.builders.filler.pattern.PatternBox;
 import buildcraft.builders.filler.pattern.PatternFlatten;
 import buildcraft.builders.filler.pattern.PatternHorizon;
+import buildcraft.builders.filler.pattern.PatternCylinder;
 import buildcraft.builders.filler.FillerRegistry;
 import buildcraft.builders.filler.pattern.PatternClear;
 import buildcraft.builders.GuiHandler;
@@ -298,6 +299,7 @@ public class BuildCraftBuilders {
 			FillerManager.registry.addPattern(new PatternBox());
 			FillerManager.registry.addPattern(new PatternPyramid());
 			FillerManager.registry.addPattern(new PatternStairs());
+			FillerManager.registry.addPattern(new PatternCylinder());
 		} catch (Error error) {
 			BCLog.logErrorAPI("Buildcraft", error, IFillerPattern.class);
 			throw error;

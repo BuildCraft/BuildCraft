@@ -110,7 +110,9 @@ public class ContainerGateInterface extends BuildCraftContainer {
 	}
 
 	@Override
-	public boolean canInteractWith(EntityPlayer entityplayer) {
+	public boolean canInteractWith(EntityPlayer player) {
+		if (pipe == null || pipe.gate == null)
+			return false;
 		return true;
 	}
 
@@ -388,10 +390,14 @@ public class ContainerGateInterface extends BuildCraftContainer {
 	}
 
 	public boolean isNearbyTriggerActive(ITrigger trigger, ITriggerParameter parameter) {
+		if (pipe.gate == null)
+			return false;
 		return pipe.gate.isNearbyTriggerActive(trigger, parameter);
 	}
 
 	public void setTrigger(int position, ITrigger trigger, boolean notify) {
+		if (pipe.gate == null)
+			return;
 		pipe.gate.setTrigger(position, trigger);
 		if (CoreProxy.proxy.isRenderWorld(pipe.container.worldObj) && notify) {
 			sendSelectionChange(position);
@@ -399,6 +405,8 @@ public class ContainerGateInterface extends BuildCraftContainer {
 	}
 
 	public void setTriggerParameter(int position, ITriggerParameter parameter, boolean notify) {
+		if (pipe.gate == null)
+			return;
 		pipe.gate.setTriggerParameter(position, parameter);
 		if (CoreProxy.proxy.isRenderWorld(pipe.container.worldObj) && notify) {
 			sendSelectionChange(position);
