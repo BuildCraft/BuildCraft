@@ -14,6 +14,7 @@ import buildcraft.core.network.PacketIds;
 import buildcraft.core.network.PacketPayload;
 import buildcraft.core.network.PacketPayloadStream;
 import buildcraft.core.network.PacketUpdate;
+import buildcraft.core.network.RPCHandler;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.StringUtils;
 
@@ -82,19 +83,15 @@ public class GuiTemplate extends GuiBuildCraft {
 
 	@Override
 	protected void keyTyped(char c, int i) {
-		// FIXME: Not much point to port this to stream payload at this stage,
-		// should use a RPC instead.
-		/*if (i != 1 && editMode) {
+		if (i != 1 && editMode) {
 			if (c == 13) {
 				editMode = false;
 				return;
 			}
-			PacketPayloadStream payload = new PacketPayloadStream();
-			payload.intPayload = new int[]{c};
-			PacketUpdate packet = new PacketUpdate(PacketIds.ARCHITECT_NAME, template.xCoord, template.yCoord, template.zCoord, payload);
-			CoreProxy.proxy.sendToServer(packet.getPacket());
+
+			RPCHandler.rpcServer(template, "handleClientInput", c);
 		} else {
 			super.keyTyped(c, i);
-		}*/
+		}
 	}
 }

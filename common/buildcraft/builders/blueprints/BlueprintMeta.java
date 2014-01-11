@@ -11,10 +11,10 @@ public class BlueprintMeta {
 	public BlueprintId id;
 
 	@NetworkData
-	public String name;
+	public String name = "";
 
 	@NetworkData
-	public String creator;
+	public String creator = "";
 
 	public BlueprintMeta() {
 

@@ -73,6 +73,8 @@ public class RPCHandler {
 				for (int j = 0; j < mapping.parameters.length; ++j) {
 					if (mapping.parameters [j].equals(int.class)) {
 						// accepted
+					} else if (mapping.parameters [j].equals(char.class)) {
+						// accepted
 					} else if (mapping.parameters [j].equals(String.class)) {
 						// accepted
 					} else if (mapping.parameters [j].equals(RPCMessageInfo.class)) {
@@ -156,6 +158,8 @@ public class RPCHandler {
 			for (int i = 0; i < actuals.length; ++i) {
 				if (formals [i].equals(int.class)) {
 					data.writeInt((Integer) actuals [i]);
+				} else if (formals [i].equals(char.class)) {
+					data.writeChar((Character) actuals [i]);
 				} else if (formals [i].equals(String.class)) {
 					data.writeUTF((String) actuals [i]);
 				} else {
@@ -191,6 +195,8 @@ public class RPCHandler {
 			for (int i = 0; i < expectedParameters; ++i) {
 				if (formals [i].equals(int.class)) {
 					actuals [i] = data.readInt();
+				} else if (formals [i].equals(char.class)) {
+					actuals [i] = data.readChar();
 				} else if (formals [i].equals(String.class)) {
 					actuals [i] = data.readUTF();
 				} else {

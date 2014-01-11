@@ -16,9 +16,13 @@ import buildcraft.core.Box;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.network.NetworkData;
+import buildcraft.core.network.RPC;
+import buildcraft.core.network.RPCSide;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
+
 import java.io.IOException;
+
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
@@ -34,8 +38,9 @@ public class TileArchitect extends TileBuildCraft implements IInventory {
 	private ItemStack items[] = new ItemStack[2];
 	private boolean isComputing = false;
 	public int computingTime = 0;
-	public @NetworkData
-	String name = "";
+
+	@NetworkData
+	public String name = "";
 
 	@Override
 	public void updateEntity() {
@@ -139,6 +144,7 @@ public class TileArchitect extends TileBuildCraft implements IInventory {
 		return blueprint;
 	}
 
+	@RPC
 	public void handleClientInput(char c) {
 		if (c == 8) {
 			if (name.length() > 0) {
@@ -333,4 +339,5 @@ public class TileArchitect extends TileBuildCraft implements IInventory {
 	@Override
 	public void closeChest() {
 	}
+
 }
