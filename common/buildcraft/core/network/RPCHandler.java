@@ -194,8 +194,7 @@ public class RPCHandler {
 				} else if (formals [i].equals(String.class)) {
 					actuals [i] = data.readUTF();
 				} else {
-					actuals [i] = formals [i].newInstance();
-					m.mappings [i].updateFromData(actuals [i], data);
+					actuals [i] = m.mappings [i].updateFromData(actuals [i], data);
 				}
 			}
 

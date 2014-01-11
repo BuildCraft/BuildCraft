@@ -39,7 +39,9 @@ public class Blueprint {
 	@NetworkData
 	public BlueprintMeta meta;
 
-	// TODO: may need additional support from the serialization system
+	// TODO: may need additional support from the serialization system:
+	// Schematic is an abstract class, the actual objects to serialize
+	// are sub classes
 	private final Schematic[][][] schematics;
 
 	@NetworkData
@@ -48,10 +50,11 @@ public class Blueprint {
 	@NetworkData
 	public int anchorX, anchorY, anchorZ;
 
-	// TODO: may need additional support from the serialization system
+	@NetworkData
 	public ForgeDirection anchorOrientation = ForgeDirection.NORTH;
 
-	// TODO: may need additional support from the serialization system
+	// TODO: may need additional support from the serialization system:
+	// Lists are not yet supported.
 	private List<ItemStack> costs;
 
 	public static Blueprint create(int sizeX, int sizeY, int sizeZ) {

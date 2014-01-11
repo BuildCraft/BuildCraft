@@ -14,6 +14,7 @@ import buildcraft.BuildCraftCore;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Type;
 import java.util.LinkedList;
@@ -66,89 +67,101 @@ public class ClassMapping {
 	private LinkedList<Field> enumFields = new LinkedList<Field>();
 	private LinkedList<ClassMapping> objectFields = new LinkedList<ClassMapping>();
 
-	private LinkedList<Field> byteArrayFields = new LinkedList<Field>();
-	private LinkedList<Field> doubleArrayFields = new LinkedList<Field>();
-	private LinkedList<Field> shortArrayFields = new LinkedList<Field>();
-	private LinkedList<Field> intArrayFields = new LinkedList<Field>();
-	private LinkedList<Field> booleanArrayFields = new LinkedList<Field>();
-	private LinkedList<Field> stringArrayFields = new LinkedList<Field>();
-	private LinkedList<ClassMapping> objectArrayFields = new LinkedList<ClassMapping>();
-
 	private Field field;
 
 	private Class<? extends Object> clas;
 
+	enum CptType {
+		Byte,
+		Float,
+		Double,
+		String,
+		Short,
+		Int,
+		Boolean,
+		Object
+	}
+
+	private CptType cptType;
+	private ClassMapping cptMapping;
+
 	private static Map <String, ClassMapping> classes = new TreeMap <String, ClassMapping> ();
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public ClassMapping() {
+
+	}
+
 	public ClassMapping(final Class<? extends Object> c) {
-		clas = c;
-		Field[] fields = c.getFields();
+		analyzeClass (c);
+	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public void analyzeClass(final Class<? extends Object> c) {
 		try {
-			for (Field f : fields) {
-				if (!isSynchronizedField(f)) {
-					continue;
+			clas = c;
+
+			if (c.isArray()) {
+				Class cptClass = c.getComponentType();
+
+				if (cptClass.equals(byte.class)) {
+					cptType = CptType.Byte;
+				} else if (cptClass.equals(float.class)) {
+					cptType = CptType.Float;
+				} else if (cptClass.equals(double.class)) {
+					cptType = CptType.Double;
+				} else if (cptClass.equals(short.class)) {
+					cptType = CptType.Short;
+				} else if (cptClass.equals(int.class)) {
+					cptType = CptType.Int;
+				} else if (cptClass.equals(String.class)) {
+					cptType = CptType.String;
+				} else if (cptClass.equals(boolean.class)) {
+					cptType = CptType.Byte;
+				} else {
+					cptType = CptType.Object;
+					cptMapping = get (cptClass);
 				}
+			} else {
+				Field[] fields = c.getFields();
 
-				Type t = f.getGenericType();
+				for (Field f : fields) {
+					if (!isSynchronizedField(f)) {
+						continue;
+					}
 
-				// ??? take into account enumerations here!
+					Type t = f.getGenericType();
 
-				if (t instanceof Class && !((Class) t).isArray()) {
-					Class fieldClass = (Class) t;
+					if (t instanceof Class) {
+						Class fieldClass = (Class) t;
 
-					if (fieldClass.equals(short.class)) {
-						shortFields.add(f);
-					} else if (fieldClass.equals(int.class)) {
-						intFields.add(f);
-					} else if (fieldClass.equals(boolean.class)) {
-						booleanFields.add(f);
-					} else if (Enum.class.isAssignableFrom(fieldClass)) {
-						enumFields.add(f);
-					} else if (fieldClass.equals(String.class)) {
-						stringFields.add(f);
-					} else if (fieldClass.equals(float.class)) {
-						floatFields.add(f);
-					} else if (fieldClass.equals(double.class)) {
-						doubleFields.add(f);
-					} else {
-						// ADD SOME SAFETY HERE - if we're not child of Object
+						if (fieldClass.equals(short.class)) {
+							shortFields.add(f);
+						} else if (fieldClass.equals(int.class)) {
+							intFields.add(f);
+						} else if (fieldClass.equals(boolean.class)) {
+							booleanFields.add(f);
+						} else if (Enum.class.isAssignableFrom(fieldClass)) {
+							enumFields.add(f);
+						} else if (fieldClass.equals(String.class)) {
+							stringFields.add(f);
+						} else if (fieldClass.equals(float.class)) {
+							floatFields.add(f);
+						} else if (fieldClass.equals(double.class)) {
+							doubleFields.add(f);
+						} else {
+							// ADD SOME SAFETY HERE - if we're not child of
+							// Object
 
-						ClassMapping mapping = new ClassMapping(fieldClass);
-						mapping.field = f;
+							ClassMapping mapping = new ClassMapping(fieldClass);
+							mapping.field = f;
 
-						objectFields.add(mapping);
+							objectFields.add(mapping);
+						}
 					}
 				}
 
-				if (t instanceof Class && ((Class) t).isArray()) {
-					Class fieldClass = (Class) t;
-					Class cptClass = fieldClass.getComponentType();
-
-					if (cptClass.equals(byte.class)) {
-						byteArrayFields.add(f);
-					} else if (cptClass.equals(double.class)) {
-						doubleArrayFields.add(f);
-					} else if (cptClass.equals(short.class)) {
-						shortArrayFields.add(f);
-					} else if (cptClass.equals(int.class)) {
-						intArrayFields.add(f);
-					} else if (cptClass.equals(String.class)) {
-						stringArrayFields.add(f);
-					} else if (cptClass.equals(boolean.class)) {
-						booleanArrayFields.add(f);
-					} else {
-						// ADD SOME SAFETY HERE - if we're not child of Object
-
-						ClassMapping mapping = new ClassMapping(cptClass);
-						mapping.field = f;
-						objectArrayFields.add(mapping);
-					}
-				}
 			}
 		} catch (IllegalArgumentException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -159,8 +172,17 @@ public class ClassMapping {
 		return updateAnnotation != null;
 	}
 
-	@SuppressWarnings("rawtypes")
 	public void setData(Object obj, DataOutputStream data) throws IllegalArgumentException,
+	IllegalAccessException, IOException {
+		if (clas.isArray()) {
+			setDataArray(obj, data);
+		} else {
+			setDataClass(obj, data);
+		}
+	}
+
+	@SuppressWarnings("rawtypes")
+	private void setDataClass(Object obj, DataOutputStream data) throws IllegalArgumentException,
 			IllegalAccessException, IOException {
 
 		for (Field f : shortFields) {
@@ -184,7 +206,7 @@ public class ClassMapping {
 		}
 
 		for (Field f : doubleFields) {
-			data.writeFloat((float) f.getDouble(obj));
+			data.writeDouble((double) f.getDouble(obj));
 		}
 
 		for (Field f : stringFields) {
@@ -208,117 +230,102 @@ public class ClassMapping {
 				c.setData(cpt, data);
 			}
 		}
+	}
 
-		for (Field f : byteArrayFields) {
-			byte [] val = (byte[]) f.get(obj);
+	private void setDataArray(Object obj, DataOutputStream data) throws IllegalArgumentException,
+	IllegalAccessException, IOException {
+		Class<? extends Object> cpt = clas.getComponentType();
 
-			if (val == null) {
-				data.writeBoolean(false);
-			} else {
-				data.writeBoolean(true);
-				data.writeInt(val.length);
-				data.write(val);
-			}
-		}
+		switch (cptType) {
+			case Byte: {
+				byte [] arr = (byte []) obj;
+				data.writeInt (arr.length);
 
-		for (Field f : doubleArrayFields) {
-			double [] val = (double[]) f.get(obj);
-
-			if (val == null) {
-				data.writeBoolean(false);
-			} else {
-				data.writeBoolean(true);
-				data.writeInt(val.length);
-
-				for (int i = 0; i < val.length; ++i) {
-					data.writeFloat((float) val [i]);
+				for (int i = 0; i < arr.length; ++i) {
+					data.writeByte(arr [i]);
 				}
+
+				break;
 			}
-		}
+			case Float: {
+				float [] arr = (float []) obj;
+				data.writeInt (arr.length);
 
-		for (Field f : shortArrayFields) {
-			short [] val = (short[]) f.get(obj);
-
-			if (val == null) {
-				data.writeBoolean(false);
-			} else {
-				data.writeBoolean(true);
-				data.writeInt(val.length);
-
-				for (int i = 0; i < val.length; ++i) {
-					data.writeShort(val [i]);
+				for (int i = 0; i < arr.length; ++i) {
+					data.writeFloat(arr [i]);
 				}
+
+				break;
 			}
-		}
+			case Double: {
+				double [] arr = (double []) obj;
+				data.writeInt (arr.length);
 
-		for (Field f : intArrayFields) {
-			int [] val = (int[]) f.get(obj);
-
-			if (val == null) {
-				data.writeBoolean(false);
-			} else {
-				data.writeBoolean(true);
-				data.writeInt(val.length);
-
-				for (int i = 0; i < val.length; ++i) {
-					data.writeShort(val [i]);
+				for (int i = 0; i < arr.length; ++i) {
+					data.writeDouble(arr [i]);
 				}
+
+				break;
 			}
-		}
+			case String: {
+				String [] arr = (String []) obj;
+				data.writeInt (arr.length);
 
-		for (Field f : booleanArrayFields) {
-			boolean [] val = (boolean[]) f.get(obj);
-
-			if (val == null) {
-				data.writeBoolean(false);
-			} else {
-				data.writeBoolean(true);
-				data.writeInt(val.length);
-
-				for (int i = 0; i < val.length; ++i) {
-					data.writeBoolean(val [i]);
-				}
-			}
-		}
-
-		for (Field f : stringArrayFields) {
-			String [] val = (String[]) f.get(obj);
-
-			if (val == null) {
-				data.writeBoolean(false);
-			} else {
-				data.writeBoolean(true);
-				data.writeInt(val.length);
-
-				for (int i = 0; i < val.length; ++i) {
-					if (val [i] == null) {
+				for (int i = 0; i < arr.length; ++i) {
+					if (arr [i] == null) {
 						data.writeBoolean(false);
 					} else {
 						data.writeBoolean(true);
-						data.writeUTF(val [i]);
+						data.writeUTF(arr [i]);
 					}
 				}
+
+				break;
 			}
-		}
+			case Short: {
+				short [] arr = (short []) obj;
+				data.writeInt (arr.length);
 
-		for (ClassMapping c : objectArrayFields) {
-			NetworkData updateAnnotation = c.field.getAnnotation(NetworkData.class);
+				for (int i = 0; i < arr.length; ++i) {
+					data.writeShort(arr [i]);
+				}
 
-			Object[] cpts = (Object[]) c.field.get(obj);
+				break;
+			}
+			case Int: {
+				int [] arr = (int []) obj;
+				data.writeInt (arr.length);
 
-			if (cpts == null) {
-				data.writeBoolean(false);
-			} else {
-				data.writeBoolean(true);
-				data.writeInt(cpts.length);
+				for (int i = 0; i < arr.length; ++i) {
+					data.writeInt(arr [i]);
+				}
 
-				for (int i = 0; i < cpts.length; ++i)
-					if (cpts[i] == null) {
+				break;
+			}
+			case Boolean: {
+				boolean [] arr = (boolean []) obj;
+				data.writeInt (arr.length);
+
+				for (int i = 0; i < arr.length; ++i) {
+					data.writeBoolean(arr [i]);
+				}
+
+				break;
+			}
+			case Object: {
+				Object [] arr = (Object []) obj;
+				data.writeInt (arr.length);
+
+				for (int i = 0; i < arr.length; ++i) {
+					if (arr [i] == null) {
 						data.writeBoolean(false);
 					} else {
 						data.writeBoolean(true);
-						c.setData(cpts[i], data);
+						cptMapping.setData(arr [i], data);
 					}
+				}
+
+				break;
 			}
 		}
 	}
@@ -360,9 +367,22 @@ public class ClassMapping {
 	 * is not robust to polymorphism
 	 * - only public non-final fields can be serialized
 	 */
+	public Object updateFromData(Object obj, DataInputStream data) throws IllegalArgumentException,
+	IllegalAccessException, IOException, InstantiationException {
+		if (clas.isArray()) {
+			return updateFromDataArray(obj, data);
+		} else {
+			return updateFromDataClass(obj, data);
+		}
+	}
+
 	@SuppressWarnings("rawtypes")
-	public void updateFromData(Object obj, DataInputStream data) throws IllegalArgumentException,
+	public Object updateFromDataClass(Object obj, DataInputStream data) throws IllegalArgumentException,
 			IllegalAccessException, IOException, InstantiationException {
+
+		if (obj == null) {
+			obj = clas.newInstance();
+		}
 
 		for (Field f : shortFields) {
 			f.setShort(obj, data.readShort());
@@ -385,7 +405,7 @@ public class ClassMapping {
 		}
 
 		for (Field f : doubleFields) {
-			f.setDouble(obj, data.readFloat());
+			f.setDouble(obj, data.readDouble());
 		}
 
 		for (Field f : stringFields) {
@@ -398,142 +418,182 @@ public class ClassMapping {
 
 		for (ClassMapping c : objectFields) {
 			if (data.readBoolean()) {
-				if (c.field.get(obj) == null) {
-					c.field.set
-					(obj, c.field.getDeclaringClass().newInstance());
-				}
-
-				c.updateFromData(c.field.get(obj), data);
-			} else {
-				c.updateFromData(c.field.get(obj), null);
-			}
-		}
-
-		for (Field f : byteArrayFields) {
-			if (data.readBoolean()) {
-				int length = data.readInt();
-				byte[] tmp = new byte [length];
-				data.read(tmp);
-				f.set(obj, tmp);
-			} else {
-				f.set(obj, null);
-			}
-		}
-
-		for (Field f : doubleArrayFields) {
-			if (data.readBoolean()) {
-				int length = data.readInt();
-				double[] tmp = new double [length];
-
-				for (int i = 0; i < tmp.length; ++i) {
-					tmp [i] = data.readFloat();
-				}
-
-				f.set(obj, tmp);
-			} else {
-				f.set(obj, null);
-			}
-		}
-
-		for (Field f : shortArrayFields) {
-			if (data.readBoolean()) {
-				int length = data.readInt();
-				short[] tmp = new short [length];
-
-				for (int i = 0; i < tmp.length; ++i) {
-					tmp [i] = data.readShort();
-				}
-
-				f.set(obj, tmp);
-			} else {
-				f.set(obj, null);
-			}
-		}
-
-		for (Field f : intArrayFields) {
-			if (data.readBoolean()) {
-				int length = data.readInt();
-				int[] tmp = new int [length];
-
-				for (int i = 0; i < tmp.length; ++i) {
-					tmp [i] = data.readInt();
-				}
-
-				f.set(obj, tmp);
-			} else {
-				f.set(obj, null);
-			}
-		}
-
-		for (Field f : booleanArrayFields) {
-			if (data.readBoolean()) {
-				int length = data.readInt();
-				boolean[] tmp = new boolean [length];
-
-				for (int i = 0; i < tmp.length; ++i) {
-					tmp [i] = data.readBoolean();
-				}
-
-				f.set(obj, tmp);
-			} else {
-				f.set(obj, null);
-			}
-		}
-
-		for (Field f : stringArrayFields) {
-			if (data.readBoolean()) {
-				int length = data.readInt();
-				String [] tmp = new String [length];
-
-				for (int i = 0; i < tmp.length; ++i) {
-					if (data.readBoolean()) {
-						tmp [i] = data.readUTF();
-					} else {
-						tmp [i] = null;
-					}
-				}
-
-				f.set(obj, tmp);
-			} else {
-				f.set(obj, null);
-			}
-		}
-
-		for (ClassMapping c : objectArrayFields) {
-			Object[] cpts = (Object[]) c.field.get(obj);
-
-			if (data.readBoolean()) {
-				int serializedSize = data.readInt();
-
-				if (serializedSize != cpts.length) {
-					throw new IOException
-					("Expected size doesn't match serialized size on object array");
-				}
-
-				for (int i = 0; i < cpts.length; ++i) {
-					boolean isNull = data.readBoolean();
-
-					if (!isNull) {
-						if (cpts [i] == null) {
-							cpts [i] = c.field.getDeclaringClass().getComponentType().newInstance();
-						}
-
-						c.updateFromData(cpts[i], data);
-					} else {
-						cpts [i] = null;
-					}
-				}
+				c.field.set (obj, c.updateFromData(c.field.get(obj), data));
 			} else {
 				c.field.set(obj, null);
 			}
 		}
+
+		return obj;
+	}
+
+	private Object updateFromDataArray(Object obj, DataInputStream data) throws IllegalArgumentException,
+	IllegalAccessException, IOException, InstantiationException {
+		Class<? extends Object> cpt = clas.getComponentType();
+
+		int size = data.readInt();
+
+		switch (cptType) {
+			case Byte: {
+				byte [] arr;
+
+				if (obj == null) {
+					arr = new byte [size];
+				} else {
+					arr = (byte []) obj;
+				}
+
+				for (int i = 0; i < arr.length; ++i) {
+					arr [i] = data.readByte();
+				}
+
+				obj = arr;
+
+				break;
+			}
+			case Float: {
+				float [] arr;
+
+				if (obj == null) {
+					arr = new float [size];
+				} else {
+					arr = (float []) obj;
+				}
+
+				for (int i = 0; i < arr.length; ++i) {
+					arr [i] = data.readFloat();
+				}
+
+				obj = arr;
+
+				break;
+			}
+			case Double: {
+				double [] arr;
+
+				if (obj == null) {
+					arr = new double [size];
+				} else {
+					arr = (double []) obj;
+				}
+
+				for (int i = 0; i < arr.length; ++i) {
+					arr [i] = data.readDouble();
+				}
+
+				obj = arr;
+
+				break;
+			}
+			case String: {
+				String [] arr;
+
+				if (obj == null) {
+					arr = new String [size];
+				} else {
+					arr = (String []) obj;
+				}
+
+				for (int i = 0; i < arr.length; ++i) {
+					if (data.readBoolean()) {
+						arr [i] = data.readUTF();
+					} else {
+						arr [i] = null;
+					}
+				}
+
+				obj = arr;
+
+				break;
+			}
+			case Short: {
+				short [] arr;
+
+				if (obj == null) {
+					arr = new short [size];
+				} else {
+					arr = (short []) obj;
+				}
+
+				for (int i = 0; i < arr.length; ++i) {
+					arr [i] = data.readShort();
+				}
+
+				obj = arr;
+
+				break;
+			}
+			case Int: {
+				int [] arr;
+
+				if (obj == null) {
+					arr = new int [size];
+				} else {
+					arr = (int []) obj;
+				}
+
+				for (int i = 0; i < arr.length; ++i) {
+					arr [i] = data.readInt();
+				}
+
+				obj = arr;
+
+				break;
+			}
+			case Boolean: {
+				boolean [] arr;
+
+				if (obj == null) {
+					arr = new boolean [size];
+				} else {
+					arr = (boolean []) obj;
+				}
+
+				for (int i = 0; i < arr.length; ++i) {
+					arr [i] = data.readBoolean();
+				}
+
+				obj = arr;
+
+				break;
+			}
+			case Object: {
+				Object [] arr;
+
+				if (obj == null) {
+					arr = (Object[]) Array.newInstance(cpt, size);
+				} else {
+					arr = (Object []) obj;
+				}
+
+				for (int i = 0; i < arr.length; ++i) {
+					if (data.readBoolean()) {
+						arr [i] = cptMapping.updateFromData(arr [i], data);
+					} else {
+						arr [i] = null;
+					}
+				}
+
+				obj = arr;
+
+				break;
+			}
+		}
+
+		return obj;
 	}
 
 	public static ClassMapping get (Class clas) {
+		ClassMapping mapping;
+
 		if (!classes.containsKey(clas.getCanonicalName())) {
-			classes.put(clas.getCanonicalName(), new ClassMapping(clas));
+			mapping = new ClassMapping ();
+			classes.put(clas.getCanonicalName(), mapping);
+			mapping.analyzeClass(clas);
+		} else {
+			mapping = classes.get(clas.getCanonicalName());
 		}
 
-		return classes.get(clas.getCanonicalName());
+		return mapping;
 	}
 }

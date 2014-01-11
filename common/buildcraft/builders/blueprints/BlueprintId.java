@@ -7,6 +7,7 @@ import java.util.Arrays;
 import buildcraft.core.network.NetworkData;
 
 public final class BlueprintId {
+
 	@NetworkData
 	public byte[] id;
 
