@@ -1,36 +1,40 @@
 package buildcraft.builders;
 
 import buildcraft.BuildCraftBuilders;
+import buildcraft.builders.blueprints.Blueprint;
 import buildcraft.builders.blueprints.BlueprintDatabase;
 import buildcraft.builders.blueprints.BlueprintMeta;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.blueprints.BptBase;
 import buildcraft.core.blueprints.BptPlayerIndex;
 import buildcraft.core.inventory.InvUtils;
+import buildcraft.core.network.NetworkData;
 import buildcraft.core.network.RPC;
 import buildcraft.core.network.RPCHandler;
-import buildcraft.core.network.RPCMessageInfo;
 import buildcraft.core.network.RPCSide;
 import buildcraft.core.proxy.CoreProxy;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
+/**
+ * In this implementation, the blueprint library is the interface to the
+ * *local* player blueprint. The player will be able to load blueprint on his
+ * environment, and save blueprints to the server environment.
+ */
 public class TileBlueprintLibrary extends TileBuildCraft implements IInventory {
 	public ItemStack[] stack = new ItemStack[4];
 
 	public int progressIn = 0;
 	public int progressOut = 0;
 
+	@NetworkData
 	public String owner = "";
 
 	private ArrayList<BptBase> currentPage;
@@ -39,6 +43,8 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory {
 
 	int selected = -1;
 	boolean locked = false;
+
+	public EntityPlayer uploadingPlayer = null;
 
 	public TileBlueprintLibrary() {
 
@@ -97,25 +103,13 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory {
 		return result;
 	}
 
-	@SideOnly (Side.CLIENT)
 	public void updateCurrentNames() {
 		currentBlueprint.clear();
-		RPCHandler.rpcServer(this, "fetchPage", 0);
-	}
-
-	@RPC (RPCSide.SERVER)
-	public void fetchPage (int pageId, RPCMessageInfo info) {
-		List <BlueprintMeta> metas = BlueprintDatabase.getPage(pageId, 12);
+		List <BlueprintMeta> metas = BlueprintDatabase.getPage(0, 12);
 
 		for (BlueprintMeta meta : metas) {
-			RPCHandler.rpcPlayer(this, "receiveBlueprintMeta", info.sender, meta);
+			currentBlueprint.add(meta.name);
 		}
-	}
-
-	@RPC (RPCSide.CLIENT)
-	// TODO: It would be more efficient to get directly a list or an array here
-	public void receiveBlueprintMeta (BlueprintMeta meta) {
-		currentBlueprint.add(meta.name);
 	}
 
 	public ArrayList<BptBase> getCurrentPage() {
@@ -240,7 +234,6 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory {
 
 	@Override
 	public boolean isItemValidForSlot(int i, ItemStack itemstack) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -271,21 +264,26 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory {
 			progressOut++;
 		}
 
+		// On progress IN, we'll download the blueprint from the server to the
+		// client, and then store it to the client.
 		if (progressIn == 100 && stack[1] == null) {
 			setInventorySlotContents(1, stack[0]);
 			setInventorySlotContents(0, null);
-			BptBase bpt = BuildCraftBuilders.getBptRootIndex().getBluePrint(stack[1].getItemDamage());
 
-			if (bpt != null) {
-				BptPlayerIndex index = BuildCraftBuilders.getPlayerIndex(BuildersProxy.getOwner(this));
+			Blueprint bpt = ItemBlueprint.getBlueprint(stack [1]);
 
-				try {
-					index.addBlueprint(bpt.file);
+			if (bpt != null && uploadingPlayer != null) {
+				RPCHandler.rpcPlayer(this, "receiveBlueprint", uploadingPlayer, bpt);
+
+				//BptPlayerIndex index = BuildCraftBuilders.getPlayerIndex(BuildersProxy.getOwner(this));
+
+				/*try {
+					//index.addBlueprint(bpt.file);
 					setCurrentPage(true);
 					setCurrentPage(false);
 				} catch (IOException e) {
 					e.printStackTrace();
-				}
+				}*/
 			}
 		}
 
@@ -298,5 +296,10 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory {
 			}
 			setInventorySlotContents(2, null);
 		}
+	}
+
+	@RPC (RPCSide.CLIENT)
+	public void receiveBlueprint (Blueprint bpt) {
+		BlueprintDatabase.add(bpt);
 	}
 }

@@ -17,7 +17,14 @@ public final class ItemSchematic extends Schematic {
 	public static ItemSchematic create(Item item) {
 		return new ItemSchematic(item);
 	}
-	public final Item item;
+	public Item item;
+
+	/**
+	 * For serializer use only
+	 */
+	public ItemSchematic() {
+
+	}
 
 	private ItemSchematic(Item item) {
 		super(item.itemID);

@@ -1,8 +1,8 @@
-/** 
+/**
  * Copyright (c) SpaceToad, 2011
  * http://www.mod-buildcraft.com
- * 
- * BuildCraft is distributed under the terms of the Minecraft Mod Public 
+ *
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
@@ -15,6 +15,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ICrafting;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
+import net.minecraft.item.ItemStack;
 
 public class ContainerBlueprintLibrary extends BuildCraftContainer {
 
@@ -46,6 +47,21 @@ public class ContainerBlueprintLibrary extends BuildCraftContainer {
 		for (int i1 = 0; i1 < 9; i1++) {
 			addSlotToContainer(new Slot(playerInventory, i1, 8 + i1 * 18, 198));
 		}
+	}
+
+	public ItemStack slotClick(int slotNum, int mouseButton, int modifier, EntityPlayer player) {
+		if (slotNum != 0) {
+			return super.slotClick(slotNum, mouseButton, modifier, player);
+		} else {
+			// This record in the library the last player that activated the
+			// upload slot
+
+			library.uploadingPlayer = player;
+
+			return super.slotClick(slotNum, mouseButton, modifier, player);
+		}
+
+
 	}
 
 	@Override

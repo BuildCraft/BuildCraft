@@ -40,7 +40,7 @@ public class Blueprint {
 	public BlueprintMeta meta;
 
 	@NetworkData
-	private final Schematic[][][] schematics;
+	public Schematic[][][] schematics;
 
 	@NetworkData
 	public int sizeX, sizeY, sizeZ;
@@ -51,12 +51,19 @@ public class Blueprint {
 	@NetworkData
 	public ForgeDirection anchorOrientation = ForgeDirection.NORTH;
 
-	// TODO: may need additional support from the serialization system:
-	// Lists are not yet supported.
+	// This can be computed from the schematics, so doesn't need to be
+	// synchronized.
 	private List<ItemStack> costs;
 
 	public static Blueprint create(int sizeX, int sizeY, int sizeZ) {
 		return new Blueprint(new BlueprintMeta(), sizeX, sizeY, sizeZ);
+	}
+
+	/**
+	 * To be used by the serialiser only
+	 */
+	public Blueprint() {
+
 	}
 
 	private Blueprint(BlueprintMeta meta, int sizeX, int sizeY, int sizeZ) {

@@ -9,13 +9,9 @@ package buildcraft.builders.gui;
 
 import buildcraft.BuildCraftBuilders;
 import buildcraft.builders.TileBlueprintLibrary;
-import buildcraft.builders.blueprints.BlueprintMeta;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.blueprints.BptPlayerIndex;
 import buildcraft.core.gui.GuiBuildCraft;
-import buildcraft.core.network.PacketIds;
-import buildcraft.core.network.PacketPayload;
-import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.StringUtils;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.entity.player.EntityPlayer;
@@ -25,7 +21,7 @@ import org.lwjgl.opengl.GL11;
 
 public class GuiBlueprintLibrary extends GuiBuildCraft {
 
-	private static final ResourceLocation TEXTURE = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_GUI + "/library_r.png");
+	private static final ResourceLocation TEXTURE = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_GUI + "/library_rw.png");
 	EntityPlayer player;
 	TileBlueprintLibrary library;
 	ContainerBlueprintLibrary container;

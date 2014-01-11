@@ -20,6 +20,9 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.TreeMap;
 
+import net.minecraft.nbt.NBTBase;
+import net.minecraft.nbt.NBTTagCompound;
+
 /**
  * This class implements custom class mapping. There are three advantages in
  * using a custom serializer here:
@@ -70,6 +73,7 @@ public class ClassMapping {
 	private LinkedList<Field> intFields = new LinkedList<Field>();
 	private LinkedList<Field> booleanFields = new LinkedList<Field>();
 	private LinkedList<Field> enumFields = new LinkedList<Field>();
+	private LinkedList<Field> nbtFields = new LinkedList<Field>();
 
 	class FieldObject {
 		public Field field;
@@ -157,6 +161,8 @@ public class ClassMapping {
 							floatFields.add(f);
 						} else if (fieldClass.equals(double.class)) {
 							doubleFields.add(f);
+						} else if (NBTBase.class.isAssignableFrom(fieldClass)) {
+							nbtFields.add(f);
 						} else {
 							FieldObject obj = new FieldObject();
 							obj.mapping = get (fieldClass);
@@ -187,12 +193,67 @@ public class ClassMapping {
 		setDataInt(obj, data, context);
 	}
 
+	/**
+	 * This class will update data in an object from a stream. Public data
+	 * market #NetworkData will get synchronized. The following rules will
+	 * apply:
+	 *
+	 * In the following description, we consider strings as primitive objects.
+	 *
+	 * Market primitives data will be directly updated on the destination
+	 * object after the value of the source object
+	 *
+	 * Market primitive arrays will be re-created in the destination object
+	 * after the primitive array of the source object. This means that array
+	 * references are not preserved by the proccess. If an array is null
+	 * in the source array and not in the destination one, it will be turned to
+	 * null.
+	 *
+	 * Market object will be synchronized - that it we do not create new
+	 * instances in the destination object if they are already there but rather
+	 * recursively synchronize values. If destination is null and not
+	 * source, the destination will get the instance created. If destination is
+	 * not null and source is, the destination will get truned to null.
+	 *
+	 * Market object arrays will be synchronized - not re-created. If
+	 * destination is null and not source, the destination will get the instance
+	 * created. If destination is not null and source is, the destination will
+	 * get turned to null. The same behavior applies to the contents of the
+	 * array. Trying to synchronize two arrays of different size is an error
+	 * and will lead to an exception - so if the array needs to change on the
+	 * destination it needs to be set to null first.
+	 *
+	 * WARNINGS
+	 *
+	 *  - only public non-final fields can be serialized
+	 *  - non static nested classes are not supported
+	 *  - no reference analysis is done, e.g. an object referenced twice will
+	 *    be serialized twice
+	 *
+	 * @throws ClassNotFoundException
+	 */
+	public Object updateFromData (Object obj, DataInputStream data) throws IllegalArgumentException,
+	IllegalAccessException, IOException, InstantiationException, ClassNotFoundException {
+		SerializationContext context = new SerializationContext();
+
+		return updateFromDataInt(obj, data, context);
+	}
+
 	public void setDataInt(Object obj, DataOutputStream data, SerializationContext context) throws IllegalArgumentException,
 	IllegalAccessException, IOException {
 		if (mappedClass.isArray()) {
 			setDataArray(obj, data, context);
 		} else {
 			setDataClass(obj, data, context);
+		}
+	}
+
+	private Object updateFromDataInt (Object obj, DataInputStream data, SerializationContext context) throws IllegalArgumentException,
+	IllegalAccessException, IOException, InstantiationException, ClassNotFoundException {
+		if (mappedClass.isArray()) {
+			return updateFromDataArray(obj, data, context);
+		} else {
+			return updateFromDataClass(obj, data, context);
 		}
 	}
 
@@ -235,37 +296,90 @@ public class ClassMapping {
 			}
 		}
 
+		for (Field f : nbtFields) {
+			NBTBase nbt = (NBTTagCompound) f.get(obj);
+
+			if (nbt == null) {
+				data.writeBoolean(false);
+			} else {
+				data.writeBoolean(true);
+				NBTBase.writeNamedTag(nbt, data);
+			}
+		}
+
 		for (FieldObject f : objectFields) {
 			Object cpt = f.field.get(obj);
-			ClassMapping mapping = f.mapping;
 
 			if (cpt == null) {
 				data.writeBoolean(false);
 			} else {
-				Class realClass = cpt.getClass();
-
 				data.writeBoolean(true);
 
-				if (realClass.equals(f.mapping.mappedClass)) {
-					data.writeByte(0);
-				} else {
-					if (context.classToId.containsKey(realClass.getCanonicalName())) {
-						int index = context.classToId.get(realClass.getCanonicalName());
-						data.writeByte(index);
-						mapping = context.idToClass.get(index);
-					} else {
-						int index = context.classToId.size() + 1;
-						data.writeByte(index);
-						data.writeUTF(realClass.getCanonicalName());
-						context.classToId.put(realClass.getCanonicalName(), context.classToId.size());
-					}
-
-					mapping = get (realClass);
-				}
-
-				mapping.setDataInt(cpt, data, context);
+				setDataObject(cpt, f.mapping, data, context);
 			}
 		}
+	}
+
+	@SuppressWarnings("rawtypes")
+	public Object updateFromDataClass(Object obj, DataInputStream data, SerializationContext context) throws IllegalArgumentException,
+			IllegalAccessException, IOException, InstantiationException, ClassNotFoundException {
+
+		if (obj == null) {
+			obj = mappedClass.newInstance();
+		}
+
+		for (Field f : shortFields) {
+			f.setShort(obj, data.readShort());
+		}
+
+		for (Field f : intFields) {
+			f.setInt(obj, data.readInt());
+		}
+
+		for (Field f : booleanFields) {
+			f.setBoolean(obj, data.readBoolean());
+		}
+
+		for (Field f : enumFields) {
+			f.set(obj, ((Class) f.getGenericType()).getEnumConstants()[data.readByte()]);
+		}
+
+		for (Field f : floatFields) {
+			f.setFloat(obj, data.readFloat());
+		}
+
+		for (Field f : doubleFields) {
+			f.setDouble(obj, data.readDouble());
+		}
+
+		for (Field f : stringFields) {
+			if (data.readBoolean()) {
+				f.set(obj, data.readUTF());
+			} else {
+				f.set(obj, null);
+			}
+		}
+
+		for (Field f : nbtFields) {
+			if (data.readBoolean()) {
+				f.set(obj, NBTBase.readNamedTag(data));
+			} else {
+				f.set(obj, null);
+			}
+		}
+
+		for (FieldObject f : objectFields) {
+			if (data.readBoolean()) {
+				f.field.set(
+						obj,
+						updateFromDataObject(f.field.get(obj), f.mapping,
+								data, context));
+			} else {
+				f.field.set(obj, null);
+			}
+		}
+
+		return obj;
 	}
 
 	private void setDataArray(Object obj, DataOutputStream data, SerializationContext context) throws IllegalArgumentException,
@@ -357,147 +471,18 @@ public class ClassMapping {
 						data.writeBoolean(false);
 					} else {
 						data.writeBoolean(true);
-						cptMapping.setDataInt(arr [i], data, context);
+
+						if (cptMapping.mappedClass.isArray()) {
+							cptMapping.setDataInt(arr [i], data, context);
+						} else {
+							setDataObject(arr [i], cptMapping, data, context);
+						}
 					}
 				}
 
 				break;
 			}
 		}
-	}
-
-	/**
-	 * This class will update data in an object from a stream. Public data
-	 * market #NetworkData will get synchronized. The following rules will
-	 * apply:
-	 *
-	 * In the following description, we consider strings as primitive objects.
-	 *
-	 * Market primitives data will be directly updated on the destination
-	 * object after the value of the source object
-	 *
-	 * Market primitive arrays will be re-created in the destination object
-	 * after the primitive array of the source object. This means that array
-	 * references are not preserved by the proccess. If an array is null
-	 * in the source array and not in the destination one, it will be turned to
-	 * null.
-	 *
-	 * Market object will be synchronized - that it we do not create new
-	 * instances in the destination object if they are already there but rather
-	 * recursively synchronize values. If destination is null and not
-	 * source, the destination will get the instance created. If destination is
-	 * not null and source is, the destination will get truned to null.
-	 *
-	 * Market object arrays will be synchronized - not re-created. If
-	 * destination is null and not source, the destination will get the instance
-	 * created. If destination is not null and source is, the destination will
-	 * get turned to null. The same behavior applies to the contents of the
-	 * array. Trying to synchronize two arrays of different size is an error
-	 * and will lead to an exception - so if the array needs to change on the
-	 * destination it needs to be set to null first.
-	 *
-	 * WARNINGS
-	 *
-	 *  - only public non-final fields can be serialized
-	 *  - non static nested classes are not supported
-	 *  - no reference analysis is done, e.g. an object referenced twice will
-	 *    be serialized twice
-	 *
-	 * @throws ClassNotFoundException
-	 */
-	public Object updateFromData (Object obj, DataInputStream data) throws IllegalArgumentException,
-	IllegalAccessException, IOException, InstantiationException, ClassNotFoundException {
-		SerializationContext context = new SerializationContext();
-
-		return updateFromDataInt(obj, data, context);
-	}
-
-	private Object updateFromDataInt (Object obj, DataInputStream data, SerializationContext context) throws IllegalArgumentException,
-	IllegalAccessException, IOException, InstantiationException, ClassNotFoundException {
-		if (mappedClass.isArray()) {
-			return updateFromDataArray(obj, data, context);
-		} else {
-			return updateFromDataClass(obj, data, context);
-		}
-	}
-
-	@SuppressWarnings("rawtypes")
-	public Object updateFromDataClass(Object obj, DataInputStream data, SerializationContext context) throws IllegalArgumentException,
-			IllegalAccessException, IOException, InstantiationException, ClassNotFoundException {
-
-		if (obj == null) {
-			obj = mappedClass.newInstance();
-		}
-
-		for (Field f : shortFields) {
-			f.setShort(obj, data.readShort());
-		}
-
-		for (Field f : intFields) {
-			f.setInt(obj, data.readInt());
-		}
-
-		for (Field f : booleanFields) {
-			f.setBoolean(obj, data.readBoolean());
-		}
-
-		for (Field f : enumFields) {
-			f.set(obj, ((Class) f.getGenericType()).getEnumConstants()[data.readByte()]);
-		}
-
-		for (Field f : floatFields) {
-			f.setFloat(obj, data.readFloat());
-		}
-
-		for (Field f : doubleFields) {
-			f.setDouble(obj, data.readDouble());
-		}
-
-		for (Field f : stringFields) {
-			if (data.readBoolean()) {
-				f.set(obj, data.readUTF());
-			} else {
-				f.set(obj, null);
-			}
-		}
-
-		// The data layout for an object is the following:
-		// [boolean] does the object exist (e.g. non-null)
-		//    {false} exit
-		// [int] what is the object real class?
-		//    {0} the same as the declared class
-		//    {1-x} a different one
-		//       [string] if the number is not yet registered, the name of the
-		//                class
-		// [bytes] the actual contents
-
-		for (FieldObject f : objectFields) {
-			if (data.readBoolean()) {
-				ClassMapping mapping = f.mapping;
-
-				int index = data.readByte();
-
-				if (index != 0) {
-					if (context.idToClass.size() < index) {
-						String className = data.readUTF();
-
-						Class cls = Class.forName(className);
-
-						mapping = get (cls);
-
-						context.idToClass.add(get (cls));
-					} else {
-						mapping = context.idToClass.get(index);
-					}
-				}
-
-				f.field.set (obj, mapping.updateFromDataInt(f.field.get(obj), data, context));
-			} else {
-				f.field.set(obj, null);
-			}
-		}
-
-		return obj;
 	}
 
 	private Object updateFromDataArray(Object obj, DataInputStream data, SerializationContext context) throws IllegalArgumentException,
@@ -641,7 +626,11 @@ public class ClassMapping {
 
 				for (int i = 0; i < arr.length; ++i) {
 					if (data.readBoolean()) {
-						arr [i] = cptMapping.updateFromDataInt(arr [i], data, context);
+						if (cptMapping.mappedClass.isArray()) {
+							arr [i] = cptMapping.updateFromDataInt(arr[i], data, context);
+						} else {
+							arr [i] = updateFromDataObject(arr[i], cptMapping, data, context);
+						}
 					} else {
 						arr [i] = null;
 					}
@@ -654,6 +643,73 @@ public class ClassMapping {
 		}
 
 		return obj;
+	}
+
+	private void setDataObject(Object obj,
+			ClassMapping baseMapping, DataOutputStream data,
+			SerializationContext context) throws IllegalArgumentException,
+			IllegalAccessException, IOException {
+		ClassMapping mapping = baseMapping;
+
+		Class realClass = obj.getClass();
+
+		if (realClass.equals(baseMapping.mappedClass)) {
+			data.writeByte(0);
+		} else {
+			if (context.classToId.containsKey(realClass.getCanonicalName())) {
+				int index = context.classToId.get(realClass.getCanonicalName()) + 1;
+				data.writeByte(index);
+				mapping = context.idToClass.get(index - 1);
+			} else {
+				int index = context.classToId.size() + 1;
+				mapping = get(realClass);
+
+				data.writeByte(index);
+				data.writeUTF(realClass.getCanonicalName());
+				context.classToId.put(realClass.getCanonicalName(),
+						context.classToId.size());
+				context.idToClass.add(mapping);
+			}
+		}
+
+		mapping.setDataInt(obj, data, context);
+	}
+
+	private Object updateFromDataObject(Object obj,
+			ClassMapping baseMapping, DataInputStream data,
+			SerializationContext context) throws IllegalArgumentException,
+			IllegalAccessException, IOException, InstantiationException,
+			ClassNotFoundException {
+
+		// The data layout for an object is the following:
+		// [boolean] does the object exist (e.g. non-null)
+		//    {false} exit
+		// [int] what is the object real class?
+		//    {0} the same as the declared class
+		//    {1-x} a different one
+		//       [string] if the number is not yet registered, the name of the
+		//                class
+		// [bytes] the actual contents
+
+		int index = data.readByte();
+
+		ClassMapping mapping = baseMapping;
+
+		if (index != 0) {
+			if (context.idToClass.size() < index) {
+				String className = data.readUTF();
+
+				Class cls = Class.forName(className);
+
+				mapping = get(cls);
+
+				context.idToClass.add(get(cls));
+			} else {
+				mapping = context.idToClass.get(index - 1);
+			}
+		}
+
+		return mapping.updateFromDataInt(obj, data, context);
 	}
 
 	public static ClassMapping get (Class clas) {

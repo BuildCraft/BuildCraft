@@ -17,11 +17,16 @@ public final class BlockSchematic extends Schematic {
 	public static BlockSchematic create(Block block) {
 		return new BlockSchematic(block);
 	}
-	public final Block block;
+
+	/**
+	 * For serializer use only
+	 */
+	public BlockSchematic() {
+
+	}
 
 	private BlockSchematic(Block block) {
 		super(block.blockID);
-		this.block = block;
 	}
 
 	private BlockSchematic(String nbt) {
@@ -31,13 +36,13 @@ public final class BlockSchematic extends Schematic {
 
 	@Override
 	public BlockHandler getHandler() {
-		return BlockHandler.get(block);
+		return BlockHandler.get(Block.blocksList [id]);
 	}
 
 	@Override
 	public void writeToNBT(NBTTagCompound nbt) {
 		super.writeToNBT(nbt);
 		nbt.setString("schematicType", "block");
-		nbt.setString("blockName", block.getUnlocalizedName());
+		nbt.setString("blockName", Block.blocksList [id].getUnlocalizedName());
 	}
 }

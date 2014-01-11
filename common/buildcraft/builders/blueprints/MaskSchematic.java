@@ -17,7 +17,7 @@ public final class MaskSchematic extends Schematic {
 		return new MaskSchematic();
 	}
 
-	private MaskSchematic() {
+	public MaskSchematic() {
 		super(0);
 	}
 
