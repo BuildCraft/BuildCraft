@@ -42,7 +42,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 
 public class TileFiller extends TileBuildCraft implements IInventory, IPowerReceptor, IMachine, IActionReceptor, IGuiReturnHandler {
 

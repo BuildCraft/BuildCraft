@@ -22,7 +22,7 @@ import java.util.LinkedList;
 import java.util.Map;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 
 public class PipePowerIron extends Pipe<PipeTransportPower> {
 

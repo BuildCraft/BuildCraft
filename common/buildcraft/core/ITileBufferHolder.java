@@ -10,7 +10,7 @@
 package buildcraft.core;
 
 import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 
 public interface ITileBufferHolder {
 

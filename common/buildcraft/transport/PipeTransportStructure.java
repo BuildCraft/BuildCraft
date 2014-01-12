@@ -2,7 +2,7 @@ package buildcraft.transport;
 
 import buildcraft.api.transport.IPipeTile.PipeType;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 
 public class PipeTransportStructure extends PipeTransport {
 

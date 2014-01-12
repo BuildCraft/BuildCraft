@@ -2,7 +2,7 @@ package buildcraft.api.inventory;
 
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 
 public interface ISpecialInventory extends IInventory {
 

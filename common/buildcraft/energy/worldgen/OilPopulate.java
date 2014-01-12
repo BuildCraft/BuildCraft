@@ -26,7 +26,7 @@ import static net.minecraftforge.common.BiomeDictionary.Type.FOREST;
 import static net.minecraftforge.common.BiomeDictionary.Type.FROZEN;
 import static net.minecraftforge.common.BiomeDictionary.Type.WASTELAND;
 import net.minecraftforge.common.EnumHelper;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.event.ForgeSubscribe;
 import net.minecraftforge.event.terraingen.PopulateChunkEvent;
 import net.minecraftforge.event.terraingen.PopulateChunkEvent.Populate.EventType;

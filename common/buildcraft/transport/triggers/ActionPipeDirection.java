@@ -11,7 +11,7 @@ import buildcraft.core.triggers.BCAction;
 import java.util.Locale;
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.util.Icon;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 
 public class ActionPipeDirection extends BCAction {
 

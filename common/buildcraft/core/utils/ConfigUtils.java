@@ -10,8 +10,8 @@ package buildcraft.core.utils;
 
 import buildcraft.BuildCraftCore;
 import java.util.logging.Level;
-import net.minecraftforge.common.Configuration;
-import net.minecraftforge.common.Property;
+import net.minecraftforge.common.config.Configuration;
+import net.minecraftforge.common.config.Property;
 
 /**
  *

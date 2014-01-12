@@ -8,7 +8,7 @@
 package buildcraft.transport.pipes;
 
 import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.FluidStack;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;

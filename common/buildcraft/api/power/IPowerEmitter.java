@@ -8,7 +8,7 @@
  */
 package buildcraft.api.power;
 
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 
 /**
  * Essentially only used for Wooden Power Pipe connection rules.

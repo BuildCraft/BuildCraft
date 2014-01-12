@@ -26,7 +26,7 @@ import java.util.LinkedList;
 import java.util.List;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 
 public class TileLaser extends TileBuildCraft implements IPowerReceptor, IActionReceptor, IMachine {
 

@@ -3,7 +3,7 @@ package buildcraft.core.inventory;
 import buildcraft.api.inventory.ISpecialInventory;
 import buildcraft.core.inventory.filters.IStackFilter;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 
 public class TransactorSpecial extends Transactor {
 

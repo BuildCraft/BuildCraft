@@ -10,7 +10,7 @@ import net.minecraft.block.BlockLever;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 
 public class ItemWrench extends ItemBuildCraft implements IToolWrench {
 

@@ -9,7 +9,7 @@
 
 package buildcraft.transport;
 
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.FluidStack;
 
 public interface IPipeTransportFluidsHook {

@@ -9,7 +9,7 @@ package buildcraft.transport;
 
 import buildcraft.api.core.Position;
 import java.util.LinkedList;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 
 /**
  * @deprecated This has been replaced by the Pipe Event system.

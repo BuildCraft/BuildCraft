@@ -4,7 +4,7 @@ import buildcraft.core.inventory.InventoryIterator.IInvSlot;
 import java.util.Iterator;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 
 /**
  * @author CovertJaguar <http://www.railcraft.info>

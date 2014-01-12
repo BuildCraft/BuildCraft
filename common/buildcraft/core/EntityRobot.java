@@ -9,6 +9,8 @@
 
 package buildcraft.core;
 
+import io.netty.buffer.ByteBuf;
+
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -87,12 +89,12 @@ public class EntityRobot extends Entity implements IEntityAdditionalSpawnData {
 	}
 
 	@Override
-	public void writeSpawnData(ByteArrayDataOutput data) {
+	public void writeSpawnData(ByteBuf data) {
 
 		if (box == null) {
 			box = new Box();
 		}
-
+		
 		data.writeInt(box.xMin);
 		data.writeInt(box.yMin);
 		data.writeInt(box.zMin);
@@ -102,7 +104,7 @@ public class EntityRobot extends Entity implements IEntityAdditionalSpawnData {
 	}
 
 	@Override
-	public void readSpawnData(ByteArrayDataInput data) {
+	public void readSpawnData(ByteBuf data) {
 
 		box = new Box();
 		box.xMin = data.readInt();

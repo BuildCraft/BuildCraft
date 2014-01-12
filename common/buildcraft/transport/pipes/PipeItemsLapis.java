@@ -27,7 +27,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 
 public class PipeItemsLapis extends Pipe<PipeTransportItems> {
 

@@ -9,7 +9,7 @@ package buildcraft.energy;
 
 import buildcraft.api.power.PowerHandler;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.api.transport.IPipeTile.PipeType;
 import buildcraft.core.proxy.CoreProxy;
 

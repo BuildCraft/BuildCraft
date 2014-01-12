@@ -11,7 +11,7 @@ package buildcraft.factory;
 import buildcraft.api.blueprints.BptBlock;
 import buildcraft.api.blueprints.BptSlotInfo;
 import buildcraft.api.blueprints.IBptContext;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 
 @Deprecated
 public class BptBlockRefinery extends BptBlock {

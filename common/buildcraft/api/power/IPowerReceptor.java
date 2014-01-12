@@ -8,7 +8,7 @@
 package buildcraft.api.power;
 
 import net.minecraft.world.World;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 
 /**
  * This interface should be implemented by any Tile Entity that wishes to be

@@ -16,7 +16,7 @@ import buildcraft.core.blueprints.BptItem;
 import java.util.LinkedList;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 
 public class BptItemPipeDiamond extends BptItem {
 

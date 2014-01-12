@@ -7,7 +7,7 @@ import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportStructure;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 
 public class PipeStructureCobblestone extends Pipe {
 

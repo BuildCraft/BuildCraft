@@ -8,7 +8,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
-import net.minecraftforge.common.Property;
+import net.minecraftforge.common.config.Property;
 
 public class Version implements Runnable {
 
