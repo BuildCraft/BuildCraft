@@ -4,45 +4,48 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 
+import net.minecraft.nbt.NBTTagCompound;
+import buildcraft.BuildCraftBuilders;
 import buildcraft.core.network.NetworkData;
 
-public final class BlueprintId {
+public final class BlueprintId implements Comparable<BlueprintId> {
 
 	@NetworkData
-	public byte[] id;
+	public byte[] uniqueId;
 
-	public static BlueprintId generate(byte[] data) {
+	@NetworkData
+	public String name;
+
+	public String completeId;
+
+	public BlueprintId() {
+	}
+
+	public void generateUniqueId(byte[] data) {
 		try {
 			MessageDigest digest = MessageDigest.getInstance("SHA-256");
 			byte[] id = digest.digest(data);
 
-			return new BlueprintId(id);
+			uniqueId = id;
 		} catch (NoSuchAlgorithmException e) {
 			throw new RuntimeException(e);
 		}
 	}
 
-	public static BlueprintId fromRawId(byte[] id) {
-		if (id.length != 32) return null;
-
-		return new BlueprintId(id);
+	public void write (NBTTagCompound nbt) {
+		nbt.setByteArray("uniqueBptId", uniqueId);
+		nbt.setString("name", name);
 	}
 
-	public BlueprintId() {
-	}
-
-	private BlueprintId(byte[] id) {
-		this.id = id;
-	}
-
-	public byte[] toRawId() {
-		return id;
+	public void read (NBTTagCompound nbt) {
+		uniqueId = nbt.getByteArray("uniqueBptId");
+		name = nbt.getString("name");
 	}
 
 	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof BlueprintId) {
-			return Arrays.equals(id, ((BlueprintId) obj).id);
+			return Arrays.equals(uniqueId, ((BlueprintId) obj).uniqueId);
 		} else {
 			return false;
 		}
@@ -50,22 +53,67 @@ public final class BlueprintId {
 
 	@Override
 	public int hashCode() {
-		return Arrays.hashCode(id);
+		return Arrays.hashCode(uniqueId);
+	}
+
+	public String getCompleteId () {
+		if (completeId == null) {
+			completeId = name + BuildCraftBuilders.BPT_SEP_CHARACTER
+					+ toString(uniqueId);
+		}
+
+		return completeId;
 	}
 
 	@Override
 	public String toString() {
-		char[] ret = new char[id.length * 2];
-
-		for (int i = 0; i < id.length; i++) {
-			ret[i * 2] = toHex(id[i] >>> 4);
-			ret[i * 2 + 1] = toHex(id[i] & 0xf);
-		}
-
-		return new String(ret);
+		return getCompleteId();
 	}
 
-	private char toHex(int i) {
-		return (char) (i < 10 ? '0' + i : 'a' - 10 + i);
+	private static char toHex(int i) {
+		if (i < 10) {
+			return (char) ('0' + i);
+		} else {
+			return (char) ('a' - 10 + i);
+		}
+	}
+
+	private static int fromHex(char c) {
+		if (c >= '0' && c <= '9') {
+			return c - '0';
+		} else {
+			return c - ('a' - 10);
+		}
+	}
+
+	@Override
+	public int compareTo(BlueprintId o) {
+		return getCompleteId().compareTo(o.getCompleteId());
+	}
+
+	public static String toString (byte [] bytes) {
+		char[] ret = new char[bytes.length * 2];
+
+		for (int i = 0; i < bytes.length; i++) {
+			int val = bytes [i] + 128;
+
+			ret[i * 2] = toHex(val >> 4);
+			ret[i * 2 + 1] = toHex(val & 0xf);
+		}
+
+		return new String (ret);
+	}
+
+	public static byte[] toBytes(String suffix) {
+		byte [] result = new byte [suffix.length() / 2];
+
+		for (int i = 0; i < result.length; ++i) {
+			result [i] = (byte) ((byte) (fromHex(suffix.charAt(i * 2 + 1)))
+					+ (byte) (fromHex(suffix.charAt(i * 2)) << 4));
+
+			result [i] -= 128;
+		}
+
+		return result;
 	}
 }

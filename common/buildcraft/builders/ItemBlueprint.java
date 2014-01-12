@@ -7,18 +7,18 @@
  */
 package buildcraft.builders;
 
+import buildcraft.BuildCraftBuilders;
 import buildcraft.builders.blueprints.Blueprint;
-import buildcraft.builders.blueprints.BlueprintDatabase;
 import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.ItemBuildCraft;
 import buildcraft.core.utils.NBTUtils;
 import buildcraft.core.utils.StringUtils;
 
 import java.util.List;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-
 import buildcraft.builders.blueprints.BlueprintId;
 
 public abstract class ItemBlueprint extends ItemBuildCraft {
@@ -40,19 +40,24 @@ public abstract class ItemBlueprint extends ItemBuildCraft {
 			list.add(StringUtils.localize("item.blueprint.blank"));
 	}
 
+	public static ItemStack getBlueprintItem(Blueprint blueprint) {
+		ItemStack stack = new ItemStack(BuildCraftBuilders.blueprintItem, 1, 1);
+		NBTTagCompound nbt = NBTUtils.getItemData(stack);
+		blueprint.getId().write (nbt);
+		return stack;
+	}
+
+
 	public static Blueprint getBlueprint(ItemStack stack) {
 		if (stack == null) {
 			return null;
 		}
 
 		NBTTagCompound nbt = NBTUtils.getItemData(stack);
-		byte[] idRaw = nbt.getByteArray("blueprint");
-		BlueprintId id = BlueprintId.fromRawId(idRaw);
+		BlueprintId id = new BlueprintId ();
 
-		if (id == null) {
-			return null;
-		} else {
-			return BlueprintDatabase.get(id);
-		}
+		id.read (nbt);
+
+		return BuildCraftBuilders.serverDB.get(id);
 	}
 }

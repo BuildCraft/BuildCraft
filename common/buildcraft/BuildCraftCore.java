@@ -28,7 +28,6 @@ import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.gates.ActionManager;
 import buildcraft.api.recipes.BuildcraftRecipes;
-import buildcraft.builders.blueprints.BlueprintDatabase;
 import buildcraft.core.BlockIndex;
 import buildcraft.core.BlockPingPong;
 import buildcraft.core.BlockSpring;
@@ -70,8 +69,6 @@ import buildcraft.core.recipes.AssemblyRecipeManager;
 import buildcraft.core.recipes.IntegrationRecipeManager;
 import buildcraft.core.recipes.RefineryRecipeManager;
 import buildcraft.core.triggers.TriggerRedstoneInput;
-import buildcraft.factory.BlockAutoWorkbench;
-import buildcraft.factory.TileRefinery;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
@@ -159,8 +156,6 @@ public class BuildCraftCore {
 	public void loadConfiguration(FMLPreInitializationEvent evt) {
 
 		BCLog.initLog();
-
-		BlueprintDatabase.init(evt.getModConfigurationDirectory());
 
 		BuildcraftRecipes.assemblyTable = AssemblyRecipeManager.INSTANCE;
 		BuildcraftRecipes.integrationTable = IntegrationRecipeManager.INSTANCE;

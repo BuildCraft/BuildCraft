@@ -2,8 +2,7 @@ package buildcraft.builders;
 
 import buildcraft.BuildCraftBuilders;
 import buildcraft.builders.blueprints.Blueprint;
-import buildcraft.builders.blueprints.BlueprintDatabase;
-import buildcraft.builders.blueprints.BlueprintMeta;
+import buildcraft.builders.blueprints.BlueprintId;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.blueprints.BptBase;
 import buildcraft.core.blueprints.BptPlayerIndex;
@@ -105,10 +104,10 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory {
 
 	public void updateCurrentNames() {
 		currentBlueprint.clear();
-		List <BlueprintMeta> metas = BlueprintDatabase.getPage(0, 12);
+		List <BlueprintId> ids = BuildCraftBuilders.clientDB.getPage(0, 12);
 
-		for (BlueprintMeta meta : metas) {
-			currentBlueprint.add(meta.name);
+		for (BlueprintId id : ids) {
+			currentBlueprint.add(id.name);
 		}
 	}
 
@@ -274,6 +273,7 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory {
 
 			if (bpt != null && uploadingPlayer != null) {
 				RPCHandler.rpcPlayer(this, "receiveBlueprint", uploadingPlayer, bpt);
+				uploadingPlayer = null;
 
 				//BptPlayerIndex index = BuildCraftBuilders.getPlayerIndex(BuildersProxy.getOwner(this));
 
@@ -300,6 +300,7 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory {
 
 	@RPC (RPCSide.CLIENT)
 	public void receiveBlueprint (Blueprint bpt) {
-		BlueprintDatabase.add(bpt);
+		BuildCraftBuilders.clientDB.add(bpt);
+		updateCurrentNames();
 	}
 }

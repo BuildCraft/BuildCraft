@@ -11,21 +11,18 @@ public class BlueprintMeta {
 	public BlueprintId id;
 
 	@NetworkData
-	public String name = "";
-
-	@NetworkData
 	public String creator = "";
 
 	public BlueprintMeta() {
-
+		id = new BlueprintId();
 	}
 
-	protected BlueprintMeta(BlueprintId id, NBTTagCompound nbt) {
+	/*protected BlueprintMeta(BlueprintId id, NBTTagCompound nbt) {
 		this.id = id;
 
 		name = nbt.getString("name");
 		creator = nbt.getString("creator");
-	}
+	}*/
 
 	protected BlueprintId getId() {
 		return id;
@@ -36,13 +33,11 @@ public class BlueprintMeta {
 	}
 
 	protected String getName() {
-		return name;
+		return id.name;
 	}
 
 	protected void setName(String name) {
-		if (getId() != null) throw new IllegalStateException("modifying finalized blueprint");
-
-		this.name = name;
+		this.id.name = name;
 	}
 
 	/**
@@ -56,13 +51,10 @@ public class BlueprintMeta {
 	 * @param creator the creator to set
 	 */
 	protected void setCreator(String creator) {
-		if (getId() != null) throw new IllegalStateException("modifying finalized blueprint");
-
 		this.creator = creator;
 	}
 
 	protected void writeToNBT(NBTTagCompound nbt) {
-		nbt.setString("name", name);
 		nbt.setString("version", version);
 		nbt.setString("creator", creator);
 	}

@@ -8,29 +8,25 @@
  */
 package buildcraft.builders.blueprints;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.WeakHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
+import buildcraft.BuildCraftBuilders;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
@@ -41,29 +37,28 @@ import net.minecraft.nbt.NBTTagCompound;
  * @author CovertJaguar <http://www.railcraft.info/>
  */
 public class BlueprintDatabase {
+	private final int bufferSize = 8192;
+	private final String fileExt = ".bpt";
+	private File blueprintFolder;
+
+	private Set <BlueprintId> blueprintIds = new TreeSet<BlueprintId> ();
+
+	//private Map<BlueprintId, BlueprintMeta> blueprintMetas = new HashMap<BlueprintId, BlueprintMeta>();
+	private Map<BlueprintId, Blueprint> loadedBlueprints = new WeakHashMap<BlueprintId, Blueprint>();
+
 	/**
 	 * Initialize the blueprint database.
 	 *
 	 * @param configDir config directory to read the blueprints from.
 	 */
-	public static void init(File configDir) {
-		blueprintFolder = new File(new File(configDir, "buildcraft"), "blueprints");
+	public void init(File configDir) {
+		blueprintFolder = configDir;
 
-		if (!blueprintFolder.exists()) blueprintFolder.mkdirs();
+		if (!blueprintFolder.exists()) {
+			blueprintFolder.mkdirs();
+		}
 
 		loadIndex(); // TODO: load index in a thread
-	}
-
-	// TODO: server: send ids to the client on connect, mby full meta
-	// TODO: client: send missing blueprints to the server after receiving the server's ids
-
-	/**
-	 * Get a list with the metadata for all available blueprints.
-	 *
-	 * @return meta data iterable
-	 */
-	public static Iterable<BlueprintMeta> getList() {
-		return blueprintMetas.values();
 	}
 
 	/**
@@ -72,15 +67,15 @@ public class BlueprintDatabase {
 	 * FIXME: This returns blueprints in no particular order. We probably want
 	 * to have an ordered list of blueprint instead
 	 */
-	public static List <BlueprintMeta> getPage (int pageId, int pageSize) {
-		List <BlueprintMeta> result = new ArrayList<BlueprintMeta>();
+	public List <BlueprintId> getPage (int pageId, int pageSize) {
+		List <BlueprintId> result = new ArrayList<BlueprintId>();
 
 		int start = pageId * pageSize;
 		int stop = (pageId + 1) * pageSize;
 
 		int i = 0;
 
-		for (BlueprintMeta meta : blueprintMetas.values()) {
+		for (BlueprintId id : blueprintIds) {
 			i++;
 
 			if (i >= stop) {
@@ -88,7 +83,7 @@ public class BlueprintDatabase {
 			}
 
 			if (i >= start) {
-				result.add (meta);
+				result.add (id);
 			}
 		}
 
@@ -103,14 +98,11 @@ public class BlueprintDatabase {
 	 * @param id blueprint id
 	 * @return blueprint or null if it can't be retrieved
 	 */
-	public static Blueprint get(BlueprintId id) {
-		Blueprint ret = blueprints.get(id);
+	public Blueprint get(BlueprintId id) {
+		Blueprint ret = loadedBlueprints.get(id);
 
 		if (ret == null) {
-			BlueprintMeta meta = blueprintMetas.get(id);
-			if (meta == null) return null; // no meta -> no bpt as well
-
-			ret = load(meta);
+			ret = load(id);
 		}
 
 		return ret;
@@ -122,22 +114,21 @@ public class BlueprintDatabase {
 	 * @param blueprint blueprint to add
 	 * @return id for the added blueprint
 	 */
-	public static BlueprintId add(Blueprint blueprint) {
+	public BlueprintId add(Blueprint blueprint) {
 		BlueprintId id = save(blueprint);
 
-		blueprint.setId(id);
+		if (!blueprintIds.contains(id)) {
+			blueprintIds.add(id);
+		}
 
-		BlueprintMeta prevValue = blueprintMetas.put(id, blueprint.getMeta());
-		blueprints.put(id, blueprint);
-
-		if (prevValue != null) {
-			// TODO: duplicate entry, shouldn't happen
+		if (!loadedBlueprints.containsKey(id)) {
+			loadedBlueprints.put(id, blueprint);
 		}
 
 		return id;
 	}
 
-	private static BlueprintId save(Blueprint blueprint) {
+	private BlueprintId save(Blueprint blueprint) {
 		NBTTagCompound nbt = new NBTTagCompound();
 		blueprint.writeToNBT(nbt);
 
@@ -152,9 +143,11 @@ public class BlueprintDatabase {
 
 		byte[] data = bos.toByteArray();
 
-		BlueprintId id = BlueprintId.generate(data);
+		blueprint.generateId(data);
 
-		File blueprintFile = new File(blueprintFolder, String.format(Locale.ENGLISH, "%s-%s.nbt", id.toString(), blueprint.getName()));
+		BlueprintId id = blueprint.meta.id;
+
+		File blueprintFile = new File(blueprintFolder, String.format(Locale.ENGLISH, "%s" + fileExt, id.toString()));
 
 		if (!blueprintFile.exists()) {
 			OutputStream gzOs = null;
@@ -176,7 +169,7 @@ public class BlueprintDatabase {
 		return id;
 	}
 
-	private static void loadIndex() {
+	private void loadIndex() {
 		FilenameFilter filter = new FilenameFilter() {
 			@Override
 			public boolean accept(File dir, String name) {
@@ -185,34 +178,25 @@ public class BlueprintDatabase {
 		};
 
 		for (File blueprintFile : blueprintFolder.listFiles(filter)) {
-			RawBlueprint rawBlueprint = load(blueprintFile);
+			String fileName = blueprintFile.getName();
 
-			if (rawBlueprint == null) {
-				// TODO: delete?
-				continue;
-			}
+			int cutIndex = fileName.indexOf(BuildCraftBuilders.BPT_SEP_CHARACTER);
 
-			BlueprintMeta meta;
+			String prefix = fileName.substring(0, cutIndex);
+			String suffix = fileName.substring(cutIndex + 1);
 
-			try {
-				meta = new BlueprintMeta(rawBlueprint.id, rawBlueprint.nbt);
-			} catch (Exception e) {
-				// TODO: delete?
-				continue;
-			}
+			BlueprintId id = new BlueprintId();
+			id.name = prefix;
+			id.uniqueId = BlueprintId.toBytes (suffix);
 
-			// TODO: check if the filename is matching id+name
-
-			BlueprintMeta prevValue = blueprintMetas.put(meta.getId(), meta);
-
-			if (prevValue != null) {
-				// TODO: duplicate entry, handle
+			if (!blueprintIds.contains(id)) {
+				blueprintIds.add(id);
 			}
 		}
 	}
 
-	private static Blueprint load(final BlueprintMeta meta) {
-		FilenameFilter filter = new FilenameFilter() {
+	private Blueprint load(final BlueprintId id) {
+		/*FilenameFilter filter = new FilenameFilter() {
 			String prefix = meta.getId().toString();
 
 			@Override
@@ -237,64 +221,11 @@ public class BlueprintDatabase {
 				continue;
 			}
 
-			blueprints.put(blueprint.getId(), blueprint);
+			loadedBlueprints.put(blueprint.getId(), blueprint);
 
 			return blueprint;
-		}
+		}*/
 
 		return null;
 	}
-
-	private static RawBlueprint load(File file) {
-		InputStream fileIs = null;
-		ByteArrayOutputStream decompressedStream;
-
-		try {
-			fileIs = new GZIPInputStream(new FileInputStream(file), bufferSize);
-			decompressedStream = new ByteArrayOutputStream(bufferSize * 4);
-			byte buffer[] = new byte[bufferSize];
-			int len;
-
-			while ((len = fileIs.read(buffer)) != -1) {
-				decompressedStream.write(buffer, 0, len);
-			}
-		} catch (IOException e) {
-			Logger.getLogger("Buildcraft").log(Level.SEVERE, String.format("Failed to load Blueprint file: %s %s", file.getName(), e.getMessage()));
-			return null;
-		} finally {
-			try {
-				fileIs.close();
-			} catch (IOException e) {}
-		}
-
-		byte[] data = decompressedStream.toByteArray();
-		BlueprintId id = BlueprintId.generate(data);
-
-		DataInputStream dataIs = new DataInputStream(new ByteArrayInputStream(data));
-		NBTTagCompound nbt;
-
-		try {
-			nbt = CompressedStreamTools.read(dataIs);
-		} catch (IOException e) {
-			return null;
-		}
-
-		return new RawBlueprint(id, nbt);
-	}
-
-	private static class RawBlueprint {
-		RawBlueprint(BlueprintId id, NBTTagCompound nbt) {
-			this.id = id;
-			this.nbt = nbt;
-		}
-
-		final BlueprintId id;
-		final NBTTagCompound nbt;
-	}
-
-	private static final int bufferSize = 8192;
-	private static final String fileExt = ".bpt";
-	private static File blueprintFolder;
-	private static Map<BlueprintId, BlueprintMeta> blueprintMetas = new HashMap<BlueprintId, BlueprintMeta>();
-	private static Map<BlueprintId, Blueprint> blueprints = new WeakHashMap<BlueprintId, Blueprint>();
 }

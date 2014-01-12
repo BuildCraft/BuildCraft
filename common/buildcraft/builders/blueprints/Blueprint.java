@@ -7,12 +7,10 @@
  */
 package buildcraft.builders.blueprints;
 
-import buildcraft.BuildCraftBuilders;
 import buildcraft.api.builder.BlockHandler;
 import buildcraft.core.inventory.StackHelper;
 import buildcraft.core.network.NetworkData;
 import buildcraft.core.utils.BCLog;
-import buildcraft.core.utils.NBTUtils;
 import buildcraft.factory.TileQuarry;
 
 import java.util.ArrayList;
@@ -130,8 +128,6 @@ public class Blueprint {
 	}
 
 	private void setSchematic(int x, int y, int z, Schematic schematic) {
-		if (getId() != null) throw new IllegalStateException("modifying finalized blueprint");
-
 		schematic.x = x;
 		schematic.y = y;
 		schematic.z = z;
@@ -148,6 +144,7 @@ public class Blueprint {
 			}
 		} catch (Throwable error) {
 			BCLog.logger.severe(String.format("Error while trying to save block [%s:%d] to blueprint, skipping.", block.getUnlocalizedName(), block.blockID));
+			error.printStackTrace();
 			BCLog.logger.throwing(getClass().getCanonicalName(), "setBlock", error);
 		}
 	}
@@ -243,8 +240,10 @@ public class Blueprint {
 		for (int y = 0; y < sizeY; y++) {
 			for (int x = 0; x < sizeX; x++) {
 				for (int z = 0; z < sizeZ; z++) {
-					if (schematics[x][y][z] == null)
+					if (schematics[x][y][z] == null) {
 						continue;
+					}
+
 					NBTTagCompound blockNBT = new NBTTagCompound();
 					schematics[x][y][z].writeToNBT(nbt);
 					blockList.appendTag(blockNBT);
@@ -262,16 +261,11 @@ public class Blueprint {
 		nbt.setByte("anchorOrientation", (byte) anchorOrientation.ordinal());
 	}
 
-
-
 	public void rotateLeft() {
 		anchorOrientation = anchorOrientation.getRotation(ForgeDirection.DOWN);
 	}
 
-	public ItemStack getBlueprintItem() {
-		ItemStack blueprint = new ItemStack(BuildCraftBuilders.blueprintItem, 1, 1);
-		NBTTagCompound nbt = NBTUtils.getItemData(blueprint);
-		nbt.setByteArray("blueprint", getId().toRawId());
-		return blueprint;
+	public void generateId (byte [] data) {
+		meta.id.generateUniqueId(data);
 	}
 }

@@ -36,6 +36,7 @@ import buildcraft.builders.BlockFiller;
 import buildcraft.builders.BlockMarker;
 import buildcraft.builders.BlockPathMarker;
 import buildcraft.builders.EventHandlerBuilders;
+import buildcraft.builders.blueprints.BlueprintDatabase;
 import buildcraft.builders.filler.pattern.PatternFill;
 import buildcraft.builders.filler.pattern.PatternPyramid;
 import buildcraft.builders.filler.pattern.PatternStairs;
@@ -79,9 +80,12 @@ import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+
+import java.io.File;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.TreeMap;
+
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -96,6 +100,7 @@ import net.minecraftforge.event.ForgeSubscribe;
 @NetworkMod(channels = {DefaultProps.NET_CHANNEL_NAME}, packetHandler = PacketHandlerBuilders.class, clientSideRequired = true, serverSideRequired = true)
 public class BuildCraftBuilders {
 
+	public static final char BPT_SEP_CHARACTER = '-';
 	public static final int LIBRARY_PAGE_SIZE = 12;
 	public static final int MAX_BLUEPRINTS_NAME_SIZE = 14;
 	public static BlockMarker markerBlock;
@@ -115,6 +120,23 @@ public class BuildCraftBuilders {
 	private static LinkedList<IBuilderHook> hooks = new LinkedList<IBuilderHook>();
 	@Instance("BuildCraft|Builders")
 	public static BuildCraftBuilders instance;
+
+	public static BlueprintDatabase serverDB;
+	public static BlueprintDatabase clientDB;
+
+	@EventHandler
+	public void loadConfiguration(FMLPreInitializationEvent evt) {
+		File bptMainDir = new File(new File(evt.getModConfigurationDirectory(), "buildcraft"), "blueprints");
+
+		File serverDir = new File (bptMainDir, "server");
+		File clientDir = new File (bptMainDir, "client");
+
+		serverDB = new BlueprintDatabase();
+		clientDB = new BlueprintDatabase();
+
+		serverDB.init(serverDir);
+		clientDB.init(clientDir);
+	}
 
 	@EventHandler
 	public void init(FMLInitializationEvent evt) {

@@ -11,7 +11,6 @@ import buildcraft.BuildCraftBuilders;
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.core.LaserKind;
 import buildcraft.builders.blueprints.Blueprint;
-import buildcraft.builders.blueprints.BlueprintDatabase;
 import buildcraft.core.Box;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.TileBuildCraft;
@@ -100,9 +99,9 @@ public class TileArchitect extends TileBuildCraft implements IInventory {
 
 		blueprint.anchorOrientation = ForgeDirection.getOrientation(worldObj.getBlockMetadata(xCoord, yCoord, zCoord));
 
-		BlueprintDatabase.add(blueprint);
+		BuildCraftBuilders.serverDB.add(blueprint);
 
-		setInventorySlotContents(1, blueprint.getBlueprintItem());
+		setInventorySlotContents(1, ItemBlueprint.getBlueprintItem(blueprint));
 		setInventorySlotContents(0, null);
 	}
 
