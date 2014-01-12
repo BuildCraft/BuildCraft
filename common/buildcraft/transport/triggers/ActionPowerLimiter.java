@@ -10,12 +10,12 @@ package buildcraft.transport.triggers;
 import buildcraft.core.triggers.BCAction;
 import buildcraft.transport.pipes.PipePowerIron.PowerMode;
 import java.util.Locale;
-import net.minecraft.client.renderer.texture.IconRegister;
-import net.minecraft.util.Icon;
+import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.util.IIcon;
 
 public class ActionPowerLimiter extends BCAction {
 
-	private Icon icon;
+	private IIcon icon;
 	public final PowerMode limit;
 
 	public ActionPowerLimiter(PowerMode limit) {
@@ -30,12 +30,12 @@ public class ActionPowerLimiter extends BCAction {
 	}
 
 	@Override
-	public Icon getIcon() {
+	public IIcon getIcon() {
 		return icon;
 	}
 
 	@Override
-	public void registerIcons(IconRegister iconRegister) {
+	public void registerIcons(IIconRegister iconRegister) {
 		icon = iconRegister.registerIcon("buildcraft:triggers/trigger_limiter_" + limit.name().toLowerCase(Locale.ENGLISH));
 	}
 }

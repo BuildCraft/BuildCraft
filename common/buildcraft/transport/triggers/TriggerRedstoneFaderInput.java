@@ -14,14 +14,14 @@ import buildcraft.transport.IPipeTrigger;
 import buildcraft.transport.Pipe;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraft.client.renderer.texture.IconRegister;
-import net.minecraft.util.Icon;
+import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.util.IIcon;
 
 public class TriggerRedstoneFaderInput extends BCTrigger implements IPipeTrigger {
 
 	public final int level;
 	@SideOnly(Side.CLIENT)
-	private Icon icon;
+	private IIcon icon;
 
 	public TriggerRedstoneFaderInput(int level) {
 		super(String.format("buildcraft:redtone.input.%02d", level));
@@ -41,13 +41,13 @@ public class TriggerRedstoneFaderInput extends BCTrigger implements IPipeTrigger
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public Icon getIcon() {
+	public IIcon getIcon() {
 		return icon;
 	}
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void registerIcons(IconRegister iconRegister) {
+	public void registerIcons(IIconRegister iconRegister) {
 		icon = iconRegister.registerIcon(String.format("buildcraft:triggers/redstone_%02d", level));
 	}
 }

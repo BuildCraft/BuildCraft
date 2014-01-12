@@ -20,24 +20,24 @@ import cpw.mods.fml.relauncher.SideOnly;
 import java.util.ArrayList;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Icon;
+import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
 public class BlockArchitect extends BlockContainer {
 
-	Icon blockTextureSides;
-	Icon blockTextureFront;
-	Icon blockTextureTopPos;
-	Icon blockTextureTopNeg;
-	Icon blockTextureTopArchitect;
+	IIcon blockTextureSides;
+	IIcon blockTextureFront;
+	IIcon blockTextureTopPos;
+	IIcon blockTextureTopNeg;
+	IIcon blockTextureTopArchitect;
 
 	public BlockArchitect(int i) {
 		super(i, Material.iron);
@@ -108,7 +108,7 @@ public class BlockArchitect extends BlockContainer {
 	}
 
 	@SuppressWarnings({ "all" })
-	public Icon getBlockTexture(IBlockAccess iblockaccess, int i, int j, int k, int l) {
+	public IIcon getBlockTexture(IBlockAccess iblockaccess, int i, int j, int k, int l) {
 		int m = iblockaccess.getBlockMetadata(i, j, k);
 
 		if (l == 1)
@@ -118,7 +118,7 @@ public class BlockArchitect extends BlockContainer {
 	}
 
 	@Override
-	public Icon getIcon(int i, int j) {
+	public IIcon getIcon(int i, int j) {
 		if (j == 0 && i == 3)
 			return blockTextureFront;
 
@@ -139,7 +139,7 @@ public class BlockArchitect extends BlockContainer {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void registerIcons(IconRegister par1IconRegister)
+	public void registerIcons(IIconRegister par1IconRegister)
 	{
 	    blockTextureSides = par1IconRegister.registerIcon("buildcraft:architect_sides");
         blockTextureTopNeg = par1IconRegister.registerIcon("buildcraft:architect_top_neg");

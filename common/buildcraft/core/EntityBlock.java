@@ -11,13 +11,13 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.Icon;
+import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
 
 public class EntityBlock extends Entity {
 
 	@SideOnly(Side.CLIENT)
-	public Icon texture;
+	public IIcon texture;
 	public float shadowSize = 0;
 	public float rotationX = 0;
 	public float rotationY = 0;

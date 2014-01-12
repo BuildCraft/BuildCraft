@@ -20,13 +20,13 @@ import cpw.mods.fml.relauncher.SideOnly;
 import java.util.ArrayList;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Icon;
+import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import static net.minecraftforge.common.ForgeDirection.EAST;
@@ -37,7 +37,7 @@ import net.minecraftforge.fluids.FluidContainerRegistry;
 
 public class BlockRefinery extends BlockContainer {
 
-	private static Icon icon;
+	private static IIcon icon;
 
 	public BlockRefinery(int i) {
 		super(i, Material.iron);
@@ -141,13 +141,13 @@ public class BlockRefinery extends BlockContainer {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void registerIcons(IconRegister par1IconRegister) {
+	public void registerIcons(IIconRegister par1IconRegister) {
 		icon = par1IconRegister.registerIcon("buildcraft:refineryBack");
 	}
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public Icon getIcon(int par1, int par2) {
+	public IIcon getIcon(int par1, int par2) {
 		return icon;
 	}
 }

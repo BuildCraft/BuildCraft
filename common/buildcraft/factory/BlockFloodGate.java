@@ -15,19 +15,19 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import java.util.ArrayList;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Icon;
+import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
 
 public class BlockFloodGate extends BlockBuildCraft {
 
-	private Icon textureTop;
-	private Icon textureBottom;
-	private Icon textureSide;
+	private IIcon textureTop;
+	private IIcon textureBottom;
+	private IIcon textureSide;
 
 	public BlockFloodGate(int i) {
 		super(i, Material.iron);
@@ -39,7 +39,7 @@ public class BlockFloodGate extends BlockBuildCraft {
 	}
 
 	@Override
-	public Icon getIcon(int i, int j) {
+	public IIcon getIcon(int i, int j) {
 		switch (i) {
 			case 0:
 				return textureBottom;
@@ -97,7 +97,7 @@ public class BlockFloodGate extends BlockBuildCraft {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void registerIcons(IconRegister par1IconRegister) {
+	public void registerIcons(IIconRegister par1IconRegister) {
 		textureTop = par1IconRegister.registerIcon("buildcraft:floodgate_top");
 		textureBottom = par1IconRegister.registerIcon("buildcraft:floodgate_bottom");
 		textureSide = par1IconRegister.registerIcon("buildcraft:floodgate_side");

@@ -43,7 +43,7 @@ import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Icon;
+import net.minecraft.util.IIcon;
 import net.minecraft.util.Timer;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
@@ -507,7 +507,7 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 		GL11.glPopMatrix();
 	}
 
-	private void renderGate(TileGenericPipe tile, Icon icon, int layer, float trim, float translateCenter, float extraDepth) {
+	private void renderGate(TileGenericPipe tile, IIcon icon, int layer, float trim, float translateCenter, float extraDepth) {
 		PipeRenderState state = tile.renderState;
 
 		RenderInfo box = new RenderInfo();

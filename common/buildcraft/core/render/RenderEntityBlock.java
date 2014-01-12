@@ -14,7 +14,7 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.entity.Entity;
-import net.minecraft.util.Icon;
+import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -38,8 +38,8 @@ public class RenderEntityBlock extends Render {
 		public double maxY;
 		public double maxZ;
 		public Block baseBlock = Block.sand;
-		public Icon texture = null;
-		public Icon[] textureArray = null;
+		public IIcon texture = null;
+		public IIcon[] textureArray = null;
 		public boolean[] renderSide = new boolean[6];
 		public float light = -1f;
 		public int brightness = -1;
@@ -103,7 +103,7 @@ public class RenderEntityBlock extends Render {
 			maxZ = 1 - temp;
 		}
 
-		public Icon getBlockTextureFromSide(int i) {
+		public IIcon getBlockTextureFromSide(int i) {
 			if (texture != null)
 				return texture;
 			if (textureArray == null || textureArray.length == 0)

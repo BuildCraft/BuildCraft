@@ -4,8 +4,8 @@ import java.util.Locale;
 
 import buildcraft.core.triggers.BCTrigger;
 import buildcraft.core.utils.StringUtils;
-import net.minecraft.client.renderer.texture.IconRegister;
-import net.minecraft.util.Icon;
+import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.util.IIcon;
 
 public class TriggerClockTimer extends BCTrigger {
 
@@ -20,7 +20,7 @@ public class TriggerClockTimer extends BCTrigger {
 		}
 	}
 	public final Time time;
-	private Icon icon;
+	private IIcon icon;
 
 	public TriggerClockTimer(Time time) {
 		super("buildcraft:timer." + time.name().toLowerCase(Locale.ENGLISH));
@@ -29,7 +29,7 @@ public class TriggerClockTimer extends BCTrigger {
 	}
 
 	@Override
-	public Icon getIcon() {
+	public IIcon getIcon() {
 		return icon;
 	}
 
@@ -39,7 +39,7 @@ public class TriggerClockTimer extends BCTrigger {
 	}
 
 	@Override
-	public void registerIcons(IconRegister iconRegister) {
+	public void registerIcons(IIconRegister iconRegister) {
 		icon = iconRegister.registerIcon("buildcraft:triggers/trigger_timer_" + time.name().toLowerCase(Locale.ENGLISH));
 	}
 }

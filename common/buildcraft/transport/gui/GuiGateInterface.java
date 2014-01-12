@@ -20,7 +20,7 @@ import java.util.Iterator;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.Icon;
+import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 
@@ -54,7 +54,7 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 
 		@SideOnly(Side.CLIENT)
 		@Override
-		public Icon getIcon() {
+		public IIcon getIcon() {
 			ITrigger trigger = pipe.gate.getTrigger(slot);
 			if (trigger != null)
 				return trigger.getIcon();
@@ -95,7 +95,7 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 
 		@SideOnly(Side.CLIENT)
 		@Override
-		public Icon getIcon() {
+		public IIcon getIcon() {
 			IAction action = pipe.gate.getAction(slot);
 			if (action != null)
 				return action.getIcon();

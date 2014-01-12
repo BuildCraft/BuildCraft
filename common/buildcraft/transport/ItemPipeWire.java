@@ -7,10 +7,10 @@ import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import java.util.List;
-import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.Icon;
+import net.minecraft.util.IIcon;
 
 public class ItemPipeWire extends ItemBuildCraft {
 
@@ -25,7 +25,7 @@ public class ItemPipeWire extends ItemBuildCraft {
 	}
 
 	@Override
-	public Icon getIconFromDamage(int damage) {
+	public IIcon getIconFromDamage(int damage) {
 		return icons[damage];
 	}
 
@@ -45,7 +45,7 @@ public class ItemPipeWire extends ItemBuildCraft {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void registerIcons(IconRegister par1IconRegister) {
+	public void registerIcons(IIconRegister par1IconRegister) {
 		icons = new Icon[PipeWire.VALUES.length];
 		for (PipeWire pipeWire : PipeWire.VALUES) {
 			icons[pipeWire.ordinal()] = par1IconRegister.registerIcon("buildcraft:" + pipeWire.getTag());

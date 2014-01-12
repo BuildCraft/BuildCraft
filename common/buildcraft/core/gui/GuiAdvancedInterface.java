@@ -5,7 +5,7 @@ import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.Icon;
+import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.Fluid;
 
@@ -32,7 +32,7 @@ public abstract class GuiAdvancedInterface extends GuiBuildCraft {
 				return "";
 		}
 
-		public Icon getIcon() {
+		public IIcon getIcon() {
 			return null;
 		}
 
@@ -194,7 +194,7 @@ public abstract class GuiAdvancedInterface extends GuiBuildCraft {
 		}
 
 		@Override
-		public Icon getIcon() {
+		public IIcon getIcon() {
 			return FluidRenderer.getFluidTexture(fluid, false);
 		}
 

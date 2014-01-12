@@ -2,8 +2,8 @@ package buildcraft.api.gates;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraft.client.renderer.texture.IconRegister;
-import net.minecraft.util.Icon;
+import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.util.IIcon;
 
 public interface ITrigger {
 
@@ -16,10 +16,10 @@ public interface ITrigger {
 	String getUniqueTag();
 
 	@SideOnly(Side.CLIENT)
-	Icon getIcon();
+	IIcon getIcon();
 
 	@SideOnly(Side.CLIENT)
-	void registerIcons(IconRegister iconRegister);
+	void registerIcons(IIconRegister iconRegister);
 
 	/**
 	 * Return true if this trigger can accept parameters

@@ -9,7 +9,7 @@ package buildcraft.builders.triggers;
 
 import buildcraft.api.filler.IFillerPattern;
 import buildcraft.core.triggers.*;
-import net.minecraft.util.Icon;
+import net.minecraft.util.IIcon;
 
 public class ActionFiller extends BCAction {
 
@@ -26,7 +26,7 @@ public class ActionFiller extends BCAction {
 	}
 
 	@Override
-	public Icon getIcon() {
+	public IIcon getIcon() {
 		return pattern.getIcon();
 	}
 

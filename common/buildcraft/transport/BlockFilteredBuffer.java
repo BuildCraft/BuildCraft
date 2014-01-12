@@ -16,11 +16,11 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import java.util.ArrayList;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Icon;
+import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
 
 /**
@@ -29,7 +29,7 @@ import net.minecraft.world.World;
  */
 public class BlockFilteredBuffer extends BlockBuildCraft {
 
-	private static Icon blockTexture;
+	private static IIcon blockTexture;
 
 	public BlockFilteredBuffer(int blockId) {
 		super(blockId, Material.iron);
@@ -72,13 +72,13 @@ public class BlockFilteredBuffer extends BlockBuildCraft {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void registerIcons(IconRegister par1IconRegister) {
+	public void registerIcons(IIconRegister par1IconRegister) {
 		blockTexture = par1IconRegister.registerIcon("buildcraft:filteredBuffer_all");
 	}
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public Icon getIcon(int i, int j) {
+	public IIcon getIcon(int i, int j) {
 		return blockTexture;
 	}
 }

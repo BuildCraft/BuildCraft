@@ -17,10 +17,10 @@ import cpw.mods.fml.relauncher.SideOnly;
 import java.util.List;
 import java.util.logging.Level;
 import net.minecraft.block.Block;
-import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.Icon;
+import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
 
 public class ItemPipe extends ItemBuildCraft implements IItemPipe {
@@ -98,7 +98,7 @@ public class ItemPipe extends ItemBuildCraft implements IItemPipe {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public Icon getIconFromDamage(int par1) {
+	public IIcon getIconFromDamage(int par1) {
 		if (iconProvider != null) { // invalid pipes won't have this set
 			return iconProvider.getIcon(pipeIconIndex);
 		} else {
@@ -108,7 +108,7 @@ public class ItemPipe extends ItemBuildCraft implements IItemPipe {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void registerIcons(IconRegister par1IconRegister) {
+	public void registerIcons(IIconRegister par1IconRegister) {
 		// NOOP
 	}
 

@@ -1,7 +1,7 @@
 package buildcraft.transport;
 
-import net.minecraft.client.renderer.texture.IconRegister;
-import net.minecraft.util.Icon;
+import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.util.IIcon;
 import buildcraft.BuildCraftCore;
 import buildcraft.api.core.IIconProvider;
 import cpw.mods.fml.relauncher.Side;
@@ -111,7 +111,7 @@ public class PipeIconProvider implements IIconProvider {
 		public static final TYPE[] VALUES = values();
 		private final String iconTag;
 		private final String iconTagColorBlind;
-		private Icon icon;
+		private IIcon icon;
 
 		private TYPE(String iconTag, String IconTagColorBlind) {
 			this.iconTag = iconTag;
@@ -122,18 +122,18 @@ public class PipeIconProvider implements IIconProvider {
 			this(iconTag, iconTag);
 		}
 
-		private void registerIcon(IconRegister iconRegister) {
+		private void registerIcon(IIconRegister iconRegister) {
 			icon = iconRegister.registerIcon("buildcraft:" + (BuildCraftCore.colorBlindMode ? iconTagColorBlind : iconTag));
 		}
 
-		public Icon getIcon() {
+		public IIcon getIcon() {
 			return icon;
 		}
 	}
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public Icon getIcon(int pipeIconIndex) {
+	public IIcon getIcon(int pipeIconIndex) {
 		if (pipeIconIndex == -1)
 			return null;
 		return TYPE.VALUES[pipeIconIndex].icon;
@@ -141,7 +141,7 @@ public class PipeIconProvider implements IIconProvider {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void registerIcons(IconRegister iconRegister) {
+	public void registerIcons(IIconRegister iconRegister) {
 		for (TYPE type : TYPE.VALUES) {
 			type.registerIcon(iconRegister);
 		}

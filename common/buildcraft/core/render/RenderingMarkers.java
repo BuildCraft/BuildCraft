@@ -5,7 +5,7 @@ import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.util.Icon;
+import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 
 public class RenderingMarkers implements ISimpleBlockRenderingHandler {
@@ -125,7 +125,7 @@ public class RenderingMarkers implements ISimpleBlockRenderingHandler {
 		int yCoord = (int) y;
 		int zCoord = (int) z;
 
-		Icon i = block.getBlockTexture(iblockaccess, xCoord, yCoord, zCoord, 1);
+		IIcon i = block.getBlockTexture(iblockaccess, xCoord, yCoord, zCoord, 1);
 
 		int m = metaToOld[meta];
 		x += 0.5D;

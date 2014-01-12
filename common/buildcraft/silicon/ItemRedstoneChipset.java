@@ -7,10 +7,10 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import java.util.List;
 import java.util.Locale;
-import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.Icon;
+import net.minecraft.util.IIcon;
 
 public class ItemRedstoneChipset extends ItemBuildCraft {
 
@@ -24,7 +24,7 @@ public class ItemRedstoneChipset extends ItemBuildCraft {
 		QUARTZ,
 		COMP;
 		public static final Chipset[] VALUES = values();
-		private Icon icon;
+		private IIcon icon;
 
 		public String getChipsetName() {
 			return "redstone_" + name().toLowerCase(Locale.ENGLISH) + "_chipset";
@@ -52,7 +52,7 @@ public class ItemRedstoneChipset extends ItemBuildCraft {
 	}
 
 	@Override
-	public Icon getIconFromDamage(int damage) {
+	public IIcon getIconFromDamage(int damage) {
 		return Chipset.fromOrdinal(damage).icon;
 	}
 
@@ -72,7 +72,7 @@ public class ItemRedstoneChipset extends ItemBuildCraft {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void registerIcons(IconRegister par1IconRegister) {
+	public void registerIcons(IIconRegister par1IconRegister) {
 		for (Chipset chipset : Chipset.VALUES) {
 			chipset.icon = par1IconRegister.registerIcon("buildcraft:" + chipset.getChipsetName());
 		}

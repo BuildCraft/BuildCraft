@@ -17,10 +17,10 @@ import buildcraft.core.utils.StringUtils;
 import java.util.HashSet;
 import java.util.Set;
 import net.minecraft.block.Block;
-import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Icon;
+import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
@@ -28,7 +28,7 @@ public abstract class FillerPattern implements IFillerPattern {
 
 	public static final Set<FillerPattern> patterns = new HashSet<FillerPattern>();
 	private final String tag;
-	private Icon icon;
+	private IIcon icon;
 
 	public FillerPattern(String tag) {
 		this.tag = tag;
@@ -54,12 +54,12 @@ public abstract class FillerPattern implements IFillerPattern {
 		return "buildcraft:" + tag;
 	}
 
-	public void registerIcon(IconRegister iconRegister) {
+	public void registerIcon(IIconRegister iconRegister) {
 		icon = iconRegister.registerIcon("buildcraft:fillerPatterns/" + tag);
 	}
 
 	@Override
-	public Icon getIcon() {
+	public IIcon getIcon() {
 		return icon;
 	}
 

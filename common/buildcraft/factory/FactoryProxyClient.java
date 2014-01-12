@@ -13,14 +13,14 @@ import buildcraft.factory.render.RenderTank;
 import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 import java.lang.reflect.Method;
-import net.minecraft.util.Icon;
+import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
 
 public class FactoryProxyClient extends FactoryProxy {
 
-	public static Icon pumpTexture;
-	public static Icon drillTexture;
-	public static Icon drillHeadTexture;
+	public static IIcon pumpTexture;
+	public static IIcon drillTexture;
+	public static IIcon drillHeadTexture;
 
 	@Override
 	public void initializeTileEntities() {

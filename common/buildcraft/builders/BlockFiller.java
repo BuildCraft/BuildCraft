@@ -20,19 +20,19 @@ import cpw.mods.fml.relauncher.SideOnly;
 import java.util.ArrayList;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Icon;
+import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
 public class BlockFiller extends BlockContainer {
 
-	Icon textureSides;
-	Icon textureTopOn;
-	Icon textureTopOff;
+	IIcon textureSides;
+	IIcon textureTopOn;
+	IIcon textureTopOff;
 	public IFillerPattern currentPattern;
 
 	public BlockFiller(int i) {
@@ -57,7 +57,7 @@ public class BlockFiller extends BlockContainer {
 	}
 
 	@Override
-	public Icon getBlockTexture(IBlockAccess world, int x, int y, int z, int side) {
+	public IIcon getBlockTexture(IBlockAccess world, int x, int y, int z, int side) {
 		int m = world.getBlockMetadata(x, y, z);
 		TileEntity tile = world.getBlockTileEntity(x, y, z);
 
@@ -78,7 +78,7 @@ public class BlockFiller extends BlockContainer {
 	}
 
 	@Override
-	public Icon getIcon(int i, int j) {
+	public IIcon getIcon(int i, int j) {
 		if (i == 0 || i == 1)
 			return textureTopOn;
 		else
@@ -104,7 +104,7 @@ public class BlockFiller extends BlockContainer {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void registerIcons(IconRegister par1IconRegister) {
+	public void registerIcons(IIconRegister par1IconRegister) {
 	    textureTopOn = par1IconRegister.registerIcon("buildcraft:blockFillerTopOn");
         textureTopOff = par1IconRegister.registerIcon("buildcraft:blockFillerTopOff");
         textureSides = par1IconRegister.registerIcon("buildcraft:blockFillerSides");

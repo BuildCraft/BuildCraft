@@ -18,7 +18,7 @@ import java.util.List;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.Icon;
+import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
 
 public abstract class ItemBptBase extends ItemBuildCraft {
@@ -32,7 +32,7 @@ public abstract class ItemBptBase extends ItemBuildCraft {
 
 	@SuppressWarnings({ "all" })
 	// @Override (client only)
-	public abstract Icon getIconFromDamage(int i);
+	public abstract IIcon getIconFromDamage(int i);
 
 	@SuppressWarnings({ "all" })
 	// @Override (client only)

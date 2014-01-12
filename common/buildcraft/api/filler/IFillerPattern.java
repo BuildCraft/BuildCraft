@@ -4,7 +4,7 @@ import buildcraft.api.core.IBox;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Icon;
+import net.minecraft.util.IIcon;
 import net.minecraftforge.common.util.ForgeDirection;
 
 public interface IFillerPattern {
@@ -23,7 +23,7 @@ public interface IFillerPattern {
 	public IPatternIterator createPatternIterator(TileEntity tile, IBox box, ForgeDirection orientation);
 
 	@SideOnly(Side.CLIENT)
-	public Icon getIcon();
+	public IIcon getIcon();
 
 	public String getDisplayName();
 }

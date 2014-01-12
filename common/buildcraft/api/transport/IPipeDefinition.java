@@ -8,9 +8,9 @@
  */
 package buildcraft.api.transport;
 
-import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Icon;
+import net.minecraft.util.IIcon;
 
 /**
  *
@@ -20,11 +20,11 @@ public interface IPipeDefinition {
 
 	String getUniqueTag();
 
-	void registerIcons(IconRegister iconRegister);
+	void registerIcons(IIconRegister iconRegister);
 
-	Icon getIcon(int index);
+	IIcon getIcon(int index);
 
-	Icon getItemIcon();
+	IIcon getItemIcon();
 
 	PipeBehavior makePipeBehavior(TileEntity tile);
 }

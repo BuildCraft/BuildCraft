@@ -16,11 +16,11 @@ import cpw.mods.fml.relauncher.SideOnly;
 import java.util.ArrayList;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Icon;
+import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
@@ -30,9 +30,9 @@ import net.minecraftforge.fluids.FluidStack;
 
 public class BlockTank extends BlockContainer {
 
-	private Icon textureStackedSide;
-	private Icon textureBottomSide;
-	private Icon textureTop;
+	private IIcon textureStackedSide;
+	private IIcon textureBottomSide;
+	private IIcon textureTop;
 
 	public BlockTank(int i) {
 		super(i, Material.glass);
@@ -62,7 +62,7 @@ public class BlockTank extends BlockContainer {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public Icon getIcon(int par1, int par2) {
+	public IIcon getIcon(int par1, int par2) {
 		switch (par1) {
 			case 0:
 			case 1:
@@ -74,7 +74,7 @@ public class BlockTank extends BlockContainer {
 
 	@SuppressWarnings({"all"})
 	@Override
-	public Icon getBlockTexture(IBlockAccess iblockaccess, int i, int j, int k, int l) {
+	public IIcon getBlockTexture(IBlockAccess iblockaccess, int i, int j, int k, int l) {
 		switch (l) {
 			case 0:
 			case 1:
@@ -154,7 +154,7 @@ public class BlockTank extends BlockContainer {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void registerIcons(IconRegister par1IconRegister) {
+	public void registerIcons(IIconRegister par1IconRegister) {
 		textureStackedSide = par1IconRegister.registerIcon("buildcraft:tank_stacked_side");
 		textureBottomSide = par1IconRegister.registerIcon("buildcraft:tank_bottom_side");
 		textureTop = par1IconRegister.registerIcon("buildcraft:tank_top");

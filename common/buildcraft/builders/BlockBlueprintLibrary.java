@@ -17,18 +17,18 @@ import cpw.mods.fml.relauncher.SideOnly;
 import java.util.ArrayList;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Icon;
+import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
 
 public class BlockBlueprintLibrary extends BlockContainer {
 
-	private Icon textureTop;
-    private Icon textureSide;
+	private IIcon textureTop;
+    private IIcon textureSide;
 
     public BlockBlueprintLibrary(int i) {
 		super(i, Material.wood);
@@ -60,7 +60,7 @@ public class BlockBlueprintLibrary extends BlockContainer {
 	}
 
 	@Override
-	public Icon getIcon(int i, int j) {
+	public IIcon getIcon(int i, int j) {
 		switch (i) {
 		case 0:
 		case 1:
@@ -86,7 +86,7 @@ public class BlockBlueprintLibrary extends BlockContainer {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void registerIcons(IconRegister par1IconRegister)
+	public void registerIcons(IIconRegister par1IconRegister)
 	{
 	    textureTop = par1IconRegister.registerIcon("buildcraft:library_topbottom");
         textureSide = par1IconRegister.registerIcon("buildcraft:library_side");

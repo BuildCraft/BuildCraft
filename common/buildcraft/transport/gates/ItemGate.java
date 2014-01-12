@@ -19,14 +19,14 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
-import net.minecraft.util.Icon;
+import net.minecraft.util.IIcon;
 
 public class ItemGate extends ItemBuildCraft {
 
@@ -182,13 +182,13 @@ public class ItemGate extends ItemBuildCraft {
 	}
 
 	@Override
-	public Icon getIconIndex(ItemStack stack) {
+	public IIcon getIconIndex(ItemStack stack) {
 		return getLogic(stack).getIconItem();
 	}
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void registerIcons(IconRegister iconRegister) {
+	public void registerIcons(IIconRegister iconRegister) {
 
 		for (GateDefinition.GateMaterial material : GateDefinition.GateMaterial.VALUES) {
 			material.registerItemIcon(iconRegister);

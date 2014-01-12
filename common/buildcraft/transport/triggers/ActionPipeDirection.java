@@ -9,13 +9,13 @@ package buildcraft.transport.triggers;
 
 import buildcraft.core.triggers.BCAction;
 import java.util.Locale;
-import net.minecraft.client.renderer.texture.IconRegister;
-import net.minecraft.util.Icon;
+import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.util.IIcon;
 import net.minecraftforge.common.util.ForgeDirection;
 
 public class ActionPipeDirection extends BCAction {
 
-	private Icon icon;
+	private IIcon icon;
 	public final ForgeDirection direction;
 
 	public ActionPipeDirection(ForgeDirection direction) {
@@ -30,12 +30,12 @@ public class ActionPipeDirection extends BCAction {
 	}
 
 	@Override
-	public Icon getIcon() {
+	public IIcon getIcon() {
 		return icon;
 	}
 
 	@Override
-	public void registerIcons(IconRegister iconRegister) {
+	public void registerIcons(IIconRegister iconRegister) {
 		icon = iconRegister.registerIcon("buildcraft:triggers/trigger_dir_" + direction.name().toLowerCase(Locale.ENGLISH));
 	}
 }

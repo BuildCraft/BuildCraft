@@ -11,13 +11,13 @@ package buildcraft.builders;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraft.client.renderer.texture.IconRegister;
-import net.minecraft.util.Icon;
+import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.util.IIcon;
 
 public class ItemBptBluePrint extends ItemBptBase {
 
-    private Icon cleanBlueprint;
-    private Icon usedBlueprint;
+    private IIcon cleanBlueprint;
+    private IIcon usedBlueprint;
 
 	public ItemBptBluePrint(int i) {
 		super(i);
@@ -25,7 +25,7 @@ public class ItemBptBluePrint extends ItemBptBase {
 	}
 
 	@Override
-	public Icon getIconFromDamage(int i) {
+	public IIcon getIconFromDamage(int i) {
 		if (i == 0)
 			return cleanBlueprint;
 		else
@@ -34,7 +34,7 @@ public class ItemBptBluePrint extends ItemBptBase {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void registerIcons(IconRegister par1IconRegister)
+	public void registerIcons(IIconRegister par1IconRegister)
 	{
 	    cleanBlueprint = par1IconRegister.registerIcon("buildcraft:blueprint_clean");
 	    usedBlueprint = par1IconRegister.registerIcon("buildcraft:blueprint_used");

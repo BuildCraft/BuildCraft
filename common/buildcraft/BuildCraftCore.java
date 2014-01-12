@@ -16,7 +16,7 @@ import net.minecraft.block.BlockFluid;
 import net.minecraft.entity.EntityList;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.Icon;
+import net.minecraft.util.IIcon;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.IPlantable;
@@ -112,13 +112,13 @@ public class BuildCraftCore {
 	public static Item diamondGearItem;
 	public static Item wrenchItem;
 	@SideOnly(Side.CLIENT)
-	public static Icon redLaserTexture;
+	public static IIcon redLaserTexture;
 	@SideOnly(Side.CLIENT)
-	public static Icon blueLaserTexture;
+	public static IIcon blueLaserTexture;
 	@SideOnly(Side.CLIENT)
-	public static Icon stripesLaserTexture;
+	public static IIcon stripesLaserTexture;
 	@SideOnly(Side.CLIENT)
-	public static Icon transparentTexture;
+	public static IIcon transparentTexture;
 	@SideOnly(Side.CLIENT)
 	public static IIconProvider iconProvider;
 	public static int blockByEntityModel;

@@ -18,17 +18,17 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import java.util.ArrayList;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Icon;
+import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
 
 public class BlockAutoWorkbench extends BlockBuildCraft {
 
-	Icon topTexture;
-	Icon sideTexture;
+	IIcon topTexture;
+	IIcon sideTexture;
 
 	public BlockAutoWorkbench(int i) {
 		super(i, Material.wood);
@@ -36,7 +36,7 @@ public class BlockAutoWorkbench extends BlockBuildCraft {
 	}
 
 	@Override
-	public Icon getIcon(int i, int j) {
+	public IIcon getIcon(int i, int j) {
 		if (i == 1 || i == 0)
 			return topTexture;
 		else
@@ -75,7 +75,7 @@ public class BlockAutoWorkbench extends BlockBuildCraft {
 	}
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void registerIcons(IconRegister par1IconRegister)
+	public void registerIcons(IIconRegister par1IconRegister)
 	{
 	    topTexture = par1IconRegister.registerIcon("buildcraft:autoWorkbench_top");
 	    sideTexture = par1IconRegister.registerIcon("buildcraft:autoWorkbench_side");

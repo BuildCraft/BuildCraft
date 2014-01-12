@@ -3,8 +3,8 @@ package buildcraft.core.triggers;
 import buildcraft.api.core.IIconProvider;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraft.client.renderer.texture.IconRegister;
-import net.minecraft.util.Icon;
+import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.util.IIcon;
 
 /**
  * Don't put new Trigger Icons in here please, put them in the Trigger classes
@@ -53,20 +53,20 @@ public class ActionTriggerIconProvider implements IIconProvider {
 	public static final int Trigger_Inventory_Below75 = 35;
 	public static final int MAX = 39;
 	@SideOnly(Side.CLIENT)
-	private final Icon[] icons = new Icon[MAX];
+	private final IIcon[] icons = new IIcon[MAX];
 
 	private ActionTriggerIconProvider() {
 	}
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public Icon getIcon(int iconIndex) {
+	public IIcon getIcon(int iconIndex) {
 		return icons[iconIndex];
 	}
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void registerIcons(IconRegister iconRegister) {
+	public void registerIcons(IIconRegister iconRegister) {
 		icons[ActionTriggerIconProvider.Action_MachineControl_On] = iconRegister.registerIcon("buildcraft:triggers/action_machinecontrol_on");
 		icons[ActionTriggerIconProvider.Action_MachineControl_Off] = iconRegister.registerIcon("buildcraft:triggers/action_machinecontrol_off");
 		icons[ActionTriggerIconProvider.Action_MachineControl_Loop] = iconRegister.registerIcon("buildcraft:triggers/action_machinecontrol_loop");

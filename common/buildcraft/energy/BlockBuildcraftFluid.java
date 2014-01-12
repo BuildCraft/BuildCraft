@@ -15,8 +15,8 @@ import cpw.mods.fml.relauncher.SideOnly;
 import java.util.Random;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.particle.EntityFX;
-import net.minecraft.client.renderer.texture.IconRegister;
-import net.minecraft.util.Icon;
+import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
@@ -37,18 +37,18 @@ public class BlockBuildcraftFluid extends BlockFluidClassic {
 		super(id, fluid, material);
 	}
 	@SideOnly(Side.CLIENT)
-	protected Icon[] theIcon;
+	protected IIcon[] theIcon;
 	protected boolean flammable;
 	protected int flammability = 0;
 
 	@Override
-	public Icon getIcon(int side, int meta) {
+	public IIcon getIcon(int side, int meta) {
 		return side != 0 && side != 1 ? this.theIcon[1] : this.theIcon[0];
 	}
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void registerIcons(IconRegister iconRegister) {
+	public void registerIcons(IIconRegister iconRegister) {
 		this.theIcon = new Icon[] { iconRegister.registerIcon("buildcraft:" + fluidName + "_still"), iconRegister.registerIcon("buildcraft:" + fluidName + "_flow") };
 	}
 

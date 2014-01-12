@@ -11,7 +11,7 @@ import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.util.Icon;
+import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
@@ -62,7 +62,7 @@ public class GuiCombustionEngine extends GuiEngine {
 		}
 		int start = 0;
 
-		Icon liquidIcon = null;
+		IIcon liquidIcon = null;
 		Fluid fluid = liquid.getFluid();
 		if (fluid != null && fluid.getStillIcon() != null) {
 			liquidIcon = fluid.getStillIcon();

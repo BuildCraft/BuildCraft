@@ -9,18 +9,18 @@ import cpw.mods.fml.relauncher.SideOnly;
 import java.util.List;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Icon;
+import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
 
 public class BlockLaserTable extends BlockContainer {
 
 	@SideOnly(Side.CLIENT)
-	private Icon[][] icons;
+	private IIcon[][] icons;
 
 	public BlockLaserTable(int i) {
 		super(i, Material.iron);
@@ -64,7 +64,7 @@ public class BlockLaserTable extends BlockContainer {
 	}
 
 	@Override
-	public Icon getIcon(int side, int meta) {
+	public IIcon getIcon(int side, int meta) {
 		int s = side > 1 ? 2 : side;
 		return icons[meta][s];
 	}
@@ -103,7 +103,7 @@ public class BlockLaserTable extends BlockContainer {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void registerIcons(IconRegister par1IconRegister) {
+	public void registerIcons(IIconRegister par1IconRegister) {
 		icons = new Icon[3][];
 		icons[0] = new Icon[3];
 		icons[1] = new Icon[3];

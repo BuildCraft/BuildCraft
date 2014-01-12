@@ -12,8 +12,8 @@ import static buildcraft.api.gates.ActionManager.actions;
 import buildcraft.api.gates.IAction;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraft.client.renderer.texture.IconRegister;
-import net.minecraft.util.Icon;
+import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.util.IIcon;
 
 public abstract class BCAction implements IAction {
 
@@ -44,7 +44,7 @@ public abstract class BCAction implements IAction {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public Icon getIcon() {
+	public IIcon getIcon() {
 		return ActionTriggerIconProvider.INSTANCE.getIcon(getIconIndex());
 	}
 
@@ -54,7 +54,7 @@ public abstract class BCAction implements IAction {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void registerIcons(IconRegister iconRegister) {
+	public void registerIcons(IIconRegister iconRegister) {
 	}
 
 	@Override

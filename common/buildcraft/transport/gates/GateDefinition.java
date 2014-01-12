@@ -11,8 +11,8 @@ package buildcraft.transport.gates;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.utils.StringUtils;
 import java.util.Locale;
-import net.minecraft.client.renderer.texture.IconRegister;
-import net.minecraft.util.Icon;
+import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
 
 /**
@@ -38,14 +38,14 @@ public final class GateDefinition {
 		public final int guiHeight;
 		public final int numSlots;
 		public final boolean hasParameterSlot;
-		private Icon iconBlock;
-		private Icon iconItem;
+		private IIcon iconBlock;
+		private IIcon iconItem;
 
-		public Icon getIconBlock() {
+		public IIcon getIconBlock() {
 			return iconBlock;
 		}
 
-		public Icon getIconItem() {
+		public IIcon getIconItem() {
 			return iconItem;
 		}
 
@@ -53,12 +53,12 @@ public final class GateDefinition {
 			return name().toLowerCase(Locale.ENGLISH);
 		}
 
-		public void registerBlockIcon(IconRegister iconRegister) {
+		public void registerBlockIcon(IIconRegister iconRegister) {
 			if (this != REDSTONE)
 				iconBlock = iconRegister.registerIcon("buildcraft:gates/gate_material_" + getTag());
 		}
 
-		public void registerItemIcon(IconRegister iconRegister) {
+		public void registerItemIcon(IIconRegister iconRegister) {
 			if (this != REDSTONE)
 				iconItem = iconRegister.registerIcon("buildcraft:gates/gate_material_" + getTag());
 		}
@@ -81,19 +81,19 @@ public final class GateDefinition {
 
 		AND, OR;
 		public static final GateLogic[] VALUES = values();
-		private Icon iconLit;
-		private Icon iconDark;
-		private Icon iconItem;
+		private IIcon iconLit;
+		private IIcon iconDark;
+		private IIcon iconItem;
 
-		public Icon getIconLit() {
+		public IIcon getIconLit() {
 			return iconLit;
 		}
 
-		public Icon getIconDark() {
+		public IIcon getIconDark() {
 			return iconDark;
 		}
 
-		public Icon getIconItem() {
+		public IIcon getIconItem() {
 			return iconItem;
 		}
 
@@ -101,12 +101,12 @@ public final class GateDefinition {
 			return name().toLowerCase(Locale.ENGLISH);
 		}
 
-		public void registerBlockIcon(IconRegister iconRegister) {
+		public void registerBlockIcon(IIconRegister iconRegister) {
 			iconLit = iconRegister.registerIcon("buildcraft:gates/gate_lit_" + getTag());
 			iconDark = iconRegister.registerIcon("buildcraft:gates/gate_dark_" + getTag());
 		}
 
-		public void registerItemIcon(IconRegister iconRegister) {
+		public void registerItemIcon(IIconRegister iconRegister) {
 			iconItem = iconRegister.registerIcon("buildcraft:gates/gate_logic_" + getTag());
 		}
 

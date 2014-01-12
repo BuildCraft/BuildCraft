@@ -5,7 +5,7 @@ import buildcraft.core.fluids.Tank;
 import buildcraft.core.gui.GuiBuildCraft;
 import buildcraft.core.gui.tooltips.ToolTip;
 import buildcraft.core.render.FluidRenderer;
-import net.minecraft.util.Icon;
+import net.minecraft.util.IIcon;
 import net.minecraftforge.fluids.FluidStack;
 
 /**
@@ -34,7 +34,7 @@ public class FluidGaugeWidget extends Widget {
         if (fluidStack == null || fluidStack.amount <= 0 || fluidStack.getFluid() == null)
             return;
 
-        Icon liquidIcon = FluidRenderer.getFluidTexture(fluidStack, false);
+        IIcon liquidIcon = FluidRenderer.getFluidTexture(fluidStack, false);
 
         if (liquidIcon == null)
             return;
