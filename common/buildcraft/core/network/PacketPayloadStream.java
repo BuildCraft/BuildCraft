@@ -8,6 +8,8 @@
  */
 package buildcraft.core.network;
 
+import io.netty.buffer.ByteBuf;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -25,10 +27,10 @@ public class PacketPayloadStream extends PacketPayload {
 
 	public static interface StreamWriter {
 
-		public void writeData(DataOutputStream data) throws IOException;
+		public void writeData(ByteBuf data);
 	}
 	private StreamWriter handler;
-	public DataInputStream stream;
+	public ByteBuf stream;
 
 	public PacketPayloadStream() {
 	}
@@ -38,12 +40,12 @@ public class PacketPayloadStream extends PacketPayload {
 	}
 
 	@Override
-	public void writeData(DataOutputStream data) throws IOException {
+	public void writeData(ByteBuf data) {
 		handler.writeData(data);
 	}
 
 	@Override
-	public void readData(DataInputStream data) throws IOException {
+	public void readData(ByteBuf data) {
 		stream = data;
 	}
 

@@ -14,9 +14,11 @@ import buildcraft.core.network.BuildCraftPacket;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.registry.GameRegistry;
+
 import java.io.File;
 import java.util.List;
 import java.util.Random;
+
 import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
@@ -28,7 +30,9 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
-import net.minecraft.network.packet.Packet;
+import net.minecraft.network.INetHandler;
+import net.minecraft.network.NetHandlerPlayServer;
+import net.minecraft.network.Packet;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChatMessageComponent;
 import net.minecraft.util.ChunkCoordinates;
@@ -131,26 +135,6 @@ public class CoreProxy {
 	        //GameRegistry.addShapelessRecipe(result, recipe);
 	}
 
-	public void sendToPlayers(Packet packet, World world, int x, int y, int z, int maxDistance) {
-		if (packet != null) {
-			for (int j = 0; j < world.playerEntities.size(); j++) {
-				EntityPlayerMP player = (EntityPlayerMP) world.playerEntities.get(j);
-
-				if (Math.abs(player.posX - x) <= maxDistance && Math.abs(player.posY - y) <= maxDistance && Math.abs(player.posZ - z) <= maxDistance) {
-					player.playerNetServerHandler.sendPacketToPlayer(packet);
-				}
-			}
-		}
-	}
-
-	public void sendToPlayer(EntityPlayer entityplayer, BuildCraftPacket packet) {
-		EntityPlayerMP player = (EntityPlayerMP) entityplayer;
-		player.playerNetServerHandler.sendPacketToPlayer(packet.getPacket());
-	}
-
-	public void sendToServer(Packet packet) {
-	}
-
 	public int addCustomTexture(String pathToTexture) {
 		return 0;
 	}
@@ -236,5 +220,16 @@ public class CoreProxy {
 
 	public EntityBlock newEntityBlock(World world, double i, double j, double k, double iSize, double jSize, double kSize, LaserKind laserKind) {
 		return new EntityBlock(world, i, j, k, iSize, jSize, kSize);
+	}
+	
+	/**
+	 * This function returns either the player from the handler if it's on the
+	 * server, or directly from the minecraft instance if it's the client.
+	 * 
+	 * TODO: This is a bit kludgy, probably better to separate the client and
+	 * server channels instead.
+	 */
+	public EntityPlayer getPlayerFromNetHandler (INetHandler hander) {
+		return ((NetHandlerPlayServer) hander).field_147369_b;
 	}
 }

@@ -4,9 +4,12 @@ import buildcraft.core.network.BuildCraftPacket;
 import buildcraft.core.network.PacketIds;
 import buildcraft.core.utils.EnumColor;
 import buildcraft.transport.TravelingItem;
+import io.netty.buffer.ByteBuf;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+
 import net.minecraft.util.MathHelper;
 import net.minecraftforge.common.util.ForgeDirection;
 
@@ -35,7 +38,7 @@ public class PacketPipeTransportTraveler extends BuildCraftPacket {
 	}
 
 	@Override
-	public void writeData(DataOutputStream data) throws IOException {
+	public void writeData(ByteBuf data) {
 		data.writeFloat((float) item.xCoord);
 		data.writeFloat((float) item.yCoord);
 		data.writeFloat((float) item.zCoord);
@@ -53,7 +56,7 @@ public class PacketPipeTransportTraveler extends BuildCraftPacket {
 	}
 
 	@Override
-	public void readData(DataInputStream data) throws IOException {
+	public void readData(ByteBuf data) {
 		this.itemX = data.readFloat();
 		this.itemY = data.readFloat();
 		this.itemZ = data.readFloat();

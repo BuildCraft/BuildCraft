@@ -62,8 +62,7 @@ import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 
 @Mod(name = "BuildCraft Energy", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Energy", dependencies = DefaultProps.DEPENDENCY_CORE)
-@NetworkMod(channels = {DefaultProps.NET_CHANNEL_NAME}, clientSideRequired = true, serverSideRequired = true)
-public class BuildCraftEnergy {
+public class BuildCraftEnergy extends BuildCraftMod {
 
 	public final static int ENERGY_REMOVE_BLOCK = 25;
 	public final static int ENERGY_EXTRACT_ITEM = 2;
@@ -222,7 +221,7 @@ public class BuildCraftEnergy {
 
 	@EventHandler
 	public void init(FMLInitializationEvent evt) {
-		NetworkRegistry.instance().registerGuiHandler(instance, new GuiHandler());
+		NetworkRegistry.INSTANCE.registerGuiHandler(instance, new GuiHandler());
 
 		new BptBlockEngine(engineBlock.blockID);
 

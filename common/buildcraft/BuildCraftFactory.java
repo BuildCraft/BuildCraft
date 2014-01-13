@@ -10,6 +10,7 @@ package buildcraft;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.InterModComms;
 import buildcraft.core.Version;
+import buildcraft.core.network.PacketHandler;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.ConfigUtils;
 import buildcraft.factory.BlockAutoWorkbench;
@@ -39,7 +40,9 @@ import buildcraft.factory.TileQuarry;
 import buildcraft.factory.TileRefinery;
 import buildcraft.factory.TileTank;
 import buildcraft.factory.network.PacketHandlerFactory;
+
 import com.google.common.collect.Lists;
+
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
@@ -51,7 +54,9 @@ import cpw.mods.fml.common.network.NetworkMod;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+
 import java.util.List;
+
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.item.Item;
@@ -66,8 +71,7 @@ import net.minecraftforge.common.config.Property;
 import net.minecraftforge.event.ForgeSubscribe;
 
 @Mod(name = "BuildCraft Factory", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Factory", dependencies = DefaultProps.DEPENDENCY_CORE)
-@NetworkMod(channels = {DefaultProps.NET_CHANNEL_NAME}, packetHandler = PacketHandlerFactory.class, clientSideRequired = true, serverSideRequired = true)
-public class BuildCraftFactory {
+public class BuildCraftFactory extends BuildCraftMod {
 
 	public static final int MINING_MJ_COST_PER_BLOCK = 64;
 	public static BlockQuarry quarryBlock;
@@ -127,7 +131,7 @@ public class BuildCraftFactory {
 
 	@EventHandler
 	public void load(FMLInitializationEvent evt) {
-		NetworkRegistry.instance().registerGuiHandler(instance, new GuiHandler());
+		NetworkRegistry.INSTANCE.registerGuiHandler(instance, new GuiHandler());
 
 		// EntityRegistry.registerModEntity(EntityMechanicalArm.class, "bcMechanicalArm", EntityIds.MECHANICAL_ARM, instance, 50, 1, true);
 
@@ -154,6 +158,9 @@ public class BuildCraftFactory {
 
 	@EventHandler
 	public void initialize(FMLPreInitializationEvent evt) {
+		channels = NetworkRegistry.INSTANCE.newChannel
+				(DefaultProps.NET_CHANNEL_NAME + "-FACTORY", new PacketHandlerFactory());
+		
 		ConfigUtils genCat = new ConfigUtils(BuildCraftCore.mainConfiguration, Configuration.CATEGORY_GENERAL);
 
 		allowMining = genCat.get("mining.enabled", true, "disables the recipes for automated mining machines");

@@ -1,5 +1,7 @@
 package buildcraft.core.network;
 
+import io.netty.buffer.ByteBuf;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -43,7 +45,7 @@ public class PacketTileState extends PacketCoordinates {
 	}
 
 	@Override
-	public void readData(DataInputStream data) throws IOException {
+	public void readData(ByteBuf data) {
 		super.readData(data);
 	}
 
@@ -61,7 +63,7 @@ public class PacketTileState extends PacketCoordinates {
 	}
 
 	@Override
-	public void writeData(DataOutputStream data) throws IOException {
+	public void writeData(ByteBuf data) {
 		super.writeData(data);
 		data.writeByte(stateList.size());
 		for (StateWithId stateWithId : stateList) {

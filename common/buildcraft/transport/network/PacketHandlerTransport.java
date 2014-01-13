@@ -1,115 +1,110 @@
 package buildcraft.transport.network;
 
+import buildcraft.core.network.BuildCraftChannelHandler;
+import buildcraft.core.network.BuildCraftPacket;
 import buildcraft.core.network.PacketCoordinates;
 import buildcraft.core.network.PacketIds;
 import buildcraft.core.network.PacketSlotChange;
 import buildcraft.core.network.PacketUpdate;
+import buildcraft.core.proxy.CoreProxy;
 import buildcraft.transport.PipeTransportItems;
 import buildcraft.transport.PipeTransportPower;
 import buildcraft.transport.TileGenericPipe;
 import buildcraft.transport.gui.ContainerGateInterface;
 import buildcraft.transport.pipes.PipeItemsDiamond;
 import buildcraft.transport.pipes.PipeItemsEmerald;
-import cpw.mods.fml.common.network.IPacketHandler;
-import cpw.mods.fml.common.network.Player;
+import cpw.mods.fml.common.network.NetworkRegistry;
+import io.netty.buffer.ByteBuf;
+import io.netty.channel.ChannelHandlerContext;
+
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
+
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.Container;
-import net.minecraft.network.INetworkManager;
-import net.minecraft.network.packet.Packet250CustomPayload;
+import net.minecraft.network.INetHandler;
+import net.minecraft.network.NetHandlerPlayServer;
+import net.minecraft.network.play.INetHandlerPlayServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 
-public class PacketHandlerTransport implements IPacketHandler {
+public class PacketHandlerTransport extends BuildCraftChannelHandler {
 
+	/**
+	 * TODO: A lot of this is based on the player to retrieve the world. 
+	 * Passing a dimension id would be more appropriate. More generally, it
+	 * seems like a lot of these packets could be replaced with tile-based
+	 * RPCs.
+	 */
 	@Override
-	public void onPacketData(INetworkManager manager, Packet250CustomPayload packet2, Player player) {
-		DataInputStream data = new DataInputStream(new ByteArrayInputStream(packet2.data));
+	public void decodeInto(ChannelHandlerContext ctx, ByteBuf data, BuildCraftPacket packet) {
+		super.decodeInto(ctx, data, packet);
 		try {
-			// NetClientHandler net = (NetClientHandler) network.getNetHandler();
+			INetHandler netHandler = ctx.channel().attr(NetworkRegistry.NET_HANDLER).get();
+			
+			EntityPlayer player = 
+					CoreProxy.proxy.getPlayerFromNetHandler(netHandler);
 
-			int packetID = data.read();
+			int packetID = packet.getID();
 
-			PacketUpdate packet = new PacketUpdate();
 			switch (packetID) {
 				case PacketIds.PIPE_POWER:
-					PacketPowerUpdate packetPower = new PacketPowerUpdate();
-					packetPower.readData(data);
-					onPacketPower((EntityPlayer) player, packetPower);
+					onPacketPower(player, (PacketPowerUpdate) packet);
 					break;
 				case PacketIds.PIPE_LIQUID:
-					PacketFluidUpdate packetFluid = new PacketFluidUpdate();
-					packetFluid.readData(data);
+					// action will have happened already at read time
 					break;
 				case PacketIds.PIPE_TRAVELER: {
-					PacketPipeTransportTraveler pkt = new PacketPipeTransportTraveler();
-					pkt.readData(data);
-					onPipeTravelerUpdate((EntityPlayer) player, pkt);
+					onPipeTravelerUpdate(player, (PacketPipeTransportTraveler) packet);
 					break;
 				}
 				case PacketIds.GATE_ACTIONS:
-					packet.readData(data);
-					onGateActions((EntityPlayer) player, packet);
+					onGateActions(player, (PacketUpdate) packet);
 					break;
 				case PacketIds.GATE_TRIGGERS:
-					packet.readData(data);
-					onGateTriggers((EntityPlayer) player, packet);
+					onGateTriggers(player, (PacketUpdate) packet);
 					break;
 				case PacketIds.GATE_SELECTION:
-					packet.readData(data);
-					onGateSelection((EntityPlayer) player, packet);
+					onGateSelection(player, (PacketUpdate) packet);
 					break;
 				case PacketIds.PIPE_ITEMSTACK: {
-					PacketPipeTransportItemStack pkt = new PacketPipeTransportItemStack();
-					pkt.readData(data);
+					// action will have happened already at read time
 					break;
 				}
 				case PacketIds.PIPE_GATE_EXPANSION_MAP: {
-					PacketGateExpansionMap pkt = new PacketGateExpansionMap();
-					pkt.readData(data);
+					// action will have happened already at read time
 					break;
 				}
 
 				/**
 				 * SERVER SIDE *
 				 */
-				case PacketIds.DIAMOND_PIPE_SELECT: {
-					PacketSlotChange packet1 = new PacketSlotChange();
-					packet1.readData(data);
-					onDiamondPipeSelect((EntityPlayer) player, packet1);
+				case PacketIds.DIAMOND_PIPE_SELECT: {					
+					onDiamondPipeSelect((EntityPlayer) player, (PacketSlotChange) packet);
 					break;
 				}
 
-				case PacketIds.EMERALD_PIPE_SELECT: {
-					PacketSlotChange packet1 = new PacketSlotChange();
-					packet1.readData(data);
-					onEmeraldPipeSelect((EntityPlayer) player, packet1);
+				case PacketIds.EMERALD_PIPE_SELECT: {					
+					onEmeraldPipeSelect((EntityPlayer) player, (PacketSlotChange) packet);
 					break;
 				}
 
-				case PacketIds.GATE_REQUEST_INIT:
-					PacketCoordinates packetU = new PacketCoordinates();
-					packetU.readData(data);
-					onGateInitRequest((EntityPlayer) player, packetU);
+				case PacketIds.GATE_REQUEST_INIT:					
+					onGateInitRequest((EntityPlayer) player, (PacketCoordinates) packet);
 					break;
 
 				case PacketIds.GATE_REQUEST_SELECTION:
-					PacketCoordinates packetS = new PacketCoordinates();
-					packetS.readData(data);
-					onGateSelectionRequest((EntityPlayerMP) player, packetS);
+					onGateSelectionRequest((EntityPlayer) player, (PacketCoordinates) packet);
 					break;
 
 				case PacketIds.GATE_SELECTION_CHANGE:
-					PacketUpdate packet3 = new PacketUpdate();
-					packet3.readData(data);
-					onGateSelectionChange((EntityPlayerMP) player, packet3);
+					onGateSelectionChange((EntityPlayer) player, (PacketUpdate) packet);
 					break;
 
 				case PacketIds.PIPE_ITEMSTACK_REQUEST: {
-					PacketPipeTransportItemStackRequest pkt = new PacketPipeTransportItemStackRequest(player);
-					pkt.readData(data);
+					// action will have happened already at read time
 					break;
 				}
 			}

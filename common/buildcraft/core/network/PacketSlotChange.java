@@ -1,8 +1,11 @@
 package buildcraft.core.network;
 
+import io.netty.buffer.ByteBuf;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompressedStreamTools;
 
@@ -21,7 +24,7 @@ public class PacketSlotChange extends PacketCoordinates {
 	}
 
 	@Override
-	public void writeData(DataOutputStream data) throws IOException {
+	public void writeData(ByteBuf data) {
 
 		super.writeData(data);
 
@@ -45,7 +48,7 @@ public class PacketSlotChange extends PacketCoordinates {
 	}
 
 	@Override
-	public void readData(DataInputStream data) throws IOException {
+	public void readData(ByteBuf data) {
 
 		super.readData(data);
 

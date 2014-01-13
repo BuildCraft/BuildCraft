@@ -2,41 +2,50 @@ package buildcraft.builders.network;
 
 import buildcraft.builders.TileArchitect;
 import buildcraft.builders.TileBlueprintLibrary;
+import buildcraft.core.network.BuildCraftChannelHandler;
+import buildcraft.core.network.BuildCraftPacket;
 import buildcraft.core.network.PacketIds;
 import buildcraft.core.network.PacketPayloadArrays;
 import buildcraft.core.network.PacketUpdate;
+import buildcraft.core.proxy.CoreProxy;
 import cpw.mods.fml.common.network.IPacketHandler;
+import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.network.Player;
+import io.netty.buffer.ByteBuf;
+import io.netty.channel.ChannelHandlerContext;
+
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
+
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.network.INetHandler;
 import net.minecraft.network.INetworkManager;
-import net.minecraft.network.packet.Packet250CustomPayload;
+import net.minecraft.network.Packet250CustomPayload;
 import net.minecraft.tileentity.TileEntity;
 
-public class PacketHandlerBuilders implements IPacketHandler {
+public class PacketHandlerBuilders extends BuildCraftChannelHandler {
 
 	@Override
-	public void onPacketData(INetworkManager manager, Packet250CustomPayload packet, Player player) {
+	public void decodeInto(ChannelHandlerContext ctx, ByteBuf data, BuildCraftPacket packet) {
+		super.decodeInto(ctx, data, packet);
 
-		DataInputStream data = new DataInputStream(new ByteArrayInputStream(packet.data));
 		try {
-			int packetID = data.read();
+			INetHandler netHandler = ctx.channel().attr(NetworkRegistry.NET_HANDLER).get();
+			
+			EntityPlayer player = 
+					CoreProxy.proxy.getPlayerFromNetHandler(netHandler);
+
+			int packetID = packet.getID();
+			
 			switch (packetID) {
 			case PacketIds.ARCHITECT_NAME:
-				PacketUpdate packetA = new PacketUpdate();
-				packetA.readData(data);
-				onArchitectName((EntityPlayer) player, packetA);
+				onArchitectName(player, (PacketUpdate) packet);
 				break;
 			case PacketIds.LIBRARY_ACTION:
-				PacketLibraryAction packetB = new PacketLibraryAction();
-				packetB.readData(data);
-				onLibraryAction((EntityPlayer) player, packetB);
+				onLibraryAction(player, (PacketLibraryAction) packet);
 				break;
 			case PacketIds.LIBRARY_SELECT:
-				PacketLibraryAction packetC = new PacketLibraryAction();
-				packetC.readData(data);
-				onLibrarySelect((EntityPlayer) player, packetC);
+				onLibrarySelect(player, (PacketLibraryAction) packet);
 				break;
 			}
 		} catch (Exception ex) {

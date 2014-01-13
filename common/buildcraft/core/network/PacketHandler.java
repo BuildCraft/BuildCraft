@@ -1,18 +1,20 @@
 package buildcraft.core.network;
 
+import io.netty.buffer.ByteBuf;
+import io.netty.channel.ChannelHandlerContext;
+
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
 
+import buildcraft.core.proxy.CoreProxy;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.network.INetworkManager;
-import net.minecraft.network.packet.Packet250CustomPayload;
+import net.minecraft.network.INetHandler;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
-import cpw.mods.fml.common.network.IPacketHandler;
-import cpw.mods.fml.common.network.Player;
+import cpw.mods.fml.common.network.NetworkRegistry;
 
-public class PacketHandler implements IPacketHandler {
+public class PacketHandler extends BuildCraftChannelHandler {
 
 	private void onTileUpdate(EntityPlayer player, PacketTileUpdate packet) throws IOException {
 		World world = player.worldObj;
@@ -30,23 +32,28 @@ public class PacketHandler implements IPacketHandler {
 	}
 
 	@Override
-	public void onPacketData(INetworkManager manager, Packet250CustomPayload packet, Player player) {
-		DataInputStream data = new DataInputStream(new ByteArrayInputStream(packet.data));
+	public void decodeInto(ChannelHandlerContext ctx, ByteBuf data, BuildCraftPacket packet) {
+		super.decodeInto(ctx, data, packet);
+		
 		try {
 
-			int packetID = data.read();
+			INetHandler netHandler = ctx.channel().attr(NetworkRegistry.NET_HANDLER).get();
+			
+			EntityPlayer player = 
+					CoreProxy.proxy.getPlayerFromNetHandler(netHandler);
+
+			int packetID = packet.getID();
+			
 			switch (packetID) {
 				case PacketIds.TILE_UPDATE: {
-					PacketTileUpdate pkt = new PacketTileUpdate();
-					pkt.readData(data);
-					onTileUpdate((EntityPlayer) player, pkt);
+					onTileUpdate(player, (PacketTileUpdate) packet);
 					break;
 				}
 
 				case PacketIds.STATE_UPDATE: {
-					PacketTileState pkt = new PacketTileState();
+					PacketTileState pkt = (PacketTileState) packet;
 					pkt.readData(data);
-					World world = ((EntityPlayer) player).worldObj;
+					World world = player.worldObj;
 					TileEntity tile = world.getBlockTileEntity(pkt.posX, pkt.posY, pkt.posZ);
 					if (tile instanceof ISyncedTile) {
 						pkt.applyStates(data, (ISyncedTile) tile);
@@ -55,14 +62,12 @@ public class PacketHandler implements IPacketHandler {
 				}
 
 				case PacketIds.GUI_RETURN: {
-					PacketGuiReturn pkt = new PacketGuiReturn((EntityPlayer) player);
-					pkt.readData(data);
+					// action will have happened already at read time
 					break;
 				}
 
 				case PacketIds.GUI_WIDGET: {
-					PacketGuiWidget pkt = new PacketGuiWidget();
-					pkt.readData(data);
+					// action will have happened already at read time
 					break;
 				}
 			}

@@ -14,7 +14,7 @@ import cpw.mods.fml.common.network.Player;
 import net.minecraft.network.INetworkManager;
 import net.minecraft.network.NetLoginHandler;
 import net.minecraft.network.packet.NetHandler;
-import net.minecraft.network.packet.Packet1Login;
+import net.minecraft.network.Packet1Login;
 import net.minecraft.server.MinecraftServer;
 
 /**

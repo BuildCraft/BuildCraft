@@ -1,8 +1,11 @@
 package buildcraft.core.network;
 
+import io.netty.buffer.ByteBuf;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 
@@ -19,7 +22,7 @@ public class PacketNBT extends PacketCoordinates {
 	}
 
 	@Override
-	public void writeData(DataOutputStream data) throws IOException {
+	public void writeData(ByteBuf data) {
 
 		super.writeData(data);
 
@@ -29,7 +32,7 @@ public class PacketNBT extends PacketCoordinates {
 	}
 
 	@Override
-	public void readData(DataInputStream data) throws IOException {
+	public void readData(ByteBuf data) {
 
 		super.readData(data);
 

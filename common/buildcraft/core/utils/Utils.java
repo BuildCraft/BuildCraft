@@ -25,8 +25,11 @@ import buildcraft.core.network.ISynchronizedTile;
 import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.energy.TileEngine;
+import io.netty.buffer.ByteBuf;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -396,5 +399,28 @@ public class Utils {
 			slots[k - first] = k;
 		}
 		return slots;
+	}
+	
+	public static void writeUTF (ByteBuf data, String str) {		
+		try {
+			byte [] b = str.getBytes("UTF-8");
+			data.writeInt (b.length);
+			data.writeBytes(b);
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+			data.writeInt (0);
+		}
+	}
+	
+	public static String readUTF (ByteBuf data) {		
+		try {
+			int len = data.readInt();
+			byte [] b = new byte [len];
+			data.readBytes(b);
+			return new String (b, "UTF-8");
+		} catch (UnsupportedEncodingException e) {	
+			e.printStackTrace();
+			return null;
+		}
 	}
 }

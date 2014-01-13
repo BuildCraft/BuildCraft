@@ -9,6 +9,8 @@
 package buildcraft.core.network;
 
 import buildcraft.core.utils.Utils;
+import io.netty.buffer.ByteBuf;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -71,7 +73,7 @@ public class PacketPayloadArrays extends PacketPayload {
 	}
 
 	@Override
-	public void writeData(DataOutputStream data) throws IOException {
+	public void writeData(ByteBuf data) {
 		data.writeInt(intPayload.length);
 		data.writeInt(floatPayload.length);
 		data.writeInt(stringPayload.length);
@@ -83,12 +85,12 @@ public class PacketPayloadArrays extends PacketPayload {
 			data.writeFloat(floatData);
 		}
 		for (String stringData : stringPayload) {
-			data.writeUTF(stringData);
+			Utils.writeUTF(data, stringData);
 		}
 	}
 
 	@Override
-	public void readData(DataInputStream data) throws IOException {
+	public void readData(ByteBuf data) {
 		intPayload = new int[data.readInt()];
 		floatPayload = new float[data.readInt()];
 		stringPayload = new String[data.readInt()];
@@ -100,7 +102,7 @@ public class PacketPayloadArrays extends PacketPayload {
 			floatPayload[i] = data.readFloat();
 		}
 		for (int i = 0; i < stringPayload.length; i++) {
-			stringPayload[i] = data.readUTF();
+			stringPayload[i] = Utils.readUTF(data);
 		}
 	}
 

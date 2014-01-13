@@ -10,9 +10,12 @@ package buildcraft.core.network;
 
 import buildcraft.core.gui.BuildCraftContainer;
 import cpw.mods.fml.client.FMLClientHandler;
+import io.netty.buffer.ByteBuf;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+
 import net.minecraft.client.entity.EntityClientPlayerMP;
 /**
  *
@@ -34,14 +37,14 @@ public class PacketGuiWidget extends BuildCraftPacket {
     }
 
     @Override
-    public void writeData(DataOutputStream data) throws IOException {
+    public void writeData(ByteBuf data) {
         data.writeByte(windowId);
         data.writeByte(widgetId);
         data.write(payload);
     }
 
     @Override
-    public void readData(DataInputStream data) throws IOException {
+    public void readData(ByteBuf data) {
         windowId = data.readByte();
         widgetId = data.readByte();
 

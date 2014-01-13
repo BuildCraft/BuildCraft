@@ -2,6 +2,8 @@ package buildcraft.core.network;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import io.netty.buffer.ByteBuf;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -21,9 +23,9 @@ public abstract class PacketPayload {
 		return null;
 	}
 
-	public abstract void writeData(DataOutputStream data) throws IOException;
+	public abstract void writeData(ByteBuf data);
 
-	public abstract void readData(DataInputStream data) throws IOException;
+	public abstract void readData(ByteBuf data);
 
 	public abstract Type getType();
 }

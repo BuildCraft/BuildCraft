@@ -3,11 +3,14 @@ package buildcraft.transport.network;
 import buildcraft.core.network.BuildCraftPacket;
 import buildcraft.core.network.PacketIds;
 import buildcraft.transport.TravelingItem;
+import io.netty.buffer.ByteBuf;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+
 import net.minecraft.item.ItemStack;
-import net.minecraft.network.packet.Packet;
+import net.minecraft.network.Packet;
 
 public class PacketPipeTransportItemStack extends BuildCraftPacket {
 
@@ -23,13 +26,13 @@ public class PacketPipeTransportItemStack extends BuildCraftPacket {
 	}
 
 	@Override
-	public void writeData(DataOutputStream data) throws IOException {
+	public void writeData(ByteBuf data) {
 		data.writeInt(entityId);
 		Packet.writeItemStack(stack, data);
 	}
 
 	@Override
-	public void readData(DataInputStream data) throws IOException {
+	public void readData(ByteBuf data) {
 		this.entityId = data.readInt();
 		stack = Packet.readItemStack(data);
 		TravelingItem item = TravelingItem.clientCache.get(entityId);
