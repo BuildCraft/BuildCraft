@@ -2,6 +2,7 @@ package buildcraft.silicon;
 
 import buildcraft.api.power.ILaserTarget;
 import buildcraft.BuildCraftCore;
+import buildcraft.BuildCraftSilicon;
 import buildcraft.api.gates.IAction;
 import buildcraft.api.gates.IActionReceptor;
 import buildcraft.core.IMachine;
@@ -23,9 +24,12 @@ import buildcraft.core.triggers.ActionMachineControl;
 import buildcraft.core.utils.CraftingHelper;
 import buildcraft.core.utils.StringUtils;
 import buildcraft.core.utils.Utils;
+
 import com.google.common.collect.Lists;
+
 import java.util.EnumSet;
 import java.util.List;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
@@ -46,6 +50,7 @@ import static net.minecraftforge.common.ForgeDirection.NORTH;
 import static net.minecraftforge.common.ForgeDirection.SOUTH;
 import static net.minecraftforge.common.ForgeDirection.WEST;
 import net.minecraftforge.oredict.OreDictionary;
+
 import org.bouncycastle.util.Arrays;
 
 public class TileAdvancedCraftingTable extends TileLaserTableBase implements IInventory, ILaserTarget, IMachine, IActionReceptor, ISidedInventory {
@@ -366,7 +371,7 @@ public class TileAdvancedCraftingTable extends TileLaserTableBase implements IIn
 		updateRecipe();
 		if (CoreProxy.proxy.isRenderWorld(worldObj)) {
 			PacketSlotChange packet = new PacketSlotChange(PacketIds.ADVANCED_WORKBENCH_SETSLOT, xCoord, yCoord, zCoord, slot, stack);
-			CoreProxy.proxy.sendToServer(packet.getPacket());
+			BuildCraftSilicon.instance.sendToServer(packet);
 		}
 	}
 

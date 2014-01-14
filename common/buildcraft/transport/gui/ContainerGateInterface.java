@@ -7,6 +7,7 @@
  */
 package buildcraft.transport.gui;
 
+import buildcraft.BuildCraftTransport;
 import buildcraft.api.gates.ActionManager;
 import buildcraft.api.gates.IAction;
 import buildcraft.api.gates.IOverrideDefaultTriggers;
@@ -215,7 +216,7 @@ public class ContainerGateInterface extends BuildCraftContainer {
 	}
 
 	public void sendSelectionChange(int position) {
-		CoreProxy.proxy.sendToServer(new PacketUpdate(PacketIds.GATE_SELECTION_CHANGE, pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord, getSelectionPayload(position)).getPacket());
+		BuildCraftTransport.instance.sendToServer(new PacketUpdate(PacketIds.GATE_SELECTION_CHANGE, pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord, getSelectionPayload(position)));
 	}
 
 	/**
@@ -226,12 +227,12 @@ public class ContainerGateInterface extends BuildCraftContainer {
 
 		if (!isNetInitialized && CoreProxy.proxy.isRenderWorld(pipe.container.worldObj)) {
 			isNetInitialized = true;
-			CoreProxy.proxy.sendToServer(new PacketCoordinates(PacketIds.GATE_REQUEST_INIT, pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord).getPacket());
+			BuildCraftTransport.instance.sendToServer(new PacketCoordinates(PacketIds.GATE_REQUEST_INIT, pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord));
 		}
 
 		if (!isSynchronized && CoreProxy.proxy.isRenderWorld(pipe.container.worldObj)) {
 			isSynchronized = true;
-			CoreProxy.proxy.sendToServer(new PacketCoordinates(PacketIds.GATE_REQUEST_SELECTION, pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord).getPacket());
+			BuildCraftTransport.instance.sendToServer(new PacketCoordinates(PacketIds.GATE_REQUEST_SELECTION, pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord));
 		}
 	}
 
@@ -301,7 +302,7 @@ public class ContainerGateInterface extends BuildCraftContainer {
 		PacketUpdate packet = new PacketUpdate(PacketIds.GATE_ACTIONS, pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord, payload);
 
 		// Send to player
-		CoreProxy.proxy.sendToPlayer(player, packet);
+		BuildCraftTransport.instance.sendToPlayer(player, packet);
 	}
 
 	/**
@@ -324,7 +325,7 @@ public class ContainerGateInterface extends BuildCraftContainer {
 		PacketUpdate packet = new PacketUpdate(PacketIds.GATE_TRIGGERS, pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord, payload);
 
 		// Send to player
-		CoreProxy.proxy.sendToPlayer(player, packet);
+		BuildCraftTransport.instance.sendToPlayer(player, packet);
 	}
 
 	/**
@@ -336,7 +337,7 @@ public class ContainerGateInterface extends BuildCraftContainer {
 		if (pipe == null || pipe.gate == null)
 			return;
 		for (int position = 0; position < pipe.gate.material.numSlots; position++) {
-			CoreProxy.proxy.sendToPlayer(player, new PacketUpdate(PacketIds.GATE_SELECTION, pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord, getSelectionPayload(position)));
+			BuildCraftTransport.instance.sendToPlayer(player, new PacketUpdate(PacketIds.GATE_SELECTION, pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord, getSelectionPayload(position)));
 		}
 
 		// System.out.println("Sending current selection to player");

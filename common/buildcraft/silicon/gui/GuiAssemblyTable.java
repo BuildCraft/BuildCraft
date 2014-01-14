@@ -8,6 +8,7 @@
 package buildcraft.silicon.gui;
 
 import buildcraft.BuildCraftCore;
+import buildcraft.BuildCraftSilicon;
 import buildcraft.core.CoreIconProvider;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.gui.GuiAdvancedInterface;
@@ -19,13 +20,16 @@ import buildcraft.core.utils.StringUtils;
 import buildcraft.core.recipes.AssemblyRecipeManager.AssemblyRecipe;
 import buildcraft.silicon.TileAssemblyTable;
 import buildcraft.silicon.TileAssemblyTable.SelectionMessage;
+
 import java.util.Iterator;
 import java.util.List;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+
 import org.lwjgl.opengl.GL11;
 
 public class GuiAssemblyTable extends GuiAdvancedInterface {
@@ -112,8 +116,8 @@ public class GuiAssemblyTable extends GuiAdvancedInterface {
 
 		// Request current selection from server
 		if (CoreProxy.proxy.isRenderWorld(assemblyTable.worldObj)) {
-			CoreProxy.proxy.sendToServer(new PacketCoordinates(PacketIds.SELECTION_ASSEMBLY_GET, assemblyTable.xCoord, assemblyTable.yCoord,
-					assemblyTable.zCoord).getPacket());
+			BuildCraftSilicon.instance.sendToServer(new PacketCoordinates(PacketIds.SELECTION_ASSEMBLY_GET, assemblyTable.xCoord, assemblyTable.yCoord,
+					assemblyTable.zCoord));
 		}
 	}
 
@@ -197,7 +201,7 @@ public class GuiAssemblyTable extends GuiAdvancedInterface {
 
 				PacketNBT packet = new PacketNBT(PacketIds.SELECTION_ASSEMBLY, message.getNBT(), table.xCoord, table.yCoord, table.zCoord);
 
-				CoreProxy.proxy.sendToServer(packet.getPacket());
+				BuildCraftSilicon.instance.sendToServer(packet);
 			}
 		}
 

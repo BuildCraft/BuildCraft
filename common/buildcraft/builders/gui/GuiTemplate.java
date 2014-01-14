@@ -7,6 +7,7 @@
  */
 package buildcraft.builders.gui;
 
+import buildcraft.BuildCraftBuilders;
 import buildcraft.builders.TileArchitect;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.gui.GuiBuildCraft;
@@ -16,9 +17,12 @@ import buildcraft.core.network.PacketPayloadArrays;
 import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.StringUtils;
+
 import java.util.Date;
+
 import net.minecraft.inventory.IInventory;
 import net.minecraft.util.ResourceLocation;
+
 import org.lwjgl.opengl.GL11;
 
 public class GuiTemplate extends GuiBuildCraft {
@@ -87,7 +91,7 @@ public class GuiTemplate extends GuiBuildCraft {
 			PacketPayloadArrays payload = new PacketPayloadArrays();
 			payload.intPayload = new int[]{c};
 			PacketUpdate packet = new PacketUpdate(PacketIds.ARCHITECT_NAME, template.xCoord, template.yCoord, template.zCoord, payload);
-			CoreProxy.proxy.sendToServer(packet.getPacket());
+			BuildCraftBuilders.instance.sendToServer(packet);
 		} else {
 			super.keyTyped(c, i);
 		}

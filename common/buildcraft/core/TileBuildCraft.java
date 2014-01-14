@@ -7,6 +7,7 @@
  */
 package buildcraft.core;
 
+import buildcraft.BuildCraftMod;
 import buildcraft.api.power.IPowerReceptor;
 import buildcraft.core.network.ISynchronizedTile;
 import buildcraft.core.network.PacketPayload;
@@ -16,9 +17,11 @@ import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.network.TilePacketWrapper;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -87,9 +90,9 @@ public abstract class TileBuildCraft extends TileEntity implements ISynchronized
 	public void destroy() {
 	}
 
-	public void sendNetworkUpdate() {
+	public void sendNetworkUpdate(BuildCraftMod mod) {
 		if (CoreProxy.proxy.isSimulating(worldObj)) {
-			CoreProxy.proxy.sendToPlayers(getUpdatePacket(), worldObj, xCoord, yCoord, zCoord, DefaultProps.NETWORK_UPDATE_RANGE);
+			mod.sendToPlayers(getUpdatePacket(), worldObj, xCoord, yCoord, zCoord, DefaultProps.NETWORK_UPDATE_RANGE);
 		}
 	}
 

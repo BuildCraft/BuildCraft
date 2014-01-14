@@ -1,5 +1,6 @@
 package buildcraft.silicon;
 
+import buildcraft.BuildCraftSilicon;
 import buildcraft.core.recipes.AssemblyRecipeManager;
 import buildcraft.api.gates.IAction;
 import buildcraft.core.DefaultProps;
@@ -11,10 +12,12 @@ import buildcraft.core.utils.Utils;
 import buildcraft.core.recipes.AssemblyRecipeManager.AssemblyRecipe;
 import buildcraft.core.utils.StringUtils;
 import cpw.mods.fml.common.FMLCommonHandler;
+
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
@@ -272,7 +275,7 @@ public class TileAssemblyTable extends TileLaserTableBase implements IMachine, I
 			packet.posY = yCoord;
 			packet.posZ = zCoord;
 			// FIXME: This needs to be switched over to new synch system.
-			CoreProxy.proxy.sendToPlayers(packet.getPacket(), worldObj, (int) player.posX, (int) player.posY, (int) player.posZ,
+			BuildCraftSilicon.instance.sendToPlayers(packet, worldObj, (int) player.posX, (int) player.posY, (int) player.posZ,
 					DefaultProps.NETWORK_UPDATE_RANGE);
 		}
 	}

@@ -7,14 +7,18 @@
  */
 package buildcraft.factory.gui;
 
+import buildcraft.BuildCraftFactory;
 import buildcraft.core.gui.BuildCraftContainer;
 import buildcraft.core.network.PacketIds;
 import buildcraft.core.network.PacketPayloadStream;
 import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.factory.TileRefinery;
+import io.netty.buffer.ByteBuf;
+
 import java.io.DataOutputStream;
 import java.io.IOException;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.ICrafting;
@@ -54,13 +58,12 @@ public class ContainerRefinery extends BuildCraftContainer {
 		if (CoreProxy.proxy.isRenderWorld(refinery.worldObj)) {
 			PacketPayloadStream payload = new PacketPayloadStream(new PacketPayloadStream.StreamWriter() {
 				@Override
-				public void writeData(DataOutputStream data) throws IOException {
+				public void writeData(ByteBuf data) {
 					data.writeByte(slot);
 					data.writeShort(filter != null ? filter.getID() : -1);
 				}
 			});
-			CoreProxy.proxy.sendToServer(new PacketUpdate(PacketIds.REFINERY_FILTER_SET, refinery.xCoord, refinery.yCoord, refinery.zCoord, payload)
-					.getPacket());
+			BuildCraftFactory.instance.sendToServer(new PacketUpdate(PacketIds.REFINERY_FILTER_SET, refinery.xCoord, refinery.yCoord, refinery.zCoord, payload));
 		}
 	}
 

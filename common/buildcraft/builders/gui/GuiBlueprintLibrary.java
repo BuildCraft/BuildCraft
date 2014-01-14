@@ -140,7 +140,7 @@ public class GuiBlueprintLibrary extends GuiBuildCraft {
 		} else if (deleteButton != null && button == deleteButton) {
 			packet.actionId = TileBlueprintLibrary.COMMAND_DELETE;
 		}
-		CoreProxy.proxy.sendToServer(packet.getPacket());
+		BuildCraftBuilders.instance.sendToServer(packet);
 	}
 
 	@Override
@@ -162,7 +162,7 @@ public class GuiBlueprintLibrary extends GuiBuildCraft {
 					payload.intPayload = new int[]{ySlot};
 					PacketLibraryAction packet = new PacketLibraryAction(PacketIds.LIBRARY_SELECT, library.xCoord, library.yCoord, library.zCoord);
 					packet.actionId = ySlot;
-					CoreProxy.proxy.sendToServer(packet.getPacket());
+					BuildCraftBuilders.instance.sendToServer(packet);
 				}
 			}
 		}
