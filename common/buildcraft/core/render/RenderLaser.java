@@ -46,6 +46,8 @@ public class RenderLaser extends Render {
 		GL11.glRotatef((float) laser.angleZ, 0, 1, 0);
 		GL11.glRotatef((float) laser.angleY, 0, 0, 1);
 
+		//System.out.println ("RENDER LASER: " + laser.angleZ + ", " + laser.angleY);
+
 		renderManager.renderEngine.bindTexture(laser.getTexture());
 
 		float factor = (float) (1.0 / 16.0);
