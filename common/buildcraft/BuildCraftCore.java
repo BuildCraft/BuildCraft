@@ -29,7 +29,6 @@ import buildcraft.api.core.IIconProvider;
 import buildcraft.api.gates.ActionManager;
 import buildcraft.api.recipes.BuildcraftRecipes;
 import buildcraft.core.BlockIndex;
-import buildcraft.core.BlockPingPong;
 import buildcraft.core.BlockSpring;
 import buildcraft.core.BuildCraftConfiguration;
 import buildcraft.core.CommandBuildCraft;
@@ -44,7 +43,6 @@ import buildcraft.core.ItemSpring;
 import buildcraft.core.ItemWrench;
 import buildcraft.core.SpringPopulate;
 import buildcraft.core.TickHandlerCoreClient;
-import buildcraft.core.TilePingPong;
 import buildcraft.core.Version;
 import buildcraft.core.blueprints.BptItem;
 import buildcraft.core.network.EntityIds;
@@ -105,7 +103,6 @@ public class BuildCraftCore {
 	public static final int trackedPassiveEntityId = 156;
 	public static boolean continuousCurrentModel;
 	public static Block springBlock;
-	public static Block pingPongBlock;
 	public static Item woodenGearItem;
 	public static Item stoneGearItem;
 	public static Item ironGearItem;
@@ -252,20 +249,6 @@ public class BuildCraftCore {
 			colorBlindMode = colorBlindProp.getBoolean(false);
 
 			MinecraftForge.EVENT_BUS.register(this);
-
-			// FIXME: Ping Pong is just here as a temporary demonstration for
-			// RPCs, it's aimed at being removed before release
-
-			int pingPongId = BuildCraftCore.mainConfiguration.getBlock("pingpong.id", DefaultProps.PING_PONG_ID).getInt(DefaultProps.PING_PONG_ID);
-
-			if (pingPongId > 0) {
-				pingPongBlock = new BlockPingPong (pingPongId);
-				CoreProxy.proxy.registerBlock(pingPongBlock.setUnlocalizedName("pingPongBlock"));
-				CoreProxy.proxy.addName(pingPongBlock, "Ping Pong");
-
-				CoreProxy.proxy.registerTileEntity(TilePingPong.class, "net.minecraft.src.core.TilePingPong");
-			}
-
 		} finally {
 			if (mainConfiguration.hasChanged()) {
 				mainConfiguration.save();

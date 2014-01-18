@@ -8,6 +8,9 @@ import buildcraft.builders.gui.GuiBlueprintLibrary;
 import buildcraft.builders.gui.GuiBuilder;
 import buildcraft.builders.gui.GuiFiller;
 import buildcraft.builders.gui.GuiTemplate;
+import buildcraft.builders.urbanism.ContainerUrbanist;
+import buildcraft.builders.urbanism.GuiUrbanist;
+import buildcraft.builders.urbanism.TileUrbanist;
 import buildcraft.core.GuiIds;
 import cpw.mods.fml.common.network.IGuiHandler;
 import net.minecraft.entity.player.EntityPlayer;
@@ -18,7 +21,6 @@ public class GuiHandler implements IGuiHandler {
 
 	@Override
 	public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
-
 		if (!world.blockExists(x, y, z))
 			return null;
 
@@ -45,6 +47,12 @@ public class GuiHandler implements IGuiHandler {
 			if (!(tile instanceof TileFiller))
 				return null;
 			return new GuiFiller(player.inventory, (TileFiller) tile);
+
+		case GuiIds.URBANIST:
+			if (!(tile instanceof TileUrbanist))
+				return null;
+			return new GuiUrbanist(player.inventory, (TileUrbanist) tile);
+
 
 		default:
 			return null;
@@ -81,6 +89,11 @@ public class GuiHandler implements IGuiHandler {
 			if (!(tile instanceof TileFiller))
 				return null;
 			return new ContainerFiller(player.inventory, (TileFiller) tile);
+
+		case GuiIds.URBANIST:
+			if (!(tile instanceof TileUrbanist))
+				return null;
+			return new ContainerUrbanist(player.inventory, (TileUrbanist) tile);
 
 		default:
 			return null;

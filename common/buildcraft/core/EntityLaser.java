@@ -73,9 +73,9 @@ public abstract class EntityLaser extends Entity {
 			needsUpdate = false;
 		}
 
-		//if (CoreProxy.proxy.isRenderWorld(worldObj)) {
-		//	updateDataClient();
-		//}
+		if (CoreProxy.proxy.isRenderWorld(worldObj)) {
+			updateDataClient();
+		}
 
 		boundingBox.minX = Math.min(head.x, tail.x);
 		boundingBox.minY = Math.min(head.y, tail.y);

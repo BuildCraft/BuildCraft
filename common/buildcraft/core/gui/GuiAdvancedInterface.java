@@ -18,7 +18,7 @@ public abstract class GuiAdvancedInterface extends GuiBuildCraft {
 
 	public abstract class AdvancedSlot {
 
-		final public int x, y;
+		public int x, y;
 
 		public AdvancedSlot(int x, int y) {
 			this.x = x;

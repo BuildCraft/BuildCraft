@@ -60,6 +60,9 @@ import buildcraft.builders.filler.pattern.FillerPattern;
 import buildcraft.builders.network.PacketHandlerBuilders;
 import buildcraft.builders.triggers.ActionFiller;
 import buildcraft.builders.triggers.BuildersActionProvider;
+import buildcraft.builders.urbanism.BlockUrbanist;
+import buildcraft.builders.urbanism.TileUrbanist;
+import buildcraft.builders.urbanism.UrbanistToolsIconProvider;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.InterModComms;
 import buildcraft.core.Version;
@@ -109,6 +112,7 @@ public class BuildCraftBuilders {
 	public static BlockBuilder builderBlock;
 	public static BlockArchitect architectBlock;
 	public static BlockBlueprintLibrary libraryBlock;
+	public static BlockUrbanist urbanistBlock;
 	public static ItemBlueprintTemplate templateItem;
 	public static ItemBlueprintStandard blueprintItem;
 	public static boolean fillerDestroy;
@@ -249,6 +253,7 @@ public class BuildCraftBuilders {
 		Property builderId = BuildCraftCore.mainConfiguration.getBlock("builder.id", DefaultProps.BUILDER_ID);
 		Property architectId = BuildCraftCore.mainConfiguration.getBlock("architect.id", DefaultProps.ARCHITECT_ID);
 		Property libraryId = BuildCraftCore.mainConfiguration.getBlock("blueprintLibrary.id", DefaultProps.BLUEPRINT_LIBRARY_ID);
+		Property urbanistId = BuildCraftCore.mainConfiguration.getBlock("urbanist.id", DefaultProps.URBANIST_ID);
 
 		Property fillerDestroyProp = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "filler.destroy", DefaultProps.FILLER_DESTROY);
 		fillerDestroyProp.comment = "If true, Filler will destroy blocks instead of breaking them.";
@@ -295,6 +300,11 @@ public class BuildCraftBuilders {
 		libraryBlock = new BlockBlueprintLibrary(libraryId.getInt());
 		CoreProxy.proxy.registerBlock(libraryBlock.setUnlocalizedName("libraryBlock"));
 		CoreProxy.proxy.addName(libraryBlock, "Blueprint Library");
+
+		urbanistBlock = new BlockUrbanist (urbanistId.getInt());
+		CoreProxy.proxy.registerBlock(urbanistBlock.setUnlocalizedName("pingPongBlock"));
+		CoreProxy.proxy.addName(urbanistBlock, "Ping Pong");
+		CoreProxy.proxy.registerTileEntity(TileUrbanist.class, "net.minecraft.src.builders.TileUrbanist");
 
 		GameRegistry.registerTileEntity(TileMarker.class, "Marker");
 		GameRegistry.registerTileEntity(TileFiller.class, "Filler");
@@ -428,6 +438,14 @@ public class BuildCraftBuilders {
 			for (FillerPattern pattern : FillerPattern.patterns) {
 				pattern.registerIcon(evt.map);
 			}
+		}
+	}
+
+	@ForgeSubscribe
+	@SideOnly(Side.CLIENT)
+	public void textureHook(TextureStitchEvent.Pre event) {
+		if (event.map.textureType == 1) {
+			UrbanistToolsIconProvider.INSTANCE.registerIcons(event.map);
 		}
 	}
 }
