@@ -16,7 +16,7 @@ import buildcraft.api.power.PowerHandler.Type;
 import buildcraft.builders.blueprints.Blueprint;
 import buildcraft.builders.blueprints.BlueprintBuilder;
 import buildcraft.core.Box;
-import buildcraft.core.EntityRobot;
+import buildcraft.core.EntityRobotBuilder;
 import buildcraft.core.IBuilderInventory;
 import buildcraft.core.IMachine;
 import buildcraft.core.TileBuildCraft;
@@ -40,7 +40,7 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 	public @NetworkData
 	Box box = new Box();
 	private PowerHandler powerHandler;
-	private EntityRobot builderRobot;
+	private EntityRobotBuilder builderRobot;
 	private BlueprintBuilder blueprintBuilder;
 	private ListIterator<BlueprintBuilder.SchematicBuilder> blueprintIterator;
 	private boolean builderDone = false;
@@ -152,7 +152,7 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 			return;
 
 		if (builderRobot == null) {
-			builderRobot = new EntityRobot(worldObj, box);
+			builderRobot = new EntityRobotBuilder(worldObj, box);
 			worldObj.spawnEntityInWorld(builderRobot);
 		}
 

@@ -2,11 +2,14 @@ package buildcraft.core.render;
 
 import buildcraft.api.core.Position;
 import buildcraft.core.EntityLaser;
+import buildcraft.core.LaserData;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.client.renderer.entity.Render;
+import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
+
 import org.lwjgl.opengl.GL11;
 
 public class RenderLaser extends Render {
@@ -16,7 +19,6 @@ public class RenderLaser extends Render {
 	private ModelRenderer box;
 
 	public RenderLaser() {
-
 		box = new ModelRenderer(model, 0, 0);
 		box.addBox(0, -0.5F, -0.5F, 16, 1, 1);
 		box.rotationPointX = 0;
@@ -32,7 +34,6 @@ public class RenderLaser extends Render {
 	}
 
 	private void doRender(EntityLaser laser, double x, double y, double z, float f, float f1) {
-
 		if (!laser.isVisible() || laser.getTexture() == null)
 			return;
 
@@ -43,19 +44,32 @@ public class RenderLaser extends Render {
 		Position offset = laser.renderOffset();
 		GL11.glTranslated(x + offset.x, y + offset.y, z + offset.z);
 
+		doRenderLaser(renderManager, getBox(laser), laser.data, laser.getTexture(), x, y, z, f, f1);
+
+		iterate(laser);
+
+		GL11.glPopAttrib();
+		GL11.glPopMatrix();
+	}
+
+
+	public static void doRenderLaser(RenderManager renderManager, ModelRenderer box, LaserData laser, ResourceLocation texture, double x, double y, double z, float f, float f1) {
+		if (!laser.isVisible || texture == null)
+			return;
+
+		laser.update();
+
 		GL11.glRotatef((float) laser.angleZ, 0, 1, 0);
 		GL11.glRotatef((float) laser.angleY, 0, 0, 1);
 
-		//System.out.println ("RENDER LASER: " + laser.angleZ + ", " + laser.angleY);
-
-		renderManager.renderEngine.bindTexture(laser.getTexture());
+		renderManager.renderEngine.bindTexture(texture);
 
 		float factor = (float) (1.0 / 16.0);
 
 		float lasti = 0;
 
 		for (float i = 0; i <= laser.renderSize - 1; ++i) {
-			getBox(laser).render(factor);
+			box.render(factor);
 			GL11.glTranslated(1, 0, 0);
 			lasti = i;
 		}
@@ -63,13 +77,7 @@ public class RenderLaser extends Render {
 		lasti++;
 
 		GL11.glScalef(((float) laser.renderSize - lasti), 1, 1);
-		getBox(laser).render(factor);
-
-		iterate(laser);
-
-		GL11.glPopAttrib();
-		GL11.glPopMatrix();
-
+		box.render(factor);
 	}
 
 	protected void iterate(EntityLaser laser) {

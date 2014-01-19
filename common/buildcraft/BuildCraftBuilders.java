@@ -302,8 +302,8 @@ public class BuildCraftBuilders {
 		CoreProxy.proxy.addName(libraryBlock, "Blueprint Library");
 
 		urbanistBlock = new BlockUrbanist (urbanistId.getInt());
-		CoreProxy.proxy.registerBlock(urbanistBlock.setUnlocalizedName("pingPongBlock"));
-		CoreProxy.proxy.addName(urbanistBlock, "Ping Pong");
+		CoreProxy.proxy.registerBlock(urbanistBlock.setUnlocalizedName("urbanistBlock"));
+		CoreProxy.proxy.addName(urbanistBlock, "Urbanist");
 		CoreProxy.proxy.registerTileEntity(TileUrbanist.class, "net.minecraft.src.builders.TileUrbanist");
 
 		GameRegistry.registerTileEntity(TileMarker.class, "Marker");

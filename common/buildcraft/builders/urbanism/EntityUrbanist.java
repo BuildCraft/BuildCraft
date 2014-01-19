@@ -33,7 +33,6 @@ public class EntityUrbanist extends EntityLivingBase {
 
 	@Override
 	public void onUpdate() {
-		//System.out.println ("ON UPDATE " + posX + ", " + motionX);
         Vec3 look = this.getLook(1.0F).normalize();
 
         Vec3 worldUp = worldObj.getWorldVec3Pool().getVecFromPool(0, 1, 0);
@@ -43,7 +42,6 @@ public class EntityUrbanist extends EntityLivingBase {
 		motionX = 0;
 		motionY = 0;
 		motionZ = 0;
-
 
 		if (!Keyboard.isKeyDown(Minecraft.getMinecraft().gameSettings.keyBindSneak.keyCode)) {
 			if (Keyboard.isKeyDown(Minecraft.getMinecraft().gameSettings.keyBindLeft.keyCode)) {

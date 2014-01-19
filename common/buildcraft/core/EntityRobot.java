@@ -1,268 +1,269 @@
 /**
- * Copyright (c) SpaceToad, 2011-2012 http://www.mod-buildcraft.com
+ * Copyright (c) 2011 - 2014 SpaceToad and the BuildCraft Team
+ * http://www.mod-buildcraft.com
  *
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License
  * 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
+
 package buildcraft.core;
 
-
-import buildcraft.api.core.Position;
-import buildcraft.builders.blueprints.BlueprintBuilder.SchematicBuilder;
 import buildcraft.core.proxy.CoreProxy;
-import buildcraft.core.utils.BCLog;
-import buildcraft.core.utils.BlockUtil;
+
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteArrayDataOutput;
-import cpw.mods.fml.common.registry.IEntityAdditionalSpawnData;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import net.minecraft.entity.Entity;
-import net.minecraft.nbt.NBTTagCompound;
+
+import net.minecraft.block.Block;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
+import cpw.mods.fml.common.registry.IEntityAdditionalSpawnData;
 
-public class EntityRobot extends Entity implements IEntityAdditionalSpawnData {
+public class EntityRobot extends EntityLivingBase implements IEntityAdditionalSpawnData {
 
-	private Box box;
-	private int destX, destY, destZ;
-	EntityEnergyLaser laser;
-	public LinkedList<SchematicBuilder> targets = new LinkedList<SchematicBuilder>();
-	public static int MAX_TARGETS = 20;
-	public int wait = 0;
+	protected int aroundX, aroundY, aroundZ;
 
-	public EntityRobot(World world) {
-		super(world);
-	}
+	protected float destX, destY, destZ;
 
-	public EntityRobot(World world, Box box) {
+	double dirX, dirY, dirZ;
 
-		super(world);
+	public LaserData laser = new LaserData ();
 
-		this.box = box;
-		init();
-	}
+	private boolean needsUpdate = false;
 
-	protected void init() {
+	public EntityRobot(World par1World) {
+		super(par1World);
 
-		destX = (int) box.centerX();
-		destY = (int) box.centerY();
-		destZ = (int) box.centerZ();
+		dirX = 0;
+		dirY = 0;
+		dirZ = 0;
 
 		motionX = 0;
 		motionY = 0;
 		motionZ = 0;
 
-		setLocationAndAngles(destX, destY, destZ, 0, 0);
-
-		laser = new EntityEnergyLaser(worldObj, new Position(posX, posY, posZ), new Position(posX, posY, posZ));
-		worldObj.spawnEntityInWorld(laser);
-	}
-
-	@Override
-	public void writeSpawnData(ByteArrayDataOutput data) {
-
-		if (box == null) {
-			box = new Box();
-		}
-
-		data.writeInt(box.xMin);
-		data.writeInt(box.yMin);
-		data.writeInt(box.zMin);
-		data.writeInt(box.xMax);
-		data.writeInt(box.yMax);
-		data.writeInt(box.zMax);
-	}
-
-	@Override
-	public void readSpawnData(ByteArrayDataInput data) {
-
-		box = new Box();
-		box.xMin = data.readInt();
-		box.yMin = data.readInt();
-		box.zMin = data.readInt();
-		box.xMax = data.readInt();
-		box.yMax = data.readInt();
-		box.zMax = data.readInt();
-
-		init();
+		ignoreFrustumCheck = true;
 	}
 
 	@Override
 	protected void entityInit() {
+		super.entityInit();
+
+		preventEntitySpawning = false;
+		noClip = true;
+		isImmuneToFire = true;
+
+		dataWatcher.addObject(10, Integer.valueOf(0));
+		dataWatcher.addObject(11, Integer.valueOf(0));
+		dataWatcher.addObject(12, Integer.valueOf(0));
+		dataWatcher.addObject(13, Byte.valueOf((byte) 0));
 	}
 
-	@Override
-	protected void readEntityFromNBT(NBTTagCompound nbttagcompound) {
+	protected int encodeDouble(double d) {
+		return (int) (d * 8192);
 	}
 
-	@Override
-	protected void writeEntityToNBT(NBTTagCompound nbttagcompound) {
+	protected double decodeDouble(int i) {
+		return (i / 8192D);
 	}
 
-	@Override
-	public void onUpdate() {
-		if (CoreProxy.proxy.isRenderWorld(worldObj))
-			return;
-
-		move();
-		build();
-		updateLaser();
+	protected void updateDataClient() {
+		laser.tail.x = decodeDouble(dataWatcher.getWatchableObjectInt(10));
+		laser.tail.y = decodeDouble(dataWatcher.getWatchableObjectInt(11));
+		laser.tail.z = decodeDouble(dataWatcher.getWatchableObjectInt(12));
+		laser.isVisible = (dataWatcher.getWatchableObjectByte(13) == 1);
 	}
 
-	protected void move() {
+	protected void updateDataServer() {
+		dataWatcher.updateObject(10, Integer.valueOf(encodeDouble(laser.tail.x)));
+		dataWatcher.updateObject(11, Integer.valueOf(encodeDouble(laser.tail.y)));
+		dataWatcher.updateObject(12, Integer.valueOf(encodeDouble(laser.tail.z)));
+		dataWatcher.updateObject(13, Byte.valueOf((byte) (laser.isVisible ? 1 : 0)));
+	}
 
-		setPosition(posX + motionX, posY + motionY, posZ + motionZ);
+	protected void init() {
 
-		if (reachedDesination()) {
+	}
 
-			BlockIndex newDesination = getNewDestination();
-			if (newDesination != null) {
-				setDestination(newDesination.x, newDesination.y, newDesination.z);
-			}
+	public void setLaserDestination (float x, float y, float z) {
+		laser.tail.x = x;
+		laser.tail.y = y;
+		laser.tail.z = z;
 
+		needsUpdate = true;
+	}
+
+	public void showLaser () {
+		if (laser != null) {
+			laser.isVisible = true;
+			needsUpdate = true;
 		}
-
 	}
 
-	protected BlockIndex getNewDestination() {
-
-		Box movementBoundary = new Box();
-		movementBoundary.initialize(box);
-		movementBoundary.expand(1);
-
-		Box moveArea = new Box();
-		moveArea.initialize(destX, destY, destZ, 1);
-
-		List<BlockIndex> potentialDestinations = new ArrayList<BlockIndex>();
-		for (BlockIndex blockIndex : moveArea.getBlocksInArea()) {
-
-			if (BlockUtil.isSoftBlock(worldObj, blockIndex.x, blockIndex.y, blockIndex.z) && movementBoundary.contains(blockIndex)) {
-				potentialDestinations.add(blockIndex);
-			}
+	public void hideLaser () {
+		if (laser != null) {
+			laser.isVisible = false;
+			needsUpdate = true;
 		}
-
-		if (!potentialDestinations.isEmpty()) {
-
-			int i = worldObj.rand.nextInt(potentialDestinations.size());
-			return potentialDestinations.get(i);
-		}
-
-		return null;
 	}
 
-	protected void setDestination(int x, int y, int z) {
-
+	public void setDestination(float x, float y, float z) {
 		destX = x;
 		destY = y;
 		destZ = z;
 
-		motionX = (destX - posX) / 75 * (laser.getPowerAverage() / 2 + 1);
-		motionY = (destY - posY) / 75 * (laser.getPowerAverage() / 2 + 1);
-		motionZ = (destZ - posZ) / 75 * (laser.getPowerAverage() / 2 + 1);
+		dirX = (destX - posX);
+		dirY = (destY - posY);
+		dirZ = (destZ - posZ);
+
+		double magnitude = Math.sqrt(dirX * dirX + dirY * dirY + dirZ * dirZ);
+
+		dirX /= magnitude;
+		dirY /= magnitude;
+		dirZ /= magnitude;
+	}
+
+	public void setDestinationAround(int x, int y, int z) {
+		aroundX = x;
+		aroundY = y;
+		aroundZ = z;
+
+		randomDestination();
+	}
+
+	public void randomDestination() {
+		for (int i = 0; i < 3; ++i) {
+			float testX = aroundX + rand.nextFloat() * 10F - 5F;
+			float testY = aroundY + rand.nextFloat() * 5F;
+			float testZ = aroundZ + rand.nextFloat() * 10F - 5F;
+
+			int blockId = worldObj.getBlockId((int) testX, (int) testY,
+					(int) testZ);
+
+			if (Block.blocksList[blockId] == null
+					|| Block.blocksList[blockId].isAirBlock(worldObj,
+							(int) testX, (int) testY, (int) testZ)) {
+				setDestination(testX, testY, testZ);
+
+				return;
+			}
+		}
+	}
+
+	double prevDistance = Double.MAX_VALUE;
+
+	@Override
+	public void onUpdate() {
+		if (CoreProxy.proxy.isSimulating(worldObj) && needsUpdate) {
+			updateDataServer();
+			needsUpdate = false;
+		}
+
+		if (CoreProxy.proxy.isRenderWorld(worldObj)) {
+			updateDataClient();
+		}
+
+		if (CoreProxy.proxy.isSimulating(worldObj)) {
+			double distance = getDistance(destX, destY, destZ);
+
+			if (distance >= prevDistance) {
+				randomDestination();
+			}
+
+			prevDistance = getDistance(destX, destY, destZ);
+
+			motionX = dirX / 10F;
+			motionY = dirY / 10F;
+			motionZ = dirZ / 10F;
+		}
+
+		if (laser.isVisible) {
+			boundingBox.minX = Math.min(posX, laser.tail.x);
+			boundingBox.minY = Math.min(posY, laser.tail.y);
+			boundingBox.minZ = Math.min(posZ, laser.tail.z);
+
+			boundingBox.maxX = Math.max(posX, laser.tail.x);
+			boundingBox.maxY = Math.max(posY, laser.tail.y);
+			boundingBox.maxZ = Math.max(posZ, laser.tail.z);
+
+			boundingBox.minX--;
+			boundingBox.minY--;
+			boundingBox.minZ--;
+
+			boundingBox.maxX++;
+			boundingBox.maxY++;
+			boundingBox.maxZ++;
+		} else {
+			boundingBox.minX = posX - 1;
+			boundingBox.minY = posY - 1;
+			boundingBox.minZ = posZ - 1;
+
+			boundingBox.maxX = posX + 1;
+			boundingBox.maxY = posY + 1;
+			boundingBox.maxZ = posZ + 1;
+		}
+
+		super.onUpdate();
+	}
+
+	protected void move() {
+
 	}
 
 	protected boolean reachedDesination() {
-
-		if (getDistance(destX, destY, destZ) <= .2)
-			return true;
-
-		return false;
+		return getDistance(destX, destY, destZ) <= 0.2F;
 	}
 
-	protected void build() {
 
-		updateWait();
+	@Override
+	public void writeSpawnData(ByteArrayDataOutput data) {
 
-		if (wait <= 0 && !targets.isEmpty()) {
-
-			SchematicBuilder target = targets.peek();
-			if (target.blockExists()) {
-				target.markComplete();
-				targets.pop();
-			} else if (BlockUtil.canChangeBlock(worldObj, target.getX(), target.getY(), target.getZ())) {
-				//System.out.printf("RobotChanging %d %d %d %s\n",target.x, target.y, target.z, target.mode);
-				
-				if (!worldObj.isAirBlock(target.getX(), target.getY(), target.getZ())) {
-					BlockUtil.breakBlock(worldObj, target.getX(), target.getY(), target.getZ());
-				} else {
-					targets.pop();
-					try {
-						target.build(CoreProxy.proxy.getBuildCraftPlayer(worldObj, target.getX(), target.getY() + 2, target.getZ()));
-					} catch (Throwable t) {
-						target.markComplete();
-						targets.pop();
-						// Defensive code against errors in implementers
-						t.printStackTrace();
-						BCLog.logger.throwing("EntityRobot", "update", t);
-					}
-					if (!target.isComplete()) {
-						targets.addLast(target);
-					}
-				}
-			}
-		}
-	}
-
-	public void updateWait() {
-
-		if (targets.size() > 0)
-			if (wait == 0) {
-				wait = MAX_TARGETS - targets.size() + 2;
-			} else {
-				wait--;
-			}
-	}
-
-	private void updateLaser() {
-
-		if (laser == null)
-			return;
-
-		if (targets.size() > 0) {
-
-			SchematicBuilder target = targets.getFirst();
-
-			if (target != null) {
-				laser.setPositions(new Position(posX, posY, posZ), new Position(target.getX() + 0.5, target.getY() + 0.5, target.getZ() + 0.5));
-				laser.show();
-			}
-		} else {
-			laser.hide();
-		}
-
-		laser.pushPower(((float) targets.size()) / ((float) MAX_TARGETS) * 4F);
-	}
-
-	public boolean scheduleContruction(SchematicBuilder schematic) {
-		if (!readyToBuild()) {
-			return false;
-		}
-		if (schematic != null && !schematic.blockExists()) {
-			return targets.add(schematic);
-		}
-		return false;
-	}
-
-	public boolean readyToBuild() {
-		return targets.size() < MAX_TARGETS;
-	}
-
-	public boolean done() {
-		return targets.isEmpty();
-	}
-
-	public void setBox(Box box) {
-		this.box = box;
-		setDestination((int) box.centerX(), (int) box.centerY(), (int) box.centerZ());
 	}
 
 	@Override
-	public void setDead() {
-		if (laser != null) {
-			laser.setDead();
-		}
-		super.setDead();
+	public void readSpawnData(ByteArrayDataInput data) {
+		init();
 	}
+
+	@Override
+	public ItemStack getHeldItem() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ItemStack getCurrentItemOrArmor(int i) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setCurrentItemOrArmor(int i, ItemStack itemstack) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public ItemStack[] getLastActiveItems() {
+		return new ItemStack [0];
+	}
+
+
+	@Override
+    protected void fall(float par1) {}
+
+	@Override
+    protected void updateFallState(double par1, boolean par3) {}
+
+	@Override
+	public void moveEntityWithHeading(float par1, float par2) {
+		this.setPosition(posX + motionX, posY + motionY, posZ + motionZ);
+	}
+
+	@Override
+    public boolean isOnLadder() {
+        return false;
+    }
+
 }

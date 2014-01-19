@@ -22,7 +22,7 @@ import buildcraft.api.power.PowerHandler.PowerReceiver;
 import buildcraft.core.Box;
 import buildcraft.core.CoreConstants;
 import buildcraft.core.DefaultAreaProvider;
-import buildcraft.core.EntityRobot;
+import buildcraft.core.EntityRobotBuilder;
 import buildcraft.core.IBuilderInventory;
 import buildcraft.core.IMachine;
 import buildcraft.core.TileBuildCraft;
@@ -66,7 +66,7 @@ public class TileQuarry extends TileBuildCraft implements IMachine, IPowerRecept
 	double speed = 0.03;
 	public @NetworkData
 	boolean builderDone = false;
-	public EntityRobot builder;
+	public EntityRobotBuilder builder;
 	private BlueprintBuilder blueprintBuilder;
 	private ListIterator<SchematicBuilder> blueprintIterator;
 	public EntityMechanicalArm arm;
@@ -203,7 +203,7 @@ public class TileQuarry extends TileBuildCraft implements IMachine, IPowerRecept
 			return;
 
 		if (builder == null) {
-			builder = new EntityRobot(worldObj, box);
+			builder = new EntityRobotBuilder(worldObj, box);
 			worldObj.spawnEntityInWorld(builder);
 		}
 

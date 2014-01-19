@@ -15,6 +15,7 @@ import buildcraft.core.EntityBlock;
 import buildcraft.core.EntityEnergyLaser;
 import buildcraft.core.EntityPowerLaser;
 import buildcraft.core.EntityRobot;
+import buildcraft.core.EntityRobotBuilder;
 import buildcraft.core.render.RenderEnergyLaser;
 import buildcraft.core.render.RenderEntityBlock;
 import buildcraft.core.render.RenderLaser;
@@ -26,8 +27,9 @@ import buildcraft.transport.render.TileEntityPickupFX;
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
-import java.io.File;
+
 import java.util.List;
+
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
@@ -125,6 +127,7 @@ public class CoreProxyClient extends CoreProxy {
 		RenderingRegistry.registerEntityRenderingHandler(EntityPowerLaser.class, new RenderLaser());
 		RenderingRegistry.registerEntityRenderingHandler(EntityEnergyLaser.class, new RenderEnergyLaser());
 		RenderingRegistry.registerEntityRenderingHandler(EntityRobot.class, new RenderRobot());
+		RenderingRegistry.registerEntityRenderingHandler(EntityRobotBuilder.class, new RenderRobot());
 	}
 
 	/* NETWORKING */

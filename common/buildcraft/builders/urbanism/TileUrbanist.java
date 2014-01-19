@@ -1,5 +1,7 @@
 package buildcraft.builders.urbanism;
 
+import java.util.LinkedList;
+
 import buildcraft.core.IBuilderInventory;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.network.RPC;
@@ -20,21 +22,13 @@ public class TileUrbanist extends TileBuildCraft implements IBuilderInventory {
 	double posX, posY, posZ;
 	float yaw;
 
+	LinkedList <EntityRobotUrbanism> robots = new LinkedList<EntityRobotUrbanism>();
 
-	@RPC (RPCSide.SERVER)
-	public void setBlock (int x, int y, int z) {
-		worldObj.setBlock(x, y, z, Block.brick.blockID);
-	}
-
-	@RPC (RPCSide.SERVER)
-	public void eraseBlock (int x, int y, int z) {
-		worldObj.setBlock(x, y, z, 0);
-	}
+	LinkedList <UrbanistTask> tasks = new LinkedList <UrbanistTask> ();
 
 	public void rpcEraseBlock (int x, int y, int z) {
 		RPCHandler.rpcServer(this, "eraseBlock", x, y, z);
 	}
-
 
 	public void createUrbanistEntity() {
 		if (worldObj.isRemote) {
@@ -62,15 +56,60 @@ public class TileUrbanist extends TileBuildCraft implements IBuilderInventory {
 
 				urbanist.setPositionAndRotation(posX, posY, posZ, yaw, 50);
 				urbanist.setPositionAndUpdate(posX, posY, posZ);
+
+				RPCHandler.rpcServer(this, "spawnRobot");
 			}
 		}
+	}
 
+	@Override
+	public void updateEntity() {
+		super.updateEntity();
+
+		if (tasks.size() > 0) {
+			UrbanistTask headTask = tasks.getFirst();
+
+			for (EntityRobotUrbanism robot : robots) {
+				if (robot.isAvailable()) {
+					robot.setTask(headTask);
+					tasks.removeFirst();
+					break;
+				}
+			}
+		}
+	}
+
+	@RPC (RPCSide.SERVER)
+	public void setBlock (int x, int y, int z) {
+		worldObj.setBlock(x, y, z, Block.brick.blockID);
+	}
+
+	@RPC (RPCSide.SERVER)
+	public void eraseBlock (int x, int y, int z) {
+		tasks.add(new UrbanistTaskErase(x, y, z));
+	}
+
+	@RPC (RPCSide.SERVER)
+	public void spawnRobot () {
+		if (robots.size() == 0) {
+			for (int i = 0; i < 10; ++i) {
+				EntityRobotUrbanism robot = new EntityRobotUrbanism(worldObj);
+				robot.setLocationAndAngles(xCoord, yCoord, zCoord, 0, 0);
+				robot.setDestination(xCoord, yCoord, zCoord);
+				robot.setDestinationAround(xCoord, yCoord, zCoord);
+
+				worldObj.spawnEntityInWorld(robot);
+
+				robots.add(robot);
+			}
+		}
 	}
 
 	public void destroyUrbanistEntity() {
 		Minecraft.getMinecraft().renderViewEntity = player;
 		Minecraft.getMinecraft().gameSettings.thirdPersonView = thirdPersonView;
 		worldObj.removeEntity(urbanist);
+		urbanist.setDead();
 		urbanist = null;
 	}
 
