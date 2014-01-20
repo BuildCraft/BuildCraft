@@ -44,7 +44,7 @@ public class RenderLaser extends Render {
 		Position offset = laser.renderOffset();
 		GL11.glTranslated(x + offset.x, y + offset.y, z + offset.z);
 
-		doRenderLaser(renderManager, getBox(laser), laser.data, laser.getTexture(), x, y, z, f, f1);
+		doRenderLaser(renderManager, getBox(laser), laser.data, laser.getTexture());
 
 		iterate(laser);
 
@@ -53,7 +53,7 @@ public class RenderLaser extends Render {
 	}
 
 
-	public static void doRenderLaser(RenderManager renderManager, ModelRenderer box, LaserData laser, ResourceLocation texture, double x, double y, double z, float f, float f1) {
+	public static void doRenderLaser(RenderManager renderManager, ModelRenderer box, LaserData laser, ResourceLocation texture) {
 		if (!laser.isVisible || texture == null)
 			return;
 

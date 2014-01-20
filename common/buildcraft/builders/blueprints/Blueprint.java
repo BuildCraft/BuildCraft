@@ -64,7 +64,15 @@ public class Blueprint {
 
 	}
 
-	private Blueprint(BlueprintMeta meta, int sizeX, int sizeY, int sizeZ) {
+	public Blueprint(int sizeX, int sizeY, int sizeZ) {
+		this.sizeX = sizeX;
+		this.sizeY = sizeY;
+		this.sizeZ = sizeZ;
+
+		schematics = new Schematic[sizeX][sizeY][sizeZ];
+	}
+
+	public Blueprint(BlueprintMeta meta, int sizeX, int sizeY, int sizeZ) {
 		this.meta = meta;
 
 		this.sizeX = sizeX;
@@ -198,11 +206,13 @@ public class Blueprint {
 	 */
 	public LinkedList<Schematic> getBuildList() {
 		LinkedList<Schematic> list = new LinkedList<Schematic>();
+
 		for (int y = 0; y < sizeY; y++) {
 			for (int x = 0; x < sizeX; x++) {
 				for (int z = 0; z < sizeZ; z++) {
-					if (schematics[x][y][z] != null)
+					if (schematics[x][y][z] != null) {
 						list.add(schematics[x][y][z]);
+					}
 				}
 			}
 		}

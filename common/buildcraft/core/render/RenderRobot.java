@@ -54,7 +54,7 @@ public class RenderRobot extends Render {
 			robot.laser.head.y = robot.posY;
 			robot.laser.head.z = robot.posZ;
 
-			RenderLaser.doRenderLaser(renderManager, laserBox, robot.laser, EntityLaser.LASER_TEXTURES [1], x, y, z, factor, f1);
+			RenderLaser.doRenderLaser(renderManager, laserBox, robot.laser, EntityLaser.LASER_TEXTURES [1]);
 		}
 
 		GL11.glEnable(2896 /* GL_LIGHTING */);

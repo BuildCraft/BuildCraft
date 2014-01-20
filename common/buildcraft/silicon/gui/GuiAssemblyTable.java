@@ -10,6 +10,7 @@ package buildcraft.silicon.gui;
 import buildcraft.BuildCraftCore;
 import buildcraft.core.CoreIconProvider;
 import buildcraft.core.DefaultProps;
+import buildcraft.core.gui.AdvancedSlot;
 import buildcraft.core.gui.GuiAdvancedInterface;
 import buildcraft.core.network.PacketCoordinates;
 import buildcraft.core.network.PacketIds;
@@ -19,13 +20,16 @@ import buildcraft.core.utils.StringUtils;
 import buildcraft.core.recipes.AssemblyRecipeManager.AssemblyRecipe;
 import buildcraft.silicon.TileAssemblyTable;
 import buildcraft.silicon.TileAssemblyTable.SelectionMessage;
+
 import java.util.Iterator;
 import java.util.List;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+
 import org.lwjgl.opengl.GL11;
 
 public class GuiAssemblyTable extends GuiAdvancedInterface {
@@ -78,7 +82,7 @@ public class GuiAssemblyTable extends GuiAdvancedInterface {
 		public AssemblyRecipe recipe;
 
 		public RecipeSlot(int x, int y) {
-			super(x, y);
+			super(GuiAssemblyTable.this, x, y);
 		}
 
 		@Override

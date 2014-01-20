@@ -7,12 +7,16 @@
  */
 package buildcraft.builders.urbanism;
 
+import java.util.LinkedList;
+
 import buildcraft.core.DefaultProps;
+import buildcraft.core.gui.AdvancedSlot;
 import buildcraft.core.gui.GuiAdvancedInterface;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.util.Icon;
 import net.minecraft.util.ResourceLocation;
 
+import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
 import cpw.mods.fml.relauncher.Side;
@@ -32,7 +36,7 @@ public class GuiUrbanist extends GuiAdvancedInterface {
 		UrbanistTool tool;
 
 		public ToolSlot(UrbanistTool tool) {
-			super(0, 0);
+			super(GuiUrbanist.this, 0, 0);
 
 			this.tool = tool;
 		}
@@ -76,11 +80,17 @@ public class GuiUrbanist extends GuiAdvancedInterface {
 		tools [8] = new UrbanistTool();
 		tools [9] = new UrbanistTool();
 
-		slots = new AdvancedSlot[10];
+		LinkedList <AdvancedSlot> tmpSlots = new LinkedList <AdvancedSlot> ();
 
 		for (int i = 0; i < 10; ++i) {
-			slots [i] = new ToolSlot(tools [i]);
+			tmpSlots.add(new ToolSlot(tools [i]));
 		}
+
+		for (UrbanistTool t : tools) {
+			t.createSlots(this, tmpSlots);
+		}
+
+		slots = tmpSlots.toArray(new AdvancedSlot [tmpSlots.size()]);
 	}
 
 	@Override
@@ -130,6 +140,10 @@ public class GuiUrbanist extends GuiAdvancedInterface {
 		drawBackgroundSlots();
 
 		if (selectedTool != -1) {
+			tools [selectedTool].drawSelection(this, f, x, y);
+		}
+
+		if (selectedTool != -1) {
 			mc.renderEngine.bindTexture(TOOLBAR_TEXTURE);
 			drawTexturedModalRect(cornerX + 8 + selectedTool * 18, cornerY + 8, 194, 0, 18, 18);
 		}
@@ -140,7 +154,7 @@ public class GuiUrbanist extends GuiAdvancedInterface {
 		urbanist.destroyUrbanistEntity();
 	}
 
-	private boolean interfaceClicked (int mouseX, int mouseY) {
+	private boolean onInterface (int mouseX, int mouseY) {
 		int cornerX = (width - TOOLBAR_TEXTURE_WIDTH) / 2;
 		int cornerY = height - TOOLBAR_TEXTURE_HEIGHT;
 
@@ -150,7 +164,7 @@ public class GuiUrbanist extends GuiAdvancedInterface {
 			return true;
 		}
 
-		if (selectedTool != -1 && tools [selectedTool].interfaceClicked(mouseX, mouseY)) {
+		if (selectedTool != -1 && tools [selectedTool].onInterface(mouseX, mouseY)) {
 			return true;
 		}
 
@@ -161,10 +175,10 @@ public class GuiUrbanist extends GuiAdvancedInterface {
 	protected void mouseClicked(int mouseX, int mouseY, int mouseButton) {
 		super.mouseClicked(mouseX, mouseY, mouseButton);
 
-		if (!interfaceClicked(mouseX, mouseY)) {
+		if (!onInterface(mouseX, mouseY)) {
 
 			if (selectedTool != -1) {
-				tools [selectedTool].worldClicked(this, urbanist.urbanist.mouseClick());
+				tools [selectedTool].worldClicked(this, urbanist.urbanist.rayTraceMouse());
 			}
 
 			return;
@@ -173,7 +187,18 @@ public class GuiUrbanist extends GuiAdvancedInterface {
 		int clicked = getSlotAtLocation(mouseX, mouseY);
 
 		if (clicked != -1 && clicked < 10) {
-			selectedTool = clicked;
+			if (clicked != selectedTool) {
+				if (selectedTool != -1) {
+					tools [selectedTool].hide();
+				}
+
+				selectedTool = clicked;
+				tools [selectedTool].show();
+			}
+		}
+
+		if (clicked != -1) {
+			slots [clicked].selected();
 		}
 	}
 
@@ -182,4 +207,19 @@ public class GuiUrbanist extends GuiAdvancedInterface {
         return false;
     }
 
+	@Override
+	public void handleMouseInput() {
+		super.handleMouseInput();
+
+		int x = Mouse.getEventX() * this.width / this.mc.displayWidth;
+	    int y = this.height - Mouse.getEventY() * this.height / this.mc.displayHeight - 1;
+
+	    if (onInterface(x, x)) {
+			return;
+		}
+
+		if (selectedTool != -1) {
+			tools [selectedTool].worldMoved(this, urbanist.urbanist.rayTraceMouse());
+		}
+	}
 }

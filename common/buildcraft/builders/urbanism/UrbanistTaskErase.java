@@ -8,7 +8,9 @@ public class UrbanistTaskErase extends UrbanistTask {
 	boolean isDone = false;
 	SafeTimeTracker tracker = null;
 
-	public UrbanistTaskErase (int x, int y, int z) {
+	public UrbanistTaskErase (TileUrbanist urbanist, int x, int y, int z) {
+		super (urbanist);
+
 		this.x = x;
 		this.y = y;
 		this.z = z;

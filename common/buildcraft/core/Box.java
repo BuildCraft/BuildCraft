@@ -51,12 +51,30 @@ public class Box implements IBox {
 
 	public void initialize(int xMin, int yMin, int zMin, int xMax, int yMax, int zMax) {
 
-		this.xMin = xMin;
-		this.yMin = yMin;
-		this.zMin = zMin;
-		this.xMax = xMax;
-		this.yMax = yMax;
-		this.zMax = zMax;
+		if (xMin < xMax) {
+			this.xMin = xMin;
+			this.xMax = xMax;
+		} else {
+			this.xMin = xMax;
+			this.xMax = xMin;
+		}
+
+		if (yMin < yMax) {
+			this.yMin = yMin;
+			this.yMax = yMax;
+		} else {
+			this.yMin = yMax;
+			this.yMax = yMin;
+		}
+
+		if (zMin < zMax) {
+			this.zMin = zMin;
+			this.zMax = zMax;
+		} else {
+			this.zMin = zMax;
+			this.zMax = zMin;
+		}
+
 		initialized = !(xMin == Integer.MAX_VALUE || yMin == Integer.MAX_VALUE || zMin == Integer.MAX_VALUE || xMax == Integer.MAX_VALUE
 				|| yMax == Integer.MAX_VALUE || zMax == Integer.MAX_VALUE);
 	}
@@ -226,7 +244,7 @@ public class Box implements IBox {
 
 	public void writeToStream(DataOutputStream stream) throws IOException {
 		stream.writeBoolean(initialized);
-		
+
 		stream.writeInt(xMin);
 		stream.writeInt(yMin);
 		stream.writeInt(zMin);
@@ -238,7 +256,7 @@ public class Box implements IBox {
 
 	public void readFromStream(DataInputStream stream) throws IOException {
 		initialized = stream.readBoolean();
-		
+
 		xMin = stream.readInt();
 		yMin = stream.readInt();
 		zMin = stream.readInt();

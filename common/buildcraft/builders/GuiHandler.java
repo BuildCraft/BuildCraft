@@ -12,6 +12,7 @@ import buildcraft.builders.urbanism.ContainerUrbanist;
 import buildcraft.builders.urbanism.GuiUrbanist;
 import buildcraft.builders.urbanism.TileUrbanist;
 import buildcraft.core.GuiIds;
+import buildcraft.core.proxy.CoreProxy;
 import cpw.mods.fml.common.network.IGuiHandler;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
@@ -91,6 +92,7 @@ public class GuiHandler implements IGuiHandler {
 			return new ContainerFiller(player.inventory, (TileFiller) tile);
 
 		case GuiIds.URBANIST:
+			System.out.println ("CREATE U FROM SERVER: " + CoreProxy.proxy.isSimulating(tile.worldObj));
 			if (!(tile instanceof TileUrbanist))
 				return null;
 			return new ContainerUrbanist(player.inventory, (TileUrbanist) tile);

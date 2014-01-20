@@ -85,47 +85,6 @@ public class EntityUrbanist extends EntityLivingBase {
 		super.onUpdate();
 	}
 
-	public MovingObjectPosition mouseClick() {
-		return rayTraceMouse();
-
-		/*
-		if (pos != null) {
-			int x = pos.blockX;
-			int y = pos.blockY;
-			int z = pos.blockZ;
-
-			ForgeDirection dir = ForgeDirection.UNKNOWN;
-
-			switch (pos.sideHit) {
-			case (0):
-				dir = ForgeDirection.DOWN;
-				break;
-			case (1):
-				dir = ForgeDirection.UP;
-				break;
-			case (2):
-				dir = ForgeDirection.NORTH;
-				break;
-			case (3):
-				dir = ForgeDirection.SOUTH;
-				break;
-			case (4):
-				dir = ForgeDirection.WEST;
-				break;
-			case (5):
-				dir = ForgeDirection.EAST;
-				break;
-
-			}
-
-			x += dir.offsetX;
-			y += dir.offsetY;
-			z += dir.offsetZ;
-
-			RPCHandler.rpcServer(tile, "setBlock", x, y, z);
-		}*/
-	}
-
 	@Override
 	public ItemStack getHeldItem() {
 		return null;

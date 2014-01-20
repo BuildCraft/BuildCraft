@@ -36,6 +36,7 @@ import buildcraft.core.CommandBuildCraft;
 import buildcraft.core.CoreIconProvider;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.EntityEnergyLaser;
+import buildcraft.core.EntityFrame;
 import buildcraft.core.EntityPowerLaser;
 import buildcraft.core.EntityRobot;
 import buildcraft.core.EntityRobotBuilder;
@@ -277,6 +278,7 @@ public class BuildCraftCore {
 		EntityRegistry.registerModEntity(EntityRobotUrbanism.class, "bcRobotUrbanism", EntityIds.ROBOT_URBANISM, instance, 50, 1, true);
 		EntityRegistry.registerModEntity(EntityPowerLaser.class, "bcLaser", EntityIds.LASER, instance, 50, 1, true);
 		EntityRegistry.registerModEntity(EntityEnergyLaser.class, "bcEnergyLaser", EntityIds.ENERGY_LASER, instance, 50, 1, true);
+		EntityRegistry.registerModEntity(EntityFrame.class, "bcFrame", EntityIds.FRAME, instance, 50, 1, true);
 		EntityList.classToStringMapping.remove(EntityRobotBuilder.class);
 		EntityList.classToStringMapping.remove(EntityPowerLaser.class);
 		EntityList.classToStringMapping.remove(EntityEnergyLaser.class);

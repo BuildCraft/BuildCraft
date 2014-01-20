@@ -2,7 +2,7 @@ package buildcraft.core.gui;
 
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Icon;
@@ -16,71 +16,12 @@ import buildcraft.core.render.FluidRenderer;
 
 public abstract class GuiAdvancedInterface extends GuiBuildCraft {
 
-	public abstract class AdvancedSlot {
-
-		public int x, y;
-
-		public AdvancedSlot(int x, int y) {
-			this.x = x;
-			this.y = y;
-		}
-
-		public String getDescription() {
-			if (getItemStack() != null)
-				return getItemStack().getItem().getItemDisplayName(getItemStack());
-			else
-				return "";
-		}
-
-		public Icon getIcon() {
-			return null;
-		}
-
-		public ResourceLocation getTexture() {
-			return TextureMap.locationItemsTexture;
-		}
-
-		public ItemStack getItemStack() {
-			return null;
-		}
-
-		public boolean isDefined() {
-			return true;
-		}
-
-		public void drawSprite(int cornerX, int cornerY) {
-			if (!isDefined())
-				return;
-
-			if (getItemStack() != null) {
-				drawStack(getItemStack());
-			} else if (getIcon() != null) {
-				mc.renderEngine.bindTexture(getTexture());
-				//System.out.printf("Drawing advanced sprite %s (%d,%d) at %d %d\n", getIcon().getIconName(), getIcon().getOriginX(),getIcon().getOriginY(),cornerX + x, cornerY + y);
-				drawTexturedModelRectFromIcon(cornerX + x, cornerY + y, getIcon(), 16, 16);
-			}
-
-		}
-
-		public void drawStack(ItemStack item) {
-			if (item != null) {
-				int cornerX = (width - xSize) / 2;
-				int cornerY = (height - ySize) / 2;
-
-				itemRenderer.zLevel = 200F;
-				itemRenderer.renderItemAndEffectIntoGUI(fontRenderer, mc.renderEngine, item, cornerX + x, cornerY + y);
-				itemRenderer.renderItemOverlayIntoGUI(fontRenderer, mc.renderEngine, item, cornerX + x, cornerY + y);
-				itemRenderer.zLevel = 0.0F;
-			}
-		}
-	}
-
 	public class ItemSlot extends AdvancedSlot {
 
 		public ItemStack stack;
 
 		public ItemSlot(int x, int y) {
-			super(x, y);
+			super(GuiAdvancedInterface.this, x, y);
 		}
 
 		@Override
@@ -99,7 +40,7 @@ public abstract class GuiAdvancedInterface extends GuiBuildCraft {
 		private int slot;
 
 		public IInventorySlot(int x, int y, IInventory tile, int slot) {
-			super(x, y);
+			super(GuiAdvancedInterface.this, x, y);
 			this.tile = tile;
 			this.slot = slot;
 		}
@@ -182,7 +123,7 @@ public abstract class GuiAdvancedInterface extends GuiBuildCraft {
 		public int colorRenderCache;
 
 		public FluidSlot(int x, int y) {
-			super(x, y);
+			super(GuiAdvancedInterface.this, x, y);
 		}
 
 		@Override
@@ -203,4 +144,16 @@ public abstract class GuiAdvancedInterface extends GuiBuildCraft {
 			return FluidRenderer.getFluidSheet(fluid);
 		}
 	}
+
+	public static RenderItem getItemRenderer () {
+		return itemRenderer;
+	}
+
+    public int getXSize () {
+    	return xSize;
+    }
+
+    public int getYSize () {
+    	return ySize;
+    }
 }

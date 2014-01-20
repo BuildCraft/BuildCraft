@@ -10,6 +10,7 @@ package buildcraft.factory.gui;
 import buildcraft.core.recipes.RefineryRecipeManager;
 import buildcraft.core.recipes.RefineryRecipeManager.RefineryRecipe;
 import buildcraft.core.DefaultProps;
+import buildcraft.core.gui.AdvancedSlot;
 import buildcraft.core.gui.GuiAdvancedInterface;
 import buildcraft.core.utils.StringUtils;
 import buildcraft.factory.TileRefinery;
@@ -18,6 +19,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
+
 import org.lwjgl.opengl.GL11;
 
 public class GuiRefinery extends GuiAdvancedInterface {

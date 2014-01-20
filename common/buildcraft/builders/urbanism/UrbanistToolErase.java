@@ -4,6 +4,7 @@ import net.minecraft.util.Icon;
 import net.minecraft.util.MovingObjectPosition;
 
 class UrbanistToolErase extends UrbanistTool {
+
 	@Override
 	public Icon getIcon() {
 		return UrbanistToolsIconProvider.INSTANCE.getIcon(UrbanistToolsIconProvider.Tool_Block_Erase);

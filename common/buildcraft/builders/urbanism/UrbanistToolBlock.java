@@ -33,7 +33,7 @@ class UrbanistToolBlock extends UrbanistTool {
 	}
 
 	@Override
-	public boolean interfaceClicked (int mouseX, int mouseY) {
+	public boolean onInterface (int mouseX, int mouseY) {
 		if (mouseX < GUI_TEXTURE_WIDTH && mouseY < GUI_TEXTURE_HEIGHT) {
 			return true;
 		}

@@ -10,18 +10,22 @@ package buildcraft.transport.gui;
 import buildcraft.api.gates.IAction;
 import buildcraft.api.gates.ITrigger;
 import buildcraft.api.gates.ITriggerParameter;
+import buildcraft.core.gui.AdvancedSlot;
 import buildcraft.core.gui.GuiAdvancedInterface;
 import buildcraft.core.triggers.BCAction;
 import buildcraft.core.utils.StringUtils;
 import buildcraft.transport.Pipe;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+
 import java.util.Iterator;
+
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Icon;
 import net.minecraft.util.ResourceLocation;
+
 import org.lwjgl.opengl.GL11;
 
 public class GuiGateInterface extends GuiAdvancedInterface {
@@ -37,7 +41,7 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 		int slot;
 
 		public TriggerSlot(int x, int y, Pipe pipe, int slot) {
-			super(x, y);
+			super(GuiGateInterface.this, x, y);
 
 			this.pipe = pipe;
 			this.slot = slot;
@@ -78,7 +82,7 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 		int slot;
 
 		public ActionSlot(int x, int y, Pipe pipe, int slot) {
-			super(x, y);
+			super(GuiGateInterface.this, x, y);
 
 			this.pipe = pipe;
 			this.slot = slot;
@@ -130,7 +134,7 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 		int slot;
 
 		public TriggerParameterSlot(int x, int y, Pipe pipe, int slot) {
-			super(x, y);
+			super(GuiGateInterface.this, x, y);
 
 			this.pipe = pipe;
 			this.slot = slot;

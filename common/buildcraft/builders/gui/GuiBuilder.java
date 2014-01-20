@@ -10,12 +10,16 @@ package buildcraft.builders.gui;
 import buildcraft.builders.TileBuilder;
 import buildcraft.builders.blueprints.Blueprint;
 import buildcraft.core.DefaultProps;
+import buildcraft.core.gui.AdvancedSlot;
 import buildcraft.core.gui.GuiAdvancedInterface;
 import buildcraft.core.utils.StringUtils;
+
 import java.util.Collection;
+
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+
 import org.lwjgl.opengl.GL11;
 
 public class GuiBuilder extends GuiAdvancedInterface {

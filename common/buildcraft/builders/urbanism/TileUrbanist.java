@@ -2,6 +2,8 @@ package buildcraft.builders.urbanism;
 
 import java.util.LinkedList;
 
+import buildcraft.core.Box;
+import buildcraft.core.EntityFrame;
 import buildcraft.core.IBuilderInventory;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.network.RPC;
@@ -22,13 +24,12 @@ public class TileUrbanist extends TileBuildCraft implements IBuilderInventory {
 	double posX, posY, posZ;
 	float yaw;
 
+	int p2x = 0, p2y = 0, p2z = 0;
+	EntityFrame frame;
+
 	LinkedList <EntityRobotUrbanism> robots = new LinkedList<EntityRobotUrbanism>();
 
 	LinkedList <UrbanistTask> tasks = new LinkedList <UrbanistTask> ();
-
-	public void rpcEraseBlock (int x, int y, int z) {
-		RPCHandler.rpcServer(this, "eraseBlock", x, y, z);
-	}
 
 	public void createUrbanistEntity() {
 		if (worldObj.isRemote) {
@@ -86,7 +87,56 @@ public class TileUrbanist extends TileBuildCraft implements IBuilderInventory {
 
 	@RPC (RPCSide.SERVER)
 	public void eraseBlock (int x, int y, int z) {
-		tasks.add(new UrbanistTaskErase(x, y, z));
+		tasks.add(new UrbanistTaskErase(this, x, y, z));
+	}
+
+	public void rpcEraseBlock (int x, int y, int z) {
+		RPCHandler.rpcServer(this, "eraseBlock", x, y, z);
+	}
+
+	@RPC (RPCSide.SERVER)
+	public void createFrame (int x, int y, int z) {
+		if (frame == null) {
+			frame = new EntityFrame(worldObj, x + 0.5F, y + 0.5F, z + 0.5F, 1, 1, 1);
+			worldObj.spawnEntityInWorld(frame);
+		}
+	}
+
+	public void rpcCreateFrame (int x, int y, int z) {
+		p2x = x;
+		p2y = y;
+		p2z = z;
+
+		RPCHandler.rpcServer(this, "createFrame", x, y, z);
+	}
+
+	@RPC (RPCSide.SERVER)
+	public void moveFrame (int x, int y, int z) {
+		if (frame != null) {
+			frame.xSize = x - frame.posX + 0.5F;
+			frame.ySize = y - frame.posY + 0.5F;
+			frame.zSize = z - frame.posZ + 0.5F;
+			frame.updateData();
+		}
+	}
+
+	public void rpcMoveFrame (int x, int y, int z) {
+		if (p2x != x || p2y != y || p2z != z) {
+			p2x = x;
+			p2y = y;
+			p2z = z;
+
+			RPCHandler.rpcServer(this, "moveFrame", x, y, z);
+		}
+	}
+
+	@RPC (RPCSide.SERVER)
+	public void startFiller (String fillerTag, Box box) {
+
+	}
+
+	public void rpcstartFiller (String fillerTag, Box box) {
+		RPCHandler.rpcServer(this, "startFiller", fillerTag, box);
 	}
 
 	@RPC (RPCSide.SERVER)
