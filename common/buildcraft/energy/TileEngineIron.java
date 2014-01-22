@@ -147,7 +147,7 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
 
 			lastPowered = true;
 
-			if (burnTime > 0 || fuel.amount > 0) {
+			if (burnTime > 0 || (fuel != null && fuel.amount > 0)) {
 				if (burnTime > 0) {
 					burnTime--;
 				}
