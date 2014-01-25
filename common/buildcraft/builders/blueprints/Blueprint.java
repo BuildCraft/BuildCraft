@@ -40,6 +40,10 @@ public class Blueprint {
 	@NetworkData
 	public Schematic[][][] schematics;
 
+	// TODO: Save this somewhere, this is the sequence in which blocks are
+	// ordered to be build
+	public ArrayList<Schematic> schematicSequence = new ArrayList<Schematic>();
+
 	@NetworkData
 	public int sizeX, sizeY, sizeZ;
 
@@ -135,11 +139,12 @@ public class Blueprint {
 		meta.setCreator(creator);
 	}
 
-	private void setSchematic(int x, int y, int z, Schematic schematic) {
+	public void setSchematic(int x, int y, int z, Schematic schematic) {
 		schematic.x = x;
 		schematic.y = y;
 		schematic.z = z;
 		schematics[x][y][z] = schematic;
+		schematicSequence.add(schematic);
 	}
 
 	public void setSchematic(int x, int y, int z, World world, Block block) {

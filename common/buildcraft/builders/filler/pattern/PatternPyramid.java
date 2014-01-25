@@ -8,8 +8,14 @@
 package buildcraft.builders.filler.pattern;
 
 import buildcraft.api.core.IBox;
+import buildcraft.builders.blueprints.Blueprint;
+import buildcraft.builders.blueprints.BlueprintBuilder;
+import buildcraft.builders.blueprints.MaskSchematic;
+import buildcraft.core.Box;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
+import net.minecraftforge.common.ForgeDirection;
 
 public class PatternPyramid extends FillerPattern {
 
@@ -56,5 +62,52 @@ public class PatternPyramid extends FillerPattern {
 		}
 
 		return true;
+	}
+
+	@Override
+	public BlueprintBuilder getBlueprint (Box box, World world) {
+		int xMin = (int) box.pMin().x;
+		int yMin = (int) box.pMin().y;
+		int zMin = (int) box.pMin().z;
+
+		int xMax = (int) box.pMax().x;
+		int yMax = (int) box.pMax().y;
+		int zMax = (int) box.pMax().z;
+
+		Blueprint bpt = new Blueprint(xMax - xMin + 1, yMax - yMin + 1, zMax - zMin + 1);
+
+		int xSize = xMax - xMin + 1;
+		int zSize = zMax - zMin + 1;
+
+		int step = 0;
+		int height;
+
+		int stepY = 1;
+
+		//if (tile.yCoord <= yMin) {
+		//	stepY = 1;
+		//} else {
+		//	stepY = -1;
+		//}
+
+		if (stepY == 1) {
+			height = yMin;
+		} else {
+			height = yMax;
+		}
+
+		while (step <= xSize / 2 && step <= zSize / 2 && height >= yMin && height <= yMax) {
+			for (int x = xMin + step; x <= xMax - step; ++x) {
+				for (int z = zMin + step; z <= zMax - step; ++z) {
+					bpt.setSchematic(x - xMin, height - yMin, z - zMin, new MaskSchematic(true));
+				}
+			}
+
+			step++;
+			height += stepY;
+		}
+
+		return new BlueprintBuilder(bpt, world, box.xMin, box.yMin, box.zMin,
+				ForgeDirection.NORTH);
 	}
 }

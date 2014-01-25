@@ -640,7 +640,7 @@ public class TileQuarry extends TileBuildCraft implements IMachine, IPowerRecept
 			blueprint.setSchematic(worldObj, blueprint.sizeX - 1, h, blueprint.sizeZ - 1, BuildCraftFactory.frameBlock.blockID, 0);
 		}
 
-		blueprintBuilder = new BlueprintBuilder(blueprint, worldObj, box.xMin, yCoord, box.zMin, ForgeDirection.NORTH, null);
+		blueprintBuilder = new BlueprintBuilder(blueprint, worldObj, box.xMin, yCoord, box.zMin, ForgeDirection.NORTH);
 		blueprintIterator = blueprintBuilder.getBuilders().listIterator();
 	}
 

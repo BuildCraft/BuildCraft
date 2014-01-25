@@ -42,11 +42,11 @@ class UrbanistToolArea extends UrbanistTool {
 		} else if (step == 2) {
 			step = 0;
 
-			areaSet (startX, startY, startZ, x, y, z);
+			areaSet (gui, startX, startY, startZ, x, y, z);
 		}
 	}
 
-	public void areaSet (int x1, int y1, int z1, int x2, int y2, int z2) {
+	public void areaSet (GuiUrbanist urbanist, int x1, int y1, int z1, int x2, int y2, int z2) {
 
 	}
 
@@ -59,8 +59,6 @@ class UrbanistToolArea extends UrbanistTool {
 			z = pos.blockZ;
 		} else if (step == 2) {
 			float ydiff = (float) Mouse.getY() / (float) Minecraft.getMinecraft().displayHeight;
-
-			System.out.println (ydiff);
 
 			y = (int) (startY + (ydiff - baseY) * 50);
 

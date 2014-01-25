@@ -109,7 +109,7 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 				case EAST:
 					blueprintOrientation = blueprintOrientation.getRotation(DOWN);
 			}
-			blueprintBuilder = new BlueprintBuilder(blueprint, worldObj, xCoord, yCoord, zCoord, blueprintOrientation, invStock);
+			blueprintBuilder = new BlueprintBuilder(blueprint, worldObj, xCoord, yCoord, zCoord, blueprintOrientation);
 			blueprintIterator = blueprintBuilder.getBuilders().listIterator();
 			box.initialize(blueprintBuilder);
 			box.reorder();

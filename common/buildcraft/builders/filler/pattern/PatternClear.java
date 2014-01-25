@@ -8,8 +8,14 @@
 package buildcraft.builders.filler.pattern;
 
 import buildcraft.api.core.IBox;
+import buildcraft.builders.blueprints.Blueprint;
+import buildcraft.builders.blueprints.BlueprintBuilder;
+import buildcraft.builders.blueprints.MaskSchematic;
+import buildcraft.core.Box;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
+import net.minecraftforge.common.ForgeDirection;
 
 public class PatternClear extends FillerPattern {
 
@@ -28,5 +34,31 @@ public class PatternClear extends FillerPattern {
 		int zMax = (int) box.pMax().z;
 
 		return !empty(xMin, yMin, zMin, xMax, yMax, zMax, tile.worldObj);
+	}
+
+	@Override
+	public BlueprintBuilder getBlueprint (Box box, World world) {
+		int xMin = (int) box.pMin().x;
+		int yMin = (int) box.pMin().y;
+		int zMin = (int) box.pMin().z;
+
+		int xMax = (int) box.pMax().x;
+		int yMax = (int) box.pMax().y;
+		int zMax = (int) box.pMax().z;
+
+		Blueprint bpt = new Blueprint(xMax - xMin + 1, yMax - yMin + 1, zMax - zMin + 1);
+
+		System.out.println ("MAX = " + yMax + ", MIN = " + yMin);
+
+		for (int y = yMax; y >= yMin; --y) {
+			for (int x = xMax; x >= xMin; --x) {
+				for (int z = zMax; z >= zMin; --z) {
+					bpt.setSchematic(x - xMin, y - yMin, z - zMin, new MaskSchematic(false));
+				}
+			}
+		}
+
+		return new BlueprintBuilder(bpt, world, box.xMin, box.yMin, box.zMin,
+				ForgeDirection.NORTH);
 	}
 }

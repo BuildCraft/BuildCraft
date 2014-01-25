@@ -20,19 +20,24 @@ import net.minecraft.world.World;
 
 public class EntityFrame extends Entity {
 
-	public static final ResourceLocation RED_LASER_TEXTURE = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_ENTITIES + "/laser_1.png");
-	public static final ResourceLocation STRIPES_TEXTURE = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_ENTITIES + "/stripes.png");
+	private static final ResourceLocation RED_LASER_TEXTURE = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_ENTITIES + "/laser_1.png");
+	private static final ResourceLocation STRIPES_TEXTURE = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_ENTITIES + "/stripes.png");
+
+	public enum Kind {
+		RED_LASER,
+		STRIPES
+	}
 
 	@SideOnly(Side.CLIENT)
 	public Icon texture;
+
+	public Kind currentKind = Kind.RED_LASER;
 
 	public double xSize = 0, ySize = 0, zSize = 0;
 
 	public LinkedList<LaserData> lasers = new LinkedList<LaserData>();
 
 	boolean needsUpdate = true;
-
-	public ResourceLocation currentTexLocation = RED_LASER_TEXTURE;
 
 	public EntityFrame(World world) {
 		super (world);
@@ -55,6 +60,13 @@ public class EntityFrame extends Entity {
 		updateData();
 	}
 
+	public EntityFrame(World world, Box box) {
+		this(world, box.xMin + 0.5F, box.yMin + 0.5F, box.zMin + 0.5F, box
+				.sizeX() - 0.5F, box.sizeY() - 0.5F, box.sizeZ() - 0.5F);
+
+		updateData();
+	}
+
 	@Override
 	protected void entityInit() {
 		preventEntitySpawning = false;
@@ -65,17 +77,20 @@ public class EntityFrame extends Entity {
 		dataWatcher.addObject(8, Float.valueOf(0));
 		dataWatcher.addObject(9, Float.valueOf(0));
 		dataWatcher.addObject(10, Float.valueOf(0));
+		dataWatcher.addObject(11, Integer.valueOf(0));
 	}
 
 	protected void updateDataClient() {
 		float nxSize = dataWatcher.getWatchableObjectFloat(8);
 		float nySize = dataWatcher.getWatchableObjectFloat(9);
 		float nzSize = dataWatcher.getWatchableObjectFloat(10);
+		int nKind = dataWatcher.getWatchableObjectInt(11);
 
-		if (nxSize != xSize || nySize != ySize || nzSize != zSize) {
+		if (nxSize != xSize || nySize != ySize || nzSize != zSize || nKind != currentKind.ordinal()) {
 			xSize = nxSize;
 			ySize = nySize;
 			zSize = nzSize;
+			currentKind = Kind.values()[nKind];
 
 			updateData();
 		}
@@ -85,6 +100,7 @@ public class EntityFrame extends Entity {
 		dataWatcher.updateObject(8, Float.valueOf((float) xSize));
 		dataWatcher.updateObject(9, Float.valueOf((float) ySize));
 		dataWatcher.updateObject(10, Float.valueOf((float) zSize));
+		dataWatcher.updateObject(11, currentKind.ordinal());
 	}
 
 	public void updateData() {
@@ -174,5 +190,21 @@ public class EntityFrame extends Entity {
 		data.setDouble("xSize", xSize);
 		data.setDouble("ySize", ySize);
 		data.setDouble("zSize", zSize);
+	}
+
+	public void setKind (Kind kind) {
+		currentKind = kind;
+		needsUpdate = true;
+	}
+
+	public ResourceLocation getTexture () {
+		switch (currentKind) {
+		case RED_LASER:
+			return RED_LASER_TEXTURE;
+		case STRIPES:
+			return STRIPES_TEXTURE;
+		}
+
+		return null;
 	}
 }

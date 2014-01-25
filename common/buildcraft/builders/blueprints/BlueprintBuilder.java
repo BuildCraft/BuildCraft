@@ -1,7 +1,7 @@
-/*
- * Copyright (c) SpaceToad, 2011-2012
+/**
+ * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- * 
+ *
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -10,16 +10,12 @@ package buildcraft.builders.blueprints;
 
 import buildcraft.api.builder.BlockHandler;
 import buildcraft.api.core.IAreaProvider;
-import buildcraft.builders.blueprints.BlueprintBuilder.SchematicBuilder;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.IInventory;
+
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
-import static net.minecraftforge.common.ForgeDirection.EAST;
 
 /**
  *
@@ -31,24 +27,21 @@ public class BlueprintBuilder implements IAreaProvider {
 	public final ForgeDirection orientation;
 	public final World worldObj;
 	public final int x, y, z;
-	private final IInventory inv;
-	private final LinkedList<Schematic> buildList;
 	private final List<SchematicBuilder> builders;
 
-	public BlueprintBuilder(Blueprint blueprint, World world, int x, int y, int z, ForgeDirection orientation, IInventory inv) {
+	public BlueprintBuilder(Blueprint blueprint, World world, int x, int y, int z, ForgeDirection orientation) {
 		this.blueprint = blueprint;
 		this.orientation = orientation;
 		this.worldObj = world;
 		this.x = translateX(x, -blueprint.anchorX, -blueprint.anchorZ);
 		this.y = y - blueprint.anchorY;
 		this.z = translateZ(z, -blueprint.anchorX, -blueprint.anchorZ);
-		this.inv = inv;
-		this.buildList = blueprint.getBuildList();
-		builders = new ArrayList<SchematicBuilder>(buildList.size());
-		for (Schematic schematic : buildList) {
+		builders = new ArrayList<SchematicBuilder>(blueprint.schematicSequence.size());
+		for (Schematic schematic : blueprint.schematicSequence) {
 			BlockHandler handler = schematic.getHandler();
-			if (handler != null)
+			if (handler != null) {
 				builders.add(new SchematicBuilder(schematic, handler));
+			}
 		}
 	}
 
@@ -147,7 +140,11 @@ public class BlueprintBuilder implements IAreaProvider {
 			return handler.canPlaceNow(worldObj, getX(), getY(), getZ(), orientation, schematic.data);
 		}
 
-		public boolean build(EntityPlayer bcPlayer) {
+		//public boolean build () {
+		//	return build (CoreProxy.proxy.getBuildCraftPlayer(worldObj, x, y + 2, z));
+		//}
+
+		public boolean build(IBlueprintBuilderAgent builderAgent) {
 //			if (blockExists()) {
 //				markComplete();
 //				return false;
@@ -156,10 +153,11 @@ public class BlueprintBuilder implements IAreaProvider {
 //			if (!BlockUtil.canChangeBlock(worldObj, getX(), getY(), getZ()))
 //				return false;
 
-			if (!canBuild())
+			if (!canBuild()) {
 				return false;
+			}
 
-			boolean built = handler.readBlockFromSchematic(worldObj, getX(), getY(), getZ(), orientation, schematic.data, inv, bcPlayer);
+			boolean built = handler.buildBlockFromSchematic(worldObj, this, builderAgent);
 
 			if (built) {
 				markComplete();
@@ -169,7 +167,7 @@ public class BlueprintBuilder implements IAreaProvider {
 		}
 
 		public boolean isComplete() {
-			return complete;
+			return complete || handler.isComplete(worldObj, this);
 		}
 
 		public void markComplete() {

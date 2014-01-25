@@ -13,6 +13,8 @@ import net.minecraft.nbt.NBTTagCompound;
 
 public final class MaskSchematic extends Schematic {
 
+	private static MaskHandler handler = new MaskHandler();
+
 	boolean isPlain;
 
 	public static MaskSchematic create(NBTTagCompound nbt) {
@@ -35,7 +37,7 @@ public final class MaskSchematic extends Schematic {
 
 	@Override
 	public BlockHandler getHandler() {
-		return null;
+		return handler;
 	}
 
 	@Override

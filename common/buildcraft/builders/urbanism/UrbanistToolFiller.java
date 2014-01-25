@@ -46,7 +46,7 @@ class UrbanistToolFiller extends UrbanistToolArea {
 		@Override
 		public Icon getIcon() {
 			if (index < patterns.size()) {
-				return patterns.get(index).getIcon();
+				return getPattern().getIcon();
 			} else {
 				return null;
 			}
@@ -54,7 +54,7 @@ class UrbanistToolFiller extends UrbanistToolArea {
 
 		@Override
 		public String getDescription() {
-			return patterns.get(index).getDisplayName();
+			return getPattern().getDisplayName();
 		}
 
 		@Override
@@ -64,6 +64,11 @@ class UrbanistToolFiller extends UrbanistToolArea {
 			}
 
 			isSelected = true;
+			selection = index;
+		}
+
+		public IFillerPattern getPattern () {
+			return patterns.get(index);
 		}
 	}
 
@@ -139,10 +144,15 @@ class UrbanistToolFiller extends UrbanistToolArea {
 	}
 
 	@Override
-	public void areaSet (int x1, int y1, int z1, int x2, int y2, int z2) {
-		Box box = new Box();
-		box.initialize(x1, y1, z1, x2, y2, z2);
+	public void areaSet (GuiUrbanist gui, int x1, int y1, int z1, int x2, int y2, int z2) {
+		super.areaSet(gui, x1, y1, z1, x2, y2, z2);
 
+		if (selection != -1) {
+			Box box = new Box();
+			box.initialize(x1, y1, z1, x2, y2, z2);
+
+			gui.urbanist.rpcStartFiller(fillerSlots.get(selection).getPattern().getUniqueTag(), box);
+		}
 
 	}
 }

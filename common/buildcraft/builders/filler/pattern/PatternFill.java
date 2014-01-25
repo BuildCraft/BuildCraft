@@ -9,9 +9,13 @@ package buildcraft.builders.filler.pattern;
 
 import buildcraft.api.core.IBox;
 import buildcraft.builders.blueprints.Blueprint;
+import buildcraft.builders.blueprints.BlueprintBuilder;
 import buildcraft.builders.blueprints.MaskSchematic;
+import buildcraft.core.Box;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
+import net.minecraftforge.common.ForgeDirection;
 
 public class PatternFill extends FillerPattern {
 
@@ -35,7 +39,7 @@ public class PatternFill extends FillerPattern {
 	}
 
 	@Override
-	public Blueprint getBlueprint (IBox box) {
+	public BlueprintBuilder getBlueprint (Box box, World world) {
 		int xMin = (int) box.pMin().x;
 		int yMin = (int) box.pMin().y;
 		int zMin = (int) box.pMin().z;
@@ -49,11 +53,12 @@ public class PatternFill extends FillerPattern {
 		for (int y = yMin; y <= yMax; ++y) {
 			for (int x = xMin; x <= xMax; ++x) {
 				for (int z = zMin; z <= zMax; ++z) {
-					bpt.schematics [x - xMin][y - yMin][z - zMin] = new MaskSchematic(true);
+					bpt.setSchematic(x - xMin, y - yMin, z - zMin, new MaskSchematic(true));
 				}
 			}
 		}
 
-		return bpt;
+		return new BlueprintBuilder(bpt, world, box.xMin, box.yMin, box.zMin,
+				ForgeDirection.NORTH);
 	}
 }

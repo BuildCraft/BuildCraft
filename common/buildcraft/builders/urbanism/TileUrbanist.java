@@ -1,11 +1,16 @@
 package buildcraft.builders.urbanism;
 
 import java.util.LinkedList;
+import java.util.List;
 
+import buildcraft.builders.blueprints.BlueprintBuilder;
+import buildcraft.builders.blueprints.BlueprintBuilder.SchematicBuilder;
+import buildcraft.builders.filler.pattern.FillerPattern;
 import buildcraft.core.Box;
 import buildcraft.core.EntityFrame;
 import buildcraft.core.IBuilderInventory;
 import buildcraft.core.TileBuildCraft;
+import buildcraft.core.EntityFrame.Kind;
 import buildcraft.core.network.RPC;
 import buildcraft.core.network.RPCHandler;
 import buildcraft.core.network.RPCSide;
@@ -130,12 +135,46 @@ public class TileUrbanist extends TileBuildCraft implements IBuilderInventory {
 		}
 	}
 
-	@RPC (RPCSide.SERVER)
-	public void startFiller (String fillerTag, Box box) {
+	public class FrameTask {
+		int nbOfTasks;
+		EntityFrame frame;
 
+		public void taskDone () {
+			nbOfTasks--;
+
+			if (nbOfTasks <= 0) {
+				frame.setDead();
+			}
+		}
 	}
 
-	public void rpcstartFiller (String fillerTag, Box box) {
+	@RPC (RPCSide.SERVER)
+	public void startFiller (String fillerTag, Box box) {
+		BlueprintBuilder builder = FillerPattern.patterns.get(fillerTag).getBlueprint(box, worldObj);
+
+		List <SchematicBuilder> schematics = builder.getBuilders();
+
+		if (frame != null) {
+			frame.setDead();
+			frame = null;
+		}
+
+		EntityFrame newFrame = new EntityFrame(worldObj, box);
+		newFrame.setKind(Kind.STRIPES);
+		worldObj.spawnEntityInWorld(newFrame);
+
+		FrameTask task = new FrameTask();
+		task.frame = newFrame;
+
+		for (SchematicBuilder b : schematics) {
+			if (!b.isComplete()) {
+				tasks.add(new UrbanistTaskBuildSchematic(this, b, task));
+				task.nbOfTasks++;
+			}
+		}
+	}
+
+	public void rpcStartFiller (String fillerTag, Box box) {
 		RPCHandler.rpcServer(this, "startFiller", fillerTag, box);
 	}
 

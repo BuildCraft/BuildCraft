@@ -12,7 +12,8 @@ import buildcraft.BuildCraftBuilders;
 import buildcraft.api.core.IBox;
 import buildcraft.api.filler.IFillerPattern;
 import buildcraft.api.filler.IPatternIterator;
-import buildcraft.builders.blueprints.Blueprint;
+import buildcraft.builders.blueprints.BlueprintBuilder;
+import buildcraft.core.Box;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.BlockUtil;
 import buildcraft.core.utils.StringUtils;
@@ -36,7 +37,7 @@ public abstract class FillerPattern implements IFillerPattern {
 
 	public FillerPattern(String tag) {
 		this.tag = tag;
-		patterns.put(tag, this);
+		patterns.put(getUniqueTag (), this);
 	}
 
 	/**
@@ -48,7 +49,7 @@ public abstract class FillerPattern implements IFillerPattern {
 		return true;
 	}
 
-	public Blueprint getBlueprint (IBox box) {
+	public BlueprintBuilder getBlueprint (Box box, World world) {
 		return null;
 	}
 

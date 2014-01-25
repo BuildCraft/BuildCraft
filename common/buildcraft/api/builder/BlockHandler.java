@@ -4,8 +4,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import buildcraft.builders.blueprints.IBlueprintBuilderAgent;
+import buildcraft.builders.blueprints.BlueprintBuilder.SchematicBuilder;
 import net.minecraft.block.Block;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
@@ -59,6 +61,12 @@ public class BlockHandler {
 
 	public static void registerHandler(int id, BlockHandler handler) {
 		handlers.put(id, handler);
+	}
+
+	// FIXME: This way of creating handlers not related to a particular block
+	// is a bit off - to be improved.
+	public BlockHandler() {
+		this.id = 0;
 	}
 
 	public BlockHandler(int id) {
@@ -189,9 +197,11 @@ public class BlockHandler {
 	 * modify any ItemStack in the inventory until you have determined that
 	 * everything you require is present.
 	 */
-	public boolean readBlockFromSchematic(World world, int x, int y, int z, ForgeDirection blueprintOrientation, NBTTagCompound data, IInventory builderInventory, EntityPlayer bcPlayer) {
+	public boolean buildBlockFromSchematic(World world, SchematicBuilder builder, IBlueprintBuilderAgent builderAgent) {
+		IInventory builderInventory = builderAgent.getInventory();
+
 		if (builderInventory != null) {
-			List<ItemStack> requiredItems = getCostForSchematic(data);
+			List<ItemStack> requiredItems = getCostForSchematic(builder.schematic.data);
 			List<Integer> slotsToConsume = new ArrayList<Integer>();
 			for (ItemStack cost : requiredItems) {
 				boolean found = false;
@@ -209,7 +219,7 @@ public class BlockHandler {
 				builderInventory.setInventorySlotContents(slot, BlueprintHelpers.consumeItem(builderInventory.getStackInSlot(slot)));
 			}
 		}
-		return world.setBlock(x, y, z, Block.blocksList[id].blockID, data.getByte("blockMeta"), 3);
+		return world.setBlock(builder.getX(), builder.getY(), builder.getZ(), Block.blocksList[id].blockID, builder.schematic.data.getByte("blockMeta"), 3);
 	}
 
 	/**
@@ -220,5 +230,9 @@ public class BlockHandler {
 			return false;
 
 		return !data.hasKey("blockMeta") || data.getByte("blockMeta") == world.getBlockMetadata(x, y, z);
+	}
+
+	public boolean isComplete(World worldObj, SchematicBuilder schematicBuilder) {
+		return false;
 	}
 }

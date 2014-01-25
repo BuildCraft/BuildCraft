@@ -167,7 +167,7 @@ public class EntityRobotBuilder extends EntityRobot implements IEntityAdditional
 				} else {
 					targets.pop();
 					try {
-						target.build(CoreProxy.proxy.getBuildCraftPlayer(worldObj, target.getX(), target.getY() + 2, target.getZ()));
+						target.build(this);
 					} catch (Throwable t) {
 						target.markComplete();
 						targets.pop();

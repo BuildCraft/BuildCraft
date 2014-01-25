@@ -37,7 +37,7 @@ public class RenderFrame extends Render {
 		for (LaserData l : frame.lasers) {
 			GL11.glPushMatrix();
 			GL11.glTranslated(l.head.x - frame.posX, l.head.y - frame.posY, l.head.z - frame.posZ);
-			RenderLaser.doRenderLaser(renderManager, laserBox, l, frame.currentTexLocation);
+			RenderLaser.doRenderLaser(renderManager, laserBox, l, frame.getTexture());
 			GL11.glPopMatrix();
 		}
 
