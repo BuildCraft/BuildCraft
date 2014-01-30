@@ -51,7 +51,12 @@ public class ActionTriggerIconProvider implements IIconProvider {
 	public static final int Trigger_Inventory_Below25 = 33;
 	public static final int Trigger_Inventory_Below50 = 34;
 	public static final int Trigger_Inventory_Below75 = 35;
-	public static final int MAX = 39;
+	public static final int Trigger_FluidContainer_Below25 = 36;
+	public static final int Trigger_FluidContainer_Below50 = 37;
+	public static final int Trigger_FluidContainer_Below75 = 38;
+	
+	public static final int MAX = 45;
+	
 	@SideOnly(Side.CLIENT)
 	private final Icon[] icons = new Icon[MAX];
 
@@ -104,5 +109,8 @@ public class ActionTriggerIconProvider implements IIconProvider {
 		icons[ActionTriggerIconProvider.Trigger_Inventory_Below25] = iconRegister.registerIcon("buildcraft:triggers/trigger_inventory_below25");
 		icons[ActionTriggerIconProvider.Trigger_Inventory_Below50] = iconRegister.registerIcon("buildcraft:triggers/trigger_inventory_below50");
 		icons[ActionTriggerIconProvider.Trigger_Inventory_Below75] = iconRegister.registerIcon("buildcraft:triggers/trigger_inventory_below75");
+		icons[ActionTriggerIconProvider.Trigger_FluidContainer_Below25] = iconRegister.registerIcon("buildcraft:triggers/trigger_liquidcontainer_below25");
+		icons[ActionTriggerIconProvider.Trigger_FluidContainer_Below50] = iconRegister.registerIcon("buildcraft:triggers/trigger_liquidcontainer_below50");
+		icons[ActionTriggerIconProvider.Trigger_FluidContainer_Below75] = iconRegister.registerIcon("buildcraft:triggers/trigger_liquidcontainer_below75");
 	}
 }

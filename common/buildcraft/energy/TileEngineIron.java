@@ -425,6 +425,9 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
 		triggers.add(BuildCraftCore.triggerContainsFluid);
 		triggers.add(BuildCraftCore.triggerSpaceFluid);
 		triggers.add(BuildCraftCore.triggerFullFluid);
+		triggers.add(BuildCraftCore.triggerFluidContainerBelow25);
+		triggers.add(BuildCraftCore.triggerFluidContainerBelow50);
+		triggers.add(BuildCraftCore.triggerFluidContainerBelow75);
 
 		return triggers;
 	}
