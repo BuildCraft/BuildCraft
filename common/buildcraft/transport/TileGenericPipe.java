@@ -8,6 +8,7 @@
 package buildcraft.transport;
 
 import buildcraft.api.transport.PipeWire;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -31,7 +32,6 @@ import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.core.Position;
 import buildcraft.api.core.SafeTimeTracker;
-import buildcraft.api.gates.GateExpansionController;
 import buildcraft.api.gates.GateExpansions;
 import buildcraft.api.gates.IGateExpansion;
 import buildcraft.api.gates.IOverrideDefaultTriggers;
@@ -55,8 +55,10 @@ import buildcraft.transport.gates.GateDefinition;
 import buildcraft.transport.gates.GateFactory;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+
 import java.util.HashSet;
 import java.util.Set;
+
 import net.minecraft.server.management.PlayerInstance;
 import net.minecraft.world.WorldServer;
 

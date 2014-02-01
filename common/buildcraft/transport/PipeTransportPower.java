@@ -7,6 +7,7 @@
  */
 package buildcraft.transport;
 
+import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -23,11 +24,13 @@ import buildcraft.api.power.PowerHandler.PowerReceiver;
 import buildcraft.api.power.PowerHandler.Type;
 import buildcraft.api.transport.IPipeTile.PipeType;
 import buildcraft.core.DefaultProps;
+import buildcraft.core.ReflectAPI;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.transport.network.PacketPowerUpdate;
 import buildcraft.transport.pipes.PipePowerCobblestone;
 import buildcraft.transport.pipes.PipePowerDiamond;
 import buildcraft.transport.pipes.PipePowerGold;
+import buildcraft.transport.pipes.PipePowerHeat;
 import buildcraft.transport.pipes.PipePowerIron;
 import buildcraft.transport.pipes.PipePowerQuartz;
 import buildcraft.transport.pipes.PipePowerStone;
@@ -48,6 +51,7 @@ public class PipeTransportPower extends PipeTransport {
 		powerCapacities.put(PipePowerIron.class, 128);
 		powerCapacities.put(PipePowerGold.class, 256);
 		powerCapacities.put(PipePowerDiamond.class, 1024);
+		powerCapacities.put(PipePowerHeat.class, 1024);
 	}
 	private boolean needsInit = true;
 	private TileEntity[] tiles = new TileEntity[6];
@@ -64,9 +68,15 @@ public class PipeTransportPower extends PipeTransport {
 	private double highestPower;
 	SafeTimeTracker tracker = new SafeTimeTracker();
 
+	public float[] movementStage = new float [] {0, 0, 0};
+
 	public PipeTransportPower() {
 		for (int i = 0; i < 6; ++i) {
 			powerQuery[i] = 0;
+		}
+
+		for (int i = 0; i < 3; ++i) {
+			movementStage[i] = (float) Math.random();
 		}
 	}
 
@@ -101,6 +111,10 @@ public class PipeTransportPower extends PipeTransport {
 				return true;
 		}
 
+		if (ReflectAPI.get_MJ_STORED(tile.getClass()) != null) {
+			return true;
+		}
+
 		return false;
 	}
 
@@ -133,8 +147,16 @@ public class PipeTransportPower extends PipeTransport {
 
 	@Override
 	public void updateEntity() {
-		if (CoreProxy.proxy.isRenderWorld(container.worldObj))
+		if (CoreProxy.proxy.isRenderWorld(container.worldObj)) {
+			// updating movement stage. We're only carrying the movement on half
+			// the things. This is purely for animation purpose.
+
+			for (int i = 0; i < 6; i += 2) {
+				movementStage [i / 2] = (movementStage [i / 2] + 0.01F) % 1.0F;
+			}
+
 			return;
+		}
 
 		step();
 
@@ -151,7 +173,10 @@ public class PipeTransportPower extends PipeTransport {
 
 				for (int j = 0; j < 6; ++j) {
 					if (j != i && powerQuery[j] > 0)
-						if (tiles[j] instanceof TileGenericPipe || tiles[j] instanceof IPowerReceptor) {
+						if (tiles[j] != null
+								&& (tiles[j] instanceof TileGenericPipe
+										|| tiles[j] instanceof IPowerReceptor || ReflectAPI
+										.get_MJ_STORED(tiles[j].getClass()) != null)) {
 							totalPowerQuery += powerQuery[j];
 						}
 				}
@@ -173,6 +198,29 @@ public class PipeTransportPower extends PipeTransport {
 
 							watts = nearbyTransport.receiveEnergy(ForgeDirection.VALID_DIRECTIONS[j].getOpposite(), watts);
 							internalPower[i] -= watts;
+						} else if (tiles[j] != null) {
+							// Look for the simplified power framework
+
+							Field f = ReflectAPI.get_MJ_STORED(tiles [j].getClass());
+							try {
+								if (f != null) {
+									watts = (internalPower[i] / totalPowerQuery) * powerQuery[j];
+
+									float energy = f.getFloat(tiles[j]);
+
+									if (energy < 100) {
+										energy += watts;
+										f.setFloat(tiles [j], energy);
+										internalPower[i] -= watts;
+									}
+								}
+							} catch (IllegalArgumentException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							} catch (IllegalAccessException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
 						}
 
 						displayPower[j] += watts;
@@ -200,13 +248,35 @@ public class PipeTransportPower extends PipeTransport {
 
 		// Compute the tiles requesting energy that are not power pipes
 
-		for (int i = 0; i < 6; ++i) {
-			PowerReceiver prov = getReceiverOnSide(ForgeDirection.VALID_DIRECTIONS[i]);
+		for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
+			TileEntity tile = tiles [dir.ordinal()];
+
+			PowerReceiver prov = getReceiverOnSide(dir);
 			if (prov != null) {
 				float request = (float) prov.powerRequest();
 
 				if (request > 0) {
-					requestEnergy(ForgeDirection.VALID_DIRECTIONS[i], request);
+					requestEnergy(dir, request);
+				}
+			}
+
+			if (tile != null) {
+				Field f = ReflectAPI.get_MJ_STORED(tile.getClass());
+
+				try {
+					if (f != null) {
+						float energy = f.getFloat(tile);
+
+						if (energy < 100) {
+							requestEnergy(dir, 100);
+						}
+					}
+				} catch (IllegalArgumentException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IllegalAccessException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
 			}
 		}
@@ -260,7 +330,6 @@ public class PipeTransportPower extends PipeTransport {
 			packet.overload = isOverloaded();
 			CoreProxy.proxy.sendToPlayers(packet.getPacket(), container.worldObj, container.xCoord, container.yCoord, container.zCoord, DefaultProps.PIPE_CONTENTS_RENDER_DIST);
 		}
-
 	}
 
 	private PowerReceiver getReceiverOnSide(ForgeDirection side) {
@@ -333,6 +402,7 @@ public class PipeTransportPower extends PipeTransport {
 
 	public void requestEnergy(ForgeDirection from, float amount) {
 		step();
+
 		if (this.container.pipe instanceof IPipeTransportPowerHook) {
 			nextPowerQuery[from.ordinal()] += ((IPipeTransportPowerHook) this.container.pipe).requestEnergy(from, amount);
 		} else {
@@ -397,7 +467,7 @@ public class PipeTransportPower extends PipeTransport {
 	/**
 	 * This can be use to provide a rough estimate of how much power is
 	 * contained in a pipe. Measured in MJ.
-	 * 
+	 *
 	 * Max should be around (throughput * internalPower.length * 2), ie 112 MJ for a Cobblestone Pipe.
 	 *
 	 * @return MJ
@@ -411,5 +481,25 @@ public class PipeTransportPower extends PipeTransport {
 			amount += d;
 		}
 		return amount;
+	}
+
+	public float getPistonStage (int i) {
+		if (movementStage [i] < 0.5F) {
+			return movementStage [i] * 2;
+		} else {
+			return 1 - (movementStage [i] - 0.5F) * 2;
+		}
+	}
+
+	public double clearInstantPower () {
+		double amount = 0.0;
+
+		for (int i = 0; i < internalPower.length; ++i) {
+			amount += internalPower [i];
+			internalPower [i] = 0;
+		}
+
+		return amount;
+
 	}
 }

@@ -1,16 +1,16 @@
 /**
- * BuildCraft is open-source. It is distributed under the terms of the
- * BuildCraft Open Source License. It grants rights to read, modify, compile or
- * run the code. It does *NOT* grant the right to redistribute this software or
- * its modifications in any form, binary or source, except if expressively
- * granted by the copyright holder.
+ * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
+ * http://www.mod-buildcraft.com
+ *
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
+ * License 1.0, or MMPL. Please check the contents of the license located in
+ * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
 package buildcraft;
 
 import buildcraft.api.fuels.IronEngineCoolant;
 import buildcraft.api.fuels.IronEngineFuel;
 import buildcraft.api.recipes.BuildcraftRecipes;
-import buildcraft.core.recipes.RefineryRecipeManager;
 import buildcraft.core.BlockIndex;
 import buildcraft.core.BlockSpring;
 import buildcraft.core.DefaultProps;
@@ -20,6 +20,8 @@ import buildcraft.core.fluids.BCFluid;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.triggers.BCTrigger;
 import buildcraft.energy.BlockBuildcraftFluid;
+import buildcraft.energy.BlockEnergyEmitter;
+import buildcraft.energy.BlockEnergyReceiver;
 import buildcraft.energy.BlockEngine;
 import buildcraft.energy.BptBlockEngine;
 import buildcraft.energy.EnergyProxy;
@@ -27,6 +29,8 @@ import buildcraft.energy.GuiHandler;
 import buildcraft.energy.ItemBucketBuildcraft;
 import buildcraft.energy.ItemEngine;
 import buildcraft.energy.BucketHandler;
+import buildcraft.energy.TileEnergyEmitter;
+import buildcraft.energy.TileEnergyReceiver;
 import buildcraft.energy.TileEngine.EnergyStage;
 import buildcraft.energy.triggers.TriggerEngineHeat;
 import buildcraft.energy.worldgen.BiomeGenOilDesert;
@@ -45,7 +49,9 @@ import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+
 import java.util.TreeMap;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.item.Item;
@@ -71,14 +77,20 @@ public class BuildCraftEnergy {
 	public static BiomeGenOilDesert biomeOilDesert;
 	public static BiomeGenOilOcean biomeOilOcean;
 	public static BlockEngine engineBlock;
+	public static BlockEnergyEmitter emitterBlock;
+	public static BlockEnergyReceiver receiverBlock;
 	private static Fluid buildcraftFluidOil;
 	private static Fluid buildcraftFluidFuel;
+	private static Fluid buildcraftFluidRedPlasma;
 	public static Fluid fluidOil;
 	public static Fluid fluidFuel;
+	public static Fluid fluidRedPlasma;
 	public static Block blockOil;
 	public static Block blockFuel;
+	public static Block blockRedPlasma;
 	public static Item bucketOil;
 	public static Item bucketFuel;
+	public static Item bucketRedPlasma;
 	public static Item fuel;
 	public static boolean canOilBurn;
 	public static double oilWellScalar = 1.0;
@@ -103,8 +115,10 @@ public class BuildCraftEnergy {
 		int blockOilId = BuildCraftCore.mainConfiguration.getBlock("oil.id", defaultOilId).getInt(defaultOilId);
 
 		int blockFuelId = BuildCraftCore.mainConfiguration.getBlock("fuel.id", DefaultProps.FUEL_ID).getInt(DefaultProps.FUEL_ID);
+		int blockRedplasmaId = BuildCraftCore.mainConfiguration.getBlock("redPlasma.id", DefaultProps.REDPLASMA_ID).getInt(DefaultProps.REDPLASMA_ID);
 		int bucketOilId = BuildCraftCore.mainConfiguration.getItem("bucketOil.id", DefaultProps.BUCKET_OIL_ID).getInt(DefaultProps.BUCKET_OIL_ID);
 		int bucketFuelId = BuildCraftCore.mainConfiguration.getItem("bucketFuel.id", DefaultProps.BUCKET_FUEL_ID).getInt(DefaultProps.BUCKET_FUEL_ID);
+		int bucketRedPlasmaId = BuildCraftCore.mainConfiguration.getItem("bucketRedPlasma.id", DefaultProps.BUCKET_REDPLASMA_ID).getInt(DefaultProps.BUCKET_REDPLASMA_ID);
 		int oilDesertBiomeId = BuildCraftCore.mainConfiguration.get("biomes", "oilDesert", DefaultProps.BIOME_OIL_DESERT).getInt(DefaultProps.BIOME_OIL_DESERT);
 		int oilOceanBiomeId = BuildCraftCore.mainConfiguration.get("biomes", "oilOcean", DefaultProps.BIOME_OIL_OCEAN).getInt(DefaultProps.BIOME_OIL_OCEAN);
 		canOilBurn = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "burnOil", true, "Can oil burn?").getBoolean(true);
@@ -146,13 +160,18 @@ public class BuildCraftEnergy {
 
 		// Oil and fuel
 		buildcraftFluidOil = new BCFluid("oil").setDensity(800).setViscosity(1500);
-
 		FluidRegistry.registerFluid(buildcraftFluidOil);
 		fluidOil = FluidRegistry.getFluid("oil");
 
 		buildcraftFluidFuel = new BCFluid("fuel");
 		FluidRegistry.registerFluid(buildcraftFluidFuel);
 		fluidFuel = FluidRegistry.getFluid("fuel");
+
+		buildcraftFluidRedPlasma = new BCFluid("redplasma").setDensity(10000).setViscosity(10000).setLuminosity(30);
+		FluidRegistry.registerFluid(buildcraftFluidRedPlasma);
+		fluidRedPlasma = FluidRegistry.getFluid("redplasma");
+
+		//buildcraftFluidRedPlasma = new BCFluid("fuel");
 
 		if (fluidOil.getBlockID() == -1) {
 			if (blockOilId > 0) {
@@ -184,6 +203,18 @@ public class BuildCraftEnergy {
 			blockFuel = Block.blocksList[fluidFuel.getBlockID()];
 		}
 
+		if (fluidRedPlasma.getBlockID() == -1) {
+			if (blockRedplasmaId > 0) {
+				blockRedPlasma = new BlockBuildcraftFluid(blockRedplasmaId, fluidRedPlasma, Material.water).setFlammable(false).setParticleColor(0.9F, 0, 0);
+				blockRedPlasma.setUnlocalizedName("blockRedPlasma");
+				CoreProxy.proxy.addName(blockRedPlasma, "Red Plasma");
+				CoreProxy.proxy.registerBlock(blockRedPlasma);
+				fluidRedPlasma.setBlockID(blockRedPlasma);
+			}
+		} else {
+			blockRedPlasma = Block.blocksList[fluidRedPlasma.getBlockID()];
+		}
+
 		// Buckets
 
 		if (blockOil != null && bucketOilId > 0) {
@@ -202,8 +233,17 @@ public class BuildCraftEnergy {
 			FluidContainerRegistry.registerFluidContainer(FluidRegistry.getFluidStack("fuel", FluidContainerRegistry.BUCKET_VOLUME), new ItemStack(bucketFuel), new ItemStack(Item.bucketEmpty));
 		}
 
+		if (blockRedPlasma != null && bucketRedPlasmaId > 0) {
+			bucketRedPlasma = new ItemBucketBuildcraft(bucketRedPlasmaId, blockRedPlasma.blockID);
+			bucketRedPlasma.setUnlocalizedName("bucketRedPlasma").setContainerItem(Item.bucketEmpty);
+			LanguageRegistry.addName(bucketRedPlasma, "Red Plasma Bucket");
+			CoreProxy.proxy.registerItem(bucketRedPlasma);
+			FluidContainerRegistry.registerFluidContainer(FluidRegistry.getFluidStack("redplasma", FluidContainerRegistry.BUCKET_VOLUME), new ItemStack(bucketRedPlasma), new ItemStack(Item.bucketEmpty));
+		}
+
 		BucketHandler.INSTANCE.buckets.put(blockOil, bucketOil);
 		BucketHandler.INSTANCE.buckets.put(blockFuel, bucketFuel);
+		BucketHandler.INSTANCE.buckets.put(blockRedPlasma, bucketRedPlasma);
 		MinecraftForge.EVENT_BUS.register(BucketHandler.INSTANCE);
 
 		BuildcraftRecipes.refinery.addRecipe(new FluidStack(fluidOil, 1), new FluidStack(fluidFuel, 1), 12, 1);
@@ -216,6 +256,20 @@ public class BuildCraftEnergy {
 		// Iron Engine Coolants
 		IronEngineCoolant.addCoolant(FluidRegistry.getFluid("water"), 0.0023F);
 		IronEngineCoolant.addCoolant(Block.ice.blockID, 0, FluidRegistry.getFluidStack("water", FluidContainerRegistry.BUCKET_VOLUME * 2));
+
+		// Receiver / emitter
+
+		Property emitterId = BuildCraftCore.mainConfiguration.getBlock("energyEmitter.id", DefaultProps.EMITTER_ID);
+		emitterBlock = new BlockEnergyEmitter (emitterId.getInt());
+		CoreProxy.proxy.registerBlock(emitterBlock.setUnlocalizedName("energyEmitterBlock"));
+		CoreProxy.proxy.addName(emitterBlock, "Energy Emitter");
+		CoreProxy.proxy.registerTileEntity(TileEnergyEmitter.class, "net.minecraft.src.builders.TileEnergyEmitter");
+
+		Property receiverId = BuildCraftCore.mainConfiguration.getBlock("energyReceiver.id", DefaultProps.RECEIVER_ID);
+		receiverBlock = new BlockEnergyReceiver (receiverId.getInt());
+		CoreProxy.proxy.registerBlock(receiverBlock.setUnlocalizedName("energyReceiverBlock"));
+		CoreProxy.proxy.addName(receiverBlock, "Energy Receiver");
+		CoreProxy.proxy.registerTileEntity(TileEnergyReceiver.class, "net.minecraft.src.builders.TileEnergyReceiver");
 
 		MinecraftForge.EVENT_BUS.register(this);
 	}
@@ -247,6 +301,7 @@ public class BuildCraftEnergy {
 		if (event.map.textureType == 0) {
 			buildcraftFluidOil.setIcons(blockOil.getBlockTextureFromSide(1), blockOil.getBlockTextureFromSide(2));
 			buildcraftFluidFuel.setIcons(blockFuel.getBlockTextureFromSide(1), blockFuel.getBlockTextureFromSide(2));
+			buildcraftFluidRedPlasma.setIcons(blockRedPlasma.getBlockTextureFromSide(1), blockRedPlasma.getBlockTextureFromSide(2));
 		}
 	}
 

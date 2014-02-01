@@ -1,9 +1,10 @@
 /**
- * BuildCraft is open-source. It is distributed under the terms of the
- * BuildCraft Open Source License. It grants rights to read, modify, compile or
- * run the code. It does *NOT* grant the right to redistribute this software or
- * its modifications in any form, binary or source, except if expressively
- * granted by the copyright holder.
+ * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
+ * http://www.mod-buildcraft.com
+ *
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
+ * License 1.0, or MMPL. Please check the contents of the license located in
+ * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
 package buildcraft;
 
@@ -112,6 +113,7 @@ public class BuildCraftCore {
 	public static Item goldGearItem;
 	public static Item diamondGearItem;
 	public static Item wrenchItem;
+	public static Item redstoneCrystal;
 	@SideOnly(Side.CLIENT)
 	public static Icon redLaserTexture;
 	@SideOnly(Side.CLIENT)
@@ -208,6 +210,7 @@ public class BuildCraftCore {
 			Property ironGearId = BuildCraftCore.mainConfiguration.getItem("ironGearItem.id", DefaultProps.IRON_GEAR_ID);
 			Property goldenGearId = BuildCraftCore.mainConfiguration.getItem("goldenGearItem.id", DefaultProps.GOLDEN_GEAR_ID);
 			Property diamondGearId = BuildCraftCore.mainConfiguration.getItem("diamondGearItem.id", DefaultProps.DIAMOND_GEAR_ID);
+			Property redstoneCrystalId = BuildCraftCore.mainConfiguration.getItem("redstoneCrystalItem.id", DefaultProps.REDSTONE_CRYSTAL_ID);
 			Property modifyWorldProp = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "modifyWorld", true);
 			modifyWorldProp.comment = "set to false if BuildCraft should not generate custom blocks (e.g. oil)";
 			modifyWorld = modifyWorldProp.getBoolean(true);
@@ -246,6 +249,11 @@ public class BuildCraftCore {
 			LanguageRegistry.addName(diamondGearItem, "Diamond Gear");
 			CoreProxy.proxy.registerItem(diamondGearItem);
 			OreDictionary.registerOre("gearDiamond", new ItemStack(diamondGearItem));
+
+			redstoneCrystal = (new ItemBuildCraft(redstoneCrystalId.getInt())).setUnlocalizedName("redstoneCrystal");
+			LanguageRegistry.addName(redstoneCrystal, "Redstone Crystal");
+			CoreProxy.proxy.registerItem(redstoneCrystal);
+			OreDictionary.registerOre("redstoneCrystal", new ItemStack(redstoneCrystal));
 
 			Property colorBlindProp = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "client.colorblindmode", false);
 			colorBlindProp.comment = "Set to true to enable alternate textures";

@@ -42,5 +42,6 @@ public class PacketIds {
 
 	public static final int STATE_UPDATE = 100;
 
-	public static final int RPC = 110;
+	public static final int RPC_TILE = 110;
+	public static final int RPC_PIPE = 111;
 }

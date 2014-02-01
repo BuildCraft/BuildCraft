@@ -127,8 +127,9 @@ public class BlockEngine extends BlockBuildCraft {
 	public void randomDisplayTick(World world, int i, int j, int k, Random random) {
 		TileEngine tile = (TileEngine) world.getBlockTileEntity(i, j, k);
 
-		if (!tile.isBurning())
+		if (!tile.isBurning()) {
 			return;
+		}
 
 		float f = (float) i + 0.5F;
 		float f1 = (float) j + 0.0F + (random.nextFloat() * 6F) / 16F;

@@ -1,9 +1,10 @@
 /**
- * BuildCraft is open-source. It is distributed under the terms of the
- * BuildCraft Open Source License. It grants rights to read, modify, compile or
- * run the code. It does *NOT* grant the right to redistribute this software or
- * its modifications in any form, binary or source, except if expressively
- * granted by the copyright holder.
+ * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
+ * http://www.mod-buildcraft.com
+ *
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
+ * License 1.0, or MMPL. Please check the contents of the license located in
+ * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
 package buildcraft;
 
@@ -70,6 +71,7 @@ import buildcraft.transport.pipes.PipeItemsWood;
 import buildcraft.transport.pipes.PipePowerCobblestone;
 import buildcraft.transport.pipes.PipePowerDiamond;
 import buildcraft.transport.pipes.PipePowerGold;
+import buildcraft.transport.pipes.PipePowerHeat;
 import buildcraft.transport.pipes.PipePowerIron;
 import buildcraft.transport.pipes.PipePowerIron.PowerMode;
 import buildcraft.transport.pipes.PipePowerQuartz;
@@ -101,7 +103,9 @@ import cpw.mods.fml.common.network.NetworkMod;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
+
 import java.util.LinkedList;
+
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
@@ -149,6 +153,7 @@ public class BuildCraftTransport {
 	public static Item pipePowerIron;
 	public static Item pipePowerGold;
 	public static Item pipePowerDiamond;
+	public static Item pipePowerHeat;
 	public static ItemFacade facadeItem;
 	public static Item plugItem;
 	public static BlockFilteredBuffer filteredBufferBlock;
@@ -305,6 +310,7 @@ public class BuildCraftTransport {
 			pipePowerIron = buildPipe(DefaultProps.PIPE_POWER_IRON_ID, PipePowerIron.class, "Iron Kinesis Pipe", Item.redstone, pipeItemsIron);
 			pipePowerGold = buildPipe(DefaultProps.PIPE_POWER_GOLD_ID, PipePowerGold.class, "Golden Kinesis Pipe", Item.redstone, pipeItemsGold);
 			pipePowerDiamond = buildPipe(DefaultProps.PIPE_POWER_DIAMOND_ID, PipePowerDiamond.class, "Diamond Kinesis Pipe", Item.redstone, pipeItemsDiamond);
+			pipePowerHeat = buildPipe(DefaultProps.PIPE_POWER_HEAT_ID, PipePowerHeat.class, "Heat Kinesis Pipe", Block.furnaceIdle, pipeItemsDiamond);
 
 			pipeStructureCobblestone = buildPipe(DefaultProps.PIPE_STRUCTURE_COBBLESTONE_ID, PipeStructureCobblestone.class, "Cobblestone Structure Pipe", Block.gravel, pipeItemsCobblestone);
 

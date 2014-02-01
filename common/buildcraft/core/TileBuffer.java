@@ -1,8 +1,9 @@
 /**
- * Copyright (c) SpaceToad, 2011 http://www.mod-buildcraft.com
+ * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
+ * http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public License
- * 1.0, or MMPL. Please check the contents of the license located in
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
+ * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
 package buildcraft.core;
@@ -17,7 +18,7 @@ public final class TileBuffer {
 
 	private int blockID = 0;
 	private TileEntity tile;
-	private final SafeTimeTracker tracker = new SafeTimeTracker();
+	private final SafeTimeTracker tracker = new SafeTimeTracker(20, 5);
 	private final World world;
 	final int x, y, z;
 	private final boolean loadUnloaded;
@@ -35,12 +36,15 @@ public final class TileBuffer {
 	public final void refresh() {
 		tile = null;
 		blockID = 0;
+
 		if (!loadUnloaded && !world.blockExists(x, y, z)) {
 			return;
 		}
+
 		blockID = world.getBlockId(this.x, this.y, this.z);
 
 		Block block = Block.blocksList[blockID];
+
 		if (block != null && block.hasTileEntity(world.getBlockMetadata(this.x, this.y, this.z))) {
 			tile = world.getBlockTileEntity(this.x, this.y, this.z);
 		}
@@ -53,10 +57,11 @@ public final class TileBuffer {
 	}
 
 	public int getBlockID() {
-		if (tile != null && !tile.isInvalid())
+		if (tile != null && !tile.isInvalid()) {
 			return blockID;
+		}
 
-		if (tracker.markTimeIfDelay(world, 20)) {
+		if (tracker.markTimeIfDelay(world)) {
 			refresh();
 
 			if (tile != null && !tile.isInvalid())
@@ -67,31 +72,37 @@ public final class TileBuffer {
 	}
 
 	public TileEntity getTile() {
-		if (tile != null && !tile.isInvalid())
+		if (tile != null && !tile.isInvalid()) {
 			return tile;
+		}
 
-		if (tracker.markTimeIfDelay(world, 20)) {
+		if (tracker.markTimeIfDelay(world)) {
 			refresh();
 
-			if (tile != null && !tile.isInvalid())
+			if (tile != null && !tile.isInvalid()) {
 				return tile;
+			}
 		}
 
 		return null;
 	}
 
 	public boolean exists() {
-		if(tile != null && !tile.isInvalid())
+		if(tile != null && !tile.isInvalid()) {
 			return true;
+		}
+
 		return world.blockExists(x, y, z);
 	}
 
 	public static TileBuffer[] makeBuffer(World world, int x, int y, int z, boolean loadUnloaded) {
 		TileBuffer[] buffer = new TileBuffer[6];
+
 		for (int i = 0; i < 6; i++) {
 			ForgeDirection d = ForgeDirection.getOrientation(i);
 			buffer[i] = new TileBuffer(world, x + d.offsetX, y + d.offsetY, z + d.offsetZ, loadUnloaded);
 		}
+
 		return buffer;
 	}
 }

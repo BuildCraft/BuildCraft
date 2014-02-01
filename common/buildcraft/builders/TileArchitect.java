@@ -157,7 +157,7 @@ public class TileArchitect extends TileBuildCraft implements IInventory {
 			}
 		}
 
-		RPCHandler.rpcBroadcastPlayers(this, "setName", DefaultProps.NETWORK_UPDATE_RANGE, name);
+		RPCHandler.rpcBroadcastPlayersAtDistance(this, "setName", DefaultProps.NETWORK_UPDATE_RANGE, name);
 	}
 
 	@RPC

@@ -8,12 +8,11 @@
  */
 package buildcraft.core;
 
-/**
- * This interface is used to provide special renders of tiles in the player
- * inventory.
- */
-public interface IInventoryRenderer {
+import net.minecraft.block.Block;
+import net.minecraft.tileentity.TileEntity;
 
-	public void inventoryRender(double x, double y, double z, float f, float f1);
-
+public class BlockWrapper {
+	public BlockIndex index;
+	public TileEntity tile;
+	public Block block;
 }

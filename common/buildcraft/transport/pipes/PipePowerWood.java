@@ -156,7 +156,8 @@ public class PipePowerWood extends Pipe<PipeTransportPower> implements IPowerRec
 	public float requestEnergy(ForgeDirection from, float amount) {
 		if (container.getTile(from) instanceof IPipeTile) {
 			return amount;
+		} else {
+			return 0;
 		}
-		return 0;
 	}
 }

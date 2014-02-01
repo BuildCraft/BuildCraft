@@ -7,11 +7,7 @@ import java.io.IOException;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 
-import org.bouncycastle.crypto.util.Pack;
-
-import cpw.mods.fml.common.network.Player;
-
-public class PacketRPC extends BuildCraftPacket {
+public class PacketRPCTile extends BuildCraftPacket {
 
 	public TileEntity tile;
 
@@ -19,11 +15,11 @@ public class PacketRPC extends BuildCraftPacket {
 
 	public EntityPlayer sender;
 
-	public PacketRPC () {
+	public PacketRPCTile () {
 
 	}
 
-	public PacketRPC (byte [] bytes) {
+	public PacketRPCTile (byte [] bytes) {
 		contents = bytes;
 	}
 
@@ -33,7 +29,7 @@ public class PacketRPC extends BuildCraftPacket {
 
 	@Override
 	public int getID() {
-		return PacketIds.RPC;
+		return PacketIds.RPC_TILE;
 	}
 
 	@Override

@@ -17,7 +17,6 @@ public class RenderRobot extends Render {
 	protected ModelBase model = new ModelBase() {
 	};
 	private ModelRenderer box;
-	private ModelRenderer laserBox;
 
 	public RenderRobot() {
 		box = new ModelRenderer(model, 0, 0);
@@ -25,12 +24,6 @@ public class RenderRobot extends Render {
 		box.rotationPointX = 0;
 		box.rotationPointY = 0;
 		box.rotationPointZ = 0;
-
-		laserBox = new ModelRenderer(model, 0, 0);
-		laserBox.addBox(0, -0.5F, -0.5F, 16, 1, 1);
-		laserBox.rotationPointX = 0;
-		laserBox.rotationPointY = 0;
-		laserBox.rotationPointZ = 0;
 	}
 
 	@Override
@@ -54,7 +47,7 @@ public class RenderRobot extends Render {
 			robot.laser.head.y = robot.posY;
 			robot.laser.head.z = robot.posZ;
 
-			RenderLaser.doRenderLaser(renderManager, laserBox, robot.laser, EntityLaser.LASER_TEXTURES [1]);
+			RenderLaser.doRenderLaser(renderManager.renderEngine, robot.laser, EntityLaser.LASER_TEXTURES [1]);
 		}
 
 		GL11.glEnable(2896 /* GL_LIGHTING */);

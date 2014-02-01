@@ -1,9 +1,10 @@
 /**
- * BuildCraft is open-source. It is distributed under the terms of the
- * BuildCraft Open Source License. It grants rights to read, modify, compile or
- * run the code. It does *NOT* grant the right to redistribute this software or
- * its modifications in any form, binary or source, except if expressively
- * granted by the copyright holder.
+ * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
+ * http://www.mod-buildcraft.com
+ *
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
+ * License 1.0, or MMPL. Please check the contents of the license located in
+ * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
 package buildcraft;
 
@@ -160,7 +161,7 @@ public class BuildCraftSilicon {
 		BuildcraftRecipes.assemblyTable.addRecipe(60000, Chipset.QUARTZ.getStack(), Item.redstone, Item.netherQuartz);
 		BuildcraftRecipes.assemblyTable.addRecipe(60000, Chipset.COMP.getStack(), Item.redstone, Item.comparator);
 
-		// GATES		
+		// GATES
 		BuildcraftRecipes.assemblyTable.addRecipe(10000, ItemGate.makeGateItem(GateMaterial.REDSTONE, GateLogic.AND), Chipset.RED.getStack(), PipeWire.RED.getStack());
 
 		addGateRecipe(20000, GateMaterial.IRON, Chipset.IRON, PipeWire.RED, PipeWire.BLUE);
