@@ -41,6 +41,9 @@ public class DefaultTriggerProvider implements ITriggerProvider {
 				res.add(BuildCraftCore.triggerContainsFluid);
 				res.add(BuildCraftCore.triggerSpaceFluid);
 				res.add(BuildCraftCore.triggerFullFluid);
+				res.add(BuildCraftCore.triggerFluidContainerBelow25);
+				res.add(BuildCraftCore.triggerFluidContainerBelow50);
+				res.add(BuildCraftCore.triggerFluidContainerBelow75);
 			}
 		}
 
