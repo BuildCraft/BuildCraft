@@ -14,6 +14,7 @@ import buildcraft.core.Box;
 import buildcraft.core.Version;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.BCLog;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -24,6 +25,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
+
+import net.minecraft.block.Block;
 
 public abstract class BptBase {
 
@@ -57,15 +60,15 @@ public abstract class BptBase {
 		anchorZ = 0;
 	}
 
-	public void setBlockId(int x, int y, int z, int blockId) {
-		if (contents[x][y][z] == null) {
+	public void setBlock(int x, int y, int z, Block block) {
+		/*if (contents[x][y][z] == null) {
 			contents[x][y][z] = new BptSlot();
 			contents[x][y][z].x = x;
 			contents[x][y][z].y = y;
 			contents[x][y][z].z = z;
 		}
 
-		contents[x][y][z].blockId = blockId;
+		contents[x][y][z].blockId = blockId;*/
 	}
 
 	public void rotateLeft(BptContext context) {

@@ -125,11 +125,11 @@ public class BlockQuarry extends BlockBuildCraft {
 	}
 
 	@Override
-	public ArrayList<ItemStack> getBlockDropped(World world, int x, int y, int z, int metadata, int fortune) {
+	public ArrayList<ItemStack> getDrops(World world, int x, int y, int z, int metadata, int fortune) {
 		if (BuildCraftFactory.quarryOneTimeUse) {
 			return new ArrayList<ItemStack>();
 		}
-		return super.getBlockDropped(world, x, y, z, metadata, fortune);
+		return super.getDrops(world, x, y, z, metadata, fortune);
 	}
 
 	@Override

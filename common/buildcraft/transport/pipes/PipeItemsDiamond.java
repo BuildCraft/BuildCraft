@@ -15,6 +15,7 @@ import java.util.LinkedList;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
@@ -38,8 +39,8 @@ public class PipeItemsDiamond extends Pipe<PipeTransportItems> implements IClien
 
 	private SimpleInventory filters = new SimpleInventory(54, "Filters", 1);
 
-	public PipeItemsDiamond(int itemID) {
-		super(new PipeTransportItems(), itemID);
+	public PipeItemsDiamond(Item item) {
+		super(new PipeTransportItems(), item);
 	}
 
 	public IInventory getFilters() {

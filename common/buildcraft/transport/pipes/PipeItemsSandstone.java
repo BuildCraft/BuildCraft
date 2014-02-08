@@ -7,6 +7,7 @@
  */
 package buildcraft.transport.pipes;
 
+import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.BuildCraftTransport;
@@ -21,8 +22,8 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 public class PipeItemsSandstone extends Pipe implements IPipeConnectionForced {
 
-	public PipeItemsSandstone(int itemID) {
-		super(new PipeTransportItems(), itemID);
+	public PipeItemsSandstone(Item item) {
+		super(new PipeTransportItems(), item);
 	}
 
 	@Override

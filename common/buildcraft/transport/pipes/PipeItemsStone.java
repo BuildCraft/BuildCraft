@@ -17,12 +17,13 @@ import buildcraft.transport.TravelingItem;
 import buildcraft.transport.pipes.events.PipeEventItem;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.item.Item;
 import net.minecraftforge.common.util.ForgeDirection;
 
 public class PipeItemsStone extends Pipe {
 
-	public PipeItemsStone(int itemID) {
-		super(new PipeTransportItems(), itemID);
+	public PipeItemsStone(Item item) {
+		super(new PipeTransportItems(), item);
 	}
 
 	@Override

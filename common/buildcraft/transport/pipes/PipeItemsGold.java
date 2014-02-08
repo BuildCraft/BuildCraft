@@ -18,12 +18,13 @@ import buildcraft.transport.TravelingItem;
 import buildcraft.transport.pipes.events.PipeEventItem;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.item.Item;
 import net.minecraftforge.common.util.ForgeDirection;
 
 public class PipeItemsGold extends Pipe {
 
-	public PipeItemsGold(int itemID) {
-		super(new PipeTransportItems(), itemID);
+	public PipeItemsGold(Item item) {
+		super(new PipeTransportItems(), item);
 	}
 
 	@Override

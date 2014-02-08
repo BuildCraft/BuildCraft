@@ -12,6 +12,7 @@ import buildcraft.core.EntityBlock;
 import java.util.Arrays;
 
 import net.minecraft.block.Block;
+import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.texture.TextureMap;
@@ -27,6 +28,7 @@ import org.lwjgl.opengl.GL11;
 public class RenderEntityBlock extends Render {
 
 	public static RenderEntityBlock INSTANCE = new RenderEntityBlock();
+	protected RenderBlocks renderBlocks;
 
 	@Override
 	protected ResourceLocation getEntityTexture(Entity entity) {
@@ -121,6 +123,7 @@ public class RenderEntityBlock extends Render {
 	}
 
 	private RenderEntityBlock() {
+		renderBlocks = field_147909_c;
 	}
 
 	@Override

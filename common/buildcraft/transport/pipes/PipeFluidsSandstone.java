@@ -7,6 +7,7 @@
  */
 package buildcraft.transport.pipes;
 
+import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.FluidStack;
@@ -23,8 +24,8 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 public class PipeFluidsSandstone extends Pipe<PipeTransportFluids> implements IPipeTransportFluidsHook, IPipeConnectionForced {
 
-	public PipeFluidsSandstone(int itemID) {
-		super(new PipeTransportFluids(), itemID);
+	public PipeFluidsSandstone(Item item) {
+		super(new PipeTransportFluids(), item);
 	}
 
 	@Override

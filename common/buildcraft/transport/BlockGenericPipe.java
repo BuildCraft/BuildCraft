@@ -113,7 +113,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 	}
 
 	@Override
-	public boolean canBeReplacedByLeaves(World world, int x, int y, int z) {
+	public boolean canBeReplacedByLeaves(IBlockAccess world, int x, int y, int z) {
 		return false;
 	}
 
@@ -510,7 +510,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 	}
 
 	@Override
-	public ArrayList<ItemStack> getBlockDropped(World world, int x, int y, int z, int metadata, int fortune) {
+	public ArrayList<ItemStack> getDrops(World world, int x, int y, int z, int metadata, int fortune) {
 
 		if (CoreProxy.proxy.isRenderWorld(world))
 			return null;
@@ -526,9 +526,9 @@ public class BlockGenericPipe extends BlockBuildCraft {
 			}
 
 			if (pipe != null) {
-				if (pipe.itemID > 0) {
+				if (pipe.item != null) {
 					pipe.dropContents();
-					list.add(new ItemStack(pipe.itemID, 1, damageDropped(metadata)));
+					list.add(new ItemStack(pipe.item, 1, damageDropped(metadata)));
 				}
 			}
 		}
@@ -559,23 +559,23 @@ public class BlockGenericPipe extends BlockBuildCraft {
 			}
 
 			if (pipe != null) {
-				int k1 = pipe.itemID;
+				Item k1 = pipe.item;
 
-				if (k1 > 0) {
+				if (k1 != null) {
 					pipe.dropContents();
-					dropBlockAsItem_do(world, i, j, k, new ItemStack(k1, 1, damageDropped(l)));
+					dropBlockAsItem(world, i, j, k, new ItemStack(k1, 1, damageDropped(l)));
 				}
 			}
 		}
 	}
 
 	@Override
-	public int idDropped(int meta, Random rand, int dmg) {
-		// Returns 0 to be safe - the id does not depend on the meta
-		return 0;
+	public Item getItemDropped(int meta, Random rand, int dmg) {
+		// Returns null to be safe - the id does not depend on the meta
+		return null;
 	}
 
-	@SideOnly(Side.CLIENT)
+	/*@SideOnly(Side.CLIENT)
 	@Override
 	public int idPicked(World world, int i, int j, int k) {
 		Pipe pipe = getPipe(world, i, j, k);
@@ -584,7 +584,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 			return 0;
 		else
 			return pipe.itemID;
-	}
+	}*/
 
 	@SideOnly(Side.CLIENT)
 	@Override
@@ -642,7 +642,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float xOffset, float yOffset, float zOffset) {
 		super.onBlockActivated(world, x, y, z, player, side, xOffset, yOffset, zOffset);
 
-		world.notifyBlocksOfNeighborChange(x, y, z, BuildCraftTransport.genericPipeBlock.blockID);
+		world.notifyBlocksOfNeighborChange(x, y, z, BuildCraftTransport.genericPipeBlock);
 
 		Pipe pipe = getPipe(world, x, y, z);
 
@@ -799,7 +799,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 
 	private boolean addFacade(EntityPlayer player, Pipe pipe, ForgeDirection side) {
 		ItemStack stack = player.getCurrentEquippedItem();
-		if (pipe.container.addFacade(side, ItemFacade.getBlockId(stack), ItemFacade.getMetaData(stack))) {
+		if (pipe.container.addFacade(side, ItemFacade.getBlock(stack), ItemFacade.getMetaData(stack))) {
 			if (!player.capabilities.isCreativeMode) {
 				stack.stackSize--;
 			}
@@ -871,7 +871,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 	@SuppressWarnings({"all"})
 	@SideOnly(Side.CLIENT)
 	@Override
-	public IIcon getBlockTexture(IBlockAccess iblockaccess, int x, int y, int z, int side) {
+	public IIcon getIcon(IBlockAccess iblockaccess, int x, int y, int z, int side) {
 		TileEntity tile = iblockaccess.getTileEntity(x, y, z);
 		if (!(tile instanceof TileGenericPipe))
 			return null;
@@ -937,18 +937,18 @@ public class BlockGenericPipe extends BlockBuildCraft {
 	}
 
 	/* Registration ******************************************************** */
-	public static Map<Integer, Class<? extends Pipe>> pipes = new HashMap<Integer, Class<? extends Pipe>>();
+	public static Map<Item, Class<? extends Pipe>> pipes = new HashMap<Item, Class<? extends Pipe>>();
 	static long lastRemovedDate = -1;
 	public static Map<BlockIndex, Pipe> pipeRemoved = new HashMap<BlockIndex, Pipe>();
 
-	public static ItemPipe registerPipe(int key, Class<? extends Pipe> clas) {
-		ItemPipe item = new ItemPipe(key);
+	public static ItemPipe registerPipe(Class<? extends Pipe> clas) {
+		ItemPipe item = new ItemPipe();
 		item.setBlockName("buildcraftPipe." + clas.getSimpleName().toLowerCase(Locale.ENGLISH));
 		GameRegistry.registerItem(item, item.getUnlocalizedName());
 
-		pipes.put(item.itemID, clas);
+		pipes.put(item, clas);
 
-		Pipe dummyPipe = createPipe(item.itemID);
+		Pipe dummyPipe = createPipe(item);
 		if (dummyPipe != null) {
 			item.setPipeIconIndex(dummyPipe.getIconIndexForItem());
 			TransportProxy.proxy.setIconProviderFromPipe(item, dummyPipe);
@@ -960,7 +960,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 		return pipes.containsKey(key);
 	}
 
-	public static Pipe createPipe(int key) {
+	public static Pipe createPipe(Item key) {
 
 		try {
 			Class<? extends Pipe> pipe = pipes.get(key);
@@ -1018,7 +1018,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 			return;
 		}
 		BuildCraftTransport.instance.wireIconProvider.registerIcons(iconRegister);
-		for (int i : pipes.keySet()) {
+		for (Item i : pipes.keySet()) {
 			Pipe dummyPipe = createPipe(i);
 			if (dummyPipe != null) {
 				dummyPipe.getIconProvider().registerIcons(iconRegister);
@@ -1058,7 +1058,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 	 */
 	@SideOnly(Side.CLIENT)
 	@Override
-	public boolean addBlockHitEffects(World worldObj, MovingObjectPosition target, EffectRenderer effectRenderer) {
+	public boolean addHitEffects(World worldObj, MovingObjectPosition target, EffectRenderer effectRenderer) {
 		int x = target.blockX;
 		int y = target.blockY;
 		int z = target.blockZ;
@@ -1123,7 +1123,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 	 */
 	@SideOnly(Side.CLIENT)
 	@Override
-	public boolean addBlockDestroyEffects(World worldObj, int x, int y, int z, int meta, EffectRenderer effectRenderer) {
+	public boolean addDestroyEffects(World worldObj, int x, int y, int z, int meta, EffectRenderer effectRenderer) {
 		Pipe pipe = getPipe(worldObj, x, y, z);
 		if (pipe == null)
 			return false;

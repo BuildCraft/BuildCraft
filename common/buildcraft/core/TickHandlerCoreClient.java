@@ -1,26 +1,29 @@
 package buildcraft.core;
 
 import buildcraft.core.proxy.CoreProxy;
-import cpw.mods.fml.common.ITickHandler;
-import cpw.mods.fml.common.TickType;
+
 import java.util.EnumSet;
+
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.common.gameevent.TickEvent;
+import cpw.mods.fml.common.gameevent.TickEvent.PlayerTickEvent;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.entity.player.EntityPlayer;
 
-public class TickHandlerCoreClient implements ITickHandler {
+public class TickHandlerCoreClient {
 
 	private boolean nagged;
 
-	@Override
-	public void tickStart(EnumSet<TickType> type, Object... tickData) {
-	}
+	@SideOnly(Side.CLIENT)
+	@SubscribeEvent
+	public void tickEnd(PlayerTickEvent evt) {
 
-	@Override
-	public void tickEnd(EnumSet<TickType> type, Object... tickData) {
-
-		if (nagged)
+		if (nagged) {
 			return;
+		}
 
-		EntityPlayer player = (EntityPlayer) tickData[0];
+		EntityPlayer player = evt.player;
 
 		// if(!Config.disableVersionCheck) {
 
@@ -37,15 +40,4 @@ public class TickHandlerCoreClient implements ITickHandler {
 
 		nagged = true;
 	}
-
-	@Override
-	public EnumSet<TickType> ticks() {
-		return EnumSet.of(TickType.PLAYER);
-	}
-
-	@Override
-	public String getLabel() {
-		return "BuildCraft - Player update tick";
-	}
-
 }

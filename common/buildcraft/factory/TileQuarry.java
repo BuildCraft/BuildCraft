@@ -619,29 +619,29 @@ public class TileQuarry extends TileBuildCraft implements IMachine, IPowerRecept
 		for (int i = 0; i < bluePrint.sizeX; ++i) {
 			for (int j = 0; j < bluePrint.sizeY; ++j) {
 				for (int k = 0; k < bluePrint.sizeZ; ++k) {
-					bluePrint.setBlockId(i, j, k, 0);
+					bluePrint.setBlock(i, j, k, null);
 				}
 			}
 		}
 
 		for (int it = 0; it < 2; it++) {
 			for (int i = 0; i < bluePrint.sizeX; ++i) {
-				bluePrint.setBlockId(i, it * (box.sizeY() - 1), 0, BuildCraftFactory.frameBlock.blockID);
-				bluePrint.setBlockId(i, it * (box.sizeY() - 1), bluePrint.sizeZ - 1, BuildCraftFactory.frameBlock.blockID);
+				bluePrint.setBlock(i, it * (box.sizeY() - 1), 0, BuildCraftFactory.frameBlock);
+				bluePrint.setBlock(i, it * (box.sizeY() - 1), bluePrint.sizeZ - 1, BuildCraftFactory.frameBlock);
 			}
 
 			for (int k = 0; k < bluePrint.sizeZ; ++k) {
-				bluePrint.setBlockId(0, it * (box.sizeY() - 1), k, BuildCraftFactory.frameBlock.blockID);
-				bluePrint.setBlockId(bluePrint.sizeX - 1, it * (box.sizeY() - 1), k, BuildCraftFactory.frameBlock.blockID);
+				bluePrint.setBlock(0, it * (box.sizeY() - 1), k, BuildCraftFactory.frameBlock);
+				bluePrint.setBlock(bluePrint.sizeX - 1, it * (box.sizeY() - 1), k, BuildCraftFactory.frameBlock);
 
 			}
 		}
 
 		for (int h = 1; h < box.sizeY(); ++h) {
-			bluePrint.setBlockId(0, h, 0, BuildCraftFactory.frameBlock.blockID);
-			bluePrint.setBlockId(0, h, bluePrint.sizeZ - 1, BuildCraftFactory.frameBlock.blockID);
-			bluePrint.setBlockId(bluePrint.sizeX - 1, h, 0, BuildCraftFactory.frameBlock.blockID);
-			bluePrint.setBlockId(bluePrint.sizeX - 1, h, bluePrint.sizeZ - 1, BuildCraftFactory.frameBlock.blockID);
+			bluePrint.setBlock(0, h, 0, BuildCraftFactory.frameBlock);
+			bluePrint.setBlock(0, h, bluePrint.sizeZ - 1, BuildCraftFactory.frameBlock);
+			bluePrint.setBlock(bluePrint.sizeX - 1, h, 0, BuildCraftFactory.frameBlock);
+			bluePrint.setBlock(bluePrint.sizeX - 1, h, bluePrint.sizeZ - 1, BuildCraftFactory.frameBlock);
 		}
 
 		bluePrintBuilder = new BptBuilderBlueprint(bluePrint, worldObj, box.xMin, yCoord, box.zMin);

@@ -100,7 +100,7 @@ public class TileFloodGate extends TileBuildCraft implements IFluidHandler {
 	private boolean placeFluid(int x, int y, int z, Fluid fluid) {
 		Block block = worldObj.getBlock(x, y, z);
 		if (canPlaceFluidAt(block, x, y, z)) {
-			boolean placed = worldObj.setBlock(x, y, z, FluidUtils.getFluidBlockId(fluid, true));
+			boolean placed = worldObj.setBlock(x, y, z, FluidUtils.getFluidBlock(fluid, true));
 			if (placed) {
 				queueAdjacent(x, y, z);
 				expandQueue();

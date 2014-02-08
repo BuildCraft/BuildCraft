@@ -106,7 +106,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 	private boolean pipeBound = false;
 	private boolean resyncGateExpansions = false;
 	public int redstoneInput = 0;
-	private int[] facadeBlocks = new int[ForgeDirection.VALID_DIRECTIONS.length];
+	private Block[] facadeBlocks = new int[ForgeDirection.VALID_DIRECTIONS.length];
 	private int[] facadeMeta = new int[ForgeDirection.VALID_DIRECTIONS.length];
 	private boolean[] plugs = new boolean[ForgeDirection.VALID_DIRECTIONS.length];
 
@@ -274,8 +274,8 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 
 		// Facades
 		for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
-			int blockId = this.facadeBlocks[direction.ordinal()];
-			renderState.facadeMatrix.setFacade(direction, blockId, this.facadeMeta[direction.ordinal()]);
+			Block block = this.facadeBlocks[direction.ordinal()];
+			renderState.facadeMatrix.setFacade(direction, block, this.facadeMeta[direction.ordinal()]);
 		}
 
 		//Plugs
@@ -589,16 +589,16 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 		refreshRenderState = true;
 	}
 
-	public boolean addFacade(ForgeDirection direction, int blockid, int meta) {
+	public boolean addFacade(ForgeDirection direction, Block block, int meta) {
 		if (this.getWorldObj().isRemote)
 			return false;
-		if (this.facadeBlocks[direction.ordinal()] == blockid)
+		if (this.facadeBlocks[direction.ordinal()] == block)
 			return false;
 
 		if (hasFacade(direction))
 			dropFacadeItem(direction);
 
-		this.facadeBlocks[direction.ordinal()] = blockid;
+		this.facadeBlocks[direction.ordinal()] = block;
 		this.facadeMeta[direction.ordinal()] = meta;
 		worldObj.notifyBlockChange(this.xCoord, this.yCoord, this.zCoord, getBlock());
 		scheduleRenderUpdate();
@@ -610,7 +610,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 			return false;
 		if (this.getWorldObj().isRemote)
 			return renderState.facadeMatrix.getFacadeBlockId(direction) != 0;
-		return (this.facadeBlocks[direction.ordinal()] != 0);
+		return (this.facadeBlocks[direction.ordinal()] != null);
 	}
 
 	private void dropFacadeItem(ForgeDirection direction) {
@@ -622,7 +622,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 			return false;
 		if (!worldObj.isRemote) {
 			dropFacadeItem(direction);
-			this.facadeBlocks[direction.ordinal()] = 0;
+			this.facadeBlocks[direction.ordinal()] = null;
 			this.facadeMeta[direction.ordinal()] = 0;
 			worldObj.notifyBlockChange(this.xCoord, this.yCoord, this.zCoord, getBlock());
 			scheduleRenderUpdate();

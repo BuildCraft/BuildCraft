@@ -30,6 +30,7 @@ import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.BlockUtil;
 import buildcraft.core.utils.Utils;
+import io.netty.buffer.ByteBuf;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -296,7 +297,7 @@ public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor
 	}
 
 	private boolean isPumpableFluid(int x, int y, int z) {
-		Fluid fluid = BlockUtil.getFluid(worldObj.getBlockId(x, y, z));
+		Fluid fluid = BlockUtil.getFluid(worldObj.getBlock(x, y, z));
 		if (fluid == null)
 			return false;
 		if (!isFluidAllowed(fluid))
@@ -378,10 +379,10 @@ public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor
 	public PacketPayload getPacketPayload() {
 		PacketPayloadStream payload = new PacketPayloadStream(new PacketPayloadStream.StreamWriter() {
 			@Override
-			public void writeData(DataOutputStream data) throws IOException {
-				data.writeInt(aimY);
-				data.writeFloat((float) tubeY);
-				data.writeBoolean(powered);
+			public void writeData(ByteBuf buf) {
+				buf.writeInt(aimY);
+				buf.writeFloat((float) tubeY);
+				buf.writeBoolean(powered);
 			}
 		});
 
@@ -391,7 +392,7 @@ public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor
 	@Override
 	public void handleUpdatePacket(PacketUpdate packet) throws IOException {
 		PacketPayloadStream payload = (PacketPayloadStream) packet.payload;
-		DataInputStream data = payload.stream;
+		ByteBuf data = payload.stream;
 		aimY = data.readInt();
 		tubeY = data.readFloat();
 		powered = data.readBoolean();

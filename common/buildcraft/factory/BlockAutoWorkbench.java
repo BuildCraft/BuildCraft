@@ -68,11 +68,6 @@ public class BlockAutoWorkbench extends BlockBuildCraft {
 		return new TileAutoWorkbench();
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	@Override
-	public void addCreativeItems(ArrayList itemList) {
-		itemList.add(new ItemStack(this));
-	}
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void registerBlockIcons(IIconRegister par1IconRegister)

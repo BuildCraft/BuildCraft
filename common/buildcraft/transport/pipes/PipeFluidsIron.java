@@ -21,6 +21,7 @@ import buildcraft.transport.triggers.ActionPipeDirection;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.IFluidHandler;
@@ -46,8 +47,8 @@ public class PipeFluidsIron extends Pipe<PipeTransportFluids> {
 		}
 	};
 
-	public PipeFluidsIron(int itemID) {
-		super(new PipeTransportFluids(), itemID);
+	public PipeFluidsIron(Item item) {
+		super(new PipeTransportFluids(), item);
 	}
 
 	@Override

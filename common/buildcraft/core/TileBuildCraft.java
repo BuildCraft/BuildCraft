@@ -84,7 +84,7 @@ public abstract class TileBuildCraft extends TileEntity implements ISynchronized
 
 	public void onBlockPlacedBy(EntityLivingBase entity, ItemStack stack) {
 		if (entity instanceof EntityPlayer)
-			owner = ((EntityPlayer) entity).username;
+			owner = ((EntityPlayer) entity).getDisplayName();
 	}
 
 	public void destroy() {

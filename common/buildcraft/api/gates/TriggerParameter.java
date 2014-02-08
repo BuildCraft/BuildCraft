@@ -9,6 +9,7 @@
 
 package buildcraft.api.gates;
 
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
@@ -63,7 +64,7 @@ public class TriggerParameter implements ITriggerParameter {
 		// Legacy code to prevent existing gates from losing their contents
 		int itemID = compound.getInteger("itemID");
 		if (itemID != 0) {
-			stack = new ItemStack(itemID, 1, compound.getInteger("itemDMG"));
+			stack = new ItemStack((Item) Item.itemRegistry.getObject(itemID), 1, compound.getInteger("itemDMG"));
 			return;
 		}
 		

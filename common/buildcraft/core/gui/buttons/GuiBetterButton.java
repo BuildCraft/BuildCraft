@@ -63,9 +63,10 @@ public class GuiBetterButton extends GuiButton implements IToolTipProvider {
 
 	@Override
 	public void drawButton(Minecraft minecraft, int mouseX, int mouseY) {
-		if (!drawButton) {
+		if (!visible) {
 			return;
 		}
+		
 		FontRenderer fontrenderer = minecraft.fontRenderer;
 		bindButtonTextures(minecraft);
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
@@ -92,7 +93,7 @@ public class GuiBetterButton extends GuiButton implements IToolTipProvider {
 
 	@Override
 	public boolean isToolTipVisible() {
-		return drawButton;
+		return visible;
 	}
 
 	@Override

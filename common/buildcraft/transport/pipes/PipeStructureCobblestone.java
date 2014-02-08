@@ -7,12 +7,13 @@ import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportStructure;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.item.Item;
 import net.minecraftforge.common.util.ForgeDirection;
 
 public class PipeStructureCobblestone extends Pipe {
 
-	public PipeStructureCobblestone(int itemID) {
-		super(new PipeTransportStructure(), itemID);
+	public PipeStructureCobblestone(Item item) {
+		super(new PipeTransportStructure(), item);
 	}
 
 	@Override

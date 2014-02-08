@@ -68,10 +68,12 @@ public class BptBlockPipe extends BptBlock {
 	public boolean isValid(BptSlotInfo slot, IBptContext context) {
 		Pipe pipe = BlockGenericPipe.getPipe(context.world(), slot.x, slot.y, slot.z);
 
-		if (BlockGenericPipe.isValid(pipe))
-			return pipe.itemID == slot.cpt.getInteger("pipeId");
-		else
-			return false;
+		//if (BlockGenericPipe.isValid(pipe))
+		//	return pipe.itemID == slot.cpt.getInteger("pipeId");
+		//else
+		//	return false;
+		
+		return false;
 	}
 
 	@Override
@@ -87,12 +89,12 @@ public class BptBlockPipe extends BptBlock {
 	public void buildBlock(BptSlotInfo slot, IBptContext context) {
 		int pipeId = slot.cpt.getInteger("pipeId");
 
-		Pipe pipe = BlockGenericPipe.createPipe(pipeId);
+		//Pipe pipe = BlockGenericPipe.createPipe(pipeId);
 
-		for (int i = 0; i < pipe.wireSet.length; ++i)
-			if (slot.cpt.hasKey("wire" + i)) {
-				pipe.wireSet[i] = true;
-			}
+		//for (int i = 0; i < pipe.wireSet.length; ++i)
+		//	if (slot.cpt.hasKey("wire" + i)) {
+		//		pipe.wireSet[i] = true;
+		//	}
 
 //		if (slot.cpt.hasKey("gate")) {
 //			// / TODO: Does not save/load custom gates
@@ -137,7 +139,7 @@ public class BptBlockPipe extends BptBlock {
 		Pipe pipe = BlockGenericPipe.getPipe(context.world(), x, y, z);
 
 		if (BlockGenericPipe.isValid(pipe)) {
-			bptSlot.cpt.setInteger("pipeId", pipe.itemID);
+			//bptSlot.cpt.setInteger("pipeId", pipe.itemID);
 
 			for (int i = 0; i < pipe.wireSet.length; ++i)
 				if (pipe.wireSet[i]) {

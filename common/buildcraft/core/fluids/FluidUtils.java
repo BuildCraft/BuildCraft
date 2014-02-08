@@ -73,7 +73,7 @@ public class FluidUtils {
 
 	public static Block getFluidBlock(Fluid fluid, boolean moving) {
 		if (fluid == FluidRegistry.WATER)
-			return moving ? Blocks.flowing_lava : Blocks.water;
+			return moving ? Blocks.flowing_water : Blocks.water;
 		if (fluid == FluidRegistry.LAVA)
 			return moving ? Blocks.flowing_lava : Blocks.lava;
 		return fluid.getBlock();

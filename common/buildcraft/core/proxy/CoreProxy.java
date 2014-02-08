@@ -230,6 +230,6 @@ public class CoreProxy {
 	 * server channels instead.
 	 */
 	public EntityPlayer getPlayerFromNetHandler (INetHandler hander) {
-		return ((NetHandlerPlayServer) hander).field_147369_b;
+		return ((NetHandlerPlayServer) hander).playerEntity;
 	}
 }

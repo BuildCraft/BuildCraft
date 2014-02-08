@@ -233,7 +233,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 			durability.comment = "How long a pipe will take to break";
 			pipeDurability = (float) durability.getDouble(DefaultProps.PIPES_DURABILITY);
 
-			Property exclusionItemList = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_BLOCK, "woodenPipe.item.exclusion", new String[0]);
+			Property exclusionItemList = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "woodenPipe.item.exclusion", new String[0]);
 
 			String[] excludedItemBlocks = exclusionItemList.getStringList();
 			if (excludedItemBlocks != null) {
@@ -243,7 +243,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 			} else
 				excludedItemBlocks = new String[0];
 
-			Property exclusionFluidList = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_BLOCK, "woodenPipe.liquid.exclusion", new String[0]);
+			Property exclusionFluidList = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "woodenPipe.liquid.exclusion", new String[0]);
 
 			String[] excludedFluidBlocks = exclusionFluidList.getStringList();
 			if (excludedFluidBlocks != null) {
@@ -444,10 +444,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 	public static Item buildPipe(int defaultID, Class<? extends Pipe> clas, String descr, Object... ingredients) {
 		String name = Character.toLowerCase(clas.getSimpleName().charAt(0)) + clas.getSimpleName().substring(1);
 
-		Property prop = BuildCraftCore.mainConfiguration.getItem(name + ".id", defaultID);
-
-		int id = prop.getInt(defaultID);
-		ItemPipe res = BlockGenericPipe.registerPipe(id, clas);
+		ItemPipe res = BlockGenericPipe.registerPipe(clas);
 		res.setBlockName(clas.getSimpleName());
 		LanguageRegistry.addName(res, descr);
 

@@ -15,12 +15,13 @@ import buildcraft.transport.PipeTransportItems;
 import buildcraft.transport.pipes.events.PipeEventItem;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.item.Item;
 import net.minecraftforge.common.util.ForgeDirection;
 
 public class PipeItemsVoid extends Pipe<PipeTransportItems> {
 
-	public PipeItemsVoid(int itemID) {
-		super(new PipeTransportItems(), itemID);
+	public PipeItemsVoid(Item item) {
+		super(new PipeTransportItems(), item);
 	}
 
 	@Override

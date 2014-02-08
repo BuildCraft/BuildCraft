@@ -30,9 +30,10 @@ public class GuiMultiButton extends GuiBetterButton {
 
 	@Override
 	public void drawButton(Minecraft minecraft, int x, int y) {
-		if (!drawButton) {
+		if (!visible) {
 			return;
 		}
+		
 		FontRenderer fontrenderer = minecraft.fontRenderer;
 		bindButtonTextures(minecraft);
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);

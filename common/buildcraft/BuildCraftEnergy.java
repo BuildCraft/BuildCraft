@@ -93,14 +93,7 @@ public class BuildCraftEnergy extends BuildCraftMod {
 	public static BuildCraftEnergy instance;
 
 	@EventHandler
-	public void preInit(FMLPreInitializationEvent evt) {
-		// Update oil tag
-		int defaultOilId = DefaultProps.OIL_ID;
-		if (BuildCraftCore.mainConfiguration.hasKey(Configuration.CATEGORY_BLOCK, "oilStill.id")) {
-			defaultOilId = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_BLOCK, "oilStill.id", defaultOilId).getInt(defaultOilId);
-			BuildCraftCore.mainConfiguration.getCategory(Configuration.CATEGORY_BLOCK).remove("oilStill.id");
-		}
-		
+	public void preInit(FMLPreInitializationEvent evt) {		
 		int oilDesertBiomeId = BuildCraftCore.mainConfiguration.get("biomes", "oilDesert", DefaultProps.BIOME_OIL_DESERT).getInt(DefaultProps.BIOME_OIL_DESERT);
 		int oilOceanBiomeId = BuildCraftCore.mainConfiguration.get("biomes", "oilOcean", DefaultProps.BIOME_OIL_OCEAN).getInt(DefaultProps.BIOME_OIL_OCEAN);
 		canOilBurn = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "burnOil", true, "Can oil burn?").getBoolean(true);
@@ -118,14 +111,14 @@ public class BuildCraftEnergy extends BuildCraftMod {
 		}
 
 		if (oilDesertBiomeId > 0) {
-			if (BiomeGenBase.biomeList[oilDesertBiomeId] != null) {
+			if (BiomeGenBase.getBiomeGenArray () [oilDesertBiomeId] != null) {
 				throw new BiomeIdException("oilDesert", oilDesertBiomeId);
 			}
 			biomeOilDesert = BiomeGenOilDesert.makeBiome(oilDesertBiomeId);
 		}
 
 		if (oilOceanBiomeId > 0) {
-			if (BiomeGenBase.biomeList[oilOceanBiomeId] != null) {
+			if (BiomeGenBase.getBiomeGenArray () [oilOceanBiomeId] != null) {
 				throw new BiomeIdException("oilOcean", oilOceanBiomeId);
 			}
 			biomeOilOcean = BiomeGenOilOcean.makeBiome(oilOceanBiomeId);

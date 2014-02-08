@@ -17,10 +17,13 @@ import buildcraft.transport.TileGenericPipe;
 import buildcraft.transport.triggers.ActionPipeDirection;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+
 import java.util.LinkedList;
 import java.util.Map;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
 
@@ -45,8 +48,8 @@ public class PipeItemsIron extends Pipe<PipeTransportItems> {
 		}
 	};
 
-	public PipeItemsIron(int itemID) {
-		super(new PipeTransportItems(), itemID);
+	public PipeItemsIron(Item item) {
+		super(new PipeTransportItems(), item);
 
 		transport.allowBouncing = true;
 	}

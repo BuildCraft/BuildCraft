@@ -21,14 +21,17 @@ import buildcraft.transport.gates.GateFactory;
 import buildcraft.transport.pipes.events.PipeEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Random;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -40,7 +43,7 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 	public int[] signalStrength = new int[]{0, 0, 0, 0};
 	public TileGenericPipe container;
 	public final T transport;
-	public final int itemID;
+	public final Item item;
 	private boolean internalUpdateScheduled = false;
 	public boolean[] wireSet = new boolean[]{false, false, false, false};
 	public Gate gate;
@@ -49,9 +52,9 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 	public SafeTimeTracker actionTracker = new SafeTimeTracker();
 	private static Map<Class<? extends Pipe>, Map<Class<? extends PipeEvent>, EventHandler>> eventHandlers = new HashMap<Class<? extends Pipe>, Map<Class<? extends PipeEvent>, EventHandler>>();
 
-	public Pipe(T transport, int itemID) {
+	public Pipe(T transport, Item item) {
 		this.transport = transport;
-		this.itemID = itemID;
+		this.item = item;
 
 		if (!networkWrappers.containsKey(this.getClass())) {
 			networkWrappers
@@ -409,12 +412,12 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 	}
 
 	protected void notifyBlocksOfNeighborChange(ForgeDirection side) {
-		container.getWorldObj().notifyBlocksOfNeighborChange(container.xCoord + side.offsetX, container.yCoord + side.offsetY, container.zCoord + side.offsetZ, BuildCraftTransport.genericPipeBlock.blockID);
+		container.getWorldObj().notifyBlocksOfNeighborChange(container.xCoord + side.offsetX, container.yCoord + side.offsetY, container.zCoord + side.offsetZ, BuildCraftTransport.genericPipeBlock);
 	}
 
 	protected void updateNeighbors(boolean needSelf) {
 		if (needSelf) {
-			container.getWorldObj().notifyBlocksOfNeighborChange(container.xCoord, container.yCoord, container.zCoord, BuildCraftTransport.genericPipeBlock.blockID);
+			container.getWorldObj().notifyBlocksOfNeighborChange(container.xCoord, container.yCoord, container.zCoord, BuildCraftTransport.genericPipeBlock);
 		}
 		for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
 			notifyBlocksOfNeighborChange(side);

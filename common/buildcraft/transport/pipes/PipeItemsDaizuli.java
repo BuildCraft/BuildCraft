@@ -57,8 +57,8 @@ public class PipeItemsDaizuli extends Pipe<PipeTransportItems> {
 		}
 	};
 
-	public PipeItemsDaizuli(int itemID) {
-		super(new PipeTransportItems(), itemID);
+	public PipeItemsDaizuli(Item item) {
+		super(new PipeTransportItems(), item);
 
 		transport.allowBouncing = true;
 	}

@@ -14,12 +14,13 @@ import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportPower;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.item.Item;
 import net.minecraftforge.common.util.ForgeDirection;
 
 public class PipePowerQuartz extends Pipe<PipeTransportPower> {
 
-	public PipePowerQuartz(int itemID) {
-		super(new PipeTransportPower(), itemID);
+	public PipePowerQuartz(Item item) {
+		super(new PipeTransportPower(), item);
 		transport.initFromPipe(getClass());
 	}
 

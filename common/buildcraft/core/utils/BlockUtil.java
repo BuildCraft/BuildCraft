@@ -43,12 +43,12 @@ public class BlockUtil {
 		if (block == null)
 			return null;
 
-		if (block.isAirBlock(world, i, j, k))
+		if (block.isAir(world, i, j, k))
 			return null;
 
 		int meta = world.getBlockMetadata(i, j, k);
 
-		ArrayList<ItemStack> dropsList = block.getBlockDropped(world, i, j, k, meta, 0);
+		ArrayList<ItemStack> dropsList = block.getDrops(world, i, j, k, meta, 0);
 		float dropChance = ForgeEventFactory.fireBlockHarvesting(dropsList, world, block, i, j, k, meta, 0, 1.0F, false, CoreProxy.proxy.getBuildCraftPlayer(world));
 
 		ArrayList<ItemStack> returnList = new ArrayList<ItemStack>();
@@ -87,7 +87,7 @@ public class BlockUtil {
 	}
 
 	public static boolean isAnObstructingBlock(Block block, World world, int x, int y, int z) {
-		if (block == null || block.isAirBlock(world, x, y, z))
+		if (block == null || block.isAir(world, x, y, z))
 			return false;
 		return true;
 	}
@@ -97,7 +97,7 @@ public class BlockUtil {
 	}
 
 	public static boolean canChangeBlock(Block block, World world, int x, int y, int z) {
-		if (block == null || block.isAirBlock(world, x, y, z))
+		if (block == null || block.isAir(world, x, y, z))
 			return true;
 
 		if (block.getBlockHardness(world, x, y, z) < 0)
@@ -117,7 +117,7 @@ public class BlockUtil {
 	}
 
 	public static boolean isSoftBlock(Block block, World world, int x, int y, int z) {
-		return block == null || BuildCraftAPI.softBlocks[blockID] || block.isAirBlock(world, x, y, z);
+		return block == null || BuildCraftAPI.softBlocks.contains(block) || block.isAir(world, x, y, z);
 	}
 
 	/**

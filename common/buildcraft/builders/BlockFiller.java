@@ -99,12 +99,6 @@ public class BlockFiller extends BlockContainer {
 		super.breakBlock(world, x, y, z, block, par6);
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	@Override
-	public void addCreativeItems(ArrayList itemList) {
-		itemList.add(new ItemStack(this));
-	}
-
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void registerBlockIcons(IIconRegister par1IconRegister) {

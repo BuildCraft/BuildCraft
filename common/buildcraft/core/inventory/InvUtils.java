@@ -233,8 +233,8 @@ public class InvUtils {
 				adjacent = chest.adjacentChestZNeg;
 			}
 
-			if (chest.adjacentChestZPosition != null) {
-				adjacent = chest.adjacentChestZPosition;
+			if (chest.adjacentChestZPos != null) {
+				adjacent = chest.adjacentChestZPos;
 			}
 
 			if (adjacent != null) {

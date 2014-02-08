@@ -140,15 +140,9 @@ public class BlockMarker extends BlockContainer {
 	private void dropTorchIfCantStay(World world, int x, int y, int z) {
 		int meta = world.getBlockMetadata(x, y, z);
 		if (!canPlaceBlockOnSide(world, x, y, z, meta)) {
-			dropBlockAsItem(world, x, y, z, BuildCraftBuilders.markerBlock.blockID, 0);
+			dropBlockAsItem(world, x, y, z, 0, 0);
 			world.setBlock(x, y, z, null);
 		}
-	}
-
-	@SuppressWarnings({"unchecked", "rawtypes"})
-	@Override
-	public void addCreativeItems(ArrayList itemList) {
-		itemList.add(new ItemStack(this));
 	}
 
 	@Override

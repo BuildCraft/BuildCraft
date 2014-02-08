@@ -48,16 +48,16 @@ public class ItemFacade extends ItemBuildCraft {
 	@Override
 	public String getItemDisplayName(ItemStack itemstack) {
 		String name = super.getItemDisplayName(itemstack);
-		int decodedBlockId = ItemFacade.getBlockId(itemstack);
+		Block decodedBlock = ItemFacade.getBlock(itemstack);
 		int decodedMeta = ItemFacade.getMetaData(itemstack);
-		if (decodedBlockId < Block.blocksList.length && Block.blocksList[decodedBlockId] != null && Block.blocksList[decodedBlockId].getRenderType() == 31) {
+		if (decodedBlock != null && decodedBlock.getRenderType() == 31) {
 			decodedMeta &= 0x3;
 		}
-		ItemStack newStack = new ItemStack(decodedBlockId, 1, decodedMeta);
-		if (Item.itemsList[decodedBlockId] != null) {
+		ItemStack newStack = new ItemStack(decodedBlock, 1, decodedMeta);
+		if (Item.getItemFromBlock(decodedBlock) != null) {
 			name += ": " + CoreProxy.proxy.getItemDisplayName(newStack);
 		} else {
-			name += " < BROKEN (" + decodedBlockId + ":" + decodedMeta + " )>";
+			name += " < BROKEN (" + decodedBlock.getLocalizedName() + ":" + decodedMeta + " )>";
 		}
 		return name;
 	}
@@ -89,7 +89,7 @@ public class ItemFacade extends ItemBuildCraft {
 			return false;
 		TileGenericPipe pipeTile = (TileGenericPipe) tile;
 
-		if (pipeTile.addFacade(ForgeDirection.getOrientation(side).getOpposite(), ItemFacade.getBlockId(stack), ItemFacade.getMetaData(stack))) {
+		if (pipeTile.addFacade(ForgeDirection.getOrientation(side).getOpposite(), ItemFacade.getBlock(stack), ItemFacade.getMetaData(stack))) {
 			if (!player.capabilities.isCreativeMode) {
 				stack.stackSize--;
 			}
@@ -140,15 +140,19 @@ public class ItemFacade extends ItemBuildCraft {
 	}
 
 	public static int getMetaData(ItemStack stack) {
-		if (stack.hasTagCompound() && stack.getTagCompound().hasKey("meta"))
+		if (stack.hasTagCompound() && stack.getTagCompound().hasKey("meta")) {
 			return stack.getTagCompound().getInteger("meta");
-		return stack.getItemDamage() & 0x0000F;
+		} else {
+			return stack.getItemDamage() & 0x0000F;
+		}
 	}
 
-	public static int getBlockId(ItemStack stack) {
-		if (stack.hasTagCompound() && stack.getTagCompound().hasKey("id"))
-			return stack.getTagCompound().getInteger("id");
-		return ((stack.getItemDamage() & 0xFFF0) >>> 4);
+	public static Block getBlock(ItemStack stack) {
+		if (stack.hasTagCompound() && stack.getTagCompound().hasKey("id")) {
+			return (Block) Block.blockRegistry.getObjectById(stack.getTagCompound().getInteger("id"));
+		} else {
+			return (Block) Block.blockRegistry.getObjectById((stack.getItemDamage() & 0xFFF0) >>> 4);
+		}
 	}
 
 	@Override
@@ -192,15 +196,15 @@ public class ItemFacade extends ItemBuildCraft {
 			ItemStack slotmatch = null;
 			for (int i = 0; i < inventorycrafting.getSizeInventory(); i++) {
 				ItemStack slot = inventorycrafting.getStackInSlot(i);
-				if (slot != null && slot.getItem() == ItemFacade.this.itemID && slotmatch == null) {
+				if (slot != null && slot.getItem() == ItemFacade.this && slotmatch == null) {
 					slotmatch = slot;
 				} else if (slot != null) {
 					slotmatch = NO_MATCH;
 				}
 			}
 			if (slotmatch != null && slotmatch != NO_MATCH) {
-				int blockId = ItemFacade.getBlockId(slotmatch);
-				return blockId < Block.blocksList.length && Block.blocksList[blockId] != null && Block.blocksList[blockId].getRenderType() == 31;
+				Block block = ItemFacade.getBlock(slotmatch);
+				return block != null && block.getRenderType() == 31;
 			}
 
 			return false;
@@ -211,27 +215,25 @@ public class ItemFacade extends ItemBuildCraft {
 			ItemStack slotmatch = null;
 			for (int i = 0; i < inventorycrafting.getSizeInventory(); i++) {
 				ItemStack slot = inventorycrafting.getStackInSlot(i);
-				if (slot != null && slot.getItem() == ItemFacade.this.itemID && slotmatch == null) {
+				if (slot != null && slot.getItem() == ItemFacade.this && slotmatch == null) {
 					slotmatch = slot;
 				} else if (slot != null) {
 					slotmatch = NO_MATCH;
 				}
 			}
 			if (slotmatch != null && slotmatch != NO_MATCH) {
-				int blockId = ItemFacade.getBlockId(slotmatch);
+				Block block = ItemFacade.getBlock(slotmatch);
 				int blockMeta = ItemFacade.getMetaData(slotmatch);
-				if (blockId >= Block.blocksList.length)
-					return null;
-				Block bl = Block.blocksList[blockId];
-				// No Meta
-				if (bl != null && bl.getRenderType() == 31 && (blockMeta & 0xC) == 0)
-					return getStack(bl, (blockMeta & 0x3) | 4);
+				
+				
+				if (block != null && block.getRenderType() == 31 && (blockMeta & 0xC) == 0)
+					return getStack(block, (blockMeta & 0x3) | 4);
 				// Meta | 4 = true
-				if (bl != null && bl.getRenderType() == 31 && (blockMeta & 0x8) == 0)
-					return getStack(bl, (blockMeta & 0x3) | 8);
+				if (block != null && block.getRenderType() == 31 && (blockMeta & 0x8) == 0)
+					return getStack(block, (blockMeta & 0x3) | 8);
 				// Meta | 8 = true
-				if (bl != null && bl.getRenderType() == 31 && (blockMeta & 0x4) == 0)
-					return getStack(bl, (blockMeta & 0x3));
+				if (block != null && block.getRenderType() == 31 && (blockMeta & 0x4) == 0)
+					return getStack(block, (blockMeta & 0x3));
 			}
 			return null;
 		}
@@ -261,9 +263,9 @@ public class ItemFacade extends ItemBuildCraft {
 
 	public static ItemStack getStack(Block block, int metadata) {
 		ItemStack stack = new ItemStack(BuildCraftTransport.facadeItem, 1, 0);
-		NBTTagCompound nbt = new NBTTagCompound("tag");
-		nbt.setInteger("meta", metadata);
-		nbt.setInteger("id", blockID);
+		NBTTagCompound nbt = new NBTTagCompound();
+		nbt.setInteger("meta", metadata);		
+		nbt.setInteger("id", Block.blockRegistry.getIDForObject(block));
 		stack.setTagCompound(nbt);
 		return stack;
 	}

@@ -77,6 +77,7 @@ import buildcraft.core.utils.Localization;
 import buildcraft.core.recipes.AssemblyRecipeManager;
 import buildcraft.core.recipes.IntegrationRecipeManager;
 import buildcraft.core.triggers.TriggerRedstoneInput;
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
@@ -90,7 +91,6 @@ import cpw.mods.fml.common.network.FMLEmbeddedChannel;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
-import cpw.mods.fml.common.registry.TickRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -298,17 +298,19 @@ public class BuildCraftCore extends BuildCraftMod {
 
 	@EventHandler
 	public void postInit(FMLPostInitializationEvent event) {
-		for (Block block : Block.blocksList) {
+		for (Object o : Block.blockRegistry) {
+			Block block = (Block) o;
+			
 			if (block instanceof BlockFluidBase || block instanceof IFluidBlock || block instanceof IPlantable) {
-				BuildCraftAPI.softBlocks[block.blockID] = true;
+				BuildCraftAPI.softBlocks.add(block);
 			}
 		}
-
-		BuildCraftAPI.softBlocks[Blocks.snow.blockID] = true;
-		BuildCraftAPI.softBlocks[Block.vine.blockID] = true;
-		BuildCraftAPI.softBlocks[Block.fire.blockID] = true;
-		TickRegistry.registerTickHandler(new TickHandlerCoreClient(), Side.CLIENT);
-
+		
+		BuildCraftAPI.softBlocks.add(Blocks.snow);
+		BuildCraftAPI.softBlocks.add(Blocks.vine);
+		BuildCraftAPI.softBlocks.add(Blocks.fire);
+		
+		FMLCommonHandler.instance().bus().register(new TickHandlerCoreClient());
 	}
 
 	@EventHandler

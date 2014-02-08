@@ -14,12 +14,13 @@ import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportFluids;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.item.Item;
 import net.minecraftforge.common.util.ForgeDirection;
 
 public class PipeFluidsStone extends Pipe {
 
-	public PipeFluidsStone(int itemID) {
-		super(new PipeTransportFluids(), itemID);
+	public PipeFluidsStone(Item item) {
+		super(new PipeTransportFluids(), item);
 		// ((PipeTransportFluids) transport).flowRate = 40;
 	}
 

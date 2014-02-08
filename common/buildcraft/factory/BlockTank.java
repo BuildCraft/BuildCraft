@@ -80,7 +80,7 @@ public class BlockTank extends BlockContainer {
 			case 1:
 				return textureTop;
 			default:
-				if (iblockaccess.getBlockId(i, j - 1, k) == blockID)
+				if (iblockaccess.getBlock(i, j - 1, k) == this)
 					return textureStackedSide;
 				else
 					return textureBottomSide;
@@ -144,12 +144,6 @@ public class BlockTank extends BlockContainer {
 		if (side <= 1)
 			return world.getBlock(x, y, z) != this;
 		return super.shouldSideBeRendered(world, x, y, z, side);
-	}
-
-	@SuppressWarnings({"unchecked", "rawtypes"})
-	@Override
-	public void addCreativeItems(ArrayList itemList) {
-		itemList.add(new ItemStack(this));
 	}
 
 	@Override

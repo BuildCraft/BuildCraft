@@ -25,6 +25,7 @@ import buildcraft.core.network.PacketPayload;
 import buildcraft.core.network.PacketPayloadStream;
 import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.proxy.CoreProxy;
+import io.netty.buffer.ByteBuf;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -362,7 +363,7 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IPowe
 	public PacketPayload getPacketPayload() {
 		PacketPayload payload = new PacketPayloadStream(new PacketPayloadStream.StreamWriter() {
 			@Override
-			public void writeData(DataOutputStream data) throws IOException {
+			public void writeData(ByteBuf data) {
 				data.writeFloat(animationSpeed);
 				tankManager.writeData(data);
 			}
@@ -372,7 +373,7 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IPowe
 
 	@Override
 	public void handleUpdatePacket(PacketUpdate packet) throws IOException {
-		DataInputStream stream = ((PacketPayloadStream) packet.payload).stream;
+		ByteBuf stream = ((PacketPayloadStream) packet.payload).stream;
 		animationSpeed = stream.readFloat();
 		tankManager.readData(stream);
 	}

@@ -9,14 +9,18 @@
 package buildcraft.core.fluids;
 
 import com.google.common.collect.ForwardingList;
+
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import io.netty.buffer.ByteBuf;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
@@ -109,7 +113,7 @@ public class TankManager<T extends Tank> extends ForwardingList<T> implements IF
 		}
 	}
 
-	public void writeData(DataOutputStream data) throws IOException {
+	public void writeData(ByteBuf data) {
 		for (Tank tank : tanks) {
 			FluidStack fluidStack = tank.getFluid();
 			if (fluidStack != null && fluidStack.getFluid() != null) {
@@ -123,7 +127,7 @@ public class TankManager<T extends Tank> extends ForwardingList<T> implements IF
 	}
 
 	@SideOnly(Side.CLIENT)
-	public void readData(DataInputStream data) throws IOException {
+	public void readData(ByteBuf data) {
 		for (Tank tank : tanks) {
 			int fluidId = data.readShort();
 			if (fluidId > 0) {

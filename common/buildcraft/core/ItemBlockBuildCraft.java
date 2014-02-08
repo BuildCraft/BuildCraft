@@ -6,8 +6,8 @@ import net.minecraft.item.ItemStack;
 
 public class ItemBlockBuildCraft extends ItemBlock {
 
-	public ItemBlockBuildCraft(int id) {
-		super(id);
+	public ItemBlockBuildCraft() {
+		super();
 	}
 
 	@Override

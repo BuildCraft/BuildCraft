@@ -45,7 +45,7 @@ public class ItemPipe extends ItemBuildCraft implements IItemPipe {
 		if (worldBlock == Blocks.snow) {
 			side = 1;
 		} else if (worldBlock != Blocks.vine && worldBlock != Blocks.tallgrass && worldBlock != Blocks.deadbush
-				&& (worldBlock == null || !worldBlock.isBlockReplaceable(world, i, j, k))) {
+				&& (worldBlock == null || !worldBlock.isReplaceable(world, i, j, k))) {
 			if (side == 0) {
 				j--;
 			}
@@ -66,27 +66,31 @@ public class ItemPipe extends ItemBuildCraft implements IItemPipe {
 			}
 		}
 
-		if (itemstack.stackSize == 0)
+		if (itemstack.stackSize == 0) {
 			return false;
-		if (world.canPlaceEntityOnSide(blockID, i, j, k, false, side, entityplayer, itemstack)) {
-
+		}
+		
+		if (world.canPlaceEntityOnSide(block, i, j, k, false, side, entityplayer, itemstack)) {
 			Pipe pipe = BlockGenericPipe.createPipe(itemID);
+			
 			if (pipe == null) {
 				BCLog.logger.log(Level.WARNING, "Pipe failed to create during placement at {0},{1},{2}", new Object[]{i, j, k});
 				return true;
 			}
-			if (BlockGenericPipe.placePipe(pipe, world, i, j, k, blockID, 0)) {
-
-				Block.blocksList[blockID].onBlockPlacedBy(world, i, j, k, entityplayer, itemstack);
+			
+			if (BlockGenericPipe.placePipe(pipe, world, i, j, k, block, 0)) {
+				block.onBlockPlacedBy(world, i, j, k, entityplayer, itemstack);
 				world.playSoundEffect(i + 0.5F, j + 0.5F, k + 0.5F,
 						block.stepSound.getPlaceSound(),
 						(block.stepSound.getVolume() + 1.0F) / 2.0F,
 						block.stepSound.getPitch() * 0.8F);
 				itemstack.stackSize--;
 			}
+			
 			return true;
-		} else
+		} else {
 			return false;
+		}
 	}
 
 	@SideOnly(Side.CLIENT)

@@ -14,12 +14,13 @@ import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportPower;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.item.Item;
 import net.minecraftforge.common.util.ForgeDirection;
 
 public class PipePowerDiamond extends Pipe<PipeTransportPower> {
 
-	public PipePowerDiamond(int itemID) {
-		super(new PipeTransportPower(), itemID);
+	public PipePowerDiamond(Item item) {
+		super(new PipeTransportPower(), item);
 		transport.initFromPipe(getClass());
 	}
 

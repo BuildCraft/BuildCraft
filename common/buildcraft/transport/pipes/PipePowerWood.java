@@ -20,6 +20,7 @@ import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportPower;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.item.Item;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.ForgeDirection;
 
@@ -31,8 +32,8 @@ public class PipePowerWood extends Pipe<PipeTransportPower> implements IPowerRec
 	private boolean[] powerSources = new boolean[6];
 	private boolean full;
 
-	public PipePowerWood(int itemID) {
-		super(new PipeTransportPower(), itemID);
+	public PipePowerWood(Item item) {
+		super(new PipeTransportPower(), item);
 
 		powerHandler = new PowerHandler(this, Type.PIPE);
 		initPowerProvider();

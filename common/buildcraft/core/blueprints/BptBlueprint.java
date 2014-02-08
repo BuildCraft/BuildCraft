@@ -366,8 +366,8 @@ public class BptBlueprint extends BptBase {
 	}
 
 	@Override
-	public void setBlockId(int x, int y, int z, int blockId) {
-		super.setBlockId(x, y, z, blockId);
+	public void setBlock(int x, int y, int z, Block block) {
+		super.setBlock(x, y, z, block);
 	}
 
 	@Override

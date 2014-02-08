@@ -63,11 +63,11 @@ public class PacketHandlerFactory extends BuildCraftChannelHandler {
 
 	private void onRefinerySelect(EntityPlayer playerEntity, PacketUpdate packet) throws IOException {
 
-		TileRefinery tile = getRefinery(playerEntity.getWorldObj(), packet.posX, packet.posY, packet.posZ);
+		TileRefinery tile = getRefinery(playerEntity.worldObj, packet.posX, packet.posY, packet.posZ);
 		if (tile == null || packet.payload == null)
 			return;
 	
-		DataInputStream stream = ((PacketPayloadStream)packet.payload).stream;
+		ByteBuf stream = ((PacketPayloadStream)packet.payload).stream;
 
 		tile.setFilter(stream.readByte(), FluidRegistry.getFluid(stream.readShort()));
 	}

@@ -27,6 +27,7 @@ import buildcraft.core.utils.Utils;
 
 import com.google.common.collect.Lists;
 
+import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.List;
 
@@ -67,7 +68,7 @@ public class TileAdvancedCraftingTable extends TileLaserTableBase implements IIn
 
 		public int[] oreIDs = new int[9];
 
-		public CraftingGrid() {
+		public CraftingGrid() {			
 			super(9, "CraftingSlots", 1);
 			Arrays.fill(oreIDs, -1);
 		}

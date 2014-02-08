@@ -10,6 +10,7 @@ package buildcraft.core;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.biome.BiomeGenBase;
 import buildcraft.energy.worldgen.OilPopulate;
@@ -47,10 +48,12 @@ public class InterModComms {
                 } else {
                     Integer blId = Ints.tryParse(array[0]);
                     Integer metaId = Ints.tryParse(array[1]);
+                                                          
                     if (blId == null || metaId == null) {
                         Logger.getLogger("Buildcraft").log(Level.INFO, String.format("Received an invalid add-facade request %s from mod %s", m.getStringValue(), m.getSender()));
                     } else {
-                        ItemFacade.addFacade(new ItemStack(blId, 1, metaId));
+                    	Block block = (Block) Block.blockRegistry.getObjectById(blId);
+                        ItemFacade.addFacade(new ItemStack(block, 1, metaId));
                     }
                 }
             } else if (m.isItemStackMessage()) {
@@ -65,8 +68,8 @@ public class InterModComms {
         try {
             String biomeID = m.getStringValue().trim();
             int id = Integer.valueOf(biomeID);
-            if (id >= BiomeGenBase.biomeList.length) {
-                throw new IllegalArgumentException("Biome ID must be less than " + BiomeGenBase.biomeList.length);
+            if (id >= BiomeGenBase.getBiomeGenArray().length) {
+                throw new IllegalArgumentException("Biome ID must be less than " + BiomeGenBase.getBiomeGenArray().length);
             }
             OilPopulate.INSTANCE.surfaceDepositBiomes.add(id);
         } catch (Exception ex) {
@@ -79,8 +82,8 @@ public class InterModComms {
         try {
             String biomeID = m.getStringValue().trim();
             int id = Integer.valueOf(biomeID);
-            if (id >= BiomeGenBase.biomeList.length) {
-                throw new IllegalArgumentException("Biome ID must be less than " + BiomeGenBase.biomeList.length);
+            if (id >= BiomeGenBase.getBiomeGenArray().length) {
+                throw new IllegalArgumentException("Biome ID must be less than " + BiomeGenBase.getBiomeGenArray().length);
             }
             OilPopulate.INSTANCE.excludedBiomes.add(id);
         } catch (Exception ex) {

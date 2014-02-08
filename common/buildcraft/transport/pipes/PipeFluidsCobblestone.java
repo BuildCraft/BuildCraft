@@ -14,12 +14,13 @@ import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportFluids;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.item.Item;
 import net.minecraftforge.common.util.ForgeDirection;
 
 public class PipeFluidsCobblestone extends Pipe {
 
-	public PipeFluidsCobblestone(int itemID) {
-		super(new PipeTransportFluids(), itemID);
+	public PipeFluidsCobblestone(Item item) {
+		super(new PipeTransportFluids(), item);
 	}
 
 	@Override

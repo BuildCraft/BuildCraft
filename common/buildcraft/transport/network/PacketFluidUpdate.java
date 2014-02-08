@@ -64,7 +64,7 @@ public class PacketFluidUpdate extends PacketCoordinates {
 		colorRenderCache = transLiq.colorRenderCache;
 
 		byte[] dBytes = new byte[2];
-		data.read(dBytes);
+		data.readBytes(dBytes);
 		delta = fromByteArray(dBytes);
 
 		// System.out.printf("read %d, %d, %d = %s, %s%n", posX, posY, posZ, Arrays.toString(dBytes), delta);
@@ -90,7 +90,7 @@ public class PacketFluidUpdate extends PacketCoordinates {
 
 		byte[] dBytes = toByteArray(delta);
 		// System.out.printf("write %d, %d, %d = %s, %s%n", posX, posY, posZ, Arrays.toString(dBytes), delta);
-		data.write(dBytes);
+		data.writeBytes(dBytes);
 
 		for (ForgeDirection dir : ForgeDirection.values()) {
 			FluidStack liquid = renderCache[dir.ordinal()];

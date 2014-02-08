@@ -48,7 +48,7 @@ public class PacketGuiReturn extends BuildCraftPacket {
 		} else if (obj instanceof Entity) {
 			Entity entity = (Entity) obj;
 			data.writeBoolean(false);
-			data.writeInt(entity.entityId);
+			data.writeInt(entity.getEntityId());
 		} else
 			return;
 		obj.writeGuiData(data);

@@ -54,8 +54,8 @@ public class PipePowerIron extends Pipe<PipeTransportPower> {
 		}
 	}
 
-	public PipePowerIron(int itemID) {
-		super(new PipeTransportPower(), itemID);
+	public PipePowerIron(Item item) {
+		super(new PipeTransportPower(), item);
 		transport.initFromPipe(getClass());
 	}
 

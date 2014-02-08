@@ -77,12 +77,6 @@ public class BlockLaser extends BlockContainer {
 		return meta;
 	}
 
-	@SuppressWarnings({"unchecked", "rawtypes"})
-	@Override
-	public void addCreativeItems(ArrayList itemList) {
-		itemList.add(new ItemStack(this));
-	}
-
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void registerBlockIcons(IIconRegister par1IconRegister) {

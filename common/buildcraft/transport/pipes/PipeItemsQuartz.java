@@ -17,12 +17,13 @@ import buildcraft.transport.TravelingItem;
 import buildcraft.transport.pipes.events.PipeEventItem;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.item.Item;
 import net.minecraftforge.common.util.ForgeDirection;
 
 public class PipeItemsQuartz extends Pipe {
 
-	public PipeItemsQuartz(int itemID) {
-		super(new PipeTransportItems(), itemID);
+	public PipeItemsQuartz(Item item) {
+		super(new PipeTransportItems(), item);
 
 	}
 

@@ -22,6 +22,7 @@ import buildcraft.transport.PipeTransportFluids;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
@@ -51,8 +52,8 @@ public class PipeFluidsWood extends Pipe<PipeTransportFluids> implements IPowerR
 		}
 	};
 
-	public PipeFluidsWood(int itemID) {
-		super(new PipeTransportFluids(), itemID);
+	public PipeFluidsWood(Item item) {
+		super(new PipeTransportFluids(), item);
 
 		powerHandler = new PowerHandler(this, Type.MACHINE);
 		powerHandler.configure(1, 100, 1, 250);

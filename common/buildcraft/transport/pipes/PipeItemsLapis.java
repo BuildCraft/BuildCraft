@@ -31,8 +31,8 @@ import net.minecraftforge.common.util.ForgeDirection;
 
 public class PipeItemsLapis extends Pipe<PipeTransportItems> {
 
-	public PipeItemsLapis(int itemID) {
-		super(new PipeTransportItems(), itemID);
+	public PipeItemsLapis(Item item) {
+		super(new PipeTransportItems(), item);
 	}
 
 	@Override

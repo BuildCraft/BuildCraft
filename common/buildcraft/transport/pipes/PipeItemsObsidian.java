@@ -27,12 +27,15 @@ import buildcraft.transport.pipes.events.PipeEventItem;
 import buildcraft.transport.utils.TransportUtils;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+
 import java.util.Arrays;
 import java.util.List;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.item.EntityMinecartChest;
 import net.minecraft.entity.projectile.EntityArrow;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.AxisAlignedBB;
@@ -45,8 +48,8 @@ public class PipeItemsObsidian extends Pipe<PipeTransportItems> implements IPowe
 	private int[] entitiesDropped;
 	private int entitiesDroppedIndex = 0;
 
-	public PipeItemsObsidian(int itemID) {
-		super(new PipeTransportItems(), itemID);
+	public PipeItemsObsidian(Item item) {
+		super(new PipeTransportItems(), item);
 
 		entitiesDropped = new int[32];
 		Arrays.fill(entitiesDropped, -1);
@@ -224,7 +227,7 @@ public class PipeItemsObsidian extends Pipe<PipeTransportItems> implements IPowe
 				}
 			} else if (entity instanceof EntityArrow) {
 				powerHandler.useEnergy(distance, distance, true);
-				stack = new ItemStack(Item.arrow, 1);
+				stack = new ItemStack(Items.arrow, 1);
 				CoreProxy.proxy.removeEntity(entity);
 			}
 
@@ -241,7 +244,7 @@ public class PipeItemsObsidian extends Pipe<PipeTransportItems> implements IPowe
 			entitiesDroppedIndex = 0;
 		else
 			entitiesDroppedIndex++;
-		entitiesDropped[entitiesDroppedIndex] = event.entity.entityId;
+		entitiesDropped[entitiesDroppedIndex] = event.entity.getEntityId();
 	}
 
 	public boolean canSuck(Entity entity, int distance) {
@@ -254,7 +257,7 @@ public class PipeItemsObsidian extends Pipe<PipeTransportItems> implements IPowe
 				return false;
 
 			for (int i = 0; i < entitiesDropped.length; ++i) {
-				if (item.entityId == entitiesDropped[i])
+				if (item.getEntityId() == entitiesDropped[i])
 					return false;
 			}
 

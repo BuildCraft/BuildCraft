@@ -284,7 +284,7 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 			if ((!pipesOnly || tile instanceof IPipeTile) && isPoweredTile(tile, o)) {
 				orientation = o;
 				worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
-				worldObj.notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord, worldObj.getBlockId(xCoord, yCoord, zCoord));
+				worldObj.notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord, worldObj.getBlock(xCoord, yCoord, zCoord));
 
 				return true;
 			}

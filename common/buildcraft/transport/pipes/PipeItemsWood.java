@@ -28,6 +28,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
@@ -50,8 +51,8 @@ public class PipeItemsWood extends Pipe<PipeTransportItems> implements IPowerRec
 		}
 	};
 
-	public PipeItemsWood(int itemID) {
-		super(new PipeTransportItems(), itemID);
+	public PipeItemsWood(Item item) {
+		super(new PipeTransportItems(), item);
 
 		powerHandler = new PowerHandler(this, Type.MACHINE);
 		powerHandler.configure(1, 64.1f, 1, 64.1f);
