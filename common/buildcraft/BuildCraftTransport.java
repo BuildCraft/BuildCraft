@@ -116,7 +116,6 @@ import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.common.config.Property;
 
 @Mod(version = Version.VERSION, modid = "BuildCraft|Transport", name = "Buildcraft Transport", dependencies = DefaultProps.DEPENDENCY_CORE)
-@NetworkMod(channels = {DefaultProps.NET_CHANNEL_NAME}, packetHandler = PacketHandlerTransport.class, connectionHandler = TransportConnectionHandler.class)
 public class BuildCraftTransport extends BuildCraftMod {
 
 	public static BlockGenericPipe genericPipeBlock;
@@ -207,9 +206,8 @@ public class BuildCraftTransport extends BuildCraftMod {
 			return testStrings(liquids, world, i, j, k);
 		}
 
-		private boolean testStrings(String[] excludedBlocks, World world, int i, int j, int k) {
-			int id = world.getBlockId(i, j, k);
-			Block block = Block.blocksList[id];
+		private boolean testStrings(String[] excludedBlocks, World world, int i, int j, int k) {			
+			Block block = world.getBlock(i, j, k);
 			if (block == null)
 				return false;
 
@@ -305,7 +303,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 			pipePowerGold = buildPipe(DefaultProps.PIPE_POWER_GOLD_ID, PipePowerGold.class, "Golden Kinesis Pipe", Items.redstone, pipeItemsGold);
 			pipePowerDiamond = buildPipe(DefaultProps.PIPE_POWER_DIAMOND_ID, PipePowerDiamond.class, "Diamond Kinesis Pipe", Items.redstone, pipeItemsDiamond);
 
-			pipeStructureCobblestone = buildPipe(DefaultProps.PIPE_STRUCTURE_COBBLESTONE_ID, PipeStructureCobblestone.class, "Cobblestone Structure Pipe", Block.gravel, pipeItemsCobblestone);
+			pipeStructureCobblestone = buildPipe(DefaultProps.PIPE_STRUCTURE_COBBLESTONE_ID, PipeStructureCobblestone.class, "Cobblestone Structure Pipe", Blocks.gravel, pipeItemsCobblestone);
 
 			// Fix the recipe
 			// pipeItemsStipes = createPipe(DefaultProps.PIPE_ITEMS_STRIPES_ID, PipeItemsStripes.class, "Stripes Transport Pipe", new ItemStack(Item.dyePowder,

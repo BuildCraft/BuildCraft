@@ -228,8 +228,8 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 	protected void drawGuiContainerForegroundLayer(int par1, int par2) {
 		String name = _container.getGateName();
 
-		fontRenderer.drawString(name, getCenteredOffset(name), 10, 0x404040);
-		fontRenderer.drawString(StringUtils.localize("gui.inventory"), 8, ySize - 97, 0x404040);
+		fontRendererObj.drawString(name, getCenteredOffset(name), 10, 0x404040);
+		fontRendererObj.drawString(StringUtils.localize("gui.inventory"), 8, ySize - 97, 0x404040);
 
 		drawForegroundSelection(par1, par2);
 	}

@@ -356,8 +356,8 @@ public class Utils {
 
 	public static boolean checkLegacyPipesConnections(IBlockAccess blockAccess, int x1, int y1, int z1, int x2, int y2, int z2) {
 
-		Block b1 = Block.blocksList[blockAccess.getBlockId(x1, y1, z1)];
-		Block b2 = Block.blocksList[blockAccess.getBlockId(x2, y2, z2)];
+		Block b1 = blockAccess.getBlock(x1, y1, z1);
+		Block b2 = blockAccess.getBlock(x2, y2, z2);
 
 		if (!(b1 instanceof IFramePipeConnection) && !(b2 instanceof IFramePipeConnection)) {
 			return false;

@@ -105,7 +105,7 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory {
 		for (int i = currentPage.size(); i < currentNames.length; i++) {
 			currentNames[i] = "";
 		}
-		sendNetworkUpdate();
+		sendNetworkUpdate(BuildCraftBuilders.instance);
 	}
 
 	public ArrayList<BptBase> getCurrentPage() {
@@ -282,9 +282,9 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory {
 		if (progressOut == 100 && stack[3] == null) {
 			if (selected > -1 && selected < currentPage.size()) {
 				BptBase bpt = currentPage.get(selected);
-				setInventorySlotContents(3, BuildCraftBuilders.getBptItemStack(stack[2].itemID, bpt.position, bpt.getName()));
+				setInventorySlotContents(3, BuildCraftBuilders.getBptItemStack(stack[2].getItem(), bpt.position, bpt.getName()));
 			} else {
-				setInventorySlotContents(3, BuildCraftBuilders.getBptItemStack(stack[2].itemID, 0, null));
+				setInventorySlotContents(3, BuildCraftBuilders.getBptItemStack(stack[2].getItem(), 0, null));
 			}
 			setInventorySlotContents(2, null);
 		}

@@ -39,13 +39,13 @@ public abstract class GuiLaserTable extends GuiBuildCraft {
 			if (!isFullyOpened())
 				return;
 
-			fontRenderer.drawStringWithShadow(StringUtils.localize("gui.energy"), x + 22, y + 8, headerColour);
-			fontRenderer.drawStringWithShadow(StringUtils.localize("gui.assemblyCurrentRequired") + ":", x + 22, y + 20, subheaderColour);
-			fontRenderer.drawString(String.format("%2.1f MJ", table.clientRequiredEnergy), x + 22, y + 32, textColour);
-			fontRenderer.drawStringWithShadow(StringUtils.localize("gui.stored") + ":", x + 22, y + 44, subheaderColour);
-			fontRenderer.drawString(String.format("%2.1f MJ", table.getEnergy()), x + 22, y + 56, textColour);
-			fontRenderer.drawStringWithShadow(StringUtils.localize("gui.assemblyRate") + ":", x + 22, y + 68, subheaderColour);
-			fontRenderer.drawString(String.format("%3.2f MJ/t", table.getRecentEnergyAverage() / 100.0f), x + 22, y + 80, textColour);
+			fontRendererObj.drawStringWithShadow(StringUtils.localize("gui.energy"), x + 22, y + 8, headerColour);
+			fontRendererObj.drawStringWithShadow(StringUtils.localize("gui.assemblyCurrentRequired") + ":", x + 22, y + 20, subheaderColour);
+			fontRendererObj.drawString(String.format("%2.1f MJ", table.clientRequiredEnergy), x + 22, y + 32, textColour);
+			fontRendererObj.drawStringWithShadow(StringUtils.localize("gui.stored") + ":", x + 22, y + 44, subheaderColour);
+			fontRendererObj.drawString(String.format("%2.1f MJ", table.getEnergy()), x + 22, y + 56, textColour);
+			fontRendererObj.drawStringWithShadow(StringUtils.localize("gui.assemblyRate") + ":", x + 22, y + 68, subheaderColour);
+			fontRendererObj.drawString(String.format("%3.2f MJ/t", table.getRecentEnergyAverage() / 100.0f), x + 22, y + 80, textColour);
 
 		}
 
@@ -65,8 +65,8 @@ public abstract class GuiLaserTable extends GuiBuildCraft {
 	protected void drawGuiContainerForegroundLayer(int par1, int par2) {
 		super.drawGuiContainerForegroundLayer(par1, par2);
 		String title = table.getInventoryName();
-		fontRenderer.drawString(title, getCenteredOffset(title), 6, 0x404040);
-		fontRenderer.drawString(StringUtils.localize("gui.inventory"), 8, ySize - 97, 0x404040);
+		fontRendererObj.drawString(title, getCenteredOffset(title), 6, 0x404040);
+		fontRendererObj.drawString(StringUtils.localize("gui.inventory"), 8, ySize - 97, 0x404040);
 	}
 
 	@Override

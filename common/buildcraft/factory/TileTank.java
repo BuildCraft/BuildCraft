@@ -8,6 +8,7 @@
 package buildcraft.factory;
 
 import buildcraft.BuildCraftCore;
+import buildcraft.BuildCraftFactory;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.fluids.Tank;
@@ -16,9 +17,11 @@ import buildcraft.core.network.PacketPayload;
 import buildcraft.core.network.PacketPayloadStream;
 import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.proxy.CoreProxy;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.EnumSkyBlock;
@@ -56,7 +59,7 @@ public class TileTank extends TileBuildCraft implements IFluidHandler {
 		}
 
 		if (hasUpdate && tracker.markTimeIfDelay(worldObj, 2 * BuildCraftCore.updateFactor)) {
-			sendNetworkUpdate();
+			sendNetworkUpdate(BuildCraftFactory.instance);
 			hasUpdate = false;
 		}
 	}

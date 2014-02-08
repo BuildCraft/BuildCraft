@@ -14,7 +14,6 @@ import java.util.EnumMap;
 import java.util.TreeMap;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockFluid;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -30,8 +29,8 @@ import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.IPlantable;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Property;
-import net.minecraftforge.event.ForgeSubscribe;
 import net.minecraftforge.oredict.OreDictionary;
+import net.minecraftforge.fluids.BlockFluidBase;
 import net.minecraftforge.fluids.IFluidBlock;
 import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.core.IIconProvider;
@@ -86,6 +85,7 @@ import cpw.mods.fml.common.event.FMLInterModComms;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerStartingEvent;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.network.FMLEmbeddedChannel;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.EntityRegistry;
@@ -299,7 +299,7 @@ public class BuildCraftCore extends BuildCraftMod {
 	@EventHandler
 	public void postInit(FMLPostInitializationEvent event) {
 		for (Block block : Block.blocksList) {
-			if (block instanceof BlockFluid || block instanceof IFluidBlock || block instanceof IPlantable) {
+			if (block instanceof BlockFluidBase || block instanceof IFluidBlock || block instanceof IPlantable) {
 				BuildCraftAPI.softBlocks[block.blockID] = true;
 			}
 		}
@@ -316,14 +316,14 @@ public class BuildCraftCore extends BuildCraftMod {
 		event.registerServerCommand(new CommandBuildCraft());
 	}
 
-	@ForgeSubscribe
+	@SubscribeEvent
 	@SideOnly(Side.CLIENT)
 	public void textureHook(TextureStitchEvent.Pre event) {
-		if (event.map.textureType == 1) {
+		if (event.map.getTextureType() == 1) {
 			iconProvider = new CoreIconProvider();
 			iconProvider.registerIcons(event.map);
 			ActionTriggerIconProvider.INSTANCE.registerIcons(event.map);
-		} else if (event.map.textureType == 0) {
+		} else if (event.map.getTextureType() == 0) {
 			BuildCraftCore.redLaserTexture = event.map.registerIcon("buildcraft:blockRedLaser");
 			BuildCraftCore.blueLaserTexture = event.map.registerIcon("buildcraft:blockBlueLaser");
 			BuildCraftCore.stripesLaserTexture = event.map.registerIcon("buildcraft:blockStripesLaser");

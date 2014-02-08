@@ -28,6 +28,7 @@ import net.minecraft.world.ChunkPosition;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
 import net.minecraftforge.event.ForgeEventFactory;
+import net.minecraftforge.fluids.BlockFluidBase;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidRegistry;
@@ -37,7 +38,7 @@ import net.minecraftforge.fluids.IFluidBlock;
 public class BlockUtil {
 
 	public static List<ItemStack> getItemStackFromBlock(World world, int i, int j, int k) {
-		Block block = Block.blocksList[world.getBlockId(i, j, k)];
+		Block block = world.getBlock(i, j, k);
 
 		if (block == null)
 			return null;
@@ -112,7 +113,7 @@ public class BlockUtil {
 	}
 
 	public static boolean isSoftBlock(World world, int x, int y, int z) {
-		return isSoftBlock(world.getBlockId(x, y, z), world, x, y, z);
+		return isSoftBlock(world.getBlock(x, y, z), world, x, y, z);
 	}
 
 	public static boolean isSoftBlock(Block block, World world, int x, int y, int z) {
@@ -123,16 +124,15 @@ public class BlockUtil {
 	 * Returns true if a block cannot be harvested without a tool.
 	 */
 	public static boolean isToughBlock(World world, int x, int y, int z) {
-		return !world.getBlockMaterial(x, y, z).isToolNotRequired();
+		return !world.getBlock(x, y, z).getMaterial().isToolNotRequired();
 	}
 
 	public static boolean isFullFluidBlock(World world, int x, int y, int z) {
-		return isFullFluidBlock(world.getBlockId(x, y, z), world, x, y, z);
+		return isFullFluidBlock(world.getBlock(x, y, z), world, x, y, z);
 	}
 
-	public static boolean isFullFluidBlock(int blockId, World world, int x, int y, int z) {
-		Block block = Block.blocksList[blockId];
-		if (block instanceof BlockFluid || block instanceof IFluidBlock)
+	public static boolean isFullFluidBlock(Block block, World world, int x, int y, int z) {		
+		if (block instanceof BlockFluidBase || block instanceof IFluidBlock)
 			return world.getBlockMetadata(x, y, z) == 0;
 		return false;
 	}

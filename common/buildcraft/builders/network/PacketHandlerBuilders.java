@@ -1,5 +1,6 @@
 package buildcraft.builders.network;
 
+import buildcraft.BuildCraftBuilders;
 import buildcraft.builders.TileArchitect;
 import buildcraft.builders.TileBlueprintLibrary;
 import buildcraft.core.network.BuildCraftChannelHandler;
@@ -71,7 +72,7 @@ public class PacketHandlerBuilders extends BuildCraftChannelHandler {
 				break;
 			case TileBlueprintLibrary.COMMAND_LOCK_UPDATE:
 				tbl.locked = !tbl.locked;
-				tbl.sendNetworkUpdate();
+				tbl.sendNetworkUpdate(BuildCraftBuilders.instance);
 				break;
 			case TileBlueprintLibrary.COMMAND_NEXT:
 				tbl.setCurrentPage(true);
@@ -91,7 +92,7 @@ public class PacketHandlerBuilders extends BuildCraftChannelHandler {
 			if (ySlot < tbl.getCurrentPage().size()) {
 				tbl.selected = ySlot;
 			}
-			tbl.sendNetworkUpdate();
+			tbl.sendNetworkUpdate(BuildCraftBuilders.instance);
 		}
 	}
 

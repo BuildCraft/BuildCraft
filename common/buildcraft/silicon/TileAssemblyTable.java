@@ -137,7 +137,7 @@ public class TileAssemblyTable extends TileLaserTableBase implements IMachine, I
 			ItemStack stack = ItemStack.loadItemStackFromNBT(cpt);
 
 			for (AssemblyRecipe r : AssemblyRecipeManager.INSTANCE.getRecipes()) {
-				if (r.output.itemID == stack.itemID && r.output.getItemDamage() == stack.getItemDamage()) {
+				if (r.output.getItem() == stack.getItem() && r.output.getItemDamage() == stack.getItemDamage()) {
 					plannedOutput.add(r);
 					break;
 				}
@@ -148,7 +148,7 @@ public class TileAssemblyTable extends TileLaserTableBase implements IMachine, I
 			ItemStack stack = ItemStack.loadItemStackFromNBT(nbt.getCompoundTag("recipe"));
 
 			for (AssemblyRecipe r : plannedOutput) {
-				if (r.output.itemID == stack.itemID && r.output.getItemDamage() == stack.getItemDamage()) {
+				if (r.output.getItem() == stack.getItem() && r.output.getItemDamage() == stack.getItemDamage()) {
 					setCurrentRecipe(r);
 					break;
 				}

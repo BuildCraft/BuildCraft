@@ -8,6 +8,7 @@
 package buildcraft.factory;
 
 import buildcraft.BuildCraftCore;
+import buildcraft.BuildCraftEnergy;
 import buildcraft.BuildCraftFactory;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.gates.IAction;
@@ -101,7 +102,7 @@ public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor
 		if (tube.posY - aimY > 0.01) {
 			tubeY = tube.posY - 0.01;
 			setTubePosition();
-			sendNetworkUpdate();
+			sendNetworkUpdate(BuildCraftFactory.instance);
 			return;
 		}
 
@@ -150,7 +151,7 @@ public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor
 		if (powered != p) {
 			powered = p;
 			if(!worldObj.isRemote)
-				sendNetworkUpdate();
+				sendNetworkUpdate(BuildCraftFactory.instance);
 		}
 	}
 
@@ -192,7 +193,7 @@ public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor
 			worldObj.spawnEntityInWorld(tube);
 
 			if (!worldObj.isRemote)
-				sendNetworkUpdate();
+				sendNetworkUpdate(BuildCraftFactory.instance);
 		}
 	}
 

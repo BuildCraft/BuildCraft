@@ -15,7 +15,7 @@ import buildcraft.core.network.BuildCraftPacket;
 public class BuildCraftMod {
 	public EnumMap<Side, FMLEmbeddedChannel> channels;
 	
-	public void sendToPlayers(BuildCraftPacket packet, World world, int x, int y, int z, int maxDistance) {
+	public void sendToPlayers(Packet packet, World world, int x, int y, int z, int maxDistance) {
 		channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.ALL);
 		channels.get(Side.SERVER).writeOutbound(packet);
 	}

@@ -41,13 +41,13 @@ public abstract class GuiEngine extends GuiBuildCraft {
 			if (!isFullyOpened())
 				return;
 
-			fontRenderer.drawStringWithShadow(StringUtils.localize("gui.energy"), x + 22, y + 8, headerColour);
-			fontRenderer.drawStringWithShadow(StringUtils.localize("gui.currentOutput") + ":", x + 22, y + 20, subheaderColour);
-			fontRenderer.drawString(String.format("%.1f MJ/t", engine.currentOutput), x + 22, y + 32, textColour);
-			fontRenderer.drawStringWithShadow(StringUtils.localize("gui.stored") + ":", x + 22, y + 44, subheaderColour);
-			fontRenderer.drawString(String.format("%.1f MJ", engine.getEnergyStored()), x + 22, y + 56, textColour);
-			fontRenderer.drawStringWithShadow(StringUtils.localize("gui.heat") + ":", x + 22, y + 68, subheaderColour);
-			fontRenderer.drawString(String.format("%.2f \u00B0C", engine.getHeat()), x + 22, y + 80, textColour);
+			fontRendererObj.drawStringWithShadow(StringUtils.localize("gui.energy"), x + 22, y + 8, headerColour);
+			fontRendererObj.drawStringWithShadow(StringUtils.localize("gui.currentOutput") + ":", x + 22, y + 20, subheaderColour);
+			fontRendererObj.drawString(String.format("%.1f MJ/t", engine.currentOutput), x + 22, y + 32, textColour);
+			fontRendererObj.drawStringWithShadow(StringUtils.localize("gui.stored") + ":", x + 22, y + 44, subheaderColour);
+			fontRendererObj.drawString(String.format("%.1f MJ", engine.getEnergyStored()), x + 22, y + 56, textColour);
+			fontRendererObj.drawStringWithShadow(StringUtils.localize("gui.heat") + ":", x + 22, y + 68, subheaderColour);
+			fontRendererObj.drawString(String.format("%.2f \u00B0C", engine.getHeat()), x + 22, y + 80, textColour);
 
 		}
 

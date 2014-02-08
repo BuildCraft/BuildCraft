@@ -66,19 +66,19 @@ public class CoreProxyClient extends CoreProxy {
 	public void removeEntity(Entity entity) {
 		super.removeEntity(entity);
 
-		if (isRenderWorld(entity.getWorldObj())) {
-			((WorldClient) entity.getWorldObj()).removeEntityFromWorld(entity.entityId);
+		if (isRenderWorld(entity.worldObj)) {
+			((WorldClient) entity.worldObj).removeEntityFromWorld(entity.getEntityId());
 		}
 	}
 
 	/* WRAPPER */
 	@SuppressWarnings("rawtypes")
 	@Override
-	public void feedSubBlocks(int id, CreativeTabs tab, List itemList) {
-		if (Block.blocksList[id] == null)
+	public void feedSubBlocks(Block block, CreativeTabs tab, List itemList) {
+		if (block == null)
 			return;
 
-		Block.blocksList[id].getSubBlocks(id, tab, itemList);
+		block.getSubBlocks(Item.getItemFromBlock(block), tab, itemList);
 	}
 
 	/* LOCALIZATION */
@@ -99,10 +99,10 @@ public class CoreProxyClient extends CoreProxy {
 
 	@Override
 	public String getItemDisplayName(ItemStack stack) {
-		if (Item.itemsList[stack.itemID] == null)
+		if (stack.getItem() == null)
 			return "";
 
-		return Item.itemsList[stack.itemID].getItemDisplayName(stack);
+		return stack.getDisplayName();
 	}
 
 	/* GFX */

@@ -7,6 +7,7 @@
  */
 package buildcraft.energy;
 
+import buildcraft.BuildCraftEnergy;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
@@ -28,7 +29,7 @@ public class TileEngineLegacy extends TileEngine {
 		TileEntity newTile = worldObj.getTileEntity(xCoord, yCoord, zCoord);
 		if (newTile instanceof TileEngine) {
 			newTile.readFromNBT(nbt);
-			sendNetworkUpdate();
+			sendNetworkUpdate(BuildCraftEnergy.instance);
 			worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
 		}
 	}

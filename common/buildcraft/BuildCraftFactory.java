@@ -50,7 +50,7 @@ import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLInterModComms;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.common.network.NetworkMod;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -70,7 +70,6 @@ import net.minecraftforge.common.ForgeChunkManager;
 import net.minecraftforge.common.ForgeChunkManager.Ticket;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Property;
-import net.minecraftforge.event.ForgeSubscribe;
 
 @Mod(name = "BuildCraft Factory", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Factory", dependencies = DefaultProps.DEPENDENCY_CORE)
 public class BuildCraftFactory extends BuildCraftMod {
@@ -122,8 +121,8 @@ public class BuildCraftFactory extends BuildCraftMod {
 				int quarryY = ticket.getModData().getInteger("quarryY");
 				int quarryZ = ticket.getModData().getInteger("quarryZ");
 
-				int blId = world.getBlockId(quarryX, quarryY, quarryZ);
-				if (blId == quarryBlock.blockID) {
+				Block block = world.getBlock(quarryX, quarryY, quarryZ);
+				if (block == quarryBlock) {
 					validTickets.add(ticket);
 				}
 			}
@@ -326,10 +325,10 @@ public class BuildCraftFactory extends BuildCraftMod {
         InterModComms.processIMC(event);
     }
 
-	@ForgeSubscribe
+	@SubscribeEvent
 	@SideOnly(Side.CLIENT)
 	public void loadTextures(TextureStitchEvent.Pre evt) {
-		if (evt.map.textureType == 0) {
+		if (evt.map.getTextureType() == 0) {
 			TextureMap terrainTextures = evt.map;
 			FactoryProxyClient.pumpTexture = terrainTextures.registerIcon("buildcraft:pump_tube");
 			FactoryProxyClient.drillTexture = terrainTextures.registerIcon("buildcraft:blockDrillTexture");

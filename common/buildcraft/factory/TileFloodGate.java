@@ -192,7 +192,7 @@ public class TileFloodGate extends TileBuildCraft implements IFluidHandler {
 	}
 
 	private boolean canPlaceFluidAt(Block block, int x, int y, int z) {
-		return BlockUtil.isSoftBlock(block, worldObj, x, y, z) && !BlockUtil.isFullFluidBlock(blockId, worldObj, x, y, z);
+		return BlockUtil.isSoftBlock(block, worldObj, x, y, z) && !BlockUtil.isFullFluidBlock(block, worldObj, x, y, z);
 	}
 
 	public void onNeighborBlockChange(Block block) {

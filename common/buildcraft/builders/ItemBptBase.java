@@ -47,7 +47,7 @@ public abstract class ItemBptBase extends ItemBuildCraft {
 		if (CoreProxy.proxy.isSimulating(world)) {
 			BptBase bpt = BuildCraftBuilders.getBptRootIndex().getBluePrint(itemStack.getItemDamage());
 			if (bpt != null)
-				return BuildCraftBuilders.getBptItemStack(itemStack.itemID, itemStack.getItemDamage(), bpt.getName());
+				return BuildCraftBuilders.getBptItemStack(itemStack.getItem(), itemStack.getItemDamage(), bpt.getName());
 		}
 		return itemStack;
 	}

@@ -9,6 +9,9 @@ package buildcraft.silicon;
 
 import buildcraft.api.power.ILaserTarget;
 import buildcraft.BuildCraftCore;
+import buildcraft.BuildCraftFactory;
+import buildcraft.BuildCraftMod;
+import buildcraft.BuildCraftSilicon;
 import buildcraft.api.core.Position;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.gates.IAction;
@@ -22,8 +25,10 @@ import buildcraft.core.IMachine;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.triggers.ActionMachineControl;
+
 import java.util.LinkedList;
 import java.util.List;
+
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
@@ -102,7 +107,7 @@ public class TileLaser extends TileBuildCraft implements IPowerReceptor, IAction
 
 		onPowerSent(power);
 
-		sendNetworkUpdate();
+		sendNetworkUpdate(BuildCraftSilicon.instance);
 	}
 
 	protected float getMaxPowerSent() {
@@ -247,9 +252,9 @@ public class TileLaser extends TileBuildCraft implements IPowerReceptor, IAction
 	}
 
 	@Override
-	public void sendNetworkUpdate() {
+	public void sendNetworkUpdate(BuildCraftMod mod) {
 		if (networkTracker.markTimeIfDelay(worldObj)) {
-			super.sendNetworkUpdate();
+			super.sendNetworkUpdate(mod);
 		}
 	}
 

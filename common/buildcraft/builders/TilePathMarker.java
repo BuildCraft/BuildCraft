@@ -1,5 +1,6 @@
 package buildcraft.builders;
 
+import buildcraft.BuildCraftBuilders;
 import buildcraft.api.core.Position;
 import buildcraft.core.BlockIndex;
 import buildcraft.core.EntityLaser;
@@ -7,10 +8,12 @@ import buildcraft.core.EntityPowerLaser;
 import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.network.TileNetworkData;
 import buildcraft.core.proxy.CoreProxy;
+
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.TreeSet;
+
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
@@ -98,7 +101,7 @@ public class TilePathMarker extends TileMarker {
 			return;
 
 		tryingToConnect = !tryingToConnect; // Allow the user to stop the path marker from searching for new path markers to connect
-		sendNetworkUpdate();
+		sendNetworkUpdate(BuildCraftBuilders.instance);
 	}
 
 	@Override
@@ -114,7 +117,7 @@ public class TilePathMarker extends TileMarker {
 			if (nearestPathMarker != null) {
 				createLaserAndConnect(nearestPathMarker);
 				tryingToConnect = false;
-				sendNetworkUpdate();
+				sendNetworkUpdate(BuildCraftBuilders.instance);
 			}
 		}
 	}

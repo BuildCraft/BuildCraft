@@ -15,6 +15,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.util.ForgeDirection;
+import buildcraft.BuildCraftBuilders;
 import buildcraft.BuildCraftEnergy;
 import buildcraft.api.gates.IOverrideDefaultTriggers;
 import buildcraft.api.gates.ITrigger;
@@ -110,7 +111,7 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 
 			if (energyStage != newStage) {
 				energyStage = newStage;
-				sendNetworkUpdate();
+				sendNetworkUpdate(BuildCraftEnergy.instance);
 			}
 		}
 
@@ -260,7 +261,7 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 			return;
 
 		this.isPumping = isActive;
-		sendNetworkUpdate();
+		sendNetworkUpdate(BuildCraftEnergy.instance);
 	}
 
 	public boolean isOrientationValid() {

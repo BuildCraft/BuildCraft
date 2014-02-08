@@ -72,7 +72,7 @@ public class TileArchitect extends TileBuildCraft implements IInventory {
 			box.createLasers(worldObj, LaserKind.Stripes);
 		}
 
-		sendNetworkUpdate();
+		sendNetworkUpdate(BuildCraftBuilders.instance);
 	}
 
 	public void createBpt() {
@@ -116,10 +116,10 @@ public class TileArchitect extends TileBuildCraft implements IInventory {
 		ItemStack stack;
 		if (result.equals(BuildCraftBuilders.getBptRootIndex().getBluePrint(lastBptId))) {
 			result = BuildCraftBuilders.getBptRootIndex().getBluePrint(lastBptId);
-			stack = BuildCraftBuilders.getBptItemStack(items[0].itemID, lastBptId, result.getName());
+			stack = BuildCraftBuilders.getBptItemStack(items[0].getItem(), lastBptId, result.getName());
 		} else {
 			int bptId = BuildCraftBuilders.getBptRootIndex().storeBluePrint(result);
-			stack = BuildCraftBuilders.getBptItemStack(items[0].itemID, bptId, result.getName());
+			stack = BuildCraftBuilders.getBptItemStack(items[0].getItem(), bptId, result.getName());
 			lastBptId = bptId;
 		}
 
@@ -179,7 +179,7 @@ public class TileArchitect extends TileBuildCraft implements IInventory {
 				name += c;
 			}
 		}
-		sendNetworkUpdate();
+		sendNetworkUpdate(BuildCraftBuilders.instance);
 	}
 
 	@Override

@@ -231,7 +231,7 @@ public final class TravelingItem {
 	}
 
 	public boolean isCorrupted() {
-		return itemStack == null || itemStack.stackSize <= 0 || Item.itemsList[itemStack.itemID] == null;
+		return itemStack == null || itemStack.stackSize <= 0 || itemStack.getItem() == null;
 	}
 
 	public boolean canBeGroupedWith(TravelingItem otherItem) {

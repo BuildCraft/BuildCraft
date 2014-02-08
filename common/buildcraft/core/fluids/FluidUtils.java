@@ -5,6 +5,7 @@ import buildcraft.core.inventory.InvUtils;
 import buildcraft.core.utils.Utils;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
@@ -70,12 +71,12 @@ public class FluidUtils {
 		return false;
 	}
 
-	public static int getFluidBlockId(Fluid fluid, boolean moving) {
+	public static Block getFluidBlock(Fluid fluid, boolean moving) {
 		if (fluid == FluidRegistry.WATER)
-			return moving ? Block.waterMoving.blockID : Block.waterStill.blockID;
+			return moving ? Blocks.flowing_lava : Blocks.water;
 		if (fluid == FluidRegistry.LAVA)
-			return moving ? Block.lavaMoving.blockID : Block.lavaStill.blockID;
-		return fluid.getBlockID();
+			return moving ? Blocks.flowing_lava : Blocks.lava;
+		return fluid.getBlock();
 	}
 
 	public static void pushFluidToConsumers(IFluidTank tank, int flowCap, TileBuffer[] tileBuffer) {

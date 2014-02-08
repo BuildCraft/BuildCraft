@@ -189,9 +189,9 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 						path = ((TilePathMarker) tile).getPath();
 
 						for (BlockIndex b : path) {
-							worldObj.setBlock(b.x, b.y, b.z, 0);
+							worldObj.setBlock(b.x, b.y, b.z, null);
 
-							BuildCraftBuilders.pathMarkerBlock.dropBlockAsItem(worldObj, b.x, b.y, b.z, BuildCraftBuilders.pathMarkerBlock.blockID, 0);
+							BuildCraftBuilders.pathMarkerBlock.dropBlockAsItem(worldObj, b.x, b.y, b.z, BuildCraftBuilders.pathMarkerBlock, 0);
 						}
 
 						break;
@@ -567,7 +567,7 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 			box.reset();
 
 			if (CoreProxy.proxy.isSimulating(worldObj)) {
-				sendNetworkUpdate();
+				sendNetworkUpdate(BuildCraftBuilders.instance);
 			}
 
 			return;

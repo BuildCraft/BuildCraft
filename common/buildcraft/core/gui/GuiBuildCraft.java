@@ -46,7 +46,7 @@ public abstract class GuiBuildCraft extends GuiContainer {
 	}
 
 	public FontRenderer getFontRenderer() {
-		return fontRenderer;
+		return fontRendererObj;
 	}
 
 	protected void initLedgers(IInventory inventory) {
@@ -129,7 +129,7 @@ public abstract class GuiBuildCraft extends GuiContainer {
 	}
 
 	protected int getCenteredOffset(String string, int xWidth) {
-		return (xWidth - fontRenderer.getStringWidth(string)) / 2;
+		return (xWidth - fontRendererObj.getStringWidth(string)) / 2;
 	}
 
 	/**
@@ -214,7 +214,7 @@ public abstract class GuiBuildCraft extends GuiContainer {
 			int y;
 
 			for (ToolTipLine tip : toolTips) {
-				y = this.fontRenderer.getStringWidth(tip.text);
+				y = this.fontRendererObj.getStringWidth(tip.text);
 
 				if (y > lenght) {
 					lenght = y;
@@ -230,7 +230,7 @@ public abstract class GuiBuildCraft extends GuiContainer {
 			}
 
 			this.zLevel = 300.0F;
-			itemRenderer.zLevel = 300.0F;
+			itemRendererObj.zLevel = 300.0F;
 			int var15 = -267386864;
 			this.drawGradientRect(x - 3, y - 4, x + lenght + 3, y - 3, var15, var15);
 			this.drawGradientRect(x - 3, y + var14 + 3, x + lenght + 3, y + var14 + 4, var15, var15);
@@ -253,7 +253,7 @@ public abstract class GuiBuildCraft extends GuiContainer {
 					line = "\u00a7" + Integer.toHexString(tip.color) + line;
 				}
 
-				this.fontRenderer.drawStringWithShadow(line, x, y, -1);
+				this.fontRendererObj.drawStringWithShadow(line, x, y, -1);
 
 				y += 10 + tip.getSpacing();
 			}
@@ -331,9 +331,9 @@ public abstract class GuiBuildCraft extends GuiContainer {
 				int startY = mouseY - ((gui.height - gui.ySize) / 2) - 12;
 
 				String tooltip = ledger.getTooltip();
-				int textWidth = fontRenderer.getStringWidth(tooltip);
+				int textWidth = fontRendererObj.getStringWidth(tooltip);
 				drawGradientRect(startX - 3, startY - 3, startX + textWidth + 3, startY + 8 + 3, 0xc0000000, 0xc0000000);
-				fontRenderer.drawStringWithShadow(tooltip, startX, startY, -1);
+				fontRendererObj.drawStringWithShadow(tooltip, startX, startY, -1);
 			}
 		}
 

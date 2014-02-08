@@ -83,8 +83,8 @@ public class PipeItemsEmerald extends PipeItemsWood implements IClientState, IGu
 
 	@Override
 	public boolean blockActivated(EntityPlayer entityplayer) {
-		if (entityplayer.getCurrentEquippedItem() != null && entityplayer.getCurrentEquippedItem().itemID < Block.blocksList.length) {
-			if (Block.blocksList[entityplayer.getCurrentEquippedItem().itemID] instanceof BlockGenericPipe) {
+		if (entityplayer.getCurrentEquippedItem() != null) {
+			if (Block.getBlockFromItem(entityplayer.getCurrentEquippedItem().getItem()) instanceof BlockGenericPipe) {
 				return false;
 			}
 		}

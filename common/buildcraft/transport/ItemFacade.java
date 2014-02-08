@@ -6,19 +6,24 @@ import buildcraft.api.recipes.BuildcraftRecipes;
 import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.ItemBuildCraft;
 import buildcraft.core.proxy.CoreProxy;
+
 import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
+
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -65,7 +70,7 @@ public class ItemFacade extends ItemBuildCraft {
 	@SuppressWarnings({"unchecked", "rawtypes"})
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void getSubItems(int par1, CreativeTabs par2CreativeTabs, List itemList) {
+	public void getSubItems(Item item, CreativeTabs par2CreativeTabs, List itemList) {
 		// Do not call super, that would add a 0:0 facade
 		for (ItemStack stack : allFacades) {
 			itemList.add(stack.copy());
@@ -103,15 +108,15 @@ public class ItemFacade extends ItemBuildCraft {
 					continue;
 				}
 
-				if (!(b.blockID == 20)) {	//Explicitly allow glass
-					if (b.blockID == 7 //Bedrock
-							|| b.blockID == 2 //Grass block
-							|| b.blockID == 18 //Oak leaves
-							|| b.blockID == 19 //Sponge
-							|| b.blockID == 95 //Locked chest
-							|| b.blockID == Block.redstoneLampIdle.blockID
-							|| b.blockID == Block.redstoneLampActive.blockID
-							|| b.blockID == Block.pumpkinLantern.blockID) {
+				if (!(b == Blocks.glass)) {
+					if (b == Blocks.bedrock
+							|| b == Blocks.grass 
+							|| b == Blocks.leaves
+							|| b == Blocks.sponge
+							|| b == Blocks.chest
+							|| b == Blocks.redstone_lamp
+							|| b == Blocks.lit_redstone_lamp
+							|| b == Blocks.lit_pumpkin) {
 						continue;
 					}
 					if (!b.isOpaqueCube() || b.hasTileEntity(0) || !b.renderAsNormalBlock()) {
@@ -153,7 +158,7 @@ public class ItemFacade extends ItemBuildCraft {
 	}
 
 	public static void addFacade(ItemStack itemStack) {
-		ItemStack facade = getStack(itemStack.itemID, itemStack.getItemDamage());
+		ItemStack facade = getStack(Block.getBlockFromItem(itemStack.getItem()), itemStack.getItemDamage());
 		allFacades.add(facade);
 
 		ItemStack facade6 = facade.copy();
@@ -161,19 +166,24 @@ public class ItemFacade extends ItemBuildCraft {
 
 		// 3 Structurepipes + this block makes 6 facades
 		BuildcraftRecipes.assemblyTable.addRecipe(8000, facade6, new ItemStack(BuildCraftTransport.pipeStructureCobblestone, 3), itemStack);
-		if (itemStack.itemID < Block.blocksList.length && Block.blocksList[itemStack.itemID] != null) {
-			Block bl = Block.blocksList[itemStack.itemID];
+		
+		Block bl = Block.getBlockFromItem(itemStack.getItem());
 
-			// Special handling for logs
-			if (bl.getRenderType() == 31) {
-				ItemStack rotLog1 = getStack(itemStack.itemID, itemStack.getItemDamage() | 4);
-				ItemStack rotLog2 = getStack(itemStack.itemID, itemStack.getItemDamage() | 8);
-				allFacades.add(rotLog1);
-				allFacades.add(rotLog2);
-			}
-		}
+		// Special handling for logs
+		if (bl != null && bl.getRenderType() == 31) {
+			ItemStack rotLog1 = getStack(
+					Block.getBlockFromItem(itemStack.getItem()),
+					itemStack.getItemDamage() | 4);
+			ItemStack rotLog2 = getStack(
+					Block.getBlockFromItem(itemStack.getItem()),
+					itemStack.getItemDamage() | 8);
+			allFacades.add(rotLog1);
+			allFacades.add(rotLog2);
+		}		
 	}
-	private static final ItemStack NO_MATCH = new ItemStack(0, 0, 0);
+	
+	private static final Block NULL_BLOCK = null;
+	private static final ItemStack NO_MATCH = new ItemStack(NULL_BLOCK, 0, 0);
 
 	public class FacadeRecipe implements IRecipe {
 
@@ -182,7 +192,7 @@ public class ItemFacade extends ItemBuildCraft {
 			ItemStack slotmatch = null;
 			for (int i = 0; i < inventorycrafting.getSizeInventory(); i++) {
 				ItemStack slot = inventorycrafting.getStackInSlot(i);
-				if (slot != null && slot.itemID == ItemFacade.this.itemID && slotmatch == null) {
+				if (slot != null && slot.getItem() == ItemFacade.this.itemID && slotmatch == null) {
 					slotmatch = slot;
 				} else if (slot != null) {
 					slotmatch = NO_MATCH;
@@ -201,7 +211,7 @@ public class ItemFacade extends ItemBuildCraft {
 			ItemStack slotmatch = null;
 			for (int i = 0; i < inventorycrafting.getSizeInventory(); i++) {
 				ItemStack slot = inventorycrafting.getStackInSlot(i);
-				if (slot != null && slot.itemID == ItemFacade.this.itemID && slotmatch == null) {
+				if (slot != null && slot.getItem() == ItemFacade.this.itemID && slotmatch == null) {
 					slotmatch = slot;
 				} else if (slot != null) {
 					slotmatch = NO_MATCH;
@@ -250,10 +260,6 @@ public class ItemFacade extends ItemBuildCraft {
 	}
 
 	public static ItemStack getStack(Block block, int metadata) {
-		return getStack(block.blockID, metadata);
-	}
-
-	public static ItemStack getStack(int blockID, int metadata) {
 		ItemStack stack = new ItemStack(BuildCraftTransport.facadeItem, 1, 0);
 		NBTTagCompound nbt = new NBTTagCompound("tag");
 		nbt.setInteger("meta", metadata);

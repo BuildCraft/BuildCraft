@@ -39,7 +39,7 @@ public class GuiEmzuliPipe extends GuiBuildCraft {
 	@Override
 	protected void drawGuiContainerForegroundLayer(int par1, int par2) {
 		String title = StringUtils.localize("gui.pipes.emzuli.title");
-		fontRenderer.drawString(title, (xSize - fontRenderer.getStringWidth(title)) / 2, 6, 0x404040);
-		fontRenderer.drawString(StringUtils.localize("gui.inventory"), 8, ySize - 93, 0x404040);
+		fontRendererObj.drawString(title, (xSize - fontRendererObj.getStringWidth(title)) / 2, 6, 0x404040);
+		fontRendererObj.drawString(StringUtils.localize("gui.inventory"), 8, ySize - 93, 0x404040);
 	}
 }

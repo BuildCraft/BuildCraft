@@ -79,7 +79,7 @@ public class GuiBlueprintLibrary extends GuiBuildCraft {
 		// fontRenderer.drawString(library.owner + "'s Library", 6, 6,
 		// 0x404040);
 		String title = StringUtils.localize("tile.libraryBlock");
-		fontRenderer.drawString(title, getCenteredOffset(title), 6, 0x404040);
+		fontRendererObj.drawString(title, getCenteredOffset(title), 6, 0x404040);
 
 		int c = 0;
 		String[] currentNames = library.currentNames;
@@ -98,7 +98,7 @@ public class GuiBlueprintLibrary extends GuiBuildCraft {
 				drawGradientRect(l1, i2 + 9 * c, l1 + 88, i2 + 9 * (c + 1), 0x80ffffff, 0x80ffffff);
 			}
 
-			fontRenderer.drawString(name, 9, 25 + 9 * c, 0x404040);
+			fontRendererObj.drawString(name, 9, 25 + 9 * c, 0x404040);
 			c++;
 		}
 	}

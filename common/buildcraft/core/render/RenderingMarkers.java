@@ -23,7 +23,7 @@ public class RenderingMarkers implements ISimpleBlockRenderingHandler {
 
 		Tessellator tessellator = Tessellator.instance;
 		float f = block.getMixedBrightnessForBlock(world, x, y, z);
-		if (Block.lightValue[block.blockID] > 0) {
+		if (block.getLightValue() > 0) {
 			f = 1.0F;
 		}
 		tessellator.setColorOpaque_F(f, f, f);
@@ -174,8 +174,6 @@ public class RenderingMarkers implements ISimpleBlockRenderingHandler {
 		}
 		
 		i = block.getBlockTexture(iblockaccess, xCoord, yCoord, zCoord, 0);
-
-		
 		
 		minU = i.getMinU();
 		maxU = i.getMaxU();

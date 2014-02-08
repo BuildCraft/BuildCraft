@@ -29,8 +29,8 @@ public class GuiStoneEngine extends GuiEngine {
 	protected void drawGuiContainerForegroundLayer(int par1, int par2) {
 		super.drawGuiContainerForegroundLayer(par1, par2);
 		String title = StringUtils.localize("tile.engineStone");
-		fontRenderer.drawString(title, getCenteredOffset(title), 6, 0x404040);
-		fontRenderer.drawString(StringUtils.localize("gui.inventory"), 8, (ySize - 96) + 2, 0x404040);
+		fontRendererObj.drawString(title, getCenteredOffset(title), 6, 0x404040);
+		fontRendererObj.drawString(StringUtils.localize("gui.inventory"), 8, (ySize - 96) + 2, 0x404040);
 	}
 
 	@Override

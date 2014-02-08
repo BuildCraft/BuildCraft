@@ -32,7 +32,7 @@ public class BptBlockPipe extends BptBlock {
 	public void addRequirements(BptSlotInfo slot, IBptContext context, LinkedList<ItemStack> requirements) {
 		int pipeId = slot.cpt.getInteger("pipeId");
 
-		requirements.add(new ItemStack(pipeId, 1, 0));
+		//requirements.add(new ItemStack(pipeId, 1, 0));
 
 //		if (slot.cpt.hasKey("wire0")) {
 //			requirements.add(new ItemStack(BuildCraftTransport.pipeWire));
@@ -59,9 +59,9 @@ public class BptBlockPipe extends BptBlock {
 //			}
 //		}
 
-		if (BuildCraftCore.itemBptProps[pipeId] != null) {
-			BuildCraftCore.itemBptProps[pipeId].addRequirements(slot, requirements);
-		}
+		//if (BuildCraftCore.itemBptProps[pipeId] != null) {
+		//	BuildCraftCore.itemBptProps[pipeId].addRequirements(slot, requirements);
+		//}
 	}
 
 	@Override
@@ -78,9 +78,9 @@ public class BptBlockPipe extends BptBlock {
 	public void rotateLeft(BptSlotInfo slot, IBptContext context) {
 		int pipeId = slot.cpt.getInteger("pipeId");
 
-		if (BuildCraftCore.itemBptProps[pipeId] != null) {
-			BuildCraftCore.itemBptProps[pipeId].rotateLeft(slot, context);
-		}
+		//if (BuildCraftCore.itemBptProps[pipeId] != null) {
+		//	BuildCraftCore.itemBptProps[pipeId].rotateLeft(slot, context);
+		//}
 	}
 
 	@Override
@@ -125,11 +125,11 @@ public class BptBlockPipe extends BptBlock {
 //			}
 //		}
 
-		BlockGenericPipe.placePipe(pipe, context.world(), slot.x, slot.y, slot.z, slot.blockId, slot.meta);
+		//BlockGenericPipe.placePipe(pipe, context.world(), slot.x, slot.y, slot.z, slot.blockId, slot.meta);
 
-		if (BuildCraftCore.itemBptProps[pipeId] != null) {
-			BuildCraftCore.itemBptProps[pipeId].buildBlock(slot, context);
-		}
+		//if (BuildCraftCore.itemBptProps[pipeId] != null) {
+		//	BuildCraftCore.itemBptProps[pipeId].buildBlock(slot, context);
+		//}
 	}
 
 	@Override
@@ -169,9 +169,9 @@ public class BptBlockPipe extends BptBlock {
 //				}
 //			}
 
-			if (BuildCraftCore.itemBptProps[pipe.itemID] != null) {
-				BuildCraftCore.itemBptProps[pipe.itemID].initializeFromWorld(bptSlot, context, x, y, z);
-			}
+			//if (BuildCraftCore.itemBptProps[pipe.itemID] != null) {
+			//	BuildCraftCore.itemBptProps[pipe.itemID].initializeFromWorld(bptSlot, context, x, y, z);
+			//}
 		}
 	}
 
@@ -179,9 +179,9 @@ public class BptBlockPipe extends BptBlock {
 	public void postProcessing(BptSlotInfo slot, IBptContext context) {
 		int pipeId = slot.cpt.getInteger("pipeId");
 
-		if (BuildCraftCore.itemBptProps[pipeId] != null) {
-			BuildCraftCore.itemBptProps[pipeId].postProcessing(slot, context);
-		}
+		//if (BuildCraftCore.itemBptProps[pipeId] != null) {
+		//	BuildCraftCore.itemBptProps[pipeId].postProcessing(slot, context);
+		//}
 	}
 
 	@Override

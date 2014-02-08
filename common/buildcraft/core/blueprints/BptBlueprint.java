@@ -33,26 +33,26 @@ import net.minecraft.tileentity.TileEntity;
 
 public class BptBlueprint extends BptBase {
 
-	private int[] idMapping = new int[Item.itemsList.length];
+	//private int[] idMapping = new int[Item.itemsList.length];
 
 	TreeSet<Integer> idsToMap = new TreeSet<Integer>();
 
 	public BptBlueprint() {
-		for (int i = 0; i < idMapping.length; ++i) {
-			idMapping[i] = i;
-		}
+		//for (int i = 0; i < idMapping.length; ++i) {
+		//	idMapping[i] = i;
+		//}
 	}
 
 	public BptBlueprint(int sizeX, int sizeY, int sizeZ) {
 		super(sizeX, sizeY, sizeZ);
 
-		for (int i = 0; i < idMapping.length; ++i) {
-			idMapping[i] = i;
-		}
+		//for (int i = 0; i < idMapping.length; ++i) {
+		//	idMapping[i] = i;
+		//}
 	}
 
 	public void readFromWorld(IBptContext context, TileEntity anchorTile, int x, int y, int z) {
-		BptSlot slot = new BptSlot();
+		/*BptSlot slot = new BptSlot();
 
 		slot.x = (int) (x - context.surroundingBox().pMin().x);
 		slot.y = (int) (y - context.surroundingBox().pMin().y);
@@ -78,12 +78,12 @@ public class BptBlueprint extends BptBase {
 			t.printStackTrace();
 			BCLog.logger.throwing("BptBlueprint", "readFromWorld", t);
 
-		}
+		}*/
 	}
 
 	@Override
 	public void saveAttributes(BufferedWriter writer) throws IOException {
-		writer.write("sizeX:" + sizeX);
+		/*writer.write("sizeX:" + sizeX);
 		writer.newLine();
 		writer.write("sizeY:" + sizeY);
 		writer.newLine();
@@ -188,12 +188,12 @@ public class BptBlueprint extends BptBase {
 		}
 
 		writer.write(":requirements");
-		writer.newLine();
+		writer.newLine();*/
 	}
 
 	@Override
 	public void loadAttribute(BufferedReader reader, String attr, String val) throws IOException, BptError {
-		if ("3.1.0".equals(version))
+		/*if ("3.1.0".equals(version))
 			throw new BptError("Blueprint format 3.1.0 is not supported anymore, can't load " + file);
 
 		// blockMap is still tested for being able to load pre 3.1.2 bpts
@@ -321,7 +321,7 @@ public class BptBlueprint extends BptBase {
 					}
 				}
 			}
-		}
+		}*/
 	}
 
 	@Override
@@ -333,15 +333,17 @@ public class BptBlueprint extends BptBase {
 	}
 
 	public ItemStack mapItemStack(ItemStack bptItemStack) {
-		ItemStack newStack = bptItemStack.copy();
+		//ItemStack newStack = bptItemStack.copy();
 
-		newStack.itemID = idMapping[newStack.itemID];
+		//newStack.itemID = idMapping[newStack.itemID];
 
-		return newStack;
+		//return newStack;
+		return null;
 	}
 
 	public int mapWorldId(int bptWorldId) {
-		return idMapping[bptWorldId];
+		//return idMapping[bptWorldId];
+		return 0;
 	}
 
 	public void storeId(int worldId) {
@@ -370,6 +372,6 @@ public class BptBlueprint extends BptBase {
 
 	@Override
 	protected void copyTo(BptBase bpt) {
-		((BptBlueprint) bpt).idMapping = idMapping.clone();
+		//((BptBlueprint) bpt).idMapping = idMapping.clone();
 	}
 }

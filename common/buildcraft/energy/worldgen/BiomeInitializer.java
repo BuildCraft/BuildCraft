@@ -1,7 +1,7 @@
 package buildcraft.energy.worldgen;
 
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import buildcraft.BuildCraftEnergy;
-import net.minecraftforge.event.ForgeSubscribe;
 import net.minecraftforge.event.terraingen.WorldTypeEvent;
 
 /**
@@ -13,7 +13,7 @@ public class BiomeInitializer {
 	public BiomeInitializer() {
 	}
 
-	@ForgeSubscribe
+	@SubscribeEvent
 	public void initBiomes(WorldTypeEvent.InitBiomeGens event) {
 		if (BuildCraftEnergy.biomeOilDesert != null) {
 			event.newBiomeGens[0] = new GenLayerAddOilDesert(event.seed, 1500L, event.newBiomeGens[0]);

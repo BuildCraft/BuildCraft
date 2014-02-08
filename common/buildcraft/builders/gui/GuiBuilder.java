@@ -45,12 +45,12 @@ public class GuiBuilder extends GuiAdvancedInterface {
 		super.drawGuiContainerForegroundLayer(par1, par2);
 
 		String title = StringUtils.localize("tile.builderBlock");
-		fontRenderer.drawString(title, getCenteredOffset(title), 12, 0x404040);
-		fontRenderer.drawString(StringUtils.localize("gui.building.resources"), 8, 60, 0x404040);
-		fontRenderer.drawString(StringUtils.localize("gui.inventory"), 8, ySize - 97, 0x404040);
+		fontRendererObj.drawString(title, getCenteredOffset(title), 12, 0x404040);
+		fontRendererObj.drawString(StringUtils.localize("gui.building.resources"), 8, 60, 0x404040);
+		fontRendererObj.drawString(StringUtils.localize("gui.inventory"), 8, ySize - 97, 0x404040);
 
 		if (builder.isBuildingBlueprint()) {
-			fontRenderer.drawString(StringUtils.localize("gui.needed"), 185, 7, 0x404040);
+			fontRendererObj.drawString(StringUtils.localize("gui.needed"), 185, 7, 0x404040);
 		}
 
 		drawForegroundSelection(par1, par2);

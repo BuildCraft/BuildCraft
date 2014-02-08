@@ -74,7 +74,7 @@ import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLInterModComms;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerStoppingEvent;
-import cpw.mods.fml.common.network.NetworkMod;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
@@ -95,7 +95,6 @@ import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Property;
-import net.minecraftforge.event.ForgeSubscribe;
 
 @Mod(name = "BuildCraft Builders", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Builders", dependencies = DefaultProps.DEPENDENCY_CORE)
 public class BuildCraftBuilders extends BuildCraftMod {
@@ -377,15 +376,15 @@ public class BuildCraftBuilders extends BuildCraftMod {
 		return rootBptIndex;
 	}
 
-	/*public static ItemStack getBptItemStack(int id, int damage, String name) {
-		ItemStack stack = new ItemStack(id, 1, damage);
+	public static ItemStack getBptItemStack(Item item, int damage, String name) {
+		ItemStack stack = new ItemStack(item, 1, damage);
 		NBTTagCompound nbt = new NBTTagCompound();
 		if (name != null && !"".equals(name)) {
 			nbt.setString("BptName", name);
 			stack.setTagCompound(nbt);
 		}
 		return stack;
-	}*/
+	}
 
 	public static void addHook(IBuilderHook hook) {
 		if (!hooks.contains(hook)) {
@@ -398,10 +397,10 @@ public class BuildCraftBuilders extends BuildCraftMod {
 		TilePathMarker.clearAvailableMarkersList();
 	}
 
-	@ForgeSubscribe
+	@SubscribeEvent
 	@SideOnly(Side.CLIENT)
 	public void loadTextures(TextureStitchEvent.Pre evt) {
-		if (evt.map.textureType == 0) {
+		if (evt.map.getTextureType() == 0) {
 			for (FillerPattern pattern : FillerPattern.patterns) {
 				pattern.registerIcon(evt.map);
 			}

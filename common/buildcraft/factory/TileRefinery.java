@@ -8,6 +8,7 @@
 package buildcraft.factory;
 
 import buildcraft.BuildCraftCore;
+import buildcraft.BuildCraftFactory;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.gates.IAction;
 import buildcraft.api.power.IPowerReceptor;
@@ -24,9 +25,11 @@ import buildcraft.core.network.PacketPayload;
 import buildcraft.core.network.PacketPayloadStream;
 import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.proxy.CoreProxy;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.ICrafting;
@@ -126,7 +129,7 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IPowe
 		}
 
 		if (updateNetworkTime.markTimeIfDelay(worldObj, BuildCraftCore.updateFactor))
-			sendNetworkUpdate();
+			sendNetworkUpdate(BuildCraftFactory.instance);
 
 		isActive = false;
 

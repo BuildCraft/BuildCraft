@@ -7,6 +7,7 @@
  */
 package buildcraft.builders;
 
+import buildcraft.BuildCraftBuilders;
 import buildcraft.BuildCraftCore;
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.core.LaserKind;
@@ -35,9 +36,11 @@ import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.triggers.ActionMachineControl;
 import buildcraft.core.triggers.ActionMachineControl.Mode;
 import buildcraft.core.utils.Utils;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
@@ -83,7 +86,7 @@ public class TileFiller extends TileBuildCraft implements IInventory, IPowerRece
 				if (!CoreProxy.proxy.isRenderWorld(worldObj) && box.isInitialized()) {
 					box.createLasers(worldObj, LaserKind.Stripes);
 				}
-				sendNetworkUpdate();
+				sendNetworkUpdate(BuildCraftBuilders.instance);
 			}
 		}
 	}
@@ -135,7 +138,7 @@ public class TileFiller extends TileBuildCraft implements IInventory, IPowerRece
 
 		if (done) {
 			patternIterator = null;
-			sendNetworkUpdate();
+			sendNetworkUpdate(BuildCraftBuilders.instance);
 		} else if (powerHandler.getEnergyStored() >= POWER_USAGE) {
 			doWork(workProvider);
 		}
@@ -235,7 +238,7 @@ public class TileFiller extends TileBuildCraft implements IInventory, IPowerRece
 			currentPattern = pattern;
 			patternIterator = null;
 			done = false;
-			sendNetworkUpdate();
+			sendNetworkUpdate(BuildCraftBuilders.instance);
 		}
 	}
 

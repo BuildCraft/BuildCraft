@@ -121,7 +121,7 @@ public class BptBuilderTemplate extends BptBuilderBase {
 			BptSlot slot = list.getFirst();
 
 			// Note from CJ: I have no idea what this code is supposed to do, so I'm not touching it.
-			if (slot.blockId == world.getBlockId(slot.x, slot.y, slot.z)) {
+			/*if (slot.blockId == world.getBlockId(slot.x, slot.y, slot.z)) {
 				list.removeFirst();
 			} else if (slot.mode == Mode.ClearIfInvalid) {
 				result = slot;
@@ -145,7 +145,7 @@ public class BptBuilderTemplate extends BptBuilderBase {
 				}
 
 				break;
-			}
+			}*/
 		}
 
 		return result;

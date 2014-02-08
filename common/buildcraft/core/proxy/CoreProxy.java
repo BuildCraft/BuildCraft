@@ -78,7 +78,7 @@ public class CoreProxy {
 
 	/* WRAPPER */
 	@SuppressWarnings("rawtypes")
-	public void feedSubBlocks(int id, CreativeTabs tab, List itemList) {
+	public void feedSubBlocks(Block block, CreativeTabs tab, List itemList) {
 	}
 
 	/* LOCALIZATION */
