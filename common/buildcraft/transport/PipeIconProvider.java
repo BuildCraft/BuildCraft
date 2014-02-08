@@ -113,6 +113,8 @@ public class PipeIconProvider implements IIconProvider {
 		PipePowerHeat7("pipePowerHeat7"),
 		PipePowerHeat8("pipePowerHeat8"),
 		//
+		PipeRobotStation("pipeRobotStation"),
+		//
 		Power_Normal("texture_cyan"),
 		Power_Overload("texture_red_lit"),
 		Stripes("pipeStripes"),

@@ -1,16 +1,18 @@
 /**
- * Copyright (c) 2011 - 2014 SpaceToad and the BuildCraft Team
+ * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public License
- * 1.0, or MMPL. Please check the contents of the license located in
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
+ * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-
-package buildcraft.core;
+package buildcraft.core.robots;
 
 import buildcraft.builders.blueprints.IBlueprintBuilderAgent;
+import buildcraft.core.DefaultProps;
+import buildcraft.core.LaserData;
 import buildcraft.core.proxy.CoreProxy;
+import buildcraft.transport.TileGenericPipe;
 
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteArrayDataOutput;
@@ -20,33 +22,46 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import net.minecraftforge.common.ForgeDirection;
 import cpw.mods.fml.common.registry.IEntityAdditionalSpawnData;
 
 public class EntityRobot extends EntityLivingBase implements
 		IEntityAdditionalSpawnData, IBlueprintBuilderAgent, IInventory {
 
-	protected int aroundX, aroundY, aroundZ;
-	protected float destX, destY, destZ;
-	double dirX, dirY, dirZ;
 	public LaserData laser = new LaserData ();
 	private boolean needsUpdate = false;
 	float curBlockDamage = 0;
 	float buildEnergy = 0;
 	ItemStack buildingStack = null;
 
+	private static ResourceLocation defaultTexture = new ResourceLocation(
+			"buildcraft", DefaultProps.TEXTURE_PATH_ENTITIES
+					+ "/robot_base.png");
+
+	public AIBase currentAI;
+
+	public class DockingStation {
+		public int x, y, z;
+		public ForgeDirection side;
+	}
+
+	public DockingStation dockingStation = new DockingStation();
+
 	public EntityRobot(World par1World) {
 		super(par1World);
-
-		dirX = 0;
-		dirY = 0;
-		dirZ = 0;
 
 		motionX = 0;
 		motionY = 0;
 		motionZ = 0;
 
 		ignoreFrustumCheck = true;
+		laser.isVisible = false;
+
+		width = 0.5F;
+		height = 0.5F;
 	}
 
 	@Override
@@ -61,6 +76,10 @@ public class EntityRobot extends EntityLivingBase implements
 		dataWatcher.addObject(11, Float.valueOf(0));
 		dataWatcher.addObject(12, Float.valueOf(0));
 		dataWatcher.addObject(13, Byte.valueOf((byte) 0));
+		dataWatcher.addObject(14, Float.valueOf(0));
+		dataWatcher.addObject(15, Float.valueOf(0));
+		dataWatcher.addObject(16, Float.valueOf(0));
+		dataWatcher.addObject(17, Byte.valueOf((byte) 0));
 	}
 
 	protected void updateDataClient() {
@@ -105,55 +124,6 @@ public class EntityRobot extends EntityLivingBase implements
 		}
 	}
 
-	public void setDestination(float x, float y, float z) {
-		destX = x;
-		destY = y;
-		destZ = z;
-
-		dirX = (destX - posX);
-		dirY = (destY - posY);
-		dirZ = (destZ - posZ);
-
-		double magnitude = Math.sqrt(dirX * dirX + dirY * dirY + dirZ * dirZ);
-
-		dirX /= magnitude;
-		dirY /= magnitude;
-		dirZ /= magnitude;
-	}
-
-	public void setDestinationAround(int x, int y, int z) {
-		aroundX = x;
-		aroundY = y;
-		aroundZ = z;
-
-		randomDestination();
-	}
-
-	public void randomDestination() {
-		for (int i = 0; i < 5; ++i) {
-			float testX = aroundX + rand.nextFloat() * 10F - 5F;
-			float testY = aroundY + rand.nextFloat() * 5F;
-			float testZ = aroundZ + rand.nextFloat() * 10F - 5F;
-
-			int blockId = worldObj.getBlockId((int) testX, (int) testY,
-					(int) testZ);
-
-			// We set a destination. If it's wrong, we try a new one.
-			// Eventually, we'll accept even a wrong one if none can be easily
-			// found.
-
-			setDestination(testX, testY, testZ);
-
-			if (Block.blocksList[blockId] == null
-					|| Block.blocksList[blockId].isAirBlock(worldObj,
-							(int) testX, (int) testY, (int) testZ)) {
-				return;
-			}
-		}
-	}
-
-	double prevDistance = Double.MAX_VALUE;
-
 	@Override
 	public void onUpdate() {
 		if (CoreProxy.proxy.isSimulating(worldObj) && needsUpdate) {
@@ -165,19 +135,16 @@ public class EntityRobot extends EntityLivingBase implements
 			updateDataClient();
 		}
 
-		if (CoreProxy.proxy.isSimulating(worldObj)) {
-			double distance = getDistance(destX, destY, destZ);
-
-			if (distance >= prevDistance) {
-				randomDestination();
-			}
-
-			prevDistance = getDistance(destX, destY, destZ);
-
-			motionX = dirX / 10F;
-			motionY = dirY / 10F;
-			motionZ = dirZ / 10F;
+		if (currentAI != null) {
+			currentAI.update(this);
 		}
+
+		super.onUpdate();
+	}
+
+	public void setRegularBoundingBox () {
+		width = 0.5F;
+		height = 0.5F;
 
 		if (laser.isVisible) {
 			boundingBox.minX = Math.min(posX, laser.tail.x);
@@ -196,26 +163,40 @@ public class EntityRobot extends EntityLivingBase implements
 			boundingBox.maxY++;
 			boundingBox.maxZ++;
 		} else {
-			boundingBox.minX = posX - 1;
-			boundingBox.minY = posY - 1;
-			boundingBox.minZ = posZ - 1;
+			boundingBox.minX = posX - 0.25F;
+			boundingBox.minY = posY - 0.25F;
+			boundingBox.minZ = posZ - 0.25F;
 
-			boundingBox.maxX = posX + 1;
-			boundingBox.maxY = posY + 1;
-			boundingBox.maxZ = posZ + 1;
+			boundingBox.maxX = posX + 0.25F;
+			boundingBox.maxY = posY + 0.25F;
+			boundingBox.maxZ = posZ + 0.25F;
 		}
+	}
 
-		super.onUpdate();
+	public void setNullBoundingBox () {
+		width = 0F;
+		height = 0F;
+
+		boundingBox.minX = posX;
+		boundingBox.minY = posY;
+		boundingBox.minZ = posZ;
+
+		boundingBox.maxX = posX;
+		boundingBox.maxY = posY;
+		boundingBox.maxZ = posZ;
+	}
+
+	private void iterateBehaviorDocked () {
+		motionX = 0F;
+		motionY = 0F;
+		motionZ = 0F;
+
+		setNullBoundingBox ();
 	}
 
 	protected void move() {
 
 	}
-
-	protected boolean reachedDesination() {
-		return getDistance(destX, destY, destZ) <= 0.2F;
-	}
-
 
 	@Override
 	public void writeSpawnData(ByteArrayDataOutput data) {
@@ -411,4 +392,21 @@ public class EntityRobot extends EntityLivingBase implements
 		return false;
 	}
 
+	public ResourceLocation getTexture () {
+		return defaultTexture;
+	}
+
+	@Override
+	public void readEntityFromNBT(NBTTagCompound par1NBTTagCompound) {
+		super.readEntityFromNBT(par1NBTTagCompound);
+
+		setDead();
+    }
+
+	public void setDockingStation (TileGenericPipe tile, ForgeDirection side) {
+		dockingStation.x = tile.xCoord;
+		dockingStation.y = tile.yCoord;
+		dockingStation.z = tile.zCoord;
+		dockingStation.side = side;
+	}
 }

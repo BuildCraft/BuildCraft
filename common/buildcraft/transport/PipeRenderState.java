@@ -21,6 +21,7 @@ public class PipeRenderState implements IClientState {
 	public final TextureMatrix textureMatrix = new TextureMatrix();
 	public final WireMatrix wireMatrix = new WireMatrix();
 	public final ConnectionMatrix plugMatrix = new ConnectionMatrix();
+	public final ConnectionMatrix robotStationMatrix = new ConnectionMatrix();
 	public final FacadeMatrix facadeMatrix = new FacadeMatrix();
 	private boolean dirty = true;
 
@@ -61,14 +62,20 @@ public class PipeRenderState implements IClientState {
 		facadeMatrix.clean();
 		wireMatrix.clean();
 		plugMatrix.clean();
+		robotStationMatrix.clean();
 	}
 
 	public boolean isDirty() {
-		return dirty || pipeConnectionMatrix.isDirty() || textureMatrix.isDirty() || wireMatrix.isDirty() || facadeMatrix.isDirty() || plugMatrix.isDirty();
+		return dirty || pipeConnectionMatrix.isDirty()
+				|| textureMatrix.isDirty() || wireMatrix.isDirty()
+				|| facadeMatrix.isDirty() || plugMatrix.isDirty()
+				|| robotStationMatrix.isDirty();
 	}
 
 	public boolean needsRenderUpdate() {
-		return pipeConnectionMatrix.isDirty() || textureMatrix.isDirty() || facadeMatrix.isDirty() || plugMatrix.isDirty();
+		return pipeConnectionMatrix.isDirty() || textureMatrix.isDirty()
+				|| facadeMatrix.isDirty() || plugMatrix.isDirty()
+				|| robotStationMatrix.isDirty();
 	}
 
 	@Override
@@ -81,6 +88,7 @@ public class PipeRenderState implements IClientState {
 		wireMatrix.writeData(data);
 		facadeMatrix.writeData(data);
 		plugMatrix.writeData(data);
+		robotStationMatrix.writeData(data);
 	}
 
 	@Override
@@ -93,5 +101,6 @@ public class PipeRenderState implements IClientState {
 		wireMatrix.readData(data);
 		facadeMatrix.readData(data);
 		plugMatrix.readData(data);
+		robotStationMatrix.readData(data);
 	}
 }

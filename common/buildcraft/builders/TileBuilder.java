@@ -17,7 +17,6 @@ import buildcraft.api.power.PowerHandler.Type;
 import buildcraft.builders.blueprints.Blueprint;
 import buildcraft.builders.blueprints.BlueprintBuilder;
 import buildcraft.core.Box;
-import buildcraft.core.EntityRobotBuilder;
 import buildcraft.core.IBuilderInventory;
 import buildcraft.core.IMachine;
 import buildcraft.core.TileBuildCraft;
@@ -25,8 +24,11 @@ import buildcraft.core.inventory.InventoryMapper;
 import buildcraft.core.inventory.SimpleInventory;
 import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.network.NetworkData;
+import buildcraft.core.robots.EntityRobotBuilder;
+
 import java.io.IOException;
 import java.util.ListIterator;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;

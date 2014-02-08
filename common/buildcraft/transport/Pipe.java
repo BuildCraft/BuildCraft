@@ -385,12 +385,21 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 	}
 
 	public boolean hasGate(ForgeDirection side) {
-		if (!hasGate())
+		if (!hasGate()) {
 			return false;
-		if (container.hasFacade(side))
+		}
+
+		if (container.hasFacade(side)) {
 			return false;
-		if (container.hasPlug(side))
+		}
+
+		if (container.hasPlug(side)) {
 			return false;
+		}
+
+		if (container.hasRobotStation(side)) {
+			return false;
+		}
 
 		int connections = 0;
 		ForgeDirection targetOrientation = ForgeDirection.UNKNOWN;
@@ -440,8 +449,13 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 			if (container.hasFacade(direction)) {
 				container.dropFacade(direction);
 			}
+
 			if (container.hasPlug(direction)) {
 				container.removeAndDropPlug(direction);
+			}
+
+			if (container.hasRobotStation(direction)) {
+				container.removeAndDropRobotStation(direction);
 			}
 		}
 	}

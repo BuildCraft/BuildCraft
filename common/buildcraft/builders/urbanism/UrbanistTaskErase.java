@@ -15,7 +15,7 @@ public class UrbanistTaskErase extends UrbanistTask {
 	}
 
 	public void setup(EntityRobotUrbanism robot) {
-		robot.setDestinationAround(x, y, z);
+		//robot.setDestinationAround(x, y, z);
 	}
 
 	public void work(EntityRobotUrbanism robot) {

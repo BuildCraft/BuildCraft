@@ -66,6 +66,7 @@ public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
 
 		pipeFacadeRenderer(renderblocks, block, state, x, y, z);
 		pipePlugRenderer(renderblocks, block, state, x, y, z);
+		pipeRobotStationRenderer(renderblocks, block, state, x, y, z);
 	}
 
 	private void resetToCenterDimensions(float[] dim) {
@@ -145,6 +146,104 @@ public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
 			}
 		}
 
+	}
+
+	private void pipeRobotStationPartRender(RenderBlocks renderblocks,
+			Block block, PipeRenderState state, int x, int y, int z,
+			float xStart, float xEnd, float yStart, float yEnd, float zStart,
+			float zEnd) {
+
+		float zFightOffset = 1F / 4096F;
+
+		float[][] zeroState = new float[3][2];
+		// X START - END
+		zeroState[0][0] = xStart + zFightOffset;
+		zeroState[0][1] = xEnd - zFightOffset;
+		// Y START - END
+		zeroState[1][0] = yStart;
+		zeroState[1][1] = yEnd;
+		// Z START - END
+		zeroState[2][0] = zStart + zFightOffset;
+		zeroState[2][1] = zEnd - zFightOffset;
+
+		state.currentTexture = BuildCraftTransport.instance.pipeIconProvider
+				.getIcon(PipeIconProvider.TYPE.PipeRobotStation.ordinal()); // Structure
+																			// Pipe
+
+		for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
+			if (state.robotStationMatrix.isConnected(direction)) {
+				float[][] rotated = MatrixTranformations.deepClone(zeroState);
+				MatrixTranformations.transform(rotated, direction);
+
+				renderblocks.setRenderBounds(rotated[0][0], rotated[1][0],
+						rotated[2][0], rotated[0][1], rotated[1][1],
+						rotated[2][1]);
+				renderblocks.renderStandardBlock(block, x, y, z);
+			}
+		}
+
+	}
+
+	private void pipeRobotStationRenderer(RenderBlocks renderblocks, Block block, PipeRenderState state, int x, int y, int z) {
+
+		float width = 0.075F;
+
+		pipeRobotStationPartRender (renderblocks, block, state, x, y, z,
+				0.45F, 0.55F,
+				0.0F, 0.224F,
+				0.45F, 0.55F);
+
+
+		/*pipeRobotStationPartRender (renderblocks, block, state, x, y, z,
+				0.25F, 0.75F,
+				0.025F, 0.224F,
+				0.25F, 0.25F + width);
+
+		pipeRobotStationPartRender (renderblocks, block, state, x, y, z,
+				0.25F, 0.75F,
+				0.025F, 0.224F,
+				0.75F - width, 0.75F);
+
+		pipeRobotStationPartRender (renderblocks, block, state, x, y, z,
+				0.25F, 0.25F + width,
+				0.025F, 0.224F,
+				0.25F + width, 0.75F - width);
+
+		pipeRobotStationPartRender (renderblocks, block, state, x, y, z,
+				0.75F - width, 0.75F,
+				0.025F, 0.224F,
+				0.25F + width, 0.75F - width);*/
+
+		float zFightOffset = 1F / 4096F;
+
+		float[][] zeroState = new float[3][2];
+
+
+		// X START - END
+		zeroState[0][0] = 0.25F + zFightOffset;
+		zeroState[0][1] = 0.75F - zFightOffset;
+		// Y START - END
+		zeroState[1][0] = 0.225F;
+		zeroState[1][1] = 0.251F;
+		// Z START - END
+		zeroState[2][0] = 0.25F + zFightOffset;
+		zeroState[2][1] = 0.75F - zFightOffset;
+
+		state.currentTexture = BuildCraftTransport.instance.pipeIconProvider
+				.getIcon(PipeIconProvider.TYPE.PipeRobotStation.ordinal()); // Structure
+																			// Pipe
+
+		for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
+			if (state.robotStationMatrix.isConnected(direction)) {
+				float[][] rotated = MatrixTranformations.deepClone(zeroState);
+				MatrixTranformations.transform(rotated, direction);
+
+				renderblocks.setRenderBounds(rotated[0][0], rotated[1][0],
+						rotated[2][0], rotated[0][1], rotated[1][1],
+						rotated[2][1]);
+				renderblocks.renderStandardBlock(block, x, y, z);
+			}
+		}
 	}
 
 	@Override

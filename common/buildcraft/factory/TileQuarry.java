@@ -22,23 +22,27 @@ import buildcraft.api.power.PowerHandler.PowerReceiver;
 import buildcraft.core.Box;
 import buildcraft.core.CoreConstants;
 import buildcraft.core.DefaultAreaProvider;
-import buildcraft.core.EntityRobotBuilder;
 import buildcraft.core.IBuilderInventory;
 import buildcraft.core.IMachine;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.network.NetworkData;
 import buildcraft.core.proxy.CoreProxy;
+import buildcraft.core.robots.EntityRobotBuilder;
 import buildcraft.core.utils.BlockUtil;
 import buildcraft.core.utils.Utils;
+
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+
 import cpw.mods.fml.common.network.PacketDispatcher;
 import cpw.mods.fml.common.network.Player;
+
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Set;
+
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;

@@ -1,14 +1,16 @@
 /**
- * Copyright (c) SpaceToad, 2011 http://www.mod-buildcraft.com
+ * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
+ * http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public License
- * 1.0, or MMPL. Please check the contents of the license located in
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
+ * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
 package buildcraft.transport;
 
 import buildcraft.api.transport.PipeWire;
 import buildcraft.transport.gates.ItemGate;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -42,7 +44,10 @@ import buildcraft.api.tools.IToolWrench;
 import buildcraft.core.BlockBuildCraft;
 import buildcraft.core.BlockIndex;
 import buildcraft.core.CoreConstants;
+import buildcraft.core.ItemRobot;
 import buildcraft.core.proxy.CoreProxy;
+import buildcraft.core.robots.AIDocked;
+import buildcraft.core.robots.EntityRobot;
 import buildcraft.core.utils.BCLog;
 import buildcraft.core.utils.Utils;
 import buildcraft.core.utils.MatrixTranformations;
@@ -51,17 +56,19 @@ import buildcraft.transport.gates.GateFactory;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+
 import java.util.Arrays;
+
 import net.minecraft.client.Minecraft;
 
 public class BlockGenericPipe extends BlockBuildCraft {
 
 	static enum Part {
-
 		Pipe,
 		Gate,
 		Facade,
-		Plug
+		Plug,
+		RobotStation
 	}
 
 	static class RaytraceResult {
@@ -237,7 +244,8 @@ public class BlockGenericPipe extends BlockBuildCraft {
 			AxisAlignedBB box = rayTraceResult.boundingBox;
 			switch (rayTraceResult.hitPart) {
 				case Gate:
-				case Plug: {
+				case Plug:
+				case RobotStation: {
 					float scale = 0.001F;
 					box = box.expand(scale, scale, scale);
 					break;
@@ -298,9 +306,9 @@ public class BlockGenericPipe extends BlockBuildCraft {
 		 * pipe hits along x, y, and z axis, gate (all 6 sides) [and
 		 * wires+facades]
 		 */
-		MovingObjectPosition[] hits = new MovingObjectPosition[25];
-		AxisAlignedBB[] boxes = new AxisAlignedBB[25];
-		ForgeDirection[] sideHit = new ForgeDirection[25];
+		MovingObjectPosition[] hits = new MovingObjectPosition[31];
+		AxisAlignedBB[] boxes = new AxisAlignedBB[31];
+		ForgeDirection[] sideHit = new ForgeDirection[31];
 		Arrays.fill(sideHit, ForgeDirection.UNKNOWN);
 
 		// pipe
@@ -351,6 +359,18 @@ public class BlockGenericPipe extends BlockBuildCraft {
 			}
 		}
 
+		// robotStations
+
+		for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
+			if (tileG.hasRobotStation(side)) {
+				AxisAlignedBB bb = getRobotStationBoundingBox(side);
+				setBlockBounds(bb);
+				boxes[25 + side.ordinal()] = bb;
+				hits[25 + side.ordinal()] = super.collisionRayTrace(world, x, y, z, origin, direction);
+				sideHit[25 + side.ordinal()] = side;
+			}
+		}
+
 		// TODO: check wires
 
 		// get closest hit
@@ -386,8 +406,10 @@ public class BlockGenericPipe extends BlockBuildCraft {
 				hitPart = Part.Gate;
 			} else if (minIndex < 19) {
 				hitPart = Part.Facade;
-			} else {
+			} else if (minIndex < 25) {
 				hitPart = Part.Plug;
+			} else {
+				hitPart = Part.RobotStation;
 			}
 
 			return new RaytraceResult(hitPart, hits[minIndex], boxes[minIndex], sideHit[minIndex]);
@@ -434,6 +456,22 @@ public class BlockGenericPipe extends BlockBuildCraft {
 	}
 
 	private AxisAlignedBB getPlugBoundingBox(ForgeDirection side) {
+		float[][] bounds = new float[3][2];
+		// X START - END
+		bounds[0][0] = 0.25F;
+		bounds[0][1] = 0.75F;
+		// Y START - END
+		bounds[1][0] = 0.125F;
+		bounds[1][1] = 0.251F;
+		// Z START - END
+		bounds[2][0] = 0.25F;
+		bounds[2][1] = 0.75F;
+
+		MatrixTranformations.transform(bounds, side);
+		return AxisAlignedBB.getAABBPool().getAABB(bounds[0][0], bounds[1][0], bounds[2][0], bounds[0][1], bounds[1][1], bounds[2][1]);
+	}
+
+	private AxisAlignedBB getRobotStationBoundingBox(ForgeDirection side) {
 		float[][] bounds = new float[3][2];
 		// X START - END
 		bounds[0][0] = 0.25F;
@@ -594,6 +632,8 @@ public class BlockGenericPipe extends BlockBuildCraft {
 					return pipe.gate.getGateItem();
 				case Plug:
 					return new ItemStack(BuildCraftTransport.plugItem);
+				case RobotStation:
+					return new ItemStack(BuildCraftTransport.robotStationItem);
 			}
 		}
 		return super.getPickBlock(target, world, x, y, z);
@@ -685,10 +725,41 @@ public class BlockGenericPipe extends BlockBuildCraft {
 				if (addOrStripPlug(world, x, y, z, player, ForgeDirection.getOrientation(side), pipe)) {
 					return true;
 				}
-			} else if (currentItem.getItem() instanceof ItemFacade)
+			} else if (currentItem.getItem() instanceof ItemRobotStation) {
+				if (addOrStripRobotStation(world, x, y, z, player, ForgeDirection.getOrientation(side), pipe)) {
+					return true;
+				}
+			} else if (currentItem.getItem() instanceof ItemFacade) {
 				if (addOrStripFacade(world, x, y, z, player, ForgeDirection.getOrientation(side), pipe)) {
 					return true;
 				}
+			} else if (currentItem.getItem () instanceof ItemRobot) {
+				if (CoreProxy.proxy.isSimulating(world)) {
+					RaytraceResult rayTraceResult = doRayTrace(world, x, y, z,
+							player);
+
+					if (rayTraceResult.hitPart == Part.RobotStation) {
+						EntityRobot robot = ((ItemRobot) currentItem.getItem())
+								.createRobot(world);
+
+						float px = x + 0.5F + (float) rayTraceResult.sideHit.offsetX * 0.5F;
+						float py = y + 0.5F + (float) rayTraceResult.sideHit.offsetY * 0.5F;
+						float pz = z + 0.5F + (float) rayTraceResult.sideHit.offsetZ * 0.5F;
+
+						robot.setPosition(px, py, pz);
+						robot.setDockingStation(pipe.container,
+								rayTraceResult.sideHit);
+						robot.currentAI = new AIDocked();
+						world.spawnEntityInWorld(robot);
+
+						if (!player.capabilities.isCreativeMode) {
+							player.getCurrentEquippedItem().stackSize--;
+						}
+
+						return true;
+					}
+				}
+			}
 
 			boolean clickedOnGate = false;
 
@@ -823,6 +894,21 @@ public class BlockGenericPipe extends BlockBuildCraft {
 		return false;
 	}
 
+	private boolean addOrStripRobotStation(World world, int x, int y, int z, EntityPlayer player, ForgeDirection side, Pipe pipe) {
+		RaytraceResult rayTraceResult = doRayTrace(world, x, y, z, player);
+		if (player.isSneaking()) {
+			if (rayTraceResult != null && rayTraceResult.hitPart == Part.RobotStation) {
+				if (stripRobotStation(pipe, rayTraceResult.sideHit))
+					return true;
+			}
+		}
+		if (rayTraceResult != null && (rayTraceResult.hitPart == Part.Pipe || rayTraceResult.hitPart == Part.Gate)) {
+			if (addRobotStation(player, pipe, rayTraceResult.sideHit != null && rayTraceResult.sideHit != ForgeDirection.UNKNOWN ? rayTraceResult.sideHit : side))
+				return true;
+		}
+		return false;
+	}
+
 	private boolean addPlug(EntityPlayer player, Pipe pipe, ForgeDirection side) {
 		ItemStack stack = player.getCurrentEquippedItem();
 		if (pipe.container.addPlug(side)) {
@@ -834,7 +920,22 @@ public class BlockGenericPipe extends BlockBuildCraft {
 		return false;
 	}
 
+	private boolean addRobotStation(EntityPlayer player, Pipe pipe, ForgeDirection side) {
+		ItemStack stack = player.getCurrentEquippedItem();
+		if (pipe.container.addRobotStation(side)) {
+			if (!player.capabilities.isCreativeMode) {
+				stack.stackSize--;
+			}
+			return true;
+		}
+		return false;
+	}
+
 	private boolean stripPlug(Pipe pipe, ForgeDirection side) {
+		return pipe.container.removeAndDropPlug(side);
+	}
+
+	private boolean stripRobotStation(Pipe pipe, ForgeDirection side) {
 		return pipe.container.removeAndDropPlug(side);
 	}
 

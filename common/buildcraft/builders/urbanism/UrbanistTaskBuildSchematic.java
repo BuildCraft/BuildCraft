@@ -17,7 +17,7 @@ public class UrbanistTaskBuildSchematic extends UrbanistTask {
 	}
 
 	public void setup(EntityRobotUrbanism robot) {
-		robot.setDestinationAround(builder.getX(), builder.getY(), builder.getZ());
+		//robot.setDestinationAround(builder.getX(), builder.getY(), builder.getZ());
 	}
 
 	public void work(EntityRobotUrbanism robot) {

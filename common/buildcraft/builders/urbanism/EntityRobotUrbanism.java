@@ -2,8 +2,8 @@ package buildcraft.builders.urbanism;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
-import buildcraft.core.EntityRobot;
 import buildcraft.core.proxy.CoreProxy;
+import buildcraft.core.robots.EntityRobot;
 
 public class EntityRobotUrbanism extends EntityRobot {
 

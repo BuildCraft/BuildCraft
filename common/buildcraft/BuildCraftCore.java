@@ -39,10 +39,9 @@ import buildcraft.core.DefaultProps;
 import buildcraft.core.EntityEnergyLaser;
 import buildcraft.core.EntityFrame;
 import buildcraft.core.EntityPowerLaser;
-import buildcraft.core.EntityRobot;
-import buildcraft.core.EntityRobotBuilder;
 import buildcraft.core.InterModComms;
 import buildcraft.core.ItemBuildCraft;
+import buildcraft.core.ItemRobot;
 import buildcraft.core.ItemSpring;
 import buildcraft.core.ItemWrench;
 import buildcraft.core.SpringPopulate;
@@ -70,6 +69,9 @@ import buildcraft.core.utils.Localization;
 import buildcraft.core.recipes.AssemblyRecipeManager;
 import buildcraft.core.recipes.IntegrationRecipeManager;
 import buildcraft.core.recipes.RefineryRecipeManager;
+import buildcraft.core.robots.EntityRobot;
+import buildcraft.core.robots.EntityRobotBuilder;
+import buildcraft.core.robots.EntityRobotPicker;
 import buildcraft.core.triggers.TriggerRedstoneInput;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
@@ -114,6 +116,9 @@ public class BuildCraftCore {
 	public static Item diamondGearItem;
 	public static Item wrenchItem;
 	public static Item redstoneCrystal;
+	public static Item robotBaseItem;
+	public static Item robotBuilderItem;
+	public static Item robotPickerItem;
 	@SideOnly(Side.CLIENT)
 	public static Icon redLaserTexture;
 	@SideOnly(Side.CLIENT)
@@ -211,6 +216,9 @@ public class BuildCraftCore {
 			Property goldenGearId = BuildCraftCore.mainConfiguration.getItem("goldenGearItem.id", DefaultProps.GOLDEN_GEAR_ID);
 			Property diamondGearId = BuildCraftCore.mainConfiguration.getItem("diamondGearItem.id", DefaultProps.DIAMOND_GEAR_ID);
 			Property redstoneCrystalId = BuildCraftCore.mainConfiguration.getItem("redstoneCrystalItem.id", DefaultProps.REDSTONE_CRYSTAL_ID);
+			Property robotBaseItemId = BuildCraftCore.mainConfiguration.getItem("robotBaseItem.id", DefaultProps.ROBOT_BASE_ITEM_ID);
+			Property robotBuilderItemId = BuildCraftCore.mainConfiguration.getItem("robotBuilderItem.id", DefaultProps.ROBOT_BUILDER_ITEM_ID);
+			Property robotPickerItemId = BuildCraftCore.mainConfiguration.getItem("robotPickerItem.id", DefaultProps.ROBOT_PICKER_ITEM_ID);
 			Property modifyWorldProp = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "modifyWorld", true);
 			modifyWorldProp.comment = "set to false if BuildCraft should not generate custom blocks (e.g. oil)";
 			modifyWorld = modifyWorldProp.getBoolean(true);
@@ -255,6 +263,19 @@ public class BuildCraftCore {
 			CoreProxy.proxy.registerItem(redstoneCrystal);
 			OreDictionary.registerOre("redstoneCrystal", new ItemStack(redstoneCrystal));
 
+			robotBaseItem = (new ItemRobot(robotBaseItemId.getInt(), EntityRobot.class)).setUnlocalizedName("robotBaseItem");
+			LanguageRegistry.addName(robotBaseItem, "Base Robot");
+			CoreProxy.proxy.registerItem(robotBaseItem);
+
+			robotBuilderItem = (new ItemRobot(robotBuilderItemId.getInt(), EntityRobotBuilder.class)).setUnlocalizedName("robotBuilderItem");
+			LanguageRegistry.addName(robotBuilderItem, "Builder Robot");
+			CoreProxy.proxy.registerItem(robotBuilderItem);
+
+			robotPickerItem = (new ItemRobot(robotPickerItemId.getInt(), EntityRobotPicker.class)).setUnlocalizedName("robotPickerItem");
+			LanguageRegistry.addName(robotPickerItem, "Picker Robot");
+			CoreProxy.proxy.registerItem(robotPickerItem);
+
+
 			Property colorBlindProp = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "client.colorblindmode", false);
 			colorBlindProp.comment = "Set to true to enable alternate textures";
 			colorBlindMode = colorBlindProp.getBoolean(false);
@@ -282,6 +303,7 @@ public class BuildCraftCore {
 			loadRecipes();
 		}
 		EntityRegistry.registerModEntity(EntityRobot.class, "bcRobot", EntityIds.ROBOT, instance, 50, 1, true);
+		EntityRegistry.registerModEntity(EntityRobotPicker.class, "bcRobotPicker", EntityIds.ROBOT_PICKER, instance, 50, 1, true);
 		EntityRegistry.registerModEntity(EntityRobotBuilder.class, "bcRobotBuilder", EntityIds.ROBOT_BUILDER, instance, 50, 1, true);
 		EntityRegistry.registerModEntity(EntityRobotUrbanism.class, "bcRobotUrbanism", EntityIds.ROBOT_URBANISM, instance, 50, 1, true);
 		EntityRegistry.registerModEntity(EntityPowerLaser.class, "bcLaser", EntityIds.LASER, instance, 50, 1, true);

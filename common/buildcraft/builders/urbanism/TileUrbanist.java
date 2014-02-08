@@ -184,8 +184,8 @@ public class TileUrbanist extends TileBuildCraft implements IBuilderInventory {
 			for (int i = 0; i < 10; ++i) {
 				EntityRobotUrbanism robot = new EntityRobotUrbanism(worldObj);
 				robot.setLocationAndAngles(xCoord, yCoord, zCoord, 0, 0);
-				robot.setDestination(xCoord, yCoord, zCoord);
-				robot.setDestinationAround(xCoord, yCoord, zCoord);
+				//robot.setDestination(xCoord, yCoord, zCoord);
+				//robot.setDestinationAround(xCoord, yCoord, zCoord);
 
 				worldObj.spawnEntityInWorld(robot);
 

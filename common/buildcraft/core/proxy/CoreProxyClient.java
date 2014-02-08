@@ -15,8 +15,6 @@ import buildcraft.core.EntityBlock;
 import buildcraft.core.EntityEnergyLaser;
 import buildcraft.core.EntityFrame;
 import buildcraft.core.EntityPowerLaser;
-import buildcraft.core.EntityRobot;
-import buildcraft.core.EntityRobotBuilder;
 import buildcraft.core.render.RenderEnergyLaser;
 import buildcraft.core.render.RenderEntityBlock;
 import buildcraft.core.render.RenderFrame;
@@ -25,6 +23,8 @@ import buildcraft.core.render.RenderRobot;
 import buildcraft.core.render.RenderingEntityBlocks;
 import buildcraft.core.render.RenderingMarkers;
 import buildcraft.core.render.RenderingOil;
+import buildcraft.core.robots.EntityRobot;
+import buildcraft.core.robots.EntityRobotBuilder;
 import buildcraft.transport.render.TileEntityPickupFX;
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.client.registry.RenderingRegistry;
@@ -46,6 +46,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChatMessageComponent;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.World;
+import net.minecraftforge.client.MinecraftForgeClient;
 
 public class CoreProxyClient extends CoreProxy {
 
@@ -121,6 +122,10 @@ public class CoreProxyClient extends CoreProxy {
 		RenderingRegistry.registerBlockHandler(BuildCraftCore.legacyPipeModel, new RenderingEntityBlocks());
 		RenderingRegistry.registerBlockHandler(new RenderingOil());
 		RenderingRegistry.registerBlockHandler(new RenderingMarkers());
+
+		MinecraftForgeClient.registerItemRenderer(BuildCraftCore.robotBaseItem.itemID, new RenderRobot());
+		MinecraftForgeClient.registerItemRenderer(BuildCraftCore.robotBuilderItem.itemID, new RenderRobot());
+		MinecraftForgeClient.registerItemRenderer(BuildCraftCore.robotPickerItem.itemID, new RenderRobot());
 	}
 
 	@Override

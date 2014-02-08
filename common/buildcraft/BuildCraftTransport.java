@@ -28,6 +28,7 @@ import buildcraft.transport.ItemFacade;
 import buildcraft.transport.gates.ItemGate;
 import buildcraft.transport.ItemPipe;
 import buildcraft.transport.ItemPlug;
+import buildcraft.transport.ItemRobotStation;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTriggerProvider;
@@ -156,6 +157,7 @@ public class BuildCraftTransport {
 	public static Item pipePowerHeat;
 	public static ItemFacade facadeItem;
 	public static Item plugItem;
+	public static Item robotStationItem;
 	public static BlockFilteredBuffer filteredBufferBlock;
 	// public static Item pipeItemsStipes;
 	public static Item pipeStructureCobblestone;
@@ -338,6 +340,11 @@ public class BuildCraftTransport {
 			plugItem = new ItemPlug(pipePlugId.getInt());
 			plugItem.setUnlocalizedName("pipePlug");
 			CoreProxy.proxy.registerItem(plugItem);
+
+			Property robotStationId = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_ITEM, "robotStation.id", DefaultProps.ROBOT_STATION_ID);
+			robotStationItem = new ItemRobotStation(robotStationId.getInt());
+			robotStationItem.setUnlocalizedName("robotStation");
+			CoreProxy.proxy.registerItem(robotStationItem);
 
 			Property filteredBufferId = BuildCraftCore.mainConfiguration.getBlock("filteredBuffer.id", DefaultProps.FILTERED_BUFFER_ID);
 			filteredBufferBlock = new BlockFilteredBuffer(filteredBufferId.getInt());

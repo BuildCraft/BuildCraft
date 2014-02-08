@@ -5,18 +5,24 @@
  * 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-package buildcraft.core;
+package buildcraft.core.robots;
 
 import buildcraft.builders.blueprints.BlueprintBuilder.SchematicBuilder;
+import buildcraft.core.BlockIndex;
+import buildcraft.core.Box;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.BCLog;
 import buildcraft.core.utils.BlockUtil;
+
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteArrayDataOutput;
+
 import cpw.mods.fml.common.registry.IEntityAdditionalSpawnData;
+
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 
@@ -40,7 +46,7 @@ public class EntityRobotBuilder extends EntityRobot implements IEntityAdditional
 
 	protected void init() {
 		if (box != null) {
-			setDestination((int) box.centerX(), (int) box.centerY(), (int) box.centerZ());
+			//setDestination((int) box.centerX(), (int) box.centerY(), (int) box.centerZ());
 		}
 
 		super.init();
@@ -94,22 +100,13 @@ public class EntityRobotBuilder extends EntityRobot implements IEntityAdditional
 	protected void move() {
 		super.move();
 
-		if (reachedDesination()) {
+		/*if (reachedDesination()) {
 			BlockIndex newDesination = getNewDestination();
 
 			if (newDesination != null) {
 				setDestination(newDesination.x, newDesination.y, newDesination.z);
 			}
-		}
-	}
-
-	@Override
-	public void setDestination(float x, float y, float z) {
-		super.setDestination(x, y, z);
-
-		/*motionX = (destX - posX) / 75 * (laser.getPowerAverage() / 2 + 1);
-		motionY = (destY - posY) / 75 * (laser.getPowerAverage() / 2 + 1);
-		motionZ = (destZ - posZ) / 75 * (laser.getPowerAverage() / 2 + 1);*/
+		}*/
 	}
 
 	@Override
@@ -130,7 +127,7 @@ public class EntityRobotBuilder extends EntityRobot implements IEntityAdditional
 		movementBoundary.expand(1);
 
 		Box moveArea = new Box();
-		moveArea.initialize((int) destX, (int) destY, (int) destZ, 1);
+		//moveArea.initialize((int) destX, (int) destY, (int) destZ, 1);
 
 		List<BlockIndex> potentialDestinations = new ArrayList<BlockIndex>();
 		for (BlockIndex blockIndex : moveArea.getBlocksInArea()) {
@@ -233,7 +230,7 @@ public class EntityRobotBuilder extends EntityRobot implements IEntityAdditional
 
 	public void setBox(Box box) {
 		this.box = box;
-		setDestination((int) box.centerX(), (int) box.centerY(), (int) box.centerZ());
+		//setDestination((int) box.centerX(), (int) box.centerY(), (int) box.centerZ());
 	}
 
 	@Override
