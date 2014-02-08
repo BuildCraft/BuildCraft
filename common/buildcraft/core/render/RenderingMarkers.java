@@ -22,7 +22,7 @@ public class RenderingMarkers implements ISimpleBlockRenderingHandler {
 	public boolean renderWorldBlock(IBlockAccess world, int x, int y, int z, Block block, int modelId, RenderBlocks renderer) {
 
 		Tessellator tessellator = Tessellator.instance;
-		float f = block.getBlockBrightness(world, x, y, z);
+		float f = block.getMixedBrightnessForBlock(world, x, y, z);
 		if (Block.lightValue[block.blockID] > 0) {
 			f = 1.0F;
 		}
@@ -33,7 +33,7 @@ public class RenderingMarkers implements ISimpleBlockRenderingHandler {
 	}
 
 	@Override
-	public boolean shouldRender3DInInventory() {
+	public boolean shouldRender3DInInventory(int modelId) {
 		return false;
 	}
 
@@ -228,5 +228,4 @@ public class RenderingMarkers implements ISimpleBlockRenderingHandler {
 			face[j][3] = tmp;
 		}
 	}
-
 }

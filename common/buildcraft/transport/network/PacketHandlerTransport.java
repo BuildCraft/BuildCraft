@@ -167,7 +167,7 @@ public class PacketHandlerTransport extends BuildCraftChannelHandler {
 		if (!world.blockExists(packet.posX, packet.posY, packet.posZ))
 			return;
 
-		TileEntity entity = world.getBlockTileEntity(packet.posX, packet.posY, packet.posZ);
+		TileEntity entity = world.getTileEntity(packet.posX, packet.posY, packet.posZ);
 		if (!(entity instanceof TileGenericPipe))
 			return;
 
@@ -191,7 +191,7 @@ public class PacketHandlerTransport extends BuildCraftChannelHandler {
 		if (!world.blockExists(packetPower.posX, packetPower.posY, packetPower.posZ))
 			return;
 
-		TileEntity entity = world.getBlockTileEntity(packetPower.posX, packetPower.posY, packetPower.posZ);
+		TileEntity entity = world.getTileEntity(packetPower.posX, packetPower.posY, packetPower.posZ);
 		if (!(entity instanceof TileGenericPipe))
 			return;
 
@@ -261,7 +261,7 @@ public class PacketHandlerTransport extends BuildCraftChannelHandler {
 		if (!world.blockExists(x, y, z))
 			return null;
 
-		TileEntity tile = world.getBlockTileEntity(x, y, z);
+		TileEntity tile = world.getTileEntity(x, y, z);
 		if (!(tile instanceof TileGenericPipe))
 			return null;
 

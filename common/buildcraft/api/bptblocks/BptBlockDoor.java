@@ -61,8 +61,8 @@ public class BptBlockDoor extends BptBlock {
 
 	@Override
 	public void buildBlock(BptSlotInfo slot, IBptContext context) {
-		context.world().setBlock(slot.x, slot.y, slot.z, slot.blockId, slot.meta,1);
-		context.world().setBlock(slot.x, slot.y + 1, slot.z, slot.blockId, slot.meta + 8,1);
+		//context.world().setBlock(slot.x, slot.y, slot.z, slot.blockId, slot.meta,1);
+		//context.world().setBlock(slot.x, slot.y + 1, slot.z, slot.blockId, slot.meta + 8,1);
 
 		context.world().setBlockMetadataWithNotify(slot.x, slot.y + 1, slot.z, slot.meta + 8,1);
 		context.world().setBlockMetadataWithNotify(slot.x, slot.y, slot.z, slot.meta,1);

@@ -15,11 +15,14 @@ import buildcraft.core.fluids.Tank;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.BlockUtil;
 import buildcraft.core.utils.Utils;
+
 import java.util.Deque;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Set;
 import java.util.TreeMap;
+
+import net.minecraft.block.Block;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
@@ -95,8 +98,8 @@ public class TileFloodGate extends TileBuildCraft implements IFluidHandler {
 	}
 
 	private boolean placeFluid(int x, int y, int z, Fluid fluid) {
-		int blockId = worldObj.getBlockId(x, y, z);
-		if (canPlaceFluidAt(blockId, x, y, z)) {
+		Block block = worldObj.getBlock(x, y, z);
+		if (canPlaceFluidAt(block, x, y, z)) {
 			boolean placed = worldObj.setBlock(x, y, z, FluidUtils.getFluidBlockId(fluid, true));
 			if (placed) {
 				queueAdjacent(x, y, z);
@@ -178,21 +181,21 @@ public class TileFloodGate extends TileBuildCraft implements IFluidHandler {
 			if ((x - xCoord) * (x - xCoord) + (z - zCoord) * (z - zCoord) > 64 * 64)
 				return;
 
-			int blockId = worldObj.getBlockId(x, y, z);
-			if (BlockUtil.getFluid(blockId) == tank.getFluidType()) {
+			Block block = worldObj.getBlock(x, y, z);
+			if (BlockUtil.getFluid(block) == tank.getFluidType()) {
 				fluidsFound.add(index);
 			}
-			if (canPlaceFluidAt(blockId, x, y, z)) {
+			if (canPlaceFluidAt(block, x, y, z)) {
 				getLayerQueue(y).addLast(index);
 			}
 		}
 	}
 
-	private boolean canPlaceFluidAt(int blockId, int x, int y, int z) {
-		return BlockUtil.isSoftBlock(blockId, worldObj, x, y, z) && !BlockUtil.isFullFluidBlock(blockId, worldObj, x, y, z);
+	private boolean canPlaceFluidAt(Block block, int x, int y, int z) {
+		return BlockUtil.isSoftBlock(block, worldObj, x, y, z) && !BlockUtil.isFullFluidBlock(blockId, worldObj, x, y, z);
 	}
 
-	public void onNeighborBlockChange(int id) {
+	public void onNeighborBlockChange(Block block) {
 		boolean p = worldObj.isBlockIndirectlyGettingPowered(xCoord, yCoord, zCoord);
 		if (powered != p) {
 			powered = p;

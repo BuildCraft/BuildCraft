@@ -34,8 +34,8 @@ public class ItemGate extends ItemBuildCraft {
 	private static final String NBT_TAG_LOGIC = "logic";
 	private static final String NBT_TAG_EX = "ex";
 
-	public ItemGate(int id) {
-		super(id);
+	public ItemGate() {
+		super();
 		setHasSubtypes(false);
 		setMaxDamage(0);
 		setPassSneakClick(true);

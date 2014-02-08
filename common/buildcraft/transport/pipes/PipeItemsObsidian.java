@@ -159,7 +159,7 @@ public class PipeItemsObsidian extends Pipe<PipeTransportItems> implements IPowe
 			return false;
 
 		@SuppressWarnings("rawtypes")
-		List<Entity> discoveredEntities = (List<Entity>) container.worldObj.getEntitiesWithinAABB(Entity.class, box);
+		List<Entity> discoveredEntities = (List<Entity>) container.getWorldObj().getEntitiesWithinAABB(Entity.class, box);
 
 		for (Entity entity : discoveredEntities) {
 			if (canSuck(entity, distance)) {
@@ -175,9 +175,9 @@ public class PipeItemsObsidian extends Pipe<PipeTransportItems> implements IPowe
 					ItemStack stack = trans.remove(StackFilter.ALL, openOrientation, false);
 					if (stack != null && powerHandler.useEnergy(1, 1, true) == 1) {
 						trans.remove(StackFilter.ALL, openOrientation, true);
-						EntityItem entityitem = new EntityItem(container.worldObj, cart.posX, cart.posY + 0.3F, cart.posZ, stack);
+						EntityItem entityitem = new EntityItem(container.getWorldObj(), cart.posX, cart.posY + 0.3F, cart.posZ, stack);
 						entityitem.delayBeforeCanPickup = 10;
-						container.worldObj.spawnEntityInWorld(entityitem);
+						container.getWorldObj().spawnEntityInWorld(entityitem);
 						pullItemIntoPipe(entityitem, 1);
 						return true;
 					}
@@ -189,13 +189,13 @@ public class PipeItemsObsidian extends Pipe<PipeTransportItems> implements IPowe
 	}
 
 	public void pullItemIntoPipe(Entity entity, int distance) {
-		if (CoreProxy.proxy.isRenderWorld(container.worldObj))
+		if (CoreProxy.proxy.isRenderWorld(container.getWorldObj()))
 			return;
 
 		ForgeDirection orientation = getOpenOrientation().getOpposite();
 
 		if (orientation != ForgeDirection.UNKNOWN) {
-			container.worldObj.playSoundAtEntity(entity, "random.pop", 0.2F, ((container.worldObj.rand.nextFloat() - container.worldObj.rand.nextFloat()) * 0.7F + 1.0F) * 2.0F);
+			container.getWorldObj().playSoundAtEntity(entity, "random.pop", 0.2F, ((container.getWorldObj().rand.nextFloat() - container.getWorldObj().rand.nextFloat()) * 0.7F + 1.0F) * 2.0F);
 
 			ItemStack stack = null;
 
@@ -205,7 +205,7 @@ public class PipeItemsObsidian extends Pipe<PipeTransportItems> implements IPowe
 				EntityItem item = (EntityItem) entity;
 				ItemStack contained = item.getEntityItem();
 
-				CoreProxy.proxy.obsidianPipePickup(container.worldObj, item, this.container);
+				CoreProxy.proxy.obsidianPipePickup(container.getWorldObj(), item, this.container);
 
 				double energyUsed = powerHandler.useEnergy(distance, contained.stackSize * distance, true);
 

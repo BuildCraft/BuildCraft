@@ -75,7 +75,7 @@ public class PacketHandlerSilicon extends BuildCraftChannelHandler {
 		if (!world.blockExists(x, y, z))
 			return null;
 
-		TileEntity tile = world.getBlockTileEntity(x, y, z);
+		TileEntity tile = world.getTileEntity(x, y, z);
 		if (!(tile instanceof TileAssemblyTable))
 			return null;
 
@@ -87,7 +87,7 @@ public class PacketHandlerSilicon extends BuildCraftChannelHandler {
 		if (!world.blockExists(x, y, z))
 			return null;
 
-		TileEntity tile = world.getBlockTileEntity(x, y, z);
+		TileEntity tile = world.getTileEntity(x, y, z);
 		if (!(tile instanceof TileAdvancedCraftingTable))
 			return null;
 

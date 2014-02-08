@@ -335,7 +335,7 @@ public final class PowerHandler {
 	public void writeToNBT(NBTTagCompound data, String tag) {
 		NBTTagCompound nbt = new NBTTagCompound();
 		nbt.setDouble("energyStored", energyStored);
-		data.setCompoundTag(tag, nbt);
+		data.setTag(tag, nbt);
 	}
 
 	public final class PowerReceiver {

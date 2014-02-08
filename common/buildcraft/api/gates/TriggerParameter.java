@@ -49,7 +49,7 @@ public class TriggerParameter implements ITriggerParameter {
 		if (stack != null) {
 			NBTTagCompound tagCompound = new NBTTagCompound();
 			stack.writeToNBT(tagCompound);
-			compound.setCompoundTag("stack", tagCompound);
+			compound.setTag("stack", tagCompound);
 		}
 	}
 

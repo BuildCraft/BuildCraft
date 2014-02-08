@@ -25,18 +25,19 @@ public class BptBlockDirt extends BptBlock {
 
 	@Override
 	public void addRequirements(BptSlotInfo slot, IBptContext context, LinkedList<ItemStack> requirements) {
-		requirements.add(new ItemStack(Block.dirt));
+		//requirements.add(new ItemStack(Block.dirt));
 	}
 
 	@Override
 	public void buildBlock(BptSlotInfo slot, IBptContext context) {
-		context.world().setBlock(slot.x, slot.y, slot.z, Block.dirt.blockID, slot.meta,1);
+		//context.world().setBlock(slot.x, slot.y, slot.z, Block.dirt.blockID, slot.meta,1);
 	}
 
 	@Override
 	public boolean isValid(BptSlotInfo slot, IBptContext context) {
-		int id = context.world().getBlockId(slot.x, slot.y, slot.z);
+		//int id = context.world().getBlockId(slot.x, slot.y, slot.z);
 
-		return id == Block.dirt.blockID || id == Block.grass.blockID || id == Block.tilledField.blockID;
+		//return id == Block.dirt.blockID || id == Block.grass.blockID || id == Block.tilledField.blockID;
+		return false;
 	}
 }

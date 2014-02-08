@@ -21,6 +21,7 @@ import net.minecraft.block.BlockFluid;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.Packet60Explosion;
 import net.minecraft.world.ChunkPosition;
@@ -81,13 +82,11 @@ public class BlockUtil {
 			}
 		}
 
-		world.setBlock(x, y, z, 0);
+		world.setBlock(x, y, z, null);
 	}
 
-	public static boolean isAnObstructingBlock(int blockID, World world, int x, int y, int z) {
-		Block block = Block.blocksList[blockID];
-
-		if (blockID == 0 || block == null || block.isAirBlock(world, x, y, z))
+	public static boolean isAnObstructingBlock(Block block, World world, int x, int y, int z) {
+		if (block == null || block.isAirBlock(world, x, y, z))
 			return false;
 		return true;
 	}
@@ -96,19 +95,17 @@ public class BlockUtil {
 		return canChangeBlock(world.getBlockId(x, y, z), world, x, y, z);
 	}
 
-	public static boolean canChangeBlock(int blockID, World world, int x, int y, int z) {
-		Block block = Block.blocksList[blockID];
-
-		if (blockID == 0 || block == null || block.isAirBlock(world, x, y, z))
+	public static boolean canChangeBlock(Block block, World world, int x, int y, int z) {
+		if (block == null || block.isAirBlock(world, x, y, z))
 			return true;
 
 		if (block.getBlockHardness(world, x, y, z) < 0)
 			return false;
 
-		if (blockID == BuildCraftEnergy.blockOil.blockID)
+		if (block == BuildCraftEnergy.blockOil)
 			return false;
 
-		if (blockID == Block.lavaStill.blockID || blockID == Block.lavaMoving.blockID)
+		if (block == Blocks.lava || block == Blocks.lava)
 			return false;
 
 		return true;
@@ -118,10 +115,8 @@ public class BlockUtil {
 		return isSoftBlock(world.getBlockId(x, y, z), world, x, y, z);
 	}
 
-	public static boolean isSoftBlock(int blockID, World world, int x, int y, int z) {
-		Block block = Block.blocksList[blockID];
-
-		return blockID == 0 || block == null || BuildCraftAPI.softBlocks[blockID] || block.isAirBlock(world, x, y, z);
+	public static boolean isSoftBlock(Block block, World world, int x, int y, int z) {
+		return block == null || BuildCraftAPI.softBlocks[blockID] || block.isAirBlock(world, x, y, z);
 	}
 
 	/**
@@ -142,35 +137,34 @@ public class BlockUtil {
 		return false;
 	}
 
-	public static Fluid getFluid(int blockId) {
-		Block block = Block.blocksList[blockId];
+	public static Fluid getFluid(Block block) {
 		if (block instanceof IFluidBlock) {
 			return ((IFluidBlock) block).getFluid();
-		} else if (blockId == Block.waterStill.blockID || blockId == Block.waterMoving.blockID) {
+		} else if (block == Blocks.water || block == Blocks.flowing_water) {
 			return FluidRegistry.WATER;
-		} else if (blockId == Block.lavaStill.blockID || blockId == Block.lavaMoving.blockID) {
+		} else if (block == Blocks.lava || block == Blocks.flowing_lava) {
 			return FluidRegistry.LAVA;
 		}
 		return null;
 	}
 
 	public static FluidStack drainBlock(World world, int x, int y, int z, boolean doDrain) {
-		return drainBlock(world.getBlockId(x, y, z), world, x, y, z, doDrain);
+		return drainBlock(world.getBlock(x, y, z), world, x, y, z, doDrain);
 	}
 
-	public static FluidStack drainBlock(int blockId, World world, int x, int y, int z, boolean doDrain) {
-		if (Block.blocksList[blockId] instanceof IFluidBlock) {
-			IFluidBlock fluidBlock = (IFluidBlock) Block.blocksList[blockId];
+	public static FluidStack drainBlock(Block block, World world, int x, int y, int z, boolean doDrain) {
+		if (block instanceof IFluidBlock) {
+			IFluidBlock fluidBlock = (IFluidBlock) block;
 			if (fluidBlock.canDrain(world, x, y, z))
 				return fluidBlock.drain(world, x, y, z, doDrain);
-		} else if (blockId == Block.waterStill.blockID || blockId == Block.waterMoving.blockID) {
+		} else if (block == Blocks.water || block == Blocks.flowing_water) {
 			int meta = world.getBlockMetadata(x, y, z);
 			if (meta != 0)
 				return null;
 			if (doDrain)
 				world.setBlockToAir(x, y, z);
 			return new FluidStack(FluidRegistry.WATER, FluidContainerRegistry.BUCKET_VOLUME);
-		} else if (blockId == Block.lavaStill.blockID || blockId == Block.lavaMoving.blockID) {
+		} else if (block == Blocks.lava || block == Blocks.lava) {
 			int meta = world.getBlockMetadata(x, y, z);
 			if (meta != 0)
 				return null;

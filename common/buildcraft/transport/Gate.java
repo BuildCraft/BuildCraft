@@ -148,7 +148,7 @@ public final class Gate {
 	// GUI
 	public void openGui(EntityPlayer player) {
 		if (!CoreProxy.proxy.isRenderWorld(player.worldObj)) {
-			player.openGui(BuildCraftTransport.instance, GuiIds.GATES, pipe.container.worldObj, pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord);
+			player.openGui(BuildCraftTransport.instance, GuiIds.GATES, pipe.container.getWorldObj(), pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord);
 		}
 	}
 

@@ -5,10 +5,13 @@ import buildcraft.core.ItemBuildCraft;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+
 import java.util.List;
 import java.util.Locale;
+
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
 
@@ -45,8 +48,8 @@ public class ItemRedstoneChipset extends ItemBuildCraft {
 		}
 	}
 
-	public ItemRedstoneChipset(int i) {
-		super(i);
+	public ItemRedstoneChipset() {
+		super();
 		setHasSubtypes(true);
 		setMaxDamage(0);
 	}
@@ -64,7 +67,7 @@ public class ItemRedstoneChipset extends ItemBuildCraft {
 	@SuppressWarnings({"rawtypes", "unchecked"})
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void getSubItems(int id, CreativeTabs tab, List itemList) {
+	public void getSubItems(Item item, CreativeTabs tab, List itemList) {
 		for (Chipset chipset : Chipset.VALUES) {
 			itemList.add(chipset.getStack());
 		}

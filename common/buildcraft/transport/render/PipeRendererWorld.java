@@ -154,7 +154,7 @@ public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
 
 	@Override
 	public boolean renderWorldBlock(IBlockAccess world, int x, int y, int z, Block block, int modelId, RenderBlocks renderer) {
-		TileEntity tile = world.getBlockTileEntity(x, y, z);
+		TileEntity tile = world.getTileEntity(x, y, z);
 
 		if (tile instanceof TileGenericPipe) {
 			TileGenericPipe pipeTile = (TileGenericPipe) tile;
@@ -164,8 +164,7 @@ public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
 	}
 
 	@Override
-	public boolean shouldRender3DInInventory() {
-		// TODO Auto-generated method stub
+	public boolean shouldRender3DInInventory(int modelId) {
 		return false;
 	}
 
@@ -173,4 +172,6 @@ public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
 	public int getRenderId() {
 		return TransportProxy.pipeModel;
 	}
+
+
 }

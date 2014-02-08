@@ -13,7 +13,7 @@ import buildcraft.core.triggers.TriggerInventoryLevel.TriggerType;
 import buildcraft.core.utils.StringUtils;
 import java.util.Locale;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;

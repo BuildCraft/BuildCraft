@@ -134,7 +134,7 @@ public class PipeTransportPower extends PipeTransport {
 
 	@Override
 	public void updateEntity() {
-		if (CoreProxy.proxy.isRenderWorld(container.worldObj))
+		if (CoreProxy.proxy.isRenderWorld(container.getWorldObj()))
 			return;
 
 		step();
@@ -249,7 +249,7 @@ public class PipeTransportPower extends PipeTransport {
 			}
 		}
 
-		if (tracker.markTimeIfDelay(container.worldObj, 2 * BuildCraftCore.updateFactor)) {
+		if (tracker.markTimeIfDelay(container.getWorldObj(), 2 * BuildCraftCore.updateFactor)) {
 			PacketPowerUpdate packet = new PacketPowerUpdate(container.xCoord, container.yCoord, container.zCoord);
 
 			double displayFactor = MAX_DISPLAY / 1024.0;
@@ -259,7 +259,7 @@ public class PipeTransportPower extends PipeTransport {
 
 			packet.displayPower = clientDisplayPower;
 			packet.overload = isOverloaded();
-			BuildCraftTransport.instance.sendToPlayers(packet, container.worldObj, container.xCoord, container.yCoord, container.zCoord, DefaultProps.PIPE_CONTENTS_RENDER_DIST);
+			BuildCraftTransport.instance.sendToPlayers(packet, container.getWorldObj(), container.xCoord, container.yCoord, container.zCoord, DefaultProps.PIPE_CONTENTS_RENDER_DIST);
 		}
 
 	}
@@ -282,8 +282,8 @@ public class PipeTransportPower extends PipeTransport {
 	}
 
 	private void step() {
-		if (currentDate != container.worldObj.getTotalWorldTime()) {
-			currentDate = container.worldObj.getTotalWorldTime();
+		if (currentDate != container.getWorldObj().getTotalWorldTime()) {
+			currentDate = container.getWorldObj().getTotalWorldTime();
 
 			powerQuery = nextPowerQuery;
 			nextPowerQuery = new int[6];
@@ -343,7 +343,7 @@ public class PipeTransportPower extends PipeTransport {
 
 	@Override
 	public void initialize() {
-		currentDate = container.worldObj.getTotalWorldTime();
+		currentDate = container.getWorldObj().getTotalWorldTime();
 	}
 
 	@Override

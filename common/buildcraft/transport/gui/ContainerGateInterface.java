@@ -83,7 +83,7 @@ public class ContainerGateInterface extends BuildCraftContainer {
 
 		// Do not attempt to create a list of potential actions and triggers on
 		// the client.
-		if (!CoreProxy.proxy.isRenderWorld(pipe.container.worldObj)) {
+		if (!CoreProxy.proxy.isRenderWorld(pipe.container.getWorldObj())) {
 			_potentialActions.addAll(pipe.getActions());
 			_potentialTriggers.addAll(ActionManager.getPipeTriggers(pipe.container));
 
@@ -93,8 +93,7 @@ public class ContainerGateInterface extends BuildCraftContainer {
 
 			for (ForgeDirection o : ForgeDirection.VALID_DIRECTIONS) {
 				TileEntity tile = pipe.container.getTile(o);
-				int blockID = pipe.container.getBlockId(o);
-				Block block = Block.blocksList[blockID];
+				Block block = pipe.container.getBlock(o);
 				_potentialTriggers.addAll(ActionManager.getNeighborTriggers(block, tile));
 				_potentialActions.addAll(ActionManager.getNeighborActions(block, tile));
 			}
@@ -225,12 +224,12 @@ public class ContainerGateInterface extends BuildCraftContainer {
 	 */
 	public void synchronize() {
 
-		if (!isNetInitialized && CoreProxy.proxy.isRenderWorld(pipe.container.worldObj)) {
+		if (!isNetInitialized && CoreProxy.proxy.isRenderWorld(pipe.container.getWorldObj())) {
 			isNetInitialized = true;
 			BuildCraftTransport.instance.sendToServer(new PacketCoordinates(PacketIds.GATE_REQUEST_INIT, pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord));
 		}
 
-		if (!isSynchronized && CoreProxy.proxy.isRenderWorld(pipe.container.worldObj)) {
+		if (!isSynchronized && CoreProxy.proxy.isRenderWorld(pipe.container.getWorldObj())) {
 			isSynchronized = true;
 			BuildCraftTransport.instance.sendToServer(new PacketCoordinates(PacketIds.GATE_REQUEST_SELECTION, pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord));
 		}
@@ -376,7 +375,7 @@ public class ContainerGateInterface extends BuildCraftContainer {
 		if (pipe.gate == null)
 			return;
 		pipe.gate.setTrigger(position, trigger);
-		if (CoreProxy.proxy.isRenderWorld(pipe.container.worldObj) && notify) {
+		if (CoreProxy.proxy.isRenderWorld(pipe.container.getWorldObj()) && notify) {
 			sendSelectionChange(position);
 		}
 	}
@@ -385,7 +384,7 @@ public class ContainerGateInterface extends BuildCraftContainer {
 		if (pipe.gate == null)
 			return;
 		pipe.gate.setTriggerParameter(position, parameter);
-		if (CoreProxy.proxy.isRenderWorld(pipe.container.worldObj) && notify) {
+		if (CoreProxy.proxy.isRenderWorld(pipe.container.getWorldObj()) && notify) {
 			sendSelectionChange(position);
 		}
 	}
@@ -415,7 +414,7 @@ public class ContainerGateInterface extends BuildCraftContainer {
 
 	public void setAction(int position, IAction action, boolean notify) {
 		pipe.gate.setAction(position, action);
-		if (CoreProxy.proxy.isRenderWorld(pipe.container.worldObj) && notify) {
+		if (CoreProxy.proxy.isRenderWorld(pipe.container.getWorldObj()) && notify) {
 			sendSelectionChange(position);
 		}
 	}

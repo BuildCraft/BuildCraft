@@ -20,7 +20,7 @@ public abstract class PipeTransport {
 	public abstract PipeType getPipeType();
 
 	public World getWorld() {
-		return container.worldObj;
+		return container.getWorldObj();
 	}
 
 	public void readFromNBT(NBTTagCompound nbttagcompound) {

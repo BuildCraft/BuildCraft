@@ -183,7 +183,7 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 
 		// Update the gate if we have any
 		if (gate != null) {
-			if (container.worldObj.isRemote) {
+			if (container.getWorldObj().isRemote) {
 				// on client, only update the graphical pulse if needed
 				gate.updatePulse();
 			} else {
@@ -310,7 +310,7 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 	}
 
 	private boolean receiveSignal(int signal, PipeWire color) {
-		if (container.worldObj == null)
+		if (container.getWorldObj() == null)
 			return false;
 
 		int oldSignal = signalStrength[color.ordinal()];
@@ -409,12 +409,12 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 	}
 
 	protected void notifyBlocksOfNeighborChange(ForgeDirection side) {
-		container.worldObj.notifyBlocksOfNeighborChange(container.xCoord + side.offsetX, container.yCoord + side.offsetY, container.zCoord + side.offsetZ, BuildCraftTransport.genericPipeBlock.blockID);
+		container.getWorldObj().notifyBlocksOfNeighborChange(container.xCoord + side.offsetX, container.yCoord + side.offsetY, container.zCoord + side.offsetZ, BuildCraftTransport.genericPipeBlock.blockID);
 	}
 
 	protected void updateNeighbors(boolean needSelf) {
 		if (needSelf) {
-			container.worldObj.notifyBlocksOfNeighborChange(container.xCoord, container.yCoord, container.zCoord, BuildCraftTransport.genericPipeBlock.blockID);
+			container.getWorldObj().notifyBlocksOfNeighborChange(container.xCoord, container.yCoord, container.zCoord, BuildCraftTransport.genericPipeBlock.blockID);
 		}
 		for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
 			notifyBlocksOfNeighborChange(side);
@@ -422,7 +422,7 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 	}
 
 	public void dropItem(ItemStack stack) {
-		InvUtils.dropItems(container.worldObj, stack, container.xCoord, container.yCoord, container.zCoord);
+		InvUtils.dropItems(container.getWorldObj(), stack, container.xCoord, container.yCoord, container.zCoord);
 	}
 
 	public void onBlockRemoval() {
@@ -541,6 +541,6 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 	}
 
 	public World getWorld() {
-		return container.worldObj;
+		return container.getWorldObj();
 	}
 }

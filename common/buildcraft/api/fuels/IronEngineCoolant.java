@@ -8,8 +8,11 @@
 package buildcraft.api.fuels;
 
 import buildcraft.api.core.StackWrapper;
+
 import java.util.HashMap;
 import java.util.Map;
+
+import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.Fluid;
@@ -60,7 +63,7 @@ public final class IronEngineCoolant {
 	 * @param coolant
 	 */
 	public static void addCoolant(final ItemStack stack, final FluidStack coolant) {
-		if (stack != null && Item.itemsList[stack.itemID] != null && coolant != null) {
+		if (stack != null && stack.getItem() != null && coolant != null) {
 			solidCoolants.put(new StackWrapper(stack), coolant);
 		}
 	}
@@ -73,8 +76,12 @@ public final class IronEngineCoolant {
 	 * @param stack
 	 * @param coolant
 	 */
-	public static void addCoolant(final int itemId, final int metadata, final FluidStack coolant) {
-		addCoolant(new ItemStack(itemId, 1, metadata), coolant);
+	public static void addCoolant(final Item item, final int metadata, final FluidStack coolant) {
+		addCoolant(new ItemStack(item, 1, metadata), coolant);
+	}
+	
+	public static void addCoolant(final Block block, final int metadata, final FluidStack coolant) {
+		addCoolant(new ItemStack(block, 1, metadata), coolant);
 	}
 
 	public static boolean isCoolant(Fluid fluid) {

@@ -17,7 +17,10 @@ import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+
 import java.util.ArrayList;
+
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
@@ -39,14 +42,14 @@ public class BlockArchitect extends BlockContainer {
 	IIcon blockTextureTopNeg;
 	IIcon blockTextureTopArchitect;
 
-	public BlockArchitect(int i) {
-		super(i, Material.iron);
+	public BlockArchitect() {
+		super(Material.iron);
 		setHardness(5F);
 		//setCreativeTab(CreativeTabBuildCraft.MACHINES.get());
 	}
 
 	@Override
-	public TileEntity createNewTileEntity(World var1) {
+	public TileEntity createNewTileEntity(World world, int metadata) {
 		return new TileArchitect();
 	}
 
@@ -92,10 +95,10 @@ public class BlockArchitect extends BlockContainer {
 	}
 
 	@Override
-	public void breakBlock(World world, int i, int j, int k, int par5, int par6) {
+	public void breakBlock(World world, int i, int j, int k, Block block, int par6) {
 		Utils.preDestroyBlock(world, i, j, k);
 
-		super.breakBlock(world, i, j, k, par5, par6);
+		super.breakBlock(world, i, j, k, block, par6);
 	}
 
 	@Override
@@ -139,7 +142,7 @@ public class BlockArchitect extends BlockContainer {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void registerIcons(IIconRegister par1IconRegister)
+	public void registerBlockIcons(IIconRegister par1IconRegister)
 	{
 	    blockTextureSides = par1IconRegister.registerIcon("buildcraft:architect_sides");
         blockTextureTopNeg = par1IconRegister.registerIcon("buildcraft:architect_top_neg");

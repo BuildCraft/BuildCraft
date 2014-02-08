@@ -73,7 +73,7 @@ public class CoreProxy {
 
 	/* ENTITY HANDLING */
 	public void removeEntity(Entity entity) {
-		entity.worldObj.removeEntity(entity);
+		entity.getWorldObj().removeEntity(entity);
 	}
 
 	/* WRAPPER */
@@ -199,7 +199,7 @@ public class CoreProxy {
 		if (CoreProxy.buildCraftPlayer == null) {
 			CoreProxy.buildCraftPlayer = createNewPlayer(world);
 		} else {
-			CoreProxy.buildCraftPlayer.worldObj = world;
+			CoreProxy.buildCraftPlayer.worldObj= world;
 		}
 
 		return CoreProxy.buildCraftPlayer;

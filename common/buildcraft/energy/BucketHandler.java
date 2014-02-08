@@ -41,11 +41,11 @@ public class BucketHandler {
 
 	private ItemStack fillCustomBucket(World world, MovingObjectPosition pos) {
 
-		int blockID = world.getBlockId(pos.blockX, pos.blockY, pos.blockZ);
+		Block block = world.getBlock(pos.blockX, pos.blockY, pos.blockZ);
 
 		Item bucket = buckets.get(Block.blocksList[blockID]);
 		if (bucket != null && world.getBlockMetadata(pos.blockX, pos.blockY, pos.blockZ) == 0) {
-			world.setBlock(pos.blockX, pos.blockY, pos.blockZ, 0);
+			world.setBlock(pos.blockX, pos.blockY, pos.blockZ, null);
 			return new ItemStack(bucket);
 		} else
 			return null;

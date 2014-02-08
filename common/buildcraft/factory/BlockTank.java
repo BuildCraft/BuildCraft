@@ -34,8 +34,8 @@ public class BlockTank extends BlockContainer {
 	private IIcon textureBottomSide;
 	private IIcon textureTop;
 
-	public BlockTank(int i) {
-		super(i, Material.glass);
+	public BlockTank() {
+		super(Material.glass);
 		setBlockBounds(0.125F, 0F, 0.125F, 0.875F, 1F, 0.875F);
 		setHardness(0.5F);
 		setCreativeTab(CreativeTabBuildCraft.MACHINES.get());
@@ -56,7 +56,7 @@ public class BlockTank extends BlockContainer {
 	}
 
 	@Override
-	public TileEntity createNewTileEntity(World var1) {
+	public TileEntity createNewTileEntity(World world, int metadata) {
 		return new TileTank();
 	}
 
@@ -95,7 +95,7 @@ public class BlockTank extends BlockContainer {
 
 			FluidStack liquid = FluidContainerRegistry.getFluidForFilledItem(current);
 
-			TileTank tank = (TileTank) world.getBlockTileEntity(i, j, k);
+			TileTank tank = (TileTank) world.getTileEntity(i, j, k);
 
 			// Handle filled containers
 			if (liquid != null) {
@@ -142,7 +142,7 @@ public class BlockTank extends BlockContainer {
 	@Override
 	public boolean shouldSideBeRendered(IBlockAccess world, int x, int y, int z, int side) {
 		if (side <= 1)
-			return world.getBlockId(x, y, z) != blockID;
+			return world.getBlock(x, y, z) != this;
 		return super.shouldSideBeRendered(world, x, y, z, side);
 	}
 
@@ -154,7 +154,7 @@ public class BlockTank extends BlockContainer {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void registerIcons(IIconRegister par1IconRegister) {
+	public void registerBlockIcons(IIconRegister par1IconRegister) {
 		textureStackedSide = par1IconRegister.registerIcon("buildcraft:tank_stacked_side");
 		textureBottomSide = par1IconRegister.registerIcon("buildcraft:tank_bottom_side");
 		textureTop = par1IconRegister.registerIcon("buildcraft:tank_top");
@@ -162,7 +162,7 @@ public class BlockTank extends BlockContainer {
 
 	@Override
 	public int getLightValue(IBlockAccess world, int x, int y, int z) {
-		TileEntity tile = world.getBlockTileEntity(x, y, z);
+		TileEntity tile = world.getTileEntity(x, y, z);
 		if (tile instanceof TileTank) {
 			TileTank tank = (TileTank) tile;
 			return tank.getFluidLightLevel();

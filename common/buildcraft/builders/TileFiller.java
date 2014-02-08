@@ -167,7 +167,7 @@ public class TileFiller extends TileBuildCraft implements IInventory, IPowerRece
 	}
 
 	@Override
-	public String getInvName() {
+	public String getInventoryName() {
 		return "Filler";
 	}
 
@@ -214,7 +214,7 @@ public class TileFiller extends TileBuildCraft implements IInventory, IPowerRece
 
 	@Override
 	public boolean isUseableByPlayer(EntityPlayer entityplayer) {
-		if (worldObj.getBlockTileEntity(xCoord, yCoord, zCoord) != this)
+		if (worldObj.getTileEntity(xCoord, yCoord, zCoord) != this)
 			return false;
 		return entityplayer.getDistanceSq(xCoord + 0.5D, yCoord + 0.5D, zCoord + 0.5D) <= 64D;
 	}
@@ -296,11 +296,11 @@ public class TileFiller extends TileBuildCraft implements IInventory, IPowerRece
 	}
 
 	@Override
-	public void openChest() {
+	public void openInventory() {
 	}
 
 	@Override
-	public void closeChest() {
+	public void closeInventory() {
 	}
 
 	@Override
@@ -335,5 +335,10 @@ public class TileFiller extends TileBuildCraft implements IInventory, IPowerRece
 	@Override
 	public void readGuiData(DataInputStream data, EntityPlayer player) throws IOException {
 		setPattern(FillerManager.registry.getPattern(data.readUTF()));
+	}
+
+	@Override
+	public boolean hasCustomInventoryName() {
+		return false;
 	}
 }

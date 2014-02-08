@@ -29,7 +29,7 @@ public class PatternFill extends FillerPattern {
 		int yMax = (int) box.pMax().y;
 		int zMax = (int) box.pMax().z;
 
-		return !fill(xMin, yMin, zMin, xMax, yMax, zMax, stackToPlace, tile.worldObj);
+		return !fill(xMin, yMin, zMin, xMax, yMax, zMax, stackToPlace, tile.getWorldObj());
 	}
 
 }

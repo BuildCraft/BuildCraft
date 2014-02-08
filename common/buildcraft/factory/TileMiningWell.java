@@ -51,7 +51,7 @@ public class TileMiningWell extends TileBuildCraft implements IMachine, IPowerRe
 
 		int depth = yCoord - 1;
 
-		while (world.getBlockId(xCoord, depth, zCoord) == BuildCraftFactory.plainPipeBlock.blockID) {
+		while (world.getBlock(xCoord, depth, zCoord) == BuildCraftFactory.plainPipeBlock) {
 			depth = depth - 1;
 		}
 
@@ -64,7 +64,7 @@ public class TileMiningWell extends TileBuildCraft implements IMachine, IPowerRe
 
 		List<ItemStack> stacks = BlockUtil.getItemStackFromBlock(worldObj, xCoord, depth, zCoord);
 
-		world.setBlock(xCoord, depth, zCoord, BuildCraftFactory.plainPipeBlock.blockID);
+		world.setBlock(xCoord, depth, zCoord, BuildCraftFactory.plainPipeBlock);
 
 		if (wasAir)
 			return;

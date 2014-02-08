@@ -39,7 +39,7 @@ public class PatternCylinder extends FillerPattern {
                 int zRadius = (zMax-zMin)/2;
 
                 if(xRadius == 0 || zRadius == 0) {
-                        return !fill(xMin, yMin, zMin, xMax, yMax, zMax, stackToPlace, tile.worldObj);
+                        return !fill(xMin, yMin, zMin, xMax, yMax, zMax, stackToPlace, tile.getWorldObj());
                 }
 
                 int dx = xRadius, dz = 0;
@@ -52,7 +52,7 @@ public class PatternCylinder extends FillerPattern {
                 int stoppingZ = 0;
 
                 while(stoppingX >= stoppingZ) {
-                        if(!fillFourColumns(xCenter,zCenter,dx,dz,xFix,zFix,yMin,yMax,stackToPlace,tile.worldObj))
+                        if(!fillFourColumns(xCenter,zCenter,dx,dz,xFix,zFix,yMin,yMax,stackToPlace,tile.getWorldObj()))
                                 return false;
                         ++dz;
                         stoppingZ += twoASquare;
@@ -75,7 +75,7 @@ public class PatternCylinder extends FillerPattern {
                 stoppingZ = twoASquare*zRadius;
 
                 while(stoppingX <= stoppingZ) {
-                        if(!fillFourColumns(xCenter,zCenter,dx,dz,xFix,zFix,yMin,yMax,stackToPlace,tile.worldObj))
+                        if(!fillFourColumns(xCenter,zCenter,dx,dz,xFix,zFix,yMin,yMax,stackToPlace,tile.getWorldObj()))
                                 return false;
                         ++dx;
                         stoppingX += twoBSquare;

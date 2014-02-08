@@ -54,7 +54,7 @@ public class PacketHandlerFactory extends BuildCraftChannelHandler {
 		if (!world.blockExists(x, y, z))
 			return null;
 
-		TileEntity tile = world.getBlockTileEntity(x, y, z);
+		TileEntity tile = world.getTileEntity(x, y, z);
 		if (!(tile instanceof TileRefinery))
 			return null;
 
@@ -63,7 +63,7 @@ public class PacketHandlerFactory extends BuildCraftChannelHandler {
 
 	private void onRefinerySelect(EntityPlayer playerEntity, PacketUpdate packet) throws IOException {
 
-		TileRefinery tile = getRefinery(playerEntity.worldObj, packet.posX, packet.posY, packet.posZ);
+		TileRefinery tile = getRefinery(playerEntity.getWorldObj(), packet.posX, packet.posY, packet.posZ);
 		if (tile == null || packet.payload == null)
 			return;
 	

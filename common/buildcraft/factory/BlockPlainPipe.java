@@ -11,19 +11,22 @@ import buildcraft.core.CoreConstants;
 import buildcraft.core.IFramePipeConnection;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+
 import java.util.List;
 import java.util.Random;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.IBlockAccess;
 
 public class BlockPlainPipe extends Block implements IFramePipeConnection {
 
-	public BlockPlainPipe(int i) {
-		super(i, Material.glass);
+	public BlockPlainPipe() {
+		super(Material.glass);
 
 		minX = CoreConstants.PIPE_MIN_POS;
 		minY = 0.0;
@@ -64,13 +67,13 @@ public class BlockPlainPipe extends Block implements IFramePipeConnection {
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
-	public void getSubBlocks(int id, CreativeTabs tab, List list) {
+	public void getSubBlocks(Item item, CreativeTabs tab, List list) {
 		list.add(new ItemStack(this));
 	}
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void registerIcons(IIconRegister par1IconRegister) {
+	public void registerBlockIcons(IIconRegister par1IconRegister) {
 		this.blockIcon = par1IconRegister.registerIcon("buildcraft:blockPlainPipe");
 	}
 }

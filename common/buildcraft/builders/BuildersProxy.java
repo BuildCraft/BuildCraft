@@ -15,7 +15,7 @@ import net.minecraft.world.World;
 public class BuildersProxy {
 
 	public static boolean canPlaceTorch(World world, int i, int j, int k) {
-		Block block = Block.blocksList[world.getBlockId(i, j, k)];
+		Block block = world.getBlock(i, j, k);
 
 		if (block == null || !block.renderAsNormalBlock())
 			return false;

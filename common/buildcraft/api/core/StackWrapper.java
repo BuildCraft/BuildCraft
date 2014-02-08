@@ -39,7 +39,7 @@ public class StackWrapper {
 		if (getClass() != obj.getClass())
 			return false;
 		final StackWrapper other = (StackWrapper) obj;
-		if (stack.itemID != other.stack.itemID)
+		if (stack.getItem() != other.stack.getItem())
 			return false;
 		if (stack.getHasSubtypes() && stack.getItemDamage() != other.stack.getItemDamage())
 			return false;

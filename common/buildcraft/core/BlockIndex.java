@@ -9,6 +9,7 @@
 
 package buildcraft.core;
 
+import net.minecraft.block.Block;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 
@@ -67,8 +68,8 @@ public class BlockIndex implements Comparable<BlockIndex> {
 		c.setInteger("k", z);
 	}
 
-	public int getBlockId(World world) {
-		return world.getBlockId(x, y, z);
+	public Block getBlock(World world) {
+		return world.getBlock(x, y, z);
 	}
 
 	@Override

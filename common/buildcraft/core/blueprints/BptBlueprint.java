@@ -57,11 +57,11 @@ public class BptBlueprint extends BptBase {
 		slot.x = (int) (x - context.surroundingBox().pMin().x);
 		slot.y = (int) (y - context.surroundingBox().pMin().y);
 		slot.z = (int) (z - context.surroundingBox().pMin().z);
-		slot.blockId = anchorTile.worldObj.getBlockId(x, y, z);
-		slot.meta = anchorTile.worldObj.getBlockMetadata(x, y, z);
+		slot.blockId = anchorTile.getWorldObj().getBlockId(x, y, z);
+		slot.meta = anchorTile.getWorldObj().getBlockMetadata(x, y, z);
 
 		if (Block.blocksList[slot.blockId] instanceof BlockContainer) {
-			TileEntity tile = anchorTile.worldObj.getBlockTileEntity(x, y, z);
+			TileEntity tile = anchorTile.getWorldObj().getTileEntity(x, y, z);
 
 			if (tile != null && tile instanceof IBptContributor) {
 				IBptContributor contributor = (IBptContributor) tile;

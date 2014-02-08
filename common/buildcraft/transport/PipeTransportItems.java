@@ -100,7 +100,7 @@ public class PipeTransportItems extends PipeTransport {
 		readjustPosition(item);
 
 
-		if (!container.worldObj.isRemote) {
+		if (!container.getWorldObj().isRemote) {
 			item.output = resolveDestination(item);
 		}
 
@@ -115,7 +115,7 @@ public class PipeTransportItems extends PipeTransport {
 
 		items.add(item);
 
-		if (!container.worldObj.isRemote) {
+		if (!container.getWorldObj().isRemote) {
 			sendTravelerPacket(item, false);
 
 			if (items.size() > BuildCraftTransport.groupItemsTrigger)
@@ -142,8 +142,8 @@ public class PipeTransportItems extends PipeTransport {
 	}
 
 	private void destroyPipe() {
-		BlockUtil.explodeBlock(container.worldObj, container.xCoord, container.yCoord, container.zCoord);
-		container.worldObj.setBlockToAir(container.xCoord, container.yCoord, container.zCoord);
+		BlockUtil.explodeBlock(container.getWorldObj(), container.xCoord, container.yCoord, container.zCoord);
+		container.getWorldObj().setBlockToAir(container.xCoord, container.yCoord, container.zCoord);
 	}
 
 	/**
@@ -163,7 +163,7 @@ public class PipeTransportItems extends PipeTransport {
 		readjustSpeed(item);
 		readjustPosition(item);
 
-		if (!container.worldObj.isRemote) {
+		if (!container.getWorldObj().isRemote) {
 			item.output = resolveDestination(item);
 		}
 
@@ -177,7 +177,7 @@ public class PipeTransportItems extends PipeTransport {
 
 		items.unscheduleRemoval(item);
 
-		if (!container.worldObj.isRemote)
+		if (!container.getWorldObj().isRemote)
 			sendTravelerPacket(item, true);
 	}
 
@@ -250,7 +250,7 @@ public class PipeTransportItems extends PipeTransport {
 	private void moveSolids() {
 		items.flush();
 		
-		if (!container.worldObj.isRemote)
+		if (!container.getWorldObj().isRemote)
 			items.purgeCorruptedItems();
 
 		items.iterating = true;
@@ -319,7 +319,7 @@ public class PipeTransportItems extends PipeTransport {
 		if (passToNextPipe(item, tile)) {
 			// NOOP
 		} else if (tile instanceof IInventory) {
-			if (!container.worldObj.isRemote) {
+			if (!container.getWorldObj().isRemote) {
 				if (item.getInsertionHandler().canInsertItem(item, (IInventory) tile)) {
 					ItemStack added = Transactor.getTransactorFor(tile).add(item.getItemStack(), item.output.getOpposite(), true);
 					item.getItemStack().stackSize -= added.stackSize;
@@ -334,7 +334,7 @@ public class PipeTransportItems extends PipeTransport {
 	}
 
 	private void dropItem(TravelingItem item) {
-		if (container.worldObj.isRemote)
+		if (container.getWorldObj().isRemote)
 			return;
 
 		if (travelHook != null) {
@@ -345,7 +345,7 @@ public class PipeTransportItems extends PipeTransport {
 		container.pipe.handlePipeEvent(event);
 		if (event.entity == null)
 			return;
-		container.worldObj.spawnEntityInWorld(event.entity);
+		container.getWorldObj().spawnEntityInWorld(event.entity);
 	}
 
 	protected boolean middleReached(TravelingItem item) {
@@ -438,7 +438,7 @@ public class PipeTransportItems extends PipeTransport {
 
 	private void sendTravelerPacket(TravelingItem data, boolean forceStackRefresh) {
 		PacketPipeTransportTraveler packet = new PacketPipeTransportTraveler(data, forceStackRefresh);
-		int dimension = container.worldObj.provider.dimensionId;
+		int dimension = container.getWorldObj().provider.dimensionId;
 		PacketDispatcher.sendPacketToAllAround(container.xCoord, container.yCoord, container.zCoord, DefaultProps.PIPE_CONTENTS_RENDER_DIST, dimension, packet.getPacket());
 	}
 

@@ -23,7 +23,7 @@ public class RenderingOil implements ISimpleBlockRenderingHandler {
 	}
 
 	@Override
-	public boolean shouldRender3DInInventory() {
+	public boolean shouldRender3DInInventory(int modelId) {
 		return false;
 	}
 
@@ -31,5 +31,4 @@ public class RenderingOil implements ISimpleBlockRenderingHandler {
 	public int getRenderId() {
 		return BuildCraftCore.oilModel;
 	}
-
 }

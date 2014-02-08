@@ -32,8 +32,8 @@ public class ItemFacade extends ItemBuildCraft {
 
 	public final static LinkedList<ItemStack> allFacades = new LinkedList<ItemStack>();
 
-	public ItemFacade(int i) {
-		super(i);
+	public ItemFacade() {
+		super();
 
 		setHasSubtypes(true);
 		setMaxDamage(0);
@@ -79,7 +79,7 @@ public class ItemFacade extends ItemBuildCraft {
 		Position pos = new Position(x, y, z, ForgeDirection.getOrientation(side));
 		pos.moveForwards(1.0);
 
-		TileEntity tile = worldObj.getBlockTileEntity((int) pos.x, (int) pos.y, (int) pos.z);
+		TileEntity tile = worldObj.getTileEntity((int) pos.x, (int) pos.y, (int) pos.z);
 		if (!(tile instanceof TileGenericPipe))
 			return false;
 		TileGenericPipe pipeTile = (TileGenericPipe) tile;

@@ -15,7 +15,10 @@ import buildcraft.core.BlockBuildCraft;
 import buildcraft.core.utils.Utils;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+
 import java.util.ArrayList;
+
+import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.EntityLivingBase;
@@ -27,10 +30,10 @@ import net.minecraftforge.common.util.ForgeDirection;
 
 public class BlockMiningWell extends BlockBuildCraft {
 
-	Icon textureFront, textureSides, textureBack, textureTop;
+	IIcon textureFront, textureSides, textureBack, textureTop;
 
-	public BlockMiningWell(int i) {
-		super(i, Material.ground);
+	public BlockMiningWell() {
+		super(Material.ground);
 
 		setHardness(5F);
 		setResistance(10F);
@@ -62,15 +65,15 @@ public class BlockMiningWell extends BlockBuildCraft {
 	}
 
 	@Override
-	public void breakBlock(World world, int x, int y, int z, int id, int meta) {
-		super.breakBlock(world, x, y, z, id, meta);
+	public void breakBlock(World world, int x, int y, int z, Block block, int meta) {
+		super.breakBlock(world, x, y, z, block, meta);
 		removePipes(world, x, y, z);
 	}
 
 	public void removePipes(World world, int x, int y, int z) {
 		for (int depth = y - 1; depth > 0; depth--) {
-			int pipeID = world.getBlockId(x, depth, z);
-			if (pipeID != BuildCraftFactory.plainPipeBlock.blockID) {
+			Block pipe = world.getBlock(x, depth, z);
+			if (pipe != BuildCraftFactory.plainPipeBlock) {
 				break;
 			}
 			world.setBlockToAir(x, depth, z);
@@ -78,7 +81,7 @@ public class BlockMiningWell extends BlockBuildCraft {
 	}
 
 	@Override
-	public TileEntity createNewTileEntity(World var1) {
+	public TileEntity createNewTileEntity(World world, int metadata) {
 		return new TileMiningWell();
 	}
 
@@ -90,7 +93,7 @@ public class BlockMiningWell extends BlockBuildCraft {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void registerIcons(IIconRegister par1IconRegister)
+	public void registerBlockIcons(IIconRegister par1IconRegister)
 	{
 	    textureFront = par1IconRegister.registerIcon("buildcraft:miningwell_front");
         textureSides = par1IconRegister.registerIcon("buildcraft:miningwell_side");

@@ -30,8 +30,8 @@ public class BlockBlueprintLibrary extends BlockContainer {
 	private IIcon textureTop;
     private IIcon textureSide;
 
-    public BlockBlueprintLibrary(int i) {
-		super(i, Material.wood);
+    public BlockBlueprintLibrary() {
+		super(Material.wood);
 		//setCreativeTab(CreativeTabBuildCraft.MACHINES.get());
 		setHardness(5F);
 	}
@@ -44,7 +44,7 @@ public class BlockBlueprintLibrary extends BlockContainer {
 		if (entityplayer.isSneaking())
 			return false;
 
-		TileBlueprintLibrary tile = (TileBlueprintLibrary) world.getBlockTileEntity(i, j, k);
+		TileBlueprintLibrary tile = (TileBlueprintLibrary) world.getTileEntity(i, j, k);
 
 		if (!tile.locked || entityplayer.username.equals(tile.owner))
 			if (!CoreProxy.proxy.isRenderWorld(world)) {
@@ -55,7 +55,7 @@ public class BlockBlueprintLibrary extends BlockContainer {
 	}
 
 	@Override
-	public TileEntity createNewTileEntity(World var1) {
+	public TileEntity createNewTileEntity(World world, int metadata) {
 		return new TileBlueprintLibrary();
 	}
 
@@ -73,7 +73,7 @@ public class BlockBlueprintLibrary extends BlockContainer {
 	@Override
 	public void onBlockPlacedBy(World world, int i, int j, int k, EntityLivingBase entityliving, ItemStack stack) {
 		if (CoreProxy.proxy.isSimulating(world) && entityliving instanceof EntityPlayer) {
-			TileBlueprintLibrary tile = (TileBlueprintLibrary) world.getBlockTileEntity(i, j, k);
+			TileBlueprintLibrary tile = (TileBlueprintLibrary) world.getTileEntity(i, j, k);
 			tile.owner = ((EntityPlayer) entityliving).username;
 		}
 	}
@@ -86,7 +86,7 @@ public class BlockBlueprintLibrary extends BlockContainer {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void registerIcons(IIconRegister par1IconRegister)
+	public void registerBlockIcons(IIconRegister par1IconRegister)
 	{
 	    textureTop = par1IconRegister.registerIcon("buildcraft:library_topbottom");
         textureSide = par1IconRegister.registerIcon("buildcraft:library_side");

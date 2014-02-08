@@ -20,7 +20,7 @@ public class GuiHandler implements IGuiHandler {
 		if (!world.blockExists(x, y, z))
 			return null;
 
-		TileEntity tile = world.getBlockTileEntity(x, y, z);
+		TileEntity tile = world.getTileEntity(x, y, z);
 
 		switch (ID) {
 
@@ -50,7 +50,7 @@ public class GuiHandler implements IGuiHandler {
 		if (!world.blockExists(x, y, z))
 			return null;
 
-		TileEntity tile = world.getBlockTileEntity(x, y, z);
+		TileEntity tile = world.getTileEntity(x, y, z);
 
 		switch (ID) {
 

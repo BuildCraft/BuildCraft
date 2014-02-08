@@ -20,7 +20,7 @@ public class PipeItemRenderer implements IItemRenderer {
 		Tessellator tessellator = Tessellator.instance;
 
 		Block block = BuildCraftTransport.genericPipeBlock;
-		Icon icon = item.getItem().getIconFromDamage(0);
+		IIcon icon = item.getItem().getIconFromDamage(0);
 
 		if (icon == null)
 			icon = ((TextureMap) Minecraft.getMinecraft().getTextureManager().getTexture(TextureMap.locationBlocksTexture)).getAtlasSprite("missingno");

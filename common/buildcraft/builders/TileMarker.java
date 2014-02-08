@@ -19,6 +19,7 @@ import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.network.TileNetworkData;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
+import net.minecraft.block.Block;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 
@@ -54,7 +55,7 @@ public class TileMarker extends TileBuildCraft implements IAreaProvider {
 				return null;
 
 			if (marker == null) {
-				marker = (TileMarker) world.getBlockTileEntity(x, y, z);
+				marker = (TileMarker) world.getTileEntity(x, y, z);
 			}
 
 			return marker;
@@ -145,7 +146,7 @@ public class TileMarker extends TileBuildCraft implements IAreaProvider {
 
 			for (int i = 0; i < 3; ++i) {
 				if (initVect[i] != null) {
-					linkTo((TileMarker) worldObj.getBlockTileEntity((int) initVect[i].x, (int) initVect[i].y, (int) initVect[i].z), i);
+					linkTo((TileMarker) worldObj.getTileEntity((int) initVect[i].x, (int) initVect[i].y, (int) initVect[i].z), i);
 				}
 			}
 		}
@@ -165,8 +166,6 @@ public class TileMarker extends TileBuildCraft implements IAreaProvider {
 	}
 
 	void setVect(int n) {
-		int markerId = BuildCraftBuilders.markerBlock.blockID;
-
 		int[] coords = new int[3];
 
 		coords[0] = xCoord;
@@ -177,10 +176,10 @@ public class TileMarker extends TileBuildCraft implements IAreaProvider {
 			for (int j = 1; j < maxSize; ++j) {
 				coords[n] += j;
 
-				int blockId = worldObj.getBlockId(coords[0], coords[1], coords[2]);
+				Block block = worldObj.getBlock(coords[0], coords[1], coords[2]);
 
-				if (blockId == markerId) {
-					TileMarker marker = (TileMarker) worldObj.getBlockTileEntity(coords[0], coords[1], coords[2]);
+				if (block == BuildCraftBuilders.markerBlock) {
+					TileMarker marker = (TileMarker) worldObj.getTileEntity(coords[0], coords[1], coords[2]);
 
 					if (linkTo(marker, n)) {
 						break;
@@ -190,10 +189,10 @@ public class TileMarker extends TileBuildCraft implements IAreaProvider {
 				coords[n] -= j;
 				coords[n] -= j;
 
-				blockId = worldObj.getBlockId(coords[0], coords[1], coords[2]);
+				block = worldObj.getBlock(coords[0], coords[1], coords[2]);
 
-				if (blockId == markerId) {
-					TileMarker marker = (TileMarker) worldObj.getBlockTileEntity(coords[0], coords[1], coords[2]);
+				if (block == BuildCraftBuilders.markerBlock) {
+					TileMarker marker = (TileMarker) worldObj.getTileEntity(coords[0], coords[1], coords[2]);
 
 					if (linkTo(marker, n)) {
 						break;
@@ -405,13 +404,13 @@ public class TileMarker extends TileBuildCraft implements IAreaProvider {
 
 		for (TileWrapper m : o.vect.clone()) {
 			if (m.isSet()) {
-				worldObj.setBlock(m.x, m.y, m.z, 0);
+				worldObj.setBlock(m.x, m.y, m.z, null);
 
 				BuildCraftBuilders.markerBlock.dropBlockAsItem(worldObj, m.x, m.y, m.z, BuildCraftBuilders.markerBlock.blockID, 0);
 			}
 		}
 
-		worldObj.setBlock(o.vectO.x, o.vectO.y, o.vectO.z, 0);
+		worldObj.setBlock(o.vectO.x, o.vectO.y, o.vectO.z, null);
 
 		BuildCraftBuilders.markerBlock.dropBlockAsItem(worldObj, o.vectO.x, o.vectO.y, o.vectO.z, BuildCraftBuilders.markerBlock.blockID, 0);
 	}

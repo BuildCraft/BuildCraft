@@ -37,7 +37,7 @@ public abstract class PipeLogicWood {
 		}
 
 		if (newFacing != null && newFacing.ordinal() != meta) {
-			pipe.container.worldObj.setBlockMetadataWithNotify(pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord, newFacing.ordinal(), 3);
+			pipe.container.getWorldObj().setBlockMetadataWithNotify(pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord, newFacing.ordinal(), 3);
 			pipe.container.scheduleRenderUpdate();
 		}
 	}
@@ -70,7 +70,7 @@ public abstract class PipeLogicWood {
 	protected abstract boolean isValidConnectingTile(TileEntity tile);
 
 	public void initialize() {
-		if (!CoreProxy.proxy.isRenderWorld(pipe.container.worldObj)) {
+		if (!CoreProxy.proxy.isRenderWorld(pipe.container.getWorldObj())) {
 			switchSourceIfNeeded();
 		}
 	}
@@ -87,7 +87,7 @@ public abstract class PipeLogicWood {
 	}
 
 	public void onNeighborBlockChange(int blockId) {
-		if (!CoreProxy.proxy.isRenderWorld(pipe.container.worldObj)) {
+		if (!CoreProxy.proxy.isRenderWorld(pipe.container.getWorldObj())) {
 			switchSourceIfNeeded();
 		}
 	}

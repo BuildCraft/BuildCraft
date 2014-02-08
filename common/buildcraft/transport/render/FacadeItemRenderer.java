@@ -20,17 +20,16 @@ public class FacadeItemRenderer implements IItemRenderer {
 	private void renderFacadeItem(RenderBlocks render, ItemStack item, float translateX, float translateY, float translateZ) {
 
 		int decodedMeta = ItemFacade.getMetaData(item);
-		int decodedBlockId = ItemFacade.getBlockId(item);
+		Block block = Block.getBlockFromItem(item.getItem());
 
 		try {
-			int color = Item.itemsList[decodedBlockId].getColorFromItemStack(new ItemStack(decodedBlockId, 1, decodedMeta), 0);
+			int color = item.getItem().getColorFromItemStack(new ItemStack(block, 1, decodedMeta), 0);
 			RenderUtils.setGLColorFromInt(color);
 		} catch (Throwable error) {
 		}
 
 		Tessellator tessellator = Tessellator.instance;
 
-		Block block = Block.blocksList[decodedBlockId];
 		if (block == null)
 			return;
 
@@ -69,7 +68,7 @@ public class FacadeItemRenderer implements IItemRenderer {
 
 		// Render StructurePipe
 		block = BuildCraftTransport.genericPipeBlock;
-		Icon textureID = BuildCraftTransport.instance.pipeIconProvider.getIcon(PipeIconProvider.TYPE.PipeStructureCobblestone.ordinal()); // Structure pipe
+		IIcon textureID = BuildCraftTransport.instance.pipeIconProvider.getIcon(PipeIconProvider.TYPE.PipeStructureCobblestone.ordinal()); // Structure pipe
 
 		block.setBlockBounds(CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MAX_POS, CoreConstants.PIPE_MAX_POS, CoreConstants.PIPE_MAX_POS - 1F / 16F);
 		block.setBlockBoundsForItemRender();

@@ -47,7 +47,7 @@ public abstract class TileEngineWithInventory extends TileEngine implements IInv
 	}
 
 	@Override
-	public String getInvName() {
+	public String getInventoryName() {
 		return "Engine";
 	}
 
@@ -58,15 +58,15 @@ public abstract class TileEngineWithInventory extends TileEngine implements IInv
 
 	@Override
 	public boolean isUseableByPlayer(EntityPlayer entityplayer) {
-		return worldObj.getBlockTileEntity(xCoord, yCoord, zCoord) == this;
+		return worldObj.getTileEntity(xCoord, yCoord, zCoord) == this;
 	}
 
 	@Override
-	public void openChest() {
+	public void openInventory() {
 	}
 
 	@Override
-	public void closeChest() {
+	public void closeInventory() {
 	}
 
 	@Override

@@ -20,8 +20,8 @@ public class ItemBuildCraft extends Item {
 	private String iconName;
 	private boolean passSneakClick = false;
 
-	public ItemBuildCraft(int i) {
-		super(i);
+	public ItemBuildCraft() {
+		super();
 		setCreativeTab(CreativeTabBuildCraft.MACHINES.get());
 	}
 
@@ -31,9 +31,9 @@ public class ItemBuildCraft extends Item {
 	}
 
 	@Override
-	public Item setUnlocalizedName(String par1Str) {
+	public Item setBlockName(String par1Str) {
 		iconName = par1Str;
-		return super.setUnlocalizedName(par1Str);
+		return super.setBlockName(par1Str);
 	}
 
 	@Override

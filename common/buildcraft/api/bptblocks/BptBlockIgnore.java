@@ -24,7 +24,7 @@ public class BptBlockIgnore extends BptBlock {
 
 	@Override
 	public void addRequirements(BptSlotInfo slot, IBptContext context, LinkedList<ItemStack> requirements) {
-		requirements.add(new ItemStack(slot.blockId, 0, 0));
+		//requirements.add(new ItemStack(slot.blockId, 0, 0));
 	}
 
 	@Override

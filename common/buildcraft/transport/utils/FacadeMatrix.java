@@ -3,27 +3,29 @@ package buildcraft.transport.utils;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+
+import net.minecraft.block.Block;
 import net.minecraftforge.common.util.ForgeDirection;
 
 public class FacadeMatrix {
 
-	private final int[] _blockIds = new int[ForgeDirection.VALID_DIRECTIONS.length];
+	private final Block[] _blocks = new Block[ForgeDirection.VALID_DIRECTIONS.length];
 	private final int[] _blockMetas = new int[ForgeDirection.VALID_DIRECTIONS.length];
 	private boolean dirty = false;
 
 	public FacadeMatrix() {
 	}
 
-	public void setFacade(ForgeDirection direction, int blockId, int blockMeta) {
-		if (_blockIds[direction.ordinal()] != blockId || _blockMetas[direction.ordinal()] != blockMeta) {
-			_blockIds[direction.ordinal()] = blockId;
+	public void setFacade(ForgeDirection direction, Block block, int blockMeta) {
+		if (_blocks[direction.ordinal()] != block || _blockMetas[direction.ordinal()] != blockMeta) {
+			_blocks[direction.ordinal()] = block;
 			_blockMetas[direction.ordinal()] = blockMeta;
 			dirty = true;
 		}
 	}
 
-	public int getFacadeBlockId(ForgeDirection direction) {
-		return _blockIds[direction.ordinal()];
+	public Block getFacadeBlock(ForgeDirection direction) {
+		return _blocks[direction.ordinal()];
 	}
 
 	public int getFacadeMetaId(ForgeDirection direction) {
@@ -40,7 +42,7 @@ public class FacadeMatrix {
 
 	public void writeData(DataOutputStream data) throws IOException {
 		for (int i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
-			data.writeShort(_blockIds[i]);
+			data.writeShort(_blocks[i]);
 			data.writeByte(_blockMetas[i]);
 		}
 	}
@@ -48,8 +50,8 @@ public class FacadeMatrix {
 	public void readData(DataInputStream data) throws IOException {
 		for (int i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
 			short id = data.readShort();
-			if (_blockIds[i] != id) {
-				_blockIds[i] = id;
+			if (_blocks[i] != id) {
+				_blocks[i] = id;
 				dirty = true;
 			}
 			byte meta = data.readByte();

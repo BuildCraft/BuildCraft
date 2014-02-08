@@ -44,11 +44,11 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChatMessageComponent;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraftforge.common.util.ForgeDirection;
-import static net.minecraftforge.common.ForgeDirection.DOWN;
-import static net.minecraftforge.common.ForgeDirection.EAST;
-import static net.minecraftforge.common.ForgeDirection.NORTH;
-import static net.minecraftforge.common.ForgeDirection.SOUTH;
-import static net.minecraftforge.common.ForgeDirection.WEST;
+import static net.minecraftforge.common.util.ForgeDirection.DOWN;
+import static net.minecraftforge.common.util.ForgeDirection.EAST;
+import static net.minecraftforge.common.util.ForgeDirection.NORTH;
+import static net.minecraftforge.common.util.ForgeDirection.SOUTH;
+import static net.minecraftforge.common.util.ForgeDirection.WEST;
 import net.minecraftforge.oredict.OreDictionary;
 
 import org.bouncycastle.util.Arrays;
@@ -75,7 +75,7 @@ public class TileAdvancedCraftingTable extends TileLaserTableBase implements IIn
 		@Override
 		public void setInventorySlotContents(int slotId, ItemStack itemstack) {
 			super.setInventorySlotContents(slotId, itemstack);
-			if (TileAdvancedCraftingTable.this.worldObj == null || !TileAdvancedCraftingTable.this.worldObj.isRemote)
+			if (TileAdvancedCraftingTable.this.getWorldObj() == null || !TileAdvancedCraftingTable.this.getWorldObj().isRemote)
 				oreIDs[slotId] = itemstack == null ? -1 : OreDictionary.getOreID(itemstack);
 		}
 	}
@@ -141,7 +141,7 @@ public class TileAdvancedCraftingTable extends TileLaserTableBase implements IIn
 	private final class InternalPlayer extends EntityPlayer {
 
 		public InternalPlayer() {
-			super(TileAdvancedCraftingTable.this.worldObj, "[BuildCraft]");
+			super(TileAdvancedCraftingTable.this.getWorldObj(), "[BuildCraft]");
 			posX = TileAdvancedCraftingTable.this.xCoord;
 			posY = TileAdvancedCraftingTable.this.yCoord + 1;
 			posZ = TileAdvancedCraftingTable.this.zCoord;
@@ -209,7 +209,7 @@ public class TileAdvancedCraftingTable extends TileLaserTableBase implements IIn
 	}
 
 	@Override
-	public String getInvName() {
+	public String getInventoryName() {
 		return StringUtils.localize("tile.assemblyWorkbenchBlock");
 	}
 
@@ -475,5 +475,10 @@ public class TileAdvancedCraftingTable extends TileLaserTableBase implements IIn
 		} else if (action == BuildCraftCore.actionOff) {
 			lastMode = ActionMachineControl.Mode.Off;
 		}
+	}
+
+	@Override
+	public boolean hasCustomInventoryName() {
+		return false;
 	}
 }

@@ -33,7 +33,7 @@ public class BptBlockAutoWorkbench extends BptBlock {
 
 	@Override
 	public void initializeFromWorld(BptSlotInfo bptSlot, IBptContext context, int x, int y, int z) {
-		IInventory inventory = (IInventory) context.world().getBlockTileEntity(x, y, z);
+		IInventory inventory = (IInventory) context.world().getTileEntity(x, y, z);
 
 		BptBlockUtils.initializeInventoryContents(bptSlot, context, inventory);
 	}
@@ -42,7 +42,7 @@ public class BptBlockAutoWorkbench extends BptBlock {
 	public void buildBlock(BptSlotInfo slot, IBptContext context) {
 		super.buildBlock(slot, context);
 
-		IInventory inventory = (IInventory) context.world().getBlockTileEntity(slot.x, slot.y, slot.z);
+		IInventory inventory = (IInventory) context.world().getTileEntity(slot.x, slot.y, slot.z);
 
 		BptBlockUtils.buildInventoryContents(slot, context, inventory);
 	}

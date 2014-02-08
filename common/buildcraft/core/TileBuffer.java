@@ -15,9 +15,9 @@ import net.minecraftforge.common.util.ForgeDirection;
 
 public final class TileBuffer {
 
-	private int blockID = 0;
+	private Block block = null;
 	private TileEntity tile;
-	private final SafeTimeTracker tracker = new SafeTimeTracker();
+	private final SafeTimeTracker tracker = new SafeTimeTracker(20);
 	private final World world;
 	final int x, y, z;
 	private final boolean loadUnloaded;
@@ -34,43 +34,42 @@ public final class TileBuffer {
 
 	public final void refresh() {
 		tile = null;
-		blockID = 0;
+		block = null;
 		if (!loadUnloaded && !world.blockExists(x, y, z)) {
 			return;
 		}
-		blockID = world.getBlockId(this.x, this.y, this.z);
+		block = world.getBlock(this.x, this.y, this.z);
 
-		Block block = Block.blocksList[blockID];
 		if (block != null && block.hasTileEntity(world.getBlockMetadata(this.x, this.y, this.z))) {
-			tile = world.getBlockTileEntity(this.x, this.y, this.z);
+			tile = world.getTileEntity(this.x, this.y, this.z);
 		}
 	}
 
-	public void set(int blockID, TileEntity tile) {
-		this.blockID = blockID;
+	public void set(Block block, TileEntity tile) {
+		this.block = block;
 		this.tile = tile;
 		tracker.markTime(world);
 	}
 
-	public int getBlockID() {
+	public Block getBlock() {
 		if (tile != null && !tile.isInvalid())
-			return blockID;
+			return block;
 
-		if (tracker.markTimeIfDelay(world, 20)) {
+		if (tracker.markTimeIfDelay(world)) {
 			refresh();
 
 			if (tile != null && !tile.isInvalid())
-				return blockID;
+				return block;
 		}
 
-		return 0;
+		return null;
 	}
 
 	public TileEntity getTile() {
 		if (tile != null && !tile.isInvalid())
 			return tile;
 
-		if (tracker.markTimeIfDelay(world, 20)) {
+		if (tracker.markTimeIfDelay(world)) {
 			refresh();
 
 			if (tile != null && !tile.isInvalid())

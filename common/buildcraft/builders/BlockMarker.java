@@ -13,7 +13,10 @@ import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.utils.Utils;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+
 import java.util.ArrayList;
+
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
@@ -27,8 +30,8 @@ import net.minecraftforge.common.util.ForgeDirection;
 
 public class BlockMarker extends BlockContainer {
 
-	public BlockMarker(int i) {
-		super(i, Material.circuits);
+	public BlockMarker() {
+		super(Material.circuits);
 
 		setLightValue(0.5F);
 		setCreativeTab(CreativeTabBuildCraft.MACHINES.get());
@@ -80,20 +83,20 @@ public class BlockMarker extends BlockContainer {
 	}
 
 	@Override
-	public TileEntity createNewTileEntity(World var1) {
+	public TileEntity createNewTileEntity(World world, int metadata) {
 		return new TileMarker();
 	}
 
 	@Override
 	public boolean onBlockActivated(World world, int i, int j, int k, EntityPlayer entityplayer, int par6, float par7, float par8, float par9) {
-		((TileMarker) world.getBlockTileEntity(i, j, k)).tryConnection();
+		((TileMarker) world.getTileEntity(i, j, k)).tryConnection();
 		return true;
 	}
 
 	@Override
-	public void breakBlock(World world, int x, int y, int z, int par5, int par6) {
+	public void breakBlock(World world, int x, int y, int z, Block block, int par6) {
 		Utils.preDestroyBlock(world, x, y, z);
-		super.breakBlock(world, x, y, z, par5, par6);
+		super.breakBlock(world, x, y, z, block, par6);
 	}
 
 	@Override
@@ -112,8 +115,8 @@ public class BlockMarker extends BlockContainer {
 	}
 
 	@Override
-	public void onNeighborBlockChange(World world, int x, int y, int z, int blockId) {
-		((TileMarker) world.getBlockTileEntity(x, y, z)).updateSignals();
+	public void onNeighborBlockChange(World world, int x, int y, int z, Block block) {
+		((TileMarker) world.getTileEntity(x, y, z)).updateSignals();
 		dropTorchIfCantStay(world, x, y, z);
 	}
 
@@ -138,7 +141,7 @@ public class BlockMarker extends BlockContainer {
 		int meta = world.getBlockMetadata(x, y, z);
 		if (!canPlaceBlockOnSide(world, x, y, z, meta)) {
 			dropBlockAsItem(world, x, y, z, BuildCraftBuilders.markerBlock.blockID, 0);
-			world.setBlock(x, y, z, 0);
+			world.setBlock(x, y, z, null);
 		}
 	}
 
@@ -150,7 +153,7 @@ public class BlockMarker extends BlockContainer {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void registerIcons(IIconRegister iconRegister) {
+	public void registerBlockIcons(IIconRegister iconRegister) {
 		this.blockIcon = iconRegister.registerIcon("buildcraft:blockMarker");
 	}
 }

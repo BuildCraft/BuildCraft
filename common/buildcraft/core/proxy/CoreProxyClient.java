@@ -66,8 +66,8 @@ public class CoreProxyClient extends CoreProxy {
 	public void removeEntity(Entity entity) {
 		super.removeEntity(entity);
 
-		if (isRenderWorld(entity.worldObj)) {
-			((WorldClient) entity.worldObj).removeEntityFromWorld(entity.entityId);
+		if (isRenderWorld(entity.getWorldObj())) {
+			((WorldClient) entity.getWorldObj()).removeEntityFromWorld(entity.entityId);
 		}
 	}
 

@@ -86,6 +86,8 @@ import java.util.LinkedList;
 import java.util.TreeMap;
 
 import net.minecraft.block.Block;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -129,6 +131,7 @@ public class BuildCraftBuilders extends BuildCraftMod {
 		// Register save handler
 		MinecraftForge.EVENT_BUS.register(new EventHandlerBuilders());
 
+		/*
 		new BptBlock(0); // default bpt block
 
 		new BptBlockIgnore(Block.snow.blockID);
@@ -214,7 +217,7 @@ public class BuildCraftBuilders extends BuildCraftMod {
 		new BptBlockInventory(libraryBlock.blockID);
 
 		new BptBlockWallSide(markerBlock.blockID);
-		new BptBlockWallSide(pathMarkerBlock.blockID);
+		new BptBlockWallSide(pathMarkerBlock.blockID);*/
 
 		if (BuildCraftCore.loadDefaultRecipes) {
 			loadRecipes();
@@ -224,15 +227,6 @@ public class BuildCraftBuilders extends BuildCraftMod {
 
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent evt) {
-		Property templateItemId = BuildCraftCore.mainConfiguration.getItem("templateItem.id", DefaultProps.TEMPLATE_ITEM_ID);
-		Property blueprintItemId = BuildCraftCore.mainConfiguration.getItem("blueprintItem.id", DefaultProps.BLUEPRINT_ITEM_ID);
-		Property markerId = BuildCraftCore.mainConfiguration.getBlock("marker.id", DefaultProps.MARKER_ID);
-		Property pathMarkerId = BuildCraftCore.mainConfiguration.getBlock("pathMarker.id", DefaultProps.PATH_MARKER_ID);
-		Property fillerId = BuildCraftCore.mainConfiguration.getBlock("filler.id", DefaultProps.FILLER_ID);
-		Property builderId = BuildCraftCore.mainConfiguration.getBlock("builder.id", DefaultProps.BUILDER_ID);
-		Property architectId = BuildCraftCore.mainConfiguration.getBlock("architect.id", DefaultProps.ARCHITECT_ID);
-		Property libraryId = BuildCraftCore.mainConfiguration.getBlock("blueprintLibrary.id", DefaultProps.BLUEPRINT_LIBRARY_ID);
-
 		Property fillerDestroyProp = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "filler.destroy", DefaultProps.FILLER_DESTROY);
 		fillerDestroyProp.comment = "If true, Filler will destroy blocks instead of breaking them.";
 		fillerDestroy = fillerDestroyProp.getBoolean(DefaultProps.FILLER_DESTROY);
@@ -245,38 +239,38 @@ public class BuildCraftBuilders extends BuildCraftMod {
 		fillerLifespanNormalProp.comment = "Lifespan in ticks of items dropped by the filler from non-tough blocks (those that can be broken by hand)";
 		fillerLifespanNormal = fillerLifespanNormalProp.getInt(DefaultProps.FILLER_LIFESPAN_NORMAL);
 
-		templateItem = new ItemBptTemplate(templateItemId.getInt());
-		templateItem.setUnlocalizedName("templateItem");
+		templateItem = new ItemBptTemplate();
+		templateItem.setBlockName("templateItem");
 		LanguageRegistry.addName(templateItem, "Template");
 		CoreProxy.proxy.registerItem(templateItem);
 
-		blueprintItem = new ItemBptBluePrint(blueprintItemId.getInt());
-		blueprintItem.setUnlocalizedName("blueprintItem");
+		blueprintItem = new ItemBptBluePrint();
+		blueprintItem.setBlockName("blueprintItem");
 		LanguageRegistry.addName(blueprintItem, "Blueprint");
 		CoreProxy.proxy.registerItem(blueprintItem);
 
-		markerBlock = new BlockMarker(markerId.getInt());
-		CoreProxy.proxy.registerBlock(markerBlock.setUnlocalizedName("markerBlock"));
+		markerBlock = new BlockMarker();
+		CoreProxy.proxy.registerBlock(markerBlock.setBlockName("markerBlock"));
 		CoreProxy.proxy.addName(markerBlock, "Land Mark");
 
-		pathMarkerBlock = new BlockPathMarker(pathMarkerId.getInt());
-		CoreProxy.proxy.registerBlock(pathMarkerBlock.setUnlocalizedName("pathMarkerBlock"));
+		pathMarkerBlock = new BlockPathMarker();
+		CoreProxy.proxy.registerBlock(pathMarkerBlock.setBlockName("pathMarkerBlock"));
 		CoreProxy.proxy.addName(pathMarkerBlock, "Path Mark");
 
-		fillerBlock = new BlockFiller(fillerId.getInt());
-		CoreProxy.proxy.registerBlock(fillerBlock.setUnlocalizedName("fillerBlock"));
+		fillerBlock = new BlockFiller();
+		CoreProxy.proxy.registerBlock(fillerBlock.setBlockName("fillerBlock"));
 		CoreProxy.proxy.addName(fillerBlock, "Filler");
 
-		builderBlock = new BlockBuilder(builderId.getInt());
-		CoreProxy.proxy.registerBlock(builderBlock.setUnlocalizedName("builderBlock"));
+		builderBlock = new BlockBuilder();
+		CoreProxy.proxy.registerBlock(builderBlock.setBlockName("builderBlock"));
 		CoreProxy.proxy.addName(builderBlock, "Builder");
 
-		architectBlock = new BlockArchitect(architectId.getInt());
-		CoreProxy.proxy.registerBlock(architectBlock.setUnlocalizedName("architectBlock"));
+		architectBlock = new BlockArchitect();
+		CoreProxy.proxy.registerBlock(architectBlock.setBlockName("architectBlock"));
 		CoreProxy.proxy.addName(architectBlock, "Architect Table");
 
-		libraryBlock = new BlockBlueprintLibrary(libraryId.getInt());
-		CoreProxy.proxy.registerBlock(libraryBlock.setUnlocalizedName("libraryBlock"));
+		libraryBlock = new BlockBlueprintLibrary();
+		CoreProxy.proxy.registerBlock(libraryBlock.setBlockName("libraryBlock"));
 		CoreProxy.proxy.addName(libraryBlock, "Blueprint Library");
 
 		GameRegistry.registerTileEntity(TileMarker.class, "Marker");
@@ -322,14 +316,14 @@ public class BuildCraftBuilders extends BuildCraftMod {
 //			new ItemStack(Item.dyePowder, 1, 4), 'p', Item.paper});
 
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(markerBlock, 1), new Object[]{"l ", "r ", 'l',
-			new ItemStack(Item.dyePowder, 1, 4), 'r', Block.torchRedstoneActive});
+			new ItemStack(Items.dye, 1, 4), 'r', Blocks.redstone_torch});
 
 //		CoreProxy.proxy.addCraftingRecipe(new ItemStack(pathMarkerBlock, 1), new Object[]{"l ", "r ", 'l',
 //			new ItemStack(Item.dyePowder, 1, 2), 'r', Block.torchRedstoneActive});
 
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(fillerBlock, 1), new Object[]{"btb", "ycy", "gCg", 'b',
-			new ItemStack(Item.dyePowder, 1, 0), 't', markerBlock, 'y', new ItemStack(Item.dyePowder, 1, 11),
-			'c', Block.workbench, 'g', BuildCraftCore.goldGearItem, 'C', Block.chest});
+			new ItemStack(Items.dye, 1, 0), 't', markerBlock, 'y', new ItemStack(Items.dye, 1, 11),
+			'c', Blocks.crafting_table, 'g', BuildCraftCore.goldGearItem, 'C', Blocks.chest});
 
 //		CoreProxy.proxy.addCraftingRecipe(new ItemStack(builderBlock, 1), new Object[]{"btb", "ycy", "gCg", 'b',
 //			new ItemStack(Item.dyePowder, 1, 0), 't', markerBlock, 'y', new ItemStack(Item.dyePowder, 1, 11),
@@ -383,7 +377,7 @@ public class BuildCraftBuilders extends BuildCraftMod {
 		return rootBptIndex;
 	}
 
-	public static ItemStack getBptItemStack(int id, int damage, String name) {
+	/*public static ItemStack getBptItemStack(int id, int damage, String name) {
 		ItemStack stack = new ItemStack(id, 1, damage);
 		NBTTagCompound nbt = new NBTTagCompound();
 		if (name != null && !"".equals(name)) {
@@ -391,7 +385,7 @@ public class BuildCraftBuilders extends BuildCraftMod {
 			stack.setTagCompound(nbt);
 		}
 		return stack;
-	}
+	}*/
 
 	public static void addHook(IBuilderHook hook) {
 		if (!hooks.contains(hook)) {

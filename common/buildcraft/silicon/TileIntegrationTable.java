@@ -167,7 +167,12 @@ public class TileIntegrationTable extends TileLaserTableBase implements ISidedIn
 	}
 
 	@Override
-	public String getInvName() {
+	public String getInventoryName() {
 		return StringUtils.localize("tile.integrationTableBlock");
+	}
+
+	@Override
+	public boolean hasCustomInventoryName() {
+		return false;
 	}
 }

@@ -72,7 +72,7 @@ public class TilePathMarker extends TileMarker {
 		double nearestDistance = 0, distance; // The initialization of nearestDistance is only to make the compiler shut up
 
 		for (TilePathMarker t : availableMarkers) {
-			if (t == this || t == this.links[0] || t == this.links[1] || t.worldObj.provider.dimensionId != this.worldObj.provider.dimensionId) {
+			if (t == this || t == this.links[0] || t == this.links[1] || t.getWorldObj().provider.dimensionId != this.getWorldObj().provider.dimensionId) {
 				continue;
 			}
 
@@ -173,7 +173,7 @@ public class TilePathMarker extends TileMarker {
 		}
 
 		if (loadLink0) {
-			TileEntity e0 = worldObj.getBlockTileEntity(x0, y0, z0);
+			TileEntity e0 = worldObj.getTileEntity(x0, y0, z0);
 
 			if (links[0] != e0 && links[1] != e0 && e0 instanceof TilePathMarker) {
 				createLaserAndConnect((TilePathMarker) e0);
@@ -183,7 +183,7 @@ public class TilePathMarker extends TileMarker {
 		}
 
 		if (loadLink1) {
-			TileEntity e1 = worldObj.getBlockTileEntity(x1, y1, z1);
+			TileEntity e1 = worldObj.getTileEntity(x1, y1, z1);
 
 			if (links[0] != e1 && links[1] != e1 && e1 instanceof TilePathMarker) {
 				createLaserAndConnect((TilePathMarker) e1);
@@ -259,7 +259,7 @@ public class TilePathMarker extends TileMarker {
 	public static void clearAvailableMarkersList(World w) {
 		for (Iterator<TilePathMarker> it = availableMarkers.iterator(); it.hasNext();) {
 			TilePathMarker t = it.next();
-			if (t.worldObj.provider.dimensionId != w.provider.dimensionId) {
+			if (t.getWorldObj().provider.dimensionId != w.provider.dimensionId) {
 				it.remove();
 			}
 		}

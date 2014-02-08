@@ -14,11 +14,14 @@ import buildcraft.core.ItemBuildCraft;
 import buildcraft.core.utils.BCLog;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+
 import java.util.List;
 import java.util.logging.Level;
+
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
@@ -29,21 +32,20 @@ public class ItemPipe extends ItemBuildCraft implements IItemPipe {
 	private IIconProvider iconProvider;
 	private int pipeIconIndex;
 
-	protected ItemPipe(int i) {
-		super(i);
+	protected ItemPipe() {
+		super();
 	}
 
 	@Override
 	public boolean onItemUse(ItemStack itemstack, EntityPlayer entityplayer, World world, int i, int j, int k, int side, float par8, float par9, float par10) {
-		int blockID = BuildCraftTransport.genericPipeBlock.blockID;
 		Block block = BuildCraftTransport.genericPipeBlock;
 
-		int id = world.getBlockId(i, j, k);
+		Block worldBlock = world.getBlock(i, j, k);
 
-		if (id == Block.snow.blockID) {
+		if (worldBlock == Blocks.snow) {
 			side = 1;
-		} else if (id != Block.vine.blockID && id != Block.tallGrass.blockID && id != Block.deadBush.blockID
-				&& (Block.blocksList[id] == null || !Block.blocksList[id].isBlockReplaceable(world, i, j, k))) {
+		} else if (worldBlock != Blocks.vine && worldBlock != Blocks.tallgrass && worldBlock != Blocks.deadbush
+				&& (worldBlock == null || !worldBlock.isBlockReplaceable(world, i, j, k))) {
 			if (side == 0) {
 				j--;
 			}

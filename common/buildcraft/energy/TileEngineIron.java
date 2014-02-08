@@ -431,4 +431,9 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
 
 		return triggers;
 	}
+
+	@Override
+	public boolean hasCustomInventoryName() {
+		return false;
+	}
 }

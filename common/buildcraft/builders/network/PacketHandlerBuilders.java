@@ -55,14 +55,14 @@ public class PacketHandlerBuilders extends BuildCraftChannelHandler {
 	}
 
 	private void onArchitectName(EntityPlayer player, PacketUpdate packet) {
-		TileEntity te = player.worldObj.getBlockTileEntity(packet.posX, packet.posY, packet.posZ);
+		TileEntity te = player.worldObj.getTileEntity(packet.posX, packet.posY, packet.posZ);
 		if (te instanceof TileArchitect) {
 			((TileArchitect) te).handleClientInput((char) ((PacketPayloadArrays)packet.payload).intPayload[0]);
 		}
 	}
 
 	private void onLibraryAction(EntityPlayer player, PacketLibraryAction packet) {
-		TileEntity te = player.worldObj.getBlockTileEntity(packet.posX, packet.posY, packet.posZ);
+		TileEntity te = player.worldObj.getTileEntity(packet.posX, packet.posY, packet.posZ);
 		if (te instanceof TileBlueprintLibrary) {
 			TileBlueprintLibrary tbl = (TileBlueprintLibrary) te;
 			switch (packet.actionId) {
@@ -84,7 +84,7 @@ public class PacketHandlerBuilders extends BuildCraftChannelHandler {
 	}
 
 	private void onLibrarySelect(EntityPlayer player, PacketLibraryAction packet) {
-		TileEntity te = player.worldObj.getBlockTileEntity(packet.posX, packet.posY, packet.posZ);
+		TileEntity te = player.worldObj.getTileEntity(packet.posX, packet.posY, packet.posZ);
 		if (te instanceof TileBlueprintLibrary) {
 			TileBlueprintLibrary tbl = (TileBlueprintLibrary) te;
 			int ySlot = packet.actionId;

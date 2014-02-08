@@ -90,12 +90,11 @@ public class FacadeRenderHelper {
 	}
 
 	public static void pipeFacadeRenderer(RenderBlocks renderblocks, BlockGenericPipe block, PipeRenderState state, int x, int y, int z) {
-		state.textureArray = new Icon[6];
+		state.textureArray = new IIcon[6];
 
 		for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
-			int facadeId = state.facadeMatrix.getFacadeBlockId(direction);
-			if (facadeId != 0) {
-				Block renderBlock = Block.blocksList[facadeId];
+			Block renderBlock = state.facadeMatrix.getFacadeBlock(direction);
+			if (renderBlock != null) {
 				int renderMeta = state.facadeMatrix.getFacadeMetaId(direction);
 
 				for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
@@ -103,11 +102,11 @@ public class FacadeRenderHelper {
 					if (side == direction || side == direction.getOpposite())
 						block.setRenderSide(side, true);
 					else
-						block.setRenderSide(side, state.facadeMatrix.getFacadeBlockId(side) == 0);
+						block.setRenderSide(side, state.facadeMatrix.getFacadeBlock(side) == null);
 				}
 
 				try {
-					BlockGenericPipe.facadeRenderColor = Item.itemsList[state.facadeMatrix.getFacadeBlockId(direction)].getColorFromItemStack(new ItemStack(facadeId, 1, renderMeta), 0);
+					BlockGenericPipe.facadeRenderColor = Item.getItemFromBlock(state.facadeMatrix.getFacadeBlock(direction)).getColorFromItemStack(new ItemStack(renderBlock, 1, renderMeta), 0);
 				} catch (Throwable error) {
 				}
 
@@ -181,7 +180,7 @@ public class FacadeRenderHelper {
 		state.currentTexture = BuildCraftTransport.instance.pipeIconProvider.getIcon(PipeIconProvider.TYPE.PipeStructureCobblestone.ordinal()); // Structure Pipe
 
 		for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
-			if (state.facadeMatrix.getFacadeBlockId(direction) != 0 && !state.pipeConnectionMatrix.isConnected(direction)) {
+			if (state.facadeMatrix.getFacadeBlock(direction) != null && !state.pipeConnectionMatrix.isConnected(direction)) {
 				float[][] rotated = MatrixTranformations.deepClone(zeroStateSupport);
 				MatrixTranformations.transform(rotated, direction);
 

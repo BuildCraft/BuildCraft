@@ -16,12 +16,12 @@ public class ItemPipeWire extends ItemBuildCraft {
 
 	private Icon[] icons;
 
-	public ItemPipeWire(int i) {
-		super(i);
+	public ItemPipeWire() {
+		super();
 		setHasSubtypes(true);
 		setMaxDamage(0);
 		setPassSneakClick(true);
-		setUnlocalizedName("pipeWire");
+		setBlockName("pipeWire");
 	}
 
 	@Override

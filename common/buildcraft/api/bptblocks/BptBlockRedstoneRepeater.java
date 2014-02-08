@@ -25,7 +25,7 @@ public class BptBlockRedstoneRepeater extends BptBlock {
 
 	@Override
 	public void addRequirements(BptSlotInfo slot, IBptContext context, LinkedList<ItemStack> requirements) {
-		requirements.add(new ItemStack(Item.redstoneRepeater));
+		//requirements.add(new ItemStack(Item.redstoneRepeater));
 	}
 
 	@Override

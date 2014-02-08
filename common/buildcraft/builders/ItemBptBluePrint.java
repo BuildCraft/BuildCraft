@@ -19,8 +19,8 @@ public class ItemBptBluePrint extends ItemBptBase {
     private IIcon cleanBlueprint;
     private IIcon usedBlueprint;
 
-	public ItemBptBluePrint(int i) {
-		super(i);
+	public ItemBptBluePrint() {
+		super();
 		setCreativeTab(null);
 	}
 

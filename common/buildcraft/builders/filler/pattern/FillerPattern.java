@@ -195,7 +195,7 @@ public abstract class FillerPattern implements IFillerPattern {
 	}
 
 	private static void breakBlock(World world, int x, int y, int z) {
-		Block block = Block.blocksList[world.getBlockId(x, y, z)];
+		Block block = world.getBlock(x, y, z);
 		if (block != null)
 			world.playSoundEffect(x + 0.5F, y + 0.5F, z + 0.5F, block.stepSound.getPlaceSound(), (block.stepSound.getVolume() + 1.0F) / 2.0F, block.stepSound.getPitch() * 0.8F);
 		if (BuildCraftBuilders.fillerDestroy) {

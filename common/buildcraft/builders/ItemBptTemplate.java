@@ -7,8 +7,8 @@ import net.minecraft.util.IIcon;
 
 public class ItemBptTemplate extends ItemBptBase {
 	private IIcon usedTemplate;
-	public ItemBptTemplate(int i) {
-		super(i);
+	public ItemBptTemplate() {
+		super();
 	}
 
 	@Override

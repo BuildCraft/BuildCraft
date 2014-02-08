@@ -31,7 +31,7 @@ public class BptBlockSign extends BptBlock {
 
 	@Override
 	public void addRequirements(BptSlotInfo slot, IBptContext context, LinkedList<ItemStack> requirements) {
-		requirements.add(new ItemStack(Item.sign));
+		//requirements.add(new ItemStack(Item.sign));
 	}
 
 	@Override

@@ -55,7 +55,7 @@ public class ContainerRefinery extends BuildCraftContainer {
 
 		refinery.setFilter(slot, filter);
 
-		if (CoreProxy.proxy.isRenderWorld(refinery.worldObj)) {
+		if (CoreProxy.proxy.isRenderWorld(refinery.getWorldObj())) {
 			PacketPayloadStream payload = new PacketPayloadStream(new PacketPayloadStream.StreamWriter() {
 				@Override
 				public void writeData(ByteBuf data) {

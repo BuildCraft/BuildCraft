@@ -11,6 +11,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import net.minecraft.block.Block;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -259,8 +260,8 @@ public class TileQuarry extends TileBuildCraft implements IMachine, IPowerRecept
 
 		if (!columnVisitListIsUpdated) { // nextTarget may not be accurate, at least search the target column for changes
 			for (int y = nextTarget[1] + 1; y < yCoord + 3; y++) {
-				int blockID = worldObj.getBlockId(nextTarget[0], y, nextTarget[2]);
-				if (BlockUtil.isAnObstructingBlock(blockID, worldObj, nextTarget[0], y, nextTarget[2]) || !BlockUtil.isSoftBlock(blockID, worldObj, nextTarget[0], y, nextTarget[2])) {
+				Block block = worldObj.getBlock(nextTarget[0], y, nextTarget[2]);
+				if (BlockUtil.isAnObstructingBlock(block, worldObj, nextTarget[0], y, nextTarget[2]) || !BlockUtil.isSoftBlock(block, worldObj, nextTarget[0], y, nextTarget[2])) {
 					createColumnVisitList();
 					columnVisitListIsUpdated = true;
 					nextTarget = null;
@@ -329,11 +330,11 @@ public class TileQuarry extends TileBuildCraft implements IMachine, IPowerRecept
                             continue;
 						}
 
-						int blockID = worldObj.getBlockId(bx, by, bz);
+						Block block = worldObj.getBlock(bx, by, bz);
 
-						if (!BlockUtil.canChangeBlock(blockID, worldObj, bx, by, bz)) {
+						if (!BlockUtil.canChangeBlock(block, worldObj, bx, by, bz)) {
 							blockedColumns[searchX][searchZ] = true;
-						} else if (!BlockUtil.isSoftBlock(blockID, worldObj, bx, by, bz)) {
+						} else if (!BlockUtil.isSoftBlock(block, worldObj, bx, by, bz)) {
 							visitList.add(new int[]{bx, by, bz});
 						}
                         if (height == 0 && !worldObj.isAirBlock(bx, by, bz))
@@ -417,7 +418,7 @@ public class TileQuarry extends TileBuildCraft implements IMachine, IPowerRecept
 		int j = targetY - 1;
 		int k = targetZ;
 
-		int blockId = worldObj.getBlockId(i, j, k);
+		Block block = worldObj.getBlock(i, j, k);
 
 		if (isQuarriableBlock(i, j, k)) {
 
@@ -487,8 +488,8 @@ public class TileQuarry extends TileBuildCraft implements IMachine, IPowerRecept
 	}
 
 	private boolean isQuarriableBlock(int bx, int by, int bz) {
-		int blockID = worldObj.getBlockId(bx, by, bz);
-		return BlockUtil.canChangeBlock(blockID, worldObj, bx, by, bz) && !BlockUtil.isSoftBlock(blockID, worldObj, bx, by, bz);
+		Block block = worldObj.getBlock(bx, by, bz);
+		return BlockUtil.canChangeBlock(block, worldObj, bx, by, bz) && !BlockUtil.isSoftBlock(block, worldObj, bx, by, bz);
 	}
 
 	@Override
@@ -667,7 +668,7 @@ public class TileQuarry extends TileBuildCraft implements IMachine, IPowerRecept
 	public void initialize() {
 		super.initialize();
 
-		if (CoreProxy.proxy.isSimulating(this.worldObj) && !box.initialized) {
+		if (CoreProxy.proxy.isSimulating(this.getWorldObj()) && !box.initialized) {
 			setBoundaries(false);
 		}
 
@@ -722,7 +723,7 @@ public class TileQuarry extends TileBuildCraft implements IMachine, IPowerRecept
 	}
 
 	@Override
-	public String getInvName() {
+	public String getInventoryName() {
 		return "";
 	}
 
@@ -742,11 +743,11 @@ public class TileQuarry extends TileBuildCraft implements IMachine, IPowerRecept
 	}
 
 	@Override
-	public void openChest() {
+	public void openInventory() {
 	}
 
 	@Override
-	public void closeChest() {
+	public void closeInventory() {
 	}
 
 	@Override
@@ -855,5 +856,10 @@ public class TileQuarry extends TileBuildCraft implements IMachine, IPowerRecept
 					(Player) placedBy);
 		}
 		sendNetworkUpdate();
+	}
+
+	@Override
+	public boolean hasCustomInventoryName() {
+		return false;
 	}
 }

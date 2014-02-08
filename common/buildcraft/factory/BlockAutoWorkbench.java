@@ -30,8 +30,8 @@ public class BlockAutoWorkbench extends BlockBuildCraft {
 	IIcon topTexture;
 	IIcon sideTexture;
 
-	public BlockAutoWorkbench(int i) {
-		super(i, Material.wood);
+	public BlockAutoWorkbench() {
+		super(Material.wood);
 		setHardness(3.0F);
 	}
 
@@ -64,7 +64,7 @@ public class BlockAutoWorkbench extends BlockBuildCraft {
 	}
 
 	@Override
-	public TileEntity createNewTileEntity(World var1) {
+	public TileEntity createNewTileEntity(World world, int metadata) {
 		return new TileAutoWorkbench();
 	}
 
@@ -75,7 +75,7 @@ public class BlockAutoWorkbench extends BlockBuildCraft {
 	}
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void registerIcons(IIconRegister par1IconRegister)
+	public void registerBlockIcons(IIconRegister par1IconRegister)
 	{
 	    topTexture = par1IconRegister.registerIcon("buildcraft:autoWorkbench_top");
 	    sideTexture = par1IconRegister.registerIcon("buildcraft:autoWorkbench_side");

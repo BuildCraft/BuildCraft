@@ -19,13 +19,13 @@ public abstract class InventoryWrapper implements ISidedInventory {
 	@Override public ItemStack decrStackSize(int slotIndex, int amount) { return inventory.decrStackSize(slotIndex, amount); }
 	@Override public ItemStack getStackInSlotOnClosing(int slotIndex) { return inventory.getStackInSlotOnClosing(slotIndex); }
 	@Override public void setInventorySlotContents(int slotIndex, ItemStack itemstack) { inventory.setInventorySlotContents(slotIndex, itemstack); }
-	@Override public String getInvName() { return inventory.getInvName(); }
+	@Override public String getInventoryName() { return inventory.getInventoryName(); }
 	@Override public boolean isInvNameLocalized() { return inventory.isInvNameLocalized(); }
 	@Override public int getInventoryStackLimit() { return inventory.getInventoryStackLimit(); }
 	@Override public void onInventoryChanged() { inventory.onInventoryChanged(); }
 	@Override public boolean isUseableByPlayer(EntityPlayer entityplayer) { return inventory.isUseableByPlayer(entityplayer); }
-	@Override public void openChest() { inventory.openChest(); }
-	@Override public void closeChest() { inventory.closeChest(); }
+	@Override public void openInventory() { inventory.openInventory(); }
+	@Override public void closeInventory() { inventory.closeInventory(); }
 	@Override public boolean isItemValidForSlot(int slotIndex, ItemStack itemstack) { return inventory.isItemValidForSlot(slotIndex, itemstack); }
 
 	/* STATIC HELPER */

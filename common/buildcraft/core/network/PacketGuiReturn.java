@@ -66,7 +66,7 @@ public class PacketGuiReturn extends BuildCraftPacket {
 			int y = data.readInt();
 			int z = data.readInt();
 
-			TileEntity t = world.getBlockTileEntity(x, y, z);
+			TileEntity t = world.getTileEntity(x, y, z);
 
 			if (t instanceof IGuiReturnHandler)
 				((IGuiReturnHandler) t).readGuiData(data, sender);

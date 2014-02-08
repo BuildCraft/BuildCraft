@@ -28,7 +28,7 @@ public class RenderTank extends TileEntitySpecialRenderer {
 			return;
 		}
 
-		int[] displayList = FluidRenderer.getFluidDisplayLists(liquid, tileentity.worldObj, false);
+		int[] displayList = FluidRenderer.getFluidDisplayLists(liquid, tileentity.getWorldObj(), false);
 		if (displayList == null) {
 			return;
 		}

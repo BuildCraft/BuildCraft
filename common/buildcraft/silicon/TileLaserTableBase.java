@@ -128,15 +128,15 @@ public abstract class TileLaserTableBase extends TileBuildCraft implements ILase
 
 	@Override
 	public boolean isUseableByPlayer(EntityPlayer player) {
-		return worldObj.getBlockTileEntity(xCoord, yCoord, zCoord) == this && !isInvalid();
+		return worldObj.getTileEntity(xCoord, yCoord, zCoord) == this && !isInvalid();
 	}
 
 	@Override
-	public void openChest() {
+	public void openInventory() {
 	}
 
 	@Override
-	public void closeChest() {
+	public void closeInventory() {
 	}
 
 	@Override

@@ -31,13 +31,13 @@ public class BlockFilteredBuffer extends BlockBuildCraft {
 
 	private static IIcon blockTexture;
 
-	public BlockFilteredBuffer(int blockId) {
-		super(blockId, Material.iron);
+	public BlockFilteredBuffer() {
+		super(Material.iron);
 		setHardness(5F);
 	}
 
 	@Override
-	public TileEntity createNewTileEntity(World var1) {
+	public TileEntity createNewTileEntity(World world, int metadata) {
 		return new TileFilteredBuffer();
 	}
 
@@ -72,7 +72,7 @@ public class BlockFilteredBuffer extends BlockBuildCraft {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void registerIcons(IIconRegister par1IconRegister) {
+	public void registerBlockIcons(IIconRegister par1IconRegister) {
 		blockTexture = par1IconRegister.registerIcon("buildcraft:filteredBuffer_all");
 	}
 

@@ -32,11 +32,11 @@ public class BptBlockDelegate extends BptBlock {
 		BptSlotInfo newSlot = slot.clone();
 		slot.blockId = delegateTo;
 
-		if (BlueprintManager.blockBptProps[delegateTo] != null) {
-			BlueprintManager.blockBptProps[delegateTo].addRequirements(newSlot, context, requirements);
-		} else {
-			super.addRequirements(newSlot, context, requirements);
-		}
+		//if (BlueprintManager.blockBptProps[delegateTo] != null) {
+		//	BlueprintManager.blockBptProps[delegateTo].addRequirements(newSlot, context, requirements);
+		//} else {
+		//	super.addRequirements(newSlot, context, requirements);
+		//}
 	}
 
 	@Override
@@ -44,10 +44,12 @@ public class BptBlockDelegate extends BptBlock {
 		BptSlotInfo newSlot = slot.clone();
 		slot.blockId = delegateTo;
 
-		if (BlueprintManager.blockBptProps[delegateTo] != null)
-			return BlueprintManager.blockBptProps[delegateTo].isValid(newSlot, context);
-		else
-			return super.isValid(newSlot, context);
+		//if (BlueprintManager.blockBptProps[delegateTo] != null)
+		//	return BlueprintManager.blockBptProps[delegateTo].isValid(newSlot, context);
+		//else
+		//	return super.isValid(newSlot, context);
+		
+		return false;
 	}
 
 	@Override
@@ -55,11 +57,11 @@ public class BptBlockDelegate extends BptBlock {
 		BptSlotInfo newSlot = slot.clone();
 		slot.blockId = delegateTo;
 
-		if (BlueprintManager.blockBptProps[delegateTo] != null) {
-			BlueprintManager.blockBptProps[delegateTo].rotateLeft(newSlot, context);
-		} else {
-			super.rotateLeft(newSlot, context);
-		}
+		//if (BlueprintManager.blockBptProps[delegateTo] != null) {
+		//	BlueprintManager.blockBptProps[delegateTo].rotateLeft(newSlot, context);
+		//} else {
+		//	super.rotateLeft(newSlot, context);
+		//}
 	}
 
 }

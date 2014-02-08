@@ -106,7 +106,7 @@ public class RenderingEntityBlocks implements ISimpleBlockRenderingHandler {
 	}
 
 	@Override
-	public boolean shouldRender3DInInventory() {
+	public boolean shouldRender3DInInventory(int modelId) {
 		return true;
 	}
 
@@ -162,4 +162,6 @@ public class RenderingEntityBlocks implements ISimpleBlockRenderingHandler {
 
 		block.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
 	}
+
+
 }

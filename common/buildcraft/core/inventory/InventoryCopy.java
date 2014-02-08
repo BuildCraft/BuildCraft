@@ -68,8 +68,8 @@ public class InventoryCopy implements IInventory {
 	}
 
 	@Override
-	public String getInvName() {
-		return orignal.getInvName();
+	public String getInventoryName() {
+		return orignal.getInventoryName();
 	}
 
 	@Override
@@ -87,11 +87,11 @@ public class InventoryCopy implements IInventory {
 	}
 
 	@Override
-	public void openChest() {
+	public void openInventory() {
 	}
 
 	@Override
-	public void closeChest() {
+	public void closeInventory() {
 	}
 
 	@Override

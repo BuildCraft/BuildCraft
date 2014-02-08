@@ -8,14 +8,14 @@ import net.minecraft.item.ItemStack;
 @Deprecated
 public class BlueprintManager {
 
-	public static BptBlock[] blockBptProps = new BptBlock[Block.blocksList.length];
+	//public static BptBlock[] blockBptProps = new BptBlock[Block.blocksList.length];
 
 	public static ItemSignature getItemSignature(Item item) {
 		ItemSignature sig = new ItemSignature();
 
-		if (item.itemID >= Block.blocksList.length + BuildCraftAPI.LAST_ORIGINAL_ITEM) {
-			sig.itemClassName = item.getClass().getSimpleName();
-		}
+		//if (item.itemID >= Block.blocksList.length + BuildCraftAPI.LAST_ORIGINAL_ITEM) {
+		//	sig.itemClassName = item.getClass().getSimpleName();
+		//}
 
 		sig.itemName = item.getUnlocalizedName(new ItemStack(item));
 
@@ -23,13 +23,14 @@ public class BlueprintManager {
 	}
 
 	public static BlockSignature getBlockSignature(Block block) {
-		return BlueprintManager.blockBptProps[0].getSignature(block);
+		//return BlueprintManager.blockBptProps[0].getSignature(block);
+		return null;
 	}
 
 	static {
 		// Initialize defaults for block properties.
-		for (int i = 0; i < BlueprintManager.blockBptProps.length; ++i) {
-			new BptBlock(i);
-		}
+		//for (int i = 0; i < BlueprintManager.blockBptProps.length; ++i) {
+		//	new BptBlock(i);
+		//}
 	}
 }

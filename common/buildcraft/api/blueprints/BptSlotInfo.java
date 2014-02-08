@@ -10,6 +10,8 @@
 package buildcraft.api.blueprints;
 
 import java.util.LinkedList;
+
+import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 

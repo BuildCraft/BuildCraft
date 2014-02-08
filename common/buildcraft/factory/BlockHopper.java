@@ -21,12 +21,12 @@ public class BlockHopper extends BlockBuildCraft {
 
 	private static IIcon icon;
 
-	public BlockHopper(int blockId) {
-		super(blockId, Material.iron);
+	public BlockHopper() {
+		super(Material.iron);
 	}
 
 	@Override
-	public TileEntity createNewTileEntity(World var1) {
+	public TileEntity createNewTileEntity(World world, int metadata) {
 		return new TileHopper();
 	}
 
@@ -75,7 +75,7 @@ public class BlockHopper extends BlockBuildCraft {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void registerIcons(IIconRegister par1IconRegister) {
+	public void registerBlockIcons(IIconRegister par1IconRegister) {
 		icon = par1IconRegister.registerIcon("buildcraft:hopperBottom");
 	}
 

@@ -162,4 +162,9 @@ public class TileEngineStone extends TileEngineWithInventory {
 
 		return triggers;
 	}
+
+	@Override
+	public boolean hasCustomInventoryName() {
+		return false;
+	}
 }

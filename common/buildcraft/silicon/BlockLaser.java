@@ -25,8 +25,8 @@ public class BlockLaser extends BlockContainer {
 	@SideOnly(Side.CLIENT)
 	private IIcon textureTop, textureBottom, textureSide;
 
-	public BlockLaser(int i) {
-		super(i, Material.iron);
+	public BlockLaser() {
+		super(Material.iron);
 		setHardness(10F);
 		setCreativeTab(CreativeTabBuildCraft.MACHINES.get());
 	}
@@ -51,7 +51,7 @@ public class BlockLaser extends BlockContainer {
 	}
 
 	@Override
-	public TileEntity createNewTileEntity(World world) {
+	public TileEntity createNewTileEntity(World world, int metadata) {
 		return new TileLaser();
 	}
 
@@ -85,7 +85,7 @@ public class BlockLaser extends BlockContainer {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void registerIcons(IIconRegister par1IconRegister) {
+	public void registerBlockIcons(IIconRegister par1IconRegister) {
 		textureTop = par1IconRegister.registerIcon("buildcraft:laser_top");
 		textureBottom = par1IconRegister.registerIcon("buildcraft:laser_bottom");
 		textureSide = par1IconRegister.registerIcon("buildcraft:laser_side");

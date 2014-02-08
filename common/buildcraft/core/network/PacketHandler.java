@@ -54,7 +54,7 @@ public class PacketHandler extends BuildCraftChannelHandler {
 					PacketTileState pkt = (PacketTileState) packet;
 					pkt.readData(data);
 					World world = player.worldObj;
-					TileEntity tile = world.getBlockTileEntity(pkt.posX, pkt.posY, pkt.posZ);
+					TileEntity tile = world.getTileEntity(pkt.posX, pkt.posY, pkt.posZ);
 					if (tile instanceof ISyncedTile) {
 						pkt.applyStates(data, (ISyncedTile) tile);
 					}

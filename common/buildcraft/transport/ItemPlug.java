@@ -9,8 +9,8 @@ import net.minecraft.world.World;
 
 public class ItemPlug extends ItemBuildCraft {
 
-	public ItemPlug(int i) {
-		super(i);
+	public ItemPlug() {
+		super();
 	}
 	
 	@Override
@@ -22,7 +22,7 @@ public class ItemPlug extends ItemBuildCraft {
 //	public boolean onItemUseFirst(ItemStack stack, EntityPlayer player, World worldObj, int x, int y, int z, int side, float hitX, float hitY, float hitZ) {
 //		if (worldObj.isRemote)
 //			return false;
-//		TileEntity tile = worldObj.getBlockTileEntity(x, y, z);
+//		TileEntity tile = worldObj.getTileEntity(x, y, z);
 //		if (!(tile instanceof TileGenericPipe))
 //			return false;
 //		TileGenericPipe pipeTile = (TileGenericPipe) tile;

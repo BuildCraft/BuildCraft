@@ -42,7 +42,6 @@ import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLInterModComms;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.common.network.NetworkMod;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
 
@@ -51,6 +50,8 @@ import java.util.EnumSet;
 import java.util.List;
 
 import net.minecraft.block.Block;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.config.Property;
@@ -65,28 +66,22 @@ public class BuildCraftSilicon extends BuildCraftMod {
 	public static BuildCraftSilicon instance;
 
 	@EventHandler
-	public void preInit(FMLPreInitializationEvent evt) {
-		Property laserId = BuildCraftCore.mainConfiguration.getBlock("laser.id", DefaultProps.LASER_ID);
-
-		Property assemblyTableId = BuildCraftCore.mainConfiguration.getBlock("assemblyTable.id", DefaultProps.ASSEMBLY_TABLE_ID);
-
-		Property redstoneChipsetId = BuildCraftCore.mainConfiguration.getItem("redstoneChipset.id", DefaultProps.REDSTONE_CHIPSET);
-
+	public void preInit(FMLPreInitializationEvent evt) {		
 		BuildCraftCore.mainConfiguration.save();
 
-		laserBlock = new BlockLaser(laserId.getInt());
-		CoreProxy.proxy.addName(laserBlock.setUnlocalizedName("laserBlock"), "Laser");
+		laserBlock = new BlockLaser();
+		CoreProxy.proxy.addName(laserBlock.setBlockName("laserBlock"), "Laser");
 		CoreProxy.proxy.registerBlock(laserBlock);
 
-		assemblyTableBlock = new BlockLaserTable(assemblyTableId.getInt());
+		assemblyTableBlock = new BlockLaserTable();
 		CoreProxy.proxy.registerBlock(assemblyTableBlock, ItemLaserTable.class);
 
 		LanguageRegistry.addName(new ItemStack(assemblyTableBlock, 0, 0), "Assembly Table");
 		LanguageRegistry.addName(new ItemStack(assemblyTableBlock, 0, 1), "Advanced Crafting Table");
 		LanguageRegistry.addName(new ItemStack(assemblyTableBlock, 0, 2), "Integration Table");
 
-		redstoneChipset = new ItemRedstoneChipset(redstoneChipsetId.getInt());
-		redstoneChipset.setUnlocalizedName("redstoneChipset");
+		redstoneChipset = new ItemRedstoneChipset();
+		redstoneChipset.setBlockName("redstoneChipset");
 		CoreProxy.proxy.registerItem(redstoneChipset);
 		redstoneChipset.registerItemStacks();
 	}
@@ -102,8 +97,8 @@ public class BuildCraftSilicon extends BuildCraftMod {
 		CoreProxy.proxy.registerTileEntity(TileAdvancedCraftingTable.class, "net.minecraft.src.buildcraft.factory.TileAssemblyAdvancedWorkbench");
 		CoreProxy.proxy.registerTileEntity(TileIntegrationTable.class, "net.minecraft.src.buildcraft.factory.TileIntegrationTable");
 
-		new BptBlockRotateMeta(laserBlock.blockID, new int[]{2, 5, 3, 4}, true);
-		new BptBlockInventory(assemblyTableBlock.blockID);
+		//new BptBlockRotateMeta(laserBlock.blockID, new int[]{2, 5, 3, 4}, true);
+		//new BptBlockInventory(assemblyTableBlock.blockID);
 
 		if (BuildCraftCore.loadDefaultRecipes) {
 			loadRecipes();
@@ -119,51 +114,51 @@ public class BuildCraftSilicon extends BuildCraftMod {
 				"ORR",
 				"DDR",
 				"ORR",
-				'O', Block.obsidian,
-				'R', Item.redstone,
-				'D', Item.diamond);
+				'O', Blocks.obsidian,
+				'R', Items.redstone,
+				'D', Items.diamond);
 
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(assemblyTableBlock, 1, 0),
 				"ORO",
 				"ODO",
 				"OGO",
-				'O', Block.obsidian,
-				'R', Item.redstone,
-				'D', Item.diamond,
+				'O', Blocks.obsidian,
+				'R', Items.redstone,
+				'D', Items.diamond,
 				'G', BuildCraftCore.diamondGearItem);
 
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(assemblyTableBlock, 1, 1),
 				"OWO",
 				"OCO",
 				"ORO",
-				'O', Block.obsidian,
-				'W', Block.workbench,
-				'C', Block.chest,
+				'O', Blocks.obsidian,
+				'W', Blocks.crafting_table,
+				'C', Blocks.chest,
 				'R', new ItemStack(redstoneChipset, 1, 0));
 
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(assemblyTableBlock, 1, 2),
 				"ORO",
 				"OCO",
 				"OGO",
-				'O', Block.obsidian,
-				'R', Item.redstone,
+				'O', Blocks.obsidian,
+				'R', Items.redstone,
 				'C', new ItemStack(redstoneChipset, 1, 0),
 				'G', BuildCraftCore.diamondGearItem);
 
 		// PIPE WIRE
-		BuildcraftRecipes.assemblyTable.addRecipe(500, PipeWire.RED.getStack(8), "dyeRed", 1, Item.redstone, Item.ingotIron);
-		BuildcraftRecipes.assemblyTable.addRecipe(500, PipeWire.BLUE.getStack(8), "dyeBlue", 1, Item.redstone, Item.ingotIron);
-		BuildcraftRecipes.assemblyTable.addRecipe(500, PipeWire.GREEN.getStack(8), "dyeGreen", 1, Item.redstone, Item.ingotIron);
-		BuildcraftRecipes.assemblyTable.addRecipe(500, PipeWire.YELLOW.getStack(8), "dyeYellow", 1, Item.redstone, Item.ingotIron);
+		BuildcraftRecipes.assemblyTable.addRecipe(500, PipeWire.RED.getStack(8), "dyeRed", 1, Items.redstone, Items.iron_ingot);
+		BuildcraftRecipes.assemblyTable.addRecipe(500, PipeWire.BLUE.getStack(8), "dyeBlue", 1, Items.redstone, Items.iron_ingot);
+		BuildcraftRecipes.assemblyTable.addRecipe(500, PipeWire.GREEN.getStack(8), "dyeGreen", 1, Items.redstone, Items.iron_ingot);
+		BuildcraftRecipes.assemblyTable.addRecipe(500, PipeWire.YELLOW.getStack(8), "dyeYellow", 1, Items.redstone, Items.iron_ingot);
 
 		// CHIPSETS
-		BuildcraftRecipes.assemblyTable.addRecipe(10000, Chipset.RED.getStack(), Item.redstone);
-		BuildcraftRecipes.assemblyTable.addRecipe(20000, Chipset.IRON.getStack(), Item.redstone, Item.ingotIron);
-		BuildcraftRecipes.assemblyTable.addRecipe(40000, Chipset.GOLD.getStack(), Item.redstone, Item.ingotGold);
-		BuildcraftRecipes.assemblyTable.addRecipe(80000, Chipset.DIAMOND.getStack(), Item.redstone, Item.diamond);
-		BuildcraftRecipes.assemblyTable.addRecipe(40000, Chipset.PULSATING.getStack(2), Item.redstone, Item.enderPearl);
-		BuildcraftRecipes.assemblyTable.addRecipe(60000, Chipset.QUARTZ.getStack(), Item.redstone, Item.netherQuartz);
-		BuildcraftRecipes.assemblyTable.addRecipe(60000, Chipset.COMP.getStack(), Item.redstone, Item.comparator);
+		BuildcraftRecipes.assemblyTable.addRecipe(10000, Chipset.RED.getStack(), Items.redstone);
+		BuildcraftRecipes.assemblyTable.addRecipe(20000, Chipset.IRON.getStack(), Items.redstone, Items.iron_ingot);
+		BuildcraftRecipes.assemblyTable.addRecipe(40000, Chipset.GOLD.getStack(), Items.redstone, Items.gold_ingot);
+		BuildcraftRecipes.assemblyTable.addRecipe(80000, Chipset.DIAMOND.getStack(), Items.redstone, Items.diamond);
+		BuildcraftRecipes.assemblyTable.addRecipe(40000, Chipset.PULSATING.getStack(2), Items.redstone, Items.ender_pearl);
+		BuildcraftRecipes.assemblyTable.addRecipe(60000, Chipset.QUARTZ.getStack(), Items.redstone, Items.quartz);
+		BuildcraftRecipes.assemblyTable.addRecipe(60000, Chipset.COMP.getStack(), Items.redstone, Items.comparator);
 
 		// GATES		
 		BuildcraftRecipes.assemblyTable.addRecipe(10000, ItemGate.makeGateItem(GateMaterial.REDSTONE, GateLogic.AND), Chipset.RED.getStack(), PipeWire.RED.getStack());

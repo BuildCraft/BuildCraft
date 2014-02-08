@@ -85,7 +85,7 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IPowe
 	}
 
 	@Override
-	public String getInvName() {
+	public String getInventoryName() {
 		return null;
 	}
 
@@ -101,7 +101,7 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IPowe
 
 	@Override
 	public boolean isUseableByPlayer(EntityPlayer entityplayer) {
-		return worldObj.getBlockTileEntity(xCoord, yCoord, zCoord) == this;
+		return worldObj.getTileEntity(xCoord, yCoord, zCoord) == this;
 	}
 
 	@Override
@@ -279,11 +279,11 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IPowe
 	}
 
 	@Override
-	public void openChest() {
+	public void openInventory() {
 	}
 
 	@Override
-	public void closeChest() {
+	public void closeInventory() {
 	}
 
 	public void resetFilters() {
@@ -382,5 +382,10 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IPowe
 	@Override
 	public boolean canDrain(ForgeDirection from, Fluid fluid) {
 		return true;
+	}
+
+	@Override
+	public boolean hasCustomInventoryName() {
+		return false;
 	}
 }

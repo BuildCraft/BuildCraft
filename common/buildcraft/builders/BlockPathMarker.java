@@ -12,7 +12,10 @@ package buildcraft.builders;
 import buildcraft.core.utils.Utils;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+
 import java.util.ArrayList;
+
+import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -24,25 +27,24 @@ public class BlockPathMarker extends BlockMarker {
 
 	private IIcon activeMarker;
 
-    public BlockPathMarker(int i) {
-		super(i);
+    public BlockPathMarker() {
 	}
 
 	@Override
-	public TileEntity createNewTileEntity(World var1) {
+	public TileEntity createNewTileEntity(World world, int metadata) {
 		return new TilePathMarker();
 	}
 
 	@Override
-	public void breakBlock(World world, int x, int y, int z, int par5, int par6) {
+	public void breakBlock(World world, int x, int y, int z, Block block, int par6) {
 		Utils.preDestroyBlock(world, x, y, z);
-		super.breakBlock(world, x, y, z, par5, par6);
+		super.breakBlock(world, x, y, z, block, par6);
 	}
 
 	@SuppressWarnings({ "all" })
 	// @Override (client only)
 	public IIcon getBlockTexture(IBlockAccess iblockaccess, int i, int j, int k, int l) {
-		TilePathMarker marker = (TilePathMarker) iblockaccess.getBlockTileEntity(i, j, k);
+		TilePathMarker marker = (TilePathMarker) iblockaccess.getTileEntity(i, j, k);
 
 		if (l == 1 || (marker != null && marker.tryingToConnect))
 			return activeMarker;
@@ -58,7 +60,7 @@ public class BlockPathMarker extends BlockMarker {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void registerIcons(IIconRegister par1IconRegister)
+	public void registerBlockIcons(IIconRegister par1IconRegister)
 	{
 	    blockIcon = par1IconRegister.registerIcon("buildcraft:blockPathMarker");
 	    activeMarker = par1IconRegister.registerIcon("buildcraft:blockPathMarkerActive");

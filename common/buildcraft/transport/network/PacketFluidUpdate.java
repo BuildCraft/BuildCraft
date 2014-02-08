@@ -47,7 +47,7 @@ public class PacketFluidUpdate extends PacketCoordinates {
 		if (!world.blockExists(posX, posY, posZ))
 			return;
 
-		TileEntity entity = world.getBlockTileEntity(posX, posY, posZ);
+		TileEntity entity = world.getTileEntity(posX, posY, posZ);
 		if (!(entity instanceof TileGenericPipe))
 			return;
 

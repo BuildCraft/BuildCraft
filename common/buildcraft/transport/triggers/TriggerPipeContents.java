@@ -74,7 +74,7 @@ public class TriggerPipeContents extends BCTrigger implements IPipeTrigger {
 			else if (kind == PipeContents.containsItems)
 				if (parameter != null && parameter.getItemStack() != null) {
 					for (TravelingItem item : transportItems.items) {
-						if (item.getItemStack().itemID == parameter.getItemStack().itemID
+						if (item.getItemStack().getItem() == parameter.getItemStack().getItem()
 								&& item.getItemStack().getItemDamage() == parameter.getItemStack().getItemDamage())
 							return true;
 					}

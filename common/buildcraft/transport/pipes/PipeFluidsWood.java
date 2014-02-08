@@ -45,7 +45,7 @@ public class PipeFluidsWood extends Pipe<PipeTransportFluids> implements IPowerR
 				return false;
 			if (!(tile instanceof IFluidHandler))
 				return false;
-			if (!PipeManager.canExtractFluids(pipe, tile.worldObj, tile.xCoord, tile.yCoord, tile.zCoord))
+			if (!PipeManager.canExtractFluids(pipe, tile.getWorldObj (), tile.xCoord, tile.yCoord, tile.zCoord))
 				return false;
 			return true;
 		}
@@ -84,7 +84,7 @@ public class PipeFluidsWood extends Pipe<PipeTransportFluids> implements IPowerR
 		if (powerHandler.getEnergyStored() <= 0)
 			return;
 
-		World w = container.worldObj;
+		World w = container.getWorld();
 
 		int meta = container.getBlockMetadata();
 
@@ -94,7 +94,7 @@ public class PipeFluidsWood extends Pipe<PipeTransportFluids> implements IPowerR
 		TileEntity tile = container.getTile(ForgeDirection.getOrientation(meta));
 
 		if (tile instanceof IFluidHandler) {
-			if (!PipeManager.canExtractFluids(this, tile.worldObj, tile.xCoord, tile.yCoord, tile.zCoord))
+			if (!PipeManager.canExtractFluids(this, tile.getWorldObj(), tile.xCoord, tile.yCoord, tile.zCoord))
 				return;
 
 			if (liquidToExtract <= FluidContainerRegistry.BUCKET_VOLUME) {

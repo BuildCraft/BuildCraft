@@ -12,7 +12,10 @@ import buildcraft.energy.render.EntityDropParticleFX;
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+
 import java.util.Random;
+
+import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.particle.EntityFX;
 import net.minecraft.client.renderer.texture.IIconRegister;
@@ -33,8 +36,8 @@ public class BlockBuildcraftFluid extends BlockFluidClassic {
 	protected float particleGreen;
 	protected float particleBlue;
 
-	public BlockBuildcraftFluid(int id, Fluid fluid, Material material) {
-		super(id, fluid, material);
+	public BlockBuildcraftFluid(Fluid fluid, Material material) {
+		super(fluid, material);
 	}
 	@SideOnly(Side.CLIENT)
 	protected IIcon[] theIcon;
@@ -48,13 +51,13 @@ public class BlockBuildcraftFluid extends BlockFluidClassic {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void registerIcons(IIconRegister iconRegister) {
-		this.theIcon = new Icon[] { iconRegister.registerIcon("buildcraft:" + fluidName + "_still"), iconRegister.registerIcon("buildcraft:" + fluidName + "_flow") };
+	public void registerBlockIcons(IIconRegister iconRegister) {
+		this.theIcon = new IIcon[] { iconRegister.registerIcon("buildcraft:" + fluidName + "_still"), iconRegister.registerIcon("buildcraft:" + fluidName + "_flow") };
 	}
 
 	@Override
-	public void onNeighborBlockChange(World world, int x, int y, int z, int blockId) {
-		super.onNeighborBlockChange(world, x, y, z, blockId);
+	public void onNeighborBlockChange(World world, int x, int y, int z, Block block) {
+		super.onNeighborBlockChange(world, x, y, z, block);
 		if (flammable && world.provider.dimensionId == -1) {
 			world.newExplosion(null, x, y, z, 4F, true, true);
 			world.setBlockToAir(x, y, z);
@@ -103,7 +106,7 @@ public class BlockBuildcraftFluid extends BlockFluidClassic {
 	public void randomDisplayTick(World world, int x, int y, int z, Random rand) {
 		super.randomDisplayTick(world, x, y, z, rand);
 
-		if (rand.nextInt(10) == 0 && world.doesBlockHaveSolidTopSurface(x, y - 1, z) && !world.getBlockMaterial(x, y - 2, z).blocksMovement()) {
+		if (rand.nextInt(10) == 0 && world.doesBlockHaveSolidTopSurface(x, y - 1, z) && !world.getBlock(x, y - 2, z).getMaterial().blocksMovement()) {
 			double px = (double) ((float) x + rand.nextFloat());
 			double py = (double) y - 1.05D;
 			double pz = (double) ((float) z + rand.nextFloat());
@@ -115,14 +118,14 @@ public class BlockBuildcraftFluid extends BlockFluidClassic {
 
 	@Override
 	public boolean canDisplace(IBlockAccess world, int x, int y, int z) {
-		if (world.getBlockMaterial(x, y, z).isLiquid())
+		if (world.getBlock(x, y, z).getMaterial().isLiquid())
 			return false;
 		return super.canDisplace(world, x, y, z);
 	}
 
 	@Override
 	public boolean displaceIfPossible(World world, int x, int y, int z) {
-		if (world.getBlockMaterial(x, y, z).isLiquid())
+		if (world.getBlock(x, y, z).getMaterial().isLiquid())
 			return false;
 		return super.displaceIfPossible(world, x, y, z);
 	}

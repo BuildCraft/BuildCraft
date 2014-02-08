@@ -183,7 +183,7 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 		for (int x = xCoord - 1; x <= xCoord + 1; ++x) {
 			for (int y = yCoord - 1; y <= yCoord + 1; ++y) {
 				for (int z = zCoord - 1; z <= zCoord + 1; ++z) {
-					TileEntity tile = worldObj.getBlockTileEntity(x, y, z);
+					TileEntity tile = worldObj.getTileEntity(x, y, z);
 
 					if (tile instanceof TilePathMarker) {
 						path = ((TilePathMarker) tile).getPath();
@@ -425,7 +425,7 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 	}
 
 	@Override
-	public String getInvName() {
+	public String getInventoryName() {
 		return "Builder";
 	}
 
@@ -441,7 +441,7 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 
 	@Override
 	public boolean isUseableByPlayer(EntityPlayer entityplayer) {
-		return worldObj.getBlockTileEntity(xCoord, yCoord, zCoord) == this;
+		return worldObj.getTileEntity(xCoord, yCoord, zCoord) == this;
 	}
 
 	@Override
@@ -542,11 +542,11 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 	}
 
 	@Override
-	public void openChest() {
+	public void openInventory() {
 	}
 
 	@Override
-	public void closeChest() {
+	public void closeInventory() {
 	}
 
 //	@Override
@@ -622,6 +622,11 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 
 	@Override
 	public boolean allowAction(IAction action) {
+		return false;
+	}
+
+	@Override
+	public boolean hasCustomInventoryName() {
 		return false;
 	}
 }

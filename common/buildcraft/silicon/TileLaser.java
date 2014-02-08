@@ -166,7 +166,7 @@ public class TileLaser extends TileBuildCraft implements IPowerReceptor, IAction
 			for (int y = minY; y <= maxY; ++y) {
 				for (int z = minZ; z <= maxZ; ++z) {
 
-					TileEntity tile = worldObj.getBlockTileEntity(x, y, z);
+					TileEntity tile = worldObj.getTileEntity(x, y, z);
 					if (tile instanceof ILaserTarget) {
 
 						ILaserTarget table = (ILaserTarget) tile;

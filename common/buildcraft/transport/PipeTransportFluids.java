@@ -188,12 +188,12 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 
 	@Override
 	public void updateEntity() {
-		if (CoreProxy.proxy.isRenderWorld(container.worldObj))
+		if (CoreProxy.proxy.isRenderWorld(container.getWorldObj()))
 			return;
 
 		moveFluids();
 
-		if (tracker.markTimeIfDelay(container.worldObj, BuildCraftCore.updateFactor)) {
+		if (tracker.markTimeIfDelay(container.getWorldObj(), BuildCraftCore.updateFactor)) {
 
 			boolean init = false;
 			if (++clientSyncCounter > BuildCraftCore.longUpdateFactor) {
@@ -202,7 +202,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 			}
 			PacketFluidUpdate packet = computeFluidUpdate(init, true);
 			if (packet != null) {
-				BuildCraftTransport.instance.sendToPlayers(packet, container.worldObj, container.xCoord, container.yCoord, container.zCoord, DefaultProps.PIPE_CONTENTS_RENDER_DIST);
+				BuildCraftTransport.instance.sendToPlayers(packet, container.getWorldObj(), container.xCoord, container.yCoord, container.zCoord, DefaultProps.PIPE_CONTENTS_RENDER_DIST);
 			}
 		}
 	}
@@ -333,7 +333,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 	}
 
 	private void moveFluids() {
-		short newTimeSlot = (short) (container.worldObj.getTotalWorldTime() % travelDelay);
+		short newTimeSlot = (short) (container.getWorldObj().getTotalWorldTime() % travelDelay);
 
 		short outputCount = computeCurrentConnectionStatesAndTickFlows(newTimeSlot);
 		moveFromPipe(outputCount);
@@ -358,7 +358,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 						if (filled <= 0) {
 							outputTTL[o.ordinal()]--;
 						}
-//						else FluidEvent.fireEvent(new FluidMotionEvent(liquidToPush, container.worldObj, container.xCoord, container.yCoord, container.zCoord));
+//						else FluidEvent.fireEvent(new FluidMotionEvent(liquidToPush, container.getWorldObj(), container.xCoord, container.yCoord, container.zCoord));
 					}
 				}
 			}
@@ -388,7 +388,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 						int filled = internalTanks[direction.ordinal()].fill(liquidToPush, true);
 						internalTanks[ForgeDirection.UNKNOWN.ordinal()].drain(filled, true);
 //						if (filled > 0)
-//							FluidEvent.fireEvent(new FluidMotionEvent(liquidToPush, container.worldObj, container.xCoord, container.yCoord, container.zCoord));
+//							FluidEvent.fireEvent(new FluidMotionEvent(liquidToPush, container.getWorldObj(), container.xCoord, container.yCoord, container.zCoord));
 					}
 				}
 			}
@@ -433,7 +433,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 					int filled = internalTanks[ForgeDirection.UNKNOWN.ordinal()].fill(liquidToPush, true);
 					internalTanks[dir.ordinal()].drain(filled, true);
 //					if (filled > 0)
-//						FluidEvent.fireEvent(new FluidMotionEvent(liquidToPush, container.worldObj, container.xCoord, container.yCoord, container.zCoord));
+//						FluidEvent.fireEvent(new FluidMotionEvent(liquidToPush, container.getWorldObj(), container.xCoord, container.yCoord, container.zCoord));
 				}
 			}
 		}

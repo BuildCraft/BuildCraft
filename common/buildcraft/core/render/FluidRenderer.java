@@ -8,17 +8,21 @@
 package buildcraft.core.render;
 
 import buildcraft.core.render.RenderEntityBlock.RenderInfo;
+
 import java.util.HashMap;
 import java.util.Map;
+
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.init.Blocks;
 import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
+
 import org.lwjgl.opengl.GL11;
 
 /**
@@ -85,11 +89,11 @@ public class FluidRenderer {
 
 		diplayLists = new int[DISPLAY_STAGES];
 
-		if (fluid.getBlockID() > 0) {
-			liquidBlock.baseBlock = Block.blocksList[fluid.getBlockID()];
+		if (fluid.getBlock() != null) {
+			liquidBlock.baseBlock = fluid.getBlock();
 			liquidBlock.texture = getFluidTexture(fluidStack, flowing);
 		} else {
-			liquidBlock.baseBlock = Block.waterStill;
+			liquidBlock.baseBlock = Blocks.water;
 			liquidBlock.texture = getFluidTexture(fluidStack, flowing);
 		}
 

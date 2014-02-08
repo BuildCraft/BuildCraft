@@ -68,7 +68,7 @@ public class SimpleInventory implements IInventory, INBTTagable {
 	}
 
 	@Override
-	public String getInvName() {
+	public String getInventoryName() {
 		return _name;
 	}
 
@@ -90,11 +90,11 @@ public class SimpleInventory implements IInventory, INBTTagable {
 	}
 
 	@Override
-	public void openChest() {
+	public void openInventory() {
 	}
 
 	@Override
-	public void closeChest() {
+	public void closeInventory() {
 	}
 
 	@Override

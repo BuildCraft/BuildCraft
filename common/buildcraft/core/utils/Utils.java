@@ -74,7 +74,7 @@ public class Utils {
 			Position pos = new Position(x, y, z, orientation);
 			pos.moveForwards(1.0);
 
-			TileEntity tileInventory = world.getBlockTileEntity((int) pos.x, (int) pos.y, (int) pos.z);
+			TileEntity tileInventory = world.getTileEntity((int) pos.x, (int) pos.y, (int) pos.z);
 			ITransactor transactor = Transactor.getTransactorFor(tileInventory);
 			if (transactor != null && !(tileInventory instanceof TileEngine) && transactor.add(stack, orientation.getOpposite(), false).stackSize > 0) {
 				return transactor.add(stack, orientation.getOpposite(), true).stackSize;
@@ -150,7 +150,7 @@ public class Utils {
 
 			pos.moveForwards(1.0);
 
-			TileEntity tile = world.getBlockTileEntity((int) pos.x, (int) pos.y, (int) pos.z);
+			TileEntity tile = world.getTileEntity((int) pos.x, (int) pos.y, (int) pos.z);
 
 			if (tile instanceof IPipeTile) {
 				IPipeTile pipe = (IPipeTile) tile;
@@ -179,16 +179,16 @@ public class Utils {
 		tmp.orientation = step;
 		tmp.moveForwards(1.0);
 
-		return world.getBlockTileEntity((int) tmp.x, (int) tmp.y, (int) tmp.z);
+		return world.getTileEntity((int) tmp.x, (int) tmp.y, (int) tmp.z);
 	}
 
 	public static IAreaProvider getNearbyAreaProvider(World world, int i, int j, int k) {
-		TileEntity a1 = world.getBlockTileEntity(i + 1, j, k);
-		TileEntity a2 = world.getBlockTileEntity(i - 1, j, k);
-		TileEntity a3 = world.getBlockTileEntity(i, j, k + 1);
-		TileEntity a4 = world.getBlockTileEntity(i, j, k - 1);
-		TileEntity a5 = world.getBlockTileEntity(i, j + 1, k);
-		TileEntity a6 = world.getBlockTileEntity(i, j - 1, k);
+		TileEntity a1 = world.getTileEntity(i + 1, j, k);
+		TileEntity a2 = world.getTileEntity(i - 1, j, k);
+		TileEntity a3 = world.getTileEntity(i, j, k + 1);
+		TileEntity a4 = world.getTileEntity(i, j, k - 1);
+		TileEntity a5 = world.getTileEntity(i, j + 1, k);
+		TileEntity a6 = world.getTileEntity(i, j - 1, k);
 
 		if (a1 instanceof IAreaProvider) {
 			return (IAreaProvider) a1;
@@ -309,7 +309,7 @@ public class Utils {
 	}
 
 	public static void preDestroyBlock(World world, int i, int j, int k) {
-		TileEntity tile = world.getBlockTileEntity(i, j, k);
+		TileEntity tile = world.getTileEntity(i, j, k);
 
 		if (tile instanceof IInventory && !CoreProxy.proxy.isRenderWorld(world)) {
 			if (!(tile instanceof IDropControlInventory) || ((IDropControlInventory) tile).doDrop()) {

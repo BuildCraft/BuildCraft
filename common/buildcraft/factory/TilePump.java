@@ -29,6 +29,7 @@ import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.BlockUtil;
 import buildcraft.core.utils.Utils;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -37,6 +38,8 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Set;
 import java.util.TreeMap;
+
+import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -142,7 +145,7 @@ public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor
 		}
 	}
 
-	public void onNeighborBlockChange(int id) {
+	public void onNeighborBlockChange(Block block) {
 		boolean p = worldObj.isBlockIndirectlyGettingPowered(xCoord, yCoord, zCoord);
 		if (powered != p) {
 			powered = p;
@@ -152,7 +155,7 @@ public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor
 	}
 
 	private boolean isBlocked(int x, int y, int z) {
-		Material mat = worldObj.getBlockMaterial(x, y, z);
+		Material mat = worldObj.getBlock(x, y, z).getMaterial();
 		return mat.blocksMovement();
 	}
 
@@ -240,7 +243,7 @@ public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor
 		int x = xCoord;
 		int y = aimY;
 		int z = zCoord;
-		Fluid pumpingFluid = BlockUtil.getFluid(worldObj.getBlockId(x, y, z));
+		Fluid pumpingFluid = BlockUtil.getFluid(worldObj.getBlock(x, y, z));
 		if (pumpingFluid == null)
 			return;
 
@@ -280,11 +283,11 @@ public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor
 			if ((x - xCoord) * (x - xCoord) + (z - zCoord) * (z - zCoord) > 64 * 64)
 				return;
 
-			int blockId = worldObj.getBlockId(x, y, z);
-			if (BlockUtil.getFluid(blockId) == pumpingFluid) {
+			Block block = worldObj.getBlock(x, y, z);
+			if (BlockUtil.getFluid(block) == pumpingFluid) {
 				fluidsFound.add(index);
 			}
-			if (canDrainBlock(blockId, x, y, z, pumpingFluid)) {
+			if (canDrainBlock(block, x, y, z, pumpingFluid)) {
 				getLayerQueue(y).add(index);
 				numFluidBlocksFound++;
 			}
@@ -302,11 +305,11 @@ public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor
 		return true;
 	}
 
-	private boolean canDrainBlock(int blockId, int x, int y, int z, Fluid fluid) {
+	private boolean canDrainBlock(Block block, int x, int y, int z, Fluid fluid) {
 		if (!isFluidAllowed(fluid))
 			return false;
 
-		FluidStack fluidStack = BlockUtil.drainBlock(blockId, worldObj, x, y, z, false);
+		FluidStack fluidStack = BlockUtil.drainBlock(block, worldObj, x, y, z, false);
 		if (fluidStack == null || fluidStack.amount <= 0)
 			return false;
 

@@ -59,6 +59,8 @@ import java.util.List;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
@@ -106,7 +108,7 @@ public class BuildCraftFactory extends BuildCraftMod {
 				int quarryX = ticket.getModData().getInteger("quarryX");
 				int quarryY = ticket.getModData().getInteger("quarryY");
 				int quarryZ = ticket.getModData().getInteger("quarryZ");
-				TileQuarry tq = (TileQuarry) world.getBlockTileEntity(quarryX, quarryY, quarryZ);
+				TileQuarry tq = (TileQuarry) world.getTileEntity(quarryX, quarryY, quarryZ);
 				tq.forceChunkLoading(ticket);
 
 			}
@@ -146,10 +148,10 @@ public class BuildCraftFactory extends BuildCraftMod {
 
 		FactoryProxy.proxy.initializeTileEntities();
 
-		new BptBlockAutoWorkbench(autoWorkbenchBlock.blockID);
-		new BptBlockFrame(frameBlock.blockID);
-		new BptBlockRefinery(refineryBlock.blockID);
-		new BptBlockTank(tankBlock.blockID);
+		//new BptBlockAutoWorkbench(autoWorkbenchBlock.blockID);
+		//new BptBlockFrame(frameBlock.blockID);
+		//new BptBlockRefinery(refineryBlock.blockID);
+		//new BptBlockTank(tankBlock.blockID);
 
 		if (BuildCraftCore.loadDefaultRecipes) {
 			loadRecipes();
@@ -174,72 +176,52 @@ public class BuildCraftFactory extends BuildCraftMod {
 				+ "Entries are comma seperated, banned fluids have precedence over allowed ones."
 				+ "Default is \"+/*/*,+/-1/Lava\" - the second redundant entry (\"+/-1/lava\") is there to show the format.";
 		pumpDimensionList = new PumpDimensionList(pumpList.getString());
-
-		int miningWellId = BuildCraftCore.mainConfiguration.getBlock("miningWell.id", DefaultProps.MINING_WELL_ID).getInt(DefaultProps.MINING_WELL_ID);
-		int plainPipeId = BuildCraftCore.mainConfiguration.getBlock("drill.id", DefaultProps.DRILL_ID).getInt(DefaultProps.DRILL_ID);
-		int autoWorkbenchId = BuildCraftCore.mainConfiguration.getBlock("autoWorkbench.id", DefaultProps.AUTO_WORKBENCH_ID).getInt(DefaultProps.AUTO_WORKBENCH_ID);
-		int frameId = BuildCraftCore.mainConfiguration.getBlock("frame.id", DefaultProps.FRAME_ID).getInt(DefaultProps.FRAME_ID);
-		int quarryId = BuildCraftCore.mainConfiguration.getBlock("quarry.id", DefaultProps.QUARRY_ID).getInt(DefaultProps.QUARRY_ID);
-		int pumpId = BuildCraftCore.mainConfiguration.getBlock("pump.id", DefaultProps.PUMP_ID).getInt(DefaultProps.PUMP_ID);
-		int floodGateId = BuildCraftCore.mainConfiguration.getBlock("floodGate.id", DefaultProps.FLOOD_GATE_ID).getInt(DefaultProps.FLOOD_GATE_ID);
-		int tankId = BuildCraftCore.mainConfiguration.getBlock("tank.id", DefaultProps.TANK_ID).getInt(DefaultProps.TANK_ID);
-		int refineryId = BuildCraftCore.mainConfiguration.getBlock("refinery.id", DefaultProps.REFINERY_ID).getInt(DefaultProps.REFINERY_ID);
-		int hopperId = BuildCraftCore.mainConfiguration.getBlock("hopper.id", DefaultProps.HOPPER_ID).getInt(DefaultProps.HOPPER_ID);
-
+		
 		if (BuildCraftCore.mainConfiguration.hasChanged()) {
 			BuildCraftCore.mainConfiguration.save();
 		}
 
-		if (miningWellId > 0) {
-			miningWellBlock = new BlockMiningWell(miningWellId);
-			CoreProxy.proxy.registerBlock(miningWellBlock.setUnlocalizedName("miningWellBlock"));
-			CoreProxy.proxy.addName(miningWellBlock, "Mining Well");
-		}
-		if (plainPipeId > 0) {
-			plainPipeBlock = new BlockPlainPipe(plainPipeId);
-			CoreProxy.proxy.registerBlock(plainPipeBlock.setUnlocalizedName("plainPipeBlock"));
-			CoreProxy.proxy.addName(plainPipeBlock, "Mining Pipe");
-		}
-		if (autoWorkbenchId > 0) {
-			autoWorkbenchBlock = new BlockAutoWorkbench(autoWorkbenchId);
-			CoreProxy.proxy.registerBlock(autoWorkbenchBlock.setUnlocalizedName("autoWorkbenchBlock"));
-			CoreProxy.proxy.addName(autoWorkbenchBlock, "Automatic Crafting Table");
-		}
-		if (frameId > 0) {
-			frameBlock = new BlockFrame(frameId);
-			CoreProxy.proxy.registerBlock(frameBlock.setUnlocalizedName("frameBlock"));
-			CoreProxy.proxy.addName(frameBlock, "Frame");
-		}
-		if (quarryId > 0) {
-			quarryBlock = new BlockQuarry(quarryId);
-			CoreProxy.proxy.registerBlock(quarryBlock.setUnlocalizedName("machineBlock"));
-			CoreProxy.proxy.addName(quarryBlock, "Quarry");
-		}
-		if (tankId > 0) {
-			tankBlock = new BlockTank(tankId);
-			CoreProxy.proxy.registerBlock(tankBlock.setUnlocalizedName("tankBlock"));
-			CoreProxy.proxy.addName(tankBlock, "Tank");
-		}
-		if (pumpId > 0) {
-			pumpBlock = new BlockPump(pumpId);
-			CoreProxy.proxy.registerBlock(pumpBlock.setUnlocalizedName("pumpBlock"));
-			CoreProxy.proxy.addName(pumpBlock, "Pump");
-		}
-		if (floodGateId > 0) {
-			floodGateBlock = new BlockFloodGate(floodGateId);
-			CoreProxy.proxy.registerBlock(floodGateBlock.setUnlocalizedName("floodGateBlock"));
-			CoreProxy.proxy.addName(floodGateBlock, "Flood Gate");
-		}
-		if (refineryId > 0) {
-			refineryBlock = new BlockRefinery(refineryId);
-			CoreProxy.proxy.registerBlock(refineryBlock.setUnlocalizedName("refineryBlock"));
-			CoreProxy.proxy.addName(refineryBlock, "Refinery");
-		}
-		if (hopperId > 0) {
-			hopperBlock = new BlockHopper(hopperId);
-			CoreProxy.proxy.registerBlock(hopperBlock.setUnlocalizedName("blockHopper"));
-			CoreProxy.proxy.addName(hopperBlock, "Hopper");
-		}
+		
+		miningWellBlock = new BlockMiningWell();
+		CoreProxy.proxy.registerBlock(miningWellBlock.setBlockName("miningWellBlock"));
+		CoreProxy.proxy.addName(miningWellBlock, "Mining Well");
+		
+		plainPipeBlock = new BlockPlainPipe();
+		CoreProxy.proxy.registerBlock(plainPipeBlock.setBlockName("plainPipeBlock"));
+		CoreProxy.proxy.addName(plainPipeBlock, "Mining Pipe");
+				
+		autoWorkbenchBlock = new BlockAutoWorkbench();
+		CoreProxy.proxy.registerBlock(autoWorkbenchBlock.setBlockName("autoWorkbenchBlock"));
+		CoreProxy.proxy.addName(autoWorkbenchBlock, "Automatic Crafting Table");
+			
+		frameBlock = new BlockFrame();
+		CoreProxy.proxy.registerBlock(frameBlock.setBlockName("frameBlock"));
+		CoreProxy.proxy.addName(frameBlock, "Frame");
+						
+		quarryBlock = new BlockQuarry();
+		CoreProxy.proxy.registerBlock(quarryBlock.setBlockName("machineBlock"));
+		CoreProxy.proxy.addName(quarryBlock, "Quarry");
+		
+		tankBlock = new BlockTank();
+		CoreProxy.proxy.registerBlock(tankBlock.setBlockName("tankBlock"));
+		CoreProxy.proxy.addName(tankBlock, "Tank");
+
+		pumpBlock = new BlockPump();
+		CoreProxy.proxy.registerBlock(pumpBlock.setBlockName("pumpBlock"));
+		CoreProxy.proxy.addName(pumpBlock, "Pump");
+		
+		floodGateBlock = new BlockFloodGate();
+		CoreProxy.proxy.registerBlock(floodGateBlock.setBlockName("floodGateBlock"));
+		CoreProxy.proxy.addName(floodGateBlock, "Flood Gate");
+		
+		refineryBlock = new BlockRefinery();
+		CoreProxy.proxy.registerBlock(refineryBlock.setBlockName("refineryBlock"));
+		CoreProxy.proxy.addName(refineryBlock, "Refinery");
+		
+		hopperBlock = new BlockHopper();
+		CoreProxy.proxy.registerBlock(hopperBlock.setBlockName("blockHopper"));
+		CoreProxy.proxy.addName(hopperBlock, "Hopper");
+		
 
 		FactoryProxy.proxy.initializeEntityRenders();
 		if (BuildCraftCore.mainConfiguration.hasChanged()) {
@@ -257,10 +239,10 @@ public class BuildCraftFactory extends BuildCraftMod {
 						"ipi",
 						"igi",
 						"iPi",
-						'p', Item.redstone,
-						'i', Item.ingotIron,
+						'p', Items.redstone,
+						'i', Items.iron_ingot,
 						'g', BuildCraftCore.ironGearItem,
-						'P', Item.pickaxeIron);
+						'P', Items.iron_pickaxe);
 
 			if (quarryBlock != null)
 				CoreProxy.proxy.addCraftingRecipe(
@@ -269,16 +251,16 @@ public class BuildCraftFactory extends BuildCraftMod {
 						"gig",
 						"dDd",
 						'i', BuildCraftCore.ironGearItem,
-						'p', Item.redstone,
+						'p', Items.redstone,
 						'g', BuildCraftCore.goldGearItem,
 						'd', BuildCraftCore.diamondGearItem,
-						'D', Item.pickaxeDiamond);
+						'D', Items.diamond_pickaxe);
 
 			if (pumpBlock != null && miningWellBlock != null)
 				CoreProxy.proxy.addCraftingRecipe(new ItemStack(pumpBlock),
 						"T",
 						"W",
-						'T', tankBlock != null ? tankBlock : Block.glass,
+						'T', tankBlock != null ? tankBlock : Blocks.glass,
 						'W', miningWellBlock);
 		}
 
@@ -288,9 +270,9 @@ public class BuildCraftFactory extends BuildCraftMod {
 						"iri",
 						"iTi",
 						"gpg",
-						'r', Item.redstone,
-						'i', Item.ingotIron,
-						'T', tankBlock != null ? tankBlock : Block.glass,
+						'r', Items.redstone,
+						'i', Items.iron_ingot,
+						'T', tankBlock != null ? tankBlock : Blocks.glass,
 						'g', BuildCraftCore.ironGearItem,
 						'p', BuildCraftTransport.pipeFluidsGold);
 		}
@@ -300,7 +282,7 @@ public class BuildCraftFactory extends BuildCraftMod {
 					" g ",
 					"gwg",
 					" g ",
-					'w', Block.workbench,
+					'w', Blocks.crafting_table,
 					'g', BuildCraftCore.woodenGearItem);
 
 
@@ -309,23 +291,23 @@ public class BuildCraftFactory extends BuildCraftMod {
 					"ggg",
 					"g g",
 					"ggg",
-					'g', Block.glass);
+					'g', Blocks.glass);
 
 		if (refineryBlock != null)
 			CoreProxy.proxy.addCraftingRecipe(new ItemStack(refineryBlock),
 					"RTR",
 					"TGT",
-					'T', tankBlock != null ? tankBlock : Block.glass,
+					'T', tankBlock != null ? tankBlock : Blocks.glass,
 					'G', BuildCraftCore.diamondGearItem,
-					'R', Block.torchRedstoneActive);
+					'R', Blocks.redstone_torch);
 
 		if (hopperBlock != null)
 			CoreProxy.proxy.addCraftingRecipe(new ItemStack(hopperBlock),
 					"ICI",
 					"IGI",
 					" I ",
-					'I', Item.ingotIron,
-					'C', Block.chest,
+					'I', Items.iron_ingot,
+					'C', Blocks.chest,
 					'G', BuildCraftCore.stoneGearItem);
 
 		if (floodGateBlock != null)
@@ -333,10 +315,10 @@ public class BuildCraftFactory extends BuildCraftMod {
 					"IGI",
 					"FTF",
 					"IFI",
-					'I', Item.ingotIron,
-					'T', tankBlock != null ? tankBlock : Block.glass,
+					'I', Items.iron_ingot,
+					'T', tankBlock != null ? tankBlock : Blocks.glass,
 					'G', BuildCraftCore.ironGearItem,
-					'F', new ItemStack(Block.fenceIron));
+					'F', new ItemStack(Blocks.iron_bars));
 	}
 	
 	@EventHandler

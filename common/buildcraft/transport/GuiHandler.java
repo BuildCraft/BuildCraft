@@ -29,7 +29,7 @@ public class GuiHandler implements IGuiHandler {
 			if (!world.blockExists(x, y, z))
 				return null;
 
-			TileEntity tile = world.getBlockTileEntity(x, y, z);
+			TileEntity tile = world.getTileEntity(x, y, z);
 
 			if (tile instanceof TileFilteredBuffer) {
 				TileFilteredBuffer filteredBuffer = (TileFilteredBuffer) tile;
@@ -73,7 +73,7 @@ public class GuiHandler implements IGuiHandler {
 			if (!world.blockExists(x, y, z))
 				return null;
 
-			TileEntity tile = world.getBlockTileEntity(x, y, z);
+			TileEntity tile = world.getTileEntity(x, y, z);
 
 			if (tile instanceof TileFilteredBuffer) {
 				TileFilteredBuffer filteredBuffer = (TileFilteredBuffer) tile;

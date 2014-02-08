@@ -23,8 +23,8 @@ import net.minecraft.world.World;
 
 public abstract class ItemBptBase extends ItemBuildCraft {
 
-	public ItemBptBase(int i) {
-		super(i);
+	public ItemBptBase() {
+		super();
 
 		maxStackSize = 1;
 		setCreativeTab(CreativeTabBuildCraft.MACHINES.get());

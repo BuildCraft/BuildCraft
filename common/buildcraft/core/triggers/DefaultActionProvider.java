@@ -28,7 +28,7 @@ public class DefaultActionProvider implements IActionProvider {
 				if (machine.allowAction(BuildCraftCore.actionLoop))
 					res.add(BuildCraftCore.actionLoop);
 			}
-		} catch (Throwable error) {
+		} catch (Throwable error) {			
 			FMLLog.log("Buildcraft", Level.SEVERE, "Outdated API detected, please update your mods!");
 		}
 

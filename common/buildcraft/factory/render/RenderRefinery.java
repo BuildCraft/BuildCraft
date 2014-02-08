@@ -95,7 +95,7 @@ public class RenderRefinery extends TileEntitySpecialRenderer implements IInvent
 			anim = tile.getAnimationStage();
 
 			angle = 0;
-			switch (tile.worldObj.getBlockMetadata(tile.xCoord, tile.yCoord, tile.zCoord)) {
+			switch (tile.getWorldObj().getBlockMetadata(tile.xCoord, tile.yCoord, tile.zCoord)) {
 				case 2:
 					angle = 90;
 					break;
@@ -184,7 +184,7 @@ public class RenderRefinery extends TileEntitySpecialRenderer implements IInvent
 			GL11.glScalef(0.5F, 1, 0.5F);
 
 			if (liquid1 != null && liquid1.amount > 0) {
-				int[] list1 = FluidRenderer.getFluidDisplayLists(liquid1, tile.worldObj, false);
+				int[] list1 = FluidRenderer.getFluidDisplayLists(liquid1, tile.getWorldObj(), false);
 
 				if (list1 != null) {
 					bindTexture(FluidRenderer.getFluidSheet(liquid1));
@@ -194,7 +194,7 @@ public class RenderRefinery extends TileEntitySpecialRenderer implements IInvent
 			}
 
 			if (liquid2 != null && liquid2.amount > 0) {
-				int[] list2 = FluidRenderer.getFluidDisplayLists(liquid2, tile.worldObj, false);
+				int[] list2 = FluidRenderer.getFluidDisplayLists(liquid2, tile.getWorldObj(), false);
 
 				if (list2 != null) {
 					GL11.glPushMatrix();
@@ -208,7 +208,7 @@ public class RenderRefinery extends TileEntitySpecialRenderer implements IInvent
 
 
 			if (liquidResult != null && liquidResult.amount > 0) {
-				int[] list3 = FluidRenderer.getFluidDisplayLists(liquidResult, tile.worldObj, false);
+				int[] list3 = FluidRenderer.getFluidDisplayLists(liquidResult, tile.getWorldObj(), false);
 
 				if (list3 != null) {
 					GL11.glPushMatrix();

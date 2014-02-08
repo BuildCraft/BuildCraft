@@ -98,7 +98,6 @@ import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLInterModComms.IMCEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.common.network.NetworkMod;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
@@ -106,6 +105,8 @@ import cpw.mods.fml.common.registry.LanguageRegistry;
 import java.util.LinkedList;
 
 import net.minecraft.block.Block;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
@@ -264,33 +265,28 @@ public class BuildCraftTransport extends BuildCraftMod {
 			groupItemsTriggerProp.comment = "when reaching this amount of objects in a pipes, items will be automatically grouped";
 			groupItemsTrigger = groupItemsTriggerProp.getInt();
 
-
-			Property genericPipeId = BuildCraftCore.mainConfiguration.getBlock("pipe.id", DefaultProps.GENERIC_PIPE_ID);
-
-			Property pipeWaterproofId = BuildCraftCore.mainConfiguration.getItem("pipeWaterproof.id", DefaultProps.PIPE_WATERPROOF_ID);
-
-			pipeWaterproof = new ItemBuildCraft(pipeWaterproofId.getInt());
+			pipeWaterproof = new ItemBuildCraft();
 			pipeWaterproof.setUnlocalizedName("pipeWaterproof");
 			LanguageRegistry.addName(pipeWaterproof, "Pipe Sealant");
 			CoreProxy.proxy.registerItem(pipeWaterproof);
 
-			genericPipeBlock = new BlockGenericPipe(genericPipeId.getInt());
-			CoreProxy.proxy.registerBlock(genericPipeBlock.setUnlocalizedName("pipeBlock"), ItemBlock.class);
+			genericPipeBlock = new BlockGenericPipe();
+			CoreProxy.proxy.registerBlock(genericPipeBlock.setBlockName("pipeBlock"), ItemBlock.class);
 
-			pipeItemsWood = buildPipe(DefaultProps.PIPE_ITEMS_WOOD_ID, PipeItemsWood.class, "Wooden Transport Pipe", "plankWood", Block.glass, "plankWood");
-			pipeItemsEmerald = buildPipe(DefaultProps.PIPE_ITEMS_EMERALD_ID, PipeItemsEmerald.class, "Emerald Transport Pipe", Item.emerald, Block.glass, Item.emerald);
-			pipeItemsCobblestone = buildPipe(DefaultProps.PIPE_ITEMS_COBBLESTONE_ID, PipeItemsCobblestone.class, "Cobblestone Transport Pipe", "cobblestone", Block.glass, "cobblestone");
-			pipeItemsStone = buildPipe(DefaultProps.PIPE_ITEMS_STONE_ID, PipeItemsStone.class, "Stone Transport Pipe", "stone", Block.glass, "stone");
-			pipeItemsQuartz = buildPipe(DefaultProps.PIPE_ITEMS_QUARTZ_ID, PipeItemsQuartz.class, "Quartz Transport Pipe", Block.blockNetherQuartz, Block.glass, Block.blockNetherQuartz);
-			pipeItemsIron = buildPipe(DefaultProps.PIPE_ITEMS_IRON_ID, PipeItemsIron.class, "Iron Transport Pipe", Item.ingotIron, Block.glass, Item.ingotIron);
-			pipeItemsGold = buildPipe(DefaultProps.PIPE_ITEMS_GOLD_ID, PipeItemsGold.class, "Golden Transport Pipe", Item.ingotGold, Block.glass, Item.ingotGold);
-			pipeItemsDiamond = buildPipe(DefaultProps.PIPE_ITEMS_DIAMOND_ID, PipeItemsDiamond.class, "Diamond Transport Pipe", Item.diamond, Block.glass, Item.diamond);
-			pipeItemsObsidian = buildPipe(DefaultProps.PIPE_ITEMS_OBSIDIAN_ID, PipeItemsObsidian.class, "Obsidian Transport Pipe", Block.obsidian, Block.glass, Block.obsidian);
-			pipeItemsLapis = buildPipe(DefaultProps.PIPE_ITEMS_LAPIS_ID, PipeItemsLapis.class, "Lapis Transport Pipe", Block.blockLapis, Block.glass, Block.blockLapis);
-			pipeItemsDaizuli = buildPipe(DefaultProps.PIPE_ITEMS_DAIZULI_ID, PipeItemsDaizuli.class, "Daizuli Transport Pipe", Block.blockLapis, Block.glass, Item.diamond);
-			pipeItemsSandstone = buildPipe(DefaultProps.PIPE_ITEMS_SANDSTONE_ID, PipeItemsSandstone.class, "Sandstone Transport Pipe", Block.sandStone, Block.glass, Block.sandStone);
-			pipeItemsVoid = buildPipe(DefaultProps.PIPE_ITEMS_VOID_ID, PipeItemsVoid.class, "Void Transport Pipe", "dyeBlack", Block.glass, Item.redstone);
-			pipeItemsEmzuli = buildPipe(DefaultProps.PIPE_ITEMS_EMZULI_ID, PipeItemsEmzuli.class, "Emzuli Transport Pipe", Block.blockLapis, Block.glass, Item.emerald);
+			pipeItemsWood = buildPipe(DefaultProps.PIPE_ITEMS_WOOD_ID, PipeItemsWood.class, "Wooden Transport Pipe", "plankWood", Blocks.glass, "plankWood");
+			pipeItemsEmerald = buildPipe(DefaultProps.PIPE_ITEMS_EMERALD_ID, PipeItemsEmerald.class, "Emerald Transport Pipe", Items.emerald, Blocks.glass, Items.emerald);
+			pipeItemsCobblestone = buildPipe(DefaultProps.PIPE_ITEMS_COBBLESTONE_ID, PipeItemsCobblestone.class, "Cobblestone Transport Pipe", "cobblestone", Blocks.glass, "cobblestone");
+			pipeItemsStone = buildPipe(DefaultProps.PIPE_ITEMS_STONE_ID, PipeItemsStone.class, "Stone Transport Pipe", "stone", Blocks.glass, "stone");
+			pipeItemsQuartz = buildPipe(DefaultProps.PIPE_ITEMS_QUARTZ_ID, PipeItemsQuartz.class, "Quartz Transport Pipe", Blocks.quartz_block, Blocks.glass, Blocks.quartz_block);
+			pipeItemsIron = buildPipe(DefaultProps.PIPE_ITEMS_IRON_ID, PipeItemsIron.class, "Iron Transport Pipe", Items.iron_ingot, Blocks.glass, Items.iron_ingot);
+			pipeItemsGold = buildPipe(DefaultProps.PIPE_ITEMS_GOLD_ID, PipeItemsGold.class, "Golden Transport Pipe", Items.gold_ingot, Blocks.glass, Items.gold_ingot);
+			pipeItemsDiamond = buildPipe(DefaultProps.PIPE_ITEMS_DIAMOND_ID, PipeItemsDiamond.class, "Diamond Transport Pipe", Items.diamond, Blocks.glass, Items.diamond);
+			pipeItemsObsidian = buildPipe(DefaultProps.PIPE_ITEMS_OBSIDIAN_ID, PipeItemsObsidian.class, "Obsidian Transport Pipe", Blocks.obsidian, Blocks.glass, Blocks.obsidian);
+			pipeItemsLapis = buildPipe(DefaultProps.PIPE_ITEMS_LAPIS_ID, PipeItemsLapis.class, "Lapis Transport Pipe", Blocks.lapis_block, Blocks.glass, Blocks.lapis_block);
+			pipeItemsDaizuli = buildPipe(DefaultProps.PIPE_ITEMS_DAIZULI_ID, PipeItemsDaizuli.class, "Daizuli Transport Pipe", Blocks.lapis_block, Blocks.glass, Items.diamond);
+			pipeItemsSandstone = buildPipe(DefaultProps.PIPE_ITEMS_SANDSTONE_ID, PipeItemsSandstone.class, "Sandstone Transport Pipe", Blocks.sandstone, Blocks.glass, Blocks.sandstone);
+			pipeItemsVoid = buildPipe(DefaultProps.PIPE_ITEMS_VOID_ID, PipeItemsVoid.class, "Void Transport Pipe", "dyeBlack", Blocks.glass, Items.redstone);
+			pipeItemsEmzuli = buildPipe(DefaultProps.PIPE_ITEMS_EMZULI_ID, PipeItemsEmzuli.class, "Emzuli Transport Pipe", Blocks.lapis_block, Blocks.glass, Items.emerald);
 
 			pipeFluidsWood = buildPipe(DefaultProps.PIPE_LIQUIDS_WOOD_ID, PipeFluidsWood.class, "Wooden Waterproof Pipe", pipeWaterproof, pipeItemsWood);
 			pipeFluidsCobblestone = buildPipe(DefaultProps.PIPE_LIQUIDS_COBBLESTONE_ID, PipeFluidsCobblestone.class, "Cobblestone Waterproof Pipe", pipeWaterproof, pipeItemsCobblestone);
@@ -301,13 +297,13 @@ public class BuildCraftTransport extends BuildCraftMod {
 			pipeFluidsSandstone = buildPipe(DefaultProps.PIPE_LIQUIDS_SANDSTONE_ID, PipeFluidsSandstone.class, "Sandstone Waterproof Pipe", pipeWaterproof, pipeItemsSandstone);
 			pipeFluidsVoid = buildPipe(DefaultProps.PIPE_LIQUIDS_VOID_ID, PipeFluidsVoid.class, "Void Waterproof Pipe", pipeWaterproof, pipeItemsVoid);
 
-			pipePowerWood = buildPipe(DefaultProps.PIPE_POWER_WOOD_ID, PipePowerWood.class, "Wooden Kinesis Pipe", Item.redstone, pipeItemsWood);
-			pipePowerCobblestone = buildPipe(DefaultProps.PIPE_POWER_COBBLESTONE_ID, PipePowerCobblestone.class, "Cobblestone Kinesis Pipe", Item.redstone, pipeItemsCobblestone);
-			pipePowerStone = buildPipe(DefaultProps.PIPE_POWER_STONE_ID, PipePowerStone.class, "Stone Kinesis Pipe", Item.redstone, pipeItemsStone);
-			pipePowerQuartz = buildPipe(DefaultProps.PIPE_POWER_QUARTZ_ID, PipePowerQuartz.class, "Quartz Kinesis Pipe", Item.redstone, pipeItemsQuartz);
-			pipePowerIron = buildPipe(DefaultProps.PIPE_POWER_IRON_ID, PipePowerIron.class, "Iron Kinesis Pipe", Item.redstone, pipeItemsIron);
-			pipePowerGold = buildPipe(DefaultProps.PIPE_POWER_GOLD_ID, PipePowerGold.class, "Golden Kinesis Pipe", Item.redstone, pipeItemsGold);
-			pipePowerDiamond = buildPipe(DefaultProps.PIPE_POWER_DIAMOND_ID, PipePowerDiamond.class, "Diamond Kinesis Pipe", Item.redstone, pipeItemsDiamond);
+			pipePowerWood = buildPipe(DefaultProps.PIPE_POWER_WOOD_ID, PipePowerWood.class, "Wooden Kinesis Pipe", Items.redstone, pipeItemsWood);
+			pipePowerCobblestone = buildPipe(DefaultProps.PIPE_POWER_COBBLESTONE_ID, PipePowerCobblestone.class, "Cobblestone Kinesis Pipe", Items.redstone, pipeItemsCobblestone);
+			pipePowerStone = buildPipe(DefaultProps.PIPE_POWER_STONE_ID, PipePowerStone.class, "Stone Kinesis Pipe", Items.redstone, pipeItemsStone);
+			pipePowerQuartz = buildPipe(DefaultProps.PIPE_POWER_QUARTZ_ID, PipePowerQuartz.class, "Quartz Kinesis Pipe", Items.redstone, pipeItemsQuartz);
+			pipePowerIron = buildPipe(DefaultProps.PIPE_POWER_IRON_ID, PipePowerIron.class, "Iron Kinesis Pipe", Items.redstone, pipeItemsIron);
+			pipePowerGold = buildPipe(DefaultProps.PIPE_POWER_GOLD_ID, PipePowerGold.class, "Golden Kinesis Pipe", Items.redstone, pipeItemsGold);
+			pipePowerDiamond = buildPipe(DefaultProps.PIPE_POWER_DIAMOND_ID, PipePowerDiamond.class, "Diamond Kinesis Pipe", Items.redstone, pipeItemsDiamond);
 
 			pipeStructureCobblestone = buildPipe(DefaultProps.PIPE_STRUCTURE_COBBLESTONE_ID, PipeStructureCobblestone.class, "Cobblestone Structure Pipe", Block.gravel, pipeItemsCobblestone);
 
@@ -315,30 +311,25 @@ public class BuildCraftTransport extends BuildCraftMod {
 			// pipeItemsStipes = createPipe(DefaultProps.PIPE_ITEMS_STRIPES_ID, PipeItemsStripes.class, "Stripes Transport Pipe", new ItemStack(Item.dyePowder,
 			// 1, 0), Block.glass, new ItemStack(Item.dyePowder, 1, 11));
 
-			int pipeWireId = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_ITEM, "pipeWire.id", DefaultProps.PIPE_WIRE).getInt(DefaultProps.PIPE_WIRE);
-			pipeWire = new ItemPipeWire(pipeWireId);
+			pipeWire = new ItemPipeWire();
 			LanguageRegistry.addName(pipeWire, "Pipe Wire");
 			CoreProxy.proxy.registerItem(pipeWire);
 			PipeWire.item = pipeWire;
 
-			Property pipeGateId = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_ITEM, "pipeGate.id", DefaultProps.GATE_ID);
-			pipeGate = new ItemGate(pipeGateId.getInt());
+			pipeGate = new ItemGate();
 			pipeGate.setUnlocalizedName("pipeGate");
 			CoreProxy.proxy.registerItem(pipeGate);
 
-			Property pipeFacadeId = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_ITEM, "pipeFacade.id", DefaultProps.PIPE_FACADE_ID);
-			facadeItem = new ItemFacade(pipeFacadeId.getInt());
-			facadeItem.setUnlocalizedName("pipeFacade");
+			facadeItem = new ItemFacade();
+			facadeItem.setBlockName("pipeFacade");
 			CoreProxy.proxy.registerItem(facadeItem);
 
-			Property pipePlugId = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_ITEM, "pipePlug.id", DefaultProps.PIPE_PLUG_ID);
-			plugItem = new ItemPlug(pipePlugId.getInt());
+			plugItem = new ItemPlug();
 			plugItem.setUnlocalizedName("pipePlug");
 			CoreProxy.proxy.registerItem(plugItem);
 
-			Property filteredBufferId = BuildCraftCore.mainConfiguration.getBlock("filteredBuffer.id", DefaultProps.FILTERED_BUFFER_ID);
-			filteredBufferBlock = new BlockFilteredBuffer(filteredBufferId.getInt());
-			CoreProxy.proxy.registerBlock(filteredBufferBlock.setUnlocalizedName("filteredBufferBlock"));
+			filteredBufferBlock = new BlockFilteredBuffer();
+			CoreProxy.proxy.registerBlock(filteredBufferBlock.setBlockName("filteredBufferBlock"));
 			CoreProxy.proxy.addName(filteredBufferBlock, "Filtered Buffer");
 		} finally {
 			BuildCraftCore.mainConfiguration.save();
@@ -367,14 +358,14 @@ public class BuildCraftTransport extends BuildCraftMod {
 		// ModLoader.RegisterTileEntity(TileDockingStation.class,
 		// "net.minecraft.src.buildcraft.TileDockingStation");
 
-		new BptBlockPipe(genericPipeBlock.blockID);
+		//new BptBlockPipe(genericPipeBlock.blockID);
 
-		BuildCraftCore.itemBptProps[pipeItemsWood.itemID] = new BptItemPipeWooden();
-		BuildCraftCore.itemBptProps[pipeFluidsWood.itemID] = new BptItemPipeWooden();
-		BuildCraftCore.itemBptProps[pipeItemsIron.itemID] = new BptItemPipeIron();
-		BuildCraftCore.itemBptProps[pipeFluidsIron.itemID] = new BptItemPipeIron();
-		BuildCraftCore.itemBptProps[pipeItemsDiamond.itemID] = new BptItemPipeDiamond();
-		BuildCraftCore.itemBptProps[pipeItemsEmerald.itemID] = new BptItemPipeEmerald();
+		//BuildCraftCore.itemBptProps[pipeItemsWood.itemID] = new BptItemPipeWooden();
+		//BuildCraftCore.itemBptProps[pipeFluidsWood.itemID] = new BptItemPipeWooden();
+		//BuildCraftCore.itemBptProps[pipeItemsIron.itemID] = new BptItemPipeIron();
+		//BuildCraftCore.itemBptProps[pipeFluidsIron.itemID] = new BptItemPipeIron();
+		//BuildCraftCore.itemBptProps[pipeItemsDiamond.itemID] = new BptItemPipeDiamond();
+		//BuildCraftCore.itemBptProps[pipeItemsEmerald.itemID] = new BptItemPipeEmerald();
 
 		ActionManager.registerTriggerProvider(new PipeTriggerProvider());
 
@@ -425,7 +416,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 	public void loadRecipes() {
 
 		// Add base recipe for pipe waterproof.
-		GameRegistry.addShapelessRecipe(new ItemStack(pipeWaterproof, 1), new ItemStack(Item.dyePowder, 1, 2));
+		GameRegistry.addShapelessRecipe(new ItemStack(pipeWaterproof, 1), new ItemStack(Items.dye, 1, 2));
 
 		// Add pipe recipes
 		for (PipeRecipe pipe : pipeRecipes) {
@@ -438,8 +429,8 @@ public class BuildCraftTransport extends BuildCraftMod {
 
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(filteredBufferBlock, 1),
 				new Object[]{"wdw", "wcw", "wpw", 'w', "plankWood", 'd',
-			BuildCraftTransport.pipeItemsDiamond, 'c', Block.chest, 'p',
-			Block.pistonBase});
+			BuildCraftTransport.pipeItemsDiamond, 'c', Blocks.chest, 'p',
+			Blocks.piston});
 
 		//Facade turning helper
 		GameRegistry.addRecipe(facadeItem.new FacadeRecipe());
@@ -459,7 +450,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 
 		int id = prop.getInt(defaultID);
 		ItemPipe res = BlockGenericPipe.registerPipe(id, clas);
-		res.setUnlocalizedName(clas.getSimpleName());
+		res.setBlockName(clas.getSimpleName());
 		LanguageRegistry.addName(res, descr);
 
 		// Add appropriate recipe to temporary list

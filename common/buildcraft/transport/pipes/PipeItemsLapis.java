@@ -71,7 +71,7 @@ public class PipeItemsLapis extends Pipe<PipeTransportItems> {
 
 	public void setColor(EnumColor color) {
 		if (color.ordinal() != container.getBlockMetadata()) {
-			container.worldObj.setBlockMetadataWithNotify(container.xCoord, container.yCoord, container.zCoord, color.ordinal(), 3);
+			container.getWorldObj().setBlockMetadataWithNotify(container.xCoord, container.yCoord, container.zCoord, color.ordinal(), 3);
 			container.scheduleRenderUpdate();
 		}
 	}

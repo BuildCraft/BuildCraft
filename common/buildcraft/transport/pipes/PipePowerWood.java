@@ -67,7 +67,7 @@ public class PipePowerWood extends Pipe<PipeTransportPower> implements IPowerRec
 	@Override
 	public void updateEntity() {
 		super.updateEntity();
-		if (container.worldObj.isRemote)
+		if (container.getWorldObj().isRemote)
 			return;
 
 		if (powerHandler.getEnergyStored() <= 0)

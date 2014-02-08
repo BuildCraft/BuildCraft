@@ -63,8 +63,8 @@ public class InventoryMapper implements IInventory {
     }
 
     @Override
-    public String getInvName() {
-        return inv.getInvName();
+    public String getInventoryName() {
+        return inv.getInventoryName();
     }
 
     public void setStackSizeLimit(int limit) {
@@ -87,13 +87,13 @@ public class InventoryMapper implements IInventory {
     }
 
     @Override
-    public void openChest() {
-        inv.openChest();
+    public void openInventory() {
+        inv.openInventory();
     }
 
     @Override
-    public void closeChest() {
-        inv.closeChest();
+    public void closeInventory() {
+        inv.closeInventory();
     }
 
     @Override

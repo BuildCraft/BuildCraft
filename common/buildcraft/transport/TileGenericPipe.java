@@ -305,7 +305,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 			TileEntity tile = getTile(o);
 
 			if (tile instanceof ITileBufferHolder)
-				((ITileBufferHolder) tile).blockCreated(o, BuildCraftTransport.genericPipeBlock.blockID, this);
+				((ITileBufferHolder) tile).blockCreated(o, BuildCraftTransport.genericPipeBlock, this);
 			if (tile instanceof TileGenericPipe)
 				((TileGenericPipe) tile).scheduleNeighborChange();
 		}
@@ -433,19 +433,19 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 	}
 
 	@Override
-	public void blockCreated(ForgeDirection from, int blockID, TileEntity tile) {
+	public void blockCreated(ForgeDirection from, Block block, TileEntity tile) {
 		TileBuffer[] cache = getTileCache();
 		if (cache != null)
-			cache[from.getOpposite().ordinal()].set(blockID, tile);
+			cache[from.getOpposite().ordinal()].set(block, tile);
 	}
 
 	@Override
-	public int getBlockId(ForgeDirection to) {
+	public Block getBlock(ForgeDirection to) {
 		TileBuffer[] cache = getTileCache();
 		if (cache != null)
-			return cache[to.ordinal()].getBlockID();
+			return cache[to.ordinal()].getBlock();
 		else
-			return 0;
+			return null;
 	}
 
 	@Override
@@ -590,7 +590,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 	}
 
 	public boolean addFacade(ForgeDirection direction, int blockid, int meta) {
-		if (this.worldObj.isRemote)
+		if (this.getWorldObj().isRemote)
 			return false;
 		if (this.facadeBlocks[direction.ordinal()] == blockid)
 			return false;
@@ -600,7 +600,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 
 		this.facadeBlocks[direction.ordinal()] = blockid;
 		this.facadeMeta[direction.ordinal()] = meta;
-		worldObj.notifyBlockChange(this.xCoord, this.yCoord, this.zCoord, getBlockId());
+		worldObj.notifyBlockChange(this.xCoord, this.yCoord, this.zCoord, getBlock());
 		scheduleRenderUpdate();
 		return true;
 	}
@@ -608,7 +608,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 	public boolean hasFacade(ForgeDirection direction) {
 		if (direction == null || direction == ForgeDirection.UNKNOWN)
 			return false;
-		if (this.worldObj.isRemote)
+		if (this.getWorldObj().isRemote)
 			return renderState.facadeMatrix.getFacadeBlockId(direction) != 0;
 		return (this.facadeBlocks[direction.ordinal()] != 0);
 	}
@@ -624,7 +624,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 			dropFacadeItem(direction);
 			this.facadeBlocks[direction.ordinal()] = 0;
 			this.facadeMeta[direction.ordinal()] = 0;
-			worldObj.notifyBlockChange(this.xCoord, this.yCoord, this.zCoord, getBlockId());
+			worldObj.notifyBlockChange(this.xCoord, this.yCoord, this.zCoord, getBlock());
 			scheduleRenderUpdate();
 		}
 		return true;
@@ -722,7 +722,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 	public boolean hasPlug(ForgeDirection side) {
 		if (side == null || side == ForgeDirection.UNKNOWN)
 			return false;
-		if (this.worldObj.isRemote)
+		if (this.getWorldObj().isRemote)
 			return renderState.plugMatrix.isConnected(side);
 		return plugs[side.ordinal()];
 	}
@@ -733,7 +733,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 		if (!worldObj.isRemote) {
 			plugs[side.ordinal()] = false;
 			InvUtils.dropItems(worldObj, new ItemStack(BuildCraftTransport.plugItem), this.xCoord, this.yCoord, this.zCoord);
-			worldObj.notifyBlockChange(this.xCoord, this.yCoord, this.zCoord, getBlockId());
+			worldObj.notifyBlockChange(this.xCoord, this.yCoord, this.zCoord, getBlock());
 			scheduleNeighborChange(); //To force recalculation of connections
 			scheduleRenderUpdate();
 		}
@@ -745,17 +745,14 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 			return false;
 
 		plugs[forgeDirection.ordinal()] = true;
-		worldObj.notifyBlockChange(this.xCoord, this.yCoord, this.zCoord, getBlockId());
+		worldObj.notifyBlockChange(this.xCoord, this.yCoord, this.zCoord, getBlock());
 		scheduleNeighborChange(); //To force recalculation of connections
 		scheduleRenderUpdate();
 		return true;
 	}
 
-	public int getBlockId() {
-		Block block = getBlockType();
-		if (block != null)
-			return block.blockID;
-		return 0;
+	public Block getBlock() {
+		return getBlockType();
 	}
 
 	@Override
@@ -764,7 +761,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 	}
 
 	public boolean isUseableByPlayer(EntityPlayer player) {
-		return worldObj.getBlockTileEntity(xCoord, yCoord, zCoord) == this;
+		return worldObj.getTileEntity(xCoord, yCoord, zCoord) == this;
 	}
 
 	@Override

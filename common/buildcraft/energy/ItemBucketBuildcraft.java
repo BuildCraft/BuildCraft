@@ -11,7 +11,9 @@ import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.utils.StringUtils;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBucket;
 import net.minecraft.item.ItemStack;
@@ -20,10 +22,10 @@ public class ItemBucketBuildcraft extends ItemBucket {
 
 	private String iconName;
 
-	public ItemBucketBuildcraft(int i, int blockId) {
-		super(i, blockId);
+	public ItemBucketBuildcraft(Block block) {
+		super(block);
 		setCreativeTab(CreativeTabBuildCraft.MACHINES.get());
-		setContainerItem(Item.bucketEmpty);
+		setContainerItem(Items.bucket);
 	}
 
 	@Override
@@ -32,9 +34,9 @@ public class ItemBucketBuildcraft extends ItemBucket {
 	}
 
 	@Override
-	public Item setUnlocalizedName(String par1Str) {
+	public Item setBlockName(String par1Str) {
 		iconName = par1Str;
-		return super.setUnlocalizedName(par1Str);
+		return super.setBlockName(par1Str);
 	}
 
 	@Override

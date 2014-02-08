@@ -44,7 +44,7 @@ public class PipeItemsWood extends Pipe<PipeTransportItems> implements IPowerRec
 				return false;
 			if (!(tile instanceof IInventory))
 				return false;
-			if (!PipeManager.canExtractItems(pipe, tile.worldObj, tile.xCoord, tile.yCoord, tile.zCoord))
+			if (!PipeManager.canExtractItems(pipe, tile.getWorldObj(), tile.xCoord, tile.yCoord, tile.zCoord))
 				return false;
 			return true;
 		}
@@ -102,7 +102,7 @@ public class PipeItemsWood extends Pipe<PipeTransportItems> implements IPowerRec
 
 	@Override
 	public void doWork(PowerHandler workProvider) {
-		if(container.worldObj.isRemote)
+		if(container.getWorldObj().isRemote)
 			return;
 		
 		if (powerHandler.getEnergyStored() <= 0)
@@ -123,7 +123,7 @@ public class PipeItemsWood extends Pipe<PipeTransportItems> implements IPowerRec
 		TileEntity tile = container.getTile(side);
 
 		if (tile instanceof IInventory) {
-			if (!PipeManager.canExtractItems(this, tile.worldObj, tile.xCoord, tile.yCoord, tile.zCoord))
+			if (!PipeManager.canExtractItems(this, tile.getWorldObj(), tile.xCoord, tile.yCoord, tile.zCoord))
 				return;
 
 			IInventory inventory = (IInventory) tile;

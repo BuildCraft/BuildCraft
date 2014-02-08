@@ -41,7 +41,7 @@ public class TileAssemblyTable extends TileLaserTableBase implements IMachine, I
 			nbt.setBoolean("s", select);
 			NBTTagCompound itemNBT = new NBTTagCompound();
 			stack.writeToNBT(itemNBT);
-			nbt.setCompoundTag("i", itemNBT);
+			nbt.setTag("i", itemNBT);
 			return nbt;
 		}
 
@@ -121,7 +121,7 @@ public class TileAssemblyTable extends TileLaserTableBase implements IMachine, I
 	}
 
 	@Override
-	public String getInvName() {
+	public String getInventoryName() {
 		return StringUtils.localize("tile.assemblyTableBlock");
 	}
 
@@ -307,12 +307,16 @@ public class TileAssemblyTable extends TileLaserTableBase implements IMachine, I
 
 	@Override
 	public boolean isInvNameLocalized() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public boolean isItemValidForSlot(int slot, ItemStack stack) {
 		return true;
+	}
+
+	@Override
+	public boolean hasCustomInventoryName() {
+		return false;
 	}
 }

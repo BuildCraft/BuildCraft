@@ -65,7 +65,7 @@ public class GateItemRenderer implements IItemRenderer {
 		GL11.glPopMatrix();
 	}
 
-	private void renderLayerIn3D(Icon icon) {
+	private void renderLayerIn3D(IIcon icon) {
 		if (icon == null)
 			return;
 		GL11.glPushMatrix();
@@ -148,7 +148,7 @@ public class GateItemRenderer implements IItemRenderer {
 	private void render(ItemRenderType type, ItemStack stack) {
 		GL11.glPushMatrix();
 		GL11.glDisable(GL11.GL_LIGHTING);
-		Icon icon = ItemGate.getLogic(stack).getIconItem();
+		IIcon icon = ItemGate.getLogic(stack).getIconItem();
 		renderItem.renderIcon(0, 0, icon, 16, 16);
 
 		if (type == ItemRenderType.ENTITY)

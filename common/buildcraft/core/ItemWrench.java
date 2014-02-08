@@ -16,8 +16,8 @@ public class ItemWrench extends ItemBuildCraft implements IToolWrench {
 
 	private final Set<Class<? extends Block>> shiftRotations = new HashSet<Class<? extends Block>>();
 
-	public ItemWrench(int i) {
-		super(i);
+	public ItemWrench() {
+		super();
 		setFull3D();
 		setMaxStackSize(1);
 		shiftRotations.add(BlockLever.class);
