@@ -33,6 +33,7 @@ import buildcraft.energy.worldgen.BiomeGenOilDesert;
 import buildcraft.energy.worldgen.BiomeGenOilOcean;
 import buildcraft.energy.worldgen.BiomeInitializer;
 import buildcraft.energy.worldgen.OilPopulate;
+import buildcraft.transport.network.PacketHandlerTransport;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
@@ -207,7 +208,10 @@ public class BuildCraftEnergy extends BuildCraftMod {
 
 	@EventHandler
 	public void init(FMLInitializationEvent evt) {
-		NetworkRegistry.INSTANCE.registerGuiHandler(instance, new GuiHandler());
+		channels = NetworkRegistry.INSTANCE.newChannel
+				(DefaultProps.NET_CHANNEL_NAME + "-ENERGY", new PacketHandlerTransport());
+		
+		NetworkRegistry.INSTANCE.registerGuiHandler(instance, new GuiHandler());		
 
 		//new BptBlockEngine(engineBlock.blockID);
 
