@@ -71,7 +71,7 @@ public class ItemPipe extends ItemBuildCraft implements IItemPipe {
 		}
 		
 		if (world.canPlaceEntityOnSide(block, i, j, k, false, side, entityplayer, itemstack)) {
-			Pipe pipe = BlockGenericPipe.createPipe(itemID);
+			Pipe pipe = BlockGenericPipe.createPipe(this);
 			
 			if (pipe == null) {
 				BCLog.logger.log(Level.WARNING, "Pipe failed to create during placement at {0},{1},{2}", new Object[]{i, j, k});
@@ -128,7 +128,7 @@ public class ItemPipe extends ItemBuildCraft implements IItemPipe {
 	@SideOnly(Side.CLIENT)
 	public void addInformation(ItemStack stack, EntityPlayer player, List list, boolean advanced) {
 		super.addInformation(stack, player, list, advanced);
-		Class<? extends Pipe> pipe = BlockGenericPipe.pipes.get(itemID);
+		Class<? extends Pipe> pipe = BlockGenericPipe.pipes.get(this);
 		List<String> toolTip = PipeToolTipManager.getToolTip(pipe);
 		list.addAll(toolTip);
 	}

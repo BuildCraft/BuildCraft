@@ -25,7 +25,7 @@ public class SiliconRenderBlock implements ISimpleBlockRenderingHandler {
 	}
 
 	@Override
-	public boolean shouldRender3DInInventory() {
+	public boolean shouldRender3DInInventory(int modelId) {
 		return true;
 	}
 
@@ -168,23 +168,4 @@ public class SiliconRenderBlock implements ISimpleBlockRenderingHandler {
 		renderblocks.renderFaceXPos(block, 0.0D, 0.0D, 0.0D, block.getIcon(5, i));
 		tessellator.draw();
 	}
-
-	/*
-	 * @Override public GuiScreen handleGUI(int i) { switch (Utils.intToPacketId(i)) { case AssemblyTableGUI: return new GuiAssemblyTable(
-	 * ModLoader.getMinecraftInstance().thePlayer.inventory, new TileAssemblyTable()); default: return null; } }
-	 */
-
-	/*
-	 * @Override public void handlePacket(Packet230ModLoader packet) { switch (PacketIds.values()[packet.packetType]) { case AssemblyTableSelect: GuiScreen
-	 * screen = ModLoader.getMinecraftInstance().currentScreen;
-	 *
-	 * if (screen instanceof GuiAssemblyTable) { GuiAssemblyTable gui = (GuiAssemblyTable) screen; SelectionMessage message = new SelectionMessage();
-	 *
-	 * TileAssemblyTable.selectionMessageWrapper.updateFromPacket(message, packet);
-	 *
-	 * gui.handleSelectionMessage (message); }
-	 *
-	 * break; } }
-	 */
-
 }

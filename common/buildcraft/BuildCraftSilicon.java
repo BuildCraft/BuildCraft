@@ -81,7 +81,7 @@ public class BuildCraftSilicon extends BuildCraftMod {
 		LanguageRegistry.addName(new ItemStack(assemblyTableBlock, 0, 2), "Integration Table");
 
 		redstoneChipset = new ItemRedstoneChipset();
-		redstoneChipset.setBlockName("redstoneChipset");
+		redstoneChipset.setUnlocalizedName("redstoneChipset");
 		CoreProxy.proxy.registerItem(redstoneChipset);
 		redstoneChipset.registerItemStacks();
 	}

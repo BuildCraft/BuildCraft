@@ -15,11 +15,12 @@ import buildcraft.core.render.RenderUtils;
 import buildcraft.factory.TileRefinery;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
-import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
+import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.FluidStack;
+
 import org.lwjgl.opengl.GL11;
 
 public class RenderRefinery extends TileEntitySpecialRenderer implements IInventoryRenderer {
@@ -51,7 +52,7 @@ public class RenderRefinery extends TileEntitySpecialRenderer implements IInvent
 
 		}
 
-		setTileEntityRenderer(TileEntityRenderer.instance);
+		field_147501_a = TileEntityRendererDispatcher.instance;
 	}
 
 	public RenderRefinery(String baseTexture) {

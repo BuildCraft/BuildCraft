@@ -11,7 +11,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
-import cpw.mods.fml.common.network.PacketDispatcher;
 
 /**
  * 
@@ -39,6 +38,7 @@ public class PacketGuiReturn extends BuildCraftPacket {
 	@Override
 	public void writeData(ByteBuf data) {
 		data.writeInt(obj.getWorld().provider.dimensionId);
+		
 		if (obj instanceof TileEntity) {
 			TileEntity tile = (TileEntity) obj;
 			data.writeBoolean(true);
@@ -49,11 +49,15 @@ public class PacketGuiReturn extends BuildCraftPacket {
 			Entity entity = (Entity) obj;
 			data.writeBoolean(false);
 			data.writeInt(entity.getEntityId());
-		} else
+		} else {
 			return;
+		}
+		
 		obj.writeGuiData(data);
-		if (extraData != null)
-			data.write(extraData);
+		
+		if (extraData != null) {
+			data.writeBytes(extraData);
+		}
 	}
 
 	@Override
@@ -61,6 +65,7 @@ public class PacketGuiReturn extends BuildCraftPacket {
 		int dim = data.readInt();
 		World world = DimensionManager.getWorld(dim);
 		boolean tileReturn = data.readBoolean();
+		
 		if (tileReturn) {
 			int x = data.readInt();
 			int y = data.readInt();
@@ -68,15 +73,16 @@ public class PacketGuiReturn extends BuildCraftPacket {
 
 			TileEntity t = world.getTileEntity(x, y, z);
 
-			if (t instanceof IGuiReturnHandler)
+			if (t instanceof IGuiReturnHandler) {
 				((IGuiReturnHandler) t).readGuiData(data, sender);
-
+			}
 		} else {
 			int entityId = data.readInt();
 			Entity entity = world.getEntityByID(entityId);
 
-			if (entity instanceof IGuiReturnHandler)
+			if (entity instanceof IGuiReturnHandler) {
 				((IGuiReturnHandler) entity).readGuiData(data, sender);
+			}
 		}
 	}
 

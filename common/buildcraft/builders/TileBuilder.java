@@ -456,10 +456,10 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 
 		if (nbttagcompound.hasKey("path")) {
 			path = new LinkedList<BlockIndex>();
-			NBTTagList list = nbttagcompound.getTagList("path");
+			NBTTagList list = nbttagcompound.getTagList("path", Utils.NBTTag_Types.NBTTagCompound.ordinal());
 
 			for (int i = 0; i < list.tagCount(); ++i) {
-				path.add(new BlockIndex((NBTTagCompound) list.tagAt(i)));
+				path.add(new BlockIndex(list.getCompoundTagAt(i)));
 			}
 		}
 

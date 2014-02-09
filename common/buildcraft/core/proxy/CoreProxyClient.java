@@ -44,7 +44,6 @@ import net.minecraft.network.INetHandler;
 import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.network.Packet;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ChatMessageComponent;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.World;
 
@@ -141,7 +140,7 @@ public class CoreProxyClient extends CoreProxy {
 	/* BUILDCRAFT PLAYER */
 	@Override
 	public String playerName() {
-		return FMLClientHandler.instance().getClient().thePlayer.username;
+		return FMLClientHandler.instance().getClient().thePlayer.getDisplayName();
 	}
 
 	private EntityPlayer createNewPlayer(World world) {

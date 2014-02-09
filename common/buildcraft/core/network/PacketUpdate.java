@@ -34,7 +34,6 @@ public class PacketUpdate extends BuildCraftPacket {
 	public PacketUpdate(int packetId) {
 		this.packetId = packetId;
 		this.isChunkDataPacket = true;
-
 	}
 
 	@Override

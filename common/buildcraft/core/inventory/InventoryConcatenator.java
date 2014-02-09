@@ -70,17 +70,8 @@ public class InventoryConcatenator implements IInventory {
 	}
 
 	@Override
-	public boolean isInvNameLocalized() {
-		return false;
-	}
-
-	@Override
 	public int getInventoryStackLimit() {
 		return 64;
-	}
-
-	@Override
-	public void onInventoryChanged() {
 	}
 
 	@Override
@@ -99,5 +90,14 @@ public class InventoryConcatenator implements IInventory {
 	@Override
 	public boolean isItemValidForSlot(int slot, ItemStack stack) {
 		return invMap.get(slot).isItemValidForSlot(slotMap.get(slot), stack);
+	}
+
+	@Override
+	public boolean hasCustomInventoryName() {
+		return false;
+	}
+
+	@Override
+	public void markDirty() {
 	}
 }

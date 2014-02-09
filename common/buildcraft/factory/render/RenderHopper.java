@@ -7,7 +7,7 @@ import buildcraft.core.IInventoryRenderer;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
+import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
@@ -35,7 +35,7 @@ public class RenderHopper extends TileEntitySpecialRenderer implements IInventor
 		bottom.rotationPointX = 8F;
 		bottom.rotationPointY = 8F;
 		bottom.rotationPointZ = 8F;
-		setTileEntityRenderer(TileEntityRenderer.instance);
+		field_147501_a = TileEntityRendererDispatcher.instance;
 	}
 
 	@Override

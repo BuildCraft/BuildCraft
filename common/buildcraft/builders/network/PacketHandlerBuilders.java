@@ -9,9 +9,7 @@ import buildcraft.core.network.PacketIds;
 import buildcraft.core.network.PacketPayloadArrays;
 import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.proxy.CoreProxy;
-import cpw.mods.fml.common.network.IPacketHandler;
 import cpw.mods.fml.common.network.NetworkRegistry;
-import cpw.mods.fml.common.network.Player;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 
@@ -20,8 +18,6 @@ import java.io.DataInputStream;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.INetHandler;
-import net.minecraft.network.INetworkManager;
-import net.minecraft.network.Packet250CustomPayload;
 import net.minecraft.tileentity.TileEntity;
 
 public class PacketHandlerBuilders extends BuildCraftChannelHandler {

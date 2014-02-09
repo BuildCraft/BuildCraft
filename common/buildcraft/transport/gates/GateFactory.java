@@ -11,6 +11,7 @@ package buildcraft.transport.gates;
 import buildcraft.api.gates.GateExpansionController;
 import buildcraft.api.gates.GateExpansions;
 import buildcraft.api.gates.IGateExpansion;
+import buildcraft.core.utils.Utils;
 import buildcraft.transport.Gate;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.gates.GateDefinition.GateLogic;
@@ -98,9 +99,9 @@ public class GateFactory {
 			gate.expansions.put(GateExpansionPulsar.INSTANCE, pulsarCon);
 		}
 
-		NBTTagList exList = nbt.getTagList("expansions");
+		NBTTagList exList = nbt.getTagList("expansions", Utils.NBTTag_Types.NBTTagCompound.ordinal());
 		for (int i = 0; i < exList.tagCount(); i++) {
-			NBTTagCompound conNBT = (NBTTagCompound) exList.tagAt(i);
+			NBTTagCompound conNBT = exList.getCompoundTagAt(i);
 			IGateExpansion ex = GateExpansions.getExpansion(conNBT.getString("type"));
 			if (ex != null) {
 				GateExpansionController con = ex.makeController(pipe.container);

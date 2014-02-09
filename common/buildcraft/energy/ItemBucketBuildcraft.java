@@ -29,14 +29,14 @@ public class ItemBucketBuildcraft extends ItemBucket {
 	}
 
 	@Override
-	public String getItemDisplayName(ItemStack itemstack) {
+	public String getItemStackDisplayName(ItemStack itemstack) {
 		return StringUtils.localize(getUnlocalizedName(itemstack));
 	}
 
 	@Override
-	public Item setBlockName(String par1Str) {
+	public Item setUnlocalizedName(String par1Str) {
 		iconName = par1Str;
-		return super.setBlockName(par1Str);
+		return super.setUnlocalizedName(par1Str);
 	}
 
 	@Override

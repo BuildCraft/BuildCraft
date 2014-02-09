@@ -3,8 +3,6 @@ package buildcraft.transport.network;
 import buildcraft.core.network.BuildCraftPacket;
 import buildcraft.core.network.PacketIds;
 import buildcraft.transport.TravelingItem;
-import cpw.mods.fml.common.network.PacketDispatcher;
-import cpw.mods.fml.common.network.Player;
 import io.netty.buffer.ByteBuf;
 
 import java.io.DataInputStream;

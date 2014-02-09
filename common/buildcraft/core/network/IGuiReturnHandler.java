@@ -1,5 +1,7 @@
 package buildcraft.core.network;
 
+import io.netty.buffer.ByteBuf;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -14,7 +16,7 @@ import net.minecraft.world.World;
 public abstract interface IGuiReturnHandler {
 	public World getWorld();
 
-	public void writeGuiData(DataOutputStream data) throws IOException;
+	public void writeGuiData(ByteBuf data);
 
-	public void readGuiData(DataInputStream data, EntityPlayer player) throws IOException;
+	public void readGuiData(ByteBuf data, EntityPlayer player);
 }

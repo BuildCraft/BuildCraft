@@ -138,7 +138,7 @@ public class TileArchitect extends TileBuildCraft implements IInventory {
 
 		BptBase result = new BptTemplate(box.sizeX(), box.sizeY(), box.sizeZ());
 
-		for (int x = box.xMin; x <= box.xMax; ++x) {
+		/*for (int x = box.xMin; x <= box.xMax; ++x) {
 			for (int y = box.yMin; y <= box.yMax; ++y) {
 				for (int z = box.zMin; z <= box.zMax; ++z) {
 					if (!worldObj.isAirBlock(x, y, z)) {
@@ -148,7 +148,7 @@ public class TileArchitect extends TileBuildCraft implements IInventory {
 					}
 				}
 			}
-		}
+		}*/
 
 		return result;
 	}
@@ -260,10 +260,10 @@ public class TileArchitect extends TileBuildCraft implements IInventory {
 			box.initialize(nbttagcompound.getCompoundTag("box"));
 		}
 
-		NBTTagList nbttaglist = nbttagcompound.getTagList("Items");
+		NBTTagList nbttaglist = nbttagcompound.getTagList("Items", Utils.NBTTag_Types.NBTTagCompound.ordinal());
 		items = new ItemStack[getSizeInventory()];
 		for (int i = 0; i < nbttaglist.tagCount(); i++) {
-			NBTTagCompound nbttagcompound1 = (NBTTagCompound) nbttaglist.tagAt(i);
+			NBTTagCompound nbttagcompound1 = nbttaglist.getCompoundTagAt(i);
 			int j = nbttagcompound1.getByte("Slot") & 0xff;
 			if (j >= 0 && j < items.length) {
 				items[j] = ItemStack.loadItemStackFromNBT(nbttagcompound1);

@@ -18,16 +18,18 @@ import buildcraft.core.inventory.Transactor;
 import buildcraft.core.utils.BCLog;
 import buildcraft.core.utils.BlockUtil;
 import buildcraft.core.utils.MathUtils;
+import buildcraft.core.utils.Utils;
 import buildcraft.transport.network.PacketPipeTransportItemStackRequest;
 import buildcraft.transport.network.PacketPipeTransportTraveler;
 import buildcraft.transport.pipes.events.PipeEventItem;
 import buildcraft.transport.utils.TransportUtils;
-import cpw.mods.fml.common.network.PacketDispatcher;
+
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
+
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
@@ -370,11 +372,11 @@ public class PipeTransportItems extends PipeTransport {
 	public void readFromNBT(NBTTagCompound nbt) {
 		super.readFromNBT(nbt);
 
-		NBTTagList nbttaglist = nbt.getTagList("travelingEntities");
+		NBTTagList nbttaglist = nbt.getTagList("travelingEntities", Utils.NBTTag_Types.NBTTagCompound.ordinal());
 
 		for (int j = 0; j < nbttaglist.tagCount(); ++j) {
 			try {
-				NBTTagCompound dataTag = (NBTTagCompound) nbttaglist.tagAt(j);
+				NBTTagCompound dataTag = nbttaglist.getCompoundTagAt(j);
 
 				TravelingItem item = TravelingItem.make(dataTag);
 

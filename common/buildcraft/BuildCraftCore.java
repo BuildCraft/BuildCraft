@@ -208,7 +208,7 @@ public class BuildCraftCore extends BuildCraftMod {
 			longFactor.comment = "delay between full client sync packets, increasing it saves bandwidth, decreasing makes for better client syncronization.";
 			longUpdateFactor = longFactor.getInt(40);
 
-			wrenchItem = (new ItemWrench()).setBlockName("wrenchItem");
+			wrenchItem = (new ItemWrench()).setUnlocalizedName("wrenchItem");
 			LanguageRegistry.addName(wrenchItem, "Wrench");
 			CoreProxy.proxy.registerItem(wrenchItem);
 
@@ -226,27 +226,27 @@ public class BuildCraftCore extends BuildCraftMod {
 			consumeWaterSources = consumeWater.getBoolean(consumeWaterSources);
 			consumeWater.comment = "set to true if the Pump should consume water";
 
-			woodenGearItem = (new ItemBuildCraft()).setBlockName("woodenGearItem");
+			woodenGearItem = (new ItemBuildCraft()).setUnlocalizedName("woodenGearItem");
 			LanguageRegistry.addName(woodenGearItem, "Wooden Gear");
 			CoreProxy.proxy.registerItem(woodenGearItem);
 			OreDictionary.registerOre("gearWood", new ItemStack(woodenGearItem));
 
-			stoneGearItem = (new ItemBuildCraft()).setBlockName("stoneGearItem");
+			stoneGearItem = (new ItemBuildCraft()).setUnlocalizedName("stoneGearItem");
 			LanguageRegistry.addName(stoneGearItem, "Stone Gear");
 			CoreProxy.proxy.registerItem(stoneGearItem);
 			OreDictionary.registerOre("gearStone", new ItemStack(stoneGearItem));
 
-			ironGearItem = (new ItemBuildCraft()).setBlockName("ironGearItem");
+			ironGearItem = (new ItemBuildCraft()).setUnlocalizedName("ironGearItem");
 			LanguageRegistry.addName(ironGearItem, "Iron Gear");
 			CoreProxy.proxy.registerItem(ironGearItem);
 			OreDictionary.registerOre("gearIron", new ItemStack(ironGearItem));
 
-			goldGearItem = (new ItemBuildCraft()).setBlockName("goldGearItem");
+			goldGearItem = (new ItemBuildCraft()).setUnlocalizedName("goldGearItem");
 			LanguageRegistry.addName(goldGearItem, "Gold Gear");
 			CoreProxy.proxy.registerItem(goldGearItem);
 			OreDictionary.registerOre("gearGold", new ItemStack(goldGearItem));
 
-			diamondGearItem = (new ItemBuildCraft()).setBlockName("diamondGearItem");
+			diamondGearItem = (new ItemBuildCraft()).setUnlocalizedName("diamondGearItem");
 			LanguageRegistry.addName(diamondGearItem, "Diamond Gear");
 			CoreProxy.proxy.registerItem(diamondGearItem);
 			OreDictionary.registerOre("gearDiamond", new ItemStack(diamondGearItem));

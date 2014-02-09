@@ -1,12 +1,14 @@
 package buildcraft.silicon;
 
 import buildcraft.core.ItemBlockBuildCraft;
+import net.minecraft.block.Block;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
 public class ItemLaserTable extends ItemBlockBuildCraft {
 
-	public ItemLaserTable(int par1) {
-		super(par1);
+	public ItemLaserTable(Block block) {
+		super(block);
 		setMaxDamage(0);
 		setHasSubtypes(true);
 	}

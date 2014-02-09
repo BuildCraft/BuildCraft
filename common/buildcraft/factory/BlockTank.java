@@ -74,7 +74,7 @@ public class BlockTank extends BlockContainer {
 
 	@SuppressWarnings({"all"})
 	@Override
-	public IIcon getBlockTexture(IBlockAccess iblockaccess, int i, int j, int k, int l) {
+	public IIcon getIcon(IBlockAccess iblockaccess, int i, int j, int k, int l) {
 		switch (l) {
 			case 0:
 			case 1:

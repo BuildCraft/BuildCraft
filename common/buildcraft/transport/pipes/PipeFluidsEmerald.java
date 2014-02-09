@@ -7,6 +7,7 @@
  */
 package buildcraft.transport.pipes;
 
+import net.minecraft.item.Item;
 import buildcraft.transport.PipeIconProvider;
 
 /**
@@ -15,8 +16,8 @@ import buildcraft.transport.PipeIconProvider;
  */
 public class PipeFluidsEmerald extends PipeFluidsWood {
 
-	public PipeFluidsEmerald(int itemID) {
-		super(itemID);
+	public PipeFluidsEmerald(Item item) {
+		super(item);
 
 		standardIconIndex = PipeIconProvider.TYPE.PipeFluidsEmerald_Standard.ordinal();
 		solidIconIndex = PipeIconProvider.TYPE.PipeAllEmerald_Solid.ordinal();

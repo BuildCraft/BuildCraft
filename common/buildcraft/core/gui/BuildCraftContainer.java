@@ -12,8 +12,6 @@ import buildcraft.core.gui.slots.SlotBase;
 import buildcraft.core.gui.widgets.Widget;
 import buildcraft.core.inventory.StackHelper;
 import buildcraft.core.network.PacketGuiWidget;
-import cpw.mods.fml.common.network.PacketDispatcher;
-import cpw.mods.fml.common.network.Player;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.util.ArrayList;

@@ -125,7 +125,7 @@ public class RenderingMarkers implements ISimpleBlockRenderingHandler {
 		int yCoord = (int) y;
 		int zCoord = (int) z;
 
-		IIcon i = block.getBlockTexture(iblockaccess, xCoord, yCoord, zCoord, 1);
+		IIcon i = block.getIcon(iblockaccess, xCoord, yCoord, zCoord, 1);
 
 		int m = metaToOld[meta];
 		x += 0.5D;
@@ -173,7 +173,7 @@ public class RenderingMarkers implements ISimpleBlockRenderingHandler {
 			tessellator.addVertexWithUV(x - s, y + 0.5 - s, z - s, minU, minV);
 		}
 		
-		i = block.getBlockTexture(iblockaccess, xCoord, yCoord, zCoord, 0);
+		i = block.getIcon(iblockaccess, xCoord, yCoord, zCoord, 0);
 		
 		minU = i.getMinU();
 		maxU = i.getMaxU();

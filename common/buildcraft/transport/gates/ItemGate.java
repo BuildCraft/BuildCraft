@@ -9,19 +9,23 @@ import buildcraft.api.gates.ITrigger;
 import buildcraft.core.ItemBuildCraft;
 import buildcraft.core.inventory.InvUtils;
 import buildcraft.core.utils.Localization;
+import buildcraft.core.utils.Utils;
 import buildcraft.transport.Gate;
 import buildcraft.transport.gates.GateDefinition.GateLogic;
 import buildcraft.transport.gates.GateDefinition.GateMaterial;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -75,8 +79,8 @@ public class ItemGate extends ItemBuildCraft {
 		NBTTagCompound nbt = getNBT(stack);
 		if (nbt == null)
 			return;
-		NBTTagList expansionList = nbt.getTagList(NBT_TAG_EX);
-		expansionList.appendTag(new NBTTagString("", expansion.getUniqueIdentifier()));
+		NBTTagList expansionList = nbt.getTagList(NBT_TAG_EX, Utils.NBTTag_Types.NBTTagString.ordinal());
+		expansionList.appendTag(new NBTTagString(expansion.getUniqueIdentifier()));
 		nbt.setTag(NBT_TAG_EX, expansionList);
 	}
 
@@ -85,10 +89,10 @@ public class ItemGate extends ItemBuildCraft {
 		if (nbt == null)
 			return false;
 		try {
-			NBTTagList expansionList = nbt.getTagList(NBT_TAG_EX);
+			NBTTagList expansionList = nbt.getTagList(NBT_TAG_EX, Utils.NBTTag_Types.NBTTagString.ordinal());
 			for (int i = 0; i < expansionList.tagCount(); i++) {
-				NBTTagString ex = (NBTTagString) expansionList.tagAt(i);
-				if (ex.data.equals(expansion.getUniqueIdentifier()))
+				String ex = expansionList.getStringTagAt(i);
+				if (ex.equals(expansion.getUniqueIdentifier()))
 					return true;
 			}
 		} catch (RuntimeException error) {
@@ -102,10 +106,10 @@ public class ItemGate extends ItemBuildCraft {
 		if (nbt == null)
 			return expansions;
 		try {
-			NBTTagList expansionList = nbt.getTagList(NBT_TAG_EX);
+			NBTTagList expansionList = nbt.getTagList(NBT_TAG_EX, Utils.NBTTag_Types.NBTTagString.ordinal());
 			for (int i = 0; i < expansionList.tagCount(); i++) {
-				NBTTagString exTag = (NBTTagString) expansionList.tagAt(i);
-				IGateExpansion ex = GateExpansions.getExpansion(exTag.data);
+				String exTag = expansionList.getStringTagAt(i);
+				IGateExpansion ex = GateExpansions.getExpansion(exTag);
 				if (ex != null)
 					expansions.add(ex);
 			}
@@ -141,7 +145,7 @@ public class ItemGate extends ItemBuildCraft {
 	@SuppressWarnings({"unchecked", "rawtypes"})
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void getSubItems(int id, CreativeTabs tab, List itemList) {
+	public void getSubItems(Item item, CreativeTabs tab, List itemList) {
 		for (GateMaterial material : GateMaterial.VALUES) {
 			for (GateLogic logic : GateLogic.VALUES) {
 				if (material == GateMaterial.REDSTONE && logic == GateLogic.OR)

@@ -60,7 +60,7 @@ public class BlockFiller extends BlockContainer {
 	}
 
 	@Override
-	public IIcon getBlockTexture(IBlockAccess world, int x, int y, int z, int side) {
+	public IIcon getIcon(IBlockAccess world, int x, int y, int z, int side) {
 		int m = world.getBlockMetadata(x, y, z);
 		TileEntity tile = world.getTileEntity(x, y, z);
 

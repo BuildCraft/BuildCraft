@@ -943,7 +943,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 
 	public static ItemPipe registerPipe(Class<? extends Pipe> clas) {
 		ItemPipe item = new ItemPipe();
-		item.setBlockName("buildcraftPipe." + clas.getSimpleName().toLowerCase(Locale.ENGLISH));
+		item.setUnlocalizedName("buildcraftPipe." + clas.getSimpleName().toLowerCase(Locale.ENGLISH));
 		GameRegistry.registerItem(item, item.getUnlocalizedName());
 
 		pipes.put(item, clas);

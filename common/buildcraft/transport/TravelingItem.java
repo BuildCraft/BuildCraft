@@ -179,7 +179,7 @@ public final class TravelingItem {
 		data.setFloat("speed", getSpeed());
 		NBTTagCompound itemStackTag = new NBTTagCompound();
 		getItemStack().writeToNBT(itemStackTag);
-		data.setCompoundTag("Item", itemStackTag);
+		data.setTag("Item", itemStackTag);
 
 		data.setBoolean("toCenter", toCenter);
 		data.setInteger("input", input.ordinal());

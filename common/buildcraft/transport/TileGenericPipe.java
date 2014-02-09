@@ -8,6 +8,8 @@
 package buildcraft.transport;
 
 import buildcraft.api.transport.PipeWire;
+import io.netty.buffer.ByteBuf;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -16,6 +18,7 @@ import java.util.logging.Level;
 
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.Packet;
@@ -55,9 +58,10 @@ import buildcraft.transport.gates.GateDefinition;
 import buildcraft.transport.gates.GateFactory;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+
 import java.util.HashSet;
 import java.util.Set;
-import net.minecraft.server.management.PlayerInstance;
+
 import net.minecraft.world.WorldServer;
 
 public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFluidHandler, IPipeTile, IOverrideDefaultTriggers, ITileBufferHolder,
@@ -71,7 +75,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 		public final Set<Byte> expansions = new HashSet<Byte>();
 
 		@Override
-		public void writeData(DataOutputStream data) throws IOException {
+		public void writeData(ByteBuf data) {
 			data.writeInt(pipeId);
 			data.writeByte(gateMaterial);
 			data.writeByte(gateLogic);
@@ -82,7 +86,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 		}
 
 		@Override
-		public void readData(DataInputStream data) throws IOException {
+		public void readData(ByteBuf data) {
 			pipeId = data.readInt();
 			gateMaterial = data.readByte();
 			gateLogic = data.readByte();
@@ -106,7 +110,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 	private boolean pipeBound = false;
 	private boolean resyncGateExpansions = false;
 	public int redstoneInput = 0;
-	private Block[] facadeBlocks = new int[ForgeDirection.VALID_DIRECTIONS.length];
+	private Block[] facadeBlocks = new Block[ForgeDirection.VALID_DIRECTIONS.length];
 	private int[] facadeMeta = new int[ForgeDirection.VALID_DIRECTIONS.length];
 	private boolean[] plugs = new boolean[ForgeDirection.VALID_DIRECTIONS.length];
 
@@ -119,13 +123,13 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 		nbt.setByte("redstoneInput", (byte)redstoneInput);
 
 		if (pipe != null) {
-			nbt.setInteger("pipeId", pipe.itemID);
+			nbt.setInteger("pipeId", Item.itemRegistry.getIDForObject(pipe.item));
 			pipe.writeToNBT(nbt);
 		} else
 			nbt.setInteger("pipeId", coreState.pipeId);
 
 		for (int i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
-			nbt.setInteger("facadeBlocks[" + i + "]", facadeBlocks[i]);
+			nbt.setInteger("facadeBlocks[" + i + "]", Block.blockRegistry.getIDForObject(facadeBlocks[i]));
 			nbt.setInteger("facadeMeta[" + i + "]", facadeMeta[i]);
 			nbt.setBoolean("plug[" + i + "]", plugs[i]);
 		}
@@ -138,7 +142,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 		redstoneInput = nbt.getByte("redstoneInput");
 
 		coreState.pipeId = nbt.getInteger("pipeId");
-		pipe = BlockGenericPipe.createPipe(coreState.pipeId);
+		pipe = BlockGenericPipe.createPipe((Item) Item.itemRegistry.getObjectById(coreState.pipeId));
 		bindPipe();
 
 		if (pipe != null)
@@ -149,7 +153,8 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 		}
 
 		for (int i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
-			facadeBlocks[i] = nbt.getInteger("facadeBlocks[" + i + "]");
+			facadeBlocks[i] = (Block) Block.blockRegistry.getObjectById(nbt
+					.getInteger("facadeBlocks[" + i + "]"));
 			facadeMeta[i] = nbt.getInteger("facadeMeta[" + i + "]");
 			plugs[i] = nbt.getBoolean("plug[" + i + "]");
 		}
@@ -327,7 +332,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 
 			pipe.setTile(this);
 
-			coreState.pipeId = pipe.itemID;
+			coreState.pipeId = Item.getIdFromItem(pipe.item);
 			pipeBound = true;
 		}
 	}
@@ -609,7 +614,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 		if (direction == null || direction == ForgeDirection.UNKNOWN)
 			return false;
 		if (this.getWorldObj().isRemote)
-			return renderState.facadeMatrix.getFacadeBlockId(direction) != 0;
+			return renderState.facadeMatrix.getFacadeBlock(direction) != null;
 		return (this.facadeBlocks[direction.ordinal()] != null);
 	}
 
@@ -657,24 +662,28 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 
 		switch (stateId) {
 			case 0:
-				if (pipe == null && coreState.pipeId != 0)
-					initialize(BlockGenericPipe.createPipe(coreState.pipeId));
+				if (pipe == null && coreState.pipeId != 0) {
+					initialize(BlockGenericPipe.createPipe((Item) Item.itemRegistry.getObjectById(coreState.pipeId)));
+				}
 
-				if (pipe == null)
+				if (pipe == null) {
 					break;
+				}
 
-				if (coreState.gateMaterial == -1)
+				if (coreState.gateMaterial == -1) {
 					pipe.gate = null;
-				else if (pipe.gate == null)
+				} else if (pipe.gate == null) {
 					pipe.gate = GateFactory.makeGate(pipe, GateDefinition.GateMaterial.fromOrdinal(coreState.gateMaterial), GateDefinition.GateLogic.fromOrdinal(coreState.gateLogic));
+				}
 
 				syncGateExpansions();
 
-				worldObj.markBlockForRenderUpdate(xCoord, yCoord, zCoord);
+				worldObj.markBlockRangeForRenderUpdate(xCoord, yCoord, zCoord, xCoord, yCoord, zCoord);
 				break;
+				
 			case 1: {
 				if (renderState.needsRenderUpdate()) {
-					worldObj.markBlockForRenderUpdate(xCoord, yCoord, zCoord);
+					worldObj.markBlockRangeForRenderUpdate(xCoord, yCoord, zCoord, xCoord, yCoord, zCoord);
 					renderState.clean();
 				}
 				break;
@@ -765,13 +774,13 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 	}
 
 	@Override
-	public void writeGuiData(DataOutputStream data) throws IOException {
+	public void writeGuiData(ByteBuf data) {
 		if (BlockGenericPipe.isValid(pipe) && pipe instanceof IGuiReturnHandler)
 			((IGuiReturnHandler) pipe).writeGuiData(data);
 	}
 
 	@Override
-	public void readGuiData(DataInputStream data, EntityPlayer sender) throws IOException {
+	public void readGuiData(ByteBuf data, EntityPlayer sender) {
 		if (BlockGenericPipe.isValid(pipe) && pipe instanceof IGuiReturnHandler)
 			((IGuiReturnHandler) pipe).readGuiData(data, sender);
 	}

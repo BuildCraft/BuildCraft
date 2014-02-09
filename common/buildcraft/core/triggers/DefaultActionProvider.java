@@ -5,8 +5,8 @@ import buildcraft.api.gates.IAction;
 import buildcraft.api.gates.IActionProvider;
 import buildcraft.core.IMachine;
 import cpw.mods.fml.common.FMLLog;
+import org.apache.logging.log4j.Level;
 import java.util.LinkedList;
-import java.util.logging.Level;
 import net.minecraft.block.Block;
 import net.minecraft.tileentity.TileEntity;
 
@@ -29,7 +29,7 @@ public class DefaultActionProvider implements IActionProvider {
 					res.add(BuildCraftCore.actionLoop);
 			}
 		} catch (Throwable error) {			
-			FMLLog.log("Buildcraft", Level.SEVERE, "Outdated API detected, please update your mods!");
+			FMLLog.log("Buildcraft", Level.FATAL, "Outdated API detected, please update your mods!");
 		}
 
 		return res;

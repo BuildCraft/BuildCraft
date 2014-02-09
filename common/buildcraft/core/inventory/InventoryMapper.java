@@ -77,11 +77,6 @@ public class InventoryMapper implements IInventory {
     }
 
     @Override
-    public void onInventoryChanged() {
-        inv.onInventoryChanged();
-    }
-
-    @Override
     public boolean isUseableByPlayer(EntityPlayer entityplayer) {
         return inv.isUseableByPlayer(entityplayer);
     }
@@ -102,15 +97,20 @@ public class InventoryMapper implements IInventory {
     }
 
     @Override
-    public boolean isInvNameLocalized() {
-        return inv.isInvNameLocalized();
-    }
-
-    @Override
     public boolean isItemValidForSlot(int slot, ItemStack stack) {
         if (checkItems) {
             return inv.isItemValidForSlot(start + slot, stack);
         }
         return true;
     }
+
+	@Override
+	public boolean hasCustomInventoryName() {
+		return inv.hasCustomInventoryName();
+	}
+
+	@Override
+	public void markDirty() {
+		inv.markDirty();
+	}
 }

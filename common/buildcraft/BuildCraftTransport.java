@@ -45,7 +45,6 @@ import buildcraft.transport.ItemPipeWire;
 import buildcraft.transport.gates.GateExpansionRedstoneFader;
 import buildcraft.transport.gates.GateExpansionTimer;
 import buildcraft.transport.network.PacketHandlerTransport;
-import buildcraft.transport.network.TransportConnectionHandler;
 import buildcraft.transport.pipes.PipeFluidsCobblestone;
 import buildcraft.transport.pipes.PipeFluidsEmerald;
 import buildcraft.transport.pipes.PipeFluidsGold;
@@ -319,7 +318,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 			CoreProxy.proxy.registerItem(pipeGate);
 
 			facadeItem = new ItemFacade();
-			facadeItem.setBlockName("pipeFacade");
+			facadeItem.setUnlocalizedName("pipeFacade");
 			CoreProxy.proxy.registerItem(facadeItem);
 
 			plugItem = new ItemPlug();
@@ -445,7 +444,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 		String name = Character.toLowerCase(clas.getSimpleName().charAt(0)) + clas.getSimpleName().substring(1);
 
 		ItemPipe res = BlockGenericPipe.registerPipe(clas);
-		res.setBlockName(clas.getSimpleName());
+		res.setUnlocalizedName(clas.getSimpleName());
 		LanguageRegistry.addName(res, descr);
 
 		// Add appropriate recipe to temporary list

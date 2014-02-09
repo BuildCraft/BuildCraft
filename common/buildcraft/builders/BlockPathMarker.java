@@ -43,13 +43,13 @@ public class BlockPathMarker extends BlockMarker {
 
 	@SuppressWarnings({ "all" })
 	// @Override (client only)
-	public IIcon getBlockTexture(IBlockAccess iblockaccess, int i, int j, int k, int l) {
+	public IIcon getIcon(IBlockAccess iblockaccess, int i, int j, int k, int l) {
 		TilePathMarker marker = (TilePathMarker) iblockaccess.getTileEntity(i, j, k);
 
 		if (l == 1 || (marker != null && marker.tryingToConnect))
 			return activeMarker;
 		else
-			return super.getBlockTexture(iblockaccess, i, j, k, l);
+			return super.getIcon(iblockaccess, i, j, k, l);
 	}
 
 	@Override

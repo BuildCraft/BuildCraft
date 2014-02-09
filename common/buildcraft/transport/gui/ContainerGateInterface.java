@@ -22,8 +22,10 @@ import buildcraft.core.network.PacketPayloadArrays;
 import buildcraft.core.network.PacketPayloadStream;
 import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.proxy.CoreProxy;
+import buildcraft.core.utils.Utils;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.gates.GateDefinition;
+import io.netty.buffer.ByteBuf;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -39,6 +41,7 @@ import net.minecraft.inventory.ICrafting;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.Packet;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
@@ -163,50 +166,47 @@ public class ContainerGateInterface extends BuildCraftContainer {
 	 * @param packet
 	 */
 	public void setSelection(PacketUpdate packet, boolean notify) {
-		try {
-			PacketPayloadStream payload = (PacketPayloadStream) packet.payload;
-			DataInputStream data = payload.stream;
+		PacketPayloadStream payload = (PacketPayloadStream) packet.payload;
+		ByteBuf data = payload.stream;
 
-			int position = data.readInt();
+		int position = data.readInt();
 
-			setTrigger(position, ActionManager.triggers.get(data.readUTF()), notify);
-			setAction(position, ActionManager.actions.get(data.readUTF()), notify);
+		setTrigger(position, ActionManager.triggers.get(Utils.readUTF(data)), notify);
+		setAction(position, ActionManager.actions.get(Utils.readUTF(data)), notify);
 
-			ItemStack parameter = Packet.readItemStack(data);
-			if (parameter != null) {
-				ITriggerParameter param = new TriggerParameter();
-				param.set(parameter);
-				setTriggerParameter(position, param, notify);
-			} else {
-				setTriggerParameter(position, null, notify);
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
+		ItemStack parameter = Utils.readStack(data);		
+		
+		if (parameter != null) {
+			ITriggerParameter param = new TriggerParameter();
+			param.set(parameter);
+			setTriggerParameter(position, param, notify);
+		} else {
+			setTriggerParameter(position, null, notify);
 		}
 	}
 
 	private PacketPayload getSelectionPayload(final int position) {
 		PacketPayloadStream payload = new PacketPayloadStream(new PacketPayloadStream.StreamWriter() {
 			@Override
-			public void writeData(DataOutputStream data) throws IOException {
+			public void writeData(ByteBuf data) {
 				data.writeInt(position);
 
 				if (pipe.gate.triggers[position] != null) {
-					data.writeUTF(pipe.gate.triggers[position].getUniqueTag());
+					Utils.writeUTF(data, pipe.gate.triggers[position].getUniqueTag());
 				} else {
-					data.writeUTF("");
+					Utils.writeUTF(data, "");
 				}
 
 				if (pipe.gate.actions[position] != null) {
-					data.writeUTF(pipe.gate.actions[position].getUniqueTag());
+					Utils.writeUTF(data, pipe.gate.actions[position].getUniqueTag());
 				} else {
-					data.writeUTF("");
+					Utils.writeUTF(data, "");
 				}
 
 				if (pipe.gate.triggerParameters[position] != null && pipe.gate.triggerParameters[position].getItemStack() != null) {
-					Packet.writeItemStack(pipe.gate.triggerParameters[position].getItemStack().copy(), data);
+					Utils.writeStack(data, pipe.gate.triggerParameters[position].getItemStack());
 				} else {
-					Packet.writeItemStack(null, data);
+					Utils.writeStack(data, null);
 				}
 			}
 		});

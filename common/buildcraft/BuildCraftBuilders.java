@@ -239,12 +239,12 @@ public class BuildCraftBuilders extends BuildCraftMod {
 		fillerLifespanNormal = fillerLifespanNormalProp.getInt(DefaultProps.FILLER_LIFESPAN_NORMAL);
 
 		templateItem = new ItemBptTemplate();
-		templateItem.setBlockName("templateItem");
+		templateItem.setUnlocalizedName("templateItem");
 		LanguageRegistry.addName(templateItem, "Template");
 		CoreProxy.proxy.registerItem(templateItem);
 
 		blueprintItem = new ItemBptBluePrint();
-		blueprintItem.setBlockName("blueprintItem");
+		blueprintItem.setUnlocalizedName("blueprintItem");
 		LanguageRegistry.addName(blueprintItem, "Blueprint");
 		CoreProxy.proxy.registerItem(blueprintItem);
 

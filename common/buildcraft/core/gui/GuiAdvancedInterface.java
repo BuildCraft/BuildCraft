@@ -27,7 +27,7 @@ public abstract class GuiAdvancedInterface extends GuiBuildCraft {
 
 		public String getDescription() {
 			if (getItemStack() != null)
-				return getItemStack().getItem().getItemDisplayName(getItemStack());
+				return getItemStack().getItem().getItemStackDisplayName(getItemStack());
 			else
 				return "";
 		}

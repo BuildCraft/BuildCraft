@@ -111,7 +111,8 @@ public class BlockArchitect extends BlockContainer {
 	}
 
 	@SuppressWarnings({ "all" })
-	public IIcon getBlockTexture(IBlockAccess iblockaccess, int i, int j, int k, int l) {
+	@Override
+	public IIcon getIcon(IBlockAccess iblockaccess, int i, int j, int k, int l) {
 		int m = iblockaccess.getBlockMetadata(i, j, k);
 
 		if (l == 1)

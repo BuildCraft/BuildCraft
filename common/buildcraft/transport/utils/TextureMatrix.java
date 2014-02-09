@@ -1,8 +1,11 @@
 package buildcraft.transport.utils;
 
+import io.netty.buffer.ByteBuf;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+
 import net.minecraftforge.common.util.ForgeDirection;
 
 public class TextureMatrix {
@@ -29,13 +32,13 @@ public class TextureMatrix {
 		dirty = false;
 	}
 
-	public void writeData(DataOutputStream data) throws IOException {
+	public void writeData(ByteBuf data) {
 		for (int i = 0; i < _iconIndexes.length; i++) {
 			data.writeByte(_iconIndexes[i]);
 		}
 	}
 
-	public void readData(DataInputStream data) throws IOException {
+	public void readData(ByteBuf data) {
 		for (int i = 0; i < _iconIndexes.length; i++) {
 			int icon = data.readByte();
 			if (_iconIndexes[i] != icon) {

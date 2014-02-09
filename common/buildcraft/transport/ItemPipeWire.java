@@ -24,7 +24,7 @@ public class ItemPipeWire extends ItemBuildCraft {
 		setHasSubtypes(true);
 		setMaxDamage(0);
 		setPassSneakClick(true);
-		setBlockName("pipeWire");
+		setUnlocalizedName("pipeWire");
 	}
 
 	@Override

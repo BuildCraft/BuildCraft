@@ -34,7 +34,7 @@ public class TransactorSimple extends Transactor {
 		injected = tryPut(stack, filledSlots, injected, doAdd);
 		injected = tryPut(stack, emptySlots, injected, doAdd);
 
-		inventory.onInventoryChanged();
+		inventory.markDirty();
 		return injected;
 	}
 

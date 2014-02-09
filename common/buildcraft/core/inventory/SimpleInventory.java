@@ -8,7 +8,10 @@
 package buildcraft.core.inventory;
 
 import buildcraft.core.utils.INBTTagable;
+import buildcraft.core.utils.Utils;
+
 import java.util.LinkedList;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
@@ -44,7 +47,7 @@ public class SimpleInventory implements IInventory, INBTTagable {
 		if (slotId < _contents.length && _contents[slotId] != null) {
 			if (_contents[slotId].stackSize > count) {
 				ItemStack result = _contents[slotId].splitStack(count);
-				onInventoryChanged();
+				markDirty();
 				return result;
 			}
 			ItemStack stack = _contents[slotId];
@@ -64,7 +67,7 @@ public class SimpleInventory implements IInventory, INBTTagable {
 		if (itemstack != null && itemstack.stackSize > this.getInventoryStackLimit()) {
 			itemstack.stackSize = this.getInventoryStackLimit();
 		}
-		onInventoryChanged();
+		markDirty();
 	}
 
 	@Override
@@ -75,13 +78,6 @@ public class SimpleInventory implements IInventory, INBTTagable {
 	@Override
 	public int getInventoryStackLimit() {
 		return _stackLimit;
-	}
-
-	@Override
-	public void onInventoryChanged() {
-		for (TileEntity handler : _listener) {
-			handler.onInventoryChanged();
-		}
 	}
 
 	@Override
@@ -103,10 +99,10 @@ public class SimpleInventory implements IInventory, INBTTagable {
 	}
 
 	public void readFromNBT(NBTTagCompound data, String tag) {
-		NBTTagList nbttaglist = data.getTagList(tag);
+		NBTTagList nbttaglist = data.getTagList(tag, Utils.NBTTag_Types.NBTTagCompound.ordinal());
 
 		for (int j = 0; j < nbttaglist.tagCount(); ++j) {
-			NBTTagCompound slot = (NBTTagCompound) nbttaglist.tagAt(j);
+			NBTTagCompound slot = nbttaglist.getCompoundTagAt(j);
 			int index;
 			if (slot.hasKey("index")) {
 				index = slot.getInteger("index");
@@ -157,12 +153,19 @@ public class SimpleInventory implements IInventory, INBTTagable {
 	}
 
 	@Override
-	public boolean isInvNameLocalized() {
+	public boolean isItemValidForSlot(int i, ItemStack itemstack) {
+		return true;
+	}
+
+	@Override
+	public boolean hasCustomInventoryName() {
 		return false;
 	}
 
 	@Override
-	public boolean isItemValidForSlot(int i, ItemStack itemstack) {
-		return true;
+	public void markDirty() {
+		for (TileEntity handler : _listener) {
+			handler.markDirty();
+		}
 	}
 }

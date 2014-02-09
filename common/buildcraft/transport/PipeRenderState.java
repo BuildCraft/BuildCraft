@@ -7,9 +7,12 @@ import buildcraft.transport.utils.TextureMatrix;
 import buildcraft.transport.utils.WireMatrix;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import io.netty.buffer.ByteBuf;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+
 import net.minecraft.util.IIcon;
 
 public class PipeRenderState implements IClientState {
@@ -72,7 +75,7 @@ public class PipeRenderState implements IClientState {
 	}
 
 	@Override
-	public void writeData(DataOutputStream data) throws IOException {
+	public void writeData(ByteBuf data) {
 		data.writeBoolean(isGateLit);
 		data.writeBoolean(isGatePulsing);
 		data.writeInt(gateIconIndex);
@@ -84,7 +87,7 @@ public class PipeRenderState implements IClientState {
 	}
 
 	@Override
-	public void readData(DataInputStream data) throws IOException {
+	public void readData(ByteBuf data) {
 		isGateLit = data.readBoolean();
 		isGatePulsing = data.readBoolean();
 		gateIconIndex = data.readInt();

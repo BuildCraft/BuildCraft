@@ -7,6 +7,8 @@
  */
 package buildcraft.transport.pipes;
 
+import io.netty.buffer.ByteBuf;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -14,6 +16,7 @@ import java.io.IOException;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
@@ -74,8 +77,8 @@ public class PipeItemsEmerald extends PipeItemsWood implements IClientState, IGu
 	private final SimpleInventory filters = new SimpleInventory(9, "Filters", 1);
 	private int currentFilter = 0;
 
-	public PipeItemsEmerald(int itemID) {
-		super(itemID);
+	public PipeItemsEmerald(Item item) {
+		super(item);
 
 		standardIconIndex = PipeIconProvider.TYPE.PipeItemsEmerald_Standard.ordinal();
 		solidIconIndex = PipeIconProvider.TYPE.PipeAllEmerald_Solid.ordinal();
@@ -245,18 +248,16 @@ public class PipeItemsEmerald extends PipeItemsWood implements IClientState, IGu
 
 	// ICLIENTSTATE
 	@Override
-	public void writeData(DataOutputStream data) throws IOException {
+	public void writeData(ByteBuf data) {
 		NBTTagCompound nbt = new NBTTagCompound();
 		writeToNBT(nbt);
-		NBTBase.writeNamedTag(nbt, data);
+		Utils.writeNBT(data, nbt);
 	}
 
 	@Override
-	public void readData(DataInputStream data) throws IOException {
-		NBTBase nbt = NBTBase.readNamedTag(data);
-		if (nbt instanceof NBTTagCompound) {
-			readFromNBT((NBTTagCompound) nbt);
-		}
+	public void readData(ByteBuf data) {
+		NBTTagCompound nbt = Utils.readNBT(data);		
+		readFromNBT(nbt);
 	}
 
 	public IInventory getFilters() {
@@ -268,12 +269,12 @@ public class PipeItemsEmerald extends PipeItemsWood implements IClientState, IGu
 	}
 
 	@Override
-	public void writeGuiData(DataOutputStream data) throws IOException {
+	public void writeGuiData(ByteBuf data) {
 		data.writeByte(stateController.getCurrentState());
 	}
 
 	@Override
-	public void readGuiData(DataInputStream data, EntityPlayer sender) throws IOException {
+	public void readGuiData(ByteBuf data, EntityPlayer sender) {
 		stateController.setCurrentState(data.readByte());
 	}
 }

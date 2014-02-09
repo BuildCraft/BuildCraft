@@ -28,4 +28,13 @@ public class InventoryWrapperSimple extends InventoryWrapper {
 		return true;
 	}
 
+	@Override
+	public boolean hasCustomInventoryName() {
+		return false;
+	}
+
+	@Override
+	public void markDirty() {
+	}
+
 }

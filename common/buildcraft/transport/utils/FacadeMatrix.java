@@ -1,5 +1,7 @@
 package buildcraft.transport.utils;
 
+import io.netty.buffer.ByteBuf;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -40,14 +42,14 @@ public class FacadeMatrix {
 		dirty = false;
 	}
 
-	public void writeData(DataOutputStream data) throws IOException {
+	public void writeData(ByteBuf data) {
 		for (int i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
 			data.writeShort(Block.blockRegistry.getIDForObject(_blocks[i]));
 			data.writeByte(_blockMetas[i]);
 		}
 	}
 
-	public void readData(DataInputStream data) throws IOException {
+	public void readData(ByteBuf data) {
 		for (int i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
 			short id = data.readShort();
 			

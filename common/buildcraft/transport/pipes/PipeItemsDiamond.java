@@ -7,6 +7,8 @@
  */
 package buildcraft.transport.pipes;
 
+import io.netty.buffer.ByteBuf;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -27,6 +29,7 @@ import buildcraft.core.inventory.SimpleInventory;
 import buildcraft.core.inventory.StackHelper;
 import buildcraft.core.network.IClientState;
 import buildcraft.core.proxy.CoreProxy;
+import buildcraft.core.utils.Utils;
 import buildcraft.transport.BlockGenericPipe;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
@@ -138,17 +141,15 @@ public class PipeItemsDiamond extends Pipe<PipeTransportItems> implements IClien
 
 	// ICLIENTSTATE
 	@Override
-	public void writeData(DataOutputStream data) throws IOException {
+	public void writeData(ByteBuf data) {
 		NBTTagCompound nbt = new NBTTagCompound();
 		writeToNBT(nbt);
-		NBTBase.writeNamedTag(nbt, data);
+		Utils.writeNBT(data, nbt);
 	}
 
 	@Override
-	public void readData(DataInputStream data) throws IOException {
-		NBTBase nbt = NBTBase.readNamedTag(data);
-		if (nbt instanceof NBTTagCompound) {
-			readFromNBT((NBTTagCompound) nbt);
-		}
+	public void readData(ByteBuf data) {		
+		NBTTagCompound nbt = Utils.readNBT(data);
+		readFromNBT(nbt);
 	}
 }

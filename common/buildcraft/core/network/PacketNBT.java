@@ -26,9 +26,14 @@ public class PacketNBT extends PacketCoordinates {
 
 		super.writeData(data);
 
-		byte[] compressed = CompressedStreamTools.compress(nbttagcompound);
-		data.writeShort(compressed.length);
-		data.write(compressed);
+		try {
+			byte[] compressed = CompressedStreamTools.compress(nbttagcompound);
+			data.writeShort(compressed.length);
+			data.writeBytes(compressed);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}		
 	}
 
 	@Override
@@ -38,8 +43,14 @@ public class PacketNBT extends PacketCoordinates {
 
 		short length = data.readShort();
 		byte[] compressed = new byte[length];
-		data.readFully(compressed);
-		this.nbttagcompound = CompressedStreamTools.decompress(compressed);
+		data.readBytes(compressed);
+		
+		try {
+			this.nbttagcompound = CompressedStreamTools.decompress(compressed);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	public NBTTagCompound getTagCompound() {

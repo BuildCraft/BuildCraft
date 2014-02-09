@@ -42,8 +42,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ChatMessageComponent;
 import net.minecraft.util.ChunkCoordinates;
+import net.minecraft.util.IChatComponent;
 import net.minecraftforge.common.util.ForgeDirection;
 import static net.minecraftforge.common.util.ForgeDirection.DOWN;
 import static net.minecraftforge.common.util.ForgeDirection.EAST;
@@ -51,8 +51,6 @@ import static net.minecraftforge.common.util.ForgeDirection.NORTH;
 import static net.minecraftforge.common.util.ForgeDirection.SOUTH;
 import static net.minecraftforge.common.util.ForgeDirection.WEST;
 import net.minecraftforge.oredict.OreDictionary;
-
-import org.bouncycastle.util.Arrays;
 
 public class TileAdvancedCraftingTable extends TileLaserTableBase implements IInventory, ILaserTarget, IMachine, IActionReceptor, ISidedInventory {
 
@@ -149,7 +147,7 @@ public class TileAdvancedCraftingTable extends TileLaserTableBase implements IIn
 		}
 
 		@Override
-		public void sendChatToPlayer(ChatMessageComponent var1) {
+		public void addChatMessage(IChatComponent var1) {
 		}
 
 		@Override
@@ -215,8 +213,8 @@ public class TileAdvancedCraftingTable extends TileLaserTableBase implements IIn
 	}
 
 	@Override
-	public void onInventoryChanged() {
-		super.onInventoryChanged();
+	public void markDirty() {
+		super.markDirty();
 		craftable = craftResult.getStackInSlot(0) != null;
 	}
 
@@ -385,7 +383,7 @@ public class TileAdvancedCraftingTable extends TileLaserTableBase implements IIn
 			currentRecipe = CraftingHelper.findMatchingRecipe(internalInventoryCrafting, worldObj);
 		}
 		internalInventoryCrafting.recipeUpdate(false);
-		onInventoryChanged();
+		markDirty();
 	}
 
 	private void updateRecipeOutputDisplay() {
@@ -400,7 +398,7 @@ public class TileAdvancedCraftingTable extends TileLaserTableBase implements IIn
 			internalInventoryCrafting.recipeUpdate(false);
 		}
 		craftResult.setInventorySlotContents(0, resultStack);
-		onInventoryChanged();
+		markDirty();
 	}
 
 	private ItemStack getRecipeOutput() {

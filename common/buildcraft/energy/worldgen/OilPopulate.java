@@ -27,7 +27,6 @@ import static net.minecraftforge.common.BiomeDictionary.Type.DESERT;
 import static net.minecraftforge.common.BiomeDictionary.Type.FOREST;
 import static net.minecraftforge.common.BiomeDictionary.Type.FROZEN;
 import static net.minecraftforge.common.BiomeDictionary.Type.WASTELAND;
-import net.minecraftforge.common.EnumHelper;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.event.terraingen.PopulateChunkEvent;
 import net.minecraftforge.event.terraingen.PopulateChunkEvent.Populate.EventType;
@@ -280,7 +279,7 @@ public class OilPopulate {
 			return true;
 		}
 		
-		if (block.isGenMineableReplaceable(world, x, y, z, Block.stone.blockID)) {
+		if (block.isGenMineableReplaceable(world, x, y, z, Blocks.stone)) {
 			return true;
 		}
 		

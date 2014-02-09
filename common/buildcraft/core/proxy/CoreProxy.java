@@ -34,7 +34,6 @@ import net.minecraft.network.INetHandler;
 import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.network.Packet;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ChatMessageComponent;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.World;
 import net.minecraftforge.oredict.ShapedOreRecipe;
@@ -73,7 +72,7 @@ public class CoreProxy {
 
 	/* ENTITY HANDLING */
 	public void removeEntity(Entity entity) {
-		entity.getWorldObj().removeEntity(entity);
+		entity.worldObj.removeEntity(entity);
 	}
 
 	/* WRAPPER */

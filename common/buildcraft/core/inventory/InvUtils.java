@@ -3,6 +3,7 @@ package buildcraft.core.inventory;
 import buildcraft.core.inventory.InventoryIterator.IInvSlot;
 import buildcraft.core.inventory.filters.ArrayStackFilter;
 import buildcraft.core.inventory.filters.IStackFilter;
+import buildcraft.core.utils.Utils;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryLargeChest;
@@ -124,19 +125,19 @@ public class InvUtils {
 	public static NBTTagCompound getItemData(ItemStack stack) {
 		NBTTagCompound nbt = stack.getTagCompound();
 		if (nbt == null) {
-			nbt = new NBTTagCompound("tag");
+			nbt = new NBTTagCompound();
 			stack.setTagCompound(nbt);
 		}
 		return nbt;
 	}
 
-	public static void addItemToolTip(ItemStack stack, String tag, String msg) {
+	public static void addItemToolTip(ItemStack stack, String msg) {
 		NBTTagCompound nbt = getItemData(stack);
 		NBTTagCompound display = nbt.getCompoundTag("display");
-		nbt.setCompoundTag("display", display);
-		NBTTagList lore = display.getTagList("Lore");
+		nbt.setTag("display", display);
+		NBTTagList lore = display.getTagList("Lore", Utils.NBTTag_Types.NBTTagString.ordinal());
 		display.setTag("Lore", lore);
-		lore.appendTag(new NBTTagString(tag, msg));
+		lore.appendTag(new NBTTagString(msg));
 	}
 
 	public static void writeInvToNBT(IInventory inv, String tag, NBTTagCompound data) {
@@ -154,9 +155,9 @@ public class InvUtils {
 	}
 
 	public static void readInvFromNBT(IInventory inv, String tag, NBTTagCompound data) {
-		NBTTagList list = data.getTagList(tag);
+		NBTTagList list = data.getTagList(tag, Utils.NBTTag_Types.NBTTagCompound.ordinal());
 		for (byte entry = 0; entry < list.tagCount(); entry++) {
-			NBTTagCompound itemTag = (NBTTagCompound) list.tagAt(entry);
+			NBTTagCompound itemTag = list.getCompoundTagAt(entry);
 			int slot = itemTag.getByte("Slot");
 			if (slot >= 0 && slot < inv.getSizeInventory()) {
 				ItemStack stack = ItemStack.loadItemStackFromNBT(itemTag);
@@ -166,11 +167,11 @@ public class InvUtils {
 	}
 
 	public static void readStacksFromNBT(NBTTagCompound nbt, String name, ItemStack[] stacks) {
-		NBTTagList nbttaglist = nbt.getTagList(name);
+		NBTTagList nbttaglist = nbt.getTagList(name, Utils.NBTTag_Types.NBTTagCompound.ordinal());
 
 		for (int i = 0; i < stacks.length; ++i) {
 			if (i < nbttaglist.tagCount()) {
-				NBTTagCompound nbttagcompound2 = (NBTTagCompound) nbttaglist.tagAt(i);
+				NBTTagCompound nbttagcompound2 = nbttaglist.getCompoundTagAt(i);
 
 				stacks[i] = ItemStack.loadItemStackFromNBT(nbttagcompound2);
 			} else {

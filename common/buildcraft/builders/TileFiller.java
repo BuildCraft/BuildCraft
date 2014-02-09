@@ -36,6 +36,7 @@ import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.triggers.ActionMachineControl;
 import buildcraft.core.triggers.ActionMachineControl.Mode;
 import buildcraft.core.utils.Utils;
+import io.netty.buffer.ByteBuf;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -246,21 +247,21 @@ public class TileFiller extends TileBuildCraft implements IInventory, IPowerRece
 	public PacketPayload getPacketPayload() {
 		PacketPayloadStream payload = new PacketPayloadStream(new PacketPayloadStream.StreamWriter() {
 			@Override
-			public void writeData(DataOutputStream data) throws IOException {
+			public void writeData(ByteBuf data) {
 				box.writeToStream(data);
 				data.writeBoolean(done);
-				data.writeUTF(currentPattern.getUniqueTag());
+				Utils.writeUTF(data, currentPattern.getUniqueTag());
 			}
 		});
 
 		return payload;
 	}
 
-	public void handlePacketPayload(DataInputStream data) throws IOException {
+	public void handlePacketPayload(ByteBuf data) {
 		boolean initialized = box.isInitialized();
 		box.readFromStream(data);
 		done = data.readBoolean();
-		setPattern(FillerManager.registry.getPattern(data.readUTF()));
+		setPattern(FillerManager.registry.getPattern(Utils.readUTF(data)));
 
 		worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
 		if (!initialized && box.isInitialized()) {
@@ -331,13 +332,13 @@ public class TileFiller extends TileBuildCraft implements IInventory, IPowerRece
 	}
 
 	@Override
-	public void writeGuiData(DataOutputStream data) throws IOException {
-		data.writeUTF(currentPattern.getUniqueTag());
+	public void writeGuiData(ByteBuf data) {
+		Utils.writeUTF(data, currentPattern.getUniqueTag());
 	}
 
 	@Override
-	public void readGuiData(DataInputStream data, EntityPlayer player) throws IOException {
-		setPattern(FillerManager.registry.getPattern(data.readUTF()));
+	public void readGuiData(ByteBuf data, EntityPlayer player) {
+		setPattern(FillerManager.registry.getPattern(Utils.readUTF(data)));
 	}
 
 	@Override

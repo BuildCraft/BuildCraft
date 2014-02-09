@@ -49,7 +49,7 @@ public class PacketTileState extends PacketCoordinates {
 		super.readData(data);
 	}
 
-	public void applyStates(DataInputStream data, ISyncedTile tile) throws IOException {
+	public void applyStates(ByteBuf data, ISyncedTile tile) throws IOException {
 		byte stateCount = data.readByte();
 		for (int i = 0; i < stateCount; i++) {
 			byte stateId = data.readByte();

@@ -14,11 +14,14 @@ import buildcraft.api.core.Position;
 import buildcraft.core.network.TileNetworkData;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
+import io.netty.buffer.ByteBuf;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 
@@ -225,7 +228,7 @@ public class Box implements IBox {
 		}
 	}
 
-	public void writeToStream(DataOutputStream stream) throws IOException {
+	public void writeToStream(ByteBuf stream) {
 		stream.writeBoolean(initialized);
 		
 		stream.writeInt(xMin);
@@ -237,7 +240,7 @@ public class Box implements IBox {
 		stream.writeInt(zMax);
 	}
 
-	public void readFromStream(DataInputStream stream) throws IOException {
+	public void readFromStream(ByteBuf stream) {
 		initialized = stream.readBoolean();
 		
 		xMin = stream.readInt();

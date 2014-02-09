@@ -129,10 +129,10 @@ public class TileAssemblyTable extends TileLaserTableBase implements IMachine, I
 	public void readFromNBT(NBTTagCompound nbt) {
 		super.readFromNBT(nbt);
 
-		NBTTagList list = nbt.getTagList("planned");
+		NBTTagList list = nbt.getTagList("planned", Utils.NBTTag_Types.NBTTagCompound.ordinal());
 
 		for (int i = 0; i < list.tagCount(); ++i) {
-			NBTTagCompound cpt = (NBTTagCompound) list.tagAt(i);
+			NBTTagCompound cpt = list.getCompoundTagAt(i);
 
 			ItemStack stack = ItemStack.loadItemStackFromNBT(cpt);
 

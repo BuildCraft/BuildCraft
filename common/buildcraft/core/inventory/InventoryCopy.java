@@ -44,14 +44,12 @@ public class InventoryCopy implements IInventory {
 			if (contents[i].stackSize <= j) {
 				ItemStack itemstack = contents[i];
 				contents[i] = null;
-				onInventoryChanged();
 				return itemstack;
 			}
 			ItemStack itemstack1 = contents[i].splitStack(j);
 			if (contents[i].stackSize <= 0) {
 				contents[i] = null;
 			}
-			onInventoryChanged();
 			return itemstack1;
 		} else {
 			return null;
@@ -64,7 +62,6 @@ public class InventoryCopy implements IInventory {
 		if (itemstack != null && itemstack.stackSize > getInventoryStackLimit()) {
 			itemstack.stackSize = getInventoryStackLimit();
 		}
-		onInventoryChanged();
 	}
 
 	@Override
@@ -75,10 +72,6 @@ public class InventoryCopy implements IInventory {
 	@Override
 	public int getInventoryStackLimit() {
 		return orignal.getInventoryStackLimit();
-	}
-
-	@Override
-	public void onInventoryChanged() {
 	}
 
 	@Override
@@ -100,16 +93,21 @@ public class InventoryCopy implements IInventory {
 	}
 
 	@Override
-	public boolean isInvNameLocalized() {
-		return orignal.isInvNameLocalized();
-	}
-
-	@Override
 	public boolean isItemValidForSlot(int slot, ItemStack stack) {
 		return orignal.isItemValidForSlot(slot, stack);
 	}
 
 	public ItemStack[] getItemStacks() {
 		return contents;
+	}
+
+	@Override
+	public boolean hasCustomInventoryName() {
+		return false;
+	}
+
+	@Override
+	public void markDirty() { 
+		
 	}
 }

@@ -22,7 +22,7 @@ public abstract class InventoryWrapper implements ISidedInventory {
 	@Override public String getInventoryName() { return inventory.getInventoryName(); }
 	@Override public boolean isInvNameLocalized() { return inventory.isInvNameLocalized(); }
 	@Override public int getInventoryStackLimit() { return inventory.getInventoryStackLimit(); }
-	@Override public void onInventoryChanged() { inventory.onInventoryChanged(); }
+	@Override public void markDirty() { inventory.markDirty(); }
 	@Override public boolean isUseableByPlayer(EntityPlayer entityplayer) { return inventory.isUseableByPlayer(entityplayer); }
 	@Override public void openInventory() { inventory.openInventory(); }
 	@Override public void closeInventory() { inventory.closeInventory(); }

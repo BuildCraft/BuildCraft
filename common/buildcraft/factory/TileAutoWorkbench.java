@@ -27,8 +27,8 @@ import net.minecraft.inventory.SlotCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.ChatMessageComponent;
 import net.minecraft.util.ChunkCoordinates;
+import net.minecraft.util.IChatComponent;
 import net.minecraftforge.common.util.ForgeDirection;
 
 public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory {
@@ -69,9 +69,9 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
 		}
 
 		@Override
-		public void sendChatToPlayer(ChatMessageComponent var1) {
+		public void addChatMessage(IChatComponent var1) {
 		}
-
+		
 		@Override
 		public boolean canCommandSenderUseCommand(int var1, String var2) {
 			return false;
@@ -81,6 +81,8 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
 		public ChunkCoordinates getPlayerCoordinates() {
 			return null;
 		}
+
+		
 	}
 
 	@Override

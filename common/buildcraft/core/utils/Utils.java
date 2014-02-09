@@ -41,8 +41,19 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryLargeChest;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompressedStreamTools;
+import net.minecraft.nbt.NBTBase;
+import net.minecraft.nbt.NBTTagByte;
+import net.minecraft.nbt.NBTTagByteArray;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagDouble;
+import net.minecraft.nbt.NBTTagEnd;
+import net.minecraft.nbt.NBTTagFloat;
+import net.minecraft.nbt.NBTTagInt;
+import net.minecraft.nbt.NBTTagIntArray;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.NBTTagLong;
+import net.minecraft.nbt.NBTTagShort;
 import net.minecraft.nbt.NBTTagString;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
@@ -56,6 +67,13 @@ public class Utils {
 	public static final Random RANDOM = new Random();
 	private static final List<ForgeDirection> directions = new ArrayList<ForgeDirection>(Arrays.asList(ForgeDirection.VALID_DIRECTIONS));
 
+	public enum NBTTag_Types {
+		NBTTagEnd, NBTTagByte, NBTTagShort, 
+		NBTTagInt, NBTTagLong, NBTTagFloat, 
+		NBTTagDouble, NBTTagByteArray, NBTTagString,
+		NBTTagList, NBTTagCompound, NBTTagIntArray
+	}
+	
 	/* IINVENTORY HELPERS */
 	/**
 	 * Tries to add the passed stack to any valid inventories around the given
@@ -421,6 +439,49 @@ public class Utils {
 		} catch (UnsupportedEncodingException e) {	
 			e.printStackTrace();
 			return null;
+		}
+	}
+	
+	public static void writeNBT (ByteBuf data, NBTTagCompound nbt) {
+		try {
+			byte[] compressed = CompressedStreamTools.compress(nbt);
+			data.writeShort(compressed.length);
+			data.writeBytes(compressed);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}		
+	}
+	
+	public static NBTTagCompound readNBT(ByteBuf data) {
+		try {
+			short length = data.readShort();
+			byte[] compressed = new byte[length];
+			data.readBytes(compressed);
+			return CompressedStreamTools.decompress(compressed);
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	public static void writeStack (ByteBuf data, ItemStack stack) {
+		if (stack == null) {
+			data.writeBoolean(false);
+		} else {
+			data.writeBoolean(true);
+			NBTTagCompound nbt = new NBTTagCompound();			
+			stack.writeToNBT(nbt);
+			Utils.writeNBT(data, nbt);
+		}
+	}
+	
+
+	public static ItemStack readStack(ByteBuf data) {
+		if (!data.readBoolean()) {
+			return null;
+		} else {
+			NBTTagCompound nbt = readNBT(data);
+			return ItemStack.loadItemStackFromNBT(nbt);
 		}
 	}
 }

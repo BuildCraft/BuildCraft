@@ -8,6 +8,8 @@
  */
 package buildcraft.transport.pipes;
 
+import io.netty.buffer.ByteBuf;
+
 import java.util.BitSet;
 import java.util.LinkedList;
 import java.util.Map;
@@ -16,6 +18,7 @@ import java.util.Map.Entry;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.ForgeDirection;
@@ -32,6 +35,7 @@ import buildcraft.transport.BlockGenericPipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.TravelingItem;
 import buildcraft.transport.triggers.ActionExtractionPreset;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -48,8 +52,8 @@ public class PipeItemsEmzuli extends PipeItemsWood implements IGuiReturnHandler 
 	private final int filterCount = filters.getSizeInventory();
 	private int currentFilter = 0;
 
-	public PipeItemsEmzuli(int itemID) {
-		super(itemID);
+	public PipeItemsEmzuli(Item item) {
+		super(item);
 
 		standardIconIndex = PipeIconProvider.TYPE.PipeItemsEmzuli_Standard.ordinal();
 		solidIconIndex = PipeIconProvider.TYPE.PipeAllEmzuli_Solid.ordinal();
@@ -234,11 +238,11 @@ public class PipeItemsEmzuli extends PipeItemsWood implements IGuiReturnHandler 
 	}
 
 	@Override
-	public void writeGuiData(DataOutputStream paramDataOutputStream) throws IOException {
+	public void writeGuiData(ByteBuf paramDataOutputStream) {
 	}
 
 	@Override
-	public void readGuiData(DataInputStream data, EntityPlayer paramEntityPlayer) throws IOException {
+	public void readGuiData(ByteBuf data, EntityPlayer paramEntityPlayer) {
 		byte slot = data.readByte();
 		slotColors[slot] = data.readByte();
 	}

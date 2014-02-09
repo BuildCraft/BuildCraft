@@ -17,13 +17,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockFluid;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
-import net.minecraft.network.Packet60Explosion;
 import net.minecraft.world.ChunkPosition;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
@@ -93,7 +91,7 @@ public class BlockUtil {
 	}
 
 	public static boolean canChangeBlock(World world, int x, int y, int z) {
-		return canChangeBlock(world.getBlockId(x, y, z), world, x, y, z);
+		return canChangeBlock(world.getBlock(x, y, z), world, x, y, z);
 	}
 
 	public static boolean canChangeBlock(Block block, World world, int x, int y, int z) {

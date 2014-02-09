@@ -10,12 +10,13 @@
 package buildcraft.energy;
 
 import buildcraft.core.ItemBlockBuildCraft;
+import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 
 public class ItemEngine extends ItemBlockBuildCraft {
 
-	public ItemEngine(int i) {
-		super(i);
+	public ItemEngine(Block block) {
+		super(block);
 		setMaxDamage(0);
 		setHasSubtypes(true);
 	}

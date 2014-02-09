@@ -6,6 +6,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompressedStreamTools;
 
@@ -30,7 +31,7 @@ public class PacketSlotChange extends PacketCoordinates {
 
 		data.writeInt(slot);
 		if (stack != null) {
-			data.writeInt(stack.itemID);
+			data.writeInt(Item.itemRegistry.getIDForObject(stack.getItem()));
 			data.writeInt(stack.stackSize);
 			data.writeInt(stack.getItemDamage());
 			
@@ -56,7 +57,8 @@ public class PacketSlotChange extends PacketCoordinates {
 		int id = data.readInt();
 
 		if (id != 0) {
-			stack = new ItemStack(id, data.readInt(), data.readInt());
+			Item item = Item.getItemById(id);
+			stack = new ItemStack(item, data.readInt(), data.readInt());
 			
 			// Yes, this stuff may indeed have NBT and don't you forget it.
 			short length = data.readShort();
