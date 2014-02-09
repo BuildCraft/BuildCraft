@@ -7,8 +7,10 @@
  */
 package buildcraft.core;
 
+import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftMod;
 import buildcraft.api.power.IPowerReceptor;
+import buildcraft.core.network.BuildCraftPacket;
 import buildcraft.core.network.ISynchronizedTile;
 import buildcraft.core.network.PacketPayload;
 import buildcraft.core.network.PacketPayloadArrays;
@@ -98,7 +100,11 @@ public abstract class TileBuildCraft extends TileEntity implements ISynchronized
 
 	@Override
 	public Packet getDescriptionPacket() {
-		return new PacketTileUpdate(this).getPacket();
+		// TODO: The description packet mechanism seems to have completely be replaced by other means, e.g.
+		// the update packet. If confirmed, remove the buffer packet mechanism in Utils as well, that is
+		// BuildCraftCore.bufferedDescriptions.
+		//return new PacketTileUpdate(this).getPacket();
+		return null;
 	}
 
 	@Override
@@ -107,14 +113,15 @@ public abstract class TileBuildCraft extends TileEntity implements ISynchronized
 	}
 
 	@Override
-	public Packet getUpdatePacket() {
-		return new PacketTileUpdate(this).getPacket();
+	public BuildCraftPacket getUpdatePacket() {
+		return new PacketTileUpdate(this);
 	}
 
 	@Override
 	public void handleDescriptionPacket(PacketUpdate packet) throws IOException {
-		if (packet.payload instanceof PacketPayloadArrays)
+		if (packet.payload instanceof PacketPayloadArrays) {
 			descriptionPacket.fromPayload(this, (PacketPayloadArrays) packet.payload);
+		}
 	}
 
 	@Override
@@ -138,11 +145,6 @@ public abstract class TileBuildCraft extends TileEntity implements ISynchronized
 		super.readFromNBT(nbt);
 		if (nbt.hasKey("owner"))
 			owner = nbt.getString("owner");
-	}
-
-	public boolean isInvNameLocalized() {
-		// TODO Auto-generated method stub
-		return false;
 	}
 
 	public World getWorld() {

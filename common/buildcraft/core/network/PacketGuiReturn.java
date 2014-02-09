@@ -6,6 +6,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
+import buildcraft.BuildCraftCore;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
@@ -87,7 +88,7 @@ public class PacketGuiReturn extends BuildCraftPacket {
 	}
 
 	public void sendPacket() {
-		PacketDispatcher.sendPacketToServer(getPacket());
+		BuildCraftCore.instance.sendToServer(this);
 	}
 
 	@Override

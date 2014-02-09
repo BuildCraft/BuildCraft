@@ -10,6 +10,7 @@ import cpw.mods.fml.common.gameevent.TickEvent.PlayerTickEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.ChatComponentText;
 
 public class TickHandlerCoreClient {
 
@@ -28,12 +29,16 @@ public class TickHandlerCoreClient {
 		// if(!Config.disableVersionCheck) {
 
 		if (Version.needsUpdateNoticeAndMarkAsSeen()) {
-			player.addChatMessage(String.format("\u00A7cNew version of BuildCraft available: %s for Minecraft %s", Version.getRecommendedVersion(),
-					CoreProxy.proxy.getMinecraftVersion()));
+			player.addChatMessage(new ChatComponentText(
+					String.format(
+							"\u00A7cNew version of BuildCraft available: %s for Minecraft %s",
+							Version.getRecommendedVersion(),
+							CoreProxy.proxy.getMinecraftVersion())));
 			for (String updateLine : Version.getChangelog()) {
-				player.addChatMessage("\u00A79" + updateLine);
+				player.addChatMessage(new ChatComponentText("\u00A79" + updateLine));
 			}
-			player.addChatMessage("\u00A7cThis message only displays once. Type '/buildcraft version' if you want to see it again.");
+			player.addChatMessage(new ChatComponentText(
+					"\u00A7cThis message only displays once. Type '/buildcraft version' if you want to see it again."));
 		}
 
 		// }

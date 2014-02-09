@@ -75,22 +75,22 @@ public class BlockBuildcraftFluid extends BlockFluidClassic {
 	}
 
 	@Override
-	public int getFireSpreadSpeed(World world, int x, int y, int z, int metadata, ForgeDirection face) {
+	public int getFireSpreadSpeed(IBlockAccess world, int x, int y, int z, ForgeDirection face) {
 		return flammable ? 300 : 0;
 	}
 
 	@Override
-	public int getFlammability(IBlockAccess world, int x, int y, int z, int metadata, ForgeDirection face) {
+	public int getFlammability(IBlockAccess world, int x, int y, int z, ForgeDirection face) {
 		return flammability;
 	}
 
 	@Override
-	public boolean isFlammable(IBlockAccess world, int x, int y, int z, int metadata, ForgeDirection face) {
+	public boolean isFlammable(IBlockAccess world, int x, int y, int z, ForgeDirection face) {
 		return flammable;
 	}
 
 	@Override
-	public boolean isFireSource(World world, int x, int y, int z, int metadata, ForgeDirection side) {
+	public boolean isFireSource(World world, int x, int y, int z, ForgeDirection side) {
 		return flammable && flammability == 0;
 	}
 
@@ -106,7 +106,10 @@ public class BlockBuildcraftFluid extends BlockFluidClassic {
 	public void randomDisplayTick(World world, int x, int y, int z, Random rand) {
 		super.randomDisplayTick(world, x, y, z, rand);
 
-		if (rand.nextInt(10) == 0 && world.doesBlockHaveSolidTopSurface(x, y - 1, z) && !world.getBlock(x, y - 2, z).getMaterial().blocksMovement()) {
+		if (rand.nextInt(10) == 0
+				&& World.doesBlockHaveSolidTopSurface(world, x, y - 1, z)
+				&& !world.getBlock(x, y - 2, z).getMaterial().blocksMovement()) {
+			
 			double px = (double) ((float) x + rand.nextFloat());
 			double py = (double) y - 1.05D;
 			double pz = (double) ((float) z + rand.nextFloat());

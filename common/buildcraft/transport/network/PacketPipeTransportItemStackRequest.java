@@ -1,5 +1,6 @@
 package buildcraft.transport.network;
 
+import buildcraft.BuildCraftTransport;
 import buildcraft.core.network.BuildCraftPacket;
 import buildcraft.core.network.PacketIds;
 import buildcraft.transport.TravelingItem;
@@ -9,15 +10,13 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
+import net.minecraft.entity.player.EntityPlayer;
+
 public class PacketPipeTransportItemStackRequest extends BuildCraftPacket {
 
 	public int travelerID;
-	public Player player;
-
-	public PacketPipeTransportItemStackRequest(Player player) {
-		this.player = player;
-	}
-
+	TravelingItem item;
+	
 	public PacketPipeTransportItemStackRequest(int travelerID) {
 		this.travelerID = travelerID;
 	}
@@ -31,12 +30,18 @@ public class PacketPipeTransportItemStackRequest extends BuildCraftPacket {
 	public void readData(ByteBuf data) {
 		travelerID = data.readShort();
 		TravelingItem.TravelingItemCache cache = TravelingItem.serverCache;
-		TravelingItem item = cache.get(travelerID);
-		if (item == null)
-			return;
-		PacketDispatcher.sendPacketToPlayer(new PacketPipeTransportItemStack(travelerID, item.getItemStack()).getPacket(), player);
+		item = cache.get(travelerID);		
 	}
 
+	public void sendDataToPlayer (EntityPlayer player) {
+		if (item != null) {
+			BuildCraftTransport.instance.sendToPlayer(
+					player,
+					new PacketPipeTransportItemStack(travelerID, item
+							.getItemStack()));
+		}
+	}
+	
 	@Override
 	public int getID() {
 		return PacketIds.PIPE_ITEMSTACK_REQUEST;

@@ -1,5 +1,6 @@
 package buildcraft.energy.worldgen;
 
+import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.biome.BiomeGenDesert;
 import net.minecraftforge.common.BiomeDictionary;
 
@@ -9,6 +10,8 @@ import net.minecraftforge.common.BiomeDictionary;
  */
 public class BiomeGenOilDesert extends BiomeGenDesert {
 
+	protected static final BiomeGenBase.Height height_OilDesert = new BiomeGenBase.Height(0.1F, 0.2F);
+	
 	public static BiomeGenOilDesert makeBiome(int id) {
 		BiomeGenOilDesert biome = new BiomeGenOilDesert(id);
 		BiomeDictionary.registerBiomeType(biome, BiomeDictionary.Type.DESERT);
@@ -23,6 +26,6 @@ public class BiomeGenOilDesert extends BiomeGenDesert {
 		setBiomeName("Desert Oil Field");
 		setDisableRain();
 		setTemperatureRainfall(2.0F, 0.0F);
-		setMinMaxHeight(0.1F, 0.2F);
+		setHeight(height_OilDesert);
 	}
 }

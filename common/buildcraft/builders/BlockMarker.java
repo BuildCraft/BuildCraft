@@ -33,7 +33,7 @@ public class BlockMarker extends BlockContainer {
 	public BlockMarker() {
 		super(Material.circuits);
 
-		setLightValue(0.5F);
+		setLightLevel(0.5F);
 		setCreativeTab(CreativeTabBuildCraft.MACHINES.get());
 	}
 

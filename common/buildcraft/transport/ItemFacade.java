@@ -45,7 +45,8 @@ public class ItemFacade extends ItemBuildCraft {
 		setCreativeTab(CreativeTabBuildCraft.FACADES.get());
 	}
 
-	@Override
+	//TODO: how to control name of items?
+	/*@Override
 	public String getItemDisplayName(ItemStack itemstack) {
 		String name = super.getItemDisplayName(itemstack);
 		Block decodedBlock = ItemFacade.getBlock(itemstack);
@@ -60,7 +61,7 @@ public class ItemFacade extends ItemBuildCraft {
 			name += " < BROKEN (" + decodedBlock.getLocalizedName() + ":" + decodedMeta + " )>";
 		}
 		return name;
-	}
+	}*/
 
 	@Override
 	public String getUnlocalizedName(ItemStack itemstack) {
@@ -156,7 +157,7 @@ public class ItemFacade extends ItemBuildCraft {
 	}
 
 	@Override
-	public boolean shouldPassSneakingClickToBlock(World worldObj, int x, int y, int z) {
+	public boolean doesSneakBypassUse(World world, int x, int y, int z, EntityPlayer player) {
 		// Simply send shift click to the pipe / mod block.
 		return true;
 	}

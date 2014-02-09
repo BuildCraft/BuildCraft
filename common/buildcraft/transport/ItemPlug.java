@@ -4,6 +4,7 @@ import buildcraft.core.ItemBuildCraft;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
@@ -44,7 +45,7 @@ public class ItemPlug extends ItemBuildCraft {
 //	}
 	
 	@Override
-	public boolean shouldPassSneakingClickToBlock(World worldObj, int x, int y, int z ) {
+	public boolean doesSneakBypassUse(World world, int x, int y, int z, EntityPlayer player) {
 		return true;
 	}
 

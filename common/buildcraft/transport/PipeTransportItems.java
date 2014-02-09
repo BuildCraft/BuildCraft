@@ -424,7 +424,7 @@ public class PipeTransportItems extends PipeTransport {
 			items.add(item);
 
 		if (packet.forceStackRefresh() || item.getItemStack() == null) {
-			PacketDispatcher.sendPacketToServer(new PacketPipeTransportItemStackRequest(packet.getTravelingEntityId()).getPacket());
+			BuildCraftTransport.instance.sendToServer(new PacketPipeTransportItemStackRequest(packet.getTravelingEntityId()));
 		}
 
 		item.setPosition(packet.getItemX(), packet.getItemY(), packet.getItemZ());
@@ -440,8 +440,7 @@ public class PipeTransportItems extends PipeTransport {
 
 	private void sendTravelerPacket(TravelingItem data, boolean forceStackRefresh) {
 		PacketPipeTransportTraveler packet = new PacketPipeTransportTraveler(data, forceStackRefresh);
-		int dimension = container.getWorldObj().provider.dimensionId;
-		PacketDispatcher.sendPacketToAllAround(container.xCoord, container.yCoord, container.zCoord, DefaultProps.PIPE_CONTENTS_RENDER_DIST, dimension, packet.getPacket());
+		BuildCraftTransport.instance.sendToPlayers(packet, container.getWorldObj(), container.xCoord, container.yCoord, container.zCoord, DefaultProps.PIPE_CONTENTS_RENDER_DIST);
 	}
 
 	public int getNumberOfStacks() {

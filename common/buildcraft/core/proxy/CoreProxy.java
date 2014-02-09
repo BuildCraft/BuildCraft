@@ -19,6 +19,8 @@ import java.io.File;
 import java.util.List;
 import java.util.Random;
 
+import com.mojang.authlib.GameProfile;
+
 import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
@@ -35,6 +37,7 @@ import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.network.Packet;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChunkCoordinates;
+import net.minecraft.util.IChatComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
@@ -138,10 +141,6 @@ public class CoreProxy {
 		return 0;
 	}
 
-	public void TakenFromCrafting(EntityPlayer thePlayer, ItemStack itemstack, IInventory craftMatrix) {
-		GameRegistry.onItemCrafted(thePlayer, itemstack, craftMatrix);
-	}
-
 	public Random createNewRandom(World world) {
 		return new Random(world.getSeed());
 	}
@@ -154,9 +153,9 @@ public class CoreProxy {
 	}
 
 	private EntityPlayer createNewPlayer(World world) {
-		EntityPlayer player = new EntityPlayer(world, "[BuildCraft]") {
+		EntityPlayer player = new EntityPlayer(world, new GameProfile (null, "[BuildCraft]")) {
 			@Override
-			public void sendChatToPlayer(ChatMessageComponent var1) {
+			public void addChatMessage(IChatComponent var1) {				
 			}
 
 			@Override
@@ -173,11 +172,11 @@ public class CoreProxy {
 	}
 
 	private EntityPlayer createNewPlayer(World world, int x, int y, int z) {
-		EntityPlayer player = new EntityPlayer(world, "[BuildCraft]") {
+		EntityPlayer player = new EntityPlayer(world, new GameProfile (null, "[BuildCraft]")) {
 			@Override
-			public void sendChatToPlayer(ChatMessageComponent var1) {
+			public void addChatMessage(IChatComponent var1) {				
 			}
-
+			
 			@Override
 			public boolean canCommandSenderUseCommand(int var1, String var2) {
 				return false;
@@ -186,7 +185,7 @@ public class CoreProxy {
 			@Override
 			public ChunkCoordinates getPlayerCoordinates() {
 				return null;
-			}
+			}			
 		};
 		player.posX = x;
 		player.posY = y;

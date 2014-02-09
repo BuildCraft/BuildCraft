@@ -306,11 +306,6 @@ public class TileAssemblyTable extends TileLaserTableBase implements IMachine, I
 	}
 
 	@Override
-	public boolean isInvNameLocalized() {
-		return false;
-	}
-
-	@Override
 	public boolean isItemValidForSlot(int slot, ItemStack stack) {
 		return true;
 	}

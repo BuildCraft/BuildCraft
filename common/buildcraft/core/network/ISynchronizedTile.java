@@ -18,7 +18,7 @@ public interface ISynchronizedTile {
 
 	public void postPacketHandling(PacketUpdate packet);
 
-	public Packet getUpdatePacket();
+	public BuildCraftPacket getUpdatePacket();
 
 	public Packet getDescriptionPacket();
 

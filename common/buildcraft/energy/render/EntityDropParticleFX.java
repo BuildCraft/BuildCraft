@@ -3,6 +3,7 @@ package buildcraft.energy.render;
 import net.minecraft.client.particle.*;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
@@ -80,10 +81,16 @@ public class EntityDropParticleFX extends EntityFX {
 			this.motionZ *= 0.699999988079071D;
 		}
 
-		Material material = this.worldObj.getBlock(MathHelper.floor_double(this.posX), MathHelper.floor_double(this.posY), MathHelper.floor_double(this.posZ)).getMaterial();
+		int x = MathHelper.floor_double(this.posX);
+		int y = MathHelper.floor_double(this.posY);
+		int z = MathHelper.floor_double(this.posZ);
+		Block block = worldObj.getBlock(x, y, z);
+		
+		Material material = block.getMaterial();
 
 		if (material.isLiquid() || material.isSolid()) {
-			double d0 = (double) ((float) (MathHelper.floor_double(this.posY) + 1) - BlockFluidBase.getFluidHeightPercent(this.worldObj.getBlockMetadata(MathHelper.floor_double(this.posX), MathHelper.floor_double(this.posY), MathHelper.floor_double(this.posZ))));
+			double d0 = (double) ((float) (MathHelper.floor_double(this.posY) + 1) - ((BlockFluidBase) block)
+					.getFilledPercentage(worldObj, x, y, z));
 
 			if (this.posY < d0) {
 				this.setDead();

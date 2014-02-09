@@ -11,6 +11,7 @@ import buildcraft.core.utils.StringUtils;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
@@ -48,7 +49,7 @@ public class ItemBuildCraft extends Item {
 	}
 
 	@Override
-	public boolean shouldPassSneakingClickToBlock(World par2World, int par4, int par5, int par6) {
+	public boolean doesSneakBypassUse(World world, int x, int y, int z, EntityPlayer player) {
 		return passSneakClick;
 	}
 }

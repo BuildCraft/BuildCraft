@@ -67,10 +67,10 @@ public abstract class GuiAdvancedInterface extends GuiBuildCraft {
 				int cornerX = (width - xSize) / 2;
 				int cornerY = (height - ySize) / 2;
 
-				itemRenderer.zLevel = 200F;
-				itemRenderer.renderItemAndEffectIntoGUI(fontRendererObj, mc.renderEngine, item, cornerX + x, cornerY + y);
-				itemRenderer.renderItemOverlayIntoGUI(fontRendererObj, mc.renderEngine, item, cornerX + x, cornerY + y);
-				itemRenderer.zLevel = 0.0F;
+				itemRender.zLevel = 200F;
+				itemRender.renderItemAndEffectIntoGUI(fontRendererObj, mc.renderEngine, item, cornerX + x, cornerY + y);
+				itemRender.renderItemOverlayIntoGUI(fontRendererObj, mc.renderEngine, item, cornerX + x, cornerY + y);
+				itemRender.zLevel = 0.0F;
 			}
 		}
 	}

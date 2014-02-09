@@ -104,7 +104,7 @@ public class PacketHandlerTransport extends BuildCraftChannelHandler {
 					break;
 
 				case PacketIds.PIPE_ITEMSTACK_REQUEST: {
-					// action will have happened already at read time
+					((PacketPipeTransportItemStackRequest) packet).sendDataToPlayer((EntityPlayer) player);
 					break;
 				}
 			}

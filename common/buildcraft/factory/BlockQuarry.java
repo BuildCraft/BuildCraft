@@ -43,7 +43,8 @@ public class BlockQuarry extends BlockBuildCraft {
 
 		setHardness(10F);
 		setResistance(10F);
-		setStepSound(soundAnvilFootstep);
+		// TODO: set proper sound
+		//setStepSound(soundAnvilFootstep);
 	}
 
 	@Override
@@ -195,12 +196,6 @@ public class BlockQuarry extends BlockBuildCraft {
 		}
 
 		return false;
-	}
-
-	@SuppressWarnings({"unchecked", "rawtypes"})
-	@Override
-	public void addCreativeItems(ArrayList itemList) {
-		itemList.add(new ItemStack(this));
 	}
 
 	@Override

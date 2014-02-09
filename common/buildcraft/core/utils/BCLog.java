@@ -22,7 +22,9 @@ public class BCLog {
 	public static final Logger logger = Logger.getLogger("Buildcraft");
 
 	public static void initLog() {
-		logger.setParent(FMLLog.getLogger());
+		// TODO: check if the code below is still useful and remove otherwise.
+		//logger.setParent(FMLLog.getLogger());
+		
 		logger.info("Starting BuildCraft " + Version.getVersion());
 		logger.info("Copyright (c) SpaceToad, 2011");
 		logger.info("http://www.mod-buildcraft.com");

@@ -7,6 +7,8 @@
  */
 package buildcraft.factory;
 
+import com.mojang.authlib.GameProfile;
+
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.inventory.InvUtils;
 import buildcraft.core.inventory.InventoryConcatenator;
@@ -62,7 +64,7 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
 	private final class InternalPlayer extends EntityPlayer {
 
 		public InternalPlayer() {
-			super(TileAutoWorkbench.this.worldObj, "[BuildCraft]");
+			super(TileAutoWorkbench.this.worldObj, new GameProfile(null, "[BuildCraft]"));
 			posX = TileAutoWorkbench.this.xCoord;
 			posY = TileAutoWorkbench.this.yCoord + 1;
 			posZ = TileAutoWorkbench.this.zCoord;
@@ -276,11 +278,6 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
 
 	@Override
 	public void closeInventory() {
-	}
-
-	@Override
-	public boolean isInvNameLocalized() {
-		return false;
 	}
 
 	@Override

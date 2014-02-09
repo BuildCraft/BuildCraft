@@ -46,7 +46,10 @@ public class BlockSpring extends Block {
 		super(Material.rock);
 		setBlockUnbreakable();
 		setResistance(6000000.0F);
-		setStepSound(soundStoneFootstep);
+		
+		// TODO: set proper sound
+		//setStepSound(soundStoneFootstep);
+		
 		disableStats();
 		setTickRandomly(true);
 		setCreativeTab(CreativeTabBuildCraft.MACHINES.get());
@@ -98,7 +101,7 @@ public class BlockSpring extends Block {
 
 	// Prevents updates on chunk generation
 	@Override
-	public boolean func_82506_l() {
+	public boolean func_149698_L () {
 		return false;
 	}
 

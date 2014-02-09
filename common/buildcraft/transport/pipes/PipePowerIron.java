@@ -18,10 +18,13 @@ import buildcraft.transport.PipeTransportPower;
 import buildcraft.transport.triggers.ActionPowerLimiter;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+
 import java.util.LinkedList;
 import java.util.Map;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
+import net.minecraft.util.ChatComponentText;
 import net.minecraftforge.common.util.ForgeDirection;
 
 public class PipePowerIron extends Pipe<PipeTransportPower> {
@@ -76,7 +79,9 @@ public class PipePowerIron extends Pipe<PipeTransportPower> {
 				setMode(getMode().getNext());
 			}
 			if (getWorld().isRemote)
-				player.addChatMessage(String.format(StringUtils.localize("chat.pipe.power.iron.mode"), getMode().maxPower));
+				player.addChatMessage(new ChatComponentText(String.format(
+						StringUtils.localize("chat.pipe.power.iron.mode"),
+						getMode().maxPower)));
 
 			((IToolWrench) equipped).wrenchUsed(player, container.xCoord, container.yCoord, container.zCoord);
 			return true;

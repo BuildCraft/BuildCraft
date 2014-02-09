@@ -221,16 +221,18 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 		if (provider != null)
 			provider.update();
 
-		if (sendClientUpdate) {
+		// TODO: pipe synchronization with 1.7.2 needs to be reviewed.
+		/*if (sendClientUpdate) {
 			sendClientUpdate = false;
 			if (worldObj instanceof WorldServer) {
 				WorldServer world = (WorldServer) worldObj;
 				PlayerInstance playerInstance = world.getPlayerManager().getOrCreateChunkWatcher(xCoord >> 4, zCoord >> 4, false);
+				
 				if (playerInstance != null) {
 					playerInstance.sendToAllPlayersWatchingChunk(getDescriptionPacket());
 				}
 			}
-		}
+		}*/
 	}
 
 	// PRECONDITION: worldObj must not be null
@@ -389,6 +391,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 
 		PacketTileState packet = new PacketTileState(this.xCoord, this.yCoord, this.zCoord);
 		coreState.expansions.clear();
+		
 		if (pipe != null && pipe.gate != null) {
 			coreState.gateMaterial = pipe.gate.material.ordinal();
 			coreState.gateLogic = pipe.gate.logic.ordinal();
@@ -405,9 +408,15 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 
 		packet.addStateForSerialization((byte) 0, coreState);
 		packet.addStateForSerialization((byte) 1, renderState);
-		if (pipe instanceof IClientState)
+		
+		if (pipe instanceof IClientState) {
 			packet.addStateForSerialization((byte) 2, (IClientState) pipe);
-		return packet.getPacket();
+		}
+		
+		// TODO: pipe synchronization with 1.7.2 needs to be reviewed.
+		//return packet.getPacket();
+		
+		return null;
 	}
 
 	public void sendUpdateToClient() {
@@ -713,8 +722,8 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 	}
 
 	@Override
-	public boolean shouldRefresh(int oldID, int newID, int oldMeta, int newMeta, World world, int x, int y, int z) {
-		return oldID != newID;
+	public boolean shouldRefresh(Block oldBlock, Block newBlock, int oldMeta, int newMeta, World world, int x, int y, int z) {
+		return oldBlock != newBlock;
 	}
 
 	@Override

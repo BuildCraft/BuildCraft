@@ -20,13 +20,13 @@ public abstract class InventoryWrapper implements ISidedInventory {
 	@Override public ItemStack getStackInSlotOnClosing(int slotIndex) { return inventory.getStackInSlotOnClosing(slotIndex); }
 	@Override public void setInventorySlotContents(int slotIndex, ItemStack itemstack) { inventory.setInventorySlotContents(slotIndex, itemstack); }
 	@Override public String getInventoryName() { return inventory.getInventoryName(); }
-	@Override public boolean isInvNameLocalized() { return inventory.isInvNameLocalized(); }
 	@Override public int getInventoryStackLimit() { return inventory.getInventoryStackLimit(); }
 	@Override public void markDirty() { inventory.markDirty(); }
 	@Override public boolean isUseableByPlayer(EntityPlayer entityplayer) { return inventory.isUseableByPlayer(entityplayer); }
 	@Override public void openInventory() { inventory.openInventory(); }
 	@Override public void closeInventory() { inventory.closeInventory(); }
 	@Override public boolean isItemValidForSlot(int slotIndex, ItemStack itemstack) { return inventory.isItemValidForSlot(slotIndex, itemstack); }
+	@Override public boolean hasCustomInventoryName() { return inventory.hasCustomInventoryName(); };
 
 	/* STATIC HELPER */
 	public static ISidedInventory getWrappedInventory(Object inventory) {

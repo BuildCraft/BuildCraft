@@ -33,6 +33,7 @@ import net.minecraftforge.event.terraingen.PopulateChunkEvent.Populate.EventType
 import net.minecraftforge.event.terraingen.TerrainGen;
 import net.minecraftforge.fluids.BlockFluidBase;
 import net.minecraftforge.fluids.IFluidBlock;
+import net.minecraftforge.common.util.EnumHelper;
 
 public class OilPopulate {
 
@@ -279,15 +280,17 @@ public class OilPopulate {
 			return true;
 		}
 		
-		if (block.isGenMineableReplaceable(world, x, y, z, Blocks.stone)) {
-			return true;
-		}
+		// TODO: The code below doesn't seem to have been replaced by something
+		// in 1.7.2 - to update or remove.
+		//if (block.isGenMineableReplaceable(world, x, y, z, Blocks.stone)) {
+		//	return true;
+		//}
 		
 		if (block instanceof BlockFlower) {
 			return true;
 		}
 		
-		if (!world.isBlockOpaqueCube(x, y, z)) {
+		if (!block.isOpaqueCube()) {
 			return true;
 		}
 		

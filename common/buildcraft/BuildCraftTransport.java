@@ -45,6 +45,7 @@ import buildcraft.transport.ItemPipeWire;
 import buildcraft.transport.gates.GateExpansionRedstoneFader;
 import buildcraft.transport.gates.GateExpansionTimer;
 import buildcraft.transport.network.PacketHandlerTransport;
+import buildcraft.transport.network.PacketPipeTransportTraveler;
 import buildcraft.transport.pipes.PipeFluidsCobblestone;
 import buildcraft.transport.pipes.PipeFluidsEmerald;
 import buildcraft.transport.pipes.PipeFluidsGold;
@@ -212,14 +213,17 @@ public class BuildCraftTransport extends BuildCraftMod {
 
 			int meta = world.getBlockMetadata(i, j, k);
 
-			for (String excluded : excludedBlocks) {
+			// TODO: the exculded list is not taken into account. This probably
+			// needs to be migrated to an implementation based on names instead
+			// of ids, low priority for now.
+			/*for (String excluded : excludedBlocks) {
 				if (excluded.equals(block.getUnlocalizedName()))
 					return false;
 
 				String[] tokens = excluded.split(":");
 				if (tokens[0].equals(Integer.toString(id)) && (tokens.length == 1 || tokens[1].equals(Integer.toString(meta))))
 					return false;
-			}
+			}*/
 			return true;
 		}
 	}
@@ -473,4 +477,5 @@ public class BuildCraftTransport extends BuildCraftMod {
 
 		return res;
 	}
+
 }

@@ -94,7 +94,7 @@ import cpw.mods.fml.common.registry.LanguageRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-@Mod(name = "BuildCraft", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Core", acceptedMinecraftVersions = "[1.6.4,1.7)", dependencies = "required-after:Forge@[9.11.1.953,)")
+@Mod(name = "BuildCraft", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Core", acceptedMinecraftVersions = "[1.7.2,1.8)", dependencies = "required-after:Forge@[9.11.1.953,)")
 public class BuildCraftCore extends BuildCraftMod {
 	public static enum RenderMode {
 		Full, NoDynamic
@@ -132,7 +132,6 @@ public class BuildCraftCore extends BuildCraftMod {
 	public static int blockByEntityModel;
 	public static int legacyPipeModel;
 	public static int markerModel;
-	public static int oilModel;
 	public static BCTrigger triggerMachineActive = new TriggerMachine(true);
 	public static BCTrigger triggerMachineInactive = new TriggerMachine(false);
 	public static BCTrigger triggerEmptyInventory = new TriggerInventory(TriggerInventory.State.Empty);

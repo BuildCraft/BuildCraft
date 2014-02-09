@@ -21,7 +21,6 @@ import buildcraft.core.render.RenderLaser;
 import buildcraft.core.render.RenderRobot;
 import buildcraft.core.render.RenderingEntityBlocks;
 import buildcraft.core.render.RenderingMarkers;
-import buildcraft.core.render.RenderingOil;
 import buildcraft.transport.render.TileEntityPickupFX;
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.client.registry.RenderingRegistry;
@@ -29,6 +28,8 @@ import cpw.mods.fml.common.registry.LanguageRegistry;
 
 import java.io.File;
 import java.util.List;
+
+import com.mojang.authlib.GameProfile;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
@@ -45,6 +46,7 @@ import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.network.Packet;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChunkCoordinates;
+import net.minecraft.util.IChatComponent;
 import net.minecraft.world.World;
 
 public class CoreProxyClient extends CoreProxy {
@@ -115,11 +117,9 @@ public class CoreProxyClient extends CoreProxy {
 		BuildCraftCore.blockByEntityModel = RenderingRegistry.getNextAvailableRenderId();
 		BuildCraftCore.legacyPipeModel = RenderingRegistry.getNextAvailableRenderId();
 		BuildCraftCore.markerModel = RenderingRegistry.getNextAvailableRenderId();
-		BuildCraftCore.oilModel = RenderingRegistry.getNextAvailableRenderId();
 
 		RenderingRegistry.registerBlockHandler(new RenderingEntityBlocks());
 		RenderingRegistry.registerBlockHandler(BuildCraftCore.legacyPipeModel, new RenderingEntityBlocks());
-		RenderingRegistry.registerBlockHandler(new RenderingOil());
 		RenderingRegistry.registerBlockHandler(new RenderingMarkers());
 	}
 
@@ -131,12 +131,6 @@ public class CoreProxyClient extends CoreProxy {
 		RenderingRegistry.registerEntityRenderingHandler(EntityRobot.class, new RenderRobot());
 	}
 
-	/* NETWORKING */
-	@Override
-	public void sendToServer(Packet packet) {
-		FMLClientHandler.instance().getClient().getNetHandler().addToSendQueue(packet);
-	}
-
 	/* BUILDCRAFT PLAYER */
 	@Override
 	public String playerName() {
@@ -144,9 +138,9 @@ public class CoreProxyClient extends CoreProxy {
 	}
 
 	private EntityPlayer createNewPlayer(World world) {
-		EntityPlayer player = new EntityPlayer(world, "[BuildCraft]") {
+		EntityPlayer player = new EntityPlayer(world, new GameProfile(null, "[BuildCraft]")) {
 			@Override
-			public void sendChatToPlayer(ChatMessageComponent var1) {
+			public void addChatMessage(IChatComponent var1) {
 			}
 
 			@Override
@@ -159,6 +153,7 @@ public class CoreProxyClient extends CoreProxy {
 				return null;
 			}
 		};
+		
 		return player;
 	}
 

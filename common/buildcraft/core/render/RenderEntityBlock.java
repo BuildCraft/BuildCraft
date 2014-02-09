@@ -195,7 +195,9 @@ public class RenderEntityBlock extends Render {
 		if (blockAccess == null)
 			doLight = false;
 
-		if (doTessellating && !tessellator.isDrawing)
+		// TODO: needs to cancel the test because the variable is now private... May need to 
+		// duplicate the tessellator code.
+		//if (doTessellating && !tessellator.isDrawing)
 			tessellator.startDrawingQuads();
 
 		float light = 0;
@@ -253,7 +255,9 @@ public class RenderEntityBlock extends Render {
 		if (info.renderSide[5])
 			renderBlocks.renderFaceXPos(info.baseBlock, x, y, z, info.getBlockTextureFromSide(5));
 
-		if (doTessellating && tessellator.isDrawing)
+		// TODO: needs to cancel the test because the variable is now private... May need to 
+		// duplicate the tessellator code.
+		//if (doTessellating && tessellator.isDrawing)
 			tessellator.draw();
 	}
 }

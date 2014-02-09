@@ -230,7 +230,7 @@ public abstract class GuiBuildCraft extends GuiContainer {
 			}
 
 			this.zLevel = 300.0F;
-			itemRendererObj.zLevel = 300.0F;
+			itemRender.zLevel = 300.0F;
 			int var15 = -267386864;
 			this.drawGradientRect(x - 3, y - 4, x + lenght + 3, y - 3, var15, var15);
 			this.drawGradientRect(x - 3, y + var14 + 3, x + lenght + 3, y + var14 + 4, var15, var15);
@@ -259,7 +259,7 @@ public abstract class GuiBuildCraft extends GuiContainer {
 			}
 
 			this.zLevel = 0.0F;
-			itemRenderer.zLevel = 0.0F;
+			itemRender.zLevel = 0.0F;
 		}
 	}
 

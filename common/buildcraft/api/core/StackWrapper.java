@@ -8,6 +8,7 @@
  */
 package buildcraft.api.core;
 
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
 /**
@@ -25,7 +26,10 @@ public class StackWrapper {
 	@Override
 	public int hashCode() {
 		int hash = 5;
-		hash = 67 * hash + stack.itemID;
+		
+		// TODO: this may have a speed impact. To be checked.
+		hash = 67 * hash + Item.itemRegistry.getIDForObject(stack.getItem());
+		
 		hash = 67 * hash + stack.getItemDamage();
 		if (stack.stackTagCompound != null)
 			hash = 67 * hash + stack.stackTagCompound.hashCode();

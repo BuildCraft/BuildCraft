@@ -12,11 +12,14 @@ import java.util.List;
 import java.util.Set;
 
 import net.minecraft.block.Block;
+import net.minecraft.client.entity.EntityClientPlayerMP;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.ChatComponentText;
 import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraftforge.common.ForgeChunkManager;
 import net.minecraftforge.common.ForgeChunkManager.Ticket;
@@ -429,7 +432,8 @@ public class TileQuarry extends TileBuildCraft implements IMachine, IPowerRecept
 				}
 			}
 
-			worldObj.playAuxSFXAtEntity(null, 2001, i, j, k, blockId + (worldObj.getBlockMetadata(i, j, k) << 12));
+			// FIXME: fix sound here
+			//worldObj.playAuxSFXAtEntity(null, 2001, i, j, k, blockId + (worldObj.getBlockMetadata(i, j, k) << 12));
 			worldObj.setBlockToAir(i, j, k);
 		}
 
@@ -527,9 +531,11 @@ public class TileQuarry extends TileBuildCraft implements IMachine, IPowerRecept
 		if (chunkTicket == null) {
 			isAlive = false;
 			if (placedBy != null && CoreProxy.proxy.isSimulating(worldObj)) {
-				PacketDispatcher.sendPacketToPlayer(
-						new Packet3Chat(ChatMessageComponent.createFromText(String.format("[BUILDCRAFT] The quarry at %d, %d, %d will not work because there are no more chunkloaders available",
-						xCoord, yCoord, zCoord))), (Player) placedBy);
+				((EntityPlayerMP) placedBy)
+						.addChatMessage(new ChatComponentText(
+								String.format(
+										"[BUILDCRAFT] The quarry at %d, %d, %d will not work because there are no more chunkloaders available",
+										xCoord, yCoord, zCoord)));
 			}
 			sendNetworkUpdate(BuildCraftFactory.instance);
 			return;
@@ -556,10 +562,14 @@ public class TileQuarry extends TileBuildCraft implements IMachine, IPowerRecept
 
 		if (xSize < 3 || zSize < 3 || ((xSize * zSize) >> 8) >= chunkTicket.getMaxChunkListDepth()) {
 			if (placedBy != null) {
-				PacketDispatcher.sendPacketToPlayer(
-						new Packet3Chat(ChatMessageComponent.createFromText(String.format("Quarry size is outside of chunkloading bounds or too small %d %d (%d)", xSize, zSize,
-						chunkTicket.getMaxChunkListDepth()))), (Player) placedBy);
+				((EntityPlayerMP) placedBy)
+						.addChatMessage(new ChatComponentText(
+								String.format(
+										"Quarry size is outside of chunkloading bounds or too small %d %d (%d)",
+										xSize, zSize,
+										chunkTicket.getMaxChunkListDepth())));
 			}
+			
 			a = new DefaultAreaProvider(xCoord, yCoord, zCoord, xCoord + 10, yCoord + 4, zCoord + 10);
 
 			useDefault = true;
@@ -845,11 +855,15 @@ public class TileQuarry extends TileBuildCraft implements IMachine, IPowerRecept
 				chunks.add(chunk);
 			}
 		}
+		
 		if (placedBy != null) {
-			PacketDispatcher.sendPacketToPlayer(
-					new Packet3Chat(ChatMessageComponent.createFromText(String.format("[BUILDCRAFT] The quarry at %d %d %d will keep %d chunks loaded", xCoord, yCoord, zCoord, chunks.size()))),
-					(Player) placedBy);
+			((EntityPlayerMP) placedBy)
+					.addChatMessage(new ChatComponentText(
+							String.format(
+									"[BUILDCRAFT] The quarry at %d %d %d will keep %d chunks loaded",
+									xCoord, yCoord, zCoord, chunks.size())));
 		}
+		
 		sendNetworkUpdate(BuildCraftFactory.instance);
 	}
 

@@ -26,6 +26,7 @@ import buildcraft.core.utils.StringUtils;
 import buildcraft.core.utils.Utils;
 
 import com.google.common.collect.Lists;
+import com.mojang.authlib.GameProfile;
 
 import java.util.Arrays;
 import java.util.EnumSet;
@@ -140,7 +141,7 @@ public class TileAdvancedCraftingTable extends TileLaserTableBase implements IIn
 	private final class InternalPlayer extends EntityPlayer {
 
 		public InternalPlayer() {
-			super(TileAdvancedCraftingTable.this.getWorldObj(), "[BuildCraft]");
+			super(TileAdvancedCraftingTable.this.getWorldObj(), new GameProfile(null, "[BuildCraft]"));
 			posX = TileAdvancedCraftingTable.this.xCoord;
 			posY = TileAdvancedCraftingTable.this.yCoord + 1;
 			posZ = TileAdvancedCraftingTable.this.zCoord;
@@ -439,12 +440,6 @@ public class TileAdvancedCraftingTable extends TileLaserTableBase implements IIn
 	@Override
 	public boolean allowAction(IAction action) {
 		return action == BuildCraftCore.actionOn || action == BuildCraftCore.actionOff;
-	}
-
-	@Override
-	public boolean isInvNameLocalized() {
-		// TODO Auto-generated method stub
-		return false;
 	}
 
 	@Override

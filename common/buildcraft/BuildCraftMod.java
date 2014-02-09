@@ -19,6 +19,11 @@ public class BuildCraftMod {
 		channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.ALL);
 		channels.get(Side.SERVER).writeOutbound(packet);
 	}
+	
+	public void sendToPlayers(BuildCraftPacket packet, World world, int x, int y, int z, int maxDistance) {
+		channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.ALL);
+		channels.get(Side.SERVER).writeOutbound(packet);
+	}
 
 	public void sendToPlayer(EntityPlayer entityplayer, BuildCraftPacket packet) {
 		channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.PLAYER);
