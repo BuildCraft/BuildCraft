@@ -141,7 +141,7 @@ public class BlockMarker extends BlockContainer {
 		int meta = world.getBlockMetadata(x, y, z);
 		if (!canPlaceBlockOnSide(world, x, y, z, meta)) {
 			dropBlockAsItem(world, x, y, z, 0, 0);
-			world.setBlock(x, y, z, null);
+			world.setBlockToAir(x, y, z);
 		}
 	}
 

@@ -82,7 +82,7 @@ public class BlockUtil {
 			}
 		}
 
-		world.setBlock(x, y, z, null);
+		world.setBlockToAir(x, y, z);
 	}
 
 	public static boolean isAnObstructingBlock(Block block, World world, int x, int y, int z) {

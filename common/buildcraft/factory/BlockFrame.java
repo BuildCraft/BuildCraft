@@ -47,7 +47,7 @@ public class BlockFrame extends Block implements IFramePipeConnection {
 
 		int meta = world.getBlockMetadata(i, j, k);
 		if (meta == 1 && random.nextInt(10) > 5) {
-			world.setBlock(i, j, k, null);
+			world.setBlockToAir(i, j, k);
 		}
 	}
 

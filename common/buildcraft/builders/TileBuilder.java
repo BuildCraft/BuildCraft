@@ -189,7 +189,7 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 						path = ((TilePathMarker) tile).getPath();
 
 						for (BlockIndex b : path) {
-							worldObj.setBlock(b.x, b.y, b.z, null);
+							worldObj.setBlockToAir(b.x, b.y, b.z);
 
 							BuildCraftBuilders.pathMarkerBlock.dropBlockAsItem(worldObj, b.x, b.y, b.z, 0, 0);
 						}

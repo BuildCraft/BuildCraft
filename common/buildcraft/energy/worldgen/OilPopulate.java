@@ -330,7 +330,7 @@ public class OilPopulate {
 				return;
 			}
 			if (!world.isAirBlock(x, y + 1, z)) {
-				world.setBlock(x, y + 1, z, null, 0, update);
+				world.setBlock(x, y + 1, z, Blocks.air, 0, update);
 			}
 
 			for (int d = 1; d <= depth - 1; d++) {
