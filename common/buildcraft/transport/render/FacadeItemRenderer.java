@@ -20,7 +20,7 @@ public class FacadeItemRenderer implements IItemRenderer {
 	private void renderFacadeItem(RenderBlocks render, ItemStack item, float translateX, float translateY, float translateZ) {
 
 		int decodedMeta = ItemFacade.getMetaData(item);
-		Block block = Block.getBlockFromItem(item.getItem());
+		Block block = ItemFacade.getBlock(item);
 
 		try {
 			int color = item.getItem().getColorFromItemStack(new ItemStack(block, 1, decodedMeta), 0);

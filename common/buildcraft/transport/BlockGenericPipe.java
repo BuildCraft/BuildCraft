@@ -61,7 +61,6 @@ import net.minecraft.client.Minecraft;
 public class BlockGenericPipe extends BlockBuildCraft {
 
 	static enum Part {
-
 		Pipe,
 		Gate,
 		Facade,
@@ -965,7 +964,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 		try {
 			Class<? extends Pipe> pipe = pipes.get(key);
 			if (pipe != null)
-				return pipe.getConstructor(int.class).newInstance(key);
+				return pipe.getConstructor(Item.class).newInstance(key);
 			else {
 				BCLog.logger.warning("Detected pipe with unknown key (" + key + "). Did you remove a buildcraft addon?");
 			}

@@ -15,6 +15,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -100,42 +101,38 @@ public class ItemFacade extends ItemBuildCraft {
 	}
 
 	public static void initialize() {
-		for (Field f : Block.class.getDeclaredFields()) {
-			if (Modifier.isStatic(f.getModifiers()) && Block.class.isAssignableFrom(f.getType())) {
-				Block b;
-				try {
-					b = (Block) f.get(null);
-				} catch (Exception e) {
+		for (Object o : Block.blockRegistry) {			
+			Block b = (Block) o;
+
+			if (!(b == Blocks.glass)) {
+				if (b == Blocks.bedrock
+						|| b == Blocks.grass 
+						|| b == Blocks.leaves
+						|| b == Blocks.sponge
+						|| b == Blocks.chest
+						|| b == Blocks.redstone_lamp
+						|| b == Blocks.lit_redstone_lamp
+						|| b == Blocks.lit_pumpkin) {
 					continue;
 				}
-
-				if (!(b == Blocks.glass)) {
-					if (b == Blocks.bedrock
-							|| b == Blocks.grass 
-							|| b == Blocks.leaves
-							|| b == Blocks.sponge
-							|| b == Blocks.chest
-							|| b == Blocks.redstone_lamp
-							|| b == Blocks.lit_redstone_lamp
-							|| b == Blocks.lit_pumpkin) {
-						continue;
-					}
-					if (!b.isOpaqueCube() || b.hasTileEntity(0) || !b.renderAsNormalBlock()) {
-						continue;
-					}
+					
+				if (!b.isOpaqueCube() 
+						|| b.hasTileEntity(0)
+						|| !b.renderAsNormalBlock() 
+						|| b.getRenderType() != 0) {
+					continue;
 				}
-				ItemStack base = new ItemStack(b, 1);
-				if (base.getHasSubtypes()) {
-					Set<String> names = Sets.newHashSet();
-					for (int meta = 0; meta <= 15; meta++) {
-						ItemStack is = new ItemStack(b, 1, meta);
-						if (!Strings.isNullOrEmpty(is.getUnlocalizedName()) && names.add(is.getUnlocalizedName())) {
-							ItemFacade.addFacade(is);
-						}
-					}
-				} else {
-					ItemFacade.addFacade(base);
-				}
+			}			
+									
+			Item base = Item.getItemFromBlock(b);			
+			
+			if (base != null) {
+				List <ItemStack> stackList = new ArrayList<ItemStack> ();
+				base.getSubItems(base, null, stackList);
+				
+				for (ItemStack s : stackList) {
+					ItemFacade.addFacade(s);
+				}				
 			}
 		}
 	}
