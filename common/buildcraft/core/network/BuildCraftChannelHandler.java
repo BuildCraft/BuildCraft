@@ -7,6 +7,7 @@ import io.netty.channel.ChannelHandlerContext;
 public class BuildCraftChannelHandler extends FMLIndexedMessageToMessageCodec<BuildCraftPacket> {
 	
     public BuildCraftChannelHandler() {
+    	addDiscriminator(0, PacketTileUpdate.class);
     }
 
     @Override
