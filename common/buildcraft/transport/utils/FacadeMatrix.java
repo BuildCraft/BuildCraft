@@ -44,7 +44,12 @@ public class FacadeMatrix {
 
 	public void writeData(ByteBuf data) {
 		for (int i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
-			data.writeShort(Block.blockRegistry.getIDForObject(_blocks[i]));
+			if (_blocks [i] == null) {
+				data.writeShort(0);
+			} else {
+				data.writeShort(Block.blockRegistry.getIDForObject(_blocks[i]));
+			}
+			
 			data.writeByte(_blockMetas[i]);
 		}
 	}
@@ -53,7 +58,13 @@ public class FacadeMatrix {
 		for (int i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
 			short id = data.readShort();
 			
-			Block block = (Block) Block.blockRegistry.getObjectById(id);
+			Block block;
+			
+			if (id == 0) {
+				block = null;
+			} else {
+				block = (Block) Block.blockRegistry.getObjectById(id);
+			}
 			
 			if (_blocks[i] != block) {
 				_blocks[i] = block;

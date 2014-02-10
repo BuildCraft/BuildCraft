@@ -18,6 +18,7 @@ import java.util.logging.Level;
 
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -49,11 +50,13 @@ import buildcraft.core.IDropControlInventory;
 import buildcraft.core.ITileBufferHolder;
 import buildcraft.core.TileBuffer;
 import buildcraft.core.inventory.InvUtils;
+import buildcraft.core.network.BuildCraftPacket;
 import buildcraft.core.network.IClientState;
 import buildcraft.core.network.IGuiReturnHandler;
 import buildcraft.core.network.ISyncedTile;
 import buildcraft.core.network.PacketTileState;
 import buildcraft.core.utils.BCLog;
+import buildcraft.core.utils.Utils;
 import buildcraft.transport.gates.GateDefinition;
 import buildcraft.transport.gates.GateFactory;
 import cpw.mods.fml.relauncher.Side;
@@ -120,25 +123,32 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 	@Override
 	public void writeToNBT(NBTTagCompound nbt) {
 		super.writeToNBT(nbt);
+		
 		nbt.setByte("redstoneInput", (byte)redstoneInput);
 
 		if (pipe != null) {
 			nbt.setInteger("pipeId", Item.itemRegistry.getIDForObject(pipe.item));
 			pipe.writeToNBT(nbt);
-		} else
+		} else {
 			nbt.setInteger("pipeId", coreState.pipeId);
+		}
 
 		for (int i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
-			nbt.setInteger("facadeBlocks[" + i + "]", Block.blockRegistry.getIDForObject(facadeBlocks[i]));
+			if (facadeBlocks[i] == null) {
+				nbt.setInteger("facadeBlocks[" + i + "]", 0);
+			} else {
+				nbt.setInteger("facadeBlocks[" + i + "]", Block.blockRegistry.getIDForObject(facadeBlocks[i]));
+			}
+			
 			nbt.setInteger("facadeMeta[" + i + "]", facadeMeta[i]);
 			nbt.setBoolean("plug[" + i + "]", plugs[i]);
 		}
-
 	}
 
 	@Override
 	public void readFromNBT(NBTTagCompound nbt) {
 		super.readFromNBT(nbt);
+		
 		redstoneInput = nbt.getByte("redstoneInput");
 
 		coreState.pipeId = nbt.getInteger("pipeId");
@@ -153,8 +163,14 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 		}
 
 		for (int i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
-			facadeBlocks[i] = (Block) Block.blockRegistry.getObjectById(nbt
-					.getInteger("facadeBlocks[" + i + "]"));
+			int blockId = nbt.getInteger("facadeBlocks[" + i + "]");
+			
+			if (blockId != 0) {
+				facadeBlocks[i] = (Block) Block.blockRegistry.getObjectById(blockId);
+			} else {
+				facadeBlocks[i] = null;
+			}
+			
 			facadeMeta[i] = nbt.getInteger("facadeMeta[" + i + "]");
 			plugs[i] = nbt.getBoolean("plug[" + i + "]");
 		}
@@ -184,24 +200,30 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 	@Override
 	public void updateEntity() {
 		if (!worldObj.isRemote) {
-			if (deletePipe)
+			if (deletePipe) {
 				worldObj.setBlockToAir(xCoord, yCoord, zCoord);
+			}
 
-			if (pipe == null)
+			if (pipe == null) {
 				return;
+			}
 
-			if (!initialized)
+			if (!initialized) {
 				initialize(pipe);
+			}
 		}
 
-		if (!BlockGenericPipe.isValid(pipe))
+		if (!BlockGenericPipe.isValid(pipe)) {
 			return;
+		}
 
 		pipe.updateEntity();
 
 		if (worldObj.isRemote) {
-			if (resyncGateExpansions)
+			if (resyncGateExpansions) {
 				syncGateExpansions();
+			}
+			
 			return;
 		}
 
@@ -218,21 +240,27 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 		}
 
 		PowerReceiver provider = getPowerReceiver(null);
-		if (provider != null)
+		
+		if (provider != null) {
 			provider.update();
+		}
 
-		// TODO: pipe synchronization with 1.7.2 needs to be reviewed.
-		/*if (sendClientUpdate) {
+		if (sendClientUpdate) {
 			sendClientUpdate = false;
+			
 			if (worldObj instanceof WorldServer) {
 				WorldServer world = (WorldServer) worldObj;
-				PlayerInstance playerInstance = world.getPlayerManager().getOrCreateChunkWatcher(xCoord >> 4, zCoord >> 4, false);
+				BuildCraftPacket updatePacket = getBCDescriptionPacket();
 				
-				if (playerInstance != null) {
-					playerInstance.sendToAllPlayersWatchingChunk(getDescriptionPacket());
-				}
+				for (Object o : world.playerEntities) {
+					EntityPlayerMP player = (EntityPlayerMP) o;
+					
+					if (world.getPlayerManager().isPlayerWatchingChunk (player, xCoord >> 4, zCoord >> 4)) {
+						BuildCraftCore.instance.sendToPlayer(player, updatePacket);
+					}
+				}	
 			}
-		}*/
+		}
 	}
 
 	// PRECONDITION: worldObj must not be null
@@ -251,9 +279,11 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 		// WireState
 		for (PipeWire color : PipeWire.values()) {
 			renderState.wireMatrix.setWire(color, pipe.wireSet[color.ordinal()]);
+			
 			for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
 				renderState.wireMatrix.setWireConnected(color, direction, pipe.isWireConnectedTo(this.getTile(direction), color));
 			}
+			
 			boolean lit = pipe.signalStrength[color.ordinal()] > 0;
 
 			switch (color) {
@@ -383,10 +413,10 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 			return pipe.transport.getPipeType();
 		return null;
 	}
-
+	
 	/* SMP */
-	@Override
-	public Packet getDescriptionPacket() {
+	
+	public BuildCraftPacket getBCDescriptionPacket() { 
 		bindPipe();
 
 		PacketTileState packet = new PacketTileState(this.xCoord, this.yCoord, this.zCoord);
@@ -413,10 +443,12 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 			packet.addStateForSerialization((byte) 2, (IClientState) pipe);
 		}
 		
-		// TODO: pipe synchronization with 1.7.2 needs to be reviewed.
-		//return packet.getPacket();
-		
-		return null;
+		return packet;
+	}
+	
+	@Override
+	public Packet getDescriptionPacket() {		
+		return Utils.toPacket(getBCDescriptionPacket(), 1);
 	}
 
 	public void sendUpdateToClient() {
@@ -437,7 +469,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 
 	@Override
 	public void blockRemoved(ForgeDirection from) {
-		// TODO Auto-generated method stub
+
 	}
 
 	public TileBuffer[] getTileCache() {
@@ -604,18 +636,23 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 	}
 
 	public boolean addFacade(ForgeDirection direction, Block block, int meta) {
-		if (this.getWorldObj().isRemote)
+		if (this.getWorldObj().isRemote) {
 			return false;
-		if (this.facadeBlocks[direction.ordinal()] == block)
+		}
+		
+		if (this.facadeBlocks[direction.ordinal()] == block) {
 			return false;
+		}
 
-		if (hasFacade(direction))
+		if (hasFacade(direction)) {
 			dropFacadeItem(direction);
+		}
 
 		this.facadeBlocks[direction.ordinal()] = block;
 		this.facadeMeta[direction.ordinal()] = meta;
 		worldObj.notifyBlockChange(this.xCoord, this.yCoord, this.zCoord, getBlock());
 		scheduleRenderUpdate();
+		
 		return true;
 	}
 

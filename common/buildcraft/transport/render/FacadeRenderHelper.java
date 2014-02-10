@@ -94,6 +94,7 @@ public class FacadeRenderHelper {
 
 		for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
 			Block renderBlock = state.facadeMatrix.getFacadeBlock(direction);
+			
 			if (renderBlock != null) {
 				int renderMeta = state.facadeMatrix.getFacadeMetaId(direction);
 

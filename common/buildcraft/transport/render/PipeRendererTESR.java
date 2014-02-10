@@ -255,14 +255,15 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 
 	@Override
 	public void renderTileEntityAt(TileEntity tileentity, double x, double y, double z, float f) {
-
-		if (BuildCraftCore.render == RenderMode.NoDynamic)
+		if (BuildCraftCore.render == RenderMode.NoDynamic) {
 			return;
+		}
 
 		TileGenericPipe pipe = (TileGenericPipe) tileentity;
 
-		if (pipe.pipe == null)
+		if (pipe.pipe == null) {
 			return;
+		}
 
 		renderGatesWires(pipe, x, y, z);
 
@@ -754,8 +755,9 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 
 	public void doRenderItem(TravelingItem travellingItem, double x, double y, double z, float light, EnumColor color) {
 
-		if (travellingItem == null || travellingItem.getItemStack() == null)
+		if (travellingItem == null || travellingItem.getItemStack() == null) {
 			return;
+		}
 
 		float renderScale = 0.7f;
 		ItemStack itemstack = travellingItem.getItemStack();
@@ -765,6 +767,7 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 		GL11.glScalef(renderScale, renderScale, renderScale);
 		dummyEntityItem.setEntityItemStack(itemstack);
 		customRenderItem.doRender(dummyEntityItem, 0, 0, 0, 0, 0);
+		
 		if (color != null) {
 			bindTexture(TextureMap.locationBlocksTexture);
 			RenderInfo block = new RenderInfo();
@@ -788,6 +791,7 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 			RenderUtils.setGLColorFromInt(color.getLightHex());
 			RenderEntityBlock.INSTANCE.renderBlock(block, null, 0, 0, 0, false, true);
 		}
+		
 		GL11.glPopMatrix();
 	}
 }

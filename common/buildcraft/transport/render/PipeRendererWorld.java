@@ -24,8 +24,10 @@ public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
 	public void renderPipe(RenderBlocks renderblocks, IBlockAccess iblockaccess, BlockGenericPipe block, TileGenericPipe tile, int x, int y, int z) {
 		PipeRenderState state = tile.renderState;
 		IIconProvider icons = tile.getPipeIcons();
-		if (icons == null)
+		
+		if (icons == null) {
 			return;
+		}
 
 		int connectivity = state.pipeConnectionMatrix.getMask();
 		float[] dim = new float[6];
@@ -43,8 +45,10 @@ public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
 
 		for (int dir = 0; dir < 6; dir++) {
 			int mask = 1 << dir;
-			if ((connectivity & mask) == 0)
+			
+			if ((connectivity & mask) == 0) {
 				continue; // no connection towards dir
+			}
 
 			// center piece offsets
 			resetToCenterDimensions(dim);
@@ -72,6 +76,7 @@ public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
 		for (int i = 0; i < 3; i++) {
 			dim[i] = CoreConstants.PIPE_MIN_POS;
 		}
+		
 		for (int i = 3; i < 6; i++) {
 			dim[i] = CoreConstants.PIPE_MAX_POS;
 		}
@@ -97,10 +102,9 @@ public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
 	}
 
 	private void pipePlugRenderer(RenderBlocks renderblocks, Block block, PipeRenderState state, int x, int y, int z) {
-
 		float zFightOffset = 1F / 4096F;
-
 		float[][] zeroState = new float[3][2];
+		
 		// X START - END
 		zeroState[0][0] = 0.25F + zFightOffset;
 		zeroState[0][1] = 0.75F - zFightOffset;
@@ -160,6 +164,7 @@ public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
 			TileGenericPipe pipeTile = (TileGenericPipe) tile;
 			renderPipe(renderer, world, (BlockGenericPipe) block, pipeTile, x, y, z);
 		}
+		
 		return true;
 	}
 
@@ -172,6 +177,4 @@ public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
 	public int getRenderId() {
 		return TransportProxy.pipeModel;
 	}
-
-
 }

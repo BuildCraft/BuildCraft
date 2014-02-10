@@ -8,6 +8,7 @@ public class BuildCraftChannelHandler extends FMLIndexedMessageToMessageCodec<Bu
 	
     public BuildCraftChannelHandler() {
     	addDiscriminator(0, PacketTileUpdate.class);
+    	addDiscriminator(1, PacketTileState.class);
     }
 
     @Override

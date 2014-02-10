@@ -67,11 +67,19 @@ public class PipeRenderState implements IClientState {
 	}
 
 	public boolean isDirty() {
-		return dirty || pipeConnectionMatrix.isDirty() || textureMatrix.isDirty() || wireMatrix.isDirty() || facadeMatrix.isDirty() || plugMatrix.isDirty();
+		return dirty 
+				|| pipeConnectionMatrix.isDirty() 
+				|| textureMatrix.isDirty() 
+				|| wireMatrix.isDirty()
+				|| facadeMatrix.isDirty() 
+				|| plugMatrix.isDirty();
 	}
 
 	public boolean needsRenderUpdate() {
-		return pipeConnectionMatrix.isDirty() || textureMatrix.isDirty() || facadeMatrix.isDirty() || plugMatrix.isDirty();
+		return pipeConnectionMatrix.isDirty() 
+				|| textureMatrix.isDirty() 
+				|| facadeMatrix.isDirty() 
+				|| plugMatrix.isDirty();
 	}
 
 	@Override

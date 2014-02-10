@@ -146,16 +146,19 @@ public class BlockGenericPipe extends BlockBuildCraft {
 	@Override
 	public boolean isSideSolid(IBlockAccess world, int x, int y, int z, ForgeDirection side) {
 		TileEntity tile = world.getTileEntity(x, y, z);
+		
 		if (tile instanceof ISolidSideTile) {
 			return ((ISolidSideTile) tile).isSolidOnSide(side);
 		}
+		
 		return false;
 	}
 
-	public boolean isACube() {
+	@Override
+	public boolean isNormalCube() {
 		return false;
 	}
-
+	
 	@SuppressWarnings("rawtypes")
 	@Override
 	public void addCollisionBoxesToList(World world, int i, int j, int k, AxisAlignedBB axisalignedbb, List arraylist, Entity par7Entity) {
