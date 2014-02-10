@@ -17,15 +17,18 @@ import cpw.mods.fml.common.network.NetworkRegistry;
 public class PacketHandler extends BuildCraftChannelHandler {
 
 	private void onTileUpdate(EntityPlayer player, PacketTileUpdate packet) throws IOException {
-		World world = player.worldObj;
-
-		if (!packet.targetExists(world))
+		World world = player.worldObj;		
+		
+		if (!packet.targetExists(world)) {
 			return;
+		}
 
 		TileEntity entity = packet.getTarget(world);
-		if (!(entity instanceof ISynchronizedTile))
+		
+		if (!(entity instanceof ISynchronizedTile)) {
 			return;
-
+		}
+		
 		ISynchronizedTile tile = (ISynchronizedTile) entity;
 		tile.handleUpdatePacket(packet);
 		tile.postPacketHandling(packet);

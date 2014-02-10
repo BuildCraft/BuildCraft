@@ -14,6 +14,7 @@ import buildcraft.api.core.Position;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.IPipeTile.PipeType;
 import buildcraft.core.BlockIndex;
+import buildcraft.core.DefaultProps;
 import buildcraft.core.EntityBlock;
 import buildcraft.core.IDropControlInventory;
 import buildcraft.core.IFramePipeConnection;
@@ -21,11 +22,14 @@ import buildcraft.core.TileBuildCraft;
 import buildcraft.core.inventory.ITransactor;
 import buildcraft.core.inventory.InvUtils;
 import buildcraft.core.inventory.Transactor;
+import buildcraft.core.network.BuildCraftPacket;
 import buildcraft.core.network.ISynchronizedTile;
+import buildcraft.core.network.PacketTileUpdate;
 import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.energy.TileEngine;
 import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -36,6 +40,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
+import cpw.mods.fml.common.network.internal.FMLProxyPacket;
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.inventory.IInventory;
@@ -483,5 +488,24 @@ public class Utils {
 			NBTTagCompound nbt = readNBT(data);
 			return ItemStack.loadItemStackFromNBT(nbt);
 		}
+	}
+	
+	/**
+	 * This subprogram transforms a packet into a FML packet to be send in the
+	 * minecraft default packet mechanism. This always use BC-CORE as a 
+	 * channel, and as a result, should use discriminators declared there.
+	 * 
+	 * WARNING! The implementation of this subprogram relies on the internal
+	 * behavior of #FMLIndexedMessageToMessageCodec (in particular the encode
+	 * member). It is probably opening a maintenance issue and should be
+	 * replaced eventually by some more solid mechanism. 
+	 */
+	public static FMLProxyPacket toPacket (BuildCraftPacket packet, int discriminator) {
+		ByteBuf buf = Unpooled.buffer();
+				
+		buf.writeByte((byte) discriminator);
+		packet.writeData(buf);
+				
+		return new FMLProxyPacket(buf, DefaultProps.NET_CHANNEL_NAME + "-CORE");
 	}
 }

@@ -38,7 +38,6 @@ public class PacketUpdate extends BuildCraftPacket {
 
 	@Override
 	public void writeData(ByteBuf data) {
-
 		data.writeInt(posX);
 		data.writeInt(posY);
 		data.writeInt(posZ);
@@ -53,7 +52,6 @@ public class PacketUpdate extends BuildCraftPacket {
 
 	@Override
 	public void readData(ByteBuf data) {
-
 		posX = data.readInt();
 		posY = data.readInt();
 		posZ = data.readInt();
@@ -62,8 +60,9 @@ public class PacketUpdate extends BuildCraftPacket {
 
 		payload = PacketPayload.makePayload(type);
 
-		if (payload != null)
+		if (payload != null) {
 			payload.readData(data);
+		}
 	}
 
 	@Override

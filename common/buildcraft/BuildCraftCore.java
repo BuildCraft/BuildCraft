@@ -109,7 +109,10 @@ public class BuildCraftCore extends BuildCraftMod {
 	public static int updateFactor = 10;
 	public static long longUpdateFactor = 40;
 	public static BuildCraftConfiguration mainConfiguration;
+	
+	// TODO: This doesn't seem used anymore. Remove if it's the case.
 	public static TreeMap<BlockIndex, PacketUpdate> bufferedDescriptions = new TreeMap<BlockIndex, PacketUpdate>();
+	
 	public static final int trackedPassiveEntityId = 156;
 	public static boolean continuousCurrentModel;
 	public static Block springBlock;

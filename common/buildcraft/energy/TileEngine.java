@@ -41,10 +41,10 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 	public static final ResourceLocation IRON_TEXTURE = new ResourceLocation(DefaultProps.TEXTURE_PATH_BLOCKS + "/base_iron.png");
 
 	public enum EnergyStage {
-
 		BLUE, GREEN, YELLOW, RED, OVERHEAT;
 		public static final EnergyStage[] VALUES = values();
 	}
+	
 	public static final float MIN_HEAT = 20;
 	public static final float IDEAL_HEAT = 100;
 	public static final float MAX_HEAT = 250;
@@ -135,8 +135,10 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 	}
 
 	public float getPistonSpeed() {
-		if (CoreProxy.proxy.isSimulating(worldObj))
+		if (CoreProxy.proxy.isSimulating(worldObj)) {
 			return Math.max(0.16f * getHeatLevel(), 0.01f);
+		}
+		
 		switch (getEnergyStage()) {
 			case BLUE:
 				return 0.02F;
@@ -163,21 +165,26 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 					progressPart = 0;
 					progress = 0;
 				}
-			} else if (this.isPumping)
+			} else if (this.isPumping) {
 				progressPart = 1;
+			}
 
 			return;
 		}
 
 		if (checkOrienation) {
 			checkOrienation = false;
-			if (!isOrientationValid())
+			
+			if (!isOrientationValid()) {
 				switchOrientation(true);
+			}
 		}
 
-		if (!isRedstonePowered)
-			if (energy > 1)
+		if (!isRedstonePowered) {
+			if (energy > 1) {
 				energy--;
+			}
+		}
 
 		updateHeatLevel();
 		getEnergyStage();
@@ -195,17 +202,20 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 				progress = 0;
 				progressPart = 0;
 			}
-		} else if (isRedstonePowered && isActive())
-			if (isPoweredTile(tile, orientation))
+		} else if (isRedstonePowered && isActive()) {
+			if (isPoweredTile(tile, orientation)) {
 				if (getPowerToExtract() > 0) {
 					progressPart = 1;
 					setPumping(true);
-				} else
+				} else {
 					setPumping(false);
-			else
+				}
+			} else {
 				setPumping(false);
-		else
+			}
+		} else {
 			setPumping(false);
+		}
 
 		// Uncomment for constant power
 //		if (isRedstonePowered && isActive()) {
@@ -318,12 +328,13 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 		orientation = ForgeDirection.getOrientation(data.getInteger("orientation"));
 		progress = data.getFloat("progress");
 		energy = data.getDouble("energy");
-		heat = data.getFloat("heat");
+		heat = data.getFloat("heat");		
 	}
 
 	@Override
 	public void writeToNBT(NBTTagCompound data) {
 		super.writeToNBT(data);
+		
 		data.setInteger("orientation", orientation.ordinal());
 		data.setFloat("progress", progress);
 		data.setDouble("energy", energy);
@@ -456,11 +467,13 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 
 	@Override
 	public ConnectOverride overridePipeConnection(PipeType type, ForgeDirection with) {
-		if (type == PipeType.POWER)
+		if (type == PipeType.POWER) {
 			return ConnectOverride.DEFAULT;
-		if (with == orientation)
+		} else 	if (with == orientation) { 
 			return ConnectOverride.DISCONNECT;
-		return ConnectOverride.DEFAULT;
+		} else {
+			return ConnectOverride.DEFAULT;
+		}
 	}
 
 	@Override

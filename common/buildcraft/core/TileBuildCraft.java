@@ -19,16 +19,22 @@ import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.network.TilePacketWrapper;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.EmptyByteBuf;
+import io.netty.buffer.Unpooled;
+import io.netty.buffer.UnpooledHeapByteBuf;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import cpw.mods.fml.common.network.internal.FMLProxyPacket;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.Packet;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 
@@ -100,11 +106,7 @@ public abstract class TileBuildCraft extends TileEntity implements ISynchronized
 
 	@Override
 	public Packet getDescriptionPacket() {
-		// TODO: The description packet mechanism seems to have completely be replaced by other means, e.g.
-		// the update packet. If confirmed, remove the buffer packet mechanism in Utils as well, that is
-		// BuildCraftCore.bufferedDescriptions.
-		//return new PacketTileUpdate(this).getPacket();
-		return null;
+		return Utils.toPacket(getUpdatePacket(), 0);
 	}
 
 	@Override
@@ -126,8 +128,9 @@ public abstract class TileBuildCraft extends TileEntity implements ISynchronized
 
 	@Override
 	public void handleUpdatePacket(PacketUpdate packet) throws IOException {
-		if (packet.payload instanceof PacketPayloadArrays)
-			updatePacket.fromPayload(this, (PacketPayloadArrays) packet.payload);
+		if (packet.payload instanceof PacketPayloadArrays) {
+			updatePacket.fromPayload(this, (PacketPayloadArrays) packet.payload);		
+		}
 	}
 
 	@Override
