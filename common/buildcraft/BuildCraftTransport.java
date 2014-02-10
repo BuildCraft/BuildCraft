@@ -332,6 +332,37 @@ public class BuildCraftTransport extends BuildCraftMod {
 			filteredBufferBlock = new BlockFilteredBuffer();
 			CoreProxy.proxy.registerBlock(filteredBufferBlock.setBlockName("filteredBufferBlock"));
 			CoreProxy.proxy.addName(filteredBufferBlock, "Filtered Buffer");
+			
+			for (PipeContents kind : PipeContents.values()) {
+				triggerPipe[kind.ordinal()] = new TriggerPipeContents(kind);
+			}
+			
+			for (PipeWire wire : PipeWire.values()) {
+				triggerPipeWireActive[wire.ordinal()] = new TriggerPipeSignal(true, wire);
+				triggerPipeWireInactive[wire.ordinal()] = new TriggerPipeSignal(false, wire);
+				actionPipeWire[wire.ordinal()] = new ActionSignalOutput(wire);
+			}
+
+			for (Time time : TriggerClockTimer.Time.VALUES) {
+				triggerTimer[time.ordinal()] = new TriggerClockTimer(time);
+			}
+
+			for (int level = 0; level < triggerRedstoneLevel.length; level++) {
+				triggerRedstoneLevel[level] = new TriggerRedstoneFaderInput(level + 1);
+				actionRedstoneLevel[level] = new ActionRedstoneFaderOutput(level + 1);
+			}
+
+			for (EnumColor color : EnumColor.VALUES) {
+				actionPipeColor[color.ordinal()] = new ActionPipeColor(color);
+			}
+
+			for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
+				actionPipeDirection[direction.ordinal()] = new ActionPipeDirection(direction);
+			}
+
+			for (PowerMode limit : PowerMode.VALUES) {
+				actionPowerLimiter[limit.ordinal()] = new ActionPowerLimiter(limit);
+			}
 		} finally {
 			BuildCraftCore.mainConfiguration.save();
 		}
@@ -381,37 +412,6 @@ public class BuildCraftTransport extends BuildCraftMod {
 	@EventHandler
 	public void postInit(FMLPostInitializationEvent evt) {
 		ItemFacade.initialize();
-
-		for (PipeContents kind : PipeContents.values()) {
-			triggerPipe[kind.ordinal()] = new TriggerPipeContents(kind);
-		}
-
-		for (PipeWire wire : PipeWire.values()) {
-			triggerPipeWireActive[wire.ordinal()] = new TriggerPipeSignal(true, wire);
-			triggerPipeWireInactive[wire.ordinal()] = new TriggerPipeSignal(false, wire);
-			actionPipeWire[wire.ordinal()] = new ActionSignalOutput(wire);
-		}
-
-		for (Time time : TriggerClockTimer.Time.VALUES) {
-			triggerTimer[time.ordinal()] = new TriggerClockTimer(time);
-		}
-
-		for (int level = 0; level < triggerRedstoneLevel.length; level++) {
-			triggerRedstoneLevel[level] = new TriggerRedstoneFaderInput(level + 1);
-			actionRedstoneLevel[level] = new ActionRedstoneFaderOutput(level + 1);
-		}
-
-		for (EnumColor color : EnumColor.VALUES) {
-			actionPipeColor[color.ordinal()] = new ActionPipeColor(color);
-		}
-
-		for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
-			actionPipeDirection[direction.ordinal()] = new ActionPipeDirection(direction);
-		}
-
-		for (PowerMode limit : PowerMode.VALUES) {
-			actionPowerLimiter[limit.ordinal()] = new ActionPowerLimiter(limit);
-		}
 	}
 
 	public void loadRecipes() {

@@ -193,7 +193,6 @@ public class ItemGate extends ItemBuildCraft {
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void registerIcons(IIconRegister iconRegister) {
-
 		for (GateDefinition.GateMaterial material : GateDefinition.GateMaterial.VALUES) {
 			material.registerItemIcon(iconRegister);
 		}
