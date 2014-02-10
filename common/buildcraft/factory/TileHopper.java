@@ -34,7 +34,7 @@ public class TileHopper extends TileBuildCraft implements IInventory {
 	@Override
 	public void updateEntity() {
 		super.updateEntity();
-		if (CoreProxy.proxy.isRenderWorld(worldObj) || worldObj.getTotalWorldTime() % 2 != 0)
+		if (worldObj.isRemote || worldObj.getTotalWorldTime() % 2 != 0)
 			return;
 
 		TileEntity tile = this.getWorldObj().getTileEntity(xCoord, yCoord - 1, zCoord);

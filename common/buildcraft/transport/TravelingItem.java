@@ -192,7 +192,7 @@ public final class TravelingItem {
 	}
 
 	public EntityItem toEntityItem() {
-		if (container != null && !CoreProxy.proxy.isRenderWorld(container.getWorldObj())) {
+		if (container != null && !container.getWorldObj().isRemote) {
 			if (getItemStack().stackSize <= 0)
 				return null;
 

@@ -210,7 +210,7 @@ public class EntityRobot extends Entity implements IEntityAdditionalSpawnData {
 				//System.out.printf("RobotChanging %d %d %d %s\n",target.x, target.y, target.z, target.mode);
 				if (wait <= 0 && BlockUtil.canChangeBlock(worldObj, target.x, target.y, target.z)) {
 
-					if (!CoreProxy.proxy.isRenderWorld(worldObj)) {
+					if (!worldObj.isRemote) {
 
 						if (target.mode == Mode.ClearIfInvalid) {
 

@@ -56,7 +56,7 @@ public class BlockAutoWorkbench extends BlockBuildCraft {
 				return false;
 		}
 
-		if (!CoreProxy.proxy.isRenderWorld(world)) {
+		if (!world.isRemote) {
 			entityplayer.openGui(BuildCraftFactory.instance, GuiIds.AUTO_CRAFTING_TABLE, world, i, j, k);
 		}
 

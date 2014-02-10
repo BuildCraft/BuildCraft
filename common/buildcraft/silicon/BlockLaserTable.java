@@ -54,7 +54,7 @@ public class BlockLaserTable extends BlockContainer {
 		if (entityplayer.isSneaking())
 			return false;
 
-		if (!CoreProxy.proxy.isRenderWorld(world)) {
+		if (!world.isRemote) {
 			int meta = world.getBlockMetadata(i, j, k);
 			entityplayer.openGui(BuildCraftSilicon.instance, meta, world, i, j, k);
 		}

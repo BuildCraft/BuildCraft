@@ -188,8 +188,9 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 
 	@Override
 	public void updateEntity() {
-		if (CoreProxy.proxy.isRenderWorld(container.getWorldObj()))
+		if (container.getWorldObj().isRemote) {
 			return;
+		}
 
 		moveFluids();
 

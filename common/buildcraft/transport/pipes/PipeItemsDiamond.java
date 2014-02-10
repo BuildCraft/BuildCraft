@@ -89,7 +89,7 @@ public class PipeItemsDiamond extends Pipe<PipeTransportItems> implements IClien
 			if (Block.getBlockFromItem(entityplayer.getCurrentEquippedItem().getItem()) instanceof BlockGenericPipe)
 				return false;
 
-		if (!CoreProxy.proxy.isRenderWorld(container.getWorldObj())) {
+		if (!container.getWorldObj().isRemote) {
 			entityplayer.openGui(BuildCraftTransport.instance, GuiIds.PIPE_DIAMOND, container.getWorldObj(), container.xCoord, container.yCoord, container.zCoord);
 		}
 

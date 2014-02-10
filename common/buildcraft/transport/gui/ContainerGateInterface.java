@@ -36,6 +36,7 @@ import java.util.NavigableSet;
 import java.util.TreeSet;
 
 import net.minecraft.block.Block;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ICrafting;
 import net.minecraft.inventory.IInventory;
@@ -51,18 +52,21 @@ public class ContainerGateInterface extends BuildCraftContainer {
 
 	IInventory playerIInventory;
 	Pipe pipe;
+	
 	private final NavigableSet<ITrigger> _potentialTriggers = new TreeSet<ITrigger>(new Comparator<ITrigger>() {
 		@Override
 		public int compare(ITrigger o1, ITrigger o2) {
 			return o1.getUniqueTag().compareTo(o2.getUniqueTag());
 		}
 	});
+	
 	private final NavigableSet<IAction> _potentialActions = new TreeSet<IAction>(new Comparator<IAction>() {
 		@Override
 		public int compare(IAction o1, IAction o2) {
 			return o1.getUniqueTag().compareTo(o2.getUniqueTag());
 		}
 	});
+	
 	private boolean isSynchronized = false;
 	private boolean isNetInitialized = false;
 	public boolean[] triggerState = new boolean[8];
@@ -70,6 +74,7 @@ public class ContainerGateInterface extends BuildCraftContainer {
 
 	public ContainerGateInterface(IInventory playerInventory, Pipe pipe) {
 		super(0);
+		
 		this.playerIInventory = playerInventory;
 
 		for (int y = 0; y < 3; y++) {
@@ -86,7 +91,7 @@ public class ContainerGateInterface extends BuildCraftContainer {
 
 		// Do not attempt to create a list of potential actions and triggers on
 		// the client.
-		if (!CoreProxy.proxy.isRenderWorld(pipe.container.getWorldObj())) {
+		if (!pipe.container.getWorldObj().isRemote) {
 			_potentialActions.addAll(pipe.getActions());
 			_potentialTriggers.addAll(ActionManager.getPipeTriggers(pipe.container));
 
@@ -103,10 +108,13 @@ public class ContainerGateInterface extends BuildCraftContainer {
 
 			if (!pipe.gate.material.hasParameterSlot) {
 				Iterator<ITrigger> it = _potentialTriggers.iterator();
+				
 				while (it.hasNext()) {
 					ITrigger trigger = it.next();
-					if (trigger.requiresParameter())
+					
+					if (trigger.requiresParameter()) {
 						it.remove();
+					}
 				}
 			}
 		}
@@ -114,9 +122,11 @@ public class ContainerGateInterface extends BuildCraftContainer {
 
 	@Override
 	public boolean canInteractWith(EntityPlayer player) {
-		if (pipe == null || pipe.gate == null)
+		if (pipe == null || pipe.gate == null) {
 			return false;
-		return true;
+		} else {
+			return true;
+		}
 	}
 
 	/**
@@ -138,6 +148,7 @@ public class ContainerGateInterface extends BuildCraftContainer {
 	public void updateActions(PacketUpdate packet) {
 		_potentialActions.clear();
 		PacketPayloadArrays payload = (PacketPayloadArrays) packet.payload;
+		
 		int length = payload.intPayload[0];
 
 		for (int i = 0; i < length; i++) {
@@ -215,7 +226,12 @@ public class ContainerGateInterface extends BuildCraftContainer {
 	}
 
 	public void sendSelectionChange(int position) {
-		BuildCraftTransport.instance.sendToServer(new PacketUpdate(PacketIds.GATE_SELECTION_CHANGE, pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord, getSelectionPayload(position)));
+		if (pipe.container.getWorld().isRemote) {
+			BuildCraftTransport.instance.sendToServer(new PacketUpdate(
+					PacketIds.GATE_SELECTION_CHANGE, pipe.container.xCoord,
+					pipe.container.yCoord, pipe.container.zCoord,
+					getSelectionPayload(position)));
+		}
 	}
 
 	/**
@@ -223,13 +239,12 @@ public class ContainerGateInterface extends BuildCraftContainer {
 	 * (re-)requests the current selection on the gate if needed.
 	 */
 	public void synchronize() {
-
-		if (!isNetInitialized && CoreProxy.proxy.isRenderWorld(pipe.container.getWorldObj())) {
+		if (!isNetInitialized && pipe.container.getWorldObj().isRemote) {
 			isNetInitialized = true;
 			BuildCraftTransport.instance.sendToServer(new PacketCoordinates(PacketIds.GATE_REQUEST_INIT, pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord));
 		}
 
-		if (!isSynchronized && CoreProxy.proxy.isRenderWorld(pipe.container.getWorldObj())) {
+		if (!isSynchronized && pipe.container.getWorldObj().isRemote) {
 			isSynchronized = true;
 			BuildCraftTransport.instance.sendToServer(new PacketCoordinates(PacketIds.GATE_REQUEST_SELECTION, pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord));
 		}
@@ -249,28 +264,36 @@ public class ContainerGateInterface extends BuildCraftContainer {
 	 * SERVER SIDE *
 	 */
 	private int calculateTriggerState() {
-		if (pipe.gate == null)
+		if (pipe.gate == null) {
 			return 0;
+		}
+		
 		int state = 0;
+		
 		for (int i = 0; i < triggerState.length; i++) {
 			if (pipe.gate.triggers[i] != null) {
 				triggerState[i] = isNearbyTriggerActive(pipe.gate.triggers[i], pipe.gate.getTriggerParameter(i));
 			}
+			
 			state |= triggerState[i] ? 0x01 << i : 0x0;
 		}
+		
 		return state;
 	}
 
 	@Override
 	public void detectAndSendChanges() {
 		super.detectAndSendChanges();
+		
 		int state = calculateTriggerState();
+		
 		if (state != lastTriggerState) {
 			for (int i = 0; i < this.crafters.size(); i++) {
 				ICrafting viewingPlayer = (ICrafting) this.crafters.get(i);
 
 				viewingPlayer.sendProgressBarUpdate(this, 0 /* State update */, state);
 			}
+			
 			lastTriggerState = state;
 		}
 	}
@@ -287,13 +310,15 @@ public class ContainerGateInterface extends BuildCraftContainer {
 	 * @param player
 	 */
 	private void sendActions(EntityPlayer player) {
-
 		// Compose update packet
 		int length = _potentialActions.size();
+		
 		PacketPayloadArrays payload = new PacketPayloadArrays(1, 0, length);
 
 		payload.intPayload[0] = length;
+		
 		int i = 0;
+		
 		for (IAction action : _potentialActions) {
 			payload.stringPayload[i++] = action.getUniqueTag();
 		}
@@ -310,7 +335,6 @@ public class ContainerGateInterface extends BuildCraftContainer {
 	 * @param player
 	 */
 	private void sendTriggers(EntityPlayer player) {
-
 		// Compose update packet
 		int length = _potentialTriggers.size();
 		PacketPayloadArrays payload = new PacketPayloadArrays(1, 0, length);
@@ -333,13 +357,13 @@ public class ContainerGateInterface extends BuildCraftContainer {
 	 * @param player
 	 */
 	public void sendSelection(EntityPlayer player) {
-		if (pipe == null || pipe.gate == null)
+		if (pipe == null || pipe.gate == null) {
 			return;
+		}
+		
 		for (int position = 0; position < pipe.gate.material.numSlots; position++) {
 			BuildCraftTransport.instance.sendToPlayer(player, new PacketUpdate(PacketIds.GATE_SELECTION, pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord, getSelectionPayload(position)));
 		}
-
-		// System.out.println("Sending current selection to player");
 	}
 
 	/**
@@ -350,15 +374,19 @@ public class ContainerGateInterface extends BuildCraftContainer {
 	}
 
 	public ITrigger getFirstTrigger() {
-		if (_potentialTriggers.isEmpty())
+		if (_potentialTriggers.isEmpty()) {
 			return null;
-		return _potentialTriggers.first();
+		} else {			
+			return _potentialTriggers.first();
+		}
 	}
 
 	public ITrigger getLastTrigger() {
-		if (_potentialTriggers.isEmpty())
+		if (_potentialTriggers.isEmpty()) {
 			return null;
-		return _potentialTriggers.last();
+		} else {
+			return _potentialTriggers.last();
+		}
 	}
 
 	public Iterator<ITrigger> getTriggerIterator(boolean descending) {
@@ -366,25 +394,33 @@ public class ContainerGateInterface extends BuildCraftContainer {
 	}
 
 	public boolean isNearbyTriggerActive(ITrigger trigger, ITriggerParameter parameter) {
-		if (pipe.gate == null)
+		if (pipe.gate == null) {
 			return false;
-		return pipe.gate.isNearbyTriggerActive(trigger, parameter);
+		} else {			
+			return pipe.gate.isNearbyTriggerActive(trigger, parameter);
+		}
 	}
 
 	public void setTrigger(int position, ITrigger trigger, boolean notify) {
-		if (pipe.gate == null)
+		if (pipe.gate == null) {
 			return;
+		}
+		
 		pipe.gate.setTrigger(position, trigger);
-		if (CoreProxy.proxy.isRenderWorld(pipe.container.getWorldObj()) && notify) {
+		
+		if (pipe.container.getWorldObj().isRemote && notify) {
 			sendSelectionChange(position);
 		}
 	}
 
 	public void setTriggerParameter(int position, ITriggerParameter parameter, boolean notify) {
-		if (pipe.gate == null)
+		if (pipe.gate == null) {
 			return;
+		}
+		
 		pipe.gate.setTriggerParameter(position, parameter);
-		if (CoreProxy.proxy.isRenderWorld(pipe.container.getWorldObj()) && notify) {
+		
+		if (pipe.container.getWorldObj().isRemote && notify) {
 			sendSelectionChange(position);
 		}
 	}
@@ -397,15 +433,19 @@ public class ContainerGateInterface extends BuildCraftContainer {
 	}
 
 	public IAction getFirstAction() {
-		if (_potentialActions.isEmpty())
+		if (_potentialActions.isEmpty()) {
 			return null;
-		return _potentialActions.first();
+		} else {		
+			return _potentialActions.first();
+		}
 	}
 
 	public IAction getLastAction() {
-		if (_potentialActions.isEmpty())
+		if (_potentialActions.isEmpty()) {
 			return null;
-		return _potentialActions.last();
+		} else {
+			return _potentialActions.last();
+		}
 	}
 
 	public Iterator<IAction> getActionIterator(boolean descending) {
@@ -414,7 +454,8 @@ public class ContainerGateInterface extends BuildCraftContainer {
 
 	public void setAction(int position, IAction action, boolean notify) {
 		pipe.gate.setAction(position, action);
-		if (CoreProxy.proxy.isRenderWorld(pipe.container.getWorldObj()) && notify) {
+		
+		if (pipe.container.getWorldObj().isRemote && notify) {
 			sendSelectionChange(position);
 		}
 	}

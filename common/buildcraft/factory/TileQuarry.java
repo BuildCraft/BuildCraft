@@ -139,11 +139,11 @@ public class TileQuarry extends TileBuildCraft implements IMachine, IPowerRecept
 
 	@Override
 	public void updateEntity() {
-		if (!isAlive && CoreProxy.proxy.isSimulating(worldObj)) {
+		if (!isAlive && !worldObj.isRemote) {
 			super.updateEntity();
 			return;
 		}
-		if (!CoreProxy.proxy.isSimulating(worldObj) && isAlive) {
+		if (!!worldObj.isRemote && isAlive) {
 			super.updateEntity();
 			return;
 		}
@@ -158,7 +158,7 @@ public class TileQuarry extends TileBuildCraft implements IMachine, IPowerRecept
 			}
 		}
 
-		if (CoreProxy.proxy.isSimulating(worldObj) && inProcess) {
+		if (!worldObj.isRemote && inProcess) {
 			sendNetworkUpdate(BuildCraftFactory.instance);
 		}
 		if (inProcess || !isDigging)
@@ -530,7 +530,7 @@ public class TileQuarry extends TileBuildCraft implements IMachine, IPowerRecept
 		}
 		if (chunkTicket == null) {
 			isAlive = false;
-			if (placedBy != null && CoreProxy.proxy.isSimulating(worldObj)) {
+			if (placedBy != null && !worldObj.isRemote) {
 				((EntityPlayerMP) placedBy)
 						.addChatMessage(new ChatComponentText(
 								String.format(
@@ -673,7 +673,7 @@ public class TileQuarry extends TileBuildCraft implements IMachine, IPowerRecept
 	public void initialize() {
 		super.initialize();
 
-		if (CoreProxy.proxy.isSimulating(this.getWorldObj()) && !box.initialized) {
+		if (!this.getWorldObj().isRemote && !box.initialized) {
 			setBoundaries(false);
 		}
 

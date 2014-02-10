@@ -55,8 +55,9 @@ public class TilePathMarker extends TileMarker {
 
 	public void createLaserAndConnect(TilePathMarker pathMarker) {
 
-		if (CoreProxy.proxy.isRenderWorld(worldObj))
+		if (worldObj.isRemote) {
 			return;
+		}
 
 		EntityPowerLaser laser = new EntityPowerLaser(worldObj, new Position(xCoord + 0.5, yCoord + 0.5, zCoord + 0.5), new Position(pathMarker.xCoord + 0.5,
 				pathMarker.yCoord + 0.5, pathMarker.zCoord + 0.5));
@@ -97,8 +98,9 @@ public class TilePathMarker extends TileMarker {
 	@Override
 	public void tryConnection() {
 
-		if (CoreProxy.proxy.isRenderWorld(worldObj) || isFullyConnected())
+		if (worldObj.isRemote || isFullyConnected()) {
 			return;
+		}
 
 		tryingToConnect = !tryingToConnect; // Allow the user to stop the path marker from searching for new path markers to connect
 		sendNetworkUpdate(BuildCraftBuilders.instance);
@@ -108,8 +110,9 @@ public class TilePathMarker extends TileMarker {
 	public void updateEntity() {
 		super.updateEntity();
 
-		if (CoreProxy.proxy.isRenderWorld(worldObj))
+		if (worldObj.isRemote) {
 			return;
+		}
 
 		if (tryingToConnect) {
 			TilePathMarker nearestPathMarker = findNearestAvailablePathMarker();
@@ -171,7 +174,7 @@ public class TilePathMarker extends TileMarker {
 	public void initialize() {
 		super.initialize();
 
-		if (CoreProxy.proxy.isSimulating(worldObj) && !isFullyConnected()) {
+		if (!worldObj.isRemote && !isFullyConnected()) {
 			availableMarkers.add(this);
 		}
 
@@ -207,7 +210,7 @@ public class TilePathMarker extends TileMarker {
 			links[1] = null;
 		}
 
-		if (!isFullyConnected() && !availableMarkers.contains(this) && CoreProxy.proxy.isSimulating(worldObj)) {
+		if (!isFullyConnected() && !availableMarkers.contains(this) && !worldObj.isRemote) {
 			availableMarkers.add(this);
 		}
 	}

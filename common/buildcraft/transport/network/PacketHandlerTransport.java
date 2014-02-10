@@ -7,12 +7,14 @@ import buildcraft.core.network.PacketIds;
 import buildcraft.core.network.PacketSlotChange;
 import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.proxy.CoreProxy;
+import buildcraft.core.utils.Utils;
 import buildcraft.transport.PipeTransportItems;
 import buildcraft.transport.PipeTransportPower;
 import buildcraft.transport.TileGenericPipe;
 import buildcraft.transport.gui.ContainerGateInterface;
 import buildcraft.transport.pipes.PipeItemsDiamond;
 import buildcraft.transport.pipes.PipeItemsEmerald;
+import cpw.mods.fml.common.network.FMLOutboundHandler;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
@@ -42,10 +44,8 @@ public class PacketHandlerTransport extends BuildCraftChannelHandler {
 	public void decodeInto(ChannelHandlerContext ctx, ByteBuf data, BuildCraftPacket packet) {
 		super.decodeInto(ctx, data, packet);
 		try {
-			INetHandler netHandler = ctx.channel().attr(NetworkRegistry.NET_HANDLER).get();
-			
-			EntityPlayer player = 
-					CoreProxy.proxy.getPlayerFromNetHandler(netHandler);
+			INetHandler netHandler = ctx.channel().attr(NetworkRegistry.NET_HANDLER).get();						
+			EntityPlayer player = Utils.getPlayerFromNetHandler(netHandler);
 
 			int packetID = packet.getID();
 
@@ -82,29 +82,29 @@ public class PacketHandlerTransport extends BuildCraftChannelHandler {
 				 * SERVER SIDE *
 				 */
 				case PacketIds.DIAMOND_PIPE_SELECT: {					
-					onDiamondPipeSelect((EntityPlayer) player, (PacketSlotChange) packet);
+					onDiamondPipeSelect(player, (PacketSlotChange) packet);
 					break;
 				}
 
 				case PacketIds.EMERALD_PIPE_SELECT: {					
-					onEmeraldPipeSelect((EntityPlayer) player, (PacketSlotChange) packet);
+					onEmeraldPipeSelect(player, (PacketSlotChange) packet);
 					break;
 				}
 
 				case PacketIds.GATE_REQUEST_INIT:					
-					onGateInitRequest((EntityPlayer) player, (PacketCoordinates) packet);
+					onGateInitRequest(player, (PacketCoordinates) packet);
 					break;
 
 				case PacketIds.GATE_REQUEST_SELECTION:
-					onGateSelectionRequest((EntityPlayer) player, (PacketCoordinates) packet);
+					onGateSelectionRequest(player, (PacketCoordinates) packet);
 					break;
 
 				case PacketIds.GATE_SELECTION_CHANGE:
-					onGateSelectionChange((EntityPlayer) player, (PacketUpdate) packet);
+					onGateSelectionChange(player, (PacketUpdate) packet);
 					break;
 
 				case PacketIds.PIPE_ITEMSTACK_REQUEST: {
-					((PacketPipeTransportItemStackRequest) packet).sendDataToPlayer((EntityPlayer) player);
+					((PacketPipeTransportItemStackRequest) packet).sendDataToPlayer(player);
 					break;
 				}
 			}
@@ -216,8 +216,9 @@ public class PacketHandlerTransport extends BuildCraftChannelHandler {
 	 * @param packet
 	 */
 	private void onGateSelectionChange(EntityPlayer playerEntity, PacketUpdate packet) {
-		if (!(playerEntity.openContainer instanceof ContainerGateInterface))
+		if (!(playerEntity.openContainer instanceof ContainerGateInterface)) {
 			return;
+		}
 
 		((ContainerGateInterface) playerEntity.openContainer).setSelection(packet, true);
 	}

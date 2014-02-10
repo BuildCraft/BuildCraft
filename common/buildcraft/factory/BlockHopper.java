@@ -60,7 +60,7 @@ public class BlockHopper extends BlockBuildCraft {
 			}
 		}
 
-		if (!CoreProxy.proxy.isRenderWorld(world)) {
+		if (!world.isRemote) {
 			entityplayer.openGui(BuildCraftFactory.instance, GuiIds.HOPPER, world, x, y, z);
 		}
 

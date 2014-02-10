@@ -62,7 +62,7 @@ public class TileFloodGate extends TileBuildCraft implements IFluidHandler {
 	public void updateEntity() {
 		super.updateEntity();
 
-		if (CoreProxy.proxy.isRenderWorld(worldObj))
+		if (worldObj.isRemote)
 			return;
 
 		if (powered)

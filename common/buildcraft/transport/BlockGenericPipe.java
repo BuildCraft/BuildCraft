@@ -514,7 +514,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 	@Override
 	public ArrayList<ItemStack> getDrops(World world, int x, int y, int z, int metadata, int fortune) {
 
-		if (CoreProxy.proxy.isRenderWorld(world))
+		if (world.isRemote)
 			return null;
 
 		ArrayList<ItemStack> list = new ArrayList<ItemStack>();
@@ -545,7 +545,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 	@Override
 	public void dropBlockAsItemWithChance(World world, int i, int j, int k, int l, float f, int dmg) {
 
-		if (CoreProxy.proxy.isRenderWorld(world))
+		if (world.isRemote)
 			return;
 
 		int i1 = quantityDropped(world.rand);
@@ -743,7 +743,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 
 	private boolean stripGate(Pipe pipe) {
 		if (pipe.hasGate()) {
-			if (!CoreProxy.proxy.isRenderWorld(pipe.container.getWorldObj())) {
+			if (!pipe.container.getWorldObj().isRemote) {
 				pipe.gate.dropGate();
 			}
 			pipe.resetGate();
@@ -774,7 +774,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 
 	private boolean stripWire(Pipe pipe, PipeWire color) {
 		if (pipe.wireSet[color.ordinal()]) {
-			if (!CoreProxy.proxy.isRenderWorld(pipe.container.getWorldObj())) {
+			if (!pipe.container.getWorldObj().isRemote) {
 				dropWire(color, pipe);
 			}
 			pipe.wireSet[color.ordinal()] = false;

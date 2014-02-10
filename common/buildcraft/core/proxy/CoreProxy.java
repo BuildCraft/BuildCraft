@@ -32,8 +32,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
-import net.minecraft.network.INetHandler;
-import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.network.Packet;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChunkCoordinates;
@@ -42,6 +40,12 @@ import net.minecraft.world.World;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
 
+
+/**
+ * This class comes from the old times where there were two Minecrafts 
+ * codebases, one client and one server. We should slowly aim at removing it.
+ */
+@Deprecated
 public class CoreProxy {
 
 	@SidedProxy(clientSide = "buildcraft.core.proxy.CoreProxyClient", serverSide = "buildcraft.core.proxy.CoreProxy")
@@ -58,15 +62,6 @@ public class CoreProxy {
 
 	public World getClientWorld() {
 		return null;
-	}
-
-	/* SIMULATION */
-	public boolean isSimulating(World world) {
-		return !world.isRemote;
-	}
-
-	public boolean isRenderWorld(World world) {
-		return world.isRemote;
 	}
 
 	public String getCurrentLanguage() {
@@ -218,16 +213,5 @@ public class CoreProxy {
 
 	public EntityBlock newEntityBlock(World world, double i, double j, double k, double iSize, double jSize, double kSize, LaserKind laserKind) {
 		return new EntityBlock(world, i, j, k, iSize, jSize, kSize);
-	}
-	
-	/**
-	 * This function returns either the player from the handler if it's on the
-	 * server, or directly from the minecraft instance if it's the client.
-	 * 
-	 * TODO: This is a bit kludgy, probably better to separate the client and
-	 * server channels instead.
-	 */
-	public EntityPlayer getPlayerFromNetHandler (INetHandler hander) {
-		return ((NetHandlerPlayServer) hander).playerEntity;
 	}
 }

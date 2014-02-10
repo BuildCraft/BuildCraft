@@ -39,7 +39,7 @@ public class ContainerAutoWorkbench extends BuildCraftContainer {
 			@Override
 			public void setInventorySlotContents(int slot, ItemStack stack) {
 				super.setInventorySlotContents(slot, stack);
-				if (stack != null && tile.isLast() && CoreProxy.proxy.isRenderWorld(tile.getWorldObj())) {
+				if (stack != null && tile.isLast() && tile.getWorldObj().isRemote) {
 					InvUtils.addItemToolTip(stack, EnumChatFormatting.YELLOW + StringUtils.localize("gui.clickcraft"));
 				}
 			}

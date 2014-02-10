@@ -45,7 +45,7 @@ public class TileArchitect extends TileBuildCraft implements IInventory {
 	public void updateEntity() {
 		super.updateEntity();
 
-		if (CoreProxy.proxy.isSimulating(worldObj) && isComputing) {
+		if (!worldObj.isRemote && isComputing) {
 			if (computingTime < 200) {
 				computingTime++;
 			} else {
@@ -68,7 +68,7 @@ public class TileArchitect extends TileBuildCraft implements IInventory {
 			}
 		}
 
-		if (!CoreProxy.proxy.isRenderWorld(worldObj) && box.isInitialized()) {
+		if (!worldObj.isRemote && box.isInitialized()) {
 			box.createLasers(worldObj, LaserKind.Stripes);
 		}
 

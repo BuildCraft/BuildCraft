@@ -52,7 +52,7 @@ public class TileEngineWood extends TileEngine {
 
 	@Override
 	public float getPistonSpeed() {
-		if (CoreProxy.proxy.isSimulating(worldObj))
+		if (!worldObj.isRemote)
 			return Math.max(0.08f * getHeatLevel(), 0.01f);
 		switch (getEnergyStage()) {
 			case GREEN:

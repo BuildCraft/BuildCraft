@@ -135,9 +135,9 @@ public class BlockQuarry extends BlockBuildCraft {
 
 	@Override
 	public void breakBlock(World world, int i, int j, int k, Block block, int par6) {
-
-		if (!CoreProxy.proxy.isSimulating(world))
+		if (world.isRemote) {
 			return;
+		}
 
 		TileEntity tile = world.getTileEntity(i, j, k);
 		if (tile instanceof TileQuarry) {

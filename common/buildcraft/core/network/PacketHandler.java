@@ -8,8 +8,11 @@ import java.io.DataInputStream;
 import java.io.IOException;
 
 import buildcraft.core.proxy.CoreProxy;
+import buildcraft.core.utils.Utils;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.INetHandler;
+import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import cpw.mods.fml.common.network.NetworkRegistry;
@@ -39,11 +42,8 @@ public class PacketHandler extends BuildCraftChannelHandler {
 		super.decodeInto(ctx, data, packet);
 		
 		try {
-
 			INetHandler netHandler = ctx.channel().attr(NetworkRegistry.NET_HANDLER).get();
-			
-			EntityPlayer player = 
-					CoreProxy.proxy.getPlayerFromNetHandler(netHandler);
+			EntityPlayer player = Utils.getPlayerFromNetHandler(netHandler);
 
 			int packetID = packet.getID();
 			

@@ -72,7 +72,7 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
 			}
 			ItemStack current = player.getCurrentEquippedItem();
 			if (current != null) {
-				if (CoreProxy.proxy.isSimulating(worldObj)) {
+				if (!worldObj.isRemote) {
 					if (FluidUtils.handleRightClick(this, side, player, true, true)) {
 						return true;
 					}
@@ -83,7 +83,7 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
 				}
 			}
 		}
-		if (!CoreProxy.proxy.isRenderWorld(worldObj)) {
+		if (!worldObj.isRemote) {
 			player.openGui(BuildCraftEnergy.instance, GuiIds.ENGINE_IRON, worldObj, xCoord, yCoord, zCoord);
 		}
 		return true;
@@ -96,7 +96,7 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
 
 	@Override
 	public float getPistonSpeed() {
-		if (CoreProxy.proxy.isSimulating(worldObj)) {
+		if (!worldObj.isRemote) {
 			return Math.max(0.07f * getHeatLevel(), 0.01f);
 		}
 		switch (getEnergyStage()) {

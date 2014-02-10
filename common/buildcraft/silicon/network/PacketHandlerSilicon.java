@@ -7,6 +7,7 @@ import buildcraft.core.network.PacketIds;
 import buildcraft.core.network.PacketNBT;
 import buildcraft.core.network.PacketSlotChange;
 import buildcraft.core.proxy.CoreProxy;
+import buildcraft.core.utils.Utils;
 import buildcraft.silicon.TileAdvancedCraftingTable;
 import buildcraft.silicon.TileAssemblyTable;
 import buildcraft.silicon.TileAssemblyTable.SelectionMessage;
@@ -33,8 +34,7 @@ public class PacketHandlerSilicon extends BuildCraftChannelHandler {
 		try {
 			INetHandler netHandler = ctx.channel().attr(NetworkRegistry.NET_HANDLER).get();
 			
-			EntityPlayer player = 
-					CoreProxy.proxy.getPlayerFromNetHandler(netHandler);
+			EntityPlayer player = Utils.getPlayerFromNetHandler(netHandler);
 			
 			int packetID = packet.getID();
 			

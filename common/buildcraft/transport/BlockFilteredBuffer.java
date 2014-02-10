@@ -57,7 +57,7 @@ public class BlockFilteredBuffer extends BlockBuildCraft {
 			}
 		}
 
-		if (!CoreProxy.proxy.isRenderWorld(world)) {
+		if (!world.isRemote) {
 			entityplayer.openGui(BuildCraftTransport.instance, GuiIds.FILTERED_BUFFER, world, x, y, z);
 		}
 

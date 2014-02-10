@@ -192,8 +192,9 @@ public class PipeItemsObsidian extends Pipe<PipeTransportItems> implements IPowe
 	}
 
 	public void pullItemIntoPipe(Entity entity, int distance) {
-		if (CoreProxy.proxy.isRenderWorld(container.getWorldObj()))
+		if (container.getWorldObj().isRemote) {
 			return;
+		}
 
 		ForgeDirection orientation = getOpenOrientation().getOpposite();
 

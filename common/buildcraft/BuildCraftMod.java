@@ -30,11 +30,6 @@ public class BuildCraftMod {
 		channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGETARGS).set(entityplayer);
 		channels.get(Side.SERVER).writeOutbound(packet);
 	}
-	
-	public void replyToPlayer(EntityPlayer entityplayer, BuildCraftPacket packet) {
-		channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGET).set(OutboundTarget.REPLY);
-		channels.get(Side.SERVER).writeOutbound(packet);
-	}
 
 	public void sendToServer(BuildCraftPacket packet) {
 		channels.get(Side.CLIENT).attr(FMLOutboundHandler.FML_MESSAGETARGET).set(OutboundTarget.TOSERVER);

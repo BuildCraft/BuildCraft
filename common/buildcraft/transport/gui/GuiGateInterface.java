@@ -46,20 +46,24 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 		@Override
 		public String getDescription() {
 			ITrigger trigger = pipe.gate.getTrigger(slot);
-			if (trigger != null)
+			
+			if (trigger != null) {
 				return trigger.getDescription();
-			else
+			} else {
 				return "";
+			}
 		}
 
 		@SideOnly(Side.CLIENT)
 		@Override
 		public IIcon getIcon() {
 			ITrigger trigger = pipe.gate.getTrigger(slot);
-			if (trigger != null)
+			
+			if (trigger != null) {
 				return trigger.getIcon();
-			else
+			} else {
 				return null;
+			}
 		}
 
 		@Override
@@ -87,30 +91,37 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 		@Override
 		public String getDescription() {
 			IAction action = pipe.gate.getAction(slot);
-			if (action != null)
+			if (action != null) {
 				return action.getDescription();
-			else
+			} else {
 				return "";
+			}
 		}
 
 		@SideOnly(Side.CLIENT)
 		@Override
 		public IIcon getIcon() {
 			IAction action = pipe.gate.getAction(slot);
-			if (action != null)
+			
+			if (action != null) {
 				return action.getIcon();
-			else
+			} else {
 				return null;
+			}
 		}
 
 		@Override
 		public ResourceLocation getTexture() {
 			IAction action = pipe.gate.getAction(slot);
+			
 			if (action instanceof BCAction) {
 				BCAction bcAction = (BCAction) action;
-				if (bcAction.getTextureMap() == 0)
+				
+				if (bcAction.getTextureMap() == 0) {
 					return TextureMap.locationBlocksTexture;
+				}
 			}
+			
 			return super.getTexture();
 		}
 
@@ -144,10 +155,12 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 		@Override
 		public ItemStack getItemStack() {
 			ITriggerParameter parameter = pipe.gate.getTriggerParameter(slot);
-			if (parameter != null)
+			
+			if (parameter != null) {
 				return parameter.getItemStack();
-			else
+			} else {
 				return null;
+			}
 		}
 
 		public ITriggerParameter getTriggerParameter() {
@@ -290,8 +303,9 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 
 		AdvancedSlot slot = null;
 
-		if (position < 0)
+		if (position < 0) {
 			return;
+		}
 
 		slot = slots[position];
 

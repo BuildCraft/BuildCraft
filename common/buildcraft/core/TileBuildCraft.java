@@ -99,7 +99,7 @@ public abstract class TileBuildCraft extends TileEntity implements ISynchronized
 	}
 
 	public void sendNetworkUpdate(BuildCraftMod mod) {
-		if (CoreProxy.proxy.isSimulating(worldObj)) {
+		if (!worldObj.isRemote) {
 			mod.sendToPlayers(getUpdatePacket(), worldObj, xCoord, yCoord, zCoord, DefaultProps.NETWORK_UPDATE_RANGE);
 		}
 	}

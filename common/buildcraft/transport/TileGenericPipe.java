@@ -198,7 +198,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 	public boolean initialized = false;
 
 	@Override
-	public void updateEntity() {
+	public void updateEntity() {		
 		if (!worldObj.isRemote) {
 			if (deletePipe) {
 				worldObj.setBlockToAir(xCoord, yCoord, zCoord);

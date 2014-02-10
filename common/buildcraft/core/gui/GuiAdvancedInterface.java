@@ -49,8 +49,9 @@ public abstract class GuiAdvancedInterface extends GuiBuildCraft {
 		}
 
 		public void drawSprite(int cornerX, int cornerY) {
-			if (!isDefined())
+			if (!isDefined()) {
 				return;
+			}
 
 			if (getItemStack() != null) {
 				drawStack(getItemStack());

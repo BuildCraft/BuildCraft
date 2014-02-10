@@ -7,6 +7,7 @@ import buildcraft.core.network.PacketPayload;
 import buildcraft.core.network.PacketPayloadStream;
 import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.proxy.CoreProxy;
+import buildcraft.core.utils.Utils;
 import buildcraft.factory.TileRefinery;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
@@ -30,9 +31,7 @@ public class PacketHandlerFactory extends BuildCraftChannelHandler {
 		
 		try {
 			INetHandler netHandler = ctx.channel().attr(NetworkRegistry.NET_HANDLER).get();
-			
-			EntityPlayer player = 
-					CoreProxy.proxy.getPlayerFromNetHandler(netHandler);
+			EntityPlayer player = Utils.getPlayerFromNetHandler(netHandler);
 			
 			int packetID = packet.getID();
 

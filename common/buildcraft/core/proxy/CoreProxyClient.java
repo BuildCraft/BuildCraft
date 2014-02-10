@@ -67,7 +67,7 @@ public class CoreProxyClient extends CoreProxy {
 	public void removeEntity(Entity entity) {
 		super.removeEntity(entity);
 
-		if (isRenderWorld(entity.worldObj)) {
+		if (entity.worldObj.isRemote) {
 			((WorldClient) entity.worldObj).removeEntityFromWorld(entity.getEntityId());
 		}
 	}
@@ -183,10 +183,5 @@ public class CoreProxyClient extends CoreProxy {
 			break;
 		}
 		return eb;
-	}
-	
-	@Override
-	public EntityPlayer getPlayerFromNetHandler (INetHandler hander) {
-		return Minecraft.getMinecraft().thePlayer;
 	}
 }

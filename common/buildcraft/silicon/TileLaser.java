@@ -59,7 +59,7 @@ public class TileLaser extends TileBuildCraft implements IPowerReceptor, IAction
 	public void updateEntity() {
 		super.updateEntity();
 
-		if (!CoreProxy.proxy.isSimulating(worldObj))
+		if (!!worldObj.isRemote)
 			return;
 
 		// If a gate disabled us, remove laser and do nothing.

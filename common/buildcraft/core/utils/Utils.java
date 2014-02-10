@@ -42,7 +42,9 @@ import java.util.Random;
 
 import cpw.mods.fml.common.network.internal.FMLProxyPacket;
 import net.minecraft.block.Block;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryLargeChest;
 import net.minecraft.item.ItemStack;
@@ -60,6 +62,8 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagLong;
 import net.minecraft.nbt.NBTTagShort;
 import net.minecraft.nbt.NBTTagString;
+import net.minecraft.network.INetHandler;
+import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.MathHelper;
@@ -334,7 +338,7 @@ public class Utils {
 	public static void preDestroyBlock(World world, int i, int j, int k) {
 		TileEntity tile = world.getTileEntity(i, j, k);
 
-		if (tile instanceof IInventory && !CoreProxy.proxy.isRenderWorld(world)) {
+		if (tile instanceof IInventory && !world.isRemote) {
 			if (!(tile instanceof IDropControlInventory) || ((IDropControlInventory) tile).doDrop()) {
 				InvUtils.dropItems(world, (IInventory) tile, i, j, k);
 				InvUtils.wipeInventory((IInventory) tile);
@@ -507,5 +511,17 @@ public class Utils {
 		packet.writeData(buf);
 				
 		return new FMLProxyPacket(buf, DefaultProps.NET_CHANNEL_NAME + "-CORE");
+	}
+
+	/**
+	 * This function returns either the player from the handler if it's on the
+	 * server, or directly from the minecraft instance if it's the client.
+	 */
+	public static EntityPlayer getPlayerFromNetHandler (INetHandler handler) {		
+		if (handler instanceof NetHandlerPlayServer) {
+			return ((NetHandlerPlayServer) handler).playerEntity;
+		} else {
+			return Minecraft.getMinecraft().thePlayer;
+		}
 	}
 }
