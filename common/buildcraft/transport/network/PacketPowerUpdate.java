@@ -21,9 +21,9 @@ public class PacketPowerUpdate extends PacketCoordinates {
 	}
 
 	@Override
-	public void readData(ByteBuf data) {
-		displayPower = new short[] { 0, 0, 0, 0, 0, 0 };
+	public void readData(ByteBuf data) {		
 		super.readData(data);
+		displayPower = new short[] { 0, 0, 0, 0, 0, 0 };
 		overload = data.readBoolean();
 		for (int i = 0; i < displayPower.length; i++) {
 			displayPower[i] = data.readByte();

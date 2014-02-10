@@ -23,7 +23,6 @@ public class PacketNBT extends PacketCoordinates {
 
 	@Override
 	public void writeData(ByteBuf data) {
-
 		super.writeData(data);
 
 		try {
@@ -38,7 +37,6 @@ public class PacketNBT extends PacketCoordinates {
 
 	@Override
 	public void readData(ByteBuf data) {
-
 		super.readData(data);
 
 		short length = data.readShort();

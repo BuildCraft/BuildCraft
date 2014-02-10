@@ -18,9 +18,7 @@ public class PacketCoordinates extends BuildCraftPacket {
 	}
 
 	public PacketCoordinates(int id, int x, int y, int z) {
-
 		this.id = id;
-
 		this.posX = x;
 		this.posY = y;
 		this.posZ = z;
@@ -28,7 +26,7 @@ public class PacketCoordinates extends BuildCraftPacket {
 
 	@Override
 	public void writeData(ByteBuf data) {
-
+		data.writeByte(id);
 		data.writeInt(posX);
 		data.writeInt(posY);
 		data.writeInt(posZ);
@@ -36,16 +34,14 @@ public class PacketCoordinates extends BuildCraftPacket {
 
 	@Override
 	public void readData(ByteBuf data) {
-
+		id = data.readByte ();
 		posX = data.readInt();
 		posY = data.readInt();
 		posZ = data.readInt();
-
 	}
 
 	@Override
 	public int getID() {
 		return id;
 	}
-
 }
