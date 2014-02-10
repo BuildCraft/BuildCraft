@@ -15,6 +15,7 @@ import buildcraft.api.transport.IPipeTile.PipeType;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.IMachine;
 import buildcraft.core.inventory.Transactor;
+import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.BCLog;
 import buildcraft.core.utils.BlockUtil;
 import buildcraft.core.utils.MathUtils;
@@ -416,12 +417,14 @@ public class PipeTransportItems extends PipeTransport {
 	 */
 	public void handleTravelerPacket(PacketPipeTransportTraveler packet) {
 		TravelingItem item = TravelingItem.clientCache.get(packet.getTravelingEntityId());
+		
 		if (item == null) {
 			item = TravelingItem.make(packet.getTravelingEntityId());
 		}
 
-		if (item.getContainer() != container)
+		if (item.getContainer() != container) {
 			items.add(item);
+		}
 
 		if (packet.forceStackRefresh() || item.getItemStack() == null) {
 			BuildCraftTransport.instance.sendToServer(new PacketPipeTransportItemStackRequest(packet.getTravelingEntityId()));

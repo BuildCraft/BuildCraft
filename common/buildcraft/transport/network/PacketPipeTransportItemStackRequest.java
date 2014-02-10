@@ -17,6 +17,10 @@ public class PacketPipeTransportItemStackRequest extends BuildCraftPacket {
 	public int travelerID;
 	TravelingItem item;
 	
+	public PacketPipeTransportItemStackRequest() {
+		
+	}
+	
 	public PacketPipeTransportItemStackRequest(int travelerID) {
 		this.travelerID = travelerID;
 	}
@@ -35,7 +39,7 @@ public class PacketPipeTransportItemStackRequest extends BuildCraftPacket {
 
 	public void sendDataToPlayer (EntityPlayer player) {
 		if (item != null) {
-			BuildCraftTransport.instance.sendToPlayer(
+			BuildCraftTransport.instance.replyToPlayer(
 					player,
 					new PacketPipeTransportItemStack(travelerID, item
 							.getItemStack()));
