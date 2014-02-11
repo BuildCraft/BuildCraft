@@ -87,7 +87,7 @@ public class TileFiller extends TileBuildCraft implements IInventory, IPowerRece
 				if (!worldObj.isRemote && box.isInitialized()) {
 					box.createLasers(worldObj, LaserKind.Stripes);
 				}
-				sendNetworkUpdate(BuildCraftBuilders.instance);
+				sendNetworkUpdate();
 			}
 		}
 	}
@@ -139,7 +139,7 @@ public class TileFiller extends TileBuildCraft implements IInventory, IPowerRece
 
 		if (done) {
 			patternIterator = null;
-			sendNetworkUpdate(BuildCraftBuilders.instance);
+			sendNetworkUpdate();
 		} else if (powerHandler.getEnergyStored() >= POWER_USAGE) {
 			doWork(workProvider);
 		}
@@ -239,7 +239,7 @@ public class TileFiller extends TileBuildCraft implements IInventory, IPowerRece
 			currentPattern = pattern;
 			patternIterator = null;
 			done = false;
-			sendNetworkUpdate(BuildCraftBuilders.instance);
+			sendNetworkUpdate();
 		}
 	}
 

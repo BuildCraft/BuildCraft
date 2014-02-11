@@ -111,7 +111,7 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 
 			if (energyStage != newStage) {
 				energyStage = newStage;
-				sendNetworkUpdate(BuildCraftEnergy.instance);
+				sendNetworkUpdate();
 			}
 		}
 
@@ -256,10 +256,11 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 
 	protected void engineUpdate() {
 		if (!isRedstonePowered)
-			if (energy >= 1)
+			if (energy >= 1) {
 				energy -= 1;
-			else if (energy < 1)
+			} else if (energy < 1) {
 				energy = 0;
+			}
 	}
 
 	public boolean isActive() {
@@ -267,22 +268,26 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 	}
 
 	protected final void setPumping(boolean isActive) {
-		if (this.isPumping == isActive)
+		if (this.isPumping == isActive) {
 			return;
+		}
 
 		this.isPumping = isActive;
-		sendNetworkUpdate(BuildCraftEnergy.instance);
+		sendNetworkUpdate();
 	}
 
 	public boolean isOrientationValid() {
 		TileEntity tile = getTileBuffer(orientation).getTile();
+		
 		return isPoweredTile(tile, orientation);
 	}
 
 	public boolean switchOrientation(boolean preferPipe) {
-		if (preferPipe && switchOrientation_do(true))
+		if (preferPipe && switchOrientation_do(true)) {
 			return true;
-		return switchOrientation_do(false);
+		} else {		
+			return switchOrientation_do(false);
+		}
 	}
 
 	private boolean switchOrientation_do(boolean pipesOnly) {
@@ -299,12 +304,15 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 				return true;
 			}
 		}
+		
 		return false;
 	}
 
 	public TileBuffer getTileBuffer(ForgeDirection side) {
-		if (tileCache == null)
+		if (tileCache == null) {
 			tileCache = TileBuffer.makeBuffer(worldObj, xCoord, yCoord, zCoord, false);
+		}
+		
 		return tileCache[side.ordinal()];
 	}
 
@@ -325,6 +333,7 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 	@Override
 	public void readFromNBT(NBTTagCompound data) {
 		super.readFromNBT(data);
+		
 		orientation = ForgeDirection.getOrientation(data.getInteger("orientation"));
 		progress = data.getFloat("progress");
 		energy = data.getDouble("energy");
@@ -396,44 +405,53 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 			worldObj.setBlockToAir(xCoord, yCoord, zCoord);
 		}
 
-		if (energy > getMaxEnergy())
+		if (energy > getMaxEnergy()) {
 			energy = getMaxEnergy();
+		}
 	}
 
 	public double extractEnergy(double min, double max, boolean doExtract) {
-		if (energy < min)
+		if (energy < min) {
 			return 0;
+		}
 
 		double actualMax;
 
-		if (max > maxEnergyExtracted())
+		if (max > maxEnergyExtracted()) {
 			actualMax = maxEnergyExtracted();
-		else
+		} else {
 			actualMax = max;
+		}
 
-		if (actualMax < min)
+		if (actualMax < min) {
 			return 0;
+		}
 
 		double extracted;
 
 		if (energy >= actualMax) {
 			extracted = actualMax;
-			if (doExtract)
+			
+			if (doExtract) {
 				energy -= actualMax;
+			}
 		} else {
 			extracted = energy;
-			if (doExtract)
+			
+			if (doExtract) {
 				energy = 0;
+			}
 		}
 
 		return extracted;
 	}
 
 	public boolean isPoweredTile(TileEntity tile, ForgeDirection side) {
-		if (tile instanceof IPowerReceptor)
+		if (tile instanceof IPowerReceptor) {
 			return ((IPowerReceptor) tile).getPowerReceiver(side.getOpposite()) != null;
-
-		return false;
+		} else {
+			return false;
+		}
 	}
 
 	public abstract double getMaxEnergy();

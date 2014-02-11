@@ -93,7 +93,7 @@ public class TileMarker extends TileBuildCraft implements IAreaProvider {
 	public void updateSignals() {
 		if (!worldObj.isRemote) {
 			showSignals = worldObj.isBlockIndirectlyGettingPowered(xCoord, yCoord, zCoord);
-			sendNetworkUpdate(BuildCraftBuilders.instance);
+			sendNetworkUpdate();
 		}
 	}
 
@@ -163,7 +163,7 @@ public class TileMarker extends TileBuildCraft implements IAreaProvider {
 			}
 		}
 
-		sendNetworkUpdate(BuildCraftBuilders.instance);
+		sendNetworkUpdate();
 	}
 
 	void setVect(int n) {
@@ -392,7 +392,7 @@ public class TileMarker extends TileBuildCraft implements IAreaProvider {
 		signals = null;
 
 		if (!worldObj.isRemote && markerOrigin != null && markerOrigin != this) {
-			markerOrigin.sendNetworkUpdate(BuildCraftBuilders.instance);
+			markerOrigin.sendNetworkUpdate();
 		}
 	}
 

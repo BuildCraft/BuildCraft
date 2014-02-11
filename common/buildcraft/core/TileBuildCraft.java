@@ -98,9 +98,10 @@ public abstract class TileBuildCraft extends TileEntity implements ISynchronized
 	public void destroy() {
 	}
 
-	public void sendNetworkUpdate(BuildCraftMod mod) {
+	public void sendNetworkUpdate() {
 		if (!worldObj.isRemote) {
-			mod.sendToPlayers(getUpdatePacket(), worldObj, xCoord, yCoord, zCoord, DefaultProps.NETWORK_UPDATE_RANGE);
+			BuildCraftCore.instance.sendToPlayers(getUpdatePacket(), worldObj,
+					xCoord, yCoord, zCoord, DefaultProps.NETWORK_UPDATE_RANGE);
 		}
 	}
 

@@ -29,7 +29,7 @@ public class TileEngineLegacy extends TileEngine {
 		TileEntity newTile = worldObj.getTileEntity(xCoord, yCoord, zCoord);
 		if (newTile instanceof TileEngine) {
 			newTile.readFromNBT(nbt);
-			sendNetworkUpdate(BuildCraftEnergy.instance);
+			sendNetworkUpdate();
 			worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
 		}
 	}

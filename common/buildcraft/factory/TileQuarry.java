@@ -159,7 +159,7 @@ public class TileQuarry extends TileBuildCraft implements IMachine, IPowerRecept
 		}
 
 		if (!worldObj.isRemote && inProcess) {
-			sendNetworkUpdate(BuildCraftFactory.instance);
+			sendNetworkUpdate();
 		}
 		if (inProcess || !isDigging)
 			return;
@@ -537,7 +537,7 @@ public class TileQuarry extends TileBuildCraft implements IMachine, IPowerRecept
 										"[BUILDCRAFT] The quarry at %d, %d, %d will not work because there are no more chunkloaders available",
 										xCoord, yCoord, zCoord)));
 			}
-			sendNetworkUpdate(BuildCraftFactory.instance);
+			sendNetworkUpdate();
 			return;
 		}
 		chunkTicket.getModData().setInteger("quarryX", xCoord);
@@ -679,7 +679,7 @@ public class TileQuarry extends TileBuildCraft implements IMachine, IPowerRecept
 
 		createUtilsIfNeeded();
 
-		sendNetworkUpdate(BuildCraftFactory.instance);
+		sendNetworkUpdate();
 	}
 
 	public void reinitalize() {
@@ -864,7 +864,7 @@ public class TileQuarry extends TileBuildCraft implements IMachine, IPowerRecept
 									xCoord, yCoord, zCoord, chunks.size())));
 		}
 		
-		sendNetworkUpdate(BuildCraftFactory.instance);
+		sendNetworkUpdate();
 	}
 
 	@Override

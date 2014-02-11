@@ -569,7 +569,7 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 			box.reset();
 
 			if (!worldObj.isRemote) {
-				sendNetworkUpdate(BuildCraftBuilders.instance);
+				sendNetworkUpdate();
 			}
 
 			return;

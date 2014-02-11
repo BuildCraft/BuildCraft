@@ -103,7 +103,7 @@ public class TilePathMarker extends TileMarker {
 		}
 
 		tryingToConnect = !tryingToConnect; // Allow the user to stop the path marker from searching for new path markers to connect
-		sendNetworkUpdate(BuildCraftBuilders.instance);
+		sendNetworkUpdate();
 	}
 
 	@Override
@@ -120,7 +120,7 @@ public class TilePathMarker extends TileMarker {
 			if (nearestPathMarker != null) {
 				createLaserAndConnect(nearestPathMarker);
 				tryingToConnect = false;
-				sendNetworkUpdate(BuildCraftBuilders.instance);
+				sendNetworkUpdate();
 			}
 		}
 	}

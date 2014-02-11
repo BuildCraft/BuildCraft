@@ -130,7 +130,7 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IPowe
 		}
 
 		if (updateNetworkTime.markTimeIfDelay(worldObj, BuildCraftCore.updateFactor))
-			sendNetworkUpdate(BuildCraftFactory.instance);
+			sendNetworkUpdate();
 
 		isActive = false;
 

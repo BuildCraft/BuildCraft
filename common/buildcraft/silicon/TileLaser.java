@@ -107,7 +107,7 @@ public class TileLaser extends TileBuildCraft implements IPowerReceptor, IAction
 
 		onPowerSent(power);
 
-		sendNetworkUpdate(BuildCraftSilicon.instance);
+		sendNetworkUpdate();
 	}
 
 	protected float getMaxPowerSent() {
@@ -252,9 +252,9 @@ public class TileLaser extends TileBuildCraft implements IPowerReceptor, IAction
 	}
 
 	@Override
-	public void sendNetworkUpdate(BuildCraftMod mod) {
+	public void sendNetworkUpdate() {
 		if (networkTracker.markTimeIfDelay(worldObj)) {
-			super.sendNetworkUpdate(mod);
+			super.sendNetworkUpdate();
 		}
 	}
 

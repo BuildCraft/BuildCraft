@@ -105,7 +105,7 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory {
 		for (int i = currentPage.size(); i < currentNames.length; i++) {
 			currentNames[i] = "";
 		}
-		sendNetworkUpdate(BuildCraftBuilders.instance);
+		sendNetworkUpdate();
 	}
 
 	public ArrayList<BptBase> getCurrentPage() {

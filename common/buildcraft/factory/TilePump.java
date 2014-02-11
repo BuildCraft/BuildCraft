@@ -103,7 +103,7 @@ public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor
 		if (tube.posY - aimY > 0.01) {
 			tubeY = tube.posY - 0.01;
 			setTubePosition();
-			sendNetworkUpdate(BuildCraftFactory.instance);
+			sendNetworkUpdate();
 			return;
 		}
 
@@ -152,7 +152,7 @@ public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor
 		if (powered != p) {
 			powered = p;
 			if(!worldObj.isRemote)
-				sendNetworkUpdate(BuildCraftFactory.instance);
+				sendNetworkUpdate();
 		}
 	}
 
@@ -194,7 +194,7 @@ public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor
 			worldObj.spawnEntityInWorld(tube);
 
 			if (!worldObj.isRemote)
-				sendNetworkUpdate(BuildCraftFactory.instance);
+				sendNetworkUpdate();
 		}
 	}
 

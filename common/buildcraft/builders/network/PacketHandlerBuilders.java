@@ -67,7 +67,7 @@ public class PacketHandlerBuilders extends BuildCraftChannelHandler {
 				break;
 			case TileBlueprintLibrary.COMMAND_LOCK_UPDATE:
 				tbl.locked = !tbl.locked;
-				tbl.sendNetworkUpdate(BuildCraftBuilders.instance);
+				tbl.sendNetworkUpdate();
 				break;
 			case TileBlueprintLibrary.COMMAND_NEXT:
 				tbl.setCurrentPage(true);
@@ -87,7 +87,7 @@ public class PacketHandlerBuilders extends BuildCraftChannelHandler {
 			if (ySlot < tbl.getCurrentPage().size()) {
 				tbl.selected = ySlot;
 			}
-			tbl.sendNetworkUpdate(BuildCraftBuilders.instance);
+			tbl.sendNetworkUpdate();
 		}
 	}
 

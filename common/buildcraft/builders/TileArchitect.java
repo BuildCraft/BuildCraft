@@ -72,7 +72,7 @@ public class TileArchitect extends TileBuildCraft implements IInventory {
 			box.createLasers(worldObj, LaserKind.Stripes);
 		}
 
-		sendNetworkUpdate(BuildCraftBuilders.instance);
+		sendNetworkUpdate();
 	}
 
 	public void createBpt() {
@@ -179,7 +179,7 @@ public class TileArchitect extends TileBuildCraft implements IInventory {
 				name += c;
 			}
 		}
-		sendNetworkUpdate(BuildCraftBuilders.instance);
+		sendNetworkUpdate();
 	}
 
 	@Override
