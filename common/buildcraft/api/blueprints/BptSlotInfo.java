@@ -22,7 +22,7 @@ import net.minecraft.nbt.NBTTagCompound;
 @Deprecated
 public class BptSlotInfo {
 
-	public int blockId = 0;
+	public Block block = null;
 	public int meta = 0;
 	public int x;
 	public int y;
@@ -46,7 +46,7 @@ public class BptSlotInfo {
 		obj.x = x;
 		obj.y = y;
 		obj.z = z;
-		obj.blockId = blockId;
+		obj.block = block;
 		obj.meta = meta;
 		obj.cpt = (NBTTagCompound) cpt.copy();
 

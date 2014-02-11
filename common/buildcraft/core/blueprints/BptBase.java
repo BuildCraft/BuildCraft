@@ -61,14 +61,14 @@ public abstract class BptBase {
 	}
 
 	public void setBlock(int x, int y, int z, Block block) {
-		/*if (contents[x][y][z] == null) {
+		if (contents[x][y][z] == null) {
 			contents[x][y][z] = new BptSlot();
 			contents[x][y][z].x = x;
 			contents[x][y][z].y = y;
 			contents[x][y][z].z = z;
 		}
 
-		contents[x][y][z].blockId = blockId;*/
+		contents[x][y][z].block = block;
 	}
 
 	public void rotateLeft(BptContext context) {
@@ -195,7 +195,7 @@ public abstract class BptBase {
 						continue;
 					}
 
-					if (contents[x][y][z].blockId != bpt.contents[x][y][z].blockId)
+					if (contents[x][y][z].block != bpt.contents[x][y][z].block)
 						return false;
 				}
 			}

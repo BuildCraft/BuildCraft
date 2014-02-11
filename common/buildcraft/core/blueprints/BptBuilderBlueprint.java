@@ -13,15 +13,18 @@ import buildcraft.core.IBuilderInventory;
 import buildcraft.core.blueprints.BptSlot.Mode;
 import buildcraft.core.utils.BCLog;
 import buildcraft.core.utils.BlockUtil;
+
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.ListIterator;
 import java.util.TreeMap;
 import java.util.TreeSet;
+
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldSettings.GameType;
 
 public class BptBuilderBlueprint extends BptBuilderBase {
 
@@ -69,7 +72,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 					} else {
 						slot = new BptSlot();
 						slot.meta = 0;
-						slot.blockId = 0;
+						slot.block = null;
 					}
 
 					slot.x = xCoord;
@@ -98,7 +101,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 					} else {
 						slot = new BptSlot();
 						slot.meta = 0;
-						slot.blockId = 0;
+						slot.block = null;
 					}
 
 					slot.x = xCoord;
@@ -107,13 +110,13 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 
 					slot.mode = Mode.Build;
 
-					/*if (slot.blockId != 0 && Block.blocksList[slot.blockId].isOpaqueCube()) {
+					if (slot.block != null && slot.block.isOpaqueCube()) {
 						primaryList.add(slot);
 					} else {
 						secondaryList.add(slot);
-					}*/
+					}
 
-					if (slot.blockId != 0) {
+					if (slot.block != null) {
 						postProcessingList.add(slot.clone());
 					}
 				}
@@ -139,30 +142,33 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 			BptSlot slot = internalGetNextBlock(world, inv, clearList);
 			checkDone();
 
-			if (slot != null)
+			if (slot != null) {
 				return slot;
-			else
+			} else {
 				return null;
+			}
 		}
 
 		if (primaryList.size() != 0) {
 			BptSlot slot = internalGetNextBlock(world, inv, primaryList);
 			checkDone();
 
-			if (slot != null)
+			if (slot != null) {
 				return slot;
-			else
+			} else {
 				return null;
+			}
 		}
 
 		if (secondaryList.size() != 0) {
 			BptSlot slot = internalGetNextBlock(world, inv, secondaryList);
 			checkDone();
 
-			if (slot != null)
+			if (slot != null) {
 				return slot;
-			else
+			} else {
 				return null;
+			}
 		}
 
 		checkDone();
@@ -189,13 +195,13 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 				getNext = false;
 			}
 
-			/*if (getNext)
+			if (getNext)
 				if (slot.mode == Mode.ClearIfInvalid) {
 					if (!BlockUtil.isSoftBlock(world, slot.x, slot.y, slot.z)) {
 						result = slot;
 						break;
 					}
-				} else if (world.getWorldInfo().getGameType() == EnumGameType.CREATIVE) {
+				} else if (world.getWorldInfo().getGameType() == GameType.CREATIVE) {
 					// In creative, we don't use blocks given in the builder
 
 					result = slot;
@@ -208,8 +214,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 					break;
 				} else {
 					failSlots.add(slot);
-				}
-				*/
+				}				
 		}
 
 		list.addAll(failSlots);
@@ -218,8 +223,9 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 	}
 
 	public boolean checkRequirements(IBuilderInventory inv, BptSlot slot) {
-		if (slot.blockId == 0)
+		if (slot.block == null) {
 			return true;
+		}
 
 		LinkedList<ItemStack> tmpReq = new LinkedList<ItemStack>();
 		LinkedList<ItemStack> tmpInv = new LinkedList<ItemStack>();
@@ -277,8 +283,9 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 	}
 
 	public void useRequirements(IBuilderInventory inv, BptSlot slot) {
-		if (slot.blockId == 0)
+		if (slot.block == null) {
 			return;
+		}
 
 		LinkedList<ItemStack> tmpReq = new LinkedList<ItemStack>();
 

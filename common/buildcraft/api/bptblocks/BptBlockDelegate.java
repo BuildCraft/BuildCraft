@@ -13,15 +13,18 @@ import buildcraft.api.blueprints.BlueprintManager;
 import buildcraft.api.blueprints.BptBlock;
 import buildcraft.api.blueprints.BptSlotInfo;
 import buildcraft.api.blueprints.IBptContext;
+
 import java.util.LinkedList;
+
+import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 
 @Deprecated
 public class BptBlockDelegate extends BptBlock {
 
-	final int delegateTo;
+	final Block delegateTo;
 
-	public BptBlockDelegate(int blockId, int delegateTo) {
+	public BptBlockDelegate(int blockId, Block delegateTo) {
 		super(blockId);
 
 		this.delegateTo = delegateTo;
@@ -30,7 +33,7 @@ public class BptBlockDelegate extends BptBlock {
 	@Override
 	public void addRequirements(BptSlotInfo slot, IBptContext context, LinkedList<ItemStack> requirements) {
 		BptSlotInfo newSlot = slot.clone();
-		slot.blockId = delegateTo;
+		slot.block = delegateTo;
 
 		//if (BlueprintManager.blockBptProps[delegateTo] != null) {
 		//	BlueprintManager.blockBptProps[delegateTo].addRequirements(newSlot, context, requirements);
@@ -42,7 +45,7 @@ public class BptBlockDelegate extends BptBlock {
 	@Override
 	public boolean isValid(BptSlotInfo slot, IBptContext context) {
 		BptSlotInfo newSlot = slot.clone();
-		slot.blockId = delegateTo;
+		slot.block = delegateTo;
 
 		//if (BlueprintManager.blockBptProps[delegateTo] != null)
 		//	return BlueprintManager.blockBptProps[delegateTo].isValid(newSlot, context);
@@ -55,7 +58,7 @@ public class BptBlockDelegate extends BptBlock {
 	@Override
 	public void rotateLeft(BptSlotInfo slot, IBptContext context) {
 		BptSlotInfo newSlot = slot.clone();
-		slot.blockId = delegateTo;
+		slot.block = delegateTo;
 
 		//if (BlueprintManager.blockBptProps[delegateTo] != null) {
 		//	BlueprintManager.blockBptProps[delegateTo].rotateLeft(newSlot, context);

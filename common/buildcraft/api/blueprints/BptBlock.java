@@ -57,7 +57,7 @@ public class BptBlock {
 	 * buildBlock.
 	 */
 	public void addRequirements(BptSlotInfo slot, IBptContext context, LinkedList<ItemStack> requirements) {
-		if (slot.blockId != 0) {
+		if (slot.block != null) {
 			if (slot.storedRequirements.size() != 0) {
 				requirements.addAll(slot.storedRequirements);
 			} else {
@@ -133,20 +133,20 @@ public class BptBlock {
 	 */
 	public void buildBlock(BptSlotInfo slot, IBptContext context) {
 		// Meta needs to be specified twice, depending on the block behavior
-		//context.world().setBlock(slot.x, slot.y, slot.z, slot.blockId, slot.meta,3);
+		context.world().setBlock(slot.x, slot.y, slot.z, slot.block, slot.meta, 0);
 		//context.world().setBlockMetadataWithNotify(slot.x, slot.y, slot.z, slot.meta,3);
 
-		/*if (Block.blocksList[slot.blockId] instanceof BlockContainer) {
+		if (slot.block instanceof BlockContainer) {
 			TileEntity tile = context.world().getTileEntity(slot.x, slot.y, slot.z);
 
-			slot.cpt.setInteger("x", slot.x);
-			slot.cpt.setInteger("y", slot.y);
-			slot.cpt.setInteger("z", slot.z);
+			//slot.cpt.setInteger("x", slot.x);
+			//slot.cpt.setInteger("y", slot.y);
+			//slot.cpt.setInteger("z", slot.z);
 
-			if (tile != null) {
-				tile.readFromNBT(slot.cpt);
-			}
-		}*/
+			//if (tile != null) {
+			//	tile.readFromNBT(slot.cpt);
+			//}
+		}
 	}
 
 	/**

@@ -32,10 +32,10 @@ public class BptBuilderTemplate extends BptBuilderBase {
 
 					BptSlot slot = bluePrint.contents[i][j][k];
 
-					if (slot == null || slot.blockId == 0) {
+					if (slot == null || slot.block == null) {
 						slot = new BptSlot();
 						slot.meta = 0;
-						slot.blockId = 0;
+						slot.block = null;
 						slot.x = xCoord;
 						slot.y = yCoord;
 						slot.z = zCoord;
@@ -62,7 +62,7 @@ public class BptBuilderTemplate extends BptBuilderBase {
 					} else {
 						slot = new BptSlot();
 						slot.meta = 0;
-						slot.blockId = 0;
+						slot.block = null;
 					}
 
 					slot.x = xCoord;
@@ -71,7 +71,7 @@ public class BptBuilderTemplate extends BptBuilderBase {
 
 					slot.mode = Mode.Build;
 
-					if (slot.blockId != 0) {
+					if (slot.block != null) {
 						buildList.add(slot);
 					}
 				}

@@ -28,7 +28,7 @@ public class BptTemplate extends BptBase {
 
 		boolean first = true;
 
-		for (int x = 0; x < sizeX; ++x) {
+		/*for (int x = 0; x < sizeX; ++x) {
 			for (int y = 0; y < sizeY; ++y) {
 				for (int z = 0; z < sizeZ; ++z) {
 					if (first) {
@@ -40,7 +40,7 @@ public class BptTemplate extends BptBase {
 					writer.write(contents[x][y][z].blockId + "");
 				}
 			}
-		}
+		}*/
 	}
 
 	@Override
@@ -51,7 +51,7 @@ public class BptTemplate extends BptBase {
 			String[] mask = val.split(",");
 			int maskIndex = 0;
 
-			for (int x = 0; x < sizeX; ++x) {
+			/*for (int x = 0; x < sizeX; ++x) {
 				for (int y = 0; y < sizeY; ++y) {
 					for (int z = 0; z < sizeZ; ++z) {
 						contents[x][y][z] = new BptSlot();
@@ -63,7 +63,7 @@ public class BptTemplate extends BptBase {
 						maskIndex++;
 					}
 				}
-			}
+			}*/
 		}
 
 	}

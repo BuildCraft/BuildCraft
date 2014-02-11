@@ -3,7 +3,10 @@ package buildcraft.core.blueprints;
 import buildcraft.api.blueprints.BlueprintManager;
 import buildcraft.api.blueprints.BptSlotInfo;
 import buildcraft.api.blueprints.IBptContext;
+
 import java.util.LinkedList;
+
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
@@ -17,8 +20,14 @@ public class BptSlot extends BptSlotInfo {
 	public ItemStack stackToUse;
 
 	public boolean isValid(IBptContext context) {
-		//return BlueprintManager.blockBptProps[blockId].isValid(this, context);
-		return false;
+		// the following line is just to resurect quarry building
+		if (block == null && context.world().getBlock(x, y, z) == Blocks.air) {
+			return true;
+		} else {
+			return block == context.world().getBlock(x, y, z);
+		}
+		
+		//return BlueprintManager.blockBptProps[blockId].isValid(this, context);		
 	}
 
 	public void rotateLeft(IBptContext context) {
@@ -47,6 +56,10 @@ public class BptSlot extends BptSlotInfo {
 	}
 
 	public final void buildBlock(IBptContext context) {
+		// the following line is just to resurect quarry building
+		context.world().setBlock (x, y, z, block);
+		context.world().setBlockMetadataWithNotify(x, y, z, meta, 0);
+		
 		//BlueprintManager.blockBptProps[blockId].buildBlock(this, context);
 	}
 
@@ -64,7 +77,7 @@ public class BptSlot extends BptSlotInfo {
 		obj.x = x;
 		obj.y = y;
 		obj.z = z;
-		obj.blockId = blockId;
+		obj.block = block;
 		obj.meta = meta;
 		obj.cpt = (NBTTagCompound) cpt.copy();
 		obj.storedRequirements = (LinkedList<ItemStack>) storedRequirements.clone();

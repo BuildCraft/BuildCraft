@@ -143,11 +143,14 @@ public class TileQuarry extends TileBuildCraft implements IMachine, IPowerRecept
 			super.updateEntity();
 			return;
 		}
+		
 		if (!!worldObj.isRemote && isAlive) {
 			super.updateEntity();
 			return;
 		}
+		
 		super.updateEntity();
+		
 		if (inProcess) {
 			double energyToUse = 2 + powerHandler.getEnergyStored() / 500;
 
@@ -161,23 +164,21 @@ public class TileQuarry extends TileBuildCraft implements IMachine, IPowerRecept
 		if (!worldObj.isRemote && inProcess) {
 			sendNetworkUpdate();
 		}
-		if (inProcess || !isDigging)
+		
+		if (inProcess || !isDigging) {
 			return;
+		}
 
 		createUtilsIfNeeded();
 
 		if (bluePrintBuilder != null) {
-
 			builderDone = bluePrintBuilder.done;
+			
 			if (!builderDone) {
-
 				buildFrame();
 				return;
-
 			} else {
-
 				if (builder != null && builder.done()) {
-
 					box.deleteLasers();
 					builder.setDead();
 					builder = null;
@@ -188,7 +189,6 @@ public class TileQuarry extends TileBuildCraft implements IMachine, IPowerRecept
 		if (builder == null) {
 			dig();
 		}
-
 	}
 
 	@Override
@@ -198,8 +198,10 @@ public class TileQuarry extends TileBuildCraft implements IMachine, IPowerRecept
 	protected void buildFrame() {
 		float mj = 25 * BuildCraftFactory.miningMultiplier;
 		powerHandler.configure(50 * BuildCraftFactory.miningMultiplier, 100 * BuildCraftFactory.miningMultiplier, mj, MAX_ENERGY * BuildCraftFactory.miningMultiplier);
-		if (powerHandler.useEnergy(mj, mj, true) != mj)
+		
+		if (powerHandler.useEnergy(mj, mj, true) != mj) {
 			return;
+		}
 
 		if (builder == null) {
 			builder = new EntityRobot(worldObj, box);
@@ -214,12 +216,13 @@ public class TileQuarry extends TileBuildCraft implements IMachine, IPowerRecept
 	protected void dig() {
 		powerHandler.configure(100 * BuildCraftFactory.miningMultiplier, 500 * BuildCraftFactory.miningMultiplier, BuildCraftFactory.MINING_MJ_COST_PER_BLOCK, MAX_ENERGY * BuildCraftFactory.miningMultiplier);
 
-		float mj = BuildCraftFactory.MINING_MJ_COST_PER_BLOCK * BuildCraftFactory.miningMultiplier;
-		if (powerHandler.useEnergy(mj, mj, true) != mj)
+		float mj = BuildCraftFactory.MINING_MJ_COST_PER_BLOCK * BuildCraftFactory.miningMultiplier; 
+		
+		if (powerHandler.useEnergy(mj, mj, true) != mj) {
 			return;
+		}
 
 		if (!findTarget(true)) {
-
 			// I believe the issue is box going null becuase of bad chunkloader positioning
 			if (arm != null && box != null) {
 				setTarget(box.xMin + 1, yCoord + 2, box.zMin + 1);
@@ -238,8 +241,9 @@ public class TileQuarry extends TileBuildCraft implements IMachine, IPowerRecept
 	private final LinkedList<int[]> visitList = Lists.newLinkedList();
 
 	public boolean findTarget(boolean doSet) {
-		if (worldObj.isRemote)
+		if (worldObj.isRemote) {
 			return false;
+		}
 
 		boolean columnVisitListIsUpdated = false;
 
@@ -251,8 +255,9 @@ public class TileQuarry extends TileBuildCraft implements IMachine, IPowerRecept
 		if (!doSet)
 			return !visitList.isEmpty();
 
-		if (visitList.isEmpty())
+		if (visitList.isEmpty()) {
 			return false;
+		}
 
 		int[] nextTarget = visitList.removeFirst();
 
@@ -267,12 +272,10 @@ public class TileQuarry extends TileBuildCraft implements IMachine, IPowerRecept
 				}
 			}
 		}
-        if (columnVisitListIsUpdated && nextTarget == null && !visitList.isEmpty())
-        {
+		
+        if (columnVisitListIsUpdated && nextTarget == null && !visitList.isEmpty()) {
             nextTarget = visitList.removeFirst();
-        }
-        else if (columnVisitListIsUpdated && nextTarget == null)
-        {
+        } else if (columnVisitListIsUpdated && nextTarget == null) {
             return false;
         }
 
@@ -289,6 +292,7 @@ public class TileQuarry extends TileBuildCraft implements IMachine, IPowerRecept
 
 		Integer[][] columnHeights = new Integer[bluePrintBuilder.bluePrint.sizeX - 2][bluePrintBuilder.bluePrint.sizeZ - 2];
 		boolean[][] blockedColumns = new boolean[bluePrintBuilder.bluePrint.sizeX - 2][bluePrintBuilder.bluePrint.sizeZ - 2];
+		
 		for (int searchY = yCoord + 3; searchY >= 1 && searchY >= yCoord - BuildCraftFactory.miningDepth; --searchY) {
 			int startX, endX, incX;
 
@@ -341,8 +345,9 @@ public class TileQuarry extends TileBuildCraft implements IMachine, IPowerRecept
                         }
                         
 						// Stop at two planes - generally any obstructions will have been found and will force a recompute prior to this
-						if (visitList.size() > bluePrintBuilder.bluePrint.sizeZ * bluePrintBuilder.bluePrint.sizeX * 2)
+						if (visitList.size() > bluePrintBuilder.bluePrint.sizeZ * bluePrintBuilder.bluePrint.sizeX * 2) {
 							return;
+						}
 					}
 				}
 			}

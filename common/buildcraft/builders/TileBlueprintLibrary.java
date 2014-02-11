@@ -288,6 +288,7 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory {
 			} else {
 				setInventorySlotContents(3, BuildCraftBuilders.getBptItemStack(stack[2].getItem(), 0, null));
 			}
+			
 			setInventorySlotContents(2, null);
 		}
 	}

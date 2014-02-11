@@ -198,35 +198,28 @@ public class EntityRobot extends Entity implements IEntityAdditionalSpawnData {
 	}
 
 	protected void build() {
-
 		updateWait();
 
 		if (targets.size() > 0) {
-
 			Action a = targets.getFirst();
+			
 			if (a.slot != null) {
-
 				BptSlot target = a.slot;
 				//System.out.printf("RobotChanging %d %d %d %s\n",target.x, target.y, target.z, target.mode);
+				
 				if (wait <= 0 && BlockUtil.canChangeBlock(worldObj, target.x, target.y, target.z)) {
-
 					if (!worldObj.isRemote) {
-
 						if (target.mode == Mode.ClearIfInvalid) {
-
 							if (!target.isValid(a.context)) {
 								worldObj.setBlockToAir(target.x, target.y, target.z);
 							}
-
 						} else if (target.stackToUse != null) {
-
 							worldObj.setBlockToAir(target.x, target.y, target.z);
 							throw new RuntimeException("NOT IMPLEMENTED");
 							// target.stackToUse.getItem().onItemUse(target.stackToUse,
 							// CoreProxy.getBuildCraftPlayer(worldObj), worldObj, target.x, target.y - 1,
 							// target.z, 1);
 						} else {
-
 							try {
 								target.buildBlock(a.context);
 							} catch (Throwable t) {
@@ -239,7 +232,6 @@ public class EntityRobot extends Entity implements IEntityAdditionalSpawnData {
 
 					targets.pop();
 				}
-
 			} else if (a.builder != null) {
 				a.builder.postProcessing(worldObj);
 				targets.pop();
@@ -280,10 +272,8 @@ public class EntityRobot extends Entity implements IEntityAdditionalSpawnData {
 	}
 
 	public void scheduleContruction(BptSlot slot, BptContext context) {
-
 		if (slot != null) {
 			targets.add(new Action(slot, context));
-
 		}
 	}
 
