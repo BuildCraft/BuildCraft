@@ -27,12 +27,14 @@ public class StackWrapper {
 	public int hashCode() {
 		int hash = 5;
 		
-		// TODO: this may have a speed impact. To be checked.
-		hash = 67 * hash + Item.itemRegistry.getIDForObject(stack.getItem());
+		hash = 67 * hash + stack.getItem().hashCode();
 		
 		hash = 67 * hash + stack.getItemDamage();
-		if (stack.stackTagCompound != null)
+		
+		if (stack.stackTagCompound != null) {
 			hash = 67 * hash + stack.stackTagCompound.hashCode();
+		}
+		
 		return hash;
 	}
 

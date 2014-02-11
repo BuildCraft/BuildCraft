@@ -531,11 +531,10 @@ public class TileQuarry extends TileBuildCraft implements IMachine, IPowerRecept
 		if (chunkTicket == null) {
 			isAlive = false;
 			if (placedBy != null && !worldObj.isRemote) {
-				((EntityPlayerMP) placedBy)
-						.addChatMessage(new ChatComponentText(
-								String.format(
-										"[BUILDCRAFT] The quarry at %d, %d, %d will not work because there are no more chunkloaders available",
-										xCoord, yCoord, zCoord)));
+				placedBy.addChatMessage(new ChatComponentText(
+						String.format(
+								"[BUILDCRAFT] The quarry at %d, %d, %d will not work because there are no more chunkloaders available",
+								xCoord, yCoord, zCoord)));
 			}
 			sendNetworkUpdate();
 			return;
@@ -561,13 +560,12 @@ public class TileQuarry extends TileBuildCraft implements IMachine, IPowerRecept
 		int zSize = a.zMax() - a.zMin() + 1;
 
 		if (xSize < 3 || zSize < 3 || ((xSize * zSize) >> 8) >= chunkTicket.getMaxChunkListDepth()) {
-			if (placedBy != null) {
-				((EntityPlayerMP) placedBy)
-						.addChatMessage(new ChatComponentText(
-								String.format(
-										"Quarry size is outside of chunkloading bounds or too small %d %d (%d)",
-										xSize, zSize,
-										chunkTicket.getMaxChunkListDepth())));
+			if (placedBy != null) {				
+				placedBy.addChatMessage(new ChatComponentText(
+						String.format(
+								"Quarry size is outside of chunkloading bounds or too small %d %d (%d)",
+								xSize, zSize,
+								chunkTicket.getMaxChunkListDepth())));
 			}
 			
 			a = new DefaultAreaProvider(xCoord, yCoord, zCoord, xCoord + 10, yCoord + 4, zCoord + 10);
@@ -857,11 +855,10 @@ public class TileQuarry extends TileBuildCraft implements IMachine, IPowerRecept
 		}
 		
 		if (placedBy != null) {
-			((EntityPlayerMP) placedBy)
-					.addChatMessage(new ChatComponentText(
-							String.format(
-									"[BUILDCRAFT] The quarry at %d %d %d will keep %d chunks loaded",
-									xCoord, yCoord, zCoord, chunks.size())));
+			placedBy.addChatMessage(new ChatComponentText(
+					String.format(
+							"[BUILDCRAFT] The quarry at %d %d %d will keep %d chunks loaded",
+							xCoord, yCoord, zCoord, chunks.size())));
 		}
 		
 		sendNetworkUpdate();

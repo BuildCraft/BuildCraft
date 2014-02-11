@@ -488,7 +488,7 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 	public ConnectOverride overridePipeConnection(PipeType type, ForgeDirection with) {
 		if (type == PipeType.POWER) {
 			return ConnectOverride.DEFAULT;
-		} else 	if (with == orientation) { 
+		} else if (with == orientation) { 
 			return ConnectOverride.DISCONNECT;
 		} else {
 			return ConnectOverride.DEFAULT;

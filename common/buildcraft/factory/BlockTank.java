@@ -51,10 +51,6 @@ public class BlockTank extends BlockContainer {
 		return false;
 	}
 
-	public boolean isACube() {
-		return false;
-	}
-
 	@Override
 	public TileEntity createNewTileEntity(World world, int metadata) {
 		return new TileTank();
@@ -80,19 +76,19 @@ public class BlockTank extends BlockContainer {
 			case 1:
 				return textureTop;
 			default:
-				if (iblockaccess.getBlock(i, j - 1, k) == this)
+				if (iblockaccess.getBlock(i, j - 1, k) == this) {
 					return textureStackedSide;
-				else
+				} else {
 					return textureBottomSide;
+				}
 		}
 	}
 
 	@Override
 	public boolean onBlockActivated(World world, int i, int j, int k, EntityPlayer entityplayer, int par6, float par7, float par8, float par9) {
-
+		System.out.println ("ACTIVATED");
 		ItemStack current = entityplayer.inventory.getCurrentItem();
 		if (current != null) {
-
 			FluidStack liquid = FluidContainerRegistry.getFluidForFilledItem(current);
 
 			TileTank tank = (TileTank) world.getTileEntity(i, j, k);
@@ -109,8 +105,8 @@ public class BlockTank extends BlockContainer {
 
 				// Handle empty containers
 			} else {
-
 				FluidStack available = tank.getTankInfo(ForgeDirection.UNKNOWN)[0].fluid;
+				
 				if (available != null) {
 					ItemStack filled = FluidContainerRegistry.fillFluidContainer(available, current);
 
@@ -129,7 +125,9 @@ public class BlockTank extends BlockContainer {
 								entityplayer.inventory.setInventorySlotContents(entityplayer.inventory.currentItem, filled);
 							}
 						}
+						
 						tank.drain(ForgeDirection.UNKNOWN, liquid.amount, true);
+						
 						return true;
 					}
 				}
@@ -141,9 +139,11 @@ public class BlockTank extends BlockContainer {
 
 	@Override
 	public boolean shouldSideBeRendered(IBlockAccess world, int x, int y, int z, int side) {
-		if (side <= 1)
+		if (side <= 1) {
 			return world.getBlock(x, y, z) != this;
-		return super.shouldSideBeRendered(world, x, y, z, side);
+		} else {
+			return super.shouldSideBeRendered(world, x, y, z, side);
+		}
 	}
 
 	@Override
@@ -157,10 +157,12 @@ public class BlockTank extends BlockContainer {
 	@Override
 	public int getLightValue(IBlockAccess world, int x, int y, int z) {
 		TileEntity tile = world.getTileEntity(x, y, z);
+		
 		if (tile instanceof TileTank) {
 			TileTank tank = (TileTank) tile;
 			return tank.getFluidLightLevel();
 		}
+		
 		return super.getLightValue(world, x, y, z);
 	}
 }
