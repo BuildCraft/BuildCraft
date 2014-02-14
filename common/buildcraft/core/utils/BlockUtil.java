@@ -137,14 +137,7 @@ public class BlockUtil {
 	}
 
 	public static Fluid getFluid(Block block) {
-		if (block instanceof IFluidBlock) {
-			return ((IFluidBlock) block).getFluid();
-		} else if (block == Blocks.water || block == Blocks.flowing_water) {
-			return FluidRegistry.WATER;
-		} else if (block == Blocks.lava || block == Blocks.flowing_lava) {
-			return FluidRegistry.LAVA;
-		}
-		return null;
+		return FluidRegistry.lookupFluidForBlock (block);
 	}
 
 	public static FluidStack drainBlock(World world, int x, int y, int z, boolean doDrain) {
@@ -152,26 +145,23 @@ public class BlockUtil {
 	}
 
 	public static FluidStack drainBlock(Block block, World world, int x, int y, int z, boolean doDrain) {
-		if (block instanceof IFluidBlock) {
-			IFluidBlock fluidBlock = (IFluidBlock) block;
-			if (fluidBlock.canDrain(world, x, y, z))
-				return fluidBlock.drain(world, x, y, z, doDrain);
-		} else if (block == Blocks.water || block == Blocks.flowing_water) {
+		Fluid fluid = FluidRegistry.lookupFluidForBlock(block);		
+		
+		if (fluid != null) {
 			int meta = world.getBlockMetadata(x, y, z);
-			if (meta != 0)
+			
+			if (meta != 0) {
 				return null;
-			if (doDrain)
+			}
+			
+			if (doDrain) {
 				world.setBlockToAir(x, y, z);
-			return new FluidStack(FluidRegistry.WATER, FluidContainerRegistry.BUCKET_VOLUME);
-		} else if (block == Blocks.lava || block == Blocks.lava) {
-			int meta = world.getBlockMetadata(x, y, z);
-			if (meta != 0)
-				return null;
-			if (doDrain)
-				world.setBlockToAir(x, y, z);
-			return new FluidStack(FluidRegistry.LAVA, FluidContainerRegistry.BUCKET_VOLUME);
+			}
+			
+			return new FluidStack(fluid, FluidContainerRegistry.BUCKET_VOLUME);
+		} else { 		
+			return null;
 		}
-		return null;
 	}
 
 	/**
