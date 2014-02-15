@@ -218,7 +218,7 @@ public class TileAdvancedCraftingTable extends TileLaserTableBase implements IIn
 
 	@Override
 	public String getInventoryName() {
-		return StringUtils.localize("tile.assemblyWorkbenchBlock");
+		return StringUtils.localize("tile.assemblyWorkbenchBlock.name");
 	}
 
 	@Override

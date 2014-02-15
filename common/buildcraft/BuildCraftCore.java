@@ -74,7 +74,6 @@ import buildcraft.core.triggers.TriggerInventory;
 import buildcraft.core.triggers.TriggerInventoryLevel;
 import buildcraft.core.triggers.TriggerMachine;
 import buildcraft.core.utils.BCLog;
-import buildcraft.core.utils.Localization;
 import buildcraft.core.recipes.AssemblyRecipeManager;
 import buildcraft.core.recipes.IntegrationRecipeManager;
 import buildcraft.core.triggers.TriggerRedstoneInput;
@@ -294,9 +293,6 @@ public class BuildCraftCore extends BuildCraftMod {
 
 		CoreProxy.proxy.initializeRendering();
 		CoreProxy.proxy.initializeEntityRendering();
-
-		Localization.addLocalization("/lang/buildcraft/", DefaultProps.DEFAULT_LANGUAGE);
-
 	}
 
 	@EventHandler
