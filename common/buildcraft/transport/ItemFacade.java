@@ -132,19 +132,25 @@ public class ItemFacade extends ItemBuildCraft {
 				}
 			}													
 			
-			ItemStack base = new ItemStack(b, 1);
+			Item item = Item.getItemFromBlock(b);
 			
-			if (base.getHasSubtypes()) {
-				Set<String> names = Sets.newHashSet();
-				
-				for (int meta = 0; meta <= 15; meta++) {
-					ItemStack is = new ItemStack(b, 1, meta);
-					if (!Strings.isNullOrEmpty(is.getUnlocalizedName()) && names.add(is.getUnlocalizedName())) {
-						ItemFacade.addFacade(is);
+			if (item != null) {
+				ItemStack base = new ItemStack(item, 1);
+
+				if (base.getHasSubtypes()) {
+					Set<String> names = Sets.newHashSet();
+
+					for (int meta = 0; meta <= 15; meta++) {
+						ItemStack is = new ItemStack(item, 1, meta);
+						
+						if (!Strings.isNullOrEmpty(is.getUnlocalizedName())
+								&& names.add(is.getUnlocalizedName())) {
+							ItemFacade.addFacade(is);
+						}
 					}
+				} else {
+					ItemFacade.addFacade(base);
 				}
-			} else {
-				ItemFacade.addFacade(base);
 			}
 		}
 	}
