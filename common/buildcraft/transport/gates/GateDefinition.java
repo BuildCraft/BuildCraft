@@ -34,13 +34,17 @@ public final class GateDefinition {
 		public final int guiHeight;
 		public final int numSlots;
 		public final boolean hasParameterSlot;
+		@SideOnly(Side.CLIENT)
 		private IIcon iconBlock;
+		@SideOnly(Side.CLIENT)
 		private IIcon iconItem;
 
+		@SideOnly(Side.CLIENT)
 		public IIcon getIconBlock() {
 			return iconBlock;
 		}
 
+		@SideOnly(Side.CLIENT)
 		public IIcon getIconItem() {
 			return iconItem;
 		}
@@ -49,11 +53,13 @@ public final class GateDefinition {
 			return name().toLowerCase(Locale.ENGLISH);
 		}
 
+		@SideOnly(Side.CLIENT)
 		public void registerBlockIcon(IIconRegister iconRegister) {
 			if (this != REDSTONE)
 				iconBlock = iconRegister.registerIcon("buildcraft:gates/gate_material_" + getTag());
 		}
 
+		@SideOnly(Side.CLIENT)
 		public void registerItemIcon(IIconRegister iconRegister) {
 			if (this != REDSTONE)
 				iconItem = iconRegister.registerIcon("buildcraft:gates/gate_material_" + getTag());

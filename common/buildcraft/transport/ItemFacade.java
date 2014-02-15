@@ -136,7 +136,9 @@ public class ItemFacade extends ItemBuildCraft {
 			
 			if (base != null) {
 				List <ItemStack> stackList = new ArrayList<ItemStack> ();
-				base.getSubItems(base, null, stackList);
+				if ( FMLCommonHandler.instance().getSide() == Side.CLIENT ) {
+					base.getSubItems(base, null, stackList);
+				}
 				
 				for (ItemStack s : stackList) {
 					ItemFacade.addFacade(s);
