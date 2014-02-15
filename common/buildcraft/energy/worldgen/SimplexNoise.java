@@ -1,6 +1,14 @@
+/**
+ * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
+ * http://www.mod-buildcraft.com
+ *
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
+ * License 1.0, or MMPL. Please check the contents of the license located in
+ * http://www.mod-buildcraft.com/MMPL-1.0.txt
+ */
 package buildcraft.energy.worldgen;
 
-/*
+/**
  * A speed-improved simplex noise algorithm for 2D, 3D and 4D in Java.
  *
  * Based on example code by Stefan Gustavson (stegu@itn.liu.se).
@@ -16,7 +24,6 @@ package buildcraft.energy.worldgen;
  * attribution is appreciated.
  *
  */
-
 public class SimplexNoise { // Simplex noise in 2D, 3D and 4D
 	private static Grad grad3[] = { new Grad(1, 1, 0), new Grad(-1, 1, 0), new Grad(1, -1, 0), new Grad(-1, -1, 0), new Grad(1, 0, 1), new Grad(-1, 0, 1),
 			new Grad(1, 0, -1), new Grad(-1, 0, -1), new Grad(0, 1, 1), new Grad(0, -1, 1), new Grad(0, 1, -1), new Grad(0, -1, -1) };

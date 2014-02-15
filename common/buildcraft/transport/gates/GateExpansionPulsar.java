@@ -1,5 +1,5 @@
-/*
- * Copyright (c) SpaceToad, 2011-2012
+/**
+ * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
  *
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
@@ -25,10 +25,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
 
-/**
- *
- * @author CovertJaguar <http://www.railcraft.info/>
- */
 public class GateExpansionPulsar extends GateExpansionBuildcraft implements IGateExpansion {
 
 	public static GateExpansionPulsar INSTANCE = new GateExpansionPulsar();

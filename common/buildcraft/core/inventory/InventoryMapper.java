@@ -1,3 +1,11 @@
+/**
+ * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
+ * http://www.mod-buildcraft.com
+ *
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
+ * License 1.0, or MMPL. Please check the contents of the license located in
+ * http://www.mod-buildcraft.com/MMPL-1.0.txt
+ */
 package buildcraft.core.inventory;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -8,8 +16,6 @@ import net.minecraft.item.ItemStack;
  * Wrapper class used to specify part of an existing inventory to be treated as
  * a complete inventory. Used primarily to map a side of an ISidedInventory, but
  * it is also helpful for complex inventories such as the Tunnel Bore.
- *
- * @author CovertJaguar <http://www.railcraft.info>
  */
 public class InventoryMapper implements IInventory {
 

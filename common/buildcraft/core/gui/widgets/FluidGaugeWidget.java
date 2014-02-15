@@ -1,5 +1,12 @@
+/**
+ * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
+ * http://www.mod-buildcraft.com
+ *
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
+ * License 1.0, or MMPL. Please check the contents of the license located in
+ * http://www.mod-buildcraft.com/MMPL-1.0.txt
+ */
 package buildcraft.core.gui.widgets;
-
 
 import buildcraft.core.fluids.Tank;
 import buildcraft.core.gui.GuiBuildCraft;
@@ -8,10 +15,6 @@ import buildcraft.core.render.FluidRenderer;
 import net.minecraft.util.IIcon;
 import net.minecraftforge.fluids.FluidStack;
 
-/**
- *
- * @author CovertJaguar <http://www.railcraft.info>
- */
 public class FluidGaugeWidget extends Widget {
 
     public final Tank tank;
