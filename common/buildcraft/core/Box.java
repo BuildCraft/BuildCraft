@@ -1,8 +1,9 @@
 /**
- * Copyright (c) SpaceToad, 2011 http://www.mod-buildcraft.com
+ * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
+ * http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public License
- * 1.0, or MMPL. Please check the contents of the license located in
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
+ * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
 package buildcraft.core;
@@ -14,11 +15,14 @@ import buildcraft.api.core.Position;
 import buildcraft.core.network.NetworkData;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
+import io.netty.buffer.ByteBuf;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 
@@ -224,7 +228,7 @@ public class Box implements IBox {
 		}
 	}
 
-	public void writeToStream(DataOutputStream stream) throws IOException {
+	public void writeToStream(ByteBuf stream) {
 		stream.writeBoolean(initialized);
 		
 		stream.writeInt(xMin);
@@ -236,7 +240,7 @@ public class Box implements IBox {
 		stream.writeInt(zMax);
 	}
 
-	public void readFromStream(DataInputStream stream) throws IOException {
+	public void readFromStream(ByteBuf stream) {
 		initialized = stream.readBoolean();
 		
 		xMin = stream.readInt();

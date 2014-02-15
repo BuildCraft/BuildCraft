@@ -1,12 +1,11 @@
 /**
- * Copyright (c) SpaceToad, 2011-2012
+ * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
  *
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-
 package buildcraft.core.blueprints;
 
 import buildcraft.core.IBuilderInventory;
@@ -32,10 +31,10 @@ public class BptBuilderTemplate extends BptBuilderBase {
 
 					BptSlot slot = bluePrint.contents[i][j][k];
 
-					if (slot == null || slot.blockId == 0) {
+					if (slot == null || slot.block == null) {
 						slot = new BptSlot();
 						slot.meta = 0;
-						slot.blockId = 0;
+						slot.block = null;
 						slot.x = xCoord;
 						slot.y = yCoord;
 						slot.z = zCoord;
@@ -62,7 +61,7 @@ public class BptBuilderTemplate extends BptBuilderBase {
 					} else {
 						slot = new BptSlot();
 						slot.meta = 0;
-						slot.blockId = 0;
+						slot.block = null;
 					}
 
 					slot.x = xCoord;
@@ -71,7 +70,7 @@ public class BptBuilderTemplate extends BptBuilderBase {
 
 					slot.mode = Mode.Build;
 
-					if (slot.blockId != 0) {
+					if (slot.block != null) {
 						buildList.add(slot);
 					}
 				}
@@ -121,7 +120,7 @@ public class BptBuilderTemplate extends BptBuilderBase {
 			BptSlot slot = list.getFirst();
 
 			// Note from CJ: I have no idea what this code is supposed to do, so I'm not touching it.
-			if (slot.blockId == world.getBlockId(slot.x, slot.y, slot.z)) {
+			/*if (slot.blockId == world.getBlockId(slot.x, slot.y, slot.z)) {
 				list.removeFirst();
 			} else if (slot.mode == Mode.ClearIfInvalid) {
 				result = slot;
@@ -145,7 +144,7 @@ public class BptBuilderTemplate extends BptBuilderBase {
 				}
 
 				break;
-			}
+			}*/
 		}
 
 		return result;

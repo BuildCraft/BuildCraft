@@ -1,8 +1,9 @@
 /**
- * Copyright (c) SpaceToad, 2011 http://www.mod-buildcraft.com
+ * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
+ * http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public License
- * 1.0, or MMPL. Please check the contents of the license located in
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
+ * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
 package buildcraft.builders.filler.pattern;
@@ -17,18 +18,18 @@ import buildcraft.core.utils.StringUtils;
 import java.util.HashSet;
 import java.util.Set;
 import net.minecraft.block.Block;
-import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Icon;
+import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 
 public abstract class FillerPattern implements IFillerPattern {
 
 	public static final Set<FillerPattern> patterns = new HashSet<FillerPattern>();
 	private final String tag;
-	private Icon icon;
+	private IIcon icon;
 
 	public FillerPattern(String tag) {
 		this.tag = tag;
@@ -54,12 +55,12 @@ public abstract class FillerPattern implements IFillerPattern {
 		return "buildcraft:" + tag;
 	}
 
-	public void registerIcon(IconRegister iconRegister) {
+	public void registerIcon(IIconRegister iconRegister) {
 		icon = iconRegister.registerIcon("buildcraft:fillerPatterns/" + tag);
 	}
 
 	@Override
-	public Icon getIcon() {
+	public IIcon getIcon() {
 		return icon;
 	}
 
@@ -195,9 +196,12 @@ public abstract class FillerPattern implements IFillerPattern {
 	}
 
 	private static void breakBlock(World world, int x, int y, int z) {
-		Block block = Block.blocksList[world.getBlockId(x, y, z)];
-		if (block != null)
-			world.playSoundEffect(x + 0.5F, y + 0.5F, z + 0.5F, block.stepSound.getPlaceSound(), (block.stepSound.getVolume() + 1.0F) / 2.0F, block.stepSound.getPitch() * 0.8F);
+		Block block = world.getBlock(x, y, z);
+		if (block != null) {
+			// TODO: fix sound
+			//world.playSoundEffect(x + 0.5F, y + 0.5F, z + 0.5F, block.stepSound.getPlaceSound(), (block.stepSound.getVolume() + 1.0F) / 2.0F, block.stepSound.getPitch() * 0.8F);
+		}
+		
 		if (BuildCraftBuilders.fillerDestroy) {
 			world.setBlockToAir(x, y, z);
 		} else if (BlockUtil.isToughBlock(world, x, y, z)) {

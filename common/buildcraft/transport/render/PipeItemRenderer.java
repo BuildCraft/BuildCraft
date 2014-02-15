@@ -1,3 +1,11 @@
+/**
+ * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
+ * http://www.mod-buildcraft.com
+ *
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
+ * License 1.0, or MMPL. Please check the contents of the license located in
+ * http://www.mod-buildcraft.com/MMPL-1.0.txt
+ */
 package buildcraft.transport.render;
 
 import buildcraft.BuildCraftTransport;
@@ -8,7 +16,7 @@ import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.Icon;
+import net.minecraft.util.IIcon;
 import net.minecraftforge.client.IItemRenderer;
 import org.lwjgl.opengl.GL11;
 
@@ -20,7 +28,7 @@ public class PipeItemRenderer implements IItemRenderer {
 		Tessellator tessellator = Tessellator.instance;
 
 		Block block = BuildCraftTransport.genericPipeBlock;
-		Icon icon = item.getItem().getIconFromDamage(0);
+		IIcon icon = item.getItem().getIconFromDamage(0);
 
 		if (icon == null)
 			icon = ((TextureMap) Minecraft.getMinecraft().getTextureManager().getTexture(TextureMap.locationBlocksTexture)).getAtlasSprite("missingno");

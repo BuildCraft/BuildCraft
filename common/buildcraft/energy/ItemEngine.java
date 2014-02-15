@@ -1,21 +1,21 @@
-/** 
- * Copyright (c) SpaceToad, 2011
+/**
+ * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- * 
- * BuildCraft is distributed under the terms of the Minecraft Mod Public 
+ *
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-
 package buildcraft.energy;
 
 import buildcraft.core.ItemBlockBuildCraft;
+import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 
 public class ItemEngine extends ItemBlockBuildCraft {
 
-	public ItemEngine(int i) {
-		super(i);
+	public ItemEngine(Block block) {
+		super(block);
 		setMaxDamage(0);
 		setHasSubtypes(true);
 	}

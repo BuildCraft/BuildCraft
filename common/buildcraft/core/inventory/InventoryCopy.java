@@ -1,3 +1,11 @@
+/**
+ * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
+ * http://www.mod-buildcraft.com
+ *
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
+ * License 1.0, or MMPL. Please check the contents of the license located in
+ * http://www.mod-buildcraft.com/MMPL-1.0.txt
+ */
 package buildcraft.core.inventory;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -9,8 +17,6 @@ import net.minecraft.item.ItemStack;
  *
  * Useful for performing inventory manipulations and then examining the results
  * without affecting the original inventory.
- *
- * @author CovertJaguar <http://www.railcraft.info>
  */
 public class InventoryCopy implements IInventory {
 
@@ -44,14 +50,12 @@ public class InventoryCopy implements IInventory {
 			if (contents[i].stackSize <= j) {
 				ItemStack itemstack = contents[i];
 				contents[i] = null;
-				onInventoryChanged();
 				return itemstack;
 			}
 			ItemStack itemstack1 = contents[i].splitStack(j);
 			if (contents[i].stackSize <= 0) {
 				contents[i] = null;
 			}
-			onInventoryChanged();
 			return itemstack1;
 		} else {
 			return null;
@@ -64,12 +68,11 @@ public class InventoryCopy implements IInventory {
 		if (itemstack != null && itemstack.stackSize > getInventoryStackLimit()) {
 			itemstack.stackSize = getInventoryStackLimit();
 		}
-		onInventoryChanged();
 	}
 
 	@Override
-	public String getInvName() {
-		return orignal.getInvName();
+	public String getInventoryName() {
+		return orignal.getInventoryName();
 	}
 
 	@Override
@@ -78,30 +81,21 @@ public class InventoryCopy implements IInventory {
 	}
 
 	@Override
-	public void onInventoryChanged() {
-	}
-
-	@Override
 	public boolean isUseableByPlayer(EntityPlayer entityplayer) {
 		return true;
 	}
 
 	@Override
-	public void openChest() {
+	public void openInventory() {
 	}
 
 	@Override
-	public void closeChest() {
+	public void closeInventory() {
 	}
 
 	@Override
 	public ItemStack getStackInSlotOnClosing(int slot) {
 		return orignal.getStackInSlotOnClosing(slot);
-	}
-
-	@Override
-	public boolean isInvNameLocalized() {
-		return orignal.isInvNameLocalized();
 	}
 
 	@Override
@@ -111,5 +105,15 @@ public class InventoryCopy implements IInventory {
 
 	public ItemStack[] getItemStacks() {
 		return contents;
+	}
+
+	@Override
+	public boolean hasCustomInventoryName() {
+		return false;
+	}
+
+	@Override
+	public void markDirty() { 
+		
 	}
 }

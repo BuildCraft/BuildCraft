@@ -1,3 +1,11 @@
+/**
+ * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
+ * http://www.mod-buildcraft.com
+ *
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
+ * License 1.0, or MMPL. Please check the contents of the license located in
+ * http://www.mod-buildcraft.com/MMPL-1.0.txt
+ */
 package buildcraft.core.gui;
 
 import buildcraft.core.DefaultProps;
@@ -18,7 +26,7 @@ import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Icon;
+import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 
@@ -46,7 +54,7 @@ public abstract class GuiBuildCraft extends GuiContainer {
 	}
 
 	public FontRenderer getFontRenderer() {
-		return fontRenderer;
+		return fontRendererObj;
 	}
 
 	protected void initLedgers(IInventory inventory) {
@@ -129,7 +137,7 @@ public abstract class GuiBuildCraft extends GuiContainer {
 	}
 
 	protected int getCenteredOffset(String string, int xWidth) {
-		return (xWidth - fontRenderer.getStringWidth(string)) / 2;
+		return (xWidth - fontRendererObj.getStringWidth(string)) / 2;
 	}
 
 	/**
@@ -214,7 +222,7 @@ public abstract class GuiBuildCraft extends GuiContainer {
 			int y;
 
 			for (ToolTipLine tip : toolTips) {
-				y = this.fontRenderer.getStringWidth(tip.text);
+				y = this.fontRendererObj.getStringWidth(tip.text);
 
 				if (y > lenght) {
 					lenght = y;
@@ -230,7 +238,7 @@ public abstract class GuiBuildCraft extends GuiContainer {
 			}
 
 			this.zLevel = 300.0F;
-			itemRenderer.zLevel = 300.0F;
+			itemRender.zLevel = 300.0F;
 			int var15 = -267386864;
 			this.drawGradientRect(x - 3, y - 4, x + lenght + 3, y - 3, var15, var15);
 			this.drawGradientRect(x - 3, y + var14 + 3, x + lenght + 3, y + var14 + 4, var15, var15);
@@ -253,13 +261,13 @@ public abstract class GuiBuildCraft extends GuiContainer {
 					line = "\u00a7" + Integer.toHexString(tip.color) + line;
 				}
 
-				this.fontRenderer.drawStringWithShadow(line, x, y, -1);
+				this.fontRendererObj.drawStringWithShadow(line, x, y, -1);
 
 				y += 10 + tip.getSpacing();
 			}
 
 			this.zLevel = 0.0F;
-			itemRenderer.zLevel = 0.0F;
+			itemRender.zLevel = 0.0F;
 		}
 	}
 
@@ -331,9 +339,9 @@ public abstract class GuiBuildCraft extends GuiContainer {
 				int startY = mouseY - ((gui.height - gui.ySize) / 2) - 12;
 
 				String tooltip = ledger.getTooltip();
-				int textWidth = fontRenderer.getStringWidth(tooltip);
+				int textWidth = fontRendererObj.getStringWidth(tooltip);
 				drawGradientRect(startX - 3, startY - 3, startX + textWidth + 3, startY + 8 + 3, 0xc0000000, 0xc0000000);
-				fontRenderer.drawStringWithShadow(tooltip, startX, startY, -1);
+				fontRendererObj.drawStringWithShadow(tooltip, startX, startY, -1);
 			}
 		}
 
@@ -456,7 +464,7 @@ public abstract class GuiBuildCraft extends GuiContainer {
 			GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0F);
 		}
 
-		protected void drawIcon(Icon icon, int x, int y) {
+		protected void drawIcon(IIcon icon, int x, int y) {
 
 			GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0F);
 			drawTexturedModelRectFromIcon(x, y, icon, 16, 16);

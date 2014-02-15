@@ -1,8 +1,9 @@
 /**
- * Copyright (c) SpaceToad, 2011 http://www.mod-buildcraft.com
+ * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
+ * http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public License
- * 1.0, or MMPL. Please check the contents of the license located in
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
+ * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
 package buildcraft.factory;
@@ -16,31 +17,35 @@ import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+
 import java.util.ArrayList;
+
+import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Icon;
+import net.minecraft.util.IIcon;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 
 public class BlockQuarry extends BlockBuildCraft {
 
-	Icon textureTop;
-	Icon textureFront;
-	Icon textureSide;
+	IIcon textureTop;
+	IIcon textureFront;
+	IIcon textureSide;
 
-	public BlockQuarry(int i) {
-		super(i, Material.iron);
+	public BlockQuarry() {
+		super(Material.iron);
 
 		setHardness(10F);
 		setResistance(10F);
-		setStepSound(soundAnvilFootstep);
+		// TODO: set proper sound
+		//setStepSound(soundAnvilFootstep);
 	}
 
 	@Override
@@ -51,13 +56,13 @@ public class BlockQuarry extends BlockBuildCraft {
 
 		world.setBlockMetadataWithNotify(i, j, k, orientation.getOpposite().ordinal(), 1);
 		if (entityliving instanceof EntityPlayer) {
-			TileQuarry tq = (TileQuarry) world.getBlockTileEntity(i, j, k);
+			TileQuarry tq = (TileQuarry) world.getTileEntity(i, j, k);
 			tq.placedBy = (EntityPlayer) entityliving;
 		}
 	}
 
 	@Override
-	public Icon getIcon(int i, int j) {
+	public IIcon getIcon(int i, int j) {
 		// If no metadata is set, then this is an icon.
 		if (j == 0 && i == 3)
 			return textureFront;
@@ -74,7 +79,7 @@ public class BlockQuarry extends BlockBuildCraft {
 	}
 
 	@Override
-	public TileEntity createNewTileEntity(World var1) {
+	public TileEntity createNewTileEntity(World world, int metadata) {
 		return new TileQuarry();
 	}
 
@@ -83,9 +88,9 @@ public class BlockQuarry extends BlockBuildCraft {
 		if (!world.checkChunksExist(i - width2, j - width2, k - width2, i + width2, j + width2, k + width2))
 			return;
 
-		int blockID = world.getBlockId(i, j, k);
+		Block block = world.getBlock(i, j, k);
 
-		if (blockID != BuildCraftFactory.frameBlock.blockID)
+		if (block != BuildCraftFactory.frameBlock)
 			return;
 
 		int meta = world.getBlockMetadata(i, j, k);
@@ -116,26 +121,26 @@ public class BlockQuarry extends BlockBuildCraft {
 	}
 
 	private void markFrameForDecay(World world, int x, int y, int z) {
-		if (world.getBlockId(x, y, z) == BuildCraftFactory.frameBlock.blockID) {
+		if (world.getBlock(x, y, z) == BuildCraftFactory.frameBlock) {
 			world.setBlockMetadataWithNotify(x, y, z, 1, 0);
 		}
 	}
 
 	@Override
-	public ArrayList<ItemStack> getBlockDropped(World world, int x, int y, int z, int metadata, int fortune) {
+	public ArrayList<ItemStack> getDrops(World world, int x, int y, int z, int metadata, int fortune) {
 		if (BuildCraftFactory.quarryOneTimeUse) {
 			return new ArrayList<ItemStack>();
 		}
-		return super.getBlockDropped(world, x, y, z, metadata, fortune);
+		return super.getDrops(world, x, y, z, metadata, fortune);
 	}
 
 	@Override
-	public void breakBlock(World world, int i, int j, int k, int par5, int par6) {
-
-		if (!CoreProxy.proxy.isSimulating(world))
+	public void breakBlock(World world, int i, int j, int k, Block block, int par6) {
+		if (world.isRemote) {
 			return;
+		}
 
-		TileEntity tile = world.getBlockTileEntity(i, j, k);
+		TileEntity tile = world.getTileEntity(i, j, k);
 		if (tile instanceof TileQuarry) {
 			TileQuarry quarry = (TileQuarry) tile;
 			Box box = quarry.box;
@@ -170,40 +175,12 @@ public class BlockQuarry extends BlockBuildCraft {
 
 		Utils.preDestroyBlock(world, i, j, k);
 
-		// byte width = 1;
-		// int width2 = width + 1;
-		//
-		// if (world.checkChunksExist(i - width2, j - width2, k - width2, i + width2, j + width2, k + width2)) {
-		//
-		// boolean frameFound = false;
-		// for (int z = -width; z <= width; ++z) {
-		//
-		// for (int y = -width; y <= width; ++y) {
-		//
-		// for (int x = -width; x <= width; ++x) {
-		//
-		// int blockID = world.getBlockId(i + z, j + y, k + x);
-		//
-		// if (blockID == BuildCraftFactory.frameBlock.blockID) {
-		// searchFrames(world, i + z, j + y, k + x);
-		// frameFound = true;
-		// break;
-		// }
-		// }
-		// if (frameFound)
-		// break;
-		// }
-		// if (frameFound)
-		// break;
-		// }
-		// }
-
-		super.breakBlock(world, i, j, k, par5, par6);
+		super.breakBlock(world, i, j, k, block, par6);
 	}
 
 	@Override
 	public boolean onBlockActivated(World world, int i, int j, int k, EntityPlayer entityplayer, int par6, float par7, float par8, float par9) {
-		TileQuarry tile = (TileQuarry) world.getBlockTileEntity(i, j, k);
+		TileQuarry tile = (TileQuarry) world.getTileEntity(i, j, k);
 
 		// Drop through if the player is sneaking
 		if (entityplayer.isSneaking())
@@ -222,15 +199,9 @@ public class BlockQuarry extends BlockBuildCraft {
 		return false;
 	}
 
-	@SuppressWarnings({"unchecked", "rawtypes"})
-	@Override
-	public void addCreativeItems(ArrayList itemList) {
-		itemList.add(new ItemStack(this));
-	}
-
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void registerIcons(IconRegister par1IconRegister) {
+	public void registerBlockIcons(IIconRegister par1IconRegister) {
 		textureSide = par1IconRegister.registerIcon("buildcraft:quarry_side");
 		textureTop = par1IconRegister.registerIcon("buildcraft:quarry_top");
 		textureFront = par1IconRegister.registerIcon("buildcraft:quarry_front");

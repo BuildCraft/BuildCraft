@@ -1,5 +1,5 @@
 /**
- * Copyright (c) SpaceToad, 2011-2012
+ * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
  *
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
@@ -7,6 +7,10 @@
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
 package buildcraft.builders.blueprints;
+
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufAllocator;
+import io.netty.buffer.Unpooled;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
@@ -27,15 +31,11 @@ import java.util.logging.Logger;
 import java.util.zip.GZIPOutputStream;
 
 import buildcraft.BuildCraftBuilders;
+import buildcraft.core.utils.Utils;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 
-/**
- *
- * @author Player
- * @author CovertJaguar <http://www.railcraft.info/>
- */
 public class BlueprintDatabase {
 	private final int bufferSize = 8192;
 	private final String fileExt = ".bpt";
@@ -131,17 +131,13 @@ public class BlueprintDatabase {
 	private BlueprintId save(Blueprint blueprint) {
 		NBTTagCompound nbt = new NBTTagCompound();
 		blueprint.writeToNBT(nbt);
+		
+		ByteBuf buf = Unpooled.buffer();
 
-		ByteArrayOutputStream bos = new ByteArrayOutputStream();
-		DataOutputStream os = new DataOutputStream(bos);
+		Utils.writeNBT(buf, nbt);
 
-		try {
-			NBTBase.writeNamedTag(nbt, os);
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
-
-		byte[] data = bos.toByteArray();
+		byte[] data = new byte [buf.readableBytes()];
+		buf.readBytes(data);
 
 		blueprint.generateId(data);
 

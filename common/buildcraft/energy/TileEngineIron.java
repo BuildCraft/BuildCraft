@@ -1,8 +1,9 @@
 /**
- * Copyright (c) SpaceToad, 2011 http://www.mod-buildcraft.com
+ * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
+ * http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public License
- * 1.0, or MMPL. Please check the contents of the license located in
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
+ * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
 package buildcraft.energy;
@@ -15,7 +16,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.biome.BiomeGenBase;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
@@ -72,7 +73,7 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
 			}
 			ItemStack current = player.getCurrentEquippedItem();
 			if (current != null) {
-				if (CoreProxy.proxy.isSimulating(worldObj)) {
+				if (!worldObj.isRemote) {
 					if (FluidUtils.handleRightClick(this, side, player, true, true)) {
 						return true;
 					}
@@ -83,7 +84,7 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
 				}
 			}
 		}
-		if (!CoreProxy.proxy.isRenderWorld(worldObj)) {
+		if (!worldObj.isRemote) {
 			player.openGui(BuildCraftEnergy.instance, GuiIds.ENGINE_IRON, worldObj, xCoord, yCoord, zCoord);
 		}
 		return true;
@@ -96,7 +97,7 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
 
 	@Override
 	public float getPistonSpeed() {
-		if (CoreProxy.proxy.isSimulating(worldObj)) {
+		if (!worldObj.isRemote) {
 			return Math.max(0.07f * getHeatLevel(), 0.01f);
 		}
 		switch (getEnergyStage()) {
@@ -430,5 +431,10 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
 		triggers.add(BuildCraftCore.triggerFluidContainerBelow75);
 
 		return triggers;
+	}
+
+	@Override
+	public boolean hasCustomInventoryName() {
+		return false;
 	}
 }

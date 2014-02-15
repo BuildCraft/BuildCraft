@@ -1,8 +1,9 @@
 /**
- * Copyright (c) SpaceToad, 2011 http://www.mod-buildcraft.com
+ * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
+ * http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public License
- * 1.0, or MMPL. Please check the contents of the license located in
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
+ * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
 package buildcraft.factory;
@@ -22,7 +23,7 @@ import java.util.List;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 
 public class TileMiningWell extends TileBuildCraft implements IMachine, IPowerReceptor {
 
@@ -51,7 +52,7 @@ public class TileMiningWell extends TileBuildCraft implements IMachine, IPowerRe
 
 		int depth = yCoord - 1;
 
-		while (world.getBlockId(xCoord, depth, zCoord) == BuildCraftFactory.plainPipeBlock.blockID) {
+		while (world.getBlock(xCoord, depth, zCoord) == BuildCraftFactory.plainPipeBlock) {
 			depth = depth - 1;
 		}
 
@@ -64,7 +65,7 @@ public class TileMiningWell extends TileBuildCraft implements IMachine, IPowerRe
 
 		List<ItemStack> stacks = BlockUtil.getItemStackFromBlock(worldObj, xCoord, depth, zCoord);
 
-		world.setBlock(xCoord, depth, zCoord, BuildCraftFactory.plainPipeBlock.blockID);
+		world.setBlock(xCoord, depth, zCoord, BuildCraftFactory.plainPipeBlock);
 
 		if (wasAir)
 			return;

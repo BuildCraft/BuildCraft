@@ -1,8 +1,9 @@
 /**
- * Copyright (c) SpaceToad, 2011 http://www.mod-buildcraft.com
+ * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
+ * http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public License
- * 1.0, or MMPL. Please check the contents of the license located in
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
+ * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
 package buildcraft.energy;
@@ -12,27 +13,32 @@ import buildcraft.core.BlockBuildCraft;
 import buildcraft.core.IItemPipe;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+
 import java.util.List;
 import java.util.Random;
+
+import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Icon;
+import net.minecraft.util.IIcon;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 
 public class BlockEngine extends BlockBuildCraft {
 
-	private static Icon woodTexture;
-	private static Icon stoneTexture;
-	private static Icon ironTexture;
+	private static IIcon woodTexture;
+	private static IIcon stoneTexture;
+	private static IIcon ironTexture;
 
-	public BlockEngine(int i) {
-		super(i, Material.iron);
-		setUnlocalizedName("engineBlock");
+	public BlockEngine() {
+		super(Material.iron);
+		setBlockName("engineBlock");
 	}
 
 	@Override
@@ -47,7 +53,7 @@ public class BlockEngine extends BlockBuildCraft {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void registerIcons(IconRegister par1IconRegister) {
+	public void registerBlockIcons(IIconRegister par1IconRegister) {
 		woodTexture = par1IconRegister.registerIcon("buildcraft:engineWoodBottom");
 		stoneTexture = par1IconRegister.registerIcon("buildcraft:engineStoneBottom");
 		ironTexture = par1IconRegister.registerIcon("buildcraft:engineIronBottom");
@@ -69,8 +75,8 @@ public class BlockEngine extends BlockBuildCraft {
 	}
 
 	@Override
-	public boolean isBlockSolidOnSide(World world, int x, int y, int z, ForgeDirection side) {
-		TileEntity tile = world.getBlockTileEntity(x, y, z);
+	public boolean isSideSolid(IBlockAccess world, int x, int y, int z, ForgeDirection side) {
+		TileEntity tile = world.getTileEntity(x, y, z);
 		if (tile instanceof TileEngine) {
 			return ((TileEngine) tile).orientation.getOpposite() == side;
 		}
@@ -79,7 +85,7 @@ public class BlockEngine extends BlockBuildCraft {
 
 	@Override
 	public boolean rotateBlock(World world, int x, int y, int z, ForgeDirection axis) {
-		TileEntity tile = world.getBlockTileEntity(x, y, z);
+		TileEntity tile = world.getTileEntity(x, y, z);
 		if (tile instanceof TileEngine) {
 			return ((TileEngine) tile).switchOrientation(false);
 		}
@@ -89,7 +95,7 @@ public class BlockEngine extends BlockBuildCraft {
 	@Override
 	public boolean onBlockActivated(World world, int i, int j, int k, EntityPlayer player, int side, float par7, float par8, float par9) {
 
-		TileEngine tile = (TileEngine) world.getBlockTileEntity(i, j, k);
+		TileEngine tile = (TileEngine) world.getTileEntity(i, j, k);
 
 		// Drop through if the player is sneaking
 		if (player.isSneaking())
@@ -111,7 +117,7 @@ public class BlockEngine extends BlockBuildCraft {
 
 	@Override
 	public void onPostBlockPlaced(World world, int x, int y, int z, int par5) {
-		TileEngine tile = (TileEngine) world.getBlockTileEntity(x, y, z);
+		TileEngine tile = (TileEngine) world.getTileEntity(x, y, z);
 		tile.orientation = ForgeDirection.UP;
 		if (!tile.isOrientationValid())
 			tile.switchOrientation(true);
@@ -125,7 +131,7 @@ public class BlockEngine extends BlockBuildCraft {
 	@SuppressWarnings({"all"})
 	@Override
 	public void randomDisplayTick(World world, int i, int j, int k, Random random) {
-		TileEngine tile = (TileEngine) world.getBlockTileEntity(i, j, k);
+		TileEngine tile = (TileEngine) world.getTileEntity(i, j, k);
 
 		if (!tile.isBurning())
 			return;
@@ -144,15 +150,15 @@ public class BlockEngine extends BlockBuildCraft {
 
 	@SuppressWarnings({"unchecked", "rawtypes"})
 	@Override
-	public void getSubBlocks(int blockid, CreativeTabs par2CreativeTabs, List itemList) {
+	public void getSubBlocks(Item item, CreativeTabs par2CreativeTabs, List itemList) {
 		itemList.add(new ItemStack(this, 1, 0));
 		itemList.add(new ItemStack(this, 1, 1));
 		itemList.add(new ItemStack(this, 1, 2));
 	}
 
 	@Override
-	public void onNeighborBlockChange(World world, int i, int j, int k, int l) {
-		TileEngine tile = (TileEngine) world.getBlockTileEntity(i, j, k);
+	public void onNeighborBlockChange(World world, int x, int y, int z, Block block) {
+		TileEngine tile = (TileEngine) world.getTileEntity(x, y, z);
 
 		if (tile != null) {
 			tile.checkRedstonePower();
@@ -161,7 +167,7 @@ public class BlockEngine extends BlockBuildCraft {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public Icon getIcon(int side, int meta) {
+	public IIcon getIcon(int side, int meta) {
 		switch (meta) {
 			case 0:
 				return woodTexture;
@@ -175,7 +181,7 @@ public class BlockEngine extends BlockBuildCraft {
 	}
 
 	@Override
-	public TileEntity createNewTileEntity(World world) {
+	public TileEntity createNewTileEntity(World world, int metadata) {
 		return null;
 	}
 }

@@ -1,28 +1,35 @@
 /**
- * Copyright (c) SpaceToad, 2011 http://www.mod-buildcraft.com
+ * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
+ * http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public License
- * 1.0, or MMPL. Please check the contents of the license located in
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
+ * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
 package buildcraft.core.render;
 
 import buildcraft.core.EntityBlock;
+
 import java.util.Arrays;
+
 import net.minecraft.block.Block;
+import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.entity.Entity;
-import net.minecraft.util.Icon;
+import net.minecraft.init.Blocks;
+import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+
 import org.lwjgl.opengl.GL11;
 
 public class RenderEntityBlock extends Render {
 
 	public static RenderEntityBlock INSTANCE = new RenderEntityBlock();
+	protected RenderBlocks renderBlocks;
 
 	@Override
 	protected ResourceLocation getEntityTexture(Entity entity) {
@@ -37,9 +44,9 @@ public class RenderEntityBlock extends Render {
 		public double maxX;
 		public double maxY;
 		public double maxZ;
-		public Block baseBlock = Block.sand;
-		public Icon texture = null;
-		public Icon[] textureArray = null;
+		public Block baseBlock = Blocks.sand;
+		public IIcon texture = null;
+		public IIcon[] textureArray = null;
 		public boolean[] renderSide = new boolean[6];
 		public float light = -1f;
 		public int brightness = -1;
@@ -48,7 +55,7 @@ public class RenderEntityBlock extends Render {
 			setRenderAllSides();
 		}
 
-		public RenderInfo(Block template, Icon[] texture) {
+		public RenderInfo(Block template, IIcon[] texture) {
 			this();
 			this.baseBlock = template;
 			this.textureArray = texture;
@@ -60,7 +67,7 @@ public class RenderEntityBlock extends Render {
 		}
 
 		public float getBlockBrightness(IBlockAccess iblockaccess, int i, int j, int k) {
-			return baseBlock.getBlockBrightness(iblockaccess, i, j, k);
+			return baseBlock.getMixedBrightnessForBlock(iblockaccess, i, j, k);
 		}
 
 		public final void setBounds(double minX, double minY, double minZ, double maxX, double maxY, double maxZ) {
@@ -103,7 +110,7 @@ public class RenderEntityBlock extends Render {
 			maxZ = 1 - temp;
 		}
 
-		public Icon getBlockTextureFromSide(int i) {
+		public IIcon getBlockTextureFromSide(int i) {
 			if (texture != null)
 				return texture;
 			if (textureArray == null || textureArray.length == 0)
@@ -117,6 +124,7 @@ public class RenderEntityBlock extends Render {
 	}
 
 	private RenderEntityBlock() {
+		renderBlocks = field_147909_c;
 	}
 
 	@Override
@@ -188,13 +196,15 @@ public class RenderEntityBlock extends Render {
 		if (blockAccess == null)
 			doLight = false;
 
-		if (doTessellating && !tessellator.isDrawing)
+		// TODO: needs to cancel the test because the variable is now private... May need to 
+		// duplicate the tessellator code.
+		//if (doTessellating && !tessellator.isDrawing)
 			tessellator.startDrawingQuads();
 
 		float light = 0;
 		if (doLight) {
 			if (info.light < 0) {
-				light = info.baseBlock.getBlockBrightness(blockAccess, (int) lightX, (int) lightY, (int) lightZ);
+				light = info.baseBlock.getMixedBrightnessForBlock(blockAccess, (int) lightX, (int) lightY, (int) lightZ);
 				light = light + ((1.0f - light) * 0.4f);
 			} else
 				light = info.light;
@@ -246,96 +256,9 @@ public class RenderEntityBlock extends Render {
 		if (info.renderSide[5])
 			renderBlocks.renderFaceXPos(info.baseBlock, x, y, z, info.getBlockTextureFromSide(5));
 
-		if (doTessellating && tessellator.isDrawing)
+		// TODO: needs to cancel the test because the variable is now private... May need to 
+		// duplicate the tessellator code.
+		//if (doTessellating && tessellator.isDrawing)
 			tessellator.draw();
 	}
-//
-//	public void renderBlock(RenderInfo block, IBlockAccess blockAccess, int i, int j, int k, boolean doLight, boolean doTessellating) {
-//		float f = 0.5F;
-//		float f1 = 1.0F;
-//		float f2 = 0.8F;
-//		float f3 = 0.6F;
-//
-//		renderBlocks.renderMaxX = block.maxX;
-//		renderBlocks.renderMinX = block.minX;
-//		renderBlocks.renderMaxY = block.maxY;
-//		renderBlocks.renderMinY = block.minY;
-//		renderBlocks.renderMaxZ = block.maxZ;
-//		renderBlocks.renderMinZ = block.minZ;
-//		renderBlocks.enableAO = false;
-//
-//
-//		Tessellator tessellator = Tessellator.instance;
-//
-//		if (doTessellating) {
-//			tessellator.startDrawingQuads();
-//		}
-//
-//		float f4 = 0, f5 = 0;
-//
-//		if (doLight) {
-//			f4 = block.getBlockBrightness(blockAccess, i, j, k);
-//			f5 = block.getBlockBrightness(blockAccess, i, j, k);
-//			if (f5 < f4) {
-//				f5 = f4;
-//			}
-//			tessellator.setColorOpaque_F(f * f5, f * f5, f * f5);
-//		}
-//
-//		renderBlocks.renderFaceYNeg(null, 0, 0, 0, block.getBlockTextureFromSide(0));
-//
-//		if (doLight) {
-//			f5 = block.getBlockBrightness(blockAccess, i, j, k);
-//			if (f5 < f4) {
-//				f5 = f4;
-//			}
-//			tessellator.setColorOpaque_F(f1 * f5, f1 * f5, f1 * f5);
-//		}
-//
-//		renderBlocks.renderFaceYPos(null, 0, 0, 0, block.getBlockTextureFromSide(1));
-//
-//		if (doLight) {
-//			f5 = block.getBlockBrightness(blockAccess, i, j, k);
-//			if (f5 < f4) {
-//				f5 = f4;
-//			}
-//			tessellator.setColorOpaque_F(f2 * f5, f2 * f5, f2 * f5);
-//		}
-//
-//		renderBlocks.renderFaceZNeg(null, 0, 0, 0, block.getBlockTextureFromSide(2));
-//
-//		if (doLight) {
-//			f5 = block.getBlockBrightness(blockAccess, i, j, k);
-//			if (f5 < f4) {
-//				f5 = f4;
-//			}
-//			tessellator.setColorOpaque_F(f2 * f5, f2 * f5, f2 * f5);
-//		}
-//
-//		renderBlocks.renderFaceZPos(null, 0, 0, 0, block.getBlockTextureFromSide(3));
-//
-//		if (doLight) {
-//			f5 = block.getBlockBrightness(blockAccess, i, j, k);
-//			if (f5 < f4) {
-//				f5 = f4;
-//			}
-//			tessellator.setColorOpaque_F(f3 * f5, f3 * f5, f3 * f5);
-//		}
-//
-//		renderBlocks.renderFaceXNeg(null, 0, 0, 0, block.getBlockTextureFromSide(4));
-//
-//		if (doLight) {
-//			f5 = block.getBlockBrightness(blockAccess, i, j, k);
-//			if (f5 < f4) {
-//				f5 = f4;
-//			}
-//			tessellator.setColorOpaque_F(f3 * f5, f3 * f5, f3 * f5);
-//		}
-//
-//		renderBlocks.renderFaceXPos(null, 0, 0, 0, block.getBlockTextureFromSide(5));
-//
-//		if (doTessellating) {
-//			tessellator.draw();
-//		}
-//	}
 }

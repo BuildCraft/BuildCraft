@@ -1,3 +1,11 @@
+/**
+ * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
+ * http://www.mod-buildcraft.com
+ *
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
+ * License 1.0, or MMPL. Please check the contents of the license located in
+ * http://www.mod-buildcraft.com/MMPL-1.0.txt
+ */
 package buildcraft.factory;
 
 import buildcraft.BuildCraftCore;
@@ -10,23 +18,23 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import java.util.ArrayList;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Icon;
+import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
 
 public class BlockHopper extends BlockBuildCraft {
 
-	private static Icon icon;
+	private static IIcon icon;
 
-	public BlockHopper(int blockId) {
-		super(blockId, Material.iron);
+	public BlockHopper() {
+		super(Material.iron);
 	}
 
 	@Override
-	public TileEntity createNewTileEntity(World var1) {
+	public TileEntity createNewTileEntity(World world, int metadata) {
 		return new TileHopper();
 	}
 
@@ -60,28 +68,22 @@ public class BlockHopper extends BlockBuildCraft {
 			}
 		}
 
-		if (!CoreProxy.proxy.isRenderWorld(world)) {
+		if (!world.isRemote) {
 			entityplayer.openGui(BuildCraftFactory.instance, GuiIds.HOPPER, world, x, y, z);
 		}
 
 		return true;
 	}
 
-	@SuppressWarnings({"unchecked", "rawtypes"})
-	@Override
-	public void addCreativeItems(ArrayList itemList) {
-		itemList.add(new ItemStack(this));
-	}
-
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void registerIcons(IconRegister par1IconRegister) {
+	public void registerBlockIcons(IIconRegister par1IconRegister) {
 		icon = par1IconRegister.registerIcon("buildcraft:hopperBottom");
 	}
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public Icon getIcon(int par1, int par2) {
+	public IIcon getIcon(int par1, int par2) {
 		return icon;
 	}
 }

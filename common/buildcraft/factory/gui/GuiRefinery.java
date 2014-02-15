@@ -1,8 +1,9 @@
 /**
- * Copyright (c) SpaceToad, 2011 http://www.mod-buildcraft.com
+ * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
+ * http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public License
- * 1.0, or MMPL. Please check the contents of the license located in
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
+ * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
 package buildcraft.factory.gui;
@@ -43,10 +44,10 @@ public class GuiRefinery extends GuiAdvancedInterface {
 	@Override
 	protected void drawGuiContainerForegroundLayer(int par1, int par2) {
 		String title = StringUtils.localize("tile.refineryBlock");
-		fontRenderer.drawString(title, getCenteredOffset(title), 6, 0x404040);
-		fontRenderer.drawString("->", 63, 59, 0x404040);
-		fontRenderer.drawString("<-", 106, 59, 0x404040);
-		fontRenderer.drawString(StringUtils.localize("gui.inventory"), 8, (ySize - 96) + 2, 0x404040);
+		fontRendererObj.drawString(title, getCenteredOffset(title), 6, 0x404040);
+		fontRendererObj.drawString("->", 63, 59, 0x404040);
+		fontRendererObj.drawString("<-", 106, 59, 0x404040);
+		fontRendererObj.drawString(StringUtils.localize("gui.inventory"), 8, (ySize - 96) + 2, 0x404040);
 
 		drawForegroundSelection(par1, par2);
 	}

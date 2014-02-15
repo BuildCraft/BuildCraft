@@ -1,9 +1,10 @@
 /**
- * BuildCraft is open-source. It is distributed under the terms of the
- * BuildCraft Open Source License. It grants rights to read, modify, compile or
- * run the code. It does *NOT* grant the right to redistribute this software or
- * its modifications in any form, binary or source, except if expressively
- * granted by the copyright holder.
+ * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
+ * http://www.mod-buildcraft.com
+ *
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
+ * License 1.0, or MMPL. Please check the contents of the license located in
+ * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
 package buildcraft.core.utils;
 
@@ -17,16 +18,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockFluid;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
-import net.minecraft.network.packet.Packet60Explosion;
+import net.minecraft.network.play.server.S27PacketExplosion;
 import net.minecraft.world.ChunkPosition;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
 import net.minecraftforge.event.ForgeEventFactory;
+import net.minecraftforge.fluids.BlockFluidBase;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidRegistry;
@@ -36,17 +38,17 @@ import net.minecraftforge.fluids.IFluidBlock;
 public class BlockUtil {
 
 	public static List<ItemStack> getItemStackFromBlock(World world, int i, int j, int k) {
-		Block block = Block.blocksList[world.getBlockId(i, j, k)];
+		Block block = world.getBlock(i, j, k);
 
 		if (block == null)
 			return null;
 
-		if (block.isAirBlock(world, i, j, k))
+		if (block.isAir(world, i, j, k))
 			return null;
 
 		int meta = world.getBlockMetadata(i, j, k);
 
-		ArrayList<ItemStack> dropsList = block.getBlockDropped(world, i, j, k, meta, 0);
+		ArrayList<ItemStack> dropsList = block.getDrops(world, i, j, k, meta, 0);
 		float dropChance = ForgeEventFactory.fireBlockHarvesting(dropsList, world, block, i, j, k, meta, 0, 1.0F, false, CoreProxy.proxy.getBuildCraftPlayer(world));
 
 		ArrayList<ItemStack> returnList = new ArrayList<ItemStack>();
@@ -81,104 +83,86 @@ public class BlockUtil {
 			}
 		}
 
-		world.setBlock(x, y, z, 0);
+		world.setBlockToAir(x, y, z);
 	}
 
-	public static boolean isAnObstructingBlock(int blockID, World world, int x, int y, int z) {
-		Block block = Block.blocksList[blockID];
-
-		if (blockID == 0 || block == null || block.isAirBlock(world, x, y, z))
+	public static boolean isAnObstructingBlock(Block block, World world, int x, int y, int z) {
+		if (block == null || block.isAir(world, x, y, z))
 			return false;
 		return true;
 	}
 
 	public static boolean canChangeBlock(World world, int x, int y, int z) {
-		return canChangeBlock(world.getBlockId(x, y, z), world, x, y, z);
+		return canChangeBlock(world.getBlock(x, y, z), world, x, y, z);
 	}
 
-	public static boolean canChangeBlock(int blockID, World world, int x, int y, int z) {
-		Block block = Block.blocksList[blockID];
-
-		if (blockID == 0 || block == null || block.isAirBlock(world, x, y, z))
+	public static boolean canChangeBlock(Block block, World world, int x, int y, int z) {
+		if (block == null || block.isAir(world, x, y, z))
 			return true;
 
 		if (block.getBlockHardness(world, x, y, z) < 0)
 			return false;
 
-		if (blockID == BuildCraftEnergy.blockOil.blockID)
+		if (block == BuildCraftEnergy.blockOil)
 			return false;
 
-		if (blockID == Block.lavaStill.blockID || blockID == Block.lavaMoving.blockID)
+		if (block == Blocks.lava || block == Blocks.lava)
 			return false;
 
 		return true;
 	}
 
 	public static boolean isSoftBlock(World world, int x, int y, int z) {
-		return isSoftBlock(world.getBlockId(x, y, z), world, x, y, z);
+		return isSoftBlock(world.getBlock(x, y, z), world, x, y, z);
 	}
 
-	public static boolean isSoftBlock(int blockID, World world, int x, int y, int z) {
-		Block block = Block.blocksList[blockID];
-
-		return blockID == 0 || block == null || BuildCraftAPI.softBlocks[blockID] || block.isAirBlock(world, x, y, z);
+	public static boolean isSoftBlock(Block block, World world, int x, int y, int z) {
+		return block == null || BuildCraftAPI.softBlocks.contains(block) || block.isAir(world, x, y, z);
 	}
 
 	/**
 	 * Returns true if a block cannot be harvested without a tool.
 	 */
 	public static boolean isToughBlock(World world, int x, int y, int z) {
-		return !world.getBlockMaterial(x, y, z).isToolNotRequired();
+		return !world.getBlock(x, y, z).getMaterial().isToolNotRequired();
 	}
 
 	public static boolean isFullFluidBlock(World world, int x, int y, int z) {
-		return isFullFluidBlock(world.getBlockId(x, y, z), world, x, y, z);
+		return isFullFluidBlock(world.getBlock(x, y, z), world, x, y, z);
 	}
 
-	public static boolean isFullFluidBlock(int blockId, World world, int x, int y, int z) {
-		Block block = Block.blocksList[blockId];
-		if (block instanceof BlockFluid || block instanceof IFluidBlock)
+	public static boolean isFullFluidBlock(Block block, World world, int x, int y, int z) {		
+		if (block instanceof BlockFluidBase || block instanceof IFluidBlock)
 			return world.getBlockMetadata(x, y, z) == 0;
 		return false;
 	}
 
-	public static Fluid getFluid(int blockId) {
-		Block block = Block.blocksList[blockId];
-		if (block instanceof IFluidBlock) {
-			return ((IFluidBlock) block).getFluid();
-		} else if (blockId == Block.waterStill.blockID || blockId == Block.waterMoving.blockID) {
-			return FluidRegistry.WATER;
-		} else if (blockId == Block.lavaStill.blockID || blockId == Block.lavaMoving.blockID) {
-			return FluidRegistry.LAVA;
-		}
-		return null;
+	public static Fluid getFluid(Block block) {
+		return FluidRegistry.lookupFluidForBlock (block);
 	}
 
 	public static FluidStack drainBlock(World world, int x, int y, int z, boolean doDrain) {
-		return drainBlock(world.getBlockId(x, y, z), world, x, y, z, doDrain);
+		return drainBlock(world.getBlock(x, y, z), world, x, y, z, doDrain);
 	}
 
-	public static FluidStack drainBlock(int blockId, World world, int x, int y, int z, boolean doDrain) {
-		if (Block.blocksList[blockId] instanceof IFluidBlock) {
-			IFluidBlock fluidBlock = (IFluidBlock) Block.blocksList[blockId];
-			if (fluidBlock.canDrain(world, x, y, z))
-				return fluidBlock.drain(world, x, y, z, doDrain);
-		} else if (blockId == Block.waterStill.blockID || blockId == Block.waterMoving.blockID) {
+	public static FluidStack drainBlock(Block block, World world, int x, int y, int z, boolean doDrain) {
+		Fluid fluid = FluidRegistry.lookupFluidForBlock(block);		
+		
+		if (fluid != null) {
 			int meta = world.getBlockMetadata(x, y, z);
-			if (meta != 0)
+			
+			if (meta != 0) {
 				return null;
-			if (doDrain)
+			}
+			
+			if (doDrain) {
 				world.setBlockToAir(x, y, z);
-			return new FluidStack(FluidRegistry.WATER, FluidContainerRegistry.BUCKET_VOLUME);
-		} else if (blockId == Block.lavaStill.blockID || blockId == Block.lavaMoving.blockID) {
-			int meta = world.getBlockMetadata(x, y, z);
-			if (meta != 0)
-				return null;
-			if (doDrain)
-				world.setBlockToAir(x, y, z);
-			return new FluidStack(FluidRegistry.LAVA, FluidContainerRegistry.BUCKET_VOLUME);
+			}
+			
+			return new FluidStack(fluid, FluidContainerRegistry.BUCKET_VOLUME);
+		} else { 		
+			return null;
 		}
-		return null;
 	}
 
 	/**
@@ -198,7 +182,7 @@ public class BlockUtil {
 				continue;
 
 			if (player.getDistanceSq(x, y, z) < 4096) {
-				((EntityPlayerMP) player).playerNetServerHandler.sendPacketToPlayer(new Packet60Explosion(x + .5, y + .5, z + .5, 3f, explosion.affectedBlockPositions, null));
+				((EntityPlayerMP) player).playerNetServerHandler.sendPacket(new S27PacketExplosion(x + .5, y + .5, z + .5, 3f, explosion.affectedBlockPositions, null));
 			}
 		}
 	}

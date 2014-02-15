@@ -1,13 +1,17 @@
+/**
+ * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
+ * http://www.mod-buildcraft.com
+ *
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
+ * License 1.0, or MMPL. Please check the contents of the license located in
+ * http://www.mod-buildcraft.com/MMPL-1.0.txt
+ */
 package buildcraft.builders.blueprints;
 
 import buildcraft.api.builder.BlockHandler;
 import net.minecraft.block.Block;
 import net.minecraft.nbt.NBTTagCompound;
 
-/**
- *
- * @author CovertJaguar <http://www.railcraft.info/>
- */
 public final class BlockSchematic extends Schematic {
 
 	public static BlockSchematic create(NBTTagCompound nbt) {
@@ -26,7 +30,7 @@ public final class BlockSchematic extends Schematic {
 	}
 
 	private BlockSchematic(Block block) {
-		super(block.blockID);
+		super(Block.blockRegistry.getIDForObject(block));
 	}
 
 	private BlockSchematic(String nbt) {
@@ -36,13 +40,14 @@ public final class BlockSchematic extends Schematic {
 
 	@Override
 	public BlockHandler getHandler() {
-		return BlockHandler.get(Block.blocksList [id]);
+		return BlockHandler.get((Block) Block.blockRegistry.getObjectById(id));
 	}
 
 	@Override
 	public void writeToNBT(NBTTagCompound nbt) {
 		super.writeToNBT(nbt);
+		
 		nbt.setString("schematicType", "block");
-		nbt.setString("blockName", Block.blocksList [id].getUnlocalizedName());
+		nbt.setString("blockName", ((Block) Block.blockRegistry.getObjectById(id)).getUnlocalizedName());
 	}
 }

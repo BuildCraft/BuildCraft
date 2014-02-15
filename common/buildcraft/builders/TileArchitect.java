@@ -1,12 +1,19 @@
 /**
- * Copyright (c) SpaceToad, 2011 http://www.mod-buildcraft.com
+ * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
+ * http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public License
- * 1.0, or MMPL. Please check the contents of the license located in
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
+ * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
 package buildcraft.builders;
 
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.BuildCraftBuilders;
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.core.LaserKind;
@@ -30,7 +37,7 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 
 public class TileArchitect extends TileBuildCraft implements IInventory {
 
@@ -47,7 +54,7 @@ public class TileArchitect extends TileBuildCraft implements IInventory {
 	public void updateEntity() {
 		super.updateEntity();
 
-		if (CoreProxy.proxy.isSimulating(worldObj) && isComputing) {
+		if (!worldObj.isRemote && isComputing) {
 			if (computingTime < 200) {
 				computingTime++;
 			} else {
@@ -70,7 +77,7 @@ public class TileArchitect extends TileBuildCraft implements IInventory {
 			}
 		}
 
-		if (!CoreProxy.proxy.isRenderWorld(worldObj) && box.isInitialized()) {
+		if (!worldObj.isRemote && box.isInitialized()) {
 			box.createLasers(worldObj, LaserKind.Stripes);
 		}
 
@@ -97,6 +104,7 @@ public class TileArchitect extends TileBuildCraft implements IInventory {
 		blueprint.anchorY = yCoord - box.yMin;
 		blueprint.anchorZ = zCoord - box.zMin;
 
+
 		blueprint.anchorOrientation = ForgeDirection.getOrientation(worldObj.getBlockMetadata(xCoord, yCoord, zCoord));
 
 		BuildCraftBuilders.serverDB.add(blueprint);
@@ -108,7 +116,7 @@ public class TileArchitect extends TileBuildCraft implements IInventory {
 	private Blueprint createMaskBlueprint(Box box) {
 		Blueprint blueprint = Blueprint.create(box.sizeX(), box.sizeY(), box.sizeZ());
 
-		for (int x = box.xMin; x <= box.xMax; ++x) {
+		/*for (int x = box.xMin; x <= box.xMax; ++x) {
 			for (int y = box.yMin; y <= box.yMax; ++y) {
 				for (int z = box.zMin; z <= box.zMax; ++z) {
 					if (worldObj.isAirBlock(x, y, z))
@@ -120,7 +128,7 @@ public class TileArchitect extends TileBuildCraft implements IInventory {
 					blueprint.setSchematic(x - box.xMin, y - box.yMin, z - box.zMin, worldObj, block);
 				}
 			}
-		}
+		}*/
 
 		return blueprint;
 	}
@@ -131,11 +139,15 @@ public class TileArchitect extends TileBuildCraft implements IInventory {
 		for (int x = box.xMin; x <= box.xMax; ++x) {
 			for (int y = box.yMin; y <= box.yMax; ++y) {
 				for (int z = box.zMin; z <= box.zMax; ++z) {
-					if (worldObj.isAirBlock(x, y, z))
+					if (worldObj.isAirBlock(x, y, z)) {
 						continue;
-					Block block = Block.blocksList[worldObj.getBlockId(x, y, z)];
-					if (block == null)
+					}
+					
+					Block block = worldObj.getBlock(x, y, z);
+					
+					if (block == null) {
 						continue;
+					}
 
 					blueprint.setSchematic(x - box.xMin, y - box.yMin, z - box.zMin, worldObj, block);
 				}
@@ -211,7 +223,7 @@ public class TileArchitect extends TileBuildCraft implements IInventory {
 	}
 
 	@Override
-	public String getInvName() {
+	public String getInventoryName() {
 		return "Template";
 	}
 
@@ -227,7 +239,7 @@ public class TileArchitect extends TileBuildCraft implements IInventory {
 
 	@Override
 	public boolean isUseableByPlayer(EntityPlayer entityplayer) {
-		return worldObj.getBlockTileEntity(xCoord, yCoord, zCoord) == this;
+		return worldObj.getTileEntity(xCoord, yCoord, zCoord) == this;
 	}
 
 	@Override
@@ -241,10 +253,10 @@ public class TileArchitect extends TileBuildCraft implements IInventory {
 			box.initialize(nbttagcompound.getCompoundTag("box"));
 		}
 
-		NBTTagList nbttaglist = nbttagcompound.getTagList("Items");
+		NBTTagList nbttaglist = nbttagcompound.getTagList("Items", Utils.NBTTag_Types.NBTTagCompound.ordinal());
 		items = new ItemStack[getSizeInventory()];
 		for (int i = 0; i < nbttaglist.tagCount(); i++) {
-			NBTTagCompound nbttagcompound1 = (NBTTagCompound) nbttaglist.tagAt(i);
+			NBTTagCompound nbttagcompound1 = nbttaglist.getCompoundTagAt(i);
 			int j = nbttagcompound1.getByte("Slot") & 0xff;
 			if (j >= 0 && j < items.length) {
 				items[j] = ItemStack.loadItemStackFromNBT(nbttagcompound1);
@@ -340,11 +352,16 @@ public class TileArchitect extends TileBuildCraft implements IInventory {
 	}
 
 	@Override
-	public void openChest() {
+	public void openInventory() {
 	}
 
 	@Override
-	public void closeChest() {
+	public void closeInventory() {
+	}
+
+	@Override
+	public boolean hasCustomInventoryName() {
+		return false;
 	}
 
 }

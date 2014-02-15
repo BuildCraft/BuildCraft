@@ -1,3 +1,11 @@
+/**
+ * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
+ * http://www.mod-buildcraft.com
+ *
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
+ * License 1.0, or MMPL. Please check the contents of the license located in
+ * http://www.mod-buildcraft.com/MMPL-1.0.txt
+ */
 package buildcraft.transport.render;
 
 import buildcraft.BuildCraftTransport;
@@ -6,7 +14,7 @@ import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.Icon;
+import net.minecraft.util.IIcon;
 import net.minecraftforge.client.IItemRenderer;
 import static net.minecraftforge.client.IItemRenderer.ItemRenderType.EQUIPPED_FIRST_PERSON;
 import org.lwjgl.opengl.GL11;
@@ -19,7 +27,7 @@ public class PlugItemRenderer implements IItemRenderer {
 		Tessellator tessellator = Tessellator.instance;
 
 		block = BuildCraftTransport.genericPipeBlock;
-		Icon textureID = BuildCraftTransport.instance.pipeIconProvider.getIcon(PipeIconProvider.TYPE.PipeStructureCobblestone.ordinal()); // Structure pipe
+		IIcon textureID = BuildCraftTransport.instance.pipeIconProvider.getIcon(PipeIconProvider.TYPE.PipeStructureCobblestone.ordinal()); // Structure pipe
 
 		block.setBlockBounds(0.25F, 0.25F, 0.25F, 0.75F, 0.375F, 0.75F);
 		block.setBlockBoundsForItemRender();

@@ -1,3 +1,11 @@
+/**
+ * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
+ * http://www.mod-buildcraft.com
+ *
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
+ * License 1.0, or MMPL. Please check the contents of the license located in
+ * http://www.mod-buildcraft.com/MMPL-1.0.txt
+ */
 package buildcraft.core.gui;
 
 import net.minecraft.client.renderer.OpenGlHelper;
@@ -5,7 +13,7 @@ import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.Icon;
+import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.Fluid;
 
@@ -27,12 +35,12 @@ public abstract class GuiAdvancedInterface extends GuiBuildCraft {
 
 		public String getDescription() {
 			if (getItemStack() != null)
-				return getItemStack().getItem().getItemDisplayName(getItemStack());
+				return getItemStack().getItem().getItemStackDisplayName(getItemStack());
 			else
 				return "";
 		}
 
-		public Icon getIcon() {
+		public IIcon getIcon() {
 			return null;
 		}
 
@@ -49,8 +57,9 @@ public abstract class GuiAdvancedInterface extends GuiBuildCraft {
 		}
 
 		public void drawSprite(int cornerX, int cornerY) {
-			if (!isDefined())
+			if (!isDefined()) {
 				return;
+			}
 
 			if (getItemStack() != null) {
 				drawStack(getItemStack());
@@ -67,10 +76,10 @@ public abstract class GuiAdvancedInterface extends GuiBuildCraft {
 				int cornerX = (width - xSize) / 2;
 				int cornerY = (height - ySize) / 2;
 
-				itemRenderer.zLevel = 200F;
-				itemRenderer.renderItemAndEffectIntoGUI(fontRenderer, mc.renderEngine, item, cornerX + x, cornerY + y);
-				itemRenderer.renderItemOverlayIntoGUI(fontRenderer, mc.renderEngine, item, cornerX + x, cornerY + y);
-				itemRenderer.zLevel = 0.0F;
+				itemRender.zLevel = 200F;
+				itemRender.renderItemAndEffectIntoGUI(fontRendererObj, mc.renderEngine, item, cornerX + x, cornerY + y);
+				itemRender.renderItemOverlayIntoGUI(fontRendererObj, mc.renderEngine, item, cornerX + x, cornerY + y);
+				itemRender.zLevel = 0.0F;
 			}
 		}
 	}
@@ -194,7 +203,7 @@ public abstract class GuiAdvancedInterface extends GuiBuildCraft {
 		}
 
 		@Override
-		public Icon getIcon() {
+		public IIcon getIcon() {
 			return FluidRenderer.getFluidTexture(fluid, false);
 		}
 

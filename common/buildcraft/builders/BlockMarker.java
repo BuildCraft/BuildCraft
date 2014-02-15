@@ -1,8 +1,9 @@
 /**
- * Copyright (c) SpaceToad, 2011 http://www.mod-buildcraft.com
+ * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
+ * http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public License
- * 1.0, or MMPL. Please check the contents of the license located in
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
+ * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
 package buildcraft.builders;
@@ -13,24 +14,27 @@ import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.utils.Utils;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+
 import java.util.ArrayList;
+
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 
 public class BlockMarker extends BlockContainer {
 
-	public BlockMarker(int i) {
-		super(i, Material.circuits);
+	public BlockMarker() {
+		super(Material.circuits);
 
-		setLightValue(0.5F);
+		setLightLevel(0.5F);
 		setCreativeTab(CreativeTabBuildCraft.MACHINES.get());
 	}
 
@@ -80,20 +84,20 @@ public class BlockMarker extends BlockContainer {
 	}
 
 	@Override
-	public TileEntity createNewTileEntity(World var1) {
+	public TileEntity createNewTileEntity(World world, int metadata) {
 		return new TileMarker();
 	}
 
 	@Override
 	public boolean onBlockActivated(World world, int i, int j, int k, EntityPlayer entityplayer, int par6, float par7, float par8, float par9) {
-		((TileMarker) world.getBlockTileEntity(i, j, k)).tryConnection();
+		((TileMarker) world.getTileEntity(i, j, k)).tryConnection();
 		return true;
 	}
 
 	@Override
-	public void breakBlock(World world, int x, int y, int z, int par5, int par6) {
+	public void breakBlock(World world, int x, int y, int z, Block block, int par6) {
 		Utils.preDestroyBlock(world, x, y, z);
-		super.breakBlock(world, x, y, z, par5, par6);
+		super.breakBlock(world, x, y, z, block, par6);
 	}
 
 	@Override
@@ -112,8 +116,8 @@ public class BlockMarker extends BlockContainer {
 	}
 
 	@Override
-	public void onNeighborBlockChange(World world, int x, int y, int z, int blockId) {
-		((TileMarker) world.getBlockTileEntity(x, y, z)).updateSignals();
+	public void onNeighborBlockChange(World world, int x, int y, int z, Block block) {
+		((TileMarker) world.getTileEntity(x, y, z)).updateSignals();
 		dropTorchIfCantStay(world, x, y, z);
 	}
 
@@ -137,20 +141,14 @@ public class BlockMarker extends BlockContainer {
 	private void dropTorchIfCantStay(World world, int x, int y, int z) {
 		int meta = world.getBlockMetadata(x, y, z);
 		if (!canPlaceBlockOnSide(world, x, y, z, meta)) {
-			dropBlockAsItem(world, x, y, z, BuildCraftBuilders.markerBlock.blockID, 0);
-			world.setBlock(x, y, z, 0);
+			dropBlockAsItem(world, x, y, z, 0, 0);
+			world.setBlockToAir(x, y, z);
 		}
-	}
-
-	@SuppressWarnings({"unchecked", "rawtypes"})
-	@Override
-	public void addCreativeItems(ArrayList itemList) {
-		itemList.add(new ItemStack(this));
 	}
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void registerIcons(IconRegister iconRegister) {
+	public void registerBlockIcons(IIconRegister iconRegister) {
 		this.blockIcon = iconRegister.registerIcon("buildcraft:blockMarker");
 	}
 }

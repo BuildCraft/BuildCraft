@@ -1,10 +1,18 @@
+/**
+ * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
+ * http://www.mod-buildcraft.com
+ *
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
+ * License 1.0, or MMPL. Please check the contents of the license located in
+ * http://www.mod-buildcraft.com/MMPL-1.0.txt
+ */
 package buildcraft.transport;
 
 import buildcraft.api.core.IIconProvider;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraft.client.renderer.texture.IconRegister;
-import net.minecraft.util.Icon;
+import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.util.IIcon;
 
 public class WireIconProvider implements IIconProvider {
 	
@@ -20,18 +28,18 @@ public class WireIconProvider implements IIconProvider {
 	public static final int MAX								=  8;
 
 	@SideOnly(Side.CLIENT)
-	private Icon[] icons;
+	private IIcon[] icons;
 	
 	@Override
 	@SideOnly(Side.CLIENT)
-	public Icon getIcon(int pipeIconIndex) {
+	public IIcon getIcon(int pipeIconIndex) {
 		return icons[pipeIconIndex];
 	}
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void registerIcons(IconRegister iconRegister) {
-		icons = new Icon[MAX];
+	public void registerIcons(IIconRegister iconRegister) {
+		icons = new IIcon[MAX];
 
 		icons[WireIconProvider.Texture_Red_Dark] = iconRegister.registerIcon("buildcraft:texture_red_dark");
 		icons[WireIconProvider.Texture_Red_Lit] = iconRegister.registerIcon("buildcraft:texture_red_lit");

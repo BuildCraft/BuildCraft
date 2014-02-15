@@ -1,71 +1,92 @@
+/**
+ * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
+ * http://www.mod-buildcraft.com
+ *
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
+ * License 1.0, or MMPL. Please check the contents of the license located in
+ * http://www.mod-buildcraft.com/MMPL-1.0.txt
+ */
 package buildcraft.core.network;
+
+import io.netty.buffer.ByteBuf;
+import io.netty.channel.ChannelHandlerContext;
 
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 
+import buildcraft.core.proxy.CoreProxy;
+import buildcraft.core.utils.Utils;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.network.INetworkManager;
-import net.minecraft.network.packet.Packet250CustomPayload;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.network.INetHandler;
+import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
-import cpw.mods.fml.common.network.IPacketHandler;
-import cpw.mods.fml.common.network.Player;
-import cpw.mods.fml.repackage.com.nothome.delta.DebugDiffWriter;
 
-public class PacketHandler implements IPacketHandler {
+import cpw.mods.fml.repackage.com.nothome.delta.DebugDiffWriter;
+import cpw.mods.fml.common.network.NetworkRegistry;
+
+
+public class PacketHandler extends BuildCraftChannelHandler {
 
 	private void onTileUpdate(EntityPlayer player, PacketTileUpdate packet) throws IOException {
-		World world = player.worldObj;
-
-		if (!packet.targetExists(world))
+		World world = player.worldObj;		
+		
+		if (!packet.targetExists(world)) {
 			return;
+		}
 
 		TileEntity entity = packet.getTarget(world);
-		if (!(entity instanceof ISynchronizedTile))
+		
+		if (!(entity instanceof ISynchronizedTile)) {
 			return;
-
+		}
+		
 		ISynchronizedTile tile = (ISynchronizedTile) entity;
 		tile.handleUpdatePacket(packet);
 		tile.postPacketHandling(packet);
 	}
 
 	@Override
-	public void onPacketData(INetworkManager manager, Packet250CustomPayload packet, Player player) {
-		DataInputStream data = new DataInputStream(new ByteArrayInputStream(packet.data));
 
+	public void decodeInto(ChannelHandlerContext ctx, ByteBuf data, BuildCraftPacket packet) {
+		super.decodeInto(ctx, data, packet);
+		
 		try {
-			int packetID = data.read();
+			INetHandler netHandler = ctx.channel().attr(NetworkRegistry.NET_HANDLER).get();
+			EntityPlayer player = Utils.getPlayerFromNetHandler(netHandler);
+
+			int packetID = packet.getID();
+			
 			switch (packetID) {
 				case PacketIds.TILE_UPDATE: {
-					PacketTileUpdate pkt = new PacketTileUpdate();
-					pkt.readData(data);
-					onTileUpdate((EntityPlayer) player, pkt);
+					onTileUpdate(player, (PacketTileUpdate) packet);
 					break;
 				}
 
 				case PacketIds.STATE_UPDATE: {
-					PacketTileState pkt = new PacketTileState();
-					pkt.readData(data);
-					World world = ((EntityPlayer) player).worldObj;
-					TileEntity tile = world.getBlockTileEntity(pkt.posX, pkt.posY, pkt.posZ);
+					PacketTileState pkt = (PacketTileState) packet;
+					World world = player.worldObj;
+					
+					TileEntity tile = world.getTileEntity(pkt.posX, pkt.posY, pkt.posZ);
+					
 					if (tile instanceof ISyncedTile) {
 						pkt.applyStates(data, (ISyncedTile) tile);
 					}
+					
 					break;
 				}
 
 				case PacketIds.GUI_RETURN: {
-					PacketGuiReturn pkt = new PacketGuiReturn((EntityPlayer) player);
-					pkt.readData(data);
+					// action will have happened already at read time
 					break;
 				}
 
 				case PacketIds.GUI_WIDGET: {
-					PacketGuiWidget pkt = new PacketGuiWidget();
-					pkt.readData(data);
+					// action will have happened already at read time
 					break;
 				}
 
@@ -91,7 +112,7 @@ public class PacketHandler implements IPacketHandler {
 						int y = data.readInt();
 						int z = data.readInt();
 
-						TileEntity tile = world.getBlockTileEntity(x, y, z);
+						TileEntity tile = world.getTileEntity(x, y, z);
 
 						rpc.setTile (tile);
 						rpc.readData(data);

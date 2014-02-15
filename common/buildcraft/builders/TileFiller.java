@@ -1,12 +1,14 @@
 /**
- * Copyright (c) SpaceToad, 2011 http://www.mod-buildcraft.com
+ * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
+ * http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public License
- * 1.0, or MMPL. Please check the contents of the license located in
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
+ * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
 package buildcraft.builders;
 
+import buildcraft.BuildCraftBuilders;
 import buildcraft.BuildCraftCore;
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.core.LaserKind;
@@ -35,14 +37,17 @@ import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.triggers.ActionMachineControl;
 import buildcraft.core.triggers.ActionMachineControl.Mode;
 import buildcraft.core.utils.Utils;
+import io.netty.buffer.ByteBuf;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 
 public class TileFiller extends TileBuildCraft implements IInventory, IPowerReceptor, IMachine, IActionReceptor, IGuiReturnHandler {
 
@@ -70,7 +75,7 @@ public class TileFiller extends TileBuildCraft implements IInventory, IPowerRece
 	public void initialize() {
 		super.initialize();
 
-		if (!CoreProxy.proxy.isRenderWorld(worldObj)) {
+		if (!worldObj.isRemote) {
 			IAreaProvider a = Utils.getNearbyAreaProvider(worldObj, xCoord, yCoord, zCoord);
 
 			if (a != null) {
@@ -80,7 +85,7 @@ public class TileFiller extends TileBuildCraft implements IInventory, IPowerRece
 					((TileMarker) a).removeFromWorld();
 				}
 
-				if (!CoreProxy.proxy.isRenderWorld(worldObj) && box.isInitialized()) {
+				if (!worldObj.isRemote && box.isInitialized()) {
 					box.createLasers(worldObj, LaserKind.Stripes);
 				}
 				sendNetworkUpdate();
@@ -100,7 +105,7 @@ public class TileFiller extends TileBuildCraft implements IInventory, IPowerRece
 
 	@Override
 	public void doWork(PowerHandler workProvider) {
-		if (CoreProxy.proxy.isRenderWorld(worldObj))
+		if (worldObj.isRemote)
 			return;
 		if (done)
 			return;
@@ -167,7 +172,7 @@ public class TileFiller extends TileBuildCraft implements IInventory, IPowerRece
 	}
 
 	@Override
-	public String getInvName() {
+	public String getInventoryName() {
 		return "Filler";
 	}
 
@@ -214,7 +219,7 @@ public class TileFiller extends TileBuildCraft implements IInventory, IPowerRece
 
 	@Override
 	public boolean isUseableByPlayer(EntityPlayer entityplayer) {
-		if (worldObj.getBlockTileEntity(xCoord, yCoord, zCoord) != this)
+		if (worldObj.getTileEntity(xCoord, yCoord, zCoord) != this)
 			return false;
 		return entityplayer.getDistanceSq(xCoord + 0.5D, yCoord + 0.5D, zCoord + 0.5D) <= 64D;
 	}
@@ -243,21 +248,21 @@ public class TileFiller extends TileBuildCraft implements IInventory, IPowerRece
 	public PacketPayload getPacketPayload() {
 		PacketPayloadStream payload = new PacketPayloadStream(new PacketPayloadStream.StreamWriter() {
 			@Override
-			public void writeData(DataOutputStream data) throws IOException {
+			public void writeData(ByteBuf data) {
 				box.writeToStream(data);
 				data.writeBoolean(done);
-				data.writeUTF(currentPattern.getUniqueTag());
+				Utils.writeUTF(data, currentPattern.getUniqueTag());
 			}
 		});
 
 		return payload;
 	}
 
-	public void handlePacketPayload(DataInputStream data) throws IOException {
+	public void handlePacketPayload(ByteBuf data) {
 		boolean initialized = box.isInitialized();
 		box.readFromStream(data);
 		done = data.readBoolean();
-		setPattern(FillerManager.registry.getPattern(data.readUTF()));
+		setPattern(FillerManager.registry.getPattern(Utils.readUTF(data)));
 
 		worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
 		if (!initialized && box.isInitialized()) {
@@ -296,11 +301,11 @@ public class TileFiller extends TileBuildCraft implements IInventory, IPowerRece
 	}
 
 	@Override
-	public void openChest() {
+	public void openInventory() {
 	}
 
 	@Override
-	public void closeChest() {
+	public void closeInventory() {
 	}
 
 	@Override
@@ -328,12 +333,17 @@ public class TileFiller extends TileBuildCraft implements IInventory, IPowerRece
 	}
 
 	@Override
-	public void writeGuiData(DataOutputStream data) throws IOException {
-		data.writeUTF(currentPattern.getUniqueTag());
+	public void writeGuiData(ByteBuf data) {
+		Utils.writeUTF(data, currentPattern.getUniqueTag());
 	}
 
 	@Override
-	public void readGuiData(DataInputStream data, EntityPlayer player) throws IOException {
-		setPattern(FillerManager.registry.getPattern(data.readUTF()));
+	public void readGuiData(ByteBuf data, EntityPlayer player) {
+		setPattern(FillerManager.registry.getPattern(Utils.readUTF(data)));
+	}
+
+	@Override
+	public boolean hasCustomInventoryName() {
+		return false;
 	}
 }

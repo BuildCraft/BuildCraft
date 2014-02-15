@@ -1,3 +1,11 @@
+/**
+ * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
+ * http://www.mod-buildcraft.com
+ *
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
+ * License 1.0, or MMPL. Please check the contents of the license located in
+ * http://www.mod-buildcraft.com/MMPL-1.0.txt
+ */
 package buildcraft.transport.render;
 
 import buildcraft.BuildCraftTransport;
@@ -10,7 +18,7 @@ import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.Icon;
+import net.minecraft.util.IIcon;
 import net.minecraftforge.client.IItemRenderer;
 import static net.minecraftforge.client.IItemRenderer.ItemRenderType.EQUIPPED_FIRST_PERSON;
 import org.lwjgl.opengl.GL11;
@@ -20,17 +28,16 @@ public class FacadeItemRenderer implements IItemRenderer {
 	private void renderFacadeItem(RenderBlocks render, ItemStack item, float translateX, float translateY, float translateZ) {
 
 		int decodedMeta = ItemFacade.getMetaData(item);
-		int decodedBlockId = ItemFacade.getBlockId(item);
+		Block block = ItemFacade.getBlock(item);
 
 		try {
-			int color = Item.itemsList[decodedBlockId].getColorFromItemStack(new ItemStack(decodedBlockId, 1, decodedMeta), 0);
+			int color = item.getItem().getColorFromItemStack(new ItemStack(block, 1, decodedMeta), 0);
 			RenderUtils.setGLColorFromInt(color);
 		} catch (Throwable error) {
 		}
 
 		Tessellator tessellator = Tessellator.instance;
 
-		Block block = Block.blocksList[decodedBlockId];
 		if (block == null)
 			return;
 
@@ -69,7 +76,7 @@ public class FacadeItemRenderer implements IItemRenderer {
 
 		// Render StructurePipe
 		block = BuildCraftTransport.genericPipeBlock;
-		Icon textureID = BuildCraftTransport.instance.pipeIconProvider.getIcon(PipeIconProvider.TYPE.PipeStructureCobblestone.ordinal()); // Structure pipe
+		IIcon textureID = BuildCraftTransport.instance.pipeIconProvider.getIcon(PipeIconProvider.TYPE.PipeStructureCobblestone.ordinal()); // Structure pipe
 
 		block.setBlockBounds(CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MAX_POS, CoreConstants.PIPE_MAX_POS, CoreConstants.PIPE_MAX_POS - 1F / 16F);
 		block.setBlockBoundsForItemRender();

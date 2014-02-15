@@ -1,12 +1,11 @@
 /**
- * Copyright (c) SpaceToad, 2011
+ * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
  *
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-
 package buildcraft.core.proxy;
 
 import buildcraft.BuildCraftCore;
@@ -21,26 +20,32 @@ import buildcraft.core.render.RenderLaser;
 import buildcraft.core.render.RenderRobot;
 import buildcraft.core.render.RenderingEntityBlocks;
 import buildcraft.core.render.RenderingMarkers;
-import buildcraft.core.render.RenderingOil;
 import buildcraft.transport.render.TileEntityPickupFX;
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
+
 import java.io.File;
 import java.util.List;
+
+import com.mojang.authlib.GameProfile;
+
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
+import net.minecraft.client.network.NetHandlerPlayClient;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.network.packet.Packet;
+import net.minecraft.network.INetHandler;
+import net.minecraft.network.NetHandlerPlayServer;
+import net.minecraft.network.Packet;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ChatMessageComponent;
 import net.minecraft.util.ChunkCoordinates;
+import net.minecraft.util.IChatComponent;
 import net.minecraft.world.World;
 
 public class CoreProxyClient extends CoreProxy {
@@ -61,19 +66,19 @@ public class CoreProxyClient extends CoreProxy {
 	public void removeEntity(Entity entity) {
 		super.removeEntity(entity);
 
-		if (isRenderWorld(entity.worldObj)) {
-			((WorldClient) entity.worldObj).removeEntityFromWorld(entity.entityId);
+		if (entity.worldObj.isRemote) {
+			((WorldClient) entity.worldObj).removeEntityFromWorld(entity.getEntityId());
 		}
 	}
 
 	/* WRAPPER */
 	@SuppressWarnings("rawtypes")
 	@Override
-	public void feedSubBlocks(int id, CreativeTabs tab, List itemList) {
-		if (Block.blocksList[id] == null)
+	public void feedSubBlocks(Block block, CreativeTabs tab, List itemList) {
+		if (block == null)
 			return;
 
-		Block.blocksList[id].getSubBlocks(id, tab, itemList);
+		block.getSubBlocks(Item.getItemFromBlock(block), tab, itemList);
 	}
 
 	/* LOCALIZATION */
@@ -94,10 +99,10 @@ public class CoreProxyClient extends CoreProxy {
 
 	@Override
 	public String getItemDisplayName(ItemStack stack) {
-		if (Item.itemsList[stack.itemID] == null)
+		if (stack.getItem() == null)
 			return "";
 
-		return Item.itemsList[stack.itemID].getItemDisplayName(stack);
+		return stack.getDisplayName();
 	}
 
 	/* GFX */
@@ -111,11 +116,9 @@ public class CoreProxyClient extends CoreProxy {
 		BuildCraftCore.blockByEntityModel = RenderingRegistry.getNextAvailableRenderId();
 		BuildCraftCore.legacyPipeModel = RenderingRegistry.getNextAvailableRenderId();
 		BuildCraftCore.markerModel = RenderingRegistry.getNextAvailableRenderId();
-		BuildCraftCore.oilModel = RenderingRegistry.getNextAvailableRenderId();
 
 		RenderingRegistry.registerBlockHandler(new RenderingEntityBlocks());
 		RenderingRegistry.registerBlockHandler(BuildCraftCore.legacyPipeModel, new RenderingEntityBlocks());
-		RenderingRegistry.registerBlockHandler(new RenderingOil());
 		RenderingRegistry.registerBlockHandler(new RenderingMarkers());
 	}
 
@@ -127,22 +130,16 @@ public class CoreProxyClient extends CoreProxy {
 		RenderingRegistry.registerEntityRenderingHandler(EntityRobot.class, new RenderRobot());
 	}
 
-	/* NETWORKING */
-	@Override
-	public void sendToServer(Packet packet) {
-		FMLClientHandler.instance().getClient().getNetHandler().addToSendQueue(packet);
-	}
-
 	/* BUILDCRAFT PLAYER */
 	@Override
 	public String playerName() {
-		return FMLClientHandler.instance().getClient().thePlayer.username;
+		return FMLClientHandler.instance().getClient().thePlayer.getDisplayName();
 	}
 
 	private EntityPlayer createNewPlayer(World world) {
-		EntityPlayer player = new EntityPlayer(world, "[BuildCraft]") {
+		EntityPlayer player = new EntityPlayer(world, new GameProfile(null, "[BuildCraft]")) {
 			@Override
-			public void sendChatToPlayer(ChatMessageComponent var1) {
+			public void addChatMessage(IChatComponent var1) {
 			}
 
 			@Override
@@ -155,6 +152,7 @@ public class CoreProxyClient extends CoreProxy {
 				return null;
 			}
 		};
+		
 		return player;
 	}
 

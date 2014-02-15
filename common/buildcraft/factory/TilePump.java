@@ -1,13 +1,15 @@
 /**
- * Copyright (c) SpaceToad, 2011 http://www.mod-buildcraft.com
+ * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
+ * http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public License
- * 1.0, or MMPL. Please check the contents of the license located in
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
+ * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
 package buildcraft.factory;
 
 import buildcraft.BuildCraftCore;
+import buildcraft.BuildCraftEnergy;
 import buildcraft.BuildCraftFactory;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.gates.IAction;
@@ -29,6 +31,8 @@ import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.BlockUtil;
 import buildcraft.core.utils.Utils;
+import io.netty.buffer.ByteBuf;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -37,10 +41,12 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Set;
 import java.util.TreeMap;
+
+import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidRegistry;
@@ -50,7 +56,7 @@ import net.minecraftforge.fluids.IFluidHandler;
 
 public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor, IFluidHandler {
 
-	public static int REBUID_DELAY = 512;
+	public static final int REBUID_DELAY = 512;
 	public static int MAX_LIQUID = FluidContainerRegistry.BUCKET_VOLUME * 16;
 	EntityBlock tube;
 	private TreeMap<Integer, Deque<BlockIndex>> pumpLayerQueues = new TreeMap<Integer, Deque<BlockIndex>>();
@@ -59,7 +65,7 @@ public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor
 	int aimY = 0;
 	private PowerHandler powerHandler;
 	private TileBuffer[] tileBuffer = null;
-	private SafeTimeTracker timer = new SafeTimeTracker();
+	private SafeTimeTracker timer = new SafeTimeTracker(REBUID_DELAY);
 	private int tick = Utils.RANDOM.nextInt();
 	private int numFluidBlocksFound = 0;
 	private boolean powered = false;
@@ -81,19 +87,23 @@ public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor
 		if (powered) {
 			pumpLayerQueues.clear();
 			destroyTube();
-		} else
+		} else {
 			createTube();
+		}
 
-		if (worldObj.isRemote)
+		if (worldObj.isRemote) {
 			return;
+		}
 
 		pushToConsumers();
 		
-		if(powered)
+		if (powered) {
 			return;
+		}
 		
-		if(tube == null)
+		if (tube == null) {
 			return;
+		}
 
 		if (tube.posY - aimY > 0.01) {
 			tubeY = tube.posY - 0.01;
@@ -103,17 +113,17 @@ public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor
 		}
 
 		tick++;
-		if (tick % 16 != 0)
+		
+		if (tick % 16 != 0) {
 			return;
+		}
 
 		BlockIndex index = getNextIndexToPump(false);
 
 		FluidStack fluidToPump = index != null ? BlockUtil.drainBlock(worldObj, index.x, index.y, index.z, false) : null;
 		if (fluidToPump != null) {
 			if (isFluidAllowed(fluidToPump.getFluid()) && tank.fill(fluidToPump, false) == fluidToPump.amount) {
-
 				if (powerHandler.useEnergy(10, 10, true) == 10) {
-
 					if (fluidToPump.getFluid() != FluidRegistry.WATER || BuildCraftCore.consumeWaterSources || numFluidBlocksFound < 9) {
 						index = getNextIndexToPump(true);
 						BlockUtil.drainBlock(worldObj, index.x, index.y, index.z, true);
@@ -125,7 +135,6 @@ public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor
 		} else {
 			if (tick % 128 == 0) {
 				// TODO: improve that decision
-
 				rebuildQueue();
 
 				if (getNextIndexToPump(false) == null) {
@@ -142,29 +151,37 @@ public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor
 		}
 	}
 
-	public void onNeighborBlockChange(int id) {
+	public void onNeighborBlockChange(Block block) {
 		boolean p = worldObj.isBlockIndirectlyGettingPowered(xCoord, yCoord, zCoord);
+		
 		if (powered != p) {
 			powered = p;
-			if(!worldObj.isRemote)
+			
+			if(!worldObj.isRemote) {
 				sendNetworkUpdate();
+			}
 		}
 	}
 
 	private boolean isBlocked(int x, int y, int z) {
-		Material mat = worldObj.getBlockMaterial(x, y, z);
+		Material mat = worldObj.getBlock(x, y, z).getMaterial();
+		
 		return mat.blocksMovement();
 	}
 
 	private void pushToConsumers() {
-		if (tileBuffer == null)
+		if (tileBuffer == null) {
 			tileBuffer = TileBuffer.makeBuffer(worldObj, xCoord, yCoord, zCoord, false);
+		}
+		
 		FluidUtils.pushFluidToConsumers(tank, 400, tileBuffer);
 	}
 
 	private TileEntity getTile(ForgeDirection side) {
-		if (tileBuffer == null)
+		if (tileBuffer == null) {
 			tileBuffer = TileBuffer.makeBuffer(worldObj, xCoord, yCoord, zCoord, false);
+		}
+		
 		return tileBuffer[side.ordinal()].getTile();
 	}
 
@@ -188,8 +205,9 @@ public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor
 
 			worldObj.spawnEntityInWorld(tube);
 
-			if (!worldObj.isRemote)
+			if (!worldObj.isRemote) {
 				sendNetworkUpdate();
+			}
 		}
 	}
 
@@ -204,33 +222,39 @@ public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor
 
 	private BlockIndex getNextIndexToPump(boolean remove) {
 		if (pumpLayerQueues.isEmpty()) {
-			if (timer.markTimeIfDelay(worldObj, REBUID_DELAY)) {
+			if (timer.markTimeIfDelay(worldObj)) {
 				rebuildQueue();
 			}
+			
 			return null;
 		}
 
 		Deque<BlockIndex> topLayer = pumpLayerQueues.lastEntry().getValue();
 
 		if (topLayer != null) {
-			if (topLayer.isEmpty())
+			if (topLayer.isEmpty()) {
 				pumpLayerQueues.pollLastEntry();
+			}
+			
 			if (remove) {
 				BlockIndex index = topLayer.pollLast();
 				return index;
+			} else {
+				return topLayer.peekLast();
 			}
-			return topLayer.peekLast();
+		} else {
+			return null;
 		}
-
-		return null;
 	}
 
 	private Deque<BlockIndex> getLayerQueue(int layer) {
 		Deque<BlockIndex> pumpQueue = pumpLayerQueues.get(layer);
+		
 		if (pumpQueue == null) {
 			pumpQueue = new LinkedList<BlockIndex>();
 			pumpLayerQueues.put(layer, pumpQueue);
 		}
+		
 		return pumpQueue;
 	}
 
@@ -239,13 +263,16 @@ public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor
 		pumpLayerQueues.clear();
 		int x = xCoord;
 		int y = aimY;
-		int z = zCoord;
-		Fluid pumpingFluid = BlockUtil.getFluid(worldObj.getBlockId(x, y, z));
-		if (pumpingFluid == null)
+		int z = zCoord;	
+		Fluid pumpingFluid = BlockUtil.getFluid(worldObj.getBlock(x, y, z));
+		
+		if (pumpingFluid == null) {
 			return;
+		}
 
-		if (pumpingFluid != tank.getAcceptedFluid() && tank.getAcceptedFluid() != null)
+		if (pumpingFluid != tank.getAcceptedFluid() && tank.getAcceptedFluid() != null) {
 			return;
+		}
 
 		Set<BlockIndex> visitedBlocks = new HashSet<BlockIndex>();
 		Deque<BlockIndex> fluidsFound = new LinkedList<BlockIndex>();
@@ -265,8 +292,11 @@ public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor
 				queueForPumping(index.x, index.y, index.z + 1, visitedBlocks, fluidsFound, pumpingFluid);
 				queueForPumping(index.x, index.y, index.z - 1, visitedBlocks, fluidsFound, pumpingFluid);
 
-				if (pumpingFluid == FluidRegistry.WATER && !BuildCraftCore.consumeWaterSources && numFluidBlocksFound >= 9)
+				if (pumpingFluid == FluidRegistry.WATER
+						&& !BuildCraftCore.consumeWaterSources
+						&& numFluidBlocksFound >= 9) {
 					return;
+				}
 
 //				if (System.nanoTime() > timeoutTime)
 //					return;
@@ -277,14 +307,17 @@ public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor
 	public void queueForPumping(int x, int y, int z, Set<BlockIndex> visitedBlocks, Deque<BlockIndex> fluidsFound, Fluid pumpingFluid) {
 		BlockIndex index = new BlockIndex(x, y, z);
 		if (visitedBlocks.add(index)) {
-			if ((x - xCoord) * (x - xCoord) + (z - zCoord) * (z - zCoord) > 64 * 64)
+			if ((x - xCoord) * (x - xCoord) + (z - zCoord) * (z - zCoord) > 64 * 64) {
 				return;
+			}
 
-			int blockId = worldObj.getBlockId(x, y, z);
-			if (BlockUtil.getFluid(blockId) == pumpingFluid) {
+			Block block = worldObj.getBlock(x, y, z);
+			
+			if (BlockUtil.getFluid(block) == pumpingFluid) {
 				fluidsFound.add(index);
 			}
-			if (canDrainBlock(blockId, x, y, z, pumpingFluid)) {
+			
+			if (canDrainBlock(block, x, y, z, pumpingFluid)) {
 				getLayerQueue(y).add(index);
 				numFluidBlocksFound++;
 			}
@@ -292,25 +325,31 @@ public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor
 	}
 
 	private boolean isPumpableFluid(int x, int y, int z) {
-		Fluid fluid = BlockUtil.getFluid(worldObj.getBlockId(x, y, z));
-		if (fluid == null)
+		Fluid fluid = BlockUtil.getFluid(worldObj.getBlock(x, y, z));
+		
+		if (fluid == null) {
 			return false;
-		if (!isFluidAllowed(fluid))
+		} else if (!isFluidAllowed(fluid)) {
 			return false;
-		if (tank.getAcceptedFluid() != null && tank.getAcceptedFluid() != fluid)
+		} else if (tank.getAcceptedFluid() != null && tank.getAcceptedFluid() != fluid) {
 			return false;
-		return true;
+		} else {
+			return true;
+		}
 	}
 
-	private boolean canDrainBlock(int blockId, int x, int y, int z, Fluid fluid) {
-		if (!isFluidAllowed(fluid))
+	private boolean canDrainBlock(Block block, int x, int y, int z, Fluid fluid) {
+		if (!isFluidAllowed(fluid)) {
 			return false;
+		}
 
-		FluidStack fluidStack = BlockUtil.drainBlock(blockId, worldObj, x, y, z, false);
-		if (fluidStack == null || fluidStack.amount <= 0)
+		FluidStack fluidStack = BlockUtil.drainBlock(block, worldObj, x, y, z, false);
+		
+		if (fluidStack == null || fluidStack.amount <= 0) {
 			return false;
-
-		return fluidStack.getFluid() == fluid;
+		} else {
+			return fluidStack.getFluid() == fluid;
+		}
 	}
 
 	private boolean isFluidAllowed(Fluid fluid) {
@@ -356,9 +395,9 @@ public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor
 
 		if (next != null) {
 			return isPumpableFluid(next.x, next.y, next.z);
+		} else {
+			return false;
 		}
-
-		return false;
 	}
 
 	@Override
@@ -374,10 +413,10 @@ public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor
 	public PacketPayload getPacketPayload() {
 		PacketPayloadStream payload = new PacketPayloadStream(new PacketPayloadStream.StreamWriter() {
 			@Override
-			public void writeData(DataOutputStream data) throws IOException {
-				data.writeInt(aimY);
-				data.writeFloat((float) tubeY);
-				data.writeBoolean(powered);
+			public void writeData(ByteBuf buf) {
+				buf.writeInt(aimY);
+				buf.writeFloat((float) tubeY);
+				buf.writeBoolean(powered);
 			}
 		});
 
@@ -387,7 +426,7 @@ public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor
 	@Override
 	public void handleUpdatePacket(PacketUpdate packet) throws IOException {
 		PacketPayloadStream payload = (PacketPayloadStream) packet.payload;
-		DataInputStream data = payload.stream;
+		ByteBuf data = payload.stream;
 		aimY = data.readInt();
 		tubeY = data.readFloat();
 		powered = data.readBoolean();
@@ -458,11 +497,13 @@ public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor
 
 	@Override
 	public FluidStack drain(ForgeDirection from, FluidStack resource, boolean doDrain) {
-		if (resource == null)
+		if (resource == null) {
 			return null;
-		if (!resource.isFluidEqual(tank.getFluid()))
+		} else if (!resource.isFluidEqual(tank.getFluid())) {
 			return null;
-		return drain(from, resource.amount, doDrain);
+		} else {
+			return drain(from, resource.amount, doDrain);
+		}
 	}
 
 	@Override

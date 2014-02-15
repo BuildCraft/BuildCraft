@@ -1,12 +1,21 @@
+/**
+ * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
+ * http://www.mod-buildcraft.com
+ *
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
+ * License 1.0, or MMPL. Please check the contents of the license located in
+ * http://www.mod-buildcraft.com/MMPL-1.0.txt
+ */
 package buildcraft.energy.render;
 
 import net.minecraft.client.particle.*;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraft.block.BlockFluid;
+import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
+import net.minecraftforge.fluids.BlockFluidBase;
 
 @SideOnly(Side.CLIENT)
 public class EntityDropParticleFX extends EntityFX {
@@ -80,10 +89,16 @@ public class EntityDropParticleFX extends EntityFX {
 			this.motionZ *= 0.699999988079071D;
 		}
 
-		Material material = this.worldObj.getBlockMaterial(MathHelper.floor_double(this.posX), MathHelper.floor_double(this.posY), MathHelper.floor_double(this.posZ));
+		int x = MathHelper.floor_double(this.posX);
+		int y = MathHelper.floor_double(this.posY);
+		int z = MathHelper.floor_double(this.posZ);
+		Block block = worldObj.getBlock(x, y, z);
+		
+		Material material = block.getMaterial();
 
 		if (material.isLiquid() || material.isSolid()) {
-			double d0 = (double) ((float) (MathHelper.floor_double(this.posY) + 1) - BlockFluid.getFluidHeightPercent(this.worldObj.getBlockMetadata(MathHelper.floor_double(this.posX), MathHelper.floor_double(this.posY), MathHelper.floor_double(this.posZ))));
+			double d0 = (double) ((float) (MathHelper.floor_double(this.posY) + 1) - ((BlockFluidBase) block)
+					.getFilledPercentage(worldObj, x, y, z));
 
 			if (this.posY < d0) {
 				this.setDead();

@@ -1,8 +1,9 @@
 /**
- * Copyright (c) SpaceToad, 2011 http://www.mod-buildcraft.com
+ * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
+ * http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public License
- * 1.0, or MMPL. Please check the contents of the license located in
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
+ * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
 package buildcraft.core.utils;
@@ -14,6 +15,7 @@ import buildcraft.api.core.Position;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.IPipeTile.PipeType;
 import buildcraft.core.BlockIndex;
+import buildcraft.core.DefaultProps;
 import buildcraft.core.EntityBlock;
 import buildcraft.core.IDropControlInventory;
 import buildcraft.core.IFramePipeConnection;
@@ -21,38 +23,67 @@ import buildcraft.core.TileBuildCraft;
 import buildcraft.core.inventory.ITransactor;
 import buildcraft.core.inventory.InvUtils;
 import buildcraft.core.inventory.Transactor;
+import buildcraft.core.network.BuildCraftPacket;
 import buildcraft.core.network.ISynchronizedTile;
+import buildcraft.core.network.PacketTileUpdate;
 import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.energy.TileEngine;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
+import cpw.mods.fml.common.network.internal.FMLProxyPacket;
 import net.minecraft.block.Block;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryLargeChest;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompressedStreamTools;
+import net.minecraft.nbt.NBTBase;
+import net.minecraft.nbt.NBTTagByte;
+import net.minecraft.nbt.NBTTagByteArray;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagDouble;
+import net.minecraft.nbt.NBTTagEnd;
+import net.minecraft.nbt.NBTTagFloat;
+import net.minecraft.nbt.NBTTagInt;
+import net.minecraft.nbt.NBTTagIntArray;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.NBTTagLong;
+import net.minecraft.nbt.NBTTagShort;
 import net.minecraft.nbt.NBTTagString;
+import net.minecraft.network.INetHandler;
+import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 
 public class Utils {
 
 	public static final Random RANDOM = new Random();
 	private static final List<ForgeDirection> directions = new ArrayList<ForgeDirection>(Arrays.asList(ForgeDirection.VALID_DIRECTIONS));
 
+	public enum NBTTag_Types {
+		NBTTagEnd, NBTTagByte, NBTTagShort, 
+		NBTTagInt, NBTTagLong, NBTTagFloat, 
+		NBTTagDouble, NBTTagByteArray, NBTTagString,
+		NBTTagList, NBTTagCompound, NBTTagIntArray
+	}
+	
 	/* IINVENTORY HELPERS */
 	/**
 	 * Tries to add the passed stack to any valid inventories around the given
@@ -71,7 +102,7 @@ public class Utils {
 			Position pos = new Position(x, y, z, orientation);
 			pos.moveForwards(1.0);
 
-			TileEntity tileInventory = world.getBlockTileEntity((int) pos.x, (int) pos.y, (int) pos.z);
+			TileEntity tileInventory = world.getTileEntity((int) pos.x, (int) pos.y, (int) pos.z);
 			ITransactor transactor = Transactor.getTransactorFor(tileInventory);
 			if (transactor != null && !(tileInventory instanceof TileEngine) && transactor.add(stack, orientation.getOpposite(), false).stackSize > 0) {
 				return transactor.add(stack, orientation.getOpposite(), true).stackSize;
@@ -147,7 +178,7 @@ public class Utils {
 
 			pos.moveForwards(1.0);
 
-			TileEntity tile = world.getBlockTileEntity((int) pos.x, (int) pos.y, (int) pos.z);
+			TileEntity tile = world.getTileEntity((int) pos.x, (int) pos.y, (int) pos.z);
 
 			if (tile instanceof IPipeTile) {
 				IPipeTile pipe = (IPipeTile) tile;
@@ -176,16 +207,16 @@ public class Utils {
 		tmp.orientation = step;
 		tmp.moveForwards(1.0);
 
-		return world.getBlockTileEntity((int) tmp.x, (int) tmp.y, (int) tmp.z);
+		return world.getTileEntity((int) tmp.x, (int) tmp.y, (int) tmp.z);
 	}
 
 	public static IAreaProvider getNearbyAreaProvider(World world, int i, int j, int k) {
-		TileEntity a1 = world.getBlockTileEntity(i + 1, j, k);
-		TileEntity a2 = world.getBlockTileEntity(i - 1, j, k);
-		TileEntity a3 = world.getBlockTileEntity(i, j, k + 1);
-		TileEntity a4 = world.getBlockTileEntity(i, j, k - 1);
-		TileEntity a5 = world.getBlockTileEntity(i, j + 1, k);
-		TileEntity a6 = world.getBlockTileEntity(i, j - 1, k);
+		TileEntity a1 = world.getTileEntity(i + 1, j, k);
+		TileEntity a2 = world.getTileEntity(i - 1, j, k);
+		TileEntity a3 = world.getTileEntity(i, j, k + 1);
+		TileEntity a4 = world.getTileEntity(i, j, k - 1);
+		TileEntity a5 = world.getTileEntity(i, j + 1, k);
+		TileEntity a6 = world.getTileEntity(i, j - 1, k);
 
 		if (a1 instanceof IAreaProvider) {
 			return (IAreaProvider) a1;
@@ -306,9 +337,9 @@ public class Utils {
 	}
 
 	public static void preDestroyBlock(World world, int i, int j, int k) {
-		TileEntity tile = world.getBlockTileEntity(i, j, k);
+		TileEntity tile = world.getTileEntity(i, j, k);
 
-		if (tile instanceof IInventory && !CoreProxy.proxy.isRenderWorld(world)) {
+		if (tile instanceof IInventory && !world.isRemote) {
 			if (!(tile instanceof IDropControlInventory) || ((IDropControlInventory) tile).doDrop()) {
 				InvUtils.dropItems(world, (IInventory) tile, i, j, k);
 				InvUtils.wipeInventory((IInventory) tile);
@@ -353,8 +384,8 @@ public class Utils {
 
 	public static boolean checkLegacyPipesConnections(IBlockAccess blockAccess, int x1, int y1, int z1, int x2, int y2, int z2) {
 
-		Block b1 = Block.blocksList[blockAccess.getBlockId(x1, y1, z1)];
-		Block b2 = Block.blocksList[blockAccess.getBlockId(x2, y2, z2)];
+		Block b1 = blockAccess.getBlock(x1, y1, z1);
+		Block b2 = blockAccess.getBlock(x2, y2, z2);
 
 		if (!(b1 instanceof IFramePipeConnection) && !(b2 instanceof IFramePipeConnection)) {
 			return false;
@@ -396,5 +427,102 @@ public class Utils {
 			slots[k - first] = k;
 		}
 		return slots;
+	}
+	
+	public static void writeUTF (ByteBuf data, String str) {		
+		try {
+			byte [] b = str.getBytes("UTF-8");
+			data.writeInt (b.length);
+			data.writeBytes(b);
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+			data.writeInt (0);
+		}
+	}
+	
+	public static String readUTF (ByteBuf data) {		
+		try {
+			int len = data.readInt();
+			byte [] b = new byte [len];
+			data.readBytes(b);
+			return new String (b, "UTF-8");
+		} catch (UnsupportedEncodingException e) {	
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	public static void writeNBT (ByteBuf data, NBTTagCompound nbt) {
+		try {
+			byte[] compressed = CompressedStreamTools.compress(nbt);
+			data.writeShort(compressed.length);
+			data.writeBytes(compressed);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}		
+	}
+	
+	public static NBTTagCompound readNBT(ByteBuf data) {
+		try {
+			short length = data.readShort();
+			byte[] compressed = new byte[length];
+			data.readBytes(compressed);
+			return CompressedStreamTools.decompress(compressed);
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	public static void writeStack (ByteBuf data, ItemStack stack) {
+		if (stack == null) {
+			data.writeBoolean(false);
+		} else {
+			data.writeBoolean(true);
+			NBTTagCompound nbt = new NBTTagCompound();			
+			stack.writeToNBT(nbt);
+			Utils.writeNBT(data, nbt);
+		}
+	}
+	
+
+	public static ItemStack readStack(ByteBuf data) {
+		if (!data.readBoolean()) {
+			return null;
+		} else {
+			NBTTagCompound nbt = readNBT(data);
+			return ItemStack.loadItemStackFromNBT(nbt);
+		}
+	}
+	
+	/**
+	 * This subprogram transforms a packet into a FML packet to be send in the
+	 * minecraft default packet mechanism. This always use BC-CORE as a 
+	 * channel, and as a result, should use discriminators declared there.
+	 * 
+	 * WARNING! The implementation of this subprogram relies on the internal
+	 * behavior of #FMLIndexedMessageToMessageCodec (in particular the encode
+	 * member). It is probably opening a maintenance issue and should be
+	 * replaced eventually by some more solid mechanism. 
+	 */
+	public static FMLProxyPacket toPacket (BuildCraftPacket packet, int discriminator) {
+		ByteBuf buf = Unpooled.buffer();
+				
+		buf.writeByte((byte) discriminator);
+		packet.writeData(buf);
+				
+		return new FMLProxyPacket(buf, DefaultProps.NET_CHANNEL_NAME + "-CORE");
+	}
+
+	/**
+	 * This function returns either the player from the handler if it's on the
+	 * server, or directly from the minecraft instance if it's the client.
+	 */
+	public static EntityPlayer getPlayerFromNetHandler (INetHandler handler) {		
+		if (handler instanceof NetHandlerPlayServer) {
+			return ((NetHandlerPlayServer) handler).playerEntity;
+		} else {
+			return Minecraft.getMinecraft().thePlayer;
+		}
 	}
 }

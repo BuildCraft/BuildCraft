@@ -1,3 +1,11 @@
+/**
+ * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
+ * http://www.mod-buildcraft.com
+ *
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
+ * License 1.0, or MMPL. Please check the contents of the license located in
+ * http://www.mod-buildcraft.com/MMPL-1.0.txt
+ */
 package buildcraft.transport;
 
 import buildcraft.api.transport.PipeWire;
@@ -6,18 +14,21 @@ import buildcraft.silicon.ItemRedstoneChipset.Chipset;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+
 import java.util.List;
-import net.minecraft.client.renderer.texture.IconRegister;
+
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.Icon;
+import net.minecraft.util.IIcon;
 
 public class ItemPipeWire extends ItemBuildCraft {
 
-	private Icon[] icons;
+	private IIcon[] icons;
 
-	public ItemPipeWire(int i) {
-		super(i);
+	public ItemPipeWire() {
+		super();
 		setHasSubtypes(true);
 		setMaxDamage(0);
 		setPassSneakClick(true);
@@ -25,7 +36,7 @@ public class ItemPipeWire extends ItemBuildCraft {
 	}
 
 	@Override
-	public Icon getIconFromDamage(int damage) {
+	public IIcon getIconFromDamage(int damage) {
 		return icons[damage];
 	}
 
@@ -37,7 +48,7 @@ public class ItemPipeWire extends ItemBuildCraft {
 	@SuppressWarnings({"rawtypes", "unchecked"})
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void getSubItems(int id, CreativeTabs tab, List itemList) {
+	public void getSubItems(Item item, CreativeTabs tab, List itemList) {
 		for (PipeWire pipeWire : PipeWire.VALUES) {
 			itemList.add(pipeWire.getStack());
 		}
@@ -45,8 +56,8 @@ public class ItemPipeWire extends ItemBuildCraft {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void registerIcons(IconRegister par1IconRegister) {
-		icons = new Icon[PipeWire.VALUES.length];
+	public void registerIcons(IIconRegister par1IconRegister) {
+		icons = new IIcon[PipeWire.VALUES.length];
 		for (PipeWire pipeWire : PipeWire.VALUES) {
 			icons[pipeWire.ordinal()] = par1IconRegister.registerIcon("buildcraft:" + pipeWire.getTag());
 		}

@@ -1,30 +1,31 @@
 /**
- * Copyright (c) SpaceToad, 2011 http://www.mod-buildcraft.com
+ * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
+ * http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public License
- * 1.0, or MMPL. Please check the contents of the license located in
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
+ * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
 package buildcraft.core.render;
 
 import buildcraft.core.render.RenderEntityBlock.RenderInfo;
+
 import java.util.HashMap;
 import java.util.Map;
+
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.client.renderer.texture.TextureMap;
-import net.minecraft.util.Icon;
+import net.minecraft.init.Blocks;
+import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
+
 import org.lwjgl.opengl.GL11;
 
-/**
- *
- * @author CovertJaguar <railcraft.wikispaces.com>
- */
 public class FluidRenderer {
 
 	private static final ResourceLocation BLOCK_TEXTURE = TextureMap.locationBlocksTexture;
@@ -33,18 +34,18 @@ public class FluidRenderer {
 	public static final int DISPLAY_STAGES = 100;
 	private static final RenderInfo liquidBlock = new RenderInfo();
 
-	public static Icon getFluidTexture(FluidStack fluidStack, boolean flowing) {
+	public static IIcon getFluidTexture(FluidStack fluidStack, boolean flowing) {
 		if (fluidStack == null) {
 			return null;
 		}
 		return getFluidTexture(fluidStack.getFluid(), flowing);
 	}
 
-	public static Icon getFluidTexture(Fluid fluid, boolean flowing) {
+	public static IIcon getFluidTexture(Fluid fluid, boolean flowing) {
 		if (fluid == null) {
 			return null;
 		}
-		Icon icon = flowing ? fluid.getFlowingIcon() : fluid.getStillIcon();
+		IIcon icon = flowing ? fluid.getFlowingIcon() : fluid.getStillIcon();
 		if (icon == null) {
 			icon = ((TextureMap) Minecraft.getMinecraft().getTextureManager().getTexture(TextureMap.locationBlocksTexture)).getAtlasSprite("missingno");
 		}
@@ -85,11 +86,11 @@ public class FluidRenderer {
 
 		diplayLists = new int[DISPLAY_STAGES];
 
-		if (fluid.getBlockID() > 0) {
-			liquidBlock.baseBlock = Block.blocksList[fluid.getBlockID()];
+		if (fluid.getBlock() != null) {
+			liquidBlock.baseBlock = fluid.getBlock();
 			liquidBlock.texture = getFluidTexture(fluidStack, flowing);
 		} else {
-			liquidBlock.baseBlock = Block.waterStill;
+			liquidBlock.baseBlock = Blocks.water;
 			liquidBlock.texture = getFluidTexture(fluidStack, flowing);
 		}
 

@@ -1,8 +1,9 @@
 /**
- * Copyright (c) SpaceToad, 2011 http://www.mod-buildcraft.com
+ * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
+ * http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public License
- * 1.0, or MMPL. Please check the contents of the license located in
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
+ * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
 package buildcraft.factory;
@@ -17,30 +18,33 @@ import buildcraft.core.fluids.FluidUtils;
 import buildcraft.core.utils.Utils;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+
 import java.util.ArrayList;
+
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Icon;
+import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
-import net.minecraftforge.common.ForgeDirection;
-import static net.minecraftforge.common.ForgeDirection.EAST;
-import static net.minecraftforge.common.ForgeDirection.NORTH;
-import static net.minecraftforge.common.ForgeDirection.SOUTH;
-import static net.minecraftforge.common.ForgeDirection.WEST;
+import net.minecraftforge.common.util.ForgeDirection;
+import static net.minecraftforge.common.util.ForgeDirection.EAST;
+import static net.minecraftforge.common.util.ForgeDirection.NORTH;
+import static net.minecraftforge.common.util.ForgeDirection.SOUTH;
+import static net.minecraftforge.common.util.ForgeDirection.WEST;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 
 public class BlockRefinery extends BlockContainer {
 
-	private static Icon icon;
+	private static IIcon icon;
 
-	public BlockRefinery(int i) {
-		super(i, Material.iron);
+	public BlockRefinery() {
+		super(Material.iron);
 
 		setHardness(5F);
 		setCreativeTab(CreativeTabBuildCraft.MACHINES.get());
@@ -66,7 +70,7 @@ public class BlockRefinery extends BlockContainer {
 	}
 
 	@Override
-	public TileEntity createNewTileEntity(World var1) {
+	public TileEntity createNewTileEntity(World world, int metadata) {
 		return new TileRefinery();
 	}
 
@@ -104,7 +108,7 @@ public class BlockRefinery extends BlockContainer {
 
 	@Override
 	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float hitX, float hitY, float hitZ) {
-		TileEntity tile = world.getBlockTileEntity(x, y, z);
+		TileEntity tile = world.getTileEntity(x, y, z);
 
 		if (!(tile instanceof TileRefinery))
 			return false;
@@ -117,7 +121,7 @@ public class BlockRefinery extends BlockContainer {
 			return true;
 		}
 
-		if (current != null && current.itemID != Item.bucketEmpty.itemID) {
+		if (current != null && current.getItem() != Items.bucket) {
 			if (!world.isRemote) {
 				if (FluidUtils.handleRightClick((TileRefinery) tile, ForgeDirection.getOrientation(side), player, true, false))
 					return true;
@@ -132,22 +136,16 @@ public class BlockRefinery extends BlockContainer {
 
 		return true;
 	}
-
-	@SuppressWarnings({"unchecked", "rawtypes"})
-	@Override
-	public void addCreativeItems(ArrayList itemList) {
-		itemList.add(new ItemStack(this));
-	}
-
+	
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void registerIcons(IconRegister par1IconRegister) {
+	public void registerBlockIcons(IIconRegister par1IconRegister) {
 		icon = par1IconRegister.registerIcon("buildcraft:refineryBack");
 	}
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public Icon getIcon(int par1, int par2) {
+	public IIcon getIcon(int par1, int par2) {
 		return icon;
 	}
 }

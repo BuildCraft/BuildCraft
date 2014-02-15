@@ -1,8 +1,9 @@
 /**
- * Copyright (c) SpaceToad, 2011 http://www.mod-buildcraft.com
+ * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
+ * http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public License
- * 1.0, or MMPL. Please check the contents of the license located in
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
+ * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
 package buildcraft.builders.gui;
@@ -37,9 +38,10 @@ public class GuiBlueprintLibrary extends GuiBuildCraft {
 		this.library = library;
 		container = (ContainerBlueprintLibrary) inventorySlots;
 
-		index = BuildCraftBuilders.getPlayerIndex(player.username);
+		index = BuildCraftBuilders.getPlayerIndex(player.getDisplayName());
 		library.updateCurrentNames();
 	}
+	
 	private GuiButton nextPageButton;
 	private GuiButton prevPageButton;
 	private GuiButton lockButton;
@@ -76,7 +78,7 @@ public class GuiBlueprintLibrary extends GuiBuildCraft {
 		// fontRenderer.drawString(library.owner + "'s Library", 6, 6,
 		// 0x404040);
 		String title = StringUtils.localize("tile.libraryBlock");
-		fontRenderer.drawString(title, getCenteredOffset(title), 6, 0x404040);
+		fontRendererObj.drawString(title, getCenteredOffset(title), 6, 0x404040);
 
 		int c = 0;
 		for (String bpt : library.currentBlueprint) {
@@ -94,7 +96,7 @@ public class GuiBlueprintLibrary extends GuiBuildCraft {
 				drawGradientRect(l1, i2 + 9 * c, l1 + 88, i2 + 9 * (c + 1), 0x80ffffff, 0x80ffffff);
 			}*/
 
-			fontRenderer.drawString(name, 9, 25 + 9 * c, 0x404040);
+			fontRendererObj.drawString(name, 9, 25 + 9 * c, 0x404040);
 			c++;
 		}
 	}
@@ -136,6 +138,7 @@ public class GuiBlueprintLibrary extends GuiBuildCraft {
 		} else if (deleteButton != null && button == deleteButton) {
 			packet.actionId = TileBlueprintLibrary.COMMAND_DELETE;
 		}
+
 		CoreProxy.proxy.sendToServer(packet.getPacket());*/
 	}
 

@@ -1,3 +1,11 @@
+/**
+ * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
+ * http://www.mod-buildcraft.com
+ *
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
+ * License 1.0, or MMPL. Please check the contents of the license located in
+ * http://www.mod-buildcraft.com/MMPL-1.0.txt
+ */
 package buildcraft.builders;
 
 import buildcraft.BuildCraftBuilders;
@@ -52,6 +60,10 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory {
 	@Override
 	public void initialize() {
 		super.initialize();
+		
+		if (!worldObj.isRemote) {
+			setCurrentPage(getNextPage(null));
+		}
 	}
 
 	public ArrayList<BptBase> getNextPage(String after) {
@@ -222,7 +234,7 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory {
 	}
 
 	@Override
-	public String getInvName() {
+	public String getInventoryName() {
 		return "";
 	}
 
@@ -238,22 +250,24 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory {
 
 	@Override
 	public boolean isUseableByPlayer(EntityPlayer entityplayer) {
-		return worldObj.getBlockTileEntity(xCoord, yCoord, zCoord) == this;
+		return worldObj.getTileEntity(xCoord, yCoord, zCoord) == this;
 	}
 
 	@Override
-	public void openChest() {
+	public void openInventory() {
 	}
 
 	@Override
-	public void closeChest() {
+	public void closeInventory() {
 	}
 
 	@Override
 	public void updateEntity() {
 		super.updateEntity();
-		if (CoreProxy.proxy.isRenderWorld(worldObj))
+		
+		if (worldObj.isRemote) {
 			return;
+		}
 
 		if (progressIn > 0 && progressIn < 100) {
 			progressIn++;
@@ -290,10 +304,11 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory {
 		if (progressOut == 100 && stack[3] == null) {
 			if (selected > -1 && selected < currentPage.size()) {
 				BptBase bpt = currentPage.get(selected);
-				setInventorySlotContents(3, BuildCraftBuilders.getBptItemStack(stack[2].itemID, bpt.position, bpt.getName()));
+				setInventorySlotContents(3, BuildCraftBuilders.getBptItemStack(stack[2].getItem(), bpt.position, bpt.getName()));
 			} else {
-				setInventorySlotContents(3, BuildCraftBuilders.getBptItemStack(stack[2].itemID, 0, null));
+				setInventorySlotContents(3, BuildCraftBuilders.getBptItemStack(stack[2].getItem(), 0, null));
 			}
+			
 			setInventorySlotContents(2, null);
 		}
 	}
@@ -302,5 +317,10 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory {
 	public void receiveBlueprint (Blueprint bpt) {
 		BuildCraftBuilders.clientDB.add(bpt);
 		updateCurrentNames();
+	}
+
+	@Override
+	public boolean hasCustomInventoryName() {
+		return false;
 	}
 }

@@ -1,13 +1,15 @@
 /**
- * Copyright (c) SpaceToad, 2011 http://www.mod-buildcraft.com
+ * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
+ * http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public License
- * 1.0, or MMPL. Please check the contents of the license located in
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
+ * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
 package buildcraft.factory;
 
 import buildcraft.BuildCraftCore;
+import buildcraft.BuildCraftFactory;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.fluids.Tank;
@@ -16,13 +18,16 @@ import buildcraft.core.network.PacketPayload;
 import buildcraft.core.network.PacketPayloadStream;
 import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.proxy.CoreProxy;
+import io.netty.buffer.ByteBuf;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.EnumSkyBlock;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
@@ -41,7 +46,7 @@ public class TileTank extends TileBuildCraft implements IFluidHandler {
 	/* UPDATING */
 	@Override
 	public void updateEntity() {
-		if (CoreProxy.proxy.isRenderWorld(worldObj)) {
+		if (worldObj.isRemote) {
 			int lightValue = getFluidLightLevel();
 			if (prevLightValue != lightValue) {
 				prevLightValue = lightValue;
@@ -66,7 +71,7 @@ public class TileTank extends TileBuildCraft implements IFluidHandler {
 	public PacketPayload getPacketPayload() {
 		PacketPayload payload = new PacketPayloadStream(new PacketPayloadStream.StreamWriter() {
 			@Override
-			public void writeData(DataOutputStream data) throws IOException {
+			public void writeData(ByteBuf data) {
 				tankManager.writeData(data);
 			}
 		});
@@ -75,7 +80,7 @@ public class TileTank extends TileBuildCraft implements IFluidHandler {
 
 	@Override
 	public void handleUpdatePacket(PacketUpdate packet) throws IOException {
-		DataInputStream stream = ((PacketPayloadStream) packet.payload).stream;
+		ByteBuf stream = ((PacketPayloadStream) packet.payload).stream;
 		tankManager.readData(stream);
 	}
 
@@ -129,7 +134,7 @@ public class TileTank extends TileBuildCraft implements IFluidHandler {
 	}
 
 	public static TileTank getTankBelow(TileTank tile) {
-		TileEntity below = tile.worldObj.getBlockTileEntity(tile.xCoord, tile.yCoord - 1, tile.zCoord);
+		TileEntity below = tile.getWorldObj().getTileEntity(tile.xCoord, tile.yCoord - 1, tile.zCoord);
 		if (below instanceof TileTank) {
 			return (TileTank) below;
 		} else {
@@ -138,7 +143,7 @@ public class TileTank extends TileBuildCraft implements IFluidHandler {
 	}
 
 	public static TileTank getTankAbove(TileTank tile) {
-		TileEntity above = tile.worldObj.getBlockTileEntity(tile.xCoord, tile.yCoord + 1, tile.zCoord);
+		TileEntity above = tile.getWorldObj().getTileEntity(tile.xCoord, tile.yCoord + 1, tile.zCoord);
 		if (above instanceof TileTank) {
 			return (TileTank) above;
 		} else {

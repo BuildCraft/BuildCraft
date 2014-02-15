@@ -1,14 +1,18 @@
 /**
- * Copyright (c) SpaceToad, 2011 http://www.mod-buildcraft.com
+ * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
+ * http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public License
- * 1.0, or MMPL. Please check the contents of the license located in
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
+ * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
 package buildcraft.silicon;
 
 import buildcraft.api.power.ILaserTarget;
 import buildcraft.BuildCraftCore;
+import buildcraft.BuildCraftFactory;
+import buildcraft.BuildCraftMod;
+import buildcraft.BuildCraftSilicon;
 import buildcraft.api.core.Position;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.gates.IAction;
@@ -22,11 +26,13 @@ import buildcraft.core.IMachine;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.triggers.ActionMachineControl;
+
 import java.util.LinkedList;
 import java.util.List;
+
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 
 public class TileLaser extends TileBuildCraft implements IPowerReceptor, IActionReceptor, IMachine {
 
@@ -54,7 +60,7 @@ public class TileLaser extends TileBuildCraft implements IPowerReceptor, IAction
 	public void updateEntity() {
 		super.updateEntity();
 
-		if (!CoreProxy.proxy.isSimulating(worldObj))
+		if (!!worldObj.isRemote)
 			return;
 
 		// If a gate disabled us, remove laser and do nothing.
@@ -166,7 +172,7 @@ public class TileLaser extends TileBuildCraft implements IPowerReceptor, IAction
 			for (int y = minY; y <= maxY; ++y) {
 				for (int z = minZ; z <= maxZ; ++z) {
 
-					TileEntity tile = worldObj.getBlockTileEntity(x, y, z);
+					TileEntity tile = worldObj.getTileEntity(x, y, z);
 					if (tile instanceof ILaserTarget) {
 
 						ILaserTarget table = (ILaserTarget) tile;

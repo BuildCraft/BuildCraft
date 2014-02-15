@@ -1,7 +1,7 @@
-/*
- * Copyright (c) SpaceToad, 2011-2012
+/**
+ * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- * 
+ *
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -11,6 +11,7 @@ package buildcraft.transport.gates;
 import buildcraft.api.gates.GateExpansionController;
 import buildcraft.api.gates.GateExpansions;
 import buildcraft.api.gates.IGateExpansion;
+import buildcraft.core.utils.Utils;
 import buildcraft.transport.Gate;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.gates.GateDefinition.GateLogic;
@@ -19,10 +20,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 
-/**
- *
- * @author CovertJaguar <http://www.railcraft.info/>
- */
 public class GateFactory {
 
 	public static Gate makeGate(Pipe pipe, GateMaterial material, GateLogic logic) {
@@ -98,9 +95,9 @@ public class GateFactory {
 			gate.expansions.put(GateExpansionPulsar.INSTANCE, pulsarCon);
 		}
 
-		NBTTagList exList = nbt.getTagList("expansions");
+		NBTTagList exList = nbt.getTagList("expansions", Utils.NBTTag_Types.NBTTagCompound.ordinal());
 		for (int i = 0; i < exList.tagCount(); i++) {
-			NBTTagCompound conNBT = (NBTTagCompound) exList.tagAt(i);
+			NBTTagCompound conNBT = exList.getCompoundTagAt(i);
 			IGateExpansion ex = GateExpansions.getExpansion(conNBT.getString("type"));
 			if (ex != null) {
 				GateExpansionController con = ex.makeController(pipe.container);

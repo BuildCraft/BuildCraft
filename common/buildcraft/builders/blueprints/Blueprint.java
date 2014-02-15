@@ -1,8 +1,9 @@
 /**
- * Copyright (c) SpaceToad, 2011-2012 http://www.mod-buildcraft.com
+ * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
+ * http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public License
- * 1.0, or MMPL. Please check the contents of the license located in
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
+ * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
 package buildcraft.builders.blueprints;
@@ -11,6 +12,7 @@ import buildcraft.api.builder.BlockHandler;
 import buildcraft.core.inventory.StackHelper;
 import buildcraft.core.network.NetworkData;
 import buildcraft.core.utils.BCLog;
+import buildcraft.core.utils.Utils;
 import buildcraft.factory.TileQuarry;
 
 import java.util.ArrayList;
@@ -23,14 +25,11 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.world.World;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 
 /**
  * This class is used to represent the data of the blueprint as it exists in the
  * world.
- *
- * @author CovertJaguar <http://www.railcraft.info/>
- * @author Player
  */
 public class Blueprint {
 
@@ -85,9 +84,10 @@ public class Blueprint {
 
 		anchorOrientation = ForgeDirection.getOrientation(nbt.getByte("anchorOrientation"));
 
-		NBTTagList blockList = nbt.getTagList("blocks");
+		NBTTagList blockList = nbt.getTagList("blocks",Utils.NBTTag_Types.NBTTagCompound.ordinal());
+		
 		for (int i = 0; i < blockList.tagCount(); i++) {
-			NBTTagCompound blockNBT = (NBTTagCompound) blockList.tagAt(i);
+			NBTTagCompound blockNBT = (NBTTagCompound) blockList.getCompoundTagAt(i);
 			Schematic schematic = Schematic.createSchematicFromNBT(blockNBT);
 			schematics[schematic.x][schematic.y][schematic.z] = schematic;
 		}
@@ -143,7 +143,7 @@ public class Blueprint {
 				setSchematic(x, y, z, schematic);
 			}
 		} catch (Throwable error) {
-			BCLog.logger.severe(String.format("Error while trying to save block [%s:%d] to blueprint, skipping.", block.getUnlocalizedName(), block.blockID));
+			BCLog.logger.severe(String.format("Error while trying to save block [%s] to blueprint, skipping.", block.getUnlocalizedName()));
 			error.printStackTrace();
 			BCLog.logger.throwing(getClass().getCanonicalName(), "setBlock", error);
 		}
@@ -160,7 +160,7 @@ public class Blueprint {
 				setSchematic(x, y, z, schematic);
 			}
 		} catch (Throwable error) {
-			BCLog.logger.severe(String.format("Error while trying to save item [%s:%d] to blueprint, skipping.", item.getItem().getUnlocalizedName(), item.itemID));
+			BCLog.logger.severe(String.format("Error while trying to save item [%s] to blueprint, skipping.", item.getItem().getUnlocalizedName()));
 			BCLog.logger.throwing(getClass().getCanonicalName(), "setBlock", error);
 		}
 	}
@@ -173,11 +173,11 @@ public class Blueprint {
 	 *
 	 * @see TileQuarry
 	 */
-	public void setSchematic(World world, int x, int y, int z, int id, int meta) {
-		Block block = Block.blocksList[id];
+	public void setSchematic(World world, int x, int y, int z, Block block, int meta) {
 		if (block == null) {
 			return;
 		}
+		
 		BlockSchematic schematic = BlockSchematic.create(block);
 		schematic.data.setByte("blockMeta", (byte) meta);
 		setSchematic(x, y, z, schematic);

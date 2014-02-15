@@ -1,3 +1,11 @@
+/**
+ * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
+ * http://www.mod-buildcraft.com
+ *
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
+ * License 1.0, or MMPL. Please check the contents of the license located in
+ * http://www.mod-buildcraft.com/MMPL-1.0.txt
+ */
 package buildcraft.silicon;
 
 import buildcraft.BuildCraftSilicon;
@@ -6,24 +14,28 @@ import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+
 import java.util.List;
+
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Icon;
+import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
 
 public class BlockLaserTable extends BlockContainer {
 
 	@SideOnly(Side.CLIENT)
-	private Icon[][] icons;
+	private IIcon[][] icons;
 
-	public BlockLaserTable(int i) {
-		super(i, Material.iron);
+	public BlockLaserTable() {
+		super(Material.iron);
 
 		setBlockBounds(0, 0, 0, 1, 9F / 16F, 1);
 		setHardness(10F);
@@ -50,7 +62,7 @@ public class BlockLaserTable extends BlockContainer {
 		if (entityplayer.isSneaking())
 			return false;
 
-		if (!CoreProxy.proxy.isRenderWorld(world)) {
+		if (!world.isRemote) {
 			int meta = world.getBlockMetadata(i, j, k);
 			entityplayer.openGui(BuildCraftSilicon.instance, meta, world, i, j, k);
 		}
@@ -58,13 +70,13 @@ public class BlockLaserTable extends BlockContainer {
 	}
 
 	@Override
-	public void breakBlock(World world, int x, int y, int z, int par5, int par6) {
+	public void breakBlock(World world, int x, int y, int z, Block block, int par6) {
 		Utils.preDestroyBlock(world, x, y, z);
-		super.breakBlock(world, x, y, z, par5, par6);
+		super.breakBlock(world, x, y, z, block, par6);
 	}
 
 	@Override
-	public Icon getIcon(int side, int meta) {
+	public IIcon getIcon(int side, int meta) {
 		int s = side > 1 ? 2 : side;
 		return icons[meta][s];
 	}
@@ -83,7 +95,7 @@ public class BlockLaserTable extends BlockContainer {
 	}
 
 	@Override
-	public TileEntity createNewTileEntity(World var1) {
+	public TileEntity createNewTileEntity(World world, int metadata) {
 		return null;
 	}
 
@@ -95,7 +107,7 @@ public class BlockLaserTable extends BlockContainer {
 	@SuppressWarnings({"rawtypes", "unchecked"})
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void getSubBlocks(int par1, CreativeTabs par2CreativeTabs, List par3List) {
+	public void getSubBlocks(Item item, CreativeTabs par2CreativeTabs, List par3List) {
 		par3List.add(new ItemStack(this, 1, 0));
 		par3List.add(new ItemStack(this, 1, 1));
 		par3List.add(new ItemStack(this, 1, 2));
@@ -103,11 +115,11 @@ public class BlockLaserTable extends BlockContainer {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void registerIcons(IconRegister par1IconRegister) {
-		icons = new Icon[3][];
-		icons[0] = new Icon[3];
-		icons[1] = new Icon[3];
-		icons[2] = new Icon[3];
+	public void registerBlockIcons(IIconRegister par1IconRegister) {
+		icons = new IIcon[3][];
+		icons[0] = new IIcon[3];
+		icons[1] = new IIcon[3];
+		icons[2] = new IIcon[3];
 
 		icons[0][0] = par1IconRegister.registerIcon("buildcraft:assemblytable_bottom");
 		icons[0][1] = par1IconRegister.registerIcon("buildcraft:assemblytable_top");

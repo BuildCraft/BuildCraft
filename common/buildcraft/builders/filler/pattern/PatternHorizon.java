@@ -1,8 +1,9 @@
 /**
- * Copyright (c) SpaceToad, 2011 http://www.mod-buildcraft.com
+ * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
+ * http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public License
- * 1.0, or MMPL. Please check the contents of the license located in
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
+ * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
 package buildcraft.builders.filler.pattern;
@@ -26,9 +27,9 @@ public class PatternHorizon extends FillerPattern {
 		int xMax = (int) box.pMax().x;
 		int zMax = (int) box.pMax().z;
 
-		if (stackToPlace != null && flatten(xMin, 1, zMin, xMax, yMin - 1, zMax, tile.worldObj, stackToPlace)) {
+		if (stackToPlace != null && flatten(xMin, 1, zMin, xMax, yMin - 1, zMax, tile.getWorldObj(), stackToPlace)) {
 			return false;
 		}
-		return !empty(xMin, yMin, zMin, xMax, tile.worldObj.getActualHeight(), zMax, tile.worldObj);
+		return !empty(xMin, yMin, zMin, xMax, tile.getWorldObj().getActualHeight(), zMax, tile.getWorldObj());
 	}
 }

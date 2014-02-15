@@ -1,12 +1,18 @@
 /**
- * Copyright (c) SpaceToad, 2011-2012 http://www.mod-buildcraft.com
+ * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
+ * http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public License
- * 1.0, or MMPL. Please check the contents of the license located in
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
+ * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
 package buildcraft.core;
 
+import io.netty.buffer.ByteBuf;
+
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
 import buildcraft.api.core.Position;
 import buildcraft.builders.blueprints.BlueprintBuilder.SchematicBuilder;
@@ -61,12 +67,12 @@ public class EntityRobot extends Entity implements IEntityAdditionalSpawnData {
 	}
 
 	@Override
-	public void writeSpawnData(ByteArrayDataOutput data) {
+	public void writeSpawnData(ByteBuf data) {
 
 		if (box == null) {
 			box = new Box();
 		}
-
+		
 		data.writeInt(box.xMin);
 		data.writeInt(box.yMin);
 		data.writeInt(box.zMin);
@@ -76,7 +82,7 @@ public class EntityRobot extends Entity implements IEntityAdditionalSpawnData {
 	}
 
 	@Override
-	public void readSpawnData(ByteArrayDataInput data) {
+	public void readSpawnData(ByteBuf data) {
 
 		box = new Box();
 		box.xMin = data.readInt();
@@ -103,8 +109,9 @@ public class EntityRobot extends Entity implements IEntityAdditionalSpawnData {
 
 	@Override
 	public void onUpdate() {
-		if (CoreProxy.proxy.isRenderWorld(worldObj))
+		if (worldObj.isRemote) {
 			return;
+		}
 
 		move();
 		build();
@@ -172,7 +179,6 @@ public class EntityRobot extends Entity implements IEntityAdditionalSpawnData {
 	}
 
 	protected void build() {
-
 		updateWait();
 
 		if (wait <= 0 && !targets.isEmpty()) {
@@ -187,6 +193,7 @@ public class EntityRobot extends Entity implements IEntityAdditionalSpawnData {
 				if (!worldObj.isAirBlock(target.getX(), target.getY(), target.getZ())) {
 					BlockUtil.breakBlock(worldObj, target.getX(), target.getY(), target.getZ());
 				} else {
+
 					targets.pop();
 					try {
 						target.build(CoreProxy.proxy.getBuildCraftPlayer(worldObj, target.getX(), target.getY() + 2, target.getZ()));
@@ -239,9 +246,11 @@ public class EntityRobot extends Entity implements IEntityAdditionalSpawnData {
 		if (!readyToBuild()) {
 			return false;
 		}
+		
 		if (schematic != null && !schematic.blockExists()) {
 			return targets.add(schematic);
 		}
+		
 		return false;
 	}
 

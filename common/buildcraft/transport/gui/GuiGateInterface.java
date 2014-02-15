@@ -1,8 +1,9 @@
 /**
- * Copyright (c) SpaceToad, 2011 http://www.mod-buildcraft.com
+ * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
+ * http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public License
- * 1.0, or MMPL. Please check the contents of the license located in
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
+ * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
 package buildcraft.transport.gui;
@@ -20,7 +21,7 @@ import java.util.Iterator;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.Icon;
+import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 
@@ -46,20 +47,24 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 		@Override
 		public String getDescription() {
 			ITrigger trigger = pipe.gate.getTrigger(slot);
-			if (trigger != null)
+			
+			if (trigger != null) {
 				return trigger.getDescription();
-			else
+			} else {
 				return "";
+			}
 		}
 
 		@SideOnly(Side.CLIENT)
 		@Override
-		public Icon getIcon() {
+		public IIcon getIcon() {
 			ITrigger trigger = pipe.gate.getTrigger(slot);
-			if (trigger != null)
+			
+			if (trigger != null) {
 				return trigger.getIcon();
-			else
+			} else {
 				return null;
+			}
 		}
 
 		@Override
@@ -87,30 +92,37 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 		@Override
 		public String getDescription() {
 			IAction action = pipe.gate.getAction(slot);
-			if (action != null)
+			if (action != null) {
 				return action.getDescription();
-			else
+			} else {
 				return "";
+			}
 		}
 
 		@SideOnly(Side.CLIENT)
 		@Override
-		public Icon getIcon() {
+		public IIcon getIcon() {
 			IAction action = pipe.gate.getAction(slot);
-			if (action != null)
+			
+			if (action != null) {
 				return action.getIcon();
-			else
+			} else {
 				return null;
+			}
 		}
 
 		@Override
 		public ResourceLocation getTexture() {
 			IAction action = pipe.gate.getAction(slot);
+			
 			if (action instanceof BCAction) {
 				BCAction bcAction = (BCAction) action;
-				if (bcAction.getTextureMap() == 0)
+				
+				if (bcAction.getTextureMap() == 0) {
 					return TextureMap.locationBlocksTexture;
+				}
 			}
+			
 			return super.getTexture();
 		}
 
@@ -144,10 +156,12 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 		@Override
 		public ItemStack getItemStack() {
 			ITriggerParameter parameter = pipe.gate.getTriggerParameter(slot);
-			if (parameter != null)
+			
+			if (parameter != null) {
 				return parameter.getItemStack();
-			else
+			} else {
 				return null;
+			}
 		}
 
 		public ITriggerParameter getTriggerParameter() {
@@ -228,8 +242,8 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 	protected void drawGuiContainerForegroundLayer(int par1, int par2) {
 		String name = _container.getGateName();
 
-		fontRenderer.drawString(name, getCenteredOffset(name), 10, 0x404040);
-		fontRenderer.drawString(StringUtils.localize("gui.inventory"), 8, ySize - 97, 0x404040);
+		fontRendererObj.drawString(name, getCenteredOffset(name), 10, 0x404040);
+		fontRendererObj.drawString(StringUtils.localize("gui.inventory"), 8, ySize - 97, 0x404040);
 
 		drawForegroundSelection(par1, par2);
 	}
@@ -290,8 +304,9 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 
 		AdvancedSlot slot = null;
 
-		if (position < 0)
+		if (position < 0) {
 			return;
+		}
 
 		slot = slots[position];
 

@@ -1,5 +1,8 @@
 package buildcraft.core.network;
 
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
+
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -12,7 +15,9 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.TreeMap;
 
+import buildcraft.BuildCraftCore;
 import buildcraft.core.proxy.CoreProxy;
+import buildcraft.core.utils.Utils;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.tileentity.TileEntity;
@@ -91,7 +96,7 @@ public class RPCHandler {
 		PacketRPC packet = handlers.get (tile.getClass().getName()).createRCPPacket(tile, method, actuals);
 
 		if (packet != null) {
-			CoreProxy.proxy.sendToServer(packet.getPacket());
+			BuildCraftCore.instance.sendToServer(packet);
 		}
 	}
 
@@ -103,7 +108,7 @@ public class RPCHandler {
 		PacketRPC packet = handlers.get (tile.getClass().getName()).createRCPPacket(tile, method, actuals);
 
 		if (packet != null) {
-			CoreProxy.proxy.sendToPlayer(player, packet);
+			BuildCraftCore.instance.sendToPlayer(player, packet);
 		}
 	}
 
@@ -115,19 +120,19 @@ public class RPCHandler {
 		PacketRPC packet = handlers.get (tile.getClass().getName()).createRCPPacket(tile, method, actuals);
 
 		if (packet != null) {
-			for (Object o : tile.worldObj.playerEntities) {
+			for (Object o : tile.getWorldObj().playerEntities) {
 				EntityPlayerMP player = (EntityPlayerMP) o;
 
 				if (Math.abs(player.posX - tile.xCoord) <= maxDistance
 						&& Math.abs(player.posY - tile.yCoord) <= maxDistance
 						&& Math.abs(player.posZ - tile.zCoord) <= maxDistance) {
-					CoreProxy.proxy.sendToPlayer(player, packet);
+					BuildCraftCore.instance.sendToPlayer(player, packet);
 				}
 			}
 		}
 	}
 
-	public static void receiveRPC (TileEntity tile, RPCMessageInfo info, DataInputStream data) {
+	public static void receiveRPC (TileEntity tile, RPCMessageInfo info, ByteBuf data) {
 		if (!handlers.containsKey(tile.getClass().getName())) {
 			handlers.put (tile.getClass().getName(), new RPCHandler (tile.getClass()));
 		}
@@ -154,13 +159,12 @@ public class RPCHandler {
 					+ " expects " + m.parameters.length + "parameters, not " + actuals.length);
 		}
 
-		ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-		DataOutputStream data = new DataOutputStream(bytes);
+		ByteBuf data = Unpooled.buffer();
 
 		try {
 			// In order to save space on message, we assuming dimensions ids
 			// small. Maybe worth using a varint instead
-			data.writeShort(tile.worldObj.provider.dimensionId);
+			data.writeShort(tile.getWorldObj().provider.dimensionId);
 			data.writeInt(tile.xCoord);
 			data.writeInt(tile.yCoord);
 			data.writeInt(tile.zCoord);
@@ -173,27 +177,24 @@ public class RPCHandler {
 				} else if (formals [i].equals(char.class)) {
 					data.writeChar((Character) actuals [i]);
 				} else if (formals [i].equals(String.class)) {
-					data.writeUTF((String) actuals [i]);
+					Utils.writeUTF(data, (String) actuals [i]);
 				} else {
 					m.mappings [i].setData(actuals [i], data);
 				}
 			}
-
-			data.flush();
-		} catch (IOException e) {
-			e.printStackTrace();
 		} catch (IllegalArgumentException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
-		return new PacketRPC(bytes.toByteArray());
+		byte [] bytes = new byte [data.readableBytes()];
+		data.readBytes(bytes);
+		
+		return new PacketRPC(bytes);
 	}
 
-	private void internalRpcReceive (TileEntity tile, RPCMessageInfo info, DataInputStream data) {
+	private void internalRpcReceive (TileEntity tile, RPCMessageInfo info, ByteBuf data) {
 		try {
 			short methodIndex = data.readShort();
 
@@ -210,7 +211,7 @@ public class RPCHandler {
 				} else if (formals [i].equals(char.class)) {
 					actuals [i] = data.readChar();
 				} else if (formals [i].equals(String.class)) {
-					actuals [i] = data.readUTF();
+					actuals [i] = Utils.readUTF(data);
 				} else {
 					actuals [i] = m.mappings [i].updateFromData(actuals [i], data);
 				}
@@ -221,8 +222,6 @@ public class RPCHandler {
 			}
 
 			m.method.invoke(tile, actuals);
-		} catch (IOException e) {
-			e.printStackTrace();
 		} catch (IllegalAccessException e) {
 			e.printStackTrace();
 		} catch (IllegalArgumentException e) {

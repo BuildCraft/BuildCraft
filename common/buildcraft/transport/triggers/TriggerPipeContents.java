@@ -1,8 +1,9 @@
 /**
- * Copyright (c) SpaceToad, 2011 http://www.mod-buildcraft.com
+ * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
+ * http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public License
- * 1.0, or MMPL. Please check the contents of the license located in
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
+ * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
 package buildcraft.transport.triggers;
@@ -20,9 +21,9 @@ import buildcraft.transport.pipes.PipePowerWood;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import java.util.Locale;
-import net.minecraft.client.renderer.texture.IconRegister;
-import net.minecraft.util.Icon;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.util.IIcon;
+import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
@@ -40,7 +41,7 @@ public class TriggerPipeContents extends BCTrigger implements IPipeTrigger {
 		public BCTrigger trigger;
 	};
 	private PipeContents kind;
-	private Icon icon;
+	private IIcon icon;
 
 	public TriggerPipeContents(PipeContents kind) {
 		super("buildcraft:pipe.contents." + kind.name().toLowerCase(Locale.ENGLISH), "buildcraft.pipe.contents." + kind.name());
@@ -74,7 +75,7 @@ public class TriggerPipeContents extends BCTrigger implements IPipeTrigger {
 			else if (kind == PipeContents.containsItems)
 				if (parameter != null && parameter.getItemStack() != null) {
 					for (TravelingItem item : transportItems.items) {
-						if (item.getItemStack().itemID == parameter.getItemStack().itemID
+						if (item.getItemStack().getItem() == parameter.getItemStack().getItem()
 								&& item.getItemStack().getItemDamage() == parameter.getItemStack().getItemDamage())
 							return true;
 					}
@@ -136,13 +137,13 @@ public class TriggerPipeContents extends BCTrigger implements IPipeTrigger {
 	}
 
 	@Override
-	public Icon getIcon() {
+	public IIcon getIcon() {
 		return icon;
 	}
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void registerIcons(IconRegister iconRegister) {
+	public void registerIcons(IIconRegister iconRegister) {
 		icon = iconRegister.registerIcon("buildcraft:triggers/trigger_pipecontents_" + kind.name().toLowerCase(Locale.ENGLISH));
 	}
 }

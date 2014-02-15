@@ -1,13 +1,19 @@
+/**
+ * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
+ * http://www.mod-buildcraft.com
+ *
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
+ * License 1.0, or MMPL. Please check the contents of the license located in
+ * http://www.mod-buildcraft.com/MMPL-1.0.txt
+ */
 package buildcraft.api.builder;
 
 import java.util.Random;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 
 /**
  * A collection of helpful functions to make your life easier.
- *
- * @author CovertJaguar <http://www.railcraft.info/>
  */
 public class BlueprintHelpers {
 
@@ -43,7 +49,7 @@ public class BlueprintHelpers {
 	public static ItemStack consumeItem(ItemStack stack) {
 		if (stack.stackSize == 1) {
 			if (stack.getItem().hasContainerItem()) {
-				return stack.getItem().getContainerItemStack(stack);
+				return stack.getItem().getContainerItem(stack);
 			} else {
 				return null;
 			}

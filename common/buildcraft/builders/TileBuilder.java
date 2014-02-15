@@ -1,8 +1,9 @@
 /**
- * Copyright (c) SpaceToad, 2011 http://www.mod-buildcraft.com
+ * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
+ * http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public License
- * 1.0, or MMPL. Please check the contents of the license located in
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
+ * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
 package buildcraft.builders;
@@ -31,8 +32,13 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.common.ForgeDirection;
-import static net.minecraftforge.common.ForgeDirection.*;
+
+import net.minecraftforge.common.util.ForgeDirection;
+
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.AxisAlignedBB;
+import net.minecraftforge.common.util.ForgeDirection;
 
 public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IPowerReceptor, IMachine {
 
@@ -58,8 +64,9 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 	public void updateEntity() {
 		super.updateEntity();
 
-		if (worldObj.isRemote)
+		if (worldObj.isRemote) {
 			return;
+		}
 
 		setupBuilder();
 	}
@@ -92,22 +99,22 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 			builderDone = false;
 		}
 		if (!builderDone && blueprintBuilder == null && blueprint != null) {
-			ForgeDirection blueprintOrientation = NORTH;
+			ForgeDirection blueprintOrientation = ForgeDirection.NORTH;
 			switch (ForgeDirection.getOrientation(getBlockMetadata())) {
 				case WEST:
-					blueprintOrientation = blueprintOrientation.getRotation(UP);
+					blueprintOrientation = blueprintOrientation.getRotation(ForgeDirection.UP);
 				case SOUTH:
-					blueprintOrientation = blueprintOrientation.getRotation(UP);
+					blueprintOrientation = blueprintOrientation.getRotation(ForgeDirection.UP);
 				case EAST:
-					blueprintOrientation = blueprintOrientation.getRotation(UP);
+					blueprintOrientation = blueprintOrientation.getRotation(ForgeDirection.UP);
 			}
 			switch (blueprint.anchorOrientation) {
 				case WEST:
-					blueprintOrientation = blueprintOrientation.getRotation(DOWN);
+					blueprintOrientation = blueprintOrientation.getRotation(ForgeDirection.DOWN);
 				case SOUTH:
-					blueprintOrientation = blueprintOrientation.getRotation(DOWN);
+					blueprintOrientation = blueprintOrientation.getRotation(ForgeDirection.DOWN);
 				case EAST:
-					blueprintOrientation = blueprintOrientation.getRotation(DOWN);
+					blueprintOrientation = blueprintOrientation.getRotation(ForgeDirection.DOWN);
 			}
 			blueprintBuilder = new BlueprintBuilder(blueprint, worldObj, xCoord, yCoord, zCoord, blueprintOrientation, invStock);
 			blueprintIterator = blueprintBuilder.getBuilders().listIterator();
@@ -137,19 +144,21 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 		}
 	}
 
+
 	private void build() {
-		if (blueprintBuilder == null)
+		if (blueprintBuilder == null) {
 			return;
-
-		if (blueprintIterator == null)
+		} else if (blueprintIterator == null) {
 			return;
-
-		if (!blueprintIterator.hasNext())
+		} else if (!blueprintIterator.hasNext()) {
 			return;
+		}
 
 		float mj = 25;
-		if (powerHandler.useEnergy(mj, mj, true) != mj)
+		
+		if (powerHandler.useEnergy(mj, mj, true) != mj) {
 			return;
+		}
 
 		if (builderRobot == null) {
 			builderRobot = new EntityRobot(worldObj, box);
@@ -196,7 +205,7 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 	}
 
 	@Override
-	public String getInvName() {
+	public String getInventoryName() {
 		return "Builder";
 	}
 
@@ -215,7 +224,7 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 
 	@Override
 	public boolean isUseableByPlayer(EntityPlayer entityplayer) {
-		return worldObj.getBlockTileEntity(xCoord, yCoord, zCoord) == this;
+		return worldObj.getTileEntity(xCoord, yCoord, zCoord) == this;
 	}
 
 	@Override
@@ -288,11 +297,11 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 	}
 
 	@Override
-	public void openChest() {
+	public void openInventory() {
 	}
 
 	@Override
-	public void closeChest() {
+	public void closeInventory() {
 	}
 
 	@Override
@@ -317,6 +326,11 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 
 	@Override
 	public boolean allowAction(IAction action) {
+		return false;
+	}
+
+	@Override
+	public boolean hasCustomInventoryName() {
 		return false;
 	}
 }
