@@ -130,19 +130,21 @@ public class ItemFacade extends ItemBuildCraft {
 						|| b.getRenderType() != 0) {
 					continue;
 				}
-			}			
-									
-			Item base = Item.getItemFromBlock(b);			
+			}													
 			
-			if (base != null) {
-				List <ItemStack> stackList = new ArrayList<ItemStack> ();
-				if ( FMLCommonHandler.instance().getSide() == Side.CLIENT ) {
-					base.getSubItems(base, null, stackList);
-				}
+			ItemStack base = new ItemStack(b, 1);
+			
+			if (base.getHasSubtypes()) {
+				Set<String> names = Sets.newHashSet();
 				
-				for (ItemStack s : stackList) {
-					ItemFacade.addFacade(s);
-				}				
+				for (int meta = 0; meta <= 15; meta++) {
+					ItemStack is = new ItemStack(b, 1, meta);
+					if (!Strings.isNullOrEmpty(is.getUnlocalizedName()) && names.add(is.getUnlocalizedName())) {
+						ItemFacade.addFacade(is);
+					}
+				}
+			} else {
+				ItemFacade.addFacade(base);
 			}
 		}
 	}
