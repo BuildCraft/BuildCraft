@@ -8,22 +8,6 @@
  */
 package buildcraft.transport;
 
-import buildcraft.BuildCraftTransport;
-import buildcraft.api.core.Position;
-import buildcraft.api.recipes.BuildcraftRecipes;
-import buildcraft.core.CreativeTabBuildCraft;
-import buildcraft.core.ItemBuildCraft;
-import buildcraft.core.proxy.CoreProxy;
-
-import com.google.common.base.Strings;
-import com.google.common.collect.Sets;
-
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -41,6 +25,17 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
+import buildcraft.BuildCraftTransport;
+import buildcraft.api.core.Position;
+import buildcraft.api.recipes.BuildcraftRecipes;
+import buildcraft.core.CreativeTabBuildCraft;
+import buildcraft.core.ItemBuildCraft;
+
+import com.google.common.base.Strings;
+import com.google.common.collect.Sets;
+
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class ItemFacade extends ItemBuildCraft {
 
@@ -109,12 +104,12 @@ public class ItemFacade extends ItemBuildCraft {
 	}
 
 	public static void initialize() {
-		for (Object o : Block.blockRegistry) {			
+		for (Object o : Block.blockRegistry) {
 			Block b = (Block) o;
 
 			if (!(b == Blocks.glass)) {
 				if (b == Blocks.bedrock
-						|| b == Blocks.grass 
+						|| b == Blocks.grass
 						|| b == Blocks.leaves
 						|| b == Blocks.sponge
 						|| b == Blocks.chest
@@ -123,17 +118,17 @@ public class ItemFacade extends ItemBuildCraft {
 						|| b == Blocks.lit_pumpkin) {
 					continue;
 				}
-					
-				if (!b.isOpaqueCube() 
+
+				if (!b.isOpaqueCube()
 						|| b.hasTileEntity(0)
-						|| !b.renderAsNormalBlock() 
+						|| !b.renderAsNormalBlock()
 						|| b.getRenderType() != 0) {
 					continue;
 				}
-			}													
-			
+			}
+
 			Item item = Item.getItemFromBlock(b);
-			
+
 			if (item != null) {
 				ItemStack base = new ItemStack(item, 1);
 
@@ -142,14 +137,23 @@ public class ItemFacade extends ItemBuildCraft {
 
 					for (int meta = 0; meta <= 15; meta++) {
 						ItemStack is = new ItemStack(item, 1, meta);
-						
+
 						if (!Strings.isNullOrEmpty(is.getUnlocalizedName())
 								&& names.add(is.getUnlocalizedName())) {
-							ItemFacade.addFacade(is);
+
+							try {
+								ItemFacade.addFacade(is);
+							} catch (Throwable t) {
+								t.printStackTrace();
+							}
 						}
 					}
 				} else {
-					ItemFacade.addFacade(base);
+					try {
+						ItemFacade.addFacade(base);
+					}  catch (Throwable t) {
+						t.printStackTrace();
+					}
 				}
 			}
 		}
@@ -186,7 +190,7 @@ public class ItemFacade extends ItemBuildCraft {
 
 		// 3 Structurepipes + this block makes 6 facades
 		BuildcraftRecipes.assemblyTable.addRecipe(8000, facade6, new ItemStack(BuildCraftTransport.pipeStructureCobblestone, 3), itemStack);
-		
+
 		Block bl = Block.getBlockFromItem(itemStack.getItem());
 
 		// Special handling for logs
@@ -199,9 +203,9 @@ public class ItemFacade extends ItemBuildCraft {
 					itemStack.getItemDamage() | 8);
 			allFacades.add(rotLog1);
 			allFacades.add(rotLog2);
-		}		
+		}
 	}
-	
+
 	private static final Block NULL_BLOCK = null;
 	private static final ItemStack NO_MATCH = new ItemStack(NULL_BLOCK, 0, 0);
 
@@ -240,8 +244,8 @@ public class ItemFacade extends ItemBuildCraft {
 			if (slotmatch != null && slotmatch != NO_MATCH) {
 				Block block = ItemFacade.getBlock(slotmatch);
 				int blockMeta = ItemFacade.getMetaData(slotmatch);
-				
-				
+
+
 				if (block != null && block.getRenderType() == 31 && (blockMeta & 0xC) == 0)
 					return getStack(block, (blockMeta & 0x3) | 4);
 				// Meta | 4 = true
@@ -280,7 +284,7 @@ public class ItemFacade extends ItemBuildCraft {
 	public static ItemStack getStack(Block block, int metadata) {
 		ItemStack stack = new ItemStack(BuildCraftTransport.facadeItem, 1, 0);
 		NBTTagCompound nbt = new NBTTagCompound();
-		nbt.setInteger("meta", metadata);		
+		nbt.setInteger("meta", metadata);
 		nbt.setInteger("id", Block.blockRegistry.getIDForObject(block));
 		stack.setTagCompound(nbt);
 		return stack;
