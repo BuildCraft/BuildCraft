@@ -13,18 +13,32 @@ import java.util.Set;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.core.DefaultProps;
+import buildcraft.core.inventory.TransactorSimple;
+import buildcraft.transport.PipeTransportItems;
+import buildcraft.transport.TileGenericPipe;
+import buildcraft.transport.TravelingItem;
 
-public class EntityRobotPicker extends EntityRobot {
+public class EntityRobotPicker extends EntityRobot implements IInventory {
 
 	private static ResourceLocation texture = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_ENTITIES + "/robot_picker.png");
 
 	SafeTimeTracker scanTracker = new SafeTimeTracker(40, 10);
 	SafeTimeTracker pickTracker = new SafeTimeTracker(20, 0);
+	SafeTimeTracker unloadTracker = new SafeTimeTracker(20, 0);
+
+	TransactorSimple inventoryInsert = new TransactorSimple(this);
+
 	int pickTime = -1;
+
+	ItemStack inv [] = new ItemStack [6];
 
 	public EntityRobotPicker(World par1World) {
 		super(par1World);
@@ -64,16 +78,50 @@ public class EntityRobotPicker extends EntityRobot {
 				pickTime++;
 
 				if (pickTime > 20) {
-					target.setDead();
+
+					target.getEntityItem().stackSize -= inventoryInsert.inject(
+							target.getEntityItem(), ForgeDirection.UNKNOWN,
+							true);
+
+					if (target.getEntityItem().stackSize <= 0) {
+						target.setDead();
+					}
 				}
 			}
 		} else {
+			if (currentAI instanceof AIDocked) {
+				TileGenericPipe pipe = (TileGenericPipe) worldObj
+						.getTileEntity(dockingStation.x, dockingStation.y,
+								dockingStation.z);
+
+				if (pipe.pipe.transport instanceof PipeTransportItems) {
+					if (unloadTracker.markTimeIfDelay(worldObj)) {
+						for (int i = 0; i < inv.length; ++i) {
+							if (inv[i] != null) {
+								float cx = dockingStation.x + 0.5F + 0.2F * dockingStation.side.offsetX;
+								float cy = dockingStation.y + 0.5F + 0.2F * dockingStation.side.offsetY;
+								float cz = dockingStation.z + 0.5F + 0.2F * dockingStation.side.offsetZ;
+
+								TravelingItem item = TravelingItem.make(cx, cy,
+										cz, inv[i]);
+
+								((PipeTransportItems) pipe.pipe.transport)
+										.injectItem(item, dockingStation.side.getOpposite());
+
+								inv[i] = null;
+
+								break;
+							}
+						}
+					}
+				}
+			}
+
 			if (scanTracker.markTimeIfDelay(worldObj)) {
 				scan ();
 			}
 		}
 	}
-
 
 	public void scan () {
 		for (Object o : worldObj.loadedEntityList) {
@@ -89,13 +137,91 @@ public class EntityRobotPicker extends EntityRobot {
 
 				if (sqrDistance <= maxDistance) {
 					EntityItem item = (EntityItem) e;
-					target = item;
-					targettedItems.add(e.getEntityId());
-					currentAI = new AIMoveAround(this, (float) e.posX, (float) e.posY, (float) e.posZ);
-					pickTime = -1;
-					break;
+
+					if (inventoryInsert.inject(item.getEntityItem(),
+							ForgeDirection.UNKNOWN, false) > 0) {
+
+						target = item;
+						targettedItems.add(e.getEntityId());
+						currentAI = new AIMoveAround(this, (float) e.posX,
+								(float) e.posY, (float) e.posZ);
+						pickTime = -1;
+
+						break;
+					}
 				}
 			}
 		}
+	}
+
+	@Override
+	public int getSizeInventory() {
+		return inv.length;
+	}
+
+	@Override
+	public ItemStack getStackInSlot(int var1) {
+		return inv [var1];
+	}
+
+	@Override
+	public ItemStack decrStackSize(int var1, int var2) {
+		ItemStack result = inv [var1].splitStack(var2);
+
+		if (inv [var1].stackSize == 0) {
+			inv [var1] = null;
+		}
+
+		return result;
+	}
+
+	@Override
+	public ItemStack getStackInSlotOnClosing(int var1) {
+		return inv [var1].splitStack(var1);
+	}
+
+	@Override
+	public void setInventorySlotContents(int var1, ItemStack var2) {
+		inv [var1] = var2;
+	}
+
+	@Override
+	public String getInventoryName() {
+		return null;
+	}
+
+	@Override
+	public boolean hasCustomInventoryName() {
+		return false;
+	}
+
+	@Override
+	public int getInventoryStackLimit() {
+		return 64;
+	}
+
+	@Override
+	public void markDirty() {
+	}
+
+	@Override
+	public boolean isUseableByPlayer(EntityPlayer var1) {
+		return false;
+	}
+
+	@Override
+	public void openInventory() {
+	}
+
+	@Override
+	public void closeInventory() {
+	}
+
+	@Override
+	public boolean isItemValidForSlot(int var1, ItemStack var2) {
+		return inv[var1] == null
+				|| (inv[var1].isItemEqual(var2) && inv[var1].isStackable() && inv[var1].stackSize
+						+ var2.stackSize <= inv[var1].getItem()
+						.getItemStackLimit());
 	}
 }

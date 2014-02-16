@@ -8,238 +8,166 @@
  */
 package buildcraft.core.robots;
 
-import io.netty.buffer.ByteBuf;
-
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.block.Block;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
-import buildcraft.builders.blueprints.BlueprintBuilder.SchematicBuilder;
-import buildcraft.core.BlockIndex;
-import buildcraft.core.Box;
-import buildcraft.core.utils.BCLog;
-import buildcraft.core.utils.BlockUtil;
+import buildcraft.builders.blueprints.IBlueprintBuilderAgent;
+import buildcraft.core.proxy.CoreProxy;
 import cpw.mods.fml.common.registry.IEntityAdditionalSpawnData;
 
-public class EntityRobotBuilder extends EntityRobot implements IEntityAdditionalSpawnData {
+public class EntityRobotBuilder extends EntityRobot implements
+		IEntityAdditionalSpawnData, IBlueprintBuilderAgent, IInventory {
 
-	private Box box;
+	ItemStack buildingStack = null;
 
-	public LinkedList<SchematicBuilder> targets = new LinkedList<SchematicBuilder>();
-	public static int MAX_TARGETS = 20;
-	public int wait = 0;
-
-	public EntityRobotBuilder(World world) {
-		super(world);
+	public EntityRobotBuilder(World par1World) {
+		super (par1World);
 	}
 
-	public EntityRobotBuilder(World world, Box box) {
-		super(world);
-
-		this.box = box;
-	}
-
+	/**
+	 * Operate a block break. Return true is the block has indeed been broken.
+	 */
 	@Override
-	protected void init() {
-		if (box != null) {
-			//setDestination((int) box.centerX(), (int) box.centerY(), (int) box.centerZ());
+	public boolean breakBlock (int x, int y, int z) {
+		Block block = worldObj.getBlock(x, y, z);
+
+		if (block != null) {
+			curBlockDamage += 1 / (block.getBlockHardness(worldObj, x,y, z) * 20);
 		}
 
-		super.init();
-	}
+		if (block != null && curBlockDamage < 1) {
+			worldObj.destroyBlockInWorldPartially(getEntityId(), x, y, z,
+					(int) (this.curBlockDamage * 10.0F) - 1);
 
-	@Override
-	public void writeSpawnData(ByteBuf data) {
-		super.writeSpawnData(data);
+			setLaserDestination(x + 0.5F, y + 0.5F, z + 0.5F);
+			showLaser();
 
-		if (box == null) {
-			box = new Box();
+			return false;
+		} else {
+			worldObj.destroyBlockInWorldPartially(getEntityId(), x, y, z, -1);
+			worldObj.setBlock(x, y, z, Blocks.air);
+			curBlockDamage = 0;
+
+			hideLaser();
+
+			return true;
 		}
-
-		data.writeInt(box.xMin);
-		data.writeInt(box.yMin);
-		data.writeInt(box.zMin);
-		data.writeInt(box.xMax);
-		data.writeInt(box.yMax);
-		data.writeInt(box.zMax);
 	}
 
 	@Override
-	public void readSpawnData(ByteBuf data) {
+	public boolean buildBlock(int x, int y, int z) {
+		if (buildingStack == null) {
+			if (worldObj.getBlock(x, y, z) != Blocks.air) {
+				breakBlock(x, y, z);
+			} else {
+				setLaserDestination(x + 0.5F, y + 0.5F, z + 0.5F);
+				showLaser();
 
-		box = new Box();
-		box.xMin = data.readInt();
-		box.yMin = data.readInt();
-		box.zMin = data.readInt();
-		box.xMax = data.readInt();
-		box.yMax = data.readInt();
-		box.zMax = data.readInt();
-
-		super.readSpawnData(data);
-	}
-
-	@Override
-	protected void entityInit() {
-		super.entityInit();
-	}
-
-	@Override
-	public void readEntityFromNBT(NBTTagCompound nbttagcompound) {
-		super.readEntityFromNBT(nbttagcompound);
-	}
-
-	@Override
-	public void writeEntityToNBT(NBTTagCompound nbttagcompound) {
-		super.writeEntityToNBT(nbttagcompound);
-	}
-
-	@Override
-	protected void move() {
-		super.move();
-
-		/*if (reachedDesination()) {
-			BlockIndex newDesination = getNewDestination();
-
-			if (newDesination != null) {
-				setDestination(newDesination.x, newDesination.y, newDesination.z);
+				buildingStack = getInventory().decrStackSize(0, 1);
+				buildEnergy = 0;
 			}
-		}*/
-	}
 
-	@Override
-	public void onUpdate() {
-		super.onUpdate();
+			return false;
+		} else {
+			buildEnergy++;
 
-		if (worldObj.isRemote) {
-			return;
-		}
+			if (buildEnergy >= 25) {
+				buildingStack.getItem().onItemUse(buildingStack,
+						CoreProxy.proxy.getBuildCraftPlayer(worldObj),
+						worldObj, x, y - 1, z, 1, 0.0f, 0.0f, 0.0f);
 
-		build();
-		updateLaser();
-	}
+				buildingStack = null;
 
-	protected BlockIndex getNewDestination() {
-
-		Box movementBoundary = new Box();
-		movementBoundary.initialize(box);
-		movementBoundary.expand(1);
-
-		Box moveArea = new Box();
-		//moveArea.initialize((int) destX, (int) destY, (int) destZ, 1);
-
-		List<BlockIndex> potentialDestinations = new ArrayList<BlockIndex>();
-		for (BlockIndex blockIndex : moveArea.getBlocksInArea()) {
-
-			if (BlockUtil.isSoftBlock(worldObj, blockIndex.x, blockIndex.y, blockIndex.z) && movementBoundary.contains(blockIndex)) {
-				potentialDestinations.add(blockIndex);
+				hideLaser();
+				return true;
+			} else {
+				return false;
 			}
 		}
+	}
 
-		if (!potentialDestinations.isEmpty()) {
+	@Override
+	public IInventory getInventory() {
+		return this;
+	}
 
-			int i = worldObj.rand.nextInt(potentialDestinations.size());
-			return potentialDestinations.get(i);
-		}
+	@Override
+	public int getSizeInventory() {
+		return 1;
+	}
 
+	@Override
+	public ItemStack getStackInSlot(int i) {
+		// Fake inventory filled with bricks
+		return new ItemStack(Blocks.brick_block);
+	}
+
+	@Override
+	public ItemStack decrStackSize(int i, int j) {
+		// Fake inventory filled with bricks
+		return new ItemStack(Blocks.brick_block);
+	}
+
+	@Override
+	public ItemStack getStackInSlotOnClosing(int i) {
+		// TODO Auto-generated method stub
 		return null;
 	}
 
-	protected void build() {
-		updateWait();
+	@Override
+	public void setInventorySlotContents(int i, ItemStack itemstack) {
+		// TODO Auto-generated method stub
 
-		if (wait <= 0 && !targets.isEmpty()) {
-
-			SchematicBuilder target = targets.peek();
-			if (target.blockExists()) {
-				target.markComplete();
-				targets.pop();
-			} else if (BlockUtil.canChangeBlock(worldObj, target.getX(), target.getY(), target.getZ())) {
-				//System.out.printf("RobotChanging %d %d %d %s\n",target.x, target.y, target.z, target.mode);
-
-				if (!worldObj.isAirBlock(target.getX(), target.getY(), target.getZ())) {
-					BlockUtil.breakBlock(worldObj, target.getX(), target.getY(), target.getZ());
-				} else {
-
-					targets.pop();
-					try {
-						target.build(this);
-					} catch (Throwable t) {
-						target.markComplete();
-						targets.pop();
-						// Defensive code against errors in implementers
-						t.printStackTrace();
-						BCLog.logger.throwing("EntityRobot", "update", t);
-					}
-					if (!target.isComplete()) {
-						targets.addLast(target);
-					}
-				}
-			}
-		}
-	}
-
-	public void updateWait() {
-
-		if (targets.size() > 0)
-			if (wait == 0) {
-				wait = MAX_TARGETS - targets.size() + 2;
-			} else {
-				wait--;
-			}
-	}
-
-	private void updateLaser() {
-
-		/*if (laser == null)
-			return;
-
-		if (targets.size() > 0) {
-
-			SchematicBuilder target = targets.getFirst();
-
-			if (target != null) {
-				laser.setPositions(new Position(posX, posY, posZ), new Position(target.getX() + 0.5, target.getY() + 0.5, target.getZ() + 0.5));
-				laser.show();
-			}
-		} else {
-			laser.hide();
-		}
-
-		laser.pushPower(((float) targets.size()) / ((float) MAX_TARGETS) * 4F);*/
-	}
-
-	public boolean scheduleContruction(SchematicBuilder schematic) {
-		if (!readyToBuild()) {
-			return false;
-		}
-
-		if (schematic != null && !schematic.blockExists()) {
-			return targets.add(schematic);
-		}
-
-		return false;
-	}
-
-	public boolean readyToBuild() {
-		return targets.size() < MAX_TARGETS;
-	}
-
-	public boolean done() {
-		return targets.isEmpty();
-	}
-
-	public void setBox(Box box) {
-		this.box = box;
-		//setDestination((int) box.centerX(), (int) box.centerY(), (int) box.centerZ());
 	}
 
 	@Override
-	public void setDead() {
-		/*if (laser != null) {
-			laser.setDead();
-		}*/
-		super.setDead();
+	public int getInventoryStackLimit() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public boolean isUseableByPlayer(EntityPlayer entityplayer) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean isItemValidForSlot(int i, ItemStack itemstack) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public String getInventoryName() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean hasCustomInventoryName() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void markDirty() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void openInventory() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void closeInventory() {
+		// TODO Auto-generated method stub
+
 	}
 }

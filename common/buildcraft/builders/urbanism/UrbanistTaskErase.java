@@ -36,10 +36,10 @@ public class UrbanistTaskErase extends UrbanistTask {
 		}
 
 		if (inBreak) {
-			if (robot.breakBlock(x, y, z)) {
-				isDone = true;
-				robot.hideLaser();
-			}
+			//if (robot.breakBlock(x, y, z)) {
+			//	isDone = true;
+			//	robot.hideLaser();
+			//}
 		}
 	}
 

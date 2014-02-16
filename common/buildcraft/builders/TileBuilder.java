@@ -8,6 +8,14 @@
  */
 package buildcraft.builders;
 
+import java.io.IOException;
+import java.util.ListIterator;
+
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.api.core.LaserKind;
 import buildcraft.api.gates.IAction;
 import buildcraft.api.power.IPowerReceptor;
@@ -22,24 +30,9 @@ import buildcraft.core.IMachine;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.inventory.InventoryMapper;
 import buildcraft.core.inventory.SimpleInventory;
-import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.network.NetworkData;
+import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.robots.EntityRobotBuilder;
-
-import java.io.IOException;
-import java.util.ListIterator;
-
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-
-import net.minecraftforge.common.util.ForgeDirection;
-
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraftforge.common.util.ForgeDirection;
 
 public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IPowerReceptor, IMachine {
 
@@ -156,28 +149,28 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 		}
 
 		float mj = 25;
-		
+
 		if (powerHandler.useEnergy(mj, mj, true) != mj) {
 			return;
 		}
 
-		if (builderRobot == null) {
-			builderRobot = new EntityRobotBuilder(worldObj, box);
-			worldObj.spawnEntityInWorld(builderRobot);
-		}
+		//if (builderRobot == null) {
+		//	builderRobot = new EntityRobotBuilder(worldObj, box);
+		//	worldObj.spawnEntityInWorld(builderRobot);
+		//}
 
-		if (builderRobot.readyToBuild()) {
-			while (blueprintIterator.hasNext()) {
-				if (builderRobot.scheduleContruction(blueprintIterator.next())) {
-					powerHandler.useEnergy(0, 25, true);
-					break;
-				}
-			}
-		}
+		//if (builderRobot.readyToBuild()) {
+		//	while (blueprintIterator.hasNext()) {
+		//		if (builderRobot.scheduleContruction(blueprintIterator.next())) {
+		//			powerHandler.useEnergy(0, 25, true);
+		//			break;
+		//		}
+		//	}
+		//}
 	}
 
 	public boolean hasWorkScheduled() {
-		return (blueprintIterator != null && blueprintIterator.hasNext()) || (builderRobot != null && !builderRobot.done());
+		return (blueprintIterator != null && blueprintIterator.hasNext()) || (builderRobot != null /*&& !builderRobot.done()*/);
 	}
 
 	@Override

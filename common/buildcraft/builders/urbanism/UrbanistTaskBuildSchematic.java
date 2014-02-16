@@ -36,9 +36,9 @@ public class UrbanistTaskBuildSchematic extends UrbanistTask {
 		}
 
 		if (inBuild) {
-			if (builder.build(robot)) {
-				task.taskDone();
-			}
+			//if (builder.build(robot)) {
+			//	task.taskDone();
+			//}
 		}
 	}
 

@@ -8,24 +8,6 @@
  */
 package buildcraft.transport;
 
-import buildcraft.BuildCraftTransport;
-import buildcraft.api.core.Position;
-import buildcraft.api.gates.ITrigger;
-import buildcraft.api.inventory.ISpecialInventory;
-import buildcraft.api.transport.IPipeTile.PipeType;
-import buildcraft.core.DefaultProps;
-import buildcraft.core.IMachine;
-import buildcraft.core.inventory.Transactor;
-import buildcraft.core.proxy.CoreProxy;
-import buildcraft.core.utils.BCLog;
-import buildcraft.core.utils.BlockUtil;
-import buildcraft.core.utils.MathUtils;
-import buildcraft.core.utils.Utils;
-import buildcraft.transport.network.PacketPipeTransportItemStackRequest;
-import buildcraft.transport.network.PacketPipeTransportTraveler;
-import buildcraft.transport.pipes.events.PipeEventItem;
-import buildcraft.transport.utils.TransportUtils;
-
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.LinkedList;
@@ -39,6 +21,22 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
+import buildcraft.BuildCraftTransport;
+import buildcraft.api.core.Position;
+import buildcraft.api.gates.ITrigger;
+import buildcraft.api.inventory.ISpecialInventory;
+import buildcraft.api.transport.IPipeTile.PipeType;
+import buildcraft.core.DefaultProps;
+import buildcraft.core.IMachine;
+import buildcraft.core.inventory.Transactor;
+import buildcraft.core.utils.BCLog;
+import buildcraft.core.utils.BlockUtil;
+import buildcraft.core.utils.MathUtils;
+import buildcraft.core.utils.Utils;
+import buildcraft.transport.network.PacketPipeTransportItemStackRequest;
+import buildcraft.transport.network.PacketPipeTransportTraveler;
+import buildcraft.transport.pipes.events.PipeEventItem;
+import buildcraft.transport.utils.TransportUtils;
 
 public class PipeTransportItems extends PipeTransport {
 
@@ -253,7 +251,7 @@ public class PipeTransportItems extends PipeTransport {
 
 	private void moveSolids() {
 		items.flush();
-		
+
 		if (!container.getWorldObj().isRemote)
 			items.purgeCorruptedItems();
 
@@ -418,7 +416,7 @@ public class PipeTransportItems extends PipeTransport {
 	 */
 	public void handleTravelerPacket(PacketPipeTransportTraveler packet) {
 		TravelingItem item = TravelingItem.clientCache.get(packet.getTravelingEntityId());
-		
+
 		if (item == null) {
 			item = TravelingItem.make(packet.getTravelingEntityId());
 		}

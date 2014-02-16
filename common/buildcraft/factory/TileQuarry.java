@@ -171,13 +171,13 @@ public class TileQuarry extends TileBuildCraft implements IMachine, IPowerRecept
 		createUtilsIfNeeded();
 
 		if (blueprintBuilder != null) {
-			builderDone = !blueprintIterator.hasNext();
-			if (!builderDone) {
-				buildFrame();
-				return;
-			} else if (builder != null && builder.done()) {
-				killBuilder();
-			}
+			//builderDone = !blueprintIterator.hasNext();
+			//if (!builderDone) {
+			//	buildFrame();
+			//	return;
+			//} else if (builder != null && builder.done()) {
+			//	killBuilder();
+			//}
 		}
 
 		if (builder == null) {
@@ -206,19 +206,19 @@ public class TileQuarry extends TileBuildCraft implements IMachine, IPowerRecept
 			return;
 		}
 
-		if (builder == null) {
-			builder = new EntityRobotBuilder(worldObj, box);
-			worldObj.spawnEntityInWorld(builder);
-		}
+		//if (builder == null) {
+		//	builder = new EntityRobotBuilder(worldObj, box);
+		//	worldObj.spawnEntityInWorld(builder);
+		//}
 
-		if (builder.readyToBuild()) {
-			while (blueprintIterator.hasNext()) {
-				if (builder.scheduleContruction(blueprintIterator.next())) {
-					powerHandler.useEnergy(0, 25, true);
-					break;
-				}
-			}
-		}
+		//if (builder.readyToBuild()) {
+		//	while (blueprintIterator.hasNext()) {
+		//		if (builder.scheduleContruction(blueprintIterator.next())) {
+		//			powerHandler.useEnergy(0, 25, true);
+		//			break;
+		//		}
+		//	}
+		//}
 	}
 
 	protected void dig() {
