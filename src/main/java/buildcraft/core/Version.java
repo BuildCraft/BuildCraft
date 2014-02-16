@@ -26,8 +26,8 @@ public class Version implements Runnable {
 
 		CURRENT, OUTDATED, CONNECTION_ERROR
 	}
-	public static final String VERSION = "@VERSION@";
-	public static final String BUILD_NUMBER = "@BUILD_NUMBER@";
+	public static final String VERSION = "5.0.0";
+	public static final String BUILD_NUMBER = "58";
 	private static final String REMOTE_VERSION_FILE = "http://bit.ly/buildcraftversion";
 	private static final String REMOTE_CHANGELOG_ROOT = "https://dl.dropboxusercontent.com/u/38558957/Minecraft/Buildcraft/changelogs/";
 	public static EnumUpdateState currentVersion = EnumUpdateState.CURRENT;
