@@ -1,3 +1,6 @@
-/bin
+# gradle
+/.gradle
 /build
-/download
+
+# ForgeGradle
+/run
