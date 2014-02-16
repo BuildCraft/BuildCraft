@@ -77,7 +77,7 @@ public class GuiBlueprintLibrary extends GuiBuildCraft {
 	protected void drawGuiContainerForegroundLayer(int par1, int par2) {
 		// fontRenderer.drawString(library.owner + "'s Library", 6, 6,
 		// 0x404040);
-		String title = StringUtils.localize("tile.libraryBlock");
+		String title = StringUtils.localize("tile.libraryBlock.name");
 		fontRendererObj.drawString(title, getCenteredOffset(title), 6, 0x404040);
 
 		int c = 0;

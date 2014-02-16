@@ -184,43 +184,33 @@ public class BuildCraftFactory extends BuildCraftMod {
 		
 		miningWellBlock = new BlockMiningWell();
 		CoreProxy.proxy.registerBlock(miningWellBlock.setBlockName("miningWellBlock"));
-		CoreProxy.proxy.addName(miningWellBlock, "Mining Well");
 		
 		plainPipeBlock = new BlockPlainPipe();
 		CoreProxy.proxy.registerBlock(plainPipeBlock.setBlockName("plainPipeBlock"));
-		CoreProxy.proxy.addName(plainPipeBlock, "Mining Pipe");
 				
 		autoWorkbenchBlock = new BlockAutoWorkbench();
 		CoreProxy.proxy.registerBlock(autoWorkbenchBlock.setBlockName("autoWorkbenchBlock"));
-		CoreProxy.proxy.addName(autoWorkbenchBlock, "Automatic Crafting Table");
 			
 		frameBlock = new BlockFrame();
 		CoreProxy.proxy.registerBlock(frameBlock.setBlockName("frameBlock"));
-		CoreProxy.proxy.addName(frameBlock, "Frame");
 						
 		quarryBlock = new BlockQuarry();
 		CoreProxy.proxy.registerBlock(quarryBlock.setBlockName("machineBlock"));
-		CoreProxy.proxy.addName(quarryBlock, "Quarry");
 		
 		tankBlock = new BlockTank();
 		CoreProxy.proxy.registerBlock(tankBlock.setBlockName("tankBlock"));
-		CoreProxy.proxy.addName(tankBlock, "Tank");
 
 		pumpBlock = new BlockPump();
 		CoreProxy.proxy.registerBlock(pumpBlock.setBlockName("pumpBlock"));
-		CoreProxy.proxy.addName(pumpBlock, "Pump");
 		
 		floodGateBlock = new BlockFloodGate();
 		CoreProxy.proxy.registerBlock(floodGateBlock.setBlockName("floodGateBlock"));
-		CoreProxy.proxy.addName(floodGateBlock, "Flood Gate");
 		
 		refineryBlock = new BlockRefinery();
 		CoreProxy.proxy.registerBlock(refineryBlock.setBlockName("refineryBlock"));
-		CoreProxy.proxy.addName(refineryBlock, "Refinery");
 		
 		hopperBlock = new BlockHopper();
 		CoreProxy.proxy.registerBlock(hopperBlock.setBlockName("blockHopper"));
-		CoreProxy.proxy.addName(hopperBlock, "Hopper");
 		
 
 		FactoryProxy.proxy.initializeEntityRenders();

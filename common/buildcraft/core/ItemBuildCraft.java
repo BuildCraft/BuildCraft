@@ -28,11 +28,6 @@ public class ItemBuildCraft extends Item {
 	}
 
 	@Override
-	public String getItemStackDisplayName(ItemStack itemstack) {
-		return StringUtils.localize(getUnlocalizedName(itemstack));
-	}
-
-	@Override
 	public Item setUnlocalizedName(String par1Str) {
 		iconName = par1Str;
 		return super.setUnlocalizedName(par1Str);

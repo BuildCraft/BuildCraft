@@ -8,6 +8,22 @@
  */
 package buildcraft;
 
+import java.util.TreeMap;
+
+import net.minecraft.block.Block;
+import net.minecraft.block.material.Material;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.world.biome.BiomeGenBase;
+import net.minecraftforge.client.event.TextureStitchEvent;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.config.Configuration;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidContainerRegistry;
+import net.minecraftforge.fluids.FluidRegistry;
+import net.minecraftforge.fluids.FluidStack;
 import buildcraft.api.fuels.IronEngineCoolant;
 import buildcraft.api.fuels.IronEngineFuel;
 import buildcraft.api.recipes.BuildcraftRecipes;
@@ -16,19 +32,16 @@ import buildcraft.core.BlockSpring;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.InterModComms;
 import buildcraft.core.Version;
-import buildcraft.core.fluids.BCFluid;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.triggers.BCTrigger;
 import buildcraft.energy.BlockBuildcraftFluid;
 import buildcraft.energy.BlockEnergyEmitter;
 import buildcraft.energy.BlockEnergyReceiver;
 import buildcraft.energy.BlockEngine;
-import buildcraft.energy.BptBlockEngine;
 import buildcraft.energy.EnergyProxy;
 import buildcraft.energy.GuiHandler;
 import buildcraft.energy.ItemBucketBuildcraft;
 import buildcraft.energy.ItemEngine;
-import buildcraft.energy.BucketHandler;
 import buildcraft.energy.TileEnergyEmitter;
 import buildcraft.energy.TileEnergyReceiver;
 import buildcraft.energy.TileEngine.EnergyStage;
@@ -50,24 +63,6 @@ import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-
-import java.util.TreeMap;
-
-import net.minecraft.block.Block;
-import net.minecraft.block.material.Material;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.world.biome.BiomeGenBase;
-import net.minecraftforge.client.event.TextureStitchEvent;
-import net.minecraftforge.common.config.Configuration;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.config.Property;
-import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidContainerRegistry;
-import net.minecraftforge.fluids.FluidRegistry;
-import net.minecraftforge.fluids.FluidStack;
 
 @Mod(name = "BuildCraft Energy", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Energy", dependencies = DefaultProps.DEPENDENCY_CORE)
 public class BuildCraftEnergy extends BuildCraftMod {
@@ -104,9 +99,9 @@ public class BuildCraftEnergy extends BuildCraftMod {
 	public static BuildCraftEnergy instance;
 
 	@EventHandler
-	public void preInit(FMLPreInitializationEvent evt) {		
-		int oilDesertBiomeId = BuildCraftCore.mainConfiguration.get("biomes", "oilDesert", DefaultProps.BIOME_OIL_DESERT).getInt(DefaultProps.BIOME_OIL_DESERT);
-		int oilOceanBiomeId = BuildCraftCore.mainConfiguration.get("biomes", "oilOcean", DefaultProps.BIOME_OIL_OCEAN).getInt(DefaultProps.BIOME_OIL_OCEAN);
+	public void preInit(FMLPreInitializationEvent evt) {
+		int oilDesertBiomeId = BuildCraftCore.mainConfiguration.get("biomes", "biomeOilDesert", DefaultProps.BIOME_OIL_DESERT).getInt(DefaultProps.BIOME_OIL_DESERT);
+		int oilOceanBiomeId = BuildCraftCore.mainConfiguration.get("biomes", "biomeOilOcean", DefaultProps.BIOME_OIL_OCEAN).getInt(DefaultProps.BIOME_OIL_OCEAN);
 		canOilBurn = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "burnOil", true, "Can oil burn?").getBoolean(true);
 		oilWellScalar = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "oilWellGenerationRate", 1.0, "Probability of oil well generation").getDouble(1.0);
 
@@ -145,24 +140,23 @@ public class BuildCraftEnergy extends BuildCraftMod {
 
 
 		// Oil and fuel
-		buildcraftFluidOil = new BCFluid("oil").setDensity(800).setViscosity(1500);
+		buildcraftFluidOil = new Fluid("oil").setDensity(800).setViscosity(1500);
 		FluidRegistry.registerFluid(buildcraftFluidOil);
 		fluidOil = FluidRegistry.getFluid("oil");
 
-		buildcraftFluidFuel = new BCFluid("fuel");
+		buildcraftFluidFuel = new Fluid("fuel");
 		FluidRegistry.registerFluid(buildcraftFluidFuel);
 		fluidFuel = FluidRegistry.getFluid("fuel");
 
-		buildcraftFluidRedPlasma = new BCFluid("redplasma").setDensity(10000).setViscosity(10000).setLuminosity(30);
+		buildcraftFluidRedPlasma = new Fluid("redplasma").setDensity(10000).setViscosity(10000).setLuminosity(30);
 		FluidRegistry.registerFluid(buildcraftFluidRedPlasma);
 		fluidRedPlasma = FluidRegistry.getFluid("redplasma");
 
 		if (fluidOil.getBlock() == null) {
 			blockOil = new BlockBuildcraftFluid(fluidOil, Material.water).setFlammable(canOilBurn).setFlammability(0);
 			blockOil.setBlockName("blockOil");
-			CoreProxy.proxy.addName(blockOil, "Oil");
 			CoreProxy.proxy.registerBlock(blockOil);
-			fluidOil.setBlock(blockOil);		
+			fluidOil.setBlock(blockOil);
 		} else {
 			blockOil = fluidOil.getBlock();
 		}
@@ -176,17 +170,15 @@ public class BuildCraftEnergy extends BuildCraftMod {
 		if (fluidFuel.getBlock() == null) {
 			blockFuel = new BlockBuildcraftFluid(fluidFuel, Material.water).setFlammable(true).setFlammability(5).setParticleColor(0.7F, 0.7F, 0.0F);
 			blockFuel.setBlockName("blockFuel");
-			CoreProxy.proxy.addName(blockFuel, "Fuel");
 			CoreProxy.proxy.registerBlock(blockFuel);
-			fluidFuel.setBlock(blockFuel);			
+			fluidFuel.setBlock(blockFuel);
 		} else {
 			blockFuel = fluidFuel.getBlock();
 		}
 
-		if (fluidRedPlasma.getBlock() == null) {			
+		if (fluidRedPlasma.getBlock() == null) {
 			blockRedPlasma = new BlockBuildcraftFluid(fluidRedPlasma, Material.water).setFlammable(false).setParticleColor(0.9F, 0, 0);
 			blockRedPlasma.setBlockName("blockRedPlasma");
-			CoreProxy.proxy.addName(blockRedPlasma, "Red Plasma");
 			CoreProxy.proxy.registerBlock(blockRedPlasma);
 			fluidRedPlasma.setBlock(blockRedPlasma);
 		} else {
@@ -219,7 +211,7 @@ public class BuildCraftEnergy extends BuildCraftMod {
 			FluidContainerRegistry.registerFluidContainer(FluidRegistry.getFluidStack("redplasma", FluidContainerRegistry.BUCKET_VOLUME), new ItemStack(bucketRedPlasma), new ItemStack(Items.bucket));
 		}
 
-		// TODO: Are these still really necessary? If not, remove the 
+		// TODO: Are these still really necessary? If not, remove the
 		// BucketHandler class as well.
 		//BucketHandler.INSTANCE.buckets.put(blockOil, bucketOil);
 		//BucketHandler.INSTANCE.buckets.put(blockFuel, bucketFuel);
@@ -240,12 +232,10 @@ public class BuildCraftEnergy extends BuildCraftMod {
 
 		emitterBlock = new BlockEnergyEmitter ();
 		CoreProxy.proxy.registerBlock(emitterBlock.setBlockName("energyEmitterBlock"));
-		CoreProxy.proxy.addName(emitterBlock, "Energy Emitter");
 		CoreProxy.proxy.registerTileEntity(TileEnergyEmitter.class, "net.minecraft.src.builders.TileEnergyEmitter");
 
 		receiverBlock = new BlockEnergyReceiver ();
 		CoreProxy.proxy.registerBlock(receiverBlock.setBlockName("energyReceiverBlock"));
-		CoreProxy.proxy.addName(receiverBlock, "Energy Receiver");
 		CoreProxy.proxy.registerTileEntity(TileEnergyReceiver.class, "net.minecraft.src.builders.TileEnergyReceiver");
 
 		MinecraftForge.EVENT_BUS.register(this);
@@ -255,8 +245,8 @@ public class BuildCraftEnergy extends BuildCraftMod {
 	public void init(FMLInitializationEvent evt) {
 		channels = NetworkRegistry.INSTANCE.newChannel
 				(DefaultProps.NET_CHANNEL_NAME + "-ENERGY", new PacketHandlerTransport());
-		
-		NetworkRegistry.INSTANCE.registerGuiHandler(instance, new GuiHandler());		
+
+		NetworkRegistry.INSTANCE.registerGuiHandler(instance, new GuiHandler());
 
 		//new BptBlockEngine(engineBlock.blockID);
 

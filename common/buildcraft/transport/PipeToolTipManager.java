@@ -8,14 +8,18 @@
  */
 package buildcraft.transport;
 
-import buildcraft.core.utils.Localization;
+import buildcraft.core.utils.StringUtils;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.google.common.base.Splitter;
+import com.google.common.collect.Iterables;
 
 @SideOnly(Side.CLIENT)
 public class PipeToolTipManager {
@@ -35,13 +39,13 @@ public class PipeToolTipManager {
 	public static List<String> getToolTip(Class<? extends Pipe> pipe) {
 		List<String> tips = new ArrayList<String>();
 		String tipTag = "tip." + pipe.getSimpleName();
-		if (Localization.hasKey(tipTag)) {
-			String localized = Localization.get(tipTag);
-			if (localized != null) {
-				String[] lines = localized.split("\\n");
+		if (StringUtils.canLocalize(tipTag)) {
+		   String localized = StringUtils.localize(tipTag);
+		   if (localized != null) {
+		      String[] lines = (String[])Iterables.toArray(StringUtils.newLineSplitter.split(localized), String.class);
 				tips.addAll(Arrays.asList(lines));
 			}
-		}
+	   }
 		String tip = toolTips.get(pipe);
 		if (tip != null)
 			tips.add(tip);

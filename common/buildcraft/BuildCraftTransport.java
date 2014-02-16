@@ -8,16 +8,29 @@
  */
 package buildcraft;
 
+import java.util.LinkedList;
+
+import net.minecraft.block.Block;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
+import net.minecraft.item.ItemStack;
+import net.minecraft.world.World;
+import net.minecraftforge.common.config.Configuration;
+import net.minecraftforge.common.config.Property;
+import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.gates.ActionManager;
+import buildcraft.api.gates.GateExpansions;
 import buildcraft.api.recipes.BuildcraftRecipes;
 import buildcraft.api.transport.IExtractionHandler;
 import buildcraft.api.transport.PipeManager;
+import buildcraft.api.transport.PipeWire;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.InterModComms;
 import buildcraft.core.ItemBuildCraft;
 import buildcraft.core.Version;
-import buildcraft.core.network.PacketHandler;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.triggers.BCAction;
 import buildcraft.core.triggers.BCTrigger;
@@ -26,8 +39,8 @@ import buildcraft.transport.BlockFilteredBuffer;
 import buildcraft.transport.BlockGenericPipe;
 import buildcraft.transport.GuiHandler;
 import buildcraft.transport.ItemFacade;
-import buildcraft.transport.gates.ItemGate;
 import buildcraft.transport.ItemPipe;
+import buildcraft.transport.ItemPipeWire;
 import buildcraft.transport.ItemPlug;
 import buildcraft.transport.ItemRobotStation;
 import buildcraft.transport.Pipe;
@@ -35,19 +48,11 @@ import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTriggerProvider;
 import buildcraft.transport.TransportProxy;
 import buildcraft.transport.WireIconProvider;
-import buildcraft.transport.blueprints.BptBlockPipe;
-import buildcraft.transport.blueprints.BptItemPipeDiamond;
-import buildcraft.transport.blueprints.BptItemPipeEmerald;
-import buildcraft.transport.blueprints.BptItemPipeIron;
-import buildcraft.transport.blueprints.BptItemPipeWooden;
 import buildcraft.transport.gates.GateExpansionPulsar;
-import buildcraft.api.gates.GateExpansions;
-import buildcraft.api.transport.PipeWire;
-import buildcraft.transport.ItemPipeWire;
 import buildcraft.transport.gates.GateExpansionRedstoneFader;
 import buildcraft.transport.gates.GateExpansionTimer;
+import buildcraft.transport.gates.ItemGate;
 import buildcraft.transport.network.PacketHandlerTransport;
-import buildcraft.transport.network.PacketPipeTransportTraveler;
 import buildcraft.transport.pipes.PipeFluidsCobblestone;
 import buildcraft.transport.pipes.PipeFluidsEmerald;
 import buildcraft.transport.pipes.PipeFluidsGold;
@@ -60,9 +65,9 @@ import buildcraft.transport.pipes.PipeItemsCobblestone;
 import buildcraft.transport.pipes.PipeItemsDaizuli;
 import buildcraft.transport.pipes.PipeItemsDiamond;
 import buildcraft.transport.pipes.PipeItemsEmerald;
+import buildcraft.transport.pipes.PipeItemsEmzuli;
 import buildcraft.transport.pipes.PipeItemsGold;
 import buildcraft.transport.pipes.PipeItemsIron;
-import buildcraft.transport.pipes.PipeItemsEmzuli;
 import buildcraft.transport.pipes.PipeItemsLapis;
 import buildcraft.transport.pipes.PipeItemsObsidian;
 import buildcraft.transport.pipes.PipeItemsQuartz;
@@ -85,15 +90,15 @@ import buildcraft.transport.triggers.ActionExtractionPreset;
 import buildcraft.transport.triggers.ActionPipeColor;
 import buildcraft.transport.triggers.ActionPipeDirection;
 import buildcraft.transport.triggers.ActionPowerLimiter;
+import buildcraft.transport.triggers.ActionRedstoneFaderOutput;
 import buildcraft.transport.triggers.ActionSignalOutput;
 import buildcraft.transport.triggers.ActionSingleEnergyPulse;
-import buildcraft.transport.triggers.TriggerPipeContents;
 import buildcraft.transport.triggers.TriggerClockTimer;
 import buildcraft.transport.triggers.TriggerClockTimer.Time;
+import buildcraft.transport.triggers.TriggerPipeContents;
 import buildcraft.transport.triggers.TriggerPipeContents.PipeContents;
 import buildcraft.transport.triggers.TriggerPipeSignal;
 import buildcraft.transport.triggers.TriggerRedstoneFaderInput;
-import buildcraft.transport.triggers.ActionRedstoneFaderOutput;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
@@ -104,19 +109,6 @@ import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
-
-import java.util.LinkedList;
-
-import net.minecraft.block.Block;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemBlock;
-import net.minecraft.item.ItemStack;
-import net.minecraft.world.World;
-import net.minecraftforge.common.config.Configuration;
-import net.minecraftforge.common.util.ForgeDirection;
-import net.minecraftforge.common.config.Property;
 
 @Mod(version = Version.VERSION, modid = "BuildCraft|Transport", name = "Buildcraft Transport", dependencies = DefaultProps.DEPENDENCY_CORE)
 public class BuildCraftTransport extends BuildCraftMod {
@@ -211,7 +203,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 			return testStrings(liquids, world, i, j, k);
 		}
 
-		private boolean testStrings(String[] excludedBlocks, World world, int i, int j, int k) {			
+		private boolean testStrings(String[] excludedBlocks, World world, int i, int j, int k) {
 			Block block = world.getBlock(i, j, k);
 			if (block == null)
 				return false;
@@ -342,12 +334,10 @@ public class BuildCraftTransport extends BuildCraftMod {
 			filteredBufferBlock = new BlockFilteredBuffer();
 			CoreProxy.proxy.registerBlock(filteredBufferBlock.setBlockName("filteredBufferBlock"));
 
-			CoreProxy.proxy.addName(filteredBufferBlock, "Filtered Buffer");
-			
 			for (PipeContents kind : PipeContents.values()) {
 				triggerPipe[kind.ordinal()] = new TriggerPipeContents(kind);
 			}
-			
+
 			for (PipeWire wire : PipeWire.values()) {
 				triggerPipeWireActive[wire.ordinal()] = new TriggerPipeSignal(true, wire);
 				triggerPipeWireInactive[wire.ordinal()] = new TriggerPipeSignal(false, wire);
@@ -383,7 +373,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 	public void init(FMLInitializationEvent evt) {
 		channels = NetworkRegistry.INSTANCE.newChannel
 				(DefaultProps.NET_CHANNEL_NAME + "-TRANSPORT", new PacketHandlerTransport());
-		
+
 		// Register connection handler
 		// MinecraftForge.registerConnectionHandler(new ConnectionHandler());
 

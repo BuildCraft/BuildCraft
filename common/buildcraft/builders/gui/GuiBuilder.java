@@ -50,7 +50,7 @@ public class GuiBuilder extends GuiAdvancedInterface {
 	protected void drawGuiContainerForegroundLayer(int par1, int par2) {
 		super.drawGuiContainerForegroundLayer(par1, par2);
 
-		String title = StringUtils.localize("tile.builderBlock");
+		String title = StringUtils.localize("tile.builderBlock.name");
 		fontRendererObj.drawString(title, getCenteredOffset(title), 12, 0x404040);
 		fontRendererObj.drawString(StringUtils.localize("gui.building.resources"), 8, 60, 0x404040);
 		fontRendererObj.drawString(StringUtils.localize("gui.inventory"), 8, ySize - 97, 0x404040);
