@@ -8,9 +8,6 @@
  */
 package buildcraft.core;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-
 import java.util.List;
 import java.util.Random;
 
@@ -22,6 +19,8 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class BlockSpring extends Block {
 
@@ -54,13 +53,13 @@ public class BlockSpring extends Block {
 		super(Material.rock);
 		setBlockUnbreakable();
 		setResistance(6000000.0F);
-		
+
 		// TODO: set proper sound
 		//setStepSound(soundStoneFootstep);
-		
+
 		disableStats();
 		setTickRandomly(true);
-		setCreativeTab(CreativeTabBuildCraft.MACHINES.get());
+		setCreativeTab(CreativeTabBuildCraft.MISC.get());
 	}
 
 	@Override

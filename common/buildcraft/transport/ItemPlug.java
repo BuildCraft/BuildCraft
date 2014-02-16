@@ -8,25 +8,26 @@
  */
 package buildcraft.transport;
 
-import buildcraft.core.ItemBuildCraft;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
+import buildcraft.core.CreativeTabBuildCraft;
+import buildcraft.core.ItemBuildCraft;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class ItemPlug extends ItemBuildCraft {
 
 	public ItemPlug() {
-		super();
+		super(CreativeTabBuildCraft.TIER_1);
 	}
-	
+
 	@Override
 	public String getUnlocalizedName(ItemStack itemstack) {
 		return "item.PipePlug";
 	}
-	
+
 //	@Override
 //	public boolean onItemUseFirst(ItemStack stack, EntityPlayer player, World worldObj, int x, int y, int z, int side, float hitX, float hitY, float hitZ) {
 //		if (worldObj.isRemote)
@@ -51,7 +52,7 @@ public class ItemPlug extends ItemBuildCraft {
 //			return false;
 //		}
 //	}
-	
+
 	@Override
 	public boolean doesSneakBypassUse(World world, int x, int y, int z, EntityPlayer player) {
 		return true;
@@ -70,5 +71,5 @@ public class ItemPlug extends ItemBuildCraft {
     {
         return 0;
     }
-	
+
 }

@@ -29,6 +29,7 @@ import buildcraft.api.fuels.IronEngineFuel;
 import buildcraft.api.recipes.BuildcraftRecipes;
 import buildcraft.core.BlockIndex;
 import buildcraft.core.BlockSpring;
+import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.InterModComms;
 import buildcraft.core.Version;
@@ -131,7 +132,7 @@ public class BuildCraftEnergy extends BuildCraftMod {
 		}
 
 
-		engineBlock = new BlockEngine();
+		engineBlock = new BlockEngine(CreativeTabBuildCraft.TIER_1);
 		CoreProxy.proxy.registerBlock(engineBlock, ItemEngine.class);
 
 		LanguageRegistry.addName(new ItemStack(engineBlock, 1, 0), "Redstone Engine");
@@ -188,7 +189,7 @@ public class BuildCraftEnergy extends BuildCraftMod {
 		// Buckets
 
 		if (blockOil != null) {
-			bucketOil = new ItemBucketBuildcraft(blockOil);
+			bucketOil = new ItemBucketBuildcraft(blockOil, CreativeTabBuildCraft.TIER_2);
 			bucketOil.setUnlocalizedName("bucketOil").setContainerItem(Items.bucket);
 			LanguageRegistry.addName(bucketOil, "Oil Bucket");
 			CoreProxy.proxy.registerItem(bucketOil);
@@ -196,7 +197,7 @@ public class BuildCraftEnergy extends BuildCraftMod {
 		}
 
 		if (blockFuel != null) {
-			bucketFuel = new ItemBucketBuildcraft(blockFuel);
+			bucketFuel = new ItemBucketBuildcraft(blockFuel, CreativeTabBuildCraft.TIER_2);
 			bucketFuel.setUnlocalizedName("bucketFuel").setContainerItem(Items.bucket);
 			LanguageRegistry.addName(bucketFuel, "Fuel Bucket");
 			CoreProxy.proxy.registerItem(bucketFuel);
@@ -204,7 +205,7 @@ public class BuildCraftEnergy extends BuildCraftMod {
 		}
 
 		if (blockRedPlasma != null) {
-			bucketRedPlasma = new ItemBucketBuildcraft(blockRedPlasma);
+			bucketRedPlasma = new ItemBucketBuildcraft(blockRedPlasma, CreativeTabBuildCraft.TIER_4);
 			bucketRedPlasma.setUnlocalizedName("bucketRedPlasma").setContainerItem(Items.bucket);
 			LanguageRegistry.addName(bucketRedPlasma, "Red Plasma Bucket");
 			CoreProxy.proxy.registerItem(bucketRedPlasma);

@@ -8,9 +8,11 @@
  */
 package buildcraft.energy;
 
-import buildcraft.core.ItemBlockBuildCraft;
 import net.minecraft.block.Block;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;
+import buildcraft.core.CreativeTabBuildCraft;
+import buildcraft.core.ItemBlockBuildCraft;
 
 public class ItemEngine extends ItemBlockBuildCraft {
 
@@ -27,11 +29,17 @@ public class ItemEngine extends ItemBlockBuildCraft {
 
 	@Override
 	public String getUnlocalizedName(ItemStack itemstack) {
-		if (itemstack.getItemDamage() == 0)
+		if (itemstack.getItemDamage() == 0) {
 			return "tile.engineWood";
-		else if (itemstack.getItemDamage() == 1)
+		} else if (itemstack.getItemDamage() == 1) {
 			return "tile.engineStone";
-		else
+		} else {
 			return "tile.engineIron";
+		}
+	}
+
+	@Override
+	public CreativeTabs[] getCreativeTabs() {
+		return new CreativeTabs[] { CreativeTabBuildCraft.TIER_1.get(), CreativeTabBuildCraft.TIER_2.get() };
 	}
 }

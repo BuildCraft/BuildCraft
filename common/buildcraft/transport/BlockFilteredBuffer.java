@@ -8,28 +8,26 @@
  */
 package buildcraft.transport;
 
-import buildcraft.BuildCraftTransport;
-import buildcraft.core.BlockBuildCraft;
-import buildcraft.core.GuiIds;
-import buildcraft.core.IItemPipe;
-import buildcraft.core.proxy.CoreProxy;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import java.util.ArrayList;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
+import buildcraft.BuildCraftTransport;
+import buildcraft.core.BlockBuildCraft;
+import buildcraft.core.CreativeTabBuildCraft;
+import buildcraft.core.GuiIds;
+import buildcraft.core.IItemPipe;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class BlockFilteredBuffer extends BlockBuildCraft {
 
 	private static IIcon blockTexture;
 
 	public BlockFilteredBuffer() {
-		super(Material.iron);
+		super(Material.iron, CreativeTabBuildCraft.MISC);
 		setHardness(5F);
 	}
 

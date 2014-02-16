@@ -8,12 +8,6 @@
  */
 package buildcraft.energy;
 
-import buildcraft.BuildCraftCore;
-import buildcraft.core.BlockBuildCraft;
-import buildcraft.core.IItemPipe;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-
 import java.util.List;
 import java.util.Random;
 
@@ -29,6 +23,12 @@ import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
+import buildcraft.BuildCraftCore;
+import buildcraft.core.BlockBuildCraft;
+import buildcraft.core.CreativeTabBuildCraft;
+import buildcraft.core.IItemPipe;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class BlockEngine extends BlockBuildCraft {
 
@@ -36,8 +36,8 @@ public class BlockEngine extends BlockBuildCraft {
 	private static IIcon stoneTexture;
 	private static IIcon ironTexture;
 
-	public BlockEngine() {
-		super(Material.iron);
+	public BlockEngine(CreativeTabBuildCraft creativeTab) {
+		super(Material.iron, creativeTab);
 		setBlockName("engineBlock");
 	}
 
@@ -109,7 +109,7 @@ public class BlockEngine extends BlockBuildCraft {
 		}
 
 		if (tile instanceof TileEngine) {
-			return ((TileEngine) tile).onBlockActivated(player, ForgeDirection.getOrientation(side));
+			return tile.onBlockActivated(player, ForgeDirection.getOrientation(side));
 		}
 
 		return false;
@@ -137,9 +137,9 @@ public class BlockEngine extends BlockBuildCraft {
 			return;
 		}
 
-		float f = (float) i + 0.5F;
-		float f1 = (float) j + 0.0F + (random.nextFloat() * 6F) / 16F;
-		float f2 = (float) k + 0.5F;
+		float f = i + 0.5F;
+		float f1 = j + 0.0F + (random.nextFloat() * 6F) / 16F;
+		float f2 = k + 0.5F;
 		float f3 = 0.52F;
 		float f4 = random.nextFloat() * 0.6F - 0.3F;
 
@@ -152,9 +152,12 @@ public class BlockEngine extends BlockBuildCraft {
 	@SuppressWarnings({"unchecked", "rawtypes"})
 	@Override
 	public void getSubBlocks(Item item, CreativeTabs par2CreativeTabs, List itemList) {
-		itemList.add(new ItemStack(this, 1, 0));
-		itemList.add(new ItemStack(this, 1, 1));
-		itemList.add(new ItemStack(this, 1, 2));
+		if (par2CreativeTabs == CreativeTabBuildCraft.TIER_1.get()) {
+			itemList.add(new ItemStack(this, 1, 0));
+			itemList.add(new ItemStack(this, 1, 1));
+		} else {
+			itemList.add(new ItemStack(this, 1, 2));
+		}
 	}
 
 	@Override

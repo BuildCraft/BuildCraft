@@ -19,9 +19,7 @@ import buildcraft.core.CreativeTabBuildCraft;
 public class BlockEnergyEmitter extends BlockBuildCraft {
 
 	public BlockEnergyEmitter() {
-		super(Material.glass);
-
-		setCreativeTab(CreativeTabBuildCraft.MACHINES.get());
+		super(Material.glass, CreativeTabBuildCraft.TIER_4);
 	}
 
 	@Override

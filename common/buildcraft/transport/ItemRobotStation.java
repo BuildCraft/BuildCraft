@@ -12,6 +12,7 @@ import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
+import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.ItemBuildCraft;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -19,7 +20,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 public class ItemRobotStation extends ItemBuildCraft {
 
 	public ItemRobotStation() {
-		super();
+		super(CreativeTabBuildCraft.TIER_4);
 	}
 
 	@Override

@@ -8,15 +8,6 @@
  */
 package buildcraft.factory;
 
-import buildcraft.BuildCraftFactory;
-import buildcraft.api.core.Position;
-import buildcraft.core.BlockBuildCraft;
-import buildcraft.core.utils.Utils;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-
-import java.util.ArrayList;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
@@ -26,17 +17,23 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
+import buildcraft.BuildCraftFactory;
+import buildcraft.core.BlockBuildCraft;
+import buildcraft.core.CreativeTabBuildCraft;
+import buildcraft.core.utils.Utils;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class BlockMiningWell extends BlockBuildCraft {
 
 	IIcon textureFront, textureSides, textureBack, textureTop;
 
 	public BlockMiningWell() {
-		super(Material.ground);
+		super(Material.ground, CreativeTabBuildCraft.TIER_1);
 
 		setHardness(5F);
 		setResistance(10F);
-		
+
 		// TODO: set proper sound
 		//setStepSound(soundStoneFootstep);
 	}

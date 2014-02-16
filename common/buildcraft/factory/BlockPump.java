@@ -8,24 +8,20 @@
  */
 package buildcraft.factory;
 
+import net.minecraft.block.Block;
+import net.minecraft.block.material.Material;
+import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.IIcon;
+import net.minecraft.world.World;
 import buildcraft.api.tools.IToolWrench;
 import buildcraft.core.BlockBuildCraft;
 import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.utils.Utils;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-
-import java.util.ArrayList;
-
-import net.minecraft.block.Block;
-import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IIconRegister;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.IIcon;
-import net.minecraft.world.World;
 
 public class BlockPump extends BlockBuildCraft {
 
@@ -34,7 +30,7 @@ public class BlockPump extends BlockBuildCraft {
 	private IIcon textureSide;
 
 	public BlockPump() {
-		super(Material.iron);
+		super(Material.iron, CreativeTabBuildCraft.TIER_2);
 	}
 
 	@Override

@@ -8,31 +8,32 @@
  */
 package buildcraft.builders;
 
-import buildcraft.BuildCraftBuilders;
-import buildcraft.core.CreativeTabBuildCraft;
-import buildcraft.core.ItemBuildCraft;
-import buildcraft.core.blueprints.BptBase;
-import buildcraft.core.proxy.CoreProxy;
 import java.util.List;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
+import buildcraft.BuildCraftBuilders;
+import buildcraft.core.CreativeTabBuildCraft;
+import buildcraft.core.ItemBuildCraft;
+import buildcraft.core.blueprints.BptBase;
 
 public abstract class ItemBptBase extends ItemBuildCraft {
 
 	public ItemBptBase() {
-		super();
+		super(CreativeTabBuildCraft.TIER_3);
 
 		maxStackSize = 1;
-		setCreativeTab(CreativeTabBuildCraft.MACHINES.get());
 	}
 
+	@Override
 	@SuppressWarnings({ "all" })
 	// @Override (client only)
 	public abstract IIcon getIconFromDamage(int i);
 
+	@Override
 	@SuppressWarnings({ "all" })
 	// @Override (client only)
 	public void addInformation(ItemStack itemstack, EntityPlayer player, List list, boolean advanced) {

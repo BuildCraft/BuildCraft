@@ -8,16 +8,6 @@
  */
 package buildcraft.factory;
 
-import buildcraft.BuildCraftFactory;
-import buildcraft.api.core.Position;
-import buildcraft.api.tools.IToolWrench;
-import buildcraft.core.BlockBuildCraft;
-import buildcraft.core.Box;
-import buildcraft.core.proxy.CoreProxy;
-import buildcraft.core.utils.Utils;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-
 import java.util.ArrayList;
 
 import net.minecraft.block.Block;
@@ -29,9 +19,16 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
-import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
+import buildcraft.BuildCraftFactory;
+import buildcraft.api.tools.IToolWrench;
+import buildcraft.core.BlockBuildCraft;
+import buildcraft.core.Box;
+import buildcraft.core.CreativeTabBuildCraft;
+import buildcraft.core.utils.Utils;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class BlockQuarry extends BlockBuildCraft {
 
@@ -40,7 +37,7 @@ public class BlockQuarry extends BlockBuildCraft {
 	IIcon textureSide;
 
 	public BlockQuarry() {
-		super(Material.iron);
+		super(Material.iron, CreativeTabBuildCraft.TIER_2);
 
 		setHardness(10F);
 		setResistance(10F);

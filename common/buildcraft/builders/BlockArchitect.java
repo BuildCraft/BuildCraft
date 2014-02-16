@@ -8,18 +8,6 @@
  */
 package buildcraft.builders;
 
-import buildcraft.BuildCraftBuilders;
-import buildcraft.api.core.Position;
-import buildcraft.api.tools.IToolWrench;
-import buildcraft.core.CreativeTabBuildCraft;
-import buildcraft.core.GuiIds;
-import buildcraft.core.proxy.CoreProxy;
-import buildcraft.core.utils.Utils;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-
-import java.util.ArrayList;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
@@ -33,6 +21,13 @@ import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
+import buildcraft.BuildCraftBuilders;
+import buildcraft.api.tools.IToolWrench;
+import buildcraft.core.CreativeTabBuildCraft;
+import buildcraft.core.GuiIds;
+import buildcraft.core.utils.Utils;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class BlockArchitect extends BlockContainer {
 
@@ -45,7 +40,7 @@ public class BlockArchitect extends BlockContainer {
 	public BlockArchitect() {
 		super(Material.iron);
 		setHardness(5F);
-		setCreativeTab(CreativeTabBuildCraft.MACHINES.get());
+		setCreativeTab(CreativeTabBuildCraft.TIER_3.get());
 	}
 
 	@Override

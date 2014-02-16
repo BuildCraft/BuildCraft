@@ -16,7 +16,7 @@ public class ItemRobot extends ItemBuildCraft {
 	Class <? extends EntityRobot> robotClass;
 
 	public ItemRobot(Class <? extends EntityRobot> robotClass) {
-		super();
+		super(CreativeTabBuildCraft.TIER_4);
 
 		this.robotClass = robotClass;
 	}
@@ -25,7 +25,6 @@ public class ItemRobot extends ItemBuildCraft {
 		try {
 			return this.robotClass.getConstructor(World.class).newInstance(world);
 		} catch (Throwable e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return null;
 		}

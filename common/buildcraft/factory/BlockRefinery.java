@@ -8,19 +8,6 @@
  */
 package buildcraft.factory;
 
-import buildcraft.BuildCraftCore;
-import buildcraft.BuildCraftFactory;
-import buildcraft.api.core.Position;
-import buildcraft.api.tools.IToolWrench;
-import buildcraft.core.CreativeTabBuildCraft;
-import buildcraft.core.GuiIds;
-import buildcraft.core.fluids.FluidUtils;
-import buildcraft.core.utils.Utils;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-
-import java.util.ArrayList;
-
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
@@ -33,11 +20,16 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
-import static net.minecraftforge.common.util.ForgeDirection.EAST;
-import static net.minecraftforge.common.util.ForgeDirection.NORTH;
-import static net.minecraftforge.common.util.ForgeDirection.SOUTH;
-import static net.minecraftforge.common.util.ForgeDirection.WEST;
 import net.minecraftforge.fluids.FluidContainerRegistry;
+import buildcraft.BuildCraftCore;
+import buildcraft.BuildCraftFactory;
+import buildcraft.api.tools.IToolWrench;
+import buildcraft.core.CreativeTabBuildCraft;
+import buildcraft.core.GuiIds;
+import buildcraft.core.fluids.FluidUtils;
+import buildcraft.core.utils.Utils;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class BlockRefinery extends BlockContainer {
 
@@ -47,7 +39,7 @@ public class BlockRefinery extends BlockContainer {
 		super(Material.iron);
 
 		setHardness(5F);
-		setCreativeTab(CreativeTabBuildCraft.MACHINES.get());
+		setCreativeTab(CreativeTabBuildCraft.TIER_2.get());
 	}
 
 	@Override
@@ -136,7 +128,7 @@ public class BlockRefinery extends BlockContainer {
 
 		return true;
 	}
-	
+
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void registerBlockIcons(IIconRegister par1IconRegister) {

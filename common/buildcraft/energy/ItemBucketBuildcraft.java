@@ -8,25 +8,23 @@
  */
 package buildcraft.energy;
 
-import buildcraft.core.CreativeTabBuildCraft;
-import buildcraft.core.utils.StringUtils;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBucket;
-import net.minecraft.item.ItemStack;
+import buildcraft.core.CreativeTabBuildCraft;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class ItemBucketBuildcraft extends ItemBucket {
 
 	private String iconName;
 
-	public ItemBucketBuildcraft(Block block) {
+	public ItemBucketBuildcraft(Block block, CreativeTabBuildCraft creativeTab) {
 		super(block);
-		setCreativeTab(CreativeTabBuildCraft.MACHINES.get());
 		setContainerItem(Items.bucket);
+		setCreativeTab(creativeTab.get());
 	}
 
 	@Override

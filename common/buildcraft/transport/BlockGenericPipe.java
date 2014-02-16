@@ -45,6 +45,7 @@ import buildcraft.api.transport.PipeWire;
 import buildcraft.core.BlockBuildCraft;
 import buildcraft.core.BlockIndex;
 import buildcraft.core.CoreConstants;
+import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.ItemRobot;
 import buildcraft.core.robots.AIDocked;
 import buildcraft.core.robots.EntityRobot;
@@ -92,7 +93,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 
 	/* Defined subprograms ************************************************* */
 	public BlockGenericPipe() {
-		super(Material.glass);
+		super(Material.glass, CreativeTabBuildCraft.TIER_1);
 		setRenderAllSides();
 		setCreativeTab(null);
 	}
@@ -1038,8 +1039,8 @@ public class BlockGenericPipe extends BlockBuildCraft {
 	static long lastRemovedDate = -1;
 	public static Map<BlockIndex, Pipe> pipeRemoved = new HashMap<BlockIndex, Pipe>();
 
-	public static ItemPipe registerPipe(Class<? extends Pipe> clas) {
-		ItemPipe item = new ItemPipe();
+	public static ItemPipe registerPipe(Class<? extends Pipe> clas, CreativeTabBuildCraft creativeTab) {
+		ItemPipe item = new ItemPipe(creativeTab);
 		item.setUnlocalizedName("buildcraftPipe." + clas.getSimpleName().toLowerCase(Locale.ENGLISH));
 		GameRegistry.registerItem(item, item.getUnlocalizedName());
 

@@ -8,14 +8,6 @@
  */
 package buildcraft.transport;
 
-import buildcraft.BuildCraftTransport;
-import buildcraft.api.core.IIconProvider;
-import buildcraft.core.IItemPipe;
-import buildcraft.core.ItemBuildCraft;
-import buildcraft.core.utils.BCLog;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-
 import java.util.List;
 import java.util.logging.Level;
 
@@ -26,6 +18,14 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
+import buildcraft.BuildCraftTransport;
+import buildcraft.api.core.IIconProvider;
+import buildcraft.core.CreativeTabBuildCraft;
+import buildcraft.core.IItemPipe;
+import buildcraft.core.ItemBuildCraft;
+import buildcraft.core.utils.BCLog;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class ItemPipe extends ItemBuildCraft implements IItemPipe {
 
@@ -33,8 +33,8 @@ public class ItemPipe extends ItemBuildCraft implements IItemPipe {
 	private IIconProvider iconProvider;
 	private int pipeIconIndex;
 
-	protected ItemPipe() {
-		super();
+	protected ItemPipe(CreativeTabBuildCraft creativeTab) {
+		super(creativeTab);
 	}
 
 	@Override
@@ -70,27 +70,27 @@ public class ItemPipe extends ItemBuildCraft implements IItemPipe {
 		if (itemstack.stackSize == 0) {
 			return false;
 		}
-		
+
 		if (world.canPlaceEntityOnSide(block, i, j, k, false, side, entityplayer, itemstack)) {
 			Pipe pipe = BlockGenericPipe.createPipe(this);
-			
+
 			if (pipe == null) {
 				BCLog.logger.log(Level.WARNING, "Pipe failed to create during placement at {0},{1},{2}", new Object[]{i, j, k});
 				return true;
 			}
-			
+
 			if (BlockGenericPipe.placePipe(pipe, world, i, j, k, block, 0)) {
 				block.onBlockPlacedBy(world, i, j, k, entityplayer, itemstack);
-				
+
 				// TODO: Fix sound
 				//world.playSoundEffect(i + 0.5F, j + 0.5F, k + 0.5F,
 				//		block.stepSound.getPlaceSound(),
 				//		(block.stepSound.getVolume() + 1.0F) / 2.0F,
 				//		block.stepSound.getPitch() * 0.8F);
-				
+
 				itemstack.stackSize--;
 			}
-			
+
 			return true;
 		} else {
 			return false;
