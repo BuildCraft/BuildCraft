@@ -81,22 +81,6 @@ public class CoreProxyClient extends CoreProxy {
 		block.getSubBlocks(Item.getItemFromBlock(block), tab, itemList);
 	}
 
-	/* LOCALIZATION */
-	@Override
-	public String getCurrentLanguage() {
-		return Minecraft.getMinecraft().getLanguageManager().getCurrentLanguage().getLanguageCode();
-	}
-
-	@Override
-	public void addName(Object obj, String s) {
-		LanguageRegistry.addName(obj, s);
-	}
-
-	@Override
-	public void addLocalization(String s1, String string) {
-		LanguageRegistry.instance().addStringLocalization(s1, string);
-	}
-
 	@Override
 	public String getItemDisplayName(ItemStack stack) {
 		if (stack.getItem() == null)

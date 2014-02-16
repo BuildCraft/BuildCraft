@@ -26,6 +26,9 @@ public class PacketGuiReturn extends BuildCraftPacket {
 	private IGuiReturnHandler obj;
 	private byte[] extraData;
 
+	public PacketGuiReturn() {
+	}
+	
 	public PacketGuiReturn(EntityPlayer sender) {
 		this.sender = sender;
 	}

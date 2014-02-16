@@ -53,7 +53,7 @@ public class GuiFilteredBuffer extends GuiContainer {
 
 	@Override
 	protected void drawGuiContainerForegroundLayer(int par1, int par2) {
-		String title = StringUtils.localize("tile.filteredBufferBlock");
+		String title = StringUtils.localize("tile.filteredBufferBlock.name");
 		int xPos = (xSize - fontRendererObj.getStringWidth(title)) / 2;
 		fontRendererObj.drawString(title, xPos, 10, 0x404040);
 	}

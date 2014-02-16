@@ -71,7 +71,6 @@ public class BuildCraftSilicon extends BuildCraftMod {
 		BuildCraftCore.mainConfiguration.save();
 
 		laserBlock = new BlockLaser();
-		CoreProxy.proxy.addName(laserBlock.setBlockName("laserBlock"), "Laser");
 		CoreProxy.proxy.registerBlock(laserBlock);
 
 		assemblyTableBlock = new BlockLaserTable();

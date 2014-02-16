@@ -16,7 +16,7 @@ import buildcraft.api.gates.IAction;
 import buildcraft.api.gates.ITrigger;
 import buildcraft.core.ItemBuildCraft;
 import buildcraft.core.inventory.InvUtils;
-import buildcraft.core.utils.Localization;
+import buildcraft.core.utils.StringUtils;
 import buildcraft.core.utils.Utils;
 import buildcraft.transport.Gate;
 import buildcraft.transport.gates.GateDefinition.GateLogic;
@@ -39,6 +39,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
 import net.minecraft.util.IIcon;
+import net.minecraft.util.StatCollector;
 
 public class ItemGate extends ItemBuildCraft {
 
@@ -174,6 +175,12 @@ public class ItemGate extends ItemBuildCraft {
 	public String getUnlocalizedName(ItemStack stack) {
 		return GateDefinition.getLocalizedName(getMaterial(stack), getLogic(stack));
 	}
+	
+	@Override
+   public String getItemStackDisplayName(ItemStack stack)
+   {
+	   return ("" + StatCollector.translateToLocal(this.getUnlocalizedNameInefficiently(stack))).trim();
+   }
 
 	@SuppressWarnings({"unchecked", "rawtypes"})
 	@Override
@@ -216,12 +223,12 @@ public class ItemGate extends ItemBuildCraft {
 	public void addInformation(ItemStack stack, EntityPlayer player, List list, boolean adv) {
 		super.addInformation(stack, player, list, adv);
 		
-		list.add("§9§o" + Localization.get("tip.gate.wires"));
-		list.add(Localization.get("tip.gate.wires." + getMaterial(stack).getTag()));
+		list.add(StringUtils.localize("tip.gate.wires"));
+		list.add(StringUtils.localize("tip.gate.wires." + getMaterial(stack).getTag()));
 		Set<IGateExpansion> expansions = getInstalledExpansions(stack);
 		
 		if (!expansions.isEmpty()) {
-			list.add("§9§o" + Localization.get("tip.gate.expansions"));
+			list.add(StringUtils.localize("tip.gate.expansions"));
 			
 			for (IGateExpansion expansion : expansions) {
 				list.add(expansion.getDisplayName());

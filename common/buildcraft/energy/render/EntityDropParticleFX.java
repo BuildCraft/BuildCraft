@@ -16,6 +16,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.BlockFluidBase;
+import net.minecraftforge.fluids.IFluidBlock;
 
 @SideOnly(Side.CLIENT)
 public class EntityDropParticleFX extends EntityFX {
@@ -96,8 +97,8 @@ public class EntityDropParticleFX extends EntityFX {
 		
 		Material material = block.getMaterial();
 
-		if (material.isLiquid() || material.isSolid()) {
-			double d0 = (double) ((float) (MathHelper.floor_double(this.posY) + 1) - ((BlockFluidBase) block)
+		if ((material.isLiquid() || material.isSolid()) && block instanceof IFluidBlock) {
+			double d0 = (double) ((float) (MathHelper.floor_double(this.posY) + 1) - ((IFluidBlock) block)
 					.getFilledPercentage(worldObj, x, y, z));
 
 			if (this.posY < d0) {
