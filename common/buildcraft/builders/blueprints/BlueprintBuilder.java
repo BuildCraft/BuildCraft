@@ -15,12 +15,8 @@ import java.util.Collections;
 import java.util.List;
 
 import net.minecraft.world.World;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 
-/**
- *
- * @author CovertJaguar <http://www.railcraft.info/>
- */
 public class BlueprintBuilder implements IAreaProvider {
 
 	public final Blueprint blueprint;

@@ -1,15 +1,19 @@
 /**
- * Copyright (c) SpaceToad, 2011 http://www.mod-buildcraft.com
+ * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
+ * http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public License
- * 1.0, or MMPL. Please check the contents of the license located in
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
+ * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
 package buildcraft.api.fuels;
 
 import buildcraft.api.core.StackWrapper;
+
 import java.util.HashMap;
 import java.util.Map;
+
+import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.Fluid;
@@ -60,7 +64,7 @@ public final class IronEngineCoolant {
 	 * @param coolant
 	 */
 	public static void addCoolant(final ItemStack stack, final FluidStack coolant) {
-		if (stack != null && Item.itemsList[stack.itemID] != null && coolant != null) {
+		if (stack != null && stack.getItem() != null && coolant != null) {
 			solidCoolants.put(new StackWrapper(stack), coolant);
 		}
 	}
@@ -73,8 +77,12 @@ public final class IronEngineCoolant {
 	 * @param stack
 	 * @param coolant
 	 */
-	public static void addCoolant(final int itemId, final int metadata, final FluidStack coolant) {
-		addCoolant(new ItemStack(itemId, 1, metadata), coolant);
+	public static void addCoolant(final Item item, final int metadata, final FluidStack coolant) {
+		addCoolant(new ItemStack(item, 1, metadata), coolant);
+	}
+	
+	public static void addCoolant(final Block block, final int metadata, final FluidStack coolant) {
+		addCoolant(new ItemStack(block, 1, metadata), coolant);
 	}
 
 	public static boolean isCoolant(Fluid fluid) {

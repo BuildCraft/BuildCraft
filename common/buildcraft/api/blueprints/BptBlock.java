@@ -1,12 +1,11 @@
 /**
- * Copyright (c) SpaceToad, 2011
+ * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
  *
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-
 package buildcraft.api.blueprints;
 
 import buildcraft.api.core.BuildCraftAPI;
@@ -49,7 +48,7 @@ public class BptBlock {
 	public BptBlock(int blockId) {
 		this.blockId = blockId;
 
-		BlueprintManager.blockBptProps[blockId] = this;
+		//BlueprintManager.blockBptProps[blockId] = this;
 	}
 
 	/**
@@ -57,11 +56,11 @@ public class BptBlock {
 	 * buildBlock.
 	 */
 	public void addRequirements(BptSlotInfo slot, IBptContext context, LinkedList<ItemStack> requirements) {
-		if (slot.blockId != 0) {
+		if (slot.block != null) {
 			if (slot.storedRequirements.size() != 0) {
 				requirements.addAll(slot.storedRequirements);
 			} else {
-				requirements.add(new ItemStack(slot.blockId, 1, slot.meta));
+			//	requirements.add(new ItemStack(slot.blockId, 1, slot.meta));
 			}
 		}
 	}
@@ -103,7 +102,7 @@ public class BptBlock {
 		if (stack.stackSize == 0 && stack.getItem().getContainerItem() != null) {
 			Item container = stack.getItem().getContainerItem();
 
-			stack.itemID = container.itemID;
+			//stack.itemID = container.itemID;
 			stack.stackSize = 1;
 			stack.setItemDamage(0);
 		}
@@ -117,7 +116,8 @@ public class BptBlock {
 	 * Added metadata sensitivity //Krapht
 	 */
 	public boolean isValid(BptSlotInfo slot, IBptContext context) {
-		return slot.blockId == context.world().getBlockId(slot.x, slot.y, slot.z) && slot.meta == context.world().getBlockMetadata(slot.x, slot.y, slot.z);
+		//return slot.blockId == context.world().getBlockId(slot.x, slot.y, slot.z) && slot.meta == context.world().getBlockMetadata(slot.x, slot.y, slot.z);
+		return false;
 	}
 
 	/**
@@ -132,19 +132,19 @@ public class BptBlock {
 	 */
 	public void buildBlock(BptSlotInfo slot, IBptContext context) {
 		// Meta needs to be specified twice, depending on the block behavior
-		context.world().setBlock(slot.x, slot.y, slot.z, slot.blockId, slot.meta,3);
-		context.world().setBlockMetadataWithNotify(slot.x, slot.y, slot.z, slot.meta,3);
+		context.world().setBlock(slot.x, slot.y, slot.z, slot.block, slot.meta, 0);
+		//context.world().setBlockMetadataWithNotify(slot.x, slot.y, slot.z, slot.meta,3);
 
-		if (Block.blocksList[slot.blockId] instanceof BlockContainer) {
-			TileEntity tile = context.world().getBlockTileEntity(slot.x, slot.y, slot.z);
+		if (slot.block instanceof BlockContainer) {
+			TileEntity tile = context.world().getTileEntity(slot.x, slot.y, slot.z);
 
-			slot.cpt.setInteger("x", slot.x);
-			slot.cpt.setInteger("y", slot.y);
-			slot.cpt.setInteger("z", slot.z);
+			//slot.cpt.setInteger("x", slot.x);
+			//slot.cpt.setInteger("y", slot.y);
+			//slot.cpt.setInteger("z", slot.z);
 
-			if (tile != null) {
-				tile.readFromNBT(slot.cpt);
-			}
+			//if (tile != null) {
+			//	tile.readFromNBT(slot.cpt);
+			//}
 		}
 	}
 
@@ -162,8 +162,8 @@ public class BptBlock {
 	 * By default, if the block is a BlockContainer, tile information will be to save / load the block.
 	 */
 	public void initializeFromWorld(BptSlotInfo slot, IBptContext context, int x, int y, int z) {
-		if (Block.blocksList[slot.blockId] instanceof BlockContainer) {
-			TileEntity tile = context.world().getBlockTileEntity(x, y, z);
+		/*if (Block.blocksList[slot.blockId] instanceof BlockContainer) {
+			TileEntity tile = context.world().getTileEntity(x, y, z);
 
 			if (tile != null) {
 				tile.writeToNBT(slot.cpt);
@@ -176,7 +176,7 @@ public class BptBlock {
 			if (req != null) {
 				slot.storedRequirements.addAll(req);
 			}
-		}
+		}*/
 	}
 
 	/**
@@ -194,7 +194,7 @@ public class BptBlock {
 	public BlockSignature getSignature(Block block) {
 		BlockSignature sig = new BlockSignature();
 
-		if (block.blockID > BuildCraftAPI.LAST_ORIGINAL_BLOCK) {
+		/*if (block.blockID > BuildCraftAPI.LAST_ORIGINAL_BLOCK) {
 			sig.blockClassName = block.getClass().getSimpleName();
 
 			if (block instanceof BlockContainer) {
@@ -205,7 +205,7 @@ public class BptBlock {
 					sig.tileClassName = tile.getClass().getSimpleName();
 				}
 			}
-		}
+		}*/
 
 		sig.blockName = block.getUnlocalizedName();
 		sig.replaceNullWithStar();

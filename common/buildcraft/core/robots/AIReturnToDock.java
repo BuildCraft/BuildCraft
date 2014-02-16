@@ -8,7 +8,6 @@
  */
 package buildcraft.core.robots;
 
-import buildcraft.core.proxy.CoreProxy;
 
 public class AIReturnToDock extends AIBase {
 
@@ -18,7 +17,7 @@ public class AIReturnToDock extends AIBase {
 
 	@Override
 	public void update(EntityRobot robot) {
-		if (!CoreProxy.proxy.isSimulating(robot.worldObj)) {
+		if (robot.worldObj.isRemote) {
 			return;
 		}
 

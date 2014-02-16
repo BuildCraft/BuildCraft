@@ -8,24 +8,22 @@
  */
 package buildcraft.core.robots;
 
-import buildcraft.builders.blueprints.IBlueprintBuilderAgent;
-import buildcraft.core.DefaultProps;
-import buildcraft.core.LaserData;
-import buildcraft.core.proxy.CoreProxy;
-import buildcraft.transport.TileGenericPipe;
-
-import com.google.common.io.ByteArrayDataInput;
-import com.google.common.io.ByteArrayDataOutput;
-
+import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
+import buildcraft.builders.blueprints.IBlueprintBuilderAgent;
+import buildcraft.core.DefaultProps;
+import buildcraft.core.LaserData;
+import buildcraft.core.proxy.CoreProxy;
+import buildcraft.transport.TileGenericPipe;
 import cpw.mods.fml.common.registry.IEntityAdditionalSpawnData;
 
 public class EntityRobot extends EntityLivingBase implements
@@ -126,12 +124,12 @@ public class EntityRobot extends EntityLivingBase implements
 
 	@Override
 	public void onUpdate() {
-		if (CoreProxy.proxy.isSimulating(worldObj) && needsUpdate) {
+		if (!worldObj.isRemote && needsUpdate) {
 			updateDataServer();
 			needsUpdate = false;
 		}
 
-		if (CoreProxy.proxy.isRenderWorld(worldObj)) {
+		if (worldObj.isRemote) {
 			updateDataClient();
 		}
 
@@ -199,12 +197,12 @@ public class EntityRobot extends EntityLivingBase implements
 	}
 
 	@Override
-	public void writeSpawnData(ByteArrayDataOutput data) {
+	public void writeSpawnData(ByteBuf data) {
 
 	}
 
 	@Override
-	public void readSpawnData(ByteArrayDataInput data) {
+	public void readSpawnData(ByteBuf data) {
 		init();
 	}
 
@@ -215,15 +213,8 @@ public class EntityRobot extends EntityLivingBase implements
 	}
 
 	@Override
-	public ItemStack getCurrentItemOrArmor(int i) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public void setCurrentItemOrArmor(int i, ItemStack itemstack) {
 		// TODO Auto-generated method stub
-
 	}
 
 	@Override
@@ -253,14 +244,14 @@ public class EntityRobot extends EntityLivingBase implements
 	 */
 	@Override
 	public boolean breakBlock (int x, int y, int z) {
-		Block block = Block.blocksList[worldObj.getBlockId(x, y, z)];
+		Block block = worldObj.getBlock(x, y, z);
 
 		if (block != null) {
 			curBlockDamage += 1 / (block.getBlockHardness(worldObj, x,y, z) * 20);
 		}
 
 		if (block != null && curBlockDamage < 1) {
-			worldObj.destroyBlockInWorldPartially(entityId, x, y, z,
+			worldObj.destroyBlockInWorldPartially(getEntityId(), x, y, z,
 					(int) (this.curBlockDamage * 10.0F) - 1);
 
 			setLaserDestination(x + 0.5F, y + 0.5F, z + 0.5F);
@@ -268,8 +259,8 @@ public class EntityRobot extends EntityLivingBase implements
 
 			return false;
 		} else {
-			worldObj.destroyBlockInWorldPartially(entityId, x, y, z, -1);
-			worldObj.setBlock(x, y, z, 0);
+			worldObj.destroyBlockInWorldPartially(getEntityId(), x, y, z, -1);
+			worldObj.setBlock(x, y, z, Blocks.air);
 			curBlockDamage = 0;
 
 			hideLaser();
@@ -281,10 +272,10 @@ public class EntityRobot extends EntityLivingBase implements
 	@Override
 	public boolean buildBlock(int x, int y, int z) {
 		if (buildingStack == null) {
-			if (worldObj.getBlockId(x, y, z) != 0) {
+			if (worldObj.getBlock(x, y, z) != Blocks.air) {
 				breakBlock(x, y, z);
 			} else {
-				setLaserDestination((float) x + 0.5F, (float) y + 0.5F, (float) z + 0.5F);
+				setLaserDestination(x + 0.5F, y + 0.5F, z + 0.5F);
 				showLaser();
 
 				buildingStack = getInventory().decrStackSize(0, 1);
@@ -323,13 +314,13 @@ public class EntityRobot extends EntityLivingBase implements
 	@Override
 	public ItemStack getStackInSlot(int i) {
 		// Fake inventory filled with bricks
-		return new ItemStack(Block.brick);
+		return new ItemStack(Blocks.brick_block);
 	}
 
 	@Override
 	public ItemStack decrStackSize(int i, int j) {
 		// Fake inventory filled with bricks
-		return new ItemStack(Block.brick);
+		return new ItemStack(Blocks.brick_block);
 	}
 
 	@Override
@@ -345,45 +336,15 @@ public class EntityRobot extends EntityLivingBase implements
 	}
 
 	@Override
-	public String getInvName() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public boolean isInvNameLocalized() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
 	public int getInventoryStackLimit() {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
-	public void onInventoryChanged() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
 	public boolean isUseableByPlayer(EntityPlayer entityplayer) {
 		// TODO Auto-generated method stub
 		return false;
-	}
-
-	@Override
-	public void openChest() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void closeChest() {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
@@ -408,5 +369,41 @@ public class EntityRobot extends EntityLivingBase implements
 		dockingStation.y = tile.yCoord;
 		dockingStation.z = tile.zCoord;
 		dockingStation.side = side;
+	}
+
+	@Override
+	public String getInventoryName() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean hasCustomInventoryName() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void markDirty() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void openInventory() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void closeInventory() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public ItemStack getEquipmentInSlot(int var1) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

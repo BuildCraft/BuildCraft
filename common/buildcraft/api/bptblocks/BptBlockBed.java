@@ -1,18 +1,20 @@
 /**
- * Copyright (c) SpaceToad, 2011
+ * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
  *
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-
 package buildcraft.api.bptblocks;
 
 import buildcraft.api.blueprints.BptBlock;
 import buildcraft.api.blueprints.BptSlotInfo;
 import buildcraft.api.blueprints.IBptContext;
+
 import java.util.LinkedList;
+
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
@@ -26,7 +28,7 @@ public class BptBlockBed extends BptBlock {
 	@Override
 	public void addRequirements(BptSlotInfo slot, IBptContext context, LinkedList<ItemStack> requirements) {
 		if ((slot.meta & 8) == 0) {
-			requirements.add(new ItemStack(Item.bed));
+			requirements.add(new ItemStack(Items.bed));
 		}
 	}
 
@@ -56,7 +58,7 @@ public class BptBlockBed extends BptBlock {
 		if ((slot.meta & 8) != 0)
 			return;
 
-		context.world().setBlock(slot.x, slot.y, slot.z, slot.blockId, slot.meta,1);
+		//context.world().setBlock(slot.x, slot.y, slot.z, slot.block, slot.meta,1);
 
 		int x2 = slot.x;
 		int z2 = slot.z;
@@ -76,7 +78,7 @@ public class BptBlockBed extends BptBlock {
 			break;
 		}
 
-		context.world().setBlock(x2, slot.y, z2, slot.blockId, slot.meta + 8,1);
+		//context.world().setBlock(x2, slot.y, z2, slot.block, slot.meta + 8,1);
 	}
 
 	@Override

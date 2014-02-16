@@ -1,23 +1,29 @@
 /**
- * Copyright (c) SpaceToad, 2011 http://www.mod-buildcraft.com
+ * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
+ * http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public License
- * 1.0, or MMPL. Please check the contents of the license located in
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
+ * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
 package buildcraft.core.gui;
 
+import buildcraft.BuildCraftCore;
 import buildcraft.core.gui.slots.IPhantomSlot;
 import buildcraft.core.gui.slots.SlotBase;
 import buildcraft.core.gui.widgets.Widget;
 import buildcraft.core.inventory.StackHelper;
 import buildcraft.core.network.PacketGuiWidget;
-import cpw.mods.fml.common.network.PacketDispatcher;
-import cpw.mods.fml.common.network.Player;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufInputStream;
+
 import java.io.DataInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+
+import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
@@ -49,11 +55,18 @@ public abstract class BuildCraftContainer extends Container {
 
 	public void sendWidgetDataToClient(Widget widget, ICrafting player, byte[] data) {
 		PacketGuiWidget pkt = new PacketGuiWidget(windowId, widgets.indexOf(widget), data);
-		PacketDispatcher.sendPacketToPlayer(pkt.getPacket(), (Player) player);
+		BuildCraftCore.instance.sendToPlayer((EntityPlayer) player, pkt);
 	}
 
-	public void handleWidgetClientData(int widgetId, DataInputStream data) throws IOException {
-		widgets.get(widgetId).handleClientPacketData(data);
+	public void handleWidgetClientData(int widgetId, ByteBuf data) {
+		InputStream input = new ByteBufInputStream (data);
+		DataInputStream stream = new DataInputStream(input);
+		
+		try {
+			widgets.get(widgetId).handleClientPacketData(stream);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override

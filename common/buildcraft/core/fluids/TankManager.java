@@ -1,7 +1,7 @@
-/*
- * Copyright (c) SpaceToad, 2011-2012
+/**
+ * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- * 
+ *
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -9,25 +9,25 @@
 package buildcraft.core.fluids;
 
 import com.google.common.collect.ForwardingList;
+
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import io.netty.buffer.ByteBuf;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
 
-/**
- *
- * @author CovertJaguar <http://www.railcraft.info/>
- */
 public class TankManager<T extends Tank> extends ForwardingList<T> implements IFluidHandler, List<T> {
 
 	private List<T> tanks = new ArrayList<T>();
@@ -109,7 +109,7 @@ public class TankManager<T extends Tank> extends ForwardingList<T> implements IF
 		}
 	}
 
-	public void writeData(DataOutputStream data) throws IOException {
+	public void writeData(ByteBuf data) {
 		for (Tank tank : tanks) {
 			FluidStack fluidStack = tank.getFluid();
 			if (fluidStack != null && fluidStack.getFluid() != null) {
@@ -123,7 +123,7 @@ public class TankManager<T extends Tank> extends ForwardingList<T> implements IF
 	}
 
 	@SideOnly(Side.CLIENT)
-	public void readData(DataInputStream data) throws IOException {
+	public void readData(ByteBuf data) {
 		for (Tank tank : tanks) {
 			int fluidId = data.readShort();
 			if (fluidId > 0) {

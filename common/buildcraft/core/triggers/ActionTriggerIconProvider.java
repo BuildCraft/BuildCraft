@@ -1,16 +1,22 @@
+/**
+ * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
+ * http://www.mod-buildcraft.com
+ *
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
+ * License 1.0, or MMPL. Please check the contents of the license located in
+ * http://www.mod-buildcraft.com/MMPL-1.0.txt
+ */
 package buildcraft.core.triggers;
 
 import buildcraft.api.core.IIconProvider;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraft.client.renderer.texture.IconRegister;
-import net.minecraft.util.Icon;
+import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.util.IIcon;
 
 /**
  * Don't put new Trigger Icons in here please, put them in the Trigger classes
  * like the #TriggerClockTimer. This class will go away someday.
- *
- * @author CovertJaguar <http://www.railcraft.info/>
  */
 public class ActionTriggerIconProvider implements IIconProvider {
 
@@ -51,22 +57,27 @@ public class ActionTriggerIconProvider implements IIconProvider {
 	public static final int Trigger_Inventory_Below25 = 33;
 	public static final int Trigger_Inventory_Below50 = 34;
 	public static final int Trigger_Inventory_Below75 = 35;
-	public static final int MAX = 39;
+	public static final int Trigger_FluidContainer_Below25 = 36;
+	public static final int Trigger_FluidContainer_Below50 = 37;
+	public static final int Trigger_FluidContainer_Below75 = 38;
+	
+	public static final int MAX = 45;
+	
 	@SideOnly(Side.CLIENT)
-	private final Icon[] icons = new Icon[MAX];
+	private final IIcon[] icons = new IIcon[MAX];
 
 	private ActionTriggerIconProvider() {
 	}
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public Icon getIcon(int iconIndex) {
+	public IIcon getIcon(int iconIndex) {
 		return icons[iconIndex];
 	}
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void registerIcons(IconRegister iconRegister) {
+	public void registerIcons(IIconRegister iconRegister) {
 		icons[ActionTriggerIconProvider.Action_MachineControl_On] = iconRegister.registerIcon("buildcraft:triggers/action_machinecontrol_on");
 		icons[ActionTriggerIconProvider.Action_MachineControl_Off] = iconRegister.registerIcon("buildcraft:triggers/action_machinecontrol_off");
 		icons[ActionTriggerIconProvider.Action_MachineControl_Loop] = iconRegister.registerIcon("buildcraft:triggers/action_machinecontrol_loop");
@@ -104,5 +115,8 @@ public class ActionTriggerIconProvider implements IIconProvider {
 		icons[ActionTriggerIconProvider.Trigger_Inventory_Below25] = iconRegister.registerIcon("buildcraft:triggers/trigger_inventory_below25");
 		icons[ActionTriggerIconProvider.Trigger_Inventory_Below50] = iconRegister.registerIcon("buildcraft:triggers/trigger_inventory_below50");
 		icons[ActionTriggerIconProvider.Trigger_Inventory_Below75] = iconRegister.registerIcon("buildcraft:triggers/trigger_inventory_below75");
+		icons[ActionTriggerIconProvider.Trigger_FluidContainer_Below25] = iconRegister.registerIcon("buildcraft:triggers/trigger_liquidcontainer_below25");
+		icons[ActionTriggerIconProvider.Trigger_FluidContainer_Below50] = iconRegister.registerIcon("buildcraft:triggers/trigger_liquidcontainer_below50");
+		icons[ActionTriggerIconProvider.Trigger_FluidContainer_Below75] = iconRegister.registerIcon("buildcraft:triggers/trigger_liquidcontainer_below75");
 	}
 }

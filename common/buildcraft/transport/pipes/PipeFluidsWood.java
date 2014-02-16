@@ -1,9 +1,10 @@
 /**
- * BuildCraft is open-source. It is distributed under the terms of the
- * BuildCraft Open Source License. It grants rights to read, modify, compile or
- * run the code. It does *NOT* grant the right to redistribute this software or
- * its modifications in any form, binary or source, except if expressively
- * granted by the copyright holder.
+ * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
+ * http://www.mod-buildcraft.com
+ *
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
+ * License 1.0, or MMPL. Please check the contents of the license located in
+ * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
 package buildcraft.transport.pipes;
 
@@ -22,9 +23,10 @@ import buildcraft.transport.PipeTransportFluids;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidHandler;
@@ -45,14 +47,14 @@ public class PipeFluidsWood extends Pipe<PipeTransportFluids> implements IPowerR
 				return false;
 			if (!(tile instanceof IFluidHandler))
 				return false;
-			if (!PipeManager.canExtractFluids(pipe, tile.worldObj, tile.xCoord, tile.yCoord, tile.zCoord))
+			if (!PipeManager.canExtractFluids(pipe, tile.getWorldObj (), tile.xCoord, tile.yCoord, tile.zCoord))
 				return false;
 			return true;
 		}
 	};
 
-	public PipeFluidsWood(int itemID) {
-		super(new PipeTransportFluids(), itemID);
+	public PipeFluidsWood(Item item) {
+		super(new PipeTransportFluids(), item);
 
 		powerHandler = new PowerHandler(this, Type.MACHINE);
 		powerHandler.configure(1, 100, 1, 250);
@@ -84,7 +86,7 @@ public class PipeFluidsWood extends Pipe<PipeTransportFluids> implements IPowerR
 		if (powerHandler.getEnergyStored() <= 0)
 			return;
 
-		World w = container.worldObj;
+		World w = container.getWorld();
 
 		int meta = container.getBlockMetadata();
 
@@ -94,7 +96,7 @@ public class PipeFluidsWood extends Pipe<PipeTransportFluids> implements IPowerR
 		TileEntity tile = container.getTile(ForgeDirection.getOrientation(meta));
 
 		if (tile instanceof IFluidHandler) {
-			if (!PipeManager.canExtractFluids(this, tile.worldObj, tile.xCoord, tile.yCoord, tile.zCoord))
+			if (!PipeManager.canExtractFluids(this, tile.getWorldObj(), tile.xCoord, tile.yCoord, tile.zCoord))
 				return;
 
 			if (liquidToExtract <= FluidContainerRegistry.BUCKET_VOLUME) {

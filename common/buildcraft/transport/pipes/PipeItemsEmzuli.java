@@ -1,12 +1,14 @@
-/*
- * Copyright (c) SpaceToad, 2011-2012
+/**
+ * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- * 
+ *
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
 package buildcraft.transport.pipes;
+
+import io.netty.buffer.ByteBuf;
 
 import java.util.BitSet;
 import java.util.LinkedList;
@@ -16,9 +18,10 @@ import java.util.Map.Entry;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.gates.IAction;
 import buildcraft.api.inventory.ISpecialInventory;
@@ -32,14 +35,11 @@ import buildcraft.transport.BlockGenericPipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.TravelingItem;
 import buildcraft.transport.triggers.ActionExtractionPreset;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-/**
- *
- * @author SandGrainOne
- */
 public class PipeItemsEmzuli extends PipeItemsWood implements IGuiReturnHandler {
 
 	public final byte[] slotColors = new byte[4];
@@ -48,8 +48,8 @@ public class PipeItemsEmzuli extends PipeItemsWood implements IGuiReturnHandler 
 	private final int filterCount = filters.getSizeInventory();
 	private int currentFilter = 0;
 
-	public PipeItemsEmzuli(int itemID) {
-		super(itemID);
+	public PipeItemsEmzuli(Item item) {
+		super(item);
 
 		standardIconIndex = PipeIconProvider.TYPE.PipeItemsEmzuli_Standard.ordinal();
 		solidIconIndex = PipeIconProvider.TYPE.PipeAllEmzuli_Solid.ordinal();
@@ -57,8 +57,8 @@ public class PipeItemsEmzuli extends PipeItemsWood implements IGuiReturnHandler 
 
 	@Override
 	public boolean blockActivated(EntityPlayer entityplayer) {
-		if (entityplayer.getCurrentEquippedItem() != null && entityplayer.getCurrentEquippedItem().itemID < Block.blocksList.length) {
-			if (Block.blocksList[entityplayer.getCurrentEquippedItem().itemID] instanceof BlockGenericPipe) {
+		if (entityplayer.getCurrentEquippedItem() != null) {
+			if (Block.getBlockFromItem(entityplayer.getCurrentEquippedItem().getItem()) instanceof BlockGenericPipe) {
 				return false;
 			}
 		}
@@ -67,8 +67,8 @@ public class PipeItemsEmzuli extends PipeItemsWood implements IGuiReturnHandler 
 			return true;
 		}
 
-		if (!CoreProxy.proxy.isRenderWorld(container.worldObj)) {
-			entityplayer.openGui(BuildCraftTransport.instance, GuiIds.PIPE_LOGEMERALD_ITEM, container.worldObj, container.xCoord, container.yCoord, container.zCoord);
+		if (!container.getWorldObj().isRemote) {
+			entityplayer.openGui(BuildCraftTransport.instance, GuiIds.PIPE_LOGEMERALD_ITEM, container.getWorldObj(), container.xCoord, container.yCoord, container.zCoord);
 		}
 
 		return true;
@@ -234,11 +234,11 @@ public class PipeItemsEmzuli extends PipeItemsWood implements IGuiReturnHandler 
 	}
 
 	@Override
-	public void writeGuiData(DataOutputStream paramDataOutputStream) throws IOException {
+	public void writeGuiData(ByteBuf paramDataOutputStream) {
 	}
 
 	@Override
-	public void readGuiData(DataInputStream data, EntityPlayer paramEntityPlayer) throws IOException {
+	public void readGuiData(ByteBuf data, EntityPlayer paramEntityPlayer) {
 		byte slot = data.readByte();
 		slotColors[slot] = data.readByte();
 	}

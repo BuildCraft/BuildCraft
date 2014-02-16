@@ -1,8 +1,9 @@
 /**
- * Copyright (c) SpaceToad, 2011 http://www.mod-buildcraft.com
+ * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
+ * http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public License
- * 1.0, or MMPL. Please check the contents of the license located in
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
+ * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
 package buildcraft.transport;
@@ -14,8 +15,9 @@ import java.util.Map;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.BuildCraftCore;
+import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.gates.ITrigger;
 import buildcraft.api.power.IPowerEmitter;
@@ -25,7 +27,6 @@ import buildcraft.api.power.PowerHandler.Type;
 import buildcraft.api.transport.IPipeTile.PipeType;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.ReflectAPI;
-import buildcraft.core.proxy.CoreProxy;
 import buildcraft.transport.network.PacketPowerUpdate;
 import buildcraft.transport.pipes.PipePowerCobblestone;
 import buildcraft.transport.pipes.PipePowerDiamond;
@@ -147,7 +148,7 @@ public class PipeTransportPower extends PipeTransport {
 
 	@Override
 	public void updateEntity() {
-		if (CoreProxy.proxy.isRenderWorld(container.worldObj)) {
+		if (container.getWorldObj().isRemote) {
 			// updating movement stage. We're only carrying the movement on half
 			// the things. This is purely for animation purpose.
 
@@ -318,7 +319,7 @@ public class PipeTransportPower extends PipeTransport {
 			}
 		}
 
-		if (tracker.markTimeIfDelay(container.worldObj, 2 * BuildCraftCore.updateFactor)) {
+		if (tracker.markTimeIfDelay(container.getWorldObj(), 2 * BuildCraftCore.updateFactor)) {
 			PacketPowerUpdate packet = new PacketPowerUpdate(container.xCoord, container.yCoord, container.zCoord);
 
 			double displayFactor = MAX_DISPLAY / 1024.0;
@@ -328,7 +329,7 @@ public class PipeTransportPower extends PipeTransport {
 
 			packet.displayPower = clientDisplayPower;
 			packet.overload = isOverloaded();
-			CoreProxy.proxy.sendToPlayers(packet.getPacket(), container.worldObj, container.xCoord, container.yCoord, container.zCoord, DefaultProps.PIPE_CONTENTS_RENDER_DIST);
+			BuildCraftTransport.instance.sendToPlayers(packet, container.getWorldObj(), container.xCoord, container.yCoord, container.zCoord, DefaultProps.PIPE_CONTENTS_RENDER_DIST);
 		}
 	}
 
@@ -350,8 +351,8 @@ public class PipeTransportPower extends PipeTransport {
 	}
 
 	private void step() {
-		if (currentDate != container.worldObj.getTotalWorldTime()) {
-			currentDate = container.worldObj.getTotalWorldTime();
+		if (currentDate != container.getWorldObj().getTotalWorldTime()) {
+			currentDate = container.getWorldObj().getTotalWorldTime();
 
 			powerQuery = nextPowerQuery;
 			nextPowerQuery = new int[6];
@@ -412,7 +413,7 @@ public class PipeTransportPower extends PipeTransport {
 
 	@Override
 	public void initialize() {
-		currentDate = container.worldObj.getTotalWorldTime();
+		currentDate = container.getWorldObj().getTotalWorldTime();
 	}
 
 	@Override

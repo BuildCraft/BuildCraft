@@ -1,4 +1,14 @@
+/**
+ * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
+ * http://www.mod-buildcraft.com
+ *
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
+ * License 1.0, or MMPL. Please check the contents of the license located in
+ * http://www.mod-buildcraft.com/MMPL-1.0.txt
+ */
 package buildcraft.core.network;
+
+import io.netty.buffer.ByteBuf;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -21,7 +31,7 @@ public class PacketTileState extends PacketCoordinates {
 	private List<StateWithId> stateList = new LinkedList<StateWithId>();
 
 	/**
-	 * Default constructor for incomming packets
+	 * Default constructor for incoming packets
 	 */
 	public PacketTileState() {
 	}
@@ -43,11 +53,11 @@ public class PacketTileState extends PacketCoordinates {
 	}
 
 	@Override
-	public void readData(DataInputStream data) throws IOException {
+	public void readData(ByteBuf data) {
 		super.readData(data);
 	}
 
-	public void applyStates(DataInputStream data, ISyncedTile tile) throws IOException {
+	public void applyStates(ByteBuf data, ISyncedTile tile) throws IOException {
 		byte stateCount = data.readByte();
 		for (int i = 0; i < stateCount; i++) {
 			byte stateId = data.readByte();
@@ -61,7 +71,7 @@ public class PacketTileState extends PacketCoordinates {
 	}
 
 	@Override
-	public void writeData(DataOutputStream data) throws IOException {
+	public void writeData(ByteBuf data) {
 		super.writeData(data);
 		data.writeByte(stateList.size());
 		for (StateWithId stateWithId : stateList) {

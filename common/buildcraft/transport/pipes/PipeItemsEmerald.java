@@ -1,11 +1,14 @@
 /**
- * Copyright (c) SpaceToad, 2011 http://www.mod-buildcraft.com
+ * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
+ * http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public License
- * 1.0, or MMPL. Please check the contents of the license located in
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
+ * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
 package buildcraft.transport.pipes;
+
+import io.netty.buffer.ByteBuf;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -14,10 +17,11 @@ import java.io.IOException;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.inventory.ISpecialInventory;
 import buildcraft.core.GuiIds;
@@ -74,8 +78,8 @@ public class PipeItemsEmerald extends PipeItemsWood implements IClientState, IGu
 	private final SimpleInventory filters = new SimpleInventory(9, "Filters", 1);
 	private int currentFilter = 0;
 
-	public PipeItemsEmerald(int itemID) {
-		super(itemID);
+	public PipeItemsEmerald(Item item) {
+		super(item);
 
 		standardIconIndex = PipeIconProvider.TYPE.PipeItemsEmerald_Standard.ordinal();
 		solidIconIndex = PipeIconProvider.TYPE.PipeAllEmerald_Solid.ordinal();
@@ -83,8 +87,8 @@ public class PipeItemsEmerald extends PipeItemsWood implements IClientState, IGu
 
 	@Override
 	public boolean blockActivated(EntityPlayer entityplayer) {
-		if (entityplayer.getCurrentEquippedItem() != null && entityplayer.getCurrentEquippedItem().itemID < Block.blocksList.length) {
-			if (Block.blocksList[entityplayer.getCurrentEquippedItem().itemID] instanceof BlockGenericPipe) {
+		if (entityplayer.getCurrentEquippedItem() != null) {
+			if (Block.getBlockFromItem(entityplayer.getCurrentEquippedItem().getItem()) instanceof BlockGenericPipe) {
 				return false;
 			}
 		}
@@ -93,8 +97,8 @@ public class PipeItemsEmerald extends PipeItemsWood implements IClientState, IGu
 			return true;
 		}
 
-		if (!CoreProxy.proxy.isRenderWorld(container.worldObj)) {
-			entityplayer.openGui(BuildCraftTransport.instance, GuiIds.PIPE_EMERALD_ITEM, container.worldObj, container.xCoord, container.yCoord, container.zCoord);
+		if (!container.getWorldObj().isRemote) {
+			entityplayer.openGui(BuildCraftTransport.instance, GuiIds.PIPE_EMERALD_ITEM, container.getWorldObj(), container.xCoord, container.yCoord, container.zCoord);
 		}
 
 		return true;
@@ -245,18 +249,16 @@ public class PipeItemsEmerald extends PipeItemsWood implements IClientState, IGu
 
 	// ICLIENTSTATE
 	@Override
-	public void writeData(DataOutputStream data) throws IOException {
+	public void writeData(ByteBuf data) {
 		NBTTagCompound nbt = new NBTTagCompound();
 		writeToNBT(nbt);
-		NBTBase.writeNamedTag(nbt, data);
+		Utils.writeNBT(data, nbt);
 	}
 
 	@Override
-	public void readData(DataInputStream data) throws IOException {
-		NBTBase nbt = NBTBase.readNamedTag(data);
-		if (nbt instanceof NBTTagCompound) {
-			readFromNBT((NBTTagCompound) nbt);
-		}
+	public void readData(ByteBuf data) {
+		NBTTagCompound nbt = Utils.readNBT(data);		
+		readFromNBT(nbt);
 	}
 
 	public IInventory getFilters() {
@@ -268,12 +270,12 @@ public class PipeItemsEmerald extends PipeItemsWood implements IClientState, IGu
 	}
 
 	@Override
-	public void writeGuiData(DataOutputStream data) throws IOException {
+	public void writeGuiData(ByteBuf data) {
 		data.writeByte(stateController.getCurrentState());
 	}
 
 	@Override
-	public void readGuiData(DataInputStream data, EntityPlayer sender) throws IOException {
+	public void readGuiData(ByteBuf data, EntityPlayer sender) {
 		stateController.setCurrentState(data.readByte());
 	}
 }

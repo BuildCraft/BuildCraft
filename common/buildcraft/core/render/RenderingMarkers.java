@@ -1,3 +1,11 @@
+/**
+ * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
+ * http://www.mod-buildcraft.com
+ *
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
+ * License 1.0, or MMPL. Please check the contents of the license located in
+ * http://www.mod-buildcraft.com/MMPL-1.0.txt
+ */
 package buildcraft.core.render;
 
 import buildcraft.BuildCraftCore;
@@ -5,7 +13,7 @@ import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.util.Icon;
+import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 
 public class RenderingMarkers implements ISimpleBlockRenderingHandler {
@@ -22,8 +30,8 @@ public class RenderingMarkers implements ISimpleBlockRenderingHandler {
 	public boolean renderWorldBlock(IBlockAccess world, int x, int y, int z, Block block, int modelId, RenderBlocks renderer) {
 
 		Tessellator tessellator = Tessellator.instance;
-		float f = block.getBlockBrightness(world, x, y, z);
-		if (Block.lightValue[block.blockID] > 0) {
+		float f = block.getMixedBrightnessForBlock(world, x, y, z);
+		if (block.getLightValue() > 0) {
 			f = 1.0F;
 		}
 		tessellator.setColorOpaque_F(f, f, f);
@@ -33,7 +41,7 @@ public class RenderingMarkers implements ISimpleBlockRenderingHandler {
 	}
 
 	@Override
-	public boolean shouldRender3DInInventory() {
+	public boolean shouldRender3DInInventory(int modelId) {
 		return false;
 	}
 
@@ -125,7 +133,7 @@ public class RenderingMarkers implements ISimpleBlockRenderingHandler {
 		int yCoord = (int) y;
 		int zCoord = (int) z;
 
-		Icon i = block.getBlockTexture(iblockaccess, xCoord, yCoord, zCoord, 1);
+		IIcon i = block.getIcon(iblockaccess, xCoord, yCoord, zCoord, 1);
 
 		int m = metaToOld[meta];
 		x += 0.5D;
@@ -173,9 +181,7 @@ public class RenderingMarkers implements ISimpleBlockRenderingHandler {
 			tessellator.addVertexWithUV(x - s, y + 0.5 - s, z - s, minU, minV);
 		}
 		
-		i = block.getBlockTexture(iblockaccess, xCoord, yCoord, zCoord, 0);
-
-		
+		i = block.getIcon(iblockaccess, xCoord, yCoord, zCoord, 0);
 		
 		minU = i.getMinU();
 		maxU = i.getMaxU();
@@ -228,5 +234,4 @@ public class RenderingMarkers implements ISimpleBlockRenderingHandler {
 			face[j][3] = tmp;
 		}
 	}
-
 }

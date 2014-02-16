@@ -1,12 +1,11 @@
 /**
- * Copyright (c) SpaceToad, 2011
+ * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
  *
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-
 package buildcraft.factory;
 
 import buildcraft.core.EntityBlock;
@@ -99,7 +98,7 @@ public class EntityMechanicalArm extends Entity {
 	}
 
 	private void findAndJoinQuarry() {
-		TileEntity te = worldObj.getBlockTileEntity((int) posX, (int) posY, (int) posZ);
+		TileEntity te = worldObj.getTileEntity((int) posX, (int) posY, (int) posZ);
 		if (te != null && te instanceof TileQuarry) {
 			parent = (TileQuarry) te;
 			parent.setArm(this);

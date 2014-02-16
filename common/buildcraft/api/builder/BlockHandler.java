@@ -1,3 +1,11 @@
+/**
+ * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
+ * http://www.mod-buildcraft.com
+ *
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
+ * License 1.0, or MMPL. Please check the contents of the license located in
+ * http://www.mod-buildcraft.com/MMPL-1.0.txt
+ */
 package buildcraft.api.builder;
 
 import java.util.ArrayList;
@@ -5,8 +13,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import buildcraft.builders.blueprints.IBlueprintBuilderAgent;
-import buildcraft.builders.blueprints.BlueprintBuilder.SchematicBuilder;
 import net.minecraft.block.Block;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
@@ -14,7 +20,9 @@ import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
+import buildcraft.builders.blueprints.BlueprintBuilder.SchematicBuilder;
+import buildcraft.builders.blueprints.IBlueprintBuilderAgent;
 
 /**
  * BlockHandlers are used to serialize blocks for saving/loading from
@@ -22,41 +30,45 @@ import net.minecraftforge.common.ForgeDirection;
  *
  * To implement your own, you should extend this class and override the
  * functions as needed.
- *
- * @author CovertJaguar <http://www.railcraft.info/>
  */
 public class BlockHandler {
 
-	private static final Map<Integer, BlockHandler> handlers = new HashMap<Integer, BlockHandler>();
+	private static final Map<Object, BlockHandler> handlers = new HashMap<Object, BlockHandler>();
 	private final int id;
 
 	public static BlockHandler get(Item item) {
-		if (item == null)
+		if (item == null) {
 			return null;
-		return get(item.itemID);
+		} else {
+			return get(item);
+		}
 	}
 
 	public static BlockHandler get(Block block) {
-		if (block == null)
+		if (block == null) {
 			return null;
-		return get(block.blockID);
+		} else {
+			return get(block);
+		}
 	}
 
 	public static BlockHandler get(int id) {
 		BlockHandler handler = handlers.get(id);
+
 		if (handler == null) {
 			handler = new BlockHandler(id);
 			registerHandler(id, handler);
 		}
+
 		return handler;
 	}
 
 	public static void registerHandler(Block block, BlockHandler handler) {
-		handlers.put(block.blockID, handler);
+		handlers.put(block, handler);
 	}
 
 	public static void registerHandler(Item item, BlockHandler handler) {
-		handlers.put(item.itemID, handler);
+		handlers.put(item, handler);
 	}
 
 	public static void registerHandler(int id, BlockHandler handler) {
@@ -79,21 +91,22 @@ public class BlockHandler {
 	 * We will also skip any blocks that drop actual items like Ore blocks.
 	 */
 	public boolean canSaveToSchematic(World world, int x, int y, int z) {
-		if (!(Item.itemsList[id] instanceof ItemBlock))
-			return false;
+		Block block = Block.getBlockById(id);
 
-		Block block = Block.blocksList[id];
-		if (block == null)
+		if (block == null) {
 			return false;
+		}
 
 		int meta = world.getBlockMetadata(x, y, z);
-		try {
-			if (block.idDropped(meta, null, 0) != id)
-				return false;
 
+		try {
+			if (block.getItemDropped(meta, null, 0) != Item.getItemFromBlock(block)) {
+				return false;
+			}
 		} catch (NullPointerException ex) {
 			return false;
 		}
+
 		return !block.hasTileEntity(meta);
 	}
 
@@ -105,21 +118,24 @@ public class BlockHandler {
 	 * We will also skip any blocks that drop actual items like Ore blocks.
 	 */
 	public boolean canSaveToSchematic(ItemStack stack) {
-		if (stack == null)
+		if (stack == null) {
 			return false;
-		if (!(stack.getItem() instanceof ItemBlock))
-			return false;
+		}
 
-		if (id > Block.blocksList.length)
+		if (!(stack.getItem() instanceof ItemBlock)) {
 			return false;
+		}
 
-		Block block = Block.blocksList[id];
-		if (block == null)
+		Block block = Block.getBlockById(id);
+
+		if (block == null) {
 			return false;
+		}
 
 		try {
-			if (block.idDropped(stack.getItemDamage(), null, 0) != id)
+			if (block.getItemDropped(stack.getItemDamage(), null, 0) != Item.getItemFromBlock(block)) {
 				return false;
+			}
 		} catch (NullPointerException ex) {
 			return false;
 		}
@@ -159,8 +175,9 @@ public class BlockHandler {
 	 */
 	public List<ItemStack> getCostForSchematic(NBTTagCompound data) {
 		List<ItemStack> cost = new ArrayList<ItemStack>();
-		Block block = Block.blocksList[id];
-		cost.add(new ItemStack(block.idDropped(data.getByte("blockMeta"), BlueprintHelpers.RANDOM, 0), 1, block.damageDropped(data.getByte("blockMeta"))));
+		Block block = Block.getBlockById(id);
+		cost.add(new ItemStack(block.getItemDropped(data.getByte("blockMeta"), BlueprintHelpers.RANDOM, 0), 1, block.damageDropped(data.getByte("blockMeta"))));
+
 		return cost;
 	}
 
@@ -203,8 +220,10 @@ public class BlockHandler {
 		if (builderInventory != null) {
 			List<ItemStack> requiredItems = getCostForSchematic(builder.schematic.data);
 			List<Integer> slotsToConsume = new ArrayList<Integer>();
+
 			for (ItemStack cost : requiredItems) {
 				boolean found = false;
+
 				for (int slot = 0; slot < builderInventory.getSizeInventory(); slot++) {
 					if (areItemsEqual(builderInventory.getStackInSlot(slot), cost)) {
 						slotsToConsume.add(slot);
@@ -212,22 +231,26 @@ public class BlockHandler {
 						break;
 					}
 				}
-				if (!found)
+
+				if (!found) {
 					return false;
+				}
 			}
 			for (Integer slot : slotsToConsume) {
 				builderInventory.setInventorySlotContents(slot, BlueprintHelpers.consumeItem(builderInventory.getStackInSlot(slot)));
 			}
 		}
-		return world.setBlock(builder.getX(), builder.getY(), builder.getZ(), Block.blocksList[id].blockID, builder.schematic.data.getByte("blockMeta"), 3);
+
+		return world.setBlock(builder.getX(), builder.getY(), builder.getZ(), Block.getBlockById(id), 0, 3);
 	}
 
 	/**
 	 * Checks if the block matches the schematic.
 	 */
 	public boolean doesBlockMatchSchematic(World world, int x, int y, int z, ForgeDirection blueprintOrientation, NBTTagCompound data) {
-		if (id != world.getBlockId(x, y, z))
+		if (Block.getBlockById(id) != world.getBlock(x, y, z)) {
 			return false;
+		}
 
 		return !data.hasKey("blockMeta") || data.getByte("blockMeta") == world.getBlockMetadata(x, y, z);
 	}

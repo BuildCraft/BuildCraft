@@ -1,7 +1,7 @@
-/*
- * Copyright (c) SpaceToad, 2011-2012
+/**
+ * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- * 
+ *
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -19,13 +19,9 @@ import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.Icon;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraft.util.IIcon;
+import net.minecraftforge.common.util.ForgeDirection;
 
-/**
- *
- * @author CovertJaguar <http://www.railcraft.info/>
- */
 public class FacadeRenderHelper {
 
 	private static final float zFightOffset = 1F / 4096F;
@@ -90,12 +86,12 @@ public class FacadeRenderHelper {
 	}
 
 	public static void pipeFacadeRenderer(RenderBlocks renderblocks, BlockGenericPipe block, PipeRenderState state, int x, int y, int z) {
-		state.textureArray = new Icon[6];
+		state.textureArray = new IIcon[6];
 
 		for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
-			int facadeId = state.facadeMatrix.getFacadeBlockId(direction);
-			if (facadeId != 0) {
-				Block renderBlock = Block.blocksList[facadeId];
+			Block renderBlock = state.facadeMatrix.getFacadeBlock(direction);
+			
+			if (renderBlock != null) {
 				int renderMeta = state.facadeMatrix.getFacadeMetaId(direction);
 
 				for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
@@ -103,11 +99,11 @@ public class FacadeRenderHelper {
 					if (side == direction || side == direction.getOpposite())
 						block.setRenderSide(side, true);
 					else
-						block.setRenderSide(side, state.facadeMatrix.getFacadeBlockId(side) == 0);
+						block.setRenderSide(side, state.facadeMatrix.getFacadeBlock(side) == null);
 				}
 
 				try {
-					BlockGenericPipe.facadeRenderColor = Item.itemsList[state.facadeMatrix.getFacadeBlockId(direction)].getColorFromItemStack(new ItemStack(facadeId, 1, renderMeta), 0);
+					BlockGenericPipe.facadeRenderColor = Item.getItemFromBlock(state.facadeMatrix.getFacadeBlock(direction)).getColorFromItemStack(new ItemStack(renderBlock, 1, renderMeta), 0);
 				} catch (Throwable error) {
 				}
 
@@ -181,7 +177,7 @@ public class FacadeRenderHelper {
 		state.currentTexture = BuildCraftTransport.instance.pipeIconProvider.getIcon(PipeIconProvider.TYPE.PipeStructureCobblestone.ordinal()); // Structure Pipe
 
 		for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
-			if (state.facadeMatrix.getFacadeBlockId(direction) != 0 && !state.pipeConnectionMatrix.isConnected(direction)) {
+			if (state.facadeMatrix.getFacadeBlock(direction) != null && !state.pipeConnectionMatrix.isConnected(direction)) {
 				float[][] rotated = MatrixTranformations.deepClone(zeroStateSupport);
 				MatrixTranformations.transform(rotated, direction);
 

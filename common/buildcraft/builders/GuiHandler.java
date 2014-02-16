@@ -1,3 +1,11 @@
+/**
+ * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
+ * http://www.mod-buildcraft.com
+ *
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
+ * License 1.0, or MMPL. Please check the contents of the license located in
+ * http://www.mod-buildcraft.com/MMPL-1.0.txt
+ */
 package buildcraft.builders;
 
 import buildcraft.builders.gui.ContainerBlueprintLibrary;
@@ -25,7 +33,7 @@ public class GuiHandler implements IGuiHandler {
 		if (!world.blockExists(x, y, z))
 			return null;
 
-		TileEntity tile = world.getBlockTileEntity(x, y, z);
+		TileEntity tile = world.getTileEntity(x, y, z);
 
 		switch (ID) {
 
@@ -67,7 +75,7 @@ public class GuiHandler implements IGuiHandler {
 		if (!world.blockExists(x, y, z))
 			return null;
 
-		TileEntity tile = world.getBlockTileEntity(x, y, z);
+		TileEntity tile = world.getTileEntity(x, y, z);
 
 		switch (ID) {
 
@@ -92,10 +100,11 @@ public class GuiHandler implements IGuiHandler {
 			return new ContainerFiller(player.inventory, (TileFiller) tile);
 
 		case GuiIds.URBANIST:
-			System.out.println ("CREATE U FROM SERVER: " + CoreProxy.proxy.isSimulating(tile.worldObj));
-			if (!(tile instanceof TileUrbanist))
+			if (!(tile instanceof TileUrbanist)) {
 				return null;
-			return new ContainerUrbanist(player.inventory, (TileUrbanist) tile);
+			} else {			
+				return new ContainerUrbanist(player.inventory, (TileUrbanist) tile);
+			}
 
 		default:
 			return null;

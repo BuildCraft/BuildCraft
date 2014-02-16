@@ -1,12 +1,8 @@
 package buildcraft.core.network;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-
-import buildcraft.transport.Pipe;
+import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.tileentity.TileEntity;
+import buildcraft.transport.Pipe;
 
 public class PacketRPCPipe extends BuildCraftPacket {
 
@@ -34,7 +30,7 @@ public class PacketRPCPipe extends BuildCraftPacket {
 	}
 
 	@Override
-	public void readData(DataInputStream data) throws IOException {
+	public void readData(ByteBuf data) {
 		RPCMessageInfo info = new RPCMessageInfo();
 		info.sender = sender;
 
@@ -42,8 +38,8 @@ public class PacketRPCPipe extends BuildCraftPacket {
 	}
 
 	@Override
-	public void writeData(DataOutputStream data) throws IOException {
-		data.write(contents);
+	public void writeData(ByteBuf data) {
+		data.writeBytes(contents);
 	}
 
 }

@@ -1,17 +1,17 @@
 /**
- * Copyright (c) SpaceToad, 2011
+ * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
  *
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-
 package buildcraft.core.network;
+
+import io.netty.buffer.ByteBuf;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
-import java.io.IOException;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Type;
@@ -20,6 +20,7 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.TreeMap;
 
+import buildcraft.core.utils.Utils;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 
@@ -186,8 +187,8 @@ public class ClassMapping {
 	}
 
 
-	public void setData(Object obj, DataOutputStream data) throws IllegalArgumentException,
-	IllegalAccessException, IOException {
+	public void setData(Object obj, ByteBuf data) throws IllegalArgumentException,
+	IllegalAccessException {
 		SerializationContext context = new SerializationContext();
 
 		setDataInt(obj, data, context);
@@ -232,15 +233,15 @@ public class ClassMapping {
 	 *
 	 * @throws ClassNotFoundException
 	 */
-	public Object updateFromData (Object obj, DataInputStream data) throws IllegalArgumentException,
-	IllegalAccessException, IOException, InstantiationException, ClassNotFoundException {
+	public Object updateFromData (Object obj, ByteBuf data) throws IllegalArgumentException,
+	IllegalAccessException, InstantiationException, ClassNotFoundException {
 		SerializationContext context = new SerializationContext();
 
 		return updateFromDataInt(obj, data, context);
 	}
 
-	public void setDataInt(Object obj, DataOutputStream data, SerializationContext context) throws IllegalArgumentException,
-	IllegalAccessException, IOException {
+	public void setDataInt(Object obj, ByteBuf data, SerializationContext context) throws IllegalArgumentException,
+	IllegalAccessException {
 		if (mappedClass.isArray()) {
 			setDataArray(obj, data, context);
 		} else {
@@ -248,8 +249,8 @@ public class ClassMapping {
 		}
 	}
 
-	private Object updateFromDataInt (Object obj, DataInputStream data, SerializationContext context) throws IllegalArgumentException,
-	IllegalAccessException, IOException, InstantiationException, ClassNotFoundException {
+	private Object updateFromDataInt (Object obj, ByteBuf data, SerializationContext context) throws IllegalArgumentException,
+	IllegalAccessException, InstantiationException, ClassNotFoundException {
 		if (mappedClass.isArray()) {
 			return updateFromDataArray(obj, data, context);
 		} else {
@@ -258,8 +259,8 @@ public class ClassMapping {
 	}
 
 	@SuppressWarnings("rawtypes")
-	private void setDataClass(Object obj, DataOutputStream data, SerializationContext context) throws IllegalArgumentException,
-			IllegalAccessException, IOException {
+	private void setDataClass(Object obj, ByteBuf data, SerializationContext context) throws IllegalArgumentException,
+			IllegalAccessException {
 
 		for (Field f : shortFields) {
 			data.writeShort(f.getShort(obj));
@@ -292,18 +293,18 @@ public class ClassMapping {
 				data.writeBoolean(false);
 			} else {
 				data.writeBoolean(true);
-				data.writeUTF(s);
+				Utils.writeUTF(data, s);
 			}
 		}
 
 		for (Field f : nbtFields) {
-			NBTBase nbt = (NBTTagCompound) f.get(obj);
+			NBTTagCompound nbt = (NBTTagCompound) f.get(obj);
 
 			if (nbt == null) {
 				data.writeBoolean(false);
 			} else {
 				data.writeBoolean(true);
-				NBTBase.writeNamedTag(nbt, data);
+				Utils.writeNBT(data, nbt);
 			}
 		}
 
@@ -321,8 +322,8 @@ public class ClassMapping {
 	}
 
 	@SuppressWarnings("rawtypes")
-	public Object updateFromDataClass(Object obj, DataInputStream data, SerializationContext context) throws IllegalArgumentException,
-			IllegalAccessException, IOException, InstantiationException, ClassNotFoundException {
+	public Object updateFromDataClass(Object obj, ByteBuf data, SerializationContext context) throws IllegalArgumentException,
+			IllegalAccessException, InstantiationException, ClassNotFoundException {
 
 		if (obj == null) {
 			obj = mappedClass.newInstance();
@@ -354,7 +355,7 @@ public class ClassMapping {
 
 		for (Field f : stringFields) {
 			if (data.readBoolean()) {
-				f.set(obj, data.readUTF());
+				f.set(obj, Utils.readUTF(data));
 			} else {
 				f.set(obj, null);
 			}
@@ -362,7 +363,7 @@ public class ClassMapping {
 
 		for (Field f : nbtFields) {
 			if (data.readBoolean()) {
-				f.set(obj, NBTBase.readNamedTag(data));
+				f.set(obj, Utils.readNBT(data));
 			} else {
 				f.set(obj, null);
 			}
@@ -382,8 +383,8 @@ public class ClassMapping {
 		return obj;
 	}
 
-	private void setDataArray(Object obj, DataOutputStream data, SerializationContext context) throws IllegalArgumentException,
-	IllegalAccessException, IOException {
+	private void setDataArray(Object obj, ByteBuf data, SerializationContext context) throws IllegalArgumentException,
+	IllegalAccessException {
 		Class<? extends Object> cpt = mappedClass.getComponentType();
 
 		switch (cptType) {
@@ -426,7 +427,7 @@ public class ClassMapping {
 						data.writeBoolean(false);
 					} else {
 						data.writeBoolean(true);
-						data.writeUTF(arr [i]);
+						Utils.writeUTF(data, arr [i]);
 					}
 				}
 
@@ -485,8 +486,8 @@ public class ClassMapping {
 		}
 	}
 
-	private Object updateFromDataArray(Object obj, DataInputStream data, SerializationContext context) throws IllegalArgumentException,
-	IllegalAccessException, IOException, InstantiationException, ClassNotFoundException {
+	private Object updateFromDataArray(Object obj, ByteBuf data, SerializationContext context) throws IllegalArgumentException,
+	IllegalAccessException, InstantiationException, ClassNotFoundException {
 		Class<? extends Object> cpt = mappedClass.getComponentType();
 
 		int size = data.readInt();
@@ -554,7 +555,7 @@ public class ClassMapping {
 
 				for (int i = 0; i < arr.length; ++i) {
 					if (data.readBoolean()) {
-						arr [i] = data.readUTF();
+						arr [i] = Utils.readUTF(data);
 					} else {
 						arr [i] = null;
 					}
@@ -646,9 +647,9 @@ public class ClassMapping {
 	}
 
 	private void setDataObject(Object obj,
-			ClassMapping baseMapping, DataOutputStream data,
+			ClassMapping baseMapping, ByteBuf data,
 			SerializationContext context) throws IllegalArgumentException,
-			IllegalAccessException, IOException {
+			IllegalAccessException {
 		ClassMapping mapping = baseMapping;
 
 		Class realClass = obj.getClass();
@@ -665,7 +666,7 @@ public class ClassMapping {
 				mapping = get(realClass);
 
 				data.writeByte(index);
-				data.writeUTF(realClass.getCanonicalName());
+				Utils.writeUTF(data, realClass.getCanonicalName());
 				context.classToId.put(realClass.getCanonicalName(),
 						context.classToId.size());
 				context.idToClass.add(mapping);
@@ -676,9 +677,9 @@ public class ClassMapping {
 	}
 
 	private Object updateFromDataObject(Object obj,
-			ClassMapping baseMapping, DataInputStream data,
+			ClassMapping baseMapping, ByteBuf data,
 			SerializationContext context) throws IllegalArgumentException,
-			IllegalAccessException, IOException, InstantiationException,
+			IllegalAccessException, InstantiationException,
 			ClassNotFoundException {
 
 		// The data layout for an object is the following:
@@ -697,7 +698,7 @@ public class ClassMapping {
 
 		if (index != 0) {
 			if (context.idToClass.size() < index) {
-				String className = data.readUTF();
+				String className = Utils.readUTF(data);
 
 				Class cls = Class.forName(className);
 

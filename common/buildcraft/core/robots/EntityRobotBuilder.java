@@ -1,23 +1,14 @@
 /**
- * Copyright (c) SpaceToad, 2011-2012 http://www.mod-buildcraft.com
+ * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
+ * http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public License
- * 1.0, or MMPL. Please check the contents of the license located in
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
+ * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
 package buildcraft.core.robots;
 
-import buildcraft.builders.blueprints.BlueprintBuilder.SchematicBuilder;
-import buildcraft.core.BlockIndex;
-import buildcraft.core.Box;
-import buildcraft.core.proxy.CoreProxy;
-import buildcraft.core.utils.BCLog;
-import buildcraft.core.utils.BlockUtil;
-
-import com.google.common.io.ByteArrayDataInput;
-import com.google.common.io.ByteArrayDataOutput;
-
-import cpw.mods.fml.common.registry.IEntityAdditionalSpawnData;
+import io.netty.buffer.ByteBuf;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -25,6 +16,12 @@ import java.util.List;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
+import buildcraft.builders.blueprints.BlueprintBuilder.SchematicBuilder;
+import buildcraft.core.BlockIndex;
+import buildcraft.core.Box;
+import buildcraft.core.utils.BCLog;
+import buildcraft.core.utils.BlockUtil;
+import cpw.mods.fml.common.registry.IEntityAdditionalSpawnData;
 
 public class EntityRobotBuilder extends EntityRobot implements IEntityAdditionalSpawnData {
 
@@ -44,6 +41,7 @@ public class EntityRobotBuilder extends EntityRobot implements IEntityAdditional
 		this.box = box;
 	}
 
+	@Override
 	protected void init() {
 		if (box != null) {
 			//setDestination((int) box.centerX(), (int) box.centerY(), (int) box.centerZ());
@@ -53,7 +51,7 @@ public class EntityRobotBuilder extends EntityRobot implements IEntityAdditional
 	}
 
 	@Override
-	public void writeSpawnData(ByteArrayDataOutput data) {
+	public void writeSpawnData(ByteBuf data) {
 		super.writeSpawnData(data);
 
 		if (box == null) {
@@ -69,7 +67,7 @@ public class EntityRobotBuilder extends EntityRobot implements IEntityAdditional
 	}
 
 	@Override
-	public void readSpawnData(ByteArrayDataInput data) {
+	public void readSpawnData(ByteBuf data) {
 
 		box = new Box();
 		box.xMin = data.readInt();
@@ -97,6 +95,7 @@ public class EntityRobotBuilder extends EntityRobot implements IEntityAdditional
 		super.writeEntityToNBT(nbttagcompound);
 	}
 
+	@Override
 	protected void move() {
 		super.move();
 
@@ -113,8 +112,9 @@ public class EntityRobotBuilder extends EntityRobot implements IEntityAdditional
 	public void onUpdate() {
 		super.onUpdate();
 
-		if (CoreProxy.proxy.isRenderWorld(worldObj))
+		if (worldObj.isRemote) {
 			return;
+		}
 
 		build();
 		updateLaser();
@@ -147,7 +147,6 @@ public class EntityRobotBuilder extends EntityRobot implements IEntityAdditional
 	}
 
 	protected void build() {
-
 		updateWait();
 
 		if (wait <= 0 && !targets.isEmpty()) {
@@ -162,6 +161,7 @@ public class EntityRobotBuilder extends EntityRobot implements IEntityAdditional
 				if (!worldObj.isAirBlock(target.getX(), target.getY(), target.getZ())) {
 					BlockUtil.breakBlock(worldObj, target.getX(), target.getY(), target.getZ());
 				} else {
+
 					targets.pop();
 					try {
 						target.build(this);
@@ -214,9 +214,11 @@ public class EntityRobotBuilder extends EntityRobot implements IEntityAdditional
 		if (!readyToBuild()) {
 			return false;
 		}
+
 		if (schematic != null && !schematic.blockExists()) {
 			return targets.add(schematic);
 		}
+
 		return false;
 	}
 

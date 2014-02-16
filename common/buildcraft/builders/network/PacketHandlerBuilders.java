@@ -1,32 +1,49 @@
+/**
+ * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
+ * http://www.mod-buildcraft.com
+ *
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
+ * License 1.0, or MMPL. Please check the contents of the license located in
+ * http://www.mod-buildcraft.com/MMPL-1.0.txt
+ */
 package buildcraft.builders.network;
 
+import buildcraft.BuildCraftBuilders;
 import buildcraft.builders.TileArchitect;
 import buildcraft.builders.TileBlueprintLibrary;
+import buildcraft.core.network.BuildCraftChannelHandler;
+import buildcraft.core.network.BuildCraftPacket;
 import buildcraft.core.network.PacketIds;
 import buildcraft.core.network.PacketUpdate;
-import cpw.mods.fml.common.network.IPacketHandler;
-import cpw.mods.fml.common.network.Player;
+import buildcraft.core.proxy.CoreProxy;
+import buildcraft.core.utils.Utils;
+import cpw.mods.fml.common.network.NetworkRegistry;
+import io.netty.buffer.ByteBuf;
+import io.netty.channel.ChannelHandlerContext;
+
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
+
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.network.INetworkManager;
-import net.minecraft.network.packet.Packet250CustomPayload;
+import net.minecraft.network.INetHandler;
 import net.minecraft.tileentity.TileEntity;
 
-public class PacketHandlerBuilders implements IPacketHandler {
+public class PacketHandlerBuilders extends BuildCraftChannelHandler {
 
 	@Override
-	public void onPacketData(INetworkManager manager, Packet250CustomPayload packet, Player player) {
+	public void decodeInto(ChannelHandlerContext ctx, ByteBuf data, BuildCraftPacket packet) {
+		super.decodeInto(ctx, data, packet);
 
-		DataInputStream data = new DataInputStream(new ByteArrayInputStream(packet.data));
 		try {
-			int packetID = data.read();
+			INetHandler netHandler = ctx.channel().attr(NetworkRegistry.NET_HANDLER).get();			
+			EntityPlayer player = Utils.getPlayerFromNetHandler(netHandler);
+
+			int packetID = packet.getID();
+			
 			switch (packetID) {
 			// FIXME: Replace that by a RPC
 			case PacketIds.ARCHITECT_NAME:
-				PacketUpdate packetA = new PacketUpdate();
-				packetA.readData(data);
-				onArchitectName((EntityPlayer) player, packetA);
+				onArchitectName(player, (PacketUpdate) packet);
 				break;
 			}
 		} catch (Exception ex) {

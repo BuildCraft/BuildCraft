@@ -12,20 +12,20 @@ import net.minecraft.block.material.Material;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.core.BlockBuildCraft;
 import buildcraft.core.CreativeTabBuildCraft;
 
 public class BlockEnergyEmitter extends BlockBuildCraft {
 
-	public BlockEnergyEmitter(int id) {
-		super(id, Material.glass);
+	public BlockEnergyEmitter() {
+		super(Material.glass);
 
 		setCreativeTab(CreativeTabBuildCraft.MACHINES.get());
 	}
 
 	@Override
-	public TileEntity createNewTileEntity(World world) {
+	public TileEntity createNewTileEntity(World world, int p) {
 		return new TileEnergyEmitter();
 	}
 
@@ -55,7 +55,7 @@ public class BlockEnergyEmitter extends BlockBuildCraft {
 	//}
 
 	@Override
-	public boolean isBlockSolidOnSide(World world, int x, int y, int z, ForgeDirection side) {
+	public boolean isSideSolid(IBlockAccess world, int x, int y, int z, ForgeDirection side) {
 		return false;
 	}
 

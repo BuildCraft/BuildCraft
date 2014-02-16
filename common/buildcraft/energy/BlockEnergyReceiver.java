@@ -16,14 +16,14 @@ import buildcraft.core.CreativeTabBuildCraft;
 
 public class BlockEnergyReceiver extends BlockBuildCraft {
 
-	public BlockEnergyReceiver(int id) {
-		super(id, Material.iron);
+	public BlockEnergyReceiver() {
+		super(Material.iron);
 
 		setCreativeTab(CreativeTabBuildCraft.MACHINES.get());
 	}
 
 	@Override
-	public TileEntity createNewTileEntity(World world) {
+	public TileEntity createNewTileEntity(World world, int p) {
 		return new TileEnergyReceiver();
 
 	}

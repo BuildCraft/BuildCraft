@@ -21,7 +21,6 @@ import buildcraft.core.network.RPC;
 import buildcraft.core.network.RPCHandler;
 import buildcraft.core.network.RPCMessageInfo;
 import buildcraft.core.network.RPCSide;
-import buildcraft.core.proxy.CoreProxy;
 
 public class TileEnergyEmitter extends TileBuildCraft {
 
@@ -56,7 +55,7 @@ public class TileEnergyEmitter extends TileBuildCraft {
 	public void initialize () {
 		super.initialize();
 
-		if (CoreProxy.proxy.isRenderWorld(worldObj)) {
+		if (worldObj.isRemote) {
 			RPCHandler.rpcServer(this, "requestLasers");
 		}
 	}
@@ -65,7 +64,7 @@ public class TileEnergyEmitter extends TileBuildCraft {
 	public void updateEntity() {
 		super.updateEntity();
 
-		if (CoreProxy.proxy.isRenderWorld(worldObj)) {
+		if (worldObj.isRemote) {
 			for (Target t : targets.values()) {
 				if (t.data.isVisible) {
 					t.data.update();
@@ -118,7 +117,7 @@ public class TileEnergyEmitter extends TileBuildCraft {
 
 		if (syncMJ.markTimeIfDelay(worldObj)) {
 			RPCHandler.rpcBroadcastPlayers(this, "synchronizeMJ", mjAcc
-					/ (float) accumulated);
+					/ accumulated);
 			mjAcc = 0;
 			accumulated = 0;
 		}

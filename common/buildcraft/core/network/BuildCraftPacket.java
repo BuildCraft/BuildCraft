@@ -1,39 +1,23 @@
+/**
+ * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
+ * http://www.mod-buildcraft.com
+ *
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
+ * License 1.0, or MMPL. Please check the contents of the license located in
+ * http://www.mod-buildcraft.com/MMPL-1.0.txt
+ */
 package buildcraft.core.network;
 
 import buildcraft.core.DefaultProps;
-import java.io.ByteArrayOutputStream;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import net.minecraft.network.packet.Packet;
-import net.minecraft.network.packet.Packet250CustomPayload;
+import io.netty.buffer.ByteBuf;
 
 public abstract class BuildCraftPacket {
 
 	protected boolean isChunkDataPacket = false;
-	protected String channel = DefaultProps.NET_CHANNEL_NAME;
 
 	public abstract int getID();
 
-	public Packet getPacket() {
+	public abstract void readData(ByteBuf data);
 
-		ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-		DataOutputStream data = new DataOutputStream(bytes);
-		try {
-			data.writeByte(getID());
-			writeData(data);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		Packet250CustomPayload packet = new Packet250CustomPayload();
-		packet.channel = channel;
-		packet.data = bytes.toByteArray();
-		packet.length = packet.data.length;
-		packet.isChunkDataPacket = this.isChunkDataPacket;
-		return packet;
-	}
-
-	public abstract void readData(DataInputStream data) throws IOException;
-
-	public abstract void writeData(DataOutputStream data) throws IOException;
+	public abstract void writeData(ByteBuf data);
 }

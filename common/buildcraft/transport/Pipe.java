@@ -1,8 +1,9 @@
 /**
- * Copyright (c) SpaceToad, 2011 http://www.mod-buildcraft.com
+ * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
+ * http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public License
- * 1.0, or MMPL. Please check the contents of the license located in
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
+ * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
 package buildcraft.transport;
@@ -21,26 +22,29 @@ import buildcraft.transport.gates.GateFactory;
 import buildcraft.transport.pipes.events.PipeEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Random;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 
 public abstract class Pipe<T extends PipeTransport> implements IDropControlInventory {
 
 	public int[] signalStrength = new int[]{0, 0, 0, 0};
 	public TileGenericPipe container;
 	public final T transport;
-	public final int itemID;
+	public final Item item;
 	private boolean internalUpdateScheduled = false;
 	public boolean[] wireSet = new boolean[]{false, false, false, false};
 	public Gate gate;
@@ -49,9 +53,9 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 	public SafeTimeTracker actionTracker = new SafeTimeTracker();
 	private static Map<Class<? extends Pipe>, Map<Class<? extends PipeEvent>, EventHandler>> eventHandlers = new HashMap<Class<? extends Pipe>, Map<Class<? extends PipeEvent>, EventHandler>>();
 
-	public Pipe(T transport, int itemID) {
+	public Pipe(T transport, Item item) {
 		this.transport = transport;
-		this.itemID = itemID;
+		this.item = item;
 
 		if (!networkWrappers.containsKey(this.getClass())) {
 			networkWrappers
@@ -183,7 +187,7 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 
 		// Update the gate if we have any
 		if (gate != null) {
-			if (container.worldObj.isRemote) {
+			if (container.getWorldObj().isRemote) {
 				// on client, only update the graphical pulse if needed
 				gate.updatePulse();
 			} else {
@@ -310,7 +314,7 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 	}
 
 	private boolean receiveSignal(int signal, PipeWire color) {
-		if (container.worldObj == null)
+		if (container.getWorldObj() == null)
 			return false;
 
 		int oldSignal = signalStrength[color.ordinal()];
@@ -418,12 +422,12 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 	}
 
 	protected void notifyBlocksOfNeighborChange(ForgeDirection side) {
-		container.worldObj.notifyBlocksOfNeighborChange(container.xCoord + side.offsetX, container.yCoord + side.offsetY, container.zCoord + side.offsetZ, BuildCraftTransport.genericPipeBlock.blockID);
+		container.getWorldObj().notifyBlocksOfNeighborChange(container.xCoord + side.offsetX, container.yCoord + side.offsetY, container.zCoord + side.offsetZ, BuildCraftTransport.genericPipeBlock);
 	}
 
 	protected void updateNeighbors(boolean needSelf) {
 		if (needSelf) {
-			container.worldObj.notifyBlocksOfNeighborChange(container.xCoord, container.yCoord, container.zCoord, BuildCraftTransport.genericPipeBlock.blockID);
+			container.getWorldObj().notifyBlocksOfNeighborChange(container.xCoord, container.yCoord, container.zCoord, BuildCraftTransport.genericPipeBlock);
 		}
 		for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
 			notifyBlocksOfNeighborChange(side);
@@ -431,7 +435,7 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 	}
 
 	public void dropItem(ItemStack stack) {
-		InvUtils.dropItems(container.worldObj, stack, container.xCoord, container.yCoord, container.zCoord);
+		InvUtils.dropItems(container.getWorldObj(), stack, container.xCoord, container.yCoord, container.zCoord);
 	}
 
 	public void onBlockRemoval() {
@@ -555,6 +559,6 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 	}
 
 	public World getWorld() {
-		return container.worldObj;
+		return container.getWorldObj();
 	}
 }

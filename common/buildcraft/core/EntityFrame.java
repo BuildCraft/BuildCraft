@@ -9,14 +9,13 @@ package buildcraft.core;
 
 import java.util.LinkedList;
 
-import buildcraft.core.proxy.CoreProxy;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.Icon;
+import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class EntityFrame extends Entity {
 
@@ -29,7 +28,7 @@ public class EntityFrame extends Entity {
 	}
 
 	@SideOnly(Side.CLIENT)
-	public Icon texture;
+	public IIcon texture;
 
 	public Kind currentKind = Kind.RED_LASER;
 
@@ -136,12 +135,12 @@ public class EntityFrame extends Entity {
 
 	@Override
 	public void onUpdate() {
-		if (CoreProxy.proxy.isSimulating(worldObj) && needsUpdate) {
+		if (!worldObj.isRemote && needsUpdate) {
 			updateDataServer();
 			needsUpdate = false;
 		}
 
-		if (CoreProxy.proxy.isRenderWorld(worldObj)) {
+		if (worldObj.isRemote) {
 			updateDataClient();
 		}
 	}

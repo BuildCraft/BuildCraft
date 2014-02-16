@@ -1,14 +1,16 @@
 package buildcraft.transport.render;
 
-import buildcraft.BuildCraftTransport;
-import buildcraft.transport.PipeIconProvider;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.Icon;
+import net.minecraft.util.IIcon;
 import net.minecraftforge.client.IItemRenderer;
+
 import org.lwjgl.opengl.GL11;
+
+import buildcraft.BuildCraftTransport;
+import buildcraft.transport.PipeIconProvider;
 
 public class RobotStationItemRenderer implements IItemRenderer {
 
@@ -18,7 +20,7 @@ public class RobotStationItemRenderer implements IItemRenderer {
 		Tessellator tessellator = Tessellator.instance;
 
 		block = BuildCraftTransport.genericPipeBlock;
-		Icon textureID = BuildCraftTransport.instance.pipeIconProvider.getIcon(PipeIconProvider.TYPE.PipeRobotStation.ordinal()); // Structure pipe
+		IIcon textureID = BuildCraftTransport.instance.pipeIconProvider.getIcon(PipeIconProvider.TYPE.PipeRobotStation.ordinal()); // Structure pipe
 
 		block.setBlockBounds(0.25F, 0.25F, 0.25F, 0.75F, 0.375F, 0.75F);
 		block.setBlockBoundsForItemRender();

@@ -8,22 +8,30 @@
  */
 package buildcraft;
 
+import static buildcraft.BuildCraftEnergy.spawnOilSprings;
+
 import java.io.File;
+import java.util.EnumMap;
 import java.util.TreeMap;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockFluid;
 import net.minecraft.entity.EntityList;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.Icon;
+import net.minecraft.network.Packet;
+import net.minecraft.util.IIcon;
+import net.minecraft.world.World;
 import net.minecraftforge.client.event.TextureStitchEvent;
-import net.minecraftforge.common.Configuration;
+import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.IPlantable;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.Property;
-import net.minecraftforge.event.ForgeSubscribe;
+import net.minecraftforge.common.config.Property;
 import net.minecraftforge.oredict.OreDictionary;
+import net.minecraftforge.fluids.BlockFluidBase;
 import net.minecraftforge.fluids.IFluidBlock;
 import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.core.IIconProvider;
@@ -48,6 +56,7 @@ import buildcraft.core.SpringPopulate;
 import buildcraft.core.TickHandlerCoreClient;
 import buildcraft.core.Version;
 import buildcraft.core.blueprints.BptItem;
+import buildcraft.core.network.BuildCraftPacket;
 import buildcraft.core.network.EntityIds;
 import buildcraft.core.network.PacketHandler;
 import buildcraft.core.network.PacketUpdate;
@@ -61,6 +70,7 @@ import buildcraft.core.triggers.BCTrigger;
 import buildcraft.core.triggers.DefaultActionProvider;
 import buildcraft.core.triggers.DefaultTriggerProvider;
 import buildcraft.core.triggers.TriggerFluidContainer;
+import buildcraft.core.triggers.TriggerFluidContainerLevel;
 import buildcraft.core.triggers.TriggerInventory;
 import buildcraft.core.triggers.TriggerInventoryLevel;
 import buildcraft.core.triggers.TriggerMachine;
@@ -73,6 +83,7 @@ import buildcraft.core.robots.EntityRobot;
 import buildcraft.core.robots.EntityRobotBuilder;
 import buildcraft.core.robots.EntityRobotPicker;
 import buildcraft.core.triggers.TriggerRedstoneInput;
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
@@ -81,19 +92,17 @@ import cpw.mods.fml.common.event.FMLInterModComms;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerStartingEvent;
-import cpw.mods.fml.common.network.NetworkMod;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.common.network.FMLEmbeddedChannel;
+import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
-import cpw.mods.fml.common.registry.TickRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-@Mod(name = "BuildCraft", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Core", acceptedMinecraftVersions = "[1.6.4,1.7)", dependencies = "required-after:Forge@[9.11.1.953,)")
-@NetworkMod(channels = {DefaultProps.NET_CHANNEL_NAME}, packetHandler = PacketHandler.class, clientSideRequired = true, serverSideRequired = true)
-public class BuildCraftCore {
-
+@Mod(name = "BuildCraft", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Core", acceptedMinecraftVersions = "[1.7.2,1.8)", dependencies = "required-after:Forge@[10.12.0.1024,)")
+public class BuildCraftCore extends BuildCraftMod {
 	public static enum RenderMode {
-
 		Full, NoDynamic
 	};
 	public static RenderMode render = RenderMode.Full;
@@ -105,7 +114,10 @@ public class BuildCraftCore {
 	public static int updateFactor = 10;
 	public static long longUpdateFactor = 40;
 	public static BuildCraftConfiguration mainConfiguration;
+	
+	// TODO: This doesn't seem used anymore. Remove if it's the case.
 	public static TreeMap<BlockIndex, PacketUpdate> bufferedDescriptions = new TreeMap<BlockIndex, PacketUpdate>();
+	
 	public static final int trackedPassiveEntityId = 156;
 	public static boolean continuousCurrentModel;
 	public static Block springBlock;
@@ -120,19 +132,18 @@ public class BuildCraftCore {
 	public static Item robotBuilderItem;
 	public static Item robotPickerItem;
 	@SideOnly(Side.CLIENT)
-	public static Icon redLaserTexture;
+	public static IIcon redLaserTexture;
 	@SideOnly(Side.CLIENT)
-	public static Icon blueLaserTexture;
+	public static IIcon blueLaserTexture;
 	@SideOnly(Side.CLIENT)
-	public static Icon stripesLaserTexture;
+	public static IIcon stripesLaserTexture;
 	@SideOnly(Side.CLIENT)
-	public static Icon transparentTexture;
+	public static IIcon transparentTexture;
 	@SideOnly(Side.CLIENT)
 	public static IIconProvider iconProvider;
 	public static int blockByEntityModel;
 	public static int legacyPipeModel;
 	public static int markerModel;
-	public static int oilModel;
 	public static BCTrigger triggerMachineActive = new TriggerMachine(true);
 	public static BCTrigger triggerMachineInactive = new TriggerMachine(false);
 	public static BCTrigger triggerEmptyInventory = new TriggerInventory(TriggerInventory.State.Empty);
@@ -148,6 +159,9 @@ public class BuildCraftCore {
 	public static BCTrigger triggerInventoryBelow25 = new TriggerInventoryLevel(TriggerInventoryLevel.TriggerType.BELOW_25);
 	public static BCTrigger triggerInventoryBelow50 = new TriggerInventoryLevel(TriggerInventoryLevel.TriggerType.BELOW_50);
 	public static BCTrigger triggerInventoryBelow75 = new TriggerInventoryLevel(TriggerInventoryLevel.TriggerType.BELOW_75);
+	public static BCTrigger triggerFluidContainerBelow25 = new TriggerFluidContainerLevel(TriggerFluidContainerLevel.TriggerType.BELOW_25);
+	public static BCTrigger triggerFluidContainerBelow50 = new TriggerFluidContainerLevel(TriggerFluidContainerLevel.TriggerType.BELOW_50);
+	public static BCTrigger triggerFluidContainerBelow75 = new TriggerFluidContainerLevel(TriggerFluidContainerLevel.TriggerType.BELOW_75);
 	public static BCAction actionRedstone = new ActionRedstoneOutput();
 	public static BCAction actionOn = new ActionMachineControl(Mode.On);
 	public static BCAction actionOff = new ActionMachineControl(Mode.Off);
@@ -155,7 +169,7 @@ public class BuildCraftCore {
 	public static boolean loadDefaultRecipes = true;
 	public static boolean forcePneumaticPower = true;
 	public static boolean consumeWaterSources = false;
-	public static BptItem[] itemBptProps = new BptItem[Item.itemsList.length];
+	//public static BptItem[] itemBptProps = new BptItem[Item.itemsList.length];
 	@Instance("BuildCraft|Core")
 	public static BuildCraftCore instance;
 
@@ -202,30 +216,17 @@ public class BuildCraftCore {
 			longFactor.comment = "delay between full client sync packets, increasing it saves bandwidth, decreasing makes for better client syncronization.";
 			longUpdateFactor = longFactor.getInt(40);
 
-			Property wrenchId = BuildCraftCore.mainConfiguration.getItem("wrench.id", DefaultProps.WRENCH_ID);
-
-			wrenchItem = (new ItemWrench(wrenchId.getInt(DefaultProps.WRENCH_ID))).setUnlocalizedName("wrenchItem");
+			wrenchItem = (new ItemWrench()).setUnlocalizedName("wrenchItem");
 			LanguageRegistry.addName(wrenchItem, "Wrench");
 			CoreProxy.proxy.registerItem(wrenchItem);
 
-			int springId = BuildCraftCore.mainConfiguration.getBlock("springBlock.id", DefaultProps.SPRING_ID).getInt(DefaultProps.SPRING_ID);
-
-			Property woodenGearId = BuildCraftCore.mainConfiguration.getItem("woodenGearItem.id", DefaultProps.WOODEN_GEAR_ID);
-			Property stoneGearId = BuildCraftCore.mainConfiguration.getItem("stoneGearItem.id", DefaultProps.STONE_GEAR_ID);
-			Property ironGearId = BuildCraftCore.mainConfiguration.getItem("ironGearItem.id", DefaultProps.IRON_GEAR_ID);
-			Property goldenGearId = BuildCraftCore.mainConfiguration.getItem("goldenGearItem.id", DefaultProps.GOLDEN_GEAR_ID);
-			Property diamondGearId = BuildCraftCore.mainConfiguration.getItem("diamondGearItem.id", DefaultProps.DIAMOND_GEAR_ID);
-			Property redstoneCrystalId = BuildCraftCore.mainConfiguration.getItem("redstoneCrystalItem.id", DefaultProps.REDSTONE_CRYSTAL_ID);
-			Property robotBaseItemId = BuildCraftCore.mainConfiguration.getItem("robotBaseItem.id", DefaultProps.ROBOT_BASE_ITEM_ID);
-			Property robotBuilderItemId = BuildCraftCore.mainConfiguration.getItem("robotBuilderItem.id", DefaultProps.ROBOT_BUILDER_ITEM_ID);
-			Property robotPickerItemId = BuildCraftCore.mainConfiguration.getItem("robotPickerItem.id", DefaultProps.ROBOT_PICKER_ITEM_ID);
 			Property modifyWorldProp = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "modifyWorld", true);
 			modifyWorldProp.comment = "set to false if BuildCraft should not generate custom blocks (e.g. oil)";
 			modifyWorld = modifyWorldProp.getBoolean(true);
 
-			if (BuildCraftCore.modifyWorld && springId > 0) {
+			if (BuildCraftCore.modifyWorld) {
 				BlockSpring.EnumSpring.WATER.canGen = BuildCraftCore.mainConfiguration.get("worldgen", "waterSpring", true).getBoolean(true);
-				springBlock = new BlockSpring(springId).setUnlocalizedName("eternalSpring");
+				springBlock = new BlockSpring().setBlockName("eternalSpring");
 				CoreProxy.proxy.registerBlock(springBlock, ItemSpring.class);
 			}
 
@@ -233,54 +234,37 @@ public class BuildCraftCore {
 			consumeWaterSources = consumeWater.getBoolean(consumeWaterSources);
 			consumeWater.comment = "set to true if the Pump should consume water";
 
-			woodenGearItem = (new ItemBuildCraft(woodenGearId.getInt())).setUnlocalizedName("woodenGearItem");
+			woodenGearItem = (new ItemBuildCraft()).setUnlocalizedName("woodenGearItem");
 			LanguageRegistry.addName(woodenGearItem, "Wooden Gear");
 			CoreProxy.proxy.registerItem(woodenGearItem);
 			OreDictionary.registerOre("gearWood", new ItemStack(woodenGearItem));
 
-			stoneGearItem = (new ItemBuildCraft(stoneGearId.getInt())).setUnlocalizedName("stoneGearItem");
+			stoneGearItem = (new ItemBuildCraft()).setUnlocalizedName("stoneGearItem");
 			LanguageRegistry.addName(stoneGearItem, "Stone Gear");
 			CoreProxy.proxy.registerItem(stoneGearItem);
 			OreDictionary.registerOre("gearStone", new ItemStack(stoneGearItem));
 
-			ironGearItem = (new ItemBuildCraft(ironGearId.getInt())).setUnlocalizedName("ironGearItem");
+			ironGearItem = (new ItemBuildCraft()).setUnlocalizedName("ironGearItem");
 			LanguageRegistry.addName(ironGearItem, "Iron Gear");
 			CoreProxy.proxy.registerItem(ironGearItem);
 			OreDictionary.registerOre("gearIron", new ItemStack(ironGearItem));
 
-			goldGearItem = (new ItemBuildCraft(goldenGearId.getInt())).setUnlocalizedName("goldGearItem");
+			goldGearItem = (new ItemBuildCraft()).setUnlocalizedName("goldGearItem");
 			LanguageRegistry.addName(goldGearItem, "Gold Gear");
 			CoreProxy.proxy.registerItem(goldGearItem);
 			OreDictionary.registerOre("gearGold", new ItemStack(goldGearItem));
 
-			diamondGearItem = (new ItemBuildCraft(diamondGearId.getInt())).setUnlocalizedName("diamondGearItem");
+			diamondGearItem = (new ItemBuildCraft()).setUnlocalizedName("diamondGearItem");
 			LanguageRegistry.addName(diamondGearItem, "Diamond Gear");
 			CoreProxy.proxy.registerItem(diamondGearItem);
 			OreDictionary.registerOre("gearDiamond", new ItemStack(diamondGearItem));
 
-			redstoneCrystal = (new ItemBuildCraft(redstoneCrystalId.getInt())).setUnlocalizedName("redstoneCrystal");
+			redstoneCrystal = (new ItemBuildCraft()).setUnlocalizedName("redstoneCrystal");
 			LanguageRegistry.addName(redstoneCrystal, "Redstone Crystal");
 			CoreProxy.proxy.registerItem(redstoneCrystal);
 			OreDictionary.registerOre("redstoneCrystal", new ItemStack(redstoneCrystal));
 
-			robotBaseItem = (new ItemRobot(robotBaseItemId.getInt(), EntityRobot.class)).setUnlocalizedName("robotBaseItem");
-			LanguageRegistry.addName(robotBaseItem, "Base Robot");
-			CoreProxy.proxy.registerItem(robotBaseItem);
-
-			robotBuilderItem = (new ItemRobot(robotBuilderItemId.getInt(), EntityRobotBuilder.class)).setUnlocalizedName("robotBuilderItem");
-			LanguageRegistry.addName(robotBuilderItem, "Builder Robot");
-			CoreProxy.proxy.registerItem(robotBuilderItem);
-
-			robotPickerItem = (new ItemRobot(robotPickerItemId.getInt(), EntityRobotPicker.class)).setUnlocalizedName("robotPickerItem");
-			LanguageRegistry.addName(robotPickerItem, "Picker Robot");
-			CoreProxy.proxy.registerItem(robotPickerItem);
-
-
-			Property colorBlindProp = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "client.colorblindmode", false);
-			colorBlindProp.comment = "Set to true to enable alternate textures";
-			colorBlindMode = colorBlindProp.getBoolean(false);
-
-			MinecraftForge.EVENT_BUS.register(this);
+			MinecraftForge.EVENT_BUS.register(this);		
 		} finally {
 			if (mainConfiguration.hasChanged()) {
 				mainConfiguration.save();
@@ -291,7 +275,9 @@ public class BuildCraftCore {
 
 	@EventHandler
 	public void initialize(FMLInitializationEvent evt) {
-		// MinecraftForge.registerConnectionHandler(new ConnectionHandler());
+		channels = NetworkRegistry.INSTANCE.newChannel
+				(DefaultProps.NET_CHANNEL_NAME + "-CORE", new PacketHandler());
+		
 		ActionManager.registerTriggerProvider(new DefaultTriggerProvider());
 		ActionManager.registerActionProvider(new DefaultActionProvider());
 
@@ -325,17 +311,19 @@ public class BuildCraftCore {
 
 	@EventHandler
 	public void postInit(FMLPostInitializationEvent event) {
-		for (Block block : Block.blocksList) {
-			if (block instanceof BlockFluid || block instanceof IFluidBlock || block instanceof IPlantable) {
-				BuildCraftAPI.softBlocks[block.blockID] = true;
+		for (Object o : Block.blockRegistry) {
+			Block block = (Block) o;
+			
+			if (block instanceof BlockFluidBase || block instanceof IFluidBlock || block instanceof IPlantable) {
+				BuildCraftAPI.softBlocks.add(block);
 			}
 		}
-
-		BuildCraftAPI.softBlocks[Block.snow.blockID] = true;
-		BuildCraftAPI.softBlocks[Block.vine.blockID] = true;
-		BuildCraftAPI.softBlocks[Block.fire.blockID] = true;
-		TickRegistry.registerTickHandler(new TickHandlerCoreClient(), Side.CLIENT);
-
+		
+		BuildCraftAPI.softBlocks.add(Blocks.snow);
+		BuildCraftAPI.softBlocks.add(Blocks.vine);
+		BuildCraftAPI.softBlocks.add(Blocks.fire);
+		
+		FMLCommonHandler.instance().bus().register(new TickHandlerCoreClient());
 	}
 
 	@EventHandler
@@ -343,14 +331,14 @@ public class BuildCraftCore {
 		event.registerServerCommand(new CommandBuildCraft());
 	}
 
-	@ForgeSubscribe
+	@SubscribeEvent
 	@SideOnly(Side.CLIENT)
 	public void textureHook(TextureStitchEvent.Pre event) {
-		if (event.map.textureType == 1) {
+		if (event.map.getTextureType() == 1) {
 			iconProvider = new CoreIconProvider();
 			iconProvider.registerIcons(event.map);
 			ActionTriggerIconProvider.INSTANCE.registerIcons(event.map);
-		} else if (event.map.textureType == 0) {
+		} else if (event.map.getTextureType() == 0) {
 			BuildCraftCore.redLaserTexture = event.map.registerIcon("buildcraft:blockRedLaser");
 			BuildCraftCore.blueLaserTexture = event.map.registerIcon("buildcraft:blockBlueLaser");
 			BuildCraftCore.stripesLaserTexture = event.map.registerIcon("buildcraft:blockStripesLaser");
@@ -360,13 +348,13 @@ public class BuildCraftCore {
 	}
 
 	public void loadRecipes() {
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(wrenchItem), "I I", " G ", " I ", 'I', Item.ingotIron, 'G', stoneGearItem);
+		CoreProxy.proxy.addCraftingRecipe(new ItemStack(wrenchItem), "I I", " G ", " I ", 'I', Items.iron_ingot, 'G', stoneGearItem);
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(woodenGearItem), " S ", "S S", " S ", 'S', "stickWood");
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(stoneGearItem), " I ", "IGI", " I ", 'I', "cobblestone", 'G',
 				woodenGearItem);
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(ironGearItem), " I ", "IGI", " I ", 'I', Item.ingotIron, 'G', stoneGearItem);
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(goldGearItem), " I ", "IGI", " I ", 'I', Item.ingotGold, 'G', ironGearItem);
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(diamondGearItem), " I ", "IGI", " I ", 'I', Item.diamond, 'G', goldGearItem);
+		CoreProxy.proxy.addCraftingRecipe(new ItemStack(ironGearItem), " I ", "IGI", " I ", 'I', Items.iron_ingot, 'G', stoneGearItem);
+		CoreProxy.proxy.addCraftingRecipe(new ItemStack(goldGearItem), " I ", "IGI", " I ", 'I', Items.gold_ingot, 'G', ironGearItem);
+		CoreProxy.proxy.addCraftingRecipe(new ItemStack(diamondGearItem), " I ", "IGI", " I ", 'I', Items.diamond, 'G', goldGearItem);
 	}
 
 	@EventHandler

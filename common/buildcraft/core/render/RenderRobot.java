@@ -8,10 +8,6 @@
  */
 package buildcraft.core.render;
 
-import buildcraft.BuildCraftCore;
-import buildcraft.core.DefaultProps;
-import buildcraft.core.EntityLaser;
-import buildcraft.core.robots.EntityRobot;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.client.renderer.RenderBlocks;
@@ -23,6 +19,11 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.IItemRenderer;
 
 import org.lwjgl.opengl.GL11;
+
+import buildcraft.BuildCraftCore;
+import buildcraft.core.DefaultProps;
+import buildcraft.core.EntityLaser;
+import buildcraft.core.robots.EntityRobot;
 
 public class RenderRobot extends Render implements IItemRenderer {
 
@@ -107,11 +108,11 @@ public class RenderRobot extends Render implements IItemRenderer {
 
 		// FIXME: Texture localisation should be factorized between items and
 		// entities.
-		if (item.itemID == BuildCraftCore.robotBaseItem.itemID) {
+		if (item.getItem() == BuildCraftCore.robotBaseItem) {
 			RenderManager.instance.renderEngine.bindTexture(TEXTURE_BASE);
-		} else if (item.itemID == BuildCraftCore.robotBuilderItem.itemID) {
+		} else if (item.getItem() == BuildCraftCore.robotBuilderItem) {
 			RenderManager.instance.renderEngine.bindTexture(TEXTURE_BUILDER);
-		} else if (item.itemID == BuildCraftCore.robotPickerItem.itemID) {
+		} else if (item.getItem() == BuildCraftCore.robotPickerItem) {
 			RenderManager.instance.renderEngine.bindTexture(TEXTURE_PICKER);
 		}
 

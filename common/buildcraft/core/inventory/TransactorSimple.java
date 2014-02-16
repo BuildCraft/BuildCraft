@@ -1,3 +1,11 @@
+/**
+ * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
+ * http://www.mod-buildcraft.com
+ *
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
+ * License 1.0, or MMPL. Please check the contents of the license located in
+ * http://www.mod-buildcraft.com/MMPL-1.0.txt
+ */
 package buildcraft.core.inventory;
 
 import buildcraft.core.inventory.InventoryIterator.IInvSlot;
@@ -6,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 
 public class TransactorSimple extends Transactor {
 
@@ -34,7 +42,7 @@ public class TransactorSimple extends Transactor {
 		injected = tryPut(stack, filledSlots, injected, doAdd);
 		injected = tryPut(stack, emptySlots, injected, doAdd);
 
-		inventory.onInventoryChanged();
+		inventory.markDirty();
 		return injected;
 	}
 

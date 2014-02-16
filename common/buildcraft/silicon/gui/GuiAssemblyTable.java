@@ -1,13 +1,15 @@
 /**
- * Copyright (c) SpaceToad, 2011 http://www.mod-buildcraft.com
+ * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
+ * http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public License
- * 1.0, or MMPL. Please check the contents of the license located in
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
+ * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
 package buildcraft.silicon.gui;
 
 import buildcraft.BuildCraftCore;
+import buildcraft.BuildCraftSilicon;
 import buildcraft.core.CoreIconProvider;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.gui.AdvancedSlot;
@@ -60,13 +62,13 @@ public class GuiAssemblyTable extends GuiAdvancedInterface {
 			if (!isFullyOpened())
 				return;
 
-			fontRenderer.drawStringWithShadow(StringUtils.localize("gui.energy"), x + 22, y + 8, headerColour);
-			fontRenderer.drawStringWithShadow(StringUtils.localize("gui.assemblyCurrentRequired") + ":", x + 22, y + 20, subheaderColour);
-			fontRenderer.drawString(String.format("%2.1f MJ", table.clientRequiredEnergy), x + 22, y + 32, textColour);
-			fontRenderer.drawStringWithShadow(StringUtils.localize("gui.stored") + ":", x + 22, y + 44, subheaderColour);
-			fontRenderer.drawString(String.format("%2.1f MJ", table.getEnergy()), x + 22, y + 56, textColour);
-			fontRenderer.drawStringWithShadow(StringUtils.localize("gui.assemblyRate") + ":", x + 22, y + 68, subheaderColour);
-			fontRenderer.drawString(String.format("%3.2f MJ/t", table.getRecentEnergyAverage() / 100.0f), x + 22, y + 80, textColour);
+			fontRendererObj.drawStringWithShadow(StringUtils.localize("gui.energy"), x + 22, y + 8, headerColour);
+			fontRendererObj.drawStringWithShadow(StringUtils.localize("gui.assemblyCurrentRequired") + ":", x + 22, y + 20, subheaderColour);
+			fontRendererObj.drawString(String.format("%2.1f MJ", table.clientRequiredEnergy), x + 22, y + 32, textColour);
+			fontRendererObj.drawStringWithShadow(StringUtils.localize("gui.stored") + ":", x + 22, y + 44, subheaderColour);
+			fontRendererObj.drawString(String.format("%2.1f MJ", table.getEnergy()), x + 22, y + 56, textColour);
+			fontRendererObj.drawStringWithShadow(StringUtils.localize("gui.assemblyRate") + ":", x + 22, y + 68, subheaderColour);
+			fontRendererObj.drawString(String.format("%3.2f MJ/t", table.getRecentEnergyAverage() / 100.0f), x + 22, y + 80, textColour);
 
 		}
 
@@ -115,9 +117,9 @@ public class GuiAssemblyTable extends GuiAdvancedInterface {
 		updateRecipes();
 
 		// Request current selection from server
-		if (CoreProxy.proxy.isRenderWorld(assemblyTable.worldObj)) {
-			CoreProxy.proxy.sendToServer(new PacketCoordinates(PacketIds.SELECTION_ASSEMBLY_GET, assemblyTable.xCoord, assemblyTable.yCoord,
-					assemblyTable.zCoord).getPacket());
+		if (assemblyTable.getWorldObj().isRemote) {
+			BuildCraftSilicon.instance.sendToServer(new PacketCoordinates(PacketIds.SELECTION_ASSEMBLY_GET, assemblyTable.xCoord, assemblyTable.yCoord,
+					assemblyTable.zCoord));
 		}
 	}
 
@@ -138,8 +140,8 @@ public class GuiAssemblyTable extends GuiAdvancedInterface {
 	protected void drawGuiContainerForegroundLayer(int par1, int par2) {
 		super.drawGuiContainerForegroundLayer(par1, par2);
 		String title = StringUtils.localize("tile.assemblyTableBlock");
-		fontRenderer.drawString(title, getCenteredOffset(title), 15, 0x404040);
-		fontRenderer.drawString(StringUtils.localize("gui.inventory"), 8, ySize - 97, 0x404040);
+		fontRendererObj.drawString(title, getCenteredOffset(title), 15, 0x404040);
+		fontRendererObj.drawString(StringUtils.localize("gui.inventory"), 8, ySize - 97, 0x404040);
 		drawForegroundSelection(par1, par2);
 	}
 
@@ -197,14 +199,11 @@ public class GuiAssemblyTable extends GuiAdvancedInterface {
 
 			message.stack = slot.recipe.output;
 
-			if (CoreProxy.proxy.isRenderWorld(table.worldObj)) {
-
+			if (table.getWorldObj().isRemote) {
 				PacketNBT packet = new PacketNBT(PacketIds.SELECTION_ASSEMBLY, message.getNBT(), table.xCoord, table.yCoord, table.zCoord);
-
-				CoreProxy.proxy.sendToServer(packet.getPacket());
+				BuildCraftSilicon.instance.sendToServer(packet);
 			}
 		}
-
 	}
 
 	@Override

@@ -1,13 +1,25 @@
+/**
+ * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
+ * http://www.mod-buildcraft.com
+ *
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
+ * License 1.0, or MMPL. Please check the contents of the license located in
+ * http://www.mod-buildcraft.com/MMPL-1.0.txt
+ */
 package buildcraft.core;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+
 import java.util.List;
 import java.util.Random;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.init.Blocks;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
@@ -17,7 +29,7 @@ public class BlockSpring extends Block {
 
 	public enum EnumSpring {
 
-		WATER(5, -1, Block.waterStill),
+		WATER(5, -1, Blocks.water),
 		OIL(6000, 8, null); // Set in BuildCraftEnergy
 		public static final EnumSpring[] VALUES = values();
 		public final int tickRate, chance;
@@ -38,18 +50,21 @@ public class BlockSpring extends Block {
 		}
 	}
 
-	public BlockSpring(int id) {
-		super(id, Material.rock);
+	public BlockSpring() {
+		super(Material.rock);
 		setBlockUnbreakable();
 		setResistance(6000000.0F);
-		setStepSound(soundStoneFootstep);
+		
+		// TODO: set proper sound
+		//setStepSound(soundStoneFootstep);
+		
 		disableStats();
 		setTickRandomly(true);
 		setCreativeTab(CreativeTabBuildCraft.MACHINES.get());
 	}
 
 	@Override
-	public void getSubBlocks(int id, CreativeTabs tab, List list) {
+	public void getSubBlocks(Item item, CreativeTabs tab, List list) {
 		for (EnumSpring type : EnumSpring.VALUES) {
 			list.add(new ItemStack(this, 1, type.ordinal()));
 		}
@@ -73,13 +88,13 @@ public class BlockSpring extends Block {
 	public void onBlockAdded(World world, int x, int y, int z) {
 		super.onBlockAdded(world, x, y, z);
 		int meta = world.getBlockMetadata(x, y, z);
-		world.scheduleBlockUpdate(x, y, z, blockID, EnumSpring.fromMeta(meta).tickRate);
+		world.scheduleBlockUpdate(x, y, z, this, EnumSpring.fromMeta(meta).tickRate);
 	}
 
 	private void assertSpring(World world, int x, int y, int z) {
 		int meta = world.getBlockMetadata(x, y, z);
 		EnumSpring spring = EnumSpring.fromMeta(meta);
-		world.scheduleBlockUpdate(x, y, z, blockID, spring.tickRate);
+		world.scheduleBlockUpdate(x, y, z, this, spring.tickRate);
 		if (!spring.canGen || spring.liquidBlock == null) {
 			return;
 		}
@@ -89,18 +104,18 @@ public class BlockSpring extends Block {
 		if (spring.chance != -1 && rand.nextInt(spring.chance) != 0) {
 			return;
 		}
-		world.setBlock(x, y + 1, z, spring.liquidBlock.blockID);
+		world.setBlock(x, y + 1, z, spring.liquidBlock);
 	}
 
 	// Prevents updates on chunk generation
 	@Override
-	public boolean func_82506_l() {
+	public boolean func_149698_L () {
 		return false;
 	}
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void registerIcons(IconRegister par1IconRegister) {
+	public void registerBlockIcons(IIconRegister par1IconRegister) {
 		blockIcon = par1IconRegister.registerIcon("bedrock");
 	}
 }

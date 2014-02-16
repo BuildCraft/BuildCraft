@@ -1,8 +1,9 @@
 /**
- * Copyright (c) SpaceToad, 2011 http://www.mod-buildcraft.com
+ * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
+ * http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public License
- * 1.0, or MMPL. Please check the contents of the license located in
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
+ * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
 package buildcraft.core.inventory;
@@ -89,7 +90,7 @@ public class StackHelper {
 			int idBase = OreDictionary.getOreID(base);
 			if (idBase >= 0) {
 				for (ItemStack itemstack : OreDictionary.getOres(idBase)) {
-					if (comparison.itemID == itemstack.itemID && (itemstack.getItemDamage() == OreDictionary.WILDCARD_VALUE || comparison.getItemDamage() == itemstack.getItemDamage()))
+					if (comparison.getItem() == itemstack.getItem() && (itemstack.getItemDamage() == OreDictionary.WILDCARD_VALUE || comparison.getItemDamage() == itemstack.getItemDamage()))
 						return true;
 				}
 			}
@@ -101,7 +102,7 @@ public class StackHelper {
 	public boolean isCraftingEquivalent(int oreID, ItemStack comparison) {
 		if (oreID >= 0) {
 			for (ItemStack itemstack : OreDictionary.getOres(oreID)) {
-				if (comparison.itemID == itemstack.itemID && (itemstack.getItemDamage() == OreDictionary.WILDCARD_VALUE || comparison.getItemDamage() == itemstack.getItemDamage()))
+				if (comparison.getItem() == itemstack.getItem() && (itemstack.getItemDamage() == OreDictionary.WILDCARD_VALUE || comparison.getItemDamage() == itemstack.getItemDamage()))
 					return true;
 			}
 		}
@@ -135,7 +136,7 @@ public class StackHelper {
 		if (a == null || b == null) {
 			return false;
 		}
-		if (a.itemID != b.itemID) {
+		if (a.getItem() != b.getItem()) {
 			return false;
 		}
 		if (matchDamage && a.getHasSubtypes()) {

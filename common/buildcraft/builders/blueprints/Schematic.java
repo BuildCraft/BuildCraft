@@ -1,5 +1,5 @@
-/*
- * Copyright (c) SpaceToad, 2011-2012
+/**
+ * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
  *
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
@@ -12,10 +12,6 @@ import buildcraft.api.builder.BlockHandler;
 import buildcraft.core.network.NetworkData;
 import net.minecraft.nbt.NBTTagCompound;
 
-/**
- *
- * @author CovertJaguar <http://www.railcraft.info/>
- */
 public abstract class Schematic {
 
 	@NetworkData
@@ -50,7 +46,7 @@ public abstract class Schematic {
 		nbt.setInteger("x", x);
 		nbt.setInteger("y", y);
 		nbt.setInteger("z", z);
-		nbt.setCompoundTag("data", data);
+		nbt.setTag("data", data);
 	}
 
 	public void readFromNBT(NBTTagCompound nbt) {

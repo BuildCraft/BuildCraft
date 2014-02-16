@@ -1,11 +1,14 @@
 /**
- * Copyright (c) SpaceToad, 2011 http://www.mod-buildcraft.com
+ * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
+ * http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public License
- * 1.0, or MMPL. Please check the contents of the license located in
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
+ * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
 package buildcraft.factory;
+
+import com.mojang.authlib.GameProfile;
 
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.inventory.InvUtils;
@@ -27,9 +30,9 @@ import net.minecraft.inventory.SlotCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.ChatMessageComponent;
 import net.minecraft.util.ChunkCoordinates;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraft.util.IChatComponent;
+import net.minecraftforge.common.util.ForgeDirection;
 
 public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory {
 
@@ -62,16 +65,16 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
 	private final class InternalPlayer extends EntityPlayer {
 
 		public InternalPlayer() {
-			super(TileAutoWorkbench.this.worldObj, "[BuildCraft]");
+			super(TileAutoWorkbench.this.worldObj, new GameProfile(null, "[BuildCraft]"));
 			posX = TileAutoWorkbench.this.xCoord;
 			posY = TileAutoWorkbench.this.yCoord + 1;
 			posZ = TileAutoWorkbench.this.zCoord;
 		}
 
 		@Override
-		public void sendChatToPlayer(ChatMessageComponent var1) {
+		public void addChatMessage(IChatComponent var1) {
 		}
-
+		
 		@Override
 		public boolean canCommandSenderUseCommand(int var1, String var2) {
 			return false;
@@ -81,6 +84,8 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
 		public ChunkCoordinates getPlayerCoordinates() {
 			return null;
 		}
+
+		
 	}
 
 	@Override
@@ -109,7 +114,7 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
 	}
 
 	@Override
-	public String getInvName() {
+	public String getInventoryName() {
 		return "";
 	}
 
@@ -120,7 +125,7 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
 
 	@Override
 	public boolean isUseableByPlayer(EntityPlayer player) {
-		return worldObj.getBlockTileEntity(xCoord, yCoord, zCoord) == this && player.getDistanceSq(xCoord + 0.5D, yCoord + 0.5D, zCoord + 0.5D) <= 64.0D;
+		return worldObj.getTileEntity(xCoord, yCoord, zCoord) == this && player.getDistanceSq(xCoord + 0.5D, yCoord + 0.5D, zCoord + 0.5D) <= 64.0D;
 	}
 
 	@Override
@@ -183,7 +188,7 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
 	@Override
 	public void updateEntity() {
 		super.updateEntity();
-		if (CoreProxy.proxy.isRenderWorld(worldObj)) {
+		if (worldObj.isRemote) {
 			return;
 		}
 
@@ -269,16 +274,11 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
 	}
 
 	@Override
-	public void openChest() {
+	public void openInventory() {
 	}
 
 	@Override
-	public void closeChest() {
-	}
-
-	@Override
-	public boolean isInvNameLocalized() {
-		return false;
+	public void closeInventory() {
 	}
 
 	@Override
@@ -325,5 +325,10 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
 			}
 		}
 		return minStackSize <= 1;
+	}
+
+	@Override
+	public boolean hasCustomInventoryName() {
+		return false;
 	}
 }

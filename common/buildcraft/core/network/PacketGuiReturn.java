@@ -1,20 +1,26 @@
+/**
+ * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
+ * http://www.mod-buildcraft.com
+ *
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
+ * License 1.0, or MMPL. Please check the contents of the license located in
+ * http://www.mod-buildcraft.com/MMPL-1.0.txt
+ */
 package buildcraft.core.network;
+
+import io.netty.buffer.ByteBuf;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
+import buildcraft.BuildCraftCore;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
-import cpw.mods.fml.common.network.PacketDispatcher;
 
-/**
- * 
- * @author CovertJaguar <railcraft.wikispaces.com>
- */
 public class PacketGuiReturn extends BuildCraftPacket {
 	private EntityPlayer sender;
 	private IGuiReturnHandler obj;
@@ -35,8 +41,9 @@ public class PacketGuiReturn extends BuildCraftPacket {
 	}
 
 	@Override
-	public void writeData(DataOutputStream data) throws IOException {
+	public void writeData(ByteBuf data) {
 		data.writeInt(obj.getWorld().provider.dimensionId);
+		
 		if (obj instanceof TileEntity) {
 			TileEntity tile = (TileEntity) obj;
 			data.writeBoolean(true);
@@ -46,40 +53,46 @@ public class PacketGuiReturn extends BuildCraftPacket {
 		} else if (obj instanceof Entity) {
 			Entity entity = (Entity) obj;
 			data.writeBoolean(false);
-			data.writeInt(entity.entityId);
-		} else
+			data.writeInt(entity.getEntityId());
+		} else {
 			return;
+		}
+		
 		obj.writeGuiData(data);
-		if (extraData != null)
-			data.write(extraData);
+		
+		if (extraData != null) {
+			data.writeBytes(extraData);
+		}
 	}
 
 	@Override
-	public void readData(DataInputStream data) throws IOException {
+	public void readData(ByteBuf data) {
 		int dim = data.readInt();
 		World world = DimensionManager.getWorld(dim);
 		boolean tileReturn = data.readBoolean();
+		
 		if (tileReturn) {
 			int x = data.readInt();
 			int y = data.readInt();
 			int z = data.readInt();
 
-			TileEntity t = world.getBlockTileEntity(x, y, z);
+			TileEntity t = world.getTileEntity(x, y, z);
 
-			if (t instanceof IGuiReturnHandler)
+			if (t instanceof IGuiReturnHandler) {
 				((IGuiReturnHandler) t).readGuiData(data, sender);
-
+			}
 		} else {
 			int entityId = data.readInt();
 			Entity entity = world.getEntityByID(entityId);
 
-			if (entity instanceof IGuiReturnHandler)
+			if (entity instanceof IGuiReturnHandler) {
 				((IGuiReturnHandler) entity).readGuiData(data, sender);
+			}
 		}
 	}
 
 	public void sendPacket() {
-		PacketDispatcher.sendPacketToServer(getPacket());
+		BuildCraftCore.instance.sendToServer(this);
 	}
 
 	@Override

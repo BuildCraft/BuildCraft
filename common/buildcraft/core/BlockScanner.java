@@ -10,7 +10,6 @@ package buildcraft.core;
 
 import java.util.Iterator;
 
-import net.minecraft.block.Block;
 import net.minecraft.world.World;
 
 public class BlockScanner implements Iterable<BlockWrapper> {
@@ -54,8 +53,8 @@ public class BlockScanner implements Iterable<BlockWrapper> {
 
 			BlockWrapper w = new BlockWrapper();
 			w.index = new BlockIndex(x, y, z);
-			w.block = Block.blocksList [world.getBlockId(x, y, z)];
-			w.tile = world.getBlockTileEntity(x, y, z);
+			w.block = world.getBlock (x, y, z);
+			w.tile = world.getTileEntity(x, y, z);
 
 			return w;
 		}

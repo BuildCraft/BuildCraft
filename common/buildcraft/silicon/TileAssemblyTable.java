@@ -1,5 +1,14 @@
+/**
+ * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
+ * http://www.mod-buildcraft.com
+ *
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
+ * License 1.0, or MMPL. Please check the contents of the license located in
+ * http://www.mod-buildcraft.com/MMPL-1.0.txt
+ */
 package buildcraft.silicon;
 
+import buildcraft.BuildCraftSilicon;
 import buildcraft.core.recipes.AssemblyRecipeManager;
 import buildcraft.api.gates.IAction;
 import buildcraft.core.DefaultProps;
@@ -11,17 +20,19 @@ import buildcraft.core.utils.Utils;
 import buildcraft.core.recipes.AssemblyRecipeManager.AssemblyRecipe;
 import buildcraft.core.utils.StringUtils;
 import cpw.mods.fml.common.FMLCommonHandler;
+
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 
 public class TileAssemblyTable extends TileLaserTableBase implements IMachine, IInventory {
 
@@ -38,7 +49,7 @@ public class TileAssemblyTable extends TileLaserTableBase implements IMachine, I
 			nbt.setBoolean("s", select);
 			NBTTagCompound itemNBT = new NBTTagCompound();
 			stack.writeToNBT(itemNBT);
-			nbt.setCompoundTag("i", itemNBT);
+			nbt.setTag("i", itemNBT);
 			return nbt;
 		}
 
@@ -118,7 +129,7 @@ public class TileAssemblyTable extends TileLaserTableBase implements IMachine, I
 	}
 
 	@Override
-	public String getInvName() {
+	public String getInventoryName() {
 		return StringUtils.localize("tile.assemblyTableBlock");
 	}
 
@@ -126,15 +137,15 @@ public class TileAssemblyTable extends TileLaserTableBase implements IMachine, I
 	public void readFromNBT(NBTTagCompound nbt) {
 		super.readFromNBT(nbt);
 
-		NBTTagList list = nbt.getTagList("planned");
+		NBTTagList list = nbt.getTagList("planned", Utils.NBTTag_Types.NBTTagCompound.ordinal());
 
 		for (int i = 0; i < list.tagCount(); ++i) {
-			NBTTagCompound cpt = (NBTTagCompound) list.tagAt(i);
+			NBTTagCompound cpt = list.getCompoundTagAt(i);
 
 			ItemStack stack = ItemStack.loadItemStackFromNBT(cpt);
 
 			for (AssemblyRecipe r : AssemblyRecipeManager.INSTANCE.getRecipes()) {
-				if (r.output.itemID == stack.itemID && r.output.getItemDamage() == stack.getItemDamage()) {
+				if (r.output.getItem() == stack.getItem() && r.output.getItemDamage() == stack.getItemDamage()) {
 					plannedOutput.add(r);
 					break;
 				}
@@ -145,7 +156,7 @@ public class TileAssemblyTable extends TileLaserTableBase implements IMachine, I
 			ItemStack stack = ItemStack.loadItemStackFromNBT(nbt.getCompoundTag("recipe"));
 
 			for (AssemblyRecipe r : plannedOutput) {
-				if (r.output.itemID == stack.itemID && r.output.getItemDamage() == stack.getItemDamage()) {
+				if (r.output.getItem() == stack.getItem() && r.output.getItemDamage() == stack.getItemDamage()) {
 					setCurrentRecipe(r);
 					break;
 				}
@@ -272,7 +283,7 @@ public class TileAssemblyTable extends TileLaserTableBase implements IMachine, I
 			packet.posY = yCoord;
 			packet.posZ = zCoord;
 			// FIXME: This needs to be switched over to new synch system.
-			CoreProxy.proxy.sendToPlayers(packet.getPacket(), worldObj, (int) player.posX, (int) player.posY, (int) player.posZ,
+			BuildCraftSilicon.instance.sendToPlayers(packet, worldObj, (int) player.posX, (int) player.posY, (int) player.posZ,
 					DefaultProps.NETWORK_UPDATE_RANGE);
 		}
 	}
@@ -303,13 +314,12 @@ public class TileAssemblyTable extends TileLaserTableBase implements IMachine, I
 	}
 
 	@Override
-	public boolean isInvNameLocalized() {
-		// TODO Auto-generated method stub
-		return false;
+	public boolean isItemValidForSlot(int slot, ItemStack stack) {
+		return true;
 	}
 
 	@Override
-	public boolean isItemValidForSlot(int slot, ItemStack stack) {
-		return true;
+	public boolean hasCustomInventoryName() {
+		return false;
 	}
 }

@@ -3,7 +3,7 @@ package buildcraft.core.gui;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.Icon;
+import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
 
 public abstract class AdvancedSlot {
@@ -19,12 +19,12 @@ public abstract class AdvancedSlot {
 
 	public String getDescription() {
 		if (getItemStack() != null)
-			return getItemStack().getItem().getItemDisplayName(getItemStack());
+			return getItemStack().getItem().getItemStackDisplayName(getItemStack());
 		else
 			return "";
 	}
 
-	public Icon getIcon() {
+	public IIcon getIcon() {
 		return null;
 	}
 

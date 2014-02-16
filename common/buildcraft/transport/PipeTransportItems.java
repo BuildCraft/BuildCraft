@@ -1,8 +1,9 @@
 /**
- * Copyright (c) SpaceToad, 2011 http://www.mod-buildcraft.com
+ * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
+ * http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public License
- * 1.0, or MMPL. Please check the contents of the license located in
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
+ * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
 package buildcraft.transport;
@@ -15,26 +16,29 @@ import buildcraft.api.transport.IPipeTile.PipeType;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.IMachine;
 import buildcraft.core.inventory.Transactor;
+import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.BCLog;
 import buildcraft.core.utils.BlockUtil;
 import buildcraft.core.utils.MathUtils;
+import buildcraft.core.utils.Utils;
 import buildcraft.transport.network.PacketPipeTransportItemStackRequest;
 import buildcraft.transport.network.PacketPipeTransportTraveler;
 import buildcraft.transport.pipes.events.PipeEventItem;
 import buildcraft.transport.utils.TransportUtils;
-import cpw.mods.fml.common.network.PacketDispatcher;
+
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
+
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 
 public class PipeTransportItems extends PipeTransport {
 
@@ -100,7 +104,7 @@ public class PipeTransportItems extends PipeTransport {
 		readjustPosition(item);
 
 
-		if (!container.worldObj.isRemote) {
+		if (!container.getWorldObj().isRemote) {
 			item.output = resolveDestination(item);
 		}
 
@@ -115,7 +119,7 @@ public class PipeTransportItems extends PipeTransport {
 
 		items.add(item);
 
-		if (!container.worldObj.isRemote) {
+		if (!container.getWorldObj().isRemote) {
 			sendTravelerPacket(item, false);
 
 			if (items.size() > BuildCraftTransport.groupItemsTrigger)
@@ -142,8 +146,8 @@ public class PipeTransportItems extends PipeTransport {
 	}
 
 	private void destroyPipe() {
-		BlockUtil.explodeBlock(container.worldObj, container.xCoord, container.yCoord, container.zCoord);
-		container.worldObj.setBlockToAir(container.xCoord, container.yCoord, container.zCoord);
+		BlockUtil.explodeBlock(container.getWorldObj(), container.xCoord, container.yCoord, container.zCoord);
+		container.getWorldObj().setBlockToAir(container.xCoord, container.yCoord, container.zCoord);
 	}
 
 	/**
@@ -163,7 +167,7 @@ public class PipeTransportItems extends PipeTransport {
 		readjustSpeed(item);
 		readjustPosition(item);
 
-		if (!container.worldObj.isRemote) {
+		if (!container.getWorldObj().isRemote) {
 			item.output = resolveDestination(item);
 		}
 
@@ -177,7 +181,7 @@ public class PipeTransportItems extends PipeTransport {
 
 		items.unscheduleRemoval(item);
 
-		if (!container.worldObj.isRemote)
+		if (!container.getWorldObj().isRemote)
 			sendTravelerPacket(item, true);
 	}
 
@@ -250,7 +254,7 @@ public class PipeTransportItems extends PipeTransport {
 	private void moveSolids() {
 		items.flush();
 		
-		if (!container.worldObj.isRemote)
+		if (!container.getWorldObj().isRemote)
 			items.purgeCorruptedItems();
 
 		items.iterating = true;
@@ -319,7 +323,7 @@ public class PipeTransportItems extends PipeTransport {
 		if (passToNextPipe(item, tile)) {
 			// NOOP
 		} else if (tile instanceof IInventory) {
-			if (!container.worldObj.isRemote) {
+			if (!container.getWorldObj().isRemote) {
 				if (item.getInsertionHandler().canInsertItem(item, (IInventory) tile)) {
 					ItemStack added = Transactor.getTransactorFor(tile).add(item.getItemStack(), item.output.getOpposite(), true);
 					item.getItemStack().stackSize -= added.stackSize;
@@ -334,7 +338,7 @@ public class PipeTransportItems extends PipeTransport {
 	}
 
 	private void dropItem(TravelingItem item) {
-		if (container.worldObj.isRemote)
+		if (container.getWorldObj().isRemote)
 			return;
 
 		if (travelHook != null) {
@@ -345,7 +349,7 @@ public class PipeTransportItems extends PipeTransport {
 		container.pipe.handlePipeEvent(event);
 		if (event.entity == null)
 			return;
-		container.worldObj.spawnEntityInWorld(event.entity);
+		container.getWorldObj().spawnEntityInWorld(event.entity);
 	}
 
 	protected boolean middleReached(TravelingItem item) {
@@ -370,11 +374,11 @@ public class PipeTransportItems extends PipeTransport {
 	public void readFromNBT(NBTTagCompound nbt) {
 		super.readFromNBT(nbt);
 
-		NBTTagList nbttaglist = nbt.getTagList("travelingEntities");
+		NBTTagList nbttaglist = nbt.getTagList("travelingEntities", Utils.NBTTag_Types.NBTTagCompound.ordinal());
 
 		for (int j = 0; j < nbttaglist.tagCount(); ++j) {
 			try {
-				NBTTagCompound dataTag = (NBTTagCompound) nbttaglist.tagAt(j);
+				NBTTagCompound dataTag = nbttaglist.getCompoundTagAt(j);
 
 				TravelingItem item = TravelingItem.make(dataTag);
 
@@ -414,15 +418,17 @@ public class PipeTransportItems extends PipeTransport {
 	 */
 	public void handleTravelerPacket(PacketPipeTransportTraveler packet) {
 		TravelingItem item = TravelingItem.clientCache.get(packet.getTravelingEntityId());
+		
 		if (item == null) {
 			item = TravelingItem.make(packet.getTravelingEntityId());
 		}
 
-		if (item.getContainer() != container)
+		if (item.getContainer() != container) {
 			items.add(item);
+		}
 
 		if (packet.forceStackRefresh() || item.getItemStack() == null) {
-			PacketDispatcher.sendPacketToServer(new PacketPipeTransportItemStackRequest(packet.getTravelingEntityId()).getPacket());
+			BuildCraftTransport.instance.sendToServer(new PacketPipeTransportItemStackRequest(packet.getTravelingEntityId()));
 		}
 
 		item.setPosition(packet.getItemX(), packet.getItemY(), packet.getItemZ());
@@ -438,8 +444,7 @@ public class PipeTransportItems extends PipeTransport {
 
 	private void sendTravelerPacket(TravelingItem data, boolean forceStackRefresh) {
 		PacketPipeTransportTraveler packet = new PacketPipeTransportTraveler(data, forceStackRefresh);
-		int dimension = container.worldObj.provider.dimensionId;
-		PacketDispatcher.sendPacketToAllAround(container.xCoord, container.yCoord, container.zCoord, DefaultProps.PIPE_CONTENTS_RENDER_DIST, dimension, packet.getPacket());
+		BuildCraftTransport.instance.sendToPlayers(packet, container.getWorldObj(), container.xCoord, container.yCoord, container.zCoord, DefaultProps.PIPE_CONTENTS_RENDER_DIST);
 	}
 
 	public int getNumberOfStacks() {

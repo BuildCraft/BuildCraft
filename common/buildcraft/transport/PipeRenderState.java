@@ -1,5 +1,15 @@
+/**
+ * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
+ * http://www.mod-buildcraft.com
+ *
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
+ * License 1.0, or MMPL. Please check the contents of the license located in
+ * http://www.mod-buildcraft.com/MMPL-1.0.txt
+ */
 package buildcraft.transport;
 
+import io.netty.buffer.ByteBuf;
+import net.minecraft.util.IIcon;
 import buildcraft.core.network.IClientState;
 import buildcraft.transport.utils.ConnectionMatrix;
 import buildcraft.transport.utils.FacadeMatrix;
@@ -7,10 +17,6 @@ import buildcraft.transport.utils.TextureMatrix;
 import buildcraft.transport.utils.WireMatrix;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import net.minecraft.util.Icon;
 
 public class PipeRenderState implements IClientState {
 
@@ -29,9 +35,9 @@ public class PipeRenderState implements IClientState {
 	 * This is a placeholder for the pipe renderer to set to a value that the BlockGenericPipe->TileGenericPipe will then return the the WorldRenderer
 	 */
 	@SideOnly(Side.CLIENT)
-	public Icon currentTexture;
+	public IIcon currentTexture;
 	@SideOnly(Side.CLIENT)
-	public Icon[] textureArray;
+	public IIcon[] textureArray;
 
 	public void setIsGateLit(boolean value) {
 		if (isGateLit != value) {
@@ -79,7 +85,7 @@ public class PipeRenderState implements IClientState {
 	}
 
 	@Override
-	public void writeData(DataOutputStream data) throws IOException {
+	public void writeData(ByteBuf data) {
 		data.writeBoolean(isGateLit);
 		data.writeBoolean(isGatePulsing);
 		data.writeInt(gateIconIndex);
@@ -92,7 +98,7 @@ public class PipeRenderState implements IClientState {
 	}
 
 	@Override
-	public void readData(DataInputStream data) throws IOException {
+	public void readData(ByteBuf data) {
 		isGateLit = data.readBoolean();
 		isGatePulsing = data.readBoolean();
 		gateIconIndex = data.readInt();

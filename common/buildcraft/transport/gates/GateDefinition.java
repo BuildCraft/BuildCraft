@@ -1,7 +1,7 @@
-/*
- * Copyright (c) SpaceToad, 2011-2012
+/**
+ * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- * 
+ *
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -10,15 +10,15 @@ package buildcraft.transport.gates;
 
 import buildcraft.core.DefaultProps;
 import buildcraft.core.utils.StringUtils;
+
 import java.util.Locale;
-import net.minecraft.client.renderer.texture.IconRegister;
-import net.minecraft.util.Icon;
+
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
 
-/**
- *
- * @author CovertJaguar <http://www.railcraft.info/>
- */
 public final class GateDefinition {
 
 	private GateDefinition() {
@@ -38,14 +38,18 @@ public final class GateDefinition {
 		public final int guiHeight;
 		public final int numSlots;
 		public final boolean hasParameterSlot;
-		private Icon iconBlock;
-		private Icon iconItem;
+		@SideOnly(Side.CLIENT)
+		private IIcon iconBlock;
+		@SideOnly(Side.CLIENT)
+		private IIcon iconItem;
 
-		public Icon getIconBlock() {
+		@SideOnly(Side.CLIENT)
+		public IIcon getIconBlock() {
 			return iconBlock;
 		}
 
-		public Icon getIconItem() {
+		@SideOnly(Side.CLIENT)
+		public IIcon getIconItem() {
 			return iconItem;
 		}
 
@@ -53,12 +57,14 @@ public final class GateDefinition {
 			return name().toLowerCase(Locale.ENGLISH);
 		}
 
-		public void registerBlockIcon(IconRegister iconRegister) {
+		@SideOnly(Side.CLIENT)
+		public void registerBlockIcon(IIconRegister iconRegister) {
 			if (this != REDSTONE)
 				iconBlock = iconRegister.registerIcon("buildcraft:gates/gate_material_" + getTag());
 		}
 
-		public void registerItemIcon(IconRegister iconRegister) {
+		@SideOnly(Side.CLIENT)
+		public void registerItemIcon(IIconRegister iconRegister) {
 			if (this != REDSTONE)
 				iconItem = iconRegister.registerIcon("buildcraft:gates/gate_material_" + getTag());
 		}
@@ -81,19 +87,19 @@ public final class GateDefinition {
 
 		AND, OR;
 		public static final GateLogic[] VALUES = values();
-		private Icon iconLit;
-		private Icon iconDark;
-		private Icon iconItem;
+		private IIcon iconLit;
+		private IIcon iconDark;
+		private IIcon iconItem;
 
-		public Icon getIconLit() {
+		public IIcon getIconLit() {
 			return iconLit;
 		}
 
-		public Icon getIconDark() {
+		public IIcon getIconDark() {
 			return iconDark;
 		}
 
-		public Icon getIconItem() {
+		public IIcon getIconItem() {
 			return iconItem;
 		}
 
@@ -101,12 +107,12 @@ public final class GateDefinition {
 			return name().toLowerCase(Locale.ENGLISH);
 		}
 
-		public void registerBlockIcon(IconRegister iconRegister) {
+		public void registerBlockIcon(IIconRegister iconRegister) {
 			iconLit = iconRegister.registerIcon("buildcraft:gates/gate_lit_" + getTag());
 			iconDark = iconRegister.registerIcon("buildcraft:gates/gate_dark_" + getTag());
 		}
 
-		public void registerItemIcon(IconRegister iconRegister) {
+		public void registerItemIcon(IIconRegister iconRegister) {
 			iconItem = iconRegister.registerIcon("buildcraft:gates/gate_logic_" + getTag());
 		}
 

@@ -9,7 +9,7 @@
 package buildcraft.core.robots;
 
 import net.minecraft.block.Block;
-import buildcraft.core.proxy.CoreProxy;
+import net.minecraft.init.Blocks;
 
 public class AIMoveAround extends AIBase {
 
@@ -27,7 +27,7 @@ public class AIMoveAround extends AIBase {
 
 	@Override
 	public void update(EntityRobot robot) {
-		if (!CoreProxy.proxy.isSimulating(robot.worldObj)) {
+		if (robot.worldObj.isRemote) {
 			return;
 		}
 
@@ -47,7 +47,7 @@ public class AIMoveAround extends AIBase {
 			float testY = aroundY + robot.worldObj.rand.nextFloat() * 5F;
 			float testZ = aroundZ + robot.worldObj.rand.nextFloat() * 10F - 5F;
 
-			int blockId = robot.worldObj.getBlockId((int) testX, (int) testY,
+			Block block = robot.worldObj.getBlock((int) testX, (int) testY,
 					(int) testZ);
 
 			// We set a destination. If it's wrong, we try a new one.
@@ -56,9 +56,7 @@ public class AIMoveAround extends AIBase {
 
 			setDestination(robot, testX, testY, testZ);
 
-			if (Block.blocksList[blockId] == null
-					|| Block.blocksList[blockId].isAirBlock(robot.worldObj,
-							(int) testX, (int) testY, (int) testZ)) {
+			if (block == Blocks.air) {
 				return;
 			}
 		}

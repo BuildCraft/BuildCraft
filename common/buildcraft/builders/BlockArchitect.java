@@ -1,12 +1,11 @@
 /**
- * Copyright (c) SpaceToad, 2011
+ * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
  *
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-
 package buildcraft.builders;
 
 import buildcraft.BuildCraftBuilders;
@@ -18,36 +17,39 @@ import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+
 import java.util.ArrayList;
+
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Icon;
+import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 
 public class BlockArchitect extends BlockContainer {
 
-	Icon blockTextureSides;
-	Icon blockTextureFront;
-	Icon blockTextureTopPos;
-	Icon blockTextureTopNeg;
-	Icon blockTextureTopArchitect;
+	IIcon blockTextureSides;
+	IIcon blockTextureFront;
+	IIcon blockTextureTopPos;
+	IIcon blockTextureTopNeg;
+	IIcon blockTextureTopArchitect;
 
-	public BlockArchitect(int i) {
-		super(i, Material.iron);
+	public BlockArchitect() {
+		super(Material.iron);
 		setHardness(5F);
 		setCreativeTab(CreativeTabBuildCraft.MACHINES.get());
 	}
 
 	@Override
-	public TileEntity createNewTileEntity(World var1) {
+	public TileEntity createNewTileEntity(World world, int metadata) {
 		return new TileArchitect();
 	}
 
@@ -84,7 +86,7 @@ public class BlockArchitect extends BlockContainer {
 			return true;
 		} else {
 
-			if (!CoreProxy.proxy.isRenderWorld(world)) {
+			if (!world.isRemote) {
 				entityplayer.openGui(BuildCraftBuilders.instance, GuiIds.ARCHITECT_TABLE, world, i, j, k);
 			}
 			return true;
@@ -93,10 +95,10 @@ public class BlockArchitect extends BlockContainer {
 	}
 
 	@Override
-	public void breakBlock(World world, int i, int j, int k, int par5, int par6) {
+	public void breakBlock(World world, int i, int j, int k, Block block, int par6) {
 		Utils.preDestroyBlock(world, i, j, k);
 
-		super.breakBlock(world, i, j, k, par5, par6);
+		super.breakBlock(world, i, j, k, block, par6);
 	}
 
 	@Override
@@ -109,7 +111,8 @@ public class BlockArchitect extends BlockContainer {
 	}
 
 	@SuppressWarnings({ "all" })
-	public Icon getBlockTexture(IBlockAccess iblockaccess, int i, int j, int k, int l) {
+	@Override
+	public IIcon getIcon(IBlockAccess iblockaccess, int i, int j, int k, int l) {
 		int m = iblockaccess.getBlockMetadata(i, j, k);
 
 		if (l == 1)
@@ -119,7 +122,7 @@ public class BlockArchitect extends BlockContainer {
 	}
 
 	@Override
-	public Icon getIcon(int i, int j) {
+	public IIcon getIcon(int i, int j) {
 		if (j == 0 && i == 3)
 			return blockTextureFront;
 
@@ -132,15 +135,9 @@ public class BlockArchitect extends BlockContainer {
 		return blockTextureSides;
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	@Override
-	public void addCreativeItems(ArrayList itemList) {
-		itemList.add(new ItemStack(this));
-	}
-
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void registerIcons(IconRegister par1IconRegister)
+	public void registerBlockIcons(IIconRegister par1IconRegister)
 	{
 	    blockTextureSides = par1IconRegister.registerIcon("buildcraft:architect_sides");
         blockTextureTopNeg = par1IconRegister.registerIcon("buildcraft:architect_top_neg");

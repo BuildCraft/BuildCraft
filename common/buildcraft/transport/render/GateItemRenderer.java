@@ -1,3 +1,11 @@
+/**
+ * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
+ * http://www.mod-buildcraft.com
+ *
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
+ * License 1.0, or MMPL. Please check the contents of the license located in
+ * http://www.mod-buildcraft.com/MMPL-1.0.txt
+ */
 package buildcraft.transport.render;
 
 import buildcraft.api.gates.IGateExpansion;
@@ -7,7 +15,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.util.Icon;
+import net.minecraft.util.IIcon;
 import net.minecraft.client.renderer.ItemRenderer;
 import net.minecraftforge.client.IItemRenderer;
 import net.minecraftforge.client.IItemRenderer.ItemRenderType;
@@ -15,10 +23,6 @@ import net.minecraftforge.client.IItemRenderer.ItemRendererHelper;
 import org.lwjgl.opengl.GL11;
 import net.minecraft.entity.item.EntityItem;
 
-/**
- *
- * @author CovertJaguar <http://www.railcraft.info>
- */
 public class GateItemRenderer implements IItemRenderer {
 
 	RenderItem renderItem = new RenderItem();
@@ -65,7 +69,7 @@ public class GateItemRenderer implements IItemRenderer {
 		GL11.glPopMatrix();
 	}
 
-	private void renderLayerIn3D(Icon icon) {
+	private void renderLayerIn3D(IIcon icon) {
 		if (icon == null)
 			return;
 		GL11.glPushMatrix();
@@ -148,7 +152,7 @@ public class GateItemRenderer implements IItemRenderer {
 	private void render(ItemRenderType type, ItemStack stack) {
 		GL11.glPushMatrix();
 		GL11.glDisable(GL11.GL_LIGHTING);
-		Icon icon = ItemGate.getLogic(stack).getIconItem();
+		IIcon icon = ItemGate.getLogic(stack).getIconItem();
 		renderItem.renderIcon(0, 0, icon, 16, 16);
 
 		if (type == ItemRenderType.ENTITY)

@@ -1,8 +1,9 @@
 /**
- * Copyright (c) SpaceToad, 2011 http://www.mod-buildcraft.com
+ * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
+ * http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public License
- * 1.0, or MMPL. Please check the contents of the license located in
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
+ * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
 package buildcraft.transport;
@@ -25,7 +26,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.MathHelper;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 
 public final class TravelingItem {
 
@@ -179,7 +180,7 @@ public final class TravelingItem {
 		data.setFloat("speed", getSpeed());
 		NBTTagCompound itemStackTag = new NBTTagCompound();
 		getItemStack().writeToNBT(itemStackTag);
-		data.setCompoundTag("Item", itemStackTag);
+		data.setTag("Item", itemStackTag);
 
 		data.setBoolean("toCenter", toCenter);
 		data.setInteger("input", input.ordinal());
@@ -192,7 +193,7 @@ public final class TravelingItem {
 	}
 
 	public EntityItem toEntityItem() {
-		if (container != null && !CoreProxy.proxy.isRenderWorld(container.worldObj)) {
+		if (container != null && !container.getWorldObj().isRemote) {
 			if (getItemStack().stackSize <= 0)
 				return null;
 
@@ -200,9 +201,9 @@ public final class TravelingItem {
 			motion.moveForwards(0.1 + getSpeed() * 2F);
 
 			ItemStack stack = getItemStack();
-			EntityItem entity = new EntityItem(container.worldObj, xCoord, yCoord, zCoord, getItemStack());
+			EntityItem entity = new EntityItem(container.getWorldObj(), xCoord, yCoord, zCoord, getItemStack());
 			if (stack.getItem().hasCustomEntity(stack)) {
-				Entity e = stack.getItem().createEntity(container.worldObj, entity, stack);
+				Entity e = stack.getItem().createEntity(container.getWorldObj(), entity, stack);
 				if (e instanceof EntityItem)
 					entity = (EntityItem) e;
 			}
@@ -210,10 +211,10 @@ public final class TravelingItem {
 			entity.lifespan = BuildCraftCore.itemLifespan;
 			entity.delayBeforeCanPickup = 10;
 
-			float f3 = 0.00F + container.worldObj.rand.nextFloat() * 0.04F - 0.02F;
-			entity.motionX = (float) container.worldObj.rand.nextGaussian() * f3 + motion.x;
-			entity.motionY = (float) container.worldObj.rand.nextGaussian() * f3 + motion.y;
-			entity.motionZ = (float) container.worldObj.rand.nextGaussian() * f3 + +motion.z;
+			float f3 = 0.00F + container.getWorldObj().rand.nextFloat() * 0.04F - 0.02F;
+			entity.motionX = (float) container.getWorldObj().rand.nextGaussian() * f3 + motion.x;
+			entity.motionY = (float) container.getWorldObj().rand.nextGaussian() * f3 + motion.y;
+			entity.motionZ = (float) container.getWorldObj().rand.nextGaussian() * f3 + +motion.z;
 			return entity;
 		}
 		return null;
@@ -222,16 +223,16 @@ public final class TravelingItem {
 	public float getEntityBrightness(float f) {
 		int i = MathHelper.floor_double(xCoord);
 		int j = MathHelper.floor_double(zCoord);
-		if (container != null && container.worldObj.blockExists(i, 128 / 2, j)) {
+		if (container != null && container.getWorldObj().blockExists(i, 128 / 2, j)) {
 			double d = 0.66000000000000003D;
 			int k = MathHelper.floor_double(yCoord + d);
-			return container.worldObj.getLightBrightness(i, k, j);
+			return container.getWorldObj().getLightBrightness(i, k, j);
 		} else
 			return 0.0F;
 	}
 
 	public boolean isCorrupted() {
-		return itemStack == null || itemStack.stackSize <= 0 || Item.itemsList[itemStack.itemID] == null;
+		return itemStack == null || itemStack.stackSize <= 0 || itemStack.getItem() == null;
 	}
 
 	public boolean canBeGroupedWith(TravelingItem otherItem) {

@@ -1,8 +1,19 @@
+/**
+ * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
+ * http://www.mod-buildcraft.com
+ *
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
+ * License 1.0, or MMPL. Please check the contents of the license located in
+ * http://www.mod-buildcraft.com/MMPL-1.0.txt
+ */
 package buildcraft.core.network;
+
+import io.netty.buffer.ByteBuf;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 
@@ -19,24 +30,33 @@ public class PacketNBT extends PacketCoordinates {
 	}
 
 	@Override
-	public void writeData(DataOutputStream data) throws IOException {
-
+	public void writeData(ByteBuf data) {
 		super.writeData(data);
 
-		byte[] compressed = CompressedStreamTools.compress(nbttagcompound);
-		data.writeShort(compressed.length);
-		data.write(compressed);
+		try {
+			byte[] compressed = CompressedStreamTools.compress(nbttagcompound);
+			data.writeShort(compressed.length);
+			data.writeBytes(compressed);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}		
 	}
 
 	@Override
-	public void readData(DataInputStream data) throws IOException {
-
+	public void readData(ByteBuf data) {
 		super.readData(data);
 
 		short length = data.readShort();
 		byte[] compressed = new byte[length];
-		data.readFully(compressed);
-		this.nbttagcompound = CompressedStreamTools.decompress(compressed);
+		data.readBytes(compressed);
+		
+		try {
+			this.nbttagcompound = CompressedStreamTools.decompress(compressed);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	public NBTTagCompound getTagCompound() {

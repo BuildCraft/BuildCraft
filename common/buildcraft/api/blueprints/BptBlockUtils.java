@@ -1,12 +1,11 @@
-/** 
- * Copyright (c) SpaceToad, 2011
+/**
+ * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- * 
- * BuildCraft is distributed under the terms of the Minecraft Mod Public 
+ *
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-
 package buildcraft.api.blueprints;
 
 import java.util.LinkedList;
@@ -55,11 +54,11 @@ public class BptBlockUtils {
 		ItemStack stacks[] = new ItemStack[list.tagCount()];
 
 		for (int i = 0; i < list.tagCount(); ++i) {
-			ItemStack stack = ItemStack.loadItemStackFromNBT((NBTTagCompound) list.tagAt(i));
+			//ItemStack stack = ItemStack.loadItemStackFromNBT((NBTTagCompound) list.tagAt(i));
 
-			if (stack != null && stack.itemID != 0 && stack.stackSize > 0) {
-				stacks[i] = context.mapItemStack(stack);
-			}
+			//if (stack != null && stack.itemID != 0 && stack.stackSize > 0) {
+			//	stacks[i] = context.mapItemStack(stack);
+			//}
 		}
 
 		return stacks;
@@ -75,7 +74,7 @@ public class BptBlockUtils {
 
 			if (stack != null && stack.stackSize != 0) {
 				stack.writeToNBT(cpt);
-				context.storeId(stack.itemID);
+				//context.storeId(stack.itemID);
 			}
 		}
 

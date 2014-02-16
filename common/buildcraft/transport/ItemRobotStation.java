@@ -8,17 +8,18 @@
  */
 package buildcraft.transport;
 
+import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+import net.minecraft.world.World;
 import buildcraft.core.ItemBuildCraft;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraft.client.renderer.texture.IconRegister;
-import net.minecraft.item.ItemStack;
-import net.minecraft.world.World;
 
 public class ItemRobotStation extends ItemBuildCraft {
 
-	public ItemRobotStation(int i) {
-		super(i);
+	public ItemRobotStation() {
+		super();
 	}
 
 	@Override
@@ -27,13 +28,13 @@ public class ItemRobotStation extends ItemBuildCraft {
 	}
 
 	@Override
-	public boolean shouldPassSneakingClickToBlock(World worldObj, int x, int y, int z ) {
+	public boolean doesSneakBypassUse(World world, int x, int y, int z, EntityPlayer player) {
 		return true;
 	}
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void registerIcons(IconRegister par1IconRegister) {
+	public void registerIcons(IIconRegister par1IconRegister) {
 	    // NOOP
 	}
 

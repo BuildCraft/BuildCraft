@@ -19,37 +19,38 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 import java.util.ArrayList;
 
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Icon;
+import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 
 public class BlockBuilder extends BlockContainer {
 
-	Icon blockTextureTop;
-	Icon blockTextureSide;
-	Icon blockTextureFront;
+	IIcon blockTextureTop;
+	IIcon blockTextureSide;
+	IIcon blockTextureFront;
 
-	public BlockBuilder(int i) {
-		super(i, Material.iron);
+	public BlockBuilder() {
+		super(Material.iron);
 		setHardness(5F);
 		setCreativeTab(CreativeTabBuildCraft.MACHINES.get());
 	}
 
 	@Override
-	public TileEntity createNewTileEntity(World var1) {
+	public TileEntity createNewTileEntity(World world, int metadata) {
 		return new TileBuilder();
 	}
 
 	@Override
-	public Icon getIcon(int i, int j) {
+	public IIcon getIcon(int i, int j) {
 		if (j == 0 && i == 3)
 			return blockTextureFront;
 
@@ -97,7 +98,7 @@ public class BlockBuilder extends BlockContainer {
 			return true;
 		} else {
 
-			if (!CoreProxy.proxy.isRenderWorld(world)) {
+			if (!world.isRemote) {
 				entityplayer.openGui(BuildCraftBuilders.instance, GuiIds.BUILDER, world, i, j, k);
 			}
 			return true;
@@ -114,20 +115,14 @@ public class BlockBuilder extends BlockContainer {
 	}
 
 	@Override
-	public void breakBlock(World world, int x, int y, int z, int par5, int par6) {
+	public void breakBlock(World world, int x, int y, int z, Block block, int par6) {
 		Utils.preDestroyBlock(world, x, y, z);
-		super.breakBlock(world, x, y, z, par5, par6);
-	}
-
-	@SuppressWarnings({"unchecked", "rawtypes"})
-	@Override
-	public void addCreativeItems(ArrayList itemList) {
-		itemList.add(new ItemStack(this));
+		super.breakBlock(world, x, y, z, block, par6);
 	}
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void registerIcons(IconRegister par1IconRegister) {
+	public void registerBlockIcons(IIconRegister par1IconRegister) {
 		blockTextureTop = par1IconRegister.registerIcon("buildcraft:builder_top");
 		blockTextureSide = par1IconRegister.registerIcon("buildcraft:builder_side");
 		blockTextureFront = par1IconRegister.registerIcon("buildcraft:builder_front");

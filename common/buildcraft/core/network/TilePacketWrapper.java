@@ -1,13 +1,14 @@
 /**
- * Copyright (c) SpaceToad, 2011
+ * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
  *
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-
 package buildcraft.core.network;
+
+import io.netty.buffer.ByteBuf;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -37,7 +38,7 @@ public class TilePacketWrapper {
 	public PacketPayload toPayload(final TileEntity tile) {
 		return new PacketPayloadStream(new PacketPayloadStream.StreamWriter() {
 			@Override
-			public void writeData(DataOutputStream data) throws IOException {
+			public void writeData(ByteBuf data) {
 				data.writeInt(tile.xCoord);
 				data.writeInt(tile.yCoord);
 				data.writeInt(tile.zCoord);
@@ -66,7 +67,7 @@ public class TilePacketWrapper {
 	public PacketPayload toPayload(final int x, final int y, final int z, final Object[] obj) {
 		return new PacketPayloadStream(new PacketPayloadStream.StreamWriter() {
 			@Override
-			public void writeData(DataOutputStream data) throws IOException {
+			public void writeData(ByteBuf data) {
 					data.writeInt(x);
 					data.writeInt(y);
 					data.writeInt(z);
@@ -89,7 +90,7 @@ public class TilePacketWrapper {
 
 	public void fromPayload(TileEntity tile, PacketPayloadStream packet) {
 		try {
-			DataInputStream data = packet.stream;
+			ByteBuf data = packet.stream;
 
 			data.readInt();
 			data.readInt();
@@ -107,7 +108,7 @@ public class TilePacketWrapper {
 
 	public void fromPayload(Object[] obj, PacketPayloadStream packet) {
 		try {
-			DataInputStream data = packet.stream;
+			ByteBuf data = packet.stream;
 
 			data.readInt();
 			data.readInt();

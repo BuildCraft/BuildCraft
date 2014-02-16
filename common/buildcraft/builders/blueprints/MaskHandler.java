@@ -1,5 +1,6 @@
 package buildcraft.builders.blueprints;
 
+import net.minecraft.init.Blocks;
 import net.minecraft.world.World;
 import buildcraft.api.builder.BlockHandler;
 import buildcraft.builders.blueprints.BlueprintBuilder.SchematicBuilder;
@@ -23,9 +24,9 @@ public class MaskHandler extends BlockHandler {
 		MaskSchematic mask = (MaskSchematic) builder.schematic;
 
 		if (mask.isPlain) {
-			return world.getBlockId(builder.getX(), builder.getY(), builder.getZ()) != 0;
+			return world.getBlock(builder.getX(), builder.getY(), builder.getZ()) != Blocks.air;
 		} else {
-			return world.getBlockId(builder.getX(), builder.getY(), builder.getZ()) == 0;
+			return world.getBlock(builder.getX(), builder.getY(), builder.getZ()) == Blocks.air;
 		}
 	}
 

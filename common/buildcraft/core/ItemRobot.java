@@ -8,15 +8,15 @@
  */
 package buildcraft.core;
 
-import buildcraft.core.robots.EntityRobot;
 import net.minecraft.world.World;
+import buildcraft.core.robots.EntityRobot;
 
 public class ItemRobot extends ItemBuildCraft {
 
 	Class <? extends EntityRobot> robotClass;
 
-	public ItemRobot(int par1, Class <? extends EntityRobot> robotClass) {
-		super(par1);
+	public ItemRobot(Class <? extends EntityRobot> robotClass) {
+		super();
 
 		this.robotClass = robotClass;
 	}

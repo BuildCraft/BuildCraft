@@ -1,20 +1,28 @@
+/**
+ * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
+ * http://www.mod-buildcraft.com
+ *
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
+ * License 1.0, or MMPL. Please check the contents of the license located in
+ * http://www.mod-buildcraft.com/MMPL-1.0.txt
+ */
 package buildcraft.builders.urbanism;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.util.IIcon;
+import net.minecraft.util.ResourceLocation;
 import buildcraft.api.filler.IFillerPattern;
 import buildcraft.builders.filler.pattern.FillerPattern;
 import buildcraft.core.Box;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.gui.AdvancedSlot;
 import buildcraft.core.gui.GuiAdvancedInterface;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.texture.TextureMap;
-import net.minecraft.util.Icon;
-import net.minecraft.util.ResourceLocation;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 class UrbanistToolFiller extends UrbanistToolArea {
 
@@ -38,13 +46,14 @@ class UrbanistToolFiller extends UrbanistToolArea {
 			this.index = index;
 		}
 
+		@Override
 		public ResourceLocation getTexture() {
 			return TextureMap.locationBlocksTexture;
 		}
 
 		@SideOnly(Side.CLIENT)
 		@Override
-		public Icon getIcon() {
+		public IIcon getIcon() {
 			if (index < patterns.size()) {
 				return getPattern().getIcon();
 			} else {
@@ -79,7 +88,7 @@ class UrbanistToolFiller extends UrbanistToolArea {
 	}
 
 	@Override
-	public Icon getIcon() {
+	public IIcon getIcon() {
 		return UrbanistToolsIconProvider.INSTANCE.getIcon(UrbanistToolsIconProvider.Tool_Filler);
 	}
 

@@ -1,7 +1,7 @@
-/*
- * Copyright (c) SpaceToad, 2011-2012
+/**
+ * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- * 
+ *
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -20,12 +20,8 @@ import buildcraft.core.utils.Utils;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 
-/**
- *
- * @author CovertJaguar <http://www.railcraft.info/>
- */
 public class TileIntegrationTable extends TileLaserTableBase implements ISidedInventory {
 
 	public static final int SLOT_INPUT_A = 0;
@@ -167,7 +163,12 @@ public class TileIntegrationTable extends TileLaserTableBase implements ISidedIn
 	}
 
 	@Override
-	public String getInvName() {
+	public String getInventoryName() {
 		return StringUtils.localize("tile.integrationTableBlock");
+	}
+
+	@Override
+	public boolean hasCustomInventoryName() {
+		return false;
 	}
 }

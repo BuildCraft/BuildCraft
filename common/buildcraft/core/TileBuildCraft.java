@@ -1,13 +1,17 @@
 /**
- * Copyright (c) SpaceToad, 2011 http://www.mod-buildcraft.com
+ * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
+ * http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public License
- * 1.0, or MMPL. Please check the contents of the license located in
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
+ * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
 package buildcraft.core;
 
+import buildcraft.BuildCraftCore;
+import buildcraft.BuildCraftMod;
 import buildcraft.api.power.IPowerReceptor;
+import buildcraft.core.network.BuildCraftPacket;
 import buildcraft.core.network.ISynchronizedTile;
 import buildcraft.core.network.PacketPayload;
 import buildcraft.core.network.PacketPayloadStream;
@@ -17,15 +21,23 @@ import buildcraft.core.network.TilePacketWrapper;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
 
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.EmptyByteBuf;
+import io.netty.buffer.Unpooled;
+import io.netty.buffer.UnpooledHeapByteBuf;
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+
+import cpw.mods.fml.common.network.internal.FMLProxyPacket;
 
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.packet.Packet;
+import net.minecraft.network.Packet;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 
@@ -83,21 +95,22 @@ public abstract class TileBuildCraft extends TileEntity implements ISynchronized
 
 	public void onBlockPlacedBy(EntityLivingBase entity, ItemStack stack) {
 		if (entity instanceof EntityPlayer)
-			owner = ((EntityPlayer) entity).username;
+			owner = ((EntityPlayer) entity).getDisplayName();
 	}
 
 	public void destroy() {
 	}
 
 	public void sendNetworkUpdate() {
-		if (CoreProxy.proxy.isSimulating(worldObj)) {
-			CoreProxy.proxy.sendToPlayers(getUpdatePacket(), worldObj, xCoord, yCoord, zCoord, DefaultProps.NETWORK_UPDATE_RANGE);
+		if (!worldObj.isRemote) {
+			BuildCraftCore.instance.sendToPlayers(getUpdatePacket(), worldObj,
+					xCoord, yCoord, zCoord, DefaultProps.NETWORK_UPDATE_RANGE);
 		}
 	}
 
 	@Override
 	public Packet getDescriptionPacket() {
-		return new PacketTileUpdate(this).getPacket();
+		return Utils.toPacket(getUpdatePacket(), 0);
 	}
 
 	@Override
@@ -106,20 +119,22 @@ public abstract class TileBuildCraft extends TileEntity implements ISynchronized
 	}
 
 	@Override
-	public Packet getUpdatePacket() {
-		return new PacketTileUpdate(this).getPacket();
+	public BuildCraftPacket getUpdatePacket() {
+		return new PacketTileUpdate(this);
 	}
 
 	@Override
 	public void handleDescriptionPacket(PacketUpdate packet) throws IOException {
-		if (packet.payload instanceof PacketPayloadStream)
+		if (packet.payload instanceof PacketPayloadStream) {
 			descriptionPacket.fromPayload(this, (PacketPayloadStream) packet.payload);
+		}
 	}
 
 	@Override
 	public void handleUpdatePacket(PacketUpdate packet) throws IOException {
-		if (packet.payload instanceof PacketPayloadStream)
-			updatePacket.fromPayload(this, (PacketPayloadStream) packet.payload);
+		if (packet.payload instanceof PacketPayloadStream) {
+			updatePacket.fromPayload(this, (PacketPayloadStream) packet.payload);		
+		}
 	}
 
 	@Override
@@ -137,11 +152,6 @@ public abstract class TileBuildCraft extends TileEntity implements ISynchronized
 		super.readFromNBT(nbt);
 		if (nbt.hasKey("owner"))
 			owner = nbt.getString("owner");
-	}
-
-	public boolean isInvNameLocalized() {
-		// TODO Auto-generated method stub
-		return false;
 	}
 
 	public World getWorld() {

@@ -1,8 +1,9 @@
 /**
- * Copyright (c) SpaceToad, 2011 http://www.mod-buildcraft.com
+ * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
+ * http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public License
- * 1.0, or MMPL. Please check the contents of the license located in
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
+ * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
 package buildcraft.transport.gui;
@@ -16,10 +17,6 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 
-/**
- *
- * @author SandGrainOne
- */
 public class GuiFilteredBuffer extends GuiContainer {
 
 	private static final ResourceLocation TEXTURE = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_GUI + "/filteredBuffer_gui.png");
@@ -57,7 +54,7 @@ public class GuiFilteredBuffer extends GuiContainer {
 	@Override
 	protected void drawGuiContainerForegroundLayer(int par1, int par2) {
 		String title = StringUtils.localize("tile.filteredBufferBlock");
-		int xPos = (xSize - fontRenderer.getStringWidth(title)) / 2;
-		fontRenderer.drawString(title, xPos, 10, 0x404040);
+		int xPos = (xSize - fontRendererObj.getStringWidth(title)) / 2;
+		fontRendererObj.drawString(title, xPos, 10, 0x404040);
 	}
 }

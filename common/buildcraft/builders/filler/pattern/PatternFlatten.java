@@ -16,7 +16,7 @@ import buildcraft.core.Box;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 
 public class PatternFlatten extends FillerPattern {
 
@@ -34,10 +34,10 @@ public class PatternFlatten extends FillerPattern {
 		int yMax = (int) box.pMax().y;
 		int zMax = (int) box.pMax().z;
 
-		if (flatten(xMin, 1, zMin, xMax, yMin - 1, zMax, tile.worldObj, stackToPlace)) {
+		if (flatten(xMin, 1, zMin, xMax, yMin - 1, zMax, tile.getWorldObj(), stackToPlace)) {
 			return false;
 		}
-		return !empty(xMin, yMin, zMin, xMax, yMax, zMax, tile.worldObj);
+		return !empty(xMin, yMin, zMin, xMax, yMax, zMax, tile.getWorldObj());
 	}
 
 	@Override

@@ -1,24 +1,32 @@
+/**
+ * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
+ * http://www.mod-buildcraft.com
+ *
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
+ * License 1.0, or MMPL. Please check the contents of the license located in
+ * http://www.mod-buildcraft.com/MMPL-1.0.txt
+ */
 package buildcraft.builders.urbanism;
 
 import java.util.LinkedList;
 import java.util.List;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
+import net.minecraft.item.ItemStack;
 import buildcraft.builders.blueprints.BlueprintBuilder;
 import buildcraft.builders.blueprints.BlueprintBuilder.SchematicBuilder;
 import buildcraft.builders.filler.pattern.FillerPattern;
 import buildcraft.core.Box;
 import buildcraft.core.EntityFrame;
+import buildcraft.core.EntityFrame.Kind;
 import buildcraft.core.IBuilderInventory;
 import buildcraft.core.TileBuildCraft;
-import buildcraft.core.EntityFrame.Kind;
 import buildcraft.core.network.RPC;
 import buildcraft.core.network.RPCHandler;
 import buildcraft.core.network.RPCSide;
-import net.minecraft.block.Block;
-import net.minecraft.client.Minecraft;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
 
 public class TileUrbanist extends TileBuildCraft implements IBuilderInventory {
 
@@ -87,7 +95,7 @@ public class TileUrbanist extends TileBuildCraft implements IBuilderInventory {
 
 	@RPC (RPCSide.SERVER)
 	public void setBlock (int x, int y, int z) {
-		worldObj.setBlock(x, y, z, Block.brick.blockID);
+		worldObj.setBlock(x, y, z, Blocks.brick_block);
 	}
 
 	@RPC (RPCSide.SERVER)
@@ -233,12 +241,6 @@ public class TileUrbanist extends TileBuildCraft implements IBuilderInventory {
 	}
 
 	@Override
-	public String getInvName() {
-		// TODO Auto-generated method stub
-		return "Urbanist";
-	}
-
-	@Override
 	public int getInventoryStackLimit() {
 		// TODO Auto-generated method stub
 		return 0;
@@ -247,18 +249,6 @@ public class TileUrbanist extends TileBuildCraft implements IBuilderInventory {
 	@Override
 	public boolean isUseableByPlayer(EntityPlayer entityplayer) {
 		return true;
-	}
-
-	@Override
-	public void openChest() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void closeChest() {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
@@ -271,6 +261,30 @@ public class TileUrbanist extends TileBuildCraft implements IBuilderInventory {
 	public boolean isBuildingMaterial(int i) {
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+	@Override
+	public String getInventoryName() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean hasCustomInventoryName() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void openInventory() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void closeInventory() {
+		// TODO Auto-generated method stub
+
 	}
 
 }

@@ -8,10 +8,8 @@
  */
 package buildcraft.transport;
 
-import buildcraft.api.transport.PipeWire;
-import buildcraft.transport.gates.ItemGate;
-
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -20,46 +18,45 @@ import java.util.Random;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.particle.EffectRenderer;
 import net.minecraft.client.particle.EntityDiggingFX;
-import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.Icon;
+import net.minecraft.util.IIcon;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.gates.GateExpansions;
 import buildcraft.api.gates.IGateExpansion;
 import buildcraft.api.tools.IToolWrench;
+import buildcraft.api.transport.PipeWire;
 import buildcraft.core.BlockBuildCraft;
 import buildcraft.core.BlockIndex;
 import buildcraft.core.CoreConstants;
 import buildcraft.core.ItemRobot;
-import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.robots.AIDocked;
 import buildcraft.core.robots.EntityRobot;
 import buildcraft.core.utils.BCLog;
-import buildcraft.core.utils.Utils;
 import buildcraft.core.utils.MatrixTranformations;
+import buildcraft.core.utils.Utils;
 import buildcraft.transport.gates.GateDefinition;
 import buildcraft.transport.gates.GateFactory;
+import buildcraft.transport.gates.ItemGate;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-
-import java.util.Arrays;
-
-import net.minecraft.client.Minecraft;
 
 public class BlockGenericPipe extends BlockBuildCraft {
 
@@ -94,8 +91,8 @@ public class BlockGenericPipe extends BlockBuildCraft {
 	private int renderMask = 0;
 
 	/* Defined subprograms ************************************************* */
-	public BlockGenericPipe(int i) {
-		super(i, Material.glass);
+	public BlockGenericPipe() {
+		super(Material.glass);
 		setRenderAllSides();
 		setCreativeTab(null);
 	}
@@ -116,7 +113,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 	}
 
 	@Override
-	public boolean canBeReplacedByLeaves(World world, int x, int y, int z) {
+	public boolean canBeReplacedByLeaves(IBlockAccess world, int x, int y, int z) {
 		return false;
 	}
 
@@ -148,15 +145,18 @@ public class BlockGenericPipe extends BlockBuildCraft {
 	}
 
 	@Override
-	public boolean isBlockSolidOnSide(World world, int x, int y, int z, ForgeDirection side) {
-		TileEntity tile = world.getBlockTileEntity(x, y, z);
+	public boolean isSideSolid(IBlockAccess world, int x, int y, int z, ForgeDirection side) {
+		TileEntity tile = world.getTileEntity(x, y, z);
+
 		if (tile instanceof ISolidSideTile) {
 			return ((ISolidSideTile) tile).isSolidOnSide(side);
 		}
+
 		return false;
 	}
 
-	public boolean isACube() {
+	@Override
+	public boolean isNormalCube() {
 		return false;
 	}
 
@@ -166,7 +166,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 		setBlockBounds(CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MAX_POS, CoreConstants.PIPE_MAX_POS, CoreConstants.PIPE_MAX_POS);
 		super.addCollisionBoxesToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
 
-		TileEntity tile1 = world.getBlockTileEntity(i, j, k);
+		TileEntity tile1 = world.getTileEntity(i, j, k);
 		if (tile1 instanceof TileGenericPipe) {
 			TileGenericPipe tileG = (TileGenericPipe) tile1;
 
@@ -288,7 +288,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 	}
 
 	private RaytraceResult doRayTrace(World world, int x, int y, int z, Vec3 origin, Vec3 direction) {
-		TileEntity pipeTileEntity = world.getBlockTileEntity(x, y, z);
+		TileEntity pipeTileEntity = world.getTileEntity(x, y, z);
 
 		TileGenericPipe tileG = null;
 		if (pipeTileEntity instanceof TileGenericPipe)
@@ -518,7 +518,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 			pipe.onBlockRemoval();
 		}
 
-		World world = pipe.container.worldObj;
+		World world = pipe.container.getWorldObj();
 
 		if (world == null)
 			return;
@@ -533,20 +533,20 @@ public class BlockGenericPipe extends BlockBuildCraft {
 		}
 
 		pipeRemoved.put(new BlockIndex(x, y, z), pipe);
-		world.removeBlockTileEntity(x, y, z);
+		world.removeTileEntity(x, y, z);
 	}
 
 	@Override
-	public void breakBlock(World world, int x, int y, int z, int par5, int par6) {
+	public void breakBlock(World world, int x, int y, int z, Block block, int par6) {
 		Utils.preDestroyBlock(world, x, y, z);
 		removePipe(getPipe(world, x, y, z));
-		super.breakBlock(world, x, y, z, par5, par6);
+		super.breakBlock(world, x, y, z, block, par6);
 	}
 
 	@Override
-	public ArrayList<ItemStack> getBlockDropped(World world, int x, int y, int z, int metadata, int fortune) {
+	public ArrayList<ItemStack> getDrops(World world, int x, int y, int z, int metadata, int fortune) {
 
-		if (CoreProxy.proxy.isRenderWorld(world))
+		if (world.isRemote)
 			return null;
 
 		ArrayList<ItemStack> list = new ArrayList<ItemStack>();
@@ -560,9 +560,9 @@ public class BlockGenericPipe extends BlockBuildCraft {
 			}
 
 			if (pipe != null) {
-				if (pipe.itemID > 0) {
+				if (pipe.item != null) {
 					pipe.dropContents();
-					list.add(new ItemStack(pipe.itemID, 1, damageDropped(metadata)));
+					list.add(new ItemStack(pipe.item, 1, damageDropped(metadata)));
 				}
 			}
 		}
@@ -570,14 +570,14 @@ public class BlockGenericPipe extends BlockBuildCraft {
 	}
 
 	@Override
-	public TileEntity createNewTileEntity(World var1) {
+	public TileEntity createNewTileEntity(World world, int metadata) {
 		return new TileGenericPipe();
 	}
 
 	@Override
 	public void dropBlockAsItemWithChance(World world, int i, int j, int k, int l, float f, int dmg) {
 
-		if (CoreProxy.proxy.isRenderWorld(world))
+		if (world.isRemote)
 			return;
 
 		int i1 = quantityDropped(world.rand);
@@ -593,23 +593,23 @@ public class BlockGenericPipe extends BlockBuildCraft {
 			}
 
 			if (pipe != null) {
-				int k1 = pipe.itemID;
+				Item k1 = pipe.item;
 
-				if (k1 > 0) {
+				if (k1 != null) {
 					pipe.dropContents();
-					dropBlockAsItem_do(world, i, j, k, new ItemStack(k1, 1, damageDropped(l)));
+					dropBlockAsItem(world, i, j, k, new ItemStack(k1, 1, damageDropped(l)));
 				}
 			}
 		}
 	}
 
 	@Override
-	public int idDropped(int meta, Random rand, int dmg) {
-		// Returns 0 to be safe - the id does not depend on the meta
-		return 0;
+	public Item getItemDropped(int meta, Random rand, int dmg) {
+		// Returns null to be safe - the id does not depend on the meta
+		return null;
 	}
 
-	@SideOnly(Side.CLIENT)
+	/*@SideOnly(Side.CLIENT)
 	@Override
 	public int idPicked(World world, int i, int j, int k) {
 		Pipe pipe = getPipe(world, i, j, k);
@@ -618,7 +618,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 			return 0;
 		else
 			return pipe.itemID;
-	}
+	}*/
 
 	@SideOnly(Side.CLIENT)
 	@Override
@@ -641,8 +641,8 @@ public class BlockGenericPipe extends BlockBuildCraft {
 
 	/* Wrappers ************************************************************ */
 	@Override
-	public void onNeighborBlockChange(World world, int x, int y, int z, int id) {
-		super.onNeighborBlockChange(world, x, y, z, id);
+	public void onNeighborBlockChange(World world, int x, int y, int z, Block block) {
+		super.onNeighborBlockChange(world, x, y, z, block);
 
 		Pipe pipe = getPipe(world, x, y, z);
 
@@ -678,7 +678,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float xOffset, float yOffset, float zOffset) {
 		super.onBlockActivated(world, x, y, z, player, side, xOffset, yOffset, zOffset);
 
-		world.notifyBlocksOfNeighborChange(x, y, z, BuildCraftTransport.genericPipeBlock.blockID);
+		world.notifyBlocksOfNeighborChange(x, y, z, BuildCraftTransport.genericPipeBlock);
 
 		Pipe pipe = getPipe(world, x, y, z);
 
@@ -692,7 +692,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 					return true;
 			} else if (currentItem == null) {
 				// Fall through the end of the test
-			} else if (currentItem.itemID == Item.sign.itemID)
+			} else if (currentItem.getItem() == Items.sign)
 				// Sign will be placed anyway, so lets show the sign gui
 				return false;
 			else if (currentItem.getItem() instanceof ItemPipe)
@@ -734,7 +734,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 					return true;
 				}
 			} else if (currentItem.getItem () instanceof ItemRobot) {
-				if (CoreProxy.proxy.isSimulating(world)) {
+				if (!world.isRemote) {
 					RaytraceResult rayTraceResult = doRayTrace(world, x, y, z,
 							player);
 
@@ -742,9 +742,9 @@ public class BlockGenericPipe extends BlockBuildCraft {
 						EntityRobot robot = ((ItemRobot) currentItem.getItem())
 								.createRobot(world);
 
-						float px = x + 0.5F + (float) rayTraceResult.sideHit.offsetX * 0.5F;
-						float py = y + 0.5F + (float) rayTraceResult.sideHit.offsetY * 0.5F;
-						float pz = z + 0.5F + (float) rayTraceResult.sideHit.offsetZ * 0.5F;
+						float px = x + 0.5F + rayTraceResult.sideHit.offsetX * 0.5F;
+						float py = y + 0.5F + rayTraceResult.sideHit.offsetY * 0.5F;
+						float pz = z + 0.5F + rayTraceResult.sideHit.offsetZ * 0.5F;
 
 						robot.setPosition(px, py, pz);
 						robot.setDockingStation(pipe.container,
@@ -808,7 +808,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 
 	private boolean stripGate(Pipe pipe) {
 		if (pipe.hasGate()) {
-			if (!CoreProxy.proxy.isRenderWorld(pipe.container.worldObj)) {
+			if (!pipe.container.getWorldObj().isRemote) {
 				pipe.gate.dropGate();
 			}
 			pipe.resetGate();
@@ -839,7 +839,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 
 	private boolean stripWire(Pipe pipe, PipeWire color) {
 		if (pipe.wireSet[color.ordinal()]) {
-			if (!CoreProxy.proxy.isRenderWorld(pipe.container.worldObj)) {
+			if (!pipe.container.getWorldObj().isRemote) {
 				dropWire(color, pipe);
 			}
 			pipe.wireSet[color.ordinal()] = false;
@@ -866,7 +866,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 
 	private boolean addFacade(EntityPlayer player, Pipe pipe, ForgeDirection side) {
 		ItemStack stack = player.getCurrentEquippedItem();
-		if (pipe.container.addFacade(side, ItemFacade.getBlockId(stack), ItemFacade.getMetaData(stack))) {
+		if (pipe.container.addFacade(side, ItemFacade.getBlock(stack), ItemFacade.getMetaData(stack))) {
 			if (!player.capabilities.isCreativeMode) {
 				stack.stackSize--;
 			}
@@ -968,8 +968,8 @@ public class BlockGenericPipe extends BlockBuildCraft {
 	@SuppressWarnings({"all"})
 	@SideOnly(Side.CLIENT)
 	@Override
-	public Icon getBlockTexture(IBlockAccess iblockaccess, int x, int y, int z, int side) {
-		TileEntity tile = iblockaccess.getBlockTileEntity(x, y, z);
+	public IIcon getIcon(IBlockAccess iblockaccess, int x, int y, int z, int side) {
+		TileEntity tile = iblockaccess.getTileEntity(x, y, z);
 		if (!(tile instanceof TileGenericPipe))
 			return null;
 		if (((TileGenericPipe) tile).renderState.textureArray != null)
@@ -1034,18 +1034,18 @@ public class BlockGenericPipe extends BlockBuildCraft {
 	}
 
 	/* Registration ******************************************************** */
-	public static Map<Integer, Class<? extends Pipe>> pipes = new HashMap<Integer, Class<? extends Pipe>>();
+	public static Map<Item, Class<? extends Pipe>> pipes = new HashMap<Item, Class<? extends Pipe>>();
 	static long lastRemovedDate = -1;
 	public static Map<BlockIndex, Pipe> pipeRemoved = new HashMap<BlockIndex, Pipe>();
 
-	public static ItemPipe registerPipe(int key, Class<? extends Pipe> clas) {
-		ItemPipe item = new ItemPipe(key);
+	public static ItemPipe registerPipe(Class<? extends Pipe> clas) {
+		ItemPipe item = new ItemPipe();
 		item.setUnlocalizedName("buildcraftPipe." + clas.getSimpleName().toLowerCase(Locale.ENGLISH));
 		GameRegistry.registerItem(item, item.getUnlocalizedName());
 
-		pipes.put(item.itemID, clas);
+		pipes.put(item, clas);
 
-		Pipe dummyPipe = createPipe(item.itemID);
+		Pipe dummyPipe = createPipe(item);
 		if (dummyPipe != null) {
 			item.setPipeIconIndex(dummyPipe.getIconIndexForItem());
 			TransportProxy.proxy.setIconProviderFromPipe(item, dummyPipe);
@@ -1057,12 +1057,12 @@ public class BlockGenericPipe extends BlockBuildCraft {
 		return pipes.containsKey(key);
 	}
 
-	public static Pipe createPipe(int key) {
+	public static Pipe createPipe(Item key) {
 
 		try {
 			Class<? extends Pipe> pipe = pipes.get(key);
 			if (pipe != null)
-				return pipe.getConstructor(int.class).newInstance(key);
+				return pipe.getConstructor(Item.class).newInstance(key);
 			else {
 				BCLog.logger.warning("Detected pipe with unknown key (" + key + "). Did you remove a buildcraft addon?");
 			}
@@ -1074,14 +1074,14 @@ public class BlockGenericPipe extends BlockBuildCraft {
 		return null;
 	}
 
-	public static boolean placePipe(Pipe pipe, World world, int i, int j, int k, int blockId, int meta) {
+	public static boolean placePipe(Pipe pipe, World world, int i, int j, int k, Block block, int meta) {
 		if (world.isRemote)
 			return true;
 
-		boolean placed = world.setBlock(i, j, k, blockId, meta, 3);
+		boolean placed = world.setBlock(i, j, k, block, meta, 3);
 
 		if (placed) {
-			TileGenericPipe tile = (TileGenericPipe) world.getBlockTileEntity(i, j, k);
+			TileGenericPipe tile = (TileGenericPipe) world.getTileEntity(i, j, k);
 			tile.initialize(pipe);
 			tile.sendUpdateToClient();
 		}
@@ -1091,7 +1091,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 
 	public static Pipe getPipe(IBlockAccess blockAccess, int i, int j, int k) {
 
-		TileEntity tile = blockAccess.getBlockTileEntity(i, j, k);
+		TileEntity tile = blockAccess.getTileEntity(i, j, k);
 
 		if (!(tile instanceof TileGenericPipe) || tile.isInvalid())
 			return null;
@@ -1109,13 +1109,13 @@ public class BlockGenericPipe extends BlockBuildCraft {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void registerIcons(IconRegister iconRegister) {
+	public void registerBlockIcons(IIconRegister iconRegister) {
 		if (!skippedFirstIconRegister) {
 			skippedFirstIconRegister = true;
 			return;
 		}
 		BuildCraftTransport.instance.wireIconProvider.registerIcons(iconRegister);
-		for (int i : pipes.keySet()) {
+		for (Item i : pipes.keySet()) {
 			Pipe dummyPipe = createPipe(i);
 			if (dummyPipe != null) {
 				dummyPipe.getIconProvider().registerIcons(iconRegister);
@@ -1138,7 +1138,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public Icon getIcon(int par1, int par2) {
+	public IIcon getIcon(int par1, int par2) {
 		return BuildCraftTransport.instance.pipeIconProvider.getIcon(PipeIconProvider.TYPE.Stripes.ordinal());
 	}
 
@@ -1155,7 +1155,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 	 */
 	@SideOnly(Side.CLIENT)
 	@Override
-	public boolean addBlockHitEffects(World worldObj, MovingObjectPosition target, EffectRenderer effectRenderer) {
+	public boolean addHitEffects(World worldObj, MovingObjectPosition target, EffectRenderer effectRenderer) {
 		int x = target.blockX;
 		int y = target.blockY;
 		int z = target.blockZ;
@@ -1164,7 +1164,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 		if (pipe == null)
 			return false;
 
-		Icon icon = pipe.getIconProvider().getIcon(pipe.getIconIndexForItem());
+		IIcon icon = pipe.getIconProvider().getIcon(pipe.getIconIndexForItem());
 
 		int sideHit = target.sideHit;
 
@@ -1220,12 +1220,12 @@ public class BlockGenericPipe extends BlockBuildCraft {
 	 */
 	@SideOnly(Side.CLIENT)
 	@Override
-	public boolean addBlockDestroyEffects(World worldObj, int x, int y, int z, int meta, EffectRenderer effectRenderer) {
+	public boolean addDestroyEffects(World worldObj, int x, int y, int z, int meta, EffectRenderer effectRenderer) {
 		Pipe pipe = getPipe(worldObj, x, y, z);
 		if (pipe == null)
 			return false;
 
-		Icon icon = pipe.getIconProvider().getIcon(pipe.getIconIndexForItem());
+		IIcon icon = pipe.getIconProvider().getIcon(pipe.getIconIndexForItem());
 
 		byte its = 4;
 		for (int i = 0; i < its; ++i) {

@@ -1,3 +1,11 @@
+/**
+ * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
+ * http://www.mod-buildcraft.com
+ *
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
+ * License 1.0, or MMPL. Please check the contents of the license located in
+ * http://www.mod-buildcraft.com/MMPL-1.0.txt
+ */
 package buildcraft.transport.render;
 
 import buildcraft.BuildCraftTransport;
@@ -17,15 +25,17 @@ import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.IBlockAccess;
 
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 
 public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
 
 	public void renderPipe(RenderBlocks renderblocks, IBlockAccess iblockaccess, BlockGenericPipe block, TileGenericPipe tile, int x, int y, int z) {
 		PipeRenderState state = tile.renderState;
 		IIconProvider icons = tile.getPipeIcons();
-		if (icons == null)
+		
+		if (icons == null) {
 			return;
+		}
 
 		int connectivity = state.pipeConnectionMatrix.getMask();
 		float[] dim = new float[6];
@@ -43,8 +53,10 @@ public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
 
 		for (int dir = 0; dir < 6; dir++) {
 			int mask = 1 << dir;
-			if ((connectivity & mask) == 0)
+			
+			if ((connectivity & mask) == 0) {
 				continue; // no connection towards dir
+			}
 
 			// center piece offsets
 			resetToCenterDimensions(dim);
@@ -73,6 +85,7 @@ public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
 		for (int i = 0; i < 3; i++) {
 			dim[i] = CoreConstants.PIPE_MIN_POS;
 		}
+		
 		for (int i = 3; i < 6; i++) {
 			dim[i] = CoreConstants.PIPE_MAX_POS;
 		}
@@ -98,10 +111,9 @@ public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
 	}
 
 	private void pipePlugRenderer(RenderBlocks renderblocks, Block block, PipeRenderState state, int x, int y, int z) {
-
 		float zFightOffset = 1F / 4096F;
-
 		float[][] zeroState = new float[3][2];
+		
 		// X START - END
 		zeroState[0][0] = 0.25F + zFightOffset;
 		zeroState[0][1] = 0.75F - zFightOffset;
@@ -253,18 +265,18 @@ public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
 
 	@Override
 	public boolean renderWorldBlock(IBlockAccess world, int x, int y, int z, Block block, int modelId, RenderBlocks renderer) {
-		TileEntity tile = world.getBlockTileEntity(x, y, z);
+		TileEntity tile = world.getTileEntity(x, y, z);
 
 		if (tile instanceof TileGenericPipe) {
 			TileGenericPipe pipeTile = (TileGenericPipe) tile;
 			renderPipe(renderer, world, (BlockGenericPipe) block, pipeTile, x, y, z);
 		}
+		
 		return true;
 	}
 
 	@Override
-	public boolean shouldRender3DInInventory() {
-		// TODO Auto-generated method stub
+	public boolean shouldRender3DInInventory(int modelId) {
 		return false;
 	}
 

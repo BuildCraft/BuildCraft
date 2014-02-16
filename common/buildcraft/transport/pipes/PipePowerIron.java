@@ -1,9 +1,10 @@
 /**
- * BuildCraft is open-source. It is distributed under the terms of the
- * BuildCraft Open Source License. It grants rights to read, modify, compile or
- * run the code. It does *NOT* grant the right to redistribute this software or
- * its modifications in any form, binary or source, except if expressively
- * granted by the copyright holder.
+ * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
+ * http://www.mod-buildcraft.com
+ *
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
+ * License 1.0, or MMPL. Please check the contents of the license located in
+ * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
 package buildcraft.transport.pipes;
 
@@ -18,11 +19,14 @@ import buildcraft.transport.PipeTransportPower;
 import buildcraft.transport.triggers.ActionPowerLimiter;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+
 import java.util.LinkedList;
 import java.util.Map;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraft.util.ChatComponentText;
+import net.minecraftforge.common.util.ForgeDirection;
 
 public class PipePowerIron extends Pipe<PipeTransportPower> {
 
@@ -54,8 +58,8 @@ public class PipePowerIron extends Pipe<PipeTransportPower> {
 		}
 	}
 
-	public PipePowerIron(int itemID) {
-		super(new PipeTransportPower(), itemID);
+	public PipePowerIron(Item item) {
+		super(new PipeTransportPower(), item);
 		transport.initFromPipe(getClass());
 	}
 
@@ -76,7 +80,9 @@ public class PipePowerIron extends Pipe<PipeTransportPower> {
 				setMode(getMode().getNext());
 			}
 			if (getWorld().isRemote)
-				player.addChatMessage(String.format(StringUtils.localize("chat.pipe.power.iron.mode"), getMode().maxPower));
+				player.addChatMessage(new ChatComponentText(String.format(
+						StringUtils.localize("chat.pipe.power.iron.mode"),
+						getMode().maxPower)));
 
 			((IToolWrench) equipped).wrenchUsed(player, container.xCoord, container.yCoord, container.zCoord);
 			return true;
@@ -97,7 +103,7 @@ public class PipePowerIron extends Pipe<PipeTransportPower> {
 
 	public void setMode(PowerMode mode) {
 		if (mode.ordinal() != container.getBlockMetadata()) {
-			container.worldObj.setBlockMetadataWithNotify(container.xCoord, container.yCoord, container.zCoord, mode.ordinal(), 3);
+			container.getWorldObj().setBlockMetadataWithNotify(container.xCoord, container.yCoord, container.zCoord, mode.ordinal(), 3);
 			container.scheduleRenderUpdate();
 		}
 	}

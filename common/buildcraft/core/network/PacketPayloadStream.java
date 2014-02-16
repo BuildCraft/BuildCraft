@@ -1,5 +1,5 @@
-/*
- * Copyright (c) SpaceToad, 2011-2012
+/**
+ * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
  *
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
@@ -8,6 +8,8 @@
  */
 package buildcraft.core.network;
 
+import io.netty.buffer.ByteBuf;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -15,16 +17,18 @@ import java.io.IOException;
 /**
  * Alternative Packet Payload system.
  *
- * @author CovertJaguar <http://www.railcraft.info/>
+ * Note, you cannot use a Stream payload and the TileNetworkData annotation at
+ * the same time. Attempting to do will most likely result in a class cast
+ * exception somewhere.
  */
 public class PacketPayloadStream extends PacketPayload {
 
 	public static interface StreamWriter {
 
-		public void writeData(DataOutputStream data) throws IOException;
+		public void writeData(ByteBuf data);
 	}
 	private StreamWriter handler;
-	public DataInputStream stream;
+	public ByteBuf stream;
 
 	public PacketPayloadStream() {
 	}
@@ -34,12 +38,12 @@ public class PacketPayloadStream extends PacketPayload {
 	}
 
 	@Override
-	public void writeData(DataOutputStream data) throws IOException {
+	public void writeData(ByteBuf data) {
 		handler.writeData(data);
 	}
 
 	@Override
-	public void readData(DataInputStream data) throws IOException {
+	public void readData(ByteBuf data) {
 		stream = data;
 	}
 }

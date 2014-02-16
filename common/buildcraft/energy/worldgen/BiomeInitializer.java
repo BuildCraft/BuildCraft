@@ -1,19 +1,23 @@
+/**
+ * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
+ * http://www.mod-buildcraft.com
+ *
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
+ * License 1.0, or MMPL. Please check the contents of the license located in
+ * http://www.mod-buildcraft.com/MMPL-1.0.txt
+ */
 package buildcraft.energy.worldgen;
 
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import buildcraft.BuildCraftEnergy;
-import net.minecraftforge.event.ForgeSubscribe;
 import net.minecraftforge.event.terraingen.WorldTypeEvent;
 
-/**
- *
- * @author CovertJaguar <http://www.railcraft.info/>
- */
 public class BiomeInitializer {
 
 	public BiomeInitializer() {
 	}
 
-	@ForgeSubscribe
+	@SubscribeEvent
 	public void initBiomes(WorldTypeEvent.InitBiomeGens event) {
 		if (BuildCraftEnergy.biomeOilDesert != null) {
 			event.newBiomeGens[0] = new GenLayerAddOilDesert(event.seed, 1500L, event.newBiomeGens[0]);

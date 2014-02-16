@@ -11,13 +11,12 @@ package buildcraft.core.robots;
 import java.util.HashSet;
 import java.util.Set;
 
-import buildcraft.api.core.SafeTimeTracker;
-import buildcraft.core.DefaultProps;
-import buildcraft.core.proxy.CoreProxy;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import buildcraft.api.core.SafeTimeTracker;
+import buildcraft.core.DefaultProps;
 
 public class EntityRobotPicker extends EntityRobot {
 
@@ -43,13 +42,13 @@ public class EntityRobotPicker extends EntityRobot {
 	public void onUpdate () {
 		super.onUpdate();
 
-		if (CoreProxy.proxy.isRenderWorld(worldObj)) {
+		if (worldObj.isRemote) {
 			return;
 		}
 
 		if (target != null) {
 			if (target.isDead) {
-				targettedItems.remove(target.entityId);
+				targettedItems.remove(target.getEntityId());
 				target = null;
 				currentAI = new AIReturnToDock();
 				hideLaser();
@@ -80,7 +79,7 @@ public class EntityRobotPicker extends EntityRobot {
 		for (Object o : worldObj.loadedEntityList) {
 			Entity e = (Entity) o;
 
-			if (!e.isDead && e instanceof EntityItem && !targettedItems.contains(e.entityId)) {
+			if (!e.isDead && e instanceof EntityItem && !targettedItems.contains(e.getEntityId())) {
 				double dx = e.posX - posX;
 				double dy = e.posY - posY;
 				double dz = e.posZ - posZ;
@@ -91,7 +90,7 @@ public class EntityRobotPicker extends EntityRobot {
 				if (sqrDistance <= maxDistance) {
 					EntityItem item = (EntityItem) e;
 					target = item;
-					targettedItems.add(e.entityId);
+					targettedItems.add(e.getEntityId());
 					currentAI = new AIMoveAround(this, (float) e.posX, (float) e.posY, (float) e.posZ);
 					pickTime = -1;
 					break;

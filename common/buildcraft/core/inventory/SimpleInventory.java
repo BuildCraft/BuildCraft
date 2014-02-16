@@ -1,14 +1,18 @@
 /**
- * Copyright (c) Krapht, 2011
+ * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
+ * http://www.mod-buildcraft.com
  *
- * "LogisticsPipes" is distributed under the terms of the Minecraft Mod Public
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
 package buildcraft.core.inventory;
 
 import buildcraft.core.utils.INBTTagable;
+import buildcraft.core.utils.Utils;
+
 import java.util.LinkedList;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
@@ -44,7 +48,7 @@ public class SimpleInventory implements IInventory, INBTTagable {
 		if (slotId < _contents.length && _contents[slotId] != null) {
 			if (_contents[slotId].stackSize > count) {
 				ItemStack result = _contents[slotId].splitStack(count);
-				onInventoryChanged();
+				markDirty();
 				return result;
 			}
 			ItemStack stack = _contents[slotId];
@@ -64,11 +68,11 @@ public class SimpleInventory implements IInventory, INBTTagable {
 		if (itemstack != null && itemstack.stackSize > this.getInventoryStackLimit()) {
 			itemstack.stackSize = this.getInventoryStackLimit();
 		}
-		onInventoryChanged();
+		markDirty();
 	}
 
 	@Override
-	public String getInvName() {
+	public String getInventoryName() {
 		return _name;
 	}
 
@@ -78,23 +82,16 @@ public class SimpleInventory implements IInventory, INBTTagable {
 	}
 
 	@Override
-	public void onInventoryChanged() {
-		for (TileEntity handler : _listener) {
-			handler.onInventoryChanged();
-		}
-	}
-
-	@Override
 	public boolean isUseableByPlayer(EntityPlayer entityplayer) {
 		return true;
 	}
 
 	@Override
-	public void openChest() {
+	public void openInventory() {
 	}
 
 	@Override
-	public void closeChest() {
+	public void closeInventory() {
 	}
 
 	@Override
@@ -103,10 +100,10 @@ public class SimpleInventory implements IInventory, INBTTagable {
 	}
 
 	public void readFromNBT(NBTTagCompound data, String tag) {
-		NBTTagList nbttaglist = data.getTagList(tag);
+		NBTTagList nbttaglist = data.getTagList(tag, Utils.NBTTag_Types.NBTTagCompound.ordinal());
 
 		for (int j = 0; j < nbttaglist.tagCount(); ++j) {
-			NBTTagCompound slot = (NBTTagCompound) nbttaglist.tagAt(j);
+			NBTTagCompound slot = nbttaglist.getCompoundTagAt(j);
 			int index;
 			if (slot.hasKey("index")) {
 				index = slot.getInteger("index");
@@ -157,12 +154,19 @@ public class SimpleInventory implements IInventory, INBTTagable {
 	}
 
 	@Override
-	public boolean isInvNameLocalized() {
+	public boolean isItemValidForSlot(int i, ItemStack itemstack) {
+		return true;
+	}
+
+	@Override
+	public boolean hasCustomInventoryName() {
 		return false;
 	}
 
 	@Override
-	public boolean isItemValidForSlot(int i, ItemStack itemstack) {
-		return true;
+	public void markDirty() {
+		for (TileEntity handler : _listener) {
+			handler.markDirty();
+		}
 	}
 }

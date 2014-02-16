@@ -11,7 +11,8 @@ package buildcraft.core;
 import buildcraft.core.utils.StringUtils;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
@@ -21,13 +22,13 @@ public class ItemBuildCraft extends Item {
 	private String iconName;
 	private boolean passSneakClick = false;
 
-	public ItemBuildCraft(int i) {
-		super(i);
+	public ItemBuildCraft() {
+		super();
 		setCreativeTab(CreativeTabBuildCraft.MACHINES.get());
 	}
 
 	@Override
-	public String getItemDisplayName(ItemStack itemstack) {
+	public String getItemStackDisplayName(ItemStack itemstack) {
 		return StringUtils.localize(getUnlocalizedName(itemstack));
 	}
 
@@ -39,7 +40,7 @@ public class ItemBuildCraft extends Item {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void registerIcons(IconRegister par1IconRegister) {
+	public void registerIcons(IIconRegister par1IconRegister) {
 		this.itemIcon = par1IconRegister.registerIcon("buildcraft:" + iconName);
 	}
 
@@ -49,7 +50,7 @@ public class ItemBuildCraft extends Item {
 	}
 
 	@Override
-	public boolean shouldPassSneakingClickToBlock(World par2World, int par4, int par5, int par6) {
+	public boolean doesSneakBypassUse(World world, int x, int y, int z, EntityPlayer player) {
 		return passSneakClick;
 	}
 }

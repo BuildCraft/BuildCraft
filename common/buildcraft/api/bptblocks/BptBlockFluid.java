@@ -1,12 +1,11 @@
 /**
- * Copyright (c) SpaceToad, 2011
+ * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
  *
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-
 package buildcraft.api.bptblocks;
 
 import buildcraft.api.blueprints.BptBlock;
@@ -35,9 +34,9 @@ public class BptBlockFluid extends BptBlock {
 
 	@Override
 	public boolean isValid(BptSlotInfo slot, IBptContext context) {
-		if (slot.meta == 0)
-			return slot.blockId == context.world().getBlockId(slot.x, slot.y, slot.z) && context.world().getBlockMetadata(slot.x, slot.y, slot.z) == 0;
-		else
+		//if (slot.meta == 0)
+		//	return slot.blockId == context.world().getBlockId(slot.x, slot.y, slot.z) && context.world().getBlockMetadata(slot.x, slot.y, slot.z) == 0;
+		//else
 			return true;
 	}
 
@@ -53,9 +52,9 @@ public class BptBlockFluid extends BptBlock {
 
 	@Override
 	public void buildBlock(BptSlotInfo slot, IBptContext context) {
-		if (slot.meta == 0) {
-			context.world().setBlock(slot.x, slot.y, slot.z, slot.blockId, 0,1);
-		}
+		//if (slot.meta == 0) {
+		//	context.world().setBlock(slot.x, slot.y, slot.z, slot.blockId, 0,1);
+		//}
 	}
 
 }

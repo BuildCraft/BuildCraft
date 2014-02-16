@@ -1,12 +1,11 @@
 /**
- * Copyright (c) SpaceToad, 2011-2012
+ * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
  *
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-
 package buildcraft.transport.blueprints;
 
 import buildcraft.BuildCraftCore;
@@ -32,7 +31,7 @@ public class BptBlockPipe extends BptBlock {
 	public void addRequirements(BptSlotInfo slot, IBptContext context, LinkedList<ItemStack> requirements) {
 		int pipeId = slot.cpt.getInteger("pipeId");
 
-		requirements.add(new ItemStack(pipeId, 1, 0));
+		//requirements.add(new ItemStack(pipeId, 1, 0));
 
 //		if (slot.cpt.hasKey("wire0")) {
 //			requirements.add(new ItemStack(BuildCraftTransport.pipeWire));
@@ -59,40 +58,42 @@ public class BptBlockPipe extends BptBlock {
 //			}
 //		}
 
-		if (BuildCraftCore.itemBptProps[pipeId] != null) {
-			BuildCraftCore.itemBptProps[pipeId].addRequirements(slot, requirements);
-		}
+		//if (BuildCraftCore.itemBptProps[pipeId] != null) {
+		//	BuildCraftCore.itemBptProps[pipeId].addRequirements(slot, requirements);
+		//}
 	}
 
 	@Override
 	public boolean isValid(BptSlotInfo slot, IBptContext context) {
 		Pipe pipe = BlockGenericPipe.getPipe(context.world(), slot.x, slot.y, slot.z);
 
-		if (BlockGenericPipe.isValid(pipe))
-			return pipe.itemID == slot.cpt.getInteger("pipeId");
-		else
-			return false;
+		//if (BlockGenericPipe.isValid(pipe))
+		//	return pipe.itemID == slot.cpt.getInteger("pipeId");
+		//else
+		//	return false;
+		
+		return false;
 	}
 
 	@Override
 	public void rotateLeft(BptSlotInfo slot, IBptContext context) {
 		int pipeId = slot.cpt.getInteger("pipeId");
 
-		if (BuildCraftCore.itemBptProps[pipeId] != null) {
-			BuildCraftCore.itemBptProps[pipeId].rotateLeft(slot, context);
-		}
+		//if (BuildCraftCore.itemBptProps[pipeId] != null) {
+		//	BuildCraftCore.itemBptProps[pipeId].rotateLeft(slot, context);
+		//}
 	}
 
 	@Override
 	public void buildBlock(BptSlotInfo slot, IBptContext context) {
 		int pipeId = slot.cpt.getInteger("pipeId");
 
-		Pipe pipe = BlockGenericPipe.createPipe(pipeId);
+		//Pipe pipe = BlockGenericPipe.createPipe(pipeId);
 
-		for (int i = 0; i < pipe.wireSet.length; ++i)
-			if (slot.cpt.hasKey("wire" + i)) {
-				pipe.wireSet[i] = true;
-			}
+		//for (int i = 0; i < pipe.wireSet.length; ++i)
+		//	if (slot.cpt.hasKey("wire" + i)) {
+		//		pipe.wireSet[i] = true;
+		//	}
 
 //		if (slot.cpt.hasKey("gate")) {
 //			// / TODO: Does not save/load custom gates
@@ -125,11 +126,11 @@ public class BptBlockPipe extends BptBlock {
 //			}
 //		}
 
-		BlockGenericPipe.placePipe(pipe, context.world(), slot.x, slot.y, slot.z, slot.blockId, slot.meta);
+		//BlockGenericPipe.placePipe(pipe, context.world(), slot.x, slot.y, slot.z, slot.blockId, slot.meta);
 
-		if (BuildCraftCore.itemBptProps[pipeId] != null) {
-			BuildCraftCore.itemBptProps[pipeId].buildBlock(slot, context);
-		}
+		//if (BuildCraftCore.itemBptProps[pipeId] != null) {
+		//	BuildCraftCore.itemBptProps[pipeId].buildBlock(slot, context);
+		//}
 	}
 
 	@Override
@@ -137,7 +138,7 @@ public class BptBlockPipe extends BptBlock {
 		Pipe pipe = BlockGenericPipe.getPipe(context.world(), x, y, z);
 
 		if (BlockGenericPipe.isValid(pipe)) {
-			bptSlot.cpt.setInteger("pipeId", pipe.itemID);
+			//bptSlot.cpt.setInteger("pipeId", pipe.itemID);
 
 			for (int i = 0; i < pipe.wireSet.length; ++i)
 				if (pipe.wireSet[i]) {
@@ -169,9 +170,9 @@ public class BptBlockPipe extends BptBlock {
 //				}
 //			}
 
-			if (BuildCraftCore.itemBptProps[pipe.itemID] != null) {
-				BuildCraftCore.itemBptProps[pipe.itemID].initializeFromWorld(bptSlot, context, x, y, z);
-			}
+			//if (BuildCraftCore.itemBptProps[pipe.itemID] != null) {
+			//	BuildCraftCore.itemBptProps[pipe.itemID].initializeFromWorld(bptSlot, context, x, y, z);
+			//}
 		}
 	}
 
@@ -179,9 +180,9 @@ public class BptBlockPipe extends BptBlock {
 	public void postProcessing(BptSlotInfo slot, IBptContext context) {
 		int pipeId = slot.cpt.getInteger("pipeId");
 
-		if (BuildCraftCore.itemBptProps[pipeId] != null) {
-			BuildCraftCore.itemBptProps[pipeId].postProcessing(slot, context);
-		}
+		//if (BuildCraftCore.itemBptProps[pipeId] != null) {
+		//	BuildCraftCore.itemBptProps[pipeId].postProcessing(slot, context);
+		//}
 	}
 
 	@Override

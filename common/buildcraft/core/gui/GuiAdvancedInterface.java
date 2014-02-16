@@ -1,3 +1,11 @@
+/**
+ * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
+ * http://www.mod-buildcraft.com
+ *
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
+ * License 1.0, or MMPL. Please check the contents of the license located in
+ * http://www.mod-buildcraft.com/MMPL-1.0.txt
+ */
 package buildcraft.core.gui;
 
 import net.minecraft.client.renderer.OpenGlHelper;
@@ -5,17 +13,16 @@ import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.Icon;
+import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.Fluid;
 
 import org.lwjgl.opengl.GL11;
 
-import buildcraft.core.render.RenderUtils;
 import buildcraft.core.render.FluidRenderer;
+import buildcraft.core.render.RenderUtils;
 
 public abstract class GuiAdvancedInterface extends GuiBuildCraft {
-
 	public class ItemSlot extends AdvancedSlot {
 
 		public ItemStack stack;
@@ -135,7 +142,7 @@ public abstract class GuiAdvancedInterface extends GuiBuildCraft {
 		}
 
 		@Override
-		public Icon getIcon() {
+		public IIcon getIcon() {
 			return FluidRenderer.getFluidTexture(fluid, false);
 		}
 
@@ -146,7 +153,7 @@ public abstract class GuiAdvancedInterface extends GuiBuildCraft {
 	}
 
 	public static RenderItem getItemRenderer () {
-		return itemRenderer;
+		return itemRender;
 	}
 
     public int getXSize () {

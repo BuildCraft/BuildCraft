@@ -8,20 +8,20 @@
  */
 package buildcraft.transport.pipes;
 
+import net.minecraft.entity.item.EntityItem;
+import net.minecraft.init.Blocks;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.core.SafeTimeTracker;
-import buildcraft.core.proxy.CoreProxy;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportPower;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraft.block.Block;
-import net.minecraft.entity.item.EntityItem;
-import net.minecraft.item.ItemStack;
-import net.minecraftforge.common.ForgeDirection;
 
 public class PipePowerHeat extends Pipe<PipeTransportPower> {
 
@@ -30,8 +30,8 @@ public class PipePowerHeat extends Pipe<PipeTransportPower> {
 
 	SafeTimeTracker scanTracker = new SafeTimeTracker(40, 5);
 
-	public PipePowerHeat(int itemID) {
-		super(new PipeTransportPower(), itemID);
+	public PipePowerHeat(Item item) {
+		super(new PipeTransportPower(), item);
 		transport.initFromPipe(getClass());
 	}
 
@@ -57,7 +57,7 @@ public class PipePowerHeat extends Pipe<PipeTransportPower> {
 			return PipeIconProvider.TYPE.PipePowerHeat0.ordinal();
 		} else {
 			return PipeIconProvider.TYPE.PipePowerHeat0.ordinal()
-					+ container.worldObj.getBlockMetadata(container.xCoord,
+					+ container.getWorld().getBlockMetadata(container.xCoord,
 							container.yCoord, container.zCoord);
 		}
 	}
@@ -66,27 +66,26 @@ public class PipePowerHeat extends Pipe<PipeTransportPower> {
 	public void updateEntity() {
 		super.updateEntity();
 
-		if (!CoreProxy.proxy.isSimulating(container.worldObj)) {
+		if (container.getWorld().isRemote) {
 			return;
 		}
 
-		PipeTransportPower power = ((PipeTransportPower) transport);
+		PipeTransportPower power = (transport);
 
 		power.requestEnergy(ForgeDirection.UP, 1024);
 
 		powerLevel = power.clearInstantPower ();
 
-		int meta = container.worldObj.getBlockMetadata(container.xCoord, container.yCoord, container.zCoord);
+		int meta = container.getWorld().getBlockMetadata(container.xCoord, container.yCoord, container.zCoord);
 		int newMeta = getHeatLevel();
 
 		if (meta != newMeta) {
-			System.out.println ("SEND NEW META " + newMeta);
-			container.worldObj.setBlockMetadataWithNotify(container.xCoord,
+			container.getWorld().setBlockMetadataWithNotify(container.xCoord,
 					container.yCoord, container.zCoord, newMeta, 2);
 			container.scheduleRenderUpdate();
 		}
 
-		if (powerLevel >= 10 && scanTracker.markTimeIfDelay(container.worldObj)) {
+		if (powerLevel >= 10 && scanTracker.markTimeIfDelay(container.getWorld())) {
 			int x = container.xCoord;
 			int y = container.yCoord;
 			int z = container.zCoord;
@@ -94,27 +93,27 @@ public class PipePowerHeat extends Pipe<PipeTransportPower> {
 			for (int xi = x - 1; xi <= x + 1; ++xi) {
 				for (int yi = y - 1; yi <= y + 1; ++yi) {
 					for (int zi = z - 1; zi <= z + 1; ++zi) {
-						if (container.worldObj.getBlockId(xi, yi, zi) == Block.blockRedstone.blockID) {
-							container.worldObj.setBlock(xi, yi, zi, 0);
+						if (container.getWorld().getBlock(xi, yi, zi) == Blocks.redstone_block) {
+							container.getWorld().setBlock(xi, yi, zi, Blocks.air);
 
 							for (int i = 0; i < 4; ++i) {
 								ItemStack stack = new ItemStack(
 										BuildCraftCore.redstoneCrystal);
 								EntityItem entityitem = new EntityItem(
-										container.worldObj, xi + 0.5F,
+										container.getWorld(), xi + 0.5F,
 										yi + 0.5F, zi + 0.5F, stack);
 
 								entityitem.lifespan = BuildCraftCore.itemLifespan;
 								entityitem.delayBeforeCanPickup = 10;
 
 								float f3 = 0.05F;
-								entityitem.motionX = (float) (container.worldObj.rand
+								entityitem.motionX = (float) (container.getWorld().rand
 										.nextGaussian() - 0.5F) * f3;
-								entityitem.motionY = (float) (container.worldObj.rand
+								entityitem.motionY = (float) (container.getWorld().rand
 										.nextGaussian() - 0.5F) * f3;
-								entityitem.motionZ = (float) (container.worldObj.rand
+								entityitem.motionZ = (float) (container.getWorld().rand
 										.nextGaussian() - 0.5F) * f3;
-								container.worldObj
+								container.getWorld()
 										.spawnEntityInWorld(entityitem);
 							}
 						}

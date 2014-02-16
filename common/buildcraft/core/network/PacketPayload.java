@@ -1,7 +1,17 @@
+/**
+ * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
+ * http://www.mod-buildcraft.com
+ *
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
+ * License 1.0, or MMPL. Please check the contents of the license located in
+ * http://www.mod-buildcraft.com/MMPL-1.0.txt
+ */
 package buildcraft.core.network;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import io.netty.buffer.ByteBuf;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -15,7 +25,7 @@ public abstract class PacketPayload {
 		return new PacketPayloadStream();
 	}
 
-	public abstract void writeData(DataOutputStream data) throws IOException;
+	public abstract void writeData(ByteBuf data);
 
-	public abstract void readData(DataInputStream data) throws IOException;
+	public abstract void readData(ByteBuf data);
 }

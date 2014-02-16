@@ -1,16 +1,25 @@
+/**
+ * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
+ * http://www.mod-buildcraft.com
+ *
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
+ * License 1.0, or MMPL. Please check the contents of the license located in
+ * http://www.mod-buildcraft.com/MMPL-1.0.txt
+ */
 package buildcraft.builders.urbanism;
 
-import org.lwjgl.input.Keyboard;
-import org.lwjgl.input.Mouse;
-
-import buildcraft.api.core.Position;
-import buildcraft.core.EntityEnergyLaser;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
+
+import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
+
+import buildcraft.api.core.Position;
+import buildcraft.core.EntityEnergyLaser;
 
 public class EntityUrbanist extends EntityLivingBase {
 
@@ -43,34 +52,34 @@ public class EntityUrbanist extends EntityLivingBase {
 		motionY = 0;
 		motionZ = 0;
 
-		if (!Keyboard.isKeyDown(Minecraft.getMinecraft().gameSettings.keyBindSneak.keyCode)) {
-			if (Keyboard.isKeyDown(Minecraft.getMinecraft().gameSettings.keyBindLeft.keyCode)) {
+		if (!Keyboard.isKeyDown(Minecraft.getMinecraft().gameSettings.keyBindSneak.getKeyCode())) {
+			if (Keyboard.isKeyDown(Minecraft.getMinecraft().gameSettings.keyBindLeft.getKeyCode())) {
 				motionX = side.xCoord * 0.5;
 				motionZ = side.zCoord * 0.5;
-			} else if (Keyboard.isKeyDown(Minecraft.getMinecraft().gameSettings.keyBindRight.keyCode)) {
+			} else if (Keyboard.isKeyDown(Minecraft.getMinecraft().gameSettings.keyBindRight.getKeyCode())) {
 				motionX = side.xCoord * -0.5;
 				motionZ = side.zCoord * -0.5;
 			}
 		} else {
-			if (Keyboard.isKeyDown(Minecraft.getMinecraft().gameSettings.keyBindLeft.keyCode)) {
+			if (Keyboard.isKeyDown(Minecraft.getMinecraft().gameSettings.keyBindLeft.getKeyCode())) {
 				setAngles (-10, 0);
-			} else if (Keyboard.isKeyDown(Minecraft.getMinecraft().gameSettings.keyBindRight.keyCode)) {
+			} else if (Keyboard.isKeyDown(Minecraft.getMinecraft().gameSettings.keyBindRight.getKeyCode())) {
 				setAngles (10, 0);
 			}
 		}
 
-		if (!Keyboard.isKeyDown(Minecraft.getMinecraft().gameSettings.keyBindSneak.keyCode)) {
-			if (Keyboard.isKeyDown(Minecraft.getMinecraft().gameSettings.keyBindForward.keyCode)) {
+		if (!Keyboard.isKeyDown(Minecraft.getMinecraft().gameSettings.keyBindSneak.getKeyCode())) {
+			if (Keyboard.isKeyDown(Minecraft.getMinecraft().gameSettings.keyBindForward.getKeyCode())) {
 				motionX = forward.xCoord * 0.5;
 				motionZ = forward.zCoord * 0.5;
-			} else if (Keyboard.isKeyDown(Minecraft.getMinecraft().gameSettings.keyBindBack.keyCode)) {
+			} else if (Keyboard.isKeyDown(Minecraft.getMinecraft().gameSettings.keyBindBack.getKeyCode())) {
 				motionX = forward.xCoord * -0.5;
 				motionZ = forward.zCoord * -0.5;
 			}
 		} else {
-			if (Keyboard.isKeyDown(Minecraft.getMinecraft().gameSettings.keyBindForward.keyCode)) {
+			if (Keyboard.isKeyDown(Minecraft.getMinecraft().gameSettings.keyBindForward.getKeyCode())) {
 				setAngles(0, 10);
-			} else if (Keyboard.isKeyDown(Minecraft.getMinecraft().gameSettings.keyBindBack.keyCode)) {
+			} else if (Keyboard.isKeyDown(Minecraft.getMinecraft().gameSettings.keyBindBack.getKeyCode())) {
 				setAngles(0, -10);
 			}
 		}
@@ -87,11 +96,6 @@ public class EntityUrbanist extends EntityLivingBase {
 
 	@Override
 	public ItemStack getHeldItem() {
-		return null;
-	}
-
-	@Override
-	public ItemStack getCurrentItemOrArmor(int i) {
 		return null;
 	}
 
@@ -150,7 +154,7 @@ public class EntityUrbanist extends EntityLivingBase {
 
         Vec3 vec32 = pos.addVector(look.xCoord * distance, look.yCoord * distance, look.zCoord * distance);
 
-        MovingObjectPosition result = this.worldObj.clip(pos, vec32);
+        MovingObjectPosition result = this.worldObj.rayTraceBlocks(pos, vec32);
 
 		if (debugPointer) {
 			if (laser == null) {
@@ -183,5 +187,10 @@ public class EntityUrbanist extends EntityLivingBase {
 
         return result;
     }
+
+	@Override
+	public ItemStack getEquipmentInSlot(int var1) {
+		return null;
+	}
 
 }

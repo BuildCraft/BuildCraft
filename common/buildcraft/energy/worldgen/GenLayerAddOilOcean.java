@@ -1,13 +1,17 @@
+/**
+ * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
+ * http://www.mod-buildcraft.com
+ *
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
+ * License 1.0, or MMPL. Please check the contents of the license located in
+ * http://www.mod-buildcraft.com/MMPL-1.0.txt
+ */
 package buildcraft.energy.worldgen;
 
 import buildcraft.BuildCraftEnergy;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.gen.layer.GenLayer;
 
-/**
- *
- * @author CovertJaguar <http://www.railcraft.info/>
- */
 public class GenLayerAddOilOcean extends GenLayerBiomeReplacer {
 
 	public static final double NOISE_FIELD_SCALE = 0.0005;

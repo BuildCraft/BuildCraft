@@ -1,3 +1,11 @@
+/**
+ * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
+ * http://www.mod-buildcraft.com
+ *
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
+ * License 1.0, or MMPL. Please check the contents of the license located in
+ * http://www.mod-buildcraft.com/MMPL-1.0.txt
+ */
 package buildcraft.transport.network;
 
 import buildcraft.core.network.PacketCoordinates;
@@ -5,13 +13,16 @@ import buildcraft.core.network.PacketIds;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.transport.PipeTransportFluids;
 import buildcraft.transport.TileGenericPipe;
+import io.netty.buffer.ByteBuf;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.BitSet;
+
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.FluidStack;
 
 public class PacketFluidUpdate extends PacketCoordinates {
@@ -37,14 +48,14 @@ public class PacketFluidUpdate extends PacketCoordinates {
 	}
 
 	@Override
-	public void readData(DataInputStream data) throws IOException {
+	public void readData(ByteBuf data) {
 		super.readData(data);
 
 		World world = CoreProxy.proxy.getClientWorld();
 		if (!world.blockExists(posX, posY, posZ))
 			return;
 
-		TileEntity entity = world.getBlockTileEntity(posX, posY, posZ);
+		TileEntity entity = world.getTileEntity(posX, posY, posZ);
 		if (!(entity instanceof TileGenericPipe))
 			return;
 
@@ -61,7 +72,7 @@ public class PacketFluidUpdate extends PacketCoordinates {
 		colorRenderCache = transLiq.colorRenderCache;
 
 		byte[] dBytes = new byte[2];
-		data.read(dBytes);
+		data.readBytes(dBytes);
 		delta = fromByteArray(dBytes);
 
 		// System.out.printf("read %d, %d, %d = %s, %s%n", posX, posY, posZ, Arrays.toString(dBytes), delta);
@@ -82,12 +93,12 @@ public class PacketFluidUpdate extends PacketCoordinates {
 	}
 
 	@Override
-	public void writeData(DataOutputStream data) throws IOException {
+	public void writeData(ByteBuf data) {
 		super.writeData(data);
 
 		byte[] dBytes = toByteArray(delta);
 		// System.out.printf("write %d, %d, %d = %s, %s%n", posX, posY, posZ, Arrays.toString(dBytes), delta);
-		data.write(dBytes);
+		data.writeBytes(dBytes);
 
 		for (ForgeDirection dir : ForgeDirection.values()) {
 			FluidStack liquid = renderCache[dir.ordinal()];

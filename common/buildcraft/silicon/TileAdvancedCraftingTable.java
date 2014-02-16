@@ -1,7 +1,16 @@
+/**
+ * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
+ * http://www.mod-buildcraft.com
+ *
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
+ * License 1.0, or MMPL. Please check the contents of the license located in
+ * http://www.mod-buildcraft.com/MMPL-1.0.txt
+ */
 package buildcraft.silicon;
 
 import buildcraft.api.power.ILaserTarget;
 import buildcraft.BuildCraftCore;
+import buildcraft.BuildCraftSilicon;
 import buildcraft.api.gates.IAction;
 import buildcraft.api.gates.IActionReceptor;
 import buildcraft.core.IMachine;
@@ -23,9 +32,14 @@ import buildcraft.core.triggers.ActionMachineControl;
 import buildcraft.core.utils.CraftingHelper;
 import buildcraft.core.utils.StringUtils;
 import buildcraft.core.utils.Utils;
+
 import com.google.common.collect.Lists;
+import com.mojang.authlib.GameProfile;
+
+import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.List;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
@@ -37,16 +51,15 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ChatMessageComponent;
 import net.minecraft.util.ChunkCoordinates;
-import net.minecraftforge.common.ForgeDirection;
-import static net.minecraftforge.common.ForgeDirection.DOWN;
-import static net.minecraftforge.common.ForgeDirection.EAST;
-import static net.minecraftforge.common.ForgeDirection.NORTH;
-import static net.minecraftforge.common.ForgeDirection.SOUTH;
-import static net.minecraftforge.common.ForgeDirection.WEST;
+import net.minecraft.util.IChatComponent;
+import net.minecraftforge.common.util.ForgeDirection;
+import static net.minecraftforge.common.util.ForgeDirection.DOWN;
+import static net.minecraftforge.common.util.ForgeDirection.EAST;
+import static net.minecraftforge.common.util.ForgeDirection.NORTH;
+import static net.minecraftforge.common.util.ForgeDirection.SOUTH;
+import static net.minecraftforge.common.util.ForgeDirection.WEST;
 import net.minecraftforge.oredict.OreDictionary;
-import org.bouncycastle.util.Arrays;
 
 public class TileAdvancedCraftingTable extends TileLaserTableBase implements IInventory, ILaserTarget, IMachine, IActionReceptor, ISidedInventory {
 
@@ -62,7 +75,7 @@ public class TileAdvancedCraftingTable extends TileLaserTableBase implements IIn
 
 		public int[] oreIDs = new int[9];
 
-		public CraftingGrid() {
+		public CraftingGrid() {			
 			super(9, "CraftingSlots", 1);
 			Arrays.fill(oreIDs, -1);
 		}
@@ -70,7 +83,7 @@ public class TileAdvancedCraftingTable extends TileLaserTableBase implements IIn
 		@Override
 		public void setInventorySlotContents(int slotId, ItemStack itemstack) {
 			super.setInventorySlotContents(slotId, itemstack);
-			if (TileAdvancedCraftingTable.this.worldObj == null || !TileAdvancedCraftingTable.this.worldObj.isRemote)
+			if (TileAdvancedCraftingTable.this.getWorldObj() == null || !TileAdvancedCraftingTable.this.getWorldObj().isRemote)
 				oreIDs[slotId] = itemstack == null ? -1 : OreDictionary.getOreID(itemstack);
 		}
 	}
@@ -136,14 +149,14 @@ public class TileAdvancedCraftingTable extends TileLaserTableBase implements IIn
 	private final class InternalPlayer extends EntityPlayer {
 
 		public InternalPlayer() {
-			super(TileAdvancedCraftingTable.this.worldObj, "[BuildCraft]");
+			super(TileAdvancedCraftingTable.this.getWorldObj(), new GameProfile(null, "[BuildCraft]"));
 			posX = TileAdvancedCraftingTable.this.xCoord;
 			posY = TileAdvancedCraftingTable.this.yCoord + 1;
 			posZ = TileAdvancedCraftingTable.this.zCoord;
 		}
 
 		@Override
-		public void sendChatToPlayer(ChatMessageComponent var1) {
+		public void addChatMessage(IChatComponent var1) {
 		}
 
 		@Override
@@ -204,13 +217,13 @@ public class TileAdvancedCraftingTable extends TileLaserTableBase implements IIn
 	}
 
 	@Override
-	public String getInvName() {
+	public String getInventoryName() {
 		return StringUtils.localize("tile.assemblyWorkbenchBlock");
 	}
 
 	@Override
-	public void onInventoryChanged() {
-		super.onInventoryChanged();
+	public void markDirty() {
+		super.markDirty();
 		craftable = craftResult.getStackInSlot(0) != null;
 	}
 
@@ -237,7 +250,7 @@ public class TileAdvancedCraftingTable extends TileLaserTableBase implements IIn
 			craftSlot = new SlotCrafting(internalPlayer, internalInventoryCrafting, craftResult, 0, 0, 0);
 			updateRecipe();
 		}
-		if (!CoreProxy.proxy.isSimulating(worldObj))
+		if (!!worldObj.isRemote)
 			return;
 		if (lastMode == ActionMachineControl.Mode.Off)
 			return;
@@ -364,9 +377,9 @@ public class TileAdvancedCraftingTable extends TileLaserTableBase implements IIn
 	public void updateCraftingMatrix(int slot, ItemStack stack) {
 		craftingSlots.setInventorySlotContents(slot, stack);
 		updateRecipe();
-		if (CoreProxy.proxy.isRenderWorld(worldObj)) {
+		if (worldObj.isRemote) {
 			PacketSlotChange packet = new PacketSlotChange(PacketIds.ADVANCED_WORKBENCH_SETSLOT, xCoord, yCoord, zCoord, slot, stack);
-			CoreProxy.proxy.sendToServer(packet.getPacket());
+			BuildCraftSilicon.instance.sendToServer(packet);
 		}
 	}
 
@@ -379,7 +392,7 @@ public class TileAdvancedCraftingTable extends TileLaserTableBase implements IIn
 			currentRecipe = CraftingHelper.findMatchingRecipe(internalInventoryCrafting, worldObj);
 		}
 		internalInventoryCrafting.recipeUpdate(false);
-		onInventoryChanged();
+		markDirty();
 	}
 
 	private void updateRecipeOutputDisplay() {
@@ -394,7 +407,7 @@ public class TileAdvancedCraftingTable extends TileLaserTableBase implements IIn
 			internalInventoryCrafting.recipeUpdate(false);
 		}
 		craftResult.setInventorySlotContents(0, resultStack);
-		onInventoryChanged();
+		markDirty();
 	}
 
 	private ItemStack getRecipeOutput() {
@@ -438,12 +451,6 @@ public class TileAdvancedCraftingTable extends TileLaserTableBase implements IIn
 	}
 
 	@Override
-	public boolean isInvNameLocalized() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
 	public int[] getAccessibleSlotsFromSide(int side) {
 		return SLOTS;
 	}
@@ -470,5 +477,10 @@ public class TileAdvancedCraftingTable extends TileLaserTableBase implements IIn
 		} else if (action == BuildCraftCore.actionOff) {
 			lastMode = ActionMachineControl.Mode.Off;
 		}
+	}
+
+	@Override
+	public boolean hasCustomInventoryName() {
+		return false;
 	}
 }

@@ -1,12 +1,11 @@
 /**
- * Copyright (c) SpaceToad, 2011-2012
+ * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
  *
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-
 package buildcraft.core.blueprints;
 
 import java.io.BufferedReader;
@@ -28,7 +27,7 @@ public class BptTemplate extends BptBase {
 
 		boolean first = true;
 
-		for (int x = 0; x < sizeX; ++x) {
+		/*for (int x = 0; x < sizeX; ++x) {
 			for (int y = 0; y < sizeY; ++y) {
 				for (int z = 0; z < sizeZ; ++z) {
 					if (first) {
@@ -40,7 +39,7 @@ public class BptTemplate extends BptBase {
 					writer.write(contents[x][y][z].blockId + "");
 				}
 			}
-		}
+		}*/
 	}
 
 	@Override
@@ -51,7 +50,7 @@ public class BptTemplate extends BptBase {
 			String[] mask = val.split(",");
 			int maskIndex = 0;
 
-			for (int x = 0; x < sizeX; ++x) {
+			/*for (int x = 0; x < sizeX; ++x) {
 				for (int y = 0; y < sizeY; ++y) {
 					for (int z = 0; z < sizeZ; ++z) {
 						contents[x][y][z] = new BptSlot();
@@ -63,7 +62,7 @@ public class BptTemplate extends BptBase {
 						maskIndex++;
 					}
 				}
-			}
+			}*/
 		}
 
 	}
