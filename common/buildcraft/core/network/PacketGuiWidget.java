@@ -16,7 +16,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-import net.minecraft.client.entity.EntityClientPlayerMP;
+import net.minecraft.entity.player.EntityPlayer;
 
 public class PacketGuiWidget extends BuildCraftPacket {
 
@@ -45,7 +45,7 @@ public class PacketGuiWidget extends BuildCraftPacket {
         windowId = data.readByte();
         widgetId = data.readByte();
 
-        EntityClientPlayerMP player = FMLClientHandler.instance().getClient().thePlayer;
+        EntityPlayer player = FMLClientHandler.instance().getClient().thePlayer;
 
         if (player.openContainer instanceof BuildCraftContainer && player.openContainer.windowId == windowId) {
             ((BuildCraftContainer) player.openContainer).handleWidgetClientData(widgetId, data);
