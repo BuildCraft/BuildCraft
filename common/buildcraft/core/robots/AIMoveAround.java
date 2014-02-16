@@ -10,12 +10,17 @@ package buildcraft.core.robots;
 
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
+import net.minecraft.nbt.NBTTagCompound;
 
 public class AIMoveAround extends AIBase {
 
 	protected float aroundX, aroundY, aroundZ;
 
 	double prevDistance = Double.MAX_VALUE;
+
+	public AIMoveAround () {
+
+	}
 
 	public AIMoveAround (EntityRobot robot, float x, float y, float z) {
 		aroundX = x;
@@ -60,5 +65,23 @@ public class AIMoveAround extends AIBase {
 				return;
 			}
 		}
+	}
+
+	@Override
+	public void writeToNBT(NBTTagCompound nbt) {
+		super.writeToNBT(nbt);
+
+		nbt.setFloat("aroundX", aroundX);
+		nbt.setFloat("aroundY", aroundY);
+		nbt.setFloat("aroundZ", aroundZ);
+    }
+
+	@Override
+	public void readFromNBT(NBTTagCompound nbt) {
+		super.readFromNBT(nbt);
+
+		aroundX = nbt.getFloat("aroundX");
+		aroundY = nbt.getFloat("aroundY");
+		aroundZ = nbt.getFloat("aroundZ");
 	}
 }

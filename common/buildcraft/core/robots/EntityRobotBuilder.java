@@ -22,6 +22,8 @@ public class EntityRobotBuilder extends EntityRobot implements
 		IEntityAdditionalSpawnData, IBlueprintBuilderAgent, IInventory {
 
 	ItemStack buildingStack = null;
+	float curBlockDamage = 0;
+	float buildEnergy = 0;
 
 	public EntityRobotBuilder(World par1World) {
 		super (par1World);

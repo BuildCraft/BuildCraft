@@ -8,6 +8,8 @@
  */
 package buildcraft.core.robots;
 
+import net.minecraft.nbt.NBTTagCompound;
+
 
 public class AIReturnToDock extends AIBase {
 
@@ -60,5 +62,19 @@ public class AIReturnToDock extends AIBase {
 				prevDistance = distance;
 			}
 		}
+	}
+
+	@Override
+	public void writeToNBT(NBTTagCompound nbt) {
+		super.writeToNBT(nbt);
+
+		nbt.setInteger("phase", phase);
+    }
+
+	@Override
+	public void readFromNBT(NBTTagCompound nbt) {
+		super.readFromNBT(nbt);
+
+		phase = nbt.getInteger("phase");
 	}
 }

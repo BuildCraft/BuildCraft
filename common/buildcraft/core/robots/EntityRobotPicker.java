@@ -16,6 +16,7 @@ import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
@@ -78,7 +79,6 @@ public class EntityRobotPicker extends EntityRobot implements IInventory {
 				pickTime++;
 
 				if (pickTime > 20) {
-
 					target.getEntityItem().stackSize -= inventoryInsert.inject(
 							target.getEntityItem(), ForgeDirection.UNKNOWN,
 							true);
@@ -223,5 +223,27 @@ public class EntityRobotPicker extends EntityRobot implements IInventory {
 				|| (inv[var1].isItemEqual(var2) && inv[var1].isStackable() && inv[var1].stackSize
 						+ var2.stackSize <= inv[var1].getItem()
 						.getItemStackLimit());
+	}
+
+	@Override
+    public void writeEntityToNBT(NBTTagCompound nbt) {
+		super.writeEntityToNBT(nbt);
+
+		for (int i = 0; i < inv.length; ++i) {
+			NBTTagCompound stackNbt = new NBTTagCompound();
+
+			if (inv [i] != null) {
+				nbt.setTag("inv[" + i + "]", inv [i].writeToNBT(stackNbt));
+			}
+		}
+    }
+
+	@Override
+	public void readEntityFromNBT(NBTTagCompound nbt) {
+		super.readEntityFromNBT(nbt);
+
+		for (int i = 0; i < inv.length; ++i) {
+			inv [i] = ItemStack.loadItemStackFromNBT(nbt.getCompoundTag("inv[" + i + "]"));
+		}
 	}
 }

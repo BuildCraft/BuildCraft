@@ -8,6 +8,8 @@
  */
 package buildcraft.core.robots;
 
+import net.minecraft.nbt.NBTTagCompound;
+
 public abstract class AIBase {
 
 	protected float destX, destY, destZ;
@@ -35,4 +37,23 @@ public abstract class AIBase {
 		robot.motionZ = dirZ / 10F;
 	}
 
+	public void writeToNBT(NBTTagCompound nbt) {
+		nbt.setFloat("destX", destX);
+		nbt.setFloat("destY", destY);
+		nbt.setFloat("destZ", destZ);
+
+		nbt.setDouble("dirX", dirX);
+		nbt.setDouble("dirY", dirY);
+		nbt.setDouble("dirZ", dirZ);
+    }
+
+	public void readFromNBT(NBTTagCompound nbt) {
+		destX = nbt.getFloat("destX");
+		destY = nbt.getFloat("destY");
+		destZ = nbt.getFloat("destZ");
+
+		dirX = nbt.getDouble("dirX");
+		dirY = nbt.getDouble("dirY");
+		dirZ = nbt.getDouble("dirZ");
+	}
 }

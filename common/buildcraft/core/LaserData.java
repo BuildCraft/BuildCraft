@@ -1,5 +1,6 @@
 package buildcraft.core;
 
+import net.minecraft.nbt.NBTTagCompound;
 import buildcraft.api.core.Position;
 
 public class LaserData {
@@ -28,5 +29,23 @@ public class LaserData {
 
 	public void iterateTexture () {
 		laserTexAnimation = (laserTexAnimation + 1) % 40;
+	}
+
+    public void writeToNBT(NBTTagCompound nbt) {
+    	NBTTagCompound headNbt = new NBTTagCompound();
+    	head.writeToNBT(headNbt);
+    	nbt.setTag("head", headNbt);
+
+    	NBTTagCompound tailNbt = new NBTTagCompound();
+    	tail.writeToNBT(tailNbt);
+    	nbt.setTag("tail", tailNbt);
+
+    	nbt.setBoolean("isVisible", isVisible);
+    }
+
+	public void readFromNBT(NBTTagCompound nbt) {
+		head.readFromNBT(nbt.getCompoundTag("head"));
+		tail.readFromNBT(nbt.getCompoundTag("tail"));
+		isVisible = nbt.getBoolean("isVisible");
 	}
 }

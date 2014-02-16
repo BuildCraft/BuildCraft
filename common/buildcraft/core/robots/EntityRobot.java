@@ -25,8 +25,6 @@ public class EntityRobot extends EntityLivingBase implements
 
 	public LaserData laser = new LaserData ();
 	private boolean needsUpdate = false;
-	float curBlockDamage = 0;
-	float buildEnergy = 0;
 
 	private static ResourceLocation defaultTexture = new ResourceLocation(
 			"buildcraft", DefaultProps.TEXTURE_PATH_ENTITIES
@@ -237,10 +235,41 @@ public class EntityRobot extends EntityLivingBase implements
 	}
 
 	@Override
-	public void readEntityFromNBT(NBTTagCompound par1NBTTagCompound) {
-		super.readEntityFromNBT(par1NBTTagCompound);
+    public void writeEntityToNBT(NBTTagCompound nbt) {
+		super.writeEntityToNBT(nbt);
 
-		setDead();
+		nbt.setInteger("dockX", dockingStation.x);
+		nbt.setInteger("dockY", dockingStation.y);
+		nbt.setInteger("dockZ", dockingStation.z);
+		nbt.setInteger("dockSide", dockingStation.side.ordinal());
+
+		if (currentAI != null) {
+			nbt.setString("ai", currentAI.getClass().getCanonicalName());
+		}
+
+		NBTTagCompound nbtLaser = new NBTTagCompound();
+		laser.writeToNBT(nbtLaser);
+		nbt.setTag("laser", nbtLaser);
+    }
+
+	@Override
+	public void readEntityFromNBT(NBTTagCompound nbt) {
+		super.readEntityFromNBT(nbt);
+
+		dockingStation.x = nbt.getInteger("dockX");
+		dockingStation.y = nbt.getInteger("dockY");
+		dockingStation.z = nbt.getInteger("dockZ");
+		dockingStation.side = ForgeDirection.values () [nbt.getInteger("dockSide")];
+
+		if (nbt.hasKey("ai")) {
+			try {
+				currentAI = (AIBase) Class.forName(nbt.getString("ai")).newInstance();
+			} catch (Throwable t) {
+				t.printStackTrace();
+			}
+		}
+
+		laser.readFromNBT(nbt.getCompoundTag("laser"));
     }
 
 	public void setDockingStation (TileGenericPipe tile, ForgeDirection side) {
