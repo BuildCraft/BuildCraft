@@ -251,27 +251,21 @@ public class BuildCraftBuilders extends BuildCraftMod {
 
 		markerBlock = new BlockMarker();
 		CoreProxy.proxy.registerBlock(markerBlock.setBlockName("markerBlock"));
-		CoreProxy.proxy.addName(markerBlock, "Land Mark");
 
 		pathMarkerBlock = new BlockPathMarker();
 		CoreProxy.proxy.registerBlock(pathMarkerBlock.setBlockName("pathMarkerBlock"));
-		CoreProxy.proxy.addName(pathMarkerBlock, "Path Mark");
 
 		fillerBlock = new BlockFiller();
 		CoreProxy.proxy.registerBlock(fillerBlock.setBlockName("fillerBlock"));
-		CoreProxy.proxy.addName(fillerBlock, "Filler");
 
 		builderBlock = new BlockBuilder();
 		CoreProxy.proxy.registerBlock(builderBlock.setBlockName("builderBlock"));
-		CoreProxy.proxy.addName(builderBlock, "Builder");
 
 		architectBlock = new BlockArchitect();
 		CoreProxy.proxy.registerBlock(architectBlock.setBlockName("architectBlock"));
-		CoreProxy.proxy.addName(architectBlock, "Architect Table");
 
 		libraryBlock = new BlockBlueprintLibrary();
 		CoreProxy.proxy.registerBlock(libraryBlock.setBlockName("libraryBlock"));
-		CoreProxy.proxy.addName(libraryBlock, "Blueprint Library");
 
 		GameRegistry.registerTileEntity(TileMarker.class, "Marker");
 		GameRegistry.registerTileEntity(TileFiller.class, "Filler");

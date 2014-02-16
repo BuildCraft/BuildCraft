@@ -130,7 +130,7 @@ public class TileAssemblyTable extends TileLaserTableBase implements IMachine, I
 
 	@Override
 	public String getInventoryName() {
-		return StringUtils.localize("tile.assemblyTableBlock");
+		return StringUtils.localize("tile.assemblyTableBlock.name");
 	}
 
 	@Override

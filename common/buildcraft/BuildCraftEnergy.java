@@ -17,7 +17,6 @@ import buildcraft.core.BlockSpring;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.InterModComms;
 import buildcraft.core.Version;
-import buildcraft.core.fluids.BCFluid;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.triggers.BCTrigger;
 import buildcraft.energy.BlockBuildcraftFluid;
@@ -136,19 +135,18 @@ public class BuildCraftEnergy extends BuildCraftMod {
 
 
 		// Oil and fuel
-		buildcraftFluidOil = new BCFluid("oil").setDensity(800).setViscosity(1500);
+		buildcraftFluidOil = new Fluid("oil").setDensity(800).setViscosity(1500);
 
 		FluidRegistry.registerFluid(buildcraftFluidOil);
 		fluidOil = FluidRegistry.getFluid("oil");
 
-		buildcraftFluidFuel = new BCFluid("fuel");
+		buildcraftFluidFuel = new Fluid("fuel");
 		FluidRegistry.registerFluid(buildcraftFluidFuel);
 		fluidFuel = FluidRegistry.getFluid("fuel");
 
 		if (fluidOil.getBlock() == null) {
 			blockOil = new BlockBuildcraftFluid(fluidOil, Material.water).setFlammable(canOilBurn).setFlammability(0);
 			blockOil.setBlockName("blockOil");
-			CoreProxy.proxy.addName(blockOil, "Oil");
 			CoreProxy.proxy.registerBlock(blockOil);
 			fluidOil.setBlock(blockOil);		
 		} else {
@@ -164,7 +162,6 @@ public class BuildCraftEnergy extends BuildCraftMod {
 		if (fluidFuel.getBlock() == null) {
 			blockFuel = new BlockBuildcraftFluid(fluidFuel, Material.water).setFlammable(true).setFlammability(5).setParticleColor(0.7F, 0.7F, 0.0F);
 			blockFuel.setBlockName("blockFuel");
-			CoreProxy.proxy.addName(blockFuel, "Fuel");
 			CoreProxy.proxy.registerBlock(blockFuel);
 			fluidFuel.setBlock(blockFuel);			
 		} else {

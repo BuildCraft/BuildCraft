@@ -1,16 +1,13 @@
 package buildcraft.core;
 
-import buildcraft.BuildCraftCore;
-import buildcraft.core.utils.Localization;
-import buildcraft.transport.ItemFacade;
-
 import java.util.Locale;
 
-import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import buildcraft.BuildCraftCore;
+import buildcraft.transport.ItemFacade;
 
 public enum CreativeTabBuildCraft {
 
@@ -28,10 +25,6 @@ public enum CreativeTabBuildCraft {
 
 	private String getLabel() {
 		return "buildcraft." + name().toLowerCase(Locale.ENGLISH);
-	}
-
-	private String translate() {
-		return Localization.get("tab." + name().toLowerCase(Locale.ENGLISH));
 	}
 
 	private ItemStack getItem() {
@@ -53,11 +46,6 @@ public enum CreativeTabBuildCraft {
 		@Override
 		public ItemStack getIconItemStack() {
 			return getItem();
-		}
-
-		@Override
-		public String getTranslatedTabLabel() {
-			return translate();
 		}
 
 		@Override

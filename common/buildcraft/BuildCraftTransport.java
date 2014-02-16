@@ -332,7 +332,6 @@ public class BuildCraftTransport extends BuildCraftMod {
 
 			filteredBufferBlock = new BlockFilteredBuffer();
 			CoreProxy.proxy.registerBlock(filteredBufferBlock.setBlockName("filteredBufferBlock"));
-			CoreProxy.proxy.addName(filteredBufferBlock, "Filtered Buffer");
 			
 			for (PipeContents kind : PipeContents.values()) {
 				triggerPipe[kind.ordinal()] = new TriggerPipeContents(kind);

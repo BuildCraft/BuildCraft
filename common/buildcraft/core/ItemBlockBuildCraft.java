@@ -23,9 +23,4 @@ public class ItemBlockBuildCraft extends ItemBlock {
 	public int getMetadata(int i) {
 		return i;
 	}
-
-	@Override
-	public String getItemStackDisplayName(ItemStack itemstack) {
-		return StringUtils.localize(getUnlocalizedName(itemstack));
-	}
 }
