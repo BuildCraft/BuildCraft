@@ -24,7 +24,7 @@ apply plugin: 'maven' // for uploading to a mnven repo
 // grab buildNumber
 ext.buildnumber = 0 // this will be referenced as simply project.buildnumber from now on.
 
-if (System.env.hasProperty('buildnumber'))
+if (System.env.hasProperty('BUILD_NUMBER'))
     project.buildnumber = System.getenv().BUILD_NUMBER
 else
     logger.lifecycle "SETTING BUILDNUMBER TO 0"
@@ -54,6 +54,8 @@ sourceSets {
         }
         resources {
             srcDir 'buildcraft_resources'
+            srcDir '../BuildCraft-Localization'
+            exclude '**/.md' // exclude readme from localization repo
             // exclude 'some exclusion'
             // include 'some inclusion'
 
@@ -75,11 +77,6 @@ processResources
     // copy everything else, thats not the mcmod.info
     from(sourceSets.main.resources.srcDirs) {
         exclude 'mcmod.info'
-    }
-
-    // the localization repo... this wont crash if the localization folder does not exist
-    from('../BuildCraft-Localization/lang/buildcraft') {
-        into 'build/resources/main/assets/buildcraft/lang'
     }
 }
 
