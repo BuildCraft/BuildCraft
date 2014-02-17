@@ -30,6 +30,7 @@ import buildcraft.api.core.Position;
 import buildcraft.api.recipes.BuildcraftRecipes;
 import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.ItemBuildCraft;
+import buildcraft.core.proxy.CoreProxy;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
@@ -49,10 +50,9 @@ public class ItemFacade extends ItemBuildCraft {
 		setCreativeTab(CreativeTabBuildCraft.FACADES.get());
 	}
 
-	//TODO: how to control name of items?
-	/*@Override
-	public String getItemDisplayName(ItemStack itemstack) {
-		String name = super.getItemDisplayName(itemstack);
+	@Override
+	public String getItemStackDisplayName(ItemStack itemstack) {
+		String name = super.getItemStackDisplayName(itemstack);
 		Block decodedBlock = ItemFacade.getBlock(itemstack);
 		int decodedMeta = ItemFacade.getMetaData(itemstack);
 		if (decodedBlock != null && decodedBlock.getRenderType() == 31) {
@@ -65,7 +65,7 @@ public class ItemFacade extends ItemBuildCraft {
 			name += " < BROKEN (" + decodedBlock.getLocalizedName() + ":" + decodedMeta + " )>";
 		}
 		return name;
-	}*/
+	}
 
 	@Override
 	public String getUnlocalizedName(ItemStack itemstack) {
