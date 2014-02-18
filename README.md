@@ -31,39 +31,40 @@ less time coding and more time doing stuff that makes them less grumpy.
 * Render issue (Quarry causes flickering) - Try without optifine, if it still flickers, report it
 
 ### Compiling and packaging Buildcraft
-1. Ensure that `Apache Ant` (found [here](http://ant.apache.org/)) and `Git` (found [here](http://git-scm.com/)) are installed correctly on your system.
- * Linux users will need the latest version of astyle installed as well.
+1. Ensure that `Java` (found [here](http://www.oracle.com/technetwork/java/javase/downloads/jdk7-downloads-1880260.html)), `Git` (found [here](http://git-scm.com/)) are installed correctly on your system.
+ * Optional: Install `Gradle` (found [here](http://www.gradle.org/downloads))
 1. Create a base directory for the build
-1. Clone the Buildcraft repository into `basedir/BuildCraft/`
- * Optional: Copy BuildCraft localization repository into `basedir/BuildCraft-Localization`
-1. Navigate to basedir/Buildcraft in a shell and run `ant` (this will take 2-5 minutes)
-1. The compiled and obfuscated jar will be in basedir/bin
+1. Clone the Buildcraft repository into 'baseDir/BuildCraft/'
+ * Optional: Copy BuildCraft localization repository into `baseDir/BuildCraft-Localization`
+1. Navigate to basedir/BuildCraft in a shell and run `gradlew setupCIWorkspace build` (this may take a while).
+ * With `Gradle` installed: use `gradle` instead of `gradlew`
+ * On Windows: use `gradlew.bat` instead of `gradlew`
+1. The compiled and obfuscated jar will be in 'baseDir/BuildCraft/build/libs'
 
-Your directory structure should look like this before running ant:
+Your directory structure should look like this before running gradle:
 ***
 
-    basedir
-    \- buildcraft
+    baseDir
+    \- BuildCraft
      |- buildcraft_resources
      |- common
      |- ...
-    \- buildcraft.localization
+    \- BuildCraft-Localization
      |- lang
 
 ***
 
-And like this after running ant:
+And like this after running gradle:
 ***
 
     basedir
-    \- buildcraft
-     |- bin
+    \- BuildCraft
+     |- .gradle
      |- build
      |- buildcraft_resources
      |- common
-     |- download
      |- ...
-    \- buildcraft.localization
+    \- BuildCraft-Localization
      |- lang
 
 ***
@@ -72,3 +73,13 @@ And like this after running ant:
 
 Localizations can be submitted [here](https://github.com/BuildCraft/BuildCraft-Localization). Localization PRs against
 this repository will have to be rejected.
+
+### Depending on BuildCraft
+
+add the following to your build.gradle file
+```
+dependencies {
+    compile 'com.mod-buildcraft:BuildCraft:5.0.0.+'
+}
+```
+where `5.0.0` is the desired version of BuildCraft

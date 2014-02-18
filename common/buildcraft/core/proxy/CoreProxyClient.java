@@ -19,6 +19,8 @@ import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.INetHandler;
+import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.IChatComponent;
@@ -45,7 +47,6 @@ import com.mojang.authlib.GameProfile;
 
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.client.registry.RenderingRegistry;
-import cpw.mods.fml.common.registry.LanguageRegistry;
 
 public class CoreProxyClient extends CoreProxy {
 
@@ -171,5 +172,18 @@ public class CoreProxyClient extends CoreProxy {
 			break;
 		}
 		return eb;
+	}
+
+	/**
+	 * This function returns either the player from the handler if it's on the
+	 * server, or directly from the minecraft instance if it's the client.
+	 */
+	@Override
+	public EntityPlayer getPlayerFromNetHandler (INetHandler handler) {
+		if (handler instanceof NetHandlerPlayServer) {
+			return ((NetHandlerPlayServer) handler).playerEntity;
+		} else {
+			return Minecraft.getMinecraft().thePlayer;
+		}
 	}
 }

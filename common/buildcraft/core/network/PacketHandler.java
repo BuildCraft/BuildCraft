@@ -11,40 +11,32 @@ package buildcraft.core.network;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 
-import java.io.ByteArrayInputStream;
-import java.io.DataInputStream;
 import java.io.IOException;
 
-import buildcraft.transport.TileGenericPipe;
-import buildcraft.core.proxy.CoreProxy;
-import buildcraft.core.utils.Utils;
-
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.INetHandler;
-import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
-
-import cpw.mods.fml.repackage.com.nothome.delta.DebugDiffWriter;
+import buildcraft.core.proxy.CoreProxy;
+import buildcraft.transport.TileGenericPipe;
 import cpw.mods.fml.common.network.NetworkRegistry;
 
 public class PacketHandler extends BuildCraftChannelHandler {
 
 	private void onTileUpdate(EntityPlayer player, PacketTileUpdate packet) throws IOException {
-		World world = player.worldObj;		
-		
+		World world = player.worldObj;
+
 		if (!packet.targetExists(world)) {
 			return;
 		}
 
 		TileEntity entity = packet.getTarget(world);
-		
+
 		if (!(entity instanceof ISynchronizedTile)) {
 			return;
 		}
-		
+
 		ISynchronizedTile tile = (ISynchronizedTile) entity;
 		tile.handleUpdatePacket(packet);
 		tile.postPacketHandling(packet);
@@ -54,13 +46,13 @@ public class PacketHandler extends BuildCraftChannelHandler {
 
 	public void decodeInto(ChannelHandlerContext ctx, ByteBuf data, BuildCraftPacket packet) {
 		super.decodeInto(ctx, data, packet);
-		
+
 		try {
 			INetHandler netHandler = ctx.channel().attr(NetworkRegistry.NET_HANDLER).get();
-			EntityPlayer player = Utils.getPlayerFromNetHandler(netHandler);
+			EntityPlayer player = CoreProxy.proxy.getPlayerFromNetHandler(netHandler);
 
 			int packetID = packet.getID();
-			
+
 			switch (packetID) {
 				case PacketIds.TILE_UPDATE: {
 					onTileUpdate(player, (PacketTileUpdate) packet);
@@ -70,13 +62,13 @@ public class PacketHandler extends BuildCraftChannelHandler {
 				case PacketIds.STATE_UPDATE: {
 					PacketTileState pkt = (PacketTileState) packet;
 					World world = player.worldObj;
-					
+
 					TileEntity tile = world.getTileEntity(pkt.posX, pkt.posY, pkt.posZ);
-					
+
 					if (tile instanceof ISyncedTile) {
 						pkt.applyStates(data, (ISyncedTile) tile);
 					}
-					
+
 					break;
 				}
 
@@ -92,7 +84,7 @@ public class PacketHandler extends BuildCraftChannelHandler {
 
 				case PacketIds.RPC_TILE: {
 					PacketRPCTile rpc = new PacketRPCTile();
-					rpc.sender = (EntityPlayer) player;
+					rpc.sender = player;
 
 					int dimId = data.readShort();
 					World world = null;
@@ -123,7 +115,7 @@ public class PacketHandler extends BuildCraftChannelHandler {
 
 				case PacketIds.RPC_PIPE: {
 					PacketRPCPipe rpc = new PacketRPCPipe();
-					rpc.sender = (EntityPlayer) player;
+					rpc.sender = player;
 
 					int dimId = data.readShort();
 					World world = null;

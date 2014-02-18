@@ -8,7 +8,11 @@
  */
 package buildcraft.builders.network;
 
-import buildcraft.BuildCraftBuilders;
+import io.netty.buffer.ByteBuf;
+import io.netty.channel.ChannelHandlerContext;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.network.INetHandler;
+import net.minecraft.tileentity.TileEntity;
 import buildcraft.builders.TileArchitect;
 import buildcraft.builders.TileBlueprintLibrary;
 import buildcraft.core.network.BuildCraftChannelHandler;
@@ -16,17 +20,7 @@ import buildcraft.core.network.BuildCraftPacket;
 import buildcraft.core.network.PacketIds;
 import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.proxy.CoreProxy;
-import buildcraft.core.utils.Utils;
 import cpw.mods.fml.common.network.NetworkRegistry;
-import io.netty.buffer.ByteBuf;
-import io.netty.channel.ChannelHandlerContext;
-
-import java.io.ByteArrayInputStream;
-import java.io.DataInputStream;
-
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.network.INetHandler;
-import net.minecraft.tileentity.TileEntity;
 
 public class PacketHandlerBuilders extends BuildCraftChannelHandler {
 
@@ -35,11 +29,11 @@ public class PacketHandlerBuilders extends BuildCraftChannelHandler {
 		super.decodeInto(ctx, data, packet);
 
 		try {
-			INetHandler netHandler = ctx.channel().attr(NetworkRegistry.NET_HANDLER).get();			
-			EntityPlayer player = Utils.getPlayerFromNetHandler(netHandler);
+			INetHandler netHandler = ctx.channel().attr(NetworkRegistry.NET_HANDLER).get();
+			EntityPlayer player = CoreProxy.proxy.getPlayerFromNetHandler(netHandler);
 
 			int packetID = packet.getID();
-			
+
 			switch (packetID) {
 			// FIXME: Replace that by a RPC
 			case PacketIds.ARCHITECT_NAME:

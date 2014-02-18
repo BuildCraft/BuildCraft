@@ -176,10 +176,10 @@ public class ItemGate extends ItemBuildCraft {
 	}
 
 	@Override
-   public String getItemStackDisplayName(ItemStack stack)
-   {
-	   return ("" + StatCollector.translateToLocal(this.getUnlocalizedNameInefficiently(stack))).trim();
-   }
+	public String getItemStackDisplayName(ItemStack stack)
+	{
+		return ("" + StatCollector.translateToLocal(this.getUnlocalizedNameInefficiently(stack))).trim();
+	}
 
 	@SuppressWarnings({"unchecked", "rawtypes"})
 	@Override
