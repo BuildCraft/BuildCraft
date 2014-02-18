@@ -8,6 +8,28 @@
  */
 package buildcraft.core.utils;
 
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
+
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Random;
+
+import net.minecraft.block.Block;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompressedStreamTools;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.MathHelper;
+import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.World;
+import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.BuildCraftCore;
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.core.LaserKind;
@@ -25,52 +47,10 @@ import buildcraft.core.inventory.InvUtils;
 import buildcraft.core.inventory.Transactor;
 import buildcraft.core.network.BuildCraftPacket;
 import buildcraft.core.network.ISynchronizedTile;
-import buildcraft.core.network.PacketTileUpdate;
 import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.energy.TileEngine;
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
-
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Random;
-
 import cpw.mods.fml.common.network.internal.FMLProxyPacket;
-import net.minecraft.block.Block;
-import net.minecraft.client.Minecraft;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.InventoryLargeChest;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompressedStreamTools;
-import net.minecraft.nbt.NBTBase;
-import net.minecraft.nbt.NBTTagByte;
-import net.minecraft.nbt.NBTTagByteArray;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagDouble;
-import net.minecraft.nbt.NBTTagEnd;
-import net.minecraft.nbt.NBTTagFloat;
-import net.minecraft.nbt.NBTTagInt;
-import net.minecraft.nbt.NBTTagIntArray;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.nbt.NBTTagLong;
-import net.minecraft.nbt.NBTTagShort;
-import net.minecraft.nbt.NBTTagString;
-import net.minecraft.network.INetHandler;
-import net.minecraft.network.NetHandlerPlayServer;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntityChest;
-import net.minecraft.util.MathHelper;
-import net.minecraft.world.IBlockAccess;
-import net.minecraft.world.World;
-import net.minecraftforge.common.util.ForgeDirection;
 
 public class Utils {
 
@@ -78,12 +58,12 @@ public class Utils {
 	private static final List<ForgeDirection> directions = new ArrayList<ForgeDirection>(Arrays.asList(ForgeDirection.VALID_DIRECTIONS));
 
 	public enum NBTTag_Types {
-		NBTTagEnd, NBTTagByte, NBTTagShort, 
-		NBTTagInt, NBTTagLong, NBTTagFloat, 
+		NBTTagEnd, NBTTagByte, NBTTagShort,
+		NBTTagInt, NBTTagLong, NBTTagFloat,
 		NBTTagDouble, NBTTagByteArray, NBTTagString,
 		NBTTagList, NBTTagCompound, NBTTagIntArray
 	}
-	
+
 	/* IINVENTORY HELPERS */
 	/**
 	 * Tries to add the passed stack to any valid inventories around the given
@@ -428,8 +408,8 @@ public class Utils {
 		}
 		return slots;
 	}
-	
-	public static void writeUTF (ByteBuf data, String str) {		
+
+	public static void writeUTF (ByteBuf data, String str) {
 		try {
 			byte [] b = str.getBytes("UTF-8");
 			data.writeInt (b.length);
@@ -439,19 +419,19 @@ public class Utils {
 			data.writeInt (0);
 		}
 	}
-	
-	public static String readUTF (ByteBuf data) {		
+
+	public static String readUTF (ByteBuf data) {
 		try {
 			int len = data.readInt();
 			byte [] b = new byte [len];
 			data.readBytes(b);
 			return new String (b, "UTF-8");
-		} catch (UnsupportedEncodingException e) {	
+		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 			return null;
 		}
 	}
-	
+
 	public static void writeNBT (ByteBuf data, NBTTagCompound nbt) {
 		try {
 			byte[] compressed = CompressedStreamTools.compress(nbt);
@@ -459,9 +439,9 @@ public class Utils {
 			data.writeBytes(compressed);
 		} catch (IOException e) {
 			e.printStackTrace();
-		}		
+		}
 	}
-	
+
 	public static NBTTagCompound readNBT(ByteBuf data) {
 		try {
 			short length = data.readShort();
@@ -473,18 +453,18 @@ public class Utils {
 			return null;
 		}
 	}
-	
+
 	public static void writeStack (ByteBuf data, ItemStack stack) {
 		if (stack == null) {
 			data.writeBoolean(false);
 		} else {
 			data.writeBoolean(true);
-			NBTTagCompound nbt = new NBTTagCompound();			
+			NBTTagCompound nbt = new NBTTagCompound();
 			stack.writeToNBT(nbt);
 			Utils.writeNBT(data, nbt);
 		}
 	}
-	
+
 
 	public static ItemStack readStack(ByteBuf data) {
 		if (!data.readBoolean()) {
@@ -494,35 +474,23 @@ public class Utils {
 			return ItemStack.loadItemStackFromNBT(nbt);
 		}
 	}
-	
+
 	/**
 	 * This subprogram transforms a packet into a FML packet to be send in the
-	 * minecraft default packet mechanism. This always use BC-CORE as a 
+	 * minecraft default packet mechanism. This always use BC-CORE as a
 	 * channel, and as a result, should use discriminators declared there.
-	 * 
+	 *
 	 * WARNING! The implementation of this subprogram relies on the internal
 	 * behavior of #FMLIndexedMessageToMessageCodec (in particular the encode
 	 * member). It is probably opening a maintenance issue and should be
-	 * replaced eventually by some more solid mechanism. 
+	 * replaced eventually by some more solid mechanism.
 	 */
 	public static FMLProxyPacket toPacket (BuildCraftPacket packet, int discriminator) {
 		ByteBuf buf = Unpooled.buffer();
-				
+
 		buf.writeByte((byte) discriminator);
 		packet.writeData(buf);
-				
-		return new FMLProxyPacket(buf, DefaultProps.NET_CHANNEL_NAME + "-CORE");
-	}
 
-	/**
-	 * This function returns either the player from the handler if it's on the
-	 * server, or directly from the minecraft instance if it's the client.
-	 */
-	public static EntityPlayer getPlayerFromNetHandler (INetHandler handler) {		
-		if (handler instanceof NetHandlerPlayServer) {
-			return ((NetHandlerPlayServer) handler).playerEntity;
-		} else {
-			return Minecraft.getMinecraft().thePlayer;
-		}
+		return new FMLProxyPacket(buf, DefaultProps.NET_CHANNEL_NAME + "-CORE");
 	}
 }

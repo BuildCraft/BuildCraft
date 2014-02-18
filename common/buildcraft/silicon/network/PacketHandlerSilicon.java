@@ -8,6 +8,13 @@
  */
 package buildcraft.silicon.network;
 
+import io.netty.buffer.ByteBuf;
+import io.netty.channel.ChannelHandlerContext;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.Container;
+import net.minecraft.network.INetHandler;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
 import buildcraft.core.network.BuildCraftChannelHandler;
 import buildcraft.core.network.BuildCraftPacket;
 import buildcraft.core.network.PacketCoordinates;
@@ -15,39 +22,27 @@ import buildcraft.core.network.PacketIds;
 import buildcraft.core.network.PacketNBT;
 import buildcraft.core.network.PacketSlotChange;
 import buildcraft.core.proxy.CoreProxy;
-import buildcraft.core.utils.Utils;
 import buildcraft.silicon.TileAdvancedCraftingTable;
 import buildcraft.silicon.TileAssemblyTable;
 import buildcraft.silicon.TileAssemblyTable.SelectionMessage;
 import buildcraft.silicon.gui.ContainerAssemblyTable;
-import io.netty.buffer.ByteBuf;
-import io.netty.channel.ChannelHandlerContext;
-
-import java.io.ByteArrayInputStream;
-import java.io.DataInputStream;
-
 import cpw.mods.fml.common.network.NetworkRegistry;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.Container;
-import net.minecraft.network.INetHandler;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.World;
 
 public class PacketHandlerSilicon extends BuildCraftChannelHandler {
 
 	@Override
 	public void decodeInto(ChannelHandlerContext ctx, ByteBuf data, BuildCraftPacket packet) {
 		super.decodeInto(ctx, data, packet);
-				
+
 		try {
 			INetHandler netHandler = ctx.channel().attr(NetworkRegistry.NET_HANDLER).get();
-			
-			EntityPlayer player = Utils.getPlayerFromNetHandler(netHandler);
-			
+
+			EntityPlayer player = CoreProxy.proxy.getPlayerFromNetHandler(netHandler);
+
 			int packetID = packet.getID();
-			
+
 			switch (packetID) {
-			case PacketIds.SELECTION_ASSEMBLY_SEND:			
+			case PacketIds.SELECTION_ASSEMBLY_SEND:
 				onSelectionUpdate(player, (PacketNBT) packet);
 				break;
 			case PacketIds.SELECTION_ASSEMBLY:
@@ -104,7 +99,7 @@ public class PacketHandlerSilicon extends BuildCraftChannelHandler {
 
 	/**
 	 * Sends the current selection on the assembly table to a player.
-	 * 
+	 *
 	 * @param player
 	 * @param packet
 	 */
@@ -119,7 +114,7 @@ public class PacketHandlerSilicon extends BuildCraftChannelHandler {
 
 	/**
 	 * Sets the selection on an assembly table according to player request.
-	 * 
+	 *
 	 * @param player
 	 * @param packetA
 	 */
@@ -136,7 +131,7 @@ public class PacketHandlerSilicon extends BuildCraftChannelHandler {
 
 	/**
 	 * Sets the packet into the advanced workbench
-	 * 
+	 *
 	 * @param player
 	 * @param packet1
 	 */

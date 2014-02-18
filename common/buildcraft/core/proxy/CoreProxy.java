@@ -8,45 +8,36 @@
  */
 package buildcraft.core.proxy;
 
-import buildcraft.api.core.LaserKind;
-import buildcraft.core.EntityBlock;
-import buildcraft.core.ItemBlockBuildCraft;
-import buildcraft.core.network.BuildCraftPacket;
-import cpw.mods.fml.common.Loader;
-import cpw.mods.fml.common.SidedProxy;
-import cpw.mods.fml.common.registry.GameRegistry;
-
-import java.io.File;
 import java.util.List;
 import java.util.Random;
-
-import com.mojang.authlib.GameProfile;
 
 import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
-import net.minecraft.network.Packet;
+import net.minecraft.network.INetHandler;
+import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.IChatComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
+import buildcraft.api.core.LaserKind;
+import buildcraft.core.EntityBlock;
+import buildcraft.core.ItemBlockBuildCraft;
 
+import com.mojang.authlib.GameProfile;
 
-/**
- * This class comes from the old times where there were two Minecrafts 
- * codebases, one client and one server. We should slowly aim at removing it.
- */
-@Deprecated
+import cpw.mods.fml.common.Loader;
+import cpw.mods.fml.common.SidedProxy;
+import cpw.mods.fml.common.registry.GameRegistry;
+
 public class CoreProxy {
 
 	@SidedProxy(clientSide = "buildcraft.core.proxy.CoreProxyClient", serverSide = "buildcraft.core.proxy.CoreProxy")
@@ -140,7 +131,7 @@ public class CoreProxy {
 	private EntityPlayer createNewPlayer(World world) {
 		EntityPlayer player = new EntityPlayer(world, new GameProfile (null, "[BuildCraft]")) {
 			@Override
-			public void addChatMessage(IChatComponent var1) {				
+			public void addChatMessage(IChatComponent var1) {
 			}
 
 			@Override
@@ -159,9 +150,9 @@ public class CoreProxy {
 	private EntityPlayer createNewPlayer(World world, int x, int y, int z) {
 		EntityPlayer player = new EntityPlayer(world, new GameProfile (null, "[BuildCraft]")) {
 			@Override
-			public void addChatMessage(IChatComponent var1) {				
+			public void addChatMessage(IChatComponent var1) {
 			}
-			
+
 			@Override
 			public boolean canCommandSenderUseCommand(int var1, String var2) {
 				return false;
@@ -170,7 +161,7 @@ public class CoreProxy {
 			@Override
 			public ChunkCoordinates getPlayerCoordinates() {
 				return null;
-			}			
+			}
 		};
 		player.posX = x;
 		player.posY = y;
@@ -203,5 +194,17 @@ public class CoreProxy {
 
 	public EntityBlock newEntityBlock(World world, double i, double j, double k, double iSize, double jSize, double kSize, LaserKind laserKind) {
 		return new EntityBlock(world, i, j, k, iSize, jSize, kSize);
+	}
+
+	/**
+	 * This function returns either the player from the handler if it's on the
+	 * server, or directly from the minecraft instance if it's the client.
+	 */
+	public EntityPlayer getPlayerFromNetHandler (INetHandler handler) {
+		if (handler instanceof NetHandlerPlayServer) {
+			return ((NetHandlerPlayServer) handler).playerEntity;
+		} else {
+			return null;
+		}
 	}
 }
