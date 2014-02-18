@@ -8,6 +8,23 @@
  */
 package buildcraft.core.proxy;
 
+import java.util.List;
+
+import net.minecraft.block.Block;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.WorldClient;
+import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.network.INetHandler;
+import net.minecraft.network.NetHandlerPlayServer;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ChunkCoordinates;
+import net.minecraft.util.IChatComponent;
+import net.minecraft.world.World;
 import buildcraft.BuildCraftCore;
 import buildcraft.api.core.LaserKind;
 import buildcraft.core.EntityBlock;
@@ -21,32 +38,11 @@ import buildcraft.core.render.RenderRobot;
 import buildcraft.core.render.RenderingEntityBlocks;
 import buildcraft.core.render.RenderingMarkers;
 import buildcraft.transport.render.TileEntityPickupFX;
-import cpw.mods.fml.client.FMLClientHandler;
-import cpw.mods.fml.client.registry.RenderingRegistry;
-import cpw.mods.fml.common.registry.LanguageRegistry;
-
-import java.io.File;
-import java.util.List;
 
 import com.mojang.authlib.GameProfile;
 
-import net.minecraft.block.Block;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.WorldClient;
-import net.minecraft.client.network.NetHandlerPlayClient;
-import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.item.EntityItem;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.INetHandler;
-import net.minecraft.network.NetHandlerPlayServer;
-import net.minecraft.network.Packet;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ChunkCoordinates;
-import net.minecraft.util.IChatComponent;
-import net.minecraft.world.World;
+import cpw.mods.fml.client.FMLClientHandler;
+import cpw.mods.fml.client.registry.RenderingRegistry;
 
 public class CoreProxyClient extends CoreProxy {
 
@@ -136,7 +132,7 @@ public class CoreProxyClient extends CoreProxy {
 				return null;
 			}
 		};
-		
+
 		return player;
 	}
 
@@ -166,5 +162,18 @@ public class CoreProxyClient extends CoreProxy {
 			break;
 		}
 		return eb;
+	}
+
+	/**
+	 * This function returns either the player from the handler if it's on the
+	 * server, or directly from the minecraft instance if it's the client.
+	 */
+	@Override
+	public EntityPlayer getPlayerFromNetHandler (INetHandler handler) {
+		if (handler instanceof NetHandlerPlayServer) {
+			return ((NetHandlerPlayServer) handler).playerEntity;
+		} else {
+			return Minecraft.getMinecraft().thePlayer;
+		}
 	}
 }

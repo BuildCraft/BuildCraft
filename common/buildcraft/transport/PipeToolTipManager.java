@@ -42,10 +42,10 @@ public class PipeToolTipManager {
 		if (StringUtils.canLocalize(tipTag)) {
 		   String localized = StringUtils.localize(tipTag);
 		   if (localized != null) {
-		      String[] lines = (String[])Iterables.toArray(StringUtils.newLineSplitter.split(localized), String.class);
-				tips.addAll(Arrays.asList(lines));
+			   List<String> lines = StringUtils.newLineSplitter.splitToList(localized);
+			   tips.addAll(lines);
+			   }
 			}
-	   }
 		String tip = toolTips.get(pipe);
 		if (tip != null)
 			tips.add(tip);

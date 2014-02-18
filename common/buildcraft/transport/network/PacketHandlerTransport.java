@@ -8,6 +8,13 @@
  */
 package buildcraft.transport.network;
 
+import io.netty.buffer.ByteBuf;
+import io.netty.channel.ChannelHandlerContext;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.Container;
+import net.minecraft.network.INetHandler;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
 import buildcraft.core.network.BuildCraftChannelHandler;
 import buildcraft.core.network.BuildCraftPacket;
 import buildcraft.core.network.PacketCoordinates;
@@ -15,35 +22,18 @@ import buildcraft.core.network.PacketIds;
 import buildcraft.core.network.PacketSlotChange;
 import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.proxy.CoreProxy;
-import buildcraft.core.utils.Utils;
 import buildcraft.transport.PipeTransportItems;
 import buildcraft.transport.PipeTransportPower;
 import buildcraft.transport.TileGenericPipe;
 import buildcraft.transport.gui.ContainerGateInterface;
 import buildcraft.transport.pipes.PipeItemsDiamond;
 import buildcraft.transport.pipes.PipeItemsEmerald;
-import cpw.mods.fml.common.network.FMLOutboundHandler;
 import cpw.mods.fml.common.network.NetworkRegistry;
-import io.netty.buffer.ByteBuf;
-import io.netty.channel.ChannelHandlerContext;
-
-import java.io.ByteArrayInputStream;
-import java.io.DataInputStream;
-
-import net.minecraft.client.Minecraft;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.inventory.Container;
-import net.minecraft.network.INetHandler;
-import net.minecraft.network.NetHandlerPlayServer;
-import net.minecraft.network.play.INetHandlerPlayServer;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.World;
 
 public class PacketHandlerTransport extends BuildCraftChannelHandler {
 
 	/**
-	 * TODO: A lot of this is based on the player to retrieve the world. 
+	 * TODO: A lot of this is based on the player to retrieve the world.
 	 * Passing a dimension id would be more appropriate. More generally, it
 	 * seems like a lot of these packets could be replaced with tile-based
 	 * RPCs.
@@ -52,8 +42,8 @@ public class PacketHandlerTransport extends BuildCraftChannelHandler {
 	public void decodeInto(ChannelHandlerContext ctx, ByteBuf data, BuildCraftPacket packet) {
 		super.decodeInto(ctx, data, packet);
 		try {
-			INetHandler netHandler = ctx.channel().attr(NetworkRegistry.NET_HANDLER).get();						
-			EntityPlayer player = Utils.getPlayerFromNetHandler(netHandler);
+			INetHandler netHandler = ctx.channel().attr(NetworkRegistry.NET_HANDLER).get();
+			EntityPlayer player = CoreProxy.proxy.getPlayerFromNetHandler(netHandler);
 
 			int packetID = packet.getID();
 
@@ -89,17 +79,17 @@ public class PacketHandlerTransport extends BuildCraftChannelHandler {
 				/**
 				 * SERVER SIDE *
 				 */
-				case PacketIds.DIAMOND_PIPE_SELECT: {					
+				case PacketIds.DIAMOND_PIPE_SELECT: {
 					onDiamondPipeSelect(player, (PacketSlotChange) packet);
 					break;
 				}
 
-				case PacketIds.EMERALD_PIPE_SELECT: {					
+				case PacketIds.EMERALD_PIPE_SELECT: {
 					onEmeraldPipeSelect(player, (PacketSlotChange) packet);
 					break;
 				}
 
-				case PacketIds.GATE_REQUEST_INIT:					
+				case PacketIds.GATE_REQUEST_INIT:
 					onGateInitRequest(player, (PacketCoordinates) packet);
 					break;
 
