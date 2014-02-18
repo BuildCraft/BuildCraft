@@ -8,12 +8,11 @@
  */
 package buildcraft.core;
 
-import buildcraft.api.core.Position;
-import buildcraft.core.proxy.CoreProxy;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import buildcraft.api.core.Position;
 
 public abstract class EntityLaser extends Entity {
 
@@ -72,9 +71,9 @@ public abstract class EntityLaser extends Entity {
 			needsUpdate = false;
 		}
 
-		if (worldObj.isRemote) {
-			updateDataClient();
-		}
+		//if (worldObj.isRemote) {
+		//	updateDataClient();
+		//}
 
 		boundingBox.minX = Math.min(data.head.x, data.tail.x);
 		boundingBox.minY = Math.min(data.head.y, data.tail.y);

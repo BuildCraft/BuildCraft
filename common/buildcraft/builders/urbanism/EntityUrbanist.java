@@ -8,7 +8,13 @@
  */
 package buildcraft.builders.urbanism;
 
+import java.nio.ByteBuffer;
+import java.nio.DoubleBuffer;
+import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
+
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.MovingObjectPosition;
@@ -16,8 +22,8 @@ import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 
 import org.lwjgl.input.Keyboard;
-import org.lwjgl.input.Mouse;
 
+import buildcraft.BuildCraftCore;
 import buildcraft.api.core.Position;
 import buildcraft.core.EntityEnergyLaser;
 
@@ -26,7 +32,7 @@ public class EntityUrbanist extends EntityLivingBase {
 	/**
 	 * To be used only in debug sessions to adjust the mouse pointer parameters.
 	 */
-	private boolean debugPointer = false;
+	private boolean debugPointer = true;
 	private EntityEnergyLaser laser = null;
 
 	public EntityLivingBase player;
@@ -109,67 +115,48 @@ public class EntityUrbanist extends EntityLivingBase {
 		return null;
 	}
 
+	static FloatBuffer modelviewF = GLAllocation.createDirectFloatBuffer(16);
+	static FloatBuffer projectionF = GLAllocation.createDirectFloatBuffer(16);
+	static DoubleBuffer modelviewD = ByteBuffer.allocateDirect(16 * 8).asDoubleBuffer();
+	static DoubleBuffer projectionD = ByteBuffer.allocateDirect(16 * 8).asDoubleBuffer();
+	static IntBuffer viewport = GLAllocation.createDirectIntBuffer(16);
+	static FloatBuffer winZ = ByteBuffer.allocateDirect(1 * 4).asFloatBuffer();
+    static FloatBuffer pos = ByteBuffer.allocateDirect(3 * 4).asFloatBuffer();
+
 	public MovingObjectPosition rayTraceMouse() {
-		// These three parameters have been determined experimentally. Proper
-		// ray tracing would involve matrix inversion through e.g. gluUnProject.
-		// This works just fine right now, and can be re-adjusted using the
-		// debug pointer (a laser instance). Note: laser parameters are not yet
-		// synchronized with the client, not needs to tweaks to be used
-		// properly.
-		double posAdjust = -1F;
-		float diffScale = 3.67F;
-		float diffLScale = 5.2F;
-
 		double distance = 1000;
-
-		float width = Minecraft.getMinecraft().displayWidth;
-		float height = Minecraft.getMinecraft().displayHeight;
-
-		float x = Mouse.getX();
-		float y = Mouse.getY();
-
-		// the height determines the view scale, hence / height in both cases
-		float diffX = (x - (width  / 2F)) / height * 2F;
-		float diffY = (y - (height  / 2F)) / height * 2F;
-
-		diffX *= diffScale;
-		diffY *= diffScale;
-
-		float diffXL = diffX / diffLScale;
-		float diffYL = diffY / diffLScale;
 
         Vec3 pos = this.getPosition(1.0F);
         Vec3 look = this.getLook(1.0F).normalize();
 
-        Vec3 worldUp = worldObj.getWorldVec3Pool().getVecFromPool(0, 1, 0);
-        Vec3 side = worldUp.crossProduct(look).normalize();
-        Vec3 up = side.crossProduct(look).normalize();
-
-        pos = pos.addVector(up.xCoord * posAdjust, up.yCoord * posAdjust, up.zCoord * posAdjust);
-        pos = pos.addVector(side.xCoord * -diffX, side.yCoord * -diffX, side.zCoord * -diffX);
-        pos = pos.addVector(up.xCoord * -diffY, up.yCoord * -diffY, up.zCoord * -diffY);
-
-        look = look.addVector(side.xCoord * -diffXL, side.yCoord * -diffXL, side.zCoord * -diffXL);
-        look = look.addVector(up.xCoord * -diffYL, up.yCoord * -diffYL, up.zCoord * -diffYL);
+        pos.xCoord += BuildCraftCore.diffX;
+        pos.yCoord += BuildCraftCore.diffY;
+        pos.zCoord += BuildCraftCore.diffZ;
 
         Vec3 vec32 = pos.addVector(look.xCoord * distance, look.yCoord * distance, look.zCoord * distance);
 
         MovingObjectPosition result = this.worldObj.rayTraceBlocks(pos, vec32);
 
+        // TODO: work on pos not on result!!!
+        System.out.println ("POS = " + pos.xCoord + ", " + pos.yCoord + ", " + pos.zCoord);
+        System.out.println ("RESULT = " + result.blockX + ", " + result.blockY + ", " + result.blockZ);
+
 		if (debugPointer) {
 			if (laser == null) {
+				// note: as this is on the client, it will only work if the
+				// server client update is deactivated in the server updateentity.
 				laser = new EntityEnergyLaser(worldObj, new Position(posX,
 						posY, posZ), new Position(posX, posY, posZ));
+
 				worldObj.spawnEntityInWorld(laser);
 			}
 
 			pos = this.getPosition(1.0F);
-			pos = pos.addVector(up.xCoord * posAdjust, up.yCoord * posAdjust,
-					up.zCoord * posAdjust);
-			pos = pos.addVector(side.xCoord * -diffX, side.yCoord * -diffX,
-					side.zCoord * -diffX);
-			pos = pos.addVector(up.xCoord * -diffY, up.yCoord * -diffY,
-					up.zCoord * -diffY);
+			pos.xCoord += BuildCraftCore.diffX;
+		    pos.yCoord += BuildCraftCore.diffY + 0.1F;
+		    pos.zCoord += BuildCraftCore.diffZ;
+
+		    look = this.getLook(1.0F).normalize();
 
 			Vec3 aimed = worldObj.getWorldVec3Pool().getVecFromPool(
 					pos.xCoord + look.xCoord * 200,

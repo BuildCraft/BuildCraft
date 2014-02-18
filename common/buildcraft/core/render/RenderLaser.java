@@ -10,10 +10,6 @@ package buildcraft.core.render;
 
 import java.util.Date;
 
-import buildcraft.api.core.Position;
-import buildcraft.core.EntityLaser;
-import buildcraft.core.LaserData;
-import buildcraft.core.render.RenderEntityBlock.RenderInfo;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.client.renderer.GLAllocation;
@@ -23,6 +19,11 @@ import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
 
 import org.lwjgl.opengl.GL11;
+
+import buildcraft.api.core.Position;
+import buildcraft.core.EntityLaser;
+import buildcraft.core.LaserData;
+import buildcraft.core.render.RenderEntityBlock.RenderInfo;
 
 public class RenderLaser extends Render {
 
@@ -64,8 +65,8 @@ public class RenderLaser extends Render {
 
 					RenderInfo block = new RenderInfo();
 
-					float minSize = 0.2F * (float) size / 100F;
-					float maxSize = 0.4F * (float) size / 100F;
+					float minSize = 0.2F * size / 100F;
+					float maxSize = 0.4F * size / 100F;
 					//float minSize = 0.1F;
 					//float maxSize = 0.2F;
 
@@ -93,9 +94,8 @@ public class RenderLaser extends Render {
 
 	@Override
 	public void doRender(Entity entity, double x, double y, double z, float f, float f1) {
-
 		doRender((EntityLaser) entity, x, y, z, f, f1);
-		entity.setAngles(45, 180);
+		//entity.setAngles(45, 180);
 	}
 
 	private void doRender(EntityLaser laser, double x, double y, double z, float f, float f1) {
