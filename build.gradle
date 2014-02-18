@@ -24,7 +24,7 @@ apply plugin: 'maven' // for uploading to a mnven repo
 // grab buildNumber
 ext.buildnumber = 0 // this will be referenced as simply project.buildnumber from now on.
 
-if (System.env.hasProperty('BUILD_NUMBER'))
+if (System.getenv().BUILD_NUMBER)
     project.buildnumber = System.getenv().BUILD_NUMBER
 else
     logger.lifecycle "SETTING BUILDNUMBER TO 0"
