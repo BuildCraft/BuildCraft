@@ -1,4 +1,3 @@
-
 ## Welcome to Buildcraft on GitHub
 
 ### Rule on opening issues
@@ -42,7 +41,7 @@ less time coding and more time doing stuff that makes them less grumpy.
  * On Windows: use `gradlew.bat` instead of `gradlew`
 1. The compiled and obfuscated jar will be in 'baseDir/BuildCraft/build/libs'
 
-Your directory structure should look like this before running ant:
+Your directory structure should look like this before running gradle:
 ***
 
     baseDir
@@ -55,7 +54,7 @@ Your directory structure should look like this before running ant:
 
 ***
 
-And like this after running ant:
+And like this after running gradle:
 ***
 
     basedir
