@@ -25,6 +25,7 @@ import buildcraft.builders.blueprints.BlueprintBuilder.SchematicBuilder;
 import buildcraft.builders.filler.pattern.FillerPattern;
 import buildcraft.core.Box;
 import buildcraft.core.TileBuildCraft;
+import buildcraft.core.network.NetworkData;
 import buildcraft.core.network.RPC;
 import buildcraft.core.network.RPCHandler;
 import buildcraft.core.network.RPCSide;
@@ -40,31 +41,7 @@ public class TileUrbanist extends TileBuildCraft implements IInventory {
 
 	int p2x = 0, p2y = 0, p2z = 0;
 
-	public static class AnchoredBox {
-		Box box = new Box();
-		float x1, y1, z1;
-
-		public void setP2 (float x2, float y2, float z2) {
-			box.initialize(x1, y1, z1, x2, y2, z2);
-		}
-
-		public void writeToNBT(NBTTagCompound nbt) {
-			nbt.setFloat("anchorX", x1);
-			nbt.setFloat("anchorY", y1);
-			nbt.setFloat("anchorZ", z1);
-
-			box.writeToNBT(nbt);
-		}
-
-		public void readFromNBT(NBTTagCompound nbt) {
-			x1 = nbt.getFloat("anchorX");
-			y1 = nbt.getFloat("anchorY");
-			z1 = nbt.getFloat("anchorZ");
-
-			box.initialize(nbt);
-		}
-	}
-
+	@NetworkData
 	public ArrayList <AnchoredBox> frames = new ArrayList <AnchoredBox> ();
 
 	LinkedList <UrbanistTask> tasks = new LinkedList <UrbanistTask> ();

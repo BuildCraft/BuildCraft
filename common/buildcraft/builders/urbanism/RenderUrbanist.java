@@ -14,7 +14,6 @@ import net.minecraft.util.ResourceLocation;
 
 import org.lwjgl.opengl.GL11;
 
-import buildcraft.builders.urbanism.TileUrbanist.AnchoredBox;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.render.RenderBox;
 

@@ -10,8 +10,6 @@ package buildcraft.core.network;
 
 import io.netty.buffer.ByteBuf;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Type;
@@ -20,9 +18,8 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.TreeMap;
 
-import buildcraft.core.utils.Utils;
-import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
+import buildcraft.core.utils.Utils;
 
 /**
  * This class implements custom class mapping. There are three advantages in
@@ -75,6 +72,7 @@ public class ClassMapping {
 	private LinkedList<Field> booleanFields = new LinkedList<Field>();
 	private LinkedList<Field> enumFields = new LinkedList<Field>();
 	private LinkedList<Field> nbtFields = new LinkedList<Field>();
+	private LinkedList<Field> arrayListFields = new LinkedList<Field>();
 
 	class FieldObject {
 		public Field field;
@@ -143,7 +141,7 @@ public class ClassMapping {
 						continue;
 					}
 
-					Type t = f.getGenericType();
+					Type t = f.getType();
 
 					if (t instanceof Class) {
 						Class fieldClass = (Class) t;
@@ -162,8 +160,11 @@ public class ClassMapping {
 							floatFields.add(f);
 						} else if (fieldClass.equals(double.class)) {
 							doubleFields.add(f);
-						} else if (NBTBase.class.isAssignableFrom(fieldClass)) {
+						} else if (NBTTagCompound.class.isAssignableFrom(fieldClass)) {
 							nbtFields.add(f);
+						} else if (ArrayList.class.isAssignableFrom(fieldClass)) {
+							System.out.println ("ARRAY LIST IN MAPPING");
+							arrayListFields.add(f);
 						} else {
 							FieldObject obj = new FieldObject();
 							obj.mapping = get (fieldClass);
@@ -283,7 +284,7 @@ public class ClassMapping {
 		}
 
 		for (Field f : doubleFields) {
-			data.writeDouble((double) f.getDouble(obj));
+			data.writeDouble(f.getDouble(obj));
 		}
 
 		for (Field f : stringFields) {
@@ -305,6 +306,21 @@ public class ClassMapping {
 			} else {
 				data.writeBoolean(true);
 				Utils.writeNBT(data, nbt);
+			}
+		}
+
+		for (Field f : arrayListFields) {
+			ArrayList list = (ArrayList) f.get(obj);
+
+			if (list == null) {
+				data.writeBoolean(false);
+			} else {
+				data.writeBoolean(true);
+				data.writeShort(list.size());
+
+				for (Object o : list) {
+					setDataObject(o, null, data, context);
+				}
 			}
 		}
 
@@ -356,6 +372,24 @@ public class ClassMapping {
 		for (Field f : stringFields) {
 			if (data.readBoolean()) {
 				f.set(obj, Utils.readUTF(data));
+			} else {
+				f.set(obj, null);
+			}
+		}
+
+		for (Field f : arrayListFields) {
+			System.out.println ("RETRIEVE ARRAY LIST");
+			if (data.readBoolean()) {
+				int size = data.readShort();
+
+				ArrayList arr = new ArrayList();
+
+				for (int i = 0; i < size; ++i) {
+					arr.add(updateFromDataObject(null, null,
+								data, context));
+				}
+
+				f.set(obj, arr);
 			} else {
 				f.set(obj, null);
 			}
@@ -654,7 +688,7 @@ public class ClassMapping {
 
 		Class realClass = obj.getClass();
 
-		if (realClass.equals(baseMapping.mappedClass)) {
+		if (baseMapping != null && realClass.equals(baseMapping.mappedClass)) {
 			data.writeByte(0);
 		} else {
 			if (context.classToId.containsKey(realClass.getCanonicalName())) {
