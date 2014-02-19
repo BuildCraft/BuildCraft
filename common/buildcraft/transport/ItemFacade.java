@@ -136,16 +136,16 @@ public class ItemFacade extends ItemBuildCraft {
 					Set<String> names = Sets.newHashSet();
 
 					for (int meta = 0; meta <= 15; meta++) {
-						ItemStack is = new ItemStack(item, 1, meta);
+						try {
+							ItemStack is = new ItemStack(item, 1, meta);
 
-						if (!Strings.isNullOrEmpty(is.getUnlocalizedName())
-								&& names.add(is.getUnlocalizedName())) {
+							if (!Strings.isNullOrEmpty(is.getUnlocalizedName())
+									&& names.add(is.getUnlocalizedName())) {
 
-							try {
 								ItemFacade.addFacade(is);
-							} catch (Throwable t) {
-								t.printStackTrace();
 							}
+						} catch (Throwable t) {
+							t.printStackTrace();
 						}
 					}
 				} else {
