@@ -8,14 +8,14 @@
  */
 package buildcraft.builders.blueprints;
 
-import buildcraft.api.builder.BlockHandler;
-import buildcraft.api.core.IAreaProvider;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
+import buildcraft.api.builder.BlockHandler;
+import buildcraft.api.core.IAreaProvider;
 
 public class BlueprintBuilder implements IAreaProvider {
 
@@ -46,32 +46,32 @@ public class BlueprintBuilder implements IAreaProvider {
 	}
 
 	@Override
-	public int xMin() {
+	public float xMin() {
 		return x;
 	}
 
 	@Override
-	public int yMin() {
+	public float yMin() {
 		return y;
 	}
 
 	@Override
-	public int zMin() {
+	public float zMin() {
 		return z;
 	}
 
 	@Override
-	public int xMax() {
+	public float xMax() {
 		return translateX(x, blueprint.sizeX - 1, blueprint.sizeZ - 1);
 	}
 
 	@Override
-	public int yMax() {
+	public float yMax() {
 		return y + blueprint.sizeY - 1;
 	}
 
 	@Override
-	public int zMax() {
+	public float zMax() {
 		return translateZ(z, blueprint.sizeX - 1, blueprint.sizeZ - 1);
 	}
 

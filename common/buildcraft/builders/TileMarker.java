@@ -8,19 +8,19 @@
  */
 package buildcraft.builders;
 
+import net.minecraft.block.Block;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.world.World;
 import buildcraft.BuildCraftBuilders;
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.core.LaserKind;
 import buildcraft.api.core.Position;
 import buildcraft.core.EntityBlock;
 import buildcraft.core.TileBuildCraft;
-import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.network.NetworkData;
+import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
-import net.minecraft.block.Block;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.world.World;
 
 public class TileMarker extends TileBuildCraft implements IAreaProvider {
 
@@ -280,42 +280,42 @@ public class TileMarker extends TileBuildCraft implements IAreaProvider {
 	}
 
 	@Override
-	public int xMin() {
+	public float xMin() {
 		if (origin.isSet())
 			return origin.xMin;
 		return xCoord;
 	}
 
 	@Override
-	public int yMin() {
+	public float yMin() {
 		if (origin.isSet())
 			return origin.yMin;
 		return yCoord;
 	}
 
 	@Override
-	public int zMin() {
+	public float zMin() {
 		if (origin.isSet())
 			return origin.zMin;
 		return zCoord;
 	}
 
 	@Override
-	public int xMax() {
+	public float xMax() {
 		if (origin.isSet())
 			return origin.xMax;
 		return xCoord;
 	}
 
 	@Override
-	public int yMax() {
+	public float yMax() {
 		if (origin.isSet())
 			return origin.yMax;
 		return yCoord;
 	}
 
 	@Override
-	public int zMax() {
+	public float zMax() {
 		if (origin.isSet())
 			return origin.zMax;
 		return zCoord;

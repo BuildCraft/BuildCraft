@@ -32,7 +32,7 @@ public class EntityUrbanist extends EntityLivingBase {
 	/**
 	 * To be used only in debug sessions to adjust the mouse pointer parameters.
 	 */
-	private boolean debugPointer = true;
+	private boolean debugPointer = false;
 	private EntityEnergyLaser laser = null;
 
 	public EntityLivingBase player;
@@ -135,16 +135,18 @@ public class EntityUrbanist extends EntityLivingBase {
 
         Vec3 vec32 = pos.addVector(look.xCoord * distance, look.yCoord * distance, look.zCoord * distance);
 
+        /**
+         * Note: at this stage, pos is already very close to the object to
+         * trace. It's not clear if the look vector is perfect, but
+         * approximations at this stage don't matter anymore.
+         */
         MovingObjectPosition result = this.worldObj.rayTraceBlocks(pos, vec32);
-
-        // TODO: work on pos not on result!!!
-        System.out.println ("POS = " + pos.xCoord + ", " + pos.yCoord + ", " + pos.zCoord);
-        System.out.println ("RESULT = " + result.blockX + ", " + result.blockY + ", " + result.blockZ);
 
 		if (debugPointer) {
 			if (laser == null) {
 				// note: as this is on the client, it will only work if the
-				// server client update is deactivated in the server updateentity.
+				// server client update is deactivated in the server
+				// updateentity.
 				laser = new EntityEnergyLaser(worldObj, new Position(posX,
 						posY, posZ), new Position(posX, posY, posZ));
 

@@ -34,17 +34,17 @@ public class BlockScanner implements Iterable<BlockWrapper> {
 			if (x <= box.xMax) {
 				x++;
 			} else {
-				x = box.xMin;
+				x = (int) box.xMin;
 
 				if (y <= box.yMax) {
 					y++;
 				} else {
-					y = box.yMin;
+					y = (int) box.yMin;
 
 					if (z <= box.zMax) {
 						z++;
 					} else {
-						z = box.zMin;
+						z = (int) box.zMin;
 					}
 				}
 			}
@@ -70,9 +70,9 @@ public class BlockScanner implements Iterable<BlockWrapper> {
 		this.world = world;
 		this.iterations = iterations;
 
-		x = box.xMin;
-		y = box.yMin;
-		z = box.zMin;
+		x = (int) box.xMin;
+		y = (int) box.yMin;
+		z = (int) box.zMin;
 	}
 
 	@Override

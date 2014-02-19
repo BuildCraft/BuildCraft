@@ -25,32 +25,32 @@ public class DefaultAreaProvider implements IAreaProvider {
 	}
 
 	@Override
-	public int xMin() {
+	public float xMin() {
 		return xMin;
 	}
 
 	@Override
-	public int yMin() {
+	public float yMin() {
 		return yMin;
 	}
 
 	@Override
-	public int zMin() {
+	public float zMin() {
 		return zMin;
 	}
 
 	@Override
-	public int xMax() {
+	public float xMax() {
 		return xMax;
 	}
 
 	@Override
-	public int yMax() {
+	public float yMax() {
 		return yMax;
 	}
 
 	@Override
-	public int zMax() {
+	public float zMax() {
 		return zMax;
 	}
 

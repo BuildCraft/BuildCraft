@@ -1,3 +1,11 @@
+/**
+ * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
+ * http://www.mod-buildcraft.com
+ *
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
+ * License 1.0, or MMPL. Please check the contents of the license located in
+ * http://www.mod-buildcraft.com/MMPL-1.0.txt
+ */
 package buildcraft.core;
 
 import net.minecraft.nbt.NBTTagCompound;
@@ -15,6 +23,20 @@ public class LaserData {
 
 	// Size of the wave, from 0 to 1
 	public float waveSize = 1F;
+
+	public LaserData () {
+
+	}
+
+	public LaserData (Position tail, Position head) {
+		this.tail.x = tail.x;
+		this.tail.y = tail.y;
+		this.tail.z = tail.z;
+
+		this.head.x = head.x;
+		this.head.y = head.y;
+		this.head.z = head.z;
+	}
 
 	public void update () {
 		double dx = head.x - tail.x;

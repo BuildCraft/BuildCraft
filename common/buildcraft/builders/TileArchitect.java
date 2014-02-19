@@ -8,6 +8,9 @@
  */
 package buildcraft.builders;
 
+import java.io.IOException;
+
+import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
@@ -21,23 +24,12 @@ import buildcraft.builders.blueprints.Blueprint;
 import buildcraft.core.Box;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.TileBuildCraft;
-import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.network.NetworkData;
+import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.network.RPC;
 import buildcraft.core.network.RPCHandler;
 import buildcraft.core.network.RPCSide;
-import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
-
-import java.io.IOException;
-
-import net.minecraft.block.Block;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraftforge.common.util.ForgeDirection;
 
 public class TileArchitect extends TileBuildCraft implements IInventory {
 
@@ -100,9 +92,9 @@ public class TileArchitect extends TileBuildCraft implements IInventory {
 			blueprint.setName(name);
 		}
 
-		blueprint.anchorX = xCoord - box.xMin;
-		blueprint.anchorY = yCoord - box.yMin;
-		blueprint.anchorZ = zCoord - box.zMin;
+		blueprint.anchorX = xCoord - (int) box.xMin;
+		blueprint.anchorY = yCoord - (int) box.yMin;
+		blueprint.anchorZ = zCoord - (int) box.zMin;
 
 
 		blueprint.anchorOrientation = ForgeDirection.getOrientation(worldObj.getBlockMetadata(xCoord, yCoord, zCoord));
@@ -114,7 +106,7 @@ public class TileArchitect extends TileBuildCraft implements IInventory {
 	}
 
 	private Blueprint createMaskBlueprint(Box box) {
-		Blueprint blueprint = Blueprint.create(box.sizeX(), box.sizeY(), box.sizeZ());
+		Blueprint blueprint = Blueprint.create((int) box.sizeX(), (int) box.sizeY(), (int) box.sizeZ());
 
 		/*for (int x = box.xMin; x <= box.xMax; ++x) {
 			for (int y = box.yMin; y <= box.yMax; ++y) {
@@ -134,22 +126,22 @@ public class TileArchitect extends TileBuildCraft implements IInventory {
 	}
 
 	private Blueprint createStandardBlueprint(Box box) {
-		Blueprint blueprint = Blueprint.create(box.sizeX(), box.sizeY(), box.sizeZ());
+		Blueprint blueprint = Blueprint.create((int) box.sizeX(), (int) box.sizeY(), (int) box.sizeZ());
 
-		for (int x = box.xMin; x <= box.xMax; ++x) {
-			for (int y = box.yMin; y <= box.yMax; ++y) {
-				for (int z = box.zMin; z <= box.zMax; ++z) {
+		for (int x = (int) box.xMin; x <= box.xMax; ++x) {
+			for (int y = (int) box.yMin; y <= box.yMax; ++y) {
+				for (int z = (int) box.zMin; z <= box.zMax; ++z) {
 					if (worldObj.isAirBlock(x, y, z)) {
 						continue;
 					}
-					
+
 					Block block = worldObj.getBlock(x, y, z);
-					
+
 					if (block == null) {
 						continue;
 					}
 
-					blueprint.setSchematic(x - box.xMin, y - box.yMin, z - box.zMin, worldObj, block);
+					blueprint.setSchematic(x - (int) box.xMin, y - (int) box.yMin, z - (int) box.zMin, worldObj, block);
 				}
 			}
 		}

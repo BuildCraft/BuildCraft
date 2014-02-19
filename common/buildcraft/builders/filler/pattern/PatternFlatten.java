@@ -8,15 +8,15 @@
  */
 package buildcraft.builders.filler.pattern;
 
+import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
+import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.api.core.IBox;
 import buildcraft.builders.blueprints.Blueprint;
 import buildcraft.builders.blueprints.BlueprintBuilder;
 import buildcraft.builders.blueprints.MaskSchematic;
 import buildcraft.core.Box;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.World;
-import net.minecraftforge.common.util.ForgeDirection;
 
 public class PatternFlatten extends FillerPattern {
 
@@ -61,7 +61,7 @@ public class PatternFlatten extends FillerPattern {
 			}
 		}
 
-		return new BlueprintBuilder(bpt, world, box.xMin, 1, box.zMin,
+		return new BlueprintBuilder(bpt, world, (int) box.xMin, 1, (int) box.zMin,
 				ForgeDirection.NORTH);
 	}
 }

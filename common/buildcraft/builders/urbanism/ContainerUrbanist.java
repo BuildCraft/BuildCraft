@@ -9,9 +9,9 @@
 
 package buildcraft.builders.urbanism;
 
-import buildcraft.core.gui.BuildCraftContainer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
+import buildcraft.core.gui.BuildCraftContainer;
 
 public class ContainerUrbanist extends BuildCraftContainer {
 

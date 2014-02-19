@@ -61,10 +61,10 @@ class UrbanistToolArea extends UrbanistTool {
 	@Override
 	public void worldMoved(GuiUrbanist gui, MovingObjectPosition pos) {
 		if (step == 1) {
-			gui.urbanist.rpcMoveFrame(pos.blockX, y, pos.blockZ);
-
 			x = pos.blockX;
 			z = pos.blockZ;
+
+			gui.urbanist.rpcMoveFrame(x, y, z);
 		} else if (step == 2) {
 			float ydiff = (float) Mouse.getY() / (float) Minecraft.getMinecraft().displayHeight;
 

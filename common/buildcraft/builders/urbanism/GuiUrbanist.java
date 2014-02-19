@@ -176,8 +176,6 @@ public class GuiUrbanist extends GuiAdvancedInterface {
 	protected void mouseClicked(int mouseX, int mouseY, int mouseButton) {
 		super.mouseClicked(mouseX, mouseY, mouseButton);
 
-		System.out.println ("CLICKED");
-
 		if (!onInterface(mouseX, mouseY)) {
 			if (selectedTool != -1) {
 				tools [selectedTool].worldClicked(this, urbanist.urbanist.rayTraceMouse());

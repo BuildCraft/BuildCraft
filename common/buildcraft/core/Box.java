@@ -8,6 +8,13 @@
  */
 package buildcraft.core;
 
+import io.netty.buffer.ByteBuf;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.world.World;
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.core.IBox;
 import buildcraft.api.core.LaserKind;
@@ -15,31 +22,32 @@ import buildcraft.api.core.Position;
 import buildcraft.core.network.NetworkData;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
-import io.netty.buffer.ByteBuf;
-
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.world.World;
 
 public class Box implements IBox {
 
 	public @NetworkData
-	int xMin, yMin, zMin, xMax, yMax, zMax;
+	float xMin, yMin, zMin, xMax, yMax, zMax;
 	public @NetworkData
 	boolean initialized;
+
+	// TODO: we should convert all boxes to the interface that draws it directly
+	// rather than the one that relies on additional entities. Amongst other
+	// things, this is a substancial save of synchronization data, as only
+	// boundaries need to be carried over.
 	private EntityBlock lasers[];
+
+	public LaserData lasersData [];
 
 	public Box() {
 		reset();
 	}
 
-	public void reset() {
+	public Box(float xMin, float yMin, float zMin, float xMax, float yMax, float zMax) {
+		this ();
+		initialize(xMin, yMin, zMin, xMax, yMax, zMax);
+	}
 
+	public void reset() {
 		initialized = false;
 		xMin = Integer.MAX_VALUE;
 		yMin = Integer.MAX_VALUE;
@@ -53,8 +61,7 @@ public class Box implements IBox {
 		return initialized;
 	}
 
-	public void initialize(int xMin, int yMin, int zMin, int xMax, int yMax, int zMax) {
-
+	public void initialize(float xMin, float yMin, float zMin, float xMax, float yMax, float zMax) {
 		if (xMin < xMax) {
 			this.xMin = xMin;
 			this.xMax = xMax;
@@ -84,38 +91,35 @@ public class Box implements IBox {
 	}
 
 	public void initialize(Box box) {
-
 		initialize(box.xMin, box.yMin, box.zMin, box.xMax, box.yMax, box.zMax);
 	}
 
 	public void initialize(IAreaProvider a) {
-
 		initialize(a.xMin(), a.yMin(), a.zMin(), a.xMax(), a.yMax(), a.zMax());
 	}
 
 	public void initialize(NBTTagCompound nbttagcompound) {
-
-		initialize(nbttagcompound.getInteger("xMin"), nbttagcompound.getInteger("yMin"), nbttagcompound.getInteger("zMin"), nbttagcompound.getInteger("xMax"),
-				nbttagcompound.getInteger("yMax"), nbttagcompound.getInteger("zMax"));
+		initialize(nbttagcompound.getFloat("xMin"),
+				nbttagcompound.getFloat("yMin"),
+				nbttagcompound.getFloat("zMin"),
+				nbttagcompound.getFloat("xMax"),
+				nbttagcompound.getFloat("yMax"),
+				nbttagcompound.getFloat("zMax"));
 	}
 
 	public void initialize(int centerX, int centerY, int centerZ, int size) {
-
 		initialize(centerX - size, centerY - size, centerZ - size, centerX + size, centerY + size, centerZ + size);
-
 	}
 
 	public List<BlockIndex> getBlocksInArea() {
-
 		List<BlockIndex> blocks = new ArrayList<BlockIndex>();
 
-		for (int x = xMin; x <= xMax; x++) {
-			for (int y = yMin; y <= yMax; y++) {
-				for (int z = zMin; z <= zMax; z++) {
-					blocks.add(new BlockIndex(x, y, z));
+		for (float x = xMin; x <= xMax; x++) {
+			for (float y = yMin; y <= yMax; y++) {
+				for (float z = zMin; z <= zMax; z++) {
+					blocks.add(new BlockIndex((int) x, (int) y, (int) z));
 				}
 			}
-
 		}
 
 		return blocks;
@@ -123,7 +127,6 @@ public class Box implements IBox {
 
 	@Override
 	public void expand(int amount) {
-
 		xMin += amount;
 		yMin += amount;
 		zMin += amount;
@@ -139,11 +142,11 @@ public class Box implements IBox {
 
 	@Override
 	public boolean contains(int x, int y, int z) {
-
-		if (x >= xMin && x <= xMax && y >= yMin && y <= yMax && z >= zMin && z <= zMax)
+		if (x >= xMin && x <= xMax && y >= yMin && y <= yMax && z >= zMin && z <= zMax) {
 			return true;
-
-		return false;
+		} else {
+			return false;
+		}
 	}
 
 	public boolean contains(Position p) {
@@ -164,15 +167,15 @@ public class Box implements IBox {
 		return new Position(xMax, yMax, zMax);
 	}
 
-	public int sizeX() {
+	public float sizeX() {
 		return xMax - xMin + 1;
 	}
 
-	public int sizeY() {
+	public float sizeY() {
 		return yMax - yMin + 1;
 	}
 
-	public int sizeZ() {
+	public float sizeZ() {
 		return zMax - zMin + 1;
 	}
 
@@ -189,7 +192,6 @@ public class Box implements IBox {
 	}
 
 	public Box rotateLeft() {
-
 		Box nBox = new Box();
 		nBox.xMin = (sizeZ() - 1) - zMin;
 		nBox.yMin = yMin;
@@ -205,8 +207,7 @@ public class Box implements IBox {
 	}
 
 	public void reorder() {
-
-		int tmp;
+		float tmp;
 
 		if (xMin > xMax) {
 			tmp = xMin;
@@ -234,9 +235,12 @@ public class Box implements IBox {
 		}
 	}
 
+	public void createLaserData() {
+		lasersData = Utils.createLaserDataBox(xMin, yMin, zMin, xMax, yMax, zMax);
+	}
+
 	@Override
 	public void deleteLasers() {
-
 		if (lasers != null) {
 			for (EntityBlock b : lasers) {
 				CoreProxy.proxy.removeEntity(b);
@@ -249,36 +253,35 @@ public class Box implements IBox {
 	public void writeToStream(ByteBuf stream) {
 		stream.writeBoolean(initialized);
 
-		stream.writeInt(xMin);
-		stream.writeInt(yMin);
-		stream.writeInt(zMin);
+		stream.writeFloat(xMin);
+		stream.writeFloat(yMin);
+		stream.writeFloat(zMin);
 
-		stream.writeInt(xMax);
-		stream.writeInt(yMax);
-		stream.writeInt(zMax);
+		stream.writeFloat(xMax);
+		stream.writeFloat(yMax);
+		stream.writeFloat(zMax);
 	}
 
 	public void readFromStream(ByteBuf stream) {
 		initialized = stream.readBoolean();
 
-		xMin = stream.readInt();
-		yMin = stream.readInt();
-		zMin = stream.readInt();
+		xMin = stream.readFloat();
+		yMin = stream.readFloat();
+		zMin = stream.readFloat();
 
-		xMax = stream.readInt();
-		yMax = stream.readInt();
-		zMax = stream.readInt();
+		xMax = stream.readFloat();
+		yMax = stream.readFloat();
+		zMax = stream.readFloat();
 	}
 
 	public void writeToNBT(NBTTagCompound nbttagcompound) {
+		nbttagcompound.setFloat("xMin", xMin);
+		nbttagcompound.setFloat("yMin", yMin);
+		nbttagcompound.setFloat("zMin", zMin);
 
-		nbttagcompound.setInteger("xMin", xMin);
-		nbttagcompound.setInteger("yMin", yMin);
-		nbttagcompound.setInteger("zMin", zMin);
-
-		nbttagcompound.setInteger("xMax", xMax);
-		nbttagcompound.setInteger("yMax", yMax);
-		nbttagcompound.setInteger("zMax", zMax);
+		nbttagcompound.setFloat("xMax", xMax);
+		nbttagcompound.setFloat("yMax", yMax);
+		nbttagcompound.setFloat("zMax", zMax);
 	}
 
 	@Override

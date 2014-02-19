@@ -8,11 +8,11 @@
  */
 package buildcraft.core.blueprints;
 
+import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.world.World;
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.core.Box;
 import buildcraft.core.IBuilderInventory;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.world.World;
 
 public abstract class BptBuilderBase implements IAreaProvider {
 
@@ -41,32 +41,32 @@ public abstract class BptBuilderBase implements IAreaProvider {
 	public abstract BptSlot getNextBlock(World world, IBuilderInventory inv);
 
 	@Override
-	public int xMin() {
+	public float xMin() {
 		return x - blueprint.anchorX;
 	}
 
 	@Override
-	public int yMin() {
+	public float yMin() {
 		return y - blueprint.anchorY;
 	}
 
 	@Override
-	public int zMin() {
+	public float zMin() {
 		return z - blueprint.anchorZ;
 	}
 
 	@Override
-	public int xMax() {
+	public float xMax() {
 		return x + blueprint.sizeX - blueprint.anchorX - 1;
 	}
 
 	@Override
-	public int yMax() {
+	public float yMax() {
 		return y + blueprint.sizeY - blueprint.anchorY - 1;
 	}
 
 	@Override
-	public int zMax() {
+	public float zMax() {
 		return z + blueprint.sizeZ - blueprint.anchorZ - 1;
 	}
 

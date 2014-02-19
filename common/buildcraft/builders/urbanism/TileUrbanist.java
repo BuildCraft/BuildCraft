@@ -8,6 +8,7 @@
  */
 package buildcraft.builders.urbanism;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -15,20 +16,20 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.AxisAlignedBB;
 import buildcraft.builders.blueprints.BlueprintBuilder;
 import buildcraft.builders.blueprints.BlueprintBuilder.SchematicBuilder;
 import buildcraft.builders.filler.pattern.FillerPattern;
 import buildcraft.core.Box;
-import buildcraft.core.EntityFrame;
-import buildcraft.core.EntityFrame.Kind;
-import buildcraft.core.IBuilderInventory;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.network.RPC;
 import buildcraft.core.network.RPCHandler;
 import buildcraft.core.network.RPCSide;
 
-public class TileUrbanist extends TileBuildCraft implements IBuilderInventory {
+public class TileUrbanist extends TileBuildCraft implements IInventory {
 
 	public EntityUrbanist urbanist;
 	EntityLivingBase player;
@@ -38,9 +39,33 @@ public class TileUrbanist extends TileBuildCraft implements IBuilderInventory {
 	float yaw;
 
 	int p2x = 0, p2y = 0, p2z = 0;
-	EntityFrame frame;
 
-	LinkedList <EntityRobotUrbanism> robots = new LinkedList<EntityRobotUrbanism>();
+	public static class AnchoredBox {
+		Box box = new Box();
+		float x1, y1, z1;
+
+		public void setP2 (float x2, float y2, float z2) {
+			box.initialize(x1, y1, z1, x2, y2, z2);
+		}
+
+		public void writeToNBT(NBTTagCompound nbt) {
+			nbt.setFloat("anchorX", x1);
+			nbt.setFloat("anchorY", y1);
+			nbt.setFloat("anchorZ", z1);
+
+			box.writeToNBT(nbt);
+		}
+
+		public void readFromNBT(NBTTagCompound nbt) {
+			x1 = nbt.getFloat("anchorX");
+			y1 = nbt.getFloat("anchorY");
+			z1 = nbt.getFloat("anchorZ");
+
+			box.initialize(nbt);
+		}
+	}
+
+	public ArrayList <AnchoredBox> frames = new ArrayList <AnchoredBox> ();
 
 	LinkedList <UrbanistTask> tasks = new LinkedList <UrbanistTask> ();
 
@@ -70,8 +95,6 @@ public class TileUrbanist extends TileBuildCraft implements IBuilderInventory {
 
 				urbanist.setPositionAndRotation(posX, posY, posZ, yaw, 50);
 				urbanist.setPositionAndUpdate(posX, posY, posZ);
-
-				RPCHandler.rpcServer(this, "spawnRobot");
 			}
 		}
 	}
@@ -79,18 +102,6 @@ public class TileUrbanist extends TileBuildCraft implements IBuilderInventory {
 	@Override
 	public void updateEntity() {
 		super.updateEntity();
-
-		if (tasks.size() > 0) {
-			UrbanistTask headTask = tasks.getFirst();
-
-			for (EntityRobotUrbanism robot : robots) {
-				if (robot.isAvailable()) {
-					robot.setTask(headTask);
-					tasks.removeFirst();
-					break;
-				}
-			}
-		}
 	}
 
 	@RPC (RPCSide.SERVER)
@@ -107,12 +118,14 @@ public class TileUrbanist extends TileBuildCraft implements IBuilderInventory {
 		RPCHandler.rpcServer(this, "eraseBlock", x, y, z);
 	}
 
-	@RPC (RPCSide.SERVER)
+	@RPC (RPCSide.BOTH)
 	public void createFrame (int x, int y, int z) {
-		if (frame == null) {
-			frame = new EntityFrame(worldObj, x + 0.5F, y + 0.5F, z + 0.5F, 1, 1, 1);
-			worldObj.spawnEntityInWorld(frame);
-		}
+		AnchoredBox a = new AnchoredBox();
+		a.box = new Box (x + 0.5F, y + 0.5F, z + 0.5F, x + 0.5F, y + 2.5F, z + 0.5F);
+		a.x1 = x + 0.5F;
+		a.y1 = y + 0.5F;
+		a.z1 = z + 0.5F;
+		frames.add(a);
 	}
 
 	public void rpcCreateFrame (int x, int y, int z) {
@@ -120,16 +133,14 @@ public class TileUrbanist extends TileBuildCraft implements IBuilderInventory {
 		p2y = y;
 		p2z = z;
 
+		createFrame(x, y, z);
 		RPCHandler.rpcServer(this, "createFrame", x, y, z);
 	}
 
-	@RPC (RPCSide.SERVER)
+	@RPC (RPCSide.BOTH)
 	public void moveFrame (int x, int y, int z) {
-		if (frame != null) {
-			frame.xSize = x - frame.posX + 0.5F;
-			frame.ySize = y - frame.posY + 0.5F;
-			frame.zSize = z - frame.posZ + 0.5F;
-			frame.updateData();
+		if (frames.size() > 0) {
+			frames.get(frames.size() - 1).setP2(x + 0.5F, y + 0.5F, z + 0.5F);
 		}
 	}
 
@@ -139,19 +150,20 @@ public class TileUrbanist extends TileBuildCraft implements IBuilderInventory {
 			p2y = y;
 			p2z = z;
 
+			moveFrame(x, y, z);
 			RPCHandler.rpcServer(this, "moveFrame", x, y, z);
 		}
 	}
 
 	public class FrameTask {
 		int nbOfTasks;
-		EntityFrame frame;
+		//EntityFrame frame;
 
 		public void taskDone () {
 			nbOfTasks--;
 
 			if (nbOfTasks <= 0) {
-				frame.setDead();
+			//	frame.setDead();
 			}
 		}
 	}
@@ -162,7 +174,7 @@ public class TileUrbanist extends TileBuildCraft implements IBuilderInventory {
 
 		List <SchematicBuilder> schematics = builder.getBuilders();
 
-		if (frame != null) {
+		/*if (frame != null) {
 			frame.setDead();
 			frame = null;
 		}
@@ -170,9 +182,9 @@ public class TileUrbanist extends TileBuildCraft implements IBuilderInventory {
 		EntityFrame newFrame = new EntityFrame(worldObj, box);
 		newFrame.setKind(Kind.STRIPES);
 		worldObj.spawnEntityInWorld(newFrame);
-
+*/
 		FrameTask task = new FrameTask();
-		task.frame = newFrame;
+		//task.frame = newFrame;
 
 		for (SchematicBuilder b : schematics) {
 			if (!b.isComplete()) {
@@ -186,22 +198,6 @@ public class TileUrbanist extends TileBuildCraft implements IBuilderInventory {
 		RPCHandler.rpcServer(this, "startFiller", fillerTag, box);
 	}
 
-	@RPC (RPCSide.SERVER)
-	public void spawnRobot () {
-		if (robots.size() == 0) {
-			for (int i = 0; i < 10; ++i) {
-				EntityRobotUrbanism robot = new EntityRobotUrbanism(worldObj);
-				robot.setLocationAndAngles(xCoord, yCoord, zCoord, 0, 0);
-				//robot.setDestination(xCoord, yCoord, zCoord);
-				//robot.setDestinationAround(xCoord, yCoord, zCoord);
-
-				worldObj.spawnEntityInWorld(robot);
-
-				robots.add(robot);
-			}
-		}
-	}
-
 	public void destroyUrbanistEntity() {
 		Minecraft.getMinecraft().renderViewEntity = player;
 		Minecraft.getMinecraft().gameSettings.thirdPersonView = thirdPersonView;
@@ -212,79 +208,124 @@ public class TileUrbanist extends TileBuildCraft implements IBuilderInventory {
 
 	@Override
 	public int getSizeInventory() {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
-	public ItemStack getStackInSlot(int i) {
-		// TODO Auto-generated method stub
+	public ItemStack getStackInSlot(int var1) {
 		return null;
 	}
 
 	@Override
-	public ItemStack decrStackSize(int i, int j) {
-		// TODO Auto-generated method stub
+	public ItemStack decrStackSize(int var1, int var2) {
 		return null;
 	}
 
 	@Override
-	public ItemStack getStackInSlotOnClosing(int i) {
-		// TODO Auto-generated method stub
+	public ItemStack getStackInSlotOnClosing(int var1) {
 		return null;
 	}
 
 	@Override
-	public void setInventorySlotContents(int i, ItemStack itemstack) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public int getInventoryStackLimit() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public boolean isUseableByPlayer(EntityPlayer entityplayer) {
-		return true;
-	}
-
-	@Override
-	public boolean isItemValidForSlot(int i, ItemStack itemstack) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean isBuildingMaterial(int i) {
-		// TODO Auto-generated method stub
-		return false;
+	public void setInventorySlotContents(int var1, ItemStack var2) {
 	}
 
 	@Override
 	public String getInventoryName() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public boolean hasCustomInventoryName() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
-	public void openInventory() {
-		// TODO Auto-generated method stub
+	public int getInventoryStackLimit() {
+		return 0;
+	}
 
+	@Override
+	public boolean isUseableByPlayer(EntityPlayer var1) {
+		return true;
+	}
+
+	@Override
+	public void openInventory() {
 	}
 
 	@Override
 	public void closeInventory() {
-		// TODO Auto-generated method stub
-
 	}
 
+	@Override
+	public boolean isItemValidForSlot(int var1, ItemStack var2) {
+		return false;
+	}
+
+	@Override
+	public AxisAlignedBB getRenderBoundingBox() {
+		double xMin = xCoord;
+		double yMin = yCoord;
+		double zMin = zCoord;
+		double xMax = xCoord + 1.0;
+		double yMax = yCoord + 1.0;
+		double zMax = zCoord + 1.0;
+
+		for (AnchoredBox b : frames) {
+			if (b.box.xMin < xMin) {
+				xMin = b.box.xMin;
+			}
+
+			if (b.box.yMin < yMin) {
+				yMin = b.box.yMin;
+			}
+
+			if (b.box.zMin < zMin) {
+				zMin = b.box.zMin;
+			}
+
+			if (b.box.xMax > xMax) {
+				xMax = b.box.xMax;
+			}
+
+			if (b.box.yMax > yMax) {
+				yMax = b.box.yMax;
+			}
+
+			if (b.box.zMax > zMax) {
+				zMax = b.box.zMax;
+			}
+		}
+
+		return AxisAlignedBB.getBoundingBox(xMin, yMin, zMin, xMax, yMax, zMax);
+	}
+
+	@Override
+	public void writeToNBT(NBTTagCompound nbt) {
+		super.writeToNBT(nbt);
+
+		nbt.setInteger("nbFrames", frames.size());
+
+		for (int i = 0; i < frames.size(); ++i) {
+			NBTTagCompound cpt = new NBTTagCompound();
+			frames.get(i).writeToNBT(cpt);
+			nbt.setTag("frame[" + i + "]", cpt);
+		}
+	}
+
+	@Override
+	public void readFromNBT(NBTTagCompound nbt) {
+		super.readFromNBT(nbt);
+
+		frames.clear();
+
+		int size = nbt.getInteger("nbFrames");
+
+		for (int i = 0; i < size; ++i) {
+			AnchoredBox b = new AnchoredBox();
+			b.readFromNBT(nbt.getCompoundTag("frame[" + i + "]"));
+			frames.add(b);
+		}
+	}
 }

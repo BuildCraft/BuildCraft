@@ -143,28 +143,28 @@ public class BlockQuarry extends BlockBuildCraft {
 			Box box = quarry.box;
 			if (box.isInitialized() && Integer.MAX_VALUE != box.xMax) {
 				// X - Axis
-				for (int x = box.xMin; x <= box.xMax; x++) {
-					markFrameForDecay(world, x, box.yMin, box.zMin);
-					markFrameForDecay(world, x, box.yMax, box.zMin);
-					markFrameForDecay(world, x, box.yMin, box.zMax);
-					markFrameForDecay(world, x, box.yMax, box.zMax);
+				for (int x = (int) box.xMin; x <= box.xMax; x++) {
+					markFrameForDecay(world, x, (int) box.yMin, (int) box.zMin);
+					markFrameForDecay(world, x, (int) box.yMax, (int) box.zMin);
+					markFrameForDecay(world, x, (int) box.yMin, (int) box.zMax);
+					markFrameForDecay(world, x, (int) box.yMax, (int) box.zMax);
 				}
 
 				// Z - Axis
-				for (int z = box.zMin + 1; z <= box.zMax - 1; z++) {
-					markFrameForDecay(world, box.xMin, box.yMin, z);
-					markFrameForDecay(world, box.xMax, box.yMin, z);
-					markFrameForDecay(world, box.xMin, box.yMax, z);
-					markFrameForDecay(world, box.xMax, box.yMax, z);
+				for (int z = (int) box.zMin + 1; z <= box.zMax - 1; z++) {
+					markFrameForDecay(world, (int) box.xMin, (int) box.yMin, z);
+					markFrameForDecay(world, (int) box.xMax, (int) box.yMin, z);
+					markFrameForDecay(world, (int) box.xMin, (int) box.yMax, z);
+					markFrameForDecay(world, (int) box.xMax, (int) box.yMax, z);
 				}
 
 				// Y - Axis
-				for (int y = box.yMin + 1; y <= box.yMax - 1; y++) {
+				for (int y = (int) box.yMin + 1; y <= box.yMax - 1; y++) {
 
-					markFrameForDecay(world, box.xMin, y, box.zMin);
-					markFrameForDecay(world, box.xMax, y, box.zMin);
-					markFrameForDecay(world, box.xMin, y, box.zMax);
-					markFrameForDecay(world, box.xMax, y, box.zMax);
+					markFrameForDecay(world, (int) box.xMin, y, (int) box.zMin);
+					markFrameForDecay(world, (int) box.xMax, y, (int) box.zMin);
+					markFrameForDecay(world, (int) box.xMin, y, (int) box.zMax);
+					markFrameForDecay(world, (int) box.xMax, y, (int) box.zMax);
 				}
 			}
 			quarry.destroy();
