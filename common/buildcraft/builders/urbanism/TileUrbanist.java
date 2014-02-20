@@ -23,6 +23,7 @@ import net.minecraft.util.AxisAlignedBB;
 import buildcraft.builders.blueprints.BlueprintBuilder;
 import buildcraft.builders.blueprints.BlueprintBuilder.SchematicBuilder;
 import buildcraft.builders.filler.pattern.FillerPattern;
+import buildcraft.builders.urbanism.AnchoredBox.Kind;
 import buildcraft.core.Box;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.network.NetworkData;
@@ -110,6 +111,8 @@ public class TileUrbanist extends TileBuildCraft implements IInventory {
 		p2y = y;
 		p2z = z;
 
+		// TODO: this is OK in SMP, but the frame actually needs to be
+		// broadcasted to all players
 		createFrame(x, y, z);
 		RPCHandler.rpcServer(this, "createFrame", x, y, z);
 	}
@@ -127,6 +130,8 @@ public class TileUrbanist extends TileBuildCraft implements IInventory {
 			p2y = y;
 			p2z = z;
 
+			// TODO: this is OK in SMP, but the frame actually needs to be
+			// broadcasted to all players
 			moveFrame(x, y, z);
 			RPCHandler.rpcServer(this, "moveFrame", x, y, z);
 		}
@@ -134,13 +139,25 @@ public class TileUrbanist extends TileBuildCraft implements IInventory {
 
 	public class FrameTask {
 		int nbOfTasks;
-		//EntityFrame frame;
+		AnchoredBox frame;
 
 		public void taskDone () {
 			nbOfTasks--;
 
 			if (nbOfTasks <= 0) {
-			//	frame.setDead();
+				frames.remove(frame);
+			}
+		}
+	}
+
+	@RPC (RPCSide.CLIENT)
+	public void setFrameKind (int id, int kind) {
+		if (id < frames.size()) {
+			AnchoredBox b = frames.get(id);
+
+			if (b != null) {
+				System.out.println ("SWITCH " + id + " TO " + kind);
+				b.kind = Kind.values()[kind];
 			}
 		}
 	}
@@ -160,8 +177,12 @@ public class TileUrbanist extends TileBuildCraft implements IInventory {
 		newFrame.setKind(Kind.STRIPES);
 		worldObj.spawnEntityInWorld(newFrame);
 */
+
 		FrameTask task = new FrameTask();
-		//task.frame = newFrame;
+		task.frame = frames.get(frames.size() - 1);
+		task.frame.kind = Kind.STRIPES;
+		RPCHandler.rpcBroadcastPlayers(this, "setFrameKind", frames.size() - 1,
+				Kind.STRIPES.ordinal());
 
 		for (SchematicBuilder b : schematics) {
 			if (!b.isComplete()) {

@@ -19,7 +19,11 @@ import buildcraft.core.render.RenderBox;
 
 public class RenderUrbanist extends TileEntitySpecialRenderer {
 
-	private static final ResourceLocation CHAMBER_TEXTURE = new ResourceLocation(DefaultProps.TEXTURE_PATH_BLOCKS + "/chamber2.png");
+	private static final ResourceLocation LASER_RED = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_ENTITIES + "/laser_1.png");
+	private static final ResourceLocation LASER_YELLOW = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_ENTITIES + "/laser_2.png");
+	private static final ResourceLocation LASER_GREEN = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_ENTITIES + "/laser_3.png");
+	private static final ResourceLocation LASER_BLUE = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_ENTITIES + "/laser_4.png");
+	private static final ResourceLocation STRIPES = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_ENTITIES + "/stripes.png");
 
 	public RenderUrbanist() {
 	}
@@ -38,7 +42,28 @@ public class RenderUrbanist extends TileEntitySpecialRenderer {
 		for (AnchoredBox b : urbanist.frames) {
 			GL11.glPushMatrix();
 			GL11.glTranslated(-tileentity.xCoord, -tileentity.yCoord, -tileentity.zCoord);
-			RenderBox.doRender(TileEntityRendererDispatcher.instance.field_147553_e, b.box, x, y, z, f, 0);
+
+			ResourceLocation texture = LASER_RED;
+
+			switch (b.kind) {
+			case LASER_RED:
+				texture = LASER_RED;
+				break;
+			case LASER_YELLOW:
+				texture = LASER_YELLOW;
+				break;
+			case LASER_GREEN:
+				texture = LASER_GREEN;
+				break;
+			case LASER_BLUE:
+				texture = LASER_BLUE;
+				break;
+			case STRIPES:
+				texture = STRIPES;
+				break;
+			}
+
+			RenderBox.doRender(TileEntityRendererDispatcher.instance.field_147553_e, texture, b.box, x, y, z, f, 0);
 			GL11.glPopMatrix();
 		}
 

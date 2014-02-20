@@ -14,14 +14,11 @@ import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 
 import buildcraft.core.Box;
-import buildcraft.core.DefaultProps;
 import buildcraft.core.LaserData;
 
 public class RenderBox {
 
-	private static final ResourceLocation LASER_TEXTURE = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_ENTITIES + "/laser_1.png");
-
-	public static void doRender(TextureManager t, Box box, double x, double y, double z, float f, float f1) {
+	public static void doRender(TextureManager t, ResourceLocation texture, Box box, double x, double y, double z, float f, float f1) {
 		GL11.glPushMatrix();
 		GL11.glDisable(2896 /* GL_LIGHTING */);
 		GL11.glTranslated(x, y, z);
@@ -32,7 +29,7 @@ public class RenderBox {
 			l.update();
 			GL11.glPushMatrix();
 			GL11.glTranslated(l.head.x, l.head.y, l.head.z);
-			RenderLaser.doRenderLaser(t, l, LASER_TEXTURE);
+			RenderLaser.doRenderLaser(t, l, texture);
 			GL11.glPopMatrix();
 		}
 

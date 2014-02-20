@@ -19,11 +19,23 @@ public class AnchoredBox {
 	@NetworkData
 	public float x1, y1, z1;
 
+	public enum Kind {
+		LASER_RED,
+		LASER_YELLOW,
+		LASER_GREEN,
+		LASER_BLUE,
+		STRIPES
+	}
+
+	@NetworkData
+	public Kind kind = Kind.LASER_RED;
+
 	public void setP2 (float x2, float y2, float z2) {
 		box.initialize(x1, y1, z1, x2, y2, z2);
 	}
 
 	public void writeToNBT(NBTTagCompound nbt) {
+		nbt.setByte("kind", (byte) kind.ordinal());
 		nbt.setFloat("anchorX", x1);
 		nbt.setFloat("anchorY", y1);
 		nbt.setFloat("anchorZ", z1);
@@ -32,6 +44,7 @@ public class AnchoredBox {
 	}
 
 	public void readFromNBT(NBTTagCompound nbt) {
+		kind = Kind.values() [nbt.getShort("kind")];
 		x1 = nbt.getFloat("anchorX");
 		y1 = nbt.getFloat("anchorY");
 		z1 = nbt.getFloat("anchorZ");
