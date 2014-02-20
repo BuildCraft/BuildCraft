@@ -8,17 +8,17 @@
  */
 package buildcraft.core;
 
-import buildcraft.BuildCraftCore;
-
 import java.util.Random;
 
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.event.terraingen.PopulateChunkEvent;
 import net.minecraftforge.event.terraingen.TerrainGen;
+import buildcraft.BuildCraftCore;
+import cpw.mods.fml.common.eventhandler.Event.Result;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 
 public class SpringPopulate {
 
@@ -28,6 +28,7 @@ public class SpringPopulate {
 		boolean doGen = TerrainGen.populate(event.chunkProvider, event.world, event.rand, event.chunkX, event.chunkX, event.hasVillageGenerated, PopulateChunkEvent.Populate.EventType.CUSTOM);
 
 		if (!doGen) {
+			event.setResult(Result.ALLOW);
 			return;
 		}
 

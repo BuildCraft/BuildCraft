@@ -8,14 +8,15 @@
  */
 package buildcraft.energy.worldgen;
 
-import buildcraft.BuildCraftCore;
-import buildcraft.BuildCraftEnergy;
+import static net.minecraftforge.common.BiomeDictionary.Type.DESERT;
+import static net.minecraftforge.common.BiomeDictionary.Type.FOREST;
+import static net.minecraftforge.common.BiomeDictionary.Type.FROZEN;
+import static net.minecraftforge.common.BiomeDictionary.Type.WASTELAND;
 
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
 
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFlower;
 import net.minecraft.block.material.Material;
@@ -24,17 +25,17 @@ import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.BiomeDictionary;
-import static net.minecraftforge.common.BiomeDictionary.Type.DESERT;
-import static net.minecraftforge.common.BiomeDictionary.Type.FOREST;
-import static net.minecraftforge.common.BiomeDictionary.Type.FROZEN;
-import static net.minecraftforge.common.BiomeDictionary.Type.WASTELAND;
+import net.minecraftforge.common.util.EnumHelper;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.event.terraingen.PopulateChunkEvent;
 import net.minecraftforge.event.terraingen.PopulateChunkEvent.Populate.EventType;
 import net.minecraftforge.event.terraingen.TerrainGen;
 import net.minecraftforge.fluids.BlockFluidBase;
 import net.minecraftforge.fluids.IFluidBlock;
-import net.minecraftforge.common.util.EnumHelper;
+import buildcraft.BuildCraftCore;
+import buildcraft.BuildCraftEnergy;
+import cpw.mods.fml.common.eventhandler.Event.Result;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 
 public class OilPopulate {
 
@@ -65,6 +66,7 @@ public class OilPopulate {
 		boolean doGen = TerrainGen.populate(event.chunkProvider, event.world, event.rand, event.chunkX, event.chunkX, event.hasVillageGenerated, EVENT_TYPE);
 
 		if (!doGen) {
+			event.setResult(Result.ALLOW);
 			return;
 		}
 
@@ -256,7 +258,7 @@ public class OilPopulate {
 		}
 	}
 
-	private boolean isReplaceableFluid(World world, int x, int y, int z) {		
+	private boolean isReplaceableFluid(World world, int x, int y, int z) {
 		Block block = world.getBlock(x, y, z);
 		return (block instanceof BlockFluidBase || block instanceof IFluidBlock) && block.getMaterial() != Material.lava;
 	}
@@ -268,33 +270,33 @@ public class OilPopulate {
 
 	private boolean isReplaceableForLake(World world, BiomeGenBase biome, int x, int y, int z) {
 		Block block = world.getBlock(x, y, z);
-		
+
 		if (block == null) {
 			return true;
 		}
-		
+
 		if (block == biome.fillerBlock || block == biome.topBlock) {
 			return true;
 		}
-		
+
 		if (!block.getMaterial().blocksMovement()) {
 			return true;
 		}
-		
+
 		// TODO: The code below doesn't seem to have been replaced by something
 		// in 1.7.2 - to update or remove.
 		//if (block.isGenMineableReplaceable(world, x, y, z, Blocks.stone)) {
 		//	return true;
 		//}
-		
+
 		if (block instanceof BlockFlower) {
 			return true;
 		}
-		
+
 		if (!block.isOpaqueCube()) {
 			return true;
 		}
-		
+
 		return false;
 	}
 
@@ -352,27 +354,27 @@ public class OilPopulate {
 
 		for (; y > 0; --y) {
 			Block block = chunk.getBlock(trimmedX, y, trimmedZ);
-			
+
 			if (block == null) {
 				continue;
 			}
-			
+
 			if (block instanceof BlockFluidBase) {
 				return y;
 			}
-			
+
 			if (block instanceof IFluidBlock) {
 				return y;
 			}
-			
+
 			if (!block.getMaterial().blocksMovement()) {
 				continue;
 			}
-			
+
 			if (block instanceof BlockFlower) {
 				continue;
 			}
-			
+
 			return y - 1;
 		}
 
