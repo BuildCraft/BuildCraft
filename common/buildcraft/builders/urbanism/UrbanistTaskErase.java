@@ -8,6 +8,8 @@
  */
 package buildcraft.builders.urbanism;
 
+import buildcraft.core.robots.EntityRobot;
+
 public class UrbanistTaskErase extends UrbanistTask {
 
 	int x, y, z;
@@ -23,12 +25,12 @@ public class UrbanistTaskErase extends UrbanistTask {
 	}
 
 	@Override
-	public void setup(EntityRobotUrbanism robot) {
+	public void setup(EntityRobot robot) {
 		//robot.setDestinationAround(x, y, z);
 	}
 
 	@Override
-	public void work(EntityRobotUrbanism robot) {
+	public void update(EntityRobot robot) {
 		if (!inBreak && robot.getDistance(x, y, z) <= 10) {
 			inBreak = true;
 			robot.setLaserDestination(x + 0.5F, y + 0.5F, z + 0.5F);

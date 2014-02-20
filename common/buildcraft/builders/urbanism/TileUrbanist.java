@@ -30,8 +30,12 @@ import buildcraft.core.network.NetworkData;
 import buildcraft.core.network.RPC;
 import buildcraft.core.network.RPCHandler;
 import buildcraft.core.network.RPCSide;
+import buildcraft.core.robots.EntityRobot;
+import buildcraft.core.robots.IRobotTask;
+import buildcraft.core.robots.IRobotTaskProvider;
+import buildcraft.core.robots.RobotTaskProviderRegistry;
 
-public class TileUrbanist extends TileBuildCraft implements IInventory {
+public class TileUrbanist extends TileBuildCraft implements IInventory, IRobotTaskProvider {
 
 	public EntityUrbanist urbanist;
 	EntityLivingBase player;
@@ -45,7 +49,9 @@ public class TileUrbanist extends TileBuildCraft implements IInventory {
 	@NetworkData
 	public ArrayList <AnchoredBox> frames = new ArrayList <AnchoredBox> ();
 
-	LinkedList <UrbanistTask> tasks = new LinkedList <UrbanistTask> ();
+	boolean isCreatingFrame = false;
+
+	LinkedList <IRobotTask> tasks = new LinkedList <IRobotTask> ();
 
 	public void createUrbanistEntity() {
 		if (worldObj.isRemote) {
@@ -98,6 +104,7 @@ public class TileUrbanist extends TileBuildCraft implements IInventory {
 
 	@RPC (RPCSide.BOTH)
 	public void createFrame (int x, int y, int z) {
+		isCreatingFrame = true;
 		AnchoredBox a = new AnchoredBox();
 		a.box = new Box (x + 0.5F, y + 0.5F, z + 0.5F, x + 0.5F, y + 2.5F, z + 0.5F);
 		a.x1 = x + 0.5F;
@@ -119,8 +126,11 @@ public class TileUrbanist extends TileBuildCraft implements IInventory {
 
 	@RPC (RPCSide.BOTH)
 	public void moveFrame (int x, int y, int z) {
-		if (frames.size() > 0) {
-			frames.get(frames.size() - 1).setP2(x + 0.5F, y + 0.5F, z + 0.5F);
+		if (isCreatingFrame) {
+			if (frames.size() > 0) {
+				frames.get(frames.size() - 1).setP2(x + 0.5F, y + 0.5F,
+						z + 0.5F);
+			}
 		}
 	}
 
@@ -156,7 +166,6 @@ public class TileUrbanist extends TileBuildCraft implements IInventory {
 			AnchoredBox b = frames.get(id);
 
 			if (b != null) {
-				System.out.println ("SWITCH " + id + " TO " + kind);
 				b.kind = Kind.values()[kind];
 			}
 		}
@@ -168,25 +177,17 @@ public class TileUrbanist extends TileBuildCraft implements IInventory {
 
 		List <SchematicBuilder> schematics = builder.getBuilders();
 
-		/*if (frame != null) {
-			frame.setDead();
-			frame = null;
-		}
-
-		EntityFrame newFrame = new EntityFrame(worldObj, box);
-		newFrame.setKind(Kind.STRIPES);
-		worldObj.spawnEntityInWorld(newFrame);
-*/
-
 		FrameTask task = new FrameTask();
 		task.frame = frames.get(frames.size() - 1);
 		task.frame.kind = Kind.STRIPES;
 		RPCHandler.rpcBroadcastPlayers(this, "setFrameKind", frames.size() - 1,
 				Kind.STRIPES.ordinal());
 
+		isCreatingFrame = false;
+
 		for (SchematicBuilder b : schematics) {
 			if (!b.isComplete()) {
-				tasks.add(new UrbanistTaskBuildSchematic(this, b, task));
+				tasks.add(new TaskBuildSchematic(b, task));
 				task.nbOfTasks++;
 			}
 		}
@@ -324,6 +325,48 @@ public class TileUrbanist extends TileBuildCraft implements IInventory {
 			AnchoredBox b = new AnchoredBox();
 			b.readFromNBT(nbt.getCompoundTag("frame[" + i + "]"));
 			frames.add(b);
+		}
+	}
+
+	@Override
+	public double getX() {
+		return xCoord;
+	}
+
+	@Override
+	public double getY() {
+		return yCoord;
+	}
+
+	@Override
+	public double getZ() {
+		return zCoord;
+	}
+
+	@Override
+	public boolean isActive() {
+		return !isInvalid();
+	}
+
+	@Override
+	public IRobotTask getNextTask(EntityRobot robot) {
+		if (tasks.size() > 0) {
+			return tasks.getFirst();
+		} else {
+			return null;
+		}
+	}
+
+	@Override
+	public void popNextTask() {
+		tasks.removeFirst();
+	}
+
+
+	@Override
+	public void initialize () {
+		if (!worldObj.isRemote) {
+			RobotTaskProviderRegistry.registerProvider(this);
 		}
 	}
 }

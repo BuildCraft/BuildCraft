@@ -8,7 +8,10 @@
  */
 package buildcraft.builders.urbanism;
 
-public class UrbanistTask {
+import buildcraft.core.robots.EntityRobot;
+import buildcraft.core.robots.IRobotTask;
+
+public class UrbanistTask implements IRobotTask {
 
 	protected TileUrbanist urbanist;
 
@@ -16,14 +19,17 @@ public class UrbanistTask {
 		this.urbanist = urbanist;
 	}
 
-	public void setup(EntityRobotUrbanism robot) {
+	@Override
+	public void setup(EntityRobot robot) {
 
 	}
 
-	public void work(EntityRobotUrbanism robot) {
+	@Override
+	public void update(EntityRobot robot) {
 
 	}
 
+	@Override
 	public boolean done() {
 		return true;
 	}

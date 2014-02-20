@@ -15,6 +15,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
+import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.LaserData;
 import buildcraft.transport.TileGenericPipe;
@@ -22,6 +23,8 @@ import cpw.mods.fml.common.registry.IEntityAdditionalSpawnData;
 
 public class EntityRobot extends EntityLivingBase implements
 		IEntityAdditionalSpawnData {
+
+	public SafeTimeTracker scanForTasks = new SafeTimeTracker (40, 10);
 
 	public LaserData laser = new LaserData ();
 	private boolean needsUpdate = false;
@@ -31,6 +34,7 @@ public class EntityRobot extends EntityLivingBase implements
 					+ "/robot_base.png");
 
 	public AIBase currentAI;
+	public IRobotTask currentTask;
 
 	public class DockingStation {
 		public int x, y, z;
@@ -100,14 +104,15 @@ public class EntityRobot extends EntityLivingBase implements
 	}
 
 	public void showLaser () {
-		if (laser != null && !laser.isVisible) {
+		if (!laser.isVisible) {
+			System.out.println ("SHOW LASER");
 			laser.isVisible = true;
 			needsUpdate = true;
 		}
 	}
 
 	public void hideLaser () {
-		if (laser != null && laser.isVisible) {
+		if (laser.isVisible) {
 			laser.isVisible = false;
 			needsUpdate = true;
 		}
@@ -126,6 +131,21 @@ public class EntityRobot extends EntityLivingBase implements
 
 		if (currentAI != null) {
 			currentAI.update(this);
+		}
+
+		if (!worldObj.isRemote) {
+			if (currentTask == null) {
+				if (scanForTasks.markTimeIfDelay(worldObj)) {
+					System.out.println ("SCAN");
+					RobotTaskProviderRegistry.scanForTask(this);
+				}
+			} else {
+				if (currentTask.done()) {
+					currentTask = null;
+				} else {
+					currentTask.update(this);
+				}
+			}
 		}
 
 		super.onUpdate();
@@ -283,5 +303,9 @@ public class EntityRobot extends EntityLivingBase implements
 	public ItemStack getEquipmentInSlot(int var1) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	public boolean acceptTask (IRobotTask task) {
+		return false;
 	}
 }

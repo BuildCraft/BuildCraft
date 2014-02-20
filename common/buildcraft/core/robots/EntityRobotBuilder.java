@@ -13,13 +13,18 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import buildcraft.builders.blueprints.IBlueprintBuilderAgent;
+import buildcraft.builders.urbanism.TaskBuildSchematic;
+import buildcraft.core.DefaultProps;
 import buildcraft.core.proxy.CoreProxy;
 import cpw.mods.fml.common.registry.IEntityAdditionalSpawnData;
 
 public class EntityRobotBuilder extends EntityRobot implements
 		IEntityAdditionalSpawnData, IBlueprintBuilderAgent, IInventory {
+
+	private static ResourceLocation texture = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_ENTITIES + "/robot_builder.png");
 
 	ItemStack buildingStack = null;
 	float curBlockDamage = 0;
@@ -115,61 +120,57 @@ public class EntityRobotBuilder extends EntityRobot implements
 
 	@Override
 	public ItemStack getStackInSlotOnClosing(int i) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public void setInventorySlotContents(int i, ItemStack itemstack) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public int getInventoryStackLimit() {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
 	public boolean isUseableByPlayer(EntityPlayer entityplayer) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public boolean isItemValidForSlot(int i, ItemStack itemstack) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public String getInventoryName() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public boolean hasCustomInventoryName() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public void markDirty() {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void openInventory() {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void closeInventory() {
-		// TODO Auto-generated method stub
+	}
 
+	@Override
+	public boolean acceptTask (IRobotTask task) {
+		return task instanceof TaskBuildSchematic;
+	}
+
+	@Override
+	public ResourceLocation getTexture () {
+		return texture;
 	}
 }

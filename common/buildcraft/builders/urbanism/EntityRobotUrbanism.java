@@ -38,7 +38,7 @@ public class EntityRobotUrbanism extends EntityRobot {
 
 		if (!worldObj.isRemote) {
 			if (task != null) {
-				task.work(this);
+				task.update(this);
 
 				if (task.done()) {
 					task = null;
