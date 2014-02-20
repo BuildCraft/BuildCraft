@@ -42,11 +42,6 @@ public class BlockEnergyEmitter extends BlockBuildCraft {
 		return false;
 	}
 
-	public boolean isACube() {
-		return false;
-	}
-
-
 	//@Override
 	//public int getRenderType() {
 	//	return BuildCraftCore.blockByEntityModel;
