@@ -8,27 +8,15 @@
  */
 package buildcraft.core.blueprints;
 
-import buildcraft.api.blueprints.BlockSignature;
-import buildcraft.api.blueprints.BlueprintManager;
-import buildcraft.api.blueprints.BptBlock;
-import buildcraft.api.blueprints.BptSlotInfo;
-import buildcraft.api.blueprints.IBptContext;
-import buildcraft.api.blueprints.ItemSignature;
-import buildcraft.core.IBptContributor;
-import buildcraft.core.utils.BCLog;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.StringReader;
 import java.util.TreeSet;
+
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockContainer;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTBase;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
+import buildcraft.api.blueprints.IBptContext;
 
 public class BptBlueprint extends BptBase {
 
@@ -349,19 +337,6 @@ public class BptBlueprint extends BptBase {
 		if (worldId != 0) {
 			idsToMap.add(worldId);
 		}
-	}
-
-	private boolean itemMatch(ItemSignature sig, Item item) {
-		if (item == null)
-			return false;
-
-		if (!"*".equals(sig.itemClassName) && !item.getClass().getSimpleName().equals(sig.itemClassName))
-			return false;
-
-		if (!"*".equals(sig.itemName) && !item.getUnlocalizedName(new ItemStack(item)).equals(sig.itemName))
-			return false;
-
-		return true;
 	}
 
 	@Override

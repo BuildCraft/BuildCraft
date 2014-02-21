@@ -108,7 +108,7 @@ public class PatternPyramid extends FillerPattern {
 			height += stepY;
 		}
 
-		return new BlueprintBuilder(bpt, world, (int) box.xMin, (int) box.yMin, (int) box.zMin,
+		return new BlueprintBuilder(bpt, world, box.xMin, box.yMin, box.zMin,
 				ForgeDirection.NORTH);
 	}
 }

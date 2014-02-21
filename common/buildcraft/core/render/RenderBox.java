@@ -18,17 +18,16 @@ import buildcraft.core.LaserData;
 
 public class RenderBox {
 
-	public static void doRender(TextureManager t, ResourceLocation texture, Box box, double x, double y, double z, float f, float f1) {
+	public static void doRender(TextureManager t, ResourceLocation texture, Box box) {
 		GL11.glPushMatrix();
 		GL11.glDisable(2896 /* GL_LIGHTING */);
-		GL11.glTranslated(x, y, z);
 
 		box.createLaserData();
 
 		for (LaserData l : box.lasersData) {
 			l.update();
 			GL11.glPushMatrix();
-			GL11.glTranslated(l.head.x, l.head.y, l.head.z);
+			GL11.glTranslated(l.head.x + 0.5F, l.head.y + 0.5F, l.head.z + 0.5F);
 			RenderLaser.doRenderLaser(t, l, texture);
 			GL11.glPopMatrix();
 		}

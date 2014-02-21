@@ -8,14 +8,14 @@
  */
 package buildcraft.api.bptblocks;
 
+import net.minecraft.block.Block;
 import buildcraft.api.blueprints.BptSlotInfo;
 import buildcraft.api.blueprints.IBptContext;
 
-@Deprecated
 public class BptBlockPiston extends BptBlockRotateMeta {
 
-	public BptBlockPiston(int blockId) {
-		super(blockId, new int[] { 2, 5, 3, 4 }, true);
+	public BptBlockPiston(Block block) {
+		super(block, new int[] { 2, 5, 3, 4 }, true);
 	}
 
 	@Override

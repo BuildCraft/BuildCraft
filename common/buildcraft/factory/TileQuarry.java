@@ -28,7 +28,6 @@ import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftFactory;
 import buildcraft.api.core.IAreaProvider;
-import buildcraft.api.core.LaserKind;
 import buildcraft.api.gates.IAction;
 import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.power.PowerHandler;
@@ -98,7 +97,7 @@ public class TileQuarry extends TileBuildCraft implements IMachine, IPowerRecept
 
 		if (builderDone) {
 
-			box.deleteLasers();
+			box.isVisible = false;
 
 			if (arm == null) {
 				createArm();
@@ -113,7 +112,7 @@ public class TileQuarry extends TileBuildCraft implements IMachine, IPowerRecept
 
 		} else {
 
-			box.createLasers(worldObj, LaserKind.Stripes);
+			box.isVisible = true;
 			isDigging = true;
 		}
 	}
@@ -186,7 +185,6 @@ public class TileQuarry extends TileBuildCraft implements IMachine, IPowerRecept
 	}
 
 	private void killBuilder() {
-		box.deleteLasers();
 		builder.setDead();
 		builder = null;
 	}
@@ -233,7 +231,7 @@ public class TileQuarry extends TileBuildCraft implements IMachine, IPowerRecept
 		if (!findTarget(true)) {
 			// I believe the issue is box going null becuase of bad chunkloader positioning
 			if (arm != null && box != null) {
-				setTarget((int) box.xMin + 1, yCoord + 2, (int) box.zMin + 1);
+				setTarget(box.xMin + 1, yCoord + 2, box.zMin + 1);
 			}
 
 			isDigging = false;
@@ -330,7 +328,7 @@ public class TileQuarry extends TileBuildCraft implements IMachine, IPowerRecept
 				for (int searchZ = startZ; searchZ != endZ; searchZ += incZ) {
 					if (!blockedColumns[searchX][searchZ]) {
 						Integer height = columnHeights[searchX][searchZ];
-						int bx = (int) box.xMin + searchX + 1, by = searchY, bz = (int) box.zMin + searchZ + 1;
+						int bx = box.xMin + searchX + 1, by = searchY, bz = box.zMin + searchZ + 1;
 
 						if (height == null) {
 							columnHeights[searchX][searchZ] = height = worldObj.getHeightValue(bx, bz);
@@ -529,7 +527,6 @@ public class TileQuarry extends TileBuildCraft implements IMachine, IPowerRecept
 			builder.setDead();
 		}
 
-		box.deleteLasers();
 		arm = null;
 	}
 
@@ -571,8 +568,8 @@ public class TileQuarry extends TileBuildCraft implements IMachine, IPowerRecept
 			useDefault = true;
 		}
 
-		int xSize = (int) a.xMax() - (int) a.xMin() + 1;
-		int zSize = (int) a.zMax() - (int) a.zMin() + 1;
+		int xSize = a.xMax() - a.xMin() + 1;
+		int zSize = a.zMax() - a.zMin() + 1;
 
 		if (xSize < 3 || zSize < 3 || ((xSize * zSize) >> 8) >= chunkTicket.getMaxChunkListDepth()) {
 			if (placedBy != null) {
@@ -587,9 +584,9 @@ public class TileQuarry extends TileBuildCraft implements IMachine, IPowerRecept
 			useDefault = true;
 		}
 
-		xSize =(int) a.xMax() - (int) a.xMin() + 1;
-		int ySize = (int) a.yMax() - (int) a.yMin() + 1;
-		zSize = (int) a.zMax() - (int) a.zMin() + 1;
+		xSize =a.xMax() - a.xMin() + 1;
+		int ySize = a.yMax() - a.yMin() + 1;
+		zSize = a.zMax() - a.zMin() + 1;
 
 		box.initialize(a);
 
@@ -631,17 +628,17 @@ public class TileQuarry extends TileBuildCraft implements IMachine, IPowerRecept
 	}
 
 	private void initializeBlueprintBuilder() {
-		Blueprint blueprint = Blueprint.create((int) box.sizeX(), (int) box.sizeY(), (int) box.sizeZ());
+		Blueprint blueprint = Blueprint.create(box.sizeX(), box.sizeY(), box.sizeZ());
 
 		for (int it = 0; it < 2; it++) {
 			for (int i = 0; i < blueprint.sizeX; ++i) {
-				blueprint.setSchematic(worldObj, i, it * ((int) box.sizeY() - 1), 0, BuildCraftFactory.frameBlock, 0);
-				blueprint.setSchematic(worldObj, i, it * ((int) box.sizeY() - 1), blueprint.sizeZ - 1, BuildCraftFactory.frameBlock, 0);
+				blueprint.setSchematic(worldObj, i, it * (box.sizeY() - 1), 0, BuildCraftFactory.frameBlock, 0);
+				blueprint.setSchematic(worldObj, i, it * (box.sizeY() - 1), blueprint.sizeZ - 1, BuildCraftFactory.frameBlock, 0);
 			}
 
 			for (int k = 0; k < blueprint.sizeZ; ++k) {
-				blueprint.setSchematic(worldObj, 0, it * ((int) box.sizeY() - 1), k, BuildCraftFactory.frameBlock, 0);
-				blueprint.setSchematic(worldObj, blueprint.sizeX - 1, it * ((int) box.sizeY() - 1), k, BuildCraftFactory.frameBlock, 0);
+				blueprint.setSchematic(worldObj, 0, it * (box.sizeY() - 1), k, BuildCraftFactory.frameBlock, 0);
+				blueprint.setSchematic(worldObj, blueprint.sizeX - 1, it * (box.sizeY() - 1), k, BuildCraftFactory.frameBlock, 0);
 			}
 		}
 
@@ -652,7 +649,7 @@ public class TileQuarry extends TileBuildCraft implements IMachine, IPowerRecept
 			blueprint.setSchematic(worldObj, blueprint.sizeX - 1, h, blueprint.sizeZ - 1, BuildCraftFactory.frameBlock, 0);
 		}
 
-		blueprintBuilder = new BlueprintBuilder(blueprint, worldObj, (int) box.xMin, yCoord, (int) box.zMin, ForgeDirection.NORTH);
+		blueprintBuilder = new BlueprintBuilder(blueprint, worldObj, box.xMin, yCoord, box.zMin, ForgeDirection.NORTH);
 		blueprintIterator = blueprintBuilder.getBuilders().listIterator();
 	}
 
@@ -663,7 +660,6 @@ public class TileQuarry extends TileBuildCraft implements IMachine, IPowerRecept
 		if (isAlive) {
 			createUtilsIfNeeded();
 		} else {
-			box.deleteLasers();
 			box.reset();
 			return;
 		}
@@ -852,8 +848,8 @@ public class TileQuarry extends TileBuildCraft implements IMachine, IPowerRecept
 		chunks.add(quarryChunk);
 		ForgeChunkManager.forceChunk(ticket, quarryChunk);
 
-		for (int chunkX = (int) box.xMin >> 4; chunkX <= (int) box.xMax >> 4; chunkX++) {
-			for (int chunkZ = (int) box.zMin >> 4; chunkZ <= (int) box.zMax >> 4; chunkZ++) {
+		for (int chunkX = box.xMin >> 4; chunkX <= box.xMax >> 4; chunkX++) {
+			for (int chunkZ = box.zMin >> 4; chunkZ <= box.zMax >> 4; chunkZ++) {
 				ChunkCoordIntPair chunk = new ChunkCoordIntPair(chunkX, chunkZ);
 				ForgeChunkManager.forceChunk(ticket, chunk);
 				chunks.add(chunk);

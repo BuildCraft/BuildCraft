@@ -41,32 +41,32 @@ public abstract class BptBuilderBase implements IAreaProvider {
 	public abstract BptSlot getNextBlock(World world, IBuilderInventory inv);
 
 	@Override
-	public float xMin() {
+	public int xMin() {
 		return x - blueprint.anchorX;
 	}
 
 	@Override
-	public float yMin() {
+	public int yMin() {
 		return y - blueprint.anchorY;
 	}
 
 	@Override
-	public float zMin() {
+	public int zMin() {
 		return z - blueprint.anchorZ;
 	}
 
 	@Override
-	public float xMax() {
+	public int xMax() {
 		return x + blueprint.sizeX - blueprint.anchorX - 1;
 	}
 
 	@Override
-	public float yMax() {
+	public int yMax() {
 		return y + blueprint.sizeY - blueprint.anchorY - 1;
 	}
 
 	@Override
-	public float zMax() {
+	public int zMax() {
 		return z + blueprint.sizeZ - blueprint.anchorZ - 1;
 	}
 

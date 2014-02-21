@@ -8,23 +8,20 @@
  */
 package buildcraft.transport.blueprints;
 
-import buildcraft.BuildCraftCore;
-import buildcraft.api.blueprints.BlockSignature;
+import java.util.LinkedList;
+
+import net.minecraft.block.Block;
+import net.minecraft.item.ItemStack;
 import buildcraft.api.blueprints.BptBlock;
 import buildcraft.api.blueprints.BptSlotInfo;
 import buildcraft.api.blueprints.IBptContext;
-import buildcraft.core.Version;
 import buildcraft.transport.BlockGenericPipe;
 import buildcraft.transport.Pipe;
-import java.util.LinkedList;
-import net.minecraft.block.Block;
-import net.minecraft.item.ItemStack;
 
-@Deprecated
 public class BptBlockPipe extends BptBlock {
 
-	public BptBlockPipe(int blockId) {
-		super(blockId);
+	public BptBlockPipe(Block block) {
+		super(block);
 	}
 
 	@Override
@@ -71,7 +68,7 @@ public class BptBlockPipe extends BptBlock {
 		//	return pipe.itemID == slot.cpt.getInteger("pipeId");
 		//else
 		//	return false;
-		
+
 		return false;
 	}
 
@@ -183,16 +180,6 @@ public class BptBlockPipe extends BptBlock {
 		//if (BuildCraftCore.itemBptProps[pipeId] != null) {
 		//	BuildCraftCore.itemBptProps[pipeId].postProcessing(slot, context);
 		//}
-	}
-
-	@Override
-	public BlockSignature getSignature(Block block) {
-		BlockSignature sig = super.getSignature(block);
-
-		sig.mod = "BuildCraftTransport";
-		sig.modVersion = Version.VERSION;
-
-		return sig;
 	}
 
 }

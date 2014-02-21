@@ -14,27 +14,35 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.world.World;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.AxisAlignedBB;
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.core.IBox;
-import buildcraft.api.core.LaserKind;
 import buildcraft.api.core.Position;
 import buildcraft.core.network.NetworkData;
-import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
 
 public class Box implements IBox {
 
-	public @NetworkData
-	float xMin, yMin, zMin, xMax, yMax, zMax;
-	public @NetworkData
-	boolean initialized;
+	public enum Kind {
+		LASER_RED,
+		LASER_YELLOW,
+		LASER_GREEN,
+		LASER_BLUE,
+		STRIPES
+	}
 
-	// TODO: we should convert all boxes to the interface that draws it directly
-	// rather than the one that relies on additional entities. Amongst other
-	// things, this is a substancial save of synchronization data, as only
-	// boundaries need to be carried over.
-	private EntityBlock lasers[];
+	@NetworkData
+	public Kind kind = Kind.LASER_RED;
+
+	@NetworkData
+	public int xMin, yMin, zMin, xMax, yMax, zMax;
+
+	@NetworkData
+	public boolean initialized;
+
+	@NetworkData
+	public boolean isVisible = true;
 
 	public LaserData lasersData [];
 
@@ -42,7 +50,12 @@ public class Box implements IBox {
 		reset();
 	}
 
-	public Box(float xMin, float yMin, float zMin, float xMax, float yMax, float zMax) {
+	public Box(TileEntity e) {
+		initialize(e.xCoord, e.yCoord, e.zCoord, e.xCoord + 1, e.yCoord + 1,
+				e.zCoord + 1);
+	}
+
+	public Box(int xMin, int yMin, int zMin, int xMax, int yMax, int zMax) {
 		this ();
 		initialize(xMin, yMin, zMin, xMax, yMax, zMax);
 	}
@@ -61,7 +74,7 @@ public class Box implements IBox {
 		return initialized;
 	}
 
-	public void initialize(float xMin, float yMin, float zMin, float xMax, float yMax, float zMax) {
+	public void initialize(int xMin, int yMin, int zMin, int xMax, int yMax, int zMax) {
 		if (xMin < xMax) {
 			this.xMin = xMin;
 			this.xMax = xMax;
@@ -99,12 +112,14 @@ public class Box implements IBox {
 	}
 
 	public void initialize(NBTTagCompound nbttagcompound) {
-		initialize(nbttagcompound.getFloat("xMin"),
-				nbttagcompound.getFloat("yMin"),
-				nbttagcompound.getFloat("zMin"),
-				nbttagcompound.getFloat("xMax"),
-				nbttagcompound.getFloat("yMax"),
-				nbttagcompound.getFloat("zMax"));
+		kind = Kind.values() [nbttagcompound.getShort("kind")];
+
+		initialize(nbttagcompound.getInteger("xMin"),
+				nbttagcompound.getInteger("yMin"),
+				nbttagcompound.getInteger("zMin"),
+				nbttagcompound.getInteger("xMax"),
+				nbttagcompound.getInteger("yMax"),
+				nbttagcompound.getInteger("zMax"));
 	}
 
 	public void initialize(int centerX, int centerY, int centerZ, int size) {
@@ -167,15 +182,15 @@ public class Box implements IBox {
 		return new Position(xMax, yMax, zMax);
 	}
 
-	public float sizeX() {
+	public int sizeX() {
 		return xMax - xMin + 1;
 	}
 
-	public float sizeY() {
+	public int sizeY() {
 		return yMax - yMin + 1;
 	}
 
-	public float sizeZ() {
+	public int sizeZ() {
 		return zMax - zMin + 1;
 	}
 
@@ -207,7 +222,7 @@ public class Box implements IBox {
 	}
 
 	public void reorder() {
-		float tmp;
+		int tmp;
 
 		if (xMin > xMax) {
 			tmp = xMin;
@@ -229,63 +244,81 @@ public class Box implements IBox {
 	}
 
 	@Override
-	public void createLasers(World world, LaserKind kind) {
-		if (lasers == null) {
-			lasers = Utils.createLaserBox(world, xMin, yMin, zMin, xMax, yMax, zMax, kind);
-		}
-	}
-
 	public void createLaserData() {
 		lasersData = Utils.createLaserDataBox(xMin, yMin, zMin, xMax, yMax, zMax);
-	}
-
-	@Override
-	public void deleteLasers() {
-		if (lasers != null) {
-			for (EntityBlock b : lasers) {
-				CoreProxy.proxy.removeEntity(b);
-			}
-
-			lasers = null;
-		}
 	}
 
 	public void writeToStream(ByteBuf stream) {
 		stream.writeBoolean(initialized);
 
-		stream.writeFloat(xMin);
-		stream.writeFloat(yMin);
-		stream.writeFloat(zMin);
+		stream.writeInt(xMin);
+		stream.writeInt(yMin);
+		stream.writeInt(zMin);
 
-		stream.writeFloat(xMax);
-		stream.writeFloat(yMax);
-		stream.writeFloat(zMax);
+		stream.writeInt(xMax);
+		stream.writeInt(yMax);
+		stream.writeInt(zMax);
 	}
 
 	public void readFromStream(ByteBuf stream) {
 		initialized = stream.readBoolean();
 
-		xMin = stream.readFloat();
-		yMin = stream.readFloat();
-		zMin = stream.readFloat();
+		xMin = stream.readInt();
+		yMin = stream.readInt();
+		zMin = stream.readInt();
 
-		xMax = stream.readFloat();
-		yMax = stream.readFloat();
-		zMax = stream.readFloat();
+		xMax = stream.readInt();
+		yMax = stream.readInt();
+		zMax = stream.readInt();
 	}
 
 	public void writeToNBT(NBTTagCompound nbttagcompound) {
-		nbttagcompound.setFloat("xMin", xMin);
-		nbttagcompound.setFloat("yMin", yMin);
-		nbttagcompound.setFloat("zMin", zMin);
+		nbttagcompound.setByte("kind", (byte) kind.ordinal());
 
-		nbttagcompound.setFloat("xMax", xMax);
-		nbttagcompound.setFloat("yMax", yMax);
-		nbttagcompound.setFloat("zMax", zMax);
+		nbttagcompound.setInteger("xMin", xMin);
+		nbttagcompound.setInteger("yMin", yMin);
+		nbttagcompound.setInteger("zMin", zMin);
+
+		nbttagcompound.setInteger("xMax", xMax);
+		nbttagcompound.setInteger("yMax", yMax);
+		nbttagcompound.setInteger("zMax", zMax);
 	}
 
 	@Override
 	public String toString() {
 		return "{" + xMin + ", " + xMax + "}, {" + yMin + ", " + yMax + "}, {" + zMin + ", " + zMax + "}";
+	}
+
+	public Box extendToEncompass (Box toBeContained) {
+		if (toBeContained.xMin < xMin) {
+			xMin = toBeContained.xMin;
+		}
+
+		if (toBeContained.yMin < yMin) {
+			yMin = toBeContained.yMin;
+		}
+
+		if (toBeContained.zMin < zMin) {
+			zMin = toBeContained.zMin;
+		}
+
+		if (toBeContained.xMax > xMax) {
+			xMax = toBeContained.xMax;
+		}
+
+		if (toBeContained.yMax > yMax) {
+			yMax = toBeContained.yMax;
+		}
+
+		if (toBeContained.zMax > zMax) {
+			zMax = toBeContained.zMax;
+		}
+
+		return this;
+	}
+
+	public AxisAlignedBB getBoundingBox() {
+		return AxisAlignedBB.getBoundingBox(xMin, yMin, zMin,
+				xMax, yMax, zMax);
 	}
 }

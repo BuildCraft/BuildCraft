@@ -8,13 +8,14 @@
  */
 package buildcraft.api.bptblocks;
 
+import java.util.LinkedList;
+
+import net.minecraft.block.Block;
+import net.minecraft.item.ItemStack;
 import buildcraft.api.blueprints.BptBlock;
 import buildcraft.api.blueprints.BptSlotInfo;
 import buildcraft.api.blueprints.IBptContext;
-import java.util.LinkedList;
-import net.minecraft.item.ItemStack;
 
-@Deprecated
 public class BptBlockRotateMeta extends BptBlock {
 
 	int[] rot;
@@ -22,8 +23,8 @@ public class BptBlockRotateMeta extends BptBlock {
 
 	int infoMask = 0;
 
-	public BptBlockRotateMeta(int blockId, int[] rotations, boolean rotateForward) {
-		super(blockId);
+	public BptBlockRotateMeta(Block block, int[] rotations, boolean rotateForward) {
+		super(block);
 
 		rot = rotations;
 

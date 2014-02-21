@@ -8,21 +8,19 @@
  */
 package buildcraft.api.bptblocks;
 
+import java.util.LinkedList;
+
+import net.minecraft.block.Block;
+import net.minecraft.init.Items;
+import net.minecraft.item.ItemStack;
 import buildcraft.api.blueprints.BptBlock;
 import buildcraft.api.blueprints.BptSlotInfo;
 import buildcraft.api.blueprints.IBptContext;
 
-import java.util.LinkedList;
-
-import net.minecraft.init.Items;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-
-@Deprecated
 public class BptBlockBed extends BptBlock {
 
-	public BptBlockBed(int blockId) {
-		super(blockId);
+	public BptBlockBed(Block block) {
+		super(block);
 	}
 
 	@Override

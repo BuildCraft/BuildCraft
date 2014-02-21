@@ -8,39 +8,47 @@
  */
 package buildcraft.builders;
 
-import java.io.IOException;
-
-import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.AxisAlignedBB;
 import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.BuildCraftBuilders;
 import buildcraft.api.core.IAreaProvider;
-import buildcraft.api.core.LaserKind;
-import buildcraft.builders.blueprints.Blueprint;
 import buildcraft.core.Box;
-import buildcraft.core.DefaultProps;
+import buildcraft.core.Box.Kind;
+import buildcraft.core.IBoxProvider;
 import buildcraft.core.TileBuildCraft;
+import buildcraft.core.blueprints.BptBase;
+import buildcraft.core.blueprints.BptBlueprint;
+import buildcraft.core.blueprints.BptContext;
+import buildcraft.core.blueprints.BptTemplate;
 import buildcraft.core.network.NetworkData;
-import buildcraft.core.network.PacketUpdate;
-import buildcraft.core.network.RPC;
-import buildcraft.core.network.RPCHandler;
-import buildcraft.core.network.RPCSide;
 import buildcraft.core.utils.Utils;
 
-public class TileArchitect extends TileBuildCraft implements IInventory {
+public class TileArchitect extends TileBuildCraft implements IInventory, IBoxProvider {
 
 	public @NetworkData
 	Box box = new Box();
+
 	private ItemStack items[] = new ItemStack[2];
+
 	private boolean isComputing = false;
 	public int computingTime = 0;
 
-	@NetworkData
-	public String name = "";
+	public @NetworkData
+	String name = "";
+
+	// Use that field to avoid creating several times the same template if
+	// they're the same!
+	private int lastBptId = 0;
+
+	public TileArchitect() {
+		box.kind = Kind.STRIPES;
+	}
 
 	@Override
 	public void updateEntity() {
@@ -50,7 +58,7 @@ public class TileArchitect extends TileBuildCraft implements IInventory {
 			if (computingTime < 200) {
 				computingTime++;
 			} else {
-				createBlueprint();
+				createBpt();
 			}
 		}
 	}
@@ -69,87 +77,103 @@ public class TileArchitect extends TileBuildCraft implements IInventory {
 			}
 		}
 
-		if (!worldObj.isRemote && box.isInitialized()) {
-			box.createLasers(worldObj, LaserKind.Stripes);
-		}
-
 		sendNetworkUpdate();
 	}
 
-	public void createBlueprint() {
+	public void createBpt() {
 		if (!box.isInitialized() || items[1] != null)
 			return;
 
-		Blueprint blueprint;
+		BptBase result;
+		BptContext context = null;
 
 		if (items[0].getItem() instanceof ItemBlueprintTemplate) {
-			blueprint = createMaskBlueprint(box);
+			result = createBptTemplate();
+			context = new BptContext(worldObj, null, box);
 		} else {
-			blueprint = createStandardBlueprint(box);
+			result = createBptBlueprint();
+			context = new BptContext(worldObj, (BptBlueprint) result, box);
 		}
 
 		if (!name.equals("")) {
-			blueprint.setName(name);
+			result.setName(name);
 		}
 
-		blueprint.anchorX = xCoord - (int) box.xMin;
-		blueprint.anchorY = yCoord - (int) box.yMin;
-		blueprint.anchorZ = zCoord - (int) box.zMin;
+		result.anchorX = xCoord - box.xMin;
+		result.anchorY = yCoord - box.yMin;
+		result.anchorZ = zCoord - box.zMin;
 
+		ForgeDirection o = ForgeDirection.values()[worldObj.getBlockMetadata(xCoord, yCoord, zCoord)].getOpposite();
 
-		blueprint.anchorOrientation = ForgeDirection.getOrientation(worldObj.getBlockMetadata(xCoord, yCoord, zCoord));
+		if (o == ForgeDirection.EAST) {
+			// Do nothing
+		} else if (o == ForgeDirection.SOUTH) {
+			result.rotateLeft(context);
+			result.rotateLeft(context);
+			result.rotateLeft(context);
+		} else if (o == ForgeDirection.WEST) {
+			result.rotateLeft(context);
+			result.rotateLeft(context);
+		} else if (o == ForgeDirection.NORTH) {
+			result.rotateLeft(context);
+		}
 
-		BuildCraftBuilders.serverDB.add(blueprint);
+		ItemStack stack;
+		if (result.equals(BuildCraftBuilders.getBptRootIndex().getBluePrint(lastBptId))) {
+			result = BuildCraftBuilders.getBptRootIndex().getBluePrint(lastBptId);
+			stack = BuildCraftBuilders.getBptItemStack(items[0].getItem(), lastBptId, result.getName());
+		} else {
+			int bptId = BuildCraftBuilders.getBptRootIndex().storeBluePrint(result);
+			stack = BuildCraftBuilders.getBptItemStack(items[0].getItem(), bptId, result.getName());
+			lastBptId = bptId;
+		}
 
-		setInventorySlotContents(1, ItemBlueprint.getBlueprintItem(blueprint));
+		setInventorySlotContents(1, stack);
 		setInventorySlotContents(0, null);
 	}
 
-	private Blueprint createMaskBlueprint(Box box) {
-		Blueprint blueprint = Blueprint.create((int) box.sizeX(), (int) box.sizeY(), (int) box.sizeZ());
+	public BptBase createBptTemplate() {
+		int mask1 = 1;
+		int mask0 = 0;
 
-		/*for (int x = box.xMin; x <= box.xMax; ++x) {
+		if (worldObj.isBlockIndirectlyGettingPowered(xCoord, yCoord, zCoord)) {
+			mask1 = 0;
+			mask0 = 1;
+		}
+
+		BptBase result = new BptTemplate(box.sizeX(), box.sizeY(), box.sizeZ());
+
+		for (int x = box.xMin; x <= box.xMax; ++x) {
 			for (int y = box.yMin; y <= box.yMax; ++y) {
 				for (int z = box.zMin; z <= box.zMax; ++z) {
-					if (worldObj.isAirBlock(x, y, z))
-						continue;
-					Block block = Block.blocksList[worldObj.getBlockId(x, y, z)];
-					if (block == null)
-						continue;
-
-					blueprint.setSchematic(x - box.xMin, y - box.yMin, z - box.zMin, worldObj, block);
-				}
-			}
-		}*/
-
-		return blueprint;
-	}
-
-	private Blueprint createStandardBlueprint(Box box) {
-		Blueprint blueprint = Blueprint.create((int) box.sizeX(), (int) box.sizeY(), (int) box.sizeZ());
-
-		for (int x = (int) box.xMin; x <= box.xMax; ++x) {
-			for (int y = (int) box.yMin; y <= box.yMax; ++y) {
-				for (int z = (int) box.zMin; z <= box.zMax; ++z) {
-					if (worldObj.isAirBlock(x, y, z)) {
-						continue;
+					if (worldObj.getBlock(x, y, z) != Blocks.air) {
+						result.setBlock(x - box.xMin, y - box.yMin, z - box.zMin, Blocks.stone);
+					} else {
+						result.setBlock(x - box.xMin, y - box.yMin, z - box.zMin, Blocks.air);
 					}
-
-					Block block = worldObj.getBlock(x, y, z);
-
-					if (block == null) {
-						continue;
-					}
-
-					blueprint.setSchematic(x - (int) box.xMin, y - (int) box.yMin, z - (int) box.zMin, worldObj, block);
 				}
 			}
 		}
 
-		return blueprint;
+		return result;
 	}
 
-	@RPC (RPCSide.SERVER)
+	private BptBase createBptBlueprint() {
+		BptBlueprint result = new BptBlueprint(box.sizeX(), box.sizeY(), box.sizeZ());
+
+		BptContext context = new BptContext(worldObj, result, box);
+
+		for (int x = box.xMin; x <= box.xMax; ++x) {
+			for (int y = box.yMin; y <= box.yMax; ++y) {
+				for (int z = box.zMin; z <= box.zMax; ++z) {
+					result.readFromWorld(context, this, x, y, z);
+				}
+			}
+		}
+
+		return result;
+	}
+
 	public void handleClientInput(char c) {
 		if (c == 8) {
 			if (name.length() > 0) {
@@ -160,13 +184,7 @@ public class TileArchitect extends TileBuildCraft implements IInventory {
 				name += c;
 			}
 		}
-
-		RPCHandler.rpcBroadcastPlayersAtDistance(this, "setName", DefaultProps.NETWORK_UPDATE_RANGE, name);
-	}
-
-	@RPC
-	public void setName (String name) {
-		this.name = name;
+		sendNetworkUpdate();
 	}
 
 	@Override
@@ -207,8 +225,10 @@ public class TileArchitect extends TileBuildCraft implements IInventory {
 
 	@Override
 	public ItemStack getStackInSlotOnClosing(int slot) {
-		if (items[slot] == null)
+		if (items[slot] == null) {
 			return null;
+		}
+
 		ItemStack toReturn = items[slot];
 		items[slot] = null;
 		return toReturn;
@@ -225,11 +245,6 @@ public class TileArchitect extends TileBuildCraft implements IInventory {
 	}
 
 	@Override
-	public boolean isItemValidForSlot(int slot, ItemStack stack) {
-		return slot == 0 && stack != null && stack.getItem() == BuildCraftBuilders.blueprintItem;
-	}
-
-	@Override
 	public boolean isUseableByPlayer(EntityPlayer entityplayer) {
 		return worldObj.getTileEntity(xCoord, yCoord, zCoord) == this;
 	}
@@ -238,6 +253,7 @@ public class TileArchitect extends TileBuildCraft implements IInventory {
 	public void readFromNBT(NBTTagCompound nbttagcompound) {
 		super.readFromNBT(nbttagcompound);
 
+		lastBptId = nbttagcompound.getInteger("lastTemplateId");
 		computingTime = nbttagcompound.getInteger("computingTime");
 		isComputing = nbttagcompound.getBoolean("isComputing");
 
@@ -245,11 +261,14 @@ public class TileArchitect extends TileBuildCraft implements IInventory {
 			box.initialize(nbttagcompound.getCompoundTag("box"));
 		}
 
-		NBTTagList nbttaglist = nbttagcompound.getTagList("Items", Utils.NBTTag_Types.NBTTagCompound.ordinal());
+		NBTTagList nbttaglist = nbttagcompound.getTagList("Items",
+				Utils.NBTTag_Types.NBTTagCompound.ordinal());
 		items = new ItemStack[getSizeInventory()];
+
 		for (int i = 0; i < nbttaglist.tagCount(); i++) {
 			NBTTagCompound nbttagcompound1 = nbttaglist.getCompoundTagAt(i);
 			int j = nbttagcompound1.getByte("Slot") & 0xff;
+
 			if (j >= 0 && j < items.length) {
 				items[j] = ItemStack.loadItemStackFromNBT(nbttagcompound1);
 			}
@@ -262,6 +281,7 @@ public class TileArchitect extends TileBuildCraft implements IInventory {
 	public void writeToNBT(NBTTagCompound nbttagcompound) {
 		super.writeToNBT(nbttagcompound);
 
+		nbttagcompound.setInteger("lastTemplateId", lastBptId);
 		nbttagcompound.setInteger("computingTime", computingTime);
 		nbttagcompound.setBoolean("isComputing", isComputing);
 
@@ -291,18 +311,11 @@ public class TileArchitect extends TileBuildCraft implements IInventory {
 		destroy();
 	}
 
-	@Override
-	public void destroy() {
-		if (box.isInitialized()) {
-			box.deleteLasers();
-		}
-	}
-
 	private void initializeComputing() {
 		if (!box.isInitialized())
 			return;
 		else if (!isComputing) {
-			if (items[0] != null && items[0].getItem() instanceof ItemBlueprint && items[1] == null) {
+			if (items[0] != null && items[0].getItem() instanceof ItemBptBase && items[1] == null) {
 				isComputing = true;
 				computingTime = 0;
 			} else {
@@ -310,7 +323,7 @@ public class TileArchitect extends TileBuildCraft implements IInventory {
 				computingTime = 0;
 			}
 		} else {
-			if (items[0] == null || !(items[0].getItem() instanceof ItemBlueprint)) {
+			if (items[0] == null || !(items[0].getItem() instanceof ItemBptBase)) {
 				isComputing = false;
 				computingTime = 0;
 			}
@@ -319,28 +332,6 @@ public class TileArchitect extends TileBuildCraft implements IInventory {
 
 	public int getComputingProgressScaled(int i) {
 		return (computingTime * i) / 200;
-	}
-
-	@Override
-	public void handleDescriptionPacket(PacketUpdate packet) throws IOException {
-		boolean initialized = box.isInitialized();
-
-		super.handleDescriptionPacket(packet);
-
-		if (!initialized && box.isInitialized()) {
-			box.createLasers(worldObj, LaserKind.Stripes);
-		}
-	}
-
-	@Override
-	public void handleUpdatePacket(PacketUpdate packet) throws IOException {
-		boolean initialized = box.isInitialized();
-
-		super.handleUpdatePacket(packet);
-
-		if (!initialized && box.isInitialized()) {
-			box.createLasers(worldObj, LaserKind.Stripes);
-		}
 	}
 
 	@Override
@@ -353,7 +344,21 @@ public class TileArchitect extends TileBuildCraft implements IInventory {
 
 	@Override
 	public boolean hasCustomInventoryName() {
+		return true;
+	}
+
+	@Override
+	public boolean isItemValidForSlot(int var1, ItemStack var2) {
 		return false;
 	}
 
+	@Override
+	public Box getBox() {
+		return box;
+	}
+
+	@Override
+	public AxisAlignedBB getRenderBoundingBox() {
+		return new Box (this).extendToEncompass(box).getBoundingBox();
+	}
 }

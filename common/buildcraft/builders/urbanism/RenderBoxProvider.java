@@ -14,10 +14,13 @@ import net.minecraft.util.ResourceLocation;
 
 import org.lwjgl.opengl.GL11;
 
+import buildcraft.core.Box;
 import buildcraft.core.DefaultProps;
+import buildcraft.core.IBoxProvider;
+import buildcraft.core.IBoxesProvider;
 import buildcraft.core.render.RenderBox;
 
-public class RenderUrbanist extends TileEntitySpecialRenderer {
+public class RenderBoxProvider extends TileEntitySpecialRenderer {
 
 	private static final ResourceLocation LASER_RED = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_ENTITIES + "/laser_1.png");
 	private static final ResourceLocation LASER_YELLOW = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_ENTITIES + "/laser_2.png");
@@ -25,13 +28,11 @@ public class RenderUrbanist extends TileEntitySpecialRenderer {
 	private static final ResourceLocation LASER_BLUE = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_ENTITIES + "/laser_4.png");
 	private static final ResourceLocation STRIPES = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_ENTITIES + "/stripes.png");
 
-	public RenderUrbanist() {
+	public RenderBoxProvider() {
 	}
 
 	@Override
 	public void renderTileEntityAt(TileEntity tileentity, double x, double y, double z, float f) {
-		TileUrbanist urbanist = (TileUrbanist) tileentity;
-
 		GL11.glPushMatrix();
 		GL11.glPushAttrib(GL11.GL_ENABLE_BIT);
 		GL11.glEnable(GL11.GL_CULL_FACE);
@@ -39,60 +40,44 @@ public class RenderUrbanist extends TileEntitySpecialRenderer {
 		GL11.glEnable(GL11.GL_BLEND);
 		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
-		for (AnchoredBox b : urbanist.frames) {
-			GL11.glPushMatrix();
-			GL11.glTranslated(-tileentity.xCoord, -tileentity.yCoord, -tileentity.zCoord);
+		GL11.glPushMatrix();
+		GL11.glTranslated(-tileentity.xCoord, -tileentity.yCoord, -tileentity.zCoord);
+		GL11.glTranslated(x, y, z);
 
-			ResourceLocation texture = LASER_RED;
-
-			switch (b.kind) {
-			case LASER_RED:
-				texture = LASER_RED;
-				break;
-			case LASER_YELLOW:
-				texture = LASER_YELLOW;
-				break;
-			case LASER_GREEN:
-				texture = LASER_GREEN;
-				break;
-			case LASER_BLUE:
-				texture = LASER_BLUE;
-				break;
-			case STRIPES:
-				texture = STRIPES;
-				break;
+		if (tileentity instanceof IBoxesProvider) {
+			for (Box b : ((IBoxesProvider) tileentity).getBoxes()) {
+				RenderBox.doRender(
+						TileEntityRendererDispatcher.instance.field_147553_e,
+						getTexture(b.kind), b);
 			}
+		} else if (tileentity instanceof IBoxProvider) {
+			Box b = ((IBoxProvider) tileentity).getBox();
 
-			RenderBox.doRender(TileEntityRendererDispatcher.instance.field_147553_e, texture, b.box, x, y, z, f, 0);
-			GL11.glPopMatrix();
+			RenderBox.doRender(
+					TileEntityRendererDispatcher.instance.field_147553_e,
+					getTexture(b.kind), b);
 		}
+
+		GL11.glPopMatrix();
 
 		GL11.glPopAttrib();
 		GL11.glPopMatrix();
+	}
 
-		/*TileEnergyEmitter emitter = ((TileEnergyEmitter) tileentity);
+	private ResourceLocation getTexture(Box.Kind kind) {
+		switch (kind) {
+		case LASER_RED:
+			return LASER_RED;
+		case LASER_YELLOW:
+			return LASER_YELLOW;
+		case LASER_GREEN:
+			return LASER_GREEN;
+		case LASER_BLUE:
+			return LASER_BLUE;
+		case STRIPES:
+			return STRIPES;
+		}
 
-		if (emitter != null) {
-			GL11.glPushMatrix();
-			GL11.glPushAttrib(GL11.GL_ENABLE_BIT);
-			GL11.glEnable(GL11.GL_CULL_FACE);
-			GL11.glDisable(GL11.GL_LIGHTING);
-			GL11.glEnable(GL11.GL_BLEND);
-			GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-
-			GL11.glTranslated(x, y, z);
-
-			for (Target t : emitter.targets.values()) {
-				GL11.glPushMatrix();
-				GL11.glTranslated(0.5F, 0.5F, 0.5F);
-				RenderLaser.doRenderLaserWave(TileEntityRendererDispatcher.instance.field_147553_e,
-						t.data, EntityLaser.LASER_TEXTURES[3]);
-				GL11.glPopMatrix();
-			}
-
-			//GL11.glEnable(GL11.GL_LIGHTING);
-			GL11.glPopAttrib();
-			GL11.glPopMatrix();
-		}*/
+		return null;
 	}
 }

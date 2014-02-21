@@ -6,20 +6,14 @@
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-package buildcraft.api.core;
+package buildcraft.core;
 
-public interface IBox {
+import java.util.ArrayList;
 
-	public void expand(int amount);
+import buildcraft.api.core.IBox;
 
-	public void contract(int amount);
+public interface BoxProvider {
 
-	public boolean contains(int x, int y, int z);
-
-	public Position pMin();
-
-	public Position pMax();
-
-	public void createLaserData();
+	public ArrayList<IBox> getBoxes ();
 
 }

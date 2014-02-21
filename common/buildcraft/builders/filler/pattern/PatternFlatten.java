@@ -61,7 +61,7 @@ public class PatternFlatten extends FillerPattern {
 			}
 		}
 
-		return new BlueprintBuilder(bpt, world, (int) box.xMin, 1, (int) box.zMin,
+		return new BlueprintBuilder(bpt, world, box.xMin, 1, box.zMin,
 				ForgeDirection.NORTH);
 	}
 }

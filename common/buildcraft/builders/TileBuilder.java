@@ -8,7 +8,6 @@
  */
 package buildcraft.builders;
 
-import java.io.IOException;
 import java.util.ListIterator;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -16,7 +15,6 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.ForgeDirection;
-import buildcraft.api.core.LaserKind;
 import buildcraft.api.gates.IAction;
 import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.power.PowerHandler;
@@ -31,7 +29,6 @@ import buildcraft.core.TileBuildCraft;
 import buildcraft.core.inventory.InventoryMapper;
 import buildcraft.core.inventory.SimpleInventory;
 import buildcraft.core.network.NetworkData;
-import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.robots.EntityRobotBuilder;
 
 public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IPowerReceptor, IMachine {
@@ -257,10 +254,6 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 
 	@Override
 	public void destroy() {
-		if (box.isInitialized()) {
-			box.deleteLasers();
-		}
-
 		if (builderRobot != null) {
 			builderRobot.setDead();
 			builderRobot = null;
@@ -270,24 +263,6 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 	@Override
 	public PowerReceiver getPowerReceiver(ForgeDirection side) {
 		return powerHandler.getPowerReceiver();
-	}
-
-	@Override
-	public void handleDescriptionPacket(PacketUpdate packet) throws IOException {
-		super.handleDescriptionPacket(packet);
-		if (box.isInitialized())
-			box.createLasers(worldObj, LaserKind.Stripes);
-		else
-			box.deleteLasers();
-	}
-
-	@Override
-	public void handleUpdatePacket(PacketUpdate packet) throws IOException {
-		super.handleUpdatePacket(packet);
-		if (box.isInitialized())
-			box.createLasers(worldObj, LaserKind.Stripes);
-		else
-			box.deleteLasers();
 	}
 
 	@Override

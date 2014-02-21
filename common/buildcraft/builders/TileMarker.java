@@ -86,6 +86,7 @@ public class TileMarker extends TileBuildCraft implements IAreaProvider {
 
 	private EntityBlock[] lasers;
 	private EntityBlock[] signals;
+
 	public @NetworkData
 	boolean showSignals = false;
 
@@ -280,42 +281,42 @@ public class TileMarker extends TileBuildCraft implements IAreaProvider {
 	}
 
 	@Override
-	public float xMin() {
+	public int xMin() {
 		if (origin.isSet())
 			return origin.xMin;
 		return xCoord;
 	}
 
 	@Override
-	public float yMin() {
+	public int yMin() {
 		if (origin.isSet())
 			return origin.yMin;
 		return yCoord;
 	}
 
 	@Override
-	public float zMin() {
+	public int zMin() {
 		if (origin.isSet())
 			return origin.zMin;
 		return zCoord;
 	}
 
 	@Override
-	public float xMax() {
+	public int xMax() {
 		if (origin.isSet())
 			return origin.xMax;
 		return xCoord;
 	}
 
 	@Override
-	public float yMax() {
+	public int yMax() {
 		if (origin.isSet())
 			return origin.yMax;
 		return yCoord;
 	}
 
 	@Override
-	public float zMax() {
+	public int zMax() {
 		if (origin.isSet())
 			return origin.zMax;
 		return zCoord;

@@ -8,19 +8,20 @@
  */
 package buildcraft.api.bptblocks;
 
+import java.util.LinkedList;
+
+import net.minecraft.block.Block;
+import net.minecraft.item.ItemStack;
 import buildcraft.api.blueprints.BptBlock;
 import buildcraft.api.blueprints.BptSlotInfo;
 import buildcraft.api.blueprints.IBptContext;
-import java.util.LinkedList;
-import net.minecraft.item.ItemStack;
 
-@Deprecated
 public class BptBlockFluid extends BptBlock {
 
 	private final ItemStack bucketStack;
 
-	public BptBlockFluid(int blockId, ItemStack bucketStack) {
-		super(blockId);
+	public BptBlockFluid(Block block, ItemStack bucketStack) {
+		super(block);
 
 		this.bucketStack = bucketStack;
 	}

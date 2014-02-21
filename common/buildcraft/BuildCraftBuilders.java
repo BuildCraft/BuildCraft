@@ -22,6 +22,24 @@ import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
+import buildcraft.api.bptblocks.BptBlockBed;
+import buildcraft.api.bptblocks.BptBlockCustomStack;
+import buildcraft.api.bptblocks.BptBlockDelegate;
+import buildcraft.api.bptblocks.BptBlockDirt;
+import buildcraft.api.bptblocks.BptBlockDoor;
+import buildcraft.api.bptblocks.BptBlockFluid;
+import buildcraft.api.bptblocks.BptBlockIgnore;
+import buildcraft.api.bptblocks.BptBlockIgnoreMeta;
+import buildcraft.api.bptblocks.BptBlockInventory;
+import buildcraft.api.bptblocks.BptBlockLever;
+import buildcraft.api.bptblocks.BptBlockPiston;
+import buildcraft.api.bptblocks.BptBlockPumpkin;
+import buildcraft.api.bptblocks.BptBlockRedstoneRepeater;
+import buildcraft.api.bptblocks.BptBlockRotateInventory;
+import buildcraft.api.bptblocks.BptBlockRotateMeta;
+import buildcraft.api.bptblocks.BptBlockSign;
+import buildcraft.api.bptblocks.BptBlockStairs;
+import buildcraft.api.bptblocks.BptBlockWallSide;
 import buildcraft.api.filler.FillerManager;
 import buildcraft.api.filler.IFillerPattern;
 import buildcraft.api.gates.ActionManager;
@@ -31,6 +49,7 @@ import buildcraft.builders.BlockBuilder;
 import buildcraft.builders.BlockFiller;
 import buildcraft.builders.BlockMarker;
 import buildcraft.builders.BlockPathMarker;
+import buildcraft.builders.BuilderProxy;
 import buildcraft.builders.EventHandlerBuilders;
 import buildcraft.builders.GuiHandler;
 import buildcraft.builders.IBuilderHook;
@@ -133,98 +152,92 @@ public class BuildCraftBuilders extends BuildCraftMod {
 		// Register save handler
 		MinecraftForge.EVENT_BUS.register(new EventHandlerBuilders());
 
-		/*
-		new BptBlock(0); // default bpt block
+		new BptBlockIgnore(Blocks.snow);
+		new BptBlockIgnore(Blocks.tallgrass);
+		new BptBlockIgnore(Blocks.ice);
+		new BptBlockIgnore(Blocks.piston_head);
 
-		new BptBlockIgnore(Block.snow.blockID);
-		new BptBlockIgnore(Block.tallGrass.blockID);
-		new BptBlockIgnore(Block.ice.blockID);
-		new BptBlockIgnore(Block.pistonExtension.blockID);
+		new BptBlockDirt(Blocks.dirt);
+		new BptBlockDirt(Blocks.grass);
+		new BptBlockDirt(Blocks.farmland);
 
-		new BptBlockDirt(Block.dirt.blockID);
-		new BptBlockDirt(Block.grass.blockID);
-		new BptBlockDirt(Block.tilledField.blockID);
+		new BptBlockDelegate(Blocks.unlit_redstone_torch, Blocks.redstone_torch);
+		new BptBlockDelegate(Blocks.lit_furnace, Blocks.furnace);
+		new BptBlockDelegate(Blocks.piston_extension, Blocks.piston);
 
-		new BptBlockDelegate(Block.torchRedstoneIdle.blockID, Block.torchRedstoneActive.blockID);
-		new BptBlockDelegate(Block.furnaceBurning.blockID, Block.furnaceIdle.blockID);
-		new BptBlockDelegate(Block.pistonMoving.blockID, Block.pistonBase.blockID);
+		new BptBlockWallSide(Blocks.torch);
+		new BptBlockWallSide(Blocks.redstone_torch);
 
-		new BptBlockWallSide(Block.torchWood.blockID);
-		new BptBlockWallSide(Block.torchRedstoneActive.blockID);
+		new BptBlockRotateMeta(Blocks.ladder, new int[]{2, 5, 3, 4}, true);
+		new BptBlockRotateMeta(Blocks.fence_gate, new int[]{0, 1, 2, 3}, true);
 
-		new BptBlockRotateMeta(Block.ladder.blockID, new int[]{2, 5, 3, 4}, true);
-		new BptBlockRotateMeta(Block.fenceGate.blockID, new int[]{0, 1, 2, 3}, true);
+		new BptBlockRotateInventory(Blocks.furnace, new int[]{2, 5, 3, 4}, true);
+		new BptBlockRotateInventory(Blocks.chest, new int[]{2, 5, 3, 4}, true);
+		new BptBlockRotateInventory(Blocks.dispenser, new int[]{2, 5, 3, 4}, true);
 
-		new BptBlockRotateInventory(Block.furnaceIdle.blockID, new int[]{2, 5, 3, 4}, true);
-		new BptBlockRotateInventory(Block.chest.blockID, new int[]{2, 5, 3, 4}, true);
-		new BptBlockRotateInventory(Block.lockedChest.blockID, new int[]{2, 5, 3, 4}, true);
-		new BptBlockRotateInventory(Block.dispenser.blockID, new int[]{2, 5, 3, 4}, true);
+		new BptBlockInventory(Blocks.brewing_stand);
 
-		new BptBlockInventory(Block.brewingStand.blockID);
+		new BptBlockRotateMeta(Blocks.vine, new int[]{1, 4, 8, 2}, false);
+		new BptBlockRotateMeta(Blocks.trapdoor, new int[]{0, 1, 2, 3}, false);
 
-		new BptBlockRotateMeta(Block.vine.blockID, new int[]{1, 4, 8, 2}, false);
-		new BptBlockRotateMeta(Block.trapdoor.blockID, new int[]{0, 1, 2, 3}, false);
+		new BptBlockLever(Blocks.wooden_button);
+		new BptBlockLever(Blocks.stone_button);
+		new BptBlockLever(Blocks.lever);
 
-		new BptBlockLever(Block.woodenButton.blockID);
-		new BptBlockLever(Block.stoneButton.blockID);
-		new BptBlockLever(Block.lever.blockID);
+		new BptBlockCustomStack(Blocks.stone, new ItemStack(Blocks.stone));
+		new BptBlockCustomStack(Blocks.redstone_wire, new ItemStack(Items.redstone));
+		new BptBlockCustomStack(Blocks.cake, new ItemStack(Items.cake));
+		//new BptBlockCustomStack(Blocks.crops.blockID, new ItemStack(Items.seeds));
+		new BptBlockCustomStack(Blocks.pumpkin_stem, new ItemStack(Items.pumpkin_seeds));
+		new BptBlockCustomStack(Blocks.melon_stem, new ItemStack(Items.melon_seeds));
+		new BptBlockCustomStack(Blocks.glowstone, new ItemStack(Blocks.glowstone));
 
-		new BptBlockCustomStack(Block.stone.blockID, new ItemStack(Block.stone));
-		new BptBlockCustomStack(Block.redstoneWire.blockID, new ItemStack(Item.redstone));
-		// FIXME: Not sure what this has become
-		// new BptBlockCustomStack(Block.stairDouble.blockID, new ItemStack(Block.stairSingle, 2));
-		new BptBlockCustomStack(Block.cake.blockID, new ItemStack(Item.cake));
-		new BptBlockCustomStack(Block.crops.blockID, new ItemStack(Item.seeds));
-		new BptBlockCustomStack(Block.pumpkinStem.blockID, new ItemStack(Item.pumpkinSeeds));
-		new BptBlockCustomStack(Block.melonStem.blockID, new ItemStack(Item.melonSeeds));
-		new BptBlockCustomStack(Block.glowStone.blockID, new ItemStack(Block.glowStone));
+		new BptBlockRedstoneRepeater(Blocks.powered_repeater);
+		new BptBlockRedstoneRepeater(Blocks.unpowered_repeater);
 
-		new BptBlockRedstoneRepeater(Block.redstoneRepeaterActive.blockID);
-		new BptBlockRedstoneRepeater(Block.redstoneRepeaterIdle.blockID);
+		new BptBlockFluid(Blocks.water, new ItemStack(Items.water_bucket));
+		new BptBlockFluid(Blocks.flowing_water, new ItemStack(Items.water_bucket));
+		new BptBlockFluid(Blocks.lava, new ItemStack(Items.lava_bucket));
+		new BptBlockFluid(Blocks.flowing_lava, new ItemStack(Items.lava_bucket));
 
-		new BptBlockFluid(Block.waterStill.blockID, new ItemStack(Item.bucketWater));
-		new BptBlockFluid(Block.waterMoving.blockID, new ItemStack(Item.bucketWater));
-		new BptBlockFluid(Block.lavaStill.blockID, new ItemStack(Item.bucketLava));
-		new BptBlockFluid(Block.lavaMoving.blockID, new ItemStack(Item.bucketLava));
+		new BptBlockIgnoreMeta(Blocks.rail);
+		new BptBlockIgnoreMeta(Blocks.detector_rail);
+		new BptBlockIgnoreMeta(Blocks.glass_pane);
 
-		new BptBlockIgnoreMeta(Block.rail.blockID);
-		new BptBlockIgnoreMeta(Block.railPowered.blockID);
-		new BptBlockIgnoreMeta(Block.railDetector.blockID);
-		new BptBlockIgnoreMeta(Block.thinGlass.blockID);
+		new BptBlockPiston(Blocks.piston);
+		new BptBlockPiston(Blocks.sticky_piston);
 
-		new BptBlockPiston(Block.pistonBase.blockID);
-		new BptBlockPiston(Block.pistonStickyBase.blockID);
+		new BptBlockPumpkin(Blocks.lit_pumpkin);
 
-		new BptBlockPumpkin(Block.pumpkinLantern.blockID);
+		new BptBlockStairs(Blocks.stone_stairs);
+		new BptBlockStairs(Blocks.oak_stairs);
+		new BptBlockStairs(Blocks.nether_brick_stairs);
+		new BptBlockStairs(Blocks.brick_stairs);
+		new BptBlockStairs(Blocks.stone_brick_stairs);
 
-		new BptBlockStairs(Block.stairsCobblestone.blockID);
-		new BptBlockStairs(Block.stairsWoodOak.blockID);
-		new BptBlockStairs(Block.stairsNetherBrick.blockID);
-		new BptBlockStairs(Block.stairsBrick.blockID);
-		new BptBlockStairs(Block.stairsStoneBrick.blockID);
+		new BptBlockDoor(Blocks.wooden_button, new ItemStack(Items.wooden_door));
+		new BptBlockDoor(Blocks.iron_door, new ItemStack(Items.iron_door));
 
-		new BptBlockDoor(Block.doorWood.blockID, new ItemStack(Item.doorWood));
-		new BptBlockDoor(Block.doorIron.blockID, new ItemStack(Item.doorIron));
+		new BptBlockBed(Blocks.bed);
 
-		new BptBlockBed(Block.bed.blockID);
-
-		new BptBlockSign(Block.signWall.blockID, true);
-		new BptBlockSign(Block.signPost.blockID, false);
+		new BptBlockSign(Blocks.wall_sign, true);
+		new BptBlockSign(Blocks.standing_sign, false);
 
 		// BUILDCRAFT BLOCKS
 
-		new BptBlockRotateInventory(architectBlock.blockID, new int[]{2, 5, 3, 4}, true);
-		new BptBlockRotateInventory(builderBlock.blockID, new int[]{2, 5, 3, 4}, true);
+		new BptBlockRotateInventory(architectBlock, new int[]{2, 5, 3, 4}, true);
+		new BptBlockRotateInventory(builderBlock, new int[]{2, 5, 3, 4}, true);
 
-		new BptBlockInventory(libraryBlock.blockID);
+		new BptBlockInventory(libraryBlock);
 
-		new BptBlockWallSide(markerBlock.blockID);
-		new BptBlockWallSide(pathMarkerBlock.blockID);*/
+		new BptBlockWallSide(markerBlock);
+		new BptBlockWallSide(pathMarkerBlock);
 
 		if (BuildCraftCore.loadDefaultRecipes) {
 			loadRecipes();
 		}
 
+		BuilderProxy.proxy.registerBlockRenderers();
 	}
 
 	@EventHandler

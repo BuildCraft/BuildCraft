@@ -8,17 +8,18 @@
  */
 package buildcraft.api.bptblocks;
 
+import java.util.LinkedList;
+
+import net.minecraft.block.Block;
+import net.minecraft.item.ItemStack;
 import buildcraft.api.blueprints.BptBlock;
 import buildcraft.api.blueprints.BptSlotInfo;
 import buildcraft.api.blueprints.IBptContext;
-import java.util.LinkedList;
-import net.minecraft.item.ItemStack;
 
-@Deprecated
 public class BptBlockIgnoreMeta extends BptBlock {
 
-	public BptBlockIgnoreMeta(int blockId) {
-		super(blockId);
+	public BptBlockIgnoreMeta(Block block) {
+		super(block);
 	}
 
 	@Override

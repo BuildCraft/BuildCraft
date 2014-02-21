@@ -9,7 +9,7 @@
 package buildcraft.energy;
 
 import buildcraft.BuildCraftEnergy;
-import buildcraft.builders.urbanism.RenderUrbanist;
+import buildcraft.builders.urbanism.RenderBoxProvider;
 import buildcraft.builders.urbanism.TileUrbanist;
 import buildcraft.core.render.RenderingEntityBlocks;
 import buildcraft.core.render.RenderingEntityBlocks.EntityRenderIndex;
@@ -24,7 +24,8 @@ public class EnergyProxyClient extends EnergyProxy {
 		super.registerTileEntities();
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEngine.class, new RenderEngine());
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEnergyEmitter.class, new RenderEnergyEmitter());
-		ClientRegistry.bindTileEntitySpecialRenderer(TileUrbanist.class, new RenderUrbanist());
+
+		ClientRegistry.bindTileEntitySpecialRenderer(TileUrbanist.class, new RenderBoxProvider());
 	}
 
 	@Override

@@ -8,37 +8,23 @@
  */
 package buildcraft.api.blueprints;
 
-import buildcraft.api.core.BuildCraftAPI;
-import net.minecraft.block.Block;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
+import java.util.HashMap;
 
-@Deprecated
+import net.minecraft.block.Block;
+
 public class BlueprintManager {
 
-	//public static BptBlock[] blockBptProps = new BptBlock[Block.blocksList.length];
+	private static final HashMap <Block, BptBlock> bptBlockRegistry = new HashMap<Block, BptBlock>();
 
-	public static ItemSignature getItemSignature(Item item) {
-		ItemSignature sig = new ItemSignature();
-
-		//if (item.itemID >= Block.blocksList.length + BuildCraftAPI.LAST_ORIGINAL_ITEM) {
-		//	sig.itemClassName = item.getClass().getSimpleName();
-		//}
-
-		sig.itemName = item.getUnlocalizedName(new ItemStack(item));
-
-		return sig;
+	public static void registerBptBlock (Block block, BptBlock bptBlock) {
+		bptBlockRegistry.put(block, bptBlock);
 	}
 
-	public static BlockSignature getBlockSignature(Block block) {
-		//return BlueprintManager.blockBptProps[0].getSignature(block);
-		return null;
-	}
+	public static BptBlock getBptBlock (Block block) {
+		if (!bptBlockRegistry.containsKey(block)) {
+			registerBptBlock(block, new BptBlock(block));
+		}
 
-	static {
-		// Initialize defaults for block properties.
-		//for (int i = 0; i < BlueprintManager.blockBptProps.length; ++i) {
-		//	new BptBlock(i);
-		//}
+		return bptBlockRegistry.get(block);
 	}
 }

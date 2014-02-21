@@ -59,7 +59,7 @@ public class PatternFill extends FillerPattern {
 			}
 		}
 
-		return new BlueprintBuilder(bpt, world, (int) box.xMin, (int) box.yMin, (int) box.zMin,
+		return new BlueprintBuilder(bpt, world, box.xMin, box.yMin, box.zMin,
 				ForgeDirection.NORTH);
 	}
 }

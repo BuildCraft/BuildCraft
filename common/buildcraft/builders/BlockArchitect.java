@@ -140,4 +140,19 @@ public class BlockArchitect extends BlockContainer {
         blockTextureTopArchitect = par1IconRegister.registerIcon("buildcraft:architect_top");
         blockTextureFront = par1IconRegister.registerIcon("buildcraft:architect_front");
 	}
+
+	@Override
+	public boolean renderAsNormalBlock() {
+		return false;
+	}
+
+	@Override
+	public boolean isSideSolid(IBlockAccess world, int x, int y, int z, ForgeDirection side) {
+		return false;
+	}
+
+	@Override
+	public int getLightValue(IBlockAccess world, int x, int y, int z) {
+		return 1;
+	}
 }

@@ -8,22 +8,20 @@
  */
 package buildcraft.api.bptblocks;
 
-import buildcraft.api.blueprints.BlockSignature;
+import java.util.LinkedList;
+
+import net.minecraft.block.Block;
+import net.minecraft.item.ItemStack;
 import buildcraft.api.blueprints.BptBlock;
 import buildcraft.api.blueprints.BptSlotInfo;
 import buildcraft.api.blueprints.IBptContext;
-import java.util.LinkedList;
-import net.minecraft.block.Block;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
 
-@Deprecated
 public class BptBlockSign extends BptBlock {
 
 	boolean isWall;
 
-	public BptBlockSign(int blockId, boolean isWall) {
-		super(blockId);
+	public BptBlockSign(Block block, boolean isWall) {
+		super(block);
 
 		this.isWall = isWall;
 	}
@@ -46,18 +44,4 @@ public class BptBlockSign extends BptBlock {
 			// slot.meta = ForgeDirection.values()[slot.meta].rotateLeft().ordinal();
 		}
 	}
-
-	@Override
-	public BlockSignature getSignature(Block block) {
-		BlockSignature sig = super.getSignature(block);
-
-		if (isWall) {
-			sig.customField = "wall";
-		} else {
-			sig.customField = "floor";
-		}
-
-		return sig;
-	}
-
 }

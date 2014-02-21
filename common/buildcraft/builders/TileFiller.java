@@ -8,10 +8,17 @@
  */
 package buildcraft.builders;
 
-import buildcraft.BuildCraftBuilders;
+import io.netty.buffer.ByteBuf;
+
+import java.io.IOException;
+
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.BuildCraftCore;
 import buildcraft.api.core.IAreaProvider;
-import buildcraft.api.core.LaserKind;
 import buildcraft.api.filler.FillerManager;
 import buildcraft.api.filler.IFillerPattern;
 import buildcraft.api.filler.IPatternIterator;
@@ -33,21 +40,9 @@ import buildcraft.core.network.IGuiReturnHandler;
 import buildcraft.core.network.PacketPayload;
 import buildcraft.core.network.PacketPayloadStream;
 import buildcraft.core.network.PacketUpdate;
-import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.triggers.ActionMachineControl;
 import buildcraft.core.triggers.ActionMachineControl.Mode;
 import buildcraft.core.utils.Utils;
-import io.netty.buffer.ByteBuf;
-
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.common.util.ForgeDirection;
 
 public class TileFiller extends TileBuildCraft implements IInventory, IPowerReceptor, IMachine, IActionReceptor, IGuiReturnHandler {
 
@@ -85,9 +80,6 @@ public class TileFiller extends TileBuildCraft implements IInventory, IPowerRece
 					((TileMarker) a).removeFromWorld();
 				}
 
-				if (!worldObj.isRemote && box.isInitialized()) {
-					box.createLasers(worldObj, LaserKind.Stripes);
-				}
 				sendNetworkUpdate();
 			}
 		}
@@ -230,11 +222,6 @@ public class TileFiller extends TileBuildCraft implements IInventory, IPowerRece
 		destroy();
 	}
 
-	@Override
-	public void destroy() {
-		box.deleteLasers();
-	}
-
 	public void setPattern(IFillerPattern pattern) {
 		if (pattern != null && currentPattern != pattern) {
 			currentPattern = pattern;
@@ -265,9 +252,6 @@ public class TileFiller extends TileBuildCraft implements IInventory, IPowerRece
 		setPattern(FillerManager.registry.getPattern(Utils.readUTF(data)));
 
 		worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
-		if (!initialized && box.isInitialized()) {
-			box.createLasers(worldObj, LaserKind.Stripes);
-		}
 	}
 
 	@Override

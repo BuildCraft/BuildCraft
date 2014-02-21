@@ -9,11 +9,20 @@
 package buildcraft.builders;
 
 import buildcraft.BuildCraftBuilders;
+import buildcraft.builders.urbanism.RenderBoxProvider;
+import cpw.mods.fml.client.registry.ClientRegistry;
 
 public class BuilderProxyClient extends BuilderProxy {
 
     @Override
 	public void registerClientHook() {
 		BuildCraftBuilders.addHook(new ClientBuilderHook());
+	}
+
+	@Override
+	public void registerBlockRenderers() {
+		super.registerBlockRenderers();
+
+		ClientRegistry.bindTileEntitySpecialRenderer(TileArchitect.class, new RenderBoxProvider());
 	}
 }

@@ -8,15 +8,15 @@
  */
 package buildcraft.factory;
 
+import net.minecraft.block.Block;
 import buildcraft.api.blueprints.BptBlock;
 import buildcraft.api.blueprints.BptSlotInfo;
 import buildcraft.api.blueprints.IBptContext;
 
-@Deprecated
 public class BptBlockTank extends BptBlock {
 
-	public BptBlockTank(int blockId) {
-		super(blockId);
+	public BptBlockTank(Block block) {
+		super(block);
 	}
 
 	@Override

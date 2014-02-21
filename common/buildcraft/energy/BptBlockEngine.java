@@ -8,19 +8,16 @@
  */
 package buildcraft.energy;
 
-import buildcraft.api.blueprints.BlockSignature;
+import net.minecraft.block.Block;
+import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.api.blueprints.BptBlock;
 import buildcraft.api.blueprints.BptSlotInfo;
 import buildcraft.api.blueprints.IBptContext;
-import buildcraft.core.Version;
-import net.minecraft.block.Block;
-import net.minecraftforge.common.util.ForgeDirection;
 
-@Deprecated
 public class BptBlockEngine extends BptBlock {
 
-	public BptBlockEngine(int blockId) {
-		super(blockId);
+	public BptBlockEngine(Block block) {
+		super(block);
 	}
 
 	@Override
@@ -48,13 +45,4 @@ public class BptBlockEngine extends BptBlock {
 		engine.orientation = ForgeDirection.getOrientation(slot.cpt.getInteger("orientation"));
 	}
 
-	@Override
-	public BlockSignature getSignature(Block block) {
-		BlockSignature sig = super.getSignature(block);
-
-		sig.mod = "BuildCraftEnergy";
-		sig.modVersion = Version.VERSION;
-
-		return sig;
-	}
 }

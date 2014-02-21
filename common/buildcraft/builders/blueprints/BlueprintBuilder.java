@@ -46,32 +46,32 @@ public class BlueprintBuilder implements IAreaProvider {
 	}
 
 	@Override
-	public float xMin() {
+	public int xMin() {
 		return x;
 	}
 
 	@Override
-	public float yMin() {
+	public int yMin() {
 		return y;
 	}
 
 	@Override
-	public float zMin() {
+	public int zMin() {
 		return z;
 	}
 
 	@Override
-	public float xMax() {
+	public int xMax() {
 		return translateX(x, blueprint.sizeX - 1, blueprint.sizeZ - 1);
 	}
 
 	@Override
-	public float yMax() {
+	public int yMax() {
 		return y + blueprint.sizeY - 1;
 	}
 
 	@Override
-	public float zMax() {
+	public int zMax() {
 		return translateZ(z, blueprint.sizeX - 1, blueprint.sizeZ - 1);
 	}
 

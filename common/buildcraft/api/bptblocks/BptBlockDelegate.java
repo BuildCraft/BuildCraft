@@ -8,23 +8,20 @@
  */
 package buildcraft.api.bptblocks;
 
-import buildcraft.api.blueprints.BlueprintManager;
-import buildcraft.api.blueprints.BptBlock;
-import buildcraft.api.blueprints.BptSlotInfo;
-import buildcraft.api.blueprints.IBptContext;
-
 import java.util.LinkedList;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
+import buildcraft.api.blueprints.BptBlock;
+import buildcraft.api.blueprints.BptSlotInfo;
+import buildcraft.api.blueprints.IBptContext;
 
-@Deprecated
 public class BptBlockDelegate extends BptBlock {
 
 	final Block delegateTo;
 
-	public BptBlockDelegate(int blockId, Block delegateTo) {
-		super(blockId);
+	public BptBlockDelegate(Block block, Block delegateTo) {
+		super(block);
 
 		this.delegateTo = delegateTo;
 	}
@@ -50,7 +47,7 @@ public class BptBlockDelegate extends BptBlock {
 		//	return BlueprintManager.blockBptProps[delegateTo].isValid(newSlot, context);
 		//else
 		//	return super.isValid(newSlot, context);
-		
+
 		return false;
 	}
 

@@ -8,16 +8,16 @@
  */
 package buildcraft.factory;
 
+import net.minecraft.block.Block;
+import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.api.blueprints.BptBlock;
 import buildcraft.api.blueprints.BptSlotInfo;
 import buildcraft.api.blueprints.IBptContext;
-import net.minecraftforge.common.util.ForgeDirection;
 
-@Deprecated
 public class BptBlockRefinery extends BptBlock {
 
-	public BptBlockRefinery(int blockId) {
-		super(blockId);
+	public BptBlockRefinery(Block block) {
+		super(block);
 	}
 
 	@Override

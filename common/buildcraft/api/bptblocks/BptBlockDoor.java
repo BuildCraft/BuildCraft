@@ -8,19 +8,20 @@
  */
 package buildcraft.api.bptblocks;
 
+import java.util.LinkedList;
+
+import net.minecraft.block.Block;
+import net.minecraft.item.ItemStack;
 import buildcraft.api.blueprints.BptBlock;
 import buildcraft.api.blueprints.BptSlotInfo;
 import buildcraft.api.blueprints.IBptContext;
-import java.util.LinkedList;
-import net.minecraft.item.ItemStack;
 
-@Deprecated
 public class BptBlockDoor extends BptBlock {
 
 	final ItemStack stack;
 
-	public BptBlockDoor(int blockId, ItemStack stack) {
-		super(blockId);
+	public BptBlockDoor(Block block, ItemStack stack) {
+		super(block);
 
 		this.stack = stack;
 	}

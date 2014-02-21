@@ -23,8 +23,9 @@ import net.minecraft.util.AxisAlignedBB;
 import buildcraft.builders.blueprints.BlueprintBuilder;
 import buildcraft.builders.blueprints.BlueprintBuilder.SchematicBuilder;
 import buildcraft.builders.filler.pattern.FillerPattern;
-import buildcraft.builders.urbanism.AnchoredBox.Kind;
 import buildcraft.core.Box;
+import buildcraft.core.Box.Kind;
+import buildcraft.core.IBoxesProvider;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.network.NetworkData;
 import buildcraft.core.network.RPC;
@@ -35,7 +36,7 @@ import buildcraft.core.robots.IRobotTask;
 import buildcraft.core.robots.IRobotTaskProvider;
 import buildcraft.core.robots.RobotTaskProviderRegistry;
 
-public class TileUrbanist extends TileBuildCraft implements IInventory, IRobotTaskProvider {
+public class TileUrbanist extends TileBuildCraft implements IInventory, IRobotTaskProvider, IBoxesProvider {
 
 	public EntityUrbanist urbanist;
 	EntityLivingBase player;
@@ -106,10 +107,10 @@ public class TileUrbanist extends TileBuildCraft implements IInventory, IRobotTa
 	public void createFrame (int x, int y, int z) {
 		isCreatingFrame = true;
 		AnchoredBox a = new AnchoredBox();
-		a.box = new Box (x + 0.5F, y + 0.5F, z + 0.5F, x + 0.5F, y + 2.5F, z + 0.5F);
-		a.x1 = x + 0.5F;
-		a.y1 = y + 0.5F;
-		a.z1 = z + 0.5F;
+		a.box = new Box (x, y, z, x, y + 2, z);
+		a.x1 = x;
+		a.y1 = y;
+		a.z1 = z;
 		frames.add(a);
 	}
 
@@ -128,8 +129,7 @@ public class TileUrbanist extends TileBuildCraft implements IInventory, IRobotTa
 	public void moveFrame (int x, int y, int z) {
 		if (isCreatingFrame) {
 			if (frames.size() > 0) {
-				frames.get(frames.size() - 1).setP2(x + 0.5F, y + 0.5F,
-						z + 0.5F);
+				frames.get(frames.size() - 1).setP2(x, y, z);
 			}
 		}
 	}
@@ -166,7 +166,7 @@ public class TileUrbanist extends TileBuildCraft implements IInventory, IRobotTa
 			AnchoredBox b = frames.get(id);
 
 			if (b != null) {
-				b.kind = Kind.values()[kind];
+				b.box.kind = Kind.values()[kind];
 			}
 		}
 	}
@@ -179,7 +179,7 @@ public class TileUrbanist extends TileBuildCraft implements IInventory, IRobotTa
 
 		FrameTask task = new FrameTask();
 		task.frame = frames.get(frames.size() - 1);
-		task.frame.kind = Kind.STRIPES;
+		task.frame.box.kind = Kind.STRIPES;
 		RPCHandler.rpcBroadcastPlayers(this, "setFrameKind", frames.size() - 1,
 				Kind.STRIPES.ordinal());
 
@@ -264,40 +264,13 @@ public class TileUrbanist extends TileBuildCraft implements IInventory, IRobotTa
 
 	@Override
 	public AxisAlignedBB getRenderBoundingBox() {
-		double xMin = xCoord;
-		double yMin = yCoord;
-		double zMin = zCoord;
-		double xMax = xCoord + 1.0;
-		double yMax = yCoord + 1.0;
-		double zMax = zCoord + 1.0;
+		Box box = new Box(this);
 
 		for (AnchoredBox b : frames) {
-			if (b.box.xMin < xMin) {
-				xMin = b.box.xMin;
-			}
-
-			if (b.box.yMin < yMin) {
-				yMin = b.box.yMin;
-			}
-
-			if (b.box.zMin < zMin) {
-				zMin = b.box.zMin;
-			}
-
-			if (b.box.xMax > xMax) {
-				xMax = b.box.xMax;
-			}
-
-			if (b.box.yMax > yMax) {
-				yMax = b.box.yMax;
-			}
-
-			if (b.box.zMax > zMax) {
-				zMax = b.box.zMax;
-			}
+			box.extendToEncompass(b.box);
 		}
 
-		return AxisAlignedBB.getBoundingBox(xMin, yMin, zMin, xMax, yMax, zMax);
+		return box.getBoundingBox();
 	}
 
 	@Override
@@ -368,5 +341,16 @@ public class TileUrbanist extends TileBuildCraft implements IInventory, IRobotTa
 		if (!worldObj.isRemote) {
 			RobotTaskProviderRegistry.registerProvider(this);
 		}
+	}
+
+	@Override
+	public ArrayList<Box> getBoxes() {
+		ArrayList<Box> result = new ArrayList<Box>();
+
+		for (AnchoredBox b : frames) {
+			result.add(b.box);
+		}
+
+		return result;
 	}
 }
