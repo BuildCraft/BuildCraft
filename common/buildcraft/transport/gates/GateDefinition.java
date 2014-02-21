@@ -87,18 +87,27 @@ public final class GateDefinition {
 
 		AND, OR;
 		public static final GateLogic[] VALUES = values();
+
+		@SideOnly(Side.CLIENT)
 		private IIcon iconLit;
+
+		@SideOnly(Side.CLIENT)
 		private IIcon iconDark;
+
+		@SideOnly(Side.CLIENT)
 		private IIcon iconItem;
 
+		@SideOnly(Side.CLIENT)
 		public IIcon getIconLit() {
 			return iconLit;
 		}
 
+		@SideOnly(Side.CLIENT)
 		public IIcon getIconDark() {
 			return iconDark;
 		}
 
+		@SideOnly(Side.CLIENT)
 		public IIcon getIconItem() {
 			return iconItem;
 		}
@@ -107,11 +116,13 @@ public final class GateDefinition {
 			return name().toLowerCase(Locale.ENGLISH);
 		}
 
+		@SideOnly(Side.CLIENT)
 		public void registerBlockIcon(IIconRegister iconRegister) {
 			iconLit = iconRegister.registerIcon("buildcraft:gates/gate_lit_" + getTag());
 			iconDark = iconRegister.registerIcon("buildcraft:gates/gate_dark_" + getTag());
 		}
 
+		@SideOnly(Side.CLIENT)
 		public void registerItemIcon(IIconRegister iconRegister) {
 			iconItem = iconRegister.registerIcon("buildcraft:gates/gate_logic_" + getTag());
 		}
