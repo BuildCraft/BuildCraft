@@ -48,7 +48,7 @@ minecraft {
 sourceSets {
     main {
         java {
-            srcDir 'common/buildcraft'
+            srcDir 'common'
             // exclude 'some exclusion'
             // include 'some inclusion'
         }
