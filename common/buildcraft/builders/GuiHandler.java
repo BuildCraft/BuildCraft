@@ -11,11 +11,11 @@ package buildcraft.builders;
 import buildcraft.builders.gui.ContainerBlueprintLibrary;
 import buildcraft.builders.gui.ContainerBuilder;
 import buildcraft.builders.gui.ContainerFiller;
-import buildcraft.builders.gui.ContainerTemplate;
+import buildcraft.builders.gui.ContainerArchitect;
 import buildcraft.builders.gui.GuiBlueprintLibrary;
 import buildcraft.builders.gui.GuiBuilder;
 import buildcraft.builders.gui.GuiFiller;
-import buildcraft.builders.gui.GuiTemplate;
+import buildcraft.builders.gui.GuiArchitect;
 import buildcraft.builders.urbanism.ContainerUrbanist;
 import buildcraft.builders.urbanism.GuiUrbanist;
 import buildcraft.builders.urbanism.TileUrbanist;
@@ -40,7 +40,7 @@ public class GuiHandler implements IGuiHandler {
 		case GuiIds.ARCHITECT_TABLE:
 			if (!(tile instanceof TileArchitect))
 				return null;
-			return new GuiTemplate(player.inventory, (TileArchitect) tile);
+			return new GuiArchitect(player.inventory, (TileArchitect) tile);
 
 		case GuiIds.BLUEPRINT_LIBRARY:
 			if (!(tile instanceof TileBlueprintLibrary))
@@ -82,7 +82,7 @@ public class GuiHandler implements IGuiHandler {
 		case GuiIds.ARCHITECT_TABLE:
 			if (!(tile instanceof TileArchitect))
 				return null;
-			return new ContainerTemplate(player.inventory, (TileArchitect) tile);
+			return new ContainerArchitect(player.inventory, (TileArchitect) tile);
 
 		case GuiIds.BLUEPRINT_LIBRARY:
 			if (!(tile instanceof TileBlueprintLibrary))

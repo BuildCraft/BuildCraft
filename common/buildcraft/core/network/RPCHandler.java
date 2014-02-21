@@ -256,7 +256,7 @@ public class RPCHandler {
 			// special last argument RPCMessageInfo
 
 			throw new RuntimeException(getClass().getName() + "." + method
-					+ " expects " + m.parameters.length + "parameters, not " + actuals.length);
+					+ " expects " + m.parameters.length + " parameters, not " + actuals.length);
 		}
 
 		data.writeShort(methodIndex);

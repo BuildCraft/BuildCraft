@@ -24,5 +24,6 @@ public class BuilderProxyClient extends BuilderProxy {
 		super.registerBlockRenderers();
 
 		ClientRegistry.bindTileEntitySpecialRenderer(TileArchitect.class, new RenderBoxProvider());
+		ClientRegistry.bindTileEntitySpecialRenderer(TileBuilder.class, new RenderBoxProvider());
 	}
 }

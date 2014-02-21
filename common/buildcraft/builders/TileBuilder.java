@@ -8,191 +8,429 @@
  */
 package buildcraft.builders;
 
-import java.util.ListIterator;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.LinkedList;
 
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.AxisAlignedBB;
 import net.minecraftforge.common.util.ForgeDirection;
+import buildcraft.BuildCraftBuilders;
 import buildcraft.api.gates.IAction;
 import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.power.PowerHandler;
 import buildcraft.api.power.PowerHandler.PowerReceiver;
 import buildcraft.api.power.PowerHandler.Type;
-import buildcraft.builders.blueprints.Blueprint;
-import buildcraft.builders.blueprints.BlueprintBuilder;
+import buildcraft.core.BlockIndex;
 import buildcraft.core.Box;
+import buildcraft.core.Box.Kind;
+import buildcraft.core.EntityLaser;
+import buildcraft.core.IBoxProvider;
 import buildcraft.core.IBuilderInventory;
 import buildcraft.core.IMachine;
 import buildcraft.core.TileBuildCraft;
-import buildcraft.core.inventory.InventoryMapper;
-import buildcraft.core.inventory.SimpleInventory;
+import buildcraft.core.blueprints.BptBase;
+import buildcraft.core.blueprints.BptBlueprint;
+import buildcraft.core.blueprints.BptBuilderBase;
+import buildcraft.core.blueprints.BptBuilderBlueprint;
+import buildcraft.core.blueprints.BptBuilderTemplate;
+import buildcraft.core.blueprints.BptContext;
 import buildcraft.core.network.NetworkData;
-import buildcraft.core.robots.EntityRobotBuilder;
+import buildcraft.core.robots.EntityRobot;
+import buildcraft.core.utils.Utils;
 
-public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IPowerReceptor, IMachine {
+public class TileBuilder extends TileBuildCraft implements IBuilderInventory,
+		IPowerReceptor, IMachine, IBoxProvider {
 
-	private static final int SLOT_BLUEPRINT = 0;
-	public @NetworkData
-	Box box = new Box();
+	private final ItemStack items[] = new ItemStack[28];
+
+	private BptBuilderBase bluePrintBuilder;
+
+	@NetworkData
+	public Box box = new Box();
+
 	private PowerHandler powerHandler;
-	private EntityRobotBuilder builderRobot;
-	private BlueprintBuilder blueprintBuilder;
-	private ListIterator<BlueprintBuilder.SchematicBuilder> blueprintIterator;
-	private boolean builderDone = false;
-	private SimpleInventory inv = new SimpleInventory(28, "Builder", 64);
-	private IInventory invStock = new InventoryMapper(inv, 1, 27);
-	private Blueprint blueprint;
+
+	private LinkedList<BlockIndex> path;
+
+	private LinkedList<EntityLaser> pathLasers;
+
+	private EntityRobot builderRobot;
+
+	private class PathIterator {
+
+		public Iterator<BlockIndex> currentIterator;
+		public double cx, cy, cz;
+		public float ix, iy, iz;
+		public BlockIndex to;
+		public double lastDistance;
+		AxisAlignedBB oldBoundingBox = null;
+		ForgeDirection o = null;
+
+		public PathIterator(BlockIndex from, Iterator<BlockIndex> it) {
+			this.to = it.next();
+
+			currentIterator = it;
+
+			double dx = to.x - from.z;
+			double dy = to.y - from.y;
+			double dz = to.z - from.z;
+
+			double size = Math.sqrt(dx * dx + dy * dy + dz * dz);
+
+			cx = dx / size / 10;
+			cy = dy / size / 10;
+			cz = dz / size / 10;
+
+			ix = from.x;
+			iy = from.y;
+			iz = from.z;
+
+			lastDistance = (ix - to.x) * (ix - to.x) + (iy - to.y)
+					* (iy - to.y) + (iz - to.z) * (iz - to.z);
+
+			if (Math.abs(dx) > Math.abs(dz)) {
+				if (dx > 0) {
+					o = ForgeDirection.EAST;
+				} else {
+					o = ForgeDirection.WEST;
+				}
+			} else {
+				if (dz > 0) {
+					o = ForgeDirection.SOUTH;
+				} else {
+					o = ForgeDirection.NORTH;
+				}
+			}
+		}
+
+		/**
+		 * Return false when reached the end of the iteration
+		 */
+		public BptBuilderBase next() {
+			while (true) {
+				BptBuilderBase bpt;
+
+				int newX = Math.round(ix);
+				int newY = Math.round(iy);
+				int newZ = Math.round(iz);
+
+				bpt = instanciateBluePrint(newX, newY, newZ, o);
+
+				if (bpt == null)
+					return null;
+
+				AxisAlignedBB boundingBox = bpt.getBoundingBox();
+
+				if (oldBoundingBox == null || !collision(oldBoundingBox, boundingBox)) {
+
+					oldBoundingBox = boundingBox;
+
+					if (bpt != null)
+						return bpt;
+				}
+
+				ix += cx;
+				iy += cy;
+				iz += cz;
+
+				double distance = (ix - to.x) * (ix - to.x) + (iy - to.y)
+						* (iy - to.y) + (iz - to.z) * (iz - to.z);
+
+				if (distance > lastDistance)
+					return null;
+				else {
+					lastDistance = distance;
+				}
+			}
+		}
+
+		public PathIterator iterate() {
+			if (currentIterator.hasNext()) {
+				PathIterator next = new PathIterator(to, currentIterator);
+				next.oldBoundingBox = oldBoundingBox;
+
+				return next;
+			} else
+				return null;
+		}
+
+		public boolean collision(AxisAlignedBB left, AxisAlignedBB right) {
+			if (left.maxX < right.minX || left.minX > right.maxX)
+				return false;
+			if (left.maxY < right.minY || left.minY > right.maxY)
+				return false;
+			if (left.maxZ < right.minZ || left.minZ > right.maxZ)
+				return false;
+			return true;
+		}
+	}
+
+	public PathIterator currentPathIterator;
+
+	private boolean done = true;
 
 	public TileBuilder() {
 		super();
+
 		powerHandler = new PowerHandler(this, Type.MACHINE);
-		powerHandler.configure(25, 25, 25, 100);
+		powerHandler.configure(25, 25, 25, 25);
+
+		box.kind = Kind.STRIPES;
 	}
 
 	@Override
-	public void updateEntity() {
-		super.updateEntity();
+	public void initialize() {
+		super.initialize();
 
 		if (worldObj.isRemote) {
 			return;
 		}
 
-		setupBuilder();
+		for (int x = xCoord - 1; x <= xCoord + 1; ++x) {
+			for (int y = yCoord - 1; y <= yCoord + 1; ++y) {
+				for (int z = zCoord - 1; z <= zCoord + 1; ++z) {
+					TileEntity tile = worldObj.getTileEntity(x, y, z);
+
+					if (tile instanceof TilePathMarker) {
+						path = ((TilePathMarker) tile).getPath();
+
+						for (BlockIndex b : path) {
+							worldObj.setBlockToAir(b.x, b.y, b.z);
+
+							BuildCraftBuilders.pathMarkerBlock.dropBlockAsItem(
+									worldObj, b.x, b.y, b.z,
+									0, 0);
+						}
+
+						break;
+					}
+				}
+			}
+		}
+
+		if (path != null && pathLasers == null) {
+			path.getFirst().x = xCoord;
+			path.getFirst().y = yCoord;
+			path.getFirst().z = zCoord;
+
+			createLasersForPath();
+		}
+
+		iterateBpt();
+	}
+
+	public void createLasersForPath() {
+		/*pathLasers = new LinkedList<EntityLaser>();
+		BlockIndex previous = null;
+
+		for (BlockIndex b : path) {
+			if (previous != null) {
+				EntityPowerLaser laser = new EntityPowerLaser(worldObj, new Position(previous.i + 0.5, previous.j + 0.5, previous.k + 0.5), new Position(
+						b.x + 0.5, b.y + 0.5, b.z + 0.5));
+
+				laser.setTexture(DefaultProps.TEXTURE_PATH_ENTITIES + "/laser_1.png");
+				laser.show();
+				worldObj.spawnEntityInWorld(laser);
+				pathLasers.add(laser);
+			}
+
+			previous = b;
+		}*/
+	}
+
+	public BptBuilderBase instanciateBluePrint(int x, int y, int z, ForgeDirection o) {
+		BptBase bpt = BuildCraftBuilders.getBptRootIndex().getBluePrint(items[0].getItemDamage());
+
+		if (bpt == null)
+			return null;
+
+		bpt = bpt.clone();
+
+		BptContext context = new BptContext(worldObj, null, bpt.getBoxForPos(x, y, z));
+
+		if (o == ForgeDirection.EAST) {
+			// Do nothing
+		} else if (o == ForgeDirection.SOUTH) {
+			bpt.rotateLeft(context);
+		} else if (o == ForgeDirection.WEST) {
+			bpt.rotateLeft(context);
+			bpt.rotateLeft(context);
+		} else if (o == ForgeDirection.NORTH) {
+			bpt.rotateLeft(context);
+			bpt.rotateLeft(context);
+			bpt.rotateLeft(context);
+		}
+
+		if (items[0].getItem() instanceof ItemBlueprintTemplate)
+			return new BptBuilderTemplate(bpt, worldObj, x, y, z);
+		else if (items[0].getItem() instanceof ItemBptBluePrint)
+			return new BptBuilderBlueprint((BptBlueprint) bpt, worldObj, x, y, z);
+		else
+			return null;
 	}
 
 	@Override
 	public void doWork(PowerHandler workProvider) {
-		if (worldObj.isRemote)
+		if (worldObj.isRemote) {
 			return;
-
-		if (builderDone)
-			return;
-
-		build();
-	}
-
-	public Blueprint getBlueprint() {
-		ItemStack blueprintStack = getStackInSlot(SLOT_BLUEPRINT);
-		return ItemBlueprint.getBlueprint(blueprintStack);
-	}
-
-	public BlueprintBuilder getBlueprintBuilder() {
-		return blueprintBuilder;
-	}
-
-	private void setupBuilder() {
-		Blueprint newBlueprint = getBlueprint();
-		if (blueprint != newBlueprint) {
-			blueprint = newBlueprint;
-			reset();
-			builderDone = false;
 		}
-		if (!builderDone && blueprintBuilder == null && blueprint != null) {
-			ForgeDirection blueprintOrientation = ForgeDirection.NORTH;
-			switch (ForgeDirection.getOrientation(getBlockMetadata())) {
-				case WEST:
-					blueprintOrientation = blueprintOrientation.getRotation(ForgeDirection.UP);
-				case SOUTH:
-					blueprintOrientation = blueprintOrientation.getRotation(ForgeDirection.UP);
-				case EAST:
-					blueprintOrientation = blueprintOrientation.getRotation(ForgeDirection.UP);
+
+		if (done) {
+			return;
+		//}// else if (builderRobot != null && !builderRobot.readyToBuild()) {
+		//	return;
+		} else if (powerHandler.useEnergy(25, 25, true) < 25) {
+			return;
+		}
+
+		iterateBpt();
+
+		/* Temp fix to make Builders impotent as the World Destroyers they are
+		if (bluePrintBuilder != null && !bluePrintBuilder.done) {
+			if (!box.isInitialized()) {
+				box.initialize(bluePrintBuilder);
 			}
-			switch (blueprint.anchorOrientation) {
-				case WEST:
-					blueprintOrientation = blueprintOrientation.getRotation(ForgeDirection.DOWN);
-				case SOUTH:
-					blueprintOrientation = blueprintOrientation.getRotation(ForgeDirection.DOWN);
-				case EAST:
-					blueprintOrientation = blueprintOrientation.getRotation(ForgeDirection.DOWN);
+
+			if (builderRobot == null) {
+				builderRobot = new EntityRobot(worldObj, box);
+				worldObj.spawnEntityInWorld(builderRobot);
 			}
-			blueprintBuilder = new BlueprintBuilder(blueprint, worldObj, xCoord, yCoord, zCoord, blueprintOrientation);
-			blueprintIterator = blueprintBuilder.getBuilders().listIterator();
-			box.initialize(blueprintBuilder);
-			box.reorder();
-			sendNetworkUpdate();
-		}
 
-		if (!hasWorkScheduled()) {
-			reset();
-			builderDone = true;
+			box.createLasers(worldObj, LaserKind.Stripes);
+
+			builderRobot.scheduleContruction(bluePrintBuilder.getNextBlock(worldObj, new SurroundingInventory(worldObj, xCoord, yCoord, zCoord)),
+					bluePrintBuilder.getContext());
 		}
+		*/
 	}
 
-	private void reset() {
-		box.reset();
-		blueprintBuilder = null;
-		blueprintIterator = null;
-		killRobot();
-		sendNetworkUpdate();
-	}
+	public void iterateBpt() {
+		if (items[0] == null || !(items[0].getItem() instanceof ItemBptBase)) {
 
-	private void killRobot() {
-		if (builderRobot != null) {
-			builderRobot.setDead();
-			builderRobot = null;
-		}
-	}
+			if (bluePrintBuilder != null) {
+				bluePrintBuilder = null;
+			}
 
+			if (builderRobot != null) {
+				builderRobot.setDead();
+				builderRobot = null;
+			}
 
-	private void build() {
-		if (blueprintBuilder == null) {
-			return;
-		} else if (blueprintIterator == null) {
-			return;
-		} else if (!blueprintIterator.hasNext()) {
+			if (box.isInitialized()) {
+				box.reset();
+			}
+
+			if (currentPathIterator != null) {
+				currentPathIterator = null;
+			}
+
 			return;
 		}
 
-		float mj = 25;
+		if (bluePrintBuilder == null || bluePrintBuilder.done) {
+			if (path != null && path.size() > 1) {
+				if (currentPathIterator == null) {
+					Iterator<BlockIndex> it = path.iterator();
+					BlockIndex start = it.next();
+					currentPathIterator = new PathIterator(start, it);
+				}
 
-		if (powerHandler.useEnergy(mj, mj, true) != mj) {
-			return;
+				if (bluePrintBuilder != null && builderRobot != null) {
+					//builderRobot.markEndOfBlueprint(bluePrintBuilder);
+				}
+
+				bluePrintBuilder = currentPathIterator.next();
+
+				if (bluePrintBuilder != null) {
+					box.reset();
+					/*
+					box.initialize(bluePrintBuilder);
+					*/
+				}
+
+				if (builderRobot != null) {
+					//builderRobot.setBox(box);
+				}
+
+				if (bluePrintBuilder == null) {
+					currentPathIterator = currentPathIterator.iterate();
+				}
+
+				if (currentPathIterator == null) {
+					done = true;
+				}
+			} else {
+				if (bluePrintBuilder != null && bluePrintBuilder.done) {
+					if (builderRobot != null) {
+						//builderRobot.markEndOfBlueprint(bluePrintBuilder);
+					}
+
+					done = true;
+					bluePrintBuilder = null;
+				} else {
+					bluePrintBuilder = instanciateBluePrint(xCoord, yCoord, zCoord,
+							ForgeDirection.values()[worldObj.getBlockMetadata(xCoord, yCoord, zCoord)].getOpposite());
+
+					if (bluePrintBuilder != null) {
+						box.initialize(bluePrintBuilder);
+					}
+				}
+			}
 		}
-
-		//if (builderRobot == null) {
-		//	builderRobot = new EntityRobotBuilder(worldObj, box);
-		//	worldObj.spawnEntityInWorld(builderRobot);
-		//}
-
-		//if (builderRobot.readyToBuild()) {
-		//	while (blueprintIterator.hasNext()) {
-		//		if (builderRobot.scheduleContruction(blueprintIterator.next())) {
-		//			powerHandler.useEnergy(0, 25, true);
-		//			break;
-		//		}
-		//	}
-		//}
-	}
-
-	public boolean hasWorkScheduled() {
-		return (blueprintIterator != null && blueprintIterator.hasNext()) || (builderRobot != null /*&& !builderRobot.done()*/);
 	}
 
 	@Override
 	public int getSizeInventory() {
-		return inv.getSizeInventory();
+		return items.length;
 	}
 
 	@Override
-	public ItemStack getStackInSlot(int slot) {
-		return inv.getStackInSlot(slot);
+	public ItemStack getStackInSlot(int i) {
+		return items[i];
 	}
 
 	@Override
-	public ItemStack decrStackSize(int slot, int amount) {
-		return inv.decrStackSize(slot, amount);
+	public ItemStack decrStackSize(int i, int j) {
+		ItemStack result;
+		if (items[i] == null) {
+			result = null;
+		} else if (items[i].stackSize > j) {
+			result = items[i].splitStack(j);
+		} else {
+			ItemStack tmp = items[i];
+			items[i] = null;
+			result = tmp;
+		}
+
+		if (i == 0) {
+			iterateBpt();
+		}
+
+		return result;
 	}
 
 	@Override
-	public void setInventorySlotContents(int slot, ItemStack stack) {
-		inv.setInventorySlotContents(slot, stack);
+	public void setInventorySlotContents(int i, ItemStack itemstack) {
+		items[i] = itemstack;
+
+		if (i == 0) {
+			iterateBpt();
+			done = false;
+		}
 	}
 
 	@Override
 	public ItemStack getStackInSlotOnClosing(int slot) {
-		return inv.getStackInSlotOnClosing(slot);
+		if (items[slot] == null)
+			return null;
+		ItemStack toReturn = items[slot];
+		items[slot] = null;
+		return toReturn;
 	}
 
 	@Override
@@ -206,44 +444,58 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 	}
 
 	@Override
-	public boolean isItemValidForSlot(int slot, ItemStack stack) {
-		if (slot == SLOT_BLUEPRINT) {
-			return ItemBlueprint.getBlueprint(stack) != null;
-		}
-		return true;
-	}
-
-	@Override
 	public boolean isUseableByPlayer(EntityPlayer entityplayer) {
 		return worldObj.getTileEntity(xCoord, yCoord, zCoord) == this;
 	}
 
 	@Override
-	public void readFromNBT(NBTTagCompound nbt) {
-		super.readFromNBT(nbt);
+	public void readFromNBT(NBTTagCompound nbttagcompound) {
+		super.readFromNBT(nbttagcompound);
 
-		inv.readFromNBT(nbt);
+		Utils.readStacksFromNBT(nbttagcompound, "Items", items);
 
-		if (nbt.hasKey("box")) {
-			box.initialize(nbt.getCompoundTag("box"));
+		if (nbttagcompound.hasKey("box")) {
+			box.initialize(nbttagcompound.getCompoundTag("box"));
 		}
 
-		builderDone = nbt.getBoolean("builderDone");
+		if (nbttagcompound.hasKey("path")) {
+			path = new LinkedList<BlockIndex>();
+			NBTTagList list = nbttagcompound.getTagList("path",
+					Utils.NBTTag_Types.NBTTagCompound.ordinal());
+
+			for (int i = 0; i < list.tagCount(); ++i) {
+				path.add(new BlockIndex(list.getCompoundTagAt(i)));
+			}
+		}
+
+		done = nbttagcompound.getBoolean("done");
 	}
 
 	@Override
-	public void writeToNBT(NBTTagCompound nbt) {
-		super.writeToNBT(nbt);
+	public void writeToNBT(NBTTagCompound nbttagcompound) {
+		super.writeToNBT(nbttagcompound);
 
-		inv.writeToNBT(nbt);
+		Utils.writeStacksToNBT(nbttagcompound, "Items", items);
 
 		if (box.isInitialized()) {
 			NBTTagCompound boxStore = new NBTTagCompound();
 			box.writeToNBT(boxStore);
-			nbt.setTag("box", boxStore);
+			nbttagcompound.setTag("box", boxStore);
 		}
 
-		nbt.setBoolean("builderDone", builderDone);
+		if (path != null) {
+			NBTTagList list = new NBTTagList();
+
+			for (BlockIndex i : path) {
+				NBTTagCompound c = new NBTTagCompound();
+				i.writeTo(c);
+				list.appendTag(c);
+			}
+
+			nbttagcompound.setTag("path", list);
+		}
+
+		nbttagcompound.setBoolean("done", done);
 	}
 
 	@Override
@@ -258,11 +510,8 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 			builderRobot.setDead();
 			builderRobot = null;
 		}
-	}
 
-	@Override
-	public PowerReceiver getPowerReceiver(ForgeDirection side) {
-		return powerHandler.getPowerReceiver();
+		cleanPathLasers();
 	}
 
 	@Override
@@ -274,8 +523,33 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 	}
 
 	@Override
+	public void updateEntity() {
+		super.updateEntity();
+
+		if ((bluePrintBuilder == null || bluePrintBuilder.done)
+				&& box.isInitialized()
+				//&& (builderRobot == null || builderRobot.done())
+				) {
+
+			box.isVisible = false;
+			box.reset();
+
+			if (!worldObj.isRemote) {
+				sendNetworkUpdate();
+			}
+
+			return;
+		}
+
+		if (!box.isInitialized() && bluePrintBuilder == null && builderRobot != null) {
+			builderRobot.setDead();
+			builderRobot = null;
+		}
+	}
+
+	@Override
 	public boolean isActive() {
-		return !builderDone;
+		return !done;
 	}
 
 	@Override
@@ -286,6 +560,28 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 	@Override
 	public boolean manageSolids() {
 		return true;
+	}
+
+	public void cleanPathLasers() {
+		if (pathLasers != null) {
+			for (EntityLaser laser : pathLasers) {
+				laser.setDead();
+			}
+
+			pathLasers = null;
+		}
+	}
+
+	public boolean isBuildingBlueprint() {
+		return getStackInSlot(0) != null && getStackInSlot(0).getItem() instanceof ItemBptBluePrint;
+	}
+
+	public Collection<ItemStack> getNeededItems() {
+		if (bluePrintBuilder instanceof BptBuilderBlueprint) {
+			return ((BptBuilderBlueprint) bluePrintBuilder).neededItems;
+		} else {
+			return null;
+		}
 	}
 
 	@Override
@@ -300,6 +596,28 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 
 	@Override
 	public boolean hasCustomInventoryName() {
+		// TODO Auto-generated method stub
 		return false;
+	}
+
+	@Override
+	public boolean isItemValidForSlot(int var1, ItemStack var2) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public Box getBox() {
+		return box;
+	}
+
+	@Override
+	public AxisAlignedBB getRenderBoundingBox() {
+		return new Box (this).extendToEncompass(box).getBoundingBox();
+	}
+
+	@Override
+	public PowerReceiver getPowerReceiver(ForgeDirection side) {
+		return powerHandler.getPowerReceiver();
 	}
 }

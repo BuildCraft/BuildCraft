@@ -27,6 +27,9 @@ import buildcraft.core.blueprints.BptBlueprint;
 import buildcraft.core.blueprints.BptContext;
 import buildcraft.core.blueprints.BptTemplate;
 import buildcraft.core.network.NetworkData;
+import buildcraft.core.network.RPC;
+import buildcraft.core.network.RPCHandler;
+import buildcraft.core.network.RPCSide;
 import buildcraft.core.utils.Utils;
 
 public class TileArchitect extends TileBuildCraft implements IInventory, IBoxProvider {
@@ -81,8 +84,9 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 	}
 
 	public void createBpt() {
-		if (!box.isInitialized() || items[1] != null)
+		if (!box.isInitialized() || items[1] != null) {
 			return;
+		}
 
 		BptBase result;
 		BptContext context = null;
@@ -103,7 +107,8 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 		result.anchorY = yCoord - box.yMin;
 		result.anchorZ = zCoord - box.zMin;
 
-		ForgeDirection o = ForgeDirection.values()[worldObj.getBlockMetadata(xCoord, yCoord, zCoord)].getOpposite();
+		ForgeDirection o = ForgeDirection.values()[worldObj.getBlockMetadata(
+				xCoord, yCoord, zCoord)].getOpposite();
 
 		if (o == ForgeDirection.EAST) {
 			// Do nothing
@@ -119,6 +124,7 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 		}
 
 		ItemStack stack;
+
 		if (result.equals(BuildCraftBuilders.getBptRootIndex().getBluePrint(lastBptId))) {
 			result = BuildCraftBuilders.getBptRootIndex().getBluePrint(lastBptId);
 			stack = BuildCraftBuilders.getBptItemStack(items[0].getItem(), lastBptId, result.getName());
@@ -174,6 +180,7 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 		return result;
 	}
 
+	@RPC (RPCSide.SERVER)
 	public void handleClientInput(char c) {
 		if (c == 8) {
 			if (name.length() > 0) {
@@ -184,7 +191,13 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 				name += c;
 			}
 		}
-		sendNetworkUpdate();
+
+		RPCHandler.rpcBroadcastPlayers(this, "setName", name);
+	}
+
+	@RPC
+	public void setName (String name) {
+		this.name = name;
 	}
 
 	@Override
@@ -220,7 +233,6 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 		items[i] = itemstack;
 
 		initializeComputing();
-
 	}
 
 	@Override
@@ -312,10 +324,10 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 	}
 
 	private void initializeComputing() {
-		if (!box.isInitialized())
+		if (!box.isInitialized()) {
 			return;
-		else if (!isComputing) {
-			if (items[0] != null && items[0].getItem() instanceof ItemBptBase && items[1] == null) {
+		} else if (!isComputing) {
+			if (items[0] != null && items[0].getItem() instanceof ItemBlueprint && items[1] == null) {
 				isComputing = true;
 				computingTime = 0;
 			} else {
@@ -323,7 +335,7 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 				computingTime = 0;
 			}
 		} else {
-			if (items[0] == null || !(items[0].getItem() instanceof ItemBptBase)) {
+			if (items[0] == null || !(items[0].getItem() instanceof ItemBlueprint)) {
 				isComputing = false;
 				computingTime = 0;
 			}

@@ -18,6 +18,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.BuildCraftBuilders;
@@ -122,5 +123,20 @@ public class BlockBuilder extends BlockContainer {
 		blockTextureTop = par1IconRegister.registerIcon("buildcraft:builder_top");
 		blockTextureSide = par1IconRegister.registerIcon("buildcraft:builder_side");
 		blockTextureFront = par1IconRegister.registerIcon("buildcraft:builder_front");
+	}
+
+	@Override
+	public boolean renderAsNormalBlock() {
+		return false;
+	}
+
+	@Override
+	public boolean isSideSolid(IBlockAccess world, int x, int y, int z, ForgeDirection side) {
+		return false;
+	}
+
+	@Override
+	public int getLightValue(IBlockAccess world, int x, int y, int z) {
+		return 1;
 	}
 }

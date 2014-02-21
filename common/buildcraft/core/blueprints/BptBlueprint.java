@@ -14,9 +14,12 @@ import java.io.IOException;
 import java.util.TreeSet;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockContainer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import buildcraft.api.blueprints.IBptContext;
+import buildcraft.core.IBptContributor;
+import buildcraft.core.utils.BCLog;
 
 public class BptBlueprint extends BptBase {
 
@@ -39,15 +42,15 @@ public class BptBlueprint extends BptBase {
 	}
 
 	public void readFromWorld(IBptContext context, TileEntity anchorTile, int x, int y, int z) {
-		/*BptSlot slot = new BptSlot();
+		BptSlot slot = new BptSlot();
 
 		slot.x = (int) (x - context.surroundingBox().pMin().x);
 		slot.y = (int) (y - context.surroundingBox().pMin().y);
 		slot.z = (int) (z - context.surroundingBox().pMin().z);
-		slot.blockId = anchorTile.getWorldObj().getBlockId(x, y, z);
+		slot.block = anchorTile.getWorldObj().getBlock(x, y, z);
 		slot.meta = anchorTile.getWorldObj().getBlockMetadata(x, y, z);
 
-		if (Block.blocksList[slot.blockId] instanceof BlockContainer) {
+		if (slot.block instanceof BlockContainer) {
 			TileEntity tile = anchorTile.getWorldObj().getTileEntity(x, y, z);
 
 			if (tile != null && tile instanceof IBptContributor) {
@@ -64,8 +67,7 @@ public class BptBlueprint extends BptBase {
 			// Defensive code against errors in implementers
 			t.printStackTrace();
 			BCLog.logger.throwing("BptBlueprint", "readFromWorld", t);
-
-		}*/
+		}
 	}
 
 	@Override

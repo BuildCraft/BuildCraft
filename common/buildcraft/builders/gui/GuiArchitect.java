@@ -27,15 +27,15 @@ import net.minecraft.util.ResourceLocation;
 
 import org.lwjgl.opengl.GL11;
 
-public class GuiTemplate extends GuiBuildCraft {
+public class GuiArchitect extends GuiBuildCraft {
 
 	private static final ResourceLocation TEXTURE = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_GUI + "/template_gui.png");
 	IInventory playerInventory;
 	TileArchitect template;
 	boolean editMode = false;
 
-	public GuiTemplate(IInventory playerInventory, TileArchitect template) {
-		super(new ContainerTemplate(playerInventory, template), template, TEXTURE);
+	public GuiArchitect(IInventory playerInventory, TileArchitect template) {
+		super(new ContainerArchitect(playerInventory, template), template, TEXTURE);
 		this.playerInventory = playerInventory;
 		this.template = template;
 		xSize = 175;

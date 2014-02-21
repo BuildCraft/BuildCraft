@@ -25,6 +25,7 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.IBlockAccess;
@@ -522,5 +523,33 @@ public class Utils {
 		packet.writeData(buf);
 
 		return new FMLProxyPacket(buf, DefaultProps.NET_CHANNEL_NAME + "-CORE");
+	}
+
+	public static void readStacksFromNBT(NBTTagCompound nbt, String name, ItemStack[] stacks) {
+		NBTTagList nbttaglist = nbt.getTagList(name, NBTTag_Types.NBTTagCompound.ordinal());
+
+		for (int i = 0; i < stacks.length; ++i)
+			if (i < nbttaglist.tagCount()) {
+				NBTTagCompound nbttagcompound2 = nbttaglist.getCompoundTagAt(i);
+
+				stacks[i] = ItemStack.loadItemStackFromNBT(nbttagcompound2);
+			} else {
+				stacks[i] = null;
+			}
+	}
+
+	public static void writeStacksToNBT(NBTTagCompound nbt, String name, ItemStack[] stacks) {
+		NBTTagList nbttaglist = new NBTTagList();
+
+		for (int i = 0; i < stacks.length; ++i) {
+			NBTTagCompound cpt = new NBTTagCompound();
+			nbttaglist.appendTag(cpt);
+			if (stacks[i] != null) {
+				stacks[i].writeToNBT(cpt);
+			}
+
+		}
+
+		nbt.setTag(name, nbttaglist);
 	}
 }

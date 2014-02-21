@@ -8,20 +8,16 @@
  */
 package buildcraft.builders.gui;
 
+import net.minecraft.inventory.IInventory;
+import net.minecraft.util.ResourceLocation;
+
+import org.lwjgl.opengl.GL11;
+
 import buildcraft.builders.TileBuilder;
-import buildcraft.builders.blueprints.Blueprint;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.gui.AdvancedSlot;
 import buildcraft.core.gui.GuiAdvancedInterface;
 import buildcraft.core.utils.StringUtils;
-
-import java.util.Collection;
-
-import net.minecraft.inventory.IInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
-
-import org.lwjgl.opengl.GL11;
 
 public class GuiBuilder extends GuiAdvancedInterface {
 
@@ -55,7 +51,7 @@ public class GuiBuilder extends GuiAdvancedInterface {
 		fontRendererObj.drawString(StringUtils.localize("gui.building.resources"), 8, 60, 0x404040);
 		fontRendererObj.drawString(StringUtils.localize("gui.inventory"), 8, ySize - 97, 0x404040);
 		fontRendererObj.drawString(StringUtils.localize("gui.needed"), 185, 7, 0x404040);
-		
+
 		drawForegroundSelection(par1, par2);
 	}
 
@@ -80,7 +76,7 @@ public class GuiBuilder extends GuiAdvancedInterface {
 			((ItemSlot) slots[s]).stack = null;
 		}
 
-		Blueprint blueprint = builder.getBlueprint();
+		/*Blueprint blueprint = builder.getBlueprint();
 		if(blueprint != null){
 			Collection<ItemStack> needs = blueprint.getCost();
 
@@ -96,7 +92,7 @@ public class GuiBuilder extends GuiAdvancedInterface {
 					s++;
 				}
 			}
-		}
+		}*/
 
 		drawBackgroundSlots();
 	}
