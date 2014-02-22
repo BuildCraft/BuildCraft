@@ -8,17 +8,17 @@
  */
 package buildcraft.builders.gui;
 
-import buildcraft.BuildCraftBuilders;
-import buildcraft.builders.TileBlueprintLibrary;
-import buildcraft.core.DefaultProps;
-import buildcraft.core.blueprints.BptPlayerIndex;
-import buildcraft.core.gui.GuiBuildCraft;
-import buildcraft.core.utils.StringUtils;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 
 import org.lwjgl.opengl.GL11;
+
+import buildcraft.BuildCraftBuilders;
+import buildcraft.builders.TileBlueprintLibrary;
+import buildcraft.core.DefaultProps;
+import buildcraft.core.gui.GuiBuildCraft;
+import buildcraft.core.utils.StringUtils;
 
 public class GuiBlueprintLibrary extends GuiBuildCraft {
 
@@ -27,7 +27,7 @@ public class GuiBlueprintLibrary extends GuiBuildCraft {
 	TileBlueprintLibrary library;
 	ContainerBlueprintLibrary container;
 	boolean computeInput;
-	BptPlayerIndex index;
+	//BptPlayerIndex index;
 
 	public GuiBlueprintLibrary(EntityPlayer player, TileBlueprintLibrary library) {
 		super(new ContainerBlueprintLibrary(player, library), library, TEXTURE);
@@ -38,10 +38,10 @@ public class GuiBlueprintLibrary extends GuiBuildCraft {
 		this.library = library;
 		container = (ContainerBlueprintLibrary) inventorySlots;
 
-		index = BuildCraftBuilders.getPlayerIndex(player.getDisplayName());
+		//index = BuildCraftBuilders.getPlayerIndex(player.getDisplayName());
 		library.updateCurrentNames();
 	}
-	
+
 	private GuiButton nextPageButton;
 	private GuiButton prevPageButton;
 	private GuiButton lockButton;

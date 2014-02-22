@@ -14,10 +14,10 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import buildcraft.BuildCraftBuilders;
-import buildcraft.builders.blueprints.Blueprint;
 import buildcraft.builders.blueprints.BlueprintId;
 import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.ItemBuildCraft;
+import buildcraft.core.blueprints.BlueprintBase;
 import buildcraft.core.utils.NBTUtils;
 import buildcraft.core.utils.StringUtils;
 
@@ -31,23 +31,23 @@ public abstract class ItemBlueprint extends ItemBuildCraft {
 	@Override
 	public void addInformation(ItemStack stack, EntityPlayer player, List list, boolean advanced) {
 		// TODO: This code will break in SMP, put name and creator in NBT
-		Blueprint blueprint = getBlueprint(stack);
+		BlueprintBase blueprint = getBlueprint(stack);
 		if (blueprint != null) {
-			list.add(String.format(StringUtils.localize("item.blueprint.name"), blueprint.getName()));
-			list.add(String.format(StringUtils.localize("item.blueprint.creator"), blueprint.getCreator()));
+			list.add(String.format(StringUtils.localize("item.blueprint.name"), blueprint.id.name));
+			list.add(String.format(StringUtils.localize("item.blueprint.creator"), blueprint.author));
 		} else
 			list.add(StringUtils.localize("item.blueprint.blank"));
 	}
 
-	public static ItemStack getBlueprintItem(Blueprint blueprint) {
+	public static ItemStack getBlueprintItem(BlueprintBase blueprint) {
 		ItemStack stack = new ItemStack(BuildCraftBuilders.blueprintItem, 1, 1);
 		NBTTagCompound nbt = NBTUtils.getItemData(stack);
-		blueprint.getId().write (nbt);
+		blueprint.id.write (nbt);
 		return stack;
 	}
 
 
-	public static Blueprint getBlueprint(ItemStack stack) {
+	public static BlueprintBase getBlueprint(ItemStack stack) {
 		if (stack == null) {
 			return null;
 		}

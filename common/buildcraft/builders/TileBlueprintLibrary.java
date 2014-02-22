@@ -8,19 +8,6 @@
  */
 package buildcraft.builders;
 
-import buildcraft.BuildCraftBuilders;
-import buildcraft.builders.blueprints.Blueprint;
-import buildcraft.builders.blueprints.BlueprintId;
-import buildcraft.core.TileBuildCraft;
-import buildcraft.core.blueprints.BptBase;
-import buildcraft.core.blueprints.BptPlayerIndex;
-import buildcraft.core.inventory.InvUtils;
-import buildcraft.core.network.NetworkData;
-import buildcraft.core.network.RPC;
-import buildcraft.core.network.RPCHandler;
-import buildcraft.core.network.RPCSide;
-import buildcraft.core.proxy.CoreProxy;
-
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -29,6 +16,15 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import buildcraft.BuildCraftBuilders;
+import buildcraft.builders.blueprints.BlueprintId;
+import buildcraft.core.TileBuildCraft;
+import buildcraft.core.blueprints.BlueprintBase;
+import buildcraft.core.inventory.InvUtils;
+import buildcraft.core.network.NetworkData;
+import buildcraft.core.network.RPC;
+import buildcraft.core.network.RPCHandler;
+import buildcraft.core.network.RPCSide;
 
 /**
  * In this implementation, the blueprint library is the interface to the
@@ -44,7 +40,7 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory {
 	@NetworkData
 	public String owner = "";
 
-	private ArrayList<BptBase> currentPage;
+	private ArrayList<BlueprintBase> currentPage;
 
 	public LinkedList <String> currentBlueprint = new LinkedList <String> ();
 
@@ -60,14 +56,14 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory {
 	@Override
 	public void initialize() {
 		super.initialize();
-		
+
 		if (!worldObj.isRemote) {
 			setCurrentPage(getNextPage(null));
 		}
 	}
 
-	public ArrayList<BptBase> getNextPage(String after) {
-		ArrayList<BptBase> result = new ArrayList<BptBase>();
+	public ArrayList<BlueprintBase> getNextPage(String after) {
+		/*ArrayList<BlueprintBase> result = new ArrayList<BlueprintBase>();
 
 		BptPlayerIndex index = BuildCraftBuilders.getPlayerIndex(BuildersProxy.getOwner(this));
 
@@ -80,18 +76,19 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory {
 				break;
 			}
 
-			BptBase bpt = BuildCraftBuilders.getBptRootIndex().getBluePrint(it);
+			BlueprintBase bpt = BuildCraftBuilders.getBptRootIndex().getBluePrint(it);
 
 			if (bpt != null) {
 				result.add(bpt);
 			}
 		}
 
-		return result;
+		return result;*/
+		return null;
 	}
 
-	public ArrayList<BptBase> getPrevPage(String before) {
-		ArrayList<BptBase> result = new ArrayList<BptBase>();
+	public ArrayList<BlueprintBase> getPrevPage(String before) {
+		/*ArrayList<BlueprintBase> result = new ArrayList<BlueprintBase>();
 
 		BptPlayerIndex index = BuildCraftBuilders.getPlayerIndex(BuildersProxy.getOwner(this));
 
@@ -104,14 +101,15 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory {
 				break;
 			}
 
-			BptBase bpt = BuildCraftBuilders.getBptRootIndex().getBluePrint(it);
+			BlueprintBase bpt = BuildCraftBuilders.getBptRootIndex().getBluePrint(it);
 
 			if (bpt != null) {
 				result.add(bpt);
 			}
 		}
 
-		return result;
+		return result;*/
+		return null;
 	}
 
 	public void updateCurrentNames() {
@@ -123,18 +121,18 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory {
 		}
 	}
 
-	public ArrayList<BptBase> getCurrentPage() {
+	public ArrayList<BlueprintBase> getCurrentPage() {
 		return currentPage;
 	}
 
-	public void setCurrentPage(ArrayList<BptBase> newPage) {
+	public void setCurrentPage(ArrayList<BlueprintBase> newPage) {
 		currentPage = newPage;
 		selected = -1;
 		updateCurrentNames();
 	}
 
 	public void setCurrentPage(boolean nextPage) {
-		int index = 0;
+		/*int index = 0;
 		if (nextPage) {
 			index = currentPage.size() - 1;
 		}
@@ -142,11 +140,11 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory {
 			setCurrentPage(getNextPage(currentPage.get(index).file.getName()));
 		} else {
 			setCurrentPage(getNextPage(null));
-		}
+		}*/
 	}
 
 	public void deleteSelectedBpt() {
-		BptPlayerIndex index = BuildCraftBuilders.getPlayerIndex(BuildersProxy.getOwner(this));
+		/*BptPlayerIndex index = BuildCraftBuilders.getPlayerIndex(BuildersProxy.getOwner(this));
 		if (selected > -1 && selected < currentPage.size()) {
 			index.deleteBluePrint(currentPage.get(selected).file.getName());
 			if (currentPage.size() > 0) {
@@ -156,7 +154,7 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory {
 			}
 			selected = -1;
 			updateCurrentNames();
-		}
+		}*/
 	}
 
 	@Override
@@ -264,7 +262,7 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory {
 	@Override
 	public void updateEntity() {
 		super.updateEntity();
-		
+
 		if (worldObj.isRemote) {
 			return;
 		}
@@ -283,7 +281,7 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory {
 			setInventorySlotContents(1, stack[0]);
 			setInventorySlotContents(0, null);
 
-			Blueprint bpt = ItemBlueprint.getBlueprint(stack [1]);
+			BlueprintBase bpt = ItemBlueprint.getBlueprint(stack [1]);
 
 			if (bpt != null && uploadingPlayer != null) {
 				RPCHandler.rpcPlayer(this, "receiveBlueprint", uploadingPlayer, bpt);
@@ -303,18 +301,20 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory {
 
 		if (progressOut == 100 && stack[3] == null) {
 			if (selected > -1 && selected < currentPage.size()) {
-				BptBase bpt = currentPage.get(selected);
-				setInventorySlotContents(3, BuildCraftBuilders.getBptItemStack(stack[2].getItem(), bpt.position, bpt.getName()));
+				BlueprintBase bpt = currentPage.get(selected);
+				setInventorySlotContents(3, BuildCraftBuilders.getBptItemStack(
+						stack[2].getItem(), bpt.position, bpt.id.name));
 			} else {
-				setInventorySlotContents(3, BuildCraftBuilders.getBptItemStack(stack[2].getItem(), 0, null));
+				setInventorySlotContents(3, BuildCraftBuilders.getBptItemStack(
+						stack[2].getItem(), 0, null));
 			}
-			
+
 			setInventorySlotContents(2, null);
 		}
 	}
 
 	@RPC (RPCSide.CLIENT)
-	public void receiveBlueprint (Blueprint bpt) {
+	public void receiveBlueprint (BlueprintBase bpt) {
 		BuildCraftBuilders.clientDB.add(bpt);
 		updateCurrentNames();
 	}

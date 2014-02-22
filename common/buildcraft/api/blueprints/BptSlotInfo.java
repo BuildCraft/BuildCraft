@@ -15,7 +15,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
 /**
- * This class records a slot, either from a blueprint or from a block placed in the world.
+ * This class records a slot, either from a blueprint or from a block placed in
+ * the world.
  */
 public class BptSlotInfo {
 
@@ -26,13 +27,17 @@ public class BptSlotInfo {
 	public int z;
 
 	/**
-	 * This field contains requirements for a given block when stored in the blueprint. Modders can either rely on this list or compute their own int BptBlock.
+	 * This field contains requirements for a given block when stored in the
+	 * blueprint. Modders can either rely on this list or compute their own int
+	 * BptBlock.
 	 */
 	public LinkedList<ItemStack> storedRequirements = new LinkedList<ItemStack>();
 
 	/**
-	 * This tree contains additional data to be stored in the blueprint. By default, it will be initialized from BptBlock.initializeFromWorld with the standard
-	 * readNBT function of the corresponding tile (if any) and will be loaded from BptBlock.buildBlock using the standard writeNBT function.
+	 * This tree contains additional data to be stored in the blueprint. By
+	 * default, it will be initialized from BptBlock.initializeFromWorld with
+	 * the standard readNBT function of the corresponding tile (if any) and will
+	 * be loaded from BptBlock.buildBlock using the standard writeNBT function.
 	 */
 	public NBTTagCompound cpt = new NBTTagCompound();
 

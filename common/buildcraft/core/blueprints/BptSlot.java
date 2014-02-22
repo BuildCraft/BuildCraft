@@ -8,15 +8,18 @@
  */
 package buildcraft.core.blueprints;
 
-import buildcraft.api.blueprints.BlueprintManager;
-import buildcraft.api.blueprints.BptSlotInfo;
-import buildcraft.api.blueprints.IBptContext;
-
+import java.util.HashMap;
 import java.util.LinkedList;
 
+import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import buildcraft.api.blueprints.BptSlotInfo;
+import buildcraft.api.blueprints.IBptContext;
+import buildcraft.core.utils.Utils;
 
 public class BptSlot extends BptSlotInfo {
 
@@ -34,8 +37,8 @@ public class BptSlot extends BptSlotInfo {
 		} else {
 			return block == context.world().getBlock(x, y, z);
 		}
-		
-		//return BlueprintManager.blockBptProps[blockId].isValid(this, context);		
+
+		//return BlueprintManager.blockBptProps[blockId].isValid(this, context);
 	}
 
 	public void rotateLeft(IBptContext context) {
@@ -67,7 +70,7 @@ public class BptSlot extends BptSlotInfo {
 		// the following line is just to resurect quarry building
 		context.world().setBlock (x, y, z, block);
 		context.world().setBlockMetadataWithNotify(x, y, z, meta, 0);
-		
+
 		//BlueprintManager.blockBptProps[blockId].buildBlock(this, context);
 	}
 
@@ -99,4 +102,49 @@ public class BptSlot extends BptSlotInfo {
 		return obj;
 	}
 
+	public void writeToNBT(NBTTagCompound nbt,
+			HashMap<Block, Integer> blocksMap, HashMap<Item, Integer> itemsMap) {
+		if (!blocksMap.containsKey(block)) {
+			blocksMap.put(block,
+					Block.blockRegistry.getIDForObject(block));
+		}
+
+		nbt.setInteger("blockId", blocksMap.get(block));
+		nbt.setInteger("blockMeta", meta);
+		nbt.setTag("blockCpt", cpt);
+
+		NBTTagList rq = new NBTTagList();
+
+		for (ItemStack stack : storedRequirements) {
+			if (!itemsMap.containsKey(stack.getItem())) {
+				itemsMap.put(stack.getItem(),
+						Item.itemRegistry.getIDForObject(stack.getItem()));
+			}
+
+			NBTTagCompound sub = new NBTTagCompound();
+			stack.writeToNBT(stack.writeToNBT(sub));
+			rq.appendTag(sub);
+		}
+
+		nbt.setTag("rq", rq);
+	}
+
+	public void readFromNBT(NBTTagCompound nbt,
+			HashMap<Integer, Block> blocksMap, HashMap<Integer, Integer> itemsMap) {
+
+		block = blocksMap.get(nbt.getInteger("blockId"));
+		meta = nbt.getInteger("blockMeta");
+		cpt = nbt.getCompoundTag("blockCpt");
+
+		NBTTagList rq = nbt.getTagList("rq", Utils.NBTTag_Types.NBTTagList.ordinal());
+
+		for (int i = 0; i < rq.tagCount(); ++i) {
+			NBTTagCompound sub = rq.getCompoundTagAt(i);
+
+			// Maps the id in the blueprint to the id in the world
+			sub.setInteger("id", itemsMap.get(sub.getInteger("id")));
+
+			storedRequirements.add(ItemStack.loadItemStackFromNBT(sub));
+		}
+	}
 }

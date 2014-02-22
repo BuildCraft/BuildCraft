@@ -22,10 +22,10 @@ import buildcraft.core.Box;
 import buildcraft.core.Box.Kind;
 import buildcraft.core.IBoxProvider;
 import buildcraft.core.TileBuildCraft;
-import buildcraft.core.blueprints.BptBase;
-import buildcraft.core.blueprints.BptBlueprint;
+import buildcraft.core.blueprints.Blueprint;
+import buildcraft.core.blueprints.BlueprintBase;
 import buildcraft.core.blueprints.BptContext;
-import buildcraft.core.blueprints.BptTemplate;
+import buildcraft.core.blueprints.Template;
 import buildcraft.core.network.NetworkData;
 import buildcraft.core.network.RPC;
 import buildcraft.core.network.RPCHandler;
@@ -88,19 +88,19 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 			return;
 		}
 
-		BptBase result;
+		BlueprintBase result;
 		BptContext context = null;
 
-		if (items[0].getItem() instanceof ItemBlueprintTemplate) {
+		if (items[0].getItem() instanceof ItemBlueprint) {
+			result = createBptBlueprint();
+			context = new BptContext(worldObj, (Blueprint) result, box);
+		} else {
 			result = createBptTemplate();
 			context = new BptContext(worldObj, null, box);
-		} else {
-			result = createBptBlueprint();
-			context = new BptContext(worldObj, (BptBlueprint) result, box);
 		}
 
 		if (!name.equals("")) {
-			result.setName(name);
+			result.id.name = name;
 		}
 
 		result.anchorX = xCoord - box.xMin;
@@ -123,22 +123,14 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 			result.rotateLeft(context);
 		}
 
-		ItemStack stack;
+		BuildCraftBuilders.serverDB.add(result);
 
-		if (result.equals(BuildCraftBuilders.getBptRootIndex().getBluePrint(lastBptId))) {
-			result = BuildCraftBuilders.getBptRootIndex().getBluePrint(lastBptId);
-			stack = BuildCraftBuilders.getBptItemStack(items[0].getItem(), lastBptId, result.getName());
-		} else {
-			int bptId = BuildCraftBuilders.getBptRootIndex().storeBluePrint(result);
-			stack = BuildCraftBuilders.getBptItemStack(items[0].getItem(), bptId, result.getName());
-			lastBptId = bptId;
-		}
 
-		setInventorySlotContents(1, stack);
+		setInventorySlotContents(1, ItemBlueprint.getBlueprintItem(result));
 		setInventorySlotContents(0, null);
 	}
 
-	public BptBase createBptTemplate() {
+	public BlueprintBase createBptTemplate() {
 		int mask1 = 1;
 		int mask0 = 0;
 
@@ -147,7 +139,7 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 			mask0 = 1;
 		}
 
-		BptBase result = new BptTemplate(box.sizeX(), box.sizeY(), box.sizeZ());
+		BlueprintBase result = new Template(box.sizeX(), box.sizeY(), box.sizeZ());
 
 		for (int x = box.xMin; x <= box.xMax; ++x) {
 			for (int y = box.yMin; y <= box.yMax; ++y) {
@@ -164,8 +156,8 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 		return result;
 	}
 
-	private BptBase createBptBlueprint() {
-		BptBlueprint result = new BptBlueprint(box.sizeX(), box.sizeY(), box.sizeZ());
+	private BlueprintBase createBptBlueprint() {
+		Blueprint result = new Blueprint(box.sizeX(), box.sizeY(), box.sizeZ());
 
 		BptContext context = new BptContext(worldObj, result, box);
 

@@ -19,13 +19,13 @@ import buildcraft.api.core.IAreaProvider;
 
 public class BlueprintBuilder implements IAreaProvider {
 
-	public final Blueprint blueprint;
+	public final SchematicBlueprint blueprint;
 	public final ForgeDirection orientation;
 	public final World worldObj;
 	public final int x, y, z;
 	private final List<SchematicBuilder> builders;
 
-	public BlueprintBuilder(Blueprint blueprint, World world, int x, int y, int z, ForgeDirection orientation) {
+	public BlueprintBuilder(SchematicBlueprint blueprint, World world, int x, int y, int z, ForgeDirection orientation) {
 		this.blueprint = blueprint;
 		this.orientation = orientation;
 		this.worldObj = world;

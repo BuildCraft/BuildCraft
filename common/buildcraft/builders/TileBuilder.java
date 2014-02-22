@@ -33,11 +33,10 @@ import buildcraft.core.IBoxProvider;
 import buildcraft.core.IBuilderInventory;
 import buildcraft.core.IMachine;
 import buildcraft.core.TileBuildCraft;
-import buildcraft.core.blueprints.BptBase;
-import buildcraft.core.blueprints.BptBlueprint;
+import buildcraft.core.blueprints.Blueprint;
+import buildcraft.core.blueprints.BlueprintBase;
 import buildcraft.core.blueprints.BptBuilderBase;
 import buildcraft.core.blueprints.BptBuilderBlueprint;
-import buildcraft.core.blueprints.BptBuilderTemplate;
 import buildcraft.core.blueprints.BptContext;
 import buildcraft.core.network.NetworkData;
 import buildcraft.core.robots.EntityRobot;
@@ -244,7 +243,7 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory,
 	}
 
 	public BptBuilderBase instanciateBluePrint(int x, int y, int z, ForgeDirection o) {
-		BptBase bpt = BuildCraftBuilders.getBptRootIndex().getBluePrint(items[0].getItemDamage());
+		BlueprintBase bpt = ItemBlueprint.getBlueprint(items [0]);
 
 		if (bpt == null)
 			return null;
@@ -266,12 +265,13 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory,
 			bpt.rotateLeft(context);
 		}
 
-		if (items[0].getItem() instanceof ItemBlueprintTemplate)
-			return new BptBuilderTemplate(bpt, worldObj, x, y, z);
-		else if (items[0].getItem() instanceof ItemBptBluePrint)
-			return new BptBuilderBlueprint((BptBlueprint) bpt, worldObj, x, y, z);
-		else
+		if (items[0].getItem() instanceof ItemBlueprint) {
+			return new BptBuilderBlueprint((Blueprint) bpt, worldObj, x, y, z);
+		/*} else if (items[0].getItem() instanceof ItemBptBluePrint) {
+			return new BptBuilderTemplate(bpt, worldObj, x, y, z);*/
+		} else {
 			return null;
+		}
 	}
 
 	@Override
@@ -310,8 +310,7 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory,
 	}
 
 	public void iterateBpt() {
-		if (items[0] == null || !(items[0].getItem() instanceof ItemBptBase)) {
-
+		if (items[0] == null || !(items[0].getItem() instanceof ItemBlueprint)) {
 			if (bluePrintBuilder != null) {
 				bluePrintBuilder = null;
 			}
@@ -348,9 +347,7 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory,
 
 				if (bluePrintBuilder != null) {
 					box.reset();
-					/*
 					box.initialize(bluePrintBuilder);
-					*/
 				}
 
 				if (builderRobot != null) {
@@ -573,7 +570,7 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory,
 	}
 
 	public boolean isBuildingBlueprint() {
-		return getStackInSlot(0) != null && getStackInSlot(0).getItem() instanceof ItemBptBluePrint;
+		return getStackInSlot(0) != null && getStackInSlot(0).getItem() instanceof ItemBlueprint;
 	}
 
 	public Collection<ItemStack> getNeededItems() {

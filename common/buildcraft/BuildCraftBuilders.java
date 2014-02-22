@@ -9,9 +9,6 @@
 package buildcraft;
 
 import java.io.File;
-import java.io.IOException;
-import java.util.LinkedList;
-import java.util.TreeMap;
 
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
@@ -52,7 +49,6 @@ import buildcraft.builders.BlockPathMarker;
 import buildcraft.builders.BuilderProxy;
 import buildcraft.builders.EventHandlerBuilders;
 import buildcraft.builders.GuiHandler;
-import buildcraft.builders.IBuilderHook;
 import buildcraft.builders.ItemBlueprintStandard;
 import buildcraft.builders.ItemBlueprintTemplate;
 import buildcraft.builders.TileArchitect;
@@ -81,8 +77,6 @@ import buildcraft.builders.urbanism.UrbanistToolsIconProvider;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.InterModComms;
 import buildcraft.core.Version;
-import buildcraft.core.blueprints.BptPlayerIndex;
-import buildcraft.core.blueprints.BptRootIndex;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.BCLog;
 import cpw.mods.fml.common.Mod;
@@ -118,9 +112,6 @@ public class BuildCraftBuilders extends BuildCraftMod {
 	public static int fillerLifespanTough;
 	public static int fillerLifespanNormal;
 	public static ActionFiller[] fillerActions;
-	private static BptRootIndex rootBptIndex;
-	public static TreeMap<String, BptPlayerIndex> playerLibrary = new TreeMap<String, BptPlayerIndex>();
-	private static LinkedList<IBuilderHook> hooks = new LinkedList<IBuilderHook>();
 	@Instance("BuildCraft|Builders")
 	public static BuildCraftBuilders instance;
 
@@ -357,40 +348,6 @@ public class BuildCraftBuilders extends BuildCraftMod {
 		InterModComms.processIMC(event);
 	}
 
-	public static BptPlayerIndex getPlayerIndex(String name) {
-		BptRootIndex rootIndex = getBptRootIndex();
-
-		if (!playerLibrary.containsKey(name)) {
-			try {
-				playerLibrary.put(name, new BptPlayerIndex(name + ".list", rootIndex));
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-
-		return playerLibrary.get(name);
-	}
-
-	public static BptRootIndex getBptRootIndex() {
-		if (rootBptIndex == null) {
-			try {
-				rootBptIndex = new BptRootIndex("index.txt");
-				rootBptIndex.loadIndex();
-
-				for (IBuilderHook hook : hooks) {
-					hook.rootIndexInitialized(rootBptIndex);
-				}
-
-				rootBptIndex.importNewFiles();
-
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-
-		return rootBptIndex;
-	}
-
 	public static ItemStack getBptItemStack(Item item, int damage, String name) {
 		ItemStack stack = new ItemStack(item, 1, damage);
 		NBTTagCompound nbt = new NBTTagCompound();
@@ -399,12 +356,6 @@ public class BuildCraftBuilders extends BuildCraftMod {
 			stack.setTagCompound(nbt);
 		}
 		return stack;
-	}
-
-	public static void addHook(IBuilderHook hook) {
-		if (!hooks.contains(hook)) {
-			hooks.add(hook);
-		}
 	}
 
 	@EventHandler

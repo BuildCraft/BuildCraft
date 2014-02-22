@@ -19,7 +19,7 @@ public class BptBuilderTemplate extends BptBuilderBase {
 	LinkedList<BptSlot> clearList = new LinkedList<BptSlot>();
 	LinkedList<BptSlot> buildList = new LinkedList<BptSlot>();
 
-	public BptBuilderTemplate(BptBase bluePrint, World world, int x, int y, int z) {
+	public BptBuilderTemplate(BlueprintBase bluePrint, World world, int x, int y, int z) {
 		super(bluePrint, world, x, y, z);
 
 		for (int j = bluePrint.sizeY - 1; j >= 0; --j) {

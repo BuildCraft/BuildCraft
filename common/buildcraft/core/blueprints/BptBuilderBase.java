@@ -16,12 +16,12 @@ import buildcraft.core.IBuilderInventory;
 
 public abstract class BptBuilderBase implements IAreaProvider {
 
-	public BptBase blueprint;
+	public BlueprintBase blueprint;
 	int x, y, z;
 	public boolean done;
 	protected BptContext context;
 
-	public BptBuilderBase(BptBase bluePrint, World world, int x, int y, int z) {
+	public BptBuilderBase(BlueprintBase bluePrint, World world, int x, int y, int z) {
 		this.blueprint = bluePrint;
 		this.x = x;
 		this.y = y;
@@ -31,8 +31,8 @@ public abstract class BptBuilderBase implements IAreaProvider {
 		Box box = new Box();
 		box.initialize(this);
 
-		if (bluePrint instanceof BptBlueprint) {
-			context = new BptContext(world, (BptBlueprint) bluePrint, box);
+		if (bluePrint instanceof Blueprint) {
+			context = new BptContext(world, (Blueprint) bluePrint, box);
 		} else {
 			context = new BptContext(world, null, box);
 		}

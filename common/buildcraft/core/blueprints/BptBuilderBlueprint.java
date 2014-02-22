@@ -54,7 +54,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 		}
 	});
 
-	public BptBuilderBlueprint(BptBlueprint bluePrint, World world, int x, int y, int z) {
+	public BptBuilderBlueprint(Blueprint bluePrint, World world, int x, int y, int z) {
 		super(bluePrint, world, x, y, z);
 
 		for (int j = bluePrint.sizeY - 1; j >= 0; --j) {

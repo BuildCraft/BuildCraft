@@ -9,11 +9,8 @@
 package buildcraft.builders.blueprints;
 
 import io.netty.buffer.ByteBuf;
-import io.netty.buffer.ByteBufAllocator;
 import io.netty.buffer.Unpooled;
 
-import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
@@ -30,11 +27,11 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.zip.GZIPOutputStream;
 
-import buildcraft.BuildCraftBuilders;
-import buildcraft.core.utils.Utils;
 import net.minecraft.nbt.CompressedStreamTools;
-import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
+import buildcraft.BuildCraftBuilders;
+import buildcraft.core.blueprints.BlueprintBase;
+import buildcraft.core.utils.Utils;
 
 public class BlueprintDatabase {
 	private final int bufferSize = 8192;
@@ -44,7 +41,7 @@ public class BlueprintDatabase {
 	private Set <BlueprintId> blueprintIds = new TreeSet<BlueprintId> ();
 
 	//private Map<BlueprintId, BlueprintMeta> blueprintMetas = new HashMap<BlueprintId, BlueprintMeta>();
-	private Map<BlueprintId, Blueprint> loadedBlueprints = new WeakHashMap<BlueprintId, Blueprint>();
+	private Map<BlueprintId, BlueprintBase> loadedBlueprints = new WeakHashMap<BlueprintId, BlueprintBase>();
 
 	/**
 	 * Initialize the blueprint database.
@@ -98,8 +95,8 @@ public class BlueprintDatabase {
 	 * @param id blueprint id
 	 * @return blueprint or null if it can't be retrieved
 	 */
-	public Blueprint get(BlueprintId id) {
-		Blueprint ret = loadedBlueprints.get(id);
+	public BlueprintBase get(BlueprintId id) {
+		BlueprintBase ret = loadedBlueprints.get(id);
 
 		if (ret == null) {
 			ret = load(id);
@@ -114,7 +111,7 @@ public class BlueprintDatabase {
 	 * @param blueprint blueprint to add
 	 * @return id for the added blueprint
 	 */
-	public BlueprintId add(Blueprint blueprint) {
+	public BlueprintId add(BlueprintBase blueprint) {
 		BlueprintId id = save(blueprint);
 
 		if (!blueprintIds.contains(id)) {
@@ -128,10 +125,10 @@ public class BlueprintDatabase {
 		return id;
 	}
 
-	private BlueprintId save(Blueprint blueprint) {
+	private BlueprintId save(BlueprintBase blueprint) {
 		NBTTagCompound nbt = new NBTTagCompound();
 		blueprint.writeToNBT(nbt);
-		
+
 		ByteBuf buf = Unpooled.buffer();
 
 		Utils.writeNBT(buf, nbt);
@@ -139,9 +136,9 @@ public class BlueprintDatabase {
 		byte[] data = new byte [buf.readableBytes()];
 		buf.readBytes(data);
 
-		blueprint.generateId(data);
+		blueprint.id.generateUniqueId(data);
 
-		BlueprintId id = blueprint.meta.id;
+		BlueprintId id = blueprint.id;
 
 		File blueprintFile = new File(blueprintFolder, String.format(Locale.ENGLISH, "%s" + fileExt, id.toString()));
 
@@ -191,7 +188,7 @@ public class BlueprintDatabase {
 		}
 	}
 
-	private Blueprint load(final BlueprintId id) {
+	private BlueprintBase load(final BlueprintId id) {
 		/*FilenameFilter filter = new FilenameFilter() {
 			String prefix = meta.getId().toString();
 

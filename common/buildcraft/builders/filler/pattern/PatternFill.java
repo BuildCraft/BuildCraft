@@ -13,7 +13,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.api.core.IBox;
-import buildcraft.builders.blueprints.Blueprint;
+import buildcraft.builders.blueprints.SchematicBlueprint;
 import buildcraft.builders.blueprints.BlueprintBuilder;
 import buildcraft.builders.blueprints.MaskSchematic;
 import buildcraft.core.Box;
@@ -49,7 +49,7 @@ public class PatternFill extends FillerPattern {
 		int yMax = (int) box.pMax().y;
 		int zMax = (int) box.pMax().z;
 
-		Blueprint bpt = new Blueprint(xMax - xMin + 1, yMax - yMin + 1, zMax - zMin + 1);
+		SchematicBlueprint bpt = new SchematicBlueprint(xMax - xMin + 1, yMax - yMin + 1, zMax - zMin + 1);
 
 		for (int y = yMin; y <= yMax; ++y) {
 			for (int x = xMin; x <= xMax; ++x) {

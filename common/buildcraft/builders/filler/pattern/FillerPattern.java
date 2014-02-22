@@ -8,16 +8,6 @@
  */
 package buildcraft.builders.filler.pattern;
 
-import buildcraft.BuildCraftBuilders;
-import buildcraft.api.core.IBox;
-import buildcraft.api.filler.IFillerPattern;
-import buildcraft.api.filler.IPatternIterator;
-import buildcraft.builders.blueprints.BlueprintBuilder;
-import buildcraft.core.Box;
-import buildcraft.core.proxy.CoreProxy;
-import buildcraft.core.utils.BlockUtil;
-import buildcraft.core.utils.StringUtils;
-
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -28,6 +18,15 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
+import buildcraft.BuildCraftBuilders;
+import buildcraft.api.core.IBox;
+import buildcraft.api.filler.IFillerPattern;
+import buildcraft.api.filler.IPatternIterator;
+import buildcraft.builders.blueprints.BlueprintBuilder;
+import buildcraft.core.Box;
+import buildcraft.core.proxy.CoreProxy;
+import buildcraft.core.utils.BlockUtil;
+import buildcraft.core.utils.StringUtils;
 
 public abstract class FillerPattern implements IFillerPattern {
 
@@ -49,6 +48,9 @@ public abstract class FillerPattern implements IFillerPattern {
 		return true;
 	}
 
+	/**
+	 * TODO: This should be based on templates!!!!!
+	 */
 	public BlueprintBuilder getBlueprint (Box box, World world) {
 		return null;
 	}
@@ -209,7 +211,7 @@ public abstract class FillerPattern implements IFillerPattern {
 			// TODO: fix sound
 			//world.playSoundEffect(x + 0.5F, y + 0.5F, z + 0.5F, block.stepSound.getPlaceSound(), (block.stepSound.getVolume() + 1.0F) / 2.0F, block.stepSound.getPitch() * 0.8F);
 		}
-		
+
 		if (BuildCraftBuilders.fillerDestroy) {
 			world.setBlockToAir(x, y, z);
 		} else if (BlockUtil.isToughBlock(world, x, y, z)) {

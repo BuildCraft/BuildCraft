@@ -32,7 +32,7 @@ import buildcraft.api.gates.IAction;
 import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.power.PowerHandler;
 import buildcraft.api.power.PowerHandler.PowerReceiver;
-import buildcraft.builders.blueprints.Blueprint;
+import buildcraft.builders.blueprints.SchematicBlueprint;
 import buildcraft.builders.blueprints.BlueprintBuilder;
 import buildcraft.builders.blueprints.BlueprintBuilder.SchematicBuilder;
 import buildcraft.core.Box;
@@ -628,7 +628,7 @@ public class TileQuarry extends TileBuildCraft implements IMachine, IPowerRecept
 	}
 
 	private void initializeBlueprintBuilder() {
-		Blueprint blueprint = Blueprint.create(box.sizeX(), box.sizeY(), box.sizeZ());
+		SchematicBlueprint blueprint = SchematicBlueprint.create(box.sizeX(), box.sizeY(), box.sizeZ());
 
 		for (int it = 0; it < 2; it++) {
 			for (int i = 0; i < blueprint.sizeX; ++i) {

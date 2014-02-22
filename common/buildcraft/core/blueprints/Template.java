@@ -8,26 +8,27 @@
  */
 package buildcraft.core.blueprints;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.IOException;
+import net.minecraft.nbt.NBTTagCompound;
 
-public class BptTemplate extends BptBase {
+/**
+ * Use the template system to describe fillers
+ */
+public class Template extends BlueprintBase {
 
-	public BptTemplate() {
+	public Template() {
 	}
 
-	public BptTemplate(int sizeX, int sizeY, int sizeZ) {
+	public Template(int sizeX, int sizeY, int sizeZ) {
 		super(sizeX, sizeY, sizeZ);
 	}
 
 	@Override
-	public void saveAttributes(BufferedWriter writer) throws IOException {
-		writer.write("mask:");
+	public void saveContents(NBTTagCompound nbt) {
+		/*writer.write("mask:");
 
 		boolean first = true;
 
-		/*for (int x = 0; x < sizeX; ++x) {
+		for (int x = 0; x < sizeX; ++x) {
 			for (int y = 0; y < sizeY; ++y) {
 				for (int z = 0; z < sizeZ; ++z) {
 					if (first) {
@@ -43,8 +44,8 @@ public class BptTemplate extends BptBase {
 	}
 
 	@Override
-	public void loadAttribute(BufferedReader reader, String attr, String val) {
-		if (attr.equals("mask")) {
+	public void loadContents(NBTTagCompound nbt) throws BptError {
+		/*if (attr.equals("mask")) {
 			contents = new BptSlot[sizeX][sizeY][sizeZ];
 
 			String[] mask = val.split(",");
@@ -62,8 +63,8 @@ public class BptTemplate extends BptBase {
 						maskIndex++;
 					}
 				}
-			}*/
-		}
+			}
+		}*/
 
 	}
 

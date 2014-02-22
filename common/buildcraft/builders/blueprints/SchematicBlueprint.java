@@ -31,7 +31,7 @@ import net.minecraftforge.common.util.ForgeDirection;
  * This class is used to represent the data of the blueprint as it exists in the
  * world.
  */
-public class Blueprint {
+public class SchematicBlueprint {
 
 	@NetworkData
 	public BlueprintMeta meta;
@@ -56,18 +56,18 @@ public class Blueprint {
 	// synchronized.
 	private List<ItemStack> costs;
 
-	public static Blueprint create(int sizeX, int sizeY, int sizeZ) {
-		return new Blueprint(new BlueprintMeta(), sizeX, sizeY, sizeZ);
+	public static SchematicBlueprint create(int sizeX, int sizeY, int sizeZ) {
+		return new SchematicBlueprint(new BlueprintMeta(), sizeX, sizeY, sizeZ);
 	}
 
 	/**
 	 * To be used by the serialiser only
 	 */
-	public Blueprint() {
+	public SchematicBlueprint() {
 
 	}
 
-	public Blueprint(int sizeX, int sizeY, int sizeZ) {
+	public SchematicBlueprint(int sizeX, int sizeY, int sizeZ) {
 		this.sizeX = sizeX;
 		this.sizeY = sizeY;
 		this.sizeZ = sizeZ;
@@ -75,7 +75,7 @@ public class Blueprint {
 		schematics = new Schematic[sizeX][sizeY][sizeZ];
 	}
 
-	public Blueprint(BlueprintMeta meta, int sizeX, int sizeY, int sizeZ) {
+	public SchematicBlueprint(BlueprintMeta meta, int sizeX, int sizeY, int sizeZ) {
 		this.meta = meta;
 
 		this.sizeX = sizeX;
@@ -85,7 +85,7 @@ public class Blueprint {
 		schematics = new Schematic[sizeX][sizeY][sizeZ];
 	}
 
-	protected Blueprint(BlueprintMeta meta, NBTTagCompound nbt) {
+	protected SchematicBlueprint(BlueprintMeta meta, NBTTagCompound nbt) {
 		this(meta, nbt.getInteger("sizeX"),
 				nbt.getInteger("sizeY"),
 				nbt.getInteger("sizeZ"));
