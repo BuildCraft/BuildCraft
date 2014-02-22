@@ -14,10 +14,10 @@ import buildcraft.api.recipes.BuildcraftRecipes;
 import buildcraft.api.transport.IExtractionHandler;
 import buildcraft.api.transport.PipeManager;
 import buildcraft.core.DefaultProps;
+import buildcraft.core.BuildCraftConfiguration;
 import buildcraft.core.InterModComms;
 import buildcraft.core.ItemBuildCraft;
 import buildcraft.core.Version;
-import buildcraft.core.network.PacketHandler;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.triggers.BCAction;
 import buildcraft.core.triggers.BCTrigger;
@@ -34,11 +34,6 @@ import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTriggerProvider;
 import buildcraft.transport.TransportProxy;
 import buildcraft.transport.WireIconProvider;
-import buildcraft.transport.blueprints.BptBlockPipe;
-import buildcraft.transport.blueprints.BptItemPipeDiamond;
-import buildcraft.transport.blueprints.BptItemPipeEmerald;
-import buildcraft.transport.blueprints.BptItemPipeIron;
-import buildcraft.transport.blueprints.BptItemPipeWooden;
 import buildcraft.transport.gates.GateExpansionPulsar;
 import buildcraft.api.gates.GateExpansions;
 import buildcraft.api.transport.PipeWire;
@@ -46,7 +41,6 @@ import buildcraft.transport.ItemPipeWire;
 import buildcraft.transport.gates.GateExpansionRedstoneFader;
 import buildcraft.transport.gates.GateExpansionTimer;
 import buildcraft.transport.network.PacketHandlerTransport;
-import buildcraft.transport.network.PacketPipeTransportTraveler;
 import buildcraft.transport.pipes.PipeFluidsCobblestone;
 import buildcraft.transport.pipes.PipeFluidsEmerald;
 import buildcraft.transport.pipes.PipeFluidsGold;
@@ -115,6 +109,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.common.config.Property;
+import net.minecraftforge.oredict.RecipeSorter;
 
 @Mod(version = Version.VERSION, modid = "BuildCraft|Transport", name = "Buildcraft Transport", dependencies = DefaultProps.DEPENDENCY_CORE)
 public class BuildCraftTransport extends BuildCraftMod {
@@ -159,6 +154,8 @@ public class BuildCraftTransport extends BuildCraftMod {
 	// public static Item pipeItemsStipes;
 	public static Item pipeStructureCobblestone;
 	public static int groupItemsTrigger;
+	public static String[] facadeBlacklist;
+
 	public static BCTrigger[] triggerPipe = new BCTrigger[PipeContents.values().length];
 	public static BCTrigger[] triggerPipeWireActive = new BCTrigger[PipeWire.values().length];
 	public static BCTrigger[] triggerPipeWireInactive = new BCTrigger[PipeWire.values().length];
@@ -177,6 +174,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 	public static BCAction actionExtractionPresetYellow = new ActionExtractionPreset(EnumColor.YELLOW);
 	public IIconProvider pipeIconProvider = new PipeIconProvider();
 	public IIconProvider wireIconProvider = new WireIconProvider();
+
 	@Instance("BuildCraft|Transport")
 	public static BuildCraftTransport instance;
 
@@ -257,6 +255,9 @@ public class BuildCraftTransport extends BuildCraftMod {
 			} else
 				excludedFluidBlocks = new String[0];
 
+			filteredBufferBlock = new BlockFilteredBuffer();
+			CoreProxy.proxy.registerBlock(filteredBufferBlock.setBlockName("filteredBufferBlock"));
+
 			PipeManager.registerExtractionHandler(new ExtractionHandler(excludedItemBlocks, excludedFluidBlocks));
 
 			GateExpansions.registerExpansion(GateExpansionPulsar.INSTANCE);
@@ -266,6 +267,36 @@ public class BuildCraftTransport extends BuildCraftMod {
 			Property groupItemsTriggerProp = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "pipes.groupItemsTrigger", 32);
 			groupItemsTriggerProp.comment = "when reaching this amount of objects in a pipes, items will be automatically grouped";
 			groupItemsTrigger = groupItemsTriggerProp.getInt();
+
+			Property facadeBlacklistProp = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "facade.blacklist", new String[] {
+					Block.blockRegistry.getNameForObject(Blocks.bedrock),
+					Block.blockRegistry.getNameForObject(Blocks.command_block),
+					Block.blockRegistry.getNameForObject(Blocks.end_portal_frame),
+					Block.blockRegistry.getNameForObject(Blocks.grass),
+					Block.blockRegistry.getNameForObject(Blocks.leaves),
+					Block.blockRegistry.getNameForObject(Blocks.leaves2),
+					Block.blockRegistry.getNameForObject(Blocks.lit_pumpkin),
+					Block.blockRegistry.getNameForObject(Blocks.lit_redstone_lamp),
+					Block.blockRegistry.getNameForObject(Blocks.mob_spawner),
+					Block.blockRegistry.getNameForObject(Blocks.monster_egg),
+					Block.blockRegistry.getNameForObject(Blocks.redstone_lamp),
+					Block.blockRegistry.getNameForObject(Blocks.double_stone_slab),
+					Block.blockRegistry.getNameForObject(Blocks.double_wooden_slab),
+					Block.blockRegistry.getNameForObject(Blocks.sponge),
+					BuildCraftConfiguration.surroundWithQuotes(Block.blockRegistry.getNameForObject(BuildCraftBuilders.architectBlock)),
+					BuildCraftConfiguration.surroundWithQuotes(Block.blockRegistry.getNameForObject(BuildCraftBuilders.builderBlock)),
+					BuildCraftConfiguration.surroundWithQuotes(Block.blockRegistry.getNameForObject(BuildCraftBuilders.fillerBlock)),
+					BuildCraftConfiguration.surroundWithQuotes(Block.blockRegistry.getNameForObject(BuildCraftBuilders.libraryBlock)),
+					BuildCraftConfiguration.surroundWithQuotes(Block.blockRegistry.getNameForObject(BuildCraftFactory.autoWorkbenchBlock)),
+					BuildCraftConfiguration.surroundWithQuotes(Block.blockRegistry.getNameForObject(BuildCraftFactory.floodGateBlock)),
+					BuildCraftConfiguration.surroundWithQuotes(Block.blockRegistry.getNameForObject(BuildCraftFactory.miningWellBlock)),
+					BuildCraftConfiguration.surroundWithQuotes(Block.blockRegistry.getNameForObject(BuildCraftFactory.pumpBlock)),
+					BuildCraftConfiguration.surroundWithQuotes(Block.blockRegistry.getNameForObject(BuildCraftFactory.quarryBlock)),
+					BuildCraftConfiguration.surroundWithQuotes(Block.blockRegistry.getNameForObject(BuildCraftTransport.filteredBufferBlock)),
+			});
+
+			facadeBlacklistProp.comment = "Blocks listed here will not have facades created. The format is modid:blockname.\nFor mods with a | character, the value needs to be surrounded with quotes.";
+			facadeBlacklist = facadeBlacklistProp.getStringList();
 
 			pipeWaterproof = new ItemBuildCraft();
 			pipeWaterproof.setUnlocalizedName("pipeWaterproof");
@@ -330,9 +361,6 @@ public class BuildCraftTransport extends BuildCraftMod {
 			plugItem.setUnlocalizedName("pipePlug");
 			CoreProxy.proxy.registerItem(plugItem);
 
-			filteredBufferBlock = new BlockFilteredBuffer();
-			CoreProxy.proxy.registerBlock(filteredBufferBlock.setBlockName("filteredBufferBlock"));
-			
 			for (PipeContents kind : PipeContents.values()) {
 				triggerPipe[kind.ordinal()] = new TriggerPipeContents(kind);
 			}
@@ -435,6 +463,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 
 		//Facade turning helper
 		GameRegistry.addRecipe(facadeItem.new FacadeRecipe());
+		RecipeSorter.register("facadeTurningHelper", ItemFacade.FacadeRecipe.class, RecipeSorter.Category.SHAPELESS, "");
 
 		BuildcraftRecipes.assemblyTable.addRecipe(1000, new ItemStack(plugItem, 8), new ItemStack(pipeStructureCobblestone));
 	}

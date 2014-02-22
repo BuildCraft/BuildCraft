@@ -11,6 +11,7 @@ package buildcraft.core;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.google.common.base.Strings;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.biome.BiomeGenBase;
@@ -28,9 +29,11 @@ public class InterModComms {
 
     public static void processIMC(IMCEvent event) {
         for (IMCMessage m : event.getMessages()) {
-            if ("add-facade".equals(m.key)) {
-                processFacadeIMC(event, m);
-            } else if (m.key.equals("oil-lake-biome")) {
+            if (m.key.equals("add-facade")) {
+                processAddFacadeIMC(event, m);
+            } else if (m.key.equals("blacklist-facade")) {
+								processBlacklistFacadeIMC(event, m);
+						}	else if (m.key.equals("oil-lake-biome")) {
                 processOilLakeBiomeIMC(event, m);
             } else if (m.key.equals("oil-gen-exclude")) {
                 processOilGenExcludeIMC(event, m);
@@ -38,8 +41,8 @@ public class InterModComms {
         }
     }
 
-    public static void processFacadeIMC(IMCEvent event, IMCMessage m) {
-        try {
+    public static void processAddFacadeIMC(IMCEvent event, IMCMessage m) {
+				try {
             if (m.isStringMessage()) {
                 Splitter splitter = Splitter.on("@").trimResults();
 
@@ -47,22 +50,55 @@ public class InterModComms {
                 if (array.length != 2) {
                     Logger.getLogger("Buildcraft").log(Level.INFO, String.format("Received an invalid add-facade request %s from mod %s", m.getStringValue(), m.getSender()));
                 } else {
-                    Integer blId = Ints.tryParse(array[0]);
-                    Integer metaId = Ints.tryParse(array[1]);
-                                                          
-                    if (blId == null || metaId == null) {
+                    String blockName = array[0];
+									  Integer metaId = Ints.tryParse(array[1]);
+
+                    if (Strings.isNullOrEmpty(blockName)|| metaId == null) {
                         Logger.getLogger("Buildcraft").log(Level.INFO, String.format("Received an invalid add-facade request %s from mod %s", m.getStringValue(), m.getSender()));
                     } else {
-                    	Block block = (Block) Block.blockRegistry.getObjectById(blId);
-                        ItemFacade.addFacade(new ItemStack(block, 1, metaId));
+												Block block = (Block) Block.blockRegistry.getObject(blockName);
+												if(block.getRenderType() != 0 && block.getRenderType() != 31) {
+													ItemFacade.addFacade(new ItemStack(block, 1, metaId));
+												} else {
+													logRedundantAddFacadeMessage(m, block.toString());
+												}
                     }
                 }
             } else if (m.isItemStackMessage()) {
-                ItemFacade.addFacade(m.getItemStackValue());
+								ItemStack modItemStack = m.getItemStackValue();
+
+								Block block = Block.getBlockFromItem(modItemStack.getItem());
+								if(block != null && block.getRenderType() != 0 && block.getRenderType() != 31) {
+									ItemFacade.addFacade(modItemStack);
+								} else {
+									logRedundantAddFacadeMessage(m, block.toString());
+								}
             }
         } catch (Exception ex) {
-
         }
+    }
+
+		public static void processBlacklistFacadeIMC(IMCEvent event, IMCMessage message){
+			try {
+				if(message.isItemStackMessage()) {
+					ItemStack modItemStack = message.getItemStackValue();
+
+					Block block = Block.getBlockFromItem(modItemStack.getItem());
+					if(block != null) {
+						String blockName = Block.blockRegistry.getNameForObject(block);
+						ItemFacade.blacklistFacade(blockName);
+					}
+
+				} else {
+					Logger.getLogger("Buildcraft").log(Level.INFO, String.format("Invalid blacklist-facade message from mod %s. Send an ItemStackMessage instead.", message.getSender()));
+				}
+			} catch (Throwable _) {
+			}
+		}
+
+		private static void logRedundantAddFacadeMessage(IMCMessage m, String blockName)
+		{
+				Logger.getLogger("Buildcraft").log(Level.WARNING, String.format("%s is trying to add %s a facade that Buildcraft will add later. Facade not added.", m.getSender(), blockName));
     }
 
     public static void processOilLakeBiomeIMC(IMCEvent event, IMCMessage m) {
