@@ -20,6 +20,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.BuildCraftBuilders;
+import buildcraft.api.blueprints.IBptContext;
 import buildcraft.api.gates.IAction;
 import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.power.PowerHandler;
@@ -38,6 +39,7 @@ import buildcraft.core.blueprints.BlueprintBase;
 import buildcraft.core.blueprints.BptBuilderBase;
 import buildcraft.core.blueprints.BptBuilderBlueprint;
 import buildcraft.core.blueprints.BptContext;
+import buildcraft.core.blueprints.BptSlot;
 import buildcraft.core.network.NetworkData;
 import buildcraft.core.robots.EntityRobot;
 import buildcraft.core.utils.Utils;
@@ -245,12 +247,13 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory,
 	public BptBuilderBase instanciateBluePrint(int x, int y, int z, ForgeDirection o) {
 		BlueprintBase bpt = ItemBlueprint.getBlueprint(items [0]);
 
-		if (bpt == null)
+		if (bpt == null) {
 			return null;
+		}
 
 		bpt = bpt.clone();
 
-		BptContext context = new BptContext(worldObj, null, bpt.getBoxForPos(x, y, z));
+		BptContext context = new BptContext(worldObj, bpt.getBoxForPos(x, y, z));
 
 		if (o == ForgeDirection.EAST) {
 			// Do nothing
@@ -265,13 +268,19 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory,
 			bpt.rotateLeft(context);
 		}
 
+		BptBuilderBase result = null;
+
 		if (items[0].getItem() instanceof ItemBlueprint) {
-			return new BptBuilderBlueprint((Blueprint) bpt, worldObj, x, y, z);
+			result = new BptBuilderBlueprint((Blueprint) bpt, worldObj, x, y, z);
 		/*} else if (items[0].getItem() instanceof ItemBptBluePrint) {
 			return new BptBuilderTemplate(bpt, worldObj, x, y, z);*/
 		} else {
-			return null;
+			result = null;
 		}
+
+		debugForceBlueprintCompletion(result, context);
+
+		return result;
 	}
 
 	@Override
@@ -616,5 +625,17 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory,
 	@Override
 	public PowerReceiver getPowerReceiver(ForgeDirection side) {
 		return powerHandler.getPowerReceiver();
+	}
+
+	public void debugForceBlueprintCompletion (BptBuilderBase builder, IBptContext context) {
+		while (true) {
+			BptSlot slot = builder.getNextBlock(worldObj, this);
+
+			if (slot == null) {
+				break;
+			}
+
+			slot.buildBlock(context);
+		}
 	}
 }

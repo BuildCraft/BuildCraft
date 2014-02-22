@@ -32,9 +32,9 @@ public abstract class BptBuilderBase implements IAreaProvider {
 		box.initialize(this);
 
 		if (bluePrint instanceof Blueprint) {
-			context = new BptContext(world, (Blueprint) bluePrint, box);
+			context = new BptContext(world, box);
 		} else {
-			context = new BptContext(world, null, box);
+			context = new BptContext(world, box);
 		}
 	}
 

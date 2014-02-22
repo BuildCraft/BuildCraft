@@ -16,12 +16,10 @@ import buildcraft.core.Box;
 
 public class BptContext implements IBptContext {
 
-	private Blueprint bpt;
 	private Box box;
 	private World world;
 
-	public BptContext(World world, Blueprint bpt, Box box) {
-		this.bpt = bpt;
+	public BptContext(World world, Box box) {
 		this.box = box;
 		this.world = world;
 	}

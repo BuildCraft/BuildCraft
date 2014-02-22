@@ -93,10 +93,10 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 
 		if (items[0].getItem() instanceof ItemBlueprint) {
 			result = createBptBlueprint();
-			context = new BptContext(worldObj, (Blueprint) result, box);
+			context = new BptContext(worldObj, box);
 		} else {
 			result = createBptTemplate();
-			context = new BptContext(worldObj, null, box);
+			context = new BptContext(worldObj, box);
 		}
 
 		if (!name.equals("")) {
@@ -124,7 +124,6 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 		}
 
 		BuildCraftBuilders.serverDB.add(result);
-
 
 		setInventorySlotContents(1, ItemBlueprint.getBlueprintItem(result));
 		setInventorySlotContents(0, null);
@@ -159,7 +158,7 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 	private BlueprintBase createBptBlueprint() {
 		Blueprint result = new Blueprint(box.sizeX(), box.sizeY(), box.sizeZ());
 
-		BptContext context = new BptContext(worldObj, result, box);
+		BptContext context = new BptContext(worldObj, box);
 
 		for (int x = box.xMin; x <= box.xMax; ++x) {
 			for (int y = box.yMin; y <= box.yMax; ++y) {

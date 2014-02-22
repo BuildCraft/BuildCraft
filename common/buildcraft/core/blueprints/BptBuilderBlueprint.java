@@ -8,22 +8,18 @@
  */
 package buildcraft.core.blueprints;
 
+import java.util.Comparator;
+import java.util.LinkedList;
+import java.util.ListIterator;
+import java.util.TreeSet;
+
+import net.minecraft.item.ItemStack;
+import net.minecraft.world.World;
+import net.minecraft.world.WorldSettings.GameType;
 import buildcraft.core.IBuilderInventory;
 import buildcraft.core.blueprints.BptSlot.Mode;
 import buildcraft.core.utils.BCLog;
 import buildcraft.core.utils.BlockUtil;
-
-import java.util.Comparator;
-import java.util.LinkedList;
-import java.util.ListIterator;
-import java.util.TreeMap;
-import java.util.TreeSet;
-
-import net.minecraft.block.Block;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.world.World;
-import net.minecraft.world.WorldSettings.GameType;
 
 public class BptBuilderBlueprint extends BptBuilderBase {
 
@@ -143,8 +139,6 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 
 			if (slot != null) {
 				return slot;
-			} else {
-				return null;
 			}
 		}
 
@@ -154,8 +148,6 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 
 			if (slot != null) {
 				return slot;
-			} else {
-				return null;
 			}
 		}
 
@@ -165,8 +157,6 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 
 			if (slot != null) {
 				return slot;
-			} else {
-				return null;
 			}
 		}
 
@@ -213,7 +203,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 					break;
 				} else {
 					failSlots.add(slot);
-				}				
+				}
 		}
 
 		list.addAll(failSlots);
