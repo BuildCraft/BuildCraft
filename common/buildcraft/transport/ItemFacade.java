@@ -237,13 +237,13 @@ public class ItemFacade extends ItemBuildCraft {
 	public static void addFacade(ItemStack itemStack) {
 		ItemStack facade = getStack(Block.getBlockFromItem(itemStack.getItem()), itemStack.getItemDamage());
 		if(!allFacades.contains(facade)) {
-		  allFacades.add(facade);
+			allFacades.add(facade);
 
-		  ItemStack facade6 = facade.copy();
-		  facade6.stackSize = 6;
+			ItemStack facade6 = facade.copy();
+			facade6.stackSize = 6;
 
-		  // 3 Structurepipes + this block makes 6 facades
-		  BuildcraftRecipes.assemblyTable.addRecipe(8000, facade6, new ItemStack(BuildCraftTransport.pipeStructureCobblestone, 3), itemStack);
+			// 3 Structurepipes + this block makes 6 facades
+			BuildcraftRecipes.assemblyTable.addRecipe(8000, facade6, new ItemStack(BuildCraftTransport.pipeStructureCobblestone, 3), itemStack);
 		}
 	}
 
