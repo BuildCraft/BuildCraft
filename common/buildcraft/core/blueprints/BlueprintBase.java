@@ -13,22 +13,28 @@ import net.minecraft.nbt.NBTTagCompound;
 import buildcraft.builders.blueprints.BlueprintId;
 import buildcraft.core.Box;
 import buildcraft.core.Version;
+import buildcraft.core.network.NetworkData;
 import buildcraft.core.utils.BCLog;
 
 public abstract class BlueprintBase {
 
-	BptSlot contents[][][];
+	@NetworkData
+	public BptSlot contents[][][];
 
-	public int position;
-
+	@NetworkData
 	public int anchorX, anchorY, anchorZ;
+
+	@NetworkData
 	public int sizeX, sizeY, sizeZ;
 
+	@NetworkData
 	public BlueprintId id = new BlueprintId();
 
+	@NetworkData
 	public String author;
 
-	protected String version = "";
+	@NetworkData
+	public String version = "";
 
 	public BlueprintBase() {
 	}
@@ -220,7 +226,6 @@ public abstract class BlueprintBase {
 		res.sizeY = sizeY;
 		res.sizeZ = sizeZ;
 
-		res.position = position;
 		res.id = id;
 		res.author = author;
 

@@ -8,11 +8,12 @@
  */
 package buildcraft.api.blueprints;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import buildcraft.core.network.NetworkData;
 
 /**
  * This class records a slot, either from a blueprint or from a block placed in
@@ -20,18 +21,19 @@ import net.minecraft.nbt.NBTTagCompound;
  */
 public class BptSlotInfo {
 
+	@NetworkData
 	public Block block = null;
-	public int meta = 0;
-	public int x;
-	public int y;
-	public int z;
+
+	@NetworkData
+	public int x, y, z, meta = 0;
 
 	/**
 	 * This field contains requirements for a given block when stored in the
 	 * blueprint. Modders can either rely on this list or compute their own int
 	 * BptBlock.
 	 */
-	public LinkedList<ItemStack> storedRequirements = new LinkedList<ItemStack>();
+	@NetworkData
+	public ArrayList<ItemStack> storedRequirements = new ArrayList<ItemStack>();
 
 	/**
 	 * This tree contains additional data to be stored in the blueprint. By
@@ -39,6 +41,7 @@ public class BptSlotInfo {
 	 * the standard readNBT function of the corresponding tile (if any) and will
 	 * be loaded from BptBlock.buildBlock using the standard writeNBT function.
 	 */
+	@NetworkData
 	public NBTTagCompound cpt = new NBTTagCompound();
 
 	@Override

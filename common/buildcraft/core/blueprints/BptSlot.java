@@ -8,6 +8,7 @@
  */
 package buildcraft.core.blueprints;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 
@@ -30,6 +31,7 @@ public class BptSlot extends BptSlotInfo {
 
 	public Mode mode = Mode.Build;
 	public ItemStack stackToUse;
+
 	BptBlock bptBlock = null;
 
 	public boolean isValid(IBptContext context) {
@@ -80,7 +82,7 @@ public class BptSlot extends BptSlotInfo {
 		obj.block = block;
 		obj.meta = meta;
 		obj.cpt = (NBTTagCompound) cpt.copy();
-		obj.storedRequirements = (LinkedList<ItemStack>) storedRequirements.clone();
+		obj.storedRequirements = (ArrayList<ItemStack>) storedRequirements.clone();
 
 		if (stackToUse != null) {
 			obj.stackToUse = stackToUse.copy();

@@ -6,7 +6,7 @@
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-package buildcraft.core.network;
+package buildcraft.core.network.serializers;
 
 import io.netty.buffer.ByteBuf;
 
@@ -18,7 +18,10 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.TreeMap;
 
+import net.minecraft.block.Block;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import buildcraft.core.network.NetworkData;
 import buildcraft.core.utils.Utils;
 
 /**
@@ -57,37 +60,30 @@ import buildcraft.core.utils.Utils;
  * to the same null and non-null elements on both sides.
  *
  */
-public class ClassMapping {
+public class ClassMapping extends ClassSerializer {
 
-	private class SerializationContext {
-		public ArrayList<ClassMapping> idToClass = new ArrayList<ClassMapping> ();
-		public Map <String, Integer> classToId = new TreeMap<String, Integer> ();
-	}
+	private static SerializationObject anonymousSerializer = new SerializationObject();
 
 	private LinkedList<Field> floatFields = new LinkedList<Field>();
 	private LinkedList<Field> doubleFields = new LinkedList<Field>();
-	private LinkedList<Field> stringFields = new LinkedList<Field>();
 	private LinkedList<Field> shortFields = new LinkedList<Field>();
 	private LinkedList<Field> intFields = new LinkedList<Field>();
 	private LinkedList<Field> booleanFields = new LinkedList<Field>();
 	private LinkedList<Field> enumFields = new LinkedList<Field>();
-	private LinkedList<Field> nbtFields = new LinkedList<Field>();
+
 	private LinkedList<Field> arrayListFields = new LinkedList<Field>();
 
 	class FieldObject {
 		public Field field;
-		public ClassMapping mapping;
+		public ClassSerializer mapping;
 	}
 
 	private LinkedList<FieldObject> objectFields = new LinkedList<FieldObject>();
-
-	private Class<? extends Object> mappedClass;
 
 	enum CptType {
 		Byte,
 		Float,
 		Double,
-		String,
 		Short,
 		Int,
 		Boolean,
@@ -95,23 +91,17 @@ public class ClassMapping {
 	}
 
 	private CptType cptType;
-	private ClassMapping cptMapping;
+	private ClassSerializer cptMapping;
 
-	private static Map <String, ClassMapping> classes = new TreeMap <String, ClassMapping> ();
+	private static Map <String, ClassSerializer> classes = new TreeMap <String, ClassSerializer> ();
 
 	public ClassMapping() {
 
 	}
 
-	public ClassMapping(final Class<? extends Object> c) {
-		analyzeClass (c);
-	}
-
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public void analyzeClass(final Class<? extends Object> c) {
 		try {
-			mappedClass = c;
-
 			if (c.isArray()) {
 				Class cptClass = c.getComponentType();
 
@@ -125,8 +115,6 @@ public class ClassMapping {
 					cptType = CptType.Short;
 				} else if (cptClass.equals(int.class)) {
 					cptType = CptType.Int;
-				} else if (cptClass.equals(String.class)) {
-					cptType = CptType.String;
 				} else if (cptClass.equals(boolean.class)) {
 					cptType = CptType.Byte;
 				} else {
@@ -154,16 +142,11 @@ public class ClassMapping {
 							booleanFields.add(f);
 						} else if (Enum.class.isAssignableFrom(fieldClass)) {
 							enumFields.add(f);
-						} else if (fieldClass.equals(String.class)) {
-							stringFields.add(f);
 						} else if (fieldClass.equals(float.class)) {
 							floatFields.add(f);
 						} else if (fieldClass.equals(double.class)) {
 							doubleFields.add(f);
-						} else if (NBTTagCompound.class.isAssignableFrom(fieldClass)) {
-							nbtFields.add(f);
 						} else if (ArrayList.class.isAssignableFrom(fieldClass)) {
-							System.out.println ("ARRAY LIST IN MAPPING");
 							arrayListFields.add(f);
 						} else {
 							FieldObject obj = new FieldObject();
@@ -185,14 +168,6 @@ public class ClassMapping {
 		NetworkData updateAnnotation = f.getAnnotation(NetworkData.class);
 
 		return updateAnnotation != null;
-	}
-
-
-	public void setData(Object obj, ByteBuf data) throws IllegalArgumentException,
-	IllegalAccessException {
-		SerializationContext context = new SerializationContext();
-
-		setDataInt(obj, data, context);
 	}
 
 	/**
@@ -231,37 +206,68 @@ public class ClassMapping {
 	 *  - non static nested classes are not supported
 	 *  - no reference analysis is done, e.g. an object referenced twice will
 	 *    be serialized twice
-	 *
-	 * @throws ClassNotFoundException
 	 */
-	public Object updateFromData (Object obj, ByteBuf data) throws IllegalArgumentException,
-	IllegalAccessException, InstantiationException, ClassNotFoundException {
-		SerializationContext context = new SerializationContext();
-
-		return updateFromDataInt(obj, data, context);
-	}
-
-	public void setDataInt(Object obj, ByteBuf data, SerializationContext context) throws IllegalArgumentException,
-	IllegalAccessException {
-		if (mappedClass.isArray()) {
-			setDataArray(obj, data, context);
+	@Override
+	public void write(ByteBuf data, Object o, SerializationContext context) throws IllegalArgumentException, IllegalAccessException {
+		if (o == null) {
+			data.writeBoolean(false);
 		} else {
-			setDataClass(obj, data, context);
+			data.writeBoolean(true);
+
+			if (mappedClass.isArray()) {
+				writeArray(o, data, context);
+			} else {
+				writeClass(o, data, context);
+			}
 		}
 	}
 
-	private Object updateFromDataInt (Object obj, ByteBuf data, SerializationContext context) throws IllegalArgumentException,
-	IllegalAccessException, InstantiationException, ClassNotFoundException {
-		if (mappedClass.isArray()) {
-			return updateFromDataArray(obj, data, context);
+	@Override
+	public Object read(ByteBuf data, Object o, SerializationContext context)
+			throws IllegalArgumentException, IllegalAccessException,
+			InstantiationException, ClassNotFoundException {
+
+		if (!data.readBoolean()) {
+			return null;
 		} else {
-			return updateFromDataClass(obj, data, context);
+			if (mappedClass.isArray()) {
+				return readArray(o, data, context);
+			} else {
+				return readClass(o, data, context);
+			}
 		}
 	}
 
 	@SuppressWarnings("rawtypes")
-	private void setDataClass(Object obj, ByteBuf data, SerializationContext context) throws IllegalArgumentException,
+	void writeClass(Object obj, ByteBuf data, SerializationContext context) throws IllegalArgumentException,
 			IllegalAccessException {
+
+		Class realClass = obj.getClass();
+
+		if (realClass.equals(this.mappedClass)) {
+			data.writeByte(0);
+		} else {
+			ClassMapping delegateMapping;
+
+			if (context.classToId.containsKey(realClass.getCanonicalName())) {
+				int index = context.classToId.get(realClass.getCanonicalName()) + 1;
+				data.writeByte(index);
+				delegateMapping = (ClassMapping) context.idToClass.get(index - 1);
+			} else {
+				int index = context.classToId.size() + 1;
+				delegateMapping = (ClassMapping) get(realClass);
+
+				data.writeByte(index);
+				Utils.writeUTF(data, realClass.getCanonicalName());
+				context.classToId.put(realClass.getCanonicalName(),
+						context.classToId.size());
+				context.idToClass.add(delegateMapping);
+			}
+
+			delegateMapping.writeClass(obj, data, context);
+
+			return;
+		}
 
 		for (Field f : shortFields) {
 			data.writeShort(f.getShort(obj));
@@ -287,28 +293,6 @@ public class ClassMapping {
 			data.writeDouble(f.getDouble(obj));
 		}
 
-		for (Field f : stringFields) {
-			String s = (String) f.get(obj);
-
-			if (s == null) {
-				data.writeBoolean(false);
-			} else {
-				data.writeBoolean(true);
-				Utils.writeUTF(data, s);
-			}
-		}
-
-		for (Field f : nbtFields) {
-			NBTTagCompound nbt = (NBTTagCompound) f.get(obj);
-
-			if (nbt == null) {
-				data.writeBoolean(false);
-			} else {
-				data.writeBoolean(true);
-				Utils.writeNBT(data, nbt);
-			}
-		}
-
 		for (Field f : arrayListFields) {
 			ArrayList list = (ArrayList) f.get(obj);
 
@@ -319,27 +303,50 @@ public class ClassMapping {
 				data.writeShort(list.size());
 
 				for (Object o : list) {
-					setDataObject(o, null, data, context);
+					anonymousSerializer.write(data, o, context);
 				}
 			}
 		}
 
 		for (FieldObject f : objectFields) {
 			Object cpt = f.field.get(obj);
-
-			if (cpt == null) {
-				data.writeBoolean(false);
-			} else {
-				data.writeBoolean(true);
-
-				setDataObject(cpt, f.mapping, data, context);
-			}
+			f.mapping.write(data, cpt, context);
 		}
 	}
 
 	@SuppressWarnings("rawtypes")
-	public Object updateFromDataClass(Object obj, ByteBuf data, SerializationContext context) throws IllegalArgumentException,
+	Object readClass(Object obj, ByteBuf data, SerializationContext context) throws IllegalArgumentException,
 			IllegalAccessException, InstantiationException, ClassNotFoundException {
+
+		// The data layout for an object is the following:
+		// [boolean] does the object exist (e.g. non-null)
+		// {false} exit
+		// [int] what is the object real class?
+		// {0} the same as the declared class
+		// {1-x} a different one
+		// [string] if the number is not yet registered, the name of the
+		// class
+		// [bytes] the actual contents
+
+		int index = data.readByte();
+
+		if (index != 0) {
+			ClassMapping delegateMapping;
+
+			if (context.idToClass.size() < index) {
+				String className = Utils.readUTF(data);
+
+				Class cls = Class.forName(className);
+
+				delegateMapping = (ClassMapping) get(cls);
+
+				context.idToClass.add(get(cls));
+			} else {
+				delegateMapping = (ClassMapping) context.idToClass.get(index - 1);
+			}
+
+			return delegateMapping.readClass(obj, data, context);
+		}
 
 		if (obj == null) {
 			obj = mappedClass.newInstance();
@@ -369,24 +376,14 @@ public class ClassMapping {
 			f.setDouble(obj, data.readDouble());
 		}
 
-		for (Field f : stringFields) {
-			if (data.readBoolean()) {
-				f.set(obj, Utils.readUTF(data));
-			} else {
-				f.set(obj, null);
-			}
-		}
-
 		for (Field f : arrayListFields) {
-			System.out.println ("RETRIEVE ARRAY LIST");
 			if (data.readBoolean()) {
 				int size = data.readShort();
 
 				ArrayList arr = new ArrayList();
 
 				for (int i = 0; i < size; ++i) {
-					arr.add(updateFromDataObject(null, null,
-								data, context));
+					arr.add(anonymousSerializer.read(data, null, context));
 				}
 
 				f.set(obj, arr);
@@ -395,29 +392,14 @@ public class ClassMapping {
 			}
 		}
 
-		for (Field f : nbtFields) {
-			if (data.readBoolean()) {
-				f.set(obj, Utils.readNBT(data));
-			} else {
-				f.set(obj, null);
-			}
-		}
-
 		for (FieldObject f : objectFields) {
-			if (data.readBoolean()) {
-				f.field.set(
-						obj,
-						updateFromDataObject(f.field.get(obj), f.mapping,
-								data, context));
-			} else {
-				f.field.set(obj, null);
-			}
+			f.field.set(obj, f.mapping.read(data, f.field.get(obj), context));
 		}
 
 		return obj;
 	}
 
-	private void setDataArray(Object obj, ByteBuf data, SerializationContext context) throws IllegalArgumentException,
+	private void writeArray(Object obj, ByteBuf data, SerializationContext context) throws IllegalArgumentException,
 	IllegalAccessException {
 		Class<? extends Object> cpt = mappedClass.getComponentType();
 
@@ -448,21 +430,6 @@ public class ClassMapping {
 
 				for (int i = 0; i < arr.length; ++i) {
 					data.writeDouble(arr [i]);
-				}
-
-				break;
-			}
-			case String: {
-				String [] arr = (String []) obj;
-				data.writeInt (arr.length);
-
-				for (int i = 0; i < arr.length; ++i) {
-					if (arr [i] == null) {
-						data.writeBoolean(false);
-					} else {
-						data.writeBoolean(true);
-						Utils.writeUTF(data, arr [i]);
-					}
 				}
 
 				break;
@@ -502,17 +469,7 @@ public class ClassMapping {
 				data.writeInt (arr.length);
 
 				for (int i = 0; i < arr.length; ++i) {
-					if (arr [i] == null) {
-						data.writeBoolean(false);
-					} else {
-						data.writeBoolean(true);
-
-						if (cptMapping.mappedClass.isArray()) {
-							cptMapping.setDataInt(arr [i], data, context);
-						} else {
-							setDataObject(arr [i], cptMapping, data, context);
-						}
-					}
+					cptMapping.write(data, arr [i], context);
 				}
 
 				break;
@@ -520,7 +477,7 @@ public class ClassMapping {
 		}
 	}
 
-	private Object updateFromDataArray(Object obj, ByteBuf data, SerializationContext context) throws IllegalArgumentException,
+	private Object readArray(Object obj, ByteBuf data, SerializationContext context) throws IllegalArgumentException,
 	IllegalAccessException, InstantiationException, ClassNotFoundException {
 		Class<? extends Object> cpt = mappedClass.getComponentType();
 
@@ -572,27 +529,6 @@ public class ClassMapping {
 
 				for (int i = 0; i < arr.length; ++i) {
 					arr [i] = data.readDouble();
-				}
-
-				obj = arr;
-
-				break;
-			}
-			case String: {
-				String [] arr;
-
-				if (obj == null) {
-					arr = new String [size];
-				} else {
-					arr = (String []) obj;
-				}
-
-				for (int i = 0; i < arr.length; ++i) {
-					if (data.readBoolean()) {
-						arr [i] = Utils.readUTF(data);
-					} else {
-						arr [i] = null;
-					}
 				}
 
 				obj = arr;
@@ -660,15 +596,7 @@ public class ClassMapping {
 				}
 
 				for (int i = 0; i < arr.length; ++i) {
-					if (data.readBoolean()) {
-						if (cptMapping.mappedClass.isArray()) {
-							arr [i] = cptMapping.updateFromDataInt(arr[i], data, context);
-						} else {
-							arr [i] = updateFromDataObject(arr[i], cptMapping, data, context);
-						}
-					} else {
-						arr [i] = null;
-					}
+					arr [i] = cptMapping.read(data, arr[i], context);
 				}
 
 				obj = arr;
@@ -680,84 +608,29 @@ public class ClassMapping {
 		return obj;
 	}
 
-	private void setDataObject(Object obj,
-			ClassMapping baseMapping, ByteBuf data,
-			SerializationContext context) throws IllegalArgumentException,
-			IllegalAccessException {
-		ClassMapping mapping = baseMapping;
-
-		Class realClass = obj.getClass();
-
-		if (baseMapping != null && realClass.equals(baseMapping.mappedClass)) {
-			data.writeByte(0);
-		} else {
-			if (context.classToId.containsKey(realClass.getCanonicalName())) {
-				int index = context.classToId.get(realClass.getCanonicalName()) + 1;
-				data.writeByte(index);
-				mapping = context.idToClass.get(index - 1);
-			} else {
-				int index = context.classToId.size() + 1;
-				mapping = get(realClass);
-
-				data.writeByte(index);
-				Utils.writeUTF(data, realClass.getCanonicalName());
-				context.classToId.put(realClass.getCanonicalName(),
-						context.classToId.size());
-				context.idToClass.add(mapping);
-			}
-		}
-
-		mapping.setDataInt(obj, data, context);
+	private static void registerSerializer (Class clas, ClassSerializer s) {
+		s.mappedClass = clas;
+		classes.put(clas.getCanonicalName(), s);
 	}
 
-	private Object updateFromDataObject(Object obj,
-			ClassMapping baseMapping, ByteBuf data,
-			SerializationContext context) throws IllegalArgumentException,
-			IllegalAccessException, InstantiationException,
-			ClassNotFoundException {
-
-		// The data layout for an object is the following:
-		// [boolean] does the object exist (e.g. non-null)
-		//    {false} exit
-		// [int] what is the object real class?
-		//    {0} the same as the declared class
-		//    {1-x} a different one
-		//       [string] if the number is not yet registered, the name of the
-		//                class
-		// [bytes] the actual contents
-
-		int index = data.readByte();
-
-		ClassMapping mapping = baseMapping;
-
-		if (index != 0) {
-			if (context.idToClass.size() < index) {
-				String className = Utils.readUTF(data);
-
-				Class cls = Class.forName(className);
-
-				mapping = get(cls);
-
-				context.idToClass.add(get(cls));
-			} else {
-				mapping = context.idToClass.get(index - 1);
-			}
-		}
-
-		return mapping.updateFromDataInt(obj, data, context);
-	}
-
-	public static ClassMapping get (Class clas) {
-		ClassMapping mapping;
+	public static ClassSerializer get (Class clas) {
+		ClassSerializer mapping;
 
 		if (!classes.containsKey(clas.getCanonicalName())) {
 			mapping = new ClassMapping ();
-			classes.put(clas.getCanonicalName(), mapping);
-			mapping.analyzeClass(clas);
+			registerSerializer(clas, mapping);
+			((ClassMapping) mapping).analyzeClass(clas);
 		} else {
 			mapping = classes.get(clas.getCanonicalName());
 		}
 
 		return mapping;
+	}
+
+	static {
+		registerSerializer(String.class, new SerializerString());
+		registerSerializer(Block.class, new SerializerBlock());
+		registerSerializer(NBTTagCompound.class, new SerializerNBT());
+		registerSerializer(ItemStack.class, new SerializerItemStack());
 	}
 }

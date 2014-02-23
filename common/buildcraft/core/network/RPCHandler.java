@@ -17,7 +17,9 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.tileentity.TileEntity;
 import buildcraft.BuildCraftCore;
 import buildcraft.core.DefaultProps;
-import buildcraft.core.utils.Utils;
+import buildcraft.core.network.serializers.ClassMapping;
+import buildcraft.core.network.serializers.ClassSerializer;
+import buildcraft.core.network.serializers.SerializationContext;
 import buildcraft.transport.Pipe;
 
 /**
@@ -35,7 +37,7 @@ public class RPCHandler {
 	class MethodMapping {
 		Method method;
 		Class [] parameters;
-		ClassMapping [] mappings;
+		ClassSerializer [] mappings;
 		boolean hasInfo = false;
 	}
 
@@ -201,10 +203,8 @@ public class RPCHandler {
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (IllegalArgumentException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -240,38 +240,43 @@ public class RPCHandler {
 		return new PacketRPCTile(bytes);
 	}
 
-	private void writeParameters (String method, ByteBuf data, Object ... actuals) throws IOException, IllegalArgumentException, IllegalAccessException {
+	private void writeParameters(String method, ByteBuf data, Object... actuals)
+			throws IOException, IllegalArgumentException,
+			IllegalAccessException {
 		if (!methodsMap.containsKey(method)) {
-			throw new RuntimeException(method + " is not a callable method of " + getClass().getName());
+			throw new RuntimeException(method + " is not a callable method of "
+					+ getClass().getName());
 		}
 
 		int methodIndex = methodsMap.get(method);
-		MethodMapping m = methods [methodIndex];
-		Class formals [] = m.parameters;
+		MethodMapping m = methods[methodIndex];
+		Class formals[] = m.parameters;
 
-		int expectedParameters = m.hasInfo ? formals.length - 1 : formals.length;
+		int expectedParameters = m.hasInfo ? formals.length - 1
+				: formals.length;
 
 		if (expectedParameters != actuals.length) {
 			// We accept formals + 1 as an argument, in order to support the
 			// special last argument RPCMessageInfo
 
 			throw new RuntimeException(getClass().getName() + "." + method
-					+ " expects " + m.parameters.length + " parameters, not " + actuals.length);
+					+ " expects " + m.parameters.length + " parameters, not "
+					+ actuals.length);
 		}
 
 		data.writeShort(methodIndex);
 
+		SerializationContext context = new SerializationContext();
+
 		for (int i = 0; i < actuals.length; ++i) {
-			if (formals [i].equals(int.class)) {
-				data.writeInt((Integer) actuals [i]);
-			} else if (formals [i].equals(float.class)) {
-				data.writeFloat((Float) actuals [i]);
-			} else if (formals [i].equals(char.class)) {
-				data.writeChar((Character) actuals [i]);
-			} else if (formals [i].equals(String.class)) {
-				Utils.writeUTF(data, (String) actuals [i]);
+			if (formals[i].equals(int.class)) {
+				data.writeInt((Integer) actuals[i]);
+			} else if (formals[i].equals(float.class)) {
+				data.writeFloat((Float) actuals[i]);
+			} else if (formals[i].equals(char.class)) {
+				data.writeChar((Character) actuals[i]);
 			} else {
-				m.mappings [i].setData(actuals [i], data);
+				m.mappings[i].write(data, actuals[i], context);
 			}
 		}
 	}
@@ -287,6 +292,8 @@ public class RPCHandler {
 
 			int expectedParameters = m.hasInfo ? formals.length - 1 : formals.length;
 
+			SerializationContext context = new SerializationContext();
+
 			for (int i = 0; i < expectedParameters; ++i) {
 				if (formals [i].equals(int.class)) {
 					actuals [i] = data.readInt();
@@ -294,10 +301,8 @@ public class RPCHandler {
 					actuals [i] = data.readFloat();
 				} else if (formals [i].equals(char.class)) {
 					actuals [i] = data.readChar();
-				} else if (formals [i].equals(String.class)) {
-					actuals [i] = Utils.readUTF(data);
 				} else {
-					actuals [i] = m.mappings [i].updateFromData(actuals [i], data);
+					actuals [i] = m.mappings [i].read (data, actuals [i], context);
 				}
 			}
 

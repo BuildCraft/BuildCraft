@@ -34,6 +34,8 @@ import buildcraft.core.network.RPCSide;
 public class TileBlueprintLibrary extends TileBuildCraft implements IInventory {
 	public ItemStack[] stack = new ItemStack[4];
 
+	private static final int PROGRESS_TIME = 100;
+
 	public int progressIn = 0;
 	public int progressOut = 0;
 
@@ -267,11 +269,11 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory {
 			return;
 		}
 
-		if (progressIn > 0 && progressIn < 100) {
+		if (progressIn > 0 && progressIn < PROGRESS_TIME) {
 			progressIn++;
 		}
 
-		if (progressOut > 0 && progressOut < 100) {
+		if (progressOut > 0 && progressOut < PROGRESS_TIME) {
 			progressOut++;
 		}
 
@@ -303,7 +305,7 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory {
 			if (selected > -1 && selected < currentPage.size()) {
 				BlueprintBase bpt = currentPage.get(selected);
 				setInventorySlotContents(3, BuildCraftBuilders.getBptItemStack(
-						stack[2].getItem(), bpt.position, bpt.id.name));
+						stack[2].getItem(), 0, bpt.id.name));
 			} else {
 				setInventorySlotContents(3, BuildCraftBuilders.getBptItemStack(
 						stack[2].getItem(), 0, null));

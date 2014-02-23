@@ -9,17 +9,13 @@
 package buildcraft.core.network;
 
 import io.netty.buffer.ByteBuf;
-
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-
 import net.minecraft.tileentity.TileEntity;
+import buildcraft.core.network.serializers.ClassMapping;
+import buildcraft.core.network.serializers.ClassSerializer;
+import buildcraft.core.network.serializers.SerializationContext;
 
 public class TilePacketWrapper {
-	ClassMapping rootMappings[];
+	ClassSerializer rootMappings[];
 
 	@SuppressWarnings("rawtypes")
 	public TilePacketWrapper(Class c) {
@@ -28,10 +24,10 @@ public class TilePacketWrapper {
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public TilePacketWrapper(Class c[]) {
-		rootMappings = new ClassMapping[c.length];
+		rootMappings = new ClassSerializer [c.length];
 
 		for (int i = 0; i < c.length; ++i) {
-			rootMappings[i] = new ClassMapping(c[i]);
+			rootMappings[i] = ClassMapping.get (c[i]);
 		}
 	}
 
@@ -44,12 +40,11 @@ public class TilePacketWrapper {
 				data.writeInt(tile.zCoord);
 
 				try {
-					rootMappings[0].setData(tile, data);
+					SerializationContext context = new SerializationContext();
+					rootMappings[0].write(data, tile, context);
 				} catch (IllegalArgumentException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				} catch (IllegalAccessException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
@@ -74,12 +69,11 @@ public class TilePacketWrapper {
 
 					for (int i = 0; i < rootMappings.length; ++i) {
 						try {
-							rootMappings[i].setData(obj[i], data);
+							SerializationContext context = new SerializationContext();
+							rootMappings[0].write(data, obj [i], context);
 						} catch (IllegalArgumentException e) {
-							// TODO Auto-generated catch block
 							e.printStackTrace();
 						} catch (IllegalAccessException e) {
-							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
 					}
@@ -96,7 +90,8 @@ public class TilePacketWrapper {
 			data.readInt();
 			data.readInt();
 
-			rootMappings[0].updateFromData(tile, data);
+			SerializationContext context = new SerializationContext();
+			rootMappings[0].read(data, tile, context);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -115,7 +110,8 @@ public class TilePacketWrapper {
 			data.readInt();
 
 			for (int i = 0; i < rootMappings.length; ++i) {
-				rootMappings[i].updateFromData(obj[i], data);
+				SerializationContext context = new SerializationContext();
+				rootMappings[i].read(data, obj[i], context);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
