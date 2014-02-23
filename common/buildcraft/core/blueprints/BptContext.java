@@ -10,18 +10,21 @@ package buildcraft.core.blueprints;
 
 import net.minecraft.world.World;
 import buildcraft.api.blueprints.IBptContext;
+import buildcraft.api.blueprints.MappingRegistry;
 import buildcraft.api.core.IBox;
 import buildcraft.api.core.Position;
 import buildcraft.core.Box;
 
 public class BptContext implements IBptContext {
 
-	private Box box;
-	private World world;
+	public Box box;
+	public World world;
+	private MappingRegistry mappingRegistry;
 
-	public BptContext(World world, Box box) {
-		this.box = box;
+	BptContext (World world, Box box, MappingRegistry registry) {
 		this.world = world;
+		this.box = box;
+		this.mappingRegistry = registry;
 	}
 
 	@Override
@@ -41,5 +44,10 @@ public class BptContext implements IBptContext {
 
 	public void rotateLeft() {
 		box = box.rotateLeft();
+	}
+
+	@Override
+	public MappingRegistry getMappingRegistry() {
+		return mappingRegistry;
 	}
 }

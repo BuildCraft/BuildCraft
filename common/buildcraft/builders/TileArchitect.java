@@ -17,6 +17,7 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.BuildCraftBuilders;
+import buildcraft.api.blueprints.IBptContext;
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.core.Box;
 import buildcraft.core.Box.Kind;
@@ -91,10 +92,10 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 
 		if (items[0].getItem() instanceof ItemBlueprint) {
 			result = createBptBlueprint();
-			context = new BptContext(worldObj, box);
+			context = result.getContext(worldObj, box);
 		} else {
 			result = createBptTemplate();
-			context = new BptContext(worldObj, box);
+			context =  result.getContext(worldObj, box);
 		}
 
 		if (!name.equals("")) {
@@ -156,8 +157,7 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 
 	private BlueprintBase createBptBlueprint() {
 		Blueprint result = new Blueprint(box.sizeX(), box.sizeY(), box.sizeZ());
-
-		BptContext context = new BptContext(worldObj, box);
+		IBptContext context = result.getContext(worldObj, box);
 
 		for (int x = box.xMin; x <= box.xMax; ++x) {
 			for (int y = box.yMin; y <= box.yMax; ++y) {

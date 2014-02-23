@@ -17,9 +17,12 @@ import buildcraft.api.core.Position;
  * blueprint slots.
  */
 public interface IBptContext {
+
 	public Position rotatePositionLeft(Position pos);
 
 	public IBox surroundingBox();
 
 	public World world();
+
+	public MappingRegistry getMappingRegistry ();
 }

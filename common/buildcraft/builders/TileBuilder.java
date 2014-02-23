@@ -253,7 +253,7 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory,
 
 		bpt = bpt.clone();
 
-		BptContext context = new BptContext(worldObj, bpt.getBoxForPos(x, y, z));
+		BptContext context = bpt.getContext(worldObj, bpt.getBoxForPos(x, y, z));
 
 		if (o == ForgeDirection.EAST) {
 			// Do nothing

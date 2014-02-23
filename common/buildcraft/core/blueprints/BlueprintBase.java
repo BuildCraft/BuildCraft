@@ -10,6 +10,8 @@ package buildcraft.core.blueprints;
 
 import net.minecraft.block.Block;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.world.World;
+import buildcraft.api.blueprints.MappingRegistry;
 import buildcraft.builders.blueprints.BlueprintId;
 import buildcraft.core.Box;
 import buildcraft.core.Version;
@@ -35,6 +37,10 @@ public abstract class BlueprintBase {
 
 	@NetworkData
 	public String version = "";
+
+	// This should not need to be synchronized over the network - the
+	// information deduced from it are on the contents nbt
+	protected MappingRegistry mapping = new MappingRegistry();
 
 	public BlueprintBase() {
 	}
@@ -228,6 +234,8 @@ public abstract class BlueprintBase {
 
 		res.contents = new BptSlot[sizeX][sizeY][sizeZ];
 
+		res.mapping = mapping.clone ();
+
 		for (int x = 0; x < sizeX; ++x) {
 			for (int y = 0; y < sizeY; ++y) {
 				for (int z = 0; z < sizeZ; ++z)
@@ -259,6 +267,10 @@ public abstract class BlueprintBase {
 		res.reorder();
 
 		return res;
+	}
+
+	public BptContext getContext (World world, Box box) {
+		return new BptContext(world, box, mapping);
 	}
 
 	public abstract void loadContents(NBTTagCompound nbt) throws BptError;

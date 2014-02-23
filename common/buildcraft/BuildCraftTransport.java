@@ -49,6 +49,7 @@ import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTriggerProvider;
 import buildcraft.transport.TransportProxy;
 import buildcraft.transport.WireIconProvider;
+import buildcraft.transport.blueprints.BptBlockPipe;
 import buildcraft.transport.gates.GateExpansionPulsar;
 import buildcraft.transport.gates.GateExpansionRedstoneFader;
 import buildcraft.transport.gates.GateExpansionTimer;
@@ -392,7 +393,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 		// ModLoader.RegisterTileEntity(TileDockingStation.class,
 		// "net.minecraft.src.buildcraft.TileDockingStation");
 
-		//new BptBlockPipe(genericPipeBlock.blockID);
+		new BptBlockPipe(genericPipeBlock);
 
 		//BuildCraftCore.itemBptProps[pipeItemsWood.itemID] = new BptItemPipeWooden();
 		//BuildCraftCore.itemBptProps[pipeFluidsWood.itemID] = new BptItemPipeWooden();

@@ -152,9 +152,9 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 		pipe = BlockGenericPipe.createPipe((Item) Item.itemRegistry.getObjectById(coreState.pipeId));
 		bindPipe();
 
-		if (pipe != null)
+		if (pipe != null) {
 			pipe.readFromNBT(nbt);
-		else {
+		} else {
 			BCLog.logger.log(Level.WARNING, "Pipe failed to load from NBT at {0},{1},{2}", new Object[]{xCoord, yCoord, zCoord});
 			deletePipe = true;
 		}

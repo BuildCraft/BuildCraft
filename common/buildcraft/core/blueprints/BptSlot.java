@@ -9,7 +9,6 @@
 package buildcraft.core.blueprints;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedList;
 
 import net.minecraft.block.Block;
@@ -21,6 +20,7 @@ import buildcraft.api.blueprints.BlueprintManager;
 import buildcraft.api.blueprints.BptBlock;
 import buildcraft.api.blueprints.BptSlotInfo;
 import buildcraft.api.blueprints.IBptContext;
+import buildcraft.api.blueprints.MappingRegistry;
 import buildcraft.core.utils.Utils;
 
 public class BptSlot extends BptSlotInfo {
@@ -93,24 +93,18 @@ public class BptSlot extends BptSlotInfo {
 		return obj;
 	}
 
-	public void writeToNBT(NBTTagCompound nbt,
-			HashMap<Block, Integer> blocksMap, HashMap<Item, Integer> itemsMap) {
-		if (!blocksMap.containsKey(block)) {
-			blocksMap.put(block,
-					Block.blockRegistry.getIDForObject(block));
-		}
+	public void writeToNBT(NBTTagCompound nbt, MappingRegistry registry) {
+		registry.setIdForBlock(block, Block.blockRegistry.getIDForObject(block));
 
-		nbt.setInteger("blockId", blocksMap.get(block));
+		nbt.setInteger("blockId", registry.getIdForBlock(block));
 		nbt.setInteger("blockMeta", meta);
 		nbt.setTag("blockCpt", cpt);
 
 		NBTTagList rq = new NBTTagList();
 
 		for (ItemStack stack : storedRequirements) {
-			if (!itemsMap.containsKey(stack.getItem())) {
-				itemsMap.put(stack.getItem(),
-						Item.itemRegistry.getIDForObject(stack.getItem()));
-			}
+			registry.setIdForItem(stack.getItem(),
+					Item.itemRegistry.getIDForObject(stack.getItem()));
 
 			NBTTagCompound sub = new NBTTagCompound();
 			stack.writeToNBT(stack.writeToNBT(sub));
@@ -120,10 +114,9 @@ public class BptSlot extends BptSlotInfo {
 		nbt.setTag("rq", rq);
 	}
 
-	public void readFromNBT(NBTTagCompound nbt,
-			HashMap<Integer, Block> blocksMap, HashMap<Integer, Integer> itemsMap) {
+	public void readFromNBT(NBTTagCompound nbt,	MappingRegistry registry) {
 
-		block = blocksMap.get(nbt.getInteger("blockId"));
+		block = registry.getBlockForId(nbt.getInteger("blockId"));
 		meta = nbt.getInteger("blockMeta");
 		cpt = nbt.getCompoundTag("blockCpt");
 
@@ -133,7 +126,8 @@ public class BptSlot extends BptSlotInfo {
 			NBTTagCompound sub = rq.getCompoundTagAt(i);
 
 			// Maps the id in the blueprint to the id in the world
-			sub.setInteger("id", itemsMap.get(sub.getInteger("id")));
+			sub.setInteger("id", Item.itemRegistry.getIDForObject(registry
+					.getItemForId(sub.getInteger("id"))));
 
 			storedRequirements.add(ItemStack.loadItemStackFromNBT(sub));
 		}

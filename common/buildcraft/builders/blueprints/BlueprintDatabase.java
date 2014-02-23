@@ -30,7 +30,6 @@ import java.util.logging.Logger;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import buildcraft.BuildCraftBuilders;
-import buildcraft.core.blueprints.Blueprint;
 import buildcraft.core.blueprints.BlueprintBase;
 import buildcraft.core.utils.Utils;
 
@@ -169,8 +168,7 @@ public class BlueprintDatabase {
 				NBTTagCompound nbt = CompressedStreamTools
 						.readCompressed(new FileInputStream(blueprintFile));
 
-				Blueprint blueprint = new Blueprint();
-				blueprint.readFromNBT(nbt);
+				BlueprintBase blueprint = BlueprintBase.loadBluePrint(nbt);
 				blueprint.id = id;
 
 				loadedBlueprints.put(id, blueprint);

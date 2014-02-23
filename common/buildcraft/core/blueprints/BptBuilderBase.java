@@ -31,11 +31,7 @@ public abstract class BptBuilderBase implements IAreaProvider {
 		Box box = new Box();
 		box.initialize(this);
 
-		if (bluePrint instanceof Blueprint) {
-			context = new BptContext(world, box);
-		} else {
-			context = new BptContext(world, box);
-		}
+		context = bluePrint.getContext(world, box);
 	}
 
 	public abstract BptSlot getNextBlock(World world, IBuilderInventory inv);
