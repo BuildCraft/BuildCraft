@@ -602,13 +602,11 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory,
 
 	@Override
 	public boolean hasCustomInventoryName() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public boolean isItemValidForSlot(int var1, ItemStack var2) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 

@@ -72,7 +72,7 @@ public class Blueprint extends BlueprintBase {
 			for (int y = 0; y < sizeY; ++y) {
 				for (int z = 0; z < sizeZ; ++z) {
 					NBTTagCompound cpt = new NBTTagCompound();
-					contents[x][y][z].writeToNBT(nbt, blocksInUse, itemsInUse);
+					contents[x][y][z].writeToNBT(cpt, blocksInUse, itemsInUse);
 					nbtContents.appendTag(cpt);
 				}
 			}
@@ -99,10 +99,10 @@ public class Blueprint extends BlueprintBase {
 			sub.setString("name",
 					Item.itemRegistry.getNameForObject(e.getKey()));
 			sub.setInteger("id", e.getValue());
-			blocksMapping.appendTag(sub);
+			itemsMapping.appendTag(sub);
 		}
 
-		nbt.setTag("itemsMapping", blocksMapping);
+		nbt.setTag("itemsMapping", itemsMapping);
 	}
 
 	@Override
@@ -127,8 +127,8 @@ public class Blueprint extends BlueprintBase {
 		NBTTagList itemsMapping = nbt.getTagList("itemsMapping",
 				Utils.NBTTag_Types.NBTTagCompound.ordinal());
 
-		for (int i = 0; i < blocksMapping.tagCount(); ++i) {
-			NBTTagCompound sub = blocksMapping.getCompoundTagAt(i);
+		for (int i = 0; i < itemsMapping.tagCount(); ++i) {
+			NBTTagCompound sub = itemsMapping.getCompoundTagAt(i);
 
 			int id = sub.getInteger("id");
 			String name = sub.getString("name");

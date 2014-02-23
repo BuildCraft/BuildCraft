@@ -65,7 +65,7 @@ public class RPCHandler {
 				MethodMapping mapping = new MethodMapping();
 				mapping.method = sortedMethods [i];
 				mapping.parameters = sortedMethods [i].getParameterTypes();
-				mapping.mappings = new ClassMapping [mapping.parameters.length];
+				mapping.mappings = new ClassSerializer [mapping.parameters.length];
 
 				for (int j = 0; j < mapping.parameters.length; ++j) {
 					if (mapping.parameters [j].equals(int.class)) {
@@ -73,8 +73,6 @@ public class RPCHandler {
 					} else if (mapping.parameters [j].equals(char.class)) {
 						// accepted
 					} else if (mapping.parameters [j].equals(float.class)) {
-						// accepted
-					} else if (mapping.parameters [j].equals(String.class)) {
 						// accepted
 					} else if (mapping.parameters [j].equals(RPCMessageInfo.class)) {
 						mapping.hasInfo = true;

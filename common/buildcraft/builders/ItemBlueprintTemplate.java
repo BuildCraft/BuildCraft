@@ -22,10 +22,11 @@ public class ItemBlueprintTemplate extends ItemBlueprint {
 
 	@Override
 	public IIcon getIconFromDamage(int i) {
-		if (i == 0)
+		if (i == 0) {
 			return itemIcon;
-		else
+		} else {
 			return usedTemplate;
+		}
 	}
 
 	@Override

@@ -12,6 +12,8 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
@@ -25,11 +27,11 @@ import java.util.TreeSet;
 import java.util.WeakHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.zip.GZIPOutputStream;
 
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import buildcraft.BuildCraftBuilders;
+import buildcraft.core.blueprints.Blueprint;
 import buildcraft.core.blueprints.BlueprintBase;
 import buildcraft.core.utils.Utils;
 
@@ -145,11 +147,7 @@ public class BlueprintDatabase {
 		if (!blueprintFile.exists()) {
 			OutputStream gzOs = null;
 			try {
-				gzOs = new GZIPOutputStream(new FileOutputStream(blueprintFile));
-
-				gzOs.write(data);
-
-				CompressedStreamTools.write(nbt, blueprintFile);
+				CompressedStreamTools.writeCompressed(nbt, new FileOutputStream(blueprintFile));
 			} catch (IOException ex) {
 				Logger.getLogger("Buildcraft").log(Level.SEVERE, String.format("Failed to save Blueprint file: %s %s", blueprintFile.getName(), ex.getMessage()));
 			} finally {
@@ -189,35 +187,27 @@ public class BlueprintDatabase {
 	}
 
 	private BlueprintBase load(final BlueprintId id) {
-		/*FilenameFilter filter = new FilenameFilter() {
-			String prefix = meta.getId().toString();
+		File blueprintFile = new File(blueprintFolder, String.format(
+				Locale.ENGLISH, "%s" + fileExt, id.toString()));
 
-			@Override
-			public boolean accept(File dir, String name) {
-				return name.endsWith(fileExt) && name.startsWith(prefix);
-			}
-		};
-
-		for (File blueprintFile : blueprintFolder.listFiles(filter)) {
-			RawBlueprint rawBlueprint = load(blueprintFile);
-
-			if (rawBlueprint == null) {
-				continue;
-			}
-
-			Blueprint blueprint;
-
+		if (blueprintFile.exists()) {
 			try {
-				blueprint = new Blueprint(meta, rawBlueprint.nbt);
-			} catch (Exception e) {
-				// TODO: delete?
-				continue;
+				NBTTagCompound nbt = CompressedStreamTools
+						.readCompressed(new FileInputStream(blueprintFile));
+
+				Blueprint blueprint = new Blueprint();
+				blueprint.readFromNBT(nbt);
+				blueprint.id = id;
+
+				loadedBlueprints.put(id, blueprint);
+
+				return blueprint;
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
 			}
-
-			loadedBlueprints.put(blueprint.getId(), blueprint);
-
-			return blueprint;
-		}*/
+		}
 
 		return null;
 	}

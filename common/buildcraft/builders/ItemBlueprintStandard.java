@@ -8,10 +8,10 @@
  */
 package buildcraft.builders;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.util.IIcon;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class ItemBlueprintStandard extends ItemBlueprint {
 
@@ -24,10 +24,11 @@ public class ItemBlueprintStandard extends ItemBlueprint {
 
 	@Override
 	public IIcon getIconFromDamage(int damage) {
-		if (damage == 0)
+		if (damage == 0) {
 			return cleanBlueprint;
-		else
+		} else {
 			return usedBlueprint;
+		}
 	}
 
 	@Override

@@ -154,9 +154,6 @@ public abstract class BlueprintBase {
 
 		author = nbt.getString("author");
 
-		id = new BlueprintId();
-		id.read(nbt.getCompoundTag("id"));
-
 		contents = new BptSlot [sizeX][sizeY][sizeZ];
 
 		try {
