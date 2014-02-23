@@ -8,23 +8,24 @@
  */
 package buildcraft.builders.gui;
 
-import buildcraft.builders.TileArchitect;
-import buildcraft.core.gui.BuildCraftContainer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ICrafting;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
+import net.minecraft.item.ItemStack;
+import buildcraft.builders.TileArchitect;
+import buildcraft.core.gui.BuildCraftContainer;
 
 public class ContainerArchitect extends BuildCraftContainer {
 
 	protected IInventory playerIInventory;
-	protected TileArchitect template;
+	protected TileArchitect architect;
 	protected int computingTime = 0;
 
 	public ContainerArchitect(IInventory playerInventory, TileArchitect template) {
 		super(template.getSizeInventory());
 		this.playerIInventory = playerInventory;
-		this.template = template;
+		this.architect = template;
 
 		addSlotToContainer(new Slot(template, 0, 55, 35));
 		addSlotToContainer(new Slot(template, 1, 114, 35));
@@ -52,24 +53,33 @@ public class ContainerArchitect extends BuildCraftContainer {
 		super.detectAndSendChanges();
 		for (int i = 0; i < crafters.size(); i++) {
 			ICrafting icrafting = (ICrafting) crafters.get(i);
-			if (computingTime != template.computingTime) {
-				icrafting.sendProgressBarUpdate(this, 0, template.computingTime);
+			if (computingTime != architect.computingTime) {
+				icrafting.sendProgressBarUpdate(this, 0, architect.computingTime);
 			}
 		}
 
-		computingTime = template.computingTime;
+		computingTime = architect.computingTime;
 	}
 
 	@Override
 	public void updateProgressBar(int i, int j) {
 		if (i == 0) {
-			template.computingTime = j;
+			architect.computingTime = j;
 		}
 	}
 
 	@Override
 	public boolean canInteractWith(EntityPlayer entityplayer) {
-		return template.isUseableByPlayer(entityplayer);
+		return architect.isUseableByPlayer(entityplayer);
+	}
+
+	@Override
+	public ItemStack slotClick(int slotNum, int mouseButton, int modifier, EntityPlayer player) {
+		if (slotNum == 0) {
+			architect.currentAuthorName = player.getDisplayName();
+		}
+
+		return super.slotClick(slotNum, mouseButton, modifier, player);
 	}
 
 }

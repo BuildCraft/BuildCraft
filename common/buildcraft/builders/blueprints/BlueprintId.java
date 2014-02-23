@@ -13,6 +13,9 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 
 import net.minecraft.nbt.NBTTagCompound;
+
+import org.apache.commons.lang3.ArrayUtils;
+
 import buildcraft.BuildCraftBuilders;
 import buildcraft.core.network.NetworkData;
 
@@ -61,7 +64,7 @@ public final class BlueprintId implements Comparable<BlueprintId> {
 
 	@Override
 	public int hashCode() {
-		return Arrays.hashCode(uniqueId);
+		return Arrays.hashCode(ArrayUtils.addAll(uniqueId, name.getBytes()));
 	}
 
 	public String getCompleteId () {

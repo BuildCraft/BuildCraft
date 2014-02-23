@@ -45,9 +45,7 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 	public @NetworkData
 	String name = "";
 
-	// Use that field to avoid creating several times the same template if
-	// they're the same!
-	private int lastBptId = 0;
+	public String currentAuthorName = "";
 
 	public TileArchitect() {
 		box.kind = Kind.STRIPES;
@@ -101,6 +99,7 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 
 		if (!name.equals("")) {
 			result.id.name = name;
+			result.author = currentAuthorName;
 		}
 
 		result.anchorX = xCoord - box.xMin;
@@ -256,7 +255,6 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 	public void readFromNBT(NBTTagCompound nbttagcompound) {
 		super.readFromNBT(nbttagcompound);
 
-		lastBptId = nbttagcompound.getInteger("lastTemplateId");
 		computingTime = nbttagcompound.getInteger("computingTime");
 		isComputing = nbttagcompound.getBoolean("isComputing");
 
@@ -278,13 +276,13 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 		}
 
 		name = nbttagcompound.getString("name");
+		currentAuthorName = nbttagcompound.getString("lastAuthor");
 	}
 
 	@Override
 	public void writeToNBT(NBTTagCompound nbttagcompound) {
 		super.writeToNBT(nbttagcompound);
 
-		nbttagcompound.setInteger("lastTemplateId", lastBptId);
 		nbttagcompound.setInteger("computingTime", computingTime);
 		nbttagcompound.setBoolean("isComputing", isComputing);
 
@@ -306,6 +304,7 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 
 		nbttagcompound.setTag("Items", nbttaglist);
 		nbttagcompound.setString("name", name);
+		nbttagcompound.setString("lastAuthor", currentAuthorName);
 	}
 
 	@Override

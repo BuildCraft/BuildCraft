@@ -34,7 +34,7 @@ public abstract class ItemBlueprint extends ItemBuildCraft {
 
 		if (blueprint != null) {
 			list.add(String.format(blueprint.id.name));
-			list.add(String.format(StringUtils.localize("item.blueprint.author"), blueprint.author));
+			list.add(String.format(StringUtils.localize("item.blueprint.author") + " " + blueprint.author));
 		} else
 			list.add(StringUtils.localize("item.blueprint.blank"));
 	}
