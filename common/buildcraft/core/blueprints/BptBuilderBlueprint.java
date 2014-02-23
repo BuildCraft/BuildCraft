@@ -8,14 +8,17 @@
  */
 package buildcraft.core.blueprints;
 
+import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.ListIterator;
-import java.util.TreeSet;
+import java.util.Map.Entry;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldSettings.GameType;
+import buildcraft.api.core.StackKey;
 import buildcraft.core.IBuilderInventory;
 import buildcraft.core.blueprints.BptSlot.Mode;
 import buildcraft.core.utils.BCLog;
@@ -29,26 +32,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 
 	LinkedList<BptSlot> postProcessingList = new LinkedList<BptSlot>();
 
-	public TreeSet<ItemStack> neededItems = new TreeSet<ItemStack>(new Comparator<ItemStack>() {
-
-		@Override
-		public int compare(ItemStack o1, ItemStack o2) {
-			if (o1.stackSize > o2.stackSize)
-				return -1;
-			else if (o1.stackSize < o2.stackSize)
-				return 1;
-			//else if (o1.itemID > o2.itemID)
-			//	return -1;
-			//else if (o1.itemID < o2.itemID)
-			//	return 1;
-			else if (o1.getItemDamage() > o2.getItemDamage())
-				return -1;
-			else if (o1.getItemDamage() < o2.getItemDamage())
-				return 1;
-
-			return 0;
-		}
-	});
+	public LinkedList <ItemStack> neededItems = new LinkedList <ItemStack> ();
 
 	public BptBuilderBlueprint(Blueprint bluePrint, World world, int x, int y, int z) {
 		super(bluePrint, world, x, y, z);
@@ -343,22 +327,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 	public void recomputeNeededItems() {
 		neededItems.clear();
 
-		/*TreeMap<ItemStack, Integer> computeStacks = new TreeMap<ItemStack, Integer>(new Comparator<ItemStack>() {
-
-			@Override
-			public int compare(ItemStack o1, ItemStack o2) {
-				if (o1.itemID > o2.itemID)
-					return 1;
-				else if (o1.itemID < o2.itemID)
-					return -1;
-				else if (o1.getItemDamage() > o2.getItemDamage())
-					return 1;
-				else if (o1.getItemDamage() < o2.getItemDamage())
-					return -1;
-
-				return 0;
-			}
-		});*/
+		HashMap <StackKey, Integer> computeStacks = new HashMap <StackKey, Integer> ();
 
 		for (BptSlot slot : primaryList) {
 
@@ -372,50 +341,70 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 				BCLog.logger.throwing("BptBuilderBlueprint", "recomputeIfNeeded", t);
 			}
 
-			/*for (ItemStack stack : stacks) {
-				if (stack == null || stack.itemID == 0) {
+			for (ItemStack stack : stacks) {
+				if (stack == null || stack.getItem() == null || stack.stackSize == 0) {
 					continue;
 				}
 
-				if (!computeStacks.containsKey(stack)) {
-					computeStacks.put(stack.copy(), stack.stackSize);
+				StackKey key = new StackKey(stack);
+
+				if (!computeStacks.containsKey(key)) {
+					computeStacks.put(key, stack.stackSize);
 				} else {
-					Integer num = computeStacks.get(stack);
+					Integer num = computeStacks.get(key);
 					num += stack.stackSize;
 
-					computeStacks.put(stack, num);
+					computeStacks.put(key, num);
 				}
 
-			}*/
+			}
 		}
 
 		for (BptSlot slot : secondaryList) {
 			LinkedList<ItemStack> stacks = slot.getRequirements(context);
 
-			/*for (ItemStack stack : stacks) {
-				if (stack == null || stack.itemID <= 0 || stack.itemID >= Item.itemsList.length || stack.stackSize == 0 || stack.getItem() == null) {
+			for (ItemStack stack : stacks) {
+				if (stack == null || stack.getItem() == null || stack.stackSize == 0) {
 					continue;
 				}
 
-				if (!computeStacks.containsKey(stack)) {
-					computeStacks.put(stack.copy(), stack.stackSize);
+				StackKey key = new StackKey(stack);
+
+				if (!computeStacks.containsKey(key)) {
+					computeStacks.put(key, stack.stackSize);
 				} else {
-					Integer num = computeStacks.get(stack);
+					Integer num = computeStacks.get(key);
 					num += stack.stackSize;
 
-					computeStacks.put(stack, num);
+					computeStacks.put(key, num);
 				}
 
-			}*/
+			}
 		}
 
-		/*for (ItemStack stack : computeStacks.keySet())
-			if (stack.isItemStackDamageable()) {
-				neededItems.add(new ItemStack(stack.getItem()));
-			} else {
-				neededItems.add(new ItemStack(stack.itemID, computeStacks.get(stack), stack.getItemDamage()));
+		for (Entry<StackKey, Integer> e : computeStacks.entrySet()) {
+			ItemStack newStack = e.getKey().stack.copy();
+			newStack.stackSize = e.getValue();
+			neededItems.add(newStack);
+		}
+
+		Collections.sort (neededItems, new Comparator<ItemStack>() {
+			@Override
+			public int compare(ItemStack o1, ItemStack o2) {
+				if (o1.stackSize > o2.stackSize) {
+					return -1;
+				} else if (o1.stackSize < o2.stackSize) {
+					return 1;
+				} else if (o1.getItemDamage() > o2.getItemDamage()) {
+					return -1;
+				} else if (o1.getItemDamage() < o2.getItemDamage()) {
+					return 1;
+				} else {
+					return 0;
+				}
 			}
-		*/
+		});
+
 	}
 
 	@Override

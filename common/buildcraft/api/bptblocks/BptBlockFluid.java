@@ -35,10 +35,11 @@ public class BptBlockFluid extends BptBlock {
 
 	@Override
 	public boolean isValid(BptSlotInfo slot, IBptContext context) {
-		//if (slot.meta == 0)
-		//	return slot.blockId == context.world().getBlockId(slot.x, slot.y, slot.z) && context.world().getBlockMetadata(slot.x, slot.y, slot.z) == 0;
-		//else
+		if (slot.meta == 0) {
+			return slot.block == context.world().getBlock(slot.x, slot.y, slot.z) && context.world().getBlockMetadata(slot.x, slot.y, slot.z) == 0;
+		} else {
 			return true;
+		}
 	}
 
 	@Override
@@ -53,9 +54,9 @@ public class BptBlockFluid extends BptBlock {
 
 	@Override
 	public void buildBlock(BptSlotInfo slot, IBptContext context) {
-		//if (slot.meta == 0) {
-		//	context.world().setBlock(slot.x, slot.y, slot.z, slot.blockId, 0,1);
-		//}
+		if (slot.meta == 0) {
+			context.world().setBlock(slot.x, slot.y, slot.z, slot.block, 0,1);
+		}
 	}
 
 }

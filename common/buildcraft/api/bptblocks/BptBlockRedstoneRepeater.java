@@ -11,6 +11,7 @@ package buildcraft.api.bptblocks;
 import java.util.LinkedList;
 
 import net.minecraft.block.Block;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import buildcraft.api.blueprints.BptBlock;
 import buildcraft.api.blueprints.BptSlotInfo;
@@ -24,7 +25,7 @@ public class BptBlockRedstoneRepeater extends BptBlock {
 
 	@Override
 	public void addRequirements(BptSlotInfo slot, IBptContext context, LinkedList<ItemStack> requirements) {
-		//requirements.add(new ItemStack(Item.redstoneRepeater));
+		requirements.add(new ItemStack(Items.repeater));
 	}
 
 	@Override

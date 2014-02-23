@@ -8,6 +8,7 @@
  */
 package buildcraft.api.blueprints;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 
 import net.minecraft.block.Block;
@@ -69,7 +70,7 @@ public class BptBlock {
 			if (slot.storedRequirements.size() != 0) {
 				requirements.addAll(slot.storedRequirements);
 			} else {
-			//	requirements.add(new ItemStack(slot.blockId, 1, slot.meta));
+				requirements.add(new ItemStack(slot.block, 1, slot.meta));
 			}
 		}
 	}
@@ -130,8 +131,7 @@ public class BptBlock {
 	 * subprogram is permissive and doesn't take into account metadata.
 	 */
 	public boolean isValid(BptSlotInfo slot, IBptContext context) {
-		//return slot.blockId == context.world().getBlockId(slot.x, slot.y, slot.z) && slot.meta == context.world().getBlockMetadata(slot.x, slot.y, slot.z);
-		return false;
+		return slot.block == context.world().getBlock(slot.x, slot.y, slot.z) && slot.meta == context.world().getBlockMetadata(slot.x, slot.y, slot.z);
 	}
 
 	/**
@@ -189,7 +189,7 @@ public class BptBlock {
 	 * save / load the block.
 	 */
 	public void initializeFromWorld(BptSlotInfo slot, IBptContext context, int x, int y, int z) {
-		/*if (Block.blocksList[slot.blockId] instanceof BlockContainer) {
+		if (slot.block instanceof BlockContainer) {
 			TileEntity tile = context.world().getTileEntity(x, y, z);
 
 			if (tile != null) {
@@ -197,13 +197,14 @@ public class BptBlock {
 			}
 		}
 
-		if (Block.blocksList[slot.blockId] != null) {
-			ArrayList<ItemStack> req = Block.blocksList[slot.blockId].getBlockDropped(context.world(), x, y, z, context.world().getBlockMetadata(x, y, z), 0);
+		if (slot.block != null) {
+			ArrayList<ItemStack> req = slot.block.getDrops(context.world(), x,
+					y, z, context.world().getBlockMetadata(x, y, z), 0);
 
 			if (req != null) {
 				slot.storedRequirements.addAll(req);
 			}
-		}*/
+		}
 	}
 
 	/**

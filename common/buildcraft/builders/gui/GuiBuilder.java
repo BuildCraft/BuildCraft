@@ -8,7 +8,10 @@
  */
 package buildcraft.builders.gui;
 
+import java.util.Collection;
+
 import net.minecraft.inventory.IInventory;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
 import org.lwjgl.opengl.GL11;
@@ -76,23 +79,20 @@ public class GuiBuilder extends GuiAdvancedInterface {
 			((ItemSlot) slots[s]).stack = null;
 		}
 
-		/*Blueprint blueprint = builder.getBlueprint();
-		if(blueprint != null){
-			Collection<ItemStack> needs = blueprint.getCost();
+		Collection<ItemStack> needs = builder.getNeededItems();
 
-			if (needs != null) {
-				int s = 0;
+		if (needs != null) {
+			int s = 0;
 
-				for (ItemStack stack : needs) {
-					if (s >= slots.length) {
-						break;
-					}
-
-					((ItemSlot) slots[s]).stack = stack.copy();
-					s++;
+			for (ItemStack stack : needs) {
+				if (s >= slots.length) {
+					break;
 				}
+
+				((ItemSlot) slots[s]).stack = stack.copy();
+				s++;
 			}
-		}*/
+		}
 
 		drawBackgroundSlots();
 	}

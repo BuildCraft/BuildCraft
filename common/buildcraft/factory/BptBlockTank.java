@@ -26,7 +26,7 @@ public class BptBlockTank extends BptBlock {
 
 	@Override
 	public void buildBlock(BptSlotInfo slot, IBptContext context) {
-		//context.world().setBlock(slot.x, slot.y, slot.z, slot.blockId, slot.meta,1);
+		context.world().setBlock(slot.x, slot.y, slot.z, slot.block, slot.meta,1);
 	}
 
 }

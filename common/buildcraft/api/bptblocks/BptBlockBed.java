@@ -53,10 +53,11 @@ public class BptBlockBed extends BptBlock {
 
 	@Override
 	public void buildBlock(BptSlotInfo slot, IBptContext context) {
-		if ((slot.meta & 8) != 0)
+		if ((slot.meta & 8) != 0) {
 			return;
+		}
 
-		//context.world().setBlock(slot.x, slot.y, slot.z, slot.block, slot.meta,1);
+		context.world().setBlock(slot.x, slot.y, slot.z, slot.block, slot.meta,1);
 
 		int x2 = slot.x;
 		int z2 = slot.z;
@@ -76,7 +77,7 @@ public class BptBlockBed extends BptBlock {
 			break;
 		}
 
-		//context.world().setBlock(x2, slot.y, z2, slot.block, slot.meta + 8,1);
+		context.world().setBlock(x2, slot.y, z2, slot.block, slot.meta + 8,1);
 	}
 
 	@Override

@@ -1076,8 +1076,9 @@ public class BlockGenericPipe extends BlockBuildCraft {
 	}
 
 	public static boolean placePipe(Pipe pipe, World world, int i, int j, int k, Block block, int meta) {
-		if (world.isRemote)
+		if (world.isRemote) {
 			return true;
+		}
 
 		boolean placed = world.setBlock(i, j, k, block, meta, 3);
 
@@ -1091,13 +1092,13 @@ public class BlockGenericPipe extends BlockBuildCraft {
 	}
 
 	public static Pipe getPipe(IBlockAccess blockAccess, int i, int j, int k) {
-
 		TileEntity tile = blockAccess.getTileEntity(i, j, k);
 
-		if (!(tile instanceof TileGenericPipe) || tile.isInvalid())
+		if (!(tile instanceof TileGenericPipe) || tile.isInvalid()) {
 			return null;
-
-		return ((TileGenericPipe) tile).pipe;
+		} else {
+			return ((TileGenericPipe) tile).pipe;
+		}
 	}
 
 	public static boolean isFullyDefined(Pipe pipe) {

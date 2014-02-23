@@ -278,7 +278,7 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory,
 			result = null;
 		}
 
-		debugForceBlueprintCompletion(result, context);
+		//debugForceBlueprintCompletion(result, context);
 
 		return result;
 	}
@@ -634,6 +634,14 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory,
 			}
 
 			slot.buildBlock(context);
+		}
+	}
+
+	public BptBuilderBase getBlueprint () {
+		if (bluePrintBuilder != null) {
+			return bluePrintBuilder;
+		} else {
+			return null;
 		}
 	}
 }

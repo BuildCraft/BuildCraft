@@ -252,8 +252,9 @@ public class PipeTransportItems extends PipeTransport {
 	private void moveSolids() {
 		items.flush();
 
-		if (!container.getWorldObj().isRemote)
+		if (!container.getWorldObj().isRemote) {
 			items.purgeCorruptedItems();
+		}
 
 		items.iterating = true;
 		for (TravelingItem item : items) {
