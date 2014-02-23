@@ -16,11 +16,10 @@ import buildcraft.transport.PipeIconProvider;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.item.Item;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
 import net.minecraftforge.client.IItemRenderer;
-import static net.minecraftforge.client.IItemRenderer.ItemRenderType.EQUIPPED_FIRST_PERSON;
 import org.lwjgl.opengl.GL11;
 
 public class FacadeItemRenderer implements IItemRenderer {
@@ -38,38 +37,42 @@ public class FacadeItemRenderer implements IItemRenderer {
 
 		Tessellator tessellator = Tessellator.instance;
 
-		if (block == null)
+		if (block == null) {
 			return;
+		}
+
+		if(block.getIcon(0, decodedMeta) == null) {
+			return;
+		}
 
 		// Render Facade
 		GL11.glPushMatrix();
 		block.setBlockBounds(0F, 0F, 1F - 1F / 16F, 1F, 1F, 1F);
 		render.setRenderBoundsFromBlock(block);
 		GL11.glTranslatef(translateX, translateY, translateZ);
-
 		tessellator.startDrawingQuads();
 		tessellator.setNormal(0.0F, -1F, 0.0F);
-		render.renderFaceYNeg(block, 0.0D, 0.0D, 0.0D, block.getIcon(0, decodedMeta));
+		render.renderFaceYNeg(block, 0.0D, 0.0D, 0.0D, tryGetBlockIcon(block, 0, decodedMeta));
 		tessellator.draw();
 		tessellator.startDrawingQuads();
 		tessellator.setNormal(0.0F, 1.0F, 0.0F);
-		render.renderFaceYPos(block, 0.0D, 0.0D, 0.0D, block.getIcon(1, decodedMeta));
+		render.renderFaceYPos(block, 0.0D, 0.0D, 0.0D, tryGetBlockIcon(block, 1, decodedMeta));
 		tessellator.draw();
 		tessellator.startDrawingQuads();
 		tessellator.setNormal(0.0F, 0.0F, -1F);
-		render.renderFaceZNeg(block, 0.0D, 0.0D, 0.0D, block.getIcon(2, decodedMeta));
+		render.renderFaceZNeg(block, 0.0D, 0.0D, 0.0D, tryGetBlockIcon(block, 2, decodedMeta));
 		tessellator.draw();
 		tessellator.startDrawingQuads();
 		tessellator.setNormal(0.0F, 0.0F, 1.0F);
-		render.renderFaceZPos(block, 0.0D, 0.0D, 0.0D, block.getIcon(3, decodedMeta));
+		render.renderFaceZPos(block, 0.0D, 0.0D, 0.0D, tryGetBlockIcon(block, 3, decodedMeta));
 		tessellator.draw();
 		tessellator.startDrawingQuads();
 		tessellator.setNormal(-1F, 0.0F, 0.0F);
-		render.renderFaceXNeg(block, 0.0D, 0.0D, 0.0D, block.getIcon(4, decodedMeta));
+		render.renderFaceXNeg(block, 0.0D, 0.0D, 0.0D, tryGetBlockIcon(block, 4, decodedMeta));
 		tessellator.draw();
 		tessellator.startDrawingQuads();
 		tessellator.setNormal(1.0F, 0.0F, 0.0F);
-		render.renderFaceXPos(block, 0.0D, 0.0D, 0.0D, block.getIcon(5, decodedMeta));
+		render.renderFaceXPos(block, 0.0D, 0.0D, 0.0D, tryGetBlockIcon(block, 5, decodedMeta));
 		tessellator.draw();
 		block.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
 		GL11.glPopMatrix();
@@ -109,6 +112,15 @@ public class FacadeItemRenderer implements IItemRenderer {
 		tessellator.draw();
 		GL11.glTranslatef(0.5F, 0.5F, 0.5F);
 		block.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
+	}
+
+	private IIcon tryGetBlockIcon( Block block, int side, int decodedMeta)
+	{
+		try {
+		return block.getIcon(side, decodedMeta);
+		} catch (Throwable t) {
+			return Blocks.cobblestone.getIcon(0, 0);
+		}
 	}
 
 	@Override

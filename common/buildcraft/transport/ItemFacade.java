@@ -12,6 +12,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import buildcraft.core.BlockSpring;
+import buildcraft.core.BuildCraftConfiguration;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
@@ -41,6 +43,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 public class ItemFacade extends ItemBuildCraft {
 
 	public final static LinkedList<ItemStack> allFacades = new LinkedList<ItemStack>();
+	public final static LinkedList<String> blacklistedFacades = new LinkedList<String>();
 
 	public ItemFacade() {
 		super();
@@ -62,7 +65,13 @@ public class ItemFacade extends ItemBuildCraft {
 		if (Item.getItemFromBlock(decodedBlock) != null) {
 			name += ": " + CoreProxy.proxy.getItemDisplayName(newStack);
 		} else {
-			name += " < BROKEN (" + decodedBlock.getLocalizedName() + ":" + decodedMeta + " )>";
+			String localizedName;
+			try {
+				localizedName = decodedBlock.getLocalizedName();
+			} catch(NullPointerException npe) {
+				localizedName = "Null";
+			}
+			name += " < BROKEN (" + localizedName + ":" + decodedMeta + " )>";
 		}
 		return name;
 	}
@@ -95,11 +104,11 @@ public class ItemFacade extends ItemBuildCraft {
 		TileGenericPipe pipeTile = (TileGenericPipe) tile;
 
 		if (pipeTile.addFacade(ForgeDirection.getOrientation(side).getOpposite(), ItemFacade.getBlock(stack), ItemFacade.getMetaData(stack))) {
-			if (!player.capabilities.isCreativeMode) {
-				stack.stackSize--;
-			}
+			stack.stackSize--;
+
 			return true;
 		}
+
 		return false;
 	}
 
@@ -107,56 +116,86 @@ public class ItemFacade extends ItemBuildCraft {
 		for (Object o : Block.blockRegistry) {
 			Block b = (Block) o;
 
-			if (!(b == Blocks.glass)) {
-				if (b == Blocks.bedrock
-						|| b == Blocks.grass
-						|| b == Blocks.leaves
-						|| b == Blocks.sponge
-						|| b == Blocks.chest
-						|| b == Blocks.redstone_lamp
-						|| b == Blocks.lit_redstone_lamp
-						|| b == Blocks.lit_pumpkin) {
-					continue;
-				}
-
-				if (!b.isOpaqueCube()
-						|| b.hasTileEntity(0)
-						|| !b.renderAsNormalBlock()
-						|| b.getRenderType() != 0) {
-					continue;
-				}
+			if (!isBlockValidForFacade(b))
+			{
+				continue;
 			}
 
 			Item item = Item.getItemFromBlock(b);
 
-			if (item != null) {
-				ItemStack base = new ItemStack(item, 1);
+			if (item == null) {
+				continue;
+			}
 
-				if (base.getHasSubtypes()) {
-					Set<String> names = Sets.newHashSet();
+			if (isBlockBlacklisted(b))
+			{
+				continue;
+			}
 
-					for (int meta = 0; meta <= 15; meta++) {
-						try {
-							ItemStack is = new ItemStack(item, 1, meta);
+			registerValidFacades(b, item);
+		}
+	}
 
-							if (!Strings.isNullOrEmpty(is.getUnlocalizedName())
-									&& names.add(is.getUnlocalizedName())) {
+	private static void registerValidFacades(Block block, Item item)
+	{
+		Set<String> names = Sets.newHashSet();
 
-								ItemFacade.addFacade(is);
-							}
-						} catch (Throwable t) {
-							t.printStackTrace();
+		for(int i=0; i <= 15; i++) {
+			try {
+				ItemStack stack = new ItemStack(item, 1, i);
+
+				if(!Strings.isNullOrEmpty(stack.getUnlocalizedName())
+						&& names.add(stack.getUnlocalizedName())) {
+						ItemFacade.addFacade(stack);
+
+						// prevent adding multiple facades if it's a rotatable block
+						if(block.getRenderType() == 31) {
+							break;
 						}
 					}
-				} else {
-					try {
-						ItemFacade.addFacade(base);
-					}  catch (Throwable t) {
-						t.printStackTrace();
-					}
-				}
+				} catch(Throwable t) {
+				t.printStackTrace();
 			}
 		}
+	}
+
+	private static boolean isBlockBlacklisted(Block block)
+	{
+		String blockName = Block.blockRegistry.getNameForObject(block);
+		for (String blacklistedBlock : BuildCraftTransport.facadeBlacklist) {
+			if(blockName.equals(BuildCraftConfiguration.stripSurroundingQuotes(blacklistedBlock))) {
+				return true;
+			}
+		}
+
+		for(String blacklistedBlock : blacklistedFacades){
+				if(blockName.equals(blacklistedBlock)){
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	private static boolean isBlockValidForFacade(Block block)
+	{
+		if(block.getRenderType() != 0 && block.getRenderType() != 31)
+		{
+			return false;
+		}
+
+		if(!block.renderAsNormalBlock()) {
+			if((block != Blocks.glass && block != Blocks.stained_glass)) {
+				return false;
+			}
+		}
+
+		if(block instanceof BlockSpring || block instanceof BlockGenericPipe)
+		{
+			return false;
+		}
+
+		return true;
 	}
 
 	public static int getMetaData(ItemStack stack) {
@@ -168,11 +207,23 @@ public class ItemFacade extends ItemBuildCraft {
 	}
 
 	public static Block getBlock(ItemStack stack) {
-		if (stack.hasTagCompound() && stack.getTagCompound().hasKey("id")) {
-			return (Block) Block.blockRegistry.getObjectById(stack.getTagCompound().getInteger("id"));
-		} else {
-			return (Block) Block.blockRegistry.getObjectById((stack.getItemDamage() & 0xFFF0) >>> 4);
+		if(!stack.hasTagCompound()) {
+			return null;
 		}
+
+		Block facadeBlock = null;
+		NBTTagCompound stackTagCompound = stack.getTagCompound();
+		// reading the 'id' tag is kept to maintain back-compat.
+		// The stack gets upgraded the first time this code is run.
+		if(stackTagCompound.hasKey("id")) {
+			facadeBlock = (Block)Block.blockRegistry.getObjectById(stackTagCompound.getInteger("id"));
+			stackTagCompound.removeTag("id");
+			stackTagCompound.setString("name", Block.blockRegistry.getNameForObject(facadeBlock));
+		} else if (stackTagCompound.hasKey("name")) {
+			 facadeBlock = (Block) Block.blockRegistry.getObject(stackTagCompound.getString("name"));
+		}
+
+		return facadeBlock;
 	}
 
 	@Override
@@ -183,26 +234,20 @@ public class ItemFacade extends ItemBuildCraft {
 
 	public static void addFacade(ItemStack itemStack) {
 		ItemStack facade = getStack(Block.getBlockFromItem(itemStack.getItem()), itemStack.getItemDamage());
-		allFacades.add(facade);
+		if(!allFacades.contains(facade)) {
+			allFacades.add(facade);
 
-		ItemStack facade6 = facade.copy();
-		facade6.stackSize = 6;
+			ItemStack facade6 = facade.copy();
+			facade6.stackSize = 6;
 
-		// 3 Structurepipes + this block makes 6 facades
-		BuildcraftRecipes.assemblyTable.addRecipe(8000, facade6, new ItemStack(BuildCraftTransport.pipeStructureCobblestone, 3), itemStack);
+			// 3 Structurepipes + this block makes 6 facades
+			BuildcraftRecipes.assemblyTable.addRecipe(8000, facade6, new ItemStack(BuildCraftTransport.pipeStructureCobblestone, 3), itemStack);
+		}
+	}
 
-		Block bl = Block.getBlockFromItem(itemStack.getItem());
-
-		// Special handling for logs
-		if (bl != null && bl.getRenderType() == 31) {
-			ItemStack rotLog1 = getStack(
-					Block.getBlockFromItem(itemStack.getItem()),
-					itemStack.getItemDamage() | 4);
-			ItemStack rotLog2 = getStack(
-					Block.getBlockFromItem(itemStack.getItem()),
-					itemStack.getItemDamage() | 8);
-			allFacades.add(rotLog1);
-			allFacades.add(rotLog2);
+	public static void blacklistFacade(String blockName) {
+		if(!blacklistedFacades.contains(blockName)) {
+			blacklistedFacades.add(blockName);
 		}
 	}
 
@@ -213,49 +258,83 @@ public class ItemFacade extends ItemBuildCraft {
 
 		@Override
 		public boolean matches(InventoryCrafting inventorycrafting, World world) {
-			ItemStack slotmatch = null;
-			for (int i = 0; i < inventorycrafting.getSizeInventory(); i++) {
-				ItemStack slot = inventorycrafting.getStackInSlot(i);
-				if (slot != null && slot.getItem() == ItemFacade.this && slotmatch == null) {
-					slotmatch = slot;
-				} else if (slot != null) {
-					slotmatch = NO_MATCH;
-				}
-			}
-			if (slotmatch != null && slotmatch != NO_MATCH) {
-				Block block = ItemFacade.getBlock(slotmatch);
-				return block != null && block.getRenderType() == 31;
-			}
+			Object[] facade = getFacadeBlockFromCraftingGrid(inventorycrafting);
 
-			return false;
+			return facade != null && facade[0] != null;
 		}
 
 		@Override
 		public ItemStack getCraftingResult(InventoryCrafting inventorycrafting) {
+			Object[] facade = getFacadeBlockFromCraftingGrid(inventorycrafting);
+			if(facade == null) {
+				return null;
+			}
+
+			Block block = (Block)facade[0];
+			ItemStack originalFacade = (ItemStack)facade[1];
+
+			if(block == null) {
+				return null;
+			}
+
+			return getNextFacadeItemStack(block, originalFacade);
+		}
+
+		private Object[] getFacadeBlockFromCraftingGrid(InventoryCrafting inventorycrafting) {
 			ItemStack slotmatch = null;
+			int countOfItems = 0;
 			for (int i = 0; i < inventorycrafting.getSizeInventory(); i++) {
 				ItemStack slot = inventorycrafting.getStackInSlot(i);
+
 				if (slot != null && slot.getItem() == ItemFacade.this && slotmatch == null) {
 					slotmatch = slot;
+					countOfItems++;
 				} else if (slot != null) {
 					slotmatch = NO_MATCH;
 				}
+
+				if(countOfItems > 1) {
+					return null;
+				}
 			}
+
 			if (slotmatch != null && slotmatch != NO_MATCH) {
-				Block block = ItemFacade.getBlock(slotmatch);
-				int blockMeta = ItemFacade.getMetaData(slotmatch);
-
-
-				if (block != null && block.getRenderType() == 31 && (blockMeta & 0xC) == 0)
-					return getStack(block, (blockMeta & 0x3) | 4);
-				// Meta | 4 = true
-				if (block != null && block.getRenderType() == 31 && (blockMeta & 0x8) == 0)
-					return getStack(block, (blockMeta & 0x3) | 8);
-				// Meta | 8 = true
-				if (block != null && block.getRenderType() == 31 && (blockMeta & 0x4) == 0)
-					return getStack(block, (blockMeta & 0x3));
+				return new Object[] { ItemFacade.getBlock(slotmatch), slotmatch };
 			}
+
 			return null;
+		}
+
+		private ItemStack getNextFacadeItemStack(Block block, ItemStack originalFacade)
+		{
+			int blockMeta = ItemFacade.getMetaData(originalFacade);
+			int stackMeta = 0;
+
+			switch(block.getRenderType()) {
+				case 1:
+					//supports cycling through variants (wool, planks, etc)
+					if(blockMeta >= 15) {
+						stackMeta = 0;
+					} else {
+						stackMeta = blockMeta + 1;
+					}
+					break;
+				case 31:
+					if ((blockMeta & 0xC) == 0)	{
+						// Meta | 4 = true
+						stackMeta = (blockMeta & 0x3) | 4;
+					} else if ((blockMeta & 0x8) == 0) {
+						// Meta | 8 = true
+						stackMeta = (blockMeta & 0x3) | 8;
+					} else if ((blockMeta & 0x4) == 0) {
+						stackMeta = (blockMeta & 0x3);
+					}
+					break;
+				default:
+					stackMeta = blockMeta;
+			}
+
+			return getStack(block, stackMeta);
 		}
 
 		@Override
@@ -285,7 +364,7 @@ public class ItemFacade extends ItemBuildCraft {
 		ItemStack stack = new ItemStack(BuildCraftTransport.facadeItem, 1, 0);
 		NBTTagCompound nbt = new NBTTagCompound();
 		nbt.setInteger("meta", metadata);
-		nbt.setInteger("id", Block.blockRegistry.getIDForObject(block));
+		nbt.setString("name", Block.blockRegistry.getNameForObject(block));
 		stack.setTagCompound(nbt);
 		return stack;
 	}
