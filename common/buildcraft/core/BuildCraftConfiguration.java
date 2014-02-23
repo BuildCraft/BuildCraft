@@ -25,4 +25,11 @@ public class BuildCraftConfiguration extends Configuration {
 		super.save();
 	}
 
+	public static String surroundWithQuotes(String stringToSurroundWithQuotes){
+		return String.format("\"%s\"", stringToSurroundWithQuotes);
+	}
+
+	public static String stripSurroundingQuotes(String stringToStripQuotes) {
+		return stringToStripQuotes.replaceAll("^\"|\"$", "");
+	}
 }
