@@ -154,7 +154,6 @@ public class ItemFacade extends ItemBuildCraft {
 						}
 					}
 				} catch(Throwable t) {
-				System.out.println("Error registering facade for " + block.toString() + ", skipping.");
 				t.printStackTrace();
 			}
 		}
@@ -182,7 +181,6 @@ public class ItemFacade extends ItemBuildCraft {
 	{
 		if(block.getRenderType() != 0 && block.getRenderType() != 31)
 		{
-			System.out.println(block.toString() + " has a render type of " + block.getRenderType() + ", not supported. Skipping.");
 			return false;
 		}
 
