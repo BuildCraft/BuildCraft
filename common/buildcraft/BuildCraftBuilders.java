@@ -12,9 +12,7 @@ import java.io.File;
 
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
@@ -346,16 +344,6 @@ public class BuildCraftBuilders extends BuildCraftMod {
 	@EventHandler
 	public void processIMCRequests(FMLInterModComms.IMCEvent event) {
 		InterModComms.processIMC(event);
-	}
-
-	public static ItemStack getBptItemStack(Item item, int damage, String name) {
-		ItemStack stack = new ItemStack(item, 1, damage);
-		NBTTagCompound nbt = new NBTTagCompound();
-		if (name != null && !"".equals(name)) {
-			nbt.setString("BptName", name);
-			stack.setTagCompound(nbt);
-		}
-		return stack;
 	}
 
 	@EventHandler

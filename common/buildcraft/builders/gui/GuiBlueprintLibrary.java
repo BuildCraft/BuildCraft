@@ -16,19 +16,19 @@ import org.lwjgl.opengl.GL11;
 
 import buildcraft.BuildCraftBuilders;
 import buildcraft.builders.TileBlueprintLibrary;
+import buildcraft.builders.blueprints.BlueprintId;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.gui.GuiBuildCraft;
 import buildcraft.core.utils.StringUtils;
 
 public class GuiBlueprintLibrary extends GuiBuildCraft {
 
-	private static final ResourceLocation TEXTURE = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_GUI + "/library_rw.png");
+	private static final ResourceLocation TEXTURE = new ResourceLocation(
+			"buildcraft", DefaultProps.TEXTURE_PATH_GUI + "/library_rw.png");
 	EntityPlayer player;
 	TileBlueprintLibrary library;
 	ContainerBlueprintLibrary container;
 	boolean computeInput;
-	//BptPlayerIndex index;
-
 	public GuiBlueprintLibrary(EntityPlayer player, TileBlueprintLibrary library) {
 		super(new ContainerBlueprintLibrary(player, library), library, TEXTURE);
 		this.player = player;
@@ -37,9 +37,6 @@ public class GuiBlueprintLibrary extends GuiBuildCraft {
 
 		this.library = library;
 		container = (ContainerBlueprintLibrary) inventorySlots;
-
-		//index = BuildCraftBuilders.getPlayerIndex(player.getDisplayName());
-		library.updateCurrentNames();
 	}
 
 	private GuiButton nextPageButton;
@@ -81,20 +78,18 @@ public class GuiBlueprintLibrary extends GuiBuildCraft {
 		fontRendererObj.drawString(title, getCenteredOffset(title), 6, 0x404040);
 
 		int c = 0;
-		for (String bpt : library.currentBlueprint) {
-			//String name = currentNames[i];
-
-			String name = bpt;
+		for (BlueprintId bpt : library.currentPage) {
+			String name = bpt.name;
 
 			if (name.length() > BuildCraftBuilders.MAX_BLUEPRINTS_NAME_SIZE) {
 				name = name.substring(0, BuildCraftBuilders.MAX_BLUEPRINTS_NAME_SIZE);
 			}
 
-			/*if (i == library.selected) {
+			if (c == library.selected) {
 				int l1 = 8;
 				int i2 = 24;
 				drawGradientRect(l1, i2 + 9 * c, l1 + 88, i2 + 9 * (c + 1), 0x80ffffff, 0x80ffffff);
-			}*/
+			}
 
 			fontRendererObj.drawString(name, 9, 25 + 9 * c, 0x404040);
 			c++;
@@ -156,13 +151,9 @@ public class GuiBlueprintLibrary extends GuiBuildCraft {
 			int ySlot = (y - 24) / 9;
 
 			if (ySlot >= 0 && ySlot <= 11) {
-				/*if (ySlot < library.currentNames.length) {
-					PacketPayloadArrays payload = new PacketPayloadArrays();
-					payload.intPayload = new int[]{ySlot};
-					PacketLibraryAction packet = new PacketLibraryAction(PacketIds.LIBRARY_SELECT, library.xCoord, library.yCoord, library.zCoord);
-					packet.actionId = ySlot;
-					CoreProxy.proxy.sendToServer(packet.getPacket());
-				}*/
+				if (ySlot < library.currentPage.size()) {
+					library.selectBlueprint(ySlot);
+				}
 			}
 		}
 	}

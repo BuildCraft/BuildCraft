@@ -9,8 +9,6 @@
 package buildcraft.builders;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
@@ -42,14 +40,15 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory {
 	@NetworkData
 	public String owner = "";
 
-	private ArrayList<BlueprintBase> currentPage;
+	public ArrayList<BlueprintId> currentPage;
 
-	public LinkedList <String> currentBlueprint = new LinkedList <String> ();
-
-	int selected = -1;
+	public int selected = -1;
 	boolean locked = false;
 
 	public EntityPlayer uploadingPlayer = null;
+	public EntityPlayer downloadingPlayer = null;
+
+	int pageId = 0;
 
 	public TileBlueprintLibrary() {
 
@@ -59,90 +58,18 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory {
 	public void initialize() {
 		super.initialize();
 
-		if (!worldObj.isRemote) {
-			setCurrentPage(getNextPage(null));
+		if (worldObj.isRemote) {
+			setCurrentPage(BuildCraftBuilders.clientDB.getPage (0));
 		}
 	}
 
-	public ArrayList<BlueprintBase> getNextPage(String after) {
-		/*ArrayList<BlueprintBase> result = new ArrayList<BlueprintBase>();
-
-		BptPlayerIndex index = BuildCraftBuilders.getPlayerIndex(BuildersProxy.getOwner(this));
-
-		String it = after;
-
-		while (result.size() < BuildCraftBuilders.LIBRARY_PAGE_SIZE) {
-			it = index.nextBpt(it);
-
-			if (it == null) {
-				break;
-			}
-
-			BlueprintBase bpt = BuildCraftBuilders.getBptRootIndex().getBluePrint(it);
-
-			if (bpt != null) {
-				result.add(bpt);
-			}
-		}
-
-		return result;*/
-		return null;
-	}
-
-	public ArrayList<BlueprintBase> getPrevPage(String before) {
-		/*ArrayList<BlueprintBase> result = new ArrayList<BlueprintBase>();
-
-		BptPlayerIndex index = BuildCraftBuilders.getPlayerIndex(BuildersProxy.getOwner(this));
-
-		String it = before;
-
-		while (result.size() < BuildCraftBuilders.LIBRARY_PAGE_SIZE) {
-			it = index.prevBpt(it);
-
-			if (it == null) {
-				break;
-			}
-
-			BlueprintBase bpt = BuildCraftBuilders.getBptRootIndex().getBluePrint(it);
-
-			if (bpt != null) {
-				result.add(bpt);
-			}
-		}
-
-		return result;*/
-		return null;
-	}
-
-	public void updateCurrentNames() {
-		currentBlueprint.clear();
-		List <BlueprintId> ids = BuildCraftBuilders.clientDB.getPage(0, 12);
-
-		for (BlueprintId id : ids) {
-			currentBlueprint.add(id.name);
-		}
-	}
-
-	public ArrayList<BlueprintBase> getCurrentPage() {
+	public ArrayList<BlueprintId> getCurrentPage() {
 		return currentPage;
 	}
 
-	public void setCurrentPage(ArrayList<BlueprintBase> newPage) {
+	public void setCurrentPage(ArrayList<BlueprintId> newPage) {
 		currentPage = newPage;
 		selected = -1;
-		updateCurrentNames();
-	}
-
-	public void setCurrentPage(boolean nextPage) {
-		/*int index = 0;
-		if (nextPage) {
-			index = currentPage.size() - 1;
-		}
-		if (currentPage.size() > 0) {
-			setCurrentPage(getNextPage(currentPage.get(index).file.getName()));
-		} else {
-			setCurrentPage(getNextPage(null));
-		}*/
 	}
 
 	public void deleteSelectedBpt() {
@@ -191,8 +118,9 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory {
 
 	@Override
 	public ItemStack decrStackSize(int i, int j) {
-		if (stack[i] == null)
+		if (stack[i] == null) {
 			return null;
+		}
 
 		ItemStack res = stack[i].splitStack(j);
 
@@ -226,8 +154,10 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory {
 
 	@Override
 	public ItemStack getStackInSlotOnClosing(int slot) {
-		if (stack[slot] == null)
+		if (stack[slot] == null) {
 			return null;
+		}
+
 		ItemStack toReturn = stack[slot];
 		stack[slot] = null;
 		return toReturn;
@@ -286,43 +216,55 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory {
 			BlueprintBase bpt = ItemBlueprint.getBlueprint(stack [1]);
 
 			if (bpt != null && uploadingPlayer != null) {
-				RPCHandler.rpcPlayer(this, "receiveBlueprint", uploadingPlayer, bpt);
+				RPCHandler.rpcPlayer(this, "downloadBlueprintToClient", uploadingPlayer, bpt);
 				uploadingPlayer = null;
-
-				//BptPlayerIndex index = BuildCraftBuilders.getPlayerIndex(BuildersProxy.getOwner(this));
-
-				/*try {
-					//index.addBlueprint(bpt.file);
-					setCurrentPage(true);
-					setCurrentPage(false);
-				} catch (IOException e) {
-					e.printStackTrace();
-				}*/
 			}
 		}
 
 		if (progressOut == 100 && stack[3] == null) {
-			if (selected > -1 && selected < currentPage.size()) {
-				BlueprintBase bpt = currentPage.get(selected);
-				setInventorySlotContents(3, BuildCraftBuilders.getBptItemStack(
-						stack[2].getItem(), 0, bpt.id.name));
-			} else {
-				setInventorySlotContents(3, BuildCraftBuilders.getBptItemStack(
-						stack[2].getItem(), 0, null));
-			}
-
-			setInventorySlotContents(2, null);
+			RPCHandler.rpcPlayer(this, "requestSelectedBlueprint",
+					downloadingPlayer);
+			progressOut = 0;
 		}
-	}
-
-	@RPC (RPCSide.CLIENT)
-	public void receiveBlueprint (BlueprintBase bpt) {
-		BuildCraftBuilders.clientDB.add(bpt);
-		updateCurrentNames();
 	}
 
 	@Override
 	public boolean hasCustomInventoryName() {
 		return false;
+	}
+
+	@RPC (RPCSide.CLIENT)
+	public void requestSelectedBlueprint () {
+		if (selected > -1 && selected < currentPage.size()) {
+			RPCHandler.rpcServer(this, "uploadBlueprintToServer",
+					BuildCraftBuilders.clientDB
+							.get(currentPage.get(selected)));
+		} else {
+			RPCHandler.rpcServer(this, "uploadBlueprintToServer", (Object) null);
+		}
+	}
+
+	@RPC (RPCSide.SERVER)
+	public void uploadBlueprintToServer (BlueprintBase bpt) {
+		if (bpt != null) {
+			BuildCraftBuilders.serverDB.add(bpt);
+			setInventorySlotContents(3, ItemBlueprint.getBlueprintItem(bpt));
+		} else {
+			setInventorySlotContents(3, stack [2]);
+		}
+
+		setInventorySlotContents(2, null);
+
+		downloadingPlayer = null;
+	}
+
+	@RPC (RPCSide.CLIENT)
+	public void downloadBlueprintToClient (BlueprintBase bpt) {
+		BuildCraftBuilders.clientDB.add(bpt);
+		setCurrentPage(BuildCraftBuilders.clientDB.getPage (pageId));
+	}
+
+	public void selectBlueprint (int index) {
+		selected = index;
 	}
 }

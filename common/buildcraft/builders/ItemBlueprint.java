@@ -46,7 +46,6 @@ public abstract class ItemBlueprint extends ItemBuildCraft {
 		return stack;
 	}
 
-
 	public static BlueprintBase getBlueprint(ItemStack stack) {
 		if (stack == null) {
 			return null;

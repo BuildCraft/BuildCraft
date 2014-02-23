@@ -8,13 +8,13 @@
  */
 package buildcraft.builders.gui;
 
-import buildcraft.builders.TileBlueprintLibrary;
-import buildcraft.core.gui.BuildCraftContainer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ICrafting;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
+import buildcraft.builders.TileBlueprintLibrary;
+import buildcraft.core.gui.BuildCraftContainer;
 
 public class ContainerBlueprintLibrary extends BuildCraftContainer {
 
@@ -48,19 +48,21 @@ public class ContainerBlueprintLibrary extends BuildCraftContainer {
 		}
 	}
 
+	@Override
 	public ItemStack slotClick(int slotNum, int mouseButton, int modifier, EntityPlayer player) {
-		if (slotNum != 0) {
-			return super.slotClick(slotNum, mouseButton, modifier, player);
-		} else {
-			// This record in the library the last player that activated the
-			// upload slot
+		// When downloading or uploading a blueprint, the server needs to know
+		// who requested it. The way to do it so far is by recording the last
+		// player that clicks on the slots. To be improved if the method is
+		// not robust enough (e.g. what if the player is not logged anymore?
+		// is that robust against race conditions? etc.)
 
+		if (slotNum == 0) {
 			library.uploadingPlayer = player;
-
-			return super.slotClick(slotNum, mouseButton, modifier, player);
+		} else if (slotNum == 2){
+			library.downloadingPlayer = player;
 		}
 
-
+		return super.slotClick(slotNum, mouseButton, modifier, player);
 	}
 
 	@Override

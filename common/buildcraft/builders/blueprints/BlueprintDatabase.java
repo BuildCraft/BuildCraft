@@ -19,7 +19,6 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -39,10 +38,11 @@ public class BlueprintDatabase {
 	private final int bufferSize = 8192;
 	private final String fileExt = ".bpt";
 	private File blueprintFolder;
+	private final static int PAGE_SIZE = 12;
 
 	private Set <BlueprintId> blueprintIds = new TreeSet<BlueprintId> ();
+	private BlueprintId [] pages = new BlueprintId [0];
 
-	//private Map<BlueprintId, BlueprintMeta> blueprintMetas = new HashMap<BlueprintId, BlueprintMeta>();
 	private Map<BlueprintId, BlueprintBase> loadedBlueprints = new WeakHashMap<BlueprintId, BlueprintBase>();
 
 	/**
@@ -57,36 +57,7 @@ public class BlueprintDatabase {
 			blueprintFolder.mkdirs();
 		}
 
-		loadIndex(); // TODO: load index in a thread
-	}
-
-	/**
-	 * Return a list of blueprint on a given page.
-	 *
-	 * FIXME: This returns blueprints in no particular order. We probably want
-	 * to have an ordered list of blueprint instead
-	 */
-	public List <BlueprintId> getPage (int pageId, int pageSize) {
-		List <BlueprintId> result = new ArrayList<BlueprintId>();
-
-		int start = pageId * pageSize;
-		int stop = (pageId + 1) * pageSize;
-
-		int i = 0;
-
-		for (BlueprintId id : blueprintIds) {
-			i++;
-
-			if (i >= stop) {
-				break;
-			}
-
-			if (i >= start) {
-				result.add (id);
-			}
-		}
-
-		return result;
+		loadIndex();
 	}
 
 	/**
@@ -118,6 +89,7 @@ public class BlueprintDatabase {
 
 		if (!blueprintIds.contains(id)) {
 			blueprintIds.add(id);
+			pages = blueprintIds.toArray(pages);
 		}
 
 		if (!loadedBlueprints.containsKey(id)) {
@@ -178,12 +150,14 @@ public class BlueprintDatabase {
 
 			BlueprintId id = new BlueprintId();
 			id.name = prefix;
-			id.uniqueId = BlueprintId.toBytes (suffix);
+			id.uniqueId = BlueprintId.toBytes (suffix.replaceAll(".bpt", ""));
 
 			if (!blueprintIds.contains(id)) {
 				blueprintIds.add(id);
 			}
 		}
+
+		pages = blueprintIds.toArray(pages);
 	}
 
 	private BlueprintBase load(final BlueprintId id) {
@@ -210,5 +184,23 @@ public class BlueprintDatabase {
 		}
 
 		return null;
+	}
+
+	public ArrayList<BlueprintId> getPage (int pageId) {
+		ArrayList<BlueprintId> result = new ArrayList<BlueprintId>();
+
+		if (pageId < 0) {
+			return result;
+		}
+
+		for (int i = pageId * PAGE_SIZE; i < pageId * PAGE_SIZE + PAGE_SIZE; ++i) {
+			if (i < pages.length) {
+				result.add(pages [i]);
+			} else {
+				break;
+			}
+		}
+
+		return result;
 	}
 }
