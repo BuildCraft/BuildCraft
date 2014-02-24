@@ -153,7 +153,8 @@ public class ItemFacade extends ItemBuildCraft {
 							break;
 						}
 					}
-				} catch(Throwable t) {
+				} catch(IndexOutOfBoundsException _){
+				}	catch(Throwable t) {
 				t.printStackTrace();
 			}
 		}
@@ -184,10 +185,8 @@ public class ItemFacade extends ItemBuildCraft {
 			return false;
 		}
 
-		if(!block.renderAsNormalBlock()) {
-			if((block != Blocks.glass && block != Blocks.stained_glass)) {
-				return false;
-			}
+		if(block.getBlockBoundsMaxX() != 1.0 || block.getBlockBoundsMaxY() != 1.0 || block.getBlockBoundsMaxZ() != 1.0){
+			return false;
 		}
 
 		if(block instanceof BlockSpring || block instanceof BlockGenericPipe)
