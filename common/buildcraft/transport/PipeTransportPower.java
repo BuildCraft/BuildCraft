@@ -21,6 +21,8 @@ import buildcraft.api.power.IPowerEmitter;
 import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.power.PowerHandler.PowerReceiver;
 import buildcraft.api.power.PowerHandler.Type;
+import buildcraft.api.transport.ICustomPowerPipeProvider;
+import buildcraft.api.transport.ICustomPowerPipeReciver;
 import buildcraft.api.transport.IPipeTile.PipeType;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.proxy.CoreProxy;
@@ -100,6 +102,23 @@ public class PipeTransportPower extends PipeTransport {
 			if (emitter.canEmitPowerFrom(side.getOpposite()))
 				return true;
 		}
+		
+		if(tile instanceof ICustomPowerPipeReciver && !(tile instanceof IPowerReceptor) && !(tile instanceof IPowerEmitter))
+		{
+			ICustomPowerPipeReciver customPipe = (ICustomPowerPipeReciver) tile;
+			if(customPipe.canConnect(side.getOpposite()))
+			{
+				return true;
+			}
+		}
+		if(tile instanceof ICustomPowerPipeProvider && !(tile instanceof IPowerReceptor) && !(tile instanceof IPowerEmitter))
+		{
+			ICustomPowerPipeProvider customPipe = (ICustomPowerPipeProvider)tile;
+			if(customPipe.canConnect(side.getOpposite()))
+			{
+				return true;
+			}
+		}
 
 		return false;
 	}
@@ -174,6 +193,14 @@ public class PipeTransportPower extends PipeTransport {
 							watts = nearbyTransport.receiveEnergy(ForgeDirection.VALID_DIRECTIONS[j].getOpposite(), watts);
 							internalPower[i] -= watts;
 						}
+						else if(tiles[j] instanceof ICustomPowerPipeReciver)
+						{
+							watts = (internalPower[i] / totalPowerQuery) * powerQuery[j];
+							ICustomPowerPipeReciver nearbyCustomPipe = (ICustomPowerPipeReciver) tiles[j];
+							watts = nearbyCustomPipe.receiveEnergy(ForgeDirection.VALID_DIRECTIONS[j].getOpposite(), watts);
+							internalPower[i] -=watts;
+							
+						}
 
 						displayPower[j] += watts;
 						displayPower[i] += watts;
@@ -243,6 +270,12 @@ public class PipeTransportPower extends PipeTransport {
 
 						PipeTransportPower nearbyTransport = (PipeTransportPower) nearbyTile.pipe.transport;
 						nearbyTransport.requestEnergy(ForgeDirection.VALID_DIRECTIONS[i].getOpposite(), transferQuery[i]);
+					}
+					else if(entity instanceof ICustomPowerPipeReciver)
+					{
+						ICustomPowerPipeReciver customPipe = (ICustomPowerPipeReciver) entity;		
+						step();
+						nextPowerQuery[ForgeDirection.VALID_DIRECTIONS[i].getOpposite().ordinal()] += customPipe.requestEnergy(ForgeDirection.VALID_DIRECTIONS[i].getOpposite(), transferQuery[i]);
 					}
 				}
 			}
@@ -383,6 +416,7 @@ public class PipeTransportPower extends PipeTransport {
 		clientDisplayPower = packetPower.displayPower;
 		overload = packetPower.overload ? OVERLOAD_TICKS : 0;
 	}
+<<<<<<< HEAD
 
 	/**
 	 * This can be use to provide a rough estimate of how much power is flowing
@@ -412,4 +446,7 @@ public class PipeTransportPower extends PipeTransport {
 		}
 		return amount;
 	}
+=======
+	
+>>>>>>> Custom Power Pipe API
 }
