@@ -7,11 +7,12 @@
  */
 package buildcraft.transport;
 
-import buildcraft.api.transport.PipeWire;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.Set;
 import java.util.logging.Level;
 
 import net.minecraft.block.Block;
@@ -19,8 +20,10 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.packet.Packet;
+import net.minecraft.server.management.PlayerInstance;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
@@ -31,7 +34,6 @@ import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.core.Position;
 import buildcraft.api.core.SafeTimeTracker;
-import buildcraft.api.gates.GateExpansionController;
 import buildcraft.api.gates.GateExpansions;
 import buildcraft.api.gates.IGateExpansion;
 import buildcraft.api.gates.IOverrideDefaultTriggers;
@@ -41,6 +43,8 @@ import buildcraft.api.power.PowerHandler;
 import buildcraft.api.power.PowerHandler.PowerReceiver;
 import buildcraft.api.transport.IPipeConnection;
 import buildcraft.api.transport.IPipeTile;
+import buildcraft.api.transport.IPowerPipeTile;
+import buildcraft.api.transport.PipeWire;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.IDropControlInventory;
 import buildcraft.core.ITileBufferHolder;
@@ -55,13 +59,9 @@ import buildcraft.transport.gates.GateDefinition;
 import buildcraft.transport.gates.GateFactory;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import java.util.HashSet;
-import java.util.Set;
-import net.minecraft.server.management.PlayerInstance;
-import net.minecraft.world.WorldServer;
 
 public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFluidHandler, IPipeTile, IOverrideDefaultTriggers, ITileBufferHolder,
-		IDropControlInventory, ISyncedTile, ISolidSideTile, IGuiReturnHandler {
+		IDropControlInventory, ISyncedTile, ISolidSideTile, IGuiReturnHandler, IPowerPipeTile {
 
 	public class CoreState implements IClientState {
 
@@ -778,4 +778,42 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 		if (BlockGenericPipe.isValid(pipe) && pipe instanceof IGuiReturnHandler)
 			((IGuiReturnHandler) pipe).readGuiData(data, sender);
 	}
+
+	/**
+	 * @IPowerPipeTile Starts.
+	 * This is the area where custom Pipes can look if BC Pipes require Energy or not.
+	 */
+	
+	@Override
+	public float reciveEnergy(ForgeDirection from, float val)
+	{
+		if(BlockGenericPipe.isValid(pipe) && pipe.transport instanceof PipeTransportPower)
+		{
+			return ((PipeTransportPower)pipe.transport).receiveEnergy(from, val);
+		}
+		return 0;
+	}
+
+	@Override
+	public float requestEnergy(ForgeDirection from)
+	{
+		if(BlockGenericPipe.isValid(pipe) && pipe.transport instanceof PipeTransportPower)
+		{
+			float requestedEnergy = 0.0F;
+			for(int i = 0;i<from.VALID_DIRECTIONS.length;i++)
+			{
+				if(from.ordinal() != from.getOrientation(i).ordinal())
+				{
+					requestedEnergy += ((PipeTransportPower)pipe.transport).nextPowerQuery[i];
+				}
+			}
+			
+			
+			return requestedEnergy;
+		}
+		return 0;
+	}
+
+	
+	
 }
