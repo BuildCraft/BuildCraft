@@ -122,6 +122,12 @@ public class BlockGenericPipe extends BlockBuildCraft {
 		return false;
 	}
 
+    // Forces pipes to render in the alpha pass, allowing for partially transparent facades
+    @Override
+    public int getRenderBlockPass() {
+        return 1;
+    }
+
 	public void setRenderMask(int mask) {
 		renderMask = mask;
 	}
