@@ -186,11 +186,10 @@ public class BuildCraftEnergy extends BuildCraftMod {
 			FluidContainerRegistry.registerFluidContainer(FluidRegistry.getFluidStack("fuel", FluidContainerRegistry.BUCKET_VOLUME), new ItemStack(bucketFuel), new ItemStack(Items.bucket));
 		}
 
-		// TODO: Are these still really necessary? If not, remove the 
-		// BucketHandler class as well.
-		//BucketHandler.INSTANCE.buckets.put(blockOil, bucketOil);
-		//BucketHandler.INSTANCE.buckets.put(blockFuel, bucketFuel);
-		//MinecraftForge.EVENT_BUS.register(BucketHandler.INSTANCE);
+		// BucketHandler ensures empty buckets fill with the correct liquid.
+		BucketHandler.INSTANCE.buckets.put(blockOil, bucketOil);
+		BucketHandler.INSTANCE.buckets.put(blockFuel, bucketFuel);
+		MinecraftForge.EVENT_BUS.register(BucketHandler.INSTANCE);
 
 		BuildcraftRecipes.refinery.addRecipe(new FluidStack(fluidOil, 1), new FluidStack(fluidFuel, 1), 12, 1);
 
