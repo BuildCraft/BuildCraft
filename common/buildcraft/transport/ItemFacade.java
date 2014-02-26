@@ -12,13 +12,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import buildcraft.core.BlockSpring;
-import buildcraft.core.BuildCraftConfiguration;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -30,6 +27,8 @@ import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.Position;
 import buildcraft.api.recipes.BuildcraftRecipes;
+import buildcraft.core.BlockSpring;
+import buildcraft.core.BuildCraftConfiguration;
 import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.ItemBuildCraft;
 import buildcraft.core.proxy.CoreProxy;
@@ -116,8 +115,7 @@ public class ItemFacade extends ItemBuildCraft {
 		for (Object o : Block.blockRegistry) {
 			Block b = (Block) o;
 
-			if (!isBlockValidForFacade(b))
-			{
+			if (!isBlockValidForFacade(b)) {
 				continue;
 			}
 
@@ -127,8 +125,7 @@ public class ItemFacade extends ItemBuildCraft {
 				continue;
 			}
 
-			if (isBlockBlacklisted(b))
-			{
+			if (isBlockBlacklisted(b)) {
 				continue;
 			}
 
@@ -136,8 +133,7 @@ public class ItemFacade extends ItemBuildCraft {
 		}
 	}
 
-	private static void registerValidFacades(Block block, Item item)
-	{
+	private static void registerValidFacades(Block block, Item item) {
 		Set<String> names = Sets.newHashSet();
 
 		for(int i=0; i <= 15; i++) {
@@ -154,23 +150,28 @@ public class ItemFacade extends ItemBuildCraft {
 						}
 					}
 				} catch(IndexOutOfBoundsException _){
-				}	catch(Throwable t) {
-				t.printStackTrace();
-			}
+
+				} catch(Throwable t) {
+					t.printStackTrace();
+				}
 		}
 	}
 
-	private static boolean isBlockBlacklisted(Block block)
-	{
+	private static boolean isBlockBlacklisted(Block block) {
 		String blockName = Block.blockRegistry.getNameForObject(block);
+
+		if (blockName == null) {
+			return true;
+		}
+
 		for (String blacklistedBlock : BuildCraftTransport.facadeBlacklist) {
 			if(blockName.equals(BuildCraftConfiguration.stripSurroundingQuotes(blacklistedBlock))) {
 				return true;
 			}
 		}
 
-		for(String blacklistedBlock : blacklistedFacades){
-				if(blockName.equals(blacklistedBlock)){
+		for(String blacklistedBlock : blacklistedFacades) {
+			if(blockName.equals(blacklistedBlock)) {
 				return true;
 			}
 		}
@@ -178,19 +179,16 @@ public class ItemFacade extends ItemBuildCraft {
 		return false;
 	}
 
-	private static boolean isBlockValidForFacade(Block block)
-	{
-		if(block.getRenderType() != 0 && block.getRenderType() != 31)
-		{
+	private static boolean isBlockValidForFacade(Block block) {
+		if(block.getRenderType() != 0 && block.getRenderType() != 31) {
 			return false;
 		}
 
-		if(block.getBlockBoundsMaxX() != 1.0 || block.getBlockBoundsMaxY() != 1.0 || block.getBlockBoundsMaxZ() != 1.0){
+		if(block.getBlockBoundsMaxX() != 1.0 || block.getBlockBoundsMaxY() != 1.0 || block.getBlockBoundsMaxZ() != 1.0) {
 			return false;
 		}
 
-		if(block instanceof BlockSpring || block instanceof BlockGenericPipe)
-		{
+		if(block instanceof BlockSpring || block instanceof BlockGenericPipe) {
 			return false;
 		}
 
