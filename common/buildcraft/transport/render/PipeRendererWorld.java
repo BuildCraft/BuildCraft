@@ -22,6 +22,7 @@ import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
+import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.IBlockAccess;
 
@@ -168,7 +169,14 @@ public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
 	public boolean renderWorldBlock(IBlockAccess world, int x, int y, int z, Block block, int modelId, RenderBlocks renderer) {
 		TileEntity tile = world.getTileEntity(x, y, z);
 
-		if (tile instanceof TileGenericPipe) {
+        // Here to prevent Minecraft from crashing when nothing renders on render pass zero
+        // This is likely a bug, and has been submitted as an issue to the Forge team
+        renderer.setRenderBounds(0, 0, 0, 0, 0, 0);
+        renderer.renderStandardBlock(Blocks.stone, x, y, z);
+        renderer.setRenderBoundsFromBlock(block);
+
+
+        if (tile instanceof TileGenericPipe) {
 			TileGenericPipe pipeTile = (TileGenericPipe) tile;
 			renderPipe(renderer, world, (BlockGenericPipe) block, pipeTile, x, y, z);
 		}
