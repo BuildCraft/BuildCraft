@@ -13,6 +13,7 @@ import java.util.LinkedList;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.blueprints.BptBlock;
 import buildcraft.api.blueprints.BptSlotInfo;
@@ -46,6 +47,10 @@ public class BptBlockPipe extends BptBlock {
 
 		if (slot.cpt.hasKey("wire3")) {
 			requirements.add(new ItemStack(BuildCraftTransport.pipeWire, 1, 3));
+		}
+
+		if (slot.cpt.hasKey("gate")) {
+			requirements.add (ItemStack.loadItemStackFromNBT(slot.cpt.getCompoundTag("gate")));
 		}
 
 		/*if (slot.cpt.hasKey("gate")) {
@@ -85,6 +90,7 @@ public class BptBlockPipe extends BptBlock {
 
 	@Override
 	public void buildBlock(BptSlotInfo slot, IBptContext context) {
+		// TODO: use directly an NBT built from the pipe here.
 		int pipeId = slot.cpt.getInteger("pipeId");
 
 		Pipe pipe = BlockGenericPipe.createPipe(context.getMappingRegistry()
@@ -95,6 +101,8 @@ public class BptBlockPipe extends BptBlock {
 				pipe.wireSet[i] = true;
 			}
 		}
+
+
 
 		/*if (slot.cpt.hasKey("gate")) {
 			int gateId = slot.cpt.getInteger("gate");
@@ -143,10 +151,18 @@ public class BptBlockPipe extends BptBlock {
 			bptSlot.cpt.setInteger("pipeId", context.getMappingRegistry()
 					.getIdForItem(pipe.item));
 
-			for (int i = 0; i < pipe.wireSet.length; ++i)
+			for (int i = 0; i < pipe.wireSet.length; ++i) {
 				if (pipe.wireSet[i]) {
 					bptSlot.cpt.setInteger("wire" + i, 1);
 				}
+			}
+
+			if (pipe.hasGate()) {
+				NBTTagCompound gateNBT = new NBTTagCompound();
+				pipe.gate.getGateItem().writeToNBT(gateNBT);
+				bptSlot.cpt.setTag("gate", gateNBT);
+			}
+
 
 			// / TODO: Does not save/load custom gates
 			/*if (pipe.hasGate()) {
