@@ -6,6 +6,8 @@ bin
 
 #idea
 *.iml
+*.ipr
+*.iws
 .idea
 out
 
@@ -13,3 +15,5 @@ out
 build
 .gradle
 
+#runtime
+run

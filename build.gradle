@@ -1,5 +1,5 @@
-// DONT TOUCH THE BUILDSCTPT[] BLOCK
-// its special, and it is only there to make forgegradle work correctly.
+// DON'T TOUCH THE BUILDSCTPT[] BLOCK
+// its special, and it is only there to make ForgeGradle work correctly.
 
 buildscript {
     repositories {
@@ -18,8 +18,8 @@ buildscript {
     }
 }
 
-apply plugin: 'forge' // adds the forge cuntionality
-apply plugin: 'maven' // for uploading to a mnven repo
+apply plugin: 'forge' // adds the forge dependency
+apply plugin: 'maven' // for uploading to a maven repo
 
 // grab buildNumber
 ext.buildnumber = 0 // this will be referenced as simply project.buildnumber from now on.
@@ -36,7 +36,7 @@ archivesBaseName = "buildcraft" // the name that all artifacts will use as a bas
 minecraft {
     version = "1.7.2-10.12.0.1029" // McVersion-ForgeVersion     this variable is later changed to contain only the MC version, while the apiVersion variable is used for the forge version.  Yeah its stupid, and will be changed eentually.
 
-    assetDir = "run/assets" // the palce for FOrgegradle to download the assets. The assets that the launcher gets and stuff
+    assetDir = "run/assets" // the place for ForgeGradle to download the assets. The assets that the launcher gets and stuff
 
     // replacing stuff in the source
     replace '@VERSION@', project.version
@@ -58,7 +58,6 @@ sourceSets {
             exclude '**/.md' // exclude readme from localization repo
             // exclude 'some exclusion'
             // include 'some inclusion'
-
         }
     }
 }
@@ -70,11 +69,11 @@ processResources
         include 'mcmod.info'
                 
         // replace version and mcversion
-        // ${version}   and    ${mcversion}    are the exact strings bieng replaced
+        // ${version}   and    ${mcversion}    are the exact strings being replaced
         expand 'version':project.version, 'mcversion':project.minecraft.version, 'buildnumber':project.buildnumber
     }
         
-    // copy everything else, thats not the mcmod.info
+    // copy everything else, that's not the mcmod.info
     from(sourceSets.main.resources.srcDirs) {
         exclude 'mcmod.info'
     }
@@ -84,7 +83,7 @@ processResources
 // extra jar section
 // -------------------
 
-// for the benfit of the jars, we will now now add the buildnumber to the jars
+// for the benefit of the jars, we will now now add the buildnumber to the jars
 project.version += '.' + project.buildnumber
 
 // add a source jar
@@ -124,7 +123,7 @@ dependencies {
 
 // specify artifacts to be uploaded
 artifacts {
-    // the default jar is already here by defualt
+    // the default jar is already here by default
     archives sourceJar
     archives javadocJar
     archives deobfJar
@@ -156,7 +155,7 @@ uploadArchives {
                     project {
                         name project.archivesBaseName
                         packaging 'jar'
-                        description 'A Minecraft mod adding all sourts of machinery'
+                        description 'A Minecraft mod adding all sorts of machinery'
                         url 'http://www.mod-buildcraft.com/'
 
                         scm {
