@@ -108,6 +108,11 @@ public class BlockGenericPipe extends BlockBuildCraft {
 	}
 
 	@Override
+	public int getRenderBlockPass(int pass) {
+		return 1;
+	}
+
+	@Override
 	public boolean isOpaqueCube() {
 		return false;
 	}

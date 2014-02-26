@@ -14,6 +14,7 @@ import buildcraft.core.render.RenderUtils;
 import buildcraft.transport.ItemFacade;
 import buildcraft.transport.PipeIconProvider;
 import net.minecraft.block.Block;
+import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.init.Blocks;
@@ -47,6 +48,14 @@ public class FacadeItemRenderer implements IItemRenderer {
 
 		// Render Facade
 		GL11.glPushMatrix();
+
+        // Enable glBlending for transparency
+        if (block.getRenderBlockPass() > 0) {
+        	GL11.glAlphaFunc(GL11.GL_GREATER, 0.1F);
+        	GL11.glEnable(GL11.GL_BLEND);
+        	OpenGlHelper.glBlendFunc(770, 771, 1, 0);
+        }
+
 		block.setBlockBounds(0F, 0F, 1F - 1F / 16F, 1F, 1F, 1F);
 		render.setRenderBoundsFromBlock(block);
 		GL11.glTranslatef(translateX, translateY, translateZ);
@@ -75,6 +84,12 @@ public class FacadeItemRenderer implements IItemRenderer {
 		render.renderFaceXPos(block, 0.0D, 0.0D, 0.0D, tryGetBlockIcon(block, 5, decodedMeta));
 		tessellator.draw();
 		block.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
+
+        // Disable blending
+        if (block.getRenderBlockPass() > 0) {
+        	GL11.glDisable(GL11.GL_BLEND);
+        }
+
 		GL11.glPopMatrix();
 
 		// Render StructurePipe
