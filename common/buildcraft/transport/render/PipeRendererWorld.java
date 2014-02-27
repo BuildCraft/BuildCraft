@@ -11,20 +11,14 @@ package buildcraft.transport.render;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.core.CoreConstants;
-import buildcraft.transport.BlockGenericPipe;
-import buildcraft.transport.PipeIconProvider;
-import buildcraft.transport.PipeRenderState;
-import buildcraft.transport.TransportProxy;
 import buildcraft.core.utils.MatrixTranformations;
-import buildcraft.transport.TileGenericPipe;
-
+import buildcraft.transport.*;
 import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
-
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
+import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.IBlockAccess;
-
 import net.minecraftforge.common.util.ForgeDirection;
 
 public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
@@ -167,6 +161,12 @@ public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
 	@Override
 	public boolean renderWorldBlock(IBlockAccess world, int x, int y, int z, Block block, int modelId, RenderBlocks renderer) {
 		TileEntity tile = world.getTileEntity(x, y, z);
+
+		// Here to prevent Minecraft from crashing when nothing renders on render pass zero
+		// This is likely a bug, and has been submitted as an issue to the Forge team
+		renderer.setRenderBounds(0, 0, 0, 0, 0, 0);
+		renderer.renderStandardBlock(Blocks.stone, x, y, z);
+		renderer.setRenderBoundsFromBlock(block);
 
 		if (tile instanceof TileGenericPipe) {
 			TileGenericPipe pipeTile = (TileGenericPipe) tile;
