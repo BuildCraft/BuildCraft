@@ -36,7 +36,9 @@ less time coding and more time doing stuff that makes them less grumpy.
 1. Create a base directory for the build
 1. Clone the Buildcraft repository into 'baseDir/BuildCraft/'
  * Optional: Copy BuildCraft localization repository into `baseDir/BuildCraft-Localization`
-1. Navigate to basedir/BuildCraft in a shell and run `gradlew setupCIWorkspace build` (this may take a while).
+1. Navigate to basedir/BuildCraft in a shell and run one of two commands:
+ * `gradlew setupCIWorkspace build` to just build a current jar (this may take a while).
+ * `gradlew setupDecompWorkspace` to setup a complete developement enviroment.
  * With `Gradle` installed: use `gradle` instead of `gradlew`
  * On Windows: use `gradlew.bat` instead of `gradlew`
 1. The compiled and obfuscated jar will be in 'baseDir/BuildCraft/build/libs'
