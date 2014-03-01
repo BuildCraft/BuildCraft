@@ -8,20 +8,18 @@
  */
 package buildcraft.transport.blueprints;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
+import net.minecraft.tileentity.TileEntity;
 import buildcraft.api.blueprints.BptBlock;
 import buildcraft.api.blueprints.BptSlotInfo;
 import buildcraft.api.blueprints.IBptContext;
-import buildcraft.core.utils.Utils;
 import buildcraft.transport.BlockGenericPipe;
 import buildcraft.transport.Pipe;
+import buildcraft.transport.TileGenericPipe.SideProperties;
 
 public class BptBlockPipe extends BptBlock {
 
@@ -35,12 +33,7 @@ public class BptBlockPipe extends BptBlock {
 
 		requirements.add(new ItemStack(pipeItem));
 
-		NBTTagList nbtDrops = slot.cpt.getTagList("drops", Utils.NBTTag_Types.NBTTagCompound.ordinal());
-
-		for (int i = 0; i < nbtDrops.tagCount(); ++i) {
-			NBTTagCompound nbt = nbtDrops.getCompoundTagAt(i);
-			requirements.add(ItemStack.loadItemStackFromNBT(nbt));
-		}
+		requirements.addAll(slot.storedRequirements);
 	}
 
 	@Override
@@ -57,73 +50,54 @@ public class BptBlockPipe extends BptBlock {
 
 	@Override
 	public void rotateLeft(BptSlotInfo slot, IBptContext context) {
-		int pipeId = slot.cpt.getInteger("pipeId");
+		SideProperties props = new SideProperties ();
 
-		/*if (BuildCraftCore.itemBptProps[pipeId] != null) {
-			BuildCraftCore.itemBptProps[pipeId].rotateLeft(slot, context);
-		}*/
+		props.readFromNBT(slot.cpt);
+		props.rotateLeft();
+		props.writeToNBT(slot.cpt);
+
+		Item pipeItem = context.getMappingRegistry().getItemForId(slot.cpt.getInteger("pipeId"));
+
+		if (BptPipeExtension.contains(pipeItem)) {
+			BptPipeExtension.get(pipeItem).rotateLeft(slot, context);
+		}
 	}
 
 	@Override
 	public void buildBlock(BptSlotInfo slot, IBptContext context) {
-		int pipeId = slot.cpt.getInteger("pipeId");
+		slot.cpt.setInteger("x", slot.x);
+		slot.cpt.setInteger("y", slot.y);
+		slot.cpt.setInteger("z", slot.z);
 
-		Pipe pipe = BlockGenericPipe.createPipe(context.getMappingRegistry()
-				.getItemForId(pipeId));
+		context.world().setBlock(slot.x, slot.y, slot.z, slot.block);
+		context.world().setBlockMetadataWithNotify(slot.x, slot.y, slot.z, slot.meta, 0);
 
-		for (int i = 0; i < pipe.wireSet.length; ++i) {
-			if (slot.cpt.hasKey("wire" + i)) {
-				pipe.wireSet[i] = true;
-			}
-		}
-
-
-
-		BlockGenericPipe.placePipe(pipe, context.world(), slot.x, slot.y,
-				slot.z, slot.block, slot.meta);
-
-		/*if (BuildCraftCore.itemBptProps[pipeId] != null) {
-			BuildCraftCore.itemBptProps[pipeId].buildBlock(slot, context);
-		}*/
+		TileEntity tile = context.world().getTileEntity(slot.x, slot.y, slot.z);
+		tile.readFromNBT(slot.cpt);
 	}
 
 	@Override
-	public void initializeFromWorld(BptSlotInfo bptSlot, IBptContext context, int x, int y, int z) {
+	public void initializeFromWorld(BptSlotInfo slot, IBptContext context, int x, int y, int z) {
+		TileEntity tile = context.world().getTileEntity(x, y, z);
 		Pipe pipe = BlockGenericPipe.getPipe(context.world(), x, y, z);
 
 		if (BlockGenericPipe.isValid(pipe)) {
 			context.getMappingRegistry().setIdForItem(pipe.item, Item.getIdFromItem(pipe.item));
-			bptSlot.cpt.setInteger("pipeId", context.getMappingRegistry()
+			slot.cpt.setInteger("pipeId", context.getMappingRegistry()
 					.getIdForItem(pipe.item));
 
-			NBTTagList nbtDrops = new NBTTagList();
+			slot.storedRequirements.addAll(pipe.computeItemDrop ());
 
-			ArrayList<ItemStack> drops = pipe.computeItemDrop ();
-
-			for (ItemStack s : drops) {
-				NBTTagCompound nbtStack = new NBTTagCompound();
-				s.writeToNBT(nbtStack);
-				nbtDrops.appendTag(nbtStack);
-			}
-
-			bptSlot.cpt.setTag("drops", nbtDrops);
-
-			NBTTagCompound worldNbt = new NBTTagCompound();
-			pipe.writeToNBT(worldNbt);
-
-			bptSlot.cpt.setTag("worldNBT", worldNbt);
-
-			// TODO: store the pipe nbt on disk as well...
+			tile.writeToNBT(slot.cpt);
 		}
 	}
 
 	@Override
 	public void postProcessing(BptSlotInfo slot, IBptContext context) {
-		int pipeId = slot.cpt.getInteger("pipeId");
+		Item pipeItem = context.getMappingRegistry().getItemForId(slot.cpt.getInteger("pipeId"));
 
-		//if (BuildCraftCore.itemBptProps[pipeId] != null) {
-		//	BuildCraftCore.itemBptProps[pipeId].postProcessing(slot, context);
-		//}
+		if (BptPipeExtension.contains(pipeItem)) {
+			BptPipeExtension.get(pipeItem).postProcessing(slot, context);
+		}
 	}
-
 }

@@ -122,8 +122,9 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory,
 
 				bpt = instanciateBluePrint(newX, newY, newZ, o);
 
-				if (bpt == null)
+				if (bpt == null) {
 					return null;
+				}
 
 				AxisAlignedBB boundingBox = bpt.getBoundingBox();
 
@@ -131,8 +132,9 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory,
 
 					oldBoundingBox = boundingBox;
 
-					if (bpt != null)
+					if (bpt != null) {
 						return bpt;
+					}
 				}
 
 				ix += cx;
@@ -142,9 +144,9 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory,
 				double distance = (ix - to.x) * (ix - to.x) + (iy - to.y)
 						* (iy - to.y) + (iz - to.z) * (iz - to.z);
 
-				if (distance > lastDistance)
+				if (distance > lastDistance) {
 					return null;
-				else {
+				} else {
 					lastDistance = distance;
 				}
 			}
@@ -156,17 +158,21 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory,
 				next.oldBoundingBox = oldBoundingBox;
 
 				return next;
-			} else
+			} else {
 				return null;
+			}
 		}
 
 		public boolean collision(AxisAlignedBB left, AxisAlignedBB right) {
-			if (left.maxX < right.minX || left.minX > right.maxX)
+			if (left.maxX < right.minX || left.minX > right.maxX) {
 				return false;
-			if (left.maxY < right.minY || left.minY > right.maxY)
+			}
+			if (left.maxY < right.minY || left.minY > right.maxY) {
 				return false;
-			if (left.maxZ < right.minZ || left.minZ > right.maxZ)
+			}
+			if (left.maxZ < right.minZ || left.minZ > right.maxZ) {
 				return false;
+			}
 			return true;
 		}
 	}
@@ -278,7 +284,7 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory,
 			result = null;
 		}
 
-		//debugForceBlueprintCompletion(result, context);
+		debugForceBlueprintCompletion(result, context);
 
 		return result;
 	}
@@ -424,16 +430,19 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory,
 	public void setInventorySlotContents(int i, ItemStack itemstack) {
 		items[i] = itemstack;
 
-		if (i == 0) {
-			iterateBpt();
-			done = false;
+		if (!worldObj.isRemote) {
+			if (i == 0) {
+				iterateBpt();
+				done = false;
+			}
 		}
 	}
 
 	@Override
 	public ItemStack getStackInSlotOnClosing(int slot) {
-		if (items[slot] == null)
+		if (items[slot] == null) {
 			return null;
+		}
 		ItemStack toReturn = items[slot];
 		items[slot] = null;
 		return toReturn;

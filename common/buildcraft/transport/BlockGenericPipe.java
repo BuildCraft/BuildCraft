@@ -1076,6 +1076,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 			item.setPipeIconIndex(dummyPipe.getIconIndexForItem());
 			TransportProxy.proxy.setIconProviderFromPipe(item, dummyPipe);
 		}
+
 		return item;
 	}
 

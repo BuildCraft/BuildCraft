@@ -1,4 +1,3 @@
-
 /**
  * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com

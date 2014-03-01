@@ -39,6 +39,7 @@ import buildcraft.energy.BlockBuildcraftFluid;
 import buildcraft.energy.BlockEnergyEmitter;
 import buildcraft.energy.BlockEnergyReceiver;
 import buildcraft.energy.BlockEngine;
+import buildcraft.energy.BptBlockEngine;
 import buildcraft.energy.EnergyProxy;
 import buildcraft.energy.GuiHandler;
 import buildcraft.energy.ItemBucketBuildcraft;
@@ -249,7 +250,7 @@ public class BuildCraftEnergy extends BuildCraftMod {
 
 		NetworkRegistry.INSTANCE.registerGuiHandler(instance, new GuiHandler());
 
-		//new BptBlockEngine(engineBlock.blockID);
+		new BptBlockEngine(engineBlock);
 
 		if (BuildCraftCore.loadDefaultRecipes) {
 			loadRecipes();

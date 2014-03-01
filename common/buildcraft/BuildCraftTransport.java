@@ -52,6 +52,9 @@ import buildcraft.transport.PipeTriggerProvider;
 import buildcraft.transport.TransportProxy;
 import buildcraft.transport.WireIconProvider;
 import buildcraft.transport.blueprints.BptBlockPipe;
+import buildcraft.transport.blueprints.BptItemPipeFilters;
+import buildcraft.transport.blueprints.BptPipeIron;
+import buildcraft.transport.blueprints.BptPipeWooden;
 import buildcraft.transport.gates.GateExpansionPulsar;
 import buildcraft.transport.gates.GateExpansionRedstoneFader;
 import buildcraft.transport.gates.GateExpansionTimer;
@@ -212,8 +215,9 @@ public class BuildCraftTransport extends BuildCraftMod {
 
 		private boolean testStrings(String[] excludedBlocks, World world, int i, int j, int k) {
 			Block block = world.getBlock(i, j, k);
-			if (block == null)
+			if (block == null) {
 				return false;
+			}
 
 			int meta = world.getBlockMetadata(i, j, k);
 
@@ -247,8 +251,9 @@ public class BuildCraftTransport extends BuildCraftMod {
 				for (int j = 0; j < excludedItemBlocks.length; ++j) {
 					excludedItemBlocks[j] = excludedItemBlocks[j].trim();
 				}
-			} else
+			} else {
 				excludedItemBlocks = new String[0];
+			}
 
 			Property exclusionFluidList = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "woodenPipe.liquid.exclusion", new String[0]);
 
@@ -257,8 +262,9 @@ public class BuildCraftTransport extends BuildCraftMod {
 				for (int j = 0; j < excludedFluidBlocks.length; ++j) {
 					excludedFluidBlocks[j] = excludedFluidBlocks[j].trim();
 				}
-			} else
+			} else {
 				excludedFluidBlocks = new String[0];
+			}
 
 			filteredBufferBlock = new BlockFilteredBuffer();
 			CoreProxy.proxy.registerBlock(filteredBufferBlock.setBlockName("filteredBufferBlock"));
@@ -423,23 +429,18 @@ public class BuildCraftTransport extends BuildCraftMod {
 
 		TransportProxy.proxy.registerTileEntities();
 
-		// dockingStationBlock = new
-		// BlockDockingStation(Integer.parseInt(dockingStationId.value));
-		// ModLoader.registerBlock(dockingStationBlock);
-		// CoreProxy.addName(dockingStationBlock.setBlockName("dockingStation"),
-		// "Docking Station");
-
-		// ModLoader.RegisterTileEntity(TileDockingStation.class,
-		// "net.minecraft.src.buildcraft.TileDockingStation");
-
 		new BptBlockPipe(genericPipeBlock);
 
-		//BuildCraftCore.itemBptProps[pipeItemsWood.itemID] = new BptItemPipeWooden();
-		//BuildCraftCore.itemBptProps[pipeFluidsWood.itemID] = new BptItemPipeWooden();
-		//BuildCraftCore.itemBptProps[pipeItemsIron.itemID] = new BptItemPipeIron();
-		//BuildCraftCore.itemBptProps[pipeFluidsIron.itemID] = new BptItemPipeIron();
-		//BuildCraftCore.itemBptProps[pipeItemsDiamond.itemID] = new BptItemPipeDiamond();
-		//BuildCraftCore.itemBptProps[pipeItemsEmerald.itemID] = new BptItemPipeEmerald();
+		new BptPipeIron(pipeItemsIron);
+		new BptPipeIron(pipeFluidsIron);
+		new BptPipeIron(pipePowerIron);
+
+		new BptPipeWooden(pipeItemsWood);
+		new BptPipeWooden(pipeFluidsWood);
+		new BptPipeWooden(pipePowerWood);
+
+		new BptItemPipeFilters(pipeItemsDiamond);
+		new BptItemPipeFilters(pipeItemsEmerald);
 
 		ActionManager.registerTriggerProvider(new PipeTriggerProvider());
 

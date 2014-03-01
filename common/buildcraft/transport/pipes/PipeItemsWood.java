@@ -8,6 +8,13 @@
  */
 package buildcraft.transport.pipes;
 
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.ISidedInventory;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.core.Position;
@@ -19,20 +26,13 @@ import buildcraft.api.power.PowerHandler.Type;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.PipeManager;
 import buildcraft.core.inventory.InvUtils;
-import buildcraft.transport.TravelingItem;
 import buildcraft.core.inventory.InventoryWrapper;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportItems;
+import buildcraft.transport.TravelingItem;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.ISidedInventory;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.util.ForgeDirection;
 
 public class PipeItemsWood extends Pipe<PipeTransportItems> implements IPowerReceptor {
 
@@ -42,12 +42,15 @@ public class PipeItemsWood extends Pipe<PipeTransportItems> implements IPowerRec
 	private PipeLogicWood logic = new PipeLogicWood(this) {
 		@Override
 		protected boolean isValidConnectingTile(TileEntity tile) {
-			if (tile instanceof IPipeTile)
+			if (tile instanceof IPipeTile) {
 				return false;
-			if (!(tile instanceof IInventory))
+			}
+			if (!(tile instanceof IInventory)) {
 				return false;
-			if (!PipeManager.canExtractItems(pipe, tile.getWorldObj(), tile.xCoord, tile.yCoord, tile.zCoord))
+			}
+			if (!PipeManager.canExtractItems(pipe, tile.getWorldObj(), tile.xCoord, tile.yCoord, tile.zCoord)) {
 				return false;
+			}
 			return true;
 		}
 	};
@@ -85,15 +88,16 @@ public class PipeItemsWood extends Pipe<PipeTransportItems> implements IPowerRec
 
 	@Override
 	public int getIconIndex(ForgeDirection direction) {
-		if (direction == ForgeDirection.UNKNOWN)
+		if (direction == ForgeDirection.UNKNOWN) {
 			return standardIconIndex;
-		else {
+		} else {
 			int metadata = container.getBlockMetadata();
 
-			if (metadata == direction.ordinal())
+			if (metadata == direction.ordinal()) {
 				return solidIconIndex;
-			else
+			} else {
 				return standardIconIndex;
+			}
 		}
 	}
 
@@ -104,35 +108,41 @@ public class PipeItemsWood extends Pipe<PipeTransportItems> implements IPowerRec
 
 	@Override
 	public void doWork(PowerHandler workProvider) {
-		if(container.getWorldObj().isRemote)
+		if(container.getWorldObj().isRemote) {
 			return;
-		
-		if (powerHandler.getEnergyStored() <= 0)
-			return;
+		}
 
-		if (transport.getNumberOfStacks() < PipeTransportItems.MAX_PIPE_STACKS)
+		if (powerHandler.getEnergyStored() <= 0) {
+			return;
+		}
+
+		if (transport.getNumberOfStacks() < PipeTransportItems.MAX_PIPE_STACKS) {
 			extractItems();
+		}
 		powerHandler.setEnergy(0);
 	}
 
 	private void extractItems() {
 		int meta = container.getBlockMetadata();
 
-		if (meta > 5)
+		if (meta > 5) {
 			return;
+		}
 
 		ForgeDirection side = ForgeDirection.getOrientation(meta);
 		TileEntity tile = container.getTile(side);
 
 		if (tile instanceof IInventory) {
-			if (!PipeManager.canExtractItems(this, tile.getWorldObj(), tile.xCoord, tile.yCoord, tile.zCoord))
+			if (!PipeManager.canExtractItems(this, tile.getWorldObj(), tile.xCoord, tile.yCoord, tile.zCoord)) {
 				return;
+			}
 
 			IInventory inventory = (IInventory) tile;
 
 			ItemStack[] extracted = checkExtract(inventory, true, side.getOpposite());
-			if (extracted == null)
+			if (extracted == null) {
 				return;
+			}
 
 			tile.markDirty();
 
@@ -180,8 +190,9 @@ public class PipeItemsWood extends Pipe<PipeTransportItems> implements IPowerRec
 			IInventory inv = InvUtils.getInventory(inventory);
 			ItemStack result = checkExtractGeneric(inv, doRemove, from);
 
-			if (result != null)
+			if (result != null) {
 				return new ItemStack[]{result};
+			}
 		}
 
 		return null;
@@ -193,8 +204,9 @@ public class PipeItemsWood extends Pipe<PipeTransportItems> implements IPowerRec
 	}
 
 	public ItemStack checkExtractGeneric(ISidedInventory inventory, boolean doRemove, ForgeDirection from) {
-		if (inventory == null)
+		if (inventory == null) {
 			return null;
+		}
 
 		for (int k : inventory.getAccessibleSlotsFromSide(from.ordinal())) {
 			ItemStack slot = inventory.getStackInSlot(k);

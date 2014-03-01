@@ -8,10 +8,23 @@
  */
 package buildcraft;
 
+import java.util.List;
+
+import net.minecraft.block.Block;
+import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
+import net.minecraft.item.ItemStack;
+import net.minecraft.world.World;
+import net.minecraftforge.client.event.TextureStitchEvent;
+import net.minecraftforge.common.ForgeChunkManager;
+import net.minecraftforge.common.ForgeChunkManager.Ticket;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.config.Configuration;
+import net.minecraftforge.common.config.Property;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.InterModComms;
 import buildcraft.core.Version;
-import buildcraft.core.network.PacketHandler;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.ConfigUtils;
 import buildcraft.factory.BlockAutoWorkbench;
@@ -55,22 +68,6 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-
-import java.util.List;
-
-import net.minecraft.block.Block;
-import net.minecraft.client.renderer.texture.TextureMap;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.world.World;
-import net.minecraftforge.client.event.TextureStitchEvent;
-import net.minecraftforge.common.config.Configuration;
-import net.minecraftforge.common.ForgeChunkManager;
-import net.minecraftforge.common.ForgeChunkManager.Ticket;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.config.Property;
 
 @Mod(name = "BuildCraft Factory", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Factory", dependencies = DefaultProps.DEPENDENCY_CORE)
 public class BuildCraftFactory extends BuildCraftMod {
@@ -148,10 +145,10 @@ public class BuildCraftFactory extends BuildCraftMod {
 
 		FactoryProxy.proxy.initializeTileEntities();
 
-		//new BptBlockAutoWorkbench(autoWorkbenchBlock.blockID);
-		//new BptBlockFrame(frameBlock.blockID);
-		//new BptBlockRefinery(refineryBlock.blockID);
-		//new BptBlockTank(tankBlock.blockID);
+		new BptBlockAutoWorkbench(autoWorkbenchBlock);
+		new BptBlockFrame(frameBlock);
+		new BptBlockRefinery(refineryBlock);
+		new BptBlockTank(tankBlock);
 
 		if (BuildCraftCore.loadDefaultRecipes) {
 			loadRecipes();
@@ -162,7 +159,7 @@ public class BuildCraftFactory extends BuildCraftMod {
 	public void initialize(FMLPreInitializationEvent evt) {
 		channels = NetworkRegistry.INSTANCE.newChannel
 				(DefaultProps.NET_CHANNEL_NAME + "-FACTORY", new PacketHandlerFactory());
-		
+
 		ConfigUtils genCat = new ConfigUtils(BuildCraftCore.mainConfiguration, Configuration.CATEGORY_GENERAL);
 
 		allowMining = genCat.get("mining.enabled", true, "disables the recipes for automated mining machines");
@@ -176,42 +173,42 @@ public class BuildCraftFactory extends BuildCraftMod {
 				+ "Entries are comma seperated, banned fluids have precedence over allowed ones."
 				+ "Default is \"+/*/*,+/-1/Lava\" - the second redundant entry (\"+/-1/lava\") is there to show the format.";
 		pumpDimensionList = new PumpDimensionList(pumpList.getString());
-		
+
 		if (BuildCraftCore.mainConfiguration.hasChanged()) {
 			BuildCraftCore.mainConfiguration.save();
 		}
 
-		
+
 		miningWellBlock = new BlockMiningWell();
 		CoreProxy.proxy.registerBlock(miningWellBlock.setBlockName("miningWellBlock"));
-		
+
 		plainPipeBlock = new BlockPlainPipe();
 		CoreProxy.proxy.registerBlock(plainPipeBlock.setBlockName("plainPipeBlock"));
-				
+
 		autoWorkbenchBlock = new BlockAutoWorkbench();
 		CoreProxy.proxy.registerBlock(autoWorkbenchBlock.setBlockName("autoWorkbenchBlock"));
-			
+
 		frameBlock = new BlockFrame();
 		CoreProxy.proxy.registerBlock(frameBlock.setBlockName("frameBlock"));
-						
+
 		quarryBlock = new BlockQuarry();
 		CoreProxy.proxy.registerBlock(quarryBlock.setBlockName("machineBlock"));
-		
+
 		tankBlock = new BlockTank();
 		CoreProxy.proxy.registerBlock(tankBlock.setBlockName("tankBlock"));
 
 		pumpBlock = new BlockPump();
 		CoreProxy.proxy.registerBlock(pumpBlock.setBlockName("pumpBlock"));
-		
+
 		floodGateBlock = new BlockFloodGate();
 		CoreProxy.proxy.registerBlock(floodGateBlock.setBlockName("floodGateBlock"));
-		
+
 		refineryBlock = new BlockRefinery();
 		CoreProxy.proxy.registerBlock(refineryBlock.setBlockName("refineryBlock"));
-		
+
 		hopperBlock = new BlockHopper();
 		CoreProxy.proxy.registerBlock(hopperBlock.setBlockName("blockHopper"));
-		
+
 
 		FactoryProxy.proxy.initializeEntityRenders();
 		if (BuildCraftCore.mainConfiguration.hasChanged()) {
@@ -224,7 +221,7 @@ public class BuildCraftFactory extends BuildCraftMod {
 	public static void loadRecipes() {
 
 		if (allowMining) {
-			if (miningWellBlock != null)
+			if (miningWellBlock != null) {
 				CoreProxy.proxy.addCraftingRecipe(new ItemStack(miningWellBlock, 1),
 						"ipi",
 						"igi",
@@ -233,8 +230,9 @@ public class BuildCraftFactory extends BuildCraftMod {
 						'i', Items.iron_ingot,
 						'g', BuildCraftCore.ironGearItem,
 						'P', Items.iron_pickaxe);
+			}
 
-			if (quarryBlock != null)
+			if (quarryBlock != null) {
 				CoreProxy.proxy.addCraftingRecipe(
 						new ItemStack(quarryBlock),
 						"ipi",
@@ -245,17 +243,19 @@ public class BuildCraftFactory extends BuildCraftMod {
 						'g', BuildCraftCore.goldGearItem,
 						'd', BuildCraftCore.diamondGearItem,
 						'D', Items.diamond_pickaxe);
+			}
 
-			if (pumpBlock != null && miningWellBlock != null)
+			if (pumpBlock != null && miningWellBlock != null) {
 				CoreProxy.proxy.addCraftingRecipe(new ItemStack(pumpBlock),
 						"T",
 						"W",
 						'T', tankBlock != null ? tankBlock : Blocks.glass,
 						'W', miningWellBlock);
+			}
 		}
 
 		if (!allowMining || miningWellBlock == null) {
-			if (pumpBlock != null)
+			if (pumpBlock != null) {
 				CoreProxy.proxy.addCraftingRecipe(new ItemStack(pumpBlock),
 						"iri",
 						"iTi",
@@ -265,33 +265,37 @@ public class BuildCraftFactory extends BuildCraftMod {
 						'T', tankBlock != null ? tankBlock : Blocks.glass,
 						'g', BuildCraftCore.ironGearItem,
 						'p', BuildCraftTransport.pipeFluidsGold);
+			}
 		}
 
-		if (autoWorkbenchBlock != null)
+		if (autoWorkbenchBlock != null) {
 			CoreProxy.proxy.addCraftingRecipe(new ItemStack(autoWorkbenchBlock),
 					" g ",
 					"gwg",
 					" g ",
 					'w', Blocks.crafting_table,
 					'g', BuildCraftCore.woodenGearItem);
+		}
 
 
-		if (tankBlock != null)
+		if (tankBlock != null) {
 			CoreProxy.proxy.addCraftingRecipe(new ItemStack(tankBlock),
 					"ggg",
 					"g g",
 					"ggg",
 					'g', Blocks.glass);
+		}
 
-		if (refineryBlock != null)
+		if (refineryBlock != null) {
 			CoreProxy.proxy.addCraftingRecipe(new ItemStack(refineryBlock),
 					"RTR",
 					"TGT",
 					'T', tankBlock != null ? tankBlock : Blocks.glass,
 					'G', BuildCraftCore.diamondGearItem,
 					'R', Blocks.redstone_torch);
+		}
 
-		if (hopperBlock != null)
+		if (hopperBlock != null) {
 			CoreProxy.proxy.addCraftingRecipe(new ItemStack(hopperBlock),
 					"ICI",
 					"IGI",
@@ -299,8 +303,9 @@ public class BuildCraftFactory extends BuildCraftMod {
 					'I', Items.iron_ingot,
 					'C', Blocks.chest,
 					'G', BuildCraftCore.stoneGearItem);
+		}
 
-		if (floodGateBlock != null)
+		if (floodGateBlock != null) {
 			CoreProxy.proxy.addCraftingRecipe(new ItemStack(floodGateBlock),
 					"IGI",
 					"FTF",
@@ -309,6 +314,7 @@ public class BuildCraftFactory extends BuildCraftMod {
 					'T', tankBlock != null ? tankBlock : Blocks.glass,
 					'G', BuildCraftCore.ironGearItem,
 					'F', new ItemStack(Blocks.iron_bars));
+		}
 	}
 
 	@EventHandler

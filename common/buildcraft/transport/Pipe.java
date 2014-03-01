@@ -89,17 +89,22 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 
 	public final void handlePipeEvent(PipeEvent event) {
 		Map<Class<? extends PipeEvent>, EventHandler> handlerMap = eventHandlers.get(getClass());
+
 		if (handlerMap == null) {
 			handlerMap = new HashMap<Class<? extends PipeEvent>, EventHandler>();
 			eventHandlers.put(getClass(), handlerMap);
 		}
+
 		EventHandler handler = handlerMap.get(event.getClass());
+
 		if (handler == null) {
 			handler = makeEventHandler(event, handlerMap);
 		}
+
 		if (handler.method == null) {
 			return;
 		}
+
 		try {
 			handler.method.invoke(this, event);
 		} catch (Exception ex) {
@@ -108,12 +113,14 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 
 	private EventHandler makeEventHandler(PipeEvent event, Map<Class<? extends PipeEvent>, EventHandler> handlerMap) {
 		EventHandler handler;
+
 		try {
 			Method method = getClass().getDeclaredMethod("eventHandler", event.getClass());
 			handler = new EventHandler(method);
 		} catch (Exception ex) {
 			handler = new EventHandler(null);
 		}
+
 		handlerMap.put(event.getClass(), handler);
 		return handler;
 	}
@@ -137,9 +144,9 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 
 	public boolean canPipeConnect(TileEntity tile, ForgeDirection side) {
 		Pipe otherPipe;
+
 		if (tile instanceof TileGenericPipe) {
 			otherPipe = ((TileGenericPipe) tile).pipe;
-
 			if (!BlockGenericPipe.isFullyDefined(otherPipe)) {
 				return false;
 			}
@@ -148,6 +155,7 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 				return false;
 			}
 		}
+
 		return transport.canPipeConnect(tile, side);
 	}
 
@@ -182,7 +190,6 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 	public abstract int getIconIndex(ForgeDirection direction);
 
 	public void updateEntity() {
-
 		transport.updateEntity();
 
 		if (internalUpdateScheduled) {
