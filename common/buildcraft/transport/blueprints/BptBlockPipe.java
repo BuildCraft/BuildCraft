@@ -82,7 +82,6 @@ public class BptBlockPipe extends BptBlock {
 		Pipe pipe = BlockGenericPipe.getPipe(context.world(), x, y, z);
 
 		if (BlockGenericPipe.isValid(pipe)) {
-			context.getMappingRegistry().setIdForItem(pipe.item, Item.getIdFromItem(pipe.item));
 			slot.cpt.setInteger("pipeId", context.getMappingRegistry()
 					.getIdForItem(pipe.item));
 

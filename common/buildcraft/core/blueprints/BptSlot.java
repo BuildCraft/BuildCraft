@@ -11,7 +11,6 @@ package buildcraft.core.blueprints;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
-import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -94,8 +93,6 @@ public class BptSlot extends BptSlotInfo {
 	}
 
 	public void writeToNBT(NBTTagCompound nbt, MappingRegistry registry) {
-		registry.setIdForBlock(block, Block.blockRegistry.getIDForObject(block));
-
 		nbt.setInteger("blockId", registry.getIdForBlock(block));
 		nbt.setInteger("blockMeta", meta);
 		nbt.setTag("blockCpt", cpt);
@@ -103,11 +100,10 @@ public class BptSlot extends BptSlotInfo {
 		NBTTagList rq = new NBTTagList();
 
 		for (ItemStack stack : storedRequirements) {
-			registry.setIdForItem(stack.getItem(),
-					Item.itemRegistry.getIDForObject(stack.getItem()));
-
 			NBTTagCompound sub = new NBTTagCompound();
 			stack.writeToNBT(stack.writeToNBT(sub));
+			sub.setInteger("id", Item.itemRegistry.getIDForObject(registry
+					.getItemForId(sub.getInteger("id"))));
 			rq.appendTag(sub);
 		}
 

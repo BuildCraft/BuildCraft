@@ -25,14 +25,14 @@ public class MappingRegistry {
 	private HashMap <Item, Integer> itemToId = new HashMap<Item, Integer>();
 	private HashMap <Integer, Item> idToItem = new HashMap<Integer, Item>();
 
-	public void setIdForItem (Item item, int id) {
+	private void setIdForItem (Item item, int id) {
 		if (!itemToId.containsKey(item)) {
 			itemToId.put(item, id);
 			idToItem.put(id, item);
 		}
 	}
 
-	public void setIdForBlock (Block block, int id) {
+	private void setIdForBlock (Block block, int id) {
 		if (!blockToId.containsKey(block)) {
 			blockToId.put(block, id);
 			idToBlock.put(id, block);
@@ -40,35 +40,35 @@ public class MappingRegistry {
 	}
 
 	public Item getItemForId(int id) {
-		if (idToItem.containsKey(id)) {
-			return idToItem.get(id);
+		if (!idToItem.containsKey(id)) {
+			return null;
 		}
 
-		return null;
+		return idToItem.get(id);
 	}
 
 	public int getIdForItem(Item item) {
-		if (itemToId.containsKey(item)) {
-			return itemToId.get(item);
+		if (!itemToId.containsKey(item)) {
+			setIdForItem(item, itemToId.size());
 		}
 
-		return 0;
+		return itemToId.get(item);
 	}
 
 	public Block getBlockForId(int id) {
-		if (idToBlock.containsKey(id)) {
-			return idToBlock.get(id);
+		if (!idToBlock.containsKey(id)) {
+			return null;
 		}
 
-		return null;
+		return idToBlock.get(id);
 	}
 
 	public int getIdForBlock(Block block) {
-		if (blockToId.containsKey(block)) {
-			return blockToId.get(block);
+		if (!blockToId.containsKey(block)) {
+			setIdForBlock(block, blockToId.size());
 		}
 
-		return 0;
+		return blockToId.get(block);
 	}
 
 	public void write (NBTTagCompound nbt) {
