@@ -8,22 +8,8 @@
  */
 package buildcraft.transport;
 
-import buildcraft.api.transport.PipeWire;
-import buildcraft.BuildCraftTransport;
-import buildcraft.api.core.IIconProvider;
-import buildcraft.api.core.SafeTimeTracker;
-import buildcraft.api.gates.IAction;
-import buildcraft.api.gates.ITrigger;
-import buildcraft.core.IDropControlInventory;
-import buildcraft.core.inventory.InvUtils;
-import buildcraft.core.network.TilePacketWrapper;
-import buildcraft.core.utils.Utils;
-import buildcraft.transport.gates.GateFactory;
-import buildcraft.transport.pipes.events.PipeEvent;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
@@ -38,6 +24,20 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
+import buildcraft.BuildCraftTransport;
+import buildcraft.api.core.IIconProvider;
+import buildcraft.api.core.SafeTimeTracker;
+import buildcraft.api.gates.IAction;
+import buildcraft.api.gates.ITrigger;
+import buildcraft.api.transport.PipeWire;
+import buildcraft.core.IDropControlInventory;
+import buildcraft.core.inventory.InvUtils;
+import buildcraft.core.network.TilePacketWrapper;
+import buildcraft.core.utils.Utils;
+import buildcraft.transport.gates.GateFactory;
+import buildcraft.transport.pipes.events.PipeEvent;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public abstract class Pipe<T extends PipeTransport> implements IDropControlInventory {
 
@@ -439,29 +439,39 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 	}
 
 	public void onBlockRemoval() {
+		for (ItemStack stack : computeItemDrop()) {
+			dropItem(stack);
+		}
+	}
+
+	public ArrayList <ItemStack> computeItemDrop () {
+		ArrayList <ItemStack> result = new ArrayList <ItemStack> ();
+
 		for (PipeWire pipeWire : PipeWire.VALUES) {
-			if (wireSet[pipeWire.ordinal()])
-				dropItem(pipeWire.getStack());
+			if (wireSet[pipeWire.ordinal()]) {
+				result.add(pipeWire.getStack());
+			}
 		}
 
 		if (hasGate()) {
-			gate.dropGate();
-			resetGate();
+			result.add(gate.getGateItem());
 		}
 
 		for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
 			if (container.hasFacade(direction)) {
-				container.dropFacade(direction);
+				result.add (container.getFacade(direction));
 			}
 
 			if (container.hasPlug(direction)) {
-				container.removeAndDropPlug(direction);
+				result.add (new ItemStack(BuildCraftTransport.plugItem));
 			}
 
 			if (container.hasRobotStation(direction)) {
-				container.removeAndDropRobotStation(direction);
+				result.add (new ItemStack(BuildCraftTransport.robotStationItem));
 			}
 		}
+
+		return result;
 	}
 
 	public boolean isTriggerActive(ITrigger trigger) {

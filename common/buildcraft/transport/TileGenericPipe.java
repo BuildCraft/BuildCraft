@@ -660,20 +660,28 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 	}
 
 	public boolean hasFacade(ForgeDirection direction) {
-		if (direction == null || direction == ForgeDirection.UNKNOWN)
+		if (direction == null || direction == ForgeDirection.UNKNOWN) {
 			return false;
-		if (this.getWorldObj().isRemote)
+		} else if (this.getWorldObj().isRemote) {
 			return renderState.facadeMatrix.getFacadeBlock(direction) != null;
-		return (this.facadeBlocks[direction.ordinal()] != null);
+		} else {
+			return (this.facadeBlocks[direction.ordinal()] != null);
+		}
 	}
 
 	private void dropFacadeItem(ForgeDirection direction) {
-		InvUtils.dropItems(worldObj, ItemFacade.getStack(this.facadeBlocks[direction.ordinal()], this.facadeMeta[direction.ordinal()]), this.xCoord, this.yCoord, this.zCoord);
+		InvUtils.dropItems(worldObj, getFacade(direction), this.xCoord, this.yCoord, this.zCoord);
+	}
+
+	public ItemStack getFacade (ForgeDirection direction) {
+		return ItemFacade.getStack(this.facadeBlocks[direction.ordinal()], this.facadeMeta[direction.ordinal()]);
 	}
 
 	public boolean dropFacade(ForgeDirection direction) {
-		if (!hasFacade(direction))
+		if (!hasFacade(direction)) {
 			return false;
+		}
+
 		if (!worldObj.isRemote) {
 			dropFacadeItem(direction);
 			this.facadeBlocks[direction.ordinal()] = null;
@@ -681,6 +689,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 			worldObj.notifyBlockChange(this.xCoord, this.yCoord, this.zCoord, getBlock());
 			scheduleRenderUpdate();
 		}
+
 		return true;
 	}
 

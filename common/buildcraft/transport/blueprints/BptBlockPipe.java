@@ -8,16 +8,18 @@
  */
 package buildcraft.transport.blueprints;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import buildcraft.BuildCraftTransport;
+import net.minecraft.nbt.NBTTagList;
 import buildcraft.api.blueprints.BptBlock;
 import buildcraft.api.blueprints.BptSlotInfo;
 import buildcraft.api.blueprints.IBptContext;
+import buildcraft.core.utils.Utils;
 import buildcraft.transport.BlockGenericPipe;
 import buildcraft.transport.Pipe;
 
@@ -33,38 +35,12 @@ public class BptBlockPipe extends BptBlock {
 
 		requirements.add(new ItemStack(pipeItem));
 
-		if (slot.cpt.hasKey("wire0")) {
-			requirements.add(new ItemStack(BuildCraftTransport.pipeWire, 1, 0));
-		}
+		NBTTagList nbtDrops = slot.cpt.getTagList("drops", Utils.NBTTag_Types.NBTTagCompound.ordinal());
 
-		if (slot.cpt.hasKey("wire1")) {
-			requirements.add(new ItemStack(BuildCraftTransport.pipeWire, 1, 1));
+		for (int i = 0; i < nbtDrops.tagCount(); ++i) {
+			NBTTagCompound nbt = nbtDrops.getCompoundTagAt(i);
+			requirements.add(ItemStack.loadItemStackFromNBT(nbt));
 		}
-
-		if (slot.cpt.hasKey("wire2")) {
-			requirements.add(new ItemStack(BuildCraftTransport.pipeWire, 1, 2));
-		}
-
-		if (slot.cpt.hasKey("wire3")) {
-			requirements.add(new ItemStack(BuildCraftTransport.pipeWire, 1, 3));
-		}
-
-		if (slot.cpt.hasKey("gate")) {
-			requirements.add (ItemStack.loadItemStackFromNBT(slot.cpt.getCompoundTag("gate")));
-		}
-
-		/*if (slot.cpt.hasKey("gate")) {
-			int gateId = slot.cpt.getInteger("gate");
-			if (slot.cpt.hasKey("hasPulser") && slot.cpt.getBoolean("hasPulser")) {
-				requirements.add(new ItemStack(BuildCraftTransport.pipeGateAutarchic, 1, gateId - 1));
-			} else {
-				requirements.add(new ItemStack(BuildCraftTransport.pipeGate, 1, gateId - 1));
-			}
-		}
-
-		if (BuildCraftCore.itemBptProps[pipeId] != null) {
-			BuildCraftCore.itemBptProps[pipeId].addRequirements(slot, requirements);
-		}*/
 	}
 
 	@Override
@@ -90,7 +66,6 @@ public class BptBlockPipe extends BptBlock {
 
 	@Override
 	public void buildBlock(BptSlotInfo slot, IBptContext context) {
-		// TODO: use directly an NBT built from the pipe here.
 		int pipeId = slot.cpt.getInteger("pipeId");
 
 		Pipe pipe = BlockGenericPipe.createPipe(context.getMappingRegistry()
@@ -103,36 +78,6 @@ public class BptBlockPipe extends BptBlock {
 		}
 
 
-
-		/*if (slot.cpt.hasKey("gate")) {
-			int gateId = slot.cpt.getInteger("gate");
-			GateVanilla newGate;
-			if (slot.cpt.hasKey("hasPulser") && slot.cpt.getBoolean("hasPulser")) {
-				newGate = new GateVanilla(pipe, new ItemStack(BuildCraftTransport.pipeGateAutarchic, 1, gateId - 1));
-			} else {
-				newGate = new GateVanilla(pipe, new ItemStack(BuildCraftTransport.pipeGate, 1, gateId - 1));
-			}
-			pipe.gate = newGate;
-
-			for (int i = 0; i < 8; ++i) {
-				if (slot.cpt.hasKey("trigger" + i)) {
-					pipe.gate.actions[i] = ActionManager.triggers[slot.cpt.getInteger("trigger" + i)];
-				}
-
-				if (slot.cpt.hasKey("triggerParameter" + i)) {
-					ItemStack s = ItemStack.loadItemStackFromNBT((NBTTagCompound) slot.cpt.getTag("triggerParameter" + i));
-
-					if (s != null) {
-						pipe.triggerParameters[i] = new TriggerParameter();
-						pipe.triggerParameters[i].set(s);
-					}
-				}
-
-				if (slot.cpt.hasKey("action" + i)) {
-					pipe.activatedActions[i] = ActionManager.actions[slot.cpt.getInteger("action" + i)];
-				}
-			}
-		}*/
 
 		BlockGenericPipe.placePipe(pipe, context.world(), slot.x, slot.y,
 				slot.z, slot.block, slot.meta);
@@ -151,47 +96,24 @@ public class BptBlockPipe extends BptBlock {
 			bptSlot.cpt.setInteger("pipeId", context.getMappingRegistry()
 					.getIdForItem(pipe.item));
 
-			for (int i = 0; i < pipe.wireSet.length; ++i) {
-				if (pipe.wireSet[i]) {
-					bptSlot.cpt.setInteger("wire" + i, 1);
-				}
+			NBTTagList nbtDrops = new NBTTagList();
+
+			ArrayList<ItemStack> drops = pipe.computeItemDrop ();
+
+			for (ItemStack s : drops) {
+				NBTTagCompound nbtStack = new NBTTagCompound();
+				s.writeToNBT(nbtStack);
+				nbtDrops.appendTag(nbtStack);
 			}
 
-			if (pipe.hasGate()) {
-				NBTTagCompound gateNBT = new NBTTagCompound();
-				pipe.gate.getGateItem().writeToNBT(gateNBT);
-				bptSlot.cpt.setTag("gate", gateNBT);
-			}
+			bptSlot.cpt.setTag("drops", nbtDrops);
 
+			NBTTagCompound worldNbt = new NBTTagCompound();
+			pipe.writeToNBT(worldNbt);
 
-			// / TODO: Does not save/load custom gates
-			/*if (pipe.hasGate()) {
-				bptSlot.cpt.setInteger("gate", pipe.gate.kind.ordinal());
-				if (pipe.gate instanceof GateVanilla) {
-					bptSlot.cpt.setBoolean("hasPulser", ((GateVanilla) pipe.gate).hasPulser());
-				}
+			bptSlot.cpt.setTag("worldNBT", worldNbt);
 
-				for (int i = 0; i < 8; ++i) {
-					if (pipe.activatedTriggers[i] != null) {
-						bptSlot.cpt.setInteger("trigger" + i, pipe.activatedTriggers[i].getId());
-					}
-
-					if (pipe.triggerParameters[i] != null) {
-						NBTTagCompound subCpt = new NBTTagCompound();
-						pipe.triggerParameters[i].getItemStack().writeToNBT(subCpt);
-
-						bptSlot.cpt.setTag("triggerParameter" + i, subCpt);
-					}
-
-					if (pipe.activatedActions[i] != null) {
-						bptSlot.cpt.setInteger("action" + i, pipe.activatedActions[i].getId());
-					}
-				}
-			}
-
-			if (BuildCraftCore.itemBptProps[pipe.itemID] != null) {
-				BuildCraftCore.itemBptProps[pipe.itemID].initializeFromWorld(bptSlot, context, x, y, z);
-			}*/
+			// TODO: store the pipe nbt on disk as well...
 		}
 	}
 
