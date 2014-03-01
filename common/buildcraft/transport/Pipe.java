@@ -8,21 +8,6 @@
  */
 package buildcraft.transport;
 
-import buildcraft.api.transport.PipeWire;
-import buildcraft.BuildCraftTransport;
-import buildcraft.api.core.IIconProvider;
-import buildcraft.api.core.SafeTimeTracker;
-import buildcraft.api.gates.IAction;
-import buildcraft.api.gates.ITrigger;
-import buildcraft.core.IDropControlInventory;
-import buildcraft.core.inventory.InvUtils;
-import buildcraft.core.network.TilePacketWrapper;
-import buildcraft.core.utils.Utils;
-import buildcraft.transport.gates.GateFactory;
-import buildcraft.transport.pipes.events.PipeEvent;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -37,7 +22,22 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldSettings.GameType;
 import net.minecraftforge.common.util.ForgeDirection;
+import buildcraft.BuildCraftTransport;
+import buildcraft.api.core.IIconProvider;
+import buildcraft.api.core.SafeTimeTracker;
+import buildcraft.api.gates.IAction;
+import buildcraft.api.gates.ITrigger;
+import buildcraft.api.transport.PipeWire;
+import buildcraft.core.IDropControlInventory;
+import buildcraft.core.inventory.InvUtils;
+import buildcraft.core.network.TilePacketWrapper;
+import buildcraft.core.utils.Utils;
+import buildcraft.transport.gates.GateFactory;
+import buildcraft.transport.pipes.events.PipeEvent;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public abstract class Pipe<T extends PipeTransport> implements IDropControlInventory {
 
@@ -93,10 +93,12 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 			eventHandlers.put(getClass(), handlerMap);
 		}
 		EventHandler handler = handlerMap.get(event.getClass());
-		if (handler == null)
+		if (handler == null) {
 			handler = makeEventHandler(event, handlerMap);
-		if (handler.method == null)
+		}
+		if (handler.method == null) {
 			return;
+		}
 		try {
 			handler.method.invoke(this, event);
 		} catch (Exception ex) {
@@ -137,11 +139,13 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 		if (tile instanceof TileGenericPipe) {
 			otherPipe = ((TileGenericPipe) tile).pipe;
 
-			if (!BlockGenericPipe.isFullyDefined(otherPipe))
+			if (!BlockGenericPipe.isFullyDefined(otherPipe)) {
 				return false;
+			}
 
-			if (!PipeConnectionBans.canPipesConnect(getClass(), otherPipe.getClass()))
+			if (!PipeConnectionBans.canPipesConnect(getClass(), otherPipe.getClass())) {
 				return false;
+			}
 		}
 		return transport.canPipeConnect(tile, side);
 	}
@@ -251,10 +255,11 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 			if (tile instanceof TileGenericPipe) {
 				TileGenericPipe tilePipe = (TileGenericPipe) tile;
 
-				if (BlockGenericPipe.isFullyDefined(tilePipe.pipe))
+				if (BlockGenericPipe.isFullyDefined(tilePipe.pipe)) {
 					if (isWireConnectedTo(tile, color)) {
 						foundBiggerSignal |= receiveSignal(tilePipe.pipe.signalStrength[color.ordinal()] - 1, color);
 					}
+				}
 			}
 		}
 
@@ -284,8 +289,9 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 	}
 
 	private void updateSignalStateForColor(PipeWire wire) {
-		if (!wireSet[wire.ordinal()])
+		if (!wireSet[wire.ordinal()]) {
 			return;
+		}
 
 		// STEP 1: compute internal signal strength
 
@@ -304,18 +310,20 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 				if (tile instanceof TileGenericPipe) {
 					TileGenericPipe tilePipe = (TileGenericPipe) tile;
 
-					if (BlockGenericPipe.isFullyDefined(tilePipe.pipe) && tilePipe.pipe.wireSet[wire.ordinal()])
+					if (BlockGenericPipe.isFullyDefined(tilePipe.pipe) && tilePipe.pipe.wireSet[wire.ordinal()]) {
 						if (isWireConnectedTo(tile, wire)) {
 							tilePipe.pipe.receiveSignal(signalStrength[wire.ordinal()] - 1, wire);
 						}
+					}
 				}
 			}
 		}
 	}
 
 	private boolean receiveSignal(int signal, PipeWire color) {
-		if (container.getWorldObj() == null)
+		if (container.getWorldObj() == null) {
 			return false;
+		}
 
 		int oldSignal = signalStrength[color.ordinal()];
 
@@ -328,8 +336,9 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 			}
 
 			return true;
-		} else
+		} else {
 			return false;
+		}
 	}
 
 	public boolean inputOpen(ForgeDirection from) {
@@ -344,8 +353,9 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 	}
 
 	public boolean canConnectRedstone() {
-		if (hasGate())
+		if (hasGate()) {
 			return true;
+		}
 
 		return false;
 	}
@@ -355,8 +365,9 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 			ForgeDirection o = ForgeDirection.getOrientation(side).getOpposite();
 			TileEntity tile = container.getTile(o);
 
-			if (tile instanceof TileGenericPipe && container.isPipeConnected(o))
+			if (tile instanceof TileGenericPipe && container.isPipeConnected(o)) {
 				return 0;
+			}
 
 			return gate.getRedstoneOutput();
 		}
@@ -373,8 +384,9 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 	// / @Override TODO: should be in IPipe
 	public boolean isWired() {
 		for (PipeWire color : PipeWire.values()) {
-			if (isWired(color))
+			if (isWired(color)) {
 				return true;
+			}
 		}
 
 		return false;
@@ -389,25 +401,30 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 	}
 
 	public boolean hasGate(ForgeDirection side) {
-		if (!hasGate())
+		if (!hasGate()) {
 			return false;
-		if (container.hasFacade(side))
+		}
+		if (container.hasFacade(side)) {
 			return false;
-		if (container.hasPlug(side))
+		}
+		if (container.hasPlug(side)) {
 			return false;
+		}
 
 		int connections = 0;
 		ForgeDirection targetOrientation = ForgeDirection.UNKNOWN;
 		for (ForgeDirection o : ForgeDirection.VALID_DIRECTIONS) {
 			if (container.isPipeConnected(o)) {
 				connections++;
-				if (connections == 1)
+				if (connections == 1) {
 					targetOrientation = o;
+				}
 			}
 		}
 
-		if (connections > 1 || connections == 0)
+		if (connections > 1 || connections == 0) {
 			return true;
+		}
 
 		return targetOrientation.getOpposite() != side;
 	}
@@ -430,22 +447,25 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 	}
 
 	public void onBlockRemoval() {
-		for (PipeWire pipeWire : PipeWire.VALUES) {
-			if (wireSet[pipeWire.ordinal()])
-				dropItem(pipeWire.getStack());
-		}
-
-		if (hasGate()) {
-			gate.dropGate();
-			resetGate();
-		}
-
-		for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
-			if (container.hasFacade(direction)) {
-				container.dropFacade(direction);
+		if (getWorld().getWorldInfo().getGameType() != GameType.CREATIVE) {
+			for (PipeWire pipeWire : PipeWire.VALUES) {
+				if (wireSet[pipeWire.ordinal()]) {
+					dropItem(pipeWire.getStack());
+				}
 			}
-			if (container.hasPlug(direction)) {
-				container.removeAndDropPlug(direction);
+
+			if (hasGate()) {
+				gate.dropGate();
+				resetGate();
+			}
+
+			for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
+				if (container.hasFacade(direction)) {
+					container.dropFacade(direction);
+				}
+				if (container.hasPlug(direction)) {
+					container.removeAndDropPlug(direction);
+				}
 			}
 		}
 	}
@@ -478,16 +498,19 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 	}
 
 	public boolean isWireConnectedTo(TileEntity tile, PipeWire color) {
-		if (!(tile instanceof TileGenericPipe))
+		if (!(tile instanceof TileGenericPipe)) {
 			return false;
+		}
 
 		TileGenericPipe tilePipe = (TileGenericPipe) tile;
 
-		if (!BlockGenericPipe.isFullyDefined(tilePipe.pipe))
+		if (!BlockGenericPipe.isFullyDefined(tilePipe.pipe)) {
 			return false;
+		}
 
-		if (!tilePipe.pipe.wireSet[color.ordinal()])
+		if (!tilePipe.pipe.wireSet[color.ordinal()]) {
 			return false;
+		}
 
 		return (tilePipe.pipe.transport instanceof PipeTransportStructure || transport instanceof PipeTransportStructure || Utils.checkPipesConnections(
 				container, tile));
@@ -510,13 +533,15 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 
 				Connections_num++;
 
-				if (Connections_num == 1)
+				if (Connections_num == 1) {
 					target_orientation = o;
+				}
 			}
 		}
 
-		if (Connections_num > 1 || Connections_num == 0)
+		if (Connections_num > 1 || Connections_num == 0) {
 			return ForgeDirection.UNKNOWN;
+		}
 
 		return target_orientation.getOpposite();
 	}
