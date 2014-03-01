@@ -108,7 +108,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 	}
 
 	@Override
-	public int getRenderBlockPass(int pass) {
+	public int getRenderBlockPass() {
 		return 1;
 	}
 
