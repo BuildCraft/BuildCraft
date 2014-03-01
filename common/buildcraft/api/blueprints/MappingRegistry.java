@@ -8,8 +8,8 @@
  */
 package buildcraft.api.blueprints;
 
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map.Entry;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
@@ -20,27 +20,27 @@ import buildcraft.core.utils.Utils;
 public class MappingRegistry {
 
 	private HashMap <Block, Integer> blockToId = new HashMap<Block, Integer>();
-	private HashMap <Integer, Block> idToBlock = new HashMap<Integer, Block>();
+	private ArrayList <Block> idToBlock = new ArrayList<Block>();
 
 	private HashMap <Item, Integer> itemToId = new HashMap<Item, Integer>();
-	private HashMap <Integer, Item> idToItem = new HashMap<Integer, Item>();
+	private ArrayList <Item> idToItem = new ArrayList<Item>();
 
-	private void setIdForItem (Item item, int id) {
+	private void registerItem (Item item) {
 		if (!itemToId.containsKey(item)) {
-			itemToId.put(item, id);
-			idToItem.put(id, item);
+			idToItem.add(item);
+			itemToId.put(item, idToItem.size() - 1);
 		}
 	}
 
-	private void setIdForBlock (Block block, int id) {
+	private void registerBlock (Block block) {
 		if (!blockToId.containsKey(block)) {
-			blockToId.put(block, id);
-			idToBlock.put(id, block);
+			idToBlock.add(block);
+			blockToId.put(block, idToBlock.size() - 1);
 		}
 	}
 
 	public Item getItemForId(int id) {
-		if (!idToItem.containsKey(id)) {
+		if (id >= idToItem.size()) {
 			return null;
 		}
 
@@ -49,14 +49,14 @@ public class MappingRegistry {
 
 	public int getIdForItem(Item item) {
 		if (!itemToId.containsKey(item)) {
-			setIdForItem(item, itemToId.size());
+			registerItem(item);
 		}
 
 		return itemToId.get(item);
 	}
 
 	public Block getBlockForId(int id) {
-		if (!idToBlock.containsKey(id)) {
+		if (id >= idToBlock.size()) {
 			return null;
 		}
 
@@ -65,7 +65,7 @@ public class MappingRegistry {
 
 	public int getIdForBlock(Block block) {
 		if (!blockToId.containsKey(block)) {
-			setIdForBlock(block, blockToId.size());
+			registerBlock (block);
 		}
 
 		return blockToId.get(block);
@@ -74,11 +74,10 @@ public class MappingRegistry {
 	public void write (NBTTagCompound nbt) {
 		NBTTagList blocksMapping = new NBTTagList();
 
-		for (Entry<Block, Integer> e : blockToId.entrySet()) {
+		for (Block b : idToBlock) {
 			NBTTagCompound sub = new NBTTagCompound();
 			sub.setString("name",
-					Block.blockRegistry.getNameForObject(e.getKey()));
-			sub.setInteger("id", e.getValue());
+					Block.blockRegistry.getNameForObject(b));
 			blocksMapping.appendTag(sub);
 		}
 
@@ -86,11 +85,10 @@ public class MappingRegistry {
 
 		NBTTagList itemsMapping = new NBTTagList();
 
-		for (Entry<Item, Integer> e : itemToId.entrySet()) {
+		for (Item i : idToItem) {
 			NBTTagCompound sub = new NBTTagCompound();
 			sub.setString("name",
-					Item.itemRegistry.getNameForObject(e.getKey()));
-			sub.setInteger("id", e.getValue());
+					Item.itemRegistry.getNameForObject(i));
 			itemsMapping.appendTag(sub);
 		}
 
@@ -103,13 +101,9 @@ public class MappingRegistry {
 
 		for (int i = 0; i < blocksMapping.tagCount(); ++i) {
 			NBTTagCompound sub = blocksMapping.getCompoundTagAt(i);
-
-			int id = sub.getInteger("id");
 			String name = sub.getString("name");
-
 			Block b = (Block) Block.blockRegistry.getObject(name);
-
-			setIdForBlock(b, id);
+			registerBlock (b);
 		}
 
 		NBTTagList itemsMapping = nbt.getTagList("itemsMapping",
@@ -117,13 +111,9 @@ public class MappingRegistry {
 
 		for (int i = 0; i < itemsMapping.tagCount(); ++i) {
 			NBTTagCompound sub = itemsMapping.getCompoundTagAt(i);
-
-			int id = sub.getInteger("id");
 			String name = sub.getString("name");
-
 			Item item = (Item) Item.itemRegistry.getObject(name);
-
-			setIdForItem(item, id);
+			registerItem (item);
 		}
 	}
 
@@ -131,9 +121,9 @@ public class MappingRegistry {
 	public final MappingRegistry clone() {
 		MappingRegistry result = new MappingRegistry();
 		result.blockToId = (HashMap<Block, Integer>) blockToId.clone();
-		result.idToBlock = (HashMap<Integer, Block>) idToBlock.clone();
+		result.idToBlock = (ArrayList<Block>) idToBlock.clone();
 		result.itemToId = (HashMap<Item, Integer>) itemToId.clone();
-		result.idToItem = (HashMap<Integer, Item>) idToItem.clone();
+		result.idToItem = (ArrayList<Item>) idToItem.clone();
 
 		return result;
 	}

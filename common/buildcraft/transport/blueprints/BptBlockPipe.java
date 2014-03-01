@@ -68,6 +68,10 @@ public class BptBlockPipe extends BptBlock {
 		slot.cpt.setInteger("x", slot.x);
 		slot.cpt.setInteger("y", slot.y);
 		slot.cpt.setInteger("z", slot.z);
+		slot.cpt.setInteger(
+				"pipeId",
+				Item.getIdFromItem(context.getMappingRegistry().getItemForId(
+						slot.cpt.getInteger("pipeId"))));
 
 		context.world().setBlock(slot.x, slot.y, slot.z, slot.block);
 		context.world().setBlockMetadataWithNotify(slot.x, slot.y, slot.z, slot.meta, 0);
@@ -82,12 +86,13 @@ public class BptBlockPipe extends BptBlock {
 		Pipe pipe = BlockGenericPipe.getPipe(context.world(), x, y, z);
 
 		if (BlockGenericPipe.isValid(pipe)) {
-			slot.cpt.setInteger("pipeId", context.getMappingRegistry()
-					.getIdForItem(pipe.item));
-
 			slot.storedRequirements.addAll(pipe.computeItemDrop ());
 
 			tile.writeToNBT(slot.cpt);
+
+			// This overrides the default pipeId
+			slot.cpt.setInteger("pipeId", context.getMappingRegistry()
+					.getIdForItem(pipe.item));
 		}
 	}
 
