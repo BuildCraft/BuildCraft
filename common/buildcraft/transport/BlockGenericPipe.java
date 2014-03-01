@@ -292,16 +292,19 @@ public class BlockGenericPipe extends BlockBuildCraft {
 		TileEntity pipeTileEntity = world.getTileEntity(x, y, z);
 
 		TileGenericPipe tileG = null;
-		if (pipeTileEntity instanceof TileGenericPipe)
+		if (pipeTileEntity instanceof TileGenericPipe) {
 			tileG = (TileGenericPipe) pipeTileEntity;
+		}
 
-		if (tileG == null)
+		if (tileG == null) {
 			return null;
+		}
 
 		Pipe pipe = tileG.pipe;
 
-		if (!isValid(pipe))
+		if (!isValid(pipe)) {
 			return null;
+		}
 
 		/**
 		 * pipe hits along x, y, and z axis, gate (all 6 sides) [and
@@ -381,8 +384,9 @@ public class BlockGenericPipe extends BlockBuildCraft {
 
 		for (int i = 0; i < hits.length; i++) {
 			MovingObjectPosition hit = hits[i];
-			if (hit == null)
+			if (hit == null) {
 				continue;
+			}
 
 			double lengthSquared = hit.hitVec.squareDistanceTo(origin);
 
@@ -512,8 +516,9 @@ public class BlockGenericPipe extends BlockBuildCraft {
 	}
 
 	public static void removePipe(Pipe pipe) {
-		if (pipe == null)
+		if (pipe == null) {
 			return;
+		}
 
 		if (isValid(pipe)) {
 			pipe.onBlockRemoval();
@@ -521,8 +526,9 @@ public class BlockGenericPipe extends BlockBuildCraft {
 
 		World world = pipe.container.getWorldObj();
 
-		if (world == null)
+		if (world == null) {
 			return;
+		}
 
 		int x = pipe.container.xCoord;
 		int y = pipe.container.yCoord;
@@ -547,8 +553,9 @@ public class BlockGenericPipe extends BlockBuildCraft {
 	@Override
 	public ArrayList<ItemStack> getDrops(World world, int x, int y, int z, int metadata, int fortune) {
 
-		if (world.isRemote)
+		if (world.isRemote) {
 			return null;
+		}
 
 		ArrayList<ItemStack> list = new ArrayList<ItemStack>();
 
@@ -578,8 +585,9 @@ public class BlockGenericPipe extends BlockBuildCraft {
 	@Override
 	public void dropBlockAsItemWithChance(World world, int i, int j, int k, int l, float f, int dmg) {
 
-		if (world.isRemote)
+		if (world.isRemote) {
 			return;
+		}
 
 		int i1 = quantityDropped(world.rand);
 		for (int j1 = 0; j1 < i1; j1++) {
@@ -689,20 +697,21 @@ public class BlockGenericPipe extends BlockBuildCraft {
 			// Right click while sneaking with empty hand to strip equipment
 			// from the pipe.
 			if (player.isSneaking() && currentItem == null) {
-				if (stripEquipment(world, x, y, z, player, pipe))
+				if (stripEquipment(world, x, y, z, player, pipe)) {
 					return true;
+				}
 			} else if (currentItem == null) {
 				// Fall through the end of the test
-			} else if (currentItem.getItem() == Items.sign)
+			} else if (currentItem.getItem() == Items.sign) {
 				// Sign will be placed anyway, so lets show the sign gui
 				return false;
-			else if (currentItem.getItem() instanceof ItemPipe)
+			} else if (currentItem.getItem() instanceof ItemPipe) {
 				return false;
-			else if (currentItem.getItem() instanceof IToolWrench)
+			} else if (currentItem.getItem() instanceof IToolWrench) {
 				// Only check the instance at this point. Call the IToolWrench
 				// interface callbacks for the individual pipe/logic calls
 				return pipe.blockActivated(player);
-			else if (PipeWire.RED.isPipeWire(currentItem)) {
+			} else if (PipeWire.RED.isPipeWire(currentItem)) {
 				if (addOrStripWire(player, pipe, PipeWire.RED)) {
 					return true;
 				}
@@ -775,21 +784,24 @@ public class BlockGenericPipe extends BlockBuildCraft {
 			if (clickedOnGate) {
 				pipe.gate.openGui(player);
 				return true;
-			} else
+			} else {
 				return pipe.blockActivated(player);
+			}
 		}
 
 		return false;
 	}
 
 	private boolean addOrStripGate(World world, int x, int y, int z, EntityPlayer player, Pipe pipe) {
-		if (addGate(player, pipe))
+		if (addGate(player, pipe)) {
 			return true;
+		}
 		if (player.isSneaking()) {
 			RaytraceResult rayTraceResult = doRayTrace(world, x, y, z, player);
 			if (rayTraceResult != null && rayTraceResult.hitPart == Part.Gate) {
-				if (stripGate(pipe))
+				if (stripGate(pipe)) {
 					return true;
+				}
 			}
 		}
 		return false;
@@ -854,13 +866,15 @@ public class BlockGenericPipe extends BlockBuildCraft {
 		RaytraceResult rayTraceResult = doRayTrace(world, x, y, z, player);
 		if (player.isSneaking()) {
 			if (rayTraceResult != null && rayTraceResult.hitPart == Part.Facade) {
-				if (stripFacade(pipe, rayTraceResult.sideHit))
+				if (stripFacade(pipe, rayTraceResult.sideHit)) {
 					return true;
+				}
 			}
 		}
 		if (rayTraceResult != null && (rayTraceResult.hitPart != Part.Facade)) {
-			if (addFacade(player, pipe, rayTraceResult.sideHit != null && rayTraceResult.sideHit != ForgeDirection.UNKNOWN ? rayTraceResult.sideHit : side))
+			if (addFacade(player, pipe, rayTraceResult.sideHit != null && rayTraceResult.sideHit != ForgeDirection.UNKNOWN ? rayTraceResult.sideHit : side)) {
 				return true;
+			}
 		}
 		return false;
 	}
@@ -884,13 +898,15 @@ public class BlockGenericPipe extends BlockBuildCraft {
 		RaytraceResult rayTraceResult = doRayTrace(world, x, y, z, player);
 		if (player.isSneaking()) {
 			if (rayTraceResult != null && rayTraceResult.hitPart == Part.Plug) {
-				if (stripPlug(pipe, rayTraceResult.sideHit))
+				if (stripPlug(pipe, rayTraceResult.sideHit)) {
 					return true;
+				}
 			}
 		}
 		if (rayTraceResult != null && (rayTraceResult.hitPart == Part.Pipe || rayTraceResult.hitPart == Part.Gate)) {
-			if (addPlug(player, pipe, rayTraceResult.sideHit != null && rayTraceResult.sideHit != ForgeDirection.UNKNOWN ? rayTraceResult.sideHit : side))
+			if (addPlug(player, pipe, rayTraceResult.sideHit != null && rayTraceResult.sideHit != ForgeDirection.UNKNOWN ? rayTraceResult.sideHit : side)) {
 				return true;
+			}
 		}
 		return false;
 	}
@@ -899,13 +915,15 @@ public class BlockGenericPipe extends BlockBuildCraft {
 		RaytraceResult rayTraceResult = doRayTrace(world, x, y, z, player);
 		if (player.isSneaking()) {
 			if (rayTraceResult != null && rayTraceResult.hitPart == Part.RobotStation) {
-				if (stripRobotStation(pipe, rayTraceResult.sideHit))
+				if (stripRobotStation(pipe, rayTraceResult.sideHit)) {
 					return true;
+				}
 			}
 		}
 		if (rayTraceResult != null && (rayTraceResult.hitPart == Part.Pipe || rayTraceResult.hitPart == Part.Gate)) {
-			if (addRobotStation(player, pipe, rayTraceResult.sideHit != null && rayTraceResult.sideHit != ForgeDirection.UNKNOWN ? rayTraceResult.sideHit : side))
+			if (addRobotStation(player, pipe, rayTraceResult.sideHit != null && rayTraceResult.sideHit != ForgeDirection.UNKNOWN ? rayTraceResult.sideHit : side)) {
 				return true;
+			}
 		}
 		return false;
 	}
@@ -944,14 +962,16 @@ public class BlockGenericPipe extends BlockBuildCraft {
 		// Try to strip facades first
 		RaytraceResult rayTraceResult = doRayTrace(world, x, y, z, player);
 		if (rayTraceResult != null && rayTraceResult.hitPart == Part.Facade) {
-			if (stripFacade(pipe, rayTraceResult.sideHit))
+			if (stripFacade(pipe, rayTraceResult.sideHit)) {
 				return true;
+			}
 		}
 
 		// Try to strip wires second, starting with yellow.
 		for (PipeWire color : PipeWire.values()) {
-			if (stripWire(pipe, color))
+			if (stripWire(pipe, color)) {
 				return true;
+			}
 		}
 
 		return stripGate(pipe);
@@ -971,10 +991,12 @@ public class BlockGenericPipe extends BlockBuildCraft {
 	@Override
 	public IIcon getIcon(IBlockAccess iblockaccess, int x, int y, int z, int side) {
 		TileEntity tile = iblockaccess.getTileEntity(x, y, z);
-		if (!(tile instanceof TileGenericPipe))
+		if (!(tile instanceof TileGenericPipe)) {
 			return null;
-		if (((TileGenericPipe) tile).renderState.textureArray != null)
+		}
+		if (((TileGenericPipe) tile).renderState.textureArray != null) {
 			return ((TileGenericPipe) tile).renderState.textureArray[side];
+		}
 		return ((TileGenericPipe) tile).renderState.currentTexture;
 	}
 
@@ -993,20 +1015,22 @@ public class BlockGenericPipe extends BlockBuildCraft {
 	public boolean canConnectRedstone(IBlockAccess world, int x, int y, int z, int side) {
 		Pipe pipe = getPipe(world, x, y, z);
 
-		if (isValid(pipe))
+		if (isValid(pipe)) {
 			return pipe.canConnectRedstone();
-		else
+		} else {
 			return false;
+		}
 	}
 
 	@Override
 	public int isProvidingStrongPower(IBlockAccess iblockaccess, int x, int y, int z, int l) {
 		Pipe pipe = getPipe(iblockaccess, x, y, z);
 
-		if (isValid(pipe))
+		if (isValid(pipe)) {
 			return pipe.isPoweringTo(l);
-		else
+		} else {
 			return 0;
+		}
 	}
 
 	@Override
@@ -1018,10 +1042,11 @@ public class BlockGenericPipe extends BlockBuildCraft {
 	public int isProvidingWeakPower(IBlockAccess world, int i, int j, int k, int l) {
 		Pipe pipe = getPipe(world, i, j, k);
 
-		if (isValid(pipe))
+		if (isValid(pipe)) {
 			return pipe.isIndirectlyPoweringTo(l);
-		else
+		} else {
 			return 0;
+		}
 	}
 
 	@SuppressWarnings({"all"})
@@ -1062,9 +1087,9 @@ public class BlockGenericPipe extends BlockBuildCraft {
 
 		try {
 			Class<? extends Pipe> pipe = pipes.get(key);
-			if (pipe != null)
+			if (pipe != null) {
 				return pipe.getConstructor(Item.class).newInstance(key);
-			else {
+			} else {
 				BCLog.logger.warning("Detected pipe with unknown key (" + key + "). Did you remove a buildcraft addon?");
 			}
 
@@ -1163,8 +1188,9 @@ public class BlockGenericPipe extends BlockBuildCraft {
 		int z = target.blockZ;
 
 		Pipe pipe = getPipe(worldObj, x, y, z);
-		if (pipe == null)
+		if (pipe == null) {
 			return false;
+		}
 
 		IIcon icon = pipe.getIconProvider().getIcon(pipe.getIconIndexForItem());
 
@@ -1224,8 +1250,9 @@ public class BlockGenericPipe extends BlockBuildCraft {
 	@Override
 	public boolean addDestroyEffects(World worldObj, int x, int y, int z, int meta, EffectRenderer effectRenderer) {
 		Pipe pipe = getPipe(worldObj, x, y, z);
-		if (pipe == null)
+		if (pipe == null) {
 			return false;
+		}
 
 		IIcon icon = pipe.getIconProvider().getIcon(pipe.getIconIndexForItem());
 
