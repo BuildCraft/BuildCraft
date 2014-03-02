@@ -20,19 +20,18 @@ public class SerializationObject extends ClassSerializer {
 		if (o == null) {
 			data.writeBoolean(false);
 		} else {
+			data.writeBoolean(true);
 			Class realClass = o.getClass();
 
-			ClassMapping delegateMapping;
+			ClassSerializer delegateMapping;
 
 			if (context.classToId.containsKey(realClass.getCanonicalName())) {
 				int index = context.classToId.get(realClass.getCanonicalName()) + 1;
 				data.writeByte(index);
-				delegateMapping = (ClassMapping) context.idToClass
-						.get(index - 1);
+				delegateMapping = context.idToClass.get(index - 1);
 			} else {
 				int index = context.classToId.size() + 1;
-				delegateMapping = (ClassMapping) ClassMapping.get(realClass);
-
+				delegateMapping = ClassMapping.get(realClass);
 				data.writeByte(index);
 				Utils.writeUTF(data, realClass.getCanonicalName());
 				context.classToId.put(realClass.getCanonicalName(),
@@ -40,7 +39,11 @@ public class SerializationObject extends ClassSerializer {
 				context.idToClass.add(delegateMapping);
 			}
 
-			delegateMapping.writeClass(o, data, context);
+			if (delegateMapping instanceof ClassMapping) {
+				((ClassMapping) delegateMapping).writeClass(o, data, context);
+			} else {
+				delegateMapping.write(data, o, context);
+			}
 		}
 	}
 
@@ -54,20 +57,24 @@ public class SerializationObject extends ClassSerializer {
 		} else {
 			int index = data.readByte();
 
-			ClassMapping delegateMapping;
+			ClassSerializer delegateMapping;
 
 			if (context.idToClass.size() < index) {
 				String className = Utils.readUTF(data);
+
 				Class cls = Class.forName(className);
-				delegateMapping = (ClassMapping) ClassMapping.get(cls);
+				delegateMapping = ClassMapping.get(cls);
 
 				context.idToClass.add(ClassMapping.get(cls));
 			} else {
-				delegateMapping = (ClassMapping) context.idToClass
-						.get(index - 1);
+				delegateMapping = context.idToClass.get(index - 1);
 			}
 
-			return delegateMapping.readClass(o, data, context);
+			if (delegateMapping instanceof ClassMapping) {
+				return ((ClassMapping) delegateMapping).readClass(o, data, context);
+			} else {
+				return delegateMapping.read(data, o, context);
+			}
 		}
 	}
 

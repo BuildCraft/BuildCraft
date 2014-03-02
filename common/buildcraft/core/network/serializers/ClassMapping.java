@@ -408,8 +408,8 @@ public class ClassMapping extends ClassSerializer {
 				byte [] arr = (byte []) obj;
 				data.writeInt (arr.length);
 
-				for (int i = 0; i < arr.length; ++i) {
-					data.writeByte(arr [i]);
+				for (byte element : arr) {
+					data.writeByte(element);
 				}
 
 				break;
@@ -418,8 +418,8 @@ public class ClassMapping extends ClassSerializer {
 				float [] arr = (float []) obj;
 				data.writeInt (arr.length);
 
-				for (int i = 0; i < arr.length; ++i) {
-					data.writeFloat(arr [i]);
+				for (float element : arr) {
+					data.writeFloat(element);
 				}
 
 				break;
@@ -428,8 +428,8 @@ public class ClassMapping extends ClassSerializer {
 				double [] arr = (double []) obj;
 				data.writeInt (arr.length);
 
-				for (int i = 0; i < arr.length; ++i) {
-					data.writeDouble(arr [i]);
+				for (double element : arr) {
+					data.writeDouble(element);
 				}
 
 				break;
@@ -438,8 +438,8 @@ public class ClassMapping extends ClassSerializer {
 				short [] arr = (short []) obj;
 				data.writeInt (arr.length);
 
-				for (int i = 0; i < arr.length; ++i) {
-					data.writeShort(arr [i]);
+				for (short element : arr) {
+					data.writeShort(element);
 				}
 
 				break;
@@ -448,8 +448,8 @@ public class ClassMapping extends ClassSerializer {
 				int [] arr = (int []) obj;
 				data.writeInt (arr.length);
 
-				for (int i = 0; i < arr.length; ++i) {
-					data.writeInt(arr [i]);
+				for (int element : arr) {
+					data.writeInt(element);
 				}
 
 				break;
@@ -458,8 +458,8 @@ public class ClassMapping extends ClassSerializer {
 				boolean [] arr = (boolean []) obj;
 				data.writeInt (arr.length);
 
-				for (int i = 0; i < arr.length; ++i) {
-					data.writeBoolean(arr [i]);
+				for (boolean element : arr) {
+					data.writeBoolean(element);
 				}
 
 				break;
@@ -468,8 +468,8 @@ public class ClassMapping extends ClassSerializer {
 				Object [] arr = (Object []) obj;
 				data.writeInt (arr.length);
 
-				for (int i = 0; i < arr.length; ++i) {
-					cptMapping.write(data, arr [i], context);
+				for (Object element : arr) {
+					cptMapping.write(data, element, context);
 				}
 
 				break;
