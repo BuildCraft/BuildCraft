@@ -14,11 +14,13 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.TreeMap;
 
 import net.minecraft.block.Block;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import buildcraft.core.network.NetworkData;
@@ -62,7 +64,7 @@ import buildcraft.core.utils.Utils;
  */
 public class ClassMapping extends ClassSerializer {
 
-	private static SerializationObject anonymousSerializer = new SerializationObject();
+	private static SerializerObject anonymousSerializer = new SerializerObject();
 
 	private LinkedList<Field> floatFields = new LinkedList<Field>();
 	private LinkedList<Field> doubleFields = new LinkedList<Field>();
@@ -71,6 +73,7 @@ public class ClassMapping extends ClassSerializer {
 	private LinkedList<Field> booleanFields = new LinkedList<Field>();
 	private LinkedList<Field> enumFields = new LinkedList<Field>();
 
+	// TODO: Make a specific serializer for this one
 	private LinkedList<Field> arrayListFields = new LinkedList<Field>();
 
 	class FieldObject {
@@ -616,7 +619,11 @@ public class ClassMapping extends ClassSerializer {
 	public static ClassSerializer get (Class clas) {
 		ClassSerializer mapping;
 
-		if (!classes.containsKey(clas.getCanonicalName())) {
+		if (Block.class.isAssignableFrom(clas)) {
+			mapping = classes.get(Block.class.getCanonicalName());
+		} else if (Item.class.isAssignableFrom(clas)) {
+			mapping = classes.get(Item.class.getCanonicalName());
+		} else if (!classes.containsKey(clas.getCanonicalName())) {
 			mapping = new ClassMapping ();
 			registerSerializer(clas, mapping);
 			((ClassMapping) mapping).analyzeClass(clas);
@@ -629,8 +636,11 @@ public class ClassMapping extends ClassSerializer {
 
 	static {
 		registerSerializer(String.class, new SerializerString());
+		registerSerializer(HashMap.class, new SerializerHashMap());
 		registerSerializer(Block.class, new SerializerBlock());
+		registerSerializer(Item.class, new SerializerItem());
 		registerSerializer(NBTTagCompound.class, new SerializerNBT());
 		registerSerializer(ItemStack.class, new SerializerItemStack());
+		registerSerializer(Integer.class, new SerializerInteger());
 	}
 }

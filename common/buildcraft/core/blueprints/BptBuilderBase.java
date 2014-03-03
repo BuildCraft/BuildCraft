@@ -19,7 +19,7 @@ public abstract class BptBuilderBase implements IAreaProvider {
 	public BlueprintBase blueprint;
 	int x, y, z;
 	public boolean done;
-	protected BptContext context;
+	public BptContext context;
 
 	public BptBuilderBase(BlueprintBase bluePrint, World world, int x, int y, int z) {
 		this.blueprint = bluePrint;

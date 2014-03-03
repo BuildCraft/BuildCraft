@@ -41,8 +41,8 @@ public class BptBlockPipe extends BptBlock {
 		Pipe pipe = BlockGenericPipe.getPipe(context.world(), slot.x, slot.y, slot.z);
 
 		if (BlockGenericPipe.isValid(pipe)) {
-			return pipe.item == Item.itemRegistry.getObjectById(slot.cpt
-					.getInteger("pipeId"));
+			return pipe.item == context.getMappingRegistry().getItemForId(
+					slot.cpt.getInteger("pipeId"));
 		} else {
 			return false;
 		}
@@ -73,8 +73,7 @@ public class BptBlockPipe extends BptBlock {
 				Item.getIdFromItem(context.getMappingRegistry().getItemForId(
 						slot.cpt.getInteger("pipeId"))));
 
-		context.world().setBlock(slot.x, slot.y, slot.z, slot.block);
-		context.world().setBlockMetadataWithNotify(slot.x, slot.y, slot.z, slot.meta, 0);
+		context.world().setBlock(slot.x, slot.y, slot.z, slot.block, slot.meta, 3);
 
 		TileEntity tile = context.world().getTileEntity(slot.x, slot.y, slot.z);
 		tile.readFromNBT(slot.cpt);

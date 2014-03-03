@@ -20,7 +20,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.BuildCraftBuilders;
-import buildcraft.api.blueprints.IBptContext;
 import buildcraft.api.gates.IAction;
 import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.power.PowerHandler;
@@ -283,8 +282,6 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory,
 		} else {
 			result = null;
 		}
-
-		debugForceBlueprintCompletion(result, context);
 
 		return result;
 	}
@@ -560,6 +557,10 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory,
 			builderRobot.setDead();
 			builderRobot = null;
 		}
+
+		if (!worldObj.isRemote) {
+			debugForceBlueprintCompletion();
+		}
 	}
 
 	@Override
@@ -634,15 +635,13 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory,
 		return powerHandler.getPowerReceiver();
 	}
 
-	public void debugForceBlueprintCompletion (BptBuilderBase builder, IBptContext context) {
-		while (true) {
-			BptSlot slot = builder.getNextBlock(worldObj, this);
+	public void debugForceBlueprintCompletion () {
+		if (bluePrintBuilder != null) {
+			BptSlot slot = bluePrintBuilder.getNextBlock(worldObj, this);
 
-			if (slot == null) {
-				break;
+			if (slot != null) {
+				slot.buildBlock(bluePrintBuilder.context);
 			}
-
-			slot.buildBlock(context);
 		}
 	}
 

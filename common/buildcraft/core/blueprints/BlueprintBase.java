@@ -38,9 +38,8 @@ public abstract class BlueprintBase {
 	@NetworkData
 	public String version = "";
 
-	// This should not need to be synchronized over the network - the
-	// information deduced from it are on the contents nbt
-	protected MappingRegistry mapping = new MappingRegistry();
+	@NetworkData
+	public MappingRegistry mapping = new MappingRegistry();
 
 	public BlueprintBase() {
 	}
@@ -238,10 +237,11 @@ public abstract class BlueprintBase {
 
 		for (int x = 0; x < sizeX; ++x) {
 			for (int y = 0; y < sizeY; ++y) {
-				for (int z = 0; z < sizeZ; ++z)
+				for (int z = 0; z < sizeZ; ++z) {
 					if (contents[x][y][z] != null) {
 						res.contents[x][y][z] = contents[x][y][z].clone();
 					}
+				}
 			}
 		}
 

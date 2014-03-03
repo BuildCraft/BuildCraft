@@ -15,15 +15,22 @@ import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import buildcraft.core.network.NetworkData;
 import buildcraft.core.utils.Utils;
 
 public class MappingRegistry {
 
-	private HashMap <Block, Integer> blockToId = new HashMap<Block, Integer>();
-	private ArrayList <Block> idToBlock = new ArrayList<Block>();
+	@NetworkData
+	public HashMap <Block, Integer> blockToId = new HashMap<Block, Integer>();
 
-	private HashMap <Item, Integer> itemToId = new HashMap<Item, Integer>();
-	private ArrayList <Item> idToItem = new ArrayList<Item>();
+	@NetworkData
+	public ArrayList <Block> idToBlock = new ArrayList<Block>();
+
+	@NetworkData
+	public HashMap <Item, Integer> itemToId = new HashMap<Item, Integer>();
+
+	@NetworkData
+	public ArrayList <Item> idToItem = new ArrayList<Item>();
 
 	private void registerItem (Item item) {
 		if (!itemToId.containsKey(item)) {
