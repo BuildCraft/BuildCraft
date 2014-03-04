@@ -8,12 +8,14 @@
  */
 package buildcraft.core.blueprints;
 
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
+import buildcraft.api.blueprints.BlueprintManager;
+import buildcraft.api.blueprints.BptBlock;
 import buildcraft.api.blueprints.IBptContext;
-import buildcraft.core.IBptContributor;
 import buildcraft.core.utils.BCLog;
 import buildcraft.core.utils.Utils;
 
@@ -27,22 +29,18 @@ public class Blueprint extends BlueprintBase {
 	}
 
 	public void readFromWorld(IBptContext context, TileEntity anchorTile, int x, int y, int z) {
-		BptSlot slot = new BptSlot();
+		Block block = anchorTile.getWorldObj().getBlock(x, y, z);
+
+		BptBlock slot = BlueprintManager.newSchematic(block);
 
 		slot.x = (int) (x - context.surroundingBox().pMin().x);
 		slot.y = (int) (y - context.surroundingBox().pMin().y);
 		slot.z = (int) (z - context.surroundingBox().pMin().z);
-		slot.block = anchorTile.getWorldObj().getBlock(x, y, z);
+		slot.block = block;
 		slot.meta = anchorTile.getWorldObj().getBlockMetadata(x, y, z);
 
 		if (slot.block instanceof BlockContainer) {
 			TileEntity tile = anchorTile.getWorldObj().getTileEntity(x, y, z);
-
-			if (tile != null && tile instanceof IBptContributor) {
-				IBptContributor contributor = (IBptContributor) tile;
-
-				contributor.saveToBluePrint(anchorTile, this, slot);
-			}
 		}
 
 		try {
@@ -91,7 +89,10 @@ public class Blueprint extends BlueprintBase {
 				for (int z = 0; z < sizeZ; ++z) {
 					NBTTagCompound cpt = nbtContents.getCompoundTagAt(index);
 					index++;
-					contents[x][y][z] = new BptSlot();
+
+					int blockId = cpt.getInteger("blockId");
+
+					contents[x][y][z] = BlueprintManager.newSchematic(mapping.getBlockForId(blockId));
 					contents[x][y][z].readFromNBT(cpt, mapping);
 				}
 			}

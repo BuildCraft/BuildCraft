@@ -3,7 +3,7 @@ package buildcraft.transport.blueprints;
 import java.util.HashMap;
 
 import net.minecraft.item.Item;
-import buildcraft.api.blueprints.BptSlotInfo;
+import buildcraft.api.blueprints.BptBlock;
 import buildcraft.api.blueprints.IBptContext;
 
 public class BptPipeExtension {
@@ -14,11 +14,11 @@ public class BptPipeExtension {
 		bptPipeExtensionRegistry.put(i, this);
 	}
 
-	public void postProcessing(BptSlotInfo slot, IBptContext context) {
+	public void postProcessing(BptBlock slot, IBptContext context) {
 
 	}
 
-	public void rotateLeft(BptSlotInfo slot, IBptContext context) {
+	public void rotateLeft(BptBlock slot, IBptContext context) {
 
 	}
 

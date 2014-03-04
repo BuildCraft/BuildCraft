@@ -8,21 +8,19 @@
  */
 package buildcraft.api.bptblocks;
 
-import net.minecraft.block.Block;
-import buildcraft.api.blueprints.BptSlotInfo;
 import buildcraft.api.blueprints.IBptContext;
 
 public class BptBlockPiston extends BptBlockRotateMeta {
 
-	public BptBlockPiston(Block block) {
-		super(block, new int[] { 2, 5, 3, 4 }, true);
+	public BptBlockPiston() {
+		super(new int[] { 2, 5, 3, 4 }, true);
 	}
 
 	@Override
-	public void buildBlock(BptSlotInfo slot, IBptContext context) {
-		int meta = slot.meta & 7;
+	public void buildBlock(IBptContext context) {
+		int localMeta = meta & 7;
 
-		//context.world().setBlock(slot.x, slot.y, slot.z, slot.blockId, meta,1);
+		context.world().setBlock(x, y, z, block, localMeta, 3);
 	}
 
 }

@@ -10,40 +10,36 @@ package buildcraft.api.bptblocks;
 
 import java.util.LinkedList;
 
-import net.minecraft.block.Block;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.api.blueprints.BptBlock;
-import buildcraft.api.blueprints.BptSlotInfo;
 import buildcraft.api.blueprints.IBptContext;
 
 public class BptBlockSign extends BptBlock {
 
 	boolean isWall;
 
-	public BptBlockSign(Block block, boolean isWall) {
-		super(block);
-
+	public BptBlockSign(boolean isWall) {
 		this.isWall = isWall;
 	}
 
 	@Override
-	public void addRequirements(BptSlotInfo slot, IBptContext context, LinkedList<ItemStack> requirements) {
+	public void addRequirements(IBptContext context, LinkedList<ItemStack> requirements) {
 		requirements.add(new ItemStack(Items.sign));
 	}
 
 	@Override
-	public void rotateLeft(BptSlotInfo slot, IBptContext context) {
+	public void rotateLeft(IBptContext context) {
 		if (!isWall) {
-			double angle = ((slot.meta) * 360.0) / 16.0;
+			double angle = ((meta) * 360.0) / 16.0;
 			angle += 90.0;
 			if (angle >= 360) {
 				angle -= 360;
 			}
-			slot.meta = (int) (angle / 360.0 * 16.0);
+			meta = (int) (angle / 360.0 * 16.0);
 		} else {
-			slot.meta = ForgeDirection.values()[slot.meta].getRotation(ForgeDirection.UP).ordinal();
+			meta = ForgeDirection.values()[meta].getRotation(ForgeDirection.UP).ordinal();
 		}
 	}
 }

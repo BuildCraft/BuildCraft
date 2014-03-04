@@ -37,11 +37,11 @@ public class SchematicBlueprint {
 	public BlueprintMeta meta;
 
 	@NetworkData
-	public Schematic[][][] schematics;
+	public SchematicOld[][][] schematics;
 
 	// TODO: Save this somewhere, this is the sequence in which blocks are
 	// ordered to be build
-	public ArrayList<Schematic> schematicSequence = new ArrayList<Schematic>();
+	public ArrayList<SchematicOld> schematicSequence = new ArrayList<SchematicOld>();
 
 	@NetworkData
 	public int sizeX, sizeY, sizeZ;
@@ -72,7 +72,7 @@ public class SchematicBlueprint {
 		this.sizeY = sizeY;
 		this.sizeZ = sizeZ;
 
-		schematics = new Schematic[sizeX][sizeY][sizeZ];
+		schematics = new SchematicOld[sizeX][sizeY][sizeZ];
 	}
 
 	public SchematicBlueprint(BlueprintMeta meta, int sizeX, int sizeY, int sizeZ) {
@@ -82,7 +82,7 @@ public class SchematicBlueprint {
 		this.sizeY = sizeY;
 		this.sizeZ = sizeZ;
 
-		schematics = new Schematic[sizeX][sizeY][sizeZ];
+		schematics = new SchematicOld[sizeX][sizeY][sizeZ];
 	}
 
 	protected SchematicBlueprint(BlueprintMeta meta, NBTTagCompound nbt) {
@@ -100,7 +100,7 @@ public class SchematicBlueprint {
 		
 		for (int i = 0; i < blockList.tagCount(); i++) {
 			NBTTagCompound blockNBT = (NBTTagCompound) blockList.getCompoundTagAt(i);
-			Schematic schematic = Schematic.createSchematicFromNBT(blockNBT);
+			SchematicOld schematic = SchematicOld.createSchematicFromNBT(blockNBT);
 			schematics[schematic.x][schematic.y][schematic.z] = schematic;
 		}
 	}
@@ -139,7 +139,7 @@ public class SchematicBlueprint {
 		meta.setCreator(creator);
 	}
 
-	public void setSchematic(int x, int y, int z, Schematic schematic) {
+	public void setSchematic(int x, int y, int z, SchematicOld schematic) {
 		schematic.x = x;
 		schematic.y = y;
 		schematic.z = z;
@@ -151,7 +151,7 @@ public class SchematicBlueprint {
 		BlockHandler handler = BlockHandler.get(block);
 		try {
 			if (handler.canSaveToSchematic(world, x, y, z)) {
-				Schematic schematic = BlockSchematic.create(block);
+				SchematicOld schematic = BlockSchematic.create(block);
 				handler.saveToSchematic(world, x, y, z, schematic.data);
 				setSchematic(x, y, z, schematic);
 			}
@@ -168,7 +168,7 @@ public class SchematicBlueprint {
 		BlockHandler handler = BlockHandler.get(item.getItem());
 		try {
 			if (handler.canSaveToSchematic(item)) {
-				Schematic schematic = ItemSchematic.create(item.getItem());
+				SchematicOld schematic = ItemSchematic.create(item.getItem());
 				handler.saveToSchematic(item, schematic.data);
 				setSchematic(x, y, z, schematic);
 			}
@@ -196,7 +196,7 @@ public class SchematicBlueprint {
 		setSchematic(x, y, z, schematic);
 	}
 
-	public Schematic getBlock(int x, int y, int z) {
+	public SchematicOld getBlock(int x, int y, int z) {
 		return schematics[x][y][z];
 	}
 
@@ -209,8 +209,8 @@ public class SchematicBlueprint {
 	 *
 	 * @return List<BlockScematic>
 	 */
-	public LinkedList<Schematic> getBuildList() {
-		LinkedList<Schematic> list = new LinkedList<Schematic>();
+	public LinkedList<SchematicOld> getBuildList() {
+		LinkedList<SchematicOld> list = new LinkedList<SchematicOld>();
 
 		for (int y = 0; y < sizeY; y++) {
 			for (int x = 0; x < sizeX; x++) {
@@ -228,7 +228,7 @@ public class SchematicBlueprint {
 		if (costs != null)
 			return costs;
 		List<ItemStack> stacks = new ArrayList<ItemStack>();
-		for (Schematic schematic : getBuildList()) {
+		for (SchematicOld schematic : getBuildList()) {
 			BlockHandler handler = BlockHandler.get(schematic.id);
 			List<ItemStack> requirements = handler.getCostForSchematic(schematic.data);
 			for (ItemStack newStack : requirements) {

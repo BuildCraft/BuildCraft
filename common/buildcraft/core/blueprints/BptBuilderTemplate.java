@@ -8,16 +8,17 @@
  */
 package buildcraft.core.blueprints;
 
-import buildcraft.core.IBuilderInventory;
-import buildcraft.core.blueprints.BptSlot.Mode;
 import java.util.LinkedList;
-import net.minecraft.item.ItemStack;
+
 import net.minecraft.world.World;
+import buildcraft.api.blueprints.BptBlock;
+import buildcraft.api.blueprints.BptBlock.Mode;
+import buildcraft.core.IBuilderInventory;
 
 public class BptBuilderTemplate extends BptBuilderBase {
 
-	LinkedList<BptSlot> clearList = new LinkedList<BptSlot>();
-	LinkedList<BptSlot> buildList = new LinkedList<BptSlot>();
+	LinkedList<BptBlock> clearList = new LinkedList<BptBlock>();
+	LinkedList<BptBlock> buildList = new LinkedList<BptBlock>();
 
 	public BptBuilderTemplate(BlueprintBase bluePrint, World world, int x, int y, int z) {
 		super(bluePrint, world, x, y, z);
@@ -29,10 +30,10 @@ public class BptBuilderTemplate extends BptBuilderBase {
 					int yCoord = j + y - bluePrint.anchorY;
 					int zCoord = k + z - bluePrint.anchorZ;
 
-					BptSlot slot = bluePrint.contents[i][j][k];
+					BptBlock slot = bluePrint.contents[i][j][k];
 
 					if (slot == null || slot.block == null) {
-						slot = new BptSlot();
+						slot = new BptBlock();
 						slot.meta = 0;
 						slot.block = null;
 						slot.x = xCoord;
@@ -54,12 +55,12 @@ public class BptBuilderTemplate extends BptBuilderBase {
 					int yCoord = j + y - bluePrint.anchorY;
 					int zCoord = k + z - bluePrint.anchorZ;
 
-					BptSlot slot = bluePrint.contents[i][j][k];
+					BptBlock slot = bluePrint.contents[i][j][k];
 
 					if (slot != null) {
 						slot = slot.clone();
 					} else {
-						slot = new BptSlot();
+						slot = new BptBlock();
 						slot.meta = 0;
 						slot.block = null;
 					}
@@ -87,25 +88,27 @@ public class BptBuilderTemplate extends BptBuilderBase {
 	}
 
 	@Override
-	public BptSlot getNextBlock(World world, IBuilderInventory inv) {
+	public BptBlock getNextBlock(World world, IBuilderInventory inv) {
 		if (clearList.size() != 0) {
-			BptSlot slot = internalGetNextBlock(world, inv, clearList);
+			BptBlock slot = internalGetNextBlock(world, inv, clearList);
 			checkDone();
 
-			if (slot != null)
+			if (slot != null) {
 				return slot;
-			else
+			} else {
 				return null;
+			}
 		}
 
 		if (buildList.size() != 0) {
-			BptSlot slot = internalGetNextBlock(world, inv, buildList);
+			BptBlock slot = internalGetNextBlock(world, inv, buildList);
 			checkDone();
 
-			if (slot != null)
+			if (slot != null) {
 				return slot;
-			else
+			} else {
 				return null;
+			}
 		}
 
 		checkDone();
@@ -113,11 +116,11 @@ public class BptBuilderTemplate extends BptBuilderBase {
 		return null;
 	}
 
-	public BptSlot internalGetNextBlock(World world, IBuilderInventory inv, LinkedList<BptSlot> list) {
-		BptSlot result = null;
+	public BptBlock internalGetNextBlock(World world, IBuilderInventory inv, LinkedList<BptBlock> list) {
+		BptBlock result = null;
 
 		while (list.size() > 0) {
-			BptSlot slot = list.getFirst();
+			BptBlock slot = list.getFirst();
 
 			// Note from CJ: I have no idea what this code is supposed to do, so I'm not touching it.
 			/*if (slot.blockId == world.getBlockId(slot.x, slot.y, slot.z)) {

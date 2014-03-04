@@ -8,24 +8,17 @@
  */
 package buildcraft.api.bptblocks;
 
-import net.minecraft.block.Block;
 import net.minecraft.inventory.IInventory;
 import buildcraft.api.blueprints.BptBlock;
-import buildcraft.api.blueprints.BptSlotInfo;
 import buildcraft.api.blueprints.IBptContext;
 
 public class BptBlockInventory extends BptBlock {
 
-	public BptBlockInventory(Block block) {
-		super(block);
-
-	}
-
 	@Override
-	public void buildBlock(BptSlotInfo slot, IBptContext context) {
-		super.buildBlock(slot, context);
+	public void buildBlock(IBptContext context) {
+		super.buildBlock(context);
 
-		IInventory inv = (IInventory) context.world().getTileEntity(slot.x, slot.y, slot.z);
+		IInventory inv = (IInventory) context.world().getTileEntity(x, y, z);
 
 		for (int i = 0; i < inv.getSizeInventory(); ++i) {
 			inv.setInventorySlotContents(i, null);

@@ -11,7 +11,7 @@ package buildcraft.builders.blueprints;
 import buildcraft.api.builder.BlockHandler;
 import net.minecraft.nbt.NBTTagCompound;
 
-public final class MaskSchematic extends Schematic {
+public final class MaskSchematic extends SchematicOld {
 
 	private static MaskHandler handler = new MaskHandler();
 

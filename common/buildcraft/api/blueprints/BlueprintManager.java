@@ -8,23 +8,54 @@
  */
 package buildcraft.api.blueprints;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 
 import net.minecraft.block.Block;
 
 public class BlueprintManager {
 
-	private static final HashMap <Block, BptBlock> bptBlockRegistry = new HashMap<Block, BptBlock>();
-
-	public static void registerBptBlock (Block block, BptBlock bptBlock) {
-		bptBlockRegistry.put(block, bptBlock);
+	private static class SchematicConstructor {
+		Class clas;
+		Object [] params;
 	}
 
-	public static BptBlock getBptBlock (Block block) {
-		if (!bptBlockRegistry.containsKey(block)) {
-			registerBptBlock(block, new BptBlock(block));
+	private static final HashMap <Block, SchematicConstructor> schematicClasses =
+			new HashMap<Block, SchematicConstructor>();
+
+	public static void registerSchematicClass (Block block, Class clas, Object ... params) {
+		SchematicConstructor c = new SchematicConstructor ();
+		c.clas = clas;
+		c.params = params;
+
+		schematicClasses.put(block, c);
+	}
+
+	public static BptBlock newSchematic (Block block) {
+		if (!schematicClasses.containsKey(block)) {
+			registerSchematicClass(block, BptBlock.class);
 		}
 
-		return bptBlockRegistry.get(block);
+		try {
+			SchematicConstructor c = schematicClasses.get(block);
+			return (BptBlock) c.clas.getConstructors() [0].newInstance(c.params);
+		} catch (InstantiationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SecurityException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return null;
 	}
 }

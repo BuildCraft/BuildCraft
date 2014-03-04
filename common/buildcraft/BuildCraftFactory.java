@@ -22,6 +22,7 @@ import net.minecraftforge.common.ForgeChunkManager.Ticket;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
+import buildcraft.api.blueprints.BlueprintManager;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.InterModComms;
 import buildcraft.core.Version;
@@ -145,10 +146,10 @@ public class BuildCraftFactory extends BuildCraftMod {
 
 		FactoryProxy.proxy.initializeTileEntities();
 
-		new BptBlockAutoWorkbench(autoWorkbenchBlock);
-		new BptBlockFrame(frameBlock);
-		new BptBlockRefinery(refineryBlock);
-		new BptBlockTank(tankBlock);
+		BlueprintManager.registerSchematicClass(autoWorkbenchBlock, BptBlockAutoWorkbench.class);
+		BlueprintManager.registerSchematicClass(frameBlock, BptBlockFrame.class);
+		BlueprintManager.registerSchematicClass(refineryBlock, BptBlockRefinery.class);
+		BlueprintManager.registerSchematicClass(tankBlock, BptBlockTank.class);
 
 		if (BuildCraftCore.loadDefaultRecipes) {
 			loadRecipes();

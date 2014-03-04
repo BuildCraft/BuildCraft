@@ -21,6 +21,7 @@ import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.oredict.RecipeSorter;
+import buildcraft.api.blueprints.BlueprintManager;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.gates.ActionManager;
 import buildcraft.api.gates.GateExpansions;
@@ -429,7 +430,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 
 		TransportProxy.proxy.registerTileEntities();
 
-		new BptBlockPipe(genericPipeBlock);
+		BlueprintManager.registerSchematicClass(genericPipeBlock, BptBlockPipe.class);
 
 		new BptPipeIron(pipeItemsIron);
 		new BptPipeIron(pipeFluidsIron);

@@ -24,6 +24,7 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
+import buildcraft.api.blueprints.BlueprintManager;
 import buildcraft.api.fuels.IronEngineCoolant;
 import buildcraft.api.fuels.IronEngineFuel;
 import buildcraft.api.recipes.BuildcraftRecipes;
@@ -250,7 +251,7 @@ public class BuildCraftEnergy extends BuildCraftMod {
 
 		NetworkRegistry.INSTANCE.registerGuiHandler(instance, new GuiHandler());
 
-		new BptBlockEngine(engineBlock);
+		BlueprintManager.registerSchematicClass(engineBlock, BptBlockEngine.class);
 
 		if (BuildCraftCore.loadDefaultRecipes) {
 			loadRecipes();

@@ -11,6 +11,8 @@ package buildcraft.core.blueprints;
 import net.minecraft.block.Block;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
+import buildcraft.api.blueprints.BlueprintManager;
+import buildcraft.api.blueprints.BptBlock;
 import buildcraft.api.blueprints.MappingRegistry;
 import buildcraft.builders.blueprints.BlueprintId;
 import buildcraft.core.Box;
@@ -21,7 +23,7 @@ import buildcraft.core.utils.BCLog;
 public abstract class BlueprintBase {
 
 	@NetworkData
-	public BptSlot contents[][][];
+	public BptBlock contents[][][];
 
 	@NetworkData
 	public int anchorX, anchorY, anchorZ;
@@ -45,7 +47,7 @@ public abstract class BlueprintBase {
 	}
 
 	public BlueprintBase(int sizeX, int sizeY, int sizeZ) {
-		contents = new BptSlot[sizeX][sizeY][sizeZ];
+		contents = new BptBlock[sizeX][sizeY][sizeZ];
 
 		this.sizeX = sizeX;
 		this.sizeY = sizeY;
@@ -58,7 +60,7 @@ public abstract class BlueprintBase {
 
 	public void setBlock(int x, int y, int z, Block block) {
 		if (contents[x][y][z] == null) {
-			contents[x][y][z] = new BptSlot();
+			contents[x][y][z] = BlueprintManager.newSchematic(block);
 			contents[x][y][z].x = x;
 			contents[x][y][z].y = y;
 			contents[x][y][z].z = z;
@@ -68,7 +70,7 @@ public abstract class BlueprintBase {
 	}
 
 	public void rotateLeft(BptContext context) {
-		BptSlot newContents[][][] = new BptSlot[sizeZ][sizeY][sizeX];
+		BptBlock newContents[][][] = new BptBlock[sizeZ][sizeY][sizeX];
 
 		for (int x = 0; x < sizeZ; ++x) {
 			for (int y = 0; y < sizeY; ++y) {
@@ -159,7 +161,7 @@ public abstract class BlueprintBase {
 
 		author = nbt.getString("author");
 
-		contents = new BptSlot [sizeX][sizeY][sizeZ];
+		contents = new BptBlock [sizeX][sizeY][sizeZ];
 
 		try {
 			loadContents (nbt);
@@ -231,7 +233,7 @@ public abstract class BlueprintBase {
 		res.id = id;
 		res.author = author;
 
-		res.contents = new BptSlot[sizeX][sizeY][sizeZ];
+		res.contents = new BptBlock[sizeX][sizeY][sizeZ];
 
 		res.mapping = mapping.clone ();
 

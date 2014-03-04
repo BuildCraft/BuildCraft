@@ -10,29 +10,23 @@ package buildcraft.api.bptblocks;
 
 import java.util.LinkedList;
 
-import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
-import buildcraft.api.blueprints.BptSlotInfo;
 import buildcraft.api.blueprints.IBptContext;
 
 public class BptBlockLever extends BptBlockWallSide {
 
-	public BptBlockLever(Block block) {
-		super(block);
-	}
-
 	@Override
-	public void addRequirements(BptSlotInfo slot, IBptContext context, LinkedList<ItemStack> requirements) {
+	public void addRequirements(IBptContext context, LinkedList<ItemStack> requirements) {
 		//requirements.add(new ItemStack(slot.blockId, 1, 0));
 	}
 
 	@Override
-	public void rotateLeft(BptSlotInfo slot, IBptContext context) {
-		int status = slot.meta - (slot.meta & 7);
+	public void rotateLeft(IBptContext context) {
+		int status = meta - (meta & 7);
 
-		slot.meta -= status;
-		super.rotateLeft(slot, context);
-		slot.meta += status;
+		meta -= status;
+		super.rotateLeft(context);
+		meta += status;
 
 	}
 }

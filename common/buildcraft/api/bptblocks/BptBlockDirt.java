@@ -14,28 +14,23 @@ import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import buildcraft.api.blueprints.BptBlock;
-import buildcraft.api.blueprints.BptSlotInfo;
 import buildcraft.api.blueprints.IBptContext;
 
 public class BptBlockDirt extends BptBlock {
 
-	public BptBlockDirt(Block block) {
-		super(block);
-	}
-
 	@Override
-	public void addRequirements(BptSlotInfo slot, IBptContext context, LinkedList<ItemStack> requirements) {
+	public void addRequirements(IBptContext context, LinkedList<ItemStack> requirements) {
 		requirements.add(new ItemStack(Blocks.dirt));
 	}
 
 	@Override
-	public void buildBlock(BptSlotInfo slot, IBptContext context) {
-		context.world().setBlock(slot.x, slot.y, slot.z, Blocks.dirt, slot.meta,1);
+	public void buildBlock(IBptContext context) {
+		context.world().setBlock(x, y, z, Blocks.dirt, meta, 3);
 	}
 
 	@Override
-	public boolean isValid(BptSlotInfo slot, IBptContext context) {
-		Block block = context.world().getBlock(slot.x, slot.y, slot.z);
+	public boolean isValid(IBptContext context) {
+		Block block = context.world().getBlock(x, y, z);
 
 		return block == Blocks.dirt || block == Blocks.grass || block == Blocks.farmland;
 	}

@@ -33,7 +33,7 @@ public class BlueprintBuilder implements IAreaProvider {
 		this.y = y - blueprint.anchorY;
 		this.z = translateZ(z, -blueprint.anchorX, -blueprint.anchorZ);
 		builders = new ArrayList<SchematicBuilder>(blueprint.schematicSequence.size());
-		for (Schematic schematic : blueprint.schematicSequence) {
+		for (SchematicOld schematic : blueprint.schematicSequence) {
 			BlockHandler handler = schematic.getHandler();
 			if (handler != null) {
 				builders.add(new SchematicBuilder(schematic, handler));
@@ -107,11 +107,11 @@ public class BlueprintBuilder implements IAreaProvider {
 
 	public class SchematicBuilder {
 
-		public final Schematic schematic;
+		public final SchematicOld schematic;
 		public final BlockHandler handler;
 		private boolean complete;
 
-		private SchematicBuilder(Schematic schematic, BlockHandler handler) {
+		private SchematicBuilder(SchematicOld schematic, BlockHandler handler) {
 			this.schematic = schematic;
 			this.handler = handler;
 		}

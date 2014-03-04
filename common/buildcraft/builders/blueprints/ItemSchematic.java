@@ -12,7 +12,7 @@ import buildcraft.api.builder.BlockHandler;
 import net.minecraft.item.Item;
 import net.minecraft.nbt.NBTTagCompound;
 
-public final class ItemSchematic extends Schematic {
+public final class ItemSchematic extends SchematicOld {
 
 	public static ItemSchematic create(NBTTagCompound nbt) {
 		return null;

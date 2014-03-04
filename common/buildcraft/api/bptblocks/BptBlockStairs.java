@@ -10,42 +10,36 @@ package buildcraft.api.bptblocks;
 
 import java.util.LinkedList;
 
-import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import buildcraft.api.blueprints.BptBlock;
-import buildcraft.api.blueprints.BptSlotInfo;
 import buildcraft.api.blueprints.IBptContext;
 
 public class BptBlockStairs extends BptBlock {
 
-	public BptBlockStairs(Block block) {
-		super(block);
+	@Override
+	public void addRequirements(IBptContext context, LinkedList<ItemStack> requirements) {
+		requirements.add(new ItemStack(block, 1, 0));
 	}
 
 	@Override
-	public void addRequirements(BptSlotInfo slot, IBptContext context, LinkedList<ItemStack> requirements) {
-		requirements.add(new ItemStack(slot.block, 1, 0));
+	public boolean isValid(IBptContext context) {
+		return block == context.world().getBlock(x, y, z);
 	}
 
 	@Override
-	public boolean isValid(BptSlotInfo slot, IBptContext context) {
-		return slot.block == context.world().getBlock(slot.x, slot.y, slot.z);
-	}
-
-	@Override
-	public void rotateLeft(BptSlotInfo slot, IBptContext context) {
-		switch (slot.meta) {
+	public void rotateLeft(IBptContext context) {
+		switch (meta) {
 		case 0:
-			slot.meta = 2;
+			meta = 2;
 			break;
 		case 1:
-			slot.meta = 3;
+			meta = 3;
 			break;
 		case 2:
-			slot.meta = 1;
+			meta = 1;
 			break;
 		case 3:
-			slot.meta = 0;
+			meta = 0;
 			break;
 		}
 	}

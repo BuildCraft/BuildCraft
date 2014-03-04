@@ -10,40 +10,34 @@ package buildcraft.api.bptblocks;
 
 import java.util.LinkedList;
 
-import net.minecraft.block.Block;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import buildcraft.api.blueprints.BptBlock;
-import buildcraft.api.blueprints.BptSlotInfo;
 import buildcraft.api.blueprints.IBptContext;
 
 public class BptBlockRedstoneRepeater extends BptBlock {
 
-	public BptBlockRedstoneRepeater(Block block) {
-		super(block);
-	}
-
 	@Override
-	public void addRequirements(BptSlotInfo slot, IBptContext context, LinkedList<ItemStack> requirements) {
+	public void addRequirements(IBptContext context, LinkedList<ItemStack> requirements) {
 		requirements.add(new ItemStack(Items.repeater));
 	}
 
 	@Override
-	public void rotateLeft(BptSlotInfo slot, IBptContext context) {
-		int step = slot.meta - (slot.meta & 3);
+	public void rotateLeft(IBptContext context) {
+		int step = meta - (meta & 3);
 
-		switch (slot.meta - step) {
+		switch (meta - step) {
 		case 0:
-			slot.meta = 1 + step;
+			meta = 1 + step;
 			break;
 		case 1:
-			slot.meta = 2 + step;
+			meta = 2 + step;
 			break;
 		case 2:
-			slot.meta = 3 + step;
+			meta = 3 + step;
 			break;
 		case 3:
-			slot.meta = 0 + step;
+			meta = 0 + step;
 			break;
 		}
 	}

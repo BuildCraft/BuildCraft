@@ -15,6 +15,7 @@ import java.util.List;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
+import buildcraft.api.blueprints.BlueprintManager;
 import buildcraft.api.bptblocks.BptBlockInventory;
 import buildcraft.api.bptblocks.BptBlockRotateMeta;
 import buildcraft.api.recipes.BuildcraftRecipes;
@@ -93,8 +94,8 @@ public class BuildCraftSilicon extends BuildCraftMod {
 		CoreProxy.proxy.registerTileEntity(TileAdvancedCraftingTable.class, "net.minecraft.src.buildcraft.factory.TileAssemblyAdvancedWorkbench");
 		CoreProxy.proxy.registerTileEntity(TileIntegrationTable.class, "net.minecraft.src.buildcraft.factory.TileIntegrationTable");
 
-		new BptBlockRotateMeta(laserBlock, new int[]{2, 5, 3, 4}, true);
-		new BptBlockInventory(assemblyTableBlock);
+		BlueprintManager.registerSchematicClass(laserBlock, BptBlockRotateMeta.class, new int[]{2, 5, 3, 4}, true);
+		BlueprintManager.registerSchematicClass(assemblyTableBlock, BptBlockInventory.class);
 
 		if (BuildCraftCore.loadDefaultRecipes) {
 			loadRecipes();

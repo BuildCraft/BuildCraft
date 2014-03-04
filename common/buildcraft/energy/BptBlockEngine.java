@@ -8,41 +8,35 @@
  */
 package buildcraft.energy;
 
-import net.minecraft.block.Block;
 import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.api.blueprints.BptBlock;
-import buildcraft.api.blueprints.BptSlotInfo;
 import buildcraft.api.blueprints.IBptContext;
 
 public class BptBlockEngine extends BptBlock {
 
-	public BptBlockEngine(Block block) {
-		super(block);
-	}
-
 	@Override
-	public void rotateLeft(BptSlotInfo slot, IBptContext context) {
-		int o = slot.cpt.getInteger("orientation");
+	public void rotateLeft(IBptContext context) {
+		int o = cpt.getInteger("orientation");
 
 		o = ForgeDirection.values()[o].getRotation(ForgeDirection.DOWN).ordinal();
 
-		slot.cpt.setInteger("orientation", o);
+		cpt.setInteger("orientation", o);
 	}
 
 	@Override
-	public void initializeFromWorld(BptSlotInfo bptSlot, IBptContext context, int x, int y, int z) {
+	public void initializeFromWorld(IBptContext context, int x, int y, int z) {
 		TileEngine engine = (TileEngine) context.world().getTileEntity(x, y, z);
 
-		bptSlot.cpt.setInteger("orientation", engine.orientation.ordinal());
+		cpt.setInteger("orientation", engine.orientation.ordinal());
 	}
 
 	@Override
-	public void buildBlock(BptSlotInfo slot, IBptContext context) {
-		context.world().setBlock(slot.x, slot.y, slot.z, slot.block, slot.meta,1);
+	public void buildBlock(IBptContext context) {
+		context.world().setBlock(x, y, z, block, meta,1);
 
-		TileEngine engine = (TileEngine) context.world().getTileEntity(slot.x, slot.y, slot.z);
+		TileEngine engine = (TileEngine) context.world().getTileEntity(x, y, z);
 
-		engine.orientation = ForgeDirection.getOrientation(slot.cpt.getInteger("orientation"));
+		engine.orientation = ForgeDirection.getOrientation(cpt.getInteger("orientation"));
 	}
 
 }

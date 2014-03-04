@@ -10,24 +10,20 @@ package buildcraft.api.bptblocks;
 
 import java.util.LinkedList;
 
-import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import buildcraft.api.blueprints.BptBlock;
-import buildcraft.api.blueprints.BptSlotInfo;
 import buildcraft.api.blueprints.IBptContext;
 
 public class BptBlockCustomStack extends BptBlock {
 
 	final ItemStack customStack;
 
-	public BptBlockCustomStack(Block block, ItemStack customStack) {
-		super(block);
-
+	public BptBlockCustomStack(ItemStack customStack) {
 		this.customStack = customStack;
 	}
 
 	@Override
-	public void addRequirements(BptSlotInfo slot, IBptContext context, LinkedList<ItemStack> requirements) {
+	public void addRequirements(IBptContext context, LinkedList<ItemStack> requirements) {
 		requirements.add(customStack.copy());
 	}
 

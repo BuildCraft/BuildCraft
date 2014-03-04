@@ -8,25 +8,19 @@
  */
 package buildcraft.factory;
 
-import net.minecraft.block.Block;
 import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.api.blueprints.BptBlock;
-import buildcraft.api.blueprints.BptSlotInfo;
 import buildcraft.api.blueprints.IBptContext;
 
 public class BptBlockRefinery extends BptBlock {
 
-	public BptBlockRefinery(Block block) {
-		super(block);
+	@Override
+	public void rotateLeft(IBptContext context) {
+		meta = ForgeDirection.values()[meta].getRotation(ForgeDirection.DOWN).ordinal();
 	}
 
 	@Override
-	public void rotateLeft(BptSlotInfo slot, IBptContext context) {
-		slot.meta = ForgeDirection.values()[slot.meta].getRotation(ForgeDirection.DOWN).ordinal();
-	}
-
-	@Override
-	public void initializeFromWorld(BptSlotInfo slot, IBptContext context, int x, int y, int z) {
+	public void initializeFromWorld(IBptContext context, int x, int y, int z) {
 		TileRefinery refinery = (TileRefinery) context.world().getTileEntity(x, y, z);
 
 //		slot.cpt.setInteger("filter0", refinery.getFilter(0));
@@ -34,21 +28,21 @@ public class BptBlockRefinery extends BptBlock {
 	}
 
 	@Override
-	public void buildBlock(BptSlotInfo slot, IBptContext context) {
-		super.buildBlock(slot, context);
+	public void buildBlock(IBptContext context) {
+		super.buildBlock(context);
 
-		TileRefinery refinery = (TileRefinery) context.world().getTileEntity(slot.x, slot.y, slot.z);
+		TileRefinery refinery = (TileRefinery) context.world().getTileEntity(x, y, z);
 
-		int filter0 = slot.cpt.getInteger("filter0");
-		int filter1 = slot.cpt.getInteger("filter1");
+		int filter0 = cpt.getInteger("filter0");
+		int filter1 = cpt.getInteger("filter1");
 		int filterMeta0 = 0;
 		int filterMeta1 = 0;
 
-		if (slot.cpt.hasKey("filterMeta0")) {
-			filterMeta0 = slot.cpt.getInteger("filterMeta0");
+		if (cpt.hasKey("filterMeta0")) {
+			filterMeta0 = cpt.getInteger("filterMeta0");
 		}
-		if (slot.cpt.hasKey("filterMeta1")) {
-			filterMeta1 = slot.cpt.getInteger("filterMeta1");
+		if (cpt.hasKey("filterMeta1")) {
+			filterMeta1 = cpt.getInteger("filterMeta1");
 		}
 
 //		refinery.setFilter(0, filter0, filterMeta0);

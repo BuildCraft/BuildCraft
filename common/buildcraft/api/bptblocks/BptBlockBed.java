@@ -10,59 +10,53 @@ package buildcraft.api.bptblocks;
 
 import java.util.LinkedList;
 
-import net.minecraft.block.Block;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import buildcraft.api.blueprints.BptBlock;
-import buildcraft.api.blueprints.BptSlotInfo;
 import buildcraft.api.blueprints.IBptContext;
 
 public class BptBlockBed extends BptBlock {
 
-	public BptBlockBed(Block block) {
-		super(block);
-	}
-
 	@Override
-	public void addRequirements(BptSlotInfo slot, IBptContext context, LinkedList<ItemStack> requirements) {
-		if ((slot.meta & 8) == 0) {
+	public void addRequirements(IBptContext context, LinkedList<ItemStack> requirements) {
+		if ((meta & 8) == 0) {
 			requirements.add(new ItemStack(Items.bed));
 		}
 	}
 
 	@Override
-	public void rotateLeft(BptSlotInfo slot, IBptContext context) {
-		int orientation = (slot.meta & 7);
-		int others = slot.meta - orientation;
+	public void rotateLeft(IBptContext context) {
+		int orientation = (meta & 7);
+		int others = meta - orientation;
 
 		switch (orientation) {
 		case 0:
-			slot.meta = 1 + others;
+			meta = 1 + others;
 			break;
 		case 1:
-			slot.meta = 2 + others;
+			meta = 2 + others;
 			break;
 		case 2:
-			slot.meta = 3 + others;
+			meta = 3 + others;
 			break;
 		case 3:
-			slot.meta = 0 + others;
+			meta = 0 + others;
 			break;
 		}
 	}
 
 	@Override
-	public void buildBlock(BptSlotInfo slot, IBptContext context) {
-		if ((slot.meta & 8) != 0) {
+	public void buildBlock(IBptContext context) {
+		if ((meta & 8) != 0) {
 			return;
 		}
 
-		context.world().setBlock(slot.x, slot.y, slot.z, slot.block, slot.meta,1);
+		context.world().setBlock(x, y, z, block, meta, 3);
 
-		int x2 = slot.x;
-		int z2 = slot.z;
+		int x2 = x;
+		int z2 = z;
 
-		switch (slot.meta) {
+		switch (meta) {
 		case 0:
 			z2++;
 			break;
@@ -77,11 +71,11 @@ public class BptBlockBed extends BptBlock {
 			break;
 		}
 
-		context.world().setBlock(x2, slot.y, z2, slot.block, slot.meta + 8,1);
+		context.world().setBlock(x2, y, z2, block, meta + 8,1);
 	}
 
 	@Override
-	public boolean ignoreBuilding(BptSlotInfo slot) {
-		return (slot.meta & 8) != 0;
+	public boolean ignoreBuilding() {
+		return (meta & 8) != 0;
 	}
 }

@@ -16,7 +16,11 @@ import net.minecraft.block.BlockContainer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
+import buildcraft.core.network.NetworkData;
+import buildcraft.core.utils.Utils;
 
 /**
  * This class allow to specify specific behavior for blocks stored in
@@ -53,24 +57,72 @@ import net.minecraft.tileentity.TileEntity;
  */
 public class BptBlock {
 
-	public final Block block;
+	@NetworkData
+	public Block block = null;
 
-	public BptBlock(Block block) {
-		this.block = block;
-		BlueprintManager.registerBptBlock(block, this);
+	@NetworkData
+	public int x, y, z, meta = 0;
+
+	/**
+	 * This field contains requirements for a given block when stored in the
+	 * blueprint. Modders can either rely on this list or compute their own int
+	 * BptBlock.
+	 */
+	@NetworkData
+	public ArrayList<ItemStack> storedRequirements = new ArrayList<ItemStack>();
+
+	/**
+	 * This tree contains additional data to be stored in the blueprint. By
+	 * default, it will be initialized from BptBlock.initializeFromWorld with
+	 * the standard readNBT function of the corresponding tile (if any) and will
+	 * be loaded from BptBlock.buildBlock using the standard writeNBT function.
+	 */
+	@NetworkData
+	public NBTTagCompound cpt = new NBTTagCompound();
+
+	public enum Mode {
+		ClearIfInvalid, Build
+	};
+
+	public Mode mode = Mode.Build;
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public BptBlock clone() {
+		BptBlock obj = BlueprintManager.newSchematic(block);
+
+		obj.x = x;
+		obj.y = y;
+		obj.z = z;
+		obj.block = block;
+		obj.meta = meta;
+		obj.cpt = (NBTTagCompound) cpt.copy();
+		obj.storedRequirements = (ArrayList<ItemStack>) storedRequirements.clone();
+		obj.mode = mode;
+
+		return obj;
 	}
+
+	public final LinkedList<ItemStack> getRequirements(IBptContext context) {
+		LinkedList<ItemStack> res = new LinkedList<ItemStack>();
+
+		addRequirements(context, res);
+
+		return res;
+	}
+
 
 	/**
 	 * Returns the requirements needed to build this block. When the
 	 * requirements are met, they will be removed all at once from the builder,
 	 * before calling buildBlock.
 	 */
-	public void addRequirements(BptSlotInfo slot, IBptContext context, LinkedList<ItemStack> requirements) {
-		if (slot.block != null) {
-			if (slot.storedRequirements.size() != 0) {
-				requirements.addAll(slot.storedRequirements);
+	public void addRequirements(IBptContext context, LinkedList<ItemStack> requirements) {
+		if (block != null) {
+			if (storedRequirements.size() != 0) {
+				requirements.addAll(storedRequirements);
 			} else {
-				requirements.add(new ItemStack(slot.block, 1, slot.meta));
+				requirements.add(new ItemStack(block, 1, meta));
 			}
 		}
 	}
@@ -92,7 +144,7 @@ public class BptBlock {
 	 * returns: what was used (similer to req, but created from stack, so that
 	 * any NBT based differences are drawn from the correct source)
 	 */
-	public ItemStack useItem(BptSlotInfo slot, IBptContext context, ItemStack req, ItemStack stack) {
+	public ItemStack useItem(IBptContext context, ItemStack req, ItemStack stack) {
 		ItemStack result = stack.copy();
 		if (stack.isItemStackDamageable()) {
 			if (req.getItemDamage() + stack.getItemDamage() <= stack.getMaxDamage()) {
@@ -130,34 +182,34 @@ public class BptBlock {
 	 * the blueprint at the location given by the slot. By default, this
 	 * subprogram is permissive and doesn't take into account metadata.
 	 */
-	public boolean isValid(BptSlotInfo slot, IBptContext context) {
-		return slot.block == context.world().getBlock(slot.x, slot.y, slot.z) && slot.meta == context.world().getBlockMetadata(slot.x, slot.y, slot.z);
+	public boolean isValid(IBptContext context) {
+		return block == context.world().getBlock(x, y, z) && meta == context.world().getBlockMetadata(x, y, z);
 	}
 
 	/**
 	 * Perform a 90 degree rotation to the slot.
 	 */
-	public void rotateLeft(BptSlotInfo slot, IBptContext context) {
+	public void rotateLeft(IBptContext context) {
 
 	}
 
 	/**
 	 * Places the block in the world, at the location specified in the slot.
 	 */
-	public void buildBlock(BptSlotInfo slot, IBptContext context) {
+	public void buildBlock(IBptContext context) {
 		// Meta needs to be specified twice, depending on the block behavior
-		context.world().setBlock(slot.x, slot.y, slot.z, slot.block, slot.meta, 3);
+		context.world().setBlock(x, y, z, block, meta, 3);
 		//context.world().setBlockMetadataWithNotify(slot.x, slot.y, slot.z, slot.meta, 3);
 
-		if (slot.block instanceof BlockContainer) {
-			TileEntity tile = context.world().getTileEntity(slot.x, slot.y, slot.z);
+		if (block instanceof BlockContainer) {
+			TileEntity tile = context.world().getTileEntity(x, y, z);
 
-			slot.cpt.setInteger("x", slot.x);
-			slot.cpt.setInteger("y", slot.y);
-			slot.cpt.setInteger("z", slot.z);
+			cpt.setInteger("x", x);
+			cpt.setInteger("y", y);
+			cpt.setInteger("z", z);
 
 			if (tile != null) {
-				tile.readFromNBT(slot.cpt);
+				tile.readFromNBT(cpt);
 			}
 
 			// By default, clear the inventory to avoid possible dupe bugs
@@ -175,7 +227,7 @@ public class BptBlock {
 	 * Return true if the block should not be placed to the world. Requirements
 	 * will not be asked on such a block, and building will not be called.
 	 */
-	public boolean ignoreBuilding(BptSlotInfo slot) {
+	public boolean ignoreBuilding() {
 		return false;
 	}
 
@@ -188,21 +240,21 @@ public class BptBlock {
 	 * By default, if the block is a BlockContainer, tile information will be to
 	 * save / load the block.
 	 */
-	public void initializeFromWorld(BptSlotInfo slot, IBptContext context, int x, int y, int z) {
-		if (slot.block instanceof BlockContainer) {
+	public void initializeFromWorld(IBptContext context, int x, int y, int z) {
+		if (block instanceof BlockContainer) {
 			TileEntity tile = context.world().getTileEntity(x, y, z);
 
 			if (tile != null) {
-				tile.writeToNBT(slot.cpt);
+				tile.writeToNBT(cpt);
 			}
 		}
 
-		if (slot.block != null) {
-			ArrayList<ItemStack> req = slot.block.getDrops(context.world(), x,
+		if (block != null) {
+			ArrayList<ItemStack> req = block.getDrops(context.world(), x,
 					y, z, context.world().getBlockMetadata(x, y, z), 0);
 
 			if (req != null) {
-				slot.storedRequirements.addAll(req);
+				storedRequirements.addAll(req);
 			}
 		}
 	}
@@ -212,11 +264,47 @@ public class BptBlock {
 	 * blocks. This may be useful to adjust variable depending on surrounding
 	 * blocks that may not be there already at initial building.
 	 */
-	public void postProcessing(BptSlotInfo slot, IBptContext context) {
+	public void postProcessing(IBptContext context) {
 
 	}
 
 	private boolean starMatch(String s1, String s2) {
 		return s1.equals("*") || s2.equals("*") || s1.equals(s2);
+	}
+
+	public void writeToNBT(NBTTagCompound nbt, MappingRegistry registry) {
+		nbt.setInteger("blockId", registry.getIdForBlock(block));
+		nbt.setInteger("blockMeta", meta);
+		nbt.setTag("blockCpt", cpt);
+
+		NBTTagList rq = new NBTTagList();
+
+		for (ItemStack stack : storedRequirements) {
+			NBTTagCompound sub = new NBTTagCompound();
+			stack.writeToNBT(stack.writeToNBT(sub));
+			sub.setInteger("id", Item.itemRegistry.getIDForObject(registry
+					.getItemForId(sub.getInteger("id"))));
+			rq.appendTag(sub);
+		}
+
+		nbt.setTag("rq", rq);
+	}
+
+	public void readFromNBT(NBTTagCompound nbt,	MappingRegistry registry) {
+		block = registry.getBlockForId(nbt.getInteger("blockId"));
+		meta = nbt.getInteger("blockMeta");
+		cpt = nbt.getCompoundTag("blockCpt");
+
+		NBTTagList rq = nbt.getTagList("rq", Utils.NBTTag_Types.NBTTagList.ordinal());
+
+		for (int i = 0; i < rq.tagCount(); ++i) {
+			NBTTagCompound sub = rq.getCompoundTagAt(i);
+
+			// Maps the id in the blueprint to the id in the world
+			sub.setInteger("id", Item.itemRegistry.getIDForObject(registry
+					.getItemForId(sub.getInteger("id"))));
+
+			storedRequirements.add(ItemStack.loadItemStackFromNBT(sub));
+		}
 	}
 }

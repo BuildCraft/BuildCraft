@@ -12,7 +12,7 @@ import buildcraft.api.builder.BlockHandler;
 import buildcraft.core.network.NetworkData;
 import net.minecraft.nbt.NBTTagCompound;
 
-public abstract class Schematic {
+public abstract class SchematicOld {
 
 	@NetworkData
 	public int id;
@@ -32,11 +32,11 @@ public abstract class Schematic {
 	/**
 	 * Only to be class by the serializer
 	 */
-	public Schematic() {
+	public SchematicOld() {
 
 	}
 
-	protected Schematic(int id) {
+	protected SchematicOld(int id) {
 		this.id = id;
 	}
 
@@ -56,9 +56,9 @@ public abstract class Schematic {
 		data = nbt.getCompoundTag("data");
 	}
 
-	public static Schematic createSchematicFromNBT(NBTTagCompound nbt) {
+	public static SchematicOld createSchematicFromNBT(NBTTagCompound nbt) {
 		String schematicType = nbt.getString("schematicType");
-		Schematic schematic;
+		SchematicOld schematic;
 		if (schematicType.equals("block")) {
 			schematic = BlockSchematic.create(nbt);
 		} else if (schematicType.equals("item")) {

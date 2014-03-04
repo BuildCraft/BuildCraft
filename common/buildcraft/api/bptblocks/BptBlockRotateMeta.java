@@ -10,10 +10,8 @@ package buildcraft.api.bptblocks;
 
 import java.util.LinkedList;
 
-import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import buildcraft.api.blueprints.BptBlock;
-import buildcraft.api.blueprints.BptSlotInfo;
 import buildcraft.api.blueprints.IBptContext;
 
 public class BptBlockRotateMeta extends BptBlock {
@@ -23,17 +21,15 @@ public class BptBlockRotateMeta extends BptBlock {
 
 	int infoMask = 0;
 
-	public BptBlockRotateMeta(Block block, int[] rotations, boolean rotateForward) {
-		super(block);
-
+	public BptBlockRotateMeta(int[] rotations, boolean rotateForward) {
 		rot = rotations;
 
-		for (int i = 0; i < rot.length; ++i) {
-			if (rot[i] < 4) {
+		for (int element : rot) {
+			if (element < 4) {
 				infoMask = (infoMask < 3 ? 3 : infoMask);
-			} else if (rot[i] < 8) {
+			} else if (element < 8) {
 				infoMask = (infoMask < 7 ? 7 : infoMask);
-			} else if (rot[i] < 16) {
+			} else if (element < 16) {
 				infoMask = (infoMask < 15 ? 15 : infoMask);
 			}
 		}
@@ -42,19 +38,19 @@ public class BptBlockRotateMeta extends BptBlock {
 	}
 
 	@Override
-	public void addRequirements(BptSlotInfo slot, IBptContext context, LinkedList<ItemStack> requirements) {
-		requirements.add(new ItemStack(slot.block, 1, 0));
+	public void addRequirements(IBptContext context, LinkedList<ItemStack> requirements) {
+		requirements.add(new ItemStack(block, 1, 0));
 	}
 
 	@Override
-	public boolean isValid(BptSlotInfo slot, IBptContext context) {
-		return slot.block == context.world().getBlock(slot.x, slot.y, slot.z);
+	public boolean isValid(IBptContext context) {
+		return block == context.world().getBlock(x, y, z);
 	}
 
 	@Override
-	public void rotateLeft(BptSlotInfo slot, IBptContext context) {
-		int pos = slot.meta & infoMask;
-		int others = slot.meta - pos;
+	public void rotateLeft(IBptContext context) {
+		int pos = meta & infoMask;
+		int others = meta - pos;
 
 		if (rotateForward) {
 			if (pos == rot[0]) {
@@ -78,7 +74,7 @@ public class BptBlockRotateMeta extends BptBlock {
 			}
 		}
 
-		slot.meta = pos + others;
+		meta = pos + others;
 	}
 
 }

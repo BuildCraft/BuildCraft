@@ -10,41 +10,35 @@ package buildcraft.factory;
 
 import java.util.LinkedList;
 
-import net.minecraft.block.Block;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import buildcraft.api.blueprints.BptBlock;
 import buildcraft.api.blueprints.BptBlockUtils;
-import buildcraft.api.blueprints.BptSlotInfo;
 import buildcraft.api.blueprints.IBptContext;
 
 public class BptBlockAutoWorkbench extends BptBlock {
 
-	public BptBlockAutoWorkbench(Block block) {
-		super(block);
+	@Override
+	public void addRequirements(IBptContext context, LinkedList<ItemStack> requirements) {
+		super.addRequirements(context, requirements);
+
+		BptBlockUtils.requestInventoryContents(this, context, requirements);
 	}
 
 	@Override
-	public void addRequirements(BptSlotInfo slot, IBptContext context, LinkedList<ItemStack> requirements) {
-		super.addRequirements(slot, context, requirements);
-
-		BptBlockUtils.requestInventoryContents(slot, context, requirements);
-	}
-
-	@Override
-	public void initializeFromWorld(BptSlotInfo bptSlot, IBptContext context, int x, int y, int z) {
+	public void initializeFromWorld(IBptContext context, int x, int y, int z) {
 		IInventory inventory = (IInventory) context.world().getTileEntity(x, y, z);
 
-		BptBlockUtils.initializeInventoryContents(bptSlot, context, inventory);
+		BptBlockUtils.initializeInventoryContents(this, context, inventory);
 	}
 
 	@Override
-	public void buildBlock(BptSlotInfo slot, IBptContext context) {
-		super.buildBlock(slot, context);
+	public void buildBlock(IBptContext context) {
+		super.buildBlock(context);
 
-		IInventory inventory = (IInventory) context.world().getTileEntity(slot.x, slot.y, slot.z);
+		IInventory inventory = (IInventory) context.world().getTileEntity(x, y, z);
 
-		BptBlockUtils.buildInventoryContents(slot, context, inventory);
+		BptBlockUtils.buildInventoryContents(this, context, inventory);
 	}
 
 }

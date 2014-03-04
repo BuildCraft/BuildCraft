@@ -17,7 +17,7 @@ import net.minecraft.nbt.NBTTagList;
 
 public class BptBlockUtils {
 
-	public static void requestInventoryContents(BptSlotInfo slot, IBptContext context, LinkedList<ItemStack> requirements) {
+	public static void requestInventoryContents(BptBlock slot, IBptContext context, LinkedList<ItemStack> requirements) {
 		ItemStack[] stacks = getItemStacks(slot, context);
 
 		for (ItemStack stack : stacks) {
@@ -27,7 +27,7 @@ public class BptBlockUtils {
 		}
 	}
 
-	public static void initializeInventoryContents(BptSlotInfo slot, IBptContext context, IInventory inventory) {
+	public static void initializeInventoryContents(BptBlock slot, IBptContext context, IInventory inventory) {
 		ItemStack[] stacks = new ItemStack[inventory.getSizeInventory()];
 
 		for (int i = 0; i < inventory.getSizeInventory(); ++i) {
@@ -37,7 +37,7 @@ public class BptBlockUtils {
 		setItemStacks(slot, context, stacks);
 	}
 
-	public static void buildInventoryContents(BptSlotInfo slot, IBptContext context, IInventory inventory) {
+	public static void buildInventoryContents(BptBlock slot, IBptContext context, IInventory inventory) {
 		ItemStack[] stacks = getItemStacks(slot, context);
 
 		for (int i = 0; i < stacks.length; ++i) {
@@ -45,11 +45,12 @@ public class BptBlockUtils {
 		}
 	}
 
-	public static ItemStack[] getItemStacks(BptSlotInfo slot, IBptContext context) {
+	public static ItemStack[] getItemStacks(BptBlock slot, IBptContext context) {
 		NBTTagList list = (NBTTagList) slot.cpt.getTag("inv");
 
-		if (list == null)
+		if (list == null) {
 			return new ItemStack[0];
+		}
 
 		ItemStack stacks[] = new ItemStack[list.tagCount()];
 
@@ -64,14 +65,12 @@ public class BptBlockUtils {
 		return stacks;
 	}
 
-	public static void setItemStacks(BptSlotInfo slot, IBptContext context, ItemStack[] stacks) {
+	public static void setItemStacks(BptBlock slot, IBptContext context, ItemStack[] stacks) {
 		NBTTagList nbttaglist = new NBTTagList();
 
-		for (int i = 0; i < stacks.length; ++i) {
+		for (ItemStack stack : stacks) {
 			NBTTagCompound cpt = new NBTTagCompound();
 			nbttaglist.appendTag(cpt);
-			ItemStack stack = stacks[i];
-
 			if (stack != null && stack.stackSize != 0) {
 				stack.writeToNBT(cpt);
 				//context.storeId(stack.itemID);
