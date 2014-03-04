@@ -27,7 +27,7 @@ public class BptItemPipeFilters extends BptPipeExtension {
 		SimpleInventory newInv = new SimpleInventory(54, "Filters", 1);
 		inv.readFromNBT(slot.cpt);
 
-		for (int dir = 2; dir <= 5; ++dir) {
+		for (int dir = 0; dir <= 5; ++dir) {
 			ForgeDirection r = ForgeDirection.values()[dir].getRotation(ForgeDirection.UP);
 
 			for (int s = 0; s < 9; ++s) {
