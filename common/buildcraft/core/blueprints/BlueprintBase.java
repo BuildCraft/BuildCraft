@@ -17,31 +17,17 @@ import buildcraft.api.blueprints.MappingRegistry;
 import buildcraft.builders.blueprints.BlueprintId;
 import buildcraft.core.Box;
 import buildcraft.core.Version;
-import buildcraft.core.network.NetworkData;
 import buildcraft.core.utils.BCLog;
 
 public abstract class BlueprintBase {
 
-	@NetworkData
 	public BptBlock contents[][][];
-
-	@NetworkData
 	public int anchorX, anchorY, anchorZ;
-
-	@NetworkData
 	public int sizeX, sizeY, sizeZ;
-
-	@NetworkData
 	public BlueprintId id = new BlueprintId();
-
-	@NetworkData
 	public String author;
-
-	@NetworkData
-	public String version = "";
-
-	@NetworkData
-	public MappingRegistry mapping = new MappingRegistry();
+	private String version = "";
+	protected MappingRegistry mapping = new MappingRegistry();
 
 	public BlueprintBase() {
 	}

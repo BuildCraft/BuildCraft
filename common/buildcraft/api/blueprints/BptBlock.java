@@ -19,7 +19,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
-import buildcraft.core.network.NetworkData;
 import buildcraft.core.utils.Utils;
 
 /**
@@ -57,10 +56,7 @@ import buildcraft.core.utils.Utils;
  */
 public class BptBlock {
 
-	@NetworkData
 	public Block block = null;
-
-	@NetworkData
 	public int x, y, z, meta = 0;
 
 	/**
@@ -68,7 +64,6 @@ public class BptBlock {
 	 * blueprint. Modders can either rely on this list or compute their own int
 	 * BptBlock.
 	 */
-	@NetworkData
 	public ArrayList<ItemStack> storedRequirements = new ArrayList<ItemStack>();
 
 	/**
@@ -77,7 +72,6 @@ public class BptBlock {
 	 * the standard readNBT function of the corresponding tile (if any) and will
 	 * be loaded from BptBlock.buildBlock using the standard writeNBT function.
 	 */
-	@NetworkData
 	public NBTTagCompound cpt = new NBTTagCompound();
 
 	public enum Mode {

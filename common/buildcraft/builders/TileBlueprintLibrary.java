@@ -216,7 +216,9 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory {
 			BlueprintBase bpt = ItemBlueprint.getBlueprint(stack [1]);
 
 			if (bpt != null && uploadingPlayer != null) {
-				RPCHandler.rpcPlayer(this, "downloadBlueprintToClient", uploadingPlayer, bpt);
+				NBTTagCompound nbt = new NBTTagCompound();
+				bpt.writeToNBT(nbt);
+				RPCHandler.rpcPlayer(this, "downloadBlueprintToClient", uploadingPlayer, bpt.id, nbt);
 				uploadingPlayer = null;
 			}
 		}
@@ -236,17 +238,21 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory {
 	@RPC (RPCSide.CLIENT)
 	public void requestSelectedBlueprint () {
 		if (selected > -1 && selected < currentPage.size()) {
-			RPCHandler.rpcServer(this, "uploadBlueprintToServer",
-					BuildCraftBuilders.clientDB
-							.get(currentPage.get(selected)));
+			BlueprintBase bpt = BuildCraftBuilders.clientDB.get(currentPage.get(selected));
+			NBTTagCompound nbt = new NBTTagCompound();
+			bpt.writeToNBT(nbt);
+
+			RPCHandler.rpcServer(this, "uploadBlueprintToServer", bpt.id, nbt);
 		} else {
-			RPCHandler.rpcServer(this, "uploadBlueprintToServer", (Object) null);
+			RPCHandler.rpcServer(this, "uploadBlueprintToServer", null, null);
 		}
 	}
 
 	@RPC (RPCSide.SERVER)
-	public void uploadBlueprintToServer (BlueprintBase bpt) {
-		if (bpt != null) {
+	public void uploadBlueprintToServer (BlueprintId id, NBTTagCompound data) {
+		if (data != null) {
+			BlueprintBase bpt = BlueprintBase.loadBluePrint(data);
+			bpt.id = id;
 			BuildCraftBuilders.serverDB.add(bpt);
 			setInventorySlotContents(3, ItemBlueprint.getBlueprintItem(bpt));
 		} else {
@@ -259,7 +265,10 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory {
 	}
 
 	@RPC (RPCSide.CLIENT)
-	public void downloadBlueprintToClient (BlueprintBase bpt) {
+	public void downloadBlueprintToClient (BlueprintId id, NBTTagCompound data) {
+		BlueprintBase bpt = BlueprintBase.loadBluePrint(data);
+		bpt.id = id;
+
 		BuildCraftBuilders.clientDB.add(bpt);
 		setCurrentPage(BuildCraftBuilders.clientDB.getPage (pageId));
 	}
