@@ -11,13 +11,13 @@ package buildcraft.factory;
 import java.util.LinkedList;
 
 import net.minecraft.item.ItemStack;
-import buildcraft.api.blueprints.BptBlock;
-import buildcraft.api.blueprints.IBptContext;
+import buildcraft.api.blueprints.Schematic;
+import buildcraft.api.blueprints.IBuilderContext;
 
-public class BptBlockFrame extends BptBlock {
+public class SchematicFrame extends Schematic {
 
 	@Override
-	public void addRequirements(IBptContext context, LinkedList<ItemStack> requirements) {
+	public void addRequirements(IBuilderContext context, LinkedList<ItemStack> requirements) {
 
 	}
 

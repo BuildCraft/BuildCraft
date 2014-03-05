@@ -14,8 +14,8 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import buildcraft.api.blueprints.BlueprintManager;
-import buildcraft.api.blueprints.BptBlock;
-import buildcraft.api.blueprints.IBptContext;
+import buildcraft.api.blueprints.Schematic;
+import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.core.utils.BCLog;
 import buildcraft.core.utils.Utils;
 
@@ -28,10 +28,10 @@ public class Blueprint extends BlueprintBase {
 		super(sizeX, sizeY, sizeZ);
 	}
 
-	public void readFromWorld(IBptContext context, TileEntity anchorTile, int x, int y, int z) {
+	public void readFromWorld(IBuilderContext context, TileEntity anchorTile, int x, int y, int z) {
 		Block block = anchorTile.getWorldObj().getBlock(x, y, z);
 
-		BptBlock slot = BlueprintManager.newSchematic(block);
+		Schematic slot = BlueprintManager.newSchematic(block);
 
 		slot.x = (int) (x - context.surroundingBox().pMin().x);
 		slot.y = (int) (y - context.surroundingBox().pMin().y);
@@ -44,7 +44,7 @@ public class Blueprint extends BlueprintBase {
 		}
 
 		try {
-			slot.initializeFromWorld(context, x, y, z);
+			slot.readFromWorld(context, x, y, z);
 			contents[slot.x][slot.y][slot.z] = slot;
 		} catch (Throwable t) {
 			// Defensive code against errors in implementers

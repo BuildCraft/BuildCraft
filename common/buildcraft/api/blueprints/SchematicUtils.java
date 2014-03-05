@@ -15,9 +15,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 
-public class BptBlockUtils {
+public class SchematicUtils {
 
-	public static void requestInventoryContents(BptBlock slot, IBptContext context, LinkedList<ItemStack> requirements) {
+	public static void requestInventoryContents(Schematic slot, IBuilderContext context, LinkedList<ItemStack> requirements) {
 		ItemStack[] stacks = getItemStacks(slot, context);
 
 		for (ItemStack stack : stacks) {
@@ -27,7 +27,7 @@ public class BptBlockUtils {
 		}
 	}
 
-	public static void initializeInventoryContents(BptBlock slot, IBptContext context, IInventory inventory) {
+	public static void initializeInventoryContents(Schematic slot, IBuilderContext context, IInventory inventory) {
 		ItemStack[] stacks = new ItemStack[inventory.getSizeInventory()];
 
 		for (int i = 0; i < inventory.getSizeInventory(); ++i) {
@@ -37,7 +37,7 @@ public class BptBlockUtils {
 		setItemStacks(slot, context, stacks);
 	}
 
-	public static void buildInventoryContents(BptBlock slot, IBptContext context, IInventory inventory) {
+	public static void buildInventoryContents(Schematic slot, IBuilderContext context, IInventory inventory) {
 		ItemStack[] stacks = getItemStacks(slot, context);
 
 		for (int i = 0; i < stacks.length; ++i) {
@@ -45,7 +45,7 @@ public class BptBlockUtils {
 		}
 	}
 
-	public static ItemStack[] getItemStacks(BptBlock slot, IBptContext context) {
+	public static ItemStack[] getItemStacks(Schematic slot, IBuilderContext context) {
 		NBTTagList list = (NBTTagList) slot.cpt.getTag("inv");
 
 		if (list == null) {
@@ -65,7 +65,7 @@ public class BptBlockUtils {
 		return stacks;
 	}
 
-	public static void setItemStacks(BptBlock slot, IBptContext context, ItemStack[] stacks) {
+	public static void setItemStacks(Schematic slot, IBuilderContext context, ItemStack[] stacks) {
 		NBTTagList nbttaglist = new NBTTagList();
 
 		for (ItemStack stack : stacks) {

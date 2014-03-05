@@ -6,31 +6,31 @@
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-package buildcraft.api.bptblocks;
+package buildcraft.api.schematics;
 
 import java.util.LinkedList;
 
 import net.minecraft.item.ItemStack;
-import buildcraft.api.blueprints.BptBlock;
-import buildcraft.api.blueprints.IBptContext;
+import buildcraft.api.blueprints.Schematic;
+import buildcraft.api.blueprints.IBuilderContext;
 
-public class BptBlockDoor extends BptBlock {
+public class SchematicDoor extends Schematic {
 
 	final ItemStack stack;
 
-	public BptBlockDoor(ItemStack stack) {
+	public SchematicDoor(ItemStack stack) {
 		this.stack = stack;
 	}
 
 	@Override
-	public void addRequirements(IBptContext context, LinkedList<ItemStack> requirements) {
+	public void addRequirements(IBuilderContext context, LinkedList<ItemStack> requirements) {
 		if ((meta & 8) == 0) {
 			requirements.add(stack.copy());
 		}
 	}
 
 	@Override
-	public void rotateLeft(IBptContext context) {
+	public void rotateLeft(IBuilderContext context) {
 		int orientation = (meta & 3);
 		int others = meta - orientation;
 
@@ -56,7 +56,7 @@ public class BptBlockDoor extends BptBlock {
 	}
 
 	@Override
-	public void buildBlock(IBptContext context) {
+	public void writeToWorld(IBuilderContext context) {
 		context.world().setBlock(x, y, z, block, meta, 3);
 		context.world().setBlock(x, y + 1, z, block, meta + 8, 3);
 

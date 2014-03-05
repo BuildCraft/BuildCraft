@@ -9,13 +9,13 @@
 package buildcraft.energy;
 
 import net.minecraftforge.common.util.ForgeDirection;
-import buildcraft.api.blueprints.BptBlock;
-import buildcraft.api.blueprints.IBptContext;
+import buildcraft.api.blueprints.Schematic;
+import buildcraft.api.blueprints.IBuilderContext;
 
-public class BptBlockEngine extends BptBlock {
+public class SchematicEngine extends Schematic {
 
 	@Override
-	public void rotateLeft(IBptContext context) {
+	public void rotateLeft(IBuilderContext context) {
 		int o = cpt.getInteger("orientation");
 
 		o = ForgeDirection.values()[o].getRotation(ForgeDirection.DOWN).ordinal();
@@ -24,14 +24,14 @@ public class BptBlockEngine extends BptBlock {
 	}
 
 	@Override
-	public void initializeFromWorld(IBptContext context, int x, int y, int z) {
+	public void readFromWorld(IBuilderContext context, int x, int y, int z) {
 		TileEngine engine = (TileEngine) context.world().getTileEntity(x, y, z);
 
 		cpt.setInteger("orientation", engine.orientation.ordinal());
 	}
 
 	@Override
-	public void buildBlock(IBptContext context) {
+	public void writeToWorld(IBuilderContext context) {
 		context.world().setBlock(x, y, z, block, meta,1);
 
 		TileEngine engine = (TileEngine) context.world().getTileEntity(x, y, z);

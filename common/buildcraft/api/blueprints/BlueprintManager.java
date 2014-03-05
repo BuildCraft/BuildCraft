@@ -31,14 +31,14 @@ public class BlueprintManager {
 		schematicClasses.put(block, c);
 	}
 
-	public static BptBlock newSchematic (Block block) {
+	public static Schematic newSchematic (Block block) {
 		if (!schematicClasses.containsKey(block)) {
-			registerSchematicClass(block, BptBlock.class);
+			registerSchematicClass(block, Schematic.class);
 		}
 
 		try {
 			SchematicConstructor c = schematicClasses.get(block);
-			return (BptBlock) c.clas.getConstructors() [0].newInstance(c.params);
+			return (Schematic) c.clas.getConstructors() [0].newInstance(c.params);
 		} catch (InstantiationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

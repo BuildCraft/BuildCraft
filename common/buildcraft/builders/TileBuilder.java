@@ -20,7 +20,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.BuildCraftBuilders;
-import buildcraft.api.blueprints.BptBlock;
+import buildcraft.api.blueprints.Schematic;
 import buildcraft.api.gates.IAction;
 import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.power.PowerHandler;
@@ -637,10 +637,10 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory,
 
 	public void debugForceBlueprintCompletion () {
 		if (bluePrintBuilder != null) {
-			BptBlock slot = bluePrintBuilder.getNextBlock(worldObj, this);
+			Schematic slot = bluePrintBuilder.getNextBlock(worldObj, this);
 
 			if (slot != null) {
-				slot.buildBlock(bluePrintBuilder.context);
+				slot.writeToWorld(bluePrintBuilder.context);
 			}
 		}
 	}

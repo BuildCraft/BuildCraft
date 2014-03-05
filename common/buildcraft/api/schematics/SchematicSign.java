@@ -6,31 +6,31 @@
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-package buildcraft.api.bptblocks;
+package buildcraft.api.schematics;
 
 import java.util.LinkedList;
 
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.util.ForgeDirection;
-import buildcraft.api.blueprints.BptBlock;
-import buildcraft.api.blueprints.IBptContext;
+import buildcraft.api.blueprints.Schematic;
+import buildcraft.api.blueprints.IBuilderContext;
 
-public class BptBlockSign extends BptBlock {
+public class SchematicSign extends Schematic {
 
 	boolean isWall;
 
-	public BptBlockSign(boolean isWall) {
+	public SchematicSign(boolean isWall) {
 		this.isWall = isWall;
 	}
 
 	@Override
-	public void addRequirements(IBptContext context, LinkedList<ItemStack> requirements) {
+	public void addRequirements(IBuilderContext context, LinkedList<ItemStack> requirements) {
 		requirements.add(new ItemStack(Items.sign));
 	}
 
 	@Override
-	public void rotateLeft(IBptContext context) {
+	public void rotateLeft(IBuilderContext context) {
 		if (!isWall) {
 			double angle = ((meta) * 360.0) / 16.0;
 			angle += 90.0;

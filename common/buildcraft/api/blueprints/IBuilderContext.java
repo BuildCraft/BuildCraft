@@ -16,7 +16,7 @@ import buildcraft.api.core.Position;
  * This interface provide contextual information when building or initializing
  * blueprint slots.
  */
-public interface IBptContext {
+public interface IBuilderContext {
 
 	public Position rotatePositionLeft(Position pos);
 

@@ -52,7 +52,7 @@ import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTriggerProvider;
 import buildcraft.transport.TransportProxy;
 import buildcraft.transport.WireIconProvider;
-import buildcraft.transport.blueprints.BptBlockPipe;
+import buildcraft.transport.blueprints.SchematicPipe;
 import buildcraft.transport.blueprints.BptItemPipeFilters;
 import buildcraft.transport.blueprints.BptPipeIron;
 import buildcraft.transport.blueprints.BptPipeWooden;
@@ -430,7 +430,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 
 		TransportProxy.proxy.registerTileEntities();
 
-		BlueprintManager.registerSchematicClass(genericPipeBlock, BptBlockPipe.class);
+		BlueprintManager.registerSchematicClass(genericPipeBlock, SchematicPipe.class);
 
 		new BptPipeIron(pipeItemsIron);
 		new BptPipeIron(pipeFluidsIron);

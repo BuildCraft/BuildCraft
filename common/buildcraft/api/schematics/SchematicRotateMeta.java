@@ -6,22 +6,22 @@
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-package buildcraft.api.bptblocks;
+package buildcraft.api.schematics;
 
 import java.util.LinkedList;
 
 import net.minecraft.item.ItemStack;
-import buildcraft.api.blueprints.BptBlock;
-import buildcraft.api.blueprints.IBptContext;
+import buildcraft.api.blueprints.Schematic;
+import buildcraft.api.blueprints.IBuilderContext;
 
-public class BptBlockRotateMeta extends BptBlock {
+public class SchematicRotateMeta extends Schematic {
 
 	int[] rot;
 	boolean rotateForward;
 
 	int infoMask = 0;
 
-	public BptBlockRotateMeta(int[] rotations, boolean rotateForward) {
+	public SchematicRotateMeta(int[] rotations, boolean rotateForward) {
 		rot = rotations;
 
 		for (int element : rot) {
@@ -38,17 +38,17 @@ public class BptBlockRotateMeta extends BptBlock {
 	}
 
 	@Override
-	public void addRequirements(IBptContext context, LinkedList<ItemStack> requirements) {
+	public void addRequirements(IBuilderContext context, LinkedList<ItemStack> requirements) {
 		requirements.add(new ItemStack(block, 1, 0));
 	}
 
 	@Override
-	public boolean isValid(IBptContext context) {
+	public boolean isValid(IBuilderContext context) {
 		return block == context.world().getBlock(x, y, z);
 	}
 
 	@Override
-	public void rotateLeft(IBptContext context) {
+	public void rotateLeft(IBuilderContext context) {
 		int pos = meta & infoMask;
 		int others = meta - pos;
 

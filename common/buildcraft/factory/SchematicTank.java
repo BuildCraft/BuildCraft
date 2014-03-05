@@ -8,18 +8,18 @@
  */
 package buildcraft.factory;
 
-import buildcraft.api.blueprints.BptBlock;
-import buildcraft.api.blueprints.IBptContext;
+import buildcraft.api.blueprints.Schematic;
+import buildcraft.api.blueprints.IBuilderContext;
 
-public class BptBlockTank extends BptBlock {
+public class SchematicTank extends Schematic {
 
 	@Override
-	public void initializeFromWorld(IBptContext context, int x, int y, int z) {
+	public void readFromWorld(IBuilderContext context, int x, int y, int z) {
 
 	}
 
 	@Override
-	public void buildBlock(IBptContext context) {
+	public void writeToWorld(IBuilderContext context) {
 		context.world().setBlock(x, y, z, block, meta, 3);
 	}
 

@@ -12,33 +12,33 @@ import java.util.LinkedList;
 
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
-import buildcraft.api.blueprints.BptBlock;
-import buildcraft.api.blueprints.BptBlockUtils;
-import buildcraft.api.blueprints.IBptContext;
+import buildcraft.api.blueprints.Schematic;
+import buildcraft.api.blueprints.SchematicUtils;
+import buildcraft.api.blueprints.IBuilderContext;
 
-public class BptBlockAutoWorkbench extends BptBlock {
+public class SchematicAutoWorkbench extends Schematic {
 
 	@Override
-	public void addRequirements(IBptContext context, LinkedList<ItemStack> requirements) {
+	public void addRequirements(IBuilderContext context, LinkedList<ItemStack> requirements) {
 		super.addRequirements(context, requirements);
 
-		BptBlockUtils.requestInventoryContents(this, context, requirements);
+		SchematicUtils.requestInventoryContents(this, context, requirements);
 	}
 
 	@Override
-	public void initializeFromWorld(IBptContext context, int x, int y, int z) {
+	public void readFromWorld(IBuilderContext context, int x, int y, int z) {
 		IInventory inventory = (IInventory) context.world().getTileEntity(x, y, z);
 
-		BptBlockUtils.initializeInventoryContents(this, context, inventory);
+		SchematicUtils.initializeInventoryContents(this, context, inventory);
 	}
 
 	@Override
-	public void buildBlock(IBptContext context) {
-		super.buildBlock(context);
+	public void writeToWorld(IBuilderContext context) {
+		super.writeToWorld(context);
 
 		IInventory inventory = (IInventory) context.world().getTileEntity(x, y, z);
 
-		BptBlockUtils.buildInventoryContents(this, context, inventory);
+		SchematicUtils.buildInventoryContents(this, context, inventory);
 	}
 
 }

@@ -6,31 +6,31 @@
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-package buildcraft.api.bptblocks;
+package buildcraft.api.schematics;
 
 import java.util.LinkedList;
 
 import net.minecraft.item.ItemStack;
-import buildcraft.api.blueprints.BptBlock;
-import buildcraft.api.blueprints.IBptContext;
+import buildcraft.api.blueprints.Schematic;
+import buildcraft.api.blueprints.IBuilderContext;
 
-public class BptBlockFluid extends BptBlock {
+public class SchematicFluid extends Schematic {
 
 	private final ItemStack bucketStack;
 
-	public BptBlockFluid(ItemStack bucketStack) {
+	public SchematicFluid(ItemStack bucketStack) {
 		this.bucketStack = bucketStack;
 	}
 
 	@Override
-	public void addRequirements(IBptContext context, LinkedList<ItemStack> requirements) {
+	public void addRequirements(IBuilderContext context, LinkedList<ItemStack> requirements) {
 		if (meta == 0) {
 			requirements.add(bucketStack.copy());
 		}
 	}
 
 	@Override
-	public boolean isValid(IBptContext context) {
+	public boolean isValid(IBuilderContext context) {
 		if (meta == 0) {
 			return block == context.world().getBlock(x, y, z) && context.world().getBlockMetadata(x, y, z) == 0;
 		} else {
@@ -39,7 +39,7 @@ public class BptBlockFluid extends BptBlock {
 	}
 
 	@Override
-	public void rotateLeft(IBptContext context) {
+	public void rotateLeft(IBuilderContext context) {
 
 	}
 
@@ -49,7 +49,7 @@ public class BptBlockFluid extends BptBlock {
 	}
 
 	@Override
-	public void buildBlock(IBptContext context) {
+	public void writeToWorld(IBuilderContext context) {
 		if (meta == 0) {
 			context.world().setBlock(x, y, z, block, 0,1);
 		}

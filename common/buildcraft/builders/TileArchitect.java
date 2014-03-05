@@ -17,7 +17,7 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.BuildCraftBuilders;
-import buildcraft.api.blueprints.IBptContext;
+import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.core.Box;
 import buildcraft.core.Box.Kind;
@@ -157,7 +157,7 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 
 	private BlueprintBase createBptBlueprint() {
 		Blueprint result = new Blueprint(box.sizeX(), box.sizeY(), box.sizeZ());
-		IBptContext context = result.getContext(worldObj, box);
+		IBuilderContext context = result.getContext(worldObj, box);
 
 		for (int x = box.xMin; x <= box.xMax; ++x) {
 			for (int y = box.yMin; y <= box.yMax; ++y) {

@@ -6,21 +6,21 @@
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-package buildcraft.api.bptblocks;
+package buildcraft.api.schematics;
 
 import net.minecraft.inventory.IInventory;
-import buildcraft.api.blueprints.IBptContext;
+import buildcraft.api.blueprints.IBuilderContext;
 
-public class BptBlockRotateInventory extends BptBlockRotateMeta {
+public class SchematicRotateInventory extends SchematicRotateMeta {
 
-	public BptBlockRotateInventory(int[] rotations, boolean rotateForward) {
+	public SchematicRotateInventory(int[] rotations, boolean rotateForward) {
 		super(rotations, rotateForward);
 
 	}
 
 	@Override
-	public void buildBlock(IBptContext context) {
-		super.buildBlock(context);
+	public void writeToWorld(IBuilderContext context) {
+		super.writeToWorld(context);
 
 		IInventory inv = (IInventory) context.world().getTileEntity(x, y, z);
 

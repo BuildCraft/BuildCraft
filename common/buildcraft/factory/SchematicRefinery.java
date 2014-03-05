@@ -9,18 +9,18 @@
 package buildcraft.factory;
 
 import net.minecraftforge.common.util.ForgeDirection;
-import buildcraft.api.blueprints.BptBlock;
-import buildcraft.api.blueprints.IBptContext;
+import buildcraft.api.blueprints.Schematic;
+import buildcraft.api.blueprints.IBuilderContext;
 
-public class BptBlockRefinery extends BptBlock {
+public class SchematicRefinery extends Schematic {
 
 	@Override
-	public void rotateLeft(IBptContext context) {
+	public void rotateLeft(IBuilderContext context) {
 		meta = ForgeDirection.values()[meta].getRotation(ForgeDirection.DOWN).ordinal();
 	}
 
 	@Override
-	public void initializeFromWorld(IBptContext context, int x, int y, int z) {
+	public void readFromWorld(IBuilderContext context, int x, int y, int z) {
 		TileRefinery refinery = (TileRefinery) context.world().getTileEntity(x, y, z);
 
 //		slot.cpt.setInteger("filter0", refinery.getFilter(0));
@@ -28,8 +28,8 @@ public class BptBlockRefinery extends BptBlock {
 	}
 
 	@Override
-	public void buildBlock(IBptContext context) {
-		super.buildBlock(context);
+	public void writeToWorld(IBuilderContext context) {
+		super.writeToWorld(context);
 
 		TileRefinery refinery = (TileRefinery) context.world().getTileEntity(x, y, z);
 

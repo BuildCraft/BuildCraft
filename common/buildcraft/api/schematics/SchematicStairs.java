@@ -6,37 +6,37 @@
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-package buildcraft.api.bptblocks;
+package buildcraft.api.schematics;
 
 import java.util.LinkedList;
 
 import net.minecraft.item.ItemStack;
-import buildcraft.api.blueprints.BptBlock;
-import buildcraft.api.blueprints.IBptContext;
+import buildcraft.api.blueprints.Schematic;
+import buildcraft.api.blueprints.IBuilderContext;
 
-public class BptBlockPumpkin extends BptBlock {
+public class SchematicStairs extends Schematic {
 
 	@Override
-	public void addRequirements(IBptContext context, LinkedList<ItemStack> requirements) {
+	public void addRequirements(IBuilderContext context, LinkedList<ItemStack> requirements) {
 		requirements.add(new ItemStack(block, 1, 0));
 	}
 
 	@Override
-	public boolean isValid(IBptContext context) {
+	public boolean isValid(IBuilderContext context) {
 		return block == context.world().getBlock(x, y, z);
 	}
 
 	@Override
-	public void rotateLeft(IBptContext context) {
+	public void rotateLeft(IBuilderContext context) {
 		switch (meta) {
 		case 0:
-			meta = 1;
-			break;
-		case 1:
 			meta = 2;
 			break;
-		case 2:
+		case 1:
 			meta = 3;
+			break;
+		case 2:
+			meta = 1;
 			break;
 		case 3:
 			meta = 0;

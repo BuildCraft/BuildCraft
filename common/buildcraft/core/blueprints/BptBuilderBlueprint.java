@@ -18,8 +18,8 @@ import java.util.Map.Entry;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldSettings.GameType;
-import buildcraft.api.blueprints.BptBlock;
-import buildcraft.api.blueprints.BptBlock.Mode;
+import buildcraft.api.blueprints.Schematic;
+import buildcraft.api.blueprints.Schematic.Mode;
 import buildcraft.api.core.StackKey;
 import buildcraft.core.IBuilderInventory;
 import buildcraft.core.utils.BCLog;
@@ -27,11 +27,11 @@ import buildcraft.core.utils.BlockUtil;
 
 public class BptBuilderBlueprint extends BptBuilderBase {
 
-	LinkedList<BptBlock> clearList = new LinkedList<BptBlock>();
-	LinkedList<BptBlock> primaryList = new LinkedList<BptBlock>();
-	LinkedList<BptBlock> secondaryList = new LinkedList<BptBlock>();
+	LinkedList<Schematic> clearList = new LinkedList<Schematic>();
+	LinkedList<Schematic> primaryList = new LinkedList<Schematic>();
+	LinkedList<Schematic> secondaryList = new LinkedList<Schematic>();
 
-	LinkedList<BptBlock> postProcessingList = new LinkedList<BptBlock>();
+	LinkedList<Schematic> postProcessingList = new LinkedList<Schematic>();
 
 	public LinkedList <ItemStack> neededItems = new LinkedList <ItemStack> ();
 
@@ -45,12 +45,12 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 					int yCoord = j + y - bluePrint.anchorY;
 					int zCoord = k + z - bluePrint.anchorZ;
 
-					BptBlock slot = bluePrint.contents[i][j][k];
+					Schematic slot = bluePrint.contents[i][j][k];
 
 					if (slot != null) {
 						slot = slot.clone();
 					} else {
-						slot = new BptBlock();
+						slot = new Schematic();
 						slot.meta = 0;
 						slot.block = null;
 					}
@@ -74,12 +74,12 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 					int yCoord = j + y - bluePrint.anchorY;
 					int zCoord = k + z - bluePrint.anchorZ;
 
-					BptBlock slot = bluePrint.contents[i][j][k];
+					Schematic slot = bluePrint.contents[i][j][k];
 
 					if (slot != null) {
 						slot = slot.clone();
 					} else {
-						slot = new BptBlock();
+						slot = new Schematic();
 						slot.meta = 0;
 						slot.block = null;
 					}
@@ -117,9 +117,9 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 	}
 
 	@Override
-	public BptBlock getNextBlock(World world, IBuilderInventory inv) {
+	public Schematic getNextBlock(World world, IBuilderInventory inv) {
 		if (clearList.size() != 0) {
-			BptBlock slot = internalGetNextBlock(world, inv, clearList);
+			Schematic slot = internalGetNextBlock(world, inv, clearList);
 			checkDone();
 
 			if (slot != null) {
@@ -128,7 +128,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 		}
 
 		if (primaryList.size() != 0) {
-			BptBlock slot = internalGetNextBlock(world, inv, primaryList);
+			Schematic slot = internalGetNextBlock(world, inv, primaryList);
 			checkDone();
 
 			if (slot != null) {
@@ -137,7 +137,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 		}
 
 		if (secondaryList.size() != 0) {
-			BptBlock slot = internalGetNextBlock(world, inv, secondaryList);
+			Schematic slot = internalGetNextBlock(world, inv, secondaryList);
 			checkDone();
 
 			if (slot != null) {
@@ -150,13 +150,13 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 		return null;
 	}
 
-	public BptBlock internalGetNextBlock(World world, IBuilderInventory inv, LinkedList<BptBlock> list) {
-		LinkedList<BptBlock> failSlots = new LinkedList<BptBlock>();
+	public Schematic internalGetNextBlock(World world, IBuilderInventory inv, LinkedList<Schematic> list) {
+		LinkedList<Schematic> failSlots = new LinkedList<Schematic>();
 
-		BptBlock result = null;
+		Schematic result = null;
 
 		while (list.size() > 0) {
-			BptBlock slot = list.removeFirst();
+			Schematic slot = list.removeFirst();
 
 			boolean getNext = false;
 
@@ -197,7 +197,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 		return result;
 	}
 
-	public boolean checkRequirements(IBuilderInventory inv, BptBlock slot) {
+	public boolean checkRequirements(IBuilderInventory inv, Schematic slot) {
 		if (slot.block == null) {
 			return true;
 		}
@@ -258,7 +258,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 		return true;
 	}
 
-	public void useRequirements(IBuilderInventory inv, BptBlock slot) {
+	public void useRequirements(IBuilderInventory inv, Schematic slot) {
 		if (slot.block == null) {
 			return;
 		}
@@ -334,7 +334,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 
 		HashMap <StackKey, Integer> computeStacks = new HashMap <StackKey, Integer> ();
 
-		for (BptBlock slot : primaryList) {
+		for (Schematic slot : primaryList) {
 
 			LinkedList<ItemStack> stacks = new LinkedList<ItemStack>();
 
@@ -365,7 +365,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 			}
 		}
 
-		for (BptBlock slot : secondaryList) {
+		for (Schematic slot : secondaryList) {
 			LinkedList<ItemStack> stacks = slot.getRequirements(context);
 
 			for (ItemStack stack : stacks) {
@@ -414,7 +414,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 
 	@Override
 	public void postProcessing(World world) {
-		for (BptBlock s : postProcessingList) {
+		for (Schematic s : postProcessingList) {
 			try {
 				s.postProcessing(context);
 			} catch (Throwable t) {

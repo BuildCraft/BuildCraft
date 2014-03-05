@@ -38,10 +38,10 @@ import buildcraft.factory.BlockPump;
 import buildcraft.factory.BlockQuarry;
 import buildcraft.factory.BlockRefinery;
 import buildcraft.factory.BlockTank;
-import buildcraft.factory.BptBlockAutoWorkbench;
-import buildcraft.factory.BptBlockFrame;
-import buildcraft.factory.BptBlockRefinery;
-import buildcraft.factory.BptBlockTank;
+import buildcraft.factory.SchematicAutoWorkbench;
+import buildcraft.factory.SchematicFrame;
+import buildcraft.factory.SchematicRefinery;
+import buildcraft.factory.SchematicTank;
 import buildcraft.factory.FactoryProxy;
 import buildcraft.factory.FactoryProxyClient;
 import buildcraft.factory.GuiHandler;
@@ -146,10 +146,10 @@ public class BuildCraftFactory extends BuildCraftMod {
 
 		FactoryProxy.proxy.initializeTileEntities();
 
-		BlueprintManager.registerSchematicClass(autoWorkbenchBlock, BptBlockAutoWorkbench.class);
-		BlueprintManager.registerSchematicClass(frameBlock, BptBlockFrame.class);
-		BlueprintManager.registerSchematicClass(refineryBlock, BptBlockRefinery.class);
-		BlueprintManager.registerSchematicClass(tankBlock, BptBlockTank.class);
+		BlueprintManager.registerSchematicClass(autoWorkbenchBlock, SchematicAutoWorkbench.class);
+		BlueprintManager.registerSchematicClass(frameBlock, SchematicFrame.class);
+		BlueprintManager.registerSchematicClass(refineryBlock, SchematicRefinery.class);
+		BlueprintManager.registerSchematicClass(tankBlock, SchematicTank.class);
 
 		if (BuildCraftCore.loadDefaultRecipes) {
 			loadRecipes();

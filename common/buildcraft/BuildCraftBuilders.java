@@ -18,26 +18,26 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
 import buildcraft.api.blueprints.BlueprintManager;
-import buildcraft.api.bptblocks.BptBlockBed;
-import buildcraft.api.bptblocks.BptBlockCustomStack;
-import buildcraft.api.bptblocks.BptBlockDirt;
-import buildcraft.api.bptblocks.BptBlockDoor;
-import buildcraft.api.bptblocks.BptBlockFluid;
-import buildcraft.api.bptblocks.BptBlockIgnore;
-import buildcraft.api.bptblocks.BptBlockIgnoreMeta;
-import buildcraft.api.bptblocks.BptBlockInventory;
-import buildcraft.api.bptblocks.BptBlockLever;
-import buildcraft.api.bptblocks.BptBlockPiston;
-import buildcraft.api.bptblocks.BptBlockPumpkin;
-import buildcraft.api.bptblocks.BptBlockRedstoneRepeater;
-import buildcraft.api.bptblocks.BptBlockRotateInventory;
-import buildcraft.api.bptblocks.BptBlockRotateMeta;
-import buildcraft.api.bptblocks.BptBlockSign;
-import buildcraft.api.bptblocks.BptBlockStairs;
-import buildcraft.api.bptblocks.BptBlockWallSide;
 import buildcraft.api.filler.FillerManager;
 import buildcraft.api.filler.IFillerPattern;
 import buildcraft.api.gates.ActionManager;
+import buildcraft.api.schematics.SchematicBed;
+import buildcraft.api.schematics.SchematicCustomStack;
+import buildcraft.api.schematics.SchematicDirt;
+import buildcraft.api.schematics.SchematicDoor;
+import buildcraft.api.schematics.SchematicFluid;
+import buildcraft.api.schematics.SchematicIgnore;
+import buildcraft.api.schematics.SchematicIgnoreMeta;
+import buildcraft.api.schematics.SchematicInventory;
+import buildcraft.api.schematics.SchematicLever;
+import buildcraft.api.schematics.SchematicPiston;
+import buildcraft.api.schematics.SchematicPumpkin;
+import buildcraft.api.schematics.SchematicRedstoneRepeater;
+import buildcraft.api.schematics.SchematicRotateInventory;
+import buildcraft.api.schematics.SchematicRotateMeta;
+import buildcraft.api.schematics.SchematicSign;
+import buildcraft.api.schematics.SchematicStairs;
+import buildcraft.api.schematics.SchematicWallSide;
 import buildcraft.builders.BlockArchitect;
 import buildcraft.builders.BlockBlueprintLibrary;
 import buildcraft.builders.BlockBuilder;
@@ -141,85 +141,85 @@ public class BuildCraftBuilders extends BuildCraftMod {
 		// Register save handler
 		MinecraftForge.EVENT_BUS.register(new EventHandlerBuilders());
 
-		BlueprintManager.registerSchematicClass(Blocks.snow, BptBlockIgnore.class);
-		BlueprintManager.registerSchematicClass(Blocks.tallgrass, BptBlockIgnore.class);
-		BlueprintManager.registerSchematicClass(Blocks.ice, BptBlockIgnore.class);
-		BlueprintManager.registerSchematicClass(Blocks.piston_head, BptBlockIgnore.class);
+		BlueprintManager.registerSchematicClass(Blocks.snow, SchematicIgnore.class);
+		BlueprintManager.registerSchematicClass(Blocks.tallgrass, SchematicIgnore.class);
+		BlueprintManager.registerSchematicClass(Blocks.ice, SchematicIgnore.class);
+		BlueprintManager.registerSchematicClass(Blocks.piston_head, SchematicIgnore.class);
 
-		BlueprintManager.registerSchematicClass(Blocks.dirt, BptBlockDirt.class);
-		BlueprintManager.registerSchematicClass(Blocks.grass, BptBlockDirt.class);
-		BlueprintManager.registerSchematicClass(Blocks.farmland, BptBlockDirt.class);
+		BlueprintManager.registerSchematicClass(Blocks.dirt, SchematicDirt.class);
+		BlueprintManager.registerSchematicClass(Blocks.grass, SchematicDirt.class);
+		BlueprintManager.registerSchematicClass(Blocks.farmland, SchematicDirt.class);
 
-		BlueprintManager.registerSchematicClass(Blocks.torch, BptBlockWallSide.class);
-		BlueprintManager.registerSchematicClass(Blocks.redstone_torch, BptBlockWallSide.class);
-		BlueprintManager.registerSchematicClass(Blocks.unlit_redstone_torch, BptBlockWallSide.class);
+		BlueprintManager.registerSchematicClass(Blocks.torch, SchematicWallSide.class);
+		BlueprintManager.registerSchematicClass(Blocks.redstone_torch, SchematicWallSide.class);
+		BlueprintManager.registerSchematicClass(Blocks.unlit_redstone_torch, SchematicWallSide.class);
 
-		BlueprintManager.registerSchematicClass(Blocks.ladder, BptBlockRotateMeta.class, new int[]{2, 5, 3, 4}, true);
-		BlueprintManager.registerSchematicClass(Blocks.fence_gate, BptBlockRotateMeta.class, new int[]{0, 1, 2, 3}, true);
+		BlueprintManager.registerSchematicClass(Blocks.ladder, SchematicRotateMeta.class, new int[]{2, 5, 3, 4}, true);
+		BlueprintManager.registerSchematicClass(Blocks.fence_gate, SchematicRotateMeta.class, new int[]{0, 1, 2, 3}, true);
 
-		BlueprintManager.registerSchematicClass(Blocks.furnace, BptBlockRotateInventory.class, new int[]{2, 5, 3, 4}, true);
-		BlueprintManager.registerSchematicClass(Blocks.lit_furnace, BptBlockRotateInventory.class, new int[]{2, 5, 3, 4}, true);
-		BlueprintManager.registerSchematicClass(Blocks.chest, BptBlockRotateInventory.class, new int[]{2, 5, 3, 4}, true);
-		BlueprintManager.registerSchematicClass(Blocks.dispenser, BptBlockRotateInventory.class, new int[]{2, 5, 3, 4}, true);
+		BlueprintManager.registerSchematicClass(Blocks.furnace, SchematicRotateInventory.class, new int[]{2, 5, 3, 4}, true);
+		BlueprintManager.registerSchematicClass(Blocks.lit_furnace, SchematicRotateInventory.class, new int[]{2, 5, 3, 4}, true);
+		BlueprintManager.registerSchematicClass(Blocks.chest, SchematicRotateInventory.class, new int[]{2, 5, 3, 4}, true);
+		BlueprintManager.registerSchematicClass(Blocks.dispenser, SchematicRotateInventory.class, new int[]{2, 5, 3, 4}, true);
 
-		BlueprintManager.registerSchematicClass(Blocks.brewing_stand, BptBlockInventory.class);
+		BlueprintManager.registerSchematicClass(Blocks.brewing_stand, SchematicInventory.class);
 
-		BlueprintManager.registerSchematicClass(Blocks.vine, BptBlockRotateMeta.class, new int[]{1, 4, 8, 2}, false);
-		BlueprintManager.registerSchematicClass(Blocks.trapdoor, BptBlockRotateMeta.class, new int[]{0, 1, 2, 3}, false);
+		BlueprintManager.registerSchematicClass(Blocks.vine, SchematicRotateMeta.class, new int[]{1, 4, 8, 2}, false);
+		BlueprintManager.registerSchematicClass(Blocks.trapdoor, SchematicRotateMeta.class, new int[]{0, 1, 2, 3}, false);
 
-		BlueprintManager.registerSchematicClass(Blocks.wooden_button, BptBlockLever.class);
-		BlueprintManager.registerSchematicClass(Blocks.stone_button, BptBlockLever.class);
-		BlueprintManager.registerSchematicClass(Blocks.lever, BptBlockLever.class);
+		BlueprintManager.registerSchematicClass(Blocks.wooden_button, SchematicLever.class);
+		BlueprintManager.registerSchematicClass(Blocks.stone_button, SchematicLever.class);
+		BlueprintManager.registerSchematicClass(Blocks.lever, SchematicLever.class);
 
-		BlueprintManager.registerSchematicClass(Blocks.stone, BptBlockCustomStack.class, new ItemStack(Blocks.stone));
-		BlueprintManager.registerSchematicClass(Blocks.redstone_wire, BptBlockCustomStack.class, new ItemStack(Items.redstone));
-		BlueprintManager.registerSchematicClass(Blocks.cake, BptBlockCustomStack.class, new ItemStack(Items.cake));
+		BlueprintManager.registerSchematicClass(Blocks.stone, SchematicCustomStack.class, new ItemStack(Blocks.stone));
+		BlueprintManager.registerSchematicClass(Blocks.redstone_wire, SchematicCustomStack.class, new ItemStack(Items.redstone));
+		BlueprintManager.registerSchematicClass(Blocks.cake, SchematicCustomStack.class, new ItemStack(Items.cake));
 		//new BptBlockCustomStack(Blocks.crops.blockID, new ItemStack(Items.seeds));
-		BlueprintManager.registerSchematicClass(Blocks.pumpkin_stem, BptBlockCustomStack.class, new ItemStack(Items.pumpkin_seeds));
-		BlueprintManager.registerSchematicClass(Blocks.melon_stem, BptBlockCustomStack.class, new ItemStack(Items.melon_seeds));
-		BlueprintManager.registerSchematicClass(Blocks.glowstone, BptBlockCustomStack.class, new ItemStack(Blocks.glowstone));
+		BlueprintManager.registerSchematicClass(Blocks.pumpkin_stem, SchematicCustomStack.class, new ItemStack(Items.pumpkin_seeds));
+		BlueprintManager.registerSchematicClass(Blocks.melon_stem, SchematicCustomStack.class, new ItemStack(Items.melon_seeds));
+		BlueprintManager.registerSchematicClass(Blocks.glowstone, SchematicCustomStack.class, new ItemStack(Blocks.glowstone));
 
-		BlueprintManager.registerSchematicClass(Blocks.powered_repeater, BptBlockRedstoneRepeater.class);
-		BlueprintManager.registerSchematicClass(Blocks.unpowered_repeater, BptBlockRedstoneRepeater.class);
+		BlueprintManager.registerSchematicClass(Blocks.powered_repeater, SchematicRedstoneRepeater.class);
+		BlueprintManager.registerSchematicClass(Blocks.unpowered_repeater, SchematicRedstoneRepeater.class);
 
-		BlueprintManager.registerSchematicClass(Blocks.water, BptBlockFluid.class, new ItemStack(Items.water_bucket));
-		BlueprintManager.registerSchematicClass(Blocks.flowing_water, BptBlockFluid.class, new ItemStack(Items.water_bucket));
-		BlueprintManager.registerSchematicClass(Blocks.lava, BptBlockFluid.class, new ItemStack(Items.lava_bucket));
-		BlueprintManager.registerSchematicClass(Blocks.flowing_lava, BptBlockFluid.class, new ItemStack(Items.lava_bucket));
+		BlueprintManager.registerSchematicClass(Blocks.water, SchematicFluid.class, new ItemStack(Items.water_bucket));
+		BlueprintManager.registerSchematicClass(Blocks.flowing_water, SchematicFluid.class, new ItemStack(Items.water_bucket));
+		BlueprintManager.registerSchematicClass(Blocks.lava, SchematicFluid.class, new ItemStack(Items.lava_bucket));
+		BlueprintManager.registerSchematicClass(Blocks.flowing_lava, SchematicFluid.class, new ItemStack(Items.lava_bucket));
 
-		BlueprintManager.registerSchematicClass(Blocks.rail, BptBlockIgnoreMeta.class);
-		BlueprintManager.registerSchematicClass(Blocks.detector_rail, BptBlockIgnoreMeta.class);
-		BlueprintManager.registerSchematicClass(Blocks.glass_pane, BptBlockIgnoreMeta.class);
+		BlueprintManager.registerSchematicClass(Blocks.rail, SchematicIgnoreMeta.class);
+		BlueprintManager.registerSchematicClass(Blocks.detector_rail, SchematicIgnoreMeta.class);
+		BlueprintManager.registerSchematicClass(Blocks.glass_pane, SchematicIgnoreMeta.class);
 
-		BlueprintManager.registerSchematicClass(Blocks.piston, BptBlockPiston.class);
-		BlueprintManager.registerSchematicClass(Blocks.piston_extension, BptBlockPiston.class);
-		BlueprintManager.registerSchematicClass(Blocks.sticky_piston, BptBlockPiston.class);
+		BlueprintManager.registerSchematicClass(Blocks.piston, SchematicPiston.class);
+		BlueprintManager.registerSchematicClass(Blocks.piston_extension, SchematicPiston.class);
+		BlueprintManager.registerSchematicClass(Blocks.sticky_piston, SchematicPiston.class);
 
-		BlueprintManager.registerSchematicClass(Blocks.lit_pumpkin, BptBlockPumpkin.class);
+		BlueprintManager.registerSchematicClass(Blocks.lit_pumpkin, SchematicPumpkin.class);
 
-		BlueprintManager.registerSchematicClass(Blocks.stone_stairs, BptBlockStairs.class);
-		BlueprintManager.registerSchematicClass(Blocks.oak_stairs, BptBlockStairs.class);
-		BlueprintManager.registerSchematicClass(Blocks.nether_brick_stairs, BptBlockStairs.class);
-		BlueprintManager.registerSchematicClass(Blocks.brick_stairs, BptBlockStairs.class);
-		BlueprintManager.registerSchematicClass(Blocks.stone_brick_stairs, BptBlockStairs.class);
+		BlueprintManager.registerSchematicClass(Blocks.stone_stairs, SchematicStairs.class);
+		BlueprintManager.registerSchematicClass(Blocks.oak_stairs, SchematicStairs.class);
+		BlueprintManager.registerSchematicClass(Blocks.nether_brick_stairs, SchematicStairs.class);
+		BlueprintManager.registerSchematicClass(Blocks.brick_stairs, SchematicStairs.class);
+		BlueprintManager.registerSchematicClass(Blocks.stone_brick_stairs, SchematicStairs.class);
 
-		BlueprintManager.registerSchematicClass(Blocks.wooden_button, BptBlockDoor.class, new ItemStack(Items.wooden_door));
-		BlueprintManager.registerSchematicClass(Blocks.iron_door, BptBlockDoor.class, new ItemStack(Items.iron_door));
+		BlueprintManager.registerSchematicClass(Blocks.wooden_button, SchematicDoor.class, new ItemStack(Items.wooden_door));
+		BlueprintManager.registerSchematicClass(Blocks.iron_door, SchematicDoor.class, new ItemStack(Items.iron_door));
 
-		BlueprintManager.registerSchematicClass(Blocks.bed, BptBlockBed.class);
+		BlueprintManager.registerSchematicClass(Blocks.bed, SchematicBed.class);
 
-		BlueprintManager.registerSchematicClass(Blocks.wall_sign, BptBlockSign.class, true);
-		BlueprintManager.registerSchematicClass(Blocks.standing_sign, BptBlockSign.class, false);
+		BlueprintManager.registerSchematicClass(Blocks.wall_sign, SchematicSign.class, true);
+		BlueprintManager.registerSchematicClass(Blocks.standing_sign, SchematicSign.class, false);
 
 		// BUILDCRAFT BLOCKS
 
-		BlueprintManager.registerSchematicClass(architectBlock, BptBlockRotateInventory.class, new int[]{2, 5, 3, 4}, true);
-		BlueprintManager.registerSchematicClass(builderBlock, BptBlockRotateInventory.class, new int[]{2, 5, 3, 4}, true);
+		BlueprintManager.registerSchematicClass(architectBlock, SchematicRotateInventory.class, new int[]{2, 5, 3, 4}, true);
+		BlueprintManager.registerSchematicClass(builderBlock, SchematicRotateInventory.class, new int[]{2, 5, 3, 4}, true);
 
-		BlueprintManager.registerSchematicClass(libraryBlock, BptBlockInventory.class);
+		BlueprintManager.registerSchematicClass(libraryBlock, SchematicInventory.class);
 
-		BlueprintManager.registerSchematicClass(markerBlock, BptBlockWallSide.class);
-		BlueprintManager.registerSchematicClass(pathMarkerBlock, BptBlockWallSide.class);
+		BlueprintManager.registerSchematicClass(markerBlock, SchematicWallSide.class);
+		BlueprintManager.registerSchematicClass(pathMarkerBlock, SchematicWallSide.class);
 
 		if (BuildCraftCore.loadDefaultRecipes) {
 			loadRecipes();

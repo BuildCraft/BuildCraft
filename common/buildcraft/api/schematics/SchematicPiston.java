@@ -6,18 +6,18 @@
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-package buildcraft.api.bptblocks;
+package buildcraft.api.schematics;
 
-import buildcraft.api.blueprints.IBptContext;
+import buildcraft.api.blueprints.IBuilderContext;
 
-public class BptBlockPiston extends BptBlockRotateMeta {
+public class SchematicPiston extends SchematicRotateMeta {
 
-	public BptBlockPiston() {
+	public SchematicPiston() {
 		super(new int[] { 2, 5, 3, 4 }, true);
 	}
 
 	@Override
-	public void buildBlock(IBptContext context) {
+	public void writeToWorld(IBuilderContext context) {
 		int localMeta = meta & 7;
 
 		context.world().setBlock(x, y, z, block, localMeta, 3);

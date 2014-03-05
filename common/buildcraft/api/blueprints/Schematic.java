@@ -30,22 +30,12 @@ import buildcraft.core.utils.Utils;
  * load in the blueprint
  *
  * Default implementations of this can be seen in the package
- * buildcraft.api.bptblocks. The class BptBlockUtils provide some additional
+ * buildcraft.api.schematics. The class SchematicUtils provide some additional
  * utilities.
  *
  * Blueprints perform "id translation" in case the block ids between a blueprint
- * and the world installation are different. In order to translate block ids,
- * blocks needs to be uniquely identified. By default, this identification is
- * done by:
- *
- * - the block simple class name - the tile simple class name (if any) - the
- * block name
- *
- * In certain circumstances, the above is not enough (e.g. if several blocks
- * share the same class and the same name, with no tile). In this case,
- * additional data may be provided by children of this class:
- *
- * - mod name - custom signature
+ * and the world installation are different. Mapping is done through the
+ * builder context.
  *
  * At blueprint load time, BuildCraft will check that each block id of the
  * blueprint corresponds to the block id in the installation. If not, it will
@@ -54,7 +44,7 @@ import buildcraft.core.utils.Utils;
  * such block id is found, BuildCraft will assume that the block is not
  * installed and will not load the blueprint.
  */
-public class BptBlock {
+public class Schematic {
 
 	public Block block = null;
 	public int x, y, z, meta = 0;
@@ -62,13 +52,13 @@ public class BptBlock {
 	/**
 	 * This field contains requirements for a given block when stored in the
 	 * blueprint. Modders can either rely on this list or compute their own int
-	 * BptBlock.
+	 * Schematic.
 	 */
 	public ArrayList<ItemStack> storedRequirements = new ArrayList<ItemStack>();
 
 	/**
 	 * This tree contains additional data to be stored in the blueprint. By
-	 * default, it will be initialized from BptBlock.initializeFromWorld with
+	 * default, it will be initialized from Schematic.readFromWord with
 	 * the standard readNBT function of the corresponding tile (if any) and will
 	 * be loaded from BptBlock.buildBlock using the standard writeNBT function.
 	 */
@@ -82,8 +72,8 @@ public class BptBlock {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public BptBlock clone() {
-		BptBlock obj = BlueprintManager.newSchematic(block);
+	public Schematic clone() {
+		Schematic obj = BlueprintManager.newSchematic(block);
 
 		obj.x = x;
 		obj.y = y;
@@ -97,7 +87,7 @@ public class BptBlock {
 		return obj;
 	}
 
-	public final LinkedList<ItemStack> getRequirements(IBptContext context) {
+	public final LinkedList<ItemStack> getRequirements(IBuilderContext context) {
 		LinkedList<ItemStack> res = new LinkedList<ItemStack>();
 
 		addRequirements(context, res);
@@ -111,7 +101,7 @@ public class BptBlock {
 	 * requirements are met, they will be removed all at once from the builder,
 	 * before calling buildBlock.
 	 */
-	public void addRequirements(IBptContext context, LinkedList<ItemStack> requirements) {
+	public void addRequirements(IBuilderContext context, LinkedList<ItemStack> requirements) {
 		if (block != null) {
 			if (storedRequirements.size() != 0) {
 				requirements.addAll(storedRequirements);
@@ -138,7 +128,7 @@ public class BptBlock {
 	 * returns: what was used (similer to req, but created from stack, so that
 	 * any NBT based differences are drawn from the correct source)
 	 */
-	public ItemStack useItem(IBptContext context, ItemStack req, ItemStack stack) {
+	public ItemStack useItem(IBuilderContext context, ItemStack req, ItemStack stack) {
 		ItemStack result = stack.copy();
 		if (stack.isItemStackDamageable()) {
 			if (req.getItemDamage() + stack.getItemDamage() <= stack.getMaxDamage()) {
@@ -176,21 +166,21 @@ public class BptBlock {
 	 * the blueprint at the location given by the slot. By default, this
 	 * subprogram is permissive and doesn't take into account metadata.
 	 */
-	public boolean isValid(IBptContext context) {
+	public boolean isValid(IBuilderContext context) {
 		return block == context.world().getBlock(x, y, z) && meta == context.world().getBlockMetadata(x, y, z);
 	}
 
 	/**
 	 * Perform a 90 degree rotation to the slot.
 	 */
-	public void rotateLeft(IBptContext context) {
+	public void rotateLeft(IBuilderContext context) {
 
 	}
 
 	/**
 	 * Places the block in the world, at the location specified in the slot.
 	 */
-	public void buildBlock(IBptContext context) {
+	public void writeToWorld(IBuilderContext context) {
 		// Meta needs to be specified twice, depending on the block behavior
 		context.world().setBlock(x, y, z, block, meta, 3);
 		context.world().setBlockMetadataWithNotify(x, y, z, meta, 3);
@@ -234,7 +224,7 @@ public class BptBlock {
 	 * By default, if the block is a BlockContainer, tile information will be to
 	 * save / load the block.
 	 */
-	public void initializeFromWorld(IBptContext context, int x, int y, int z) {
+	public void readFromWorld(IBuilderContext context, int x, int y, int z) {
 		if (block instanceof BlockContainer) {
 			TileEntity tile = context.world().getTileEntity(x, y, z);
 
@@ -258,12 +248,8 @@ public class BptBlock {
 	 * blocks. This may be useful to adjust variable depending on surrounding
 	 * blocks that may not be there already at initial building.
 	 */
-	public void postProcessing(IBptContext context) {
+	public void postProcessing(IBuilderContext context) {
 
-	}
-
-	private boolean starMatch(String s1, String s2) {
-		return s1.equals("*") || s2.equals("*") || s1.equals(s2);
 	}
 
 	public void writeToNBT(NBTTagCompound nbt, MappingRegistry registry) {

@@ -6,17 +6,17 @@
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-package buildcraft.api.bptblocks;
+package buildcraft.api.schematics;
 
 import net.minecraft.inventory.IInventory;
-import buildcraft.api.blueprints.BptBlock;
-import buildcraft.api.blueprints.IBptContext;
+import buildcraft.api.blueprints.Schematic;
+import buildcraft.api.blueprints.IBuilderContext;
 
-public class BptBlockInventory extends BptBlock {
+public class SchematicInventory extends Schematic {
 
 	@Override
-	public void buildBlock(IBptContext context) {
-		super.buildBlock(context);
+	public void writeToWorld(IBuilderContext context) {
+		super.writeToWorld(context);
 
 		IInventory inv = (IInventory) context.world().getTileEntity(x, y, z);
 

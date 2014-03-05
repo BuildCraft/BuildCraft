@@ -13,16 +13,16 @@ import java.util.LinkedList;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import buildcraft.api.blueprints.BptBlock;
-import buildcraft.api.blueprints.IBptContext;
+import buildcraft.api.blueprints.Schematic;
+import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.transport.BlockGenericPipe;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.TileGenericPipe.SideProperties;
 
-public class BptBlockPipe extends BptBlock {
+public class SchematicPipe extends Schematic {
 
 	@Override
-	public void addRequirements(IBptContext context, LinkedList<ItemStack> requirements) {
+	public void addRequirements(IBuilderContext context, LinkedList<ItemStack> requirements) {
 		Item pipeItem = context.getMappingRegistry().getItemForId (cpt.getInteger("pipeId"));
 
 		requirements.add(new ItemStack(pipeItem));
@@ -31,7 +31,7 @@ public class BptBlockPipe extends BptBlock {
 	}
 
 	@Override
-	public boolean isValid(IBptContext context) {
+	public boolean isValid(IBuilderContext context) {
 		Pipe pipe = BlockGenericPipe.getPipe(context.world(), x, y, z);
 
 		if (BlockGenericPipe.isValid(pipe)) {
@@ -43,7 +43,7 @@ public class BptBlockPipe extends BptBlock {
 	}
 
 	@Override
-	public void rotateLeft(IBptContext context) {
+	public void rotateLeft(IBuilderContext context) {
 		SideProperties props = new SideProperties ();
 
 		props.readFromNBT(cpt);
@@ -58,7 +58,7 @@ public class BptBlockPipe extends BptBlock {
 	}
 
 	@Override
-	public void buildBlock(IBptContext context) {
+	public void writeToWorld(IBuilderContext context) {
 		cpt.setInteger("x", x);
 		cpt.setInteger("y", y);
 		cpt.setInteger("z", z);
@@ -74,7 +74,7 @@ public class BptBlockPipe extends BptBlock {
 	}
 
 	@Override
-	public void initializeFromWorld(IBptContext context, int x, int y, int z) {
+	public void readFromWorld(IBuilderContext context, int x, int y, int z) {
 		TileEntity tile = context.world().getTileEntity(x, y, z);
 		Pipe pipe = BlockGenericPipe.getPipe(context.world(), x, y, z);
 
@@ -90,7 +90,7 @@ public class BptBlockPipe extends BptBlock {
 	}
 
 	@Override
-	public void postProcessing(IBptContext context) {
+	public void postProcessing(IBuilderContext context) {
 		Item pipeItem = context.getMappingRegistry().getItemForId(cpt.getInteger("pipeId"));
 
 		if (BptPipeExtension.contains(pipeItem)) {

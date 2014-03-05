@@ -12,7 +12,7 @@ import net.minecraft.block.Block;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 import buildcraft.api.blueprints.BlueprintManager;
-import buildcraft.api.blueprints.BptBlock;
+import buildcraft.api.blueprints.Schematic;
 import buildcraft.api.blueprints.MappingRegistry;
 import buildcraft.builders.blueprints.BlueprintId;
 import buildcraft.core.Box;
@@ -21,7 +21,7 @@ import buildcraft.core.utils.BCLog;
 
 public abstract class BlueprintBase {
 
-	public BptBlock contents[][][];
+	public Schematic contents[][][];
 	public int anchorX, anchorY, anchorZ;
 	public int sizeX, sizeY, sizeZ;
 	public BlueprintId id = new BlueprintId();
@@ -33,7 +33,7 @@ public abstract class BlueprintBase {
 	}
 
 	public BlueprintBase(int sizeX, int sizeY, int sizeZ) {
-		contents = new BptBlock[sizeX][sizeY][sizeZ];
+		contents = new Schematic[sizeX][sizeY][sizeZ];
 
 		this.sizeX = sizeX;
 		this.sizeY = sizeY;
@@ -56,7 +56,7 @@ public abstract class BlueprintBase {
 	}
 
 	public void rotateLeft(BptContext context) {
-		BptBlock newContents[][][] = new BptBlock[sizeZ][sizeY][sizeX];
+		Schematic newContents[][][] = new Schematic[sizeZ][sizeY][sizeX];
 
 		for (int x = 0; x < sizeZ; ++x) {
 			for (int y = 0; y < sizeY; ++y) {
@@ -147,7 +147,7 @@ public abstract class BlueprintBase {
 
 		author = nbt.getString("author");
 
-		contents = new BptBlock [sizeX][sizeY][sizeZ];
+		contents = new Schematic [sizeX][sizeY][sizeZ];
 
 		try {
 			loadContents (nbt);
@@ -219,7 +219,7 @@ public abstract class BlueprintBase {
 		res.id = id;
 		res.author = author;
 
-		res.contents = new BptBlock[sizeX][sizeY][sizeZ];
+		res.contents = new Schematic[sizeX][sizeY][sizeZ];
 
 		res.mapping = mapping.clone ();
 
