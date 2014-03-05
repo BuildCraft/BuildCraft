@@ -101,6 +101,8 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 @Mod(name = "BuildCraft", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Core", acceptedMinecraftVersions = "[1.7.2,1.8)", dependencies = "required-after:Forge@[10.12.0.1024,)")
 public class BuildCraftCore extends BuildCraftMod {
+	public static final boolean NEXTGEN_PREALPHA = true;
+
 	public static enum RenderMode {
 		Full, NoDynamic
 	};
@@ -263,14 +265,16 @@ public class BuildCraftCore extends BuildCraftMod {
 			CoreProxy.proxy.registerItem(redstoneCrystal);
 			OreDictionary.registerOre("redstoneCrystal", new ItemStack(redstoneCrystal));
 
-			robotBaseItem = new ItemRobot(EntityRobot.class).setUnlocalizedName("robotBase");
-			CoreProxy.proxy.registerItem(robotBaseItem);
+			if (!BuildCraftCore.NEXTGEN_PREALPHA) {
+				robotBaseItem = new ItemRobot(EntityRobot.class).setUnlocalizedName("robotBase");
+				CoreProxy.proxy.registerItem(robotBaseItem);
 
-			robotPickerItem = new ItemRobot(EntityRobotPicker.class).setUnlocalizedName("robotPicker");
-			CoreProxy.proxy.registerItem(robotPickerItem);
+				robotPickerItem = new ItemRobot(EntityRobotPicker.class).setUnlocalizedName("robotPicker");
+				CoreProxy.proxy.registerItem(robotPickerItem);
 
-			robotBuilderItem = new ItemRobot(EntityRobotBuilder.class).setUnlocalizedName("robotBuilder");
-			CoreProxy.proxy.registerItem(robotBuilderItem);
+				robotBuilderItem = new ItemRobot(EntityRobotBuilder.class).setUnlocalizedName("robotBuilder");
+				CoreProxy.proxy.registerItem(robotBuilderItem);
+			}
 
 			MinecraftForge.EVENT_BUS.register(this);
 		} finally {

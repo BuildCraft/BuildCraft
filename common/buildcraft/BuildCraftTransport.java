@@ -52,10 +52,10 @@ import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTriggerProvider;
 import buildcraft.transport.TransportProxy;
 import buildcraft.transport.WireIconProvider;
-import buildcraft.transport.blueprints.SchematicPipe;
 import buildcraft.transport.blueprints.BptItemPipeFilters;
 import buildcraft.transport.blueprints.BptPipeIron;
 import buildcraft.transport.blueprints.BptPipeWooden;
+import buildcraft.transport.blueprints.SchematicPipe;
 import buildcraft.transport.gates.GateExpansionPulsar;
 import buildcraft.transport.gates.GateExpansionRedstoneFader;
 import buildcraft.transport.gates.GateExpansionTimer;
@@ -350,7 +350,10 @@ public class BuildCraftTransport extends BuildCraftMod {
 			pipePowerIron = buildPipe(DefaultProps.PIPE_POWER_IRON_ID, PipePowerIron.class, "Iron Kinesis Pipe", CreativeTabBuildCraft.TIER_2, Items.redstone, pipeItemsIron);
 			pipePowerGold = buildPipe(DefaultProps.PIPE_POWER_GOLD_ID, PipePowerGold.class, "Golden Kinesis Pipe", CreativeTabBuildCraft.TIER_2, Items.redstone, pipeItemsGold);
 			pipePowerDiamond = buildPipe(DefaultProps.PIPE_POWER_DIAMOND_ID, PipePowerDiamond.class, "Diamond Kinesis Pipe", CreativeTabBuildCraft.TIER_2, Items.redstone, pipeItemsDiamond);
-			pipePowerHeat = buildPipe(DefaultProps.PIPE_POWER_HEAT_ID, PipePowerHeat.class, "Heat Kinesis Pipe", CreativeTabBuildCraft.TIER_3, Blocks.furnace, pipeItemsDiamond);
+
+			if (!BuildCraftCore.NEXTGEN_PREALPHA) {
+				pipePowerHeat = buildPipe(DefaultProps.PIPE_POWER_HEAT_ID, PipePowerHeat.class, "Heat Kinesis Pipe", CreativeTabBuildCraft.TIER_3, Blocks.furnace, pipeItemsDiamond);
+			}
 
 			pipeStructureCobblestone = buildPipe(DefaultProps.PIPE_STRUCTURE_COBBLESTONE_ID, PipeStructureCobblestone.class, "Cobblestone Structure Pipe", CreativeTabBuildCraft.TIER_1, Blocks.gravel, pipeItemsCobblestone);
 
@@ -375,9 +378,11 @@ public class BuildCraftTransport extends BuildCraftMod {
 			plugItem.setUnlocalizedName("pipePlug");
 			CoreProxy.proxy.registerItem(plugItem);
 
-			robotStationItem = new ItemRobotStation();
-			robotStationItem.setUnlocalizedName("robotStation");
-			CoreProxy.proxy.registerItem(robotStationItem);
+			if (!BuildCraftCore.NEXTGEN_PREALPHA) {
+				robotStationItem = new ItemRobotStation();
+				robotStationItem.setUnlocalizedName("robotStation");
+				CoreProxy.proxy.registerItem(robotStationItem);
+			}
 
 			filteredBufferBlock = new BlockFilteredBuffer();
 			CoreProxy.proxy.registerBlock(filteredBufferBlock.setBlockName("filteredBufferBlock"));

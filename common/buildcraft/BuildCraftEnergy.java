@@ -40,11 +40,11 @@ import buildcraft.energy.BlockBuildcraftFluid;
 import buildcraft.energy.BlockEnergyEmitter;
 import buildcraft.energy.BlockEnergyReceiver;
 import buildcraft.energy.BlockEngine;
-import buildcraft.energy.SchematicEngine;
 import buildcraft.energy.EnergyProxy;
 import buildcraft.energy.GuiHandler;
 import buildcraft.energy.ItemBucketBuildcraft;
 import buildcraft.energy.ItemEngine;
+import buildcraft.energy.SchematicEngine;
 import buildcraft.energy.TileEnergyEmitter;
 import buildcraft.energy.TileEnergyReceiver;
 import buildcraft.energy.TileEngine.EnergyStage;
@@ -206,12 +206,14 @@ public class BuildCraftEnergy extends BuildCraftMod {
 			FluidContainerRegistry.registerFluidContainer(FluidRegistry.getFluidStack("fuel", FluidContainerRegistry.BUCKET_VOLUME), new ItemStack(bucketFuel), new ItemStack(Items.bucket));
 		}
 
-		if (blockRedPlasma != null) {
-			bucketRedPlasma = new ItemBucketBuildcraft(blockRedPlasma, CreativeTabBuildCraft.TIER_4);
-			bucketRedPlasma.setUnlocalizedName("bucketRedPlasma").setContainerItem(Items.bucket);
-			LanguageRegistry.addName(bucketRedPlasma, "Red Plasma Bucket");
-			CoreProxy.proxy.registerItem(bucketRedPlasma);
-			FluidContainerRegistry.registerFluidContainer(FluidRegistry.getFluidStack("redplasma", FluidContainerRegistry.BUCKET_VOLUME), new ItemStack(bucketRedPlasma), new ItemStack(Items.bucket));
+		if (!BuildCraftCore.NEXTGEN_PREALPHA) {
+			if (blockRedPlasma != null) {
+				bucketRedPlasma = new ItemBucketBuildcraft(blockRedPlasma, CreativeTabBuildCraft.TIER_4);
+				bucketRedPlasma.setUnlocalizedName("bucketRedPlasma").setContainerItem(Items.bucket);
+				LanguageRegistry.addName(bucketRedPlasma, "Red Plasma Bucket");
+				CoreProxy.proxy.registerItem(bucketRedPlasma);
+				FluidContainerRegistry.registerFluidContainer(FluidRegistry.getFluidStack("redplasma", FluidContainerRegistry.BUCKET_VOLUME), new ItemStack(bucketRedPlasma), new ItemStack(Items.bucket));
+			}
 		}
 
 		// TODO: Are these still really necessary? If not, remove the
@@ -233,13 +235,15 @@ public class BuildCraftEnergy extends BuildCraftMod {
 
 		// Receiver / emitter
 
-		emitterBlock = new BlockEnergyEmitter ();
-		CoreProxy.proxy.registerBlock(emitterBlock.setBlockName("energyEmitterBlock"));
-		CoreProxy.proxy.registerTileEntity(TileEnergyEmitter.class, "net.minecraft.src.builders.TileEnergyEmitter");
+		if (!BuildCraftCore.NEXTGEN_PREALPHA) {
+			emitterBlock = new BlockEnergyEmitter ();
+			CoreProxy.proxy.registerBlock(emitterBlock.setBlockName("energyEmitterBlock"));
+			CoreProxy.proxy.registerTileEntity(TileEnergyEmitter.class, "net.minecraft.src.builders.TileEnergyEmitter");
 
-		receiverBlock = new BlockEnergyReceiver ();
-		CoreProxy.proxy.registerBlock(receiverBlock.setBlockName("energyReceiverBlock"));
-		CoreProxy.proxy.registerTileEntity(TileEnergyReceiver.class, "net.minecraft.src.builders.TileEnergyReceiver");
+			receiverBlock = new BlockEnergyReceiver ();
+			CoreProxy.proxy.registerBlock(receiverBlock.setBlockName("energyReceiverBlock"));
+			CoreProxy.proxy.registerTileEntity(TileEnergyReceiver.class, "net.minecraft.src.builders.TileEnergyReceiver");
+		}
 
 		MinecraftForge.EVENT_BUS.register(this);
 	}
