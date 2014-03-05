@@ -27,7 +27,6 @@ public class BptBlockRotateInventory extends BptBlockRotateMeta {
 		for (int i = 0; i < inv.getSizeInventory(); ++i) {
 			inv.setInventorySlotContents(i, null);
 		}
-
 	}
 
 }

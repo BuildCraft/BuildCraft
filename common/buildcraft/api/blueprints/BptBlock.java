@@ -193,7 +193,7 @@ public class BptBlock {
 	public void buildBlock(IBptContext context) {
 		// Meta needs to be specified twice, depending on the block behavior
 		context.world().setBlock(x, y, z, block, meta, 3);
-		//context.world().setBlockMetadataWithNotify(slot.x, slot.y, slot.z, slot.meta, 3);
+		context.world().setBlockMetadataWithNotify(x, y, z, meta, 3);
 
 		if (block instanceof BlockContainer) {
 			TileEntity tile = context.world().getTileEntity(x, y, z);
