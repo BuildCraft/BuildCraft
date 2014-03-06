@@ -177,7 +177,7 @@ public class Utils {
 
 			IPipeTile pipeEntry = possiblePipes.get(choice);
 
-			return pipeEntry.injectItem(stack, true, pipeDirections.get(choice));
+			return pipeEntry.injectItem(stack, true, pipeDirections.get(choice), -1);
 		}
 		return 0;
 	}

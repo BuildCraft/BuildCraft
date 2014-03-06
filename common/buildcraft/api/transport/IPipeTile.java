@@ -28,9 +28,10 @@ public interface IPipeTile {
 	 * @param doAdd If false no actual addition should take place. Implementors
 	 * should simulate.
 	 * @param from Orientation the ItemStack is offered from.
+	 * @param color The color of the item to be added to the pipe. -1 is no color. 
 	 * @return Amount of items used from the passed stack.
 	 */
-	int injectItem(ItemStack stack, boolean doAdd, ForgeDirection from);
+	int injectItem(ItemStack stack, boolean doAdd, ForgeDirection from, int color);
 
 	/**
 	 * True if the pipe is connected to the block/pipe in the specific direction
