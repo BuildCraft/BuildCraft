@@ -8,13 +8,11 @@
  */
 package buildcraft.transport;
 
-import buildcraft.api.transport.PipeWire;
 import io.netty.buffer.ByteBuf;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
+import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.Set;
 import java.util.logging.Level;
 
 import net.minecraft.block.Block;
@@ -26,6 +24,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.Packet;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
@@ -36,7 +35,6 @@ import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.core.Position;
 import buildcraft.api.core.SafeTimeTracker;
-import buildcraft.api.gates.GateExpansionController;
 import buildcraft.api.gates.GateExpansions;
 import buildcraft.api.gates.IGateExpansion;
 import buildcraft.api.gates.IOverrideDefaultTriggers;
@@ -46,6 +44,7 @@ import buildcraft.api.power.PowerHandler;
 import buildcraft.api.power.PowerHandler.PowerReceiver;
 import buildcraft.api.transport.IPipeConnection;
 import buildcraft.api.transport.IPipeTile;
+import buildcraft.api.transport.PipeWire;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.IDropControlInventory;
 import buildcraft.core.ITileBufferHolder;
@@ -57,16 +56,12 @@ import buildcraft.core.network.IGuiReturnHandler;
 import buildcraft.core.network.ISyncedTile;
 import buildcraft.core.network.PacketTileState;
 import buildcraft.core.utils.BCLog;
+import buildcraft.core.utils.EnumColor;
 import buildcraft.core.utils.Utils;
 import buildcraft.transport.gates.GateDefinition;
 import buildcraft.transport.gates.GateFactory;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-
-import java.util.HashSet;
-import java.util.Set;
-
-import net.minecraft.world.WorldServer;
 
 public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFluidHandler, IPipeTile, IOverrideDefaultTriggers, ITileBufferHolder,
 		IDropControlInventory, ISyncedTile, ISolidSideTile, IGuiReturnHandler {
@@ -394,13 +389,14 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 
 	/* IPIPEENTRY */
 	@Override
-	public int injectItem(ItemStack payload, boolean doAdd, ForgeDirection from) {
+	public int injectItem(ItemStack payload, boolean doAdd, ForgeDirection from, int color) {
 		if (BlockGenericPipe.isValid(pipe) && pipe.transport instanceof PipeTransportItems && isPipeConnected(from)) {
 			if (doAdd) {
 				Position itemPos = new Position(xCoord + 0.5, yCoord + 0.5, zCoord + 0.5, from.getOpposite());
 				itemPos.moveBackwards(0.4);
 
 				TravelingItem pipedItem = TravelingItem.make(itemPos.x, itemPos.y, itemPos.z, payload);
+				pipedItem.color = color > -1 ? EnumColor.fromId(color) : null;
 				((PipeTransportItems) pipe.transport).injectItem(pipedItem, itemPos.orientation);
 			}
 			return payload.stackSize;
