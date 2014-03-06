@@ -25,7 +25,7 @@ public final class BlueprintId implements Comparable<BlueprintId> {
 	public byte[] uniqueId;
 
 	@NetworkData
-	public String name;
+	public String name = "";
 
 	public String completeId;
 

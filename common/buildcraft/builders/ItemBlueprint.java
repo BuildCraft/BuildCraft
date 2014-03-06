@@ -33,10 +33,17 @@ public abstract class ItemBlueprint extends ItemBuildCraft {
 		BlueprintBase blueprint = getBlueprint(stack);
 
 		if (blueprint != null) {
-			list.add(String.format(blueprint.id.name));
+			if (blueprint.id.name.equals("")) {
+				list.add(String.format(StringUtils.localize("item.blueprint.unnamed")));
+			} else {
+				list.add(String.format(blueprint.id.name));
+			}
+
+
 			list.add(String.format(StringUtils.localize("item.blueprint.author") + " " + blueprint.author));
-		} else
+		} else {
 			list.add(StringUtils.localize("item.blueprint.blank"));
+		}
 	}
 
 	public static ItemStack getBlueprintItem(BlueprintBase blueprint) {

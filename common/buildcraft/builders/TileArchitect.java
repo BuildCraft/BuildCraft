@@ -98,11 +98,9 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 			context =  result.getContext(worldObj, box);
 		}
 
-		if (!name.equals("")) {
-			result.id.name = name;
-			result.author = currentAuthorName;
-		}
-
+		
+		result.id.name = name;
+		result.author = currentAuthorName;
 		result.anchorX = xCoord - box.xMin;
 		result.anchorY = yCoord - box.yMin;
 		result.anchorZ = zCoord - box.zMin;
