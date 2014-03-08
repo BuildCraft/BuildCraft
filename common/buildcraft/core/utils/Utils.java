@@ -153,8 +153,9 @@ public class Utils {
 		List<ForgeDirection> pipeDirections = new ArrayList<ForgeDirection>();
 
 		for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
-			if (from.getOpposite() == side)
+			if (from.getOpposite() == side) {
 				continue;
+			}
 
 			Position pos = new Position(x, y, z, side);
 
@@ -164,10 +165,12 @@ public class Utils {
 
 			if (tile instanceof IPipeTile) {
 				IPipeTile pipe = (IPipeTile) tile;
-				if (pipe.getPipeType() != PipeType.ITEM)
+				if (pipe.getPipeType() != PipeType.ITEM) {
 					continue;
-				if (!pipe.isPipeConnected(side.getOpposite()))
+				}
+				if (!pipe.isPipeConnected(side.getOpposite())) {
 					continue;
+				}
 
 				possiblePipes.add(pipe);
 				pipeDirections.add(side.getOpposite());
@@ -363,32 +366,37 @@ public class Utils {
 	}
 
 	public static boolean checkPipesConnections(TileEntity tile1, TileEntity tile2) {
-		if (tile1 == null || tile2 == null)
+		if (tile1 == null || tile2 == null) {
 			return false;
+		}
 
-		if (!(tile1 instanceof IPipeTile) && !(tile2 instanceof IPipeTile))
+		if (!(tile1 instanceof IPipeTile) && !(tile2 instanceof IPipeTile)) {
 			return false;
+		}
 
 		ForgeDirection o = ForgeDirection.UNKNOWN;
 
-		if (tile1.xCoord - 1 == tile2.xCoord)
+		if (tile1.xCoord - 1 == tile2.xCoord) {
 			o = ForgeDirection.WEST;
-		else if (tile1.xCoord + 1 == tile2.xCoord)
+		} else if (tile1.xCoord + 1 == tile2.xCoord) {
 			o = ForgeDirection.EAST;
-		else if (tile1.yCoord - 1 == tile2.yCoord)
+		} else if (tile1.yCoord - 1 == tile2.yCoord) {
 			o = ForgeDirection.DOWN;
-		else if (tile1.yCoord + 1 == tile2.yCoord)
+		} else if (tile1.yCoord + 1 == tile2.yCoord) {
 			o = ForgeDirection.UP;
-		else if (tile1.zCoord - 1 == tile2.zCoord)
+		} else if (tile1.zCoord - 1 == tile2.zCoord) {
 			o = ForgeDirection.NORTH;
-		else if (tile1.zCoord + 1 == tile2.zCoord)
+		} else if (tile1.zCoord + 1 == tile2.zCoord) {
 			o = ForgeDirection.SOUTH;
+		}
 
-		if (tile1 instanceof IPipeTile && !((IPipeTile) tile1).isPipeConnected(o))
+		if (tile1 instanceof IPipeTile && !((IPipeTile) tile1).isPipeConnected(o)) {
 			return false;
+		}
 
-		if (tile2 instanceof IPipeTile && !((IPipeTile) tile2).isPipeConnected(o.getOpposite()))
+		if (tile2 instanceof IPipeTile && !((IPipeTile) tile2).isPipeConnected(o.getOpposite())) {
 			return false;
+		}
 
 		return true;
 	}
@@ -466,7 +474,7 @@ public class Utils {
 	public static void writeNBT (ByteBuf data, NBTTagCompound nbt) {
 		try {
 			byte[] compressed = CompressedStreamTools.compress(nbt);
-			data.writeShort(compressed.length);
+			data.writeInt(compressed.length);
 			data.writeBytes(compressed);
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -475,7 +483,7 @@ public class Utils {
 
 	public static NBTTagCompound readNBT(ByteBuf data) {
 		try {
-			short length = data.readShort();
+			int length = data.readInt();
 			byte[] compressed = new byte[length];
 			data.readBytes(compressed);
 			return CompressedStreamTools.decompress(compressed);
@@ -528,7 +536,7 @@ public class Utils {
 	public static void readStacksFromNBT(NBTTagCompound nbt, String name, ItemStack[] stacks) {
 		NBTTagList nbttaglist = nbt.getTagList(name, NBTTag_Types.NBTTagCompound.ordinal());
 
-		for (int i = 0; i < stacks.length; ++i)
+		for (int i = 0; i < stacks.length; ++i) {
 			if (i < nbttaglist.tagCount()) {
 				NBTTagCompound nbttagcompound2 = nbttaglist.getCompoundTagAt(i);
 
@@ -536,16 +544,17 @@ public class Utils {
 			} else {
 				stacks[i] = null;
 			}
+		}
 	}
 
 	public static void writeStacksToNBT(NBTTagCompound nbt, String name, ItemStack[] stacks) {
 		NBTTagList nbttaglist = new NBTTagList();
 
-		for (int i = 0; i < stacks.length; ++i) {
+		for (ItemStack stack : stacks) {
 			NBTTagCompound cpt = new NBTTagCompound();
 			nbttaglist.appendTag(cpt);
-			if (stacks[i] != null) {
-				stacks[i].writeToNBT(cpt);
+			if (stack != null) {
+				stack.writeToNBT(cpt);
 			}
 
 		}
