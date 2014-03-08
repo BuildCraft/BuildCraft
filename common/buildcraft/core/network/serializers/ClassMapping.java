@@ -411,9 +411,7 @@ public class ClassMapping extends ClassSerializer {
 				byte [] arr = (byte []) obj;
 				data.writeInt (arr.length);
 
-				for (byte element : arr) {
-					data.writeByte(element);
-				}
+				data.writeBytes(arr);
 
 				break;
 			}
@@ -496,9 +494,7 @@ public class ClassMapping extends ClassSerializer {
 					arr = (byte []) obj;
 				}
 
-				for (int i = 0; i < arr.length; ++i) {
-					arr [i] = data.readByte();
-				}
+				data.readBytes (arr);
 
 				obj = arr;
 

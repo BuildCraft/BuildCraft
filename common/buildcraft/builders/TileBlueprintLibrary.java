@@ -8,11 +8,13 @@
  */
 package buildcraft.builders;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import buildcraft.BuildCraftBuilders;
 import buildcraft.builders.blueprints.BlueprintId;
@@ -216,9 +218,8 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory {
 			BlueprintBase bpt = ItemBlueprint.getBlueprint(stack [1]);
 
 			if (bpt != null && uploadingPlayer != null) {
-				NBTTagCompound nbt = new NBTTagCompound();
-				bpt.writeToNBT(nbt);
-				RPCHandler.rpcPlayer(this, "downloadBlueprintToClient", uploadingPlayer, bpt.id, nbt);
+				RPCHandler.rpcPlayer(this, "downloadBlueprintToClient",
+						uploadingPlayer, bpt.id, bpt.getData());
 				uploadingPlayer = null;
 			}
 		}
@@ -239,38 +240,50 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory {
 	public void requestSelectedBlueprint () {
 		if (selected > -1 && selected < currentPage.size()) {
 			BlueprintBase bpt = BuildCraftBuilders.clientDB.get(currentPage.get(selected));
-			NBTTagCompound nbt = new NBTTagCompound();
-			bpt.writeToNBT(nbt);
 
-			RPCHandler.rpcServer(this, "uploadBlueprintToServer", bpt.id, nbt);
+			RPCHandler.rpcServer(this, "uploadBlueprintToServer", bpt.id, bpt.getData());
 		} else {
 			RPCHandler.rpcServer(this, "uploadBlueprintToServer", null, null);
 		}
 	}
 
 	@RPC (RPCSide.SERVER)
-	public void uploadBlueprintToServer (BlueprintId id, NBTTagCompound data) {
-		if (data != null) {
-			BlueprintBase bpt = BlueprintBase.loadBluePrint(data);
-			bpt.id = id;
-			BuildCraftBuilders.serverDB.add(bpt);
-			setInventorySlotContents(3, ItemBlueprint.getBlueprintItem(bpt));
-		} else {
-			setInventorySlotContents(3, stack [2]);
+	public void uploadBlueprintToServer (BlueprintId id, byte [] data) {
+		try {
+			if (data != null) {
+				NBTTagCompound nbt = CompressedStreamTools.decompress(data);
+				BlueprintBase bpt = BlueprintBase.loadBluePrint(nbt);
+				bpt.setData(data);
+				bpt.id = id;
+				BuildCraftBuilders.serverDB.add(bpt);
+				setInventorySlotContents(3, ItemBlueprint.getBlueprintItem(bpt));
+			} else {
+				setInventorySlotContents(3, stack[2]);
+			}
+
+			setInventorySlotContents(2, null);
+
+			downloadingPlayer = null;
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-
-		setInventorySlotContents(2, null);
-
-		downloadingPlayer = null;
 	}
 
 	@RPC (RPCSide.CLIENT)
-	public void downloadBlueprintToClient (BlueprintId id, NBTTagCompound data) {
-		BlueprintBase bpt = BlueprintBase.loadBluePrint(data);
-		bpt.id = id;
+	public void downloadBlueprintToClient (BlueprintId id, byte [] data) {
+		try {
+			NBTTagCompound nbt = CompressedStreamTools.decompress(data);
+			BlueprintBase bpt = BlueprintBase.loadBluePrint(nbt);
+			bpt.setData(data);
+			bpt.id = id;
 
-		BuildCraftBuilders.clientDB.add(bpt);
-		setCurrentPage(BuildCraftBuilders.clientDB.getPage (pageId));
+			BuildCraftBuilders.clientDB.add(bpt);
+			setCurrentPage(BuildCraftBuilders.clientDB.getPage(pageId));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	public void selectBlueprint (int index) {

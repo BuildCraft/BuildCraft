@@ -163,6 +163,7 @@ public class BlueprintDatabase {
 				NBTTagCompound nbt = CompressedStreamTools.decompress(data);
 
 				BlueprintBase blueprint = BlueprintBase.loadBluePrint(nbt);
+				blueprint.setData(data);
 				blueprint.id = id;
 
 				loadedBlueprints.put(id, blueprint);
