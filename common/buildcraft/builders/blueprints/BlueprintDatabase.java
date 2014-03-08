@@ -8,9 +8,6 @@
  */
 package buildcraft.builders.blueprints;
 
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -31,7 +28,6 @@ import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import buildcraft.BuildCraftBuilders;
 import buildcraft.core.blueprints.BlueprintBase;
-import buildcraft.core.utils.Utils;
 
 public class BlueprintDatabase {
 	private final int bufferSize = 8192;
@@ -99,17 +95,7 @@ public class BlueprintDatabase {
 	}
 
 	private BlueprintId save(BlueprintBase blueprint) {
-		NBTTagCompound nbt = new NBTTagCompound();
-		blueprint.writeToNBT(nbt);
-
-		ByteBuf buf = Unpooled.buffer();
-
-		Utils.writeNBT(buf, nbt);
-
-		byte[] data = new byte [buf.readableBytes()];
-		buf.readBytes(data);
-
-		blueprint.id.generateUniqueId(data);
+		blueprint.id.generateUniqueId(blueprint.getData());
 
 		BlueprintId id = blueprint.id;
 
@@ -118,12 +104,16 @@ public class BlueprintDatabase {
 		if (!blueprintFile.exists()) {
 			OutputStream gzOs = null;
 			try {
-				CompressedStreamTools.writeCompressed(nbt, new FileOutputStream(blueprintFile));
+				FileOutputStream f = new FileOutputStream(blueprintFile);
+				f.write(blueprint.getData());
+				f.close();
 			} catch (IOException ex) {
 				Logger.getLogger("Buildcraft").log(Level.SEVERE, String.format("Failed to save Blueprint file: %s %s", blueprintFile.getName(), ex.getMessage()));
 			} finally {
 				try {
-					if (gzOs != null) gzOs.close();
+					if (gzOs != null) {
+						gzOs.close();
+					}
 				} catch (IOException e) { }
 			}
 		}
@@ -165,8 +155,12 @@ public class BlueprintDatabase {
 
 		if (blueprintFile.exists()) {
 			try {
-				NBTTagCompound nbt = CompressedStreamTools
-						.readCompressed(new FileInputStream(blueprintFile));
+				FileInputStream f = new FileInputStream(blueprintFile);
+				byte [] data = new byte [(int) blueprintFile.length()];
+				f.read (data);
+				f.close();
+
+				NBTTagCompound nbt = CompressedStreamTools.decompress(data);
 
 				BlueprintBase blueprint = BlueprintBase.loadBluePrint(nbt);
 				blueprint.id = id;

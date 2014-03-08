@@ -68,7 +68,26 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 
 				computingTime = (int) ((1 - (float) blockScanner.blocksLeft()
 						/ (float) blockScanner.totalBlocks()) * 100);
-			} else {
+
+				if (blockScanner.blocksLeft() == 0) {
+					ForgeDirection o = ForgeDirection.values()[worldObj.getBlockMetadata(
+							xCoord, yCoord, zCoord)].getOpposite();
+
+					if (o == ForgeDirection.EAST) {
+						// Do nothing
+					} else if (o == ForgeDirection.SOUTH) {
+						writingBlueprint.rotateLeft(writingContext);
+						writingBlueprint.rotateLeft(writingContext);
+						writingBlueprint.rotateLeft(writingContext);
+					} else if (o == ForgeDirection.WEST) {
+						writingBlueprint.rotateLeft(writingContext);
+						writingBlueprint.rotateLeft(writingContext);
+					} else if (o == ForgeDirection.NORTH) {
+						writingBlueprint.rotateLeft(writingContext);
+					}
+
+				}
+			} else if (writingBlueprint.getData() != null) {
 				createBpt();
 
 				computingTime = 0;
@@ -94,22 +113,6 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 	}
 
 	public void createBpt() {
-		ForgeDirection o = ForgeDirection.values()[worldObj.getBlockMetadata(
-				xCoord, yCoord, zCoord)].getOpposite();
-
-		if (o == ForgeDirection.EAST) {
-			// Do nothing
-		} else if (o == ForgeDirection.SOUTH) {
-			writingBlueprint.rotateLeft(writingContext);
-			writingBlueprint.rotateLeft(writingContext);
-			writingBlueprint.rotateLeft(writingContext);
-		} else if (o == ForgeDirection.WEST) {
-			writingBlueprint.rotateLeft(writingContext);
-			writingBlueprint.rotateLeft(writingContext);
-		} else if (o == ForgeDirection.NORTH) {
-			writingBlueprint.rotateLeft(writingContext);
-		}
-
 		BuildCraftBuilders.serverDB.add(writingBlueprint);
 
 		setInventorySlotContents(1, ItemBlueprint.getBlueprintItem(writingBlueprint));

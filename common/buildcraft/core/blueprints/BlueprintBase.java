@@ -8,12 +8,15 @@
  */
 package buildcraft.core.blueprints;
 
+import java.io.IOException;
+
 import net.minecraft.block.Block;
+import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 import buildcraft.api.blueprints.BlueprintManager;
-import buildcraft.api.blueprints.Schematic;
 import buildcraft.api.blueprints.MappingRegistry;
+import buildcraft.api.blueprints.Schematic;
 import buildcraft.builders.blueprints.BlueprintId;
 import buildcraft.core.Box;
 import buildcraft.core.Version;
@@ -28,6 +31,8 @@ public abstract class BlueprintBase {
 	public String author;
 	private String version = "";
 	protected MappingRegistry mapping = new MappingRegistry();
+
+	private byte [] data;
 
 	public BlueprintBase() {
 	}
@@ -264,4 +269,42 @@ public abstract class BlueprintBase {
 	public abstract void loadContents(NBTTagCompound nbt) throws BptError;
 
 	public abstract void saveContents(NBTTagCompound nbt);
+
+	class ComputeDataThread extends Thread {
+		public NBTTagCompound nbt;
+
+		@Override
+		public void run () {
+			try {
+				BlueprintBase.this.setData(CompressedStreamTools.compress(nbt));
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+
+	ComputeDataThread computeData;
+
+	/**
+	 * This function will return the binary data associated to this blueprint.
+	 * This data is computed asynchronously. If the data is not yet available,
+	 * null will be returned.
+	 */
+	public synchronized byte [] getData () {
+		if (data != null) {
+			return data;
+		} else if (computeData == null) {
+			computeData = new ComputeDataThread();
+			computeData.nbt = new NBTTagCompound();
+			writeToNBT(computeData.nbt);
+			computeData.start();
+		}
+
+		return null;
+	}
+
+	public synchronized void setData (byte [] b) {
+		data = b;
+	}
 }
