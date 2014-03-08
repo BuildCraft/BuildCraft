@@ -10,53 +10,48 @@ package buildcraft.core;
 
 import java.util.Iterator;
 
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 
-public class BlockScanner implements Iterable<BlockWrapper> {
+public class BlockScanner implements Iterable<BlockIndex> {
 
-	Box box;
+	Box box = new Box ();
 	World world;
 
 	int x, y, z;
-	int iterations;
+	int iterationsPerCycle;
+	int blocksDone = 0;
 
-	class BlockIt implements Iterator<BlockWrapper> {
+	class BlockIt implements Iterator<BlockIndex> {
 
 		int it = 0;
 
 		@Override
 		public boolean hasNext() {
-			return it <= iterations;
+			return z <= box.zMax && it <= iterationsPerCycle;
 		}
 
 		@Override
-		public BlockWrapper next() {
-			if (x <= box.xMax) {
+		public BlockIndex next() {
+			BlockIndex index = new BlockIndex(x, y, z);
+			it++;
+			blocksDone++;
+
+			if (x < box.xMax) {
 				x++;
 			} else {
 				x = box.xMin;
 
-				if (y <= box.yMax) {
+				if (y < box.yMax) {
 					y++;
 				} else {
 					y = box.yMin;
 
-					if (z <= box.zMax) {
-						z++;
-					} else {
-						z = box.zMin;
-					}
+					z++;
 				}
 			}
 
-			it++;
-
-			BlockWrapper w = new BlockWrapper();
-			w.index = new BlockIndex(x, y, z);
-			w.block = world.getBlock (x, y, z);
-			w.tile = world.getTileEntity(x, y, z);
-
-			return w;
+			return index;
 		}
 
 		@Override
@@ -65,19 +60,50 @@ public class BlockScanner implements Iterable<BlockWrapper> {
 		}
 	}
 
-	public  BlockScanner (Box box, World world, int iterations) {
+	public  BlockScanner (Box box, World world, int iterationsPreCycle) {
 		this.box = box;
 		this.world = world;
-		this.iterations = iterations;
+		this.iterationsPerCycle = iterationsPreCycle;
 
 		x = box.xMin;
 		y = box.yMin;
 		z = box.zMin;
 	}
 
+	public  BlockScanner () {
+	}
+
 	@Override
-	public Iterator<BlockWrapper> iterator() {
+	public Iterator<BlockIndex> iterator() {
 		return new BlockIt();
+	}
+
+	public int totalBlocks () {
+		return box.sizeX() * box.sizeY() * box.sizeZ();
+	}
+
+	public int blocksLeft () {
+		return totalBlocks() - blocksDone;
+	}
+
+	public void writeToNBT (NBTTagCompound nbt) {
+		nbt.setInteger("x", x);
+		nbt.setInteger("y", y);
+		nbt.setInteger("z", z);
+		nbt.setInteger("blocksDone", blocksDone);
+		nbt.setInteger("iterationsPerCycle", iterationsPerCycle);
+		NBTTagCompound boxNBT = new NBTTagCompound();
+		box.writeToNBT(boxNBT);
+		nbt.setTag("box", boxNBT);
+	}
+
+	public void readFromNBT (NBTTagCompound nbt) {
+		x = nbt.getInteger("x");
+		y = nbt.getInteger("y");
+		z = nbt.getInteger("z");
+		blocksDone = nbt.getInteger("blocksDone");
+		iterationsPerCycle = nbt.getInteger("iterationsPerCycle");
+		box.initialize(nbt.getCompoundTag("box"));
 	}
 
 }

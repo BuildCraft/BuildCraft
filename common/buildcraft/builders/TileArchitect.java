@@ -9,7 +9,6 @@
 package buildcraft.builders;
 
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -17,16 +16,15 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.BuildCraftBuilders;
-import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.core.IAreaProvider;
+import buildcraft.core.BlockIndex;
+import buildcraft.core.BlockScanner;
 import buildcraft.core.Box;
 import buildcraft.core.Box.Kind;
 import buildcraft.core.IBoxProvider;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.blueprints.Blueprint;
-import buildcraft.core.blueprints.BlueprintBase;
 import buildcraft.core.blueprints.BptContext;
-import buildcraft.core.blueprints.Template;
 import buildcraft.core.network.NetworkData;
 import buildcraft.core.network.RPC;
 import buildcraft.core.network.RPCHandler;
@@ -35,13 +33,18 @@ import buildcraft.core.utils.Utils;
 
 public class TileArchitect extends TileBuildCraft implements IInventory, IBoxProvider {
 
+	// TODO: In release, this should go down to 100
+	private final static int SCANNER_ITERATION = 1000;
+
+	private Blueprint writingBlueprint;
+	private BptContext writingContext;
+	private BlockScanner blockScanner;
+	public int computingTime = 0;
+
 	public @NetworkData
 	Box box = new Box();
 
 	private ItemStack items[] = new ItemStack[2];
-
-	private boolean isComputing = false;
-	public int computingTime = 0;
 
 	public @NetworkData
 	String name = "";
@@ -56,11 +59,19 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 	public void updateEntity() {
 		super.updateEntity();
 
-		if (!worldObj.isRemote && isComputing) {
-			if (computingTime < 200) {
-				computingTime++;
+		if (!worldObj.isRemote && blockScanner != null) {
+			if (blockScanner.blocksLeft() != 0) {
+				for (BlockIndex index : blockScanner) {
+					writingBlueprint.readFromWorld(writingContext, this,
+							index.x, index.y, index.z);
+				}
+
+				computingTime = (int) ((1 - (float) blockScanner.blocksLeft()
+						/ (float) blockScanner.totalBlocks()) * 100);
 			} else {
 				createBpt();
+
+				computingTime = 0;
 			}
 		}
 	}
@@ -83,51 +94,33 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 	}
 
 	public void createBpt() {
-		if (!box.isInitialized() || items[1] != null) {
-			return;
-		}
-
-		BlueprintBase result;
-		BptContext context = null;
-
-		if (items[0].getItem() instanceof ItemBlueprint) {
-			result = createBptBlueprint();
-			context = result.getContext(worldObj, box);
-		} else {
-			result = createBptTemplate();
-			context =  result.getContext(worldObj, box);
-		}
-
-		
-		result.id.name = name;
-		result.author = currentAuthorName;
-		result.anchorX = xCoord - box.xMin;
-		result.anchorY = yCoord - box.yMin;
-		result.anchorZ = zCoord - box.zMin;
-
 		ForgeDirection o = ForgeDirection.values()[worldObj.getBlockMetadata(
 				xCoord, yCoord, zCoord)].getOpposite();
 
 		if (o == ForgeDirection.EAST) {
 			// Do nothing
 		} else if (o == ForgeDirection.SOUTH) {
-			result.rotateLeft(context);
-			result.rotateLeft(context);
-			result.rotateLeft(context);
+			writingBlueprint.rotateLeft(writingContext);
+			writingBlueprint.rotateLeft(writingContext);
+			writingBlueprint.rotateLeft(writingContext);
 		} else if (o == ForgeDirection.WEST) {
-			result.rotateLeft(context);
-			result.rotateLeft(context);
+			writingBlueprint.rotateLeft(writingContext);
+			writingBlueprint.rotateLeft(writingContext);
 		} else if (o == ForgeDirection.NORTH) {
-			result.rotateLeft(context);
+			writingBlueprint.rotateLeft(writingContext);
 		}
 
-		BuildCraftBuilders.serverDB.add(result);
+		BuildCraftBuilders.serverDB.add(writingBlueprint);
 
-		setInventorySlotContents(1, ItemBlueprint.getBlueprintItem(result));
+		setInventorySlotContents(1, ItemBlueprint.getBlueprintItem(writingBlueprint));
 		setInventorySlotContents(0, null);
+
+		writingBlueprint = null;
+		writingContext = null;
+		blockScanner = null;
 	}
 
-	public BlueprintBase createBptTemplate() {
+	/*public BlueprintBase createBptTemplate() {
 		int mask1 = 1;
 		int mask0 = 0;
 
@@ -151,22 +144,7 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 		}
 
 		return result;
-	}
-
-	private BlueprintBase createBptBlueprint() {
-		Blueprint result = new Blueprint(box.sizeX(), box.sizeY(), box.sizeZ());
-		IBuilderContext context = result.getContext(worldObj, box);
-
-		for (int x = box.xMin; x <= box.xMax; ++x) {
-			for (int y = box.yMin; y <= box.yMax; ++y) {
-				for (int z = box.zMin; z <= box.zMax; ++z) {
-					result.readFromWorld(context, this, x, y, z);
-				}
-			}
-		}
-
-		return result;
-	}
+	}*/
 
 	@RPC (RPCSide.SERVER)
 	public void handleClientInput(char c) {
@@ -253,8 +231,12 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 	public void readFromNBT(NBTTagCompound nbttagcompound) {
 		super.readFromNBT(nbttagcompound);
 
-		computingTime = nbttagcompound.getInteger("computingTime");
-		isComputing = nbttagcompound.getBoolean("isComputing");
+		// For now, scan states don't get saved. Would need to save
+		// blueprints too.
+		/*if (nbttagcompound.hasKey("scanner")) {
+			blockScanner = new BlockScanner();
+			blockScanner.readFromNBT(nbttagcompound.getCompoundTag("scanner"));
+		}*/
 
 		if (nbttagcompound.hasKey("box")) {
 			box.initialize(nbttagcompound.getCompoundTag("box"));
@@ -281,8 +263,13 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 	public void writeToNBT(NBTTagCompound nbttagcompound) {
 		super.writeToNBT(nbttagcompound);
 
-		nbttagcompound.setInteger("computingTime", computingTime);
-		nbttagcompound.setBoolean("isComputing", isComputing);
+		// For now, scan states don't get saved. Would need to save
+		// blueprints too.
+		/*if (blockScanner != null) {
+			NBTTagCompound scanner = new NBTTagCompound();
+			blockScanner.writeToNBT(scanner);
+			nbttagcompound.setTag("scanner", scanner);
+		}*/
 
 		if (box.isInitialized()) {
 			NBTTagCompound boxStore = new NBTTagCompound();
@@ -314,24 +301,39 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 	private void initializeComputing() {
 		if (!box.isInitialized()) {
 			return;
-		} else if (!isComputing) {
+		} else if (blockScanner == null) {
 			if (items[0] != null && items[0].getItem() instanceof ItemBlueprint && items[1] == null) {
-				isComputing = true;
-				computingTime = 0;
+				if (!box.isInitialized() || items[1] != null) {
+					return;
+				}
+
+				blockScanner = new BlockScanner(box, getWorld(), SCANNER_ITERATION);
+				writingBlueprint = new Blueprint(box.sizeX(), box.sizeY(), box.sizeZ());
+				writingContext = writingBlueprint.getContext(worldObj, box);
+
+				writingBlueprint.id.name = name;
+				writingBlueprint.author = currentAuthorName;
+				writingBlueprint.anchorX = xCoord - box.xMin;
+				writingBlueprint.anchorY = yCoord - box.yMin;
+				writingBlueprint.anchorZ = zCoord - box.zMin;
 			} else {
-				isComputing = false;
-				computingTime = 0;
+
 			}
 		} else {
 			if (items[0] == null || !(items[0].getItem() instanceof ItemBlueprint)) {
-				isComputing = false;
-				computingTime = 0;
+				blockScanner = null;
+				writingBlueprint = null;
+				writingContext = null;
 			}
 		}
 	}
 
-	public int getComputingProgressScaled(int i) {
-		return (computingTime * i) / 200;
+	public int getComputingProgressScaled(int scale) {
+		if (blockScanner == null) {
+			return 0;
+		} else {
+			return (int) ((float) computingTime / (float) 100 * scale);
+		}
 	}
 
 	@Override
