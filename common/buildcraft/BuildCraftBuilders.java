@@ -156,6 +156,9 @@ public class BuildCraftBuilders extends BuildCraftMod {
 
 		BlueprintManager.registerSchematicClass(Blocks.ladder, SchematicRotateMeta.class, new int[]{2, 5, 3, 4}, true);
 		BlueprintManager.registerSchematicClass(Blocks.fence_gate, SchematicRotateMeta.class, new int[]{0, 1, 2, 3}, true);
+		BlueprintManager.registerSchematicClass(Blocks.log, SchematicRotateMeta.class, new int[]{8, 4, 8, 4}, true);
+		BlueprintManager.registerSchematicClass(Blocks.log2, SchematicRotateMeta.class, new int[]{8, 4, 8, 4}, true);
+		BlueprintManager.registerSchematicClass(Blocks.hay_block, SchematicRotateMeta.class, new int[]{8, 4, 8, 4}, true);
 
 		BlueprintManager.registerSchematicClass(Blocks.furnace, SchematicRotateInventory.class, new int[]{2, 5, 3, 4}, true);
 		BlueprintManager.registerSchematicClass(Blocks.lit_furnace, SchematicRotateInventory.class, new int[]{2, 5, 3, 4}, true);
