@@ -6,6 +6,7 @@ import io.netty.buffer.Unpooled;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.LinkedList;
@@ -57,14 +58,14 @@ public class RPCHandler {
 
 		LinkedList <Method> rpcMethods = new LinkedList<Method>();
 
-		for (int i = 0; i < sortedMethods.length; ++i) {
-			if (sortedMethods [i].getAnnotation (RPC.class) != null) {
-				methodsMap.put(sortedMethods [i].getName(), rpcMethods.size());
-				rpcMethods.add(sortedMethods [i]);
+		for (Method sortedMethod : sortedMethods) {
+			if (sortedMethod.getAnnotation (RPC.class) != null) {
+				methodsMap.put(sortedMethod.getName(), rpcMethods.size());
+				rpcMethods.add(sortedMethod);
 
 				MethodMapping mapping = new MethodMapping();
-				mapping.method = sortedMethods [i];
-				mapping.parameters = sortedMethods [i].getParameterTypes();
+				mapping.method = sortedMethod;
+				mapping.parameters = sortedMethod.getParameterTypes();
 				mapping.mappings = new ClassSerializer [mapping.parameters.length];
 
 				for (int j = 0; j < mapping.parameters.length; ++j) {
@@ -96,7 +97,11 @@ public class RPCHandler {
 		PacketRPCTile packet = handlers.get (tile.getClass().getName()).createRCPPacket(tile, method, actuals);
 
 		if (packet != null) {
-			BuildCraftCore.instance.sendToServer(packet);
+			ArrayList<PacketRPCTile> packets = packet.breakIntoSmallerPackets(30 * 1024);
+
+			for (PacketRPCTile p : packets) {
+				BuildCraftCore.instance.sendToServer(p);
+			}
 		}
 	}
 
@@ -216,13 +221,6 @@ public class RPCHandler {
 		ByteBuf data = Unpooled.buffer();
 
 		try {
-			// In order to save space on message, we assuming dimensions ids
-			// small. Maybe worth using a varint instead
-			data.writeShort(tile.getWorldObj().provider.dimensionId);
-			data.writeInt(tile.xCoord);
-			data.writeInt(tile.yCoord);
-			data.writeInt(tile.zCoord);
-
 			writeParameters(method, data, actuals);
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -235,7 +233,7 @@ public class RPCHandler {
 		byte [] bytes = new byte [data.readableBytes()];
 		data.readBytes(bytes);
 
-		return new PacketRPCTile(bytes);
+		return new PacketRPCTile(tile, bytes);
 	}
 
 	private void writeParameters(String method, ByteBuf data, Object... actuals)
