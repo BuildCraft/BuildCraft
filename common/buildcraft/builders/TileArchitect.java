@@ -182,6 +182,7 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 	@Override
 	public ItemStack decrStackSize(int i, int j) {
 		ItemStack result;
+
 		if (items[i] == null) {
 			result = null;
 		} else if (items[i].stackSize > j) {
@@ -192,7 +193,9 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 			result = tmp;
 		}
 
-		initializeComputing();
+		if (i == 0) {
+			initializeComputing();
+		}
 
 		return result;
 	}
@@ -201,7 +204,9 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 	public void setInventorySlotContents(int i, ItemStack itemstack) {
 		items[i] = itemstack;
 
-		initializeComputing();
+		if (i == 0) {
+			initializeComputing();
+		}
 	}
 
 	@Override
@@ -302,6 +307,10 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 	}
 
 	private void initializeComputing() {
+		if (getWorld().isRemote) {
+			return;
+		}
+
 		if (!box.isInitialized()) {
 			return;
 		} else if (blockScanner == null) {
@@ -323,20 +332,14 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 
 			}
 		} else {
-			if (items[0] == null || !(items[0].getItem() instanceof ItemBlueprint)) {
-				blockScanner = null;
-				writingBlueprint = null;
-				writingContext = null;
-			}
+			blockScanner = null;
+			writingBlueprint = null;
+			writingContext = null;
 		}
 	}
 
 	public int getComputingProgressScaled(int scale) {
-		if (blockScanner == null) {
-			return 0;
-		} else {
-			return (int) ((float) computingTime / (float) 100 * scale);
-		}
+		return (int) ((float) computingTime / (float) 100 * scale);
 	}
 
 	@Override

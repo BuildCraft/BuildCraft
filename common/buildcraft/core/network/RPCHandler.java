@@ -30,6 +30,8 @@ import buildcraft.transport.Pipe;
  */
 public class RPCHandler {
 
+	public static int MAX_PACKET_SIZE = 30 * 1024;
+
 	private static Map <String, RPCHandler> handlers =
 			new TreeMap <String, RPCHandler> ();
 
@@ -99,7 +101,7 @@ public class RPCHandler {
 		if (packet != null) {
 			ArrayList<PacketRPCTile> packets = packet.breakIntoSmallerPackets(30 * 1024);
 
-			for (PacketRPCTile p : packets) {
+			for (PacketRPCTile p : packet.breakIntoSmallerPackets(MAX_PACKET_SIZE)) {
 				BuildCraftCore.instance.sendToServer(p);
 			}
 		}
@@ -113,7 +115,9 @@ public class RPCHandler {
 		PacketRPCTile packet = handlers.get (tile.getClass().getName()).createRCPPacket(tile, method, actuals);
 
 		if (packet != null) {
-			BuildCraftCore.instance.sendToPlayer(player, packet);
+			for (PacketRPCTile p : packet.breakIntoSmallerPackets(MAX_PACKET_SIZE)) {
+				BuildCraftCore.instance.sendToPlayer(player, p);
+			}
 		}
 	}
 
@@ -133,13 +137,16 @@ public class RPCHandler {
 		PacketRPCTile packet = handlers.get (tile.getClass().getName()).createRCPPacket(tile, method, actuals);
 
 		if (packet != null) {
-			for (Object o : tile.getWorldObj().playerEntities) {
-				EntityPlayerMP player = (EntityPlayerMP) o;
+			for (PacketRPCTile p : packet
+					.breakIntoSmallerPackets(MAX_PACKET_SIZE)) {
+				for (Object o : tile.getWorldObj().playerEntities) {
+					EntityPlayerMP player = (EntityPlayerMP) o;
 
-				if (Math.abs(player.posX - tile.xCoord) <= maxDistance
-						&& Math.abs(player.posY - tile.yCoord) <= maxDistance
-						&& Math.abs(player.posZ - tile.zCoord) <= maxDistance) {
-					BuildCraftCore.instance.sendToPlayer(player, packet);
+					if (Math.abs(player.posX - tile.xCoord) <= maxDistance
+							&& Math.abs(player.posY - tile.yCoord) <= maxDistance
+							&& Math.abs(player.posZ - tile.zCoord) <= maxDistance) {
+						BuildCraftCore.instance.sendToPlayer(player, p);
+					}
 				}
 			}
 		}
