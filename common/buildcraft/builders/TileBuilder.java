@@ -643,6 +643,10 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory,
 				slot.schematic.writeToWorld(bluePrintBuilder.context, slot.x,
 						slot.y, slot.z);
 			}
+
+			if (bluePrintBuilder instanceof BptBuilderBlueprint) {
+				((BptBuilderBlueprint) bluePrintBuilder).recomputeNeededItems();
+			}
 		}
 	}
 

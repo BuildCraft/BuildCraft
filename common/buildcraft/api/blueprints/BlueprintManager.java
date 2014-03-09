@@ -48,7 +48,9 @@ public class BlueprintManager {
 
 		try {
 			SchematicConstructor c = schematicClasses.get(block);
-			return (Schematic) c.clas.getConstructors() [0].newInstance(c.params);
+			Schematic s = (Schematic) c.clas.getConstructors() [0].newInstance(c.params);
+			s.block = block;
+			return s;
 		} catch (InstantiationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

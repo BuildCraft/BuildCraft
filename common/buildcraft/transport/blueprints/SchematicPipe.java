@@ -8,7 +8,7 @@
  */
 package buildcraft.transport.blueprints;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -20,15 +20,6 @@ import buildcraft.transport.Pipe;
 import buildcraft.transport.TileGenericPipe.SideProperties;
 
 public class SchematicPipe extends SchematicTile {
-
-	@Override
-	public void addRequirements(IBuilderContext context, LinkedList<ItemStack> requirements) {
-		Item pipeItem = context.getMappingRegistry().getItemForId (cpt.getInteger("pipeId"));
-
-		requirements.add(new ItemStack(pipeItem));
-
-		requirements.addAll(storedRequirements);
-	}
 
 	@Override
 	public boolean isValid(IBuilderContext context, int x, int y, int z) {
@@ -79,7 +70,11 @@ public class SchematicPipe extends SchematicTile {
 		Pipe pipe = BlockGenericPipe.getPipe(context.world(), x, y, z);
 
 		if (BlockGenericPipe.isValid(pipe)) {
-			storedRequirements.addAll(pipe.computeItemDrop ());
+			ArrayList <ItemStack> items = pipe.computeItemDrop ();
+			storedRequirements = new ItemStack [items.size() + 1];
+			items.toArray(storedRequirements);
+			storedRequirements[storedRequirements.length - 1] = new ItemStack(
+					pipe.item);
 
 			tile.writeToNBT(cpt);
 

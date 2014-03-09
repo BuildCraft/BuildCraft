@@ -16,6 +16,9 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+
+import org.apache.commons.lang3.ArrayUtils;
+
 import buildcraft.core.utils.Utils;
 
 /**
@@ -51,7 +54,7 @@ public class Schematic {
 	 * blueprint. Modders can either rely on this list or compute their own int
 	 * Schematic.
 	 */
-	public ArrayList<ItemStack> storedRequirements = new ArrayList<ItemStack>();
+	public ItemStack [] storedRequirements = new ItemStack [0];
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -60,7 +63,7 @@ public class Schematic {
 
 		obj.block = block;
 		obj.meta = meta;
-		obj.storedRequirements = (ArrayList<ItemStack>) storedRequirements.clone();
+		obj.storedRequirements = ArrayUtils.clone(storedRequirements);
 
 		return obj;
 	}
@@ -81,8 +84,10 @@ public class Schematic {
 	 */
 	public void addRequirements(IBuilderContext context, LinkedList<ItemStack> requirements) {
 		if (block != null) {
-			if (storedRequirements.size() != 0) {
-				requirements.addAll(storedRequirements);
+			if (storedRequirements.length != 0) {
+				for (ItemStack s : storedRequirements) {
+					requirements.add(s);
+				}
 			} else {
 				requirements.add(new ItemStack(block, 1, meta));
 			}
@@ -187,7 +192,8 @@ public class Schematic {
 					y, z, context.world().getBlockMetadata(x, y, z), 0);
 
 			if (req != null) {
-				storedRequirements.addAll(req);
+				storedRequirements = new ItemStack [req.size()];
+				req.toArray(storedRequirements);
 			}
 		}
 	}
@@ -223,6 +229,7 @@ public class Schematic {
 		meta = nbt.getInteger("blockMeta");
 
 		NBTTagList rq = nbt.getTagList("rq", Utils.NBTTag_Types.NBTTagList.ordinal());
+		storedRequirements = new ItemStack[rq.tagCount()];
 
 		for (int i = 0; i < rq.tagCount(); ++i) {
 			NBTTagCompound sub = rq.getCompoundTagAt(i);
@@ -231,7 +238,7 @@ public class Schematic {
 			sub.setInteger("id", Item.itemRegistry.getIDForObject(registry
 					.getItemForId(sub.getInteger("id"))));
 
-			storedRequirements.add(ItemStack.loadItemStackFromNBT(sub));
+			storedRequirements [i] = ItemStack.loadItemStackFromNBT(sub);
 		}
 	}
 }
