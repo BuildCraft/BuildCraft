@@ -93,6 +93,8 @@ public class SchematicTile extends Schematic {
 
 	@Override
 	public void readFromNBT(NBTTagCompound nbt,	MappingRegistry registry) {
+		super.readFromNBT(nbt, registry);
+
 		cpt = nbt.getCompoundTag("blockCpt");
 	}
 }
