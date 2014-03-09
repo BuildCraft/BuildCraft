@@ -30,17 +30,20 @@ public abstract class ItemBlueprint extends ItemBuildCraft {
 
 	@Override
 	public void addInformation(ItemStack stack, EntityPlayer player, List list, boolean advanced) {
-		BlueprintBase blueprint = getBlueprint(stack);
+		BlueprintId blueprint = getId(stack);
 
 		if (blueprint != null) {
-			if (blueprint.id.name.equals("")) {
+			if (blueprint.name.equals("")) {
 				list.add(String.format(StringUtils.localize("item.blueprint.unnamed")));
 			} else {
-				list.add(String.format(blueprint.id.name));
+				list.add(String.format(blueprint.name));
 			}
 
 
-			list.add(String.format(StringUtils.localize("item.blueprint.author") + " " + blueprint.author));
+			list.add(String.format(StringUtils
+					.localize("item.blueprint.author")
+					+ " "
+					+ NBTUtils.getItemData(stack).getString("author")));
 		} else {
 			list.add(StringUtils.localize("item.blueprint.blank"));
 		}
@@ -50,19 +53,23 @@ public abstract class ItemBlueprint extends ItemBuildCraft {
 		ItemStack stack = new ItemStack(BuildCraftBuilders.blueprintItem, 1);
 		NBTTagCompound nbt = NBTUtils.getItemData(stack);
 		blueprint.id.write (nbt);
+		nbt.setString("author", blueprint.author);
 		return stack;
 	}
 
-	public static BlueprintBase getBlueprint(ItemStack stack) {
-		if (stack == null) {
-			return null;
-		}
-
+	public static BlueprintId getId (ItemStack stack) {
 		NBTTagCompound nbt = NBTUtils.getItemData(stack);
 		BlueprintId id = new BlueprintId ();
-
 		id.read (nbt);
 
-		return BuildCraftBuilders.serverDB.get(id);
+		if (BuildCraftBuilders.serverDB.exists(id)) {
+			return id;
+		} else {
+			return null;
+		}
+	}
+
+	public static BlueprintBase loadBlueprint(ItemStack stack) {
+		return BuildCraftBuilders.serverDB.load (getId (stack));
 	}
 }

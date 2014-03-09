@@ -215,7 +215,7 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory {
 			setInventorySlotContents(1, stack[0]);
 			setInventorySlotContents(0, null);
 
-			BlueprintBase bpt = ItemBlueprint.getBlueprint(stack [1]);
+			BlueprintBase bpt = ItemBlueprint.loadBlueprint(stack [1]);
 
 			if (bpt != null && uploadingPlayer != null) {
 				RPCHandler.rpcPlayer(this, "downloadBlueprintToClient",
@@ -239,7 +239,7 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory {
 	@RPC (RPCSide.CLIENT)
 	public void requestSelectedBlueprint () {
 		if (selected > -1 && selected < currentPage.size()) {
-			BlueprintBase bpt = BuildCraftBuilders.clientDB.get(currentPage.get(selected));
+			BlueprintBase bpt = BuildCraftBuilders.clientDB.load(currentPage.get(selected));
 
 			RPCHandler.rpcServer(this, "uploadBlueprintToServer", bpt.id, bpt.getData());
 		} else {

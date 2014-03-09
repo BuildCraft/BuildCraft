@@ -17,10 +17,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.WeakHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -38,8 +36,6 @@ public class BlueprintDatabase {
 	private Set <BlueprintId> blueprintIds = new TreeSet<BlueprintId> ();
 	private BlueprintId [] pages = new BlueprintId [0];
 
-	private Map<BlueprintId, BlueprintBase> loadedBlueprints = new WeakHashMap<BlueprintId, BlueprintBase>();
-
 	/**
 	 * Initialize the blueprint database.
 	 *
@@ -56,24 +52,6 @@ public class BlueprintDatabase {
 	}
 
 	/**
-	 * Get a specific blueprint by id.
-	 *
-	 * @note The blueprint will be loaded as needed.
-	 *
-	 * @param id blueprint id
-	 * @return blueprint or null if it can't be retrieved
-	 */
-	public BlueprintBase get(BlueprintId id) {
-		BlueprintBase ret = loadedBlueprints.get(id);
-
-		if (ret == null) {
-			ret = load(id);
-		}
-
-		return ret;
-	}
-
-	/**
 	 * Add a blueprint to the database and save it to disk.
 	 *
 	 * @param blueprint blueprint to add
@@ -85,10 +63,6 @@ public class BlueprintDatabase {
 		if (!blueprintIds.contains(id)) {
 			blueprintIds.add(id);
 			pages = blueprintIds.toArray(pages);
-		}
-
-		if (!loadedBlueprints.containsKey(id)) {
-			loadedBlueprints.put(id, blueprint);
 		}
 
 		return id;
@@ -149,7 +123,15 @@ public class BlueprintDatabase {
 		pages = blueprintIds.toArray(pages);
 	}
 
-	private BlueprintBase load(final BlueprintId id) {
+	public boolean exists (BlueprintId id) {
+		return blueprintIds.contains(id);
+	}
+
+	public BlueprintBase load(final BlueprintId id) {
+		if (id == null) {
+			return null;
+		}
+
 		File blueprintFile = new File(blueprintFolder, String.format(
 				Locale.ENGLISH, "%s" + fileExt, id.toString()));
 
@@ -165,8 +147,6 @@ public class BlueprintDatabase {
 				BlueprintBase blueprint = BlueprintBase.loadBluePrint(nbt);
 				blueprint.setData(data);
 				blueprint.id = id;
-
-				loadedBlueprints.put(id, blueprint);
 
 				return blueprint;
 			} catch (FileNotFoundException e) {

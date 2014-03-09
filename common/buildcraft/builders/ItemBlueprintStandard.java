@@ -25,7 +25,7 @@ public class ItemBlueprintStandard extends ItemBlueprint {
 
 	@Override
 	public IIcon getIconIndex(ItemStack stack) {
-		if (getBlueprint(stack) == null) {
+		if (getId(stack) == null) {
 			return cleanBlueprint;
 		} else {
 			return usedBlueprint;
