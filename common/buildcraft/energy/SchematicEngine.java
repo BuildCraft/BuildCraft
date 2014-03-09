@@ -10,9 +10,9 @@ package buildcraft.energy;
 
 import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.api.blueprints.IBuilderContext;
-import buildcraft.api.blueprints.Schematic;
+import buildcraft.api.blueprints.SchematicTile;
 
-public class SchematicEngine extends Schematic {
+public class SchematicEngine extends SchematicTile {
 
 	@Override
 	public void rotateLeft(IBuilderContext context) {

@@ -12,13 +12,10 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockContainer;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.tileentity.TileEntity;
 import buildcraft.core.utils.Utils;
 
 /**
@@ -56,14 +53,6 @@ public class Schematic {
 	 */
 	public ArrayList<ItemStack> storedRequirements = new ArrayList<ItemStack>();
 
-	/**
-	 * This tree contains additional data to be stored in the blueprint. By
-	 * default, it will be initialized from Schematic.readFromWord with
-	 * the standard readNBT function of the corresponding tile (if any) and will
-	 * be loaded from BptBlock.buildBlock using the standard writeNBT function.
-	 */
-	public NBTTagCompound cpt = new NBTTagCompound();
-
 	@SuppressWarnings("unchecked")
 	@Override
 	public Schematic clone() {
@@ -71,7 +60,6 @@ public class Schematic {
 
 		obj.block = block;
 		obj.meta = meta;
-		obj.cpt = (NBTTagCompound) cpt.copy();
 		obj.storedRequirements = (ArrayList<ItemStack>) storedRequirements.clone();
 
 		return obj;
@@ -174,27 +162,6 @@ public class Schematic {
 		// Meta needs to be specified twice, depending on the block behavior
 		context.world().setBlock(x, y, z, block, meta, 3);
 		context.world().setBlockMetadataWithNotify(x, y, z, meta, 3);
-
-		if (block instanceof BlockContainer) {
-			TileEntity tile = context.world().getTileEntity(x, y, z);
-
-			cpt.setInteger("x", x);
-			cpt.setInteger("y", y);
-			cpt.setInteger("z", z);
-
-			if (tile != null) {
-				tile.readFromNBT(cpt);
-			}
-
-			// By default, clear the inventory to avoid possible dupe bugs
-			if (tile instanceof IInventory) {
-				IInventory inv = (IInventory) tile;
-
-				for (int i = 0; i < inv.getSizeInventory(); ++i) {
-					inv.setInventorySlotContents(i, null);
-				}
-			}
-		}
 	}
 
 	/**
@@ -215,14 +182,6 @@ public class Schematic {
 	 * save / load the block.
 	 */
 	public void readFromWorld(IBuilderContext context, int x, int y, int z) {
-		if (block instanceof BlockContainer) {
-			TileEntity tile = context.world().getTileEntity(x, y, z);
-
-			if (tile != null) {
-				tile.writeToNBT(cpt);
-			}
-		}
-
 		if (block != null) {
 			ArrayList<ItemStack> req = block.getDrops(context.world(), x,
 					y, z, context.world().getBlockMetadata(x, y, z), 0);
@@ -245,7 +204,6 @@ public class Schematic {
 	public void writeToNBT(NBTTagCompound nbt, MappingRegistry registry) {
 		nbt.setInteger("blockId", registry.getIdForBlock(block));
 		nbt.setInteger("blockMeta", meta);
-		nbt.setTag("blockCpt", cpt);
 
 		NBTTagList rq = new NBTTagList();
 
@@ -263,7 +221,6 @@ public class Schematic {
 	public void readFromNBT(NBTTagCompound nbt,	MappingRegistry registry) {
 		block = registry.getBlockForId(nbt.getInteger("blockId"));
 		meta = nbt.getInteger("blockMeta");
-		cpt = nbt.getCompoundTag("blockCpt");
 
 		NBTTagList rq = nbt.getTagList("rq", Utils.NBTTag_Types.NBTTagList.ordinal());
 

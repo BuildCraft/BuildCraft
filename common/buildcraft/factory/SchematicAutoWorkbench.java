@@ -13,10 +13,10 @@ import java.util.LinkedList;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import buildcraft.api.blueprints.IBuilderContext;
-import buildcraft.api.blueprints.Schematic;
+import buildcraft.api.blueprints.SchematicTile;
 import buildcraft.api.blueprints.SchematicUtils;
 
-public class SchematicAutoWorkbench extends Schematic {
+public class SchematicAutoWorkbench extends SchematicTile {
 
 	@Override
 	public void addRequirements(IBuilderContext context, LinkedList<ItemStack> requirements) {

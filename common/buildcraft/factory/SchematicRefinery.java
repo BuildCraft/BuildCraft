@@ -10,9 +10,9 @@ package buildcraft.factory;
 
 import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.api.blueprints.IBuilderContext;
-import buildcraft.api.blueprints.Schematic;
+import buildcraft.api.blueprints.SchematicTile;
 
-public class SchematicRefinery extends Schematic {
+public class SchematicRefinery extends SchematicTile {
 
 	@Override
 	public void rotateLeft(IBuilderContext context) {

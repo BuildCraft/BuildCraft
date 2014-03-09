@@ -3,8 +3,8 @@ package buildcraft.transport.blueprints;
 import java.util.HashMap;
 
 import net.minecraft.item.Item;
-import buildcraft.api.blueprints.Schematic;
 import buildcraft.api.blueprints.IBuilderContext;
+import buildcraft.api.blueprints.SchematicTile;
 
 public class BptPipeExtension {
 
@@ -14,11 +14,11 @@ public class BptPipeExtension {
 		bptPipeExtensionRegistry.put(i, this);
 	}
 
-	public void postProcessing(Schematic slot, IBuilderContext context) {
+	public void postProcessing(SchematicTile slot, IBuilderContext context) {
 
 	}
 
-	public void rotateLeft(Schematic slot, IBuilderContext context) {
+	public void rotateLeft(SchematicTile slot, IBuilderContext context) {
 
 	}
 

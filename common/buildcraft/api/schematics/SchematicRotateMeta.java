@@ -12,9 +12,9 @@ import java.util.LinkedList;
 
 import net.minecraft.item.ItemStack;
 import buildcraft.api.blueprints.IBuilderContext;
-import buildcraft.api.blueprints.Schematic;
+import buildcraft.api.blueprints.SchematicTile;
 
-public class SchematicRotateMeta extends Schematic {
+public class SchematicRotateMeta extends SchematicTile {
 
 	int[] rot;
 	boolean rotateForward;

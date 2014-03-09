@@ -10,8 +10,8 @@ package buildcraft.transport.blueprints;
 
 import net.minecraft.item.Item;
 import net.minecraftforge.common.util.ForgeDirection;
-import buildcraft.api.blueprints.Schematic;
 import buildcraft.api.blueprints.IBuilderContext;
+import buildcraft.api.blueprints.SchematicTile;
 
 public class BptPipeIron extends BptPipeExtension {
 
@@ -20,7 +20,7 @@ public class BptPipeIron extends BptPipeExtension {
 	}
 
 	@Override
-	public void rotateLeft(Schematic slot, IBuilderContext context) {
+	public void rotateLeft(SchematicTile slot, IBuilderContext context) {
 		int orientation = slot.meta & 7;
 		int others = slot.meta - orientation;
 

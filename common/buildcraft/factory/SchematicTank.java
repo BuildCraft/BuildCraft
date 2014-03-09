@@ -9,9 +9,9 @@
 package buildcraft.factory;
 
 import buildcraft.api.blueprints.IBuilderContext;
-import buildcraft.api.blueprints.Schematic;
+import buildcraft.api.blueprints.SchematicTile;
 
-public class SchematicTank extends Schematic {
+public class SchematicTank extends SchematicTile {
 
 	@Override
 	public void readFromWorld(IBuilderContext context, int x, int y, int z) {
