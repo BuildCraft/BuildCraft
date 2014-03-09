@@ -68,6 +68,14 @@ public class BlueprintDatabase {
 		return id;
 	}
 
+	public void deleteBlueprint (BlueprintId id) {
+		File blueprintFile = new File(blueprintFolder, String.format(Locale.ENGLISH, "%s" + fileExt, id.toString()));
+		blueprintFile.delete();
+		blueprintIds.remove(id);
+		pages = new BlueprintId [blueprintIds.size()];
+		pages = blueprintIds.toArray(pages);
+	}
+
 	private BlueprintId save(BlueprintBase blueprint) {
 		blueprint.id.generateUniqueId(blueprint.getData());
 
@@ -175,5 +183,9 @@ public class BlueprintDatabase {
 		}
 
 		return result;
+	}
+
+	public int getPageNumber () {
+		return (int) Math.ceil((float) blueprintIds.size() / (float) PAGE_SIZE);
 	}
 }

@@ -61,12 +61,8 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory {
 		super.initialize();
 
 		if (worldObj.isRemote) {
-			setCurrentPage(BuildCraftBuilders.clientDB.getPage (0));
+			setCurrentPage(BuildCraftBuilders.clientDB.getPage (pageId));
 		}
-	}
-
-	public ArrayList<BlueprintId> getCurrentPage() {
-		return currentPage;
 	}
 
 	public void setCurrentPage(ArrayList<BlueprintId> newPage) {
@@ -74,18 +70,34 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory {
 		selected = -1;
 	}
 
+	public void pageNext () {
+		if (pageId < BuildCraftBuilders.clientDB.getPageNumber() - 1) {
+			pageId++;
+		}
+
+		setCurrentPage(BuildCraftBuilders.clientDB.getPage (pageId));
+	}
+
+	public void pagePrev () {
+		if (pageId > 0) {
+			pageId--;
+		}
+
+		setCurrentPage(BuildCraftBuilders.clientDB.getPage (pageId));
+	}
+
 	public void deleteSelectedBpt() {
-		/*BptPlayerIndex index = BuildCraftBuilders.getPlayerIndex(BuildersProxy.getOwner(this));
-		if (selected > -1 && selected < currentPage.size()) {
-			index.deleteBluePrint(currentPage.get(selected).file.getName());
-			if (currentPage.size() > 0) {
-				currentPage = getNextPage(index.prevBpt(currentPage.get(0).file.getName()));
-			} else {
-				currentPage = getNextPage(null);
+		if (selected != -1) {
+			BuildCraftBuilders.clientDB.deleteBlueprint(currentPage
+					.get(selected));
+
+			if (pageId > BuildCraftBuilders.clientDB.getPageNumber() - 1
+					&& pageId > 0) {
+				pageId--;
 			}
-			selected = -1;
-			updateCurrentNames();
-		}*/
+
+			setCurrentPage(BuildCraftBuilders.clientDB.getPage (pageId));
+		}
 	}
 
 	@Override

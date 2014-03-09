@@ -57,23 +57,12 @@ public class GuiBlueprintLibrary extends GuiBuildCraft {
 		buttonList.add(prevPageButton);
 		buttonList.add(nextPageButton);
 
-		// if (library.owner.equals(player.username)) {
 		deleteButton = new GuiButton(2, j + 100, k + 114, 25, 20, StringUtils.localize("gui.del"));
 		buttonList.add(deleteButton);
-
-		lockButton = new GuiButton(3, j + 127, k + 114, 40, 20, StringUtils.localize("gui.lock"));
-		buttonList.add(lockButton);
-		/*if (library.locked) {
-			lockButton.displayString = StringUtils.localize("gui.unlock");
-		} else {
-			lockButton.displayString = StringUtils.localize("gui.lock");
-		}*/
 	}
 
 	@Override
 	protected void drawGuiContainerForegroundLayer(int par1, int par2) {
-		// fontRenderer.drawString(library.owner + "'s Library", 6, 6,
-		// 0x404040);
 		String title = StringUtils.localize("tile.libraryBlock.name");
 		fontRendererObj.drawString(title, getCenteredOffset(title), 6, 0x404040);
 
@@ -113,28 +102,14 @@ public class GuiBlueprintLibrary extends GuiBuildCraft {
 	}
 
 	@Override
-	public void updateScreen() {
-		/*if (library.locked) {
-			lockButton.displayString = StringUtils.localize("gui.unlock");
-		} else {
-			lockButton.displayString = StringUtils.localize("gui.lock");
-		}*/
-	}
-
-	@Override
 	protected void actionPerformed(GuiButton button) {
-		/*PacketLibraryAction packet = new PacketLibraryAction(PacketIds.LIBRARY_ACTION, library.xCoord, library.yCoord, library.zCoord);
 		if (button == nextPageButton) {
-			packet.actionId = TileBlueprintLibrary.COMMAND_NEXT;
+			library.pageNext();
 		} else if (button == prevPageButton) {
-			packet.actionId = TileBlueprintLibrary.COMMAND_PREV;
-		} else if (lockButton != null && button == lockButton) {
-			packet.actionId = TileBlueprintLibrary.COMMAND_LOCK_UPDATE;
+			library.pagePrev();
 		} else if (deleteButton != null && button == deleteButton) {
-			packet.actionId = TileBlueprintLibrary.COMMAND_DELETE;
+			library.deleteSelectedBpt();
 		}
-
-		CoreProxy.proxy.sendToServer(packet.getPacket());*/
 	}
 
 	@Override
