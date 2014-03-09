@@ -258,7 +258,14 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory,
 	}
 
 	public BptBuilderBase instanciateBluePrint(int x, int y, int z, ForgeDirection o) {
-		BlueprintBase bpt = ItemBlueprint.loadBlueprint(items [0]);
+		BlueprintBase bpt = null;
+
+		try {
+			bpt = ItemBlueprint.loadBlueprint(items [0]);
+		} catch (Throwable t) {
+			setInventorySlotContents(0, null);
+			return null;
+		}
 
 		if (bpt == null) {
 			return null;
