@@ -22,8 +22,8 @@ import buildcraft.BuildCraftBuilders;
 import buildcraft.api.core.IBox;
 import buildcraft.api.filler.IFillerPattern;
 import buildcraft.api.filler.IPatternIterator;
-import buildcraft.builders.blueprints.BlueprintBuilder;
 import buildcraft.core.Box;
+import buildcraft.core.blueprints.BptBuilderTemplate;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.BlockUtil;
 import buildcraft.core.utils.StringUtils;
@@ -51,7 +51,7 @@ public abstract class FillerPattern implements IFillerPattern {
 	/**
 	 * TODO: This should be based on templates!!!!!
 	 */
-	public BlueprintBuilder getBlueprint (Box box, World world) {
+	public BptBuilderTemplate getBlueprint (Box box, World world) {
 		return null;
 	}
 
@@ -113,8 +113,9 @@ public abstract class FillerPattern implements IFillerPattern {
 		for (int y = yMin; y <= yMax && !found; ++y) {
 			for (int x = xMin; x <= xMax && !found; ++x) {
 				for (int z = zMin; z <= zMax && !found; ++z) {
-					if (!BlockUtil.canChangeBlock(world, x, y, z))
+					if (!BlockUtil.canChangeBlock(world, x, y, z)) {
 						return false;
+					}
 					if (BlockUtil.isSoftBlock(world, x, y, z)) {
 						lastX = x;
 						lastY = y;
@@ -147,8 +148,9 @@ public abstract class FillerPattern implements IFillerPattern {
 			boolean found = false;
 			for (int x = xMin; x <= xMax; ++x) {
 				for (int z = zMin; z <= zMax; ++z) {
-					if (!BlockUtil.canChangeBlock(world, x, y, z))
+					if (!BlockUtil.canChangeBlock(world, x, y, z)) {
 						return false;
+					}
 					if (!BlockUtil.isSoftBlock(world, x, y, z)) {
 						found = true;
 						lastX = x;

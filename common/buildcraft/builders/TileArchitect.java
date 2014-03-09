@@ -32,9 +32,7 @@ import buildcraft.core.network.RPCSide;
 import buildcraft.core.utils.Utils;
 
 public class TileArchitect extends TileBuildCraft implements IInventory, IBoxProvider {
-
-	// TODO: In release, this should go down to 100
-	private final static int SCANNER_ITERATION = 1000;
+	private final static int SCANNER_ITERATION = 100;
 
 	private Blueprint writingBlueprint;
 	private BptContext writingContext;

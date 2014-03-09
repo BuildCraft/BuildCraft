@@ -66,7 +66,6 @@ import buildcraft.builders.filler.pattern.PatternFlatten;
 import buildcraft.builders.filler.pattern.PatternHorizon;
 import buildcraft.builders.filler.pattern.PatternPyramid;
 import buildcraft.builders.filler.pattern.PatternStairs;
-import buildcraft.builders.network.PacketHandlerBuilders;
 import buildcraft.builders.triggers.ActionFiller;
 import buildcraft.builders.triggers.BuildersActionProvider;
 import buildcraft.builders.urbanism.BlockUrbanist;
@@ -132,9 +131,6 @@ public class BuildCraftBuilders extends BuildCraftMod {
 
 	@EventHandler
 	public void init(FMLInitializationEvent evt) {
-		channels = NetworkRegistry.INSTANCE.newChannel
-				(DefaultProps.NET_CHANNEL_NAME + "-BUILDERS", new PacketHandlerBuilders());
-
 		// Register gui handler
 		NetworkRegistry.INSTANCE.registerGuiHandler(instance, new GuiHandler());
 

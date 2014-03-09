@@ -10,7 +10,6 @@ package buildcraft.builders.urbanism;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.List;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EntityLivingBase;
@@ -20,9 +19,6 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
-import buildcraft.builders.blueprints.BlueprintBuilder;
-import buildcraft.builders.blueprints.BlueprintBuilder.SchematicBuilder;
-import buildcraft.builders.filler.pattern.FillerPattern;
 import buildcraft.core.Box;
 import buildcraft.core.Box.Kind;
 import buildcraft.core.IBoxesProvider;
@@ -173,7 +169,8 @@ public class TileUrbanist extends TileBuildCraft implements IInventory, IRobotTa
 
 	@RPC (RPCSide.SERVER)
 	public void startFiller (String fillerTag, Box box) {
-		BlueprintBuilder builder = FillerPattern.patterns.get(fillerTag).getBlueprint(box, worldObj);
+		// TODO: This need to be updated to the new blueprint system
+		/*BptBuilderBase builder = FillerPattern.patterns.get(fillerTag).getBlueprint(box, worldObj);
 
 		List <SchematicBuilder> schematics = builder.getBuilders();
 
@@ -190,7 +187,7 @@ public class TileUrbanist extends TileBuildCraft implements IInventory, IRobotTa
 				tasks.add(new TaskBuildSchematic(b, task));
 				task.nbOfTasks++;
 			}
-		}
+		}*/
 	}
 
 	public void rpcStartFiller (String fillerTag, Box box) {

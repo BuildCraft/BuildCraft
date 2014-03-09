@@ -8,8 +8,7 @@
  */
 package buildcraft.builders.urbanism;
 
-import buildcraft.builders.blueprints.BlueprintBuilder.SchematicBuilder;
-import buildcraft.builders.blueprints.IBlueprintBuilderAgent;
+import buildcraft.api.blueprints.SchematicToBuild;
 import buildcraft.builders.urbanism.TileUrbanist.FrameTask;
 import buildcraft.core.robots.AIMoveAround;
 import buildcraft.core.robots.EntityRobot;
@@ -17,39 +16,45 @@ import buildcraft.core.robots.IRobotTask;
 
 public class TaskBuildSchematic implements IRobotTask {
 
-	SchematicBuilder builder;
+	SchematicToBuild builder;
 	boolean inBuild = false;
 	FrameTask task;
 
-	public TaskBuildSchematic (SchematicBuilder builder, FrameTask task) {
+	public TaskBuildSchematic (SchematicToBuild builder, FrameTask task) {
 		this.builder = builder;
 		this.task = task;
 	}
 
 	@Override
 	public void setup(EntityRobot robot) {
-		robot.currentAI = new AIMoveAround(robot, builder.getX(), builder.getY(), builder.getZ());
+		robot.currentAI = new AIMoveAround(robot, builder.x, builder.y, builder.z);
 	}
 
 	@Override
 	public void update(EntityRobot robot) {
-		if (!inBuild && robot.getDistance(builder.getX(), builder.getY(), builder.getZ()) <= 15) {
+		if (!inBuild && robot.getDistance(builder.x, builder.y, builder.z) <= 15) {
 			inBuild = true;
-			robot.setLaserDestination(builder.getX(), builder.getY(), builder.getZ());
+			robot.setLaserDestination(builder.x, builder.y, builder.z);
 			robot.showLaser();
 		}
 
 		if (inBuild) {
-			if (builder.build((IBlueprintBuilderAgent) robot)) {
+			// TODO: need to migrate this to a system based on the new
+			// blueprints.
+			/*if (builder.build((IBlueprintBuilderAgent) robot)) {
 				task.taskDone();
 				robot.hideLaser();
-			}
+			}*/
 		}
 	}
 
 	@Override
 	public boolean done() {
-		return builder.isComplete();
+		// TODO: need to migrate this to a system based on the new
+		// blueprints.
+		//return builder.isComplete();
+
+		return true;
 	}
 
 }

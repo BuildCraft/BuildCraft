@@ -10,7 +10,6 @@ package buildcraft.factory;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Set;
 
 import net.minecraft.block.Block;
@@ -27,20 +26,21 @@ import net.minecraftforge.common.ForgeChunkManager.Type;
 import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftFactory;
+import buildcraft.api.blueprints.BlueprintManager;
+import buildcraft.api.blueprints.SchematicToBuild;
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.gates.IAction;
 import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.power.PowerHandler;
 import buildcraft.api.power.PowerHandler.PowerReceiver;
-import buildcraft.builders.blueprints.SchematicBlueprint;
-import buildcraft.builders.blueprints.BlueprintBuilder;
-import buildcraft.builders.blueprints.BlueprintBuilder.SchematicBuilder;
 import buildcraft.core.Box;
 import buildcraft.core.CoreConstants;
 import buildcraft.core.DefaultAreaProvider;
 import buildcraft.core.IBuilderInventory;
 import buildcraft.core.IMachine;
 import buildcraft.core.TileBuildCraft;
+import buildcraft.core.blueprints.Blueprint;
+import buildcraft.core.blueprints.BptBuilderBlueprint;
 import buildcraft.core.network.NetworkData;
 import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.proxy.CoreProxy;
@@ -66,8 +66,7 @@ public class TileQuarry extends TileBuildCraft implements IMachine, IPowerRecept
 	public @NetworkData
 	boolean builderDone = false;
 	public EntityRobotBuilder builder;
-	private BlueprintBuilder blueprintBuilder;
-	private ListIterator<SchematicBuilder> blueprintIterator;
+	private BptBuilderBlueprint blueprintBuilder;
 	public EntityMechanicalArm arm;
 	public PowerHandler powerHandler;
 	boolean isDigging = false;
@@ -194,8 +193,11 @@ public class TileQuarry extends TileBuildCraft implements IMachine, IPowerRecept
 	}
 
 	protected void buildFrame() {
-		if (!blueprintIterator.hasNext())
+		SchematicToBuild schematic = blueprintBuilder.getNextBlock(getWorld(), this);
+
+		if (schematic == null) {
 			return;
+		}
 
 		float mj = 25 * BuildCraftFactory.miningMultiplier;
 		powerHandler.configure(50 * BuildCraftFactory.miningMultiplier, 100 * BuildCraftFactory.miningMultiplier, mj, MAX_ENERGY * BuildCraftFactory.miningMultiplier);
@@ -258,8 +260,9 @@ public class TileQuarry extends TileBuildCraft implements IMachine, IPowerRecept
 			columnVisitListIsUpdated = true;
 		}
 
-		if (!doSet)
+		if (!doSet) {
 			return !visitList.isEmpty();
+		}
 
 		if (visitList.isEmpty()) {
 			return false;
@@ -421,8 +424,9 @@ public class TileQuarry extends TileBuildCraft implements IMachine, IPowerRecept
 	public void positionReached() {
 		inProcess = false;
 
-		if (worldObj.isRemote)
+		if (worldObj.isRemote) {
 			return;
+		}
 
 		int i = targetX;
 		int j = targetY - 1;
@@ -628,29 +632,28 @@ public class TileQuarry extends TileBuildCraft implements IMachine, IPowerRecept
 	}
 
 	private void initializeBlueprintBuilder() {
-		SchematicBlueprint blueprint = SchematicBlueprint.create(box.sizeX(), box.sizeY(), box.sizeZ());
+		Blueprint blueprint = new Blueprint (box.sizeX(), box.sizeY(), box.sizeZ());
 
 		for (int it = 0; it < 2; it++) {
 			for (int i = 0; i < blueprint.sizeX; ++i) {
-				blueprint.setSchematic(worldObj, i, it * (box.sizeY() - 1), 0, BuildCraftFactory.frameBlock, 0);
-				blueprint.setSchematic(worldObj, i, it * (box.sizeY() - 1), blueprint.sizeZ - 1, BuildCraftFactory.frameBlock, 0);
+				blueprint.contents [i][it * (box.sizeY() - 1)][0] = BlueprintManager.newSchematic(BuildCraftFactory.frameBlock);
+				blueprint.contents [i][it * (box.sizeY() - 1)][blueprint.sizeZ - 1] = BlueprintManager.newSchematic(BuildCraftFactory.frameBlock);
 			}
 
 			for (int k = 0; k < blueprint.sizeZ; ++k) {
-				blueprint.setSchematic(worldObj, 0, it * (box.sizeY() - 1), k, BuildCraftFactory.frameBlock, 0);
-				blueprint.setSchematic(worldObj, blueprint.sizeX - 1, it * (box.sizeY() - 1), k, BuildCraftFactory.frameBlock, 0);
+				blueprint.contents [0][it * (box.sizeY() - 1)][k] = BlueprintManager.newSchematic(BuildCraftFactory.frameBlock);
+				blueprint.contents [blueprint.sizeX - 1][it * (box.sizeY() - 1)][k] = BlueprintManager.newSchematic(BuildCraftFactory.frameBlock);
 			}
 		}
 
 		for (int h = 1; h < box.sizeY(); ++h) {
-			blueprint.setSchematic(worldObj, 0, h, 0, BuildCraftFactory.frameBlock, 0);
-			blueprint.setSchematic(worldObj, 0, h, blueprint.sizeZ - 1, BuildCraftFactory.frameBlock, 0);
-			blueprint.setSchematic(worldObj, blueprint.sizeX - 1, h, 0, BuildCraftFactory.frameBlock, 0);
-			blueprint.setSchematic(worldObj, blueprint.sizeX - 1, h, blueprint.sizeZ - 1, BuildCraftFactory.frameBlock, 0);
+			blueprint.contents [0][h][0] = BlueprintManager.newSchematic(BuildCraftFactory.frameBlock);
+			blueprint.contents [0][h][blueprint.sizeZ - 1] = BlueprintManager.newSchematic(BuildCraftFactory.frameBlock);
+			blueprint.contents [blueprint.sizeX - 1][h][0] = BlueprintManager.newSchematic(BuildCraftFactory.frameBlock);
+			blueprint.contents [blueprint.sizeX - 1][h][blueprint.sizeZ - 1] = BlueprintManager.newSchematic(BuildCraftFactory.frameBlock);
 		}
 
-		blueprintBuilder = new BlueprintBuilder(blueprint, worldObj, box.xMin, yCoord, box.zMin, ForgeDirection.NORTH);
-		blueprintIterator = blueprintBuilder.getBuilders().listIterator();
+		blueprintBuilder = new BptBuilderBlueprint(blueprint, worldObj, box.xMin, yCoord, box.zMin); //ForgeDirection.NORTH
 	}
 
 	@Override

@@ -8,15 +8,15 @@
  */
 package buildcraft.builders.filler.pattern;
 
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.ForgeDirection;
+import buildcraft.api.blueprints.BlueprintManager;
 import buildcraft.api.core.IBox;
-import buildcraft.builders.blueprints.SchematicBlueprint;
-import buildcraft.builders.blueprints.BlueprintBuilder;
-import buildcraft.builders.blueprints.MaskSchematic;
 import buildcraft.core.Box;
+import buildcraft.core.blueprints.BptBuilderTemplate;
+import buildcraft.core.blueprints.Template;
 
 public class PatternPyramid extends FillerPattern {
 
@@ -55,8 +55,9 @@ public class PatternPyramid extends FillerPattern {
 		}
 
 		while (step <= xSize / 2 && step <= zSize / 2 && height >= yMin && height <= yMax) {
-			if (fill(xMin + step, height, zMin + step, xMax - step, height, zMax - step, stackToPlace, tile.getWorldObj()))
+			if (fill(xMin + step, height, zMin + step, xMax - step, height, zMax - step, stackToPlace, tile.getWorldObj())) {
 				return false;
+			}
 
 			step++;
 			height += stepY;
@@ -66,7 +67,7 @@ public class PatternPyramid extends FillerPattern {
 	}
 
 	@Override
-	public BlueprintBuilder getBlueprint (Box box, World world) {
+	public BptBuilderTemplate getBlueprint (Box box, World world) {
 		int xMin = (int) box.pMin().x;
 		int yMin = (int) box.pMin().y;
 		int zMin = (int) box.pMin().z;
@@ -75,7 +76,7 @@ public class PatternPyramid extends FillerPattern {
 		int yMax = (int) box.pMax().y;
 		int zMax = (int) box.pMax().z;
 
-		SchematicBlueprint bpt = new SchematicBlueprint(xMax - xMin + 1, yMax - yMin + 1, zMax - zMin + 1);
+		Template bpt = new Template(xMax - xMin + 1, yMax - yMin + 1, zMax - zMin + 1);
 
 		int xSize = xMax - xMin + 1;
 		int zSize = zMax - zMin + 1;
@@ -100,7 +101,7 @@ public class PatternPyramid extends FillerPattern {
 		while (step <= xSize / 2 && step <= zSize / 2 && height >= yMin && height <= yMax) {
 			for (int x = xMin + step; x <= xMax - step; ++x) {
 				for (int z = zMin + step; z <= zMax - step; ++z) {
-					bpt.setSchematic(x - xMin, height - yMin, z - zMin, new MaskSchematic(true));
+					bpt.contents [x - xMin][height - yMin][z - zMin] = BlueprintManager.newSchematic(Blocks.stone);
 				}
 			}
 
@@ -108,7 +109,6 @@ public class PatternPyramid extends FillerPattern {
 			height += stepY;
 		}
 
-		return new BlueprintBuilder(bpt, world, box.xMin, box.yMin, box.zMin,
-				ForgeDirection.NORTH);
+		return new BptBuilderTemplate(bpt, world, box.xMin, box.yMin, box.zMin);
 	}
 }
