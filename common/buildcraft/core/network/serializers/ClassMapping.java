@@ -633,6 +633,7 @@ public class ClassMapping extends ClassSerializer {
 	static {
 		registerSerializer(String.class, new SerializerString());
 		registerSerializer(HashMap.class, new SerializerHashMap());
+		registerSerializer(LinkedList.class, new SerializerLinkedList());
 		registerSerializer(Block.class, new SerializerBlock());
 		registerSerializer(Item.class, new SerializerItem());
 		registerSerializer(NBTTagCompound.class, new SerializerNBT());

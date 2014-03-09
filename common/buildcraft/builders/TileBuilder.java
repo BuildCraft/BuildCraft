@@ -40,6 +40,9 @@ import buildcraft.core.blueprints.BptBuilderBase;
 import buildcraft.core.blueprints.BptBuilderBlueprint;
 import buildcraft.core.blueprints.BptContext;
 import buildcraft.core.network.NetworkData;
+import buildcraft.core.network.RPC;
+import buildcraft.core.network.RPCHandler;
+import buildcraft.core.network.RPCSide;
 import buildcraft.core.robots.EntityRobot;
 import buildcraft.core.utils.Utils;
 
@@ -60,6 +63,8 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory,
 	private LinkedList<EntityLaser> pathLasers;
 
 	private EntityRobot builderRobot;
+
+	private LinkedList <ItemStack> requiredToBuild;
 
 	private class PathIterator {
 
@@ -593,10 +598,33 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory,
 	}
 
 	public Collection<ItemStack> getNeededItems() {
-		if (bluePrintBuilder instanceof BptBuilderBlueprint) {
-			return ((BptBuilderBlueprint) bluePrintBuilder).neededItems;
-		} else {
-			return null;
+		return requiredToBuild;
+	}
+
+	@RPC (RPCSide.CLIENT)
+	public void setItemRequirements (LinkedList <ItemStack> rq, LinkedList <Integer> realSizes) {
+		// Item stack serialized are represented through bytes, so 0-255. In
+		// order to get the real amounts, we need to pass the real sizes of the
+		// stacks as a separate list.
+
+		requiredToBuild = rq;
+
+		if (rq.size() > 0) {
+			Iterator <ItemStack> itStack = rq.iterator();
+			Iterator <Integer> size = realSizes.iterator();
+
+			while (true) {
+				ItemStack stack = itStack.next();
+				stack.stackSize = size.next();
+
+				if (stack.stackSize > 999) {
+					stack.stackSize = 999;
+				}
+
+				if (!itStack.hasNext()) {
+					break;
+				}
+			}
 		}
 	}
 
@@ -646,6 +674,16 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory,
 
 			if (bluePrintBuilder instanceof BptBuilderBlueprint) {
 				((BptBuilderBlueprint) bluePrintBuilder).recomputeNeededItems();
+
+				LinkedList <Integer> realSize = new LinkedList<Integer>();
+
+				for (ItemStack stack : ((BptBuilderBlueprint) bluePrintBuilder).neededItems) {
+					realSize.add(stack.stackSize);
+					stack.stackSize = 0;
+				}
+
+				RPCHandler.rpcBroadcastPlayers(this, "setItemRequirements",
+						((BptBuilderBlueprint) bluePrintBuilder).neededItems, realSize);
 			}
 		}
 	}

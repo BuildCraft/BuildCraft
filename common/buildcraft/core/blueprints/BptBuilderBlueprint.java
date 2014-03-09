@@ -16,6 +16,7 @@ import java.util.ListIterator;
 import java.util.Map.Entry;
 
 import net.minecraft.init.Blocks;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldSettings.GameType;
@@ -336,7 +337,6 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 		HashMap <StackKey, Integer> computeStacks = new HashMap <StackKey, Integer> ();
 
 		for (SchematicToBuild slot : primaryList) {
-
 			LinkedList<ItemStack> stacks = new LinkedList<ItemStack>();
 
 			try {
@@ -394,6 +394,29 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 			neededItems.add(newStack);
 		}
 
+
+		LinkedList <ItemStack> sortedList = new LinkedList <ItemStack> ();
+
+		for (ItemStack toInsert : neededItems) {
+			int index = 0;
+			boolean didInsert = false;
+
+			for (ItemStack inserted : sortedList) {
+				if (inserted.stackSize < toInsert.stackSize) {
+					sortedList.add(index, toInsert);
+					didInsert = true;
+					break;
+				}
+
+				index++;
+			}
+
+			if (!didInsert) {
+				sortedList.addLast(toInsert);
+			}
+		}
+
+
 		Collections.sort (neededItems, new Comparator<ItemStack>() {
 			@Override
 			public int compare(ItemStack o1, ItemStack o2) {
@@ -401,7 +424,11 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 					return -1;
 				} else if (o1.stackSize < o2.stackSize) {
 					return 1;
-				} else if (o1.getItemDamage() > o2.getItemDamage()) {
+				} else if (Item.getIdFromItem(o1.getItem()) > Item.getIdFromItem(o2.getItem())) {
+					return -1;
+				}  else if (Item.getIdFromItem(o1.getItem()) < Item.getIdFromItem(o2.getItem())) {
+					return 1;
+				}  else if (o1.getItemDamage() > o2.getItemDamage()) {
 					return -1;
 				} else if (o1.getItemDamage() < o2.getItemDamage()) {
 					return 1;
