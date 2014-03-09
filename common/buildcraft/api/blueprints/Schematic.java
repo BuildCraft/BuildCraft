@@ -59,7 +59,7 @@ public class Schematic {
 	@SuppressWarnings("unchecked")
 	@Override
 	public Schematic clone() {
-		Schematic obj = BlueprintManager.newSchematic(block);
+		Schematic obj = SchematicRegistry.newSchematic(block);
 
 		obj.block = block;
 		obj.meta = meta;

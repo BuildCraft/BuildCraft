@@ -13,7 +13,7 @@ import net.minecraft.block.BlockContainer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
-import buildcraft.api.blueprints.BlueprintManager;
+import buildcraft.api.blueprints.SchematicRegistry;
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.Schematic;
 import buildcraft.core.utils.BCLog;
@@ -31,7 +31,7 @@ public class Blueprint extends BlueprintBase {
 	public void readFromWorld(IBuilderContext context, TileEntity anchorTile, int x, int y, int z) {
 		Block block = anchorTile.getWorldObj().getBlock(x, y, z);
 
-		Schematic slot = BlueprintManager.newSchematic(block);
+		Schematic slot = SchematicRegistry.newSchematic(block);
 
 		if (slot == null) {
 			return;
@@ -102,7 +102,7 @@ public class Blueprint extends BlueprintBase {
 					if (cpt.hasKey("blockId")) {
 						int blockId = cpt.getInteger("blockId");
 
-						contents[x][y][z] = BlueprintManager.newSchematic(mapping.getBlockForId(blockId));
+						contents[x][y][z] = SchematicRegistry.newSchematic(mapping.getBlockForId(blockId));
 						contents[x][y][z].readFromNBT(cpt, mapping);
 					} else {
 						contents[x][y][z] = null;

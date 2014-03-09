@@ -15,7 +15,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.init.Blocks;
 
-public class BlueprintManager {
+public class SchematicRegistry {
 
 	private static class SchematicConstructor {
 		Class clas;

@@ -26,7 +26,7 @@ import net.minecraftforge.common.ForgeChunkManager.Type;
 import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftFactory;
-import buildcraft.api.blueprints.BlueprintManager;
+import buildcraft.api.blueprints.SchematicRegistry;
 import buildcraft.api.blueprints.SchematicToBuild;
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.gates.IAction;
@@ -636,21 +636,21 @@ public class TileQuarry extends TileBuildCraft implements IMachine, IPowerRecept
 
 		for (int it = 0; it < 2; it++) {
 			for (int i = 0; i < blueprint.sizeX; ++i) {
-				blueprint.contents [i][it * (box.sizeY() - 1)][0] = BlueprintManager.newSchematic(BuildCraftFactory.frameBlock);
-				blueprint.contents [i][it * (box.sizeY() - 1)][blueprint.sizeZ - 1] = BlueprintManager.newSchematic(BuildCraftFactory.frameBlock);
+				blueprint.contents [i][it * (box.sizeY() - 1)][0] = SchematicRegistry.newSchematic(BuildCraftFactory.frameBlock);
+				blueprint.contents [i][it * (box.sizeY() - 1)][blueprint.sizeZ - 1] = SchematicRegistry.newSchematic(BuildCraftFactory.frameBlock);
 			}
 
 			for (int k = 0; k < blueprint.sizeZ; ++k) {
-				blueprint.contents [0][it * (box.sizeY() - 1)][k] = BlueprintManager.newSchematic(BuildCraftFactory.frameBlock);
-				blueprint.contents [blueprint.sizeX - 1][it * (box.sizeY() - 1)][k] = BlueprintManager.newSchematic(BuildCraftFactory.frameBlock);
+				blueprint.contents [0][it * (box.sizeY() - 1)][k] = SchematicRegistry.newSchematic(BuildCraftFactory.frameBlock);
+				blueprint.contents [blueprint.sizeX - 1][it * (box.sizeY() - 1)][k] = SchematicRegistry.newSchematic(BuildCraftFactory.frameBlock);
 			}
 		}
 
 		for (int h = 1; h < box.sizeY(); ++h) {
-			blueprint.contents [0][h][0] = BlueprintManager.newSchematic(BuildCraftFactory.frameBlock);
-			blueprint.contents [0][h][blueprint.sizeZ - 1] = BlueprintManager.newSchematic(BuildCraftFactory.frameBlock);
-			blueprint.contents [blueprint.sizeX - 1][h][0] = BlueprintManager.newSchematic(BuildCraftFactory.frameBlock);
-			blueprint.contents [blueprint.sizeX - 1][h][blueprint.sizeZ - 1] = BlueprintManager.newSchematic(BuildCraftFactory.frameBlock);
+			blueprint.contents [0][h][0] = SchematicRegistry.newSchematic(BuildCraftFactory.frameBlock);
+			blueprint.contents [0][h][blueprint.sizeZ - 1] = SchematicRegistry.newSchematic(BuildCraftFactory.frameBlock);
+			blueprint.contents [blueprint.sizeX - 1][h][0] = SchematicRegistry.newSchematic(BuildCraftFactory.frameBlock);
+			blueprint.contents [blueprint.sizeX - 1][h][blueprint.sizeZ - 1] = SchematicRegistry.newSchematic(BuildCraftFactory.frameBlock);
 		}
 
 		blueprintBuilder = new BptBuilderBlueprint(blueprint, worldObj, box.xMin, yCoord, box.zMin); //ForgeDirection.NORTH

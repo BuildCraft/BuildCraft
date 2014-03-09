@@ -14,7 +14,7 @@ import net.minecraft.block.Block;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
-import buildcraft.api.blueprints.BlueprintManager;
+import buildcraft.api.blueprints.SchematicRegistry;
 import buildcraft.api.blueprints.MappingRegistry;
 import buildcraft.api.blueprints.Schematic;
 import buildcraft.builders.blueprints.BlueprintId;
@@ -51,7 +51,7 @@ public abstract class BlueprintBase {
 
 	public void setBlock(int x, int y, int z, Block block) {
 		if (contents[x][y][z] == null) {
-			contents[x][y][z] = BlueprintManager.newSchematic(block);
+			contents[x][y][z] = SchematicRegistry.newSchematic(block);
 		}
 
 		contents[x][y][z].block = block;

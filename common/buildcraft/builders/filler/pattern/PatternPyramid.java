@@ -12,7 +12,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
-import buildcraft.api.blueprints.BlueprintManager;
+import buildcraft.api.blueprints.SchematicRegistry;
 import buildcraft.api.core.IBox;
 import buildcraft.core.Box;
 import buildcraft.core.blueprints.BptBuilderTemplate;
@@ -101,7 +101,7 @@ public class PatternPyramid extends FillerPattern {
 		while (step <= xSize / 2 && step <= zSize / 2 && height >= yMin && height <= yMax) {
 			for (int x = xMin + step; x <= xMax - step; ++x) {
 				for (int z = zMin + step; z <= zMax - step; ++z) {
-					bpt.contents [x - xMin][height - yMin][z - zMin] = BlueprintManager.newSchematic(Blocks.stone);
+					bpt.contents [x - xMin][height - yMin][z - zMin] = SchematicRegistry.newSchematic(Blocks.stone);
 				}
 			}
 

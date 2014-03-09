@@ -12,7 +12,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
-import buildcraft.api.blueprints.BlueprintManager;
+import buildcraft.api.blueprints.SchematicRegistry;
 import buildcraft.api.core.IBox;
 import buildcraft.core.Box;
 import buildcraft.core.blueprints.BptBuilderTemplate;
@@ -54,7 +54,7 @@ public class PatternFill extends FillerPattern {
 		for (int y = yMin; y <= yMax; ++y) {
 			for (int x = xMin; x <= xMax; ++x) {
 				for (int z = zMin; z <= zMax; ++z) {
-					bpt.contents[x - xMin][y - yMin][z - zMin] = BlueprintManager
+					bpt.contents[x - xMin][y - yMin][z - zMin] = SchematicRegistry
 							.newSchematic(Blocks.stone);
 				}
 			}
