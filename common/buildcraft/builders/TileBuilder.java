@@ -21,6 +21,7 @@ import net.minecraft.util.AxisAlignedBB;
 import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.BuildCraftBuilders;
 import buildcraft.api.blueprints.SchematicToBuild;
+import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.gates.IAction;
 import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.power.PowerHandler;
@@ -65,6 +66,8 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory,
 	private EntityRobot builderRobot;
 
 	private LinkedList <ItemStack> requiredToBuild;
+
+	private SafeTimeTracker debugBuildTracker = new SafeTimeTracker(5);
 
 	private class PathIterator {
 
@@ -421,8 +424,12 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory,
 			result = tmp;
 		}
 
-		if (i == 0) {
-			iterateBpt();
+		if (!worldObj.isRemote) {
+			if (i == 0) {
+				RPCHandler.rpcBroadcastPlayers(this, "setItemRequirements",
+						null, null);
+				iterateBpt();
+			}
 		}
 
 		return result;
@@ -434,6 +441,7 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory,
 
 		if (!worldObj.isRemote) {
 			if (i == 0) {
+				RPCHandler.rpcBroadcastPlayers(this, "setItemRequirements", null, null);
 				iterateBpt();
 				done = false;
 			}
@@ -609,7 +617,7 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory,
 
 		requiredToBuild = rq;
 
-		if (rq.size() > 0) {
+		if (rq != null && rq.size() > 0) {
 			Iterator <ItemStack> itStack = rq.iterator();
 			Iterator <Integer> size = realSizes.iterator();
 
@@ -664,6 +672,10 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory,
 	}
 
 	public void debugForceBlueprintCompletion () {
+		if (!debugBuildTracker.markTimeIfDelay(worldObj)) {
+			return;
+		}
+
 		if (bluePrintBuilder != null) {
 			SchematicToBuild slot = bluePrintBuilder.getNextBlock(worldObj, this);
 
@@ -673,8 +685,6 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory,
 			}
 
 			if (bluePrintBuilder instanceof BptBuilderBlueprint) {
-				((BptBuilderBlueprint) bluePrintBuilder).recomputeNeededItems();
-
 				LinkedList <Integer> realSize = new LinkedList<Integer>();
 
 				for (ItemStack stack : ((BptBuilderBlueprint) bluePrintBuilder).neededItems) {

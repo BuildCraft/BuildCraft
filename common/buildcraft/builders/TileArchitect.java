@@ -111,6 +111,7 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 	}
 
 	public void createBpt() {
+		writingBlueprint.id.name = name;
 		BuildCraftBuilders.serverDB.add(writingBlueprint);
 
 		setInventorySlotContents(1, ItemBlueprint.getBlueprintItem(writingBlueprint));
