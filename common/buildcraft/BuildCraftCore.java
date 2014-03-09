@@ -372,9 +372,10 @@ public class BuildCraftCore extends BuildCraftMod {
 
 	public static float diffX, diffY, diffZ;
 
-	static FloatBuffer modelviewF = GLAllocation.createDirectFloatBuffer(16);
-	static FloatBuffer projectionF = GLAllocation.createDirectFloatBuffer(16);
-	static IntBuffer viewport = GLAllocation.createDirectIntBuffer(16);
+	static FloatBuffer modelviewF;
+	static FloatBuffer projectionF;
+	static IntBuffer viewport;
+
     static FloatBuffer pos = ByteBuffer.allocateDirect(3 * 4).asFloatBuffer();
 
 	@SubscribeEvent
@@ -396,6 +397,13 @@ public class BuildCraftCore extends BuildCraftMod {
 		 *
 		 * See EntityUrbanist#rayTraceMouse for a usage example.
 		 */
+
+		if (modelviewF == null) {
+			modelviewF = GLAllocation.createDirectFloatBuffer(16);
+			projectionF = GLAllocation.createDirectFloatBuffer(16);
+			viewport = GLAllocation.createDirectIntBuffer(16);
+
+		}
 
 		GL11.glGetFloat(GL11.GL_MODELVIEW_MATRIX, modelviewF);
 		GL11.glGetFloat(GL11.GL_PROJECTION_MATRIX, projectionF);
