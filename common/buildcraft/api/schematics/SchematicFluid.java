@@ -11,8 +11,8 @@ package buildcraft.api.schematics;
 import java.util.LinkedList;
 
 import net.minecraft.item.ItemStack;
-import buildcraft.api.blueprints.Schematic;
 import buildcraft.api.blueprints.IBuilderContext;
+import buildcraft.api.blueprints.Schematic;
 
 public class SchematicFluid extends Schematic {
 
@@ -30,7 +30,7 @@ public class SchematicFluid extends Schematic {
 	}
 
 	@Override
-	public boolean isValid(IBuilderContext context) {
+	public boolean isValid(IBuilderContext context, int x, int y, int z) {
 		if (meta == 0) {
 			return block == context.world().getBlock(x, y, z) && context.world().getBlockMetadata(x, y, z) == 0;
 		} else {
@@ -49,7 +49,7 @@ public class SchematicFluid extends Schematic {
 	}
 
 	@Override
-	public void writeToWorld(IBuilderContext context) {
+	public void writeToWorld(IBuilderContext context, int x, int y, int z) {
 		if (meta == 0) {
 			context.world().setBlock(x, y, z, block, 0,1);
 		}

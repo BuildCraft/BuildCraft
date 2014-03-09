@@ -9,14 +9,14 @@
 package buildcraft.api.schematics;
 
 import net.minecraft.inventory.IInventory;
-import buildcraft.api.blueprints.Schematic;
 import buildcraft.api.blueprints.IBuilderContext;
+import buildcraft.api.blueprints.Schematic;
 
 public class SchematicInventory extends Schematic {
 
 	@Override
-	public void writeToWorld(IBuilderContext context) {
-		super.writeToWorld(context);
+	public void writeToWorld(IBuilderContext context, int x, int y, int z) {
+		super.writeToWorld(context, x, y, z);
 
 		IInventory inv = (IInventory) context.world().getTileEntity(x, y, z);
 

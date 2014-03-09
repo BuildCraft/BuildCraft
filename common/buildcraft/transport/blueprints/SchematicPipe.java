@@ -13,8 +13,8 @@ import java.util.LinkedList;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import buildcraft.api.blueprints.Schematic;
 import buildcraft.api.blueprints.IBuilderContext;
+import buildcraft.api.blueprints.Schematic;
 import buildcraft.transport.BlockGenericPipe;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.TileGenericPipe.SideProperties;
@@ -31,7 +31,7 @@ public class SchematicPipe extends Schematic {
 	}
 
 	@Override
-	public boolean isValid(IBuilderContext context) {
+	public boolean isValid(IBuilderContext context, int x, int y, int z) {
 		Pipe pipe = BlockGenericPipe.getPipe(context.world(), x, y, z);
 
 		if (BlockGenericPipe.isValid(pipe)) {
@@ -58,7 +58,7 @@ public class SchematicPipe extends Schematic {
 	}
 
 	@Override
-	public void writeToWorld(IBuilderContext context) {
+	public void writeToWorld(IBuilderContext context, int x, int y, int z) {
 		cpt.setInteger("x", x);
 		cpt.setInteger("y", y);
 		cpt.setInteger("z", z);

@@ -11,8 +11,8 @@ package buildcraft.api.schematics;
 import java.util.LinkedList;
 
 import net.minecraft.item.ItemStack;
-import buildcraft.api.blueprints.Schematic;
 import buildcraft.api.blueprints.IBuilderContext;
+import buildcraft.api.blueprints.Schematic;
 
 public class SchematicDoor extends Schematic {
 
@@ -56,7 +56,7 @@ public class SchematicDoor extends Schematic {
 	}
 
 	@Override
-	public void writeToWorld(IBuilderContext context) {
+	public void writeToWorld(IBuilderContext context, int x, int y, int z) {
 		context.world().setBlock(x, y, z, block, meta, 3);
 		context.world().setBlock(x, y + 1, z, block, meta + 8, 3);
 

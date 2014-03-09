@@ -17,7 +17,7 @@ public class SchematicPiston extends SchematicRotateMeta {
 	}
 
 	@Override
-	public void writeToWorld(IBuilderContext context) {
+	public void writeToWorld(IBuilderContext context, int x, int y, int z) {
 		int localMeta = meta & 7;
 
 		context.world().setBlock(x, y, z, block, localMeta, 3);

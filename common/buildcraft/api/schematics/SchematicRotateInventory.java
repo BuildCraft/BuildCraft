@@ -19,8 +19,8 @@ public class SchematicRotateInventory extends SchematicRotateMeta {
 	}
 
 	@Override
-	public void writeToWorld(IBuilderContext context) {
-		super.writeToWorld(context);
+	public void writeToWorld(IBuilderContext context, int x, int y, int z) {
+		super.writeToWorld(context, x, y, z);
 
 		IInventory inv = (IInventory) context.world().getTileEntity(x, y, z);
 

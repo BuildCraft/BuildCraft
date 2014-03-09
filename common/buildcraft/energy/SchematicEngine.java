@@ -9,8 +9,8 @@
 package buildcraft.energy;
 
 import net.minecraftforge.common.util.ForgeDirection;
-import buildcraft.api.blueprints.Schematic;
 import buildcraft.api.blueprints.IBuilderContext;
+import buildcraft.api.blueprints.Schematic;
 
 public class SchematicEngine extends Schematic {
 
@@ -31,7 +31,7 @@ public class SchematicEngine extends Schematic {
 	}
 
 	@Override
-	public void writeToWorld(IBuilderContext context) {
+	public void writeToWorld(IBuilderContext context, int x, int y, int z) {
 		context.world().setBlock(x, y, z, block, meta,1);
 
 		TileEngine engine = (TileEngine) context.world().getTileEntity(x, y, z);

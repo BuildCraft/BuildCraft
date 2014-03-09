@@ -52,9 +52,6 @@ public abstract class BlueprintBase {
 	public void setBlock(int x, int y, int z, Block block) {
 		if (contents[x][y][z] == null) {
 			contents[x][y][z] = BlueprintManager.newSchematic(block);
-			contents[x][y][z].x = x;
-			contents[x][y][z].y = y;
-			contents[x][y][z].z = z;
 		}
 
 		contents[x][y][z].block = block;

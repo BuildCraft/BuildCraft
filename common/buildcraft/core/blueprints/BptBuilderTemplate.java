@@ -12,13 +12,14 @@ import java.util.LinkedList;
 
 import net.minecraft.world.World;
 import buildcraft.api.blueprints.Schematic;
-import buildcraft.api.blueprints.Schematic.Mode;
+import buildcraft.api.blueprints.SchematicToBuild;
+import buildcraft.api.blueprints.SchematicToBuild.Mode;
 import buildcraft.core.IBuilderInventory;
 
 public class BptBuilderTemplate extends BptBuilderBase {
 
-	LinkedList<Schematic> clearList = new LinkedList<Schematic>();
-	LinkedList<Schematic> buildList = new LinkedList<Schematic>();
+	LinkedList<SchematicToBuild> clearList = new LinkedList<SchematicToBuild>();
+	LinkedList<SchematicToBuild> buildList = new LinkedList<SchematicToBuild>();
 
 	public BptBuilderTemplate(BlueprintBase bluePrint, World world, int x, int y, int z) {
 		super(bluePrint, world, x, y, z);
@@ -36,13 +37,17 @@ public class BptBuilderTemplate extends BptBuilderBase {
 						slot = new Schematic();
 						slot.meta = 0;
 						slot.block = null;
-						slot.x = xCoord;
-						slot.y = yCoord;
-						slot.z = zCoord;
 
-						slot.mode = Mode.ClearIfInvalid;
 
-						clearList.add(slot);
+						SchematicToBuild b = new SchematicToBuild();
+
+						b.schematic = slot;
+						b.x = xCoord;
+						b.y = yCoord;
+						b.z = zCoord;
+						b.mode = Mode.ClearIfInvalid;
+
+						clearList.add(b);
 					}
 				}
 			}
@@ -65,14 +70,17 @@ public class BptBuilderTemplate extends BptBuilderBase {
 						slot.block = null;
 					}
 
-					slot.x = xCoord;
-					slot.y = yCoord;
-					slot.z = zCoord;
+					SchematicToBuild b = new SchematicToBuild();
 
-					slot.mode = Mode.Build;
+					b.schematic = slot;
+					b.x = xCoord;
+					b.y = yCoord;
+					b.z = zCoord;
+
+					b.mode = Mode.Build;
 
 					if (slot.block != null) {
-						buildList.add(slot);
+						buildList.add(b);
 					}
 				}
 			}
@@ -88,9 +96,9 @@ public class BptBuilderTemplate extends BptBuilderBase {
 	}
 
 	@Override
-	public Schematic getNextBlock(World world, IBuilderInventory inv) {
+	public SchematicToBuild getNextBlock(World world, IBuilderInventory inv) {
 		if (clearList.size() != 0) {
-			Schematic slot = internalGetNextBlock(world, inv, clearList);
+			SchematicToBuild slot = internalGetNextBlock(world, inv, clearList);
 			checkDone();
 
 			if (slot != null) {
@@ -101,7 +109,7 @@ public class BptBuilderTemplate extends BptBuilderBase {
 		}
 
 		if (buildList.size() != 0) {
-			Schematic slot = internalGetNextBlock(world, inv, buildList);
+			SchematicToBuild slot = internalGetNextBlock(world, inv, buildList);
 			checkDone();
 
 			if (slot != null) {
@@ -116,11 +124,11 @@ public class BptBuilderTemplate extends BptBuilderBase {
 		return null;
 	}
 
-	public Schematic internalGetNextBlock(World world, IBuilderInventory inv, LinkedList<Schematic> list) {
-		Schematic result = null;
+	public SchematicToBuild internalGetNextBlock(World world, IBuilderInventory inv, LinkedList<SchematicToBuild> list) {
+		SchematicToBuild result = null;
 
 		while (list.size() > 0) {
-			Schematic slot = list.getFirst();
+			SchematicToBuild slot = list.getFirst();
 
 			// Note from CJ: I have no idea what this code is supposed to do, so I'm not touching it.
 			/*if (slot.blockId == world.getBlockId(slot.x, slot.y, slot.z)) {

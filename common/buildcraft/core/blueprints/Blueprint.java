@@ -14,8 +14,8 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import buildcraft.api.blueprints.BlueprintManager;
-import buildcraft.api.blueprints.Schematic;
 import buildcraft.api.blueprints.IBuilderContext;
+import buildcraft.api.blueprints.Schematic;
 import buildcraft.core.utils.BCLog;
 import buildcraft.core.utils.Utils;
 
@@ -33,9 +33,14 @@ public class Blueprint extends BlueprintBase {
 
 		Schematic slot = BlueprintManager.newSchematic(block);
 
-		slot.x = (int) (x - context.surroundingBox().pMin().x);
-		slot.y = (int) (y - context.surroundingBox().pMin().y);
-		slot.z = (int) (z - context.surroundingBox().pMin().z);
+		if (slot == null) {
+			return;
+		}
+
+		int posX = (int) (x - context.surroundingBox().pMin().x);
+		int posY = (int) (y - context.surroundingBox().pMin().y);
+		int posZ = (int) (z - context.surroundingBox().pMin().z);
+
 		slot.block = block;
 		slot.meta = anchorTile.getWorldObj().getBlockMetadata(x, y, z);
 
@@ -45,7 +50,7 @@ public class Blueprint extends BlueprintBase {
 
 		try {
 			slot.readFromWorld(context, x, y, z);
-			contents[slot.x][slot.y][slot.z] = slot;
+			contents[posX][posY][posZ] = slot;
 		} catch (Throwable t) {
 			// Defensive code against errors in implementers
 			t.printStackTrace();
@@ -62,7 +67,11 @@ public class Blueprint extends BlueprintBase {
 			for (int y = 0; y < sizeY; ++y) {
 				for (int z = 0; z < sizeZ; ++z) {
 					NBTTagCompound cpt = new NBTTagCompound();
-					contents[x][y][z].writeToNBT(cpt, mapping);
+
+					if (contents [x][y][z] != null) {
+						contents[x][y][z].writeToNBT(cpt, mapping);
+					}
+
 					nbtContents.appendTag(cpt);
 				}
 			}
@@ -90,10 +99,14 @@ public class Blueprint extends BlueprintBase {
 					NBTTagCompound cpt = nbtContents.getCompoundTagAt(index);
 					index++;
 
-					int blockId = cpt.getInteger("blockId");
+					if (cpt.hasKey("blockId")) {
+						int blockId = cpt.getInteger("blockId");
 
-					contents[x][y][z] = BlueprintManager.newSchematic(mapping.getBlockForId(blockId));
-					contents[x][y][z].readFromNBT(cpt, mapping);
+						contents[x][y][z] = BlueprintManager.newSchematic(mapping.getBlockForId(blockId));
+						contents[x][y][z].readFromNBT(cpt, mapping);
+					} else {
+						contents[x][y][z] = null;
+					}
 				}
 			}
 		}

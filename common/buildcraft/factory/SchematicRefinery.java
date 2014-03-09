@@ -9,8 +9,8 @@
 package buildcraft.factory;
 
 import net.minecraftforge.common.util.ForgeDirection;
-import buildcraft.api.blueprints.Schematic;
 import buildcraft.api.blueprints.IBuilderContext;
+import buildcraft.api.blueprints.Schematic;
 
 public class SchematicRefinery extends Schematic {
 
@@ -28,8 +28,8 @@ public class SchematicRefinery extends Schematic {
 	}
 
 	@Override
-	public void writeToWorld(IBuilderContext context) {
-		super.writeToWorld(context);
+	public void writeToWorld(IBuilderContext context, int x, int y, int z) {
+		super.writeToWorld(context, x, y, z);
 
 		TileRefinery refinery = (TileRefinery) context.world().getTileEntity(x, y, z);
 

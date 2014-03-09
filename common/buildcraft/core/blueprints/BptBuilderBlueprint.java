@@ -15,11 +15,13 @@ import java.util.LinkedList;
 import java.util.ListIterator;
 import java.util.Map.Entry;
 
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldSettings.GameType;
 import buildcraft.api.blueprints.Schematic;
-import buildcraft.api.blueprints.Schematic.Mode;
+import buildcraft.api.blueprints.SchematicToBuild;
+import buildcraft.api.blueprints.SchematicToBuild.Mode;
 import buildcraft.api.core.StackKey;
 import buildcraft.core.IBuilderInventory;
 import buildcraft.core.utils.BCLog;
@@ -27,11 +29,11 @@ import buildcraft.core.utils.BlockUtil;
 
 public class BptBuilderBlueprint extends BptBuilderBase {
 
-	LinkedList<Schematic> clearList = new LinkedList<Schematic>();
-	LinkedList<Schematic> primaryList = new LinkedList<Schematic>();
-	LinkedList<Schematic> secondaryList = new LinkedList<Schematic>();
+	LinkedList<SchematicToBuild> clearList = new LinkedList<SchematicToBuild>();
+	LinkedList<SchematicToBuild> primaryList = new LinkedList<SchematicToBuild>();
+	LinkedList<SchematicToBuild> secondaryList = new LinkedList<SchematicToBuild>();
 
-	LinkedList<Schematic> postProcessingList = new LinkedList<Schematic>();
+	LinkedList<SchematicToBuild> postProcessingList = new LinkedList<SchematicToBuild>();
 
 	public LinkedList <ItemStack> neededItems = new LinkedList <ItemStack> ();
 
@@ -47,21 +49,20 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 
 					Schematic slot = bluePrint.contents[i][j][k];
 
-					if (slot != null) {
-						slot = slot.clone();
-					} else {
+					if (slot == null) {
 						slot = new Schematic();
 						slot.meta = 0;
-						slot.block = null;
+						slot.block = Blocks.air;
 					}
 
-					slot.x = xCoord;
-					slot.y = yCoord;
-					slot.z = zCoord;
+					SchematicToBuild b = new SchematicToBuild ();
+					b.schematic = slot;
+					b.x = xCoord;
+					b.y = yCoord;
+					b.z = zCoord;
+					b.mode = Mode.ClearIfInvalid;
 
-					slot.mode = Mode.ClearIfInvalid;
-
-					clearList.add(slot);
+					clearList.add(b);
 
 				}
 			}
@@ -76,28 +77,27 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 
 					Schematic slot = bluePrint.contents[i][j][k];
 
-					if (slot != null) {
-						slot = slot.clone();
-					} else {
+					if (slot == null) {
 						slot = new Schematic();
 						slot.meta = 0;
-						slot.block = null;
+						slot.block = Blocks.air;
 					}
 
-					slot.x = xCoord;
-					slot.y = yCoord;
-					slot.z = zCoord;
-
-					slot.mode = Mode.Build;
+					SchematicToBuild b = new SchematicToBuild ();
+					b.schematic = slot;
+					b.x = xCoord;
+					b.y = yCoord;
+					b.z = zCoord;
+					b.mode = Mode.Build;
 
 					if (slot.block != null && slot.block.isOpaqueCube()) {
-						primaryList.add(slot);
+						primaryList.add(b);
 					} else {
-						secondaryList.add(slot);
+						secondaryList.add(b);
 					}
 
 					if (slot.block != null) {
-						postProcessingList.add(slot.clone());
+						postProcessingList.add(b);
 					}
 				}
 			}
@@ -117,9 +117,9 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 	}
 
 	@Override
-	public Schematic getNextBlock(World world, IBuilderInventory inv) {
+	public SchematicToBuild getNextBlock(World world, IBuilderInventory inv) {
 		if (clearList.size() != 0) {
-			Schematic slot = internalGetNextBlock(world, inv, clearList);
+			SchematicToBuild slot = internalGetNextBlock(world, inv, clearList);
 			checkDone();
 
 			if (slot != null) {
@@ -128,7 +128,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 		}
 
 		if (primaryList.size() != 0) {
-			Schematic slot = internalGetNextBlock(world, inv, primaryList);
+			SchematicToBuild slot = internalGetNextBlock(world, inv, primaryList);
 			checkDone();
 
 			if (slot != null) {
@@ -137,7 +137,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 		}
 
 		if (secondaryList.size() != 0) {
-			Schematic slot = internalGetNextBlock(world, inv, secondaryList);
+			SchematicToBuild slot = internalGetNextBlock(world, inv, secondaryList);
 			checkDone();
 
 			if (slot != null) {
@@ -150,18 +150,19 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 		return null;
 	}
 
-	public Schematic internalGetNextBlock(World world, IBuilderInventory inv, LinkedList<Schematic> list) {
-		LinkedList<Schematic> failSlots = new LinkedList<Schematic>();
+	public SchematicToBuild internalGetNextBlock(World world, IBuilderInventory inv, LinkedList<SchematicToBuild> list) {
+		LinkedList<SchematicToBuild> failSlots = new LinkedList<SchematicToBuild>();
 
-		Schematic result = null;
+		SchematicToBuild result = null;
 
 		while (list.size() > 0) {
-			Schematic slot = list.removeFirst();
+			SchematicToBuild slot = list.removeFirst();
 
 			boolean getNext = false;
 
 			try {
-				getNext = !slot.isValid(context) && !slot.ignoreBuilding();
+				getNext = !slot.schematic.isValid(context, slot.x, slot.y,
+						slot.z) && !slot.schematic.ignoreBuilding();
 			} catch (Throwable t) {
 				// Defensive code against errors in implementers
 				t.printStackTrace();
@@ -181,8 +182,8 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 					result = slot;
 
 					break;
-				} else if (checkRequirements(inv, slot)) {
-					useRequirements(inv, slot);
+				} else if (checkRequirements(inv, slot.schematic)) {
+					useRequirements(inv, slot.schematic);
 
 					result = slot;
 					break;
@@ -334,12 +335,12 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 
 		HashMap <StackKey, Integer> computeStacks = new HashMap <StackKey, Integer> ();
 
-		for (Schematic slot : primaryList) {
+		for (SchematicToBuild slot : primaryList) {
 
 			LinkedList<ItemStack> stacks = new LinkedList<ItemStack>();
 
 			try {
-				stacks = slot.getRequirements(context);
+				stacks = slot.schematic.getRequirements(context);
 			} catch (Throwable t) {
 				// Defensive code against errors in implementers
 				t.printStackTrace();
@@ -365,8 +366,8 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 			}
 		}
 
-		for (Schematic slot : secondaryList) {
-			LinkedList<ItemStack> stacks = slot.getRequirements(context);
+		for (SchematicToBuild slot : secondaryList) {
+			LinkedList<ItemStack> stacks = slot.schematic.getRequirements(context);
 
 			for (ItemStack stack : stacks) {
 				if (stack == null || stack.getItem() == null || stack.stackSize == 0) {
@@ -414,9 +415,9 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 
 	@Override
 	public void postProcessing(World world) {
-		for (Schematic s : postProcessingList) {
+		for (SchematicToBuild s : postProcessingList) {
 			try {
-				s.postProcessing(context);
+				s.schematic.postProcessing(context);
 			} catch (Throwable t) {
 				// Defensive code against errors in implementers
 				t.printStackTrace();

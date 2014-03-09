@@ -13,8 +13,8 @@ import java.util.LinkedList;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
-import buildcraft.api.blueprints.Schematic;
 import buildcraft.api.blueprints.IBuilderContext;
+import buildcraft.api.blueprints.Schematic;
 
 public class SchematicDirt extends Schematic {
 
@@ -24,12 +24,12 @@ public class SchematicDirt extends Schematic {
 	}
 
 	@Override
-	public void writeToWorld(IBuilderContext context) {
+	public void writeToWorld(IBuilderContext context, int x, int y, int z) {
 		context.world().setBlock(x, y, z, Blocks.dirt, meta, 3);
 	}
 
 	@Override
-	public boolean isValid(IBuilderContext context) {
+	public boolean isValid(IBuilderContext context, int x, int y, int z) {
 		Block block = context.world().getBlock(x, y, z);
 
 		return block == Blocks.dirt || block == Blocks.grass || block == Blocks.farmland;

@@ -11,8 +11,8 @@ package buildcraft.api.schematics;
 import java.util.LinkedList;
 
 import net.minecraft.item.ItemStack;
-import buildcraft.api.blueprints.Schematic;
 import buildcraft.api.blueprints.IBuilderContext;
+import buildcraft.api.blueprints.Schematic;
 
 public class SchematicRotateMeta extends Schematic {
 
@@ -43,7 +43,7 @@ public class SchematicRotateMeta extends Schematic {
 	}
 
 	@Override
-	public boolean isValid(IBuilderContext context) {
+	public boolean isValid(IBuilderContext context, int x, int y, int z) {
 		return block == context.world().getBlock(x, y, z);
 	}
 

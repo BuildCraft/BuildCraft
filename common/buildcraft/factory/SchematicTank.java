@@ -8,8 +8,8 @@
  */
 package buildcraft.factory;
 
-import buildcraft.api.blueprints.Schematic;
 import buildcraft.api.blueprints.IBuilderContext;
+import buildcraft.api.blueprints.Schematic;
 
 public class SchematicTank extends Schematic {
 
@@ -19,7 +19,7 @@ public class SchematicTank extends Schematic {
 	}
 
 	@Override
-	public void writeToWorld(IBuilderContext context) {
+	public void writeToWorld(IBuilderContext context, int x, int y, int z) {
 		context.world().setBlock(x, y, z, block, meta, 3);
 	}
 

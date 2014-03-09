@@ -12,9 +12,9 @@ import java.util.LinkedList;
 
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
+import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.Schematic;
 import buildcraft.api.blueprints.SchematicUtils;
-import buildcraft.api.blueprints.IBuilderContext;
 
 public class SchematicAutoWorkbench extends Schematic {
 
@@ -33,8 +33,8 @@ public class SchematicAutoWorkbench extends Schematic {
 	}
 
 	@Override
-	public void writeToWorld(IBuilderContext context) {
-		super.writeToWorld(context);
+	public void writeToWorld(IBuilderContext context, int x, int y, int z) {
+		super.writeToWorld(context, x, y, z);
 
 		IInventory inventory = (IInventory) context.world().getTileEntity(x, y, z);
 

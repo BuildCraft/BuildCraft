@@ -47,7 +47,7 @@ import buildcraft.core.utils.Utils;
 public class Schematic {
 
 	public Block block = null;
-	public int x, y, z, meta = 0;
+	public int meta = 0;
 
 	/**
 	 * This field contains requirements for a given block when stored in the
@@ -64,25 +64,15 @@ public class Schematic {
 	 */
 	public NBTTagCompound cpt = new NBTTagCompound();
 
-	public enum Mode {
-		ClearIfInvalid, Build
-	};
-
-	public Mode mode = Mode.Build;
-
 	@SuppressWarnings("unchecked")
 	@Override
 	public Schematic clone() {
 		Schematic obj = BlueprintManager.newSchematic(block);
 
-		obj.x = x;
-		obj.y = y;
-		obj.z = z;
 		obj.block = block;
 		obj.meta = meta;
 		obj.cpt = (NBTTagCompound) cpt.copy();
 		obj.storedRequirements = (ArrayList<ItemStack>) storedRequirements.clone();
-		obj.mode = mode;
 
 		return obj;
 	}
@@ -166,7 +156,7 @@ public class Schematic {
 	 * the blueprint at the location given by the slot. By default, this
 	 * subprogram is permissive and doesn't take into account metadata.
 	 */
-	public boolean isValid(IBuilderContext context) {
+	public boolean isValid(IBuilderContext context, int x, int y, int z) {
 		return block == context.world().getBlock(x, y, z) && meta == context.world().getBlockMetadata(x, y, z);
 	}
 
@@ -180,7 +170,7 @@ public class Schematic {
 	/**
 	 * Places the block in the world, at the location specified in the slot.
 	 */
-	public void writeToWorld(IBuilderContext context) {
+	public void writeToWorld(IBuilderContext context, int x, int y, int z) {
 		// Meta needs to be specified twice, depending on the block behavior
 		context.world().setBlock(x, y, z, block, meta, 3);
 		context.world().setBlockMetadataWithNotify(x, y, z, meta, 3);

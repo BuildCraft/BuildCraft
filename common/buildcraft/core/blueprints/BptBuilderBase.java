@@ -10,7 +10,7 @@ package buildcraft.core.blueprints;
 
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.World;
-import buildcraft.api.blueprints.Schematic;
+import buildcraft.api.blueprints.SchematicToBuild;
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.core.Box;
 import buildcraft.core.IBuilderInventory;
@@ -35,7 +35,7 @@ public abstract class BptBuilderBase implements IAreaProvider {
 		context = bluePrint.getContext(world, box);
 	}
 
-	public abstract Schematic getNextBlock(World world, IBuilderInventory inv);
+	public abstract SchematicToBuild getNextBlock(World world, IBuilderInventory inv);
 
 	@Override
 	public int xMin() {

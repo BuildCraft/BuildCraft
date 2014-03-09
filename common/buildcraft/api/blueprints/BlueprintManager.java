@@ -12,6 +12,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 
 import net.minecraft.block.Block;
+import net.minecraft.init.Blocks;
 
 public class BlueprintManager {
 
@@ -32,6 +33,10 @@ public class BlueprintManager {
 	}
 
 	public static Schematic newSchematic (Block block) {
+		if (block == Blocks.air) {
+			return null;
+		}
+
 		if (!schematicClasses.containsKey(block)) {
 			registerSchematicClass(block, Schematic.class);
 		}
