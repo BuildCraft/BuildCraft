@@ -106,7 +106,7 @@ public class BlockUtil {
 		if (block == BuildCraftEnergy.blockOil)
 			return false;
 
-		if (block == Blocks.lava || block == Blocks.lava)
+		if (block == Blocks.lava || block == Blocks.flowing_lava)
 			return false;
 
 		return true;
