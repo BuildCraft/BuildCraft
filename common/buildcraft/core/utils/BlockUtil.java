@@ -117,7 +117,7 @@ public class BlockUtil {
 	}
 
 	public static boolean isSoftBlock(Block block, World world, int x, int y, int z) {
-		return block == null || BuildCraftAPI.softBlocks.contains(block) || block.isAir(world, x, y, z) || block == Blocks.water || block == Blocks.flowing_water;
+		return block == null || BuildCraftAPI.softBlocks.contains(block) || block.isAir(world, x, y, z);
 	}
 
 	/**
