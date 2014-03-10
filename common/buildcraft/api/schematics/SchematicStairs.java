@@ -28,20 +28,25 @@ public class SchematicStairs extends Schematic {
 
 	@Override
 	public void rotateLeft(IBuilderContext context) {
-		switch (meta) {
+		int pos = meta & 3;
+		int others = meta - pos;
+
+		switch (pos) {
 		case 0:
-			meta = 2;
+			pos = 2;
 			break;
 		case 1:
-			meta = 3;
+			pos = 3;
 			break;
 		case 2:
-			meta = 1;
+			pos = 1;
 			break;
 		case 3:
-			meta = 0;
+			pos = 0;
 			break;
 		}
+
+		meta = pos + others;
 	}
 
 }

@@ -197,11 +197,19 @@ public class BuildCraftBuilders extends BuildCraftMod {
 
 		SchematicRegistry.registerSchematicClass(Blocks.lit_pumpkin, SchematicPumpkin.class);
 
-		SchematicRegistry.registerSchematicClass(Blocks.stone_stairs, SchematicStairs.class);
+
 		SchematicRegistry.registerSchematicClass(Blocks.oak_stairs, SchematicStairs.class);
-		SchematicRegistry.registerSchematicClass(Blocks.nether_brick_stairs, SchematicStairs.class);
+		SchematicRegistry.registerSchematicClass(Blocks.stone_stairs, SchematicStairs.class);
 		SchematicRegistry.registerSchematicClass(Blocks.brick_stairs, SchematicStairs.class);
 		SchematicRegistry.registerSchematicClass(Blocks.stone_brick_stairs, SchematicStairs.class);
+		SchematicRegistry.registerSchematicClass(Blocks.nether_brick_stairs, SchematicStairs.class);
+		SchematicRegistry.registerSchematicClass(Blocks.sandstone_stairs, SchematicStairs.class);
+		SchematicRegistry.registerSchematicClass(Blocks.spruce_stairs, SchematicStairs.class);
+		SchematicRegistry.registerSchematicClass(Blocks.birch_stairs, SchematicStairs.class);
+		SchematicRegistry.registerSchematicClass(Blocks.jungle_stairs, SchematicStairs.class);
+		SchematicRegistry.registerSchematicClass(Blocks.quartz_stairs, SchematicStairs.class);
+		SchematicRegistry.registerSchematicClass(Blocks.acacia_stairs, SchematicStairs.class);
+		SchematicRegistry.registerSchematicClass(Blocks.dark_oak_stairs, SchematicStairs.class);
 
 		SchematicRegistry.registerSchematicClass(Blocks.wooden_button, SchematicDoor.class, new ItemStack(Items.wooden_door));
 		SchematicRegistry.registerSchematicClass(Blocks.iron_door, SchematicDoor.class, new ItemStack(Items.iron_door));
