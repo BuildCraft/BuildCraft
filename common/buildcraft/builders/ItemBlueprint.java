@@ -49,14 +49,6 @@ public abstract class ItemBlueprint extends ItemBuildCraft {
 		}
 	}
 
-	public static ItemStack getBlueprintItem(BlueprintBase blueprint) {
-		ItemStack stack = new ItemStack(BuildCraftBuilders.blueprintItem, 1);
-		NBTTagCompound nbt = NBTUtils.getItemData(stack);
-		blueprint.id.write (nbt);
-		nbt.setString("author", blueprint.author);
-		return stack;
-	}
-
 	public static BlueprintId getId (ItemStack stack) {
 		NBTTagCompound nbt = NBTUtils.getItemData(stack);
 		BlueprintId id = new BlueprintId ();

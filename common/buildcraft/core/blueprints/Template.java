@@ -8,7 +8,16 @@
  */
 package buildcraft.core.blueprints;
 
+import net.minecraft.block.Block;
+import net.minecraft.init.Blocks;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
+import buildcraft.BuildCraftBuilders;
+import buildcraft.api.blueprints.IBuilderContext;
+import buildcraft.api.blueprints.SchematicRegistry;
+import buildcraft.api.core.BuildCraftAPI;
+import buildcraft.core.utils.NBTUtils;
 
 /**
  * Use the template system to describe fillers
@@ -23,49 +32,65 @@ public class Template extends BlueprintBase {
 	}
 
 	@Override
-	public void saveContents(NBTTagCompound nbt) {
-		/*writer.write("mask:");
+	public void readFromWorld(IBuilderContext context, TileEntity anchorTile, int x, int y, int z) {
+		Block block = anchorTile.getWorldObj().getBlock(x, y, z);
 
-		boolean first = true;
+		int posX = (int) (x - context.surroundingBox().pMin().x);
+		int posY = (int) (y - context.surroundingBox().pMin().y);
+		int posZ = (int) (z - context.surroundingBox().pMin().z);
+
+		if (!BuildCraftAPI.softBlocks.contains(block)) {
+			contents [posX][posY][posZ] = SchematicRegistry.newSchematic(Blocks.stone);
+		}
+	}
+
+	@Override
+	public void saveContents(NBTTagCompound nbt) {
+		// Note: this way of storing data is suboptimal, we really need a bit
+		// per mask entry, not a byte. However, this is fine, as compression
+		// will fix it.
+
+		byte [] data = new byte [sizeX * sizeY * sizeZ];
+		int ind = 0;
 
 		for (int x = 0; x < sizeX; ++x) {
 			for (int y = 0; y < sizeY; ++y) {
 				for (int z = 0; z < sizeZ; ++z) {
-					if (first) {
-						first = false;
-					} else {
-						writer.write(",");
-					}
-
-					writer.write(contents[x][y][z].blockId + "");
+					data [ind] = (byte) ((contents[x][y][z] == null) ? 0 : 1);
+					ind++;
 				}
 			}
-		}*/
+		}
+
+		nbt.setByteArray("mask", data);
 	}
 
 	@Override
 	public void loadContents(NBTTagCompound nbt) throws BptError {
-		/*if (attr.equals("mask")) {
-			contents = new BptSlot[sizeX][sizeY][sizeZ];
+		byte [] data = nbt.getByteArray("mask");
+		int ind = 0;
 
-			String[] mask = val.split(",");
-			int maskIndex = 0;
-
-			/*for (int x = 0; x < sizeX; ++x) {
-				for (int y = 0; y < sizeY; ++y) {
-					for (int z = 0; z < sizeZ; ++z) {
-						contents[x][y][z] = new BptSlot();
-						contents[x][y][z].x = x;
-						contents[x][y][z].y = y;
-						contents[x][y][z].z = z;
-						contents[x][y][z].blockId = Integer.parseInt(mask[maskIndex]);
-
-						maskIndex++;
+		for (int x = 0; x < sizeX; ++x) {
+			for (int y = 0; y < sizeY; ++y) {
+				for (int z = 0; z < sizeZ; ++z) {
+					if (data [ind] == 1) {
+						contents [x][y][z] = SchematicRegistry.newSchematic(Blocks.stone);
 					}
+
+					ind++;
 				}
 			}
-		}*/
+		}
+	}
 
+	@Override
+	public ItemStack getStack () {
+		ItemStack stack = new ItemStack(BuildCraftBuilders.templateItem, 1);
+		NBTTagCompound nbt = NBTUtils.getItemData(stack);
+		id.write (nbt);
+		nbt.setString("author", author);
+
+		return stack;
 	}
 
 }

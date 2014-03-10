@@ -14,6 +14,7 @@ import net.minecraft.world.World;
 import buildcraft.api.blueprints.Schematic;
 import buildcraft.api.blueprints.SchematicToBuild;
 import buildcraft.api.blueprints.SchematicToBuild.Mode;
+import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.core.IBuilderInventory;
 
 public class BptBuilderTemplate extends BptBuilderBase {
@@ -34,14 +35,9 @@ public class BptBuilderTemplate extends BptBuilderBase {
 					Schematic slot = bluePrint.contents[i][j][k];
 
 					if (slot == null || slot.block == null) {
-						slot = new Schematic();
-						slot.meta = 0;
-						slot.block = null;
-
-
 						SchematicToBuild b = new SchematicToBuild();
 
-						b.schematic = slot;
+						b.schematic = null;
 						b.x = xCoord;
 						b.y = yCoord;
 						b.z = zCoord;
@@ -63,23 +59,15 @@ public class BptBuilderTemplate extends BptBuilderBase {
 					Schematic slot = bluePrint.contents[i][j][k];
 
 					if (slot != null) {
-						slot = slot.clone();
-					} else {
-						slot = new Schematic();
-						slot.meta = 0;
-						slot.block = null;
-					}
+						SchematicToBuild b = new SchematicToBuild();
 
-					SchematicToBuild b = new SchematicToBuild();
+						b.schematic = slot;
+						b.x = xCoord;
+						b.y = yCoord;
+						b.z = zCoord;
 
-					b.schematic = slot;
-					b.x = xCoord;
-					b.y = yCoord;
-					b.z = zCoord;
+						b.mode = Mode.Build;
 
-					b.mode = Mode.Build;
-
-					if (slot.block != null) {
 						buildList.add(b);
 					}
 				}
@@ -103,8 +91,6 @@ public class BptBuilderTemplate extends BptBuilderBase {
 
 			if (slot != null) {
 				return slot;
-			} else {
-				return null;
 			}
 		}
 
@@ -114,8 +100,6 @@ public class BptBuilderTemplate extends BptBuilderBase {
 
 			if (slot != null) {
 				return slot;
-			} else {
-				return null;
 			}
 		}
 
@@ -128,34 +112,19 @@ public class BptBuilderTemplate extends BptBuilderBase {
 		SchematicToBuild result = null;
 
 		while (list.size() > 0) {
-			SchematicToBuild slot = list.getFirst();
+			SchematicToBuild slot = list.removeFirst();
 
-			// Note from CJ: I have no idea what this code is supposed to do, so I'm not touching it.
-			/*if (slot.blockId == world.getBlockId(slot.x, slot.y, slot.z)) {
-				list.removeFirst();
-			} else if (slot.mode == Mode.ClearIfInvalid) {
+			if (slot.mode == Mode.ClearIfInvalid
+					&& !BuildCraftAPI.softBlocks.contains(context.world()
+							.getBlock(slot.x, slot.y, slot.z))) {
 				result = slot;
-				list.removeFirst();
 				break;
-			} else {
-				int size = inv.getSizeInventory();
-				for (int i = 0; i < size; ++i) {
-					if (!inv.isBuildingMaterial(i)) {
-						continue;
-					}
-
-					ItemStack stack = inv.decrStackSize(i, 1);
-
-					if (stack != null && stack.stackSize > 0) {
-						result = slot.clone();
-						result.stackToUse = stack;
-						list.removeFirst();
-						break;
-					}
-				}
-
+			} else if (slot.mode == Mode.Build
+					&& BuildCraftAPI.softBlocks.contains(context.world()
+							.getBlock(slot.x, slot.y, slot.z))) {
+				result = slot;
 				break;
-			}*/
+			}
 		}
 
 		return result;

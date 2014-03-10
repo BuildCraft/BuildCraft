@@ -11,12 +11,15 @@ package buildcraft.core.blueprints;
 import java.io.IOException;
 
 import net.minecraft.block.Block;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
-import buildcraft.api.blueprints.SchematicRegistry;
+import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.MappingRegistry;
 import buildcraft.api.blueprints.Schematic;
+import buildcraft.api.blueprints.SchematicRegistry;
 import buildcraft.builders.blueprints.BlueprintId;
 import buildcraft.core.Box;
 import buildcraft.core.Version;
@@ -124,7 +127,7 @@ public abstract class BlueprintBase {
 
 		BlueprintBase bpt;
 
-		if ("template".equals("kind")) {
+		if ("template".equals(kind)) {
 			bpt = new Template ();
 		} else {
 			bpt = new Blueprint();
@@ -263,10 +266,6 @@ public abstract class BlueprintBase {
 		return new BptContext(world, box, mapping);
 	}
 
-	public abstract void loadContents(NBTTagCompound nbt) throws BptError;
-
-	public abstract void saveContents(NBTTagCompound nbt);
-
 	class ComputeDataThread extends Thread {
 		public NBTTagCompound nbt;
 
@@ -304,4 +303,12 @@ public abstract class BlueprintBase {
 	public synchronized void setData (byte [] b) {
 		data = b;
 	}
+
+	public abstract void loadContents(NBTTagCompound nbt) throws BptError;
+
+	public abstract void saveContents(NBTTagCompound nbt);
+
+	public abstract void readFromWorld(IBuilderContext context, TileEntity anchorTile, int x, int y, int z);
+
+	public abstract ItemStack getStack ();
 }

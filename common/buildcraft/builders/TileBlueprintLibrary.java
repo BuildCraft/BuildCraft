@@ -268,7 +268,7 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory {
 				bpt.setData(data);
 				bpt.id = id;
 				BuildCraftBuilders.serverDB.add(bpt);
-				setInventorySlotContents(3, ItemBlueprint.getBlueprintItem(bpt));
+				setInventorySlotContents(3, bpt.getStack());
 			} else {
 				setInventorySlotContents(3, stack[2]);
 			}

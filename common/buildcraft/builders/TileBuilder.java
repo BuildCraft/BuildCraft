@@ -39,6 +39,7 @@ import buildcraft.core.blueprints.Blueprint;
 import buildcraft.core.blueprints.BlueprintBase;
 import buildcraft.core.blueprints.BptBuilderBase;
 import buildcraft.core.blueprints.BptBuilderBlueprint;
+import buildcraft.core.blueprints.BptBuilderTemplate;
 import buildcraft.core.blueprints.BptContext;
 import buildcraft.core.network.NetworkData;
 import buildcraft.core.network.RPC;
@@ -290,10 +291,10 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory,
 
 		BptBuilderBase result = null;
 
-		if (items[0].getItem() instanceof ItemBlueprint) {
+		if (items[0].getItem() instanceof ItemBlueprintStandard) {
 			result = new BptBuilderBlueprint((Blueprint) bpt, worldObj, x, y, z);
-		/*} else if (items[0].getItem() instanceof ItemBptBluePrint) {
-			return new BptBuilderTemplate(bpt, worldObj, x, y, z);*/
+		} else if (items[0].getItem() instanceof ItemBlueprintTemplate) {
+			return new BptBuilderTemplate(bpt, worldObj, x, y, z);
 		} else {
 			result = null;
 		}
@@ -687,8 +688,12 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory,
 			SchematicToBuild slot = bluePrintBuilder.getNextBlock(worldObj, this);
 
 			if (slot != null) {
-				slot.schematic.writeToWorld(bluePrintBuilder.context, slot.x,
+				if (slot.schematic == null) {
+					getWorld().setBlockToAir(slot.x, slot.y, slot.z);
+				} else {
+					slot.schematic.writeToWorld(bluePrintBuilder.context, slot.x,
 						slot.y, slot.z);
+				}
 			}
 
 			if (bluePrintBuilder instanceof BptBuilderBlueprint) {

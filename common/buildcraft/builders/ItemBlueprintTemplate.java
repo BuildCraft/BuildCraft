@@ -9,6 +9,7 @@
 package buildcraft.builders;
 
 import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -21,8 +22,8 @@ public class ItemBlueprintTemplate extends ItemBlueprint {
 	}
 
 	@Override
-	public IIcon getIconFromDamage(int i) {
-		if (i == 0) {
+	public IIcon getIconIndex(ItemStack stack) {
+		if (getId(stack) == null) {
 			return itemIcon;
 		} else {
 			return usedTemplate;

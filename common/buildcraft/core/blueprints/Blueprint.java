@@ -10,13 +10,16 @@ package buildcraft.core.blueprints;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
-import buildcraft.api.blueprints.SchematicRegistry;
+import buildcraft.BuildCraftBuilders;
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.Schematic;
+import buildcraft.api.blueprints.SchematicRegistry;
 import buildcraft.core.utils.BCLog;
+import buildcraft.core.utils.NBTUtils;
 import buildcraft.core.utils.Utils;
 
 public class Blueprint extends BlueprintBase {
@@ -28,6 +31,7 @@ public class Blueprint extends BlueprintBase {
 		super(sizeX, sizeY, sizeZ);
 	}
 
+	@Override
 	public void readFromWorld(IBuilderContext context, TileEntity anchorTile, int x, int y, int z) {
 		Block block = anchorTile.getWorldObj().getBlock(x, y, z);
 
@@ -110,5 +114,15 @@ public class Blueprint extends BlueprintBase {
 				}
 			}
 		}
+	}
+
+	@Override
+	public ItemStack getStack () {
+		ItemStack stack = new ItemStack(BuildCraftBuilders.blueprintItem, 1);
+		NBTTagCompound nbt = NBTUtils.getItemData(stack);
+		id.write (nbt);
+		nbt.setString("author", author);
+
+		return stack;
 	}
 }

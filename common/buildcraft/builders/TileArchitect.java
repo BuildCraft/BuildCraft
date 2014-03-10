@@ -24,7 +24,9 @@ import buildcraft.core.Box.Kind;
 import buildcraft.core.IBoxProvider;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.blueprints.Blueprint;
+import buildcraft.core.blueprints.BlueprintBase;
 import buildcraft.core.blueprints.BptContext;
+import buildcraft.core.blueprints.Template;
 import buildcraft.core.network.NetworkData;
 import buildcraft.core.network.RPC;
 import buildcraft.core.network.RPCHandler;
@@ -34,7 +36,7 @@ import buildcraft.core.utils.Utils;
 public class TileArchitect extends TileBuildCraft implements IInventory, IBoxProvider {
 	private final static int SCANNER_ITERATION = 100;
 
-	private Blueprint writingBlueprint;
+	private BlueprintBase writingBlueprint;
 	private BptContext writingContext;
 	private BlockScanner blockScanner;
 	public int computingTime = 0;
@@ -86,7 +88,7 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 
 				}
 			} else if (writingBlueprint.getData() != null) {
-				createBpt();
+				createBlueprint();
 
 				computingTime = 0;
 			}
@@ -110,11 +112,11 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 		sendNetworkUpdate();
 	}
 
-	public void createBpt() {
+	public void createBlueprint() {
 		writingBlueprint.id.name = name;
 		BuildCraftBuilders.serverDB.add(writingBlueprint);
 
-		setInventorySlotContents(1, ItemBlueprint.getBlueprintItem(writingBlueprint));
+		setInventorySlotContents(1, writingBlueprint.getStack());
 		setInventorySlotContents(0, null);
 
 		writingBlueprint = null;
@@ -319,7 +321,13 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 				}
 
 				blockScanner = new BlockScanner(box, getWorld(), SCANNER_ITERATION);
-				writingBlueprint = new Blueprint(box.sizeX(), box.sizeY(), box.sizeZ());
+
+				if (items[0].getItem() instanceof ItemBlueprintStandard) {
+					writingBlueprint = new Blueprint(box.sizeX(), box.sizeY(), box.sizeZ());
+				} else if (items[0].getItem() instanceof ItemBlueprintTemplate) {
+					writingBlueprint = new Template(box.sizeX(), box.sizeY(), box.sizeZ());
+				}
+
 				writingContext = writingBlueprint.getContext(worldObj, box);
 
 				writingBlueprint.id.name = name;
@@ -327,8 +335,6 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 				writingBlueprint.anchorX = xCoord - box.xMin;
 				writingBlueprint.anchorY = yCoord - box.yMin;
 				writingBlueprint.anchorZ = zCoord - box.zMin;
-			} else {
-
 			}
 		} else {
 			blockScanner = null;
