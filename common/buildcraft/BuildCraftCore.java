@@ -15,6 +15,7 @@ import java.util.EnumMap;
 import java.util.TreeMap;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockLiquid;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -300,7 +301,7 @@ public class BuildCraftCore extends BuildCraftMod {
 		for (Object o : Block.blockRegistry) {
 			Block block = (Block) o;
 			
-			if (block instanceof BlockFluidBase || block instanceof IFluidBlock || block instanceof IPlantable) {
+			if (block instanceof BlockFluidBase || block instanceof BlockLiquid || block instanceof IPlantable) {
 				BuildCraftAPI.softBlocks.add(block);
 			}
 		}
