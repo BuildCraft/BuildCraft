@@ -16,7 +16,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.util.ForgeDirection;
-import buildcraft.BuildCraftBuilders;
 import buildcraft.BuildCraftEnergy;
 import buildcraft.api.gates.IOverrideDefaultTriggers;
 import buildcraft.api.gates.ITrigger;
@@ -29,10 +28,11 @@ import buildcraft.api.transport.IPipeConnection;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.IPipeTile.PipeType;
 import buildcraft.core.DefaultProps;
+import buildcraft.core.ReflectMjAPI;
+import buildcraft.core.ReflectMjAPI.BatteryField;
 import buildcraft.core.TileBuffer;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.network.NetworkData;
-import buildcraft.core.proxy.CoreProxy;
 import buildcraft.energy.gui.ContainerEngine;
 
 public abstract class TileEngine extends TileBuildCraft implements IPowerReceptor, IPowerEmitter, IOverrideDefaultTriggers, IPipeConnection {
@@ -45,7 +45,7 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 		BLUE, GREEN, YELLOW, RED, OVERHEAT;
 		public static final EnergyStage[] VALUES = values();
 	}
-	
+
 	public static final float MIN_HEAT = 20;
 	public static final float IDEAL_HEAT = 100;
 	public static final float MAX_HEAT = 250;
@@ -92,22 +92,24 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 
 	protected EnergyStage computeEnergyStage() {
 		float energyLevel = getHeatLevel();
-		if (energyLevel < 0.25f)
+		if (energyLevel < 0.25f) {
 			return EnergyStage.BLUE;
-		else if (energyLevel < 0.5f)
+		} else if (energyLevel < 0.5f) {
 			return EnergyStage.GREEN;
-		else if (energyLevel < 0.75f)
+		} else if (energyLevel < 0.75f) {
 			return EnergyStage.YELLOW;
-		else if (energyLevel < 1f)
+		} else if (energyLevel < 1f) {
 			return EnergyStage.RED;
-		else
+		} else {
 			return EnergyStage.OVERHEAT;
+		}
 	}
 
 	public final EnergyStage getEnergyStage() {
 		if (!worldObj.isRemote) {
-			if (energyStage == EnergyStage.OVERHEAT)
+			if (energyStage == EnergyStage.OVERHEAT) {
 				return energyStage;
+			}
 			EnergyStage newStage = computeEnergyStage();
 
 			if (energyStage != newStage) {
@@ -139,7 +141,7 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 		if (!worldObj.isRemote) {
 			return Math.max(0.16f * getHeatLevel(), 0.01f);
 		}
-		
+
 		switch (getEnergyStage()) {
 			case BLUE:
 				return 0.02F;
@@ -175,7 +177,7 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 
 		if (checkOrienation) {
 			checkOrienation = false;
-			
+
 			if (!isOrientationValid()) {
 				switchOrientation(true);
 			}
@@ -228,21 +230,50 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 
 	private double getPowerToExtract() {
 		TileEntity tile = getTileBuffer(orientation).getTile();
-		PowerReceiver receptor = ((IPowerReceptor) tile).getPowerReceiver(orientation.getOpposite());
-		return extractEnergy(receptor.getMinEnergyReceived(), receptor.getMaxEnergyReceived(), false); // Comment out for constant power
-//		return extractEnergy(0, getActualOutput(), false); // Uncomment for constant power
+
+		if (tile instanceof IPowerReceptor) {
+			PowerReceiver receptor = ((IPowerReceptor) tile)
+					.getPowerReceiver(orientation.getOpposite());
+
+			return extractEnergy(receptor.getMinEnergyReceived(),
+					receptor.getMaxEnergyReceived(), false);
+		} else {
+			return extractEnergy(0, ReflectMjAPI.getMjBattery(tile.getClass())
+					.getEnergyRequested(tile), false);
+		}
 	}
 
 	private void sendPower() {
 		TileEntity tile = getTileBuffer(orientation).getTile();
 		if (isPoweredTile(tile, orientation)) {
-			PowerReceiver receptor = ((IPowerReceptor) tile).getPowerReceiver(orientation.getOpposite());
-
 			double extracted = getPowerToExtract();
-			if (extracted > 0) {
-				double needed = receptor.receiveEnergy(PowerHandler.Type.ENGINE, extracted, orientation.getOpposite());
-				extractEnergy(receptor.getMinEnergyReceived(), needed, true); // Comment out for constant power
-//				currentOutput = extractEnergy(0, needed, true); // Uncomment for constant power
+
+			if (tile instanceof IPowerReceptor) {
+				PowerReceiver receptor = ((IPowerReceptor) tile)
+						.getPowerReceiver(orientation.getOpposite());
+
+				if (extracted > 0) {
+					double needed = receptor.receiveEnergy(
+							PowerHandler.Type.ENGINE, extracted,
+							orientation.getOpposite());
+
+					extractEnergy(receptor.getMinEnergyReceived(), needed, true);
+				}
+			} else {
+				try {
+					BatteryField f = ReflectMjAPI.getMjBattery(tile.getClass());
+
+					f.field.set(
+							tile,
+							f.field.getDouble(tile)
+									+ extractEnergy(0,
+											extracted + f.battery.miniumConsumption(),
+											true) - f.battery.miniumConsumption());
+				} catch (IllegalArgumentException e) {
+					e.printStackTrace();
+				} catch (IllegalAccessException e) {
+					e.printStackTrace();
+				}
 			}
 		}
 	}
@@ -256,12 +287,13 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 	}
 
 	protected void engineUpdate() {
-		if (!isRedstonePowered)
+		if (!isRedstonePowered) {
 			if (energy >= 1) {
 				energy -= 1;
 			} else if (energy < 1) {
 				energy = 0;
 			}
+		}
 	}
 
 	public boolean isActive() {
@@ -279,14 +311,14 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 
 	public boolean isOrientationValid() {
 		TileEntity tile = getTileBuffer(orientation).getTile();
-		
+
 		return isPoweredTile(tile, orientation);
 	}
 
 	public boolean switchOrientation(boolean preferPipe) {
 		if (preferPipe && switchOrientation_do(true)) {
 			return true;
-		} else {		
+		} else {
 			return switchOrientation_do(false);
 		}
 	}
@@ -305,7 +337,7 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 				return true;
 			}
 		}
-		
+
 		return false;
 	}
 
@@ -313,7 +345,7 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 		if (tileCache == null) {
 			tileCache = TileBuffer.makeBuffer(worldObj, xCoord, yCoord, zCoord, false);
 		}
-		
+
 		return tileCache[side.ordinal()];
 	}
 
@@ -334,17 +366,17 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 	@Override
 	public void readFromNBT(NBTTagCompound data) {
 		super.readFromNBT(data);
-		
+
 		orientation = ForgeDirection.getOrientation(data.getInteger("orientation"));
 		progress = data.getFloat("progress");
 		energy = data.getDouble("energy");
-		heat = data.getFloat("heat");		
+		heat = data.getFloat("heat");
 	}
 
 	@Override
 	public void writeToNBT(NBTTagCompound data) {
 		super.writeToNBT(data);
-		
+
 		data.setInteger("orientation", orientation.ordinal());
 		data.setFloat("progress", progress);
 		data.setDouble("energy", energy);
@@ -432,13 +464,13 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 
 		if (energy >= actualMax) {
 			extracted = actualMax;
-			
+
 			if (doExtract) {
 				energy -= actualMax;
 			}
 		} else {
 			extracted = energy;
-			
+
 			if (doExtract) {
 				energy = 0;
 			}
@@ -448,8 +480,12 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 	}
 
 	public boolean isPoweredTile(TileEntity tile, ForgeDirection side) {
-		if (tile instanceof IPowerReceptor) {
+		if (tile == null) {
+			return false;
+		} else if (tile instanceof IPowerReceptor) {
 			return ((IPowerReceptor) tile).getPowerReceiver(side.getOpposite()) != null;
+		} else if (ReflectMjAPI.getMjBattery(tile.getClass()) != null) {
+			return true;
 		} else {
 			return false;
 		}
@@ -489,7 +525,7 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 	public ConnectOverride overridePipeConnection(PipeType type, ForgeDirection with) {
 		if (type == PipeType.POWER) {
 			return ConnectOverride.DEFAULT;
-		} else if (with == orientation) { 
+		} else if (with == orientation) {
 			return ConnectOverride.DISCONNECT;
 		} else {
 			return ConnectOverride.DEFAULT;

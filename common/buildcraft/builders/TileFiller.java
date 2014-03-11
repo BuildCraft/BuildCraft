@@ -13,28 +13,27 @@ import io.netty.buffer.ByteBuf;
 import java.io.IOException;
 
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.AxisAlignedBB;
 import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.BuildCraftCore;
+import buildcraft.api.blueprints.SchematicToBuild;
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.filler.FillerManager;
 import buildcraft.api.filler.IFillerPattern;
-import buildcraft.api.filler.IPatternIterator;
 import buildcraft.api.gates.IAction;
 import buildcraft.api.gates.IActionReceptor;
-import buildcraft.api.power.IPowerReceptor;
-import buildcraft.api.power.PowerHandler;
-import buildcraft.api.power.PowerHandler.PowerReceiver;
-import buildcraft.api.power.PowerHandler.Type;
+import buildcraft.api.mj.MjBattery;
 import buildcraft.builders.filler.pattern.PatternFill;
 import buildcraft.builders.triggers.ActionFiller;
 import buildcraft.core.Box;
+import buildcraft.core.IBoxProvider;
+import buildcraft.core.IBuilderInventory;
 import buildcraft.core.IMachine;
 import buildcraft.core.TileBuildCraft;
-import buildcraft.core.inventory.InventoryIterator;
-import buildcraft.core.inventory.InventoryIterator.IInvSlot;
+import buildcraft.core.blueprints.BptBuilderTemplate;
+import buildcraft.core.blueprints.BptContext;
 import buildcraft.core.inventory.SimpleInventory;
 import buildcraft.core.network.IGuiReturnHandler;
 import buildcraft.core.network.PacketPayload;
@@ -44,26 +43,24 @@ import buildcraft.core.triggers.ActionMachineControl;
 import buildcraft.core.triggers.ActionMachineControl.Mode;
 import buildcraft.core.utils.Utils;
 
-public class TileFiller extends TileBuildCraft implements IInventory, IPowerReceptor, IMachine, IActionReceptor, IGuiReturnHandler {
+public class TileFiller extends TileBuildCraft implements IBuilderInventory, IMachine, IActionReceptor, IGuiReturnHandler, IBoxProvider {
 
 	public IFillerPattern currentPattern = PatternFill.INSTANCE;
+
+	private BptBuilderTemplate currentTemplate;
+	private BptContext context;
+
 	private static int POWER_USAGE = 25;
 	private final Box box = new Box();
 	private boolean done = false;
-	private IPatternIterator patternIterator;
-	private PowerHandler powerHandler;
 	private ActionMachineControl.Mode lastMode = ActionMachineControl.Mode.Unknown;
 	private SimpleInventory inv = new SimpleInventory(27, "Filler", 64);
 
+	@MjBattery (maxReceivedPerCycle = 25)
+	public double mjStored = 0;
+
 	public TileFiller() {
 		inv.addListener(this);
-		powerHandler = new PowerHandler(this, Type.MACHINE);
-		initPowerProvider();
-	}
-
-	private void initPowerProvider() {
-		powerHandler.configure(30, POWER_USAGE * 2, POWER_USAGE, POWER_USAGE * 4);
-		powerHandler.configurePowerPerdition(1, 1);
 	}
 
 	@Override
@@ -88,30 +85,42 @@ public class TileFiller extends TileBuildCraft implements IInventory, IPowerRece
 	@Override
 	public void updateEntity() {
 		super.updateEntity();
+
+		if (worldObj.isRemote) {
+			return;
+		}
+
 		if (done) {
 			if (lastMode == Mode.Loop) {
 				done = false;
 			}
 		}
-	}
 
-	@Override
-	public void doWork(PowerHandler workProvider) {
-		if (worldObj.isRemote)
+		if (lastMode == Mode.Off) {
 			return;
-		if (done)
-			return;
-		if (lastMode == Mode.Off)
-			return;
-		if (powerHandler.useEnergy(POWER_USAGE, POWER_USAGE, false) != POWER_USAGE)
-			return;
-		if (!box.isInitialized())
-			return;
+		}
 
-		if (patternIterator == null)
-			patternIterator = currentPattern.createPatternIterator(this, box, ForgeDirection.NORTH);
+		if (!box.isInitialized()) {
+			return;
+		}
 
-		ItemStack stackToUse = null;
+		if (mjStored > POWER_USAGE) {
+			mjStored -= POWER_USAGE;
+		} else {
+			return;
+		}
+
+		if (currentPattern != null && currentTemplate == null) {
+			currentTemplate = currentPattern.getBlueprint(box, getWorld(), ForgeDirection.NORTH);
+			context = currentTemplate.getContext();
+		}
+
+		if (currentTemplate != null) {
+			SchematicToBuild s = currentTemplate.getNextBlock(getWorld(), this);
+			s.schematic.writeToWorld(context, s.x, s.y, s.z);
+		}
+
+		/*ItemStack stackToUse = null;
 		int slotNum = 0;
 
 		for (IInvSlot slot : InventoryIterator.getIterable(inv, ForgeDirection.UNKNOWN)) {
@@ -123,19 +132,14 @@ public class TileFiller extends TileBuildCraft implements IInventory, IPowerRece
 			}
 		}
 
-		done = patternIterator.iteratePattern(stackToUse);
-		powerHandler.useEnergy(POWER_USAGE, POWER_USAGE, true);
 
 		if (stackToUse != null && stackToUse.stackSize <= 0) {
 			setInventorySlotContents(slotNum, null);
 		}
 
 		if (done) {
-			patternIterator = null;
 			sendNetworkUpdate();
-		} else if (powerHandler.getEnergyStored() >= POWER_USAGE) {
-			doWork(workProvider);
-		}
+		}*/
 	}
 
 	@Override
@@ -174,14 +178,17 @@ public class TileFiller extends TileBuildCraft implements IInventory, IPowerRece
 
 		inv.readFromNBT(nbt);
 
-		if (nbt.hasKey("pattern"))
+		if (nbt.hasKey("pattern")) {
 			currentPattern = FillerManager.registry.getPattern(nbt.getString("pattern"));
+		}
 
-		if (currentPattern == null)
+		if (currentPattern == null) {
 			currentPattern = PatternFill.INSTANCE;
+		}
 
-		if (nbt.hasKey("box"))
+		if (nbt.hasKey("box")) {
 			box.initialize(nbt.getCompoundTag("box"));
+		}
 
 		done = nbt.getBoolean("done");
 		lastMode = Mode.values()[nbt.getByte("lastMode")];
@@ -193,8 +200,9 @@ public class TileFiller extends TileBuildCraft implements IInventory, IPowerRece
 
 		inv.writeToNBT(nbt);
 
-		if (currentPattern != null)
+		if (currentPattern != null) {
 			nbt.setString("pattern", currentPattern.getUniqueTag());
+		}
 
 		NBTTagCompound boxStore = new NBTTagCompound();
 		box.writeToNBT(boxStore);
@@ -211,8 +219,9 @@ public class TileFiller extends TileBuildCraft implements IInventory, IPowerRece
 
 	@Override
 	public boolean isUseableByPlayer(EntityPlayer entityplayer) {
-		if (worldObj.getTileEntity(xCoord, yCoord, zCoord) != this)
+		if (worldObj.getTileEntity(xCoord, yCoord, zCoord) != this) {
 			return false;
+		}
 		return entityplayer.getDistanceSq(xCoord + 0.5D, yCoord + 0.5D, zCoord + 0.5D) <= 64D;
 	}
 
@@ -225,7 +234,6 @@ public class TileFiller extends TileBuildCraft implements IInventory, IPowerRece
 	public void setPattern(IFillerPattern pattern) {
 		if (pattern != null && currentPattern != pattern) {
 			currentPattern = pattern;
-			patternIterator = null;
 			done = false;
 			sendNetworkUpdate();
 		}
@@ -262,11 +270,6 @@ public class TileFiller extends TileBuildCraft implements IInventory, IPowerRece
 	@Override
 	public void handleUpdatePacket(PacketUpdate packet) throws IOException {
 		handlePacketPayload(((PacketPayloadStream) packet.payload).stream);
-	}
-
-	@Override
-	public PowerReceiver getPowerReceiver(ForgeDirection side) {
-		return powerHandler.getPowerReceiver();
 	}
 
 	@Override
@@ -329,5 +332,20 @@ public class TileFiller extends TileBuildCraft implements IInventory, IPowerRece
 	@Override
 	public boolean hasCustomInventoryName() {
 		return false;
+	}
+
+	@Override
+	public Box getBox() {
+		return box;
+	}
+
+	@Override
+	public AxisAlignedBB getRenderBoundingBox() {
+		return new Box (this).extendToEncompass(box).getBoundingBox();
+	}
+
+	@Override
+	public boolean isBuildingMaterial(int i) {
+		return true;
 	}
 }

@@ -9,11 +9,9 @@
 package buildcraft.builders.filler.pattern;
 
 import net.minecraft.init.Blocks;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.api.blueprints.SchematicRegistry;
-import buildcraft.api.core.IBox;
 import buildcraft.core.Box;
 import buildcraft.core.blueprints.BptBuilderTemplate;
 import buildcraft.core.blueprints.Template;
@@ -24,7 +22,7 @@ public class PatternFlatten extends FillerPattern {
 		super("flatten");
 	}
 
-	@Override
+	/*@Override
 	public boolean iteratePattern(TileEntity tile, IBox box, ItemStack stackToPlace) {
 		int xMin = (int) box.pMin().x;
 		int yMin = (int) box.pMin().y;
@@ -38,10 +36,10 @@ public class PatternFlatten extends FillerPattern {
 			return false;
 		}
 		return !empty(xMin, yMin, zMin, xMax, yMax, zMax, tile.getWorldObj());
-	}
+	}*/
 
 	@Override
-	public BptBuilderTemplate getBlueprint (Box box, World world) {
+	public BptBuilderTemplate getBlueprint (Box box, World world, ForgeDirection orientation) {
 		int xMin = (int) box.pMin().x;
 		int yMin = 1;
 		int zMin = (int) box.pMin().z;
@@ -64,4 +62,11 @@ public class PatternFlatten extends FillerPattern {
 
 		return new BptBuilderTemplate(bpt, world, box.xMin, 1, box.zMin);
 	}
+
+	/*@Override
+	public BptBuilderTemplate getBlueprint(Box box, World world,
+			) {
+		// TODO Auto-generated method stub
+		return null;
+	}*/
 }

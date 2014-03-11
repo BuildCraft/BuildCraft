@@ -14,13 +14,13 @@ public interface IPipeTransportPowerHook {
 
 	/**
 	 * Override default behavior on receiving energy into the pipe.
-	 * 
+	 *
 	 * @return The amount of power used, or -1 for default behavior.
 	 */
-	public float receiveEnergy(ForgeDirection from, float val);
+	public double receiveEnergy(ForgeDirection from, double val);
 
 	/**
 	 * Override default requested power.
 	 */
-	public float requestEnergy(ForgeDirection from, float amount);
+	public double requestEnergy(ForgeDirection from, double amount);
 }

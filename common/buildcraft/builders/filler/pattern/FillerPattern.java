@@ -14,16 +14,10 @@ import java.util.TreeMap;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.BuildCraftBuilders;
-import buildcraft.api.core.IBox;
 import buildcraft.api.filler.IFillerPattern;
-import buildcraft.api.filler.IPatternIterator;
-import buildcraft.core.Box;
-import buildcraft.core.blueprints.BptBuilderTemplate;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.BlockUtil;
 import buildcraft.core.utils.StringUtils;
@@ -37,22 +31,6 @@ public abstract class FillerPattern implements IFillerPattern {
 	public FillerPattern(String tag) {
 		this.tag = tag;
 		patterns.put(getUniqueTag (), this);
-	}
-
-	/**
-	 * stackToPlace contains the next item that can be place in the world. Null
-	 * if there is none. IteratePattern is responsible to decrementing the stack
-	 * size if needed. Return true when the iteration process is finished.
-	 */
-	public boolean iteratePattern(TileEntity tile, IBox box, ItemStack stackToPlace) {
-		return true;
-	}
-
-	/**
-	 * TODO: This should be based on templates!!!!!
-	 */
-	public BptBuilderTemplate getBlueprint (Box box, World world) {
-		return null;
 	}
 
 	@Override
@@ -77,27 +55,6 @@ public abstract class FillerPattern implements IFillerPattern {
 	@Override
 	public String toString() {
 		return "Pattern: " + getUniqueTag();
-	}
-
-	@Override
-	public IPatternIterator createPatternIterator(TileEntity tile, IBox box, ForgeDirection orientation) {
-		return new PatternIterator(tile, box);
-	}
-
-	protected class PatternIterator implements IPatternIterator {
-
-		private final IBox box;
-		private final TileEntity tile;
-
-		public PatternIterator(TileEntity tile, IBox box) {
-			this.box = box;
-			this.tile = tile;
-		}
-
-		@Override
-		public boolean iteratePattern(ItemStack stackToPlace) {
-			return FillerPattern.this.iteratePattern(tile, box, stackToPlace);
-		}
 	}
 
 	/**

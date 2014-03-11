@@ -8,9 +8,10 @@
  */
 package buildcraft.builders.filler.pattern;
 
-import buildcraft.api.core.IBox;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
+import net.minecraftforge.common.util.ForgeDirection;
+import buildcraft.core.Box;
+import buildcraft.core.blueprints.BptBuilderTemplate;
 
 public class PatternHorizon extends FillerPattern {
 
@@ -18,7 +19,7 @@ public class PatternHorizon extends FillerPattern {
 		super("horizon");
 	}
 
-	@Override
+	/*@Override
 	public boolean iteratePattern(TileEntity tile, IBox box, ItemStack stackToPlace) {
 		int xMin = (int) box.pMin().x;
 		int yMin = (int) box.pMin().y;
@@ -31,5 +32,11 @@ public class PatternHorizon extends FillerPattern {
 			return false;
 		}
 		return !empty(xMin, yMin, zMin, xMax, tile.getWorldObj().getActualHeight(), zMax, tile.getWorldObj());
+	}*/
+
+	@Override
+	public BptBuilderTemplate getBlueprint(Box box, World world,
+			ForgeDirection orientation) {
+		return null;
 	}
 }

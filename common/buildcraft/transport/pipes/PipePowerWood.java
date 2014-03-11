@@ -8,6 +8,9 @@
  */
 package buildcraft.transport.pipes;
 
+import net.minecraft.item.Item;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.power.IPowerReceptor;
@@ -21,9 +24,6 @@ import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportPower;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraft.item.Item;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.common.util.ForgeDirection;
 
 public class PipePowerWood extends Pipe<PipeTransportPower> implements IPowerReceptor, IPipeTransportPowerHook {
 
@@ -69,11 +69,13 @@ public class PipePowerWood extends Pipe<PipeTransportPower> implements IPowerRec
 	@Override
 	public void updateEntity() {
 		super.updateEntity();
-		if (container.getWorldObj().isRemote)
+		if (container.getWorldObj().isRemote) {
 			return;
+		}
 
-		if (powerHandler.getEnergyStored() <= 0)
+		if (powerHandler.getEnergyStored() <= 0) {
 			return;
+		}
 
 		int sources = 0;
 		for (ForgeDirection o : ForgeDirection.VALID_DIRECTIONS) {
@@ -103,15 +105,16 @@ public class PipePowerWood extends Pipe<PipeTransportPower> implements IPowerRec
 		} else {
 			energyToRemove = 1;
 		}
-		energyToRemove /= (float) sources;
+		energyToRemove /= sources;
 
 		for (ForgeDirection o : ForgeDirection.VALID_DIRECTIONS) {
-			if (!powerSources[o.ordinal()])
+			if (!powerSources[o.ordinal()]) {
 				continue;
+			}
 
 			float energyUsable = (float) powerHandler.useEnergy(0, energyToRemove, false);
 
-			float energySent = transport.receiveEnergy(o, energyUsable);
+			double energySent = transport.receiveEnergy(o, energyUsable);
 			if (energySent > 0) {
 				powerHandler.useEnergy(0, energySent, true);
 			}
@@ -150,12 +153,12 @@ public class PipePowerWood extends Pipe<PipeTransportPower> implements IPowerRec
 	}
 
 	@Override
-	public float receiveEnergy(ForgeDirection from, float val) {
+	public double receiveEnergy(ForgeDirection from, double val) {
 		return -1;
 	}
 
 	@Override
-	public float requestEnergy(ForgeDirection from, float amount) {
+	public double requestEnergy(ForgeDirection from, double amount) {
 		if (container.getTile(from) instanceof IPipeTile) {
 			return amount;
 		} else {

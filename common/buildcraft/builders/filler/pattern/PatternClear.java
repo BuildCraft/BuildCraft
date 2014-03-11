@@ -8,10 +8,8 @@
  */
 package buildcraft.builders.filler.pattern;
 
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
-import buildcraft.api.core.IBox;
+import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.core.Box;
 import buildcraft.core.blueprints.BptBuilderTemplate;
 import buildcraft.core.blueprints.Template;
@@ -22,7 +20,7 @@ public class PatternClear extends FillerPattern {
 		super("clear");
 	}
 
-	@Override
+	/*@Override
 	public boolean iteratePattern(TileEntity tile, IBox box, ItemStack stackToPlace) {
 		int xMin = (int) box.pMin().x;
 		int yMin = (int) box.pMin().y;
@@ -33,10 +31,10 @@ public class PatternClear extends FillerPattern {
 		int zMax = (int) box.pMax().z;
 
 		return !empty(xMin, yMin, zMin, xMax, yMax, zMax, tile.getWorldObj());
-	}
+	}*/
 
 	@Override
-	public BptBuilderTemplate getBlueprint (Box box, World world) {
+	public BptBuilderTemplate getBlueprint (Box box, World world, ForgeDirection orientation) {
 		int xMin = (int) box.pMin().x;
 		int yMin = (int) box.pMin().y;
 		int zMin = (int) box.pMin().z;

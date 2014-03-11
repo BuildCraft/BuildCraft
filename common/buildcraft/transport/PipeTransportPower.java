@@ -8,7 +8,6 @@
  */
 package buildcraft.transport;
 
-import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -26,7 +25,8 @@ import buildcraft.api.power.PowerHandler.PowerReceiver;
 import buildcraft.api.power.PowerHandler.Type;
 import buildcraft.api.transport.IPipeTile.PipeType;
 import buildcraft.core.DefaultProps;
-import buildcraft.core.ReflectAPI;
+import buildcraft.core.ReflectMjAPI;
+import buildcraft.core.ReflectMjAPI.BatteryField;
 import buildcraft.transport.network.PacketPowerUpdate;
 import buildcraft.transport.pipes.PipePowerCobblestone;
 import buildcraft.transport.pipes.PipePowerDiamond;
@@ -94,25 +94,28 @@ public class PipeTransportPower extends PipeTransport {
 	public boolean canPipeConnect(TileEntity tile, ForgeDirection side) {
 		if (tile instanceof TileGenericPipe) {
 			Pipe pipe2 = ((TileGenericPipe) tile).pipe;
-			if (BlockGenericPipe.isValid(pipe2) && !(pipe2.transport instanceof PipeTransportPower))
+			if (BlockGenericPipe.isValid(pipe2) && !(pipe2.transport instanceof PipeTransportPower)) {
 				return false;
+			}
 			return true;
 		}
 
 		if (tile instanceof IPowerReceptor) {
 			IPowerReceptor receptor = (IPowerReceptor) tile;
 			PowerReceiver receiver = receptor.getPowerReceiver(side.getOpposite());
-			if (receiver != null && receiver.getType().canReceiveFromPipes())
+			if (receiver != null && receiver.getType().canReceiveFromPipes()) {
 				return true;
+			}
 		}
 
 		if (container.pipe instanceof PipePowerWood && tile instanceof IPowerEmitter) {
 			IPowerEmitter emitter = (IPowerEmitter) tile;
-			if (emitter.canEmitPowerFrom(side.getOpposite()))
+			if (emitter.canEmitPowerFrom(side.getOpposite())) {
 				return true;
+			}
 		}
 
-		if (ReflectAPI.get_MJ_STORED(tile.getClass()) != null) {
+		if (ReflectMjAPI.getMjBattery(tile.getClass()) != null) {
 			return true;
 		}
 
@@ -173,23 +176,24 @@ public class PipeTransportPower extends PipeTransport {
 				float totalPowerQuery = 0;
 
 				for (int j = 0; j < 6; ++j) {
-					if (j != i && powerQuery[j] > 0)
+					if (j != i && powerQuery[j] > 0) {
 						if (tiles[j] != null
 								&& (tiles[j] instanceof TileGenericPipe
-										|| tiles[j] instanceof IPowerReceptor || ReflectAPI
-										.get_MJ_STORED(tiles[j].getClass()) != null)) {
+										|| tiles[j] instanceof IPowerReceptor || ReflectMjAPI
+										.getMjBattery(tiles[j].getClass()) != null)) {
 							totalPowerQuery += powerQuery[j];
 						}
+					}
 				}
 
 				for (int j = 0; j < 6; ++j) {
 					if (j != i && powerQuery[j] > 0) {
-						float watts = 0.0F;
+						double watts = 0.0F;
 
 						PowerReceiver prov = getReceiverOnSide(ForgeDirection.VALID_DIRECTIONS[j]);
 						if (prov != null && prov.powerRequest() > 0) {
 							watts = (internalPower[i] / totalPowerQuery) * powerQuery[j];
-							watts = (float) prov.receiveEnergy(Type.PIPE, watts, ForgeDirection.VALID_DIRECTIONS[j].getOpposite());
+							watts = prov.receiveEnergy(Type.PIPE, watts, ForgeDirection.VALID_DIRECTIONS[j].getOpposite());
 							internalPower[i] -= watts;
 						} else if (tiles[j] instanceof TileGenericPipe) {
 							watts = (internalPower[i] / totalPowerQuery) * powerQuery[j];
@@ -202,16 +206,17 @@ public class PipeTransportPower extends PipeTransport {
 						} else if (tiles[j] != null) {
 							// Look for the simplified power framework
 
-							Field f = ReflectAPI.get_MJ_STORED(tiles [j].getClass());
+							BatteryField f = ReflectMjAPI.getMjBattery(tiles [j].getClass());
+
 							try {
 								if (f != null) {
 									watts = (internalPower[i] / totalPowerQuery) * powerQuery[j];
 
-									float energy = f.getFloat(tiles[j]);
+									double energy = f.field.getDouble (tiles[j]);
 
 									if (energy < 100) {
 										energy += watts;
-										f.setFloat(tiles [j], energy);
+										f.field.setDouble(tiles [j], energy);
 										internalPower[i] -= watts;
 									}
 								}
@@ -262,22 +267,10 @@ public class PipeTransportPower extends PipeTransport {
 			}
 
 			if (tile != null) {
-				Field f = ReflectAPI.get_MJ_STORED(tile.getClass());
+				BatteryField f = ReflectMjAPI.getMjBattery(tile.getClass());
 
-				try {
-					if (f != null) {
-						float energy = f.getFloat(tile);
-
-						if (energy < 100) {
-							requestEnergy(dir, 100);
-						}
-					}
-				} catch (IllegalArgumentException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (IllegalAccessException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+				if (f != null) {
+					requestEnergy(dir, f.getEnergyRequested(tile));
 				}
 			}
 		}
@@ -335,14 +328,17 @@ public class PipeTransportPower extends PipeTransport {
 
 	private PowerReceiver getReceiverOnSide(ForgeDirection side) {
 		TileEntity tile = tiles[side.ordinal()];
-		if (!(tile instanceof IPowerReceptor))
+		if (!(tile instanceof IPowerReceptor)) {
 			return null;
+		}
 		IPowerReceptor receptor = (IPowerReceptor) tile;
 		PowerReceiver receiver = receptor.getPowerReceiver(side.getOpposite());
-		if (receiver == null)
+		if (receiver == null) {
 			return null;
-		if (!receiver.getType().canReceiveFromPipes())
+		}
+		if (!receiver.getType().canReceiveFromPipes()) {
 			return null;
+		}
 		return receiver;
 	}
 
@@ -379,29 +375,32 @@ public class PipeTransportPower extends PipeTransport {
 	 * All power input MUST go through designated input pipes, such as Wooden
 	 * Power Pipes or a subclass thereof.
 	 */
-	public float receiveEnergy(ForgeDirection from, float val) {
+	public double receiveEnergy(ForgeDirection from, double val) {
 		step();
 		if (this.container.pipe instanceof IPipeTransportPowerHook) {
-			float ret = ((IPipeTransportPowerHook) this.container.pipe).receiveEnergy(from, val);
-			if (ret >= 0)
+			double ret = ((IPipeTransportPowerHook) this.container.pipe).receiveEnergy(from, val);
+			if (ret >= 0) {
 				return ret;
+			}
 		}
 		int side = from.ordinal();
-		if (internalNextPower[side] > maxPower)
+		if (internalNextPower[side] > maxPower) {
 			return 0;
+		}
 
 		internalNextPower[side] += val;
 
 		if (internalNextPower[side] > maxPower) {
 			val -= internalNextPower[side] - maxPower;
 			internalNextPower[side] = maxPower;
-			if (val < 0)
+			if (val < 0) {
 				val = 0;
+			}
 		}
 		return val;
 	}
 
-	public void requestEnergy(ForgeDirection from, float amount) {
+	public void requestEnergy(ForgeDirection from, double amount) {
 		step();
 
 		if (this.container.pipe instanceof IPipeTransportPowerHook) {
