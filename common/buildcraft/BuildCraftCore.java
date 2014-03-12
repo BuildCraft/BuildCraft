@@ -24,10 +24,12 @@ import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.Packet;
+import net.minecraft.stats.Achievement;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.config.Configuration;
+import net.minecraftforge.common.AchievementPage;
 import net.minecraftforge.common.IPlantable;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Property;
@@ -75,6 +77,7 @@ import buildcraft.core.triggers.TriggerInventory;
 import buildcraft.core.triggers.TriggerInventoryLevel;
 import buildcraft.core.triggers.TriggerMachine;
 import buildcraft.core.utils.BCLog;
+import buildcraft.core.utils.CraftingHandler;
 import buildcraft.core.recipes.AssemblyRecipeManager;
 import buildcraft.core.recipes.IntegrationRecipeManager;
 import buildcraft.core.triggers.TriggerRedstoneInput;
@@ -165,6 +168,13 @@ public class BuildCraftCore extends BuildCraftMod {
 	@Instance("BuildCraft|Core")
 	public static BuildCraftCore instance;
 
+	public static Achievement woodenGearAchievement;
+	public static Achievement stoneGearAchievement;
+	public static Achievement ironGearAchievement;
+	public static Achievement goldGearAchievement;
+	public static Achievement diamondGearAchievement;
+	public static AchievementPage BuildcraftAchievments;
+	
 	@EventHandler
 	public void loadConfiguration(FMLPreInitializationEvent evt) {
 
@@ -292,8 +302,11 @@ public class BuildCraftCore extends BuildCraftMod {
 		EntityList.stringToClassMapping.remove("BuildCraft|Core.bcLaser");
 		EntityList.stringToClassMapping.remove("BuildCraft|Core.bcEnergyLaser");
 
+		FMLCommonHandler.instance().bus().register(new CraftingHandler());
+		
 		CoreProxy.proxy.initializeRendering();
 		CoreProxy.proxy.initializeEntityRendering();
+		
 	}
 
 	@EventHandler
@@ -347,5 +360,15 @@ public class BuildCraftCore extends BuildCraftMod {
 	@EventHandler
 	public void processIMCRequests(FMLInterModComms.IMCEvent event) {
 		InterModComms.processIMC(event);
+	}
+	@EventHandler
+	public void load(FMLInitializationEvent event) {
+		woodenGearAchievement = new Achievement("achievement.woodenGear", "woodenGearAchievement", 0, 0,woodenGearItem, null).registerStat();
+		stoneGearAchievement = new Achievement("achievement.stoneGear", "stoneGearAchievement", 2, 0, stoneGearItem, woodenGearAchievement).registerStat();
+		ironGearAchievement = new Achievement("achievement.ironGear", "ironGearAchievement", 4, 0, ironGearItem, stoneGearAchievement).registerStat();
+		goldGearAchievement = new Achievement("achievement.goldGear", "goldGearAchievement", 6, 0, goldGearItem, ironGearAchievement).registerStat();
+		diamondGearAchievement = new Achievement("achievement.diamondGear", "diamondGearAchievement", 8, 0, diamondGearItem, goldGearAchievement).registerStat();
+		BuildcraftAchievments = new AchievementPage("Buildcraft", woodenGearAchievement, stoneGearAchievement, ironGearAchievement, goldGearAchievement, diamondGearAchievement);
+		AchievementPage.registerAchievementPage(BuildcraftAchievments);
 	}
 }
