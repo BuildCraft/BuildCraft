@@ -173,7 +173,14 @@ public class BuildCraftCore extends BuildCraftMod {
 	public static Achievement ironGearAchievement;
 	public static Achievement goldGearAchievement;
 	public static Achievement diamondGearAchievement;
-	public static AchievementPage BuildcraftAchievments;
+	public static Achievement wrenchAchievement;
+	public static Achievement aLotOfCraftingAchievement;
+	public static Achievement straightDownAchievement;
+	public static Achievement chunkDestroyerAchievement;
+	public static Achievement fasterFillingAchievement;
+	public static Achievement timeForSomeLogicAchievement;
+	
+	public static AchievementPage BuildcraftAchievements;
 	
 	@EventHandler
 	public void loadConfiguration(FMLPreInitializationEvent evt) {
@@ -368,7 +375,13 @@ public class BuildCraftCore extends BuildCraftMod {
 		ironGearAchievement = new Achievement("achievement.ironGear", "ironGearAchievement", 4, 0, ironGearItem, stoneGearAchievement).registerStat();
 		goldGearAchievement = new Achievement("achievement.goldGear", "goldGearAchievement", 6, 0, goldGearItem, ironGearAchievement).registerStat();
 		diamondGearAchievement = new Achievement("achievement.diamondGear", "diamondGearAchievement", 8, 0, diamondGearItem, goldGearAchievement).registerStat();
-		BuildcraftAchievments = new AchievementPage("Buildcraft", woodenGearAchievement, stoneGearAchievement, ironGearAchievement, goldGearAchievement, diamondGearAchievement);
-		AchievementPage.registerAchievementPage(BuildcraftAchievments);
+		wrenchAchievement = new Achievement("achievement.wrench", "wrenchAchievement", 3, 2, wrenchItem, stoneGearAchievement).registerStat();
+		aLotOfCraftingAchievement = new Achievement("achievement.aLotOfCrafting", "aLotOfCraftingAchievement", 1, 2, BuildCraftFactory.autoWorkbenchBlock, woodenGearAchievement).registerStat();
+		straightDownAchievement = new Achievement("achievement.straightDown", "straightDownAchievement", 5, 2, BuildCraftFactory.miningWellBlock, ironGearAchievement).registerStat();
+		chunkDestroyerAchievement = new Achievement("achievement.chunkDestroyer", "chunkDestroyerAchievement", 9, 2, BuildCraftFactory.quarryBlock, diamondGearAchievement).registerStat();
+		fasterFillingAchievement = new Achievement("achievement.fasterFilling", "fasterFillingAchievement", 7, 2, BuildCraftBuilders.fillerBlock, goldGearAchievement).registerStat();
+		timeForSomeLogicAchievement = new Achievement("achievement.timeForSomeLogic", "timeForSomeLogicAchievement", 9, -2, BuildCraftSilicon.assemblyTableBlock, diamondGearAchievement).registerStat();
+		BuildcraftAchievements = new AchievementPage("Buildcraft", woodenGearAchievement, stoneGearAchievement, ironGearAchievement, goldGearAchievement, diamondGearAchievement, wrenchAchievement, aLotOfCraftingAchievement, straightDownAchievement, chunkDestroyerAchievement, fasterFillingAchievement, timeForSomeLogicAchievement);
+		AchievementPage.registerAchievementPage(BuildcraftAchievements);
 	}
 }

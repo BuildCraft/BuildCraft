@@ -24,6 +24,9 @@ public class CraftingHandler {
 		if (Event.crafting.getItem().equals(BuildCraftCore.diamondGearItem)){
 			Event.player.addStat(BuildCraftCore.diamondGearAchievement, 1);
 		}
+		if (Event.crafting.getItem().equals(BuildCraftCore.wrenchItem)){
+			Event.player.addStat(BuildCraftCore.wrenchAchievement, 1);
+		}
 	}
 
 }
