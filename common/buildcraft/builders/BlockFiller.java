@@ -9,6 +9,7 @@
 package buildcraft.builders;
 
 import buildcraft.BuildCraftBuilders;
+import buildcraft.BuildCraftCore;
 import buildcraft.api.filler.IFillerPattern;
 import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.GuiIds;
@@ -23,6 +24,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -104,5 +106,9 @@ public class BlockFiller extends BlockContainer {
 	    textureTopOn = par1IconRegister.registerIcon("buildcraft:blockFillerTopOn");
         textureTopOff = par1IconRegister.registerIcon("buildcraft:blockFillerTopOff");
         textureSides = par1IconRegister.registerIcon("buildcraft:blockFillerSides");
+	}
+	@Override
+	public void onBlockPlacedBy(World world, int i, int j, int k, EntityLivingBase entityliving, ItemStack stack){
+		world.getClosestPlayer(i, j, k, 5).addStat(BuildCraftCore.fasterFillingAchievement, 1);
 	}
 }

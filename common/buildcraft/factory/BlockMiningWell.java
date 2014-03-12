@@ -8,18 +8,21 @@
  */
 package buildcraft.factory;
 
+import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftFactory;
 import buildcraft.api.core.Position;
 import buildcraft.core.BlockBuildCraft;
 import buildcraft.core.utils.Utils;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import ibxm.Player;
 
 import java.util.ArrayList;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -61,7 +64,9 @@ public class BlockMiningWell extends BlockBuildCraft {
 	@Override
 	public void onBlockPlacedBy(World world, int i, int j, int k, EntityLivingBase entityliving, ItemStack stack) {
 		ForgeDirection orientation = Utils.get2dOrientation(entityliving);
-
+		if (world.getClosestPlayer(i, j, k, 5)!=null){
+			world.getClosestPlayer(i, j, k, 5).addStat(BuildCraftCore.straightDownAchievement, 1);
+		}
 		world.setBlockMetadataWithNotify(i, j, k, orientation.getOpposite().ordinal(),1);
 	}
 

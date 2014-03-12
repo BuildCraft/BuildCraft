@@ -8,6 +8,7 @@
  */
 package buildcraft.factory;
 
+import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftFactory;
 import buildcraft.api.core.Position;
 import buildcraft.api.tools.IToolWrench;
@@ -51,6 +52,9 @@ public class BlockQuarry extends BlockBuildCraft {
 	@Override
 	public void onBlockPlacedBy(World world, int i, int j, int k, EntityLivingBase entityliving, ItemStack stack) {
 		super.onBlockPlacedBy(world, i, j, k, entityliving, stack);
+		if (world.getClosestPlayer(i, j, k, 5)!=null){
+			world.getClosestPlayer(i, j, k, 5).addStat(BuildCraftCore.chunkDestroyerAchievement, 1);
+		}
 
 		ForgeDirection orientation = Utils.get2dOrientation(entityliving);
 

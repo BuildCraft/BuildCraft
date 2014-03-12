@@ -179,7 +179,6 @@ public class BuildCraftCore extends BuildCraftMod {
 	public static Achievement chunkDestroyerAchievement;
 	public static Achievement fasterFillingAchievement;
 	public static Achievement timeForSomeLogicAchievement;
-	
 	public static AchievementPage BuildcraftAchievements;
 	
 	@EventHandler
@@ -381,6 +380,7 @@ public class BuildCraftCore extends BuildCraftMod {
 		chunkDestroyerAchievement = new Achievement("achievement.chunkDestroyer", "chunkDestroyerAchievement", 9, 2, BuildCraftFactory.quarryBlock, diamondGearAchievement).registerStat();
 		fasterFillingAchievement = new Achievement("achievement.fasterFilling", "fasterFillingAchievement", 7, 2, BuildCraftBuilders.fillerBlock, goldGearAchievement).registerStat();
 		timeForSomeLogicAchievement = new Achievement("achievement.timeForSomeLogic", "timeForSomeLogicAchievement", 9, -2, BuildCraftSilicon.assemblyTableBlock, diamondGearAchievement).registerStat();
+		
 		BuildcraftAchievements = new AchievementPage("Buildcraft", woodenGearAchievement, stoneGearAchievement, ironGearAchievement, goldGearAchievement, diamondGearAchievement, wrenchAchievement, aLotOfCraftingAchievement, straightDownAchievement, chunkDestroyerAchievement, fasterFillingAchievement, timeForSomeLogicAchievement);
 		AchievementPage.registerAchievementPage(BuildcraftAchievements);
 	}

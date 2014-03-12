@@ -8,6 +8,7 @@
  */
 package buildcraft.silicon;
 
+import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftSilicon;
 import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.proxy.CoreProxy;
@@ -22,6 +23,7 @@ import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -132,5 +134,11 @@ public class BlockLaserTable extends BlockContainer {
 		icons[2][0] = par1IconRegister.registerIcon("buildcraft:integrationtable_bottom");
 		icons[2][1] = par1IconRegister.registerIcon("buildcraft:integrationtable_top");
 		icons[2][2] = par1IconRegister.registerIcon("buildcraft:integrationtable_side");
+	}
+	@Override
+	public void onBlockPlacedBy(World world, int i, int j, int k, EntityLivingBase entityliving, ItemStack stack){
+		if (world.getClosestPlayer(i, j, k, 5)!=null){
+			world.getClosestPlayer(i, j, k, 5).addStat(BuildCraftCore.timeForSomeLogicAchievement, 1);
+		}
 	}
 }
