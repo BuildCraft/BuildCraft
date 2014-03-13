@@ -110,8 +110,9 @@ public class BlockFiller extends BlockContainer {
 	}
 	@Override
 	public void onBlockPlacedBy(World world, int i, int j, int k, EntityLivingBase entityliving, ItemStack stack){
-		if (world.getClosestPlayer(i, j, k, 5)!=null){
-			world.getClosestPlayer(i, j, k, 5).addStat(BuildCraftCore.fasterFillingAchievement, 1);
+		if (entityliving instanceof EntityPlayer){
+			EntityPlayer p=(EntityPlayer) entityliving;
+			p.addStat(BuildCraftCore.fasterFillingAchievement, 1);
 		}
 	}
 }

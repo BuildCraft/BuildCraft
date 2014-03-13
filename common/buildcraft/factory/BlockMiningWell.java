@@ -24,6 +24,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
@@ -64,8 +65,9 @@ public class BlockMiningWell extends BlockBuildCraft {
 	@Override
 	public void onBlockPlacedBy(World world, int i, int j, int k, EntityLivingBase entityliving, ItemStack stack) {
 		ForgeDirection orientation = Utils.get2dOrientation(entityliving);
-		if (world.getClosestPlayer(i, j, k, 5)!=null){
-			world.getClosestPlayer(i, j, k, 5).addStat(BuildCraftCore.straightDownAchievement, 1);
+		if (entityliving instanceof EntityPlayer){
+			EntityPlayer p=(EntityPlayer) entityliving;
+			p.addStat(BuildCraftCore.straightDownAchievement, 1);
 		}
 		world.setBlockMetadataWithNotify(i, j, k, orientation.getOpposite().ordinal(),1);
 	}

@@ -80,8 +80,9 @@ public class BlockAutoWorkbench extends BlockBuildCraft {
 	}
 	@Override
 	public void onBlockPlacedBy(World world, int i, int j, int k, EntityLivingBase entityliving, ItemStack stack) {
-		if (world.getClosestPlayer(i, j, k, 5)!=null){
-			world.getClosestPlayer(i, j, k, 5).addStat(BuildCraftCore.aLotOfCraftingAchievement, 1);
+		if (entityliving instanceof EntityPlayer){
+			EntityPlayer p=(EntityPlayer) entityliving;
+			p.addStat(BuildCraftCore.aLotOfCraftingAchievement, 1);
 		}
 	}
 	
