@@ -4,6 +4,7 @@ package buildcraft.core.utils;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.PlayerEvent;
 import buildcraft.BuildCraftCore;
+import buildcraft.BuildCraftFactory;
 
 public class CraftingHandler {
 	

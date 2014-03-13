@@ -17,6 +17,7 @@ import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import ibxm.Player;
 
 import java.util.ArrayList;
 
@@ -109,6 +110,8 @@ public class BlockFiller extends BlockContainer {
 	}
 	@Override
 	public void onBlockPlacedBy(World world, int i, int j, int k, EntityLivingBase entityliving, ItemStack stack){
-		world.getClosestPlayer(i, j, k, 5).addStat(BuildCraftCore.fasterFillingAchievement, 1);
+		if (world.getClosestPlayer(i, j, k, 5)!=null){
+			world.getClosestPlayer(i, j, k, 5).addStat(BuildCraftCore.fasterFillingAchievement, 1);
+		}
 	}
 }
