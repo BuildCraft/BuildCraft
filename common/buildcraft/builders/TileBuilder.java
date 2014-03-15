@@ -84,7 +84,7 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IM
 
 			currentIterator = it;
 
-			double dx = to.x - from.z;
+			double dx = to.x - from.x;
 			double dy = to.y - from.y;
 			double dz = to.z - from.z;
 
