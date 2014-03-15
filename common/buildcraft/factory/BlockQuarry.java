@@ -52,10 +52,6 @@ public class BlockQuarry extends BlockBuildCraft {
 	@Override
 	public void onBlockPlacedBy(World world, int i, int j, int k, EntityLivingBase entityliving, ItemStack stack) {
 		super.onBlockPlacedBy(world, i, j, k, entityliving, stack);
-		if (entityliving instanceof EntityPlayer){
-			EntityPlayer p=(EntityPlayer) entityliving;
-			p.addStat(BuildCraftCore.chunkDestroyerAchievement, 1);
-		}
 
 		ForgeDirection orientation = Utils.get2dOrientation(entityliving);
 

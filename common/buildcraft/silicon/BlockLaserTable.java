@@ -135,11 +135,4 @@ public class BlockLaserTable extends BlockContainer {
 		icons[2][1] = par1IconRegister.registerIcon("buildcraft:integrationtable_top");
 		icons[2][2] = par1IconRegister.registerIcon("buildcraft:integrationtable_side");
 	}
-	@Override
-	public void onBlockPlacedBy(World world, int i, int j, int k, EntityLivingBase entityliving, ItemStack stack){
-		if (entityliving instanceof EntityPlayer){
-			EntityPlayer p=(EntityPlayer) entityliving;
-			p.addStat(BuildCraftCore.timeForSomeLogicAchievement, 1);
-		}
-	}
 }

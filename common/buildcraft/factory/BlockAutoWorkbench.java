@@ -78,12 +78,4 @@ public class BlockAutoWorkbench extends BlockBuildCraft {
 	    topTexture = par1IconRegister.registerIcon("buildcraft:autoWorkbench_top");
 	    sideTexture = par1IconRegister.registerIcon("buildcraft:autoWorkbench_side");
 	}
-	@Override
-	public void onBlockPlacedBy(World world, int i, int j, int k, EntityLivingBase entityliving, ItemStack stack) {
-		if (entityliving instanceof EntityPlayer){
-			EntityPlayer p=(EntityPlayer) entityliving;
-			p.addStat(BuildCraftCore.aLotOfCraftingAchievement, 1);
-		}
-	}
-	
 }

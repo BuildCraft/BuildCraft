@@ -108,11 +108,4 @@ public class BlockFiller extends BlockContainer {
         textureTopOff = par1IconRegister.registerIcon("buildcraft:blockFillerTopOff");
         textureSides = par1IconRegister.registerIcon("buildcraft:blockFillerSides");
 	}
-	@Override
-	public void onBlockPlacedBy(World world, int i, int j, int k, EntityLivingBase entityliving, ItemStack stack){
-		if (entityliving instanceof EntityPlayer){
-			EntityPlayer p=(EntityPlayer) entityliving;
-			p.addStat(BuildCraftCore.fasterFillingAchievement, 1);
-		}
-	}
 }
