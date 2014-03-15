@@ -40,25 +40,26 @@ public class BlockMiningWell extends BlockBuildCraft {
 
 	@Override
 	public IIcon getIcon(int i, int j) {
-		if (j == 0 && i == 3)
+		if (j == 0 && i == 3) {
 			return textureFront;
+		}
 
-		if (i == 1)
+		if (i == 1) {
 			return textureTop;
-		else if (i == 0)
+		} else if (i == 0) {
 			return textureBack;
-		else if (i == j)
+		} else if (i == j) {
 			return textureFront;
-		else if (j >= 0 && j < 6 && ForgeDirection.values()[j].getOpposite().ordinal() == i)
+		} else if (j >= 0 && j < 6 && ForgeDirection.values()[j].getOpposite().ordinal() == i) {
 			return textureBack;
-		else
+		} else {
 			return textureSides;
+		}
 	}
 
 	@Override
 	public void onBlockPlacedBy(World world, int i, int j, int k, EntityLivingBase entityliving, ItemStack stack) {
 		ForgeDirection orientation = Utils.get2dOrientation(entityliving);
-
 		world.setBlockMetadataWithNotify(i, j, k, orientation.getOpposite().ordinal(),1);
 	}
 

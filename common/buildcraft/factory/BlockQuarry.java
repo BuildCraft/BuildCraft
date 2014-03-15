@@ -61,11 +61,13 @@ public class BlockQuarry extends BlockBuildCraft {
 	@Override
 	public IIcon getIcon(int i, int j) {
 		// If no metadata is set, then this is an icon.
-		if (j == 0 && i == 3)
+		if (j == 0 && i == 3) {
 			return textureFront;
+		}
 
-		if (i == j && i > 1) // Front can't be top or bottom.
+		if (i == j && i > 1) {
 			return textureFront;
+		}
 
 		switch (i) {
 			case 1:
@@ -82,13 +84,15 @@ public class BlockQuarry extends BlockBuildCraft {
 
 	public void searchFrames(World world, int i, int j, int k) {
 		int width2 = 1;
-		if (!world.checkChunksExist(i - width2, j - width2, k - width2, i + width2, j + width2, k + width2))
+		if (!world.checkChunksExist(i - width2, j - width2, k - width2, i + width2, j + width2, k + width2)) {
 			return;
+		}
 
 		Block block = world.getBlock(i, j, k);
 
-		if (block != BuildCraftFactory.frameBlock)
+		if (block != BuildCraftFactory.frameBlock) {
 			return;
+		}
 
 		int meta = world.getBlockMetadata(i, j, k);
 
@@ -180,8 +184,9 @@ public class BlockQuarry extends BlockBuildCraft {
 		TileQuarry tile = (TileQuarry) world.getTileEntity(i, j, k);
 
 		// Drop through if the player is sneaking
-		if (entityplayer.isSneaking())
+		if (entityplayer.isSneaking()) {
 			return false;
+		}
 
 		// Restart the quarry if its a wrench
 		Item equipped = entityplayer.getCurrentEquippedItem() != null ? entityplayer.getCurrentEquippedItem().getItem() : null;

@@ -57,8 +57,9 @@ public class BlockLaserTable extends BlockContainer {
 	@Override
 	public boolean onBlockActivated(World world, int i, int j, int k, EntityPlayer entityplayer, int par6, float par7, float par8, float par9) {
 		// Drop through if the player is sneaking
-		if (entityplayer.isSneaking())
+		if (entityplayer.isSneaking()) {
 			return false;
+		}
 
 		if (!world.isRemote) {
 			int meta = world.getBlockMetadata(i, j, k);

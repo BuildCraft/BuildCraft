@@ -15,21 +15,23 @@ import java.nio.IntBuffer;
 import java.util.TreeMap;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockLiquid;
 import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.entity.EntityList;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.stats.Achievement;
 import net.minecraft.util.IIcon;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
+import net.minecraftforge.common.AchievementPage;
 import net.minecraftforge.common.IPlantable;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
 import net.minecraftforge.fluids.BlockFluidBase;
-import net.minecraftforge.fluids.IFluidBlock;
 import net.minecraftforge.oredict.OreDictionary;
 
 import org.lwjgl.input.Mouse;
@@ -82,6 +84,7 @@ import buildcraft.core.triggers.TriggerInventoryLevel;
 import buildcraft.core.triggers.TriggerMachine;
 import buildcraft.core.triggers.TriggerRedstoneInput;
 import buildcraft.core.utils.BCLog;
+import buildcraft.core.utils.CraftingHandler;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
@@ -172,6 +175,21 @@ public class BuildCraftCore extends BuildCraftMod {
 	//public static BptItem[] itemBptProps = new BptItem[Item.itemsList.length];
 	@Instance("BuildCraft|Core")
 	public static BuildCraftCore instance;
+
+	public static Achievement woodenGearAchievement;
+	public static Achievement stoneGearAchievement;
+	public static Achievement ironGearAchievement;
+	public static Achievement goldGearAchievement;
+	public static Achievement diamondGearAchievement;
+	public static Achievement wrenchAchievement;
+	public static Achievement aLotOfCraftingAchievement;
+	public static Achievement straightDownAchievement;
+	public static Achievement chunkDestroyerAchievement;
+	public static Achievement fasterFillingAchievement;
+	public static Achievement timeForSomeLogicAchievement;
+	public static Achievement refineAndRedefineAchievement;
+	public static Achievement tinglyLaserAchievement;
+	public static AchievementPage BuildcraftAchievements;
 
 	@EventHandler
 	public void loadConfiguration(FMLPreInitializationEvent evt) {
@@ -310,16 +328,18 @@ public class BuildCraftCore extends BuildCraftMod {
 		EntityList.stringToClassMapping.remove("BuildCraft|Core.bcLaser");
 		EntityList.stringToClassMapping.remove("BuildCraft|Core.bcEnergyLaser");
 
+		FMLCommonHandler.instance().bus().register(new CraftingHandler());
+
 		CoreProxy.proxy.initializeRendering();
 		CoreProxy.proxy.initializeEntityRendering();
+
 	}
 
 	@EventHandler
 	public void postInit(FMLPostInitializationEvent event) {
 		for (Object o : Block.blockRegistry) {
 			Block block = (Block) o;
-
-			if (block instanceof BlockFluidBase || block instanceof IFluidBlock || block instanceof IPlantable) {
+			if (block instanceof BlockFluidBase || block instanceof BlockLiquid || block instanceof IPlantable) {
 				BuildCraftAPI.softBlocks.add(block);
 			}
 		}
@@ -424,6 +444,26 @@ public class BuildCraftCore extends BuildCraftMod {
 		diffX = pos.get(0);
 		diffY = pos.get(1);
 		diffZ = pos.get(2);
+	}
+
+	@EventHandler
+	public void load(FMLInitializationEvent event) {
+		woodenGearAchievement = new Achievement("achievement.woodenGear", "woodenGearAchievement", 0, 0,woodenGearItem, null).registerStat();
+		stoneGearAchievement = new Achievement("achievement.stoneGear", "stoneGearAchievement", 2, 0, stoneGearItem, woodenGearAchievement).registerStat();
+		ironGearAchievement = new Achievement("achievement.ironGear", "ironGearAchievement", 4, 0, ironGearItem, stoneGearAchievement).registerStat();
+		goldGearAchievement = new Achievement("achievement.goldGear", "goldGearAchievement", 6, 0, goldGearItem, ironGearAchievement).registerStat();
+		diamondGearAchievement = new Achievement("achievement.diamondGear", "diamondGearAchievement", 8, 0, diamondGearItem, goldGearAchievement).registerStat();
+		wrenchAchievement = new Achievement("achievement.wrench", "wrenchAchievement", 3, 2, wrenchItem, stoneGearAchievement).registerStat();
+		aLotOfCraftingAchievement = new Achievement("achievement.aLotOfCrafting", "aLotOfCraftingAchievement", 1, 2, BuildCraftFactory.autoWorkbenchBlock, woodenGearAchievement).registerStat();
+		straightDownAchievement = new Achievement("achievement.straightDown", "straightDownAchievement", 5, 2, BuildCraftFactory.miningWellBlock, ironGearAchievement).registerStat();
+		chunkDestroyerAchievement = new Achievement("achievement.chunkDestroyer", "chunkDestroyerAchievement", 9, 2, BuildCraftFactory.quarryBlock, diamondGearAchievement).registerStat();
+		fasterFillingAchievement = new Achievement("achievement.fasterFilling", "fasterFillingAchievement", 7, 2, BuildCraftBuilders.fillerBlock, goldGearAchievement).registerStat();
+		timeForSomeLogicAchievement = new Achievement("achievement.timeForSomeLogic", "timeForSomeLogicAchievement", 9, -2, BuildCraftSilicon.assemblyTableBlock, diamondGearAchievement).registerStat();
+		refineAndRedefineAchievement = new Achievement("achievement.refineAndRedefine", "refineAndRedefineAchievement", 10, 0, BuildCraftFactory.refineryBlock, diamondGearAchievement).registerStat();
+		tinglyLaserAchievement = new Achievement("achievement.tinglyLaser", "tinglyLaserAchievement", 11, -2, BuildCraftSilicon.laserBlock ,timeForSomeLogicAchievement).registerStat();
+
+		BuildcraftAchievements = new AchievementPage("Buildcraft", woodenGearAchievement, stoneGearAchievement, ironGearAchievement, goldGearAchievement, diamondGearAchievement, wrenchAchievement, aLotOfCraftingAchievement, straightDownAchievement, chunkDestroyerAchievement, fasterFillingAchievement, timeForSomeLogicAchievement, refineAndRedefineAchievement, tinglyLaserAchievement);
+		AchievementPage.registerAchievementPage(BuildcraftAchievements);
 	}
 
 }

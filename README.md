@@ -15,7 +15,7 @@ Do not submit pull requests which solely "fix" formatting. As these kinds of cha
 Please only submit "code cleanup", if the changes actually have a substantial impact on readability.
 
 ### Reporting issues
-* Do not open an issue if you're not planning to fix it, intead open a thread on http://mod-buildcraft.com/forums/index.php?board=2.0
+* Do not open an issue if you're not planning to fix it, instead open a thread on http://mod-buildcraft.com/forums/index.php?board=2.0
 * Before reporting an issue, please check that it has not been reported before.
 * Issues are for bugs/crashes, please do not use them to ask general questions.
 * Always include the version you are having trouble with. Or if you're building from source, which source you're building.

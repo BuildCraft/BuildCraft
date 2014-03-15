@@ -34,10 +34,11 @@ public class BlockAutoWorkbench extends BlockBuildCraft {
 
 	@Override
 	public IIcon getIcon(int i, int j) {
-		if (i == 1 || i == 0)
+		if (i == 1 || i == 0) {
 			return topTexture;
-		else
+		} else {
 			return sideTexture;
+		}
 	}
 
 	@Override
@@ -45,12 +46,14 @@ public class BlockAutoWorkbench extends BlockBuildCraft {
 		super.onBlockActivated(world, i, j, k, entityplayer, par6, par7, par8, par9);
 
 		// Drop through if the player is sneaking
-		if (entityplayer.isSneaking())
+		if (entityplayer.isSneaking()) {
 			return false;
+		}
 
 		if (entityplayer.getCurrentEquippedItem() != null) {
-			if (entityplayer.getCurrentEquippedItem().getItem() instanceof IItemPipe)
+			if (entityplayer.getCurrentEquippedItem().getItem() instanceof IItemPipe) {
 				return false;
+			}
 		}
 
 		if (!world.isRemote) {
