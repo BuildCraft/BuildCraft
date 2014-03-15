@@ -26,6 +26,7 @@ fillerpattern.horizon=Horizon
 fillerpattern.pyramid=Pyramid
 fillerpattern.stairs=Stairs
 fillerpattern.box=Box
+fillerpattern.cylinder=Cylinder
 
 fluid.oil=Oil
 fluid.fuel=Fuel
