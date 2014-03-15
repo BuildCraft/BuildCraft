@@ -8,10 +8,7 @@
  */
 package buildcraft.builders.filler.pattern;
 
-import net.minecraft.world.World;
-import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.core.Box;
-import buildcraft.core.blueprints.BptBuilderTemplate;
 import buildcraft.core.blueprints.Template;
 
 public class PatternFill extends FillerPattern {
@@ -23,11 +20,11 @@ public class PatternFill extends FillerPattern {
 	}
 
 	@Override
-	public BptBuilderTemplate getBlueprint (Box box, World world, ForgeDirection orientation) {
+	public Template getBlueprint (Box box) {
 		Template bpt = new Template(box.sizeX(), box.sizeY(), box.sizeZ());
 
 		fill (0, 0, 0, box.sizeX() - 1, box.sizeY() - 1, box.sizeZ() - 1, bpt);
 
-		return new BptBuilderTemplate(bpt, world, box.xMin, box.yMin, box.zMin);
+		return bpt;
 	}
 }

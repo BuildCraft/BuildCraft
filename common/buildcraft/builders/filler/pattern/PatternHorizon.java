@@ -8,10 +8,8 @@
  */
 package buildcraft.builders.filler.pattern;
 
-import net.minecraft.world.World;
-import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.core.Box;
-import buildcraft.core.blueprints.BptBuilderTemplate;
+import buildcraft.core.blueprints.Template;
 
 public class PatternHorizon extends FillerPattern {
 
@@ -19,24 +17,24 @@ public class PatternHorizon extends FillerPattern {
 		super("horizon");
 	}
 
-	/*@Override
-	public boolean iteratePattern(TileEntity tile, IBox box, ItemStack stackToPlace) {
-		int xMin = (int) box.pMin().x;
-		int yMin = (int) box.pMin().y;
-		int zMin = (int) box.pMin().z;
-
-		int xMax = (int) box.pMax().x;
-		int zMax = (int) box.pMax().z;
-
-		if (stackToPlace != null && flatten(xMin, 1, zMin, xMax, yMin - 1, zMax, tile.getWorldObj(), stackToPlace)) {
-			return false;
-		}
-		return !empty(xMin, yMin, zMin, xMax, tile.getWorldObj().getActualHeight(), zMax, tile.getWorldObj());
-	}*/
-
 	@Override
-	public BptBuilderTemplate getBlueprint(Box box, World world,
-			ForgeDirection orientation) {
-		return null;
+	public Template getBlueprint(Box box) {
+		/*
+		int xMin = 0;
+		int yMin = 0;
+		int zMin = 0;
+
+		int xMax = box.sizeX() - 1;
+		int zMax = box.sizeZ() - 1;
+
+		Template template = new Template ();
+
+		flatten(xMin, 1, zMin, xMax, yMin - 1, zMax, template);
+		empty(xMin, yMin, zMin, xMax, 128, template);*/
+
+		// FIXME: This one still needs to be fixed, taking into account
+		// world specific data somehow
+
+		return new Template (0, 0, 0);
 	}
 }

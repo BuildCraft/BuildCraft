@@ -9,11 +9,8 @@
 package buildcraft.builders.filler.pattern;
 
 import net.minecraft.init.Blocks;
-import net.minecraft.world.World;
-import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.api.blueprints.SchematicRegistry;
 import buildcraft.core.Box;
-import buildcraft.core.blueprints.BptBuilderTemplate;
 import buildcraft.core.blueprints.Template;
 
 public class PatternPyramid extends FillerPattern {
@@ -26,7 +23,7 @@ public class PatternPyramid extends FillerPattern {
 	boolean param1 = true;
 
 	@Override
-	public BptBuilderTemplate getBlueprint (Box box, World world, ForgeDirection orientation) {
+	public Template getBlueprint (Box box) {
 		int xMin = (int) box.pMin().x;
 		int yMin = (int) box.pMin().y;
 		int zMin = (int) box.pMin().z;
@@ -68,6 +65,6 @@ public class PatternPyramid extends FillerPattern {
 			height += stepY;
 		}
 
-		return new BptBuilderTemplate(bpt, world, box.xMin, box.yMin, box.zMin);
+		return bpt;
 	}
 }

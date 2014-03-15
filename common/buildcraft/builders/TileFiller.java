@@ -16,7 +16,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
-import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.BuildCraftCore;
 import buildcraft.api.blueprints.SchematicToBuild;
 import buildcraft.api.core.IAreaProvider;
@@ -111,7 +110,9 @@ public class TileFiller extends TileBuildCraft implements IBuilderInventory, IMa
 		}
 
 		if (currentPattern != null && currentTemplate == null) {
-			currentTemplate = currentPattern.getBlueprint(box, getWorld(), ForgeDirection.NORTH);
+			currentTemplate = new BptBuilderTemplate(
+					currentPattern.getBlueprint(box), getWorld(), box.xMin,
+					box.yMin, box.zMin);
 			context = currentTemplate.getContext();
 		}
 

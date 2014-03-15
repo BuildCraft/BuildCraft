@@ -8,10 +8,7 @@
  */
 package buildcraft.builders.filler.pattern;
 
-import net.minecraft.world.World;
-import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.core.Box;
-import buildcraft.core.blueprints.BptBuilderTemplate;
 import buildcraft.core.blueprints.Template;
 
 
@@ -28,8 +25,7 @@ public class PatternStairs extends FillerPattern {
 	int param4 = 0;
 
 	@Override
-	public BptBuilderTemplate getBlueprint(Box box, World world,
-			ForgeDirection orientation) {
+	public Template getBlueprint(Box box) {
 		int xMin = 0;
 		int yMin = 0;
 		int zMin = 0;
@@ -200,6 +196,6 @@ public class PatternStairs extends FillerPattern {
 			}
 		}
 
-		return new BptBuilderTemplate(template, world, box.xMin, box.yMin, box.zMin);
+		return template;
 	}
 }
