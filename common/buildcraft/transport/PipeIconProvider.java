@@ -154,8 +154,9 @@ public class PipeIconProvider implements IIconProvider {
 	@Override
 	@SideOnly(Side.CLIENT)
 	public IIcon getIcon(int pipeIconIndex) {
-		if (pipeIconIndex == -1)
+		if (pipeIconIndex == -1) {
 			return null;
+		}
 		return TYPE.VALUES[pipeIconIndex].icon;
 	}
 

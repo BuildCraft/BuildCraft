@@ -59,8 +59,9 @@ public class PipeTransportItems extends PipeTransport {
 		}
 		PipeEventItem.AdjustSpeed event = new PipeEventItem.AdjustSpeed(item);
 		container.pipe.handlePipeEvent(event);
-		if (!event.handled)
+		if (!event.handled) {
 			defaultReajustSpeed(item);
+		}
 	}
 
 	public void defaultReajustSpeed(TravelingItem item) {
@@ -90,10 +91,11 @@ public class PipeTransportItems extends PipeTransport {
 	}
 
 	public void injectItem(TravelingItem item, ForgeDirection inputOrientation) {
-		if (item.isCorrupted())
+		if (item.isCorrupted()) {
 			// Safe guard - if for any reason the item is corrupted at this
 			// stage, avoid adding it to the pipe to avoid further exceptions.
 			return;
+		}
 
 		item.reset();
 		item.input = inputOrientation;
@@ -112,16 +114,18 @@ public class PipeTransportItems extends PipeTransport {
 
 		PipeEventItem.Entered event = new PipeEventItem.Entered(item);
 		container.pipe.handlePipeEvent(event);
-		if (event.cancelled)
+		if (event.cancelled) {
 			return;
+		}
 
 		items.add(item);
 
 		if (!container.getWorldObj().isRemote) {
 			sendTravelerPacket(item, false);
 
-			if (items.size() > BuildCraftTransport.groupItemsTrigger)
+			if (items.size() > BuildCraftTransport.groupItemsTrigger) {
 				groupEntities();
+			}
 
 			if (items.size() > MAX_PIPE_STACKS) {
 				BCLog.logger.log(Level.WARNING, String.format("Pipe exploded at %d,%d,%d because it had too many stacks: %d", container.xCoord, container.yCoord, container.zCoord, items.size()));
@@ -132,8 +136,9 @@ public class PipeTransportItems extends PipeTransport {
 			int numItems = 0;
 			for (TravelingItem travellingItem : items) {
 				ItemStack stack = travellingItem.getItemStack();
-				if (stack != null && stack.stackSize > 0)
+				if (stack != null && stack.stackSize > 0) {
 					numItems += stack.stackSize;
+				}
 			}
 
 			if (numItems > MAX_PIPE_ITEMS) {
@@ -154,10 +159,11 @@ public class PipeTransportItems extends PipeTransport {
 	 * @param item
 	 */
 	protected void reverseItem(TravelingItem item) {
-		if (item.isCorrupted())
+		if (item.isCorrupted()) {
 			// Safe guard - if for any reason the item is corrupted at this
 			// stage, avoid adding it to the pipe to avoid further exceptions.
 			return;
+		}
 
 		item.toCenter = true;
 		item.input = item.output.getOpposite();
@@ -174,20 +180,23 @@ public class PipeTransportItems extends PipeTransport {
 		}
 		PipeEventItem.Entered event = new PipeEventItem.Entered(item);
 		container.pipe.handlePipeEvent(event);
-		if (event.cancelled)
+		if (event.cancelled) {
 			return;
+		}
 
 		items.unscheduleRemoval(item);
 
-		if (!container.getWorldObj().isRemote)
+		if (!container.getWorldObj().isRemote) {
 			sendTravelerPacket(item, true);
+		}
 	}
 
 	public ForgeDirection resolveDestination(TravelingItem data) {
 		List<ForgeDirection> validDestinations = getPossibleMovements(data);
 
-		if (validDestinations.isEmpty())
+		if (validDestinations.isEmpty()) {
 			return ForgeDirection.UNKNOWN;
+		}
 
 		return validDestinations.get(0);
 	}
@@ -205,8 +214,9 @@ public class PipeTransportItems extends PipeTransport {
 		sides.remove(ForgeDirection.UNKNOWN);
 
 		for (ForgeDirection o : sides) {
-			if (container.pipe.outputOpen(o) && canReceivePipeObjects(o, item))
+			if (container.pipe.outputOpen(o) && canReceivePipeObjects(o, item)) {
 				result.add(o);
+			}
 		}
 
 		if (this.container.pipe instanceof IPipeTransportItemsHook) {
@@ -230,16 +240,19 @@ public class PipeTransportItems extends PipeTransport {
 	public boolean canReceivePipeObjects(ForgeDirection o, TravelingItem item) {
 		TileEntity entity = container.getTile(o);
 
-		if (!container.isPipeConnected(o))
+		if (!container.isPipeConnected(o)) {
 			return false;
+		}
 
 		if (entity instanceof TileGenericPipe) {
 			TileGenericPipe pipe = (TileGenericPipe) entity;
 
 			return pipe.pipe.transport instanceof PipeTransportItems;
-		} else if (entity instanceof IInventory && item.getInsertionHandler().canInsertItem(item, (IInventory) entity))
-			if (Transactor.getTransactorFor(entity).add(item.getItemStack(), o.getOpposite(), false).stackSize > 0)
+		} else if (entity instanceof IInventory && item.getInsertionHandler().canInsertItem(item, (IInventory) entity)) {
+			if (Transactor.getTransactorFor(entity).add(item.getItemStack(), o.getOpposite(), false).stackSize > 0) {
 				return true;
+			}
+		}
 
 		return false;
 	}
@@ -275,8 +288,9 @@ public class PipeTransportItems extends PipeTransport {
 				item.setPosition(container.xCoord + 0.5, container.yCoord + TransportUtils.getPipeFloorOf(item.getItemStack()), container.zCoord + 0.5);
 
 				if (item.output == ForgeDirection.UNKNOWN) {
-					if (items.scheduleRemoval(item))
+					if (items.scheduleRemoval(item)) {
 						dropItem(item);
+					}
 				} else {
 					if (travelHook != null) {
 						travelHook.centerReached(this, item);
@@ -332,13 +346,15 @@ public class PipeTransportItems extends PipeTransport {
 					reverseItem(item);
 				}
 			}
-		} else
+		} else {
 			dropItem(item);
+		}
 	}
 
 	private void dropItem(TravelingItem item) {
-		if (container.getWorldObj().isRemote)
+		if (container.getWorldObj().isRemote) {
 			return;
+		}
 
 		if (travelHook != null) {
 			travelHook.drop(this, item);
@@ -346,8 +362,11 @@ public class PipeTransportItems extends PipeTransport {
 
 		PipeEventItem.DropItem event = new PipeEventItem.DropItem(item, item.toEntityItem());
 		container.pipe.handlePipeEvent(event);
-		if (event.entity == null)
+
+		if (event.entity == null) {
 			return;
+		}
+
 		container.getWorldObj().spawnEntityInWorld(event.entity);
 	}
 
@@ -381,8 +400,9 @@ public class PipeTransportItems extends PipeTransport {
 
 				TravelingItem item = TravelingItem.make(dataTag);
 
-				if (item.isCorrupted())
+				if (item.isCorrupted()) {
 					continue;
+				}
 
 				items.scheduleLoad(item);
 			} catch (Throwable t) {
@@ -453,8 +473,9 @@ public class PipeTransportItems extends PipeTransport {
 	public int getNumberOfItems() {
 		int num = 0;
 		for (TravelingItem item : items) {
-			if (item.getItemStack() == null)
+			if (item.getItemStack() == null) {
 				continue;
+			}
 			num += item.getItemStack().stackSize;
 		}
 		return num;
@@ -467,8 +488,9 @@ public class PipeTransportItems extends PipeTransport {
 	public boolean canPipeConnect(TileEntity tile, ForgeDirection side) {
 		if (tile instanceof TileGenericPipe) {
 			Pipe pipe2 = ((TileGenericPipe) tile).pipe;
-			if (BlockGenericPipe.isValid(pipe2) && !(pipe2.transport instanceof PipeTransportItems))
+			if (BlockGenericPipe.isValid(pipe2) && !(pipe2.transport instanceof PipeTransportItems)) {
 				return false;
+			}
 		}
 
 		if (tile instanceof ISidedInventory) {
@@ -490,11 +512,13 @@ public class PipeTransportItems extends PipeTransport {
 	 */
 	public void groupEntities() {
 		for (TravelingItem item : items) {
-			if (item.isCorrupted())
+			if (item.isCorrupted()) {
 				continue;
+			}
 			for (TravelingItem otherItem : items) {
-				if (item.tryMergeInto(otherItem))
+				if (item.tryMergeInto(otherItem)) {
 					break;
+				}
 			}
 		}
 	}
@@ -504,8 +528,9 @@ public class PipeTransportItems extends PipeTransport {
 		groupEntities();
 
 		for (TravelingItem item : items) {
-			if (!item.isCorrupted())
+			if (!item.isCorrupted()) {
 				container.pipe.dropItem(item.getItemStack());
+			}
 		}
 
 		items.clear();

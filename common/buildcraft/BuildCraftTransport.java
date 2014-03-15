@@ -81,6 +81,7 @@ import buildcraft.transport.pipes.PipeItemsObsidian;
 import buildcraft.transport.pipes.PipeItemsQuartz;
 import buildcraft.transport.pipes.PipeItemsSandstone;
 import buildcraft.transport.pipes.PipeItemsStone;
+import buildcraft.transport.pipes.PipeItemsStripes;
 import buildcraft.transport.pipes.PipeItemsVoid;
 import buildcraft.transport.pipes.PipeItemsWood;
 import buildcraft.transport.pipes.PipePowerCobblestone;
@@ -140,6 +141,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 	public static Item pipeItemsVoid;
 	public static Item pipeItemsSandstone;
 	public static Item pipeItemsEmzuli;
+	public static Item pipeItemsStripes;
 	public static Item pipeFluidsWood;
 	public static Item pipeFluidsCobblestone;
 	public static Item pipeFluidsStone;
@@ -333,6 +335,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 			pipeItemsSandstone = buildPipe(DefaultProps.PIPE_ITEMS_SANDSTONE_ID, PipeItemsSandstone.class, "Sandstone Transport Pipe", CreativeTabBuildCraft.TIER_1, Blocks.sandstone, Blocks.glass, Blocks.sandstone);
 			pipeItemsVoid = buildPipe(DefaultProps.PIPE_ITEMS_VOID_ID, PipeItemsVoid.class, "Void Transport Pipe", CreativeTabBuildCraft.TIER_1, "dyeBlack", Blocks.glass, Items.redstone);
 			pipeItemsEmzuli = buildPipe(DefaultProps.PIPE_ITEMS_EMZULI_ID, PipeItemsEmzuli.class, "Emzuli Transport Pipe", CreativeTabBuildCraft.MISC, Blocks.lapis_block, Blocks.glass, Items.emerald);
+			pipeItemsStripes = buildPipe(0, PipeItemsStripes.class, "Stripes Transport Pipe", CreativeTabBuildCraft.TIER_3, Items.dye, Blocks.glass, Items.dye);
 
 			pipeFluidsWood = buildPipe(DefaultProps.PIPE_LIQUIDS_WOOD_ID, PipeFluidsWood.class, "Wooden Waterproof Pipe", CreativeTabBuildCraft.TIER_2, pipeWaterproof, pipeItemsWood);
 			pipeFluidsCobblestone = buildPipe(DefaultProps.PIPE_LIQUIDS_COBBLESTONE_ID, PipeFluidsCobblestone.class, "Cobblestone Waterproof Pipe", CreativeTabBuildCraft.TIER_2, pipeWaterproof, pipeItemsCobblestone);

@@ -10,9 +10,6 @@ package buildcraft.transport.pipes;
 
 import io.netty.buffer.ByteBuf;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
 import java.util.LinkedList;
 
 import net.minecraft.block.Block;
@@ -20,7 +17,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.BuildCraftTransport;
@@ -29,7 +25,6 @@ import buildcraft.core.GuiIds;
 import buildcraft.core.inventory.SimpleInventory;
 import buildcraft.core.inventory.StackHelper;
 import buildcraft.core.network.IClientState;
-import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
 import buildcraft.transport.BlockGenericPipe;
 import buildcraft.transport.Pipe;
@@ -86,9 +81,11 @@ public class PipeItemsDiamond extends Pipe<PipeTransportItems> implements IClien
 
 	@Override
 	public boolean blockActivated(EntityPlayer entityplayer) {
-		if (entityplayer.getCurrentEquippedItem() != null)
-			if (Block.getBlockFromItem(entityplayer.getCurrentEquippedItem().getItem()) instanceof BlockGenericPipe)
+		if (entityplayer.getCurrentEquippedItem() != null) {
+			if (Block.getBlockFromItem(entityplayer.getCurrentEquippedItem().getItem()) instanceof BlockGenericPipe) {
 				return false;
+			}
+		}
 
 		if (!container.getWorldObj().isRemote) {
 			entityplayer.openGui(BuildCraftTransport.instance, GuiIds.PIPE_DIAMOND, container.getWorldObj(), container.xCoord, container.yCoord, container.zCoord);
@@ -111,20 +108,26 @@ public class PipeItemsDiamond extends Pipe<PipeTransportItems> implements IClien
 			for (int slot = 0; slot < 9; ++slot) {
 				ItemStack filter = getFilters().getStackInSlot(dir.ordinal() * 9 + slot);
 
-				if (filter != null)
+				if (filter != null) {
 					foundFilter = true;
+				}
 
-				if (StackHelper.instance().isMatchingItem(filter, event.item.getItemStack(), true, false))
+				if (StackHelper.instance().isMatchingItem(filter, event.item.getItemStack(), true, false)) {
 					filteredOrientations.add(dir);
+				}
 			}
-			if (!foundFilter)
+			if (!foundFilter) {
 				defaultOrientations.add(dir);
+			}
 		}
+
 		event.destinations.clear();
-		if (!filteredOrientations.isEmpty())
+
+		if (!filteredOrientations.isEmpty()) {
 			event.destinations.addAll(filteredOrientations);
-		else
+		} else {
 			event.destinations.addAll(defaultOrientations);
+		}
 	}
 
 	/* SAVING & LOADING */
@@ -149,7 +152,7 @@ public class PipeItemsDiamond extends Pipe<PipeTransportItems> implements IClien
 	}
 
 	@Override
-	public void readData(ByteBuf data) {		
+	public void readData(ByteBuf data) {
 		NBTTagCompound nbt = Utils.readNBT(data);
 		readFromNBT(nbt);
 	}

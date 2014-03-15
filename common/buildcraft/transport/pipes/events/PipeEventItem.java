@@ -8,11 +8,12 @@
  */
 package buildcraft.transport.pipes.events;
 
-import buildcraft.transport.TravelingItem;
 import java.util.List;
+
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
+import buildcraft.transport.TravelingItem;
 
 public abstract class PipeEventItem extends PipeEvent {
 
@@ -52,10 +53,20 @@ public abstract class PipeEventItem extends PipeEvent {
 	public static class DropItem extends PipeEventItem {
 
 		public EntityItem entity;
+		public ForgeDirection direction = ForgeDirection.UNKNOWN;
 
 		public DropItem(TravelingItem item, EntityItem entity) {
 			super(item);
 			this.entity = entity;
+
+			System.out.println ("OUTPUT = " + item.output);
+			System.out.println ("INPUT = " + item.output);
+
+			if (item.output != ForgeDirection.UNKNOWN) {
+				this.direction = item.output;
+			} else {
+				this.direction = item.input.getOpposite();
+			}
 		}
 	}
 

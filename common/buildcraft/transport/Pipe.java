@@ -27,7 +27,6 @@ import net.minecraft.world.WorldSettings.GameType;
 import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
-import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.gates.IAction;
 import buildcraft.api.gates.ITrigger;
 import buildcraft.api.transport.PipeWire;
@@ -51,7 +50,6 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 	public Gate gate;
 	@SuppressWarnings("rawtypes")
 	private static Map<Class, TilePacketWrapper> networkWrappers = new HashMap<Class, TilePacketWrapper>();
-	public SafeTimeTracker actionTracker = new SafeTimeTracker();
 	private static Map<Class<? extends Pipe>, Map<Class<? extends PipeEvent>, EventHandler>> eventHandlers = new HashMap<Class<? extends Pipe>, Map<Class<? extends PipeEvent>, EventHandler>>();
 
 	public Pipe(T transport, Item item) {
@@ -65,9 +63,7 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 	}
 
 	public void setTile(TileEntity tile) {
-
 		this.container = (TileGenericPipe) tile;
-
 		transport.setTile((TileGenericPipe) tile);
 	}
 
