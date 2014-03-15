@@ -643,6 +643,12 @@ public class BlockGenericPipe extends BlockBuildCraft {
 					return new ItemStack(BuildCraftTransport.plugItem);
 				case RobotStation:
 					return new ItemStack(BuildCraftTransport.robotStationItem);
+                		case Pipe:
+                    			return new ItemStack(getPipe(world, x, y, z).item);
+		                case Facade:
+		                    ForgeDirection dir = ForgeDirection.getOrientation(target.sideHit);
+		                    FacadeMatrix matrix = getPipe(world, x, y, z).container.renderState.facadeMatrix;
+		                    return ItemFacade.getStack(matrix.getFacadeBlock(dir), matrix.getFacadeMetaId(dir));
 			}
 		}
 		return super.getPickBlock(target, world, x, y, z);
