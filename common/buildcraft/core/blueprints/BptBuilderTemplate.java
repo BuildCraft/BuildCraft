@@ -12,7 +12,6 @@ import java.util.LinkedList;
 
 import net.minecraft.world.World;
 import buildcraft.api.blueprints.Schematic;
-import buildcraft.api.blueprints.SchematicMask;
 import buildcraft.api.blueprints.SchematicToBuild;
 import buildcraft.api.blueprints.SchematicToBuild.Mode;
 import buildcraft.api.core.BuildCraftAPI;
@@ -38,7 +37,7 @@ public class BptBuilderTemplate extends BptBuilderBase {
 					if (slot == null) {
 						SchematicToBuild b = new SchematicToBuild();
 
-						b.schematic = new SchematicMask(false);
+						b.schematic = null;
 						b.x = xCoord;
 						b.y = yCoord;
 						b.z = zCoord;

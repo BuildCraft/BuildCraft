@@ -20,4 +20,12 @@ public class SchematicToBuild {
 
 	public Mode mode = Mode.Build;
 
+	public Schematic getSchematic () {
+		if (schematic == null) {
+			return schematic;
+		} else {
+			return new SchematicMask(false);
+		}
+	}
+
 }

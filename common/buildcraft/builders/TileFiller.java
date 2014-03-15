@@ -118,7 +118,10 @@ public class TileFiller extends TileBuildCraft implements IBuilderInventory, IMa
 
 		if (currentTemplate != null) {
 			SchematicToBuild s = currentTemplate.getNextBlock(getWorld(), this);
-			s.schematic.writeToWorld(context, s.x, s.y, s.z);
+
+			if (s != null) {
+				s.getSchematic().writeToWorld(context, s.x, s.y, s.z);
+			}
 		}
 
 		/*ItemStack stackToUse = null;
