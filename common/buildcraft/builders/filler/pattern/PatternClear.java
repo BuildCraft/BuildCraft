@@ -20,19 +20,6 @@ public class PatternClear extends FillerPattern {
 		super("clear");
 	}
 
-	/*@Override
-	public boolean iteratePattern(TileEntity tile, IBox box, ItemStack stackToPlace) {
-		int xMin = (int) box.pMin().x;
-		int yMin = (int) box.pMin().y;
-		int zMin = (int) box.pMin().z;
-
-		int xMax = (int) box.pMax().x;
-		int yMax = (int) box.pMax().y;
-		int zMax = (int) box.pMax().z;
-
-		return !empty(xMin, yMin, zMin, xMax, yMax, zMax, tile.getWorldObj());
-	}*/
-
 	@Override
 	public BptBuilderTemplate getBlueprint (Box box, World world, ForgeDirection orientation) {
 		int xMin = (int) box.pMin().x;

@@ -8,10 +8,8 @@
  */
 package buildcraft.builders.filler.pattern;
 
-import net.minecraft.init.Blocks;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
-import buildcraft.api.blueprints.SchematicRegistry;
 import buildcraft.core.Box;
 import buildcraft.core.blueprints.BptBuilderTemplate;
 import buildcraft.core.blueprints.Template;
@@ -26,24 +24,9 @@ public class PatternFill extends FillerPattern {
 
 	@Override
 	public BptBuilderTemplate getBlueprint (Box box, World world, ForgeDirection orientation) {
-		int xMin = (int) box.pMin().x;
-		int yMin = (int) box.pMin().y;
-		int zMin = (int) box.pMin().z;
+		Template bpt = new Template(box.sizeX(), box.sizeY(), box.sizeZ());
 
-		int xMax = (int) box.pMax().x;
-		int yMax = (int) box.pMax().y;
-		int zMax = (int) box.pMax().z;
-
-		Template bpt = new Template(xMax - xMin + 1, yMax - yMin + 1, zMax - zMin + 1);
-
-		for (int y = yMin; y <= yMax; ++y) {
-			for (int x = xMin; x <= xMax; ++x) {
-				for (int z = zMin; z <= zMax; ++z) {
-					bpt.contents[x - xMin][y - yMin][z - zMin] = SchematicRegistry
-							.newSchematic(Blocks.stone);
-				}
-			}
-		}
+		fill (0, 0, 0, box.sizeX() - 1, box.sizeY() - 1, box.sizeZ() - 1, bpt);
 
 		return new BptBuilderTemplate(bpt, world, box.xMin, box.yMin, box.zMin);
 	}

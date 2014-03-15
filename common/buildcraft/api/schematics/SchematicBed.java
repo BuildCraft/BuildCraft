@@ -13,9 +13,9 @@ import java.util.LinkedList;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import buildcraft.api.blueprints.IBuilderContext;
-import buildcraft.api.blueprints.Schematic;
+import buildcraft.api.blueprints.SchematicBlock;
 
-public class SchematicBed extends Schematic {
+public class SchematicBed extends SchematicBlock {
 
 	@Override
 	public void addRequirements(IBuilderContext context, LinkedList<ItemStack> requirements) {

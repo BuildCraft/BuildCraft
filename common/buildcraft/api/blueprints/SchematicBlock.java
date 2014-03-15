@@ -8,38 +8,21 @@
  */
 package buildcraft.api.blueprints;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 
+import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import buildcraft.core.utils.Utils;
 
-import org.apache.commons.lang3.ArrayUtils;
+public class SchematicBlock extends Schematic {
 
-/**
- * This class allow to specify specific behavior for blocks stored in
- * blueprints:
- *
- * - what items needs to be used to create that block - how the block has to be
- * built on the world - how to rotate the block - what extra data to store /
- * load in the blueprint
- *
- * Default implementations of this can be seen in the package
- * buildcraft.api.schematics. The class SchematicUtils provide some additional
- * utilities.
- *
- * Blueprints perform "id translation" in case the block ids between a blueprint
- * and the world installation are different. Mapping is done through the
- * builder context.
- *
- * At blueprint load time, BuildCraft will check that each block id of the
- * blueprint corresponds to the block id in the installation. If not, it will
- * perform a search through the block list, and upon matching signature, it will
- * translate all blocks ids of the blueprint to the installation ones. If no
- * such block id is found, BuildCraft will assume that the block is not
- * installed and will not load the blueprint.
- */
-public class Schematic {
+	public Block block = null;
+	public int meta = 0;
 
 	/**
 	 * This field contains requirements for a given block when stored in the
@@ -50,35 +33,33 @@ public class Schematic {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public Schematic clone() {
-		Schematic obj;
-		try {
-			obj = (Schematic) super.clone();
-		} catch (CloneNotSupportedException e) {
-			return null;
-		}
+	public SchematicBlock clone() {
+		SchematicBlock obj = SchematicRegistry.newSchematic(block);
 
-		obj.storedRequirements = ArrayUtils.clone(storedRequirements);
+		obj.block = block;
+		obj.meta = meta;
+		obj.storedRequirements = Arrays.copyOf(storedRequirements,
+				storedRequirements.length);
 
 		return obj;
 	}
-
-	public final LinkedList<ItemStack> getRequirements(IBuilderContext context) {
-		LinkedList<ItemStack> res = new LinkedList<ItemStack>();
-
-		addRequirements(context, res);
-
-		return res;
-	}
-
 
 	/**
 	 * Returns the requirements needed to build this block. When the
 	 * requirements are met, they will be removed all at once from the builder,
 	 * before calling buildBlock.
 	 */
+	@Override
 	public void addRequirements(IBuilderContext context, LinkedList<ItemStack> requirements) {
-
+		if (block != null) {
+			if (storedRequirements.length != 0) {
+				for (ItemStack s : storedRequirements) {
+					requirements.add(s);
+				}
+			} else {
+				requirements.add(new ItemStack(block, 1, meta));
+			}
+		}
 	}
 
 	/**
@@ -98,6 +79,7 @@ public class Schematic {
 	 * returns: what was used (similer to req, but created from stack, so that
 	 * any NBT based differences are drawn from the correct source)
 	 */
+	@Override
 	public ItemStack useItem(IBuilderContext context, ItemStack req, ItemStack stack) {
 		ItemStack result = stack.copy();
 		if (stack.isItemStackDamageable()) {
@@ -136,13 +118,15 @@ public class Schematic {
 	 * the blueprint at the location given by the slot. By default, this
 	 * subprogram is permissive and doesn't take into account metadata.
 	 */
+	@Override
 	public boolean isValid(IBuilderContext context, int x, int y, int z) {
-		return true;
+		return block == context.world().getBlock(x, y, z) && meta == context.world().getBlockMetadata(x, y, z);
 	}
 
 	/**
 	 * Perform a 90 degree rotation to the slot.
 	 */
+	@Override
 	public void rotateLeft(IBuilderContext context) {
 
 	}
@@ -150,14 +134,18 @@ public class Schematic {
 	/**
 	 * Places the block in the world, at the location specified in the slot.
 	 */
+	@Override
 	public void writeToWorld(IBuilderContext context, int x, int y, int z) {
-
+		// Meta needs to be specified twice, depending on the block behavior
+		context.world().setBlock(x, y, z, block, meta, 3);
+		context.world().setBlockMetadataWithNotify(x, y, z, meta, 3);
 	}
 
 	/**
 	 * Return true if the block should not be placed to the world. Requirements
 	 * will not be asked on such a block, and building will not be called.
 	 */
+	@Override
 	public boolean ignoreBuilding() {
 		return false;
 	}
@@ -171,8 +159,17 @@ public class Schematic {
 	 * By default, if the block is a BlockContainer, tile information will be to
 	 * save / load the block.
 	 */
+	@Override
 	public void readFromWorld(IBuilderContext context, int x, int y, int z) {
+		if (block != null) {
+			ArrayList<ItemStack> req = block.getDrops(context.world(), x,
+					y, z, context.world().getBlockMetadata(x, y, z), 0);
 
+			if (req != null) {
+				storedRequirements = new ItemStack [req.size()];
+				req.toArray(storedRequirements);
+			}
+		}
 	}
 
 	/**
@@ -180,16 +177,45 @@ public class Schematic {
 	 * blocks. This may be useful to adjust variable depending on surrounding
 	 * blocks that may not be there already at initial building.
 	 */
+	@Override
 	public void postProcessing(IBuilderContext context) {
 
 	}
 
+	@Override
 	public void writeToNBT(NBTTagCompound nbt, MappingRegistry registry) {
+		nbt.setInteger("blockId", registry.getIdForBlock(block));
+		nbt.setInteger("blockMeta", meta);
 
+		NBTTagList rq = new NBTTagList();
+
+		for (ItemStack stack : storedRequirements) {
+			NBTTagCompound sub = new NBTTagCompound();
+			stack.writeToNBT(stack.writeToNBT(sub));
+			sub.setInteger("id", Item.itemRegistry.getIDForObject(registry
+					.getItemForId(sub.getInteger("id"))));
+			rq.appendTag(sub);
+		}
+
+		nbt.setTag("rq", rq);
 	}
 
+	@Override
 	public void readFromNBT(NBTTagCompound nbt,	MappingRegistry registry) {
+		block = registry.getBlockForId(nbt.getInteger("blockId"));
+		meta = nbt.getInteger("blockMeta");
 
+		NBTTagList rq = nbt.getTagList("rq", Utils.NBTTag_Types.NBTTagList.ordinal());
+		storedRequirements = new ItemStack[rq.tagCount()];
+
+		for (int i = 0; i < rq.tagCount(); ++i) {
+			NBTTagCompound sub = rq.getCompoundTagAt(i);
+
+			// Maps the id in the blueprint to the id in the world
+			sub.setInteger("id", Item.itemRegistry.getIDForObject(registry
+					.getItemForId(sub.getInteger("id"))));
+
+			storedRequirements [i] = ItemStack.loadItemStackFromNBT(sub);
+		}
 	}
-
 }

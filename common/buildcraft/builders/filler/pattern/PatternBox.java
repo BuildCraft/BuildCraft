@@ -12,6 +12,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.core.Box;
 import buildcraft.core.blueprints.BptBuilderTemplate;
+import buildcraft.core.blueprints.Template;
 
 
 public class PatternBox extends FillerPattern {
@@ -23,37 +24,23 @@ public class PatternBox extends FillerPattern {
 	@Override
 	public BptBuilderTemplate getBlueprint(Box box, World world,
 			ForgeDirection orientation) {
-		return null;
+		Template result = new Template (box.sizeX(), box.sizeY(), box.sizeZ());
+
+		int xMin = 0;
+		int yMin = 0;
+		int zMin = 0;
+
+		int xMax = box.sizeX() - 1;
+		int yMax = box.sizeY() - 1;
+		int zMax = box.sizeZ() - 1;
+
+		fill(xMin, yMin, zMin, xMax, yMin, zMax, result);
+		fill(xMin, yMin, zMin, xMin, yMax, zMax, result);
+		fill(xMin, yMin, zMin, xMax, yMax, zMin, result);
+		fill(xMax, yMin, zMin, xMax, yMax, zMax, result);
+		fill(xMin, yMin, zMax, xMax, yMax, zMax, result);
+		fill(xMin, yMax, zMin, xMax, yMax, zMax, result);
+
+		return new BptBuilderTemplate(result, world, box.xMin, box.yMin, box.zMin);
 	}
-
-	/*@Override
-	public boolean iteratePattern(TileEntity tile, IBox box, ItemStack stackToPlace) {
-		int xMin = (int) box.pMin().x;
-		int yMin = (int) box.pMin().y;
-		int zMin = (int) box.pMin().z;
-
-		int xMax = (int) box.pMax().x;
-		int yMax = (int) box.pMax().y;
-		int zMax = (int) box.pMax().z;
-
-		if (fill(xMin, yMin, zMin, xMax, yMin, zMax, stackToPlace, tile.getWorldObj()))
-			return false;
-
-		if (fill(xMin, yMin, zMin, xMin, yMax, zMax, stackToPlace, tile.getWorldObj()))
-			return false;
-
-		if (fill(xMin, yMin, zMin, xMax, yMax, zMin, stackToPlace, tile.getWorldObj()))
-			return false;
-
-		if (fill(xMax, yMin, zMin, xMax, yMax, zMax, stackToPlace, tile.getWorldObj()))
-			return false;
-
-		if (fill(xMin, yMin, zMax, xMax, yMax, zMax, stackToPlace, tile.getWorldObj()))
-			return false;
-
-		if (fill(xMin, yMax, zMin, xMax, yMax, zMax, stackToPlace, tile.getWorldObj()))
-			return false;
-
-		return true;
-	}*/
 }

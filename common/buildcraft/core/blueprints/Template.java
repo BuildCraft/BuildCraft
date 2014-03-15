@@ -9,13 +9,12 @@
 package buildcraft.core.blueprints;
 
 import net.minecraft.block.Block;
-import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import buildcraft.BuildCraftBuilders;
 import buildcraft.api.blueprints.IBuilderContext;
-import buildcraft.api.blueprints.SchematicRegistry;
+import buildcraft.api.blueprints.SchematicMask;
 import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.core.utils.NBTUtils;
 
@@ -40,7 +39,7 @@ public class Template extends BlueprintBase {
 		int posZ = (int) (z - context.surroundingBox().pMin().z);
 
 		if (!BuildCraftAPI.softBlocks.contains(block)) {
-			contents [posX][posY][posZ] = SchematicRegistry.newSchematic(Blocks.stone);
+			contents [posX][posY][posZ] = new SchematicMask(true);
 		}
 	}
 
@@ -74,7 +73,7 @@ public class Template extends BlueprintBase {
 			for (int y = 0; y < sizeY; ++y) {
 				for (int z = 0; z < sizeZ; ++z) {
 					if (data [ind] == 1) {
-						contents [x][y][z] = SchematicRegistry.newSchematic(Blocks.stone);
+						contents [x][y][z] = new SchematicMask(true);
 					}
 
 					ind++;

@@ -11,10 +11,10 @@ package buildcraft.api.schematics;
 import java.util.LinkedList;
 
 import net.minecraft.item.ItemStack;
-import buildcraft.api.blueprints.Schematic;
+import buildcraft.api.blueprints.SchematicBlock;
 import buildcraft.api.blueprints.IBuilderContext;
 
-public class SchematicCustomStack extends Schematic {
+public class SchematicCustomStack extends SchematicBlock {
 
 	final ItemStack customStack;
 

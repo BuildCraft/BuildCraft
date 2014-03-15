@@ -11,10 +11,10 @@ package buildcraft.api.schematics;
 import java.util.LinkedList;
 
 import net.minecraft.item.ItemStack;
-import buildcraft.api.blueprints.Schematic;
+import buildcraft.api.blueprints.SchematicBlock;
 import buildcraft.api.blueprints.IBuilderContext;
 
-public class SchematicWallSide extends Schematic {
+public class SchematicWallSide extends SchematicBlock {
 
 	@Override
 	public void addRequirements(IBuilderContext context, LinkedList<ItemStack> requirements) {

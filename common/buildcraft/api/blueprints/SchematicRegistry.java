@@ -33,7 +33,7 @@ public class SchematicRegistry {
 		schematicClasses.put(block, c);
 	}
 
-	public static Schematic newSchematic (Block block) {
+	public static SchematicBlock newSchematic (Block block) {
 		if (block == Blocks.air) {
 			return null;
 		}
@@ -42,29 +42,24 @@ public class SchematicRegistry {
 			if (block instanceof BlockContainer) {
 				registerSchematicClass(block, SchematicTile.class);
 			} else {
-				registerSchematicClass(block, Schematic.class);
+				registerSchematicClass(block, SchematicBlock.class);
 			}
 		}
 
 		try {
 			SchematicConstructor c = schematicClasses.get(block);
-			Schematic s = (Schematic) c.clas.getConstructors() [0].newInstance(c.params);
+			SchematicBlock s = (SchematicBlock) c.clas.getConstructors() [0].newInstance(c.params);
 			s.block = block;
 			return s;
 		} catch (InstantiationException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IllegalArgumentException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (InvocationTargetException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (SecurityException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 

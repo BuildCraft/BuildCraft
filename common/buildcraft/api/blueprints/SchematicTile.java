@@ -13,7 +13,7 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 
-public class SchematicTile extends Schematic {
+public class SchematicTile extends SchematicBlock {
 
 	/**
 	 * This tree contains additional data to be stored in the blueprint. By
@@ -25,7 +25,7 @@ public class SchematicTile extends Schematic {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public Schematic clone() {
+	public SchematicBlock clone() {
 		SchematicTile s = (SchematicTile) super.clone();
 
 		s.cpt = (NBTTagCompound) cpt.copy();

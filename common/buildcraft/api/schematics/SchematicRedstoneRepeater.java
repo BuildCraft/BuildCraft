@@ -12,10 +12,10 @@ import java.util.LinkedList;
 
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
-import buildcraft.api.blueprints.Schematic;
+import buildcraft.api.blueprints.SchematicBlock;
 import buildcraft.api.blueprints.IBuilderContext;
 
-public class SchematicRedstoneRepeater extends Schematic {
+public class SchematicRedstoneRepeater extends SchematicBlock {
 
 	@Override
 	public void addRequirements(IBuilderContext context, LinkedList<ItemStack> requirements) {

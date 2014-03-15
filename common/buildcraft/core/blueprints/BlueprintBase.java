@@ -10,7 +10,6 @@ package buildcraft.core.blueprints;
 
 import java.io.IOException;
 
-import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
@@ -19,7 +18,7 @@ import net.minecraft.world.World;
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.MappingRegistry;
 import buildcraft.api.blueprints.Schematic;
-import buildcraft.api.blueprints.SchematicRegistry;
+import buildcraft.api.blueprints.SchematicBlock;
 import buildcraft.builders.blueprints.BlueprintId;
 import buildcraft.core.Box;
 import buildcraft.core.Version;
@@ -50,14 +49,6 @@ public abstract class BlueprintBase {
 		anchorX = 0;
 		anchorY = 0;
 		anchorZ = 0;
-	}
-
-	public void setBlock(int x, int y, int z, Block block) {
-		if (contents[x][y][z] == null) {
-			contents[x][y][z] = SchematicRegistry.newSchematic(block);
-		}
-
-		contents[x][y][z].block = block;
 	}
 
 	public void rotateLeft(BptContext context) {
@@ -162,42 +153,6 @@ public abstract class BlueprintBase {
 	}
 
 	@Override
-	public boolean equals(Object o) {
-		if (o == null || !(o.getClass() != getClass())) {
-			return false;
-		}
-
-		BlueprintBase bpt = (BlueprintBase) o;
-
-		if (sizeX != bpt.sizeX || sizeY != bpt.sizeY || sizeZ != bpt.sizeZ
-				|| anchorX != bpt.anchorX || anchorY != bpt.anchorY
-				|| anchorZ != bpt.anchorZ) {
-			return false;
-		}
-
-		for (int x = 0; x < contents.length; ++x) {
-			for (int y = 0; y < contents[0].length; ++y) {
-				for (int z = 0; z < contents[0][0].length; ++z) {
-					if (contents[x][y][z] != null
-							&& bpt.contents[x][y][z] == null) {
-						return false;
-					} else if (contents[x][y][z] == null
-							&& bpt.contents[x][y][z] != null) {
-						return false;
-					} else if (contents[x][y][z] == null
-							&& bpt.contents[x][y][z] == null) {
-						continue;
-					} else if (contents[x][y][z].block != bpt.contents[x][y][z].block) {
-						return false;
-					}
-				}
-			}
-		}
-
-		return true;
-	}
-
-	@Override
 	public final BlueprintBase clone() {
 		BlueprintBase res = null;
 
@@ -224,7 +179,7 @@ public abstract class BlueprintBase {
 		res.id = id;
 		res.author = author;
 
-		res.contents = new Schematic[sizeX][sizeY][sizeZ];
+		res.contents = new SchematicBlock[sizeX][sizeY][sizeZ];
 
 		res.mapping = mapping.clone ();
 

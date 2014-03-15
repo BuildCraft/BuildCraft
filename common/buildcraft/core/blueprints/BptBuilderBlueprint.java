@@ -20,7 +20,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldSettings.GameType;
-import buildcraft.api.blueprints.Schematic;
+import buildcraft.api.blueprints.SchematicBlock;
 import buildcraft.api.blueprints.SchematicToBuild;
 import buildcraft.api.blueprints.SchematicToBuild.Mode;
 import buildcraft.api.core.StackKey;
@@ -48,10 +48,10 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 					int yCoord = j + y - bluePrint.anchorY;
 					int zCoord = k + z - bluePrint.anchorZ;
 
-					Schematic slot = bluePrint.contents[i][j][k];
+					SchematicBlock slot = (SchematicBlock) bluePrint.contents[i][j][k];
 
 					if (slot == null) {
-						slot = new Schematic();
+						slot = new SchematicBlock();
 						slot.meta = 0;
 						slot.block = Blocks.air;
 					}
@@ -76,10 +76,10 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 					int yCoord = j + y - bluePrint.anchorY;
 					int zCoord = k + z - bluePrint.anchorZ;
 
-					Schematic slot = bluePrint.contents[i][j][k];
+					SchematicBlock slot = (SchematicBlock) bluePrint.contents[i][j][k];
 
 					if (slot == null) {
-						slot = new Schematic();
+						slot = new SchematicBlock();
 						slot.meta = 0;
 						slot.block = Blocks.air;
 					}
@@ -183,8 +183,8 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 					result = slot;
 
 					break;
-				} else if (checkRequirements(inv, slot.schematic)) {
-					useRequirements(inv, slot.schematic);
+				} else if (checkRequirements(inv, (SchematicBlock) slot.schematic)) {
+					useRequirements(inv, (SchematicBlock) slot.schematic);
 
 					result = slot;
 					break;
@@ -199,7 +199,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 		return result;
 	}
 
-	public boolean checkRequirements(IBuilderInventory inv, Schematic slot) {
+	public boolean checkRequirements(IBuilderInventory inv, SchematicBlock slot) {
 		if (slot.block == null) {
 			return true;
 		}
@@ -260,7 +260,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 		return true;
 	}
 
-	public void useRequirements(IBuilderInventory inv, Schematic slot) {
+	public void useRequirements(IBuilderInventory inv, SchematicBlock slot) {
 		if (slot.block == null) {
 			return;
 		}

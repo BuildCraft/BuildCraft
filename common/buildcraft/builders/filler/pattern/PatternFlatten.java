@@ -8,10 +8,9 @@
  */
 package buildcraft.builders.filler.pattern;
 
-import net.minecraft.init.Blocks;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
-import buildcraft.api.blueprints.SchematicRegistry;
+import buildcraft.api.blueprints.SchematicMask;
 import buildcraft.core.Box;
 import buildcraft.core.blueprints.BptBuilderTemplate;
 import buildcraft.core.blueprints.Template;
@@ -54,19 +53,11 @@ public class PatternFlatten extends FillerPattern {
 		for (int y = yMax; y >= yMin; --y) {
 			for (int x = xMin; x <= xMax && !found; ++x) {
 				for (int z = zMin; z <= zMax && !found; ++z) {
-					bpt.contents[x - xMin][y - yMin][z - zMin] = SchematicRegistry
-							.newSchematic(Blocks.stone);
+					bpt.contents[x - xMin][y - yMin][z - zMin] = new SchematicMask(true);
 				}
 			}
 		}
 
 		return new BptBuilderTemplate(bpt, world, box.xMin, 1, box.zMin);
 	}
-
-	/*@Override
-	public BptBuilderTemplate getBlueprint(Box box, World world,
-			) {
-		// TODO Auto-generated method stub
-		return null;
-	}*/
 }

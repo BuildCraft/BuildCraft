@@ -12,9 +12,9 @@ import java.util.LinkedList;
 
 import net.minecraft.item.ItemStack;
 import buildcraft.api.blueprints.IBuilderContext;
-import buildcraft.api.blueprints.Schematic;
+import buildcraft.api.blueprints.SchematicBlock;
 
-public class SchematicDoor extends Schematic {
+public class SchematicDoor extends SchematicBlock {
 
 	final ItemStack stack;
 
