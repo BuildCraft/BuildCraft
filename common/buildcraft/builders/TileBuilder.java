@@ -21,19 +21,17 @@ import net.minecraft.util.AxisAlignedBB;
 import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.BuildCraftBuilders;
 import buildcraft.api.blueprints.SchematicToBuild;
+import buildcraft.api.core.Position;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.gates.IAction;
-import buildcraft.api.power.IPowerReceptor;
-import buildcraft.api.power.PowerHandler;
-import buildcraft.api.power.PowerHandler.PowerReceiver;
-import buildcraft.api.power.PowerHandler.Type;
+import buildcraft.api.mj.MjBattery;
 import buildcraft.core.BlockIndex;
 import buildcraft.core.Box;
 import buildcraft.core.Box.Kind;
-import buildcraft.core.EntityLaser;
 import buildcraft.core.IBoxProvider;
 import buildcraft.core.IBuilderInventory;
 import buildcraft.core.IMachine;
+import buildcraft.core.LaserData;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.blueprints.Blueprint;
 import buildcraft.core.blueprints.BlueprintBase;
@@ -48,8 +46,7 @@ import buildcraft.core.network.RPCSide;
 import buildcraft.core.robots.EntityRobot;
 import buildcraft.core.utils.Utils;
 
-public class TileBuilder extends TileBuildCraft implements IBuilderInventory,
-		IPowerReceptor, IMachine, IBoxProvider {
+public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IMachine, IBoxProvider {
 
 	private final ItemStack items[] = new ItemStack[28];
 
@@ -58,17 +55,19 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory,
 	@NetworkData
 	public Box box = new Box();
 
-	private PowerHandler powerHandler;
-
 	private LinkedList<BlockIndex> path;
 
-	private LinkedList<EntityLaser> pathLasers;
+	@NetworkData
+	private LinkedList<LaserData> pathLasers;
 
 	private EntityRobot builderRobot;
 
 	private LinkedList <ItemStack> requiredToBuild;
 
 	private SafeTimeTracker debugBuildTracker = new SafeTimeTracker(5);
+
+	@MjBattery (maxReceivedPerCycle = 25)
+	public double mjStored = 0;
 
 	private class PathIterator {
 
@@ -192,9 +191,6 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory,
 	public TileBuilder() {
 		super();
 
-		powerHandler = new PowerHandler(this, Type.MACHINE);
-		powerHandler.configure(25, 25, 25, 25);
-
 		box.kind = Kind.STRIPES;
 	}
 
@@ -240,22 +236,20 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory,
 	}
 
 	public void createLasersForPath() {
-		/*pathLasers = new LinkedList<EntityLaser>();
+		pathLasers = new LinkedList<LaserData>();
 		BlockIndex previous = null;
 
 		for (BlockIndex b : path) {
 			if (previous != null) {
-				EntityPowerLaser laser = new EntityPowerLaser(worldObj, new Position(previous.i + 0.5, previous.j + 0.5, previous.k + 0.5), new Position(
+				LaserData laser = new LaserData(new Position(previous.x + 0.5,
+						previous.y + 0.5, previous.z + 0.5), new Position(
 						b.x + 0.5, b.y + 0.5, b.z + 0.5));
 
-				laser.setTexture(DefaultProps.TEXTURE_PATH_ENTITIES + "/laser_1.png");
-				laser.show();
-				worldObj.spawnEntityInWorld(laser);
 				pathLasers.add(laser);
 			}
 
 			previous = b;
-		}*/
+		}
 	}
 
 	public BptBuilderBase instanciateBluePrint(int x, int y, int z, ForgeDirection o) {
@@ -300,41 +294,6 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory,
 		}
 
 		return result;
-	}
-
-	@Override
-	public void doWork(PowerHandler workProvider) {
-		if (worldObj.isRemote) {
-			return;
-		}
-
-		if (done) {
-			return;
-		//}// else if (builderRobot != null && !builderRobot.readyToBuild()) {
-		//	return;
-		} else if (powerHandler.useEnergy(25, 25, true) < 25) {
-			return;
-		}
-
-		iterateBpt();
-
-		/* Temp fix to make Builders impotent as the World Destroyers they are
-		if (bluePrintBuilder != null && !bluePrintBuilder.done) {
-			if (!box.isInitialized()) {
-				box.initialize(bluePrintBuilder);
-			}
-
-			if (builderRobot == null) {
-				builderRobot = new EntityRobot(worldObj, box);
-				worldObj.spawnEntityInWorld(builderRobot);
-			}
-
-			box.createLasers(worldObj, LaserKind.Stripes);
-
-			builderRobot.scheduleContruction(bluePrintBuilder.getNextBlock(worldObj, new SurroundingInventory(worldObj, xCoord, yCoord, zCoord)),
-					bluePrintBuilder.getContext());
-		}
-		*/
 	}
 
 	public void iterateBpt() {
@@ -543,8 +502,6 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory,
 			builderRobot.setDead();
 			builderRobot = null;
 		}
-
-		cleanPathLasers();
 	}
 
 	@Override
@@ -579,9 +536,42 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory,
 			builderRobot = null;
 		}
 
-		if (!worldObj.isRemote) {
-			debugForceBlueprintCompletion();
+		if (worldObj.isRemote) {
+			return;
 		}
+
+		iterateBpt();
+		debugForceBlueprintCompletion();
+
+		if (done) {
+			return;
+		//}// else if (builderRobot != null && !builderRobot.readyToBuild()) {
+		//	return;
+		} else if (mjStored < 25) {
+			return;
+		}
+
+
+
+		/* Temp fix to make Builders impotent as the World Destroyers they are
+		if (bluePrintBuilder != null && !bluePrintBuilder.done) {
+			if (!box.isInitialized()) {
+				box.initialize(bluePrintBuilder);
+			}
+
+			if (builderRobot == null) {
+				builderRobot = new EntityRobot(worldObj, box);
+				worldObj.spawnEntityInWorld(builderRobot);
+			}
+
+			box.createLasers(worldObj, LaserKind.Stripes);
+
+			builderRobot.scheduleContruction(bluePrintBuilder.getNextBlock(worldObj, new SurroundingInventory(worldObj, xCoord, yCoord, zCoord)),
+					bluePrintBuilder.getContext());
+		}
+		*/
+
+		mjStored = 0;
 	}
 
 	@Override
@@ -597,16 +587,6 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory,
 	@Override
 	public boolean manageSolids() {
 		return true;
-	}
-
-	public void cleanPathLasers() {
-		if (pathLasers != null) {
-			for (EntityLaser laser : pathLasers) {
-				laser.setDead();
-			}
-
-			pathLasers = null;
-		}
 	}
 
 	public boolean isBuildingBlueprint() {
@@ -672,11 +652,6 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory,
 	@Override
 	public AxisAlignedBB getRenderBoundingBox() {
 		return new Box (this).extendToEncompass(box).getBoundingBox();
-	}
-
-	@Override
-	public PowerReceiver getPowerReceiver(ForgeDirection side) {
-		return powerHandler.getPowerReceiver();
 	}
 
 	public void debugForceBlueprintCompletion () {

@@ -48,11 +48,13 @@ public class BlockBuilder extends BlockContainer {
 
 	@Override
 	public IIcon getIcon(int i, int j) {
-		if (j == 0 && i == 3)
+		if (j == 0 && i == 3) {
 			return blockTextureFront;
+		}
 
-		if (i == j)
+		if (i == j) {
 			return blockTextureFront;
+		}
 
 		switch (i) {
 			case 1:
@@ -66,8 +68,9 @@ public class BlockBuilder extends BlockContainer {
 	public boolean onBlockActivated(World world, int i, int j, int k, EntityPlayer entityplayer, int par6, float par7, float par8, float par9) {
 
 		// Drop through if the player is sneaking
-		if (entityplayer.isSneaking())
+		if (entityplayer.isSneaking()) {
 			return false;
+		}
 
 		Item equipped = entityplayer.getCurrentEquippedItem() != null ? entityplayer.getCurrentEquippedItem().getItem() : null;
 		if (equipped instanceof IToolWrench && ((IToolWrench) equipped).canWrench(entityplayer, i, j, k)) {
@@ -92,14 +95,14 @@ public class BlockBuilder extends BlockContainer {
 
 			world.markBlockForUpdate(i, j, k);
 			((IToolWrench) equipped).wrenchUsed(entityplayer, i, j, k);
+
 			return true;
 		} else {
-
 			if (!world.isRemote) {
 				entityplayer.openGui(BuildCraftBuilders.instance, GuiIds.BUILDER, world, i, j, k);
 			}
-			return true;
 
+			return true;
 		}
 	}
 

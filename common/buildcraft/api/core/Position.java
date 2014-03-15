@@ -11,10 +11,14 @@ package buildcraft.api.core;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
+import buildcraft.core.network.NetworkData;
 
 public class Position {
 
+	@NetworkData
 	public double x, y, z;
+
+	@NetworkData
 	public ForgeDirection orientation;
 
 	public Position(double ci, double cj, double ck) {

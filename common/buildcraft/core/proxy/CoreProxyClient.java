@@ -30,10 +30,8 @@ import buildcraft.BuildCraftCore;
 import buildcraft.api.core.LaserKind;
 import buildcraft.core.EntityBlock;
 import buildcraft.core.EntityEnergyLaser;
-import buildcraft.core.EntityPowerLaser;
 import buildcraft.core.render.RenderEnergyLaser;
 import buildcraft.core.render.RenderEntityBlock;
-import buildcraft.core.render.RenderLaser;
 import buildcraft.core.render.RenderRobot;
 import buildcraft.core.render.RenderingEntityBlocks;
 import buildcraft.core.render.RenderingMarkers;
@@ -73,16 +71,18 @@ public class CoreProxyClient extends CoreProxy {
 	@SuppressWarnings("rawtypes")
 	@Override
 	public void feedSubBlocks(Block block, CreativeTabs tab, List itemList) {
-		if (block == null)
+		if (block == null) {
 			return;
+		}
 
 		block.getSubBlocks(Item.getItemFromBlock(block), tab, itemList);
 	}
 
 	@Override
 	public String getItemDisplayName(ItemStack stack) {
-		if (stack.getItem() == null)
+		if (stack.getItem() == null) {
 			return "";
+		}
 
 		return stack.getDisplayName();
 	}
@@ -111,7 +111,6 @@ public class CoreProxyClient extends CoreProxy {
 	@Override
 	public void initializeEntityRendering() {
 		RenderingRegistry.registerEntityRenderingHandler(EntityBlock.class, RenderEntityBlock.INSTANCE);
-		RenderingRegistry.registerEntityRenderingHandler(EntityPowerLaser.class, new RenderLaser());
 		RenderingRegistry.registerEntityRenderingHandler(EntityEnergyLaser.class, new RenderEnergyLaser());
 		RenderingRegistry.registerEntityRenderingHandler(EntityRobot.class, new RenderRobot());
 		RenderingRegistry.registerEntityRenderingHandler(EntityRobotBuilder.class, new RenderRobot());

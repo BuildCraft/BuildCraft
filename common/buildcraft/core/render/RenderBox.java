@@ -27,7 +27,7 @@ public class RenderBox {
 		for (LaserData l : box.lasersData) {
 			l.update();
 			GL11.glPushMatrix();
-			GL11.glTranslated(l.head.x + 0.5F, l.head.y + 0.5F, l.head.z + 0.5F);
+			GL11.glTranslated(0.5F, 0.5F, 0.5F);
 			RenderLaser.doRenderLaser(t, l, texture);
 			GL11.glPopMatrix();
 		}

@@ -99,8 +99,9 @@ public class RenderLaser extends Render {
 	}
 
 	private void doRender(EntityLaser laser, double x, double y, double z, float f, float f1) {
-		if (!laser.isVisible() || laser.getTexture() == null)
+		if (!laser.isVisible() || laser.getTexture() == null) {
 			return;
+		}
 
 		GL11.glPushMatrix();
 		GL11.glPushAttrib(GL11.GL_ENABLE_BIT);
@@ -166,6 +167,7 @@ public class RenderLaser extends Render {
 
 		GL11.glPushMatrix();
 
+		GL11.glTranslated(laser.head.x, laser.head.y, laser.head.z);
 		laser.update();
 
 		GL11.glRotatef((float) laser.angleZ, 0, 1, 0);

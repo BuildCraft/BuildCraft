@@ -10,13 +10,18 @@ package buildcraft.core;
 
 import net.minecraft.nbt.NBTTagCompound;
 import buildcraft.api.core.Position;
+import buildcraft.core.network.NetworkData;
 
 public class LaserData {
+	@NetworkData
 	public Position head = new Position (0, 0, 0), tail = new Position(0, 0, 0);
+
+	@NetworkData
+	public boolean isVisible = true;
+
 	public double renderSize = 0;
 	public double angleY = 0;
 	public double angleZ = 0;
-	public boolean isVisible = true;
 
 	public double wavePosition = 0;
 	public int laserTexAnimation = 0;
