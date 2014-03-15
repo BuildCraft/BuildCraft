@@ -12,6 +12,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.core.Box;
 import buildcraft.core.blueprints.BptBuilderTemplate;
+import buildcraft.core.blueprints.Template;
 
 public class PatternCylinder extends FillerPattern {
 
@@ -19,16 +20,19 @@ public class PatternCylinder extends FillerPattern {
 		super("cylinder");
 	}
 
-	/*@Override
-	public boolean iteratePattern(TileEntity tile, IBox box,
-			ItemStack stackToPlace) {
-		int xMin = (int) box.pMin().x;
-		int yMin = (int) box.pMin().y;
-		int zMin = (int) box.pMin().z;
 
-		int xMax = (int) box.pMax().x;
-		int yMax = (int) box.pMax().y;
-		int zMax = (int) box.pMax().z;
+	@Override
+	public BptBuilderTemplate getBlueprint(Box box, World world,
+			ForgeDirection orientation) {
+		Template result = new Template (box.sizeX(), box.sizeY(), box.sizeZ());
+
+		int xMin = 0;
+		int yMin = 0;
+		int zMin = 0;
+
+		int xMax = box.sizeX() - 1;
+		int yMax = box.sizeY() - 1;
+		int zMax = box.sizeZ() - 1;
 
 		int xFix = (xMax - xMin) % 2;
 		int zFix = (zMax - zMin) % 2;
@@ -42,8 +46,7 @@ public class PatternCylinder extends FillerPattern {
 		int zRadius = (zMax - zMin) / 2;
 
 		if (xRadius == 0 || zRadius == 0) {
-			return !fill(xMin, yMin, zMin, xMax, yMax, zMax, stackToPlace,
-					tile.getWorldObj());
+			fill(xMin, yMin, zMin, xMax, yMax, zMax, result);
 		}
 
 		int dx = xRadius, dz = 0;
@@ -56,10 +59,9 @@ public class PatternCylinder extends FillerPattern {
 		int stoppingZ = 0;
 
 		while (stoppingX >= stoppingZ) {
-			if (!fillFourColumns(xCenter, zCenter, dx, dz, xFix, zFix, yMin,
-					yMax, stackToPlace, tile.getWorldObj())) {
-				return false;
-			}
+			fillFourColumns(xCenter, zCenter, dx, dz, xFix, zFix, yMin,
+					yMax, result);
+
 			++dz;
 			stoppingZ += twoASquare;
 			ellipseError += zChange;
@@ -81,10 +83,9 @@ public class PatternCylinder extends FillerPattern {
 		stoppingZ = twoASquare * zRadius;
 
 		while (stoppingX <= stoppingZ) {
-			if (!fillFourColumns(xCenter, zCenter, dx, dz, xFix, zFix, yMin,
-					yMax, stackToPlace, tile.getWorldObj())) {
-				return false;
-			}
+			fillFourColumns(xCenter, zCenter, dx, dz, xFix, zFix, yMin,
+					yMax, result);
+
 			++dx;
 			stoppingX += twoBSquare;
 			ellipseError += xChange;
@@ -97,45 +98,30 @@ public class PatternCylinder extends FillerPattern {
 			}
 		}
 
-		return true;
+		return new BptBuilderTemplate(result, world, box.xMin, box.yMin, box.zMin);
 	}
 
 	private boolean fillFourColumns(int xCenter, int zCenter, int dx, int dz,
-			int xFix, int zFix, int yMin, int yMax, ItemStack stackToPlace,
-			World world) {
+			int xFix, int zFix, int yMin, int yMax, Template template) {
 		int x, z;
 
 		x = xCenter + dx + xFix;
 		z = zCenter + dz + zFix;
-		if (fill(x, yMin, z, x, yMax, z, stackToPlace, world)) {
-			return false;
-		}
+		fill(x, yMin, z, x, yMax, z, template);
 
 		x = xCenter - dx;
 		z = zCenter + dz + zFix;
-		if (fill(x, yMin, z, x, yMax, z, stackToPlace, world)) {
-			return false;
-		}
+		fill(x, yMin, z, x, yMax, z, template);
 
 		x = xCenter - dx;
 		z = zCenter - dz;
-		if (fill(x, yMin, z, x, yMax, z, stackToPlace, world)) {
-			return false;
-		}
+		fill(x, yMin, z, x, yMax, z, template);
 
 		x = xCenter + dx + xFix;
 		z = zCenter - dz;
-		if (fill(x, yMin, z, x, yMax, z, stackToPlace, world)) {
-			return false;
-		}
+		fill(x, yMin, z, x, yMax, z, template);
 
 		return true;
-	}*/
-
-	@Override
-	public BptBuilderTemplate getBlueprint(Box box, World world,
-			ForgeDirection orientation) {
-		return null;
 	}
 
 }
