@@ -613,10 +613,9 @@ public class BlockGenericPipe extends BlockBuildCraft {
  +		                    Block block = matrix.getFacadeBlock(dir);
  +		                    if(block != null)
  +		                        return ItemFacade.getStack(block, matrix.getFacadeMetaId(dir));
- +		                    else return null;
 			}
 		}
-		return super.getPickBlock(target, world, x, y, z);
+		return null;
 	}
 
 	/* Wrappers ************************************************************ */
