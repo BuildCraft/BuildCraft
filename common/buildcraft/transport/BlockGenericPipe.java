@@ -648,7 +648,10 @@ public class BlockGenericPipe extends BlockBuildCraft {
 		                case Facade:
 		                    ForgeDirection dir = ForgeDirection.getOrientation(target.sideHit);
 		                    FacadeMatrix matrix = getPipe(world, x, y, z).container.renderState.facadeMatrix;
-		                    return ItemFacade.getStack(matrix.getFacadeBlock(dir), matrix.getFacadeMetaId(dir));
+		                    Block block = matrix.getFacadeBlock(dir);
+		                    if(block != null)
+		                        return ItemFacade.getStack(block, matrix.getFacadeMetaId(dir));
+		                    else return null;
 			}
 		}
 		return super.getPickBlock(target, world, x, y, z);
