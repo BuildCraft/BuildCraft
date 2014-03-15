@@ -9,6 +9,7 @@
 package buildcraft.builders;
 
 import buildcraft.BuildCraftBuilders;
+import buildcraft.BuildCraftCore;
 import buildcraft.api.filler.IFillerPattern;
 import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.GuiIds;
@@ -16,6 +17,7 @@ import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import ibxm.Player;
 
 import java.util.ArrayList;
 
@@ -23,6 +25,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;

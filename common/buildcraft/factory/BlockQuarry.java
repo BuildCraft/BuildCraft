@@ -8,6 +8,7 @@
  */
 package buildcraft.factory;
 
+import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftFactory;
 import buildcraft.api.core.Position;
 import buildcraft.api.tools.IToolWrench;
