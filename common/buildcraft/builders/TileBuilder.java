@@ -58,7 +58,7 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IM
 	private LinkedList<BlockIndex> path;
 
 	@NetworkData
-	private LinkedList<LaserData> pathLasers;
+	public LinkedList<LaserData> pathLasers = new LinkedList<LaserData> ();
 
 	private EntityRobot builderRobot;
 
@@ -224,12 +224,14 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IM
 			}
 		}
 
-		if (path != null && pathLasers == null) {
+		if (path != null && pathLasers.size() == 0) {
 			path.getFirst().x = xCoord;
 			path.getFirst().y = yCoord;
 			path.getFirst().z = zCoord;
 
 			createLasersForPath();
+
+			sendNetworkUpdate();
 		}
 
 		iterateBpt();
