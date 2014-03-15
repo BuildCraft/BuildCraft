@@ -8,6 +8,7 @@
  */
 package buildcraft.transport.pipes;
 
+import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
@@ -62,21 +63,17 @@ public class PipeItemsStripes extends Pipe {
 	}*/
 
 	public void eventHandler(PipeEventItem.DropItem event) {
-		System.out.println ("EVENT " + event.direction);
-
 		Position p = new Position(container.xCoord, container.yCoord,
-				container.zCoord, ForgeDirection.UP);
+				container.zCoord, event.direction);
 		Position from = new Position (p);
 		p.moveForwards(1.0);
 
-		 //if (getWorld().getBlock((int) p.x, (int) p.y, (int) p.z) == Blocks.air) {
-			 System.out.println ("TRY PLACE");
-
+		if (getWorld().getBlock((int) p.x, (int) p.y, (int) p.z) == Blocks.air) {
 			event.entity.getEntityItem().tryPlaceItemIntoWorld(
 					CoreProxy.proxy.getBuildCraftPlayer(getWorld()),
-					getWorld(),
-					(int) p.x, (int) p.y - 1, (int) p.z, 1, 0.0f, 0.0f, 0.0f);
-		//}
+					getWorld(), (int) p.x, (int) p.y, (int) p.z, 1, 0.0f, 0.0f,
+					0.0f);
+		}
 
 		/*if (convertPipe(pipe, data)) {
 			BuildCraftTransport.pipeItemsStipes.onItemUse(new ItemStack(

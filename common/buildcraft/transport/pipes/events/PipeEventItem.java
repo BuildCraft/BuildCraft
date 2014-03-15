@@ -59,13 +59,10 @@ public abstract class PipeEventItem extends PipeEvent {
 			super(item);
 			this.entity = entity;
 
-			System.out.println ("OUTPUT = " + item.output);
-			System.out.println ("INPUT = " + item.output);
-
 			if (item.output != ForgeDirection.UNKNOWN) {
 				this.direction = item.output;
 			} else {
-				this.direction = item.input.getOpposite();
+				this.direction = item.input;
 			}
 		}
 	}
