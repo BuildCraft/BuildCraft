@@ -605,6 +605,15 @@ public class BlockGenericPipe extends BlockBuildCraft {
 					return pipe.gate.getGateItem();
 				case Plug:
 					return new ItemStack(BuildCraftTransport.plugItem);
+				case Pipe:
+ +                    			return new ItemStack(getPipe(world, x, y, z).item);
+ +		                case Facade:
+ +		                    ForgeDirection dir = ForgeDirection.getOrientation(target.sideHit);
+ +		                    FacadeMatrix matrix = getPipe(world, x, y, z).container.renderState.facadeMatrix;
+ +		                    Block block = matrix.getFacadeBlock(dir);
+ +		                    if(block != null)
+ +		                        return ItemFacade.getStack(block, matrix.getFacadeMetaId(dir));
+ +		                    else return null;
 			}
 		}
 		return super.getPickBlock(target, world, x, y, z);
@@ -1076,7 +1085,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 	 * the particles. Useful when you have entirely different texture sheets for
 	 * different sides/locations in the world.
 	 *
-	 * @param world The current world
+	 * @param worldObj The current world
 	 * @param target The target the player is looking at {x/y/z/side/sub}
 	 * @param effectRenderer A reference to the current effect renderer.
 	 * @return True to prevent vanilla digging particles form spawning.
@@ -1139,7 +1148,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 	 * your block. So be sure to do proper sanity checks before assuming that
 	 * the location is this block.
 	 *
-	 * @param world The current world
+	 * @param worldObj The current world
 	 * @param x X position to spawn the particle
 	 * @param y Y position to spawn the particle
 	 * @param z Z position to spawn the particle
