@@ -51,6 +51,7 @@ import buildcraft.core.utils.Utils;
 import buildcraft.transport.gates.GateDefinition;
 import buildcraft.transport.gates.GateFactory;
 import buildcraft.transport.gates.ItemGate;
+import buildcraft.transport.utils.FacadeMatrix;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -600,19 +601,22 @@ public class BlockGenericPipe extends BlockBuildCraft {
 
 		if (rayTraceResult != null && rayTraceResult.boundingBox != null) {
 			switch (rayTraceResult.hitPart) {
-				case Gate:
+			case Gate:
 					Pipe pipe = getPipe(world, x, y, z);
 					return pipe.gate.getGateItem();
-				case Plug:
+			case Plug:
 					return new ItemStack(BuildCraftTransport.plugItem);
-				case Pipe:
- +                    			return new ItemStack(getPipe(world, x, y, z).item);
- +		                case Facade:
- +		                    ForgeDirection dir = ForgeDirection.getOrientation(target.sideHit);
- +		                    FacadeMatrix matrix = getPipe(world, x, y, z).container.renderState.facadeMatrix;
- +		                    Block block = matrix.getFacadeBlock(dir);
- +		                    if(block != null)
- +		                        return ItemFacade.getStack(block, matrix.getFacadeMetaId(dir));
+			case Pipe:
+				return new ItemStack(getPipe(world, x, y, z).item);
+			case Facade:
+				ForgeDirection dir = ForgeDirection
+						.getOrientation(target.sideHit);
+				FacadeMatrix matrix = getPipe(world, x, y, z).container.renderState.facadeMatrix;
+				Block block = matrix.getFacadeBlock(dir);
+				if (block != null) {
+					return ItemFacade.getStack(block,
+							matrix.getFacadeMetaId(dir));
+				}
 			}
 		}
 		return null;
