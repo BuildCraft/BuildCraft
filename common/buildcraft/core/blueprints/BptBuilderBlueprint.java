@@ -128,7 +128,6 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 			checkDone();
 
 			if (slot != null) {
-				postProcessing.add(slot);
 				return slot;
 			}
 		}
@@ -138,7 +137,6 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 			checkDone();
 
 			if (slot != null) {
-				postProcessing.add(slot);
 				return slot;
 			}
 		}
@@ -155,6 +153,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 
 		while (list.size() > 0) {
 			SchematicToBuild slot = list.removeFirst();
+			postProcessing.add(slot);
 
 			boolean getNext = false;
 

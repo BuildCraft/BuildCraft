@@ -27,6 +27,11 @@ public class SchematicPortal extends SchematicBlock {
 	}
 
 	@Override
+	public boolean isValid(IBuilderContext context, int x, int y, int z) {
+		return true;
+	}
+
+	@Override
 	public void postProcessing(IBuilderContext context, int x, int y, int z) {
 		context.world().setBlock(x, y, z, Blocks.portal);
 	}
