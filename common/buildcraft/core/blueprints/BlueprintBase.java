@@ -18,7 +18,6 @@ import net.minecraft.world.World;
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.MappingRegistry;
 import buildcraft.api.blueprints.Schematic;
-import buildcraft.api.blueprints.SchematicBlock;
 import buildcraft.builders.blueprints.BlueprintId;
 import buildcraft.core.Box;
 import buildcraft.core.Version;
@@ -179,7 +178,7 @@ public abstract class BlueprintBase {
 		res.id = id;
 		res.author = author;
 
-		res.contents = new SchematicBlock[sizeX][sizeY][sizeZ];
+		res.contents = new Schematic [sizeX][sizeY][sizeZ];
 
 		res.mapping = mapping.clone ();
 

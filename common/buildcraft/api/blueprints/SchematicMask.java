@@ -21,11 +21,7 @@ public class SchematicMask extends Schematic {
 
 	@Override
 	public Schematic clone() {
-		Schematic obj = super.clone();
-
-		((SchematicMask) obj).isConcrete = isConcrete;
-
-		return obj;
+		return new SchematicMask(isConcrete);
 	}
 
 	@Override

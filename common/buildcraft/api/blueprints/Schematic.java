@@ -43,6 +43,7 @@ public class Schematic {
 	@Override
 	public Schematic clone() {
 		Schematic obj;
+
 		try {
 			obj = (Schematic) super.clone();
 		} catch (CloneNotSupportedException e) {
