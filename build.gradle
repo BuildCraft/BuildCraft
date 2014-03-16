@@ -29,7 +29,7 @@ if (System.getenv().BUILD_NUMBER)
 else
     logger.lifecycle "SETTING BUILDNUMBER TO 0"
 
-version = "6.0.1"
+version = "6.0.2"
 group= "com.mod-buildcraft"
 archivesBaseName = "buildcraft" // the name that all artifacts will use as a base. artifacts names follow this pattern: [baseName]-[appendix]-[version]-[classifier].[extension]
 
