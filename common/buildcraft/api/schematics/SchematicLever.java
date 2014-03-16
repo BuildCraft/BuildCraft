@@ -8,17 +8,9 @@
  */
 package buildcraft.api.schematics;
 
-import java.util.LinkedList;
-
-import net.minecraft.item.ItemStack;
 import buildcraft.api.blueprints.IBuilderContext;
 
 public class SchematicLever extends SchematicWallSide {
-
-	@Override
-	public void addRequirements(IBuilderContext context, LinkedList<ItemStack> requirements) {
-		//requirements.add(new ItemStack(slot.blockId, 1, 0));
-	}
 
 	@Override
 	public void rotateLeft(IBuilderContext context) {

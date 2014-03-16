@@ -211,7 +211,7 @@ public class BuildCraftBuilders extends BuildCraftMod {
 		SchematicRegistry.registerSchematicClass(Blocks.acacia_stairs, SchematicStairs.class);
 		SchematicRegistry.registerSchematicClass(Blocks.dark_oak_stairs, SchematicStairs.class);
 
-		SchematicRegistry.registerSchematicClass(Blocks.wooden_button, SchematicDoor.class, new ItemStack(Items.wooden_door));
+		SchematicRegistry.registerSchematicClass(Blocks.wooden_door, SchematicDoor.class, new ItemStack(Items.wooden_door));
 		SchematicRegistry.registerSchematicClass(Blocks.iron_door, SchematicDoor.class, new ItemStack(Items.iron_door));
 
 		SchematicRegistry.registerSchematicClass(Blocks.bed, SchematicBed.class);
