@@ -172,16 +172,6 @@ public class SchematicBlock extends Schematic {
 		}
 	}
 
-	/**
-	 * Called on a block when the blueprint has finished to place all the
-	 * blocks. This may be useful to adjust variable depending on surrounding
-	 * blocks that may not be there already at initial building.
-	 */
-	@Override
-	public void postProcessing(IBuilderContext context) {
-
-	}
-
 	@Override
 	public void writeToNBT(NBTTagCompound nbt, MappingRegistry registry) {
 		nbt.setInteger("blockId", registry.getIdForBlock(block));

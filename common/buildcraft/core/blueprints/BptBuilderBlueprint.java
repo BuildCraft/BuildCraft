@@ -33,8 +33,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 	LinkedList<SchematicToBuild> clearList = new LinkedList<SchematicToBuild>();
 	LinkedList<SchematicToBuild> primaryList = new LinkedList<SchematicToBuild>();
 	LinkedList<SchematicToBuild> secondaryList = new LinkedList<SchematicToBuild>();
-
-	LinkedList<SchematicToBuild> postProcessingList = new LinkedList<SchematicToBuild>();
+	LinkedList<SchematicToBuild> postProcessing = new LinkedList<SchematicToBuild>();
 
 	public LinkedList <ItemStack> neededItems = new LinkedList <ItemStack> ();
 
@@ -96,10 +95,6 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 					} else {
 						secondaryList.add(b);
 					}
-
-					if (slot.block != null) {
-						postProcessingList.add(b);
-					}
 				}
 			}
 		}
@@ -133,6 +128,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 			checkDone();
 
 			if (slot != null) {
+				postProcessing.add(slot);
 				return slot;
 			}
 		}
@@ -142,6 +138,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 			checkDone();
 
 			if (slot != null) {
+				postProcessing.add(slot);
 				return slot;
 			}
 		}
@@ -151,7 +148,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 		return null;
 	}
 
-	public SchematicToBuild internalGetNextBlock(World world, IBuilderInventory inv, LinkedList<SchematicToBuild> list) {
+	private SchematicToBuild internalGetNextBlock(World world, IBuilderInventory inv, LinkedList<SchematicToBuild> list) {
 		LinkedList<SchematicToBuild> failSlots = new LinkedList<SchematicToBuild>();
 
 		SchematicToBuild result = null;
@@ -442,9 +439,9 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 
 	@Override
 	public void postProcessing(World world) {
-		for (SchematicToBuild s : postProcessingList) {
+		for (SchematicToBuild s : postProcessing) {
 			try {
-				s.schematic.postProcessing(context);
+				s.schematic.postProcessing(context,  s.x, s.y, s.z);
 			} catch (Throwable t) {
 				// Defensive code against errors in implementers
 				t.printStackTrace();

@@ -21,23 +21,6 @@ import buildcraft.api.blueprints.SchematicRegistry;
 import buildcraft.api.filler.FillerManager;
 import buildcraft.api.filler.IFillerPattern;
 import buildcraft.api.gates.ActionManager;
-import buildcraft.api.schematics.SchematicBed;
-import buildcraft.api.schematics.SchematicCustomStack;
-import buildcraft.api.schematics.SchematicDirt;
-import buildcraft.api.schematics.SchematicDoor;
-import buildcraft.api.schematics.SchematicFluid;
-import buildcraft.api.schematics.SchematicIgnore;
-import buildcraft.api.schematics.SchematicIgnoreMeta;
-import buildcraft.api.schematics.SchematicInventory;
-import buildcraft.api.schematics.SchematicLever;
-import buildcraft.api.schematics.SchematicPiston;
-import buildcraft.api.schematics.SchematicPumpkin;
-import buildcraft.api.schematics.SchematicRedstoneRepeater;
-import buildcraft.api.schematics.SchematicRotateInventory;
-import buildcraft.api.schematics.SchematicRotateMeta;
-import buildcraft.api.schematics.SchematicSign;
-import buildcraft.api.schematics.SchematicStairs;
-import buildcraft.api.schematics.SchematicWallSide;
 import buildcraft.builders.BlockArchitect;
 import buildcraft.builders.BlockBlueprintLibrary;
 import buildcraft.builders.BlockBuilder;
@@ -66,6 +49,24 @@ import buildcraft.builders.filler.pattern.PatternFlatten;
 import buildcraft.builders.filler.pattern.PatternHorizon;
 import buildcraft.builders.filler.pattern.PatternPyramid;
 import buildcraft.builders.filler.pattern.PatternStairs;
+import buildcraft.builders.schematics.SchematicBed;
+import buildcraft.builders.schematics.SchematicCustomStack;
+import buildcraft.builders.schematics.SchematicDirt;
+import buildcraft.builders.schematics.SchematicDoor;
+import buildcraft.builders.schematics.SchematicFluid;
+import buildcraft.builders.schematics.SchematicIgnore;
+import buildcraft.builders.schematics.SchematicIgnoreMeta;
+import buildcraft.builders.schematics.SchematicInventory;
+import buildcraft.builders.schematics.SchematicLever;
+import buildcraft.builders.schematics.SchematicPiston;
+import buildcraft.builders.schematics.SchematicPortal;
+import buildcraft.builders.schematics.SchematicPumpkin;
+import buildcraft.builders.schematics.SchematicRedstoneRepeater;
+import buildcraft.builders.schematics.SchematicRotateInventory;
+import buildcraft.builders.schematics.SchematicRotateMeta;
+import buildcraft.builders.schematics.SchematicSign;
+import buildcraft.builders.schematics.SchematicStairs;
+import buildcraft.builders.schematics.SchematicWallSide;
 import buildcraft.builders.triggers.ActionFiller;
 import buildcraft.builders.triggers.BuildersActionProvider;
 import buildcraft.builders.urbanism.BlockUrbanist;
@@ -197,7 +198,6 @@ public class BuildCraftBuilders extends BuildCraftMod {
 
 		SchematicRegistry.registerSchematicClass(Blocks.lit_pumpkin, SchematicPumpkin.class);
 
-
 		SchematicRegistry.registerSchematicClass(Blocks.oak_stairs, SchematicStairs.class);
 		SchematicRegistry.registerSchematicClass(Blocks.stone_stairs, SchematicStairs.class);
 		SchematicRegistry.registerSchematicClass(Blocks.brick_stairs, SchematicStairs.class);
@@ -218,6 +218,8 @@ public class BuildCraftBuilders extends BuildCraftMod {
 
 		SchematicRegistry.registerSchematicClass(Blocks.wall_sign, SchematicSign.class, true);
 		SchematicRegistry.registerSchematicClass(Blocks.standing_sign, SchematicSign.class, false);
+
+		SchematicRegistry.registerSchematicClass(Blocks.portal, SchematicPortal.class);
 
 		// BUILDCRAFT BLOCKS
 

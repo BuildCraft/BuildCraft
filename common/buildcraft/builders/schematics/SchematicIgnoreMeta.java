@@ -6,39 +6,23 @@
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-package buildcraft.api.schematics;
+package buildcraft.builders.schematics;
 
 import java.util.LinkedList;
 
-import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
-import buildcraft.api.blueprints.SchematicBlock;
 import buildcraft.api.blueprints.IBuilderContext;
+import buildcraft.api.blueprints.SchematicBlock;
 
-public class SchematicRedstoneRepeater extends SchematicBlock {
+public class SchematicIgnoreMeta extends SchematicBlock {
 
 	@Override
 	public void addRequirements(IBuilderContext context, LinkedList<ItemStack> requirements) {
-		requirements.add(new ItemStack(Items.repeater));
+		requirements.add(new ItemStack(block, 1, 0));
 	}
 
 	@Override
-	public void rotateLeft(IBuilderContext context) {
-		int step = meta - (meta & 3);
-
-		switch (meta - step) {
-		case 0:
-			meta = 1 + step;
-			break;
-		case 1:
-			meta = 2 + step;
-			break;
-		case 2:
-			meta = 3 + step;
-			break;
-		case 3:
-			meta = 0 + step;
-			break;
-		}
+	public boolean isValid(IBuilderContext context, int x, int y, int z) {
+		return block == context.world().getBlock(x, y, z);
 	}
 }

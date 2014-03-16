@@ -6,7 +6,7 @@
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-package buildcraft.api.schematics;
+package buildcraft.builders.schematics;
 
 import java.util.LinkedList;
 
@@ -14,44 +14,33 @@ import net.minecraft.item.ItemStack;
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.SchematicBlock;
 
-public class SchematicFluid extends SchematicBlock {
-
-	private final ItemStack bucketStack;
-
-	public SchematicFluid(ItemStack bucketStack) {
-		this.bucketStack = bucketStack;
-	}
+public class SchematicPumpkin extends SchematicBlock {
 
 	@Override
 	public void addRequirements(IBuilderContext context, LinkedList<ItemStack> requirements) {
-		if (meta == 0) {
-			requirements.add(bucketStack.copy());
-		}
+		requirements.add(new ItemStack(block, 1, 0));
 	}
 
 	@Override
 	public boolean isValid(IBuilderContext context, int x, int y, int z) {
-		if (meta == 0) {
-			return block == context.world().getBlock(x, y, z) && context.world().getBlockMetadata(x, y, z) == 0;
-		} else {
-			return true;
-		}
+		return block == context.world().getBlock(x, y, z);
 	}
 
 	@Override
 	public void rotateLeft(IBuilderContext context) {
-
-	}
-
-	@Override
-	public boolean ignoreBuilding() {
-		return meta != 0;
-	}
-
-	@Override
-	public void writeToWorld(IBuilderContext context, int x, int y, int z) {
-		if (meta == 0) {
-			context.world().setBlock(x, y, z, block, 0,1);
+		switch (meta) {
+		case 0:
+			meta = 1;
+			break;
+		case 1:
+			meta = 2;
+			break;
+		case 2:
+			meta = 3;
+			break;
+		case 3:
+			meta = 0;
+			break;
 		}
 	}
 

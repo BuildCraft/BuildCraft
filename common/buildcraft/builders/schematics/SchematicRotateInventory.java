@@ -6,13 +6,17 @@
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-package buildcraft.api.schematics;
+package buildcraft.builders.schematics;
 
 import net.minecraft.inventory.IInventory;
 import buildcraft.api.blueprints.IBuilderContext;
-import buildcraft.api.blueprints.SchematicTile;
 
-public class SchematicInventory extends SchematicTile {
+public class SchematicRotateInventory extends SchematicRotateMeta {
+
+	public SchematicRotateInventory(int[] rotations, boolean rotateForward) {
+		super(rotations, rotateForward);
+
+	}
 
 	@Override
 	public void writeToWorld(IBuilderContext context, int x, int y, int z) {
@@ -23,7 +27,6 @@ public class SchematicInventory extends SchematicTile {
 		for (int i = 0; i < inv.getSizeInventory(); ++i) {
 			inv.setInventorySlotContents(i, null);
 		}
-
 	}
 
 }

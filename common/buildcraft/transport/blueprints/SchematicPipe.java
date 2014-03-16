@@ -85,7 +85,7 @@ public class SchematicPipe extends SchematicTile {
 	}
 
 	@Override
-	public void postProcessing(IBuilderContext context) {
+	public void postProcessing(IBuilderContext context, int x, int y, int z) {
 		Item pipeItem = context.getMappingRegistry().getItemForId(cpt.getInteger("pipeId"));
 
 		if (BptPipeExtension.contains(pipeItem)) {

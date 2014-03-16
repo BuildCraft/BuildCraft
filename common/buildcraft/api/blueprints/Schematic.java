@@ -170,7 +170,7 @@ public class Schematic {
 	 * blocks. This may be useful to adjust variable depending on surrounding
 	 * blocks that may not be there already at initial building.
 	 */
-	public void postProcessing(IBuilderContext context) {
+	public void postProcessing(IBuilderContext context, int x, int y, int z) {
 
 	}
 
@@ -181,5 +181,4 @@ public class Schematic {
 	public void readFromNBT(NBTTagCompound nbt,	MappingRegistry registry) {
 
 	}
-
 }
