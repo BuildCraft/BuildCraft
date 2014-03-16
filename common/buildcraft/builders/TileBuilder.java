@@ -654,7 +654,14 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IM
 
 	@Override
 	public AxisAlignedBB getRenderBoundingBox() {
-		return new Box (this).extendToEncompass(box).getBoundingBox();
+		Box renderBox = new Box (this).extendToEncompass(box);
+
+		for (LaserData l : pathLasers) {
+			renderBox = renderBox.extendToEncompass(l.head);
+			renderBox = renderBox.extendToEncompass(l.tail);
+		}
+
+		return renderBox.getBoundingBox();
 	}
 
 	public void debugForceBlueprintCompletion () {

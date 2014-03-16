@@ -162,7 +162,6 @@ public class BuildCraftTransport extends BuildCraftMod {
 	public static Item plugItem;
 	public static Item robotStationItem;
 	public static BlockFilteredBuffer filteredBufferBlock;
-	// public static Item pipeItemsStipes;
 	public static Item pipeStructureCobblestone;
 	public static int groupItemsTrigger;
 	public static String[] facadeBlacklist;

@@ -321,4 +321,32 @@ public class Box implements IBox {
 		return AxisAlignedBB.getBoundingBox(xMin, yMin, zMin,
 				xMax, yMax, zMax);
 	}
+
+	public Box extendToEncompass(Position toBeContained) {
+		if (toBeContained.x < xMin) {
+			xMin = (int) toBeContained.x - 1;
+		}
+
+		if (toBeContained.y < yMin) {
+			yMin = (int) toBeContained.y - 1;
+		}
+
+		if (toBeContained.z < zMin) {
+			zMin = (int) toBeContained.z - 1;
+		}
+
+		if (toBeContained.x > xMax) {
+			xMax = (int) toBeContained.x + 1;
+		}
+
+		if (toBeContained.y > yMax) {
+			yMax = (int) toBeContained.y + 1;
+		}
+
+		if (toBeContained.z > zMax) {
+			zMax = (int) toBeContained.z + 1;
+		}
+
+		return this;
+	}
 }

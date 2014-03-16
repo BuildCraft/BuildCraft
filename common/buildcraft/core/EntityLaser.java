@@ -20,7 +20,8 @@ public abstract class EntityLaser extends Entity {
 		new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_ENTITIES + "/laser_1.png"),
 		new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_ENTITIES + "/laser_2.png"),
 		new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_ENTITIES + "/laser_3.png"),
-		new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_ENTITIES + "/laser_4.png")};
+		new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_ENTITIES + "/laser_4.png"),
+		new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_ENTITIES + "/stripes.png")};
 
 	public LaserData data = new LaserData();
 
@@ -63,8 +64,9 @@ public abstract class EntityLaser extends Entity {
 	@Override
 	public void onUpdate() {
 
-		if (data.head == null || data.tail == null)
+		if (data.head == null || data.tail == null) {
 			return;
+		}
 
 		if (!worldObj.isRemote && needsUpdate) {
 			updateDataServer();
