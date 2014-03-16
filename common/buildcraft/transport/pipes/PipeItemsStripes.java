@@ -94,26 +94,24 @@ public class PipeItemsStripes extends Pipe {
 	/*@Override
 	public void centerReached(PipeTransportItems pipe, EntityData data) {
 		convertPipe(pipe, data);
-	}
+	}*/
 
-	@SuppressWarnings("unchecked")
-	public boolean convertPipe(PipeTransportItems pipe, EntityData data) {
+	/*@SuppressWarnings("unchecked")
+	public boolean convertPipe(PipeTransportItems pipe, EntityItem data) {
+		if (data.getEntityItem().getItem() instanceof ItemPipe) {
+			if (!(data.getEntityItem().getItem() == BuildCraftTransport.pipeItemsStripes)) {
 
-		if (data.item.getItemStack().getItem() instanceof ItemPipe) {
-			if (!(data.item.getItemStack().itemID == BuildCraftTransport.pipeItemsStipes.shiftedIndex)) {
-
-				Pipe newPipe = BlockGenericPipe.createPipe(data.item
-						.getItemStack().itemID);
+				Pipe newPipe = BlockGenericPipe.createPipe(data.getEntityItem().getItem());
 				newPipe.setTile(this.container);
 				this.container.pipe = newPipe;
 				((PipeTransportItems) newPipe.transport).travelingEntities = (TreeMap<Integer, EntityData>) pipe.travelingEntities
 						.clone();
 
-				data.item.getItemStack().stackSize--;
+				data.getEntityItem().stackSize--;
 
-				if (data.item.getItemStack().stackSize <= 0) {
+				if (data.getEntityItem().stackSize <= 0) {
 					((PipeTransportItems) newPipe.transport).travelingEntities
-							.remove(data.item.getEntityId());
+							.remove(data.getEntityId());
 				}
 
 				pipe.scheduleRemoval(data.item);
@@ -123,8 +121,9 @@ public class PipeItemsStripes extends Pipe {
 		}
 
 		return false;
-	}
+	}*/
 
+	/*
 	@Override
 	public void endReached(PipeTransportItems pipe, EntityData data,
 			TileEntity tile) {
