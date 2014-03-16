@@ -192,8 +192,7 @@ public class SchematicBlock extends Schematic {
 		for (ItemStack stack : storedRequirements) {
 			NBTTagCompound sub = new NBTTagCompound();
 			stack.writeToNBT(stack.writeToNBT(sub));
-			sub.setInteger("id", Item.itemRegistry.getIDForObject(registry
-					.getItemForId(sub.getInteger("id"))));
+			sub.setInteger("id", registry.getIdForItem(stack.getItem()));
 			rq.appendTag(sub);
 		}
 
@@ -205,17 +204,32 @@ public class SchematicBlock extends Schematic {
 		block = registry.getBlockForId(nbt.getInteger("blockId"));
 		meta = nbt.getInteger("blockMeta");
 
-		NBTTagList rq = nbt.getTagList("rq", Utils.NBTTag_Types.NBTTagList.ordinal());
-		storedRequirements = new ItemStack[rq.tagCount()];
+		NBTTagList rq = nbt.getTagList("rq", Utils.NBTTag_Types.NBTTagCompound.ordinal());
+
+		ArrayList<ItemStack> rqs = new ArrayList<ItemStack>();
 
 		for (int i = 0; i < rq.tagCount(); ++i) {
-			NBTTagCompound sub = rq.getCompoundTagAt(i);
+			try {
+				NBTTagCompound sub = rq.getCompoundTagAt(i);
 
-			// Maps the id in the blueprint to the id in the world
-			sub.setInteger("id", Item.itemRegistry.getIDForObject(registry
-					.getItemForId(sub.getInteger("id"))));
+				if (sub.getInteger("id") >= 0) {
+					// Maps the id in the blueprint to the id in the world
+					sub.setInteger("id", Item.itemRegistry
+							.getIDForObject(registry.getItemForId(sub
+									.getInteger("id"))));
 
-			storedRequirements [i] = ItemStack.loadItemStackFromNBT(sub);
+					rqs.add(ItemStack.loadItemStackFromNBT(sub));
+				} else {
+					// TODO: requirement can't be retreived, this blueprint is
+					// only useable in creative
+				}
+			} catch (Throwable t) {
+				t.printStackTrace();
+				// TODO: requirement can't be retreived, this blueprint is
+				// only useable in creative
+			}
 		}
+
+		storedRequirements = rqs.toArray(new ItemStack [rqs.size()]);
 	}
 }

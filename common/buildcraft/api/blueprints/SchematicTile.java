@@ -8,10 +8,14 @@
  */
 package buildcraft.api.blueprints;
 
+import java.util.ArrayList;
+
 import net.minecraft.block.BlockContainer;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import buildcraft.core.utils.Utils;
 
 public class SchematicTile extends SchematicBlock {
 
@@ -50,15 +54,6 @@ public class SchematicTile extends SchematicBlock {
 			if (tile != null) {
 				tile.readFromNBT(cpt);
 			}
-
-			// By default, clear the inventory to avoid possible dupe bugs
-			if (tile instanceof IInventory) {
-				IInventory inv = (IInventory) tile;
-
-				for (int i = 0; i < inv.getSizeInventory(); ++i) {
-					inv.setInventorySlotContents(i, null);
-				}
-			}
 		}
 	}
 
@@ -80,6 +75,21 @@ public class SchematicTile extends SchematicBlock {
 
 			if (tile != null) {
 				tile.writeToNBT(cpt);
+			}
+
+			if (tile instanceof IInventory) {
+				IInventory inv = (IInventory) tile;
+
+				ArrayList <ItemStack> rqs = new ArrayList <ItemStack> ();
+
+				for (int i = 0; i < inv.getSizeInventory(); ++i) {
+					if (inv.getStackInSlot(i) != null) {
+						rqs.add(inv.getStackInSlot(i));
+					}
+				}
+
+				storedRequirements = Utils.concat(storedRequirements,
+						rqs.toArray(new ItemStack[rqs.size()]));
 			}
 		}
 	}

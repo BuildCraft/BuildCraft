@@ -38,14 +38,13 @@ import buildcraft.factory.BlockPump;
 import buildcraft.factory.BlockQuarry;
 import buildcraft.factory.BlockRefinery;
 import buildcraft.factory.BlockTank;
-import buildcraft.factory.SchematicAutoWorkbench;
-import buildcraft.factory.SchematicFrame;
-import buildcraft.factory.SchematicRefinery;
-import buildcraft.factory.SchematicTank;
 import buildcraft.factory.FactoryProxy;
 import buildcraft.factory.FactoryProxyClient;
 import buildcraft.factory.GuiHandler;
 import buildcraft.factory.PumpDimensionList;
+import buildcraft.factory.SchematicFrame;
+import buildcraft.factory.SchematicRefinery;
+import buildcraft.factory.SchematicTank;
 import buildcraft.factory.TileAutoWorkbench;
 import buildcraft.factory.TileFloodGate;
 import buildcraft.factory.TileHopper;
@@ -146,7 +145,6 @@ public class BuildCraftFactory extends BuildCraftMod {
 
 		FactoryProxy.proxy.initializeTileEntities();
 
-		SchematicRegistry.registerSchematicClass(autoWorkbenchBlock, SchematicAutoWorkbench.class);
 		SchematicRegistry.registerSchematicClass(frameBlock, SchematicFrame.class);
 		SchematicRegistry.registerSchematicClass(refineryBlock, SchematicRefinery.class);
 		SchematicRegistry.registerSchematicClass(tankBlock, SchematicTank.class);

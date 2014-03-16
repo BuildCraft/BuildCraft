@@ -261,6 +261,7 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IM
 			bpt = ItemBlueprint.loadBlueprint(items [0]);
 		} catch (Throwable t) {
 			setInventorySlotContents(0, null);
+			t.printStackTrace();
 			return null;
 		}
 

@@ -14,8 +14,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
-import org.apache.commons.lang3.ArrayUtils;
-
 /**
  * This class allow to specify specific behavior for blocks stored in
  * blueprints:
@@ -41,13 +39,6 @@ import org.apache.commons.lang3.ArrayUtils;
  */
 public class Schematic {
 
-	/**
-	 * This field contains requirements for a given block when stored in the
-	 * blueprint. Modders can either rely on this list or compute their own int
-	 * Schematic.
-	 */
-	public ItemStack [] storedRequirements = new ItemStack [0];
-
 	@SuppressWarnings("unchecked")
 	@Override
 	public Schematic clone() {
@@ -57,8 +48,6 @@ public class Schematic {
 		} catch (CloneNotSupportedException e) {
 			return null;
 		}
-
-		obj.storedRequirements = ArrayUtils.clone(storedRequirements);
 
 		return obj;
 	}
