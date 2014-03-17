@@ -15,7 +15,7 @@ import net.minecraft.item.ItemStack;
 import buildcraft.api.blueprints.SchematicBlock;
 import buildcraft.api.blueprints.IBuilderContext;
 
-public class SchematicRedstoneRepeater extends SchematicBlock {
+public class SchematicRedstoneDiode extends SchematicBlock {
 
 	@Override
 	public void addRequirements(IBuilderContext context, LinkedList<ItemStack> requirements) {

@@ -61,7 +61,7 @@ import buildcraft.builders.schematics.SchematicLever;
 import buildcraft.builders.schematics.SchematicPiston;
 import buildcraft.builders.schematics.SchematicPortal;
 import buildcraft.builders.schematics.SchematicPumpkin;
-import buildcraft.builders.schematics.SchematicRedstoneRepeater;
+import buildcraft.builders.schematics.SchematicRedstoneDiode;
 import buildcraft.builders.schematics.SchematicRotateInventory;
 import buildcraft.builders.schematics.SchematicRotateMeta;
 import buildcraft.builders.schematics.SchematicSign;
@@ -180,8 +180,10 @@ public class BuildCraftBuilders extends BuildCraftMod {
 		SchematicRegistry.registerSchematicClass(Blocks.melon_stem, SchematicCustomStack.class, new ItemStack(Items.melon_seeds));
 		SchematicRegistry.registerSchematicClass(Blocks.glowstone, SchematicCustomStack.class, new ItemStack(Blocks.glowstone));
 
-		SchematicRegistry.registerSchematicClass(Blocks.powered_repeater, SchematicRedstoneRepeater.class);
-		SchematicRegistry.registerSchematicClass(Blocks.unpowered_repeater, SchematicRedstoneRepeater.class);
+		SchematicRegistry.registerSchematicClass(Blocks.powered_repeater, SchematicRedstoneDiode.class);
+		SchematicRegistry.registerSchematicClass(Blocks.unpowered_repeater, SchematicRedstoneDiode.class);
+		SchematicRegistry.registerSchematicClass(Blocks.powered_comparator, SchematicRedstoneDiode.class);
+		SchematicRegistry.registerSchematicClass(Blocks.unpowered_comparator, SchematicRedstoneDiode.class);
 
 		SchematicRegistry.registerSchematicClass(Blocks.water, SchematicFluid.class, new ItemStack(Items.water_bucket));
 		SchematicRegistry.registerSchematicClass(Blocks.flowing_water, SchematicFluid.class, new ItemStack(Items.water_bucket));
