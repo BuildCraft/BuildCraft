@@ -34,15 +34,17 @@ import buildcraft.core.TileBuildCraft;
 import buildcraft.core.blueprints.BptBuilderTemplate;
 import buildcraft.core.blueprints.BptContext;
 import buildcraft.core.inventory.SimpleInventory;
-import buildcraft.core.network.IGuiReturnHandler;
 import buildcraft.core.network.PacketPayload;
 import buildcraft.core.network.PacketPayloadStream;
 import buildcraft.core.network.PacketUpdate;
+import buildcraft.core.network.RPC;
+import buildcraft.core.network.RPCHandler;
+import buildcraft.core.network.RPCSide;
 import buildcraft.core.triggers.ActionMachineControl;
 import buildcraft.core.triggers.ActionMachineControl.Mode;
 import buildcraft.core.utils.Utils;
 
-public class TileFiller extends TileBuildCraft implements IBuilderInventory, IMachine, IActionReceptor, IGuiReturnHandler, IBoxProvider {
+public class TileFiller extends TileBuildCraft implements IBuilderInventory, IMachine, IActionReceptor, IBoxProvider {
 
 	public IFillerPattern currentPattern = PatternFill.INSTANCE;
 
@@ -238,6 +240,7 @@ public class TileFiller extends TileBuildCraft implements IBuilderInventory, IMa
 	public void setPattern(IFillerPattern pattern) {
 		if (pattern != null && currentPattern != pattern) {
 			currentPattern = pattern;
+			currentTemplate = null;
 			done = false;
 			sendNetworkUpdate();
 		}
@@ -323,14 +326,13 @@ public class TileFiller extends TileBuildCraft implements IBuilderInventory, IMa
 		return true;
 	}
 
-	@Override
-	public void writeGuiData(ByteBuf data) {
-		Utils.writeUTF(data, currentPattern.getUniqueTag());
+	public void rpcSetPatternFromString (String name) {
+		RPCHandler.rpcServer(this, "setPatternFromString", name);
 	}
 
-	@Override
-	public void readGuiData(ByteBuf data, EntityPlayer player) {
-		setPattern(FillerManager.registry.getPattern(Utils.readUTF(data)));
+	@RPC (RPCSide.SERVER)
+	public void setPatternFromString (String name) {
+		setPattern(FillerManager.registry.getPattern(name));
 	}
 
 	@Override

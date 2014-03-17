@@ -8,6 +8,9 @@
  */
 package buildcraft.builders.gui;
 
+import net.minecraft.client.gui.GuiButton;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.util.ResourceLocation;
 import buildcraft.api.filler.FillerManager;
 import buildcraft.builders.TileFiller;
 import buildcraft.core.DefaultProps;
@@ -15,11 +18,7 @@ import buildcraft.core.gui.GuiBuildCraft;
 import buildcraft.core.gui.GuiTools;
 import buildcraft.core.gui.buttons.GuiBetterButton;
 import buildcraft.core.gui.buttons.StandardButtonTextureSets;
-import buildcraft.core.network.PacketGuiReturn;
 import buildcraft.core.utils.StringUtils;
-import net.minecraft.client.gui.GuiButton;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.util.ResourceLocation;
 
 public class GuiFiller extends GuiBuildCraft {
 
@@ -50,13 +49,13 @@ public class GuiFiller extends GuiBuildCraft {
 	protected void actionPerformed(GuiButton button) {
 		super.actionPerformed(button);
 
-		if (button.id == 0)
+		if (button.id == 0) {
 			filler.currentPattern = FillerManager.registry.getPreviousPattern(filler.currentPattern);
-		if (button.id == 1)
+		} else if (button.id == 1) {
 			filler.currentPattern = FillerManager.registry.getNextPattern(filler.currentPattern);
+		}
 
-		PacketGuiReturn pkt = new PacketGuiReturn(filler);
-		pkt.sendPacket();
+		filler.rpcSetPatternFromString(filler.currentPattern.getUniqueTag());
 	}
 
 	@Override
