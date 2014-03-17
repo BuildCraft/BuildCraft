@@ -157,6 +157,7 @@ public class BuildCraftBuilders extends BuildCraftMod {
 		SchematicRegistry.registerSchematicClass(Blocks.log2, SchematicRotateMeta.class, new int[]{8, 4, 8, 4}, true);
 		SchematicRegistry.registerSchematicClass(Blocks.hay_block, SchematicRotateMeta.class, new int[]{8, 4, 8, 4}, true);
 		SchematicRegistry.registerSchematicClass(Blocks.quartz_block, SchematicRotateMeta.class, new int[]{4, 3, 4, 3}, true);
+		SchematicRegistry.registerSchematicClass(Blocks.hopper, SchematicRotateMeta.class, new int[]{2, 5, 3, 4}, true);
 
 		SchematicRegistry.registerSchematicClass(Blocks.furnace, SchematicRotateInventory.class, new int[]{2, 5, 3, 4}, true);
 		SchematicRegistry.registerSchematicClass(Blocks.lit_furnace, SchematicRotateInventory.class, new int[]{2, 5, 3, 4}, true);
@@ -167,6 +168,7 @@ public class BuildCraftBuilders extends BuildCraftMod {
 
 		SchematicRegistry.registerSchematicClass(Blocks.vine, SchematicRotateMeta.class, new int[]{1, 4, 8, 2}, false);
 		SchematicRegistry.registerSchematicClass(Blocks.trapdoor, SchematicRotateMeta.class, new int[]{0, 1, 2, 3}, false);
+
 
 		SchematicRegistry.registerSchematicClass(Blocks.wooden_button, SchematicLever.class);
 		SchematicRegistry.registerSchematicClass(Blocks.stone_button, SchematicLever.class);
