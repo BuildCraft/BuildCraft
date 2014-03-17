@@ -22,9 +22,9 @@ public class SchematicToBuild {
 
 	public Schematic getSchematic () {
 		if (schematic == null) {
-			return schematic;
-		} else {
 			return new SchematicMask(false);
+		} else {
+			return schematic;
 		}
 	}
 
