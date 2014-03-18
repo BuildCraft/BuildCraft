@@ -45,55 +45,46 @@ public class GuiCombustionEngine extends GuiEngine {
 		super.drawGuiContainerBackgroundLayer(f, x, y);
 		int j = (width - xSize) / 2;
 		int k = (height - ySize) / 2;
-
-		TileEngineIron engine = (TileEngineIron) tile;
-
-		if (engine.getScaledBurnTime(58) > 0) {
-			displayGauge(j, k, 19, 104, engine.getScaledBurnTime(58), engine.getFuel(), engine.tankFuel);
-		}
-
-		if (engine.getScaledCoolant(58) > 0) {
-			displayGauge(j, k, 19, 122, engine.getScaledCoolant(58), engine.getCoolant(), engine.tankCoolant);
-		}
+		TileEngineIron engine = (TileEngineIron)tile;
+        	drawFluid(engine.getFuel(), engine.getScaledBurnTime(58), j + 104, k + 19, 16, 58);
+        	drawFluid(engine.getCoolant(), engine.getScaledCoolant(58), j + 122, k + 19, 16, 58);
+        	mc.renderEngine.bindTexture(TEXTURE);
+        	drawTexturedModalRect(j + 104, k + 19, 176, 0, 16, 60);
+        	drawTexturedModalRect(j + 122, k + 19, 176, 0, 16, 60);
 	}
 
-	private void displayGauge(int j, int k, int line, int col, int squaled, FluidStack liquid, Tank tank) {
-		if (liquid == null) {
+	private void drawFluid(FluidStack fluid, int level, int x, int y, int width, int height){
+		if(fluid == null || fluid.getFluid() == null)
 			return;
-		}
-		int start = 0;
-
-		IIcon liquidIcon = null;
-		Fluid fluid = liquid.getFluid();
-		if (fluid != null && fluid.getStillIcon() != null) {
-			liquidIcon = fluid.getStillIcon();
-		}
+		IIcon icon = fluid.getFluid().getIcon(fluid);
 		mc.renderEngine.bindTexture(BLOCK_TEXTURE);
-		RenderUtils.setGLColorFromInt(tank.colorRenderCache);
+		RenderUtils.setGLColorFromInt(fluid.getFluid().getColor(fluid));
+		int fullX = width / 16;
+		int fullY = height / 16;
+		int lastX = width - fullX * 16;
+		int lastY = height - fullY * 16;
+		int fullLvl = (height - level) / 16;
+		int lastLvl = (height - level) - fullLvl * 16;
+		for(int i = 0; i < fullX; i++)
+			for(int j = 0; j < fullY; j++)
+				if(j >= fullLvl)
+					drawCutIcon(icon, x + i * 16, y + j * 16, 16, 16, j == fullLvl ? lastLvl : 0);
+		for(int i = 0; i < fullX; i++)
+			drawCutIcon(icon, x + i * 16, y + fullY * 16, 16, lastY, fullLvl == fullY ? lastLvl : 0);
+		for(int i = 0; i < fullY; i++)
+			if(i >= fullLvl)
+				drawCutIcon(icon, x + fullX * 16, y + i * 16, lastX, 16, i == fullLvl ? lastLvl : 0);
+		drawCutIcon(icon, x + fullX * 16, y + fullY * 16, lastX, lastY, fullLvl == fullY ? lastLvl : 0);
+	}
 
-		if (liquidIcon != null) {
-			while (true) {
-				int x;
-
-				if (squaled > 16) {
-					x = 16;
-					squaled -= 16;
-				} else {
-					x = squaled;
-					squaled = 0;
-				}
-
-				drawTexturedModelRectFromIcon(j + col, k + line + 58 - x - start, liquidIcon, 16, 16 - (16 - x));
-				start = start + 16;
-
-				if (x == 0 || squaled == 0) {
-					break;
-				}
-			}
-		}
-
-		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-		mc.renderEngine.bindTexture(TEXTURE);
-		drawTexturedModalRect(j + col, k + line, 176, 0, 16, 60);
+	//The magic is here
+	private void drawCutIcon(IIcon icon, int x, int y, int width, int height, int cut){
+		Tessellator tess = Tessellator.instance;
+		tess.startDrawingQuads();
+		tess.addVertexWithUV(x, y + height, zLevel, icon.getMinU(), icon.getInterpolatedV(height));
+		tess.addVertexWithUV(x + width, y + height, zLevel, icon.getInterpolatedU(width), icon.getInterpolatedV(height));
+		tess.addVertexWithUV(x + width, y + cut, zLevel, icon.getInterpolatedU(width), icon.getInterpolatedV(cut));
+		tess.addVertexWithUV(x, y + cut, zLevel, icon.getMinU(), icon.getInterpolatedV(cut));
+		tess.draw();
 	}
 }
