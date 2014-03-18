@@ -282,10 +282,23 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 
 						drawTexturedModalRect(cornerX + slot.x + 17, cornerY + slot.y - 1, 176, 0, 18, 18);
 					}
-				} else if (_container.triggerState[triggerTracker++]) {
+				}
+				else if (_container.triggerState[triggerTracker++]) {
 					mc.renderEngine.bindTexture(texture);
 
 					drawTexturedModalRect(cornerX + slot.x + 17, cornerY + slot.y + 6, 176, 18, 18, 4);
+				}
+			}
+			else if (slot instanceof TriggerParameterSlot) {
+				TriggerParameterSlot paramSlot = (TriggerParameterSlot) slot;
+				TriggerSlot trigger = (TriggerSlot) slots[s - numSlots * 2];
+
+				if (trigger.isDefined() && trigger.getTrigger().requiresParameter()) {
+					if (paramSlot.getItemStack() == null) {
+						mc.renderEngine.bindTexture(texture);
+
+						drawTexturedModalRect(cornerX + slot.x - 1, cornerY + slot.y - 1, 176, 22, 18, 18);
+					}
 				}
 			}
 		}
