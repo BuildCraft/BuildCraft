@@ -61,6 +61,7 @@ import buildcraft.builders.schematics.SchematicLever;
 import buildcraft.builders.schematics.SchematicPiston;
 import buildcraft.builders.schematics.SchematicPortal;
 import buildcraft.builders.schematics.SchematicPumpkin;
+import buildcraft.builders.schematics.SchematicRail;
 import buildcraft.builders.schematics.SchematicRedstoneDiode;
 import buildcraft.builders.schematics.SchematicRotateInventory;
 import buildcraft.builders.schematics.SchematicRotateMeta;
@@ -169,7 +170,6 @@ public class BuildCraftBuilders extends BuildCraftMod {
 		SchematicRegistry.registerSchematicClass(Blocks.vine, SchematicRotateMeta.class, new int[]{1, 4, 8, 2}, false);
 		SchematicRegistry.registerSchematicClass(Blocks.trapdoor, SchematicRotateMeta.class, new int[]{0, 1, 2, 3}, false);
 
-
 		SchematicRegistry.registerSchematicClass(Blocks.wooden_button, SchematicLever.class);
 		SchematicRegistry.registerSchematicClass(Blocks.stone_button, SchematicLever.class);
 		SchematicRegistry.registerSchematicClass(Blocks.lever, SchematicLever.class);
@@ -224,6 +224,11 @@ public class BuildCraftBuilders extends BuildCraftMod {
 		SchematicRegistry.registerSchematicClass(Blocks.standing_sign, SchematicSign.class, false);
 
 		SchematicRegistry.registerSchematicClass(Blocks.portal, SchematicPortal.class);
+
+		SchematicRegistry.registerSchematicClass(Blocks.rail, SchematicRail.class);
+		SchematicRegistry.registerSchematicClass(Blocks.activator_rail, SchematicRail.class);
+		SchematicRegistry.registerSchematicClass(Blocks.detector_rail, SchematicRail.class);
+		SchematicRegistry.registerSchematicClass(Blocks.golden_rail, SchematicRail.class);
 
 		// BUILDCRAFT BLOCKS
 
