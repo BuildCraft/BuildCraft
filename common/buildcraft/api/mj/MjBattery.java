@@ -25,6 +25,10 @@ import java.lang.annotation.Target;
  * receive up to "maxReceivedPerCyle" units of energy. As an optional behavior,
  * the system can have a minimum amount of energy consumed even if the system
  * is at max capacity, modelized by the "minimumConsumption" value.
+ *
+ * If the field designated by MjBattery is an object, then BuildCraft will
+ * consider that this is a case of a nested battery, and will look for the
+ * field in the designated object.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)

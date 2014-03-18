@@ -29,7 +29,7 @@ import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.IPipeTile.PipeType;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.ReflectMjAPI;
-import buildcraft.core.ReflectMjAPI.BatteryField;
+import buildcraft.core.ReflectMjAPI.BatteryObject;
 import buildcraft.core.TileBuffer;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.network.NetworkData;
@@ -238,8 +238,8 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 			return extractEnergy(receptor.getMinEnergyReceived(),
 					receptor.getMaxEnergyReceived(), false);
 		} else {
-			return extractEnergy(0, ReflectMjAPI.getMjBattery(tile.getClass())
-					.getEnergyRequested(tile), false);
+			return extractEnergy(0, ReflectMjAPI.getMjBattery(tile)
+					.getEnergyRequested(), false);
 		}
 	}
 
@@ -260,20 +260,10 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 					extractEnergy(receptor.getMinEnergyReceived(), needed, true);
 				}
 			} else {
-				try {
-					BatteryField f = ReflectMjAPI.getMjBattery(tile.getClass());
+				BatteryObject battery = ReflectMjAPI.getMjBattery(tile);
 
-					f.field.set(
-							tile,
-							f.field.getDouble(tile)
-									+ extractEnergy(0,
-											extracted + f.battery.miniumConsumption(),
-											true) - f.battery.miniumConsumption());
-				} catch (IllegalArgumentException e) {
-					e.printStackTrace();
-				} catch (IllegalAccessException e) {
-					e.printStackTrace();
-				}
+				battery.addEnergy(extractEnergy(0, battery.miniumConsumption(),
+						true));
 			}
 		}
 	}
@@ -484,7 +474,7 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 			return false;
 		} else if (tile instanceof IPowerReceptor) {
 			return ((IPowerReceptor) tile).getPowerReceiver(side.getOpposite()) != null;
-		} else if (ReflectMjAPI.getMjBattery(tile.getClass()) != null) {
+		} else if (ReflectMjAPI.getMjBattery(tile) != null) {
 			return true;
 		} else {
 			return false;

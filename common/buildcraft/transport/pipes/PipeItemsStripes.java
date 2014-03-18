@@ -8,59 +8,82 @@
  */
 package buildcraft.transport.pipes;
 
+import java.util.ArrayList;
+
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.core.Position;
+import buildcraft.api.mj.MjBattery;
 import buildcraft.core.proxy.CoreProxy;
+import buildcraft.transport.BlockGenericPipe;
+import buildcraft.transport.ItemPipe;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportItems;
 import buildcraft.transport.TileGenericPipe;
+import buildcraft.transport.TravelingItem;
 import buildcraft.transport.pipes.events.PipeEventItem;
+import buildcraft.transport.utils.TransportUtils;
 
-public class PipeItemsStripes extends Pipe {
+public class PipeItemsStripes extends Pipe <PipeTransportItems> {
+
+	@MjBattery (maxCapacity = 1, maxReceivedPerCycle = 1, miniumConsumption = 1)
+	public double mjStored = 0;
 
 	public PipeItemsStripes(Item item) {
 		super(new PipeTransportItems(), item);
-
-		//((PipeTransportItems) transport).travelHook = this;
 	}
 
-	/*@Override
-	public void doWork() {
-		if (powerProvider.useEnergy(1, 1, true) == 1) {
+	@Override
+	public void updateEntity() {
+		super.updateEntity();
+
+		if (container.getWorldObj().isRemote) {
+			return;
+		}
+
+		if (mjStored > 0) {
 			ForgeDirection o = getOpenOrientation();
 
-			if (o != ForgeDirection.Unknown) {
-				Position p = new Position(xCoord, yCoord, zCoord, o);
+			if (o != ForgeDirection.UNKNOWN) {
+				Position p = new Position(container.xCoord, container.yCoord,
+						container.zCoord, o);
 				p.moveForwards(1.0);
 
-				ArrayList<ItemStack> stacks = BuildCraftBlockUtil
-						.getItemStackFromBlock(worldObj, (int) p.x, (int) p.y,
-								(int) p.z);
+				ArrayList<ItemStack> stacks = getWorld().getBlock(
+						(int) p.x, (int) p.y, (int) p.z)
+						.getDrops(
+								getWorld(),
+								(int) p.x,
+								(int) p.y,
+								(int) p.z,
+								getWorld().getBlockMetadata((int) p.x,
+										(int) p.y, (int) p.z), 0);
 
 				if (stacks != null) {
 					for (ItemStack s : stacks) {
 						if (s != null) {
-							IPipedItem newItem = new EntityPassiveItem(
-									worldObj, xCoord + 0.5, yCoord
-											+ Utils.getPipeFloorOf(s),
-									zCoord + 0.5, s);
+							TravelingItem newItem = TravelingItem.make(
+									container.xCoord + 0.5, container.yCoord
+											+ TransportUtils.getPipeFloorOf(s),
+									container.zCoord + 0.5, s);
 
-							this.container.entityEntering(newItem, o.reverse());
+							transport.injectItem(newItem, o.getOpposite());
 						}
 					}
 				}
 
-				worldObj.setBlock((int) p.x, (int) p.y, (int) p.z, 0);
+				getWorld().setBlockToAir((int) p.x, (int) p.y, (int) p.z);
 			}
 		}
 
-	}*/
+		mjStored = 0;
+	}
 
 	public void eventHandler(PipeEventItem.DropItem event) {
 		Position p = new Position(container.xCoord, container.yCoord,
@@ -68,67 +91,44 @@ public class PipeItemsStripes extends Pipe {
 		Position from = new Position (p);
 		p.moveForwards(1.0);
 
-		if (getWorld().getBlock((int) p.x, (int) p.y, (int) p.z) == Blocks.air) {
+		if (convertPipe(transport, event.item)) {
+			BuildCraftTransport.pipeItemsStripes.onItemUse(new ItemStack(
+					BuildCraftTransport.pipeItemsStripes), CoreProxy
+					.proxy.getBuildCraftPlayer(getWorld()), getWorld(), (int) p.x,
+					(int) p.y, (int) p.z, 1, 0, 0, 0);
+		} else if (getWorld().getBlock((int) p.x, (int) p.y, (int) p.z) == Blocks.air) {
+			event.entity.getEntityItem().tryPlaceItemIntoWorld(
+					CoreProxy.proxy.getBuildCraftPlayer(getWorld()),
+					getWorld(), (int) p.x, (int) p.y - 1, (int) p.z, 1, 0.0f, 0.0f,
+					0.0f);
+		} else {
 			event.entity.getEntityItem().tryPlaceItemIntoWorld(
 					CoreProxy.proxy.getBuildCraftPlayer(getWorld()),
 					getWorld(), (int) p.x, (int) p.y, (int) p.z, 1, 0.0f, 0.0f,
 					0.0f);
 		}
-
-		/*if (convertPipe(pipe, data)) {
-			BuildCraftTransport.pipeItemsStipes.onItemUse(new ItemStack(
-					BuildCraftTransport.pipeItemsStipes), CoreProxy
-					.getBuildCraftPlayer(worldObj), worldObj, (int) p.x,
-					(int) p.y - 1, (int) p.z, 1);
-		} else else {
-			data.item
-					.getItemStack()
-					.getItem()
-					.tryPlaceIntoWorld(data.item.getItemStack(),
-							CoreProxy.getBuildCraftPlayer(worldObj), worldObj,
-							(int) p.x, (int) p.y, (int) p.z, 1, 0.0f, 0.0f,
-							0.0f);
-		}*/
 	}
 
-	/*@Override
-	public void centerReached(PipeTransportItems pipe, EntityData data) {
-		convertPipe(pipe, data);
-	}*/
-
-	/*@SuppressWarnings("unchecked")
-	public boolean convertPipe(PipeTransportItems pipe, EntityItem data) {
-		if (data.getEntityItem().getItem() instanceof ItemPipe) {
-			if (!(data.getEntityItem().getItem() == BuildCraftTransport.pipeItemsStripes)) {
-
-				Pipe newPipe = BlockGenericPipe.createPipe(data.getEntityItem().getItem());
+	@SuppressWarnings("unchecked")
+	public boolean convertPipe(PipeTransportItems pipe, TravelingItem item) {
+		if (item.getItemStack().getItem() instanceof ItemPipe) {
+			if (!(item.getItemStack().getItem() == BuildCraftTransport.pipeItemsStripes)) {
+				Pipe newPipe = BlockGenericPipe.createPipe(item.getItemStack().getItem());
 				newPipe.setTile(this.container);
 				this.container.pipe = newPipe;
-				((PipeTransportItems) newPipe.transport).travelingEntities = (TreeMap<Integer, EntityData>) pipe.travelingEntities
-						.clone();
 
-				data.getEntityItem().stackSize--;
+				item.getItemStack().stackSize--;
 
-				if (data.getEntityItem().stackSize <= 0) {
-					((PipeTransportItems) newPipe.transport).travelingEntities
-							.remove(data.getEntityId());
+				if (item.getItemStack().stackSize <= 0) {
+					((PipeTransportItems) newPipe.transport).items.remove(item);
 				}
-
-				pipe.scheduleRemoval(data.item);
 
 				return true;
 			}
 		}
 
 		return false;
-	}*/
-
-	/*
-	@Override
-	public void endReached(PipeTransportItems pipe, EntityData data,
-			TileEntity tile) {
-
-	}*/
+	}
 
 	@Override
 	public IIconProvider getIconProvider() {
