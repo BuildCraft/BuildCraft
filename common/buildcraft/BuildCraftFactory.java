@@ -33,6 +33,7 @@ import buildcraft.factory.BlockFloodGate;
 import buildcraft.factory.BlockFrame;
 import buildcraft.factory.BlockHopper;
 import buildcraft.factory.BlockMiningWell;
+import buildcraft.factory.BlockMultiRefinery;
 import buildcraft.factory.BlockPlainPipe;
 import buildcraft.factory.BlockPump;
 import buildcraft.factory.BlockQuarry;
@@ -83,6 +84,7 @@ public class BuildCraftFactory extends BuildCraftMod {
 	public static BlockTank tankBlock;
 	public static BlockRefinery refineryBlock;
 	public static BlockHopper hopperBlock;
+	public static BlockMultiRefinery blockMultiRefinery;
 	public static boolean allowMining = true;
 	public static boolean quarryOneTimeUse = false;
 	public static float miningMultiplier = 1;
@@ -207,6 +209,9 @@ public class BuildCraftFactory extends BuildCraftMod {
 
 		hopperBlock = new BlockHopper();
 		CoreProxy.proxy.registerBlock(hopperBlock.setBlockName("blockHopper"));
+		
+		blockMultiRefinery = new BlockMultiRefinery();
+		CoreProxy.proxy.registerBlock(blockMultiRefinery.setBlockName("blockMultiRefinery"));
 
 
 		FactoryProxy.proxy.initializeEntityRenders();
