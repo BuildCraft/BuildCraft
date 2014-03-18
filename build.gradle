@@ -150,7 +150,7 @@ uploadArchives {
                 // this is the definition of the maven pom.xml. This is simply a DSL to define the XML. Not actual fields or things to set.
                 pom {
                     groupId = project.group
-                    version = project.version + '.' + project.buildnumber
+                    version = project.version
                     artifactId = project.archivesBaseName
                     project {
                         name project.archivesBaseName
