@@ -73,7 +73,7 @@ public class ReflectMjAPI {
 			return 0;
 		}
 
-		public double miniumConsumption() {
+		public double minimumConsumption() {
 			return f.battery.miniumConsumption();
 		}
 	}
