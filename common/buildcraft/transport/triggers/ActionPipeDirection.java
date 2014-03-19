@@ -8,11 +8,13 @@
  */
 package buildcraft.transport.triggers;
 
-import buildcraft.core.triggers.BCAction;
 import java.util.Locale;
+
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.util.IIcon;
 import net.minecraftforge.common.util.ForgeDirection;
+import buildcraft.api.gates.IAction;
+import buildcraft.core.triggers.BCAction;
 
 public class ActionPipeDirection extends BCAction {
 
@@ -38,5 +40,10 @@ public class ActionPipeDirection extends BCAction {
 	@Override
 	public void registerIcons(IIconRegister iconRegister) {
 		icon = iconRegister.registerIcon("buildcraft:triggers/trigger_dir_" + direction.name().toLowerCase(Locale.ENGLISH));
+	}
+
+	@Override
+	public IAction rotateLeft() {
+		return new ActionPipeDirection(direction.getRotation(ForgeDirection.UP));
 	}
 }

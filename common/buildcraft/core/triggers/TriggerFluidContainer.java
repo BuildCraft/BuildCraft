@@ -8,16 +8,18 @@
  */
 package buildcraft.core.triggers;
 
-import buildcraft.api.gates.ITileTrigger;
-import buildcraft.api.gates.ITriggerParameter;
-import buildcraft.core.utils.StringUtils;
 import java.util.Locale;
+
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
+import buildcraft.api.gates.ITileTrigger;
+import buildcraft.api.gates.ITrigger;
+import buildcraft.api.gates.ITriggerParameter;
+import buildcraft.core.utils.StringUtils;
 
 public class TriggerFluidContainer extends BCTrigger implements ITileTrigger {
 
@@ -34,10 +36,11 @@ public class TriggerFluidContainer extends BCTrigger implements ITileTrigger {
 
 	@Override
 	public boolean hasParameter() {
-		if (state == State.Contains || state == State.Space)
+		if (state == State.Contains || state == State.Space) {
 			return true;
-		else
+		} else {
 			return false;
+		}
 	}
 
 	@Override
@@ -61,27 +64,31 @@ public class TriggerFluidContainer extends BCTrigger implements ITileTrigger {
 			}
 
 			FluidTankInfo[] liquids = container.getTankInfo(side);
-			if (liquids == null || liquids.length == 0)
+			if (liquids == null || liquids.length == 0) {
 				return false;
+			}
 
 			switch (state) {
 				case Empty:
 					for (FluidTankInfo c : liquids) {
-						if (c.fluid != null && c.fluid.amount > 0 && (searchedFluid == null || searchedFluid.isFluidEqual(c.fluid)))
+						if (c.fluid != null && c.fluid.amount > 0 && (searchedFluid == null || searchedFluid.isFluidEqual(c.fluid))) {
 							return false;
+						}
 					}
 					return true;
 				case Contains:
 					for (FluidTankInfo c : liquids) {
-						if (c.fluid != null && c.fluid.amount > 0 && (searchedFluid == null || searchedFluid.isFluidEqual(c.fluid)))
+						if (c.fluid != null && c.fluid.amount > 0 && (searchedFluid == null || searchedFluid.isFluidEqual(c.fluid))) {
 							return true;
+						}
 					}
 					return false;
 				case Space:
 					if (searchedFluid == null) {
 						for (FluidTankInfo c : liquids) {
-							if (c.fluid == null || c.fluid.amount < c.capacity)
+							if (c.fluid == null || c.fluid.amount < c.capacity) {
 								return true;
+							}
 						}
 						return false;
 					}
@@ -89,8 +96,9 @@ public class TriggerFluidContainer extends BCTrigger implements ITileTrigger {
 				case Full:
 					if (searchedFluid == null) {
 						for (FluidTankInfo c : liquids) {
-							if (c.fluid == null || c.fluid.amount < c.capacity)
+							if (c.fluid == null || c.fluid.amount < c.capacity) {
 								return false;
+							}
 						}
 						return true;
 					}
@@ -113,5 +121,10 @@ public class TriggerFluidContainer extends BCTrigger implements ITileTrigger {
 			default:
 				return ActionTriggerIconProvider.Trigger_FluidContainer_Full;
 		}
+	}
+
+	@Override
+	public ITrigger rotateLeft() {
+		return this;
 	}
 }

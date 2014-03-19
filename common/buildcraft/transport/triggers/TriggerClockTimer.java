@@ -10,10 +10,11 @@ package buildcraft.transport.triggers;
 
 import java.util.Locale;
 
-import buildcraft.core.triggers.BCTrigger;
-import buildcraft.core.utils.StringUtils;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.util.IIcon;
+import buildcraft.api.gates.ITrigger;
+import buildcraft.core.triggers.BCTrigger;
+import buildcraft.core.utils.StringUtils;
 
 public class TriggerClockTimer extends BCTrigger {
 
@@ -49,5 +50,10 @@ public class TriggerClockTimer extends BCTrigger {
 	@Override
 	public void registerIcons(IIconRegister iconRegister) {
 		icon = iconRegister.registerIcon("buildcraft:triggers/trigger_timer_" + time.name().toLowerCase(Locale.ENGLISH));
+	}
+
+	@Override
+	public ITrigger rotateLeft() {
+		return this;
 	}
 }

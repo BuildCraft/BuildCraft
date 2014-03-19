@@ -10,12 +10,12 @@ package buildcraft.transport.triggers;
 
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.util.IIcon;
-import buildcraft.core.triggers.ActionTriggerIconProvider;
+import buildcraft.api.gates.IAction;
 import buildcraft.core.triggers.BCAction;
 import buildcraft.core.utils.StringUtils;
 
 public class ActionSingleEnergyPulse extends BCAction {
-	
+
 	private IIcon icon;
 
 	public ActionSingleEnergyPulse() {
@@ -31,10 +31,14 @@ public class ActionSingleEnergyPulse extends BCAction {
 	public String getDescription() {
 		return StringUtils.localize("gate.action.pulsar.single");
 	}
-	
+
 	@Override
 	public void registerIcons(IIconRegister iconRegister) {
 		icon = iconRegister.registerIcon("buildcraft:triggers/action_single_pulsar");
 	}
 
+	@Override
+	public IAction rotateLeft() {
+		return this;
+	}
 }

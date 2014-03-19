@@ -8,18 +8,20 @@
  */
 package buildcraft.core.triggers;
 
+import java.util.Locale;
+
+import net.minecraft.inventory.IInventory;
+import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.api.gates.ITileTrigger;
+import buildcraft.api.gates.ITrigger;
 import buildcraft.api.gates.ITriggerParameter;
 import buildcraft.api.inventory.ISpecialInventory;
 import buildcraft.core.inventory.InventoryIterator;
 import buildcraft.core.inventory.InventoryIterator.IInvSlot;
 import buildcraft.core.inventory.StackHelper;
 import buildcraft.core.utils.StringUtils;
-import java.util.Locale;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.util.ForgeDirection;
 
 public class TriggerInventory extends BCTrigger implements ITileTrigger {
 
@@ -37,10 +39,11 @@ public class TriggerInventory extends BCTrigger implements ITileTrigger {
 
 	@Override
 	public boolean hasParameter() {
-		if (state == State.Contains || state == State.Space)
+		if (state == State.Contains || state == State.Space) {
 			return true;
-		else
+		} else {
 			return false;
+		}
 	}
 
 	@Override
@@ -69,8 +72,9 @@ public class TriggerInventory extends BCTrigger implements ITileTrigger {
 				case Full:
 					break;
 				case Space:
-					if (searchedStack == null)
+					if (searchedStack == null) {
 						break;
+					}
 					int added = specialInventory.addItem(searchedStack, false, side);
 					return added > 0;
 			}
@@ -90,8 +94,9 @@ public class TriggerInventory extends BCTrigger implements ITileTrigger {
 						&& (searchedStack == null || slot.canPutStackInSlot(searchedStack));
 			}
 
-			if (!hasSlots)
+			if (!hasSlots) {
 				return false;
+			}
 
 			switch (state) {
 				case Empty:
@@ -120,5 +125,10 @@ public class TriggerInventory extends BCTrigger implements ITileTrigger {
 			default:
 				return ActionTriggerIconProvider.Trigger_Inventory_Full;
 		}
+	}
+
+	@Override
+	public ITrigger rotateLeft() {
+		return this;
 	}
 }
