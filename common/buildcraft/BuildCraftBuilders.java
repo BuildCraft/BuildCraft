@@ -53,6 +53,7 @@ import buildcraft.builders.schematics.SchematicBed;
 import buildcraft.builders.schematics.SchematicCustomStack;
 import buildcraft.builders.schematics.SchematicDirt;
 import buildcraft.builders.schematics.SchematicDoor;
+import buildcraft.builders.schematics.SchematicFire;
 import buildcraft.builders.schematics.SchematicFluid;
 import buildcraft.builders.schematics.SchematicIgnore;
 import buildcraft.builders.schematics.SchematicIgnoreMeta;
@@ -229,6 +230,8 @@ public class BuildCraftBuilders extends BuildCraftMod {
 		SchematicRegistry.registerSchematicClass(Blocks.activator_rail, SchematicRail.class);
 		SchematicRegistry.registerSchematicClass(Blocks.detector_rail, SchematicRail.class);
 		SchematicRegistry.registerSchematicClass(Blocks.golden_rail, SchematicRail.class);
+
+		SchematicRegistry.registerSchematicClass(Blocks.fire, SchematicFire.class);
 
 		// BUILDCRAFT BLOCKS
 
