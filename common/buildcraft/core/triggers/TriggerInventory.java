@@ -17,7 +17,6 @@ import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.api.gates.ITileTrigger;
 import buildcraft.api.gates.ITrigger;
 import buildcraft.api.gates.ITriggerParameter;
-import buildcraft.api.inventory.ISpecialInventory;
 import buildcraft.core.inventory.InventoryIterator;
 import buildcraft.core.inventory.InventoryIterator.IInvSlot;
 import buildcraft.core.inventory.StackHelper;
@@ -57,27 +56,6 @@ public class TriggerInventory extends BCTrigger implements ITileTrigger {
 
 		if (parameter != null) {
 			searchedStack = parameter.getItemStack();
-		}
-
-		if (tile instanceof ISpecialInventory) {
-			ISpecialInventory specialInventory = (ISpecialInventory) tile;
-			ItemStack[] itemStacks;
-			switch (state) {
-				case Contains:
-					itemStacks = specialInventory.extractItem(false, side, 1);
-					return itemStacks != null && itemStacks.length > 0 && itemStacks[0] != null && itemStacks[0].stackSize > 0 && (searchedStack == null || itemStacks[0].isItemEqual(searchedStack));
-				case Empty:
-					itemStacks = specialInventory.extractItem(false, side, 1);
-					return itemStacks == null || itemStacks.length == 0 || itemStacks[0] == null || itemStacks[0].stackSize == 0;
-				case Full:
-					break;
-				case Space:
-					if (searchedStack == null) {
-						break;
-					}
-					int added = specialInventory.addItem(searchedStack, false, side);
-					return added > 0;
-			}
 		}
 
 		if (tile instanceof IInventory) {

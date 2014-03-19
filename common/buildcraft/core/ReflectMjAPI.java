@@ -76,6 +76,10 @@ public class ReflectMjAPI {
 		public double minimumConsumption() {
 			return f.battery.miniumConsumption();
 		}
+
+		public double maxReceivedPerCycle() {
+			return f.battery.maxReceivedPerCycle();
+		}
 	}
 
 	public static BatteryObject getMjBattery (Object o) {

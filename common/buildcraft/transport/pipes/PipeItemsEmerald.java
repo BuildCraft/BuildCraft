@@ -9,21 +9,14 @@
 package buildcraft.transport.pipes;
 
 import io.netty.buffer.ByteBuf;
-
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.BuildCraftTransport;
-import buildcraft.api.inventory.ISpecialInventory;
 import buildcraft.core.GuiIds;
 import buildcraft.core.gui.buttons.IButtonTextureSet;
 import buildcraft.core.gui.buttons.IMultiButtonState;
@@ -35,7 +28,6 @@ import buildcraft.core.inventory.InvUtils;
 import buildcraft.core.inventory.SimpleInventory;
 import buildcraft.core.network.IClientState;
 import buildcraft.core.network.IGuiReturnHandler;
-import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.StringUtils;
 import buildcraft.core.utils.Utils;
 import buildcraft.transport.BlockGenericPipe;
@@ -111,73 +103,23 @@ public class PipeItemsEmerald extends PipeItemsWood implements IClientState, IGu
 	 */
 	@Override
 	public ItemStack[] checkExtract(IInventory inventory, boolean doRemove, ForgeDirection from) {
+		IInventory inv = InvUtils.getInventory(inventory);
+		ItemStack result = checkExtractGeneric(inv, doRemove, from);
 
-		// ISELECTIVEINVENTORY
-		// non blocking mode is not implemented for ISelectiveInventory yet
-//		if (inventory instanceof ISelectiveInventory) {
-//			ItemStack[] stacks = ((ISelectiveInventory) inventory).extractItem(new ItemStack[]{getCurrentFilter()}, false, doRemove, from, (int) powerHandler.getEnergyStored());
-//			if (doRemove) {
-//				for (ItemStack stack : stacks) {
-//					if (stack != null) {
-//						powerHandler.useEnergy(stack.stackSize, stack.stackSize, true);
-//					}
-//				}
-//				incrementFilter();
-//			}
-//			return stacks;
-//		} else 
-
-		// ISPECIALINVENTORY
-		// non blocking mode is not needed for ISpecialInventory since its not round robin anyway
-		if (inventory instanceof ISpecialInventory) {
-			ItemStack[] stacks = ((ISpecialInventory) inventory).extractItem(false, from, (int) powerHandler.getEnergyStored());
-			if (stacks != null) {
-				for (ItemStack stack : stacks) {
-					if (stack == null)
-						continue;
-
-					boolean matches = false;
-					for (int i = 0; i < filters.getSizeInventory(); i++) {
-						ItemStack filter = filters.getStackInSlot(i);
-						if (filter != null && filter.isItemEqual(stack)) {
-							matches = true;
-							break;
-						}
-					}
-					if (!matches) {
-						return null;
-					}
-				}
-				if (doRemove) {
-					stacks = ((ISpecialInventory) inventory).extractItem(true, from, (int) powerHandler.getEnergyStored());
-					for (ItemStack stack : stacks) {
-						if (stack != null) {
-							powerHandler.useEnergy(stack.stackSize, stack.stackSize, true);
-						}
-					}
-				}
+		// check through every filter once if non-blocking
+		if (doRemove
+				&& stateController.getButtonState() == ButtonState.NONBLOCKING
+				&& result == null) {
+			int count = 1;
+			while (result == null && count < filters.getSizeInventory()) {
+				incrementFilter();
+				result = checkExtractGeneric(inv, doRemove, from);
+				count++;
 			}
-			return stacks;
+		}
 
-		} else {
-
-			// This is a generic inventory
-			IInventory inv = InvUtils.getInventory(inventory);
-			ItemStack result = checkExtractGeneric(inv, doRemove, from);
-
-			// check through every filter once if non-blocking
-			if (doRemove && stateController.getButtonState() == ButtonState.NONBLOCKING && result == null) {
-				int count = 1;
-				while (result == null && count < filters.getSizeInventory()) {
-					incrementFilter();
-					result = checkExtractGeneric(inv, doRemove, from);
-					count++;
-				}
-			}
-
-			if (result != null) {
-				return new ItemStack[]{result};
-			}
+		if (result != null) {
+			return new ItemStack[] { result };
 		}
 
 		return null;
@@ -218,7 +160,10 @@ public class PipeItemsEmerald extends PipeItemsWood implements IClientState, IGu
 				}
 				if (doRemove) {
 					incrementFilter();
-					return inventory.decrStackSize(i, (int) powerHandler.useEnergy(1, stack.stackSize, true));
+					double energyUsed =  mjStored > stack.stackSize ? stack.stackSize : mjStored;
+					mjStored -= energyUsed;
+
+					return inventory.decrStackSize(i, (int) energyUsed);
 				} else {
 					return stack;
 				}
@@ -257,7 +202,7 @@ public class PipeItemsEmerald extends PipeItemsWood implements IClientState, IGu
 
 	@Override
 	public void readData(ByteBuf data) {
-		NBTTagCompound nbt = Utils.readNBT(data);		
+		NBTTagCompound nbt = Utils.readNBT(data);
 		readFromNBT(nbt);
 	}
 

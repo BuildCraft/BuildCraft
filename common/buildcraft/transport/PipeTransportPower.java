@@ -205,7 +205,6 @@ public class PipeTransportPower extends PipeTransport {
 							internalPower[i] -= watts;
 						} else if (tiles[j] != null) {
 							// Look for the simplified power framework
-
 							BatteryObject battery = ReflectMjAPI.getMjBattery(tiles [j]);
 
 							if (battery != null) {

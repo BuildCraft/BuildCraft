@@ -24,21 +24,15 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.gates.IAction;
-import buildcraft.api.inventory.ISpecialInventory;
 import buildcraft.core.GuiIds;
 import buildcraft.core.inventory.InvUtils;
 import buildcraft.core.inventory.SimpleInventory;
 import buildcraft.core.network.IGuiReturnHandler;
-import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.EnumColor;
 import buildcraft.transport.BlockGenericPipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.TravelingItem;
 import buildcraft.transport.triggers.ActionExtractionPreset;
-
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
 
 public class PipeItemsEmzuli extends PipeItemsWood implements IGuiReturnHandler {
 
@@ -78,8 +72,9 @@ public class PipeItemsEmzuli extends PipeItemsWood implements IGuiReturnHandler 
 	protected TravelingItem makeItem(double x, double y, double z, ItemStack stack) {
 		TravelingItem item = super.makeItem(x, y, z, stack);
 		int color = slotColors[currentFilter % filterCount];
-		if (color > 0)
+		if (color > 0) {
 			item.color = EnumColor.fromId(color - 1);
+		}
 		return item;
 	}
 
@@ -101,59 +96,11 @@ public class PipeItemsEmzuli extends PipeItemsWood implements IGuiReturnHandler 
 			return null;
 		}
 
-		/* ISELECTIVEINVENTORY */
-//		if (inventory instanceof ISelectiveInventory) {
-//			ItemStack[] stacks = ((ISelectiveInventory) inventory).extractItem(new ItemStack[]{getCurrentFilter()}, false, doRemove, from, (int) powerHandler.getEnergyStored());
-//			if (doRemove) {
-//				for (ItemStack stack : stacks) {
-//					if (stack != null) {
-//						powerHandler.useEnergy(stack.stackSize, stack.stackSize, true);
-//					}
-//				}
-//			}
-//			return stacks;
-//		} else 
+		IInventory inv = InvUtils.getInventory(inventory);
+		ItemStack result = checkExtractGeneric(inv, doRemove, from);
 
-			/* ISPECIALINVENTORY */
-		if (inventory instanceof ISpecialInventory) {
-			ItemStack[] stacks = ((ISpecialInventory) inventory).extractItem(false, from, (int) powerHandler.getEnergyStored());
-			if (stacks != null) {
-				for (ItemStack stack : stacks) {
-					if (stack == null)
-						continue;
-
-					boolean matches = false;
-					for (int i = 0; i < filters.getSizeInventory(); i++) {
-						ItemStack filter = filters.getStackInSlot(i);
-						if (filter != null && filter.isItemEqual(stack)) {
-							matches = true;
-							break;
-						}
-					}
-					if (!matches) {
-						return null;
-					}
-				}
-				if (doRemove) {
-					stacks = ((ISpecialInventory) inventory).extractItem(true, from, (int) powerHandler.getEnergyStored());
-					for (ItemStack stack : stacks) {
-						if (stack != null) {
-							powerHandler.useEnergy(stack.stackSize, stack.stackSize, true);
-						}
-					}
-				}
-			}
-			return stacks;
-
-		} else {
-
-			// This is a generic inventory
-			IInventory inv = InvUtils.getInventory(inventory);
-			ItemStack result = checkExtractGeneric(inv, doRemove, from);
-
-			if (result != null) {
-				return new ItemStack[]{result};
-			}
+		if (result != null) {
+			return new ItemStack[]{result};
 		}
 
 		return null;
@@ -175,7 +122,10 @@ public class PipeItemsEmzuli extends PipeItemsWood implements IGuiReturnHandler 
 					continue;
 				}
 				if (doRemove) {
-					return inventory.decrStackSize(i, (int) powerHandler.useEnergy(1, stack.stackSize, true));
+					double energyUsed =  mjStored > stack.stackSize ? stack.stackSize : mjStored;
+					mjStored -= energyUsed;
+
+					return inventory.decrStackSize(i, (int) energyUsed);
 				} else {
 					return stack;
 				}

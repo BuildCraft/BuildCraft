@@ -262,7 +262,7 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 			} else {
 				BatteryObject battery = ReflectMjAPI.getMjBattery(tile);
 
-				battery.addEnergy(extractEnergy(0, battery.minimumConsumption(),
+				battery.addEnergy(extractEnergy(0, battery.maxReceivedPerCycle(),
 						true));
 			}
 		}
