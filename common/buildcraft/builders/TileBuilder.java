@@ -676,7 +676,7 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IM
 				if (slot.schematic == null) {
 					getWorld().setBlockToAir(slot.x, slot.y, slot.z);
 				} else {
-					slot.schematic.writeToWorld(bluePrintBuilder.context, slot.x,
+					slot.writeToWorld(bluePrintBuilder.context, slot.x,
 						slot.y, slot.z);
 				}
 			} else {
