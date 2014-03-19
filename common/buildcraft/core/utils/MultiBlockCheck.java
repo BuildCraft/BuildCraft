@@ -1,85 +1,31 @@
 package buildcraft.core.utils;
 
+import net.minecraft.item.Item;
 import net.minecraft.world.World;
 import buildcraft.BuildCraftFactory;
+import buildcraft.BuildCraftTransport;
 
 public class MultiBlockCheck {
+	
 	
 	public static boolean isPartOfAMultiBlock(String type, int x, int y, int z, World world){
 		if (!world.isRemote){
 			if (type=="refinery"){
-				if (world.getBlock(x+1, y, z)==BuildCraftFactory.blockMultiRefinery
-						&& world.getBlock(x, y, z+1)==BuildCraftFactory.blockMultiRefinery
-						&& world.getBlock(x+1, y, z+1)==BuildCraftFactory.blockMultiRefinery
-						&& world.getBlock(x, y+1, z)==BuildCraftFactory.blockMultiRefinery
-						&& world.getBlock(x+1, y+1, z)==BuildCraftFactory.blockMultiRefinery
-						&& world.getBlock(x, y+1, z+1)==BuildCraftFactory.blockMultiRefinery
-						&& world.getBlock(x+1, y+1, z+1)==BuildCraftFactory.blockMultiRefinery){
-					return true;
+				boolean multiBlock = true;
+				for (int t = -5; t <= 5; t ++){
+					for (int u = -1; u <=1; u++){
+						for (int v = 0; u<=2; v++){
+							if (world.getBlock(x+t, y+u, z+v)!=BuildCraftFactory.blockRefineryHeater
+									&& world.getBlock(x+t, y+u, z+v)!=BuildCraftFactory.blockRefineryControl){
+								if (z!=0 && Item.getItemFromBlock(world.getBlock(x+t,y+u,z))!=BuildCraftTransport.pipeFluidsCobblestone){
+									multiBlock=false;
+								}
+								
+							}
+						}
+					}
 				}
-				if (world.getBlock(x-1, y, z)==BuildCraftFactory.blockMultiRefinery
-						&& world.getBlock(x, y, z+1)==BuildCraftFactory.blockMultiRefinery
-						&& world.getBlock(x-1, y, z+1)==BuildCraftFactory.blockMultiRefinery
-						&& world.getBlock(x, y+1, z)==BuildCraftFactory.blockMultiRefinery
-						&& world.getBlock(x-1, y+1, z)==BuildCraftFactory.blockMultiRefinery
-						&& world.getBlock(x, y+1, z+1)==BuildCraftFactory.blockMultiRefinery
-						&& world.getBlock(x-1, y+1, z+1)==BuildCraftFactory.blockMultiRefinery){
-					return true;
-				}
-				if (world.getBlock(x+1, y, z)==BuildCraftFactory.blockMultiRefinery
-						&& world.getBlock(x, y, z+1)==BuildCraftFactory.blockMultiRefinery
-						&& world.getBlock(x+1, y, z+1)==BuildCraftFactory.blockMultiRefinery
-						&& world.getBlock(x, y-1, z)==BuildCraftFactory.blockMultiRefinery
-						&& world.getBlock(x+1, y-1, z)==BuildCraftFactory.blockMultiRefinery
-						&& world.getBlock(x, y-1, z+1)==BuildCraftFactory.blockMultiRefinery
-						&& world.getBlock(x+1, y-1, z+1)==BuildCraftFactory.blockMultiRefinery){
-					return true;
-				}
-				if (world.getBlock(x+1, y, z)==BuildCraftFactory.blockMultiRefinery
-						&& world.getBlock(x, y, z-1)==BuildCraftFactory.blockMultiRefinery
-						&& world.getBlock(x+1, y, z-1)==BuildCraftFactory.blockMultiRefinery
-						&& world.getBlock(x, y+1, z)==BuildCraftFactory.blockMultiRefinery
-						&& world.getBlock(x+1, y+1, z)==BuildCraftFactory.blockMultiRefinery
-						&& world.getBlock(x, y+1, z-1)==BuildCraftFactory.blockMultiRefinery
-						&& world.getBlock(x+1, y+1, z-1)==BuildCraftFactory.blockMultiRefinery){
-					return true;
-				}
-				if (world.getBlock(x-1, y, z)==BuildCraftFactory.blockMultiRefinery
-						&& world.getBlock(x, y, z+1)==BuildCraftFactory.blockMultiRefinery
-						&& world.getBlock(x-1, y, z+1)==BuildCraftFactory.blockMultiRefinery
-						&& world.getBlock(x, y-1, z)==BuildCraftFactory.blockMultiRefinery
-						&& world.getBlock(x-1, y-1, z)==BuildCraftFactory.blockMultiRefinery
-						&& world.getBlock(x, y-1, z+1)==BuildCraftFactory.blockMultiRefinery
-						&& world.getBlock(x-1, y-1, z+1)==BuildCraftFactory.blockMultiRefinery){
-					return true;
-				}
-				if (world.getBlock(x-1, y, z)==BuildCraftFactory.blockMultiRefinery
-						&& world.getBlock(x, y, z-1)==BuildCraftFactory.blockMultiRefinery
-						&& world.getBlock(x-1, y, z-1)==BuildCraftFactory.blockMultiRefinery
-						&& world.getBlock(x, y+1, z)==BuildCraftFactory.blockMultiRefinery
-						&& world.getBlock(x-1, y+1, z)==BuildCraftFactory.blockMultiRefinery
-						&& world.getBlock(x, y+1, z-1)==BuildCraftFactory.blockMultiRefinery
-						&& world.getBlock(x-1, y+1, z-1)==BuildCraftFactory.blockMultiRefinery){
-					return true;
-				}
-				if (world.getBlock(x+1, y, z)==BuildCraftFactory.blockMultiRefinery
-						&& world.getBlock(x, y, z-1)==BuildCraftFactory.blockMultiRefinery
-						&& world.getBlock(x+1, y, z-1)==BuildCraftFactory.blockMultiRefinery
-						&& world.getBlock(x, y-1, z)==BuildCraftFactory.blockMultiRefinery
-						&& world.getBlock(x+1, y-1, z)==BuildCraftFactory.blockMultiRefinery
-						&& world.getBlock(x, y-1, z-1)==BuildCraftFactory.blockMultiRefinery
-						&& world.getBlock(x+1, y-1, z-1)==BuildCraftFactory.blockMultiRefinery){
-					return true;
-				}
-				if (world.getBlock(x-1, y, z)==BuildCraftFactory.blockMultiRefinery
-						&& world.getBlock(x, y, z-1)==BuildCraftFactory.blockMultiRefinery
-						&& world.getBlock(x-1, y, z-1)==BuildCraftFactory.blockMultiRefinery
-						&& world.getBlock(x, y-1, z)==BuildCraftFactory.blockMultiRefinery
-						&& world.getBlock(x-1, y-1, z)==BuildCraftFactory.blockMultiRefinery
-						&& world.getBlock(x, y-1, z-1)==BuildCraftFactory.blockMultiRefinery
-						&& world.getBlock(x-1, y-1, z-1)==BuildCraftFactory.blockMultiRefinery){
-					return true;
-				}
+				return multiBlock;
 			}
 		}
 		return false;
