@@ -13,6 +13,7 @@ import java.util.Locale;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.util.IIcon;
 import net.minecraftforge.common.util.ForgeDirection;
+import buildcraft.BuildCraftTransport;
 import buildcraft.api.gates.IAction;
 import buildcraft.core.triggers.BCAction;
 
@@ -44,6 +45,6 @@ public class ActionPipeDirection extends BCAction {
 
 	@Override
 	public IAction rotateLeft() {
-		return new ActionPipeDirection(direction.getRotation(ForgeDirection.UP));
+		return BuildCraftTransport.actionPipeDirection [direction.getRotation(ForgeDirection.UP).ordinal()];
 	}
 }
