@@ -85,35 +85,40 @@ public class ReflectMjAPI {
 	public static BatteryObject getMjBattery (Object o) {
 		BatteryField f = getMjBattery (o.getClass());
 
-		if (f == null) {
-			return null;
-		} else if (f.kind == BatteryKind.Value) {
-			BatteryObject obj = new BatteryObject();
-			obj.o = o;
-			obj.f = f;
+		if (f != null && f.field.isAccessible()) {// Not sure(the getDeclaredFields thing), 
+			if (f.kind == BatteryKind.Value) {// but for Java we accept only public, yes?
+				BatteryObject obj = new BatteryObject();
+				obj.o = o;
+				obj.f = f;
 
-			return obj;
-		} else {
-			try {
-				return getMjBattery(f.field.get(o));
-			} catch (IllegalArgumentException e) {
-				e.printStackTrace();
-				return null;
-			} catch (IllegalAccessException e) {
-				e.printStackTrace();
-				return null;
+				return obj;
+			} else {
+				try {
+					return getMjBattery(f.field.get(o));
+				} catch (IllegalArgumentException e) {
+					e.printStackTrace();
+				} catch (IllegalAccessException e) {
+					e.printStackTrace();
+				}
 			}
 		}
+            	return null;
 	}
 
 	static Map <Class, BatteryField> MjBatteries = new HashMap <Class, BatteryField> ();
 
 	private static BatteryField getMjBattery (Class c) {
 		if (!MjBatteries.containsKey(c)) {
-			for (Field f : c.getFields()) {
+			for (Field f : c.getDeclaredFields()) {
 				MjBattery battery = f.getAnnotation (MjBattery.class);
 
 				if (battery != null) {
+					try{
+						c.getMethod(f.getName() + "_$eq", double.class); // Find public Scala setter
+						f.setAccessible(true); // If exception wasn't thrown, set accessibility
+					}catch(NoSuchMethodException e){
+						// NOOP
+					}
 					BatteryField bField = new BatteryField();
 					bField.field = f;
 					bField.battery = battery;
