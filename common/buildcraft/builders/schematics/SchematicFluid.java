@@ -49,9 +49,21 @@ public class SchematicFluid extends SchematicBlock {
 	}
 
 	@Override
+	public void readFromWorld(IBuilderContext context, int x, int y, int z) {
+		// Cancel storage of requirements
+	}
+
+	@Override
 	public void writeToWorld(IBuilderContext context, int x, int y, int z) {
 		if (meta == 0) {
-			context.world().setBlock(x, y, z, block, 0,1);
+			context.world().setBlock(x, y, z, block, 0, 3);
+		}
+	}
+
+	@Override
+	public void postProcessing(IBuilderContext context, int x, int y, int z) {
+		if (meta != 0) {
+			context.world().setBlock(x, y, z, block, meta, 3);
 		}
 	}
 

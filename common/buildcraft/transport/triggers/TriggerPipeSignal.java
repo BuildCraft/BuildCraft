@@ -8,14 +8,16 @@
  */
 package buildcraft.transport.triggers;
 
+import java.util.Locale;
+
+import buildcraft.api.gates.ITrigger;
 import buildcraft.api.gates.ITriggerParameter;
+import buildcraft.api.transport.PipeWire;
 import buildcraft.core.triggers.ActionTriggerIconProvider;
 import buildcraft.core.triggers.BCTrigger;
+import buildcraft.core.utils.StringUtils;
 import buildcraft.transport.IPipeTrigger;
 import buildcraft.transport.Pipe;
-import buildcraft.api.transport.PipeWire;
-import buildcraft.core.utils.StringUtils;
-import java.util.Locale;
 
 public class TriggerPipeSignal extends BCTrigger implements IPipeTrigger {
 
@@ -42,10 +44,11 @@ public class TriggerPipeSignal extends BCTrigger implements IPipeTrigger {
 
 	@Override
 	public boolean isTriggerActive(Pipe pipe, ITriggerParameter parameter) {
-		if (active)
+		if (active) {
 			return pipe.signalStrength[color.ordinal()] > 0;
-		else
+		} else {
 			return pipe.signalStrength[color.ordinal()] == 0;
+		}
 	}
 
 	@Override
@@ -74,5 +77,10 @@ public class TriggerPipeSignal extends BCTrigger implements IPipeTrigger {
 			}
 		}
 		return -1;
+	}
+
+	@Override
+	public ITrigger rotateLeft() {
+		return this;
 	}
 }

@@ -8,6 +8,15 @@
  */
 package buildcraft.transport.triggers;
 
+import java.util.Locale;
+
+import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.util.IIcon;
+import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraftforge.fluids.FluidContainerRegistry;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidTankInfo;
+import buildcraft.api.gates.ITrigger;
 import buildcraft.api.gates.ITriggerParameter;
 import buildcraft.core.triggers.BCTrigger;
 import buildcraft.core.utils.StringUtils;
@@ -20,13 +29,6 @@ import buildcraft.transport.TravelingItem;
 import buildcraft.transport.pipes.PipePowerWood;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import java.util.Locale;
-import net.minecraft.client.renderer.texture.IIconRegister;
-import net.minecraft.util.IIcon;
-import net.minecraftforge.common.util.ForgeDirection;
-import net.minecraftforge.fluids.FluidContainerRegistry;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidTankInfo;
 
 public class TriggerPipeContents extends BCTrigger implements IPipeTrigger {
 
@@ -70,17 +72,20 @@ public class TriggerPipeContents extends BCTrigger implements IPipeTrigger {
 		if (pipe.transport instanceof PipeTransportItems) {
 			PipeTransportItems transportItems = (PipeTransportItems) pipe.transport;
 
-			if (kind == PipeContents.empty)
+			if (kind == PipeContents.empty) {
 				return transportItems.items.isEmpty();
-			else if (kind == PipeContents.containsItems)
+			} else if (kind == PipeContents.containsItems) {
 				if (parameter != null && parameter.getItemStack() != null) {
 					for (TravelingItem item : transportItems.items) {
 						if (item.getItemStack().getItem() == parameter.getItemStack().getItem()
-								&& item.getItemStack().getItemDamage() == parameter.getItemStack().getItemDamage())
+								&& item.getItemStack().getItemDamage() == parameter.getItemStack().getItemDamage()) {
 							return true;
+						}
 					}
-				} else
+				} else {
 					return !transportItems.items.isEmpty();
+				}
+			}
 		} else if (pipe.transport instanceof PipeTransportFluids) {
 			PipeTransportFluids transportFluids = (PipeTransportFluids) pipe.transport;
 
@@ -92,16 +97,19 @@ public class TriggerPipeContents extends BCTrigger implements IPipeTrigger {
 
 			if (kind == PipeContents.empty) {
 				for (FluidTankInfo b : transportFluids.getTankInfo(ForgeDirection.UNKNOWN)) {
-					if (b.fluid != null && b.fluid.amount != 0)
+					if (b.fluid != null && b.fluid.amount != 0) {
 						return false;
+					}
 				}
 
 				return true;
 			} else {
 				for (FluidTankInfo b : transportFluids.getTankInfo(ForgeDirection.UNKNOWN)) {
-					if (b.fluid != null && b.fluid.amount != 0)
-						if (searchedFluid == null || searchedFluid.isFluidEqual(b.fluid))
+					if (b.fluid != null && b.fluid.amount != 0) {
+						if (searchedFluid == null || searchedFluid.isFluidEqual(b.fluid)) {
 							return true;
+						}
+					}
 				}
 
 				return false;
@@ -112,15 +120,17 @@ public class TriggerPipeContents extends BCTrigger implements IPipeTrigger {
 			switch (kind) {
 				case empty:
 					for (double s : transportPower.displayPower) {
-						if (s > 1e-4)
+						if (s > 1e-4) {
 							return false;
+						}
 					}
 
 					return true;
 				case containsEnergy:
 					for (double s : transportPower.displayPower) {
-						if (s > 1e-4)
+						if (s > 1e-4) {
 							return true;
+						}
 					}
 
 					return false;
@@ -145,5 +155,10 @@ public class TriggerPipeContents extends BCTrigger implements IPipeTrigger {
 	@SideOnly(Side.CLIENT)
 	public void registerIcons(IIconRegister iconRegister) {
 		icon = iconRegister.registerIcon("buildcraft:triggers/trigger_pipecontents_" + kind.name().toLowerCase(Locale.ENGLISH));
+	}
+
+	@Override
+	public ITrigger rotateLeft() {
+		return this;
 	}
 }

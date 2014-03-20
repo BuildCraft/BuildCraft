@@ -24,7 +24,6 @@ import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.Position;
 import buildcraft.api.gates.ITrigger;
-import buildcraft.api.inventory.ISpecialInventory;
 import buildcraft.api.transport.IPipeTile.PipeType;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.IMachine;
@@ -498,7 +497,7 @@ public class PipeTransportItems extends PipeTransport {
 			return slots != null && slots.length > 0;
 		}
 
-		return tile instanceof TileGenericPipe || tile instanceof ISpecialInventory || (tile instanceof IInventory && ((IInventory) tile).getSizeInventory() > 0)
+		return tile instanceof TileGenericPipe || (tile instanceof IInventory && ((IInventory) tile).getSizeInventory() > 0)
 				|| (tile instanceof IMachine && ((IMachine) tile).manageSolids());
 	}
 

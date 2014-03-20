@@ -53,6 +53,7 @@ import buildcraft.builders.schematics.SchematicBed;
 import buildcraft.builders.schematics.SchematicCustomStack;
 import buildcraft.builders.schematics.SchematicDirt;
 import buildcraft.builders.schematics.SchematicDoor;
+import buildcraft.builders.schematics.SchematicFire;
 import buildcraft.builders.schematics.SchematicFluid;
 import buildcraft.builders.schematics.SchematicIgnore;
 import buildcraft.builders.schematics.SchematicIgnoreMeta;
@@ -61,7 +62,8 @@ import buildcraft.builders.schematics.SchematicLever;
 import buildcraft.builders.schematics.SchematicPiston;
 import buildcraft.builders.schematics.SchematicPortal;
 import buildcraft.builders.schematics.SchematicPumpkin;
-import buildcraft.builders.schematics.SchematicRedstoneRepeater;
+import buildcraft.builders.schematics.SchematicRail;
+import buildcraft.builders.schematics.SchematicRedstoneDiode;
 import buildcraft.builders.schematics.SchematicRotateInventory;
 import buildcraft.builders.schematics.SchematicRotateMeta;
 import buildcraft.builders.schematics.SchematicSign;
@@ -157,6 +159,7 @@ public class BuildCraftBuilders extends BuildCraftMod {
 		SchematicRegistry.registerSchematicClass(Blocks.log2, SchematicRotateMeta.class, new int[]{8, 4, 8, 4}, true);
 		SchematicRegistry.registerSchematicClass(Blocks.hay_block, SchematicRotateMeta.class, new int[]{8, 4, 8, 4}, true);
 		SchematicRegistry.registerSchematicClass(Blocks.quartz_block, SchematicRotateMeta.class, new int[]{4, 3, 4, 3}, true);
+		SchematicRegistry.registerSchematicClass(Blocks.hopper, SchematicRotateMeta.class, new int[]{2, 5, 3, 4}, true);
 
 		SchematicRegistry.registerSchematicClass(Blocks.furnace, SchematicRotateInventory.class, new int[]{2, 5, 3, 4}, true);
 		SchematicRegistry.registerSchematicClass(Blocks.lit_furnace, SchematicRotateInventory.class, new int[]{2, 5, 3, 4}, true);
@@ -180,8 +183,10 @@ public class BuildCraftBuilders extends BuildCraftMod {
 		SchematicRegistry.registerSchematicClass(Blocks.melon_stem, SchematicCustomStack.class, new ItemStack(Items.melon_seeds));
 		SchematicRegistry.registerSchematicClass(Blocks.glowstone, SchematicCustomStack.class, new ItemStack(Blocks.glowstone));
 
-		SchematicRegistry.registerSchematicClass(Blocks.powered_repeater, SchematicRedstoneRepeater.class);
-		SchematicRegistry.registerSchematicClass(Blocks.unpowered_repeater, SchematicRedstoneRepeater.class);
+		SchematicRegistry.registerSchematicClass(Blocks.powered_repeater, SchematicRedstoneDiode.class);
+		SchematicRegistry.registerSchematicClass(Blocks.unpowered_repeater, SchematicRedstoneDiode.class);
+		SchematicRegistry.registerSchematicClass(Blocks.powered_comparator, SchematicRedstoneDiode.class);
+		SchematicRegistry.registerSchematicClass(Blocks.unpowered_comparator, SchematicRedstoneDiode.class);
 
 		SchematicRegistry.registerSchematicClass(Blocks.water, SchematicFluid.class, new ItemStack(Items.water_bucket));
 		SchematicRegistry.registerSchematicClass(Blocks.flowing_water, SchematicFluid.class, new ItemStack(Items.water_bucket));
@@ -220,6 +225,13 @@ public class BuildCraftBuilders extends BuildCraftMod {
 		SchematicRegistry.registerSchematicClass(Blocks.standing_sign, SchematicSign.class, false);
 
 		SchematicRegistry.registerSchematicClass(Blocks.portal, SchematicPortal.class);
+
+		SchematicRegistry.registerSchematicClass(Blocks.rail, SchematicRail.class);
+		SchematicRegistry.registerSchematicClass(Blocks.activator_rail, SchematicRail.class);
+		SchematicRegistry.registerSchematicClass(Blocks.detector_rail, SchematicRail.class);
+		SchematicRegistry.registerSchematicClass(Blocks.golden_rail, SchematicRail.class);
+
+		SchematicRegistry.registerSchematicClass(Blocks.fire, SchematicFire.class);
 
 		// BUILDCRAFT BLOCKS
 

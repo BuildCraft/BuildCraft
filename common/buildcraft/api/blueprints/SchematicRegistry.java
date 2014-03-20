@@ -12,7 +12,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockContainer;
+import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.init.Blocks;
 
 public class SchematicRegistry {
@@ -39,7 +39,7 @@ public class SchematicRegistry {
 		}
 
 		if (!schematicClasses.containsKey(block)) {
-			if (block instanceof BlockContainer) {
+			if (block instanceof ITileEntityProvider) {
 				registerSchematicClass(block, SchematicTile.class);
 			} else {
 				registerSchematicClass(block, SchematicBlock.class);

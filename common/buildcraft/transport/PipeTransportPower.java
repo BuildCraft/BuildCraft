@@ -26,7 +26,7 @@ import buildcraft.api.power.PowerHandler.Type;
 import buildcraft.api.transport.IPipeTile.PipeType;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.ReflectMjAPI;
-import buildcraft.core.ReflectMjAPI.BatteryField;
+import buildcraft.core.ReflectMjAPI.BatteryObject;
 import buildcraft.transport.network.PacketPowerUpdate;
 import buildcraft.transport.pipes.PipePowerCobblestone;
 import buildcraft.transport.pipes.PipePowerDiamond;
@@ -115,7 +115,7 @@ public class PipeTransportPower extends PipeTransport {
 			}
 		}
 
-		if (ReflectMjAPI.getMjBattery(tile.getClass()) != null) {
+		if (ReflectMjAPI.getMjBattery(tile) != null) {
 			return true;
 		}
 
@@ -180,7 +180,7 @@ public class PipeTransportPower extends PipeTransport {
 						if (tiles[j] != null
 								&& (tiles[j] instanceof TileGenericPipe
 										|| tiles[j] instanceof IPowerReceptor || ReflectMjAPI
-										.getMjBattery(tiles[j].getClass()) != null)) {
+										.getMjBattery(tiles[j]) != null)) {
 							totalPowerQuery += powerQuery[j];
 						}
 					}
@@ -205,27 +205,13 @@ public class PipeTransportPower extends PipeTransport {
 							internalPower[i] -= watts;
 						} else if (tiles[j] != null) {
 							// Look for the simplified power framework
+							BatteryObject battery = ReflectMjAPI.getMjBattery(tiles [j]);
 
-							BatteryField f = ReflectMjAPI.getMjBattery(tiles [j].getClass());
+							if (battery != null) {
+								watts = (internalPower[i] / totalPowerQuery)
+										* powerQuery[j];
 
-							try {
-								if (f != null) {
-									watts = (internalPower[i] / totalPowerQuery) * powerQuery[j];
-
-									double energy = f.field.getDouble (tiles[j]);
-
-									if (energy < 100) {
-										energy += watts;
-										f.field.setDouble(tiles [j], energy);
-										internalPower[i] -= watts;
-									}
-								}
-							} catch (IllegalArgumentException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							} catch (IllegalAccessException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
+								internalPower[i] -= battery.addEnergy(watts);
 							}
 						}
 
@@ -267,10 +253,10 @@ public class PipeTransportPower extends PipeTransport {
 			}
 
 			if (tile != null) {
-				BatteryField f = ReflectMjAPI.getMjBattery(tile.getClass());
+				BatteryObject battery = ReflectMjAPI.getMjBattery(tile);
 
-				if (f != null) {
-					requestEnergy(dir, f.getEnergyRequested(tile));
+				if (battery != null) {
+					requestEnergy(dir, battery.getEnergyRequested());
 				}
 			}
 		}

@@ -8,17 +8,19 @@
  */
 package buildcraft.core.triggers;
 
+import java.util.Locale;
+
+import net.minecraft.inventory.IInventory;
+import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.api.gates.ITileTrigger;
+import buildcraft.api.gates.ITrigger;
 import buildcraft.api.gates.ITriggerParameter;
 import buildcraft.core.inventory.InventoryIterator;
 import buildcraft.core.inventory.InventoryIterator.IInvSlot;
 import buildcraft.core.inventory.StackHelper;
 import buildcraft.core.utils.StringUtils;
-import java.util.Locale;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.util.ForgeDirection;
 
 public class TriggerInventoryLevel extends BCTrigger implements ITileTrigger {
 
@@ -58,8 +60,9 @@ public class TriggerInventoryLevel extends BCTrigger implements ITileTrigger {
 	@Override
 	public boolean isTriggerActive(ForgeDirection side, TileEntity tile, ITriggerParameter parameter) {
 		// A parameter is required
-		if (parameter == null)
+		if (parameter == null) {
 			return false;
+		}
 
 		if (tile instanceof IInventory) {
 			ItemStack searchStack = parameter.getItemStack();
@@ -77,7 +80,7 @@ public class TriggerInventoryLevel extends BCTrigger implements ITileTrigger {
 			}
 
 			if (stackSpace > 0) {
-				float percentage = (float) foundItems / ((float) stackSpace * (float) searchStack.getMaxStackSize());
+				float percentage = foundItems / ((float) stackSpace * (float) searchStack.getMaxStackSize());
 				return percentage < type.level;
 			}
 
@@ -96,5 +99,10 @@ public class TriggerInventoryLevel extends BCTrigger implements ITileTrigger {
 			default:
 				return ActionTriggerIconProvider.Trigger_Inventory_Below75;
 		}
+	}
+
+	@Override
+	public ITrigger rotateLeft() {
+		return this;
 	}
 }

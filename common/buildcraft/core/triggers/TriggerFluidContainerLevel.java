@@ -8,31 +8,32 @@
  */
 package buildcraft.core.triggers;
 
-import buildcraft.api.gates.ITileTrigger;
-import buildcraft.api.gates.ITriggerParameter;
-import buildcraft.core.triggers.TriggerInventoryLevel.TriggerType;
-import buildcraft.core.utils.StringUtils;
 import java.util.Locale;
+
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
+import buildcraft.api.gates.ITileTrigger;
+import buildcraft.api.gates.ITrigger;
+import buildcraft.api.gates.ITriggerParameter;
+import buildcraft.core.utils.StringUtils;
 
 public class TriggerFluidContainerLevel extends BCTrigger implements ITileTrigger {
 
 	public enum TriggerType {
-		
+
 		BELOW_25(0.25F), BELOW_50(0.5F), BELOW_75(0.75F);
-		
+
 		public final float level;
 
 		private TriggerType(float level) {
 			this.level = level;
 		}
 	};
-	
+
 	public TriggerType type;
 
 	public TriggerFluidContainerLevel(TriggerType type) {
@@ -66,8 +67,9 @@ public class TriggerFluidContainerLevel extends BCTrigger implements ITileTrigge
 			}
 
 			FluidTankInfo[] liquids = container.getTankInfo(side);
-			if (liquids == null || liquids.length == 0)
+			if (liquids == null || liquids.length == 0) {
 				return false;
+			}
 
 			for (FluidTankInfo c : liquids) {
 				if (c.fluid == null) {
@@ -76,7 +78,7 @@ public class TriggerFluidContainerLevel extends BCTrigger implements ITileTrigge
 					}
 					return container.fill(side, searchedFluid, false) > 0;
 				}
-				
+
 				if (searchedFluid == null || searchedFluid.isFluidEqual(c.fluid)) {
 					float percentage = (float) c.fluid.amount / (float) c.capacity;
 					return percentage < type.level;
@@ -98,5 +100,10 @@ public class TriggerFluidContainerLevel extends BCTrigger implements ITileTrigge
 			default:
 				return ActionTriggerIconProvider.Trigger_FluidContainer_Below75;
 		}
+	}
+
+	@Override
+	public ITrigger rotateLeft() {
+		return this;
 	}
 }

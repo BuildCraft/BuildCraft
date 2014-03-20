@@ -283,7 +283,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 			boolean smallStack = reqStk.stackSize == 1;
 			ItemStack usedStack = reqStk;
 			int size = inv.getSizeInventory();
-			for (int i = 0; i <= size; ++i) {
+			for (int i = 0; i < size; ++i) {
 				if (!inv.isBuildingMaterial(i)) {
 
 				}

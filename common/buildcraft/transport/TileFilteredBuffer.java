@@ -8,6 +8,11 @@
  */
 package buildcraft.transport;
 
+import java.util.LinkedList;
+
+import buildcraft.BuildCraftCore;
+import buildcraft.api.gates.IOverrideDefaultTriggers;
+import buildcraft.api.gates.ITrigger;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.inventory.SimpleInventory;
 import net.minecraft.entity.player.EntityPlayer;
@@ -16,7 +21,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
-public class TileFilteredBuffer extends TileBuildCraft implements IInventory {
+public class TileFilteredBuffer extends TileBuildCraft implements IInventory, IOverrideDefaultTriggers {
 
 	private final SimpleInventory inventoryFilters = new SimpleInventory(9, "FilteredBufferFilters", 1);
 	private final SimpleInventory inventoryStorage = new SimpleInventory(9, "FilteredBufferStorage", 64);
@@ -123,5 +128,16 @@ public class TileFilteredBuffer extends TileBuildCraft implements IInventory {
 	@Override
 	public boolean hasCustomInventoryName() {
 		return false;
+	}
+
+	@Override
+	public LinkedList<ITrigger> getTriggers() {
+		LinkedList<ITrigger> triggers = new LinkedList<ITrigger>();
+		
+		triggers.add(BuildCraftCore.triggerInventoryBelow25);
+		triggers.add(BuildCraftCore.triggerInventoryBelow50);
+		triggers.add(BuildCraftCore.triggerInventoryBelow75);
+
+		return triggers;
 	}
 }

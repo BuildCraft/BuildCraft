@@ -10,7 +10,6 @@ package buildcraft.api.blueprints;
 
 import java.util.ArrayList;
 
-import net.minecraft.block.BlockContainer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -44,7 +43,7 @@ public class SchematicTile extends SchematicBlock {
 	public void writeToWorld(IBuilderContext context, int x, int y, int z) {
 		super.writeToWorld(context, x, y, z);
 
-		if (block instanceof BlockContainer) {
+		if (block.hasTileEntity(meta)) {
 			TileEntity tile = context.world().getTileEntity(x, y, z);
 
 			cpt.setInteger("x", x);
@@ -70,7 +69,7 @@ public class SchematicTile extends SchematicBlock {
 	public void readFromWorld(IBuilderContext context, int x, int y, int z) {
 		super.readFromWorld(context, x, y, z);
 
-		if (block instanceof BlockContainer) {
+		if (block.hasTileEntity(meta)) {
 			TileEntity tile = context.world().getTileEntity(x, y, z);
 
 			if (tile != null) {

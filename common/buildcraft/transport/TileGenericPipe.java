@@ -39,9 +39,7 @@ import buildcraft.api.gates.GateExpansions;
 import buildcraft.api.gates.IGateExpansion;
 import buildcraft.api.gates.IOverrideDefaultTriggers;
 import buildcraft.api.gates.ITrigger;
-import buildcraft.api.power.IPowerReceptor;
-import buildcraft.api.power.PowerHandler;
-import buildcraft.api.power.PowerHandler.PowerReceiver;
+import buildcraft.api.mj.MjBattery;
 import buildcraft.api.transport.IPipeConnection;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.PipeWire;
@@ -62,7 +60,8 @@ import buildcraft.transport.gates.GateFactory;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFluidHandler, IPipeTile, IOverrideDefaultTriggers, ITileBufferHolder,
+public class TileGenericPipe extends TileEntity implements IFluidHandler,
+		IPipeTile, IOverrideDefaultTriggers, ITileBufferHolder,
 		IDropControlInventory, ISyncedTile, ISolidSideTile, IGuiReturnHandler {
 
 	public class CoreState implements IClientState {
@@ -101,7 +100,10 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 	private TileBuffer[] tileBuffer;
 	public boolean[] pipeConnectionsBuffer = new boolean[6];
 	public SafeTimeTracker networkSyncTracker = new SafeTimeTracker();
+
+	@MjBattery
 	public Pipe pipe;
+
 	private boolean sendClientUpdate = false;
 	private boolean blockNeighborChange = false;
 	private boolean refreshRenderState = false;
@@ -272,12 +274,6 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 			refreshRenderState = false;
 		}
 
-		PowerReceiver provider = getPowerReceiver(null);
-
-		if (provider != null) {
-			provider.update();
-		}
-
 		if (sendClientUpdate) {
 			sendClientUpdate = false;
 
@@ -408,22 +404,6 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 
 	public boolean isInitialized() {
 		return initialized;
-	}
-
-	@Override
-	public PowerHandler.PowerReceiver getPowerReceiver(ForgeDirection side) {
-		if (BlockGenericPipe.isValid(pipe) && pipe instanceof IPowerReceptor) {
-			return ((IPowerReceptor) pipe).getPowerReceiver(null);
-		} else {
-			return null;
-		}
-	}
-
-	@Override
-	public void doWork(PowerHandler workProvider) {
-		if (BlockGenericPipe.isValid(pipe) && pipe instanceof IPowerReceptor) {
-			((IPowerReceptor) pipe).doWork(workProvider);
-		}
 	}
 
 	public void scheduleNeighborChange() {

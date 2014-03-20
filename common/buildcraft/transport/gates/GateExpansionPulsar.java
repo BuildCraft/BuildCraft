@@ -8,22 +8,19 @@
  */
 package buildcraft.transport.gates;
 
-import buildcraft.api.gates.GateExpansionController;
-import buildcraft.api.gates.IGateExpansion;
-import buildcraft.BuildCraftTransport;
-import buildcraft.api.gates.IAction;
-import buildcraft.api.power.IPowerReceptor;
-import buildcraft.api.power.PowerHandler;
-import buildcraft.api.power.PowerHandler.Type;
-import buildcraft.transport.TileGenericPipe;
-import buildcraft.transport.triggers.ActionEnergyPulsar;
-import buildcraft.transport.triggers.ActionSingleEnergyPulse;
-
 import java.util.List;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.util.ForgeDirection;
+import buildcraft.BuildCraftTransport;
+import buildcraft.api.gates.GateExpansionController;
+import buildcraft.api.gates.IAction;
+import buildcraft.api.gates.IGateExpansion;
+import buildcraft.core.ReflectMjAPI;
+import buildcraft.core.ReflectMjAPI.BatteryObject;
+import buildcraft.transport.TileGenericPipe;
+import buildcraft.transport.triggers.ActionEnergyPulsar;
+import buildcraft.transport.triggers.ActionSingleEnergyPulse;
 
 public class GateExpansionPulsar extends GateExpansionBuildcraft implements IGateExpansion {
 
@@ -85,8 +82,9 @@ public class GateExpansionPulsar extends GateExpansionBuildcraft implements IGat
 
 		@Override
 		public void tick() {
-			if (!isActive && hasPulsed)
+			if (!isActive && hasPulsed) {
 				hasPulsed = false;
+			}
 
 			if (tick++ % PULSE_PERIOD != 0) {
 				// only do the treatement once every period
@@ -98,11 +96,11 @@ public class GateExpansionPulsar extends GateExpansionBuildcraft implements IGat
 				return;
 			}
 
-			PowerHandler.PowerReceiver powerReceptor = ((IPowerReceptor) pipeTile).getPowerReceiver(ForgeDirection.UNKNOWN);
+			BatteryObject battery = ReflectMjAPI.getMjBattery(pipeTile);
 
-			if (powerReceptor != null && (!singlePulse || !hasPulsed)) {
+			if (battery != null && (!singlePulse || !hasPulsed)) {
 				((TileGenericPipe) pipeTile).pipe.gate.setPulsing(true);
-				powerReceptor.receiveEnergy(Type.GATE, Math.min(1 << (pulseCount - 1), 64) * 1.01f, ForgeDirection.WEST);
+				battery.addEnergy(Math.min(1 << (pulseCount - 1), 64) * 1.01f);
 				hasPulsed = true;
 			} else {
 				((TileGenericPipe) pipeTile).pipe.gate.setPulsing(true);

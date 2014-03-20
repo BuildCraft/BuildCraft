@@ -8,9 +8,10 @@
  */
 package buildcraft.builders.triggers;
 
-import buildcraft.api.filler.IFillerPattern;
-import buildcraft.core.triggers.*;
 import net.minecraft.util.IIcon;
+import buildcraft.api.filler.IFillerPattern;
+import buildcraft.api.gates.IAction;
+import buildcraft.core.triggers.BCAction;
 
 public class ActionFiller extends BCAction {
 
@@ -34,5 +35,10 @@ public class ActionFiller extends BCAction {
 	@Override
 	public int getTextureMap() {
 		return 0;
+	}
+
+	@Override
+	public IAction rotateLeft() {
+		return this;
 	}
 }

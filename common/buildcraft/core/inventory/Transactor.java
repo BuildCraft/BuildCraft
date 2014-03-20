@@ -8,7 +8,6 @@
  */
 package buildcraft.core.inventory;
 
-import buildcraft.api.inventory.ISpecialInventory;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
@@ -27,12 +26,11 @@ public abstract class Transactor implements ITransactor {
 
 	public static ITransactor getTransactorFor(Object object) {
 
-		if (object instanceof ISpecialInventory)
-			return new TransactorSpecial((ISpecialInventory) object);
-		else if (object instanceof ISidedInventory)
+		if (object instanceof ISidedInventory) {
 			return new TransactorSimple((ISidedInventory) object);
-		else if (object instanceof IInventory)
+		} else if (object instanceof IInventory) {
 			return new TransactorSimple(InvUtils.getInventory((IInventory) object));
+		}
 
 		return null;
 	}

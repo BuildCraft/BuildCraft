@@ -12,9 +12,13 @@ import java.util.ArrayList;
 
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.SchematicTile;
+import buildcraft.api.gates.ActionManager;
+import buildcraft.api.gates.IAction;
+import buildcraft.api.gates.ITrigger;
 import buildcraft.transport.BlockGenericPipe;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.TileGenericPipe.SideProperties;
@@ -45,6 +49,22 @@ public class SchematicPipe extends SchematicTile {
 
 		if (BptPipeExtension.contains(pipeItem)) {
 			BptPipeExtension.get(pipeItem).rotateLeft(this, context);
+		}
+
+		NBTTagCompound gateNBT = cpt.getCompoundTag("Gate");
+
+		for (int i = 0; i < 8; ++i) {
+			if (gateNBT.hasKey("trigger[" + i + "]")) {
+				ITrigger t = ActionManager.triggers.get(gateNBT.getString("trigger[" + i + "]"));
+				t = t.rotateLeft ();
+				gateNBT.setString("trigger[" + i + "]", t.getUniqueTag());
+			}
+
+			if (gateNBT.hasKey("action[" + i + "]")) {
+				IAction a = ActionManager.actions.get(gateNBT.getString("action[" + i + "]"));
+				a = a.rotateLeft ();
+				gateNBT.setString("action[" + i + "]", a.getUniqueTag());
+			}
 		}
 	}
 

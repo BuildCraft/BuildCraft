@@ -8,12 +8,13 @@
  */
 package buildcraft.core.triggers;
 
+import net.minecraft.tileentity.TileEntity;
+import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.api.gates.ITileTrigger;
+import buildcraft.api.gates.ITrigger;
 import buildcraft.api.gates.ITriggerParameter;
 import buildcraft.core.IMachine;
 import buildcraft.core.utils.StringUtils;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.util.ForgeDirection;
 
 public class TriggerMachine extends BCTrigger implements ITileTrigger {
 
@@ -35,10 +36,11 @@ public class TriggerMachine extends BCTrigger implements ITileTrigger {
 		if (tile instanceof IMachine) {
 			IMachine machine = (IMachine) tile;
 
-			if (active)
+			if (active) {
 				return machine.isActive();
-			else
+			} else {
 				return !machine.isActive();
+			}
 		}
 
 		return false;
@@ -46,9 +48,15 @@ public class TriggerMachine extends BCTrigger implements ITileTrigger {
 
 	@Override
 	public int getIconIndex() {
-		if (active)
+		if (active) {
 			return ActionTriggerIconProvider.Trigger_Machine_Active;
-		else
+		} else {
 			return ActionTriggerIconProvider.Trigger_Machine_Inactive;
+		}
+	}
+
+	@Override
+	public ITrigger rotateLeft() {
+		return this;
 	}
 }

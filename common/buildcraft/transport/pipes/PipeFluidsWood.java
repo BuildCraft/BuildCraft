@@ -8,20 +8,6 @@
  */
 package buildcraft.transport.pipes;
 
-import buildcraft.BuildCraftTransport;
-import buildcraft.api.core.IIconProvider;
-import buildcraft.api.power.IPowerReceptor;
-import buildcraft.api.power.PowerHandler;
-import buildcraft.api.power.PowerHandler.PowerReceiver;
-import buildcraft.api.power.PowerHandler.Type;
-import buildcraft.api.transport.IPipeTile;
-import buildcraft.api.transport.PipeManager;
-import buildcraft.core.network.NetworkData;
-import buildcraft.transport.Pipe;
-import buildcraft.transport.PipeIconProvider;
-import buildcraft.transport.PipeTransportFluids;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
@@ -30,12 +16,26 @@ import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidHandler;
+import buildcraft.BuildCraftTransport;
+import buildcraft.api.core.IIconProvider;
+import buildcraft.api.mj.MjBattery;
+import buildcraft.api.transport.IPipeTile;
+import buildcraft.api.transport.PipeManager;
+import buildcraft.core.network.NetworkData;
+import buildcraft.transport.Pipe;
+import buildcraft.transport.PipeIconProvider;
+import buildcraft.transport.PipeTransportFluids;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
-public class PipeFluidsWood extends Pipe<PipeTransportFluids> implements IPowerReceptor {
+public class PipeFluidsWood extends Pipe<PipeTransportFluids> {
+
+	@MjBattery (maxCapacity = 250, maxReceivedPerCycle = 100, miniumConsumption = 0)
+	public double mjStored = 0;
 
 	public @NetworkData
 	int liquidToExtract;
-	private PowerHandler powerHandler;
+
 	protected int standardIconIndex = PipeIconProvider.TYPE.PipeFluidsWood_Standard.ordinal();
 	protected int solidIconIndex = PipeIconProvider.TYPE.PipeAllWood_Solid.ordinal();
 	long lastMining = 0;
@@ -43,22 +43,21 @@ public class PipeFluidsWood extends Pipe<PipeTransportFluids> implements IPowerR
 	private PipeLogicWood logic = new PipeLogicWood(this) {
 		@Override
 		protected boolean isValidConnectingTile(TileEntity tile) {
-			if(tile instanceof IPipeTile)
+			if(tile instanceof IPipeTile) {
 				return false;
-			if (!(tile instanceof IFluidHandler))
+			}
+			if (!(tile instanceof IFluidHandler)) {
 				return false;
-			if (!PipeManager.canExtractFluids(pipe, tile.getWorldObj (), tile.xCoord, tile.yCoord, tile.zCoord))
+			}
+			if (!PipeManager.canExtractFluids(pipe, tile.getWorldObj (), tile.xCoord, tile.yCoord, tile.zCoord)) {
 				return false;
+			}
 			return true;
 		}
 	};
 
 	public PipeFluidsWood(Item item) {
 		super(new PipeTransportFluids(), item);
-
-		powerHandler = new PowerHandler(this, Type.MACHINE);
-		powerHandler.configure(1, 100, 1, 250);
-		powerHandler.configurePowerPerdition(0, 0);
 	}
 
 	@Override
@@ -76,39 +75,6 @@ public class PipeFluidsWood extends Pipe<PipeTransportFluids> implements IPowerR
 	public void initialize() {
 		logic.initialize();
 		super.initialize();
-	}
-
-	/**
-	 * Extracts a random piece of item outside of a nearby chest.
-	 */
-	@Override
-	public void doWork(PowerHandler workProvider) {
-		if (powerHandler.getEnergyStored() <= 0)
-			return;
-
-		World w = container.getWorld();
-
-		int meta = container.getBlockMetadata();
-
-		if (meta > 5)
-			return;
-
-		TileEntity tile = container.getTile(ForgeDirection.getOrientation(meta));
-
-		if (tile instanceof IFluidHandler) {
-			if (!PipeManager.canExtractFluids(this, tile.getWorldObj(), tile.xCoord, tile.yCoord, tile.zCoord))
-				return;
-
-			if (liquidToExtract <= FluidContainerRegistry.BUCKET_VOLUME) {
-				liquidToExtract += powerHandler.useEnergy(1, 1, true) * FluidContainerRegistry.BUCKET_VOLUME;
-			}
-		}
-		powerHandler.useEnergy(1, 1, true);
-	}
-
-	@Override
-	public PowerReceiver getPowerReceiver(ForgeDirection side) {
-		return powerHandler.getPowerReceiver();
 	}
 
 	@Override
@@ -138,6 +104,29 @@ public class PipeFluidsWood extends Pipe<PipeTransportFluids> implements IPowerR
 				liquidToExtract -= inserted;
 			}
 		}
+
+		if (mjStored >= 1) {
+			World w = container.getWorld();
+
+			if (meta > 5) {
+				return;
+			}
+
+			TileEntity tile = container.getTile(ForgeDirection
+					.getOrientation(meta));
+
+			if (tile instanceof IFluidHandler) {
+				if (!PipeManager.canExtractFluids(this, tile.getWorldObj(),
+						tile.xCoord, tile.yCoord, tile.zCoord)) {
+					return;
+				}
+
+				if (liquidToExtract <= FluidContainerRegistry.BUCKET_VOLUME) {
+					liquidToExtract += FluidContainerRegistry.BUCKET_VOLUME;
+				}
+			}
+			mjStored -= 1;
+		}
 	}
 
 	@Override
@@ -148,15 +137,16 @@ public class PipeFluidsWood extends Pipe<PipeTransportFluids> implements IPowerR
 
 	@Override
 	public int getIconIndex(ForgeDirection direction) {
-		if (direction == ForgeDirection.UNKNOWN)
+		if (direction == ForgeDirection.UNKNOWN) {
 			return standardIconIndex;
-		else {
+		} else {
 			int metadata = container.getBlockMetadata();
 
-			if (metadata == direction.ordinal())
+			if (metadata == direction.ordinal()) {
 				return solidIconIndex;
-			else
+			} else {
 				return standardIconIndex;
+			}
 		}
 	}
 
