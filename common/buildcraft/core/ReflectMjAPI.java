@@ -85,8 +85,8 @@ public class ReflectMjAPI {
 	public static BatteryObject getMjBattery (Object o) {
 		BatteryField f = getMjBattery (o.getClass());
 
-		if (f != null && f.field.isAccessible()) {// Not sure(the getDeclaredFields thing), 
-			if (f.kind == BatteryKind.Value) {// but for Java we accept only public, yes?
+		if (f != null) {
+			if (f.kind == BatteryKind.Value) {
 				BatteryObject obj = new BatteryObject();
 				obj.o = o;
 				obj.f = f;
@@ -118,6 +118,9 @@ public class ReflectMjAPI {
 						f.setAccessible(true); // If exception wasn't thrown, set accessibility
 					}catch(NoSuchMethodException e){
 						// NOOP
+					}
+					if (!f.isAccessible()) {
+						return null;
 					}
 					BatteryField bField = new BatteryField();
 					bField.field = f;
