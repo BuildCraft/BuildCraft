@@ -31,4 +31,6 @@ public class GuiIds {
 	public static final int PIPE_LOGEMERALD_ITEM = 53;
 
 	public static final int FILTERED_BUFFER = 60;
+	
+	public static final int REFINERY_CONTROL = 70;
 }
