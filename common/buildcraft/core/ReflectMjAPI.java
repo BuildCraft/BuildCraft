@@ -120,7 +120,7 @@ public class ReflectMjAPI {
 						// NOOP
 					}
 					if (!f.isAccessible()) {
-						return null;
+						continue;
 					}
 					BatteryField bField = new BatteryField();
 					bField.field = f;
