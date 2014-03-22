@@ -32,11 +32,24 @@ public class SchematicEngine extends SchematicTile {
 
 	@Override
 	public void writeToWorld(IBuilderContext context, int x, int y, int z) {
-		context.world().setBlock(x, y, z, block, meta,1);
+		super.writeToWorld(context, x, y, z);
 
 		TileEngine engine = (TileEngine) context.world().getTileEntity(x, y, z);
 
 		engine.orientation = ForgeDirection.getOrientation(cpt.getInteger("orientation"));
+		engine.sendNetworkUpdate();
+	}
+
+	@Override
+	public void postProcessing (IBuilderContext context, int x, int y, int z) {
+		TileEngine engine = (TileEngine) context.world().getTileEntity(x, y, z);
+
+		if (engine != null) {
+			engine.orientation = ForgeDirection.getOrientation(cpt.getInteger("orientation"));
+			engine.sendNetworkUpdate();
+			context.world().markBlockForUpdate(x, y, z);
+			context.world().notifyBlocksOfNeighborChange(x, y, z, block);
+		}
 	}
 
 }
