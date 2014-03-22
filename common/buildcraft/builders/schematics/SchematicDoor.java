@@ -11,12 +11,16 @@ package buildcraft.builders.schematics;
 import java.util.LinkedList;
 
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import buildcraft.api.blueprints.IBuilderContext;
+import buildcraft.api.blueprints.MappingRegistry;
 import buildcraft.api.blueprints.SchematicBlock;
 
 public class SchematicDoor extends SchematicBlock {
 
 	final ItemStack stack;
+
+	int upperMeta = 0;
 
 	public SchematicDoor(ItemStack stack) {
 		this.stack = stack;
@@ -31,23 +35,26 @@ public class SchematicDoor extends SchematicBlock {
 
 	@Override
 	public void rotateLeft(IBuilderContext context) {
+		meta = rotateMeta(meta);
+		upperMeta = rotateMeta(upperMeta);
+	}
+
+	private int rotateMeta (int meta) {
 		int orientation = (meta & 3);
 		int others = meta - orientation;
 
 		switch (orientation) {
 		case 0:
-			meta = 1 + others;
-			break;
+			return 1 + others;
 		case 1:
-			meta = 2 + others;
-			break;
+			return 2 + others;
 		case 2:
-			meta = 3 + others;
-			break;
+			return meta = 3 + others;
 		case 3:
-			meta = 0 + others;
-			break;
+			return 0 + others;
 		}
+
+		return 0;
 	}
 
 	@Override
@@ -58,10 +65,32 @@ public class SchematicDoor extends SchematicBlock {
 	@Override
 	public void writeToWorld(IBuilderContext context, int x, int y, int z) {
 		context.world().setBlock(x, y, z, block, meta, 3);
-		context.world().setBlock(x, y + 1, z, block, meta + 8, 3);
+		context.world().setBlock(x, y + 1, z, block, upperMeta, 3);
 
-		context.world().setBlockMetadataWithNotify(x, y + 1, z, meta + 8, 3);
+		context.world().setBlockMetadataWithNotify(x, y + 1, z, upperMeta, 3);
 		context.world().setBlockMetadataWithNotify(x, y, z, meta, 3);
+	}
 
+	@Override
+	public void readFromWorld(IBuilderContext context, int x, int y, int z) {
+		super.readFromWorld(context, x, y, z);
+
+		if ((meta & 8) == 0) {
+			upperMeta = context.world().getBlockMetadata(x, y + 1, z);
+		}
+	}
+
+	@Override
+	public void writeToNBT(NBTTagCompound nbt, MappingRegistry registry) {
+		super.writeToNBT(nbt, registry);
+
+		nbt.setByte("upperMeta", (byte) upperMeta);
+	}
+
+	@Override
+	public void readFromNBT(NBTTagCompound nbt,	MappingRegistry registry) {
+		super.readFromNBT(nbt, registry);
+
+		upperMeta = nbt.getByte("upperMeta");
 	}
 }
