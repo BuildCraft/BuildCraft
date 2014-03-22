@@ -40,10 +40,10 @@ public class GuiRefineryControl extends GuiAdvancedInterface{
 	protected void drawGuiContainerForegroundLayer(int par1, int par2) {
 		String title = StringUtils.localize("tile.refineryControl.name");
 		fontRendererObj.drawString(title, getCenteredOffset(title), 6, 0x404040);
-		if (!(buildcraft.core.utils.MultiBlockCheck.isPartOfAMultiBlock("refinery", x, y, z, world))){
-			fontRendererObj.drawString("NO REFINERY DETECTED", getCenteredOffset("NO REFINERY DETECTED"), 40, 0x404040);
+		if (buildcraft.core.utils.MultiBlockCheck.isPartOfAMultiBlock("refinery", x, y, z, world)){
+			fontRendererObj.drawString("REFINERY DETECTED", getCenteredOffset("REFINERY DETECTED"), 40, 0x404040);
 			} else {
-				fontRendererObj.drawString("REFINERY DETECTED", getCenteredOffset("REFINERY DETECTED"), 40, 0x404040);
+				fontRendererObj.drawString("NO REFINERY DETECTED", getCenteredOffset("NO REFINERY DETECTED"), 40, 0x404040);
 				}
 		}
 	}

@@ -1,5 +1,6 @@
 package buildcraft.factory;
 
+import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftFactory;
 import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.GuiIds;
@@ -47,6 +48,9 @@ public class BlockRefineryControl extends BlockContainer{
 				}
 
 				if (!world.isRemote) {
+					if (buildcraft.core.utils.MultiBlockCheck.isPartOfAMultiBlock("refinery", x, y, z, world)){
+						player.addStat(BuildCraftCore.refineAndRedefineAchievement, 1);
+					}
 					player.openGui(BuildCraftFactory.instance, GuiIds.REFINERY_CONTROL, world, x, y, z);
 				}
 
