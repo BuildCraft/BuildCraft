@@ -1,5 +1,7 @@
 package buildcraft.core;
 
+import java.lang.reflect.Modifier;
+import java.lang.reflect.Method;
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
@@ -28,7 +30,7 @@ public class ReflectMjAPI {
 				if (left > 0) {
 					return left;
 				} else {
-					return battery.miniumConsumption();
+					return battery.minimumConsumption();
 				}
 			} catch (IllegalArgumentException e) {
 				e.printStackTrace();
@@ -74,7 +76,7 @@ public class ReflectMjAPI {
 		}
 
 		public double minimumConsumption() {
-			return f.battery.miniumConsumption();
+			return f.battery.minimumConsumption();
 		}
 
 		public double maxReceivedPerCycle() {
@@ -85,24 +87,25 @@ public class ReflectMjAPI {
 	public static BatteryObject getMjBattery (Object o) {
 		BatteryField f = getMjBattery (o.getClass());
 
-		if (f != null) {
-			if (f.kind == BatteryKind.Value) {
-				BatteryObject obj = new BatteryObject();
-				obj.o = o;
-				obj.f = f;
+		if (f == null) {
+			return null;
+		} else if (f.kind == BatteryKind.Value) {
+			BatteryObject obj = new BatteryObject();
+			obj.o = o;
+			obj.f = f;
 
-				return obj;
-			} else {
-				try {
-					return getMjBattery(f.field.get(o));
-				} catch (IllegalArgumentException e) {
-					e.printStackTrace();
-				} catch (IllegalAccessException e) {
-					e.printStackTrace();
-				}
+			return obj;
+		} else {
+			try {
+				return getMjBattery(f.field.get(o));
+			} catch (IllegalArgumentException e) {
+				e.printStackTrace();
+				return null;
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+				return null;
 			}
 		}
-            	return null;
 	}
 
 	static Map <Class, BatteryField> MjBatteries = new HashMap <Class, BatteryField> ();
@@ -113,31 +116,30 @@ public class ReflectMjAPI {
 				MjBattery battery = f.getAnnotation (MjBattery.class);
 
 				if (battery != null) {
-					try{
-						c.getMethod(f.getName() + "_$eq", double.class); // Find public Scala setter
-						f.setAccessible(true); // If exception wasn't thrown, set accessibility
-					}catch(NoSuchMethodException e){
-						// NOOP
+					for (Method method : c.getMethods()) {
+						if (method.getName().equals(f.getName() + "_$eq")) {
+							f.setAccessible(true);
+							break;
+						}
 					}
-					if (!f.isAccessible()) {
-						continue;
+					if (f.isAccessible() || Modifier.isPublic(f.getModifiers())) {
+						BatteryField bField = new BatteryField();
+						bField.field = f;
+						bField.battery = battery;
+
+						if (f.getType().equals(double.class)) {
+							bField.kind = BatteryKind.Value;
+						} else if (f.getType().isPrimitive()) {
+							throw new RuntimeException(
+									"MJ battery needs to be object or double type");
+						} else {
+							bField.kind = BatteryKind.Container;
+						}
+
+						MjBatteries.put(c, bField);
+
+						return bField;
 					}
-					BatteryField bField = new BatteryField();
-					bField.field = f;
-					bField.battery = battery;
-
-					if (f.getType().equals(double.class)) {
-						bField.kind = BatteryKind.Value;
-					} else if (f.getType().isPrimitive()) {
-						throw new RuntimeException(
-								"MJ battery needs to be object or double type");
-					} else {
-						bField.kind = BatteryKind.Container;
-					}
-
-					MjBatteries.put(c, bField);
-
-					return bField;
 				}
 			}
 
