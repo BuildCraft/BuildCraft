@@ -11,12 +11,10 @@ package buildcraft.core.blueprints;
 import java.util.LinkedList;
 
 import net.minecraft.world.World;
-import buildcraft.api.blueprints.BuildingSlot;
-import buildcraft.api.blueprints.BuildingSlotBlock;
-import buildcraft.api.blueprints.BuildingSlotBlock.Mode;
 import buildcraft.api.blueprints.Schematic;
 import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.core.IBuilderInventory;
+import buildcraft.core.blueprints.BuildingSlotBlock.Mode;
 
 public class BptBuilderTemplate extends BptBuilderBase {
 

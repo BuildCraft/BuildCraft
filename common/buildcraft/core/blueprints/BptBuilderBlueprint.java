@@ -20,15 +20,12 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldSettings.GameType;
-import buildcraft.api.blueprints.BuildingSlot;
-import buildcraft.api.blueprints.BuildingSlotBlock;
-import buildcraft.api.blueprints.BuildingSlotBlock.Mode;
-import buildcraft.api.blueprints.BuildingSlotEntity;
 import buildcraft.api.blueprints.CoordTransformation;
 import buildcraft.api.blueprints.SchematicBlock;
 import buildcraft.api.blueprints.SchematicEntity;
 import buildcraft.api.core.StackKey;
 import buildcraft.core.IBuilderInventory;
+import buildcraft.core.blueprints.BuildingSlotBlock.Mode;
 import buildcraft.core.utils.BCLog;
 import buildcraft.core.utils.BlockUtil;
 
@@ -105,9 +102,10 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 		}
 
 		CoordTransformation transform = new CoordTransformation();
-		transform.x = x;
-		transform.y = y;
-		transform.z = z;
+
+		transform.x = x - blueprint.anchorX;
+		transform.y = y - blueprint.anchorY;
+		transform.z = z - blueprint.anchorZ;
 
 		for (SchematicEntity e : bluePrint.entities) {
 			BuildingSlotEntity b = new BuildingSlotEntity();

@@ -11,6 +11,11 @@ package buildcraft;
 import java.io.File;
 
 import net.minecraft.entity.item.EntityItemFrame;
+import net.minecraft.entity.item.EntityMinecartChest;
+import net.minecraft.entity.item.EntityMinecartEmpty;
+import net.minecraft.entity.item.EntityMinecartFurnace;
+import net.minecraft.entity.item.EntityMinecartHopper;
+import net.minecraft.entity.item.EntityMinecartTNT;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
@@ -61,6 +66,7 @@ import buildcraft.builders.schematics.SchematicIgnore;
 import buildcraft.builders.schematics.SchematicIgnoreMeta;
 import buildcraft.builders.schematics.SchematicInventory;
 import buildcraft.builders.schematics.SchematicLever;
+import buildcraft.builders.schematics.SchematicMinecart;
 import buildcraft.builders.schematics.SchematicPiston;
 import buildcraft.builders.schematics.SchematicPortal;
 import buildcraft.builders.schematics.SchematicPumpkin;
@@ -238,6 +244,12 @@ public class BuildCraftBuilders extends BuildCraftMod {
 		SchematicRegistry.registerSchematicBlock(Blocks.fire, SchematicFire.class);
 
 		// Standard entities
+
+		SchematicRegistry.registerSchematicEntity(EntityMinecartEmpty.class, SchematicMinecart.class);
+		SchematicRegistry.registerSchematicEntity(EntityMinecartFurnace.class, SchematicMinecart.class);
+		SchematicRegistry.registerSchematicEntity(EntityMinecartTNT.class, SchematicMinecart.class);
+		SchematicRegistry.registerSchematicEntity(EntityMinecartChest.class, SchematicMinecart.class);
+		SchematicRegistry.registerSchematicEntity(EntityMinecartHopper.class, SchematicMinecart.class);
 
 		SchematicRegistry.registerSchematicEntity(EntityItemFrame.class, SchematicHanging.class);
 

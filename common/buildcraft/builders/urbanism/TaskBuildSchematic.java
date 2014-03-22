@@ -8,8 +8,8 @@
  */
 package buildcraft.builders.urbanism;
 
-import buildcraft.api.blueprints.BuildingSlotBlock;
 import buildcraft.builders.urbanism.TileUrbanist.FrameTask;
+import buildcraft.core.blueprints.BuildingSlotBlock;
 import buildcraft.core.robots.AIMoveAround;
 import buildcraft.core.robots.EntityRobot;
 import buildcraft.core.robots.IRobotTask;

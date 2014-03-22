@@ -6,15 +6,24 @@
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-package buildcraft.api.blueprints;
+package buildcraft.core.blueprints;
 
-public class BuildingSlotEntity extends BuildingSlot {
+import java.util.LinkedList;
 
-	public CoordTransformation transform;
-	public SchematicEntity schematic;
+import buildcraft.api.blueprints.IBuilderContext;
+import net.minecraft.item.ItemStack;
 
-	@Override
+public class BuildingSlot {
+
 	public void writeToWorld(IBuilderContext context) {
-		schematic.writeToWorld(context, transform);
+
+	}
+
+	public void postProcessing (IBuilderContext context) {
+
+	}
+
+	public LinkedList<ItemStack> getRequirements (IBuilderContext context) {
+		return new LinkedList<ItemStack>();
 	}
 }

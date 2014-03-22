@@ -17,15 +17,24 @@ import buildcraft.api.core.Position;
 public class SchematicHanging extends SchematicEntity {
 
 	@Override
-	public void writeToWorld(IBuilderContext context, CoordTransformation transform) {
-
-        /*par1NBTTagCompound.setByte("Direction", (byte)this.hangingDirection);
-        par1NBTTagCompound.setInteger("TileX", this.field_146063_b);
-        par1NBTTagCompound.setInteger("TileY", this.field_146064_c);
-        par1NBTTagCompound.setInteger("TileZ", this.field_146062_d);*/
+	public void rotateLeft(IBuilderContext context) {
+		super.rotateLeft(context);
 
 		Position pos = new Position (cpt.getInteger("TileX"), cpt.getInteger("TileY"), cpt.getInteger("TileZ"));
-		pos = transform.transform(pos);
+		pos = context.rotatePositionLeft(pos);
+		cpt.setInteger("TileX", (int) pos.x);
+		cpt.setInteger("TileY", (int) pos.y);
+		cpt.setInteger("TileZ", (int) pos.z);
+
+		int direction = cpt.getByte("Direction");
+		direction = direction < 3 ? direction + 1 : 0;
+		cpt.setInteger("Direction", direction);
+	}
+
+	@Override
+	public void writeToWorld(IBuilderContext context, CoordTransformation transform) {
+		Position pos = new Position (cpt.getInteger("TileX"), cpt.getInteger("TileY"), cpt.getInteger("TileZ"));
+		pos = transform.translate(pos);
 		cpt.setInteger("TileX", (int) pos.x);
 		cpt.setInteger("TileY", (int) pos.y);
 		cpt.setInteger("TileZ", (int) pos.z);
@@ -38,7 +47,8 @@ public class SchematicHanging extends SchematicEntity {
 		super.readFromWorld(context, entity, transform);
 
 		Position pos = new Position (cpt.getInteger("TileX"), cpt.getInteger("TileY"), cpt.getInteger("TileZ"));
-		pos = transform.transform(pos);
+		pos = transform.translate(pos);
+
 		cpt.setInteger("TileX", (int) pos.x);
 		cpt.setInteger("TileY", (int) pos.y);
 		cpt.setInteger("TileZ", (int) pos.z);

@@ -39,6 +39,15 @@ public class Blueprint extends BlueprintBase {
 	}
 
 	@Override
+	public void rotateLeft(BptContext context) {
+		for (SchematicEntity e : entities) {
+			e.rotateLeft(context);
+		}
+
+		super.rotateLeft(context);
+	}
+
+	@Override
 	public void readFromWorld(IBuilderContext context, TileEntity anchorTile, int x, int y, int z) {
 		Block block = anchorTile.getWorldObj().getBlock(x, y, z);
 
@@ -72,12 +81,10 @@ public class Blueprint extends BlueprintBase {
 	@Override
 	public void readEntitiesFromWorld(IBuilderContext context, TileEntity anchorTile) {
 		CoordTransformation transform = new CoordTransformation();
-		/*transform.x = -context.surroundingBox().pMin().x;
+
+		transform.x = -context.surroundingBox().pMin().x;
 		transform.y = -context.surroundingBox().pMin().y;
-		transform.z = -context.surroundingBox().pMin().z;*/
-		transform.x = -anchorTile.xCoord;
-		transform.y = -anchorTile.yCoord;
-		transform.z = -anchorTile.zCoord;
+		transform.z = -context.surroundingBox().pMin().z;
 
 		for (Object o : context.world().loadedEntityList) {
 			Entity e = (Entity) o;

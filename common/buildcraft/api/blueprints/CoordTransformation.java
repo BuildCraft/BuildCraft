@@ -16,7 +16,7 @@ public class CoordTransformation {
 	public double y = 0;
 	public double z = 0;
 
-	public Position transform (Position p) {
+	public Position translate (Position p) {
 		Position p2 = new Position (p);
 
 		p2.x = p.x + x;
