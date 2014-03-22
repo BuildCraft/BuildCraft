@@ -27,13 +27,14 @@ public class BlockRefineryControl extends BlockContainer{
 	}
 	@Override
 	public void onBlockPlacedBy(World world, int i, int j, int k, EntityLivingBase entityliving, ItemStack stack){
-		if (MultiBlockCheck.isPartOfAMultiBlock("refinery", i, j, k, world)){
-			System.out.println("ok");
-		}
 	}
 	
 	@Override
 	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float hitX, float hitY, float hitZ){
+		TileEntity tile = world.getTileEntity(x, y, z);
+
+		if (!(tile instanceof TileRefineryControl))
+			return false;
 		// Drop through if the player is sneaking
 				if (player.isSneaking()) {
 					return false;
