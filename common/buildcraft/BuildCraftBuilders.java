@@ -60,6 +60,7 @@ import buildcraft.builders.schematics.SchematicBed;
 import buildcraft.builders.schematics.SchematicCustomStack;
 import buildcraft.builders.schematics.SchematicDirt;
 import buildcraft.builders.schematics.SchematicDoor;
+import buildcraft.builders.schematics.SchematicFarmland;
 import buildcraft.builders.schematics.SchematicFire;
 import buildcraft.builders.schematics.SchematicFluid;
 import buildcraft.builders.schematics.SchematicHanging;
@@ -75,6 +76,7 @@ import buildcraft.builders.schematics.SchematicRail;
 import buildcraft.builders.schematics.SchematicRedstoneDiode;
 import buildcraft.builders.schematics.SchematicRotateInventory;
 import buildcraft.builders.schematics.SchematicRotateMeta;
+import buildcraft.builders.schematics.SchematicSeeds;
 import buildcraft.builders.schematics.SchematicSign;
 import buildcraft.builders.schematics.SchematicStairs;
 import buildcraft.builders.schematics.SchematicWallSide;
@@ -158,7 +160,12 @@ public class BuildCraftBuilders extends BuildCraftMod {
 
 		SchematicRegistry.registerSchematicBlock(Blocks.dirt, SchematicDirt.class);
 		SchematicRegistry.registerSchematicBlock(Blocks.grass, SchematicDirt.class);
-		SchematicRegistry.registerSchematicBlock(Blocks.farmland, SchematicDirt.class);
+
+		SchematicRegistry.registerSchematicBlock(Blocks.farmland, SchematicFarmland.class);
+		SchematicRegistry.registerSchematicBlock(Blocks.wheat, SchematicSeeds.class, Items.wheat_seeds);
+		SchematicRegistry.registerSchematicBlock(Blocks.pumpkin_stem, SchematicSeeds.class, Items.pumpkin_seeds);
+		SchematicRegistry.registerSchematicBlock(Blocks.melon_stem, SchematicSeeds.class, Items.melon_seeds);
+		SchematicRegistry.registerSchematicBlock(Blocks.nether_wart, SchematicSeeds.class, Items.nether_wart);
 
 		SchematicRegistry.registerSchematicBlock(Blocks.torch, SchematicWallSide.class);
 		SchematicRegistry.registerSchematicBlock(Blocks.redstone_torch, SchematicWallSide.class);
@@ -189,7 +196,6 @@ public class BuildCraftBuilders extends BuildCraftMod {
 		SchematicRegistry.registerSchematicBlock(Blocks.stone, SchematicCustomStack.class, new ItemStack(Blocks.stone));
 		SchematicRegistry.registerSchematicBlock(Blocks.redstone_wire, SchematicCustomStack.class, new ItemStack(Items.redstone));
 		SchematicRegistry.registerSchematicBlock(Blocks.cake, SchematicCustomStack.class, new ItemStack(Items.cake));
-		//new BptBlockCustomStack(Blocks.crops.blockID, new ItemStack(Items.seeds));
 		SchematicRegistry.registerSchematicBlock(Blocks.pumpkin_stem, SchematicCustomStack.class, new ItemStack(Items.pumpkin_seeds));
 		SchematicRegistry.registerSchematicBlock(Blocks.melon_stem, SchematicCustomStack.class, new ItemStack(Items.melon_seeds));
 		SchematicRegistry.registerSchematicBlock(Blocks.glowstone, SchematicCustomStack.class, new ItemStack(Blocks.glowstone));
