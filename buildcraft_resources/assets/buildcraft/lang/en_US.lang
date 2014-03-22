@@ -199,6 +199,9 @@ tile.refineryBlock.name=Refinery
 tile.spring.oil.name=Oil Spring
 tile.spring.water.name=Water Spring
 tile.tankBlock.name=Tank
+tile.refineryControl.name=Refinery Control
+tile.BlockRefineryHeater.name=Refinery Heater
+tile.BlockRefineryControl.name=Refinery Control
 
 tip.gate.wires=§9§oCompatible Wires:
 tip.gate.wires.redstone=Red

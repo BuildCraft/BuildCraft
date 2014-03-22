@@ -22,5 +22,7 @@ public ContainerRefineryControl(InventoryPlayer inventory, TileRefineryControl t
 	public boolean canInteractWith(EntityPlayer entityPlayer) {
 		return true;
 	}
+	
+
 
 }
