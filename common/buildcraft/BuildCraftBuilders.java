@@ -16,6 +16,7 @@ import net.minecraft.entity.item.EntityMinecartEmpty;
 import net.minecraft.entity.item.EntityMinecartFurnace;
 import net.minecraft.entity.item.EntityMinecartHopper;
 import net.minecraft.entity.item.EntityMinecartTNT;
+import net.minecraft.entity.item.EntityPainting;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
@@ -251,6 +252,7 @@ public class BuildCraftBuilders extends BuildCraftMod {
 		SchematicRegistry.registerSchematicEntity(EntityMinecartChest.class, SchematicMinecart.class);
 		SchematicRegistry.registerSchematicEntity(EntityMinecartHopper.class, SchematicMinecart.class);
 
+		SchematicRegistry.registerSchematicEntity(EntityPainting.class, SchematicHanging.class);
 		SchematicRegistry.registerSchematicEntity(EntityItemFrame.class, SchematicHanging.class);
 
 		// BuildCraft blocks
