@@ -255,7 +255,7 @@ public class BuildCraftEnergy extends BuildCraftMod {
 
 		NetworkRegistry.INSTANCE.registerGuiHandler(instance, new GuiHandler());
 
-		SchematicRegistry.registerSchematicClass(engineBlock, SchematicEngine.class);
+		SchematicRegistry.registerSchematicBlock(engineBlock, SchematicEngine.class);
 
 		if (BuildCraftCore.loadDefaultRecipes) {
 			loadRecipes();

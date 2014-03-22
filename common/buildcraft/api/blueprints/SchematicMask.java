@@ -20,11 +20,6 @@ public class SchematicMask extends Schematic {
 	}
 
 	@Override
-	public Schematic clone() {
-		return new SchematicMask(isConcrete);
-	}
-
-	@Override
 	public void writeToWorld(IBuilderContext context, int x, int y, int z) {
 		if (isConcrete) {
 			context.world().setBlock(x, y, z, Blocks.brick_block, 0, 3);

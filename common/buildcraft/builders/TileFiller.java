@@ -17,7 +17,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
 import buildcraft.BuildCraftCore;
-import buildcraft.api.blueprints.SchematicToBuild;
+import buildcraft.api.blueprints.BuildingSlot;
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.filler.FillerManager;
 import buildcraft.api.filler.IFillerPattern;
@@ -119,10 +119,10 @@ public class TileFiller extends TileBuildCraft implements IBuilderInventory, IMa
 		}
 
 		if (currentTemplate != null) {
-			SchematicToBuild s = currentTemplate.getNextBlock(getWorld(), this);
+			BuildingSlot s = currentTemplate.getNextBlock(getWorld(), this);
 
 			if (s != null) {
-				s.getSchematic().writeToWorld(context, s.x, s.y, s.z);
+				s.writeToWorld(context);
 			}
 
 			if (!done && s == null || currentTemplate.done) {

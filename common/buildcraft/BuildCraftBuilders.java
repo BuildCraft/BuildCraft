@@ -10,6 +10,7 @@ package buildcraft;
 
 import java.io.File;
 
+import net.minecraft.entity.item.EntityItemFrame;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
@@ -55,6 +56,7 @@ import buildcraft.builders.schematics.SchematicDirt;
 import buildcraft.builders.schematics.SchematicDoor;
 import buildcraft.builders.schematics.SchematicFire;
 import buildcraft.builders.schematics.SchematicFluid;
+import buildcraft.builders.schematics.SchematicHanging;
 import buildcraft.builders.schematics.SchematicIgnore;
 import buildcraft.builders.schematics.SchematicIgnoreMeta;
 import buildcraft.builders.schematics.SchematicInventory;
@@ -140,108 +142,114 @@ public class BuildCraftBuilders extends BuildCraftMod {
 		// Register save handler
 		MinecraftForge.EVENT_BUS.register(new EventHandlerBuilders());
 
-		SchematicRegistry.registerSchematicClass(Blocks.snow, SchematicIgnore.class);
-		SchematicRegistry.registerSchematicClass(Blocks.tallgrass, SchematicIgnore.class);
-		SchematicRegistry.registerSchematicClass(Blocks.ice, SchematicIgnore.class);
-		SchematicRegistry.registerSchematicClass(Blocks.piston_head, SchematicIgnore.class);
+		// Standard blocks
 
-		SchematicRegistry.registerSchematicClass(Blocks.dirt, SchematicDirt.class);
-		SchematicRegistry.registerSchematicClass(Blocks.grass, SchematicDirt.class);
-		SchematicRegistry.registerSchematicClass(Blocks.farmland, SchematicDirt.class);
+		SchematicRegistry.registerSchematicBlock(Blocks.snow, SchematicIgnore.class);
+		SchematicRegistry.registerSchematicBlock(Blocks.tallgrass, SchematicIgnore.class);
+		SchematicRegistry.registerSchematicBlock(Blocks.ice, SchematicIgnore.class);
+		SchematicRegistry.registerSchematicBlock(Blocks.piston_head, SchematicIgnore.class);
 
-		SchematicRegistry.registerSchematicClass(Blocks.torch, SchematicWallSide.class);
-		SchematicRegistry.registerSchematicClass(Blocks.redstone_torch, SchematicWallSide.class);
-		SchematicRegistry.registerSchematicClass(Blocks.unlit_redstone_torch, SchematicWallSide.class);
+		SchematicRegistry.registerSchematicBlock(Blocks.dirt, SchematicDirt.class);
+		SchematicRegistry.registerSchematicBlock(Blocks.grass, SchematicDirt.class);
+		SchematicRegistry.registerSchematicBlock(Blocks.farmland, SchematicDirt.class);
 
-		SchematicRegistry.registerSchematicClass(Blocks.ladder, SchematicRotateMeta.class, new int[]{2, 5, 3, 4}, true);
-		SchematicRegistry.registerSchematicClass(Blocks.fence_gate, SchematicRotateMeta.class, new int[]{0, 1, 2, 3}, true);
-		SchematicRegistry.registerSchematicClass(Blocks.log, SchematicRotateMeta.class, new int[]{8, 4, 8, 4}, true);
-		SchematicRegistry.registerSchematicClass(Blocks.log2, SchematicRotateMeta.class, new int[]{8, 4, 8, 4}, true);
-		SchematicRegistry.registerSchematicClass(Blocks.hay_block, SchematicRotateMeta.class, new int[]{8, 4, 8, 4}, true);
-		SchematicRegistry.registerSchematicClass(Blocks.quartz_block, SchematicRotateMeta.class, new int[]{4, 3, 4, 3}, true);
-		SchematicRegistry.registerSchematicClass(Blocks.hopper, SchematicRotateMeta.class, new int[]{2, 5, 3, 4}, true);
+		SchematicRegistry.registerSchematicBlock(Blocks.torch, SchematicWallSide.class);
+		SchematicRegistry.registerSchematicBlock(Blocks.redstone_torch, SchematicWallSide.class);
+		SchematicRegistry.registerSchematicBlock(Blocks.unlit_redstone_torch, SchematicWallSide.class);
 
-		SchematicRegistry.registerSchematicClass(Blocks.furnace, SchematicRotateInventory.class, new int[]{2, 5, 3, 4}, true);
-		SchematicRegistry.registerSchematicClass(Blocks.lit_furnace, SchematicRotateInventory.class, new int[]{2, 5, 3, 4}, true);
-		SchematicRegistry.registerSchematicClass(Blocks.chest, SchematicRotateInventory.class, new int[]{2, 5, 3, 4}, true);
-		SchematicRegistry.registerSchematicClass(Blocks.dispenser, SchematicRotateInventory.class, new int[]{2, 5, 3, 4}, true);
+		SchematicRegistry.registerSchematicBlock(Blocks.ladder, SchematicRotateMeta.class, new int[]{2, 5, 3, 4}, true);
+		SchematicRegistry.registerSchematicBlock(Blocks.fence_gate, SchematicRotateMeta.class, new int[]{0, 1, 2, 3}, true);
+		SchematicRegistry.registerSchematicBlock(Blocks.log, SchematicRotateMeta.class, new int[]{8, 4, 8, 4}, true);
+		SchematicRegistry.registerSchematicBlock(Blocks.log2, SchematicRotateMeta.class, new int[]{8, 4, 8, 4}, true);
+		SchematicRegistry.registerSchematicBlock(Blocks.hay_block, SchematicRotateMeta.class, new int[]{8, 4, 8, 4}, true);
+		SchematicRegistry.registerSchematicBlock(Blocks.quartz_block, SchematicRotateMeta.class, new int[]{4, 3, 4, 3}, true);
+		SchematicRegistry.registerSchematicBlock(Blocks.hopper, SchematicRotateMeta.class, new int[]{2, 5, 3, 4}, true);
 
-		SchematicRegistry.registerSchematicClass(Blocks.brewing_stand, SchematicInventory.class);
+		SchematicRegistry.registerSchematicBlock(Blocks.furnace, SchematicRotateInventory.class, new int[]{2, 5, 3, 4}, true);
+		SchematicRegistry.registerSchematicBlock(Blocks.lit_furnace, SchematicRotateInventory.class, new int[]{2, 5, 3, 4}, true);
+		SchematicRegistry.registerSchematicBlock(Blocks.chest, SchematicRotateInventory.class, new int[]{2, 5, 3, 4}, true);
+		SchematicRegistry.registerSchematicBlock(Blocks.dispenser, SchematicRotateInventory.class, new int[]{2, 5, 3, 4}, true);
 
-		SchematicRegistry.registerSchematicClass(Blocks.vine, SchematicRotateMeta.class, new int[]{1, 4, 8, 2}, false);
-		SchematicRegistry.registerSchematicClass(Blocks.trapdoor, SchematicRotateMeta.class, new int[]{0, 1, 2, 3}, false);
+		SchematicRegistry.registerSchematicBlock(Blocks.brewing_stand, SchematicInventory.class);
 
-		SchematicRegistry.registerSchematicClass(Blocks.wooden_button, SchematicLever.class);
-		SchematicRegistry.registerSchematicClass(Blocks.stone_button, SchematicLever.class);
-		SchematicRegistry.registerSchematicClass(Blocks.lever, SchematicLever.class);
+		SchematicRegistry.registerSchematicBlock(Blocks.vine, SchematicRotateMeta.class, new int[]{1, 4, 8, 2}, false);
+		SchematicRegistry.registerSchematicBlock(Blocks.trapdoor, SchematicRotateMeta.class, new int[]{0, 1, 2, 3}, false);
 
-		SchematicRegistry.registerSchematicClass(Blocks.stone, SchematicCustomStack.class, new ItemStack(Blocks.stone));
-		SchematicRegistry.registerSchematicClass(Blocks.redstone_wire, SchematicCustomStack.class, new ItemStack(Items.redstone));
-		SchematicRegistry.registerSchematicClass(Blocks.cake, SchematicCustomStack.class, new ItemStack(Items.cake));
+		SchematicRegistry.registerSchematicBlock(Blocks.wooden_button, SchematicLever.class);
+		SchematicRegistry.registerSchematicBlock(Blocks.stone_button, SchematicLever.class);
+		SchematicRegistry.registerSchematicBlock(Blocks.lever, SchematicLever.class);
+
+		SchematicRegistry.registerSchematicBlock(Blocks.stone, SchematicCustomStack.class, new ItemStack(Blocks.stone));
+		SchematicRegistry.registerSchematicBlock(Blocks.redstone_wire, SchematicCustomStack.class, new ItemStack(Items.redstone));
+		SchematicRegistry.registerSchematicBlock(Blocks.cake, SchematicCustomStack.class, new ItemStack(Items.cake));
 		//new BptBlockCustomStack(Blocks.crops.blockID, new ItemStack(Items.seeds));
-		SchematicRegistry.registerSchematicClass(Blocks.pumpkin_stem, SchematicCustomStack.class, new ItemStack(Items.pumpkin_seeds));
-		SchematicRegistry.registerSchematicClass(Blocks.melon_stem, SchematicCustomStack.class, new ItemStack(Items.melon_seeds));
-		SchematicRegistry.registerSchematicClass(Blocks.glowstone, SchematicCustomStack.class, new ItemStack(Blocks.glowstone));
+		SchematicRegistry.registerSchematicBlock(Blocks.pumpkin_stem, SchematicCustomStack.class, new ItemStack(Items.pumpkin_seeds));
+		SchematicRegistry.registerSchematicBlock(Blocks.melon_stem, SchematicCustomStack.class, new ItemStack(Items.melon_seeds));
+		SchematicRegistry.registerSchematicBlock(Blocks.glowstone, SchematicCustomStack.class, new ItemStack(Blocks.glowstone));
 
-		SchematicRegistry.registerSchematicClass(Blocks.powered_repeater, SchematicRedstoneDiode.class);
-		SchematicRegistry.registerSchematicClass(Blocks.unpowered_repeater, SchematicRedstoneDiode.class);
-		SchematicRegistry.registerSchematicClass(Blocks.powered_comparator, SchematicRedstoneDiode.class);
-		SchematicRegistry.registerSchematicClass(Blocks.unpowered_comparator, SchematicRedstoneDiode.class);
+		SchematicRegistry.registerSchematicBlock(Blocks.powered_repeater, SchematicRedstoneDiode.class);
+		SchematicRegistry.registerSchematicBlock(Blocks.unpowered_repeater, SchematicRedstoneDiode.class);
+		SchematicRegistry.registerSchematicBlock(Blocks.powered_comparator, SchematicRedstoneDiode.class);
+		SchematicRegistry.registerSchematicBlock(Blocks.unpowered_comparator, SchematicRedstoneDiode.class);
 
-		SchematicRegistry.registerSchematicClass(Blocks.water, SchematicFluid.class, new ItemStack(Items.water_bucket));
-		SchematicRegistry.registerSchematicClass(Blocks.flowing_water, SchematicFluid.class, new ItemStack(Items.water_bucket));
-		SchematicRegistry.registerSchematicClass(Blocks.lava, SchematicFluid.class, new ItemStack(Items.lava_bucket));
-		SchematicRegistry.registerSchematicClass(Blocks.flowing_lava, SchematicFluid.class, new ItemStack(Items.lava_bucket));
+		SchematicRegistry.registerSchematicBlock(Blocks.water, SchematicFluid.class, new ItemStack(Items.water_bucket));
+		SchematicRegistry.registerSchematicBlock(Blocks.flowing_water, SchematicFluid.class, new ItemStack(Items.water_bucket));
+		SchematicRegistry.registerSchematicBlock(Blocks.lava, SchematicFluid.class, new ItemStack(Items.lava_bucket));
+		SchematicRegistry.registerSchematicBlock(Blocks.flowing_lava, SchematicFluid.class, new ItemStack(Items.lava_bucket));
 
-		SchematicRegistry.registerSchematicClass(Blocks.rail, SchematicIgnoreMeta.class);
-		SchematicRegistry.registerSchematicClass(Blocks.detector_rail, SchematicIgnoreMeta.class);
-		SchematicRegistry.registerSchematicClass(Blocks.glass_pane, SchematicIgnoreMeta.class);
+		SchematicRegistry.registerSchematicBlock(Blocks.rail, SchematicIgnoreMeta.class);
+		SchematicRegistry.registerSchematicBlock(Blocks.detector_rail, SchematicIgnoreMeta.class);
+		SchematicRegistry.registerSchematicBlock(Blocks.glass_pane, SchematicIgnoreMeta.class);
 
-		SchematicRegistry.registerSchematicClass(Blocks.piston, SchematicPiston.class);
-		SchematicRegistry.registerSchematicClass(Blocks.piston_extension, SchematicPiston.class);
-		SchematicRegistry.registerSchematicClass(Blocks.sticky_piston, SchematicPiston.class);
+		SchematicRegistry.registerSchematicBlock(Blocks.piston, SchematicPiston.class);
+		SchematicRegistry.registerSchematicBlock(Blocks.piston_extension, SchematicPiston.class);
+		SchematicRegistry.registerSchematicBlock(Blocks.sticky_piston, SchematicPiston.class);
 
-		SchematicRegistry.registerSchematicClass(Blocks.lit_pumpkin, SchematicPumpkin.class);
+		SchematicRegistry.registerSchematicBlock(Blocks.lit_pumpkin, SchematicPumpkin.class);
 
-		SchematicRegistry.registerSchematicClass(Blocks.oak_stairs, SchematicStairs.class);
-		SchematicRegistry.registerSchematicClass(Blocks.stone_stairs, SchematicStairs.class);
-		SchematicRegistry.registerSchematicClass(Blocks.brick_stairs, SchematicStairs.class);
-		SchematicRegistry.registerSchematicClass(Blocks.stone_brick_stairs, SchematicStairs.class);
-		SchematicRegistry.registerSchematicClass(Blocks.nether_brick_stairs, SchematicStairs.class);
-		SchematicRegistry.registerSchematicClass(Blocks.sandstone_stairs, SchematicStairs.class);
-		SchematicRegistry.registerSchematicClass(Blocks.spruce_stairs, SchematicStairs.class);
-		SchematicRegistry.registerSchematicClass(Blocks.birch_stairs, SchematicStairs.class);
-		SchematicRegistry.registerSchematicClass(Blocks.jungle_stairs, SchematicStairs.class);
-		SchematicRegistry.registerSchematicClass(Blocks.quartz_stairs, SchematicStairs.class);
-		SchematicRegistry.registerSchematicClass(Blocks.acacia_stairs, SchematicStairs.class);
-		SchematicRegistry.registerSchematicClass(Blocks.dark_oak_stairs, SchematicStairs.class);
+		SchematicRegistry.registerSchematicBlock(Blocks.oak_stairs, SchematicStairs.class);
+		SchematicRegistry.registerSchematicBlock(Blocks.stone_stairs, SchematicStairs.class);
+		SchematicRegistry.registerSchematicBlock(Blocks.brick_stairs, SchematicStairs.class);
+		SchematicRegistry.registerSchematicBlock(Blocks.stone_brick_stairs, SchematicStairs.class);
+		SchematicRegistry.registerSchematicBlock(Blocks.nether_brick_stairs, SchematicStairs.class);
+		SchematicRegistry.registerSchematicBlock(Blocks.sandstone_stairs, SchematicStairs.class);
+		SchematicRegistry.registerSchematicBlock(Blocks.spruce_stairs, SchematicStairs.class);
+		SchematicRegistry.registerSchematicBlock(Blocks.birch_stairs, SchematicStairs.class);
+		SchematicRegistry.registerSchematicBlock(Blocks.jungle_stairs, SchematicStairs.class);
+		SchematicRegistry.registerSchematicBlock(Blocks.quartz_stairs, SchematicStairs.class);
+		SchematicRegistry.registerSchematicBlock(Blocks.acacia_stairs, SchematicStairs.class);
+		SchematicRegistry.registerSchematicBlock(Blocks.dark_oak_stairs, SchematicStairs.class);
 
-		SchematicRegistry.registerSchematicClass(Blocks.wooden_door, SchematicDoor.class, new ItemStack(Items.wooden_door));
-		SchematicRegistry.registerSchematicClass(Blocks.iron_door, SchematicDoor.class, new ItemStack(Items.iron_door));
+		SchematicRegistry.registerSchematicBlock(Blocks.wooden_door, SchematicDoor.class, new ItemStack(Items.wooden_door));
+		SchematicRegistry.registerSchematicBlock(Blocks.iron_door, SchematicDoor.class, new ItemStack(Items.iron_door));
 
-		SchematicRegistry.registerSchematicClass(Blocks.bed, SchematicBed.class);
+		SchematicRegistry.registerSchematicBlock(Blocks.bed, SchematicBed.class);
 
-		SchematicRegistry.registerSchematicClass(Blocks.wall_sign, SchematicSign.class, true);
-		SchematicRegistry.registerSchematicClass(Blocks.standing_sign, SchematicSign.class, false);
+		SchematicRegistry.registerSchematicBlock(Blocks.wall_sign, SchematicSign.class, true);
+		SchematicRegistry.registerSchematicBlock(Blocks.standing_sign, SchematicSign.class, false);
 
-		SchematicRegistry.registerSchematicClass(Blocks.portal, SchematicPortal.class);
+		SchematicRegistry.registerSchematicBlock(Blocks.portal, SchematicPortal.class);
 
-		SchematicRegistry.registerSchematicClass(Blocks.rail, SchematicRail.class);
-		SchematicRegistry.registerSchematicClass(Blocks.activator_rail, SchematicRail.class);
-		SchematicRegistry.registerSchematicClass(Blocks.detector_rail, SchematicRail.class);
-		SchematicRegistry.registerSchematicClass(Blocks.golden_rail, SchematicRail.class);
+		SchematicRegistry.registerSchematicBlock(Blocks.rail, SchematicRail.class);
+		SchematicRegistry.registerSchematicBlock(Blocks.activator_rail, SchematicRail.class);
+		SchematicRegistry.registerSchematicBlock(Blocks.detector_rail, SchematicRail.class);
+		SchematicRegistry.registerSchematicBlock(Blocks.golden_rail, SchematicRail.class);
 
-		SchematicRegistry.registerSchematicClass(Blocks.fire, SchematicFire.class);
+		SchematicRegistry.registerSchematicBlock(Blocks.fire, SchematicFire.class);
 
-		// BUILDCRAFT BLOCKS
+		// Standard entities
 
-		SchematicRegistry.registerSchematicClass(architectBlock, SchematicRotateInventory.class, new int[]{2, 5, 3, 4}, true);
-		SchematicRegistry.registerSchematicClass(builderBlock, SchematicRotateInventory.class, new int[]{2, 5, 3, 4}, true);
+		SchematicRegistry.registerSchematicEntity(EntityItemFrame.class, SchematicHanging.class);
 
-		SchematicRegistry.registerSchematicClass(libraryBlock, SchematicInventory.class);
+		// BuildCraft blocks
 
-		SchematicRegistry.registerSchematicClass(markerBlock, SchematicWallSide.class);
-		SchematicRegistry.registerSchematicClass(pathMarkerBlock, SchematicWallSide.class);
+		SchematicRegistry.registerSchematicBlock(architectBlock, SchematicRotateInventory.class, new int[]{2, 5, 3, 4}, true);
+		SchematicRegistry.registerSchematicBlock(builderBlock, SchematicRotateInventory.class, new int[]{2, 5, 3, 4}, true);
+
+		SchematicRegistry.registerSchematicBlock(libraryBlock, SchematicInventory.class);
+
+		SchematicRegistry.registerSchematicBlock(markerBlock, SchematicWallSide.class);
+		SchematicRegistry.registerSchematicBlock(pathMarkerBlock, SchematicWallSide.class);
 
 		if (BuildCraftCore.loadDefaultRecipes) {
 			loadRecipes();

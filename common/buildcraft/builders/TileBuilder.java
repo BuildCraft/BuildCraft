@@ -20,7 +20,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.BuildCraftBuilders;
-import buildcraft.api.blueprints.SchematicToBuild;
+import buildcraft.api.blueprints.BuildingSlot;
 import buildcraft.api.core.Position;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.gates.IAction;
@@ -268,8 +268,6 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IM
 		if (bpt == null) {
 			return null;
 		}
-
-		bpt = bpt.clone();
 
 		BptContext context = bpt.getContext(worldObj, bpt.getBoxForPos(x, y, z));
 
@@ -670,18 +668,24 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IM
 		}
 
 		if (bluePrintBuilder != null) {
-			SchematicToBuild slot = bluePrintBuilder.getNextBlock(worldObj, this);
+			BuildingSlot slot = bluePrintBuilder.getNextBlock(worldObj, this);
 
 			if (slot != null) {
-				if (slot.schematic == null) {
-					getWorld().setBlockToAir(slot.x, slot.y, slot.z);
-				} else {
-					slot.writeToWorld(bluePrintBuilder.context, slot.x,
-						slot.y, slot.z);
-				}
-			} else {
+				slot.writeToWorld(bluePrintBuilder.context);
+			}
+
+			if (slot == null || bluePrintBuilder.done) {
 				bluePrintBuilder.postProcessing(worldObj);
 				bluePrintBuilder = null;
+
+				for (int i = 1; i < items.length; ++i) {
+					if (items [i] == null) {
+						items [i] = items [0];
+						break;
+					}
+				}
+
+				items [0] = null;
 			}
 
 			if (bluePrintBuilder instanceof BptBuilderBlueprint) {

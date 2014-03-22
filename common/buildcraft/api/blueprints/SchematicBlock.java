@@ -9,7 +9,6 @@
 package buildcraft.api.blueprints;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.LinkedList;
 
 import net.minecraft.block.Block;
@@ -30,19 +29,6 @@ public class SchematicBlock extends Schematic {
 	 * Schematic.
 	 */
 	public ItemStack [] storedRequirements = new ItemStack [0];
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public SchematicBlock clone() {
-		SchematicBlock obj = SchematicRegistry.newSchematic(block);
-
-		obj.block = block;
-		obj.meta = meta;
-		obj.storedRequirements = Arrays.copyOf(storedRequirements,
-				storedRequirements.length);
-
-		return obj;
-	}
 
 	/**
 	 * Returns the requirements needed to build this block. When the

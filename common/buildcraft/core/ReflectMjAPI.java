@@ -28,7 +28,7 @@ public class ReflectMjAPI {
 				if (left > 0) {
 					return left;
 				} else {
-					return battery.miniumConsumption();
+					return battery.minimumConsumption();
 				}
 			} catch (IllegalArgumentException e) {
 				e.printStackTrace();
@@ -74,7 +74,7 @@ public class ReflectMjAPI {
 		}
 
 		public double minimumConsumption() {
-			return f.battery.miniumConsumption();
+			return f.battery.minimumConsumption();
 		}
 
 		public double maxReceivedPerCycle() {

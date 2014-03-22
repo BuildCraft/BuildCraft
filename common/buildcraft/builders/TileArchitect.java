@@ -70,6 +70,8 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 						/ (float) blockScanner.totalBlocks()) * 100);
 
 				if (blockScanner.blocksLeft() == 0) {
+					writingBlueprint.readEntitiesFromWorld (writingContext, this);
+
 					ForgeDirection o = ForgeDirection.values()[worldObj.getBlockMetadata(
 							xCoord, yCoord, zCoord)].getOpposite();
 
@@ -123,32 +125,6 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 		writingContext = null;
 		blockScanner = null;
 	}
-
-	/*public BlueprintBase createBptTemplate() {
-		int mask1 = 1;
-		int mask0 = 0;
-
-		if (worldObj.isBlockIndirectlyGettingPowered(xCoord, yCoord, zCoord)) {
-			mask1 = 0;
-			mask0 = 1;
-		}
-
-		BlueprintBase result = new Template(box.sizeX(), box.sizeY(), box.sizeZ());
-
-		for (int x = box.xMin; x <= box.xMax; ++x) {
-			for (int y = box.yMin; y <= box.yMax; ++y) {
-				for (int z = box.zMin; z <= box.zMax; ++z) {
-					if (worldObj.getBlock(x, y, z) != Blocks.air) {
-						result.setBlock(x - box.xMin, y - box.yMin, z - box.zMin, Blocks.stone);
-					} else {
-						result.setBlock(x - box.xMin, y - box.yMin, z - box.zMin, Blocks.air);
-					}
-				}
-			}
-		}
-
-		return result;
-	}*/
 
 	@RPC (RPCSide.SERVER)
 	public void handleClientInput(char c) {

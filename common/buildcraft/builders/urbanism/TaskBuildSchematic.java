@@ -8,7 +8,7 @@
  */
 package buildcraft.builders.urbanism;
 
-import buildcraft.api.blueprints.SchematicToBuild;
+import buildcraft.api.blueprints.BuildingSlotBlock;
 import buildcraft.builders.urbanism.TileUrbanist.FrameTask;
 import buildcraft.core.robots.AIMoveAround;
 import buildcraft.core.robots.EntityRobot;
@@ -16,11 +16,11 @@ import buildcraft.core.robots.IRobotTask;
 
 public class TaskBuildSchematic implements IRobotTask {
 
-	SchematicToBuild builder;
+	BuildingSlotBlock builder;
 	boolean inBuild = false;
 	FrameTask task;
 
-	public TaskBuildSchematic (SchematicToBuild builder, FrameTask task) {
+	public TaskBuildSchematic (BuildingSlotBlock builder, FrameTask task) {
 		this.builder = builder;
 		this.task = task;
 	}

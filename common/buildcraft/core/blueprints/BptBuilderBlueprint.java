@@ -20,9 +20,13 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldSettings.GameType;
+import buildcraft.api.blueprints.BuildingSlot;
+import buildcraft.api.blueprints.BuildingSlotBlock;
+import buildcraft.api.blueprints.BuildingSlotBlock.Mode;
+import buildcraft.api.blueprints.BuildingSlotEntity;
+import buildcraft.api.blueprints.CoordTransformation;
 import buildcraft.api.blueprints.SchematicBlock;
-import buildcraft.api.blueprints.SchematicToBuild;
-import buildcraft.api.blueprints.SchematicToBuild.Mode;
+import buildcraft.api.blueprints.SchematicEntity;
 import buildcraft.api.core.StackKey;
 import buildcraft.core.IBuilderInventory;
 import buildcraft.core.utils.BCLog;
@@ -30,10 +34,11 @@ import buildcraft.core.utils.BlockUtil;
 
 public class BptBuilderBlueprint extends BptBuilderBase {
 
-	LinkedList<SchematicToBuild> clearList = new LinkedList<SchematicToBuild>();
-	LinkedList<SchematicToBuild> primaryList = new LinkedList<SchematicToBuild>();
-	LinkedList<SchematicToBuild> secondaryList = new LinkedList<SchematicToBuild>();
-	LinkedList<SchematicToBuild> postProcessing = new LinkedList<SchematicToBuild>();
+	LinkedList<BuildingSlotBlock> clearList = new LinkedList<BuildingSlotBlock>();
+	LinkedList<BuildingSlotBlock> primaryList = new LinkedList<BuildingSlotBlock>();
+	LinkedList<BuildingSlotBlock> secondaryList = new LinkedList<BuildingSlotBlock>();
+	LinkedList<BuildingSlotEntity> entityList = new LinkedList<BuildingSlotEntity>();
+	LinkedList<BuildingSlot> postProcessing = new LinkedList<BuildingSlot>();
 
 	public LinkedList <ItemStack> neededItems = new LinkedList <ItemStack> ();
 
@@ -43,9 +48,9 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 		for (int j = bluePrint.sizeY - 1; j >= 0; --j) {
 			for (int i = 0; i < bluePrint.sizeX; ++i) {
 				for (int k = 0; k < bluePrint.sizeZ; ++k) {
-					int xCoord = i + x - bluePrint.anchorX;
-					int yCoord = j + y - bluePrint.anchorY;
-					int zCoord = k + z - bluePrint.anchorZ;
+					int xCoord = i + x - blueprint.anchorX;
+					int yCoord = j + y - blueprint.anchorY;
+					int zCoord = k + z - blueprint.anchorZ;
 
 					SchematicBlock slot = (SchematicBlock) bluePrint.contents[i][j][k];
 
@@ -55,7 +60,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 						slot.block = Blocks.air;
 					}
 
-					SchematicToBuild b = new SchematicToBuild ();
+					BuildingSlotBlock b = new BuildingSlotBlock ();
 					b.schematic = slot;
 					b.x = xCoord;
 					b.y = yCoord;
@@ -71,9 +76,9 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 		for (int j = 0; j < bluePrint.sizeY; ++j) {
 			for (int i = 0; i < bluePrint.sizeX; ++i) {
 				for (int k = 0; k < bluePrint.sizeZ; ++k) {
-					int xCoord = i + x - bluePrint.anchorX;
-					int yCoord = j + y - bluePrint.anchorY;
-					int zCoord = k + z - bluePrint.anchorZ;
+					int xCoord = i + x - blueprint.anchorX;
+					int yCoord = j + y - blueprint.anchorY;
+					int zCoord = k + z - blueprint.anchorZ;
 
 					SchematicBlock slot = (SchematicBlock) bluePrint.contents[i][j][k];
 
@@ -83,7 +88,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 						slot.block = Blocks.air;
 					}
 
-					SchematicToBuild b = new SchematicToBuild ();
+					BuildingSlotBlock b = new BuildingSlotBlock ();
 					b.schematic = slot;
 					b.x = xCoord;
 					b.y = yCoord;
@@ -99,13 +104,27 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 			}
 		}
 
+		CoordTransformation transform = new CoordTransformation();
+		transform.x = x;
+		transform.y = y;
+		transform.z = z;
+
+		for (SchematicEntity e : bluePrint.entities) {
+			BuildingSlotEntity b = new BuildingSlotEntity();
+			b.schematic = e;
+			b.transform = transform;
+
+			entityList.add(b);
+		}
+
 		recomputeNeededItems();
 	}
 
 	private void checkDone() {
 		recomputeNeededItems();
 
-		if (clearList.size() == 0 && primaryList.size() == 0 && secondaryList.size() == 0) {
+		if (clearList.size() == 0 && primaryList.size() == 0
+				&& secondaryList.size() == 0 && entityList.size() == 0) {
 			done = true;
 		} else {
 			done = false;
@@ -113,9 +132,9 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 	}
 
 	@Override
-	public SchematicToBuild getNextBlock(World world, IBuilderInventory inv) {
+	public BuildingSlot getNextBlock(World world, IBuilderInventory inv) {
 		if (clearList.size() != 0) {
-			SchematicToBuild slot = internalGetNextBlock(world, inv, clearList);
+			BuildingSlot slot = internalGetNextBlock(world, inv, clearList);
 			checkDone();
 
 			if (slot != null) {
@@ -124,7 +143,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 		}
 
 		if (primaryList.size() != 0) {
-			SchematicToBuild slot = internalGetNextBlock(world, inv, primaryList);
+			BuildingSlot slot = internalGetNextBlock(world, inv, primaryList);
 			checkDone();
 
 			if (slot != null) {
@@ -133,8 +152,17 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 		}
 
 		if (secondaryList.size() != 0) {
-			SchematicToBuild slot = internalGetNextBlock(world, inv, secondaryList);
+			BuildingSlot slot = internalGetNextBlock(world, inv, secondaryList);
 			checkDone();
+
+			if (slot != null) {
+				return slot;
+			}
+		}
+
+		if (entityList.size() != 0) {
+			BuildingSlot slot = entityList.removeFirst();
+			checkDone ();
 
 			if (slot != null) {
 				return slot;
@@ -146,13 +174,13 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 		return null;
 	}
 
-	private SchematicToBuild internalGetNextBlock(World world, IBuilderInventory inv, LinkedList<SchematicToBuild> list) {
-		LinkedList<SchematicToBuild> failSlots = new LinkedList<SchematicToBuild>();
+	private BuildingSlot internalGetNextBlock(World world, IBuilderInventory inv, LinkedList<BuildingSlotBlock> list) {
+		LinkedList<BuildingSlotBlock> failSlots = new LinkedList<BuildingSlotBlock>();
 
-		SchematicToBuild result = null;
+		BuildingSlot result = null;
 
 		while (list.size() > 0) {
-			SchematicToBuild slot = list.removeFirst();
+			BuildingSlotBlock slot = list.removeFirst();
 			postProcessing.add(slot);
 
 			boolean getNext = false;
@@ -332,11 +360,11 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 
 		HashMap <StackKey, Integer> computeStacks = new HashMap <StackKey, Integer> ();
 
-		for (SchematicToBuild slot : primaryList) {
+		for (BuildingSlot slot : primaryList) {
 			LinkedList<ItemStack> stacks = new LinkedList<ItemStack>();
 
 			try {
-				stacks = slot.schematic.getRequirements(context);
+				stacks = slot.getRequirements(context);
 			} catch (Throwable t) {
 				// Defensive code against errors in implementers
 				t.printStackTrace();
@@ -362,8 +390,8 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 			}
 		}
 
-		for (SchematicToBuild slot : secondaryList) {
-			LinkedList<ItemStack> stacks = slot.schematic.getRequirements(context);
+		for (BuildingSlot slot : secondaryList) {
+			LinkedList<ItemStack> stacks = slot.getRequirements(context);
 
 			for (ItemStack stack : stacks) {
 				if (stack == null || stack.getItem() == null || stack.stackSize == 0) {
@@ -438,9 +466,9 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 
 	@Override
 	public void postProcessing(World world) {
-		for (SchematicToBuild s : postProcessing) {
+		for (BuildingSlot s : postProcessing) {
 			try {
-				s.schematic.postProcessing(context,  s.x, s.y, s.z);
+				s.postProcessing(context);
 			} catch (Throwable t) {
 				// Defensive code against errors in implementers
 				t.printStackTrace();

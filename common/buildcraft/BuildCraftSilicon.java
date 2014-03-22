@@ -94,8 +94,8 @@ public class BuildCraftSilicon extends BuildCraftMod {
 		CoreProxy.proxy.registerTileEntity(TileAdvancedCraftingTable.class, "net.minecraft.src.buildcraft.factory.TileAssemblyAdvancedWorkbench");
 		CoreProxy.proxy.registerTileEntity(TileIntegrationTable.class, "net.minecraft.src.buildcraft.factory.TileIntegrationTable");
 
-		SchematicRegistry.registerSchematicClass(laserBlock, SchematicRotateMeta.class, new int[]{2, 5, 3, 4}, true);
-		SchematicRegistry.registerSchematicClass(assemblyTableBlock, SchematicInventory.class);
+		SchematicRegistry.registerSchematicBlock(laserBlock, SchematicRotateMeta.class, new int[]{2, 5, 3, 4}, true);
+		SchematicRegistry.registerSchematicBlock(assemblyTableBlock, SchematicInventory.class);
 
 		if (BuildCraftCore.loadDefaultRecipes) {
 			loadRecipes();

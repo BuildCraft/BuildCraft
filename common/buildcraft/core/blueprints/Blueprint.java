@@ -8,21 +8,28 @@
  */
 package buildcraft.core.blueprints;
 
+import java.util.LinkedList;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
+import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import buildcraft.BuildCraftBuilders;
+import buildcraft.api.blueprints.CoordTransformation;
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.SchematicBlock;
+import buildcraft.api.blueprints.SchematicEntity;
 import buildcraft.api.blueprints.SchematicRegistry;
 import buildcraft.core.utils.BCLog;
 import buildcraft.core.utils.NBTUtils;
 import buildcraft.core.utils.Utils;
 
 public class Blueprint extends BlueprintBase {
+	public LinkedList <SchematicEntity> entities = new LinkedList <SchematicEntity> ();
+
 	public Blueprint() {
 		super ();
 	}
@@ -35,7 +42,7 @@ public class Blueprint extends BlueprintBase {
 	public void readFromWorld(IBuilderContext context, TileEntity anchorTile, int x, int y, int z) {
 		Block block = anchorTile.getWorldObj().getBlock(x, y, z);
 
-		SchematicBlock slot = SchematicRegistry.newSchematic(block);
+		SchematicBlock slot = SchematicRegistry.newSchematicBlock(block);
 
 		if (slot == null) {
 			return;
@@ -62,6 +69,30 @@ public class Blueprint extends BlueprintBase {
 		}
 	}
 
+	@Override
+	public void readEntitiesFromWorld(IBuilderContext context, TileEntity anchorTile) {
+		CoordTransformation transform = new CoordTransformation();
+		/*transform.x = -context.surroundingBox().pMin().x;
+		transform.y = -context.surroundingBox().pMin().y;
+		transform.z = -context.surroundingBox().pMin().z;*/
+		transform.x = -anchorTile.xCoord;
+		transform.y = -anchorTile.yCoord;
+		transform.z = -anchorTile.zCoord;
+
+		for (Object o : context.world().loadedEntityList) {
+			Entity e = (Entity) o;
+
+			if (context.surroundingBox().contains(e.posX, e.posY, e.posZ)) {
+				SchematicEntity s = SchematicRegistry.newSchematicEntity(e.getClass());
+
+				if (s != null) {
+					s.readFromWorld(context, e, transform);
+					entities.add(s);
+				}
+			}
+		}
+	}
+
 
 	@Override
 	public void saveContents(NBTTagCompound nbt) {
@@ -82,6 +113,16 @@ public class Blueprint extends BlueprintBase {
 		}
 
 		nbt.setTag("contents", nbtContents);
+
+		NBTTagList entitiesNBT = new NBTTagList();
+
+		for (SchematicEntity s : entities) {
+			NBTTagCompound subNBT = new NBTTagCompound();
+			s.writeToNBT(subNBT, mapping);
+			entitiesNBT.appendTag(subNBT);
+		}
+
+		nbt.setTag("entities", entitiesNBT);
 
 		NBTTagCompound contextNBT = new NBTTagCompound();
 		mapping.write (contextNBT);
@@ -106,12 +147,26 @@ public class Blueprint extends BlueprintBase {
 					if (cpt.hasKey("blockId")) {
 						int blockId = cpt.getInteger("blockId");
 
-						contents[x][y][z] = SchematicRegistry.newSchematic(mapping.getBlockForId(blockId));
+						contents[x][y][z] = SchematicRegistry.newSchematicBlock(mapping.getBlockForId(blockId));
 						contents[x][y][z].readFromNBT(cpt, mapping);
 					} else {
 						contents[x][y][z] = null;
 					}
 				}
+			}
+		}
+
+		NBTTagList entitiesNBT = nbt.getTagList("entities",
+				Utils.NBTTag_Types.NBTTagCompound.ordinal());
+
+		for (int i = 0; i < entitiesNBT.tagCount(); ++i) {
+			NBTTagCompound cpt = entitiesNBT.getCompoundTagAt(i);
+
+			if (cpt.hasKey("entityId")) {
+				int entityId = cpt.getInteger("entityId");
+				SchematicEntity s = SchematicRegistry.newSchematicEntity(mapping.getEntityForId(entityId));
+				s.readFromNBT(cpt, mapping);
+				entities.add(s);
 			}
 		}
 	}

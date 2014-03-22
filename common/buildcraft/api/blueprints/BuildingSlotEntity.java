@@ -6,20 +6,15 @@
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-package buildcraft.api.core;
+package buildcraft.api.blueprints;
 
-public interface IBox {
+public class BuildingSlotEntity extends BuildingSlot {
 
-	public void expand(int amount);
+	public CoordTransformation transform;
+	public SchematicEntity schematic;
 
-	public void contract(int amount);
-
-	public boolean contains(double x, double y, double z);
-
-	public Position pMin();
-
-	public Position pMax();
-
-	public void createLaserData();
-
+	@Override
+	public void writeToWorld(IBuilderContext context) {
+		schematic.writeToWorld(context, transform);
+	}
 }

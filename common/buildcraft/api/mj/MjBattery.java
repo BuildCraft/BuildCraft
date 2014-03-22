@@ -37,6 +37,6 @@ public @interface MjBattery {
 
 	public double maxCapacity () default 100.0;
 	public double maxReceivedPerCycle () default 10.0;
-	public double miniumConsumption () default 0.1;
+	public double minimumConsumption () default 0.1;
 
 }
