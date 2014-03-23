@@ -13,14 +13,14 @@ public class MultiBlockCheck {
 	
 	
 	public static boolean isPartOfAMultiBlock(String type, int x, int y, int z, World world){
-		return north (x, y, z, world) || south(x, y, z, world);
+		return north(x, y, z, world) || south(x, y, z, world);
 		}
 	
 	public static boolean north(int x, int y, int z, World world){
-		boolean partOfMultiBlock = false;
+		boolean partOfMultiBlock = true;
 		boolean pipeDetected = false;
 		for (int teller=-4; teller<=4; teller++){
-			for (int teller2=0; teller2<=2; teller2++){
+			for (int teller2 = 0; teller2 <=2; teller2++){
 				for (int teller3 = 0; teller3>=-2; teller3--){
 					if (teller2 == 1 && teller3 == -1){
 						if (teller == -4 || teller == 4){
@@ -50,7 +50,6 @@ public class MultiBlockCheck {
 				}
 			}
 		}
-		
 		return partOfMultiBlock;
 	}
 	
