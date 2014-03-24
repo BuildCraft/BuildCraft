@@ -13,8 +13,11 @@ public class MultiBlockCheck {
 	
 	
 	public static boolean isPartOfAMultiBlock(String type, int x, int y, int z, World world){
-		return north(x, y, z, world) || east (x, y, z, world) || south(x, y, z, world) || west(x, y, z, world);
+		if (type=="refinery"){
+			return north(x, y, z, world) || east (x, y, z, world) || south(x, y, z, world) || west(x, y, z, world);
 		}
+		return false;
+	}
 	
 	public static boolean north(int x, int y, int z, World world){
 		boolean partOfMultiBlock = true;
