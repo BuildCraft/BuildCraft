@@ -2,6 +2,7 @@ package buildcraft.factory;
 
 
 import buildcraft.BuildCraftEnergy;
+import buildcraft.api.fuels.IronEngineFuel;
 import buildcraft.api.gates.IAction;
 import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.power.PowerHandler;
@@ -57,20 +58,27 @@ public class TileRefineryControl extends TileEntity implements IFluidHandler, IP
 	public int getRecentEnergyAverage() {
 		return recentEnergyAverage;
 	}
+	public int AmountOfOil(){
+		return input.getFluidAmount();
+	}
+	
+	public int AmountOfFuel(){
+		return output.getFluidAmount();
+	}
 	
 	public int getScaledInput(int i) {
 		return this.input.getFluid() != null ? (int) (((float) this.input.getFluid().amount / (float) (MAX_LIQUID)) * i) : 0;
 	}
 	public int getScaledOutput(int i) {
-		return output.getFluid() != null ? (int) (((float) output.getFluid().amount / (float) (MAX_LIQUID)) * i) : 0;
+		return output.getFluid() != null ? (int) (((float) this.output.getFluid().amount / (float) (MAX_LIQUID)) * i) : 0;
 	}
 	
 	public FluidStack getInput(){
-		return new FluidStack(BuildCraftEnergy.fluidOil, 1);
+		return input.getFluid();
 	}
 	
 	public FluidStack getOutput(){
-		return new FluidStack(BuildCraftEnergy.fluidFuel, 1);
+		return output.getFluid();
 	}
 
 	public double getEnergy() {
@@ -178,6 +186,9 @@ public class TileRefineryControl extends TileEntity implements IFluidHandler, IP
 
 	@Override
 	public int fill(ForgeDirection from, FluidStack resource, boolean doFill) {
+		if (resource.getFluid() == BuildCraftEnergy.fluidOil)
+			return input.fill(resource, doFill);
+
 		return 0;
 	}
 
@@ -193,6 +204,9 @@ public class TileRefineryControl extends TileEntity implements IFluidHandler, IP
 
 	@Override
 	public boolean canFill(ForgeDirection from, Fluid fluid) {
+		if (fluid == BuildCraftEnergy.fluidOil){
+			return true;
+		}
 		return false;
 	}
 
@@ -202,8 +216,21 @@ public class TileRefineryControl extends TileEntity implements IFluidHandler, IP
 	}
 
 	@Override
-	public FluidTankInfo[] getTankInfo(ForgeDirection from) {
-		return null;
+	public FluidTankInfo[] getTankInfo(ForgeDirection direction) {
+		return tankManager.getTankInfo(direction);
+	}
+	@Override
+	public void readFromNBT(NBTTagCompound data) {
+		super.readFromNBT(data);
+		tankManager.readFromNBT(data);
+
+	}
+
+	@Override
+	public void writeToNBT(NBTTagCompound data) {
+		super.writeToNBT(data);
+		tankManager.writeToNBT(data);
+
 	}
 	
 }

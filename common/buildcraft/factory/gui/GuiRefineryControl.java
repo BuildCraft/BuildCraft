@@ -11,15 +11,16 @@ import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidStack;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.gui.GuiAdvancedInterface;
+import buildcraft.core.gui.GuiBuildCraft;
 import buildcraft.core.render.RenderUtils;
 import buildcraft.core.utils.StringUtils;
 import buildcraft.energy.TileEngineIron;
 import buildcraft.energy.gui.GuiEngine;
 import buildcraft.factory.TileRefineryControl;
 
-public class GuiRefineryControl extends GuiEngine{
+public class GuiRefineryControl extends GuiBuildCraft{
 	
-	private static final ResourceLocation texture = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_GUI + "/ledger.png");
+	private static final ResourceLocation texture = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_GUI + "/refinery_control_gui.png");
 	private static final ResourceLocation BLOCK_TEXTURE = TextureMap.locationBlocksTexture;
 	private int x;
 	private int y;
@@ -27,7 +28,7 @@ public class GuiRefineryControl extends GuiEngine{
 	private World world;
 	
 	public GuiRefineryControl(InventoryPlayer inventory, TileRefineryControl refineryControl) {
-		super(new ContainerRefineryControl(inventory, refineryControl), inventory, texture);
+		super(new ContainerRefineryControl(inventory, refineryControl), refineryControl, texture);
 		x = refineryControl.xCoord;
 		y = refineryControl.yCoord;
 		z = refineryControl.zCoord;
@@ -37,13 +38,17 @@ public class GuiRefineryControl extends GuiEngine{
 	@Override
 	protected void drawGuiContainerForegroundLayer(int par1, int par2) {
 		super.drawGuiContainerForegroundLayer(par1, par2);
-		String title = StringUtils.localize("tile.refineryControl.name");
-		/*fontRendererObj.drawString(title, getCenteredOffset(title), 6, 0x404040);
+		TileRefineryControl refinery = (TileRefineryControl) world.getTileEntity(x, y, z);
+		/*String title = StringUtils.localize("tile.refineryControl.name");
+		fontRendererObj.drawString(title, getCenteredOffset(title), 6, 0x404040);
 		if (buildcraft.core.utils.MultiBlockCheck.isPartOfAMultiBlock("refinery", x, y, z, world)){
-			fontRendererObj.drawString("REFINERY DETECTED", getCenteredOffset("REFINERY DETECTED"), 40, 0x008000);
+			fontRendererObj.drawString("REFINERY DETECTED", getCenteredOffset("REFINERY DETECTED"), 25, 0x008000);
 			} else {
-				fontRendererObj.drawString("NO REFINERY DETECTED", getCenteredOffset("NO REFINERY DETECTED"), 40, 0xff0000);
+				fontRendererObj.drawString("NO REFINERY DETECTED", getCenteredOffset("NO REFINERY DETECTED"), 25, 0xff0000);
 				}*/
+		fontRendererObj.drawString("Oil: "+ refinery.AmountOfOil(), 10, 50, 0x404040);
+		fontRendererObj.drawString("Fuel: "+refinery.AmountOfFuel(), 10, 65, 0x404040);
+		
 		}
 
 	@Override
@@ -52,8 +57,6 @@ public class GuiRefineryControl extends GuiEngine{
 		int j = (width - xSize) / 2;
 		int k = (height - ySize) / 2;
 		TileRefineryControl refinery = (TileRefineryControl)tile;
-		System.out.println(refinery.getInput());
-		System.out.println(refinery.getScaledInput(58));
         drawFluid(refinery.getInput(), refinery.getScaledInput(58), j + 104, k + 19, 16, 58);
         drawFluid(refinery.getOutput(), refinery.getScaledOutput(58), j + 122, k + 19, 16, 58);
         mc.renderEngine.bindTexture(texture);
