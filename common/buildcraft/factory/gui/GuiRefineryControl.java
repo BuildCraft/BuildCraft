@@ -38,14 +38,13 @@ public class GuiRefineryControl extends GuiBuildCraft{
 	@Override
 	protected void drawGuiContainerForegroundLayer(int par1, int par2) {
 		super.drawGuiContainerForegroundLayer(par1, par2);
-		TileRefineryControl refinery = (TileRefineryControl) world.getTileEntity(x, y, z);
-		/*String title = StringUtils.localize("tile.refineryControl.name");
-		fontRendererObj.drawString(title, getCenteredOffset(title), 6, 0x404040);
+		TileRefineryControl refinery = (TileRefineryControl) tile;
+		String title = StringUtils.localize("tile.refineryControl.name");
 		if (buildcraft.core.utils.MultiBlockCheck.isPartOfAMultiBlock("refinery", x, y, z, world)){
-			fontRendererObj.drawString("REFINERY DETECTED", getCenteredOffset("REFINERY DETECTED"), 25, 0x008000);
+			fontRendererObj.drawString(title, getCenteredOffset(title), 6, 0x008000);
 			} else {
-				fontRendererObj.drawString("NO REFINERY DETECTED", getCenteredOffset("NO REFINERY DETECTED"), 25, 0xff0000);
-				}*/
+				fontRendererObj.drawString(title, getCenteredOffset(title), 6, 0xff0000);
+				}
 		fontRendererObj.drawString("Oil: "+ refinery.AmountOfOil(), 10, 50, 0x404040);
 		fontRendererObj.drawString("Fuel: "+refinery.AmountOfFuel(), 10, 65, 0x404040);
 		
@@ -56,7 +55,7 @@ public class GuiRefineryControl extends GuiBuildCraft{
 		super.drawGuiContainerBackgroundLayer(f, x, y);
 		int j = (width - xSize) / 2;
 		int k = (height - ySize) / 2;
-		TileRefineryControl refinery = (TileRefineryControl)tile;
+		TileRefineryControl refinery = (TileRefineryControl) tile;
         drawFluid(refinery.getInput(), refinery.getScaledInput(58), j + 104, k + 19, 16, 58);
         drawFluid(refinery.getOutput(), refinery.getScaledOutput(58), j + 122, k + 19, 16, 58);
         mc.renderEngine.bindTexture(texture);
