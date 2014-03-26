@@ -1,6 +1,7 @@
 package buildcraft.factory;
 
 
+import buildcraft.BuildCraftEnergy;
 import buildcraft.api.gates.IAction;
 import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.power.PowerHandler;
@@ -25,10 +26,10 @@ import net.minecraftforge.fluids.IFluidHandler;
 public class TileRefineryControl extends TileEntity implements IFluidHandler, IPowerReceptor, IInventory, IMachine{
 	
 	private PowerHandler powerHandler;
-	public static int LPS = FluidContainerRegistry.BUCKET_VOLUME * 4;
-	public SingleUseTank input = new SingleUseTank("input", LPS, this);
-	public SingleUseTank output = new SingleUseTank("output", LPS, this);
-	public TankManager<SingleUseTank> tankManager = new TankManager<SingleUseTank>(input, output);
+	public static int MAX_LIQUID = FluidContainerRegistry.BUCKET_VOLUME * 10;
+	public SingleUseTank input = new SingleUseTank("input", MAX_LIQUID, this);
+	public SingleUseTank output = new SingleUseTank("output", MAX_LIQUID, this);
+	private TankManager tankManager = new TankManager();
 	public double clientRequiredEnergy = 0;
 	private double energy = 0;
 	private int tick = 0;
@@ -38,6 +39,8 @@ public class TileRefineryControl extends TileEntity implements IFluidHandler, IP
 	public TileRefineryControl() {
 		powerHandler = new PowerHandler(this, Type.MACHINE);
 		initPowerProvider();
+		tankManager.add(input);
+		tankManager.add(output);
 	}
 
 	private void initPowerProvider() {
@@ -53,6 +56,21 @@ public class TileRefineryControl extends TileEntity implements IFluidHandler, IP
 	}
 	public int getRecentEnergyAverage() {
 		return recentEnergyAverage;
+	}
+	
+	public int getScaledInput(int i) {
+		return this.input.getFluid() != null ? (int) (((float) this.input.getFluid().amount / (float) (MAX_LIQUID)) * i) : 0;
+	}
+	public int getScaledOutput(int i) {
+		return output.getFluid() != null ? (int) (((float) output.getFluid().amount / (float) (MAX_LIQUID)) * i) : 0;
+	}
+	
+	public FluidStack getInput(){
+		return new FluidStack(BuildCraftEnergy.fluidOil, 1);
+	}
+	
+	public FluidStack getOutput(){
+		return new FluidStack(BuildCraftEnergy.fluidFuel, 1);
 	}
 
 	public double getEnergy() {
