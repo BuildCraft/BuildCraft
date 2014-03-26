@@ -59,7 +59,9 @@ public class TileRefineryControl extends TileEntity implements IFluidHandler, IP
 		return recentEnergyAverage;
 	}
 	public int AmountOfOil(){
-		return input.getFluidAmount();
+		//System.out.println(input.getFluidAmount());
+		//return input.getFluidAmount();
+		return 10000 	;
 	}
 	
 	public int AmountOfFuel(){
@@ -74,7 +76,8 @@ public class TileRefineryControl extends TileEntity implements IFluidHandler, IP
 	}
 	
 	public FluidStack getInput(){
-		return input.getFluid();
+		//return input.getFluid();
+		return new FluidStack(BuildCraftEnergy.fluidOil, AmountOfOil());
 	}
 	
 	public FluidStack getOutput(){
