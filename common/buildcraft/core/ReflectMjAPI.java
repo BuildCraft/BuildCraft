@@ -1,5 +1,7 @@
 package buildcraft.core;
 
+import java.lang.reflect.Modifier;
+import java.lang.reflect.Method;
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
@@ -110,26 +112,34 @@ public class ReflectMjAPI {
 
 	private static BatteryField getMjBattery (Class c) {
 		if (!MjBatteries.containsKey(c)) {
-			for (Field f : c.getFields()) {
+			for (Field f : c.getDeclaredFields()) {
 				MjBattery battery = f.getAnnotation (MjBattery.class);
 
 				if (battery != null) {
-					BatteryField bField = new BatteryField();
-					bField.field = f;
-					bField.battery = battery;
-
-					if (f.getType().equals(double.class)) {
-						bField.kind = BatteryKind.Value;
-					} else if (f.getType().isPrimitive()) {
-						throw new RuntimeException(
-								"MJ battery needs to be object or double type");
-					} else {
-						bField.kind = BatteryKind.Container;
+					for (Method method : c.getMethods()) {
+						if (method.getName().equals(f.getName() + "_$eq")) {
+							f.setAccessible(true);
+							break;
+						}
 					}
+					if (f.isAccessible() || Modifier.isPublic(f.getModifiers())) {
+						BatteryField bField = new BatteryField();
+						bField.field = f;
+						bField.battery = battery;
 
-					MjBatteries.put(c, bField);
+						if (f.getType().equals(double.class)) {
+							bField.kind = BatteryKind.Value;
+						} else if (f.getType().isPrimitive()) {
+							throw new RuntimeException(
+									"MJ battery needs to be object or double type");
+						} else {
+							bField.kind = BatteryKind.Container;
+						}
 
-					return bField;
+						MjBatteries.put(c, bField);
+
+						return bField;
+					}
 				}
 			}
 
