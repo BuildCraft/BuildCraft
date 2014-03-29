@@ -66,7 +66,6 @@ import buildcraft.builders.schematics.SchematicFluid;
 import buildcraft.builders.schematics.SchematicHanging;
 import buildcraft.builders.schematics.SchematicIgnore;
 import buildcraft.builders.schematics.SchematicIgnoreMeta;
-import buildcraft.builders.schematics.SchematicInventory;
 import buildcraft.builders.schematics.SchematicLever;
 import buildcraft.builders.schematics.SchematicMinecart;
 import buildcraft.builders.schematics.SchematicPiston;
@@ -74,7 +73,6 @@ import buildcraft.builders.schematics.SchematicPortal;
 import buildcraft.builders.schematics.SchematicPumpkin;
 import buildcraft.builders.schematics.SchematicRail;
 import buildcraft.builders.schematics.SchematicRedstoneDiode;
-import buildcraft.builders.schematics.SchematicRotateInventory;
 import buildcraft.builders.schematics.SchematicRotateMeta;
 import buildcraft.builders.schematics.SchematicSeeds;
 import buildcraft.builders.schematics.SchematicSign;
@@ -179,12 +177,10 @@ public class BuildCraftBuilders extends BuildCraftMod {
 		SchematicRegistry.registerSchematicBlock(Blocks.quartz_block, SchematicRotateMeta.class, new int[]{4, 3, 4, 3}, true);
 		SchematicRegistry.registerSchematicBlock(Blocks.hopper, SchematicRotateMeta.class, new int[]{2, 5, 3, 4}, true);
 
-		SchematicRegistry.registerSchematicBlock(Blocks.furnace, SchematicRotateInventory.class, new int[]{2, 5, 3, 4}, true);
-		SchematicRegistry.registerSchematicBlock(Blocks.lit_furnace, SchematicRotateInventory.class, new int[]{2, 5, 3, 4}, true);
-		SchematicRegistry.registerSchematicBlock(Blocks.chest, SchematicRotateInventory.class, new int[]{2, 5, 3, 4}, true);
-		SchematicRegistry.registerSchematicBlock(Blocks.dispenser, SchematicRotateInventory.class, new int[]{2, 5, 3, 4}, true);
-
-		SchematicRegistry.registerSchematicBlock(Blocks.brewing_stand, SchematicInventory.class);
+		SchematicRegistry.registerSchematicBlock(Blocks.furnace, SchematicRotateMeta.class, new int[]{2, 5, 3, 4}, true);
+		SchematicRegistry.registerSchematicBlock(Blocks.lit_furnace, SchematicRotateMeta.class, new int[]{2, 5, 3, 4}, true);
+		SchematicRegistry.registerSchematicBlock(Blocks.chest, SchematicRotateMeta.class, new int[]{2, 5, 3, 4}, true);
+		SchematicRegistry.registerSchematicBlock(Blocks.dispenser, SchematicRotateMeta.class, new int[]{2, 5, 3, 4}, true);
 
 		SchematicRegistry.registerSchematicBlock(Blocks.vine, SchematicRotateMeta.class, new int[]{1, 4, 8, 2}, false);
 		SchematicRegistry.registerSchematicBlock(Blocks.trapdoor, SchematicRotateMeta.class, new int[]{0, 1, 2, 3}, false);
@@ -263,10 +259,8 @@ public class BuildCraftBuilders extends BuildCraftMod {
 
 		// BuildCraft blocks
 
-		SchematicRegistry.registerSchematicBlock(architectBlock, SchematicRotateInventory.class, new int[]{2, 5, 3, 4}, true);
-		SchematicRegistry.registerSchematicBlock(builderBlock, SchematicRotateInventory.class, new int[]{2, 5, 3, 4}, true);
-
-		SchematicRegistry.registerSchematicBlock(libraryBlock, SchematicInventory.class);
+		SchematicRegistry.registerSchematicBlock(architectBlock, SchematicRotateMeta.class, new int[]{2, 5, 3, 4}, true);
+		SchematicRegistry.registerSchematicBlock(builderBlock, SchematicRotateMeta.class, new int[]{2, 5, 3, 4}, true);
 
 		SchematicRegistry.registerSchematicBlock(markerBlock, SchematicWallSide.class);
 		SchematicRegistry.registerSchematicBlock(pathMarkerBlock, SchematicWallSide.class);

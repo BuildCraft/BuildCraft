@@ -18,7 +18,6 @@ import net.minecraft.item.ItemStack;
 import buildcraft.api.blueprints.SchematicRegistry;
 import buildcraft.api.recipes.BuildcraftRecipes;
 import buildcraft.api.transport.PipeWire;
-import buildcraft.builders.schematics.SchematicInventory;
 import buildcraft.builders.schematics.SchematicRotateMeta;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.InterModComms;
@@ -95,7 +94,6 @@ public class BuildCraftSilicon extends BuildCraftMod {
 		CoreProxy.proxy.registerTileEntity(TileIntegrationTable.class, "net.minecraft.src.buildcraft.factory.TileIntegrationTable");
 
 		SchematicRegistry.registerSchematicBlock(laserBlock, SchematicRotateMeta.class, new int[]{2, 5, 3, 4}, true);
-		SchematicRegistry.registerSchematicBlock(assemblyTableBlock, SchematicInventory.class);
 
 		if (BuildCraftCore.loadDefaultRecipes) {
 			loadRecipes();
