@@ -14,6 +14,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.SchematicTile;
 import buildcraft.api.gates.ActionManager;
@@ -99,8 +100,25 @@ public class SchematicPipe extends SchematicTile {
 			tile.writeToNBT(cpt);
 
 			// This overrides the default pipeId
+
 			cpt.setInteger("pipeId", context.getMappingRegistry()
 					.getIdForItem(pipe.item));
+
+			// remove all pipe contents
+
+			cpt.removeTag("travelingEntities");
+
+			for (ForgeDirection direction : ForgeDirection.values()) {
+				cpt.removeTag("tank[" + direction.ordinal() + "]");
+				cpt.removeTag("transferState[" + direction.ordinal() + "]");
+			}
+
+			for (int i = 0; i < 6; ++i) {
+				cpt.removeTag("powerQuery[" + i + "]");
+				cpt.removeTag("nextPowerQuery[" + i + "]");
+				cpt.removeTag("internalPower[" + i + "]");
+				cpt.removeTag("internalNextPower[" + i + "]");
+			}
 		}
 	}
 
