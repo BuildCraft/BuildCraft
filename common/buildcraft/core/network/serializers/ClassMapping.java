@@ -16,6 +16,7 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -125,12 +126,14 @@ public class ClassMapping extends ClassSerializer {
 					cptMapping = get (cptClass);
 				}
 			} else {
-				Field[] fields = c.getFields();
+				List <Field> fields = Utils.getAllFields(c);
 
 				for (Field f : fields) {
 					if (!isSynchronizedField(f)) {
 						continue;
 					}
+
+					f.setAccessible(true);
 
 					Type t = f.getType();
 

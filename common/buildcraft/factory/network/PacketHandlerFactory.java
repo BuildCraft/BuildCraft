@@ -21,7 +21,6 @@ import net.minecraftforge.fluids.FluidRegistry;
 import buildcraft.core.network.BuildCraftChannelHandler;
 import buildcraft.core.network.BuildCraftPacket;
 import buildcraft.core.network.PacketIds;
-import buildcraft.core.network.PacketPayloadStream;
 import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.factory.TileRefinery;
@@ -54,12 +53,14 @@ public class PacketHandlerFactory extends BuildCraftChannelHandler {
 	}
 
 	private TileRefinery getRefinery(World world, int x, int y, int z) {
-		if (!world.blockExists(x, y, z))
+		if (!world.blockExists(x, y, z)) {
 			return null;
+		}
 
 		TileEntity tile = world.getTileEntity(x, y, z);
-		if (!(tile instanceof TileRefinery))
+		if (!(tile instanceof TileRefinery)) {
 			return null;
+		}
 
 		return (TileRefinery) tile;
 	}
@@ -67,10 +68,11 @@ public class PacketHandlerFactory extends BuildCraftChannelHandler {
 	private void onRefinerySelect(EntityPlayer playerEntity, PacketUpdate packet) throws IOException {
 
 		TileRefinery tile = getRefinery(playerEntity.worldObj, packet.posX, packet.posY, packet.posZ);
-		if (tile == null || packet.payload == null)
+		if (tile == null || packet.payload == null) {
 			return;
+		}
 
-		ByteBuf stream = ((PacketPayloadStream)packet.payload).stream;
+		ByteBuf stream = packet.payload.stream;
 
 		tile.setFilter(stream.readByte(), FluidRegistry.getFluid(stream.readShort()));
 	}

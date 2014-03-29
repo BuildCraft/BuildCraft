@@ -50,8 +50,9 @@ public class TileMarker extends TileBuildCraft implements IAreaProvider {
 		}
 
 		public TileMarker getMarker(World world) {
-			if (!isSet())
+			if (!isSet()) {
 				return null;
+			}
 
 			if (marker == null) {
 				marker = (TileMarker) world.getTileEntity(x, y, z);
@@ -206,11 +207,13 @@ public class TileMarker extends TileBuildCraft implements IAreaProvider {
 	}
 
 	private boolean linkTo(TileMarker marker, int n) {
-		if (marker == null)
+		if (marker == null) {
 			return false;
+		}
 
-		if (origin.isSet() && marker.origin.isSet())
+		if (origin.isSet() && marker.origin.isSet()) {
 			return false;
+		}
 
 		if (!origin.isSet() && !marker.origin.isSet()) {
 			origin = new Origin();
@@ -282,43 +285,49 @@ public class TileMarker extends TileBuildCraft implements IAreaProvider {
 
 	@Override
 	public int xMin() {
-		if (origin.isSet())
+		if (origin.isSet()) {
 			return origin.xMin;
+		}
 		return xCoord;
 	}
 
 	@Override
 	public int yMin() {
-		if (origin.isSet())
+		if (origin.isSet()) {
 			return origin.yMin;
+		}
 		return yCoord;
 	}
 
 	@Override
 	public int zMin() {
-		if (origin.isSet())
+		if (origin.isSet()) {
 			return origin.zMin;
+		}
 		return zCoord;
 	}
 
 	@Override
 	public int xMax() {
-		if (origin.isSet())
+		if (origin.isSet()) {
 			return origin.xMax;
+		}
 		return xCoord;
 	}
 
 	@Override
 	public int yMax() {
-		if (origin.isSet())
+		if (origin.isSet()) {
 			return origin.yMax;
+		}
 		return yCoord;
 	}
 
 	@Override
 	public int zMax() {
-		if (origin.isSet())
+		if (origin.isSet()) {
 			return origin.zMax;
+		}
 		return zCoord;
 	}
 
@@ -398,8 +407,9 @@ public class TileMarker extends TileBuildCraft implements IAreaProvider {
 
 	@Override
 	public void removeFromWorld() {
-		if (!origin.isSet())
+		if (!origin.isSet()) {
 			return;
+		}
 
 		Origin o = origin;
 

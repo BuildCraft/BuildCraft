@@ -66,30 +66,35 @@ public class BlockEngine extends BlockBuildCraft {
 
 	@Override
 	public TileEntity createTileEntity(World world, int metadata) {
-		if (metadata == 1)
+		if (metadata == 1) {
 			return new TileEngineStone();
-		else if (metadata == 2)
+		} else if (metadata == 2) {
 			return new TileEngineIron();
-		else
+		} else {
 			return new TileEngineWood();
+		}
 	}
 
 	@Override
 	public boolean isSideSolid(IBlockAccess world, int x, int y, int z, ForgeDirection side) {
 		TileEntity tile = world.getTileEntity(x, y, z);
+
 		if (tile instanceof TileEngine) {
 			return ((TileEngine) tile).orientation.getOpposite() == side;
+		} else {
+			return false;
 		}
-		return false;
 	}
 
 	@Override
 	public boolean rotateBlock(World world, int x, int y, int z, ForgeDirection axis) {
 		TileEntity tile = world.getTileEntity(x, y, z);
+
 		if (tile instanceof TileEngine) {
 			return ((TileEngine) tile).switchOrientation(false);
+		} else {
+			return false;
 		}
-		return false;
 	}
 
 	@Override
@@ -98,8 +103,9 @@ public class BlockEngine extends BlockBuildCraft {
 		TileEngine tile = (TileEngine) world.getTileEntity(i, j, k);
 
 		// Drop through if the player is sneaking
-		if (player.isSneaking())
+		if (player.isSneaking()) {
 			return false;
+		}
 
 		// Do not open guis when having a pipe in hand
 		if (player.getCurrentEquippedItem() != null) {
@@ -119,8 +125,10 @@ public class BlockEngine extends BlockBuildCraft {
 	public void onPostBlockPlaced(World world, int x, int y, int z, int par5) {
 		TileEngine tile = (TileEngine) world.getTileEntity(x, y, z);
 		tile.orientation = ForgeDirection.UP;
-		if (!tile.isOrientationValid())
+
+		if (!tile.isOrientationValid()) {
 			tile.switchOrientation(true);
+		}
 	}
 
 	@Override

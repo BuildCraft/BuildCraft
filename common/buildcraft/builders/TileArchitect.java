@@ -118,8 +118,6 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 					a.removeFromWorld();
 				}
 			}
-
-			sendNetworkUpdate();
 		}
 	}
 
@@ -370,7 +368,7 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 	}
 
 	@RPC (RPCSide.SERVER)
-	public void setReadConfiguration (BlueprintReadConfiguration conf) {
+	private void setReadConfiguration (BlueprintReadConfiguration conf) {
 		readConfiguration = conf;
 		sendNetworkUpdate();
 	}

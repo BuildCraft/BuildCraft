@@ -35,7 +35,6 @@ import buildcraft.core.blueprints.BptContext;
 import buildcraft.core.blueprints.BuildingSlot;
 import buildcraft.core.inventory.SimpleInventory;
 import buildcraft.core.network.PacketPayload;
-import buildcraft.core.network.PacketPayloadStream;
 import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.network.RPC;
 import buildcraft.core.network.RPCHandler;
@@ -253,7 +252,7 @@ public class TileFiller extends TileBuildCraft implements IBuilderInventory, IMa
 
 	@Override
 	public PacketPayload getPacketPayload() {
-		PacketPayloadStream payload = new PacketPayloadStream(new PacketPayloadStream.StreamWriter() {
+		PacketPayload payload = new PacketPayload(new PacketPayload.StreamWriter() {
 			@Override
 			public void writeData(ByteBuf data) {
 				box.writeToStream(data);
@@ -276,12 +275,12 @@ public class TileFiller extends TileBuildCraft implements IBuilderInventory, IMa
 
 	@Override
 	public void handleDescriptionPacket(PacketUpdate packet) throws IOException {
-		handlePacketPayload(((PacketPayloadStream) packet.payload).stream);
+		handlePacketPayload(packet.payload.stream);
 	}
 
 	@Override
 	public void handleUpdatePacket(PacketUpdate packet) throws IOException {
-		handlePacketPayload(((PacketPayloadStream) packet.payload).stream);
+		handlePacketPayload(packet.payload.stream);
 	}
 
 	@Override

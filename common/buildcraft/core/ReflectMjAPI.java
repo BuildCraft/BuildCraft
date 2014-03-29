@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import buildcraft.api.mj.MjBattery;
+import buildcraft.core.utils.Utils;
 
 public class ReflectMjAPI {
 
@@ -110,7 +111,7 @@ public class ReflectMjAPI {
 
 	private static BatteryField getMjBattery (Class c) {
 		if (!MjBatteries.containsKey(c)) {
-			for (Field f : c.getDeclaredFields()) {
+			for (Field f : Utils.getAllFields(c)) {
 				MjBattery battery = f.getAnnotation (MjBattery.class);
 
 				if (battery != null) {

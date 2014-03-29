@@ -59,13 +59,15 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 	public float progress;
 	public double energy;
 	public float heat = MIN_HEAT;
-	//
-	public @NetworkData
-	EnergyStage energyStage = EnergyStage.BLUE;
-	public @NetworkData
-	ForgeDirection orientation = ForgeDirection.UP;
-	public @NetworkData
-	boolean isPumping = false; // Used for SMP synch
+
+	@NetworkData
+	public EnergyStage energyStage = EnergyStage.BLUE;
+
+	@NetworkData
+	public ForgeDirection orientation = ForgeDirection.UP;
+
+	@NetworkData
+	private boolean isPumping = false; // Used for SMP synch
 
 	public TileEngine() {
 		powerHandler = new PowerHandler(this, Type.ENGINE);
@@ -110,6 +112,7 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 			if (energyStage == EnergyStage.OVERHEAT) {
 				return energyStage;
 			}
+
 			EnergyStage newStage = computeEnergyStage();
 
 			if (energyStage != newStage) {

@@ -8,24 +8,36 @@
  */
 package buildcraft.core.network;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import io.netty.buffer.ByteBuf;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-
 /**
- * FIXME: Now that packet PayloadArray is removed, it's probably worth removing
- * the abstraction, and having just one class for PayloadStream.
+ * Alternative Packet Payload system.
+ *
+ * Note, you cannot use a Stream payload and the TileNetworkData annotation at
+ * the same time. Attempting to do will most likely result in a class cast
+ * exception somewhere.
  */
-public abstract class PacketPayload {
-	public static PacketPayload makePayload() {
-		return new PacketPayloadStream();
+public class PacketPayload {
+
+	public static interface StreamWriter {
+		public void writeData(ByteBuf data);
 	}
 
-	public abstract void writeData(ByteBuf data);
+	private StreamWriter handler;
+	public ByteBuf stream;
 
-	public abstract void readData(ByteBuf data);
+	public PacketPayload() {
+	}
+
+	public PacketPayload(StreamWriter handler) {
+		this.handler = handler;
+	}
+
+	public void writeData(ByteBuf data) {
+		handler.writeData(data);
+	}
+
+	public void readData(ByteBuf data) {
+		stream = data;
+	}
 }
