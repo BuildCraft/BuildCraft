@@ -17,21 +17,16 @@ public class BlueprintReadConfiguration {
 	public boolean rotate = true;
 
 	@NetworkData
-	public boolean readAllBlocks = true;
-
-	@NetworkData
-	public boolean readAllMods = true;
+	public boolean readTiles = true;
 
 	public void writeToNBT(NBTTagCompound nbttagcompound) {
 		nbttagcompound.setBoolean("rotate", rotate);
-		nbttagcompound.setBoolean("readAllBlocks", readAllBlocks);
-		nbttagcompound.setBoolean("readAllMods", readAllMods);
+		nbttagcompound.setBoolean("readAllBlocks", readTiles);
 	}
 
 	public void readFromNBT(NBTTagCompound nbttagcompound) {
 		rotate = nbttagcompound.getBoolean("rotate");
-		readAllBlocks = nbttagcompound.getBoolean("readAllBlocks");
-		readAllMods = nbttagcompound.getBoolean("readAllMods");
+		readTiles = nbttagcompound.getBoolean("readAllBlocks");
 	}
 
 }

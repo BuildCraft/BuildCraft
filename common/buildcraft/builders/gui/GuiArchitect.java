@@ -57,9 +57,6 @@ public class GuiArchitect extends GuiBuildCraft {
 		optionReadBlocks = new GuiButton(1, x + 5, y + 55, 77, 20, "");
 		buttonList.add(optionReadBlocks);
 
-		optionReadMods = new GuiButton(1, x + 5, y + 80, 77, 20, "");
-		buttonList.add(optionReadMods);
-
 		updateButtons();
 	}
 
@@ -69,10 +66,8 @@ public class GuiArchitect extends GuiBuildCraft {
 
 		if (button == optionRotate) {
 			conf.rotate = !conf.rotate;
-		} else if (button == optionReadMods) {
-			conf.readAllMods = !conf.readAllMods;
 		} else if (button == optionReadBlocks) {
-			conf.readAllBlocks = !conf.readAllBlocks;
+			conf.readTiles = !conf.readTiles;
 		}
 
 		architect.rpcSetConfiguration(conf);
@@ -89,18 +84,11 @@ public class GuiArchitect extends GuiBuildCraft {
 			optionRotate.displayString = "Rotate: Off";
 		}
 
-		if (conf.readAllBlocks) {
+		if (conf.readTiles) {
 			optionReadBlocks.displayString = "Blocks: All";
 		} else {
 			optionReadBlocks.displayString = "Blocks: Simple";
 		}
-
-		if (conf.readAllMods) {
-			optionReadMods.displayString = "Mods: All";
-		} else {
-			optionReadMods.displayString = "Mods: Safe";
-		}
-
 	}
 
 	@Override

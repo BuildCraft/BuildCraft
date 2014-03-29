@@ -11,7 +11,6 @@ package buildcraft.core.blueprints;
 import java.util.LinkedList;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockContainer;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -49,6 +48,7 @@ public class Blueprint extends BlueprintBase {
 
 	@Override
 	public void readFromWorld(IBuilderContext context, TileEntity anchorTile, int x, int y, int z) {
+		BptContext bptContext = (BptContext) context;
 		Block block = anchorTile.getWorldObj().getBlock(x, y, z);
 
 		SchematicBlock slot = SchematicRegistry.newSchematicBlock(block);
@@ -64,8 +64,8 @@ public class Blueprint extends BlueprintBase {
 		slot.block = block;
 		slot.meta = anchorTile.getWorldObj().getBlockMetadata(x, y, z);
 
-		if (slot.block instanceof BlockContainer) {
-			TileEntity tile = anchorTile.getWorldObj().getTileEntity(x, y, z);
+		if (!bptContext.readConfiguration.readTiles && anchorTile.getWorldObj().getTileEntity(x, y, z) != null) {
+			return;
 		}
 
 		try {

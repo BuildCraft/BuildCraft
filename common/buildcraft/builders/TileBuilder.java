@@ -271,17 +271,19 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IM
 
 		BptContext context = bpt.getContext(worldObj, bpt.getBoxForPos(x, y, z));
 
-		if (o == ForgeDirection.EAST) {
-			// Do nothing
-		} else if (o == ForgeDirection.SOUTH) {
-			bpt.rotateLeft(context);
-		} else if (o == ForgeDirection.WEST) {
-			bpt.rotateLeft(context);
-			bpt.rotateLeft(context);
-		} else if (o == ForgeDirection.NORTH) {
-			bpt.rotateLeft(context);
-			bpt.rotateLeft(context);
-			bpt.rotateLeft(context);
+		if (bpt.rotate) {
+			if (o == ForgeDirection.EAST) {
+				// Do nothing
+			} else if (o == ForgeDirection.SOUTH) {
+				bpt.rotateLeft(context);
+			} else if (o == ForgeDirection.WEST) {
+				bpt.rotateLeft(context);
+				bpt.rotateLeft(context);
+			} else if (o == ForgeDirection.NORTH) {
+				bpt.rotateLeft(context);
+				bpt.rotateLeft(context);
+				bpt.rotateLeft(context);
+			}
 		}
 
 		BptBuilderBase result = null;

@@ -79,19 +79,22 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 					ForgeDirection o = ForgeDirection.values()[worldObj.getBlockMetadata(
 							xCoord, yCoord, zCoord)].getOpposite();
 
-					if (o == ForgeDirection.EAST) {
-						// Do nothing
-					} else if (o == ForgeDirection.SOUTH) {
-						writingBlueprint.rotateLeft(writingContext);
-						writingBlueprint.rotateLeft(writingContext);
-						writingBlueprint.rotateLeft(writingContext);
-					} else if (o == ForgeDirection.WEST) {
-						writingBlueprint.rotateLeft(writingContext);
-						writingBlueprint.rotateLeft(writingContext);
-					} else if (o == ForgeDirection.NORTH) {
-						writingBlueprint.rotateLeft(writingContext);
-					}
+					writingBlueprint.rotate = readConfiguration.rotate;
 
+					if (writingBlueprint.rotate) {
+						if (o == ForgeDirection.EAST) {
+							// Do nothing
+						} else if (o == ForgeDirection.SOUTH) {
+							writingBlueprint.rotateLeft(writingContext);
+							writingBlueprint.rotateLeft(writingContext);
+							writingBlueprint.rotateLeft(writingContext);
+						} else if (o == ForgeDirection.WEST) {
+							writingBlueprint.rotateLeft(writingContext);
+							writingBlueprint.rotateLeft(writingContext);
+						} else if (o == ForgeDirection.NORTH) {
+							writingBlueprint.rotateLeft(writingContext);
+						}
+					}
 				}
 			} else if (writingBlueprint.getData() != null) {
 				createBlueprint();

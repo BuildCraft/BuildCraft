@@ -32,6 +32,7 @@ public abstract class BlueprintBase {
 	public String author;
 	private String version = "";
 	protected MappingRegistry mapping = new MappingRegistry();
+	public boolean rotate = true;
 
 	private byte [] data;
 
@@ -104,6 +105,7 @@ public abstract class BlueprintBase {
 		nbt.setInteger("anchorX", anchorX);
 		nbt.setInteger("anchorY", anchorY);
 		nbt.setInteger("anchorZ", anchorZ);
+		nbt.setBoolean("rotate", rotate);
 
 		if (author != null) {
 			nbt.setString("author", author);
@@ -141,6 +143,12 @@ public abstract class BlueprintBase {
 		anchorZ = nbt.getInteger("anchorZ");
 
 		author = nbt.getString("author");
+
+		if (nbt.hasKey("rotate")) {
+			rotate = nbt.getBoolean("rotate");
+		} else {
+			rotate = true;
+		}
 
 		contents = new Schematic [sizeX][sizeY][sizeZ];
 
