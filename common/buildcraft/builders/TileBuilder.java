@@ -67,7 +67,7 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IM
 	private SafeTimeTracker debugBuildTracker = new SafeTimeTracker(5);
 
 	@MjBattery (maxReceivedPerCycle = 25)
-	public double mjStored = 0;
+	private double mjStored = 0;
 
 	private class PathIterator {
 

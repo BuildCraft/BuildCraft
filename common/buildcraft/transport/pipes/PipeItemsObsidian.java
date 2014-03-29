@@ -41,7 +41,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 public class PipeItemsObsidian extends Pipe<PipeTransportItems> {
 
 	@MjBattery (maxCapacity = 256, maxReceivedPerCycle = 64, minimumConsumption = 0)
-	public double mjStored = 0;
+	private double mjStored = 0;
 
 	private static final PowerHandler.PerditionCalculator PERDITION = new PowerHandler.PerditionCalculator(0.5F);
 	private int[] entitiesDropped;

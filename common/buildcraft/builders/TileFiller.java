@@ -58,7 +58,7 @@ public class TileFiller extends TileBuildCraft implements IBuilderInventory, IMa
 	private SimpleInventory inv = new SimpleInventory(27, "Filler", 64);
 
 	@MjBattery (maxReceivedPerCycle = 25)
-	public double mjStored = 0;
+	private double mjStored = 0;
 
 	public TileFiller() {
 		inv.addListener(this);

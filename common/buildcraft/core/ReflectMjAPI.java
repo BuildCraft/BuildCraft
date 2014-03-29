@@ -1,8 +1,7 @@
 package buildcraft.core;
 
-import java.lang.reflect.Modifier;
-import java.lang.reflect.Method;
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -116,12 +115,8 @@ public class ReflectMjAPI {
 				MjBattery battery = f.getAnnotation (MjBattery.class);
 
 				if (battery != null) {
-					for (Method method : c.getMethods()) {
-						if (method.getName().equals(f.getName() + "_$eq")) {
-							f.setAccessible(true);
-							break;
-						}
-					}
+					f.setAccessible(true);
+
 					if (f.isAccessible() || Modifier.isPublic(f.getModifiers())) {
 						BatteryField bField = new BatteryField();
 						bField.field = f;

@@ -33,7 +33,7 @@ import buildcraft.transport.utils.TransportUtils;
 public class PipeItemsStripes extends Pipe <PipeTransportItems> {
 
 	@MjBattery (maxCapacity = 1, maxReceivedPerCycle = 1, minimumConsumption = 0)
-	public double mjStored = 0;
+	private double mjStored = 0;
 
 	public PipeItemsStripes(Item item) {
 		super(new PipeTransportItems(), item);

@@ -31,7 +31,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 public class PipeFluidsWood extends Pipe<PipeTransportFluids> {
 
 	@MjBattery (maxCapacity = 250, maxReceivedPerCycle = 100, minimumConsumption = 0)
-	public double mjStored = 0;
+	private double mjStored = 0;
 
 	public @NetworkData
 	int liquidToExtract;
