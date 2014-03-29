@@ -10,13 +10,6 @@ package buildcraft.core.network;
 
 import io.netty.buffer.ByteBuf;
 
-/**
- * Alternative Packet Payload system.
- *
- * Note, you cannot use a Stream payload and the TileNetworkData annotation at
- * the same time. Attempting to do will most likely result in a class cast
- * exception somewhere.
- */
 public class PacketPayload {
 
 	public static interface StreamWriter {
