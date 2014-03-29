@@ -202,6 +202,8 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IM
 			return;
 		}
 
+		box.kind = Kind.STRIPES;
+
 		for (int x = xCoord - 1; x <= xCoord + 1; ++x) {
 			for (int y = yCoord - 1; y <= yCoord + 1; ++y) {
 				for (int z = zCoord - 1; z <= zCoord + 1; ++z) {
@@ -338,6 +340,7 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IM
 				if (bluePrintBuilder != null) {
 					box.reset();
 					box.initialize(bluePrintBuilder);
+					sendNetworkUpdate();
 				}
 
 				if (builderRobot != null) {
@@ -365,6 +368,7 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IM
 
 					if (bluePrintBuilder != null) {
 						box.initialize(bluePrintBuilder);
+						sendNetworkUpdate();
 					}
 				}
 			}
@@ -519,17 +523,18 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IM
 	public void updateEntity() {
 		super.updateEntity();
 
+		if (worldObj.isRemote) {
+			return;
+		}
+
 		if ((bluePrintBuilder == null || bluePrintBuilder.done)
 				&& box.isInitialized()
 				//&& (builderRobot == null || builderRobot.done())
 				) {
 
-			box.isVisible = false;
 			box.reset();
 
-			if (!worldObj.isRemote) {
-				sendNetworkUpdate();
-			}
+			sendNetworkUpdate();
 
 			return;
 		}
@@ -537,10 +542,6 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IM
 		if (!box.isInitialized() && bluePrintBuilder == null && builderRobot != null) {
 			builderRobot.setDead();
 			builderRobot = null;
-		}
-
-		if (worldObj.isRemote) {
-			return;
 		}
 
 		iterateBpt();
@@ -553,8 +554,6 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IM
 		} else if (mjStored < 25) {
 			return;
 		}
-
-
 
 		/* Temp fix to make Builders impotent as the World Destroyers they are
 		if (bluePrintBuilder != null && !bluePrintBuilder.done) {

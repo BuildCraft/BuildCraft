@@ -95,7 +95,6 @@ public class TileQuarry extends TileBuildCraft implements IMachine, IPowerRecept
 		}
 
 		if (builderDone) {
-
 			box.isVisible = false;
 
 			if (arm == null) {
