@@ -25,6 +25,7 @@ import buildcraft.core.IBoxProvider;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.blueprints.Blueprint;
 import buildcraft.core.blueprints.BlueprintBase;
+import buildcraft.core.blueprints.BlueprintReadConfiguration;
 import buildcraft.core.blueprints.BptContext;
 import buildcraft.core.blueprints.Template;
 import buildcraft.core.network.NetworkData;
@@ -41,13 +42,16 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 	private BlockScanner blockScanner;
 	public int computingTime = 0;
 
-	public @NetworkData
-	Box box = new Box();
+	@NetworkData
+	public BlueprintReadConfiguration readConfiguration = new BlueprintReadConfiguration();
+
+	@NetworkData
+	public Box box = new Box();
 
 	private ItemStack items[] = new ItemStack[2];
 
-	public @NetworkData
-	String name = "";
+	@NetworkData
+	public String name = "";
 
 	public String currentAuthorName = "";
 
@@ -101,17 +105,19 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 	public void initialize() {
 		super.initialize();
 
-		if (!box.isInitialized()) {
-			IAreaProvider a = Utils.getNearbyAreaProvider(worldObj, xCoord, yCoord, zCoord);
+		if (!worldObj.isRemote) {
+			if (!box.isInitialized()) {
+				IAreaProvider a = Utils.getNearbyAreaProvider(worldObj, xCoord,
+						yCoord, zCoord);
 
-			if (a != null) {
-				box.initialize(a);
-				a.removeFromWorld();
-
+				if (a != null) {
+					box.initialize(a);
+					a.removeFromWorld();
+				}
 			}
-		}
 
-		sendNetworkUpdate();
+			sendNetworkUpdate();
+		}
 	}
 
 	public void createBlueprint() {
@@ -242,6 +248,10 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 
 		name = nbttagcompound.getString("name");
 		currentAuthorName = nbttagcompound.getString("lastAuthor");
+
+		if (nbttagcompound.hasKey("readConfiguration")) {
+			readConfiguration.readFromNBT(nbttagcompound.getCompoundTag("readConfiguration"));
+		}
 	}
 
 	@Override
@@ -275,6 +285,10 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 		nbttagcompound.setTag("Items", nbttaglist);
 		nbttagcompound.setString("name", name);
 		nbttagcompound.setString("lastAuthor", currentAuthorName);
+
+		NBTTagCompound readConf = new NBTTagCompound();
+		readConfiguration.writeToNBT(readConf);
+		nbttagcompound.setTag("readConfiguration", readConf);
 	}
 
 	@Override
@@ -305,6 +319,7 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 				}
 
 				writingContext = writingBlueprint.getContext(worldObj, box);
+				writingContext.readConfiguration = readConfiguration;
 
 				writingBlueprint.id.name = name;
 				writingBlueprint.author = currentAuthorName;
@@ -349,5 +364,16 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 	@Override
 	public AxisAlignedBB getRenderBoundingBox() {
 		return new Box (this).extendToEncompass(box).getBoundingBox();
+	}
+
+	@RPC (RPCSide.SERVER)
+	public void setReadConfiguration (BlueprintReadConfiguration conf) {
+		readConfiguration = conf;
+		sendNetworkUpdate();
+	}
+
+	public void rpcSetConfiguration (BlueprintReadConfiguration conf) {
+		readConfiguration = conf;
+		RPCHandler.rpcServer(this, "setReadConfiguration", conf);
 	}
 }

@@ -17,6 +17,7 @@ import buildcraft.core.Box;
 
 public class BptContext implements IBuilderContext {
 
+	public BlueprintReadConfiguration readConfiguration;
 	public Box box;
 	public World world;
 	private MappingRegistry mappingRegistry;

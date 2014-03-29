@@ -10,6 +10,7 @@ package buildcraft.builders.gui;
 
 import java.util.Date;
 
+import net.minecraft.client.gui.GuiButton;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.util.ResourceLocation;
 
@@ -17,35 +18,102 @@ import org.lwjgl.opengl.GL11;
 
 import buildcraft.builders.TileArchitect;
 import buildcraft.core.DefaultProps;
+import buildcraft.core.blueprints.BlueprintReadConfiguration;
 import buildcraft.core.gui.GuiBuildCraft;
 import buildcraft.core.network.RPCHandler;
 import buildcraft.core.utils.StringUtils;
 
 public class GuiArchitect extends GuiBuildCraft {
 
-	private static final ResourceLocation TEXTURE = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_GUI + "/template_gui.png");
+	private static final ResourceLocation TEXTURE = new ResourceLocation(
+			"buildcraft", DefaultProps.TEXTURE_PATH_GUI + "/architect_gui.png");
+
 	IInventory playerInventory;
-	TileArchitect template;
+	TileArchitect architect;
 	boolean editMode = false;
 
-	public GuiArchitect(IInventory playerInventory, TileArchitect template) {
-		super(new ContainerArchitect(playerInventory, template), template, TEXTURE);
+	private GuiButton optionRotate;
+	private GuiButton optionReadMods;
+	private GuiButton optionReadBlocks;
+
+	public GuiArchitect(IInventory playerInventory, TileArchitect architect) {
+		super(new ContainerArchitect(playerInventory, architect), architect, TEXTURE);
 		this.playerInventory = playerInventory;
-		this.template = template;
-		xSize = 175;
-		ySize = 225;
+		this.architect = architect;
+		xSize = 256;
+		ySize = 166;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public void initGui() {
+		super.initGui();
+		int x = (width - xSize) / 2;
+		int y = (height - ySize) / 2;
+
+		optionRotate = new GuiButton(0, x + 5, y + 30, 77, 20, "");
+		buttonList.add(optionRotate);
+
+		optionReadBlocks = new GuiButton(1, x + 5, y + 55, 77, 20, "");
+		buttonList.add(optionReadBlocks);
+
+		optionReadMods = new GuiButton(1, x + 5, y + 80, 77, 20, "");
+		buttonList.add(optionReadMods);
+
+		updateButtons();
+	}
+
+	@Override
+	protected void actionPerformed(GuiButton button) {
+		BlueprintReadConfiguration conf = architect.readConfiguration;
+
+		if (button == optionRotate) {
+			conf.rotate = !conf.rotate;
+		} else if (button == optionReadMods) {
+			conf.readAllMods = !conf.readAllMods;
+		} else if (button == optionReadBlocks) {
+			conf.readAllBlocks = !conf.readAllBlocks;
+		}
+
+		architect.rpcSetConfiguration(conf);
+
+		updateButtons();
+	}
+
+	private void updateButtons () {
+		BlueprintReadConfiguration conf = architect.readConfiguration;
+
+		if (conf.rotate) {
+			optionRotate.displayString = "Rotate: On";
+		} else {
+			optionRotate.displayString = "Rotate: Off";
+		}
+
+		if (conf.readAllBlocks) {
+			optionReadBlocks.displayString = "Blocks: All";
+		} else {
+			optionReadBlocks.displayString = "Blocks: Simple";
+		}
+
+		if (conf.readAllMods) {
+			optionReadMods.displayString = "Mods: All";
+		} else {
+			optionReadMods.displayString = "Mods: Safe";
+		}
+
 	}
 
 	@Override
 	protected void drawGuiContainerForegroundLayer(int par1, int par2) {
 		String title = StringUtils.localize("tile.architectBlock.name");
+		String inv = StringUtils.localize("gui.inventory");
 		fontRendererObj.drawString(title, getCenteredOffset(title), 6, 0x404040);
-		fontRendererObj.drawString(StringUtils.localize("gui.inventory"), 8, ySize - 152, 0x404040);
+		fontRendererObj.drawString(inv, getCenteredOffset(inv) + 40, ySize - 94, 0x404040);
 
 		if (editMode && ((new Date()).getTime() / 100) % 8 >= 4) {
-			fontRendererObj.drawString(template.name + "|", 51, 62, 0x404040);
+			fontRendererObj.drawString(architect.name + "|", 131, 62, 0x404040);
 		} else {
-			fontRendererObj.drawString(template.name, 51, 62, 0x404040);
+			fontRendererObj.drawString(architect.name, 131, 62, 0x404040);
 		}
 	}
 
@@ -56,8 +124,8 @@ public class GuiArchitect extends GuiBuildCraft {
 		int j = (width - xSize) / 2;
 		int k = (height - ySize) / 2;
 		drawTexturedModalRect(j, k, 0, 0, xSize, ySize);
-		int i1 = template.getComputingProgressScaled(24);
-		drawTexturedModalRect(j + 79, k + 34, 176, 14, i1 + 1, 16);
+		int i1 = architect.getComputingProgressScaled(24);
+		drawTexturedModalRect(j + 159, k + 34, 0, 166, i1 + 1, 16);
 	}
 
 	@Override
@@ -72,7 +140,7 @@ public class GuiArchitect extends GuiBuildCraft {
 
 		if (editMode) {
 			editMode = false;
-		} else if (x >= 50 && y >= 61 && x <= 137 && y <= 139) {
+		} else if (x >= 130 && y >= 61 && x <= 217 && y <= 139) {
 			editMode = true;
 		}
 	}
@@ -85,7 +153,7 @@ public class GuiArchitect extends GuiBuildCraft {
 				return;
 			}
 
-			RPCHandler.rpcServer(template, "handleClientInput", c);
+			RPCHandler.rpcServer(architect, "handleClientInput", c);
 		} else {
 			super.keyTyped(c, i);
 		}
