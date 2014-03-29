@@ -1,7 +1,6 @@
 package buildcraft.core;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -116,25 +115,22 @@ public class ReflectMjAPI {
 
 				if (battery != null) {
 					f.setAccessible(true);
+					BatteryField bField = new BatteryField();
+					bField.field = f;
+					bField.battery = battery;
 
-					if (f.isAccessible() || Modifier.isPublic(f.getModifiers())) {
-						BatteryField bField = new BatteryField();
-						bField.field = f;
-						bField.battery = battery;
-
-						if (f.getType().equals(double.class)) {
-							bField.kind = BatteryKind.Value;
-						} else if (f.getType().isPrimitive()) {
-							throw new RuntimeException(
-									"MJ battery needs to be object or double type");
-						} else {
-							bField.kind = BatteryKind.Container;
-						}
-
-						MjBatteries.put(c, bField);
-
-						return bField;
+					if (f.getType().equals(double.class)) {
+						bField.kind = BatteryKind.Value;
+					} else if (f.getType().isPrimitive()) {
+						throw new RuntimeException(
+								"MJ battery needs to be object or double type");
+					} else {
+						bField.kind = BatteryKind.Container;
 					}
+
+					MjBatteries.put(c, bField);
+
+					return bField;
 				}
 			}
 
