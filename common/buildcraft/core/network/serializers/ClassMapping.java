@@ -74,9 +74,6 @@ public class ClassMapping extends ClassSerializer {
 	private LinkedList<Field> booleanFields = new LinkedList<Field>();
 	private LinkedList<Field> enumFields = new LinkedList<Field>();
 
-	// TODO: Make a specific serializer for this one
-	private LinkedList<Field> arrayListFields = new LinkedList<Field>();
-
 	class FieldObject {
 		public Field field;
 		public ClassSerializer mapping;
@@ -152,8 +149,6 @@ public class ClassMapping extends ClassSerializer {
 							floatFields.add(f);
 						} else if (fieldClass.equals(double.class)) {
 							doubleFields.add(f);
-						} else if (ArrayList.class.isAssignableFrom(fieldClass)) {
-							arrayListFields.add(f);
 						} else {
 							FieldObject obj = new FieldObject();
 							obj.mapping = get (fieldClass);
@@ -299,21 +294,6 @@ public class ClassMapping extends ClassSerializer {
 			data.writeDouble(f.getDouble(obj));
 		}
 
-		for (Field f : arrayListFields) {
-			ArrayList list = (ArrayList) f.get(obj);
-
-			if (list == null) {
-				data.writeBoolean(false);
-			} else {
-				data.writeBoolean(true);
-				data.writeShort(list.size());
-
-				for (Object o : list) {
-					anonymousSerializer.write(data, o, context);
-				}
-			}
-		}
-
 		for (FieldObject f : objectFields) {
 			Object cpt = f.field.get(obj);
 			f.mapping.write(data, cpt, context);
@@ -380,22 +360,6 @@ public class ClassMapping extends ClassSerializer {
 
 		for (Field f : doubleFields) {
 			f.setDouble(obj, data.readDouble());
-		}
-
-		for (Field f : arrayListFields) {
-			if (data.readBoolean()) {
-				int size = data.readShort();
-
-				ArrayList arr = new ArrayList();
-
-				for (int i = 0; i < size; ++i) {
-					arr.add(anonymousSerializer.read(data, null, context));
-				}
-
-				f.set(obj, arr);
-			} else {
-				f.set(obj, null);
-			}
 		}
 
 		for (FieldObject f : objectFields) {
@@ -637,6 +601,7 @@ public class ClassMapping extends ClassSerializer {
 		registerSerializer(String.class, new SerializerString());
 		registerSerializer(HashMap.class, new SerializerHashMap());
 		registerSerializer(LinkedList.class, new SerializerLinkedList());
+		registerSerializer(ArrayList.class, new SerializerArrayList());
 		registerSerializer(Block.class, new SerializerBlock());
 		registerSerializer(Item.class, new SerializerItem());
 		registerSerializer(NBTTagCompound.class, new SerializerNBT());
