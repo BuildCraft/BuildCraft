@@ -10,13 +10,13 @@ package buildcraft.core.blueprints;
 
 import java.util.LinkedList;
 
+import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.Schematic;
 import buildcraft.api.blueprints.SchematicMask;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
 
-public class BuildingSlotBlock extends BuildingSlot {
+public class BuildingSlotBlock extends BuildingSlot implements Comparable<BuildingSlotBlock> {
 
 	public int x, y, z;
 	public Schematic schematic;
@@ -65,5 +65,35 @@ public class BuildingSlotBlock extends BuildingSlot {
 	@Override
 	public LinkedList<ItemStack> getRequirements (IBuilderContext context) {
 		return getSchematic().getRequirements(context);
+	}
+
+	@Override
+	public int compareTo(BuildingSlotBlock o) {
+		if (o.schematic instanceof Comparable && schematic instanceof Comparable ) {
+			Comparable comp1 = (Comparable) schematic;
+			Comparable comp2 = (Comparable) o.schematic;
+
+			int cmp = comp1.compareTo(comp2);
+
+			if (cmp != 0) {
+				return cmp;
+			}
+		}
+
+		if (y < o.y) {
+			return -1;
+		} else if (y > o.y) {
+			return 1;
+		} else if (x < o.x) {
+			return -1;
+		} else if (x > o.x) {
+			return 1;
+		} else if (z < o.z) {
+			return -1;
+		} else if (z > o.z) {
+			return 1;
+		} else {
+			return 0;
+		}
 	}
 }

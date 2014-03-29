@@ -18,7 +18,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import buildcraft.core.utils.Utils;
 
-public class SchematicBlock extends Schematic {
+public class SchematicBlock extends Schematic  implements Comparable<SchematicBlock> {
 
 	public Block block = null;
 	public int meta = 0;
@@ -207,5 +207,16 @@ public class SchematicBlock extends Schematic {
 		}
 
 		storedRequirements = rqs.toArray(new ItemStack [rqs.size()]);
+	}
+
+	@Override
+	public int compareTo(SchematicBlock o) {
+		if (block.isOpaqueCube() == o.block.isOpaqueCube()) {
+			return 0;
+		} else if (block.isOpaqueCube()) {
+			return -1;
+		} else {
+			return 1;
+		}
 	}
 }

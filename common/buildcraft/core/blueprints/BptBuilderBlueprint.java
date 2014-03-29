@@ -31,11 +31,10 @@ import buildcraft.core.utils.BlockUtil;
 
 public class BptBuilderBlueprint extends BptBuilderBase {
 
-	LinkedList<BuildingSlotBlock> clearList = new LinkedList<BuildingSlotBlock>();
-	LinkedList<BuildingSlotBlock> primaryList = new LinkedList<BuildingSlotBlock>();
-	LinkedList<BuildingSlotBlock> secondaryList = new LinkedList<BuildingSlotBlock>();
-	LinkedList<BuildingSlotEntity> entityList = new LinkedList<BuildingSlotEntity>();
-	LinkedList<BuildingSlot> postProcessing = new LinkedList<BuildingSlot>();
+	private LinkedList<BuildingSlotBlock> clearList = new LinkedList<BuildingSlotBlock>();
+	private LinkedList<BuildingSlotBlock> blockList = new LinkedList<BuildingSlotBlock>();
+	private LinkedList<BuildingSlotEntity> entityList = new LinkedList<BuildingSlotEntity>();
+	private LinkedList<BuildingSlot> postProcessing = new LinkedList<BuildingSlot>();
 
 	public LinkedList <ItemStack> neededItems = new LinkedList <ItemStack> ();
 
@@ -92,14 +91,12 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 					b.z = zCoord;
 					b.mode = Mode.Build;
 
-					if (slot.block != null && slot.block.isOpaqueCube()) {
-						primaryList.add(b);
-					} else {
-						secondaryList.add(b);
-					}
+					blockList.add (b);
 				}
 			}
 		}
+
+		Collections.sort(blockList);
 
 		CoordTransformation transform = new CoordTransformation();
 
@@ -121,8 +118,8 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 	private void checkDone() {
 		recomputeNeededItems();
 
-		if (clearList.size() == 0 && primaryList.size() == 0
-				&& secondaryList.size() == 0 && entityList.size() == 0) {
+		if (clearList.size() == 0 && blockList.size() == 0
+				&& entityList.size() == 0) {
 			done = true;
 		} else {
 			done = false;
@@ -140,17 +137,8 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 			}
 		}
 
-		if (primaryList.size() != 0) {
-			BuildingSlot slot = internalGetNextBlock(world, inv, primaryList);
-			checkDone();
-
-			if (slot != null) {
-				return slot;
-			}
-		}
-
-		if (secondaryList.size() != 0) {
-			BuildingSlot slot = internalGetNextBlock(world, inv, secondaryList);
+		if (blockList.size() != 0) {
+			BuildingSlot slot = internalGetNextBlock(world, inv, blockList);
 			checkDone();
 
 			if (slot != null) {
@@ -358,7 +346,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 
 		HashMap <StackKey, Integer> computeStacks = new HashMap <StackKey, Integer> ();
 
-		for (BuildingSlot slot : primaryList) {
+		for (BuildingSlot slot : blockList) {
 			LinkedList<ItemStack> stacks = new LinkedList<ItemStack>();
 
 			try {
@@ -368,28 +356,6 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 				t.printStackTrace();
 				BCLog.logger.throwing("BptBuilderBlueprint", "recomputeIfNeeded", t);
 			}
-
-			for (ItemStack stack : stacks) {
-				if (stack == null || stack.getItem() == null || stack.stackSize == 0) {
-					continue;
-				}
-
-				StackKey key = new StackKey(stack);
-
-				if (!computeStacks.containsKey(key)) {
-					computeStacks.put(key, stack.stackSize);
-				} else {
-					Integer num = computeStacks.get(key);
-					num += stack.stackSize;
-
-					computeStacks.put(key, num);
-				}
-
-			}
-		}
-
-		for (BuildingSlot slot : secondaryList) {
-			LinkedList<ItemStack> stacks = slot.getRequirements(context);
 
 			for (ItemStack stack : stacks) {
 				if (stack == null || stack.getItem() == null || stack.stackSize == 0) {
