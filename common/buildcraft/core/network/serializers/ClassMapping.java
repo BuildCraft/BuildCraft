@@ -24,6 +24,7 @@ import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.fluids.FluidStack;
 import buildcraft.core.network.NetworkData;
 import buildcraft.core.utils.Utils;
 
@@ -606,6 +607,7 @@ public class ClassMapping extends ClassSerializer {
 		registerSerializer(Item.class, new SerializerItem());
 		registerSerializer(NBTTagCompound.class, new SerializerNBT());
 		registerSerializer(ItemStack.class, new SerializerItemStack());
+		registerSerializer(FluidStack.class, new SerializerFluidStack());
 		registerSerializer(Integer.class, new SerializerInteger());
 	}
 }
