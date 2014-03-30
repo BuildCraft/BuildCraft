@@ -16,9 +16,10 @@ import buildcraft.BuildCraftBuilders;
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.core.Position;
 import buildcraft.core.blueprints.BuildingSlot;
+import buildcraft.core.blueprints.IBuilder;
 import buildcraft.core.network.NetworkData;
 
-public class BuildingItem {
+public class BuildingItem implements IBuilder {
 	@NetworkData
 	public Position origin, destination;
 
@@ -142,5 +143,10 @@ public class BuildingItem {
 		}
 
 		return stacksToDisplay;
+	}
+
+	@Override
+	public boolean isDone() {
+		return isDone;
 	}
 }
