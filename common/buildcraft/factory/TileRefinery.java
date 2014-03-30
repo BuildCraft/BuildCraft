@@ -8,28 +8,8 @@
  */
 package buildcraft.factory;
 
-import buildcraft.BuildCraftCore;
-import buildcraft.BuildCraftFactory;
-import buildcraft.api.core.SafeTimeTracker;
-import buildcraft.api.gates.IAction;
-import buildcraft.api.power.IPowerReceptor;
-import buildcraft.api.power.PowerHandler;
-import buildcraft.api.power.PowerHandler.PowerReceiver;
-import buildcraft.api.power.PowerHandler.Type;
-import buildcraft.core.recipes.RefineryRecipeManager;
-import buildcraft.core.recipes.RefineryRecipeManager.RefineryRecipe;
-import buildcraft.core.IMachine;
-import buildcraft.core.TileBuildCraft;
-import buildcraft.core.fluids.SingleUseTank;
-import buildcraft.core.fluids.TankManager;
-import buildcraft.core.network.PacketPayload;
-import buildcraft.core.network.PacketPayloadStream;
-import buildcraft.core.network.PacketUpdate;
-import buildcraft.core.proxy.CoreProxy;
 import io.netty.buffer.ByteBuf;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -45,6 +25,21 @@ import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
+import buildcraft.BuildCraftCore;
+import buildcraft.api.core.SafeTimeTracker;
+import buildcraft.api.gates.IAction;
+import buildcraft.api.power.IPowerReceptor;
+import buildcraft.api.power.PowerHandler;
+import buildcraft.api.power.PowerHandler.PowerReceiver;
+import buildcraft.api.power.PowerHandler.Type;
+import buildcraft.core.IMachine;
+import buildcraft.core.TileBuildCraft;
+import buildcraft.core.fluids.SingleUseTank;
+import buildcraft.core.fluids.TankManager;
+import buildcraft.core.network.PacketPayload;
+import buildcraft.core.network.PacketUpdate;
+import buildcraft.core.recipes.RefineryRecipeManager;
+import buildcraft.core.recipes.RefineryRecipeManager.RefineryRecipe;
 
 public class TileRefinery extends TileBuildCraft implements IFluidHandler, IPowerReceptor, IInventory, IMachine {
 
@@ -130,8 +125,9 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IPowe
 			return;
 		}
 
-		if (updateNetworkTime.markTimeIfDelay(worldObj, BuildCraftCore.updateFactor))
+		if (updateNetworkTime.markTimeIfDelay(worldObj, BuildCraftCore.updateFactor)) {
 			sendNetworkUpdate();
+		}
 
 		isActive = false;
 
@@ -160,8 +156,9 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IPowe
 			decreaseAnimation();
 		}
 
-		if (!time.markTimeIfDelay(worldObj, currentRecipe.timeRequired))
+		if (!time.markTimeIfDelay(worldObj, currentRecipe.timeRequired)) {
 			return;
+		}
 
 		double energyUsed = powerHandler.useEnergy(currentRecipe.energyCost, currentRecipe.energyCost, true);
 
@@ -173,16 +170,18 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IPowe
 	}
 
 	private boolean containsInput(FluidStack ingredient) {
-		if (ingredient == null)
+		if (ingredient == null) {
 			return true;
+		}
 
 		return (tank1.getFluid() != null && tank1.getFluid().containsFluid(ingredient))
 				|| (tank2.getFluid() != null && tank2.getFluid().containsFluid(ingredient));
 	}
 
 	private boolean consumeInput(FluidStack liquid) {
-		if (liquid == null)
+		if (liquid == null) {
 			return true;
+		}
 
 		if (tank1.getFluid() != null && tank1.getFluid().containsFluid(liquid)) {
 			tank1.drain(liquid.amount, true);
@@ -323,10 +322,12 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IPowe
 	}
 
 	public void sendGUINetworkData(Container container, ICrafting iCrafting) {
-		if (getFilter(0) != null)
+		if (getFilter(0) != null) {
 			iCrafting.sendProgressBarUpdate(container, 0, getFilter(0).getID());
-		if (getFilter(1) != null)
+		}
+		if (getFilter(1) != null) {
 			iCrafting.sendProgressBarUpdate(container, 1, getFilter(1).getID());
+		}
 	}
 
 	/* ITANKCONTAINER */
@@ -349,8 +350,9 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IPowe
 
 	@Override
 	public FluidStack drain(ForgeDirection from, FluidStack resource, boolean doDrain) {
-		if (resource == null || !resource.isFluidEqual(result.getFluid()))
+		if (resource == null || !resource.isFluidEqual(result.getFluid())) {
 			return null;
+		}
 		return drain(from, resource.amount, doDrain);
 	}
 
@@ -362,7 +364,7 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IPowe
 	// Network
 	@Override
 	public PacketPayload getPacketPayload() {
-		PacketPayload payload = new PacketPayloadStream(new PacketPayloadStream.StreamWriter() {
+		PacketPayload payload = new PacketPayload(new PacketPayload.StreamWriter() {
 			@Override
 			public void writeData(ByteBuf data) {
 				data.writeFloat(animationSpeed);
@@ -374,7 +376,7 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IPowe
 
 	@Override
 	public void handleUpdatePacket(PacketUpdate packet) throws IOException {
-		ByteBuf stream = ((PacketPayloadStream) packet.payload).stream;
+		ByteBuf stream = packet.payload.stream;
 		animationSpeed = stream.readFloat();
 		tankManager.readData(stream);
 	}

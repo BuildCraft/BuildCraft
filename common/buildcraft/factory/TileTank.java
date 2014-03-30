@@ -8,20 +8,8 @@
  */
 package buildcraft.factory;
 
-import buildcraft.BuildCraftCore;
-import buildcraft.BuildCraftFactory;
-import buildcraft.api.core.SafeTimeTracker;
-import buildcraft.core.TileBuildCraft;
-import buildcraft.core.fluids.Tank;
-import buildcraft.core.fluids.TankManager;
-import buildcraft.core.network.PacketPayload;
-import buildcraft.core.network.PacketPayloadStream;
-import buildcraft.core.network.PacketUpdate;
-import buildcraft.core.proxy.CoreProxy;
 import io.netty.buffer.ByteBuf;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
 
 import net.minecraft.nbt.NBTTagCompound;
@@ -34,6 +22,13 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
+import buildcraft.BuildCraftCore;
+import buildcraft.api.core.SafeTimeTracker;
+import buildcraft.core.TileBuildCraft;
+import buildcraft.core.fluids.Tank;
+import buildcraft.core.fluids.TankManager;
+import buildcraft.core.network.PacketPayload;
+import buildcraft.core.network.PacketUpdate;
 
 public class TileTank extends TileBuildCraft implements IFluidHandler {
 
@@ -69,7 +64,7 @@ public class TileTank extends TileBuildCraft implements IFluidHandler {
 	/* NETWORK */
 	@Override
 	public PacketPayload getPacketPayload() {
-		PacketPayload payload = new PacketPayloadStream(new PacketPayloadStream.StreamWriter() {
+		PacketPayload payload = new PacketPayload(new PacketPayload.StreamWriter() {
 			@Override
 			public void writeData(ByteBuf data) {
 				tankManager.writeData(data);
@@ -80,7 +75,7 @@ public class TileTank extends TileBuildCraft implements IFluidHandler {
 
 	@Override
 	public void handleUpdatePacket(PacketUpdate packet) throws IOException {
-		ByteBuf stream = ((PacketPayloadStream) packet.payload).stream;
+		ByteBuf stream = packet.payload.stream;
 		tankManager.readData(stream);
 	}
 
@@ -204,10 +199,12 @@ public class TileTank extends TileBuildCraft implements IFluidHandler {
 
 	@Override
 	public FluidStack drain(ForgeDirection from, FluidStack resource, boolean doDrain) {
-		if (resource == null)
+		if (resource == null) {
 			return null;
-		if (!resource.isFluidEqual(tank.getFluid()))
+		}
+		if (!resource.isFluidEqual(tank.getFluid())) {
 			return null;
+		}
 		return drain(from, resource.amount, doDrain);
 	}
 

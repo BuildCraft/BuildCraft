@@ -21,6 +21,7 @@ import buildcraft.core.DefaultProps;
 import buildcraft.core.network.serializers.ClassMapping;
 import buildcraft.core.network.serializers.ClassSerializer;
 import buildcraft.core.network.serializers.SerializationContext;
+import buildcraft.core.utils.Utils;
 import buildcraft.transport.Pipe;
 
 /**
@@ -47,7 +48,7 @@ public class RPCHandler {
 	private MethodMapping [] methods;
 
 	public RPCHandler (Class c) {
-		Method [] sortedMethods = c.getMethods();
+		Method [] sortedMethods = Utils.getAllMethods (c).toArray(new Method [0]);
 
 		LinkedList <MethodMapping> mappings = new LinkedList<MethodMapping>();
 
@@ -62,6 +63,7 @@ public class RPCHandler {
 
 		for (Method sortedMethod : sortedMethods) {
 			if (sortedMethod.getAnnotation (RPC.class) != null) {
+				sortedMethod.setAccessible(true);
 				methodsMap.put(sortedMethod.getName(), rpcMethods.size());
 				rpcMethods.add(sortedMethod);
 

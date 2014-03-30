@@ -12,15 +12,14 @@ import java.util.LinkedList;
 
 import net.minecraft.world.World;
 import buildcraft.api.blueprints.Schematic;
-import buildcraft.api.blueprints.SchematicToBuild;
-import buildcraft.api.blueprints.SchematicToBuild.Mode;
 import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.core.IBuilderInventory;
+import buildcraft.core.blueprints.BuildingSlotBlock.Mode;
 
 public class BptBuilderTemplate extends BptBuilderBase {
 
-	LinkedList<SchematicToBuild> clearList = new LinkedList<SchematicToBuild>();
-	LinkedList<SchematicToBuild> buildList = new LinkedList<SchematicToBuild>();
+	LinkedList<BuildingSlotBlock> clearList = new LinkedList<BuildingSlotBlock>();
+	LinkedList<BuildingSlotBlock> buildList = new LinkedList<BuildingSlotBlock>();
 
 	public BptBuilderTemplate(BlueprintBase bluePrint, World world, int x, int y, int z) {
 		super(bluePrint, world, x, y, z);
@@ -28,14 +27,14 @@ public class BptBuilderTemplate extends BptBuilderBase {
 		for (int j = bluePrint.sizeY - 1; j >= 0; --j) {
 			for (int i = 0; i < bluePrint.sizeX; ++i) {
 				for (int k = 0; k < bluePrint.sizeZ; ++k) {
-					int xCoord = i + x - bluePrint.anchorX;
-					int yCoord = j + y - bluePrint.anchorY;
-					int zCoord = k + z - bluePrint.anchorZ;
+					int xCoord = i + x - blueprint.anchorX;
+					int yCoord = j + y - blueprint.anchorY;
+					int zCoord = k + z - blueprint.anchorZ;
 
 					Schematic slot = bluePrint.contents[i][j][k];
 
 					if (slot == null) {
-						SchematicToBuild b = new SchematicToBuild();
+						BuildingSlotBlock b = new BuildingSlotBlock();
 
 						b.schematic = null;
 						b.x = xCoord;
@@ -52,14 +51,14 @@ public class BptBuilderTemplate extends BptBuilderBase {
 		for (int j = 0; j < bluePrint.sizeY; ++j) {
 			for (int i = 0; i < bluePrint.sizeX; ++i) {
 				for (int k = 0; k < bluePrint.sizeZ; ++k) {
-					int xCoord = i + x - bluePrint.anchorX;
-					int yCoord = j + y - bluePrint.anchorY;
-					int zCoord = k + z - bluePrint.anchorZ;
+					int xCoord = i + x - blueprint.anchorX;
+					int yCoord = j + y - blueprint.anchorY;
+					int zCoord = k + z - blueprint.anchorZ;
 
 					Schematic slot = bluePrint.contents[i][j][k];
 
 					if (slot != null) {
-						SchematicToBuild b = new SchematicToBuild();
+						BuildingSlotBlock b = new BuildingSlotBlock();
 
 						b.schematic = slot;
 						b.x = xCoord;
@@ -84,9 +83,9 @@ public class BptBuilderTemplate extends BptBuilderBase {
 	}
 
 	@Override
-	public SchematicToBuild getNextBlock(World world, IBuilderInventory inv) {
+	public BuildingSlot getNextBlock(World world, IBuilderInventory inv) {
 		if (clearList.size() != 0) {
-			SchematicToBuild slot = internalGetNextBlock(world, inv, clearList);
+			BuildingSlotBlock slot = internalGetNextBlock(world, inv, clearList);
 			checkDone();
 
 			if (slot != null) {
@@ -95,7 +94,7 @@ public class BptBuilderTemplate extends BptBuilderBase {
 		}
 
 		if (buildList.size() != 0) {
-			SchematicToBuild slot = internalGetNextBlock(world, inv, buildList);
+			BuildingSlotBlock slot = internalGetNextBlock(world, inv, buildList);
 			checkDone();
 
 			if (slot != null) {
@@ -108,11 +107,11 @@ public class BptBuilderTemplate extends BptBuilderBase {
 		return null;
 	}
 
-	public SchematicToBuild internalGetNextBlock(World world, IBuilderInventory inv, LinkedList<SchematicToBuild> list) {
-		SchematicToBuild result = null;
+	public BuildingSlotBlock internalGetNextBlock(World world, IBuilderInventory inv, LinkedList<BuildingSlotBlock> list) {
+		BuildingSlotBlock result = null;
 
 		while (list.size() > 0) {
-			SchematicToBuild slot = list.removeFirst();
+			BuildingSlotBlock slot = list.removeFirst();
 
 			if (slot.mode == Mode.ClearIfInvalid
 					&& !BuildCraftAPI.softBlocks.contains(context.world()

@@ -39,20 +39,6 @@ import net.minecraft.nbt.NBTTagCompound;
  */
 public class Schematic {
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public Schematic clone() {
-		Schematic obj;
-
-		try {
-			obj = (Schematic) super.clone();
-		} catch (CloneNotSupportedException e) {
-			return null;
-		}
-
-		return obj;
-	}
-
 	public final LinkedList<ItemStack> getRequirements(IBuilderContext context) {
 		LinkedList<ItemStack> res = new LinkedList<ItemStack>();
 

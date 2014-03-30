@@ -8,24 +8,29 @@
  */
 package buildcraft.core.network;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import io.netty.buffer.ByteBuf;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
+public class PacketPayload {
 
-/**
- * FIXME: Now that packet PayloadArray is removed, it's probably worth removing
- * the abstraction, and having just one class for PayloadStream.
- */
-public abstract class PacketPayload {
-	public static PacketPayload makePayload() {
-		return new PacketPayloadStream();
+	public static interface StreamWriter {
+		public void writeData(ByteBuf data);
 	}
 
-	public abstract void writeData(ByteBuf data);
+	private StreamWriter handler;
+	public ByteBuf stream;
 
-	public abstract void readData(ByteBuf data);
+	public PacketPayload() {
+	}
+
+	public PacketPayload(StreamWriter handler) {
+		this.handler = handler;
+	}
+
+	public void writeData(ByteBuf data) {
+		handler.writeData(data);
+	}
+
+	public void readData(ByteBuf data) {
+		stream = data;
+	}
 }

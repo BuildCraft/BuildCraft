@@ -14,6 +14,8 @@ import io.netty.buffer.Unpooled;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Array;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -573,5 +575,37 @@ public class Utils {
 	    System.arraycopy(B, 0, C, aLen, bLen);
 
 	    return C;
+	}
+
+	public static List<Field> getAllFields(Class clas) {
+	    List<Field> result = new ArrayList<Field>();
+
+	    Class current = clas;
+
+	    while (current != null && current != Object.class) {
+	    	for (Field f : current.getDeclaredFields()) {
+	    		result.add(f);
+	    	}
+
+	        current = current.getSuperclass();
+	    }
+
+	    return result;
+	}
+
+	public static List<Method> getAllMethods(Class clas) {
+	    List<Method> result = new ArrayList<Method>();
+
+	    Class current = clas;
+
+	    while (current != null && current != Object.class) {
+	    	for (Method m : current.getDeclaredMethods()) {
+	    		result.add(m);
+	    	}
+
+	        current = current.getSuperclass();
+	    }
+
+	    return result;
 	}
 }

@@ -57,7 +57,7 @@ public class PatternPyramid extends FillerPattern {
 		while (step <= xSize / 2 && step <= zSize / 2 && height >= yMin && height <= yMax) {
 			for (int x = xMin + step; x <= xMax - step; ++x) {
 				for (int z = zMin + step; z <= zMax - step; ++z) {
-					bpt.contents [x - xMin][height - yMin][z - zMin] = SchematicRegistry.newSchematic(Blocks.stone);
+					bpt.contents [x - xMin][height - yMin][z - zMin] = SchematicRegistry.newSchematicBlock(Blocks.stone);
 				}
 			}
 

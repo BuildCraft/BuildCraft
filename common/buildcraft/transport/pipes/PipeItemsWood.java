@@ -32,7 +32,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 public class PipeItemsWood extends Pipe<PipeTransportItems> {
 
-	@MjBattery (maxCapacity = 64, maxReceivedPerCycle = 64, miniumConsumption = 0)
+	@MjBattery (maxCapacity = 64, maxReceivedPerCycle = 64, minimumConsumption = 0)
 	public double mjStored = 0;
 
 	protected int standardIconIndex = PipeIconProvider.TYPE.PipeItemsWood_Standard.ordinal();

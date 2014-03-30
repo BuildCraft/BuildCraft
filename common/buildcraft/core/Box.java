@@ -156,7 +156,7 @@ public class Box implements IBox {
 	}
 
 	@Override
-	public boolean contains(int x, int y, int z) {
+	public boolean contains(double x, double y, double z) {
 		if (x >= xMin && x <= xMax && y >= yMin && y <= yMax && z >= zMin && z <= zMax) {
 			return true;
 		} else {

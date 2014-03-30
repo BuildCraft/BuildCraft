@@ -437,7 +437,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 
 		TransportProxy.proxy.registerTileEntities();
 
-		SchematicRegistry.registerSchematicClass(genericPipeBlock, SchematicPipe.class);
+		SchematicRegistry.registerSchematicBlock(genericPipeBlock, SchematicPipe.class);
 
 		new BptPipeIron(pipeItemsIron);
 		new BptPipeIron(pipeFluidsIron);

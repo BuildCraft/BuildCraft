@@ -26,16 +26,6 @@ public class SchematicTile extends SchematicBlock {
 	 */
 	public NBTTagCompound cpt = new NBTTagCompound();
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public SchematicBlock clone() {
-		SchematicTile s = (SchematicTile) super.clone();
-
-		s.cpt = (NBTTagCompound) cpt.copy();
-
-		return s;
-	}
-
 	/**
 	 * Places the block in the world, at the location specified in the slot.
 	 */

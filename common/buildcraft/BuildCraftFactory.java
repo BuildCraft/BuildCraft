@@ -151,9 +151,9 @@ public class BuildCraftFactory extends BuildCraftMod {
 
 		FactoryProxy.proxy.initializeTileEntities();
 
-		SchematicRegistry.registerSchematicClass(frameBlock, SchematicFrame.class);
-		SchematicRegistry.registerSchematicClass(refineryBlock, SchematicRefinery.class);
-		SchematicRegistry.registerSchematicClass(tankBlock, SchematicTank.class);
+		SchematicRegistry.registerSchematicBlock(frameBlock, SchematicFrame.class);
+		SchematicRegistry.registerSchematicBlock(refineryBlock, SchematicRefinery.class);
+		SchematicRegistry.registerSchematicBlock(tankBlock, SchematicTank.class);
 
 		if (BuildCraftCore.loadDefaultRecipes) {
 			loadRecipes();

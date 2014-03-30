@@ -17,7 +17,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
 import buildcraft.BuildCraftCore;
-import buildcraft.api.blueprints.SchematicToBuild;
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.filler.FillerManager;
 import buildcraft.api.filler.IFillerPattern;
@@ -33,9 +32,9 @@ import buildcraft.core.IMachine;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.blueprints.BptBuilderTemplate;
 import buildcraft.core.blueprints.BptContext;
+import buildcraft.core.blueprints.BuildingSlot;
 import buildcraft.core.inventory.SimpleInventory;
 import buildcraft.core.network.PacketPayload;
-import buildcraft.core.network.PacketPayloadStream;
 import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.network.RPC;
 import buildcraft.core.network.RPCHandler;
@@ -58,7 +57,7 @@ public class TileFiller extends TileBuildCraft implements IBuilderInventory, IMa
 	private SimpleInventory inv = new SimpleInventory(27, "Filler", 64);
 
 	@MjBattery (maxReceivedPerCycle = 25)
-	public double mjStored = 0;
+	private double mjStored = 0;
 
 	public TileFiller() {
 		inv.addListener(this);
@@ -119,10 +118,10 @@ public class TileFiller extends TileBuildCraft implements IBuilderInventory, IMa
 		}
 
 		if (currentTemplate != null) {
-			SchematicToBuild s = currentTemplate.getNextBlock(getWorld(), this);
+			BuildingSlot s = currentTemplate.getNextBlock(getWorld(), this);
 
 			if (s != null) {
-				s.getSchematic().writeToWorld(context, s.x, s.y, s.z);
+				s.writeToWorld(context);
 			}
 
 			if (!done && s == null || currentTemplate.done) {
@@ -253,7 +252,7 @@ public class TileFiller extends TileBuildCraft implements IBuilderInventory, IMa
 
 	@Override
 	public PacketPayload getPacketPayload() {
-		PacketPayloadStream payload = new PacketPayloadStream(new PacketPayloadStream.StreamWriter() {
+		PacketPayload payload = new PacketPayload(new PacketPayload.StreamWriter() {
 			@Override
 			public void writeData(ByteBuf data) {
 				box.writeToStream(data);
@@ -276,12 +275,12 @@ public class TileFiller extends TileBuildCraft implements IBuilderInventory, IMa
 
 	@Override
 	public void handleDescriptionPacket(PacketUpdate packet) throws IOException {
-		handlePacketPayload(((PacketPayloadStream) packet.payload).stream);
+		handlePacketPayload(packet.payload.stream);
 	}
 
 	@Override
 	public void handleUpdatePacket(PacketUpdate packet) throws IOException {
-		handlePacketPayload(((PacketPayloadStream) packet.payload).stream);
+		handlePacketPayload(packet.payload.stream);
 	}
 
 	@Override

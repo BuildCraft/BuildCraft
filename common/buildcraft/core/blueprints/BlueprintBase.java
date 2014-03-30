@@ -32,6 +32,7 @@ public abstract class BlueprintBase {
 	public String author;
 	private String version = "";
 	protected MappingRegistry mapping = new MappingRegistry();
+	public boolean rotate = true;
 
 	private byte [] data;
 
@@ -104,6 +105,7 @@ public abstract class BlueprintBase {
 		nbt.setInteger("anchorX", anchorX);
 		nbt.setInteger("anchorY", anchorY);
 		nbt.setInteger("anchorZ", anchorZ);
+		nbt.setBoolean("rotate", rotate);
 
 		if (author != null) {
 			nbt.setString("author", author);
@@ -142,6 +144,12 @@ public abstract class BlueprintBase {
 
 		author = nbt.getString("author");
 
+		if (nbt.hasKey("rotate")) {
+			rotate = nbt.getBoolean("rotate");
+		} else {
+			rotate = true;
+		}
+
 		contents = new Schematic [sizeX][sizeY][sizeZ];
 
 		try {
@@ -149,52 +157,6 @@ public abstract class BlueprintBase {
 		} catch (BptError e) {
 			e.printStackTrace();
 		}
-	}
-
-	@Override
-	public final BlueprintBase clone() {
-		BlueprintBase res = null;
-
-		try {
-			res = getClass().newInstance();
-		} catch (InstantiationException e) {
-			e.printStackTrace();
-
-			return null;
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-
-			return null;
-		}
-
-		res.anchorX = anchorX;
-		res.anchorY = anchorY;
-		res.anchorZ = anchorZ;
-
-		res.sizeX = sizeX;
-		res.sizeY = sizeY;
-		res.sizeZ = sizeZ;
-
-		res.id = id;
-		res.author = author;
-
-		res.contents = new Schematic [sizeX][sizeY][sizeZ];
-
-		res.mapping = mapping.clone ();
-
-		for (int x = 0; x < sizeX; ++x) {
-			for (int y = 0; y < sizeY; ++y) {
-				for (int z = 0; z < sizeZ; ++z) {
-					if (contents[x][y][z] != null) {
-						res.contents[x][y][z] = contents[x][y][z].clone();
-					}
-				}
-			}
-		}
-
-		copyTo(res);
-
-		return res;
 	}
 
 	protected void copyTo(BlueprintBase base) {
@@ -265,4 +227,8 @@ public abstract class BlueprintBase {
 	public abstract void readFromWorld(IBuilderContext context, TileEntity anchorTile, int x, int y, int z);
 
 	public abstract ItemStack getStack ();
+
+	public void readEntitiesFromWorld(IBuilderContext context, TileEntity anchorTile) {
+
+	}
 }

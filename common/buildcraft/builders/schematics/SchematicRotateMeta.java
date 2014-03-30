@@ -8,9 +8,6 @@
  */
 package buildcraft.builders.schematics;
 
-import java.util.LinkedList;
-
-import net.minecraft.item.ItemStack;
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.SchematicTile;
 
@@ -35,11 +32,6 @@ public class SchematicRotateMeta extends SchematicTile {
 		}
 
 		this.rotateForward = rotateForward;
-	}
-
-	@Override
-	public void addRequirements(IBuilderContext context, LinkedList<ItemStack> requirements) {
-		requirements.add(new ItemStack(block, 1, 0));
 	}
 
 	@Override

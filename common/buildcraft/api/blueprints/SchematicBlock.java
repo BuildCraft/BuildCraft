@@ -9,7 +9,6 @@
 package buildcraft.api.blueprints;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.LinkedList;
 
 import net.minecraft.block.Block;
@@ -19,7 +18,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import buildcraft.core.utils.Utils;
 
-public class SchematicBlock extends Schematic {
+public class SchematicBlock extends Schematic  implements Comparable<SchematicBlock> {
 
 	public Block block = null;
 	public int meta = 0;
@@ -30,19 +29,6 @@ public class SchematicBlock extends Schematic {
 	 * Schematic.
 	 */
 	public ItemStack [] storedRequirements = new ItemStack [0];
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public SchematicBlock clone() {
-		SchematicBlock obj = SchematicRegistry.newSchematic(block);
-
-		obj.block = block;
-		obj.meta = meta;
-		obj.storedRequirements = Arrays.copyOf(storedRequirements,
-				storedRequirements.length);
-
-		return obj;
-	}
 
 	/**
 	 * Returns the requirements needed to build this block. When the
@@ -221,5 +207,16 @@ public class SchematicBlock extends Schematic {
 		}
 
 		storedRequirements = rqs.toArray(new ItemStack [rqs.size()]);
+	}
+
+	@Override
+	public int compareTo(SchematicBlock o) {
+		if (block.isOpaqueCube() == o.block.isOpaqueCube()) {
+			return 0;
+		} else if (block.isOpaqueCube()) {
+			return -1;
+		} else {
+			return 1;
+		}
 	}
 }

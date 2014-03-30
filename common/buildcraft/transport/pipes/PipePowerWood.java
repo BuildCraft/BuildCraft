@@ -26,7 +26,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 public class PipePowerWood extends Pipe<PipeTransportPower> implements IPipeTransportPowerHook {
 
-	@MjBattery (maxCapacity = 1500, maxReceivedPerCycle = 500, miniumConsumption = 0)
+	@MjBattery (maxCapacity = 1500, maxReceivedPerCycle = 500, minimumConsumption = 0)
 	public double mjStored = 0;
 
 	protected int standardIconIndex = PipeIconProvider.TYPE.PipePowerWood_Standard.ordinal();

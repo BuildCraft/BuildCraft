@@ -25,6 +25,7 @@ import buildcraft.core.IBoxProvider;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.blueprints.Blueprint;
 import buildcraft.core.blueprints.BlueprintBase;
+import buildcraft.core.blueprints.BlueprintReadConfiguration;
 import buildcraft.core.blueprints.BptContext;
 import buildcraft.core.blueprints.Template;
 import buildcraft.core.network.NetworkData;
@@ -41,13 +42,16 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 	private BlockScanner blockScanner;
 	public int computingTime = 0;
 
-	public @NetworkData
-	Box box = new Box();
+	@NetworkData
+	public BlueprintReadConfiguration readConfiguration = new BlueprintReadConfiguration();
+
+	@NetworkData
+	public Box box = new Box();
 
 	private ItemStack items[] = new ItemStack[2];
 
-	public @NetworkData
-	String name = "";
+	@NetworkData
+	public String name = "";
 
 	public String currentAuthorName = "";
 
@@ -70,22 +74,27 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 						/ (float) blockScanner.totalBlocks()) * 100);
 
 				if (blockScanner.blocksLeft() == 0) {
+					writingBlueprint.readEntitiesFromWorld (writingContext, this);
+
 					ForgeDirection o = ForgeDirection.values()[worldObj.getBlockMetadata(
 							xCoord, yCoord, zCoord)].getOpposite();
 
-					if (o == ForgeDirection.EAST) {
-						// Do nothing
-					} else if (o == ForgeDirection.SOUTH) {
-						writingBlueprint.rotateLeft(writingContext);
-						writingBlueprint.rotateLeft(writingContext);
-						writingBlueprint.rotateLeft(writingContext);
-					} else if (o == ForgeDirection.WEST) {
-						writingBlueprint.rotateLeft(writingContext);
-						writingBlueprint.rotateLeft(writingContext);
-					} else if (o == ForgeDirection.NORTH) {
-						writingBlueprint.rotateLeft(writingContext);
-					}
+					writingBlueprint.rotate = readConfiguration.rotate;
 
+					if (writingBlueprint.rotate) {
+						if (o == ForgeDirection.EAST) {
+							// Do nothing
+						} else if (o == ForgeDirection.SOUTH) {
+							writingBlueprint.rotateLeft(writingContext);
+							writingBlueprint.rotateLeft(writingContext);
+							writingBlueprint.rotateLeft(writingContext);
+						} else if (o == ForgeDirection.WEST) {
+							writingBlueprint.rotateLeft(writingContext);
+							writingBlueprint.rotateLeft(writingContext);
+						} else if (o == ForgeDirection.NORTH) {
+							writingBlueprint.rotateLeft(writingContext);
+						}
+					}
 				}
 			} else if (writingBlueprint.getData() != null) {
 				createBlueprint();
@@ -99,17 +108,18 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 	public void initialize() {
 		super.initialize();
 
-		if (!box.isInitialized()) {
-			IAreaProvider a = Utils.getNearbyAreaProvider(worldObj, xCoord, yCoord, zCoord);
+		if (!worldObj.isRemote) {
+			if (!box.isInitialized()) {
+				IAreaProvider a = Utils.getNearbyAreaProvider(worldObj, xCoord,
+						yCoord, zCoord);
 
-			if (a != null) {
-				box.initialize(a);
-				a.removeFromWorld();
-
+				if (a != null) {
+					box.initialize(a);
+					a.removeFromWorld();
+					sendNetworkUpdate();
+				}
 			}
 		}
-
-		sendNetworkUpdate();
 	}
 
 	public void createBlueprint() {
@@ -123,32 +133,6 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 		writingContext = null;
 		blockScanner = null;
 	}
-
-	/*public BlueprintBase createBptTemplate() {
-		int mask1 = 1;
-		int mask0 = 0;
-
-		if (worldObj.isBlockIndirectlyGettingPowered(xCoord, yCoord, zCoord)) {
-			mask1 = 0;
-			mask0 = 1;
-		}
-
-		BlueprintBase result = new Template(box.sizeX(), box.sizeY(), box.sizeZ());
-
-		for (int x = box.xMin; x <= box.xMax; ++x) {
-			for (int y = box.yMin; y <= box.yMax; ++y) {
-				for (int z = box.zMin; z <= box.zMax; ++z) {
-					if (worldObj.getBlock(x, y, z) != Blocks.air) {
-						result.setBlock(x - box.xMin, y - box.yMin, z - box.zMin, Blocks.stone);
-					} else {
-						result.setBlock(x - box.xMin, y - box.yMin, z - box.zMin, Blocks.air);
-					}
-				}
-			}
-		}
-
-		return result;
-	}*/
 
 	@RPC (RPCSide.SERVER)
 	public void handleClientInput(char c) {
@@ -266,6 +250,10 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 
 		name = nbttagcompound.getString("name");
 		currentAuthorName = nbttagcompound.getString("lastAuthor");
+
+		if (nbttagcompound.hasKey("readConfiguration")) {
+			readConfiguration.readFromNBT(nbttagcompound.getCompoundTag("readConfiguration"));
+		}
 	}
 
 	@Override
@@ -299,6 +287,10 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 		nbttagcompound.setTag("Items", nbttaglist);
 		nbttagcompound.setString("name", name);
 		nbttagcompound.setString("lastAuthor", currentAuthorName);
+
+		NBTTagCompound readConf = new NBTTagCompound();
+		readConfiguration.writeToNBT(readConf);
+		nbttagcompound.setTag("readConfiguration", readConf);
 	}
 
 	@Override
@@ -329,6 +321,7 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 				}
 
 				writingContext = writingBlueprint.getContext(worldObj, box);
+				writingContext.readConfiguration = readConfiguration;
 
 				writingBlueprint.id.name = name;
 				writingBlueprint.author = currentAuthorName;
@@ -373,5 +366,16 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 	@Override
 	public AxisAlignedBB getRenderBoundingBox() {
 		return new Box (this).extendToEncompass(box).getBoundingBox();
+	}
+
+	@RPC (RPCSide.SERVER)
+	private void setReadConfiguration (BlueprintReadConfiguration conf) {
+		readConfiguration = conf;
+		sendNetworkUpdate();
+	}
+
+	public void rpcSetConfiguration (BlueprintReadConfiguration conf) {
+		readConfiguration = conf;
+		RPCHandler.rpcServer(this, "setReadConfiguration", conf);
 	}
 }

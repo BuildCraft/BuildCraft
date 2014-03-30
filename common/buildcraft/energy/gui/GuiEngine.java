@@ -8,16 +8,16 @@
  */
 package buildcraft.energy.gui;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.util.ResourceLocation;
 import buildcraft.BuildCraftCore;
 import buildcraft.core.CoreIconProvider;
 import buildcraft.core.gui.BuildCraftContainer;
 import buildcraft.core.gui.GuiBuildCraft;
 import buildcraft.core.utils.StringUtils;
 import buildcraft.energy.TileEngine;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.texture.TextureMap;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.util.ResourceLocation;
 
 public abstract class GuiEngine extends GuiBuildCraft {
 
@@ -46,8 +46,9 @@ public abstract class GuiEngine extends GuiBuildCraft {
 			Minecraft.getMinecraft().renderEngine.bindTexture(ITEM_TEXTURE);
 			drawIcon(BuildCraftCore.iconProvider.getIcon(CoreIconProvider.ENERGY), x + 3, y + 4);
 
-			if (!isFullyOpened())
+			if (!isFullyOpened()) {
 				return;
+			}
 
 			fontRendererObj.drawStringWithShadow(StringUtils.localize("gui.energy"), x + 22, y + 8, headerColour);
 			fontRendererObj.drawStringWithShadow(StringUtils.localize("gui.currentOutput") + ":", x + 22, y + 20, subheaderColour);

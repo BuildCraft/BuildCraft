@@ -32,7 +32,7 @@ public class TilePacketWrapper {
 	}
 
 	public PacketPayload toPayload(final TileEntity tile) {
-		return new PacketPayloadStream(new PacketPayloadStream.StreamWriter() {
+		return new PacketPayload(new PacketPayload.StreamWriter() {
 			@Override
 			public void writeData(ByteBuf data) {
 				data.writeInt(tile.xCoord);
@@ -60,7 +60,7 @@ public class TilePacketWrapper {
 	}
 
 	public PacketPayload toPayload(final int x, final int y, final int z, final Object[] obj) {
-		return new PacketPayloadStream(new PacketPayloadStream.StreamWriter() {
+		return new PacketPayload(new PacketPayload.StreamWriter() {
 			@Override
 			public void writeData(ByteBuf data) {
 					data.writeInt(x);
@@ -82,7 +82,7 @@ public class TilePacketWrapper {
 		});
 	}
 
-	public void fromPayload(TileEntity tile, PacketPayloadStream packet) {
+	public void fromPayload(TileEntity tile, PacketPayload packet) {
 		try {
 			ByteBuf data = packet.stream;
 
@@ -97,11 +97,11 @@ public class TilePacketWrapper {
 		}
 	}
 
-	public void fromPayload(Object obj, PacketPayloadStream packet) {
+	public void fromPayload(Object obj, PacketPayload packet) {
 		fromPayload(new Object[] { obj }, packet);
 	}
 
-	public void fromPayload(Object[] obj, PacketPayloadStream packet) {
+	public void fromPayload(Object[] obj, PacketPayload packet) {
 		try {
 			ByteBuf data = packet.stream;
 

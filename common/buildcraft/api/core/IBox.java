@@ -14,7 +14,7 @@ public interface IBox {
 
 	public void contract(int amount);
 
-	public boolean contains(int x, int y, int z);
+	public boolean contains(double x, double y, double z);
 
 	public Position pMin();
 

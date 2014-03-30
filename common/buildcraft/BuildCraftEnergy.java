@@ -40,6 +40,7 @@ import buildcraft.energy.BlockBuildcraftFluid;
 import buildcraft.energy.BlockEnergyEmitter;
 import buildcraft.energy.BlockEnergyReceiver;
 import buildcraft.energy.BlockEngine;
+import buildcraft.energy.BucketHandler;
 import buildcraft.energy.EnergyProxy;
 import buildcraft.energy.GuiHandler;
 import buildcraft.energy.ItemBucketBuildcraft;
@@ -216,11 +217,10 @@ public class BuildCraftEnergy extends BuildCraftMod {
 			}
 		}
 
-		// TODO: Are these still really necessary? If not, remove the
-		// BucketHandler class as well.
-		//BucketHandler.INSTANCE.buckets.put(blockOil, bucketOil);
-		//BucketHandler.INSTANCE.buckets.put(blockFuel, bucketFuel);
-		//MinecraftForge.EVENT_BUS.register(BucketHandler.INSTANCE);
+		// BucketHandler ensures empty buckets fill with the correct liquid.
+		BucketHandler.INSTANCE.buckets.put(blockOil, bucketOil);
+		BucketHandler.INSTANCE.buckets.put(blockFuel, bucketFuel);
+		MinecraftForge.EVENT_BUS.register(BucketHandler.INSTANCE);
 
 		BuildcraftRecipes.refinery.addRecipe(new FluidStack(fluidOil, 1), new FluidStack(fluidFuel, 1), 12, 1);
 
@@ -255,7 +255,7 @@ public class BuildCraftEnergy extends BuildCraftMod {
 
 		NetworkRegistry.INSTANCE.registerGuiHandler(instance, new GuiHandler());
 
-		SchematicRegistry.registerSchematicClass(engineBlock, SchematicEngine.class);
+		SchematicRegistry.registerSchematicBlock(engineBlock, SchematicEngine.class);
 
 		if (BuildCraftCore.loadDefaultRecipes) {
 			loadRecipes();
