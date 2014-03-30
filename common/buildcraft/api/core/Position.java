@@ -21,6 +21,10 @@ public class Position {
 	@NetworkData
 	public ForgeDirection orientation;
 
+	public Position() {
+
+	}
+
 	public Position(double ci, double cj, double ck) {
 		x = ci;
 		y = cj;

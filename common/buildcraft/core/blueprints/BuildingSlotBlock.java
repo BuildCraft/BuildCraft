@@ -15,6 +15,7 @@ import net.minecraft.tileentity.TileEntity;
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.Schematic;
 import buildcraft.api.blueprints.SchematicMask;
+import buildcraft.api.core.Position;
 
 public class BuildingSlotBlock extends BuildingSlot implements Comparable<BuildingSlotBlock> {
 
@@ -71,7 +72,11 @@ public class BuildingSlotBlock extends BuildingSlot implements Comparable<Buildi
 
 	@Override
 	public LinkedList<ItemStack> getRequirements (IBuilderContext context) {
-		return getSchematic().getRequirements(context);
+		if (mode == Mode.ClearIfInvalid) {
+			return new LinkedList<ItemStack>();
+		} else {
+			return getSchematic().getRequirements(context);
+		}
 	}
 
 	@Override
@@ -102,5 +107,10 @@ public class BuildingSlotBlock extends BuildingSlot implements Comparable<Buildi
 		} else {
 			return 0;
 		}
+	}
+
+	@Override
+	public Position getDestination () {
+		return new Position (x + 0.5, y + 0.5, z + 0.5);
 	}
 }

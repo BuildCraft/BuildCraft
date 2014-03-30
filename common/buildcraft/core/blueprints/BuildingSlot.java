@@ -10,10 +10,11 @@ package buildcraft.core.blueprints;
 
 import java.util.LinkedList;
 
-import buildcraft.api.blueprints.IBuilderContext;
 import net.minecraft.item.ItemStack;
+import buildcraft.api.blueprints.IBuilderContext;
+import buildcraft.api.core.Position;
 
-public class BuildingSlot {
+public abstract class BuildingSlot {
 
 	public void writeToWorld(IBuilderContext context) {
 
@@ -26,4 +27,6 @@ public class BuildingSlot {
 	public LinkedList<ItemStack> getRequirements (IBuilderContext context) {
 		return new LinkedList<ItemStack>();
 	}
+
+	public abstract Position getDestination ();
 }
