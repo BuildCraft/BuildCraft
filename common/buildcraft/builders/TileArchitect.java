@@ -116,6 +116,7 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 				if (a != null) {
 					box.initialize(a);
 					a.removeFromWorld();
+					sendNetworkUpdate();
 				}
 			}
 		}
