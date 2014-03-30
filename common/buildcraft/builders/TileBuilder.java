@@ -693,7 +693,7 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IM
 				i.destination = slot.getDestination();
 				i.slotToBuild = slot;
 				i.context = bluePrintBuilder.getContext();
-				i.stackToBuild = slot.getRequirements(bluePrintBuilder.getContext());
+				i.stacksToBuild = slot.getRequirements(bluePrintBuilder.getContext());
 				buildingItems.add(i);
 				RPCHandler.rpcBroadcastPlayers(this, "launchItem", i);
 			}

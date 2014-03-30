@@ -12,12 +12,11 @@ import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.entity.item.EntityItem;
-import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 
 import org.lwjgl.opengl.GL11;
 
-import buildcraft.BuildCraftBuilders;
+import buildcraft.builders.BuildingItem.StackAtPosition;
 import buildcraft.builders.urbanism.RenderBoxProvider;
 import buildcraft.core.EntityLaser;
 import buildcraft.core.LaserData;
@@ -93,22 +92,22 @@ public class RenderBuilder extends RenderBoxProvider {
 			return;
 		}
 
-		ItemStack stackToDisplay = i.stackToBuild.getFirst();
-
-		if (stackToDisplay == null) {
-			stackToDisplay = new ItemStack(BuildCraftBuilders.stripesBlock);
-		}
-
 		i.displayUpdate();
-		float renderScale = 0.7f;
-		GL11.glPushMatrix();
-		GL11.glTranslatef((float) i.posDisplay.x, (float) i.posDisplay.y, (float) i.posDisplay.z);
-		GL11.glTranslatef(0, 0.25F, 0);
-		GL11.glScalef(renderScale, renderScale, renderScale);
-		dummyEntityItem.setEntityItemStack(stackToDisplay);
-		customRenderItem.doRender(dummyEntityItem, 0, 0, 0, 0, 0);
 
-		GL11.glPopMatrix();
+		for (StackAtPosition s : i.getStacks()) {
+			if (s.display) {
+				float renderScale = 0.7f;
+				GL11.glPushMatrix();
+				GL11.glTranslatef((float) s.pos.x, (float) s.pos.y,
+						(float) s.pos.z);
+				GL11.glTranslatef(0, 0.25F, 0);
+				GL11.glScalef(renderScale, renderScale, renderScale);
+				dummyEntityItem.setEntityItemStack(s.stack);
+				customRenderItem.doRender(dummyEntityItem, 0, 0, 0, 0, 0);
+
+				GL11.glPopMatrix();
+			}
+		}
 	}
 
 }

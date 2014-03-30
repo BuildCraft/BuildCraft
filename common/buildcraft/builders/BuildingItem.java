@@ -12,6 +12,7 @@ import java.util.Date;
 import java.util.LinkedList;
 
 import net.minecraft.item.ItemStack;
+import buildcraft.BuildCraftBuilders;
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.core.Position;
 import buildcraft.core.blueprints.BuildingSlot;
@@ -22,11 +23,17 @@ public class BuildingItem {
 	public Position origin, destination;
 
 	@NetworkData
-	public LinkedList <ItemStack> stackToBuild = new LinkedList<ItemStack>();
+	public LinkedList <ItemStack> stacksToBuild = new LinkedList<ItemStack>();
 
-	public Position pos = new Position(),
-			posDisplay = new Position(),
-			displayDiff = new Position();
+	public LinkedList <StackAtPosition> stacksToDisplay = new LinkedList<StackAtPosition>();
+
+	public class StackAtPosition {
+		public Position pos;
+		public ItemStack stack;
+		public boolean display;
+	}
+
+	public Position posDisplay = new Position();
 
 	long previousUpdate;
 	boolean isDone = false;
@@ -47,18 +54,36 @@ public class BuildingItem {
 
 			double size = Math.sqrt(dx * dx + dy * dy + dz * dz);
 
-			maxLifetime = size * 5.0;
+			maxLifetime = size * 10.0;
 
 			vx = dx / maxLifetime;
 			vy = dy / maxLifetime;
 			vz = dz / maxLifetime;
 
-			pos.x = origin.x;
-			pos.y = origin.y;
-			pos.z = origin.z;
+			for (ItemStack s : stacksToBuild) {
+				StackAtPosition sPos = new StackAtPosition();
+				sPos.stack = s;
+				stacksToDisplay.add(sPos);
+			}
+
+			if (stacksToDisplay.size() == 0) {
+				StackAtPosition sPos = new StackAtPosition();
+				sPos.stack = new ItemStack(BuildCraftBuilders.stripesBlock);
+				stacksToDisplay.add(sPos);
+			}
 
 			initialized = true;
 		}
+	}
+
+	public Position getDisplayPosition (double time) {
+		Position result = new Position ();
+
+		result.x = origin.x + vx * time;
+		result.y = origin.y + vy * time + Math.sin(time / maxLifetime * Math.PI) * (5.0 + (destination.y - origin.y) / 2.0);
+		result.z = origin.z + vz * time;
+
+		return result;
 	}
 
 	public void update () {
@@ -68,23 +93,14 @@ public class BuildingItem {
 
 		initialize();
 
-		pos.x += vx;
-		pos.y += vy;
-		pos.z += vz;
-
-		posDisplay.x = pos.x;
-		posDisplay.y = pos.y + Math.sin(lifetime / maxLifetime * Math.PI) * 10.0;
-		posDisplay.z = pos.z;
-
 		lifetime++;
 
-		if (lifetime > maxLifetime) {
+		if (lifetime > maxLifetime + stacksToBuild.size() - 1) {
 			isDone = true;
 			build ();
 		}
 
 		lifetimeDisplay = lifetime;
-		displayDiff = new Position(0, 0, 0);
 		previousUpdate = new Date ().getTime();
 	}
 
@@ -98,18 +114,8 @@ public class BuildingItem {
 
 		double displayPortion = timeSpan / tickDuration;
 
-		lifetimeDisplay += 1.0 * displayPortion;
-
 		if (lifetimeDisplay - lifetime <= 1.0) {
-			displayDiff.x += vx * displayPortion;
-			displayDiff.y += vy * displayPortion;
-			displayDiff.z += vz * displayPortion;
-
-			posDisplay.x = pos.x + displayDiff.x;
-			posDisplay.y = pos.y + displayDiff.y
-					+ Math.sin(lifetimeDisplay / maxLifetime * Math.PI) * 10.0;
-			posDisplay.z = pos.z + displayDiff.z;
-
+			lifetimeDisplay += 1.0 * displayPortion;
 		}
 	}
 
@@ -117,5 +123,24 @@ public class BuildingItem {
 		if (slotToBuild != null) {
 			slotToBuild.writeToWorld(context);
 		}
+	}
+
+	public LinkedList <StackAtPosition> getStacks () {
+		int d = 0;
+
+		for (StackAtPosition s : stacksToDisplay) {
+			double stackLife = lifetimeDisplay - d;
+
+			if (stackLife <= maxLifetime && stackLife > 0) {
+				s.pos = getDisplayPosition(stackLife);
+				s.display = true;
+			} else {
+				s.display = false;
+			}
+
+			d++;
+		}
+
+		return stacksToDisplay;
 	}
 }
