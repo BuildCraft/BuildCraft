@@ -10,7 +10,8 @@ import net.minecraft.util.IIcon;
 
 public class BlockRefineryHeater extends Block{
 	
-	private static IIcon icon;
+	IIcon textureTop;
+	IIcon textureSide;
 
 	public BlockRefineryHeater(){
 		super(Material.iron);
@@ -34,13 +35,20 @@ public class BlockRefineryHeater extends Block{
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void registerBlockIcons(IIconRegister par1IconRegister) {
-		icon = par1IconRegister.registerIcon("buildcraft:refineryBack");
+		textureTop = par1IconRegister.registerIcon("buildcraft:refinery_heater_top");
+		textureSide = par1IconRegister.registerIcon("buildcraft:refinery_heater_sides_inactive");
 	}
 
 	@Override
-	@SideOnly(Side.CLIENT)
-	public IIcon getIcon(int par1, int par2) {
-		return icon;
+	public IIcon getIcon(int i, int j) {
+		switch (i) {
+			case 0:
+				return textureTop;
+			case 1:
+				return textureTop;
+			default:
+				return textureSide;
+		}
 	}
 
 }
