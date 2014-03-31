@@ -85,7 +85,7 @@ public class TileRefineryControl extends TileBuildCraft implements IFluidHandler
 	}
 	
 	public int getScaledInput(int i) {
-		return this.input.getFluid() != null ? (int) (((float) this.inputTank.getFluid().amount / (float) (MAX_LIQUID)) * i) : 0;
+		return this.inputTank.getFluid() != null ? (int) (((float) this.inputTank.getFluid().amount / (float) (MAX_LIQUID)) * i) : 0;
 	}
 	public int getScaledOutput(int i) {
 		return outputTank.getFluid() != null ? (int) (((float) this.outputTank.getFluid().amount / (float) (MAX_LIQUID)) * i) : 0;
