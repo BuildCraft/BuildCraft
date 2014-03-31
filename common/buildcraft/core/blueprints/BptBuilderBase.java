@@ -8,6 +8,8 @@
  */
 package buildcraft.core.blueprints;
 
+import java.util.ArrayList;
+
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.World;
 import buildcraft.api.core.IAreaProvider;
@@ -18,8 +20,10 @@ public abstract class BptBuilderBase implements IAreaProvider {
 
 	public BlueprintBase blueprint;
 	int x, y, z;
-	public boolean done;
+	protected boolean done;
 	public BptContext context;
+
+	private ArrayList <IBuilder> buildersInAction = new ArrayList<IBuilder>();
 
 	public BptBuilderBase(BlueprintBase bluePrint, World world, int x, int y, int z) {
 		this.blueprint = bluePrint;
@@ -81,5 +85,21 @@ public abstract class BptBuilderBase implements IAreaProvider {
 
 	public BptContext getContext() {
 		return context;
+	}
+
+	public void registerBuilder (IBuilder builder) {
+		buildersInAction.add(builder);
+	}
+
+	public void removeDoneBuilders () {
+		for (int i = buildersInAction.size() - 1; i >= 0; --i) {
+			if (buildersInAction.get(i).isDone()) {
+				buildersInAction.remove(i);
+			}
+		}
+	}
+
+	public boolean isDone () {
+		return done && buildersInAction.size() == 0;
 	}
 }

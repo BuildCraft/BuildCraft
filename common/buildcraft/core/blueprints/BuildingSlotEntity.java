@@ -8,9 +8,11 @@
  */
 package buildcraft.core.blueprints;
 
+import net.minecraft.nbt.NBTTagList;
 import buildcraft.api.blueprints.CoordTransformation;
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.SchematicEntity;
+import buildcraft.api.core.Position;
 
 public class BuildingSlotEntity extends BuildingSlot {
 
@@ -20,5 +22,15 @@ public class BuildingSlotEntity extends BuildingSlot {
 	@Override
 	public void writeToWorld(IBuilderContext context) {
 		schematic.writeToWorld(context, transform);
+	}
+
+	@Override
+	public Position getDestination () {
+		NBTTagList nbttaglist = schematic.cpt.getTagList("Pos", 6);
+		Position pos = new Position(nbttaglist.func_150309_d(0),
+				nbttaglist.func_150309_d(1), nbttaglist.func_150309_d(2));
+		pos = transform.translate(pos);
+
+		return pos;
 	}
 }

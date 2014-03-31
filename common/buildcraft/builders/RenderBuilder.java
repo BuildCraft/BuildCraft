@@ -8,17 +8,39 @@
  */
 package buildcraft.builders;
 
+import net.minecraft.client.renderer.entity.RenderItem;
+import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.tileentity.TileEntity;
 
 import org.lwjgl.opengl.GL11;
 
+import buildcraft.builders.BuildingItem.StackAtPosition;
 import buildcraft.builders.urbanism.RenderBoxProvider;
 import buildcraft.core.EntityLaser;
 import buildcraft.core.LaserData;
 import buildcraft.core.render.RenderLaser;
 
 public class RenderBuilder extends RenderBoxProvider {
+
+	private final EntityItem dummyEntityItem = new EntityItem(null);
+	private final RenderItem customRenderItem;
+
+	public RenderBuilder () {
+		customRenderItem = new RenderItem() {
+			@Override
+			public boolean shouldBob() {
+				return false;
+			}
+
+			@Override
+			public boolean shouldSpreadItems() {
+				return false;
+			}
+		};
+		customRenderItem.setRenderManager(RenderManager.instance);
+	}
 
 	@Override
 	public void renderTileEntityAt(TileEntity tileentity, double x, double y, double z, float f) {
@@ -51,6 +73,40 @@ public class RenderBuilder extends RenderBoxProvider {
 			//GL11.glEnable(GL11.GL_LIGHTING);
 			GL11.glPopAttrib();
 			GL11.glPopMatrix();
+		}
+
+		GL11.glPushMatrix();
+
+		GL11.glTranslated(x, y, z);
+		GL11.glTranslated(-tileentity.xCoord, -tileentity.yCoord, -tileentity.zCoord);
+
+		for (BuildingItem i : builder.buildingItems) {
+			doRenderItem(i, 1.0F);
+		}
+
+		GL11.glPopMatrix();
+	}
+
+	public void doRenderItem(BuildingItem i, float light) {
+		if (i == null) {
+			return;
+		}
+
+		i.displayUpdate();
+
+		for (StackAtPosition s : i.getStacks()) {
+			if (s.display) {
+				float renderScale = 0.7f;
+				GL11.glPushMatrix();
+				GL11.glTranslatef((float) s.pos.x, (float) s.pos.y,
+						(float) s.pos.z);
+				GL11.glTranslatef(0, 0.25F, 0);
+				GL11.glScalef(renderScale, renderScale, renderScale);
+				dummyEntityItem.setEntityItemStack(s.stack);
+				customRenderItem.doRender(dummyEntityItem, 0, 0, 0, 0, 0);
+
+				GL11.glPopMatrix();
+			}
 		}
 	}
 

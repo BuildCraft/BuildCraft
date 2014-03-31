@@ -124,7 +124,7 @@ public class TileFiller extends TileBuildCraft implements IBuilderInventory, IMa
 				s.writeToWorld(context);
 			}
 
-			if (!done && s == null || currentTemplate.done) {
+			if (!done && s == null || currentTemplate.isDone()) {
 				done = true;
 				sendNetworkUpdate();
 			}

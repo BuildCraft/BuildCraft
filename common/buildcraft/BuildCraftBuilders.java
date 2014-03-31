@@ -34,6 +34,7 @@ import buildcraft.builders.BlockBuilder;
 import buildcraft.builders.BlockFiller;
 import buildcraft.builders.BlockMarker;
 import buildcraft.builders.BlockPathMarker;
+import buildcraft.builders.BlockStripes;
 import buildcraft.builders.BuilderProxy;
 import buildcraft.builders.EventHandlerBuilders;
 import buildcraft.builders.GuiHandler;
@@ -108,6 +109,7 @@ public class BuildCraftBuilders extends BuildCraftMod {
 	public static final char BPT_SEP_CHARACTER = '-';
 	public static final int LIBRARY_PAGE_SIZE = 12;
 	public static final int MAX_BLUEPRINTS_NAME_SIZE = 14;
+	public static BlockStripes stripesBlock;
 	public static BlockMarker markerBlock;
 	public static BlockPathMarker pathMarkerBlock;
 	public static BlockFiller fillerBlock;
@@ -295,6 +297,9 @@ public class BuildCraftBuilders extends BuildCraftMod {
 		blueprintItem.setUnlocalizedName("blueprintItem");
 		LanguageRegistry.addName(blueprintItem, "Blueprint");
 		CoreProxy.proxy.registerItem(blueprintItem);
+
+		stripesBlock = new BlockStripes ();
+		CoreProxy.proxy.registerBlock(stripesBlock);
 
 		markerBlock = new BlockMarker();
 		CoreProxy.proxy.registerBlock(markerBlock.setBlockName("markerBlock"));

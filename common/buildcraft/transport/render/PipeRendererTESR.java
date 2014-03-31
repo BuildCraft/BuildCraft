@@ -206,8 +206,9 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 	boolean initialized = false;
 
 	private void initializeDisplayPowerList(World world) {
-		if (initialized)
+		if (initialized) {
 			return;
+		}
 
 		initialized = true;
 
@@ -365,47 +366,53 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 
 		boolean center = false;
 
-		if (minX == 0 && maxX != 1 && (foundY || foundZ))
+		if (minX == 0 && maxX != 1 && (foundY || foundZ)) {
 			if (cx == CoreConstants.PIPE_MIN_POS) {
 				maxX = CoreConstants.PIPE_MIN_POS;
 			} else {
 				center = true;
 			}
+		}
 
-		if (minX != 0 && maxX == 1 && (foundY || foundZ))
+		if (minX != 0 && maxX == 1 && (foundY || foundZ)) {
 			if (cx == CoreConstants.PIPE_MAX_POS) {
 				minX = CoreConstants.PIPE_MAX_POS;
 			} else {
 				center = true;
 			}
+		}
 
-		if (minY == 0 && maxY != 1 && (foundX || foundZ))
+		if (minY == 0 && maxY != 1 && (foundX || foundZ)) {
 			if (cy == CoreConstants.PIPE_MIN_POS) {
 				maxY = CoreConstants.PIPE_MIN_POS;
 			} else {
 				center = true;
 			}
+		}
 
-		if (minY != 0 && maxY == 1 && (foundX || foundZ))
+		if (minY != 0 && maxY == 1 && (foundX || foundZ)) {
 			if (cy == CoreConstants.PIPE_MAX_POS) {
 				minY = CoreConstants.PIPE_MAX_POS;
 			} else {
 				center = true;
 			}
+		}
 
-		if (minZ == 0 && maxZ != 1 && (foundX || foundY))
+		if (minZ == 0 && maxZ != 1 && (foundX || foundY)) {
 			if (cz == CoreConstants.PIPE_MIN_POS) {
 				maxZ = CoreConstants.PIPE_MIN_POS;
 			} else {
 				center = true;
 			}
+		}
 
-		if (minZ != 0 && maxZ == 1 && (foundX || foundY))
+		if (minZ != 0 && maxZ == 1 && (foundX || foundY)) {
 			if (cz == CoreConstants.PIPE_MAX_POS) {
 				minZ = CoreConstants.PIPE_MAX_POS;
 			} else {
 				center = true;
 			}
+		}
 
 		boolean found = foundX || foundY || foundZ;
 
@@ -481,10 +488,11 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 		bindTexture(TextureMap.locationBlocksTexture);
 
 		IIcon iconLogic;
-		if (pipe.renderState.isGateLit())
+		if (pipe.renderState.isGateLit()) {
 			iconLogic = pipe.pipe.gate.logic.getIconLit();
-		else
+		} else {
 			iconLogic = pipe.pipe.gate.logic.getIconDark();
+		}
 
 		float translateCenter = 0;
 
@@ -508,8 +516,9 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 		}
 
 		IIcon materialIcon = pipe.pipe.gate.material.getIconBlock();
-		if (materialIcon != null)
+		if (materialIcon != null) {
 			renderGate(pipe, materialIcon, 1, 0.13F, translateCenter, translateCenter);
+		}
 
 		for (IGateExpansion expansion : pipe.pipe.gate.expansions.keySet()) {
 			renderGate(pipe, expansion.getOverlayBlock(), 2, 0.13F, translateCenter, translateCenter);
@@ -554,8 +563,9 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 				float[][] rotated = MatrixTranformations.deepClone(zeroState);
 				MatrixTranformations.transform(rotated, direction);
 
-				if (layer != 0)
+				if (layer != 0) {
 					box.setRenderSingleSide(direction.ordinal());
+				}
 				box.setBounds(rotated[0][0], rotated[1][0], rotated[2][0], rotated[0][1], rotated[1][1], rotated[2][1]);
 				RenderEntityBlock.INSTANCE.renderBlock(box, tile.getWorldObj(), 0, 0, 0, tile.xCoord, tile.yCoord, tile.zCoord, true, true);
 				GL11.glPopMatrix();
@@ -581,13 +591,15 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 
 				connections++;
 
-				if (connections == 1)
+				if (connections == 1) {
 					targetOrientation = o;
+				}
 			}
 		}
 
-		if (connections > 1 || connections == 0)
+		if (connections > 1 || connections == 0) {
 			return false;
+		}
 
 		return targetOrientation.getOpposite() == direction;
 	}
@@ -672,8 +684,9 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 			}
 		}
 
-		if (!needsRender)
+		if (!needsRender) {
 			return;
+		}
 
 		GL11.glPushMatrix();
 		GL11.glPushAttrib(GL11.GL_ENABLE_BIT);
@@ -693,16 +706,19 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 
 			FluidStack fluidStack = trans.renderCache[i];
 
-			if (fluidStack == null || fluidStack.amount <= 0)
+			if (fluidStack == null || fluidStack.amount <= 0) {
 				continue;
+			}
 
-			if (!pipe.container.isPipeConnected(side))
+			if (!pipe.container.isPipeConnected(side)) {
 				continue;
+			}
 
 			DisplayFluidList d = getListFromBuffer(fluidStack, pipe.container.getWorldObj());
 
-			if (d == null)
+			if (d == null) {
 				continue;
+			}
 
 			int stage = (int) ((float) fluidStack.amount / (float) (trans.getCapacity()) * (LIQUID_STAGES - 1));
 
@@ -768,8 +784,9 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 
 		int liquidId = stack.fluidID;
 
-		if (liquidId == 0)
+		if (liquidId == 0) {
 			return null;
+		}
 
 		return getDisplayFluidLists(liquidId, world);
 	}

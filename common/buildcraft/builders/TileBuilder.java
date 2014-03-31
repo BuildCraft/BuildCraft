@@ -69,6 +69,8 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IM
 	@MjBattery (maxReceivedPerCycle = 25)
 	private double mjStored = 0;
 
+	public LinkedList <BuildingItem> buildingItems = new LinkedList<BuildingItem>();
+
 	private class PathIterator {
 
 		public Iterator<BlockIndex> currentIterator;
@@ -323,7 +325,7 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IM
 			return;
 		}
 
-		if (bluePrintBuilder == null || bluePrintBuilder.done) {
+		if (bluePrintBuilder == null || bluePrintBuilder.isDone()) {
 			if (path != null && path.size() > 1) {
 				if (currentPathIterator == null) {
 					Iterator<BlockIndex> it = path.iterator();
@@ -355,7 +357,7 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IM
 					done = true;
 				}
 			} else {
-				if (bluePrintBuilder != null && bluePrintBuilder.done) {
+				if (bluePrintBuilder != null && bluePrintBuilder.isDone()) {
 					if (builderRobot != null) {
 						//builderRobot.markEndOfBlueprint(bluePrintBuilder);
 					}
@@ -523,11 +525,29 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IM
 	public void updateEntity() {
 		super.updateEntity();
 
+		BuildingItem toRemove = null;
+
+		for (BuildingItem i : buildingItems) {
+			i.update();
+
+			if (i.isDone) {
+				toRemove = i;
+			}
+		}
+
+		if (toRemove != null) {
+			buildingItems.remove(toRemove);
+		}
+
 		if (worldObj.isRemote) {
 			return;
 		}
 
-		if ((bluePrintBuilder == null || bluePrintBuilder.done)
+		if (bluePrintBuilder != null) {
+			bluePrintBuilder.removeDoneBuilders();
+		}
+
+		if ((bluePrintBuilder == null || bluePrintBuilder.isDone())
 				&& box.isInitialized()
 				//&& (builderRobot == null || builderRobot.done())
 				) {
@@ -672,10 +692,20 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IM
 			BuildingSlot slot = bluePrintBuilder.getNextBlock(worldObj, this);
 
 			if (slot != null) {
-				slot.writeToWorld(bluePrintBuilder.context);
+				BuildingItem i = new BuildingItem();
+				i.origin = new Position (xCoord + 0.5, yCoord + 0.5, zCoord + 0.5);
+				i.destination = slot.getDestination();
+				i.slotToBuild = slot;
+				i.context = bluePrintBuilder.getContext();
+				i.stacksToBuild = slot.getRequirements(bluePrintBuilder.getContext());
+				buildingItems.add(i);
+				RPCHandler.rpcBroadcastPlayers(this, "launchItem", i);
+				bluePrintBuilder.registerBuilder(i);
 			}
 
-			if (slot == null || bluePrintBuilder.done) {
+			if (bluePrintBuilder.isDone()) {
+				// TODO: find a way to confirm that all agents are done before
+				// calling post processing.
 				bluePrintBuilder.postProcessing(worldObj);
 				bluePrintBuilder = null;
 
@@ -710,4 +740,10 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IM
 			return null;
 		}
 	}
+
+	@RPC (RPCSide.CLIENT)
+	public void launchItem (BuildingItem item) {
+		buildingItems.add(item);
+	}
+
 }
