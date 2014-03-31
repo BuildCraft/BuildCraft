@@ -35,9 +35,9 @@ public class BuildingItem implements IBuilder {
 	}
 
 	public Position posDisplay = new Position();
+	public boolean isDone = false;
 
 	long previousUpdate;
-	boolean isDone = false;
 	double lifetime = 0;
 	double lifetimeDisplay = 0;
 	double maxLifetime = 0;
@@ -55,7 +55,7 @@ public class BuildingItem implements IBuilder {
 
 			double size = Math.sqrt(dx * dx + dy * dy + dz * dz);
 
-			maxLifetime = size * 10.0;
+			maxLifetime = size * 7.0;
 
 			vx = dx / maxLifetime;
 			vy = dy / maxLifetime;

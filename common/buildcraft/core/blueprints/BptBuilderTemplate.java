@@ -13,7 +13,7 @@ import java.util.LinkedList;
 import net.minecraft.world.World;
 import buildcraft.api.blueprints.Schematic;
 import buildcraft.api.core.BuildCraftAPI;
-import buildcraft.core.IBuilderInventory;
+import buildcraft.builders.TileAbstractBuilder;
 import buildcraft.core.blueprints.BuildingSlotBlock.Mode;
 
 public class BptBuilderTemplate extends BptBuilderBase {
@@ -83,7 +83,7 @@ public class BptBuilderTemplate extends BptBuilderBase {
 	}
 
 	@Override
-	public BuildingSlot getNextBlock(World world, IBuilderInventory inv) {
+	public BuildingSlot getNextBlock(World world, TileAbstractBuilder inv) {
 		if (clearList.size() != 0) {
 			BuildingSlotBlock slot = internalGetNextBlock(world, inv, clearList);
 			checkDone();
@@ -107,7 +107,7 @@ public class BptBuilderTemplate extends BptBuilderBase {
 		return null;
 	}
 
-	public BuildingSlotBlock internalGetNextBlock(World world, IBuilderInventory inv, LinkedList<BuildingSlotBlock> list) {
+	public BuildingSlotBlock internalGetNextBlock(World world, TileAbstractBuilder inv, LinkedList<BuildingSlotBlock> list) {
 		BuildingSlotBlock result = null;
 
 		while (list.size() > 0) {

@@ -8,6 +8,7 @@
  */
 package buildcraft.factory;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -32,12 +33,13 @@ import buildcraft.api.gates.IAction;
 import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.power.PowerHandler;
 import buildcraft.api.power.PowerHandler.PowerReceiver;
+import buildcraft.builders.BuildingItem;
+import buildcraft.builders.TileAbstractBuilder;
 import buildcraft.core.Box;
 import buildcraft.core.CoreConstants;
 import buildcraft.core.DefaultAreaProvider;
-import buildcraft.core.IBuilderInventory;
 import buildcraft.core.IMachine;
-import buildcraft.core.TileBuildCraft;
+import buildcraft.core.LaserData;
 import buildcraft.core.blueprints.Blueprint;
 import buildcraft.core.blueprints.BptBuilderBlueprint;
 import buildcraft.core.blueprints.BuildingSlot;
@@ -51,7 +53,7 @@ import buildcraft.core.utils.Utils;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
-public class TileQuarry extends TileBuildCraft implements IMachine, IPowerReceptor, IBuilderInventory {
+public class TileQuarry extends TileAbstractBuilder implements IMachine, IPowerReceptor {
 
 	public @NetworkData
 	Box box = new Box();
@@ -758,7 +760,7 @@ public class TileQuarry extends TileBuildCraft implements IMachine, IPowerRecept
 	}
 
 	@Override
-	public boolean isBuildingMaterial(int i) {
+	public boolean isBuildingMaterialSlot(int i) {
 		return true;
 	}
 
@@ -871,5 +873,23 @@ public class TileQuarry extends TileBuildCraft implements IMachine, IPowerRecept
 	@Override
 	public boolean hasCustomInventoryName() {
 		return false;
+	}
+
+	@Override
+	public void addBuildingItem(BuildingItem item) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public ArrayList<BuildingItem> getBuilders() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public LinkedList<LaserData> getPathLaser() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

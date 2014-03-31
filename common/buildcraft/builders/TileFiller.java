@@ -26,13 +26,11 @@ import buildcraft.api.mj.MjBattery;
 import buildcraft.builders.filler.pattern.PatternFill;
 import buildcraft.builders.triggers.ActionFiller;
 import buildcraft.core.Box;
+import buildcraft.core.Box.Kind;
 import buildcraft.core.IBoxProvider;
-import buildcraft.core.IBuilderInventory;
 import buildcraft.core.IMachine;
-import buildcraft.core.TileBuildCraft;
 import buildcraft.core.blueprints.BptBuilderTemplate;
 import buildcraft.core.blueprints.BptContext;
-import buildcraft.core.blueprints.BuildingSlot;
 import buildcraft.core.inventory.SimpleInventory;
 import buildcraft.core.network.PacketPayload;
 import buildcraft.core.network.PacketUpdate;
@@ -43,7 +41,7 @@ import buildcraft.core.triggers.ActionMachineControl;
 import buildcraft.core.triggers.ActionMachineControl.Mode;
 import buildcraft.core.utils.Utils;
 
-public class TileFiller extends TileBuildCraft implements IBuilderInventory, IMachine, IActionReceptor, IBoxProvider {
+public class TileFiller extends TileAbstractBuilder implements IMachine, IActionReceptor, IBoxProvider {
 
 	public IFillerPattern currentPattern = PatternFill.INSTANCE;
 
@@ -61,6 +59,7 @@ public class TileFiller extends TileBuildCraft implements IBuilderInventory, IMa
 
 	public TileFiller() {
 		inv.addListener(this);
+		box.kind = Kind.STRIPES;
 	}
 
 	@Override
@@ -118,14 +117,11 @@ public class TileFiller extends TileBuildCraft implements IBuilderInventory, IMa
 		}
 
 		if (currentTemplate != null) {
-			BuildingSlot s = currentTemplate.getNextBlock(getWorld(), this);
+			currentTemplate.buildNextSlot(worldObj, this, xCoord, yCoord, zCoord);
 
-			if (s != null) {
-				s.writeToWorld(context);
-			}
-
-			if (!done && s == null || currentTemplate.isDone()) {
+			if (currentTemplate.isDone(this)) {
 				done = true;
+				currentTemplate = null;
 				sendNetworkUpdate();
 			}
 		}
@@ -232,7 +228,9 @@ public class TileFiller extends TileBuildCraft implements IBuilderInventory, IMa
 		if (worldObj.getTileEntity(xCoord, yCoord, zCoord) != this) {
 			return false;
 		}
-		return entityplayer.getDistanceSq(xCoord + 0.5D, yCoord + 0.5D, zCoord + 0.5D) <= 64D;
+
+		return entityplayer.getDistanceSq(xCoord + 0.5D, yCoord + 0.5D,
+				zCoord + 0.5D) <= 64D;
 	}
 
 	@Override
@@ -355,7 +353,8 @@ public class TileFiller extends TileBuildCraft implements IBuilderInventory, IMa
 	}
 
 	@Override
-	public boolean isBuildingMaterial(int i) {
+	public boolean isBuildingMaterialSlot(int i) {
 		return true;
 	}
+
 }

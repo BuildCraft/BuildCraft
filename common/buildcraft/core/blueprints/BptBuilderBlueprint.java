@@ -24,7 +24,7 @@ import buildcraft.api.blueprints.CoordTransformation;
 import buildcraft.api.blueprints.SchematicBlock;
 import buildcraft.api.blueprints.SchematicEntity;
 import buildcraft.api.core.StackKey;
-import buildcraft.core.IBuilderInventory;
+import buildcraft.builders.TileAbstractBuilder;
 import buildcraft.core.blueprints.BuildingSlotBlock.Mode;
 import buildcraft.core.utils.BCLog;
 import buildcraft.core.utils.BlockUtil;
@@ -127,7 +127,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 	}
 
 	@Override
-	public BuildingSlot getNextBlock(World world, IBuilderInventory inv) {
+	public BuildingSlot getNextBlock(World world, TileAbstractBuilder inv) {
 		if (clearList.size() != 0) {
 			BuildingSlot slot = internalGetNextBlock(world, inv, clearList);
 			checkDone();
@@ -160,7 +160,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 		return null;
 	}
 
-	private BuildingSlot internalGetNextBlock(World world, IBuilderInventory inv, LinkedList<BuildingSlotBlock> list) {
+	private BuildingSlot internalGetNextBlock(World world, TileAbstractBuilder inv, LinkedList<BuildingSlotBlock> list) {
 		LinkedList<BuildingSlotBlock> failSlots = new LinkedList<BuildingSlotBlock>();
 
 		BuildingSlot result = null;
@@ -209,7 +209,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 		return result;
 	}
 
-	public boolean checkRequirements(IBuilderInventory inv, SchematicBlock slot) {
+	public boolean checkRequirements(TileAbstractBuilder inv, SchematicBlock slot) {
 		if (slot.block == null) {
 			return true;
 		}
@@ -231,7 +231,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 
 		int size = inv.getSizeInventory();
 		for (int i = 0; i < size; ++i) {
-			if (!inv.isBuildingMaterial(i)) {
+			if (!inv.isBuildingMaterialSlot(i)) {
 				continue;
 			}
 
@@ -270,7 +270,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 		return true;
 	}
 
-	public void useRequirements(IBuilderInventory inv, SchematicBlock slot) {
+	public void useRequirements(TileAbstractBuilder inv, SchematicBlock slot) {
 		if (slot.block == null) {
 			return;
 		}
@@ -298,7 +298,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 			ItemStack usedStack = reqStk;
 			int size = inv.getSizeInventory();
 			for (int i = 0; i < size; ++i) {
-				if (!inv.isBuildingMaterial(i)) {
+				if (!inv.isBuildingMaterialSlot(i)) {
 
 				}
 

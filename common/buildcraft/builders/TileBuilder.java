@@ -28,17 +28,14 @@ import buildcraft.core.BlockIndex;
 import buildcraft.core.Box;
 import buildcraft.core.Box.Kind;
 import buildcraft.core.IBoxProvider;
-import buildcraft.core.IBuilderInventory;
 import buildcraft.core.IMachine;
 import buildcraft.core.LaserData;
-import buildcraft.core.TileBuildCraft;
 import buildcraft.core.blueprints.Blueprint;
 import buildcraft.core.blueprints.BlueprintBase;
 import buildcraft.core.blueprints.BptBuilderBase;
 import buildcraft.core.blueprints.BptBuilderBlueprint;
 import buildcraft.core.blueprints.BptBuilderTemplate;
 import buildcraft.core.blueprints.BptContext;
-import buildcraft.core.blueprints.BuildingSlot;
 import buildcraft.core.network.NetworkData;
 import buildcraft.core.network.RPC;
 import buildcraft.core.network.RPCHandler;
@@ -46,7 +43,7 @@ import buildcraft.core.network.RPCSide;
 import buildcraft.core.robots.EntityRobot;
 import buildcraft.core.utils.Utils;
 
-public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IMachine, IBoxProvider {
+public class TileBuilder extends TileAbstractBuilder implements IMachine, IBoxProvider {
 
 	private final ItemStack items[] = new ItemStack[28];
 
@@ -57,9 +54,6 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IM
 
 	private LinkedList<BlockIndex> path;
 
-	@NetworkData
-	public LinkedList<LaserData> pathLasers = new LinkedList<LaserData> ();
-
 	private EntityRobot builderRobot;
 
 	private LinkedList <ItemStack> requiredToBuild;
@@ -68,8 +62,6 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IM
 
 	@MjBattery (maxReceivedPerCycle = 25)
 	private double mjStored = 0;
-
-	public LinkedList <BuildingItem> buildingItems = new LinkedList<BuildingItem>();
 
 	private class PathIterator {
 
@@ -325,7 +317,7 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IM
 			return;
 		}
 
-		if (bluePrintBuilder == null || bluePrintBuilder.isDone()) {
+		if (bluePrintBuilder == null || bluePrintBuilder.isDone(this)) {
 			if (path != null && path.size() > 1) {
 				if (currentPathIterator == null) {
 					Iterator<BlockIndex> it = path.iterator();
@@ -357,7 +349,7 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IM
 					done = true;
 				}
 			} else {
-				if (bluePrintBuilder != null && bluePrintBuilder.isDone()) {
+				if (bluePrintBuilder != null && bluePrintBuilder.isDone(this)) {
 					if (builderRobot != null) {
 						//builderRobot.markEndOfBlueprint(bluePrintBuilder);
 					}
@@ -525,29 +517,15 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IM
 	public void updateEntity() {
 		super.updateEntity();
 
-		BuildingItem toRemove = null;
-
-		for (BuildingItem i : buildingItems) {
-			i.update();
-
-			if (i.isDone) {
-				toRemove = i;
-			}
-		}
-
-		if (toRemove != null) {
-			buildingItems.remove(toRemove);
-		}
-
 		if (worldObj.isRemote) {
 			return;
 		}
 
 		if (bluePrintBuilder != null) {
-			bluePrintBuilder.removeDoneBuilders();
+			bluePrintBuilder.removeDoneBuilders(this);
 		}
 
-		if ((bluePrintBuilder == null || bluePrintBuilder.isDone())
+		if ((bluePrintBuilder == null || bluePrintBuilder.isDone(this))
 				&& box.isInitialized()
 				//&& (builderRobot == null || builderRobot.done())
 				) {
@@ -647,7 +625,7 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IM
 	}
 
 	@Override
-	public boolean isBuildingMaterial(int i) {
+	public boolean isBuildingMaterialSlot(int i) {
 		return i != 0;
 	}
 
@@ -689,23 +667,9 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IM
 		}
 
 		if (bluePrintBuilder != null) {
-			BuildingSlot slot = bluePrintBuilder.getNextBlock(worldObj, this);
+			bluePrintBuilder.buildNextSlot(worldObj, this, xCoord, yCoord, zCoord);
 
-			if (slot != null) {
-				BuildingItem i = new BuildingItem();
-				i.origin = new Position (xCoord + 0.5, yCoord + 0.5, zCoord + 0.5);
-				i.destination = slot.getDestination();
-				i.slotToBuild = slot;
-				i.context = bluePrintBuilder.getContext();
-				i.stacksToBuild = slot.getRequirements(bluePrintBuilder.getContext());
-				buildingItems.add(i);
-				RPCHandler.rpcBroadcastPlayers(this, "launchItem", i);
-				bluePrintBuilder.registerBuilder(i);
-			}
-
-			if (bluePrintBuilder.isDone()) {
-				// TODO: find a way to confirm that all agents are done before
-				// calling post processing.
+			if (bluePrintBuilder.isDone(this)) {
 				bluePrintBuilder.postProcessing(worldObj);
 				bluePrintBuilder = null;
 
@@ -739,11 +703,6 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IM
 		} else {
 			return null;
 		}
-	}
-
-	@RPC (RPCSide.CLIENT)
-	public void launchItem (BuildingItem item) {
-		buildingItems.add(item);
 	}
 
 }

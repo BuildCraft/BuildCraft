@@ -8,7 +8,10 @@
  */
 package buildcraft.api.blueprints;
 
+import java.util.LinkedList;
+
 import net.minecraft.init.Blocks;
+import net.minecraft.item.ItemStack;
 import buildcraft.core.utils.BlockUtil;
 
 public class SchematicMask extends Schematic {
@@ -35,6 +38,12 @@ public class SchematicMask extends Schematic {
 		} else {
 			return BlockUtil.isSoftBlock(context.world(), x, y, z);
 		}
+	}
+
+	// TODO: To be removed with the "real" list of items
+	@Override
+	public void addRequirements(IBuilderContext context, LinkedList<ItemStack> requirements) {
+		requirements.add(new ItemStack(Blocks.brick_block));
 	}
 
 }
