@@ -1,6 +1,10 @@
 package buildcraft.factory;
 
 
+import io.netty.buffer.ByteBuf;
+
+import java.io.IOException;
+
 import buildcraft.BuildCraftEnergy;
 import buildcraft.api.fuels.IronEngineFuel;
 import buildcraft.api.gates.IAction;
@@ -9,8 +13,12 @@ import buildcraft.api.power.PowerHandler;
 import buildcraft.api.power.PowerHandler.PowerReceiver;
 import buildcraft.api.power.PowerHandler.Type;
 import buildcraft.core.IMachine;
+import buildcraft.core.TileBuildCraft;
 import buildcraft.core.fluids.SingleUseTank;
 import buildcraft.core.fluids.TankManager;
+import buildcraft.core.network.NetworkData;
+import buildcraft.core.network.PacketPayload;
+import buildcraft.core.network.PacketUpdate;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
@@ -24,24 +32,28 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
 
-public class TileRefineryControl extends TileEntity implements IFluidHandler, IPowerReceptor, IInventory, IMachine{
+public class TileRefineryControl extends TileBuildCraft implements IFluidHandler, IPowerReceptor, IInventory, IMachine {
 	
 	private PowerHandler powerHandler;
 	public static int MAX_LIQUID = FluidContainerRegistry.BUCKET_VOLUME * 10;
-	public SingleUseTank input = new SingleUseTank("input", MAX_LIQUID, this);
-	public SingleUseTank output = new SingleUseTank("output", MAX_LIQUID, this);
+	public SingleUseTank inputTank = new SingleUseTank("inputTank", MAX_LIQUID, this);
+	public SingleUseTank outputTank = new SingleUseTank("outputTank", MAX_LIQUID, this);
 	private TankManager tankManager = new TankManager();
 	public double clientRequiredEnergy = 0;
 	private double energy = 0;
 	private int tick = 0;
 	private int recentEnergyAverage;
 	private double[] recentEnergy = new double[20];
+	@NetworkData
+	public FluidStack input;
+	@NetworkData
+	public FluidStack output;
 	
 	public TileRefineryControl() {
 		powerHandler = new PowerHandler(this, Type.MACHINE);
 		initPowerProvider();
-		tankManager.add(input);
-		tankManager.add(output);
+		tankManager.add(inputTank);
+		tankManager.add(outputTank);
 	}
 
 	private void initPowerProvider() {
@@ -59,29 +71,32 @@ public class TileRefineryControl extends TileEntity implements IFluidHandler, IP
 		return recentEnergyAverage;
 	}
 	public int AmountOfOil(){
-		//System.out.println(input.getFluidAmount());
-		//return input.getFluidAmount();
-		return 10000 	;
+		if (inputTank.isEmpty()){
+			return 0;
+		}
+		return inputTank.getFluid().amount;
 	}
 	
 	public int AmountOfFuel(){
-		return output.getFluidAmount();
+		if (outputTank.isEmpty()){
+			return 0;
+		}
+		return outputTank.getFluidAmount();
 	}
 	
 	public int getScaledInput(int i) {
-		return this.input.getFluid() != null ? (int) (((float) this.input.getFluid().amount / (float) (MAX_LIQUID)) * i) : 0;
+		return this.input.getFluid() != null ? (int) (((float) this.inputTank.getFluid().amount / (float) (MAX_LIQUID)) * i) : 0;
 	}
 	public int getScaledOutput(int i) {
-		return output.getFluid() != null ? (int) (((float) this.output.getFluid().amount / (float) (MAX_LIQUID)) * i) : 0;
+		return outputTank.getFluid() != null ? (int) (((float) this.outputTank.getFluid().amount / (float) (MAX_LIQUID)) * i) : 0;
 	}
 	
 	public FluidStack getInput(){
-		//return input.getFluid();
-		return new FluidStack(BuildCraftEnergy.fluidOil, AmountOfOil());
+		return inputTank.getFluid();
 	}
 	
 	public FluidStack getOutput(){
-		return output.getFluid();
+		return outputTank.getFluid();
 	}
 
 	public double getEnergy() {
@@ -189,8 +204,9 @@ public class TileRefineryControl extends TileEntity implements IFluidHandler, IP
 
 	@Override
 	public int fill(ForgeDirection from, FluidStack resource, boolean doFill) {
+		sendNetworkUpdate();
 		if (resource.getFluid() == BuildCraftEnergy.fluidOil)
-			return input.fill(resource, doFill);
+			return inputTank.fill(resource, doFill);
 
 		return 0;
 	}
@@ -234,6 +250,28 @@ public class TileRefineryControl extends TileEntity implements IFluidHandler, IP
 		super.writeToNBT(data);
 		tankManager.writeToNBT(data);
 
+	}
+
+	@Override
+	public void markDirty() {
+
+	}
+
+	@Override
+	public PacketPayload getPacketPayload() {
+		PacketPayload payload = new PacketPayload(new PacketPayload.StreamWriter() {
+			@Override
+			public void writeData(ByteBuf data) {
+				tankManager.writeData(data);
+			}
+		});
+		return payload;
+	}
+
+	@Override
+	public void handleUpdatePacket(PacketUpdate packet) throws IOException {
+		ByteBuf stream = packet.payload.stream;
+		tankManager.readData(stream);
 	}
 	
 }
