@@ -125,27 +125,6 @@ public class TileFiller extends TileAbstractBuilder implements IMachine, IAction
 				sendNetworkUpdate();
 			}
 		}
-
-		/*ItemStack stackToUse = null;
-		int slotNum = 0;
-
-		for (IInvSlot slot : InventoryIterator.getIterable(inv, ForgeDirection.UNKNOWN)) {
-			ItemStack stack = slot.getStackInSlot();
-			if (stack != null && stack.stackSize > 0) {
-				stackToUse = stack;
-				slotNum = slot.getIndex();
-				break;
-			}
-		}
-
-
-		if (stackToUse != null && stackToUse.stackSize <= 0) {
-			setInventorySlotContents(slotNum, null);
-		}
-
-		if (done) {
-			sendNetworkUpdate();
-		}*/
 	}
 
 	@Override

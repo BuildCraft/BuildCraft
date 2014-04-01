@@ -43,6 +43,7 @@ public class BuildingItem implements IBuilder {
 	double maxLifetime = 0;
 	private boolean initialized = false;
 	double vx, vy, vz;
+	double maxHeight;
 
 	public BuildingSlot slotToBuild;
 	public IBuilderContext context;
@@ -56,6 +57,16 @@ public class BuildingItem implements IBuilder {
 			double size = Math.sqrt(dx * dx + dy * dy + dz * dz);
 
 			maxLifetime = size * 7.0;
+
+			maxHeight = (5.0 + (destination.y - origin.y) / 2.0);
+
+			double a = maxLifetime / 2.0;
+			double b = maxHeight;
+			double c = Math.sqrt(a * a + b * b);
+
+			// Since the item is going to travel up as well, this is an
+			// approximation of the additional distance to go through.
+			maxLifetime += c * 2;
 
 			vx = dx / maxLifetime;
 			vy = dy / maxLifetime;
@@ -81,7 +92,7 @@ public class BuildingItem implements IBuilder {
 		Position result = new Position ();
 
 		result.x = origin.x + vx * time;
-		result.y = origin.y + vy * time + Math.sin(time / maxLifetime * Math.PI) * (5.0 + (destination.y - origin.y) / 2.0);
+		result.y = origin.y + vy * time + Math.sin(time / maxLifetime * Math.PI) * maxHeight;
 		result.z = origin.z + vz * time;
 
 		return result;

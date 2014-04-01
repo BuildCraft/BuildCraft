@@ -10,11 +10,16 @@ package buildcraft.core.blueprints;
 
 import java.util.LinkedList;
 
+import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.ForgeDirection;
+import buildcraft.BuildCraftBuilders;
 import buildcraft.api.blueprints.Schematic;
 import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.builders.TileAbstractBuilder;
 import buildcraft.core.blueprints.BuildingSlotBlock.Mode;
+import buildcraft.core.inventory.InventoryIterator;
+import buildcraft.core.inventory.InventoryIterator.IInvSlot;
 
 public class BptBuilderTemplate extends BptBuilderBase {
 
@@ -110,19 +115,38 @@ public class BptBuilderTemplate extends BptBuilderBase {
 	public BuildingSlotBlock internalGetNextBlock(World world, TileAbstractBuilder inv, LinkedList<BuildingSlotBlock> list) {
 		BuildingSlotBlock result = null;
 
+		IInvSlot firstSlotToConsume = null;
+
+		for (IInvSlot invSlot : InventoryIterator.getIterable(inv, ForgeDirection.UNKNOWN)) {
+			ItemStack stack = invSlot.getStackInSlot();
+
+			if (stack != null && stack.stackSize > 0) {
+				firstSlotToConsume = invSlot;
+				break;
+			}
+		}
+
 		while (list.size() > 0) {
-			BuildingSlotBlock slot = list.removeFirst();
+			BuildingSlotBlock slot = list.getFirst();
 
 			if (slot.mode == Mode.ClearIfInvalid
 					&& !BuildCraftAPI.softBlocks.contains(context.world()
 							.getBlock(slot.x, slot.y, slot.z))) {
+				slot.addStackConsumed(new ItemStack(BuildCraftBuilders.stripesBlock));
 				result = slot;
+				list.removeFirst();
+
 				break;
 			} else if (slot.mode == Mode.Build
 					&& BuildCraftAPI.softBlocks.contains(context.world()
 							.getBlock(slot.x, slot.y, slot.z))) {
-				result = slot;
-				break;
+
+				if (firstSlotToConsume != null) {
+					slot.addStackConsumed(firstSlotToConsume.decreaseStackInSlot());
+					result = slot;
+					list.removeFirst();
+					break;
+				}
 			}
 		}
 

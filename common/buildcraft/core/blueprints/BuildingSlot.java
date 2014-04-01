@@ -16,6 +16,8 @@ import buildcraft.api.core.Position;
 
 public abstract class BuildingSlot {
 
+	public LinkedList <ItemStack> stackConsumed;
+
 	public void writeToWorld(IBuilderContext context) {
 
 	}
@@ -29,4 +31,12 @@ public abstract class BuildingSlot {
 	}
 
 	public abstract Position getDestination ();
+
+	public void addStackConsumed (ItemStack stack) {
+		if (stackConsumed == null) {
+			stackConsumed = new LinkedList<ItemStack>();
+		}
+
+		stackConsumed.add (stack);
+	}
 }
