@@ -66,7 +66,7 @@ public class BuildingItem implements IBuilder {
 
 			// Since the item is going to travel up as well, this is an
 			// approximation of the additional distance to go through.
-			maxLifetime += c * 2;
+			maxLifetime = c * 2;
 
 			vx = dx / maxLifetime;
 			vy = dy / maxLifetime;
