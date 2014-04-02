@@ -8,12 +8,6 @@
  */
 package buildcraft.core.utils;
 
-import buildcraft.BuildCraftCore;
-import buildcraft.BuildCraftEnergy;
-import buildcraft.api.core.BuildCraftAPI;
-import buildcraft.core.proxy.CoreProxy;
-import cpw.mods.fml.common.FMLCommonHandler;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,6 +20,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.server.S27PacketExplosion;
 import net.minecraft.world.ChunkPosition;
 import net.minecraft.world.Explosion;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.fluids.BlockFluidBase;
@@ -34,17 +29,24 @@ import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidBlock;
+import buildcraft.BuildCraftCore;
+import buildcraft.BuildCraftEnergy;
+import buildcraft.api.core.BuildCraftAPI;
+import buildcraft.core.proxy.CoreProxy;
+import cpw.mods.fml.common.FMLCommonHandler;
 
 public class BlockUtil {
 
 	public static List<ItemStack> getItemStackFromBlock(World world, int i, int j, int k) {
 		Block block = world.getBlock(i, j, k);
 
-		if (block == null)
+		if (block == null) {
 			return null;
+		}
 
-		if (block.isAir(world, i, j, k))
+		if (block.isAir(world, i, j, k)) {
 			return null;
+		}
 
 		int meta = world.getBlockMetadata(i, j, k);
 
@@ -87,8 +89,9 @@ public class BlockUtil {
 	}
 
 	public static boolean isAnObstructingBlock(Block block, World world, int x, int y, int z) {
-		if (block == null || block.isAir(world, x, y, z))
+		if (block == null || block.isAir(world, x, y, z)) {
 			return false;
+		}
 		return true;
 	}
 
@@ -97,26 +100,30 @@ public class BlockUtil {
 	}
 
 	public static boolean canChangeBlock(Block block, World world, int x, int y, int z) {
-		if (block == null || block.isAir(world, x, y, z))
+		if (block == null || block.isAir(world, x, y, z)) {
 			return true;
+		}
 
-		if (block.getBlockHardness(world, x, y, z) < 0)
+		if (block.getBlockHardness(world, x, y, z) < 0) {
 			return false;
+		}
 
-		if (block == BuildCraftEnergy.blockOil)
+		if (block == BuildCraftEnergy.blockOil) {
 			return false;
+		}
 
-		if (block == Blocks.lava || block == Blocks.flowing_lava)
+		if (block == Blocks.lava || block == Blocks.flowing_lava) {
 			return false;
+		}
 
 		return true;
 	}
 
-	public static boolean isSoftBlock(World world, int x, int y, int z) {
+	public static boolean isSoftBlock(IBlockAccess world, int x, int y, int z) {
 		return isSoftBlock(world.getBlock(x, y, z), world, x, y, z);
 	}
 
-	public static boolean isSoftBlock(Block block, World world, int x, int y, int z) {
+	public static boolean isSoftBlock(Block block, IBlockAccess world, int x, int y, int z) {
 		return block == null || BuildCraftAPI.softBlocks.contains(block) || block.isAir(world, x, y, z);
 	}
 
@@ -131,9 +138,10 @@ public class BlockUtil {
 		return isFullFluidBlock(world.getBlock(x, y, z), world, x, y, z);
 	}
 
-	public static boolean isFullFluidBlock(Block block, World world, int x, int y, int z) {		
-		if (block instanceof BlockFluidBase || block instanceof IFluidBlock)
+	public static boolean isFullFluidBlock(Block block, World world, int x, int y, int z) {
+		if (block instanceof BlockFluidBase || block instanceof IFluidBlock) {
 			return world.getBlockMetadata(x, y, z) == 0;
+		}
 		return false;
 	}
 
@@ -146,21 +154,21 @@ public class BlockUtil {
 	}
 
 	public static FluidStack drainBlock(Block block, World world, int x, int y, int z, boolean doDrain) {
-		Fluid fluid = FluidRegistry.lookupFluidForBlock(block);		
-		
+		Fluid fluid = FluidRegistry.lookupFluidForBlock(block);
+
 		if (fluid != null) {
 			int meta = world.getBlockMetadata(x, y, z);
-			
+
 			if (meta != 0) {
 				return null;
 			}
-			
+
 			if (doDrain) {
 				world.setBlockToAir(x, y, z);
 			}
-			
+
 			return new FluidStack(fluid, FluidContainerRegistry.BUCKET_VOLUME);
-		} else { 		
+		} else {
 			return null;
 		}
 	}
@@ -170,16 +178,18 @@ public class BlockUtil {
 	 */
 	@SuppressWarnings("unchecked")
 	public static void explodeBlock(World world, int x, int y, int z) {
-		if (FMLCommonHandler.instance().getEffectiveSide().isClient())
+		if (FMLCommonHandler.instance().getEffectiveSide().isClient()) {
 			return;
+		}
 
 		Explosion explosion = new Explosion(world, null, x + .5, y + .5, z + .5, 3f);
 		explosion.affectedBlockPositions.add(new ChunkPosition(x, y, z));
 		explosion.doExplosionB(true);
 
 		for (EntityPlayer player : (List<EntityPlayer>) world.playerEntities) {
-			if (!(player instanceof EntityPlayerMP))
+			if (!(player instanceof EntityPlayerMP)) {
 				continue;
+			}
 
 			if (player.getDistanceSq(x, y, z) < 4096) {
 				((EntityPlayerMP) player).playerNetServerHandler.sendPacket(new S27PacketExplosion(x + .5, y + .5, z + .5, 3f, explosion.affectedBlockPositions, null));

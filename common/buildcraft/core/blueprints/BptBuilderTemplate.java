@@ -15,16 +15,17 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.BuildCraftBuilders;
 import buildcraft.api.blueprints.Schematic;
-import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.builders.TileAbstractBuilder;
 import buildcraft.core.blueprints.BuildingSlotBlock.Mode;
 import buildcraft.core.inventory.InventoryIterator;
 import buildcraft.core.inventory.InventoryIterator.IInvSlot;
+import buildcraft.core.utils.BlockUtil;
 
 public class BptBuilderTemplate extends BptBuilderBase {
 
-	LinkedList<BuildingSlotBlock> clearList = new LinkedList<BuildingSlotBlock>();
-	LinkedList<BuildingSlotBlock> buildList = new LinkedList<BuildingSlotBlock>();
+	private LinkedList<BuildingSlotBlock> buildList = new LinkedList<BuildingSlotBlock>();
+	private BuildingSlotIterator iterator;
+
 
 	public BptBuilderTemplate(BlueprintBase bluePrint, World world, int x, int y, int z) {
 		super(bluePrint, world, x, y, z);
@@ -47,11 +48,13 @@ public class BptBuilderTemplate extends BptBuilderBase {
 						b.z = zCoord;
 						b.mode = Mode.ClearIfInvalid;
 
-						clearList.add(b);
+						buildList.add(b);
 					}
 				}
 			}
 		}
+
+		buildList.add(null);
 
 		for (int j = 0; j < bluePrint.sizeY; ++j) {
 			for (int i = 0; i < bluePrint.sizeX; ++i) {
@@ -77,10 +80,12 @@ public class BptBuilderTemplate extends BptBuilderBase {
 				}
 			}
 		}
+
+		iterator = new BuildingSlotIterator(buildList);
 	}
 
 	private void checkDone() {
-		if (clearList.size() == 0 && buildList.size() == 0) {
+		if (buildList.size() == 0) {
 			done = true;
 		} else {
 			done = false;
@@ -89,15 +94,6 @@ public class BptBuilderTemplate extends BptBuilderBase {
 
 	@Override
 	public BuildingSlot getNextBlock(World world, TileAbstractBuilder inv) {
-		if (clearList.size() != 0) {
-			BuildingSlotBlock slot = internalGetNextBlock(world, inv, clearList);
-			checkDone();
-
-			if (slot != null) {
-				return slot;
-			}
-		}
-
 		if (buildList.size() != 0) {
 			BuildingSlotBlock slot = internalGetNextBlock(world, inv, buildList);
 			checkDone();
@@ -126,26 +122,36 @@ public class BptBuilderTemplate extends BptBuilderBase {
 			}
 		}
 
-		while (list.size() > 0) {
-			BuildingSlotBlock slot = list.getFirst();
+		iterator.startIteration();
 
-			if (slot.mode == Mode.ClearIfInvalid
-					&& !BuildCraftAPI.softBlocks.contains(context.world()
-							.getBlock(slot.x, slot.y, slot.z))) {
-				slot.addStackConsumed(new ItemStack(BuildCraftBuilders.stripesBlock));
-				result = slot;
-				list.removeFirst();
+		while (iterator.hasNext()) {
+			BuildingSlotBlock slot = iterator.next();
 
+			if (slot == null) {
 				break;
-			} else if (slot.mode == Mode.Build
-					&& BuildCraftAPI.softBlocks.contains(context.world()
-							.getBlock(slot.x, slot.y, slot.z))) {
-
-				if (firstSlotToConsume != null) {
-					slot.addStackConsumed(firstSlotToConsume.decreaseStackInSlot());
+			} else if (slot.mode == Mode.ClearIfInvalid) {
+				if (BlockUtil.isSoftBlock(world, slot.x, slot.y, slot.z)) {
+					iterator.remove();
+				} else {
+					slot.addStackConsumed(new ItemStack(
+							BuildCraftBuilders.stripesBlock));
 					result = slot;
-					list.removeFirst();
+					iterator.remove();
+
 					break;
+				}
+			} else if (slot.mode == Mode.Build) {
+				if (!BlockUtil.isSoftBlock(world, slot.x, slot.y, slot.z)) {
+					iterator.remove();
+				} else {
+					if (firstSlotToConsume != null) {
+						slot.addStackConsumed(firstSlotToConsume
+								.decreaseStackInSlot());
+						result = slot;
+						iterator.remove();
+
+						break;
+					}
 				}
 			}
 		}
