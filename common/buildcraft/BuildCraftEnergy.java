@@ -113,14 +113,22 @@ public class BuildCraftEnergy extends BuildCraftMod {
 
 		if (oilDesertBiomeId > 0) {
 			if (BiomeGenBase.getBiomeGenArray () [oilDesertBiomeId] != null) {
-				throw new BiomeIdException("oilDesert", oilDesertBiomeId);
+				//throw new BiomeIdException("oilDesert", oilDesertBiomeId);
+				oilDesertBiomeId = findUnusedBiomeID("oilDesert");
+				// save changes to config file
+				BuildCraftCore.mainConfiguration.get("biomes", "biomeOilDesert", oilDesertBiomeId).set(oilDesertBiomeId);
+				BuildCraftCore.mainConfiguration.save();
 			}
 			biomeOilDesert = BiomeGenOilDesert.makeBiome(oilDesertBiomeId);
 		}
 
 		if (oilOceanBiomeId > 0) {
 			if (BiomeGenBase.getBiomeGenArray () [oilOceanBiomeId] != null) {
-				throw new BiomeIdException("oilOcean", oilOceanBiomeId);
+				//throw new BiomeIdException("oilOcean", oilOceanBiomeId);
+				oilOceanBiomeId = findUnusedBiomeID("oilOcean");
+				// save changes to config file
+				BuildCraftCore.mainConfiguration.get("biomes", "biomeOilOcean", oilOceanBiomeId).set(oilOceanBiomeId);
+				BuildCraftCore.mainConfiguration.save();
 			}
 			biomeOilOcean = BiomeGenOilOcean.makeBiome(oilOceanBiomeId);
 		}
@@ -246,6 +254,25 @@ public class BuildCraftEnergy extends BuildCraftMod {
 			'g', Blocks.glass, 'G', BuildCraftCore.stoneGearItem, 'p', Blocks.piston});
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(engineBlock, 1, 2), new Object[]{"www", " g ", "GpG", 'w', Items.iron_ingot,
 			'g', Blocks.glass, 'G', BuildCraftCore.ironGearItem, 'p', Blocks.piston});
+	}
+
+	private int findUnusedBiomeID (String biomeName) {
+		int freeBiomeID = 0;
+		// code to find a free biome
+		for (int i=1; i<256; i++) {
+			if (BiomeGenBase.getBiomeGenArray()[i] == null) {
+				freeBiomeID = i;
+				return freeBiomeID;
+			}
+		}
+		// failed to find any free biome IDs
+		class BiomeIdLimitException extends RuntimeException {
+			public BiomeIdLimitException(String biome) {
+				super(String.format("You have a run out of free Biome Ids for %s", biome));
+			}
+		}
+		
+		throw new BiomeIdLimitExceptio(biomeName);
 	}
 
 	@EventHandler
