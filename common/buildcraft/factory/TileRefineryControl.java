@@ -8,6 +8,7 @@ import java.io.IOException;
 import buildcraft.BuildCraftEnergy;
 import buildcraft.api.fuels.IronEngineFuel;
 import buildcraft.api.gates.IAction;
+import buildcraft.api.mj.MjBattery;
 import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.power.PowerHandler;
 import buildcraft.api.power.PowerHandler.PowerReceiver;
@@ -32,44 +33,35 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
 
-public class TileRefineryControl extends TileBuildCraft implements IFluidHandler, IPowerReceptor, IInventory, IMachine {
+public class TileRefineryControl extends TileBuildCraft implements IFluidHandler, IInventory {
 	
-	private PowerHandler powerHandler;
 	public static int MAX_LIQUID = FluidContainerRegistry.BUCKET_VOLUME * 10;
 	public SingleUseTank inputTank = new SingleUseTank("inputTank", MAX_LIQUID, this);
 	public SingleUseTank outputTank = new SingleUseTank("outputTank", MAX_LIQUID, this);
 	private TankManager tankManager = new TankManager();
-	public double clientRequiredEnergy = 0;
-	private double energy = 0;
-	private int tick = 0;
-	private int recentEnergyAverage;
-	private double[] recentEnergy = new double[20];
+	@MjBattery (maxReceivedPerCycle = 25, maxCapacity = 1000)
+	public double energy;
 	@NetworkData
 	public FluidStack input;
 	@NetworkData
 	public FluidStack output;
 	
+	
 	public TileRefineryControl() {
-		powerHandler = new PowerHandler(this, Type.MACHINE);
-		initPowerProvider();
 		tankManager.add(inputTank);
 		tankManager.add(outputTank);
-	}
-
-	private void initPowerProvider() {
-		powerHandler.configure(50, 150, 25, 1000);
-		powerHandler.configurePowerPerdition(1, 1);
 	}
 	
 	@Override
 	public void updateEntity() {
-		tick++;
-		tick = tick % recentEnergy.length;
-		recentEnergy[tick] = 0.0f;
+			if (AmountOfOil() > 1 && AmountOfFuel() <= 9999 && energy >=25){
+				inputTank.drain(1, true);
+				outputTank.fill(new FluidStack (BuildCraftEnergy.fluidFuel, 1), true);
+				energy = energy-10;
+				sendNetworkUpdate();
+		}
 	}
-	public int getRecentEnergyAverage() {
-		return recentEnergyAverage;
-	}
+	
 	public int AmountOfOil(){
 		if (inputTank.isEmpty()){
 			return 0;
@@ -103,41 +95,8 @@ public class TileRefineryControl extends TileBuildCraft implements IFluidHandler
 		return energy;
 	}
 
-	public void setEnergy(double energy) {
-		this.energy = energy;
-	}
-
-	public void addEnergy(double energy) {
-		this.energy += energy;
-	}
-
-	public void subtractEnergy(double energy) {
-		this.energy -= energy;
-	}
-
-
 	public int getSizeInventory() {
 		return 0;
-	}
-
-	@Override
-	public boolean isActive() {
-		return false;
-	}
-
-	@Override
-	public boolean manageFluids() {
-		return false;
-	}
-
-	@Override
-	public boolean manageSolids() {
-		return false;
-	}
-
-	@Override
-	public boolean allowAction(IAction action) {
-		return false;
 	}
 
 	@Override
@@ -190,14 +149,6 @@ public class TileRefineryControl extends TileBuildCraft implements IFluidHandler
 	}
 
 	@Override
-	public PowerReceiver getPowerReceiver(ForgeDirection side) {
-		return powerHandler.getPowerReceiver();
-	}
-
-	@Override
-	public void doWork(PowerHandler workProvider) {}
-
-	@Override
 	public World getWorld() {
 		return null;
 	}
@@ -205,10 +156,12 @@ public class TileRefineryControl extends TileBuildCraft implements IFluidHandler
 	@Override
 	public int fill(ForgeDirection from, FluidStack resource, boolean doFill) {
 		sendNetworkUpdate();
-		if (resource.getFluid() == BuildCraftEnergy.fluidOil)
-			return inputTank.fill(resource, doFill);
-
-		return 0;
+		int fluid = 0;
+		if (resource.getFluid() == BuildCraftEnergy.fluidOil){
+			fluid = inputTank.fill(resource, doFill);
+			sendNetworkUpdate();
+		}
+		return fluid;
 	}
 
 	@Override
@@ -242,6 +195,7 @@ public class TileRefineryControl extends TileBuildCraft implements IFluidHandler
 	public void readFromNBT(NBTTagCompound data) {
 		super.readFromNBT(data);
 		tankManager.readFromNBT(data);
+		energy = data.getDouble("energy");
 
 	}
 
@@ -249,7 +203,7 @@ public class TileRefineryControl extends TileBuildCraft implements IFluidHandler
 	public void writeToNBT(NBTTagCompound data) {
 		super.writeToNBT(data);
 		tankManager.writeToNBT(data);
-
+		data.setDouble("energy", energy);
 	}
 
 	@Override

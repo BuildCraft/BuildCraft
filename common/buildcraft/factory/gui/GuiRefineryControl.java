@@ -47,23 +47,23 @@ public class GuiRefineryControl extends GuiBuildCraft{
 			} else {
 				fontRendererObj.drawString(title, getCenteredOffset(title), 6, 0xff0000);
 				}
+		refinery.sendNetworkUpdate();
 		fontRendererObj.drawString("Oil: "+ refinery.AmountOfOil(), 10, 50, 0x404040);
-		fontRendererObj.drawString("Fuel: "+ refinery.AmountOfFuel(), 10, 65, 0x404040);
-		
+		fontRendererObj.drawString("Fuel: "+ refinery.AmountOfFuel(), 10, 65, 0x404040);		
 		}
 
 	@Override
 	protected void drawGuiContainerBackgroundLayer(float f, int x, int y) {
-		super.drawGuiContainerBackgroundLayer(f, x, y);		
-		TileRefineryControl  refineryB = (TileRefineryControl) tile;
+		super.drawGuiContainerBackgroundLayer(f, x, y);
 		int j = (width - xSize) / 2;
 		int k = (height - ySize) / 2;
-		height = refineryB.getScaledInput(45);
-        drawFluid(refineryB.getInput(), refineryB.getScaledInput(58), j + 10, k + 19, 16, 58);
-        drawFluid(refineryB.getOutput(), refineryB.getScaledOutput(58), j + 12, k + 19, 16, 58);
-        mc.renderEngine.bindTexture(texture);
+		mc.renderEngine.bindTexture(texture);
         drawTexturedModalRect(j + 104, k + 19, 176, 0, 16, 60);
         drawTexturedModalRect(j + 122, k + 19, 176, 0, 16, 60);
+		TileRefineryControl  refineryB = (TileRefineryControl) tile;
+		height = refineryB.getScaledInput(58);
+        drawFluid(refineryB.getInput(), refineryB.getScaledInput(58), j + 103, k + 15, 16, 58);
+        drawFluid(refineryB.getOutput(), refineryB.getScaledOutput(58), j + 122, k + 15, 16, 58);
 	}
 
 	private void drawFluid(FluidStack fluid, int level, int x, int y, int width, int height){
@@ -71,7 +71,7 @@ public class GuiRefineryControl extends GuiBuildCraft{
 			return;
 		}
 		IIcon icon = fluid.getFluid().getIcon(fluid);
-		mc.renderEngine.bindTexture(texture);
+		mc.renderEngine.bindTexture(BLOCK_TEXTURE);
 		RenderUtils.setGLColorFromInt(fluid.getFluid().getColor(fluid));
 		int fullX = width / 16;
 		int fullY = height / 16;
