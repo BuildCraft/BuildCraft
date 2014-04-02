@@ -56,17 +56,46 @@ public class BuildingItem implements IBuilder {
 
 			double size = Math.sqrt(dx * dx + dy * dy + dz * dz);
 
-			maxLifetime = size * 7.0;
+			maxLifetime = size * 5.0;
 
 			maxHeight = (5.0 + (destination.y - origin.y) / 2.0);
 
-			double a = maxLifetime / 2.0;
-			double b = maxHeight;
-			double c = Math.sqrt(a * a + b * b);
+			// the below computation is an approximation of the distance to
+			// travel for the object. It really follows a sinus, but we compute
+			// the size of a triangle for simplification.
 
-			// Since the item is going to travel up as well, this is an
-			// approximation of the additional distance to go through.
-			maxLifetime = c * 2;
+			Position middle = new Position();
+			middle.x = (destination.x + origin.x) / 2;
+			middle.y = (destination.y + origin.y) / 2;
+			middle.z = (destination.z + origin.z) / 2;
+
+			Position top = new Position ();
+			top.x = middle.x;
+			top.y = middle.y + maxHeight;
+			top.z = middle.z;
+
+			Position originToTop = new Position ();
+			originToTop.x = top.x - origin.x;
+			originToTop.y = top.y - origin.y;
+			originToTop.z = top.z - origin.z;
+
+			Position destinationToTop = new Position ();
+			destinationToTop.x = destination.x - origin.x;
+			destinationToTop.y = destination.y - origin.y;
+			destinationToTop.z = destination.z - origin.z;
+
+			Position distance = new Position();
+
+			double d1 = Math.sqrt(originToTop.x * originToTop.x + originToTop.y
+					* originToTop.y + originToTop.z * originToTop.z);
+
+			double d2 = Math.sqrt(destinationToTop.x * destinationToTop.x + destinationToTop.y
+					* destinationToTop.y + destinationToTop.z * destinationToTop.z);
+
+			d1 = d1 / size * maxLifetime;
+			d2 = d2 / size * maxLifetime;
+
+			maxLifetime = d1 + d2;
 
 			vx = dx / maxLifetime;
 			vy = dy / maxLifetime;
