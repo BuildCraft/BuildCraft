@@ -8,10 +8,25 @@
  */
 package buildcraft;
 
+import java.util.TreeMap;
+
+import net.minecraft.block.Block;
+import net.minecraft.block.material.Material;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.world.biome.BiomeGenBase;
+import net.minecraftforge.client.event.TextureStitchEvent;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.config.Configuration;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidContainerRegistry;
+import net.minecraftforge.fluids.FluidRegistry;
+import net.minecraftforge.fluids.FluidStack;
 import buildcraft.api.fuels.IronEngineCoolant;
 import buildcraft.api.fuels.IronEngineFuel;
 import buildcraft.api.recipes.BuildcraftRecipes;
-import buildcraft.core.recipes.RefineryRecipeManager;
 import buildcraft.core.BlockIndex;
 import buildcraft.core.BlockSpring;
 import buildcraft.core.DefaultProps;
@@ -21,12 +36,11 @@ import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.triggers.BCTrigger;
 import buildcraft.energy.BlockBuildcraftFluid;
 import buildcraft.energy.BlockEngine;
-import buildcraft.energy.BptBlockEngine;
+import buildcraft.energy.BucketHandler;
 import buildcraft.energy.EnergyProxy;
 import buildcraft.energy.GuiHandler;
 import buildcraft.energy.ItemBucketBuildcraft;
 import buildcraft.energy.ItemEngine;
-import buildcraft.energy.BucketHandler;
 import buildcraft.energy.TileEngine.EnergyStage;
 import buildcraft.energy.triggers.TriggerEngineHeat;
 import buildcraft.energy.worldgen.BiomeGenOilDesert;
@@ -46,24 +60,6 @@ import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-
-import java.util.TreeMap;
-
-import net.minecraft.block.Block;
-import net.minecraft.block.material.Material;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.world.biome.BiomeGenBase;
-import net.minecraftforge.client.event.TextureStitchEvent;
-import net.minecraftforge.common.config.Configuration;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.config.Property;
-import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidContainerRegistry;
-import net.minecraftforge.fluids.FluidRegistry;
-import net.minecraftforge.fluids.FluidStack;
 
 @Mod(name = "BuildCraft Energy", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Energy", dependencies = DefaultProps.DEPENDENCY_CORE)
 public class BuildCraftEnergy extends BuildCraftMod {
@@ -94,7 +90,7 @@ public class BuildCraftEnergy extends BuildCraftMod {
 	public static BuildCraftEnergy instance;
 
 	@EventHandler
-	public void preInit(FMLPreInitializationEvent evt) {		
+	public void preInit(FMLPreInitializationEvent evt) {
 		int oilDesertBiomeId = BuildCraftCore.mainConfiguration.get("biomes", "biomeOilDesert", DefaultProps.BIOME_OIL_DESERT).getInt(DefaultProps.BIOME_OIL_DESERT);
 		int oilOceanBiomeId = BuildCraftCore.mainConfiguration.get("biomes", "biomeOilOcean", DefaultProps.BIOME_OIL_OCEAN).getInt(DefaultProps.BIOME_OIL_OCEAN);
 		canOilBurn = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "burnOil", true, "Can oil burn?").getBoolean(true);
@@ -113,7 +109,6 @@ public class BuildCraftEnergy extends BuildCraftMod {
 
 		if (oilDesertBiomeId > 0) {
 			if (BiomeGenBase.getBiomeGenArray () [oilDesertBiomeId] != null) {
-				//throw new BiomeIdException("oilDesert", oilDesertBiomeId);
 				oilDesertBiomeId = findUnusedBiomeID("oilDesert");
 				// save changes to config file
 				BuildCraftCore.mainConfiguration.get("biomes", "biomeOilDesert", oilDesertBiomeId).set(oilDesertBiomeId);
@@ -124,7 +119,6 @@ public class BuildCraftEnergy extends BuildCraftMod {
 
 		if (oilOceanBiomeId > 0) {
 			if (BiomeGenBase.getBiomeGenArray () [oilOceanBiomeId] != null) {
-				//throw new BiomeIdException("oilOcean", oilOceanBiomeId);
 				oilOceanBiomeId = findUnusedBiomeID("oilOcean");
 				// save changes to config file
 				BuildCraftCore.mainConfiguration.get("biomes", "biomeOilOcean", oilOceanBiomeId).set(oilOceanBiomeId);
@@ -155,7 +149,7 @@ public class BuildCraftEnergy extends BuildCraftMod {
 			blockOil = new BlockBuildcraftFluid(fluidOil, Material.water).setFlammable(canOilBurn).setFlammability(0);
 			blockOil.setBlockName("blockOil");
 			CoreProxy.proxy.registerBlock(blockOil);
-			fluidOil.setBlock(blockOil);		
+			fluidOil.setBlock(blockOil);
 		} else {
 			blockOil = fluidOil.getBlock();
 		}
@@ -170,7 +164,7 @@ public class BuildCraftEnergy extends BuildCraftMod {
 			blockFuel = new BlockBuildcraftFluid(fluidFuel, Material.water).setFlammable(true).setFlammability(5).setParticleColor(0.7F, 0.7F, 0.0F);
 			blockFuel.setBlockName("blockFuel");
 			CoreProxy.proxy.registerBlock(blockFuel);
-			fluidFuel.setBlock(blockFuel);			
+			fluidFuel.setBlock(blockFuel);
 		} else {
 			blockFuel = fluidFuel.getBlock();
 		}
@@ -216,8 +210,8 @@ public class BuildCraftEnergy extends BuildCraftMod {
 	public void init(FMLInitializationEvent evt) {
 		channels = NetworkRegistry.INSTANCE.newChannel
 				(DefaultProps.NET_CHANNEL_NAME + "-ENERGY", new PacketHandlerTransport());
-		
-		NetworkRegistry.INSTANCE.registerGuiHandler(instance, new GuiHandler());		
+
+		NetworkRegistry.INSTANCE.registerGuiHandler(instance, new GuiHandler());
 
 		//new BptBlockEngine(engineBlock.blockID);
 
@@ -254,30 +248,11 @@ public class BuildCraftEnergy extends BuildCraftMod {
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(engineBlock, 1, 2), new Object[]{"www", " g ", "GpG", 'w', Items.iron_ingot,
 			'g', Blocks.glass, 'G', BuildCraftCore.ironGearItem, 'p', Blocks.piston});
 	}
-	
-	private int findUnusedBiomeID (String biomeName) {
-		int freeBiomeID = 0;
-		// code to find a free biome
-		for (int i=1; i<256; i++) {
-			if (BiomeGenBase.getBiomeGenArray()[i] == null) {
-				freeBiomeID = i;
-				return freeBiomeID;
-			}
-		}
-		// failed to find any free biome IDs
-		class BiomeIdLimitException extends RuntimeException {
-			public BiomeIdLimitException(String biome) {
-				super(String.format("You have a run out of free Biome Ids for %s", biome));
-			}
-		}
-		
-		throw new BiomeIdLimitException(biomeName);
-	}
 
 	private int findUnusedBiomeID (String biomeName) {
 		int freeBiomeID = 0;
 		// code to find a free biome
-		for (int i=1; i<256; i++) {
+		for (int i = 1; i < 256; i++) {
 			if (BiomeGenBase.getBiomeGenArray()[i] == null) {
 				freeBiomeID = i;
 				return freeBiomeID;
@@ -289,7 +264,7 @@ public class BuildCraftEnergy extends BuildCraftMod {
 				super(String.format("You have a run out of free Biome Ids for %s", biome));
 			}
 		}
-		
+
 		throw new BiomeIdLimitException(biomeName);
 	}
 
