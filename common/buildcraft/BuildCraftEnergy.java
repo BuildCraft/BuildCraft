@@ -100,13 +100,6 @@ public class BuildCraftEnergy extends BuildCraftMod {
 		double fuelFuelMultiplier = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "fuel.fuel.combustion", 1.0F, "adjust energy value of Fuel in Combustion Engines").getDouble(1.0F);
 		BuildCraftCore.mainConfiguration.save();
 
-		class BiomeIdException extends RuntimeException {
-
-			public BiomeIdException(String biome, int id) {
-				super(String.format("You have a Biome Id conflict at %d for %s", id, biome));
-			}
-		}
-
 		if (oilDesertBiomeId > 0) {
 			if (BiomeGenBase.getBiomeGenArray () [oilDesertBiomeId] != null) {
 				oilDesertBiomeId = findUnusedBiomeID("oilDesert");
