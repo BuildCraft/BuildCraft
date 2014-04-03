@@ -39,6 +39,7 @@ import buildcraft.factory.BlockPlainPipe;
 import buildcraft.factory.BlockPump;
 import buildcraft.factory.BlockQuarry;
 import buildcraft.factory.BlockRefinery;
+import buildcraft.factory.BlockRefineryValve;
 import buildcraft.factory.BlockTank;
 import buildcraft.factory.FactoryProxy;
 import buildcraft.factory.FactoryProxyClient;
@@ -55,6 +56,7 @@ import buildcraft.factory.TilePump;
 import buildcraft.factory.TileQuarry;
 import buildcraft.factory.TileRefinery;
 import buildcraft.factory.TileRefineryControl;
+import buildcraft.factory.TileRefineryValve;
 import buildcraft.factory.TileTank;
 import buildcraft.factory.network.PacketHandlerFactory;
 
@@ -88,6 +90,7 @@ public class BuildCraftFactory extends BuildCraftMod {
 	public static BlockHopper hopperBlock;
 	public static BlockRefineryHeater blockRefineryHeater;
 	public static BlockRefineryControl blockRefineryControl;
+	public static BlockRefineryValve blockRefineryValve;
 	public static boolean allowMining = true;
 	public static boolean quarryOneTimeUse = false;
 	public static float miningMultiplier = 1;
@@ -148,6 +151,7 @@ public class BuildCraftFactory extends BuildCraftMod {
 		CoreProxy.proxy.registerTileEntity(TileRefinery.class, "net.minecraft.src.buildcraft.factory.Refinery");
 		CoreProxy.proxy.registerTileEntity(TileHopper.class, "net.minecraft.src.buildcraft.factory.TileHopper");
 		CoreProxy.proxy.registerTileEntity(TileRefineryControl.class, "TileRefineryControl");
+		CoreProxy.proxy.registerTileEntity(TileRefineryValve.class, "TileRefineryValve");
 
 		FactoryProxy.proxy.initializeTileEntities();
 
@@ -219,6 +223,9 @@ public class BuildCraftFactory extends BuildCraftMod {
 		
 		blockRefineryControl = new BlockRefineryControl();
 		CoreProxy.proxy.registerBlock(blockRefineryControl.setBlockName("BlockRefineryControl"));
+		
+		blockRefineryValve = new BlockRefineryValve();
+		CoreProxy.proxy.registerBlock(blockRefineryValve.setBlockName("BlockRefineryValve"));
 
 
 		FactoryProxy.proxy.initializeEntityRenders();

@@ -27,7 +27,7 @@ public class MultiBlockCheck {
 				for (int teller3 = 0; teller3>=-2; teller3--){
 					if (teller2 == 1 && teller3 == -1){
 						if (teller == -4 || teller == 4){
-							if (world.getBlock(x+teller, y+teller2, z+teller3)!=BuildCraftFactory.floodGateBlock){
+							if (world.getBlock(x+teller, y+teller2, z+teller3)!=BuildCraftFactory.blockRefineryValve){
 								partOfMultiBlock=false;
 							} 
 						} else {
@@ -64,7 +64,7 @@ public class MultiBlockCheck {
 				for (int teller3 = 0; teller3<=2; teller3++){
 					if (teller2 == 1 && teller3 == 1){
 						if (teller == -4 || teller == 4){
-							if (world.getBlock(x+teller3, y+teller2, z+teller)!=BuildCraftFactory.floodGateBlock){
+							if (world.getBlock(x+teller3, y+teller2, z+teller)!=BuildCraftFactory.blockRefineryValve){
 								partOfMultiBlock=false;
 							} 
 						} else {
@@ -101,7 +101,7 @@ public class MultiBlockCheck {
 				for (int teller3 = 0; teller3<=2; teller3++){
 					if (teller2 == 1 && teller3 == 1){
 						if (teller == -4 || teller == 4){
-							if (world.getBlock(x+teller, y+teller2, z+teller3)!=BuildCraftFactory.floodGateBlock){
+							if (world.getBlock(x+teller, y+teller2, z+teller3)!=BuildCraftFactory.blockRefineryValve){
 								partOfMultiBlock=false;
 							} 
 						} else {
@@ -138,7 +138,7 @@ public class MultiBlockCheck {
 				for (int teller3 = 0; teller3>=-2; teller3--){
 					if (teller2 == 1 && teller3 == -1){
 						if (teller == -4 || teller == 4){
-							if (world.getBlock(x+teller3, y+teller2, z+teller)!=BuildCraftFactory.floodGateBlock){
+							if (world.getBlock(x+teller3, y+teller2, z+teller)!=BuildCraftFactory.blockRefineryValve){
 								partOfMultiBlock=false;
 							} 
 						} else {

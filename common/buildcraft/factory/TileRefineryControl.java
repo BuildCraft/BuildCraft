@@ -41,10 +41,7 @@ public class TileRefineryControl extends TileBuildCraft implements IFluidHandler
 	private TankManager tankManager = new TankManager();
 	@MjBattery (maxReceivedPerCycle = 25, maxCapacity = 1000)
 	public double energy;
-	@NetworkData
-	public FluidStack input;
-	@NetworkData
-	public FluidStack output;
+	
 	
 	
 	public TileRefineryControl() {
