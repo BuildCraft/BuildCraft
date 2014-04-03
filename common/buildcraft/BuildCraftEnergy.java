@@ -290,7 +290,7 @@ public class BuildCraftEnergy extends BuildCraftMod {
 			}
 		}
 		
-		throw new BiomeIdLimitExceptio(biomeName);
+		throw new BiomeIdLimitException(biomeName);
 	}
 
 	@EventHandler
