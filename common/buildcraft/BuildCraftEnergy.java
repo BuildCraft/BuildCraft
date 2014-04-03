@@ -133,7 +133,6 @@ public class BuildCraftEnergy extends BuildCraftMod {
 			biomeOilOcean = BiomeGenOilOcean.makeBiome(oilOceanBiomeId);
 		}
 
-
 		engineBlock = new BlockEngine();
 		CoreProxy.proxy.registerBlock(engineBlock, ItemEngine.class);
 
@@ -254,6 +253,25 @@ public class BuildCraftEnergy extends BuildCraftMod {
 			'g', Blocks.glass, 'G', BuildCraftCore.stoneGearItem, 'p', Blocks.piston});
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(engineBlock, 1, 2), new Object[]{"www", " g ", "GpG", 'w', Items.iron_ingot,
 			'g', Blocks.glass, 'G', BuildCraftCore.ironGearItem, 'p', Blocks.piston});
+	}
+	
+	private int findUnusedBiomeID (String biomeName) {
+		int freeBiomeID = 0;
+		// code to find a free biome
+		for (int i=1; i<256; i++) {
+			if (BiomeGenBase.getBiomeGenArray()[i] == null) {
+				freeBiomeID = i;
+				return freeBiomeID;
+			}
+		}
+		// failed to find any free biome IDs
+		class BiomeIdLimitException extends RuntimeException {
+			public BiomeIdLimitException(String biome) {
+				super(String.format("You have a run out of free Biome Ids for %s", biome));
+			}
+		}
+		
+		throw new BiomeIdLimitException(biomeName);
 	}
 
 	private int findUnusedBiomeID (String biomeName) {
