@@ -132,8 +132,17 @@ public class BptBuilderTemplate extends BptBuilderBase {
 				if (BlockUtil.isSoftBlock(world, slot.x, slot.y, slot.z)) {
 					iterator.remove();
 				} else {
-					slot.addStackConsumed(new ItemStack(
-							BuildCraftBuilders.stripesBlock));
+					int hardness = (int) context
+							.world()
+							.getBlock(slot.x, slot.y, slot.z)
+							.getBlockHardness(context.world(), slot.x, slot.y,
+									slot.z) + 1;
+
+					for (int i = 0; i < hardness; ++i) {
+						slot.addStackConsumed(new ItemStack(
+								BuildCraftBuilders.buildToolBlock));
+					}
+
 					result = slot;
 					iterator.remove();
 

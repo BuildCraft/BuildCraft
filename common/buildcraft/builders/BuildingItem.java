@@ -109,7 +109,7 @@ public class BuildingItem implements IBuilder {
 
 			if (stacksToDisplay.size() == 0) {
 				StackAtPosition sPos = new StackAtPosition();
-				sPos.stack = new ItemStack(BuildCraftBuilders.stripesBlock);
+				sPos.stack = new ItemStack(BuildCraftBuilders.buildToolBlock);
 				stacksToDisplay.add(sPos);
 			}
 
