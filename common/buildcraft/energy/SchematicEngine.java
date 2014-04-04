@@ -8,6 +8,9 @@
  */
 package buildcraft.energy;
 
+import java.util.LinkedList;
+
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.SchematicTile;
@@ -31,8 +34,8 @@ public class SchematicEngine extends SchematicTile {
 	}
 
 	@Override
-	public void writeToWorld(IBuilderContext context, int x, int y, int z) {
-		super.writeToWorld(context, x, y, z);
+	public void writeToWorld(IBuilderContext context, int x, int y, int z, LinkedList <ItemStack> stacks) {
+		super.writeToWorld(context, x, y, z, stacks);
 
 		TileEngine engine = (TileEngine) context.world().getTileEntity(x, y, z);
 

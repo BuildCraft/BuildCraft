@@ -26,7 +26,6 @@ public class BptBuilderTemplate extends BptBuilderBase {
 	private LinkedList<BuildingSlotBlock> buildList = new LinkedList<BuildingSlotBlock>();
 	private BuildingSlotIterator iterator;
 
-
 	public BptBuilderTemplate(BlueprintBase bluePrint, World world, int x, int y, int z) {
 		super(bluePrint, world, x, y, z);
 

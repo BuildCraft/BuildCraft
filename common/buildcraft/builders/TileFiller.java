@@ -328,7 +328,7 @@ public class TileFiller extends TileAbstractBuilder implements IMachine, IAction
 
 	@Override
 	public AxisAlignedBB getRenderBoundingBox() {
-		return new Box (this).extendToEncompass(box).getBoundingBox();
+		return new Box (this).extendToEncompass(box).expand(50).getBoundingBox();
 	}
 
 	@Override

@@ -8,6 +8,9 @@
  */
 package buildcraft.builders.schematics;
 
+import java.util.LinkedList;
+
+import net.minecraft.item.ItemStack;
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.SchematicBlock;
 
@@ -52,7 +55,7 @@ public class SchematicRail extends SchematicBlock {
 	}
 
 	@Override
-	public void writeToWorld(IBuilderContext context, int x, int y, int z) {
+	public void writeToWorld(IBuilderContext context, int x, int y, int z, LinkedList <ItemStack> stacks) {
 		context.world().setBlock(x, y, z, block, 0, 3);
 	}
 

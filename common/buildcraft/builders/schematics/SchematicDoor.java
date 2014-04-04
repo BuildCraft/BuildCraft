@@ -63,7 +63,7 @@ public class SchematicDoor extends SchematicBlock {
 	}
 
 	@Override
-	public void writeToWorld(IBuilderContext context, int x, int y, int z) {
+	public void writeToWorld(IBuilderContext context, int x, int y, int z, LinkedList <ItemStack> stacks) {
 		context.world().setBlock(x, y, z, block, meta, 3);
 		context.world().setBlock(x, y + 1, z, block, upperMeta, 3);
 

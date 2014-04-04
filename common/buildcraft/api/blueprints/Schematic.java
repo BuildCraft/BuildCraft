@@ -124,9 +124,10 @@ public class Schematic {
 	}
 
 	/**
-	 * Places the block in the world, at the location specified in the slot.
+	 * Places the block in the world, at the location specified in the slot,
+	 * using the stack in parameters
 	 */
-	public void writeToWorld(IBuilderContext context, int x, int y, int z) {
+	public void writeToWorld(IBuilderContext context, int x, int y, int z, LinkedList <ItemStack> stacks) {
 
 	}
 

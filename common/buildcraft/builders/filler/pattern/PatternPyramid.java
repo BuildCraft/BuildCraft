@@ -8,8 +8,7 @@
  */
 package buildcraft.builders.filler.pattern;
 
-import net.minecraft.init.Blocks;
-import buildcraft.api.blueprints.SchematicRegistry;
+import buildcraft.api.blueprints.SchematicMask;
 import buildcraft.core.Box;
 import buildcraft.core.blueprints.Template;
 
@@ -57,7 +56,7 @@ public class PatternPyramid extends FillerPattern {
 		while (step <= xSize / 2 && step <= zSize / 2 && height >= yMin && height <= yMax) {
 			for (int x = xMin + step; x <= xMax - step; ++x) {
 				for (int z = zMin + step; z <= zMax - step; ++z) {
-					bpt.contents [x - xMin][height - yMin][z - zMin] = SchematicRegistry.newSchematicBlock(Blocks.stone);
+					bpt.contents [x - xMin][height - yMin][z - zMin] = new SchematicMask(true);
 				}
 			}
 

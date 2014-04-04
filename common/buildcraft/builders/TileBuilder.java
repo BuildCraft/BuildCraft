@@ -658,7 +658,7 @@ public class TileBuilder extends TileAbstractBuilder implements IMachine, IBoxPr
 			renderBox = renderBox.extendToEncompass(l.tail);
 		}
 
-		return renderBox.getBoundingBox();
+		return renderBox.expand(50).getBoundingBox();
 	}
 
 	public void debugForceBlueprintCompletion () {

@@ -141,18 +141,20 @@ public class Box implements IBox {
 	}
 
 	@Override
-	public void expand(int amount) {
-		xMin += amount;
-		yMin += amount;
-		zMin += amount;
+	public Box expand(int amount) {
+		xMin -= amount;
+		yMin -= amount;
+		zMin -= amount;
 		xMax += amount;
 		yMax += amount;
 		zMax += amount;
+
+		return this;
 	}
 
 	@Override
-	public void contract(int amount) {
-		expand(-amount);
+	public IBox contract(int amount) {
+		return expand(-amount);
 	}
 
 	@Override

@@ -9,6 +9,7 @@
 package buildcraft.transport.blueprints;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -70,7 +71,7 @@ public class SchematicPipe extends SchematicTile {
 	}
 
 	@Override
-	public void writeToWorld(IBuilderContext context, int x, int y, int z) {
+	public void writeToWorld(IBuilderContext context, int x, int y, int z, LinkedList <ItemStack> stacks) {
 		cpt.setInteger("x", x);
 		cpt.setInteger("y", y);
 		cpt.setInteger("z", z);

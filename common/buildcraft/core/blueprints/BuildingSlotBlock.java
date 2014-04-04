@@ -44,7 +44,7 @@ public class BuildingSlotBlock extends BuildingSlot implements Comparable<Buildi
 			}
 		} else {
 			try {
-				getSchematic().writeToWorld(context, x, y, z);
+				getSchematic().writeToWorld(context, x, y, z, stackConsumed);
 
 				// Once the schematic has been written, we're going to issue
 				// calls

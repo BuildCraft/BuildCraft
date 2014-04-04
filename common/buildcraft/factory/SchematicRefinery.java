@@ -8,6 +8,9 @@
  */
 package buildcraft.factory;
 
+import java.util.LinkedList;
+
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.SchematicTile;
@@ -28,8 +31,8 @@ public class SchematicRefinery extends SchematicTile {
 	}
 
 	@Override
-	public void writeToWorld(IBuilderContext context, int x, int y, int z) {
-		super.writeToWorld(context, x, y, z);
+	public void writeToWorld(IBuilderContext context, int x, int y, int z, LinkedList <ItemStack> stacks) {
+		super.writeToWorld(context, x, y, z, stacks);
 
 		TileRefinery refinery = (TileRefinery) context.world().getTileEntity(x, y, z);
 

@@ -12,6 +12,7 @@ import java.util.LinkedList;
 
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
+import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.BlockUtil;
 
 public class SchematicMask extends Schematic {
@@ -23,9 +24,17 @@ public class SchematicMask extends Schematic {
 	}
 
 	@Override
-	public void writeToWorld(IBuilderContext context, int x, int y, int z) {
+	public void writeToWorld(IBuilderContext context, int x, int y, int z, LinkedList <ItemStack> stacks) {
 		if (isConcrete) {
-			context.world().setBlock(x, y, z, Blocks.brick_block, 0, 3);
+			if (stacks.size() == 0 || !BlockUtil.isSoftBlock(context.world(), x, y, z)) {
+				return;
+			} else {
+				ItemStack stack = stacks.getFirst();
+
+				stack.tryPlaceItemIntoWorld(
+						CoreProxy.proxy.getBuildCraftPlayer(context.world()),
+						context.world(), x, y, z, 1, 0.0f, 0.0f, 0.0f);
+			}
 		} else {
 			context.world().setBlock(x, y, z, Blocks.air, 0, 3);
 		}

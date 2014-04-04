@@ -54,7 +54,7 @@ public class SchematicFluid extends SchematicBlock {
 	}
 
 	@Override
-	public void writeToWorld(IBuilderContext context, int x, int y, int z) {
+	public void writeToWorld(IBuilderContext context, int x, int y, int z, LinkedList <ItemStack> stacks) {
 		if (meta == 0) {
 			context.world().setBlock(x, y, z, block, 0, 3);
 		}

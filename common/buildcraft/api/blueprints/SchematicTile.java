@@ -9,6 +9,7 @@
 package buildcraft.api.blueprints;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
@@ -30,8 +31,8 @@ public class SchematicTile extends SchematicBlock {
 	 * Places the block in the world, at the location specified in the slot.
 	 */
 	@Override
-	public void writeToWorld(IBuilderContext context, int x, int y, int z) {
-		super.writeToWorld(context, x, y, z);
+	public void writeToWorld(IBuilderContext context, int x, int y, int z, LinkedList <ItemStack> stacks) {
+		super.writeToWorld(context, x, y, z, stacks);
 
 		if (block.hasTileEntity(meta)) {
 			TileEntity tile = context.world().getTileEntity(x, y, z);
