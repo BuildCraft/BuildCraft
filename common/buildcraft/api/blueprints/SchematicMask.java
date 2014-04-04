@@ -55,4 +55,12 @@ public class SchematicMask extends Schematic {
 		requirements.add(new ItemStack(Blocks.brick_block));
 	}
 
+	@Override
+	public void writeCompleted(IBuilderContext context, int x, int y, int z, double completed) {
+		if (!isConcrete) {
+			context.world().destroyBlockInWorldPartially(0, x, y, z,
+					(int) (completed * 10.0F) - 1);
+		}
+	}
+
 }

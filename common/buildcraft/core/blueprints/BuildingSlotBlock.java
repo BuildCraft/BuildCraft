@@ -113,4 +113,9 @@ public class BuildingSlotBlock extends BuildingSlot implements Comparable<Buildi
 	public Position getDestination () {
 		return new Position (x + 0.5, y + 0.5, z + 0.5);
 	}
+
+	@Override
+	public void writeCompleted (IBuilderContext context, double complete) {
+		getSchematic().writeCompleted(context, x, y, z, complete);
+	}
 }

@@ -22,6 +22,10 @@ public abstract class BuildingSlot {
 
 	}
 
+	public void writeCompleted (IBuilderContext context, double complete) {
+
+	}
+
 	public void postProcessing (IBuilderContext context) {
 
 	}

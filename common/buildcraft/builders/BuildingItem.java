@@ -20,6 +20,7 @@ import buildcraft.core.blueprints.IBuilder;
 import buildcraft.core.network.NetworkData;
 
 public class BuildingItem implements IBuilder {
+
 	@NetworkData
 	public Position origin, destination;
 
@@ -47,6 +48,8 @@ public class BuildingItem implements IBuilder {
 
 	public BuildingSlot slotToBuild;
 	public IBuilderContext context;
+
+	public double receivedProgress = 0;
 
 	public void initialize () {
 		if (!initialized) {
@@ -143,6 +146,11 @@ public class BuildingItem implements IBuilder {
 
 		lifetimeDisplay = lifetime;
 		previousUpdate = new Date ().getTime();
+
+		if (slotToBuild != null && lifetime > maxLifetime) {
+			slotToBuild.writeCompleted(context, (lifetime - maxLifetime)
+					/ stacksToBuild.size());
+		}
 	}
 
 	public void displayUpdate () {
