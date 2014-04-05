@@ -26,7 +26,6 @@ import buildcraft.api.gates.IAction;
 import buildcraft.core.BlockIndex;
 import buildcraft.core.Box;
 import buildcraft.core.Box.Kind;
-import buildcraft.core.IBoxProvider;
 import buildcraft.core.IMachine;
 import buildcraft.core.LaserData;
 import buildcraft.core.blueprints.Blueprint;
@@ -41,7 +40,7 @@ import buildcraft.core.network.RPCHandler;
 import buildcraft.core.network.RPCSide;
 import buildcraft.core.utils.Utils;
 
-public class TileBuilder extends TileAbstractBuilder implements IMachine, IBoxProvider {
+public class TileBuilder extends TileAbstractBuilder implements IMachine {
 
 	private static int POWER_ACTIVATION = 50;
 

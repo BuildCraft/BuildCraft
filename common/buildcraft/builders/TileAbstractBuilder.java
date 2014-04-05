@@ -12,8 +12,10 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 
 import net.minecraft.inventory.IInventory;
+import net.minecraft.nbt.NBTTagCompound;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.mj.MjBattery;
+import buildcraft.core.IBoxProvider;
 import buildcraft.core.LaserData;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.network.NetworkData;
@@ -21,7 +23,7 @@ import buildcraft.core.network.RPC;
 import buildcraft.core.network.RPCHandler;
 import buildcraft.core.network.RPCSide;
 
-public abstract class TileAbstractBuilder extends TileBuildCraft implements IInventory {
+public abstract class TileAbstractBuilder extends TileBuildCraft implements IInventory, IBoxProvider {
 
 	public static double BREAK_ENERGY = 10;
 	public static double BUILD_ENERGY = 20;
@@ -83,5 +85,17 @@ public abstract class TileAbstractBuilder extends TileBuildCraft implements IInv
 		mjStored -= quantity;
 	}
 
+	@Override
+	public void readFromNBT(NBTTagCompound nbttagcompound) {
+		super.readFromNBT(nbttagcompound);
 
+		mjStored = nbttagcompound.getDouble("mjStored");
+	}
+
+	@Override
+	public void writeToNBT(NBTTagCompound nbttagcompound) {
+		super.writeToNBT(nbttagcompound);
+
+		nbttagcompound.setDouble("mjStored", mjStored);
+	}
 }

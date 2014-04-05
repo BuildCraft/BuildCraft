@@ -183,7 +183,9 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 						}
 					}
 				} else {
-					if (checkRequirements(builder, (SchematicBlock) slot.schematic)) {
+					if (BlockUtil.isSoftBlock(world, slot.x, slot.y, slot.z)
+							&& checkRequirements(builder,
+									(SchematicBlock) slot.schematic)) {
 						useRequirements(builder, slot);
 
 						iterator.remove();

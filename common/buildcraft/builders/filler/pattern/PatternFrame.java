@@ -20,7 +20,7 @@ public class PatternFrame extends FillerPattern {
 	}
 
 	@Override
-	public Template getBlueprint(Box box) {
+	public Template getTemplate(Box box) {
 		Template template = new Template (box.sizeX(), box.sizeY(), box.sizeZ());
 
 		int xMin = 0;

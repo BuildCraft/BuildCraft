@@ -22,7 +22,7 @@ public class PatternPyramid extends FillerPattern {
 	boolean param1 = true;
 
 	@Override
-	public Template getBlueprint (Box box) {
+	public Template getTemplate (Box box) {
 		int xMin = (int) box.pMin().x;
 		int yMin = (int) box.pMin().y;
 		int zMin = (int) box.pMin().z;

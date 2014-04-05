@@ -178,11 +178,8 @@ public class BuildingItem implements IBuilder {
 			Block block = context.world().getBlock((int) destination.x, (int)destination.y, (int)destination.z);
 			int meta = context.world().getBlockMetadata((int) destination.x, (int)destination.y, (int)destination.z);
 
-			context.world().playAuxSFXAtEntity(
-					null,
-					2001,
-					(int) destination.x,
-					(int) destination.y,
+			context.world().playAuxSFXAtEntity(null, 2001,
+					(int) destination.x, (int) destination.y,
 					(int) destination.z,
 					Block.getIdFromBlock(block) + (meta << 12));
 

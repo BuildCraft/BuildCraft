@@ -18,7 +18,7 @@ public class PatternHorizon extends FillerPattern {
 	}
 
 	@Override
-	public Template getBlueprint(Box box) {
+	public Template getTemplate(Box box) {
 		/*
 		int xMin = 0;
 		int yMin = 0;

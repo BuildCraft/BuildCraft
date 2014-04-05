@@ -26,7 +26,6 @@ import buildcraft.builders.filler.pattern.PatternFill;
 import buildcraft.builders.triggers.ActionFiller;
 import buildcraft.core.Box;
 import buildcraft.core.Box.Kind;
-import buildcraft.core.IBoxProvider;
 import buildcraft.core.IMachine;
 import buildcraft.core.blueprints.BptBuilderTemplate;
 import buildcraft.core.blueprints.BptContext;
@@ -40,7 +39,7 @@ import buildcraft.core.triggers.ActionMachineControl;
 import buildcraft.core.triggers.ActionMachineControl.Mode;
 import buildcraft.core.utils.Utils;
 
-public class TileFiller extends TileAbstractBuilder implements IMachine, IActionReceptor, IBoxProvider {
+public class TileFiller extends TileAbstractBuilder implements IMachine, IActionReceptor {
 
 	public IFillerPattern currentPattern = PatternFill.INSTANCE;
 
@@ -105,7 +104,7 @@ public class TileFiller extends TileAbstractBuilder implements IMachine, IAction
 
 		if (currentPattern != null && currentTemplate == null) {
 			currentTemplate = new BptBuilderTemplate(
-					currentPattern.getBlueprint(box), getWorld(), box.xMin,
+					currentPattern.getTemplate(box), getWorld(), box.xMin,
 					box.yMin, box.zMin);
 			context = currentTemplate.getContext();
 		}
