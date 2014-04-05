@@ -15,7 +15,7 @@ import net.minecraft.item.ItemStack;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.BlockUtil;
 
-public class SchematicMask extends Schematic {
+public class SchematicMask extends SchematicBlockBase {
 
 	public boolean isConcrete = true;
 

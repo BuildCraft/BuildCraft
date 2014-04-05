@@ -13,14 +13,14 @@ import java.util.LinkedList;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import buildcraft.api.blueprints.IBuilderContext;
-import buildcraft.api.blueprints.Schematic;
+import buildcraft.api.blueprints.SchematicBlockBase;
 import buildcraft.api.blueprints.SchematicMask;
 import buildcraft.api.core.Position;
 
 public class BuildingSlotBlock extends BuildingSlot implements Comparable<BuildingSlotBlock> {
 
 	public int x, y, z;
-	public Schematic schematic;
+	public SchematicBlockBase schematic;
 
 	public enum Mode {
 		ClearIfInvalid, Build
@@ -28,7 +28,8 @@ public class BuildingSlotBlock extends BuildingSlot implements Comparable<Buildi
 
 	public Mode mode = Mode.Build;
 
-	public Schematic getSchematic () {
+	@Override
+	public SchematicBlockBase getSchematic () {
 		if (schematic == null) {
 			return new SchematicMask(false);
 		} else {

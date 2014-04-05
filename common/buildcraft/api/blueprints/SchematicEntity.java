@@ -8,19 +8,31 @@
  */
 package buildcraft.api.blueprints;
 
+import java.util.ArrayList;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagDouble;
 import net.minecraft.nbt.NBTTagFloat;
 import net.minecraft.nbt.NBTTagList;
 import buildcraft.api.core.Position;
+import buildcraft.core.utils.Utils;
 
-public class SchematicEntity {
+public class SchematicEntity extends Schematic {
 
 	public Class <? extends Entity> entity;
 
 	public NBTTagCompound cpt = new NBTTagCompound();
+
+	/**
+	 * This field contains requirements for a given block when stored in the
+	 * blueprint. Modders can either rely on this list or compute their own int
+	 * Schematic.
+	 */
+	public ItemStack [] storedRequirements = new ItemStack [0];
 
 	public void writeToWorld(IBuilderContext context, CoordTransformation transform) {
 		NBTTagList nbttaglist = cpt.getTagList("Pos", 6);
@@ -44,6 +56,7 @@ public class SchematicEntity {
 		cpt.setTag("Pos", this.newDoubleNBTList(new double[] {pos.x, pos.y, pos.z}));
 	}
 
+	@Override
 	public void rotateLeft(IBuilderContext context) {
 		NBTTagList nbttaglist = cpt.getTagList("Pos", 6);
 		Position pos = new Position(nbttaglist.func_150309_d(0),
@@ -57,13 +70,54 @@ public class SchematicEntity {
 		cpt.setTag("Rotation", this.newFloatNBTList(new float[] {yaw, nbttaglist.func_150308_e (1)}));
 	}
 
+	@Override
 	public void writeToNBT(NBTTagCompound nbt, MappingRegistry registry) {
 		nbt.setInteger ("entityId", registry.getIdForEntity(entity));
 		nbt.setTag("entity", cpt);
+
+		NBTTagList rq = new NBTTagList();
+
+		for (ItemStack stack : storedRequirements) {
+			NBTTagCompound sub = new NBTTagCompound();
+			stack.writeToNBT(stack.writeToNBT(sub));
+			sub.setInteger("id", registry.getIdForItem(stack.getItem()));
+			rq.appendTag(sub);
+		}
+
+		nbt.setTag("rq", rq);
 	}
 
+	@Override
 	public void readFromNBT(NBTTagCompound nbt, MappingRegistry registry) {
 		cpt = nbt.getCompoundTag("entity");
+
+		NBTTagList rq = nbt.getTagList("rq", Utils.NBTTag_Types.NBTTagCompound.ordinal());
+
+		ArrayList<ItemStack> rqs = new ArrayList<ItemStack>();
+
+		for (int i = 0; i < rq.tagCount(); ++i) {
+			try {
+				NBTTagCompound sub = rq.getCompoundTagAt(i);
+
+				if (sub.getInteger("id") >= 0) {
+					// Maps the id in the blueprint to the id in the world
+					sub.setInteger("id", Item.itemRegistry
+							.getIDForObject(registry.getItemForId(sub
+									.getInteger("id"))));
+
+					rqs.add(ItemStack.loadItemStackFromNBT(sub));
+				} else {
+					// TODO: requirement can't be retreived, this blueprint is
+					// only useable in creative
+				}
+			} catch (Throwable t) {
+				t.printStackTrace();
+				// TODO: requirement can't be retreived, this blueprint is
+				// only useable in creative
+			}
+		}
+
+		storedRequirements = rqs.toArray(new ItemStack [rqs.size()]);
 	}
 
 	protected NBTTagList newDoubleNBTList(double... par1ArrayOfDouble) {

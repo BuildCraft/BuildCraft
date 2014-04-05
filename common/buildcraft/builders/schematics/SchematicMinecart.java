@@ -9,6 +9,8 @@
 package buildcraft.builders.schematics;
 
 import net.minecraft.entity.Entity;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagList;
 import buildcraft.api.blueprints.CoordTransformation;
 import buildcraft.api.blueprints.IBuilderContext;
@@ -16,6 +18,12 @@ import buildcraft.api.blueprints.SchematicEntity;
 import buildcraft.api.core.Position;
 
 public class SchematicMinecart extends SchematicEntity {
+
+	private Item baseItem;
+
+	public SchematicMinecart (Item baseItem) {
+		this.baseItem = baseItem;
+	}
 
 	@Override
 	public void writeToWorld(IBuilderContext context, CoordTransformation transform) {
@@ -39,5 +47,8 @@ public class SchematicMinecart extends SchematicEntity {
 		pos.x -= 0.5;
 		pos.z -= 0.5;
 		cpt.setTag("Pos", this.newDoubleNBTList(new double[] {pos.x, pos.y, pos.z}));
+
+		storedRequirements = new ItemStack [1];
+		storedRequirements [0] = new ItemStack(baseItem);
 	}
 }

@@ -109,15 +109,6 @@ public class Schematic {
 	}
 
 	/**
-	 * Return true if the block on the world correspond to the block stored in
-	 * the blueprint at the location given by the slot. By default, this
-	 * subprogram is permissive and doesn't take into account metadata.
-	 */
-	public boolean isValid(IBuilderContext context, int x, int y, int z) {
-		return true;
-	}
-
-	/**
 	 * Perform a 90 degree rotation to the slot.
 	 */
 	public void rotateLeft(IBuilderContext context) {
@@ -130,18 +121,6 @@ public class Schematic {
 	 */
 	public void writeToWorld(IBuilderContext context, int x, int y, int z, LinkedList <ItemStack> stacks) {
 
-	}
-
-	public void writeCompleted(IBuilderContext context, int x, int y, int z, double completed) {
-
-	}
-
-	/**
-	 * Return true if the block should not be placed to the world. Requirements
-	 * will not be asked on such a block, and building will not be called.
-	 */
-	public boolean ignoreBuilding() {
-		return false;
 	}
 
 	/**

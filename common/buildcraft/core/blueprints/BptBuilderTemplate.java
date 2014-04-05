@@ -13,7 +13,7 @@ import java.util.LinkedList;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
-import buildcraft.api.blueprints.Schematic;
+import buildcraft.api.blueprints.SchematicBlockBase;
 import buildcraft.builders.TileAbstractBuilder;
 import buildcraft.core.blueprints.BuildingSlotBlock.Mode;
 import buildcraft.core.inventory.InventoryIterator;
@@ -35,7 +35,7 @@ public class BptBuilderTemplate extends BptBuilderBase {
 					int yCoord = j + y - blueprint.anchorY;
 					int zCoord = k + z - blueprint.anchorZ;
 
-					Schematic slot = bluePrint.contents[i][j][k];
+					SchematicBlockBase slot = bluePrint.contents[i][j][k];
 
 					if (slot == null) {
 						BuildingSlotBlock b = new BuildingSlotBlock();
@@ -59,7 +59,7 @@ public class BptBuilderTemplate extends BptBuilderBase {
 					int yCoord = j + y - blueprint.anchorY;
 					int zCoord = k + z - blueprint.anchorZ;
 
-					Schematic slot = bluePrint.contents[i][j][k];
+					SchematicBlockBase slot = bluePrint.contents[i][j][k];
 
 					if (slot != null) {
 						BuildingSlotBlock b = new BuildingSlotBlock();

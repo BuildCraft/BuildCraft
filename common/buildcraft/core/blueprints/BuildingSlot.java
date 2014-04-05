@@ -12,6 +12,7 @@ import java.util.LinkedList;
 
 import net.minecraft.item.ItemStack;
 import buildcraft.api.blueprints.IBuilderContext;
+import buildcraft.api.blueprints.Schematic;
 import buildcraft.api.core.Position;
 
 public abstract class BuildingSlot {
@@ -43,4 +44,6 @@ public abstract class BuildingSlot {
 
 		stackConsumed.add (stack);
 	}
+
+	public abstract Schematic getSchematic ();
 }

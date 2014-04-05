@@ -18,7 +18,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import buildcraft.core.utils.Utils;
 
-public class SchematicBlock extends Schematic  implements Comparable<SchematicBlock> {
+public class SchematicBlock extends SchematicBlockBase  implements Comparable<SchematicBlock> {
 
 	public Block block = null;
 	public int meta = 0;

@@ -8,6 +8,9 @@
  */
 package buildcraft.core.blueprints;
 
+import java.util.LinkedList;
+
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagList;
 import buildcraft.api.blueprints.CoordTransformation;
 import buildcraft.api.blueprints.IBuilderContext;
@@ -32,5 +35,21 @@ public class BuildingSlotEntity extends BuildingSlot {
 		pos = transform.translate(pos);
 
 		return pos;
+	}
+
+	@Override
+	public LinkedList<ItemStack> getRequirements (IBuilderContext context) {
+		LinkedList<ItemStack> results = new LinkedList<ItemStack>();
+
+		for (ItemStack s : schematic.storedRequirements) {
+			results.add(s);
+		}
+
+		return results;
+	}
+
+	@Override
+	public SchematicEntity getSchematic() {
+		return schematic;
 	}
 }

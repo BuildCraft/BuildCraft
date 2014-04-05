@@ -11,6 +11,7 @@ package buildcraft.core.blueprints;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.ListIterator;
 import java.util.Map.Entry;
@@ -21,6 +22,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldSettings.GameType;
 import buildcraft.api.blueprints.CoordTransformation;
+import buildcraft.api.blueprints.Schematic;
 import buildcraft.api.blueprints.SchematicBlock;
 import buildcraft.api.blueprints.SchematicEntity;
 import buildcraft.api.core.StackKey;
@@ -138,7 +140,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 		}
 
 		if (entityList.size() != 0) {
-			BuildingSlot slot = entityList.removeFirst();
+			BuildingSlot slot = internalGetNextEntity(world, inv, entityList);
 			checkDone ();
 
 			if (slot != null) {
@@ -185,7 +187,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 				} else {
 					if (BlockUtil.isSoftBlock(world, slot.x, slot.y, slot.z)
 							&& checkRequirements(builder,
-									(SchematicBlock) slot.schematic)) {
+									slot.schematic)) {
 						useRequirements(builder, slot);
 
 						iterator.remove();
@@ -201,11 +203,26 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 		return null;
 	}
 
-	public boolean checkRequirements(TileAbstractBuilder builder, SchematicBlock slot) {
-		if (slot.block == null) {
-			return true;
+	private BuildingSlot internalGetNextEntity(World world,
+			TileAbstractBuilder builder, LinkedList<BuildingSlotEntity> list) {
+		Iterator<BuildingSlotEntity> it = list.iterator();
+
+		while (iterator.hasNext()) {
+			BuildingSlotEntity slot = it.next();
+
+			if (checkRequirements(builder, slot.schematic)) {
+				useRequirements(builder, slot);
+
+				iterator.remove();
+				postProcessing.add(slot);
+				return slot;
+			}
 		}
 
+		return null;
+	}
+
+	public boolean checkRequirements(TileAbstractBuilder builder, Schematic slot) {
 		double energyRequired = 0;
 
 		LinkedList<ItemStack> tmpReq = new LinkedList<ItemStack>();
@@ -268,7 +285,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 		return true;
 	}
 
-	public void useRequirements(TileAbstractBuilder builder, BuildingSlotBlock slot) {
+	public void useRequirements(TileAbstractBuilder builder, BuildingSlot slot) {
 		LinkedList<ItemStack> tmpReq = new LinkedList<ItemStack>();
 
 		double energyRequired = 0;
@@ -392,6 +409,35 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 
 					computeStacks.put(key, num);
 				}
+			}
+		}
+
+		for (BuildingSlotEntity slot : entityList) {
+			LinkedList<ItemStack> stacks = new LinkedList<ItemStack>();
+
+			try {
+				stacks = slot.getRequirements(context);
+			} catch (Throwable t) {
+				// Defensive code against errors in implementers
+				t.printStackTrace();
+				BCLog.logger.throwing("BptBuilderBlueprint", "recomputeIfNeeded", t);
+			}
+
+			for (ItemStack stack : stacks) {
+				if (stack == null || stack.getItem() == null || stack.stackSize == 0) {
+					continue;
+				}
+
+				StackKey key = new StackKey(stack);
+
+				if (!computeStacks.containsKey(key)) {
+					computeStacks.put(key, stack.stackSize);
+				} else {
+					Integer num = computeStacks.get(key);
+					num += stack.stackSize;
+
+					computeStacks.put(key, num);
+				}
 
 			}
 		}
@@ -401,7 +447,6 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 			newStack.stackSize = e.getValue();
 			neededItems.add(newStack);
 		}
-
 
 		LinkedList <ItemStack> sortedList = new LinkedList <ItemStack> ();
 

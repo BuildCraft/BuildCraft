@@ -9,12 +9,22 @@
 package buildcraft.builders.schematics;
 
 import net.minecraft.entity.Entity;
+import net.minecraft.init.Items;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import buildcraft.api.blueprints.CoordTransformation;
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.SchematicEntity;
 import buildcraft.api.core.Position;
 
 public class SchematicHanging extends SchematicEntity {
+
+	private Item baseItem;
+
+	public SchematicHanging (Item baseItem) {
+		this.baseItem = baseItem;
+	}
 
 	@Override
 	public void rotateLeft(IBuilderContext context) {
@@ -39,6 +49,13 @@ public class SchematicHanging extends SchematicEntity {
 		cpt.setInteger("TileY", (int) pos.y);
 		cpt.setInteger("TileZ", (int) pos.z);
 
+		if (baseItem == Items.item_frame) {
+			NBTTagCompound tag = cpt.getCompoundTag("Item");
+			tag.setInteger("id", Item.itemRegistry.getIDForObject(context
+					.getMappingRegistry().getItemForId(tag.getInteger("id"))));
+			cpt.setTag("Item", tag);
+		}
+
 		super.writeToWorld(context, transform);
 	}
 
@@ -52,5 +69,20 @@ public class SchematicHanging extends SchematicEntity {
 		cpt.setInteger("TileX", (int) pos.x);
 		cpt.setInteger("TileY", (int) pos.y);
 		cpt.setInteger("TileZ", (int) pos.z);
+
+		if (baseItem == Items.item_frame) {
+			NBTTagCompound tag = cpt.getCompoundTag("Item");
+			ItemStack stack = ItemStack.loadItemStackFromNBT(tag);
+
+			storedRequirements = new ItemStack [2];
+			storedRequirements [0] = new ItemStack(baseItem);
+			storedRequirements [1] = stack;
+
+			tag.setInteger("id", context.getMappingRegistry().getIdForItem(stack.getItem()));
+			cpt.setTag("Item", tag);
+		} else {
+			storedRequirements = new ItemStack [1];
+			storedRequirements [0] = new ItemStack(baseItem);
+		}
 	}
 }

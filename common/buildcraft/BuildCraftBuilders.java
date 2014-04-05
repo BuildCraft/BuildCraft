@@ -264,14 +264,14 @@ public class BuildCraftBuilders extends BuildCraftMod {
 
 		// Standard entities
 
-		SchematicRegistry.registerSchematicEntity(EntityMinecartEmpty.class, SchematicMinecart.class);
-		SchematicRegistry.registerSchematicEntity(EntityMinecartFurnace.class, SchematicMinecart.class);
-		SchematicRegistry.registerSchematicEntity(EntityMinecartTNT.class, SchematicMinecart.class);
-		SchematicRegistry.registerSchematicEntity(EntityMinecartChest.class, SchematicMinecart.class);
-		SchematicRegistry.registerSchematicEntity(EntityMinecartHopper.class, SchematicMinecart.class);
+		SchematicRegistry.registerSchematicEntity(EntityMinecartEmpty.class, SchematicMinecart.class, Items.minecart);
+		SchematicRegistry.registerSchematicEntity(EntityMinecartFurnace.class, SchematicMinecart.class, Items.furnace_minecart);
+		SchematicRegistry.registerSchematicEntity(EntityMinecartTNT.class, SchematicMinecart.class, Items.tnt_minecart);
+		SchematicRegistry.registerSchematicEntity(EntityMinecartChest.class, SchematicMinecart.class, Items.chest_minecart);
+		SchematicRegistry.registerSchematicEntity(EntityMinecartHopper.class, SchematicMinecart.class, Items.hopper_minecart);
 
-		SchematicRegistry.registerSchematicEntity(EntityPainting.class, SchematicHanging.class);
-		SchematicRegistry.registerSchematicEntity(EntityItemFrame.class, SchematicHanging.class);
+		SchematicRegistry.registerSchematicEntity(EntityPainting.class, SchematicHanging.class, Items.painting);
+		SchematicRegistry.registerSchematicEntity(EntityItemFrame.class, SchematicHanging.class, Items.item_frame);
 
 		// BuildCraft blocks
 
