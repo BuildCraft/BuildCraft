@@ -64,6 +64,7 @@ import buildcraft.builders.schematics.SchematicDoor;
 import buildcraft.builders.schematics.SchematicFarmland;
 import buildcraft.builders.schematics.SchematicFire;
 import buildcraft.builders.schematics.SchematicFluid;
+import buildcraft.builders.schematics.SchematicGravel;
 import buildcraft.builders.schematics.SchematicHanging;
 import buildcraft.builders.schematics.SchematicIgnore;
 import buildcraft.builders.schematics.SchematicIgnoreMeta;
@@ -78,6 +79,7 @@ import buildcraft.builders.schematics.SchematicRotateMeta;
 import buildcraft.builders.schematics.SchematicSeeds;
 import buildcraft.builders.schematics.SchematicSign;
 import buildcraft.builders.schematics.SchematicStairs;
+import buildcraft.builders.schematics.SchematicStone;
 import buildcraft.builders.schematics.SchematicWallSide;
 import buildcraft.builders.triggers.ActionFiller;
 import buildcraft.builders.triggers.BuildersActionProvider;
@@ -191,7 +193,18 @@ public class BuildCraftBuilders extends BuildCraftMod {
 		SchematicRegistry.registerSchematicBlock(Blocks.stone_button, SchematicLever.class);
 		SchematicRegistry.registerSchematicBlock(Blocks.lever, SchematicLever.class);
 
-		SchematicRegistry.registerSchematicBlock(Blocks.stone, SchematicCustomStack.class, new ItemStack(Blocks.stone));
+		SchematicRegistry.registerSchematicBlock(Blocks.stone, SchematicStone.class);
+		SchematicRegistry.registerSchematicBlock(Blocks.gold_ore, SchematicStone.class);
+		SchematicRegistry.registerSchematicBlock(Blocks.iron_ore, SchematicStone.class);
+		SchematicRegistry.registerSchematicBlock(Blocks.coal_ore, SchematicStone.class);
+		SchematicRegistry.registerSchematicBlock(Blocks.lapis_ore, SchematicStone.class);
+		SchematicRegistry.registerSchematicBlock(Blocks.diamond_ore, SchematicStone.class);
+		SchematicRegistry.registerSchematicBlock(Blocks.redstone_ore, SchematicStone.class);
+		SchematicRegistry.registerSchematicBlock(Blocks.lit_redstone_ore, SchematicStone.class);
+		SchematicRegistry.registerSchematicBlock(Blocks.emerald_ore, SchematicStone.class);
+
+		SchematicRegistry.registerSchematicBlock(Blocks.gravel, SchematicGravel.class);
+
 		SchematicRegistry.registerSchematicBlock(Blocks.redstone_wire, SchematicCustomStack.class, new ItemStack(Items.redstone));
 		SchematicRegistry.registerSchematicBlock(Blocks.cake, SchematicCustomStack.class, new ItemStack(Items.cake));
 		SchematicRegistry.registerSchematicBlock(Blocks.pumpkin_stem, SchematicCustomStack.class, new ItemStack(Items.pumpkin_seeds));

@@ -183,20 +183,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 						}
 					}
 				} else {
-					if (world.getWorldInfo().getGameType() == GameType.CREATIVE) {
-
-						// In creative, we don't use blocks or energy from the
-						// builder
-
-						for (ItemStack s : slot.getRequirements(context)) {
-							slot.addStackConsumed(s);
-						}
-
-						iterator.remove();
-						postProcessing.add(slot);
-						return slot;
-					} else if (checkRequirements(builder,
-							(SchematicBlock) slot.schematic)) {
+					if (checkRequirements(builder, (SchematicBlock) slot.schematic)) {
 						useRequirements(builder, slot);
 
 						iterator.remove();
@@ -237,6 +224,10 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 
 		if (builder.energyAvailable() < energyRequired) {
 			return false;
+		}
+
+		if (context.world().getWorldInfo().getGameType() == GameType.CREATIVE) {
+			return true;
 		}
 
 		int size = builder.getSizeInventory();
@@ -295,6 +286,14 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 		}
 
 		builder.consumeEnergy(energyRequired);
+
+		if (context.world ().getWorldInfo().getGameType() == GameType.CREATIVE) {
+			for (ItemStack s : slot.getRequirements(context)) {
+				slot.addStackConsumed(s);
+			}
+
+			return;
+		}
 
 		ListIterator<ItemStack> itr = tmpReq.listIterator();
 
