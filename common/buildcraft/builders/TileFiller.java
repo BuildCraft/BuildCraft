@@ -22,7 +22,6 @@ import buildcraft.api.filler.FillerManager;
 import buildcraft.api.filler.IFillerPattern;
 import buildcraft.api.gates.IAction;
 import buildcraft.api.gates.IActionReceptor;
-import buildcraft.api.mj.MjBattery;
 import buildcraft.builders.filler.pattern.PatternFill;
 import buildcraft.builders.triggers.ActionFiller;
 import buildcraft.core.Box;
@@ -48,14 +47,11 @@ public class TileFiller extends TileAbstractBuilder implements IMachine, IAction
 	private BptBuilderTemplate currentTemplate;
 	private BptContext context;
 
-	private static int POWER_USAGE = 25;
+	private static int POWER_ACTIVATION = 50;
 	private final Box box = new Box();
 	private boolean done = false;
 	private ActionMachineControl.Mode lastMode = ActionMachineControl.Mode.Unknown;
 	private SimpleInventory inv = new SimpleInventory(27, "Filler", 64);
-
-	@MjBattery (maxReceivedPerCycle = 25)
-	private double mjStored = 0;
 
 	public TileFiller() {
 		inv.addListener(this);
@@ -103,9 +99,7 @@ public class TileFiller extends TileAbstractBuilder implements IMachine, IAction
 			return;
 		}
 
-		if (mjStored > POWER_USAGE) {
-			mjStored -= POWER_USAGE;
-		} else {
+		if (mjStored < POWER_ACTIVATION) {
 			return;
 		}
 

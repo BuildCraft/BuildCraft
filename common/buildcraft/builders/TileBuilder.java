@@ -18,12 +18,12 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.world.WorldSettings.GameType;
 import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.BuildCraftBuilders;
 import buildcraft.api.core.Position;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.gates.IAction;
-import buildcraft.api.mj.MjBattery;
 import buildcraft.core.BlockIndex;
 import buildcraft.core.Box;
 import buildcraft.core.Box.Kind;
@@ -40,10 +40,11 @@ import buildcraft.core.network.NetworkData;
 import buildcraft.core.network.RPC;
 import buildcraft.core.network.RPCHandler;
 import buildcraft.core.network.RPCSide;
-import buildcraft.core.robots.EntityRobot;
 import buildcraft.core.utils.Utils;
 
 public class TileBuilder extends TileAbstractBuilder implements IMachine, IBoxProvider {
+
+	private static int POWER_ACTIVATION = 50;
 
 	private final ItemStack items[] = new ItemStack[28];
 
@@ -54,14 +55,9 @@ public class TileBuilder extends TileAbstractBuilder implements IMachine, IBoxPr
 
 	private LinkedList<BlockIndex> path;
 
-	private EntityRobot builderRobot;
-
 	private LinkedList <ItemStack> requiredToBuild;
 
-	private SafeTimeTracker debugBuildTracker = new SafeTimeTracker(5);
-
-	@MjBattery (maxReceivedPerCycle = 25)
-	private double mjStored = 0;
+	private SafeTimeTracker buildTracker = new SafeTimeTracker(5);
 
 	private class PathIterator {
 
@@ -301,11 +297,6 @@ public class TileBuilder extends TileAbstractBuilder implements IMachine, IBoxPr
 				bluePrintBuilder = null;
 			}
 
-			if (builderRobot != null) {
-				builderRobot.setDead();
-				builderRobot = null;
-			}
-
 			if (box.isInitialized()) {
 				box.reset();
 			}
@@ -325,20 +316,12 @@ public class TileBuilder extends TileAbstractBuilder implements IMachine, IBoxPr
 					currentPathIterator = new PathIterator(start, it);
 				}
 
-				if (bluePrintBuilder != null && builderRobot != null) {
-					//builderRobot.markEndOfBlueprint(bluePrintBuilder);
-				}
-
 				bluePrintBuilder = currentPathIterator.next();
 
 				if (bluePrintBuilder != null) {
 					box.reset();
 					box.initialize(bluePrintBuilder);
 					sendNetworkUpdate();
-				}
-
-				if (builderRobot != null) {
-					//builderRobot.setBox(box);
 				}
 
 				if (bluePrintBuilder == null) {
@@ -350,10 +333,6 @@ public class TileBuilder extends TileAbstractBuilder implements IMachine, IBoxPr
 				}
 			} else {
 				if (bluePrintBuilder != null && bluePrintBuilder.isDone(this)) {
-					if (builderRobot != null) {
-						//builderRobot.markEndOfBlueprint(bluePrintBuilder);
-					}
-
 					done = true;
 					bluePrintBuilder = null;
 				} else {
@@ -498,14 +477,6 @@ public class TileBuilder extends TileAbstractBuilder implements IMachine, IBoxPr
 	}
 
 	@Override
-	public void destroy() {
-		if (builderRobot != null) {
-			builderRobot.setDead();
-			builderRobot = null;
-		}
-	}
-
-	@Override
 	public void openInventory() {
 	}
 
@@ -526,10 +497,7 @@ public class TileBuilder extends TileAbstractBuilder implements IMachine, IBoxPr
 		}
 
 		if ((bluePrintBuilder == null || bluePrintBuilder.isDone(this))
-				&& box.isInitialized()
-				//&& (builderRobot == null || builderRobot.done())
-				) {
-
+				&& box.isInitialized()) {
 			box.reset();
 
 			sendNetworkUpdate();
@@ -537,41 +505,22 @@ public class TileBuilder extends TileAbstractBuilder implements IMachine, IBoxPr
 			return;
 		}
 
-		if (!box.isInitialized() && bluePrintBuilder == null && builderRobot != null) {
-			builderRobot.setDead();
-			builderRobot = null;
+		iterateBpt();
+
+		if (getWorld().getWorldInfo().getGameType() == GameType.CREATIVE) {
+			build();
+		} else {
+			if (mjStored > POWER_ACTIVATION) {
+				build();
+			}
 		}
 
-		iterateBpt();
-		debugForceBlueprintCompletion();
 
 		if (done) {
 			return;
-		//}// else if (builderRobot != null && !builderRobot.readyToBuild()) {
-		//	return;
 		} else if (mjStored < 25) {
 			return;
 		}
-
-		/* Temp fix to make Builders impotent as the World Destroyers they are
-		if (bluePrintBuilder != null && !bluePrintBuilder.done) {
-			if (!box.isInitialized()) {
-				box.initialize(bluePrintBuilder);
-			}
-
-			if (builderRobot == null) {
-				builderRobot = new EntityRobot(worldObj, box);
-				worldObj.spawnEntityInWorld(builderRobot);
-			}
-
-			box.createLasers(worldObj, LaserKind.Stripes);
-
-			builderRobot.scheduleContruction(bluePrintBuilder.getNextBlock(worldObj, new SurroundingInventory(worldObj, xCoord, yCoord, zCoord)),
-					bluePrintBuilder.getContext());
-		}
-		*/
-
-		mjStored = 0;
 	}
 
 	@Override
@@ -661,8 +610,8 @@ public class TileBuilder extends TileAbstractBuilder implements IMachine, IBoxPr
 		return renderBox.expand(50).getBoundingBox();
 	}
 
-	public void debugForceBlueprintCompletion () {
-		if (!debugBuildTracker.markTimeIfDelay(worldObj)) {
+	public void build () {
+		if (!buildTracker.markTimeIfDelay(worldObj)) {
 			return;
 		}
 

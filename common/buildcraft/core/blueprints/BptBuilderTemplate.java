@@ -13,7 +13,6 @@ import java.util.LinkedList;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
-import buildcraft.BuildCraftBuilders;
 import buildcraft.api.blueprints.Schematic;
 import buildcraft.builders.TileAbstractBuilder;
 import buildcraft.core.blueprints.BuildingSlotBlock.Mode;
@@ -52,8 +51,6 @@ public class BptBuilderTemplate extends BptBuilderBase {
 				}
 			}
 		}
-
-		buildList.add(null);
 
 		for (int j = 0; j < bluePrint.sizeY; ++j) {
 			for (int i = 0; i < bluePrint.sizeX; ++i) {
@@ -107,12 +104,12 @@ public class BptBuilderTemplate extends BptBuilderBase {
 		return null;
 	}
 
-	public BuildingSlotBlock internalGetNextBlock(World world, TileAbstractBuilder inv, LinkedList<BuildingSlotBlock> list) {
+	public BuildingSlotBlock internalGetNextBlock(World world, TileAbstractBuilder builder, LinkedList<BuildingSlotBlock> list) {
 		BuildingSlotBlock result = null;
 
 		IInvSlot firstSlotToConsume = null;
 
-		for (IInvSlot invSlot : InventoryIterator.getIterable(inv, ForgeDirection.UNKNOWN)) {
+		for (IInvSlot invSlot : InventoryIterator.getIterable(builder, ForgeDirection.UNKNOWN)) {
 			ItemStack stack = invSlot.getStackInSlot();
 
 			if (stack != null && stack.stackSize > 0) {
@@ -132,27 +129,20 @@ public class BptBuilderTemplate extends BptBuilderBase {
 				if (BlockUtil.isSoftBlock(world, slot.x, slot.y, slot.z)) {
 					iterator.remove();
 				} else {
-					int hardness = (int) context
-							.world()
-							.getBlock(slot.x, slot.y, slot.z)
-							.getBlockHardness(context.world(), slot.x, slot.y,
-									slot.z) + 1;
+					if (setupForDestroy(builder, context, slot)) {
+						result = slot;
+						iterator.remove();
 
-					for (int i = 0; i < hardness; ++i) {
-						slot.addStackConsumed(new ItemStack(
-								BuildCraftBuilders.buildToolBlock));
+						break;
 					}
-
-					result = slot;
-					iterator.remove();
-
-					break;
 				}
 			} else if (slot.mode == Mode.Build) {
 				if (!BlockUtil.isSoftBlock(world, slot.x, slot.y, slot.z)) {
 					iterator.remove();
 				} else {
-					if (firstSlotToConsume != null) {
+					if (builder.energyAvailable() > TileAbstractBuilder.BUILD_ENERGY && firstSlotToConsume != null) {
+						builder.consumeEnergy(TileAbstractBuilder.BUILD_ENERGY);
+
 						slot.addStackConsumed(firstSlotToConsume
 								.decreaseStackInSlot());
 						result = slot;

@@ -9,9 +9,13 @@
 package buildcraft.core.blueprints;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.World;
+import buildcraft.BuildCraftBuilders;
+import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.core.Position;
 import buildcraft.builders.BuildingItem;
@@ -117,5 +121,28 @@ public abstract class BptBuilderBase implements IAreaProvider {
 
 	public boolean isDone (TileAbstractBuilder builder) {
 		return done && builder.getBuilders().size() == 0;
+	}
+
+	protected boolean setupForDestroy (TileAbstractBuilder builder, IBuilderContext context, BuildingSlotBlock slot) {
+		LinkedList<ItemStack> result = new LinkedList<ItemStack>();
+
+		int hardness = (int) context
+				.world()
+				.getBlock(slot.x, slot.y, slot.z)
+				.getBlockHardness(context.world(), slot.x, slot.y,
+						slot.z);
+
+		if (builder.energyAvailable() < hardness * TileAbstractBuilder.BREAK_ENERGY) {
+			return false;
+		} else {
+			builder.consumeEnergy(hardness * TileAbstractBuilder.BREAK_ENERGY);
+
+			for (int i = 0; i < hardness; ++i) {
+				slot.addStackConsumed(new ItemStack(
+						BuildCraftBuilders.buildToolBlock));
+			}
+
+			return true;
+		}
 	}
 }

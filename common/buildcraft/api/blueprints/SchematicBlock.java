@@ -49,7 +49,7 @@ public class SchematicBlock extends Schematic  implements Comparable<SchematicBl
 	}
 
 	/**
-	 * This is called each time an item matches a reqquirement, that is: (req id
+	 * This is called each time an item matches a requirement, that is: (req id
 	 * == stack id) for damageable items (req id == stack id && req dmg == stack
 	 * dmg) for other items by default, it will increase damage of damageable
 	 * items by the amount of damage of the requirement, and remove the intended
@@ -58,16 +58,17 @@ public class SchematicBlock extends Schematic  implements Comparable<SchematicBl
 	 * Client may override this behavior for default items. Note that this
 	 * subprogram may be called twice with the same parameters, once with a copy
 	 * of requirements and stack to check if the entire requirements can be
-	 * fullfilled, and once with the real inventory. Implementer is responsible
+	 * fulfilled, and once with the real inventory. Implementer is responsible
 	 * for updating req (with the remaining requirements if any) and stack
 	 * (after usage)
 	 *
-	 * returns: what was used (similer to req, but created from stack, so that
+	 * returns: what was used (similar to req, but created from stack, so that
 	 * any NBT based differences are drawn from the correct source)
 	 */
 	@Override
 	public ItemStack useItem(IBuilderContext context, ItemStack req, ItemStack stack) {
 		ItemStack result = stack.copy();
+
 		if (stack.isItemStackDamageable()) {
 			if (req.getItemDamage() + stack.getItemDamage() <= stack.getMaxDamage()) {
 				stack.setItemDamage(req.getItemDamage() + stack.getItemDamage());
@@ -96,6 +97,7 @@ public class SchematicBlock extends Schematic  implements Comparable<SchematicBl
 			stack.stackSize = 1;
 			stack.setItemDamage(0);
 		}
+
 		return result;
 	}
 
