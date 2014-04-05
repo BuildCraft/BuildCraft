@@ -586,8 +586,12 @@ public class TileBuilder extends TileAbstractBuilder implements IMachine, IBoxPr
 	}
 
 	@Override
-	public boolean isItemValidForSlot(int var1, ItemStack var2) {
-		return false;
+	public boolean isItemValidForSlot(int slot, ItemStack stack) {
+		if (slot == 0) {
+			return stack.getItem() instanceof ItemBlueprint;
+		} else {
+			return true;
+		}
 	}
 
 	@Override
