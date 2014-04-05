@@ -11,6 +11,7 @@ package buildcraft.builders;
 import java.util.Date;
 import java.util.LinkedList;
 
+import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import buildcraft.BuildCraftBuilders;
 import buildcraft.api.blueprints.IBuilderContext;
@@ -174,6 +175,17 @@ public class BuildingItem implements IBuilder {
 
 	private void build() {
 		if (slotToBuild != null) {
+			Block block = context.world().getBlock((int) destination.x, (int)destination.y, (int)destination.z);
+			int meta = context.world().getBlockMetadata((int) destination.x, (int)destination.y, (int)destination.z);
+
+			context.world().playAuxSFXAtEntity(
+					null,
+					2001,
+					(int) destination.x,
+					(int) destination.y,
+					(int) destination.z,
+					Block.getIdFromBlock(block) + (meta << 12));
+
 			slotToBuild.writeToWorld(context);
 		}
 	}

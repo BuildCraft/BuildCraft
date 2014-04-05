@@ -54,6 +54,7 @@ import buildcraft.builders.filler.pattern.PatternClear;
 import buildcraft.builders.filler.pattern.PatternCylinder;
 import buildcraft.builders.filler.pattern.PatternFill;
 import buildcraft.builders.filler.pattern.PatternFlatten;
+import buildcraft.builders.filler.pattern.PatternFrame;
 import buildcraft.builders.filler.pattern.PatternHorizon;
 import buildcraft.builders.filler.pattern.PatternPyramid;
 import buildcraft.builders.filler.pattern.PatternStairs;
@@ -364,6 +365,7 @@ public class BuildCraftBuilders extends BuildCraftMod {
 			FillerManager.registry.addPattern(new PatternPyramid());
 			FillerManager.registry.addPattern(new PatternStairs());
 			FillerManager.registry.addPattern(new PatternCylinder());
+			FillerManager.registry.addPattern(new PatternFrame());
 		} catch (Error error) {
 			BCLog.logErrorAPI("Buildcraft", error, IFillerPattern.class);
 			throw error;

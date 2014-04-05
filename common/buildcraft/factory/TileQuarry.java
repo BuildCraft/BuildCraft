@@ -449,8 +449,14 @@ public class TileQuarry extends TileAbstractBuilder implements IMachine, IPowerR
 				}
 			}
 
-			// FIXME: fix sound here
-			//worldObj.playAuxSFXAtEntity(null, 2001, i, j, k, blockId + (worldObj.getBlockMetadata(i, j, k) << 12));
+			worldObj.playAuxSFXAtEntity(
+					null,
+					2001,
+					i,
+					j,
+					k,
+					Block.getIdFromBlock(block)
+							+ (worldObj.getBlockMetadata(i, j, k) << 12));
 			worldObj.setBlockToAir(i, j, k);
 		}
 
