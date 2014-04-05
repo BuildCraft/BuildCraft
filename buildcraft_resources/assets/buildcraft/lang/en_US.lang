@@ -202,6 +202,7 @@ tile.tankBlock.name=Tank
 tile.refineryControl.name=Refinery Control
 tile.BlockRefineryHeater.name=Refinery Heater
 tile.BlockRefineryControl.name=Refinery Control
+tile.BlockRefineryValve.name=Refinery Valve
 
 tip.gate.wires=§9§oCompatible Wires:
 tip.gate.wires.redstone=Red
