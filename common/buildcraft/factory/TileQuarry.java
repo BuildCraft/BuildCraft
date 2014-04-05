@@ -59,25 +59,38 @@ public class TileQuarry extends TileAbstractBuilder implements IMachine {
 	double headPosX, headPosY, headPosZ;
 	public @NetworkData
 	double speed = 0.03;
+	public @NetworkData
+	boolean builderDone = false;
 
 	private BptBuilderBase builder;
 	public EntityMechanicalArm arm;
 	boolean isDigging = false;
+
+	private boolean loadDefaultBoundaries = false;
+	private boolean movingHorizontally;
+	private boolean movingVertically;
+	private double headTrajectory;
+	private Ticket chunkTicket;
+	public @NetworkData
+	boolean isAlive;
+	public EntityPlayer placedBy;
 
 	public TileQuarry () {
 		box.kind = Kind.STRIPES;
 	}
 
 	public void createUtilsIfNeeded() {
-		if (builder == null) {
-			if (!box.isInitialized()) {
-				setBoundaries(loadDefaultBoundaries);
-			}
+		if (!worldObj.isRemote) {
+			if (builder == null) {
+				if (!box.isInitialized()) {
+					setBoundaries(loadDefaultBoundaries);
+				}
 
-			initializeBlueprintBuilder();
+				initializeBlueprintBuilder();
+			}
 		}
 
-		if (builder != null && builder.isDone(this)) {
+		if (builderDone) {
 			box.isVisible = false;
 
 			if (arm == null) {
@@ -90,26 +103,19 @@ public class TileQuarry extends TileAbstractBuilder implements IMachine {
 					setHead(box.xMin + 1, yCoord + 2, box.zMin + 1);
 				}
 			}
-
 		} else {
-
 			box.isVisible = true;
 			isDigging = true;
 		}
 	}
-	private boolean loadDefaultBoundaries = false;
-	private boolean movingHorizontally;
-	private boolean movingVertically;
-	private double headTrajectory;
-	private Ticket chunkTicket;
-	public @NetworkData
-	boolean isAlive;
-	public EntityPlayer placedBy;
 
 	private void createArm() {
-		worldObj.spawnEntityInWorld(new EntityMechanicalArm(worldObj, box.xMin + CoreConstants.PIPE_MAX_POS, yCoord + builder.blueprint.sizeY - 1
-				+ CoreConstants.PIPE_MIN_POS, box.zMin + CoreConstants.PIPE_MAX_POS, builder.blueprint.sizeX - 2 + CoreConstants.PIPE_MIN_POS * 2, builder.blueprint.sizeZ
-				- 2 + CoreConstants.PIPE_MIN_POS * 2, this));
+		worldObj.spawnEntityInWorld(new EntityMechanicalArm(worldObj, box.xMin
+				+ CoreConstants.PIPE_MAX_POS, yCoord + box.sizeY ()
+				- 1 + CoreConstants.PIPE_MIN_POS, box.zMin
+				+ CoreConstants.PIPE_MAX_POS, box.sizeX () - 2
+				+ CoreConstants.PIPE_MIN_POS * 2, box.sizeZ() - 2
+				+ CoreConstants.PIPE_MIN_POS * 2, this));
 	}
 
 	// Callback from the arm once it's created
@@ -154,6 +160,7 @@ public class TileQuarry extends TileAbstractBuilder implements IMachine {
 			if (!builder.isDone(this)) {
 				builder.buildNextSlot(worldObj, this, xCoord, yCoord, zCoord);
 			} else {
+				builderDone = true;
 				dig();
 			}
 		}
