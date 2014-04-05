@@ -6,6 +6,7 @@ import io.netty.buffer.ByteBuf;
 import java.io.IOException;
 
 import buildcraft.BuildCraftEnergy;
+import buildcraft.BuildCraftFactory;
 import buildcraft.api.fuels.IronEngineFuel;
 import buildcraft.api.gates.IAction;
 import buildcraft.api.mj.MjBattery;
@@ -20,6 +21,7 @@ import buildcraft.core.fluids.TankManager;
 import buildcraft.core.network.NetworkData;
 import buildcraft.core.network.PacketPayload;
 import buildcraft.core.network.PacketUpdate;
+import buildcraft.core.utils.MultiBlockCheck;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
@@ -41,6 +43,8 @@ public class TileRefineryControl extends TileBuildCraft implements IFluidHandler
 	private TankManager tankManager = new TankManager();
 	@MjBattery (maxReceivedPerCycle = 25, maxCapacity = 1000)
 	public double energy;
+	public TileRefineryValve input, output;
+	public boolean valvesAssinged = false;
 	
 	
 	
@@ -51,11 +55,52 @@ public class TileRefineryControl extends TileBuildCraft implements IFluidHandler
 	
 	@Override
 	public void updateEntity() {
-			if (AmountOfOil() > 1 && AmountOfFuel() <= 9999 && energy >=25){
-				inputTank.drain(1, true);
-				outputTank.fill(new FluidStack (BuildCraftEnergy.fluidFuel, 1), true);
-				energy = energy-10;
-				sendNetworkUpdate();
+		if (MultiBlockCheck.isPartOfAMultiBlock("refinery", this.xCoord, this.yCoord, this.zCoord, this.getWorldObj())){
+			if (!valvesAssinged){
+				World world = this.getWorldObj();
+				int x = this.xCoord;
+				int y = this.yCoord;
+				int z = this.zCoord;
+				if (world.getBlock(x - 4, y + 1, z+1) == BuildCraftFactory.blockRefineryValve && world.getBlock(x+4, y+1, z+1) == BuildCraftFactory.blockRefineryValve){
+					input = (TileRefineryValve) world.getTileEntity(x-4, y+1, z+1);
+					input.markAsInput();
+					output = (TileRefineryValve) world.getTileEntity(x+4, y+1, z+1);
+					output.markAsOutput();
+					valvesAssinged = true;
+					}
+				if (world.getBlock(x - 4, y + 1, z-1) == BuildCraftFactory.blockRefineryValve && world.getBlock(x+4, y+1, z-1) == BuildCraftFactory.blockRefineryValve){
+					input = (TileRefineryValve) world.getTileEntity(x-4, y+1, z-1);
+					input.markAsInput();
+					output = (TileRefineryValve) world.getTileEntity(x+4, y+1, z-1);
+					output.markAsOutput();
+					valvesAssinged = true;
+					}
+				if (world.getBlock(x+1, y+1, z-4) == BuildCraftFactory.blockRefineryValve && world.getBlock (x+1, y+1, z+4) == BuildCraftFactory.blockRefineryValve){
+					input = (TileRefineryValve) world.getTileEntity(x+1, y+1, z-4);
+					input.markAsInput();
+					output = (TileRefineryValve) world.getTileEntity(x+1, y+1, z+4);
+					output.markAsOutput();
+					valvesAssinged = true;
+					}
+				if (world.getBlock(x-1, y+1, z-4) == BuildCraftFactory.blockRefineryValve && world.getBlock (x-1, y+1, z+4) == BuildCraftFactory.blockRefineryValve){
+					input = (TileRefineryValve) world.getTileEntity(x-1, y+1, z-4);
+					input.markAsInput();
+					output = (TileRefineryValve) world.getTileEntity(x-1, y+1, z+4);
+					output.markAsOutput();
+					valvesAssinged = true;
+					}
+				}
+			} else {
+				if (valvesAssinged){
+					input.markNeutral();
+					output.markNeutral();
+					}
+				}
+		if (AmountOfOil() > 1 && AmountOfFuel() <= 9999 && energy >=25 ){
+			inputTank.drain(1, true);
+			outputTank.fill(new FluidStack (BuildCraftEnergy.fluidFuel, 1), true);
+			energy = energy-10;
+			sendNetworkUpdate();
 		}
 	}
 	
@@ -152,13 +197,7 @@ public class TileRefineryControl extends TileBuildCraft implements IFluidHandler
 
 	@Override
 	public int fill(ForgeDirection from, FluidStack resource, boolean doFill) {
-		sendNetworkUpdate();
-		int fluid = 0;
-		if (resource.getFluid() == BuildCraftEnergy.fluidOil){
-			fluid = inputTank.fill(resource, doFill);
-			sendNetworkUpdate();
-		}
-		return fluid;
+		return 0;
 	}
 
 	@Override
@@ -173,9 +212,7 @@ public class TileRefineryControl extends TileBuildCraft implements IFluidHandler
 
 	@Override
 	public boolean canFill(ForgeDirection from, Fluid fluid) {
-		if (fluid == BuildCraftEnergy.fluidOil){
-			return true;
-		}
+		
 		return false;
 	}
 
@@ -193,7 +230,6 @@ public class TileRefineryControl extends TileBuildCraft implements IFluidHandler
 		super.readFromNBT(data);
 		tankManager.readFromNBT(data);
 		energy = data.getDouble("energy");
-
 	}
 
 	@Override

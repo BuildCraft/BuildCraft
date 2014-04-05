@@ -1,5 +1,9 @@
 package buildcraft.factory;
 
+import io.netty.buffer.ByteBuf;
+
+import java.io.IOException;
+
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
@@ -11,6 +15,8 @@ import buildcraft.BuildCraftEnergy;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.fluids.SingleUseTank;
 import buildcraft.core.fluids.TankManager;
+import buildcraft.core.network.PacketPayload;
+import buildcraft.core.network.PacketUpdate;
 
 public class TileRefineryValve extends TileBuildCraft implements IFluidHandler{
 	
@@ -22,13 +28,27 @@ public class TileRefineryValve extends TileBuildCraft implements IFluidHandler{
 	public TileRefineryValve(){
 		tankManager.add(tank);
 	}
+	
+	public void markNeutral(){
+		type = 0;
+	}
+	
+	public void markAsInput(){
+		type = 1;
+	}
+	
+	public void markAsOutput(){
+		type = 2;
+	}
 
 	@Override
 	public int fill(ForgeDirection from, FluidStack resource, boolean doFill) {
-		if (type != 1){
-			return 0;
+		if (type == 1 && resource.getFluid() == BuildCraftEnergy.fluidOil){
+			int t = tank.fill(resource, doFill);
+			sendNetworkUpdate();
+			return t;
 		}
-		return tank.fill(resource, doFill);
+		return 0;
 	}
 
 	@Override
@@ -39,10 +59,12 @@ public class TileRefineryValve extends TileBuildCraft implements IFluidHandler{
 
 	@Override
 	public FluidStack drain(ForgeDirection from, int maxDrain, boolean doDrain) {
-		if (type != 2){
-			return null;
+		if (type == 2){
+			FluidStack t = tank.drain(maxDrain, doDrain);
+			sendNetworkUpdate();
+			return t;
 		}
-		return tank.drain(maxDrain, doDrain);
+		return null;
 	}
 
 	@Override
@@ -55,7 +77,7 @@ public class TileRefineryValve extends TileBuildCraft implements IFluidHandler{
 
 	@Override
 	public boolean canDrain(ForgeDirection from, Fluid fluid) {
-		if (type == 2 ){
+		if (type == 2){
 			return true;
 		}
 		return false;
@@ -64,6 +86,21 @@ public class TileRefineryValve extends TileBuildCraft implements IFluidHandler{
 	@Override
 	public FluidTankInfo[] getTankInfo(ForgeDirection from) {
 		return tankManager.getTankInfo(from);
+	}
+	
+	public int getScaledFluid(int i) {
+		return this.tank.getFluid() != null ? (int) (((float) this.tank.getFluid().amount / (float) (MAX_LIQUID)) * i) : 0;
+	}
+	
+	public int getAmountOfLiquid(){
+		if (tank.isEmpty()){
+			return 0;
+		}
+		return tank.getFluidAmount();
+	}
+	
+	public FluidStack getLiquid(){
+		return tank.getFluid();
 	}
 	
 	@Override
@@ -79,6 +116,22 @@ public class TileRefineryValve extends TileBuildCraft implements IFluidHandler{
 		super.writeToNBT(data);
 		tankManager.writeToNBT(data);
 		data.setInteger("type", type);
+	}
+	@Override
+	public PacketPayload getPacketPayload() {
+		PacketPayload payload = new PacketPayload(new PacketPayload.StreamWriter() {
+			@Override
+			public void writeData(ByteBuf data) {
+				tankManager.writeData(data);
+			}
+		});
+		return payload;
+	}
+
+	@Override
+	public void handleUpdatePacket(PacketUpdate packet) throws IOException {
+		ByteBuf stream = packet.payload.stream;
+		tankManager.readData(stream);
 	}
 
 }

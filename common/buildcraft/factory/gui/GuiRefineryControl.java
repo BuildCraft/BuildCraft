@@ -44,12 +44,12 @@ public class GuiRefineryControl extends GuiBuildCraft{
 		String title = StringUtils.localize("tile.refineryControl.name");
 		if (buildcraft.core.utils.MultiBlockCheck.isPartOfAMultiBlock("refinery", x, y, z, world)){
 			fontRendererObj.drawString(title, getCenteredOffset(title), 6, 0x008000);
+			fontRendererObj.drawString("Oil: "+ refinery.input.getAmountOfLiquid(), 10, 50, 0x404040);
+			fontRendererObj.drawString("Fuel: "+ refinery.output.getAmountOfLiquid(), 10, 65, 0x404040);	
 			} else {
 				fontRendererObj.drawString(title, getCenteredOffset(title), 6, 0xff0000);
 				}
-		refinery.sendNetworkUpdate();
-		fontRendererObj.drawString("Oil: "+ refinery.AmountOfOil(), 10, 50, 0x404040);
-		fontRendererObj.drawString("Fuel: "+ refinery.AmountOfFuel(), 10, 65, 0x404040);		
+		refinery.sendNetworkUpdate();	
 		}
 
 	@Override
@@ -57,13 +57,15 @@ public class GuiRefineryControl extends GuiBuildCraft{
 		super.drawGuiContainerBackgroundLayer(f, x, y);
 		int j = (width - xSize) / 2;
 		int k = (height - ySize) / 2;
-		mc.renderEngine.bindTexture(texture);
-        drawTexturedModalRect(j + 104, k + 19, 176, 0, 16, 60);
-        drawTexturedModalRect(j + 122, k + 19, 176, 0, 16, 60);
 		TileRefineryControl  refineryB = (TileRefineryControl) tile;
-		height = refineryB.getScaledInput(58);
-        drawFluid(refineryB.getInput(), refineryB.getScaledInput(58), j + 103, k + 15, 16, 58);
-        drawFluid(refineryB.getOutput(), refineryB.getScaledOutput(58), j + 122, k + 15, 16, 58);
+		if (refineryB.valvesAssinged){
+	        drawFluid(refineryB.input.getLiquid(), refineryB.input.getScaledFluid(58), j + 104, k + 19, 16, 58);
+	        drawFluid(refineryB.output.getLiquid() ,refineryB.input.getScaledFluid(58), j + 122, k + 19, 16, 58);
+		}
+		mc.renderEngine.bindTexture(texture);
+		drawTexturedModalRect(j + 104, k + 19, 176, 0, 16, 60);
+	    drawTexturedModalRect(j + 122, k + 19, 176, 0, 16, 60);
+		
 	}
 
 	private void drawFluid(FluidStack fluid, int level, int x, int y, int width, int height){
