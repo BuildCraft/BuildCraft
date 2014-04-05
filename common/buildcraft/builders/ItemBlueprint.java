@@ -30,15 +30,14 @@ public abstract class ItemBlueprint extends ItemBuildCraft {
 
 	@Override
 	public void addInformation(ItemStack stack, EntityPlayer player, List list, boolean advanced) {
-		BlueprintId blueprint = getId(stack);
+		if (NBTUtils.getItemData(stack).hasKey("name")) {
+			String name = NBTUtils.getItemData(stack).getString("name");
 
-		if (blueprint != null) {
-			if (blueprint.name.equals("")) {
+			if (name.equals("")) {
 				list.add(String.format(StringUtils.localize("item.blueprint.unnamed")));
 			} else {
-				list.add(String.format(blueprint.name));
+				list.add(String.format (name));
 			}
-
 
 			list.add(String.format(StringUtils
 					.localize("item.blueprint.author")
