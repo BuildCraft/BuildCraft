@@ -35,22 +35,18 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
 
-public class TileRefineryControl extends TileBuildCraft implements IFluidHandler, IInventory {
-	
-	public static int MAX_LIQUID = FluidContainerRegistry.BUCKET_VOLUME * 10;
-	public SingleUseTank inputTank = new SingleUseTank("inputTank", MAX_LIQUID, this);
-	public SingleUseTank outputTank = new SingleUseTank("outputTank", MAX_LIQUID, this);
-	private TankManager tankManager = new TankManager();
+public class TileRefineryControl extends TileBuildCraft implements IInventory {
+
 	@MjBattery (maxReceivedPerCycle = 25, maxCapacity = 1000)
 	public double energy;
 	public TileRefineryValve input, output;
 	public boolean valvesAssinged = false;
+	public boolean active = false;
 	
 	
 	
 	public TileRefineryControl() {
-		tankManager.add(inputTank);
-		tankManager.add(outputTank);
+		
 	}
 	
 	@Override
@@ -62,76 +58,52 @@ public class TileRefineryControl extends TileBuildCraft implements IFluidHandler
 				int y = this.yCoord;
 				int z = this.zCoord;
 				if (world.getBlock(x - 4, y + 1, z+1) == BuildCraftFactory.blockRefineryValve && world.getBlock(x+4, y+1, z+1) == BuildCraftFactory.blockRefineryValve){
-					input = (TileRefineryValve) world.getTileEntity(x-4, y+1, z+1);
+					input = (TileRefineryValve) world.getTileEntity(x+4, y+1, z+1);
 					input.markAsInput();
-					output = (TileRefineryValve) world.getTileEntity(x+4, y+1, z+1);
+					output = (TileRefineryValve) world.getTileEntity(x-4, y+1, z+1);
 					output.markAsOutput();
 					valvesAssinged = true;
 					}
 				if (world.getBlock(x - 4, y + 1, z-1) == BuildCraftFactory.blockRefineryValve && world.getBlock(x+4, y+1, z-1) == BuildCraftFactory.blockRefineryValve){
-					input = (TileRefineryValve) world.getTileEntity(x-4, y+1, z-1);
+					input = (TileRefineryValve) world.getTileEntity(x+4, y+1, z-1);
 					input.markAsInput();
-					output = (TileRefineryValve) world.getTileEntity(x+4, y+1, z-1);
+					output = (TileRefineryValve) world.getTileEntity(x-4, y+1, z-1);
 					output.markAsOutput();
 					valvesAssinged = true;
 					}
 				if (world.getBlock(x+1, y+1, z-4) == BuildCraftFactory.blockRefineryValve && world.getBlock (x+1, y+1, z+4) == BuildCraftFactory.blockRefineryValve){
-					input = (TileRefineryValve) world.getTileEntity(x+1, y+1, z-4);
+					input = (TileRefineryValve) world.getTileEntity(x+1, y+1, z+4);
 					input.markAsInput();
-					output = (TileRefineryValve) world.getTileEntity(x+1, y+1, z+4);
+					output = (TileRefineryValve) world.getTileEntity(x+1, y+1, z-4);
 					output.markAsOutput();
 					valvesAssinged = true;
 					}
 				if (world.getBlock(x-1, y+1, z-4) == BuildCraftFactory.blockRefineryValve && world.getBlock (x-1, y+1, z+4) == BuildCraftFactory.blockRefineryValve){
-					input = (TileRefineryValve) world.getTileEntity(x-1, y+1, z-4);
+					input = (TileRefineryValve) world.getTileEntity(x-1, y+1, z+4);
 					input.markAsInput();
-					output = (TileRefineryValve) world.getTileEntity(x-1, y+1, z+4);
+					output = (TileRefineryValve) world.getTileEntity(x-1, y+1, z-4);
 					output.markAsOutput();
 					valvesAssinged = true;
 					}
 				}
+			if (input.getAmountOfLiquid() >= 1 && output.getAmountOfLiquid() <= 9999 && energy >=25 ){
+				active = true;
+				input.tank.drain(1, true);
+				output.tank.fill(new FluidStack (BuildCraftEnergy.fluidFuel, 1), true);
+				energy = energy-10;
+				sendNetworkUpdate();
+				input.sendNetworkUpdate();
+				output.sendNetworkUpdate();
+			} else {
+				active = false;
+			}
 			} else {
 				if (valvesAssinged){
 					input.markNeutral();
 					output.markNeutral();
 					}
 				}
-		if (AmountOfOil() > 1 && AmountOfFuel() <= 9999 && energy >=25 ){
-			inputTank.drain(1, true);
-			outputTank.fill(new FluidStack (BuildCraftEnergy.fluidFuel, 1), true);
-			energy = energy-10;
-			sendNetworkUpdate();
 		}
-	}
-	
-	public int AmountOfOil(){
-		if (inputTank.isEmpty()){
-			return 0;
-		}
-		return inputTank.getFluid().amount;
-	}
-	
-	public int AmountOfFuel(){
-		if (outputTank.isEmpty()){
-			return 0;
-		}
-		return outputTank.getFluidAmount();
-	}
-	
-	public int getScaledInput(int i) {
-		return this.inputTank.getFluid() != null ? (int) (((float) this.inputTank.getFluid().amount / (float) (MAX_LIQUID)) * i) : 0;
-	}
-	public int getScaledOutput(int i) {
-		return outputTank.getFluid() != null ? (int) (((float) this.outputTank.getFluid().amount / (float) (MAX_LIQUID)) * i) : 0;
-	}
-	
-	public FluidStack getInput(){
-		return inputTank.getFluid();
-	}
-	
-	public FluidStack getOutput(){
-		return outputTank.getFluid();
-	}
 
 	public double getEnergy() {
 		return energy;
@@ -196,69 +168,19 @@ public class TileRefineryControl extends TileBuildCraft implements IFluidHandler
 	}
 
 	@Override
-	public int fill(ForgeDirection from, FluidStack resource, boolean doFill) {
-		return 0;
-	}
-
-	@Override
-	public FluidStack drain(ForgeDirection from, FluidStack resource, boolean doDrain) {
-		return null;
-	}
-
-	@Override
-	public FluidStack drain(ForgeDirection from, int maxDrain, boolean doDrain) {
-		return null;
-	}
-
-	@Override
-	public boolean canFill(ForgeDirection from, Fluid fluid) {
-		
-		return false;
-	}
-
-	@Override
-	public boolean canDrain(ForgeDirection from, Fluid fluid) {
-		return false;
-	}
-
-	@Override
-	public FluidTankInfo[] getTankInfo(ForgeDirection direction) {
-		return tankManager.getTankInfo(direction);
-	}
-	@Override
 	public void readFromNBT(NBTTagCompound data) {
 		super.readFromNBT(data);
-		tankManager.readFromNBT(data);
 		energy = data.getDouble("energy");
 	}
 
 	@Override
 	public void writeToNBT(NBTTagCompound data) {
 		super.writeToNBT(data);
-		tankManager.writeToNBT(data);
 		data.setDouble("energy", energy);
 	}
 
 	@Override
 	public void markDirty() {
 
-	}
-
-	@Override
-	public PacketPayload getPacketPayload() {
-		PacketPayload payload = new PacketPayload(new PacketPayload.StreamWriter() {
-			@Override
-			public void writeData(ByteBuf data) {
-				tankManager.writeData(data);
-			}
-		});
-		return payload;
-	}
-
-	@Override
-	public void handleUpdatePacket(PacketUpdate packet) throws IOException {
-		ByteBuf stream = packet.payload.stream;
-		tankManager.readData(stream);
-	}
-	
+	}	
 }

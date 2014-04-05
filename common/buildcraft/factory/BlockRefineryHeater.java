@@ -36,7 +36,7 @@ public class BlockRefineryHeater extends Block{
 	@SideOnly(Side.CLIENT)
 	public void registerBlockIcons(IIconRegister par1IconRegister) {
 		textureTop = par1IconRegister.registerIcon("buildcraft:refinery_heater_top");
-		textureSide = par1IconRegister.registerIcon("buildcraft:refinery_heater_sides_inactive");
+		textureSide = par1IconRegister.registerIcon("buildcraft:refinery_heater_sides_active");
 	}
 
 	@Override

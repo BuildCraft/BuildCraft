@@ -60,7 +60,7 @@ public class GuiRefineryControl extends GuiBuildCraft{
 		TileRefineryControl  refineryB = (TileRefineryControl) tile;
 		if (refineryB.valvesAssinged){
 	        drawFluid(refineryB.input.getLiquid(), refineryB.input.getScaledFluid(58), j + 104, k + 19, 16, 58);
-	        drawFluid(refineryB.output.getLiquid() ,refineryB.input.getScaledFluid(58), j + 122, k + 19, 16, 58);
+	        drawFluid(refineryB.output.getLiquid() ,refineryB.output.getScaledFluid(58), j + 122, k + 19, 16, 58);
 		}
 		mc.renderEngine.bindTexture(texture);
 		drawTexturedModalRect(j + 104, k + 19, 176, 0, 16, 60);
