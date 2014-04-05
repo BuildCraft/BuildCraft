@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 
 import net.minecraft.inventory.IInventory;
+import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.mj.MjBattery;
 import buildcraft.core.LaserData;
 import buildcraft.core.TileBuildCraft;
@@ -32,6 +33,8 @@ public abstract class TileAbstractBuilder extends TileBuildCraft implements IInv
 	public LinkedList<LaserData> pathLasers = new LinkedList<LaserData> ();
 
 	public ArrayList <BuildingItem> buildersInAction = new ArrayList<BuildingItem>();
+
+	protected SafeTimeTracker buildTracker = new SafeTimeTracker(5);
 
 	@Override
 	public void updateEntity() {

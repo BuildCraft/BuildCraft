@@ -104,6 +104,7 @@ public class Schematic {
 			stack.stackSize = 1;
 			stack.setItemDamage(0);
 		}
+
 		return result;
 	}
 

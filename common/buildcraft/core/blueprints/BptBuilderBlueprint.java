@@ -80,9 +80,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 					SchematicBlock slot = (SchematicBlock) bluePrint.contents[i][j][k];
 
 					if (slot == null) {
-						slot = new SchematicBlock();
-						slot.meta = 0;
-						slot.block = Blocks.air;
+						continue;
 					}
 
 					BuildingSlotBlock b = new BuildingSlotBlock ();
@@ -174,25 +172,37 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 
 			if (getNext) {
 				if (slot.mode == Mode.ClearIfInvalid) {
-					if (!BlockUtil.isSoftBlock(world, slot.x, slot.y, slot.z)) {
+					if (BlockUtil.isSoftBlock(world, slot.x, slot.y, slot.z)
+							|| BlockUtil.isUnbreakableBlock(world, slot.x, slot.y, slot.z)) {
+						iterator.remove();
+					} else {
 						if (setupForDestroy(builder, context, slot)) {
 							iterator.remove();
 							postProcessing.add(slot);
 							return slot;
 						}
 					}
-				} else if (world.getWorldInfo().getGameType() == GameType.CREATIVE) {
-					// In creative, we don't use blocks or energy from the builder
+				} else {
+					if (world.getWorldInfo().getGameType() == GameType.CREATIVE) {
 
-					iterator.remove();
-					postProcessing.add(slot);
-					return slot;
-				} else if (checkRequirements(builder, (SchematicBlock) slot.schematic)) {
-					useRequirements(builder, slot);
+						// In creative, we don't use blocks or energy from the
+						// builder
 
-					iterator.remove();
-					postProcessing.add(slot);
-					return slot;
+						for (ItemStack s : slot.getRequirements(context)) {
+							slot.addStackConsumed(s);
+						}
+
+						iterator.remove();
+						postProcessing.add(slot);
+						return slot;
+					} else if (checkRequirements(builder,
+							(SchematicBlock) slot.schematic)) {
+						useRequirements(builder, slot);
+
+						iterator.remove();
+						postProcessing.add(slot);
+						return slot;
+					}
 				}
 			} else {
 				iterator.remove();

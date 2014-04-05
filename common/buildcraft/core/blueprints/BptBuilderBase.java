@@ -137,7 +137,7 @@ public abstract class BptBuilderBase implements IAreaProvider {
 		} else {
 			builder.consumeEnergy(hardness * TileAbstractBuilder.BREAK_ENERGY);
 
-			for (int i = 0; i < hardness; ++i) {
+			for (int i = 0; i <= hardness; ++i) {
 				slot.addStackConsumed(new ItemStack(
 						BuildCraftBuilders.buildToolBlock));
 			}

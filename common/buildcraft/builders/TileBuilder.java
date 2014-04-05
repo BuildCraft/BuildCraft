@@ -22,7 +22,6 @@ import net.minecraft.world.WorldSettings.GameType;
 import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.BuildCraftBuilders;
 import buildcraft.api.core.Position;
-import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.gates.IAction;
 import buildcraft.core.BlockIndex;
 import buildcraft.core.Box;
@@ -56,8 +55,6 @@ public class TileBuilder extends TileAbstractBuilder implements IMachine, IBoxPr
 	private LinkedList<BlockIndex> path;
 
 	private LinkedList <ItemStack> requiredToBuild;
-
-	private SafeTimeTracker buildTracker = new SafeTimeTracker(5);
 
 	private class PathIterator {
 

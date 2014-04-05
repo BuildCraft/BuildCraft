@@ -99,7 +99,7 @@ public class TileFiller extends TileAbstractBuilder implements IMachine, IAction
 			return;
 		}
 
-		if (mjStored < POWER_ACTIVATION) {
+		if (mjStored < POWER_ACTIVATION && !buildTracker.markTimeIfDelay(worldObj)) {
 			return;
 		}
 

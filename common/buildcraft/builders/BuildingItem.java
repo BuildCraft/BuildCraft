@@ -104,6 +104,10 @@ public class BuildingItem implements IBuilder {
 			vy = dy / maxLifetime;
 			vz = dz / maxLifetime;
 
+			if (stacksToBuild == null) {
+				stacksToBuild = new LinkedList<ItemStack>();
+			}
+
 			for (ItemStack s : stacksToBuild) {
 				StackAtPosition sPos = new StackAtPosition();
 				sPos.stack = s;

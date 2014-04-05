@@ -126,7 +126,8 @@ public class BptBuilderTemplate extends BptBuilderBase {
 			if (slot == null) {
 				break;
 			} else if (slot.mode == Mode.ClearIfInvalid) {
-				if (BlockUtil.isSoftBlock(world, slot.x, slot.y, slot.z)) {
+				if (BlockUtil.isSoftBlock(world, slot.x, slot.y, slot.z)
+						|| BlockUtil.isUnbreakableBlock(world, slot.x, slot.y, slot.z)) {
 					iterator.remove();
 				} else {
 					if (setupForDestroy(builder, context, slot)) {

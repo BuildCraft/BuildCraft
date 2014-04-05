@@ -20,6 +20,7 @@ import buildcraft.api.core.IIconProvider;
 import buildcraft.api.core.Position;
 import buildcraft.api.mj.MjBattery;
 import buildcraft.core.proxy.CoreProxy;
+import buildcraft.core.utils.BlockUtil;
 import buildcraft.transport.BlockGenericPipe;
 import buildcraft.transport.ItemPipe;
 import buildcraft.transport.Pipe;
@@ -55,30 +56,33 @@ public class PipeItemsStripes extends Pipe <PipeTransportItems> {
 						container.zCoord, o);
 				p.moveForwards(1.0);
 
-				ArrayList<ItemStack> stacks = getWorld().getBlock(
-						(int) p.x, (int) p.y, (int) p.z)
-						.getDrops(
-								getWorld(),
-								(int) p.x,
-								(int) p.y,
-								(int) p.z,
-								getWorld().getBlockMetadata((int) p.x,
-										(int) p.y, (int) p.z), 0);
+				if (!BlockUtil.isUnbreakableBlock(getWorld(), (int) p.x, (int) p.y, (int) p.z)) {
+					ArrayList<ItemStack> stacks = getWorld().getBlock(
+							(int) p.x, (int) p.y, (int) p.z).getDrops(
+							getWorld(),
+							(int) p.x,
+							(int) p.y,
+							(int) p.z,
+							getWorld().getBlockMetadata((int) p.x, (int) p.y,
+									(int) p.z), 0);
 
-				if (stacks != null) {
-					for (ItemStack s : stacks) {
-						if (s != null) {
-							TravelingItem newItem = TravelingItem.make(
-									container.xCoord + 0.5, container.yCoord
-											+ TransportUtils.getPipeFloorOf(s),
-									container.zCoord + 0.5, s);
+					if (stacks != null) {
+						for (ItemStack s : stacks) {
+							if (s != null) {
+								TravelingItem newItem = TravelingItem.make(
+										container.xCoord + 0.5,
+										container.yCoord
+												+ TransportUtils
+														.getPipeFloorOf(s),
+										container.zCoord + 0.5, s);
 
-							transport.injectItem(newItem, o.getOpposite());
+								transport.injectItem(newItem, o.getOpposite());
+							}
 						}
 					}
-				}
 
-				getWorld().setBlockToAir((int) p.x, (int) p.y, (int) p.z);
+					getWorld().setBlockToAir((int) p.x, (int) p.y, (int) p.z);
+				}
 			}
 		}
 

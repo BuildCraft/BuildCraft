@@ -127,6 +127,12 @@ public class BlockUtil {
 		return block == null || BuildCraftAPI.softBlocks.contains(block) || block.isAir(world, x, y, z);
 	}
 
+	public static boolean isUnbreakableBlock(World world, int x, int y, int z) {
+		Block b = world.getBlock(x, y, z);
+
+		return b != null && b.getBlockHardness(world, x, y, z) < 0;
+	}
+
 	/**
 	 * Returns true if a block cannot be harvested without a tool.
 	 */
