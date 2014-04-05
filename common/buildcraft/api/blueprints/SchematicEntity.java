@@ -145,4 +145,24 @@ public class SchematicEntity extends Schematic {
 
 		return nbttaglist;
 	}
+
+	public boolean isAlreadyBuilt(IBuilderContext context, CoordTransformation transform) {
+		NBTTagList nbttaglist = cpt.getTagList("Pos", 6);
+		Position newPosition = new Position(nbttaglist.func_150309_d(0),
+				nbttaglist.func_150309_d(1), nbttaglist.func_150309_d(2));
+
+		newPosition = transform.translate(newPosition);
+
+		for (Object o : context.world().loadedEntityList) {
+			Entity e = (Entity) o;
+
+			Position existingPositon = new Position(e.posX, e.posY, e.posZ);
+
+			if (existingPositon.isClose (newPosition, 0.1F)) {
+				return true;
+			}
+		}
+
+		return false;
+	}
 }

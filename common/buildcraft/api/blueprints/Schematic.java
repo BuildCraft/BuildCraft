@@ -39,6 +39,15 @@ import net.minecraft.nbt.NBTTagCompound;
  */
 public class Schematic {
 
+	/**
+	 * Return true if the block on the world correspond to the block stored in
+	 * the blueprint at the location given by the slot. By default, this
+	 * subprogram is permissive and doesn't take into account metadata.
+	 */
+	public boolean isAlreadyBuilt(IBuilderContext context, int x, int y, int z) {
+		return true;
+	}
+
 	public final LinkedList<ItemStack> getRequirements(IBuilderContext context) {
 		LinkedList<ItemStack> res = new LinkedList<ItemStack>();
 

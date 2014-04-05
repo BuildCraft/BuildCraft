@@ -163,8 +163,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 
 			try {
 				getNext = !slot.schematic.ignoreBuilding()
-						&& !slot.schematic.isValid(context, slot.x, slot.y,
-								slot.z);
+						&& !slot.isAlreadyBuilt(context);
 			} catch (Throwable t) {
 				// Defensive code against errors in implementers
 				t.printStackTrace();
@@ -207,15 +206,19 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 			TileAbstractBuilder builder, LinkedList<BuildingSlotEntity> list) {
 		Iterator<BuildingSlotEntity> it = list.iterator();
 
-		while (iterator.hasNext()) {
+		while (it.hasNext()) {
 			BuildingSlotEntity slot = it.next();
 
-			if (checkRequirements(builder, slot.schematic)) {
-				useRequirements(builder, slot);
+			if (slot.isAlreadyBuilt(context)) {
+				it.remove();
+			} else {
+				if (checkRequirements(builder, slot.schematic)) {
+					useRequirements(builder, slot);
 
-				iterator.remove();
-				postProcessing.add(slot);
-				return slot;
+					it.remove();
+					postProcessing.add(slot);
+					return slot;
+				}
 			}
 		}
 

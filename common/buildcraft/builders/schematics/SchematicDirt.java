@@ -29,7 +29,7 @@ public class SchematicDirt extends SchematicBlock {
 	}
 
 	@Override
-	public boolean isValid(IBuilderContext context, int x, int y, int z) {
+	public boolean isAlreadyBuilt(IBuilderContext context, int x, int y, int z) {
 		Block block = context.world().getBlock(x, y, z);
 
 		return block == Blocks.dirt || block == Blocks.grass || block == Blocks.farmland;

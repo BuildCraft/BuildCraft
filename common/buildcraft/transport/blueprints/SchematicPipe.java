@@ -28,7 +28,7 @@ import buildcraft.transport.TileGenericPipe.SideProperties;
 public class SchematicPipe extends SchematicTile {
 
 	@Override
-	public boolean isValid(IBuilderContext context, int x, int y, int z) {
+	public boolean isAlreadyBuilt(IBuilderContext context, int x, int y, int z) {
 		Pipe pipe = BlockGenericPipe.getPipe(context.world(), x, y, z);
 
 		if (BlockGenericPipe.isValid(pipe)) {

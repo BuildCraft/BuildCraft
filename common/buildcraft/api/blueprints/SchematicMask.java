@@ -41,7 +41,7 @@ public class SchematicMask extends SchematicBlockBase {
 	}
 
 	@Override
-	public boolean isValid(IBuilderContext context, int x, int y, int z) {
+	public boolean isAlreadyBuilt(IBuilderContext context, int x, int y, int z) {
 		if (isConcrete) {
 			return !BlockUtil.isSoftBlock(context.world(), x, y, z);
 		} else {

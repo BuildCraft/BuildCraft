@@ -45,5 +45,7 @@ public abstract class BuildingSlot {
 		stackConsumed.add (stack);
 	}
 
+	public abstract boolean isAlreadyBuilt (IBuilderContext context);
+
 	public abstract Schematic getSchematic ();
 }

@@ -32,6 +32,7 @@ public class BuildingSlotEntity extends BuildingSlot {
 		NBTTagList nbttaglist = schematic.cpt.getTagList("Pos", 6);
 		Position pos = new Position(nbttaglist.func_150309_d(0),
 				nbttaglist.func_150309_d(1), nbttaglist.func_150309_d(2));
+
 		pos = transform.translate(pos);
 
 		return pos;
@@ -51,5 +52,10 @@ public class BuildingSlotEntity extends BuildingSlot {
 	@Override
 	public SchematicEntity getSchematic() {
 		return schematic;
+	}
+
+	@Override
+	public boolean isAlreadyBuilt(IBuilderContext context) {
+		return schematic.isAlreadyBuilt(context, transform);
 	}
 }

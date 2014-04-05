@@ -60,7 +60,7 @@ public class SchematicRail extends SchematicBlock {
 	}
 
 	@Override
-	public boolean isValid(IBuilderContext context, int x, int y, int z) {
+	public boolean isAlreadyBuilt(IBuilderContext context, int x, int y, int z) {
 		return block == context.world().getBlock(x, y, z);
 	}
 

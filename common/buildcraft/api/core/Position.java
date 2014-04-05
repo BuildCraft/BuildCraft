@@ -148,4 +148,18 @@ public class Position {
 		return new Position(p.x < x ? x : p.x, p.y < y ? y : p.y, p.z < z ? z : p.z);
 	}
 
+	public boolean isClose(Position newPosition, float f) {
+		double dx = x - newPosition.x;
+		double dy = y - newPosition.y;
+		double dz = z - newPosition.z;
+
+		double sqrDis = dx * dx + dy * dy + dz * dz;
+
+		if (sqrDis > f * f) {
+			return false;
+		} else {
+			return true;
+		}
+	}
+
 }

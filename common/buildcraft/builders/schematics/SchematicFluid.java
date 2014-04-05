@@ -30,7 +30,7 @@ public class SchematicFluid extends SchematicBlock {
 	}
 
 	@Override
-	public boolean isValid(IBuilderContext context, int x, int y, int z) {
+	public boolean isAlreadyBuilt(IBuilderContext context, int x, int y, int z) {
 		if (meta == 0) {
 			return block == context.world().getBlock(x, y, z) && context.world().getBlockMetadata(x, y, z) == 0;
 		} else {

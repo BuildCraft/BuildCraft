@@ -34,7 +34,7 @@ public class SchematicSeeds extends SchematicBlock {
 	}
 
 	@Override
-	public boolean isValid(IBuilderContext context, int x, int y, int z) {
+	public boolean isAlreadyBuilt(IBuilderContext context, int x, int y, int z) {
 		return context.world().getBlock(x, y, z) == block;
 	}
 }

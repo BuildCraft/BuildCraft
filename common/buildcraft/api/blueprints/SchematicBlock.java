@@ -107,7 +107,7 @@ public class SchematicBlock extends SchematicBlockBase  implements Comparable<Sc
 	 * subprogram is permissive and doesn't take into account metadata.
 	 */
 	@Override
-	public boolean isValid(IBuilderContext context, int x, int y, int z) {
+	public boolean isAlreadyBuilt(IBuilderContext context, int x, int y, int z) {
 		return block == context.world().getBlock(x, y, z) && meta == context.world().getBlockMetadata(x, y, z);
 	}
 

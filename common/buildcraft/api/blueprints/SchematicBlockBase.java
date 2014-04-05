@@ -34,15 +34,6 @@ package buildcraft.api.blueprints;
  */
 public class SchematicBlockBase extends Schematic {
 
-	/**
-	 * Return true if the block on the world correspond to the block stored in
-	 * the blueprint at the location given by the slot. By default, this
-	 * subprogram is permissive and doesn't take into account metadata.
-	 */
-	public boolean isValid(IBuilderContext context, int x, int y, int z) {
-		return true;
-	}
-
 	public void writeCompleted(IBuilderContext context, int x, int y, int z, double completed) {
 
 	}

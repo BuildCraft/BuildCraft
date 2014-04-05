@@ -40,7 +40,7 @@ public class BuildingSlotBlock extends BuildingSlot implements Comparable<Buildi
 	@Override
 	public void writeToWorld(IBuilderContext context) {
 		if (mode == Mode.ClearIfInvalid) {
-			if (!getSchematic().isValid(context, x, y, z)) {
+			if (!getSchematic().isAlreadyBuilt(context, x, y, z)) {
 				context.world().setBlockToAir(x, y, z);
 			}
 		} else {
@@ -118,5 +118,10 @@ public class BuildingSlotBlock extends BuildingSlot implements Comparable<Buildi
 	@Override
 	public void writeCompleted (IBuilderContext context, double complete) {
 		getSchematic().writeCompleted(context, x, y, z, complete);
+	}
+
+	@Override
+	public boolean isAlreadyBuilt(IBuilderContext context) {
+		return schematic.isAlreadyBuilt(context, x, y, z);
 	}
 }
