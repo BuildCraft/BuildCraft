@@ -42,11 +42,11 @@ public class TileRefineryControl extends TileBuildCraft implements IInventory {
 	public TileRefineryValve input, output;
 	public boolean valvesAssinged = false;
 	public boolean active = false;
-	
+	@NetworkData
+	public double temprature = 20;
 	
 	
 	public TileRefineryControl() {
-		
 	}
 	
 	@Override
@@ -86,17 +86,26 @@ public class TileRefineryControl extends TileBuildCraft implements IInventory {
 					valvesAssinged = true;
 					}
 				}
-			if (input.getAmountOfLiquid() >= 1 && output.getAmountOfLiquid() <= 9999 && energy >=25 ){
-				active = true;
-				input.tank.drain(1, true);
-				output.tank.fill(new FluidStack (BuildCraftEnergy.fluidFuel, 1), true);
+			if (energy>=10){
 				energy = energy-10;
-				sendNetworkUpdate();
-				input.sendNetworkUpdate();
-				output.sendNetworkUpdate();
-			} else {
-				active = false;
-			}
+				active = true;
+				if (temprature<400){
+					temprature = temprature+0.1;
+					sendNetworkUpdate();
+				}
+				if (input.getAmountOfLiquid() >= 1 && output.getAmountOfLiquid() <= 9999 && temprature>=370){
+					input.tank.drain(1, true);
+					output.tank.fill(new FluidStack (BuildCraftEnergy.fluidFuel, 1), true);
+					input.sendNetworkUpdate();
+					output.sendNetworkUpdate();
+					}
+				} else {
+					active = false;
+					if (temprature > 20){
+						temprature = temprature-0.1;
+						sendNetworkUpdate();
+					}
+					}
 			} else {
 				if (valvesAssinged){
 					input.markNeutral();
@@ -104,6 +113,10 @@ public class TileRefineryControl extends TileBuildCraft implements IInventory {
 					}
 				}
 		}
+	
+	public int getTemprature(){
+		return (int) Math.round(temprature);
+	}
 
 	public double getEnergy() {
 		return energy;
@@ -171,16 +184,18 @@ public class TileRefineryControl extends TileBuildCraft implements IInventory {
 	public void readFromNBT(NBTTagCompound data) {
 		super.readFromNBT(data);
 		energy = data.getDouble("energy");
+		temprature = data.getDouble("temprature");
 	}
 
 	@Override
 	public void writeToNBT(NBTTagCompound data) {
 		super.writeToNBT(data);
 		data.setDouble("energy", energy);
+		data.setDouble("temprature", temprature);
 	}
 
 	@Override
 	public void markDirty() {
 
 	}	
-}
+	}

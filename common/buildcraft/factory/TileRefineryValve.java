@@ -117,6 +117,7 @@ public class TileRefineryValve extends TileBuildCraft implements IFluidHandler{
 		tankManager.writeToNBT(data);
 		data.setInteger("type", type);
 	}
+	
 	@Override
 	public PacketPayload getPacketPayload() {
 		PacketPayload payload = new PacketPayload(new PacketPayload.StreamWriter() {
