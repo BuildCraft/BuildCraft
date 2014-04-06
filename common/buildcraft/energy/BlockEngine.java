@@ -141,7 +141,10 @@ public class BlockEngine extends BlockBuildCraft {
 		if (tile instanceof TileEngine){
 			AxisAlignedBB[] aabbs = boxes[((TileEngine)tile).orientation.ordinal()];
 			for (AxisAlignedBB aabb : aabbs) {
-				list.add(aabb);
+				aabb = aabb.getOffsetBoundingBox(x, y, z);
+				if (mask.intersectsWith(aabb)){
+					list.add(aabb);
+				}
 			}
 		} else {
 			super.addCollisionBoxesToList(wrd, x, y, z, full, list, ent);
