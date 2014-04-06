@@ -14,6 +14,7 @@ import java.util.TreeMap;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.World;
 import buildcraft.api.core.SafeTimeTracker;
+import buildcraft.api.mj.MjBattery;
 import buildcraft.core.BlockIndex;
 import buildcraft.core.LaserData;
 import buildcraft.core.TileBuildCraft;
@@ -24,15 +25,8 @@ import buildcraft.core.network.RPCSide;
 
 public class TileEnergyEmitter extends TileBuildCraft {
 
-	/**
-	 * TODO: Try to use these instead of IPowerReceptor
-	 */
-	public float _MJ_STORED = 0;
-	/*
-	public static final float   __MJ_POWER_MAX = 1024;
-	public static final boolean __MJ_RECEIVE_PNEUMATIC = true;
-	public static final boolean __MJ_RECEIVE_LASER = false;
-	*/
+	@MjBattery (maxCapacity = 1024, maxReceivedPerCycle = 1204, minimumConsumption = 0)
+	public double mjStored;
 
 	public float mjAcc = 0;
 	public int accumulated = 0;
@@ -72,7 +66,7 @@ public class TileEnergyEmitter extends TileBuildCraft {
 
 					if (t.data.wavePosition > t.data.renderSize) {
 						t.data.wavePosition = 0;
-						t.data.waveSize = (_MJ_STORED / targets.size() / 10F);
+						t.data.waveSize = (float) (mjStored / targets.size() / 10F);
 
 						if (t.data.waveSize > 1) {
 							t.data.waveSize = 1F;
@@ -112,7 +106,7 @@ public class TileEnergyEmitter extends TileBuildCraft {
 		// synchronize regularly with the client an average of the energy in
 		// the emitter
 
-		mjAcc += _MJ_STORED;
+		mjAcc += mjStored;
 		accumulated++;
 
 		if (syncMJ.markTimeIfDelay(worldObj)) {
@@ -122,7 +116,7 @@ public class TileEnergyEmitter extends TileBuildCraft {
 			accumulated = 0;
 		}
 
-		if (_MJ_STORED == 0) {
+		if (mjStored == 0) {
 			for (Target t : targets.values()) {
 				if (t.data.isVisible) {
 					t.data.isVisible = false;
@@ -132,13 +126,13 @@ public class TileEnergyEmitter extends TileBuildCraft {
 				}
 			}
 		} else {
-			float perTargetEnergy = 10;
+			double perTargetEnergy = 10;
 
-			if (_MJ_STORED > targets.size() * 10) {
-				_MJ_STORED -= targets.size() * 10;
+			if (mjStored > targets.size() * 10) {
+				mjStored -= targets.size() * 10;
 			} else {
-				perTargetEnergy = _MJ_STORED / targets.size();
-				_MJ_STORED = 0;
+				perTargetEnergy = mjStored / targets.size();
+				mjStored = 0;
 			}
 
 			for (Target t : targets.values()) {
@@ -158,7 +152,7 @@ public class TileEnergyEmitter extends TileBuildCraft {
 
 	@RPC (RPCSide.CLIENT)
 	public void synchronizeMJ (float val) {
-		_MJ_STORED = val;
+		mjStored = val;
 	}
 
 	@RPC (RPCSide.CLIENT)
