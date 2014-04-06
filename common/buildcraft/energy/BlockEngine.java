@@ -31,6 +31,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.entity.Entity;
 import net.minecraft.util.Vec3;
 
 import static net.minecraft.util.AxisAlignedBB.getBoundingBox;
@@ -156,16 +157,23 @@ public class BlockEngine extends BlockBuildCraft {
 		TileEntity tile = wrd.getTileEntity(x, y, z);
 		if (tile instanceof TileEngine){
 			AxisAlignedBB[] aabbs = boxes[((TileEngine)tile).orientation.ordinal()];
+			MovingObjectPosition closest = null;
 			for(AxisAlignedBB aabb : aabbs){
 				MovingObjectPosition mop = aabb.getOffsetBoundingBox(x, y, z).calculateIntercept(origin, direction);
 				if(mop != null){
 					mop.blockX = x;
 					mop.blockY = y;
 					mop.blockZ = z;
-					return mop;
+					if (closest != null) {
+						if (mop.hitVec.distanceTo(origin) < closest.hitVec.distanceTo(origin)) {
+							closest = mop;
+						}
+					} else {
+						closest = mop;
+					}
 				}
 			}
-			return null;
+			return closest;
 		} else {
 			return super.collisionRayTrace(wrd, x, y, z, origin, direction);
 		}
