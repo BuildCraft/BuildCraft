@@ -18,6 +18,7 @@ import net.minecraft.world.World;
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.MappingRegistry;
 import buildcraft.api.blueprints.SchematicBlockBase;
+import buildcraft.api.blueprints.Translation;
 import buildcraft.builders.blueprints.BlueprintId;
 import buildcraft.core.Box;
 import buildcraft.core.Version;
@@ -49,6 +50,30 @@ public abstract class BlueprintBase {
 		anchorX = 0;
 		anchorY = 0;
 		anchorZ = 0;
+	}
+
+	public void transformToBlueprint(Translation transform) {
+		for (int x = 0; x < sizeX; ++x) {
+			for (int y = 0; y < sizeY; ++y) {
+				for (int z = 0; z < sizeZ; ++z) {
+					if (contents [x][y][z] != null) {
+						contents [x][y][z].transformToBlueprint(mapping, transform);
+					}
+				}
+			}
+		}
+	}
+
+	public void transformToWorld(Translation transform) {
+		for (int x = 0; x < sizeX; ++x) {
+			for (int y = 0; y < sizeY; ++y) {
+				for (int z = 0; z < sizeZ; ++z) {
+					if (contents [x][y][z] != null) {
+						contents [x][y][z].transformToWorld(mapping, transform);
+					}
+				}
+			}
+		}
 	}
 
 	public void rotateLeft(BptContext context) {

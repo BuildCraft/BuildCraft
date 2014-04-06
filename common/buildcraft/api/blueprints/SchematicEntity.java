@@ -23,7 +23,7 @@ import buildcraft.core.utils.Utils;
 
 public class SchematicEntity extends Schematic {
 
-	public Class <? extends Entity> entity;
+	public Class<? extends Entity> entity;
 
 	public NBTTagCompound cpt = new NBTTagCompound();
 
@@ -32,28 +32,38 @@ public class SchematicEntity extends Schematic {
 	 * blueprint. Modders can either rely on this list or compute their own int
 	 * Schematic.
 	 */
-	public ItemStack [] storedRequirements = new ItemStack [0];
+	public ItemStack[] storedRequirements = new ItemStack[0];
 
-	public void writeToWorld(IBuilderContext context, CoordTransformation transform) {
-		NBTTagList nbttaglist = cpt.getTagList("Pos", 6);
-		Position pos = new Position(nbttaglist.func_150309_d(0),
-				nbttaglist.func_150309_d(1), nbttaglist.func_150309_d(2));
-		pos = transform.translate(pos);
-		cpt.setTag("Pos", this.newDoubleNBTList(new double[] {pos.x, pos.y, pos.z}));
-
+	public void writeToWorld(IBuilderContext context) {
 		Entity e = EntityList.createEntityFromNBT(cpt, context.world());
 		context.world().spawnEntityInWorld(e);
 	}
 
-	public void readFromWorld(IBuilderContext context, Entity entity, CoordTransformation transform) {
+	public void readFromWorld(IBuilderContext context, Entity entity) {
 		entity.writeToNBTOptional(cpt);
+	}
 
+	@Override
+	public void transformToBlueprint(MappingRegistry registry,
+			Translation transform) {
 		NBTTagList nbttaglist = cpt.getTagList("Pos", 6);
 		Position pos = new Position(nbttaglist.func_150309_d(0),
 				nbttaglist.func_150309_d(1), nbttaglist.func_150309_d(2));
 		pos = transform.translate(pos);
 
-		cpt.setTag("Pos", this.newDoubleNBTList(new double[] {pos.x, pos.y, pos.z}));
+		cpt.setTag("Pos",
+				this.newDoubleNBTList(new double[] { pos.x, pos.y, pos.z }));
+	}
+
+	@Override
+	public void transformToWorld(MappingRegistry registry, Translation transform) {
+		NBTTagList nbttaglist = cpt.getTagList("Pos", 6);
+		Position pos = new Position(nbttaglist.func_150309_d(0),
+				nbttaglist.func_150309_d(1), nbttaglist.func_150309_d(2));
+		pos = transform.translate(pos);
+
+		cpt.setTag("Pos",
+				this.newDoubleNBTList(new double[] { pos.x, pos.y, pos.z }));
 	}
 
 	@Override
@@ -62,17 +72,23 @@ public class SchematicEntity extends Schematic {
 		Position pos = new Position(nbttaglist.func_150309_d(0),
 				nbttaglist.func_150309_d(1), nbttaglist.func_150309_d(2));
 		pos = context.rotatePositionLeft(pos);
-		cpt.setTag("Pos", this.newDoubleNBTList(new double[] {pos.x, pos.y, pos.z}));
+		cpt.setTag("Pos",
+				this.newDoubleNBTList(new double[] { pos.x, pos.y, pos.z }));
 
 		nbttaglist = cpt.getTagList("Rotation", 5);
-		float yaw = nbttaglist.func_150308_e (0);
+		float yaw = nbttaglist.func_150308_e(0);
 		yaw += 90;
-		cpt.setTag("Rotation", this.newFloatNBTList(new float[] {yaw, nbttaglist.func_150308_e (1)}));
+		cpt.setTag(
+				"Rotation",
+				this.newFloatNBTList(new float[] { yaw,
+						nbttaglist.func_150308_e(1) }));
 	}
 
 	@Override
 	public void writeToNBT(NBTTagCompound nbt, MappingRegistry registry) {
-		nbt.setInteger ("entityId", registry.getIdForEntity(entity));
+		NBTTagList nbttaglist = cpt.getTagList("Pos", 6);
+
+		nbt.setInteger("entityId", registry.getIdForEntity(entity));
 		nbt.setTag("entity", cpt);
 
 		NBTTagList rq = new NBTTagList();
@@ -91,7 +107,8 @@ public class SchematicEntity extends Schematic {
 	public void readFromNBT(NBTTagCompound nbt, MappingRegistry registry) {
 		cpt = nbt.getCompoundTag("entity");
 
-		NBTTagList rq = nbt.getTagList("rq", Utils.NBTTag_Types.NBTTagCompound.ordinal());
+		NBTTagList rq = nbt.getTagList("rq",
+				Utils.NBTTag_Types.NBTTagCompound.ordinal());
 
 		ArrayList<ItemStack> rqs = new ArrayList<ItemStack>();
 
@@ -117,7 +134,7 @@ public class SchematicEntity extends Schematic {
 			}
 		}
 
-		storedRequirements = rqs.toArray(new ItemStack [rqs.size()]);
+		storedRequirements = rqs.toArray(new ItemStack[rqs.size()]);
 	}
 
 	protected NBTTagList newDoubleNBTList(double... par1ArrayOfDouble) {
@@ -146,23 +163,22 @@ public class SchematicEntity extends Schematic {
 		return nbttaglist;
 	}
 
-	public boolean isAlreadyBuilt(IBuilderContext context, CoordTransformation transform) {
+	public boolean isAlreadyBuilt(IBuilderContext context) {
 		NBTTagList nbttaglist = cpt.getTagList("Pos", 6);
 		Position newPosition = new Position(nbttaglist.func_150309_d(0),
 				nbttaglist.func_150309_d(1), nbttaglist.func_150309_d(2));
-
-		newPosition = transform.translate(newPosition);
 
 		for (Object o : context.world().loadedEntityList) {
 			Entity e = (Entity) o;
 
 			Position existingPositon = new Position(e.posX, e.posY, e.posZ);
 
-			if (existingPositon.isClose (newPosition, 0.1F)) {
+			if (existingPositon.isClose(newPosition, 0.1F)) {
 				return true;
 			}
 		}
 
 		return false;
 	}
+
 }

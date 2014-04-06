@@ -125,6 +125,26 @@ public class Schematic {
 	}
 
 	/**
+	 * Performs a transformations from world to blueprints. In particular, it should:
+	 * - use the registry to map ids from world to blueprints
+	 * - apply translations to all positions in the schematic to center in the
+	 *   blueprint referencial
+	 */
+	public void transformToBlueprint(MappingRegistry registry, Translation transform) {
+
+	}
+
+	/**
+	 * Performs a transformations from blueprints to worlds. In particular, it should:
+	 * - use the registry to map ids from blueprints to world
+	 * - apply translations to all positions in the schematic to center in the
+	 *   builder referencial
+	 */
+	public void transformToWorld(MappingRegistry registry, Translation transform) {
+
+	}
+
+	/**
 	 * Places the block in the world, at the location specified in the slot,
 	 * using the stack in parameters
 	 */

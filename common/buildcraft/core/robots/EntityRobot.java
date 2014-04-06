@@ -105,7 +105,6 @@ public class EntityRobot extends EntityLivingBase implements
 
 	public void showLaser () {
 		if (!laser.isVisible) {
-			System.out.println ("SHOW LASER");
 			laser.isVisible = true;
 			needsUpdate = true;
 		}
@@ -136,7 +135,6 @@ public class EntityRobot extends EntityLivingBase implements
 		if (!worldObj.isRemote) {
 			if (currentTask == null) {
 				if (scanForTasks.markTimeIfDelay(worldObj)) {
-					System.out.println ("SCAN");
 					RobotTaskProviderRegistry.scanForTask(this);
 				}
 			} else {

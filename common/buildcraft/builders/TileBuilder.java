@@ -21,6 +21,7 @@ import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.WorldSettings.GameType;
 import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.BuildCraftBuilders;
+import buildcraft.api.blueprints.Translation;
 import buildcraft.api.core.Position;
 import buildcraft.api.gates.IAction;
 import buildcraft.core.BlockIndex;
@@ -273,6 +274,14 @@ public class TileBuilder extends TileAbstractBuilder implements IMachine {
 				bpt.rotateLeft(context);
 			}
 		}
+
+		Translation transform = new Translation();
+
+		transform.x = x - bpt.anchorX;
+		transform.y = y - bpt.anchorY;
+		transform.z = z - bpt.anchorZ;
+
+		bpt.transformToWorld(transform);
 
 		BptBuilderBase result = null;
 
