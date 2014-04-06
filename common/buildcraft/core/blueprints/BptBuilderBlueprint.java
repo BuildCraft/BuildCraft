@@ -72,6 +72,8 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 			}
 		}
 
+		LinkedList<BuildingSlotBlock> tmpBuildList = new LinkedList<BuildingSlotBlock>();
+
 		for (int j = 0; j < bluePrint.sizeY; ++j) {
 			for (int i = 0; i < bluePrint.sizeX; ++i) {
 				for (int k = 0; k < bluePrint.sizeZ; ++k) {
@@ -92,12 +94,14 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 					b.z = zCoord;
 					b.mode = Mode.Build;
 
-					buildList.add (b);
+					tmpBuildList.add (b);
 				}
 			}
 		}
 
-		Collections.sort(buildList);
+		Collections.sort(tmpBuildList);
+
+		buildList.addAll(tmpBuildList);
 
 		iterator = new BuildingSlotIterator(buildList);
 
@@ -371,13 +375,21 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 			return false;
 		} else if (!invStk.isItemStackDamageable() && (reqStk.getItemDamage() != invStk.getItemDamage())) {
 			return false;
-		} else if (reqStk.stackTagCompound != null && invStk.stackTagCompound == null) {
+		}
+
+		// TODO: stackTagCompound may or may not be relevant. In particular, TMI
+		// adds some compounds to all objects and kills the comparions. Let's
+		// avoid considering for now, and later allow mods to provide they
+		// own item comparator
+		/*else if (reqStk.stackTagCompound != null && invStk.stackTagCompound == null) {
 			return false;
 		} else if (reqStk.stackTagCompound == null && invStk.stackTagCompound != null) {
 			return false;
 		} else if (reqStk.stackTagCompound != null && !reqStk.stackTagCompound.equals(invStk.stackTagCompound)) {
 			return false;
-		} else {
+		}*/
+
+		else {
 			return true;
 		}
 	}
