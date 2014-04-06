@@ -47,7 +47,7 @@ public class GuiRefineryControl extends GuiBuildCraft{
 			fontRendererObj.drawString(title, getCenteredOffset(title), 6, 0x008000);
 			fontRendererObj.drawString("Oil: "+ refinery.input.getAmountOfLiquid(), 10, 50, 0x404040);
 			fontRendererObj.drawString("Fuel: "+ refinery.output.getAmountOfLiquid(), 10, 65, 0x404040);
-			fontRendererObj.drawString("Temprature: "+refinery.getTemprature(), 10, 80, 0x404040);
+			fontRendererObj.drawString("Temperature: "+refinery.getTemprature(), 10, 80, 0x404040);
 			} else {
 				fontRendererObj.drawString(title, getCenteredOffset(title), 6, 0xff0000);
 				}
