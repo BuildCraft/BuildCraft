@@ -13,6 +13,8 @@ import java.util.LinkedList;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import buildcraft.core.utils.Utils;
 
 /**
  * This class allow to specify specific behavior for blocks stored in
@@ -182,5 +184,41 @@ public class Schematic {
 
 	}
 
+	public void inventorySlotsToBlueprint (MappingRegistry registry, NBTTagCompound nbt) {
+		inventorySlotsToBlueprint(registry, nbt, "Items");
+	}
 
+	public void inventorySlotsToBlueprint (MappingRegistry registry, NBTTagCompound nbt, String nbtName) {
+		if (!nbt.hasKey(nbtName)) {
+			return;
+		}
+
+		NBTTagList list = nbt.getTagList(nbtName,
+				Utils.NBTTag_Types.NBTTagCompound.ordinal());
+
+		for (int i = 0; i < list.tagCount(); ++i) {
+            NBTTagCompound invSlot = list.getCompoundTagAt(i);
+            Item item = Item.getItemById(invSlot.getInteger ("id"));
+            invSlot.setInteger("id", registry.getIdForItem(item));
+		}
+	}
+
+	public void inventorySlotsToWorld (MappingRegistry registry, NBTTagCompound nbt) {
+		inventorySlotsToWorld (registry, nbt, "Items");
+	}
+
+	public void inventorySlotsToWorld (MappingRegistry registry, NBTTagCompound nbt, String nbtName) {
+		if (!nbt.hasKey(nbtName)) {
+			return;
+		}
+
+		NBTTagList list = nbt.getTagList(nbtName,
+				Utils.NBTTag_Types.NBTTagCompound.ordinal());
+
+		for (int i = 0; i < list.tagCount(); ++i) {
+            NBTTagCompound invSlot = list.getCompoundTagAt(i);
+            Item item = registry.getItemForId(invSlot.getInteger ("id"));
+            invSlot.setInteger("id", Item.getIdFromItem(item));
+		}
+	}
 }

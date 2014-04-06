@@ -68,10 +68,13 @@ public class SchematicHanging extends SchematicEntity {
 	@Override
 	public void writeToWorld(IBuilderContext context) {
 		if (baseItem == Items.item_frame) {
-			NBTTagCompound tag = cpt.getCompoundTag("Item");
-			tag.setInteger("id", Item.itemRegistry.getIDForObject(context
-					.getMappingRegistry().getItemForId(tag.getInteger("id"))));
-			cpt.setTag("Item", tag);
+			if (cpt.hasKey("Item")) {
+				NBTTagCompound tag = cpt.getCompoundTag("Item");
+				tag.setInteger("id", Item.itemRegistry.getIDForObject(context
+						.getMappingRegistry()
+						.getItemForId(tag.getInteger("id"))));
+				cpt.setTag("Item", tag);
+			}
 		}
 
 		super.writeToWorld(context);

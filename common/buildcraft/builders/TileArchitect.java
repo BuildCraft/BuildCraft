@@ -75,7 +75,6 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 						/ (float) blockScanner.totalBlocks()) * 100);
 
 				if (blockScanner.blocksLeft() == 0) {
-					System.out.println ("Z_A " + writingContext.box.sizeZ());
 					writingBlueprint.readEntitiesFromWorld (writingContext, this);
 
 					Translation transform = new Translation();

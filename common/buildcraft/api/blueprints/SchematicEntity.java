@@ -53,6 +53,8 @@ public class SchematicEntity extends Schematic {
 
 		cpt.setTag("Pos",
 				this.newDoubleNBTList(new double[] { pos.x, pos.y, pos.z }));
+
+		inventorySlotsToBlueprint(registry, cpt);
 	}
 
 	@Override
@@ -64,6 +66,8 @@ public class SchematicEntity extends Schematic {
 
 		cpt.setTag("Pos",
 				this.newDoubleNBTList(new double[] { pos.x, pos.y, pos.z }));
+
+		inventorySlotsToWorld(registry, cpt);
 	}
 
 	@Override

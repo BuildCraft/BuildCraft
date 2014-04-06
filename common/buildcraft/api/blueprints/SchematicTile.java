@@ -27,6 +27,16 @@ public class SchematicTile extends SchematicBlock {
 	 */
 	public NBTTagCompound cpt = new NBTTagCompound();
 
+	@Override
+	public void transformToBlueprint(MappingRegistry registry, Translation transform) {
+		inventorySlotsToBlueprint(registry, cpt);
+	}
+
+	@Override
+	public void transformToWorld(MappingRegistry registry, Translation transform) {
+		inventorySlotsToWorld(registry, cpt);
+	}
+
 	/**
 	 * Places the block in the world, at the location specified in the slot.
 	 */
