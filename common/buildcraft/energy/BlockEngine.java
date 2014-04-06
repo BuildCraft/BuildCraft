@@ -28,7 +28,8 @@ import buildcraft.core.BlockBuildCraft;
 import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.IItemPipe;
 import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;import net.minecraft.util.MovingObjectPosition;
+import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.Vec3;
 
