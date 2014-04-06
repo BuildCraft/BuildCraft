@@ -244,6 +244,7 @@ public class BuildCraftEnergy extends BuildCraftMod {
 		}
 
 		MinecraftForge.EVENT_BUS.register(this);
+		MinecraftForge.EVENT_BUS.register(new BlockHighlightHandler());
 	}
 
 	@EventHandler
