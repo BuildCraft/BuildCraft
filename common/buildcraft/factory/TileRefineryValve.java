@@ -46,6 +46,7 @@ public class TileRefineryValve extends TileBuildCraft implements IFluidHandler{
 		if (type == 1 && resource.getFluid() == BuildCraftEnergy.fluidOil){
 			int t = tank.fill(resource, doFill);
 			sendNetworkUpdate();
+			
 			return t;
 		}
 		return 0;
