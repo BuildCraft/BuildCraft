@@ -31,6 +31,10 @@ public class SchematicMask extends SchematicBlockBase {
 			} else {
 				ItemStack stack = stacks.getFirst();
 
+				// force the block to be air block, in case it's just a soft
+				// block which replacement is not straightforward
+				context.world().setBlock(x, y, z, Blocks.air, 0, 3);
+
 				stack.tryPlaceItemIntoWorld(
 						CoreProxy.proxy.getBuildCraftPlayer(context.world()),
 						context.world(), x, y, z, 1, 0.0f, 0.0f, 0.0f);
