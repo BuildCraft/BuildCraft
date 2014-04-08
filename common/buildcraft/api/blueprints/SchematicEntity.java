@@ -9,6 +9,7 @@
 package buildcraft.api.blueprints;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
@@ -33,6 +34,13 @@ public class SchematicEntity extends Schematic {
 	 * Schematic.
 	 */
 	public ItemStack[] storedRequirements = new ItemStack[0];
+
+	@Override
+	public void addRequirements(IBuilderContext context, LinkedList<ItemStack> requirements) {
+		for (ItemStack s : storedRequirements) {
+			requirements.add(s);
+		}
+	}
 
 	public void writeToWorld(IBuilderContext context) {
 		Entity e = EntityList.createEntityFromNBT(cpt, context.world());
