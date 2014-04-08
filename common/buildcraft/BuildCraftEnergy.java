@@ -28,6 +28,7 @@ import buildcraft.api.blueprints.SchematicRegistry;
 import buildcraft.api.fuels.IronEngineCoolant;
 import buildcraft.api.fuels.IronEngineFuel;
 import buildcraft.api.recipes.BuildcraftRecipes;
+import buildcraft.builders.filler.FillerRegistry;
 import buildcraft.core.BlockIndex;
 import buildcraft.core.BlockSpring;
 import buildcraft.core.CreativeTabBuildCraft;
@@ -36,6 +37,7 @@ import buildcraft.core.InterModComms;
 import buildcraft.core.Version;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.triggers.BCTrigger;
+import buildcraft.core.utils.StringUtils;
 import buildcraft.energy.BlockBuildcraftFluid;
 import buildcraft.energy.BlockEnergyEmitter;
 import buildcraft.energy.BlockEnergyReceiver;
@@ -82,14 +84,18 @@ public class BuildCraftEnergy extends BuildCraftMod {
 	private static Fluid buildcraftFluidOil;
 	private static Fluid buildcraftFluidFuel;
 	private static Fluid buildcraftFluidRedPlasma;
+	private static Fluid buildcraftFluidTar;
 	public static Fluid fluidOil;
 	public static Fluid fluidFuel;
 	public static Fluid fluidRedPlasma;
+	public static Fluid fluidTar;
 	public static Block blockOil;
 	public static Block blockFuel;
 	public static Block blockRedPlasma;
+	public static Block blockTar;
 	public static Item bucketOil;
 	public static Item bucketFuel;
+	public static Item bucketTar;
 	public static Item bucketRedPlasma;
 	public static Item fuel;
 	public static boolean canOilBurn;
@@ -153,6 +159,10 @@ public class BuildCraftEnergy extends BuildCraftMod {
 		buildcraftFluidRedPlasma = new Fluid("redplasma").setDensity(10000).setViscosity(10000).setLuminosity(30);
 		FluidRegistry.registerFluid(buildcraftFluidRedPlasma);
 		fluidRedPlasma = FluidRegistry.getFluid("redplasma");
+		
+		buildcraftFluidTar = new Fluid("tar");
+		FluidRegistry.registerFluid(buildcraftFluidTar);
+		fluidTar = FluidRegistry.getFluid("tar");
 
 		if (fluidOil.getBlock() == null) {
 			blockOil = new BlockBuildcraftFluid(fluidOil, Material.water).setFlammable(canOilBurn).setFlammability(0);
@@ -186,6 +196,15 @@ public class BuildCraftEnergy extends BuildCraftMod {
 		} else {
 			blockRedPlasma = fluidRedPlasma.getBlock();
 		}
+		
+		if (fluidTar.getBlock() == null){
+			blockTar = new BlockBuildcraftFluid(fluidTar, Material.water).setFlammable(true).setParticleColor(0.5F, 0.5F, 0.5F);
+			blockTar.setBlockName("blockTar");
+			CoreProxy.proxy.registerBlock(blockTar);
+			fluidTar.setBlock(blockTar);
+		} else {
+			blockTar = fluidTar.getBlock();
+		}
 
 		// Buckets
 
@@ -204,6 +223,13 @@ public class BuildCraftEnergy extends BuildCraftMod {
 			CoreProxy.proxy.registerItem(bucketFuel);
 			FluidContainerRegistry.registerFluidContainer(FluidRegistry.getFluidStack("fuel", FluidContainerRegistry.BUCKET_VOLUME), new ItemStack(bucketFuel), new ItemStack(Items.bucket));
 		}
+		if (blockTar != null){
+			bucketTar = new ItemBucketBuildcraft(blockTar, CreativeTabBuildCraft.TIER_2);
+			bucketTar.setUnlocalizedName("bucketTar").setContainerItem(Items.bucket);
+			LanguageRegistry.addName(bucketTar, "Tar Bucket");
+			CoreProxy.proxy.registerItem(bucketTar);
+			FluidContainerRegistry.registerFluidContainer(FluidRegistry.getFluidStack("tar", FluidContainerRegistry.BUCKET_VOLUME), new ItemStack(bucketTar), new ItemStack(Items.bucket));
+		}
 
 		if (!BuildCraftCore.NEXTGEN_PREALPHA) {
 			if (blockRedPlasma != null) {
@@ -218,6 +244,7 @@ public class BuildCraftEnergy extends BuildCraftMod {
 		// BucketHandler ensures empty buckets fill with the correct liquid.
 		BucketHandler.INSTANCE.buckets.put(blockOil, bucketOil);
 		BucketHandler.INSTANCE.buckets.put(blockFuel, bucketFuel);
+		BucketHandler.INSTANCE.buckets.put(blockTar, bucketTar);
 		MinecraftForge.EVENT_BUS.register(BucketHandler.INSTANCE);
 
 		BuildcraftRecipes.refinery.addRecipe(new FluidStack(fluidOil, 1), new FluidStack(fluidFuel, 1), 12, 1);
@@ -277,6 +304,7 @@ public class BuildCraftEnergy extends BuildCraftMod {
 			buildcraftFluidOil.setIcons(blockOil.getBlockTextureFromSide(1), blockOil.getBlockTextureFromSide(2));
 			buildcraftFluidFuel.setIcons(blockFuel.getBlockTextureFromSide(1), blockFuel.getBlockTextureFromSide(2));
 			buildcraftFluidRedPlasma.setIcons(blockRedPlasma.getBlockTextureFromSide(1), blockRedPlasma.getBlockTextureFromSide(2));
+			buildcraftFluidTar.setIcons(blockOil.getBlockTextureFromSide(1), blockOil.getBlockTextureFromSide(2));
 		}
 	}
 
