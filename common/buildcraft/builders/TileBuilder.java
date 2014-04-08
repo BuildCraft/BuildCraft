@@ -310,6 +310,8 @@ public class TileBuilder extends TileAbstractBuilder implements IMachine {
 				currentPathIterator = null;
 			}
 
+			updateRequirements();
+
 			return;
 		}
 
@@ -350,6 +352,8 @@ public class TileBuilder extends TileAbstractBuilder implements IMachine {
 					}
 				}
 			}
+
+			updateRequirements();
 		}
 	}
 
@@ -393,7 +397,6 @@ public class TileBuilder extends TileAbstractBuilder implements IMachine {
 
 		if (!worldObj.isRemote) {
 			if (i == 0) {
-				RPCHandler.rpcBroadcastPlayers(this, "setItemRequirements", null, null);
 				iterateBpt();
 				done = false;
 			}
@@ -641,18 +644,25 @@ public class TileBuilder extends TileAbstractBuilder implements IMachine {
 				items [0] = null;
 			}
 
-			if (bluePrintBuilder instanceof BptBuilderBlueprint) {
-				LinkedList <Integer> realSize = new LinkedList<Integer>();
-
-				for (ItemStack stack : ((BptBuilderBlueprint) bluePrintBuilder).neededItems) {
-					realSize.add(stack.stackSize);
-					stack.stackSize = 0;
-				}
-
-				RPCHandler.rpcBroadcastPlayers(this, "setItemRequirements",
-						((BptBuilderBlueprint) bluePrintBuilder).neededItems, realSize);
-			}
+			updateRequirements();
 		}
+	}
+
+	public void updateRequirements () {
+		if (bluePrintBuilder instanceof BptBuilderBlueprint) {
+			LinkedList <Integer> realSize = new LinkedList<Integer>();
+
+			for (ItemStack stack : ((BptBuilderBlueprint) bluePrintBuilder).neededItems) {
+				realSize.add(stack.stackSize);
+				stack.stackSize = 0;
+			}
+
+			RPCHandler.rpcBroadcastPlayers(this, "setItemRequirements",
+					((BptBuilderBlueprint) bluePrintBuilder).neededItems, realSize);
+		} else {
+			RPCHandler.rpcBroadcastPlayers(this, "setItemRequirements", null, null);
+		}
+
 	}
 
 	public BptBuilderBase getBlueprint () {
