@@ -57,34 +57,25 @@ public class TileRefineryControl extends TileBuildCraft implements IInventory {
 				int x = this.xCoord;
 				int y = this.yCoord;
 				int z = this.zCoord;
-				if (world.getBlock(x - 4, y + 1, z+1) == BuildCraftFactory.blockRefineryValve && world.getBlock(x+4, y+1, z+1) == BuildCraftFactory.blockRefineryValve){
-					input = (TileRefineryValve) world.getTileEntity(x+4, y+1, z+1);
-					input.markAsInput();
-					output = (TileRefineryValve) world.getTileEntity(x-4, y+1, z+1);
-					output.markAsOutput();
-					valvesAssinged = true;
+				if (world.getTileEntity(x+1, y, z) instanceof TileRefineryValve && world.getTileEntity(x+1, y+5, z) instanceof TileRefineryValve){
+					input =  (TileRefineryValve) world.getTileEntity(x+1, y, z);
+					output = (TileRefineryValve) world.getTileEntity(x+1, y+5, z);
 					}
-				if (world.getBlock(x - 4, y + 1, z-1) == BuildCraftFactory.blockRefineryValve && world.getBlock(x+4, y+1, z-1) == BuildCraftFactory.blockRefineryValve){
-					input = (TileRefineryValve) world.getTileEntity(x+4, y+1, z-1);
-					input.markAsInput();
-					output = (TileRefineryValve) world.getTileEntity(x-4, y+1, z-1);
-					output.markAsOutput();
-					valvesAssinged = true;
+				if (world.getTileEntity(x-1, y, z) instanceof TileRefineryValve && world.getTileEntity(x-1, y+5, z) instanceof TileRefineryValve){
+					input = (TileRefineryValve) world.getTileEntity(x-1, y, z);
+					output = (TileRefineryValve) world.getTileEntity(x-1, y+5, z);
 					}
-				if (world.getBlock(x+1, y+1, z-4) == BuildCraftFactory.blockRefineryValve && world.getBlock (x+1, y+1, z+4) == BuildCraftFactory.blockRefineryValve){
-					input = (TileRefineryValve) world.getTileEntity(x+1, y+1, z+4);
-					input.markAsInput();
-					output = (TileRefineryValve) world.getTileEntity(x+1, y+1, z-4);
-					output.markAsOutput();
-					valvesAssinged = true;
+				if (world.getTileEntity(x, y, z+1) instanceof TileRefineryValve && world.getTileEntity (x, y+5, z+1) instanceof TileRefineryValve){
+					input = (TileRefineryValve) world.getTileEntity(x, y, z+1);
+					output = (TileRefineryValve) world.getTileEntity(x, y+5, z+1);
 					}
-				if (world.getBlock(x-1, y+1, z-4) == BuildCraftFactory.blockRefineryValve && world.getBlock (x-1, y+1, z+4) == BuildCraftFactory.blockRefineryValve){
-					input = (TileRefineryValve) world.getTileEntity(x-1, y+1, z+4);
-					input.markAsInput();
-					output = (TileRefineryValve) world.getTileEntity(x-1, y+1, z-4);
-					output.markAsOutput();
-					valvesAssinged = true;
-					}
+				if (world.getTileEntity(x, y, z-1) instanceof TileRefineryValve && world.getTileEntity(x, y+5, z-1) instanceof TileRefineryValve){
+					input = (TileRefineryValve) world.getTileEntity(x, y, z-1);
+					output = (TileRefineryValve) world.getTileEntity(x, y+5, z-1);
+				}
+				input.markAsInput();
+				output.markAsOutput();
+				valvesAssinged = true;
 				}
 			if (energy>=10){
 				energy = energy-10;
@@ -104,6 +95,7 @@ public class TileRefineryControl extends TileBuildCraft implements IInventory {
 				if (valvesAssinged){
 					input.markNeutral();
 					output.markNeutral();
+					valvesAssinged = false;
 					}
 				}
 		}

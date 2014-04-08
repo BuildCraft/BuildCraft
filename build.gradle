@@ -21,15 +21,7 @@ buildscript {
 apply plugin: 'forge' // adds the forge dependency
 apply plugin: 'maven' // for uploading to a maven repo
 
-// grab buildNumber
-ext.buildnumber = 0 // this will be referenced as simply project.buildnumber from now on.
-
-if (System.getenv().BUILD_NUMBER)
-    project.buildnumber = System.getenv().BUILD_NUMBER
-else
-    logger.lifecycle "SETTING BUILDNUMBER TO 0"
-
-version = "6.0.4"
+version = "6.0.5"
 group= "com.mod-buildcraft"
 archivesBaseName = "buildcraft" // the name that all artifacts will use as a base. artifacts names follow this pattern: [baseName]-[appendix]-[version]-[classifier].[extension]
 
@@ -41,7 +33,6 @@ minecraft {
     // replacing stuff in the source
     replace '@VERSION@', project.version
     replace '@MC_VERSION@', version
-    replace '@BUILD_NUMBER@', project.buildnumber
 }
 
 // configure  the source folders
@@ -70,7 +61,7 @@ processResources
                 
         // replace version and mcversion
         // ${version}   and    ${mcversion}    are the exact strings being replaced
-        expand 'version':project.version, 'mcversion':project.minecraft.version, 'buildnumber':project.buildnumber
+        expand 'version':project.version, 'mcversion':project.minecraft.version
     }
         
     // copy everything else, that's not the mcmod.info
@@ -82,9 +73,6 @@ processResources
 // --------------------
 // extra jar section
 // -------------------
-
-// for the benefit of the jars, we will now now add the buildnumber to the jars
-project.version += '.' + project.buildnumber
 
 // add a source jar
 task sourceJar(type: Jar) {

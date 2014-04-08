@@ -8,13 +8,6 @@
  */
 package buildcraft.factory;
 
-import buildcraft.BuildCraftCore;
-import buildcraft.core.CoreConstants;
-import buildcraft.core.IFramePipeConnection;
-import buildcraft.core.utils.Utils;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-
 import java.util.List;
 import java.util.Random;
 
@@ -30,24 +23,18 @@ import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import buildcraft.BuildCraftCore;
+import buildcraft.core.CoreConstants;
+import buildcraft.core.IFramePipeConnection;
+import buildcraft.core.utils.Utils;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class BlockFrame extends Block implements IFramePipeConnection {
 
 	public BlockFrame() {
 		super(Material.glass);
 		setHardness(0.5F);
-		setTickRandomly(true);
-	}
-
-	@Override
-	public void updateTick(World world, int i, int j, int k, Random random) {
-		if (world.isRemote)
-			return;
-
-		int meta = world.getBlockMetadata(i, j, k);
-		if (meta == 1 && random.nextInt(10) > 5) {
-			world.setBlockToAir(i, j, k);
-		}
 	}
 
 	@Override
@@ -101,6 +88,7 @@ public class BlockFrame extends Block implements IFramePipeConnection {
 		return AxisAlignedBB.getBoundingBox((double) i + xMin, (double) j + yMin, (double) k + zMin, (double) i + xMax, (double) j + yMax, (double) k + zMax);
 	}
 
+	@Override
 	@SuppressWarnings({ "all" })
 	// @Override (client only)
 	public AxisAlignedBB getSelectedBoundingBoxFromPool(World world, int i, int j, int k) {

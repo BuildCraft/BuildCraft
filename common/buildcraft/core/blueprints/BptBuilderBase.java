@@ -9,12 +9,18 @@
 package buildcraft.core.blueprints;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.World;
+import buildcraft.BuildCraftBuilders;
+import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.core.IAreaProvider;
+import buildcraft.api.core.Position;
+import buildcraft.builders.BuildingItem;
+import buildcraft.builders.TileAbstractBuilder;
 import buildcraft.core.Box;
-import buildcraft.core.IBuilderInventory;
 
 public abstract class BptBuilderBase implements IAreaProvider {
 
@@ -22,8 +28,6 @@ public abstract class BptBuilderBase implements IAreaProvider {
 	int x, y, z;
 	protected boolean done;
 	public BptContext context;
-
-	private ArrayList <IBuilder> buildersInAction = new ArrayList<IBuilder>();
 
 	public BptBuilderBase(BlueprintBase bluePrint, World world, int x, int y, int z) {
 		this.blueprint = bluePrint;
@@ -38,7 +42,25 @@ public abstract class BptBuilderBase implements IAreaProvider {
 		context = bluePrint.getContext(world, box);
 	}
 
-	public abstract BuildingSlot getNextBlock(World world, IBuilderInventory inv);
+	public abstract BuildingSlot getNextBlock(World world, TileAbstractBuilder inv);
+
+	public boolean buildNextSlot (World world, TileAbstractBuilder builder, int x, int y, int z) {
+		BuildingSlot slot = getNextBlock(world, builder);
+
+		if (slot != null) {
+			BuildingItem i = new BuildingItem();
+			i.origin = new Position (x + 0.5, y + 0.5, z + 0.5);
+			i.destination = slot.getDestination();
+			i.slotToBuild = slot;
+			i.context = getContext();
+			i.stacksToBuild = slot.stackConsumed;
+			builder.addBuildingItem(i);
+
+			return true;
+		}
+
+		return false;
+	}
 
 	@Override
 	public int xMin() {
@@ -87,19 +109,40 @@ public abstract class BptBuilderBase implements IAreaProvider {
 		return context;
 	}
 
-	public void registerBuilder (IBuilder builder) {
-		buildersInAction.add(builder);
-	}
+	public void removeDoneBuilders (TileAbstractBuilder builder) {
+		ArrayList<BuildingItem> items = builder.getBuilders();
 
-	public void removeDoneBuilders () {
-		for (int i = buildersInAction.size() - 1; i >= 0; --i) {
-			if (buildersInAction.get(i).isDone()) {
-				buildersInAction.remove(i);
+		for (int i = items.size() - 1; i >= 0; --i) {
+			if (items.get(i).isDone()) {
+				items.remove(i);
 			}
 		}
 	}
 
-	public boolean isDone () {
-		return done && buildersInAction.size() == 0;
+	public boolean isDone (TileAbstractBuilder builder) {
+		return done && builder.getBuilders().size() == 0;
+	}
+
+	protected boolean setupForDestroy (TileAbstractBuilder builder, IBuilderContext context, BuildingSlotBlock slot) {
+		LinkedList<ItemStack> result = new LinkedList<ItemStack>();
+
+		int hardness = (int) context
+				.world()
+				.getBlock(slot.x, slot.y, slot.z)
+				.getBlockHardness(context.world(), slot.x, slot.y,
+						slot.z);
+
+		if (builder.energyAvailable() < hardness * TileAbstractBuilder.BREAK_ENERGY) {
+			return false;
+		} else {
+			builder.consumeEnergy(hardness * TileAbstractBuilder.BREAK_ENERGY);
+
+			for (int i = 0; i <= hardness; ++i) {
+				slot.addStackConsumed(new ItemStack(
+						BuildCraftBuilders.buildToolBlock));
+			}
+
+			return true;
+		}
 	}
 }

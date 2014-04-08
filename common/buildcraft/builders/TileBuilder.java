@@ -18,35 +18,32 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.world.WorldSettings.GameType;
 import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.BuildCraftBuilders;
+import buildcraft.api.blueprints.Translation;
 import buildcraft.api.core.Position;
-import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.gates.IAction;
-import buildcraft.api.mj.MjBattery;
 import buildcraft.core.BlockIndex;
 import buildcraft.core.Box;
 import buildcraft.core.Box.Kind;
-import buildcraft.core.IBoxProvider;
-import buildcraft.core.IBuilderInventory;
 import buildcraft.core.IMachine;
 import buildcraft.core.LaserData;
-import buildcraft.core.TileBuildCraft;
 import buildcraft.core.blueprints.Blueprint;
 import buildcraft.core.blueprints.BlueprintBase;
 import buildcraft.core.blueprints.BptBuilderBase;
 import buildcraft.core.blueprints.BptBuilderBlueprint;
 import buildcraft.core.blueprints.BptBuilderTemplate;
 import buildcraft.core.blueprints.BptContext;
-import buildcraft.core.blueprints.BuildingSlot;
 import buildcraft.core.network.NetworkData;
 import buildcraft.core.network.RPC;
 import buildcraft.core.network.RPCHandler;
 import buildcraft.core.network.RPCSide;
-import buildcraft.core.robots.EntityRobot;
 import buildcraft.core.utils.Utils;
 
-public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IMachine, IBoxProvider {
+public class TileBuilder extends TileAbstractBuilder implements IMachine {
+
+	private static int POWER_ACTIVATION = 50;
 
 	private final ItemStack items[] = new ItemStack[28];
 
@@ -57,19 +54,7 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IM
 
 	private LinkedList<BlockIndex> path;
 
-	@NetworkData
-	public LinkedList<LaserData> pathLasers = new LinkedList<LaserData> ();
-
-	private EntityRobot builderRobot;
-
 	private LinkedList <ItemStack> requiredToBuild;
-
-	private SafeTimeTracker debugBuildTracker = new SafeTimeTracker(5);
-
-	@MjBattery (maxReceivedPerCycle = 25)
-	private double mjStored = 0;
-
-	public LinkedList <BuildingItem> buildingItems = new LinkedList<BuildingItem>();
 
 	private class PathIterator {
 
@@ -290,6 +275,14 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IM
 			}
 		}
 
+		Translation transform = new Translation();
+
+		transform.x = x - bpt.anchorX;
+		transform.y = y - bpt.anchorY;
+		transform.z = z - bpt.anchorZ;
+
+		bpt.transformToWorld(transform);
+
 		BptBuilderBase result = null;
 
 		if (items[0].getItem() instanceof ItemBlueprintStandard) {
@@ -309,11 +302,6 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IM
 				bluePrintBuilder = null;
 			}
 
-			if (builderRobot != null) {
-				builderRobot.setDead();
-				builderRobot = null;
-			}
-
 			if (box.isInitialized()) {
 				box.reset();
 			}
@@ -322,19 +310,17 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IM
 				currentPathIterator = null;
 			}
 
+			updateRequirements();
+
 			return;
 		}
 
-		if (bluePrintBuilder == null || bluePrintBuilder.isDone()) {
+		if (bluePrintBuilder == null || bluePrintBuilder.isDone(this)) {
 			if (path != null && path.size() > 1) {
 				if (currentPathIterator == null) {
 					Iterator<BlockIndex> it = path.iterator();
 					BlockIndex start = it.next();
 					currentPathIterator = new PathIterator(start, it);
-				}
-
-				if (bluePrintBuilder != null && builderRobot != null) {
-					//builderRobot.markEndOfBlueprint(bluePrintBuilder);
 				}
 
 				bluePrintBuilder = currentPathIterator.next();
@@ -345,10 +331,6 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IM
 					sendNetworkUpdate();
 				}
 
-				if (builderRobot != null) {
-					//builderRobot.setBox(box);
-				}
-
 				if (bluePrintBuilder == null) {
 					currentPathIterator = currentPathIterator.iterate();
 				}
@@ -357,11 +339,7 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IM
 					done = true;
 				}
 			} else {
-				if (bluePrintBuilder != null && bluePrintBuilder.isDone()) {
-					if (builderRobot != null) {
-						//builderRobot.markEndOfBlueprint(bluePrintBuilder);
-					}
-
+				if (bluePrintBuilder != null && bluePrintBuilder.isDone(this)) {
 					done = true;
 					bluePrintBuilder = null;
 				} else {
@@ -374,6 +352,8 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IM
 					}
 				}
 			}
+
+			updateRequirements();
 		}
 	}
 
@@ -417,7 +397,6 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IM
 
 		if (!worldObj.isRemote) {
 			if (i == 0) {
-				RPCHandler.rpcBroadcastPlayers(this, "setItemRequirements", null, null);
 				iterateBpt();
 				done = false;
 			}
@@ -506,14 +485,6 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IM
 	}
 
 	@Override
-	public void destroy() {
-		if (builderRobot != null) {
-			builderRobot.setDead();
-			builderRobot = null;
-		}
-	}
-
-	@Override
 	public void openInventory() {
 	}
 
@@ -525,33 +496,16 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IM
 	public void updateEntity() {
 		super.updateEntity();
 
-		BuildingItem toRemove = null;
-
-		for (BuildingItem i : buildingItems) {
-			i.update();
-
-			if (i.isDone) {
-				toRemove = i;
-			}
-		}
-
-		if (toRemove != null) {
-			buildingItems.remove(toRemove);
-		}
-
 		if (worldObj.isRemote) {
 			return;
 		}
 
 		if (bluePrintBuilder != null) {
-			bluePrintBuilder.removeDoneBuilders();
+			bluePrintBuilder.removeDoneBuilders(this);
 		}
 
-		if ((bluePrintBuilder == null || bluePrintBuilder.isDone())
-				&& box.isInitialized()
-				//&& (builderRobot == null || builderRobot.done())
-				) {
-
+		if ((bluePrintBuilder == null || bluePrintBuilder.isDone(this))
+				&& box.isInitialized()) {
 			box.reset();
 
 			sendNetworkUpdate();
@@ -559,41 +513,22 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IM
 			return;
 		}
 
-		if (!box.isInitialized() && bluePrintBuilder == null && builderRobot != null) {
-			builderRobot.setDead();
-			builderRobot = null;
+		iterateBpt();
+
+		if (getWorld().getWorldInfo().getGameType() == GameType.CREATIVE) {
+			build();
+		} else {
+			if (mjStored > POWER_ACTIVATION) {
+				build();
+			}
 		}
 
-		iterateBpt();
-		debugForceBlueprintCompletion();
 
 		if (done) {
 			return;
-		//}// else if (builderRobot != null && !builderRobot.readyToBuild()) {
-		//	return;
 		} else if (mjStored < 25) {
 			return;
 		}
-
-		/* Temp fix to make Builders impotent as the World Destroyers they are
-		if (bluePrintBuilder != null && !bluePrintBuilder.done) {
-			if (!box.isInitialized()) {
-				box.initialize(bluePrintBuilder);
-			}
-
-			if (builderRobot == null) {
-				builderRobot = new EntityRobot(worldObj, box);
-				worldObj.spawnEntityInWorld(builderRobot);
-			}
-
-			box.createLasers(worldObj, LaserKind.Stripes);
-
-			builderRobot.scheduleContruction(bluePrintBuilder.getNextBlock(worldObj, new SurroundingInventory(worldObj, xCoord, yCoord, zCoord)),
-					bluePrintBuilder.getContext());
-		}
-		*/
-
-		mjStored = 0;
 	}
 
 	@Override
@@ -647,7 +582,7 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IM
 	}
 
 	@Override
-	public boolean isBuildingMaterial(int i) {
+	public boolean isBuildingMaterialSlot(int i) {
 		return i != 0;
 	}
 
@@ -662,8 +597,12 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IM
 	}
 
 	@Override
-	public boolean isItemValidForSlot(int var1, ItemStack var2) {
-		return false;
+	public boolean isItemValidForSlot(int slot, ItemStack stack) {
+		if (slot == 0) {
+			return stack.getItem() instanceof ItemBlueprint;
+		} else {
+			return true;
+		}
 	}
 
 	@Override
@@ -680,32 +619,18 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IM
 			renderBox = renderBox.extendToEncompass(l.tail);
 		}
 
-		return renderBox.getBoundingBox();
+		return renderBox.expand(50).getBoundingBox();
 	}
 
-	public void debugForceBlueprintCompletion () {
-		if (!debugBuildTracker.markTimeIfDelay(worldObj)) {
+	public void build () {
+		if (!buildTracker.markTimeIfDelay(worldObj)) {
 			return;
 		}
 
 		if (bluePrintBuilder != null) {
-			BuildingSlot slot = bluePrintBuilder.getNextBlock(worldObj, this);
+			bluePrintBuilder.buildNextSlot(worldObj, this, xCoord, yCoord, zCoord);
 
-			if (slot != null) {
-				BuildingItem i = new BuildingItem();
-				i.origin = new Position (xCoord + 0.5, yCoord + 0.5, zCoord + 0.5);
-				i.destination = slot.getDestination();
-				i.slotToBuild = slot;
-				i.context = bluePrintBuilder.getContext();
-				i.stacksToBuild = slot.getRequirements(bluePrintBuilder.getContext());
-				buildingItems.add(i);
-				RPCHandler.rpcBroadcastPlayers(this, "launchItem", i);
-				bluePrintBuilder.registerBuilder(i);
-			}
-
-			if (bluePrintBuilder.isDone()) {
-				// TODO: find a way to confirm that all agents are done before
-				// calling post processing.
+			if (bluePrintBuilder.isDone(this)) {
 				bluePrintBuilder.postProcessing(worldObj);
 				bluePrintBuilder = null;
 
@@ -719,18 +644,25 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IM
 				items [0] = null;
 			}
 
-			if (bluePrintBuilder instanceof BptBuilderBlueprint) {
-				LinkedList <Integer> realSize = new LinkedList<Integer>();
-
-				for (ItemStack stack : ((BptBuilderBlueprint) bluePrintBuilder).neededItems) {
-					realSize.add(stack.stackSize);
-					stack.stackSize = 0;
-				}
-
-				RPCHandler.rpcBroadcastPlayers(this, "setItemRequirements",
-						((BptBuilderBlueprint) bluePrintBuilder).neededItems, realSize);
-			}
+			updateRequirements();
 		}
+	}
+
+	public void updateRequirements () {
+		if (bluePrintBuilder instanceof BptBuilderBlueprint) {
+			LinkedList <Integer> realSize = new LinkedList<Integer>();
+
+			for (ItemStack stack : ((BptBuilderBlueprint) bluePrintBuilder).neededItems) {
+				realSize.add(stack.stackSize);
+				stack.stackSize = 0;
+			}
+
+			RPCHandler.rpcBroadcastPlayers(this, "setItemRequirements",
+					((BptBuilderBlueprint) bluePrintBuilder).neededItems, realSize);
+		} else {
+			RPCHandler.rpcBroadcastPlayers(this, "setItemRequirements", null, null);
+		}
+
 	}
 
 	public BptBuilderBase getBlueprint () {
@@ -739,11 +671,6 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IM
 		} else {
 			return null;
 		}
-	}
-
-	@RPC (RPCSide.CLIENT)
-	public void launchItem (BuildingItem item) {
-		buildingItems.add(item);
 	}
 
 }

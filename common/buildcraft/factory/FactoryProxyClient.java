@@ -8,7 +8,12 @@
  */
 package buildcraft.factory;
 
+import java.lang.reflect.Method;
+
+import net.minecraft.util.IIcon;
+import net.minecraft.world.World;
 import buildcraft.BuildCraftFactory;
+import buildcraft.builders.RenderBuilder;
 import buildcraft.core.EntityBlock;
 import buildcraft.core.render.RenderVoid;
 import buildcraft.core.render.RenderingEntityBlocks;
@@ -20,9 +25,6 @@ import buildcraft.factory.render.RenderRefinery;
 import buildcraft.factory.render.RenderTank;
 import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.client.registry.RenderingRegistry;
-import java.lang.reflect.Method;
-import net.minecraft.util.IIcon;
-import net.minecraft.world.World;
 
 public class FactoryProxyClient extends FactoryProxy {
 
@@ -48,6 +50,7 @@ public class FactoryProxyClient extends FactoryProxy {
 			RenderingEntityBlocks.blockByEntityRenders.put(new EntityRenderIndex(BuildCraftFactory.hopperBlock, 0), new RenderHopper());
 		}
 
+		ClientRegistry.bindTileEntitySpecialRenderer(TileQuarry.class, new RenderBuilder());
 	}
 
 	@Override

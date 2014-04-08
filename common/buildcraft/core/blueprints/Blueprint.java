@@ -17,11 +17,11 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import buildcraft.BuildCraftBuilders;
-import buildcraft.api.blueprints.CoordTransformation;
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.SchematicBlock;
 import buildcraft.api.blueprints.SchematicEntity;
 import buildcraft.api.blueprints.SchematicRegistry;
+import buildcraft.api.blueprints.Translation;
 import buildcraft.core.utils.BCLog;
 import buildcraft.core.utils.NBTUtils;
 import buildcraft.core.utils.Utils;
@@ -44,6 +44,24 @@ public class Blueprint extends BlueprintBase {
 		}
 
 		super.rotateLeft(context);
+	}
+
+	@Override
+	public void transformToBlueprint(Translation transform) {
+		super.transformToBlueprint(transform);
+
+		for (SchematicEntity e : entities) {
+			e.transformToBlueprint(mapping, transform);
+		}
+	}
+
+	@Override
+	public void transformToWorld(Translation transform) {
+		super.transformToWorld(transform);
+
+		for (SchematicEntity e : entities) {
+			e.transformToWorld(mapping, transform);
+		}
 	}
 
 	@Override
@@ -80,7 +98,7 @@ public class Blueprint extends BlueprintBase {
 
 	@Override
 	public void readEntitiesFromWorld(IBuilderContext context, TileEntity anchorTile) {
-		CoordTransformation transform = new CoordTransformation();
+		Translation transform = new Translation();
 
 		transform.x = -context.surroundingBox().pMin().x;
 		transform.y = -context.surroundingBox().pMin().y;
@@ -93,7 +111,7 @@ public class Blueprint extends BlueprintBase {
 				SchematicEntity s = SchematicRegistry.newSchematicEntity(e.getClass());
 
 				if (s != null) {
-					s.readFromWorld(context, e, transform);
+					s.readFromWorld(context, e);
 					entities.add(s);
 				}
 			}
@@ -184,6 +202,7 @@ public class Blueprint extends BlueprintBase {
 		NBTTagCompound nbt = NBTUtils.getItemData(stack);
 		id.write (nbt);
 		nbt.setString("author", author);
+		nbt.setString("name", id.name);
 
 		return stack;
 	}

@@ -19,7 +19,7 @@ public class PatternFlatten extends FillerPattern {
 	}
 
 	@Override
-	public Template getBlueprint (Box box) {
+	public Template getTemplate (Box box) {
 		int xMin = (int) box.pMin().x;
 		int yMin = 1;
 		int zMin = (int) box.pMin().z;

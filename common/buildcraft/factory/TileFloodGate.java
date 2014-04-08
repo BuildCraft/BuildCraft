@@ -8,15 +8,6 @@
  */
 package buildcraft.factory;
 
-import buildcraft.api.core.SafeTimeTracker;
-import buildcraft.core.BlockIndex;
-import buildcraft.core.TileBuildCraft;
-import buildcraft.core.fluids.FluidUtils;
-import buildcraft.core.fluids.Tank;
-import buildcraft.core.proxy.CoreProxy;
-import buildcraft.core.utils.BlockUtil;
-import buildcraft.core.utils.Utils;
-
 import java.util.Deque;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -26,12 +17,19 @@ import java.util.TreeMap;
 import net.minecraft.block.Block;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraftforge.fluids.BlockFluidBase;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
+import buildcraft.core.BlockIndex;
+import buildcraft.core.TileBuildCraft;
+import buildcraft.core.fluids.FluidUtils;
+import buildcraft.core.fluids.Tank;
+import buildcraft.core.utils.BlockUtil;
+import buildcraft.core.utils.Utils;
 
 public class TileFloodGate extends TileBuildCraft implements IFluidHandler {
 
@@ -63,19 +61,22 @@ public class TileFloodGate extends TileBuildCraft implements IFluidHandler {
 	public void updateEntity() {
 		super.updateEntity();
 
-		if (worldObj.isRemote)
+		if (worldObj.isRemote) {
 			return;
+		}
 
-		if (powered)
+		if (powered) {
 			return;
+		}
 
 		tick++;
 		if (tick % 16 == 0) {
 			FluidStack fluidtoFill = tank.drain(FluidContainerRegistry.BUCKET_VOLUME, false);
 			if (fluidtoFill != null && fluidtoFill.amount == FluidContainerRegistry.BUCKET_VOLUME) {
 				Fluid fluid = fluidtoFill.getFluid();
-				if (fluid == null || !fluid.canBePlacedInWorld())
+				if (fluid == null || !fluid.canBePlacedInWorld()) {
 					return;
+				}
 
 				if (fluid == FluidRegistry.WATER && worldObj.provider.dimensionId == -1) {
 					tank.drain(FluidContainerRegistry.BUCKET_VOLUME, true);
@@ -84,8 +85,9 @@ public class TileFloodGate extends TileBuildCraft implements IFluidHandler {
 
 				if (tick % REBUILD_DELAY[rebuildDelay] == 0) {
 					rebuildDelay++;
-					if (rebuildDelay >= REBUILD_DELAY.length)
+					if (rebuildDelay >= REBUILD_DELAY.length) {
 						rebuildDelay = REBUILD_DELAY.length - 1;
+					}
 					rebuildQueue();
 				}
 				BlockIndex index = getNextIndexToFill(true);
@@ -100,14 +102,26 @@ public class TileFloodGate extends TileBuildCraft implements IFluidHandler {
 
 	private boolean placeFluid(int x, int y, int z, Fluid fluid) {
 		Block block = worldObj.getBlock(x, y, z);
+
 		if (canPlaceFluidAt(block, x, y, z)) {
-			boolean placed = worldObj.setBlock(x, y, z, FluidUtils.getFluidBlock(fluid, true));
+			boolean placed;
+			Block b = FluidUtils.getFluidBlock(fluid, true);
+
+			if(b instanceof BlockFluidBase) {
+				BlockFluidBase blockFluid = (BlockFluidBase) b;
+				placed = worldObj.setBlock(x, y, z, b, blockFluid.getMaxRenderHeightMeta(), 3);
+			} else {
+				placed = worldObj.setBlock(x, y, z, b);
+			}
+
 			if (placed) {
 				queueAdjacent(x, y, z);
 				expandQueue();
 			}
+
 			return placed;
 		}
+
 		return false;
 	}
 
@@ -119,8 +133,9 @@ public class TileFloodGate extends TileBuildCraft implements IFluidHandler {
 		Deque<BlockIndex> bottomLayer = pumpLayerQueues.firstEntry().getValue();
 
 		if (bottomLayer != null) {
-			if (bottomLayer.isEmpty())
+			if (bottomLayer.isEmpty()) {
 				pumpLayerQueues.pollFirstEntry();
+			}
 			if (remove) {
 				BlockIndex index = bottomLayer.pollFirst();
 				return index;
@@ -154,8 +169,9 @@ public class TileFloodGate extends TileBuildCraft implements IFluidHandler {
 	}
 
 	private void expandQueue() {
-		if (tank.getFluidType() == null)
+		if (tank.getFluidType() == null) {
 			return;
+		}
 		while (!fluidsFound.isEmpty()) {
 			Deque<BlockIndex> fluidsToExpand = fluidsFound;
 			fluidsFound = new LinkedList<BlockIndex>();
@@ -167,8 +183,9 @@ public class TileFloodGate extends TileBuildCraft implements IFluidHandler {
 	}
 
 	public void queueAdjacent(int x, int y, int z) {
-		if (tank.getFluidType() == null)
+		if (tank.getFluidType() == null) {
 			return;
+		}
 		queueForFilling(x, y - 1, z);
 		queueForFilling(x + 1, y, z);
 		queueForFilling(x - 1, y, z);
@@ -179,8 +196,9 @@ public class TileFloodGate extends TileBuildCraft implements IFluidHandler {
 	public void queueForFilling(int x, int y, int z) {
 		BlockIndex index = new BlockIndex(x, y, z);
 		if (visitedBlocks.add(index)) {
-			if ((x - xCoord) * (x - xCoord) + (z - zCoord) * (z - zCoord) > 64 * 64)
+			if ((x - xCoord) * (x - xCoord) + (z - zCoord) * (z - zCoord) > 64 * 64) {
 				return;
+			}
 
 			Block block = worldObj.getBlock(x, y, z);
 			if (BlockUtil.getFluid(block) == tank.getFluidType()) {
@@ -200,8 +218,9 @@ public class TileFloodGate extends TileBuildCraft implements IFluidHandler {
 		boolean p = worldObj.isBlockIndirectlyGettingPowered(xCoord, yCoord, zCoord);
 		if (powered != p) {
 			powered = p;
-			if (!p)
+			if (!p) {
 				rebuildQueue();
+			}
 		}
 	}
 

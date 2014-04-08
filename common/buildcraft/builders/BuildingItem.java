@@ -11,6 +11,7 @@ package buildcraft.builders;
 import java.util.Date;
 import java.util.LinkedList;
 
+import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import buildcraft.BuildCraftBuilders;
 import buildcraft.api.blueprints.IBuilderContext;
@@ -20,6 +21,7 @@ import buildcraft.core.blueprints.IBuilder;
 import buildcraft.core.network.NetworkData;
 
 public class BuildingItem implements IBuilder {
+
 	@NetworkData
 	public Position origin, destination;
 
@@ -35,17 +37,20 @@ public class BuildingItem implements IBuilder {
 	}
 
 	public Position posDisplay = new Position();
+	public boolean isDone = false;
 
 	long previousUpdate;
-	boolean isDone = false;
 	double lifetime = 0;
 	double lifetimeDisplay = 0;
 	double maxLifetime = 0;
 	private boolean initialized = false;
 	double vx, vy, vz;
+	double maxHeight;
 
 	public BuildingSlot slotToBuild;
 	public IBuilderContext context;
+
+	public double receivedProgress = 0;
 
 	public void initialize () {
 		if (!initialized) {
@@ -55,11 +60,54 @@ public class BuildingItem implements IBuilder {
 
 			double size = Math.sqrt(dx * dx + dy * dy + dz * dz);
 
-			maxLifetime = size * 10.0;
+			maxLifetime = size * 5.0;
+
+			maxHeight = (5.0 + (destination.y - origin.y) / 2.0);
+
+			// the below computation is an approximation of the distance to
+			// travel for the object. It really follows a sinus, but we compute
+			// the size of a triangle for simplification.
+
+			Position middle = new Position();
+			middle.x = (destination.x + origin.x) / 2;
+			middle.y = (destination.y + origin.y) / 2;
+			middle.z = (destination.z + origin.z) / 2;
+
+			Position top = new Position ();
+			top.x = middle.x;
+			top.y = middle.y + maxHeight;
+			top.z = middle.z;
+
+			Position originToTop = new Position ();
+			originToTop.x = top.x - origin.x;
+			originToTop.y = top.y - origin.y;
+			originToTop.z = top.z - origin.z;
+
+			Position destinationToTop = new Position ();
+			destinationToTop.x = destination.x - origin.x;
+			destinationToTop.y = destination.y - origin.y;
+			destinationToTop.z = destination.z - origin.z;
+
+			Position distance = new Position();
+
+			double d1 = Math.sqrt(originToTop.x * originToTop.x + originToTop.y
+					* originToTop.y + originToTop.z * originToTop.z);
+
+			double d2 = Math.sqrt(destinationToTop.x * destinationToTop.x + destinationToTop.y
+					* destinationToTop.y + destinationToTop.z * destinationToTop.z);
+
+			d1 = d1 / size * maxLifetime;
+			d2 = d2 / size * maxLifetime;
+
+			maxLifetime = d1 + d2;
 
 			vx = dx / maxLifetime;
 			vy = dy / maxLifetime;
 			vz = dz / maxLifetime;
+
+			if (stacksToBuild == null) {
+				stacksToBuild = new LinkedList<ItemStack>();
+			}
 
 			for (ItemStack s : stacksToBuild) {
 				StackAtPosition sPos = new StackAtPosition();
@@ -69,7 +117,7 @@ public class BuildingItem implements IBuilder {
 
 			if (stacksToDisplay.size() == 0) {
 				StackAtPosition sPos = new StackAtPosition();
-				sPos.stack = new ItemStack(BuildCraftBuilders.stripesBlock);
+				sPos.stack = new ItemStack(BuildCraftBuilders.buildToolBlock);
 				stacksToDisplay.add(sPos);
 			}
 
@@ -81,7 +129,7 @@ public class BuildingItem implements IBuilder {
 		Position result = new Position ();
 
 		result.x = origin.x + vx * time;
-		result.y = origin.y + vy * time + Math.sin(time / maxLifetime * Math.PI) * (5.0 + (destination.y - origin.y) / 2.0);
+		result.y = origin.y + vy * time + Math.sin(time / maxLifetime * Math.PI) * maxHeight;
 		result.z = origin.z + vz * time;
 
 		return result;
@@ -103,6 +151,11 @@ public class BuildingItem implements IBuilder {
 
 		lifetimeDisplay = lifetime;
 		previousUpdate = new Date ().getTime();
+
+		if (slotToBuild != null && lifetime > maxLifetime) {
+			slotToBuild.writeCompleted(context, (lifetime - maxLifetime)
+					/ stacksToBuild.size());
+		}
 	}
 
 	public void displayUpdate () {
@@ -122,6 +175,14 @@ public class BuildingItem implements IBuilder {
 
 	private void build() {
 		if (slotToBuild != null) {
+			Block block = context.world().getBlock((int) destination.x, (int)destination.y, (int)destination.z);
+			int meta = context.world().getBlockMetadata((int) destination.x, (int)destination.y, (int)destination.z);
+
+			context.world().playAuxSFXAtEntity(null, 2001,
+					(int) destination.x, (int) destination.y,
+					(int) destination.z,
+					Block.getIdFromBlock(block) + (meta << 12));
+
 			slotToBuild.writeToWorld(context);
 		}
 	}

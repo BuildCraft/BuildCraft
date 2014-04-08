@@ -18,7 +18,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import buildcraft.core.utils.Utils;
 
-public class SchematicBlock extends Schematic  implements Comparable<SchematicBlock> {
+public class SchematicBlock extends SchematicBlockBase  implements Comparable<SchematicBlock> {
 
 	public Block block = null;
 	public int meta = 0;
@@ -49,7 +49,7 @@ public class SchematicBlock extends Schematic  implements Comparable<SchematicBl
 	}
 
 	/**
-	 * This is called each time an item matches a reqquirement, that is: (req id
+	 * This is called each time an item matches a requirement, that is: (req id
 	 * == stack id) for damageable items (req id == stack id && req dmg == stack
 	 * dmg) for other items by default, it will increase damage of damageable
 	 * items by the amount of damage of the requirement, and remove the intended
@@ -58,16 +58,17 @@ public class SchematicBlock extends Schematic  implements Comparable<SchematicBl
 	 * Client may override this behavior for default items. Note that this
 	 * subprogram may be called twice with the same parameters, once with a copy
 	 * of requirements and stack to check if the entire requirements can be
-	 * fullfilled, and once with the real inventory. Implementer is responsible
+	 * fulfilled, and once with the real inventory. Implementer is responsible
 	 * for updating req (with the remaining requirements if any) and stack
 	 * (after usage)
 	 *
-	 * returns: what was used (similer to req, but created from stack, so that
+	 * returns: what was used (similar to req, but created from stack, so that
 	 * any NBT based differences are drawn from the correct source)
 	 */
 	@Override
 	public ItemStack useItem(IBuilderContext context, ItemStack req, ItemStack stack) {
 		ItemStack result = stack.copy();
+
 		if (stack.isItemStackDamageable()) {
 			if (req.getItemDamage() + stack.getItemDamage() <= stack.getMaxDamage()) {
 				stack.setItemDamage(req.getItemDamage() + stack.getItemDamage());
@@ -96,6 +97,7 @@ public class SchematicBlock extends Schematic  implements Comparable<SchematicBl
 			stack.stackSize = 1;
 			stack.setItemDamage(0);
 		}
+
 		return result;
 	}
 
@@ -105,7 +107,7 @@ public class SchematicBlock extends Schematic  implements Comparable<SchematicBl
 	 * subprogram is permissive and doesn't take into account metadata.
 	 */
 	@Override
-	public boolean isValid(IBuilderContext context, int x, int y, int z) {
+	public boolean isAlreadyBuilt(IBuilderContext context, int x, int y, int z) {
 		return block == context.world().getBlock(x, y, z) && meta == context.world().getBlockMetadata(x, y, z);
 	}
 
@@ -121,7 +123,7 @@ public class SchematicBlock extends Schematic  implements Comparable<SchematicBl
 	 * Places the block in the world, at the location specified in the slot.
 	 */
 	@Override
-	public void writeToWorld(IBuilderContext context, int x, int y, int z) {
+	public void writeToWorld(IBuilderContext context, int x, int y, int z, LinkedList <ItemStack> stacks) {
 		// Meta needs to be specified twice, depending on the block behavior
 		context.world().setBlock(x, y, z, block, meta, 3);
 		context.world().setBlockMetadataWithNotify(x, y, z, meta, 3);

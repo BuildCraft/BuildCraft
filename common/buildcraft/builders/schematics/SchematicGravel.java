@@ -10,62 +10,28 @@ package buildcraft.builders.schematics;
 
 import java.util.LinkedList;
 
+import net.minecraft.block.Block;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.SchematicBlock;
 
-public class SchematicRail extends SchematicBlock {
+public class SchematicGravel extends SchematicBlock {
 
 	@Override
-	public void rotateLeft(IBuilderContext context) {
-		switch (meta) {
-		case 0:
-			meta = 1;
-			break;
-		case 1:
-			meta = 0;
-			break;
-
-		case 2:
-			meta = 5;
-			break;
-		case 3:
-			meta = 4;
-			break;
-		case 4:
-			meta = 2;
-			break;
-		case 5:
-			meta = 3;
-			break;
-
-		case 6:
-			meta = 7;
-			break;
-		case 7:
-			meta = 8;
-			break;
-		case 8:
-			meta = 9;
-			break;
-		case 9:
-			meta = 6;
-			break;
-		}
+	public void addRequirements(IBuilderContext context, LinkedList<ItemStack> requirements) {
+		requirements.add(new ItemStack(Blocks.gravel));
 	}
 
 	@Override
 	public void writeToWorld(IBuilderContext context, int x, int y, int z, LinkedList <ItemStack> stacks) {
-		context.world().setBlock(x, y, z, block, 0, 3);
+		context.world().setBlock(x, y, z, Blocks.gravel, 0, 3);
 	}
 
 	@Override
 	public boolean isAlreadyBuilt(IBuilderContext context, int x, int y, int z) {
-		return block == context.world().getBlock(x, y, z);
-	}
+		Block block = context.world().getBlock(x, y, z);
 
-	@Override
-	public void postProcessing(IBuilderContext context, int x, int y, int z) {
-		context.world().setBlockMetadataWithNotify(x, y, z, meta, 3);
+		return block == Blocks.gravel;
 	}
 }

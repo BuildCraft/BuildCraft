@@ -10,7 +10,7 @@ package buildcraft.api.blueprints;
 
 import buildcraft.api.core.Position;
 
-public class CoordTransformation {
+public class Translation {
 
 	public double x = 0;
 	public double y = 0;
@@ -24,6 +24,11 @@ public class CoordTransformation {
 		p2.z = p.z + z;
 
 		return p2;
+	}
+
+	@Override
+	public String toString () {
+		return "{" + x + ", " + y + ", " + z + "}";
 	}
 
 }

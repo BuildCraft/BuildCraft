@@ -30,11 +30,11 @@ import buildcraft.api.filler.IFillerPattern;
 import buildcraft.api.gates.ActionManager;
 import buildcraft.builders.BlockArchitect;
 import buildcraft.builders.BlockBlueprintLibrary;
+import buildcraft.builders.BlockBuildTool;
 import buildcraft.builders.BlockBuilder;
 import buildcraft.builders.BlockFiller;
 import buildcraft.builders.BlockMarker;
 import buildcraft.builders.BlockPathMarker;
-import buildcraft.builders.BlockStripes;
 import buildcraft.builders.BuilderProxy;
 import buildcraft.builders.EventHandlerBuilders;
 import buildcraft.builders.GuiHandler;
@@ -54,6 +54,7 @@ import buildcraft.builders.filler.pattern.PatternClear;
 import buildcraft.builders.filler.pattern.PatternCylinder;
 import buildcraft.builders.filler.pattern.PatternFill;
 import buildcraft.builders.filler.pattern.PatternFlatten;
+import buildcraft.builders.filler.pattern.PatternFrame;
 import buildcraft.builders.filler.pattern.PatternHorizon;
 import buildcraft.builders.filler.pattern.PatternPyramid;
 import buildcraft.builders.filler.pattern.PatternStairs;
@@ -64,6 +65,7 @@ import buildcraft.builders.schematics.SchematicDoor;
 import buildcraft.builders.schematics.SchematicFarmland;
 import buildcraft.builders.schematics.SchematicFire;
 import buildcraft.builders.schematics.SchematicFluid;
+import buildcraft.builders.schematics.SchematicGravel;
 import buildcraft.builders.schematics.SchematicHanging;
 import buildcraft.builders.schematics.SchematicIgnore;
 import buildcraft.builders.schematics.SchematicIgnoreMeta;
@@ -78,6 +80,7 @@ import buildcraft.builders.schematics.SchematicRotateMeta;
 import buildcraft.builders.schematics.SchematicSeeds;
 import buildcraft.builders.schematics.SchematicSign;
 import buildcraft.builders.schematics.SchematicStairs;
+import buildcraft.builders.schematics.SchematicStone;
 import buildcraft.builders.schematics.SchematicWallSide;
 import buildcraft.builders.triggers.ActionFiller;
 import buildcraft.builders.triggers.BuildersActionProvider;
@@ -109,7 +112,7 @@ public class BuildCraftBuilders extends BuildCraftMod {
 	public static final char BPT_SEP_CHARACTER = '-';
 	public static final int LIBRARY_PAGE_SIZE = 12;
 	public static final int MAX_BLUEPRINTS_NAME_SIZE = 14;
-	public static BlockStripes stripesBlock;
+	public static BlockBuildTool buildToolBlock;
 	public static BlockMarker markerBlock;
 	public static BlockPathMarker pathMarkerBlock;
 	public static BlockFiller fillerBlock;
@@ -191,7 +194,18 @@ public class BuildCraftBuilders extends BuildCraftMod {
 		SchematicRegistry.registerSchematicBlock(Blocks.stone_button, SchematicLever.class);
 		SchematicRegistry.registerSchematicBlock(Blocks.lever, SchematicLever.class);
 
-		SchematicRegistry.registerSchematicBlock(Blocks.stone, SchematicCustomStack.class, new ItemStack(Blocks.stone));
+		SchematicRegistry.registerSchematicBlock(Blocks.stone, SchematicStone.class);
+		SchematicRegistry.registerSchematicBlock(Blocks.gold_ore, SchematicStone.class);
+		SchematicRegistry.registerSchematicBlock(Blocks.iron_ore, SchematicStone.class);
+		SchematicRegistry.registerSchematicBlock(Blocks.coal_ore, SchematicStone.class);
+		SchematicRegistry.registerSchematicBlock(Blocks.lapis_ore, SchematicStone.class);
+		SchematicRegistry.registerSchematicBlock(Blocks.diamond_ore, SchematicStone.class);
+		SchematicRegistry.registerSchematicBlock(Blocks.redstone_ore, SchematicStone.class);
+		SchematicRegistry.registerSchematicBlock(Blocks.lit_redstone_ore, SchematicStone.class);
+		SchematicRegistry.registerSchematicBlock(Blocks.emerald_ore, SchematicStone.class);
+
+		SchematicRegistry.registerSchematicBlock(Blocks.gravel, SchematicGravel.class);
+
 		SchematicRegistry.registerSchematicBlock(Blocks.redstone_wire, SchematicCustomStack.class, new ItemStack(Items.redstone));
 		SchematicRegistry.registerSchematicBlock(Blocks.cake, SchematicCustomStack.class, new ItemStack(Items.cake));
 		SchematicRegistry.registerSchematicBlock(Blocks.pumpkin_stem, SchematicCustomStack.class, new ItemStack(Items.pumpkin_seeds));
@@ -250,14 +264,14 @@ public class BuildCraftBuilders extends BuildCraftMod {
 
 		// Standard entities
 
-		SchematicRegistry.registerSchematicEntity(EntityMinecartEmpty.class, SchematicMinecart.class);
-		SchematicRegistry.registerSchematicEntity(EntityMinecartFurnace.class, SchematicMinecart.class);
-		SchematicRegistry.registerSchematicEntity(EntityMinecartTNT.class, SchematicMinecart.class);
-		SchematicRegistry.registerSchematicEntity(EntityMinecartChest.class, SchematicMinecart.class);
-		SchematicRegistry.registerSchematicEntity(EntityMinecartHopper.class, SchematicMinecart.class);
+		SchematicRegistry.registerSchematicEntity(EntityMinecartEmpty.class, SchematicMinecart.class, Items.minecart);
+		SchematicRegistry.registerSchematicEntity(EntityMinecartFurnace.class, SchematicMinecart.class, Items.furnace_minecart);
+		SchematicRegistry.registerSchematicEntity(EntityMinecartTNT.class, SchematicMinecart.class, Items.tnt_minecart);
+		SchematicRegistry.registerSchematicEntity(EntityMinecartChest.class, SchematicMinecart.class, Items.chest_minecart);
+		SchematicRegistry.registerSchematicEntity(EntityMinecartHopper.class, SchematicMinecart.class, Items.hopper_minecart);
 
-		SchematicRegistry.registerSchematicEntity(EntityPainting.class, SchematicHanging.class);
-		SchematicRegistry.registerSchematicEntity(EntityItemFrame.class, SchematicHanging.class);
+		SchematicRegistry.registerSchematicEntity(EntityPainting.class, SchematicHanging.class, Items.painting);
+		SchematicRegistry.registerSchematicEntity(EntityItemFrame.class, SchematicHanging.class, Items.item_frame);
 
 		// BuildCraft blocks
 
@@ -298,8 +312,8 @@ public class BuildCraftBuilders extends BuildCraftMod {
 		LanguageRegistry.addName(blueprintItem, "Blueprint");
 		CoreProxy.proxy.registerItem(blueprintItem);
 
-		stripesBlock = new BlockStripes ();
-		CoreProxy.proxy.registerBlock(stripesBlock);
+		buildToolBlock = new BlockBuildTool ();
+		CoreProxy.proxy.registerBlock(buildToolBlock);
 
 		markerBlock = new BlockMarker();
 		CoreProxy.proxy.registerBlock(markerBlock.setBlockName("markerBlock"));
@@ -351,6 +365,7 @@ public class BuildCraftBuilders extends BuildCraftMod {
 			FillerManager.registry.addPattern(new PatternPyramid());
 			FillerManager.registry.addPattern(new PatternStairs());
 			FillerManager.registry.addPattern(new PatternCylinder());
+			FillerManager.registry.addPattern(new PatternFrame());
 		} catch (Error error) {
 			BCLog.logErrorAPI("Buildcraft", error, IFillerPattern.class);
 			throw error;
@@ -360,9 +375,8 @@ public class BuildCraftBuilders extends BuildCraftMod {
 	}
 
 	public static void loadRecipes() {
-
-//		CoreProxy.proxy.addCraftingRecipe(new ItemStack(templateItem, 1), new Object[]{"ppp", "pip", "ppp", 'i',
-//			new ItemStack(Item.dyePowder, 1, 0), 'p', Item.paper});
+		CoreProxy.proxy.addCraftingRecipe(new ItemStack(templateItem, 1), new Object[]{"ppp", "pip", "ppp", 'i',
+			new ItemStack(Items.dye, 1, 0), 'p', Items.paper});
 
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(blueprintItem, 1), new Object[]{"ppp", "pip", "ppp", 'i',
 			new ItemStack(Items.dye, 1, 4), 'p', Items.paper});
@@ -370,21 +384,21 @@ public class BuildCraftBuilders extends BuildCraftMod {
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(markerBlock, 1), new Object[]{"l ", "r ", 'l',
 			new ItemStack(Items.dye, 1, 4), 'r', Blocks.redstone_torch});
 
-//		CoreProxy.proxy.addCraftingRecipe(new ItemStack(pathMarkerBlock, 1), new Object[]{"l ", "r ", 'l',
-//			new ItemStack(Item.dyePowder, 1, 2), 'r', Block.torchRedstoneActive});
+		CoreProxy.proxy.addCraftingRecipe(new ItemStack(pathMarkerBlock, 1), new Object[]{"l ", "r ", 'l',
+			new ItemStack(Items.dye, 1, 2), 'r', Blocks.redstone_torch});
 
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(fillerBlock, 1), new Object[]{"btb", "ycy", "gCg", 'b',
 			new ItemStack(Items.dye, 1, 0), 't', markerBlock, 'y', new ItemStack(Items.dye, 1, 11),
 			'c', Blocks.crafting_table, 'g', BuildCraftCore.goldGearItem, 'C', Blocks.chest});
 
-		//		CoreProxy.proxy.addCraftingRecipe(new ItemStack(builderBlock, 1), new Object[]{"btb", "ycy", "gCg", 'b',
-//			new ItemStack(Item.dyePowder, 1, 0), 't', markerBlock, 'y', new ItemStack(Item.dyePowder, 1, 11),
-//			'c', Block.workbench, 'g', BuildCraftCore.diamondGearItem, 'C', Block.chest});
+		CoreProxy.proxy.addCraftingRecipe(new ItemStack(builderBlock, 1), new Object[]{"btb", "ycy", "gCg", 'b',
+			new ItemStack(Items.dye, 1, 0), 't', markerBlock, 'y', new ItemStack(Items.dye, 1, 11),
+			'c', Blocks.crafting_table, 'g', BuildCraftCore.diamondGearItem, 'C', Blocks.chest});
 
-//		CoreProxy.proxy.addCraftingRecipe(new ItemStack(architectBlock, 1), new Object[]{"btb", "ycy", "gCg", 'b',
-//			new ItemStack(Item.dyePowder, 1, 0), 't', markerBlock, 'y', new ItemStack(Item.dyePowder, 1, 11),
-//			'c', Block.workbench, 'g', BuildCraftCore.diamondGearItem, 'C',
-//			new ItemStack(templateItem, 1)});
+		CoreProxy.proxy.addCraftingRecipe(new ItemStack(architectBlock, 1), new Object[]{"btb", "ycy", "gCg", 'b',
+			new ItemStack(Items.dye, 1, 0), 't', markerBlock, 'y', new ItemStack(Items.dye, 1, 11),
+			'c', Blocks.crafting_table, 'g', BuildCraftCore.diamondGearItem, 'C',
+			new ItemStack(blueprintItem, 1)});
 
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(libraryBlock, 1), new Object[]{"bbb", "bBb", "bbb", 'b',
 			new ItemStack(blueprintItem), 'B', Blocks.bookshelf});

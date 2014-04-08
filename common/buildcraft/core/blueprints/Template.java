@@ -88,6 +88,7 @@ public class Template extends BlueprintBase {
 		NBTTagCompound nbt = NBTUtils.getItemData(stack);
 		id.write (nbt);
 		nbt.setString("author", author);
+		nbt.setString("name", id.name);
 
 		return stack;
 	}

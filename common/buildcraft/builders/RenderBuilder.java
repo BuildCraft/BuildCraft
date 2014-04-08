@@ -46,7 +46,7 @@ public class RenderBuilder extends RenderBoxProvider {
 	public void renderTileEntityAt(TileEntity tileentity, double x, double y, double z, float f) {
 		super.renderTileEntityAt(tileentity, x, y, z, f);
 
-		TileBuilder builder = (TileBuilder) tileentity;
+		TileAbstractBuilder builder = (TileAbstractBuilder) tileentity;
 
 		if (builder != null) {
 			GL11.glPushMatrix();
@@ -59,14 +59,16 @@ public class RenderBuilder extends RenderBoxProvider {
 			GL11.glTranslated(x, y, z);
 			GL11.glTranslated(-tileentity.xCoord, -tileentity.yCoord, -tileentity.zCoord);
 
-			for (LaserData laser : builder.pathLasers) {
-				if (laser != null) {
-					GL11.glPushMatrix();
-					RenderLaser
-							.doRenderLaser(
-									TileEntityRendererDispatcher.instance.field_147553_e,
-									laser, EntityLaser.LASER_TEXTURES[4]);
-					GL11.glPopMatrix();
+			if (builder.getPathLaser() != null) {
+				for (LaserData laser : builder.getPathLaser()) {
+					if (laser != null) {
+						GL11.glPushMatrix();
+						RenderLaser
+								.doRenderLaser(
+										TileEntityRendererDispatcher.instance.field_147553_e,
+										laser, EntityLaser.LASER_TEXTURES[4]);
+						GL11.glPopMatrix();
+					}
 				}
 			}
 
@@ -80,8 +82,10 @@ public class RenderBuilder extends RenderBoxProvider {
 		GL11.glTranslated(x, y, z);
 		GL11.glTranslated(-tileentity.xCoord, -tileentity.yCoord, -tileentity.zCoord);
 
-		for (BuildingItem i : builder.buildingItems) {
-			doRenderItem(i, 1.0F);
+		if (builder.getBuilders() != null) {
+			for (BuildingItem i : builder.getBuilders()) {
+				doRenderItem(i, 1.0F);
+			}
 		}
 
 		GL11.glPopMatrix();

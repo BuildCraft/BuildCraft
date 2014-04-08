@@ -22,17 +22,13 @@ import buildcraft.api.filler.FillerManager;
 import buildcraft.api.filler.IFillerPattern;
 import buildcraft.api.gates.IAction;
 import buildcraft.api.gates.IActionReceptor;
-import buildcraft.api.mj.MjBattery;
 import buildcraft.builders.filler.pattern.PatternFill;
 import buildcraft.builders.triggers.ActionFiller;
 import buildcraft.core.Box;
-import buildcraft.core.IBoxProvider;
-import buildcraft.core.IBuilderInventory;
+import buildcraft.core.Box.Kind;
 import buildcraft.core.IMachine;
-import buildcraft.core.TileBuildCraft;
 import buildcraft.core.blueprints.BptBuilderTemplate;
 import buildcraft.core.blueprints.BptContext;
-import buildcraft.core.blueprints.BuildingSlot;
 import buildcraft.core.inventory.SimpleInventory;
 import buildcraft.core.network.PacketPayload;
 import buildcraft.core.network.PacketUpdate;
@@ -43,24 +39,22 @@ import buildcraft.core.triggers.ActionMachineControl;
 import buildcraft.core.triggers.ActionMachineControl.Mode;
 import buildcraft.core.utils.Utils;
 
-public class TileFiller extends TileBuildCraft implements IBuilderInventory, IMachine, IActionReceptor, IBoxProvider {
+public class TileFiller extends TileAbstractBuilder implements IMachine, IActionReceptor {
 
 	public IFillerPattern currentPattern = PatternFill.INSTANCE;
 
 	private BptBuilderTemplate currentTemplate;
 	private BptContext context;
 
-	private static int POWER_USAGE = 25;
+	private static int POWER_ACTIVATION = 50;
 	private final Box box = new Box();
 	private boolean done = false;
 	private ActionMachineControl.Mode lastMode = ActionMachineControl.Mode.Unknown;
 	private SimpleInventory inv = new SimpleInventory(27, "Filler", 64);
 
-	@MjBattery (maxReceivedPerCycle = 25)
-	private double mjStored = 0;
-
 	public TileFiller() {
 		inv.addListener(this);
+		box.kind = Kind.STRIPES;
 	}
 
 	@Override
@@ -104,52 +98,26 @@ public class TileFiller extends TileBuildCraft implements IBuilderInventory, IMa
 			return;
 		}
 
-		if (mjStored > POWER_USAGE) {
-			mjStored -= POWER_USAGE;
-		} else {
+		if (mjStored < POWER_ACTIVATION && !buildTracker.markTimeIfDelay(worldObj)) {
 			return;
 		}
 
 		if (currentPattern != null && currentTemplate == null) {
 			currentTemplate = new BptBuilderTemplate(
-					currentPattern.getBlueprint(box), getWorld(), box.xMin,
+					currentPattern.getTemplate(box), getWorld(), box.xMin,
 					box.yMin, box.zMin);
 			context = currentTemplate.getContext();
 		}
 
 		if (currentTemplate != null) {
-			BuildingSlot s = currentTemplate.getNextBlock(getWorld(), this);
+			currentTemplate.buildNextSlot(worldObj, this, xCoord, yCoord, zCoord);
 
-			if (s != null) {
-				s.writeToWorld(context);
-			}
-
-			if (!done && s == null || currentTemplate.isDone()) {
+			if (currentTemplate.isDone(this)) {
 				done = true;
+				currentTemplate = null;
 				sendNetworkUpdate();
 			}
 		}
-
-		/*ItemStack stackToUse = null;
-		int slotNum = 0;
-
-		for (IInvSlot slot : InventoryIterator.getIterable(inv, ForgeDirection.UNKNOWN)) {
-			ItemStack stack = slot.getStackInSlot();
-			if (stack != null && stack.stackSize > 0) {
-				stackToUse = stack;
-				slotNum = slot.getIndex();
-				break;
-			}
-		}
-
-
-		if (stackToUse != null && stackToUse.stackSize <= 0) {
-			setInventorySlotContents(slotNum, null);
-		}
-
-		if (done) {
-			sendNetworkUpdate();
-		}*/
 	}
 
 	@Override
@@ -232,7 +200,9 @@ public class TileFiller extends TileBuildCraft implements IBuilderInventory, IMa
 		if (worldObj.getTileEntity(xCoord, yCoord, zCoord) != this) {
 			return false;
 		}
-		return entityplayer.getDistanceSq(xCoord + 0.5D, yCoord + 0.5D, zCoord + 0.5D) <= 64D;
+
+		return entityplayer.getDistanceSq(xCoord + 0.5D, yCoord + 0.5D,
+				zCoord + 0.5D) <= 64D;
 	}
 
 	@Override
@@ -351,11 +321,12 @@ public class TileFiller extends TileBuildCraft implements IBuilderInventory, IMa
 
 	@Override
 	public AxisAlignedBB getRenderBoundingBox() {
-		return new Box (this).extendToEncompass(box).getBoundingBox();
+		return new Box (this).extendToEncompass(box).expand(50).getBoundingBox();
 	}
 
 	@Override
-	public boolean isBuildingMaterial(int i) {
+	public boolean isBuildingMaterialSlot(int i) {
 		return true;
 	}
+
 }

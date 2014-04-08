@@ -45,9 +45,9 @@ public class GuiRefineryControl extends GuiBuildCraft{
 		refinery.sendNetworkUpdate();
 		if (buildcraft.core.utils.MultiBlockCheck.isPartOfAMultiBlock("refinery", x, y, z, world)){
 			fontRendererObj.drawString(title, getCenteredOffset(title), 6, 0x008000);
-			//fontRendererObj.drawString("Oil: "+ refinery.input.getAmountOfLiquid(), 10, 50, 0x404040);
-			//fontRendererObj.drawString("Fuel: "+ refinery.output.getAmountOfLiquid(), 10, 65, 0x404040);
-			//fontRendererObj.drawString("Temperature: "+refinery.getTemprature(), 10, 80, 0x404040);
+			fontRendererObj.drawString("Oil: "+ refinery.input.getAmountOfLiquid(), 10, 50, 0x404040);
+			fontRendererObj.drawString("Fuel: "+ refinery.output.getAmountOfLiquid(), 10, 65, 0x404040);
+			fontRendererObj.drawString("Temperature: "+refinery.getTemprature(), 10, 80, 0x404040);
 			} else {
 				fontRendererObj.drawString(title, getCenteredOffset(title), 6, 0xff0000);
 				}
@@ -59,10 +59,10 @@ public class GuiRefineryControl extends GuiBuildCraft{
 		int j = (width - xSize) / 2;
 		int k = (height - ySize) / 2;
 		TileRefineryControl  refineryB = (TileRefineryControl) tile;
-	//	if (refineryB.valvesAssinged){
-	     //   drawFluid(refineryB.input.getLiquid(), refineryB.input.getScaledFluid(58), j + 104, k + 19, 16, 58);
-	    //    drawFluid(refineryB.output.getLiquid() ,refineryB.output.getScaledFluid(58), j + 122, k + 19, 16, 58);
-	//	}
+		if (refineryB.valvesAssinged){
+	        drawFluid(refineryB.input.getLiquid(), refineryB.input.getScaledFluid(58), j + 104, k + 19, 16, 58);
+	        drawFluid(refineryB.output.getLiquid() ,refineryB.output.getScaledFluid(58), j + 122, k + 19, 16, 58);
+		}
 		mc.renderEngine.bindTexture(texture);
 		drawTexturedModalRect(j + 104, k + 19, 176, 0, 16, 60);
 	    drawTexturedModalRect(j + 122, k + 19, 176, 0, 16, 60);

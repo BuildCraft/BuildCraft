@@ -43,14 +43,18 @@ public class ContainerArchitect extends BuildCraftContainer {
 	}
 
 	// FIXME: This is not called anymore
-	/*
-	 * @Override public void onCraftGuiOpened(ICrafting icrafting) { super.onCraftGuiOpened(icrafting); icrafting.updateCraftingInventoryInfo(this, 0,
-	 * template.computingTime); }
-	 */
+
+	@Override
+	public void addCraftingToCrafters(ICrafting icrafting) {
+		super.addCraftingToCrafters(icrafting);
+		icrafting.sendProgressBarUpdate(this, 0, architect.computingTime);
+	}
+
 
 	@Override
 	public void detectAndSendChanges() {
 		super.detectAndSendChanges();
+
 		for (int i = 0; i < crafters.size(); i++) {
 			ICrafting icrafting = (ICrafting) crafters.get(i);
 			if (computingTime != architect.computingTime) {

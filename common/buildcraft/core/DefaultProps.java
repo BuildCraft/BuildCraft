@@ -138,4 +138,5 @@ public class DefaultProps {
 
 	public static int BIOME_OIL_OCEAN = 160;
 	public static int BIOME_OIL_DESERT = 161;
+
 }

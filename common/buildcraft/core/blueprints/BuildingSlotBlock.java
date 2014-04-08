@@ -13,14 +13,14 @@ import java.util.LinkedList;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import buildcraft.api.blueprints.IBuilderContext;
-import buildcraft.api.blueprints.Schematic;
+import buildcraft.api.blueprints.SchematicBlockBase;
 import buildcraft.api.blueprints.SchematicMask;
 import buildcraft.api.core.Position;
 
 public class BuildingSlotBlock extends BuildingSlot implements Comparable<BuildingSlotBlock> {
 
 	public int x, y, z;
-	public Schematic schematic;
+	public SchematicBlockBase schematic;
 
 	public enum Mode {
 		ClearIfInvalid, Build
@@ -28,7 +28,8 @@ public class BuildingSlotBlock extends BuildingSlot implements Comparable<Buildi
 
 	public Mode mode = Mode.Build;
 
-	public Schematic getSchematic () {
+	@Override
+	public SchematicBlockBase getSchematic () {
 		if (schematic == null) {
 			return new SchematicMask(false);
 		} else {
@@ -39,12 +40,12 @@ public class BuildingSlotBlock extends BuildingSlot implements Comparable<Buildi
 	@Override
 	public void writeToWorld(IBuilderContext context) {
 		if (mode == Mode.ClearIfInvalid) {
-			if (!getSchematic().isValid(context, x, y, z)) {
+			if (!getSchematic().isAlreadyBuilt(context, x, y, z)) {
 				context.world().setBlockToAir(x, y, z);
 			}
 		} else {
 			try {
-				getSchematic().writeToWorld(context, x, y, z);
+				getSchematic().writeToWorld(context, x, y, z, stackConsumed);
 
 				// Once the schematic has been written, we're going to issue
 				// calls
@@ -112,5 +113,15 @@ public class BuildingSlotBlock extends BuildingSlot implements Comparable<Buildi
 	@Override
 	public Position getDestination () {
 		return new Position (x + 0.5, y + 0.5, z + 0.5);
+	}
+
+	@Override
+	public void writeCompleted (IBuilderContext context, double complete) {
+		getSchematic().writeCompleted(context, x, y, z, complete);
+	}
+
+	@Override
+	public boolean isAlreadyBuilt(IBuilderContext context) {
+		return schematic.isAlreadyBuilt(context, x, y, z);
 	}
 }

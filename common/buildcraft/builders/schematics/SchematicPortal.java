@@ -23,11 +23,11 @@ public class SchematicPortal extends SchematicBlock {
 	}
 
 	@Override
-	public void writeToWorld(IBuilderContext context, int x, int y, int z) {
+	public void writeToWorld(IBuilderContext context, int x, int y, int z, LinkedList <ItemStack> stacks) {
 	}
 
 	@Override
-	public boolean isValid(IBuilderContext context, int x, int y, int z) {
+	public boolean isAlreadyBuilt(IBuilderContext context, int x, int y, int z) {
 		return true;
 	}
 

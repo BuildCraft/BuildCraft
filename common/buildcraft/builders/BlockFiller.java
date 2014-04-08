@@ -17,6 +17,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.BuildCraftBuilders;
 import buildcraft.api.filler.IFillerPattern;
 import buildcraft.core.CreativeTabBuildCraft;
@@ -103,5 +104,20 @@ public class BlockFiller extends BlockContainer {
 	    textureTopOn = par1IconRegister.registerIcon("buildcraft:blockFillerTopOn");
         textureTopOff = par1IconRegister.registerIcon("buildcraft:blockFillerTopOff");
         textureSides = par1IconRegister.registerIcon("buildcraft:blockFillerSides");
+	}
+
+	@Override
+	public boolean renderAsNormalBlock() {
+		return false;
+	}
+
+	@Override
+	public boolean isSideSolid(IBlockAccess world, int x, int y, int z, ForgeDirection side) {
+		return false;
+	}
+
+	@Override
+	public int getLightValue(IBlockAccess world, int x, int y, int z) {
+		return 1;
 	}
 }

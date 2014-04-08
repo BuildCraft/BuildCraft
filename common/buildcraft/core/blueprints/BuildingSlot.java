@@ -12,11 +12,18 @@ import java.util.LinkedList;
 
 import net.minecraft.item.ItemStack;
 import buildcraft.api.blueprints.IBuilderContext;
+import buildcraft.api.blueprints.Schematic;
 import buildcraft.api.core.Position;
 
 public abstract class BuildingSlot {
 
+	public LinkedList <ItemStack> stackConsumed;
+
 	public void writeToWorld(IBuilderContext context) {
+
+	}
+
+	public void writeCompleted (IBuilderContext context, double complete) {
 
 	}
 
@@ -29,4 +36,16 @@ public abstract class BuildingSlot {
 	}
 
 	public abstract Position getDestination ();
+
+	public void addStackConsumed (ItemStack stack) {
+		if (stackConsumed == null) {
+			stackConsumed = new LinkedList<ItemStack>();
+		}
+
+		stackConsumed.add (stack);
+	}
+
+	public abstract boolean isAlreadyBuilt (IBuilderContext context);
+
+	public abstract Schematic getSchematic ();
 }

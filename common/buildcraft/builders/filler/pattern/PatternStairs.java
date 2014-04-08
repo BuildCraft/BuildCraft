@@ -25,7 +25,7 @@ public class PatternStairs extends FillerPattern {
 	int param4 = 0;
 
 	@Override
-	public Template getBlueprint(Box box) {
+	public Template getTemplate(Box box) {
 		int xMin = 0;
 		int yMin = 0;
 		int zMin = 0;

@@ -13,6 +13,8 @@ import java.util.LinkedList;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import buildcraft.core.utils.Utils;
 
 /**
  * This class allow to specify specific behavior for blocks stored in
@@ -38,6 +40,15 @@ import net.minecraft.nbt.NBTTagCompound;
  * installed and will not load the blueprint.
  */
 public class Schematic {
+
+	/**
+	 * Return true if the block on the world correspond to the block stored in
+	 * the blueprint at the location given by the slot. By default, this
+	 * subprogram is permissive and doesn't take into account metadata.
+	 */
+	public boolean isAlreadyBuilt(IBuilderContext context, int x, int y, int z) {
+		return true;
+	}
 
 	public final LinkedList<ItemStack> getRequirements(IBuilderContext context) {
 		LinkedList<ItemStack> res = new LinkedList<ItemStack>();
@@ -104,16 +115,8 @@ public class Schematic {
 			stack.stackSize = 1;
 			stack.setItemDamage(0);
 		}
-		return result;
-	}
 
-	/**
-	 * Return true if the block on the world correspond to the block stored in
-	 * the blueprint at the location given by the slot. By default, this
-	 * subprogram is permissive and doesn't take into account metadata.
-	 */
-	public boolean isValid(IBuilderContext context, int x, int y, int z) {
-		return true;
+		return result;
 	}
 
 	/**
@@ -124,18 +127,31 @@ public class Schematic {
 	}
 
 	/**
-	 * Places the block in the world, at the location specified in the slot.
+	 * Performs a transformations from world to blueprints. In particular, it should:
+	 * - use the registry to map ids from world to blueprints
+	 * - apply translations to all positions in the schematic to center in the
+	 *   blueprint referencial
 	 */
-	public void writeToWorld(IBuilderContext context, int x, int y, int z) {
+	public void transformToBlueprint(MappingRegistry registry, Translation transform) {
 
 	}
 
 	/**
-	 * Return true if the block should not be placed to the world. Requirements
-	 * will not be asked on such a block, and building will not be called.
+	 * Performs a transformations from blueprints to worlds. In particular, it should:
+	 * - use the registry to map ids from blueprints to world
+	 * - apply translations to all positions in the schematic to center in the
+	 *   builder referencial
 	 */
-	public boolean ignoreBuilding() {
-		return false;
+	public void transformToWorld(MappingRegistry registry, Translation transform) {
+
+	}
+
+	/**
+	 * Places the block in the world, at the location specified in the slot,
+	 * using the stack in parameters
+	 */
+	public void writeToWorld(IBuilderContext context, int x, int y, int z, LinkedList <ItemStack> stacks) {
+
 	}
 
 	/**
@@ -166,5 +182,43 @@ public class Schematic {
 
 	public void readFromNBT(NBTTagCompound nbt,	MappingRegistry registry) {
 
+	}
+
+	public void inventorySlotsToBlueprint (MappingRegistry registry, NBTTagCompound nbt) {
+		inventorySlotsToBlueprint(registry, nbt, "Items");
+	}
+
+	public void inventorySlotsToBlueprint (MappingRegistry registry, NBTTagCompound nbt, String nbtName) {
+		if (!nbt.hasKey(nbtName)) {
+			return;
+		}
+
+		NBTTagList list = nbt.getTagList(nbtName,
+				Utils.NBTTag_Types.NBTTagCompound.ordinal());
+
+		for (int i = 0; i < list.tagCount(); ++i) {
+            NBTTagCompound invSlot = list.getCompoundTagAt(i);
+            Item item = Item.getItemById(invSlot.getInteger ("id"));
+            invSlot.setInteger("id", registry.getIdForItem(item));
+		}
+	}
+
+	public void inventorySlotsToWorld (MappingRegistry registry, NBTTagCompound nbt) {
+		inventorySlotsToWorld (registry, nbt, "Items");
+	}
+
+	public void inventorySlotsToWorld (MappingRegistry registry, NBTTagCompound nbt, String nbtName) {
+		if (!nbt.hasKey(nbtName)) {
+			return;
+		}
+
+		NBTTagList list = nbt.getTagList(nbtName,
+				Utils.NBTTag_Types.NBTTagCompound.ordinal());
+
+		for (int i = 0; i < list.tagCount(); ++i) {
+            NBTTagCompound invSlot = list.getCompoundTagAt(i);
+            Item item = registry.getItemForId(invSlot.getInteger ("id"));
+            invSlot.setInteger("id", Item.getIdFromItem(item));
+		}
 	}
 }

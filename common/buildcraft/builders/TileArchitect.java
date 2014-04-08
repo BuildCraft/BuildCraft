@@ -16,6 +16,7 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.BuildCraftBuilders;
+import buildcraft.api.blueprints.Translation;
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.core.BlockIndex;
 import buildcraft.core.BlockScanner;
@@ -75,6 +76,14 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 
 				if (blockScanner.blocksLeft() == 0) {
 					writingBlueprint.readEntitiesFromWorld (writingContext, this);
+
+					Translation transform = new Translation();
+
+					transform.x = -writingContext.surroundingBox().pMin().x;
+					transform.y = -writingContext.surroundingBox().pMin().y;
+					transform.z = -writingContext.surroundingBox().pMin().z;
+
+					writingBlueprint.transformToBlueprint(transform);
 
 					ForgeDirection o = ForgeDirection.values()[worldObj.getBlockMetadata(
 							xCoord, yCoord, zCoord)].getOpposite();

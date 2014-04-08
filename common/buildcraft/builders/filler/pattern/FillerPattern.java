@@ -11,10 +11,14 @@ package buildcraft.builders.filler.pattern;
 import java.util.Map;
 import java.util.TreeMap;
 
+import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.util.IIcon;
 import buildcraft.api.blueprints.SchematicMask;
+import buildcraft.api.blueprints.SchematicRegistry;
 import buildcraft.api.filler.IFillerPattern;
+import buildcraft.core.Box;
+import buildcraft.core.blueprints.Blueprint;
 import buildcraft.core.blueprints.Template;
 import buildcraft.core.utils.StringUtils;
 
@@ -96,5 +100,26 @@ public abstract class FillerPattern implements IFillerPattern {
 				}
 			}
 		}
+	}
+
+	@Override
+	public Blueprint getBlueprint (Box box, Block block) {
+		Blueprint result = new Blueprint (box.sizeX(), box.sizeY(), box.sizeZ());
+
+		Template tmpl = getTemplate(box);
+
+		for (int x = 0; x < box.sizeX(); ++x) {
+			for (int y = 0; y < box.sizeY(); ++y) {
+				for (int z = 0; z < box.sizeZ(); ++z) {
+					if (tmpl.contents[x][y][z] != null) {
+						result.contents[x][y][z] = SchematicRegistry
+								.newSchematicBlock(block);
+					}
+
+				}
+			}
+		}
+
+		return result;
 	}
 }

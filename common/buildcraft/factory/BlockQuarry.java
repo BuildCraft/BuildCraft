@@ -19,6 +19,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.BuildCraftFactory;
@@ -207,5 +208,20 @@ public class BlockQuarry extends BlockBuildCraft {
 		textureSide = par1IconRegister.registerIcon("buildcraft:quarry_side");
 		textureTop = par1IconRegister.registerIcon("buildcraft:quarry_top");
 		textureFront = par1IconRegister.registerIcon("buildcraft:quarry_front");
+	}
+
+	@Override
+	public boolean renderAsNormalBlock() {
+		return false;
+	}
+
+	@Override
+	public boolean isSideSolid(IBlockAccess world, int x, int y, int z, ForgeDirection side) {
+		return false;
+	}
+
+	@Override
+	public int getLightValue(IBlockAccess world, int x, int y, int z) {
+		return 1;
 	}
 }

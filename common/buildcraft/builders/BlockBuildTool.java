@@ -15,9 +15,9 @@ import net.minecraft.util.IIcon;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-public class BlockStripes extends Block {
+public class BlockBuildTool extends Block {
 
-	public BlockStripes() {
+	public BlockBuildTool() {
 		super(Material.iron);
 	}
 
@@ -31,6 +31,6 @@ public class BlockStripes extends Block {
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void registerBlockIcons(IIconRegister par1IconRegister) {
-        texture = par1IconRegister.registerIcon("buildcraft:blockStripesLaser");
+        texture = par1IconRegister.registerIcon("buildcraft:blockRedLaser");
 	}
 }

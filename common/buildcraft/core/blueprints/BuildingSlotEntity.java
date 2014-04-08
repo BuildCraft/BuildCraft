@@ -8,20 +8,21 @@
  */
 package buildcraft.core.blueprints;
 
+import java.util.LinkedList;
+
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagList;
-import buildcraft.api.blueprints.CoordTransformation;
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.SchematicEntity;
 import buildcraft.api.core.Position;
 
 public class BuildingSlotEntity extends BuildingSlot {
 
-	public CoordTransformation transform;
 	public SchematicEntity schematic;
 
 	@Override
 	public void writeToWorld(IBuilderContext context) {
-		schematic.writeToWorld(context, transform);
+		schematic.writeToWorld(context);
 	}
 
 	@Override
@@ -29,8 +30,28 @@ public class BuildingSlotEntity extends BuildingSlot {
 		NBTTagList nbttaglist = schematic.cpt.getTagList("Pos", 6);
 		Position pos = new Position(nbttaglist.func_150309_d(0),
 				nbttaglist.func_150309_d(1), nbttaglist.func_150309_d(2));
-		pos = transform.translate(pos);
 
 		return pos;
+	}
+
+	@Override
+	public LinkedList<ItemStack> getRequirements (IBuilderContext context) {
+		LinkedList<ItemStack> results = new LinkedList<ItemStack>();
+
+		for (ItemStack s : schematic.storedRequirements) {
+			results.add(s);
+		}
+
+		return results;
+	}
+
+	@Override
+	public SchematicEntity getSchematic() {
+		return schematic;
+	}
+
+	@Override
+	public boolean isAlreadyBuilt(IBuilderContext context) {
+		return schematic.isAlreadyBuilt(context);
 	}
 }

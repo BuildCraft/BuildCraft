@@ -8,10 +8,14 @@
  */
 package buildcraft.api.blueprints;
 
+import java.util.LinkedList;
+
 import net.minecraft.init.Blocks;
+import net.minecraft.item.ItemStack;
+import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.BlockUtil;
 
-public class SchematicMask extends Schematic {
+public class SchematicMask extends SchematicBlockBase {
 
 	public boolean isConcrete = true;
 
@@ -20,20 +24,42 @@ public class SchematicMask extends Schematic {
 	}
 
 	@Override
-	public void writeToWorld(IBuilderContext context, int x, int y, int z) {
+	public void writeToWorld(IBuilderContext context, int x, int y, int z, LinkedList <ItemStack> stacks) {
 		if (isConcrete) {
-			context.world().setBlock(x, y, z, Blocks.brick_block, 0, 3);
+			if (stacks.size() == 0 || !BlockUtil.isSoftBlock(context.world(), x, y, z)) {
+				return;
+			} else {
+				ItemStack stack = stacks.getFirst();
+
+				stack.tryPlaceItemIntoWorld(
+						CoreProxy.proxy.getBuildCraftPlayer(context.world()),
+						context.world(), x, y, z, 1, 0.0f, 0.0f, 0.0f);
+			}
 		} else {
 			context.world().setBlock(x, y, z, Blocks.air, 0, 3);
 		}
 	}
 
 	@Override
-	public boolean isValid(IBuilderContext context, int x, int y, int z) {
+	public boolean isAlreadyBuilt(IBuilderContext context, int x, int y, int z) {
 		if (isConcrete) {
 			return !BlockUtil.isSoftBlock(context.world(), x, y, z);
 		} else {
 			return BlockUtil.isSoftBlock(context.world(), x, y, z);
+		}
+	}
+
+	// TODO: To be removed with the "real" list of items
+	@Override
+	public void addRequirements(IBuilderContext context, LinkedList<ItemStack> requirements) {
+		requirements.add(new ItemStack(Blocks.brick_block));
+	}
+
+	@Override
+	public void writeCompleted(IBuilderContext context, int x, int y, int z, double completed) {
+		if (!isConcrete) {
+			context.world().destroyBlockInWorldPartially(0, x, y, z,
+					(int) (completed * 10.0F) - 1);
 		}
 	}
 

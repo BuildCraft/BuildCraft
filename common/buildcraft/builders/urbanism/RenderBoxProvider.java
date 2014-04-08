@@ -46,16 +46,20 @@ public class RenderBoxProvider extends TileEntitySpecialRenderer {
 
 		if (tileentity instanceof IBoxesProvider) {
 			for (Box b : ((IBoxesProvider) tileentity).getBoxes()) {
-				RenderBox.doRender(
+				if (b.isVisible) {
+					RenderBox.doRender(
 						TileEntityRendererDispatcher.instance.field_147553_e,
 						getTexture(b.kind), b);
+				}
 			}
 		} else if (tileentity instanceof IBoxProvider) {
 			Box b = ((IBoxProvider) tileentity).getBox();
 
-			RenderBox.doRender(
+			if (b.isVisible) {
+				RenderBox.doRender(
 					TileEntityRendererDispatcher.instance.field_147553_e,
 					getTexture(b.kind), b);
+			}
 		}
 
 		GL11.glPopMatrix();
