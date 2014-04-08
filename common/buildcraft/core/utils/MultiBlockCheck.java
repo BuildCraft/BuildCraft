@@ -21,10 +21,10 @@ public class MultiBlockCheck {
 	
 	public static boolean north(int x, int y, int z, World world){
 		boolean partOfMultiBlock = true;
-		for (int teller=0; teller>=-2; teller--){
+		for (int teller=-1; teller<=1; teller++){
 			for (int teller2 = 0; teller2 <=5; teller2++){
-				for (int teller3 = -1; teller3<=1; teller3++){
-					if (teller == -1 && teller3 == 0){
+				for (int teller3 = 0; teller3>=-2; teller3--){
+					if (teller == 0 && teller3 == -1){
 						if (teller2 == 0 || teller2 == 5){
 							if (world.getBlock(x+teller, y+teller2, z+teller3) != BuildCraftFactory.blockRefineryValve){
 								partOfMultiBlock = false;
