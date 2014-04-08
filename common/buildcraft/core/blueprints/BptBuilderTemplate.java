@@ -110,6 +110,10 @@ public class BptBuilderTemplate extends BptBuilderBase {
 		IInvSlot firstSlotToConsume = null;
 
 		for (IInvSlot invSlot : InventoryIterator.getIterable(builder, ForgeDirection.UNKNOWN)) {
+			if (!builder.isBuildingMaterialSlot(invSlot.getIndex())) {
+				continue;
+			}
+
 			ItemStack stack = invSlot.getStackInSlot();
 
 			if (stack != null && stack.stackSize > 0) {

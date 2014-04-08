@@ -283,17 +283,13 @@ public class TileBuilder extends TileAbstractBuilder implements IMachine {
 
 		bpt.transformToWorld(transform);
 
-		BptBuilderBase result = null;
-
 		if (items[0].getItem() instanceof ItemBlueprintStandard) {
-			result = new BptBuilderBlueprint((Blueprint) bpt, worldObj, x, y, z);
+			return new BptBuilderBlueprint((Blueprint) bpt, worldObj, x, y, z);
 		} else if (items[0].getItem() instanceof ItemBlueprintTemplate) {
 			return new BptBuilderTemplate(bpt, worldObj, x, y, z);
 		} else {
-			result = null;
+			return null;
 		}
-
-		return result;
 	}
 
 	public void iterateBpt() {
