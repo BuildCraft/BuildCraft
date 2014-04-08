@@ -30,15 +30,16 @@ import buildcraft.core.IItemPipe;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.util.MovingObjectPosition;
+import buildcraft.core.ICustomHighlight;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.Vec3;
 
 import static net.minecraft.util.AxisAlignedBB.getBoundingBox;
 
-public class BlockEngine extends BlockBuildCraft {
+public class BlockEngine extends BlockBuildCraft implements ICustomHighlight {
 
-	public static final AxisAlignedBB[][] boxes = {
+	private static final AxisAlignedBB[][] boxes = {
 		{getBoundingBox(0.0, 0.5, 0.0, 1.0, 1.0, 1.0), getBoundingBox(0.25, 0.0, 0.25, 0.75, 0.5, 0.75)},// -Y
 		{getBoundingBox(0.0, 0.0, 0.0, 1.0, 0.5, 1.0), getBoundingBox(0.25, 0.5, 0.25, 0.75, 1.0, 0.75)},// +Y
 		{getBoundingBox(0.0, 0.0, 0.5, 1.0, 1.0, 1.0), getBoundingBox(0.25, 0.25, 0.0, 0.75, 0.75, 0.5)},// -Z
@@ -137,6 +138,7 @@ public class BlockEngine extends BlockBuildCraft {
 	}
 
 	@Override
+	@SuppressWarnings("unchecked")
 	public void addCollisionBoxesToList(World wrd, int x, int y, int z, AxisAlignedBB mask, List list, Entity ent) {
 		TileEntity tile = wrd.getTileEntity(x, y, z);
 		if (tile instanceof TileEngine){
@@ -148,8 +150,23 @@ public class BlockEngine extends BlockBuildCraft {
 				}
 			}
 		} else {
-			super.addCollisionBoxesToList(wrd, x, y, z, full, list, ent);
+			super.addCollisionBoxesToList(wrd, x, y, z, mask, list, ent);
 		}
+	}
+
+	@Override
+	public AxisAlignedBB[] getBoxes(World wrd, int x, int y, int z, EntityPlayer player) {
+		TileEntity tile = wrd.getTileEntity(x, y, z);
+		if (tile instanceof TileEngine) {
+			return boxes[((TileEngine)tile).orientation.ordinal()];
+		} else {
+			return new AxisAlignedBB[]{AxisAlignedBB.getAABBPool().getAABB(0.0, 0.0, 0.0, 1.0, 1.0, 1.0)};
+		}
+	}
+
+	@Override
+	public double getExpansion() {
+		return 0.0075;
 	}
 
 	@Override
@@ -161,17 +178,17 @@ public class BlockEngine extends BlockBuildCraft {
 			for(AxisAlignedBB aabb : aabbs){
 				MovingObjectPosition mop = aabb.getOffsetBoundingBox(x, y, z).calculateIntercept(origin, direction);
 				if(mop != null){
-					mop.blockX = x;
-					mop.blockY = y;
-					mop.blockZ = z;
-					if (closest != null) {
-						if (mop.hitVec.distanceTo(origin) < closest.hitVec.distanceTo(origin)) {
-							closest = mop;
-						}
+					if (closest != null && mop.hitVec.distanceTo(origin) < closest.hitVec.distanceTo(origin)) {
+						closest = mop;
 					} else {
 						closest = mop;
 					}
 				}
+			}
+			if (closest != null){
+				closest.blockX = x;
+				closest.blockY = y;
+				closest.blockZ = z;
 			}
 			return closest;
 		} else {
