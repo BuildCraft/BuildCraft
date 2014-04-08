@@ -137,7 +137,7 @@ public class BlockEngine extends BlockBuildCraft {
 	}
 
 	@Override
-	public void addCollisionBoxesToList(World wrd, int x, int y, int z, AxisAlignedBB full, List list, Entity ent) {
+	public void addCollisionBoxesToList(World wrd, int x, int y, int z, AxisAlignedBB mask, List list, Entity ent) {
 		TileEntity tile = wrd.getTileEntity(x, y, z);
 		if (tile instanceof TileEngine){
 			AxisAlignedBB[] aabbs = boxes[((TileEngine)tile).orientation.ordinal()];
