@@ -85,18 +85,30 @@ public class BuildCraftEnergy extends BuildCraftMod {
 	private static Fluid buildcraftFluidFuel;
 	private static Fluid buildcraftFluidRedPlasma;
 	private static Fluid buildcraftFluidTar;
+	private static Fluid buildcraftFluidClearOil;
+	private static Fluid buildcraftFluidDirtyFuel;
+	private static Fluid buildcraftFluidLPG;
 	public static Fluid fluidOil;
 	public static Fluid fluidFuel;
 	public static Fluid fluidRedPlasma;
 	public static Fluid fluidTar;
+	public static Fluid fluidClearOil;
+	public static Fluid fluidDirtyFuel;
+	public static Fluid fluidLPG;
 	public static Block blockOil;
 	public static Block blockFuel;
 	public static Block blockRedPlasma;
 	public static Block blockTar;
+	public static Block blockClearOil;
+	public static Block blockDirtyFuel;
+	public static Block blockLPG;
 	public static Item bucketOil;
 	public static Item bucketFuel;
 	public static Item bucketTar;
 	public static Item bucketRedPlasma;
+	public static Item bucketClearOil;
+	public static Item bucketDirtyFuel;
+	public static Item bucketLPG;
 	public static Item fuel;
 	public static boolean canOilBurn;
 	public static double oilWellScalar = 1.0;
@@ -160,9 +172,21 @@ public class BuildCraftEnergy extends BuildCraftMod {
 		FluidRegistry.registerFluid(buildcraftFluidRedPlasma);
 		fluidRedPlasma = FluidRegistry.getFluid("redplasma");
 		
-		buildcraftFluidTar = new Fluid("tar");
+		buildcraftFluidTar = new Fluid("tar").setDensity(1000).setViscosity(1000);
 		FluidRegistry.registerFluid(buildcraftFluidTar);
 		fluidTar = FluidRegistry.getFluid("tar");
+		
+		buildcraftFluidClearOil = new Fluid("clearoil").setDensity(1000).setViscosity(1000);
+		FluidRegistry.registerFluid(buildcraftFluidClearOil);
+		fluidClearOil = FluidRegistry.getFluid("clearoil");
+		
+		buildcraftFluidDirtyFuel = new Fluid("dirtyfuel").setDensity(1000).setViscosity(1000);
+		FluidRegistry.registerFluid(buildcraftFluidDirtyFuel);
+		fluidDirtyFuel = FluidRegistry.getFluid("dirtyfuel");
+		
+		buildcraftFluidLPG = new Fluid("lpg").setDensity(1000).setViscosity(1000);
+		FluidRegistry.registerFluid(buildcraftFluidLPG);
+		fluidLPG = FluidRegistry.getFluid("lpg");
 
 		if (fluidOil.getBlock() == null) {
 			blockOil = new BlockBuildcraftFluid(fluidOil, Material.water).setFlammable(canOilBurn).setFlammability(0);
@@ -205,6 +229,33 @@ public class BuildCraftEnergy extends BuildCraftMod {
 		} else {
 			blockTar = fluidTar.getBlock();
 		}
+		
+		if (fluidClearOil.getBlock() == null){
+			blockClearOil = new BlockBuildcraftFluid(fluidClearOil, Material.water).setFlammable(true).setParticleColor(0.5F, 0.5F, 0.5F);
+			blockClearOil.setBlockName("blockClearOil");
+			CoreProxy.proxy.registerBlock(blockClearOil);
+			fluidClearOil.setBlock(blockClearOil);
+		} else {
+			blockClearOil = fluidClearOil.getBlock();
+		}
+		
+		if (fluidDirtyFuel.getBlock() == null){
+			blockDirtyFuel = new BlockBuildcraftFluid(fluidDirtyFuel, Material.water).setFlammable(true).setParticleColor(0.5F, 0.5F, 0.5F);
+			blockDirtyFuel.setBlockName("blockDirtyFuel");
+			CoreProxy.proxy.registerBlock(blockDirtyFuel);
+			fluidDirtyFuel.setBlock(blockDirtyFuel);
+		} else {
+			blockDirtyFuel = fluidDirtyFuel.getBlock();
+		}
+		
+		if (fluidLPG.getBlock() == null){
+			blockLPG = new BlockBuildcraftFluid(fluidLPG, Material.water).setFlammable(true).setParticleColor(0.5F, 0.5F, 0.5F);
+			blockLPG.setBlockName("blockLPG");
+			CoreProxy.proxy.registerBlock(blockLPG);
+			fluidLPG.setBlock(blockLPG);
+		} else {
+			blockLPG = fluidLPG.getBlock();
+		}
 
 		// Buckets
 
@@ -229,6 +280,30 @@ public class BuildCraftEnergy extends BuildCraftMod {
 			LanguageRegistry.addName(bucketTar, "Tar Bucket");
 			CoreProxy.proxy.registerItem(bucketTar);
 			FluidContainerRegistry.registerFluidContainer(FluidRegistry.getFluidStack("tar", FluidContainerRegistry.BUCKET_VOLUME), new ItemStack(bucketTar), new ItemStack(Items.bucket));
+		}
+		
+		if (blockClearOil != null){
+			bucketClearOil = new ItemBucketBuildcraft(blockClearOil, CreativeTabBuildCraft.TIER_2);
+			bucketClearOil.setUnlocalizedName("bucketClearOil").setContainerItem(Items.bucket);
+			LanguageRegistry.addName(bucketClearOil, "Clear Oil Bucket");
+			CoreProxy.proxy.registerItem(bucketClearOil);
+			FluidContainerRegistry.registerFluidContainer(FluidRegistry.getFluidStack("clearOil", FluidContainerRegistry.BUCKET_VOLUME), new ItemStack(bucketClearOil), new ItemStack(Items.bucket));
+		}
+		
+		if (blockDirtyFuel != null){
+			bucketDirtyFuel = new ItemBucketBuildcraft(blockDirtyFuel, CreativeTabBuildCraft.TIER_2);
+			bucketDirtyFuel.setUnlocalizedName("bucketDirtyFuel").setContainerItem(Items.bucket);
+			LanguageRegistry.addName(bucketTar, "Dirty Fuel Bucket");
+			CoreProxy.proxy.registerItem(bucketDirtyFuel);
+			FluidContainerRegistry.registerFluidContainer(FluidRegistry.getFluidStack("dirtyFuel", FluidContainerRegistry.BUCKET_VOLUME), new ItemStack(bucketDirtyFuel), new ItemStack(Items.bucket));
+		}
+		
+		if (blockLPG != null){
+			bucketLPG = new ItemBucketBuildcraft(blockLPG, CreativeTabBuildCraft.TIER_2);
+			bucketLPG.setUnlocalizedName("bucketLPG").setContainerItem(Items.bucket);
+			LanguageRegistry.addName(bucketLPG, "LPG Bucket");
+			CoreProxy.proxy.registerItem(bucketLPG);
+			FluidContainerRegistry.registerFluidContainer(FluidRegistry.getFluidStack("lpg", FluidContainerRegistry.BUCKET_VOLUME), new ItemStack(bucketTar), new ItemStack(Items.bucket));
 		}
 
 		if (!BuildCraftCore.NEXTGEN_PREALPHA) {
@@ -304,7 +379,7 @@ public class BuildCraftEnergy extends BuildCraftMod {
 			buildcraftFluidOil.setIcons(blockOil.getBlockTextureFromSide(1), blockOil.getBlockTextureFromSide(2));
 			buildcraftFluidFuel.setIcons(blockFuel.getBlockTextureFromSide(1), blockFuel.getBlockTextureFromSide(2));
 			buildcraftFluidRedPlasma.setIcons(blockRedPlasma.getBlockTextureFromSide(1), blockRedPlasma.getBlockTextureFromSide(2));
-			buildcraftFluidTar.setIcons(blockOil.getBlockTextureFromSide(1), blockOil.getBlockTextureFromSide(2));
+			buildcraftFluidTar.setIcons(blockTar.getBlockTextureFromSide(1), blockTar.getBlockTextureFromSide(2));
 		}
 	}
 
