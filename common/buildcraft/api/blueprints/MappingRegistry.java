@@ -50,7 +50,6 @@ public class MappingRegistry {
 		}
 	}
 
-
 	public Item getItemForId(int id) {
 		if (id >= idToItem.size()) {
 			return null;

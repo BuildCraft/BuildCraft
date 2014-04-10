@@ -11,8 +11,10 @@ package buildcraft.core.blueprints;
 import java.util.LinkedList;
 
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import buildcraft.api.blueprints.IBuilderContext;
+import buildcraft.api.blueprints.MappingRegistry;
 import buildcraft.api.blueprints.SchematicBlockBase;
 import buildcraft.api.blueprints.SchematicMask;
 import buildcraft.api.core.Position;
@@ -123,5 +125,22 @@ public class BuildingSlotBlock extends BuildingSlot implements Comparable<Buildi
 	@Override
 	public boolean isAlreadyBuilt(IBuilderContext context) {
 		return schematic.isAlreadyBuilt(context, x, y, z);
+	}
+
+	@Override
+	public void writeToNBT (NBTTagCompound nbt, MappingRegistry registry) {
+		nbt.setByte("mode", (byte) mode.ordinal());
+		nbt.setInteger("x", x);
+		nbt.setInteger("y", y);
+		nbt.setInteger("z", z);
+
+		NBTTagCompound schematicNBT = new NBTTagCompound();
+		schematic.writeToNBT(schematicNBT, registry);
+		nbt.setTag("schematic", schematicNBT);
+	}
+
+	@Override
+	public void readFromNBT (NBTTagCompound nbt, MappingRegistry registry) {
+
 	}
 }

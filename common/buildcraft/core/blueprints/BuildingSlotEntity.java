@@ -11,8 +11,10 @@ package buildcraft.core.blueprints;
 import java.util.LinkedList;
 
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import buildcraft.api.blueprints.IBuilderContext;
+import buildcraft.api.blueprints.MappingRegistry;
 import buildcraft.api.blueprints.SchematicEntity;
 import buildcraft.api.core.Position;
 
@@ -53,5 +55,15 @@ public class BuildingSlotEntity extends BuildingSlot {
 	@Override
 	public boolean isAlreadyBuilt(IBuilderContext context) {
 		return schematic.isAlreadyBuilt(context);
+	}
+
+	@Override
+	public void writeToNBT (NBTTagCompound nbt, MappingRegistry registry) {
+
+	}
+
+	@Override
+	public void readFromNBT (NBTTagCompound nbt, MappingRegistry registry) {
+
 	}
 }

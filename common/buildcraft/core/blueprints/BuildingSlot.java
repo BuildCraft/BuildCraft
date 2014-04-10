@@ -11,7 +11,9 @@ package buildcraft.core.blueprints;
 import java.util.LinkedList;
 
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import buildcraft.api.blueprints.IBuilderContext;
+import buildcraft.api.blueprints.MappingRegistry;
 import buildcraft.api.blueprints.Schematic;
 import buildcraft.api.core.Position;
 
@@ -48,4 +50,8 @@ public abstract class BuildingSlot {
 	public abstract boolean isAlreadyBuilt (IBuilderContext context);
 
 	public abstract Schematic getSchematic ();
+
+	public abstract void writeToNBT (NBTTagCompound nbt, MappingRegistry registry);
+
+	public abstract void readFromNBT (NBTTagCompound nbt, MappingRegistry registry);
 }

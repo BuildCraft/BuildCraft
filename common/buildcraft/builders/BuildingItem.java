@@ -17,6 +17,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import buildcraft.BuildCraftBuilders;
 import buildcraft.api.blueprints.IBuilderContext;
+import buildcraft.api.blueprints.MappingRegistry;
 import buildcraft.api.core.Position;
 import buildcraft.core.blueprints.BuildingSlot;
 import buildcraft.core.blueprints.IBuilder;
@@ -222,6 +223,8 @@ public class BuildingItem implements IBuilder {
 		destination.writeToNBT(destinationNBT);
 		nbt.setTag ("destination", destinationNBT);
 
+		nbt.setDouble("lifeTime", lifetime);
+
 		NBTTagList items = new NBTTagList();
 		for (ItemStack s : stacksToBuild) {
 			NBTTagCompound cpt = new NBTTagCompound();
@@ -229,7 +232,16 @@ public class BuildingItem implements IBuilder {
 			items.appendTag(cpt);
 		}
 
-		// TODO: How to write the schematic??? Or load that from the builder???
+		MappingRegistry registry = new MappingRegistry();
+
+		NBTTagCompound slotNBT = new NBTTagCompound();
+		NBTTagCompound registryNBT = new NBTTagCompound();
+
+		slotToBuild.writeToNBT(slotNBT, registry);
+		registry.write(registryNBT);
+
+		nbt.setTag("registry", registryNBT);
+		nbt.setTag("slotToBuild", slotNBT);
 	}
 
 	public void readFromNBT (NBTTagCompound nbt) {
