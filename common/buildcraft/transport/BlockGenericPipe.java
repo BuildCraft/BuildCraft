@@ -8,14 +8,25 @@
  */
 package buildcraft.transport;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Random;
-
+import buildcraft.BuildCraftTransport;
+import buildcraft.api.gates.GateExpansions;
+import buildcraft.api.gates.IGateExpansion;
+import buildcraft.api.tools.IToolWrench;
+import buildcraft.api.transport.PipeWire;
+import buildcraft.core.BlockBuildCraft;
+import buildcraft.core.BlockIndex;
+import buildcraft.core.CoreConstants;
+import buildcraft.core.utils.BCLog;
+import buildcraft.core.utils.MatrixTranformations;
+import buildcraft.core.utils.Utils;
+import buildcraft.transport.gates.GateDefinition;
+import buildcraft.transport.gates.GateFactory;
+import buildcraft.transport.gates.ItemGate;
+import buildcraft.transport.render.PipeRendererWorld;
+import buildcraft.transport.utils.FacadeMatrix;
+import cpw.mods.fml.common.registry.GameRegistry;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
@@ -37,24 +48,8 @@ import net.minecraft.util.Vec3;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
-import buildcraft.BuildCraftTransport;
-import buildcraft.api.gates.GateExpansions;
-import buildcraft.api.gates.IGateExpansion;
-import buildcraft.api.tools.IToolWrench;
-import buildcraft.api.transport.PipeWire;
-import buildcraft.core.BlockBuildCraft;
-import buildcraft.core.BlockIndex;
-import buildcraft.core.CoreConstants;
-import buildcraft.core.utils.BCLog;
-import buildcraft.core.utils.MatrixTranformations;
-import buildcraft.core.utils.Utils;
-import buildcraft.transport.gates.GateDefinition;
-import buildcraft.transport.gates.GateFactory;
-import buildcraft.transport.gates.ItemGate;
-import buildcraft.transport.utils.FacadeMatrix;
-import cpw.mods.fml.common.registry.GameRegistry;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+
+import java.util.*;
 
 public class BlockGenericPipe extends BlockBuildCraft {
 
@@ -102,6 +97,17 @@ public class BlockGenericPipe extends BlockBuildCraft {
 	@Override
 	public int getRenderType() {
 		return TransportProxy.pipeModel;
+	}
+
+	@Override
+	public boolean canRenderInPass(int pass) {
+		PipeRendererWorld.renderPass = pass;
+		return true;
+	}
+
+	@Override
+	public int getRenderBlockPass() {
+		return 1;
 	}
 
 	@Override
