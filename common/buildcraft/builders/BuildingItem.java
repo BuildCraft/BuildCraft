@@ -13,6 +13,8 @@ import java.util.LinkedList;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import buildcraft.BuildCraftBuilders;
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.core.Position;
@@ -209,5 +211,28 @@ public class BuildingItem implements IBuilder {
 	@Override
 	public boolean isDone() {
 		return isDone;
+	}
+
+	public void writeToNBT (NBTTagCompound nbt) {
+		NBTTagCompound originNBT = new NBTTagCompound();
+		origin.writeToNBT(originNBT);
+		nbt.setTag ("origin", originNBT);
+
+		NBTTagCompound destinationNBT = new NBTTagCompound();
+		destination.writeToNBT(destinationNBT);
+		nbt.setTag ("destination", destinationNBT);
+
+		NBTTagList items = new NBTTagList();
+		for (ItemStack s : stacksToBuild) {
+			NBTTagCompound cpt = new NBTTagCompound();
+			s.writeToNBT(cpt);
+			items.appendTag(cpt);
+		}
+
+		// TODO: How to write the schematic??? Or load that from the builder???
+	}
+
+	public void readFromNBT (NBTTagCompound nbt) {
+
 	}
 }

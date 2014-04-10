@@ -24,9 +24,9 @@ import net.minecraft.world.WorldSettings.GameType;
 import buildcraft.api.blueprints.Schematic;
 import buildcraft.api.blueprints.SchematicBlock;
 import buildcraft.api.blueprints.SchematicEntity;
-import buildcraft.api.blueprints.Translation;
 import buildcraft.api.core.StackKey;
 import buildcraft.builders.TileAbstractBuilder;
+import buildcraft.core.BlockIndex;
 import buildcraft.core.blueprints.BuildingSlotBlock.Mode;
 import buildcraft.core.utils.BCLog;
 import buildcraft.core.utils.BlockUtil;
@@ -51,22 +51,24 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 					int yCoord = j + y - blueprint.anchorY;
 					int zCoord = k + z - blueprint.anchorZ;
 
-					SchematicBlock slot = (SchematicBlock) bluePrint.contents[i][j][k];
+					if (!clearedLocations.contains(new BlockIndex(xCoord, yCoord, zCoord))) {
+						SchematicBlock slot = (SchematicBlock) bluePrint.contents[i][j][k];
 
-					if (slot == null) {
-						slot = new SchematicBlock();
-						slot.meta = 0;
-						slot.block = Blocks.air;
+						if (slot == null) {
+							slot = new SchematicBlock();
+							slot.meta = 0;
+							slot.block = Blocks.air;
+						}
+
+						BuildingSlotBlock b = new BuildingSlotBlock();
+						b.schematic = slot;
+						b.x = xCoord;
+						b.y = yCoord;
+						b.z = zCoord;
+						b.mode = Mode.ClearIfInvalid;
+
+						buildList.add(b);
 					}
-
-					BuildingSlotBlock b = new BuildingSlotBlock ();
-					b.schematic = slot;
-					b.x = xCoord;
-					b.y = yCoord;
-					b.z = zCoord;
-					b.mode = Mode.ClearIfInvalid;
-
-					buildList.add(b);
 
 				}
 			}
@@ -81,20 +83,23 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 					int yCoord = j + y - blueprint.anchorY;
 					int zCoord = k + z - blueprint.anchorZ;
 
-					SchematicBlock slot = (SchematicBlock) bluePrint.contents[i][j][k];
+					if (!builtLocations.contains(new BlockIndex(xCoord, yCoord,
+							zCoord))) {
+						SchematicBlock slot = (SchematicBlock) bluePrint.contents[i][j][k];
 
-					if (slot == null) {
-						continue;
+						if (slot == null) {
+							continue;
+						}
+
+						BuildingSlotBlock b = new BuildingSlotBlock();
+						b.schematic = slot;
+						b.x = xCoord;
+						b.y = yCoord;
+						b.z = zCoord;
+						b.mode = Mode.Build;
+
+						tmpBuildList.add(b);
 					}
-
-					BuildingSlotBlock b = new BuildingSlotBlock ();
-					b.schematic = slot;
-					b.x = xCoord;
-					b.y = yCoord;
-					b.z = zCoord;
-					b.mode = Mode.Build;
-
-					tmpBuildList.add (b);
 				}
 			}
 		}
@@ -105,13 +110,9 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 
 		iterator = new BuildingSlotIterator(buildList);
 
-		Translation transform = new Translation();
-
-		transform.x = x - blueprint.anchorX;
-		transform.y = y - blueprint.anchorY;
-		transform.z = z - blueprint.anchorZ;
-
 		for (SchematicEntity e : bluePrint.entities) {
+			// TODO: take into account items already built... How to identify
+			// them? id in list?
 			BuildingSlotEntity b = new BuildingSlotEntity();
 			b.schematic = e;
 			entityList.add(b);
@@ -186,6 +187,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 						if (setupForDestroy(builder, context, slot)) {
 							iterator.remove();
 							postProcessing.add(slot);
+							clearedLocations.add(new BlockIndex(slot.x, slot.y, slot.z));
 							return slot;
 						}
 					}
@@ -197,6 +199,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 
 						iterator.remove();
 						postProcessing.add(slot);
+						builtLocations.add(new BlockIndex(slot.x, slot.y, slot.z));
 						return slot;
 					}
 				}

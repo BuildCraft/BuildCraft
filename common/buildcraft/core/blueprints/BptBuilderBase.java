@@ -10,8 +10,11 @@ package buildcraft.core.blueprints;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.TreeSet;
 
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.World;
 import buildcraft.BuildCraftBuilders;
@@ -20,9 +23,14 @@ import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.core.Position;
 import buildcraft.builders.BuildingItem;
 import buildcraft.builders.TileAbstractBuilder;
+import buildcraft.core.BlockIndex;
 import buildcraft.core.Box;
+import buildcraft.core.utils.Utils;
 
 public abstract class BptBuilderBase implements IAreaProvider {
+
+	protected TreeSet <BlockIndex> clearedLocations = new TreeSet <BlockIndex> ();
+	protected TreeSet <BlockIndex> builtLocations = new TreeSet <BlockIndex> ();
 
 	public BlueprintBase blueprint;
 	int x, y, z;
@@ -143,6 +151,46 @@ public abstract class BptBuilderBase implements IAreaProvider {
 			}
 
 			return true;
+		}
+	}
+
+	public void saveBuildStateToNBT (NBTTagCompound nbt) {
+		NBTTagList clearList = new NBTTagList();
+
+		for (BlockIndex loc : clearedLocations) {
+			NBTTagCompound cpt = new NBTTagCompound();
+			loc.writeTo(cpt);
+			clearList.appendTag(cpt);
+		}
+
+		nbt.setTag("clearList", clearList);
+
+		NBTTagList builtList = new NBTTagList();
+
+		for (BlockIndex loc : builtLocations) {
+			NBTTagCompound cpt = new NBTTagCompound();
+			loc.writeTo(cpt);
+			builtList.appendTag(cpt);
+		}
+
+		nbt.setTag("builtList", builtList);
+	}
+
+	public void loadBuildStateToNBT (NBTTagCompound nbt) {
+		NBTTagList clearList = nbt.getTagList("clearList", Utils.NBTTag_Types.NBTTagCompound.ordinal());
+
+		for (int i = 0; i < clearList.tagCount(); ++i) {
+			NBTTagCompound cpt = clearList.getCompoundTagAt(i);
+
+			clearedLocations.add (new BlockIndex(cpt));
+		}
+
+		NBTTagList builtList = nbt.getTagList("builtList", Utils.NBTTag_Types.NBTTagCompound.ordinal());
+
+		for (int i = 0; i < builtList.tagCount(); ++i) {
+			NBTTagCompound cpt = builtList.getCompoundTagAt(i);
+
+			builtLocations.add (new BlockIndex(cpt));
 		}
 	}
 }
