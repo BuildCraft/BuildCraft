@@ -12,9 +12,11 @@ import buildcraft.core.GuiIds;
 import buildcraft.factory.gui.ContainerAutoWorkbench;
 import buildcraft.factory.gui.ContainerHopper;
 import buildcraft.factory.gui.ContainerRefinery;
+import buildcraft.factory.gui.ContainerRefineryControl;
 import buildcraft.factory.gui.GuiAutoCrafting;
 import buildcraft.factory.gui.GuiHopper;
 import buildcraft.factory.gui.GuiRefinery;
+import buildcraft.factory.gui.GuiRefineryControl;
 import cpw.mods.fml.common.network.IGuiHandler;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
@@ -46,6 +48,11 @@ public class GuiHandler implements IGuiHandler {
 			if (!(tile instanceof TileHopper))
 				return null;
 			return new GuiHopper(player.inventory, (TileHopper) tile);
+			
+		case GuiIds.REFINERY_CONTROL:
+			if (!(tile instanceof TileRefineryControl))
+				return null;
+			return new GuiRefineryControl(player.inventory, (TileRefineryControl) tile);
 
 		default:
 			return null;
@@ -76,6 +83,11 @@ public class GuiHandler implements IGuiHandler {
 			if (!(tile instanceof TileHopper))
 				return null;
 			return new ContainerHopper(player.inventory, (TileHopper) tile);
+			
+		case GuiIds.REFINERY_CONTROL:
+			if (!(tile instanceof TileRefineryControl))
+				return null;
+			return new ContainerRefineryControl(player.inventory, (TileRefineryControl) tile);
 
 		default:
 			return null;
