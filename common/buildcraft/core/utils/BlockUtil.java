@@ -124,7 +124,7 @@ public class BlockUtil {
 	}
 
 	public static boolean isSoftBlock(Block block, IBlockAccess world, int x, int y, int z) {
-		return block == null || BuildCraftAPI.softBlocks.contains(block) || block.isAir(world, x, y, z);
+		return block == null || BuildCraftAPI.softBlocks.contains(block) || block.isReplaceable(world, x, y, z) || block.isAir(world, x, y, z);
 	}
 
 	public static boolean isUnbreakableBlock(World world, int x, int y, int z) {
