@@ -66,6 +66,7 @@ import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.recipes.AssemblyRecipeManager;
 import buildcraft.core.recipes.IntegrationRecipeManager;
 import buildcraft.core.recipes.RefineryRecipeManager;
+import buildcraft.core.render.BlockHighlightHandler;
 import buildcraft.core.robots.EntityRobot;
 import buildcraft.core.robots.EntityRobotBuilder;
 import buildcraft.core.robots.EntityRobotPicker;
@@ -294,6 +295,7 @@ public class BuildCraftCore extends BuildCraftMod {
 			}
 
 			MinecraftForge.EVENT_BUS.register(this);
+			MinecraftForge.EVENT_BUS.register(new BlockHighlightHandler());
 		} finally {
 			if (mainConfiguration.hasChanged()) {
 				mainConfiguration.save();
