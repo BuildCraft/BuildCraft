@@ -386,8 +386,6 @@ public class BuildCraftTransport extends BuildCraftMod {
 				CoreProxy.proxy.registerItem(robotStationItem);
 			}
 
-			filteredBufferBlock = new BlockFilteredBuffer();
-			CoreProxy.proxy.registerBlock(filteredBufferBlock.setBlockName("filteredBufferBlock"));
 
 			for (PipeContents kind : PipeContents.values()) {
 				triggerPipe[kind.ordinal()] = new TriggerPipeContents(kind);
