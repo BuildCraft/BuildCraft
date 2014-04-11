@@ -56,8 +56,13 @@ public class ItemFacade extends ItemBuildCraft {
 		String name = super.getItemStackDisplayName(itemstack);
 		Block decodedBlock = ItemFacade.getBlock(itemstack);
 		int decodedMeta = ItemFacade.getMetaData(itemstack);
+		Block decodedBlock_alt = ItemFacade.getAlternateBlock(itemstack);
+		int decodedMeta_alt = ItemFacade.getAlternateMetaData(itemstack);
 		if (decodedBlock != null && decodedBlock.getRenderType() == 31) {
 			decodedMeta &= 0x3;
+		}
+		if (decodedBlock_alt != null && decodedBlock_alt.getRenderType() == 31) {
+			decodedMeta_alt &= 0x3;
 		}
 		ItemStack newStack = new ItemStack(decodedBlock, 1, decodedMeta);
 		if (Item.getItemFromBlock(decodedBlock) != null) {
@@ -70,6 +75,20 @@ public class ItemFacade extends ItemBuildCraft {
 				localizedName = "Null";
 			}
 			name += " < BROKEN (" + localizedName + ":" + decodedMeta + " )>";
+		}
+		if (decodedBlock_alt != null) {
+			ItemStack newStack1 = new ItemStack(decodedBlock_alt, 1, decodedMeta_alt);
+			if (Item.getItemFromBlock(decodedBlock_alt) != null) {
+				name += " / " + CoreProxy.proxy.getItemDisplayName(newStack1);
+			} else {
+				String localizedName;
+				try {
+					localizedName = decodedBlock_alt.getLocalizedName();
+				} catch (NullPointerException npe) {
+					localizedName = "Null";
+				}
+				name += " < BROKEN (" + localizedName + ":" + decodedMeta_alt + " )>";
+			}
 		}
 		return name;
 	}
