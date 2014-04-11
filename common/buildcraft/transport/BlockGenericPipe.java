@@ -101,6 +101,11 @@ public class BlockGenericPipe extends BlockBuildCraft {
 	}
 
 	@Override
+	public boolean isOpaqueCube() {
+		return false;
+	}
+
+	@Override
 	public boolean canRenderInPass(int pass) {
 		PipeRendererWorld.renderPass = pass;
 		return true;
@@ -109,11 +114,6 @@ public class BlockGenericPipe extends BlockBuildCraft {
 	@Override
 	public int getRenderBlockPass() {
 		return 1;
-	}
-
-	@Override
-	public boolean isOpaqueCube() {
-		return false;
 	}
 
 	@Override
@@ -654,7 +654,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 				FacadeMatrix matrix = getPipe(world, x, y, z).container.renderState.facadeMatrix;
 				Block block = matrix.getFacadeBlock(dir);
 				if (block != null) {
-					return ItemFacade.getStack(block,
+					return ItemFacade.getFacade(block,
 							matrix.getFacadeMetaId(dir));
 				}
 			}
@@ -895,7 +895,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 
 	private boolean addFacade(EntityPlayer player, Pipe pipe, ForgeDirection side) {
 		ItemStack stack = player.getCurrentEquippedItem();
-		if (pipe.container.addFacade(side, ItemFacade.getBlock(stack), ItemFacade.getMetaData(stack))) {
+		if (pipe.container.addFacade(side, stack)) {
 			if (!player.capabilities.isCreativeMode) {
 				stack.stackSize--;
 			}

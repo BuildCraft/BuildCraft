@@ -8,22 +8,6 @@
  */
 package buildcraft.transport;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
-
-import net.minecraft.block.Block;
-import net.minecraft.client.renderer.texture.IIconRegister;
-import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.InventoryCrafting;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipe;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.World;
-import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.Position;
 import buildcraft.api.recipes.BuildcraftRecipes;
@@ -32,12 +16,27 @@ import buildcraft.core.BuildCraftConfiguration;
 import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.ItemBuildCraft;
 import buildcraft.core.proxy.CoreProxy;
-
 import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
-
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.block.Block;
+import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
+import net.minecraft.inventory.InventoryCrafting;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
+import net.minecraftforge.common.util.ForgeDirection;
+
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
 
 public class ItemFacade extends ItemBuildCraft {
 
@@ -88,6 +87,8 @@ public class ItemFacade extends ItemBuildCraft {
 		for (ItemStack stack : allFacades) {
 			itemList.add(stack.copy());
 		}
+		itemList.add(getPhasedFacade(Blocks.bedrock, 0));
+		itemList.add(getAdvancedFacade(Blocks.brick_block, Blocks.gold_block, 0, 0));
 	}
 
 	@Override
@@ -102,7 +103,7 @@ public class ItemFacade extends ItemBuildCraft {
 			return false;
 		TileGenericPipe pipeTile = (TileGenericPipe) tile;
 
-		if (pipeTile.addFacade(ForgeDirection.getOrientation(side).getOpposite(), ItemFacade.getBlock(stack), ItemFacade.getMetaData(stack))) {
+		if (pipeTile.addFacade(ForgeDirection.getOrientation(side).getOpposite(), stack)) {
 			stack.stackSize--;
 
 			return true;
@@ -203,6 +204,14 @@ public class ItemFacade extends ItemBuildCraft {
 		}
 	}
 
+	public static int getAlternateMetaData(ItemStack stack) {
+		if (stack.hasTagCompound() && stack.getTagCompound().hasKey("meta_alt")) {
+			return stack.getTagCompound().getInteger("meta_alt");
+		} else {
+			return stack.getItemDamage() & 0x0000F;
+		}
+	}
+
 	public static Block getBlock(ItemStack stack) {
 		if(!stack.hasTagCompound()) {
 			return null;
@@ -223,6 +232,20 @@ public class ItemFacade extends ItemBuildCraft {
 		return facadeBlock;
 	}
 
+	public static Block getAlternateBlock(ItemStack stack) {
+		if (!stack.hasTagCompound()) {
+			return null;
+		}
+
+		Block facadeBlock = null;
+		NBTTagCompound stackTagCompound = stack.getTagCompound();
+		if (stackTagCompound.hasKey("name_alt")) {
+			facadeBlock = (Block) Block.blockRegistry.getObject(stackTagCompound.getString("name_alt"));
+		}
+
+		return facadeBlock;
+	}
+
 	@Override
 	public boolean doesSneakBypassUse(World world, int x, int y, int z, EntityPlayer player) {
 		// Simply send shift click to the pipe / mod block.
@@ -234,7 +257,7 @@ public class ItemFacade extends ItemBuildCraft {
 			itemStack.stackSize = 1;
 		}
 
-		ItemStack facade = getStack(Block.getBlockFromItem(itemStack.getItem()), itemStack.getItemDamage());
+		ItemStack facade = getFacade(Block.getBlockFromItem(itemStack.getItem()), itemStack.getItemDamage());
 		if(!allFacades.contains(facade)) {
 			allFacades.add(facade);
 
@@ -335,7 +358,7 @@ public class ItemFacade extends ItemBuildCraft {
 					stackMeta = blockMeta;
 			}
 
-			return getStack(block, stackMeta);
+			return getFacade(block, stackMeta);
 		}
 
 		@Override
@@ -361,7 +384,11 @@ public class ItemFacade extends ItemBuildCraft {
 		return 0;
 	}
 
-	public static ItemStack getStack(Block block, int metadata) {
+	public static ItemStack getFacade(Block block, int metadata) {
+		if (block == null) {
+			return null;
+		}
+
 		ItemStack stack = new ItemStack(BuildCraftTransport.facadeItem, 1, 0);
 		NBTTagCompound nbt = new NBTTagCompound();
 		nbt.setInteger("meta", metadata);
@@ -369,4 +396,34 @@ public class ItemFacade extends ItemBuildCraft {
 		stack.setTagCompound(nbt);
 		return stack;
 	}
+
+	public static ItemStack getPhasedFacade(Block block, int metadata) {
+		if (block == null) {
+			return null;
+		}
+
+		ItemStack stack = new ItemStack(BuildCraftTransport.facadeItem, 1, 0);
+		NBTTagCompound nbt = new NBTTagCompound();
+		nbt.setInteger("meta", metadata);
+		nbt.setString("name", Block.blockRegistry.getNameForObject(block));
+		nbt.setBoolean("phased", true);
+		stack.setTagCompound(nbt);
+		return stack;
+	}
+
+	public static ItemStack getAdvancedFacade(Block block1, Block block2, int meta1, int meta2) {
+		if (block1 == null || block2 == null) {
+			return null;
+		}
+
+		ItemStack stack = new ItemStack(BuildCraftTransport.facadeItem, 1, 0);
+		NBTTagCompound nbt = new NBTTagCompound();
+		nbt.setInteger("meta", meta1);
+		nbt.setString("name", Block.blockRegistry.getNameForObject(block1));
+		nbt.setInteger("meta_alt", meta2);
+		nbt.setString("name_alt", Block.blockRegistry.getNameForObject(block2));
+		stack.setTagCompound(nbt);
+		return stack;
+	}
+
 }

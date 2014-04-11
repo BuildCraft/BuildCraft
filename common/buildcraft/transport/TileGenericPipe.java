@@ -8,28 +8,6 @@
  */
 package buildcraft.transport;
 
-import io.netty.buffer.ByteBuf;
-
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.Set;
-import java.util.logging.Level;
-
-import net.minecraft.block.Block;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.Packet;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
-import net.minecraftforge.common.util.ForgeDirection;
-import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidTankInfo;
-import net.minecraftforge.fluids.IFluidHandler;
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
@@ -48,21 +26,44 @@ import buildcraft.core.IDropControlInventory;
 import buildcraft.core.ITileBufferHolder;
 import buildcraft.core.TileBuffer;
 import buildcraft.core.inventory.InvUtils;
-import buildcraft.core.network.BuildCraftPacket;
-import buildcraft.core.network.IClientState;
-import buildcraft.core.network.IGuiReturnHandler;
-import buildcraft.core.network.ISyncedTile;
-import buildcraft.core.network.PacketTileState;
+import buildcraft.core.network.*;
 import buildcraft.core.utils.BCLog;
 import buildcraft.core.utils.Utils;
 import buildcraft.transport.gates.GateDefinition;
 import buildcraft.transport.gates.GateFactory;
+import buildcraft.transport.utils.FacadeMatrix;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import io.netty.buffer.ByteBuf;
+import net.minecraft.block.Block;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.Packet;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
+import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidTankInfo;
+import net.minecraftforge.fluids.IFluidHandler;
+
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.Set;
+import java.util.logging.Level;
 
 public class TileGenericPipe extends TileEntity implements IFluidHandler,
 		IPipeTile, IOverrideDefaultTriggers, ITileBufferHolder,
 		IDropControlInventory, ISyncedTile, ISolidSideTile, IGuiReturnHandler {
+
+	public static final int FACADE_BASIC = 0;
+	public static final int FACADE_PHASE = 1;
+	public static final int FACADE_TWO_PHASE = 2;
+	public static final int FACADE_ADVANCED = 3;
 
 	public class CoreState implements IClientState {
 
@@ -112,20 +113,36 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 	public int redstoneInput = 0;
 
 	public static class SideProperties {
-		Block[] facadeBlocks = new Block[ForgeDirection.VALID_DIRECTIONS.length];
-		int[] facadeMeta = new int[ForgeDirection.VALID_DIRECTIONS.length];
+		int[] facadeTypes = new int[ForgeDirection.VALID_DIRECTIONS.length];
+		int[] facadeWireTypes = new int[ForgeDirection.VALID_DIRECTIONS.length];
+
+		// Meta and block dimension two controls block index. 0 is unpowered, 1 is powered
+		Block[][] facadeBlocks = new Block[ForgeDirection.VALID_DIRECTIONS.length][2];
+		int[][] facadeMeta = new int[ForgeDirection.VALID_DIRECTIONS.length][2];
+
 		boolean[] plugs = new boolean[ForgeDirection.VALID_DIRECTIONS.length];
 		boolean[] robotStations = new boolean[ForgeDirection.VALID_DIRECTIONS.length];
 
 		public void writeToNBT (NBTTagCompound nbt) {
 			for (int i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
-				if (facadeBlocks[i] == null) {
+				nbt.setInteger("facadeTypes[" + i + "]", facadeTypes[i]);
+				nbt.setInteger("facadeWireTypes[" + i + "]", facadeWireTypes[i]);
+
+				if (facadeBlocks[i][0] == null) {
 					nbt.setInteger("facadeBlocks[" + i + "]", 0);
 				} else {
-					nbt.setInteger("facadeBlocks[" + i + "]", Block.blockRegistry.getIDForObject(facadeBlocks[i]));
+					nbt.setInteger("facadeBlocks[" + i + "]", Block.blockRegistry.getIDForObject(facadeBlocks[i][0]));
 				}
 
-				nbt.setInteger("facadeMeta[" + i + "]", facadeMeta[i]);
+				if (facadeBlocks[i][1] == null) {
+					nbt.setInteger("facadeBlocks_alt[" + i + "]", 0);
+				} else {
+					nbt.setInteger("facadeBlocks_alt[" + i + "]", Block.blockRegistry.getIDForObject(facadeBlocks[i][1]));
+				}
+
+				nbt.setInteger("facadeMeta[" + i + "]", facadeMeta[i][0]);
+				nbt.setInteger("facadeMeta_alt[" + i + "]", facadeMeta[i][1]);
+
 				nbt.setBoolean("plug[" + i + "]", plugs[i]);
 				nbt.setBoolean("robotStation[" + i + "]", robotStations[i]);
 			}
@@ -133,31 +150,52 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 
 		public void readFromNBT (NBTTagCompound nbt) {
 			for (int i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
-				int blockId = nbt.getInteger("facadeBlocks[" + i + "]");
+				facadeTypes[i] = nbt.getInteger("facadeTypes[" + i + "]");
+				facadeWireTypes[i] = nbt.getInteger("facadeWireTypes[" + i + "]");
 
+				int blockId = nbt.getInteger("facadeBlocks[" + i + "]");
+				System.out.println("Loaded block " + blockId + " for side " + i + " and index 0");
 				if (blockId != 0) {
-					facadeBlocks[i] = (Block) Block.blockRegistry.getObjectById(blockId);
+					facadeBlocks[i][0] = (Block) Block.blockRegistry.getObjectById(blockId);
 				} else {
-					facadeBlocks[i] = null;
+					facadeBlocks[i][0] = null;
 				}
 
-				facadeMeta[i] = nbt.getInteger("facadeMeta[" + i + "]");
+				int alt_blockId = nbt.getInteger("facadeBlocks_alt[" + i + "]");
+				System.out.println("Loaded block " + alt_blockId + " for side " + i + " and index 1");
+				if (alt_blockId != 0) {
+					facadeBlocks[i][1] = (Block) Block.blockRegistry.getObjectById(alt_blockId);
+				} else {
+					facadeBlocks[i][1] = null;
+				}
+
+				facadeMeta[i][0] = nbt.getInteger("facadeMeta[" + i + "]");
+				facadeMeta[i][1] = nbt.getInteger("facadeMeta_alt[" + i + "]");
+
 				plugs[i] = nbt.getBoolean("plug[" + i + "]");
 				robotStations[i] = nbt.getBoolean("robotStation[" + i + "]");
 			}
 		}
 
 		public void rotateLeft() {
-			Block[] newFacadeBlocks = new Block[ForgeDirection.VALID_DIRECTIONS.length];
-			int[] newFacadeMeta = new int[ForgeDirection.VALID_DIRECTIONS.length];
+			int[] newFacadeTypes = new int[ForgeDirection.VALID_DIRECTIONS.length];
+			int[] newFacadeWireTypes = new int[ForgeDirection.VALID_DIRECTIONS.length];
+			Block[][] newFacadeBlocks = new Block[ForgeDirection.VALID_DIRECTIONS.length][2];
+			int[][] newFacadeMeta = new int[ForgeDirection.VALID_DIRECTIONS.length][2];
+
 			boolean[] newPlugs = new boolean[ForgeDirection.VALID_DIRECTIONS.length];
 			boolean[] newRobotStations = new boolean[ForgeDirection.VALID_DIRECTIONS.length];
 
 			for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
 				ForgeDirection r = dir.getRotation(ForgeDirection.UP);
 
-				newFacadeBlocks [r.ordinal()] = facadeBlocks [dir.ordinal()];
-				newFacadeMeta [r.ordinal()] = facadeMeta [dir.ordinal()];
+				newFacadeTypes[r.ordinal()] = facadeTypes[dir.ordinal()];
+				newFacadeWireTypes[r.ordinal()] = facadeWireTypes[dir.ordinal()];
+				newFacadeBlocks[r.ordinal()][0] = facadeBlocks[dir.ordinal()][0];
+				newFacadeMeta[r.ordinal()][0] = facadeMeta[dir.ordinal()][0];
+				newFacadeBlocks[r.ordinal()][1] = facadeBlocks[dir.ordinal()][1];
+				newFacadeMeta[r.ordinal()][1] = facadeMeta[dir.ordinal()][1];
+
 				newPlugs [r.ordinal()] = plugs [dir.ordinal()];
 				newRobotStations [r.ordinal()] = robotStations [dir.ordinal()];
 			}
@@ -340,8 +378,31 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 
 		// Facades
 		for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
-			Block block = sideProperties.facadeBlocks[direction.ordinal()];
-			renderState.facadeMatrix.setFacade(direction, block, sideProperties.facadeMeta[direction.ordinal()]);
+			int type = sideProperties.facadeTypes[direction.ordinal()];
+
+			if (type == FACADE_BASIC || type == FACADE_PHASE) {
+				Block block = sideProperties.facadeBlocks[direction.ordinal()][0];
+				renderState.facadeMatrix.setFacade(direction, type, block, sideProperties.facadeMeta[direction.ordinal()][0]);
+
+				if (type == FACADE_PHASE) {
+					if (isWireActive(PipeWire.values()[sideProperties.facadeWireTypes[direction.ordinal()]])) {
+						renderState.facadeMatrix.setFacadeState(direction, FacadeMatrix.STATE_PHASED);
+					} else {
+						renderState.facadeMatrix.setFacadeState(direction, 0);
+					}
+				}
+			} else if (type == FACADE_TWO_PHASE || type == FACADE_ADVANCED) {
+				Block block = sideProperties.facadeBlocks[direction.ordinal()][0];
+				Block block_alt = sideProperties.facadeBlocks[direction.ordinal()][1];
+				int meta = sideProperties.facadeMeta[direction.ordinal()][0];
+				int meta_alt = sideProperties.facadeMeta[direction.ordinal()][1];
+
+				if (isWireActive(PipeWire.values()[sideProperties.facadeWireTypes[direction.ordinal()]])) {
+					renderState.facadeMatrix.setFacade(direction, type, block_alt, meta_alt);
+				} else {
+					renderState.facadeMatrix.setFacade(direction, type, block, meta);
+				}
+			}
 		}
 
 		//Plugs
@@ -678,22 +739,48 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 		refreshRenderState = true;
 	}
 
-	public boolean addFacade(ForgeDirection direction, Block block, int meta) {
+	public boolean addFacade(ForgeDirection direction, ItemStack stack) {
 		if (this.getWorldObj().isRemote) {
 			return false;
 		}
 
-		if (sideProperties.facadeBlocks[direction.ordinal()] == block) {
-			return false;
+		//TODO Drop and check
+
+//		if (sideProperties.facadeBlocks[direction.ordinal()] == block) {
+//			return false;
+//		}
+//
+//		if (hasFacade(direction)) {
+//			dropFacadeItem(direction);
+//		}
+
+		Block block = ItemFacade.getBlock(stack);
+		Block block_alt = ItemFacade.getAlternateBlock(stack);
+		int meta = ItemFacade.getMetaData(stack);
+		int meta_alt = ItemFacade.getAlternateMetaData(stack);
+
+		boolean phased = stack.getTagCompound().hasKey("phased");
+		int type = -1;
+
+		if (block != null && block_alt == null && !phased) {
+			type = FACADE_BASIC;
+		} else if (block != null && block_alt == null && phased) {
+			type = FACADE_PHASE;
+		} else if (block != null && block_alt != null) {
+			type = FACADE_TWO_PHASE;
 		}
 
-		if (hasFacade(direction)) {
-			dropFacadeItem(direction);
-		}
+		sideProperties.facadeTypes[direction.ordinal()] = type;
+		//TODO Configurable
+		sideProperties.facadeWireTypes[direction.ordinal()] = PipeWire.RED.ordinal();
 
-		sideProperties.facadeBlocks[direction.ordinal()] = block;
-		sideProperties.facadeMeta[direction.ordinal()] = meta;
+		sideProperties.facadeBlocks[direction.ordinal()][0] = block;
+		sideProperties.facadeMeta[direction.ordinal()][0] = meta;
+		sideProperties.facadeBlocks[direction.ordinal()][1] = block_alt;
+		sideProperties.facadeMeta[direction.ordinal()][1] = meta_alt;
+
 		worldObj.notifyBlockChange(this.xCoord, this.yCoord, this.zCoord, getBlock());
+
 		scheduleRenderUpdate();
 
 		return true;
@@ -705,7 +792,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 		} else if (this.getWorldObj().isRemote) {
 			return renderState.facadeMatrix.getFacadeBlock(direction) != null;
 		} else {
-			return (sideProperties.facadeBlocks[direction.ordinal()] != null);
+			return (sideProperties.facadeBlocks[direction.ordinal()][0] != null);
 		}
 	}
 
@@ -714,7 +801,8 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 	}
 
 	public ItemStack getFacade (ForgeDirection direction) {
-		return ItemFacade.getStack(sideProperties.facadeBlocks[direction.ordinal()], sideProperties.facadeMeta[direction.ordinal()]);
+		boolean powered = isWireActive(PipeWire.values()[sideProperties.facadeWireTypes[direction.ordinal()]]);
+		return ItemFacade.getFacade(sideProperties.facadeBlocks[direction.ordinal()][powered ? 1 : 0], sideProperties.facadeMeta[direction.ordinal()][powered ? 1 : 0]);
 	}
 
 	public boolean dropFacade(ForgeDirection direction) {
@@ -724,8 +812,10 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 
 		if (!worldObj.isRemote) {
 			dropFacadeItem(direction);
-			sideProperties.facadeBlocks[direction.ordinal()] = null;
-			sideProperties.facadeMeta[direction.ordinal()] = 0;
+
+			sideProperties.facadeBlocks[direction.ordinal()][0] = null;
+			sideProperties.facadeBlocks[direction.ordinal()][1] = null;
+
 			worldObj.notifyBlockChange(this.xCoord, this.yCoord, this.zCoord, getBlock());
 			scheduleRenderUpdate();
 		}
