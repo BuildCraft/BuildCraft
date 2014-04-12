@@ -337,7 +337,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 	private void moveFluids() {
 		short newTimeSlot = (short) (container.getWorldObj().getTotalWorldTime() % travelDelay);
 
-		short outputCount = computeCurrentConnectionStatesAndTickFlows(newTimeSlot);
+		short outputCount = computeCurrentConnectionStatesAndTickFlows(newTimeSlot > 0 && newTimeSlot < travelDelay ? newTimeSlot : 0);
 		moveFromPipe(outputCount);
 		moveFromCenter(outputCount);
 		moveToCenter();
