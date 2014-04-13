@@ -31,6 +31,17 @@ public class CraftingHandler {
 		if (Event.crafting.getItem().equals(BuildCraftCore.wrenchItem)){
 			Event.player.addStat(BuildCraftCore.wrenchAchievement, 1);
 		}
+		if (Event.crafting.getItem().equals(Item.getItemFromBlock(BuildCraftEnergy.engineBlock))){
+            		if (Event.crafting.getItemDamage() == 0) {
+                		Event.player.addStat(BuildCraftCore.engineAchievement1, 1);
+            		}
+        		else if (Event.crafting.getItemDamage() == 1) {
+                		Event.player.addStat(BuildCraftCore.engineAchievement2, 1);
+            		}
+            		else if (Event.crafting.getItemDamage() == 2) {
+                		Event.player.addStat(BuildCraftCore.engineAchievement3, 1);
+            		}
+        	}
 		if(Event.crafting.getItem().equals(Item.getItemFromBlock(BuildCraftFactory.autoWorkbenchBlock))){
 			Event.player.addStat(BuildCraftCore.aLotOfCraftingAchievement, 1);
 		}
@@ -52,6 +63,21 @@ public class CraftingHandler {
 		if (Event.crafting.getItem().equals(Item.getItemFromBlock(BuildCraftSilicon.assemblyTableBlock))){
 			Event.player.addStat(BuildCraftCore.timeForSomeLogicAchievement, 1);
 		}
+		if (Event.crafting.getItem().equals(Item.getItemFromBlock(BuildCraftBuilders.architectBlock))){
+            		Event.player.addStat(BuildCraftCore.architectAchievement, 1);
+        	}
+        	if (Event.crafting.getItem().equals(Item.getItemFromBlock(BuildCraftBuilders.builderBlock))){
+            		Event.player.addStat(BuildCraftCore.builderAchievement, 1);
+        	}
+        	if (Event.crafting.getItem().equals(BuildCraftBuilders.blueprintItem)){
+            		Event.player.addStat(BuildCraftCore.blueprintAchievement, 1);
+        	}
+        	if (Event.crafting.getItem().equals(BuildCraftBuilders.templateItem)){
+            		Event.player.addStat(BuildCraftCore.templateAchievement, 1);
+        	}
+        	if (Event.crafting.getItem().equals(Item.getItemFromBlock(BuildCraftBuilders.libraryBlock))){
+            		Event.player.addStat(BuildCraftCore.blueprintLibraryAchievement, 1);
+        	}
 	}
 
 }
