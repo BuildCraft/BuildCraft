@@ -14,14 +14,16 @@ import buildcraft.core.inventory.InventoryIterator;
 import buildcraft.core.inventory.InventoryIterator.IInvSlot;
 import buildcraft.core.inventory.Transactor;
 import buildcraft.core.inventory.filters.ArrayStackFilter;
-import java.util.LinkedList;
-import java.util.List;
+import buildcraft.transport.ItemFacade;
 import net.minecraft.block.Block;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.oredict.OreDictionary;
+
+import java.util.LinkedList;
+import java.util.List;
 
 public class AssemblyRecipeManager implements IAssemblyRecipeManager {
 
@@ -96,8 +98,15 @@ public class AssemblyRecipeManager implements IAssemblyRecipeManager {
 						if (item == null)
 							continue;
 
-						if (item.isItemEqual(requirement))
-							found += item.stackSize; // Adds quantity of stack to amount found
+						// Hacky fix
+						if (requirement.getItem() instanceof ItemFacade) {
+							if (ItemStack.areItemStacksEqual(item, requirement) && ItemStack.areItemStackTagsEqual(item, requirement)) {
+								found += item.stackSize;
+							}
+						} else {
+							if (item.isItemEqual(requirement))
+								found += item.stackSize; // Adds quantity of stack to amount found
+						}
 
 						if (found >= expected)
 							break;

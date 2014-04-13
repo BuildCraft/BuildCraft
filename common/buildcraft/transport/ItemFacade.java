@@ -11,11 +11,14 @@ package buildcraft.transport;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.Position;
 import buildcraft.api.recipes.BuildcraftRecipes;
+import buildcraft.api.transport.PipeWire;
 import buildcraft.core.BlockSpring;
 import buildcraft.core.BuildCraftConfiguration;
 import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.ItemBuildCraft;
 import buildcraft.core.proxy.CoreProxy;
+import buildcraft.core.recipes.AssemblyRecipeManager;
+import buildcraft.silicon.ItemRedstoneChipset;
 import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
 import cpw.mods.fml.relauncher.Side;
@@ -24,7 +27,6 @@ import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -106,8 +108,6 @@ public class ItemFacade extends ItemBuildCraft {
 		for (ItemStack stack : allFacades) {
 			itemList.add(stack.copy());
 		}
-		itemList.add(getPhasedFacade(Blocks.bedrock, 0));
-		itemList.add(getAdvancedFacade(Blocks.brick_block, Blocks.gold_block, 0, 0));
 	}
 
 	@Override
@@ -265,6 +265,20 @@ public class ItemFacade extends ItemBuildCraft {
 		return facadeBlock;
 	}
 
+	public static PipeWire getWire(ItemStack stack) {
+		if (!stack.hasTagCompound()) {
+			return null;
+		}
+
+		PipeWire wire = null;
+		NBTTagCompound stackTagCompound = stack.getTagCompound();
+		if (stackTagCompound.hasKey("wire")) {
+			wire = PipeWire.fromOrdinal(stackTagCompound.getByte("wire"));
+		}
+
+		return wire;
+	}
+
 	@Override
 	public boolean doesSneakBypassUse(World world, int x, int y, int z, EntityPlayer player) {
 		// Simply send shift click to the pipe / mod block.
@@ -285,6 +299,21 @@ public class ItemFacade extends ItemBuildCraft {
 
 			// 3 Structurepipes + this block makes 6 facades
 			BuildcraftRecipes.assemblyTable.addRecipe(8000, facade6, new ItemStack(BuildCraftTransport.pipeStructureCobblestone, 3), itemStack);
+		}
+	}
+
+	public static void addAdvancedFacades() {
+		for (ItemStack facade : allFacades) {
+			for (ItemStack facade1 : allFacades) {
+				if (!ItemStack.areItemStacksEqual(facade, facade1)) {
+					for (PipeWire wire : PipeWire.VALUES) {
+						ItemStack result = ItemFacade.getAdvancedFacade(getBlock(facade), getBlock(facade1), getMetaData(facade), getMetaData(facade1), wire);
+						result.stackSize = 6;
+
+						AssemblyRecipeManager.INSTANCE.addRecipe(8000, result, facade, facade1, new ItemStack(BuildCraftTransport.pipeWire, 1, wire.ordinal()), ItemRedstoneChipset.Chipset.RED.getStack());
+					}
+				}
+			}
 		}
 	}
 
@@ -430,7 +459,7 @@ public class ItemFacade extends ItemBuildCraft {
 		return stack;
 	}
 
-	public static ItemStack getAdvancedFacade(Block block1, Block block2, int meta1, int meta2) {
+	public static ItemStack getAdvancedFacade(Block block1, Block block2, int meta1, int meta2, PipeWire wire) {
 		if (block1 == null || block2 == null) {
 			return null;
 		}
@@ -441,6 +470,7 @@ public class ItemFacade extends ItemBuildCraft {
 		nbt.setString("name", Block.blockRegistry.getNameForObject(block1));
 		nbt.setInteger("meta_alt", meta2);
 		nbt.setString("name_alt", Block.blockRegistry.getNameForObject(block2));
+		nbt.setByte("wire", (byte) wire.ordinal());
 		stack.setTagCompound(nbt);
 		return stack;
 	}

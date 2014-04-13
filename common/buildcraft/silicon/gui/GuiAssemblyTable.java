@@ -17,22 +17,19 @@ import buildcraft.core.gui.GuiAdvancedInterface;
 import buildcraft.core.network.PacketCoordinates;
 import buildcraft.core.network.PacketIds;
 import buildcraft.core.network.PacketNBT;
-import buildcraft.core.proxy.CoreProxy;
-import buildcraft.core.utils.StringUtils;
 import buildcraft.core.recipes.AssemblyRecipeManager.AssemblyRecipe;
+import buildcraft.core.utils.StringUtils;
 import buildcraft.silicon.TileAssemblyTable;
 import buildcraft.silicon.TileAssemblyTable.SelectionMessage;
-
-import java.util.Iterator;
-import java.util.List;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-
 import org.lwjgl.opengl.GL11;
+
+import java.util.Iterator;
+import java.util.List;
 
 public class GuiAssemblyTable extends GuiAdvancedInterface {
 

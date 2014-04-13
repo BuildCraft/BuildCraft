@@ -9,23 +9,16 @@
 package buildcraft.silicon;
 
 import buildcraft.BuildCraftSilicon;
-import buildcraft.core.recipes.AssemblyRecipeManager;
 import buildcraft.api.gates.IAction;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.IMachine;
 import buildcraft.core.network.PacketIds;
 import buildcraft.core.network.PacketNBT;
-import buildcraft.core.proxy.CoreProxy;
-import buildcraft.core.utils.Utils;
+import buildcraft.core.recipes.AssemblyRecipeManager;
 import buildcraft.core.recipes.AssemblyRecipeManager.AssemblyRecipe;
 import buildcraft.core.utils.StringUtils;
+import buildcraft.core.utils.Utils;
 import cpw.mods.fml.common.FMLCommonHandler;
-
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
-
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
@@ -33,6 +26,11 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.util.ForgeDirection;
+
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
 
 public class TileAssemblyTable extends TileLaserTableBase implements IMachine, IInventory {
 
@@ -267,7 +265,7 @@ public class TileAssemblyTable extends TileLaserTableBase implements IMachine, I
 	}
 
 	public void sendSelectionTo(EntityPlayer player) {
-		for (AssemblyRecipe recipe : AssemblyRecipeManager.INSTANCE.getRecipes()) {
+		for (AssemblyRecipe recipe : plannedOutput) {
 			SelectionMessage message = new SelectionMessage();
 
 			message.stack = recipe.output;

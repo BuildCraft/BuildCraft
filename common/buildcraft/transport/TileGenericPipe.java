@@ -154,7 +154,6 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 				facadeWireTypes[i] = nbt.getInteger("facadeWireTypes[" + i + "]");
 
 				int blockId = nbt.getInteger("facadeBlocks[" + i + "]");
-				System.out.println("Loaded block " + blockId + " for side " + i + " and index 0");
 				if (blockId != 0) {
 					facadeBlocks[i][0] = (Block) Block.blockRegistry.getObjectById(blockId);
 				} else {
@@ -162,7 +161,6 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 				}
 
 				int alt_blockId = nbt.getInteger("facadeBlocks_alt[" + i + "]");
-				System.out.println("Loaded block " + alt_blockId + " for side " + i + " and index 1");
 				if (alt_blockId != 0) {
 					facadeBlocks[i][1] = (Block) Block.blockRegistry.getObjectById(alt_blockId);
 				} else {
@@ -744,16 +742,6 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 			return false;
 		}
 
-		//TODO Drop and check
-
-//		if (sideProperties.facadeBlocks[direction.ordinal()] == block) {
-//			return false;
-//		}
-//
-//		if (hasFacade(direction)) {
-//			dropFacadeItem(direction);
-//		}
-
 		Block block = ItemFacade.getBlock(stack);
 		Block block_alt = ItemFacade.getAlternateBlock(stack);
 		int meta = ItemFacade.getMetaData(stack);
@@ -770,9 +758,23 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 			type = FACADE_TWO_PHASE;
 		}
 
+		if (type == FACADE_BASIC) {
+			if (sideProperties.facadeBlocks[direction.ordinal()][0] == block) {
+				return false;
+			}
+		} else if (type == FACADE_TWO_PHASE) {
+			if ((sideProperties.facadeBlocks[direction.ordinal()][0] == block && sideProperties.facadeBlocks[direction.ordinal()][1] == block_alt) ||
+					sideProperties.facadeBlocks[direction.ordinal()][1] == block && sideProperties.facadeBlocks[direction.ordinal()][0] == block_alt) {
+				return false;
+			}
+		}
+
+		if (hasFacade(direction)) {
+			dropFacadeItem(direction);
+		}
+
 		sideProperties.facadeTypes[direction.ordinal()] = type;
-		//TODO Configurable
-		sideProperties.facadeWireTypes[direction.ordinal()] = PipeWire.RED.ordinal();
+		sideProperties.facadeWireTypes[direction.ordinal()] = ItemFacade.getWire(stack).ordinal();
 
 		sideProperties.facadeBlocks[direction.ordinal()][0] = block;
 		sideProperties.facadeMeta[direction.ordinal()][0] = meta;
@@ -801,8 +803,15 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 	}
 
 	public ItemStack getFacade (ForgeDirection direction) {
-		boolean powered = isWireActive(PipeWire.values()[sideProperties.facadeWireTypes[direction.ordinal()]]);
-		return ItemFacade.getFacade(sideProperties.facadeBlocks[direction.ordinal()][powered ? 1 : 0], sideProperties.facadeMeta[direction.ordinal()][powered ? 1 : 0]);
+		int type = sideProperties.facadeTypes[direction.ordinal()];
+
+		if (type == FACADE_BASIC) {
+			return ItemFacade.getFacade(sideProperties.facadeBlocks[direction.ordinal()][0], sideProperties.facadeMeta[direction.ordinal()][0]);
+		} else if (type == FACADE_TWO_PHASE) {
+			return ItemFacade.getAdvancedFacade(sideProperties.facadeBlocks[direction.ordinal()][0], sideProperties.facadeBlocks[direction.ordinal()][1], sideProperties.facadeMeta[direction.ordinal()][0], sideProperties.facadeMeta[direction.ordinal()][1], PipeWire.fromOrdinal(sideProperties.facadeWireTypes[direction.ordinal()]));
+		}
+
+		return null;
 	}
 
 	public boolean dropFacade(ForgeDirection direction) {
