@@ -16,6 +16,7 @@ import net.minecraft.tileentity.TileEntity;
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.MappingRegistry;
 import buildcraft.api.blueprints.SchematicBlockBase;
+import buildcraft.api.blueprints.SchematicFactory;
 import buildcraft.api.blueprints.SchematicMask;
 import buildcraft.api.core.Position;
 
@@ -135,12 +136,19 @@ public class BuildingSlotBlock extends BuildingSlot implements Comparable<Buildi
 		nbt.setInteger("z", z);
 
 		NBTTagCompound schematicNBT = new NBTTagCompound();
-		schematic.writeToNBT(schematicNBT, registry);
+		SchematicFactory.getFactory(schematic.getClass())
+				.saveSchematicToWorldNBT(schematicNBT, schematic, registry);
 		nbt.setTag("schematic", schematicNBT);
 	}
 
 	@Override
 	public void readFromNBT (NBTTagCompound nbt, MappingRegistry registry) {
+		mode = Mode.values() [nbt.getByte("mode")];
+		x = nbt.getInteger("x");
+		y = nbt.getInteger("y");
+		z = nbt.getInteger("z");
 
+		schematic = (SchematicBlockBase) SchematicFactory
+				.createSchematicFromWorldNBT(nbt, registry);
 	}
 }

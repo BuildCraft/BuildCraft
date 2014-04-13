@@ -20,13 +20,19 @@ import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.MappingRegistry;
 import buildcraft.api.core.Position;
 import buildcraft.core.blueprints.BuildingSlot;
+import buildcraft.core.blueprints.BuildingSlotBlock;
+import buildcraft.core.blueprints.BuildingSlotEntity;
 import buildcraft.core.blueprints.IBuilder;
 import buildcraft.core.network.NetworkData;
+import buildcraft.core.utils.Utils;
 
 public class BuildingItem implements IBuilder {
 
 	@NetworkData
 	public Position origin, destination;
+
+	@NetworkData
+	double lifetime = 0;
 
 	@NetworkData
 	public LinkedList <ItemStack> stacksToBuild = new LinkedList<ItemStack>();
@@ -43,7 +49,6 @@ public class BuildingItem implements IBuilder {
 	public boolean isDone = false;
 
 	long previousUpdate;
-	double lifetime = 0;
 	double lifetimeDisplay = 0;
 	double maxLifetime = 0;
 	private boolean initialized = false;
@@ -226,11 +231,14 @@ public class BuildingItem implements IBuilder {
 		nbt.setDouble("lifeTime", lifetime);
 
 		NBTTagList items = new NBTTagList();
+
 		for (ItemStack s : stacksToBuild) {
 			NBTTagCompound cpt = new NBTTagCompound();
 			s.writeToNBT(cpt);
 			items.appendTag(cpt);
 		}
+
+		nbt.setTag("items", items);
 
 		MappingRegistry registry = new MappingRegistry();
 
@@ -241,10 +249,38 @@ public class BuildingItem implements IBuilder {
 		registry.write(registryNBT);
 
 		nbt.setTag("registry", registryNBT);
+
+		if (slotToBuild instanceof BuildingSlotBlock) {
+			nbt.setByte ("slotKind", (byte) 0);
+		} else {
+			nbt.setByte ("slotKind", (byte) 1);
+		}
+
 		nbt.setTag("slotToBuild", slotNBT);
 	}
 
 	public void readFromNBT (NBTTagCompound nbt) {
+		origin = new Position(nbt.getCompoundTag("origin"));
+		destination = new Position (nbt.getCompoundTag("destination"));
+		lifetime = nbt.getDouble("lifetime");
 
+		NBTTagList items = nbt.getTagList("items",
+				Utils.NBTTag_Types.NBTTagCompound.ordinal());
+
+		for (int i = 0; i < items.tagCount(); ++i) {
+			stacksToBuild.add(ItemStack.loadItemStackFromNBT(items
+					.getCompoundTagAt(i)));
+		}
+
+		MappingRegistry registry = new MappingRegistry();
+		registry.read(nbt.getCompoundTag("registry"));
+
+		if (nbt.getByte("slotKind") == 0) {
+			slotToBuild = new BuildingSlotBlock();
+		} else {
+			slotToBuild = new BuildingSlotEntity();
+		}
+
+		slotToBuild.readFromNBT(nbt.getCompoundTag("slotToBuild"), registry);
 	}
 }
