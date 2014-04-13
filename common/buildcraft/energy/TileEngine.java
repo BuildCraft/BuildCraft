@@ -111,7 +111,20 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 
 	public abstract ResourceLocation getChamberTexture();
 
-	public abstract ResourceLocation getTrunkTexture(EnergyStage stage);
+	public ResourceLocation getTrunkTexture(EnergyStage stage) {
+		switch (stage) {
+			case BLUE:
+				return TRUNK_BLUE_TEXTURE;
+			case GREEN:
+				return TRUNK_GREEN_TEXTURE;
+			case YELLOW:
+				return TRUNK_YELLOW_TEXTURE;
+			case RED:
+				return TRUNK_RED_TEXTURE;
+			default:
+				return TRUNK_RED_TEXTURE;
+		}
+	}
 
 	public boolean onBlockActivated(EntityPlayer player, ForgeDirection side) {
 		return false;

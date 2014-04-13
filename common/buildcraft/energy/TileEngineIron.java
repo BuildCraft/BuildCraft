@@ -65,22 +65,6 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
 	}
 
 	@Override
-	public ResourceLocation getTrunkTexture(EnergyStage stage) {
-		switch (stage) {
-			case BLUE:
-				return TRUNK_BLUE_TEXTURE;
-			case GREEN:
-				return TRUNK_GREEN_TEXTURE;
-			case YELLOW:
-				return TRUNK_YELLOW_TEXTURE;
-			case RED:
-				return TRUNK_RED_TEXTURE;
-			default:
-				return TRUNK_RED_TEXTURE;
-		}
-	}
-
-	@Override
 	public boolean onBlockActivated(EntityPlayer player, ForgeDirection side) {
 		if (player.getCurrentEquippedItem() != null) {
 			if (player.getCurrentEquippedItem().getItem() instanceof IItemPipe) {

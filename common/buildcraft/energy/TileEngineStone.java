@@ -52,22 +52,6 @@ public class TileEngineStone extends TileEngineWithInventory {
 	}
 
 	@Override
-	public ResourceLocation getTrunkTexture(EnergyStage stage) {
-		switch (stage) {
-			case BLUE:
-				return TRUNK_BLUE_TEXTURE;
-			case GREEN:
-				return TRUNK_GREEN_TEXTURE;
-			case YELLOW:
-				return TRUNK_YELLOW_TEXTURE;
-			case RED:
-				return TRUNK_RED_TEXTURE;
-			default:
-				return TRUNK_RED_TEXTURE;
-		}
-	}
-
-	@Override
 	public boolean onBlockActivated(EntityPlayer player, ForgeDirection side) {
 		if (!worldObj.isRemote) {
 			player.openGui(BuildCraftEnergy.instance, GuiIds.ENGINE_STONE, worldObj, xCoord, yCoord, zCoord);
