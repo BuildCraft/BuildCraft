@@ -8,7 +8,6 @@
  */
 package buildcraft.energy;
 
-import buildcraft.BuildCraftEnergy;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
@@ -42,8 +41,29 @@ public class TileEngineLegacy extends TileEngine {
 	}
 
 	@Override
-	public ResourceLocation getTextureFile() {
-		return WOOD_TEXTURE;
+	public ResourceLocation getBaseTexture() {
+		return BASE_TEXTURES[0];
+	}
+
+	@Override
+	public ResourceLocation getChamberTexture() {
+		return CHAMBER_TEXTURES[0];
+	}
+
+	@Override
+	public ResourceLocation getTrunkTexture(EnergyStage stage) {
+		switch (stage) {
+			case BLUE:
+				return TRUNK_BLUE_TEXTURE;
+			case GREEN:
+				return TRUNK_GREEN_TEXTURE;
+			case YELLOW:
+				return TRUNK_YELLOW_TEXTURE;
+			case RED:
+				return TRUNK_RED_TEXTURE;
+			default:
+				return TRUNK_RED_TEXTURE;
+		}
 	}
 
 	@Override

@@ -8,20 +8,6 @@
  */
 package buildcraft.energy;
 
-import java.util.LinkedList;
-
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.ICrafting;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.biome.BiomeGenBase;
-import net.minecraftforge.common.util.ForgeDirection;
-import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidContainerRegistry;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidTankInfo;
-import net.minecraftforge.fluids.IFluidHandler;
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftEnergy;
 import buildcraft.api.fuels.IronEngineCoolant;
@@ -35,9 +21,17 @@ import buildcraft.core.fluids.FluidUtils;
 import buildcraft.core.fluids.Tank;
 import buildcraft.core.fluids.TankManager;
 import buildcraft.core.inventory.InvUtils;
-import buildcraft.core.proxy.CoreProxy;
-import buildcraft.core.utils.Utils;
 import buildcraft.energy.gui.ContainerEngine;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.ICrafting;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.biome.BiomeGenBase;
+import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraftforge.fluids.*;
+
+import java.util.LinkedList;
 
 public class TileEngineIron extends TileEngineWithInventory implements IFluidHandler {
 
@@ -61,8 +55,29 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
 	}
 
 	@Override
-	public ResourceLocation getTextureFile() {
-		return IRON_TEXTURE;
+	public ResourceLocation getBaseTexture() {
+		return BASE_TEXTURES[2];
+	}
+
+	@Override
+	public ResourceLocation getChamberTexture() {
+		return CHAMBER_TEXTURES[2];
+	}
+
+	@Override
+	public ResourceLocation getTrunkTexture(EnergyStage stage) {
+		switch (stage) {
+			case BLUE:
+				return TRUNK_BLUE_TEXTURE;
+			case GREEN:
+				return TRUNK_GREEN_TEXTURE;
+			case YELLOW:
+				return TRUNK_YELLOW_TEXTURE;
+			case RED:
+				return TRUNK_RED_TEXTURE;
+			default:
+				return TRUNK_RED_TEXTURE;
+		}
 	}
 
 	@Override

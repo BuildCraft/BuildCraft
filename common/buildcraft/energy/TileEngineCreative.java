@@ -15,13 +15,23 @@ public class TileEngineCreative extends TileEngine {
 	private PipePowerIron.PowerMode powerMode = PipePowerIron.PowerMode.M2;
 
 	@Override
-	public ResourceLocation getTextureFile() {
-		return CREATIVE_TEXTURE;
+	public ResourceLocation getBaseTexture() {
+		return BASE_TEXTURES[3];
+	}
+
+	@Override
+	public ResourceLocation getChamberTexture() {
+		return CHAMBER_TEXTURES[3];
+	}
+
+	@Override
+	public ResourceLocation getTrunkTexture(EnergyStage stage) {
+		return TRUNK_TEXTURES[3];
 	}
 
 	@Override
 	protected EnergyStage computeEnergyStage() {
-		return EnergyStage.RED;
+		return EnergyStage.BLUE;
 	}
 
 	@Override
