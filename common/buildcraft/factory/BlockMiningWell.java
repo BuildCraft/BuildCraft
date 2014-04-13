@@ -8,15 +8,6 @@
  */
 package buildcraft.factory;
 
-import buildcraft.BuildCraftFactory;
-import buildcraft.api.core.Position;
-import buildcraft.core.BlockBuildCraft;
-import buildcraft.core.utils.Utils;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-
-import java.util.ArrayList;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
@@ -26,42 +17,49 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
+import buildcraft.BuildCraftFactory;
+import buildcraft.core.BlockBuildCraft;
+import buildcraft.core.CreativeTabBuildCraft;
+import buildcraft.core.utils.Utils;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class BlockMiningWell extends BlockBuildCraft {
 
 	IIcon textureFront, textureSides, textureBack, textureTop;
 
 	public BlockMiningWell() {
-		super(Material.ground);
+		super(Material.ground, CreativeTabBuildCraft.TIER_1);
 
 		setHardness(5F);
 		setResistance(10F);
-		
+
 		// TODO: set proper sound
 		//setStepSound(soundStoneFootstep);
 	}
 
 	@Override
 	public IIcon getIcon(int i, int j) {
-		if (j == 0 && i == 3)
+		if (j == 0 && i == 3) {
 			return textureFront;
+		}
 
-		if (i == 1)
+		if (i == 1) {
 			return textureTop;
-		else if (i == 0)
+		} else if (i == 0) {
 			return textureBack;
-		else if (i == j)
+		} else if (i == j) {
 			return textureFront;
-		else if (j >= 0 && j < 6 && ForgeDirection.values()[j].getOpposite().ordinal() == i)
+		} else if (j >= 0 && j < 6 && ForgeDirection.values()[j].getOpposite().ordinal() == i) {
 			return textureBack;
-		else
+		} else {
 			return textureSides;
+		}
 	}
 
 	@Override
 	public void onBlockPlacedBy(World world, int i, int j, int k, EntityLivingBase entityliving, ItemStack stack) {
 		ForgeDirection orientation = Utils.get2dOrientation(entityliving);
-
 		world.setBlockMetadataWithNotify(i, j, k, orientation.getOpposite().ordinal(),1);
 	}
 

@@ -8,8 +8,10 @@
  */
 package buildcraft.core.triggers;
 
-import buildcraft.core.utils.StringUtils;
 import java.util.Locale;
+
+import buildcraft.api.gates.IAction;
+import buildcraft.core.utils.StringUtils;
 
 public class ActionMachineControl extends BCAction {
 
@@ -41,5 +43,10 @@ public class ActionMachineControl extends BCAction {
 			default:
 				return ActionTriggerIconProvider.Action_MachineControl_Loop;
 		}
+	}
+
+	@Override
+	public IAction rotateLeft() {
+		return this;
 	}
 }

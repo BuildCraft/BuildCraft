@@ -8,9 +8,9 @@
  */
 package buildcraft.api.power;
 
-import buildcraft.api.core.SafeTimeTracker;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.ForgeDirection;
+import buildcraft.api.core.SafeTimeTracker;
 
 /**
  * The PowerHandler is similar to FluidTank in that it holds your power and
@@ -220,14 +220,16 @@ public final class PowerHandler {
 	 * @param perdition
 	 */
 	public void setPerdition(PerditionCalculator perdition) {
-		if (perdition == null)
+		if (perdition == null) {
 			perdition = DEFAULT_PERDITION;
+		}
 		this.perdition = perdition;
 	}
 
 	public PerditionCalculator getPerdition() {
-		if (perdition == null)
+		if (perdition == null) {
 			return DEFAULT_PERDITION;
+		}
 		return perdition;
 	}
 
@@ -250,10 +252,11 @@ public final class PowerHandler {
 		if (perditionTracker.markTimeIfDelay(receptor.getWorld(), 1) && energyStored > 0) {
 			double prev = energyStored;
 			double newEnergy = getPerdition().applyPerdition(this, energyStored, perditionTracker.durationOfLastDelay());
-			if (newEnergy == 0 || newEnergy < energyStored)
+			if (newEnergy == 0 || newEnergy < energyStored) {
 				energyStored = newEnergy;
-			else
+			} else {
 				energyStored = DEFAULT_PERDITION.applyPerdition(this, energyStored, perditionTracker.durationOfLastDelay());
+			}
 			validateEnergy();
 
 			averageLostPower = (averageLostPower * ROLLING_AVERAGE_NUMERATOR + (prev - energyStored)) * ROLLING_AVERAGE_DENOMINATOR;
@@ -278,8 +281,9 @@ public final class PowerHandler {
 			}
 		}
 
-		if (source != null)
+		if (source != null) {
 			powerSources[source.ordinal()] = 10;
+		}
 	}
 
 	/**
@@ -312,8 +316,9 @@ public final class PowerHandler {
 
 		validateEnergy();
 
-		if (doUse)
+		if (doUse) {
 			averageUsedPower = (averageUsedPower * ROLLING_AVERAGE_NUMERATOR + result) * ROLLING_AVERAGE_DENOMINATOR;
+		}
 
 		return result;
 	}

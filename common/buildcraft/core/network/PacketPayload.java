@@ -8,32 +8,29 @@
  */
 package buildcraft.core.network;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import io.netty.buffer.ByteBuf;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
+public class PacketPayload {
 
-public abstract class PacketPayload {
-
-	public static enum Type {
-
-		NULL, ARRAY, STREAM
+	public static interface StreamWriter {
+		public void writeData(ByteBuf data);
 	}
 
-	public static PacketPayload makePayload(int type) {
-		if (type == Type.ARRAY.ordinal())
-			return new PacketPayloadArrays();
-		if (type == Type.STREAM.ordinal())
-			return new PacketPayloadStream();
-		return null;
+	private StreamWriter handler;
+	public ByteBuf stream;
+
+	public PacketPayload() {
 	}
 
-	public abstract void writeData(ByteBuf data);
+	public PacketPayload(StreamWriter handler) {
+		this.handler = handler;
+	}
 
-	public abstract void readData(ByteBuf data);
+	public void writeData(ByteBuf data) {
+		handler.writeData(data);
+	}
 
-	public abstract Type getType();
+	public void readData(ByteBuf data) {
+		stream = data;
+	}
 }

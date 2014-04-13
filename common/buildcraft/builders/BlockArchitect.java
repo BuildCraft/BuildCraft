@@ -9,42 +9,26 @@
 package buildcraft.builders;
 
 import buildcraft.BuildCraftBuilders;
-import buildcraft.api.core.Position;
 import buildcraft.api.tools.IToolWrench;
+import buildcraft.core.BlockMultiTexture;
+import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.GuiIds;
-import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-
-import java.util.ArrayList;
-
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
-public class BlockArchitect extends BlockContainer {
-
-	IIcon blockTextureSides;
-	IIcon blockTextureFront;
-	IIcon blockTextureTopPos;
-	IIcon blockTextureTopNeg;
-	IIcon blockTextureTopArchitect;
+public class BlockArchitect extends BlockMultiTexture {
 
 	public BlockArchitect() {
-		super(Material.iron);
-		setHardness(5F);
-		//setCreativeTab(CreativeTabBuildCraft.MACHINES.get());
+		super(Material.iron, CreativeTabBuildCraft.TIER_3);
 	}
 
 	@Override
@@ -109,39 +93,30 @@ public class BlockArchitect extends BlockContainer {
 		world.setBlockMetadataWithNotify(i, j, k, orientation.getOpposite().ordinal(),1);
 	}
 
-	@SuppressWarnings({ "all" })
 	@Override
-	public IIcon getIcon(IBlockAccess iblockaccess, int i, int j, int k, int l) {
-		int m = iblockaccess.getBlockMetadata(i, j, k);
-
-		if (l == 1)
-			return blockTextureTopArchitect;
-
-		return getIcon(l, m);
+	public boolean renderAsNormalBlock() {
+		return false;
 	}
 
 	@Override
-	public IIcon getIcon(int i, int j) {
-		if (j == 0 && i == 3)
-			return blockTextureFront;
-
-		if (i == 1)
-			return blockTextureTopArchitect;
-
-		if (i == j)
-			return blockTextureFront;
-
-		return blockTextureSides;
+	public boolean isSideSolid(IBlockAccess world, int x, int y, int z, ForgeDirection side) {
+		return false;
 	}
 
 	@Override
-	@SideOnly(Side.CLIENT)
-	public void registerBlockIcons(IIconRegister par1IconRegister)
-	{
-	    blockTextureSides = par1IconRegister.registerIcon("buildcraft:architect_sides");
-        blockTextureTopNeg = par1IconRegister.registerIcon("buildcraft:architect_top_neg");
-        blockTextureTopPos = par1IconRegister.registerIcon("buildcraft:architect_top_pos");
-        blockTextureTopArchitect = par1IconRegister.registerIcon("buildcraft:architect_top");
-        blockTextureFront = par1IconRegister.registerIcon("buildcraft:architect_front");
+	public int getLightValue(IBlockAccess world, int x, int y, int z) {
+		return 1;
 	}
+
+	/* MULTI TEXTURE */
+	@Override
+	public String getIconPrefix() {
+		return "architect_";
+	}
+
+	@Override
+	public int getFrontSide(IBlockAccess world, int x, int y, int z) {
+		return world.getBlockMetadata(x, y, z);
+	}
+
 }

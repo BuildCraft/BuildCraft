@@ -8,13 +8,6 @@
  */
 package buildcraft.factory;
 
-import buildcraft.BuildCraftCore;
-import buildcraft.core.CreativeTabBuildCraft;
-import buildcraft.core.inventory.InvUtils;
-import buildcraft.core.utils.Utils;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import java.util.ArrayList;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
@@ -25,9 +18,13 @@ import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
-import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
+import buildcraft.BuildCraftCore;
+import buildcraft.core.CreativeTabBuildCraft;
+import buildcraft.core.inventory.InvUtils;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class BlockTank extends BlockContainer {
 
@@ -39,7 +36,7 @@ public class BlockTank extends BlockContainer {
 		super(Material.glass);
 		setBlockBounds(0.125F, 0F, 0.125F, 0.875F, 1F, 0.875F);
 		setHardness(0.5F);
-		setCreativeTab(CreativeTabBuildCraft.MACHINES.get());
+		setCreativeTab(CreativeTabBuildCraft.TIER_2.get());
 	}
 
 	@Override
@@ -88,7 +85,7 @@ public class BlockTank extends BlockContainer {
 	@Override
 	public boolean onBlockActivated(World world, int i, int j, int k, EntityPlayer entityplayer, int par6, float par7, float par8, float par9) {
 		ItemStack current = entityplayer.inventory.getCurrentItem();
-		
+
 		if (current != null) {
 			FluidStack liquid = FluidContainerRegistry.getFluidForFilledItem(current);
 
@@ -107,7 +104,7 @@ public class BlockTank extends BlockContainer {
 				// Handle empty containers
 			} else {
 				FluidStack available = tank.getTankInfo(ForgeDirection.UNKNOWN)[0].fluid;
-				
+
 				if (available != null) {
 					ItemStack filled = FluidContainerRegistry.fillFluidContainer(available, current);
 
@@ -126,9 +123,9 @@ public class BlockTank extends BlockContainer {
 								entityplayer.inventory.setInventorySlotContents(entityplayer.inventory.currentItem, filled);
 							}
 						}
-						
+
 						tank.drain(ForgeDirection.UNKNOWN, liquid.amount, true);
-						
+
 						return true;
 					}
 				}
@@ -158,12 +155,12 @@ public class BlockTank extends BlockContainer {
 	@Override
 	public int getLightValue(IBlockAccess world, int x, int y, int z) {
 		TileEntity tile = world.getTileEntity(x, y, z);
-		
+
 		if (tile instanceof TileTank) {
 			TileTank tank = (TileTank) tile;
 			return tank.getFluidLightLevel();
 		}
-		
+
 		return super.getLightValue(world, x, y, z);
 	}
 }

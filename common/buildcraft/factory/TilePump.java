@@ -8,33 +8,8 @@
  */
 package buildcraft.factory;
 
-import buildcraft.BuildCraftCore;
-import buildcraft.BuildCraftEnergy;
-import buildcraft.BuildCraftFactory;
-import buildcraft.api.core.SafeTimeTracker;
-import buildcraft.api.gates.IAction;
-import buildcraft.api.power.IPowerReceptor;
-import buildcraft.api.power.PowerHandler;
-import buildcraft.api.power.PowerHandler.PowerReceiver;
-import buildcraft.api.power.PowerHandler.Type;
-import buildcraft.core.BlockIndex;
-import buildcraft.core.CoreConstants;
-import buildcraft.core.EntityBlock;
-import buildcraft.core.IMachine;
-import buildcraft.core.TileBuffer;
-import buildcraft.core.TileBuildCraft;
-import buildcraft.core.fluids.FluidUtils;
-import buildcraft.core.fluids.SingleUseTank;
-import buildcraft.core.network.PacketPayload;
-import buildcraft.core.network.PacketPayloadStream;
-import buildcraft.core.network.PacketUpdate;
-import buildcraft.core.proxy.CoreProxy;
-import buildcraft.core.utils.BlockUtil;
-import buildcraft.core.utils.Utils;
 import io.netty.buffer.ByteBuf;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.Deque;
 import java.util.HashSet;
@@ -53,6 +28,27 @@ import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
+import buildcraft.BuildCraftCore;
+import buildcraft.BuildCraftFactory;
+import buildcraft.api.core.SafeTimeTracker;
+import buildcraft.api.gates.IAction;
+import buildcraft.api.power.IPowerReceptor;
+import buildcraft.api.power.PowerHandler;
+import buildcraft.api.power.PowerHandler.PowerReceiver;
+import buildcraft.api.power.PowerHandler.Type;
+import buildcraft.core.BlockIndex;
+import buildcraft.core.CoreConstants;
+import buildcraft.core.EntityBlock;
+import buildcraft.core.IMachine;
+import buildcraft.core.TileBuffer;
+import buildcraft.core.TileBuildCraft;
+import buildcraft.core.fluids.FluidUtils;
+import buildcraft.core.fluids.SingleUseTank;
+import buildcraft.core.network.PacketPayload;
+import buildcraft.core.network.PacketUpdate;
+import buildcraft.core.proxy.CoreProxy;
+import buildcraft.core.utils.BlockUtil;
+import buildcraft.core.utils.Utils;
 
 public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor, IFluidHandler {
 
@@ -96,11 +92,11 @@ public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor
 		}
 
 		pushToConsumers();
-		
+
 		if (powered) {
 			return;
 		}
-		
+
 		if (tube == null) {
 			return;
 		}
@@ -113,7 +109,7 @@ public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor
 		}
 
 		tick++;
-		
+
 		if (tick % 16 != 0) {
 			return;
 		}
@@ -153,10 +149,10 @@ public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor
 
 	public void onNeighborBlockChange(Block block) {
 		boolean p = worldObj.isBlockIndirectlyGettingPowered(xCoord, yCoord, zCoord);
-		
+
 		if (powered != p) {
 			powered = p;
-			
+
 			if(!worldObj.isRemote) {
 				sendNetworkUpdate();
 			}
@@ -165,7 +161,7 @@ public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor
 
 	private boolean isBlocked(int x, int y, int z) {
 		Material mat = worldObj.getBlock(x, y, z).getMaterial();
-		
+
 		return mat.blocksMovement();
 	}
 
@@ -173,7 +169,7 @@ public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor
 		if (tileBuffer == null) {
 			tileBuffer = TileBuffer.makeBuffer(worldObj, xCoord, yCoord, zCoord, false);
 		}
-		
+
 		FluidUtils.pushFluidToConsumers(tank, 400, tileBuffer);
 	}
 
@@ -181,7 +177,7 @@ public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor
 		if (tileBuffer == null) {
 			tileBuffer = TileBuffer.makeBuffer(worldObj, xCoord, yCoord, zCoord, false);
 		}
-		
+
 		return tileBuffer[side.ordinal()].getTile();
 	}
 
@@ -225,7 +221,7 @@ public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor
 			if (timer.markTimeIfDelay(worldObj)) {
 				rebuildQueue();
 			}
-			
+
 			return null;
 		}
 
@@ -235,7 +231,7 @@ public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor
 			if (topLayer.isEmpty()) {
 				pumpLayerQueues.pollLastEntry();
 			}
-			
+
 			if (remove) {
 				BlockIndex index = topLayer.pollLast();
 				return index;
@@ -249,12 +245,12 @@ public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor
 
 	private Deque<BlockIndex> getLayerQueue(int layer) {
 		Deque<BlockIndex> pumpQueue = pumpLayerQueues.get(layer);
-		
+
 		if (pumpQueue == null) {
 			pumpQueue = new LinkedList<BlockIndex>();
 			pumpLayerQueues.put(layer, pumpQueue);
 		}
-		
+
 		return pumpQueue;
 	}
 
@@ -263,9 +259,9 @@ public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor
 		pumpLayerQueues.clear();
 		int x = xCoord;
 		int y = aimY;
-		int z = zCoord;	
+		int z = zCoord;
 		Fluid pumpingFluid = BlockUtil.getFluid(worldObj.getBlock(x, y, z));
-		
+
 		if (pumpingFluid == null) {
 			return;
 		}
@@ -312,11 +308,11 @@ public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor
 			}
 
 			Block block = worldObj.getBlock(x, y, z);
-			
+
 			if (BlockUtil.getFluid(block) == pumpingFluid) {
 				fluidsFound.add(index);
 			}
-			
+
 			if (canDrainBlock(block, x, y, z, pumpingFluid)) {
 				getLayerQueue(y).add(index);
 				numFluidBlocksFound++;
@@ -326,7 +322,7 @@ public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor
 
 	private boolean isPumpableFluid(int x, int y, int z) {
 		Fluid fluid = BlockUtil.getFluid(worldObj.getBlock(x, y, z));
-		
+
 		if (fluid == null) {
 			return false;
 		} else if (!isFluidAllowed(fluid)) {
@@ -344,7 +340,7 @@ public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor
 		}
 
 		FluidStack fluidStack = BlockUtil.drainBlock(block, worldObj, x, y, z, false);
-		
+
 		if (fluidStack == null || fluidStack.amount <= 0) {
 			return false;
 		} else {
@@ -411,7 +407,7 @@ public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor
 
 	@Override
 	public PacketPayload getPacketPayload() {
-		PacketPayloadStream payload = new PacketPayloadStream(new PacketPayloadStream.StreamWriter() {
+		PacketPayload payload = new PacketPayload(new PacketPayload.StreamWriter() {
 			@Override
 			public void writeData(ByteBuf buf) {
 				buf.writeInt(aimY);
@@ -425,7 +421,7 @@ public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor
 
 	@Override
 	public void handleUpdatePacket(PacketUpdate packet) throws IOException {
-		PacketPayloadStream payload = (PacketPayloadStream) packet.payload;
+		PacketPayload payload = packet.payload;
 		ByteBuf data = payload.stream;
 		aimY = data.readInt();
 		tubeY = data.readFloat();

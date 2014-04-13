@@ -8,15 +8,6 @@
  */
 package buildcraft.builders;
 
-import buildcraft.BuildCraftBuilders;
-import buildcraft.api.core.Position;
-import buildcraft.core.BlockIndex;
-import buildcraft.core.EntityLaser;
-import buildcraft.core.EntityPowerLaser;
-import buildcraft.core.network.PacketUpdate;
-import buildcraft.core.network.TileNetworkData;
-import buildcraft.core.proxy.CoreProxy;
-
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -25,18 +16,30 @@ import java.util.TreeSet;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+import buildcraft.api.core.Position;
+import buildcraft.core.BlockIndex;
+import buildcraft.core.LaserData;
+import buildcraft.core.network.NetworkData;
+import buildcraft.core.network.PacketUpdate;
 
 public class TilePathMarker extends TileMarker {
 
-	public EntityLaser lasers[] = new EntityLaser[2];
 	public int x0, y0, z0, x1, y1, z1;
 	public boolean loadLink0 = false, loadLink1 = false;
-	public @TileNetworkData
-	boolean tryingToConnect = false;
+
+	@NetworkData
+	public LaserData lasers[] = new LaserData [2];
+
+	@NetworkData
+	public boolean tryingToConnect = false;
+
 	public TilePathMarker links[] = new TilePathMarker[2];
-	public static int searchSize = 64; // TODO: this should be moved to default props
+
+	// TODO: this should be moved to default props
 	// A list with the pathMarkers that aren't fully connected
 	// It only contains markers within the loaded chunks
+	public static int searchSize = 64;
+
 	private static LinkedList<TilePathMarker> availableMarkers = new LinkedList<TilePathMarker>();
 
 	public boolean isFullyConnected() {
@@ -47,7 +50,7 @@ public class TilePathMarker extends TileMarker {
 		return links[0] == pathMarker || links[1] == pathMarker;
 	}
 
-	public void connect(TilePathMarker marker, EntityLaser laser) {
+	public void connect(TilePathMarker marker, LaserData laser) {
 		if (lasers[0] == null) {
 			lasers[0] = laser;
 			links[0] = marker;
@@ -62,26 +65,29 @@ public class TilePathMarker extends TileMarker {
 	}
 
 	public void createLaserAndConnect(TilePathMarker pathMarker) {
-
 		if (worldObj.isRemote) {
 			return;
 		}
 
-		EntityPowerLaser laser = new EntityPowerLaser(worldObj, new Position(xCoord + 0.5, yCoord + 0.5, zCoord + 0.5), new Position(pathMarker.xCoord + 0.5,
-				pathMarker.yCoord + 0.5, pathMarker.zCoord + 0.5));
-		laser.show();
+		LaserData laser = new LaserData
+				(new Position(xCoord + 0.5, yCoord + 0.5, zCoord + 0.5),
+			  	 new Position(pathMarker.xCoord + 0.5, pathMarker.yCoord + 0.5, pathMarker.zCoord + 0.5));
 
-		laser.setTexture(0);
-		worldObj.spawnEntityInWorld(laser);
+		LaserData laser2 = new LaserData (laser.head, laser.tail);
+		laser2.isVisible = false;
 
 		connect(pathMarker, laser);
-		pathMarker.connect(this, laser);
+		pathMarker.connect(this, laser2);
 	}
 
-	// Searches the availableMarkers list for the nearest available that is within searchSize
+	/**
+	 * Searches the availableMarkers list for the nearest available that is
+	 * within searchSize
+	 */
 	private TilePathMarker findNearestAvailablePathMarker() {
 		TilePathMarker nearestAvailable = null;
-		double nearestDistance = 0, distance; // The initialization of nearestDistance is only to make the compiler shut up
+		// The initialization of nearestDistance is only to make the compiler shut up
+		double nearestDistance = 0, distance;
 
 		for (TilePathMarker t : availableMarkers) {
 			if (t == this || t == this.links[0] || t == this.links[1] || t.getWorldObj().provider.dimensionId != this.getWorldObj().provider.dimensionId) {
@@ -110,7 +116,9 @@ public class TilePathMarker extends TileMarker {
 			return;
 		}
 
-		tryingToConnect = !tryingToConnect; // Allow the user to stop the path marker from searching for new path markers to connect
+		// Allow the user to stop the path marker from searching for new path markers to connect
+		tryingToConnect = !tryingToConnect;
+
 		sendNetworkUpdate();
 	}
 
@@ -127,9 +135,13 @@ public class TilePathMarker extends TileMarker {
 
 			if (nearestPathMarker != null) {
 				createLaserAndConnect(nearestPathMarker);
-				tryingToConnect = false;
-				sendNetworkUpdate();
 			}
+
+			tryingToConnect = false;
+
+			sendNetworkUpdate();
+			getWorld().markBlockRangeForRenderUpdate(xCoord, yCoord, zCoord,
+					xCoord, yCoord, zCoord);
 		}
 	}
 
@@ -164,14 +176,12 @@ public class TilePathMarker extends TileMarker {
 	public void invalidate() {
 		super.invalidate();
 
-		if (lasers[0] != null) {
+		if (links[0] != null) {
 			links[0].unlink(this);
-			lasers[0].setDead();
 		}
 
-		if (lasers[1] != null) {
+		if (links[1] != null) {
 			links[1].unlink(this);
-			lasers[1].setDead();
 		}
 
 		availableMarkers.remove(this);
@@ -205,6 +215,8 @@ public class TilePathMarker extends TileMarker {
 
 			loadLink1 = false;
 		}
+
+		sendNetworkUpdate();
 	}
 
 	private void unlink(TilePathMarker tile) {
@@ -221,6 +233,8 @@ public class TilePathMarker extends TileMarker {
 		if (!isFullyConnected() && !availableMarkers.contains(this) && !worldObj.isRemote) {
 			availableMarkers.add(this);
 		}
+
+		sendNetworkUpdate();
 	}
 
 	@Override

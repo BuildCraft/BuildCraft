@@ -25,11 +25,13 @@ import buildcraft.api.power.PowerHandler.PowerReceiver;
 import buildcraft.api.power.PowerHandler.Type;
 import buildcraft.api.transport.IPipeTile.PipeType;
 import buildcraft.core.DefaultProps;
-import buildcraft.core.proxy.CoreProxy;
+import buildcraft.core.ReflectMjAPI;
+import buildcraft.core.ReflectMjAPI.BatteryObject;
 import buildcraft.transport.network.PacketPowerUpdate;
 import buildcraft.transport.pipes.PipePowerCobblestone;
 import buildcraft.transport.pipes.PipePowerDiamond;
 import buildcraft.transport.pipes.PipePowerGold;
+import buildcraft.transport.pipes.PipePowerHeat;
 import buildcraft.transport.pipes.PipePowerIron;
 import buildcraft.transport.pipes.PipePowerQuartz;
 import buildcraft.transport.pipes.PipePowerStone;
@@ -50,6 +52,7 @@ public class PipeTransportPower extends PipeTransport {
 		powerCapacities.put(PipePowerIron.class, 128);
 		powerCapacities.put(PipePowerGold.class, 256);
 		powerCapacities.put(PipePowerDiamond.class, 1024);
+		powerCapacities.put(PipePowerHeat.class, 1024);
 	}
 	private boolean needsInit = true;
 	private TileEntity[] tiles = new TileEntity[6];
@@ -66,9 +69,15 @@ public class PipeTransportPower extends PipeTransport {
 	private double highestPower;
 	SafeTimeTracker tracker = new SafeTimeTracker();
 
+	public float[] movementStage = new float [] {0, 0, 0};
+
 	public PipeTransportPower() {
 		for (int i = 0; i < 6; ++i) {
 			powerQuery[i] = 0;
+		}
+
+		for (int i = 0; i < 3; ++i) {
+			movementStage[i] = (float) Math.random();
 		}
 	}
 
@@ -85,22 +94,29 @@ public class PipeTransportPower extends PipeTransport {
 	public boolean canPipeConnect(TileEntity tile, ForgeDirection side) {
 		if (tile instanceof TileGenericPipe) {
 			Pipe pipe2 = ((TileGenericPipe) tile).pipe;
-			if (BlockGenericPipe.isValid(pipe2) && !(pipe2.transport instanceof PipeTransportPower))
+			if (BlockGenericPipe.isValid(pipe2) && !(pipe2.transport instanceof PipeTransportPower)) {
 				return false;
+			}
 			return true;
 		}
 
 		if (tile instanceof IPowerReceptor) {
 			IPowerReceptor receptor = (IPowerReceptor) tile;
 			PowerReceiver receiver = receptor.getPowerReceiver(side.getOpposite());
-			if (receiver != null && receiver.getType().canReceiveFromPipes())
+			if (receiver != null && receiver.getType().canReceiveFromPipes()) {
 				return true;
+			}
 		}
 
 		if (container.pipe instanceof PipePowerWood && tile instanceof IPowerEmitter) {
 			IPowerEmitter emitter = (IPowerEmitter) tile;
-			if (emitter.canEmitPowerFrom(side.getOpposite()))
+			if (emitter.canEmitPowerFrom(side.getOpposite())) {
 				return true;
+			}
+		}
+
+		if (ReflectMjAPI.getMjBattery(tile) != null) {
+			return true;
 		}
 
 		return false;
@@ -136,6 +152,13 @@ public class PipeTransportPower extends PipeTransport {
 	@Override
 	public void updateEntity() {
 		if (container.getWorldObj().isRemote) {
+			// updating movement stage. We're only carrying the movement on half
+			// the things. This is purely for animation purpose.
+
+			for (int i = 0; i < 6; i += 2) {
+				movementStage [i / 2] = (movementStage [i / 2] + 0.01F) % 1.0F;
+			}
+
 			return;
 		}
 
@@ -153,20 +176,24 @@ public class PipeTransportPower extends PipeTransport {
 				float totalPowerQuery = 0;
 
 				for (int j = 0; j < 6; ++j) {
-					if (j != i && powerQuery[j] > 0)
-						if (tiles[j] instanceof TileGenericPipe || tiles[j] instanceof IPowerReceptor) {
+					if (j != i && powerQuery[j] > 0) {
+						if (tiles[j] != null
+								&& (tiles[j] instanceof TileGenericPipe
+										|| tiles[j] instanceof IPowerReceptor || ReflectMjAPI
+										.getMjBattery(tiles[j]) != null)) {
 							totalPowerQuery += powerQuery[j];
 						}
+					}
 				}
 
 				for (int j = 0; j < 6; ++j) {
 					if (j != i && powerQuery[j] > 0) {
-						float watts = 0.0F;
+						double watts = 0.0F;
 
 						PowerReceiver prov = getReceiverOnSide(ForgeDirection.VALID_DIRECTIONS[j]);
 						if (prov != null && prov.powerRequest() > 0) {
 							watts = (internalPower[i] / totalPowerQuery) * powerQuery[j];
-							watts = (float) prov.receiveEnergy(Type.PIPE, watts, ForgeDirection.VALID_DIRECTIONS[j].getOpposite());
+							watts = prov.receiveEnergy(Type.PIPE, watts, ForgeDirection.VALID_DIRECTIONS[j].getOpposite());
 							internalPower[i] -= watts;
 						} else if (tiles[j] instanceof TileGenericPipe) {
 							watts = (internalPower[i] / totalPowerQuery) * powerQuery[j];
@@ -176,6 +203,16 @@ public class PipeTransportPower extends PipeTransport {
 
 							watts = nearbyTransport.receiveEnergy(ForgeDirection.VALID_DIRECTIONS[j].getOpposite(), watts);
 							internalPower[i] -= watts;
+						} else if (tiles[j] != null) {
+							// Look for the simplified power framework
+							BatteryObject battery = ReflectMjAPI.getMjBattery(tiles [j]);
+
+							if (battery != null) {
+								watts = (internalPower[i] / totalPowerQuery)
+										* powerQuery[j];
+
+								internalPower[i] -= battery.addEnergy(watts);
+							}
 						}
 
 						displayPower[j] += watts;
@@ -203,13 +240,23 @@ public class PipeTransportPower extends PipeTransport {
 
 		// Compute the tiles requesting energy that are not power pipes
 
-		for (int i = 0; i < 6; ++i) {
-			PowerReceiver prov = getReceiverOnSide(ForgeDirection.VALID_DIRECTIONS[i]);
+		for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
+			TileEntity tile = tiles [dir.ordinal()];
+
+			PowerReceiver prov = getReceiverOnSide(dir);
 			if (prov != null) {
 				float request = (float) prov.powerRequest();
 
 				if (request > 0) {
-					requestEnergy(ForgeDirection.VALID_DIRECTIONS[i], request);
+					requestEnergy(dir, request);
+				}
+			}
+
+			if (tile != null) {
+				BatteryObject battery = ReflectMjAPI.getMjBattery(tile);
+
+				if (battery != null) {
+					requestEnergy(dir, battery.getEnergyRequested());
 				}
 			}
 		}
@@ -263,19 +310,21 @@ public class PipeTransportPower extends PipeTransport {
 			packet.overload = isOverloaded();
 			BuildCraftTransport.instance.sendToPlayers(packet, container.getWorldObj(), container.xCoord, container.yCoord, container.zCoord, DefaultProps.PIPE_CONTENTS_RENDER_DIST);
 		}
-
 	}
 
 	private PowerReceiver getReceiverOnSide(ForgeDirection side) {
 		TileEntity tile = tiles[side.ordinal()];
-		if (!(tile instanceof IPowerReceptor))
+		if (!(tile instanceof IPowerReceptor)) {
 			return null;
+		}
 		IPowerReceptor receptor = (IPowerReceptor) tile;
 		PowerReceiver receiver = receptor.getPowerReceiver(side.getOpposite());
-		if (receiver == null)
+		if (receiver == null) {
 			return null;
-		if (!receiver.getType().canReceiveFromPipes())
+		}
+		if (!receiver.getType().canReceiveFromPipes()) {
 			return null;
+		}
 		return receiver;
 	}
 
@@ -312,30 +361,34 @@ public class PipeTransportPower extends PipeTransport {
 	 * All power input MUST go through designated input pipes, such as Wooden
 	 * Power Pipes or a subclass thereof.
 	 */
-	public float receiveEnergy(ForgeDirection from, float val) {
+	public double receiveEnergy(ForgeDirection from, double val) {
 		step();
 		if (this.container.pipe instanceof IPipeTransportPowerHook) {
-			float ret = ((IPipeTransportPowerHook) this.container.pipe).receiveEnergy(from, val);
-			if (ret >= 0)
+			double ret = ((IPipeTransportPowerHook) this.container.pipe).receiveEnergy(from, val);
+			if (ret >= 0) {
 				return ret;
+			}
 		}
 		int side = from.ordinal();
-		if (internalNextPower[side] > maxPower)
+		if (internalNextPower[side] > maxPower) {
 			return 0;
+		}
 
 		internalNextPower[side] += val;
 
 		if (internalNextPower[side] > maxPower) {
 			val -= internalNextPower[side] - maxPower;
 			internalNextPower[side] = maxPower;
-			if (val < 0)
+			if (val < 0) {
 				val = 0;
+			}
 		}
 		return val;
 	}
 
-	public void requestEnergy(ForgeDirection from, float amount) {
+	public void requestEnergy(ForgeDirection from, double amount) {
 		step();
+
 		if (this.container.pipe instanceof IPipeTransportPowerHook) {
 			nextPowerQuery[from.ordinal()] += ((IPipeTransportPowerHook) this.container.pipe).requestEnergy(from, amount);
 		} else {
@@ -400,7 +453,7 @@ public class PipeTransportPower extends PipeTransport {
 	/**
 	 * This can be use to provide a rough estimate of how much power is
 	 * contained in a pipe. Measured in MJ.
-	 * 
+	 *
 	 * Max should be around (throughput * internalPower.length * 2), ie 112 MJ for a Cobblestone Pipe.
 	 *
 	 * @return MJ
@@ -414,5 +467,25 @@ public class PipeTransportPower extends PipeTransport {
 			amount += d;
 		}
 		return amount;
+	}
+
+	public float getPistonStage (int i) {
+		if (movementStage [i] < 0.5F) {
+			return movementStage [i] * 2;
+		} else {
+			return 1 - (movementStage [i] - 0.5F) * 2;
+		}
+	}
+
+	public double clearInstantPower () {
+		double amount = 0.0;
+
+		for (int i = 0; i < internalPower.length; ++i) {
+			amount += internalPower [i];
+			internalPower [i] = 0;
+		}
+
+		return amount;
+
 	}
 }

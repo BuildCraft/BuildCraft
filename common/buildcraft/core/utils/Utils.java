@@ -13,6 +13,9 @@ import io.netty.buffer.Unpooled;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Array;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -25,6 +28,7 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.IBlockAccess;
@@ -41,6 +45,7 @@ import buildcraft.core.DefaultProps;
 import buildcraft.core.EntityBlock;
 import buildcraft.core.IDropControlInventory;
 import buildcraft.core.IFramePipeConnection;
+import buildcraft.core.LaserData;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.inventory.ITransactor;
 import buildcraft.core.inventory.InvUtils;
@@ -151,8 +156,9 @@ public class Utils {
 		List<ForgeDirection> pipeDirections = new ArrayList<ForgeDirection>();
 
 		for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
-			if (from.getOpposite() == side)
+			if (from.getOpposite() == side) {
 				continue;
+			}
 
 			Position pos = new Position(x, y, z, side);
 
@@ -162,10 +168,12 @@ public class Utils {
 
 			if (tile instanceof IPipeTile) {
 				IPipeTile pipe = (IPipeTile) tile;
-				if (pipe.getPipeType() != PipeType.ITEM)
+				if (pipe.getPipeType() != PipeType.ITEM) {
 					continue;
-				if (!pipe.isPipeConnected(side.getOpposite()))
+				}
+				if (!pipe.isPipeConnected(side.getOpposite())) {
 					continue;
+				}
 
 				possiblePipes.add(pipe);
 				pipeDirections.add(side.getOpposite());
@@ -298,6 +306,35 @@ public class Utils {
 		return lasers;
 	}
 
+	public static LaserData[] createLaserDataBox(double xMin, double yMin, double zMin, double xMax, double yMax, double zMax) {
+		LaserData lasers[] = new LaserData[12];
+		Position[] p = new Position[8];
+
+		p[0] = new Position(xMin, yMin, zMin);
+		p[1] = new Position(xMax, yMin, zMin);
+		p[2] = new Position(xMin, yMax, zMin);
+		p[3] = new Position(xMax, yMax, zMin);
+		p[4] = new Position(xMin, yMin, zMax);
+		p[5] = new Position(xMax, yMin, zMax);
+		p[6] = new Position(xMin, yMax, zMax);
+		p[7] = new Position(xMax, yMax, zMax);
+
+		lasers[0] = new LaserData (p[0], p[1]);
+		lasers[1] = new LaserData (p[0], p[2]);
+		lasers[2] = new LaserData (p[2], p[3]);
+		lasers[3] = new LaserData (p[1], p[3]);
+		lasers[4] = new LaserData (p[4], p[5]);
+		lasers[5] = new LaserData (p[4], p[6]);
+		lasers[6] = new LaserData (p[5], p[7]);
+		lasers[7] = new LaserData (p[6], p[7]);
+		lasers[8] = new LaserData (p[0], p[4]);
+		lasers[9] = new LaserData (p[1], p[5]);
+		lasers[10] = new LaserData (p[2], p[6]);
+		lasers[11] = new LaserData (p[3], p[7]);
+
+		return lasers;
+	}
+
 	public static void handleBufferedDescription(ISynchronizedTile tileSynch) {
 		TileEntity tile = (TileEntity) tileSynch;
 		BlockIndex index = new BlockIndex(tile.xCoord, tile.yCoord, tile.zCoord);
@@ -332,32 +369,37 @@ public class Utils {
 	}
 
 	public static boolean checkPipesConnections(TileEntity tile1, TileEntity tile2) {
-		if (tile1 == null || tile2 == null)
+		if (tile1 == null || tile2 == null) {
 			return false;
+		}
 
-		if (!(tile1 instanceof IPipeTile) && !(tile2 instanceof IPipeTile))
+		if (!(tile1 instanceof IPipeTile) && !(tile2 instanceof IPipeTile)) {
 			return false;
+		}
 
 		ForgeDirection o = ForgeDirection.UNKNOWN;
 
-		if (tile1.xCoord - 1 == tile2.xCoord)
+		if (tile1.xCoord - 1 == tile2.xCoord) {
 			o = ForgeDirection.WEST;
-		else if (tile1.xCoord + 1 == tile2.xCoord)
+		} else if (tile1.xCoord + 1 == tile2.xCoord) {
 			o = ForgeDirection.EAST;
-		else if (tile1.yCoord - 1 == tile2.yCoord)
+		} else if (tile1.yCoord - 1 == tile2.yCoord) {
 			o = ForgeDirection.DOWN;
-		else if (tile1.yCoord + 1 == tile2.yCoord)
+		} else if (tile1.yCoord + 1 == tile2.yCoord) {
 			o = ForgeDirection.UP;
-		else if (tile1.zCoord - 1 == tile2.zCoord)
+		} else if (tile1.zCoord - 1 == tile2.zCoord) {
 			o = ForgeDirection.NORTH;
-		else if (tile1.zCoord + 1 == tile2.zCoord)
+		} else if (tile1.zCoord + 1 == tile2.zCoord) {
 			o = ForgeDirection.SOUTH;
+		}
 
-		if (tile1 instanceof IPipeTile && !((IPipeTile) tile1).isPipeConnected(o))
+		if (tile1 instanceof IPipeTile && !((IPipeTile) tile1).isPipeConnected(o)) {
 			return false;
+		}
 
-		if (tile2 instanceof IPipeTile && !((IPipeTile) tile2).isPipeConnected(o.getOpposite()))
+		if (tile2 instanceof IPipeTile && !((IPipeTile) tile2).isPipeConnected(o.getOpposite())) {
 			return false;
+		}
 
 		return true;
 	}
@@ -435,7 +477,7 @@ public class Utils {
 	public static void writeNBT (ByteBuf data, NBTTagCompound nbt) {
 		try {
 			byte[] compressed = CompressedStreamTools.compress(nbt);
-			data.writeShort(compressed.length);
+			data.writeInt(compressed.length);
 			data.writeBytes(compressed);
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -444,7 +486,7 @@ public class Utils {
 
 	public static NBTTagCompound readNBT(ByteBuf data) {
 		try {
-			short length = data.readShort();
+			int length = data.readInt();
 			byte[] compressed = new byte[length];
 			data.readBytes(compressed);
 			return CompressedStreamTools.decompress(compressed);
@@ -492,5 +534,78 @@ public class Utils {
 		packet.writeData(buf);
 
 		return new FMLProxyPacket(buf, DefaultProps.NET_CHANNEL_NAME + "-CORE");
+	}
+
+	public static void readStacksFromNBT(NBTTagCompound nbt, String name, ItemStack[] stacks) {
+		NBTTagList nbttaglist = nbt.getTagList(name, NBTTag_Types.NBTTagCompound.ordinal());
+
+		for (int i = 0; i < stacks.length; ++i) {
+			if (i < nbttaglist.tagCount()) {
+				NBTTagCompound nbttagcompound2 = nbttaglist.getCompoundTagAt(i);
+
+				stacks[i] = ItemStack.loadItemStackFromNBT(nbttagcompound2);
+			} else {
+				stacks[i] = null;
+			}
+		}
+	}
+
+	public static void writeStacksToNBT(NBTTagCompound nbt, String name, ItemStack[] stacks) {
+		NBTTagList nbttaglist = new NBTTagList();
+
+		for (ItemStack stack : stacks) {
+			NBTTagCompound cpt = new NBTTagCompound();
+			nbttaglist.appendTag(cpt);
+			if (stack != null) {
+				stack.writeToNBT(cpt);
+			}
+
+		}
+
+		nbt.setTag(name, nbttaglist);
+	}
+
+	public <T> T[] concatenate (T[] A, T[] B) {
+	    int aLen = A.length;
+	    int bLen = B.length;
+
+	    @SuppressWarnings("unchecked")
+	    T[] C = (T[]) Array.newInstance(A.getClass().getComponentType(), aLen+bLen);
+	    System.arraycopy(A, 0, C, 0, aLen);
+	    System.arraycopy(B, 0, C, aLen, bLen);
+
+	    return C;
+	}
+
+	public static List<Field> getAllFields(Class clas) {
+	    List<Field> result = new ArrayList<Field>();
+
+	    Class current = clas;
+
+	    while (current != null && current != Object.class) {
+	    	for (Field f : current.getDeclaredFields()) {
+	    		result.add(f);
+	    	}
+
+	        current = current.getSuperclass();
+	    }
+
+	    return result;
+	}
+
+	public static List<Method> getAllMethods(Class clas) {
+	    List<Method> result = new ArrayList<Method>();
+
+	    Class current = clas;
+
+	    while (current != null && current != Object.class) {
+	    	for (Method m : current.getDeclaredMethods()) {
+	    		result.add(m);
+	    	}
+
+	        current = current.getSuperclass();
+	    }
+
+	    return result;
 	}
 }

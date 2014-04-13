@@ -10,10 +10,6 @@ package buildcraft.core.network;
 
 import io.netty.buffer.ByteBuf;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-
 public class PacketUpdate extends BuildCraftPacket {
 
 	private int packetId;
@@ -52,7 +48,6 @@ public class PacketUpdate extends BuildCraftPacket {
 		data.writeInt(posZ);
 
 		if (payload != null) {
-			data.writeByte(payload.getType().ordinal());
 			payload.writeData(data);
 		} else {
 			data.writeByte(0);
@@ -66,9 +61,7 @@ public class PacketUpdate extends BuildCraftPacket {
 		posY = data.readInt();
 		posZ = data.readInt();
 
-		byte type = data.readByte();
-
-		payload = PacketPayload.makePayload(type);
+		payload = new PacketPayload();
 
 		if (payload != null) {
 			payload.readData(data);

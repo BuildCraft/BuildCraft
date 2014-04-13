@@ -8,16 +8,17 @@
  */
 package buildcraft.transport;
 
+import net.minecraftforge.client.MinecraftForgeClient;
 import buildcraft.BuildCraftTransport;
 import buildcraft.transport.render.FacadeItemRenderer;
 import buildcraft.transport.render.GateItemRenderer;
 import buildcraft.transport.render.PipeItemRenderer;
+import buildcraft.transport.render.PipeRendererTESR;
 import buildcraft.transport.render.PipeRendererWorld;
 import buildcraft.transport.render.PlugItemRenderer;
-import buildcraft.transport.render.PipeRendererTESR;
+import buildcraft.transport.render.RobotStationItemRenderer;
 import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.client.registry.RenderingRegistry;
-import net.minecraftforge.client.MinecraftForgeClient;
 
 public class TransportProxyClient extends TransportProxy {
 
@@ -25,6 +26,7 @@ public class TransportProxyClient extends TransportProxy {
 	public final static PipeRendererWorld pipeWorldRenderer = new PipeRendererWorld();
 	public final static FacadeItemRenderer facadeItemRenderer = new FacadeItemRenderer();
 	public final static PlugItemRenderer plugItemRenderer = new PlugItemRenderer();
+	public final static RobotStationItemRenderer robotStationItemRenderer = new RobotStationItemRenderer();
 	public final static GateItemRenderer gateItemRenderer = new GateItemRenderer();
 
 	@Override
@@ -51,6 +53,7 @@ public class TransportProxyClient extends TransportProxy {
 		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipeItemsLapis, pipeItemRenderer);
 		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipeItemsDaizuli, pipeItemRenderer);
 		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipeItemsEmzuli, pipeItemRenderer);
+		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipeItemsStripes, pipeItemRenderer);
 
 		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipeFluidsWood, pipeItemRenderer);
 		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipeFluidsCobblestone, pipeItemRenderer);
@@ -66,7 +69,9 @@ public class TransportProxyClient extends TransportProxy {
 		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipePowerIron, pipeItemRenderer);
 		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipePowerGold, pipeItemRenderer);
 		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipePowerDiamond, pipeItemRenderer);
+		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipePowerHeat, pipeItemRenderer);
 		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipeStructureCobblestone, pipeItemRenderer);
+
 		// MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipeItemsStipes.shiftedIndex, pipeItemRenderer);
 		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipeItemsVoid, pipeItemRenderer);
 		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipeFluidsVoid, pipeItemRenderer);
@@ -75,7 +80,9 @@ public class TransportProxyClient extends TransportProxy {
 
 		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.facadeItem, facadeItemRenderer);
 		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.plugItem, plugItemRenderer);
+		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.robotStationItem, robotStationItemRenderer);
 		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipeGate, gateItemRenderer);
+
 		TransportProxy.pipeModel = RenderingRegistry.getNextAvailableRenderId();
 
 		RenderingRegistry.registerBlockHandler(pipeWorldRenderer);

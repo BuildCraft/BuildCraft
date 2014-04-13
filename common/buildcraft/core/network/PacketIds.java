@@ -37,10 +37,6 @@ public class PacketIds {
 
 	public static final int REFINERY_FILTER_SET = 50;
 
-	public static final int ARCHITECT_NAME = 60;
-	public static final int LIBRARY_ACTION = 61;
-	public static final int LIBRARY_SELECT = 62;
-
 	public static final int ADVANCED_WORKBENCH_SETSLOT = 70;
 	public static final int SELECTION_ADVANCED_WORKBENCH = 71;
 
@@ -48,4 +44,7 @@ public class PacketIds {
 	public static final int GUI_WIDGET = 81;
 
 	public static final int STATE_UPDATE = 100;
+
+	public static final int RPC_TILE = 110;
+	public static final int RPC_PIPE = 111;
 }

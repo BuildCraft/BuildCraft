@@ -9,8 +9,11 @@
 package buildcraft.energy;
 
 import buildcraft.BuildCraftEnergy;
+import buildcraft.builders.urbanism.RenderBoxProvider;
+import buildcraft.builders.urbanism.TileUrbanist;
 import buildcraft.core.render.RenderingEntityBlocks;
 import buildcraft.core.render.RenderingEntityBlocks.EntityRenderIndex;
+import buildcraft.energy.render.RenderEnergyEmitter;
 import buildcraft.energy.render.RenderEngine;
 import cpw.mods.fml.client.registry.ClientRegistry;
 
@@ -20,12 +23,18 @@ public class EnergyProxyClient extends EnergyProxy {
 	public void registerTileEntities() {
 		super.registerTileEntities();
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEngine.class, new RenderEngine());
+		ClientRegistry.bindTileEntitySpecialRenderer(TileEnergyEmitter.class, new RenderEnergyEmitter());
+
+		ClientRegistry.bindTileEntitySpecialRenderer(TileUrbanist.class, new RenderBoxProvider());
 	}
 
 	@Override
 	public void registerBlockRenderers() {
-		RenderingEntityBlocks.blockByEntityRenders.put(new EntityRenderIndex(BuildCraftEnergy.engineBlock, 0), new RenderEngine(TileEngine.WOOD_TEXTURE));
-		RenderingEntityBlocks.blockByEntityRenders.put(new EntityRenderIndex(BuildCraftEnergy.engineBlock, 1), new RenderEngine(TileEngine.STONE_TEXTURE));
-		RenderingEntityBlocks.blockByEntityRenders.put(new EntityRenderIndex(BuildCraftEnergy.engineBlock, 2), new RenderEngine(TileEngine.IRON_TEXTURE));
+		//RenderingEntityBlocks.blockByEntityRenders.put(new EntityRenderIndex(BuildCraftEnergy.emitterBlock, 0), new RenderEnergyEmitter());
+		//TODO Update me to grab differing trunk textures
+		RenderingEntityBlocks.blockByEntityRenders.put(new EntityRenderIndex(BuildCraftEnergy.engineBlock, 0), new RenderEngine(TileEngine.BASE_TEXTURES[0], TileEngine.CHAMBER_TEXTURES[0], TileEngine.TRUNK_BLUE_TEXTURE));
+		RenderingEntityBlocks.blockByEntityRenders.put(new EntityRenderIndex(BuildCraftEnergy.engineBlock, 1), new RenderEngine(TileEngine.BASE_TEXTURES[1], TileEngine.CHAMBER_TEXTURES[1], TileEngine.TRUNK_BLUE_TEXTURE));
+		RenderingEntityBlocks.blockByEntityRenders.put(new EntityRenderIndex(BuildCraftEnergy.engineBlock, 2), new RenderEngine(TileEngine.BASE_TEXTURES[2], TileEngine.CHAMBER_TEXTURES[2], TileEngine.TRUNK_BLUE_TEXTURE));
+		RenderingEntityBlocks.blockByEntityRenders.put(new EntityRenderIndex(BuildCraftEnergy.engineBlock, 3), new RenderEngine(TileEngine.BASE_TEXTURES[3], TileEngine.CHAMBER_TEXTURES[3], TileEngine.TRUNK_TEXTURES[3]));
 	}
 }

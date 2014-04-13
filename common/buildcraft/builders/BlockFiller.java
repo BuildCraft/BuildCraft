@@ -8,27 +8,23 @@
  */
 package buildcraft.builders;
 
-import buildcraft.BuildCraftBuilders;
-import buildcraft.api.filler.IFillerPattern;
-import buildcraft.core.CreativeTabBuildCraft;
-import buildcraft.core.GuiIds;
-import buildcraft.core.proxy.CoreProxy;
-import buildcraft.core.utils.Utils;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-
-import java.util.ArrayList;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.ForgeDirection;
+import buildcraft.BuildCraftBuilders;
+import buildcraft.api.filler.IFillerPattern;
+import buildcraft.core.CreativeTabBuildCraft;
+import buildcraft.core.GuiIds;
+import buildcraft.core.utils.Utils;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class BlockFiller extends BlockContainer {
 
@@ -41,15 +37,16 @@ public class BlockFiller extends BlockContainer {
 		super(Material.iron);
 
 		setHardness(5F);
-		setCreativeTab(CreativeTabBuildCraft.MACHINES.get());
+		setCreativeTab(CreativeTabBuildCraft.TIER_2.get());
 	}
 
 	@Override
 	public boolean onBlockActivated(World world, int i, int j, int k, EntityPlayer entityplayer, int par6, float par7, float par8, float par9) {
 
 		// Drop through if the player is sneaking
-		if (entityplayer.isSneaking())
+		if (entityplayer.isSneaking()) {
 			return false;
+		}
 
 		if (!world.isRemote) {
 			entityplayer.openGui(BuildCraftBuilders.instance, GuiIds.FILLER, world, i, j, k);
@@ -66,14 +63,16 @@ public class BlockFiller extends BlockContainer {
 		if (tile != null && tile instanceof TileFiller) {
 			TileFiller filler = (TileFiller) tile;
 			if (side == 1 || side == 0) {
-				if (!filler.isActive())
+				if (!filler.isActive()) {
 					return textureTopOff;
-				else
+				} else {
 					return textureTopOn;
-			} else if (filler.currentPattern != null)
+				}
+			} else if (filler.currentPattern != null) {
 				return filler.currentPattern.getIcon();
-			else
+			} else {
 				return textureSides;
+			}
 		}
 
 		return getIcon(side, m);
@@ -81,10 +80,11 @@ public class BlockFiller extends BlockContainer {
 
 	@Override
 	public IIcon getIcon(int i, int j) {
-		if (i == 0 || i == 1)
+		if (i == 0 || i == 1) {
 			return textureTopOn;
-		else
+		} else {
 			return textureSides;
+		}
 	}
 
 	@Override
@@ -104,5 +104,20 @@ public class BlockFiller extends BlockContainer {
 	    textureTopOn = par1IconRegister.registerIcon("buildcraft:blockFillerTopOn");
         textureTopOff = par1IconRegister.registerIcon("buildcraft:blockFillerTopOff");
         textureSides = par1IconRegister.registerIcon("buildcraft:blockFillerSides");
+	}
+
+	@Override
+	public boolean renderAsNormalBlock() {
+		return false;
+	}
+
+	@Override
+	public boolean isSideSolid(IBlockAccess world, int x, int y, int z, ForgeDirection side) {
+		return false;
+	}
+
+	@Override
+	public int getLightValue(IBlockAccess world, int x, int y, int z) {
+		return 1;
 	}
 }

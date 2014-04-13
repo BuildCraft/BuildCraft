@@ -8,19 +8,19 @@
  */
 package buildcraft.builders;
 
+import net.minecraft.block.Block;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.world.World;
 import buildcraft.BuildCraftBuilders;
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.core.LaserKind;
 import buildcraft.api.core.Position;
 import buildcraft.core.EntityBlock;
 import buildcraft.core.TileBuildCraft;
+import buildcraft.core.network.NetworkData;
 import buildcraft.core.network.PacketUpdate;
-import buildcraft.core.network.TileNetworkData;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
-import net.minecraft.block.Block;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.world.World;
 
 public class TileMarker extends TileBuildCraft implements IAreaProvider {
 
@@ -28,7 +28,7 @@ public class TileMarker extends TileBuildCraft implements IAreaProvider {
 
 	public static class TileWrapper {
 
-		public @TileNetworkData
+		public @NetworkData
 		int x, y, z;
 
 		public TileWrapper() {
@@ -50,8 +50,9 @@ public class TileMarker extends TileBuildCraft implements IAreaProvider {
 		}
 
 		public TileMarker getMarker(World world) {
-			if (!isSet())
+			if (!isSet()) {
 				return null;
+			}
 
 			if (marker == null) {
 				marker = (TileMarker) world.getTileEntity(x, y, z);
@@ -73,20 +74,21 @@ public class TileMarker extends TileBuildCraft implements IAreaProvider {
 			return vectO.isSet();
 		}
 
-		public @TileNetworkData
+		public @NetworkData
 		TileWrapper vectO = new TileWrapper();
-		public @TileNetworkData(staticSize = 3)
+		public @NetworkData
 		TileWrapper[] vect = { new TileWrapper(), new TileWrapper(), new TileWrapper() };
-		public @TileNetworkData
+		public @NetworkData
 		int xMin, yMin, zMin, xMax, yMax, zMax;
 	}
 
-	public @TileNetworkData
+	public @NetworkData
 	Origin origin = new Origin();
 
 	private EntityBlock[] lasers;
 	private EntityBlock[] signals;
-	public @TileNetworkData
+
+	public @NetworkData
 	boolean showSignals = false;
 
 	public void updateSignals() {
@@ -205,11 +207,13 @@ public class TileMarker extends TileBuildCraft implements IAreaProvider {
 	}
 
 	private boolean linkTo(TileMarker marker, int n) {
-		if (marker == null)
+		if (marker == null) {
 			return false;
+		}
 
-		if (origin.isSet() && marker.origin.isSet())
+		if (origin.isSet() && marker.origin.isSet()) {
 			return false;
+		}
 
 		if (!origin.isSet() && !marker.origin.isSet()) {
 			origin = new Origin();
@@ -281,43 +285,49 @@ public class TileMarker extends TileBuildCraft implements IAreaProvider {
 
 	@Override
 	public int xMin() {
-		if (origin.isSet())
+		if (origin.isSet()) {
 			return origin.xMin;
+		}
 		return xCoord;
 	}
 
 	@Override
 	public int yMin() {
-		if (origin.isSet())
+		if (origin.isSet()) {
 			return origin.yMin;
+		}
 		return yCoord;
 	}
 
 	@Override
 	public int zMin() {
-		if (origin.isSet())
+		if (origin.isSet()) {
 			return origin.zMin;
+		}
 		return zCoord;
 	}
 
 	@Override
 	public int xMax() {
-		if (origin.isSet())
+		if (origin.isSet()) {
 			return origin.xMax;
+		}
 		return xCoord;
 	}
 
 	@Override
 	public int yMax() {
-		if (origin.isSet())
+		if (origin.isSet()) {
 			return origin.yMax;
+		}
 		return yCoord;
 	}
 
 	@Override
 	public int zMax() {
-		if (origin.isSet())
+		if (origin.isSet()) {
 			return origin.zMax;
+		}
 		return zCoord;
 	}
 
@@ -397,8 +407,9 @@ public class TileMarker extends TileBuildCraft implements IAreaProvider {
 
 	@Override
 	public void removeFromWorld() {
-		if (!origin.isSet())
+		if (!origin.isSet()) {
 			return;
+		}
 
 		Origin o = origin;
 

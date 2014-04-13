@@ -8,33 +8,10 @@
  */
 package buildcraft.transport.render;
 
-import buildcraft.BuildCraftCore;
-import buildcraft.BuildCraftCore.RenderMode;
-import buildcraft.BuildCraftTransport;
-import buildcraft.api.gates.GateExpansionController;
-import buildcraft.api.gates.IGateExpansion;
-import buildcraft.core.CoreConstants;
-import buildcraft.core.render.RenderEntityBlock;
-import buildcraft.core.render.RenderEntityBlock.RenderInfo;
-import buildcraft.core.utils.EnumColor;
-import buildcraft.core.render.RenderUtils;
-import buildcraft.core.utils.MatrixTranformations;
-import buildcraft.transport.Pipe;
-import buildcraft.api.transport.PipeWire;
-import buildcraft.transport.PipeIconProvider;
-import buildcraft.transport.PipeRenderState;
-import buildcraft.transport.PipeTransportFluids;
-import buildcraft.transport.PipeTransportItems;
-import buildcraft.transport.PipeTransportPower;
-import buildcraft.transport.TileGenericPipe;
-import buildcraft.transport.TravelingItem;
-import buildcraft.api.transport.PipeWire;
-
-import com.google.common.collect.Maps;
-
 import java.util.HashMap;
 
-import net.minecraft.block.Block;
+import net.minecraft.client.model.ModelBase;
+import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.entity.RenderItem;
@@ -46,7 +23,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
-import net.minecraft.util.Timer;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
@@ -54,6 +31,29 @@ import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 
 import org.lwjgl.opengl.GL11;
+
+import buildcraft.BuildCraftCore;
+import buildcraft.BuildCraftCore.RenderMode;
+import buildcraft.BuildCraftTransport;
+import buildcraft.api.gates.IGateExpansion;
+import buildcraft.api.transport.PipeWire;
+import buildcraft.core.CoreConstants;
+import buildcraft.core.DefaultProps;
+import buildcraft.core.render.RenderEntityBlock;
+import buildcraft.core.render.RenderEntityBlock.RenderInfo;
+import buildcraft.core.render.RenderUtils;
+import buildcraft.core.utils.EnumColor;
+import buildcraft.core.utils.MatrixTranformations;
+import buildcraft.transport.Pipe;
+import buildcraft.transport.PipeIconProvider;
+import buildcraft.transport.PipeRenderState;
+import buildcraft.transport.PipeTransportFluids;
+import buildcraft.transport.PipeTransportItems;
+import buildcraft.transport.PipeTransportPower;
+import buildcraft.transport.TileGenericPipe;
+import buildcraft.transport.TravelingItem;
+
+import com.google.common.collect.Maps;
 
 public class PipeRendererTESR extends TileEntitySpecialRenderer {
 
@@ -76,6 +76,10 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 	public int[] displayPowerList = new int[POWER_STAGES];
 	public int[] displayPowerListOverload = new int[POWER_STAGES];
 
+	protected ModelBase model = new ModelBase() {
+	};
+	private ModelRenderer box;
+
 	public PipeRendererTESR() {
 		customRenderItem = new RenderItem() {
 			@Override
@@ -89,6 +93,13 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 			}
 		};
 		customRenderItem.setRenderManager(RenderManager.instance);
+
+		box = new ModelRenderer(model, 0, 0);
+		//box.addBox(0, 64 + 1, 64 + 1, 16, 128 - 2, 128 - 2);
+		box.addBox(0, 4 + 1, 4 + 1, 2, 8 - 2, 8 - 2);
+		box.rotationPointX = 0;
+		box.rotationPointY = 0;
+		box.rotationPointZ = 0;
 	}
 
 	private DisplayFluidList getDisplayFluidLists(int liquidId, World world) {
@@ -195,8 +206,9 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 	boolean initialized = false;
 
 	private void initializeDisplayPowerList(World world) {
-		if (initialized)
+		if (initialized) {
 			return;
+		}
 
 		initialized = true;
 
@@ -354,47 +366,53 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 
 		boolean center = false;
 
-		if (minX == 0 && maxX != 1 && (foundY || foundZ))
+		if (minX == 0 && maxX != 1 && (foundY || foundZ)) {
 			if (cx == CoreConstants.PIPE_MIN_POS) {
 				maxX = CoreConstants.PIPE_MIN_POS;
 			} else {
 				center = true;
 			}
+		}
 
-		if (minX != 0 && maxX == 1 && (foundY || foundZ))
+		if (minX != 0 && maxX == 1 && (foundY || foundZ)) {
 			if (cx == CoreConstants.PIPE_MAX_POS) {
 				minX = CoreConstants.PIPE_MAX_POS;
 			} else {
 				center = true;
 			}
+		}
 
-		if (minY == 0 && maxY != 1 && (foundX || foundZ))
+		if (minY == 0 && maxY != 1 && (foundX || foundZ)) {
 			if (cy == CoreConstants.PIPE_MIN_POS) {
 				maxY = CoreConstants.PIPE_MIN_POS;
 			} else {
 				center = true;
 			}
+		}
 
-		if (minY != 0 && maxY == 1 && (foundX || foundZ))
+		if (minY != 0 && maxY == 1 && (foundX || foundZ)) {
 			if (cy == CoreConstants.PIPE_MAX_POS) {
 				minY = CoreConstants.PIPE_MAX_POS;
 			} else {
 				center = true;
 			}
+		}
 
-		if (minZ == 0 && maxZ != 1 && (foundX || foundY))
+		if (minZ == 0 && maxZ != 1 && (foundX || foundY)) {
 			if (cz == CoreConstants.PIPE_MIN_POS) {
 				maxZ = CoreConstants.PIPE_MIN_POS;
 			} else {
 				center = true;
 			}
+		}
 
-		if (minZ != 0 && maxZ == 1 && (foundX || foundY))
+		if (minZ != 0 && maxZ == 1 && (foundX || foundY)) {
 			if (cz == CoreConstants.PIPE_MAX_POS) {
 				minZ = CoreConstants.PIPE_MAX_POS;
 			} else {
 				center = true;
 			}
+		}
 
 		boolean found = foundX || foundY || foundZ;
 
@@ -470,40 +488,42 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 		bindTexture(TextureMap.locationBlocksTexture);
 
 		IIcon iconLogic;
-		if (pipe.renderState.isGateLit())
+		if (pipe.renderState.isGateLit()) {
 			iconLogic = pipe.pipe.gate.logic.getIconLit();
-		else
+		} else {
 			iconLogic = pipe.pipe.gate.logic.getIconDark();
+		}
 
-		float translateCenter = 0; 
-				
-		// Render base gate		
+		float translateCenter = 0;
+
+		// Render base gate
 		renderGate(pipe, iconLogic, 0, 0.1F, 0, 0);
-		
+
 		float pulseStage = pipe.pipe.gate.getPulseStage() * 2F;
-		
+
 		if (pipe.renderState.isGatePulsing() || pulseStage != 0) {
 			// Render pulsing gate
 			float amplitude = 0.10F;
-			float start = 0.01F;			
-		
+			float start = 0.01F;
+
 			if (pulseStage < 1) {
 				translateCenter = (pulseStage * amplitude) + start;
 			} else {
 				translateCenter = amplitude - ((pulseStage - 1F) * amplitude) + start;
 			}
-		
+
 			renderGate(pipe, iconLogic, 0, 0.13F, translateCenter, translateCenter);
 		}
 
 		IIcon materialIcon = pipe.pipe.gate.material.getIconBlock();
-		if (materialIcon != null)
+		if (materialIcon != null) {
 			renderGate(pipe, materialIcon, 1, 0.13F, translateCenter, translateCenter);
+		}
 
 		for (IGateExpansion expansion : pipe.pipe.gate.expansions.keySet()) {
 			renderGate(pipe, expansion.getOverlayBlock(), 2, 0.13F, translateCenter, translateCenter);
-		}		
-		
+		}
+
 		RenderHelper.enableStandardItemLighting();
 
 		GL11.glPopAttrib();
@@ -529,32 +549,36 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 		// Z START - END
 		zeroState[2][0] = min;
 		zeroState[2][1] = max;
-		
+
 		for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
 			if (shouldRenderNormalPipeSide(state, direction)) {
 				GL11.glPushMatrix();
-				
-				float xt = direction.offsetX * translateCenter, 
-						yt = direction.offsetY * translateCenter, 
+
+				float xt = direction.offsetX * translateCenter,
+						yt = direction.offsetY * translateCenter,
 						zt = direction.offsetZ * translateCenter;
-								
-				GL11.glTranslatef(xt, yt, zt);					
-				
+
+				GL11.glTranslatef(xt, yt, zt);
+
 				float[][] rotated = MatrixTranformations.deepClone(zeroState);
 				MatrixTranformations.transform(rotated, direction);
 
-				if (layer != 0)
+				if (layer != 0) {
 					box.setRenderSingleSide(direction.ordinal());
+				}
 				box.setBounds(rotated[0][0], rotated[1][0], rotated[2][0], rotated[0][1], rotated[1][1], rotated[2][1]);
 				RenderEntityBlock.INSTANCE.renderBlock(box, tile.getWorldObj(), 0, 0, 0, tile.xCoord, tile.yCoord, tile.zCoord, true, true);
-				
 				GL11.glPopMatrix();
 			}
-		}				
+		}
 	}
-		
+
 	private boolean shouldRenderNormalPipeSide(PipeRenderState state, ForgeDirection direction) {
-		return !state.pipeConnectionMatrix.isConnected(direction) && state.facadeMatrix.getFacadeBlock(direction) == null && !state.plugMatrix.isConnected(direction) && !isOpenOrientation(state, direction);
+		return !state.pipeConnectionMatrix.isConnected(direction)
+				&& state.facadeMatrix.getFacadeBlock(direction) == null
+				&& !state.plugMatrix.isConnected(direction)
+				&& !state.robotStationMatrix.isConnected(direction)
+				&& !isOpenOrientation(state, direction);
 	}
 
 	public boolean isOpenOrientation(PipeRenderState state, ForgeDirection direction) {
@@ -567,16 +591,20 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 
 				connections++;
 
-				if (connections == 1)
+				if (connections == 1) {
 					targetOrientation = o;
+				}
 			}
 		}
 
-		if (connections > 1 || connections == 0)
+		if (connections > 1 || connections == 0) {
 			return false;
+		}
 
 		return targetOrientation.getOpposite() == direction;
 	}
+
+	public static final ResourceLocation STRIPES_TEXTURE = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_ENTITIES + "/stripes.png");
 
 	private void renderPower(Pipe<PipeTransportPower> pipe, double x, double y, double z) {
 		initializeDisplayPowerList(pipe.container.getWorldObj());
@@ -616,6 +644,30 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 			GL11.glPopMatrix();
 		}
 
+		/*bindTexture(STRIPES_TEXTURE);
+
+		for (int side = 0; side < 6; side += 2) {
+			if (pipe.container.isPipeConnected(ForgeDirection.values()[side])) {
+				GL11.glPushMatrix();
+
+				GL11.glTranslatef(0.5F, 0.5F, 0.5F);
+
+				GL11.glRotatef(angleY[side], 0, 1, 0);
+				GL11.glRotatef(angleZ[side], 0, 0, 1);
+
+				float scale = 1.0F - side * 0.0001F;
+				GL11.glScalef(scale, scale, scale);
+
+				float movement = (0.50F) * pipe.transport.getPistonStage(side / 2);
+				GL11.glTranslatef(-0.25F - 1F / 16F - movement, -0.5F, -0.5F);
+
+				// float factor = (float) (1.0 / 256.0);
+				float factor = (float) (1.0 / 16.0);
+				box.render(factor);
+				GL11.glPopMatrix();
+			}
+		}*/
+
 		GL11.glPopAttrib();
 		GL11.glPopMatrix();
 	}
@@ -632,8 +684,9 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 			}
 		}
 
-		if (!needsRender)
+		if (!needsRender) {
 			return;
+		}
 
 		GL11.glPushMatrix();
 		GL11.glPushAttrib(GL11.GL_ENABLE_BIT);
@@ -653,16 +706,19 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 
 			FluidStack fluidStack = trans.renderCache[i];
 
-			if (fluidStack == null || fluidStack.amount <= 0)
+			if (fluidStack == null || fluidStack.amount <= 0) {
 				continue;
+			}
 
-			if (!pipe.container.isPipeConnected(side))
+			if (!pipe.container.isPipeConnected(side)) {
 				continue;
+			}
 
 			DisplayFluidList d = getListFromBuffer(fluidStack, pipe.container.getWorldObj());
 
-			if (d == null)
+			if (d == null) {
 				continue;
+			}
 
 			int stage = (int) ((float) fluidStack.amount / (float) (trans.getCapacity()) * (LIQUID_STAGES - 1));
 
@@ -728,8 +784,9 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 
 		int liquidId = stack.fluidID;
 
-		if (liquidId == 0)
+		if (liquidId == 0) {
 			return null;
+		}
 
 		return getDisplayFluidLists(liquidId, world);
 	}
@@ -768,7 +825,7 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 		GL11.glScalef(renderScale, renderScale, renderScale);
 		dummyEntityItem.setEntityItemStack(itemstack);
 		customRenderItem.doRender(dummyEntityItem, 0, 0, 0, 0, 0);
-		
+
 		if (color != null) {
 			bindTexture(TextureMap.locationBlocksTexture);
 			RenderInfo block = new RenderInfo();
@@ -792,7 +849,7 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 			RenderUtils.setGLColorFromInt(color.getLightHex());
 			RenderEntityBlock.INSTANCE.renderBlock(block, null, 0, 0, 0, false, true);
 		}
-		
+
 		GL11.glPopMatrix();
 	}
 }

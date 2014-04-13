@@ -45,7 +45,7 @@ public class ItemFacade extends ItemBuildCraft {
 	public final static LinkedList<String> blacklistedFacades = new LinkedList<String>();
 
 	public ItemFacade() {
-		super();
+		super(CreativeTabBuildCraft.FACADES);
 
 		setHasSubtypes(true);
 		setMaxDamage(0);

@@ -8,16 +8,6 @@
  */
 package buildcraft.factory;
 
-import buildcraft.BuildCraftFactory;
-import buildcraft.api.core.Position;
-import buildcraft.api.tools.IToolWrench;
-import buildcraft.core.BlockBuildCraft;
-import buildcraft.core.Box;
-import buildcraft.core.proxy.CoreProxy;
-import buildcraft.core.utils.Utils;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-
 import java.util.ArrayList;
 
 import net.minecraft.block.Block;
@@ -29,9 +19,17 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
-import net.minecraft.util.MathHelper;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
+import buildcraft.BuildCraftFactory;
+import buildcraft.api.tools.IToolWrench;
+import buildcraft.core.BlockBuildCraft;
+import buildcraft.core.Box;
+import buildcraft.core.CreativeTabBuildCraft;
+import buildcraft.core.utils.Utils;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class BlockQuarry extends BlockBuildCraft {
 
@@ -40,7 +38,7 @@ public class BlockQuarry extends BlockBuildCraft {
 	IIcon textureSide;
 
 	public BlockQuarry() {
-		super(Material.iron);
+		super(Material.iron, CreativeTabBuildCraft.TIER_2);
 
 		setHardness(10F);
 		setResistance(10F);
@@ -64,11 +62,13 @@ public class BlockQuarry extends BlockBuildCraft {
 	@Override
 	public IIcon getIcon(int i, int j) {
 		// If no metadata is set, then this is an icon.
-		if (j == 0 && i == 3)
+		if (j == 0 && i == 3) {
 			return textureFront;
+		}
 
-		if (i == j && i > 1) // Front can't be top or bottom.
+		if (i == j && i > 1) {
 			return textureFront;
+		}
 
 		switch (i) {
 			case 1:
@@ -85,13 +85,15 @@ public class BlockQuarry extends BlockBuildCraft {
 
 	public void searchFrames(World world, int i, int j, int k) {
 		int width2 = 1;
-		if (!world.checkChunksExist(i - width2, j - width2, k - width2, i + width2, j + width2, k + width2))
+		if (!world.checkChunksExist(i - width2, j - width2, k - width2, i + width2, j + width2, k + width2)) {
 			return;
+		}
 
 		Block block = world.getBlock(i, j, k);
 
-		if (block != BuildCraftFactory.frameBlock)
+		if (block != BuildCraftFactory.frameBlock) {
 			return;
+		}
 
 		int meta = world.getBlockMetadata(i, j, k);
 
@@ -183,8 +185,9 @@ public class BlockQuarry extends BlockBuildCraft {
 		TileQuarry tile = (TileQuarry) world.getTileEntity(i, j, k);
 
 		// Drop through if the player is sneaking
-		if (entityplayer.isSneaking())
+		if (entityplayer.isSneaking()) {
 			return false;
+		}
 
 		// Restart the quarry if its a wrench
 		Item equipped = entityplayer.getCurrentEquippedItem() != null ? entityplayer.getCurrentEquippedItem().getItem() : null;
@@ -205,5 +208,20 @@ public class BlockQuarry extends BlockBuildCraft {
 		textureSide = par1IconRegister.registerIcon("buildcraft:quarry_side");
 		textureTop = par1IconRegister.registerIcon("buildcraft:quarry_top");
 		textureFront = par1IconRegister.registerIcon("buildcraft:quarry_front");
+	}
+
+	@Override
+	public boolean renderAsNormalBlock() {
+		return false;
+	}
+
+	@Override
+	public boolean isSideSolid(IBlockAccess world, int x, int y, int z, ForgeDirection side) {
+		return false;
+	}
+
+	@Override
+	public int getLightValue(IBlockAccess world, int x, int y, int z) {
+		return 1;
 	}
 }

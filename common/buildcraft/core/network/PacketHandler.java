@@ -17,7 +17,9 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.INetHandler;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+import net.minecraftforge.common.DimensionManager;
 import buildcraft.core.proxy.CoreProxy;
+import buildcraft.transport.TileGenericPipe;
 import cpw.mods.fml.common.network.NetworkRegistry;
 
 public class PacketHandler extends BuildCraftChannelHandler {
@@ -41,6 +43,7 @@ public class PacketHandler extends BuildCraftChannelHandler {
 	}
 
 	@Override
+
 	public void decodeInto(ChannelHandlerContext ctx, ByteBuf data, BuildCraftPacket packet) {
 		super.decodeInto(ctx, data, packet);
 
@@ -76,6 +79,45 @@ public class PacketHandler extends BuildCraftChannelHandler {
 
 				case PacketIds.GUI_WIDGET: {
 					// action will have happened already at read time
+					break;
+				}
+
+				case PacketIds.RPC_TILE: {
+					((PacketRPCTile) packet).call(player);
+
+					break;
+				}
+
+				case PacketIds.RPC_PIPE: {
+					PacketRPCPipe rpc = new PacketRPCPipe();
+					rpc.sender = player;
+
+					int dimId = data.readShort();
+					World world = null;
+
+					if (!rpc.sender.worldObj.isRemote) {
+						// if this is a server, then get the world
+
+						world = DimensionManager.getProvider(dimId).worldObj;
+					} else if (rpc.sender.worldObj.provider.dimensionId == dimId) {
+						// if the player is on this world, then synchronize things
+
+						world = rpc.sender.worldObj;
+					}
+
+					if (world != null) {
+						int x = data.readInt();
+						int y = data.readInt();
+						int z = data.readInt();
+
+						TileEntity tile = world.getTileEntity(x, y, z);
+
+						if (tile instanceof TileGenericPipe) {
+							rpc.setPipe (((TileGenericPipe) tile).pipe);
+							rpc.readData(data);
+						}
+					}
+
 					break;
 				}
 			}

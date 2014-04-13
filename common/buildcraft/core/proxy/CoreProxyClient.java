@@ -25,18 +25,18 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.IChatComponent;
 import net.minecraft.world.World;
+import net.minecraftforge.client.MinecraftForgeClient;
 import buildcraft.BuildCraftCore;
 import buildcraft.api.core.LaserKind;
 import buildcraft.core.EntityBlock;
 import buildcraft.core.EntityEnergyLaser;
-import buildcraft.core.EntityPowerLaser;
-import buildcraft.core.EntityRobot;
 import buildcraft.core.render.RenderEnergyLaser;
 import buildcraft.core.render.RenderEntityBlock;
-import buildcraft.core.render.RenderLaser;
 import buildcraft.core.render.RenderRobot;
 import buildcraft.core.render.RenderingEntityBlocks;
 import buildcraft.core.render.RenderingMarkers;
+import buildcraft.core.robots.EntityRobot;
+import buildcraft.core.robots.EntityRobotBuilder;
 import buildcraft.transport.render.TileEntityPickupFX;
 
 import com.mojang.authlib.GameProfile;
@@ -71,16 +71,18 @@ public class CoreProxyClient extends CoreProxy {
 	@SuppressWarnings("rawtypes")
 	@Override
 	public void feedSubBlocks(Block block, CreativeTabs tab, List itemList) {
-		if (block == null)
+		if (block == null) {
 			return;
+		}
 
 		block.getSubBlocks(Item.getItemFromBlock(block), tab, itemList);
 	}
 
 	@Override
 	public String getItemDisplayName(ItemStack stack) {
-		if (stack.getItem() == null)
+		if (stack.getItem() == null) {
 			return "";
+		}
 
 		return stack.getDisplayName();
 	}
@@ -100,14 +102,18 @@ public class CoreProxyClient extends CoreProxy {
 		RenderingRegistry.registerBlockHandler(new RenderingEntityBlocks());
 		RenderingRegistry.registerBlockHandler(BuildCraftCore.legacyPipeModel, new RenderingEntityBlocks());
 		RenderingRegistry.registerBlockHandler(new RenderingMarkers());
+
+		MinecraftForgeClient.registerItemRenderer(BuildCraftCore.robotBaseItem, new RenderRobot());
+		MinecraftForgeClient.registerItemRenderer(BuildCraftCore.robotBuilderItem, new RenderRobot());
+		MinecraftForgeClient.registerItemRenderer(BuildCraftCore.robotPickerItem, new RenderRobot());
 	}
 
 	@Override
 	public void initializeEntityRendering() {
 		RenderingRegistry.registerEntityRenderingHandler(EntityBlock.class, RenderEntityBlock.INSTANCE);
-		RenderingRegistry.registerEntityRenderingHandler(EntityPowerLaser.class, new RenderLaser());
 		RenderingRegistry.registerEntityRenderingHandler(EntityEnergyLaser.class, new RenderEnergyLaser());
 		RenderingRegistry.registerEntityRenderingHandler(EntityRobot.class, new RenderRobot());
+		RenderingRegistry.registerEntityRenderingHandler(EntityRobotBuilder.class, new RenderRobot());
 	}
 
 	/* BUILDCRAFT PLAYER */

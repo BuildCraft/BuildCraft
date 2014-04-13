@@ -8,15 +8,19 @@
  */
 package buildcraft.builders.gui;
 
-import buildcraft.builders.TileBuilder;
-import buildcraft.core.DefaultProps;
-import buildcraft.core.gui.GuiAdvancedInterface;
-import buildcraft.core.utils.StringUtils;
 import java.util.Collection;
+
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+
 import org.lwjgl.opengl.GL11;
+
+import buildcraft.builders.TileBuilder;
+import buildcraft.core.DefaultProps;
+import buildcraft.core.gui.AdvancedSlot;
+import buildcraft.core.gui.GuiAdvancedInterface;
+import buildcraft.core.utils.StringUtils;
 
 public class GuiBuilder extends GuiAdvancedInterface {
 
@@ -49,10 +53,7 @@ public class GuiBuilder extends GuiAdvancedInterface {
 		fontRendererObj.drawString(title, getCenteredOffset(title), 12, 0x404040);
 		fontRendererObj.drawString(StringUtils.localize("gui.building.resources"), 8, 60, 0x404040);
 		fontRendererObj.drawString(StringUtils.localize("gui.inventory"), 8, ySize - 97, 0x404040);
-
-		if (builder.isBuildingBlueprint()) {
-			fontRendererObj.drawString(StringUtils.localize("gui.needed"), 185, 7, 0x404040);
-		}
+		fontRendererObj.drawString(StringUtils.localize("gui.needed"), 185, 7, 0x404040);
 
 		drawForegroundSelection(par1, par2);
 	}
@@ -64,13 +65,13 @@ public class GuiBuilder extends GuiAdvancedInterface {
 		int k = (height - ySize) / 2;
 		int realXSize = 0;
 
-		if (builder.isBuildingBlueprint()) {
+//		if (builder.isBuildingBlueprint()) {
 			mc.renderEngine.bindTexture(BLUEPRINT_TEXTURE);
 			realXSize = 256;
-		} else {
-			mc.renderEngine.bindTexture(TEXTURE);
-			realXSize = 176;
-		}
+//		} else {
+//			mc.renderEngine.bindTexture(TEXTURE);
+//			realXSize = 176;
+//		}
 
 		drawTexturedModalRect(j, k, 0, 0, realXSize, ySize);
 

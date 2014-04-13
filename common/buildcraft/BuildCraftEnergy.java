@@ -24,23 +24,30 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
+import buildcraft.api.blueprints.SchematicRegistry;
 import buildcraft.api.fuels.IronEngineCoolant;
 import buildcraft.api.fuels.IronEngineFuel;
 import buildcraft.api.recipes.BuildcraftRecipes;
 import buildcraft.core.BlockIndex;
 import buildcraft.core.BlockSpring;
+import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.InterModComms;
 import buildcraft.core.Version;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.triggers.BCTrigger;
 import buildcraft.energy.BlockBuildcraftFluid;
+import buildcraft.energy.BlockEnergyEmitter;
+import buildcraft.energy.BlockEnergyReceiver;
 import buildcraft.energy.BlockEngine;
 import buildcraft.energy.BucketHandler;
 import buildcraft.energy.EnergyProxy;
 import buildcraft.energy.GuiHandler;
 import buildcraft.energy.ItemBucketBuildcraft;
 import buildcraft.energy.ItemEngine;
+import buildcraft.energy.SchematicEngine;
+import buildcraft.energy.TileEnergyEmitter;
+import buildcraft.energy.TileEnergyReceiver;
 import buildcraft.energy.TileEngine.EnergyStage;
 import buildcraft.energy.triggers.TriggerEngineHeat;
 import buildcraft.energy.worldgen.BiomeGenOilDesert;
@@ -70,14 +77,20 @@ public class BuildCraftEnergy extends BuildCraftMod {
 	public static BiomeGenOilDesert biomeOilDesert;
 	public static BiomeGenOilOcean biomeOilOcean;
 	public static BlockEngine engineBlock;
+	public static BlockEnergyEmitter emitterBlock;
+	public static BlockEnergyReceiver receiverBlock;
 	private static Fluid buildcraftFluidOil;
 	private static Fluid buildcraftFluidFuel;
+	private static Fluid buildcraftFluidRedPlasma;
 	public static Fluid fluidOil;
 	public static Fluid fluidFuel;
+	public static Fluid fluidRedPlasma;
 	public static Block blockOil;
 	public static Block blockFuel;
+	public static Block blockRedPlasma;
 	public static Item bucketOil;
 	public static Item bucketFuel;
+	public static Item bucketRedPlasma;
 	public static Item fuel;
 	public static boolean canOilBurn;
 	public static double oilWellScalar = 1.0;
@@ -120,7 +133,7 @@ public class BuildCraftEnergy extends BuildCraftMod {
 			biomeOilOcean = BiomeGenOilOcean.makeBiome(oilOceanBiomeId);
 		}
 
-		engineBlock = new BlockEngine();
+		engineBlock = new BlockEngine(CreativeTabBuildCraft.TIER_1);
 		CoreProxy.proxy.registerBlock(engineBlock, ItemEngine.class);
 
 		LanguageRegistry.addName(new ItemStack(engineBlock, 1, 0), "Redstone Engine");
@@ -130,13 +143,16 @@ public class BuildCraftEnergy extends BuildCraftMod {
 
 		// Oil and fuel
 		buildcraftFluidOil = new Fluid("oil").setDensity(800).setViscosity(1500);
-
 		FluidRegistry.registerFluid(buildcraftFluidOil);
 		fluidOil = FluidRegistry.getFluid("oil");
 
 		buildcraftFluidFuel = new Fluid("fuel");
 		FluidRegistry.registerFluid(buildcraftFluidFuel);
 		fluidFuel = FluidRegistry.getFluid("fuel");
+
+		buildcraftFluidRedPlasma = new Fluid("redplasma").setDensity(10000).setViscosity(10000).setLuminosity(30);
+		FluidRegistry.registerFluid(buildcraftFluidRedPlasma);
+		fluidRedPlasma = FluidRegistry.getFluid("redplasma");
 
 		if (fluidOil.getBlock() == null) {
 			blockOil = new BlockBuildcraftFluid(fluidOil, Material.water).setFlammable(canOilBurn).setFlammability(0);
@@ -162,10 +178,19 @@ public class BuildCraftEnergy extends BuildCraftMod {
 			blockFuel = fluidFuel.getBlock();
 		}
 
+		if (fluidRedPlasma.getBlock() == null) {
+			blockRedPlasma = new BlockBuildcraftFluid(fluidRedPlasma, Material.water).setFlammable(false).setParticleColor(0.9F, 0, 0);
+			blockRedPlasma.setBlockName("blockRedPlasma");
+			CoreProxy.proxy.registerBlock(blockRedPlasma);
+			fluidRedPlasma.setBlock(blockRedPlasma);
+		} else {
+			blockRedPlasma = fluidRedPlasma.getBlock();
+		}
+
 		// Buckets
 
 		if (blockOil != null) {
-			bucketOil = new ItemBucketBuildcraft(blockOil);
+			bucketOil = new ItemBucketBuildcraft(blockOil, CreativeTabBuildCraft.TIER_2);
 			bucketOil.setUnlocalizedName("bucketOil").setContainerItem(Items.bucket);
 			LanguageRegistry.addName(bucketOil, "Oil Bucket");
 			CoreProxy.proxy.registerItem(bucketOil);
@@ -173,11 +198,21 @@ public class BuildCraftEnergy extends BuildCraftMod {
 		}
 
 		if (blockFuel != null) {
-			bucketFuel = new ItemBucketBuildcraft(blockFuel);
+			bucketFuel = new ItemBucketBuildcraft(blockFuel, CreativeTabBuildCraft.TIER_2);
 			bucketFuel.setUnlocalizedName("bucketFuel").setContainerItem(Items.bucket);
 			LanguageRegistry.addName(bucketFuel, "Fuel Bucket");
 			CoreProxy.proxy.registerItem(bucketFuel);
 			FluidContainerRegistry.registerFluidContainer(FluidRegistry.getFluidStack("fuel", FluidContainerRegistry.BUCKET_VOLUME), new ItemStack(bucketFuel), new ItemStack(Items.bucket));
+		}
+
+		if (!BuildCraftCore.NEXTGEN_PREALPHA) {
+			if (blockRedPlasma != null) {
+				bucketRedPlasma = new ItemBucketBuildcraft(blockRedPlasma, CreativeTabBuildCraft.TIER_4);
+				bucketRedPlasma.setUnlocalizedName("bucketRedPlasma").setContainerItem(Items.bucket);
+				LanguageRegistry.addName(bucketRedPlasma, "Red Plasma Bucket");
+				CoreProxy.proxy.registerItem(bucketRedPlasma);
+				FluidContainerRegistry.registerFluidContainer(FluidRegistry.getFluidStack("redplasma", FluidContainerRegistry.BUCKET_VOLUME), new ItemStack(bucketRedPlasma), new ItemStack(Items.bucket));
+			}
 		}
 
 		// BucketHandler ensures empty buckets fill with the correct liquid.
@@ -196,6 +231,18 @@ public class BuildCraftEnergy extends BuildCraftMod {
 		IronEngineCoolant.addCoolant(FluidRegistry.getFluid("water"), 0.0023F);
 		IronEngineCoolant.addCoolant(Blocks.ice, 0, FluidRegistry.getFluidStack("water", FluidContainerRegistry.BUCKET_VOLUME * 2));
 
+		// Receiver / emitter
+
+		if (!BuildCraftCore.NEXTGEN_PREALPHA) {
+			emitterBlock = new BlockEnergyEmitter ();
+			CoreProxy.proxy.registerBlock(emitterBlock.setBlockName("energyEmitterBlock"));
+			CoreProxy.proxy.registerTileEntity(TileEnergyEmitter.class, "net.minecraft.src.builders.TileEnergyEmitter");
+
+			receiverBlock = new BlockEnergyReceiver ();
+			CoreProxy.proxy.registerBlock(receiverBlock.setBlockName("energyReceiverBlock"));
+			CoreProxy.proxy.registerTileEntity(TileEnergyReceiver.class, "net.minecraft.src.builders.TileEnergyReceiver");
+		}
+
 		MinecraftForge.EVENT_BUS.register(this);
 	}
 
@@ -206,7 +253,7 @@ public class BuildCraftEnergy extends BuildCraftMod {
 
 		NetworkRegistry.INSTANCE.registerGuiHandler(instance, new GuiHandler());
 
-		//new BptBlockEngine(engineBlock.blockID);
+		SchematicRegistry.registerSchematicBlock(engineBlock, SchematicEngine.class);
 
 		if (BuildCraftCore.loadDefaultRecipes) {
 			loadRecipes();
@@ -229,6 +276,7 @@ public class BuildCraftEnergy extends BuildCraftMod {
 		if (event.map.getTextureType() == 0) {
 			buildcraftFluidOil.setIcons(blockOil.getBlockTextureFromSide(1), blockOil.getBlockTextureFromSide(2));
 			buildcraftFluidFuel.setIcons(blockFuel.getBlockTextureFromSide(1), blockFuel.getBlockTextureFromSide(2));
+			buildcraftFluidRedPlasma.setIcons(blockRedPlasma.getBlockTextureFromSide(1), blockRedPlasma.getBlockTextureFromSide(2));
 		}
 	}
 

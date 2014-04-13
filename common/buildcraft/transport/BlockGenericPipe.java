@@ -8,14 +8,25 @@
  */
 package buildcraft.transport;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Random;
-
+import buildcraft.BuildCraftTransport;
+import buildcraft.api.gates.GateExpansions;
+import buildcraft.api.gates.IGateExpansion;
+import buildcraft.api.tools.IToolWrench;
+import buildcraft.api.transport.PipeWire;
+import buildcraft.core.*;
+import buildcraft.core.robots.AIDocked;
+import buildcraft.core.robots.EntityRobot;
+import buildcraft.core.utils.BCLog;
+import buildcraft.core.utils.MatrixTranformations;
+import buildcraft.core.utils.Utils;
+import buildcraft.transport.gates.GateDefinition;
+import buildcraft.transport.gates.GateFactory;
+import buildcraft.transport.gates.ItemGate;
+import buildcraft.transport.render.PipeRendererWorld;
+import buildcraft.transport.utils.FacadeMatrix;
+import cpw.mods.fml.common.registry.GameRegistry;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
@@ -37,24 +48,8 @@ import net.minecraft.util.Vec3;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
-import buildcraft.BuildCraftTransport;
-import buildcraft.api.gates.GateExpansions;
-import buildcraft.api.gates.IGateExpansion;
-import buildcraft.api.tools.IToolWrench;
-import buildcraft.api.transport.PipeWire;
-import buildcraft.core.BlockBuildCraft;
-import buildcraft.core.BlockIndex;
-import buildcraft.core.CoreConstants;
-import buildcraft.core.utils.BCLog;
-import buildcraft.core.utils.MatrixTranformations;
-import buildcraft.core.utils.Utils;
-import buildcraft.transport.gates.GateDefinition;
-import buildcraft.transport.gates.GateFactory;
-import buildcraft.transport.gates.ItemGate;
-import buildcraft.transport.utils.FacadeMatrix;
-import cpw.mods.fml.common.registry.GameRegistry;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+
+import java.util.*;
 
 public class BlockGenericPipe extends BlockBuildCraft {
 
@@ -62,7 +57,8 @@ public class BlockGenericPipe extends BlockBuildCraft {
 		Pipe,
 		Gate,
 		Facade,
-		Plug
+		Plug,
+		RobotStation
 	}
 
 	static class RaytraceResult {
@@ -89,7 +85,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 
 	/* Defined subprograms ************************************************* */
 	public BlockGenericPipe() {
-		super(Material.glass);
+		super(Material.glass, CreativeTabBuildCraft.TIER_1);
 		setRenderAllSides();
 		setCreativeTab(null);
 	}
@@ -102,6 +98,17 @@ public class BlockGenericPipe extends BlockBuildCraft {
 	@Override
 	public int getRenderType() {
 		return TransportProxy.pipeModel;
+	}
+
+	@Override
+	public boolean canRenderInPass(int pass) {
+		PipeRendererWorld.renderPass = pass;
+		return true;
+	}
+
+	@Override
+	public int getRenderBlockPass() {
+		return 1;
 	}
 
 	@Override
@@ -241,7 +248,8 @@ public class BlockGenericPipe extends BlockBuildCraft {
 			AxisAlignedBB box = rayTraceResult.boundingBox;
 			switch (rayTraceResult.hitPart) {
 				case Gate:
-				case Plug: {
+				case Plug:
+				case RobotStation: {
 					float scale = 0.001F;
 					box = box.expand(scale, scale, scale);
 					break;
@@ -305,9 +313,9 @@ public class BlockGenericPipe extends BlockBuildCraft {
 		 * pipe hits along x, y, and z axis, gate (all 6 sides) [and
 		 * wires+facades]
 		 */
-		MovingObjectPosition[] hits = new MovingObjectPosition[25];
-		AxisAlignedBB[] boxes = new AxisAlignedBB[25];
-		ForgeDirection[] sideHit = new ForgeDirection[25];
+		MovingObjectPosition[] hits = new MovingObjectPosition[31];
+		AxisAlignedBB[] boxes = new AxisAlignedBB[31];
+		ForgeDirection[] sideHit = new ForgeDirection[31];
 		Arrays.fill(sideHit, ForgeDirection.UNKNOWN);
 
 		// pipe
@@ -358,6 +366,18 @@ public class BlockGenericPipe extends BlockBuildCraft {
 			}
 		}
 
+		// robotStations
+
+		for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
+			if (tileG.hasRobotStation(side)) {
+				AxisAlignedBB bb = getRobotStationBoundingBox(side);
+				setBlockBounds(bb);
+				boxes[25 + side.ordinal()] = bb;
+				hits[25 + side.ordinal()] = super.collisionRayTrace(world, x, y, z, origin, direction);
+				sideHit[25 + side.ordinal()] = side;
+			}
+		}
+
 		// TODO: check wires
 
 		// get closest hit
@@ -394,8 +414,10 @@ public class BlockGenericPipe extends BlockBuildCraft {
 				hitPart = Part.Gate;
 			} else if (minIndex < 19) {
 				hitPart = Part.Facade;
-			} else {
+			} else if (minIndex < 25) {
 				hitPart = Part.Plug;
+			} else {
+				hitPart = Part.RobotStation;
 			}
 
 			return new RaytraceResult(hitPart, hits[minIndex], boxes[minIndex], sideHit[minIndex]);
@@ -442,6 +464,22 @@ public class BlockGenericPipe extends BlockBuildCraft {
 	}
 
 	private AxisAlignedBB getPlugBoundingBox(ForgeDirection side) {
+		float[][] bounds = new float[3][2];
+		// X START - END
+		bounds[0][0] = 0.25F;
+		bounds[0][1] = 0.75F;
+		// Y START - END
+		bounds[1][0] = 0.125F;
+		bounds[1][1] = 0.251F;
+		// Z START - END
+		bounds[2][0] = 0.25F;
+		bounds[2][1] = 0.75F;
+
+		MatrixTranformations.transform(bounds, side);
+		return AxisAlignedBB.getAABBPool().getAABB(bounds[0][0], bounds[1][0], bounds[2][0], bounds[0][1], bounds[1][1], bounds[2][1]);
+	}
+
+	private AxisAlignedBB getRobotStationBoundingBox(ForgeDirection side) {
 		float[][] bounds = new float[3][2];
 		// X START - END
 		bounds[0][0] = 0.25F;
@@ -606,6 +644,8 @@ public class BlockGenericPipe extends BlockBuildCraft {
 					return pipe.gate.getGateItem();
 			case Plug:
 					return new ItemStack(BuildCraftTransport.plugItem);
+			case RobotStation:
+				return new ItemStack(BuildCraftTransport.robotStationItem);
 			case Pipe:
 				return new ItemStack(getPipe(world, x, y, z).item);
 			case Facade:
@@ -709,9 +749,39 @@ public class BlockGenericPipe extends BlockBuildCraft {
 				if (addOrStripPlug(world, x, y, z, player, ForgeDirection.getOrientation(side), pipe)) {
 					return true;
 				}
+			} else if (currentItem.getItem() instanceof ItemRobotStation) {
+				if (addOrStripRobotStation(world, x, y, z, player, ForgeDirection.getOrientation(side), pipe)) {
+					return true;
+				}
 			} else if (currentItem.getItem() instanceof ItemFacade) {
 				if (addOrStripFacade(world, x, y, z, player, ForgeDirection.getOrientation(side), pipe)) {
 					return true;
+				}
+			} else if (currentItem.getItem () instanceof ItemRobot) {
+				if (!world.isRemote) {
+					RaytraceResult rayTraceResult = doRayTrace(world, x, y, z,
+							player);
+
+					if (rayTraceResult.hitPart == Part.RobotStation) {
+						EntityRobot robot = ((ItemRobot) currentItem.getItem())
+								.createRobot(world);
+
+						float px = x + 0.5F + rayTraceResult.sideHit.offsetX * 0.5F;
+						float py = y + 0.5F + rayTraceResult.sideHit.offsetY * 0.5F;
+						float pz = z + 0.5F + rayTraceResult.sideHit.offsetZ * 0.5F;
+
+						robot.setPosition(px, py, pz);
+						robot.setDockingStation(pipe.container,
+								rayTraceResult.sideHit);
+						robot.currentAI = new AIDocked();
+						world.spawnEntityInWorld(robot);
+
+						if (!player.capabilities.isCreativeMode) {
+							player.getCurrentEquippedItem().stackSize--;
+						}
+
+						return true;
+					}
 				}
 			}
 
@@ -855,6 +925,23 @@ public class BlockGenericPipe extends BlockBuildCraft {
 		return false;
 	}
 
+	private boolean addOrStripRobotStation(World world, int x, int y, int z, EntityPlayer player, ForgeDirection side, Pipe pipe) {
+		RaytraceResult rayTraceResult = doRayTrace(world, x, y, z, player);
+		if (player.isSneaking()) {
+			if (rayTraceResult != null && rayTraceResult.hitPart == Part.RobotStation) {
+				if (stripRobotStation(pipe, rayTraceResult.sideHit)) {
+					return true;
+				}
+			}
+		}
+		if (rayTraceResult != null && (rayTraceResult.hitPart == Part.Pipe || rayTraceResult.hitPart == Part.Gate)) {
+			if (addRobotStation(player, pipe, rayTraceResult.sideHit != null && rayTraceResult.sideHit != ForgeDirection.UNKNOWN ? rayTraceResult.sideHit : side)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	private boolean addPlug(EntityPlayer player, Pipe pipe, ForgeDirection side) {
 		ItemStack stack = player.getCurrentEquippedItem();
 		if (pipe.container.addPlug(side)) {
@@ -866,7 +953,22 @@ public class BlockGenericPipe extends BlockBuildCraft {
 		return false;
 	}
 
+	private boolean addRobotStation(EntityPlayer player, Pipe pipe, ForgeDirection side) {
+		ItemStack stack = player.getCurrentEquippedItem();
+		if (pipe.container.addRobotStation(side)) {
+			if (!player.capabilities.isCreativeMode) {
+				stack.stackSize--;
+			}
+			return true;
+		}
+		return false;
+	}
+
 	private boolean stripPlug(Pipe pipe, ForgeDirection side) {
+		return pipe.container.removeAndDropPlug(side);
+	}
+
+	private boolean stripRobotStation(Pipe pipe, ForgeDirection side) {
 		return pipe.container.removeAndDropPlug(side);
 	}
 
@@ -976,8 +1078,8 @@ public class BlockGenericPipe extends BlockBuildCraft {
 	static long lastRemovedDate = -1;
 	public static Map<BlockIndex, Pipe> pipeRemoved = new HashMap<BlockIndex, Pipe>();
 
-	public static ItemPipe registerPipe(Class<? extends Pipe> clas) {
-		ItemPipe item = new ItemPipe();
+	public static ItemPipe registerPipe(Class<? extends Pipe> clas, CreativeTabBuildCraft creativeTab) {
+		ItemPipe item = new ItemPipe(creativeTab);
 		item.setUnlocalizedName("buildcraftPipe." + clas.getSimpleName().toLowerCase(Locale.ENGLISH));
 		GameRegistry.registerItem(item, item.getUnlocalizedName());
 
@@ -988,6 +1090,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 			item.setPipeIconIndex(dummyPipe.getIconIndexForItem());
 			TransportProxy.proxy.setIconProviderFromPipe(item, dummyPipe);
 		}
+
 		return item;
 	}
 
@@ -1029,14 +1132,13 @@ public class BlockGenericPipe extends BlockBuildCraft {
 	}
 
 	public static Pipe getPipe(IBlockAccess blockAccess, int i, int j, int k) {
-
 		TileEntity tile = blockAccess.getTileEntity(i, j, k);
 
 		if (!(tile instanceof TileGenericPipe) || tile.isInvalid()) {
 			return null;
+		} else {
+			return ((TileGenericPipe) tile).pipe;
 		}
-
-		return ((TileGenericPipe) tile).pipe;
 	}
 
 	public static boolean isFullyDefined(Pipe pipe) {

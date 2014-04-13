@@ -8,67 +8,53 @@
  */
 package buildcraft.builders;
 
-import buildcraft.BuildCraftBuilders;
-import buildcraft.BuildCraftCore;
-import buildcraft.api.core.IAreaProvider;
-import buildcraft.api.core.LaserKind;
-import buildcraft.api.filler.FillerManager;
-import buildcraft.api.filler.IFillerPattern;
-import buildcraft.api.filler.IPatternIterator;
-import buildcraft.api.gates.IAction;
-import buildcraft.api.gates.IActionReceptor;
-import buildcraft.api.power.IPowerReceptor;
-import buildcraft.api.power.PowerHandler;
-import buildcraft.api.power.PowerHandler.PowerReceiver;
-import buildcraft.api.power.PowerHandler.Type;
-import buildcraft.builders.filler.pattern.PatternFill;
-import buildcraft.builders.triggers.ActionFiller;
-import buildcraft.core.Box;
-import buildcraft.core.IMachine;
-import buildcraft.core.TileBuildCraft;
-import buildcraft.core.inventory.InventoryIterator;
-import buildcraft.core.inventory.InventoryIterator.IInvSlot;
-import buildcraft.core.inventory.SimpleInventory;
-import buildcraft.core.network.IGuiReturnHandler;
-import buildcraft.core.network.PacketPayload;
-import buildcraft.core.network.PacketPayloadStream;
-import buildcraft.core.network.PacketUpdate;
-import buildcraft.core.proxy.CoreProxy;
-import buildcraft.core.triggers.ActionMachineControl;
-import buildcraft.core.triggers.ActionMachineControl.Mode;
-import buildcraft.core.utils.Utils;
 import io.netty.buffer.ByteBuf;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
 
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.AxisAlignedBB;
+import buildcraft.BuildCraftCore;
+import buildcraft.api.core.IAreaProvider;
+import buildcraft.api.filler.FillerManager;
+import buildcraft.api.filler.IFillerPattern;
+import buildcraft.api.gates.IAction;
+import buildcraft.api.gates.IActionReceptor;
+import buildcraft.builders.filler.pattern.PatternFill;
+import buildcraft.builders.triggers.ActionFiller;
+import buildcraft.core.Box;
+import buildcraft.core.Box.Kind;
+import buildcraft.core.IMachine;
+import buildcraft.core.blueprints.BptBuilderTemplate;
+import buildcraft.core.blueprints.BptContext;
+import buildcraft.core.inventory.SimpleInventory;
+import buildcraft.core.network.PacketPayload;
+import buildcraft.core.network.PacketUpdate;
+import buildcraft.core.network.RPC;
+import buildcraft.core.network.RPCHandler;
+import buildcraft.core.network.RPCSide;
+import buildcraft.core.triggers.ActionMachineControl;
+import buildcraft.core.triggers.ActionMachineControl.Mode;
+import buildcraft.core.utils.Utils;
 
-public class TileFiller extends TileBuildCraft implements IInventory, IPowerReceptor, IMachine, IActionReceptor, IGuiReturnHandler {
+public class TileFiller extends TileAbstractBuilder implements IMachine, IActionReceptor {
 
 	public IFillerPattern currentPattern = PatternFill.INSTANCE;
-	private static int POWER_USAGE = 25;
+
+	private BptBuilderTemplate currentTemplate;
+	private BptContext context;
+
+	private static int POWER_ACTIVATION = 50;
 	private final Box box = new Box();
 	private boolean done = false;
-	private IPatternIterator patternIterator;
-	private PowerHandler powerHandler;
 	private ActionMachineControl.Mode lastMode = ActionMachineControl.Mode.Unknown;
 	private SimpleInventory inv = new SimpleInventory(27, "Filler", 64);
 
 	public TileFiller() {
 		inv.addListener(this);
-		powerHandler = new PowerHandler(this, Type.MACHINE);
-		initPowerProvider();
-	}
-
-	private void initPowerProvider() {
-		powerHandler.configure(30, POWER_USAGE * 2, POWER_USAGE, POWER_USAGE * 4);
-		powerHandler.configurePowerPerdition(1, 1);
+		box.kind = Kind.STRIPES;
 	}
 
 	@Override
@@ -85,9 +71,6 @@ public class TileFiller extends TileBuildCraft implements IInventory, IPowerRece
 					((TileMarker) a).removeFromWorld();
 				}
 
-				if (!worldObj.isRemote && box.isInitialized()) {
-					box.createLasers(worldObj, LaserKind.Stripes);
-				}
 				sendNetworkUpdate();
 			}
 		}
@@ -96,53 +79,44 @@ public class TileFiller extends TileBuildCraft implements IInventory, IPowerRece
 	@Override
 	public void updateEntity() {
 		super.updateEntity();
+
+		if (worldObj.isRemote) {
+			return;
+		}
+
 		if (done) {
 			if (lastMode == Mode.Loop) {
 				done = false;
 			}
 		}
-	}
 
-	@Override
-	public void doWork(PowerHandler workProvider) {
-		if (worldObj.isRemote)
+		if (lastMode == Mode.Off) {
 			return;
-		if (done)
-			return;
-		if (lastMode == Mode.Off)
-			return;
-		if (powerHandler.useEnergy(POWER_USAGE, POWER_USAGE, false) != POWER_USAGE)
-			return;
-		if (!box.isInitialized())
-			return;
+		}
 
-		if (patternIterator == null)
-			patternIterator = currentPattern.createPatternIterator(this, box, ForgeDirection.NORTH);
+		if (!box.isInitialized()) {
+			return;
+		}
 
-		ItemStack stackToUse = null;
-		int slotNum = 0;
+		if (mjStored < POWER_ACTIVATION && !buildTracker.markTimeIfDelay(worldObj)) {
+			return;
+		}
 
-		for (IInvSlot slot : InventoryIterator.getIterable(inv, ForgeDirection.UNKNOWN)) {
-			ItemStack stack = slot.getStackInSlot();
-			if (stack != null && stack.stackSize > 0) {
-				stackToUse = stack;
-				slotNum = slot.getIndex();
-				break;
+		if (currentPattern != null && currentTemplate == null) {
+			currentTemplate = new BptBuilderTemplate(
+					currentPattern.getTemplate(box), getWorld(), box.xMin,
+					box.yMin, box.zMin);
+			context = currentTemplate.getContext();
+		}
+
+		if (currentTemplate != null) {
+			currentTemplate.buildNextSlot(worldObj, this, xCoord, yCoord, zCoord);
+
+			if (currentTemplate.isDone(this)) {
+				done = true;
+				currentTemplate = null;
+				sendNetworkUpdate();
 			}
-		}
-
-		done = patternIterator.iteratePattern(stackToUse);
-		powerHandler.useEnergy(POWER_USAGE, POWER_USAGE, true);
-
-		if (stackToUse != null && stackToUse.stackSize <= 0) {
-			setInventorySlotContents(slotNum, null);
-		}
-
-		if (done) {
-			patternIterator = null;
-			sendNetworkUpdate();
-		} else if (powerHandler.getEnergyStored() >= POWER_USAGE) {
-			doWork(workProvider);
 		}
 	}
 
@@ -182,14 +156,17 @@ public class TileFiller extends TileBuildCraft implements IInventory, IPowerRece
 
 		inv.readFromNBT(nbt);
 
-		if (nbt.hasKey("pattern"))
+		if (nbt.hasKey("pattern")) {
 			currentPattern = FillerManager.registry.getPattern(nbt.getString("pattern"));
+		}
 
-		if (currentPattern == null)
+		if (currentPattern == null) {
 			currentPattern = PatternFill.INSTANCE;
+		}
 
-		if (nbt.hasKey("box"))
+		if (nbt.hasKey("box")) {
 			box.initialize(nbt.getCompoundTag("box"));
+		}
 
 		done = nbt.getBoolean("done");
 		lastMode = Mode.values()[nbt.getByte("lastMode")];
@@ -201,8 +178,9 @@ public class TileFiller extends TileBuildCraft implements IInventory, IPowerRece
 
 		inv.writeToNBT(nbt);
 
-		if (currentPattern != null)
+		if (currentPattern != null) {
 			nbt.setString("pattern", currentPattern.getUniqueTag());
+		}
 
 		NBTTagCompound boxStore = new NBTTagCompound();
 		box.writeToNBT(boxStore);
@@ -219,9 +197,12 @@ public class TileFiller extends TileBuildCraft implements IInventory, IPowerRece
 
 	@Override
 	public boolean isUseableByPlayer(EntityPlayer entityplayer) {
-		if (worldObj.getTileEntity(xCoord, yCoord, zCoord) != this)
+		if (worldObj.getTileEntity(xCoord, yCoord, zCoord) != this) {
 			return false;
-		return entityplayer.getDistanceSq(xCoord + 0.5D, yCoord + 0.5D, zCoord + 0.5D) <= 64D;
+		}
+
+		return entityplayer.getDistanceSq(xCoord + 0.5D, yCoord + 0.5D,
+				zCoord + 0.5D) <= 64D;
 	}
 
 	@Override
@@ -230,15 +211,10 @@ public class TileFiller extends TileBuildCraft implements IInventory, IPowerRece
 		destroy();
 	}
 
-	@Override
-	public void destroy() {
-		box.deleteLasers();
-	}
-
 	public void setPattern(IFillerPattern pattern) {
 		if (pattern != null && currentPattern != pattern) {
 			currentPattern = pattern;
-			patternIterator = null;
+			currentTemplate = null;
 			done = false;
 			sendNetworkUpdate();
 		}
@@ -246,7 +222,7 @@ public class TileFiller extends TileBuildCraft implements IInventory, IPowerRece
 
 	@Override
 	public PacketPayload getPacketPayload() {
-		PacketPayloadStream payload = new PacketPayloadStream(new PacketPayloadStream.StreamWriter() {
+		PacketPayload payload = new PacketPayload(new PacketPayload.StreamWriter() {
 			@Override
 			public void writeData(ByteBuf data) {
 				box.writeToStream(data);
@@ -265,24 +241,16 @@ public class TileFiller extends TileBuildCraft implements IInventory, IPowerRece
 		setPattern(FillerManager.registry.getPattern(Utils.readUTF(data)));
 
 		worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
-		if (!initialized && box.isInitialized()) {
-			box.createLasers(worldObj, LaserKind.Stripes);
-		}
 	}
 
 	@Override
 	public void handleDescriptionPacket(PacketUpdate packet) throws IOException {
-		handlePacketPayload(((PacketPayloadStream) packet.payload).stream);
+		handlePacketPayload(packet.payload.stream);
 	}
 
 	@Override
 	public void handleUpdatePacket(PacketUpdate packet) throws IOException {
-		handlePacketPayload(((PacketPayloadStream) packet.payload).stream);
-	}
-
-	@Override
-	public PowerReceiver getPowerReceiver(ForgeDirection side) {
-		return powerHandler.getPowerReceiver();
+		handlePacketPayload(packet.payload.stream);
 	}
 
 	@Override
@@ -332,18 +300,33 @@ public class TileFiller extends TileBuildCraft implements IInventory, IPowerRece
 		return true;
 	}
 
-	@Override
-	public void writeGuiData(ByteBuf data) {
-		Utils.writeUTF(data, currentPattern.getUniqueTag());
+	public void rpcSetPatternFromString (String name) {
+		RPCHandler.rpcServer(this, "setPatternFromString", name);
 	}
 
-	@Override
-	public void readGuiData(ByteBuf data, EntityPlayer player) {
-		setPattern(FillerManager.registry.getPattern(Utils.readUTF(data)));
+	@RPC (RPCSide.SERVER)
+	public void setPatternFromString (String name) {
+		setPattern(FillerManager.registry.getPattern(name));
 	}
 
 	@Override
 	public boolean hasCustomInventoryName() {
 		return false;
 	}
+
+	@Override
+	public Box getBox() {
+		return box;
+	}
+
+	@Override
+	public AxisAlignedBB getRenderBoundingBox() {
+		return new Box (this).extendToEncompass(box).expand(50).getBoundingBox();
+	}
+
+	@Override
+	public boolean isBuildingMaterialSlot(int i) {
+		return true;
+	}
+
 }

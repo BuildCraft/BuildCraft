@@ -8,9 +8,9 @@
  */
 package buildcraft.builders.filler.pattern;
 
-import buildcraft.api.core.IBox;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
+import buildcraft.api.blueprints.SchematicMask;
+import buildcraft.core.Box;
+import buildcraft.core.blueprints.Template;
 
 public class PatternFlatten extends FillerPattern {
 
@@ -19,18 +19,26 @@ public class PatternFlatten extends FillerPattern {
 	}
 
 	@Override
-	public boolean iteratePattern(TileEntity tile, IBox box, ItemStack stackToPlace) {
+	public Template getTemplate (Box box) {
 		int xMin = (int) box.pMin().x;
-		int yMin = (int) box.pMin().y;
+		int yMin = 1;
 		int zMin = (int) box.pMin().z;
 
 		int xMax = (int) box.pMax().x;
 		int yMax = (int) box.pMax().y;
 		int zMax = (int) box.pMax().z;
 
-		if (flatten(xMin, 1, zMin, xMax, yMin - 1, zMax, tile.getWorldObj(), stackToPlace)) {
-			return false;
+		Template bpt = new Template(xMax - xMin + 1, yMax - yMin + 1, zMax - zMin + 1);
+
+		boolean found = false;
+		for (int y = yMax; y >= yMin; --y) {
+			for (int x = xMin; x <= xMax && !found; ++x) {
+				for (int z = zMin; z <= zMax && !found; ++z) {
+					bpt.contents[x - xMin][y - yMin][z - zMin] = new SchematicMask(true);
+				}
+			}
 		}
-		return !empty(xMin, yMin, zMin, xMax, yMax, zMax, tile.getWorldObj());
+
+		return bpt;
 	}
 }

@@ -12,6 +12,7 @@ import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftSilicon;
 import buildcraft.core.CoreIconProvider;
 import buildcraft.core.DefaultProps;
+import buildcraft.core.gui.AdvancedSlot;
 import buildcraft.core.gui.GuiAdvancedInterface;
 import buildcraft.core.network.PacketCoordinates;
 import buildcraft.core.network.PacketIds;
@@ -83,7 +84,7 @@ public class GuiAssemblyTable extends GuiAdvancedInterface {
 		public AssemblyRecipe recipe;
 
 		public RecipeSlot(int x, int y) {
-			super(x, y);
+			super(GuiAssemblyTable.this, x, y);
 		}
 
 		@Override

@@ -8,23 +8,18 @@
  */
 package buildcraft.factory.gui;
 
-import buildcraft.BuildCraftFactory;
-import buildcraft.core.gui.BuildCraftContainer;
-import buildcraft.core.network.PacketIds;
-import buildcraft.core.network.PacketPayloadStream;
-import buildcraft.core.network.PacketUpdate;
-import buildcraft.core.proxy.CoreProxy;
-import buildcraft.factory.TileRefinery;
 import io.netty.buffer.ByteBuf;
-
-import java.io.DataOutputStream;
-import java.io.IOException;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.ICrafting;
 import net.minecraft.inventory.Slot;
 import net.minecraftforge.fluids.Fluid;
+import buildcraft.BuildCraftFactory;
+import buildcraft.core.gui.BuildCraftContainer;
+import buildcraft.core.network.PacketIds;
+import buildcraft.core.network.PacketPayload;
+import buildcraft.core.network.PacketUpdate;
+import buildcraft.factory.TileRefinery;
 
 public class ContainerRefinery extends BuildCraftContainer {
 
@@ -57,7 +52,7 @@ public class ContainerRefinery extends BuildCraftContainer {
 		refinery.setFilter(slot, filter);
 
 		if (refinery.getWorldObj().isRemote) {
-			PacketPayloadStream payload = new PacketPayloadStream(new PacketPayloadStream.StreamWriter() {
+			PacketPayload payload = new PacketPayload(new PacketPayload.StreamWriter() {
 				@Override
 				public void writeData(ByteBuf data) {
 					data.writeByte(slot);

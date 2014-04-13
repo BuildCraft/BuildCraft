@@ -8,12 +8,14 @@
  */
 package buildcraft.transport.triggers;
 
+import java.util.Locale;
+
+import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.util.IIcon;
+import buildcraft.api.gates.IAction;
 import buildcraft.core.triggers.BCAction;
 import buildcraft.core.utils.EnumColor;
 import buildcraft.core.utils.StringUtils;
-import java.util.Locale;
-import net.minecraft.client.renderer.texture.IIconRegister;
-import net.minecraft.util.IIcon;
 
 public class ActionPipeColor extends BCAction {
 
@@ -39,5 +41,10 @@ public class ActionPipeColor extends BCAction {
 	@Override
 	public void registerIcons(IIconRegister iconRegister) {
 		icon = iconRegister.registerIcon("buildcraft:triggers/color_" + color.name().toLowerCase(Locale.ENGLISH));
+	}
+
+	@Override
+	public IAction rotateLeft() {
+		return this;
 	}
 }

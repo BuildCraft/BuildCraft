@@ -8,6 +8,8 @@
  */
 package buildcraft.core.triggers;
 
+import buildcraft.api.gates.IAction;
+
 public class ActionRedstoneOutput extends BCAction {
 
 	public ActionRedstoneOutput() {
@@ -22,5 +24,10 @@ public class ActionRedstoneOutput extends BCAction {
 	@Override
 	public int getIconIndex() {
 		return ActionTriggerIconProvider.Trigger_RedstoneInput_Active;
+	}
+
+	@Override
+	public IAction rotateLeft() {
+		return this;
 	}
 }

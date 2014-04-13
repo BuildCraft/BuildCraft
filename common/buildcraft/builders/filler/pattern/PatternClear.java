@@ -8,9 +8,8 @@
  */
 package buildcraft.builders.filler.pattern;
 
-import buildcraft.api.core.IBox;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
+import buildcraft.core.Box;
+import buildcraft.core.blueprints.Template;
 
 public class PatternClear extends FillerPattern {
 
@@ -19,7 +18,7 @@ public class PatternClear extends FillerPattern {
 	}
 
 	@Override
-	public boolean iteratePattern(TileEntity tile, IBox box, ItemStack stackToPlace) {
+	public Template getTemplate (Box box) {
 		int xMin = (int) box.pMin().x;
 		int yMin = (int) box.pMin().y;
 		int zMin = (int) box.pMin().z;
@@ -28,6 +27,8 @@ public class PatternClear extends FillerPattern {
 		int yMax = (int) box.pMax().y;
 		int zMax = (int) box.pMax().z;
 
-		return !empty(xMin, yMin, zMin, xMax, yMax, zMax, tile.getWorldObj());
+		Template bpt = new Template(xMax - xMin + 1, yMax - yMin + 1, zMax - zMin + 1);
+
+		return bpt;
 	}
 }

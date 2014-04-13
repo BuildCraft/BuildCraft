@@ -36,9 +36,11 @@ public class DefaultProps {
 	public static int TEMPLATE_ITEM_ID = 19105;
 	public static int WRENCH_ID = 19106;
 	public static int BUCKET_OIL_ID = 19107;
+	public static int REDSTONE_CRYSTAL_ID = 19108;
 	public static int PIPE_WATERPROOF_ID = 19109;
 	public static int BUCKET_FUEL_ID = 19110;
 	public static int GATE_ID = 19111;
+	public static int BUCKET_REDPLASMA_ID = 19112;
 	public static int PIPE_WIRE = 19113;
 	public static int REDSTONE_CHIPSET = 19117;
 	public static int BLUEPRINT_ITEM_ID = 19118;
@@ -47,6 +49,7 @@ public class DefaultProps {
 	public static int GATE_AUTARCHIC_ID = 19140;
 	public static int PIPE_FACADE_ID = 19141;
 	public static int PIPE_PLUG_ID = 19142;
+	public static int ROBOT_STATION_ID = 19143;
 
 	public static int PIPE_ITEMS_WOOD_ID = 19160;
 	public static int PIPE_ITEMS_COBBLESTONE_ID = 19161;
@@ -84,12 +87,17 @@ public class DefaultProps {
 	public static int PIPE_POWER_QUARTZ_ID = 19208;
 	public static int PIPE_POWER_LAPIS_ID = 19209;
 	public static int PIPE_POWER_DIAZULI_ID = 19210;
+	public static int PIPE_POWER_HEAT_ID = 19211;
 
 	public static int PIPE_ITEMS_VOID_ID = 19220;
 	public static int PIPE_LIQUIDS_VOID_ID = 19221;
 	public static int PIPE_ITEMS_SANDSTONE_ID = 19222;
 	public static int PIPE_LIQUIDS_SANDSTONE_ID = 19223;
 	public static int PIPE_STRUCTURE_COBBLESTONE_ID = 19224;
+
+	public static int ROBOT_BASE_ITEM_ID = 19300;
+	public static int ROBOT_BUILDER_ITEM_ID = 19301;
+	public static int ROBOT_PICKER_ITEM_ID = 19302;
 
 	public static int MINING_WELL_ID = 1500;
 	public static int DRILL_ID = 1501;
@@ -113,9 +121,13 @@ public class DefaultProps {
 	public static int SPRING_ID = 1522;
 	public static int FILTERED_BUFFER_ID = 1523;
 	public static int FLOOD_GATE_ID = 1524;
-	
+
+	public static int RECEIVER_ID = 1525;
+	public static int EMITTER_ID = 1526;
+
 	public static int OIL_ID = 1530;
 	public static int FUEL_ID = 1531;
+	public static int REDPLASMA_ID = 1532;
 
 	public static boolean CURRENT_CONTINUOUS = false;
 	public static double PIPES_DURABILITY = 0.25D;

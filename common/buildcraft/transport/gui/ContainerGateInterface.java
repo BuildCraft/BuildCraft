@@ -8,6 +8,22 @@
  */
 package buildcraft.transport.gui;
 
+import io.netty.buffer.ByteBuf;
+
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.NavigableSet;
+import java.util.TreeSet;
+
+import net.minecraft.block.Block;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.ICrafting;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.Slot;
+import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.gates.ActionManager;
 import buildcraft.api.gates.IAction;
@@ -19,55 +35,30 @@ import buildcraft.core.gui.BuildCraftContainer;
 import buildcraft.core.network.PacketCoordinates;
 import buildcraft.core.network.PacketIds;
 import buildcraft.core.network.PacketPayload;
-import buildcraft.core.network.PacketPayloadArrays;
-import buildcraft.core.network.PacketPayloadStream;
 import buildcraft.core.network.PacketUpdate;
-import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.gates.GateDefinition;
-import io.netty.buffer.ByteBuf;
-
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.NavigableSet;
-import java.util.TreeSet;
-
-import net.minecraft.block.Block;
-import net.minecraft.client.Minecraft;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.ICrafting;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.Slot;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.Packet;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.util.ForgeDirection;
 
 public class ContainerGateInterface extends BuildCraftContainer {
 
 	IInventory playerIInventory;
 	Pipe pipe;
-	
+
 	private final NavigableSet<ITrigger> _potentialTriggers = new TreeSet<ITrigger>(new Comparator<ITrigger>() {
 		@Override
 		public int compare(ITrigger o1, ITrigger o2) {
 			return o1.getUniqueTag().compareTo(o2.getUniqueTag());
 		}
 	});
-	
+
 	private final NavigableSet<IAction> _potentialActions = new TreeSet<IAction>(new Comparator<IAction>() {
 		@Override
 		public int compare(IAction o1, IAction o2) {
 			return o1.getUniqueTag().compareTo(o2.getUniqueTag());
 		}
 	});
-	
+
 	private boolean isSynchronized = false;
 	private boolean isNetInitialized = false;
 	public boolean[] triggerState = new boolean[8];
@@ -75,7 +66,7 @@ public class ContainerGateInterface extends BuildCraftContainer {
 
 	public ContainerGateInterface(IInventory playerInventory, Pipe pipe) {
 		super(0);
-		
+
 		this.playerIInventory = playerInventory;
 
 		for (int y = 0; y < 3; y++) {
@@ -109,10 +100,10 @@ public class ContainerGateInterface extends BuildCraftContainer {
 
 			if (!pipe.gate.material.hasParameterSlot) {
 				Iterator<ITrigger> it = _potentialTriggers.iterator();
-				
+
 				while (it.hasNext()) {
 					ITrigger trigger = it.next();
-					
+
 					if (trigger.requiresParameter()) {
 						it.remove();
 					}
@@ -148,12 +139,11 @@ public class ContainerGateInterface extends BuildCraftContainer {
 	 */
 	public void updateActions(PacketUpdate packet) {
 		_potentialActions.clear();
-		PacketPayloadArrays payload = (PacketPayloadArrays) packet.payload;
-		
-		int length = payload.intPayload[0];
+		PacketPayload payload = packet.payload;
 
+		int length = payload.stream.readInt();
 		for (int i = 0; i < length; i++) {
-			_potentialActions.add(ActionManager.actions.get(payload.stringPayload[i]));
+			_potentialActions.add(ActionManager.actions.get(Utils.readUTF(payload.stream)));
 		}
 	}
 
@@ -164,11 +154,13 @@ public class ContainerGateInterface extends BuildCraftContainer {
 	 */
 	public void updateTriggers(PacketUpdate packet) {
 		_potentialTriggers.clear();
-		PacketPayloadArrays payload = (PacketPayloadArrays) packet.payload;
-		int length = payload.intPayload[0];
+		PacketPayload payload = packet.payload;
+
+		int length = payload.stream.readInt();
 
 		for (int i = 0; i < length; i++) {
-			_potentialTriggers.add(ActionManager.triggers.get(payload.stringPayload[i]));
+			String trigger = Utils.readUTF(payload.stream);
+			_potentialTriggers.add(ActionManager.triggers.get(trigger));
 		}
 	}
 
@@ -178,7 +170,7 @@ public class ContainerGateInterface extends BuildCraftContainer {
 	 * @param packet
 	 */
 	public void setSelection(PacketUpdate packet, boolean notify) {
-		PacketPayloadStream payload = (PacketPayloadStream) packet.payload;
+		PacketPayload payload = packet.payload;
 		ByteBuf data = payload.stream;
 
 		int position = data.readInt();
@@ -186,8 +178,8 @@ public class ContainerGateInterface extends BuildCraftContainer {
 		setTrigger(position, ActionManager.triggers.get(Utils.readUTF(data)), notify);
 		setAction(position, ActionManager.actions.get(Utils.readUTF(data)), notify);
 
-		ItemStack parameter = Utils.readStack(data);		
-		
+		ItemStack parameter = Utils.readStack(data);
+
 		if (parameter != null) {
 			ITriggerParameter param = new TriggerParameter();
 			param.set(parameter);
@@ -198,7 +190,7 @@ public class ContainerGateInterface extends BuildCraftContainer {
 	}
 
 	private PacketPayload getSelectionPayload(final int position) {
-		PacketPayloadStream payload = new PacketPayloadStream(new PacketPayloadStream.StreamWriter() {
+		PacketPayload payload = new PacketPayload(new PacketPayload.StreamWriter() {
 			@Override
 			public void writeData(ByteBuf data) {
 				data.writeInt(position);
@@ -268,33 +260,33 @@ public class ContainerGateInterface extends BuildCraftContainer {
 		if (pipe.gate == null) {
 			return 0;
 		}
-		
+
 		int state = 0;
-		
+
 		for (int i = 0; i < triggerState.length; i++) {
 			if (pipe.gate.triggers[i] != null) {
 				triggerState[i] = isNearbyTriggerActive(pipe.gate.triggers[i], pipe.gate.getTriggerParameter(i));
 			}
-			
+
 			state |= triggerState[i] ? 0x01 << i : 0x0;
 		}
-		
+
 		return state;
 	}
 
 	@Override
 	public void detectAndSendChanges() {
 		super.detectAndSendChanges();
-		
+
 		int state = calculateTriggerState();
-		
+
 		if (state != lastTriggerState) {
 			for (int i = 0; i < this.crafters.size(); i++) {
 				ICrafting viewingPlayer = (ICrafting) this.crafters.get(i);
 
 				viewingPlayer.sendProgressBarUpdate(this, 0 /* State update */, state);
 			}
-			
+
 			lastTriggerState = state;
 		}
 	}
@@ -312,17 +304,18 @@ public class ContainerGateInterface extends BuildCraftContainer {
 	 */
 	private void sendActions(EntityPlayer player) {
 		// Compose update packet
-		int length = _potentialActions.size();
-		
-		PacketPayloadArrays payload = new PacketPayloadArrays(1, 0, length);
+		PacketPayload payload = new PacketPayload(
+				new PacketPayload.StreamWriter() {
+					@Override
+					public void writeData(ByteBuf data) {
+						int length = _potentialActions.size();
+						data.writeInt(length);
 
-		payload.intPayload[0] = length;
-		
-		int i = 0;
-		
-		for (IAction action : _potentialActions) {
-			payload.stringPayload[i++] = action.getUniqueTag();
-		}
+						for (IAction action : _potentialActions) {
+							Utils.writeUTF(data, action.getUniqueTag());
+						}
+					}
+				});
 
 		PacketUpdate packet = new PacketUpdate(PacketIds.GATE_ACTIONS, pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord, payload);
 
@@ -336,15 +329,19 @@ public class ContainerGateInterface extends BuildCraftContainer {
 	 * @param player
 	 */
 	private void sendTriggers(EntityPlayer player) {
-		// Compose update packet
-		int length = _potentialTriggers.size();
-		PacketPayloadArrays payload = new PacketPayloadArrays(1, 0, length);
+		PacketPayload payload = new PacketPayload(
+				new PacketPayload.StreamWriter() {
+					@Override
+					public void writeData(ByteBuf data) {
 
-		payload.intPayload[0] = length;
-		int i = 0;
-		for (ITrigger trigger : _potentialTriggers) {
-			payload.stringPayload[i++] = trigger.getUniqueTag();
-		}
+						int length = _potentialTriggers.size();
+						data.writeInt(length);
+
+						for (ITrigger trigger : _potentialTriggers) {
+							Utils.writeUTF(data, trigger.getUniqueTag());
+						}
+					}
+				});
 
 		PacketUpdate packet = new PacketUpdate(PacketIds.GATE_TRIGGERS, pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord, payload);
 
@@ -361,7 +358,7 @@ public class ContainerGateInterface extends BuildCraftContainer {
 		if (pipe == null || pipe.gate == null) {
 			return;
 		}
-		
+
 		for (int position = 0; position < pipe.gate.material.numSlots; position++) {
 			BuildCraftTransport.instance.sendToPlayer(player, new PacketUpdate(PacketIds.GATE_SELECTION, pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord, getSelectionPayload(position)));
 		}
@@ -377,7 +374,7 @@ public class ContainerGateInterface extends BuildCraftContainer {
 	public ITrigger getFirstTrigger() {
 		if (_potentialTriggers.isEmpty()) {
 			return null;
-		} else {			
+		} else {
 			return _potentialTriggers.first();
 		}
 	}
@@ -397,7 +394,7 @@ public class ContainerGateInterface extends BuildCraftContainer {
 	public boolean isNearbyTriggerActive(ITrigger trigger, ITriggerParameter parameter) {
 		if (pipe.gate == null) {
 			return false;
-		} else {			
+		} else {
 			return pipe.gate.isNearbyTriggerActive(trigger, parameter);
 		}
 	}
@@ -406,9 +403,9 @@ public class ContainerGateInterface extends BuildCraftContainer {
 		if (pipe.gate == null) {
 			return;
 		}
-		
+
 		pipe.gate.setTrigger(position, trigger);
-		
+
 		if (pipe.container.getWorldObj().isRemote && notify) {
 			sendSelectionChange(position);
 		}
@@ -418,9 +415,9 @@ public class ContainerGateInterface extends BuildCraftContainer {
 		if (pipe.gate == null) {
 			return;
 		}
-		
+
 		pipe.gate.setTriggerParameter(position, parameter);
-		
+
 		if (pipe.container.getWorldObj().isRemote && notify) {
 			sendSelectionChange(position);
 		}
@@ -436,7 +433,7 @@ public class ContainerGateInterface extends BuildCraftContainer {
 	public IAction getFirstAction() {
 		if (_potentialActions.isEmpty()) {
 			return null;
-		} else {		
+		} else {
 			return _potentialActions.first();
 		}
 	}
@@ -455,7 +452,7 @@ public class ContainerGateInterface extends BuildCraftContainer {
 
 	public void setAction(int position, IAction action, boolean notify) {
 		pipe.gate.setAction(position, action);
-		
+
 		if (pipe.container.getWorldObj().isRemote && notify) {
 			sendSelectionChange(position);
 		}

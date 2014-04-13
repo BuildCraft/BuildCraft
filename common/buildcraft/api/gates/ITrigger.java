@@ -8,10 +8,10 @@
  */
 package buildcraft.api.gates;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.util.IIcon;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public interface ITrigger {
 
@@ -49,4 +49,10 @@ public interface ITrigger {
 	 * trigger parameter available so this subprogram is final.
 	 */
 	ITriggerParameter createParameter();
+
+	/**
+	 * This returns the trigger after a left rotation. Used in particular in
+	 * blueprints orientation.
+	 */
+	ITrigger rotateLeft();
 }

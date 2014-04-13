@@ -9,6 +9,7 @@
 package buildcraft.transport;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
@@ -26,7 +27,6 @@ import net.minecraft.world.WorldSettings.GameType;
 import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
-import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.gates.IAction;
 import buildcraft.api.gates.ITrigger;
 import buildcraft.api.transport.PipeWire;
@@ -50,7 +50,6 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 	public Gate gate;
 	@SuppressWarnings("rawtypes")
 	private static Map<Class, TilePacketWrapper> networkWrappers = new HashMap<Class, TilePacketWrapper>();
-	public SafeTimeTracker actionTracker = new SafeTimeTracker();
 	private static Map<Class<? extends Pipe>, Map<Class<? extends PipeEvent>, EventHandler>> eventHandlers = new HashMap<Class<? extends Pipe>, Map<Class<? extends PipeEvent>, EventHandler>>();
 
 	public Pipe(T transport, Item item) {
@@ -64,9 +63,7 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 	}
 
 	public void setTile(TileEntity tile) {
-
 		this.container = (TileGenericPipe) tile;
-
 		transport.setTile((TileGenericPipe) tile);
 	}
 
@@ -88,17 +85,22 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 
 	public final void handlePipeEvent(PipeEvent event) {
 		Map<Class<? extends PipeEvent>, EventHandler> handlerMap = eventHandlers.get(getClass());
+
 		if (handlerMap == null) {
 			handlerMap = new HashMap<Class<? extends PipeEvent>, EventHandler>();
 			eventHandlers.put(getClass(), handlerMap);
 		}
+
 		EventHandler handler = handlerMap.get(event.getClass());
+
 		if (handler == null) {
 			handler = makeEventHandler(event, handlerMap);
 		}
+
 		if (handler.method == null) {
 			return;
 		}
+
 		try {
 			handler.method.invoke(this, event);
 		} catch (Exception ex) {
@@ -107,12 +109,14 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 
 	private EventHandler makeEventHandler(PipeEvent event, Map<Class<? extends PipeEvent>, EventHandler> handlerMap) {
 		EventHandler handler;
+
 		try {
 			Method method = getClass().getDeclaredMethod("eventHandler", event.getClass());
 			handler = new EventHandler(method);
 		} catch (Exception ex) {
 			handler = new EventHandler(null);
 		}
+
 		handlerMap.put(event.getClass(), handler);
 		return handler;
 	}
@@ -136,9 +140,9 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 
 	public boolean canPipeConnect(TileEntity tile, ForgeDirection side) {
 		Pipe otherPipe;
+
 		if (tile instanceof TileGenericPipe) {
 			otherPipe = ((TileGenericPipe) tile).pipe;
-
 			if (!BlockGenericPipe.isFullyDefined(otherPipe)) {
 				return false;
 			}
@@ -147,6 +151,7 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 				return false;
 			}
 		}
+
 		return transport.canPipeConnect(tile, side);
 	}
 
@@ -181,7 +186,6 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 	public abstract int getIconIndex(ForgeDirection direction);
 
 	public void updateEntity() {
-
 		transport.updateEntity();
 
 		if (internalUpdateScheduled) {
@@ -404,10 +408,16 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 		if (!hasGate()) {
 			return false;
 		}
+
 		if (container.hasFacade(side)) {
 			return false;
 		}
+
 		if (container.hasPlug(side)) {
+			return false;
+		}
+
+		if (container.hasRobotStation(side)) {
 			return false;
 		}
 
@@ -448,26 +458,40 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 
 	public void onBlockRemoval() {
 		if (getWorld().getWorldInfo().getGameType() != GameType.CREATIVE) {
-			for (PipeWire pipeWire : PipeWire.VALUES) {
-				if (wireSet[pipeWire.ordinal()]) {
-					dropItem(pipeWire.getStack());
-				}
-			}
-
-			if (hasGate()) {
-				gate.dropGate();
-				resetGate();
-			}
-
-			for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
-				if (container.hasFacade(direction)) {
-					container.dropFacade(direction);
-				}
-				if (container.hasPlug(direction)) {
-					container.removeAndDropPlug(direction);
-				}
+			for (ItemStack stack : computeItemDrop()) {
+				dropItem(stack);
 			}
 		}
+	}
+
+	public ArrayList <ItemStack> computeItemDrop () {
+		ArrayList <ItemStack> result = new ArrayList <ItemStack> ();
+
+		for (PipeWire pipeWire : PipeWire.VALUES) {
+			if (wireSet[pipeWire.ordinal()]) {
+				result.add(pipeWire.getStack());
+			}
+		}
+
+		if (hasGate()) {
+			result.add(gate.getGateItem());
+		}
+
+		for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
+			if (container.hasFacade(direction)) {
+				result.add (container.getFacade(direction));
+			}
+
+			if (container.hasPlug(direction)) {
+				result.add (new ItemStack(BuildCraftTransport.plugItem));
+			}
+
+			if (container.hasRobotStation(direction)) {
+				result.add (new ItemStack(BuildCraftTransport.robotStationItem));
+			}
+		}
+
+		return result;
 	}
 
 	public boolean isTriggerActive(ITrigger trigger) {

@@ -8,22 +8,18 @@
  */
 package buildcraft.api.core;
 
-import net.minecraft.world.World;
-
 public interface IBox {
 
-	public void expand(int amount);
+	public IBox expand(int amount);
 
-	public void contract(int amount);
+	public IBox contract(int amount);
 
-	public boolean contains(int x, int y, int z);
+	public boolean contains(double x, double y, double z);
 
 	public Position pMin();
 
 	public Position pMax();
 
-	public void createLasers(World world, LaserKind kind);
-
-	public void deleteLasers();
+	public void createLaserData();
 
 }

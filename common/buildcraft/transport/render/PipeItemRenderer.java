@@ -12,6 +12,7 @@ import buildcraft.BuildCraftTransport;
 import buildcraft.core.CoreConstants;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.TextureMap;
@@ -23,6 +24,9 @@ import org.lwjgl.opengl.GL11;
 public class PipeItemRenderer implements IItemRenderer {
 
 	private void renderPipeItem(RenderBlocks render, ItemStack item, float translateX, float translateY, float translateZ) {
+		// Simply force transparency
+		OpenGlHelper.glBlendFunc(770, 771, 0, 1);
+		GL11.glEnable(GL11.GL_BLEND);
 
 		// GL11.glBindTexture(GL11.GL_TEXTURE_2D, 10);
 		Tessellator tessellator = Tessellator.instance;
@@ -64,6 +68,9 @@ public class PipeItemRenderer implements IItemRenderer {
 		tessellator.draw();
 		GL11.glTranslatef(0.5F, 0.5F, 0.5F);
 		block.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
+
+		// Cleanup
+		GL11.glDisable(GL11.GL_BLEND);
 	}
 
 	/**

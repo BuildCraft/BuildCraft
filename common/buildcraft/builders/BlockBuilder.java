@@ -8,17 +8,6 @@
  */
 package buildcraft.builders;
 
-import buildcraft.BuildCraftBuilders;
-import buildcraft.api.core.Position;
-import buildcraft.api.tools.IToolWrench;
-import buildcraft.core.GuiIds;
-import buildcraft.core.proxy.CoreProxy;
-import buildcraft.core.utils.Utils;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-
-import java.util.ArrayList;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
@@ -29,8 +18,16 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
+import buildcraft.BuildCraftBuilders;
+import buildcraft.api.tools.IToolWrench;
+import buildcraft.core.CreativeTabBuildCraft;
+import buildcraft.core.GuiIds;
+import buildcraft.core.utils.Utils;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class BlockBuilder extends BlockContainer {
 
@@ -41,7 +38,7 @@ public class BlockBuilder extends BlockContainer {
 	public BlockBuilder() {
 		super(Material.iron);
 		setHardness(5F);
-		setCreativeTab(null);
+		setCreativeTab(CreativeTabBuildCraft.TIER_3.get());
 	}
 
 	@Override
@@ -51,11 +48,13 @@ public class BlockBuilder extends BlockContainer {
 
 	@Override
 	public IIcon getIcon(int i, int j) {
-		if (j == 0 && i == 3)
+		if (j == 0 && i == 3) {
 			return blockTextureFront;
+		}
 
-		if (i == j)
+		if (i == j) {
 			return blockTextureFront;
+		}
 
 		switch (i) {
 			case 1:
@@ -69,8 +68,9 @@ public class BlockBuilder extends BlockContainer {
 	public boolean onBlockActivated(World world, int i, int j, int k, EntityPlayer entityplayer, int par6, float par7, float par8, float par9) {
 
 		// Drop through if the player is sneaking
-		if (entityplayer.isSneaking())
+		if (entityplayer.isSneaking()) {
 			return false;
+		}
 
 		Item equipped = entityplayer.getCurrentEquippedItem() != null ? entityplayer.getCurrentEquippedItem().getItem() : null;
 		if (equipped instanceof IToolWrench && ((IToolWrench) equipped).canWrench(entityplayer, i, j, k)) {
@@ -95,14 +95,14 @@ public class BlockBuilder extends BlockContainer {
 
 			world.markBlockForUpdate(i, j, k);
 			((IToolWrench) equipped).wrenchUsed(entityplayer, i, j, k);
+
 			return true;
 		} else {
-
 			if (!world.isRemote) {
 				entityplayer.openGui(BuildCraftBuilders.instance, GuiIds.BUILDER, world, i, j, k);
 			}
-			return true;
 
+			return true;
 		}
 	}
 
@@ -126,5 +126,20 @@ public class BlockBuilder extends BlockContainer {
 		blockTextureTop = par1IconRegister.registerIcon("buildcraft:builder_top");
 		blockTextureSide = par1IconRegister.registerIcon("buildcraft:builder_side");
 		blockTextureFront = par1IconRegister.registerIcon("buildcraft:builder_front");
+	}
+
+	@Override
+	public boolean renderAsNormalBlock() {
+		return false;
+	}
+
+	@Override
+	public boolean isSideSolid(IBlockAccess world, int x, int y, int z, ForgeDirection side) {
+		return false;
+	}
+
+	@Override
+	public int getLightValue(IBlockAccess world, int x, int y, int z) {
+		return 1;
 	}
 }

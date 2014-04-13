@@ -8,9 +8,9 @@
  */
 package buildcraft.builders.filler.pattern;
 
-import buildcraft.api.core.IBox;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
+import buildcraft.core.Box;
+import buildcraft.core.blueprints.Template;
+
 
 public class PatternStairs extends FillerPattern {
 
@@ -18,25 +18,33 @@ public class PatternStairs extends FillerPattern {
 		super("stairs");
 	}
 
-	@Override
-	public boolean iteratePattern(TileEntity tile, IBox box, ItemStack stackToPlace) {
-		int xMin = (int) box.pMin().x;
-		int yMin = (int) box.pMin().y;
-		int zMin = (int) box.pMin().z;
+	// TODO: These parameters need to be settable from the filler
+	boolean param1 = true;
+	int param2 = 0;
+	int param3 = 0;
+	int param4 = 0;
 
-		int xMax = (int) box.pMax().x;
-		int yMax = (int) box.pMax().y;
-		int zMax = (int) box.pMax().z;
+	@Override
+	public Template getTemplate(Box box) {
+		int xMin = 0;
+		int yMin = 0;
+		int zMin = 0;
+
+		int xMax = box.sizeX() - 1;
+		int yMax = box.sizeY() - 1;
+		int zMax = box.sizeZ() - 1;
 
 		int sizeX = xMax - xMin + 1;
 		int sizeZ = zMax - zMin + 1;
+
+		Template template = new Template (box.sizeX(), box.sizeY(), box.sizeZ());
 
 		int height;
 		int heightStep;
 		int dimX = 0;
 		int dimZ = 0;
 
-		if (tile.yCoord <= yMin) {
+		if (param1) {
 			height = yMin;
 			heightStep = 1;
 		} else {
@@ -51,27 +59,31 @@ public class PatternStairs extends FillerPattern {
 		int x = 0, z = 0;
 		int stepDiagX = 0, stepDiagZ = 0;
 
-		if (tile.xCoord == xMin - 1) {
+		if (param2 == 0) {
 			steps[0] = 1;
-		} else if (tile.xCoord == xMax + 1) {
+		} else if (param2 == 1) {
 			steps[1] = 1;
-		} else if (tile.zCoord == zMin - 1) {
+		} else if (param2 == 2) {
 			steps[2] = 1;
-		} else if (tile.zCoord == zMax + 1) {
+		} else if (param2 == 3) {
 			steps[3] = 1;
 		} else {
 			kind = 1;
 
-			if (tile.xCoord <= xMin) {
+			if (param3 == 0) {
 				x = xMin;
-			} else if (tile.xCoord >= xMax) {
+			} else if (param3 == 1) {
 				x = xMax;
+			} else if (param3 == 2) {
+				// no change
 			}
 
-			if (tile.zCoord <= zMin) {
+			if (param4 == 0) {
 				z = zMin;
-			} else if (tile.zCoord >= zMax) {
+			} else if (param4 == 1) {
 				z = zMax;
+			} else if (param4 == 2) {
+				// no change
 			}
 
 			if (heightStep == 1) {
@@ -121,9 +133,7 @@ public class PatternStairs extends FillerPattern {
 
 		if (kind == 0) {
 			while (x2 - x1 + 1 > 0 && z2 - z1 + 1 > 0 && x2 - x1 < sizeX && z2 - z1 < sizeZ && height >= yMin && height <= yMax) {
-
-				if (fill(x1, height, z1, x2, height, z2, stackToPlace, tile.getWorldObj()))
-					return false;
+				fill(x1, height, z1, x2, height, z2, template);
 
 				if (heightStep == 1) {
 					x1 += steps[0];
@@ -143,7 +153,7 @@ public class PatternStairs extends FillerPattern {
 			while (dimX >= 0 && dimX < sizeX && dimZ >= 0 && dimZ < sizeZ && height >= yMin && height <= yMax) {
 
 				if (heightStep == 1) {
-					if (tile.xCoord >= xMax) {
+					if (param3 == 1) {
 						x1 = x - sizeX + 1;
 						x2 = x1 + dimX;
 					} else {
@@ -151,7 +161,7 @@ public class PatternStairs extends FillerPattern {
 						x1 = x2 - dimX;
 					}
 
-					if (tile.zCoord >= zMax) {
+					if (param4 == 1) {
 						z1 = z - sizeZ + 1;
 						z2 = z1 + dimZ;
 					} else {
@@ -159,7 +169,7 @@ public class PatternStairs extends FillerPattern {
 						z1 = z2 - dimZ;
 					}
 				} else if (heightStep == -1) {
-					if (tile.xCoord <= xMin) {
+					if (param3 == 0) {
 						x1 = x;
 						x2 = x1 + dimX;
 					} else {
@@ -167,7 +177,7 @@ public class PatternStairs extends FillerPattern {
 						x1 = x2 - dimX;
 					}
 
-					if (tile.zCoord <= zMin) {
+					if (param3 == 1) {
 						z1 = z;
 						z2 = z1 + dimZ;
 					} else {
@@ -177,8 +187,7 @@ public class PatternStairs extends FillerPattern {
 
 				}
 
-				if (fill(x1, height, z1, x2, height, z2, stackToPlace, tile.getWorldObj()))
-					return false;
+				fill(x1, height, z1, x2, height, z2, template);
 
 				dimX += stepDiagX;
 				dimZ += stepDiagZ;
@@ -187,6 +196,6 @@ public class PatternStairs extends FillerPattern {
 			}
 		}
 
-		return true;
+		return template;
 	}
 }

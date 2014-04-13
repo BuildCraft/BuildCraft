@@ -17,4 +17,8 @@ public class BuilderProxy {
 	public void registerClientHook() {
 
 	}
+
+	public void registerBlockRenderers () {
+
+	}
 }

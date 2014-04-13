@@ -8,11 +8,13 @@
  */
 package buildcraft.transport.triggers;
 
+import java.util.Locale;
+
+import buildcraft.api.gates.IAction;
+import buildcraft.api.transport.PipeWire;
 import buildcraft.core.triggers.ActionTriggerIconProvider;
 import buildcraft.core.triggers.BCAction;
-import buildcraft.api.transport.PipeWire;
 import buildcraft.core.utils.StringUtils;
-import java.util.Locale;
 
 public class ActionSignalOutput extends BCAction {
 
@@ -42,5 +44,10 @@ public class ActionSignalOutput extends BCAction {
 			default:
 				return ActionTriggerIconProvider.Trigger_PipeSignal_Yellow_Active;
 		}
+	}
+
+	@Override
+	public IAction rotateLeft() {
+		return this;
 	}
 }

@@ -111,6 +111,18 @@ public class PipeIconProvider implements IIconProvider {
 		PipePowerIronM64("pipePowerIronM64"),
 		PipePowerIronM128("pipePowerIronM128"),
 		//
+		PipePowerHeat0("pipePowerHeat0"),
+		PipePowerHeat1("pipePowerHeat1"),
+		PipePowerHeat2("pipePowerHeat2"),
+		PipePowerHeat3("pipePowerHeat3"),
+		PipePowerHeat4("pipePowerHeat4"),
+		PipePowerHeat5("pipePowerHeat5"),
+		PipePowerHeat6("pipePowerHeat6"),
+		PipePowerHeat7("pipePowerHeat7"),
+		PipePowerHeat8("pipePowerHeat8"),
+		//
+		PipeRobotStation("pipeRobotStation"),
+		//
 		Power_Normal("texture_cyan"),
 		Power_Overload("texture_red_lit"),
 		Stripes("pipeStripes"),
@@ -142,8 +154,9 @@ public class PipeIconProvider implements IIconProvider {
 	@Override
 	@SideOnly(Side.CLIENT)
 	public IIcon getIcon(int pipeIconIndex) {
-		if (pipeIconIndex == -1)
+		if (pipeIconIndex == -1) {
 			return null;
+		}
 		return TYPE.VALUES[pipeIconIndex].icon;
 	}
 

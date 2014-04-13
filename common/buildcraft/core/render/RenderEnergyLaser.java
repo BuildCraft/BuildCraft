@@ -8,8 +8,6 @@
  */
 package buildcraft.core.render;
 
-import buildcraft.core.EntityEnergyLaser;
-import buildcraft.core.EntityLaser;
 import net.minecraft.client.model.ModelRenderer;
 
 public class RenderEnergyLaser extends RenderLaser {
@@ -23,23 +21,6 @@ public class RenderEnergyLaser extends RenderLaser {
 			box[i].rotationPointX = 0;
 			box[i].rotationPointY = 0;
 			box[i].rotationPointZ = 0;
-		}
-	}
-
-	@Override
-	protected ModelRenderer getBox(EntityLaser laser) {
-		EntityEnergyLaser eLaser = (EntityEnergyLaser) laser;
-
-		return box[eLaser.displayStage / 10];
-	}
-
-	@Override
-	protected void iterate(EntityLaser laser) {
-		EntityEnergyLaser eLaser = (EntityEnergyLaser) laser;
-
-		eLaser.displayStage = eLaser.displayStage + 1;
-		if (eLaser.displayStage >= box.length * 10) {
-			eLaser.displayStage = 0;
 		}
 	}
 }

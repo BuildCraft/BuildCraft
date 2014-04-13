@@ -8,9 +8,8 @@
  */
 package buildcraft.builders.filler.pattern;
 
-import buildcraft.api.core.IBox;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
+import buildcraft.core.Box;
+import buildcraft.core.blueprints.Template;
 
 public class PatternHorizon extends FillerPattern {
 
@@ -19,17 +18,23 @@ public class PatternHorizon extends FillerPattern {
 	}
 
 	@Override
-	public boolean iteratePattern(TileEntity tile, IBox box, ItemStack stackToPlace) {
-		int xMin = (int) box.pMin().x;
-		int yMin = (int) box.pMin().y;
-		int zMin = (int) box.pMin().z;
+	public Template getTemplate(Box box) {
+		/*
+		int xMin = 0;
+		int yMin = 0;
+		int zMin = 0;
 
-		int xMax = (int) box.pMax().x;
-		int zMax = (int) box.pMax().z;
+		int xMax = box.sizeX() - 1;
+		int zMax = box.sizeZ() - 1;
 
-		if (stackToPlace != null && flatten(xMin, 1, zMin, xMax, yMin - 1, zMax, tile.getWorldObj(), stackToPlace)) {
-			return false;
-		}
-		return !empty(xMin, yMin, zMin, xMax, tile.getWorldObj().getActualHeight(), zMax, tile.getWorldObj());
+		Template template = new Template ();
+
+		flatten(xMin, 1, zMin, xMax, yMin - 1, zMax, template);
+		empty(xMin, yMin, zMin, xMax, 128, template);*/
+
+		// FIXME: This one still needs to be fixed, taking into account
+		// world specific data somehow
+
+		return new Template (0, 0, 0);
 	}
 }

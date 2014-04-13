@@ -8,21 +8,19 @@
  */
 package buildcraft.factory;
 
-import buildcraft.BuildCraftFactory;
-import buildcraft.core.BlockBuildCraft;
-import buildcraft.core.GuiIds;
-import buildcraft.core.IItemPipe;
-import buildcraft.core.proxy.CoreProxy;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import java.util.ArrayList;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
+import buildcraft.BuildCraftFactory;
+import buildcraft.core.BlockBuildCraft;
+import buildcraft.core.CreativeTabBuildCraft;
+import buildcraft.core.GuiIds;
+import buildcraft.core.IItemPipe;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class BlockAutoWorkbench extends BlockBuildCraft {
 
@@ -30,16 +28,17 @@ public class BlockAutoWorkbench extends BlockBuildCraft {
 	IIcon sideTexture;
 
 	public BlockAutoWorkbench() {
-		super(Material.wood);
+		super(Material.wood, CreativeTabBuildCraft.TIER_1);
 		setHardness(3.0F);
 	}
 
 	@Override
 	public IIcon getIcon(int i, int j) {
-		if (i == 1 || i == 0)
+		if (i == 1 || i == 0) {
 			return topTexture;
-		else
+		} else {
 			return sideTexture;
+		}
 	}
 
 	@Override
@@ -47,12 +46,14 @@ public class BlockAutoWorkbench extends BlockBuildCraft {
 		super.onBlockActivated(world, i, j, k, entityplayer, par6, par7, par8, par9);
 
 		// Drop through if the player is sneaking
-		if (entityplayer.isSneaking())
+		if (entityplayer.isSneaking()) {
 			return false;
+		}
 
 		if (entityplayer.getCurrentEquippedItem() != null) {
-			if (entityplayer.getCurrentEquippedItem().getItem() instanceof IItemPipe)
+			if (entityplayer.getCurrentEquippedItem().getItem() instanceof IItemPipe) {
 				return false;
+			}
 		}
 
 		if (!world.isRemote) {

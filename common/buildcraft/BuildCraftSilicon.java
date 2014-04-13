@@ -8,32 +8,38 @@
  */
 package buildcraft;
 
-import buildcraft.api.bptblocks.BptBlockInventory;
-import buildcraft.api.bptblocks.BptBlockRotateMeta;
+import java.util.ArrayList;
+import java.util.EnumSet;
+import java.util.List;
+
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
+import net.minecraft.item.ItemStack;
+import buildcraft.api.blueprints.SchematicRegistry;
 import buildcraft.api.recipes.BuildcraftRecipes;
 import buildcraft.api.transport.PipeWire;
+import buildcraft.builders.schematics.SchematicRotateMeta;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.InterModComms;
-import buildcraft.silicon.ItemRedstoneChipset;
-import buildcraft.silicon.ItemRedstoneChipset.Chipset;
 import buildcraft.core.Version;
-import buildcraft.core.network.PacketHandler;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.silicon.BlockLaser;
 import buildcraft.silicon.BlockLaserTable;
 import buildcraft.silicon.GuiHandler;
 import buildcraft.silicon.ItemLaserTable;
+import buildcraft.silicon.ItemRedstoneChipset;
+import buildcraft.silicon.ItemRedstoneChipset.Chipset;
 import buildcraft.silicon.SiliconProxy;
 import buildcraft.silicon.TileAdvancedCraftingTable;
 import buildcraft.silicon.TileAssemblyTable;
 import buildcraft.silicon.TileIntegrationTable;
 import buildcraft.silicon.TileLaser;
 import buildcraft.silicon.network.PacketHandlerSilicon;
-import buildcraft.transport.gates.GateDefinition.GateMaterial;
-import buildcraft.transport.gates.GateExpansionPulsar;
 import buildcraft.silicon.recipes.GateExpansionRecipe;
 import buildcraft.silicon.recipes.GateLogicSwapRecipe;
 import buildcraft.transport.gates.GateDefinition.GateLogic;
+import buildcraft.transport.gates.GateDefinition.GateMaterial;
+import buildcraft.transport.gates.GateExpansionPulsar;
 import buildcraft.transport.gates.GateExpansionRedstoneFader;
 import buildcraft.transport.gates.GateExpansionTimer;
 import buildcraft.transport.gates.ItemGate;
@@ -46,17 +52,6 @@ import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
 
-import java.util.ArrayList;
-import java.util.EnumSet;
-import java.util.List;
-
-import net.minecraft.block.Block;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraftforge.common.config.Property;
-
 @Mod(name = "BuildCraft Silicon", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Silicon", dependencies = DefaultProps.DEPENDENCY_TRANSPORT)
 public class BuildCraftSilicon extends BuildCraftMod {
 
@@ -67,7 +62,7 @@ public class BuildCraftSilicon extends BuildCraftMod {
 	public static BuildCraftSilicon instance;
 
 	@EventHandler
-	public void preInit(FMLPreInitializationEvent evt) {		
+	public void preInit(FMLPreInitializationEvent evt) {
 		BuildCraftCore.mainConfiguration.save();
 
 		laserBlock = new BlockLaser();
@@ -91,15 +86,14 @@ public class BuildCraftSilicon extends BuildCraftMod {
 	public void init(FMLInitializationEvent evt) {
 		channels = NetworkRegistry.INSTANCE.newChannel
 				(DefaultProps.NET_CHANNEL_NAME + "-SILICON", new PacketHandlerSilicon());
-		
+
 		NetworkRegistry.INSTANCE.registerGuiHandler(instance, new GuiHandler());
 		CoreProxy.proxy.registerTileEntity(TileLaser.class, "net.minecraft.src.buildcraft.factory.TileLaser");
 		CoreProxy.proxy.registerTileEntity(TileAssemblyTable.class, "net.minecraft.src.buildcraft.factory.TileAssemblyTable");
 		CoreProxy.proxy.registerTileEntity(TileAdvancedCraftingTable.class, "net.minecraft.src.buildcraft.factory.TileAssemblyAdvancedWorkbench");
 		CoreProxy.proxy.registerTileEntity(TileIntegrationTable.class, "net.minecraft.src.buildcraft.factory.TileIntegrationTable");
 
-		//new BptBlockRotateMeta(laserBlock.blockID, new int[]{2, 5, 3, 4}, true);
-		//new BptBlockInventory(assemblyTableBlock.blockID);
+		SchematicRegistry.registerSchematicBlock(laserBlock, SchematicRotateMeta.class, new int[]{2, 5, 3, 4}, true);
 
 		if (BuildCraftCore.loadDefaultRecipes) {
 			loadRecipes();
@@ -161,7 +155,7 @@ public class BuildCraftSilicon extends BuildCraftMod {
 		BuildcraftRecipes.assemblyTable.addRecipe(60000, Chipset.QUARTZ.getStack(), Items.redstone, Items.quartz);
 		BuildcraftRecipes.assemblyTable.addRecipe(60000, Chipset.COMP.getStack(), Items.redstone, Items.comparator);
 
-		// GATES		
+		// GATES
 		BuildcraftRecipes.assemblyTable.addRecipe(10000, ItemGate.makeGateItem(GateMaterial.REDSTONE, GateLogic.AND), Chipset.RED.getStack(), PipeWire.RED.getStack());
 
 		addGateRecipe(20000, GateMaterial.IRON, Chipset.IRON, PipeWire.RED, PipeWire.BLUE);

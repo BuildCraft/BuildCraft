@@ -8,23 +8,22 @@
  */
 package buildcraft.core;
 
-import buildcraft.core.utils.StringUtils;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class ItemBuildCraft extends Item {
 
 	private String iconName;
 	private boolean passSneakClick = false;
 
-	public ItemBuildCraft() {
+	public ItemBuildCraft(CreativeTabBuildCraft creativeTab) {
 		super();
-		setCreativeTab(CreativeTabBuildCraft.MACHINES.get());
+
+		setCreativeTab(creativeTab.get());
 	}
 
 	@Override

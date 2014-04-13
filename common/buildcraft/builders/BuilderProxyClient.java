@@ -8,12 +8,27 @@
  */
 package buildcraft.builders;
 
-import buildcraft.BuildCraftBuilders;
+import buildcraft.builders.urbanism.RenderBoxProvider;
+import buildcraft.core.render.RenderBlockMultiTexture;
+import cpw.mods.fml.client.registry.ClientRegistry;
+import cpw.mods.fml.client.registry.RenderingRegistry;
 
 public class BuilderProxyClient extends BuilderProxy {
 
-    @Override
+	@Override
 	public void registerClientHook() {
-		BuildCraftBuilders.addHook(new ClientBuilderHook());
+
+	}
+
+	@Override
+	public void registerBlockRenderers() {
+		super.registerBlockRenderers();
+
+		RenderingRegistry.registerBlockHandler(new RenderBlockMultiTexture());
+
+		ClientRegistry.bindTileEntitySpecialRenderer(TileArchitect.class, new RenderBoxProvider());
+		ClientRegistry.bindTileEntitySpecialRenderer(TileFiller.class, new RenderBuilder());
+		ClientRegistry.bindTileEntitySpecialRenderer(TileBuilder.class, new RenderBuilder());
+		ClientRegistry.bindTileEntitySpecialRenderer(TilePathMarker.class, new RenderPathMarker());
 	}
 }

@@ -11,11 +11,19 @@ package buildcraft.api.core;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
+import buildcraft.core.network.NetworkData;
 
 public class Position {
 
+	@NetworkData
 	public double x, y, z;
+
+	@NetworkData
 	public ForgeDirection orientation;
+
+	public Position() {
+
+	}
 
 	public Position(double ci, double cj, double ck) {
 		x = ci;
@@ -39,11 +47,7 @@ public class Position {
 	}
 
 	public Position(NBTTagCompound nbttagcompound) {
-		x = nbttagcompound.getDouble("i");
-		y = nbttagcompound.getDouble("j");
-		z = nbttagcompound.getDouble("k");
-
-		orientation = ForgeDirection.UNKNOWN;
+		readFromNBT(nbttagcompound);
 	}
 
 	public Position(TileEntity tile) {
@@ -125,6 +129,12 @@ public class Position {
 		nbttagcompound.setDouble("k", z);
 	}
 
+	public void readFromNBT(NBTTagCompound nbttagcompound) {
+		x = nbttagcompound.getDouble("i");
+		y = nbttagcompound.getDouble("j");
+		z = nbttagcompound.getDouble("k");
+	}
+
 	@Override
 	public String toString() {
 		return "{" + x + ", " + y + ", " + z + "}";
@@ -136,6 +146,20 @@ public class Position {
 
 	public Position max(Position p) {
 		return new Position(p.x < x ? x : p.x, p.y < y ? y : p.y, p.z < z ? z : p.z);
+	}
+
+	public boolean isClose(Position newPosition, float f) {
+		double dx = x - newPosition.x;
+		double dy = y - newPosition.y;
+		double dz = z - newPosition.z;
+
+		double sqrDis = dx * dx + dy * dy + dz * dz;
+
+		if (sqrDis > f * f) {
+			return false;
+		} else {
+			return true;
+		}
 	}
 
 }

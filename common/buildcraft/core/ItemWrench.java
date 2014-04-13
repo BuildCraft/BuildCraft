@@ -8,9 +8,9 @@
  */
 package buildcraft.core;
 
-import buildcraft.api.tools.IToolWrench;
 import java.util.HashSet;
 import java.util.Set;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockButton;
 import net.minecraft.block.BlockChest;
@@ -19,13 +19,15 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
+import buildcraft.api.tools.IToolWrench;
 
 public class ItemWrench extends ItemBuildCraft implements IToolWrench {
 
 	private final Set<Class<? extends Block>> shiftRotations = new HashSet<Class<? extends Block>>();
 
 	public ItemWrench() {
-		super();
+		super(CreativeTabBuildCraft.TIER_1);
+
 		setFull3D();
 		setMaxStackSize(1);
 		shiftRotations.add(BlockLever.class);
@@ -44,7 +46,7 @@ public class ItemWrench extends ItemBuildCraft implements IToolWrench {
 	@Override
 	public boolean onItemUseFirst(ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int side, float hitX, float hitY, float hitZ) {
 		Block block = world.getBlock(x, y, z);
-		
+
 		if(block == null)
 			return false;
 
