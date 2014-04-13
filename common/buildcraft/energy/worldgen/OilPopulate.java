@@ -19,6 +19,7 @@ import java.util.Set;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFlower;
+import net.minecraft.block.BlockStaticLiquid;
 import net.minecraft.block.material.Material;
 import net.minecraft.init.Blocks;
 import net.minecraft.world.World;
@@ -260,7 +261,7 @@ public class OilPopulate {
 
 	private boolean isReplaceableFluid(World world, int x, int y, int z) {
 		Block block = world.getBlock(x, y, z);
-		return (block instanceof BlockFluidBase || block instanceof IFluidBlock) && block.getMaterial() != Material.lava;
+		return (block instanceof BlockStaticLiquid || block instanceof BlockFluidBase || block instanceof IFluidBlock) && block.getMaterial() != Material.lava;
 	}
 
 	private boolean isOil(World world, int x, int y, int z) {
@@ -355,6 +356,10 @@ public class OilPopulate {
 
 			if (block == null) {
 				continue;
+			}
+
+			if (block instanceof BlockStaticLiquid) {
+				return y;
 			}
 
 			if (block instanceof BlockFluidBase) {
