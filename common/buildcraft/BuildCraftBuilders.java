@@ -24,6 +24,9 @@ import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
+import buildcraft.api.blueprints.SchematicBlock;
+import buildcraft.api.blueprints.SchematicFactory;
+import buildcraft.api.blueprints.SchematicFactoryBlock;
 import buildcraft.api.blueprints.SchematicRegistry;
 import buildcraft.api.filler.FillerManager;
 import buildcraft.api.filler.IFillerPattern;
@@ -280,6 +283,10 @@ public class BuildCraftBuilders extends BuildCraftMod {
 
 		SchematicRegistry.registerSchematicBlock(markerBlock, SchematicWallSide.class);
 		SchematicRegistry.registerSchematicBlock(pathMarkerBlock, SchematicWallSide.class);
+
+		// Factories required to save entities in world
+
+		SchematicFactory.registerSchematicFactory(SchematicBlock.class, new SchematicFactoryBlock());
 
 		if (BuildCraftCore.loadDefaultRecipes) {
 			loadRecipes();

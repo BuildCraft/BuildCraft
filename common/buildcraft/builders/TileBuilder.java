@@ -477,7 +477,9 @@ public class TileBuilder extends TileAbstractBuilder implements IMachine {
 			NBTTagCompound builderCpt = new NBTTagCompound();
 			bluePrintBuilder.saveBuildStateToNBT(builderCpt);
 			nbttagcompound.setTag("builderState", builderCpt);
+		}
 
+		if (currentPathIterator != null) {
 			NBTTagCompound iteratorNBT = new NBTTagCompound();
 			currentPathIterator.to.writeTo(iteratorNBT);
 			nbttagcompound.setTag ("iterator", iteratorNBT);

@@ -82,7 +82,6 @@ public class SchematicRegistry {
 	}
 
 	public static SchematicEntity newSchematicEntity (Class <? extends Entity> entityClass) {
-
 		if (!schematicEntities.containsKey(entityClass)) {
 			return null;
 		}
@@ -106,4 +105,5 @@ public class SchematicRegistry {
 
 		return null;
 	}
+
 }

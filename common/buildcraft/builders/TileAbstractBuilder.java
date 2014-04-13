@@ -13,6 +13,7 @@ import java.util.LinkedList;
 
 import net.minecraft.inventory.IInventory;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.mj.MjBattery;
 import buildcraft.core.IBoxProvider;
@@ -22,6 +23,7 @@ import buildcraft.core.network.NetworkData;
 import buildcraft.core.network.RPC;
 import buildcraft.core.network.RPCHandler;
 import buildcraft.core.network.RPCSide;
+import buildcraft.core.utils.Utils;
 
 public abstract class TileAbstractBuilder extends TileBuildCraft implements IInventory, IBoxProvider {
 
@@ -90,6 +92,16 @@ public abstract class TileAbstractBuilder extends TileBuildCraft implements IInv
 		super.readFromNBT(nbttagcompound);
 
 		mjStored = nbttagcompound.getDouble("mjStored");
+
+		NBTTagList buildingList = new NBTTagList();
+
+		for (BuildingItem item : buildersInAction) {
+			NBTTagCompound sub = new NBTTagCompound();
+			item.writeToNBT(sub);
+			buildingList.appendTag(sub);
+		}
+
+		nbttagcompound.setTag("buildersInAction", buildingList);
 	}
 
 	@Override
@@ -97,5 +109,15 @@ public abstract class TileAbstractBuilder extends TileBuildCraft implements IInv
 		super.writeToNBT(nbttagcompound);
 
 		nbttagcompound.setDouble("mjStored", mjStored);
+
+		NBTTagList buildingList = nbttagcompound
+				.getTagList("buildersInAction",
+						Utils.NBTTag_Types.NBTTagCompound.ordinal());
+
+		for (int i = 0; i < buildingList.tagCount(); ++i) {
+			BuildingItem item = new BuildingItem();
+			item.readFromNBT(buildingList.getCompoundTagAt(i));
+			addBuildingItem(item);
+		}
 	}
 }
