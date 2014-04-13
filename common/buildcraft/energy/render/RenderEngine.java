@@ -10,10 +10,8 @@ package buildcraft.energy.render;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftCore.RenderMode;
-import buildcraft.core.DefaultProps;
 import buildcraft.core.IInventoryRenderer;
 import buildcraft.energy.TileEngine;
-import buildcraft.energy.TileEngine.EnergyStage;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
@@ -21,29 +19,12 @@ import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.util.ForgeDirection;
-import static net.minecraftforge.common.util.ForgeDirection.DOWN;
-import static net.minecraftforge.common.util.ForgeDirection.EAST;
-import static net.minecraftforge.common.util.ForgeDirection.NORTH;
-import static net.minecraftforge.common.util.ForgeDirection.SOUTH;
-import static net.minecraftforge.common.util.ForgeDirection.UP;
-import static net.minecraftforge.common.util.ForgeDirection.WEST;
-
 import org.lwjgl.opengl.GL11;
+
+import static net.minecraftforge.common.util.ForgeDirection.*;
 
 public class RenderEngine extends TileEntitySpecialRenderer implements IInventoryRenderer {
 
-	private static final ResourceLocation CHAMBER_TEXTURE = new ResourceLocation(DefaultProps.TEXTURE_PATH_BLOCKS + "/chamber.png");
-	private static final ResourceLocation TRUNK_BLUE_TEXTURE = new ResourceLocation(DefaultProps.TEXTURE_PATH_BLOCKS + "/trunk_blue.png");
-	private static final ResourceLocation TRUNK_GREEN_TEXTURE = new ResourceLocation(DefaultProps.TEXTURE_PATH_BLOCKS + "/trunk_green.png");
-	private static final ResourceLocation TRUNK_YELLOW_TEXTURE = new ResourceLocation(DefaultProps.TEXTURE_PATH_BLOCKS + "/trunk_yellow.png");
-	private static final ResourceLocation TRUNK_RED_TEXTURE = new ResourceLocation(DefaultProps.TEXTURE_PATH_BLOCKS + "/trunk_red.png");
-	private ModelBase model = new ModelBase() {
-	};
-	private ModelRenderer box;
-	private ModelRenderer trunk;
-	private ModelRenderer movingBox;
-	private ModelRenderer chamber;
-	private ResourceLocation baseTexture;
 	private static final float[] angleMap = new float[6];
 
 	static {
@@ -55,9 +36,19 @@ public class RenderEngine extends TileEntitySpecialRenderer implements IInventor
 		angleMap[NORTH.ordinal()] = (float) -Math.PI / 2;
 	}
 
-	public RenderEngine() {
+	private ModelBase model = new ModelBase() {
+	};
 
-		// constructor:
+	private ModelRenderer box;
+	private ModelRenderer trunk;
+	private ModelRenderer movingBox;
+	private ModelRenderer chamber;
+
+	private ResourceLocation baseTexture;
+	private ResourceLocation chamberTexture;
+	private ResourceLocation trunkTexture;
+
+	public RenderEngine() {
 		box = new ModelRenderer(model, 0, 1);
 		box.addBox(-8F, -8F, -8F, 16, 4, 16);
 		box.rotationPointX = 8;
@@ -83,15 +74,17 @@ public class RenderEngine extends TileEntitySpecialRenderer implements IInventor
 		chamber.rotationPointZ = 8F;
 	}
 
-	public RenderEngine(ResourceLocation baseTexture) {
+	public RenderEngine(ResourceLocation baseTexture, ResourceLocation chamberTexture, ResourceLocation trunkTexture) {
 		this();
 		this.baseTexture = baseTexture;
+		this.chamberTexture = chamberTexture;
+		this.trunkTexture = trunkTexture;
 		field_147501_a = TileEntityRendererDispatcher.instance;
 	}
 
 	@Override
 	public void inventoryRender(double x, double y, double z, float f, float f1) {
-		render(EnergyStage.BLUE, 0.25F, ForgeDirection.UP, baseTexture, x, y, z);
+		render(0.25F, ForgeDirection.UP, baseTexture, chamberTexture, trunkTexture, x, y, z);
 	}
 
 	@Override
@@ -100,11 +93,11 @@ public class RenderEngine extends TileEntitySpecialRenderer implements IInventor
 		TileEngine engine = ((TileEngine) tileentity);
 
 		if (engine != null) {
-			render(engine.getEnergyStage(), engine.progress, engine.orientation, engine.getTextureFile(), x, y, z);
+			render(engine.progress, engine.orientation, engine.getBaseTexture(), engine.getChamberTexture(), engine.getTrunkTexture(engine.getEnergyStage()), x, y, z);
 		}
 	}
 
-	private void render(EnergyStage energy, float progress, ForgeDirection orientation, ResourceLocation baseTexture, double x, double y, double z) {
+	private void render(float progress, ForgeDirection orientation, ResourceLocation baseTexture, ResourceLocation chamberTexture, ResourceLocation trunkTexture, double x, double y, double z) {
 
 		if (BuildCraftCore.render == RenderMode.NoDynamic) {
 			return;
@@ -171,7 +164,7 @@ public class RenderEngine extends TileEntitySpecialRenderer implements IInventor
 		movingBox.render(factor);
 		GL11.glTranslatef(-translate[0] * translatefact, -translate[1] * translatefact, -translate[2] * translatefact);
 
-		bindTexture(CHAMBER_TEXTURE);
+		bindTexture(chamberTexture);
 
 		float chamberf = 2F / 16F;
 
@@ -184,24 +177,7 @@ public class RenderEngine extends TileEntitySpecialRenderer implements IInventor
 			GL11.glTranslatef(-translate[0] * chamberf, -translate[1] * chamberf, -translate[2] * chamberf);
 		}
 
-		ResourceLocation texture;
-
-		switch (energy) {
-			case BLUE:
-				texture = TRUNK_BLUE_TEXTURE;
-				break;
-			case GREEN:
-				texture = TRUNK_GREEN_TEXTURE;
-				break;
-			case YELLOW:
-				texture = TRUNK_YELLOW_TEXTURE;
-				break;
-			default:
-				texture = TRUNK_RED_TEXTURE;
-				break;
-		}
-
-		bindTexture(texture);
+		bindTexture(trunkTexture);
 
 		trunk.render(factor);
 

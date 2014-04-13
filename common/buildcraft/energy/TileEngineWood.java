@@ -9,18 +9,22 @@
 package buildcraft.energy;
 
 import buildcraft.api.power.PowerHandler;
+import buildcraft.api.transport.IPipeTile.PipeType;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.util.ForgeDirection;
-import buildcraft.api.transport.IPipeTile.PipeType;
-import buildcraft.core.proxy.CoreProxy;
 
 public class TileEngineWood extends TileEngine {
 
 	public static final float OUTPUT = 0.05F;
 
 	@Override
-	public ResourceLocation getTextureFile() {
-		return WOOD_TEXTURE;
+	public ResourceLocation getBaseTexture() {
+		return BASE_TEXTURES[0];
+	}
+
+	@Override
+	public ResourceLocation getChamberTexture() {
+		return CHAMBER_TEXTURES[0];
 	}
 
 	@Override

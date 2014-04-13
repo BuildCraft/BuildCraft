@@ -8,14 +8,13 @@
  */
 package buildcraft.energy;
 
-import buildcraft.BuildCraftEnergy;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 
 /**
  * This class is just intended to update pre 4.0 engines to the design.
- *
+ * <p/>
  * It can be deleted someday.
  */
 public class TileEngineLegacy extends TileEngine {
@@ -42,8 +41,13 @@ public class TileEngineLegacy extends TileEngine {
 	}
 
 	@Override
-	public ResourceLocation getTextureFile() {
-		return WOOD_TEXTURE;
+	public ResourceLocation getBaseTexture() {
+		return BASE_TEXTURES[0];
+	}
+
+	@Override
+	public ResourceLocation getChamberTexture() {
+		return CHAMBER_TEXTURES[0];
 	}
 
 	@Override

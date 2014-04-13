@@ -8,8 +8,13 @@
  */
 package buildcraft.energy;
 
-import java.util.LinkedList;
-
+import buildcraft.BuildCraftCore;
+import buildcraft.BuildCraftEnergy;
+import buildcraft.api.gates.ITrigger;
+import buildcraft.core.GuiIds;
+import buildcraft.core.inventory.InvUtils;
+import buildcraft.core.utils.MathUtils;
+import buildcraft.energy.gui.ContainerEngine;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ICrafting;
 import net.minecraft.item.ItemStack;
@@ -17,14 +22,8 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntityFurnace;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.util.ForgeDirection;
-import buildcraft.BuildCraftCore;
-import buildcraft.BuildCraftEnergy;
-import buildcraft.api.gates.ITrigger;
-import buildcraft.core.GuiIds;
-import buildcraft.core.inventory.InvUtils;
-import buildcraft.core.proxy.CoreProxy;
-import buildcraft.core.utils.MathUtils;
-import buildcraft.energy.gui.ContainerEngine;
+
+import java.util.LinkedList;
 
 public class TileEngineStone extends TileEngineWithInventory {
 
@@ -43,16 +42,21 @@ public class TileEngineStone extends TileEngineWithInventory {
 	}
 
 	@Override
+	public ResourceLocation getBaseTexture() {
+		return BASE_TEXTURES[1];
+	}
+
+	@Override
+	public ResourceLocation getChamberTexture() {
+		return CHAMBER_TEXTURES[1];
+	}
+
+	@Override
 	public boolean onBlockActivated(EntityPlayer player, ForgeDirection side) {
 		if (!worldObj.isRemote) {
 			player.openGui(BuildCraftEnergy.instance, GuiIds.ENGINE_STONE, worldObj, xCoord, yCoord, zCoord);
 		}
 		return true;
-	}
-
-	@Override
-	public ResourceLocation getTextureFile() {
-		return STONE_TEXTURE;
 	}
 
 	@Override

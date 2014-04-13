@@ -180,6 +180,7 @@ tile.blockFuel.name=Fuel
 tile.blockHopper.name=Chute
 tile.blockOil.name=Oil
 tile.builderBlock.name=Builder
+tile.engineCreative.name=Creative Engine
 tile.engineIron.name=Combustion Engine
 tile.engineStone.name=Stirling Engine
 tile.engineWood.name=Redstone Engine
