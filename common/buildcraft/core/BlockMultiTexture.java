@@ -1,20 +1,26 @@
+/**
+ * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
+ * http://www.mod-buildcraft.com
+ *
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
+ * License 1.0, or MMPL. Please check the contents of the license located in
+ * http://www.mod-buildcraft.com/MMPL-1.0.txt
+ */
 package buildcraft.core;
 
-import buildcraft.core.render.IconFlipped;
-import buildcraft.core.render.RenderBlockMultiTexture;
+import java.util.HashMap;
+import java.util.Map;
+
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.common.util.ForgeDirection;
-
-import java.util.HashMap;
-import java.util.Map;
+import buildcraft.core.render.IconFlipped;
+import buildcraft.core.render.RenderBlockMultiTexture;
 
 /**
  * This whole class may need tweaking
- *
- * @author dmillerw
  */
 public abstract class BlockMultiTexture extends BlockBuildCraft {
 
