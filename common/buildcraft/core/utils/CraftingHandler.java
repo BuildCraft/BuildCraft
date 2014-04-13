@@ -77,7 +77,7 @@ public class CraftingHandler {
             		Event.player.addStat(BuildCraftCore.templateAchievement, 1);
         	}
         	if (Event.crafting.getItem().equals(Item.getItemFromBlock(BuildCraftBuilders.libraryBlock))){
-            		Event.player.addStat(BuildCraftCore.blueprintLibraryAchievement, 1);
+            		Event.player.addStat(BuildCraftCore.libraryAchievement, 1);
         	}
 	}
 
