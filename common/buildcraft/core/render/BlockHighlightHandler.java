@@ -10,9 +10,12 @@ import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.block.Block;
 import net.minecraft.util.Vec3;
 import org.lwjgl.opengl.GL11;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class BlockHighlightHandler{
 
+	@SideOnly(Side.CLIENT)
 	@SubscribeEvent
 	public void handleBlockHighlight(DrawBlockHighlightEvent e){
 		if (e.target.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK){
