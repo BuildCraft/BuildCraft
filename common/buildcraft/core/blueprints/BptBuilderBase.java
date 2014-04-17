@@ -154,7 +154,7 @@ public abstract class BptBuilderBase implements IAreaProvider {
 		}
 	}
 
-	public void saveBuildStateToNBT (NBTTagCompound nbt) {
+	public void saveBuildStateToNBT (NBTTagCompound nbt, TileAbstractBuilder builder) {
 		NBTTagList clearList = new NBTTagList();
 
 		for (BlockIndex loc : clearedLocations) {
@@ -174,9 +174,19 @@ public abstract class BptBuilderBase implements IAreaProvider {
 		}
 
 		nbt.setTag("builtList", builtList);
+
+		NBTTagList buildingList = new NBTTagList();
+
+		for (BuildingItem item : builder.buildersInAction) {
+			NBTTagCompound sub = new NBTTagCompound();
+			item.writeToNBT(sub);
+			buildingList.appendTag(sub);
+		}
+
+		nbt.setTag("buildersInAction", buildingList);
 	}
 
-	public void loadBuildStateToNBT (NBTTagCompound nbt) {
+	public void loadBuildStateToNBT (NBTTagCompound nbt, TileAbstractBuilder builder) {
 		NBTTagList clearList = nbt.getTagList("clearList", Utils.NBTTag_Types.NBTTagCompound.ordinal());
 
 		for (int i = 0; i < clearList.tagCount(); ++i) {
@@ -191,6 +201,17 @@ public abstract class BptBuilderBase implements IAreaProvider {
 			NBTTagCompound cpt = builtList.getCompoundTagAt(i);
 
 			builtLocations.add (new BlockIndex(cpt));
+		}
+
+		NBTTagList buildingList = nbt
+				.getTagList("buildersInAction",
+						Utils.NBTTag_Types.NBTTagCompound.ordinal());
+
+		for (int i = 0; i < buildingList.tagCount(); ++i) {
+			BuildingItem item = new BuildingItem();
+			item.readFromNBT(buildingList.getCompoundTagAt(i));
+			item.context = getContext();
+			builder.buildersInAction.add(item);
 		}
 	}
 }
