@@ -66,6 +66,7 @@ import buildcraft.builders.filler.pattern.PatternHorizon;
 import buildcraft.builders.filler.pattern.PatternPyramid;
 import buildcraft.builders.filler.pattern.PatternStairs;
 import buildcraft.builders.schematics.SchematicBed;
+import buildcraft.builders.schematics.SchematicCactus;
 import buildcraft.builders.schematics.SchematicCustomStack;
 import buildcraft.builders.schematics.SchematicDirt;
 import buildcraft.builders.schematics.SchematicDoor;
@@ -171,6 +172,8 @@ public class BuildCraftBuilders extends BuildCraftMod {
 		SchematicRegistry.registerSchematicBlock(Blocks.dirt, SchematicDirt.class);
 		SchematicRegistry.registerSchematicBlock(Blocks.grass, SchematicDirt.class);
 
+		SchematicRegistry.registerSchematicBlock(Blocks.cactus, SchematicCactus.class);
+
 		SchematicRegistry.registerSchematicBlock(Blocks.farmland, SchematicFarmland.class);
 		SchematicRegistry.registerSchematicBlock(Blocks.wheat, SchematicSeeds.class, Items.wheat_seeds);
 		SchematicRegistry.registerSchematicBlock(Blocks.pumpkin_stem, SchematicSeeds.class, Items.pumpkin_seeds);
@@ -229,8 +232,6 @@ public class BuildCraftBuilders extends BuildCraftMod {
 		SchematicRegistry.registerSchematicBlock(Blocks.lava, SchematicFluid.class, new ItemStack(Items.lava_bucket));
 		SchematicRegistry.registerSchematicBlock(Blocks.flowing_lava, SchematicFluid.class, new ItemStack(Items.lava_bucket));
 
-		SchematicRegistry.registerSchematicBlock(Blocks.rail, SchematicIgnoreMeta.class);
-		SchematicRegistry.registerSchematicBlock(Blocks.detector_rail, SchematicIgnoreMeta.class);
 		SchematicRegistry.registerSchematicBlock(Blocks.glass_pane, SchematicIgnoreMeta.class);
 
 		SchematicRegistry.registerSchematicBlock(Blocks.piston, SchematicPiston.class);
