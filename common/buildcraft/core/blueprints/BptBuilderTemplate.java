@@ -32,25 +32,29 @@ public class BptBuilderTemplate extends BptBuilderBase {
 
 	@Override
 	protected void initialize () {
-		for (int j = blueprint.sizeY - 1; j >= 0; --j) {
-			for (int i = 0; i < blueprint.sizeX; ++i) {
-				for (int k = 0; k < blueprint.sizeZ; ++k) {
-					int xCoord = i + x - blueprint.anchorX;
-					int yCoord = j + y - blueprint.anchorY;
-					int zCoord = k + z - blueprint.anchorZ;
+		if (blueprint.excavate) {
+			for (int j = blueprint.sizeY - 1; j >= 0; --j) {
+				for (int i = 0; i < blueprint.sizeX; ++i) {
+					for (int k = 0; k < blueprint.sizeZ; ++k) {
+						int xCoord = i + x - blueprint.anchorX;
+						int yCoord = j + y - blueprint.anchorY;
+						int zCoord = k + z - blueprint.anchorZ;
 
-					SchematicBlockBase slot = blueprint.contents[i][j][k];
+						SchematicBlockBase slot = blueprint.contents[i][j][k];
 
-					if (slot == null && !clearedLocations.contains(new BlockIndex(xCoord, yCoord, zCoord))) {
-						BuildingSlotBlock b = new BuildingSlotBlock();
+						if (slot == null
+								&& !clearedLocations.contains(new BlockIndex(
+										xCoord, yCoord, zCoord))) {
+							BuildingSlotBlock b = new BuildingSlotBlock();
 
-						b.schematic = null;
-						b.x = xCoord;
-						b.y = yCoord;
-						b.z = zCoord;
-						b.mode = Mode.ClearIfInvalid;
+							b.schematic = null;
+							b.x = xCoord;
+							b.y = yCoord;
+							b.z = zCoord;
+							b.mode = Mode.ClearIfInvalid;
 
-						buildList.add(b);
+							buildList.add(b);
+						}
 					}
 				}
 			}

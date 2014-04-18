@@ -34,6 +34,7 @@ public abstract class BlueprintBase {
 	private String version = "";
 	protected MappingRegistry mapping = new MappingRegistry();
 	public boolean rotate = true;
+	public boolean excavate = true;
 
 	private byte [] data;
 
@@ -131,6 +132,7 @@ public abstract class BlueprintBase {
 		nbt.setInteger("anchorY", anchorY);
 		nbt.setInteger("anchorZ", anchorZ);
 		nbt.setBoolean("rotate", rotate);
+		nbt.setBoolean("excavate", excavate);
 
 		if (author != null) {
 			nbt.setString("author", author);
@@ -173,6 +175,12 @@ public abstract class BlueprintBase {
 			rotate = nbt.getBoolean("rotate");
 		} else {
 			rotate = true;
+		}
+
+		if (nbt.hasKey("excavate")) {
+			excavate = nbt.getBoolean("excavate");
+		} else {
+			excavate = true;
 		}
 
 		contents = new SchematicBlockBase [sizeX][sizeY][sizeZ];
