@@ -28,15 +28,18 @@ public class BptBuilderTemplate extends BptBuilderBase {
 
 	public BptBuilderTemplate(BlueprintBase bluePrint, World world, int x, int y, int z) {
 		super(bluePrint, world, x, y, z);
+	}
 
-		for (int j = bluePrint.sizeY - 1; j >= 0; --j) {
-			for (int i = 0; i < bluePrint.sizeX; ++i) {
-				for (int k = 0; k < bluePrint.sizeZ; ++k) {
+	@Override
+	protected void initialize () {
+		for (int j = blueprint.sizeY - 1; j >= 0; --j) {
+			for (int i = 0; i < blueprint.sizeX; ++i) {
+				for (int k = 0; k < blueprint.sizeZ; ++k) {
 					int xCoord = i + x - blueprint.anchorX;
 					int yCoord = j + y - blueprint.anchorY;
 					int zCoord = k + z - blueprint.anchorZ;
 
-					SchematicBlockBase slot = bluePrint.contents[i][j][k];
+					SchematicBlockBase slot = blueprint.contents[i][j][k];
 
 					if (slot == null && !clearedLocations.contains(new BlockIndex(xCoord, yCoord, zCoord))) {
 						BuildingSlotBlock b = new BuildingSlotBlock();
@@ -53,14 +56,14 @@ public class BptBuilderTemplate extends BptBuilderBase {
 			}
 		}
 
-		for (int j = 0; j < bluePrint.sizeY; ++j) {
-			for (int i = 0; i < bluePrint.sizeX; ++i) {
-				for (int k = 0; k < bluePrint.sizeZ; ++k) {
+		for (int j = 0; j < blueprint.sizeY; ++j) {
+			for (int i = 0; i < blueprint.sizeX; ++i) {
+				for (int k = 0; k < blueprint.sizeZ; ++k) {
 					int xCoord = i + x - blueprint.anchorX;
 					int yCoord = j + y - blueprint.anchorY;
 					int zCoord = k + z - blueprint.anchorZ;
 
-					SchematicBlockBase slot = bluePrint.contents[i][j][k];
+					SchematicBlockBase slot = blueprint.contents[i][j][k];
 
 					if (slot != null && !builtLocations.contains(new BlockIndex(xCoord, yCoord, zCoord))) {
 						BuildingSlotBlock b = new BuildingSlotBlock();

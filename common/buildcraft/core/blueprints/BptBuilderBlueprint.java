@@ -47,16 +47,19 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 
 	public BptBuilderBlueprint(Blueprint bluePrint, World world, int x, int y, int z) {
 		super(bluePrint, world, x, y, z);
+	}
 
-		for (int j = bluePrint.sizeY - 1; j >= 0; --j) {
-			for (int i = 0; i < bluePrint.sizeX; ++i) {
-				for (int k = 0; k < bluePrint.sizeZ; ++k) {
+	@Override
+	protected void initialize () {
+		for (int j = blueprint.sizeY - 1; j >= 0; --j) {
+			for (int i = 0; i < blueprint.sizeX; ++i) {
+				for (int k = 0; k < blueprint.sizeZ; ++k) {
 					int xCoord = i + x - blueprint.anchorX;
 					int yCoord = j + y - blueprint.anchorY;
 					int zCoord = k + z - blueprint.anchorZ;
 
 					if (!clearedLocations.contains(new BlockIndex(xCoord, yCoord, zCoord))) {
-						SchematicBlock slot = (SchematicBlock) bluePrint.contents[i][j][k];
+						SchematicBlock slot = (SchematicBlock) blueprint.contents[i][j][k];
 
 						if (slot == null) {
 							slot = new SchematicBlock();
@@ -80,15 +83,15 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 
 		LinkedList<BuildingSlotBlock> tmpBuildList = new LinkedList<BuildingSlotBlock>();
 
-		for (int j = 0; j < bluePrint.sizeY; ++j) {
-			for (int i = 0; i < bluePrint.sizeX; ++i) {
-				for (int k = 0; k < bluePrint.sizeZ; ++k) {
+		for (int j = 0; j < blueprint.sizeY; ++j) {
+			for (int i = 0; i < blueprint.sizeX; ++i) {
+				for (int k = 0; k < blueprint.sizeZ; ++k) {
 					int xCoord = i + x - blueprint.anchorX;
 					int yCoord = j + y - blueprint.anchorY;
 					int zCoord = k + z - blueprint.anchorZ;
 
 
-					SchematicBlock slot = (SchematicBlock) bluePrint.contents[i][j][k];
+					SchematicBlock slot = (SchematicBlock) blueprint.contents[i][j][k];
 
 					if (slot == null) {
 						continue;
@@ -119,7 +122,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 
 		int seqId = 0;
 
-		for (SchematicEntity e : bluePrint.entities) {
+		for (SchematicEntity e : ((Blueprint) blueprint).entities) {
 
 			BuildingSlotEntity b = new BuildingSlotEntity();
 			b.schematic = e;

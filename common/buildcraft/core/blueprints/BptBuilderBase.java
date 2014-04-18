@@ -50,9 +50,18 @@ public abstract class BptBuilderBase implements IAreaProvider {
 		context = bluePrint.getContext(world, box);
 	}
 
+	private boolean initialized = false;
+
+	protected abstract void initialize ();
+
 	public abstract BuildingSlot getNextBlock(World world, TileAbstractBuilder inv);
 
 	public boolean buildNextSlot (World world, TileAbstractBuilder builder, int x, int y, int z) {
+		if (!initialized) {
+			initialize();
+			initialized = true;
+		}
+
 		BuildingSlot slot = getNextBlock(world, builder);
 
 		if (slot != null) {
