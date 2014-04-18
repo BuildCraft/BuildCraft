@@ -197,8 +197,8 @@ public class TileBuilder extends TileAbstractBuilder implements IMachine {
 
 			if (bluePrintBuilder != null) {
 				NBTTagCompound builderCpt = new NBTTagCompound();
-				bluePrintBuilder.loadBuildStateToNBT(initNBT, this);
-				initNBT.setTag("builderState", builderCpt);
+				bluePrintBuilder.loadBuildStateToNBT(
+						initNBT.getCompoundTag("builderState"), this);
 			}
 
 			/*
@@ -469,7 +469,7 @@ public class TileBuilder extends TileAbstractBuilder implements IMachine {
 		done = nbttagcompound.getBoolean("done");
 
 		// The rest of load has to be done upon initialize.
-		initNBT = nbttagcompound;
+		initNBT = (NBTTagCompound) nbttagcompound.getCompoundTag("bptBuilder").copy();
 	}
 
 	@Override
@@ -498,17 +498,21 @@ public class TileBuilder extends TileAbstractBuilder implements IMachine {
 
 		nbttagcompound.setBoolean("done", done);
 
+		NBTTagCompound bptNBT = new NBTTagCompound();
+
 		if (bluePrintBuilder != null) {
 			NBTTagCompound builderCpt = new NBTTagCompound();
 			bluePrintBuilder.saveBuildStateToNBT(builderCpt, this);
-			nbttagcompound.setTag("builderState", builderCpt);
+			bptNBT.setTag("builderState", builderCpt);
 		}
 
 		if (currentPathIterator != null) {
 			NBTTagCompound iteratorNBT = new NBTTagCompound();
 			currentPathIterator.to.writeTo(iteratorNBT);
-			nbttagcompound.setTag ("iterator", iteratorNBT);
+			bptNBT.setTag ("iterator", iteratorNBT);
 		}
+
+		nbttagcompound.setTag("bptBuilder", bptNBT);
 	}
 
 	@Override

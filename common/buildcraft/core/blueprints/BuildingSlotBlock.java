@@ -149,6 +149,6 @@ public class BuildingSlotBlock extends BuildingSlot implements Comparable<Buildi
 		z = nbt.getInteger("z");
 
 		schematic = (SchematicBlockBase) SchematicFactory
-				.createSchematicFromWorldNBT(nbt, registry);
+				.createSchematicFromWorldNBT(nbt.getCompoundTag("schematic"), registry);
 	}
 }
