@@ -71,7 +71,7 @@ public class SchematicBed extends SchematicBlock {
 			break;
 		}
 
-		context.world().setBlock(x2, y, z2, block, meta + 8,1);
+		context.world().setBlock(x2, y, z2, block, meta + 8, 3);
 	}
 
 	@Override
