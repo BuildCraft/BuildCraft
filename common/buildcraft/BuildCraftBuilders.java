@@ -25,8 +25,12 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
 import buildcraft.api.blueprints.SchematicBlock;
+import buildcraft.api.blueprints.SchematicEntity;
 import buildcraft.api.blueprints.SchematicFactory;
 import buildcraft.api.blueprints.SchematicFactoryBlock;
+import buildcraft.api.blueprints.SchematicFactoryEntity;
+import buildcraft.api.blueprints.SchematicFactoryMask;
+import buildcraft.api.blueprints.SchematicMask;
 import buildcraft.api.blueprints.SchematicRegistry;
 import buildcraft.api.filler.FillerManager;
 import buildcraft.api.filler.IFillerPattern;
@@ -287,6 +291,8 @@ public class BuildCraftBuilders extends BuildCraftMod {
 		// Factories required to save entities in world
 
 		SchematicFactory.registerSchematicFactory(SchematicBlock.class, new SchematicFactoryBlock());
+		SchematicFactory.registerSchematicFactory(SchematicMask.class, new SchematicFactoryMask());
+		SchematicFactory.registerSchematicFactory(SchematicEntity.class, new SchematicFactoryEntity());
 
 		if (BuildCraftCore.loadDefaultRecipes) {
 			loadRecipes();

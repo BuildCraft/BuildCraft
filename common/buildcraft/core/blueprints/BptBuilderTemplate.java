@@ -15,6 +15,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.api.blueprints.SchematicBlockBase;
 import buildcraft.builders.TileAbstractBuilder;
+import buildcraft.core.BlockIndex;
 import buildcraft.core.blueprints.BuildingSlotBlock.Mode;
 import buildcraft.core.inventory.InventoryIterator;
 import buildcraft.core.inventory.InventoryIterator.IInvSlot;
@@ -37,7 +38,7 @@ public class BptBuilderTemplate extends BptBuilderBase {
 
 					SchematicBlockBase slot = bluePrint.contents[i][j][k];
 
-					if (slot == null) {
+					if (slot == null && !clearedLocations.contains(new BlockIndex(xCoord, yCoord, zCoord))) {
 						BuildingSlotBlock b = new BuildingSlotBlock();
 
 						b.schematic = null;
@@ -61,7 +62,7 @@ public class BptBuilderTemplate extends BptBuilderBase {
 
 					SchematicBlockBase slot = bluePrint.contents[i][j][k];
 
-					if (slot != null) {
+					if (slot != null && !builtLocations.contains(new BlockIndex(xCoord, yCoord, zCoord))) {
 						BuildingSlotBlock b = new BuildingSlotBlock();
 
 						b.schematic = slot;
@@ -133,10 +134,12 @@ public class BptBuilderTemplate extends BptBuilderBase {
 				if (BlockUtil.isSoftBlock(world, slot.x, slot.y, slot.z)
 						|| BlockUtil.isUnbreakableBlock(world, slot.x, slot.y, slot.z)) {
 					iterator.remove();
+					clearedLocations.add(new BlockIndex(slot.x, slot.y, slot.z));
 				} else {
 					if (setupForDestroy(builder, context, slot)) {
 						result = slot;
 						iterator.remove();
+						clearedLocations.add(new BlockIndex(slot.x, slot.y, slot.z));
 
 						break;
 					}
@@ -144,6 +147,7 @@ public class BptBuilderTemplate extends BptBuilderBase {
 			} else if (slot.mode == Mode.Build) {
 				if (!BlockUtil.isSoftBlock(world, slot.x, slot.y, slot.z)) {
 					iterator.remove();
+					builtLocations.add(new BlockIndex(slot.x, slot.y, slot.z));
 				} else {
 					if (builder.energyAvailable() > TileAbstractBuilder.BUILD_ENERGY && firstSlotToConsume != null) {
 						builder.consumeEnergy(TileAbstractBuilder.BUILD_ENERGY);
@@ -152,6 +156,7 @@ public class BptBuilderTemplate extends BptBuilderBase {
 								.decreaseStackInSlot());
 						result = slot;
 						iterator.remove();
+						builtLocations.add(new BlockIndex(slot.x, slot.y, slot.z));
 
 						break;
 					}

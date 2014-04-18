@@ -16,11 +16,19 @@ import net.minecraft.nbt.NBTTagList;
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.MappingRegistry;
 import buildcraft.api.blueprints.SchematicEntity;
+import buildcraft.api.blueprints.SchematicFactory;
 import buildcraft.api.core.Position;
 
 public class BuildingSlotEntity extends BuildingSlot {
 
 	public SchematicEntity schematic;
+
+	/**
+	 * This value is set by builders to identify in which order entities are
+	 * being built. It can be used later for unique identification within a
+	 * blueprint.
+	 */
+	public int sequenceNumber;
 
 	@Override
 	public void writeToWorld(IBuilderContext context) {
@@ -59,11 +67,15 @@ public class BuildingSlotEntity extends BuildingSlot {
 
 	@Override
 	public void writeToNBT (NBTTagCompound nbt, MappingRegistry registry) {
-
+		NBTTagCompound schematicNBT = new NBTTagCompound();
+		SchematicFactory.getFactory(schematic.getClass())
+				.saveSchematicToWorldNBT(schematicNBT, schematic, registry);
+		nbt.setTag("schematic", schematicNBT);
 	}
 
 	@Override
 	public void readFromNBT (NBTTagCompound nbt, MappingRegistry registry) {
-
+		schematic = (SchematicEntity) SchematicFactory
+				.createSchematicFromWorldNBT(nbt.getCompoundTag("schematic"), registry);
 	}
 }
