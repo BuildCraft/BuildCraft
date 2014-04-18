@@ -103,9 +103,7 @@ public class TileFiller extends TileAbstractBuilder implements IMachine, IAction
 		}
 
 		if (currentPattern != null && currentTemplate == null) {
-			currentTemplate = new BptBuilderTemplate(
-					currentPattern.getTemplate(box), getWorld(), box.xMin,
-					box.yMin, box.zMin);
+			currentTemplate = currentPattern.getTemplateBuilder(box, getWorld());
 			context = currentTemplate.getContext();
 		}
 

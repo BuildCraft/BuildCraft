@@ -8,6 +8,7 @@
  */
 package buildcraft.builders.filler.pattern;
 
+import net.minecraft.world.World;
 import buildcraft.core.Box;
 import buildcraft.core.blueprints.Template;
 
@@ -25,7 +26,7 @@ public class PatternStairs extends FillerPattern {
 	int param4 = 0;
 
 	@Override
-	public Template getTemplate(Box box) {
+	public Template getTemplate(Box box, World world) {
 		int xMin = 0;
 		int yMin = 0;
 		int zMin = 0;
