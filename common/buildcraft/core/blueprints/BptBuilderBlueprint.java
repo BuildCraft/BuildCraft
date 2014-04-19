@@ -78,6 +78,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 						b.y = yCoord;
 						b.z = zCoord;
 						b.mode = Mode.ClearIfInvalid;
+						b.buildStage = 0;
 
 						buildList.add(b);
 					}
@@ -86,7 +87,8 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 			}
 		}
 
-		LinkedList<BuildingSlotBlock> tmpBuildList = new LinkedList<BuildingSlotBlock>();
+		LinkedList<BuildingSlotBlock> tmpBuildCubeList = new LinkedList<BuildingSlotBlock>();
+		LinkedList<BuildingSlotBlock> tmpBuildComplexList = new LinkedList<BuildingSlotBlock>();
 
 		for (int j = 0; j < blueprint.sizeY; ++j) {
 			for (int i = 0; i < blueprint.sizeX; ++i) {
@@ -110,7 +112,14 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 
 					if (!builtLocations.contains(new BlockIndex(xCoord, yCoord,
 								zCoord))) {
-						tmpBuildList.add(b);
+
+						if (((SchematicBlock) b.schematic).block.isOpaqueCube()) {
+							tmpBuildCubeList.add(b);
+							b.buildStage = 1;
+						} else {
+							tmpBuildComplexList.add(b);
+							b.buildStage = 2;
+						}
 					} else {
 						postProcessing.add(b);
 					}
@@ -118,9 +127,11 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 			}
 		}
 
-		Collections.sort(tmpBuildList);
+		Collections.sort(tmpBuildCubeList);
+		Collections.sort(tmpBuildComplexList);
 
-		buildList.addAll(tmpBuildList);
+		buildList.addAll(tmpBuildCubeList);
+		buildList.addAll(tmpBuildComplexList);
 
 		iterator = new BuildingSlotIterator(buildList);
 
@@ -188,6 +199,11 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 
 		while (iterator.hasNext()) {
 			BuildingSlotBlock slot = iterator.next();
+
+			if (slot.buildStage > buildList.getFirst().buildStage) {
+				iterator.reset ();
+				return null;
+			}
 
 			boolean getNext = false;
 

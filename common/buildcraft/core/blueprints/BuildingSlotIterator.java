@@ -59,4 +59,9 @@ public class BuildingSlotIterator {
 		current.remove();
 	}
 
+	public void reset () {
+		current = buildList.iterator();
+		nbIterations = 0;
+	}
+
 }
