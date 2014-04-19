@@ -92,44 +92,47 @@ public class BlockTank extends BlockContainer {
 		if (current != null) {
 			FluidStack liquid = FluidContainerRegistry.getFluidForFilledItem(current);
 
-			TileTank tank = (TileTank) world.getTileEntity(i, j, k);
+			TileEntity tile = world.getTileEntity(i, j, k);
+			if(tile instanceof TileTank)
+			{
+				TileTank tank = (TileTank)tile;
+				// Handle filled containers
+				if (liquid != null) {
+					int qty = tank.fill(ForgeDirection.UNKNOWN, liquid, true);
 
-			// Handle filled containers
-			if (liquid != null) {
-				int qty = tank.fill(ForgeDirection.UNKNOWN, liquid, true);
+					if (qty != 0 && !BuildCraftCore.debugMode && !entityplayer.capabilities.isCreativeMode) {
+						entityplayer.inventory.setInventorySlotContents(entityplayer.inventory.currentItem, InvUtils.consumeItem(current));
+					}
 
-				if (qty != 0 && !BuildCraftCore.debugMode && !entityplayer.capabilities.isCreativeMode) {
-					entityplayer.inventory.setInventorySlotContents(entityplayer.inventory.currentItem, InvUtils.consumeItem(current));
-				}
+					return true;
 
-				return true;
-
-				// Handle empty containers
-			} else {
-				FluidStack available = tank.getTankInfo(ForgeDirection.UNKNOWN)[0].fluid;
+					// Handle empty containers
+				} else {
+					FluidStack available = tank.getTankInfo(ForgeDirection.UNKNOWN)[0].fluid;
 				
-				if (available != null) {
-					ItemStack filled = FluidContainerRegistry.fillFluidContainer(available, current);
+					if (available != null) {
+						ItemStack filled = FluidContainerRegistry.fillFluidContainer(available, current);
 
-					liquid = FluidContainerRegistry.getFluidForFilledItem(filled);
+						liquid = FluidContainerRegistry.getFluidForFilledItem(filled);
 
-					if (liquid != null) {
-						if (!BuildCraftCore.debugMode && !entityplayer.capabilities.isCreativeMode) {
-							if (current.stackSize > 1) {
-								if (!entityplayer.inventory.addItemStackToInventory(filled))
-									return false;
-								else {
+						if (liquid != null) {
+							if (!BuildCraftCore.debugMode && !entityplayer.capabilities.isCreativeMode) {
+								if (current.stackSize > 1) {
+									if (!entityplayer.inventory.addItemStackToInventory(filled))
+										return false;
+									else {
+										entityplayer.inventory.setInventorySlotContents(entityplayer.inventory.currentItem, InvUtils.consumeItem(current));
+									}
+								} else {
 									entityplayer.inventory.setInventorySlotContents(entityplayer.inventory.currentItem, InvUtils.consumeItem(current));
+									entityplayer.inventory.setInventorySlotContents(entityplayer.inventory.currentItem, filled);
 								}
-							} else {
-								entityplayer.inventory.setInventorySlotContents(entityplayer.inventory.currentItem, InvUtils.consumeItem(current));
-								entityplayer.inventory.setInventorySlotContents(entityplayer.inventory.currentItem, filled);
 							}
+						
+							tank.drain(ForgeDirection.UNKNOWN, liquid.amount, true);
+						
+							return true;
 						}
-						
-						tank.drain(ForgeDirection.UNKNOWN, liquid.amount, true);
-						
-						return true;
 					}
 				}
 			}
