@@ -43,12 +43,15 @@ public class BlockBlueprintLibrary extends BlockContainer {
 		if (entityplayer.isSneaking())
 			return false;
 
-		TileBlueprintLibrary tile = (TileBlueprintLibrary) world.getTileEntity(i, j, k);
+		TileEntity tile = world.getTileEntity(i, j, k);
+		if (tile instanceof TileBlueprintLibrary) {
+			TileBlueprintLibrary tileBlueprint = (TileBlueprintLibrary)tile;
+			if (!tileBlueprint.locked || entityplayer.getDisplayName().equals(tileBlueprint.owner))
+				if (!world.isRemote) {
+					entityplayer.openGui(BuildCraftBuilders.instance, GuiIds.BLUEPRINT_LIBRARY, world, i, j, k);
+				}
+		}
 
-		if (!tile.locked || entityplayer.getDisplayName().equals(tile.owner))
-			if (!world.isRemote) {
-				entityplayer.openGui(BuildCraftBuilders.instance, GuiIds.BLUEPRINT_LIBRARY, world, i, j, k);
-			}
 
 		return true;
 	}
@@ -72,8 +75,9 @@ public class BlockBlueprintLibrary extends BlockContainer {
 	@Override
 	public void onBlockPlacedBy(World world, int i, int j, int k, EntityLivingBase entityliving, ItemStack stack) {
 		if (!world.isRemote && entityliving instanceof EntityPlayer) {
-			TileBlueprintLibrary tile = (TileBlueprintLibrary) world.getTileEntity(i, j, k);
-			tile.owner = ((EntityPlayer) entityliving).getDisplayName();
+			TileEntity tile = world.getTileEntity(i, j, k);
+			if (tile instanceof TileBlueprintLibrary)
+				((TileBlueprintLibrary)tile).owner = ((EntityPlayer) entityliving).getDisplayName();
 		}
 	}
 

@@ -56,8 +56,9 @@ public class BlockQuarry extends BlockBuildCraft {
 
 		world.setBlockMetadataWithNotify(i, j, k, orientation.getOpposite().ordinal(), 1);
 		if (entityliving instanceof EntityPlayer) {
-			TileQuarry tq = (TileQuarry) world.getTileEntity(i, j, k);
-			tq.placedBy = (EntityPlayer) entityliving;
+			TileEntity tile = world.getTileEntity(i, j, k);
+			if (tile instanceof TileQuarry)
+				((TileQuarry) tile).placedBy = (EntityPlayer) entityliving;
 		}
 	}
 
