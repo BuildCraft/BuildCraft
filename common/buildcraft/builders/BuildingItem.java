@@ -184,10 +184,9 @@ public class BuildingItem implements IBuilder {
 
 	private void build() {
 		if (slotToBuild != null) {
-			Position dest = slotToBuild.getDestination();
-			int destX = (int)Math.floor(dest.x);
-			int destY = (int)Math.floor(dest.y);
-			int destZ = (int)Math.floor(dest.z);
+			int destX = (int)Math.floor(destination.x);
+			int destY = (int)Math.floor(destination.y);
+			int destZ = (int)Math.floor(destination.z);
 			Block block = context.world().getBlock(destX, destY, destZ);
 			int meta = context.world().getBlockMetadata(destX, destY, destZ);
 
