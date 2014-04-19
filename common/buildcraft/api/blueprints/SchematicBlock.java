@@ -213,12 +213,6 @@ public class SchematicBlock extends SchematicBlockBase  implements Comparable<Sc
 
 	@Override
 	public int compareTo(SchematicBlock o) {
-		if (block.isOpaqueCube() == o.block.isOpaqueCube()) {
-			return 0;
-		} else if (block.isOpaqueCube()) {
-			return -1;
-		} else {
-			return 1;
-		}
+		return 0;
 	}
 }

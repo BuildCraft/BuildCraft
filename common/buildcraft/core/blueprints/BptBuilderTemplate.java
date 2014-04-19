@@ -52,6 +52,7 @@ public class BptBuilderTemplate extends BptBuilderBase {
 							b.y = yCoord;
 							b.z = zCoord;
 							b.mode = Mode.ClearIfInvalid;
+							b.buildStage = 0;
 
 							buildList.add(b);
 						}
@@ -78,6 +79,7 @@ public class BptBuilderTemplate extends BptBuilderBase {
 						b.z = zCoord;
 
 						b.mode = Mode.Build;
+						b.buildStage = 1;
 
 						buildList.add(b);
 					}
@@ -135,9 +137,12 @@ public class BptBuilderTemplate extends BptBuilderBase {
 		while (iterator.hasNext()) {
 			BuildingSlotBlock slot = iterator.next();
 
-			if (slot == null) {
-				break;
-			} else if (slot.mode == Mode.ClearIfInvalid) {
+			if (slot.buildStage > buildList.getFirst().buildStage) {
+				iterator.reset ();
+				return null;
+			}
+
+			if (slot.mode == Mode.ClearIfInvalid) {
 				if (BlockUtil.isSoftBlock(world, slot.x, slot.y, slot.z)
 						|| BlockUtil.isUnbreakableBlock(world, slot.x, slot.y, slot.z)) {
 					iterator.remove();

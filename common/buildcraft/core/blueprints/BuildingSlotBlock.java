@@ -31,6 +31,8 @@ public class BuildingSlotBlock extends BuildingSlot implements Comparable<Buildi
 
 	public Mode mode = Mode.Build;
 
+	public int buildStage = 0;
+
 	@Override
 	public SchematicBlockBase getSchematic () {
 		if (schematic == null) {
