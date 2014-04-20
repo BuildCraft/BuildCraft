@@ -12,6 +12,7 @@ import java.io.File;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+import java.util.Map;
 import java.util.TreeMap;
 
 import net.minecraft.block.Block;
@@ -32,6 +33,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
 import net.minecraftforge.fluids.BlockFluidBase;
+import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.oredict.OreDictionary;
 
 import org.lwjgl.input.Mouse;
@@ -53,6 +55,7 @@ import buildcraft.core.DefaultProps;
 import buildcraft.core.EntityEnergyLaser;
 import buildcraft.core.InterModComms;
 import buildcraft.core.ItemBuildCraft;
+import buildcraft.core.ItemIronCannister;
 import buildcraft.core.ItemRobot;
 import buildcraft.core.ItemSpring;
 import buildcraft.core.ItemWrench;
@@ -135,6 +138,7 @@ public class BuildCraftCore extends BuildCraftMod {
 	public static Item robotBaseItem;
 	public static Item robotBuilderItem;
 	public static Item robotPickerItem;
+	public static ItemIronCannister ironCannister;
 	@SideOnly(Side.CLIENT)
 	public static IIcon redLaserTexture;
 	@SideOnly(Side.CLIENT)
@@ -292,7 +296,10 @@ public class BuildCraftCore extends BuildCraftMod {
 			LanguageRegistry.addName(redstoneCrystal, "Redstone Crystal");
 			CoreProxy.proxy.registerItem(redstoneCrystal);
 			OreDictionary.registerOre("redstoneCrystal", new ItemStack(redstoneCrystal));
-
+			
+			ironCannister = new ItemIronCannister(1);
+			CoreProxy.proxy.registerItem(ironCannister);
+			
 			if (!BuildCraftCore.NEXTGEN_PREALPHA) {
 				robotBaseItem = new ItemRobot(EntityRobot.class).setUnlocalizedName("robotBase");
 				CoreProxy.proxy.registerItem(robotBaseItem);
@@ -393,6 +400,7 @@ public class BuildCraftCore extends BuildCraftMod {
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(ironGearItem), " I ", "IGI", " I ", 'I', Items.iron_ingot, 'G', stoneGearItem);
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(goldGearItem), " I ", "IGI", " I ", 'I', Items.gold_ingot, 'G', ironGearItem);
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(diamondGearItem), " I ", "IGI", " I ", 'I', Items.diamond, 'G', goldGearItem);
+		CoreProxy.proxy.addCraftingRecipe(new ItemStack(ironCannister), "PIP", "IGI", "PIP", 'P', BuildCraftTransport.pipeWaterproof, 'I', Items.iron_ingot, 'G', Blocks.glass);
 	}
 
 	@EventHandler

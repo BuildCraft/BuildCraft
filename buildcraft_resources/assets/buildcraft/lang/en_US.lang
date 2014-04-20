@@ -164,6 +164,9 @@ item.PipeItemsSandstone.name=Sandstone Transport Pipe
 item.PipeFluidsSandstone.name=Sandstone Fluid Pipe
 item.Facade.name=Facade
 item.PipePlug.name=Pipe Plug
+item.ironCannister.name=Iron Canister
+item.goldCannister.name=Gold Canister
+item.diamondCannister.name=Diamond Canister
 
 itemGroup.buildcraft.tier_1=Buildcraft Tier 1 Machines
 itemGroup.buildcraft.tier_2=Buildcraft Tier 2 Machines
@@ -201,6 +204,7 @@ tile.refineryBlock.name=Refinery
 tile.spring.oil.name=Oil Spring
 tile.spring.water.name=Water Spring
 tile.tankBlock.name=Tank
+tile.blockCanner.name=Fluidic Compressor
 
 tip.gate.wires=§9§oCompatible Wires:
 tip.gate.wires.redstone=Red

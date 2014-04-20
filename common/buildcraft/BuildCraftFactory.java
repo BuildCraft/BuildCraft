@@ -29,6 +29,7 @@ import buildcraft.core.Version;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.ConfigUtils;
 import buildcraft.factory.BlockAutoWorkbench;
+import buildcraft.factory.BlockCanner;
 import buildcraft.factory.BlockFloodGate;
 import buildcraft.factory.BlockFrame;
 import buildcraft.factory.BlockHopper;
@@ -45,6 +46,7 @@ import buildcraft.factory.PumpDimensionList;
 import buildcraft.factory.SchematicRefinery;
 import buildcraft.factory.SchematicTank;
 import buildcraft.factory.TileAutoWorkbench;
+import buildcraft.factory.TileCanner;
 import buildcraft.factory.TileFloodGate;
 import buildcraft.factory.TileHopper;
 import buildcraft.factory.TileMiningWell;
@@ -82,6 +84,7 @@ public class BuildCraftFactory extends BuildCraftMod {
 	public static BlockTank tankBlock;
 	public static BlockRefinery refineryBlock;
 	public static BlockHopper hopperBlock;
+	public static BlockCanner cannerBlock;
 	public static boolean allowMining = true;
 	public static boolean quarryOneTimeUse = false;
 	public static float miningMultiplier = 1;
@@ -141,6 +144,7 @@ public class BuildCraftFactory extends BuildCraftMod {
 		CoreProxy.proxy.registerTileEntity(TileTank.class, "net.minecraft.src.buildcraft.factory.TileTank");
 		CoreProxy.proxy.registerTileEntity(TileRefinery.class, "net.minecraft.src.buildcraft.factory.Refinery");
 		CoreProxy.proxy.registerTileEntity(TileHopper.class, "net.minecraft.src.buildcraft.factory.TileHopper");
+		CoreProxy.proxy.registerTileEntity(TileCanner.class, "net.minecraft.src.buildcraft.factory.TileCanner");
 
 		FactoryProxy.proxy.initializeTileEntities();
 
@@ -205,6 +209,9 @@ public class BuildCraftFactory extends BuildCraftMod {
 
 		hopperBlock = new BlockHopper();
 		CoreProxy.proxy.registerBlock(hopperBlock.setBlockName("blockHopper"));
+		
+		cannerBlock = new BlockCanner();
+		CoreProxy.proxy.registerBlock(cannerBlock.setBlockName("blockCanner"));
 
 
 		FactoryProxy.proxy.initializeEntityRenders();

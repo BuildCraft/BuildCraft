@@ -10,9 +10,11 @@ package buildcraft.factory;
 
 import buildcraft.core.GuiIds;
 import buildcraft.factory.gui.ContainerAutoWorkbench;
+import buildcraft.factory.gui.ContainerCanner;
 import buildcraft.factory.gui.ContainerHopper;
 import buildcraft.factory.gui.ContainerRefinery;
 import buildcraft.factory.gui.GuiAutoCrafting;
+import buildcraft.factory.gui.GuiCanner;
 import buildcraft.factory.gui.GuiHopper;
 import buildcraft.factory.gui.GuiRefinery;
 import cpw.mods.fml.common.network.IGuiHandler;
@@ -46,6 +48,11 @@ public class GuiHandler implements IGuiHandler {
 			if (!(tile instanceof TileHopper))
 				return null;
 			return new GuiHopper(player.inventory, (TileHopper) tile);
+			
+		case GuiIds.CANNER:
+			if (!(tile instanceof TileCanner))
+				return null;
+			return new GuiCanner(player.inventory, (TileCanner) tile);
 
 		default:
 			return null;
@@ -76,6 +83,11 @@ public class GuiHandler implements IGuiHandler {
 			if (!(tile instanceof TileHopper))
 				return null;
 			return new ContainerHopper(player.inventory, (TileHopper) tile);
+			
+		case GuiIds.CANNER:
+			if (!(tile instanceof TileCanner))
+				return null;
+			return new ContainerCanner(player.inventory, (TileCanner) tile);
 
 		default:
 			return null;
