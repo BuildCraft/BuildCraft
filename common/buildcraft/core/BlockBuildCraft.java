@@ -68,10 +68,10 @@ public abstract class BlockBuildCraft extends BlockContainer {
 
 	@Override
 	public void onBlockHarvested(World wrd, int x, int y, int z, int meta, EntityPlayer player) {
+		if (player.capabilities.isCreativeMode) {
+			return;
+		}
 		if (player.getHeldItem() != null && player.getHeldItem().getItem() instanceof IToolWrench && player.isSneaking()) {
-			if (player.capabilities.isCreativeMode) {
-				return;
-			}
 			player.addStat(StatList.mineBlockStatArray[getIdFromBlock(this)], 1);
 			player.addExhaustion(0.025F);
 
@@ -116,10 +116,15 @@ public abstract class BlockBuildCraft extends BlockContainer {
 		}
 	}
 
+	//Exclusively for tanks
+	protected boolean forceSaveOnMiddleClick(){
+		return false;
+	}
+
 	@Override
 	public ItemStack getPickBlock(MovingObjectPosition mop, World wrd, int x, int y, int z) {
 		if (Keyboard.isKeyDown(Minecraft.getMinecraft().gameSettings.keyBindSprint.getKeyCode()) &&
-				getItemToStoreData(wrd, x, y, z) == Item.getItemFromBlock(this)) {
+				(forceSaveOnMiddleClick() || getItemToStoreData(wrd, x, y, z) == Item.getItemFromBlock(this))) {
 			ItemStack is = super.getPickBlock(mop, wrd, x, y, z);
 			TileEntity tile = wrd.getTileEntity(x, y, z);
 			if(tile != null){

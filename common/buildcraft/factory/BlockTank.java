@@ -40,10 +40,15 @@ public class BlockTank extends BlockBuildCraft{
 		setHardness(0.5F);
 	}
 
-//	@Override //If nobody likes portable tanks
-//	protected Item getItemToStoreData(World wrd, int x, int y, int z){
-//		return null;
-//	}
+	@Override
+	protected Item getItemToStoreData(World wrd, int x, int y, int z){
+		return null;
+	}
+
+	@Override
+	protected boolean forceSaveOnMiddleClick(){
+		return true;
+	}
 
 	@Override
 	public boolean renderAsNormalBlock() {
@@ -89,20 +94,21 @@ public class BlockTank extends BlockBuildCraft{
 	}
 
 	@Override
-	public boolean onBlockActivated(World world, int i, int j, int k, EntityPlayer entityplayer, int par6, float par7, float par8, float par9) {
-		ItemStack current = entityplayer.inventory.getCurrentItem();
+	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int par6, float par7, float par8, float par9) {
+		ItemStack current = player.inventory.getCurrentItem();
+		TileEntity tile = world.getTileEntity(x, y, z);
 
-		if (current != null) {
+		if (current != null && tile instanceof  TileTank) {
 			FluidStack liquid = FluidContainerRegistry.getFluidForFilledItem(current);
 
-			TileTank tank = (TileTank) world.getTileEntity(i, j, k);
+			TileTank tank = (TileTank) tile;
 
 			// Handle filled containers
 			if (liquid != null) {
 				int qty = tank.fill(ForgeDirection.UNKNOWN, liquid, true);
 
-				if (qty != 0 && !BuildCraftCore.debugMode && !entityplayer.capabilities.isCreativeMode) {
-					entityplayer.inventory.setInventorySlotContents(entityplayer.inventory.currentItem, InvUtils.consumeItem(current));
+				if (qty != 0 && !BuildCraftCore.debugMode && !player.capabilities.isCreativeMode) {
+					player.inventory.setInventorySlotContents(player.inventory.currentItem, InvUtils.consumeItem(current));
 				}
 
 				return true;
@@ -117,16 +123,16 @@ public class BlockTank extends BlockBuildCraft{
 					liquid = FluidContainerRegistry.getFluidForFilledItem(filled);
 
 					if (liquid != null) {
-						if (!BuildCraftCore.debugMode && !entityplayer.capabilities.isCreativeMode) {
+						if (!BuildCraftCore.debugMode && !player.capabilities.isCreativeMode) {
 							if (current.stackSize > 1) {
-								if (!entityplayer.inventory.addItemStackToInventory(filled))
+								if (!player.inventory.addItemStackToInventory(filled))
 									return false;
 								else {
-									entityplayer.inventory.setInventorySlotContents(entityplayer.inventory.currentItem, InvUtils.consumeItem(current));
+									player.inventory.setInventorySlotContents(player.inventory.currentItem, InvUtils.consumeItem(current));
 								}
 							} else {
-								entityplayer.inventory.setInventorySlotContents(entityplayer.inventory.currentItem, InvUtils.consumeItem(current));
-								entityplayer.inventory.setInventorySlotContents(entityplayer.inventory.currentItem, filled);
+								player.inventory.setInventorySlotContents(player.inventory.currentItem, InvUtils.consumeItem(current));
+								player.inventory.setInventorySlotContents(player.inventory.currentItem, filled);
 							}
 						}
 
@@ -161,12 +167,9 @@ public class BlockTank extends BlockBuildCraft{
 	@Override
 	public int getLightValue(IBlockAccess world, int x, int y, int z) {
 		TileEntity tile = world.getTileEntity(x, y, z);
-
 		if (tile instanceof TileTank) {
-			TileTank tank = (TileTank) tile;
-			return tank.getFluidLightLevel();
+			return ((TileTank) tile).getFluidLightLevel();
 		}
-
 		return super.getLightValue(world, x, y, z);
 	}
 }
