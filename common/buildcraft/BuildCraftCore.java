@@ -55,6 +55,8 @@ import buildcraft.core.DefaultProps;
 import buildcraft.core.EntityEnergyLaser;
 import buildcraft.core.InterModComms;
 import buildcraft.core.ItemBuildCraft;
+import buildcraft.core.ItemDiamondCanister;
+import buildcraft.core.ItemGoldCanister;
 import buildcraft.core.ItemIronCannister;
 import buildcraft.core.ItemRobot;
 import buildcraft.core.ItemSpring;
@@ -139,6 +141,8 @@ public class BuildCraftCore extends BuildCraftMod {
 	public static Item robotBuilderItem;
 	public static Item robotPickerItem;
 	public static ItemIronCannister ironCannister;
+	public static ItemGoldCanister goldCanister;
+	public static ItemDiamondCanister diamondCanister;
 	@SideOnly(Side.CLIENT)
 	public static IIcon redLaserTexture;
 	@SideOnly(Side.CLIENT)
@@ -299,6 +303,12 @@ public class BuildCraftCore extends BuildCraftMod {
 			
 			ironCannister = new ItemIronCannister(1);
 			CoreProxy.proxy.registerItem(ironCannister);
+			
+			goldCanister = new ItemGoldCanister(2);
+			CoreProxy.proxy.registerItem(goldCanister);
+			
+			diamondCanister = new ItemDiamondCanister(3);
+			CoreProxy.proxy.registerItem(diamondCanister);
 			
 			if (!BuildCraftCore.NEXTGEN_PREALPHA) {
 				robotBaseItem = new ItemRobot(EntityRobot.class).setUnlocalizedName("robotBase");

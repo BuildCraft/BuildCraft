@@ -17,7 +17,8 @@ public class ContainerCanner extends BuildCraftContainer {
 		playerIInventory = inventory;
 		canner = tile;
 		
-		this.addSlotToContainer(new Slot (tile, 0, 116, 38));
+		this.addSlotToContainer(new Slot (tile, 0, 98, 32));
+		this.addSlotToContainer(new Slot (tile, 1, 134, 36));
 		
 		for (int inventoryRowIndex = 0; inventoryRowIndex < 3; ++inventoryRowIndex)
         {

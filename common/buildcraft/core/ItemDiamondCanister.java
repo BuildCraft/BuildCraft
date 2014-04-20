@@ -2,70 +2,35 @@ package buildcraft.core;
 
 import java.util.List;
 
-import javax.swing.Icon;
-import javax.swing.Renderer;
-
-import org.lwjgl.opengl.GL11;
-
-import buildcraft.BuildCraftCore;
-import buildcraft.core.render.RenderUtils;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraft.block.Block;
-import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.entity.Render;
-import net.minecraft.client.renderer.entity.RenderItem;
-import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.IIcon;
-import net.minecraftforge.client.IItemRenderer;
 import net.minecraftforge.fluids.FluidContainerRegistry;
-import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.ItemFluidContainer;
+import buildcraft.BuildCraftCore;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
-public class ItemIronCannister extends ItemFluidContainer{
+public class ItemDiamondCanister extends ItemFluidContainer {
 	
-	public IIcon overlay;
-	
-	public ItemIronCannister(int id)
+	public ItemDiamondCanister(int id)
 	{
 		super(id);
-		this.setUnlocalizedName("ironCannister");
+		this.setUnlocalizedName("diamondCanister");
 		this.setMaxStackSize(16);
-		this.setCapacity(FluidContainerRegistry.BUCKET_VOLUME);
+		this.setCapacity(FluidContainerRegistry.BUCKET_VOLUME*9);
 		setCreativeTab(CreativeTabBuildCraft.TIER_3.get());
 	}
-	
-	@Override
-	public boolean requiresMultipleRenderPasses() {
-		return true;
-	}
-	public IIcon getIcon(ItemStack stack, int pass)
-    {
-		IIcon i = itemIcon;
-		if(pass == 0) {
-				return itemIcon;
-		}
-		if (getFluidStackFromItemStack(stack) != null){
-			RenderUtils.setGLColorFromInt(getFluidStackFromItemStack(stack).getFluid().getColor());
-			return overlay;
-		}
-		
-		return itemIcon;
-    }
-	
+ 
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void addInformation(ItemStack iStack, EntityPlayer player, List list, boolean visible)
 	{
 		FluidStack fStack = getFluidStackFromItemStack(iStack);
 		if (fStack==null){
-			list.add("Can hold 1 bucket of liquid");
+			list.add("Can hold 9 buckets of liquid");
 		} else {
 			list.add("Currently stores " + Integer.toString(fStack.amount)+ " mB of " + fStack.getFluid().getLocalizedName().toString());
 		}
@@ -75,7 +40,7 @@ public class ItemIronCannister extends ItemFluidContainer{
  
 	public ItemStack getFilledItemStack(FluidStack fStack)
 	{
-		ItemStack iStack = new ItemStack(BuildCraftCore.ironCannister);
+		ItemStack iStack = new ItemStack(BuildCraftCore.diamondCanister);
 		if (iStack.getTagCompound() == null)
 			iStack.setTagCompound(new NBTTagCompound());
 		NBTTagCompound fluidTag = fStack.writeToNBT(new NBTTagCompound());
@@ -101,8 +66,7 @@ public class ItemIronCannister extends ItemFluidContainer{
 	@SideOnly(Side.CLIENT)
 	public void registerIcons(IIconRegister par1IconRegister)
 	{
-		this.itemIcon = par1IconRegister.registerIcon("buildcraft:ironCannister");
-		this.overlay = par1IconRegister.registerIcon("buildcraft:fluidOverlay");
+		this.itemIcon = par1IconRegister.registerIcon("buildcraft:diamondCannister");
 	}
-	
+
 }

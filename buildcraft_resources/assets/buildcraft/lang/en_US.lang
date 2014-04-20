@@ -165,8 +165,8 @@ item.PipeFluidsSandstone.name=Sandstone Fluid Pipe
 item.Facade.name=Facade
 item.PipePlug.name=Pipe Plug
 item.ironCannister.name=Iron Canister
-item.goldCannister.name=Gold Canister
-item.diamondCannister.name=Diamond Canister
+item.goldCanister.name=Gold Canister
+item.diamondCanister.name=Diamond Canister
 
 itemGroup.buildcraft.tier_1=Buildcraft Tier 1 Machines
 itemGroup.buildcraft.tier_2=Buildcraft Tier 2 Machines
