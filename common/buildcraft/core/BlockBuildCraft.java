@@ -15,6 +15,7 @@ import java.util.Random;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -62,7 +63,7 @@ public abstract class BlockBuildCraft extends BlockContainer {
 	public void harvestBlock(World wrd, EntityPlayer player, int x, int y, int z, int meta) {}
 
 	public void addDescription(NBTTagCompound nbt, List<String> lines, boolean f3) {
-		lines.add(EnumChatFormatting.DARK_PURPLE + " +NBT"); // Default one
+		lines.add(I18n.format("tip.nbt")); // Default one
 	}
 
 	@Override

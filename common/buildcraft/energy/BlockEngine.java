@@ -17,20 +17,21 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.IIcon;
-import net.minecraft.util.MovingObjectPosition;
-import net.minecraft.util.Vec3;
+import net.minecraft.util.*;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraftforge.fluids.FluidStack;
 
 import java.util.List;
 import java.util.Random;
@@ -107,6 +108,16 @@ public class BlockEngine extends BlockBuildCraft implements ICustomHighlight {
 	}
 
 	@Override
+	public boolean recolourBlock(World wrd, int x, int y, int z, ForgeDirection side, int colour){
+		if (wrd.isRemote) { // Easter egg, as requested. --anti344
+			EntityPlayer player = Minecraft.getMinecraft().thePlayer;
+			player.addChatMessage(new ChatComponentTranslation("egg.recolour_engine"));
+			player.addChatMessage(new ChatComponentTranslation("egg.insane"));
+		}
+		return false;
+	}
+
+	@Override
 	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float par7, float par8, float par9) {
 		TileEntity tile = world.getTileEntity(x, y, z);
 
@@ -125,6 +136,25 @@ public class BlockEngine extends BlockBuildCraft implements ICustomHighlight {
 			return ((TileEngine) tile).onBlockActivated(player, ForgeDirection.getOrientation(side));
 		}
 		return false;
+	}
+
+	public void addDescription(NBTTagCompound nbt, List<String> lines, boolean f3) {
+		if (nbt.hasKey("tankFuel", 10) && nbt.hasKey("tankCoolant", 10)) {
+			FluidStack fuel = FluidStack.loadFluidStackFromNBT(nbt.getCompoundTag("tankFuel"));
+			FluidStack coolant = FluidStack.loadFluidStackFromNBT(nbt.getCompoundTag("tankCoolant"));
+			if (fuel != null && fuel.getFluid() != null) {
+				lines.add(I18n.format("tip.nbt.engine.fuel", I18n.format("tip.fluid.format", fuel.getFluid().getLocalizedName(), fuel.amount)));
+			} else {
+				lines.add(I18n.format("tip.nbt.engine.fuel", I18n.format("tip.fluid.empty")));
+			}
+			if (coolant != null && coolant.getFluid() != null) {
+				lines.add(I18n.format("tip.nbt.engine.coolant", I18n.format("tip.fluid.format", coolant.getFluid().getLocalizedName(), coolant.amount)));
+			} else {
+				lines.add(I18n.format("tip.nbt.engine.coolant", I18n.format("tip.fluid.empty")));
+			}
+		} else {
+			super.addDescription(nbt, lines, f3);
+		}
 	}
 
 	@Override

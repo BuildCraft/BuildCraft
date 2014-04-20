@@ -8,6 +8,7 @@
  */
 package buildcraft.core;
 
+import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -31,7 +32,7 @@ public class ItemBlockBuildCraft extends ItemBlock {
 		if (is.hasTagCompound() && is.getTagCompound().hasKey("tileData", 10)) {
 			NBTTagCompound nbt = is.getTagCompound().getCompoundTag("tileData");
 			if (nbt.getBoolean("creative")) {
-				lines.add(EnumChatFormatting.DARK_PURPLE + " +NBT");
+				lines.add(I18n.format("tip.nbt"));
 			} else if (field_150939_a instanceof BlockBuildCraft) {
 				((BlockBuildCraft) field_150939_a).addDescription(nbt, lines, f3);
 			}
