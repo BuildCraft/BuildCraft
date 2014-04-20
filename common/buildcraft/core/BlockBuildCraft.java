@@ -18,6 +18,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -58,15 +59,10 @@ public abstract class BlockBuildCraft extends BlockContainer {
 	}
 
 	@Override
-	public void harvestBlock(World wrd, EntityPlayer player, int x, int y, int z, int meta) {
-		if (player.getHeldItem() == null || !(player.getHeldItem().getItem() instanceof IToolWrench) || !player.isSneaking()) {
-			Utils.preDestroyBlock(wrd, x, y, z);
-			super.harvestBlock(wrd, player, x, y, z, meta);
-		}
-	}
+	public void harvestBlock(World wrd, EntityPlayer player, int x, int y, int z, int meta) {}
 
 	public void addDescription(NBTTagCompound nbt, List<String> lines, boolean f3) {
-		lines.add(EnumChatFormatting.DARK_PURPLE + " +NBT"); // TODO
+		lines.add(EnumChatFormatting.DARK_PURPLE + " +NBT"); // Default one
 	}
 
 	@Override
@@ -92,6 +88,9 @@ public abstract class BlockBuildCraft extends BlockContainer {
 			if (!flag) {
 				Utils.preDestroyBlock(wrd, x, y, z);
 			}
+		} else {
+			Utils.preDestroyBlock(wrd, x, y, z);
+			super.harvestBlock(wrd, player, x, y, z, meta);
 		}
 	}
 
