@@ -83,8 +83,6 @@ public class BlockEngine extends BlockBuildCraft implements ICustomHighlight {
 	@Override
 	public TileEntity createTileEntity(World world, int metadata) {
 		switch (metadata) {
-			case 0:
-				return new TileEngineWood();
 			case 1:
 				return new TileEngineStone();
 			case 2:
@@ -99,47 +97,33 @@ public class BlockEngine extends BlockBuildCraft implements ICustomHighlight {
 	@Override
 	public boolean isSideSolid(IBlockAccess world, int x, int y, int z, ForgeDirection side) {
 		TileEntity tile = world.getTileEntity(x, y, z);
-
-		if (tile instanceof TileEngine) {
-			return ((TileEngine) tile).orientation.getOpposite() == side;
-		} else {
-			return false;
-		}
+		return tile instanceof TileEngine && ((TileEngine) tile).orientation.getOpposite() == side;
 	}
 
 	@Override
 	public boolean rotateBlock(World world, int x, int y, int z, ForgeDirection axis) {
 		TileEntity tile = world.getTileEntity(x, y, z);
-
-		if (tile instanceof TileEngine) {
-			return ((TileEngine) tile).switchOrientation(false);
-		} else {
-			return false;
-		}
+		return tile instanceof TileEngine && ((TileEngine) tile).switchOrientation(false);
 	}
 
 	@Override
-	public boolean onBlockActivated(World world, int i, int j, int k, EntityPlayer player, int side, float par7, float par8, float par9) {
-
-		TileEngine tile = (TileEngine) world.getTileEntity(i, j, k);
+	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float par7, float par8, float par9) {
+		TileEntity tile = world.getTileEntity(x, y, z);
 
 		// REMOVED DUE TO CREATIVE ENGINE REQUIREMENTS - dmillerw
 		// Drop through if the player is sneaking
 //		if (player.isSneaking()) {
 //			return false;
 //		}
-
-		// Do not open guis when having a pipe in hand
-		if (player.getCurrentEquippedItem() != null) {
-			if (player.getCurrentEquippedItem().getItem() instanceof IItemPipe) {
-				return false;
+		if (tile instanceof TileEngine){
+			// Do not open guis when having a pipe in hand
+			if(player.getCurrentEquippedItem() != null){
+				if(player.getCurrentEquippedItem().getItem() instanceof IItemPipe){
+					return false;
+				}
 			}
+			return ((TileEngine) tile).onBlockActivated(player, ForgeDirection.getOrientation(side));
 		}
-
-		if (tile instanceof TileEngine) {
-			return tile.onBlockActivated(player, ForgeDirection.getOrientation(side));
-		}
-
 		return false;
 	}
 
@@ -202,11 +186,14 @@ public class BlockEngine extends BlockBuildCraft implements ICustomHighlight {
 
 	@Override
 	public void onPostBlockPlaced(World world, int x, int y, int z, int par5) {
-		TileEngine tile = (TileEngine) world.getTileEntity(x, y, z);
-		tile.orientation = ForgeDirection.UP;
+		TileEntity tile = world.getTileEntity(x, y, z);
+		if (tile instanceof TileEngine) {
+			TileEngine engine = (TileEngine) tile;
+			engine.orientation = ForgeDirection.UP;
 
-		if (!tile.isOrientationValid()) {
-			tile.switchOrientation(true);
+			if (!engine.isOrientationValid()) {
+				engine.switchOrientation(true);
+			}
 		}
 	}
 
@@ -217,16 +204,15 @@ public class BlockEngine extends BlockBuildCraft implements ICustomHighlight {
 
 	@SuppressWarnings({"all"})
 	@Override
-	public void randomDisplayTick(World world, int i, int j, int k, Random random) {
-		TileEngine tile = (TileEngine) world.getTileEntity(i, j, k);
-
-		if (!tile.isBurning()) {
+	public void randomDisplayTick(World world, int x, int y, int z, Random random) {
+		TileEntity tile = world.getTileEntity(x, y, z);
+		if (tile instanceof TileEngine && !((TileEngine) tile).isBurning()) {
 			return;
 		}
 
-		float f = i + 0.5F;
-		float f1 = j + 0.0F + (random.nextFloat() * 6F) / 16F;
-		float f2 = k + 0.5F;
+		float f = x + 0.5F;
+		float f1 = y + 0.0F + (random.nextFloat() * 6F) / 16F;
+		float f2 = z + 0.5F;
 		float f3 = 0.52F;
 		float f4 = random.nextFloat() * 0.6F - 0.3F;
 
@@ -250,10 +236,10 @@ public class BlockEngine extends BlockBuildCraft implements ICustomHighlight {
 
 	@Override
 	public void onNeighborBlockChange(World world, int x, int y, int z, Block block) {
-		TileEngine tile = (TileEngine) world.getTileEntity(x, y, z);
+		TileEntity tile = world.getTileEntity(x, y, z);
 
-		if (tile != null) {
-			tile.checkRedstonePower();
+		if (tile instanceof TileEngine) {
+			((TileEngine) tile).checkRedstonePower();
 		}
 	}
 
