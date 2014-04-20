@@ -216,6 +216,8 @@ tip.nbt= §5+NBT
 tip.nbt.engine.fuel=  §7Fuel: %s
 tip.nbt.engine.coolant=  §7Coolant: %s
 
+tip.nbt.tank.fluid=  §7Fluid: %s
+
 tip.PipeFluidsCobblestone=Basic pipe, 10 mB/t\nWon't connect to Stone
 tip.PipeFluidsEmerald=Extraction pipe, 40 mB/t
 tip.PipeFluidsGold=Basic pipe, 40 mB/t

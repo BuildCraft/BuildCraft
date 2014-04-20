@@ -130,7 +130,6 @@ public abstract class BlockBuildCraft extends BlockContainer {
 			if(tile != null){
 				NBTTagCompound nbt = new NBTTagCompound();
 				tile.writeToNBT(nbt);
-				nbt.setBoolean("creative", true);
 				if(!is.hasTagCompound()){
 					is.setTagCompound(new NBTTagCompound());
 				}

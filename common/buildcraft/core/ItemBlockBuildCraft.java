@@ -29,13 +29,10 @@ public class ItemBlockBuildCraft extends ItemBlock {
 	@Override
 	@SuppressWarnings("unchecked")
 	public void addInformation(ItemStack is, EntityPlayer player, List lines, boolean f3) {
-		if (is.hasTagCompound() && is.getTagCompound().hasKey("tileData", 10)) {
+		if (is.hasTagCompound() && is.getTagCompound().hasKey("tileData", 10) &&
+				field_150939_a instanceof BlockBuildCraft) {
 			NBTTagCompound nbt = is.getTagCompound().getCompoundTag("tileData");
-			if (nbt.getBoolean("creative")) {
-				lines.add(I18n.format("tip.nbt"));
-			} else if (field_150939_a instanceof BlockBuildCraft) {
-				((BlockBuildCraft) field_150939_a).addDescription(nbt, lines, f3);
-			}
+			((BlockBuildCraft) field_150939_a).addDescription(nbt, lines, f3);
 		}
 	}
 
