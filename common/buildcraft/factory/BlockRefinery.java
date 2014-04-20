@@ -8,6 +8,7 @@
  */
 package buildcraft.factory;
 
+import buildcraft.core.BlockBuildCraft;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
@@ -31,15 +32,14 @@ import buildcraft.core.utils.Utils;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-public class BlockRefinery extends BlockContainer {
+public class BlockRefinery extends BlockBuildCraft{
 
 	private static IIcon icon;
 
 	public BlockRefinery() {
-		super(Material.iron);
+		super(Material.iron, CreativeTabBuildCraft.TIER_2);
 
 		setHardness(5F);
-		setCreativeTab(CreativeTabBuildCraft.TIER_2.get());
 	}
 
 	@Override

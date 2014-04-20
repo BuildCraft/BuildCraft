@@ -33,6 +33,12 @@ public class ItemWrench extends ItemBuildCraft implements IToolWrench {
 		shiftRotations.add(BlockLever.class);
 		shiftRotations.add(BlockButton.class);
 		shiftRotations.add(BlockChest.class);
+		setHarvestLevel("wrench", 5);
+	}
+
+	@Override
+	public float getDigSpeed(ItemStack is, Block block, int meta){
+		return block instanceof BlockBuildCraft ? 25.0F : super.getDigSpeed(is, block, meta);
 	}
 
 	private boolean isShiftRotation(Class<? extends Block> cls) {

@@ -192,11 +192,9 @@ public class BlockEngine extends BlockBuildCraft implements ICustomHighlight {
 				}
 			}
 			if (closest != null) {
-				closest.blockX = x;
-				closest.blockY = y;
-				closest.blockZ = z;
+				return new MovingObjectPosition(x, y, z, closest.sideHit, closest.hitVec);
 			}
-			return closest;
+			return null;
 		} else {
 			return super.collisionRayTrace(wrd, x, y, z, origin, direction);
 		}

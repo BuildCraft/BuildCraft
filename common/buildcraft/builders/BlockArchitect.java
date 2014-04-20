@@ -78,13 +78,6 @@ public class BlockArchitect extends BlockMultiTexture {
 	}
 
 	@Override
-	public void breakBlock(World world, int i, int j, int k, Block block, int par6) {
-		Utils.preDestroyBlock(world, i, j, k);
-
-		super.breakBlock(world, i, j, k, block, par6);
-	}
-
-	@Override
 	public void onBlockPlacedBy(World world, int i, int j, int k, EntityLivingBase entityliving, ItemStack stack) {
 		super.onBlockPlacedBy(world, i, j, k, entityliving, stack);
 
@@ -118,5 +111,4 @@ public class BlockArchitect extends BlockMultiTexture {
 	public int getFrontSide(IBlockAccess world, int x, int y, int z) {
 		return world.getBlockMetadata(x, y, z);
 	}
-
 }

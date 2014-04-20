@@ -96,4 +96,8 @@ public class BlockFloodGate extends BlockBuildCraft {
 		textureBottom = par1IconRegister.registerIcon("buildcraft:floodgate_bottom");
 		textureSide = par1IconRegister.registerIcon("buildcraft:floodgate_side");
 	}
+
+	public Item getItemToStoreData(World wrd, int x, int y, int z){
+		return null;
+	}
 }

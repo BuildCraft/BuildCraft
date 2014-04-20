@@ -8,10 +8,12 @@
  */
 package buildcraft.factory;
 
+import buildcraft.core.BlockBuildCraft;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
@@ -26,18 +28,22 @@ import buildcraft.core.inventory.InvUtils;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-public class BlockTank extends BlockContainer {
+public class BlockTank extends BlockBuildCraft{
 
 	private IIcon textureStackedSide;
 	private IIcon textureBottomSide;
 	private IIcon textureTop;
 
 	public BlockTank() {
-		super(Material.glass);
+		super(Material.glass, CreativeTabBuildCraft.TIER_2);
 		setBlockBounds(0.125F, 0F, 0.125F, 0.875F, 1F, 0.875F);
 		setHardness(0.5F);
-		setCreativeTab(CreativeTabBuildCraft.TIER_2.get());
 	}
+
+//	@Override //If nobody likes portable tanks
+//	protected Item getItemToStoreData(World wrd, int x, int y, int z){
+//		return null;
+//	}
 
 	@Override
 	public boolean renderAsNormalBlock() {

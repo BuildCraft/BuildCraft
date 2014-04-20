@@ -8,8 +8,8 @@
  */
 package buildcraft.builders;
 
+import buildcraft.core.BlockBuildCraft;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.EntityLivingBase;
@@ -29,16 +29,15 @@ import buildcraft.core.utils.Utils;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-public class BlockBuilder extends BlockContainer {
+public class BlockBuilder extends BlockBuildCraft {
 
 	IIcon blockTextureTop;
 	IIcon blockTextureSide;
 	IIcon blockTextureFront;
 
 	public BlockBuilder() {
-		super(Material.iron);
+		super(Material.iron, CreativeTabBuildCraft.TIER_3);
 		setHardness(5F);
-		setCreativeTab(CreativeTabBuildCraft.TIER_3.get());
 	}
 
 	@Override
@@ -112,12 +111,6 @@ public class BlockBuilder extends BlockContainer {
 		ForgeDirection orientation = Utils.get2dOrientation(entityliving);
 
 		world.setBlockMetadataWithNotify(i, j, k, orientation.getOpposite().ordinal(), 1);
-	}
-
-	@Override
-	public void breakBlock(World world, int x, int y, int z, Block block, int par6) {
-		Utils.preDestroyBlock(world, x, y, z);
-		super.breakBlock(world, x, y, z, block, par6);
 	}
 
 	@Override

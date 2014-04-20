@@ -12,6 +12,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
@@ -92,5 +93,9 @@ public class BlockMiningWell extends BlockBuildCraft {
         textureSides = par1IconRegister.registerIcon("buildcraft:miningwell_side");
         textureBack = par1IconRegister.registerIcon("buildcraft:miningwell_back");
         textureTop = par1IconRegister.registerIcon("buildcraft:miningwell_top");
+	}
+
+	public Item getItemToStoreData(World wrd, int x, int y, int z){
+		return null;
 	}
 }
