@@ -59,7 +59,7 @@ public abstract class BlockBuildCraft extends BlockContainer {
 
 	@Override
 	public void harvestBlock(World wrd, EntityPlayer player, int x, int y, int z, int meta) {
-		if (player.getHeldItem() == null || !(player.getHeldItem().getItem() instanceof IToolWrench)) {
+		if (player.getHeldItem() == null || !(player.getHeldItem().getItem() instanceof IToolWrench) || !player.isSneaking()) {
 			super.harvestBlock(wrd, player, x, y, z, meta);
 			Utils.preDestroyBlock(wrd, x, y, z);
 		}
@@ -71,7 +71,7 @@ public abstract class BlockBuildCraft extends BlockContainer {
 
 	@Override
 	public void onBlockHarvested(World wrd, int x, int y, int z, int meta, EntityPlayer player) {
-		if (player.getHeldItem() != null && player.getHeldItem().getItem() instanceof IToolWrench) {
+		if (player.getHeldItem() != null && player.getHeldItem().getItem() instanceof IToolWrench && player.isSneaking()) {
 			if (player.capabilities.isCreativeMode) {
 				return;
 			}
