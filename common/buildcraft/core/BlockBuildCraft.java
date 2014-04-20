@@ -103,9 +103,15 @@ public abstract class BlockBuildCraft extends BlockContainer {
 			}
 			NBTTagCompound nbt = new NBTTagCompound();
 			tile.writeToNBT(nbt);
+			if (tile instanceof ISaveExclusions) {
+				for(String exclusion : ((ISaveExclusions) tile).getExclusions()) {
+					nbt.removeTag(exclusion);
+				}
+			}
 			nbt.removeTag("x");
 			nbt.removeTag("y");
 			nbt.removeTag("z");
+			nbt.removeTag("owner");
 			is.getTagCompound().setTag("tileData", nbt);
 		}
 	}

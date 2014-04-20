@@ -19,11 +19,8 @@ import buildcraft.api.power.PowerHandler.Type;
 import buildcraft.api.transport.IPipeConnection;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.IPipeTile.PipeType;
-import buildcraft.core.DefaultProps;
-import buildcraft.core.ReflectMjAPI;
+import buildcraft.core.*;
 import buildcraft.core.ReflectMjAPI.BatteryObject;
-import buildcraft.core.TileBuffer;
-import buildcraft.core.TileBuildCraft;
 import buildcraft.core.network.NetworkData;
 import buildcraft.energy.gui.ContainerEngine;
 import net.minecraft.entity.player.EntityPlayer;
@@ -35,7 +32,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 
 import java.util.LinkedList;
 
-public abstract class TileEngine extends TileBuildCraft implements IPowerReceptor, IPowerEmitter, IOverrideDefaultTriggers, IPipeConnection {
+public abstract class TileEngine extends TileBuildCraft implements IPowerReceptor, IPowerEmitter, IOverrideDefaultTriggers, IPipeConnection, ISaveExclusions {
 
 	// Index corresponds to metadata
 	public static final ResourceLocation[] BASE_TEXTURES = new ResourceLocation[]{
@@ -416,6 +413,10 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 		data.setFloat("progress", progress);
 		data.setDouble("energy", energy);
 		data.setFloat("heat", heat);
+	}
+
+	public String[] getExclusions(){
+		return new String[]{"orientation"};
 	}
 
 	public void getGUINetworkData(int id, int value) {
