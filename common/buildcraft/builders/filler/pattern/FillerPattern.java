@@ -14,11 +14,13 @@ import java.util.TreeMap;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.util.IIcon;
+import net.minecraft.world.World;
 import buildcraft.api.blueprints.SchematicMask;
 import buildcraft.api.blueprints.SchematicRegistry;
 import buildcraft.api.filler.IFillerPattern;
 import buildcraft.core.Box;
 import buildcraft.core.blueprints.Blueprint;
+import buildcraft.core.blueprints.BptBuilderTemplate;
 import buildcraft.core.blueprints.Template;
 import buildcraft.core.utils.StringUtils;
 
@@ -103,10 +105,10 @@ public abstract class FillerPattern implements IFillerPattern {
 	}
 
 	@Override
-	public Blueprint getBlueprint (Box box, Block block) {
+	public Blueprint getBlueprint (Box box, World world, Block block) {
 		Blueprint result = new Blueprint (box.sizeX(), box.sizeY(), box.sizeZ());
 
-		Template tmpl = getTemplate(box);
+		Template tmpl = getTemplate(box, world);
 
 		for (int x = 0; x < box.sizeX(); ++x) {
 			for (int y = 0; y < box.sizeY(); ++y) {
@@ -121,5 +123,9 @@ public abstract class FillerPattern implements IFillerPattern {
 		}
 
 		return result;
+	}
+
+	public BptBuilderTemplate getTemplateBuilder (Box box, World world) {
+		return new BptBuilderTemplate(getTemplate(box, world), world, box.xMin, box.yMin, box.zMin);
 	}
 }

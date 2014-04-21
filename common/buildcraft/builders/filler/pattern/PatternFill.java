@@ -8,6 +8,7 @@
  */
 package buildcraft.builders.filler.pattern;
 
+import net.minecraft.world.World;
 import buildcraft.core.Box;
 import buildcraft.core.blueprints.Template;
 
@@ -20,7 +21,7 @@ public class PatternFill extends FillerPattern {
 	}
 
 	@Override
-	public Template getTemplate (Box box) {
+	public Template getTemplate (Box box, World world) {
 		Template bpt = new Template(box.sizeX(), box.sizeY(), box.sizeZ());
 
 		fill (0, 0, 0, box.sizeX() - 1, box.sizeY() - 1, box.sizeZ() - 1, bpt);

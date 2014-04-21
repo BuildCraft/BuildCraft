@@ -8,8 +8,10 @@
  */
 package buildcraft.builders.filler.pattern;
 
+import net.minecraft.world.World;
 import buildcraft.api.blueprints.SchematicMask;
 import buildcraft.core.Box;
+import buildcraft.core.blueprints.BptBuilderTemplate;
 import buildcraft.core.blueprints.Template;
 
 public class PatternFlatten extends FillerPattern {
@@ -19,26 +21,32 @@ public class PatternFlatten extends FillerPattern {
 	}
 
 	@Override
-	public Template getTemplate (Box box) {
+	public Template getTemplate (Box box, World world) {
 		int xMin = (int) box.pMin().x;
-		int yMin = 1;
+		int yMin = box.pMin().y > 0 ? (int) box.pMin().y - 1 : 0;
 		int zMin = (int) box.pMin().z;
 
 		int xMax = (int) box.pMax().x;
 		int yMax = (int) box.pMax().y;
 		int zMax = (int) box.pMax().z;
 
-		Template bpt = new Template(xMax - xMin + 1, yMax - yMin + 1, zMax - zMin + 1);
+		Template bpt = new Template(box.sizeX(), yMax - yMin + 1, box.sizeZ());
 
-		boolean found = false;
-		for (int y = yMax; y >= yMin; --y) {
-			for (int x = xMin; x <= xMax && !found; ++x) {
-				for (int z = zMin; z <= zMax && !found; ++z) {
-					bpt.contents[x - xMin][y - yMin][z - zMin] = new SchematicMask(true);
+		if (box.pMin().y > 0) {
+			for (int x = xMin; x <= xMax; ++x) {
+				for (int z = zMin; z <= zMax; ++z) {
+					bpt.contents[x - xMin][0][z - zMin] = new SchematicMask(true);
 				}
 			}
 		}
 
 		return bpt;
+	}
+
+	@Override
+	public BptBuilderTemplate getTemplateBuilder (Box box, World world) {
+		int yMin = box.pMin().y > 0 ? (int) box.pMin().y - 1 : 0;
+
+		return new BptBuilderTemplate(getTemplate(box, world), world, box.xMin, yMin, box.zMin);
 	}
 }

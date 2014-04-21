@@ -577,7 +577,7 @@ public class TileQuarry extends TileAbstractBuilder implements IMachine {
 
 	private void initializeBlueprintBuilder() {
 		Blueprint bpt = FillerManager.registry.getPattern("buildcraft:frame")
-				.getBlueprint(box, BuildCraftFactory.frameBlock);
+				.getBlueprint(box, worldObj, BuildCraftFactory.frameBlock);
 
 		builder = new BptBuilderBlueprint(bpt, worldObj, box.xMin, yCoord, box.zMin);
 	}

@@ -15,10 +15,12 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.ListIterator;
 import java.util.Map.Entry;
+import java.util.TreeSet;
 
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldSettings.GameType;
 import buildcraft.api.blueprints.Schematic;
@@ -37,22 +39,32 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 	private LinkedList<BuildingSlotEntity> entityList = new LinkedList<BuildingSlotEntity>();
 	private LinkedList<BuildingSlot> postProcessing = new LinkedList<BuildingSlot>();
 
+	protected TreeSet <Integer> builtEntities = new TreeSet <Integer> ();
+
 	private BuildingSlotIterator iterator;
 
 	public LinkedList <ItemStack> neededItems = new LinkedList <ItemStack> ();
 
 	public BptBuilderBlueprint(Blueprint bluePrint, World world, int x, int y, int z) {
 		super(bluePrint, world, x, y, z);
+	}
 
-		for (int j = bluePrint.sizeY - 1; j >= 0; --j) {
-			for (int i = 0; i < bluePrint.sizeX; ++i) {
-				for (int k = 0; k < bluePrint.sizeZ; ++k) {
+	@Override
+	protected void initialize () {
+		for (int j = blueprint.sizeY - 1; j >= 0; --j) {
+			for (int i = 0; i < blueprint.sizeX; ++i) {
+				for (int k = 0; k < blueprint.sizeZ; ++k) {
 					int xCoord = i + x - blueprint.anchorX;
 					int yCoord = j + y - blueprint.anchorY;
 					int zCoord = k + z - blueprint.anchorZ;
 
-					if (!clearedLocations.contains(new BlockIndex(xCoord, yCoord, zCoord))) {
-						SchematicBlock slot = (SchematicBlock) bluePrint.contents[i][j][k];
+					if (!clearedLocations.contains(new BlockIndex(xCoord,
+							yCoord, zCoord))) {
+						SchematicBlock slot = (SchematicBlock) blueprint.contents[i][j][k];
+
+						if (slot == null && !blueprint.excavate) {
+							continue;
+						}
 
 						if (slot == null) {
 							slot = new SchematicBlock();
@@ -66,6 +78,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 						b.y = yCoord;
 						b.z = zCoord;
 						b.mode = Mode.ClearIfInvalid;
+						b.buildStage = 0;
 
 						buildList.add(b);
 					}
@@ -74,48 +87,69 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 			}
 		}
 
-		LinkedList<BuildingSlotBlock> tmpBuildList = new LinkedList<BuildingSlotBlock>();
+		LinkedList<BuildingSlotBlock> tmpBuildCubeList = new LinkedList<BuildingSlotBlock>();
+		LinkedList<BuildingSlotBlock> tmpBuildComplexList = new LinkedList<BuildingSlotBlock>();
 
-		for (int j = 0; j < bluePrint.sizeY; ++j) {
-			for (int i = 0; i < bluePrint.sizeX; ++i) {
-				for (int k = 0; k < bluePrint.sizeZ; ++k) {
+		for (int j = 0; j < blueprint.sizeY; ++j) {
+			for (int i = 0; i < blueprint.sizeX; ++i) {
+				for (int k = 0; k < blueprint.sizeZ; ++k) {
 					int xCoord = i + x - blueprint.anchorX;
 					int yCoord = j + y - blueprint.anchorY;
 					int zCoord = k + z - blueprint.anchorZ;
 
+					SchematicBlock slot = (SchematicBlock) blueprint.contents[i][j][k];
+
+					if (slot == null) {
+						continue;
+					}
+
+					BuildingSlotBlock b = new BuildingSlotBlock();
+					b.schematic = slot;
+					b.x = xCoord;
+					b.y = yCoord;
+					b.z = zCoord;
+					b.mode = Mode.Build;
+
 					if (!builtLocations.contains(new BlockIndex(xCoord, yCoord,
-							zCoord))) {
-						SchematicBlock slot = (SchematicBlock) bluePrint.contents[i][j][k];
+								zCoord))) {
 
-						if (slot == null) {
-							continue;
+						if (((SchematicBlock) b.schematic).block.isOpaqueCube()) {
+							tmpBuildCubeList.add(b);
+							b.buildStage = 1;
+						} else {
+							tmpBuildComplexList.add(b);
+							b.buildStage = 2;
 						}
-
-						BuildingSlotBlock b = new BuildingSlotBlock();
-						b.schematic = slot;
-						b.x = xCoord;
-						b.y = yCoord;
-						b.z = zCoord;
-						b.mode = Mode.Build;
-
-						tmpBuildList.add(b);
+					} else {
+						postProcessing.add(b);
 					}
 				}
 			}
 		}
 
-		Collections.sort(tmpBuildList);
+		Collections.sort(tmpBuildCubeList);
+		Collections.sort(tmpBuildComplexList);
 
-		buildList.addAll(tmpBuildList);
+		buildList.addAll(tmpBuildCubeList);
+		buildList.addAll(tmpBuildComplexList);
 
 		iterator = new BuildingSlotIterator(buildList);
 
-		for (SchematicEntity e : bluePrint.entities) {
-			// TODO: take into account items already built... How to identify
-			// them? id in list?
+		int seqId = 0;
+
+		for (SchematicEntity e : ((Blueprint) blueprint).entities) {
+
 			BuildingSlotEntity b = new BuildingSlotEntity();
 			b.schematic = e;
-			entityList.add(b);
+			b.sequenceNumber = seqId;
+
+			if (!builtEntities.contains(seqId)) {
+				entityList.add(b);
+			} else {
+				postProcessing.add(b);
+			}
+
+			seqId++;
 		}
 
 		recomputeNeededItems();
@@ -165,6 +199,11 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 
 		while (iterator.hasNext()) {
 			BuildingSlotBlock slot = iterator.next();
+
+			if (slot.buildStage > buildList.getFirst().buildStage) {
+				iterator.reset ();
+				return null;
+			}
 
 			boolean getNext = false;
 
@@ -226,6 +265,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 
 					it.remove();
 					postProcessing.add(slot);
+					builtEntities.add(slot.sequenceNumber);
 					return slot;
 				}
 			}
@@ -523,6 +563,33 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 				t.printStackTrace();
 				BCLog.logger.throwing("BptBuilderBlueprint", "postProcessing", t);
 			}
+		}
+	}
+
+	@Override
+	public void saveBuildStateToNBT (NBTTagCompound nbt, TileAbstractBuilder builder) {
+		super.saveBuildStateToNBT(nbt, builder);
+
+		int [] entitiesBuiltArr = new int [builtEntities.size()];
+
+		int id = 0;
+
+		for (Integer i : builtEntities) {
+			entitiesBuiltArr [id] = i;
+			id++;
+		}
+
+		nbt.setIntArray("builtEntities", entitiesBuiltArr);
+	}
+
+	@Override
+	public void loadBuildStateToNBT (NBTTagCompound nbt, TileAbstractBuilder builder) {
+		super.loadBuildStateToNBT(nbt, builder);
+
+		int [] entitiesBuiltArr = nbt.getIntArray("builtEntities");
+
+		for (int i = 0; i < entitiesBuiltArr.length; ++i) {
+			builtEntities.add(i);
 		}
 	}
 

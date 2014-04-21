@@ -19,14 +19,19 @@ public class BlueprintReadConfiguration {
 	@NetworkData
 	public boolean readTiles = true;
 
+	@NetworkData
+	public boolean excavate = true;
+
 	public void writeToNBT(NBTTagCompound nbttagcompound) {
 		nbttagcompound.setBoolean("rotate", rotate);
 		nbttagcompound.setBoolean("readAllBlocks", readTiles);
+		nbttagcompound.setBoolean("excavate", excavate);
 	}
 
 	public void readFromNBT(NBTTagCompound nbttagcompound) {
 		rotate = nbttagcompound.getBoolean("rotate");
 		readTiles = nbttagcompound.getBoolean("readAllBlocks");
+		excavate = nbttagcompound.getBoolean("excavate");
 	}
 
 }

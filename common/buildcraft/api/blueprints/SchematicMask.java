@@ -12,12 +12,17 @@ import java.util.LinkedList;
 
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.BlockUtil;
 
 public class SchematicMask extends SchematicBlockBase {
 
 	public boolean isConcrete = true;
+
+	public SchematicMask () {
+
+	}
 
 	public SchematicMask (boolean isConcrete) {
 		this.isConcrete = isConcrete;
@@ -67,4 +72,13 @@ public class SchematicMask extends SchematicBlockBase {
 		}
 	}
 
+	@Override
+	public void writeToNBT(NBTTagCompound nbt, MappingRegistry registry) {
+		nbt.setBoolean("isConcrete", isConcrete);
+	}
+
+	@Override
+	public void readFromNBT(NBTTagCompound nbt,	MappingRegistry registry) {
+		isConcrete = nbt.getBoolean("isConcrete");
+	}
 }

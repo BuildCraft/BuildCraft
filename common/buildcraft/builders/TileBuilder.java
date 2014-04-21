@@ -56,6 +56,8 @@ public class TileBuilder extends TileAbstractBuilder implements IMachine {
 
 	private LinkedList <ItemStack> requiredToBuild;
 
+	NBTTagCompound initNBT = null;
+
 	private class PathIterator {
 
 		public Iterator<BlockIndex> currentIterator;
@@ -187,6 +189,26 @@ public class TileBuilder extends TileAbstractBuilder implements IMachine {
 
 		if (worldObj.isRemote) {
 			return;
+		}
+
+
+		if (initNBT != null) {
+			iterateBpt();
+
+			if (bluePrintBuilder != null) {
+				NBTTagCompound builderCpt = new NBTTagCompound();
+				bluePrintBuilder.loadBuildStateToNBT(
+						initNBT.getCompoundTag("builderState"), this);
+			}
+
+			/*
+			 * if (currentPathIterator != null) { NBTTagCompound iteratorNBT =
+			 * new NBTTagCompound();
+			 * currentPathIterator.to.writeTo(iteratorNBT);
+			 * nbttagcompound.setTag ("iterator", iteratorNBT); }
+			 */
+
+			initNBT = null;
 		}
 
 		box.kind = Kind.STRIPES;
@@ -445,6 +467,9 @@ public class TileBuilder extends TileAbstractBuilder implements IMachine {
 		}
 
 		done = nbttagcompound.getBoolean("done");
+
+		// The rest of load has to be done upon initialize.
+		initNBT = (NBTTagCompound) nbttagcompound.getCompoundTag("bptBuilder").copy();
 	}
 
 	@Override
@@ -473,17 +498,21 @@ public class TileBuilder extends TileAbstractBuilder implements IMachine {
 
 		nbttagcompound.setBoolean("done", done);
 
+		NBTTagCompound bptNBT = new NBTTagCompound();
+
 		if (bluePrintBuilder != null) {
 			NBTTagCompound builderCpt = new NBTTagCompound();
-			bluePrintBuilder.saveBuildStateToNBT(builderCpt);
-			nbttagcompound.setTag("builderState", builderCpt);
+			bluePrintBuilder.saveBuildStateToNBT(builderCpt, this);
+			bptNBT.setTag("builderState", builderCpt);
 		}
 
 		if (currentPathIterator != null) {
 			NBTTagCompound iteratorNBT = new NBTTagCompound();
 			currentPathIterator.to.writeTo(iteratorNBT);
-			nbttagcompound.setTag ("iterator", iteratorNBT);
+			bptNBT.setTag ("iterator", iteratorNBT);
 		}
+
+		nbttagcompound.setTag("bptBuilder", bptNBT);
 	}
 
 	@Override

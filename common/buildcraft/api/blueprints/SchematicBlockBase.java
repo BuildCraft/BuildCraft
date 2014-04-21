@@ -32,7 +32,7 @@ package buildcraft.api.blueprints;
  * such block id is found, BuildCraft will assume that the block is not
  * installed and will not load the blueprint.
  */
-public class SchematicBlockBase extends Schematic {
+public abstract class SchematicBlockBase extends Schematic {
 
 	public void writeCompleted(IBuilderContext context, int x, int y, int z, double completed) {
 

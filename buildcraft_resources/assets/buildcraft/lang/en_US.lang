@@ -120,6 +120,7 @@ item.redPipeWire.name=Red Pipe Wire
 item.bluePipeWire.name=Blue Pipe Wire
 item.greenPipeWire.name=Green Pipe Wire
 item.yellowPipeWire.name=Yellow Pipe Wire
+item.redstoneCrystal.name=Redstone Crystal
 item.redstone_red_chipset.name=Redstone Chipset
 item.redstone_iron_chipset.name=Iron Chipset
 item.redstone_gold_chipset.name=Golden Chipset

@@ -22,7 +22,10 @@ public class Position {
 	public ForgeDirection orientation;
 
 	public Position() {
-
+		x = 0;
+		y = 0;
+		z = 0;
+		orientation = ForgeDirection.UNKNOWN;
 	}
 
 	public Position(double ci, double cj, double ck) {
@@ -127,12 +130,14 @@ public class Position {
 		nbttagcompound.setDouble("i", x);
 		nbttagcompound.setDouble("j", y);
 		nbttagcompound.setDouble("k", z);
+		nbttagcompound.setByte("orientation", (byte) orientation.ordinal());
 	}
 
 	public void readFromNBT(NBTTagCompound nbttagcompound) {
 		x = nbttagcompound.getDouble("i");
 		y = nbttagcompound.getDouble("j");
 		z = nbttagcompound.getDouble("k");
+		orientation = ForgeDirection.values() [nbttagcompound.getByte("orientation")];
 	}
 
 	@Override

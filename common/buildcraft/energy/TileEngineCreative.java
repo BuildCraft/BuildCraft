@@ -8,18 +8,20 @@
  */
 package buildcraft.energy;
 
+import buildcraft.api.tools.IToolWrench;
+import buildcraft.core.network.NetworkData;
+import buildcraft.core.utils.StringUtils;
+import buildcraft.transport.pipes.PipePowerIron;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.util.ForgeDirection;
-import buildcraft.api.tools.IToolWrench;
-import buildcraft.core.utils.StringUtils;
-import buildcraft.transport.pipes.PipePowerIron;
 
 public class TileEngineCreative extends TileEngine {
 
+	@NetworkData
 	private PipePowerIron.PowerMode powerMode = PipePowerIron.PowerMode.M2;
 
 	@Override
@@ -44,21 +46,23 @@ public class TileEngineCreative extends TileEngine {
 
 	@Override
 	public boolean onBlockActivated(EntityPlayer player, ForgeDirection side) {
-		Item equipped = player.getCurrentEquippedItem() != null ? player.getCurrentEquippedItem().getItem() : null;
+		if (!getWorld().isRemote) {
+			Item equipped = player.getCurrentEquippedItem() != null ? player.getCurrentEquippedItem().getItem() : null;
 
-		if (equipped instanceof IToolWrench && ((IToolWrench) equipped).canWrench(player, xCoord, yCoord, zCoord)) {
-			powerMode = powerMode.getNext();
-			energy = 0;
+			if (equipped instanceof IToolWrench && ((IToolWrench) equipped).canWrench(player, xCoord, yCoord, zCoord)) {
+				powerMode = powerMode.getNext();
+				energy = 0;
 
-			if (!getWorld().isRemote) {
 				player.addChatMessage(new ChatComponentText(String.format(StringUtils.localize("chat.pipe.power.iron.mode"), powerMode.maxPower)));
-			}
 
-			((IToolWrench) equipped).wrenchUsed(player, xCoord, yCoord, zCoord);
-			return true;
+				sendNetworkUpdate();
+
+				((IToolWrench) equipped).wrenchUsed(player, xCoord, yCoord, zCoord);
+				return true;
+			}
 		}
 
-		return false;
+		return !player.isSneaking();
 	}
 
 	@Override

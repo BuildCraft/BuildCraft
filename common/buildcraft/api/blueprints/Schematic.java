@@ -39,7 +39,7 @@ import buildcraft.core.utils.Utils;
  * such block id is found, BuildCraft will assume that the block is not
  * installed and will not load the blueprint.
  */
-public class Schematic {
+public abstract class Schematic {
 
 	/**
 	 * Return true if the block on the world correspond to the block stored in

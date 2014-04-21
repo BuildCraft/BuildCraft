@@ -8,6 +8,7 @@
  */
 package buildcraft.builders.filler.pattern;
 
+import net.minecraft.world.World;
 import buildcraft.api.blueprints.SchematicMask;
 import buildcraft.core.Box;
 import buildcraft.core.blueprints.Template;
@@ -22,7 +23,7 @@ public class PatternPyramid extends FillerPattern {
 	boolean param1 = true;
 
 	@Override
-	public Template getTemplate (Box box) {
+	public Template getTemplate (Box box, World world) {
 		int xMin = (int) box.pMin().x;
 		int yMin = (int) box.pMin().y;
 		int zMin = (int) box.pMin().z;

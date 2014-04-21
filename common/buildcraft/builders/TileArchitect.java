@@ -89,6 +89,7 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 							xCoord, yCoord, zCoord)].getOpposite();
 
 					writingBlueprint.rotate = readConfiguration.rotate;
+					writingBlueprint.excavate = readConfiguration.excavate;
 
 					if (writingBlueprint.rotate) {
 						if (o == ForgeDirection.EAST) {

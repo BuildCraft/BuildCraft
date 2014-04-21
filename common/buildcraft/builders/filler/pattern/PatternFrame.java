@@ -8,6 +8,7 @@
  */
 package buildcraft.builders.filler.pattern;
 
+import net.minecraft.world.World;
 import buildcraft.api.blueprints.SchematicMask;
 import buildcraft.core.Box;
 import buildcraft.core.blueprints.Template;
@@ -20,7 +21,7 @@ public class PatternFrame extends FillerPattern {
 	}
 
 	@Override
-	public Template getTemplate(Box box) {
+	public Template getTemplate(Box box, World world) {
 		Template template = new Template (box.sizeX(), box.sizeY(), box.sizeZ());
 
 		int xMin = 0;
