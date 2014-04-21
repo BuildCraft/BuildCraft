@@ -10,18 +10,17 @@ package buildcraft.transport.render;
 
 import buildcraft.api.gates.IGateExpansion;
 import buildcraft.transport.gates.ItemGate;
-import java.util.Random;
-import net.minecraft.item.ItemStack;
+import net.minecraft.client.renderer.ItemRenderer;
+import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.client.renderer.entity.RenderManager;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.util.IIcon;
-import net.minecraft.client.renderer.ItemRenderer;
-import net.minecraftforge.client.IItemRenderer;
-import net.minecraftforge.client.IItemRenderer.ItemRenderType;
-import net.minecraftforge.client.IItemRenderer.ItemRendererHelper;
-import org.lwjgl.opengl.GL11;
 import net.minecraft.entity.item.EntityItem;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.IIcon;
+import net.minecraftforge.client.IItemRenderer;
+import org.lwjgl.opengl.GL11;
+
+import java.util.Random;
 
 public class GateItemRenderer implements IItemRenderer {
 
@@ -152,6 +151,7 @@ public class GateItemRenderer implements IItemRenderer {
 	private void render(ItemRenderType type, ItemStack stack) {
 		GL11.glPushMatrix();
 		GL11.glDisable(GL11.GL_LIGHTING);
+		GL11.glEnable(GL11.GL_ALPHA_TEST); // In certain cases gets disabled by this point
 		IIcon icon = ItemGate.getLogic(stack).getIconItem();
 		renderItem.renderIcon(0, 0, icon, 16, 16);
 
