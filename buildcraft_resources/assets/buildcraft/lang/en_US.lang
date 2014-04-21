@@ -212,7 +212,7 @@ tip.gate.expansions=§9§oInstalled Expansions:
 tip.fluid.empty=Empty
 tip.fluid.format=%s, %d mB
 
-tip.nbt= §5+NBT
+tip.nbt= §5§o+NBT
 tip.nbt.engine.fuel=  §7Fuel: %s
 tip.nbt.engine.coolant=  §7Coolant: %s
 

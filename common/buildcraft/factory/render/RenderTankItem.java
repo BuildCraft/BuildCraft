@@ -18,7 +18,7 @@ public class RenderTankItem extends RenderItemWithData<TileTank>{
 	}
 
 	@Override
-	protected void resetTile(TileTank tile){
-		tile.tank.setFluid(null);
+	protected boolean shouldRenderEmptyTile() {
+		return false;
 	}
 }
