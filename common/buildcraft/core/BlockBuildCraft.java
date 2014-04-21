@@ -12,15 +12,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import net.minecraft.block.BlockContainer;
+import net.minecraft.block.Block;
+import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import buildcraft.core.utils.Utils;
@@ -34,7 +33,7 @@ import net.minecraft.stats.StatList;
 import net.minecraft.item.Item;
 import org.lwjgl.input.Keyboard;
 
-public abstract class BlockBuildCraft extends BlockContainer {
+public abstract class BlockBuildCraft extends Block implements ITileEntityProvider{
 
 	protected static boolean keepInventory = false;
 	protected final Random rand = new Random();

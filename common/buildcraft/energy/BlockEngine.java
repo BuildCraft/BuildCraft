@@ -82,20 +82,6 @@ public class BlockEngine extends BlockBuildCraft implements ICustomHighlight {
 	}
 
 	@Override
-	public TileEntity createTileEntity(World world, int metadata) {
-		switch (metadata) {
-			case 1:
-				return new TileEngineStone();
-			case 2:
-				return new TileEngineIron();
-			case 3:
-				return new TileEngineCreative();
-			default:
-				return new TileEngineWood();
-		}
-	}
-
-	@Override
 	public boolean isSideSolid(IBlockAccess world, int x, int y, int z, ForgeDirection side) {
 		TileEntity tile = world.getTileEntity(x, y, z);
 		return tile instanceof TileEngine && ((TileEngine) tile).orientation.getOpposite() == side;
@@ -123,9 +109,9 @@ public class BlockEngine extends BlockBuildCraft implements ICustomHighlight {
 
 		// REMOVED DUE TO CREATIVE ENGINE REQUIREMENTS - dmillerw
 		// Drop through if the player is sneaking
-//		if (player.isSneaking()) {
-//			return false;
-//		}
+		//		if (player.isSneaking()) {
+		//			return false;
+		//		}
 		if (tile instanceof TileEngine){
 			// Do not open guis when having a pipe in hand
 			if(player.getCurrentEquippedItem() != null){
@@ -290,6 +276,15 @@ public class BlockEngine extends BlockBuildCraft implements ICustomHighlight {
 
 	@Override
 	public TileEntity createNewTileEntity(World world, int metadata) {
-		return null;
+		switch (metadata) {
+			case 1:
+				return new TileEngineStone();
+			case 2:
+				return new TileEngineIron();
+			case 3:
+				return new TileEngineCreative();
+			default:
+				return new TileEngineWood();
+		}
 	}
 }
