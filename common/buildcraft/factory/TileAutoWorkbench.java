@@ -131,6 +131,7 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
 	@Override
 	public void readFromNBT(NBTTagCompound data) {
 		super.readFromNBT(data);
+		progress = data.getInteger("progress");
 		resultInv.readFromNBT(data);
 		InvUtils.readInvFromNBT(craftMatrix, "matrix", data);
 
@@ -147,6 +148,7 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
 	@Override
 	public void writeToNBT(NBTTagCompound data) {
 		super.writeToNBT(data);
+		data.setInteger("progress", progress);
 		resultInv.writeToNBT(data);
 		InvUtils.writeInvToNBT(craftMatrix, "matrix", data);
 	}

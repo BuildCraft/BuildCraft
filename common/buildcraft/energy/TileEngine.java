@@ -416,7 +416,7 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 	}
 
 	public String[] getExclusions(){
-		return new String[]{"orientation"};
+		return new String[]{"orientation", "energy"};
 	}
 
 	public void getGUINetworkData(int id, int value) {
