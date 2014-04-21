@@ -4,6 +4,7 @@ import buildcraft.core.BlockBuildCraft;
 import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.utils.Utils;
 import buildcraft.factory.render.RenderMultiblockSlave;
+import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -52,6 +53,19 @@ public class BlockRefineryController extends BlockBuildCraft {
 		}
 
 		return !player.isSneaking();
+	}
+
+	@Override
+	public void breakBlock(World world, int x, int y, int z, Block block, int par6) {
+		if (!world.isRemote) {
+			TileRefineryController tile = (TileRefineryController) world.getTileEntity(x, y, z);
+
+			if (tile != null) {
+				tile.deformMultiblock();
+			}
+		}
+
+		super.breakBlock(world, x, y, z, block, par6);
 	}
 
 	@Override
