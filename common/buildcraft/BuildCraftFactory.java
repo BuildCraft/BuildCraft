@@ -57,8 +57,6 @@ import buildcraft.factory.network.PacketHandlerFactory;
 import com.google.common.collect.Lists;
 
 import cpw.mods.fml.common.Mod;
-import cpw.mods.fml.common.Mod.EventHandler;
-import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLInterModComms;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
@@ -87,10 +85,10 @@ public class BuildCraftFactory extends BuildCraftMod {
 	public static float miningMultiplier = 1;
 	public static int miningDepth = 256;
 	public static PumpDimensionList pumpDimensionList;
-	@Instance("BuildCraft|Factory")
+	@Mod.Instance("BuildCraft|Factory")
 	public static BuildCraftFactory instance;
 
-	@EventHandler
+	@Mod.EventHandler
 	public void postInit(FMLPostInitializationEvent evt) {
 		FactoryProxy.proxy.initializeNEIIntegration();
 		ForgeChunkManager.setForcedChunkLoadingCallback(instance, new QuarryChunkloadCallback());
@@ -127,7 +125,7 @@ public class BuildCraftFactory extends BuildCraftMod {
 		}
 	}
 
-	@EventHandler
+	@Mod.EventHandler
 	public void load(FMLInitializationEvent evt) {
 		NetworkRegistry.INSTANCE.registerGuiHandler(instance, new GuiHandler());
 
@@ -152,7 +150,7 @@ public class BuildCraftFactory extends BuildCraftMod {
 		}
 	}
 
-	@EventHandler
+	@Mod.EventHandler
 	public void initialize(FMLPreInitializationEvent evt) {
 		channels = NetworkRegistry.INSTANCE.newChannel
 				(DefaultProps.NET_CHANNEL_NAME + "-FACTORY", new PacketHandlerFactory());
@@ -314,7 +312,7 @@ public class BuildCraftFactory extends BuildCraftMod {
 		}
 	}
 
-	@EventHandler
+	@Mod.EventHandler
     public void processIMCRequests(FMLInterModComms.IMCEvent event) {
         InterModComms.processIMC(event);
     }

@@ -109,15 +109,12 @@ import buildcraft.transport.triggers.TriggerPipeContents.PipeContents;
 import buildcraft.transport.triggers.TriggerPipeSignal;
 import buildcraft.transport.triggers.TriggerRedstoneFaderInput;
 import cpw.mods.fml.common.Mod;
-import cpw.mods.fml.common.Mod.EventHandler;
-import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLInterModComms.IMCEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
-import cpw.mods.fml.common.registry.LanguageRegistry;
 
 @Mod(version = Version.VERSION, modid = "BuildCraft|Transport", name = "Buildcraft Transport", dependencies = DefaultProps.DEPENDENCY_CORE)
 public class BuildCraftTransport extends BuildCraftMod {
@@ -185,7 +182,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 	public IIconProvider pipeIconProvider = new PipeIconProvider();
 	public IIconProvider wireIconProvider = new WireIconProvider();
 
-	@Instance("BuildCraft|Transport")
+	@Mod.Instance("BuildCraft|Transport")
 	public static BuildCraftTransport instance;
 
 	private static class PipeRecipe {
@@ -239,7 +236,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 	}
 	private static LinkedList<PipeRecipe> pipeRecipes = new LinkedList<PipeRecipe>();
 
-	@EventHandler
+	@Mod.EventHandler
 	public void preInit(FMLPreInitializationEvent evt) {
 		try {
 			Property durability = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "pipes.durability", DefaultProps.PIPES_DURABILITY);
@@ -314,7 +311,6 @@ public class BuildCraftTransport extends BuildCraftMod {
 			pipeWaterproof = new ItemBuildCraft(CreativeTabBuildCraft.TIER_2);
 
 			pipeWaterproof.setUnlocalizedName("pipeWaterproof");
-			LanguageRegistry.addName(pipeWaterproof, "Pipe Sealant");
 			CoreProxy.proxy.registerItem(pipeWaterproof);
 
 			genericPipeBlock = new BlockGenericPipe();
@@ -364,7 +360,6 @@ public class BuildCraftTransport extends BuildCraftMod {
 			// 1, 0), Block.glass, new ItemStack(Item.dyePowder, 1, 11));
 
 			pipeWire = new ItemPipeWire();
-			LanguageRegistry.addName(pipeWire, "Pipe Wire");
 			CoreProxy.proxy.registerItem(pipeWire);
 			PipeWire.item = pipeWire;
 
@@ -422,7 +417,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 		}
 	}
 
-	@EventHandler
+	@Mod.EventHandler
 	public void init(FMLInitializationEvent evt) {
 		channels = NetworkRegistry.INSTANCE.newChannel
 				(DefaultProps.NET_CHANNEL_NAME + "-TRANSPORT", new PacketHandlerTransport());
@@ -458,7 +453,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 		NetworkRegistry.INSTANCE.registerGuiHandler(instance, new GuiHandler());
 	}
 
-	@EventHandler
+	@Mod.EventHandler
 	public void postInit(FMLPostInitializationEvent evt) {
 		ItemFacade.initialize();
 	}
@@ -478,9 +473,9 @@ public class BuildCraftTransport extends BuildCraftMod {
 		}
 
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(filteredBufferBlock, 1),
-				new Object[]{"wdw", "wcw", "wpw", 'w', "plankWood", 'd',
+				"wdw", "wcw", "wpw", 'w', "plankWood", 'd',
 			BuildCraftTransport.pipeItemsDiamond, 'c', Blocks.chest, 'p',
-			Blocks.piston});
+			Blocks.piston);
 
 		//Facade turning helper
 		GameRegistry.addRecipe(facadeItem.new FacadeRecipe());
@@ -489,7 +484,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 		BuildcraftRecipes.assemblyTable.addRecipe(1000, new ItemStack(plugItem, 8), new ItemStack(pipeStructureCobblestone));
 	}
 
-	@EventHandler
+	@Mod.EventHandler
 	public void processIMCRequests(IMCEvent event) {
 		InterModComms.processIMC(event);
 	}
@@ -501,7 +496,6 @@ public class BuildCraftTransport extends BuildCraftMod {
 
 		ItemPipe res = BlockGenericPipe.registerPipe(clas, creativeTab);
 		res.setUnlocalizedName(clas.getSimpleName());
-		LanguageRegistry.addName(res, descr);
 
 		// Add appropriate recipe to temporary list
 		PipeRecipe recipe = new PipeRecipe();
