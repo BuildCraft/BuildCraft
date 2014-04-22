@@ -16,12 +16,14 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
+
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.ForgeChunkManager;
 import net.minecraftforge.common.ForgeChunkManager.Ticket;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
+
 import buildcraft.api.blueprints.SchematicRegistry;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.InterModComms;
@@ -70,6 +72,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 public class BuildCraftFactory extends BuildCraftMod {
 
 	public static final int MINING_MJ_COST_PER_BLOCK = 64;
+
 	public static BlockQuarry quarryBlock;
 	public static BlockMiningWell miningWellBlock;
 	public static BlockAutoWorkbench autoWorkbenchBlock;
@@ -80,11 +83,14 @@ public class BuildCraftFactory extends BuildCraftMod {
 	public static BlockTank tankBlock;
 	public static BlockRefinery refineryBlock;
 	public static BlockHopper hopperBlock;
+
 	public static boolean allowMining = true;
 	public static boolean quarryOneTimeUse = false;
 	public static float miningMultiplier = 1;
 	public static int miningDepth = 256;
+
 	public static PumpDimensionList pumpDimensionList;
+
 	@Mod.Instance("BuildCraft|Factory")
 	public static BuildCraftFactory instance;
 

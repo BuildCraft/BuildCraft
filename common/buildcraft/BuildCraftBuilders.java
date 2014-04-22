@@ -20,10 +20,12 @@ import net.minecraft.entity.item.EntityPainting;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
+
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
+
 import buildcraft.api.blueprints.SchematicBlock;
 import buildcraft.api.blueprints.SchematicEntity;
 import buildcraft.api.blueprints.SchematicFactory;
@@ -54,42 +56,9 @@ import buildcraft.builders.TileFiller;
 import buildcraft.builders.TileMarker;
 import buildcraft.builders.TilePathMarker;
 import buildcraft.builders.blueprints.BlueprintDatabase;
-import buildcraft.builders.filler.FillerRegistry;
-import buildcraft.builders.filler.pattern.FillerPattern;
-import buildcraft.builders.filler.pattern.PatternBox;
-import buildcraft.builders.filler.pattern.PatternClear;
-import buildcraft.builders.filler.pattern.PatternCylinder;
-import buildcraft.builders.filler.pattern.PatternFill;
-import buildcraft.builders.filler.pattern.PatternFlatten;
-import buildcraft.builders.filler.pattern.PatternFrame;
-import buildcraft.builders.filler.pattern.PatternHorizon;
-import buildcraft.builders.filler.pattern.PatternPyramid;
-import buildcraft.builders.filler.pattern.PatternStairs;
-import buildcraft.builders.schematics.SchematicBed;
-import buildcraft.builders.schematics.SchematicCactus;
-import buildcraft.builders.schematics.SchematicCustomStack;
-import buildcraft.builders.schematics.SchematicDirt;
-import buildcraft.builders.schematics.SchematicDoor;
-import buildcraft.builders.schematics.SchematicFarmland;
-import buildcraft.builders.schematics.SchematicFire;
-import buildcraft.builders.schematics.SchematicFluid;
-import buildcraft.builders.schematics.SchematicGravel;
-import buildcraft.builders.schematics.SchematicHanging;
-import buildcraft.builders.schematics.SchematicIgnore;
-import buildcraft.builders.schematics.SchematicIgnoreMeta;
-import buildcraft.builders.schematics.SchematicLever;
-import buildcraft.builders.schematics.SchematicMinecart;
-import buildcraft.builders.schematics.SchematicPiston;
-import buildcraft.builders.schematics.SchematicPortal;
-import buildcraft.builders.schematics.SchematicPumpkin;
-import buildcraft.builders.schematics.SchematicRail;
-import buildcraft.builders.schematics.SchematicRedstoneDiode;
-import buildcraft.builders.schematics.SchematicRotateMeta;
-import buildcraft.builders.schematics.SchematicSeeds;
-import buildcraft.builders.schematics.SchematicSign;
-import buildcraft.builders.schematics.SchematicStairs;
-import buildcraft.builders.schematics.SchematicStone;
-import buildcraft.builders.schematics.SchematicWallSide;
+import buildcraft.builders.filler.*;
+import buildcraft.builders.filler.pattern.*;
+import buildcraft.builders.schematics.*;
 import buildcraft.builders.triggers.ActionFiller;
 import buildcraft.builders.triggers.BuildersActionProvider;
 import buildcraft.builders.urbanism.BlockUrbanist;
@@ -100,6 +69,7 @@ import buildcraft.core.InterModComms;
 import buildcraft.core.Version;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.BCLog;
+
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLInterModComms;
@@ -117,6 +87,7 @@ public class BuildCraftBuilders extends BuildCraftMod {
 	public static final char BPT_SEP_CHARACTER = '-';
 	public static final int LIBRARY_PAGE_SIZE = 12;
 	public static final int MAX_BLUEPRINTS_NAME_SIZE = 14;
+
 	public static BlockBuildTool buildToolBlock;
 	public static BlockMarker markerBlock;
 	public static BlockPathMarker pathMarkerBlock;
@@ -127,10 +98,13 @@ public class BuildCraftBuilders extends BuildCraftMod {
 	public static BlockUrbanist urbanistBlock;
 	public static ItemBlueprintTemplate templateItem;
 	public static ItemBlueprintStandard blueprintItem;
+    
 	public static boolean fillerDestroy;
 	public static int fillerLifespanTough;
 	public static int fillerLifespanNormal;
+
 	public static ActionFiller[] fillerActions;
+
 	@Mod.Instance("BuildCraft|Builders")
 	public static BuildCraftBuilders instance;
 

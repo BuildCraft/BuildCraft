@@ -24,6 +24,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.stats.Achievement;
 import net.minecraft.util.IIcon;
+
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.AchievementPage;
@@ -63,29 +64,16 @@ import buildcraft.core.network.EntityIds;
 import buildcraft.core.network.PacketHandler;
 import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.proxy.CoreProxy;
-import buildcraft.core.recipes.AssemblyRecipeManager;
-import buildcraft.core.recipes.IntegrationRecipeManager;
-import buildcraft.core.recipes.RefineryRecipeManager;
+import buildcraft.core.recipes.*;
 import buildcraft.core.render.BlockHighlightHandler;
 import buildcraft.core.robots.EntityRobot;
 import buildcraft.core.robots.EntityRobotBuilder;
 import buildcraft.core.robots.EntityRobotPicker;
-import buildcraft.core.triggers.ActionMachineControl;
+import buildcraft.core.triggers.*;
 import buildcraft.core.triggers.ActionMachineControl.Mode;
-import buildcraft.core.triggers.ActionRedstoneOutput;
-import buildcraft.core.triggers.ActionTriggerIconProvider;
-import buildcraft.core.triggers.BCAction;
-import buildcraft.core.triggers.BCTrigger;
-import buildcraft.core.triggers.DefaultActionProvider;
-import buildcraft.core.triggers.DefaultTriggerProvider;
-import buildcraft.core.triggers.TriggerFluidContainer;
-import buildcraft.core.triggers.TriggerFluidContainerLevel;
-import buildcraft.core.triggers.TriggerInventory;
-import buildcraft.core.triggers.TriggerInventoryLevel;
-import buildcraft.core.triggers.TriggerMachine;
-import buildcraft.core.triggers.TriggerRedstoneInput;
 import buildcraft.core.utils.BCLog;
 import buildcraft.core.utils.CraftingHandler;
+
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
@@ -101,12 +89,14 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 @Mod(name = "BuildCraft", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Core", acceptedMinecraftVersions = "[1.7.2,1.8)", dependencies = "required-after:Forge@[10.12.0.1024,)")
 public class BuildCraftCore extends BuildCraftMod {
+
 	public static final boolean NEXTGEN_PREALPHA = true;
 
 	public static enum RenderMode {
 		Full, NoDynamic
 	}
 	public static RenderMode render = RenderMode.Full;
+
 	public static boolean debugMode = false;
 	public static boolean modifyWorld = false;
 	public static boolean colorBlindMode = false;
@@ -114,14 +104,17 @@ public class BuildCraftCore extends BuildCraftMod {
 	public static int itemLifespan = 1200;
 	public static int updateFactor = 10;
 	public static long longUpdateFactor = 40;
+
 	public static BuildCraftConfiguration mainConfiguration;
 
-	// TODO: This doesn't seem used anymore. Remove if it's the case.
+    // Note from TXX: This actually IS used by the Utils class.
 	public static TreeMap<BlockIndex, PacketUpdate> bufferedDescriptions = new TreeMap<BlockIndex, PacketUpdate>();
 
 	public static final int trackedPassiveEntityId = 156;
 	public static boolean continuousCurrentModel;
+
 	public static Block springBlock;
+
 	public static Item woodenGearItem;
 	public static Item stoneGearItem;
 	public static Item ironGearItem;
@@ -132,6 +125,7 @@ public class BuildCraftCore extends BuildCraftMod {
 	public static Item robotBaseItem;
 	public static Item robotBuilderItem;
 	public static Item robotPickerItem;
+
 	@SideOnly(Side.CLIENT)
 	public static IIcon redLaserTexture;
 	@SideOnly(Side.CLIENT)
@@ -140,11 +134,14 @@ public class BuildCraftCore extends BuildCraftMod {
 	public static IIcon stripesLaserTexture;
 	@SideOnly(Side.CLIENT)
 	public static IIcon transparentTexture;
+
 	@SideOnly(Side.CLIENT)
 	public static IIconProvider iconProvider;
+
 	public static int blockByEntityModel;
 	public static int legacyPipeModel;
 	public static int markerModel;
+
 	public static BCTrigger triggerMachineActive = new TriggerMachine(true);
 	public static BCTrigger triggerMachineInactive = new TriggerMachine(false);
 	public static BCTrigger triggerEmptyInventory = new TriggerInventory(TriggerInventory.State.Empty);
@@ -167,10 +164,14 @@ public class BuildCraftCore extends BuildCraftMod {
 	public static BCAction actionOn = new ActionMachineControl(Mode.On);
 	public static BCAction actionOff = new ActionMachineControl(Mode.Off);
 	public static BCAction actionLoop = new ActionMachineControl(Mode.Loop);
+
 	public static boolean loadDefaultRecipes = true;
 	public static boolean forcePneumaticPower = true;
 	public static boolean consumeWaterSources = false;
+
+    // Can this be removed?
 	//public static BptItem[] itemBptProps = new BptItem[Item.itemsList.length];
+
 	@Mod.Instance("BuildCraft|Core")
 	public static BuildCraftCore instance;
 
@@ -190,13 +191,11 @@ public class BuildCraftCore extends BuildCraftMod {
 	public static Achievement timeForSomeLogicAchievement;
 	public static Achievement refineAndRedefineAchievement;
 	public static Achievement tinglyLaserAchievement;
-	
 	public static Achievement architectAchievement;
 	public static Achievement builderAchievement;
 	public static Achievement blueprintAchievement;
 	public static Achievement templateAchievement;
 	public static Achievement libraryAchievement;
-	
 	public static AchievementPage BuildcraftAchievements;
 
 	@Mod.EventHandler
@@ -242,9 +241,6 @@ public class BuildCraftCore extends BuildCraftMod {
 			longFactor.comment = "delay between full client sync packets, increasing it saves bandwidth, decreasing makes for better client syncronization.";
 			longUpdateFactor = longFactor.getInt(40);
 
-			wrenchItem = (new ItemWrench()).setUnlocalizedName("wrenchItem");
-			CoreProxy.proxy.registerItem(wrenchItem);
-
 			Property modifyWorldProp = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "modifyWorld", true);
 			modifyWorldProp.comment = "set to false if BuildCraft should not generate custom blocks (e.g. oil)";
 			modifyWorld = modifyWorldProp.getBoolean(true);
@@ -258,44 +254,6 @@ public class BuildCraftCore extends BuildCraftMod {
 			Property consumeWater = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "consumeWater", consumeWaterSources);
 			consumeWaterSources = consumeWater.getBoolean(consumeWaterSources);
 			consumeWater.comment = "set to true if the Pump should consume water";
-
-			woodenGearItem = (new ItemBuildCraft(CreativeTabBuildCraft.TIER_1)).setUnlocalizedName("woodenGearItem");
-			CoreProxy.proxy.registerItem(woodenGearItem);
-			OreDictionary.registerOre("gearWood", new ItemStack(woodenGearItem));
-
-			stoneGearItem = (new ItemBuildCraft(CreativeTabBuildCraft.TIER_1)).setUnlocalizedName("stoneGearItem");
-			CoreProxy.proxy.registerItem(stoneGearItem);
-			OreDictionary.registerOre("gearStone", new ItemStack(stoneGearItem));
-
-			ironGearItem = (new ItemBuildCraft(CreativeTabBuildCraft.TIER_1)).setUnlocalizedName("ironGearItem");
-			CoreProxy.proxy.registerItem(ironGearItem);
-			OreDictionary.registerOre("gearIron", new ItemStack(ironGearItem));
-
-			goldGearItem = (new ItemBuildCraft(CreativeTabBuildCraft.TIER_1)).setUnlocalizedName("goldGearItem");
-			CoreProxy.proxy.registerItem(goldGearItem);
-			OreDictionary.registerOre("gearGold", new ItemStack(goldGearItem));
-
-			diamondGearItem = (new ItemBuildCraft(CreativeTabBuildCraft.TIER_1)).setUnlocalizedName("diamondGearItem");
-			CoreProxy.proxy.registerItem(diamondGearItem);
-			OreDictionary.registerOre("gearDiamond", new ItemStack(diamondGearItem));
-
-			redstoneCrystal = (new ItemBuildCraft(CreativeTabBuildCraft.TIER_3)).setUnlocalizedName("redstoneCrystal");
-			CoreProxy.proxy.registerItem(redstoneCrystal);
-			OreDictionary.registerOre("redstoneCrystal", new ItemStack(redstoneCrystal));
-
-			if (!BuildCraftCore.NEXTGEN_PREALPHA) {
-				robotBaseItem = new ItemRobot(EntityRobot.class).setUnlocalizedName("robotBase");
-				CoreProxy.proxy.registerItem(robotBaseItem);
-
-				robotPickerItem = new ItemRobot(EntityRobotPicker.class).setUnlocalizedName("robotPicker");
-				CoreProxy.proxy.registerItem(robotPickerItem);
-
-				robotBuilderItem = new ItemRobot(EntityRobotBuilder.class).setUnlocalizedName("robotBuilder");
-				CoreProxy.proxy.registerItem(robotBuilderItem);
-			}
-
-			MinecraftForge.EVENT_BUS.register(this);
-			MinecraftForge.EVENT_BUS.register(new BlockHighlightHandler());
 		} finally {
 			if (mainConfiguration.hasChanged()) {
 				mainConfiguration.save();
@@ -303,6 +261,52 @@ public class BuildCraftCore extends BuildCraftMod {
 		}
 
 	}
+
+    @Mod.EventHandler
+    public void preInit(FMLPreInitializationEvent evt) {
+
+        wrenchItem = (new ItemWrench()).setUnlocalizedName("wrenchItem");
+        CoreProxy.proxy.registerItem(wrenchItem);
+
+        woodenGearItem = (new ItemBuildCraft(CreativeTabBuildCraft.TIER_1)).setUnlocalizedName("woodenGearItem");
+        CoreProxy.proxy.registerItem(woodenGearItem);
+        OreDictionary.registerOre("gearWood", new ItemStack(woodenGearItem));
+
+        stoneGearItem = (new ItemBuildCraft(CreativeTabBuildCraft.TIER_1)).setUnlocalizedName("stoneGearItem");
+        CoreProxy.proxy.registerItem(stoneGearItem);
+        OreDictionary.registerOre("gearStone", new ItemStack(stoneGearItem));
+
+        ironGearItem = (new ItemBuildCraft(CreativeTabBuildCraft.TIER_1)).setUnlocalizedName("ironGearItem");
+        CoreProxy.proxy.registerItem(ironGearItem);
+        OreDictionary.registerOre("gearIron", new ItemStack(ironGearItem));
+
+        goldGearItem = (new ItemBuildCraft(CreativeTabBuildCraft.TIER_1)).setUnlocalizedName("goldGearItem");
+        CoreProxy.proxy.registerItem(goldGearItem);
+        OreDictionary.registerOre("gearGold", new ItemStack(goldGearItem));
+
+        diamondGearItem = (new ItemBuildCraft(CreativeTabBuildCraft.TIER_1)).setUnlocalizedName("diamondGearItem");
+        CoreProxy.proxy.registerItem(diamondGearItem);
+        OreDictionary.registerOre("gearDiamond", new ItemStack(diamondGearItem));
+
+        redstoneCrystal = (new ItemBuildCraft(CreativeTabBuildCraft.TIER_3)).setUnlocalizedName("redstoneCrystal");
+        CoreProxy.proxy.registerItem(redstoneCrystal);
+        OreDictionary.registerOre("redstoneCrystal", new ItemStack(redstoneCrystal));
+
+        if (!BuildCraftCore.NEXTGEN_PREALPHA) {
+            robotBaseItem = new ItemRobot(EntityRobot.class).setUnlocalizedName("robotBase");
+            CoreProxy.proxy.registerItem(robotBaseItem);
+
+            robotPickerItem = new ItemRobot(EntityRobotPicker.class).setUnlocalizedName("robotPicker");
+            CoreProxy.proxy.registerItem(robotPickerItem);
+
+            robotBuilderItem = new ItemRobot(EntityRobotBuilder.class).setUnlocalizedName("robotBuilder");
+            CoreProxy.proxy.registerItem(robotBuilderItem);
+        }
+
+        MinecraftForge.EVENT_BUS.register(this);
+        MinecraftForge.EVENT_BUS.register(new BlockHighlightHandler());
+
+    }
 
 	@Mod.EventHandler
 	public void initialize(FMLInitializationEvent evt) {
@@ -334,6 +338,31 @@ public class BuildCraftCore extends BuildCraftMod {
 
 		CoreProxy.proxy.initializeRendering();
 		CoreProxy.proxy.initializeEntityRendering();
+
+        woodenGearAchievement = new Achievement("achievement.woodenGear", "woodenGearAchievement", 0, 0,woodenGearItem, null).registerStat();
+        stoneGearAchievement = new Achievement("achievement.stoneGear", "stoneGearAchievement", 2, 0, stoneGearItem, woodenGearAchievement).registerStat();
+        ironGearAchievement = new Achievement("achievement.ironGear", "ironGearAchievement", 4, 0, ironGearItem, stoneGearAchievement).registerStat();
+        goldGearAchievement = new Achievement("achievement.goldGear", "goldGearAchievement", 6, 0, goldGearItem, ironGearAchievement).registerStat();
+        diamondGearAchievement = new Achievement("achievement.diamondGear", "diamondGearAchievement", 8, 0, diamondGearItem, goldGearAchievement).registerStat();
+        wrenchAchievement = new Achievement("achievement.wrench", "wrenchAchievement", 3, 2, wrenchItem, stoneGearAchievement).registerStat();
+        engineAchievement1 = new Achievement("achievement.redstoneEngine", "engineAchievement1", 1, -2, new ItemStack(BuildCraftEnergy.engineBlock, 1, 0), woodenGearAchievement).registerStat();
+        engineAchievement2 = new Achievement("achievement.stirlingEngine", "engineAchievement2", 3, -2, new ItemStack(BuildCraftEnergy.engineBlock, 1, 1), engineAchievement1).registerStat();
+        engineAchievement3 = new Achievement("achievement.combustionEngine", "engineAchievement3", 5, -2, new ItemStack(BuildCraftEnergy.engineBlock, 1, 2), engineAchievement2).registerStat();
+        aLotOfCraftingAchievement = new Achievement("achievement.aLotOfCrafting", "aLotOfCraftingAchievement", 1, 2, BuildCraftFactory.autoWorkbenchBlock, woodenGearAchievement).registerStat();
+        straightDownAchievement = new Achievement("achievement.straightDown", "straightDownAchievement", 5, 2, BuildCraftFactory.miningWellBlock, ironGearAchievement).registerStat();
+        chunkDestroyerAchievement = new Achievement("achievement.chunkDestroyer", "chunkDestroyerAchievement", 9, 2, BuildCraftFactory.quarryBlock, diamondGearAchievement).registerStat();
+        fasterFillingAchievement = new Achievement("achievement.fasterFilling", "fasterFillingAchievement", 7, 2, BuildCraftBuilders.fillerBlock, goldGearAchievement).registerStat();
+        timeForSomeLogicAchievement = new Achievement("achievement.timeForSomeLogic", "timeForSomeLogicAchievement", 9, -2, BuildCraftSilicon.assemblyTableBlock, diamondGearAchievement).registerStat();
+        refineAndRedefineAchievement = new Achievement("achievement.refineAndRedefine", "refineAndRedefineAchievement", 10, 0, BuildCraftFactory.refineryBlock, diamondGearAchievement).registerStat();
+        tinglyLaserAchievement = new Achievement("achievement.tinglyLaser", "tinglyLaserAchievement", 11, -2, BuildCraftSilicon.laserBlock ,timeForSomeLogicAchievement).registerStat();
+        architectAchievement = new Achievement("achievement.architect", "architectAchievement", 11, 2, BuildCraftBuilders.architectBlock, chunkDestroyerAchievement).registerStat();
+        builderAchievement = new Achievement("achievement.builder", "builderAchievement", 13, 2, BuildCraftBuilders.builderBlock, architectAchievement).registerStat();
+        blueprintAchievement = new Achievement("achievement.blueprint", "blueprintAchievement", 11, 4, BuildCraftBuilders.blueprintItem, architectAchievement).registerStat();
+        templateAchievement = new Achievement("achievement.template", "templateAchievement", 13, 4, BuildCraftBuilders.templateItem, blueprintAchievement).registerStat();
+        libraryAchievement = new Achievement("achievement.blueprintLibrary", "blueprintLibraryAchievement", 15, 2, BuildCraftBuilders.libraryBlock, builderAchievement).registerStat();
+
+        BuildcraftAchievements = new AchievementPage("Buildcraft", woodenGearAchievement, stoneGearAchievement, ironGearAchievement, goldGearAchievement, diamondGearAchievement, wrenchAchievement, engineAchievement1, engineAchievement2, engineAchievement3, aLotOfCraftingAchievement, straightDownAchievement, chunkDestroyerAchievement, fasterFillingAchievement, timeForSomeLogicAchievement, refineAndRedefineAchievement, tinglyLaserAchievement, architectAchievement, builderAchievement, blueprintAchievement, templateAchievement, libraryAchievement);
+        AchievementPage.registerAchievementPage(BuildcraftAchievements);
 
 	}
 
@@ -434,7 +463,7 @@ public class BuildCraftCore extends BuildCraftMod {
 		float x = Mouse.getX();
 		float y = Mouse.getY();
 
-		// TODO: Minecraft seems to instist to have this winZ re-created at
+		// TODO: Minecraft seems to insist to have this winZ re-created at
 		// each frame - looks like a memory leak to me but I couldn't use a
 		// static variable instead, as for the rest.
 		FloatBuffer winZ = GLAllocation.createDirectFloatBuffer(1);
@@ -446,34 +475,6 @@ public class BuildCraftCore extends BuildCraftMod {
 		diffX = pos.get(0);
 		diffY = pos.get(1);
 		diffZ = pos.get(2);
-	}
-
-	@Mod.EventHandler
-	public void load(FMLInitializationEvent event) {
-		woodenGearAchievement = new Achievement("achievement.woodenGear", "woodenGearAchievement", 0, 0,woodenGearItem, null).registerStat();
-		stoneGearAchievement = new Achievement("achievement.stoneGear", "stoneGearAchievement", 2, 0, stoneGearItem, woodenGearAchievement).registerStat();
-		ironGearAchievement = new Achievement("achievement.ironGear", "ironGearAchievement", 4, 0, ironGearItem, stoneGearAchievement).registerStat();
-		goldGearAchievement = new Achievement("achievement.goldGear", "goldGearAchievement", 6, 0, goldGearItem, ironGearAchievement).registerStat();
-		diamondGearAchievement = new Achievement("achievement.diamondGear", "diamondGearAchievement", 8, 0, diamondGearItem, goldGearAchievement).registerStat();
-		wrenchAchievement = new Achievement("achievement.wrench", "wrenchAchievement", 3, 2, wrenchItem, stoneGearAchievement).registerStat();
-		engineAchievement1 = new Achievement("achievement.redstoneEngine", "engineAchievement1", 1, -2, new ItemStack(BuildCraftEnergy.engineBlock, 1, 0), woodenGearAchievement).registerStat();
-		engineAchievement2 = new Achievement("achievement.stirlingEngine", "engineAchievement2", 3, -2, new ItemStack(BuildCraftEnergy.engineBlock, 1, 1), engineAchievement1).registerStat();
-		engineAchievement3 = new Achievement("achievement.combustionEngine", "engineAchievement3", 5, -2, new ItemStack(BuildCraftEnergy.engineBlock, 1, 2), engineAchievement2).registerStat();
-		aLotOfCraftingAchievement = new Achievement("achievement.aLotOfCrafting", "aLotOfCraftingAchievement", 1, 2, BuildCraftFactory.autoWorkbenchBlock, woodenGearAchievement).registerStat();
-		straightDownAchievement = new Achievement("achievement.straightDown", "straightDownAchievement", 5, 2, BuildCraftFactory.miningWellBlock, ironGearAchievement).registerStat();
-		chunkDestroyerAchievement = new Achievement("achievement.chunkDestroyer", "chunkDestroyerAchievement", 9, 2, BuildCraftFactory.quarryBlock, diamondGearAchievement).registerStat();
-		fasterFillingAchievement = new Achievement("achievement.fasterFilling", "fasterFillingAchievement", 7, 2, BuildCraftBuilders.fillerBlock, goldGearAchievement).registerStat();
-		timeForSomeLogicAchievement = new Achievement("achievement.timeForSomeLogic", "timeForSomeLogicAchievement", 9, -2, BuildCraftSilicon.assemblyTableBlock, diamondGearAchievement).registerStat();
-		refineAndRedefineAchievement = new Achievement("achievement.refineAndRedefine", "refineAndRedefineAchievement", 10, 0, BuildCraftFactory.refineryBlock, diamondGearAchievement).registerStat();
-		tinglyLaserAchievement = new Achievement("achievement.tinglyLaser", "tinglyLaserAchievement", 11, -2, BuildCraftSilicon.laserBlock ,timeForSomeLogicAchievement).registerStat();
-		architectAchievement = new Achievement("achievement.architect", "architectAchievement", 11, 2, BuildCraftBuilders.architectBlock, chunkDestroyerAchievement).registerStat();
-		builderAchievement = new Achievement("achievement.builder", "builderAchievement", 13, 2, BuildCraftBuilders.builderBlock, architectAchievement).registerStat();
-        blueprintAchievement = new Achievement("achievement.blueprint", "blueprintAchievement", 11, 4, BuildCraftBuilders.blueprintItem, architectAchievement).registerStat();
-        templateAchievement = new Achievement("achievement.template", "templateAchievement", 13, 4, BuildCraftBuilders.templateItem, blueprintAchievement).registerStat();
-        libraryAchievement = new Achievement("achievement.blueprintLibrary", "blueprintLibraryAchievement", 15, 2, BuildCraftBuilders.libraryBlock, builderAchievement).registerStat();
-
-		BuildcraftAchievements = new AchievementPage("Buildcraft", woodenGearAchievement, stoneGearAchievement, ironGearAchievement, goldGearAchievement, diamondGearAchievement, wrenchAchievement, engineAchievement1, engineAchievement2, engineAchievement3, aLotOfCraftingAchievement, straightDownAchievement, chunkDestroyerAchievement, fasterFillingAchievement, timeForSomeLogicAchievement, refineAndRedefineAchievement, tinglyLaserAchievement, architectAchievement, builderAchievement, blueprintAchievement, templateAchievement, libraryAchievement);
-		AchievementPage.registerAchievementPage(BuildcraftAchievements);
 	}
 
 }

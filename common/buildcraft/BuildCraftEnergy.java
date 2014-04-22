@@ -18,12 +18,14 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.client.event.TextureStitchEvent;
+
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
+
 import buildcraft.api.blueprints.SchematicRegistry;
 import buildcraft.api.fuels.IronEngineCoolant;
 import buildcraft.api.fuels.IronEngineFuel;
@@ -55,6 +57,7 @@ import buildcraft.energy.worldgen.BiomeGenOilOcean;
 import buildcraft.energy.worldgen.BiomeInitializer;
 import buildcraft.energy.worldgen.OilPopulate;
 import buildcraft.transport.network.PacketHandlerTransport;
+
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLInterModComms;
@@ -71,31 +74,42 @@ public class BuildCraftEnergy extends BuildCraftMod {
 	public final static int ENERGY_REMOVE_BLOCK = 25;
 	public final static int ENERGY_EXTRACT_ITEM = 2;
 	public static boolean spawnOilSprings = true;
+
 	public static BiomeGenOilDesert biomeOilDesert;
 	public static BiomeGenOilOcean biomeOilOcean;
+
 	public static BlockEngine engineBlock;
 	public static BlockEnergyEmitter emitterBlock;
 	public static BlockEnergyReceiver receiverBlock;
+
 	private static Fluid buildcraftFluidOil;
 	private static Fluid buildcraftFluidFuel;
 	private static Fluid buildcraftFluidRedPlasma;
+
 	public static Fluid fluidOil;
 	public static Fluid fluidFuel;
 	public static Fluid fluidRedPlasma;
+
 	public static Block blockOil;
 	public static Block blockFuel;
 	public static Block blockRedPlasma;
+
 	public static Item bucketOil;
 	public static Item bucketFuel;
 	public static Item bucketRedPlasma;
 	public static Item fuel;
+
 	public static boolean canOilBurn;
 	public static double oilWellScalar = 1.0;
+
+    // Note from TXX: Now THIS isn't used.
 	public static TreeMap<BlockIndex, Integer> saturationStored = new TreeMap<BlockIndex, Integer>();
+
 	public static BCTrigger triggerBlueEngineHeat = new TriggerEngineHeat(EnergyStage.BLUE);
 	public static BCTrigger triggerGreenEngineHeat = new TriggerEngineHeat(EnergyStage.GREEN);
 	public static BCTrigger triggerYellowEngineHeat = new TriggerEngineHeat(EnergyStage.YELLOW);
 	public static BCTrigger triggerRedEngineHeat = new TriggerEngineHeat(EnergyStage.RED);
+
 	@Mod.Instance("BuildCraft|Energy")
 	public static BuildCraftEnergy instance;
 

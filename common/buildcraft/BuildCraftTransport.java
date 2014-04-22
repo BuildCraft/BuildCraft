@@ -17,10 +17,12 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
+
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.oredict.RecipeSorter;
+
 import buildcraft.api.blueprints.SchematicRegistry;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.gates.ActionManager;
@@ -94,20 +96,10 @@ import buildcraft.transport.pipes.PipePowerQuartz;
 import buildcraft.transport.pipes.PipePowerStone;
 import buildcraft.transport.pipes.PipePowerWood;
 import buildcraft.transport.pipes.PipeStructureCobblestone;
-import buildcraft.transport.triggers.ActionEnergyPulsar;
-import buildcraft.transport.triggers.ActionExtractionPreset;
-import buildcraft.transport.triggers.ActionPipeColor;
-import buildcraft.transport.triggers.ActionPipeDirection;
-import buildcraft.transport.triggers.ActionPowerLimiter;
-import buildcraft.transport.triggers.ActionRedstoneFaderOutput;
-import buildcraft.transport.triggers.ActionSignalOutput;
-import buildcraft.transport.triggers.ActionSingleEnergyPulse;
-import buildcraft.transport.triggers.TriggerClockTimer;
+import buildcraft.transport.triggers.*;
 import buildcraft.transport.triggers.TriggerClockTimer.Time;
-import buildcraft.transport.triggers.TriggerPipeContents;
 import buildcraft.transport.triggers.TriggerPipeContents.PipeContents;
-import buildcraft.transport.triggers.TriggerPipeSignal;
-import buildcraft.transport.triggers.TriggerRedstoneFaderInput;
+
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLInterModComms.IMCEvent;
@@ -120,7 +112,9 @@ import cpw.mods.fml.common.registry.GameRegistry;
 public class BuildCraftTransport extends BuildCraftMod {
 
 	public static BlockGenericPipe genericPipeBlock;
+
 	public static float pipeDurability;
+
 	public static Item pipeWaterproof;
 	public static Item pipeGate;
 	public static Item pipeWire;
@@ -160,6 +154,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 	public static Item robotStationItem;
 	public static BlockFilteredBuffer filteredBufferBlock;
 	public static Item pipeStructureCobblestone;
+
 	public static int groupItemsTrigger;
 	public static String[] facadeBlacklist;
 
@@ -179,7 +174,8 @@ public class BuildCraftTransport extends BuildCraftMod {
 	public static BCAction actionExtractionPresetBlue = new ActionExtractionPreset(EnumColor.BLUE);
 	public static BCAction actionExtractionPresetGreen = new ActionExtractionPreset(EnumColor.GREEN);
 	public static BCAction actionExtractionPresetYellow = new ActionExtractionPreset(EnumColor.YELLOW);
-	public IIconProvider pipeIconProvider = new PipeIconProvider();
+
+    public IIconProvider pipeIconProvider = new PipeIconProvider();
 	public IIconProvider wireIconProvider = new WireIconProvider();
 
 	@Mod.Instance("BuildCraft|Transport")
@@ -220,7 +216,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 
 			int meta = world.getBlockMetadata(i, j, k);
 
-			// TODO: the exculded list is not taken into account. This probably
+			// TODO: the excluded list is not taken into account. This probably
 			// needs to be migrated to an implementation based on names instead
 			// of ids, low priority for now.
 			/*for (String excluded : excludedBlocks) {
