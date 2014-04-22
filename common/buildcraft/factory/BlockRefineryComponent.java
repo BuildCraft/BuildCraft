@@ -85,12 +85,14 @@ public class BlockRefineryComponent extends BlockBuildCraft {
 		if (meta == HEATER) {
 			if (side == 1) {
 				return icons[meta][1];
+			} else {
+				return icons[FRAME][0];
 			}
 		}
 
 		if (meta == VALVE) {
 			if (side == 1 || side == 0) {
-				return icons[HEATER][0];
+				return icons[FRAME][0];
 			}
 		}
 
