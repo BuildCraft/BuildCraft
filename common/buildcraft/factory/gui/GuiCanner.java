@@ -1,15 +1,19 @@
 package buildcraft.factory.gui;
 
+import io.netty.buffer.ByteBuf;
+
 import org.lwjgl.opengl.GL11;
 
 import buildcraft.core.DefaultProps;
 import buildcraft.core.gui.GuiBuildCraft;
+import buildcraft.core.network.PacketGuiReturn;
 import buildcraft.core.render.RenderUtils;
 import buildcraft.energy.TileEngineIron;
 import buildcraft.energy.TileEngineWithInventory;
 import buildcraft.energy.gui.ContainerEngine;
 import buildcraft.energy.gui.GuiEngine;
 import buildcraft.factory.TileCanner;
+import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.TextureMap;
@@ -23,16 +27,43 @@ import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 
 public class GuiCanner extends GuiBuildCraft {
-	TileCanner canner;
 	
+	TileCanner canner;
 	private static final ResourceLocation texture = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_GUI + "/FluidicCompressorGUI_alt.png");
 	private static final ResourceLocation BLOCK_TEXTURE = TextureMap.locationBlocksTexture;
+	private GuiButton mode;
+	private String modus;
 	
 	public GuiCanner(InventoryPlayer inventoryplayer, TileCanner tilecanner) {
 		super(new ContainerCanner(inventoryplayer, tilecanner), tilecanner, texture);
 		canner = (TileCanner) tile;
 	}
+	
+	@Override
+	public void initGui(){
+		super.initGui();
 
+		int j = (width - xSize) / 2;
+		int k = (height - ySize) / 2;
+		modus = "Empty";
+		if (canner.mode == 1)
+			modus = "Fill";
+		mode = new GuiButton(0, j + 125, k + 10, 40, 20, modus);
+		buttonList.add(mode);
+	}
+	@Override
+	protected void actionPerformed(GuiButton button) {
+		super.actionPerformed(button);
+		if (button == mode){
+			if (modus == "Fill"){
+				canner.mode = 2;
+			} else {
+				canner.mode = 1;
+			}
+			canner.sendNetworkUpdate();
+		}
+	}
+	
 	@Override
 	protected void drawGuiContainerBackgroundLayer(float f, int x, int y) {
 		super.drawGuiContainerBackgroundLayer(f, x, y);

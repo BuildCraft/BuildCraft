@@ -15,6 +15,7 @@ import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
@@ -100,5 +101,14 @@ public class FluidUtils {
 				}
 			}
 		}
+	}
+	
+	public static FluidStack getFluidStackFromItemStack(ItemStack iStack) {
+		if (iStack.stackTagCompound == null || !iStack.getTagCompound().hasKey("Fluid"))
+			return null;
+ 
+		NBTTagCompound fluidTag = iStack.getTagCompound().getCompoundTag("Fluid");
+ 
+		return FluidStack.loadFluidStackFromNBT(fluidTag);
 	}
 }

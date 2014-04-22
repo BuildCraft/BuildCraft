@@ -42,7 +42,10 @@ import buildcraft.core.utils.EnumColor;
 import buildcraft.transport.BlockFilteredBuffer;
 import buildcraft.transport.BlockGenericPipe;
 import buildcraft.transport.GuiHandler;
+import buildcraft.transport.ItemDiamondCanister;
 import buildcraft.transport.ItemFacade;
+import buildcraft.transport.ItemGoldCanister;
+import buildcraft.transport.ItemIronCannister;
 import buildcraft.transport.ItemPipe;
 import buildcraft.transport.ItemPipeWire;
 import buildcraft.transport.ItemPlug;
@@ -158,6 +161,9 @@ public class BuildCraftTransport extends BuildCraftMod {
 	public static ItemFacade facadeItem;
 	public static Item plugItem;
 	public static Item robotStationItem;
+	public static ItemIronCannister ironCannister;
+	public static ItemGoldCanister goldCanister;
+	public static ItemDiamondCanister diamondCanister;
 	public static BlockFilteredBuffer filteredBufferBlock;
 	public static Item pipeStructureCobblestone;
 	public static int groupItemsTrigger;
@@ -348,6 +354,15 @@ public class BuildCraftTransport extends BuildCraftMod {
 			pipePowerIron = buildPipe(DefaultProps.PIPE_POWER_IRON_ID, PipePowerIron.class, "Iron Kinesis Pipe", CreativeTabBuildCraft.TIER_2, Items.redstone, pipeItemsIron);
 			pipePowerGold = buildPipe(DefaultProps.PIPE_POWER_GOLD_ID, PipePowerGold.class, "Golden Kinesis Pipe", CreativeTabBuildCraft.TIER_2, Items.redstone, pipeItemsGold);
 			pipePowerDiamond = buildPipe(DefaultProps.PIPE_POWER_DIAMOND_ID, PipePowerDiamond.class, "Diamond Kinesis Pipe", CreativeTabBuildCraft.TIER_2, Items.redstone, pipeItemsDiamond);
+			
+			ironCannister = new ItemIronCannister(1);
+			CoreProxy.proxy.registerItem(ironCannister);
+			
+			goldCanister = new ItemGoldCanister(2);
+			CoreProxy.proxy.registerItem(goldCanister);
+			
+			diamondCanister = new ItemDiamondCanister(3);
+			CoreProxy.proxy.registerItem(diamondCanister);
 
 			if (!BuildCraftCore.NEXTGEN_PREALPHA) {
 				pipePowerHeat = buildPipe(DefaultProps.PIPE_POWER_HEAT_ID, PipePowerHeat.class, "Heat Kinesis Pipe", CreativeTabBuildCraft.TIER_3, Blocks.furnace, pipeItemsDiamond);
@@ -482,6 +497,10 @@ public class BuildCraftTransport extends BuildCraftMod {
 		RecipeSorter.register("facadeTurningHelper", ItemFacade.FacadeRecipe.class, RecipeSorter.Category.SHAPELESS, "");
 
 		BuildcraftRecipes.assemblyTable.addRecipe(1000, new ItemStack(plugItem, 8), new ItemStack(pipeStructureCobblestone));
+		
+		CoreProxy.proxy.addCraftingRecipe(new ItemStack(ironCannister), "PIP", "IGI", "PIP", 'P', BuildCraftTransport.pipeWaterproof, 'I', Items.iron_ingot, 'G', Blocks.glass_pane);
+		CoreProxy.proxy.addCraftingRecipe(new ItemStack(goldCanister), "PGP", "GIG", "PGP", 'P', BuildCraftTransport.pipeWaterproof, 'G', Items.gold_ingot, 'I', ironCannister);
+		CoreProxy.proxy.addCraftingRecipe(new ItemStack(diamondCanister), "PDP", "DGD", "PDP", 'P', BuildCraftTransport.pipeWaterproof, 'D', Items.diamond, 'G', goldCanister);
 	}
 
 	@Mod.EventHandler

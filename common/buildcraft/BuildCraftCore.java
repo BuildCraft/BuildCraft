@@ -55,9 +55,6 @@ import buildcraft.core.DefaultProps;
 import buildcraft.core.EntityEnergyLaser;
 import buildcraft.core.InterModComms;
 import buildcraft.core.ItemBuildCraft;
-import buildcraft.core.ItemDiamondCanister;
-import buildcraft.core.ItemGoldCanister;
-import buildcraft.core.ItemIronCannister;
 import buildcraft.core.ItemRobot;
 import buildcraft.core.ItemSpring;
 import buildcraft.core.ItemWrench;
@@ -91,6 +88,9 @@ import buildcraft.core.triggers.TriggerMachine;
 import buildcraft.core.triggers.TriggerRedstoneInput;
 import buildcraft.core.utils.BCLog;
 import buildcraft.core.utils.CraftingHandler;
+import buildcraft.transport.ItemDiamondCanister;
+import buildcraft.transport.ItemGoldCanister;
+import buildcraft.transport.ItemIronCannister;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
@@ -137,9 +137,7 @@ public class BuildCraftCore extends BuildCraftMod {
 	public static Item robotBaseItem;
 	public static Item robotBuilderItem;
 	public static Item robotPickerItem;
-	public static ItemIronCannister ironCannister;
-	public static ItemGoldCanister goldCanister;
-	public static ItemDiamondCanister diamondCanister;
+	
 	@SideOnly(Side.CLIENT)
 	public static IIcon redLaserTexture;
 	@SideOnly(Side.CLIENT)
@@ -204,6 +202,10 @@ public class BuildCraftCore extends BuildCraftMod {
 	public static Achievement blueprintAchievement;
 	public static Achievement templateAchievement;
 	public static Achievement libraryAchievement;
+	
+	public static Achievement ironCanAchievement;
+	public static Achievement goldCanAchievement;
+	public static Achievement diamondCanAchievement;
 	
 	public static AchievementPage BuildcraftAchievements;
 
@@ -291,14 +293,7 @@ public class BuildCraftCore extends BuildCraftMod {
 			CoreProxy.proxy.registerItem(redstoneCrystal);
 			OreDictionary.registerOre("redstoneCrystal", new ItemStack(redstoneCrystal));
 			
-			ironCannister = new ItemIronCannister(1);
-			CoreProxy.proxy.registerItem(ironCannister);
 			
-			goldCanister = new ItemGoldCanister(2);
-			CoreProxy.proxy.registerItem(goldCanister);
-			
-			diamondCanister = new ItemDiamondCanister(3);
-			CoreProxy.proxy.registerItem(diamondCanister);
 			
 			if (!BuildCraftCore.NEXTGEN_PREALPHA) {
 				robotBaseItem = new ItemRobot(EntityRobot.class).setUnlocalizedName("robotBase");
@@ -400,7 +395,7 @@ public class BuildCraftCore extends BuildCraftMod {
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(ironGearItem), " I ", "IGI", " I ", 'I', Items.iron_ingot, 'G', stoneGearItem);
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(goldGearItem), " I ", "IGI", " I ", 'I', Items.gold_ingot, 'G', ironGearItem);
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(diamondGearItem), " I ", "IGI", " I ", 'I', Items.diamond, 'G', goldGearItem);
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(ironCannister), "PIP", "IGI", "PIP", 'P', BuildCraftTransport.pipeWaterproof, 'I', Items.iron_ingot, 'G', Blocks.glass);
+		
 	}
 
 	@Mod.EventHandler
@@ -489,8 +484,14 @@ public class BuildCraftCore extends BuildCraftMod {
         blueprintAchievement = new Achievement("achievement.blueprint", "blueprintAchievement", 11, 4, BuildCraftBuilders.blueprintItem, architectAchievement).registerStat();
         templateAchievement = new Achievement("achievement.template", "templateAchievement", 13, 4, BuildCraftBuilders.templateItem, blueprintAchievement).registerStat();
         libraryAchievement = new Achievement("achievement.blueprintLibrary", "blueprintLibraryAchievement", 15, 2, BuildCraftBuilders.libraryBlock, builderAchievement).registerStat();
+        ironCanAchievement = new Achievement("achievement.ironCanAchievement", "ironCanAchievement", 0, 4, BuildCraftTransport.ironCannister, null).registerStat().initIndependentStat();
+        goldCanAchievement = new Achievement("achievement.goldCanAchievement", "goldCanAchievement", 2, 4, BuildCraftTransport.goldCanister, ironCanAchievement).registerStat();
+        diamondCanAchievement = new Achievement("achievement.diamondCanAchievemnt", "diamondCanAchievement", 4, 4, BuildCraftTransport.diamondCanister, goldCanAchievement).registerStat();
 
-		BuildcraftAchievements = new AchievementPage("Buildcraft", woodenGearAchievement, stoneGearAchievement, ironGearAchievement, goldGearAchievement, diamondGearAchievement, wrenchAchievement, engineAchievement1, engineAchievement2, engineAchievement3, aLotOfCraftingAchievement, straightDownAchievement, chunkDestroyerAchievement, fasterFillingAchievement, timeForSomeLogicAchievement, refineAndRedefineAchievement, tinglyLaserAchievement, architectAchievement, builderAchievement, blueprintAchievement, templateAchievement, libraryAchievement);
+		BuildcraftAchievements = new AchievementPage("Buildcraft", woodenGearAchievement, stoneGearAchievement, ironGearAchievement, goldGearAchievement, diamondGearAchievement, wrenchAchievement,
+				engineAchievement1, engineAchievement2, engineAchievement3, aLotOfCraftingAchievement, straightDownAchievement, chunkDestroyerAchievement, fasterFillingAchievement,
+				timeForSomeLogicAchievement, refineAndRedefineAchievement, tinglyLaserAchievement, architectAchievement, builderAchievement, blueprintAchievement, templateAchievement,
+				libraryAchievement, ironCanAchievement, goldCanAchievement, diamondCanAchievement);
 		AchievementPage.registerAchievementPage(BuildcraftAchievements);
 	}
 

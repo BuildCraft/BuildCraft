@@ -18,21 +18,25 @@ import net.minecraftforge.fluids.IFluidHandler;
 import net.minecraftforge.fluids.ItemFluidContainer;
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftEnergy;
+import buildcraft.BuildCraftTransport;
 import buildcraft.api.mj.MjBattery;
 import buildcraft.core.GuiIds;
 import buildcraft.core.IItemPipe;
-import buildcraft.core.ItemDiamondCanister;
-import buildcraft.core.ItemGoldCanister;
-import buildcraft.core.ItemIronCannister;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.fluids.FluidUtils;
 import buildcraft.core.fluids.SingleUseTank;
 import buildcraft.core.fluids.TankManager;
 import buildcraft.core.inventory.SimpleInventory;
+import buildcraft.core.network.IGuiReturnHandler;
+import buildcraft.core.network.ISynchronizedTile;
+import buildcraft.core.network.NetworkData;
 import buildcraft.core.network.PacketPayload;
 import buildcraft.core.network.PacketUpdate;
+import buildcraft.transport.ItemDiamondCanister;
+import buildcraft.transport.ItemGoldCanister;
+import buildcraft.transport.ItemIronCannister;
 
-public class TileCanner extends TileBuildCraft implements IInventory, IFluidHandler{
+public class TileCanner extends TileBuildCraft implements IInventory, IFluidHandler, IGuiReturnHandler{
 	
 	private final SimpleInventory _inventory = new SimpleInventory(3, "Canner", 1);
 	public final int maxLiquid = FluidContainerRegistry.BUCKET_VOLUME * 10;
@@ -40,6 +44,8 @@ public class TileCanner extends TileBuildCraft implements IInventory, IFluidHand
 	public double energyStored = 0;
 	public SingleUseTank tank = new SingleUseTank("tank", maxLiquid, this);
 	private TankManager tankManager = new TankManager();
+	@NetworkData
+	public int mode = 2;
 	
 	public TileCanner(){
 		tankManager.add(tank);
@@ -47,33 +53,41 @@ public class TileCanner extends TileBuildCraft implements IInventory, IFluidHand
 	
 	@Override
 	public void updateEntity() {
-		if (_inventory.getStackInSlot(0) != null && tank.getFluid() != null){
+		//System.out.println(mode);
+		if (_inventory.getStackInSlot(0) != null && !tank.isEmpty()){
 			ItemFluidContainer item = null;
-			if (_inventory.getStackInSlot(0).getItem() == BuildCraftCore.ironCannister){
+			if (_inventory.getStackInSlot(0).getItem() == BuildCraftTransport.ironCannister){
 				item = (ItemIronCannister) _inventory.getStackInSlot(0).getItem();
 				ItemIronCannister item2 = (ItemIronCannister) item;
 			}
-			if (_inventory.getStackInSlot(0).getItem() == BuildCraftCore.goldCanister){
+			if (_inventory.getStackInSlot(0).getItem() == BuildCraftTransport.goldCanister){
 				item = (ItemGoldCanister) _inventory.getStackInSlot(0).getItem();
 			}
-			if (_inventory.getStackInSlot(0).getItem() == BuildCraftCore.diamondCanister){
+			if (_inventory.getStackInSlot(0).getItem() == BuildCraftTransport.diamondCanister){
 				item = (ItemDiamondCanister) _inventory.getStackInSlot(0).getItem();
 			}
 			if (item != null){
 				int amount = 10;
-				if (tank.getFluid().amount <50)
-					amount = tank.getFluid().amount;
-				if (energyStored >= amount){
-					FluidStack before = tank.getFluid();
-					tank.drain(item.fill(_inventory.getStackInSlot(0), new FluidStack(tank.getFluid(), amount), true), true);
-					energyStored = energyStored - amount;
-					if (tank.getFluid() != null){
-						if (item.fill(_inventory.getStackInSlot(0), new FluidStack(tank.getFluid(), 1), false) == 0){
-							_inventory.setInventorySlotContents(1, _inventory.getStackInSlot(0));
-							_inventory.setInventorySlotContents(0, null);
+				if (mode == 1){
+					if (tank.getFluid().amount <50)
+						amount = tank.getFluid().amount;
+					if (energyStored >= amount){
+						tank.drain(item.fill(_inventory.getStackInSlot(0), new FluidStack(tank.getFluid(), amount), true), true);
+						energyStored = energyStored - amount;
+						FluidStack fluid = ItemIronCannister.getFluidStackFromItemStack(_inventory.getStackInSlot(0));
+						if (fluid != null){
+							if ((item instanceof ItemIronCannister && fluid.amount == 1000)
+									|| (item instanceof ItemGoldCanister && fluid.amount == 3000)
+									|| (item instanceof ItemDiamondCanister && fluid.amount == 9000)){
+								_inventory.setInventorySlotContents(1, _inventory.getStackInSlot(0));
+								_inventory.setInventorySlotContents(0, null);
+							}
 						}
-					}
-					sendNetworkUpdate();
+						}
+					} else {
+						if (_inventory.getStackInSlot(0) != null && !tank.isFull()){
+							
+						}
 					}
 				}
 			}
@@ -85,6 +99,7 @@ public class TileCanner extends TileBuildCraft implements IInventory, IFluidHand
 		NBTTagCompound p = (NBTTagCompound) nbtTagCompound.getTag("inventory");
 		_inventory.readFromNBT(p);
 		tankManager.readFromNBT(nbtTagCompound);
+		mode = nbtTagCompound.getInteger("mode");
 	}
 
 	@Override
@@ -94,6 +109,7 @@ public class TileCanner extends TileBuildCraft implements IInventory, IFluidHand
 		_inventory.writeToNBT(inventoryTag);
 		nbtTagCompound.setTag("inventory", inventoryTag);
 		tankManager.writeToNBT(nbtTagCompound);
+		nbtTagCompound.setInteger("mode", mode);
 	}
 
 	@Override
@@ -168,7 +184,7 @@ public class TileCanner extends TileBuildCraft implements IInventory, IFluidHand
 	@Override
 	public FluidStack drain(ForgeDirection from, int maxDrain, boolean doDrain) {
 		FluidStack temp = tank.drain(maxDrain, doDrain);
-		this.sendNetworkUpdate();
+		sendNetworkUpdate();
 		return temp;
 	}
 
@@ -200,6 +216,7 @@ public class TileCanner extends TileBuildCraft implements IInventory, IFluidHand
 			@Override
 			public void writeData(ByteBuf data) {
 				tankManager.writeData(data);
+				data.writeInt(mode);
 			}
 		});
 		return payload;
@@ -209,6 +226,18 @@ public class TileCanner extends TileBuildCraft implements IInventory, IFluidHand
 	public void handleUpdatePacket(PacketUpdate packet) throws IOException {
 		ByteBuf stream = packet.payload.stream;
 		tankManager.readData(stream);
+		mode = stream.readInt();
 	}
 
+	@Override
+	public void writeGuiData(ByteBuf data) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void readGuiData(ByteBuf data, EntityPlayer player) {
+		// TODO Auto-generated method stub
+		
+	}
 }
