@@ -1,5 +1,11 @@
 package buildcraft.factory;
 
+import buildcraft.BuildCraftFactory;
+import buildcraft.core.BlockBuildCraft;
+import buildcraft.core.CreativeTabBuildCraft;
+import buildcraft.core.GuiIds;
+import buildcraft.core.IItemPipe;
+import buildcraft.core.utils.Utils;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.material.Material;
@@ -11,14 +17,8 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
-import buildcraft.BuildCraftFactory;
-import buildcraft.core.BlockBuildCraft;
-import buildcraft.core.CreativeTabBuildCraft;
-import buildcraft.core.GuiIds;
-import buildcraft.core.IItemPipe;
-import buildcraft.core.utils.Utils;
 
-public class BlockCanner extends BlockBuildCraft{
+public class BlockCanner extends BlockBuildCraft {
 	
 	IIcon textureFront;
 	IIcon textureTop;
@@ -30,7 +30,7 @@ public class BlockCanner extends BlockBuildCraft{
 		super(Material.iron, CreativeTabBuildCraft.TIER_3);
 		setHardness(5F);
 		setResistance(10F);
-		}
+	}
 
 	@Override
 	public TileEntity createNewTileEntity(World var1, int var2) {
@@ -42,19 +42,16 @@ public class BlockCanner extends BlockBuildCraft{
 		super.onBlockActivated(world, x, y, z, entityplayer, par6, par7, par8, par9);
 
 		// Drop through if the player is sneaking
-		if (entityplayer.isSneaking()) {
+		if (entityplayer.isSneaking())
 			return false;
-		}
 
 		if (entityplayer.getCurrentEquippedItem() != null) {
-			if (entityplayer.getCurrentEquippedItem().getItem() instanceof IItemPipe) {
+			if (entityplayer.getCurrentEquippedItem().getItem() instanceof IItemPipe)
 				return false;
-			}
-		}
+        }
 
-		if (!world.isRemote) {
+		if (!world.isRemote)
 			entityplayer.openGui(BuildCraftFactory.instance, GuiIds.CANNER, world, x, y, z);
-		}
 
 		return true;
 	}
@@ -64,20 +61,20 @@ public class BlockCanner extends BlockBuildCraft{
 		super.onBlockPlacedBy(world, i, j, k, entityliving, stack);
 
 		ForgeDirection orientation = Utils.get2dOrientation(entityliving);
-
 		world.setBlockMetadataWithNotify(i, j, k, orientation.getOpposite().ordinal(), 1);
+
+        TileCanner canner = (TileCanner) world.getTileEntity(i, j, k);
+        canner.fill = true;
 	}
 	
 	@Override
 	public IIcon getIcon(int i, int j) {
 		// If no metadata is set, then this is an icon.
-		if (j == 0 && i == 3) {
+		if (j == 0 && i == 3)
 			return textureFront;
-		}
 
-		if (i == j && i > 1) {
+		if (i == j && i > 1)
 			return textureFront;
-		}
 
 		switch (i) {
 		case 0:
