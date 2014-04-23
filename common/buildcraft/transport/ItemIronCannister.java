@@ -62,6 +62,16 @@ public class ItemIronCannister extends ItemFluidContainer{
 	
 	@Override
 	@SideOnly(Side.CLIENT)
+    public int getColorFromItemStack(ItemStack par1ItemStack, int par2)
+    {
+		if (FluidUtils.getFluidStackFromItemStack(par1ItemStack) == null){
+			return 16777215;
+		}
+        return FluidUtils.getFluidStackFromItemStack(par1ItemStack).getFluid().getColor();
+    }
+	
+	@Override
+	@SideOnly(Side.CLIENT)
 	public void addInformation(ItemStack iStack, EntityPlayer player, List list, boolean visible)
 	{
 		FluidStack fStack = FluidUtils.getFluidStackFromItemStack(iStack);

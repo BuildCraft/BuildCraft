@@ -5,6 +5,7 @@ import buildcraft.api.mj.MjBattery;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.fluids.FluidUtils;
 import buildcraft.core.fluids.SingleUseTank;
+import buildcraft.core.fluids.Tank;
 import buildcraft.core.fluids.TankManager;
 import buildcraft.core.inventory.SimpleInventory;
 import buildcraft.core.network.IGuiReturnHandler;
@@ -18,6 +19,7 @@ import buildcraft.transport.ItemIronCannister;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.ForgeDirection;
@@ -50,16 +52,17 @@ public class TileCanner extends TileBuildCraft implements IInventory, IFluidHand
     @Override
     public void updateEntity() {
         sendNetworkUpdate();
-
-        if (_inventory.getStackInSlot(0) != null && !tank.isEmpty()) {
+        ItemStack itemstack = _inventory.getStackInSlot(0);
+        if (itemstack != null && !tank.isEmpty()) {
             ItemFluidContainer item = null;
-            if (_inventory.getStackInSlot(0).getItem() == BuildCraftTransport.ironCannister) {
+            Item itemInSlot = itemstack.getItem();
+            if (itemInSlot == BuildCraftTransport.ironCannister) {
                 item = (ItemIronCannister) _inventory.getStackInSlot(0).getItem();
             }
-            if (_inventory.getStackInSlot(0).getItem() == BuildCraftTransport.goldCanister) {
+            if (itemInSlot == BuildCraftTransport.goldCanister) {
                 item = (ItemGoldCanister) _inventory.getStackInSlot(0).getItem();
             }
-            if (_inventory.getStackInSlot(0).getItem() == BuildCraftTransport.diamondCanister) {
+            if (itemInSlot == BuildCraftTransport.diamondCanister) {
                 item = (ItemDiamondCanister) _inventory.getStackInSlot(0).getItem();
             }
             if (item != null) {
@@ -68,20 +71,20 @@ public class TileCanner extends TileBuildCraft implements IInventory, IFluidHand
                     if (tank.getFluid().amount < 50)
                         amount = tank.getFluid().amount;
                     if (energyStored >= amount) {
-                        tank.drain(item.fill(_inventory.getStackInSlot(0), new FluidStack(tank.getFluid(), amount), true), true);
+                        tank.drain(item.fill(itemstack, new FluidStack(tank.getFluid(), amount), true), true);
                         energyStored = energyStored - amount;
                         FluidStack fluid = FluidUtils.getFluidStackFromItemStack(_inventory.getStackInSlot(0));
                         if (fluid != null) {
                             if ((item instanceof ItemIronCannister && fluid.amount == 1000)
                                     || (item instanceof ItemGoldCanister && fluid.amount == 3000)
                                     || (item instanceof ItemDiamondCanister && fluid.amount == 9000)){
-                                _inventory.setInventorySlotContents(1, _inventory.getStackInSlot(0));
+                                _inventory.setInventorySlotContents(1, itemstack);
                                 _inventory.setInventorySlotContents(0, null);
                             }
                         }
                     }
                 } else {
-                    if (_inventory.getStackInSlot(0) != null && !tank.isFull()){
+                    if (itemstack != null && !tank.isFull()){
 
                     }
                 }
