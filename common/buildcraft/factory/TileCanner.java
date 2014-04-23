@@ -52,7 +52,6 @@ public class TileCanner extends TileBuildCraft implements ISidedInventory, IFlui
 	private TankManager tankManager = new TankManager();
 	public @NetworkData
 	boolean fill;
-	private static final int[] SLOTS = Utils.createSlotArray(0, 3);
 
 	public TileCanner() {
 		tankManager.add(tank);
@@ -337,17 +336,17 @@ public class TileCanner extends TileBuildCraft implements ISidedInventory, IFlui
 	}
 
 	@Override
-	public int[] getAccessibleSlotsFromSide(int var1) {
-		return SLOTS;
+	public int[] getAccessibleSlotsFromSide(int side) {
+		return Utils.createSlotArray(0, 2);
 	}
 
 	@Override
-	public boolean canInsertItem(int var1, ItemStack var2, int var3) {
-		return isItemValidForSlot(var1, var2);
+	public boolean canInsertItem(int slot, ItemStack stack, int side) {
+		return side != 0 && slot != 2 && isItemValidForSlot(slot, stack);
 	}
 
 	@Override
-	public boolean canExtractItem(int var1, ItemStack var2, int var3) {
-		return var1 == 1;
+	public boolean canExtractItem(int slot, ItemStack stack, int side) {
+		return side != 1 && slot == 1;
 	}
 }
