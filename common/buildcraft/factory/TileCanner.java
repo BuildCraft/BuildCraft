@@ -1,11 +1,9 @@
 package buildcraft.factory;
 
 import buildcraft.BuildCraftTransport;
-import buildcraft.api.fuels.IronEngineCoolant;
 import buildcraft.api.mj.MjBattery;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.fluids.FluidUtils;
-import buildcraft.core.fluids.SingleUseTank;
 import buildcraft.core.fluids.Tank;
 import buildcraft.core.fluids.TankManager;
 import buildcraft.core.inventory.InvUtils;
@@ -21,9 +19,9 @@ import buildcraft.transport.ItemGoldCanister;
 import buildcraft.transport.ItemIronCannister;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemBucket;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.ForgeDirection;
@@ -38,9 +36,6 @@ import net.minecraftforge.fluids.ItemFluidContainer;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 public class TileCanner extends TileBuildCraft implements ISidedInventory, IFluidHandler, IGuiReturnHandler {
 
@@ -60,7 +55,6 @@ public class TileCanner extends TileBuildCraft implements ISidedInventory, IFlui
 	@Override
 	public void updateEntity() {
 		sendNetworkUpdate();
-		ItemStack stack = getStackInSlot(0);
 		if (getStackInSlot(2) != null) {
 			FluidStack liquid = FluidContainerRegistry.getFluidForFilledItem(getStackInSlot(2));
 
@@ -201,14 +195,18 @@ public class TileCanner extends TileBuildCraft implements ISidedInventory, IFlui
 	public boolean isItemValidForSlot(int slotid, ItemStack itemStack) {
 		if (itemStack == null)
 			return false;
+		Item item = itemStack.getItem();
 		if (slotid == 0){
-			if (itemStack.getItem() == BuildCraftTransport.ironCannister
-					|| itemStack.getItem() == BuildCraftTransport.goldCanister
-					|| itemStack.getItem() == BuildCraftTransport.diamondCanister){
+			if (item == BuildCraftTransport.ironCannister
+					|| item == BuildCraftTransport.goldCanister
+					|| item == BuildCraftTransport.diamondCanister) {
 				return true;
 			}
 		}
-		if (slotid == 2 && itemStack.getItem() instanceof IFluidContainerItem){
+		if (slotid == 2 && (item instanceof IFluidContainerItem || item instanceof ItemBucket)
+					&& (item != BuildCraftTransport.ironCannister
+					|| item != BuildCraftTransport.goldCanister
+					|| item != BuildCraftTransport.diamondCanister)) {
 			return true;
 		}
 		return false;
@@ -222,8 +220,7 @@ public class TileCanner extends TileBuildCraft implements ISidedInventory, IFlui
 	}
 
 	@Override
-	public FluidStack drain(ForgeDirection from, FluidStack resource,
-			boolean doDrain) {
+	public FluidStack drain(ForgeDirection from, FluidStack resource, boolean doDrain) {
 		return null;
 	}
 

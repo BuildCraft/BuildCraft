@@ -2,7 +2,6 @@ package buildcraft.factory.gui;
 
 import buildcraft.core.DefaultProps;
 import buildcraft.core.gui.GuiBuildCraft;
-import buildcraft.core.network.PacketGuiReturn;
 import buildcraft.core.render.RenderUtils;
 import buildcraft.factory.TileCanner;
 import net.minecraft.client.gui.GuiButton;
@@ -12,10 +11,6 @@ import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.FluidStack;
-import org.lwjgl.opengl.GL11;
-
-import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
 
 public class GuiCanner extends GuiBuildCraft {
 

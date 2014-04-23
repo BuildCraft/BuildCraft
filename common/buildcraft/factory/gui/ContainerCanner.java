@@ -1,12 +1,13 @@
 package buildcraft.factory.gui;
 
+import buildcraft.core.gui.BuildCraftContainer;
+import buildcraft.core.gui.slots.SlotOutput;
+import buildcraft.core.gui.slots.SlotValidated;
+import buildcraft.factory.TileCanner;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
-import buildcraft.core.gui.BuildCraftContainer;
-import buildcraft.core.gui.slots.SlotOutput;
-import buildcraft.factory.TileCanner;
 
 public class ContainerCanner extends BuildCraftContainer {
 	
@@ -18,9 +19,9 @@ public class ContainerCanner extends BuildCraftContainer {
 		playerIInventory = inventory;
 		canner = tile;
 		
-		this.addSlotToContainer(new Slot (tile, 0, 98, 32));
+		this.addSlotToContainer(new SlotValidated(tile, 0, 98, 32));
 		this.addSlotToContainer(new SlotOutput (tile, 1, 134, 36));
-		this.addSlotToContainer(new Slot(tile, 2, 22, 36));
+		this.addSlotToContainer(new SlotValidated(tile, 2, 22, 36));
 		
 		for (int inventoryRowIndex = 0; inventoryRowIndex < 3; ++inventoryRowIndex)
         {
