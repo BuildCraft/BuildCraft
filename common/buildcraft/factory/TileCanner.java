@@ -1,24 +1,28 @@
 package buildcraft.factory;
 
 import buildcraft.BuildCraftTransport;
+import buildcraft.api.fuels.IronEngineCoolant;
 import buildcraft.api.mj.MjBattery;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.fluids.FluidUtils;
 import buildcraft.core.fluids.SingleUseTank;
 import buildcraft.core.fluids.Tank;
 import buildcraft.core.fluids.TankManager;
+import buildcraft.core.inventory.InvUtils;
 import buildcraft.core.inventory.SimpleInventory;
 import buildcraft.core.network.IGuiReturnHandler;
 import buildcraft.core.network.NetworkData;
 import buildcraft.core.network.PacketGuiReturn;
 import buildcraft.core.network.PacketPayload;
 import buildcraft.core.network.PacketUpdate;
+import buildcraft.core.utils.Utils;
 import buildcraft.transport.ItemDiamondCanister;
 import buildcraft.transport.ItemGoldCanister;
 import buildcraft.transport.ItemIronCannister;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -27,6 +31,7 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
+import net.minecraftforge.fluids.IFluidContainerItem;
 import net.minecraftforge.fluids.IFluidHandler;
 import net.minecraftforge.fluids.ItemFluidContainer;
 
@@ -34,11 +39,12 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-public class TileCanner extends TileBuildCraft implements IInventory,
-		IFluidHandler, IGuiReturnHandler {
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
-	private final SimpleInventory _inventory = new SimpleInventory(3, "Canner",
-			1);
+public class TileCanner extends TileBuildCraft implements ISidedInventory, IFluidHandler, IGuiReturnHandler {
+
+	private final SimpleInventory _inventory = new SimpleInventory(3, "Canner",1);
 	public final int maxLiquid = FluidContainerRegistry.BUCKET_VOLUME * 10;
 	@MjBattery(maxCapacity = 5000.0, maxReceivedPerCycle = 25.0)
 	public double energyStored = 0;
@@ -46,6 +52,7 @@ public class TileCanner extends TileBuildCraft implements IInventory,
 	private TankManager tankManager = new TankManager();
 	public @NetworkData
 	boolean fill;
+	private static final int[] SLOTS = Utils.createSlotArray(0, 3);
 
 	public TileCanner() {
 		tankManager.add(tank);
@@ -54,6 +61,17 @@ public class TileCanner extends TileBuildCraft implements IInventory,
 	@Override
 	public void updateEntity() {
 		sendNetworkUpdate();
+		ItemStack stack = getStackInSlot(0);
+		if (getStackInSlot(2) != null) {
+			FluidStack liquid = FluidContainerRegistry.getFluidForFilledItem(getStackInSlot(2));
+
+			if (liquid != null) {
+				if (fill(ForgeDirection.UNKNOWN, liquid, false) == liquid.amount) {
+					fill(ForgeDirection.UNKNOWN, liquid, true);
+					setInventorySlotContents(2, InvUtils.consumeItem(getStackInSlot(2)));
+				}
+			}
+		}
 		ItemStack itemstack = _inventory.getStackInSlot(0);
 		if (itemstack != null) {
 			ItemFluidContainer item = null;
@@ -77,9 +95,7 @@ public class TileCanner extends TileBuildCraft implements IInventory,
 						energyStored = energyStored - amount;
 						FluidStack fluid = FluidUtils.getFluidStackFromItemStack(itemstack);
 						if (fluid != null) {
-							if ((item instanceof ItemIronCannister && fluid.amount == 1000)
-									|| (item instanceof ItemGoldCanister && fluid.amount == 3000)
-									|| (item instanceof ItemDiamondCanister && fluid.amount == 9000)) {
+							if (getProgress() == 16) {
 								_inventory.setInventorySlotContents(1, itemstack);
 								_inventory.setInventorySlotContents(0, null);
 							}
@@ -97,7 +113,7 @@ public class TileCanner extends TileBuildCraft implements IInventory,
 							amount = FluidUtils.getFluidStackFromItemStack(itemstack).amount;
 						}
 						tank.fill(item.drain(itemstack,amount, true),true);
-						if (FluidUtils.getFluidStackFromItemStack(itemstack).amount == 0){
+						if (getProgress() == 16){
 							itemstack.getTagCompound().removeTag("Fluid");
 							_inventory.setInventorySlotContents(1, itemstack);
 							_inventory.setInventorySlotContents(0, null);
@@ -184,7 +200,19 @@ public class TileCanner extends TileBuildCraft implements IInventory,
 
 	@Override
 	public boolean isItemValidForSlot(int slotid, ItemStack itemStack) {
-		return _inventory.isItemValidForSlot(slotid, itemStack);
+		if (itemStack == null)
+			return false;
+		if (slotid == 0){
+			if (itemStack.getItem() == BuildCraftTransport.ironCannister
+					|| itemStack.getItem() == BuildCraftTransport.goldCanister
+					|| itemStack.getItem() == BuildCraftTransport.diamondCanister){
+				return true;
+			}
+		}
+		if (slotid == 2 && itemStack.getItem() instanceof IFluidContainerItem){
+			return true;
+		}
+		return false;
 	}
 
 	@Override
@@ -268,5 +296,58 @@ public class TileCanner extends TileBuildCraft implements IInventory,
 			pkt.sendPacket();
 		} catch (Exception e) {
 		}
+	}
+	
+	public int getProgress(){
+		ItemStack itemstack = _inventory.getStackInSlot(0);
+		if (itemstack != null){
+			Item item = itemstack.getItem();
+			if (item instanceof ItemIronCannister){
+				FluidStack fluidstack = FluidUtils.getFluidStackFromItemStack(_inventory.getStackInSlot(0));
+				if (fluidstack != null){
+					if (fill){
+						return (fluidstack.amount*16)/1000;
+					}
+					return ((1000-fluidstack.amount)*16)/1000;
+				}
+			}
+			if (item instanceof ItemGoldCanister){
+				FluidStack fluidstack = FluidUtils.getFluidStackFromItemStack(_inventory.getStackInSlot(0));
+				if (fluidstack != null){
+					if (fill){
+						return (fluidstack.amount*16)/3000;
+					}
+					return ((1000-fluidstack.amount)*16)/3000;
+				}
+			}
+			if (item instanceof ItemDiamondCanister){
+				FluidStack fluidstack = FluidUtils.getFluidStackFromItemStack(itemstack);
+				if (fluidstack != null){
+					if (fill){
+						return (int)((fluidstack.amount*16)/9000);
+					}
+					return ((1000-fluidstack.amount)*16)/9000;
+				}
+			}
+			if (!fill){
+				return 16;
+			}
+		}
+		return 0;
+	}
+
+	@Override
+	public int[] getAccessibleSlotsFromSide(int var1) {
+		return SLOTS;
+	}
+
+	@Override
+	public boolean canInsertItem(int var1, ItemStack var2, int var3) {
+		return isItemValidForSlot(var1, var2);
+	}
+
+	@Override
+	public boolean canExtractItem(int var1, ItemStack var2, int var3) {
+		return var1 == 1;
 	}
 }
