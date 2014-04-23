@@ -1,32 +1,19 @@
 package buildcraft.core;
 
-import java.util.List;
-
-import javax.swing.Icon;
-import javax.swing.Renderer;
-
-import org.lwjgl.opengl.GL11;
-
-import buildcraft.BuildCraftCore;
+import buildcraft.BuildCraftTransport;
 import buildcraft.core.render.RenderUtils;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraft.block.Block;
-import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.entity.Render;
-import net.minecraft.client.renderer.entity.RenderItem;
-import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.IIcon;
-import net.minecraftforge.client.IItemRenderer;
 import net.minecraftforge.fluids.FluidContainerRegistry;
-import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.ItemFluidContainer;
+
+import java.util.List;
 
 public class ItemIronCannister extends ItemFluidContainer{
 	
@@ -75,7 +62,7 @@ public class ItemIronCannister extends ItemFluidContainer{
  
 	public ItemStack getFilledItemStack(FluidStack fStack)
 	{
-		ItemStack iStack = new ItemStack(BuildCraftCore.ironCannister);
+		ItemStack iStack = new ItemStack(BuildCraftTransport.ironCannister);
 		if (iStack.getTagCompound() == null)
 			iStack.setTagCompound(new NBTTagCompound());
 		NBTTagCompound fluidTag = fStack.writeToNBT(new NBTTagCompound());

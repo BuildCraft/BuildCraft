@@ -1,7 +1,8 @@
 package buildcraft.core;
 
-import java.util.List;
-
+import buildcraft.BuildCraftTransport;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -9,9 +10,8 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.ItemFluidContainer;
-import buildcraft.BuildCraftCore;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+
+import java.util.List;
 
 public class ItemGoldCanister extends ItemFluidContainer {
 	
@@ -40,7 +40,7 @@ public class ItemGoldCanister extends ItemFluidContainer {
  
 	public ItemStack getFilledItemStack(FluidStack fStack)
 	{
-		ItemStack iStack = new ItemStack(BuildCraftCore.goldCanister);
+		ItemStack iStack = new ItemStack(BuildCraftTransport.goldCanister);
 		if (iStack.getTagCompound() == null)
 			iStack.setTagCompound(new NBTTagCompound());
 		NBTTagCompound fluidTag = fStack.writeToNBT(new NBTTagCompound());
