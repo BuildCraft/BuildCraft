@@ -21,6 +21,8 @@ public class TileRefineryController extends TileMultiblockMaster {
 	@NetworkData
 	public int length = 0;
 
+	private boolean firstRun = true;
+
 	@Override
 	public void readFromNBT(NBTTagCompound nbt) {
 		super.readFromNBT(nbt);
@@ -38,10 +40,21 @@ public class TileRefineryController extends TileMultiblockMaster {
 	}
 
 	@Override
-	public void validate() {
-		if (formed) {
-			formMultiblock(); // Try to form a multiblock when first loaded if been formed before
+	public void updateEntity() {
+		if (worldObj != null && !worldObj.isRemote) {
+			if (firstRun && formed) {
+				formMultiblock();
+				worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+				firstRun = false;
+			}
 		}
+	}
+
+	@Override
+	public void validate() {
+//		if (formed) {
+//			formMultiblock(); // Try to form a multiblock when first loaded if been formed before
+//		}
 	}
 
 	@Override
@@ -119,7 +132,7 @@ public class TileRefineryController extends TileMultiblockMaster {
 			search.moveForwards(1); // Orientation util method is technically backwards ;)
 			length++;
 
-			if (length > 9) {
+			if (length > 11) {
 				break;
 			}
 
@@ -191,8 +204,6 @@ public class TileRefineryController extends TileMultiblockMaster {
 						int x = xCoord + (forge_orientation.offsetX * i) + (left.offsetX * k);
 						int y = yCoord + j;
 						int z = zCoord + (forge_orientation.offsetZ * i) + (left.offsetZ * k);
-
-						System.out.println(x + ", " + y + ", " + z + " : " + (i + j + k));
 
 						TileEntity tile = worldObj.getTileEntity(x, y, z);
 
