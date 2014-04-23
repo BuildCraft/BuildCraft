@@ -16,7 +16,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 public class TileRefineryController extends TileMultiblockMaster {
 
 	@NetworkData
-	public ForgeDirection orientation = ForgeDirection.UNKNOWN;
+	public int orientation = -1;
 
 	@NetworkData
 	public int length = 0;
@@ -25,7 +25,7 @@ public class TileRefineryController extends TileMultiblockMaster {
 	public void readFromNBT(NBTTagCompound nbt) {
 		super.readFromNBT(nbt);
 
-		orientation = ForgeDirection.getOrientation(nbt.getByte("orientation"));
+		orientation = nbt.getInteger("orientation");
 		formed = nbt.getBoolean("formed");
 	}
 
@@ -33,7 +33,7 @@ public class TileRefineryController extends TileMultiblockMaster {
 	public void writeToNBT(NBTTagCompound nbt) {
 		super.writeToNBT(nbt);
 
-		nbt.setByte("orientation", (byte) orientation.ordinal());
+		nbt.setInteger("orientation", orientation);
 		nbt.setBoolean("formed", formed);
 	}
 
@@ -63,7 +63,7 @@ public class TileRefineryController extends TileMultiblockMaster {
 	public void formMultiblock() {
 		// Orientation of controller determines multiblock orientation
 		Position search = new Position(this);
-		search.orientation = orientation;
+		search.orientation = ForgeDirection.getOrientation(orientation);
 		boolean foundEnd = false;
 		int valveCount = 0;
 		int frameCount = 0;
@@ -71,7 +71,8 @@ public class TileRefineryController extends TileMultiblockMaster {
 		int heaterCount = 0;
 		int length = 1; // Must be less than 9
 
-		ForgeDirection left = orientation.getOpposite().getRotation(ForgeDirection.UP);
+		ForgeDirection forge_orientation = ForgeDirection.getOrientation(orientation);
+		ForgeDirection left = forge_orientation.getOpposite().getRotation(ForgeDirection.UP);
 
 		/* BEGIN FRONT CHECK */
 
@@ -187,9 +188,11 @@ public class TileRefineryController extends TileMultiblockMaster {
 			for (int i = 0; i < length; i++) {
 				for (int j = -1; j <= 1; j++) {
 					for (int k = -1; k <= 1; k++) {
-						int x = xCoord + (orientation.offsetX * i) + (left.offsetX * i);
+						int x = xCoord + (forge_orientation.offsetX * i) + (left.offsetX * k);
 						int y = yCoord + j;
-						int z = zCoord + (orientation.offsetZ * k) + (left.offsetZ * k);
+						int z = zCoord + (forge_orientation.offsetZ * i) + (left.offsetZ * k);
+
+						System.out.println(x + ", " + y + ", " + z + " : " + (i + j + k));
 
 						TileEntity tile = worldObj.getTileEntity(x, y, z);
 
@@ -206,14 +209,15 @@ public class TileRefineryController extends TileMultiblockMaster {
 	public void deformMultiblock() {
 		super.deformMultiblock();
 
-		ForgeDirection left = orientation.getOpposite().getRotation(ForgeDirection.UP);
+		ForgeDirection forge_orientation = ForgeDirection.getOrientation(orientation);
+		ForgeDirection left = forge_orientation.getOpposite().getRotation(ForgeDirection.UP);
 
 		for (int i = 0; i < length; i++) {
 			for (int j = -1; j <= 1; j++) {
 				for (int k = -1; k <= 1; k++) {
-					int x = xCoord + (orientation.offsetX * i) + (left.offsetX * i);
+					int x = xCoord + (forge_orientation.offsetX * i) + (left.offsetX * i);
 					int y = yCoord + j;
-					int z = zCoord + (orientation.offsetZ * k) + (left.offsetZ * k);
+					int z = zCoord + (forge_orientation.offsetZ * k) + (left.offsetZ * k);
 
 					TileEntity tile = worldObj.getTileEntity(x, y, z);
 

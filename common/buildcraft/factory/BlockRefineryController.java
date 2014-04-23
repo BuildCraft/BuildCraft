@@ -38,7 +38,7 @@ public class BlockRefineryController extends BlockBuildCraft {
 		super.onBlockPlacedBy(world, i, j, k, entityliving, stack);
 
 		TileRefineryController tile = (TileRefineryController) world.getTileEntity(i, j, k);
-		tile.orientation = Utils.get2dOrientation(entityliving);
+		tile.orientation = Utils.get2dOrientation(entityliving).ordinal();
 	}
 
 	@Override
