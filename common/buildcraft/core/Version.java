@@ -29,7 +29,7 @@ public class Version implements Runnable {
 	public static final String VERSION = "@VERSION@";
 	public static final String BUILD_NUMBER = "@BUILD_NUMBER@";
 	private static final String REMOTE_VERSION_FILE = "http://bit.ly/buildcraftversion";
-	private static final String REMOTE_CHANGELOG_ROOT = "https://dl.dropboxusercontent.com/u/38558957/Minecraft/Buildcraft/changelogs/";
+	private static final String REMOTE_CHANGELOG_ROOT = "https://github.com/skmedix/BuildCraft/raw/NextGen/changelog.txt";
 	public static EnumUpdateState currentVersion = EnumUpdateState.CURRENT;
 	public static final int FORGE_VERSION_MAJOR = 4;
 	public static final int FORGE_VERSION_MINOR = 0;
