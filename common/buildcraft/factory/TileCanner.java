@@ -8,6 +8,8 @@ import buildcraft.core.fluids.SingleUseTank;
 import buildcraft.core.fluids.TankManager;
 import buildcraft.core.inventory.SimpleInventory;
 import buildcraft.core.network.IGuiReturnHandler;
+import buildcraft.core.network.NetworkData;
+import buildcraft.core.network.PacketGuiReturn;
 import buildcraft.core.network.PacketPayload;
 import buildcraft.core.network.PacketUpdate;
 import buildcraft.transport.ItemDiamondCanister;
@@ -26,6 +28,8 @@ import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
 import net.minecraftforge.fluids.ItemFluidContainer;
 
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 
 public class TileCanner extends TileBuildCraft implements IInventory, IFluidHandler, IGuiReturnHandler {
@@ -36,7 +40,8 @@ public class TileCanner extends TileBuildCraft implements IInventory, IFluidHand
     public double energyStored = 0;
     public SingleUseTank tank = new SingleUseTank("tank", maxLiquid, this);
     private TankManager tankManager = new TankManager();
-    public boolean fill;
+    public @NetworkData
+    boolean fill;
 
     public TileCanner() {
         tankManager.add(tank);
@@ -44,6 +49,8 @@ public class TileCanner extends TileBuildCraft implements IInventory, IFluidHand
 
     @Override
     public void updateEntity() {
+        sendNetworkUpdate();
+
         if (_inventory.getStackInSlot(0) != null && !tank.isEmpty()) {
             ItemFluidContainer item = null;
             if (_inventory.getStackInSlot(0).getItem() == BuildCraftTransport.ironCannister) {
@@ -207,6 +214,7 @@ public class TileCanner extends TileBuildCraft implements IInventory, IFluidHand
             @Override
             public void writeData(ByteBuf data) {
                 tankManager.writeData(data);
+                data.writeBoolean(fill);
             }
         });
         return payload;
@@ -216,6 +224,7 @@ public class TileCanner extends TileBuildCraft implements IInventory, IFluidHand
     public void handleUpdatePacket(PacketUpdate packet) throws IOException {
         ByteBuf stream = packet.payload.stream;
         tankManager.readData(stream);
+        fill = stream.readBoolean();
     }
 
     @Override
@@ -224,5 +233,15 @@ public class TileCanner extends TileBuildCraft implements IInventory, IFluidHand
     @Override
     public void readGuiData(ByteBuf data, EntityPlayer player) {
         fill = data.readBoolean();
+    }
+
+    public void sendModeUpdatePacket() {
+        try {
+            ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+            DataOutputStream data = new DataOutputStream(bytes);
+            data.writeBoolean(fill);
+            PacketGuiReturn pkt = new PacketGuiReturn(this, bytes.toByteArray());
+            pkt.sendPacket();
+        } catch (Exception e) {}
     }
 }

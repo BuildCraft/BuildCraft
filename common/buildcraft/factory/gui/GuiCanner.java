@@ -52,17 +52,7 @@ public class GuiCanner extends GuiBuildCraft {
         else
             mode.displayString = "Drain";
 
-        sendModeUpdatePacket();
-    }
-
-    private void sendModeUpdatePacket() {
-        try {
-            ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-            DataOutputStream data = new DataOutputStream(bytes);
-            data.writeBoolean(canner.fill);
-            PacketGuiReturn pkt = new PacketGuiReturn(canner, bytes.toByteArray());
-            pkt.sendPacket();
-        } catch (Exception e) {}
+        canner.sendModeUpdatePacket();
     }
 
     @Override
