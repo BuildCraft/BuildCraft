@@ -26,7 +26,7 @@ public class CanisterItemRender implements IItemRenderer {
 
 	@Override
 	public boolean shouldUseRenderHelper(ItemRenderType type, ItemStack item, ItemRendererHelper helper) {
-		return false;
+		return type.equals(ItemRenderType.ENTITY);
 	}
 
 	@Override
@@ -41,10 +41,14 @@ public class CanisterItemRender implements IItemRenderer {
 		} else if (type.equals(ItemRenderType.ENTITY)) {
 			glRotated(180.0D, 0.0D, 0.0D, 1.0D);
 			glRotated(90.0D, 0.0D, 1.0D, 0.0D);
-			glScaled(0.75D, 0.75D, 0.75D);
-			glTranslated(-0.5D, -0.6D, 0.0D);
+			glTranslated(-0.5D, -0.9D, 0.0D);
+			if (item.isOnItemFrame()) {
+				glTranslated(0.1D, 0.4D, 0.0D);
+				glScaled(0.85D, 0.85D, 0.85D);
+			}
 		} else if (type.equals(ItemRenderType.EQUIPPED_FIRST_PERSON)) {
 			glTranslated(1.0D, 1.0D, 0.0D);
+			glRotated(180.0D, 0.0D, 0.0D, 1.0D);
 		}
 
 		if (item.stackTagCompound != null && item.getTagCompound().hasKey("Fluid")) {
@@ -57,7 +61,7 @@ public class CanisterItemRender implements IItemRenderer {
 		Minecraft.getMinecraft().renderEngine.bindTexture(ITEM_TEXTURE);
 
 		if (!type.equals(ItemRenderType.INVENTORY))
-			ItemRenderer.renderItemIn2D(Tessellator.instance, cannister.getMaxU(), cannister.getMinV(), cannister.getMinU(), cannister.getMaxV(), cannister.getIconWidth(), cannister.getIconHeight(), 0.0625F);
+			ItemRenderer.renderItemIn2D(Tessellator.instance, cannister.getMinU(), cannister.getMaxV(), cannister.getMaxU(), cannister.getMinV(), cannister.getIconWidth(), cannister.getIconHeight(), 0.0625F);
 		else
 			renderIcon(cannister, 0.0D);
 
@@ -71,6 +75,7 @@ public class CanisterItemRender implements IItemRenderer {
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glDisable(GL_CULL_FACE);
+		glEnable(GL_ALPHA_TEST);
 		Tessellator tessellator = Tessellator.instance;
 
 		tessellator.startDrawingQuads();
@@ -117,25 +122,25 @@ public class CanisterItemRender implements IItemRenderer {
 	}
 
 	private void preRenderInvIcon(IIcon icon, double z) {
-		Tessellator.instance.addVertexWithUV(0.0D, 16.0D, z, icon.getMinU(), icon.getMaxV());
-		Tessellator.instance.addVertexWithUV(16.0D, 16.0D, z, icon.getMaxU(), icon.getMaxV());
 		Tessellator.instance.addVertexWithUV(16.0D, 0.0D, z, icon.getMaxU(), icon.getMinV());
 		Tessellator.instance.addVertexWithUV(0.0D, 0.0D, z, icon.getMinU(), icon.getMinV());
+		Tessellator.instance.addVertexWithUV(0.0D, 16.0D, z, icon.getMinU(), icon.getMaxV());
+		Tessellator.instance.addVertexWithUV(16.0D, 16.0D, z, icon.getMaxU(), icon.getMaxV());
 	}
 
 	private void preRenderWorldIcon(IIcon icon, double z) {
-		Tessellator.instance.addVertexWithUV(0.0D, 1.0D, z, icon.getMinU(), icon.getMaxV());
-		Tessellator.instance.addVertexWithUV(1.0D, 1.0D, z, icon.getMaxU(), icon.getMaxV());
 		Tessellator.instance.addVertexWithUV(1.0D, 0.0D, z, icon.getMaxU(), icon.getMinV());
 		Tessellator.instance.addVertexWithUV(0.0D, 0.0D, z, icon.getMinU(), icon.getMinV());
+		Tessellator.instance.addVertexWithUV(0.0D, 1.0D, z, icon.getMinU(), icon.getMaxV());
+		Tessellator.instance.addVertexWithUV(1.0D, 1.0D, z, icon.getMaxU(), icon.getMaxV());
 	}
 
 	private void renderIcon(IIcon icon, double z) {
 		Tessellator.instance.startDrawingQuads();
-		Tessellator.instance.addVertexWithUV(0.0D, 16.0D, z, icon.getMinU(), icon.getMaxV());
-		Tessellator.instance.addVertexWithUV(16.0D, 16.0D, z, icon.getMaxU(), icon.getMaxV());
 		Tessellator.instance.addVertexWithUV(16.0D, 0.0D, z, icon.getMaxU(), icon.getMinV());
 		Tessellator.instance.addVertexWithUV(0.0D, 0.0D, z, icon.getMinU(), icon.getMinV());
+		Tessellator.instance.addVertexWithUV(0.0D, 16.0D, z, icon.getMinU(), icon.getMaxV());
+		Tessellator.instance.addVertexWithUV(16.0D, 16.0D, z, icon.getMaxU(), icon.getMaxV());
 		Tessellator.instance.draw();
 	}
 }
