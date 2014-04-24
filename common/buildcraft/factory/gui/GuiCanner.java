@@ -98,7 +98,7 @@ public class GuiCanner extends GuiBuildCraft {
         super.drawGuiContainerBackgroundLayer(f, x, y);
         int j = (width - xSize) / 2;
         int k = (height - ySize) / 2;
-        drawFluid(canner.getFluid(), canner.getScaledLiquid(52), j+52, k+16, 16, 52);
+        drawFluid(canner.getFluid(), canner.getScaledLiquid(52), j+53, k+16, 16, 52);
         mc.renderEngine.bindTexture(texture);
         drawTexturedModalRect(j + 52, k + 21, 176, 21, 16, 58);
         
