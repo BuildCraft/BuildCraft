@@ -346,4 +346,15 @@ public class TileCanner extends TileBuildCraft implements ISidedInventory, IFlui
 	public boolean canExtractItem(int slot, ItemStack stack, int side) {
 		return side != 1 && slot == 1;
 	}
+
+	public double getEnergyStored() {
+		return energyStored;
+	}
+	
+	public int getFluidStored(){
+		if (tank.getFluid() != null){
+			return tank.getFluid().amount;
+		}
+		return 0;
+	}
 }
