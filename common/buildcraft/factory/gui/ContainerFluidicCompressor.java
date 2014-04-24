@@ -39,5 +39,10 @@ public class ContainerFluidicCompressor extends BuildCraftContainer {
 	public boolean canInteractWith(EntityPlayer entityPlayer) {
 		return canner.isUseableByPlayer(entityPlayer);
 	}
+	@Override
+	public void detectAndSendChanges() {
+		super.detectAndSendChanges();
+		canner.sendNetworkUpdate();
+		}
 
 }
