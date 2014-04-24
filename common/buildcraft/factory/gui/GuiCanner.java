@@ -1,13 +1,21 @@
 package buildcraft.factory.gui;
 
+import buildcraft.BuildCraftCore;
+import buildcraft.core.CoreIconProvider;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.gui.GuiBuildCraft;
+import buildcraft.core.gui.GuiBuildCraft.Ledger;
 import buildcraft.core.render.RenderUtils;
+import buildcraft.core.utils.StringUtils;
+import buildcraft.energy.TileEngine;
+import buildcraft.energy.gui.GuiEngine.EngineLedger;
 import buildcraft.factory.TileCanner;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.FluidStack;
@@ -17,14 +25,59 @@ public class GuiCanner extends GuiBuildCraft {
     TileCanner canner;
     private static final ResourceLocation texture = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_GUI + "/FluidicCompressorGUI.png");
     private static final ResourceLocation BLOCK_TEXTURE = TextureMap.locationBlocksTexture;
+    private static final ResourceLocation ITEM_TEXTURE = TextureMap.locationItemsTexture;
 
     public GuiCanner(InventoryPlayer inventoryplayer, TileCanner canner) {
         super(new ContainerCanner(inventoryplayer, canner), canner, texture);
         this.canner = canner;
     }
     
+    protected class EngineLedger extends Ledger {
+
+		TileCanner canner;
+		int headerColour = 0xe1c92f;
+		int subheaderColour = 0xaaafb8;
+		int textColour = 0x000000;
+
+		public EngineLedger(TileCanner canner) {
+			this.canner = canner;
+			maxHeight = 94;
+			overlayColor = 0xd46c1f;
+		}
+
+		@Override
+		public void draw(int x, int y) {
+
+			// Draw background
+			drawBackground(x, y);
+
+			// Draw icon
+			Minecraft.getMinecraft().renderEngine.bindTexture(ITEM_TEXTURE);
+			drawIcon(BuildCraftCore.iconProvider.getIcon(CoreIconProvider.ENERGY), x + 3, y + 4);
+
+			if (!isFullyOpened()) {
+				return;
+			}
+
+			fontRendererObj.drawStringWithShadow(StringUtils.localize("gui.progress"), x + 22, y + 8, headerColour);
+			fontRendererObj.drawStringWithShadow(StringUtils.localize("gui.progress") + ":", x + 22, y + 20, subheaderColour);
+			fontRendererObj.drawString(String.format("%.1f ", canner.getProgress()*6.25) + "%", x + 22, y + 32, textColour);
+			fontRendererObj.drawStringWithShadow(StringUtils.localize("gui.stored") + ":", x + 22, y + 44, subheaderColour);
+			fontRendererObj.drawString(String.format("%.1f MJ", canner.getEnergyStored()), x + 22, y + 56, textColour);
+			fontRendererObj.drawStringWithShadow(StringUtils.localize("gui.heat") + ":", x + 22, y + 68, subheaderColour);
+			fontRendererObj.drawString(Integer.toString(canner.getFluidStored()), x + 22, y + 80, textColour);
+
+		}
+
+		@Override
+		public String getTooltip() {
+			return String.format("%.1f", canner.getProgress()*6.25)+"%";
+		}
+	}
+    
     @Override
 	protected void mouseClicked(int mouseX, int mouseY, int mouseButton){
+    	super.mouseClicked(mouseX, mouseY, mouseButton);
 		int mX = mouseX - guiLeft;
 		int mY = mouseY - guiTop;
 		if (mX >= 20 && mX <= 39 && mY >= 25 && mY <= 41 && canner.fill){
@@ -102,4 +155,11 @@ public class GuiCanner extends GuiBuildCraft {
         tess.addVertexWithUV(x, y + cut, zLevel, icon.getMinU(), icon.getInterpolatedV(cut));
         tess.draw();
     }
+    
+    @Override
+	protected void initLedgers(IInventory inventory) {
+		super.initLedgers(inventory);
+		ledgerManager.add(new EngineLedger((TileCanner) tile));
+	}
+    
 }
