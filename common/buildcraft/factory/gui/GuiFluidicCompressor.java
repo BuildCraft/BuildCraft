@@ -103,12 +103,11 @@ public class GuiFluidicCompressor extends GuiBuildCraft {
         drawTexturedModalRect(j + 52, k + 21, 176, 21, 16, 58);
         
         if (canner.fill){
-        	drawTexturedModalRect(j+20, k+25, 195, 83, 19, 16);
-        	drawTexturedModalRect(j+20, k+45, 176, 99, 19, 16);
-        } else {
         	drawTexturedModalRect(j+20, k+45, 195, 99, 19, 16);
         	drawTexturedModalRect(j+20, k+25, 176, 83, 19, 16);
-        	
+        } else {
+        	drawTexturedModalRect(j+20, k+25, 195, 83, 19, 16);
+        	drawTexturedModalRect(j+20, k+45, 176, 99, 19, 16);
         }
         drawTexturedModalRect(j+89, k+53, 176, 3, canner.getProgress(), 4);
         
