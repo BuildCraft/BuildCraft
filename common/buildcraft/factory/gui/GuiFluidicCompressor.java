@@ -116,6 +116,9 @@ public class GuiFluidicCompressor extends GuiBuildCraft {
     @Override
     protected void drawGuiContainerForegroundLayer(int par1, int par2) {
         super.drawGuiContainerForegroundLayer(par1, par2);
+        String title = StringUtils.localize("tile.blockCanner.name");
+        fontRendererObj.drawString(StringUtils.localize(title), getCenteredOffset(title), 6, 0x404040);
+        fontRendererObj.drawString(StringUtils.localize("gui.inventory"), 8, (ySize - 96) + 2, 0x404040);
     }
 
     private void drawFluid(FluidStack fluid, int level, int x, int y, int width, int height){
