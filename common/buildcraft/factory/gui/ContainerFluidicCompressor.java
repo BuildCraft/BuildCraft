@@ -3,18 +3,18 @@ package buildcraft.factory.gui;
 import buildcraft.core.gui.BuildCraftContainer;
 import buildcraft.core.gui.slots.SlotOutput;
 import buildcraft.core.gui.slots.SlotValidated;
-import buildcraft.factory.TileCanner;
+import buildcraft.factory.TileFluidicCompressor;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 
-public class ContainerCanner extends BuildCraftContainer {
+public class ContainerFluidicCompressor extends BuildCraftContainer {
 	
 	IInventory playerIInventory;
-	TileCanner canner;
+	TileFluidicCompressor canner;
 
-	public ContainerCanner(InventoryPlayer inventory, TileCanner tile) {
+	public ContainerFluidicCompressor(InventoryPlayer inventory, TileFluidicCompressor tile) {
 		super(tile.getSizeInventory());
 		playerIInventory = inventory;
 		canner = tile;

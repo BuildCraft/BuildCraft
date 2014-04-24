@@ -32,5 +32,5 @@ public class GuiIds {
 
 	public static final int FILTERED_BUFFER = 60;
 	
-	public static final int CANNER = 70;
+	public static final int FLUIDIC_COMPRESSOR = 70;
 }

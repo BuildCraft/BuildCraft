@@ -18,7 +18,7 @@ import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
-public class BlockCanner extends BlockBuildCraft {
+public class BlockFluidicCompressor extends BlockBuildCraft {
 	
 	IIcon textureFront;
 	IIcon textureTop;
@@ -26,7 +26,7 @@ public class BlockCanner extends BlockBuildCraft {
 	IIcon textureBack;
 	IIcon textureBottom;
 
-	public BlockCanner() {
+	public BlockFluidicCompressor() {
 		super(Material.iron, CreativeTabBuildCraft.TIER_3);
 		setHardness(5F);
 		setResistance(10F);
@@ -34,7 +34,7 @@ public class BlockCanner extends BlockBuildCraft {
 
 	@Override
 	public TileEntity createNewTileEntity(World var1, int var2) {
-		return new TileCanner();
+		return new TileFluidicCompressor();
 	}
 	
 	@Override
@@ -51,7 +51,7 @@ public class BlockCanner extends BlockBuildCraft {
         }
 
 		if (!world.isRemote)
-			entityplayer.openGui(BuildCraftFactory.instance, GuiIds.CANNER, world, x, y, z);
+			entityplayer.openGui(BuildCraftFactory.instance, GuiIds.FLUIDIC_COMPRESSOR, world, x, y, z);
 
 		return true;
 	}
@@ -63,7 +63,7 @@ public class BlockCanner extends BlockBuildCraft {
 		ForgeDirection orientation = Utils.get2dOrientation(entityliving);
 		world.setBlockMetadataWithNotify(i, j, k, orientation.getOpposite().ordinal(), 1);
 
-        TileCanner canner = (TileCanner) world.getTileEntity(i, j, k);
+        TileFluidicCompressor canner = (TileFluidicCompressor) world.getTileEntity(i, j, k);
         canner.fill = true;
 	}
 	

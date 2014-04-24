@@ -9,7 +9,7 @@ import buildcraft.core.render.RenderUtils;
 import buildcraft.core.utils.StringUtils;
 import buildcraft.energy.TileEngine;
 import buildcraft.energy.gui.GuiEngine.EngineLedger;
-import buildcraft.factory.TileCanner;
+import buildcraft.factory.TileFluidicCompressor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.renderer.Tessellator;
@@ -20,26 +20,26 @@ import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.FluidStack;
 
-public class GuiCanner extends GuiBuildCraft {
+public class GuiFluidicCompressor extends GuiBuildCraft {
 
-    TileCanner canner;
+    TileFluidicCompressor canner;
     private static final ResourceLocation texture = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_GUI + "/FluidicCompressorGUI.png");
     private static final ResourceLocation BLOCK_TEXTURE = TextureMap.locationBlocksTexture;
     private static final ResourceLocation ITEM_TEXTURE = TextureMap.locationItemsTexture;
 
-    public GuiCanner(InventoryPlayer inventoryplayer, TileCanner canner) {
-        super(new ContainerCanner(inventoryplayer, canner), canner, texture);
+    public GuiFluidicCompressor(InventoryPlayer inventoryplayer, TileFluidicCompressor canner) {
+        super(new ContainerFluidicCompressor(inventoryplayer, canner), canner, texture);
         this.canner = canner;
     }
     
     protected class EngineLedger extends Ledger {
 
-		TileCanner canner;
+		TileFluidicCompressor canner;
 		int headerColour = 0xe1c92f;
 		int subheaderColour = 0xaaafb8;
 		int textColour = 0x000000;
 
-		public EngineLedger(TileCanner canner) {
+		public EngineLedger(TileFluidicCompressor canner) {
 			this.canner = canner;
 			maxHeight = 94;
 			overlayColor = 0xd46c1f;
@@ -63,7 +63,7 @@ public class GuiCanner extends GuiBuildCraft {
 			fontRendererObj.drawStringWithShadow(StringUtils.localize("gui.progress") + ":", x + 22, y + 20, subheaderColour);
 			fontRendererObj.drawString(String.format("%.1f ", canner.getProgress()*6.25) + "%", x + 22, y + 32, textColour);
 			fontRendererObj.drawStringWithShadow(StringUtils.localize("gui.fluid") + ":", x + 22, y + 44, subheaderColour);
-			if (canner.tank.getFluid().getFluid().getName() != null) {
+			if (canner.tank.getFluid() != null) {
 				fontRendererObj.drawString(canner.tank.getFluid().getFluid().getName(), x + 22, y + 56, textColour);
 			} else {
 				fontRendererObj.drawString(StringUtils.localize("gui.noFluid"), x + 22, y + 56, textColour);
@@ -163,7 +163,7 @@ public class GuiCanner extends GuiBuildCraft {
     @Override
 	protected void initLedgers(IInventory inventory) {
 		super.initLedgers(inventory);
-		ledgerManager.add(new EngineLedger((TileCanner) tile));
+		ledgerManager.add(new EngineLedger((TileFluidicCompressor) tile));
 	}
     
 }

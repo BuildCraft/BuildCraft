@@ -32,7 +32,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-public class TileCanner extends TileBuildCraft implements ISidedInventory, IFluidHandler, IGuiReturnHandler {
+public class TileFluidicCompressor extends TileBuildCraft implements ISidedInventory, IFluidHandler, IGuiReturnHandler {
 
 	private final SimpleInventory _inventory = new SimpleInventory(3, "Canner",1);
 	public final int maxLiquid = FluidContainerRegistry.BUCKET_VOLUME * 10;
@@ -43,7 +43,7 @@ public class TileCanner extends TileBuildCraft implements ISidedInventory, IFlui
 	public @NetworkData
 	boolean fill;
 
-	public TileCanner() {
+	public TileFluidicCompressor() {
 		tankManager.add(tank);
 	}
 
