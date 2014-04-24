@@ -334,7 +334,7 @@ public class TileCanner extends TileBuildCraft implements ISidedInventory, IFlui
 
 	@Override
 	public int[] getAccessibleSlotsFromSide(int side) {
-		return Utils.createSlotArray(0, 2);
+		return Utils.createSlotArray(0, 1);
 	}
 
 	@Override

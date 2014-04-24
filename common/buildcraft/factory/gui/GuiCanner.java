@@ -15,39 +15,25 @@ import net.minecraftforge.fluids.FluidStack;
 public class GuiCanner extends GuiBuildCraft {
 
     TileCanner canner;
-    private static final ResourceLocation texture = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_GUI + "/FluidicCompressorGUI_alt.png");
+    private static final ResourceLocation texture = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_GUI + "/FluidicCompressorGUI.png");
     private static final ResourceLocation BLOCK_TEXTURE = TextureMap.locationBlocksTexture;
-    private GuiButton mode;
 
     public GuiCanner(InventoryPlayer inventoryplayer, TileCanner canner) {
         super(new ContainerCanner(inventoryplayer, canner), canner, texture);
         this.canner = canner;
     }
-
+    
     @Override
-    public void initGui(){
-        super.initGui();
-
-        int j = (width - xSize) / 2;
-        int k = (height - ySize) / 2;
-        String modeName = "Fill";
-        if (!canner.fill)
-            modeName = "Drain";
-        mode = new GuiButton(0, j + 125, k + 10, 40, 20, modeName);
-        buttonList.add(mode);
-    }
-    @Override
-    protected void actionPerformed(GuiButton button) {
-        super.actionPerformed(button);
-
-        if (button == mode)
-            canner.fill = !canner.fill;
-        if (canner.fill)
-            mode.displayString = "Fill";
-        else
-            mode.displayString = "Drain";
-
-        canner.sendModeUpdatePacket();
+	protected void mouseClicked(int mouseX, int mouseY, int mouseButton){
+		int mX = mouseX - guiLeft;
+		int mY = mouseY - guiTop;
+		if (mX >= 20 && mX <= 39 && mY >= 25 && mY <= 41 && canner.fill){
+			canner.fill = false;
+		}
+		if (mX >= 20 && mX <= 39 && mY >= 45 && mY <= 61 && !canner.fill){
+			canner.fill = true;
+		}
+		canner.sendModeUpdatePacket();
     }
 
     @Override
@@ -55,10 +41,20 @@ public class GuiCanner extends GuiBuildCraft {
         super.drawGuiContainerBackgroundLayer(f, x, y);
         int j = (width - xSize) / 2;
         int k = (height - ySize) / 2;
-        drawFluid(canner.getFluid(), canner.getScaledLiquid(52), j+44, k+17, 16, 52);
+        drawFluid(canner.getFluid(), canner.getScaledLiquid(52), j+52, k+16, 16, 52);
         mc.renderEngine.bindTexture(texture);
-        drawTexturedModalRect(j + 44, k + 22, 176, 22, 16, 58);
-        drawTexturedModalRect(j+98, k+54, 176, 3, canner.getProgress(), 4);
+        drawTexturedModalRect(j + 52, k + 21, 176, 21, 16, 58);
+        
+        if (canner.fill){
+        	drawTexturedModalRect(j+20, k+25, 195, 83, 19, 16);
+        	drawTexturedModalRect(j+20, k+45, 176, 99, 19, 16);
+        } else {
+        	drawTexturedModalRect(j+20, k+45, 195, 99, 19, 16);
+        	drawTexturedModalRect(j+20, k+25, 176, 83, 19, 16);
+        	
+        }
+        drawTexturedModalRect(j+89, k+53, 176, 3, canner.getProgress(), 4);
+        
     }
 
     @Override
