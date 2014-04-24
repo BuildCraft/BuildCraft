@@ -103,11 +103,11 @@ public class FluidUtils {
 		}
 	}
 	
-	public static FluidStack getFluidStackFromItemStack(ItemStack iStack) {
-		if (iStack.stackTagCompound == null || !iStack.getTagCompound().hasKey("Fluid"))
+	public static FluidStack getFluidStackFromItemStack(ItemStack itemStack) {
+		if (itemStack.stackTagCompound == null || !itemStack.getTagCompound().hasKey("Fluid"))
 			return null;
  
-		NBTTagCompound fluidTag = iStack.getTagCompound().getCompoundTag("Fluid");
+		NBTTagCompound fluidTag = itemStack.getTagCompound().getCompoundTag("Fluid");
  
 		return FluidStack.loadFluidStackFromNBT(fluidTag);
 	}

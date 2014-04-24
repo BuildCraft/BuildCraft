@@ -10,6 +10,7 @@ package buildcraft;
 
 import java.util.LinkedList;
 
+import buildcraft.transport.render.CanisterItemRender;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
@@ -17,6 +18,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
+import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
 import net.minecraftforge.common.util.ForgeDirection;
@@ -363,6 +365,8 @@ public class BuildCraftTransport extends BuildCraftMod {
 			
 			diamondCanister = new ItemDiamondCanister(3);
 			CoreProxy.proxy.registerItem(diamondCanister);
+
+			MinecraftForgeClient.registerItemRenderer(ironCannister, new CanisterItemRender());
 
 			if (!BuildCraftCore.NEXTGEN_PREALPHA) {
 				pipePowerHeat = buildPipe(DefaultProps.PIPE_POWER_HEAT_ID, PipePowerHeat.class, "Heat Kinesis Pipe", CreativeTabBuildCraft.TIER_3, Blocks.furnace, pipeItemsDiamond);
