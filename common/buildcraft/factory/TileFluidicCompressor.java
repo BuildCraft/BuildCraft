@@ -276,10 +276,10 @@ public class TileFluidicCompressor extends TileBuildCraft implements
 						.getFluidStackFromItemStack(itemstack);
 				ItemCanister canister = (ItemCanister) itemstack.getItem();
 				if (fluidstack != null) {
+					int capacity = canister.getCapacity(itemstack);
 					if (fill)
-						return (fluidstack.amount * 16)
-								/ canister.getCapacity(itemstack);
-					return ((1000 - fluidstack.amount) * 16) / 1000;
+						return (fluidstack.amount * 16)/ capacity;
+					return ((capacity - fluidstack.amount) * 16) / capacity;
 				}
 			}
 			if (!fill) {
