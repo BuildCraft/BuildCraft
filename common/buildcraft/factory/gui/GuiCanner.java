@@ -25,6 +25,7 @@ public class GuiCanner extends GuiBuildCraft {
     
     @Override
 	protected void mouseClicked(int mouseX, int mouseY, int mouseButton){
+    	super.mouseClicked(mouseX, mouseY, mouseButton);
 		int mX = mouseX - guiLeft;
 		int mY = mouseY - guiTop;
 		if (mX >= 20 && mX <= 39 && mY >= 25 && mY <= 41 && canner.fill){

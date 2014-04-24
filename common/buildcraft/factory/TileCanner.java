@@ -88,7 +88,7 @@ public class TileCanner extends TileBuildCraft implements ISidedInventory, IFlui
 						energyStored = energyStored - amount;
 						FluidStack fluid = FluidUtils.getFluidStackFromItemStack(itemstack);
 						if (fluid != null) {
-							if (getProgress() == 16) {
+							if (getProgress() == 16 && _inventory.getStackInSlot(1) == null) {
 								_inventory.setInventorySlotContents(1, itemstack);
 								_inventory.setInventorySlotContents(0, null);
 							}
@@ -106,7 +106,7 @@ public class TileCanner extends TileBuildCraft implements ISidedInventory, IFlui
 							amount = FluidUtils.getFluidStackFromItemStack(itemstack).amount;
 						}
 						tank.fill(item.drain(itemstack,amount, true),true);
-						if (getProgress() == 16){
+						if (getProgress() == 16 && _inventory.getStackInSlot(1) == null){
 							itemstack.getTagCompound().removeTag("Fluid");
 							_inventory.setInventorySlotContents(1, itemstack);
 							_inventory.setInventorySlotContents(0, null);
