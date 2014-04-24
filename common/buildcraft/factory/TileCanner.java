@@ -1,6 +1,5 @@
 package buildcraft.factory;
 
-import buildcraft.BuildCraftTransport;
 import buildcraft.api.mj.MjBattery;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.fluids.FluidUtils;
@@ -14,14 +13,11 @@ import buildcraft.core.network.PacketGuiReturn;
 import buildcraft.core.network.PacketPayload;
 import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.utils.Utils;
-import buildcraft.transport.ItemDiamondCanister;
-import buildcraft.transport.ItemGoldCanister;
-import buildcraft.transport.ItemIronCannister;
+import buildcraft.transport.ItemCanister;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemBucket;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.ForgeDirection;
@@ -29,7 +25,6 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
-import net.minecraftforge.fluids.IFluidContainerItem;
 import net.minecraftforge.fluids.IFluidHandler;
 import net.minecraftforge.fluids.ItemFluidContainer;
 
@@ -57,7 +52,6 @@ public class TileCanner extends TileBuildCraft implements ISidedInventory, IFlui
 		sendNetworkUpdate();
 		if (getStackInSlot(2) != null) {
 			FluidStack liquid = FluidContainerRegistry.getFluidForFilledItem(getStackInSlot(2));
-
 			if (liquid != null) {
 				if (fill(ForgeDirection.UNKNOWN, liquid, false) == liquid.amount) {
 					fill(ForgeDirection.UNKNOWN, liquid, true);
@@ -69,14 +63,8 @@ public class TileCanner extends TileBuildCraft implements ISidedInventory, IFlui
 		if (itemstack != null) {
 			ItemFluidContainer item = null;
 			Item itemInSlot = itemstack.getItem();
-			if (itemInSlot == BuildCraftTransport.ironCannister) {
-				item = (ItemIronCannister) itemstack.getItem();
-			}
-			if (itemInSlot == BuildCraftTransport.goldCanister) {
-				item = (ItemGoldCanister) itemstack.getItem();
-			}
-			if (itemInSlot == BuildCraftTransport.diamondCanister) {
-				item = (ItemDiamondCanister) itemstack.getItem();
+			if (itemInSlot instanceof ItemCanister) {
+				item = (ItemCanister) itemstack.getItem();
 			}
 			if (item != null) {
 				int amount = 50;
@@ -197,17 +185,9 @@ public class TileCanner extends TileBuildCraft implements ISidedInventory, IFlui
 			return false;
 		Item item = itemStack.getItem();
 		if (slotid == 0){
-			if (item == BuildCraftTransport.ironCannister
-					|| item == BuildCraftTransport.goldCanister
-					|| item == BuildCraftTransport.diamondCanister) {
+			if (item instanceof ItemCanister) {
 				return true;
 			}
-		}
-		if (slotid == 2 && (item instanceof IFluidContainerItem || item instanceof ItemBucket)
-					&& (item != BuildCraftTransport.ironCannister
-					|| item != BuildCraftTransport.goldCanister
-					|| item != BuildCraftTransport.diamondCanister)) {
-			return true;
 		}
 		return false;
 	}
@@ -251,7 +231,7 @@ public class TileCanner extends TileBuildCraft implements ISidedInventory, IFlui
 	}
 
 	public int getScaledLiquid(int i) {
-		return tank.getFluid() != null ? (int) (((float) this.tank.getFluid().amount / (float) (maxLiquid)) * i): 0;
+		return tank.getFluid() != null ? (int) (((float) this.tank.getFluid().amount / (float) (maxLiquid)) * i) : 0;
 	}
 
 	@Override
@@ -294,35 +274,17 @@ public class TileCanner extends TileBuildCraft implements ISidedInventory, IFlui
 		}
 	}
 	
-	public int getProgress(){
+	public int getProgress() {
 		ItemStack itemstack = _inventory.getStackInSlot(0);
-		if (itemstack != null){
+		if (itemstack != null) {
 			Item item = itemstack.getItem();
-			if (item instanceof ItemIronCannister){
-				FluidStack fluidstack = FluidUtils.getFluidStackFromItemStack(_inventory.getStackInSlot(0));
-				if (fluidstack != null){
-					if (fill){
-						return (fluidstack.amount*16)/1000;
-					}
-					return ((1000-fluidstack.amount)*16)/1000;
-				}
-			}
-			if (item instanceof ItemGoldCanister){
-				FluidStack fluidstack = FluidUtils.getFluidStackFromItemStack(_inventory.getStackInSlot(0));
-				if (fluidstack != null){
-					if (fill){
-						return (fluidstack.amount*16)/3000;
-					}
-					return ((1000-fluidstack.amount)*16)/3000;
-				}
-			}
-			if (item instanceof ItemDiamondCanister){
+			if (item instanceof ItemCanister) {
 				FluidStack fluidstack = FluidUtils.getFluidStackFromItemStack(itemstack);
-				if (fluidstack != null){
-					if (fill){
-						return (int)((fluidstack.amount*16)/9000);
-					}
-					return ((1000-fluidstack.amount)*16)/9000;
+				ItemCanister canister = (ItemCanister) itemstack.getItem();
+				if (fluidstack != null) {
+					if (fill)
+						return (fluidstack.amount * 16) / canister.getCapacity(itemstack);
+					return ((1000 - fluidstack.amount) * 16) / 1000;
 				}
 			}
 			if (!fill){

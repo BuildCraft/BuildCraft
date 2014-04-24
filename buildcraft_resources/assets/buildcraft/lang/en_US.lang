@@ -169,7 +169,7 @@ item.PipeItemsSandstone.name=Sandstone Transport Pipe
 item.PipeFluidsSandstone.name=Sandstone Fluid Pipe
 item.Facade.name=Facade
 item.PipePlug.name=Pipe Plug
-item.ironCannister.name=Iron Canister
+item.ironCanister.name=Iron Canister
 item.goldCanister.name=Gold Canister
 item.diamondCanister.name=Diamond Canister
 
