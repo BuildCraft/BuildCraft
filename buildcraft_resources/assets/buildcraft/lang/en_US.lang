@@ -105,6 +105,10 @@ gui.pipes.emerald.nonblocking.tip=Extraction continues with the next element in 
 gui.pipes.emzuli.title=Extraction Presets
 gui.pipes.emzuli.paint=Paint Items %s
 gui.pipes.emzuli.nopaint=Don't Paint Items
+gui.progress=Progress
+gui.fluid=Fluid
+gui.fluidStored=Amount of fluid
+gui.noFluid=Empty
 
 item.bucketFuel.name=Fuel Bucket
 item.bucketOil.name=Oil Bucket

@@ -62,10 +62,14 @@ public class GuiCanner extends GuiBuildCraft {
 			fontRendererObj.drawStringWithShadow(StringUtils.localize("gui.progress"), x + 22, y + 8, headerColour);
 			fontRendererObj.drawStringWithShadow(StringUtils.localize("gui.progress") + ":", x + 22, y + 20, subheaderColour);
 			fontRendererObj.drawString(String.format("%.1f ", canner.getProgress()*6.25) + "%", x + 22, y + 32, textColour);
-			fontRendererObj.drawStringWithShadow(StringUtils.localize("gui.stored") + ":", x + 22, y + 44, subheaderColour);
-			fontRendererObj.drawString(String.format("%.1f MJ", canner.getEnergyStored()), x + 22, y + 56, textColour);
-			fontRendererObj.drawStringWithShadow(StringUtils.localize("gui.heat") + ":", x + 22, y + 68, subheaderColour);
-			fontRendererObj.drawString(Integer.toString(canner.getFluidStored()), x + 22, y + 80, textColour);
+			fontRendererObj.drawStringWithShadow(StringUtils.localize("gui.fluid") + ":", x + 22, y + 44, subheaderColour);
+			if (canner.tank.getFluid().getFluid().getName() != null) {
+				fontRendererObj.drawString(canner.tank.getFluid().getFluid().getName(), x + 22, y + 56, textColour);
+			} else {
+				fontRendererObj.drawString(StringUtils.localize("gui.noFluid"), x + 22, y + 56, textColour);
+			}
+			fontRendererObj.drawStringWithShadow(StringUtils.localize("gui.fluidStored") + ":", x + 22, y + 68, subheaderColour);
+			fontRendererObj.drawString(Integer.toString(canner.getFluidStored())+" mB", x + 22, y + 80, textColour);
 
 		}
 
