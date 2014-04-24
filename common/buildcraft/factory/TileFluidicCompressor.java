@@ -50,15 +50,6 @@ public class TileFluidicCompressor extends TileBuildCraft implements
 
 	@Override
 	public void updateEntity() {
-		if (getStackInSlot(2) != null) {
-			FluidStack liquid = FluidContainerRegistry.getFluidForFilledItem(getStackInSlot(2));
-			if (liquid != null) {
-				if (fill(ForgeDirection.UNKNOWN, liquid, false) == liquid.amount) {
-					fill(ForgeDirection.UNKNOWN, liquid, true);
-					setInventorySlotContents(2, InvUtils.consumeItem(getStackInSlot(2)));
-				}
-			}
-		}
 		ItemStack itemstack = _inventory.getStackInSlot(0);
 		if (itemstack != null) {
 			ItemFluidContainer item = null;
