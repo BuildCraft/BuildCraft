@@ -80,7 +80,7 @@ public class CraftingHandler {
 		if (Event.crafting.getItem().equals(Item.getItemFromBlock(BuildCraftBuilders.libraryBlock))){
 			Event.player.addStat(BuildCraftCore.libraryAchievement, 1);
 			}
-		if (Event.crafting.getItem().equals(BuildCraftTransport.ironCannister)){
+		if (Event.crafting.getItem().equals(BuildCraftTransport.ironCanister)){
 			Event.player.addStat(BuildCraftCore.ironCanAchievement, 1);
 		}
 		if (Event.crafting.getItem().equals(BuildCraftTransport.goldCanister)){

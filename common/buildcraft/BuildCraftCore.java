@@ -481,7 +481,7 @@ public class BuildCraftCore extends BuildCraftMod {
         blueprintAchievement = new Achievement("achievement.blueprint", "blueprintAchievement", 11, 4, BuildCraftBuilders.blueprintItem, architectAchievement).registerStat();
         templateAchievement = new Achievement("achievement.template", "templateAchievement", 13, 4, BuildCraftBuilders.templateItem, blueprintAchievement).registerStat();
         libraryAchievement = new Achievement("achievement.blueprintLibrary", "blueprintLibraryAchievement", 15, 2, BuildCraftBuilders.libraryBlock, builderAchievement).registerStat();
-        ironCanAchievement = new Achievement("achievement.ironCanAchievement", "ironCanAchievement", 0, 4, BuildCraftTransport.ironCannister, null).registerStat().initIndependentStat();
+        ironCanAchievement = new Achievement("achievement.ironCanAchievement", "ironCanAchievement", 0, 4, BuildCraftTransport.ironCanister, null).registerStat().initIndependentStat();
         goldCanAchievement = new Achievement("achievement.goldCanAchievement", "goldCanAchievement", 2, 4, BuildCraftTransport.goldCanister, ironCanAchievement).registerStat();
         diamondCanAchievement = new Achievement("achievement.diamondCanAchievemnt", "diamondCanAchievement", 4, 4, BuildCraftTransport.diamondCanister, goldCanAchievement).registerStat();
 

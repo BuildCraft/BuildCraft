@@ -1,6 +1,6 @@
 package buildcraft.transport.render;
 
-import buildcraft.BuildCraftTransport;
+import buildcraft.transport.ItemCanister;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ItemRenderer;
 import net.minecraft.client.renderer.Tessellator;
@@ -11,13 +11,18 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.IItemRenderer;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
-
-import static org.lwjgl.opengl.GL11.*;
+import org.lwjgl.opengl.GL11;
 
 public class CanisterItemRender implements IItemRenderer {
 
 	private static final ResourceLocation BLOCK_TEXTURE = TextureMap.locationBlocksTexture;
 	private static final ResourceLocation ITEM_TEXTURE = TextureMap.locationItemsTexture;
+
+	private ItemCanister canister;
+
+	public CanisterItemRender(ItemCanister canister) {
+		this.canister = canister;
+	}
 
 	@Override
 	public boolean handleRenderType(ItemStack item, ItemRenderType type) {
@@ -31,24 +36,24 @@ public class CanisterItemRender implements IItemRenderer {
 
 	@Override
 	public void renderItem(ItemRenderType type, ItemStack item, Object... data) {
-		IIcon overlay = BuildCraftTransport.ironCannister.overlay;
-		IIcon cannister = BuildCraftTransport.ironCannister.getIconFromDamage(0);
+		IIcon overlay = canister.overlay;
+		IIcon cannister = canister.getIconFromDamage(0);
 
-		glPushMatrix();
+		GL11.glPushMatrix();
 		if (type.equals(ItemRenderType.EQUIPPED)) {
-			glRotated(180.0D, 0.0D, 0.0D, 1.0D);
-			glTranslated(-1.0D, -1.0D, 0.0D);
+			GL11.glRotated(180.0D, 0.0D, 0.0D, 1.0D);
+			GL11.glTranslated(-1.0D, -1.0D, 0.0D);
 		} else if (type.equals(ItemRenderType.ENTITY)) {
-			glRotated(180.0D, 0.0D, 0.0D, 1.0D);
-			glRotated(90.0D, 0.0D, 1.0D, 0.0D);
-			glTranslated(-0.5D, -0.9D, 0.0D);
+			GL11.glRotated(180.0D, 0.0D, 0.0D, 1.0D);
+			GL11.glRotated(90.0D, 0.0D, 1.0D, 0.0D);
+			GL11.glTranslated(-0.5D, -0.9D, 0.0D);
 			if (item.isOnItemFrame()) {
-				glTranslated(0.1D, 0.4D, 0.0D);
-				glScaled(0.85D, 0.85D, 0.85D);
+				GL11.glTranslated(0.1D, 0.4D, 0.0D);
+				GL11.glScaled(0.85D, 0.85D, 0.85D);
 			}
 		} else if (type.equals(ItemRenderType.EQUIPPED_FIRST_PERSON)) {
-			glTranslated(1.0D, 1.0D, 0.0D);
-			glRotated(180.0D, 0.0D, 0.0D, 1.0D);
+			GL11.glTranslated(1.0D, 1.0D, 0.0D);
+			GL11.glRotated(180.0D, 0.0D, 0.0D, 1.0D);
 		}
 
 		if (item.stackTagCompound != null && item.getTagCompound().hasKey("Fluid")) {
@@ -65,17 +70,18 @@ public class CanisterItemRender implements IItemRenderer {
 		else
 			renderIcon(cannister, 0.0D);
 
-		glPopMatrix();
+		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+		GL11.glPopMatrix();
 	}
 
 	private void renderMask(IIcon mask, IIcon subIcon, ItemRenderType type) {
 		if (mask == null || subIcon == null)
 			return;
 
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		glDisable(GL_CULL_FACE);
-		glEnable(GL_ALPHA_TEST);
+		GL11.glEnable(GL11.GL_BLEND);
+		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+		GL11.glDisable(GL11.GL_CULL_FACE);
+		GL11.glEnable(GL11.GL_ALPHA_TEST);
 		Tessellator tessellator = Tessellator.instance;
 
 		tessellator.startDrawingQuads();
@@ -95,8 +101,8 @@ public class CanisterItemRender implements IItemRenderer {
 		tessellator.draw();
 
 		Minecraft.getMinecraft().renderEngine.bindTexture(BLOCK_TEXTURE);
-		glDepthFunc(GL_EQUAL);
-		glDepthMask(false);
+		GL11.glDepthFunc(GL11.GL_EQUAL);
+		GL11.glDepthMask(false);
 
 		tessellator.startDrawingQuads();
 		tessellator.setNormal(0.0F, 0.0F, 1.0F);
@@ -114,11 +120,11 @@ public class CanisterItemRender implements IItemRenderer {
 			preRenderWorldIcon(subIcon, -0.0635D);
 		tessellator.draw();
 
-		glDisable(GL_BLEND);
-		glDepthMask(true);
-		glDepthFunc(GL_LEQUAL);
-		glEnable(GL_CULL_FACE);
-		glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+		GL11.glDisable(GL11.GL_BLEND);
+		GL11.glDepthMask(true);
+		GL11.glDepthFunc(GL11.GL_LEQUAL);
+		GL11.glEnable(GL11.GL_CULL_FACE);
+		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 	}
 
 	private void preRenderInvIcon(IIcon icon, double z) {
