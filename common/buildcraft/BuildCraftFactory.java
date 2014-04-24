@@ -317,6 +317,8 @@ public class BuildCraftFactory extends BuildCraftMod {
 					'G', BuildCraftCore.ironGearItem,
 					'F', new ItemStack(Blocks.iron_bars));
 		}
+		
+		CoreProxy.proxy.addCraftingRecipe(new ItemStack(cannerBlock), "IFI", "PGP", "IMI", 'I', BuildCraftCore.ironGearItem, 'F', floodGateBlock, 'P', Blocks.piston, 'G', BuildCraftTransport.goldCanister, 'M', pumpBlock);
 	}
 
 	@Mod.EventHandler
