@@ -185,9 +185,7 @@ public class TileFluidicCompressor extends TileBuildCraft implements
 
 	@Override
 	public int fill(ForgeDirection from, FluidStack resource, boolean doFill) {
-		int temp = tank.fill(resource, doFill);
-		this.sendNetworkUpdate();
-		return temp;
+		return tank.fill(resource, doFill);
 	}
 
 	@Override
@@ -198,9 +196,7 @@ public class TileFluidicCompressor extends TileBuildCraft implements
 
 	@Override
 	public FluidStack drain(ForgeDirection from, int maxDrain, boolean doDrain) {
-		FluidStack temp = tank.drain(maxDrain, doDrain);
-		sendNetworkUpdate();
-		return temp;
+		return tank.drain(maxDrain, doDrain);
 	}
 
 	@Override
