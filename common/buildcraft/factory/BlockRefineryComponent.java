@@ -25,7 +25,7 @@ public class BlockRefineryComponent extends BlockBuildCraft {
 	public static final int HEATER = 2;
 	public static final int TANK = 3;
 
-	private static IIcon[][] icons;
+	public static IIcon[][] icons;
 
 	public BlockRefineryComponent() {
 		super(Material.iron, CreativeTabBuildCraft.TIER_3);
@@ -104,6 +104,7 @@ public class BlockRefineryComponent extends BlockBuildCraft {
 		icons = new IIcon[4][2];
 
 		icons[0][0] = register.registerIcon("buildcraft:refinery_component/valve");
+		icons[0][1] = register.registerIcon("buildcraft:refinery_component/valve_overlay");
 		icons[1][0] = register.registerIcon("buildcraft:refinery_component/frame");
 		icons[2][0] = register.registerIcon("buildcraft:refinery_component/heater_side");
 		icons[2][1] = register.registerIcon("buildcraft:refinery_component/heater_top");

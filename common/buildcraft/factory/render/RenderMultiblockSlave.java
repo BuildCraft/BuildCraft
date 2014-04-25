@@ -1,6 +1,8 @@
 package buildcraft.factory.render;
 
+import buildcraft.factory.BlockRefineryComponent;
 import buildcraft.factory.TileMultiblockSlave;
+import buildcraft.factory.TileMultiblockValve;
 import buildcraft.factory.TileRefineryController;
 import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
 import cpw.mods.fml.client.registry.RenderingRegistry;
@@ -57,6 +59,15 @@ public class RenderMultiblockSlave implements ISimpleBlockRenderingHandler {
 		if (tile == null || (tile instanceof TileRefineryController && !((TileRefineryController) tile).formed) || (tile instanceof TileMultiblockSlave && !((TileMultiblockSlave) tile).formed)) {
 			renderer.renderStandardBlock(block, x, y, z);
 			return true;
+		}
+
+		// Special case for valves
+		if (tile != null && tile instanceof TileMultiblockValve && ((TileMultiblockSlave) tile).formed) {
+			renderer.setOverrideBlockTexture(BlockRefineryComponent.icons[0][1]);
+			renderer.setRenderBounds(-0.001, -0.001, -0.001, 1.001, 1.001, 1.001);
+			renderer.renderStandardBlock(block, x, y, z);
+			renderer.setRenderBoundsFromBlock(block);
+			renderer.clearOverrideBlockTexture();
 		}
 
 		return false;

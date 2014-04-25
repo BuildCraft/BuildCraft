@@ -15,6 +15,8 @@ import net.minecraftforge.common.util.ForgeDirection;
 
 public class TileRefineryController extends TileMultiblockMaster {
 
+	private static final int MAX_LENGTH = 11;
+
 	@NetworkData
 	public int orientation = -1;
 
@@ -48,13 +50,6 @@ public class TileRefineryController extends TileMultiblockMaster {
 				firstRun = false;
 			}
 		}
-	}
-
-	@Override
-	public void validate() {
-//		if (formed) {
-//			formMultiblock(); // Try to form a multiblock when first loaded if been formed before
-//		}
 	}
 
 	@Override
@@ -132,7 +127,7 @@ public class TileRefineryController extends TileMultiblockMaster {
 			search.moveForwards(1); // Orientation util method is technically backwards ;)
 			length++;
 
-			if (length > 11) {
+			if (length > MAX_LENGTH) {
 				break;
 			}
 
@@ -226,9 +221,9 @@ public class TileRefineryController extends TileMultiblockMaster {
 		for (int i = 0; i < length; i++) {
 			for (int j = -1; j <= 1; j++) {
 				for (int k = -1; k <= 1; k++) {
-					int x = xCoord + (forge_orientation.offsetX * i) + (left.offsetX * i);
+					int x = xCoord + (forge_orientation.offsetX * i) + (left.offsetX * k);
 					int y = yCoord + j;
-					int z = zCoord + (forge_orientation.offsetZ * k) + (left.offsetZ * k);
+					int z = zCoord + (forge_orientation.offsetZ * i) + (left.offsetZ * k);
 
 					TileEntity tile = worldObj.getTileEntity(x, y, z);
 
@@ -253,4 +248,5 @@ public class TileRefineryController extends TileMultiblockMaster {
 	public AxisAlignedBB getRenderBoundingBox() {
 		return INFINITE_EXTENT_AABB;
 	}
+
 }
