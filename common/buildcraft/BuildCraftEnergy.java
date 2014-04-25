@@ -104,6 +104,7 @@ public class BuildCraftEnergy extends BuildCraftMod {
 		canOilBurn = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "burnOil", true, "Can oil burn?").getBoolean(true);
 		oilWellScalar = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "oilWellGenerationRate", 1.0, "Probability of oil well generation").getDouble(1.0);
 		for (String id : BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "oilBiomeIDs", BiomeDictionary.Type.DESERT.toString() +","+BiomeGenBase.taiga.biomeID, "IDs or Biome Types (e.g. DESERT,OCEAN) of biomes that should have increased oil generation rates.").getString().trim().split(",")){
+			id = id.trim();
 			if(id.length() > 0){ 
 				try{oilBiomeIDs.add(Integer.parseInt(id));}
 				catch(NumberFormatException ex){ //not an int so try and parse it as a biome type
@@ -119,6 +120,7 @@ public class BuildCraftEnergy extends BuildCraftMod {
 			}
 		}
 		for(String id : BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "excessiveOilBiomeIDs", "", "IDs or Biome Types (e.g. DESERT,OCEAN) of biomes that should have GREATLY increased oil generation rates.").getString().trim().split(",")) {
+			id = id.trim();
 			if(id.length() > 0){ 
 				try{excessiveOilBiomeIDs.add(Integer.parseInt(id));}
 				catch(NumberFormatException ex){ //not an int so try and parse it as a biome type
@@ -134,6 +136,7 @@ public class BuildCraftEnergy extends BuildCraftMod {
 			}
 		}
 		for(String id : BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "excludeOilBiomeIDs", BiomeGenBase.sky.biomeID +","+BiomeGenBase.hell.biomeID, "IDs or Biome Types (e.g. DESERT,OCEAN) of biomes that are excluded from generating oil.").getString().trim().split(",")){
+			id = id.trim();
 			if(id.length() > 0){ 
 				try{excludeOilBiomeIDs.add(Integer.parseInt(id));}
 				catch(NumberFormatException ex){ //not an int so try and parse it as a biome type
