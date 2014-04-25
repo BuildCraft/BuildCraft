@@ -9,7 +9,8 @@
 package buildcraft;
 
 import java.util.TreeMap;
-
+import java.util.HashSet;
+import java.util.Set;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.init.Blocks;
@@ -81,6 +82,9 @@ public class BuildCraftEnergy extends BuildCraftMod {
 	public static Item fuel;
 	public static boolean canOilBurn;
 	public static double oilWellScalar = 1.0;
+	public static Set<Integer> oilBiomeIDs = new HashSet<Integer>();
+	public static Set<Integer> excessiveOilBiomeIDs = new HashSet<Integer>();
+	public static Set<Integer> excludeOilBiomeIDs = new HashSet<Integer>();
 	public static TreeMap<BlockIndex, Integer> saturationStored = new TreeMap<BlockIndex, Integer>();
 	public static BCTrigger triggerBlueEngineHeat = new TriggerEngineHeat(EnergyStage.BLUE);
 	public static BCTrigger triggerGreenEngineHeat = new TriggerEngineHeat(EnergyStage.GREEN);
@@ -95,6 +99,15 @@ public class BuildCraftEnergy extends BuildCraftMod {
 		int oilOceanBiomeId = BuildCraftCore.mainConfiguration.get("biomes", "biomeOilOcean", DefaultProps.BIOME_OIL_OCEAN).getInt(DefaultProps.BIOME_OIL_OCEAN);
 		canOilBurn = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "burnOil", true, "Can oil burn?").getBoolean(true);
 		oilWellScalar = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "oilWellGenerationRate", 1.0, "Probability of oil well generation").getDouble(1.0);
+		for(String id : BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "oilBiomeIDs", BiomeGenBase.desert.biomeID +","+BiomeGenBase.taiga.biomeID, "ID's of biomes that should have increased oil generation rates.").getString().trim().split(",")){
+			if(id.length() > 0) oilBiomeIDs.add(Integer.parseInt(id));
+		}
+		for(String id : BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "excessiveOilBiomeIDs", "", "ID's of biomes that should have GREATLY increased oil generation rates.").getString().trim().split(",")) {
+			if(id.length() > 0) excessiveOilBiomeIDs.add(Integer.parseInt(id));
+		}
+		for(String id : BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "excludeOilBiomeIDs", BiomeGenBase.sky.biomeID +","+BiomeGenBase.hell.biomeID, "ID's of biomes that are excluded from generating oil.").getString().trim().split(",")){
+			if(id.length() > 0) excludeOilBiomeIDs.add(Integer.parseInt(id));
+		}
 
 		double fuelOilMultiplier = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "fuel.oil.combustion", 1.0F, "adjust energy value of Oil in Combustion Engines").getDouble(1.0F);
 		double fuelFuelMultiplier = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "fuel.fuel.combustion", 1.0F, "adjust energy value of Fuel in Combustion Engines").getDouble(1.0F);
