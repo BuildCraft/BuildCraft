@@ -1,8 +1,11 @@
 package buildcraft.factory;
 
+import buildcraft.BuildCraftEnergy;
 import buildcraft.BuildCraftFactory;
 import buildcraft.api.core.Position;
 import buildcraft.api.tools.IToolWrench;
+import buildcraft.core.fluids.Tank;
+import buildcraft.core.fluids.TankManager;
 import buildcraft.core.network.NetworkData;
 import buildcraft.core.network.PacketUpdate;
 import net.minecraft.block.Block;
@@ -11,9 +14,11 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.ChatComponentText;
 import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraftforge.fluids.*;
 
-public class TileRefineryController extends TileMultiblockMaster {
+public class TileRefineryController extends TileMultiblockMaster implements IFluidHandler {
 
 	private static final int MAX_LENGTH = 11;
 
@@ -23,7 +28,17 @@ public class TileRefineryController extends TileMultiblockMaster {
 	@NetworkData
 	public int length = 0;
 
+	//TODO Variable size?
+	private Tank tankOil = new Tank("oil", FluidContainerRegistry.BUCKET_VOLUME * 10, this);
+	private Tank tankFuel = new Tank("fuel", FluidContainerRegistry.BUCKET_VOLUME * 10, this);
+	private TankManager manager = new TankManager();
+
 	private boolean firstRun = true;
+
+	public TileRefineryController() {
+		manager.add(tankOil);
+		manager.add(tankFuel);
+	}
 
 	@Override
 	public void readFromNBT(NBTTagCompound nbt) {
@@ -31,6 +46,7 @@ public class TileRefineryController extends TileMultiblockMaster {
 
 		orientation = nbt.getInteger("orientation");
 		formed = nbt.getBoolean("formed");
+		manager.readFromNBT(nbt);
 	}
 
 	@Override
@@ -39,6 +55,7 @@ public class TileRefineryController extends TileMultiblockMaster {
 
 		nbt.setInteger("orientation", orientation);
 		nbt.setBoolean("formed", formed);
+		manager.writeToNBT(nbt);
 	}
 
 	@Override
@@ -64,6 +81,8 @@ public class TileRefineryController extends TileMultiblockMaster {
 				wrench.wrenchUsed(player, xCoord, yCoord, zCoord);
 				worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
 			}
+		} else if (formed) {
+			player.addChatComponentMessage(new ChatComponentText("You activated this multi-block!"));
 		}
 	}
 
@@ -77,7 +96,7 @@ public class TileRefineryController extends TileMultiblockMaster {
 		int frameCount = 0;
 		int tankCount = 0;
 		int heaterCount = 0;
-		int length = 1; // Must be less than 9
+		int length = 1; // Must be less than MAX_LENGTH
 
 		ForgeDirection forge_orientation = ForgeDirection.getOrientation(orientation);
 		ForgeDirection left = forge_orientation.getOpposite().getRotation(ForgeDirection.UP);
@@ -247,6 +266,40 @@ public class TileRefineryController extends TileMultiblockMaster {
 	@Override
 	public AxisAlignedBB getRenderBoundingBox() {
 		return INFINITE_EXTENT_AABB;
+	}
+
+	/* IFLUIDHANDLER */
+	@Override
+	public int fill(ForgeDirection from, FluidStack resource, boolean doFill) {
+		if (resource.getFluid() == BuildCraftEnergy.fluidOil) {
+			return tankOil.fill(resource, doFill);
+		}
+		return 0;
+	}
+
+	@Override
+	public FluidStack drain(ForgeDirection from, FluidStack resource, boolean doDrain) {
+		return tankFuel.drain(resource.amount, doDrain);
+	}
+
+	@Override
+	public FluidStack drain(ForgeDirection from, int maxDrain, boolean doDrain) {
+		return tankFuel.drain(maxDrain, doDrain);
+	}
+
+	@Override
+	public boolean canFill(ForgeDirection from, Fluid fluid) {
+		return true;
+	}
+
+	@Override
+	public boolean canDrain(ForgeDirection from, Fluid fluid) {
+		return true;
+	}
+
+	@Override
+	public FluidTankInfo[] getTankInfo(ForgeDirection from) {
+		return new FluidTankInfo[]{tankOil.getInfo(), tankFuel.getInfo()};
 	}
 
 }

@@ -10,7 +10,8 @@ import net.minecraftforge.common.util.ForgeDirection;
 
 public class TileMultiblockSlave extends TileBuildCraft {
 
-	private Position masterPosition;
+	@NetworkData
+	protected Position masterPosition;
 
 	@NetworkData
 	public boolean formed = false;

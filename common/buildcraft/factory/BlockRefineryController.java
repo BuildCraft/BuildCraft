@@ -9,6 +9,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
@@ -55,11 +56,12 @@ public class BlockRefineryController extends BlockBuildCraft {
 	@Override
 	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float fx, float fy, float fz) {
 		if (!world.isRemote) {
+			ItemStack held = player.getCurrentEquippedItem();
 			TileRefineryController tile = (TileRefineryController) world.getTileEntity(x, y, z);
 
 			if (tile != null) {
 				tile.onBlockActivated(player);
-				return true;
+				return !(held != null && held.getItem() instanceof ItemBlock);
 			}
 		}
 

@@ -37,8 +37,12 @@ public class BlockRefineryComponent extends BlockBuildCraft {
 			TileMultiblockSlave tile = (TileMultiblockSlave) world.getTileEntity(x, y, z);
 
 			if (tile != null) {
-				tile.onBlockActivated(player);
-				return true;
+				if (tile.formed) {
+					tile.onBlockActivated(player);
+					return true;
+				} else {
+					return false;
+				}
 			}
 		}
 
@@ -63,6 +67,11 @@ public class BlockRefineryComponent extends BlockBuildCraft {
 		for (int i = 0; i < NAMES.length; i++) {
 			list.add(new ItemStack(this, 1, i));
 		}
+	}
+
+	@Override
+	public int damageDropped(int damage) {
+		return damage;
 	}
 
 	@Override
