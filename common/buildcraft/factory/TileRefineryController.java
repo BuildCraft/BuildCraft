@@ -15,11 +15,13 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.ChatComponentTranslation;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.*;
 
 public class TileRefineryController extends TileMultiblockMaster implements IFluidHandler {
 
+	private static final int MIN_LENGTH = 3;
 	private static final int MAX_LENGTH = 11;
 
 	@NetworkData
@@ -62,7 +64,7 @@ public class TileRefineryController extends TileMultiblockMaster implements IFlu
 	public void updateEntity() {
 		if (worldObj != null && !worldObj.isRemote) {
 			if (firstRun && formed) {
-				formMultiblock();
+				formMultiblock(null);
 				worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
 				firstRun = false;
 			}
@@ -77,7 +79,7 @@ public class TileRefineryController extends TileMultiblockMaster implements IFlu
 			IToolWrench wrench = (IToolWrench) stack.getItem();
 
 			if (wrench.canWrench(player, xCoord, yCoord, zCoord)) {
-				formMultiblock();
+				formMultiblock(player);
 				wrench.wrenchUsed(player, xCoord, yCoord, zCoord);
 				worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
 			}
@@ -87,7 +89,7 @@ public class TileRefineryController extends TileMultiblockMaster implements IFlu
 	}
 
 	@Override
-	public void formMultiblock() {
+	public void formMultiblock(EntityPlayer player) {
 		// Orientation of controller determines multiblock orientation
 		Position search = new Position(this);
 		search.orientation = ForgeDirection.getOrientation(orientation);
@@ -205,9 +207,14 @@ public class TileRefineryController extends TileMultiblockMaster implements IFlu
 		int requiredFrameCount = 5; // Five frames surrounding the controller
 		int requiredTankCount = (5 * (length - 1)) + 1; // Tank blocks surrounding middle, plus plug at end
 
-		if (valveCount != requiredValveCount || heaterCount != requiredHeaterCount || frameCount != requiredFrameCount || tankCount != requiredTankCount) {
-			// Indicate failure in some way
-		} else {
+		boolean minLength = length > MIN_LENGTH;
+		boolean maxLength = length < MAX_LENGTH;
+		boolean valves = valveCount == requiredValveCount;
+		boolean heaters = heaterCount == requiredHeaterCount;
+		boolean frames = frameCount == requiredFrameCount;
+		boolean tanks = tankCount == requiredTankCount;
+
+		if (minLength && maxLength && valves && heaters && frames && tanks) {
 			this.length = length;
 			formed = true;
 
@@ -227,7 +234,43 @@ public class TileRefineryController extends TileMultiblockMaster implements IFlu
 					}
 				}
 			}
+		} else {
+			if (player != null) {
+				boilerHeader(player);
+
+				if (!minLength) {
+					boilerError(player, "length_min", MIN_LENGTH, length);
+				}
+
+				if (!maxLength) {
+					boilerError(player, "length_max", MAX_LENGTH, length);
+				}
+
+				if (!valves) {
+					boilerError(player, "valve", requiredValveCount, valveCount);
+				}
+
+				if (!heaters) {
+					boilerError(player, "heater", requiredHeaterCount, heaterCount);
+				}
+
+				if (!frames) {
+					boilerError(player, "frame", requiredFrameCount, frameCount);
+				}
+
+				if (!tanks) {
+					boilerError(player, "tank", requiredTankCount, tankCount);
+				}
+			}
 		}
+	}
+
+	private void boilerHeader(EntityPlayer player) {
+		player.addChatComponentMessage(new ChatComponentTranslation("chat.boiler.error.header"));
+	}
+
+	private void boilerError(EntityPlayer player, String type, Object... args) {
+		player.addChatComponentMessage(new ChatComponentText(" - ").appendSibling(new ChatComponentTranslation("chat.boiler.error." + type, args)));
 	}
 
 	@Override

@@ -2,6 +2,14 @@
 
 chat.pipe.power.iron.mode=Switched to %d MJ/t limit
 
+chat.boiler.error.header=Boiler formation failed:
+chat.boiler.error.length_min=Boiler is too short! Minimum length is %s
+chat.boiler.error.length_max=Boiler is too long! Maximum length is %s
+chat.boiler.error.valve=Boiler requires %s valves, currently has %s
+chat.boiler.error.heater=Boiler requires %s heaters, currently has %s
+chat.boiler.error.frame=Boiler requires %s machine frames, currently has %s
+chat.boiler.error.tank=Boiler requires %s tanks, currently has %s
+
 color.black=Black
 color.blue=Blue
 color.brown=Brown
@@ -198,6 +206,11 @@ tile.pathMarkerBlock.name=Path Marker
 tile.plainPipeBlock.name=Mining Pipe
 tile.pumpBlock.name=Pump
 tile.refineryBlock.name=Refinery
+tile.refineryController.name=Refinery Controller
+tile.refineryComponent.valve.name=Valve
+tile.refineryComponent.machine_frame.name=Machine Frame
+tile.refineryComponent.heater.name=Heater
+tile.refineryComponent.tank.name=Tank
 tile.spring.oil.name=Oil Spring
 tile.spring.water.name=Water Spring
 tile.tankBlock.name=Tank

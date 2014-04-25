@@ -13,7 +13,7 @@ public class TileMultiblockMaster extends TileBuildCraft {
 
 	}
 
-	public void formMultiblock() {
+	public void formMultiblock(EntityPlayer player) {
 		formed = true;
 	}
 
