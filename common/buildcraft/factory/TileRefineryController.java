@@ -208,7 +208,7 @@ public class TileRefineryController extends TileMultiblockMaster implements IFlu
 		int requiredTankCount = (5 * (length - 1)) + 1; // Tank blocks surrounding middle, plus plug at end
 
 		boolean minLength = length > MIN_LENGTH;
-		boolean maxLength = length < MAX_LENGTH;
+		boolean maxLength = length <= MAX_LENGTH;
 		boolean valves = valveCount == requiredValveCount;
 		boolean heaters = heaterCount == requiredHeaterCount;
 		boolean frames = frameCount == requiredFrameCount;
