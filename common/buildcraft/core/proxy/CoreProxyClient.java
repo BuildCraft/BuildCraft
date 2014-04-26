@@ -29,8 +29,6 @@ import net.minecraftforge.client.MinecraftForgeClient;
 import buildcraft.BuildCraftCore;
 import buildcraft.api.core.LaserKind;
 import buildcraft.core.EntityBlock;
-import buildcraft.core.EntityEnergyLaser;
-import buildcraft.core.render.RenderEnergyLaser;
 import buildcraft.core.render.RenderEntityBlock;
 import buildcraft.core.render.RenderRobot;
 import buildcraft.core.render.RenderingEntityBlocks;
@@ -111,7 +109,6 @@ public class CoreProxyClient extends CoreProxy {
 	@Override
 	public void initializeEntityRendering() {
 		RenderingRegistry.registerEntityRenderingHandler(EntityBlock.class, RenderEntityBlock.INSTANCE);
-		RenderingRegistry.registerEntityRenderingHandler(EntityEnergyLaser.class, new RenderEnergyLaser());
 		RenderingRegistry.registerEntityRenderingHandler(EntityRobot.class, new RenderRobot());
 		RenderingRegistry.registerEntityRenderingHandler(EntityRobotBuilder.class, new RenderRobot());
 	}
