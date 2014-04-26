@@ -1123,9 +1123,12 @@ public class BlockGenericPipe extends BlockBuildCraft {
 		boolean placed = world.setBlock(i, j, k, block, meta, 3);
 
 		if (placed) {
-			TileGenericPipe tile = (TileGenericPipe) world.getTileEntity(i, j, k);
-			tile.initialize(pipe);
-			tile.sendUpdateToClient();
+			TileEntity tile = world.getTileEntity(i, j, k);
+			if (tile instanceof TileGenericPipe) {
+				TileGenericPipe tilePipe = (TileGenericPipe) tile;
+				tilePipe.initialize(pipe);
+				tilePipe.sendUpdateToClient();
+			}
 		}
 
 		return placed;
