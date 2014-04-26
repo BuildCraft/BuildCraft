@@ -17,7 +17,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import org.apache.commons.lang3.ArrayUtils;
 
 import buildcraft.BuildCraftBuilders;
-import buildcraft.core.network.NetworkData;
+import buildcraft.api.core.NetworkData;
 
 public final class BlueprintId implements Comparable<BlueprintId> {
 

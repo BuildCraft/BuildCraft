@@ -18,13 +18,13 @@ import net.minecraft.nbt.NBTTagList;
 import buildcraft.BuildCraftBuilders;
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.MappingRegistry;
+import buildcraft.api.core.MinecraftConstants;
+import buildcraft.api.core.NetworkData;
 import buildcraft.api.core.Position;
 import buildcraft.core.blueprints.BuildingSlot;
 import buildcraft.core.blueprints.BuildingSlotBlock;
 import buildcraft.core.blueprints.BuildingSlotEntity;
 import buildcraft.core.blueprints.IBuilder;
-import buildcraft.core.network.NetworkData;
-import buildcraft.core.utils.Utils;
 
 public class BuildingItem implements IBuilder {
 
@@ -265,7 +265,7 @@ public class BuildingItem implements IBuilder {
 		lifetime = nbt.getDouble("lifetime");
 
 		NBTTagList items = nbt.getTagList("items",
-				Utils.NBTTag_Types.NBTTagCompound.ordinal());
+				MinecraftConstants.NBTTagCompound);
 
 		for (int i = 0; i < items.tagCount(); ++i) {
 			stacksToBuild.add(ItemStack.loadItemStackFromNBT(items

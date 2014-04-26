@@ -12,11 +12,20 @@ import java.util.HashSet;
 import java.util.Set;
 
 import net.minecraft.block.Block;
+import net.minecraft.world.IBlockAccess;
 
 public class BuildCraftAPI {
 
-	public static final int LAST_ORIGINAL_BLOCK = 122;
-	public static final int LAST_ORIGINAL_ITEM = 126;
+	public static ICoreProxy proxy;
 
 	public static final Set <Block> softBlocks = new HashSet<Block>();
+
+	public static boolean isSoftBlock(IBlockAccess world, int x, int y, int z) {
+		return isSoftBlock(world.getBlock(x, y, z), world, x, y, z);
+	}
+
+	public static boolean isSoftBlock(Block block, IBlockAccess world, int x, int y, int z) {
+		return block == null || BuildCraftAPI.softBlocks.contains(block) || block.isReplaceable(world, x, y, z) || block.isAir(world, x, y, z);
+	}
+
 }

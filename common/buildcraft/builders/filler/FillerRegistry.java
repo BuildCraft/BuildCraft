@@ -8,13 +8,15 @@
  */
 package buildcraft.builders.filler;
 
-import buildcraft.api.filler.IFillerPattern;
-import buildcraft.api.filler.IFillerRegistry;
-import buildcraft.builders.triggers.ActionFiller;
 import java.util.HashSet;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
+
+import buildcraft.api.filler.IFillerPattern;
+import buildcraft.api.filler.IFillerRegistry;
+import buildcraft.builders.filler.pattern.FillerPattern;
+import buildcraft.builders.triggers.ActionFiller;
 
 public class FillerRegistry implements IFillerRegistry {
 
@@ -24,7 +26,7 @@ public class FillerRegistry implements IFillerRegistry {
 	@Override
 	public void addPattern(IFillerPattern pattern) {
 		patterns.put(pattern.getUniqueTag(), pattern);
-		patternActions.add(new ActionFiller(pattern));
+		patternActions.add(new ActionFiller((FillerPattern) pattern));
 	}
 
 	@Override
@@ -35,16 +37,18 @@ public class FillerRegistry implements IFillerRegistry {
 	@Override
 	public IFillerPattern getNextPattern(IFillerPattern currentPattern) {
 		Entry<String, IFillerPattern> pattern = patterns.higherEntry(currentPattern.getUniqueTag());
-		if (pattern == null)
+		if (pattern == null) {
 			pattern = patterns.firstEntry();
+		}
 		return pattern.getValue();
 	}
 
 	@Override
 	public IFillerPattern getPreviousPattern(IFillerPattern currentPattern) {
 		Entry<String, IFillerPattern> pattern = patterns.lowerEntry(currentPattern.getUniqueTag());
-		if (pattern == null)
+		if (pattern == null) {
 			pattern = patterns.lastEntry();
+		}
 		return pattern.getValue();
 	}
 

@@ -10,9 +10,9 @@ package buildcraft.transport.pipes;
 
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
+import buildcraft.api.core.NetworkData;
 import buildcraft.api.gates.IAction;
 import buildcraft.api.tools.IToolWrench;
-import buildcraft.core.network.NetworkData;
 import buildcraft.core.utils.EnumColor;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
@@ -25,9 +25,11 @@ import buildcraft.transport.triggers.ActionPipeColor;
 import buildcraft.transport.triggers.ActionPipeDirection;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Map;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;

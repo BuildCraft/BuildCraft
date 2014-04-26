@@ -19,8 +19,8 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagDouble;
 import net.minecraft.nbt.NBTTagFloat;
 import net.minecraft.nbt.NBTTagList;
+import buildcraft.api.core.MinecraftConstants;
 import buildcraft.api.core.Position;
-import buildcraft.core.utils.Utils;
 
 public class SchematicEntity extends Schematic {
 
@@ -120,7 +120,7 @@ public class SchematicEntity extends Schematic {
 		cpt = nbt.getCompoundTag("entity");
 
 		NBTTagList rq = nbt.getTagList("rq",
-				Utils.NBTTag_Types.NBTTagCompound.ordinal());
+				MinecraftConstants.NBTTagCompound);
 
 		ArrayList<ItemStack> rqs = new ArrayList<ItemStack>();
 

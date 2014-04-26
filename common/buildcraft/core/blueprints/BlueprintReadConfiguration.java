@@ -9,7 +9,7 @@
 package buildcraft.core.blueprints;
 
 import net.minecraft.nbt.NBTTagCompound;
-import buildcraft.core.network.NetworkData;
+import buildcraft.api.core.NetworkData;
 
 public class BlueprintReadConfiguration {
 

@@ -9,6 +9,7 @@
 package buildcraft.energy;
 
 import buildcraft.BuildCraftEnergy;
+import buildcraft.api.core.NetworkData;
 import buildcraft.api.gates.IOverrideDefaultTriggers;
 import buildcraft.api.gates.ITrigger;
 import buildcraft.api.power.IPowerEmitter;
@@ -24,7 +25,6 @@ import buildcraft.core.ReflectMjAPI;
 import buildcraft.core.ReflectMjAPI.BatteryObject;
 import buildcraft.core.TileBuffer;
 import buildcraft.core.TileBuildCraft;
-import buildcraft.core.network.NetworkData;
 import buildcraft.energy.gui.ContainerEngine;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ICrafting;

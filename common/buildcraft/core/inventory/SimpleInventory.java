@@ -8,9 +8,6 @@
  */
 package buildcraft.core.inventory;
 
-import buildcraft.core.utils.INBTTagable;
-import buildcraft.core.utils.Utils;
-
 import java.util.LinkedList;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -19,6 +16,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
+import buildcraft.api.core.MinecraftConstants;
+import buildcraft.core.utils.INBTTagable;
 
 public class SimpleInventory implements IInventory, INBTTagable {
 
@@ -100,7 +99,7 @@ public class SimpleInventory implements IInventory, INBTTagable {
 	}
 
 	public void readFromNBT(NBTTagCompound data, String tag) {
-		NBTTagList nbttaglist = data.getTagList(tag, Utils.NBTTag_Types.NBTTagCompound.ordinal());
+		NBTTagList nbttaglist = data.getTagList(tag, MinecraftConstants.NBTTagCompound);
 
 		for (int j = 0; j < nbttaglist.tagCount(); ++j) {
 			NBTTagCompound slot = nbttaglist.getCompoundTagAt(j);

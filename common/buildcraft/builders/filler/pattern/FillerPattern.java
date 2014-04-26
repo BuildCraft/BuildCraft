@@ -104,7 +104,8 @@ public abstract class FillerPattern implements IFillerPattern {
 		}
 	}
 
-	@Override
+	public abstract Template getTemplate (Box box, World world);
+
 	public Blueprint getBlueprint (Box box, World world, Block block) {
 		Blueprint result = new Blueprint (box.sizeX(), box.sizeY(), box.sizeZ());
 

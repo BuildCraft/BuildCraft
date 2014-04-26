@@ -9,8 +9,8 @@
 package buildcraft.core;
 
 import net.minecraft.nbt.NBTTagCompound;
+import buildcraft.api.core.NetworkData;
 import buildcraft.api.core.Position;
-import buildcraft.core.network.NetworkData;
 
 public class LaserData {
 	@NetworkData

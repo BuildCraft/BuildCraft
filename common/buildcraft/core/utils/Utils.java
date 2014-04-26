@@ -37,6 +37,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.BuildCraftCore;
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.core.LaserKind;
+import buildcraft.api.core.MinecraftConstants;
 import buildcraft.api.core.Position;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.IPipeTile.PipeType;
@@ -61,13 +62,6 @@ public class Utils {
 
 	public static final Random RANDOM = new Random();
 	private static final List<ForgeDirection> directions = new ArrayList<ForgeDirection>(Arrays.asList(ForgeDirection.VALID_DIRECTIONS));
-
-	public enum NBTTag_Types {
-		NBTTagEnd, NBTTagByte, NBTTagShort,
-		NBTTagInt, NBTTagLong, NBTTagFloat,
-		NBTTagDouble, NBTTagByteArray, NBTTagString,
-		NBTTagList, NBTTagCompound, NBTTagIntArray
-	}
 
 	/* IINVENTORY HELPERS */
 	/**
@@ -425,24 +419,6 @@ public class Utils {
 
 	}
 
-	public static <T> T[] concat(T[] first, T[] second) {
-		T[] result = Arrays.copyOf(first, first.length + second.length);
-		System.arraycopy(second, 0, result, first.length, second.length);
-		return result;
-	}
-
-	public static int[] concat(int[] first, int[] second) {
-		int[] result = Arrays.copyOf(first, first.length + second.length);
-		System.arraycopy(second, 0, result, first.length, second.length);
-		return result;
-	}
-
-	public static float[] concat(float[] first, float[] second) {
-		float[] result = Arrays.copyOf(first, first.length + second.length);
-		System.arraycopy(second, 0, result, first.length, second.length);
-		return result;
-	}
-
 	public static int[] createSlotArray(int first, int count) {
 		int[] slots = new int[count];
 		for (int k = first; k < first + count; k++) {
@@ -537,7 +513,7 @@ public class Utils {
 	}
 
 	public static void readStacksFromNBT(NBTTagCompound nbt, String name, ItemStack[] stacks) {
-		NBTTagList nbttaglist = nbt.getTagList(name, NBTTag_Types.NBTTagCompound.ordinal());
+		NBTTagList nbttaglist = nbt.getTagList(name, MinecraftConstants.NBTTagCompound);
 
 		for (int i = 0; i < stacks.length; ++i) {
 			if (i < nbttaglist.tagCount()) {

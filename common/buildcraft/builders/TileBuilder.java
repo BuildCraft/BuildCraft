@@ -22,6 +22,8 @@ import net.minecraft.world.WorldSettings.GameType;
 import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.BuildCraftBuilders;
 import buildcraft.api.blueprints.Translation;
+import buildcraft.api.core.MinecraftConstants;
+import buildcraft.api.core.NetworkData;
 import buildcraft.api.core.Position;
 import buildcraft.api.gates.IAction;
 import buildcraft.core.BlockIndex;
@@ -35,7 +37,6 @@ import buildcraft.core.blueprints.BptBuilderBase;
 import buildcraft.core.blueprints.BptBuilderBlueprint;
 import buildcraft.core.blueprints.BptBuilderTemplate;
 import buildcraft.core.blueprints.BptContext;
-import buildcraft.core.network.NetworkData;
 import buildcraft.core.network.RPC;
 import buildcraft.core.network.RPCHandler;
 import buildcraft.core.network.RPCSide;
@@ -459,7 +460,7 @@ public class TileBuilder extends TileAbstractBuilder implements IMachine {
 		if (nbttagcompound.hasKey("path")) {
 			path = new LinkedList<BlockIndex>();
 			NBTTagList list = nbttagcompound.getTagList("path",
-					Utils.NBTTag_Types.NBTTagCompound.ordinal());
+					MinecraftConstants.NBTTagCompound);
 
 			for (int i = 0; i < list.tagCount(); ++i) {
 				path.add(new BlockIndex(list.getCompoundTagAt(i)));

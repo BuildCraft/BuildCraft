@@ -16,7 +16,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import buildcraft.core.utils.Utils;
+import buildcraft.api.core.MinecraftConstants;
 
 public class SchematicBlock extends SchematicBlockBase  implements Comparable<SchematicBlock> {
 
@@ -182,7 +182,7 @@ public class SchematicBlock extends SchematicBlockBase  implements Comparable<Sc
 		block = registry.getBlockForId(nbt.getInteger("blockId"));
 		meta = nbt.getInteger("blockMeta");
 
-		NBTTagList rq = nbt.getTagList("rq", Utils.NBTTag_Types.NBTTagCompound.ordinal());
+		NBTTagList rq = nbt.getTagList("rq", MinecraftConstants.NBTTagCompound);
 
 		ArrayList<ItemStack> rqs = new ArrayList<ItemStack>();
 

@@ -19,9 +19,9 @@ import net.minecraft.util.AxisAlignedBB;
 import buildcraft.BuildCraftCore;
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.filler.FillerManager;
-import buildcraft.api.filler.IFillerPattern;
 import buildcraft.api.gates.IAction;
 import buildcraft.api.gates.IActionReceptor;
+import buildcraft.builders.filler.pattern.FillerPattern;
 import buildcraft.builders.filler.pattern.PatternFill;
 import buildcraft.builders.triggers.ActionFiller;
 import buildcraft.core.Box;
@@ -41,7 +41,7 @@ import buildcraft.core.utils.Utils;
 
 public class TileFiller extends TileAbstractBuilder implements IMachine, IActionReceptor {
 
-	public IFillerPattern currentPattern = PatternFill.INSTANCE;
+	public FillerPattern currentPattern = PatternFill.INSTANCE;
 
 	private BptBuilderTemplate currentTemplate;
 	private BptContext context;
@@ -155,7 +155,7 @@ public class TileFiller extends TileAbstractBuilder implements IMachine, IAction
 		inv.readFromNBT(nbt);
 
 		if (nbt.hasKey("pattern")) {
-			currentPattern = FillerManager.registry.getPattern(nbt.getString("pattern"));
+			currentPattern = (FillerPattern) FillerManager.registry.getPattern(nbt.getString("pattern"));
 		}
 
 		if (currentPattern == null) {
@@ -209,7 +209,7 @@ public class TileFiller extends TileAbstractBuilder implements IMachine, IAction
 		destroy();
 	}
 
-	public void setPattern(IFillerPattern pattern) {
+	public void setPattern(FillerPattern pattern) {
 		if (pattern != null && currentPattern != pattern) {
 			currentPattern = pattern;
 			currentTemplate = null;
@@ -236,7 +236,7 @@ public class TileFiller extends TileAbstractBuilder implements IMachine, IAction
 		boolean initialized = box.isInitialized();
 		box.readFromStream(data);
 		done = data.readBoolean();
-		setPattern(FillerManager.registry.getPattern(Utils.readUTF(data)));
+		setPattern((FillerPattern) FillerManager.registry.getPattern(Utils.readUTF(data)));
 
 		worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
 	}
@@ -304,7 +304,7 @@ public class TileFiller extends TileAbstractBuilder implements IMachine, IAction
 
 	@RPC (RPCSide.SERVER)
 	public void setPatternFromString (String name) {
-		setPattern(FillerManager.registry.getPattern(name));
+		setPattern((FillerPattern) FillerManager.registry.getPattern(name));
 	}
 
 	@Override

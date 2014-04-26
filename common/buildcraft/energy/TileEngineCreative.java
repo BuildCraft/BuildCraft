@@ -8,8 +8,8 @@
  */
 package buildcraft.energy;
 
+import buildcraft.api.core.NetworkData;
 import buildcraft.api.tools.IToolWrench;
-import buildcraft.core.network.NetworkData;
 import buildcraft.core.utils.StringUtils;
 import buildcraft.transport.pipes.PipePowerIron;
 import net.minecraft.entity.player.EntityPlayer;

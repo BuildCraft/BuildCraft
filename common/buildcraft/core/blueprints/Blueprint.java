@@ -22,9 +22,9 @@ import buildcraft.api.blueprints.SchematicBlock;
 import buildcraft.api.blueprints.SchematicEntity;
 import buildcraft.api.blueprints.SchematicRegistry;
 import buildcraft.api.blueprints.Translation;
+import buildcraft.api.core.MinecraftConstants;
 import buildcraft.core.utils.BCLog;
 import buildcraft.core.utils.NBTUtils;
-import buildcraft.core.utils.Utils;
 
 public class Blueprint extends BlueprintBase {
 	public LinkedList <SchematicEntity> entities = new LinkedList <SchematicEntity> ();
@@ -159,7 +159,7 @@ public class Blueprint extends BlueprintBase {
 		mapping.read (nbt.getCompoundTag("idMapping"));
 
 		NBTTagList nbtContents = nbt.getTagList("contents",
-				Utils.NBTTag_Types.NBTTagCompound.ordinal());
+				MinecraftConstants.NBTTagCompound);
 
 		int index = 0;
 
@@ -182,7 +182,7 @@ public class Blueprint extends BlueprintBase {
 		}
 
 		NBTTagList entitiesNBT = nbt.getTagList("entities",
-				Utils.NBTTag_Types.NBTTagCompound.ordinal());
+				MinecraftConstants.NBTTagCompound);
 
 		for (int i = 0; i < entitiesNBT.tagCount(); ++i) {
 			NBTTagCompound cpt = entitiesNBT.getCompoundTagAt(i);
