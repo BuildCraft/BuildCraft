@@ -5,6 +5,7 @@ chat.pipe.power.iron.mode=Switched to %d MJ/t limit
 chat.boiler.error.header=Boiler formation failed:
 chat.boiler.error.length_min=Boiler is too short! Minimum length is %s
 chat.boiler.error.length_max=Boiler is too long! Maximum length is %s
+chat.boiler.error.hatch=Boiler requires %s hatches, currently has %s
 chat.boiler.error.valve=Boiler requires %s valves, currently has %s
 chat.boiler.error.heater=Boiler requires %s heaters, currently has %s
 chat.boiler.error.frame=Boiler requires %s machine frames, currently has %s

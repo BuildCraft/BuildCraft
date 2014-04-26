@@ -13,7 +13,6 @@ public class TileMultiblockSlave extends TileBuildCraft {
 
 	private static final int SCAN_RADIUS = 10;
 
-	@NetworkData
 	protected Position masterPosition;
 
 	@NetworkData
@@ -32,6 +31,10 @@ public class TileMultiblockSlave extends TileBuildCraft {
 		this.formed = false;
 
 		worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+	}
+
+	public TileMultiblockMaster getMaster() {
+		return formed ? (TileMultiblockMaster) worldObj.getTileEntity((int) masterPosition.x, (int) masterPosition.y, (int) masterPosition.z) : null;
 	}
 
 	public boolean onBlockActivated(EntityPlayer player) {
@@ -104,4 +107,5 @@ public class TileMultiblockSlave extends TileBuildCraft {
 
 		worldObj.markBlockRangeForRenderUpdate(xCoord, yCoord, zCoord, xCoord, yCoord, zCoord);
 	}
+
 }

@@ -18,14 +18,15 @@ import java.util.List;
 
 public class BlockRefineryComponent extends BlockBuildCraft {
 
-	public static final String[] NAMES = new String[]{"valve_steel", "valve_iron", "machine_frame", "heater", "tank", "tank_filter"};
+	public static final String[] NAMES = new String[]{"valve_steel", "valve_iron", "hatch", "machine_frame", "heater", "tank", "tank_filter"};
 
 	public static final int VALVE_STEEL = 0;
 	public static final int VALVE_IRON = 1;
-	public static final int FRAME = 2;
-	public static final int HEATER = 3;
-	public static final int TANK = 4;
-	public static final int FILTER = 5;
+	public static final int HATCH = 2;
+	public static final int FRAME = 3;
+	public static final int HEATER = 4;
+	public static final int TANK = 5;
+	public static final int FILTER = 6;
 
 	public static IIcon[][] icons;
 
@@ -108,6 +109,12 @@ public class BlockRefineryComponent extends BlockBuildCraft {
 			}
 		}
 
+		if (meta == HATCH) {
+			if (side == 1 || side == 0) {
+				return icons[FRAME][0];
+			}
+		}
+
 		return icons[meta][0];
 	}
 
@@ -121,14 +128,17 @@ public class BlockRefineryComponent extends BlockBuildCraft {
 		icons[1][0] = register.registerIcon("buildcraft:refinery_component/valve_iron");
 		icons[1][1] = register.registerIcon("buildcraft:refinery_component/valve_overlay");
 
-		icons[2][0] = register.registerIcon("buildcraft:refinery_component/frame");
+		icons[2][0] = register.registerIcon("buildcraft:refinery_component/hatch");
+		icons[2][1] = register.registerIcon("buildcraft:refinery_component/hatch_overlay");
 
-		icons[3][0] = register.registerIcon("buildcraft:refinery_component/heater_side");
-		icons[3][1] = register.registerIcon("buildcraft:refinery_component/heater_top");
+		icons[3][0] = register.registerIcon("buildcraft:refinery_component/frame");
 
-		icons[4][0] = register.registerIcon("buildcraft:refinery_component/tank");
+		icons[4][0] = register.registerIcon("buildcraft:refinery_component/heater_side");
+		icons[4][1] = register.registerIcon("buildcraft:refinery_component/heater_top");
 
-		icons[5][0] = register.registerIcon("buildcraft:refinery_component/tank_filter");
+		icons[5][0] = register.registerIcon("buildcraft:refinery_component/tank");
+
+		icons[6][0] = register.registerIcon("buildcraft:refinery_component/tank_filter");
 	}
 
 	@Override
@@ -137,6 +147,8 @@ public class BlockRefineryComponent extends BlockBuildCraft {
 			case 0:
 			case 1:
 				return new TileMultiblockValve(); // VALVE
+			case 2:
+
 			default:
 				return new TileMultiblockSlave();
 		}

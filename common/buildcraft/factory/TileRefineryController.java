@@ -61,6 +61,7 @@ public class TileRefineryController extends TileMultiblockMaster implements IFlu
 		search.orientation = ForgeDirection.getOrientation(orientation);
 		boolean foundEnd = false;
 		int valveCount = 0;
+		int hatchCount = 0;
 		int frameCount = 0;
 		int tankCount = 0;
 		int heaterCount = 0;
@@ -81,6 +82,8 @@ public class TileRefineryController extends TileMultiblockMaster implements IFlu
 					heaterCount++;
 				} else if (meta == BlockRefineryComponent.VALVE_STEEL) {
 					valveCount++;
+				} else if (meta == BlockRefineryComponent.HATCH) {
+					hatchCount++;
 				}
 			}
 		}
@@ -141,6 +144,8 @@ public class TileRefineryController extends TileMultiblockMaster implements IFlu
 						heaterCount++;
 					} else if (meta == BlockRefineryComponent.VALVE_STEEL) {
 						valveCount++;
+					} else if (meta == BlockRefineryComponent.HATCH) {
+						hatchCount++;
 					}
 				}
 			}
@@ -168,19 +173,21 @@ public class TileRefineryController extends TileMultiblockMaster implements IFlu
 			}
 		}
 
+		int requiredHatchCount = 1;
 		int requiredValveCount = 2;
-		int requiredHeaterCount = 3 * length - valveCount; // Three heaters form the bottom, minus the required valves
+		int requiredHeaterCount = 3 * length - requiredValveCount - requiredHatchCount; // Three heaters form the bottom, minus the required valves
 		int requiredFrameCount = 5; // Five frames surrounding the controller
 		int requiredTankCount = (5 * (length - 1)) + 1; // Tank blocks surrounding middle, plus plug at end
 
 		boolean minLength = length >= MIN_LENGTH;
 		boolean maxLength = length <= MAX_LENGTH;
+		boolean hatches = hatchCount == requiredHatchCount;
 		boolean valves = valveCount == requiredValveCount;
 		boolean heaters = heaterCount == requiredHeaterCount;
 		boolean frames = frameCount == requiredFrameCount;
 		boolean tanks = tankCount == requiredTankCount;
 
-		if (minLength && maxLength && valves && heaters && frames && tanks) {
+		if (minLength && maxLength && hatches && valves && heaters && frames && tanks) {
 			this.length = length;
 			formed = true;
 
@@ -210,6 +217,10 @@ public class TileRefineryController extends TileMultiblockMaster implements IFlu
 
 				if (!maxLength) {
 					boilerError(player, "length_max", MAX_LENGTH, length);
+				}
+
+				if (!hatches) {
+					boilerError(player, "hatch", requiredHatchCount, hatchCount);
 				}
 
 				if (!valves) {
@@ -296,14 +307,15 @@ public class TileRefineryController extends TileMultiblockMaster implements IFlu
 		return tankFuel.drain(maxDrain, doDrain);
 	}
 
+	// These are false as to prevent pipes/other blocks from connecting to the controller
 	@Override
 	public boolean canFill(ForgeDirection from, Fluid fluid) {
-		return true;
+		return false;
 	}
 
 	@Override
 	public boolean canDrain(ForgeDirection from, Fluid fluid) {
-		return true;
+		return false;
 	}
 
 	@Override
