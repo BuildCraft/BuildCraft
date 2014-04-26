@@ -8,6 +8,8 @@
  */
 package buildcraft.silicon;
 
+import buildcraft.silicon.render.RenderLaserBlock;
+import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 
 public class SiliconProxyClient extends SiliconProxy {
@@ -15,5 +17,7 @@ public class SiliconProxyClient extends SiliconProxy {
 	public void registerRenderers() {
 		SiliconProxy.laserBlockModel = RenderingRegistry.getNextAvailableRenderId();
 		RenderingRegistry.registerBlockHandler(new SiliconRenderBlock());
+
+		ClientRegistry.bindTileEntitySpecialRenderer(TileLaser.class, new RenderLaserBlock());
 	}
 }
