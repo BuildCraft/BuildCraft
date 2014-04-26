@@ -3,14 +3,12 @@ package buildcraft.factory;
 import buildcraft.BuildCraftEnergy;
 import buildcraft.BuildCraftFactory;
 import buildcraft.api.core.Position;
-import buildcraft.api.tools.IToolWrench;
 import buildcraft.core.fluids.Tank;
 import buildcraft.core.fluids.TankManager;
 import buildcraft.core.network.NetworkData;
 import buildcraft.core.network.PacketUpdate;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
@@ -35,8 +33,6 @@ public class TileRefineryController extends TileMultiblockMaster implements IFlu
 	private Tank tankFuel = new Tank("fuel", FluidContainerRegistry.BUCKET_VOLUME * 10, this);
 	private TankManager manager = new TankManager();
 
-	private boolean firstRun = true;
-
 	public TileRefineryController() {
 		manager.add(tankOil);
 		manager.add(tankFuel);
@@ -47,7 +43,6 @@ public class TileRefineryController extends TileMultiblockMaster implements IFlu
 		super.readFromNBT(nbt);
 
 		orientation = nbt.getInteger("orientation");
-		formed = nbt.getBoolean("formed");
 		manager.readFromNBT(nbt);
 	}
 
@@ -56,36 +51,7 @@ public class TileRefineryController extends TileMultiblockMaster implements IFlu
 		super.writeToNBT(nbt);
 
 		nbt.setInteger("orientation", orientation);
-		nbt.setBoolean("formed", formed);
 		manager.writeToNBT(nbt);
-	}
-
-	@Override
-	public void updateEntity() {
-		if (worldObj != null && !worldObj.isRemote) {
-			if (firstRun && formed) {
-				formMultiblock(null);
-				worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
-				firstRun = false;
-			}
-		}
-	}
-
-	@Override
-	public void onBlockActivated(EntityPlayer player) {
-		ItemStack stack = player.getCurrentEquippedItem();
-
-		if (!formed && !player.isSneaking() && stack != null && stack.getItem() instanceof IToolWrench) {
-			IToolWrench wrench = (IToolWrench) stack.getItem();
-
-			if (wrench.canWrench(player, xCoord, yCoord, zCoord)) {
-				formMultiblock(player);
-				wrench.wrenchUsed(player, xCoord, yCoord, zCoord);
-				worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
-			}
-		} else if (formed) {
-			player.addChatComponentMessage(new ChatComponentText("You activated this multi-block!"));
-		}
 	}
 
 	@Override
@@ -113,7 +79,7 @@ public class TileRefineryController extends TileMultiblockMaster implements IFlu
 			if (block == BuildCraftFactory.refineryComponent) {
 				if (meta == BlockRefineryComponent.HEATER) {
 					heaterCount++;
-				} else if (meta == BlockRefineryComponent.VALVE) {
+				} else if (meta == BlockRefineryComponent.VALVE_STEEL) {
 					valveCount++;
 				}
 			}
@@ -173,7 +139,7 @@ public class TileRefineryController extends TileMultiblockMaster implements IFlu
 				if (block == BuildCraftFactory.refineryComponent) {
 					if (meta == BlockRefineryComponent.HEATER) {
 						heaterCount++;
-					} else if (meta == BlockRefineryComponent.VALVE) {
+					} else if (meta == BlockRefineryComponent.VALVE_STEEL) {
 						valveCount++;
 					}
 				}

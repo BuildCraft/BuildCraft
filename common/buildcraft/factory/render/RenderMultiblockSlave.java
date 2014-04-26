@@ -1,9 +1,9 @@
 package buildcraft.factory.render;
 
 import buildcraft.factory.BlockRefineryComponent;
+import buildcraft.factory.TileMultiblockMaster;
 import buildcraft.factory.TileMultiblockSlave;
 import buildcraft.factory.TileMultiblockValve;
-import buildcraft.factory.TileRefineryController;
 import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 import net.minecraft.block.Block;
@@ -56,15 +56,20 @@ public class RenderMultiblockSlave implements ISimpleBlockRenderingHandler {
 	public boolean renderWorldBlock(IBlockAccess world, int x, int y, int z, Block block, int modelId, RenderBlocks renderer) {
 		TileEntity tile = world.getTileEntity(x, y, z);
 
-		if (tile == null || (tile instanceof TileRefineryController && !((TileRefineryController) tile).formed) || (tile instanceof TileMultiblockSlave && !((TileMultiblockSlave) tile).formed)) {
+		if (tile == null || (tile instanceof TileMultiblockMaster && !((TileMultiblockMaster) tile).formed) || (tile instanceof TileMultiblockSlave && !((TileMultiblockSlave) tile).formed)) {
 			renderer.renderStandardBlock(block, x, y, z);
 			return true;
 		}
 
 		// Special case for valves
+		int meta = world.getBlockMetadata(x, y, z);
 		if (tile != null && tile instanceof TileMultiblockValve && ((TileMultiblockSlave) tile).formed) {
 			renderer.setOverrideBlockTexture(BlockRefineryComponent.icons[0][1]);
-			renderer.setRenderBounds(-0.001, -0.001, -0.001, 1.001, 1.001, 1.001);
+			if (meta == BlockRefineryComponent.VALVE_STEEL) {
+				renderer.setRenderBounds(-0.001, -0.001, -0.001, 1.001, 1.001, 1.001);
+			} else if (meta == BlockRefineryComponent.VALVE_IRON) {
+				renderer.setRenderBounds(0.06, 0.06, 0.06, 1F - 0.06, 1F - 0.06, 1F - 0.06);
+			}
 			renderer.renderStandardBlock(block, x, y, z);
 			renderer.setRenderBoundsFromBlock(block);
 			renderer.clearOverrideBlockTexture();

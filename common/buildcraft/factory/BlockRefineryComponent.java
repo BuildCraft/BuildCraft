@@ -18,12 +18,14 @@ import java.util.List;
 
 public class BlockRefineryComponent extends BlockBuildCraft {
 
-	public static final String[] NAMES = new String[]{"valve", "machine_frame", "heater", "tank"};
+	public static final String[] NAMES = new String[]{"valve_steel", "valve_iron", "machine_frame", "heater", "tank", "tank_filter"};
 
-	public static final int VALVE = 0;
-	public static final int FRAME = 1;
-	public static final int HEATER = 2;
-	public static final int TANK = 3;
+	public static final int VALVE_STEEL = 0;
+	public static final int VALVE_IRON = 1;
+	public static final int FRAME = 2;
+	public static final int HEATER = 3;
+	public static final int TANK = 4;
+	public static final int FILTER = 5;
 
 	public static IIcon[][] icons;
 
@@ -99,9 +101,15 @@ public class BlockRefineryComponent extends BlockBuildCraft {
 			}
 		}
 
-		if (meta == VALVE) {
+		if (meta == VALVE_STEEL) {
 			if (side == 1 || side == 0) {
 				return icons[FRAME][0];
+			}
+		}
+
+		if (meta == VALVE_IRON) {
+			if (side == 1 || side == 0) {
+				return icons[TANK][0];
 			}
 		}
 
@@ -110,20 +118,29 @@ public class BlockRefineryComponent extends BlockBuildCraft {
 
 	@Override
 	public void registerBlockIcons(IIconRegister register) {
-		icons = new IIcon[4][2];
+		icons = new IIcon[NAMES.length][2];
 
-		icons[0][0] = register.registerIcon("buildcraft:refinery_component/valve");
+		icons[0][0] = register.registerIcon("buildcraft:refinery_component/valve_steel");
 		icons[0][1] = register.registerIcon("buildcraft:refinery_component/valve_overlay");
-		icons[1][0] = register.registerIcon("buildcraft:refinery_component/frame");
-		icons[2][0] = register.registerIcon("buildcraft:refinery_component/heater_side");
-		icons[2][1] = register.registerIcon("buildcraft:refinery_component/heater_top");
-		icons[3][0] = register.registerIcon("buildcraft:refinery_component/tank");
+
+		icons[1][0] = register.registerIcon("buildcraft:refinery_component/valve_iron");
+		icons[1][1] = register.registerIcon("buildcraft:refinery_component/valve_overlay");
+
+		icons[2][0] = register.registerIcon("buildcraft:refinery_component/frame");
+
+		icons[3][0] = register.registerIcon("buildcraft:refinery_component/heater_side");
+		icons[3][1] = register.registerIcon("buildcraft:refinery_component/heater_top");
+
+		icons[4][0] = register.registerIcon("buildcraft:refinery_component/tank");
+
+		icons[5][0] = register.registerIcon("buildcraft:refinery_component/tank_filter");
 	}
 
 	@Override
 	public TileEntity createNewTileEntity(World world, int meta) {
 		switch (meta) {
 			case 0:
+			case 1:
 				return new TileMultiblockValve(); // VALVE
 			default:
 				return new TileMultiblockSlave();

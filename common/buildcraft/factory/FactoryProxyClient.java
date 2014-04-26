@@ -50,6 +50,7 @@ public class FactoryProxyClient extends FactoryProxy {
 
 		ClientRegistry.bindTileEntitySpecialRenderer(TileQuarry.class, new RenderBuilder());
 		ClientRegistry.bindTileEntitySpecialRenderer(TileRefineryController.class, new RenderBoiler());
+		ClientRegistry.bindTileEntitySpecialRenderer(TileTowerRegulator.class, new RenderTower());
 	}
 
 	@Override

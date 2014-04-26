@@ -59,6 +59,7 @@ public class BuildCraftFactory extends BuildCraftMod {
 	public static BlockHopper hopperBlock;
 	public static BlockRefineryController refineryController;
 	public static BlockRefineryComponent refineryComponent;
+	public static BlockTowerRegulator towerRegulator;
 	public static boolean allowMining = true;
 	public static boolean quarryOneTimeUse = false;
 	public static float miningMultiplier = 1;
@@ -119,6 +120,7 @@ public class BuildCraftFactory extends BuildCraftMod {
 		CoreProxy.proxy.registerTileEntity(TileRefinery.class, "net.minecraft.src.buildcraft.factory.Refinery");
 		CoreProxy.proxy.registerTileEntity(TileHopper.class, "net.minecraft.src.buildcraft.factory.TileHopper");
 		CoreProxy.proxy.registerTileEntity(TileRefineryController.class, "RefineryController");
+		CoreProxy.proxy.registerTileEntity(TileTowerRegulator.class, "TowerRegulator");
 		CoreProxy.proxy.registerTileEntity(TileMultiblockSlave.class, "MultiblockSlave");
 		CoreProxy.proxy.registerTileEntity(TileMultiblockValve.class, "MultiblockValve");
 
@@ -191,6 +193,9 @@ public class BuildCraftFactory extends BuildCraftMod {
 
 		refineryComponent = new BlockRefineryComponent();
 		CoreProxy.proxy.registerBlock(refineryComponent.setBlockName("refineryComponent"), ItemRefineryComponent.class);
+
+		towerRegulator = new BlockTowerRegulator();
+		CoreProxy.proxy.registerBlock(towerRegulator.setBlockName("towerRegulator"));
 
 		FactoryProxy.proxy.initializeBlockRenders();
 		FactoryProxy.proxy.initializeEntityRenders();
