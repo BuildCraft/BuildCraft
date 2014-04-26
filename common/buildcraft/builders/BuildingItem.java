@@ -25,6 +25,7 @@ import buildcraft.core.blueprints.BuildingSlot;
 import buildcraft.core.blueprints.BuildingSlotBlock;
 import buildcraft.core.blueprints.BuildingSlotEntity;
 import buildcraft.core.blueprints.IBuilder;
+import buildcraft.core.utils.BlockUtil;
 
 public class BuildingItem implements IBuilder {
 
@@ -183,13 +184,21 @@ public class BuildingItem implements IBuilder {
 
 	private void build() {
 		if (slotToBuild != null) {
-			Block block = context.world().getBlock((int) destination.x, (int)destination.y, (int)destination.z);
-			int meta = context.world().getBlockMetadata((int) destination.x, (int)destination.y, (int)destination.z);
+			int destX = (int)Math.floor(destination.x);
+			int destY = (int)Math.floor(destination.y);
+			int destZ = (int)Math.floor(destination.z);
+			Block block = context.world().getBlock(destX, destY, destZ);
+			int meta = context.world().getBlockMetadata(destX, destY, destZ);
 
 			context.world().playAuxSFXAtEntity(null, 2001,
-					(int) destination.x, (int) destination.y,
-					(int) destination.z,
+					destX, destY, destZ,
 					Block.getIdFromBlock(block) + (meta << 12));
+
+			/*if (BlockUtil.isToughBlock(context.world(), destX, destY, destZ)) {
+				BlockUtil.breakBlock(context.world(), destX, destY, destZ, BuildCraftBuilders.fillerLifespanTough);
+			} else {
+				BlockUtil.breakBlock(context.world(), destX, destY, destZ, BuildCraftBuilders.fillerLifespanNormal);
+			}*/
 
 			slotToBuild.writeToWorld(context);
 		}

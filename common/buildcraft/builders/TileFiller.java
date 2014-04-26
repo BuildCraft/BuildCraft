@@ -84,12 +84,6 @@ public class TileFiller extends TileAbstractBuilder implements IMachine, IAction
 			return;
 		}
 
-		if (done) {
-			if (lastMode == Mode.Loop) {
-				done = false;
-			}
-		}
-
 		if (lastMode == Mode.Off) {
 			return;
 		}
@@ -100,6 +94,16 @@ public class TileFiller extends TileAbstractBuilder implements IMachine, IAction
 
 		if (mjStored < POWER_ACTIVATION && !buildTracker.markTimeIfDelay(worldObj)) {
 			return;
+		}
+
+		boolean oldDone = done;
+
+		if (done) {
+			if (lastMode == Mode.Loop) {
+				done = false;
+			}else{
+				return;
+			}
 		}
 
 		if (currentPattern != null && currentTemplate == null) {
@@ -113,8 +117,11 @@ public class TileFiller extends TileAbstractBuilder implements IMachine, IAction
 			if (currentTemplate.isDone(this)) {
 				done = true;
 				currentTemplate = null;
-				sendNetworkUpdate();
 			}
+		}
+
+		if(oldDone != done){
+			sendNetworkUpdate();
 		}
 	}
 
