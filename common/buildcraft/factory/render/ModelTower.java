@@ -41,6 +41,7 @@ public class ModelTower {
 
 		ModelRenderer tower;
 		ModelRenderer ring;
+		ModelRenderer bottom;
 		ModelRenderer top;
 
 		public TopSmall() {
@@ -55,12 +56,18 @@ public class ModelTower {
 			setRotation(tower, 0F, 0F, 0F);
 			ring = new ModelRenderer(this, 0, 0);
 			ring.addBox(0F, 0F, 0F, 48, 2, 48);
-			ring.setRotationPoint(-24F, 8F, -24F);
+			ring.setRotationPoint(-24F, 7F, -24F);
 			ring.setTextureSize(256, 128);
 			ring.mirror = true;
 			setRotation(ring, 0F, 0F, 0F);
+			bottom = new ModelRenderer(this, 0, 0);
+			bottom.addBox(0F, 0F, 0F, 48, 1, 48);
+			bottom.setRotationPoint(-24F, 23F, -24F);
+			bottom.setTextureSize(256, 128);
+			bottom.mirror = true;
+			setRotation(bottom, 0F, 0F, 0F);
 			top = new ModelRenderer(this, 0, 0);
-			top.addBox(0F, 0F, 0F, 48, 2, 48);
+			top.addBox(0F, 0F, 0F, 48, 1, 48);
 			top.setRotationPoint(-24F, -8F, -24F);
 			top.setTextureSize(256, 128);
 			top.mirror = true;
@@ -70,6 +77,7 @@ public class ModelTower {
 		public void render(float f5) {
 			tower.render(f5);
 			ring.render(f5);
+			bottom.render(f5);
 			top.render(f5);
 		}
 
