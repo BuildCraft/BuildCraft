@@ -8,19 +8,32 @@
  */
 package buildcraft.core;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockContainer;
+import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import buildcraft.core.utils.Utils;
+import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraftforge.event.ForgeEventFactory;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.MovingObjectPosition;
+import buildcraft.api.tools.IToolWrench;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.stats.StatList;
+import net.minecraft.item.Item;
+import org.lwjgl.input.Keyboard;
 
-public abstract class BlockBuildCraft extends BlockContainer {
+public abstract class BlockBuildCraft extends Block implements ITileEntityProvider{
 
 	protected static boolean keepInventory = false;
 	protected final Random rand = new Random();
@@ -29,6 +42,7 @@ public abstract class BlockBuildCraft extends BlockContainer {
 		super(material);
 		setCreativeTab(creativeTab.get());
 		setHardness(5F);
+		setHarvestLevel("wrench", 5);
 	}
 
 	@Override
@@ -40,10 +54,90 @@ public abstract class BlockBuildCraft extends BlockContainer {
 		}
 	}
 
+	protected Item getItemToStoreData(World wrd, int x, int y, int z){
+		return Item.getItemFromBlock(this);
+	}
+
 	@Override
-	public void breakBlock(World world, int x, int y, int z, Block block, int par6) {
-		Utils.preDestroyBlock(world, x, y, z);
-		super.breakBlock(world, x, y, z, block, par6);
+	public void harvestBlock(World wrd, EntityPlayer player, int x, int y, int z, int meta) {}
+
+	public void addDescription(NBTTagCompound nbt, List<String> lines, boolean f3) {
+		lines.add(I18n.format("tip.nbt")); // Default one
+	}
+
+	@Override
+	public void onBlockHarvested(World wrd, int x, int y, int z, int meta, EntityPlayer player) {
+		if (player.capabilities.isCreativeMode) {
+			return;
+		}
+		if (player.getHeldItem() != null && player.getHeldItem().getItem() instanceof IToolWrench && player.isSneaking()) {
+			player.addStat(StatList.mineBlockStatArray[getIdFromBlock(this)], 1);
+			player.addExhaustion(0.025F);
+
+			ArrayList<ItemStack> drops = getDrops(wrd, x, y, z, meta, EnchantmentHelper.getFortuneModifier(player));
+			ForgeEventFactory.fireBlockHarvesting(drops, wrd, this, x, y, z, meta, 0, 1.0F, true, player);
+			Item storage = getItemToStoreData(wrd, x, y, z);
+			boolean flag = false;
+			for (ItemStack is : drops) {
+				if (!flag && is != null && is.getItem() == storage) {
+					storeData(is, wrd, x, y, z);
+					flag = true;
+				}
+				dropBlockAsItem(wrd, x, y, z, is);
+			}
+			if (!flag) {
+				Utils.preDestroyBlock(wrd, x, y, z);
+			}
+		} else {
+			Utils.preDestroyBlock(wrd, x, y, z);
+			super.harvestBlock(wrd, player, x, y, z, meta);
+		}
+	}
+
+	protected void storeData(ItemStack is, World wrd, int x, int y, int z){
+		TileEntity tile = wrd.getTileEntity(x, y, z);
+		if (tile != null) {
+			if (!is.hasTagCompound()) {
+				is.setTagCompound(new NBTTagCompound());
+			}
+			NBTTagCompound nbt = new NBTTagCompound();
+			tile.writeToNBT(nbt);
+			if (tile instanceof ISaveExclusions) {
+				for(String exclusion : ((ISaveExclusions) tile).getExclusions()) {
+					nbt.removeTag(exclusion);
+				}
+			}
+			nbt.removeTag("x");
+			nbt.removeTag("y");
+			nbt.removeTag("z");
+			nbt.removeTag("owner");
+			is.getTagCompound().setTag("tileData", nbt);
+		}
+	}
+
+	//Exclusively for tanks
+	protected boolean forceSaveOnMiddleClick(){
+		return false;
+	}
+
+	@Override
+	public ItemStack getPickBlock(MovingObjectPosition mop, World wrd, int x, int y, int z) {
+		if (Keyboard.isKeyDown(Minecraft.getMinecraft().gameSettings.keyBindSprint.getKeyCode()) &&
+				(forceSaveOnMiddleClick() || getItemToStoreData(wrd, x, y, z) == Item.getItemFromBlock(this))) {
+			ItemStack is = super.getPickBlock(mop, wrd, x, y, z);
+			TileEntity tile = wrd.getTileEntity(x, y, z);
+			if(tile != null){
+				NBTTagCompound nbt = new NBTTagCompound();
+				tile.writeToNBT(nbt);
+				if(!is.hasTagCompound()){
+					is.setTagCompound(new NBTTagCompound());
+				}
+				is.getTagCompound().setTag("tileData", nbt);
+			}
+			return is;
+		} else {
+			return super.getPickBlock(mop, wrd, x, y, z);
+		}
 	}
 
 	@Override

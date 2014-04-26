@@ -210,6 +210,15 @@ tip.gate.wires.gold=Red, Blue, Yellow
 tip.gate.wires.diamond=Red, Blue, Yellow, Green
 tip.gate.expansions=§9§oInstalled Expansions:
 
+tip.fluid.empty=Empty
+tip.fluid.format=%s, %d mB
+
+tip.nbt= §5§o+NBT
+tip.nbt.engine.fuel=  §7Fuel: %s
+tip.nbt.engine.coolant=  §7Coolant: %s
+
+tip.nbt.tank.fluid=  §7Fluid: %s
+
 tip.PipeFluidsCobblestone=Basic pipe, 10 mB/t\nWon't connect to Stone
 tip.PipeFluidsEmerald=Extraction pipe, 40 mB/t
 tip.PipeFluidsGold=Basic pipe, 40 mB/t
@@ -278,3 +287,6 @@ achievement.templateAchievement=Basis
 achievement.templateAchievement.desc=Craft a template
 achievement.blueprintLibraryAchievement=Ideas live on
 achievement.blueprintLibraryAchievement.desc=Craft a blueprint library
+
+egg.insane=Insane!
+egg.recolour_engine=Are you trying to recolour BuildCraft engine??

@@ -10,6 +10,8 @@ package buildcraft.factory;
 
 import java.lang.reflect.Method;
 
+import buildcraft.factory.render.RenderTankItem;
+import net.minecraft.item.Item;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
 import buildcraft.BuildCraftFactory;
@@ -25,6 +27,7 @@ import buildcraft.factory.render.RenderRefinery;
 import buildcraft.factory.render.RenderTank;
 import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.client.registry.RenderingRegistry;
+import net.minecraftforge.client.MinecraftForgeClient;
 
 public class FactoryProxyClient extends FactoryProxy {
 
@@ -38,6 +41,7 @@ public class FactoryProxyClient extends FactoryProxy {
 
 		if (BuildCraftFactory.tankBlock != null) {
 			ClientRegistry.bindTileEntitySpecialRenderer(TileTank.class, new RenderTank());
+			MinecraftForgeClient.registerItemRenderer(Item.getItemFromBlock(BuildCraftFactory.tankBlock), new RenderTankItem());
 		}
 
 		if (BuildCraftFactory.refineryBlock != null) {

@@ -8,11 +8,13 @@
  */
 package buildcraft.builders;
 
+import buildcraft.core.BlockBuildCraft;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.IBlockAccess;
@@ -24,13 +26,12 @@ import buildcraft.core.utils.Utils;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-public class BlockMarker extends BlockContainer {
+public class BlockMarker extends BlockBuildCraft {
 
 	public BlockMarker() {
-		super(Material.circuits);
+		super(Material.circuits, CreativeTabBuildCraft.TIER_2);
 
 		setLightLevel(0.5F);
-		setCreativeTab(CreativeTabBuildCraft.TIER_2.get());
 	}
 
 	private AxisAlignedBB getBoundingBox(int meta) {
@@ -84,15 +85,17 @@ public class BlockMarker extends BlockContainer {
 	}
 
 	@Override
-	public boolean onBlockActivated(World world, int i, int j, int k, EntityPlayer entityplayer, int par6, float par7, float par8, float par9) {
-		((TileMarker) world.getTileEntity(i, j, k)).tryConnection();
+	public boolean onBlockActivated(World wrd, int x, int y, int z, EntityPlayer entityplayer, int par6, float par7, float par8, float par9) {
+		TileEntity tile = wrd.getTileEntity(x, y, z);
+		if (tile instanceof  TileMarker) {
+			((TileMarker) tile).tryConnection();
+		}
 		return true;
 	}
 
 	@Override
-	public void breakBlock(World world, int x, int y, int z, Block block, int par6) {
-		Utils.preDestroyBlock(world, x, y, z);
-		super.breakBlock(world, x, y, z, block, par6);
+	protected Item getItemToStoreData(World wrd, int x, int y, int z){
+		return null;
 	}
 
 	@Override
@@ -111,9 +114,12 @@ public class BlockMarker extends BlockContainer {
 	}
 
 	@Override
-	public void onNeighborBlockChange(World world, int x, int y, int z, Block block) {
-		((TileMarker) world.getTileEntity(x, y, z)).updateSignals();
-		dropTorchIfCantStay(world, x, y, z);
+	public void onNeighborBlockChange(World wrd, int x, int y, int z, Block block) {
+		TileEntity tile = wrd.getTileEntity(x, y, z);
+		if (tile instanceof  TileMarker) {
+			((TileMarker) tile).updateSignals();
+		}
+		dropTorchIfCantStay(wrd, x, y, z);
 	}
 
 	@Override
