@@ -55,19 +55,21 @@ public class PatternCylinder extends FillerPattern {
 		int stoppingX = twoBSquare * xRadius;
 		int stoppingZ = 0;
 
-		while (stoppingX >= stoppingZ) {
-			fillFourColumns(xCenter, zCenter, dx, dz, xFix, zFix, yMin,
-					yMax, result);
+		if (twoASquare > 0) {
+			while (stoppingX >= stoppingZ) {
+				fillFourColumns(xCenter, zCenter, dx, dz, xFix, zFix, yMin,
+						yMax, result);
 
-			++dz;
-			stoppingZ += twoASquare;
-			ellipseError += zChange;
-			zChange += twoASquare;
-			if (2 * ellipseError + xChange > 0) {
-				--dx;
-				stoppingX -= twoBSquare;
-				ellipseError += xChange;
-				xChange += twoBSquare;
+				++dz;
+				stoppingZ += twoASquare;
+				ellipseError += zChange;
+				zChange += twoASquare;
+				if (2 * ellipseError + xChange > 0) {
+					--dx;
+					stoppingX -= twoBSquare;
+					ellipseError += xChange;
+					xChange += twoBSquare;
+				}
 			}
 		}
 
@@ -79,19 +81,21 @@ public class PatternCylinder extends FillerPattern {
 		stoppingX = 0;
 		stoppingZ = twoASquare * zRadius;
 
-		while (stoppingX <= stoppingZ) {
-			fillFourColumns(xCenter, zCenter, dx, dz, xFix, zFix, yMin,
-					yMax, result);
+		if (twoBSquare > 0) {
+			while (stoppingX <= stoppingZ) {
+				fillFourColumns(xCenter, zCenter, dx, dz, xFix, zFix, yMin,
+						yMax, result);
 
-			++dx;
-			stoppingX += twoBSquare;
-			ellipseError += xChange;
-			xChange += twoBSquare;
-			if (2 * ellipseError + zChange > 0) {
-				--dz;
-				stoppingZ -= twoASquare;
-				ellipseError += zChange;
-				zChange += twoASquare;
+				++dx;
+				stoppingX += twoBSquare;
+				ellipseError += xChange;
+				xChange += twoBSquare;
+				if (2 * ellipseError + zChange > 0) {
+					--dz;
+					stoppingZ -= twoASquare;
+					ellipseError += zChange;
+					zChange += twoASquare;
+				}
 			}
 		}
 
