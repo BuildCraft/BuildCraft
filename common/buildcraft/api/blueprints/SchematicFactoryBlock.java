@@ -8,6 +8,8 @@
  */
 package buildcraft.api.blueprints;
 
+import net.minecraft.block.Block;
+import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 
 public class SchematicFactoryBlock extends SchematicFactory <SchematicBlock> {
@@ -15,15 +17,24 @@ public class SchematicFactoryBlock extends SchematicFactory <SchematicBlock> {
 	@Override
 	protected SchematicBlock loadSchematicFromWorldNBT (NBTTagCompound nbt, MappingRegistry registry) {
 		int blockId = nbt.getInteger("blockId");
-		SchematicBlock s = SchematicRegistry.newSchematicBlock(registry.getBlockForId(blockId));
+		Block b = registry.getBlockForId(blockId);
 
-		if (s != null) {
-			s.readFromNBT(nbt, registry);
+		if (b == Blocks.air) {
+			SchematicBlock s = new SchematicBlock();
+			s.meta = 0;
+			s.block = Blocks.air;
+
+			return s;
 		} else {
-			return null;
+			SchematicBlock s = SchematicRegistry.newSchematicBlock(b);
+
+			if (s != null) {
+				s.readFromNBT(nbt, registry);
+				return s;
+			}
 		}
 
-		return s;
+		return null;
 	}
 
 	@Override

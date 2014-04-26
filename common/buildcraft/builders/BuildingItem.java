@@ -228,7 +228,7 @@ public class BuildingItem implements IBuilder {
 		destination.writeToNBT(destinationNBT);
 		nbt.setTag ("destination", destinationNBT);
 
-		nbt.setDouble("lifeTime", lifetime);
+		nbt.setDouble("lifetime", lifetime);
 
 		NBTTagList items = new NBTTagList();
 
