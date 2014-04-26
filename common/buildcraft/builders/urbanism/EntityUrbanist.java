@@ -24,8 +24,6 @@ import net.minecraft.world.World;
 import org.lwjgl.input.Keyboard;
 
 import buildcraft.BuildCraftCore;
-import buildcraft.api.core.Position;
-import buildcraft.core.EntityEnergyLaser;
 
 public class EntityUrbanist extends EntityLivingBase {
 
@@ -33,7 +31,7 @@ public class EntityUrbanist extends EntityLivingBase {
 	 * To be used only in debug sessions to adjust the mouse pointer parameters.
 	 */
 	private boolean debugPointer = false;
-	private EntityEnergyLaser laser = null;
+//	private EntityEnergyLaser laser = null;
 
 	public EntityLivingBase player;
 	public TileUrbanist tile;
@@ -143,15 +141,15 @@ public class EntityUrbanist extends EntityLivingBase {
         MovingObjectPosition result = this.worldObj.rayTraceBlocks(pos, vec32);
 
 		if (debugPointer) {
-			if (laser == null) {
-				// note: as this is on the client, it will only work if the
-				// server client update is deactivated in the server
-				// updateentity.
-				laser = new EntityEnergyLaser(worldObj, new Position(posX,
-						posY, posZ), new Position(posX, posY, posZ));
-
-				worldObj.spawnEntityInWorld(laser);
-			}
+//			if (laser == null) {
+//				// note: as this is on the client, it will only work if the
+//				// server client update is deactivated in the server
+//				// updateentity.
+//				laser = new EntityEnergyLaser(worldObj, new Position(posX,
+//						posY, posZ), new Position(posX, posY, posZ));
+//
+//				worldObj.spawnEntityInWorld(laser);
+//			}
 
 			pos = this.getPosition(1.0F);
 			pos.xCoord += BuildCraftCore.diffX;
@@ -165,13 +163,13 @@ public class EntityUrbanist extends EntityLivingBase {
 					pos.yCoord + look.yCoord * 200,
 					pos.zCoord + look.zCoord * 200);
 
-			laser.setPositions(
-					new Position(pos.xCoord, pos.yCoord, pos.zCoord),
-					new Position(aimed.xCoord, aimed.yCoord, aimed.zCoord));
-
-			if (!laser.isVisible()) {
-				laser.show();
-			}
+//			laser.setPositions(
+//					new Position(pos.xCoord, pos.yCoord, pos.zCoord),
+//					new Position(aimed.xCoord, aimed.yCoord, aimed.zCoord));
+//
+//			if (!laser.isVisible()) {
+//				laser.show();
+//			}
 		}
 
         return result;
