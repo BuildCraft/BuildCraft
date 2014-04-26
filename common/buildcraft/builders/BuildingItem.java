@@ -194,11 +194,11 @@ public class BuildingItem implements IBuilder {
 					destX, destY, destZ,
 					Block.getIdFromBlock(block) + (meta << 12));
 
-			if (BlockUtil.isToughBlock(context.world(), destX, destY, destZ)) {
+			/*if (BlockUtil.isToughBlock(context.world(), destX, destY, destZ)) {
 				BlockUtil.breakBlock(context.world(), destX, destY, destZ, BuildCraftBuilders.fillerLifespanTough);
 			} else {
 				BlockUtil.breakBlock(context.world(), destX, destY, destZ, BuildCraftBuilders.fillerLifespanNormal);
-			}
+			}*/
 
 			slotToBuild.writeToWorld(context);
 		}
