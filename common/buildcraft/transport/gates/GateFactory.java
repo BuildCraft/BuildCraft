@@ -11,7 +11,7 @@ package buildcraft.transport.gates;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import buildcraft.api.core.MinecraftConstants;
+import net.minecraftforge.common.util.Constants;
 import buildcraft.api.gates.GateExpansionController;
 import buildcraft.api.gates.GateExpansions;
 import buildcraft.api.gates.IGateExpansion;
@@ -96,7 +96,7 @@ public class GateFactory {
 			gate.expansions.put(GateExpansionPulsar.INSTANCE, pulsarCon);
 		}
 
-		NBTTagList exList = nbt.getTagList("expansions", MinecraftConstants.NBTTagCompound);
+		NBTTagList exList = nbt.getTagList("expansions", Constants.NBT.TAG_COMPOUND);
 		for (int i = 0; i < exList.tagCount(); i++) {
 			NBTTagCompound conNBT = exList.getCompoundTagAt(i);
 			IGateExpansion ex = GateExpansions.getExpansion(conNBT.getString("type"));

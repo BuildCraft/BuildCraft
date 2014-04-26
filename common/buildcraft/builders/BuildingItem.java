@@ -15,10 +15,10 @@ import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraftforge.common.util.Constants;
 import buildcraft.BuildCraftBuilders;
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.MappingRegistry;
-import buildcraft.api.core.MinecraftConstants;
 import buildcraft.api.core.NetworkData;
 import buildcraft.api.core.Position;
 import buildcraft.core.blueprints.BuildingSlot;
@@ -265,7 +265,7 @@ public class BuildingItem implements IBuilder {
 		lifetime = nbt.getDouble("lifetime");
 
 		NBTTagList items = nbt.getTagList("items",
-				MinecraftConstants.NBTTagCompound);
+				Constants.NBT.TAG_COMPOUND);
 
 		for (int i = 0; i < items.tagCount(); ++i) {
 			stacksToBuild.add(ItemStack.loadItemStackFromNBT(items

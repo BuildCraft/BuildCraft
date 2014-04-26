@@ -19,9 +19,9 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.BuildCraftSilicon;
-import buildcraft.api.core.MinecraftConstants;
 import buildcraft.api.gates.IAction;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.IMachine;
@@ -139,7 +139,7 @@ public class TileAssemblyTable extends TileLaserTableBase implements IMachine, I
 	public void readFromNBT(NBTTagCompound nbt) {
 		super.readFromNBT(nbt);
 
-		NBTTagList list = nbt.getTagList("planned", MinecraftConstants.NBTTagCompound);
+		NBTTagList list = nbt.getTagList("planned", Constants.NBT.TAG_COMPOUND);
 
 		for (int i = 0; i < list.tagCount(); ++i) {
 			NBTTagCompound cpt = list.getCompoundTagAt(i);

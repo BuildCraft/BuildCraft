@@ -17,8 +17,8 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
 import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.ForgeDirection;
-import buildcraft.api.core.MinecraftConstants;
 import buildcraft.core.inventory.InventoryIterator.IInvSlot;
 import buildcraft.core.inventory.filters.ArrayStackFilter;
 import buildcraft.core.inventory.filters.IStackFilter;
@@ -140,7 +140,7 @@ public class InvUtils {
 		NBTTagCompound nbt = getItemData(stack);
 		NBTTagCompound display = nbt.getCompoundTag("display");
 		nbt.setTag("display", display);
-		NBTTagList lore = display.getTagList("Lore", MinecraftConstants.NBTTagString);
+		NBTTagList lore = display.getTagList("Lore", Constants.NBT.TAG_STRING);
 		display.setTag("Lore", lore);
 		lore.appendTag(new NBTTagString(msg));
 	}
@@ -160,7 +160,7 @@ public class InvUtils {
 	}
 
 	public static void readInvFromNBT(IInventory inv, String tag, NBTTagCompound data) {
-		NBTTagList list = data.getTagList(tag, MinecraftConstants.NBTTagCompound);
+		NBTTagList list = data.getTagList(tag, Constants.NBT.TAG_COMPOUND);
 		for (byte entry = 0; entry < list.tagCount(); entry++) {
 			NBTTagCompound itemTag = list.getCompoundTagAt(entry);
 			int slot = itemTag.getByte("Slot");
@@ -172,7 +172,7 @@ public class InvUtils {
 	}
 
 	public static void readStacksFromNBT(NBTTagCompound nbt, String name, ItemStack[] stacks) {
-		NBTTagList nbttaglist = nbt.getTagList(name, MinecraftConstants.NBTTagCompound);
+		NBTTagList nbttaglist = nbt.getTagList(name, Constants.NBT.TAG_COMPOUND);
 
 		for (int i = 0; i < stacks.length; ++i) {
 			if (i < nbttaglist.tagCount()) {

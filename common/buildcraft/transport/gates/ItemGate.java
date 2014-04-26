@@ -23,8 +23,8 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
 import net.minecraft.util.IIcon;
 import net.minecraft.util.StatCollector;
+import net.minecraftforge.common.util.Constants;
 import buildcraft.BuildCraftTransport;
-import buildcraft.api.core.MinecraftConstants;
 import buildcraft.api.gates.ActionManager;
 import buildcraft.api.gates.GateExpansions;
 import buildcraft.api.gates.IAction;
@@ -98,7 +98,7 @@ public class ItemGate extends ItemBuildCraft {
 			return;
 		}
 
-		NBTTagList expansionList = nbt.getTagList(NBT_TAG_EX, MinecraftConstants.NBTTagString);
+		NBTTagList expansionList = nbt.getTagList(NBT_TAG_EX, Constants.NBT.TAG_STRING);
 		expansionList.appendTag(new NBTTagString(expansion.getUniqueIdentifier()));
 		nbt.setTag(NBT_TAG_EX, expansionList);
 	}
@@ -111,7 +111,7 @@ public class ItemGate extends ItemBuildCraft {
 		}
 
 		try {
-			NBTTagList expansionList = nbt.getTagList(NBT_TAG_EX, MinecraftConstants.NBTTagString);
+			NBTTagList expansionList = nbt.getTagList(NBT_TAG_EX, Constants.NBT.TAG_STRING);
 
 			for (int i = 0; i < expansionList.tagCount(); i++) {
 				String ex = expansionList.getStringTagAt(i);
@@ -135,7 +135,7 @@ public class ItemGate extends ItemBuildCraft {
 		}
 
 		try {
-			NBTTagList expansionList = nbt.getTagList(NBT_TAG_EX, MinecraftConstants.NBTTagString);
+			NBTTagList expansionList = nbt.getTagList(NBT_TAG_EX, Constants.NBT.TAG_STRING);
 			for (int i = 0; i < expansionList.tagCount(); i++) {
 				String exTag = expansionList.getStringTagAt(i);
 				IGateExpansion ex = GateExpansions.getExpansion(exTag);

@@ -16,13 +16,13 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraftforge.common.util.Constants;
 import buildcraft.BuildCraftBuilders;
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.SchematicBlock;
 import buildcraft.api.blueprints.SchematicEntity;
 import buildcraft.api.blueprints.SchematicRegistry;
 import buildcraft.api.blueprints.Translation;
-import buildcraft.api.core.MinecraftConstants;
 import buildcraft.core.utils.BCLog;
 import buildcraft.core.utils.NBTUtils;
 
@@ -159,7 +159,7 @@ public class Blueprint extends BlueprintBase {
 		mapping.read (nbt.getCompoundTag("idMapping"));
 
 		NBTTagList nbtContents = nbt.getTagList("contents",
-				MinecraftConstants.NBTTagCompound);
+				Constants.NBT.TAG_COMPOUND);
 
 		int index = 0;
 
@@ -182,7 +182,7 @@ public class Blueprint extends BlueprintBase {
 		}
 
 		NBTTagList entitiesNBT = nbt.getTagList("entities",
-				MinecraftConstants.NBTTagCompound);
+				Constants.NBT.TAG_COMPOUND);
 
 		for (int i = 0; i < entitiesNBT.tagCount(); ++i) {
 			NBTTagCompound cpt = entitiesNBT.getCompoundTagAt(i);

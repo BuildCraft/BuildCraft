@@ -17,10 +17,10 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.Constants;
 import buildcraft.BuildCraftBuilders;
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.core.IAreaProvider;
-import buildcraft.api.core.MinecraftConstants;
 import buildcraft.api.core.Position;
 import buildcraft.builders.BuildingItem;
 import buildcraft.builders.TileAbstractBuilder;
@@ -196,7 +196,7 @@ public abstract class BptBuilderBase implements IAreaProvider {
 	}
 
 	public void loadBuildStateToNBT (NBTTagCompound nbt, TileAbstractBuilder builder) {
-		NBTTagList clearList = nbt.getTagList("clearList", MinecraftConstants.NBTTagCompound);
+		NBTTagList clearList = nbt.getTagList("clearList", Constants.NBT.TAG_COMPOUND);
 
 		for (int i = 0; i < clearList.tagCount(); ++i) {
 			NBTTagCompound cpt = clearList.getCompoundTagAt(i);
@@ -204,7 +204,7 @@ public abstract class BptBuilderBase implements IAreaProvider {
 			clearedLocations.add (new BlockIndex(cpt));
 		}
 
-		NBTTagList builtList = nbt.getTagList("builtList", MinecraftConstants.NBTTagCompound);
+		NBTTagList builtList = nbt.getTagList("builtList", Constants.NBT.TAG_COMPOUND);
 
 		for (int i = 0; i < builtList.tagCount(); ++i) {
 			NBTTagCompound cpt = builtList.getCompoundTagAt(i);
@@ -214,7 +214,7 @@ public abstract class BptBuilderBase implements IAreaProvider {
 
 		NBTTagList buildingList = nbt
 				.getTagList("buildersInAction",
-						MinecraftConstants.NBTTagCompound);
+						Constants.NBT.TAG_COMPOUND);
 
 		for (int i = 0; i < buildingList.tagCount(); ++i) {
 			BuildingItem item = new BuildingItem();

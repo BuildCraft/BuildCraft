@@ -16,7 +16,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
-import buildcraft.api.core.MinecraftConstants;
+import net.minecraftforge.common.util.Constants;
 import buildcraft.core.utils.INBTTagable;
 
 public class SimpleInventory implements IInventory, INBTTagable {
@@ -99,7 +99,7 @@ public class SimpleInventory implements IInventory, INBTTagable {
 	}
 
 	public void readFromNBT(NBTTagCompound data, String tag) {
-		NBTTagList nbttaglist = data.getTagList(tag, MinecraftConstants.NBTTagCompound);
+		NBTTagList nbttaglist = data.getTagList(tag, Constants.NBT.TAG_COMPOUND);
 
 		for (int j = 0; j < nbttaglist.tagCount(); ++j) {
 			NBTTagCompound slot = nbttaglist.getCompoundTagAt(j);

@@ -14,7 +14,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import buildcraft.api.core.MinecraftConstants;
+import net.minecraftforge.common.util.Constants;
 
 /**
  * This class allow to specify specific behavior for blocks stored in
@@ -194,7 +194,7 @@ public abstract class Schematic {
 		}
 
 		NBTTagList list = nbt.getTagList(nbtName,
-				MinecraftConstants.NBTTagCompound);
+				Constants.NBT.TAG_COMPOUND);
 
 		for (int i = 0; i < list.tagCount(); ++i) {
             NBTTagCompound invSlot = list.getCompoundTagAt(i);
@@ -213,7 +213,7 @@ public abstract class Schematic {
 		}
 
 		NBTTagList list = nbt.getTagList(nbtName,
-				MinecraftConstants.NBTTagCompound);
+				Constants.NBT.TAG_COMPOUND);
 
 		for (int i = 0; i < list.tagCount(); ++i) {
             NBTTagCompound invSlot = list.getCompoundTagAt(i);
