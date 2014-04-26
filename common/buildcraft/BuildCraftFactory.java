@@ -30,6 +30,7 @@ import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.ConfigUtils;
 import buildcraft.factory.BlockAutoWorkbench;
 import buildcraft.factory.BlockFloodGate;
+import buildcraft.factory.BlockFluidicCompressor;
 import buildcraft.factory.BlockFrame;
 import buildcraft.factory.BlockHopper;
 import buildcraft.factory.BlockMiningWell;
@@ -46,6 +47,7 @@ import buildcraft.factory.SchematicRefinery;
 import buildcraft.factory.SchematicTank;
 import buildcraft.factory.TileAutoWorkbench;
 import buildcraft.factory.TileFloodGate;
+import buildcraft.factory.TileFluidicCompressor;
 import buildcraft.factory.TileHopper;
 import buildcraft.factory.TileMiningWell;
 import buildcraft.factory.TilePump;
@@ -80,6 +82,7 @@ public class BuildCraftFactory extends BuildCraftMod {
 	public static BlockTank tankBlock;
 	public static BlockRefinery refineryBlock;
 	public static BlockHopper hopperBlock;
+	public static BlockFluidicCompressor fluidicCompressorBlock;
 	public static boolean allowMining = true;
 	public static boolean quarryOneTimeUse = false;
 	public static float miningMultiplier = 1;
@@ -139,6 +142,7 @@ public class BuildCraftFactory extends BuildCraftMod {
 		CoreProxy.proxy.registerTileEntity(TileTank.class, "net.minecraft.src.buildcraft.factory.TileTank");
 		CoreProxy.proxy.registerTileEntity(TileRefinery.class, "net.minecraft.src.buildcraft.factory.Refinery");
 		CoreProxy.proxy.registerTileEntity(TileHopper.class, "net.minecraft.src.buildcraft.factory.TileHopper");
+		CoreProxy.proxy.registerTileEntity(TileFluidicCompressor.class, "net.minecraft.src.buildcraft.factory.TileCanner");
 
 		FactoryProxy.proxy.initializeTileEntities();
 
@@ -203,6 +207,9 @@ public class BuildCraftFactory extends BuildCraftMod {
 
 		hopperBlock = new BlockHopper();
 		CoreProxy.proxy.registerBlock(hopperBlock.setBlockName("blockHopper"));
+		
+		fluidicCompressorBlock = new BlockFluidicCompressor();
+		CoreProxy.proxy.registerBlock(fluidicCompressorBlock.setBlockName("blockCanner"));
 
 
 		FactoryProxy.proxy.initializeEntityRenders();
@@ -310,6 +317,8 @@ public class BuildCraftFactory extends BuildCraftMod {
 					'G', BuildCraftCore.ironGearItem,
 					'F', new ItemStack(Blocks.iron_bars));
 		}
+		
+		CoreProxy.proxy.addCraftingRecipe(new ItemStack(fluidicCompressorBlock), "IFI", "PGP", "IMI", 'I', BuildCraftCore.ironGearItem, 'F', floodGateBlock, 'P', Blocks.piston, 'G', BuildCraftTransport.goldCanister, 'M', pumpBlock);
 	}
 
 	@Mod.EventHandler

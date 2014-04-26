@@ -23,7 +23,7 @@ public abstract class GuiEngine extends GuiBuildCraft {
 
 	private static final ResourceLocation ITEM_TEXTURE = TextureMap.locationItemsTexture;
 
-	protected class EngineLedger extends Ledger {
+	public class EngineLedger extends Ledger {
 
 		TileEngine engine;
 		int headerColour = 0xe1c92f;

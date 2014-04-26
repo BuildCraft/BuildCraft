@@ -12,6 +12,7 @@ import java.io.File;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+import java.util.Map;
 import java.util.TreeMap;
 
 import net.minecraft.block.Block;
@@ -32,6 +33,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
 import net.minecraftforge.fluids.BlockFluidBase;
+import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.oredict.OreDictionary;
 
 import org.lwjgl.input.Mouse;
@@ -132,6 +134,7 @@ public class BuildCraftCore extends BuildCraftMod {
 	public static Item robotBaseItem;
 	public static Item robotBuilderItem;
 	public static Item robotPickerItem;
+	
 	@SideOnly(Side.CLIENT)
 	public static IIcon redLaserTexture;
 	@SideOnly(Side.CLIENT)
@@ -196,6 +199,10 @@ public class BuildCraftCore extends BuildCraftMod {
 	public static Achievement blueprintAchievement;
 	public static Achievement templateAchievement;
 	public static Achievement libraryAchievement;
+	
+	public static Achievement ironCanAchievement;
+	public static Achievement goldCanAchievement;
+	public static Achievement diamondCanAchievement;
 	
 	public static AchievementPage BuildcraftAchievements;
 
@@ -282,7 +289,9 @@ public class BuildCraftCore extends BuildCraftMod {
 			redstoneCrystal = (new ItemBuildCraft(CreativeTabBuildCraft.TIER_3)).setUnlocalizedName("redstoneCrystal");
 			CoreProxy.proxy.registerItem(redstoneCrystal);
 			OreDictionary.registerOre("redstoneCrystal", new ItemStack(redstoneCrystal));
-
+			
+			
+			
 			if (!BuildCraftCore.NEXTGEN_PREALPHA) {
 				robotBaseItem = new ItemRobot(EntityRobot.class).setUnlocalizedName("robotBase");
 				CoreProxy.proxy.registerItem(robotBaseItem);
@@ -383,6 +392,7 @@ public class BuildCraftCore extends BuildCraftMod {
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(ironGearItem), " I ", "IGI", " I ", 'I', Items.iron_ingot, 'G', stoneGearItem);
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(goldGearItem), " I ", "IGI", " I ", 'I', Items.gold_ingot, 'G', ironGearItem);
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(diamondGearItem), " I ", "IGI", " I ", 'I', Items.diamond, 'G', goldGearItem);
+		
 	}
 
 	@Mod.EventHandler
@@ -471,8 +481,14 @@ public class BuildCraftCore extends BuildCraftMod {
         blueprintAchievement = new Achievement("achievement.blueprint", "blueprintAchievement", 11, 4, BuildCraftBuilders.blueprintItem, architectAchievement).registerStat();
         templateAchievement = new Achievement("achievement.template", "templateAchievement", 13, 4, BuildCraftBuilders.templateItem, blueprintAchievement).registerStat();
         libraryAchievement = new Achievement("achievement.blueprintLibrary", "blueprintLibraryAchievement", 15, 2, BuildCraftBuilders.libraryBlock, builderAchievement).registerStat();
+        ironCanAchievement = new Achievement("achievement.ironCanAchievement", "ironCanAchievement", 0, 4, BuildCraftTransport.ironCanister, null).registerStat().initIndependentStat();
+        goldCanAchievement = new Achievement("achievement.goldCanAchievement", "goldCanAchievement", 2, 4, BuildCraftTransport.goldCanister, ironCanAchievement).registerStat();
+        diamondCanAchievement = new Achievement("achievement.diamondCanAchievemnt", "diamondCanAchievement", 4, 4, BuildCraftTransport.diamondCanister, goldCanAchievement).registerStat();
 
-		BuildcraftAchievements = new AchievementPage("Buildcraft", woodenGearAchievement, stoneGearAchievement, ironGearAchievement, goldGearAchievement, diamondGearAchievement, wrenchAchievement, engineAchievement1, engineAchievement2, engineAchievement3, aLotOfCraftingAchievement, straightDownAchievement, chunkDestroyerAchievement, fasterFillingAchievement, timeForSomeLogicAchievement, refineAndRedefineAchievement, tinglyLaserAchievement, architectAchievement, builderAchievement, blueprintAchievement, templateAchievement, libraryAchievement);
+		BuildcraftAchievements = new AchievementPage("Buildcraft", woodenGearAchievement, stoneGearAchievement, ironGearAchievement, goldGearAchievement, diamondGearAchievement, wrenchAchievement,
+				engineAchievement1, engineAchievement2, engineAchievement3, aLotOfCraftingAchievement, straightDownAchievement, chunkDestroyerAchievement, fasterFillingAchievement,
+				timeForSomeLogicAchievement, refineAndRedefineAchievement, tinglyLaserAchievement, architectAchievement, builderAchievement, blueprintAchievement, templateAchievement,
+				libraryAchievement, ironCanAchievement, goldCanAchievement, diamondCanAchievement);
 		AchievementPage.registerAchievementPage(BuildcraftAchievements);
 	}
 

@@ -8,6 +8,7 @@
  */
 package buildcraft.transport;
 
+import buildcraft.transport.render.CanisterItemRender;
 import net.minecraftforge.client.MinecraftForgeClient;
 import buildcraft.BuildCraftTransport;
 import buildcraft.transport.render.FacadeItemRenderer;
@@ -86,6 +87,10 @@ public class TransportProxyClient extends TransportProxy {
 		TransportProxy.pipeModel = RenderingRegistry.getNextAvailableRenderId();
 
 		RenderingRegistry.registerBlockHandler(pipeWorldRenderer);
+
+		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.ironCanister, new CanisterItemRender(BuildCraftTransport.ironCanister));
+		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.goldCanister, new CanisterItemRender(BuildCraftTransport.goldCanister));
+		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.diamondCanister, new CanisterItemRender(BuildCraftTransport.diamondCanister));
 	}
 
 	@Override

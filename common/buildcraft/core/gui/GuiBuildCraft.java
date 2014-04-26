@@ -370,7 +370,7 @@ public abstract class GuiBuildCraft extends GuiContainer {
 	/**
 	 * Side ledger for guis
 	 */
-	protected abstract class Ledger {
+	public abstract class Ledger {
 
 		private boolean open;
 		protected int overlayColor = 0xffffff;
