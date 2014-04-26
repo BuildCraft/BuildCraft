@@ -18,8 +18,8 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.core.IBox;
+import buildcraft.api.core.NetworkData;
 import buildcraft.api.core.Position;
-import buildcraft.core.network.NetworkData;
 import buildcraft.core.utils.Utils;
 
 public class Box implements IBox {

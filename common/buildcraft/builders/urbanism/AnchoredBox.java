@@ -9,8 +9,8 @@
 package buildcraft.builders.urbanism;
 
 import net.minecraft.nbt.NBTTagCompound;
+import buildcraft.api.core.NetworkData;
 import buildcraft.core.Box;
-import buildcraft.core.network.NetworkData;
 
 public class AnchoredBox {
 	@NetworkData

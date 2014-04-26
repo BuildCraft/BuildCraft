@@ -190,13 +190,13 @@ public class BuildCraftCore extends BuildCraftMod {
 	public static Achievement timeForSomeLogicAchievement;
 	public static Achievement refineAndRedefineAchievement;
 	public static Achievement tinglyLaserAchievement;
-	
+
 	public static Achievement architectAchievement;
 	public static Achievement builderAchievement;
 	public static Achievement blueprintAchievement;
 	public static Achievement templateAchievement;
 	public static Achievement libraryAchievement;
-	
+
 	public static AchievementPage BuildcraftAchievements;
 
 	@Mod.EventHandler
@@ -306,6 +306,8 @@ public class BuildCraftCore extends BuildCraftMod {
 
 	@Mod.EventHandler
 	public void initialize(FMLInitializationEvent evt) {
+		BuildCraftAPI.proxy = CoreProxy.proxy;
+
 		channels = NetworkRegistry.INSTANCE.newChannel
 				(DefaultProps.NET_CHANNEL_NAME + "-CORE", new PacketHandler());
 

@@ -15,16 +15,16 @@ import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraftforge.common.util.Constants;
 import buildcraft.BuildCraftBuilders;
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.MappingRegistry;
+import buildcraft.api.core.NetworkData;
 import buildcraft.api.core.Position;
 import buildcraft.core.blueprints.BuildingSlot;
 import buildcraft.core.blueprints.BuildingSlotBlock;
 import buildcraft.core.blueprints.BuildingSlotEntity;
 import buildcraft.core.blueprints.IBuilder;
-import buildcraft.core.network.NetworkData;
-import buildcraft.core.utils.Utils;
 import buildcraft.core.utils.BlockUtil;
 
 public class BuildingItem implements IBuilder {
@@ -194,11 +194,11 @@ public class BuildingItem implements IBuilder {
 					destX, destY, destZ,
 					Block.getIdFromBlock(block) + (meta << 12));
 
-			if (BlockUtil.isToughBlock(context.world(), destX, destY, destZ)) {
+			/*if (BlockUtil.isToughBlock(context.world(), destX, destY, destZ)) {
 				BlockUtil.breakBlock(context.world(), destX, destY, destZ, BuildCraftBuilders.fillerLifespanTough);
 			} else {
 				BlockUtil.breakBlock(context.world(), destX, destY, destZ, BuildCraftBuilders.fillerLifespanNormal);
-			}
+			}*/
 
 			slotToBuild.writeToWorld(context);
 		}
@@ -237,7 +237,7 @@ public class BuildingItem implements IBuilder {
 		destination.writeToNBT(destinationNBT);
 		nbt.setTag ("destination", destinationNBT);
 
-		nbt.setDouble("lifeTime", lifetime);
+		nbt.setDouble("lifetime", lifetime);
 
 		NBTTagList items = new NBTTagList();
 
@@ -274,7 +274,7 @@ public class BuildingItem implements IBuilder {
 		lifetime = nbt.getDouble("lifetime");
 
 		NBTTagList items = nbt.getTagList("items",
-				Utils.NBTTag_Types.NBTTagCompound.ordinal());
+				Constants.NBT.TAG_COMPOUND);
 
 		for (int i = 0; i < items.tagCount(); ++i) {
 			stacksToBuild.add(ItemStack.loadItemStackFromNBT(items

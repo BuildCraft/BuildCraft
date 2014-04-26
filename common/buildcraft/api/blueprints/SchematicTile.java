@@ -15,7 +15,7 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import buildcraft.core.utils.Utils;
+import buildcraft.api.core.JavaTools;
 
 public class SchematicTile extends SchematicBlock {
 
@@ -88,7 +88,7 @@ public class SchematicTile extends SchematicBlock {
 					}
 				}
 
-				storedRequirements = Utils.concat(storedRequirements,
+				storedRequirements = JavaTools.concat(storedRequirements,
 						rqs.toArray(new ItemStack[rqs.size()]));
 			}
 		}

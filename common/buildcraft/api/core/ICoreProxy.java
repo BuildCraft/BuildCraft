@@ -6,18 +6,11 @@
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-package buildcraft.api.filler;
+package buildcraft.api.core;
 
-import net.minecraft.util.IIcon;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.World;
 
-public interface IFillerPattern {
-
-	public String getUniqueTag();
-
-	@SideOnly(Side.CLIENT)
-	public IIcon getIcon();
-
-	public String getDisplayName();
+public interface ICoreProxy {
+	public EntityPlayer getBuildCraftPlayer(World world);
 }

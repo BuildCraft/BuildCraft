@@ -20,6 +20,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.Position;
@@ -31,7 +32,6 @@ import buildcraft.core.inventory.Transactor;
 import buildcraft.core.utils.BCLog;
 import buildcraft.core.utils.BlockUtil;
 import buildcraft.core.utils.MathUtils;
-import buildcraft.core.utils.Utils;
 import buildcraft.transport.network.PacketPipeTransportItemStackRequest;
 import buildcraft.transport.network.PacketPipeTransportTraveler;
 import buildcraft.transport.pipes.events.PipeEventItem;
@@ -391,7 +391,7 @@ public class PipeTransportItems extends PipeTransport {
 	public void readFromNBT(NBTTagCompound nbt) {
 		super.readFromNBT(nbt);
 
-		NBTTagList nbttaglist = nbt.getTagList("travelingEntities", Utils.NBTTag_Types.NBTTagCompound.ordinal());
+		NBTTagList nbttaglist = nbt.getTagList("travelingEntities", Constants.NBT.TAG_COMPOUND);
 
 		for (int j = 0; j < nbttaglist.tagCount(); ++j) {
 			try {

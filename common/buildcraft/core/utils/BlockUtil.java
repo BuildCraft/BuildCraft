@@ -20,7 +20,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.server.S27PacketExplosion;
 import net.minecraft.world.ChunkPosition;
 import net.minecraft.world.Explosion;
-import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.fluids.BlockFluidBase;
@@ -31,7 +30,6 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidBlock;
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftEnergy;
-import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.core.proxy.CoreProxy;
 import cpw.mods.fml.common.FMLCommonHandler;
 
@@ -117,14 +115,6 @@ public class BlockUtil {
 		}
 
 		return true;
-	}
-
-	public static boolean isSoftBlock(IBlockAccess world, int x, int y, int z) {
-		return isSoftBlock(world.getBlock(x, y, z), world, x, y, z);
-	}
-
-	public static boolean isSoftBlock(Block block, IBlockAccess world, int x, int y, int z) {
-		return block == null || BuildCraftAPI.softBlocks.contains(block) || block.isReplaceable(world, x, y, z) || block.isAir(world, x, y, z);
 	}
 
 	public static boolean isUnbreakableBlock(World world, int x, int y, int z) {

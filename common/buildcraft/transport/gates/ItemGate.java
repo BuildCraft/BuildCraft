@@ -23,6 +23,7 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
 import net.minecraft.util.IIcon;
 import net.minecraft.util.StatCollector;
+import net.minecraftforge.common.util.Constants;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.gates.ActionManager;
 import buildcraft.api.gates.GateExpansions;
@@ -33,7 +34,6 @@ import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.ItemBuildCraft;
 import buildcraft.core.inventory.InvUtils;
 import buildcraft.core.utils.StringUtils;
-import buildcraft.core.utils.Utils;
 import buildcraft.transport.Gate;
 import buildcraft.transport.gates.GateDefinition.GateLogic;
 import buildcraft.transport.gates.GateDefinition.GateMaterial;
@@ -98,7 +98,7 @@ public class ItemGate extends ItemBuildCraft {
 			return;
 		}
 
-		NBTTagList expansionList = nbt.getTagList(NBT_TAG_EX, Utils.NBTTag_Types.NBTTagString.ordinal());
+		NBTTagList expansionList = nbt.getTagList(NBT_TAG_EX, Constants.NBT.TAG_STRING);
 		expansionList.appendTag(new NBTTagString(expansion.getUniqueIdentifier()));
 		nbt.setTag(NBT_TAG_EX, expansionList);
 	}
@@ -111,7 +111,7 @@ public class ItemGate extends ItemBuildCraft {
 		}
 
 		try {
-			NBTTagList expansionList = nbt.getTagList(NBT_TAG_EX, Utils.NBTTag_Types.NBTTagString.ordinal());
+			NBTTagList expansionList = nbt.getTagList(NBT_TAG_EX, Constants.NBT.TAG_STRING);
 
 			for (int i = 0; i < expansionList.tagCount(); i++) {
 				String ex = expansionList.getStringTagAt(i);
@@ -135,12 +135,13 @@ public class ItemGate extends ItemBuildCraft {
 		}
 
 		try {
-			NBTTagList expansionList = nbt.getTagList(NBT_TAG_EX, Utils.NBTTag_Types.NBTTagString.ordinal());
+			NBTTagList expansionList = nbt.getTagList(NBT_TAG_EX, Constants.NBT.TAG_STRING);
 			for (int i = 0; i < expansionList.tagCount(); i++) {
 				String exTag = expansionList.getStringTagAt(i);
 				IGateExpansion ex = GateExpansions.getExpansion(exTag);
-				if (ex != null)
+				if (ex != null) {
 					expansions.add(ex);
+				}
 			}
 		} catch (RuntimeException error) {
 		}

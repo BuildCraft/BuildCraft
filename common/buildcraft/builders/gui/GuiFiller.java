@@ -13,6 +13,7 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.util.ResourceLocation;
 import buildcraft.api.filler.FillerManager;
 import buildcraft.builders.TileFiller;
+import buildcraft.builders.filler.pattern.FillerPattern;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.gui.GuiBuildCraft;
 import buildcraft.core.gui.GuiTools;
@@ -50,9 +51,9 @@ public class GuiFiller extends GuiBuildCraft {
 		super.actionPerformed(button);
 
 		if (button.id == 0) {
-			filler.currentPattern = FillerManager.registry.getPreviousPattern(filler.currentPattern);
+			filler.currentPattern = (FillerPattern) FillerManager.registry.getPreviousPattern(filler.currentPattern);
 		} else if (button.id == 1) {
-			filler.currentPattern = FillerManager.registry.getNextPattern(filler.currentPattern);
+			filler.currentPattern = (FillerPattern) FillerManager.registry.getNextPattern(filler.currentPattern);
 		}
 
 		filler.rpcSetPatternFromString(filler.currentPattern.getUniqueTag());

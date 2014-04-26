@@ -84,6 +84,10 @@ public class ReflectMjAPI {
 	}
 
 	public static BatteryObject getMjBattery (Object o) {
+		if (o == null) {
+			return null;
+		}
+
 		BatteryField f = getMjBattery (o.getClass());
 
 		if (f == null) {

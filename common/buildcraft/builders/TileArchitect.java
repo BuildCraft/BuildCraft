@@ -14,10 +14,12 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.BuildCraftBuilders;
 import buildcraft.api.blueprints.Translation;
 import buildcraft.api.core.IAreaProvider;
+import buildcraft.api.core.NetworkData;
 import buildcraft.core.BlockIndex;
 import buildcraft.core.BlockScanner;
 import buildcraft.core.Box;
@@ -29,7 +31,6 @@ import buildcraft.core.blueprints.BlueprintBase;
 import buildcraft.core.blueprints.BlueprintReadConfiguration;
 import buildcraft.core.blueprints.BptContext;
 import buildcraft.core.blueprints.Template;
-import buildcraft.core.network.NetworkData;
 import buildcraft.core.network.RPC;
 import buildcraft.core.network.RPCHandler;
 import buildcraft.core.network.RPCSide;
@@ -246,7 +247,7 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 		}
 
 		NBTTagList nbttaglist = nbttagcompound.getTagList("Items",
-				Utils.NBTTag_Types.NBTTagCompound.ordinal());
+				Constants.NBT.TAG_COMPOUND);
 		items = new ItemStack[getSizeInventory()];
 
 		for (int i = 0; i < nbttaglist.tagCount(); i++) {

@@ -13,8 +13,7 @@ import java.util.LinkedList;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import buildcraft.core.proxy.CoreProxy;
-import buildcraft.core.utils.BlockUtil;
+import buildcraft.api.core.BuildCraftAPI;
 
 public class SchematicMask extends SchematicBlockBase {
 
@@ -31,7 +30,7 @@ public class SchematicMask extends SchematicBlockBase {
 	@Override
 	public void writeToWorld(IBuilderContext context, int x, int y, int z, LinkedList <ItemStack> stacks) {
 		if (isConcrete) {
-			if (stacks.size() == 0 || !BlockUtil.isSoftBlock(context.world(), x, y, z)) {
+			if (stacks.size() == 0 || !BuildCraftAPI.isSoftBlock(context.world(), x, y, z)) {
 				return;
 			} else {
 				ItemStack stack = stacks.getFirst();
@@ -41,7 +40,7 @@ public class SchematicMask extends SchematicBlockBase {
 				context.world().setBlock(x, y, z, Blocks.air, 0, 3);
 
 				stack.tryPlaceItemIntoWorld(
-						CoreProxy.proxy.getBuildCraftPlayer(context.world()),
+						BuildCraftAPI.proxy.getBuildCraftPlayer(context.world()),
 						context.world(), x, y, z, 1, 0.0f, 0.0f, 0.0f);
 			}
 		} else {
@@ -52,9 +51,9 @@ public class SchematicMask extends SchematicBlockBase {
 	@Override
 	public boolean isAlreadyBuilt(IBuilderContext context, int x, int y, int z) {
 		if (isConcrete) {
-			return !BlockUtil.isSoftBlock(context.world(), x, y, z);
+			return !BuildCraftAPI.isSoftBlock(context.world(), x, y, z);
 		} else {
-			return BlockUtil.isSoftBlock(context.world(), x, y, z);
+			return BuildCraftAPI.isSoftBlock(context.world(), x, y, z);
 		}
 	}
 

@@ -26,6 +26,7 @@ import net.minecraft.world.WorldSettings.GameType;
 import buildcraft.api.blueprints.Schematic;
 import buildcraft.api.blueprints.SchematicBlock;
 import buildcraft.api.blueprints.SchematicEntity;
+import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.core.StackKey;
 import buildcraft.builders.TileAbstractBuilder;
 import buildcraft.core.BlockIndex;
@@ -219,7 +220,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 
 			if (getNext) {
 				if (slot.mode == Mode.ClearIfInvalid) {
-					if (BlockUtil.isSoftBlock(world, slot.x, slot.y, slot.z)
+					if (BuildCraftAPI.isSoftBlock(world, slot.x, slot.y, slot.z)
 							|| BlockUtil.isUnbreakableBlock(world, slot.x, slot.y, slot.z)) {
 						iterator.remove();
 					} else {
@@ -231,7 +232,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 						}
 					}
 				} else {
-					if (BlockUtil.isSoftBlock(world, slot.x, slot.y, slot.z)
+					if (BuildCraftAPI.isSoftBlock(world, slot.x, slot.y, slot.z)
 							&& checkRequirements(builder,
 									slot.schematic)) {
 						useRequirements(builder, slot);

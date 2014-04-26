@@ -6,18 +6,9 @@
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-package buildcraft.api.filler;
 
-import net.minecraft.util.IIcon;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+package buildcraft.core.gui.buttons;
 
-public interface IFillerPattern {
-
-	public String getUniqueTag();
-
-	@SideOnly(Side.CLIENT)
-	public IIcon getIcon();
-
-	public String getDisplayName();
+public interface IButtonClickEventListener {
+	public void handleButtonClick(IButtonClickEventTrigger button, int buttonId);
 }
