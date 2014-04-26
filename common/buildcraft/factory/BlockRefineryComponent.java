@@ -39,12 +39,7 @@ public class BlockRefineryComponent extends BlockBuildCraft {
 			TileMultiblockSlave tile = (TileMultiblockSlave) world.getTileEntity(x, y, z);
 
 			if (tile != null) {
-				if (tile.formed) {
-					tile.onBlockActivated(player);
-					return true;
-				} else {
-					return false;
-				}
+				return tile.onBlockActivated(player);
 			}
 		}
 

@@ -6,9 +6,12 @@ import buildcraft.core.network.NetworkData;
 import buildcraft.core.network.PacketUpdate;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
 
 public class TileMultiblockSlave extends TileBuildCraft {
+
+	private static final int SCAN_RADIUS = 10;
 
 	@NetworkData
 	protected Position masterPosition;
@@ -31,10 +34,41 @@ public class TileMultiblockSlave extends TileBuildCraft {
 		worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
 	}
 
-	public void onBlockActivated(EntityPlayer player) {
+	public boolean onBlockActivated(EntityPlayer player) {
 		if (formed) {
 			((TileMultiblockMaster) worldObj.getTileEntity((int) masterPosition.x, (int) masterPosition.y, (int) masterPosition.z)).onBlockActivated(player);
+			return true;
+		} else {
+			// Try and find master
+			int lastDistance = Integer.MAX_VALUE;
+			TileEntity lastTile = null;
+
+			for (int i = -SCAN_RADIUS; i <= SCAN_RADIUS; i++) {
+				for (int j = -SCAN_RADIUS; j <= SCAN_RADIUS; j++) {
+					for (int k = -SCAN_RADIUS; k <= SCAN_RADIUS; k++) {
+						TileEntity tile = worldObj.getTileEntity(xCoord + i, yCoord + j, zCoord + k);
+
+						if (tile != null && (tile instanceof TileMultiblockMaster) && !(((TileMultiblockMaster) tile).formed)) {
+							Position thisPos = new Position(this);
+							Position thatPos = new Position(tile);
+
+							int distance = (int) Math.abs(thisPos.getDistance(thatPos));
+
+							if (distance < lastDistance) {
+								lastDistance = distance;
+								lastTile = tile;
+							}
+						}
+					}
+				}
+			}
+
+			if (lastTile != null) {
+				((TileMultiblockMaster) lastTile).onBlockActivated(player);
+			}
 		}
+
+		return false;
 	}
 
 	public void deformMultiblock() {
