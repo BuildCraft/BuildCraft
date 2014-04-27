@@ -19,6 +19,7 @@ import buildcraft.core.proxy.CoreProxy;
 import buildcraft.silicon.*;
 import buildcraft.silicon.ItemRedstoneChipset.Chipset;
 import buildcraft.silicon.network.PacketHandlerSilicon;
+import buildcraft.silicon.recipes.AdvancedFacadeRecipe;
 import buildcraft.silicon.recipes.GateExpansionRecipe;
 import buildcraft.silicon.recipes.GateLogicSwapRecipe;
 import buildcraft.transport.gates.GateDefinition.GateLogic;
@@ -158,6 +159,9 @@ public class BuildCraftSilicon extends BuildCraftMod {
 		BuildcraftRecipes.integrationTable.addRecipe(new GateExpansionRecipe(GateExpansionPulsar.INSTANCE, Chipset.PULSATING.getStack()));
 		BuildcraftRecipes.integrationTable.addRecipe(new GateExpansionRecipe(GateExpansionTimer.INSTANCE, Chipset.QUARTZ.getStack()));
 		BuildcraftRecipes.integrationTable.addRecipe(new GateExpansionRecipe(GateExpansionRedstoneFader.INSTANCE, Chipset.COMP.getStack()));
+
+		// ADVANCED FACADES
+		BuildcraftRecipes.integrationTable.addRecipe(new AdvancedFacadeRecipe());
 	}
 
 	private static void addGateRecipe(double energyCost, GateMaterial material, Chipset chipset, PipeWire... pipeWire) {

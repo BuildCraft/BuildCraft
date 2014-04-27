@@ -17,8 +17,6 @@ import buildcraft.core.BuildCraftConfiguration;
 import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.ItemBuildCraft;
 import buildcraft.core.proxy.CoreProxy;
-import buildcraft.core.recipes.AssemblyRecipeManager;
-import buildcraft.silicon.ItemRedstoneChipset;
 import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
 import cpw.mods.fml.relauncher.Side;
@@ -279,6 +277,26 @@ public class ItemFacade extends ItemBuildCraft {
 		return wire;
 	}
 
+	public static int getType(ItemStack stack) {
+		Block block = ItemFacade.getBlock(stack);
+		Block block_alt = ItemFacade.getAlternateBlock(stack);
+		int meta = ItemFacade.getMetaData(stack);
+		int meta_alt = ItemFacade.getAlternateMetaData(stack);
+
+		boolean phased = stack.getTagCompound().hasKey("phased");
+		int type = -1;
+
+		if (block != null && block_alt == null && !phased) {
+			type = TileGenericPipe.FACADE_BASIC;
+		} else if (block != null && block_alt == null && phased) {
+			type = TileGenericPipe.FACADE_PHASE;
+		} else if (block != null && block_alt != null) {
+			type = TileGenericPipe.FACADE_TWO_PHASE;
+		}
+
+		return type;
+	}
+
 	@Override
 	public boolean doesSneakBypassUse(World world, int x, int y, int z, EntityPlayer player) {
 		// Simply send shift click to the pipe / mod block.
@@ -299,21 +317,6 @@ public class ItemFacade extends ItemBuildCraft {
 
 			// 3 Structurepipes + this block makes 6 facades
 			BuildcraftRecipes.assemblyTable.addRecipe(8000, facade6, new ItemStack(BuildCraftTransport.pipeStructureCobblestone, 3), itemStack);
-		}
-	}
-
-	public static void addAdvancedFacades() {
-		for (ItemStack facade : allFacades) {
-			for (ItemStack facade1 : allFacades) {
-				if (!ItemStack.areItemStacksEqual(facade, facade1)) {
-					for (PipeWire wire : PipeWire.VALUES) {
-						ItemStack result = ItemFacade.getAdvancedFacade(getBlock(facade), getBlock(facade1), getMetaData(facade), getMetaData(facade1), wire);
-						result.stackSize = 6;
-
-						AssemblyRecipeManager.INSTANCE.addRecipe(8000, result, facade, facade1, new ItemStack(BuildCraftTransport.pipeWire, 1, wire.ordinal()), ItemRedstoneChipset.Chipset.RED.getStack());
-					}
-				}
-			}
 		}
 	}
 

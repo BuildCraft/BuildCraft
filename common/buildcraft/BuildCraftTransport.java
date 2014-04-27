@@ -175,6 +175,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 			return true;
 		}
 	}
+
 	private static LinkedList<PipeRecipe> pipeRecipes = new LinkedList<PipeRecipe>();
 
 	@Mod.EventHandler
@@ -219,7 +220,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 			groupItemsTriggerProp.comment = "when reaching this amount of objects in a pipes, items will be automatically grouped";
 			groupItemsTrigger = groupItemsTriggerProp.getInt();
 
-			Property facadeBlacklistProp = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "facade.blacklist", new String[] {
+			Property facadeBlacklistProp = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "facade.blacklist", new String[]{
 					Block.blockRegistry.getNameForObject(Blocks.bedrock),
 					Block.blockRegistry.getNameForObject(Blocks.command_block),
 					Block.blockRegistry.getNameForObject(Blocks.end_portal_frame),
@@ -397,7 +398,6 @@ public class BuildCraftTransport extends BuildCraftMod {
 	@Mod.EventHandler
 	public void postInit(FMLPostInitializationEvent evt) {
 		ItemFacade.initialize();
-		ItemFacade.addAdvancedFacades();
 	}
 
 	public void loadRecipes() {
@@ -432,8 +432,8 @@ public class BuildCraftTransport extends BuildCraftMod {
 	}
 
 	public static Item buildPipe(int defaultID, Class<? extends Pipe> clas,
-			String descr, CreativeTabBuildCraft creativeTab,
-			Object... ingredients) {
+								 String descr, CreativeTabBuildCraft creativeTab,
+								 Object... ingredients) {
 		String name = Character.toLowerCase(clas.getSimpleName().charAt(0)) + clas.getSimpleName().substring(1);
 
 		ItemPipe res = BlockGenericPipe.registerPipe(clas, creativeTab);

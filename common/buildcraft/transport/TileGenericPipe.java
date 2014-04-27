@@ -95,6 +95,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 			}
 		}
 	}
+
 	public final PipeRenderState renderState = new PipeRenderState();
 	public final CoreState coreState = new CoreState();
 	private boolean deletePipe = false;
@@ -123,7 +124,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 		boolean[] plugs = new boolean[ForgeDirection.VALID_DIRECTIONS.length];
 		boolean[] robotStations = new boolean[ForgeDirection.VALID_DIRECTIONS.length];
 
-		public void writeToNBT (NBTTagCompound nbt) {
+		public void writeToNBT(NBTTagCompound nbt) {
 			for (int i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
 				nbt.setInteger("facadeTypes[" + i + "]", facadeTypes[i]);
 				nbt.setInteger("facadeWireTypes[" + i + "]", facadeWireTypes[i]);
@@ -148,7 +149,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 			}
 		}
 
-		public void readFromNBT (NBTTagCompound nbt) {
+		public void readFromNBT(NBTTagCompound nbt) {
 			for (int i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
 				facadeTypes[i] = nbt.getInteger("facadeTypes[" + i + "]");
 				facadeWireTypes[i] = nbt.getInteger("facadeWireTypes[" + i + "]");
@@ -194,8 +195,8 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 				newFacadeBlocks[r.ordinal()][1] = facadeBlocks[dir.ordinal()][1];
 				newFacadeMeta[r.ordinal()][1] = facadeMeta[dir.ordinal()][1];
 
-				newPlugs [r.ordinal()] = plugs [dir.ordinal()];
-				newRobotStations [r.ordinal()] = robotStations [dir.ordinal()];
+				newPlugs[r.ordinal()] = plugs[dir.ordinal()];
+				newRobotStations[r.ordinal()] = robotStations[dir.ordinal()];
 			}
 
 			facadeBlocks = newFacadeBlocks;
@@ -214,7 +215,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 	public void writeToNBT(NBTTagCompound nbt) {
 		super.writeToNBT(nbt);
 
-		nbt.setByte("redstoneInput", (byte)redstoneInput);
+		nbt.setByte("redstoneInput", (byte) redstoneInput);
 
 		if (pipe != null) {
 			nbt.setInteger("pipeId", Item.itemRegistry.getIDForObject(pipe.item));
@@ -266,6 +267,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 			pipe.validate();
 		}
 	}
+
 	public boolean initialized = false;
 
 	@Override
@@ -320,7 +322,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 				for (Object o : world.playerEntities) {
 					EntityPlayerMP player = (EntityPlayerMP) o;
 
-					if (world.getPlayerManager().isPlayerWatchingChunk (player, xCoord >> 4, zCoord >> 4)) {
+					if (world.getPlayerManager().isPlayerWatchingChunk(player, xCoord >> 4, zCoord >> 4)) {
 						BuildCraftCore.instance.sendToPlayer(player, updatePacket);
 					}
 				}
@@ -372,7 +374,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 
 		// Gate Textures and movement
 		renderState.setIsGateLit(pipe.gate != null ? pipe.gate.isGateActive() : false);
-		renderState.setIsGatePulsing(pipe.gate != null ? pipe.gate.isGatePulsing(): false);
+		renderState.setIsGatePulsing(pipe.gate != null ? pipe.gate.isGatePulsing() : false);
 
 		// Facades
 		for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
@@ -721,7 +723,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 
 	@Override
 	public boolean canDrain(ForgeDirection from, Fluid fluid) {
-		if (BlockGenericPipe.isValid(pipe) && pipe.transport instanceof IFluidHandler && !hasPlug(from) &&!hasRobotStation(from)) {
+		if (BlockGenericPipe.isValid(pipe) && pipe.transport instanceof IFluidHandler && !hasPlug(from) && !hasRobotStation(from)) {
 			return ((IFluidHandler) pipe.transport).canDrain(from, fluid);
 		} else {
 			return false;
@@ -802,7 +804,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 		InvUtils.dropItems(worldObj, getFacade(direction), this.xCoord, this.yCoord, this.zCoord);
 	}
 
-	public ItemStack getFacade (ForgeDirection direction) {
+	public ItemStack getFacade(ForgeDirection direction) {
 		int type = sideProperties.facadeTypes[direction.ordinal()];
 
 		if (type == FACADE_BASIC) {
