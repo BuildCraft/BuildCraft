@@ -16,7 +16,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.item.Item;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import buildcraft.core.utils.Utils;
+import net.minecraftforge.common.util.Constants;
 
 public class MappingRegistry {
 
@@ -134,7 +134,7 @@ public class MappingRegistry {
 
 	public void read (NBTTagCompound nbt) {
 		NBTTagList blocksMapping = nbt.getTagList("blocksMapping",
-				Utils.NBTTag_Types.NBTTagCompound.ordinal());
+				Constants.NBT.TAG_COMPOUND);
 
 		for (int i = 0; i < blocksMapping.tagCount(); ++i) {
 			NBTTagCompound sub = blocksMapping.getCompoundTagAt(i);
@@ -144,7 +144,7 @@ public class MappingRegistry {
 		}
 
 		NBTTagList itemsMapping = nbt.getTagList("itemsMapping",
-				Utils.NBTTag_Types.NBTTagCompound.ordinal());
+				Constants.NBT.TAG_COMPOUND);
 
 		for (int i = 0; i < itemsMapping.tagCount(); ++i) {
 			NBTTagCompound sub = itemsMapping.getCompoundTagAt(i);
@@ -154,7 +154,7 @@ public class MappingRegistry {
 		}
 
 		NBTTagList entitiesMapping = nbt.getTagList("entitiesMapping",
-				Utils.NBTTag_Types.NBTTagCompound.ordinal());
+				Constants.NBT.TAG_COMPOUND);
 
 		for (int i = 0; i < entitiesMapping.tagCount(); ++i) {
 			NBTTagCompound sub = entitiesMapping.getCompoundTagAt(i);

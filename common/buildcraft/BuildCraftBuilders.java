@@ -32,6 +32,7 @@ import buildcraft.api.blueprints.SchematicFactoryEntity;
 import buildcraft.api.blueprints.SchematicFactoryMask;
 import buildcraft.api.blueprints.SchematicMask;
 import buildcraft.api.blueprints.SchematicRegistry;
+import buildcraft.api.core.BCLog;
 import buildcraft.api.filler.FillerManager;
 import buildcraft.api.filler.IFillerPattern;
 import buildcraft.api.gates.ActionManager;
@@ -70,6 +71,7 @@ import buildcraft.builders.schematics.SchematicCactus;
 import buildcraft.builders.schematics.SchematicCustomStack;
 import buildcraft.builders.schematics.SchematicDirt;
 import buildcraft.builders.schematics.SchematicDoor;
+import buildcraft.builders.schematics.SchematicEnderChest;
 import buildcraft.builders.schematics.SchematicFarmland;
 import buildcraft.builders.schematics.SchematicFire;
 import buildcraft.builders.schematics.SchematicFluid;
@@ -87,8 +89,10 @@ import buildcraft.builders.schematics.SchematicRedstoneDiode;
 import buildcraft.builders.schematics.SchematicRotateMeta;
 import buildcraft.builders.schematics.SchematicSeeds;
 import buildcraft.builders.schematics.SchematicSign;
+import buildcraft.builders.schematics.SchematicSkull;
 import buildcraft.builders.schematics.SchematicStairs;
 import buildcraft.builders.schematics.SchematicStone;
+import buildcraft.builders.schematics.SchematicTripWireHook;
 import buildcraft.builders.schematics.SchematicWallSide;
 import buildcraft.builders.triggers.ActionFiller;
 import buildcraft.builders.triggers.BuildersActionProvider;
@@ -99,10 +103,7 @@ import buildcraft.core.DefaultProps;
 import buildcraft.core.InterModComms;
 import buildcraft.core.Version;
 import buildcraft.core.proxy.CoreProxy;
-import buildcraft.core.utils.BCLog;
 import cpw.mods.fml.common.Mod;
-import cpw.mods.fml.common.Mod.EventHandler;
-import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLInterModComms;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
@@ -110,7 +111,6 @@ import cpw.mods.fml.common.event.FMLServerStoppingEvent;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
-import cpw.mods.fml.common.registry.LanguageRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -134,13 +134,13 @@ public class BuildCraftBuilders extends BuildCraftMod {
 	public static int fillerLifespanTough;
 	public static int fillerLifespanNormal;
 	public static ActionFiller[] fillerActions;
-	@Instance("BuildCraft|Builders")
+	@Mod.Instance("BuildCraft|Builders")
 	public static BuildCraftBuilders instance;
 
 	public static BlueprintDatabase serverDB;
 	public static BlueprintDatabase clientDB;
 
-	@EventHandler
+	@Mod.EventHandler
 	public void loadConfiguration(FMLPreInitializationEvent evt) {
 		File bptMainDir = new File(new File(evt.getModConfigurationDirectory(), "buildcraft"), "blueprints");
 
@@ -154,7 +154,7 @@ public class BuildCraftBuilders extends BuildCraftMod {
 		clientDB.init(clientDir);
 	}
 
-	@EventHandler
+	@Mod.EventHandler
 	public void init(FMLInitializationEvent evt) {
 		// Register gui handler
 		NetworkRegistry.INSTANCE.registerGuiHandler(instance, new GuiHandler());
@@ -184,6 +184,10 @@ public class BuildCraftBuilders extends BuildCraftMod {
 		SchematicRegistry.registerSchematicBlock(Blocks.redstone_torch, SchematicWallSide.class);
 		SchematicRegistry.registerSchematicBlock(Blocks.unlit_redstone_torch, SchematicWallSide.class);
 
+		SchematicRegistry.registerSchematicBlock(Blocks.tripwire_hook, SchematicTripWireHook.class);
+
+		SchematicRegistry.registerSchematicBlock(Blocks.skull, SchematicSkull.class);
+
 		SchematicRegistry.registerSchematicBlock(Blocks.ladder, SchematicRotateMeta.class, new int[]{2, 5, 3, 4}, true);
 		SchematicRegistry.registerSchematicBlock(Blocks.fence_gate, SchematicRotateMeta.class, new int[]{0, 1, 2, 3}, true);
 		SchematicRegistry.registerSchematicBlock(Blocks.log, SchematicRotateMeta.class, new int[]{8, 4, 8, 4}, true);
@@ -191,11 +195,15 @@ public class BuildCraftBuilders extends BuildCraftMod {
 		SchematicRegistry.registerSchematicBlock(Blocks.hay_block, SchematicRotateMeta.class, new int[]{8, 4, 8, 4}, true);
 		SchematicRegistry.registerSchematicBlock(Blocks.quartz_block, SchematicRotateMeta.class, new int[]{4, 3, 4, 3}, true);
 		SchematicRegistry.registerSchematicBlock(Blocks.hopper, SchematicRotateMeta.class, new int[]{2, 5, 3, 4}, true);
+		SchematicRegistry.registerSchematicBlock(Blocks.anvil, SchematicRotateMeta.class, new int[]{0, 1, 2, 3}, true);
 
 		SchematicRegistry.registerSchematicBlock(Blocks.furnace, SchematicRotateMeta.class, new int[]{2, 5, 3, 4}, true);
 		SchematicRegistry.registerSchematicBlock(Blocks.lit_furnace, SchematicRotateMeta.class, new int[]{2, 5, 3, 4}, true);
 		SchematicRegistry.registerSchematicBlock(Blocks.chest, SchematicRotateMeta.class, new int[]{2, 5, 3, 4}, true);
 		SchematicRegistry.registerSchematicBlock(Blocks.dispenser, SchematicRotateMeta.class, new int[]{2, 5, 3, 4}, true);
+		SchematicRegistry.registerSchematicBlock(Blocks.dropper, SchematicRotateMeta.class, new int[]{2, 5, 3, 4}, true);
+
+		SchematicRegistry.registerSchematicBlock(Blocks.ender_chest, SchematicEnderChest.class);
 
 		SchematicRegistry.registerSchematicBlock(Blocks.vine, SchematicRotateMeta.class, new int[]{1, 4, 8, 2}, false);
 		SchematicRegistry.registerSchematicBlock(Blocks.trapdoor, SchematicRotateMeta.class, new int[]{0, 1, 2, 3}, false);
@@ -302,7 +310,7 @@ public class BuildCraftBuilders extends BuildCraftMod {
 		BuilderProxy.proxy.registerBlockRenderers();
 	}
 
-	@EventHandler
+	@Mod.EventHandler
 	public void preInit(FMLPreInitializationEvent evt) {
 		Property fillerDestroyProp = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "filler.destroy", DefaultProps.FILLER_DESTROY);
 		fillerDestroyProp.comment = "If true, Filler will destroy blocks instead of breaking them.";
@@ -318,12 +326,10 @@ public class BuildCraftBuilders extends BuildCraftMod {
 
 		templateItem = new ItemBlueprintTemplate();
 		templateItem.setUnlocalizedName("templateItem");
-		LanguageRegistry.addName(templateItem, "Template");
 		CoreProxy.proxy.registerItem(templateItem);
 
 		blueprintItem = new ItemBlueprintStandard();
 		blueprintItem.setUnlocalizedName("blueprintItem");
-		LanguageRegistry.addName(blueprintItem, "Blueprint");
 		CoreProxy.proxy.registerItem(blueprintItem);
 
 		buildToolBlock = new BlockBuildTool ();
@@ -389,41 +395,41 @@ public class BuildCraftBuilders extends BuildCraftMod {
 	}
 
 	public static void loadRecipes() {
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(templateItem, 1), new Object[]{"ppp", "pip", "ppp", 'i',
-			new ItemStack(Items.dye, 1, 0), 'p', Items.paper});
+		CoreProxy.proxy.addCraftingRecipe(new ItemStack(templateItem, 1), "ppp", "pip", "ppp", 'i',
+			new ItemStack(Items.dye, 1, 0), 'p', Items.paper);
 
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(blueprintItem, 1), new Object[]{"ppp", "pip", "ppp", 'i',
-			new ItemStack(Items.dye, 1, 4), 'p', Items.paper});
+		CoreProxy.proxy.addCraftingRecipe(new ItemStack(blueprintItem, 1), "ppp", "pip", "ppp", 'i',
+			new ItemStack(Items.dye, 1, 4), 'p', Items.paper);
 
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(markerBlock, 1), new Object[]{"l ", "r ", 'l',
-			new ItemStack(Items.dye, 1, 4), 'r', Blocks.redstone_torch});
+		CoreProxy.proxy.addCraftingRecipe(new ItemStack(markerBlock, 1), "l ", "r ", 'l',
+			new ItemStack(Items.dye, 1, 4), 'r', Blocks.redstone_torch);
 
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(pathMarkerBlock, 1), new Object[]{"l ", "r ", 'l',
-			new ItemStack(Items.dye, 1, 2), 'r', Blocks.redstone_torch});
+		CoreProxy.proxy.addCraftingRecipe(new ItemStack(pathMarkerBlock, 1), "l ", "r ", 'l',
+			new ItemStack(Items.dye, 1, 2), 'r', Blocks.redstone_torch);
 
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(fillerBlock, 1), new Object[]{"btb", "ycy", "gCg", 'b',
+		CoreProxy.proxy.addCraftingRecipe(new ItemStack(fillerBlock, 1), "btb", "ycy", "gCg", 'b',
 			new ItemStack(Items.dye, 1, 0), 't', markerBlock, 'y', new ItemStack(Items.dye, 1, 11),
-			'c', Blocks.crafting_table, 'g', BuildCraftCore.goldGearItem, 'C', Blocks.chest});
+			'c', Blocks.crafting_table, 'g', BuildCraftCore.goldGearItem, 'C', Blocks.chest);
 
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(builderBlock, 1), new Object[]{"btb", "ycy", "gCg", 'b',
+		CoreProxy.proxy.addCraftingRecipe(new ItemStack(builderBlock, 1), "btb", "ycy", "gCg", 'b',
 			new ItemStack(Items.dye, 1, 0), 't', markerBlock, 'y', new ItemStack(Items.dye, 1, 11),
-			'c', Blocks.crafting_table, 'g', BuildCraftCore.diamondGearItem, 'C', Blocks.chest});
+			'c', Blocks.crafting_table, 'g', BuildCraftCore.diamondGearItem, 'C', Blocks.chest);
 
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(architectBlock, 1), new Object[]{"btb", "ycy", "gCg", 'b',
+		CoreProxy.proxy.addCraftingRecipe(new ItemStack(architectBlock, 1), "btb", "ycy", "gCg", 'b',
 			new ItemStack(Items.dye, 1, 0), 't', markerBlock, 'y', new ItemStack(Items.dye, 1, 11),
 			'c', Blocks.crafting_table, 'g', BuildCraftCore.diamondGearItem, 'C',
-			new ItemStack(blueprintItem, 1)});
+			new ItemStack(blueprintItem, 1));
 
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(libraryBlock, 1), new Object[]{"bbb", "bBb", "bbb", 'b',
-			new ItemStack(blueprintItem), 'B', Blocks.bookshelf});
+		CoreProxy.proxy.addCraftingRecipe(new ItemStack(libraryBlock, 1), "bbb", "bBb", "bbb", 'b',
+			new ItemStack(blueprintItem), 'B', Blocks.bookshelf);
 	}
 
-	@EventHandler
+	@Mod.EventHandler
 	public void processIMCRequests(FMLInterModComms.IMCEvent event) {
 		InterModComms.processIMC(event);
 	}
 
-	@EventHandler
+	@Mod.EventHandler
 	public void ServerStop(FMLServerStoppingEvent event) {
 		TilePathMarker.clearAvailableMarkersList();
 	}

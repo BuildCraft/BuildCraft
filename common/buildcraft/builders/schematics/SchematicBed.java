@@ -75,7 +75,7 @@ public class SchematicBed extends SchematicBlock {
 	}
 
 	@Override
-	public boolean ignoreBuilding() {
+	public boolean doNotBuild() {
 		return (meta & 8) != 0;
 	}
 }

@@ -17,15 +17,20 @@ import net.minecraft.nbt.NBTTagCompound;
 import org.apache.commons.lang3.ArrayUtils;
 
 import buildcraft.BuildCraftBuilders;
-import buildcraft.core.network.NetworkData;
+import buildcraft.api.core.NetworkData;
 
 public final class BlueprintId implements Comparable<BlueprintId> {
+
+	public enum Kind {Template, Blueprint};
 
 	@NetworkData
 	public byte[] uniqueId;
 
 	@NetworkData
 	public String name = "";
+
+	@NetworkData
+	public Kind kind = Kind.Blueprint;
 
 	public String completeId;
 
@@ -46,11 +51,13 @@ public final class BlueprintId implements Comparable<BlueprintId> {
 	public void write (NBTTagCompound nbt) {
 		nbt.setByteArray("uniqueBptId", uniqueId);
 		nbt.setString("name", name);
+		nbt.setByte("kind", (byte) kind.ordinal());
 	}
 
 	public void read (NBTTagCompound nbt) {
 		uniqueId = nbt.getByteArray("uniqueBptId");
 		name = nbt.getString("name");
+		kind = Kind.values()[nbt.getByte("kind")];
 	}
 
 	@Override

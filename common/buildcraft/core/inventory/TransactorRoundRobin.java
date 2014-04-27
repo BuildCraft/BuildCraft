@@ -8,10 +8,10 @@
  */
 package buildcraft.core.inventory;
 
-import buildcraft.core.inventory.InventoryIterator.IInvSlot;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.util.ForgeDirection;
+import buildcraft.core.inventory.InventoryIterator.IInvSlot;
 
 public class TransactorRoundRobin extends TransactorSimple {
 
@@ -44,7 +44,7 @@ public class TransactorRoundRobin extends TransactorSimple {
 					continue;
 				}
 
-				if (StackHelper.instance().canStacksMerge(stack, stackInInventory) && stackInInventory.stackSize < smallestStackSize) {
+				if (StackHelper.canStacksMerge(stack, stackInInventory) && stackInInventory.stackSize < smallestStackSize) {
 					smallestStackSize = stackInInventory.stackSize;
 					minSlot = slot;
 				}

@@ -54,8 +54,10 @@ public class BlockQuarry extends BlockBuildCraft {
 
 		world.setBlockMetadataWithNotify(i, j, k, orientation.getOpposite().ordinal(), 1);
 		if (entityliving instanceof EntityPlayer) {
-			TileQuarry tq = (TileQuarry) world.getTileEntity(i, j, k);
-			tq.placedBy = (EntityPlayer) entityliving;
+			TileEntity tile = world.getTileEntity(i, j, k);
+			if (tile instanceof TileQuarry) {
+				((TileQuarry) tile).placedBy = (EntityPlayer) entityliving;
+			}
 		}
 	}
 
@@ -174,8 +176,6 @@ public class BlockQuarry extends BlockBuildCraft {
 			}
 			quarry.destroy();
 		}
-
-		Utils.preDestroyBlock(world, i, j, k);
 
 		super.breakBlock(world, i, j, k, block, par6);
 	}

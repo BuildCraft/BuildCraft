@@ -14,6 +14,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.api.blueprints.SchematicBlockBase;
+import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.builders.TileAbstractBuilder;
 import buildcraft.core.BlockIndex;
 import buildcraft.core.blueprints.BuildingSlotBlock.Mode;
@@ -143,7 +144,7 @@ public class BptBuilderTemplate extends BptBuilderBase {
 			}
 
 			if (slot.mode == Mode.ClearIfInvalid) {
-				if (BlockUtil.isSoftBlock(world, slot.x, slot.y, slot.z)
+				if (BuildCraftAPI.isSoftBlock(world, slot.x, slot.y, slot.z)
 						|| BlockUtil.isUnbreakableBlock(world, slot.x, slot.y, slot.z)) {
 					iterator.remove();
 					clearedLocations.add(new BlockIndex(slot.x, slot.y, slot.z));
@@ -157,7 +158,7 @@ public class BptBuilderTemplate extends BptBuilderBase {
 					}
 				}
 			} else if (slot.mode == Mode.Build) {
-				if (!BlockUtil.isSoftBlock(world, slot.x, slot.y, slot.z)) {
+				if (!BuildCraftAPI.isSoftBlock(world, slot.x, slot.y, slot.z)) {
 					iterator.remove();
 					builtLocations.add(new BlockIndex(slot.x, slot.y, slot.z));
 				} else {

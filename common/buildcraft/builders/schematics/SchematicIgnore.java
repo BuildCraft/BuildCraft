@@ -32,7 +32,7 @@ public class SchematicIgnore extends SchematicBlock {
 	}
 
 	@Override
-	public boolean ignoreBuilding() {
+	public boolean doNotBuild() {
 		return true;
 	}
 

@@ -9,13 +9,15 @@
 package buildcraft.core;
 
 import buildcraft.BuildCraftCore;
+import buildcraft.api.core.BCLog;
 import buildcraft.core.proxy.CoreProxy;
-import buildcraft.core.utils.BCLog;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+
 import net.minecraftforge.common.config.Property;
 
 public class Version implements Runnable {

@@ -28,6 +28,7 @@ import net.minecraft.util.IChatComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
+import buildcraft.api.core.ICoreProxy;
 import buildcraft.api.core.LaserKind;
 import buildcraft.core.EntityBlock;
 import buildcraft.core.ItemBlockBuildCraft;
@@ -38,7 +39,7 @@ import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.registry.GameRegistry;
 
-public class CoreProxy {
+public class CoreProxy implements ICoreProxy {
 
 	@SidedProxy(clientSide = "buildcraft.core.proxy.CoreProxyClient", serverSide = "buildcraft.core.proxy.CoreProxy")
 	public static CoreProxy proxy;
@@ -169,6 +170,7 @@ public class CoreProxy {
 		return player;
 	}
 
+	@Override
 	public EntityPlayer getBuildCraftPlayer(World world) {
 		if (CoreProxy.buildCraftPlayer == null) {
 			CoreProxy.buildCraftPlayer = createNewPlayer(world);

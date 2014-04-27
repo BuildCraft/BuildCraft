@@ -25,7 +25,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fluids.FluidStack;
-import buildcraft.core.network.NetworkData;
+import buildcraft.api.core.NetworkData;
 import buildcraft.core.utils.Utils;
 
 /**

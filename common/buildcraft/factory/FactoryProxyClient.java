@@ -9,12 +9,12 @@
 package buildcraft.factory;
 
 import buildcraft.BuildCraftFactory;
+import buildcraft.api.core.BCLog;
 import buildcraft.builders.RenderBuilder;
 import buildcraft.core.EntityBlock;
 import buildcraft.core.render.RenderVoid;
 import buildcraft.core.render.RenderingEntityBlocks;
 import buildcraft.core.render.RenderingEntityBlocks.EntityRenderIndex;
-import buildcraft.core.utils.BCLog;
 import buildcraft.factory.gui.GuiAutoCrafting;
 import buildcraft.factory.render.*;
 import cpw.mods.fml.client.registry.ClientRegistry;

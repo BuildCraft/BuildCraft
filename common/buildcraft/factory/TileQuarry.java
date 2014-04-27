@@ -26,10 +26,13 @@ import net.minecraftforge.common.ForgeChunkManager.Type;
 import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftFactory;
+import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.core.IAreaProvider;
+import buildcraft.api.core.NetworkData;
 import buildcraft.api.filler.FillerManager;
 import buildcraft.api.gates.IAction;
 import buildcraft.builders.TileAbstractBuilder;
+import buildcraft.builders.filler.pattern.FillerPattern;
 import buildcraft.core.Box;
 import buildcraft.core.Box.Kind;
 import buildcraft.core.CoreConstants;
@@ -38,7 +41,6 @@ import buildcraft.core.IMachine;
 import buildcraft.core.blueprints.Blueprint;
 import buildcraft.core.blueprints.BptBuilderBase;
 import buildcraft.core.blueprints.BptBuilderBlueprint;
-import buildcraft.core.network.NetworkData;
 import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.BlockUtil;
@@ -75,6 +77,8 @@ public class TileQuarry extends TileAbstractBuilder implements IMachine {
 	boolean isAlive;
 	public EntityPlayer placedBy;
 
+	boolean frameProducer = true;
+
 	public TileQuarry () {
 		box.kind = Kind.STRIPES;
 	}
@@ -110,12 +114,14 @@ public class TileQuarry extends TileAbstractBuilder implements IMachine {
 	}
 
 	private void createArm() {
-		worldObj.spawnEntityInWorld(new EntityMechanicalArm(worldObj, box.xMin
-				+ CoreConstants.PIPE_MAX_POS, yCoord + box.sizeY ()
-				- 1 + CoreConstants.PIPE_MIN_POS, box.zMin
-				+ CoreConstants.PIPE_MAX_POS, box.sizeX () - 2
-				+ CoreConstants.PIPE_MIN_POS * 2, box.sizeZ() - 2
-				+ CoreConstants.PIPE_MIN_POS * 2, this));
+		worldObj.spawnEntityInWorld
+		(new EntityMechanicalArm(worldObj,
+				box.xMin + CoreConstants.PIPE_MAX_POS,
+				yCoord + box.sizeY () - 1 + CoreConstants.PIPE_MIN_POS,
+				box.zMin + CoreConstants.PIPE_MAX_POS,
+				box.sizeX () - 2 + CoreConstants.PIPE_MIN_POS * 2,
+				box.sizeZ() - 2 + CoreConstants.PIPE_MIN_POS * 2,
+				this));
 	}
 
 	// Callback from the arm once it's created
@@ -218,7 +224,7 @@ public class TileQuarry extends TileAbstractBuilder implements IMachine {
 		if (!columnVisitListIsUpdated) { // nextTarget may not be accurate, at least search the target column for changes
 			for (int y = nextTarget[1] + 1; y < yCoord + 3; y++) {
 				Block block = worldObj.getBlock(nextTarget[0], y, nextTarget[2]);
-				if (BlockUtil.isAnObstructingBlock(block, worldObj, nextTarget[0], y, nextTarget[2]) || !BlockUtil.isSoftBlock(block, worldObj, nextTarget[0], y, nextTarget[2])) {
+				if (BlockUtil.isAnObstructingBlock(block, worldObj, nextTarget[0], y, nextTarget[2]) || !BuildCraftAPI.isSoftBlock(block, worldObj, nextTarget[0], y, nextTarget[2])) {
 					createColumnVisitList();
 					columnVisitListIsUpdated = true;
 					nextTarget = null;
@@ -290,7 +296,7 @@ public class TileQuarry extends TileAbstractBuilder implements IMachine {
 
 						if (!BlockUtil.canChangeBlock(block, worldObj, bx, by, bz)) {
 							blockedColumns[searchX][searchZ] = true;
-						} else if (!BlockUtil.isSoftBlock(block, worldObj, bx, by, bz)) {
+						} else if (!BuildCraftAPI.isSoftBlock(block, worldObj, bx, by, bz)) {
 							visitList.add(new int[]{bx, by, bz});
 						}
 
@@ -452,7 +458,7 @@ public class TileQuarry extends TileAbstractBuilder implements IMachine {
 
 	private boolean isQuarriableBlock(int bx, int by, int bz) {
 		Block block = worldObj.getBlock(bx, by, bz);
-		return BlockUtil.canChangeBlock(block, worldObj, bx, by, bz) && !BlockUtil.isSoftBlock(block, worldObj, bx, by, bz);
+		return BlockUtil.canChangeBlock(block, worldObj, bx, by, bz) && !BuildCraftAPI.isSoftBlock(block, worldObj, bx, by, bz);
 	}
 
 	@Override
@@ -476,6 +482,8 @@ public class TileQuarry extends TileAbstractBuilder implements IMachine {
 		}
 
 		arm = null;
+
+		frameProducer = false;
 	}
 
 	@Override
@@ -576,7 +584,7 @@ public class TileQuarry extends TileAbstractBuilder implements IMachine {
 	}
 
 	private void initializeBlueprintBuilder() {
-		Blueprint bpt = FillerManager.registry.getPattern("buildcraft:frame")
+		Blueprint bpt = ((FillerPattern) FillerManager.registry.getPattern("buildcraft:frame"))
 				.getBlueprint(box, worldObj, BuildCraftFactory.frameBlock);
 
 		builder = new BptBuilderBlueprint(bpt, worldObj, box.xMin, yCoord, box.zMin);
@@ -633,12 +641,20 @@ public class TileQuarry extends TileAbstractBuilder implements IMachine {
 
 	@Override
 	public ItemStack getStackInSlot(int i) {
-		return new ItemStack(BuildCraftFactory.frameBlock);
+		if (frameProducer) {
+			return new ItemStack(BuildCraftFactory.frameBlock);
+		} else {
+			return null;
+		}
 	}
 
 	@Override
 	public ItemStack decrStackSize(int i, int j) {
-		return new ItemStack(BuildCraftFactory.frameBlock, j);
+		if (frameProducer) {
+			return new ItemStack(BuildCraftFactory.frameBlock, j);
+		} else {
+			return null;
+		}
 	}
 
 	@Override

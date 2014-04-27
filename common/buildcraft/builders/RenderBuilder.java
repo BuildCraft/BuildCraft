@@ -16,7 +16,6 @@ import net.minecraft.tileentity.TileEntity;
 
 import org.lwjgl.opengl.GL11;
 
-import buildcraft.builders.BuildingItem.StackAtPosition;
 import buildcraft.builders.urbanism.RenderBoxProvider;
 import buildcraft.core.EntityLaser;
 import buildcraft.core.LaserData;

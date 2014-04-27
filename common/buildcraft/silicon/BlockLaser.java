@@ -8,25 +8,27 @@
  */
 package buildcraft.silicon;
 
+import static net.minecraft.util.AxisAlignedBB.getBoundingBox;
+
+import java.util.List;
+
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.IIcon;
+import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.util.Vec3;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.core.CreativeTabBuildCraft;
+import buildcraft.core.ICustomHighlight;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraft.util.MovingObjectPosition;
-import buildcraft.core.ICustomHighlight;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.Vec3;
-import java.util.List;
-
-import static net.minecraft.util.AxisAlignedBB.getBoundingBox;
 
 public class BlockLaser extends BlockContainer implements ICustomHighlight {
 
@@ -118,12 +120,13 @@ public class BlockLaser extends BlockContainer implements ICustomHighlight {
 
 	@Override
 	public IIcon getIcon(int i, int j) {
-		if (i == ForgeDirection.values()[j].getOpposite().ordinal())
+		if (i == ForgeDirection.values()[j].getOpposite().ordinal()) {
 			return textureBottom;
-		else if (i == j)
+		} else if (i == j) {
 			return textureTop;
-		else
+		} else {
 			return textureSide;
+		}
 
 	}
 
@@ -144,5 +147,10 @@ public class BlockLaser extends BlockContainer implements ICustomHighlight {
 		textureTop = par1IconRegister.registerIcon("buildcraft:laser_top");
 		textureBottom = par1IconRegister.registerIcon("buildcraft:laser_bottom");
 		textureSide = par1IconRegister.registerIcon("buildcraft:laser_side");
+	}
+
+	@Override
+	public boolean isSideSolid(IBlockAccess world, int x, int y, int z, ForgeDirection side) {
+		return false;
 	}
 }

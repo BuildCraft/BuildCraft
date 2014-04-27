@@ -17,6 +17,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.Constants;
 import buildcraft.BuildCraftBuilders;
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.core.IAreaProvider;
@@ -25,7 +26,6 @@ import buildcraft.builders.BuildingItem;
 import buildcraft.builders.TileAbstractBuilder;
 import buildcraft.core.BlockIndex;
 import buildcraft.core.Box;
-import buildcraft.core.utils.Utils;
 
 public abstract class BptBuilderBase implements IAreaProvider {
 
@@ -70,7 +70,7 @@ public abstract class BptBuilderBase implements IAreaProvider {
 			i.destination = slot.getDestination();
 			i.slotToBuild = slot;
 			i.context = getContext();
-			i.stacksToBuild = slot.stackConsumed;
+			i.setStacksToDisplay (slot.getStacksToDisplay ());
 			builder.addBuildingItem(i);
 
 			return true;
@@ -147,16 +147,15 @@ public abstract class BptBuilderBase implements IAreaProvider {
 				.world()
 				.getBlock(slot.x, slot.y, slot.z)
 				.getBlockHardness(context.world(), slot.x, slot.y,
-						slot.z);
+						slot.z)+1;
 
 		if (builder.energyAvailable() < hardness * TileAbstractBuilder.BREAK_ENERGY) {
 			return false;
 		} else {
 			builder.consumeEnergy(hardness * TileAbstractBuilder.BREAK_ENERGY);
 
-			for (int i = 0; i <= hardness; ++i) {
-				slot.addStackConsumed(new ItemStack(
-						BuildCraftBuilders.buildToolBlock));
+			for (int i = 0; i < hardness; ++i) {
+				slot.addStackConsumed(new ItemStack(BuildCraftBuilders.buildToolBlock));
 			}
 
 			return true;
@@ -196,7 +195,7 @@ public abstract class BptBuilderBase implements IAreaProvider {
 	}
 
 	public void loadBuildStateToNBT (NBTTagCompound nbt, TileAbstractBuilder builder) {
-		NBTTagList clearList = nbt.getTagList("clearList", Utils.NBTTag_Types.NBTTagCompound.ordinal());
+		NBTTagList clearList = nbt.getTagList("clearList", Constants.NBT.TAG_COMPOUND);
 
 		for (int i = 0; i < clearList.tagCount(); ++i) {
 			NBTTagCompound cpt = clearList.getCompoundTagAt(i);
@@ -204,7 +203,7 @@ public abstract class BptBuilderBase implements IAreaProvider {
 			clearedLocations.add (new BlockIndex(cpt));
 		}
 
-		NBTTagList builtList = nbt.getTagList("builtList", Utils.NBTTag_Types.NBTTagCompound.ordinal());
+		NBTTagList builtList = nbt.getTagList("builtList", Constants.NBT.TAG_COMPOUND);
 
 		for (int i = 0; i < builtList.tagCount(); ++i) {
 			NBTTagCompound cpt = builtList.getCompoundTagAt(i);
@@ -214,7 +213,7 @@ public abstract class BptBuilderBase implements IAreaProvider {
 
 		NBTTagList buildingList = nbt
 				.getTagList("buildersInAction",
-						Utils.NBTTag_Types.NBTTagCompound.ordinal());
+						Constants.NBT.TAG_COMPOUND);
 
 		for (int i = 0; i < buildingList.tagCount(); ++i) {
 			BuildingItem item = new BuildingItem();

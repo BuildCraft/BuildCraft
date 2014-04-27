@@ -8,11 +8,11 @@
  */
 package buildcraft.silicon.recipes;
 
+import net.minecraft.item.ItemStack;
 import buildcraft.api.gates.IGateExpansion;
 import buildcraft.api.recipes.IIntegrationRecipeManager.IIntegrationRecipe;
 import buildcraft.core.inventory.StackHelper;
 import buildcraft.transport.gates.ItemGate;
-import net.minecraft.item.ItemStack;
 
 public class GateExpansionRecipe implements IIntegrationRecipe {
 
@@ -35,24 +35,28 @@ public class GateExpansionRecipe implements IIntegrationRecipe {
 
 	@Override
 	public boolean isValidInputA(ItemStack inputA) {
-		if (inputA == null)
+		if (inputA == null) {
 			return false;
-		if (!(inputA.getItem() instanceof ItemGate))
+		}
+		if (!(inputA.getItem() instanceof ItemGate)) {
 			return false;
+		}
 		return !ItemGate.hasGateExpansion(inputA, expansion);
 	}
 
 	@Override
 	public boolean isValidInputB(ItemStack inputB) {
-		return StackHelper.instance().isMatchingItem(inputB, chipset);
+		return StackHelper.isMatchingItem(inputB, chipset);
 	}
 
 	@Override
 	public ItemStack getOutputForInputs(ItemStack inputA, ItemStack inputB) {
-		if (!isValidInputA(inputA))
+		if (!isValidInputA(inputA)) {
 			return null;
-		if (!isValidInputB(inputB))
+		}
+		if (!isValidInputB(inputB)) {
 			return null;
+		}
 		ItemStack output = inputA.copy();
 		output.stackSize = 1;
 		ItemGate.addGateExpansion(output, expansion);

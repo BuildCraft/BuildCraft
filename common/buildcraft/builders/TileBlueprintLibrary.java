@@ -17,11 +17,12 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import buildcraft.BuildCraftBuilders;
+import buildcraft.api.core.NetworkData;
 import buildcraft.builders.blueprints.BlueprintId;
+import buildcraft.builders.blueprints.BlueprintId.Kind;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.blueprints.BlueprintBase;
 import buildcraft.core.inventory.InvUtils;
-import buildcraft.core.network.NetworkData;
 import buildcraft.core.network.RPC;
 import buildcraft.core.network.RPCHandler;
 import buildcraft.core.network.RPCSide;
@@ -250,12 +251,17 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory {
 
 	@RPC (RPCSide.CLIENT)
 	public void requestSelectedBlueprint () {
-		if (selected > -1 && selected < currentPage.size()) {
-			BlueprintBase bpt = BuildCraftBuilders.clientDB.load(currentPage.get(selected));
+		if (isOuputConsistent()) {
+			if (selected > -1 && selected < currentPage.size()) {
+				BlueprintBase bpt = BuildCraftBuilders.clientDB
+						.load(currentPage.get(selected));
 
-			RPCHandler.rpcServer(this, "uploadBlueprintToServer", bpt.id, bpt.getData());
-		} else {
-			RPCHandler.rpcServer(this, "uploadBlueprintToServer", null, null);
+				RPCHandler.rpcServer(this, "uploadBlueprintToServer", bpt.id,
+						bpt.getData());
+			} else {
+				RPCHandler.rpcServer(this, "uploadBlueprintToServer", null,
+						null);
+			}
 		}
 	}
 
@@ -300,5 +306,16 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory {
 
 	public void selectBlueprint (int index) {
 		selected = index;
+	}
+
+	private boolean isOuputConsistent () {
+		if (selected == -1 || stack [2] == null) {
+			return false;
+		}
+
+		return (stack [2].getItem() instanceof ItemBlueprintStandard
+				&& currentPage.get(selected).kind == Kind.Blueprint) ||
+			   (stack [2].getItem() instanceof ItemBlueprintTemplate
+				&& currentPage.get(selected).kind == Kind.Template);
 	}
 }

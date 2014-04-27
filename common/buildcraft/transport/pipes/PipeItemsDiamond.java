@@ -112,7 +112,7 @@ public class PipeItemsDiamond extends Pipe<PipeTransportItems> implements IClien
 					foundFilter = true;
 				}
 
-				if (StackHelper.instance().isMatchingItem(filter, event.item.getItemStack(), true, false)) {
+				if (StackHelper.isMatchingItem(filter, event.item.getItemStack(), true, false)) {
 					filteredOrientations.add(dir);
 				}
 			}

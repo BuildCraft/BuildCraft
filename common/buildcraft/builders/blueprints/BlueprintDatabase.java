@@ -25,11 +25,13 @@ import java.util.logging.Logger;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import buildcraft.BuildCraftBuilders;
+import buildcraft.builders.blueprints.BlueprintId.Kind;
 import buildcraft.core.blueprints.BlueprintBase;
 
 public class BlueprintDatabase {
 	private final int bufferSize = 8192;
-	private final String fileExt = ".bpt";
+	private final static String BPT_EXTENSION = ".bpt";
+	private final static String TPL_EXTENSION = ".tpl";
 	private File blueprintFolder;
 	private final static int PAGE_SIZE = 12;
 
@@ -69,7 +71,7 @@ public class BlueprintDatabase {
 	}
 
 	public void deleteBlueprint (BlueprintId id) {
-		File blueprintFile = new File(blueprintFolder, String.format(Locale.ENGLISH, "%s" + fileExt, id.toString()));
+		File blueprintFile = getBlueprintFile(id);
 		blueprintFile.delete();
 		blueprintIds.remove(id);
 		pages = new BlueprintId [blueprintIds.size()];
@@ -80,8 +82,7 @@ public class BlueprintDatabase {
 		blueprint.id.generateUniqueId(blueprint.getData());
 
 		BlueprintId id = blueprint.id;
-
-		File blueprintFile = new File(blueprintFolder, String.format(Locale.ENGLISH, "%s" + fileExt, id.toString()));
+		File blueprintFile = getBlueprintFile (id);
 
 		if (!blueprintFile.exists()) {
 			OutputStream gzOs = null;
@@ -103,11 +104,19 @@ public class BlueprintDatabase {
 		return id;
 	}
 
+	private File getBlueprintFile(BlueprintId id) {
+		if (id.kind == Kind.Blueprint) {
+			return new File(blueprintFolder, String.format(Locale.ENGLISH, "%s" + BPT_EXTENSION, id.toString()));
+		} else {
+			return new File(blueprintFolder, String.format(Locale.ENGLISH, "%s" + TPL_EXTENSION, id.toString()));
+		}
+	}
+
 	private void loadIndex() {
 		FilenameFilter filter = new FilenameFilter() {
 			@Override
 			public boolean accept(File dir, String name) {
-				return name.endsWith(fileExt);
+				return name.endsWith(BPT_EXTENSION) || name.endsWith(TPL_EXTENSION);
 			}
 		};
 
@@ -121,7 +130,14 @@ public class BlueprintDatabase {
 
 			BlueprintId id = new BlueprintId();
 			id.name = prefix;
-			id.uniqueId = BlueprintId.toBytes (suffix.replaceAll(".bpt", ""));
+
+			if (suffix.contains(BPT_EXTENSION)) {
+				id.uniqueId = BlueprintId.toBytes (suffix.replaceAll(BPT_EXTENSION, ""));
+				id.kind = Kind.Blueprint;
+			} else {
+				id.uniqueId = BlueprintId.toBytes (suffix.replaceAll(TPL_EXTENSION, ""));
+				id.kind = Kind.Template;
+			}
 
 			if (!blueprintIds.contains(id)) {
 				blueprintIds.add(id);
@@ -140,8 +156,7 @@ public class BlueprintDatabase {
 			return null;
 		}
 
-		File blueprintFile = new File(blueprintFolder, String.format(
-				Locale.ENGLISH, "%s" + fileExt, id.toString()));
+		File blueprintFile = getBlueprintFile(id);
 
 		if (blueprintFile.exists()) {
 			try {

@@ -16,25 +16,30 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraftforge.common.util.Constants;
 import buildcraft.BuildCraftBuilders;
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.SchematicBlock;
 import buildcraft.api.blueprints.SchematicEntity;
 import buildcraft.api.blueprints.SchematicRegistry;
 import buildcraft.api.blueprints.Translation;
-import buildcraft.core.utils.BCLog;
+import buildcraft.api.core.BCLog;
+import buildcraft.builders.blueprints.BlueprintId.Kind;
 import buildcraft.core.utils.NBTUtils;
-import buildcraft.core.utils.Utils;
 
 public class Blueprint extends BlueprintBase {
 	public LinkedList <SchematicEntity> entities = new LinkedList <SchematicEntity> ();
 
 	public Blueprint() {
 		super ();
+
+		id.kind = Kind.Blueprint;
 	}
 
 	public Blueprint(int sizeX, int sizeY, int sizeZ) {
 		super(sizeX, sizeY, sizeZ);
+
+		id.kind = Kind.Blueprint;
 	}
 
 	@Override
@@ -159,7 +164,7 @@ public class Blueprint extends BlueprintBase {
 		mapping.read (nbt.getCompoundTag("idMapping"));
 
 		NBTTagList nbtContents = nbt.getTagList("contents",
-				Utils.NBTTag_Types.NBTTagCompound.ordinal());
+				Constants.NBT.TAG_COMPOUND);
 
 		int index = 0;
 
@@ -182,7 +187,7 @@ public class Blueprint extends BlueprintBase {
 		}
 
 		NBTTagList entitiesNBT = nbt.getTagList("entities",
-				Utils.NBTTag_Types.NBTTagCompound.ordinal());
+				Constants.NBT.TAG_COMPOUND);
 
 		for (int i = 0; i < entitiesNBT.tagCount(); ++i) {
 			NBTTagCompound cpt = entitiesNBT.getCompoundTagAt(i);

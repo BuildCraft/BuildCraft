@@ -47,6 +47,10 @@ public abstract class BuildingSlot {
 		stackConsumed.add (stack);
 	}
 
+	public LinkedList<ItemStack> getStacksToDisplay() {
+		return getSchematic ().getStacksToDisplay (stackConsumed);
+	}
+
 	public abstract boolean isAlreadyBuilt (IBuilderContext context);
 
 	public abstract Schematic getSchematic ();

@@ -44,13 +44,10 @@ import buildcraft.transport.gates.GateExpansionRedstoneFader;
 import buildcraft.transport.gates.GateExpansionTimer;
 import buildcraft.transport.gates.ItemGate;
 import cpw.mods.fml.common.Mod;
-import cpw.mods.fml.common.Mod.EventHandler;
-import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLInterModComms;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
-import cpw.mods.fml.common.registry.LanguageRegistry;
 
 @Mod(name = "BuildCraft Silicon", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Silicon", dependencies = DefaultProps.DEPENDENCY_TRANSPORT)
 public class BuildCraftSilicon extends BuildCraftMod {
@@ -58,10 +55,10 @@ public class BuildCraftSilicon extends BuildCraftMod {
 	public static ItemRedstoneChipset redstoneChipset;
 	public static BlockLaser laserBlock;
 	public static BlockLaserTable assemblyTableBlock;
-	@Instance("BuildCraft|Silicon")
+	@Mod.Instance("BuildCraft|Silicon")
 	public static BuildCraftSilicon instance;
 
-	@EventHandler
+	@Mod.EventHandler
 	public void preInit(FMLPreInitializationEvent evt) {
 		BuildCraftCore.mainConfiguration.save();
 
@@ -72,17 +69,13 @@ public class BuildCraftSilicon extends BuildCraftMod {
 		assemblyTableBlock = new BlockLaserTable();
 		CoreProxy.proxy.registerBlock(assemblyTableBlock, ItemLaserTable.class);
 
-		LanguageRegistry.addName(new ItemStack(assemblyTableBlock, 0, 0), "Assembly Table");
-		LanguageRegistry.addName(new ItemStack(assemblyTableBlock, 0, 1), "Advanced Crafting Table");
-		LanguageRegistry.addName(new ItemStack(assemblyTableBlock, 0, 2), "Integration Table");
-
 		redstoneChipset = new ItemRedstoneChipset();
 		redstoneChipset.setUnlocalizedName("redstoneChipset");
 		CoreProxy.proxy.registerItem(redstoneChipset);
 		redstoneChipset.registerItemStacks();
 	}
 
-	@EventHandler
+	@Mod.EventHandler
 	public void init(FMLInitializationEvent evt) {
 		channels = NetworkRegistry.INSTANCE.newChannel
 				(DefaultProps.NET_CHANNEL_NAME + "-SILICON", new PacketHandlerSilicon());
@@ -159,8 +152,8 @@ public class BuildCraftSilicon extends BuildCraftMod {
 		BuildcraftRecipes.assemblyTable.addRecipe(10000, ItemGate.makeGateItem(GateMaterial.REDSTONE, GateLogic.AND), Chipset.RED.getStack(), PipeWire.RED.getStack());
 
 		addGateRecipe(20000, GateMaterial.IRON, Chipset.IRON, PipeWire.RED, PipeWire.BLUE);
-		addGateRecipe(40000, GateMaterial.GOLD, Chipset.GOLD, PipeWire.RED, PipeWire.BLUE, PipeWire.YELLOW);
-		addGateRecipe(80000, GateMaterial.DIAMOND, Chipset.DIAMOND, PipeWire.RED, PipeWire.BLUE, PipeWire.YELLOW, PipeWire.GREEN);
+		addGateRecipe(40000, GateMaterial.GOLD, Chipset.GOLD, PipeWire.RED, PipeWire.BLUE, PipeWire.GREEN);
+		addGateRecipe(80000, GateMaterial.DIAMOND, Chipset.DIAMOND, PipeWire.RED, PipeWire.BLUE, PipeWire.GREEN, PipeWire.YELLOW);
 
 		// REVERSAL RECIPES
 		EnumSet<GateMaterial> materials = EnumSet.allOf(GateMaterial.class);
@@ -187,7 +180,7 @@ public class BuildCraftSilicon extends BuildCraftMod {
 		BuildcraftRecipes.assemblyTable.addRecipe(energyCost, ItemGate.makeGateItem(material, GateLogic.OR), inputs);
 	}
 
-	@EventHandler
+	@Mod.EventHandler
 	public void processIMCRequests(FMLInterModComms.IMCEvent event) {
 		InterModComms.processIMC(event);
 	}
