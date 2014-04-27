@@ -50,7 +50,7 @@ public class GateExpansionRecipe implements IIntegrationRecipe {
 	}
 
 	@Override
-	public ItemStack getOutputForInputs(ItemStack inputA, ItemStack inputB) {
+	public ItemStack getOutputForInputs(ItemStack inputA, ItemStack inputB, ItemStack[] components) {
 		if (!isValidInputA(inputA)) {
 			return null;
 		}
@@ -61,6 +61,11 @@ public class GateExpansionRecipe implements IIntegrationRecipe {
 		output.stackSize = 1;
 		ItemGate.addGateExpansion(output, expansion);
 		return output;
+	}
+
+	@Override
+	public ItemStack[] getComponents() {
+		return new ItemStack[0];
 	}
 
 	@Override

@@ -27,7 +27,9 @@ public interface IIntegrationRecipeManager {
 
 		boolean isValidInputB(ItemStack inputB);
 
-		ItemStack getOutputForInputs(ItemStack inputA, ItemStack inputB);
+		ItemStack getOutputForInputs(ItemStack inputA, ItemStack inputB, ItemStack[] components);
+
+		ItemStack[] getComponents();
 
 		ItemStack[] getExampleInputsA();
 
@@ -36,7 +38,6 @@ public interface IIntegrationRecipeManager {
 
 	/**
 	 * Add an Integration Table recipe.
-	 *
 	 */
 	void addRecipe(IIntegrationRecipe recipe);
 

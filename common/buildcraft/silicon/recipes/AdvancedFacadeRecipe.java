@@ -1,11 +1,15 @@
 package buildcraft.silicon.recipes;
 
+import buildcraft.BuildCraftTransport;
 import buildcraft.api.recipes.IIntegrationRecipeManager;
 import buildcraft.api.transport.PipeWire;
+import buildcraft.silicon.ItemRedstoneChipset;
 import buildcraft.transport.ItemFacade;
+import buildcraft.transport.ItemPipeWire;
 import buildcraft.transport.TileGenericPipe;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.oredict.OreDictionary;
 
 public class AdvancedFacadeRecipe implements IIntegrationRecipeManager.IIntegrationRecipe {
 
@@ -25,7 +29,7 @@ public class AdvancedFacadeRecipe implements IIntegrationRecipeManager.IIntegrat
 	}
 
 	@Override
-	public ItemStack getOutputForInputs(ItemStack inputA, ItemStack inputB) {
+	public ItemStack getOutputForInputs(ItemStack inputA, ItemStack inputB, ItemStack[] components) {
 		if (inputA == null || inputB == null) {
 			return null;
 		}
@@ -34,13 +38,30 @@ public class AdvancedFacadeRecipe implements IIntegrationRecipeManager.IIntegrat
 			return null;
 		}
 
+		PipeWire wire = null;
+
+		for (ItemStack stack : components) {
+			if (stack != null && stack.getItem() instanceof ItemPipeWire) {
+				wire = PipeWire.fromOrdinal(stack.getItemDamage());
+			}
+		}
+
+		if (wire == null) {
+			return null;
+		}
+
 		Block block = ItemFacade.getBlock(inputA);
 		Block block_alt = ItemFacade.getBlock(inputB);
 		int meta = ItemFacade.getMetaData(inputA);
 		int meta_alt = ItemFacade.getMetaData(inputB);
 
-		//TODO Pipe wire definition
-		return ItemFacade.getAdvancedFacade(block, block_alt, meta, meta_alt, PipeWire.RED);
+		return ItemFacade.getAdvancedFacade(block, block_alt, meta, meta_alt, wire);
+	}
+
+	@Override
+	public ItemStack[] getComponents() {
+		// Takes any pipe wire and a redstone chipset
+		return new ItemStack[]{new ItemStack(BuildCraftTransport.pipeWire, 1, OreDictionary.WILDCARD_VALUE), ItemRedstoneChipset.Chipset.RED.getStack()};
 	}
 
 	@Override
