@@ -30,7 +30,7 @@ public abstract class TileAbstractBuilder extends TileBuildCraft implements ITil
 	public static double BREAK_ENERGY = 10;
 	public static double BUILD_ENERGY = 20;
 
-	@MjBattery(maxReceivedPerCycle = 100, maxCapacity = 1000, minimumConsumption = 1)
+	@MjBattery(maxReceivedPerCycle = 100, maxCapacity = 10000, minimumConsumption = 1)
 	protected double mjStored = 0;
 
 	@NetworkData
