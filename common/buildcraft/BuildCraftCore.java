@@ -400,6 +400,14 @@ public class BuildCraftCore extends BuildCraftMod {
 	@SubscribeEvent
 	@SideOnly(Side.CLIENT)
 	public void renderLast (RenderWorldLastEvent evt) {
+		// TODO: while the urbanist is deactivated, this code can be dormant.
+		// it happens to be very expensive at run time, so we need some way
+		// to operate it only when releval (e.g. in the cycle following a
+		// click request).
+		if (true) {
+			return;
+		}
+
 		/**
 		 * Note (SpaceToad): Why on earth this thing eventually worked out is a
 		 * mystery to me. In particular, all the examples I got computed y in
