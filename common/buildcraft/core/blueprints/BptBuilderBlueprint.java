@@ -211,48 +211,53 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 				return null;
 			}
 
-			boolean getNext = false;
-
 			try {
-				getNext = !slot.schematic.ignoreBuilding()
-						&& !slot.isAlreadyBuilt(context);
+				if (!slot.isAlreadyBuilt(context)) {
+					if (slot.mode == Mode.ClearIfInvalid) {
+						if (BuildCraftAPI.isSoftBlock(world, slot.x, slot.y,
+								slot.z)
+								|| BlockUtil.isUnbreakableBlock(world, slot.x,
+										slot.y, slot.z)) {
+							iterator.remove();
+						} else {
+							if (setupForDestroy(builder, context, slot)) {
+								iterator.remove();
+								postProcessing.add(slot);
+								clearedLocations.add(new BlockIndex(slot.x,
+										slot.y, slot.z));
+								return slot;
+							}
+						}
+					} else if (!slot.schematic.doNotBuild()) {
+						if (BuildCraftAPI.isSoftBlock(world, slot.x, slot.y,
+								slot.z)) {
+							if (checkRequirements(builder, slot.schematic)) {
+								useRequirements(builder, slot);
+
+								iterator.remove();
+								postProcessing.add(slot);
+								builtLocations.add(new BlockIndex(slot.x,
+										slot.y, slot.z));
+								return slot;
+							} else {
+								// the block is not soft anymore, we can't build
+								// here.
+								// forget about it.
+								iterator.remove();
+							}
+						}
+					} else {
+						iterator.remove();
+					}
+				} else {
+					iterator.remove();
+				}
+
 			} catch (Throwable t) {
 				// Defensive code against errors in implementers
 				t.printStackTrace();
-				BCLog.logger.throwing("BptBuilderBlueprint", "internalGetBlock", t);
-				getNext = false;
-			}
-
-			if (getNext) {
-				if (slot.mode == Mode.ClearIfInvalid) {
-					if (BuildCraftAPI.isSoftBlock(world, slot.x, slot.y, slot.z)
-							|| BlockUtil.isUnbreakableBlock(world, slot.x, slot.y, slot.z)) {
-						iterator.remove();
-					} else {
-						if (setupForDestroy(builder, context, slot)) {
-							iterator.remove();
-							postProcessing.add(slot);
-							clearedLocations.add(new BlockIndex(slot.x, slot.y, slot.z));
-							return slot;
-						}
-					}
-				} else {
-					if (BuildCraftAPI.isSoftBlock(world, slot.x, slot.y, slot.z)) {
-						if (checkRequirements(builder, slot.schematic)) {
-							useRequirements(builder, slot);
-
-							iterator.remove();
-							postProcessing.add(slot);
-							builtLocations.add(new BlockIndex(slot.x, slot.y, slot.z));
-							return slot;
-						} else {
-							// the block is not soft anymore, we can't build here.
-							// forget about it.
-							iterator.remove();
-						}
-					}
-				}
-			} else {
+				BCLog.logger.throwing("BptBuilderBlueprint",
+						"internalGetBlock", t);
 				iterator.remove();
 			}
 		}

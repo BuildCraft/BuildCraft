@@ -35,7 +35,7 @@ public class SchematicFluid extends SchematicBlock {
 		if (meta == 0) {
 			return block == context.world().getBlock(x, y, z) && context.world().getBlockMetadata(x, y, z) == 0;
 		} else {
-			return true;
+			return block == context.world().getBlock(x, y, z);
 		}
 	}
 
@@ -45,7 +45,7 @@ public class SchematicFluid extends SchematicBlock {
 	}
 
 	@Override
-	public boolean ignoreBuilding() {
+	public boolean doNotBuild() {
 		return meta != 0;
 	}
 

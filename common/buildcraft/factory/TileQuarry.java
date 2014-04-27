@@ -114,12 +114,14 @@ public class TileQuarry extends TileAbstractBuilder implements IMachine {
 	}
 
 	private void createArm() {
-		worldObj.spawnEntityInWorld(new EntityMechanicalArm(worldObj, box.xMin
-				+ CoreConstants.PIPE_MAX_POS, yCoord + box.sizeY ()
-				- 1 + CoreConstants.PIPE_MIN_POS, box.zMin
-				+ CoreConstants.PIPE_MAX_POS, box.sizeX () - 2
-				+ CoreConstants.PIPE_MIN_POS * 2, box.sizeZ() - 2
-				+ CoreConstants.PIPE_MIN_POS * 2, this));
+		worldObj.spawnEntityInWorld
+		(new EntityMechanicalArm(worldObj,
+				box.xMin + CoreConstants.PIPE_MAX_POS,
+				yCoord + box.sizeY () - 1 + CoreConstants.PIPE_MIN_POS,
+				box.zMin + CoreConstants.PIPE_MAX_POS,
+				box.sizeX () - 2 + CoreConstants.PIPE_MIN_POS * 2,
+				box.sizeZ() - 2 + CoreConstants.PIPE_MIN_POS * 2,
+				this));
 	}
 
 	// Callback from the arm once it's created

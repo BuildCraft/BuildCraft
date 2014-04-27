@@ -81,7 +81,7 @@ public class SchematicBlock extends SchematicBlockBase  implements Comparable<Sc
 	 * will not be asked on such a block, and building will not be called.
 	 */
 	@Override
-	public boolean ignoreBuilding() {
+	public boolean doNotBuild() {
 		return false;
 	}
 
