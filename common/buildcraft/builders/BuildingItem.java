@@ -25,6 +25,7 @@ import buildcraft.core.blueprints.BuildingSlot;
 import buildcraft.core.blueprints.BuildingSlotBlock;
 import buildcraft.core.blueprints.BuildingSlotEntity;
 import buildcraft.core.blueprints.IBuilder;
+import buildcraft.core.utils.BlockUtil;
 
 public class BuildingItem implements IBuilder {
 
