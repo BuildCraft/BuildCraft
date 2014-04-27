@@ -239,12 +239,11 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 								builtLocations.add(new BlockIndex(slot.x,
 										slot.y, slot.z));
 								return slot;
-							} else {
-								// the block is not soft anymore, we can't build
-								// here.
-								// forget about it.
-								iterator.remove();
 							}
+						} else {
+							// the block is not soft anymore, we can't build
+							// here. Forget about it.
+							iterator.remove();
 						}
 					} else {
 						iterator.remove();
@@ -252,7 +251,6 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 				} else {
 					iterator.remove();
 				}
-
 			} catch (Throwable t) {
 				// Defensive code against errors in implementers
 				t.printStackTrace();
