@@ -77,6 +77,8 @@ public class TileQuarry extends TileAbstractBuilder implements IMachine {
 	boolean isAlive;
 	public EntityPlayer placedBy;
 
+	boolean frameProducer = true;
+
 	public TileQuarry () {
 		box.kind = Kind.STRIPES;
 	}
@@ -478,6 +480,8 @@ public class TileQuarry extends TileAbstractBuilder implements IMachine {
 		}
 
 		arm = null;
+
+		frameProducer = false;
 	}
 
 	@Override
@@ -635,12 +639,20 @@ public class TileQuarry extends TileAbstractBuilder implements IMachine {
 
 	@Override
 	public ItemStack getStackInSlot(int i) {
-		return new ItemStack(BuildCraftFactory.frameBlock);
+		if (frameProducer) {
+			return new ItemStack(BuildCraftFactory.frameBlock);
+		} else {
+			return null;
+		}
 	}
 
 	@Override
 	public ItemStack decrStackSize(int i, int j) {
-		return new ItemStack(BuildCraftFactory.frameBlock, j);
+		if (frameProducer) {
+			return new ItemStack(BuildCraftFactory.frameBlock, j);
+		} else {
+			return null;
+		}
 	}
 
 	@Override
