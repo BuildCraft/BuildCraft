@@ -57,10 +57,8 @@ public class GuiIntegrationTable extends GuiLaserTable {
 		int cornerX = (width - xSize) / 2;
 		int cornerY = (height - ySize) / 2;
 		if (integrationTable.getEnergy() > 0) {
-			if (flash)
-				drawTexturedModalRect(cornerX + 13, cornerY + 40, 0, 166, 98, 31);
 			int progress = integrationTable.getProgressScaled(98);
-			drawTexturedModalRect(cornerX + 13, cornerY + 40, 0, flash ? 190 : 214, progress, 31);
+			drawTexturedModalRect(cornerX + 13, cornerY + 40, 0, flash ? 221 : 197, progress, 24);
 		}
 	}
 }
