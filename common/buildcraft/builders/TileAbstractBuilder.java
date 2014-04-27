@@ -28,9 +28,16 @@ import buildcraft.core.network.RPCSide;
 public abstract class TileAbstractBuilder extends TileBuildCraft implements ITileBuilder, IInventory, IBoxProvider {
 
 	public static double BREAK_ENERGY = 10;
-	public static double BUILD_ENERGY = 20;
+	public static final double BUILD_ENERGY = 20;
 
-	@MjBattery(maxReceivedPerCycle = 100, maxCapacity = 10000, minimumConsumption = 1)
+	/**
+	 * Computes the maximym amount of energy required to build a full chest,
+	 * plus a safeguard. That's a nice way to evaluate maximum amount of energy
+	 * that need to be in a builder.
+	 */
+	private static final double FULL_CHEST_ENERGY = 9 * 3 * 64 * BUILD_ENERGY + 1000;
+
+	@MjBattery(maxReceivedPerCycle = 100, maxCapacity = FULL_CHEST_ENERGY, minimumConsumption = 1)
 	protected double mjStored = 0;
 
 	@NetworkData
