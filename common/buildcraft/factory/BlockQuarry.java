@@ -8,8 +8,14 @@
  */
 package buildcraft.factory;
 
-import java.util.ArrayList;
-
+import buildcraft.BuildCraftFactory;
+import buildcraft.api.tools.IToolWrench;
+import buildcraft.core.BlockBuildCraft;
+import buildcraft.core.Box;
+import buildcraft.core.CreativeTabBuildCraft;
+import buildcraft.core.utils.Utils;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
@@ -22,14 +28,8 @@ import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
-import buildcraft.BuildCraftFactory;
-import buildcraft.api.tools.IToolWrench;
-import buildcraft.core.BlockBuildCraft;
-import buildcraft.core.Box;
-import buildcraft.core.CreativeTabBuildCraft;
-import buildcraft.core.utils.Utils;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+
+import java.util.ArrayList;
 
 public class BlockQuarry extends BlockBuildCraft {
 
@@ -54,8 +54,10 @@ public class BlockQuarry extends BlockBuildCraft {
 
 		world.setBlockMetadataWithNotify(i, j, k, orientation.getOpposite().ordinal(), 1);
 		if (entityliving instanceof EntityPlayer) {
-			TileQuarry tq = (TileQuarry) world.getTileEntity(i, j, k);
-			tq.placedBy = (EntityPlayer) entityliving;
+			TileEntity tile = world.getTileEntity(i, j, k);
+			if (tile instanceof TileQuarry) {
+				((TileQuarry) tile).placedBy = (EntityPlayer) entityliving;
+			}
 		}
 	}
 
@@ -174,8 +176,6 @@ public class BlockQuarry extends BlockBuildCraft {
 			}
 			quarry.destroy();
 		}
-
-		Utils.preDestroyBlock(world, i, j, k);
 
 		super.breakBlock(world, i, j, k, block, par6);
 	}

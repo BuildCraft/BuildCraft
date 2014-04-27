@@ -8,20 +8,12 @@
  */
 package buildcraft.builders;
 
-import io.netty.buffer.ByteBuf;
-
-import java.io.IOException;
-
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.AxisAlignedBB;
 import buildcraft.BuildCraftCore;
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.filler.FillerManager;
-import buildcraft.api.filler.IFillerPattern;
 import buildcraft.api.gates.IAction;
 import buildcraft.api.gates.IActionReceptor;
+import buildcraft.builders.filler.pattern.FillerPattern;
 import buildcraft.builders.filler.pattern.PatternFill;
 import buildcraft.builders.triggers.ActionFiller;
 import buildcraft.core.Box;
@@ -30,18 +22,21 @@ import buildcraft.core.IMachine;
 import buildcraft.core.blueprints.BptBuilderTemplate;
 import buildcraft.core.blueprints.BptContext;
 import buildcraft.core.inventory.SimpleInventory;
-import buildcraft.core.network.PacketPayload;
-import buildcraft.core.network.PacketUpdate;
-import buildcraft.core.network.RPC;
-import buildcraft.core.network.RPCHandler;
-import buildcraft.core.network.RPCSide;
+import buildcraft.core.network.*;
 import buildcraft.core.triggers.ActionMachineControl;
 import buildcraft.core.triggers.ActionMachineControl.Mode;
 import buildcraft.core.utils.Utils;
+import io.netty.buffer.ByteBuf;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.AxisAlignedBB;
+
+import java.io.IOException;
 
 public class TileFiller extends TileAbstractBuilder implements IMachine, IActionReceptor {
 
-	public IFillerPattern currentPattern = PatternFill.INSTANCE;
+	public FillerPattern currentPattern = PatternFill.INSTANCE;
 
 	private BptBuilderTemplate currentTemplate;
 	private BptContext context;
@@ -84,12 +79,6 @@ public class TileFiller extends TileAbstractBuilder implements IMachine, IAction
 			return;
 		}
 
-		if (done) {
-			if (lastMode == Mode.Loop) {
-				done = false;
-			}
-		}
-
 		if (lastMode == Mode.Off) {
 			return;
 		}
@@ -102,10 +91,18 @@ public class TileFiller extends TileAbstractBuilder implements IMachine, IAction
 			return;
 		}
 
+		boolean oldDone = done;
+
+		if (done) {
+			if (lastMode == Mode.Loop) {
+				done = false;
+			} else {
+				return;
+			}
+		}
+
 		if (currentPattern != null && currentTemplate == null) {
-			currentTemplate = new BptBuilderTemplate(
-					currentPattern.getTemplate(box), getWorld(), box.xMin,
-					box.yMin, box.zMin);
+			currentTemplate = currentPattern.getTemplateBuilder(box, getWorld());
 			context = currentTemplate.getContext();
 		}
 
@@ -115,8 +112,11 @@ public class TileFiller extends TileAbstractBuilder implements IMachine, IAction
 			if (currentTemplate.isDone(this)) {
 				done = true;
 				currentTemplate = null;
-				sendNetworkUpdate();
 			}
+		}
+
+		if (oldDone != done) {
+			sendNetworkUpdate();
 		}
 	}
 
@@ -157,7 +157,7 @@ public class TileFiller extends TileAbstractBuilder implements IMachine, IAction
 		inv.readFromNBT(nbt);
 
 		if (nbt.hasKey("pattern")) {
-			currentPattern = FillerManager.registry.getPattern(nbt.getString("pattern"));
+			currentPattern = (FillerPattern) FillerManager.registry.getPattern(nbt.getString("pattern"));
 		}
 
 		if (currentPattern == null) {
@@ -211,7 +211,7 @@ public class TileFiller extends TileAbstractBuilder implements IMachine, IAction
 		destroy();
 	}
 
-	public void setPattern(IFillerPattern pattern) {
+	public void setPattern(FillerPattern pattern) {
 		if (pattern != null && currentPattern != pattern) {
 			currentPattern = pattern;
 			currentTemplate = null;
@@ -238,7 +238,7 @@ public class TileFiller extends TileAbstractBuilder implements IMachine, IAction
 		boolean initialized = box.isInitialized();
 		box.readFromStream(data);
 		done = data.readBoolean();
-		setPattern(FillerManager.registry.getPattern(Utils.readUTF(data)));
+		setPattern((FillerPattern) FillerManager.registry.getPattern(Utils.readUTF(data)));
 
 		worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
 	}
@@ -300,13 +300,13 @@ public class TileFiller extends TileAbstractBuilder implements IMachine, IAction
 		return true;
 	}
 
-	public void rpcSetPatternFromString (String name) {
+	public void rpcSetPatternFromString(String name) {
 		RPCHandler.rpcServer(this, "setPatternFromString", name);
 	}
 
-	@RPC (RPCSide.SERVER)
-	public void setPatternFromString (String name) {
-		setPattern(FillerManager.registry.getPattern(name));
+	@RPC(RPCSide.SERVER)
+	public void setPatternFromString(String name) {
+		setPattern((FillerPattern) FillerManager.registry.getPattern(name));
 	}
 
 	@Override
@@ -321,7 +321,7 @@ public class TileFiller extends TileAbstractBuilder implements IMachine, IAction
 
 	@Override
 	public AxisAlignedBB getRenderBoundingBox() {
-		return new Box (this).extendToEncompass(box).expand(50).getBoundingBox();
+		return new Box(this).extendToEncompass(box).expand(50).getBoundingBox();
 	}
 
 	@Override

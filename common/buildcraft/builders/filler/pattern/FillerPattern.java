@@ -8,19 +8,22 @@
  */
 package buildcraft.builders.filler.pattern;
 
-import java.util.Map;
-import java.util.TreeMap;
-
-import net.minecraft.block.Block;
-import net.minecraft.client.renderer.texture.IIconRegister;
-import net.minecraft.util.IIcon;
 import buildcraft.api.blueprints.SchematicMask;
 import buildcraft.api.blueprints.SchematicRegistry;
 import buildcraft.api.filler.IFillerPattern;
 import buildcraft.core.Box;
 import buildcraft.core.blueprints.Blueprint;
+import buildcraft.core.blueprints.BlueprintBase;
+import buildcraft.core.blueprints.BptBuilderTemplate;
 import buildcraft.core.blueprints.Template;
 import buildcraft.core.utils.StringUtils;
+import net.minecraft.block.Block;
+import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.util.IIcon;
+import net.minecraft.world.World;
+
+import java.util.Map;
+import java.util.TreeMap;
 
 public abstract class FillerPattern implements IFillerPattern {
 
@@ -30,7 +33,7 @@ public abstract class FillerPattern implements IFillerPattern {
 
 	public FillerPattern(String tag) {
 		this.tag = tag;
-		patterns.put(getUniqueTag (), this);
+		patterns.put(getUniqueTag(), this);
 	}
 
 	@Override
@@ -61,12 +64,14 @@ public abstract class FillerPattern implements IFillerPattern {
 	 * Generates a filling in a given area
 	 */
 	public static void fill(int xMin, int yMin, int zMin, int xMax, int yMax,
-			int zMax, Template template) {
+							int zMax, Template template) {
 
 		for (int y = yMin; y <= yMax; ++y) {
 			for (int x = xMin; x <= xMax; ++x) {
 				for (int z = zMin; z <= zMax; ++z) {
-					template.contents[x][y][z] = new SchematicMask(true);
+					if (isValid(x, y, z, template)) {
+						template.contents[x][y][z] = new SchematicMask(true);
+					}
 				}
 			}
 		}
@@ -81,7 +86,9 @@ public abstract class FillerPattern implements IFillerPattern {
 		for (int y = yMax; y >= yMin; y--) {
 			for (int x = xMin; x <= xMax; ++x) {
 				for (int z = zMin; z <= zMax; ++z) {
-					template.contents[x][y][z] = null;
+					if (isValid(x, y, z, template)) {
+						template.contents[x][y][z] = null;
+					}
 				}
 			}
 		}
@@ -96,17 +103,20 @@ public abstract class FillerPattern implements IFillerPattern {
 		for (int x = xMin; x <= xMax; ++x) {
 			for (int z = zMin; z <= zMax; ++z) {
 				for (int y = yMax; y >= yMin; --y) {
-					template.contents [x][y][z] = new SchematicMask(true);
+					if (isValid(x, y, z, template)) {
+						template.contents[x][y][z] = new SchematicMask(true);
+					}
 				}
 			}
 		}
 	}
 
-	@Override
-	public Blueprint getBlueprint (Box box, Block block) {
-		Blueprint result = new Blueprint (box.sizeX(), box.sizeY(), box.sizeZ());
+	public abstract Template getTemplate(Box box, World world);
 
-		Template tmpl = getTemplate(box);
+	public Blueprint getBlueprint(Box box, World world, Block block) {
+		Blueprint result = new Blueprint(box.sizeX(), box.sizeY(), box.sizeZ());
+
+		Template tmpl = getTemplate(box, world);
 
 		for (int x = 0; x < box.sizeX(); ++x) {
 			for (int y = 0; y < box.sizeY(); ++y) {
@@ -121,5 +131,13 @@ public abstract class FillerPattern implements IFillerPattern {
 		}
 
 		return result;
+	}
+
+	public BptBuilderTemplate getTemplateBuilder(Box box, World world) {
+		return new BptBuilderTemplate(getTemplate(box, world), world, box.xMin, box.yMin, box.zMin);
+	}
+
+	private static boolean isValid(int x, int y, int z, BlueprintBase bpt) {
+		return x >= 0 && y >= 0 && z >= 0 && x < bpt.sizeX && y < bpt.sizeY && z < bpt.sizeZ;
 	}
 }

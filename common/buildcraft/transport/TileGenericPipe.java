@@ -10,6 +10,7 @@ package buildcraft.transport;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftTransport;
+import buildcraft.api.core.BCLog;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.core.Position;
 import buildcraft.api.core.SafeTimeTracker;
@@ -27,7 +28,6 @@ import buildcraft.core.ITileBufferHolder;
 import buildcraft.core.TileBuffer;
 import buildcraft.core.inventory.InvUtils;
 import buildcraft.core.network.*;
-import buildcraft.core.utils.BCLog;
 import buildcraft.core.utils.Utils;
 import buildcraft.transport.gates.GateDefinition;
 import buildcraft.transport.gates.GateFactory;

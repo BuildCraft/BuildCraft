@@ -8,28 +8,30 @@
  */
 package buildcraft.core.blueprints;
 
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.ListIterator;
-import java.util.Map.Entry;
-
-import net.minecraft.init.Blocks;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.world.World;
-import net.minecraft.world.WorldSettings.GameType;
 import buildcraft.api.blueprints.Schematic;
 import buildcraft.api.blueprints.SchematicBlock;
 import buildcraft.api.blueprints.SchematicEntity;
-import buildcraft.api.blueprints.Translation;
+import buildcraft.api.core.BCLog;
+import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.core.StackKey;
 import buildcraft.builders.TileAbstractBuilder;
+import buildcraft.core.BlockIndex;
 import buildcraft.core.blueprints.BuildingSlotBlock.Mode;
-import buildcraft.core.utils.BCLog;
+import buildcraft.core.inventory.InventoryCopy;
+import buildcraft.core.inventory.InventoryIterator;
+import buildcraft.core.inventory.InventoryIterator.IInvSlot;
+import buildcraft.core.inventory.StackHelper;
 import buildcraft.core.utils.BlockUtil;
+import net.minecraft.init.Blocks;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.world.World;
+import net.minecraft.world.WorldSettings.GameType;
+import net.minecraftforge.common.util.ForgeDirection;
+
+import java.util.*;
+import java.util.Map.Entry;
 
 public class BptBuilderBlueprint extends BptBuilderBase {
 
@@ -37,84 +39,117 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 	private LinkedList<BuildingSlotEntity> entityList = new LinkedList<BuildingSlotEntity>();
 	private LinkedList<BuildingSlot> postProcessing = new LinkedList<BuildingSlot>();
 
+	protected TreeSet<Integer> builtEntities = new TreeSet<Integer>();
+
 	private BuildingSlotIterator iterator;
 
-	public LinkedList <ItemStack> neededItems = new LinkedList <ItemStack> ();
+	public LinkedList<ItemStack> neededItems = new LinkedList<ItemStack>();
 
 	public BptBuilderBlueprint(Blueprint bluePrint, World world, int x, int y, int z) {
 		super(bluePrint, world, x, y, z);
+	}
 
-		for (int j = bluePrint.sizeY - 1; j >= 0; --j) {
-			for (int i = 0; i < bluePrint.sizeX; ++i) {
-				for (int k = 0; k < bluePrint.sizeZ; ++k) {
+	@Override
+	protected void initialize() {
+		for (int j = blueprint.sizeY - 1; j >= 0; --j) {
+			for (int i = 0; i < blueprint.sizeX; ++i) {
+				for (int k = 0; k < blueprint.sizeZ; ++k) {
 					int xCoord = i + x - blueprint.anchorX;
 					int yCoord = j + y - blueprint.anchorY;
 					int zCoord = k + z - blueprint.anchorZ;
 
-					SchematicBlock slot = (SchematicBlock) bluePrint.contents[i][j][k];
+					if (!clearedLocations.contains(new BlockIndex(xCoord,
+							yCoord, zCoord))) {
+						SchematicBlock slot = (SchematicBlock) blueprint.contents[i][j][k];
 
-					if (slot == null) {
-						slot = new SchematicBlock();
-						slot.meta = 0;
-						slot.block = Blocks.air;
+						if (slot == null && !blueprint.excavate) {
+							continue;
+						}
+
+						if (slot == null) {
+							slot = new SchematicBlock();
+							slot.meta = 0;
+							slot.block = Blocks.air;
+						}
+
+						BuildingSlotBlock b = new BuildingSlotBlock();
+						b.schematic = slot;
+						b.x = xCoord;
+						b.y = yCoord;
+						b.z = zCoord;
+						b.mode = Mode.ClearIfInvalid;
+						b.buildStage = 0;
+
+						buildList.add(b);
 					}
-
-					BuildingSlotBlock b = new BuildingSlotBlock ();
-					b.schematic = slot;
-					b.x = xCoord;
-					b.y = yCoord;
-					b.z = zCoord;
-					b.mode = Mode.ClearIfInvalid;
-
-					buildList.add(b);
 
 				}
 			}
 		}
 
-		LinkedList<BuildingSlotBlock> tmpBuildList = new LinkedList<BuildingSlotBlock>();
+		LinkedList<BuildingSlotBlock> tmpBuildCubeList = new LinkedList<BuildingSlotBlock>();
+		LinkedList<BuildingSlotBlock> tmpBuildComplexList = new LinkedList<BuildingSlotBlock>();
 
-		for (int j = 0; j < bluePrint.sizeY; ++j) {
-			for (int i = 0; i < bluePrint.sizeX; ++i) {
-				for (int k = 0; k < bluePrint.sizeZ; ++k) {
+		for (int j = 0; j < blueprint.sizeY; ++j) {
+			for (int i = 0; i < blueprint.sizeX; ++i) {
+				for (int k = 0; k < blueprint.sizeZ; ++k) {
 					int xCoord = i + x - blueprint.anchorX;
 					int yCoord = j + y - blueprint.anchorY;
 					int zCoord = k + z - blueprint.anchorZ;
 
-					SchematicBlock slot = (SchematicBlock) bluePrint.contents[i][j][k];
+					SchematicBlock slot = (SchematicBlock) blueprint.contents[i][j][k];
 
 					if (slot == null) {
 						continue;
 					}
 
-					BuildingSlotBlock b = new BuildingSlotBlock ();
+					BuildingSlotBlock b = new BuildingSlotBlock();
 					b.schematic = slot;
 					b.x = xCoord;
 					b.y = yCoord;
 					b.z = zCoord;
 					b.mode = Mode.Build;
 
-					tmpBuildList.add (b);
+					if (!builtLocations.contains(new BlockIndex(xCoord, yCoord,
+							zCoord))) {
+
+						if (((SchematicBlock) b.schematic).block.isOpaqueCube()) {
+							tmpBuildCubeList.add(b);
+							b.buildStage = 1;
+						} else {
+							tmpBuildComplexList.add(b);
+							b.buildStage = 2;
+						}
+					} else {
+						postProcessing.add(b);
+					}
 				}
 			}
 		}
 
-		Collections.sort(tmpBuildList);
+		Collections.sort(tmpBuildCubeList);
+		Collections.sort(tmpBuildComplexList);
 
-		buildList.addAll(tmpBuildList);
+		buildList.addAll(tmpBuildCubeList);
+		buildList.addAll(tmpBuildComplexList);
 
 		iterator = new BuildingSlotIterator(buildList);
 
-		Translation transform = new Translation();
+		int seqId = 0;
 
-		transform.x = x - blueprint.anchorX;
-		transform.y = y - blueprint.anchorY;
-		transform.z = z - blueprint.anchorZ;
+		for (SchematicEntity e : ((Blueprint) blueprint).entities) {
 
-		for (SchematicEntity e : bluePrint.entities) {
 			BuildingSlotEntity b = new BuildingSlotEntity();
 			b.schematic = e;
-			entityList.add(b);
+			b.sequenceNumber = seqId;
+
+			if (!builtEntities.contains(seqId)) {
+				entityList.add(b);
+			} else {
+				postProcessing.add(b);
+			}
+
+			seqId++;
 		}
 
 		recomputeNeededItems();
@@ -145,7 +180,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 
 		if (entityList.size() != 0) {
 			BuildingSlot slot = internalGetNextEntity(world, inv, entityList);
-			checkDone ();
+			checkDone();
 
 			if (slot != null) {
 				return slot;
@@ -165,42 +200,56 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 		while (iterator.hasNext()) {
 			BuildingSlotBlock slot = iterator.next();
 
-			boolean getNext = false;
+			if (slot.buildStage > buildList.getFirst().buildStage) {
+				iterator.reset();
+				return null;
+			}
 
 			try {
-				getNext = !slot.schematic.ignoreBuilding()
-						&& !slot.isAlreadyBuilt(context);
+				if (!slot.isAlreadyBuilt(context)) {
+					if (slot.mode == Mode.ClearIfInvalid) {
+						if (BuildCraftAPI.isSoftBlock(world, slot.x, slot.y,
+								slot.z)
+								|| BlockUtil.isUnbreakableBlock(world, slot.x,
+								slot.y, slot.z)) {
+							iterator.remove();
+						} else {
+							if (setupForDestroy(builder, context, slot)) {
+								iterator.remove();
+								postProcessing.add(slot);
+								clearedLocations.add(new BlockIndex(slot.x,
+										slot.y, slot.z));
+								return slot;
+							}
+						}
+					} else if (!slot.schematic.doNotBuild()) {
+						if (BuildCraftAPI.isSoftBlock(world, slot.x, slot.y,
+								slot.z)) {
+							if (checkRequirements(builder, slot.schematic)) {
+								useRequirements(builder, slot);
+
+								iterator.remove();
+								postProcessing.add(slot);
+								builtLocations.add(new BlockIndex(slot.x,
+										slot.y, slot.z));
+								return slot;
+							}
+						} else {
+							// the block is not soft anymore, we can't build
+							// here. Forget about it.
+							iterator.remove();
+						}
+					} else {
+						iterator.remove();
+					}
+				} else {
+					iterator.remove();
+				}
 			} catch (Throwable t) {
 				// Defensive code against errors in implementers
 				t.printStackTrace();
-				BCLog.logger.throwing("BptBuilderBlueprint", "internalGetBlock", t);
-				getNext = false;
-			}
-
-			if (getNext) {
-				if (slot.mode == Mode.ClearIfInvalid) {
-					if (BlockUtil.isSoftBlock(world, slot.x, slot.y, slot.z)
-							|| BlockUtil.isUnbreakableBlock(world, slot.x, slot.y, slot.z)) {
-						iterator.remove();
-					} else {
-						if (setupForDestroy(builder, context, slot)) {
-							iterator.remove();
-							postProcessing.add(slot);
-							return slot;
-						}
-					}
-				} else {
-					if (BlockUtil.isSoftBlock(world, slot.x, slot.y, slot.z)
-							&& checkRequirements(builder,
-									slot.schematic)) {
-						useRequirements(builder, slot);
-
-						iterator.remove();
-						postProcessing.add(slot);
-						return slot;
-					}
-				}
-			} else {
+				BCLog.logger.throwing("BptBuilderBlueprint",
+						"internalGetBlock", t);
 				iterator.remove();
 			}
 		}
@@ -209,7 +258,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 	}
 
 	private BuildingSlot internalGetNextEntity(World world,
-			TileAbstractBuilder builder, LinkedList<BuildingSlotEntity> list) {
+											   TileAbstractBuilder builder, LinkedList<BuildingSlotEntity> list) {
 		Iterator<BuildingSlotEntity> it = list.iterator();
 
 		while (it.hasNext()) {
@@ -223,6 +272,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 
 					it.remove();
 					postProcessing.add(slot);
+					builtEntities.add(slot.sequenceNumber);
 					return slot;
 				}
 			}
@@ -235,7 +285,6 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 		double energyRequired = 0;
 
 		LinkedList<ItemStack> tmpReq = new LinkedList<ItemStack>();
-		LinkedList<ItemStack> tmpInv = new LinkedList<ItemStack>();
 
 		try {
 			for (ItemStack stk : slot.getRequirements(context)) {
@@ -258,22 +307,17 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 			return true;
 		}
 
-		int size = builder.getSizeInventory();
-		for (int i = 0; i < size; ++i) {
-			if (!builder.isBuildingMaterialSlot(i)) {
-				continue;
-			}
-
-			if (builder.getStackInSlot(i) != null) {
-				tmpInv.add(builder.getStackInSlot(i).copy());
-			}
-		}
-
 		for (ItemStack reqStk : tmpReq) {
-			for (ItemStack invStk : tmpInv) {
-				if (invStk != null && invStk.stackSize > 0 && isEqual (reqStk, invStk)) {
+			for (IInvSlot slotInv : InventoryIterator.getIterable(new InventoryCopy(builder), ForgeDirection.UNKNOWN)) {
+				if (!builder.isBuildingMaterialSlot(slotInv.getIndex())) {
+
+				}
+
+				ItemStack invStk = slotInv.getStackInSlot();
+
+				if (invStk != null && invStk.stackSize > 0 && StackHelper.isCraftingEquivalent(reqStk, invStk, true)) {
 					try {
-						slot.useItem(context, reqStk, invStk);
+						slot.useItem(context, reqStk, slotInv);
 					} catch (Throwable t) {
 						// Defensive code against errors in implementers
 						t.printStackTrace();
@@ -315,7 +359,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 
 		builder.consumeEnergy(energyRequired);
 
-		if (context.world ().getWorldInfo().getGameType() == GameType.CREATIVE) {
+		if (context.world().getWorldInfo().getGameType() == GameType.CREATIVE) {
 			for (ItemStack s : slot.getRequirements(context)) {
 				slot.addStackConsumed(s);
 			}
@@ -329,28 +373,22 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 			ItemStack reqStk = itr.next();
 			boolean smallStack = reqStk.stackSize == 1;
 			ItemStack usedStack = reqStk;
-			int size = builder.getSizeInventory();
-			for (int i = 0; i < size; ++i) {
-				if (!builder.isBuildingMaterialSlot(i)) {
+
+			for (IInvSlot slotInv : InventoryIterator.getIterable(builder, ForgeDirection.UNKNOWN)) {
+				if (!builder.isBuildingMaterialSlot(slotInv.getIndex())) {
 
 				}
 
-				ItemStack invStk = builder.getStackInSlot(i);
+				ItemStack invStk = slotInv.getStackInSlot();
 
-				if (invStk != null && invStk.stackSize > 0 && isEqual (reqStk, invStk)) {
+				if (invStk != null && invStk.stackSize > 0 && StackHelper.isCraftingEquivalent(reqStk, invStk, true)) {
 					try {
-						usedStack = slot.getSchematic().useItem(context, reqStk, invStk);
-						slot.addStackConsumed (usedStack);
+						usedStack = slot.getSchematic().useItem(context, reqStk, slotInv);
+						slot.addStackConsumed(usedStack);
 					} catch (Throwable t) {
 						// Defensive code against errors in implementers
 						t.printStackTrace();
 						BCLog.logger.throwing("BptBuilderBlueprint", "useRequirements", t);
-					}
-
-					if (invStk.stackSize == 0) {
-						builder.setInventorySlotContents(i, null);
-					} else {
-						builder.setInventorySlotContents(i, invStk);
 					}
 
 					if (reqStk.stackSize == 0) {
@@ -362,6 +400,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 			if (reqStk.stackSize != 0) {
 				return;
 			}
+
 			if (smallStack) {
 				itr.set(usedStack); // set to the actual item used.
 			}
@@ -370,35 +409,10 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 		return;
 	}
 
-	private boolean isEqual(ItemStack reqStk, ItemStack invStk) {
-		if (reqStk.getItem() != invStk.getItem()) {
-			return false;
-		} else if (!invStk.isItemStackDamageable() && (reqStk.getItemDamage() != invStk.getItemDamage())) {
-			return false;
-		}
-
-		// TODO: stackTagCompound may or may not be relevant. In particular, TMI
-		// adds some compounds to all objects and kills the comparions. Let's
-		// avoid considering for now, and later allow mods to provide they
-		// own item comparator
-		/*else if (reqStk.stackTagCompound != null && invStk.stackTagCompound == null) {
-			return false;
-		} else if (reqStk.stackTagCompound == null && invStk.stackTagCompound != null) {
-			return false;
-		} else if (reqStk.stackTagCompound != null && !reqStk.stackTagCompound.equals(invStk.stackTagCompound)) {
-			return false;
-		}*/
-
-		else {
-			return true;
-		}
-	}
-
-
 	public void recomputeNeededItems() {
 		neededItems.clear();
 
-		HashMap <StackKey, Integer> computeStacks = new HashMap <StackKey, Integer> ();
+		HashMap<StackKey, Integer> computeStacks = new HashMap<StackKey, Integer>();
 
 		for (BuildingSlot slot : buildList) {
 			LinkedList<ItemStack> stacks = new LinkedList<ItemStack>();
@@ -465,7 +479,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 			neededItems.add(newStack);
 		}
 
-		LinkedList <ItemStack> sortedList = new LinkedList <ItemStack> ();
+		LinkedList<ItemStack> sortedList = new LinkedList<ItemStack>();
 
 		for (ItemStack toInsert : neededItems) {
 			int index = 0;
@@ -487,7 +501,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 		}
 
 
-		Collections.sort (neededItems, new Comparator<ItemStack>() {
+		Collections.sort(neededItems, new Comparator<ItemStack>() {
 			@Override
 			public int compare(ItemStack o1, ItemStack o2) {
 				if (o1.stackSize > o2.stackSize) {
@@ -496,9 +510,9 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 					return 1;
 				} else if (Item.getIdFromItem(o1.getItem()) > Item.getIdFromItem(o2.getItem())) {
 					return -1;
-				}  else if (Item.getIdFromItem(o1.getItem()) < Item.getIdFromItem(o2.getItem())) {
+				} else if (Item.getIdFromItem(o1.getItem()) < Item.getIdFromItem(o2.getItem())) {
 					return 1;
-				}  else if (o1.getItemDamage() > o2.getItemDamage()) {
+				} else if (o1.getItemDamage() > o2.getItemDamage()) {
 					return -1;
 				} else if (o1.getItemDamage() < o2.getItemDamage()) {
 					return 1;
@@ -520,6 +534,33 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 				t.printStackTrace();
 				BCLog.logger.throwing("BptBuilderBlueprint", "postProcessing", t);
 			}
+		}
+	}
+
+	@Override
+	public void saveBuildStateToNBT(NBTTagCompound nbt, TileAbstractBuilder builder) {
+		super.saveBuildStateToNBT(nbt, builder);
+
+		int[] entitiesBuiltArr = new int[builtEntities.size()];
+
+		int id = 0;
+
+		for (Integer i : builtEntities) {
+			entitiesBuiltArr[id] = i;
+			id++;
+		}
+
+		nbt.setIntArray("builtEntities", entitiesBuiltArr);
+	}
+
+	@Override
+	public void loadBuildStateToNBT(NBTTagCompound nbt, TileAbstractBuilder builder) {
+		super.loadBuildStateToNBT(nbt, builder);
+
+		int[] entitiesBuiltArr = nbt.getIntArray("builtEntities");
+
+		for (int i = 0; i < entitiesBuiltArr.length; ++i) {
+			builtEntities.add(i);
 		}
 	}
 

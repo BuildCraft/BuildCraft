@@ -8,14 +8,13 @@
  */
 package buildcraft.core.blueprints;
 
-import java.util.LinkedList;
-
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
-import buildcraft.api.blueprints.IBuilderContext;
-import buildcraft.api.blueprints.SchematicBlockBase;
-import buildcraft.api.blueprints.SchematicMask;
+import buildcraft.api.blueprints.*;
 import buildcraft.api.core.Position;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
+
+import java.util.LinkedList;
 
 public class BuildingSlotBlock extends BuildingSlot implements Comparable<BuildingSlotBlock> {
 
@@ -24,12 +23,16 @@ public class BuildingSlotBlock extends BuildingSlot implements Comparable<Buildi
 
 	public enum Mode {
 		ClearIfInvalid, Build
-	};
+	}
+
+	;
 
 	public Mode mode = Mode.Build;
 
+	public int buildStage = 0;
+
 	@Override
-	public SchematicBlockBase getSchematic () {
+	public SchematicBlockBase getSchematic() {
 		if (schematic == null) {
 			return new SchematicMask(false);
 		} else {
@@ -67,12 +70,12 @@ public class BuildingSlotBlock extends BuildingSlot implements Comparable<Buildi
 	}
 
 	@Override
-	public void postProcessing (IBuilderContext context) {
+	public void postProcessing(IBuilderContext context) {
 		getSchematic().postProcessing(context, x, y, z);
 	}
 
 	@Override
-	public LinkedList<ItemStack> getRequirements (IBuilderContext context) {
+	public LinkedList<ItemStack> getRequirements(IBuilderContext context) {
 		if (mode == Mode.ClearIfInvalid) {
 			return new LinkedList<ItemStack>();
 		} else {
@@ -82,7 +85,7 @@ public class BuildingSlotBlock extends BuildingSlot implements Comparable<Buildi
 
 	@Override
 	public int compareTo(BuildingSlotBlock o) {
-		if (o.schematic instanceof Comparable && schematic instanceof Comparable ) {
+		if (o.schematic instanceof Comparable && schematic instanceof Comparable) {
 			Comparable comp1 = (Comparable) schematic;
 			Comparable comp2 = (Comparable) o.schematic;
 
@@ -111,17 +114,50 @@ public class BuildingSlotBlock extends BuildingSlot implements Comparable<Buildi
 	}
 
 	@Override
-	public Position getDestination () {
-		return new Position (x + 0.5, y + 0.5, z + 0.5);
+	public Position getDestination() {
+		return new Position(x + 0.5, y + 0.5, z + 0.5);
 	}
 
 	@Override
-	public void writeCompleted (IBuilderContext context, double complete) {
+	public void writeCompleted(IBuilderContext context, double complete) {
 		getSchematic().writeCompleted(context, x, y, z, complete);
 	}
 
 	@Override
 	public boolean isAlreadyBuilt(IBuilderContext context) {
 		return schematic.isAlreadyBuilt(context, x, y, z);
+	}
+
+	@Override
+	public void writeToNBT(NBTTagCompound nbt, MappingRegistry registry) {
+		nbt.setByte("mode", (byte) mode.ordinal());
+		nbt.setInteger("x", x);
+		nbt.setInteger("y", y);
+		nbt.setInteger("z", z);
+
+		NBTTagCompound schematicNBT = new NBTTagCompound();
+		SchematicFactory.getFactory(schematic.getClass())
+				.saveSchematicToWorldNBT(schematicNBT, schematic, registry);
+		nbt.setTag("schematic", schematicNBT);
+	}
+
+	@Override
+	public void readFromNBT(NBTTagCompound nbt, MappingRegistry registry) {
+		mode = Mode.values()[nbt.getByte("mode")];
+		x = nbt.getInteger("x");
+		y = nbt.getInteger("y");
+		z = nbt.getInteger("z");
+
+		schematic = (SchematicBlockBase) SchematicFactory
+				.createSchematicFromWorldNBT(nbt.getCompoundTag("schematic"), registry);
+	}
+
+	@Override
+	public LinkedList<ItemStack> getStacksToDisplay() {
+		if (mode == Mode.ClearIfInvalid) {
+			return stackConsumed;
+		} else {
+			return getSchematic().getStacksToDisplay(stackConsumed);
+		}
 	}
 }

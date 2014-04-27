@@ -11,6 +11,7 @@ package buildcraft.builders.filler.pattern;
 import buildcraft.api.blueprints.SchematicMask;
 import buildcraft.core.Box;
 import buildcraft.core.blueprints.Template;
+import net.minecraft.world.World;
 
 
 public class PatternFrame extends FillerPattern {
@@ -20,8 +21,8 @@ public class PatternFrame extends FillerPattern {
 	}
 
 	@Override
-	public Template getTemplate(Box box) {
-		Template template = new Template (box.sizeX(), box.sizeY(), box.sizeZ());
+	public Template getTemplate(Box box, World world) {
+		Template template = new Template(box.sizeX(), box.sizeY(), box.sizeZ());
 
 		int xMin = 0;
 		int yMin = 0;
@@ -33,21 +34,21 @@ public class PatternFrame extends FillerPattern {
 
 		for (int it = 0; it < 2; it++) {
 			for (int i = 0; i < template.sizeX; ++i) {
-				template.contents [i][it * (box.sizeY() - 1)][0] = new SchematicMask (true);
-				template.contents [i][it * (box.sizeY() - 1)][template.sizeZ - 1] = new SchematicMask (true);
+				template.contents[i][it * (box.sizeY() - 1)][0] = new SchematicMask(true);
+				template.contents[i][it * (box.sizeY() - 1)][template.sizeZ - 1] = new SchematicMask(true);
 			}
 
 			for (int k = 0; k < template.sizeZ; ++k) {
-				template.contents [0][it * (box.sizeY() - 1)][k] = new SchematicMask (true);
-				template.contents [template.sizeX - 1][it * (box.sizeY() - 1)][k] = new SchematicMask (true);
+				template.contents[0][it * (box.sizeY() - 1)][k] = new SchematicMask(true);
+				template.contents[template.sizeX - 1][it * (box.sizeY() - 1)][k] = new SchematicMask(true);
 			}
 		}
 
 		for (int h = 1; h < box.sizeY(); ++h) {
-			template.contents [0][h][0] = new SchematicMask (true);
-			template.contents [0][h][template.sizeZ - 1] = new SchematicMask (true);
-			template.contents [template.sizeX - 1][h][0] = new SchematicMask (true);
-			template.contents [template.sizeX - 1][h][template.sizeZ - 1] = new SchematicMask (true);
+			template.contents[0][h][0] = new SchematicMask(true);
+			template.contents[0][h][template.sizeZ - 1] = new SchematicMask(true);
+			template.contents[template.sizeX - 1][h][0] = new SchematicMask(true);
+			template.contents[template.sizeX - 1][h][template.sizeZ - 1] = new SchematicMask(true);
 		}
 
 		return template;

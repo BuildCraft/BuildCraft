@@ -8,6 +8,11 @@
  */
 package buildcraft.builders;
 
+import buildcraft.BuildCraftCore;
+import buildcraft.core.CreativeTabBuildCraft;
+import buildcraft.core.utils.Utils;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
@@ -18,11 +23,6 @@ import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
-import buildcraft.BuildCraftCore;
-import buildcraft.core.CreativeTabBuildCraft;
-import buildcraft.core.utils.Utils;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 public class BlockMarker extends BlockContainer {
 
@@ -85,7 +85,9 @@ public class BlockMarker extends BlockContainer {
 
 	@Override
 	public boolean onBlockActivated(World world, int i, int j, int k, EntityPlayer entityplayer, int par6, float par7, float par8, float par9) {
-		((TileMarker) world.getTileEntity(i, j, k)).tryConnection();
+		TileEntity tile = world.getTileEntity(i, j, k);
+		if (tile instanceof TileMarker)
+			((TileMarker) tile).tryConnection();
 		return true;
 	}
 
@@ -112,7 +114,9 @@ public class BlockMarker extends BlockContainer {
 
 	@Override
 	public void onNeighborBlockChange(World world, int x, int y, int z, Block block) {
-		((TileMarker) world.getTileEntity(x, y, z)).updateSignals();
+		TileEntity tile = world.getTileEntity(x, y, z);
+		if (tile instanceof TileMarker)
+			((TileMarker) tile).updateSignals();
 		dropTorchIfCantStay(world, x, y, z);
 	}
 

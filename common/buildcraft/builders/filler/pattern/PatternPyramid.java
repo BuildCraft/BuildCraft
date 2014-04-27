@@ -11,6 +11,7 @@ package buildcraft.builders.filler.pattern;
 import buildcraft.api.blueprints.SchematicMask;
 import buildcraft.core.Box;
 import buildcraft.core.blueprints.Template;
+import net.minecraft.world.World;
 
 public class PatternPyramid extends FillerPattern {
 
@@ -22,7 +23,7 @@ public class PatternPyramid extends FillerPattern {
 	boolean param1 = true;
 
 	@Override
-	public Template getTemplate (Box box) {
+	public Template getTemplate(Box box, World world) {
 		int xMin = (int) box.pMin().x;
 		int yMin = (int) box.pMin().y;
 		int zMin = (int) box.pMin().z;
@@ -56,7 +57,7 @@ public class PatternPyramid extends FillerPattern {
 		while (step <= xSize / 2 && step <= zSize / 2 && height >= yMin && height <= yMax) {
 			for (int x = xMin + step; x <= xMax - step; ++x) {
 				for (int z = zMin + step; z <= zMax - step; ++z) {
-					bpt.contents [x - xMin][height - yMin][z - zMin] = new SchematicMask(true);
+					bpt.contents[x - xMin][height - yMin][z - zMin] = new SchematicMask(true);
 				}
 			}
 

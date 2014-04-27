@@ -25,6 +25,7 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import java.util.LinkedHashSet;
@@ -62,8 +63,9 @@ public class TileAssemblyTable extends TileLaserTableBase implements IMachine, I
 		List<AssemblyRecipe> result = new LinkedList<AssemblyRecipe>();
 
 		for (AssemblyRecipe recipe : AssemblyRecipeManager.INSTANCE.getRecipes()) {
-			if (recipe.canBeDone(this))
+			if (recipe.canBeDone(this)) {
 				result.add(recipe);
+			}
 		}
 
 		return result;
@@ -76,14 +78,16 @@ public class TileAssemblyTable extends TileLaserTableBase implements IMachine, I
 
 	@Override
 	public void updateEntity() { // WARNING: run only server-side, see canUpdate()
-		if (currentRecipe == null)
+		if (currentRecipe == null) {
 			return;
+		}
 
 		if (!currentRecipe.canBeDone(this)) {
 			setNextCurrentRecipe();
 
-			if (currentRecipe == null)
+			if (currentRecipe == null) {
 				return;
+			}
 		}
 
 		if (getEnergy() >= currentRecipe.getEnergyCost()) {
@@ -135,7 +139,7 @@ public class TileAssemblyTable extends TileLaserTableBase implements IMachine, I
 	public void readFromNBT(NBTTagCompound nbt) {
 		super.readFromNBT(nbt);
 
-		NBTTagList list = nbt.getTagList("planned", Utils.NBTTag_Types.NBTTagCompound.ordinal());
+		NBTTagList list = nbt.getTagList("planned", Constants.NBT.TAG_COMPOUND);
 
 		for (int i = 0; i < list.tagCount(); ++i) {
 			NBTTagCompound cpt = list.getCompoundTagAt(i);
@@ -184,8 +188,9 @@ public class TileAssemblyTable extends TileLaserTableBase implements IMachine, I
 	}
 
 	public boolean isPlanned(AssemblyRecipe recipe) {
-		if (recipe == null)
+		if (recipe == null) {
 			return false;
+		}
 
 		return plannedOutput.contains(recipe);
 	}

@@ -8,28 +8,19 @@
  */
 package buildcraft.factory;
 
-import java.util.Deque;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.Set;
-import java.util.TreeMap;
-
-import net.minecraft.block.Block;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.common.util.ForgeDirection;
-import net.minecraftforge.fluids.BlockFluidBase;
-import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidContainerRegistry;
-import net.minecraftforge.fluids.FluidRegistry;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidTankInfo;
-import net.minecraftforge.fluids.IFluidHandler;
+import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.core.BlockIndex;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.fluids.FluidUtils;
 import buildcraft.core.fluids.Tank;
 import buildcraft.core.utils.BlockUtil;
 import buildcraft.core.utils.Utils;
+import net.minecraft.block.Block;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraftforge.fluids.*;
+
+import java.util.*;
 
 public class TileFloodGate extends TileBuildCraft implements IFluidHandler {
 
@@ -107,7 +98,7 @@ public class TileFloodGate extends TileBuildCraft implements IFluidHandler {
 			boolean placed;
 			Block b = FluidUtils.getFluidBlock(fluid, true);
 
-			if(b instanceof BlockFluidBase) {
+			if (b instanceof BlockFluidBase) {
 				BlockFluidBase blockFluid = (BlockFluidBase) b;
 				placed = worldObj.setBlock(x, y, z, b, blockFluid.getMaxRenderHeightMeta(), 3);
 			} else {
@@ -211,7 +202,7 @@ public class TileFloodGate extends TileBuildCraft implements IFluidHandler {
 	}
 
 	private boolean canPlaceFluidAt(Block block, int x, int y, int z) {
-		return BlockUtil.isSoftBlock(block, worldObj, x, y, z) && !BlockUtil.isFullFluidBlock(block, worldObj, x, y, z);
+		return BuildCraftAPI.isSoftBlock(block, worldObj, x, y, z) && !BlockUtil.isFullFluidBlock(block, worldObj, x, y, z);
 	}
 
 	public void onNeighborBlockChange(Block block) {

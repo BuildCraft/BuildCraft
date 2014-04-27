@@ -44,7 +44,7 @@ public class TransactorRoundRobin extends TransactorSimple {
 					continue;
 				}
 
-				if (StackHelper.instance().canStacksMerge(stack, stackInInventory) && stackInInventory.stackSize < smallestStackSize) {
+				if (StackHelper.canStacksMerge(stack, stackInInventory) && stackInInventory.stackSize < smallestStackSize) {
 					smallestStackSize = stackInInventory.stackSize;
 					minSlot = slot;
 				}

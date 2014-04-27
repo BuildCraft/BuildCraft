@@ -8,23 +8,24 @@
  */
 package buildcraft.builders;
 
-import java.io.IOException;
-import java.util.ArrayList;
-
+import buildcraft.BuildCraftBuilders;
+import buildcraft.api.core.NetworkData;
+import buildcraft.builders.blueprints.BlueprintId;
+import buildcraft.builders.blueprints.BlueprintId.Kind;
+import buildcraft.core.TileBuildCraft;
+import buildcraft.core.blueprints.BlueprintBase;
+import buildcraft.core.inventory.InvUtils;
+import buildcraft.core.network.RPC;
+import buildcraft.core.network.RPCHandler;
+import buildcraft.core.network.RPCSide;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
-import buildcraft.BuildCraftBuilders;
-import buildcraft.builders.blueprints.BlueprintId;
-import buildcraft.core.TileBuildCraft;
-import buildcraft.core.blueprints.BlueprintBase;
-import buildcraft.core.inventory.InvUtils;
-import buildcraft.core.network.NetworkData;
-import buildcraft.core.network.RPC;
-import buildcraft.core.network.RPCHandler;
-import buildcraft.core.network.RPCSide;
+
+import java.io.IOException;
+import java.util.ArrayList;
 
 /**
  * In this implementation, the blueprint library is the interface to the
@@ -61,7 +62,7 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory {
 		super.initialize();
 
 		if (worldObj.isRemote) {
-			setCurrentPage(BuildCraftBuilders.clientDB.getPage (pageId));
+			setCurrentPage(BuildCraftBuilders.clientDB.getPage(pageId));
 		}
 	}
 
@@ -70,20 +71,20 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory {
 		selected = -1;
 	}
 
-	public void pageNext () {
+	public void pageNext() {
 		if (pageId < BuildCraftBuilders.clientDB.getPageNumber() - 1) {
 			pageId++;
 		}
 
-		setCurrentPage(BuildCraftBuilders.clientDB.getPage (pageId));
+		setCurrentPage(BuildCraftBuilders.clientDB.getPage(pageId));
 	}
 
-	public void pagePrev () {
+	public void pagePrev() {
 		if (pageId > 0) {
 			pageId--;
 		}
 
-		setCurrentPage(BuildCraftBuilders.clientDB.getPage (pageId));
+		setCurrentPage(BuildCraftBuilders.clientDB.getPage(pageId));
 	}
 
 	public void deleteSelectedBpt() {
@@ -96,7 +97,7 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory {
 				pageId--;
 			}
 
-			setCurrentPage(BuildCraftBuilders.clientDB.getPage (pageId));
+			setCurrentPage(BuildCraftBuilders.clientDB.getPage(pageId));
 		}
 	}
 
@@ -227,7 +228,7 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory {
 			setInventorySlotContents(1, stack[0]);
 			setInventorySlotContents(0, null);
 
-			BlueprintBase bpt = ItemBlueprint.loadBlueprint(stack [1]);
+			BlueprintBase bpt = ItemBlueprint.loadBlueprint(stack[1]);
 
 			if (bpt != null && uploadingPlayer != null) {
 				RPCHandler.rpcPlayer(this, "downloadBlueprintToClient",
@@ -248,19 +249,24 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory {
 		return false;
 	}
 
-	@RPC (RPCSide.CLIENT)
-	public void requestSelectedBlueprint () {
-		if (selected > -1 && selected < currentPage.size()) {
-			BlueprintBase bpt = BuildCraftBuilders.clientDB.load(currentPage.get(selected));
+	@RPC(RPCSide.CLIENT)
+	public void requestSelectedBlueprint() {
+		if (isOuputConsistent()) {
+			if (selected > -1 && selected < currentPage.size()) {
+				BlueprintBase bpt = BuildCraftBuilders.clientDB
+						.load(currentPage.get(selected));
 
-			RPCHandler.rpcServer(this, "uploadBlueprintToServer", bpt.id, bpt.getData());
-		} else {
-			RPCHandler.rpcServer(this, "uploadBlueprintToServer", null, null);
+				RPCHandler.rpcServer(this, "uploadBlueprintToServer", bpt.id,
+						bpt.getData());
+			} else {
+				RPCHandler.rpcServer(this, "uploadBlueprintToServer", null,
+						null);
+			}
 		}
 	}
 
-	@RPC (RPCSide.SERVER)
-	public void uploadBlueprintToServer (BlueprintId id, byte [] data) {
+	@RPC(RPCSide.SERVER)
+	public void uploadBlueprintToServer(BlueprintId id, byte[] data) {
 		try {
 			if (data != null) {
 				NBTTagCompound nbt = CompressedStreamTools.decompress(data);
@@ -282,8 +288,8 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory {
 		}
 	}
 
-	@RPC (RPCSide.CLIENT)
-	public void downloadBlueprintToClient (BlueprintId id, byte [] data) {
+	@RPC(RPCSide.CLIENT)
+	public void downloadBlueprintToClient(BlueprintId id, byte[] data) {
 		try {
 			NBTTagCompound nbt = CompressedStreamTools.decompress(data);
 			BlueprintBase bpt = BlueprintBase.loadBluePrint(nbt);
@@ -298,7 +304,18 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory {
 		}
 	}
 
-	public void selectBlueprint (int index) {
+	public void selectBlueprint(int index) {
 		selected = index;
+	}
+
+	private boolean isOuputConsistent() {
+		if (selected == -1 || stack[2] == null) {
+			return false;
+		}
+
+		return (stack[2].getItem() instanceof ItemBlueprintStandard
+				&& currentPage.get(selected).kind == Kind.Blueprint) ||
+				(stack[2].getItem() instanceof ItemBlueprintTemplate
+						&& currentPage.get(selected).kind == Kind.Template);
 	}
 }

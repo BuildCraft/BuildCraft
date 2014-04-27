@@ -8,12 +8,6 @@
  */
 package buildcraft.core.triggers;
 
-import java.util.Locale;
-
-import net.minecraft.inventory.IInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.api.gates.ITileTrigger;
 import buildcraft.api.gates.ITrigger;
 import buildcraft.api.gates.ITriggerParameter;
@@ -21,6 +15,12 @@ import buildcraft.core.inventory.InventoryIterator;
 import buildcraft.core.inventory.InventoryIterator.IInvSlot;
 import buildcraft.core.inventory.StackHelper;
 import buildcraft.core.utils.StringUtils;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraftforge.common.util.ForgeDirection;
+
+import java.util.Locale;
 
 public class TriggerInventoryLevel extends BCTrigger implements ITileTrigger {
 
@@ -32,7 +32,9 @@ public class TriggerInventoryLevel extends BCTrigger implements ITileTrigger {
 		private TriggerType(float level) {
 			this.level = level;
 		}
-	};
+	}
+
+	;
 	public TriggerType type;
 
 	public TriggerInventoryLevel(TriggerType type) {
@@ -72,7 +74,7 @@ public class TriggerInventoryLevel extends BCTrigger implements ITileTrigger {
 			for (IInvSlot slot : InventoryIterator.getIterable((IInventory) tile, side)) {
 				if (slot.canPutStackInSlot(searchStack)) {
 					ItemStack stackInSlot = slot.getStackInSlot();
-					if (stackInSlot == null || StackHelper.instance().canStacksMerge(stackInSlot, searchStack)) {
+					if (stackInSlot == null || StackHelper.canStacksMerge(stackInSlot, searchStack)) {
 						stackSpace++;
 						foundItems += stackInSlot == null ? 0 : stackInSlot.stackSize;
 					}

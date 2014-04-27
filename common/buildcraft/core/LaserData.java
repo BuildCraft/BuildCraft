@@ -8,13 +8,13 @@
  */
 package buildcraft.core;
 
-import net.minecraft.nbt.NBTTagCompound;
+import buildcraft.api.core.NetworkData;
 import buildcraft.api.core.Position;
-import buildcraft.core.network.NetworkData;
+import net.minecraft.nbt.NBTTagCompound;
 
 public class LaserData {
 	@NetworkData
-	public Position head = new Position (0, 0, 0), tail = new Position(0, 0, 0);
+	public Position head = new Position(0, 0, 0), tail = new Position(0, 0, 0);
 
 	@NetworkData
 	public boolean isVisible = true;
@@ -29,11 +29,11 @@ public class LaserData {
 	// Size of the wave, from 0 to 1
 	public float waveSize = 1F;
 
-	public LaserData () {
+	public LaserData() {
 
 	}
 
-	public LaserData (Position tail, Position head) {
+	public LaserData(Position tail, Position head) {
 		this.tail.x = tail.x;
 		this.tail.y = tail.y;
 		this.tail.z = tail.z;
@@ -43,7 +43,7 @@ public class LaserData {
 		this.head.z = head.z;
 	}
 
-	public void update () {
+	public void update() {
 		double dx = head.x - tail.x;
 		double dy = head.y - tail.y;
 		double dz = head.z - tail.z;
@@ -54,21 +54,21 @@ public class LaserData {
 		angleY = -Math.atan2(dy, dx) * 180.0 / Math.PI;
 	}
 
-	public void iterateTexture () {
+	public void iterateTexture() {
 		laserTexAnimation = (laserTexAnimation + 1) % 40;
 	}
 
-    public void writeToNBT(NBTTagCompound nbt) {
-    	NBTTagCompound headNbt = new NBTTagCompound();
-    	head.writeToNBT(headNbt);
-    	nbt.setTag("head", headNbt);
+	public void writeToNBT(NBTTagCompound nbt) {
+		NBTTagCompound headNbt = new NBTTagCompound();
+		head.writeToNBT(headNbt);
+		nbt.setTag("head", headNbt);
 
-    	NBTTagCompound tailNbt = new NBTTagCompound();
-    	tail.writeToNBT(tailNbt);
-    	nbt.setTag("tail", tailNbt);
+		NBTTagCompound tailNbt = new NBTTagCompound();
+		tail.writeToNBT(tailNbt);
+		nbt.setTag("tail", tailNbt);
 
-    	nbt.setBoolean("isVisible", isVisible);
-    }
+		nbt.setBoolean("isVisible", isVisible);
+	}
 
 	public void readFromNBT(NBTTagCompound nbt) {
 		head.readFromNBT(nbt.getCompoundTag("head"));

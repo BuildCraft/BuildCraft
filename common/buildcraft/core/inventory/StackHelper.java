@@ -9,28 +9,15 @@
 package buildcraft.core.inventory;
 
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.oredict.OreDictionary;
 
 public class StackHelper {
-
-	private static StackHelper instance;
-
-	public static StackHelper instance() {
-		if (instance == null) {
-			instance = new StackHelper();
-		}
-		return instance;
-	}
-
-	public static void setInstance(StackHelper inst) {
-		instance = inst;
-	}
 
 	protected StackHelper() {
 	}
 
 	/* STACK MERGING */
+
 	/**
 	 * Checks if two ItemStacks are identical enough to be merged
 	 *
@@ -38,13 +25,16 @@ public class StackHelper {
 	 * @param stack2 - The second stack
 	 * @return true if stacks can be merged, false otherwise
 	 */
-	public boolean canStacksMerge(ItemStack stack1, ItemStack stack2) {
-		if (stack1 == null || stack2 == null)
+	public static boolean canStacksMerge(ItemStack stack1, ItemStack stack2) {
+		if (stack1 == null || stack2 == null) {
 			return false;
-		if (!stack1.isItemEqual(stack2))
+		}
+		if (!stack1.isItemEqual(stack2)) {
 			return false;
-		if (!ItemStack.areItemStackTagsEqual(stack1, stack2))
+		}
+		if (!ItemStack.areItemStackTagsEqual(stack1, stack2)) {
 			return false;
+		}
 		return true;
 
 	}
@@ -53,18 +43,20 @@ public class StackHelper {
 	 * Merges mergeSource into mergeTarget
 	 *
 	 * @param mergeSource - The stack to merge into mergeTarget, this stack is
-	 * not modified
+	 *                    not modified
 	 * @param mergeTarget - The target merge, this stack is modified if doMerge
-	 * is set
-	 * @param doMerge - To actually do the merge
+	 *                    is set
+	 * @param doMerge     - To actually do the merge
 	 * @return The number of items that was successfully merged.
 	 */
-	public int mergeStacks(ItemStack mergeSource, ItemStack mergeTarget, boolean doMerge) {
-		if (!canStacksMerge(mergeSource, mergeTarget))
+	public static int mergeStacks(ItemStack mergeSource, ItemStack mergeTarget, boolean doMerge) {
+		if (!canStacksMerge(mergeSource, mergeTarget)) {
 			return 0;
+		}
 		int mergeCount = Math.min(mergeTarget.getMaxStackSize() - mergeTarget.stackSize, mergeSource.stackSize);
-		if (mergeCount < 1)
+		if (mergeCount < 1) {
 			return 0;
+		}
 		if (doMerge) {
 			mergeTarget.stackSize += mergeCount;
 		}
@@ -72,26 +64,29 @@ public class StackHelper {
 	}
 
 	/* ITEM COMPARISONS */
+
 	/**
 	 * Determines whether the given ItemStack should be considered equivalent
 	 * for crafting purposes.
 	 *
-	 * @param base The stack to compare to.
-	 * @param comparison The stack to compare.
+	 * @param base          The stack to compare to.
+	 * @param comparison    The stack to compare.
 	 * @param oreDictionary true to take the Forge OreDictionary into account.
 	 * @return true if comparison should be considered a crafting equivalent for
 	 * base.
 	 */
-	public boolean isCraftingEquivalent(ItemStack base, ItemStack comparison, boolean oreDictionary) {
-		if (isMatchingItem(base, comparison, true, false))
+	public static boolean isCraftingEquivalent(ItemStack base, ItemStack comparison, boolean oreDictionary) {
+		if (isMatchingItem(base, comparison, true, false)) {
 			return true;
+		}
 
 		if (oreDictionary) {
 			int idBase = OreDictionary.getOreID(base);
 			if (idBase >= 0) {
 				for (ItemStack itemstack : OreDictionary.getOres(idBase)) {
-					if (comparison.getItem() == itemstack.getItem() && (itemstack.getItemDamage() == OreDictionary.WILDCARD_VALUE || comparison.getItemDamage() == itemstack.getItemDamage()))
+					if (comparison.getItem() == itemstack.getItem() && (itemstack.getItemDamage() == OreDictionary.WILDCARD_VALUE || comparison.getItemDamage() == itemstack.getItemDamage())) {
 						return true;
+					}
 				}
 			}
 		}
@@ -99,11 +94,12 @@ public class StackHelper {
 		return false;
 	}
 
-	public boolean isCraftingEquivalent(int oreID, ItemStack comparison) {
+	public static boolean isCraftingEquivalent(int oreID, ItemStack comparison) {
 		if (oreID >= 0) {
 			for (ItemStack itemstack : OreDictionary.getOres(oreID)) {
-				if (comparison.getItem() == itemstack.getItem() && (itemstack.getItemDamage() == OreDictionary.WILDCARD_VALUE || comparison.getItemDamage() == itemstack.getItemDamage()))
+				if (comparison.getItem() == itemstack.getItem() && (itemstack.getItemDamage() == OreDictionary.WILDCARD_VALUE || comparison.getItemDamage() == itemstack.getItemDamage())) {
 					return true;
+				}
 			}
 		}
 
@@ -114,11 +110,11 @@ public class StackHelper {
 	 * Compares item id, damage and NBT. Accepts wildcard damage. Ignores damage
 	 * entirely if the item doesn't have subtypes.
 	 *
-	 * @param base The stack to compare to.
+	 * @param base       The stack to compare to.
 	 * @param comparison The stack to compare.
 	 * @return true if id, damage and NBT match.
 	 */
-	public boolean isMatchingItem(ItemStack base, ItemStack comparison) {
+	public static boolean isMatchingItem(ItemStack base, ItemStack comparison) {
 		return isMatchingItem(base, comparison, true, true);
 	}
 
@@ -126,13 +122,13 @@ public class StackHelper {
 	 * Compares item id, and optionally damage and NBT. Accepts wildcard damage.
 	 * Ignores damage entirely if the item doesn't have subtypes.
 	 *
-	 * @param a ItemStack
-	 * @param b ItemStack
+	 * @param a           ItemStack
+	 * @param b           ItemStack
 	 * @param matchDamage
 	 * @param matchNBT
 	 * @return true if matches
 	 */
-	public boolean isMatchingItem(final ItemStack a, final ItemStack b, final boolean matchDamage, final boolean matchNBT) {
+	public static boolean isMatchingItem(final ItemStack a, final ItemStack b, final boolean matchDamage, final boolean matchNBT) {
 		if (a == null || b == null) {
 			return false;
 		}
@@ -154,11 +150,11 @@ public class StackHelper {
 		return true;
 	}
 
-	public boolean isWildcard(ItemStack stack) {
+	public static boolean isWildcard(ItemStack stack) {
 		return isWildcard(stack.getItemDamage());
 	}
 
-	public boolean isWildcard(int damage) {
+	public static boolean isWildcard(int damage) {
 		return damage == -1 || damage == OreDictionary.WILDCARD_VALUE;
 	}
 }

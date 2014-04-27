@@ -12,19 +12,19 @@ package buildcraft.api.blueprints;
 /**
  * This class allow to specify specific behavior for blocks stored in
  * blueprints:
- *
+ * <p/>
  * - what items needs to be used to create that block - how the block has to be
  * built on the world - how to rotate the block - what extra data to store /
  * load in the blueprint
- *
+ * <p/>
  * Default implementations of this can be seen in the package
  * buildcraft.api.schematics. The class SchematicUtils provide some additional
  * utilities.
- *
+ * <p/>
  * Blueprints perform "id translation" in case the block ids between a blueprint
  * and the world installation are different. Mapping is done through the
  * builder context.
- *
+ * <p/>
  * At blueprint load time, BuildCraft will check that each block id of the
  * blueprint corresponds to the block id in the installation. If not, it will
  * perform a search through the block list, and upon matching signature, it will
@@ -32,7 +32,7 @@ package buildcraft.api.blueprints;
  * such block id is found, BuildCraft will assume that the block is not
  * installed and will not load the blueprint.
  */
-public class SchematicBlockBase extends Schematic {
+public abstract class SchematicBlockBase extends Schematic {
 
 	public void writeCompleted(IBuilderContext context, int x, int y, int z, double completed) {
 
@@ -42,7 +42,7 @@ public class SchematicBlockBase extends Schematic {
 	 * Return true if the block should not be placed to the world. Requirements
 	 * will not be asked on such a block, and building will not be called.
 	 */
-	public boolean ignoreBuilding() {
+	public boolean doNotBuild() {
 		return false;
 	}
 

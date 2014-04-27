@@ -8,20 +8,24 @@
  */
 package buildcraft.core.utils;
 
+import buildcraft.BuildCraftCore;
+import buildcraft.api.core.IAreaProvider;
+import buildcraft.api.core.LaserKind;
+import buildcraft.api.core.Position;
+import buildcraft.api.transport.IPipeTile;
+import buildcraft.api.transport.IPipeTile.PipeType;
+import buildcraft.core.*;
+import buildcraft.core.inventory.ITransactor;
+import buildcraft.core.inventory.InvUtils;
+import buildcraft.core.inventory.Transactor;
+import buildcraft.core.network.BuildCraftPacket;
+import buildcraft.core.network.ISynchronizedTile;
+import buildcraft.core.network.PacketUpdate;
+import buildcraft.core.proxy.CoreProxy;
+import buildcraft.energy.TileEngine;
+import cpw.mods.fml.common.network.internal.FMLProxyPacket;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
-
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Array;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Random;
-
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.inventory.IInventory;
@@ -33,43 +37,23 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.ForgeDirection;
-import buildcraft.BuildCraftCore;
-import buildcraft.api.core.IAreaProvider;
-import buildcraft.api.core.LaserKind;
-import buildcraft.api.core.Position;
-import buildcraft.api.transport.IPipeTile;
-import buildcraft.api.transport.IPipeTile.PipeType;
-import buildcraft.core.BlockIndex;
-import buildcraft.core.DefaultProps;
-import buildcraft.core.EntityBlock;
-import buildcraft.core.IDropControlInventory;
-import buildcraft.core.IFramePipeConnection;
-import buildcraft.core.LaserData;
-import buildcraft.core.TileBuildCraft;
-import buildcraft.core.inventory.ITransactor;
-import buildcraft.core.inventory.InvUtils;
-import buildcraft.core.inventory.Transactor;
-import buildcraft.core.network.BuildCraftPacket;
-import buildcraft.core.network.ISynchronizedTile;
-import buildcraft.core.network.PacketUpdate;
-import buildcraft.core.proxy.CoreProxy;
-import buildcraft.energy.TileEngine;
-import cpw.mods.fml.common.network.internal.FMLProxyPacket;
+
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Array;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.util.*;
 
 public class Utils {
 
 	public static final Random RANDOM = new Random();
 	private static final List<ForgeDirection> directions = new ArrayList<ForgeDirection>(Arrays.asList(ForgeDirection.VALID_DIRECTIONS));
 
-	public enum NBTTag_Types {
-		NBTTagEnd, NBTTagByte, NBTTagShort,
-		NBTTagInt, NBTTagLong, NBTTagFloat,
-		NBTTagDouble, NBTTagByteArray, NBTTagString,
-		NBTTagList, NBTTagCompound, NBTTagIntArray
-	}
-
 	/* IINVENTORY HELPERS */
+
 	/**
 	 * Tries to add the passed stack to any valid inventories around the given
 	 * coordinates.
@@ -102,8 +86,8 @@ public class Utils {
 	 * rotationYaw
 	 */
 	public static ForgeDirection get2dOrientation(EntityLivingBase entityliving) {
-		ForgeDirection[] orientationTable = { ForgeDirection.SOUTH,
-				ForgeDirection.WEST, ForgeDirection.NORTH, ForgeDirection.EAST };
+		ForgeDirection[] orientationTable = {ForgeDirection.SOUTH,
+				ForgeDirection.WEST, ForgeDirection.NORTH, ForgeDirection.EAST};
 		int orientationIndex = MathHelper
 				.floor_double((entityliving.rotationYaw + 45.0) / 90.0) & 3;
 		return orientationTable[orientationIndex];
@@ -319,18 +303,18 @@ public class Utils {
 		p[6] = new Position(xMin, yMax, zMax);
 		p[7] = new Position(xMax, yMax, zMax);
 
-		lasers[0] = new LaserData (p[0], p[1]);
-		lasers[1] = new LaserData (p[0], p[2]);
-		lasers[2] = new LaserData (p[2], p[3]);
-		lasers[3] = new LaserData (p[1], p[3]);
-		lasers[4] = new LaserData (p[4], p[5]);
-		lasers[5] = new LaserData (p[4], p[6]);
-		lasers[6] = new LaserData (p[5], p[7]);
-		lasers[7] = new LaserData (p[6], p[7]);
-		lasers[8] = new LaserData (p[0], p[4]);
-		lasers[9] = new LaserData (p[1], p[5]);
-		lasers[10] = new LaserData (p[2], p[6]);
-		lasers[11] = new LaserData (p[3], p[7]);
+		lasers[0] = new LaserData(p[0], p[1]);
+		lasers[1] = new LaserData(p[0], p[2]);
+		lasers[2] = new LaserData(p[2], p[3]);
+		lasers[3] = new LaserData(p[1], p[3]);
+		lasers[4] = new LaserData(p[4], p[5]);
+		lasers[5] = new LaserData(p[4], p[6]);
+		lasers[6] = new LaserData(p[5], p[7]);
+		lasers[7] = new LaserData(p[6], p[7]);
+		lasers[8] = new LaserData(p[0], p[4]);
+		lasers[9] = new LaserData(p[1], p[5]);
+		lasers[10] = new LaserData(p[2], p[6]);
+		lasers[11] = new LaserData(p[3], p[7]);
 
 		return lasers;
 	}
@@ -425,24 +409,6 @@ public class Utils {
 
 	}
 
-	public static <T> T[] concat(T[] first, T[] second) {
-		T[] result = Arrays.copyOf(first, first.length + second.length);
-		System.arraycopy(second, 0, result, first.length, second.length);
-		return result;
-	}
-
-	public static int[] concat(int[] first, int[] second) {
-		int[] result = Arrays.copyOf(first, first.length + second.length);
-		System.arraycopy(second, 0, result, first.length, second.length);
-		return result;
-	}
-
-	public static float[] concat(float[] first, float[] second) {
-		float[] result = Arrays.copyOf(first, first.length + second.length);
-		System.arraycopy(second, 0, result, first.length, second.length);
-		return result;
-	}
-
 	public static int[] createSlotArray(int first, int count) {
 		int[] slots = new int[count];
 		for (int k = first; k < first + count; k++) {
@@ -451,30 +417,30 @@ public class Utils {
 		return slots;
 	}
 
-	public static void writeUTF (ByteBuf data, String str) {
+	public static void writeUTF(ByteBuf data, String str) {
 		try {
-			byte [] b = str.getBytes("UTF-8");
-			data.writeInt (b.length);
+			byte[] b = str.getBytes("UTF-8");
+			data.writeInt(b.length);
 			data.writeBytes(b);
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
-			data.writeInt (0);
+			data.writeInt(0);
 		}
 	}
 
-	public static String readUTF (ByteBuf data) {
+	public static String readUTF(ByteBuf data) {
 		try {
 			int len = data.readInt();
-			byte [] b = new byte [len];
+			byte[] b = new byte[len];
 			data.readBytes(b);
-			return new String (b, "UTF-8");
+			return new String(b, "UTF-8");
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 			return null;
 		}
 	}
 
-	public static void writeNBT (ByteBuf data, NBTTagCompound nbt) {
+	public static void writeNBT(ByteBuf data, NBTTagCompound nbt) {
 		try {
 			byte[] compressed = CompressedStreamTools.compress(nbt);
 			data.writeInt(compressed.length);
@@ -496,7 +462,7 @@ public class Utils {
 		}
 	}
 
-	public static void writeStack (ByteBuf data, ItemStack stack) {
+	public static void writeStack(ByteBuf data, ItemStack stack) {
 		if (stack == null) {
 			data.writeBoolean(false);
 		} else {
@@ -521,13 +487,13 @@ public class Utils {
 	 * This subprogram transforms a packet into a FML packet to be send in the
 	 * minecraft default packet mechanism. This always use BC-CORE as a
 	 * channel, and as a result, should use discriminators declared there.
-	 *
+	 * <p/>
 	 * WARNING! The implementation of this subprogram relies on the internal
 	 * behavior of #FMLIndexedMessageToMessageCodec (in particular the encode
 	 * member). It is probably opening a maintenance issue and should be
 	 * replaced eventually by some more solid mechanism.
 	 */
-	public static FMLProxyPacket toPacket (BuildCraftPacket packet, int discriminator) {
+	public static FMLProxyPacket toPacket(BuildCraftPacket packet, int discriminator) {
 		ByteBuf buf = Unpooled.buffer();
 
 		buf.writeByte((byte) discriminator);
@@ -537,7 +503,7 @@ public class Utils {
 	}
 
 	public static void readStacksFromNBT(NBTTagCompound nbt, String name, ItemStack[] stacks) {
-		NBTTagList nbttaglist = nbt.getTagList(name, NBTTag_Types.NBTTagCompound.ordinal());
+		NBTTagList nbttaglist = nbt.getTagList(name, Constants.NBT.TAG_COMPOUND);
 
 		for (int i = 0; i < stacks.length; ++i) {
 			if (i < nbttaglist.tagCount()) {
@@ -565,47 +531,47 @@ public class Utils {
 		nbt.setTag(name, nbttaglist);
 	}
 
-	public <T> T[] concatenate (T[] A, T[] B) {
-	    int aLen = A.length;
-	    int bLen = B.length;
+	public <T> T[] concatenate(T[] A, T[] B) {
+		int aLen = A.length;
+		int bLen = B.length;
 
-	    @SuppressWarnings("unchecked")
-	    T[] C = (T[]) Array.newInstance(A.getClass().getComponentType(), aLen+bLen);
-	    System.arraycopy(A, 0, C, 0, aLen);
-	    System.arraycopy(B, 0, C, aLen, bLen);
+		@SuppressWarnings("unchecked")
+		T[] C = (T[]) Array.newInstance(A.getClass().getComponentType(), aLen + bLen);
+		System.arraycopy(A, 0, C, 0, aLen);
+		System.arraycopy(B, 0, C, aLen, bLen);
 
-	    return C;
+		return C;
 	}
 
 	public static List<Field> getAllFields(Class clas) {
-	    List<Field> result = new ArrayList<Field>();
+		List<Field> result = new ArrayList<Field>();
 
-	    Class current = clas;
+		Class current = clas;
 
-	    while (current != null && current != Object.class) {
-	    	for (Field f : current.getDeclaredFields()) {
-	    		result.add(f);
-	    	}
+		while (current != null && current != Object.class) {
+			for (Field f : current.getDeclaredFields()) {
+				result.add(f);
+			}
 
-	        current = current.getSuperclass();
-	    }
+			current = current.getSuperclass();
+		}
 
-	    return result;
+		return result;
 	}
 
 	public static List<Method> getAllMethods(Class clas) {
-	    List<Method> result = new ArrayList<Method>();
+		List<Method> result = new ArrayList<Method>();
 
-	    Class current = clas;
+		Class current = clas;
 
-	    while (current != null && current != Object.class) {
-	    	for (Method m : current.getDeclaredMethods()) {
-	    		result.add(m);
-	    	}
+		while (current != null && current != Object.class) {
+			for (Method m : current.getDeclaredMethods()) {
+				result.add(m);
+			}
 
-	        current = current.getSuperclass();
-	    }
+			current = current.getSuperclass();
+		}
 
-	    return result;
+		return result;
 	}
 }

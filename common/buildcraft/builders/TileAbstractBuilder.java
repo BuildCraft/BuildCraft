@@ -8,35 +8,60 @@
  */
 package buildcraft.builders;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-
-import net.minecraft.inventory.IInventory;
-import net.minecraft.nbt.NBTTagCompound;
+import buildcraft.api.blueprints.ITileBuilder;
+import buildcraft.api.core.NetworkData;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.mj.MjBattery;
 import buildcraft.core.IBoxProvider;
 import buildcraft.core.LaserData;
 import buildcraft.core.TileBuildCraft;
-import buildcraft.core.network.NetworkData;
 import buildcraft.core.network.RPC;
 import buildcraft.core.network.RPCHandler;
+import buildcraft.core.network.RPCMessageInfo;
 import buildcraft.core.network.RPCSide;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.nbt.NBTTagCompound;
 
-public abstract class TileAbstractBuilder extends TileBuildCraft implements IInventory, IBoxProvider {
+import java.util.ArrayList;
+import java.util.LinkedList;
+
+public abstract class TileAbstractBuilder extends TileBuildCraft implements ITileBuilder, IInventory, IBoxProvider {
 
 	public static double BREAK_ENERGY = 10;
-	public static double BUILD_ENERGY = 20;
+	public static final double BUILD_ENERGY = 20;
 
-	@MjBattery(maxReceivedPerCycle = 100, maxCapacity = 1000, minimumConsumption = 1)
+	/**
+	 * Computes the maximum amount of energy required to build a full chest,
+	 * plus a safeguard. That's a nice way to evaluate maximum amount of energy
+	 * that need to be in a builder.
+	 */
+	private static final double FULL_CHEST_ENERGY = 9 * 3 * 64 * BUILD_ENERGY + 1000;
+
+	@MjBattery(maxReceivedPerCycle = 100, maxCapacity = FULL_CHEST_ENERGY, minimumConsumption = 1)
 	protected double mjStored = 0;
 
 	@NetworkData
-	public LinkedList<LaserData> pathLasers = new LinkedList<LaserData> ();
+	public LinkedList<LaserData> pathLasers = new LinkedList<LaserData>();
 
-	public ArrayList <BuildingItem> buildersInAction = new ArrayList<BuildingItem>();
+	public ArrayList<BuildingItem> buildersInAction = new ArrayList<BuildingItem>();
 
 	protected SafeTimeTracker buildTracker = new SafeTimeTracker(5);
+
+	@Override
+	public void initialize() {
+		super.initialize();
+
+		if (worldObj.isRemote) {
+			RPCHandler.rpcServer(this, "uploadBuildersInAction");
+		}
+	}
+
+	@RPC(RPCSide.SERVER)
+	private void uploadBuildersInAction(RPCMessageInfo info) {
+		for (BuildingItem i : buildersInAction) {
+			RPCHandler.rpcPlayer(this, "launchItem", info.sender, i);
+		}
+	}
 
 	@Override
 	public void updateEntity() {
@@ -65,8 +90,8 @@ public abstract class TileAbstractBuilder extends TileBuildCraft implements IInv
 		return pathLasers;
 	}
 
-	@RPC (RPCSide.CLIENT)
-	public void launchItem (BuildingItem item) {
+	@RPC(RPCSide.CLIENT)
+	public void launchItem(BuildingItem item) {
 		buildersInAction.add(item);
 	}
 
@@ -74,8 +99,6 @@ public abstract class TileAbstractBuilder extends TileBuildCraft implements IInv
 		buildersInAction.add(item);
 		RPCHandler.rpcBroadcastPlayers(this, "launchItem", item);
 	}
-
-	public abstract boolean isBuildingMaterialSlot(int i);
 
 	public final double energyAvailable() {
 		return mjStored;
@@ -86,15 +109,15 @@ public abstract class TileAbstractBuilder extends TileBuildCraft implements IInv
 	}
 
 	@Override
-	public void readFromNBT(NBTTagCompound nbttagcompound) {
-		super.readFromNBT(nbttagcompound);
+	public void writeToNBT(NBTTagCompound nbttagcompound) {
+		super.writeToNBT(nbttagcompound);
 
 		mjStored = nbttagcompound.getDouble("mjStored");
 	}
 
 	@Override
-	public void writeToNBT(NBTTagCompound nbttagcompound) {
-		super.writeToNBT(nbttagcompound);
+	public void readFromNBT(NBTTagCompound nbttagcompound) {
+		super.readFromNBT(nbttagcompound);
 
 		nbttagcompound.setDouble("mjStored", mjStored);
 	}

@@ -8,17 +8,13 @@
  */
 package buildcraft.energy.worldgen;
 
-import static net.minecraftforge.common.BiomeDictionary.Type.DESERT;
-import static net.minecraftforge.common.BiomeDictionary.Type.FOREST;
-import static net.minecraftforge.common.BiomeDictionary.Type.FROZEN;
-import static net.minecraftforge.common.BiomeDictionary.Type.WASTELAND;
-
-import java.util.HashSet;
-import java.util.Random;
-import java.util.Set;
-
+import buildcraft.BuildCraftCore;
+import buildcraft.BuildCraftEnergy;
+import cpw.mods.fml.common.eventhandler.Event.Result;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFlower;
+import net.minecraft.block.BlockStaticLiquid;
 import net.minecraft.block.material.Material;
 import net.minecraft.init.Blocks;
 import net.minecraft.world.World;
@@ -32,10 +28,12 @@ import net.minecraftforge.event.terraingen.PopulateChunkEvent.Populate.EventType
 import net.minecraftforge.event.terraingen.TerrainGen;
 import net.minecraftforge.fluids.BlockFluidBase;
 import net.minecraftforge.fluids.IFluidBlock;
-import buildcraft.BuildCraftCore;
-import buildcraft.BuildCraftEnergy;
-import cpw.mods.fml.common.eventhandler.Event.Result;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+
+import java.util.HashSet;
+import java.util.Random;
+import java.util.Set;
+
+import static net.minecraftforge.common.BiomeDictionary.Type.*;
 
 public class OilPopulate {
 
@@ -50,7 +48,9 @@ public class OilPopulate {
 	private enum GenType {
 
 		LARGE, MEDIUM, LAKE, NONE
-	};
+	}
+
+	;
 
 	private OilPopulate() {
 //		BuildCraftCore.debugMode = true;
@@ -260,7 +260,7 @@ public class OilPopulate {
 
 	private boolean isReplaceableFluid(World world, int x, int y, int z) {
 		Block block = world.getBlock(x, y, z);
-		return (block instanceof BlockFluidBase || block instanceof IFluidBlock) && block.getMaterial() != Material.lava;
+		return (block instanceof BlockStaticLiquid || block instanceof BlockFluidBase || block instanceof IFluidBlock) && block.getMaterial() != Material.lava;
 	}
 
 	private boolean isOil(World world, int x, int y, int z) {
@@ -355,6 +355,10 @@ public class OilPopulate {
 
 			if (block == null) {
 				continue;
+			}
+
+			if (block instanceof BlockStaticLiquid) {
+				return y;
 			}
 
 			if (block instanceof BlockFluidBase) {

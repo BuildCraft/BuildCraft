@@ -8,10 +8,11 @@
  */
 package buildcraft.core.utils;
 
-import buildcraft.BuildCraftCore;
-import java.util.logging.Level;
+import buildcraft.api.core.BCLog;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
+
+import java.util.logging.Level;
 
 public class ConfigUtils {
 

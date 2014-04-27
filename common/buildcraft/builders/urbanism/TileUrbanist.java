@@ -8,9 +8,18 @@
  */
 package buildcraft.builders.urbanism;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-
+import buildcraft.api.core.NetworkData;
+import buildcraft.core.Box;
+import buildcraft.core.Box.Kind;
+import buildcraft.core.IBoxesProvider;
+import buildcraft.core.TileBuildCraft;
+import buildcraft.core.network.RPC;
+import buildcraft.core.network.RPCHandler;
+import buildcraft.core.network.RPCSide;
+import buildcraft.core.robots.EntityRobot;
+import buildcraft.core.robots.IRobotTask;
+import buildcraft.core.robots.IRobotTaskProvider;
+import buildcraft.core.robots.RobotTaskProviderRegistry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -19,18 +28,9 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
-import buildcraft.core.Box;
-import buildcraft.core.Box.Kind;
-import buildcraft.core.IBoxesProvider;
-import buildcraft.core.TileBuildCraft;
-import buildcraft.core.network.NetworkData;
-import buildcraft.core.network.RPC;
-import buildcraft.core.network.RPCHandler;
-import buildcraft.core.network.RPCSide;
-import buildcraft.core.robots.EntityRobot;
-import buildcraft.core.robots.IRobotTask;
-import buildcraft.core.robots.IRobotTaskProvider;
-import buildcraft.core.robots.RobotTaskProviderRegistry;
+
+import java.util.ArrayList;
+import java.util.LinkedList;
 
 public class TileUrbanist extends TileBuildCraft implements IInventory, IRobotTaskProvider, IBoxesProvider {
 
@@ -44,11 +44,11 @@ public class TileUrbanist extends TileBuildCraft implements IInventory, IRobotTa
 	int p2x = 0, p2y = 0, p2z = 0;
 
 	@NetworkData
-	public ArrayList <AnchoredBox> frames = new ArrayList <AnchoredBox> ();
+	public ArrayList<AnchoredBox> frames = new ArrayList<AnchoredBox>();
 
 	boolean isCreatingFrame = false;
 
-	LinkedList <IRobotTask> tasks = new LinkedList <IRobotTask> ();
+	LinkedList<IRobotTask> tasks = new LinkedList<IRobotTask>();
 
 	public void createUrbanistEntity() {
 		if (worldObj.isRemote) {
@@ -85,32 +85,32 @@ public class TileUrbanist extends TileBuildCraft implements IInventory, IRobotTa
 		super.updateEntity();
 	}
 
-	@RPC (RPCSide.SERVER)
-	public void setBlock (int x, int y, int z) {
+	@RPC(RPCSide.SERVER)
+	public void setBlock(int x, int y, int z) {
 		worldObj.setBlock(x, y, z, Blocks.brick_block);
 	}
 
-	@RPC (RPCSide.SERVER)
-	public void eraseBlock (int x, int y, int z) {
+	@RPC(RPCSide.SERVER)
+	public void eraseBlock(int x, int y, int z) {
 		tasks.add(new UrbanistTaskErase(this, x, y, z));
 	}
 
-	public void rpcEraseBlock (int x, int y, int z) {
+	public void rpcEraseBlock(int x, int y, int z) {
 		RPCHandler.rpcServer(this, "eraseBlock", x, y, z);
 	}
 
-	@RPC (RPCSide.BOTH)
-	public void createFrame (int x, int y, int z) {
+	@RPC(RPCSide.BOTH)
+	public void createFrame(int x, int y, int z) {
 		isCreatingFrame = true;
 		AnchoredBox a = new AnchoredBox();
-		a.box = new Box (x, y, z, x, y + 2, z);
+		a.box = new Box(x, y, z, x, y + 2, z);
 		a.x1 = x;
 		a.y1 = y;
 		a.z1 = z;
 		frames.add(a);
 	}
 
-	public void rpcCreateFrame (int x, int y, int z) {
+	public void rpcCreateFrame(int x, int y, int z) {
 		p2x = x;
 		p2y = y;
 		p2z = z;
@@ -121,8 +121,8 @@ public class TileUrbanist extends TileBuildCraft implements IInventory, IRobotTa
 		RPCHandler.rpcServer(this, "createFrame", x, y, z);
 	}
 
-	@RPC (RPCSide.BOTH)
-	public void moveFrame (int x, int y, int z) {
+	@RPC(RPCSide.BOTH)
+	public void moveFrame(int x, int y, int z) {
 		if (isCreatingFrame) {
 			if (frames.size() > 0) {
 				frames.get(frames.size() - 1).setP2(x, y, z);
@@ -130,7 +130,7 @@ public class TileUrbanist extends TileBuildCraft implements IInventory, IRobotTa
 		}
 	}
 
-	public void rpcMoveFrame (int x, int y, int z) {
+	public void rpcMoveFrame(int x, int y, int z) {
 		if (p2x != x || p2y != y || p2z != z) {
 			p2x = x;
 			p2y = y;
@@ -147,7 +147,7 @@ public class TileUrbanist extends TileBuildCraft implements IInventory, IRobotTa
 		int nbOfTasks;
 		AnchoredBox frame;
 
-		public void taskDone () {
+		public void taskDone() {
 			nbOfTasks--;
 
 			if (nbOfTasks <= 0) {
@@ -156,8 +156,8 @@ public class TileUrbanist extends TileBuildCraft implements IInventory, IRobotTa
 		}
 	}
 
-	@RPC (RPCSide.CLIENT)
-	public void setFrameKind (int id, int kind) {
+	@RPC(RPCSide.CLIENT)
+	public void setFrameKind(int id, int kind) {
 		if (id < frames.size()) {
 			AnchoredBox b = frames.get(id);
 
@@ -167,8 +167,8 @@ public class TileUrbanist extends TileBuildCraft implements IInventory, IRobotTa
 		}
 	}
 
-	@RPC (RPCSide.SERVER)
-	public void startFiller (String fillerTag, Box box) {
+	@RPC(RPCSide.SERVER)
+	public void startFiller(String fillerTag, Box box) {
 		// TODO: This need to be updated to the new blueprint system
 		/*BptBuilderBase builder = FillerPattern.patterns.get(fillerTag).getBlueprint(box, worldObj);
 
@@ -190,7 +190,7 @@ public class TileUrbanist extends TileBuildCraft implements IInventory, IRobotTa
 		}*/
 	}
 
-	public void rpcStartFiller (String fillerTag, Box box) {
+	public void rpcStartFiller(String fillerTag, Box box) {
 		RPCHandler.rpcServer(this, "startFiller", fillerTag, box);
 	}
 
@@ -334,7 +334,7 @@ public class TileUrbanist extends TileBuildCraft implements IInventory, IRobotTa
 
 
 	@Override
-	public void initialize () {
+	public void initialize() {
 		if (!worldObj.isRemote) {
 			RobotTaskProviderRegistry.registerProvider(this);
 		}

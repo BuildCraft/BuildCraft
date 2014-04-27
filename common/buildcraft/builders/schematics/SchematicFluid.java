@@ -8,11 +8,12 @@
  */
 package buildcraft.builders.schematics;
 
-import java.util.LinkedList;
-
-import net.minecraft.item.ItemStack;
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.SchematicBlock;
+import net.minecraft.item.ItemStack;
+import net.minecraftforge.fluids.FluidContainerRegistry;
+
+import java.util.LinkedList;
 
 public class SchematicFluid extends SchematicBlock {
 
@@ -34,7 +35,7 @@ public class SchematicFluid extends SchematicBlock {
 		if (meta == 0) {
 			return block == context.world().getBlock(x, y, z) && context.world().getBlockMetadata(x, y, z) == 0;
 		} else {
-			return true;
+			return block == context.world().getBlock(x, y, z);
 		}
 	}
 
@@ -44,7 +45,7 @@ public class SchematicFluid extends SchematicBlock {
 	}
 
 	@Override
-	public boolean ignoreBuilding() {
+	public boolean doNotBuild() {
 		return meta != 0;
 	}
 
@@ -54,7 +55,7 @@ public class SchematicFluid extends SchematicBlock {
 	}
 
 	@Override
-	public void writeToWorld(IBuilderContext context, int x, int y, int z, LinkedList <ItemStack> stacks) {
+	public void writeToWorld(IBuilderContext context, int x, int y, int z, LinkedList<ItemStack> stacks) {
 		if (meta == 0) {
 			context.world().setBlock(x, y, z, block, 0, 3);
 		}
@@ -65,6 +66,19 @@ public class SchematicFluid extends SchematicBlock {
 		if (meta != 0) {
 			context.world().setBlock(x, y, z, block, meta, 3);
 		}
+	}
+
+	@Override
+	public LinkedList<ItemStack> getStacksToDisplay(
+			LinkedList<ItemStack> stackConsumed) {
+
+		ItemStack s = new ItemStack(FluidContainerRegistry
+				.getFluidForFilledItem(bucketStack).getFluid().getBlock());
+		LinkedList<ItemStack> result = new LinkedList<ItemStack>();
+
+		result.add(s);
+
+		return result;
 	}
 
 }

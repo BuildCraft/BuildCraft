@@ -11,7 +11,6 @@ package buildcraft.core.inventory;
 import buildcraft.core.inventory.InventoryIterator.IInvSlot;
 import buildcraft.core.inventory.filters.ArrayStackFilter;
 import buildcraft.core.inventory.filters.IStackFilter;
-import buildcraft.core.utils.Utils;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryLargeChest;
@@ -21,6 +20,7 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
 import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.ForgeDirection;
 
 public class InvUtils {
@@ -58,7 +58,7 @@ public class InvUtils {
 	 * Checks if there is room for the ItemStack in the inventory.
 	 *
 	 * @param stack The ItemStack
-	 * @param dest The IInventory
+	 * @param dest  The IInventory
 	 * @return true if room for stack
 	 */
 	public static boolean isRoomForStack(ItemStack stack, ForgeDirection side, IInventory dest) {
@@ -74,7 +74,7 @@ public class InvUtils {
 	 *
 	 * @param source
 	 * @param dest
-	 * @param filer an IStackFilter to match against
+	 * @param filer  an IStackFilter to match against
 	 * @return null if nothing was moved, the stack moved otherwise
 	 */
 	public static ItemStack moveOneItem(IInventory source, ForgeDirection output, IInventory dest, ForgeDirection intput, IStackFilter filter) {
@@ -97,8 +97,9 @@ public class InvUtils {
 
 	/* STACK DROPS */
 	public static void dropItems(World world, ItemStack stack, int i, int j, int k) {
-		if (stack == null || stack.stackSize <= 0)
+		if (stack == null || stack.stackSize <= 0) {
 			return;
+		}
 
 		float f1 = 0.7F;
 		double d = (world.rand.nextFloat() * f1) + (1.0F - f1) * 0.5D;
@@ -139,7 +140,7 @@ public class InvUtils {
 		NBTTagCompound nbt = getItemData(stack);
 		NBTTagCompound display = nbt.getCompoundTag("display");
 		nbt.setTag("display", display);
-		NBTTagList lore = display.getTagList("Lore", Utils.NBTTag_Types.NBTTagString.ordinal());
+		NBTTagList lore = display.getTagList("Lore", Constants.NBT.TAG_STRING);
 		display.setTag("Lore", lore);
 		lore.appendTag(new NBTTagString(msg));
 	}
@@ -159,7 +160,7 @@ public class InvUtils {
 	}
 
 	public static void readInvFromNBT(IInventory inv, String tag, NBTTagCompound data) {
-		NBTTagList list = data.getTagList(tag, Utils.NBTTag_Types.NBTTagCompound.ordinal());
+		NBTTagList list = data.getTagList(tag, Constants.NBT.TAG_COMPOUND);
 		for (byte entry = 0; entry < list.tagCount(); entry++) {
 			NBTTagCompound itemTag = list.getCompoundTagAt(entry);
 			int slot = itemTag.getByte("Slot");
@@ -171,7 +172,7 @@ public class InvUtils {
 	}
 
 	public static void readStacksFromNBT(NBTTagCompound nbt, String name, ItemStack[] stacks) {
-		NBTTagList nbttaglist = nbt.getTagList(name, Utils.NBTTag_Types.NBTTagCompound.ordinal());
+		NBTTagList nbttaglist = nbt.getTagList(name, Constants.NBT.TAG_COMPOUND);
 
 		for (int i = 0; i < stacks.length; ++i) {
 			if (i < nbttaglist.tagCount()) {
@@ -187,11 +188,11 @@ public class InvUtils {
 	public static void writeStacksToNBT(NBTTagCompound nbt, String name, ItemStack[] stacks) {
 		NBTTagList nbttaglist = new NBTTagList();
 
-		for (int i = 0; i < stacks.length; ++i) {
+		for (ItemStack stack : stacks) {
 			NBTTagCompound cpt = new NBTTagCompound();
 			nbttaglist.appendTag(cpt);
-			if (stacks[i] != null) {
-				stacks[i].writeToNBT(cpt);
+			if (stack != null) {
+				stack.writeToNBT(cpt);
 			}
 
 		}

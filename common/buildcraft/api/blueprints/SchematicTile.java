@@ -8,14 +8,14 @@
  */
 package buildcraft.api.blueprints;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-
+import buildcraft.api.core.JavaTools;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import buildcraft.core.utils.Utils;
+
+import java.util.ArrayList;
+import java.util.LinkedList;
 
 public class SchematicTile extends SchematicBlock {
 
@@ -41,7 +41,7 @@ public class SchematicTile extends SchematicBlock {
 	 * Places the block in the world, at the location specified in the slot.
 	 */
 	@Override
-	public void writeToWorld(IBuilderContext context, int x, int y, int z, LinkedList <ItemStack> stacks) {
+	public void writeToWorld(IBuilderContext context, int x, int y, int z, LinkedList<ItemStack> stacks) {
 		super.writeToWorld(context, x, y, z, stacks);
 
 		if (block.hasTileEntity(meta)) {
@@ -62,7 +62,7 @@ public class SchematicTile extends SchematicBlock {
 	 * y, z} on the world. This typically means adding entries in slot.cpt. Note
 	 * that "id" and "meta" will be set automatically, corresponding to the
 	 * block id and meta.
-	 *
+	 * <p/>
 	 * By default, if the block is a BlockContainer, tile information will be to
 	 * save / load the block.
 	 */
@@ -80,7 +80,7 @@ public class SchematicTile extends SchematicBlock {
 			if (tile instanceof IInventory) {
 				IInventory inv = (IInventory) tile;
 
-				ArrayList <ItemStack> rqs = new ArrayList <ItemStack> ();
+				ArrayList<ItemStack> rqs = new ArrayList<ItemStack>();
 
 				for (int i = 0; i < inv.getSizeInventory(); ++i) {
 					if (inv.getStackInSlot(i) != null) {
@@ -88,7 +88,7 @@ public class SchematicTile extends SchematicBlock {
 					}
 				}
 
-				storedRequirements = Utils.concat(storedRequirements,
+				storedRequirements = JavaTools.concat(storedRequirements,
 						rqs.toArray(new ItemStack[rqs.size()]));
 			}
 		}
@@ -102,7 +102,7 @@ public class SchematicTile extends SchematicBlock {
 	}
 
 	@Override
-	public void readFromNBT(NBTTagCompound nbt,	MappingRegistry registry) {
+	public void readFromNBT(NBTTagCompound nbt, MappingRegistry registry) {
 		super.readFromNBT(nbt, registry);
 
 		cpt = nbt.getCompoundTag("blockCpt");

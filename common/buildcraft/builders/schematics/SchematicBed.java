@@ -8,12 +8,12 @@
  */
 package buildcraft.builders.schematics;
 
-import java.util.LinkedList;
-
-import net.minecraft.init.Items;
-import net.minecraft.item.ItemStack;
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.SchematicBlock;
+import net.minecraft.init.Items;
+import net.minecraft.item.ItemStack;
+
+import java.util.LinkedList;
 
 public class SchematicBed extends SchematicBlock {
 
@@ -30,23 +30,23 @@ public class SchematicBed extends SchematicBlock {
 		int others = meta - orientation;
 
 		switch (orientation) {
-		case 0:
-			meta = 1 + others;
-			break;
-		case 1:
-			meta = 2 + others;
-			break;
-		case 2:
-			meta = 3 + others;
-			break;
-		case 3:
-			meta = 0 + others;
-			break;
+			case 0:
+				meta = 1 + others;
+				break;
+			case 1:
+				meta = 2 + others;
+				break;
+			case 2:
+				meta = 3 + others;
+				break;
+			case 3:
+				meta = 0 + others;
+				break;
 		}
 	}
 
 	@Override
-	public void writeToWorld(IBuilderContext context, int x, int y, int z, LinkedList <ItemStack> stacks) {
+	public void writeToWorld(IBuilderContext context, int x, int y, int z, LinkedList<ItemStack> stacks) {
 		if ((meta & 8) != 0) {
 			return;
 		}
@@ -57,25 +57,25 @@ public class SchematicBed extends SchematicBlock {
 		int z2 = z;
 
 		switch (meta) {
-		case 0:
-			z2++;
-			break;
-		case 1:
-			x2--;
-			break;
-		case 2:
-			z2--;
-			break;
-		case 3:
-			x2++;
-			break;
+			case 0:
+				z2++;
+				break;
+			case 1:
+				x2--;
+				break;
+			case 2:
+				z2--;
+				break;
+			case 3:
+				x2++;
+				break;
 		}
 
-		context.world().setBlock(x2, y, z2, block, meta + 8,1);
+		context.world().setBlock(x2, y, z2, block, meta + 8, 3);
 	}
 
 	@Override
-	public boolean ignoreBuilding() {
+	public boolean doNotBuild() {
 		return (meta & 8) != 0;
 	}
 }

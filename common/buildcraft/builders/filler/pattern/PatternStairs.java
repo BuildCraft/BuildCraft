@@ -10,6 +10,7 @@ package buildcraft.builders.filler.pattern;
 
 import buildcraft.core.Box;
 import buildcraft.core.blueprints.Template;
+import net.minecraft.world.World;
 
 
 public class PatternStairs extends FillerPattern {
@@ -25,7 +26,7 @@ public class PatternStairs extends FillerPattern {
 	int param4 = 0;
 
 	@Override
-	public Template getTemplate(Box box) {
+	public Template getTemplate(Box box, World world) {
 		int xMin = 0;
 		int yMin = 0;
 		int zMin = 0;
@@ -37,7 +38,7 @@ public class PatternStairs extends FillerPattern {
 		int sizeX = xMax - xMin + 1;
 		int sizeZ = zMax - zMin + 1;
 
-		Template template = new Template (box.sizeX(), box.sizeY(), box.sizeZ());
+		Template template = new Template(box.sizeX(), box.sizeY(), box.sizeZ());
 
 		int height;
 		int heightStep;

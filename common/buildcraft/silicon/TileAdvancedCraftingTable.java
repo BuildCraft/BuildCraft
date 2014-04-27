@@ -8,45 +8,27 @@
  */
 package buildcraft.silicon;
 
-import buildcraft.api.power.ILaserTarget;
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftSilicon;
 import buildcraft.api.gates.IAction;
 import buildcraft.api.gates.IActionReceptor;
+import buildcraft.api.power.ILaserTarget;
 import buildcraft.core.IMachine;
 import buildcraft.core.TileBuffer;
-import buildcraft.core.inventory.InvUtils;
-import buildcraft.core.inventory.InventoryCopy;
-import buildcraft.core.inventory.InventoryIterator;
+import buildcraft.core.inventory.*;
 import buildcraft.core.inventory.InventoryIterator.IInvSlot;
-import buildcraft.core.inventory.InventoryMapper;
-import buildcraft.core.inventory.SimpleInventory;
-import buildcraft.core.inventory.StackHelper;
-import buildcraft.core.inventory.Transactor;
 import buildcraft.core.inventory.filters.CraftingFilter;
 import buildcraft.core.inventory.filters.IStackFilter;
 import buildcraft.core.network.PacketIds;
 import buildcraft.core.network.PacketSlotChange;
-import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.triggers.ActionMachineControl;
 import buildcraft.core.utils.CraftingHelper;
 import buildcraft.core.utils.StringUtils;
 import buildcraft.core.utils.Utils;
-
 import com.google.common.collect.Lists;
 import com.mojang.authlib.GameProfile;
-
-import java.util.Arrays;
-import java.util.EnumSet;
-import java.util.List;
-
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.Container;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.ISidedInventory;
-import net.minecraft.inventory.InventoryCraftResult;
-import net.minecraft.inventory.InventoryCrafting;
-import net.minecraft.inventory.SlotCrafting;
+import net.minecraft.inventory.*;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
@@ -54,12 +36,13 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.IChatComponent;
 import net.minecraftforge.common.util.ForgeDirection;
-import static net.minecraftforge.common.util.ForgeDirection.DOWN;
-import static net.minecraftforge.common.util.ForgeDirection.EAST;
-import static net.minecraftforge.common.util.ForgeDirection.NORTH;
-import static net.minecraftforge.common.util.ForgeDirection.SOUTH;
-import static net.minecraftforge.common.util.ForgeDirection.WEST;
 import net.minecraftforge.oredict.OreDictionary;
+
+import java.util.Arrays;
+import java.util.EnumSet;
+import java.util.List;
+
+import static net.minecraftforge.common.util.ForgeDirection.*;
 
 public class TileAdvancedCraftingTable extends TileLaserTableBase implements IInventory, ILaserTarget, IMachine, IActionReceptor, ISidedInventory {
 
@@ -75,7 +58,7 @@ public class TileAdvancedCraftingTable extends TileLaserTableBase implements IIn
 
 		public int[] oreIDs = new int[9];
 
-		public CraftingGrid() {			
+		public CraftingGrid() {
 			super(9, "CraftingSlots", 1);
 			Arrays.fill(oreIDs, -1);
 		}
@@ -83,8 +66,9 @@ public class TileAdvancedCraftingTable extends TileLaserTableBase implements IIn
 		@Override
 		public void setInventorySlotContents(int slotId, ItemStack itemstack) {
 			super.setInventorySlotContents(slotId, itemstack);
-			if (TileAdvancedCraftingTable.this.getWorldObj() == null || !TileAdvancedCraftingTable.this.getWorldObj().isRemote)
+			if (TileAdvancedCraftingTable.this.getWorldObj() == null || !TileAdvancedCraftingTable.this.getWorldObj().isRemote) {
 				oreIDs[slotId] = itemstack == null ? -1 : OreDictionary.getOreID(itemstack);
+			}
 		}
 	}
 
@@ -169,6 +153,7 @@ public class TileAdvancedCraftingTable extends TileLaserTableBase implements IIn
 			return null;
 		}
 	}
+
 	public InventoryCraftResult craftResult;
 	private InternalInventoryCrafting internalInventoryCrafting;
 
@@ -179,6 +164,7 @@ public class TileAdvancedCraftingTable extends TileLaserTableBase implements IIn
 		invOutput = new InventoryMapper(inv, 15, 9);
 		craftResult = new InventoryCraftResult();
 	}
+
 	private static final int[] SLOTS = Utils.createSlotArray(0, 24);
 	private static final EnumSet<ForgeDirection> SEARCH_SIDES = EnumSet.of(DOWN, NORTH, SOUTH, EAST, WEST);
 	private static final float REQUIRED_POWER = 500F;
@@ -202,13 +188,15 @@ public class TileAdvancedCraftingTable extends TileLaserTableBase implements IIn
 	@Override
 	public void readFromNBT(NBTTagCompound data) {
 		super.readFromNBT(data);
-		if (data.hasKey("StorageSlots"))
+		if (data.hasKey("StorageSlots")) {
 			inv.readFromNBT(data, "StorageSlots");
+		}
 
-		if (data.hasKey("items"))
+		if (data.hasKey("items")) {
 			craftingSlots.readFromNBT(data);
-		else
+		} else {
 			craftingSlots.readFromNBT(data, "craftingSlots");
+		}
 	}
 
 	@Override
@@ -232,6 +220,7 @@ public class TileAdvancedCraftingTable extends TileLaserTableBase implements IIn
 		return craftResult.getStackInSlot(0) != null ? REQUIRED_POWER : 0f;
 	}
 
+	@Override
 	public int getProgressScaled(int i) {
 		return (int) ((getEnergy() * i) / REQUIRED_POWER);
 	}
@@ -250,10 +239,12 @@ public class TileAdvancedCraftingTable extends TileLaserTableBase implements IIn
 			craftSlot = new SlotCrafting(internalPlayer, internalInventoryCrafting, craftResult, 0, 0, 0);
 			updateRecipe();
 		}
-		if (!!worldObj.isRemote)
+		if (!!worldObj.isRemote) {
 			return;
-		if (lastMode == ActionMachineControl.Mode.Off)
+		}
+		if (lastMode == ActionMachineControl.Mode.Off) {
 			return;
+		}
 		updateRecipe();
 		searchNeighborsForIngredients();
 		locateAndBindIngredients();
@@ -273,11 +264,13 @@ public class TileAdvancedCraftingTable extends TileLaserTableBase implements IIn
 	}
 
 	private boolean canCraftAndOutput() {
-		if (!hasIngredients())
+		if (!hasIngredients()) {
 			return false;
+		}
 		ItemStack output = getRecipeOutput();
-		if (output == null)
+		if (output == null) {
 			return false;
+		}
 		return InvUtils.isRoomForStack(output, ForgeDirection.UP, invOutput);
 	}
 
@@ -287,12 +280,14 @@ public class TileAdvancedCraftingTable extends TileLaserTableBase implements IIn
 		ItemStack[] inputSlots = internalInventoryCrafting.tempStacks;
 		for (int gridSlot = 0; gridSlot < craftingSlots.getSizeInventory(); gridSlot++) {
 			internalInventoryCrafting.bindings[gridSlot] = -1;
-			if (craftingSlots.getStackInSlot(gridSlot) == null)
+			if (craftingSlots.getStackInSlot(gridSlot) == null) {
 				continue;
+			}
 			boolean foundMatch = false;
 			for (int inputSlot = 0; inputSlot < inputSlots.length; inputSlot++) {
-				if (!isMatchingIngredient(gridSlot, inputSlot))
+				if (!isMatchingIngredient(gridSlot, inputSlot)) {
 					continue;
+				}
 				if (internalInventoryCrafting.hitCount[inputSlot] < inputSlots[inputSlot].stackSize
 						&& internalInventoryCrafting.hitCount[inputSlot] < inputSlots[inputSlot].getMaxStackSize()) {
 					internalInventoryCrafting.bindings[gridSlot] = inputSlot;
@@ -301,19 +296,23 @@ public class TileAdvancedCraftingTable extends TileLaserTableBase implements IIn
 					break;
 				}
 			}
-			if (!foundMatch)
+			if (!foundMatch) {
 				return;
+			}
 		}
 	}
 
 	private boolean isMatchingIngredient(int gridSlot, int inputSlot) {
 		ItemStack inputStack = internalInventoryCrafting.tempStacks[inputSlot];
-		if (inputStack == null)
+		if (inputStack == null) {
 			return false;
-		if (StackHelper.instance().isMatchingItem(craftingSlots.getStackInSlot(gridSlot), inputStack, true, false))
+		}
+		if (StackHelper.isMatchingItem(craftingSlots.getStackInSlot(gridSlot), inputStack, true, false)) {
 			return true;
-		if (StackHelper.instance().isCraftingEquivalent(craftingSlots.oreIDs[gridSlot], inputStack))
+		}
+		if (StackHelper.isCraftingEquivalent(craftingSlots.oreIDs[gridSlot], inputStack)) {
 			return true;
+		}
 		return false;
 	}
 
@@ -356,8 +355,9 @@ public class TileAdvancedCraftingTable extends TileLaserTableBase implements IIn
 		}
 		for (IInvSlot slot : InventoryIterator.getIterable(craftingSlots, ForgeDirection.UP)) {
 			ItemStack ingred = slot.getStackInSlot();
-			if (ingred == null)
+			if (ingred == null) {
 				continue;
+			}
 			IStackFilter filter = new CraftingFilter(ingred);
 			if (InvUtils.countItems(invInput, ForgeDirection.UP, filter) < InvUtils.countItems(craftingSlots, ForgeDirection.UP, filter)) {
 				for (ForgeDirection side : SEARCH_SIDES) {

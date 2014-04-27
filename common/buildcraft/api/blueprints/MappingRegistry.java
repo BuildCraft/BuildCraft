@@ -8,48 +8,47 @@
  */
 package buildcraft.api.blueprints;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.Item;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import buildcraft.core.utils.Utils;
+import net.minecraftforge.common.util.Constants;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class MappingRegistry {
 
-	public HashMap <Block, Integer> blockToId = new HashMap<Block, Integer>();
-	public ArrayList <Block> idToBlock = new ArrayList<Block>();
+	public HashMap<Block, Integer> blockToId = new HashMap<Block, Integer>();
+	public ArrayList<Block> idToBlock = new ArrayList<Block>();
 
-	public HashMap <Item, Integer> itemToId = new HashMap<Item, Integer>();
-	public ArrayList <Item> idToItem = new ArrayList<Item>();
+	public HashMap<Item, Integer> itemToId = new HashMap<Item, Integer>();
+	public ArrayList<Item> idToItem = new ArrayList<Item>();
 
-	public HashMap <Class <? extends Entity>, Integer> entityToId = new HashMap<Class <? extends Entity>, Integer>();
-	public ArrayList <Class <? extends Entity>> idToEntity = new ArrayList<Class <? extends Entity>>();
+	public HashMap<Class<? extends Entity>, Integer> entityToId = new HashMap<Class<? extends Entity>, Integer>();
+	public ArrayList<Class<? extends Entity>> idToEntity = new ArrayList<Class<? extends Entity>>();
 
-	private void registerItem (Item item) {
+	private void registerItem(Item item) {
 		if (!itemToId.containsKey(item)) {
 			idToItem.add(item);
 			itemToId.put(item, idToItem.size() - 1);
 		}
 	}
 
-	private void registerBlock (Block block) {
+	private void registerBlock(Block block) {
 		if (!blockToId.containsKey(block)) {
 			idToBlock.add(block);
 			blockToId.put(block, idToBlock.size() - 1);
 		}
 	}
 
-	private void registerEntity (Class <? extends Entity> entityClass) {
+	private void registerEntity(Class<? extends Entity> entityClass) {
 		if (!entityToId.containsKey(entityClass)) {
 			idToEntity.add(entityClass);
 			entityToId.put(entityClass, idToEntity.size() - 1);
 		}
 	}
-
 
 	public Item getItemForId(int id) {
 		if (id >= idToItem.size()) {
@@ -77,13 +76,13 @@ public class MappingRegistry {
 
 	public int getIdForBlock(Block block) {
 		if (!blockToId.containsKey(block)) {
-			registerBlock (block);
+			registerBlock(block);
 		}
 
 		return blockToId.get(block);
 	}
 
-	public Class <? extends Entity> getEntityForId(int id) {
+	public Class<? extends Entity> getEntityForId(int id) {
 		if (id >= idToEntity.size()) {
 			return null;
 		}
@@ -91,15 +90,15 @@ public class MappingRegistry {
 		return idToEntity.get(id);
 	}
 
-	public int getIdForEntity(Class <? extends Entity> entity) {
+	public int getIdForEntity(Class<? extends Entity> entity) {
 		if (!entityToId.containsKey(entity)) {
-			registerEntity (entity);
+			registerEntity(entity);
 		}
 
 		return entityToId.get(entity);
 	}
 
-	public void write (NBTTagCompound nbt) {
+	public void write(NBTTagCompound nbt) {
 		NBTTagList blocksMapping = new NBTTagList();
 
 		for (Block b : idToBlock) {
@@ -124,7 +123,7 @@ public class MappingRegistry {
 
 		NBTTagList entitiesMapping = new NBTTagList();
 
-		for (Class <? extends Entity> e : idToEntity) {
+		for (Class<? extends Entity> e : idToEntity) {
 			NBTTagCompound sub = new NBTTagCompound();
 			sub.setString("name", e.getCanonicalName());
 			entitiesMapping.appendTag(sub);
@@ -133,29 +132,29 @@ public class MappingRegistry {
 		nbt.setTag("entitiesMapping", entitiesMapping);
 	}
 
-	public void read (NBTTagCompound nbt) {
+	public void read(NBTTagCompound nbt) {
 		NBTTagList blocksMapping = nbt.getTagList("blocksMapping",
-				Utils.NBTTag_Types.NBTTagCompound.ordinal());
+				Constants.NBT.TAG_COMPOUND);
 
 		for (int i = 0; i < blocksMapping.tagCount(); ++i) {
 			NBTTagCompound sub = blocksMapping.getCompoundTagAt(i);
 			String name = sub.getString("name");
 			Block b = (Block) Block.blockRegistry.getObject(name);
-			registerBlock (b);
+			registerBlock(b);
 		}
 
 		NBTTagList itemsMapping = nbt.getTagList("itemsMapping",
-				Utils.NBTTag_Types.NBTTagCompound.ordinal());
+				Constants.NBT.TAG_COMPOUND);
 
 		for (int i = 0; i < itemsMapping.tagCount(); ++i) {
 			NBTTagCompound sub = itemsMapping.getCompoundTagAt(i);
 			String name = sub.getString("name");
 			Item item = (Item) Item.itemRegistry.getObject(name);
-			registerItem (item);
+			registerItem(item);
 		}
 
 		NBTTagList entitiesMapping = nbt.getTagList("entitiesMapping",
-				Utils.NBTTag_Types.NBTTagCompound.ordinal());
+				Constants.NBT.TAG_COMPOUND);
 
 		for (int i = 0; i < entitiesMapping.tagCount(); ++i) {
 			NBTTagCompound sub = entitiesMapping.getCompoundTagAt(i);
@@ -163,12 +162,12 @@ public class MappingRegistry {
 			Class<? extends Entity> e = null;
 
 			try {
-				e = (Class <? extends Entity>) Class.forName(name);
+				e = (Class<? extends Entity>) Class.forName(name);
 			} catch (ClassNotFoundException e1) {
 				e1.printStackTrace();
 			}
 
-			registerEntity (e);
+			registerEntity(e);
 		}
 	}
 
@@ -179,8 +178,8 @@ public class MappingRegistry {
 		result.idToBlock = (ArrayList<Block>) idToBlock.clone();
 		result.itemToId = (HashMap<Item, Integer>) itemToId.clone();
 		result.idToItem = (ArrayList<Item>) idToItem.clone();
-		result.entityToId = (HashMap<Class <? extends Entity>, Integer>) entityToId.clone();
-		result.idToEntity = (ArrayList<Class <? extends Entity>>) idToEntity.clone();
+		result.entityToId = (HashMap<Class<? extends Entity>, Integer>) entityToId.clone();
+		result.idToEntity = (ArrayList<Class<? extends Entity>>) idToEntity.clone();
 
 		return result;
 	}

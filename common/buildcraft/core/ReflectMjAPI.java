@@ -1,11 +1,11 @@
 package buildcraft.core;
 
+import buildcraft.api.mj.MjBattery;
+import buildcraft.core.utils.Utils;
+
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
-
-import buildcraft.api.mj.MjBattery;
-import buildcraft.core.utils.Utils;
 
 public class ReflectMjAPI {
 
@@ -18,7 +18,7 @@ public class ReflectMjAPI {
 		public MjBattery battery;
 		public BatteryKind kind;
 
-		public double getEnergyRequested (Object obj) {
+		public double getEnergyRequested(Object obj) {
 			try {
 				double contained = field.getDouble(obj);
 
@@ -45,7 +45,7 @@ public class ReflectMjAPI {
 		BatteryField f;
 		Object o;
 
-		public double getEnergyRequested () {
+		public double getEnergyRequested() {
 			return f.getEnergyRequested(o);
 		}
 
@@ -83,8 +83,12 @@ public class ReflectMjAPI {
 		}
 	}
 
-	public static BatteryObject getMjBattery (Object o) {
-		BatteryField f = getMjBattery (o.getClass());
+	public static BatteryObject getMjBattery(Object o) {
+		if (o == null) {
+			return null;
+		}
+
+		BatteryField f = getMjBattery(o.getClass());
 
 		if (f == null) {
 			return null;
@@ -107,12 +111,12 @@ public class ReflectMjAPI {
 		}
 	}
 
-	static Map <Class, BatteryField> MjBatteries = new HashMap <Class, BatteryField> ();
+	static Map<Class, BatteryField> MjBatteries = new HashMap<Class, BatteryField>();
 
-	private static BatteryField getMjBattery (Class c) {
+	private static BatteryField getMjBattery(Class c) {
 		if (!MjBatteries.containsKey(c)) {
 			for (Field f : Utils.getAllFields(c)) {
-				MjBattery battery = f.getAnnotation (MjBattery.class);
+				MjBattery battery = f.getAnnotation(MjBattery.class);
 
 				if (battery != null) {
 					f.setAccessible(true);

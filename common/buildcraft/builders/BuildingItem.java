@@ -8,17 +8,23 @@
  */
 package buildcraft.builders;
 
-import java.util.Date;
-import java.util.LinkedList;
-
-import net.minecraft.block.Block;
-import net.minecraft.item.ItemStack;
 import buildcraft.BuildCraftBuilders;
 import buildcraft.api.blueprints.IBuilderContext;
+import buildcraft.api.blueprints.MappingRegistry;
+import buildcraft.api.core.NetworkData;
 import buildcraft.api.core.Position;
 import buildcraft.core.blueprints.BuildingSlot;
+import buildcraft.core.blueprints.BuildingSlotBlock;
+import buildcraft.core.blueprints.BuildingSlotEntity;
 import buildcraft.core.blueprints.IBuilder;
-import buildcraft.core.network.NetworkData;
+import net.minecraft.block.Block;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraftforge.common.util.Constants;
+
+import java.util.Date;
+import java.util.LinkedList;
 
 public class BuildingItem implements IBuilder {
 
@@ -26,21 +32,15 @@ public class BuildingItem implements IBuilder {
 	public Position origin, destination;
 
 	@NetworkData
-	public LinkedList <ItemStack> stacksToBuild = new LinkedList<ItemStack>();
+	double lifetime = 0;
 
-	public LinkedList <StackAtPosition> stacksToDisplay = new LinkedList<StackAtPosition>();
-
-	public class StackAtPosition {
-		public Position pos;
-		public ItemStack stack;
-		public boolean display;
-	}
+	@NetworkData
+	public LinkedList<StackAtPosition> stacksToDisplay = new LinkedList<StackAtPosition>();
 
 	public Position posDisplay = new Position();
 	public boolean isDone = false;
 
 	long previousUpdate;
-	double lifetime = 0;
 	double lifetimeDisplay = 0;
 	double maxLifetime = 0;
 	private boolean initialized = false;
@@ -52,7 +52,7 @@ public class BuildingItem implements IBuilder {
 
 	public double receivedProgress = 0;
 
-	public void initialize () {
+	public void initialize() {
 		if (!initialized) {
 			double dx = destination.x - origin.x;
 			double dy = destination.y - origin.y;
@@ -73,17 +73,17 @@ public class BuildingItem implements IBuilder {
 			middle.y = (destination.y + origin.y) / 2;
 			middle.z = (destination.z + origin.z) / 2;
 
-			Position top = new Position ();
+			Position top = new Position();
 			top.x = middle.x;
 			top.y = middle.y + maxHeight;
 			top.z = middle.z;
 
-			Position originToTop = new Position ();
+			Position originToTop = new Position();
 			originToTop.x = top.x - origin.x;
 			originToTop.y = top.y - origin.y;
 			originToTop.z = top.z - origin.z;
 
-			Position destinationToTop = new Position ();
+			Position destinationToTop = new Position();
 			destinationToTop.x = destination.x - origin.x;
 			destinationToTop.y = destination.y - origin.y;
 			destinationToTop.z = destination.z - origin.z;
@@ -105,16 +105,6 @@ public class BuildingItem implements IBuilder {
 			vy = dy / maxLifetime;
 			vz = dz / maxLifetime;
 
-			if (stacksToBuild == null) {
-				stacksToBuild = new LinkedList<ItemStack>();
-			}
-
-			for (ItemStack s : stacksToBuild) {
-				StackAtPosition sPos = new StackAtPosition();
-				sPos.stack = s;
-				stacksToDisplay.add(sPos);
-			}
-
 			if (stacksToDisplay.size() == 0) {
 				StackAtPosition sPos = new StackAtPosition();
 				sPos.stack = new ItemStack(BuildCraftBuilders.buildToolBlock);
@@ -125,8 +115,8 @@ public class BuildingItem implements IBuilder {
 		}
 	}
 
-	public Position getDisplayPosition (double time) {
-		Position result = new Position ();
+	public Position getDisplayPosition(double time) {
+		Position result = new Position();
 
 		result.x = origin.x + vx * time;
 		result.y = origin.y + vy * time + Math.sin(time / maxLifetime * Math.PI) * maxHeight;
@@ -135,7 +125,7 @@ public class BuildingItem implements IBuilder {
 		return result;
 	}
 
-	public void update () {
+	public void update() {
 		if (isDone) {
 			return;
 		}
@@ -144,25 +134,25 @@ public class BuildingItem implements IBuilder {
 
 		lifetime++;
 
-		if (lifetime > maxLifetime + stacksToBuild.size() - 1) {
+		if (lifetime > maxLifetime + stacksToDisplay.size() - 1) {
 			isDone = true;
-			build ();
+			build();
 		}
 
 		lifetimeDisplay = lifetime;
-		previousUpdate = new Date ().getTime();
+		previousUpdate = new Date().getTime();
 
 		if (slotToBuild != null && lifetime > maxLifetime) {
 			slotToBuild.writeCompleted(context, (lifetime - maxLifetime)
-					/ stacksToBuild.size());
+					/ stacksToDisplay.size());
 		}
 	}
 
-	public void displayUpdate () {
+	public void displayUpdate() {
 		initialize();
 
 		double tickDuration = 1000.0 / 20.0;
-		long currentUpdate = new Date ().getTime();
+		long currentUpdate = new Date().getTime();
 		double timeSpan = currentUpdate - previousUpdate;
 		previousUpdate = currentUpdate;
 
@@ -175,19 +165,27 @@ public class BuildingItem implements IBuilder {
 
 	private void build() {
 		if (slotToBuild != null) {
-			Block block = context.world().getBlock((int) destination.x, (int)destination.y, (int)destination.z);
-			int meta = context.world().getBlockMetadata((int) destination.x, (int)destination.y, (int)destination.z);
+			int destX = (int) Math.floor(destination.x);
+			int destY = (int) Math.floor(destination.y);
+			int destZ = (int) Math.floor(destination.z);
+			Block block = context.world().getBlock(destX, destY, destZ);
+			int meta = context.world().getBlockMetadata(destX, destY, destZ);
 
 			context.world().playAuxSFXAtEntity(null, 2001,
-					(int) destination.x, (int) destination.y,
-					(int) destination.z,
+					destX, destY, destZ,
 					Block.getIdFromBlock(block) + (meta << 12));
+
+			/*if (BlockUtil.isToughBlock(context.world(), destX, destY, destZ)) {
+				BlockUtil.breakBlock(context.world(), destX, destY, destZ, BuildCraftBuilders.fillerLifespanTough);
+			} else {
+				BlockUtil.breakBlock(context.world(), destX, destY, destZ, BuildCraftBuilders.fillerLifespanNormal);
+			}*/
 
 			slotToBuild.writeToWorld(context);
 		}
 	}
 
-	public LinkedList <StackAtPosition> getStacks () {
+	public LinkedList<StackAtPosition> getStacks() {
 		int d = 0;
 
 		for (StackAtPosition s : stacksToDisplay) {
@@ -209,5 +207,82 @@ public class BuildingItem implements IBuilder {
 	@Override
 	public boolean isDone() {
 		return isDone;
+	}
+
+	public void writeToNBT(NBTTagCompound nbt) {
+		NBTTagCompound originNBT = new NBTTagCompound();
+		origin.writeToNBT(originNBT);
+		nbt.setTag("origin", originNBT);
+
+		NBTTagCompound destinationNBT = new NBTTagCompound();
+		destination.writeToNBT(destinationNBT);
+		nbt.setTag("destination", destinationNBT);
+
+		nbt.setDouble("lifetime", lifetime);
+
+		NBTTagList items = new NBTTagList();
+
+		for (StackAtPosition s : stacksToDisplay) {
+			NBTTagCompound cpt = new NBTTagCompound();
+			s.stack.writeToNBT(cpt);
+			items.appendTag(cpt);
+		}
+
+		nbt.setTag("items", items);
+
+		MappingRegistry registry = new MappingRegistry();
+
+		NBTTagCompound slotNBT = new NBTTagCompound();
+		NBTTagCompound registryNBT = new NBTTagCompound();
+
+		slotToBuild.writeToNBT(slotNBT, registry);
+		registry.write(registryNBT);
+
+		nbt.setTag("registry", registryNBT);
+
+		if (slotToBuild instanceof BuildingSlotBlock) {
+			nbt.setByte("slotKind", (byte) 0);
+		} else {
+			nbt.setByte("slotKind", (byte) 1);
+		}
+
+		nbt.setTag("slotToBuild", slotNBT);
+	}
+
+	public void readFromNBT(NBTTagCompound nbt) {
+		origin = new Position(nbt.getCompoundTag("origin"));
+		destination = new Position(nbt.getCompoundTag("destination"));
+		lifetime = nbt.getDouble("lifetime");
+
+		NBTTagList items = nbt.getTagList("items",
+				Constants.NBT.TAG_COMPOUND);
+
+		for (int i = 0; i < items.tagCount(); ++i) {
+			StackAtPosition sPos = new StackAtPosition();
+			sPos.stack = ItemStack.loadItemStackFromNBT(items
+					.getCompoundTagAt(i));
+			stacksToDisplay.add(sPos);
+		}
+
+		MappingRegistry registry = new MappingRegistry();
+		registry.read(nbt.getCompoundTag("registry"));
+
+		if (nbt.getByte("slotKind") == 0) {
+			slotToBuild = new BuildingSlotBlock();
+		} else {
+			slotToBuild = new BuildingSlotEntity();
+		}
+
+		slotToBuild.readFromNBT(nbt.getCompoundTag("slotToBuild"), registry);
+	}
+
+	public void setStacksToDisplay(LinkedList<ItemStack> stacks) {
+		if (stacks != null) {
+			for (ItemStack s : stacks) {
+				StackAtPosition sPos = new StackAtPosition();
+				sPos.stack = s;
+				stacksToDisplay.add(sPos);
+			}
+		}
 	}
 }

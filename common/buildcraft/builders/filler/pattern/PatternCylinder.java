@@ -10,6 +10,7 @@ package buildcraft.builders.filler.pattern;
 
 import buildcraft.core.Box;
 import buildcraft.core.blueprints.Template;
+import net.minecraft.world.World;
 
 public class PatternCylinder extends FillerPattern {
 
@@ -19,8 +20,8 @@ public class PatternCylinder extends FillerPattern {
 
 
 	@Override
-	public Template getTemplate(Box box) {
-		Template result = new Template (box.sizeX(), box.sizeY(), box.sizeZ());
+	public Template getTemplate(Box box, World world) {
+		Template result = new Template(box.sizeX(), box.sizeY(), box.sizeZ());
 
 		int xMin = 0;
 		int yMin = 0;
@@ -54,19 +55,21 @@ public class PatternCylinder extends FillerPattern {
 		int stoppingX = twoBSquare * xRadius;
 		int stoppingZ = 0;
 
-		while (stoppingX >= stoppingZ) {
-			fillFourColumns(xCenter, zCenter, dx, dz, xFix, zFix, yMin,
-					yMax, result);
+		if (twoASquare > 0) {
+			while (stoppingX >= stoppingZ) {
+				fillFourColumns(xCenter, zCenter, dx, dz, xFix, zFix, yMin,
+						yMax, result);
 
-			++dz;
-			stoppingZ += twoASquare;
-			ellipseError += zChange;
-			zChange += twoASquare;
-			if (2 * ellipseError + xChange > 0) {
-				--dx;
-				stoppingX -= twoBSquare;
-				ellipseError += xChange;
-				xChange += twoBSquare;
+				++dz;
+				stoppingZ += twoASquare;
+				ellipseError += zChange;
+				zChange += twoASquare;
+				if (2 * ellipseError + xChange > 0) {
+					--dx;
+					stoppingX -= twoBSquare;
+					ellipseError += xChange;
+					xChange += twoBSquare;
+				}
 			}
 		}
 
@@ -78,19 +81,21 @@ public class PatternCylinder extends FillerPattern {
 		stoppingX = 0;
 		stoppingZ = twoASquare * zRadius;
 
-		while (stoppingX <= stoppingZ) {
-			fillFourColumns(xCenter, zCenter, dx, dz, xFix, zFix, yMin,
-					yMax, result);
+		if (twoBSquare > 0) {
+			while (stoppingX <= stoppingZ) {
+				fillFourColumns(xCenter, zCenter, dx, dz, xFix, zFix, yMin,
+						yMax, result);
 
-			++dx;
-			stoppingX += twoBSquare;
-			ellipseError += xChange;
-			xChange += twoBSquare;
-			if (2 * ellipseError + zChange > 0) {
-				--dz;
-				stoppingZ -= twoASquare;
-				ellipseError += zChange;
-				zChange += twoASquare;
+				++dx;
+				stoppingX += twoBSquare;
+				ellipseError += xChange;
+				xChange += twoBSquare;
+				if (2 * ellipseError + zChange > 0) {
+					--dz;
+					stoppingZ -= twoASquare;
+					ellipseError += zChange;
+					zChange += twoASquare;
+				}
 			}
 		}
 
@@ -98,7 +103,7 @@ public class PatternCylinder extends FillerPattern {
 	}
 
 	private boolean fillFourColumns(int xCenter, int zCenter, int dx, int dz,
-			int xFix, int zFix, int yMin, int yMax, Template template) {
+									int xFix, int zFix, int yMin, int yMax, Template template) {
 		int x, z;
 
 		x = xCenter + dx + xFix;

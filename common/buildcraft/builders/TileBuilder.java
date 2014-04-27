@@ -8,20 +8,9 @@
  */
 package buildcraft.builders;
 
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.LinkedList;
-
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.world.WorldSettings.GameType;
-import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.BuildCraftBuilders;
 import buildcraft.api.blueprints.Translation;
+import buildcraft.api.core.NetworkData;
 import buildcraft.api.core.Position;
 import buildcraft.api.gates.IAction;
 import buildcraft.core.BlockIndex;
@@ -29,17 +18,24 @@ import buildcraft.core.Box;
 import buildcraft.core.Box.Kind;
 import buildcraft.core.IMachine;
 import buildcraft.core.LaserData;
-import buildcraft.core.blueprints.Blueprint;
-import buildcraft.core.blueprints.BlueprintBase;
-import buildcraft.core.blueprints.BptBuilderBase;
-import buildcraft.core.blueprints.BptBuilderBlueprint;
-import buildcraft.core.blueprints.BptBuilderTemplate;
-import buildcraft.core.blueprints.BptContext;
-import buildcraft.core.network.NetworkData;
+import buildcraft.core.blueprints.*;
 import buildcraft.core.network.RPC;
 import buildcraft.core.network.RPCHandler;
 import buildcraft.core.network.RPCSide;
 import buildcraft.core.utils.Utils;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.world.WorldSettings.GameType;
+import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.common.util.ForgeDirection;
+
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.LinkedList;
 
 public class TileBuilder extends TileAbstractBuilder implements IMachine {
 
@@ -54,7 +50,9 @@ public class TileBuilder extends TileAbstractBuilder implements IMachine {
 
 	private LinkedList<BlockIndex> path;
 
-	private LinkedList <ItemStack> requiredToBuild;
+	private LinkedList<ItemStack> requiredToBuild;
+
+	NBTTagCompound initNBT = null;
 
 	private class PathIterator {
 
@@ -189,6 +187,26 @@ public class TileBuilder extends TileAbstractBuilder implements IMachine {
 			return;
 		}
 
+
+		if (initNBT != null) {
+			iterateBpt();
+
+			if (bluePrintBuilder != null) {
+				NBTTagCompound builderCpt = new NBTTagCompound();
+				bluePrintBuilder.loadBuildStateToNBT(
+						initNBT.getCompoundTag("builderState"), this);
+			}
+
+			/*
+			 * if (currentPathIterator != null) { NBTTagCompound iteratorNBT =
+			 * new NBTTagCompound();
+			 * currentPathIterator.to.writeTo(iteratorNBT);
+			 * nbttagcompound.setTag ("iterator", iteratorNBT); }
+			 */
+
+			initNBT = null;
+		}
+
 		box.kind = Kind.STRIPES;
 
 		for (int x = xCoord - 1; x <= xCoord + 1; ++x) {
@@ -247,7 +265,7 @@ public class TileBuilder extends TileAbstractBuilder implements IMachine {
 		BlueprintBase bpt = null;
 
 		try {
-			bpt = ItemBlueprint.loadBlueprint(items [0]);
+			bpt = ItemBlueprint.loadBlueprint(items[0]);
 		} catch (Throwable t) {
 			setInventorySlotContents(0, null);
 			t.printStackTrace();
@@ -437,7 +455,7 @@ public class TileBuilder extends TileAbstractBuilder implements IMachine {
 		if (nbttagcompound.hasKey("path")) {
 			path = new LinkedList<BlockIndex>();
 			NBTTagList list = nbttagcompound.getTagList("path",
-					Utils.NBTTag_Types.NBTTagCompound.ordinal());
+					Constants.NBT.TAG_COMPOUND);
 
 			for (int i = 0; i < list.tagCount(); ++i) {
 				path.add(new BlockIndex(list.getCompoundTagAt(i)));
@@ -445,6 +463,9 @@ public class TileBuilder extends TileAbstractBuilder implements IMachine {
 		}
 
 		done = nbttagcompound.getBoolean("done");
+
+		// The rest of load has to be done upon initialize.
+		initNBT = (NBTTagCompound) nbttagcompound.getCompoundTag("bptBuilder").copy();
 	}
 
 	@Override
@@ -472,6 +493,22 @@ public class TileBuilder extends TileAbstractBuilder implements IMachine {
 		}
 
 		nbttagcompound.setBoolean("done", done);
+
+		NBTTagCompound bptNBT = new NBTTagCompound();
+
+		if (bluePrintBuilder != null) {
+			NBTTagCompound builderCpt = new NBTTagCompound();
+			bluePrintBuilder.saveBuildStateToNBT(builderCpt, this);
+			bptNBT.setTag("builderState", builderCpt);
+		}
+
+		if (currentPathIterator != null) {
+			NBTTagCompound iteratorNBT = new NBTTagCompound();
+			currentPathIterator.to.writeTo(iteratorNBT);
+			bptNBT.setTag("iterator", iteratorNBT);
+		}
+
+		nbttagcompound.setTag("bptBuilder", bptNBT);
 	}
 
 	@Override
@@ -550,8 +587,8 @@ public class TileBuilder extends TileAbstractBuilder implements IMachine {
 		return requiredToBuild;
 	}
 
-	@RPC (RPCSide.CLIENT)
-	public void setItemRequirements (LinkedList <ItemStack> rq, LinkedList <Integer> realSizes) {
+	@RPC(RPCSide.CLIENT)
+	public void setItemRequirements(LinkedList<ItemStack> rq, LinkedList<Integer> realSizes) {
 		// Item stack serialized are represented through bytes, so 0-255. In
 		// order to get the real amounts, we need to pass the real sizes of the
 		// stacks as a separate list.
@@ -559,8 +596,8 @@ public class TileBuilder extends TileAbstractBuilder implements IMachine {
 		requiredToBuild = rq;
 
 		if (rq != null && rq.size() > 0) {
-			Iterator <ItemStack> itStack = rq.iterator();
-			Iterator <Integer> size = realSizes.iterator();
+			Iterator<ItemStack> itStack = rq.iterator();
+			Iterator<Integer> size = realSizes.iterator();
 
 			while (true) {
 				ItemStack stack = itStack.next();
@@ -608,7 +645,7 @@ public class TileBuilder extends TileAbstractBuilder implements IMachine {
 
 	@Override
 	public AxisAlignedBB getRenderBoundingBox() {
-		Box renderBox = new Box (this).extendToEncompass(box);
+		Box renderBox = new Box(this).extendToEncompass(box);
 
 		for (LaserData l : pathLasers) {
 			renderBox = renderBox.extendToEncompass(l.head);
@@ -618,7 +655,7 @@ public class TileBuilder extends TileAbstractBuilder implements IMachine {
 		return renderBox.expand(50).getBoundingBox();
 	}
 
-	public void build () {
+	public void build() {
 		if (!buildTracker.markTimeIfDelay(worldObj)) {
 			return;
 		}
@@ -631,22 +668,22 @@ public class TileBuilder extends TileAbstractBuilder implements IMachine {
 				bluePrintBuilder = null;
 
 				for (int i = 1; i < items.length; ++i) {
-					if (items [i] == null) {
-						items [i] = items [0];
+					if (items[i] == null) {
+						items[i] = items[0];
 						break;
 					}
 				}
 
-				items [0] = null;
+				items[0] = null;
 			}
 
 			updateRequirements();
 		}
 	}
 
-	public void updateRequirements () {
+	public void updateRequirements() {
 		if (bluePrintBuilder instanceof BptBuilderBlueprint) {
-			LinkedList <Integer> realSize = new LinkedList<Integer>();
+			LinkedList<Integer> realSize = new LinkedList<Integer>();
 
 			for (ItemStack stack : ((BptBuilderBlueprint) bluePrintBuilder).neededItems) {
 				realSize.add(stack.stackSize);
@@ -661,7 +698,7 @@ public class TileBuilder extends TileAbstractBuilder implements IMachine {
 
 	}
 
-	public BptBuilderBase getBlueprint () {
+	public BptBuilderBase getBlueprint() {
 		if (bluePrintBuilder != null) {
 			return bluePrintBuilder;
 		} else {

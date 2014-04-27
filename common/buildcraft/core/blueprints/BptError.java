@@ -8,7 +8,7 @@
  */
 package buildcraft.core.blueprints;
 
-import buildcraft.core.utils.BCLog;
+import buildcraft.api.core.BCLog;
 
 public class BptError extends Exception {
 

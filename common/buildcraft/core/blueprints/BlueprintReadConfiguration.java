@@ -8,8 +8,8 @@
  */
 package buildcraft.core.blueprints;
 
+import buildcraft.api.core.NetworkData;
 import net.minecraft.nbt.NBTTagCompound;
-import buildcraft.core.network.NetworkData;
 
 public class BlueprintReadConfiguration {
 
@@ -19,14 +19,19 @@ public class BlueprintReadConfiguration {
 	@NetworkData
 	public boolean readTiles = true;
 
+	@NetworkData
+	public boolean excavate = true;
+
 	public void writeToNBT(NBTTagCompound nbttagcompound) {
 		nbttagcompound.setBoolean("rotate", rotate);
 		nbttagcompound.setBoolean("readAllBlocks", readTiles);
+		nbttagcompound.setBoolean("excavate", excavate);
 	}
 
 	public void readFromNBT(NBTTagCompound nbttagcompound) {
 		rotate = nbttagcompound.getBoolean("rotate");
 		readTiles = nbttagcompound.getBoolean("readAllBlocks");
+		excavate = nbttagcompound.getBoolean("excavate");
 	}
 
 }

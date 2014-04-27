@@ -8,32 +8,25 @@
  */
 package buildcraft.builders;
 
+import buildcraft.BuildCraftBuilders;
+import buildcraft.api.blueprints.Translation;
+import buildcraft.api.core.IAreaProvider;
+import buildcraft.api.core.NetworkData;
+import buildcraft.core.*;
+import buildcraft.core.Box.Kind;
+import buildcraft.core.blueprints.*;
+import buildcraft.core.network.RPC;
+import buildcraft.core.network.RPCHandler;
+import buildcraft.core.network.RPCSide;
+import buildcraft.core.utils.Utils;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.ForgeDirection;
-import buildcraft.BuildCraftBuilders;
-import buildcraft.api.blueprints.Translation;
-import buildcraft.api.core.IAreaProvider;
-import buildcraft.core.BlockIndex;
-import buildcraft.core.BlockScanner;
-import buildcraft.core.Box;
-import buildcraft.core.Box.Kind;
-import buildcraft.core.IBoxProvider;
-import buildcraft.core.TileBuildCraft;
-import buildcraft.core.blueprints.Blueprint;
-import buildcraft.core.blueprints.BlueprintBase;
-import buildcraft.core.blueprints.BlueprintReadConfiguration;
-import buildcraft.core.blueprints.BptContext;
-import buildcraft.core.blueprints.Template;
-import buildcraft.core.network.NetworkData;
-import buildcraft.core.network.RPC;
-import buildcraft.core.network.RPCHandler;
-import buildcraft.core.network.RPCSide;
-import buildcraft.core.utils.Utils;
 
 public class TileArchitect extends TileBuildCraft implements IInventory, IBoxProvider {
 	private final static int SCANNER_ITERATION = 100;
@@ -75,7 +68,7 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 						/ (float) blockScanner.totalBlocks()) * 100);
 
 				if (blockScanner.blocksLeft() == 0) {
-					writingBlueprint.readEntitiesFromWorld (writingContext, this);
+					writingBlueprint.readEntitiesFromWorld(writingContext, this);
 
 					Translation transform = new Translation();
 
@@ -89,6 +82,7 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 							xCoord, yCoord, zCoord)].getOpposite();
 
 					writingBlueprint.rotate = readConfiguration.rotate;
+					writingBlueprint.excavate = readConfiguration.excavate;
 
 					if (writingBlueprint.rotate) {
 						if (o == ForgeDirection.EAST) {
@@ -143,7 +137,7 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 		blockScanner = null;
 	}
 
-	@RPC (RPCSide.SERVER)
+	@RPC(RPCSide.SERVER)
 	public void handleClientInput(char c) {
 		if (c == 8) {
 			if (name.length() > 0) {
@@ -159,7 +153,7 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 	}
 
 	@RPC
-	public void setName (String name) {
+	public void setName(String name) {
 		this.name = name;
 	}
 
@@ -245,7 +239,7 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 		}
 
 		NBTTagList nbttaglist = nbttagcompound.getTagList("Items",
-				Utils.NBTTag_Types.NBTTagCompound.ordinal());
+				Constants.NBT.TAG_COMPOUND);
 		items = new ItemStack[getSizeInventory()];
 
 		for (int i = 0; i < nbttaglist.tagCount(); i++) {
@@ -374,16 +368,16 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 
 	@Override
 	public AxisAlignedBB getRenderBoundingBox() {
-		return new Box (this).extendToEncompass(box).getBoundingBox();
+		return new Box(this).extendToEncompass(box).getBoundingBox();
 	}
 
-	@RPC (RPCSide.SERVER)
-	private void setReadConfiguration (BlueprintReadConfiguration conf) {
+	@RPC(RPCSide.SERVER)
+	private void setReadConfiguration(BlueprintReadConfiguration conf) {
 		readConfiguration = conf;
 		sendNetworkUpdate();
 	}
 
-	public void rpcSetConfiguration (BlueprintReadConfiguration conf) {
+	public void rpcSetConfiguration(BlueprintReadConfiguration conf) {
 		readConfiguration = conf;
 		RPCHandler.rpcServer(this, "setReadConfiguration", conf);
 	}

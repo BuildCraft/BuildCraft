@@ -8,43 +8,51 @@
  */
 package buildcraft.silicon;
 
-import buildcraft.api.power.ILaserTarget;
 import buildcraft.BuildCraftCore;
-import buildcraft.BuildCraftFactory;
-import buildcraft.BuildCraftMod;
-import buildcraft.BuildCraftSilicon;
+import buildcraft.api.core.NetworkData;
 import buildcraft.api.core.Position;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.gates.IAction;
 import buildcraft.api.gates.IActionReceptor;
+import buildcraft.api.power.ILaserTarget;
 import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.power.PowerHandler;
 import buildcraft.api.power.PowerHandler.PowerReceiver;
 import buildcraft.api.power.PowerHandler.Type;
-import buildcraft.core.EntityEnergyLaser;
-import buildcraft.core.IMachine;
-import buildcraft.core.TileBuildCraft;
-import buildcraft.core.proxy.CoreProxy;
+import buildcraft.core.*;
 import buildcraft.core.triggers.ActionMachineControl;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.common.util.ForgeDirection;
 
 import java.util.LinkedList;
 import java.util.List;
 
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.util.ForgeDirection;
-
 public class TileLaser extends TileBuildCraft implements IPowerReceptor, IActionReceptor, IMachine {
 
 	private static final float LASER_OFFSET = 2.0F / 16.0F;
-	private EntityEnergyLaser laser = null;
+
+	@NetworkData
+	public LaserData laser = new LaserData();
+
 	private final SafeTimeTracker laserTickTracker = new SafeTimeTracker(10);
 	private final SafeTimeTracker searchTracker = new SafeTimeTracker(100, 100);
-	private final SafeTimeTracker networkTracker = new SafeTimeTracker(3);
+	private final SafeTimeTracker networkTracker = new SafeTimeTracker(20, 3);
 	private ILaserTarget laserTarget;
 	protected PowerHandler powerHandler;
 	private ActionMachineControl.Mode lastMode = ActionMachineControl.Mode.Unknown;
 	private static final PowerHandler.PerditionCalculator PERDITION = new PowerHandler.PerditionCalculator(0.5F);
+
+	private static final short POWER_AVERAGING = 100;
+	private int powerIndex = 0;
+
+	@NetworkData
+	private double powerAverage = 0;
+
+	private final double power[] = new double[POWER_AVERAGING];
+
 
 	public TileLaser() {
 		powerHandler = new PowerHandler(this, Type.MACHINE);
@@ -57,11 +65,22 @@ public class TileLaser extends TileBuildCraft implements IPowerReceptor, IAction
 	}
 
 	@Override
+	public void initialize() {
+		super.initialize();
+
+		laser.head = new Position(xCoord, yCoord, zCoord);
+		laser.tail = new Position(xCoord, yCoord, zCoord);
+	}
+
+	@Override
 	public void updateEntity() {
 		super.updateEntity();
 
-		if (!!worldObj.isRemote)
+		laser.iterateTexture();
+
+		if (!!worldObj.isRemote) {
 			return;
+		}
 
 		// If a gate disabled us, remove laser and do nothing.
 		if (lastMode == ActionMachineControl.Mode.Off) {
@@ -89,9 +108,7 @@ public class TileLaser extends TileBuildCraft implements IPowerReceptor, IAction
 
 		// We have a table and can work, so we create a laser if
 		// necessary.
-		if (laser == null) {
-			createLaser();
-		}
+		laser.isVisible = true;
 
 		// We have a laser and may update it
 		if (laser != null && canUpdateLaser()) {
@@ -103,7 +120,7 @@ public class TileLaser extends TileBuildCraft implements IPowerReceptor, IAction
 		laserTarget.receiveLaserEnergy(power);
 
 		if (laser != null) {
-			laser.pushPower(power);
+			pushPower(power);
 		}
 
 		onPowerSent(power);
@@ -128,8 +145,9 @@ public class TileLaser extends TileBuildCraft implements IPowerReceptor, IAction
 
 	protected boolean isValidTable() {
 
-		if (laserTarget == null || laserTarget.isInvalidTarget() || !laserTarget.requiresLaserEnergy())
+		if (laserTarget == null || laserTarget.isInvalidTarget() || !laserTarget.requiresLaserEnergy()) {
 			return false;
+		}
 
 		return true;
 	}
@@ -185,16 +203,11 @@ public class TileLaser extends TileBuildCraft implements IPowerReceptor, IAction
 			}
 		}
 
-		if (targets.isEmpty())
+		if (targets.isEmpty()) {
 			return;
+		}
 
 		laserTarget = targets.get(worldObj.rand.nextInt(targets.size()));
-	}
-
-	protected void createLaser() {
-
-		laser = new EntityEnergyLaser(worldObj, new Position(xCoord, yCoord, zCoord), new Position(xCoord, yCoord, zCoord));
-		worldObj.spawnEntityInWorld(laser);
 	}
 
 	protected void updateLaser() {
@@ -229,18 +242,19 @@ public class TileLaser extends TileBuildCraft implements IPowerReceptor, IAction
 		Position tail = new Position(laserTarget.getXCoord() + 0.475 + (worldObj.rand.nextFloat() - 0.5) / 5F, laserTarget.getYCoord() + 9F / 16F,
 				laserTarget.getZCoord() + 0.475 + (worldObj.rand.nextFloat() - 0.5) / 5F);
 
-		laser.setPositions(head, tail);
+		laser.head = head;
+		laser.tail = tail;
 
-		if (!laser.isVisible()) {
-			laser.show();
+		if (!laser.isVisible) {
+			laser.isVisible = true;
 		}
 	}
 
 	protected void removeLaser() {
-		if (laser != null) {
-			laser.setDead();
-			laser = null;
-		}
+		laser.isVisible = false;
+		// force sending the network update even if the network tracker
+		// refuses.
+		super.sendNetworkUpdate();
 	}
 
 	@Override
@@ -307,5 +321,35 @@ public class TileLaser extends TileBuildCraft implements IPowerReceptor, IAction
 		} else if (action == BuildCraftCore.actionOff) {
 			lastMode = ActionMachineControl.Mode.Off;
 		}
+	}
+
+	private void pushPower(double received) {
+		powerAverage -= power[powerIndex];
+		powerAverage += received;
+		power[powerIndex] = received;
+		powerIndex++;
+
+		if (powerIndex == power.length) {
+			powerIndex = 0;
+		}
+	}
+
+	public ResourceLocation getTexture() {
+		double avg = powerAverage / POWER_AVERAGING;
+
+		if (avg <= 1.0) {
+			return EntityLaser.LASER_TEXTURES[0];
+		} else if (avg <= 2.0) {
+			return EntityLaser.LASER_TEXTURES[1];
+		} else if (avg <= 3.0) {
+			return EntityLaser.LASER_TEXTURES[2];
+		} else {
+			return EntityLaser.LASER_TEXTURES[3];
+		}
+	}
+
+	@Override
+	public AxisAlignedBB getRenderBoundingBox() {
+		return new Box(this).extendToEncompass(laser.tail).getBoundingBox();
 	}
 }

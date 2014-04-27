@@ -8,19 +8,18 @@
  */
 package buildcraft.core;
 
+import buildcraft.api.core.IAreaProvider;
+import buildcraft.api.core.IBox;
+import buildcraft.api.core.NetworkData;
+import buildcraft.api.core.Position;
+import buildcraft.core.utils.Utils;
 import io.netty.buffer.ByteBuf;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
-import buildcraft.api.core.IAreaProvider;
-import buildcraft.api.core.IBox;
-import buildcraft.api.core.Position;
-import buildcraft.core.network.NetworkData;
-import buildcraft.core.utils.Utils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Box implements IBox {
 
@@ -44,7 +43,7 @@ public class Box implements IBox {
 	@NetworkData
 	public boolean isVisible = true;
 
-	public LaserData lasersData [];
+	public LaserData lasersData[];
 
 	public Box() {
 		reset();
@@ -56,7 +55,7 @@ public class Box implements IBox {
 	}
 
 	public Box(int xMin, int yMin, int zMin, int xMax, int yMax, int zMax) {
-		this ();
+		this();
 		initialize(xMin, yMin, zMin, xMax, yMax, zMax);
 	}
 
@@ -112,7 +111,7 @@ public class Box implements IBox {
 	}
 
 	public void initialize(NBTTagCompound nbttagcompound) {
-		kind = Kind.values() [nbttagcompound.getShort("kind")];
+		kind = Kind.values()[nbttagcompound.getShort("kind")];
 
 		initialize(nbttagcompound.getInteger("xMin"),
 				nbttagcompound.getInteger("yMin"),
@@ -291,7 +290,7 @@ public class Box implements IBox {
 		return "{" + xMin + ", " + xMax + "}, {" + yMin + ", " + yMax + "}, {" + zMin + ", " + zMax + "}";
 	}
 
-	public Box extendToEncompass (Box toBeContained) {
+	public Box extendToEncompass(Box toBeContained) {
 		if (toBeContained.xMin < xMin) {
 			xMin = toBeContained.xMin;
 		}

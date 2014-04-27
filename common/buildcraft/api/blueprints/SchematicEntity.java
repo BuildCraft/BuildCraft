@@ -8,9 +8,7 @@
  */
 package buildcraft.api.blueprints;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-
+import buildcraft.api.core.Position;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.item.Item;
@@ -19,8 +17,10 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagDouble;
 import net.minecraft.nbt.NBTTagFloat;
 import net.minecraft.nbt.NBTTagList;
-import buildcraft.api.core.Position;
-import buildcraft.core.utils.Utils;
+import net.minecraftforge.common.util.Constants;
+
+import java.util.ArrayList;
+import java.util.LinkedList;
 
 public class SchematicEntity extends Schematic {
 
@@ -53,14 +53,14 @@ public class SchematicEntity extends Schematic {
 
 	@Override
 	public void transformToBlueprint(MappingRegistry registry,
-			Translation transform) {
+									 Translation transform) {
 		NBTTagList nbttaglist = cpt.getTagList("Pos", 6);
 		Position pos = new Position(nbttaglist.func_150309_d(0),
 				nbttaglist.func_150309_d(1), nbttaglist.func_150309_d(2));
 		pos = transform.translate(pos);
 
 		cpt.setTag("Pos",
-				this.newDoubleNBTList(new double[] { pos.x, pos.y, pos.z }));
+				this.newDoubleNBTList(pos.x, pos.y, pos.z));
 
 		inventorySlotsToBlueprint(registry, cpt);
 	}
@@ -73,7 +73,7 @@ public class SchematicEntity extends Schematic {
 		pos = transform.translate(pos);
 
 		cpt.setTag("Pos",
-				this.newDoubleNBTList(new double[] { pos.x, pos.y, pos.z }));
+				this.newDoubleNBTList(pos.x, pos.y, pos.z));
 
 		inventorySlotsToWorld(registry, cpt);
 	}
@@ -85,15 +85,15 @@ public class SchematicEntity extends Schematic {
 				nbttaglist.func_150309_d(1), nbttaglist.func_150309_d(2));
 		pos = context.rotatePositionLeft(pos);
 		cpt.setTag("Pos",
-				this.newDoubleNBTList(new double[] { pos.x, pos.y, pos.z }));
+				this.newDoubleNBTList(pos.x, pos.y, pos.z));
 
 		nbttaglist = cpt.getTagList("Rotation", 5);
 		float yaw = nbttaglist.func_150308_e(0);
 		yaw += 90;
 		cpt.setTag(
 				"Rotation",
-				this.newFloatNBTList(new float[] { yaw,
-						nbttaglist.func_150308_e(1) }));
+				this.newFloatNBTList(yaw,
+						nbttaglist.func_150308_e(1)));
 	}
 
 	@Override
@@ -120,7 +120,7 @@ public class SchematicEntity extends Schematic {
 		cpt = nbt.getCompoundTag("entity");
 
 		NBTTagList rq = nbt.getTagList("rq",
-				Utils.NBTTag_Types.NBTTagCompound.ordinal());
+				Constants.NBT.TAG_COMPOUND);
 
 		ArrayList<ItemStack> rqs = new ArrayList<ItemStack>();
 

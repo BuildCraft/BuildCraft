@@ -8,21 +8,21 @@
  */
 package buildcraft.core.blueprints;
 
-import java.io.IOException;
-
+import buildcraft.api.blueprints.IBuilderContext;
+import buildcraft.api.blueprints.MappingRegistry;
+import buildcraft.api.blueprints.SchematicBlockBase;
+import buildcraft.api.blueprints.Translation;
+import buildcraft.api.core.BCLog;
+import buildcraft.builders.blueprints.BlueprintId;
+import buildcraft.core.Box;
+import buildcraft.core.Version;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
-import buildcraft.api.blueprints.IBuilderContext;
-import buildcraft.api.blueprints.MappingRegistry;
-import buildcraft.api.blueprints.SchematicBlockBase;
-import buildcraft.api.blueprints.Translation;
-import buildcraft.builders.blueprints.BlueprintId;
-import buildcraft.core.Box;
-import buildcraft.core.Version;
-import buildcraft.core.utils.BCLog;
+
+import java.io.IOException;
 
 public abstract class BlueprintBase {
 
@@ -34,8 +34,9 @@ public abstract class BlueprintBase {
 	private String version = "";
 	protected MappingRegistry mapping = new MappingRegistry();
 	public boolean rotate = true;
+	public boolean excavate = true;
 
-	private byte [] data;
+	private byte[] data;
 
 	public BlueprintBase() {
 	}
@@ -56,8 +57,8 @@ public abstract class BlueprintBase {
 		for (int x = 0; x < sizeX; ++x) {
 			for (int y = 0; y < sizeY; ++y) {
 				for (int z = 0; z < sizeZ; ++z) {
-					if (contents [x][y][z] != null) {
-						contents [x][y][z].transformToBlueprint(mapping, transform);
+					if (contents[x][y][z] != null) {
+						contents[x][y][z].transformToBlueprint(mapping, transform);
 					}
 				}
 			}
@@ -68,8 +69,8 @@ public abstract class BlueprintBase {
 		for (int x = 0; x < sizeX; ++x) {
 			for (int y = 0; y < sizeY; ++y) {
 				for (int z = 0; z < sizeZ; ++z) {
-					if (contents [x][y][z] != null) {
-						contents [x][y][z].transformToWorld(mapping, transform);
+					if (contents[x][y][z] != null) {
+						contents[x][y][z].transformToWorld(mapping, transform);
 					}
 				}
 			}
@@ -115,7 +116,7 @@ public abstract class BlueprintBase {
 		context.rotateLeft();
 	}
 
-	public void writeToNBT (NBTTagCompound nbt) {
+	public void writeToNBT(NBTTagCompound nbt) {
 		nbt.setString("version", Version.VERSION);
 
 		if (this instanceof Template) {
@@ -131,6 +132,7 @@ public abstract class BlueprintBase {
 		nbt.setInteger("anchorY", anchorY);
 		nbt.setInteger("anchorZ", anchorZ);
 		nbt.setBoolean("rotate", rotate);
+		nbt.setBoolean("excavate", excavate);
 
 		if (author != null) {
 			nbt.setString("author", author);
@@ -145,7 +147,7 @@ public abstract class BlueprintBase {
 		BlueprintBase bpt;
 
 		if ("template".equals(kind)) {
-			bpt = new Template ();
+			bpt = new Template();
 		} else {
 			bpt = new Blueprint();
 		}
@@ -155,7 +157,7 @@ public abstract class BlueprintBase {
 		return bpt;
 	}
 
-	public void readFromNBT (NBTTagCompound nbt) {
+	public void readFromNBT(NBTTagCompound nbt) {
 		BlueprintBase result = null;
 
 		String version = nbt.getString("version");
@@ -175,10 +177,16 @@ public abstract class BlueprintBase {
 			rotate = true;
 		}
 
-		contents = new SchematicBlockBase [sizeX][sizeY][sizeZ];
+		if (nbt.hasKey("excavate")) {
+			excavate = nbt.getBoolean("excavate");
+		} else {
+			excavate = true;
+		}
+
+		contents = new SchematicBlockBase[sizeX][sizeY][sizeZ];
 
 		try {
-			loadContents (nbt);
+			loadContents(nbt);
 		} catch (BptError e) {
 			e.printStackTrace();
 		}
@@ -203,7 +211,7 @@ public abstract class BlueprintBase {
 		return res;
 	}
 
-	public BptContext getContext (World world, Box box) {
+	public BptContext getContext(World world, Box box) {
 		return new BptContext(world, box, mapping);
 	}
 
@@ -211,7 +219,7 @@ public abstract class BlueprintBase {
 		public NBTTagCompound nbt;
 
 		@Override
-		public void run () {
+		public void run() {
 			try {
 				BlueprintBase.this.setData(CompressedStreamTools.compress(nbt));
 			} catch (IOException e) {
@@ -228,7 +236,7 @@ public abstract class BlueprintBase {
 	 * This data is computed asynchronously. If the data is not yet available,
 	 * null will be returned.
 	 */
-	public synchronized byte [] getData () {
+	public synchronized byte[] getData() {
 		if (data != null) {
 			return data;
 		} else if (computeData == null) {
@@ -241,7 +249,7 @@ public abstract class BlueprintBase {
 		return null;
 	}
 
-	public synchronized void setData (byte [] b) {
+	public synchronized void setData(byte[] b) {
 		data = b;
 	}
 
@@ -251,7 +259,7 @@ public abstract class BlueprintBase {
 
 	public abstract void readFromWorld(IBuilderContext context, TileEntity anchorTile, int x, int y, int z);
 
-	public abstract ItemStack getStack ();
+	public abstract ItemStack getStack();
 
 	public void readEntitiesFromWorld(IBuilderContext context, TileEntity anchorTile) {
 

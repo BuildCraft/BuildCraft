@@ -11,22 +11,21 @@ package buildcraft.transport;
 import buildcraft.BuildCraftCore;
 import buildcraft.api.core.Position;
 import buildcraft.core.inventory.StackHelper;
-import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.EnumColor;
 import com.google.common.collect.MapMaker;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
-import java.util.EnumSet;
-import java.util.Map;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.inventory.IInventory;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.MathHelper;
 import net.minecraftforge.common.util.ForgeDirection;
+
+import java.util.EnumSet;
+import java.util.Map;
 
 public final class TravelingItem {
 
@@ -78,8 +77,9 @@ public final class TravelingItem {
 	}
 
 	public static TravelingItemCache getCache() {
-		if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT)
+		if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT) {
 			return clientCache;
+		}
 		return serverCache;
 	}
 
@@ -121,8 +121,9 @@ public final class TravelingItem {
 	}
 
 	public NBTTagCompound getExtraData() {
-		if (extraData == null)
+		if (extraData == null) {
 			extraData = new NBTTagCompound();
+		}
 		return extraData;
 	}
 
@@ -132,14 +133,16 @@ public final class TravelingItem {
 
 	@Deprecated
 	public void setInsetionHandler(InsertionHandler handler) {
-		if (handler == null)
+		if (handler == null) {
 			return;
+		}
 		this.insertionHandler = handler;
 	}
 
 	public void setInsertionHandler(InsertionHandler handler) {
-		if (handler == null)
+		if (handler == null) {
 			return;
+		}
 		this.insertionHandler = handler;
 	}
 
@@ -166,11 +169,13 @@ public final class TravelingItem {
 		output = ForgeDirection.getOrientation(data.getInteger("output"));
 
 		byte c = data.getByte("color");
-		if (c != -1)
+		if (c != -1) {
 			color = EnumColor.fromId(c);
+		}
 
-		if (data.hasKey("extraData"))
+		if (data.hasKey("extraData")) {
 			extraData = data.getCompoundTag("extraData");
+		}
 	}
 
 	public void writeToNBT(NBTTagCompound data) {
@@ -188,14 +193,16 @@ public final class TravelingItem {
 
 		data.setByte("color", color != null ? (byte) color.ordinal() : -1);
 
-		if (extraData != null)
+		if (extraData != null) {
 			data.setTag("extraData", extraData);
+		}
 	}
 
 	public EntityItem toEntityItem() {
 		if (container != null && !container.getWorldObj().isRemote) {
-			if (getItemStack().stackSize <= 0)
+			if (getItemStack().stackSize <= 0) {
 				return null;
+			}
 
 			Position motion = new Position(0, 0, 0, output);
 			motion.moveForwards(0.1 + getSpeed() * 2F);
@@ -204,8 +211,9 @@ public final class TravelingItem {
 			EntityItem entity = new EntityItem(container.getWorldObj(), xCoord, yCoord, zCoord, getItemStack());
 			if (stack.getItem().hasCustomEntity(stack)) {
 				Entity e = stack.getItem().createEntity(container.getWorldObj(), entity, stack);
-				if (e instanceof EntityItem)
+				if (e instanceof EntityItem) {
 					entity = (EntityItem) e;
+				}
 			}
 
 			entity.lifespan = BuildCraftCore.itemLifespan;
@@ -227,8 +235,9 @@ public final class TravelingItem {
 			double d = 0.66000000000000003D;
 			int k = MathHelper.floor_double(yCoord + d);
 			return container.getWorldObj().getLightBrightness(i, k, j);
-		} else
+		} else {
 			return 0.0F;
+		}
 	}
 
 	public boolean isCorrupted() {
@@ -236,30 +245,39 @@ public final class TravelingItem {
 	}
 
 	public boolean canBeGroupedWith(TravelingItem otherItem) {
-		if(otherItem == this)
+		if (otherItem == this) {
 			return false;
-		if (toCenter != otherItem.toCenter)
+		}
+		if (toCenter != otherItem.toCenter) {
 			return false;
-		if (output != otherItem.output)
+		}
+		if (output != otherItem.output) {
 			return false;
-		if (color != otherItem.color)
+		}
+		if (color != otherItem.color) {
 			return false;
-		if (hasExtraData() || otherItem.hasExtraData())
+		}
+		if (hasExtraData() || otherItem.hasExtraData()) {
 			return false;
-		if (insertionHandler != DEFAULT_INSERTION_HANDLER)
+		}
+		if (insertionHandler != DEFAULT_INSERTION_HANDLER) {
 			return false;
-		if (!blacklist.equals(otherItem.blacklist))
+		}
+		if (!blacklist.equals(otherItem.blacklist)) {
 			return false;
-		if (otherItem.isCorrupted())
+		}
+		if (otherItem.isCorrupted()) {
 			return false;
-		return StackHelper.instance().canStacksMerge(itemStack, otherItem.itemStack);
+		}
+		return StackHelper.canStacksMerge(itemStack, otherItem.itemStack);
 	}
 
 	public boolean tryMergeInto(TravelingItem otherItem) {
-		if (!canBeGroupedWith(otherItem))
+		if (!canBeGroupedWith(otherItem)) {
 			return false;
-		if (StackHelper.instance().mergeStacks(itemStack, otherItem.itemStack, false) == itemStack.stackSize) {
-			StackHelper.instance().mergeStacks(itemStack, otherItem.itemStack, true);
+		}
+		if (StackHelper.mergeStacks(itemStack, otherItem.itemStack, false) == itemStack.stackSize) {
+			StackHelper.mergeStacks(itemStack, otherItem.itemStack, true);
 			itemStack.stackSize = 0;
 			return true;
 		}
@@ -275,13 +293,16 @@ public final class TravelingItem {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null)
+		if (obj == null) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
+		}
 		final TravelingItem other = (TravelingItem) obj;
-		if (this.id != other.id)
+		if (this.id != other.id) {
 			return false;
+		}
 		return true;
 	}
 

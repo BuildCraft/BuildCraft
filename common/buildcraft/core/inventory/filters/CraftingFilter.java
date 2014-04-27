@@ -29,7 +29,7 @@ public class CraftingFilter implements IStackFilter {
 			return true;
 		}
 		for (ItemStack s : stacks) {
-			if (StackHelper.instance().isCraftingEquivalent(s, stack, true)) {
+			if (StackHelper.isCraftingEquivalent(s, stack, true)) {
 				return true;
 			}
 		}

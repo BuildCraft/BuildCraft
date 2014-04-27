@@ -8,15 +8,8 @@
  */
 package buildcraft.energy;
 
-import java.util.LinkedList;
-
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.ICrafting;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.BuildCraftEnergy;
+import buildcraft.api.core.NetworkData;
 import buildcraft.api.gates.IOverrideDefaultTriggers;
 import buildcraft.api.gates.ITrigger;
 import buildcraft.api.power.IPowerEmitter;
@@ -32,14 +25,46 @@ import buildcraft.core.ReflectMjAPI;
 import buildcraft.core.ReflectMjAPI.BatteryObject;
 import buildcraft.core.TileBuffer;
 import buildcraft.core.TileBuildCraft;
-import buildcraft.core.network.NetworkData;
 import buildcraft.energy.gui.ContainerEngine;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.ICrafting;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.common.util.ForgeDirection;
+
+import java.util.LinkedList;
 
 public abstract class TileEngine extends TileBuildCraft implements IPowerReceptor, IPowerEmitter, IOverrideDefaultTriggers, IPipeConnection {
 
-	public static final ResourceLocation WOOD_TEXTURE = new ResourceLocation(DefaultProps.TEXTURE_PATH_BLOCKS + "/base_wood.png");
-	public static final ResourceLocation STONE_TEXTURE = new ResourceLocation(DefaultProps.TEXTURE_PATH_BLOCKS + "/base_stone.png");
-	public static final ResourceLocation IRON_TEXTURE = new ResourceLocation(DefaultProps.TEXTURE_PATH_BLOCKS + "/base_iron.png");
+	// Index corresponds to metadata
+	public static final ResourceLocation[] BASE_TEXTURES = new ResourceLocation[]{
+			new ResourceLocation(DefaultProps.TEXTURE_PATH_BLOCKS + "/base_wood.png"),
+			new ResourceLocation(DefaultProps.TEXTURE_PATH_BLOCKS + "/base_stone.png"),
+			new ResourceLocation(DefaultProps.TEXTURE_PATH_BLOCKS + "/base_iron.png"),
+			new ResourceLocation(DefaultProps.TEXTURE_PATH_BLOCKS + "/base_creative.png")
+	};
+
+	public static final ResourceLocation[] CHAMBER_TEXTURES = new ResourceLocation[]{
+			new ResourceLocation(DefaultProps.TEXTURE_PATH_BLOCKS + "/chamber_wood.png"),
+			new ResourceLocation(DefaultProps.TEXTURE_PATH_BLOCKS + "/chamber_stone.png"),
+			new ResourceLocation(DefaultProps.TEXTURE_PATH_BLOCKS + "/chamber_iron.png"),
+			new ResourceLocation(DefaultProps.TEXTURE_PATH_BLOCKS + "/chamber_creative.png")
+	};
+
+	// THESE ARE ONLY BLUE TRUNKS. OTHER HEAT STAGES ARE HANDLED PER TILE
+	public static final ResourceLocation[] TRUNK_TEXTURES = new ResourceLocation[]{
+			new ResourceLocation(DefaultProps.TEXTURE_PATH_BLOCKS + "/trunk_wood.png"),
+			new ResourceLocation(DefaultProps.TEXTURE_PATH_BLOCKS + "/trunk_stone.png"),
+			new ResourceLocation(DefaultProps.TEXTURE_PATH_BLOCKS + "/trunk_iron.png"),
+			new ResourceLocation(DefaultProps.TEXTURE_PATH_BLOCKS + "/trunk_creative.png")
+	};
+
+	// TEMP
+	public static final ResourceLocation TRUNK_BLUE_TEXTURE = new ResourceLocation(DefaultProps.TEXTURE_PATH_BLOCKS + "/trunk_blue.png");
+	public static final ResourceLocation TRUNK_GREEN_TEXTURE = new ResourceLocation(DefaultProps.TEXTURE_PATH_BLOCKS + "/trunk_green.png");
+	public static final ResourceLocation TRUNK_YELLOW_TEXTURE = new ResourceLocation(DefaultProps.TEXTURE_PATH_BLOCKS + "/trunk_yellow.png");
+	public static final ResourceLocation TRUNK_RED_TEXTURE = new ResourceLocation(DefaultProps.TEXTURE_PATH_BLOCKS + "/trunk_red.png");
 
 	public enum EnergyStage {
 		BLUE, GREEN, YELLOW, RED, OVERHEAT;
@@ -82,7 +107,24 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 		}
 	}
 
-	public abstract ResourceLocation getTextureFile();
+	public abstract ResourceLocation getBaseTexture();
+
+	public abstract ResourceLocation getChamberTexture();
+
+	public ResourceLocation getTrunkTexture(EnergyStage stage) {
+		switch (stage) {
+			case BLUE:
+				return TRUNK_BLUE_TEXTURE;
+			case GREEN:
+				return TRUNK_GREEN_TEXTURE;
+			case YELLOW:
+				return TRUNK_YELLOW_TEXTURE;
+			case RED:
+				return TRUNK_RED_TEXTURE;
+			default:
+				return TRUNK_RED_TEXTURE;
+		}
+	}
 
 	public boolean onBlockActivated(EntityPlayer player, ForgeDirection side) {
 		return false;

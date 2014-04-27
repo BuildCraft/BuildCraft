@@ -8,20 +8,18 @@
  */
 package buildcraft.builders.gui;
 
-import java.util.Date;
-
-import net.minecraft.client.gui.GuiButton;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.util.ResourceLocation;
-
-import org.lwjgl.opengl.GL11;
-
 import buildcraft.builders.TileArchitect;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.blueprints.BlueprintReadConfiguration;
 import buildcraft.core.gui.GuiBuildCraft;
 import buildcraft.core.network.RPCHandler;
 import buildcraft.core.utils.StringUtils;
+import net.minecraft.client.gui.GuiButton;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.util.ResourceLocation;
+import org.lwjgl.opengl.GL11;
+
+import java.util.Date;
 
 public class GuiArchitect extends GuiBuildCraft {
 
@@ -35,6 +33,7 @@ public class GuiArchitect extends GuiBuildCraft {
 	private GuiButton optionRotate;
 	private GuiButton optionReadMods;
 	private GuiButton optionReadBlocks;
+	private GuiButton optionExcavate;
 
 	public GuiArchitect(IInventory playerInventory, TileArchitect architect) {
 		super(new ContainerArchitect(playerInventory, architect), architect, TEXTURE);
@@ -57,6 +56,9 @@ public class GuiArchitect extends GuiBuildCraft {
 		optionReadBlocks = new GuiButton(1, x + 5, y + 55, 77, 20, "");
 		buttonList.add(optionReadBlocks);
 
+		optionExcavate = new GuiButton(2, x + 5, y + 80, 77, 20, "");
+		buttonList.add(optionExcavate);
+
 		updateButtons();
 	}
 
@@ -68,6 +70,8 @@ public class GuiArchitect extends GuiBuildCraft {
 			conf.rotate = !conf.rotate;
 		} else if (button == optionReadBlocks) {
 			conf.readTiles = !conf.readTiles;
+		} else if (button == optionExcavate) {
+			conf.excavate = !conf.excavate;
 		}
 
 		architect.rpcSetConfiguration(conf);
@@ -75,7 +79,7 @@ public class GuiArchitect extends GuiBuildCraft {
 		updateButtons();
 	}
 
-	private void updateButtons () {
+	private void updateButtons() {
 		BlueprintReadConfiguration conf = architect.readConfiguration;
 
 		if (conf.rotate) {
@@ -88,6 +92,12 @@ public class GuiArchitect extends GuiBuildCraft {
 			optionReadBlocks.displayString = "Blocks: All";
 		} else {
 			optionReadBlocks.displayString = "Blocks: Simple";
+		}
+
+		if (conf.excavate) {
+			optionExcavate.displayString = "Excavate: On";
+		} else {
+			optionExcavate.displayString = "Excavate: Off";
 		}
 	}
 

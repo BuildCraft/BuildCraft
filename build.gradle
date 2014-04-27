@@ -14,21 +14,23 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:1.1-SNAPSHOT'
+        classpath 'net.minecraftforge.gradle:ForgeGradle:1.2-SNAPSHOT'
     }
 }
 
 apply plugin: 'forge' // adds the forge dependency
 apply plugin: 'maven' // for uploading to a maven repo
 
-version = "6.0.5"
-group= "com.mod-buildcraft"
+version = "6.0.6"
+group = "com.mod-buildcraft"
 archivesBaseName = "buildcraft" // the name that all artifacts will use as a base. artifacts names follow this pattern: [baseName]-[appendix]-[version]-[classifier].[extension]
 
 minecraft {
-    version = "1.7.2-10.12.0.1047" // McVersion-ForgeVersion     this variable is later changed to contain only the MC version, while the apiVersion variable is used for the forge version.  Yeah its stupid, and will be changed eentually.
+    version = "1.7.2-10.12.1.1060"
+    // McVersion-ForgeVersion     this variable is later changed to contain only the MC version, while the apiVersion variable is used for the forge version.  Yeah its stupid, and will be changed eentually.
 
-    assetDir = "run/assets" // the place for ForgeGradle to download the assets. The assets that the launcher gets and stuff
+    assetDir = "run/assets"
+    // the place for ForgeGradle to download the assets. The assets that the launcher gets and stuff
 
     // replacing stuff in the source
     replace '@VERSION@', project.version
@@ -54,21 +56,21 @@ sourceSets {
 }
 
 processResources
-{
-    // replace stuff in mcmod.info, nothing else
-    from(sourceSets.main.resources.srcDirs) {
-        include 'mcmod.info'
-                
-        // replace version and mcversion
-        // ${version}   and    ${mcversion}    are the exact strings being replaced
-        expand 'version':project.version, 'mcversion':project.minecraft.version
-    }
-        
-    // copy everything else, that's not the mcmod.info
-    from(sourceSets.main.resources.srcDirs) {
-        exclude 'mcmod.info'
-    }
-}
+        {
+            // replace stuff in mcmod.info, nothing else
+            from(sourceSets.main.resources.srcDirs) {
+                include 'mcmod.info'
+
+                // replace version and mcversion
+                // ${version}   and    ${mcversion}    are the exact strings being replaced
+                expand 'version': project.version, 'mcversion': project.minecraft.version
+            }
+
+            // copy everything else, that's not the mcmod.info
+            from(sourceSets.main.resources.srcDirs) {
+                exclude 'mcmod.info'
+            }
+        }
 
 // --------------------
 // extra jar section
@@ -180,20 +182,18 @@ uploadArchives {
                                 id 'SirSngir'
                                 name 'SirSengir'
                                 roles { role 'developer' }
-                            }   
+                            }
                             developer {
                                 id 'Krapht'
                                 name 'Krapht'
                                 roles { role 'developer' }
-                            }   
+                            }
 
                         }
                     }
                 }
             }
-        }
-        else
-        {
+        } else {
             // otherwise publishing to the local repo in ~/.m2 is fine...
             add project.repositories.mavenLocal()
         }

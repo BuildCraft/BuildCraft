@@ -8,13 +8,13 @@
  */
 package buildcraft.builders.schematics;
 
-import java.util.LinkedList;
-
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.MappingRegistry;
 import buildcraft.api.blueprints.SchematicBlock;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+
+import java.util.LinkedList;
 
 public class SchematicDoor extends SchematicBlock {
 
@@ -39,31 +39,36 @@ public class SchematicDoor extends SchematicBlock {
 		upperMeta = rotateMeta(upperMeta);
 	}
 
-	private int rotateMeta (int meta) {
+	private int rotateMeta(int meta) {
 		int orientation = (meta & 3);
 		int others = meta - orientation;
 
 		switch (orientation) {
-		case 0:
-			return 1 + others;
-		case 1:
-			return 2 + others;
-		case 2:
-			return meta = 3 + others;
-		case 3:
-			return 0 + others;
+			case 0:
+				return 1 + others;
+			case 1:
+				return 2 + others;
+			case 2:
+				return meta = 3 + others;
+			case 3:
+				return 0 + others;
 		}
 
 		return 0;
 	}
 
 	@Override
-	public boolean ignoreBuilding() {
+	public boolean doNotBuild() {
 		return (meta & 8) != 0;
 	}
 
 	@Override
-	public void writeToWorld(IBuilderContext context, int x, int y, int z, LinkedList <ItemStack> stacks) {
+	public boolean isAlreadyBuilt(IBuilderContext context, int x, int y, int z) {
+		return block == context.world().getBlock(x, y, z);
+	}
+
+	@Override
+	public void writeToWorld(IBuilderContext context, int x, int y, int z, LinkedList<ItemStack> stacks) {
 		context.world().setBlock(x, y, z, block, meta, 3);
 		context.world().setBlock(x, y + 1, z, block, upperMeta, 3);
 
@@ -88,7 +93,7 @@ public class SchematicDoor extends SchematicBlock {
 	}
 
 	@Override
-	public void readFromNBT(NBTTagCompound nbt,	MappingRegistry registry) {
+	public void readFromNBT(NBTTagCompound nbt, MappingRegistry registry) {
 		super.readFromNBT(nbt, registry);
 
 		upperMeta = nbt.getByte("upperMeta");

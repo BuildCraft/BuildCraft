@@ -8,25 +8,14 @@
  */
 package buildcraft.factory;
 
-import com.mojang.authlib.GameProfile;
-
 import buildcraft.core.TileBuildCraft;
-import buildcraft.core.inventory.InvUtils;
-import buildcraft.core.inventory.InventoryConcatenator;
-import buildcraft.core.inventory.InventoryIterator;
+import buildcraft.core.inventory.*;
 import buildcraft.core.inventory.InventoryIterator.IInvSlot;
-import buildcraft.core.inventory.SimpleInventory;
-import buildcraft.core.inventory.StackHelper;
-import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.CraftingHelper;
 import buildcraft.core.utils.Utils;
+import com.mojang.authlib.GameProfile;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.Container;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.ISidedInventory;
-import net.minecraft.inventory.InventoryCraftResult;
-import net.minecraft.inventory.InventoryCrafting;
-import net.minecraft.inventory.SlotCrafting;
+import net.minecraft.inventory.*;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
@@ -74,7 +63,7 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
 		@Override
 		public void addChatMessage(IChatComponent var1) {
 		}
-		
+
 		@Override
 		public boolean canCommandSenderUseCommand(int var1, String var2) {
 			return false;
@@ -85,7 +74,7 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
 			return null;
 		}
 
-		
+
 	}
 
 	@Override
@@ -217,15 +206,18 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
 	private void balanceSlots() {
 		for (IInvSlot slotA : InventoryIterator.getIterable(craftMatrix, ForgeDirection.UP)) {
 			ItemStack stackA = slotA.getStackInSlot();
-			if (stackA == null)
+			if (stackA == null) {
 				continue;
+			}
 			for (IInvSlot slotB : InventoryIterator.getIterable(craftMatrix, ForgeDirection.UP)) {
-				if (slotA.getIndex() == slotB.getIndex())
+				if (slotA.getIndex() == slotB.getIndex()) {
 					continue;
+				}
 				ItemStack stackB = slotB.getStackInSlot();
-				if (stackB == null)
+				if (stackB == null) {
 					continue;
-				if (StackHelper.instance().canStacksMerge(stackA, stackB)) {
+				}
+				if (StackHelper.canStacksMerge(stackA, stackB)) {
 					if (stackA.stackSize > stackB.stackSize + 1) {
 						stackA.stackSize--;
 						stackB.stackSize++;
@@ -283,16 +275,21 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
 
 	@Override
 	public boolean isItemValidForSlot(int slot, ItemStack stack) {
-		if (slot == SLOT_RESULT)
+		if (slot == SLOT_RESULT) {
 			return false;
-		if (stack == null)
+		}
+		if (stack == null) {
 			return false;
-		if (!stack.isStackable())
+		}
+		if (!stack.isStackable()) {
 			return false;
-		if (stack.getItem().hasContainerItem())
+		}
+		if (stack.getItem().hasContainerItem()) {
 			return false;
-		if (getStackInSlot(slot) == null)
+		}
+		if (getStackInSlot(slot) == null) {
 			return false;
+		}
 		return true;
 	}
 

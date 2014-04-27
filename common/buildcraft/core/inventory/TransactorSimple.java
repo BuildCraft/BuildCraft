@@ -10,11 +10,12 @@ package buildcraft.core.inventory;
 
 import buildcraft.core.inventory.InventoryIterator.IInvSlot;
 import buildcraft.core.inventory.filters.IStackFilter;
-import java.util.ArrayList;
-import java.util.List;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.util.ForgeDirection;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class TransactorSimple extends Transactor {
 
@@ -52,7 +53,7 @@ public class TransactorSimple extends Transactor {
 		}
 		for (IInvSlot slot : slots) {
 			ItemStack stackInSlot = slot.getStackInSlot();
-			if (stackInSlot == null || StackHelper.instance().canStacksMerge(stackInSlot, stack)) {
+			if (stackInSlot == null || StackHelper.canStacksMerge(stackInSlot, stack)) {
 				int used = addToSlot(slot, stack, injected, doAdd);
 				if (used > 0) {
 					injected += used;
@@ -66,7 +67,6 @@ public class TransactorSimple extends Transactor {
 	}
 
 	/**
-	 *
 	 * @param slot
 	 * @param stack
 	 * @param injected Amount not to move?
@@ -88,7 +88,7 @@ public class TransactorSimple extends Transactor {
 			return wanted;
 		}
 
-		if (!StackHelper.instance().canStacksMerge(stack, stackInSlot)) {
+		if (!StackHelper.canStacksMerge(stack, stackInSlot)) {
 			return 0;
 		}
 

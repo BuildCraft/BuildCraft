@@ -8,21 +8,29 @@
  */
 package buildcraft.core.blueprints;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.world.World;
 import buildcraft.BuildCraftBuilders;
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.core.Position;
 import buildcraft.builders.BuildingItem;
 import buildcraft.builders.TileAbstractBuilder;
+import buildcraft.core.BlockIndex;
 import buildcraft.core.Box;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.world.World;
+import net.minecraftforge.common.util.Constants;
+
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.TreeSet;
 
 public abstract class BptBuilderBase implements IAreaProvider {
+
+	protected TreeSet<BlockIndex> clearedLocations = new TreeSet<BlockIndex>();
+	protected TreeSet<BlockIndex> builtLocations = new TreeSet<BlockIndex>();
 
 	public BlueprintBase blueprint;
 	int x, y, z;
@@ -42,18 +50,27 @@ public abstract class BptBuilderBase implements IAreaProvider {
 		context = bluePrint.getContext(world, box);
 	}
 
+	private boolean initialized = false;
+
+	protected abstract void initialize();
+
 	public abstract BuildingSlot getNextBlock(World world, TileAbstractBuilder inv);
 
-	public boolean buildNextSlot (World world, TileAbstractBuilder builder, int x, int y, int z) {
+	public boolean buildNextSlot(World world, TileAbstractBuilder builder, int x, int y, int z) {
+		if (!initialized) {
+			initialize();
+			initialized = true;
+		}
+
 		BuildingSlot slot = getNextBlock(world, builder);
 
 		if (slot != null) {
 			BuildingItem i = new BuildingItem();
-			i.origin = new Position (x + 0.5, y + 0.5, z + 0.5);
+			i.origin = new Position(x + 0.5, y + 0.5, z + 0.5);
 			i.destination = slot.getDestination();
 			i.slotToBuild = slot;
 			i.context = getContext();
-			i.stacksToBuild = slot.stackConsumed;
+			i.setStacksToDisplay(slot.getStacksToDisplay());
 			builder.addBuildingItem(i);
 
 			return true;
@@ -109,7 +126,7 @@ public abstract class BptBuilderBase implements IAreaProvider {
 		return context;
 	}
 
-	public void removeDoneBuilders (TileAbstractBuilder builder) {
+	public void removeDoneBuilders(TileAbstractBuilder builder) {
 		ArrayList<BuildingItem> items = builder.getBuilders();
 
 		for (int i = items.size() - 1; i >= 0; --i) {
@@ -119,30 +136,90 @@ public abstract class BptBuilderBase implements IAreaProvider {
 		}
 	}
 
-	public boolean isDone (TileAbstractBuilder builder) {
+	public boolean isDone(TileAbstractBuilder builder) {
 		return done && builder.getBuilders().size() == 0;
 	}
 
-	protected boolean setupForDestroy (TileAbstractBuilder builder, IBuilderContext context, BuildingSlotBlock slot) {
+	protected boolean setupForDestroy(TileAbstractBuilder builder, IBuilderContext context, BuildingSlotBlock slot) {
 		LinkedList<ItemStack> result = new LinkedList<ItemStack>();
 
 		int hardness = (int) context
 				.world()
 				.getBlock(slot.x, slot.y, slot.z)
 				.getBlockHardness(context.world(), slot.x, slot.y,
-						slot.z);
+						slot.z) + 1;
 
 		if (builder.energyAvailable() < hardness * TileAbstractBuilder.BREAK_ENERGY) {
 			return false;
 		} else {
 			builder.consumeEnergy(hardness * TileAbstractBuilder.BREAK_ENERGY);
 
-			for (int i = 0; i <= hardness; ++i) {
-				slot.addStackConsumed(new ItemStack(
-						BuildCraftBuilders.buildToolBlock));
+			for (int i = 0; i < hardness; ++i) {
+				slot.addStackConsumed(new ItemStack(BuildCraftBuilders.buildToolBlock));
 			}
 
 			return true;
+		}
+	}
+
+	public void saveBuildStateToNBT(NBTTagCompound nbt, TileAbstractBuilder builder) {
+		NBTTagList clearList = new NBTTagList();
+
+		for (BlockIndex loc : clearedLocations) {
+			NBTTagCompound cpt = new NBTTagCompound();
+			loc.writeTo(cpt);
+			clearList.appendTag(cpt);
+		}
+
+		nbt.setTag("clearList", clearList);
+
+		NBTTagList builtList = new NBTTagList();
+
+		for (BlockIndex loc : builtLocations) {
+			NBTTagCompound cpt = new NBTTagCompound();
+			loc.writeTo(cpt);
+			builtList.appendTag(cpt);
+		}
+
+		nbt.setTag("builtList", builtList);
+
+		NBTTagList buildingList = new NBTTagList();
+
+		for (BuildingItem item : builder.buildersInAction) {
+			NBTTagCompound sub = new NBTTagCompound();
+			item.writeToNBT(sub);
+			buildingList.appendTag(sub);
+		}
+
+		nbt.setTag("buildersInAction", buildingList);
+	}
+
+	public void loadBuildStateToNBT(NBTTagCompound nbt, TileAbstractBuilder builder) {
+		NBTTagList clearList = nbt.getTagList("clearList", Constants.NBT.TAG_COMPOUND);
+
+		for (int i = 0; i < clearList.tagCount(); ++i) {
+			NBTTagCompound cpt = clearList.getCompoundTagAt(i);
+
+			clearedLocations.add(new BlockIndex(cpt));
+		}
+
+		NBTTagList builtList = nbt.getTagList("builtList", Constants.NBT.TAG_COMPOUND);
+
+		for (int i = 0; i < builtList.tagCount(); ++i) {
+			NBTTagCompound cpt = builtList.getCompoundTagAt(i);
+
+			builtLocations.add(new BlockIndex(cpt));
+		}
+
+		NBTTagList buildingList = nbt
+				.getTagList("buildersInAction",
+						Constants.NBT.TAG_COMPOUND);
+
+		for (int i = 0; i < buildingList.tagCount(); ++i) {
+			BuildingItem item = new BuildingItem();
+			item.readFromNBT(buildingList.getCompoundTagAt(i));
+			item.context = getContext();
+			builder.buildersInAction.add(item);
 		}
 	}
 }

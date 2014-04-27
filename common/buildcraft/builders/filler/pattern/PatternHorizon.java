@@ -8,8 +8,11 @@
  */
 package buildcraft.builders.filler.pattern;
 
+import buildcraft.api.blueprints.SchematicMask;
 import buildcraft.core.Box;
+import buildcraft.core.blueprints.BptBuilderTemplate;
 import buildcraft.core.blueprints.Template;
+import net.minecraft.world.World;
 
 public class PatternHorizon extends FillerPattern {
 
@@ -18,23 +21,32 @@ public class PatternHorizon extends FillerPattern {
 	}
 
 	@Override
-	public Template getTemplate(Box box) {
-		/*
-		int xMin = 0;
-		int yMin = 0;
-		int zMin = 0;
+	public Template getTemplate(Box box, World world) {
+		int xMin = (int) box.pMin().x;
+		int yMin = box.pMin().y > 0 ? (int) box.pMin().y - 1 : 0;
+		int zMin = (int) box.pMin().z;
 
-		int xMax = box.sizeX() - 1;
-		int zMax = box.sizeZ() - 1;
+		int xMax = (int) box.pMax().x;
+		int yMax = world.getActualHeight();
+		int zMax = (int) box.pMax().z;
 
-		Template template = new Template ();
+		Template bpt = new Template(box.sizeX(), yMax - yMin + 1, box.sizeZ());
 
-		flatten(xMin, 1, zMin, xMax, yMin - 1, zMax, template);
-		empty(xMin, yMin, zMin, xMax, 128, template);*/
+		if (box.pMin().y > 0) {
+			for (int x = xMin; x <= xMax; ++x) {
+				for (int z = zMin; z <= zMax; ++z) {
+					bpt.contents[x - xMin][0][z - zMin] = new SchematicMask(true);
+				}
+			}
+		}
 
-		// FIXME: This one still needs to be fixed, taking into account
-		// world specific data somehow
+		return bpt;
+	}
 
-		return new Template (0, 0, 0);
+	@Override
+	public BptBuilderTemplate getTemplateBuilder(Box box, World world) {
+		int yMin = box.pMin().y > 0 ? (int) box.pMin().y - 1 : 0;
+
+		return new BptBuilderTemplate(getTemplate(box, world), world, box.xMin, yMin, box.zMin);
 	}
 }

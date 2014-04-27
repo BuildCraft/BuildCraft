@@ -28,7 +28,7 @@ public class ArrayStackFilter implements IStackFilter {
 			return true;
 		}
 		for (ItemStack s : stacks) {
-			if (StackHelper.instance().isMatchingItem(s, stack)) {
+			if (StackHelper.isMatchingItem(s, stack)) {
 				return true;
 			}
 		}

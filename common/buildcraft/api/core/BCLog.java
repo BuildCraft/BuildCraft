@@ -6,10 +6,10 @@
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-package buildcraft.core.utils;
+package buildcraft.api.core;
 
 import buildcraft.core.Version;
-import cpw.mods.fml.common.FMLLog;
+
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -20,7 +20,7 @@ public class BCLog {
 	public static void initLog() {
 		// TODO: check if the code below is still useful and remove otherwise.
 		//logger.setParent(FMLLog.getLogger());
-		
+
 		logger.info("Starting BuildCraft " + Version.getVersion());
 		logger.info("Copyright (c) SpaceToad, 2011");
 		logger.info("http://www.mod-buildcraft.com");

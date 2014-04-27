@@ -8,19 +8,19 @@
  */
 package buildcraft.builders;
 
-import net.minecraft.block.Block;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.world.World;
 import buildcraft.BuildCraftBuilders;
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.core.LaserKind;
+import buildcraft.api.core.NetworkData;
 import buildcraft.api.core.Position;
 import buildcraft.core.EntityBlock;
 import buildcraft.core.TileBuildCraft;
-import buildcraft.core.network.NetworkData;
 import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
+import net.minecraft.block.Block;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.world.World;
 
 public class TileMarker extends TileBuildCraft implements IAreaProvider {
 
@@ -28,7 +28,8 @@ public class TileMarker extends TileBuildCraft implements IAreaProvider {
 
 	public static class TileWrapper {
 
-		public @NetworkData
+		public
+		@NetworkData
 		int x, y, z;
 
 		public TileWrapper() {
@@ -74,21 +75,26 @@ public class TileMarker extends TileBuildCraft implements IAreaProvider {
 			return vectO.isSet();
 		}
 
-		public @NetworkData
+		public
+		@NetworkData
 		TileWrapper vectO = new TileWrapper();
-		public @NetworkData
-		TileWrapper[] vect = { new TileWrapper(), new TileWrapper(), new TileWrapper() };
-		public @NetworkData
+		public
+		@NetworkData
+		TileWrapper[] vect = {new TileWrapper(), new TileWrapper(), new TileWrapper()};
+		public
+		@NetworkData
 		int xMin, yMin, zMin, xMax, yMax, zMax;
 	}
 
-	public @NetworkData
+	public
+	@NetworkData
 	Origin origin = new Origin();
 
 	private EntityBlock[] lasers;
 	private EntityBlock[] signals;
 
-	public @NetworkData
+	public
+	@NetworkData
 	boolean showSignals = false;
 
 	public void updateSignals() {

@@ -11,7 +11,6 @@ package buildcraft.api.core;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
-import buildcraft.core.network.NetworkData;
 
 public class Position {
 
@@ -22,7 +21,10 @@ public class Position {
 	public ForgeDirection orientation;
 
 	public Position() {
-
+		x = 0;
+		y = 0;
+		z = 0;
+		orientation = ForgeDirection.UNKNOWN;
 	}
 
 	public Position(double ci, double cj, double ck) {
@@ -58,19 +60,19 @@ public class Position {
 
 	public void moveRight(double step) {
 		switch (orientation) {
-		case SOUTH:
-			x = x - step;
-			break;
-		case NORTH:
-			x = x + step;
-			break;
-		case EAST:
-			z = z + step;
-			break;
-		case WEST:
-			z = z - step;
-			break;
-		default:
+			case SOUTH:
+				x = x - step;
+				break;
+			case NORTH:
+				x = x + step;
+				break;
+			case EAST:
+				z = z + step;
+				break;
+			case WEST:
+				z = z - step;
+				break;
+			default:
 		}
 	}
 
@@ -80,25 +82,25 @@ public class Position {
 
 	public void moveForwards(double step) {
 		switch (orientation) {
-		case UP:
-			y = y + step;
-			break;
-		case DOWN:
-			y = y - step;
-			break;
-		case SOUTH:
-			z = z + step;
-			break;
-		case NORTH:
-			z = z - step;
-			break;
-		case EAST:
-			x = x + step;
-			break;
-		case WEST:
-			x = x - step;
-			break;
-		default:
+			case UP:
+				y = y + step;
+				break;
+			case DOWN:
+				y = y - step;
+				break;
+			case SOUTH:
+				z = z + step;
+				break;
+			case NORTH:
+				z = z - step;
+				break;
+			case EAST:
+				x = x + step;
+				break;
+			case WEST:
+				x = x - step;
+				break;
+			default:
 		}
 	}
 
@@ -108,13 +110,13 @@ public class Position {
 
 	public void moveUp(double step) {
 		switch (orientation) {
-		case SOUTH:
-		case NORTH:
-		case EAST:
-		case WEST:
-			y = y + step;
-			break;
-		default:
+			case SOUTH:
+			case NORTH:
+			case EAST:
+			case WEST:
+				y = y + step;
+				break;
+			default:
 		}
 
 	}
@@ -127,12 +129,14 @@ public class Position {
 		nbttagcompound.setDouble("i", x);
 		nbttagcompound.setDouble("j", y);
 		nbttagcompound.setDouble("k", z);
+		nbttagcompound.setByte("orientation", (byte) orientation.ordinal());
 	}
 
 	public void readFromNBT(NBTTagCompound nbttagcompound) {
 		x = nbttagcompound.getDouble("i");
 		y = nbttagcompound.getDouble("j");
 		z = nbttagcompound.getDouble("k");
+		orientation = ForgeDirection.values()[nbttagcompound.getByte("orientation")];
 	}
 
 	@Override

@@ -8,13 +8,9 @@
  */
 package buildcraft.api.filler;
 
-import net.minecraft.block.Block;
-import net.minecraft.util.IIcon;
-import buildcraft.core.Box;
-import buildcraft.core.blueprints.Blueprint;
-import buildcraft.core.blueprints.Template;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.util.IIcon;
 
 public interface IFillerPattern {
 
@@ -24,8 +20,4 @@ public interface IFillerPattern {
 	public IIcon getIcon();
 
 	public String getDisplayName();
-
-	public Template getTemplate (Box box);
-
-	public Blueprint getBlueprint (Box box, Block block);
 }

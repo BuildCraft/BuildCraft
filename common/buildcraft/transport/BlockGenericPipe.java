@@ -9,6 +9,7 @@
 package buildcraft.transport;
 
 import buildcraft.BuildCraftTransport;
+import buildcraft.api.core.BCLog;
 import buildcraft.api.gates.GateExpansions;
 import buildcraft.api.gates.IGateExpansion;
 import buildcraft.api.tools.IToolWrench;
@@ -16,7 +17,6 @@ import buildcraft.api.transport.PipeWire;
 import buildcraft.core.*;
 import buildcraft.core.robots.AIDocked;
 import buildcraft.core.robots.EntityRobot;
-import buildcraft.core.utils.BCLog;
 import buildcraft.core.utils.MatrixTranformations;
 import buildcraft.core.utils.Utils;
 import buildcraft.transport.gates.GateDefinition;
@@ -69,6 +69,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 			this.boundingBox = boundingBox;
 			this.sideHit = side;
 		}
+
 		public final Part hitPart;
 		public final MovingObjectPosition movingObjectPosition;
 		public final AxisAlignedBB boundingBox;
@@ -79,6 +80,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 			return String.format("RayTraceResult: %s, %s", hitPart == null ? "null" : hitPart.name(), boundingBox == null ? "null" : boundingBox.toString());
 		}
 	}
+
 	private static final ForgeDirection[] DIR_VALUES = ForgeDirection.values();
 	private boolean skippedFirstIconRegister;
 	private int renderMask = 0;
@@ -639,24 +641,24 @@ public class BlockGenericPipe extends BlockBuildCraft {
 
 		if (rayTraceResult != null && rayTraceResult.boundingBox != null) {
 			switch (rayTraceResult.hitPart) {
-			case Gate:
+				case Gate:
 					Pipe pipe = getPipe(world, x, y, z);
 					return pipe.gate.getGateItem();
-			case Plug:
+				case Plug:
 					return new ItemStack(BuildCraftTransport.plugItem);
-			case RobotStation:
-				return new ItemStack(BuildCraftTransport.robotStationItem);
-			case Pipe:
-				return new ItemStack(getPipe(world, x, y, z).item);
-			case Facade:
-				ForgeDirection dir = ForgeDirection
-						.getOrientation(target.sideHit);
-				FacadeMatrix matrix = getPipe(world, x, y, z).container.renderState.facadeMatrix;
-				Block block = matrix.getFacadeBlock(dir);
-				if (block != null) {
-					return ItemFacade.getFacade(block,
-							matrix.getFacadeMetaId(dir));
-				}
+				case RobotStation:
+					return new ItemStack(BuildCraftTransport.robotStationItem);
+				case Pipe:
+					return new ItemStack(getPipe(world, x, y, z).item);
+				case Facade:
+					ForgeDirection dir = ForgeDirection
+							.getOrientation(target.sideHit);
+					FacadeMatrix matrix = getPipe(world, x, y, z).container.renderState.facadeMatrix;
+					Block block = matrix.getFacadeBlock(dir);
+					if (block != null) {
+						return ItemFacade.getFacade(block,
+								matrix.getFacadeMetaId(dir));
+					}
 			}
 		}
 		return null;
@@ -757,7 +759,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 				if (addOrStripFacade(world, x, y, z, player, ForgeDirection.getOrientation(side), pipe)) {
 					return true;
 				}
-			} else if (currentItem.getItem () instanceof ItemRobot) {
+			} else if (currentItem.getItem() instanceof ItemRobot) {
 				if (!world.isRemote) {
 					RaytraceResult rayTraceResult = doRayTrace(world, x, y, z,
 							player);
@@ -1123,9 +1125,12 @@ public class BlockGenericPipe extends BlockBuildCraft {
 		boolean placed = world.setBlock(i, j, k, block, meta, 3);
 
 		if (placed) {
-			TileGenericPipe tile = (TileGenericPipe) world.getTileEntity(i, j, k);
-			tile.initialize(pipe);
-			tile.sendUpdateToClient();
+			TileEntity tile = world.getTileEntity(i, j, k);
+			if (tile instanceof TileGenericPipe) {
+				TileGenericPipe tilePipe = (TileGenericPipe) tile;
+				tilePipe.initialize(pipe);
+				tilePipe.sendUpdateToClient();
+			}
 		}
 
 		return placed;
@@ -1190,8 +1195,8 @@ public class BlockGenericPipe extends BlockBuildCraft {
 	 * the particles. Useful when you have entirely different texture sheets for
 	 * different sides/locations in the world.
 	 *
-	 * @param worldObj The current world
-	 * @param target The target the player is looking at {x/y/z/side/sub}
+	 * @param worldObj       The current world
+	 * @param target         The target the player is looking at {x/y/z/side/sub}
 	 * @param effectRenderer A reference to the current effect renderer.
 	 * @return True to prevent vanilla digging particles form spawning.
 	 */
@@ -1253,11 +1258,11 @@ public class BlockGenericPipe extends BlockBuildCraft {
 	 * your block. So be sure to do proper sanity checks before assuming that
 	 * the location is this block.
 	 *
-	 * @param worldObj The current world
-	 * @param x X position to spawn the particle
-	 * @param y Y position to spawn the particle
-	 * @param z Z position to spawn the particle
-	 * @param meta The metadata for the block before it was destroyed.
+	 * @param worldObj       The current world
+	 * @param x              X position to spawn the particle
+	 * @param y              Y position to spawn the particle
+	 * @param z              Z position to spawn the particle
+	 * @param meta           The metadata for the block before it was destroyed.
 	 * @param effectRenderer A reference to the current effect renderer.
 	 * @return True to prevent vanilla break particles from spawning.
 	 */
@@ -1287,6 +1292,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 		}
 		return true;
 	}
+
 	public static int facadeRenderColor = -1;
 
 	@Override

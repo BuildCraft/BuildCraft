@@ -8,44 +8,54 @@
  */
 package buildcraft.core.blueprints;
 
-import java.util.LinkedList;
-
-import net.minecraft.item.ItemStack;
 import buildcraft.api.blueprints.IBuilderContext;
+import buildcraft.api.blueprints.MappingRegistry;
 import buildcraft.api.blueprints.Schematic;
 import buildcraft.api.core.Position;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+
+import java.util.LinkedList;
 
 public abstract class BuildingSlot {
 
-	public LinkedList <ItemStack> stackConsumed;
+	public LinkedList<ItemStack> stackConsumed;
 
 	public void writeToWorld(IBuilderContext context) {
 
 	}
 
-	public void writeCompleted (IBuilderContext context, double complete) {
+	public void writeCompleted(IBuilderContext context, double complete) {
 
 	}
 
-	public void postProcessing (IBuilderContext context) {
+	public void postProcessing(IBuilderContext context) {
 
 	}
 
-	public LinkedList<ItemStack> getRequirements (IBuilderContext context) {
+	public LinkedList<ItemStack> getRequirements(IBuilderContext context) {
 		return new LinkedList<ItemStack>();
 	}
 
-	public abstract Position getDestination ();
+	public abstract Position getDestination();
 
-	public void addStackConsumed (ItemStack stack) {
+	public void addStackConsumed(ItemStack stack) {
 		if (stackConsumed == null) {
 			stackConsumed = new LinkedList<ItemStack>();
 		}
 
-		stackConsumed.add (stack);
+		stackConsumed.add(stack);
 	}
 
-	public abstract boolean isAlreadyBuilt (IBuilderContext context);
+	public LinkedList<ItemStack> getStacksToDisplay() {
+		return getSchematic().getStacksToDisplay(stackConsumed);
+	}
 
-	public abstract Schematic getSchematic ();
+	public abstract boolean isAlreadyBuilt(IBuilderContext context);
+
+	public abstract Schematic getSchematic();
+
+	public abstract void writeToNBT(NBTTagCompound nbt, MappingRegistry registry);
+
+	public abstract void readFromNBT(NBTTagCompound nbt, MappingRegistry registry);
 }

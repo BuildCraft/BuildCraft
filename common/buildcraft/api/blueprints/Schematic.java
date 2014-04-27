@@ -8,30 +8,31 @@
  */
 package buildcraft.api.blueprints;
 
-import java.util.LinkedList;
-
+import buildcraft.core.inventory.InventoryIterator.IInvSlot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import buildcraft.core.utils.Utils;
+import net.minecraftforge.common.util.Constants;
+
+import java.util.LinkedList;
 
 /**
  * This class allow to specify specific behavior for blocks stored in
  * blueprints:
- *
+ * <p/>
  * - what items needs to be used to create that block - how the block has to be
  * built on the world - how to rotate the block - what extra data to store /
  * load in the blueprint
- *
+ * <p/>
  * Default implementations of this can be seen in the package
  * buildcraft.api.schematics. The class SchematicUtils provide some additional
  * utilities.
- *
+ * <p/>
  * Blueprints perform "id translation" in case the block ids between a blueprint
  * and the world installation are different. Mapping is done through the
  * builder context.
- *
+ * <p/>
  * At blueprint load time, BuildCraft will check that each block id of the
  * blueprint corresponds to the block id in the installation. If not, it will
  * perform a search through the block list, and upon matching signature, it will
@@ -39,7 +40,7 @@ import buildcraft.core.utils.Utils;
  * such block id is found, BuildCraft will assume that the block is not
  * installed and will not load the blueprint.
  */
-public class Schematic {
+public abstract class Schematic {
 
 	/**
 	 * Return true if the block on the world correspond to the block stored in
@@ -74,19 +75,21 @@ public class Schematic {
 	 * dmg) for other items by default, it will increase damage of damageable
 	 * items by the amount of damage of the requirement, and remove the intended
 	 * amount of non damageable item.
-	 *
+	 * <p/>
 	 * Client may override this behavior for default items. Note that this
 	 * subprogram may be called twice with the same parameters, once with a copy
 	 * of requirements and stack to check if the entire requirements can be
 	 * fullfilled, and once with the real inventory. Implementer is responsible
 	 * for updating req (with the remaining requirements if any) and stack
 	 * (after usage)
-	 *
+	 * <p/>
 	 * returns: what was used (similer to req, but created from stack, so that
 	 * any NBT based differences are drawn from the correct source)
 	 */
-	public ItemStack useItem(IBuilderContext context, ItemStack req, ItemStack stack) {
+	public ItemStack useItem(IBuilderContext context, ItemStack req, IInvSlot slot) {
+		ItemStack stack = slot.getStackInSlot();
 		ItemStack result = stack.copy();
+
 		if (stack.isItemStackDamageable()) {
 			if (req.getItemDamage() + stack.getItemDamage() <= stack.getMaxDamage()) {
 				stack.setItemDamage(req.getItemDamage() + stack.getItemDamage());
@@ -95,7 +98,7 @@ public class Schematic {
 			}
 
 			if (stack.getItemDamage() >= stack.getMaxDamage()) {
-				stack.stackSize = 0;
+				slot.decreaseStackInSlot();
 			}
 		} else {
 			if (stack.stackSize >= req.stackSize) {
@@ -110,10 +113,10 @@ public class Schematic {
 
 		if (stack.stackSize == 0 && stack.getItem().getContainerItem() != null) {
 			Item container = stack.getItem().getContainerItem();
-
-			//stack.itemID = container.itemID;
-			stack.stackSize = 1;
-			stack.setItemDamage(0);
+			ItemStack newStack = new ItemStack(container);
+			slot.setStackInSlot(newStack);
+		} else if (stack.stackSize == 0) {
+			slot.setStackInSlot(null);
 		}
 
 		return result;
@@ -130,7 +133,7 @@ public class Schematic {
 	 * Performs a transformations from world to blueprints. In particular, it should:
 	 * - use the registry to map ids from world to blueprints
 	 * - apply translations to all positions in the schematic to center in the
-	 *   blueprint referencial
+	 * blueprint referencial
 	 */
 	public void transformToBlueprint(MappingRegistry registry, Translation transform) {
 
@@ -140,7 +143,7 @@ public class Schematic {
 	 * Performs a transformations from blueprints to worlds. In particular, it should:
 	 * - use the registry to map ids from blueprints to world
 	 * - apply translations to all positions in the schematic to center in the
-	 *   builder referencial
+	 * builder referencial
 	 */
 	public void transformToWorld(MappingRegistry registry, Translation transform) {
 
@@ -150,7 +153,7 @@ public class Schematic {
 	 * Places the block in the world, at the location specified in the slot,
 	 * using the stack in parameters
 	 */
-	public void writeToWorld(IBuilderContext context, int x, int y, int z, LinkedList <ItemStack> stacks) {
+	public void writeToWorld(IBuilderContext context, int x, int y, int z, LinkedList<ItemStack> stacks) {
 
 	}
 
@@ -159,7 +162,7 @@ public class Schematic {
 	 * y, z} on the world. This typically means adding entries in slot.cpt. Note
 	 * that "id" and "meta" will be set automatically, corresponding to the
 	 * block id and meta.
-	 *
+	 * <p/>
 	 * By default, if the block is a BlockContainer, tile information will be to
 	 * save / load the block.
 	 */
@@ -180,45 +183,51 @@ public class Schematic {
 
 	}
 
-	public void readFromNBT(NBTTagCompound nbt,	MappingRegistry registry) {
+	public void readFromNBT(NBTTagCompound nbt, MappingRegistry registry) {
 
 	}
 
-	public void inventorySlotsToBlueprint (MappingRegistry registry, NBTTagCompound nbt) {
+	public void inventorySlotsToBlueprint(MappingRegistry registry, NBTTagCompound nbt) {
 		inventorySlotsToBlueprint(registry, nbt, "Items");
 	}
 
-	public void inventorySlotsToBlueprint (MappingRegistry registry, NBTTagCompound nbt, String nbtName) {
+	public void inventorySlotsToBlueprint(MappingRegistry registry, NBTTagCompound nbt, String nbtName) {
 		if (!nbt.hasKey(nbtName)) {
 			return;
 		}
 
 		NBTTagList list = nbt.getTagList(nbtName,
-				Utils.NBTTag_Types.NBTTagCompound.ordinal());
+				Constants.NBT.TAG_COMPOUND);
 
 		for (int i = 0; i < list.tagCount(); ++i) {
-            NBTTagCompound invSlot = list.getCompoundTagAt(i);
-            Item item = Item.getItemById(invSlot.getInteger ("id"));
-            invSlot.setInteger("id", registry.getIdForItem(item));
+			NBTTagCompound invSlot = list.getCompoundTagAt(i);
+			Item item = Item.getItemById(invSlot.getInteger("id"));
+			invSlot.setInteger("id", registry.getIdForItem(item));
 		}
 	}
 
-	public void inventorySlotsToWorld (MappingRegistry registry, NBTTagCompound nbt) {
-		inventorySlotsToWorld (registry, nbt, "Items");
+	public void inventorySlotsToWorld(MappingRegistry registry, NBTTagCompound nbt) {
+		inventorySlotsToWorld(registry, nbt, "Items");
 	}
 
-	public void inventorySlotsToWorld (MappingRegistry registry, NBTTagCompound nbt, String nbtName) {
+	public void inventorySlotsToWorld(MappingRegistry registry, NBTTagCompound nbt, String nbtName) {
 		if (!nbt.hasKey(nbtName)) {
 			return;
 		}
 
 		NBTTagList list = nbt.getTagList(nbtName,
-				Utils.NBTTag_Types.NBTTagCompound.ordinal());
+				Constants.NBT.TAG_COMPOUND);
 
 		for (int i = 0; i < list.tagCount(); ++i) {
-            NBTTagCompound invSlot = list.getCompoundTagAt(i);
-            Item item = registry.getItemForId(invSlot.getInteger ("id"));
-            invSlot.setInteger("id", Item.getIdFromItem(item));
+			NBTTagCompound invSlot = list.getCompoundTagAt(i);
+			Item item = registry.getItemForId(invSlot.getInteger("id"));
+			invSlot.setInteger("id", Item.getIdFromItem(item));
 		}
+	}
+
+	public LinkedList<ItemStack> getStacksToDisplay(
+			LinkedList<ItemStack> stackConsumed) {
+
+		return stackConsumed;
 	}
 }

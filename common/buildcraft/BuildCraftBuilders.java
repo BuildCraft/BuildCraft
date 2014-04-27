@@ -8,80 +8,16 @@
  */
 package buildcraft;
 
-import java.io.File;
-
-import net.minecraft.entity.item.EntityItemFrame;
-import net.minecraft.entity.item.EntityMinecartChest;
-import net.minecraft.entity.item.EntityMinecartEmpty;
-import net.minecraft.entity.item.EntityMinecartFurnace;
-import net.minecraft.entity.item.EntityMinecartHopper;
-import net.minecraft.entity.item.EntityMinecartTNT;
-import net.minecraft.entity.item.EntityPainting;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
-import net.minecraft.item.ItemStack;
-import net.minecraftforge.client.event.TextureStitchEvent;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.config.Configuration;
-import net.minecraftforge.common.config.Property;
-import buildcraft.api.blueprints.SchematicRegistry;
+import buildcraft.api.blueprints.*;
+import buildcraft.api.core.BCLog;
 import buildcraft.api.filler.FillerManager;
 import buildcraft.api.filler.IFillerPattern;
 import buildcraft.api.gates.ActionManager;
-import buildcraft.builders.BlockArchitect;
-import buildcraft.builders.BlockBlueprintLibrary;
-import buildcraft.builders.BlockBuildTool;
-import buildcraft.builders.BlockBuilder;
-import buildcraft.builders.BlockFiller;
-import buildcraft.builders.BlockMarker;
-import buildcraft.builders.BlockPathMarker;
-import buildcraft.builders.BuilderProxy;
-import buildcraft.builders.EventHandlerBuilders;
-import buildcraft.builders.GuiHandler;
-import buildcraft.builders.ItemBlueprintStandard;
-import buildcraft.builders.ItemBlueprintTemplate;
-import buildcraft.builders.TileArchitect;
-import buildcraft.builders.TileBlueprintLibrary;
-import buildcraft.builders.TileBuilder;
-import buildcraft.builders.TileFiller;
-import buildcraft.builders.TileMarker;
-import buildcraft.builders.TilePathMarker;
+import buildcraft.builders.*;
 import buildcraft.builders.blueprints.BlueprintDatabase;
 import buildcraft.builders.filler.FillerRegistry;
-import buildcraft.builders.filler.pattern.FillerPattern;
-import buildcraft.builders.filler.pattern.PatternBox;
-import buildcraft.builders.filler.pattern.PatternClear;
-import buildcraft.builders.filler.pattern.PatternCylinder;
-import buildcraft.builders.filler.pattern.PatternFill;
-import buildcraft.builders.filler.pattern.PatternFlatten;
-import buildcraft.builders.filler.pattern.PatternFrame;
-import buildcraft.builders.filler.pattern.PatternHorizon;
-import buildcraft.builders.filler.pattern.PatternPyramid;
-import buildcraft.builders.filler.pattern.PatternStairs;
-import buildcraft.builders.schematics.SchematicBed;
-import buildcraft.builders.schematics.SchematicCustomStack;
-import buildcraft.builders.schematics.SchematicDirt;
-import buildcraft.builders.schematics.SchematicDoor;
-import buildcraft.builders.schematics.SchematicFarmland;
-import buildcraft.builders.schematics.SchematicFire;
-import buildcraft.builders.schematics.SchematicFluid;
-import buildcraft.builders.schematics.SchematicGravel;
-import buildcraft.builders.schematics.SchematicHanging;
-import buildcraft.builders.schematics.SchematicIgnore;
-import buildcraft.builders.schematics.SchematicIgnoreMeta;
-import buildcraft.builders.schematics.SchematicLever;
-import buildcraft.builders.schematics.SchematicMinecart;
-import buildcraft.builders.schematics.SchematicPiston;
-import buildcraft.builders.schematics.SchematicPortal;
-import buildcraft.builders.schematics.SchematicPumpkin;
-import buildcraft.builders.schematics.SchematicRail;
-import buildcraft.builders.schematics.SchematicRedstoneDiode;
-import buildcraft.builders.schematics.SchematicRotateMeta;
-import buildcraft.builders.schematics.SchematicSeeds;
-import buildcraft.builders.schematics.SchematicSign;
-import buildcraft.builders.schematics.SchematicStairs;
-import buildcraft.builders.schematics.SchematicStone;
-import buildcraft.builders.schematics.SchematicWallSide;
+import buildcraft.builders.filler.pattern.*;
+import buildcraft.builders.schematics.*;
 import buildcraft.builders.triggers.ActionFiller;
 import buildcraft.builders.triggers.BuildersActionProvider;
 import buildcraft.builders.urbanism.BlockUrbanist;
@@ -91,10 +27,7 @@ import buildcraft.core.DefaultProps;
 import buildcraft.core.InterModComms;
 import buildcraft.core.Version;
 import buildcraft.core.proxy.CoreProxy;
-import buildcraft.core.utils.BCLog;
 import cpw.mods.fml.common.Mod;
-import cpw.mods.fml.common.Mod.EventHandler;
-import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLInterModComms;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
@@ -102,9 +35,18 @@ import cpw.mods.fml.common.event.FMLServerStoppingEvent;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
-import cpw.mods.fml.common.registry.LanguageRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.entity.item.*;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
+import net.minecraft.item.ItemStack;
+import net.minecraftforge.client.event.TextureStitchEvent;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.config.Configuration;
+import net.minecraftforge.common.config.Property;
+
+import java.io.File;
 
 @Mod(name = "BuildCraft Builders", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Builders", dependencies = DefaultProps.DEPENDENCY_CORE)
 public class BuildCraftBuilders extends BuildCraftMod {
@@ -126,18 +68,18 @@ public class BuildCraftBuilders extends BuildCraftMod {
 	public static int fillerLifespanTough;
 	public static int fillerLifespanNormal;
 	public static ActionFiller[] fillerActions;
-	@Instance("BuildCraft|Builders")
+	@Mod.Instance("BuildCraft|Builders")
 	public static BuildCraftBuilders instance;
 
 	public static BlueprintDatabase serverDB;
 	public static BlueprintDatabase clientDB;
 
-	@EventHandler
+	@Mod.EventHandler
 	public void loadConfiguration(FMLPreInitializationEvent evt) {
 		File bptMainDir = new File(new File(evt.getModConfigurationDirectory(), "buildcraft"), "blueprints");
 
-		File serverDir = new File (bptMainDir, "server");
-		File clientDir = new File (bptMainDir, "client");
+		File serverDir = new File(bptMainDir, "server");
+		File clientDir = new File(bptMainDir, "client");
 
 		serverDB = new BlueprintDatabase();
 		clientDB = new BlueprintDatabase();
@@ -146,7 +88,7 @@ public class BuildCraftBuilders extends BuildCraftMod {
 		clientDB.init(clientDir);
 	}
 
-	@EventHandler
+	@Mod.EventHandler
 	public void init(FMLInitializationEvent evt) {
 		// Register gui handler
 		NetworkRegistry.INSTANCE.registerGuiHandler(instance, new GuiHandler());
@@ -164,6 +106,8 @@ public class BuildCraftBuilders extends BuildCraftMod {
 		SchematicRegistry.registerSchematicBlock(Blocks.dirt, SchematicDirt.class);
 		SchematicRegistry.registerSchematicBlock(Blocks.grass, SchematicDirt.class);
 
+		SchematicRegistry.registerSchematicBlock(Blocks.cactus, SchematicCactus.class);
+
 		SchematicRegistry.registerSchematicBlock(Blocks.farmland, SchematicFarmland.class);
 		SchematicRegistry.registerSchematicBlock(Blocks.wheat, SchematicSeeds.class, Items.wheat_seeds);
 		SchematicRegistry.registerSchematicBlock(Blocks.pumpkin_stem, SchematicSeeds.class, Items.pumpkin_seeds);
@@ -174,6 +118,10 @@ public class BuildCraftBuilders extends BuildCraftMod {
 		SchematicRegistry.registerSchematicBlock(Blocks.redstone_torch, SchematicWallSide.class);
 		SchematicRegistry.registerSchematicBlock(Blocks.unlit_redstone_torch, SchematicWallSide.class);
 
+		SchematicRegistry.registerSchematicBlock(Blocks.tripwire_hook, SchematicTripWireHook.class);
+
+		SchematicRegistry.registerSchematicBlock(Blocks.skull, SchematicSkull.class);
+
 		SchematicRegistry.registerSchematicBlock(Blocks.ladder, SchematicRotateMeta.class, new int[]{2, 5, 3, 4}, true);
 		SchematicRegistry.registerSchematicBlock(Blocks.fence_gate, SchematicRotateMeta.class, new int[]{0, 1, 2, 3}, true);
 		SchematicRegistry.registerSchematicBlock(Blocks.log, SchematicRotateMeta.class, new int[]{8, 4, 8, 4}, true);
@@ -181,11 +129,15 @@ public class BuildCraftBuilders extends BuildCraftMod {
 		SchematicRegistry.registerSchematicBlock(Blocks.hay_block, SchematicRotateMeta.class, new int[]{8, 4, 8, 4}, true);
 		SchematicRegistry.registerSchematicBlock(Blocks.quartz_block, SchematicRotateMeta.class, new int[]{4, 3, 4, 3}, true);
 		SchematicRegistry.registerSchematicBlock(Blocks.hopper, SchematicRotateMeta.class, new int[]{2, 5, 3, 4}, true);
+		SchematicRegistry.registerSchematicBlock(Blocks.anvil, SchematicRotateMeta.class, new int[]{0, 1, 2, 3}, true);
 
 		SchematicRegistry.registerSchematicBlock(Blocks.furnace, SchematicRotateMeta.class, new int[]{2, 5, 3, 4}, true);
 		SchematicRegistry.registerSchematicBlock(Blocks.lit_furnace, SchematicRotateMeta.class, new int[]{2, 5, 3, 4}, true);
 		SchematicRegistry.registerSchematicBlock(Blocks.chest, SchematicRotateMeta.class, new int[]{2, 5, 3, 4}, true);
 		SchematicRegistry.registerSchematicBlock(Blocks.dispenser, SchematicRotateMeta.class, new int[]{2, 5, 3, 4}, true);
+		SchematicRegistry.registerSchematicBlock(Blocks.dropper, SchematicRotateMeta.class, new int[]{2, 5, 3, 4}, true);
+
+		SchematicRegistry.registerSchematicBlock(Blocks.ender_chest, SchematicEnderChest.class);
 
 		SchematicRegistry.registerSchematicBlock(Blocks.vine, SchematicRotateMeta.class, new int[]{1, 4, 8, 2}, false);
 		SchematicRegistry.registerSchematicBlock(Blocks.trapdoor, SchematicRotateMeta.class, new int[]{0, 1, 2, 3}, false);
@@ -222,8 +174,6 @@ public class BuildCraftBuilders extends BuildCraftMod {
 		SchematicRegistry.registerSchematicBlock(Blocks.lava, SchematicFluid.class, new ItemStack(Items.lava_bucket));
 		SchematicRegistry.registerSchematicBlock(Blocks.flowing_lava, SchematicFluid.class, new ItemStack(Items.lava_bucket));
 
-		SchematicRegistry.registerSchematicBlock(Blocks.rail, SchematicIgnoreMeta.class);
-		SchematicRegistry.registerSchematicBlock(Blocks.detector_rail, SchematicIgnoreMeta.class);
 		SchematicRegistry.registerSchematicBlock(Blocks.glass_pane, SchematicIgnoreMeta.class);
 
 		SchematicRegistry.registerSchematicBlock(Blocks.piston, SchematicPiston.class);
@@ -281,6 +231,12 @@ public class BuildCraftBuilders extends BuildCraftMod {
 		SchematicRegistry.registerSchematicBlock(markerBlock, SchematicWallSide.class);
 		SchematicRegistry.registerSchematicBlock(pathMarkerBlock, SchematicWallSide.class);
 
+		// Factories required to save entities in world
+
+		SchematicFactory.registerSchematicFactory(SchematicBlock.class, new SchematicFactoryBlock());
+		SchematicFactory.registerSchematicFactory(SchematicMask.class, new SchematicFactoryMask());
+		SchematicFactory.registerSchematicFactory(SchematicEntity.class, new SchematicFactoryEntity());
+
 		if (BuildCraftCore.loadDefaultRecipes) {
 			loadRecipes();
 		}
@@ -288,7 +244,7 @@ public class BuildCraftBuilders extends BuildCraftMod {
 		BuilderProxy.proxy.registerBlockRenderers();
 	}
 
-	@EventHandler
+	@Mod.EventHandler
 	public void preInit(FMLPreInitializationEvent evt) {
 		Property fillerDestroyProp = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "filler.destroy", DefaultProps.FILLER_DESTROY);
 		fillerDestroyProp.comment = "If true, Filler will destroy blocks instead of breaking them.";
@@ -304,15 +260,13 @@ public class BuildCraftBuilders extends BuildCraftMod {
 
 		templateItem = new ItemBlueprintTemplate();
 		templateItem.setUnlocalizedName("templateItem");
-		LanguageRegistry.addName(templateItem, "Template");
 		CoreProxy.proxy.registerItem(templateItem);
 
 		blueprintItem = new ItemBlueprintStandard();
 		blueprintItem.setUnlocalizedName("blueprintItem");
-		LanguageRegistry.addName(blueprintItem, "Blueprint");
 		CoreProxy.proxy.registerItem(blueprintItem);
 
-		buildToolBlock = new BlockBuildTool ();
+		buildToolBlock = new BlockBuildTool();
 		CoreProxy.proxy.registerBlock(buildToolBlock);
 
 		markerBlock = new BlockMarker();
@@ -334,7 +288,7 @@ public class BuildCraftBuilders extends BuildCraftMod {
 		CoreProxy.proxy.registerBlock(libraryBlock.setBlockName("libraryBlock"));
 
 		if (!BuildCraftCore.NEXTGEN_PREALPHA) {
-			urbanistBlock = new BlockUrbanist ();
+			urbanistBlock = new BlockUrbanist();
 			CoreProxy.proxy.registerBlock(urbanistBlock.setBlockName("urbanistBlock"));
 			CoreProxy.proxy.registerTileEntity(TileUrbanist.class, "net.minecraft.src.builders.TileUrbanist");
 		}
@@ -375,41 +329,41 @@ public class BuildCraftBuilders extends BuildCraftMod {
 	}
 
 	public static void loadRecipes() {
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(templateItem, 1), new Object[]{"ppp", "pip", "ppp", 'i',
-			new ItemStack(Items.dye, 1, 0), 'p', Items.paper});
+		CoreProxy.proxy.addCraftingRecipe(new ItemStack(templateItem, 1), "ppp", "pip", "ppp", 'i',
+				new ItemStack(Items.dye, 1, 0), 'p', Items.paper);
 
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(blueprintItem, 1), new Object[]{"ppp", "pip", "ppp", 'i',
-			new ItemStack(Items.dye, 1, 4), 'p', Items.paper});
+		CoreProxy.proxy.addCraftingRecipe(new ItemStack(blueprintItem, 1), "ppp", "pip", "ppp", 'i',
+				new ItemStack(Items.dye, 1, 4), 'p', Items.paper);
 
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(markerBlock, 1), new Object[]{"l ", "r ", 'l',
-			new ItemStack(Items.dye, 1, 4), 'r', Blocks.redstone_torch});
+		CoreProxy.proxy.addCraftingRecipe(new ItemStack(markerBlock, 1), "l ", "r ", 'l',
+				new ItemStack(Items.dye, 1, 4), 'r', Blocks.redstone_torch);
 
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(pathMarkerBlock, 1), new Object[]{"l ", "r ", 'l',
-			new ItemStack(Items.dye, 1, 2), 'r', Blocks.redstone_torch});
+		CoreProxy.proxy.addCraftingRecipe(new ItemStack(pathMarkerBlock, 1), "l ", "r ", 'l',
+				new ItemStack(Items.dye, 1, 2), 'r', Blocks.redstone_torch);
 
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(fillerBlock, 1), new Object[]{"btb", "ycy", "gCg", 'b',
-			new ItemStack(Items.dye, 1, 0), 't', markerBlock, 'y', new ItemStack(Items.dye, 1, 11),
-			'c', Blocks.crafting_table, 'g', BuildCraftCore.goldGearItem, 'C', Blocks.chest});
+		CoreProxy.proxy.addCraftingRecipe(new ItemStack(fillerBlock, 1), "btb", "ycy", "gCg", 'b',
+				new ItemStack(Items.dye, 1, 0), 't', markerBlock, 'y', new ItemStack(Items.dye, 1, 11),
+				'c', Blocks.crafting_table, 'g', BuildCraftCore.goldGearItem, 'C', Blocks.chest);
 
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(builderBlock, 1), new Object[]{"btb", "ycy", "gCg", 'b',
-			new ItemStack(Items.dye, 1, 0), 't', markerBlock, 'y', new ItemStack(Items.dye, 1, 11),
-			'c', Blocks.crafting_table, 'g', BuildCraftCore.diamondGearItem, 'C', Blocks.chest});
+		CoreProxy.proxy.addCraftingRecipe(new ItemStack(builderBlock, 1), "btb", "ycy", "gCg", 'b',
+				new ItemStack(Items.dye, 1, 0), 't', markerBlock, 'y', new ItemStack(Items.dye, 1, 11),
+				'c', Blocks.crafting_table, 'g', BuildCraftCore.diamondGearItem, 'C', Blocks.chest);
 
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(architectBlock, 1), new Object[]{"btb", "ycy", "gCg", 'b',
-			new ItemStack(Items.dye, 1, 0), 't', markerBlock, 'y', new ItemStack(Items.dye, 1, 11),
-			'c', Blocks.crafting_table, 'g', BuildCraftCore.diamondGearItem, 'C',
-			new ItemStack(blueprintItem, 1)});
+		CoreProxy.proxy.addCraftingRecipe(new ItemStack(architectBlock, 1), "btb", "ycy", "gCg", 'b',
+				new ItemStack(Items.dye, 1, 0), 't', markerBlock, 'y', new ItemStack(Items.dye, 1, 11),
+				'c', Blocks.crafting_table, 'g', BuildCraftCore.diamondGearItem, 'C',
+				new ItemStack(blueprintItem, 1));
 
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(libraryBlock, 1), new Object[]{"bbb", "bBb", "bbb", 'b',
-			new ItemStack(blueprintItem), 'B', Blocks.bookshelf});
+		CoreProxy.proxy.addCraftingRecipe(new ItemStack(libraryBlock, 1), "bbb", "bBb", "bbb", 'b',
+				new ItemStack(blueprintItem), 'B', Blocks.bookshelf);
 	}
 
-	@EventHandler
+	@Mod.EventHandler
 	public void processIMCRequests(FMLInterModComms.IMCEvent event) {
 		InterModComms.processIMC(event);
 	}
 
-	@EventHandler
+	@Mod.EventHandler
 	public void ServerStop(FMLServerStoppingEvent event) {
 		TilePathMarker.clearAvailableMarkersList();
 	}

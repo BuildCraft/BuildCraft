@@ -31,8 +31,10 @@ public class EnergyProxyClient extends EnergyProxy {
 	@Override
 	public void registerBlockRenderers() {
 		//RenderingEntityBlocks.blockByEntityRenders.put(new EntityRenderIndex(BuildCraftEnergy.emitterBlock, 0), new RenderEnergyEmitter());
-		RenderingEntityBlocks.blockByEntityRenders.put(new EntityRenderIndex(BuildCraftEnergy.engineBlock, 0), new RenderEngine(TileEngine.WOOD_TEXTURE));
-		RenderingEntityBlocks.blockByEntityRenders.put(new EntityRenderIndex(BuildCraftEnergy.engineBlock, 1), new RenderEngine(TileEngine.STONE_TEXTURE));
-		RenderingEntityBlocks.blockByEntityRenders.put(new EntityRenderIndex(BuildCraftEnergy.engineBlock, 2), new RenderEngine(TileEngine.IRON_TEXTURE));
+		//TODO Update me to grab differing trunk textures
+		RenderingEntityBlocks.blockByEntityRenders.put(new EntityRenderIndex(BuildCraftEnergy.engineBlock, 0), new RenderEngine(TileEngine.BASE_TEXTURES[0], TileEngine.CHAMBER_TEXTURES[0], TileEngine.TRUNK_BLUE_TEXTURE));
+		RenderingEntityBlocks.blockByEntityRenders.put(new EntityRenderIndex(BuildCraftEnergy.engineBlock, 1), new RenderEngine(TileEngine.BASE_TEXTURES[1], TileEngine.CHAMBER_TEXTURES[1], TileEngine.TRUNK_BLUE_TEXTURE));
+		RenderingEntityBlocks.blockByEntityRenders.put(new EntityRenderIndex(BuildCraftEnergy.engineBlock, 2), new RenderEngine(TileEngine.BASE_TEXTURES[2], TileEngine.CHAMBER_TEXTURES[2], TileEngine.TRUNK_BLUE_TEXTURE));
+		RenderingEntityBlocks.blockByEntityRenders.put(new EntityRenderIndex(BuildCraftEnergy.engineBlock, 3), new RenderEngine(TileEngine.BASE_TEXTURES[3], TileEngine.CHAMBER_TEXTURES[3], TileEngine.TRUNK_TEXTURES[3]));
 	}
 }

@@ -8,6 +8,11 @@
  */
 package buildcraft.builders;
 
+import buildcraft.BuildCraftBuilders;
+import buildcraft.core.CreativeTabBuildCraft;
+import buildcraft.core.GuiIds;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
@@ -17,18 +22,13 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
-import buildcraft.BuildCraftBuilders;
-import buildcraft.core.CreativeTabBuildCraft;
-import buildcraft.core.GuiIds;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 public class BlockBlueprintLibrary extends BlockContainer {
 
 	private IIcon textureTop;
-    private IIcon textureSide;
+	private IIcon textureSide;
 
-    public BlockBlueprintLibrary() {
+	public BlockBlueprintLibrary() {
 		super(Material.wood);
 		setCreativeTab(CreativeTabBuildCraft.TIER_3.get());
 		setHardness(5F);
@@ -42,12 +42,15 @@ public class BlockBlueprintLibrary extends BlockContainer {
 		if (entityplayer.isSneaking())
 			return false;
 
-		TileBlueprintLibrary tile = (TileBlueprintLibrary) world.getTileEntity(i, j, k);
+		TileEntity tile = world.getTileEntity(i, j, k);
+		if (tile instanceof TileBlueprintLibrary) {
+			TileBlueprintLibrary tileBlueprint = (TileBlueprintLibrary) tile;
+			if (!tileBlueprint.locked || entityplayer.getDisplayName().equals(tileBlueprint.owner))
+				if (!world.isRemote) {
+					entityplayer.openGui(BuildCraftBuilders.instance, GuiIds.BLUEPRINT_LIBRARY, world, i, j, k);
+				}
+		}
 
-		if (!tile.locked || entityplayer.getDisplayName().equals(tile.owner))
-			if (!world.isRemote) {
-				entityplayer.openGui(BuildCraftBuilders.instance, GuiIds.BLUEPRINT_LIBRARY, world, i, j, k);
-			}
 
 		return true;
 	}
@@ -60,27 +63,27 @@ public class BlockBlueprintLibrary extends BlockContainer {
 	@Override
 	public IIcon getIcon(int i, int j) {
 		switch (i) {
-		case 0:
-		case 1:
-			return textureTop;
-		default:
-			return textureSide;
+			case 0:
+			case 1:
+				return textureTop;
+			default:
+				return textureSide;
 		}
 	}
 
 	@Override
 	public void onBlockPlacedBy(World world, int i, int j, int k, EntityLivingBase entityliving, ItemStack stack) {
 		if (!world.isRemote && entityliving instanceof EntityPlayer) {
-			TileBlueprintLibrary tile = (TileBlueprintLibrary) world.getTileEntity(i, j, k);
-			tile.owner = ((EntityPlayer) entityliving).getDisplayName();
+			TileEntity tile = world.getTileEntity(i, j, k);
+			if (tile instanceof TileBlueprintLibrary)
+				((TileBlueprintLibrary) tile).owner = ((EntityPlayer) entityliving).getDisplayName();
 		}
 	}
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void registerBlockIcons(IIconRegister par1IconRegister)
-	{
-	    textureTop = par1IconRegister.registerIcon("buildcraft:library_topbottom");
-        textureSide = par1IconRegister.registerIcon("buildcraft:library_side");
+	public void registerBlockIcons(IIconRegister par1IconRegister) {
+		textureTop = par1IconRegister.registerIcon("buildcraft:library_topbottom");
+		textureSide = par1IconRegister.registerIcon("buildcraft:library_side");
 	}
 }

@@ -8,9 +8,14 @@
  */
 package buildcraft.transport;
 
-import java.util.List;
-import java.util.logging.Level;
-
+import buildcraft.BuildCraftTransport;
+import buildcraft.api.core.BCLog;
+import buildcraft.api.core.IIconProvider;
+import buildcraft.core.CreativeTabBuildCraft;
+import buildcraft.core.IItemPipe;
+import buildcraft.core.ItemBuildCraft;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
@@ -18,14 +23,9 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
-import buildcraft.BuildCraftTransport;
-import buildcraft.api.core.IIconProvider;
-import buildcraft.core.CreativeTabBuildCraft;
-import buildcraft.core.IItemPipe;
-import buildcraft.core.ItemBuildCraft;
-import buildcraft.core.utils.BCLog;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+
+import java.util.List;
+import java.util.logging.Level;
 
 public class ItemPipe extends ItemBuildCraft implements IItemPipe {
 

@@ -8,17 +8,19 @@
  */
 package buildcraft.core.blueprints;
 
-import java.util.LinkedList;
-
-import net.minecraft.item.ItemStack;
-import net.minecraft.world.World;
-import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.api.blueprints.SchematicBlockBase;
+import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.builders.TileAbstractBuilder;
+import buildcraft.core.BlockIndex;
 import buildcraft.core.blueprints.BuildingSlotBlock.Mode;
 import buildcraft.core.inventory.InventoryIterator;
 import buildcraft.core.inventory.InventoryIterator.IInvSlot;
 import buildcraft.core.utils.BlockUtil;
+import net.minecraft.item.ItemStack;
+import net.minecraft.world.World;
+import net.minecraftforge.common.util.ForgeDirection;
+
+import java.util.LinkedList;
 
 public class BptBuilderTemplate extends BptBuilderBase {
 
@@ -27,41 +29,49 @@ public class BptBuilderTemplate extends BptBuilderBase {
 
 	public BptBuilderTemplate(BlueprintBase bluePrint, World world, int x, int y, int z) {
 		super(bluePrint, world, x, y, z);
+	}
 
-		for (int j = bluePrint.sizeY - 1; j >= 0; --j) {
-			for (int i = 0; i < bluePrint.sizeX; ++i) {
-				for (int k = 0; k < bluePrint.sizeZ; ++k) {
-					int xCoord = i + x - blueprint.anchorX;
-					int yCoord = j + y - blueprint.anchorY;
-					int zCoord = k + z - blueprint.anchorZ;
+	@Override
+	protected void initialize() {
+		if (blueprint.excavate) {
+			for (int j = blueprint.sizeY - 1; j >= 0; --j) {
+				for (int i = 0; i < blueprint.sizeX; ++i) {
+					for (int k = 0; k < blueprint.sizeZ; ++k) {
+						int xCoord = i + x - blueprint.anchorX;
+						int yCoord = j + y - blueprint.anchorY;
+						int zCoord = k + z - blueprint.anchorZ;
 
-					SchematicBlockBase slot = bluePrint.contents[i][j][k];
+						SchematicBlockBase slot = blueprint.contents[i][j][k];
 
-					if (slot == null) {
-						BuildingSlotBlock b = new BuildingSlotBlock();
+						if (slot == null
+								&& !clearedLocations.contains(new BlockIndex(
+								xCoord, yCoord, zCoord))) {
+							BuildingSlotBlock b = new BuildingSlotBlock();
 
-						b.schematic = null;
-						b.x = xCoord;
-						b.y = yCoord;
-						b.z = zCoord;
-						b.mode = Mode.ClearIfInvalid;
+							b.schematic = null;
+							b.x = xCoord;
+							b.y = yCoord;
+							b.z = zCoord;
+							b.mode = Mode.ClearIfInvalid;
+							b.buildStage = 0;
 
-						buildList.add(b);
+							buildList.add(b);
+						}
 					}
 				}
 			}
 		}
 
-		for (int j = 0; j < bluePrint.sizeY; ++j) {
-			for (int i = 0; i < bluePrint.sizeX; ++i) {
-				for (int k = 0; k < bluePrint.sizeZ; ++k) {
+		for (int j = 0; j < blueprint.sizeY; ++j) {
+			for (int i = 0; i < blueprint.sizeX; ++i) {
+				for (int k = 0; k < blueprint.sizeZ; ++k) {
 					int xCoord = i + x - blueprint.anchorX;
 					int yCoord = j + y - blueprint.anchorY;
 					int zCoord = k + z - blueprint.anchorZ;
 
-					SchematicBlockBase slot = bluePrint.contents[i][j][k];
+					SchematicBlockBase slot = blueprint.contents[i][j][k];
 
-					if (slot != null) {
+					if (slot != null && !builtLocations.contains(new BlockIndex(xCoord, yCoord, zCoord))) {
 						BuildingSlotBlock b = new BuildingSlotBlock();
 
 						b.schematic = slot;
@@ -70,6 +80,7 @@ public class BptBuilderTemplate extends BptBuilderBase {
 						b.z = zCoord;
 
 						b.mode = Mode.Build;
+						b.buildStage = 1;
 
 						buildList.add(b);
 					}
@@ -127,23 +138,29 @@ public class BptBuilderTemplate extends BptBuilderBase {
 		while (iterator.hasNext()) {
 			BuildingSlotBlock slot = iterator.next();
 
-			if (slot == null) {
-				break;
-			} else if (slot.mode == Mode.ClearIfInvalid) {
-				if (BlockUtil.isSoftBlock(world, slot.x, slot.y, slot.z)
+			if (slot.buildStage > buildList.getFirst().buildStage) {
+				iterator.reset();
+				return null;
+			}
+
+			if (slot.mode == Mode.ClearIfInvalid) {
+				if (BuildCraftAPI.isSoftBlock(world, slot.x, slot.y, slot.z)
 						|| BlockUtil.isUnbreakableBlock(world, slot.x, slot.y, slot.z)) {
 					iterator.remove();
+					clearedLocations.add(new BlockIndex(slot.x, slot.y, slot.z));
 				} else {
 					if (setupForDestroy(builder, context, slot)) {
 						result = slot;
 						iterator.remove();
+						clearedLocations.add(new BlockIndex(slot.x, slot.y, slot.z));
 
 						break;
 					}
 				}
 			} else if (slot.mode == Mode.Build) {
-				if (!BlockUtil.isSoftBlock(world, slot.x, slot.y, slot.z)) {
+				if (!BuildCraftAPI.isSoftBlock(world, slot.x, slot.y, slot.z)) {
 					iterator.remove();
+					builtLocations.add(new BlockIndex(slot.x, slot.y, slot.z));
 				} else {
 					if (builder.energyAvailable() > TileAbstractBuilder.BUILD_ENERGY && firstSlotToConsume != null) {
 						builder.consumeEnergy(TileAbstractBuilder.BUILD_ENERGY);
@@ -152,6 +169,7 @@ public class BptBuilderTemplate extends BptBuilderBase {
 								.decreaseStackInSlot());
 						result = slot;
 						iterator.remove();
+						builtLocations.add(new BlockIndex(slot.x, slot.y, slot.z));
 
 						break;
 					}
