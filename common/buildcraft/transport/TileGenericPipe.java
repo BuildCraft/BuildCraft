@@ -749,6 +749,8 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 		int meta = ItemFacade.getMetaData(stack);
 		int meta_alt = ItemFacade.getAlternateMetaData(stack);
 
+		PipeWire wire = ItemFacade.getWire(stack);
+
 		boolean phased = stack.getTagCompound().hasKey("phased");
 		int type = -1;
 
@@ -776,7 +778,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 		}
 
 		sideProperties.facadeTypes[direction.ordinal()] = type;
-		sideProperties.facadeWireTypes[direction.ordinal()] = ItemFacade.getWire(stack).ordinal();
+		sideProperties.facadeWireTypes[direction.ordinal()] = wire != null ? wire.ordinal() : -1;
 
 		sideProperties.facadeBlocks[direction.ordinal()][0] = block;
 		sideProperties.facadeMeta[direction.ordinal()][0] = meta;
