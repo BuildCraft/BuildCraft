@@ -77,6 +77,8 @@ public class TileQuarry extends TileAbstractBuilder implements IMachine {
 	boolean isAlive;
 	public EntityPlayer placedBy;
 
+	boolean frameProducer = true;
+
 	public TileQuarry () {
 		box.kind = Kind.STRIPES;
 	}
@@ -112,12 +114,14 @@ public class TileQuarry extends TileAbstractBuilder implements IMachine {
 	}
 
 	private void createArm() {
-		worldObj.spawnEntityInWorld(new EntityMechanicalArm(worldObj, box.xMin
-				+ CoreConstants.PIPE_MAX_POS, yCoord + box.sizeY ()
-				- 1 + CoreConstants.PIPE_MIN_POS, box.zMin
-				+ CoreConstants.PIPE_MAX_POS, box.sizeX () - 2
-				+ CoreConstants.PIPE_MIN_POS * 2, box.sizeZ() - 2
-				+ CoreConstants.PIPE_MIN_POS * 2, this));
+		worldObj.spawnEntityInWorld
+		(new EntityMechanicalArm(worldObj,
+				box.xMin + CoreConstants.PIPE_MAX_POS,
+				yCoord + box.sizeY () - 1 + CoreConstants.PIPE_MIN_POS,
+				box.zMin + CoreConstants.PIPE_MAX_POS,
+				box.sizeX () - 2 + CoreConstants.PIPE_MIN_POS * 2,
+				box.sizeZ() - 2 + CoreConstants.PIPE_MIN_POS * 2,
+				this));
 	}
 
 	// Callback from the arm once it's created
@@ -478,6 +482,8 @@ public class TileQuarry extends TileAbstractBuilder implements IMachine {
 		}
 
 		arm = null;
+
+		frameProducer = false;
 	}
 
 	@Override
@@ -635,12 +641,20 @@ public class TileQuarry extends TileAbstractBuilder implements IMachine {
 
 	@Override
 	public ItemStack getStackInSlot(int i) {
-		return new ItemStack(BuildCraftFactory.frameBlock);
+		if (frameProducer) {
+			return new ItemStack(BuildCraftFactory.frameBlock);
+		} else {
+			return null;
+		}
 	}
 
 	@Override
 	public ItemStack decrStackSize(int i, int j) {
-		return new ItemStack(BuildCraftFactory.frameBlock, j);
+		if (frameProducer) {
+			return new ItemStack(BuildCraftFactory.frameBlock, j);
+		} else {
+			return null;
+		}
 	}
 
 	@Override

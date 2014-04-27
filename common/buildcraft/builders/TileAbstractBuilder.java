@@ -13,6 +13,7 @@ import java.util.LinkedList;
 
 import net.minecraft.inventory.IInventory;
 import net.minecraft.nbt.NBTTagCompound;
+import buildcraft.api.blueprints.ITileBuilder;
 import buildcraft.api.core.NetworkData;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.mj.MjBattery;
@@ -24,12 +25,19 @@ import buildcraft.core.network.RPCHandler;
 import buildcraft.core.network.RPCMessageInfo;
 import buildcraft.core.network.RPCSide;
 
-public abstract class TileAbstractBuilder extends TileBuildCraft implements IInventory, IBoxProvider {
+public abstract class TileAbstractBuilder extends TileBuildCraft implements ITileBuilder, IInventory, IBoxProvider {
 
 	public static double BREAK_ENERGY = 10;
-	public static double BUILD_ENERGY = 20;
+	public static final double BUILD_ENERGY = 20;
 
-	@MjBattery(maxReceivedPerCycle = 100, maxCapacity = 1000, minimumConsumption = 1)
+	/**
+	 * Computes the maximum amount of energy required to build a full chest,
+	 * plus a safeguard. That's a nice way to evaluate maximum amount of energy
+	 * that need to be in a builder.
+	 */
+	private static final double FULL_CHEST_ENERGY = 9 * 3 * 64 * BUILD_ENERGY + 1000;
+
+	@MjBattery(maxReceivedPerCycle = 100, maxCapacity = FULL_CHEST_ENERGY, minimumConsumption = 1)
 	protected double mjStored = 0;
 
 	@NetworkData
@@ -91,8 +99,6 @@ public abstract class TileAbstractBuilder extends TileBuildCraft implements IInv
 		buildersInAction.add(item);
 		RPCHandler.rpcBroadcastPlayers(this, "launchItem", item);
 	}
-
-	public abstract boolean isBuildingMaterialSlot(int i);
 
 	public final double energyAvailable() {
 		return mjStored;

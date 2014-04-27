@@ -58,8 +58,13 @@ public class SchematicDoor extends SchematicBlock {
 	}
 
 	@Override
-	public boolean ignoreBuilding() {
+	public boolean doNotBuild() {
 		return (meta & 8) != 0;
+	}
+
+	@Override
+	public boolean isAlreadyBuilt(IBuilderContext context, int x, int y, int z) {
+		return block == context.world().getBlock(x, y, z);
 	}
 
 	@Override

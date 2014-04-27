@@ -67,8 +67,8 @@ public class TriggerInventory extends BCTrigger implements ITileTrigger {
 				hasSlots = true;
 				ItemStack stack = slot.getStackInSlot();
 
-				foundItems |= stack != null && (searchedStack == null || StackHelper.instance().canStacksMerge(stack, searchedStack));
-				foundSpace |= (stack == null || (StackHelper.instance().canStacksMerge(stack, searchedStack) && stack.stackSize < stack.getMaxStackSize()))
+				foundItems |= stack != null && (searchedStack == null || StackHelper.canStacksMerge(stack, searchedStack));
+				foundSpace |= (stack == null || (StackHelper.canStacksMerge(stack, searchedStack) && stack.stackSize < stack.getMaxStackSize()))
 						&& (searchedStack == null || slot.canPutStackInSlot(searchedStack));
 			}
 

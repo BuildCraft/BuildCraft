@@ -72,7 +72,7 @@ public class TriggerInventoryLevel extends BCTrigger implements ITileTrigger {
 			for (IInvSlot slot : InventoryIterator.getIterable((IInventory) tile, side)) {
 				if (slot.canPutStackInSlot(searchStack)) {
 					ItemStack stackInSlot = slot.getStackInSlot();
-					if (stackInSlot == null || StackHelper.instance().canStacksMerge(stackInSlot, searchStack)) {
+					if (stackInSlot == null || StackHelper.canStacksMerge(stackInSlot, searchStack)) {
 						stackSpace++;
 						foundItems += stackInSlot == null ? 0 : stackInSlot.stackSize;
 					}

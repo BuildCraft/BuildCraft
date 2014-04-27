@@ -16,6 +16,7 @@ import buildcraft.BuildCraftBuilders;
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.SchematicMask;
 import buildcraft.api.core.BuildCraftAPI;
+import buildcraft.builders.blueprints.BlueprintId.Kind;
 import buildcraft.core.utils.NBTUtils;
 
 /**
@@ -24,10 +25,13 @@ import buildcraft.core.utils.NBTUtils;
 public class Template extends BlueprintBase {
 
 	public Template() {
+		id.kind = Kind.Template;
 	}
 
 	public Template(int sizeX, int sizeY, int sizeZ) {
 		super(sizeX, sizeY, sizeZ);
+
+		id.kind = Kind.Template;
 	}
 
 	@Override

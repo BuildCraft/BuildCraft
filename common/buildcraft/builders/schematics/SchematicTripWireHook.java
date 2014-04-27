@@ -10,72 +10,43 @@ package buildcraft.builders.schematics;
 
 import java.util.LinkedList;
 
-import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.SchematicBlock;
 
-public class SchematicBed extends SchematicBlock {
-
-	@Override
-	public void addRequirements(IBuilderContext context, LinkedList<ItemStack> requirements) {
-		if ((meta & 8) == 0) {
-			requirements.add(new ItemStack(Items.bed));
-		}
-	}
+public class SchematicTripWireHook extends SchematicBlock {
 
 	@Override
 	public void rotateLeft(IBuilderContext context) {
-		int orientation = (meta & 7);
-		int others = meta - orientation;
+		int pos = meta & 3;
+		int others = meta - pos;
 
-		switch (orientation) {
+		switch (pos) {
 		case 0:
-			meta = 1 + others;
+			pos = 1;
 			break;
 		case 1:
-			meta = 2 + others;
+			pos = 2;
 			break;
 		case 2:
-			meta = 3 + others;
+			pos = 3;
 			break;
 		case 3:
-			meta = 0 + others;
+			pos = 0;
 			break;
 		}
+
+		meta = pos + others;
 	}
 
 	@Override
 	public void writeToWorld(IBuilderContext context, int x, int y, int z, LinkedList <ItemStack> stacks) {
-		if ((meta & 8) != 0) {
-			return;
-		}
-
 		context.world().setBlock(x, y, z, block, meta, 3);
-
-		int x2 = x;
-		int z2 = z;
-
-		switch (meta) {
-		case 0:
-			z2++;
-			break;
-		case 1:
-			x2--;
-			break;
-		case 2:
-			z2--;
-			break;
-		case 3:
-			x2++;
-			break;
-		}
-
-		context.world().setBlock(x2, y, z2, block, meta + 8, 3);
 	}
 
 	@Override
-	public boolean doNotBuild() {
-		return (meta & 8) != 0;
+	public boolean isAlreadyBuilt(IBuilderContext context, int x, int y, int z) {
+		return block == context.world().getBlock(x, y, z);
 	}
+
 }

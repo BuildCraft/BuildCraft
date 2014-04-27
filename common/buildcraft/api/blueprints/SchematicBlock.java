@@ -49,59 +49,6 @@ public class SchematicBlock extends SchematicBlockBase  implements Comparable<Sc
 	}
 
 	/**
-	 * This is called each time an item matches a requirement, that is: (req id
-	 * == stack id) for damageable items (req id == stack id && req dmg == stack
-	 * dmg) for other items by default, it will increase damage of damageable
-	 * items by the amount of damage of the requirement, and remove the intended
-	 * amount of non damageable item.
-	 *
-	 * Client may override this behavior for default items. Note that this
-	 * subprogram may be called twice with the same parameters, once with a copy
-	 * of requirements and stack to check if the entire requirements can be
-	 * fulfilled, and once with the real inventory. Implementer is responsible
-	 * for updating req (with the remaining requirements if any) and stack
-	 * (after usage)
-	 *
-	 * returns: what was used (similar to req, but created from stack, so that
-	 * any NBT based differences are drawn from the correct source)
-	 */
-	@Override
-	public ItemStack useItem(IBuilderContext context, ItemStack req, ItemStack stack) {
-		ItemStack result = stack.copy();
-
-		if (stack.isItemStackDamageable()) {
-			if (req.getItemDamage() + stack.getItemDamage() <= stack.getMaxDamage()) {
-				stack.setItemDamage(req.getItemDamage() + stack.getItemDamage());
-				result.setItemDamage(req.getItemDamage());
-				req.stackSize = 0;
-			}
-
-			if (stack.getItemDamage() >= stack.getMaxDamage()) {
-				stack.stackSize = 0;
-			}
-		} else {
-			if (stack.stackSize >= req.stackSize) {
-				result.stackSize = req.stackSize;
-				stack.stackSize -= req.stackSize;
-				req.stackSize = 0;
-			} else {
-				req.stackSize -= stack.stackSize;
-				stack.stackSize = 0;
-			}
-		}
-
-		if (stack.stackSize == 0 && stack.getItem().getContainerItem() != null) {
-			Item container = stack.getItem().getContainerItem();
-
-			//stack.itemID = container.itemID;
-			stack.stackSize = 1;
-			stack.setItemDamage(0);
-		}
-
-		return result;
-	}
-
-	/**
 	 * Return true if the block on the world correspond to the block stored in
 	 * the blueprint at the location given by the slot. By default, this
 	 * subprogram is permissive and doesn't take into account metadata.
@@ -134,7 +81,7 @@ public class SchematicBlock extends SchematicBlockBase  implements Comparable<Sc
 	 * will not be asked on such a block, and building will not be called.
 	 */
 	@Override
-	public boolean ignoreBuilding() {
+	public boolean doNotBuild() {
 		return false;
 	}
 

@@ -38,6 +38,7 @@ import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.glu.GLU;
 
+import buildcraft.api.core.BCLog;
 import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.gates.ActionManager;
@@ -83,7 +84,6 @@ import buildcraft.core.triggers.TriggerInventory;
 import buildcraft.core.triggers.TriggerInventoryLevel;
 import buildcraft.core.triggers.TriggerMachine;
 import buildcraft.core.triggers.TriggerRedstoneInput;
-import buildcraft.core.utils.BCLog;
 import buildcraft.core.utils.CraftingHandler;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
@@ -400,6 +400,14 @@ public class BuildCraftCore extends BuildCraftMod {
 	@SubscribeEvent
 	@SideOnly(Side.CLIENT)
 	public void renderLast (RenderWorldLastEvent evt) {
+		// TODO: while the urbanist is deactivated, this code can be dormant.
+		// it happens to be very expensive at run time, so we need some way
+		// to operate it only when releval (e.g. in the cycle following a
+		// click request).
+		if (true) {
+			return;
+		}
+
 		/**
 		 * Note (SpaceToad): Why on earth this thing eventually worked out is a
 		 * mystery to me. In particular, all the examples I got computed y in

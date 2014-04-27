@@ -9,6 +9,7 @@
 package buildcraft.transport;
 
 import buildcraft.BuildCraftTransport;
+import buildcraft.api.core.BCLog;
 import buildcraft.api.gates.GateExpansions;
 import buildcraft.api.gates.IGateExpansion;
 import buildcraft.api.tools.IToolWrench;
@@ -16,7 +17,6 @@ import buildcraft.api.transport.PipeWire;
 import buildcraft.core.*;
 import buildcraft.core.robots.AIDocked;
 import buildcraft.core.robots.EntityRobot;
-import buildcraft.core.utils.BCLog;
 import buildcraft.core.utils.MatrixTranformations;
 import buildcraft.core.utils.Utils;
 import buildcraft.transport.gates.GateDefinition;

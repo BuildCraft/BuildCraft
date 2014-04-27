@@ -23,7 +23,8 @@ import buildcraft.api.blueprints.SchematicBlock;
 import buildcraft.api.blueprints.SchematicEntity;
 import buildcraft.api.blueprints.SchematicRegistry;
 import buildcraft.api.blueprints.Translation;
-import buildcraft.core.utils.BCLog;
+import buildcraft.api.core.BCLog;
+import buildcraft.builders.blueprints.BlueprintId.Kind;
 import buildcraft.core.utils.NBTUtils;
 
 public class Blueprint extends BlueprintBase {
@@ -31,10 +32,14 @@ public class Blueprint extends BlueprintBase {
 
 	public Blueprint() {
 		super ();
+
+		id.kind = Kind.Blueprint;
 	}
 
 	public Blueprint(int sizeX, int sizeY, int sizeZ) {
 		super(sizeX, sizeY, sizeZ);
+
+		id.kind = Kind.Blueprint;
 	}
 
 	@Override

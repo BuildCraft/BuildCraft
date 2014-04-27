@@ -9,7 +9,10 @@
 package buildcraft.core.utils;
 
 import buildcraft.BuildCraftCore;
+import buildcraft.api.core.BCLog;
+
 import java.util.logging.Level;
+
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
 
