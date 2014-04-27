@@ -17,6 +17,7 @@ import org.lwjgl.opengl.GL11;
 import buildcraft.BuildCraftBuilders;
 import buildcraft.builders.TileBlueprintLibrary;
 import buildcraft.builders.blueprints.BlueprintId;
+import buildcraft.builders.blueprints.BlueprintId.Kind;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.gui.GuiBuildCraft;
 import buildcraft.core.utils.StringUtils;
@@ -77,10 +78,20 @@ public class GuiBlueprintLibrary extends GuiBuildCraft {
 			if (c == library.selected) {
 				int l1 = 8;
 				int i2 = 24;
-				drawGradientRect(l1, i2 + 9 * c, l1 + 88, i2 + 9 * (c + 1), 0x80ffffff, 0x80ffffff);
+
+				if (bpt.kind == Kind.Blueprint) {
+					drawGradientRect(l1, i2 + 9 * c, l1 + 88, i2 + 9 * (c + 1), 0xFFA0A0FF, 0xFFA0A0FF);
+				} else {
+					drawGradientRect(l1, i2 + 9 * c, l1 + 88, i2 + 9 * (c + 1), 0x80ffffff, 0x80ffffff);
+				}
 			}
 
-			fontRendererObj.drawString(name, 9, 25 + 9 * c, 0x404040);
+			if (bpt.kind == Kind.Blueprint) {
+				fontRendererObj.drawString(name, 9, 25 + 9 * c, 0x1000FF);
+			} else {
+				fontRendererObj.drawString(name, 9, 25 + 9 * c, 0x000000);
+			}
+
 			c++;
 		}
 	}

@@ -31,7 +31,7 @@ public abstract class TileAbstractBuilder extends TileBuildCraft implements ITil
 	public static final double BUILD_ENERGY = 20;
 
 	/**
-	 * Computes the maximym amount of energy required to build a full chest,
+	 * Computes the maximum amount of energy required to build a full chest,
 	 * plus a safeguard. That's a nice way to evaluate maximum amount of energy
 	 * that need to be in a builder.
 	 */
