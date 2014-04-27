@@ -8,6 +8,9 @@
  */
 package buildcraft.core.inventory;
 
+import buildcraft.core.inventory.InventoryIterator.IInvSlot;
+import buildcraft.core.inventory.filters.ArrayStackFilter;
+import buildcraft.core.inventory.filters.IStackFilter;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryLargeChest;
@@ -19,9 +22,6 @@ import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.ForgeDirection;
-import buildcraft.core.inventory.InventoryIterator.IInvSlot;
-import buildcraft.core.inventory.filters.ArrayStackFilter;
-import buildcraft.core.inventory.filters.IStackFilter;
 
 public class InvUtils {
 
@@ -58,7 +58,7 @@ public class InvUtils {
 	 * Checks if there is room for the ItemStack in the inventory.
 	 *
 	 * @param stack The ItemStack
-	 * @param dest The IInventory
+	 * @param dest  The IInventory
 	 * @return true if room for stack
 	 */
 	public static boolean isRoomForStack(ItemStack stack, ForgeDirection side, IInventory dest) {
@@ -74,7 +74,7 @@ public class InvUtils {
 	 *
 	 * @param source
 	 * @param dest
-	 * @param filer an IStackFilter to match against
+	 * @param filer  an IStackFilter to match against
 	 * @return null if nothing was moved, the stack moved otherwise
 	 */
 	public static ItemStack moveOneItem(IInventory source, ForgeDirection output, IInventory dest, ForgeDirection intput, IStackFilter filter) {

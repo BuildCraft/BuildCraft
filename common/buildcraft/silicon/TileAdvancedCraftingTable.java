@@ -8,31 +8,6 @@
  */
 package buildcraft.silicon;
 
-import static net.minecraftforge.common.util.ForgeDirection.DOWN;
-import static net.minecraftforge.common.util.ForgeDirection.EAST;
-import static net.minecraftforge.common.util.ForgeDirection.NORTH;
-import static net.minecraftforge.common.util.ForgeDirection.SOUTH;
-import static net.minecraftforge.common.util.ForgeDirection.WEST;
-
-import java.util.Arrays;
-import java.util.EnumSet;
-import java.util.List;
-
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.Container;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.ISidedInventory;
-import net.minecraft.inventory.InventoryCraftResult;
-import net.minecraft.inventory.InventoryCrafting;
-import net.minecraft.inventory.SlotCrafting;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipe;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ChunkCoordinates;
-import net.minecraft.util.IChatComponent;
-import net.minecraftforge.common.util.ForgeDirection;
-import net.minecraftforge.oredict.OreDictionary;
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftSilicon;
 import buildcraft.api.gates.IAction;
@@ -40,14 +15,8 @@ import buildcraft.api.gates.IActionReceptor;
 import buildcraft.api.power.ILaserTarget;
 import buildcraft.core.IMachine;
 import buildcraft.core.TileBuffer;
-import buildcraft.core.inventory.InvUtils;
-import buildcraft.core.inventory.InventoryCopy;
-import buildcraft.core.inventory.InventoryIterator;
+import buildcraft.core.inventory.*;
 import buildcraft.core.inventory.InventoryIterator.IInvSlot;
-import buildcraft.core.inventory.InventoryMapper;
-import buildcraft.core.inventory.SimpleInventory;
-import buildcraft.core.inventory.StackHelper;
-import buildcraft.core.inventory.Transactor;
 import buildcraft.core.inventory.filters.CraftingFilter;
 import buildcraft.core.inventory.filters.IStackFilter;
 import buildcraft.core.network.PacketIds;
@@ -56,9 +25,24 @@ import buildcraft.core.triggers.ActionMachineControl;
 import buildcraft.core.utils.CraftingHelper;
 import buildcraft.core.utils.StringUtils;
 import buildcraft.core.utils.Utils;
-
 import com.google.common.collect.Lists;
 import com.mojang.authlib.GameProfile;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.*;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ChunkCoordinates;
+import net.minecraft.util.IChatComponent;
+import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraftforge.oredict.OreDictionary;
+
+import java.util.Arrays;
+import java.util.EnumSet;
+import java.util.List;
+
+import static net.minecraftforge.common.util.ForgeDirection.*;
 
 public class TileAdvancedCraftingTable extends TileLaserTableBase implements IInventory, ILaserTarget, IMachine, IActionReceptor, ISidedInventory {
 
@@ -169,6 +153,7 @@ public class TileAdvancedCraftingTable extends TileLaserTableBase implements IIn
 			return null;
 		}
 	}
+
 	public InventoryCraftResult craftResult;
 	private InternalInventoryCrafting internalInventoryCrafting;
 
@@ -179,6 +164,7 @@ public class TileAdvancedCraftingTable extends TileLaserTableBase implements IIn
 		invOutput = new InventoryMapper(inv, 15, 9);
 		craftResult = new InventoryCraftResult();
 	}
+
 	private static final int[] SLOTS = Utils.createSlotArray(0, 24);
 	private static final EnumSet<ForgeDirection> SEARCH_SIDES = EnumSet.of(DOWN, NORTH, SOUTH, EAST, WEST);
 	private static final float REQUIRED_POWER = 500F;

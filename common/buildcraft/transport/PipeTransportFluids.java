@@ -8,17 +8,6 @@
  */
 package buildcraft.transport;
 
-import java.util.BitSet;
-
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.util.ForgeDirection;
-import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidContainerRegistry;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidTank;
-import net.minecraftforge.fluids.FluidTankInfo;
-import net.minecraftforge.fluids.IFluidHandler;
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.SafeTimeTracker;
@@ -26,8 +15,13 @@ import buildcraft.api.gates.ITrigger;
 import buildcraft.api.transport.IPipeTile.PipeType;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.IMachine;
-import buildcraft.core.proxy.CoreProxy;
 import buildcraft.transport.network.PacketFluidUpdate;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraftforge.fluids.*;
+
+import java.util.BitSet;
 
 public class PipeTransportFluids extends PipeTransport implements IFluidHandler {
 
@@ -126,6 +120,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 
 		None, Input, Output
 	}
+
 	/**
 	 * The amount of liquid contained by a pipe section. For simplicity, all
 	 * pipe sections are assumed to be of the same volume.
@@ -212,7 +207,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 	/**
 	 * Computes the PacketFluidUpdate packet for transmission to a client
 	 *
-	 * @param initPacket everything is sent, no delta stuff ( first packet )
+	 * @param initPacket    everything is sent, no delta stuff ( first packet )
 	 * @param persistChange The render cache change is persisted
 	 * @return PacketFluidUpdate liquid update packet
 	 */

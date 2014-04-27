@@ -8,13 +8,13 @@
  */
 package buildcraft.silicon.recipes;
 
-import net.minecraft.item.ItemStack;
 import buildcraft.api.recipes.IIntegrationRecipeManager.IIntegrationRecipe;
 import buildcraft.core.inventory.StackHelper;
 import buildcraft.silicon.ItemRedstoneChipset;
 import buildcraft.transport.gates.GateDefinition.GateLogic;
 import buildcraft.transport.gates.GateDefinition.GateMaterial;
 import buildcraft.transport.gates.ItemGate;
+import net.minecraft.item.ItemStack;
 
 public class GateLogicSwapRecipe implements IIntegrationRecipe {
 
@@ -61,7 +61,7 @@ public class GateLogicSwapRecipe implements IIntegrationRecipe {
 	}
 
 	@Override
-	public ItemStack getOutputForInputs(ItemStack inputA, ItemStack inputB) {
+	public ItemStack getOutputForInputs(ItemStack inputA, ItemStack inputB, ItemStack[] components) {
 		if (!isValidInputA(inputA)) {
 			return null;
 		}
@@ -72,6 +72,11 @@ public class GateLogicSwapRecipe implements IIntegrationRecipe {
 		output.stackSize = 1;
 		ItemGate.setLogic(output, logicOut);
 		return output;
+	}
+
+	@Override
+	public ItemStack[] getComponents() {
+		return new ItemStack[0];
 	}
 
 	@Override

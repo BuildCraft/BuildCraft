@@ -8,14 +8,12 @@
  */
 package buildcraft.silicon.render;
 
+import buildcraft.core.render.RenderLaser;
+import buildcraft.silicon.TileLaser;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
-
 import org.lwjgl.opengl.GL11;
-
-import buildcraft.core.render.RenderLaser;
-import buildcraft.silicon.TileLaser;
 
 public class RenderLaserBlock extends TileEntitySpecialRenderer {
 

@@ -25,10 +25,28 @@ import org.lwjgl.opengl.GL11;
 
 public class FacadeItemRenderer implements IItemRenderer {
 
+	private static long lastCycle = 0L;
+
+	public boolean renderToggle = false;
+
 	private void renderFacadeItem(RenderBlocks render, ItemStack item, float translateX, float translateY, float translateZ) {
+		if (lastCycle < System.currentTimeMillis()) {
+			renderToggle = !renderToggle;
+			lastCycle = System.currentTimeMillis() + 1000L;
+		}
 
 		int decodedMeta = ItemFacade.getMetaData(item);
+		int decodedMeta_alt = ItemFacade.getAlternateMetaData(item);
 		Block block = ItemFacade.getBlock(item);
+		Block block_alt = ItemFacade.getAlternateBlock(item);
+
+		int actual_meta = decodedMeta;
+		Block actual_block = block;
+
+		if (block_alt != null) {
+			actual_meta = renderToggle ? decodedMeta : decodedMeta_alt;
+			actual_block = renderToggle ? block : block_alt;
+		}
 
 		try {
 			int color = item.getItem().getColorFromItemStack(new ItemStack(block, 1, decodedMeta), 0);
@@ -61,27 +79,27 @@ public class FacadeItemRenderer implements IItemRenderer {
 		GL11.glTranslatef(translateX, translateY, translateZ);
 		tessellator.startDrawingQuads();
 		tessellator.setNormal(0.0F, -1F, 0.0F);
-		render.renderFaceYNeg(block, 0.0D, 0.0D, 0.0D, tryGetBlockIcon(block, 0, decodedMeta));
+		render.renderFaceYNeg(block, 0.0D, 0.0D, 0.0D, tryGetBlockIcon(actual_block, 0, actual_meta));
 		tessellator.draw();
 		tessellator.startDrawingQuads();
 		tessellator.setNormal(0.0F, 1.0F, 0.0F);
-		render.renderFaceYPos(block, 0.0D, 0.0D, 0.0D, tryGetBlockIcon(block, 1, decodedMeta));
+		render.renderFaceYPos(block, 0.0D, 0.0D, 0.0D, tryGetBlockIcon(actual_block, 1, actual_meta));
 		tessellator.draw();
 		tessellator.startDrawingQuads();
 		tessellator.setNormal(0.0F, 0.0F, -1F);
-		render.renderFaceZNeg(block, 0.0D, 0.0D, 0.0D, tryGetBlockIcon(block, 2, decodedMeta));
+		render.renderFaceZNeg(block, 0.0D, 0.0D, 0.0D, tryGetBlockIcon(actual_block, 2, actual_meta));
 		tessellator.draw();
 		tessellator.startDrawingQuads();
 		tessellator.setNormal(0.0F, 0.0F, 1.0F);
-		render.renderFaceZPos(block, 0.0D, 0.0D, 0.0D, tryGetBlockIcon(block, 3, decodedMeta));
+		render.renderFaceZPos(block, 0.0D, 0.0D, 0.0D, tryGetBlockIcon(actual_block, 3, actual_meta));
 		tessellator.draw();
 		tessellator.startDrawingQuads();
 		tessellator.setNormal(-1F, 0.0F, 0.0F);
-		render.renderFaceXNeg(block, 0.0D, 0.0D, 0.0D, tryGetBlockIcon(block, 4, decodedMeta));
+		render.renderFaceXNeg(block, 0.0D, 0.0D, 0.0D, tryGetBlockIcon(actual_block, 4, actual_meta));
 		tessellator.draw();
 		tessellator.startDrawingQuads();
 		tessellator.setNormal(1.0F, 0.0F, 0.0F);
-		render.renderFaceXPos(block, 0.0D, 0.0D, 0.0D, tryGetBlockIcon(block, 5, decodedMeta));
+		render.renderFaceXPos(block, 0.0D, 0.0D, 0.0D, tryGetBlockIcon(actual_block, 5, actual_meta));
 		tessellator.draw();
 		block.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
 

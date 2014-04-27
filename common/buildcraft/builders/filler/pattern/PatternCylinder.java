@@ -8,9 +8,9 @@
  */
 package buildcraft.builders.filler.pattern;
 
-import net.minecraft.world.World;
 import buildcraft.core.Box;
 import buildcraft.core.blueprints.Template;
+import net.minecraft.world.World;
 
 public class PatternCylinder extends FillerPattern {
 
@@ -21,7 +21,7 @@ public class PatternCylinder extends FillerPattern {
 
 	@Override
 	public Template getTemplate(Box box, World world) {
-		Template result = new Template (box.sizeX(), box.sizeY(), box.sizeZ());
+		Template result = new Template(box.sizeX(), box.sizeY(), box.sizeZ());
 
 		int xMin = 0;
 		int yMin = 0;
@@ -103,7 +103,7 @@ public class PatternCylinder extends FillerPattern {
 	}
 
 	private boolean fillFourColumns(int xCenter, int zCenter, int dx, int dz,
-			int xFix, int zFix, int yMin, int yMax, Template template) {
+									int xFix, int zFix, int yMin, int yMax, Template template) {
 		int x, z;
 
 		x = xCenter + dx + xFix;

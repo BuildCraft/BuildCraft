@@ -8,11 +8,11 @@
  */
 package buildcraft.builders.filler.pattern;
 
-import net.minecraft.world.World;
 import buildcraft.api.blueprints.SchematicMask;
 import buildcraft.core.Box;
 import buildcraft.core.blueprints.BptBuilderTemplate;
 import buildcraft.core.blueprints.Template;
+import net.minecraft.world.World;
 
 public class PatternFlatten extends FillerPattern {
 
@@ -21,7 +21,7 @@ public class PatternFlatten extends FillerPattern {
 	}
 
 	@Override
-	public Template getTemplate (Box box, World world) {
+	public Template getTemplate(Box box, World world) {
 		int xMin = (int) box.pMin().x;
 		int yMin = box.pMin().y > 0 ? (int) box.pMin().y - 1 : 0;
 		int zMin = (int) box.pMin().z;
@@ -44,7 +44,7 @@ public class PatternFlatten extends FillerPattern {
 	}
 
 	@Override
-	public BptBuilderTemplate getTemplateBuilder (Box box, World world) {
+	public BptBuilderTemplate getTemplateBuilder(Box box, World world) {
 		int yMin = box.pMin().y > 0 ? (int) box.pMin().y - 1 : 0;
 
 		return new BptBuilderTemplate(getTemplate(box, world), world, box.xMin, yMin, box.zMin);

@@ -17,6 +17,7 @@ public class StackHelper {
 	}
 
 	/* STACK MERGING */
+
 	/**
 	 * Checks if two ItemStacks are identical enough to be merged
 	 *
@@ -42,10 +43,10 @@ public class StackHelper {
 	 * Merges mergeSource into mergeTarget
 	 *
 	 * @param mergeSource - The stack to merge into mergeTarget, this stack is
-	 * not modified
+	 *                    not modified
 	 * @param mergeTarget - The target merge, this stack is modified if doMerge
-	 * is set
-	 * @param doMerge - To actually do the merge
+	 *                    is set
+	 * @param doMerge     - To actually do the merge
 	 * @return The number of items that was successfully merged.
 	 */
 	public static int mergeStacks(ItemStack mergeSource, ItemStack mergeTarget, boolean doMerge) {
@@ -63,12 +64,13 @@ public class StackHelper {
 	}
 
 	/* ITEM COMPARISONS */
+
 	/**
 	 * Determines whether the given ItemStack should be considered equivalent
 	 * for crafting purposes.
 	 *
-	 * @param base The stack to compare to.
-	 * @param comparison The stack to compare.
+	 * @param base          The stack to compare to.
+	 * @param comparison    The stack to compare.
 	 * @param oreDictionary true to take the Forge OreDictionary into account.
 	 * @return true if comparison should be considered a crafting equivalent for
 	 * base.
@@ -108,7 +110,7 @@ public class StackHelper {
 	 * Compares item id, damage and NBT. Accepts wildcard damage. Ignores damage
 	 * entirely if the item doesn't have subtypes.
 	 *
-	 * @param base The stack to compare to.
+	 * @param base       The stack to compare to.
 	 * @param comparison The stack to compare.
 	 * @return true if id, damage and NBT match.
 	 */
@@ -120,8 +122,8 @@ public class StackHelper {
 	 * Compares item id, and optionally damage and NBT. Accepts wildcard damage.
 	 * Ignores damage entirely if the item doesn't have subtypes.
 	 *
-	 * @param a ItemStack
-	 * @param b ItemStack
+	 * @param a           ItemStack
+	 * @param b           ItemStack
 	 * @param matchDamage
 	 * @param matchNBT
 	 * @return true if matches

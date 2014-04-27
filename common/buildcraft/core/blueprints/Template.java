@@ -8,16 +8,16 @@
  */
 package buildcraft.core.blueprints;
 
-import net.minecraft.block.Block;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
 import buildcraft.BuildCraftBuilders;
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.SchematicMask;
 import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.builders.blueprints.BlueprintId.Kind;
 import buildcraft.core.utils.NBTUtils;
+import net.minecraft.block.Block;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
 
 /**
  * Use the template system to describe fillers
@@ -43,7 +43,7 @@ public class Template extends BlueprintBase {
 		int posZ = (int) (z - context.surroundingBox().pMin().z);
 
 		if (!BuildCraftAPI.softBlocks.contains(block)) {
-			contents [posX][posY][posZ] = new SchematicMask(true);
+			contents[posX][posY][posZ] = new SchematicMask(true);
 		}
 	}
 
@@ -53,13 +53,13 @@ public class Template extends BlueprintBase {
 		// per mask entry, not a byte. However, this is fine, as compression
 		// will fix it.
 
-		byte [] data = new byte [sizeX * sizeY * sizeZ];
+		byte[] data = new byte[sizeX * sizeY * sizeZ];
 		int ind = 0;
 
 		for (int x = 0; x < sizeX; ++x) {
 			for (int y = 0; y < sizeY; ++y) {
 				for (int z = 0; z < sizeZ; ++z) {
-					data [ind] = (byte) ((contents[x][y][z] == null) ? 0 : 1);
+					data[ind] = (byte) ((contents[x][y][z] == null) ? 0 : 1);
 					ind++;
 				}
 			}
@@ -70,14 +70,14 @@ public class Template extends BlueprintBase {
 
 	@Override
 	public void loadContents(NBTTagCompound nbt) throws BptError {
-		byte [] data = nbt.getByteArray("mask");
+		byte[] data = nbt.getByteArray("mask");
 		int ind = 0;
 
 		for (int x = 0; x < sizeX; ++x) {
 			for (int y = 0; y < sizeY; ++y) {
 				for (int z = 0; z < sizeZ; ++z) {
-					if (data [ind] == 1) {
-						contents [x][y][z] = new SchematicMask(true);
+					if (data[ind] == 1) {
+						contents[x][y][z] = new SchematicMask(true);
 					}
 
 					ind++;
@@ -87,10 +87,10 @@ public class Template extends BlueprintBase {
 	}
 
 	@Override
-	public ItemStack getStack () {
+	public ItemStack getStack() {
 		ItemStack stack = new ItemStack(BuildCraftBuilders.templateItem, 1);
 		NBTTagCompound nbt = NBTUtils.getItemData(stack);
-		id.write (nbt);
+		id.write(nbt);
 		nbt.setString("author", author);
 		nbt.setString("name", id.name);
 

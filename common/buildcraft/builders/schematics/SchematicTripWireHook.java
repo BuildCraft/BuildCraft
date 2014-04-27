@@ -8,11 +8,11 @@
  */
 package buildcraft.builders.schematics;
 
-import java.util.LinkedList;
-
-import net.minecraft.item.ItemStack;
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.SchematicBlock;
+import net.minecraft.item.ItemStack;
+
+import java.util.LinkedList;
 
 public class SchematicTripWireHook extends SchematicBlock {
 
@@ -22,25 +22,25 @@ public class SchematicTripWireHook extends SchematicBlock {
 		int others = meta - pos;
 
 		switch (pos) {
-		case 0:
-			pos = 1;
-			break;
-		case 1:
-			pos = 2;
-			break;
-		case 2:
-			pos = 3;
-			break;
-		case 3:
-			pos = 0;
-			break;
+			case 0:
+				pos = 1;
+				break;
+			case 1:
+				pos = 2;
+				break;
+			case 2:
+				pos = 3;
+				break;
+			case 3:
+				pos = 0;
+				break;
 		}
 
 		meta = pos + others;
 	}
 
 	@Override
-	public void writeToWorld(IBuilderContext context, int x, int y, int z, LinkedList <ItemStack> stacks) {
+	public void writeToWorld(IBuilderContext context, int x, int y, int z, LinkedList<ItemStack> stacks) {
 		context.world().setBlock(x, y, z, block, meta, 3);
 	}
 

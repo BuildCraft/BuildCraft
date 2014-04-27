@@ -11,10 +11,8 @@ package buildcraft.transport.render;
 import buildcraft.BuildCraftTransport;
 import buildcraft.core.CoreConstants;
 import buildcraft.core.utils.MatrixTranformations;
-import buildcraft.transport.BlockGenericPipe;
-import buildcraft.transport.PipeIconProvider;
-import buildcraft.transport.PipeRenderState;
-import buildcraft.transport.TransportConstants;
+import buildcraft.transport.*;
+import buildcraft.transport.utils.FacadeMatrix;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.item.Item;
@@ -89,12 +87,16 @@ public class FacadeRenderHelper {
 		state.textureArray = new IIcon[6];
 
 		for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
+			int facadeType = state.facadeMatrix.getFacadeType(direction);
 			Block renderBlock = state.facadeMatrix.getFacadeBlock(direction);
-			
+			int renderMeta = state.facadeMatrix.getFacadeMetaId(direction);
+
 			if (renderBlock != null) {
 				// If the facade is meant to render in the current pass
-				if (renderBlock.canRenderInPass(PipeRendererWorld.renderPass)) {
-					int renderMeta = state.facadeMatrix.getFacadeMetaId(direction);
+				if (renderBlock.canRenderInPass(PipeRendererWorld.renderPass) || (facadeType == TileGenericPipe.FACADE_PHASE && PipeRendererWorld.renderPass == 1)) {
+					if (facadeType == TileGenericPipe.FACADE_PHASE && state.facadeMatrix.getFacadeState(direction) == FacadeMatrix.STATE_PHASED) {
+						//TODO
+					}
 
 					for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
 						state.textureArray[side.ordinal()] = renderBlock.getIcon(side.ordinal(), renderMeta);

@@ -8,12 +8,6 @@
  */
 package buildcraft.builders.gui;
 
-import net.minecraft.client.gui.GuiButton;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.ResourceLocation;
-
-import org.lwjgl.opengl.GL11;
-
 import buildcraft.BuildCraftBuilders;
 import buildcraft.builders.TileBlueprintLibrary;
 import buildcraft.builders.blueprints.BlueprintId;
@@ -21,6 +15,10 @@ import buildcraft.builders.blueprints.BlueprintId.Kind;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.gui.GuiBuildCraft;
 import buildcraft.core.utils.StringUtils;
+import net.minecraft.client.gui.GuiButton;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.ResourceLocation;
+import org.lwjgl.opengl.GL11;
 
 public class GuiBlueprintLibrary extends GuiBuildCraft {
 
@@ -30,6 +28,7 @@ public class GuiBlueprintLibrary extends GuiBuildCraft {
 	TileBlueprintLibrary library;
 	ContainerBlueprintLibrary container;
 	boolean computeInput;
+
 	public GuiBlueprintLibrary(EntityPlayer player, TileBlueprintLibrary library) {
 		super(new ContainerBlueprintLibrary(player, library), library, TEXTURE);
 		this.player = player;

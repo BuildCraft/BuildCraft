@@ -9,29 +9,40 @@
 package buildcraft.transport.utils;
 
 import io.netty.buffer.ByteBuf;
-
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-
 import net.minecraft.block.Block;
 import net.minecraftforge.common.util.ForgeDirection;
 
 public class FacadeMatrix {
 
+	public static final int STATE_NORMAL = 0;
+	public static final int STATE_PHASED = 1;
+
+	private final int[] _types = new int[ForgeDirection.VALID_DIRECTIONS.length];
 	private final Block[] _blocks = new Block[ForgeDirection.VALID_DIRECTIONS.length];
 	private final int[] _blockMetas = new int[ForgeDirection.VALID_DIRECTIONS.length];
+	private final int[] _state = new int[ForgeDirection.VALID_DIRECTIONS.length];
 	private boolean dirty = false;
 
 	public FacadeMatrix() {
 	}
 
-	public void setFacade(ForgeDirection direction, Block block, int blockMeta) {
-		if (_blocks[direction.ordinal()] != block || _blockMetas[direction.ordinal()] != blockMeta) {
+	public void setFacade(ForgeDirection direction, int type, Block block, int blockMeta) {
+		if (_types[direction.ordinal()] != type || _blocks[direction.ordinal()] != block || _blockMetas[direction.ordinal()] != blockMeta) {
+			_types[direction.ordinal()] = type;
 			_blocks[direction.ordinal()] = block;
 			_blockMetas[direction.ordinal()] = blockMeta;
+			_state[direction.ordinal()] = STATE_NORMAL;
 			dirty = true;
 		}
+	}
+
+	public void setFacadeState(ForgeDirection direction, int state) {
+		_state[direction.ordinal()] = state;
+		dirty = true;
+	}
+
+	public int getFacadeType(ForgeDirection direction) {
+		return _types[direction.ordinal()];
 	}
 
 	public Block getFacadeBlock(ForgeDirection direction) {
@@ -40,6 +51,10 @@ public class FacadeMatrix {
 
 	public int getFacadeMetaId(ForgeDirection direction) {
 		return _blockMetas[direction.ordinal()];
+	}
+
+	public int getFacadeState(ForgeDirection direction) {
+		return _state[direction.ordinal()];
 	}
 
 	public boolean isDirty() {
@@ -52,6 +67,8 @@ public class FacadeMatrix {
 
 	public void writeData(ByteBuf data) {
 		for (int i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
+			data.writeInt(_types[i]);
+
 			if (_blocks [i] == null) {
 				data.writeShort(0);
 			} else {
@@ -59,11 +76,14 @@ public class FacadeMatrix {
 			}
 			
 			data.writeByte(_blockMetas[i]);
+			data.writeInt(_state[i]);
 		}
 	}
 
 	public void readData(ByteBuf data) {
 		for (int i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
+			_types[i] = data.readInt();
+
 			short id = data.readShort();
 			
 			Block block;
@@ -83,6 +103,8 @@ public class FacadeMatrix {
 				_blockMetas[i] = meta;
 				dirty = true;
 			}
+
+			_state[i] = data.readInt();
 		}
 	}
 }

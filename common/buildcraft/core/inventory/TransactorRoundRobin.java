@@ -8,10 +8,10 @@
  */
 package buildcraft.core.inventory;
 
+import buildcraft.core.inventory.InventoryIterator.IInvSlot;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.util.ForgeDirection;
-import buildcraft.core.inventory.InventoryIterator.IInvSlot;
 
 public class TransactorRoundRobin extends TransactorSimple {
 

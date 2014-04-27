@@ -25,8 +25,8 @@ public class GuiIntegrationTable extends GuiLaserTable {
 	public GuiIntegrationTable(InventoryPlayer playerInventory, TileIntegrationTable table) {
 		super(playerInventory, new ContainerIntegrationTable(playerInventory, table), table, TEXTURE);
 		this.integrationTable = table;
-		xSize = 175;
-		ySize = 166;
+		xSize = 176;
+		ySize = 173;
 	}
 
 	@Override
@@ -42,6 +42,14 @@ public class GuiIntegrationTable extends GuiLaserTable {
 	}
 
 	@Override
+	protected void drawGuiContainerForegroundLayer(int par1, int par2) {
+		drawLedgers(par1, par2);
+
+		String title = table.getInventoryName();
+		fontRendererObj.drawString(title, getCenteredOffset(title), 6, 0x404040);
+	}
+
+	@Override
 	protected void drawGuiContainerBackgroundLayer(float f, int mouseX, int mouseY) {
 		super.drawGuiContainerBackgroundLayer(f, mouseX, mouseY);
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
@@ -49,10 +57,8 @@ public class GuiIntegrationTable extends GuiLaserTable {
 		int cornerX = (width - xSize) / 2;
 		int cornerY = (height - ySize) / 2;
 		if (integrationTable.getEnergy() > 0) {
-			if (flash)
-				drawTexturedModalRect(cornerX + 13, cornerY + 40, 0, 166, 98, 24);
 			int progress = integrationTable.getProgressScaled(98);
-			drawTexturedModalRect(cornerX + 13, cornerY + 40, 0, flash ? 190 : 214, progress, 24);
+			drawTexturedModalRect(cornerX + 13, cornerY + 40, 0, flash ? 221 : 197, progress, 24);
 		}
 	}
 }

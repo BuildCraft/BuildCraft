@@ -8,29 +8,29 @@
  */
 package buildcraft.api.blueprints;
 
-import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
 
+import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
+
 public class SchematicRegistry {
 
 	private static class SchematicConstructor {
-		Class <? extends SchematicEntity> clas;
-		Object [] params;
+		Class<? extends SchematicEntity> clas;
+		Object[] params;
 	}
 
-	private static final HashMap <Block, SchematicConstructor> schematicBlocks =
+	private static final HashMap<Block, SchematicConstructor> schematicBlocks =
 			new HashMap<Block, SchematicConstructor>();
 
-	private static final HashMap <Class <? extends Entity>, SchematicConstructor> schematicEntities =
-			new HashMap<Class <? extends Entity>, SchematicConstructor>();
+	private static final HashMap<Class<? extends Entity>, SchematicConstructor> schematicEntities =
+			new HashMap<Class<? extends Entity>, SchematicConstructor>();
 
-	public static void registerSchematicBlock (Block block, Class clas, Object ... params) {
-		SchematicConstructor c = new SchematicConstructor ();
+	public static void registerSchematicBlock(Block block, Class clas, Object... params) {
+		SchematicConstructor c = new SchematicConstructor();
 		c.clas = clas;
 		c.params = params;
 
@@ -41,14 +41,14 @@ public class SchematicRegistry {
 			Class<? extends Entity> entityClass,
 			Class<? extends SchematicEntity> schematicClass, Object... params) {
 
-		SchematicConstructor c = new SchematicConstructor ();
+		SchematicConstructor c = new SchematicConstructor();
 		c.clas = schematicClass;
 		c.params = params;
 
 		schematicEntities.put(entityClass, c);
 	}
 
-	public static SchematicBlock newSchematicBlock (Block block) {
+	public static SchematicBlock newSchematicBlock(Block block) {
 		if (block == Blocks.air) {
 			return null;
 		}
@@ -63,7 +63,7 @@ public class SchematicRegistry {
 
 		try {
 			SchematicConstructor c = schematicBlocks.get(block);
-			SchematicBlock s = (SchematicBlock) c.clas.getConstructors() [0].newInstance(c.params);
+			SchematicBlock s = (SchematicBlock) c.clas.getConstructors()[0].newInstance(c.params);
 			s.block = block;
 			return s;
 		} catch (InstantiationException e) {
@@ -81,14 +81,14 @@ public class SchematicRegistry {
 		return null;
 	}
 
-	public static SchematicEntity newSchematicEntity (Class <? extends Entity> entityClass) {
+	public static SchematicEntity newSchematicEntity(Class<? extends Entity> entityClass) {
 		if (!schematicEntities.containsKey(entityClass)) {
 			return null;
 		}
 
 		try {
 			SchematicConstructor c = schematicEntities.get(entityClass);
-			SchematicEntity s = (SchematicEntity) c.clas.getConstructors() [0].newInstance(c.params);
+			SchematicEntity s = (SchematicEntity) c.clas.getConstructors()[0].newInstance(c.params);
 			s.entity = entityClass;
 			return s;
 		} catch (InstantiationException e) {

@@ -8,14 +8,6 @@
  */
 package buildcraft.silicon;
 
-import java.util.LinkedList;
-import java.util.List;
-
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.BuildCraftCore;
 import buildcraft.api.core.NetworkData;
 import buildcraft.api.core.Position;
@@ -27,12 +19,16 @@ import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.power.PowerHandler;
 import buildcraft.api.power.PowerHandler.PowerReceiver;
 import buildcraft.api.power.PowerHandler.Type;
-import buildcraft.core.Box;
-import buildcraft.core.EntityLaser;
-import buildcraft.core.IMachine;
-import buildcraft.core.LaserData;
-import buildcraft.core.TileBuildCraft;
+import buildcraft.core.*;
 import buildcraft.core.triggers.ActionMachineControl;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.common.util.ForgeDirection;
+
+import java.util.LinkedList;
+import java.util.List;
 
 public class TileLaser extends TileBuildCraft implements IPowerReceptor, IActionReceptor, IMachine {
 
@@ -69,7 +65,7 @@ public class TileLaser extends TileBuildCraft implements IPowerReceptor, IAction
 	}
 
 	@Override
-	public void initialize () {
+	public void initialize() {
 		super.initialize();
 
 		laser.head = new Position(xCoord, yCoord, zCoord);

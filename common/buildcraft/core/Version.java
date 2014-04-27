@@ -11,14 +11,13 @@ package buildcraft.core;
 import buildcraft.BuildCraftCore;
 import buildcraft.api.core.BCLog;
 import buildcraft.core.proxy.CoreProxy;
+import net.minecraftforge.common.config.Property;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
-
-import net.minecraftforge.common.config.Property;
 
 public class Version implements Runnable {
 
@@ -28,6 +27,7 @@ public class Version implements Runnable {
 
 		CURRENT, OUTDATED, CONNECTION_ERROR
 	}
+
 	public static final String VERSION = "@VERSION@";
 	public static final String BUILD_NUMBER = "@BUILD_NUMBER@";
 	private static final String REMOTE_VERSION_FILE = "http://bit.ly/buildcraftversion";

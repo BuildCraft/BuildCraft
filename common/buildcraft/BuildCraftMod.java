@@ -8,8 +8,7 @@
  */
 package buildcraft;
 
-import java.util.EnumMap;
-
+import buildcraft.core.network.BuildCraftPacket;
 import cpw.mods.fml.common.network.FMLEmbeddedChannel;
 import cpw.mods.fml.common.network.FMLOutboundHandler;
 import cpw.mods.fml.common.network.FMLOutboundHandler.OutboundTarget;
@@ -17,16 +16,17 @@ import cpw.mods.fml.relauncher.Side;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.Packet;
 import net.minecraft.world.World;
-import buildcraft.core.network.BuildCraftPacket;
+
+import java.util.EnumMap;
 
 public class BuildCraftMod {
 	public EnumMap<Side, FMLEmbeddedChannel> channels;
-	
+
 	public void sendToPlayers(Packet packet, World world, int x, int y, int z, int maxDistance) {
 		channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.ALL);
 		channels.get(Side.SERVER).writeOutbound(packet);
 	}
-	
+
 	public void sendToPlayers(BuildCraftPacket packet, World world, int x, int y, int z, int maxDistance) {
 		channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.ALL);
 		channels.get(Side.SERVER).writeOutbound(packet);

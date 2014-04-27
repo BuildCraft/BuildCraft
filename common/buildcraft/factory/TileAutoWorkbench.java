@@ -8,30 +8,20 @@
  */
 package buildcraft.factory;
 
+import buildcraft.core.TileBuildCraft;
+import buildcraft.core.inventory.*;
+import buildcraft.core.inventory.InventoryIterator.IInvSlot;
+import buildcraft.core.utils.CraftingHelper;
+import buildcraft.core.utils.Utils;
+import com.mojang.authlib.GameProfile;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.Container;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.ISidedInventory;
-import net.minecraft.inventory.InventoryCraftResult;
-import net.minecraft.inventory.InventoryCrafting;
-import net.minecraft.inventory.SlotCrafting;
+import net.minecraft.inventory.*;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.IChatComponent;
 import net.minecraftforge.common.util.ForgeDirection;
-import buildcraft.core.TileBuildCraft;
-import buildcraft.core.inventory.InvUtils;
-import buildcraft.core.inventory.InventoryConcatenator;
-import buildcraft.core.inventory.InventoryIterator;
-import buildcraft.core.inventory.InventoryIterator.IInvSlot;
-import buildcraft.core.inventory.SimpleInventory;
-import buildcraft.core.inventory.StackHelper;
-import buildcraft.core.utils.CraftingHelper;
-import buildcraft.core.utils.Utils;
-
-import com.mojang.authlib.GameProfile;
 
 public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory {
 

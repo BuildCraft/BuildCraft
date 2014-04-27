@@ -8,25 +8,19 @@
  */
 package buildcraft.builders.blueprints;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FilenameFilter;
-import java.io.IOException;
-import java.io.OutputStream;
+import buildcraft.BuildCraftBuilders;
+import buildcraft.builders.blueprints.BlueprintId.Kind;
+import buildcraft.core.blueprints.BlueprintBase;
+import net.minecraft.nbt.CompressedStreamTools;
+import net.minecraft.nbt.NBTTagCompound;
+
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import net.minecraft.nbt.CompressedStreamTools;
-import net.minecraft.nbt.NBTTagCompound;
-import buildcraft.BuildCraftBuilders;
-import buildcraft.builders.blueprints.BlueprintId.Kind;
-import buildcraft.core.blueprints.BlueprintBase;
 
 public class BlueprintDatabase {
 	private final int bufferSize = 8192;
@@ -35,8 +29,8 @@ public class BlueprintDatabase {
 	private File blueprintFolder;
 	private final static int PAGE_SIZE = 12;
 
-	private Set <BlueprintId> blueprintIds = new TreeSet<BlueprintId> ();
-	private BlueprintId [] pages = new BlueprintId [0];
+	private Set<BlueprintId> blueprintIds = new TreeSet<BlueprintId>();
+	private BlueprintId[] pages = new BlueprintId[0];
 
 	/**
 	 * Initialize the blueprint database.
@@ -70,11 +64,11 @@ public class BlueprintDatabase {
 		return id;
 	}
 
-	public void deleteBlueprint (BlueprintId id) {
+	public void deleteBlueprint(BlueprintId id) {
 		File blueprintFile = getBlueprintFile(id);
 		blueprintFile.delete();
 		blueprintIds.remove(id);
-		pages = new BlueprintId [blueprintIds.size()];
+		pages = new BlueprintId[blueprintIds.size()];
 		pages = blueprintIds.toArray(pages);
 	}
 
@@ -82,7 +76,7 @@ public class BlueprintDatabase {
 		blueprint.id.generateUniqueId(blueprint.getData());
 
 		BlueprintId id = blueprint.id;
-		File blueprintFile = getBlueprintFile (id);
+		File blueprintFile = getBlueprintFile(id);
 
 		if (!blueprintFile.exists()) {
 			OutputStream gzOs = null;
@@ -97,7 +91,8 @@ public class BlueprintDatabase {
 					if (gzOs != null) {
 						gzOs.close();
 					}
-				} catch (IOException e) { }
+				} catch (IOException e) {
+				}
 			}
 		}
 
@@ -132,10 +127,10 @@ public class BlueprintDatabase {
 			id.name = prefix;
 
 			if (suffix.contains(BPT_EXTENSION)) {
-				id.uniqueId = BlueprintId.toBytes (suffix.replaceAll(BPT_EXTENSION, ""));
+				id.uniqueId = BlueprintId.toBytes(suffix.replaceAll(BPT_EXTENSION, ""));
 				id.kind = Kind.Blueprint;
 			} else {
-				id.uniqueId = BlueprintId.toBytes (suffix.replaceAll(TPL_EXTENSION, ""));
+				id.uniqueId = BlueprintId.toBytes(suffix.replaceAll(TPL_EXTENSION, ""));
 				id.kind = Kind.Template;
 			}
 
@@ -147,7 +142,7 @@ public class BlueprintDatabase {
 		pages = blueprintIds.toArray(pages);
 	}
 
-	public boolean exists (BlueprintId id) {
+	public boolean exists(BlueprintId id) {
 		return blueprintIds.contains(id);
 	}
 
@@ -161,8 +156,8 @@ public class BlueprintDatabase {
 		if (blueprintFile.exists()) {
 			try {
 				FileInputStream f = new FileInputStream(blueprintFile);
-				byte [] data = new byte [(int) blueprintFile.length()];
-				f.read (data);
+				byte[] data = new byte[(int) blueprintFile.length()];
+				f.read(data);
 				f.close();
 
 				NBTTagCompound nbt = CompressedStreamTools.decompress(data);
@@ -182,7 +177,7 @@ public class BlueprintDatabase {
 		return null;
 	}
 
-	public ArrayList<BlueprintId> getPage (int pageId) {
+	public ArrayList<BlueprintId> getPage(int pageId) {
 		ArrayList<BlueprintId> result = new ArrayList<BlueprintId>();
 
 		if (pageId < 0) {
@@ -191,7 +186,7 @@ public class BlueprintDatabase {
 
 		for (int i = pageId * PAGE_SIZE; i < pageId * PAGE_SIZE + PAGE_SIZE; ++i) {
 			if (i < pages.length) {
-				result.add(pages [i]);
+				result.add(pages[i]);
 			} else {
 				break;
 			}
@@ -200,7 +195,7 @@ public class BlueprintDatabase {
 		return result;
 	}
 
-	public int getPageNumber () {
+	public int getPageNumber() {
 		return (int) Math.ceil((float) blueprintIds.size() / (float) PAGE_SIZE);
 	}
 }

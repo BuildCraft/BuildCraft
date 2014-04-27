@@ -8,12 +8,12 @@
  */
 package buildcraft.builders.schematics;
 
-import java.util.LinkedList;
-
-import net.minecraft.init.Blocks;
-import net.minecraft.item.ItemStack;
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.SchematicBlock;
+import net.minecraft.init.Blocks;
+import net.minecraft.item.ItemStack;
+
+import java.util.LinkedList;
 
 public class SchematicCactus extends SchematicBlock {
 
@@ -23,7 +23,7 @@ public class SchematicCactus extends SchematicBlock {
 	}
 
 	@Override
-	public void writeToWorld(IBuilderContext context, int x, int y, int z, LinkedList <ItemStack> stacks) {
+	public void writeToWorld(IBuilderContext context, int x, int y, int z, LinkedList<ItemStack> stacks) {
 		context.world().setBlock(x, y, z, Blocks.cactus, 0, 3);
 	}
 

@@ -8,12 +8,6 @@
  */
 package buildcraft.core.triggers;
 
-import java.util.Locale;
-
-import net.minecraft.inventory.IInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.api.gates.ITileTrigger;
 import buildcraft.api.gates.ITrigger;
 import buildcraft.api.gates.ITriggerParameter;
@@ -21,13 +15,21 @@ import buildcraft.core.inventory.InventoryIterator;
 import buildcraft.core.inventory.InventoryIterator.IInvSlot;
 import buildcraft.core.inventory.StackHelper;
 import buildcraft.core.utils.StringUtils;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraftforge.common.util.ForgeDirection;
+
+import java.util.Locale;
 
 public class TriggerInventory extends BCTrigger implements ITileTrigger {
 
 	public enum State {
 
 		Empty, Contains, Space, Full
-	};
+	}
+
+	;
 	public State state;
 
 	public TriggerInventory(State state) {

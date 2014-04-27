@@ -8,11 +8,17 @@
  */
 package buildcraft.transport.gates;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
+import buildcraft.BuildCraftTransport;
+import buildcraft.api.gates.*;
+import buildcraft.core.CreativeTabBuildCraft;
+import buildcraft.core.ItemBuildCraft;
+import buildcraft.core.inventory.InvUtils;
+import buildcraft.core.utils.StringUtils;
+import buildcraft.transport.Gate;
+import buildcraft.transport.gates.GateDefinition.GateLogic;
+import buildcraft.transport.gates.GateDefinition.GateMaterial;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -24,21 +30,11 @@ import net.minecraft.nbt.NBTTagString;
 import net.minecraft.util.IIcon;
 import net.minecraft.util.StatCollector;
 import net.minecraftforge.common.util.Constants;
-import buildcraft.BuildCraftTransport;
-import buildcraft.api.gates.ActionManager;
-import buildcraft.api.gates.GateExpansions;
-import buildcraft.api.gates.IAction;
-import buildcraft.api.gates.IGateExpansion;
-import buildcraft.api.gates.ITrigger;
-import buildcraft.core.CreativeTabBuildCraft;
-import buildcraft.core.ItemBuildCraft;
-import buildcraft.core.inventory.InvUtils;
-import buildcraft.core.utils.StringUtils;
-import buildcraft.transport.Gate;
-import buildcraft.transport.gates.GateDefinition.GateLogic;
-import buildcraft.transport.gates.GateDefinition.GateMaterial;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class ItemGate extends ItemBuildCraft {
 
@@ -177,8 +173,7 @@ public class ItemGate extends ItemBuildCraft {
 	}
 
 	@Override
-	public String getItemStackDisplayName(ItemStack stack)
-	{
+	public String getItemStackDisplayName(ItemStack stack) {
 		return ("" + StatCollector.translateToLocal(this.getUnlocalizedNameInefficiently(stack))).trim();
 	}
 

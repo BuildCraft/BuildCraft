@@ -8,11 +8,7 @@
  */
 package buildcraft.builders.urbanism;
 
-import java.nio.ByteBuffer;
-import java.nio.DoubleBuffer;
-import java.nio.FloatBuffer;
-import java.nio.IntBuffer;
-
+import buildcraft.BuildCraftCore;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.entity.EntityLivingBase;
@@ -20,10 +16,12 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
-
 import org.lwjgl.input.Keyboard;
 
-import buildcraft.BuildCraftCore;
+import java.nio.ByteBuffer;
+import java.nio.DoubleBuffer;
+import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
 
 public class EntityUrbanist extends EntityLivingBase {
 
@@ -46,11 +44,11 @@ public class EntityUrbanist extends EntityLivingBase {
 
 	@Override
 	public void onUpdate() {
-        Vec3 look = this.getLook(1.0F).normalize();
+		Vec3 look = this.getLook(1.0F).normalize();
 
-        Vec3 worldUp = worldObj.getWorldVec3Pool().getVecFromPool(0, 1, 0);
-        Vec3 side = worldUp.crossProduct(look).normalize();
-        Vec3 forward = side.crossProduct(worldUp).normalize();
+		Vec3 worldUp = worldObj.getWorldVec3Pool().getVecFromPool(0, 1, 0);
+		Vec3 side = worldUp.crossProduct(look).normalize();
+		Vec3 forward = side.crossProduct(worldUp).normalize();
 
 		motionX = 0;
 		motionY = 0;
@@ -66,9 +64,9 @@ public class EntityUrbanist extends EntityLivingBase {
 			}
 		} else {
 			if (Keyboard.isKeyDown(Minecraft.getMinecraft().gameSettings.keyBindLeft.getKeyCode())) {
-				setAngles (-10, 0);
+				setAngles(-10, 0);
 			} else if (Keyboard.isKeyDown(Minecraft.getMinecraft().gameSettings.keyBindRight.getKeyCode())) {
-				setAngles (10, 0);
+				setAngles(10, 0);
 			}
 		}
 
@@ -119,26 +117,26 @@ public class EntityUrbanist extends EntityLivingBase {
 	static DoubleBuffer projectionD = ByteBuffer.allocateDirect(16 * 8).asDoubleBuffer();
 	static IntBuffer viewport = GLAllocation.createDirectIntBuffer(16);
 	static FloatBuffer winZ = ByteBuffer.allocateDirect(1 * 4).asFloatBuffer();
-    static FloatBuffer pos = ByteBuffer.allocateDirect(3 * 4).asFloatBuffer();
+	static FloatBuffer pos = ByteBuffer.allocateDirect(3 * 4).asFloatBuffer();
 
 	public MovingObjectPosition rayTraceMouse() {
 		double distance = 1000;
 
-        Vec3 pos = this.getPosition(1.0F);
-        Vec3 look = this.getLook(1.0F).normalize();
+		Vec3 pos = this.getPosition(1.0F);
+		Vec3 look = this.getLook(1.0F).normalize();
 
-        pos.xCoord += BuildCraftCore.diffX;
-        pos.yCoord += BuildCraftCore.diffY;
-        pos.zCoord += BuildCraftCore.diffZ;
+		pos.xCoord += BuildCraftCore.diffX;
+		pos.yCoord += BuildCraftCore.diffY;
+		pos.zCoord += BuildCraftCore.diffZ;
 
-        Vec3 vec32 = pos.addVector(look.xCoord * distance, look.yCoord * distance, look.zCoord * distance);
+		Vec3 vec32 = pos.addVector(look.xCoord * distance, look.yCoord * distance, look.zCoord * distance);
 
-        /**
-         * Note: at this stage, pos is already very close to the object to
-         * trace. It's not clear if the look vector is perfect, but
-         * approximations at this stage don't matter anymore.
-         */
-        MovingObjectPosition result = this.worldObj.rayTraceBlocks(pos, vec32);
+		/**
+		 * Note: at this stage, pos is already very close to the object to
+		 * trace. It's not clear if the look vector is perfect, but
+		 * approximations at this stage don't matter anymore.
+		 */
+		MovingObjectPosition result = this.worldObj.rayTraceBlocks(pos, vec32);
 
 		if (debugPointer) {
 //			if (laser == null) {
@@ -153,10 +151,10 @@ public class EntityUrbanist extends EntityLivingBase {
 
 			pos = this.getPosition(1.0F);
 			pos.xCoord += BuildCraftCore.diffX;
-		    pos.yCoord += BuildCraftCore.diffY + 0.1F;
-		    pos.zCoord += BuildCraftCore.diffZ;
+			pos.yCoord += BuildCraftCore.diffY + 0.1F;
+			pos.zCoord += BuildCraftCore.diffZ;
 
-		    look = this.getLook(1.0F).normalize();
+			look = this.getLook(1.0F).normalize();
 
 			Vec3 aimed = worldObj.getWorldVec3Pool().getVecFromPool(
 					pos.xCoord + look.xCoord * 200,
@@ -172,8 +170,8 @@ public class EntityUrbanist extends EntityLivingBase {
 //			}
 		}
 
-        return result;
-    }
+		return result;
+	}
 
 	@Override
 	public ItemStack getEquipmentInSlot(int var1) {

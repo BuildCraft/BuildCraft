@@ -8,9 +8,6 @@
  */
 package buildcraft.builders.gui;
 
-import net.minecraft.client.gui.GuiButton;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.util.ResourceLocation;
 import buildcraft.api.filler.FillerManager;
 import buildcraft.builders.TileFiller;
 import buildcraft.builders.filler.pattern.FillerPattern;
@@ -20,6 +17,9 @@ import buildcraft.core.gui.GuiTools;
 import buildcraft.core.gui.buttons.GuiBetterButton;
 import buildcraft.core.gui.buttons.StandardButtonTextureSets;
 import buildcraft.core.utils.StringUtils;
+import net.minecraft.client.gui.GuiButton;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.util.ResourceLocation;
 
 public class GuiFiller extends GuiBuildCraft {
 

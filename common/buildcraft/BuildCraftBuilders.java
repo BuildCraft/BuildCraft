@@ -8,92 +8,16 @@
  */
 package buildcraft;
 
-import java.io.File;
-
-import net.minecraft.entity.item.EntityItemFrame;
-import net.minecraft.entity.item.EntityMinecartChest;
-import net.minecraft.entity.item.EntityMinecartEmpty;
-import net.minecraft.entity.item.EntityMinecartFurnace;
-import net.minecraft.entity.item.EntityMinecartHopper;
-import net.minecraft.entity.item.EntityMinecartTNT;
-import net.minecraft.entity.item.EntityPainting;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
-import net.minecraft.item.ItemStack;
-import net.minecraftforge.client.event.TextureStitchEvent;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.config.Configuration;
-import net.minecraftforge.common.config.Property;
-import buildcraft.api.blueprints.SchematicBlock;
-import buildcraft.api.blueprints.SchematicEntity;
-import buildcraft.api.blueprints.SchematicFactory;
-import buildcraft.api.blueprints.SchematicFactoryBlock;
-import buildcraft.api.blueprints.SchematicFactoryEntity;
-import buildcraft.api.blueprints.SchematicFactoryMask;
-import buildcraft.api.blueprints.SchematicMask;
-import buildcraft.api.blueprints.SchematicRegistry;
+import buildcraft.api.blueprints.*;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.filler.FillerManager;
 import buildcraft.api.filler.IFillerPattern;
 import buildcraft.api.gates.ActionManager;
-import buildcraft.builders.BlockArchitect;
-import buildcraft.builders.BlockBlueprintLibrary;
-import buildcraft.builders.BlockBuildTool;
-import buildcraft.builders.BlockBuilder;
-import buildcraft.builders.BlockFiller;
-import buildcraft.builders.BlockMarker;
-import buildcraft.builders.BlockPathMarker;
-import buildcraft.builders.BuilderProxy;
-import buildcraft.builders.EventHandlerBuilders;
-import buildcraft.builders.GuiHandler;
-import buildcraft.builders.ItemBlueprintStandard;
-import buildcraft.builders.ItemBlueprintTemplate;
-import buildcraft.builders.TileArchitect;
-import buildcraft.builders.TileBlueprintLibrary;
-import buildcraft.builders.TileBuilder;
-import buildcraft.builders.TileFiller;
-import buildcraft.builders.TileMarker;
-import buildcraft.builders.TilePathMarker;
+import buildcraft.builders.*;
 import buildcraft.builders.blueprints.BlueprintDatabase;
 import buildcraft.builders.filler.FillerRegistry;
-import buildcraft.builders.filler.pattern.FillerPattern;
-import buildcraft.builders.filler.pattern.PatternBox;
-import buildcraft.builders.filler.pattern.PatternClear;
-import buildcraft.builders.filler.pattern.PatternCylinder;
-import buildcraft.builders.filler.pattern.PatternFill;
-import buildcraft.builders.filler.pattern.PatternFlatten;
-import buildcraft.builders.filler.pattern.PatternFrame;
-import buildcraft.builders.filler.pattern.PatternHorizon;
-import buildcraft.builders.filler.pattern.PatternPyramid;
-import buildcraft.builders.filler.pattern.PatternStairs;
-import buildcraft.builders.schematics.SchematicBed;
-import buildcraft.builders.schematics.SchematicCactus;
-import buildcraft.builders.schematics.SchematicCustomStack;
-import buildcraft.builders.schematics.SchematicDirt;
-import buildcraft.builders.schematics.SchematicDoor;
-import buildcraft.builders.schematics.SchematicEnderChest;
-import buildcraft.builders.schematics.SchematicFarmland;
-import buildcraft.builders.schematics.SchematicFire;
-import buildcraft.builders.schematics.SchematicFluid;
-import buildcraft.builders.schematics.SchematicGravel;
-import buildcraft.builders.schematics.SchematicHanging;
-import buildcraft.builders.schematics.SchematicIgnore;
-import buildcraft.builders.schematics.SchematicIgnoreMeta;
-import buildcraft.builders.schematics.SchematicLever;
-import buildcraft.builders.schematics.SchematicMinecart;
-import buildcraft.builders.schematics.SchematicPiston;
-import buildcraft.builders.schematics.SchematicPortal;
-import buildcraft.builders.schematics.SchematicPumpkin;
-import buildcraft.builders.schematics.SchematicRail;
-import buildcraft.builders.schematics.SchematicRedstoneDiode;
-import buildcraft.builders.schematics.SchematicRotateMeta;
-import buildcraft.builders.schematics.SchematicSeeds;
-import buildcraft.builders.schematics.SchematicSign;
-import buildcraft.builders.schematics.SchematicSkull;
-import buildcraft.builders.schematics.SchematicStairs;
-import buildcraft.builders.schematics.SchematicStone;
-import buildcraft.builders.schematics.SchematicTripWireHook;
-import buildcraft.builders.schematics.SchematicWallSide;
+import buildcraft.builders.filler.pattern.*;
+import buildcraft.builders.schematics.*;
 import buildcraft.builders.triggers.ActionFiller;
 import buildcraft.builders.triggers.BuildersActionProvider;
 import buildcraft.builders.urbanism.BlockUrbanist;
@@ -113,6 +37,16 @@ import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.entity.item.*;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
+import net.minecraft.item.ItemStack;
+import net.minecraftforge.client.event.TextureStitchEvent;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.config.Configuration;
+import net.minecraftforge.common.config.Property;
+
+import java.io.File;
 
 @Mod(name = "BuildCraft Builders", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Builders", dependencies = DefaultProps.DEPENDENCY_CORE)
 public class BuildCraftBuilders extends BuildCraftMod {
@@ -144,8 +78,8 @@ public class BuildCraftBuilders extends BuildCraftMod {
 	public void loadConfiguration(FMLPreInitializationEvent evt) {
 		File bptMainDir = new File(new File(evt.getModConfigurationDirectory(), "buildcraft"), "blueprints");
 
-		File serverDir = new File (bptMainDir, "server");
-		File clientDir = new File (bptMainDir, "client");
+		File serverDir = new File(bptMainDir, "server");
+		File clientDir = new File(bptMainDir, "client");
 
 		serverDB = new BlueprintDatabase();
 		clientDB = new BlueprintDatabase();
@@ -332,7 +266,7 @@ public class BuildCraftBuilders extends BuildCraftMod {
 		blueprintItem.setUnlocalizedName("blueprintItem");
 		CoreProxy.proxy.registerItem(blueprintItem);
 
-		buildToolBlock = new BlockBuildTool ();
+		buildToolBlock = new BlockBuildTool();
 		CoreProxy.proxy.registerBlock(buildToolBlock);
 
 		markerBlock = new BlockMarker();
@@ -354,7 +288,7 @@ public class BuildCraftBuilders extends BuildCraftMod {
 		CoreProxy.proxy.registerBlock(libraryBlock.setBlockName("libraryBlock"));
 
 		if (!BuildCraftCore.NEXTGEN_PREALPHA) {
-			urbanistBlock = new BlockUrbanist ();
+			urbanistBlock = new BlockUrbanist();
 			CoreProxy.proxy.registerBlock(urbanistBlock.setBlockName("urbanistBlock"));
 			CoreProxy.proxy.registerTileEntity(TileUrbanist.class, "net.minecraft.src.builders.TileUrbanist");
 		}
@@ -396,32 +330,32 @@ public class BuildCraftBuilders extends BuildCraftMod {
 
 	public static void loadRecipes() {
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(templateItem, 1), "ppp", "pip", "ppp", 'i',
-			new ItemStack(Items.dye, 1, 0), 'p', Items.paper);
+				new ItemStack(Items.dye, 1, 0), 'p', Items.paper);
 
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(blueprintItem, 1), "ppp", "pip", "ppp", 'i',
-			new ItemStack(Items.dye, 1, 4), 'p', Items.paper);
+				new ItemStack(Items.dye, 1, 4), 'p', Items.paper);
 
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(markerBlock, 1), "l ", "r ", 'l',
-			new ItemStack(Items.dye, 1, 4), 'r', Blocks.redstone_torch);
+				new ItemStack(Items.dye, 1, 4), 'r', Blocks.redstone_torch);
 
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(pathMarkerBlock, 1), "l ", "r ", 'l',
-			new ItemStack(Items.dye, 1, 2), 'r', Blocks.redstone_torch);
+				new ItemStack(Items.dye, 1, 2), 'r', Blocks.redstone_torch);
 
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(fillerBlock, 1), "btb", "ycy", "gCg", 'b',
-			new ItemStack(Items.dye, 1, 0), 't', markerBlock, 'y', new ItemStack(Items.dye, 1, 11),
-			'c', Blocks.crafting_table, 'g', BuildCraftCore.goldGearItem, 'C', Blocks.chest);
+				new ItemStack(Items.dye, 1, 0), 't', markerBlock, 'y', new ItemStack(Items.dye, 1, 11),
+				'c', Blocks.crafting_table, 'g', BuildCraftCore.goldGearItem, 'C', Blocks.chest);
 
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(builderBlock, 1), "btb", "ycy", "gCg", 'b',
-			new ItemStack(Items.dye, 1, 0), 't', markerBlock, 'y', new ItemStack(Items.dye, 1, 11),
-			'c', Blocks.crafting_table, 'g', BuildCraftCore.diamondGearItem, 'C', Blocks.chest);
+				new ItemStack(Items.dye, 1, 0), 't', markerBlock, 'y', new ItemStack(Items.dye, 1, 11),
+				'c', Blocks.crafting_table, 'g', BuildCraftCore.diamondGearItem, 'C', Blocks.chest);
 
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(architectBlock, 1), "btb", "ycy", "gCg", 'b',
-			new ItemStack(Items.dye, 1, 0), 't', markerBlock, 'y', new ItemStack(Items.dye, 1, 11),
-			'c', Blocks.crafting_table, 'g', BuildCraftCore.diamondGearItem, 'C',
-			new ItemStack(blueprintItem, 1));
+				new ItemStack(Items.dye, 1, 0), 't', markerBlock, 'y', new ItemStack(Items.dye, 1, 11),
+				'c', Blocks.crafting_table, 'g', BuildCraftCore.diamondGearItem, 'C',
+				new ItemStack(blueprintItem, 1));
 
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(libraryBlock, 1), "bbb", "bBb", "bbb", 'b',
-			new ItemStack(blueprintItem), 'B', Blocks.bookshelf);
+				new ItemStack(blueprintItem), 'B', Blocks.bookshelf);
 	}
 
 	@Mod.EventHandler

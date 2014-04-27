@@ -8,8 +8,7 @@
  */
 package buildcraft.core.inventory;
 
-import java.util.LinkedList;
-
+import buildcraft.core.utils.INBTTagable;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
@@ -17,7 +16,8 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.Constants;
-import buildcraft.core.utils.INBTTagable;
+
+import java.util.LinkedList;
 
 public class SimpleInventory implements IInventory, INBTTagable {
 

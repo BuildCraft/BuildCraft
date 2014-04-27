@@ -8,13 +8,6 @@
  */
 package buildcraft;
 
-import java.util.ArrayList;
-import java.util.EnumSet;
-import java.util.List;
-
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
-import net.minecraft.item.ItemStack;
 import buildcraft.api.blueprints.SchematicRegistry;
 import buildcraft.api.recipes.BuildcraftRecipes;
 import buildcraft.api.transport.PipeWire;
@@ -23,18 +16,10 @@ import buildcraft.core.DefaultProps;
 import buildcraft.core.InterModComms;
 import buildcraft.core.Version;
 import buildcraft.core.proxy.CoreProxy;
-import buildcraft.silicon.BlockLaser;
-import buildcraft.silicon.BlockLaserTable;
-import buildcraft.silicon.GuiHandler;
-import buildcraft.silicon.ItemLaserTable;
-import buildcraft.silicon.ItemRedstoneChipset;
+import buildcraft.silicon.*;
 import buildcraft.silicon.ItemRedstoneChipset.Chipset;
-import buildcraft.silicon.SiliconProxy;
-import buildcraft.silicon.TileAdvancedCraftingTable;
-import buildcraft.silicon.TileAssemblyTable;
-import buildcraft.silicon.TileIntegrationTable;
-import buildcraft.silicon.TileLaser;
 import buildcraft.silicon.network.PacketHandlerSilicon;
+import buildcraft.silicon.recipes.AdvancedFacadeRecipe;
 import buildcraft.silicon.recipes.GateExpansionRecipe;
 import buildcraft.silicon.recipes.GateLogicSwapRecipe;
 import buildcraft.transport.gates.GateDefinition.GateLogic;
@@ -48,6 +33,13 @@ import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLInterModComms;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
+import net.minecraft.item.ItemStack;
+
+import java.util.ArrayList;
+import java.util.EnumSet;
+import java.util.List;
 
 @Mod(name = "BuildCraft Silicon", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Silicon", dependencies = DefaultProps.DEPENDENCY_TRANSPORT)
 public class BuildCraftSilicon extends BuildCraftMod {
@@ -167,6 +159,9 @@ public class BuildCraftSilicon extends BuildCraftMod {
 		BuildcraftRecipes.integrationTable.addRecipe(new GateExpansionRecipe(GateExpansionPulsar.INSTANCE, Chipset.PULSATING.getStack()));
 		BuildcraftRecipes.integrationTable.addRecipe(new GateExpansionRecipe(GateExpansionTimer.INSTANCE, Chipset.QUARTZ.getStack()));
 		BuildcraftRecipes.integrationTable.addRecipe(new GateExpansionRecipe(GateExpansionRedstoneFader.INSTANCE, Chipset.COMP.getStack()));
+
+		// ADVANCED FACADES
+		BuildcraftRecipes.integrationTable.addRecipe(new AdvancedFacadeRecipe());
 	}
 
 	private static void addGateRecipe(double energyCost, GateMaterial material, Chipset chipset, PipeWire... pipeWire) {

@@ -60,19 +60,19 @@ public class Position {
 
 	public void moveRight(double step) {
 		switch (orientation) {
-		case SOUTH:
-			x = x - step;
-			break;
-		case NORTH:
-			x = x + step;
-			break;
-		case EAST:
-			z = z + step;
-			break;
-		case WEST:
-			z = z - step;
-			break;
-		default:
+			case SOUTH:
+				x = x - step;
+				break;
+			case NORTH:
+				x = x + step;
+				break;
+			case EAST:
+				z = z + step;
+				break;
+			case WEST:
+				z = z - step;
+				break;
+			default:
 		}
 	}
 
@@ -82,25 +82,25 @@ public class Position {
 
 	public void moveForwards(double step) {
 		switch (orientation) {
-		case UP:
-			y = y + step;
-			break;
-		case DOWN:
-			y = y - step;
-			break;
-		case SOUTH:
-			z = z + step;
-			break;
-		case NORTH:
-			z = z - step;
-			break;
-		case EAST:
-			x = x + step;
-			break;
-		case WEST:
-			x = x - step;
-			break;
-		default:
+			case UP:
+				y = y + step;
+				break;
+			case DOWN:
+				y = y - step;
+				break;
+			case SOUTH:
+				z = z + step;
+				break;
+			case NORTH:
+				z = z - step;
+				break;
+			case EAST:
+				x = x + step;
+				break;
+			case WEST:
+				x = x - step;
+				break;
+			default:
 		}
 	}
 
@@ -110,13 +110,13 @@ public class Position {
 
 	public void moveUp(double step) {
 		switch (orientation) {
-		case SOUTH:
-		case NORTH:
-		case EAST:
-		case WEST:
-			y = y + step;
-			break;
-		default:
+			case SOUTH:
+			case NORTH:
+			case EAST:
+			case WEST:
+				y = y + step;
+				break;
+			default:
 		}
 
 	}
@@ -136,7 +136,7 @@ public class Position {
 		x = nbttagcompound.getDouble("i");
 		y = nbttagcompound.getDouble("j");
 		z = nbttagcompound.getDouble("k");
-		orientation = ForgeDirection.values() [nbttagcompound.getByte("orientation")];
+		orientation = ForgeDirection.values()[nbttagcompound.getByte("orientation")];
 	}
 
 	@Override

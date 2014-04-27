@@ -9,15 +9,14 @@
 package buildcraft.api.fuels;
 
 import buildcraft.api.core.StackKey;
-
-import java.util.HashMap;
-import java.util.Map;
-
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public final class IronEngineCoolant {
 
@@ -80,7 +79,7 @@ public final class IronEngineCoolant {
 	public static void addCoolant(final Item item, final int metadata, final FluidStack coolant) {
 		addCoolant(new ItemStack(item, 1, metadata), coolant);
 	}
-	
+
 	public static void addCoolant(final Block block, final int metadata, final FluidStack coolant) {
 		addCoolant(new ItemStack(block, 1, metadata), coolant);
 	}

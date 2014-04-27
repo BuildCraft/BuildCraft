@@ -8,17 +8,17 @@
  */
 package buildcraft.builders.schematics;
 
-import java.util.LinkedList;
-
+import buildcraft.api.blueprints.IBuilderContext;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
-import buildcraft.api.blueprints.IBuilderContext;
+
+import java.util.LinkedList;
 
 public class SchematicEnderChest extends SchematicRotateMeta {
 
 	public SchematicEnderChest() {
-		super (new int[]{2, 5, 3, 4}, true);
+		super(new int[]{2, 5, 3, 4}, true);
 	}
 
 	@Override

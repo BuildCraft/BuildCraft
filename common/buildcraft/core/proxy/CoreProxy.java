@@ -8,9 +8,14 @@
  */
 package buildcraft.core.proxy;
 
-import java.util.List;
-import java.util.Random;
-
+import buildcraft.api.core.ICoreProxy;
+import buildcraft.api.core.LaserKind;
+import buildcraft.core.EntityBlock;
+import buildcraft.core.ItemBlockBuildCraft;
+import com.mojang.authlib.GameProfile;
+import cpw.mods.fml.common.Loader;
+import cpw.mods.fml.common.SidedProxy;
+import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
@@ -28,16 +33,9 @@ import net.minecraft.util.IChatComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
-import buildcraft.api.core.ICoreProxy;
-import buildcraft.api.core.LaserKind;
-import buildcraft.core.EntityBlock;
-import buildcraft.core.ItemBlockBuildCraft;
 
-import com.mojang.authlib.GameProfile;
-
-import cpw.mods.fml.common.Loader;
-import cpw.mods.fml.common.SidedProxy;
-import cpw.mods.fml.common.registry.GameRegistry;
+import java.util.List;
+import java.util.Random;
 
 public class CoreProxy implements ICoreProxy {
 
@@ -110,8 +108,8 @@ public class CoreProxy implements ICoreProxy {
 	}
 
 	public void addShapelessRecipe(ItemStack result, Object... recipe) {
-	        CraftingManager.getInstance().getRecipeList().add(new ShapelessOreRecipe(result, recipe));
-	        //GameRegistry.addShapelessRecipe(result, recipe);
+		CraftingManager.getInstance().getRecipeList().add(new ShapelessOreRecipe(result, recipe));
+		//GameRegistry.addShapelessRecipe(result, recipe);
 	}
 
 	public int addCustomTexture(String pathToTexture) {
@@ -130,7 +128,7 @@ public class CoreProxy implements ICoreProxy {
 	}
 
 	private EntityPlayer createNewPlayer(World world) {
-		EntityPlayer player = new EntityPlayer(world, new GameProfile (null, "[BuildCraft]")) {
+		EntityPlayer player = new EntityPlayer(world, new GameProfile(null, "[BuildCraft]")) {
 			@Override
 			public void addChatMessage(IChatComponent var1) {
 			}
@@ -149,7 +147,7 @@ public class CoreProxy implements ICoreProxy {
 	}
 
 	private EntityPlayer createNewPlayer(World world, int x, int y, int z) {
-		EntityPlayer player = new EntityPlayer(world, new GameProfile (null, "[BuildCraft]")) {
+		EntityPlayer player = new EntityPlayer(world, new GameProfile(null, "[BuildCraft]")) {
 			@Override
 			public void addChatMessage(IChatComponent var1) {
 			}
@@ -175,7 +173,7 @@ public class CoreProxy implements ICoreProxy {
 		if (CoreProxy.buildCraftPlayer == null) {
 			CoreProxy.buildCraftPlayer = createNewPlayer(world);
 		} else {
-			CoreProxy.buildCraftPlayer.worldObj= world;
+			CoreProxy.buildCraftPlayer.worldObj = world;
 		}
 
 		return CoreProxy.buildCraftPlayer;
@@ -202,7 +200,7 @@ public class CoreProxy implements ICoreProxy {
 	 * This function returns either the player from the handler if it's on the
 	 * server, or directly from the minecraft instance if it's the client.
 	 */
-	public EntityPlayer getPlayerFromNetHandler (INetHandler handler) {
+	public EntityPlayer getPlayerFromNetHandler(INetHandler handler) {
 		if (handler instanceof NetHandlerPlayServer) {
 			return ((NetHandlerPlayServer) handler).playerEntity;
 		} else {

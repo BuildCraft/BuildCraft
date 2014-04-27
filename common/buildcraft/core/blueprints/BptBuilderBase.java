@@ -8,16 +8,6 @@
  */
 package buildcraft.core.blueprints;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.TreeSet;
-
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.world.World;
-import net.minecraftforge.common.util.Constants;
 import buildcraft.BuildCraftBuilders;
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.core.IAreaProvider;
@@ -26,11 +16,21 @@ import buildcraft.builders.BuildingItem;
 import buildcraft.builders.TileAbstractBuilder;
 import buildcraft.core.BlockIndex;
 import buildcraft.core.Box;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.world.World;
+import net.minecraftforge.common.util.Constants;
+
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.TreeSet;
 
 public abstract class BptBuilderBase implements IAreaProvider {
 
-	protected TreeSet <BlockIndex> clearedLocations = new TreeSet <BlockIndex> ();
-	protected TreeSet <BlockIndex> builtLocations = new TreeSet <BlockIndex> ();
+	protected TreeSet<BlockIndex> clearedLocations = new TreeSet<BlockIndex>();
+	protected TreeSet<BlockIndex> builtLocations = new TreeSet<BlockIndex>();
 
 	public BlueprintBase blueprint;
 	int x, y, z;
@@ -52,11 +52,11 @@ public abstract class BptBuilderBase implements IAreaProvider {
 
 	private boolean initialized = false;
 
-	protected abstract void initialize ();
+	protected abstract void initialize();
 
 	public abstract BuildingSlot getNextBlock(World world, TileAbstractBuilder inv);
 
-	public boolean buildNextSlot (World world, TileAbstractBuilder builder, int x, int y, int z) {
+	public boolean buildNextSlot(World world, TileAbstractBuilder builder, int x, int y, int z) {
 		if (!initialized) {
 			initialize();
 			initialized = true;
@@ -66,11 +66,11 @@ public abstract class BptBuilderBase implements IAreaProvider {
 
 		if (slot != null) {
 			BuildingItem i = new BuildingItem();
-			i.origin = new Position (x + 0.5, y + 0.5, z + 0.5);
+			i.origin = new Position(x + 0.5, y + 0.5, z + 0.5);
 			i.destination = slot.getDestination();
 			i.slotToBuild = slot;
 			i.context = getContext();
-			i.setStacksToDisplay (slot.getStacksToDisplay ());
+			i.setStacksToDisplay(slot.getStacksToDisplay());
 			builder.addBuildingItem(i);
 
 			return true;
@@ -126,7 +126,7 @@ public abstract class BptBuilderBase implements IAreaProvider {
 		return context;
 	}
 
-	public void removeDoneBuilders (TileAbstractBuilder builder) {
+	public void removeDoneBuilders(TileAbstractBuilder builder) {
 		ArrayList<BuildingItem> items = builder.getBuilders();
 
 		for (int i = items.size() - 1; i >= 0; --i) {
@@ -136,18 +136,18 @@ public abstract class BptBuilderBase implements IAreaProvider {
 		}
 	}
 
-	public boolean isDone (TileAbstractBuilder builder) {
+	public boolean isDone(TileAbstractBuilder builder) {
 		return done && builder.getBuilders().size() == 0;
 	}
 
-	protected boolean setupForDestroy (TileAbstractBuilder builder, IBuilderContext context, BuildingSlotBlock slot) {
+	protected boolean setupForDestroy(TileAbstractBuilder builder, IBuilderContext context, BuildingSlotBlock slot) {
 		LinkedList<ItemStack> result = new LinkedList<ItemStack>();
 
 		int hardness = (int) context
 				.world()
 				.getBlock(slot.x, slot.y, slot.z)
 				.getBlockHardness(context.world(), slot.x, slot.y,
-						slot.z)+1;
+						slot.z) + 1;
 
 		if (builder.energyAvailable() < hardness * TileAbstractBuilder.BREAK_ENERGY) {
 			return false;
@@ -162,7 +162,7 @@ public abstract class BptBuilderBase implements IAreaProvider {
 		}
 	}
 
-	public void saveBuildStateToNBT (NBTTagCompound nbt, TileAbstractBuilder builder) {
+	public void saveBuildStateToNBT(NBTTagCompound nbt, TileAbstractBuilder builder) {
 		NBTTagList clearList = new NBTTagList();
 
 		for (BlockIndex loc : clearedLocations) {
@@ -194,13 +194,13 @@ public abstract class BptBuilderBase implements IAreaProvider {
 		nbt.setTag("buildersInAction", buildingList);
 	}
 
-	public void loadBuildStateToNBT (NBTTagCompound nbt, TileAbstractBuilder builder) {
+	public void loadBuildStateToNBT(NBTTagCompound nbt, TileAbstractBuilder builder) {
 		NBTTagList clearList = nbt.getTagList("clearList", Constants.NBT.TAG_COMPOUND);
 
 		for (int i = 0; i < clearList.tagCount(); ++i) {
 			NBTTagCompound cpt = clearList.getCompoundTagAt(i);
 
-			clearedLocations.add (new BlockIndex(cpt));
+			clearedLocations.add(new BlockIndex(cpt));
 		}
 
 		NBTTagList builtList = nbt.getTagList("builtList", Constants.NBT.TAG_COMPOUND);
@@ -208,7 +208,7 @@ public abstract class BptBuilderBase implements IAreaProvider {
 		for (int i = 0; i < builtList.tagCount(); ++i) {
 			NBTTagCompound cpt = builtList.getCompoundTagAt(i);
 
-			builtLocations.add (new BlockIndex(cpt));
+			builtLocations.add(new BlockIndex(cpt));
 		}
 
 		NBTTagList buildingList = nbt

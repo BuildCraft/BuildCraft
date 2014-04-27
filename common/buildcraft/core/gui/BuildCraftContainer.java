@@ -8,27 +8,26 @@
  */
 package buildcraft.core.gui;
 
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.ByteBufInputStream;
-
-import java.io.DataInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
-
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.inventory.Container;
-import net.minecraft.inventory.ICrafting;
-import net.minecraft.inventory.Slot;
-import net.minecraft.item.ItemStack;
 import buildcraft.BuildCraftCore;
 import buildcraft.core.gui.slots.IPhantomSlot;
 import buildcraft.core.gui.slots.SlotBase;
 import buildcraft.core.gui.widgets.Widget;
 import buildcraft.core.inventory.StackHelper;
 import buildcraft.core.network.PacketGuiWidget;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufInputStream;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.inventory.Container;
+import net.minecraft.inventory.ICrafting;
+import net.minecraft.inventory.Slot;
+import net.minecraft.item.ItemStack;
+
+import java.io.DataInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class BuildCraftContainer extends Container {
 
@@ -58,7 +57,7 @@ public abstract class BuildCraftContainer extends Container {
 	}
 
 	public void handleWidgetClientData(int widgetId, ByteBuf data) {
-		InputStream input = new ByteBufInputStream (data);
+		InputStream input = new ByteBufInputStream(data);
 		DataInputStream stream = new DataInputStream(input);
 
 		try {

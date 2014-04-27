@@ -8,27 +8,27 @@
  */
 package buildcraft.api.blueprints;
 
-import java.util.LinkedList;
-
+import buildcraft.api.core.BuildCraftAPI;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import buildcraft.api.core.BuildCraftAPI;
+
+import java.util.LinkedList;
 
 public class SchematicMask extends SchematicBlockBase {
 
 	public boolean isConcrete = true;
 
-	public SchematicMask () {
+	public SchematicMask() {
 
 	}
 
-	public SchematicMask (boolean isConcrete) {
+	public SchematicMask(boolean isConcrete) {
 		this.isConcrete = isConcrete;
 	}
 
 	@Override
-	public void writeToWorld(IBuilderContext context, int x, int y, int z, LinkedList <ItemStack> stacks) {
+	public void writeToWorld(IBuilderContext context, int x, int y, int z, LinkedList<ItemStack> stacks) {
 		if (isConcrete) {
 			if (stacks.size() == 0 || !BuildCraftAPI.isSoftBlock(context.world(), x, y, z)) {
 				return;
@@ -77,7 +77,7 @@ public class SchematicMask extends SchematicBlockBase {
 	}
 
 	@Override
-	public void readFromNBT(NBTTagCompound nbt,	MappingRegistry registry) {
+	public void readFromNBT(NBTTagCompound nbt, MappingRegistry registry) {
 		isConcrete = nbt.getBoolean("isConcrete");
 	}
 }

@@ -8,10 +8,10 @@
  */
 package buildcraft.builders.triggers;
 
-import net.minecraft.util.IIcon;
 import buildcraft.api.gates.IAction;
 import buildcraft.builders.filler.pattern.FillerPattern;
 import buildcraft.core.triggers.BCAction;
+import net.minecraft.util.IIcon;
 
 public class ActionFiller extends BCAction {
 

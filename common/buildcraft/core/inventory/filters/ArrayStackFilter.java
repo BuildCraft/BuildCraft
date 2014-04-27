@@ -8,8 +8,8 @@
  */
 package buildcraft.core.inventory.filters;
 
-import net.minecraft.item.ItemStack;
 import buildcraft.core.inventory.StackHelper;
+import net.minecraft.item.ItemStack;
 
 /**
  * Returns true if the stack matches any one one of the filter stacks.

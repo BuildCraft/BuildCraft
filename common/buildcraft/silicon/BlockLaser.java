@@ -8,10 +8,10 @@
  */
 package buildcraft.silicon;
 
-import static net.minecraft.util.AxisAlignedBB.getBoundingBox;
-
-import java.util.List;
-
+import buildcraft.core.CreativeTabBuildCraft;
+import buildcraft.core.ICustomHighlight;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
@@ -25,10 +25,10 @@ import net.minecraft.util.Vec3;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
-import buildcraft.core.CreativeTabBuildCraft;
-import buildcraft.core.ICustomHighlight;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+
+import java.util.List;
+
+import static net.minecraft.util.AxisAlignedBB.getBoundingBox;
 
 public class BlockLaser extends BlockContainer implements ICustomHighlight {
 
@@ -64,9 +64,9 @@ public class BlockLaser extends BlockContainer implements ICustomHighlight {
 	public MovingObjectPosition collisionRayTrace(World wrd, int x, int y, int z, Vec3 origin, Vec3 direction) {
 		AxisAlignedBB[] aabbs = boxes[wrd.getBlockMetadata(x, y, z)];
 		MovingObjectPosition closest = null;
-		for(AxisAlignedBB aabb : aabbs){
+		for (AxisAlignedBB aabb : aabbs) {
 			MovingObjectPosition mop = aabb.getOffsetBoundingBox(x, y, z).calculateIntercept(origin, direction);
-			if(mop != null){
+			if (mop != null) {
 				if (closest != null && mop.hitVec.distanceTo(origin) < closest.hitVec.distanceTo(origin)) {
 					closest = mop;
 				} else {
@@ -74,7 +74,7 @@ public class BlockLaser extends BlockContainer implements ICustomHighlight {
 				}
 			}
 		}
-		if (closest != null){
+		if (closest != null) {
 			closest.blockX = x;
 			closest.blockY = y;
 			closest.blockZ = z;
@@ -88,7 +88,7 @@ public class BlockLaser extends BlockContainer implements ICustomHighlight {
 		AxisAlignedBB[] aabbs = boxes[wrd.getBlockMetadata(x, y, z)];
 		for (AxisAlignedBB aabb : aabbs) {
 			aabb = aabb.getOffsetBoundingBox(x, y, z);
-			if (mask.intersectsWith(aabb)){
+			if (mask.intersectsWith(aabb)) {
 				list.add(aabb);
 			}
 		}

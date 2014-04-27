@@ -23,11 +23,11 @@ public class BuildingSlotIterator {
 	 * Creates an iterator on the list, which will cycle through iterations per
 	 * chunk.
 	 */
-	public BuildingSlotIterator (LinkedList<BuildingSlotBlock> buildList) {
+	public BuildingSlotIterator(LinkedList<BuildingSlotBlock> buildList) {
 		this.buildList = buildList;
 	}
 
-	public void startIteration () {
+	public void startIteration() {
 		if (current == null || !current.hasNext()) {
 			current = buildList.iterator();
 		}
@@ -35,11 +35,11 @@ public class BuildingSlotIterator {
 		nbIterations = 0;
 	}
 
-	public boolean hasNext () {
+	public boolean hasNext() {
 		return current.hasNext() && nbIterations < ITERATIONS_MAX;
 	}
 
-	public BuildingSlotBlock next () {
+	public BuildingSlotBlock next() {
 		BuildingSlotBlock next = current.next();
 
 		if (next == null) {
@@ -55,11 +55,11 @@ public class BuildingSlotIterator {
 		return next;
 	}
 
-	public void remove () {
+	public void remove() {
 		current.remove();
 	}
 
-	public void reset () {
+	public void reset() {
 		current = buildList.iterator();
 		nbIterations = 0;
 	}

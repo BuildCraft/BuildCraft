@@ -122,8 +122,8 @@ public class RenderEngine extends TileEntitySpecialRenderer implements IInventor
 
 		float translatefact = step / 16;
 
-		float[] angle = { 0, 0, 0 };
-		float[] translate = { orientation.offsetX, orientation.offsetY, orientation.offsetZ };
+		float[] angle = {0, 0, 0};
+		float[] translate = {orientation.offsetX, orientation.offsetY, orientation.offsetZ};
 
 		switch (orientation) {
 			case EAST:

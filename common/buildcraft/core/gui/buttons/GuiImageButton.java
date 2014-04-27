@@ -9,19 +9,15 @@
 
 package buildcraft.core.gui.buttons;
 
-import java.util.ArrayList;
-import java.util.Locale;
-
+import buildcraft.core.DefaultProps;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.util.ResourceLocation;
-
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-
 import org.lwjgl.opengl.GL11;
 
-import buildcraft.core.DefaultProps;
+import java.util.ArrayList;
 
 @SideOnly(Side.CLIENT)
 public class GuiImageButton extends GuiButton implements IButtonClickEventTrigger {
@@ -31,70 +27,67 @@ public class GuiImageButton extends GuiButton implements IButtonClickEventTrigge
 		WHITE_LIST(19, 19),
 		BLACK_LIST(37, 19),
 		ROUND_ROBIN(55, 19);
-		
+
 		private final int u, v;
-		
+
 		ButtonImage(int u, int v) {
 			this.u = u;
 			this.v = v;
 		}
-		
-		public int getU(){
+
+		public int getU() {
 			return u;
 		}
-		
-		public int getV(){
+
+		public int getV() {
 			return v;
 		}
 	}
 
 	public static final ResourceLocation ICON_BUTTON_TEXTURES = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_GUI + "/icon_button.png");
-	
+
 	public static final int SIZE = 18;
-	
+
 	private ArrayList<IButtonClickEventListener> listeners = new ArrayList<IButtonClickEventListener>();
 	private ButtonImage image = ButtonImage.BLANK;
 	private boolean active = false;
-	
+
 	public GuiImageButton(int id, int x, int y, ButtonImage image) {
 		super(id, x, y, SIZE, SIZE, "");
 
 		this.image = image;
 	}
-	
-	public boolean IsActive()
-	{
+
+	public boolean IsActive() {
 		return active;
 	}
 
-	public void Activate()
-	{
+	public void Activate() {
 		active = true;
 	}
 
-	public void DeActivate()
-	{
+	public void DeActivate() {
 		active = false;
 	}
 
 	@Override
 	public void drawButton(Minecraft minecraft, int x, int y) {
-		
+
 		if (!visible) {
 			return;
 		}
-		
+
 		minecraft.renderEngine.bindTexture(ICON_BUTTON_TEXTURES);
-		
+
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 
 		int buttonState = getButtonState(x, y);
-		
+
 		drawTexturedModalRect(xPosition, yPosition, buttonState * SIZE, 0, SIZE, SIZE);
-		
+
 		drawTexturedModalRect(xPosition + 1, yPosition + 1, image.getU(), image.getV(), SIZE - 2, SIZE - 2);
-				
-		mouseDragged(minecraft, x, y); 
+
+		mouseDragged(minecraft, x, y);
 	}
 
 	@Override
@@ -105,49 +98,47 @@ public class GuiImageButton extends GuiButton implements IButtonClickEventTrigge
 			active = !active;
 			notifyAllListeners();
 		}
-		
+
 		return pressed;
 	}
-	
+
 	@Override
 	public void registerListener(IButtonClickEventListener listener) {
 		listeners.add(listener);
 	}
-	
+
 	@Override
 	public void removeListener(IButtonClickEventListener listener) {
 		listeners.remove(listener);
 	}
-	
+
 	@Override
 	public void notifyAllListeners() {
 		for (IButtonClickEventListener listener : listeners) {
 			listener.handleButtonClick(this, this.id);
 		}
-    }
-	
+	}
+
 	private int getButtonState(int mouseX, int mouseY) {
 		if (!this.enabled) {
 			return 0;
 		}
-		
+
 		if (isMouseOverButton(mouseX, mouseY)) {
 			if (!this.active) {
 				return 2;
-			}
-			else {
+			} else {
 				return 4;
 			}
 		}
-		
-        if (!this.active) {
-            return 1;
-        }
-        else {
-            return 3;
-        }
+
+		if (!this.active) {
+			return 1;
+		} else {
+			return 3;
+		}
 	}
-	
+
 	private boolean isMouseOverButton(int mouseX, int mouseY) {
 		return mouseX >= xPosition && mouseY >= yPosition && mouseX < xPosition + SIZE && mouseY < yPosition + SIZE;
 	}

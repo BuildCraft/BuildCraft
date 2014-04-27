@@ -8,17 +8,17 @@
  */
 package buildcraft.api.core;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import net.minecraft.block.Block;
 import net.minecraft.world.IBlockAccess;
+
+import java.util.HashSet;
+import java.util.Set;
 
 public class BuildCraftAPI {
 
 	public static ICoreProxy proxy;
 
-	public static final Set <Block> softBlocks = new HashSet<Block>();
+	public static final Set<Block> softBlocks = new HashSet<Block>();
 
 	public static boolean isSoftBlock(IBlockAccess world, int x, int y, int z) {
 		return isSoftBlock(world.getBlock(x, y, z), world, x, y, z);

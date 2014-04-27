@@ -8,15 +8,15 @@
  */
 package buildcraft.builders.filler;
 
-import java.util.HashSet;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.TreeMap;
-
 import buildcraft.api.filler.IFillerPattern;
 import buildcraft.api.filler.IFillerRegistry;
 import buildcraft.builders.filler.pattern.FillerPattern;
 import buildcraft.builders.triggers.ActionFiller;
+
+import java.util.HashSet;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.TreeMap;
 
 public class FillerRegistry implements IFillerRegistry {
 

@@ -8,14 +8,6 @@
  */
 package buildcraft.transport.pipes;
 
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.World;
-import net.minecraftforge.common.util.ForgeDirection;
-import net.minecraftforge.fluids.FluidContainerRegistry;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.IFluidHandler;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.core.NetworkData;
@@ -27,13 +19,22 @@ import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportFluids;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
+import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraftforge.fluids.FluidContainerRegistry;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.IFluidHandler;
 
 public class PipeFluidsWood extends Pipe<PipeTransportFluids> {
 
-	@MjBattery (maxCapacity = 250, maxReceivedPerCycle = 100, minimumConsumption = 0)
+	@MjBattery(maxCapacity = 250, maxReceivedPerCycle = 100, minimumConsumption = 0)
 	private double mjStored = 0;
 
-	public @NetworkData
+	public
+	@NetworkData
 	int liquidToExtract;
 
 	protected int standardIconIndex = PipeIconProvider.TYPE.PipeFluidsWood_Standard.ordinal();
@@ -43,13 +44,13 @@ public class PipeFluidsWood extends Pipe<PipeTransportFluids> {
 	private PipeLogicWood logic = new PipeLogicWood(this) {
 		@Override
 		protected boolean isValidConnectingTile(TileEntity tile) {
-			if(tile instanceof IPipeTile) {
+			if (tile instanceof IPipeTile) {
 				return false;
 			}
 			if (!(tile instanceof IFluidHandler)) {
 				return false;
 			}
-			if (!PipeManager.canExtractFluids(pipe, tile.getWorldObj (), tile.xCoord, tile.yCoord, tile.zCoord)) {
+			if (!PipeManager.canExtractFluids(pipe, tile.getWorldObj(), tile.xCoord, tile.yCoord, tile.zCoord)) {
 				return false;
 			}
 			return true;

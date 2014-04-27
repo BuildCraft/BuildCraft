@@ -1,14 +1,14 @@
 package buildcraft.core;
 
-import java.util.Locale;
-
+import buildcraft.BuildCraftCore;
+import buildcraft.BuildCraftEnergy;
+import buildcraft.transport.ItemFacade;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import buildcraft.BuildCraftCore;
-import buildcraft.BuildCraftEnergy;
-import buildcraft.transport.ItemFacade;
+
+import java.util.Locale;
 
 public enum CreativeTabBuildCraft {
 
@@ -34,21 +34,21 @@ public enum CreativeTabBuildCraft {
 
 	private ItemStack getItem() {
 		switch (this) {
-		case TIER_1:
-			return new ItemStack (BuildCraftCore.woodenGearItem, 1);
-		case TIER_2:
-			return new ItemStack (BuildCraftEnergy.bucketOil, 1);
-		case TIER_3:
-			return new ItemStack (BuildCraftCore.redstoneCrystal, 1);
-		case TIER_4:
-			return new ItemStack (BuildCraftCore.springBlock, 1);
-		case MISC:
-			return new ItemStack (BuildCraftCore.springBlock, 1);
-		case FACADES:
-			return ItemFacade.getStack(Blocks.brick_block, 0);
+			case TIER_1:
+				return new ItemStack(BuildCraftCore.woodenGearItem, 1);
+			case TIER_2:
+				return new ItemStack(BuildCraftEnergy.bucketOil, 1);
+			case TIER_3:
+				return new ItemStack(BuildCraftCore.redstoneCrystal, 1);
+			case TIER_4:
+				return new ItemStack(BuildCraftCore.springBlock, 1);
+			case MISC:
+				return new ItemStack(BuildCraftCore.springBlock, 1);
+			case FACADES:
+				return ItemFacade.getFacade(Blocks.brick_block, 0);
 		}
 
-		return ItemFacade.getStack(Blocks.brick_block, 0);
+		return ItemFacade.getFacade(Blocks.brick_block, 0);
 	}
 
 	private class Tab extends CreativeTabs {

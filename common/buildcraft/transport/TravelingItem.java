@@ -8,9 +8,13 @@
  */
 package buildcraft.transport;
 
-import java.util.EnumSet;
-import java.util.Map;
-
+import buildcraft.BuildCraftCore;
+import buildcraft.api.core.Position;
+import buildcraft.core.inventory.StackHelper;
+import buildcraft.core.utils.EnumColor;
+import com.google.common.collect.MapMaker;
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.relauncher.Side;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.inventory.IInventory;
@@ -19,15 +23,9 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.MathHelper;
 import net.minecraftforge.common.util.ForgeDirection;
-import buildcraft.BuildCraftCore;
-import buildcraft.api.core.Position;
-import buildcraft.core.inventory.StackHelper;
-import buildcraft.core.utils.EnumColor;
 
-import com.google.common.collect.MapMaker;
-
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.relauncher.Side;
+import java.util.EnumSet;
+import java.util.Map;
 
 public final class TravelingItem {
 
@@ -247,7 +245,7 @@ public final class TravelingItem {
 	}
 
 	public boolean canBeGroupedWith(TravelingItem otherItem) {
-		if(otherItem == this) {
+		if (otherItem == this) {
 			return false;
 		}
 		if (toCenter != otherItem.toCenter) {

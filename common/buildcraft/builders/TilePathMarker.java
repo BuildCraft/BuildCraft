@@ -8,19 +8,19 @@
  */
 package buildcraft.builders;
 
-import java.io.IOException;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.TreeSet;
-
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.World;
 import buildcraft.api.core.NetworkData;
 import buildcraft.api.core.Position;
 import buildcraft.core.BlockIndex;
 import buildcraft.core.LaserData;
 import buildcraft.core.network.PacketUpdate;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
+
+import java.io.IOException;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.TreeSet;
 
 public class TilePathMarker extends TileMarker {
 
@@ -28,7 +28,7 @@ public class TilePathMarker extends TileMarker {
 	public boolean loadLink0 = false, loadLink1 = false;
 
 	@NetworkData
-	public LaserData lasers[] = new LaserData [2];
+	public LaserData lasers[] = new LaserData[2];
 
 	@NetworkData
 	public boolean tryingToConnect = false;
@@ -71,9 +71,9 @@ public class TilePathMarker extends TileMarker {
 
 		LaserData laser = new LaserData
 				(new Position(xCoord + 0.5, yCoord + 0.5, zCoord + 0.5),
-			  	 new Position(pathMarker.xCoord + 0.5, pathMarker.yCoord + 0.5, pathMarker.zCoord + 0.5));
+						new Position(pathMarker.xCoord + 0.5, pathMarker.yCoord + 0.5, pathMarker.zCoord + 0.5));
 
-		LaserData laser2 = new LaserData (laser.head, laser.tail);
+		LaserData laser2 = new LaserData(laser.head, laser.tail);
 		laser2.isVisible = false;
 
 		connect(pathMarker, laser);
@@ -285,7 +285,7 @@ public class TilePathMarker extends TileMarker {
 	}
 
 	public static void clearAvailableMarkersList(World w) {
-		for (Iterator<TilePathMarker> it = availableMarkers.iterator(); it.hasNext();) {
+		for (Iterator<TilePathMarker> it = availableMarkers.iterator(); it.hasNext(); ) {
 			TilePathMarker t = it.next();
 			if (t.getWorldObj().provider.dimensionId != w.provider.dimensionId) {
 				it.remove();

@@ -8,44 +8,41 @@
  */
 package buildcraft.transport.gui;
 
-import net.minecraft.inventory.IInventory;
-import net.minecraft.util.ResourceLocation;
-
-import org.lwjgl.opengl.GL11;
-
 import buildcraft.core.DefaultProps;
 import buildcraft.core.gui.GuiBuildCraft;
 import buildcraft.core.gui.buttons.GuiImageButton;
-import buildcraft.core.gui.buttons.IButtonClickEventTrigger;
 import buildcraft.core.gui.buttons.IButtonClickEventListener;
+import buildcraft.core.gui.buttons.IButtonClickEventTrigger;
 import buildcraft.core.network.PacketGuiReturn;
 import buildcraft.core.utils.StringUtils;
 import buildcraft.transport.pipes.PipeItemsEmerald;
-import buildcraft.transport.pipes.PipeItemsEmerald.EmeraldPipeSettings;
 import buildcraft.transport.pipes.PipeItemsEmerald.FilterMode;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.util.ResourceLocation;
+import org.lwjgl.opengl.GL11;
 
 public class GuiEmeraldPipe extends GuiBuildCraft implements IButtonClickEventListener {
 
 	private static final ResourceLocation TEXTURE = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_GUI + "/pipe_emerald.png");
-	
+
 	private static final int WHITE_LIST_BUTTON_ID = 1;
 	private static final int BLACK_LIST_BUTTON_ID = 2;
 	private static final int ROUND_ROBIN_BUTTON_ID = 3;
-	
+
 	private GuiImageButton whiteListButton;
 	private GuiImageButton blackListButton;
 	private GuiImageButton roundRobinButton;
 
 	IInventory playerInventory;
 	IInventory filterInventory;
-	
+
 	PipeItemsEmerald pipe;
 
 	public GuiEmeraldPipe(IInventory playerInventory, PipeItemsEmerald pipe) {
 		super(new ContainerEmeraldPipe(playerInventory, pipe), pipe.getFilters(), TEXTURE);
 
 		this.pipe = pipe;
-		
+
 		this.playerInventory = playerInventory;
 		this.filterInventory = pipe.getFilters();
 
@@ -58,19 +55,19 @@ public class GuiEmeraldPipe extends GuiBuildCraft implements IButtonClickEventLi
 		super.initGui();
 
 		this.buttonList.clear();
-		
+
 		this.whiteListButton = new GuiImageButton(WHITE_LIST_BUTTON_ID, this.guiLeft + 7, this.guiTop + 41, GuiImageButton.ButtonImage.WHITE_LIST);
 		this.whiteListButton.registerListener(this);
-		this.buttonList.add(this.whiteListButton);		
+		this.buttonList.add(this.whiteListButton);
 
 		this.blackListButton = new GuiImageButton(BLACK_LIST_BUTTON_ID, this.guiLeft + 7 + 18, this.guiTop + 41, GuiImageButton.ButtonImage.BLACK_LIST);
 		this.blackListButton.registerListener(this);
-		this.buttonList.add(this.blackListButton);		
+		this.buttonList.add(this.blackListButton);
 
 		this.roundRobinButton = new GuiImageButton(ROUND_ROBIN_BUTTON_ID, this.guiLeft + 7 + 36, this.guiTop + 41, GuiImageButton.ButtonImage.ROUND_ROBIN);
 		this.roundRobinButton.registerListener(this);
-		this.buttonList.add(this.roundRobinButton);		
-		
+		this.buttonList.add(this.roundRobinButton);
+
 		switch (pipe.getSettings().getFilterMode()) {
 			case WHITE_LIST:
 				this.whiteListButton.Activate();
@@ -93,29 +90,29 @@ public class GuiEmeraldPipe extends GuiBuildCraft implements IButtonClickEventLi
 
 		super.onGuiClosed();
 	}
-	
+
 	@Override
 	public void handleButtonClick(IButtonClickEventTrigger sender, int buttonId) {
 		switch (buttonId) {
 			case WHITE_LIST_BUTTON_ID:
 				whiteListButton.Activate();
 				blackListButton.DeActivate();
-				roundRobinButton.DeActivate();	
-				
+				roundRobinButton.DeActivate();
+
 				pipe.getSettings().setFilterMode(FilterMode.WHITE_LIST);
 				break;
 			case BLACK_LIST_BUTTON_ID:
 				whiteListButton.DeActivate();
 				blackListButton.Activate();
-				roundRobinButton.DeActivate();	
-				
+				roundRobinButton.DeActivate();
+
 				pipe.getSettings().setFilterMode(FilterMode.BLACK_LIST);
 				break;
 			case ROUND_ROBIN_BUTTON_ID:
 				whiteListButton.DeActivate();
 				blackListButton.DeActivate();
-				roundRobinButton.Activate();	
-				
+				roundRobinButton.Activate();
+
 				pipe.getSettings().setFilterMode(FilterMode.ROUND_ROBIN);
 				break;
 		}
@@ -124,7 +121,7 @@ public class GuiEmeraldPipe extends GuiBuildCraft implements IButtonClickEventLi
 	@Override
 	protected void drawGuiContainerForegroundLayer(int par1, int par2) {
 		String title = StringUtils.localize("gui.pipes.emerald.title");
-		
+
 		fontRendererObj.drawString(title, (xSize - fontRendererObj.getStringWidth(title)) / 2, 6, 0x404040);
 		fontRendererObj.drawString(StringUtils.localize("gui.inventory"), 8, ySize - 93, 0x404040);
 	}

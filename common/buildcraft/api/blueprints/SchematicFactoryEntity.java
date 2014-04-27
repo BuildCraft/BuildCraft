@@ -10,10 +10,10 @@ package buildcraft.api.blueprints;
 
 import net.minecraft.nbt.NBTTagCompound;
 
-public class SchematicFactoryEntity extends SchematicFactory <SchematicEntity> {
+public class SchematicFactoryEntity extends SchematicFactory<SchematicEntity> {
 
 	@Override
-	protected SchematicEntity loadSchematicFromWorldNBT (NBTTagCompound nbt, MappingRegistry registry) {
+	protected SchematicEntity loadSchematicFromWorldNBT(NBTTagCompound nbt, MappingRegistry registry) {
 		int entityId = nbt.getInteger("entityId");
 		SchematicEntity s = SchematicRegistry.newSchematicEntity(registry.getEntityForId(entityId));
 
@@ -27,7 +27,7 @@ public class SchematicFactoryEntity extends SchematicFactory <SchematicEntity> {
 	}
 
 	@Override
-	public void saveSchematicToWorldNBT (NBTTagCompound nbt, SchematicEntity object, MappingRegistry registry) {
+	public void saveSchematicToWorldNBT(NBTTagCompound nbt, SchematicEntity object, MappingRegistry registry) {
 		super.saveSchematicToWorldNBT(nbt, object, registry);
 
 		nbt.setInteger("entityId", registry.getIdForEntity(object.entity));

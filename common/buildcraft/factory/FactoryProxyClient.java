@@ -8,10 +8,6 @@
  */
 package buildcraft.factory;
 
-import java.lang.reflect.Method;
-
-import net.minecraft.util.IIcon;
-import net.minecraft.world.World;
 import buildcraft.BuildCraftFactory;
 import buildcraft.api.core.BCLog;
 import buildcraft.builders.RenderBuilder;
@@ -25,6 +21,10 @@ import buildcraft.factory.render.RenderRefinery;
 import buildcraft.factory.render.RenderTank;
 import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.client.registry.RenderingRegistry;
+import net.minecraft.util.IIcon;
+import net.minecraft.world.World;
+
+import java.lang.reflect.Method;
 
 public class FactoryProxyClient extends FactoryProxy {
 

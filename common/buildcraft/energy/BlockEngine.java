@@ -8,11 +8,13 @@
  */
 package buildcraft.energy;
 
-import static net.minecraft.util.AxisAlignedBB.getBoundingBox;
-
-import java.util.List;
-import java.util.Random;
-
+import buildcraft.BuildCraftCore;
+import buildcraft.core.BlockBuildCraft;
+import buildcraft.core.CreativeTabBuildCraft;
+import buildcraft.core.ICustomHighlight;
+import buildcraft.core.IItemPipe;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
@@ -29,13 +31,11 @@ import net.minecraft.util.Vec3;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
-import buildcraft.BuildCraftCore;
-import buildcraft.core.BlockBuildCraft;
-import buildcraft.core.CreativeTabBuildCraft;
-import buildcraft.core.ICustomHighlight;
-import buildcraft.core.IItemPipe;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+
+import java.util.List;
+import java.util.Random;
+
+import static net.minecraft.util.AxisAlignedBB.getBoundingBox;
 
 public class BlockEngine extends BlockBuildCraft implements ICustomHighlight {
 
@@ -206,7 +206,7 @@ public class BlockEngine extends BlockBuildCraft implements ICustomHighlight {
 	public void onPostBlockPlaced(World world, int x, int y, int z, int par5) {
 		TileEntity tile = world.getTileEntity(x, y, z);
 		if (tile instanceof TileEngine) {
-			TileEngine engine = (TileEngine)tile;
+			TileEngine engine = (TileEngine) tile;
 			engine.orientation = ForgeDirection.UP;
 			if (!engine.isOrientationValid()) {
 				engine.switchOrientation(true);

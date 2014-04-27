@@ -8,20 +8,20 @@
  */
 package buildcraft.builders.blueprints;
 
+import buildcraft.BuildCraftBuilders;
+import buildcraft.api.core.NetworkData;
+import net.minecraft.nbt.NBTTagCompound;
+import org.apache.commons.lang3.ArrayUtils;
+
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 
-import net.minecraft.nbt.NBTTagCompound;
-
-import org.apache.commons.lang3.ArrayUtils;
-
-import buildcraft.BuildCraftBuilders;
-import buildcraft.api.core.NetworkData;
-
 public final class BlueprintId implements Comparable<BlueprintId> {
 
-	public enum Kind {Template, Blueprint};
+	public enum Kind {Template, Blueprint}
+
+	;
 
 	@NetworkData
 	public byte[] uniqueId;
@@ -48,13 +48,13 @@ public final class BlueprintId implements Comparable<BlueprintId> {
 		}
 	}
 
-	public void write (NBTTagCompound nbt) {
+	public void write(NBTTagCompound nbt) {
 		nbt.setByteArray("uniqueBptId", uniqueId);
 		nbt.setString("name", name);
 		nbt.setByte("kind", (byte) kind.ordinal());
 	}
 
-	public void read (NBTTagCompound nbt) {
+	public void read(NBTTagCompound nbt) {
 		uniqueId = nbt.getByteArray("uniqueBptId");
 		name = nbt.getString("name");
 		kind = Kind.values()[nbt.getByte("kind")];
@@ -74,7 +74,7 @@ public final class BlueprintId implements Comparable<BlueprintId> {
 		return Arrays.hashCode(ArrayUtils.addAll(uniqueId, name.getBytes()));
 	}
 
-	public String getCompleteId () {
+	public String getCompleteId() {
 		if (completeId == null) {
 			completeId = name + BuildCraftBuilders.BPT_SEP_CHARACTER
 					+ toString(uniqueId);
@@ -109,27 +109,27 @@ public final class BlueprintId implements Comparable<BlueprintId> {
 		return getCompleteId().compareTo(o.getCompleteId());
 	}
 
-	public static String toString (byte [] bytes) {
+	public static String toString(byte[] bytes) {
 		char[] ret = new char[bytes.length * 2];
 
 		for (int i = 0; i < bytes.length; i++) {
-			int val = bytes [i] + 128;
+			int val = bytes[i] + 128;
 
 			ret[i * 2] = toHex(val >> 4);
 			ret[i * 2 + 1] = toHex(val & 0xf);
 		}
 
-		return new String (ret);
+		return new String(ret);
 	}
 
 	public static byte[] toBytes(String suffix) {
-		byte [] result = new byte [suffix.length() / 2];
+		byte[] result = new byte[suffix.length() / 2];
 
 		for (int i = 0; i < result.length; ++i) {
-			result [i] = (byte) ((byte) (fromHex(suffix.charAt(i * 2 + 1)))
+			result[i] = (byte) ((byte) (fromHex(suffix.charAt(i * 2 + 1)))
 					+ (byte) (fromHex(suffix.charAt(i * 2)) << 4));
 
-			result [i] -= 128;
+			result[i] -= 128;
 		}
 
 		return result;

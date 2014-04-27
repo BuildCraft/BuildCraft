@@ -8,11 +8,6 @@
  */
 package buildcraft.builders;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-
-import net.minecraft.inventory.IInventory;
-import net.minecraft.nbt.NBTTagCompound;
 import buildcraft.api.blueprints.ITileBuilder;
 import buildcraft.api.core.NetworkData;
 import buildcraft.api.core.SafeTimeTracker;
@@ -24,6 +19,11 @@ import buildcraft.core.network.RPC;
 import buildcraft.core.network.RPCHandler;
 import buildcraft.core.network.RPCMessageInfo;
 import buildcraft.core.network.RPCSide;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.nbt.NBTTagCompound;
+
+import java.util.ArrayList;
+import java.util.LinkedList;
 
 public abstract class TileAbstractBuilder extends TileBuildCraft implements ITileBuilder, IInventory, IBoxProvider {
 
@@ -41,14 +41,14 @@ public abstract class TileAbstractBuilder extends TileBuildCraft implements ITil
 	protected double mjStored = 0;
 
 	@NetworkData
-	public LinkedList<LaserData> pathLasers = new LinkedList<LaserData> ();
+	public LinkedList<LaserData> pathLasers = new LinkedList<LaserData>();
 
-	public ArrayList <BuildingItem> buildersInAction = new ArrayList<BuildingItem>();
+	public ArrayList<BuildingItem> buildersInAction = new ArrayList<BuildingItem>();
 
 	protected SafeTimeTracker buildTracker = new SafeTimeTracker(5);
 
 	@Override
-	public void initialize () {
+	public void initialize() {
 		super.initialize();
 
 		if (worldObj.isRemote) {
@@ -56,8 +56,8 @@ public abstract class TileAbstractBuilder extends TileBuildCraft implements ITil
 		}
 	}
 
-	@RPC (RPCSide.SERVER)
-	private void uploadBuildersInAction (RPCMessageInfo info) {
+	@RPC(RPCSide.SERVER)
+	private void uploadBuildersInAction(RPCMessageInfo info) {
 		for (BuildingItem i : buildersInAction) {
 			RPCHandler.rpcPlayer(this, "launchItem", info.sender, i);
 		}
@@ -90,8 +90,8 @@ public abstract class TileAbstractBuilder extends TileBuildCraft implements ITil
 		return pathLasers;
 	}
 
-	@RPC (RPCSide.CLIENT)
-	public void launchItem (BuildingItem item) {
+	@RPC(RPCSide.CLIENT)
+	public void launchItem(BuildingItem item) {
 		buildersInAction.add(item);
 	}
 

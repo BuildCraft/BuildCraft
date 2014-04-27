@@ -8,15 +8,6 @@
  */
 package buildcraft.transport.pipes;
 
-import io.netty.buffer.ByteBuf;
-import net.minecraft.block.Block;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.ISidedInventory;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.BuildCraftTransport;
 import buildcraft.core.GuiIds;
 import buildcraft.core.inventory.InvUtils;
@@ -28,6 +19,15 @@ import buildcraft.core.network.IGuiReturnHandler;
 import buildcraft.core.utils.Utils;
 import buildcraft.transport.BlockGenericPipe;
 import buildcraft.transport.PipeIconProvider;
+import io.netty.buffer.ByteBuf;
+import net.minecraft.block.Block;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.ISidedInventory;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.common.util.ForgeDirection;
 
 public class PipeItemsEmerald extends PipeItemsWood implements IClientState, IGuiReturnHandler {
 
@@ -128,13 +128,13 @@ public class PipeItemsEmerald extends PipeItemsWood implements IClientState, IGu
 			}
 
 			if (doRemove) {
-				double energyUsed =  mjStored > stack.stackSize ? stack.stackSize : mjStored;
+				double energyUsed = mjStored > stack.stackSize ? stack.stackSize : mjStored;
 				mjStored -= energyUsed;
 
 				stack = inventory.decrStackSize(k, (int) Math.floor(energyUsed));
 			}
 
-			return new ItemStack[]{ stack };
+			return new ItemStack[]{stack};
 		}
 
 		return null;
@@ -165,7 +165,7 @@ public class PipeItemsEmerald extends PipeItemsWood implements IClientState, IGu
 					incrementFilter();
 				}
 
-				return new ItemStack[]{ stack };
+				return new ItemStack[]{stack};
 			}
 		}
 
@@ -248,7 +248,7 @@ public class PipeItemsEmerald extends PipeItemsWood implements IClientState, IGu
 
 	@Override
 	public void writeGuiData(ByteBuf data) {
-		data.writeByte((byte)settings.getFilterMode().ordinal());
+		data.writeByte((byte) settings.getFilterMode().ordinal());
 	}
 
 	@Override

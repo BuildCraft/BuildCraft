@@ -8,22 +8,6 @@
  */
 package buildcraft.factory;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
-
-import net.minecraft.block.Block;
-import net.minecraft.entity.item.EntityItem;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.ChatComponentText;
-import net.minecraft.world.ChunkCoordIntPair;
-import net.minecraftforge.common.ForgeChunkManager;
-import net.minecraftforge.common.ForgeChunkManager.Ticket;
-import net.minecraftforge.common.ForgeChunkManager.Type;
-import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftFactory;
 import buildcraft.api.core.BuildCraftAPI;
@@ -45,23 +29,44 @@ import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.BlockUtil;
 import buildcraft.core.utils.Utils;
-
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import net.minecraft.block.Block;
+import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.ChatComponentText;
+import net.minecraft.world.ChunkCoordIntPair;
+import net.minecraftforge.common.ForgeChunkManager;
+import net.minecraftforge.common.ForgeChunkManager.Ticket;
+import net.minecraftforge.common.ForgeChunkManager.Type;
+import net.minecraftforge.common.util.ForgeDirection;
+
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
 
 public class TileQuarry extends TileAbstractBuilder implements IMachine {
 
-	public @NetworkData
+	public
+	@NetworkData
 	Box box = new Box();
-	public @NetworkData
+	public
+	@NetworkData
 	boolean inProcess = false;
-	public @NetworkData
+	public
+	@NetworkData
 	int targetX, targetY, targetZ;
-	public @NetworkData
+	public
+	@NetworkData
 	double headPosX, headPosY, headPosZ;
-	public @NetworkData
+	public
+	@NetworkData
 	double speed = 0.03;
-	public @NetworkData
+	public
+	@NetworkData
 	boolean builderDone = false;
 
 	private BptBuilderBase builder;
@@ -73,13 +78,14 @@ public class TileQuarry extends TileAbstractBuilder implements IMachine {
 	private boolean movingVertically;
 	private double headTrajectory;
 	private Ticket chunkTicket;
-	public @NetworkData
+	public
+	@NetworkData
 	boolean isAlive;
 	public EntityPlayer placedBy;
 
 	boolean frameProducer = true;
 
-	public TileQuarry () {
+	public TileQuarry() {
 		box.kind = Kind.STRIPES;
 	}
 
@@ -115,13 +121,13 @@ public class TileQuarry extends TileAbstractBuilder implements IMachine {
 
 	private void createArm() {
 		worldObj.spawnEntityInWorld
-		(new EntityMechanicalArm(worldObj,
-				box.xMin + CoreConstants.PIPE_MAX_POS,
-				yCoord + box.sizeY () - 1 + CoreConstants.PIPE_MIN_POS,
-				box.zMin + CoreConstants.PIPE_MAX_POS,
-				box.sizeX () - 2 + CoreConstants.PIPE_MIN_POS * 2,
-				box.sizeZ() - 2 + CoreConstants.PIPE_MIN_POS * 2,
-				this));
+				(new EntityMechanicalArm(worldObj,
+						box.xMin + CoreConstants.PIPE_MAX_POS,
+						yCoord + box.sizeY() - 1 + CoreConstants.PIPE_MIN_POS,
+						box.zMin + CoreConstants.PIPE_MAX_POS,
+						box.sizeX() - 2 + CoreConstants.PIPE_MIN_POS * 2,
+						box.sizeZ() - 2 + CoreConstants.PIPE_MIN_POS * 2,
+						this));
 	}
 
 	// Callback from the arm once it's created
@@ -197,6 +203,7 @@ public class TileQuarry extends TileAbstractBuilder implements IMachine {
 		int[] target = getTarget();
 		headTrajectory = Math.atan2(target[2] - head[2], target[0] - head[0]);
 	}
+
 	private final LinkedList<int[]> visitList = Lists.newLinkedList();
 
 	public boolean findTarget(boolean doSet) {
@@ -318,7 +325,6 @@ public class TileQuarry extends TileAbstractBuilder implements IMachine {
 	@Override
 	public void readFromNBT(NBTTagCompound nbttagcompound) {
 		super.readFromNBT(nbttagcompound);
-
 
 
 		if (nbttagcompound.hasKey("box")) {
@@ -540,7 +546,7 @@ public class TileQuarry extends TileAbstractBuilder implements IMachine {
 			useDefault = true;
 		}
 
-		xSize =a.xMax() - a.xMin() + 1;
+		xSize = a.xMax() - a.xMin() + 1;
 		int ySize = a.yMax() - a.yMin() + 1;
 		zSize = a.zMax() - a.zMin() + 1;
 
@@ -557,23 +563,23 @@ public class TileQuarry extends TileAbstractBuilder implements IMachine {
 			ForgeDirection o = ForgeDirection.values()[worldObj.getBlockMetadata(xCoord, yCoord, zCoord)].getOpposite();
 
 			switch (o) {
-			case EAST:
-				xMin = xCoord + 1;
-				zMin = zCoord - 4 - 1;
-				break;
-			case WEST:
-				xMin = xCoord - 9 - 2;
-				zMin = zCoord - 4 - 1;
-				break;
-			case SOUTH:
-				xMin = xCoord - 4 - 1;
-				zMin = zCoord + 1;
-				break;
-			case NORTH:
-			default:
-				xMin = xCoord - 4 - 1;
-				zMin = zCoord - 9 - 2;
-				break;
+				case EAST:
+					xMin = xCoord + 1;
+					zMin = zCoord - 4 - 1;
+					break;
+				case WEST:
+					xMin = xCoord - 9 - 2;
+					zMin = zCoord - 4 - 1;
+					break;
+				case SOUTH:
+					xMin = xCoord - 4 - 1;
+					zMin = zCoord + 1;
+					break;
+				case NORTH:
+				default:
+					xMin = xCoord - 4 - 1;
+					zMin = zCoord - 9 - 2;
+					break;
 			}
 
 			box.initialize(xMin, yCoord, zMin, xMin + xSize - 1, yCoord + ySize - 1, zMin + zSize - 1);
@@ -812,7 +818,7 @@ public class TileQuarry extends TileAbstractBuilder implements IMachine {
 
 	@Override
 	public AxisAlignedBB getRenderBoundingBox() {
-		return new Box (this).extendToEncompass(box).expand(50).getBoundingBox();
+		return new Box(this).extendToEncompass(box).expand(50).getBoundingBox();
 	}
 
 	@Override

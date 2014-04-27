@@ -10,10 +10,10 @@ package buildcraft.api.blueprints;
 
 import net.minecraft.nbt.NBTTagCompound;
 
-public class SchematicFactoryMask extends SchematicFactory <SchematicMask> {
+public class SchematicFactoryMask extends SchematicFactory<SchematicMask> {
 
 	@Override
-	protected SchematicMask loadSchematicFromWorldNBT (NBTTagCompound nbt, MappingRegistry registry) {
+	protected SchematicMask loadSchematicFromWorldNBT(NBTTagCompound nbt, MappingRegistry registry) {
 		SchematicMask s = new SchematicMask();
 		s.readFromNBT(nbt, registry);
 
@@ -21,7 +21,7 @@ public class SchematicFactoryMask extends SchematicFactory <SchematicMask> {
 	}
 
 	@Override
-	public void saveSchematicToWorldNBT (NBTTagCompound nbt, SchematicMask object, MappingRegistry registry) {
+	public void saveSchematicToWorldNBT(NBTTagCompound nbt, SchematicMask object, MappingRegistry registry) {
 		super.saveSchematicToWorldNBT(nbt, object, registry);
 
 		object.writeToNBT(nbt, registry);

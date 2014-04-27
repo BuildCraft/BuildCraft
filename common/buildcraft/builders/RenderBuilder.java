@@ -8,25 +8,23 @@
  */
 package buildcraft.builders;
 
+import buildcraft.builders.urbanism.RenderBoxProvider;
+import buildcraft.core.EntityLaser;
+import buildcraft.core.LaserData;
+import buildcraft.core.render.RenderLaser;
 import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.tileentity.TileEntity;
-
 import org.lwjgl.opengl.GL11;
-
-import buildcraft.builders.urbanism.RenderBoxProvider;
-import buildcraft.core.EntityLaser;
-import buildcraft.core.LaserData;
-import buildcraft.core.render.RenderLaser;
 
 public class RenderBuilder extends RenderBoxProvider {
 
 	private final EntityItem dummyEntityItem = new EntityItem(null);
 	private final RenderItem customRenderItem;
 
-	public RenderBuilder () {
+	public RenderBuilder() {
 		customRenderItem = new RenderItem() {
 			@Override
 			public boolean shouldBob() {

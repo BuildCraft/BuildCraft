@@ -8,8 +8,11 @@
  */
 package buildcraft.core.blueprints;
 
-import java.util.LinkedList;
-
+import buildcraft.BuildCraftBuilders;
+import buildcraft.api.blueprints.*;
+import buildcraft.api.core.BCLog;
+import buildcraft.builders.blueprints.BlueprintId.Kind;
+import buildcraft.core.utils.NBTUtils;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
@@ -17,21 +20,14 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.Constants;
-import buildcraft.BuildCraftBuilders;
-import buildcraft.api.blueprints.IBuilderContext;
-import buildcraft.api.blueprints.SchematicBlock;
-import buildcraft.api.blueprints.SchematicEntity;
-import buildcraft.api.blueprints.SchematicRegistry;
-import buildcraft.api.blueprints.Translation;
-import buildcraft.api.core.BCLog;
-import buildcraft.builders.blueprints.BlueprintId.Kind;
-import buildcraft.core.utils.NBTUtils;
+
+import java.util.LinkedList;
 
 public class Blueprint extends BlueprintBase {
-	public LinkedList <SchematicEntity> entities = new LinkedList <SchematicEntity> ();
+	public LinkedList<SchematicEntity> entities = new LinkedList<SchematicEntity>();
 
 	public Blueprint() {
-		super ();
+		super();
 
 		id.kind = Kind.Blueprint;
 	}
@@ -133,7 +129,7 @@ public class Blueprint extends BlueprintBase {
 				for (int z = 0; z < sizeZ; ++z) {
 					NBTTagCompound cpt = new NBTTagCompound();
 
-					if (contents [x][y][z] != null) {
+					if (contents[x][y][z] != null) {
 						contents[x][y][z].writeToNBT(cpt, mapping);
 					}
 
@@ -155,13 +151,13 @@ public class Blueprint extends BlueprintBase {
 		nbt.setTag("entities", entitiesNBT);
 
 		NBTTagCompound contextNBT = new NBTTagCompound();
-		mapping.write (contextNBT);
+		mapping.write(contextNBT);
 		nbt.setTag("idMapping", contextNBT);
 	}
 
 	@Override
 	public void loadContents(NBTTagCompound nbt) throws BptError {
-		mapping.read (nbt.getCompoundTag("idMapping"));
+		mapping.read(nbt.getCompoundTag("idMapping"));
 
 		NBTTagList nbtContents = nbt.getTagList("contents",
 				Constants.NBT.TAG_COMPOUND);
@@ -202,10 +198,10 @@ public class Blueprint extends BlueprintBase {
 	}
 
 	@Override
-	public ItemStack getStack () {
+	public ItemStack getStack() {
 		ItemStack stack = new ItemStack(BuildCraftBuilders.blueprintItem, 1);
 		NBTTagCompound nbt = NBTUtils.getItemData(stack);
-		id.write (nbt);
+		id.write(nbt);
 		nbt.setString("author", author);
 		nbt.setString("name", id.name);
 

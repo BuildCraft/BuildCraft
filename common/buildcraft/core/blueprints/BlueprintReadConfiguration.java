@@ -8,8 +8,8 @@
  */
 package buildcraft.core.blueprints;
 
-import net.minecraft.nbt.NBTTagCompound;
 import buildcraft.api.core.NetworkData;
+import net.minecraft.nbt.NBTTagCompound;
 
 public class BlueprintReadConfiguration {
 

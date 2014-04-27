@@ -49,19 +49,19 @@ public class BlockArchitect extends BlockMultiTexture {
 			int meta = world.getBlockMetadata(i, j, k);
 
 			switch (ForgeDirection.values()[meta]) {
-			case WEST:
-				world.setBlockMetadataWithNotify(i, j, k, ForgeDirection.SOUTH.ordinal(),0);
-				break;
-			case EAST:
-				world.setBlockMetadataWithNotify(i, j, k, ForgeDirection.NORTH.ordinal(),0);
-				break;
-			case NORTH:
-				world.setBlockMetadataWithNotify(i, j, k, ForgeDirection.WEST.ordinal(),0);
-				break;
-			case SOUTH:
-			default:
-				world.setBlockMetadataWithNotify(i, j, k, ForgeDirection.EAST.ordinal(),0);
-				break;
+				case WEST:
+					world.setBlockMetadataWithNotify(i, j, k, ForgeDirection.SOUTH.ordinal(), 0);
+					break;
+				case EAST:
+					world.setBlockMetadataWithNotify(i, j, k, ForgeDirection.NORTH.ordinal(), 0);
+					break;
+				case NORTH:
+					world.setBlockMetadataWithNotify(i, j, k, ForgeDirection.WEST.ordinal(), 0);
+					break;
+				case SOUTH:
+				default:
+					world.setBlockMetadataWithNotify(i, j, k, ForgeDirection.EAST.ordinal(), 0);
+					break;
 			}
 
 			world.markBlockForUpdate(i, j, k);
@@ -90,7 +90,7 @@ public class BlockArchitect extends BlockMultiTexture {
 
 		ForgeDirection orientation = Utils.get2dOrientation(entityliving);
 
-		world.setBlockMetadataWithNotify(i, j, k, orientation.getOpposite().ordinal(),1);
+		world.setBlockMetadataWithNotify(i, j, k, orientation.getOpposite().ordinal(), 1);
 	}
 
 	@Override

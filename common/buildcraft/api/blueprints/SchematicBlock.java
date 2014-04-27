@@ -8,9 +8,6 @@
  */
 package buildcraft.api.blueprints;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -18,7 +15,10 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.util.Constants;
 
-public class SchematicBlock extends SchematicBlockBase  implements Comparable<SchematicBlock> {
+import java.util.ArrayList;
+import java.util.LinkedList;
+
+public class SchematicBlock extends SchematicBlockBase implements Comparable<SchematicBlock> {
 
 	public Block block = null;
 	public int meta = 0;
@@ -28,7 +28,7 @@ public class SchematicBlock extends SchematicBlockBase  implements Comparable<Sc
 	 * blueprint. Modders can either rely on this list or compute their own int
 	 * Schematic.
 	 */
-	public ItemStack [] storedRequirements = new ItemStack [0];
+	public ItemStack[] storedRequirements = new ItemStack[0];
 
 	/**
 	 * Returns the requirements needed to build this block. When the
@@ -70,7 +70,7 @@ public class SchematicBlock extends SchematicBlockBase  implements Comparable<Sc
 	 * Places the block in the world, at the location specified in the slot.
 	 */
 	@Override
-	public void writeToWorld(IBuilderContext context, int x, int y, int z, LinkedList <ItemStack> stacks) {
+	public void writeToWorld(IBuilderContext context, int x, int y, int z, LinkedList<ItemStack> stacks) {
 		// Meta needs to be specified twice, depending on the block behavior
 		context.world().setBlock(x, y, z, block, meta, 3);
 		context.world().setBlockMetadataWithNotify(x, y, z, meta, 3);
@@ -90,7 +90,7 @@ public class SchematicBlock extends SchematicBlockBase  implements Comparable<Sc
 	 * y, z} on the world. This typically means adding entries in slot.cpt. Note
 	 * that "id" and "meta" will be set automatically, corresponding to the
 	 * block id and meta.
-	 *
+	 * <p/>
 	 * By default, if the block is a BlockContainer, tile information will be to
 	 * save / load the block.
 	 */
@@ -101,7 +101,7 @@ public class SchematicBlock extends SchematicBlockBase  implements Comparable<Sc
 					y, z, context.world().getBlockMetadata(x, y, z), 0);
 
 			if (req != null) {
-				storedRequirements = new ItemStack [req.size()];
+				storedRequirements = new ItemStack[req.size()];
 				req.toArray(storedRequirements);
 			}
 		}
@@ -125,7 +125,7 @@ public class SchematicBlock extends SchematicBlockBase  implements Comparable<Sc
 	}
 
 	@Override
-	public void readFromNBT(NBTTagCompound nbt,	MappingRegistry registry) {
+	public void readFromNBT(NBTTagCompound nbt, MappingRegistry registry) {
 		block = registry.getBlockForId(nbt.getInteger("blockId"));
 		meta = nbt.getInteger("blockMeta");
 
@@ -155,7 +155,7 @@ public class SchematicBlock extends SchematicBlockBase  implements Comparable<Sc
 			}
 		}
 
-		storedRequirements = rqs.toArray(new ItemStack [rqs.size()]);
+		storedRequirements = rqs.toArray(new ItemStack[rqs.size()]);
 	}
 
 	@Override

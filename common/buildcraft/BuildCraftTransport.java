@@ -8,8 +8,41 @@
  */
 package buildcraft;
 
-import java.util.LinkedList;
-
+import buildcraft.api.blueprints.SchematicRegistry;
+import buildcraft.api.core.IIconProvider;
+import buildcraft.api.gates.ActionManager;
+import buildcraft.api.gates.GateExpansions;
+import buildcraft.api.recipes.BuildcraftRecipes;
+import buildcraft.api.transport.IExtractionHandler;
+import buildcraft.api.transport.PipeManager;
+import buildcraft.api.transport.PipeWire;
+import buildcraft.core.*;
+import buildcraft.core.proxy.CoreProxy;
+import buildcraft.core.triggers.BCAction;
+import buildcraft.core.triggers.BCTrigger;
+import buildcraft.core.utils.EnumColor;
+import buildcraft.transport.*;
+import buildcraft.transport.blueprints.BptItemPipeFilters;
+import buildcraft.transport.blueprints.BptPipeIron;
+import buildcraft.transport.blueprints.BptPipeWooden;
+import buildcraft.transport.blueprints.SchematicPipe;
+import buildcraft.transport.gates.GateExpansionPulsar;
+import buildcraft.transport.gates.GateExpansionRedstoneFader;
+import buildcraft.transport.gates.GateExpansionTimer;
+import buildcraft.transport.gates.ItemGate;
+import buildcraft.transport.network.PacketHandlerTransport;
+import buildcraft.transport.pipes.*;
+import buildcraft.transport.pipes.PipePowerIron.PowerMode;
+import buildcraft.transport.triggers.*;
+import buildcraft.transport.triggers.TriggerClockTimer.Time;
+import buildcraft.transport.triggers.TriggerPipeContents.PipeContents;
+import cpw.mods.fml.common.Mod;
+import cpw.mods.fml.common.event.FMLInitializationEvent;
+import cpw.mods.fml.common.event.FMLInterModComms.IMCEvent;
+import cpw.mods.fml.common.event.FMLPostInitializationEvent;
+import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.network.NetworkRegistry;
+import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
@@ -21,100 +54,8 @@ import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.oredict.RecipeSorter;
-import buildcraft.api.blueprints.SchematicRegistry;
-import buildcraft.api.core.IIconProvider;
-import buildcraft.api.gates.ActionManager;
-import buildcraft.api.gates.GateExpansions;
-import buildcraft.api.recipes.BuildcraftRecipes;
-import buildcraft.api.transport.IExtractionHandler;
-import buildcraft.api.transport.PipeManager;
-import buildcraft.api.transport.PipeWire;
-import buildcraft.core.BuildCraftConfiguration;
-import buildcraft.core.CreativeTabBuildCraft;
-import buildcraft.core.DefaultProps;
-import buildcraft.core.InterModComms;
-import buildcraft.core.ItemBuildCraft;
-import buildcraft.core.Version;
-import buildcraft.core.proxy.CoreProxy;
-import buildcraft.core.triggers.BCAction;
-import buildcraft.core.triggers.BCTrigger;
-import buildcraft.core.utils.EnumColor;
-import buildcraft.transport.BlockFilteredBuffer;
-import buildcraft.transport.BlockGenericPipe;
-import buildcraft.transport.GuiHandler;
-import buildcraft.transport.ItemFacade;
-import buildcraft.transport.ItemPipe;
-import buildcraft.transport.ItemPipeWire;
-import buildcraft.transport.ItemPlug;
-import buildcraft.transport.ItemRobotStation;
-import buildcraft.transport.Pipe;
-import buildcraft.transport.PipeIconProvider;
-import buildcraft.transport.PipeTriggerProvider;
-import buildcraft.transport.TransportProxy;
-import buildcraft.transport.WireIconProvider;
-import buildcraft.transport.blueprints.BptItemPipeFilters;
-import buildcraft.transport.blueprints.BptPipeIron;
-import buildcraft.transport.blueprints.BptPipeWooden;
-import buildcraft.transport.blueprints.SchematicPipe;
-import buildcraft.transport.gates.GateExpansionPulsar;
-import buildcraft.transport.gates.GateExpansionRedstoneFader;
-import buildcraft.transport.gates.GateExpansionTimer;
-import buildcraft.transport.gates.ItemGate;
-import buildcraft.transport.network.PacketHandlerTransport;
-import buildcraft.transport.pipes.PipeFluidsCobblestone;
-import buildcraft.transport.pipes.PipeFluidsEmerald;
-import buildcraft.transport.pipes.PipeFluidsGold;
-import buildcraft.transport.pipes.PipeFluidsIron;
-import buildcraft.transport.pipes.PipeFluidsSandstone;
-import buildcraft.transport.pipes.PipeFluidsStone;
-import buildcraft.transport.pipes.PipeFluidsVoid;
-import buildcraft.transport.pipes.PipeFluidsWood;
-import buildcraft.transport.pipes.PipeItemsCobblestone;
-import buildcraft.transport.pipes.PipeItemsDaizuli;
-import buildcraft.transport.pipes.PipeItemsDiamond;
-import buildcraft.transport.pipes.PipeItemsEmerald;
-import buildcraft.transport.pipes.PipeItemsEmzuli;
-import buildcraft.transport.pipes.PipeItemsGold;
-import buildcraft.transport.pipes.PipeItemsIron;
-import buildcraft.transport.pipes.PipeItemsLapis;
-import buildcraft.transport.pipes.PipeItemsObsidian;
-import buildcraft.transport.pipes.PipeItemsQuartz;
-import buildcraft.transport.pipes.PipeItemsSandstone;
-import buildcraft.transport.pipes.PipeItemsStone;
-import buildcraft.transport.pipes.PipeItemsStripes;
-import buildcraft.transport.pipes.PipeItemsVoid;
-import buildcraft.transport.pipes.PipeItemsWood;
-import buildcraft.transport.pipes.PipePowerCobblestone;
-import buildcraft.transport.pipes.PipePowerDiamond;
-import buildcraft.transport.pipes.PipePowerGold;
-import buildcraft.transport.pipes.PipePowerHeat;
-import buildcraft.transport.pipes.PipePowerIron;
-import buildcraft.transport.pipes.PipePowerIron.PowerMode;
-import buildcraft.transport.pipes.PipePowerQuartz;
-import buildcraft.transport.pipes.PipePowerStone;
-import buildcraft.transport.pipes.PipePowerWood;
-import buildcraft.transport.pipes.PipeStructureCobblestone;
-import buildcraft.transport.triggers.ActionEnergyPulsar;
-import buildcraft.transport.triggers.ActionExtractionPreset;
-import buildcraft.transport.triggers.ActionPipeColor;
-import buildcraft.transport.triggers.ActionPipeDirection;
-import buildcraft.transport.triggers.ActionPowerLimiter;
-import buildcraft.transport.triggers.ActionRedstoneFaderOutput;
-import buildcraft.transport.triggers.ActionSignalOutput;
-import buildcraft.transport.triggers.ActionSingleEnergyPulse;
-import buildcraft.transport.triggers.TriggerClockTimer;
-import buildcraft.transport.triggers.TriggerClockTimer.Time;
-import buildcraft.transport.triggers.TriggerPipeContents;
-import buildcraft.transport.triggers.TriggerPipeContents.PipeContents;
-import buildcraft.transport.triggers.TriggerPipeSignal;
-import buildcraft.transport.triggers.TriggerRedstoneFaderInput;
-import cpw.mods.fml.common.Mod;
-import cpw.mods.fml.common.event.FMLInitializationEvent;
-import cpw.mods.fml.common.event.FMLInterModComms.IMCEvent;
-import cpw.mods.fml.common.event.FMLPostInitializationEvent;
-import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.common.network.NetworkRegistry;
-import cpw.mods.fml.common.registry.GameRegistry;
+
+import java.util.LinkedList;
 
 @Mod(version = Version.VERSION, modid = "BuildCraft|Transport", name = "Buildcraft Transport", dependencies = DefaultProps.DEPENDENCY_CORE)
 public class BuildCraftTransport extends BuildCraftMod {
@@ -234,6 +175,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 			return true;
 		}
 	}
+
 	private static LinkedList<PipeRecipe> pipeRecipes = new LinkedList<PipeRecipe>();
 
 	@Mod.EventHandler
@@ -278,7 +220,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 			groupItemsTriggerProp.comment = "when reaching this amount of objects in a pipes, items will be automatically grouped";
 			groupItemsTrigger = groupItemsTriggerProp.getInt();
 
-			Property facadeBlacklistProp = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "facade.blacklist", new String[] {
+			Property facadeBlacklistProp = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "facade.blacklist", new String[]{
 					Block.blockRegistry.getNameForObject(Blocks.bedrock),
 					Block.blockRegistry.getNameForObject(Blocks.command_block),
 					Block.blockRegistry.getNameForObject(Blocks.end_portal_frame),
@@ -474,8 +416,8 @@ public class BuildCraftTransport extends BuildCraftMod {
 
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(filteredBufferBlock, 1),
 				"wdw", "wcw", "wpw", 'w', "plankWood", 'd',
-			BuildCraftTransport.pipeItemsDiamond, 'c', Blocks.chest, 'p',
-			Blocks.piston);
+				BuildCraftTransport.pipeItemsDiamond, 'c', Blocks.chest, 'p',
+				Blocks.piston);
 
 		//Facade turning helper
 		GameRegistry.addRecipe(facadeItem.new FacadeRecipe());
@@ -490,8 +432,8 @@ public class BuildCraftTransport extends BuildCraftMod {
 	}
 
 	public static Item buildPipe(int defaultID, Class<? extends Pipe> clas,
-			String descr, CreativeTabBuildCraft creativeTab,
-			Object... ingredients) {
+								 String descr, CreativeTabBuildCraft creativeTab,
+								 Object... ingredients) {
 		String name = Character.toLowerCase(clas.getSimpleName().charAt(0)) + clas.getSimpleName().substring(1);
 
 		ItemPipe res = BlockGenericPipe.registerPipe(clas, creativeTab);

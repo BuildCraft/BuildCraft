@@ -8,9 +8,9 @@
  */
 package buildcraft.builders;
 
-import net.minecraft.item.ItemStack;
 import buildcraft.api.core.NetworkData;
 import buildcraft.api.core.Position;
+import net.minecraft.item.ItemStack;
 
 public class StackAtPosition {
 	@NetworkData

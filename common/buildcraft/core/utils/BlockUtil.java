@@ -8,9 +8,10 @@
  */
 package buildcraft.core.utils;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import buildcraft.BuildCraftCore;
+import buildcraft.BuildCraftEnergy;
+import buildcraft.core.proxy.CoreProxy;
+import cpw.mods.fml.common.FMLCommonHandler;
 import net.minecraft.block.Block;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
@@ -22,16 +23,10 @@ import net.minecraft.world.ChunkPosition;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
 import net.minecraftforge.event.ForgeEventFactory;
-import net.minecraftforge.fluids.BlockFluidBase;
-import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidContainerRegistry;
-import net.minecraftforge.fluids.FluidRegistry;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.IFluidBlock;
-import buildcraft.BuildCraftCore;
-import buildcraft.BuildCraftEnergy;
-import buildcraft.core.proxy.CoreProxy;
-import cpw.mods.fml.common.FMLCommonHandler;
+import net.minecraftforge.fluids.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class BlockUtil {
 
@@ -142,7 +137,7 @@ public class BlockUtil {
 	}
 
 	public static Fluid getFluid(Block block) {
-		return FluidRegistry.lookupFluidForBlock (block);
+		return FluidRegistry.lookupFluidForBlock(block);
 	}
 
 	public static FluidStack drainBlock(World world, int x, int y, int z, boolean doDrain) {

@@ -8,9 +8,9 @@
  */
 package buildcraft.builders.filler.pattern;
 
-import net.minecraft.world.World;
 import buildcraft.core.Box;
 import buildcraft.core.blueprints.Template;
+import net.minecraft.world.World;
 
 public class PatternClear extends FillerPattern {
 
@@ -19,7 +19,7 @@ public class PatternClear extends FillerPattern {
 	}
 
 	@Override
-	public Template getTemplate (Box box, World world) {
+	public Template getTemplate(Box box, World world) {
 		int xMin = (int) box.pMin().x;
 		int yMin = (int) box.pMin().y;
 		int zMin = (int) box.pMin().z;

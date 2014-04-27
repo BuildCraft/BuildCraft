@@ -8,11 +8,6 @@
  */
 package buildcraft.core.blueprints;
 
-import java.util.LinkedList;
-
-import net.minecraft.item.ItemStack;
-import net.minecraft.world.World;
-import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.api.blueprints.SchematicBlockBase;
 import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.builders.TileAbstractBuilder;
@@ -21,6 +16,11 @@ import buildcraft.core.blueprints.BuildingSlotBlock.Mode;
 import buildcraft.core.inventory.InventoryIterator;
 import buildcraft.core.inventory.InventoryIterator.IInvSlot;
 import buildcraft.core.utils.BlockUtil;
+import net.minecraft.item.ItemStack;
+import net.minecraft.world.World;
+import net.minecraftforge.common.util.ForgeDirection;
+
+import java.util.LinkedList;
 
 public class BptBuilderTemplate extends BptBuilderBase {
 
@@ -32,7 +32,7 @@ public class BptBuilderTemplate extends BptBuilderBase {
 	}
 
 	@Override
-	protected void initialize () {
+	protected void initialize() {
 		if (blueprint.excavate) {
 			for (int j = blueprint.sizeY - 1; j >= 0; --j) {
 				for (int i = 0; i < blueprint.sizeX; ++i) {
@@ -45,7 +45,7 @@ public class BptBuilderTemplate extends BptBuilderBase {
 
 						if (slot == null
 								&& !clearedLocations.contains(new BlockIndex(
-										xCoord, yCoord, zCoord))) {
+								xCoord, yCoord, zCoord))) {
 							BuildingSlotBlock b = new BuildingSlotBlock();
 
 							b.schematic = null;
@@ -139,7 +139,7 @@ public class BptBuilderTemplate extends BptBuilderBase {
 			BuildingSlotBlock slot = iterator.next();
 
 			if (slot.buildStage > buildList.getFirst().buildStage) {
-				iterator.reset ();
+				iterator.reset();
 				return null;
 			}
 

@@ -8,8 +8,19 @@
  */
 package buildcraft.core.proxy;
 
-import java.util.List;
-
+import buildcraft.BuildCraftCore;
+import buildcraft.api.core.LaserKind;
+import buildcraft.core.EntityBlock;
+import buildcraft.core.render.RenderEntityBlock;
+import buildcraft.core.render.RenderRobot;
+import buildcraft.core.render.RenderingEntityBlocks;
+import buildcraft.core.render.RenderingMarkers;
+import buildcraft.core.robots.EntityRobot;
+import buildcraft.core.robots.EntityRobotBuilder;
+import buildcraft.transport.render.TileEntityPickupFX;
+import com.mojang.authlib.GameProfile;
+import cpw.mods.fml.client.FMLClientHandler;
+import cpw.mods.fml.client.registry.RenderingRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
@@ -26,21 +37,8 @@ import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.IChatComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.client.MinecraftForgeClient;
-import buildcraft.BuildCraftCore;
-import buildcraft.api.core.LaserKind;
-import buildcraft.core.EntityBlock;
-import buildcraft.core.render.RenderEntityBlock;
-import buildcraft.core.render.RenderRobot;
-import buildcraft.core.render.RenderingEntityBlocks;
-import buildcraft.core.render.RenderingMarkers;
-import buildcraft.core.robots.EntityRobot;
-import buildcraft.core.robots.EntityRobotBuilder;
-import buildcraft.transport.render.TileEntityPickupFX;
 
-import com.mojang.authlib.GameProfile;
-
-import cpw.mods.fml.client.FMLClientHandler;
-import cpw.mods.fml.client.registry.RenderingRegistry;
+import java.util.List;
 
 public class CoreProxyClient extends CoreProxy {
 
@@ -149,20 +147,20 @@ public class CoreProxyClient extends CoreProxy {
 	}
 
 	@Override
-	public EntityBlock newEntityBlock(World world, double i, double j,	double k, double iSize, double jSize, double kSize, LaserKind laserKind) {
+	public EntityBlock newEntityBlock(World world, double i, double j, double k, double iSize, double jSize, double kSize, LaserKind laserKind) {
 		EntityBlock eb = super.newEntityBlock(world, i, j, k, iSize, jSize, kSize, laserKind);
 		switch (laserKind) {
-		case Blue:
-			eb.texture = BuildCraftCore.blueLaserTexture;
-			break;
+			case Blue:
+				eb.texture = BuildCraftCore.blueLaserTexture;
+				break;
 
-		case Red:
-			eb.texture = BuildCraftCore.redLaserTexture;
-			break;
+			case Red:
+				eb.texture = BuildCraftCore.redLaserTexture;
+				break;
 
-		case Stripes:
-			eb.texture = BuildCraftCore.stripesLaserTexture;
-			break;
+			case Stripes:
+				eb.texture = BuildCraftCore.stripesLaserTexture;
+				break;
 		}
 		return eb;
 	}
@@ -172,7 +170,7 @@ public class CoreProxyClient extends CoreProxy {
 	 * server, or directly from the minecraft instance if it's the client.
 	 */
 	@Override
-	public EntityPlayer getPlayerFromNetHandler (INetHandler handler) {
+	public EntityPlayer getPlayerFromNetHandler(INetHandler handler) {
 		if (handler instanceof NetHandlerPlayServer) {
 			return ((NetHandlerPlayServer) handler).playerEntity;
 		} else {
