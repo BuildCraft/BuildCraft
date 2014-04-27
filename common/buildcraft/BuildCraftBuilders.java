@@ -71,6 +71,7 @@ import buildcraft.builders.schematics.SchematicCactus;
 import buildcraft.builders.schematics.SchematicCustomStack;
 import buildcraft.builders.schematics.SchematicDirt;
 import buildcraft.builders.schematics.SchematicDoor;
+import buildcraft.builders.schematics.SchematicEnderChest;
 import buildcraft.builders.schematics.SchematicFarmland;
 import buildcraft.builders.schematics.SchematicFire;
 import buildcraft.builders.schematics.SchematicFluid;
@@ -194,11 +195,15 @@ public class BuildCraftBuilders extends BuildCraftMod {
 		SchematicRegistry.registerSchematicBlock(Blocks.hay_block, SchematicRotateMeta.class, new int[]{8, 4, 8, 4}, true);
 		SchematicRegistry.registerSchematicBlock(Blocks.quartz_block, SchematicRotateMeta.class, new int[]{4, 3, 4, 3}, true);
 		SchematicRegistry.registerSchematicBlock(Blocks.hopper, SchematicRotateMeta.class, new int[]{2, 5, 3, 4}, true);
+		SchematicRegistry.registerSchematicBlock(Blocks.anvil, SchematicRotateMeta.class, new int[]{0, 1, 2, 3}, true);
 
 		SchematicRegistry.registerSchematicBlock(Blocks.furnace, SchematicRotateMeta.class, new int[]{2, 5, 3, 4}, true);
 		SchematicRegistry.registerSchematicBlock(Blocks.lit_furnace, SchematicRotateMeta.class, new int[]{2, 5, 3, 4}, true);
 		SchematicRegistry.registerSchematicBlock(Blocks.chest, SchematicRotateMeta.class, new int[]{2, 5, 3, 4}, true);
 		SchematicRegistry.registerSchematicBlock(Blocks.dispenser, SchematicRotateMeta.class, new int[]{2, 5, 3, 4}, true);
+		SchematicRegistry.registerSchematicBlock(Blocks.dropper, SchematicRotateMeta.class, new int[]{2, 5, 3, 4}, true);
+
+		SchematicRegistry.registerSchematicBlock(Blocks.ender_chest, SchematicEnderChest.class);
 
 		SchematicRegistry.registerSchematicBlock(Blocks.vine, SchematicRotateMeta.class, new int[]{1, 4, 8, 2}, false);
 		SchematicRegistry.registerSchematicBlock(Blocks.trapdoor, SchematicRotateMeta.class, new int[]{0, 1, 2, 3}, false);
