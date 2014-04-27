@@ -43,7 +43,7 @@ public class TileLaser extends TileBuildCraft implements IPowerReceptor, IAction
 
 	private final SafeTimeTracker laserTickTracker = new SafeTimeTracker(10);
 	private final SafeTimeTracker searchTracker = new SafeTimeTracker(100, 100);
-	private final SafeTimeTracker networkTracker = new SafeTimeTracker(3);
+	private final SafeTimeTracker networkTracker = new SafeTimeTracker(20, 3);
 	private ILaserTarget laserTarget;
 	protected PowerHandler powerHandler;
 	private ActionMachineControl.Mode lastMode = ActionMachineControl.Mode.Unknown;
@@ -73,7 +73,7 @@ public class TileLaser extends TileBuildCraft implements IPowerReceptor, IAction
 		super.initialize();
 
 		laser.head = new Position(xCoord, yCoord, zCoord);
-		laser.tail = new Position(xCoord + 2, yCoord + 2, zCoord + 2);
+		laser.tail = new Position(xCoord, yCoord, zCoord);
 	}
 
 	@Override
@@ -256,6 +256,9 @@ public class TileLaser extends TileBuildCraft implements IPowerReceptor, IAction
 
 	protected void removeLaser() {
 		laser.isVisible = false;
+		// force sending the network update even if the network tracker
+		// refuses.
+		super.sendNetworkUpdate();
 	}
 
 	@Override
