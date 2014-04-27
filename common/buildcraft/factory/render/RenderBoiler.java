@@ -47,6 +47,7 @@ public class RenderBoiler extends TileEntitySpecialRenderer {
 			Minecraft.getMinecraft().renderEngine.bindTexture(ModelBoiler.TEXTURE_FRONT);
 			modelFront.render(0.0625F);
 
+			Minecraft.getMinecraft().renderEngine.bindTexture(ModelBoiler.TEXTURE_MIDDLE);
 			for (int i = 0; i < tile.length - 1; i++) {
 				GL11.glTranslated(0, 0, 1);
 
@@ -54,7 +55,6 @@ public class RenderBoiler extends TileEntitySpecialRenderer {
 					Minecraft.getMinecraft().renderEngine.bindTexture(ModelBoiler.TEXTURE_BACK);
 					modelBack.render(0.0625F);
 				} else {
-					Minecraft.getMinecraft().renderEngine.bindTexture(ModelBoiler.TEXTURE_MIDDLE);
 					modelMiddle.render(0.0625F);
 				}
 			}
