@@ -8,8 +8,8 @@
  */
 package buildcraft.transport;
 
+import buildcraft.api.core.BCLog;
 import buildcraft.core.GuiIds;
-import buildcraft.core.utils.BCLog;
 import buildcraft.transport.gui.ContainerDiamondPipe;
 import buildcraft.transport.gui.ContainerEmeraldPipe;
 import buildcraft.transport.gui.ContainerFilteredBuffer;
@@ -24,7 +24,9 @@ import buildcraft.transport.pipes.PipeItemsDiamond;
 import buildcraft.transport.pipes.PipeItemsEmerald;
 import buildcraft.transport.pipes.PipeItemsEmzuli;
 import cpw.mods.fml.common.network.IGuiHandler;
+
 import java.util.logging.Level;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;

@@ -153,4 +153,13 @@ public class BuildingSlotBlock extends BuildingSlot implements Comparable<Buildi
 		schematic = (SchematicBlockBase) SchematicFactory
 				.createSchematicFromWorldNBT(nbt.getCompoundTag("schematic"), registry);
 	}
+
+	@Override
+	public LinkedList<ItemStack> getStacksToDisplay() {
+		if (mode == Mode.ClearIfInvalid) {
+			return stackConsumed;
+		} else {
+			return getSchematic ().getStacksToDisplay (stackConsumed);
+		}
+	}
 }

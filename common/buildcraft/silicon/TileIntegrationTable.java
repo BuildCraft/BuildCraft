@@ -8,6 +8,10 @@
  */
 package buildcraft.silicon;
 
+import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.ISidedInventory;
+import net.minecraft.item.ItemStack;
+import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.api.recipes.BuildcraftRecipes;
 import buildcraft.api.recipes.IIntegrationRecipeManager.IIntegrationRecipe;
 import buildcraft.core.inventory.ITransactor;
@@ -17,10 +21,6 @@ import buildcraft.core.inventory.StackHelper;
 import buildcraft.core.inventory.Transactor;
 import buildcraft.core.utils.StringUtils;
 import buildcraft.core.utils.Utils;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.ISidedInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraftforge.common.util.ForgeDirection;
 
 public class TileIntegrationTable extends TileLaserTableBase implements ISidedInventory {
 
@@ -43,13 +43,15 @@ public class TileIntegrationTable extends TileLaserTableBase implements ISidedIn
 	public void updateEntity() {
 		super.updateEntity();
 
-		if (worldObj.isRemote)
+		if (worldObj.isRemote) {
 			return;
+		}
 
 		tick++;
-		if (tick % CYCLE_LENGTH != 0)
+		if (tick % CYCLE_LENGTH != 0) {
 			return;
-		
+		}
+
 		canCraft = false;
 
 		currentRecipe = findMatchingRecipe();
@@ -85,18 +87,21 @@ public class TileIntegrationTable extends TileLaserTableBase implements ISidedIn
 		ItemStack inputB = inv.getStackInSlot(SLOT_INPUT_B);
 
 		for (IIntegrationRecipe recipe : BuildcraftRecipes.integrationTable.getRecipes()) {
-			if (recipe.isValidInputA(inputA) && recipe.isValidInputB(inputB))
+			if (recipe.isValidInputA(inputA) && recipe.isValidInputB(inputB)) {
 				return recipe;
+			}
 		}
 		return null;
 	}
 
 	private boolean isRoomForOutput(ItemStack output) {
 		ItemStack existingOutput = inv.getStackInSlot(SLOT_OUTPUT);
-		if (existingOutput == null)
+		if (existingOutput == null) {
 			return true;
-		if (StackHelper.instance().canStacksMerge(output, existingOutput) && output.stackSize + existingOutput.stackSize <= output.getMaxStackSize())
+		}
+		if (StackHelper.canStacksMerge(output, existingOutput) && output.stackSize + existingOutput.stackSize <= output.getMaxStackSize()) {
 			return true;
+		}
 		return false;
 	}
 
@@ -127,8 +132,9 @@ public class TileIntegrationTable extends TileLaserTableBase implements ISidedIn
 	private boolean isValidInputA(ItemStack stack) {
 		ItemStack inputB = inv.getStackInSlot(SLOT_INPUT_B);
 		for (IIntegrationRecipe recipe : BuildcraftRecipes.integrationTable.getRecipes()) {
-			if (recipe.isValidInputA(stack) && (inputB == null || recipe.isValidInputB(inputB)))
+			if (recipe.isValidInputA(stack) && (inputB == null || recipe.isValidInputB(inputB))) {
 				return true;
+			}
 		}
 		return false;
 	}
@@ -136,8 +142,9 @@ public class TileIntegrationTable extends TileLaserTableBase implements ISidedIn
 	private boolean isValidInputB(ItemStack stack) {
 		ItemStack inputA = inv.getStackInSlot(SLOT_INPUT_A);
 		for (IIntegrationRecipe recipe : BuildcraftRecipes.integrationTable.getRecipes()) {
-			if (recipe.isValidInputB(stack) && (inputA == null || recipe.isValidInputA(inputA)))
+			if (recipe.isValidInputB(stack) && (inputA == null || recipe.isValidInputA(inputA))) {
 				return true;
+			}
 		}
 		return false;
 	}

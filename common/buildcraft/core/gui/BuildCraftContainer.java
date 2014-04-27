@@ -8,12 +8,6 @@
  */
 package buildcraft.core.gui;
 
-import buildcraft.BuildCraftCore;
-import buildcraft.core.gui.slots.IPhantomSlot;
-import buildcraft.core.gui.slots.SlotBase;
-import buildcraft.core.gui.widgets.Widget;
-import buildcraft.core.inventory.StackHelper;
-import buildcraft.core.network.PacketGuiWidget;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufInputStream;
 
@@ -23,13 +17,18 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.ICrafting;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
+import buildcraft.BuildCraftCore;
+import buildcraft.core.gui.slots.IPhantomSlot;
+import buildcraft.core.gui.slots.SlotBase;
+import buildcraft.core.gui.widgets.Widget;
+import buildcraft.core.inventory.StackHelper;
+import buildcraft.core.network.PacketGuiWidget;
 
 public abstract class BuildCraftContainer extends Container {
 
@@ -61,7 +60,7 @@ public abstract class BuildCraftContainer extends Container {
 	public void handleWidgetClientData(int widgetId, ByteBuf data) {
 		InputStream input = new ByteBufInputStream (data);
 		DataInputStream stream = new DataInputStream(input);
-		
+
 		try {
 			widgets.get(widgetId).handleClientPacketData(stream);
 		} catch (IOException e) {
@@ -121,7 +120,7 @@ public abstract class BuildCraftContainer extends Container {
 				adjustPhantomSlot(slot, mouseButton, modifier);
 				slot.onPickupFromSlot(player, playerInv.getItemStack());
 			} else if (slot.isItemValid(stackHeld)) {
-				if (StackHelper.instance().canStacksMerge(stackSlot, stackHeld)) {
+				if (StackHelper.canStacksMerge(stackSlot, stackHeld)) {
 					adjustPhantomSlot(slot, mouseButton, modifier);
 				} else {
 					fillPhantomSlot(slot, stackHeld, mouseButton, modifier);
@@ -174,7 +173,7 @@ public abstract class BuildCraftContainer extends Container {
 			for (int slotIndex = start; stackToShift.stackSize > 0 && slotIndex < end; slotIndex++) {
 				Slot slot = (Slot) inventorySlots.get(slotIndex);
 				ItemStack stackInSlot = slot.getStack();
-				if (stackInSlot != null && StackHelper.instance().canStacksMerge(stackInSlot, stackToShift)) {
+				if (stackInSlot != null && StackHelper.canStacksMerge(stackInSlot, stackToShift)) {
 					int resultingStackSize = stackInSlot.stackSize + stackToShift.stackSize;
 					int max = Math.min(stackToShift.getMaxStackSize(), slot.getSlotStackLimit());
 					if (resultingStackSize <= max) {

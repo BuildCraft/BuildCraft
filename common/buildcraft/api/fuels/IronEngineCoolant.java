@@ -74,7 +74,7 @@ public final class IronEngineCoolant {
 	 * Coolant Fluid or nothing will happen. You do not need to call this for
 	 * Fluid Containers.
 	 *
-	 * @param stack
+	 * @param data.stack
 	 * @param coolant
 	 */
 	public static void addCoolant(final Item item, final int metadata, final FluidStack coolant) {

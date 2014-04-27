@@ -15,6 +15,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.util.Constants;
+import buildcraft.core.inventory.InventoryIterator.IInvSlot;
 
 /**
  * This class allow to specify specific behavior for blocks stored in
@@ -85,8 +86,10 @@ public abstract class Schematic {
 	 * returns: what was used (similer to req, but created from stack, so that
 	 * any NBT based differences are drawn from the correct source)
 	 */
-	public ItemStack useItem(IBuilderContext context, ItemStack req, ItemStack stack) {
+	public ItemStack useItem(IBuilderContext context, ItemStack req, IInvSlot slot) {
+		ItemStack stack = slot.getStackInSlot();
 		ItemStack result = stack.copy();
+
 		if (stack.isItemStackDamageable()) {
 			if (req.getItemDamage() + stack.getItemDamage() <= stack.getMaxDamage()) {
 				stack.setItemDamage(req.getItemDamage() + stack.getItemDamage());
@@ -95,7 +98,7 @@ public abstract class Schematic {
 			}
 
 			if (stack.getItemDamage() >= stack.getMaxDamage()) {
-				stack.stackSize = 0;
+				slot.decreaseStackInSlot();
 			}
 		} else {
 			if (stack.stackSize >= req.stackSize) {
@@ -110,10 +113,10 @@ public abstract class Schematic {
 
 		if (stack.stackSize == 0 && stack.getItem().getContainerItem() != null) {
 			Item container = stack.getItem().getContainerItem();
-
-			//stack.itemID = container.itemID;
-			stack.stackSize = 1;
-			stack.setItemDamage(0);
+			ItemStack newStack = new ItemStack(container);
+			slot.setStackInSlot(newStack);
+		} else if (stack.stackSize == 0) {
+			slot.setStackInSlot(null);
 		}
 
 		return result;
@@ -220,5 +223,11 @@ public abstract class Schematic {
             Item item = registry.getItemForId(invSlot.getInteger ("id"));
             invSlot.setInteger("id", Item.getIdFromItem(item));
 		}
+	}
+
+	public LinkedList<ItemStack> getStacksToDisplay(
+			LinkedList<ItemStack> stackConsumed) {
+
+		return stackConsumed;
 	}
 }

@@ -8,8 +8,8 @@
  */
 package buildcraft.core.inventory.filters;
 
-import buildcraft.core.inventory.StackHelper;
 import net.minecraft.item.ItemStack;
+import buildcraft.core.inventory.StackHelper;
 
 /**
  * Returns true if the stack matches any one one of the filter stacks.
@@ -29,7 +29,7 @@ public class CraftingFilter implements IStackFilter {
 			return true;
 		}
 		for (ItemStack s : stacks) {
-			if (StackHelper.instance().isCraftingEquivalent(s, stack, true)) {
+			if (StackHelper.isCraftingEquivalent(s, stack, true)) {
 				return true;
 			}
 		}

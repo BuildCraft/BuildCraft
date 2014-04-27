@@ -11,6 +11,7 @@ package buildcraft.builders.schematics;
 import java.util.LinkedList;
 
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.fluids.FluidContainerRegistry;
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.SchematicBlock;
 
@@ -65,6 +66,19 @@ public class SchematicFluid extends SchematicBlock {
 		if (meta != 0) {
 			context.world().setBlock(x, y, z, block, meta, 3);
 		}
+	}
+
+	@Override
+	public LinkedList<ItemStack> getStacksToDisplay(
+			LinkedList<ItemStack> stackConsumed) {
+
+		ItemStack s = new ItemStack(FluidContainerRegistry
+				.getFluidForFilledItem(bucketStack).getFluid().getBlock());
+		LinkedList<ItemStack> result = new LinkedList<ItemStack>();
+
+		result.add(s);
+
+		return result;
 	}
 
 }

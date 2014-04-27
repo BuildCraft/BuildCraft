@@ -70,7 +70,7 @@ public abstract class BptBuilderBase implements IAreaProvider {
 			i.destination = slot.getDestination();
 			i.slotToBuild = slot;
 			i.context = getContext();
-			i.stacksToBuild = slot.stackConsumed;
+			i.setStacksToDisplay (slot.getStacksToDisplay ());
 			builder.addBuildingItem(i);
 
 			return true;

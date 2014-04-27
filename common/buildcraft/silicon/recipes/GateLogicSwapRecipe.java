@@ -8,13 +8,13 @@
  */
 package buildcraft.silicon.recipes;
 
+import net.minecraft.item.ItemStack;
 import buildcraft.api.recipes.IIntegrationRecipeManager.IIntegrationRecipe;
-import buildcraft.silicon.ItemRedstoneChipset;
 import buildcraft.core.inventory.StackHelper;
+import buildcraft.silicon.ItemRedstoneChipset;
 import buildcraft.transport.gates.GateDefinition.GateLogic;
 import buildcraft.transport.gates.GateDefinition.GateMaterial;
 import buildcraft.transport.gates.ItemGate;
-import net.minecraft.item.ItemStack;
 
 public class GateLogicSwapRecipe implements IIntegrationRecipe {
 
@@ -40,28 +40,34 @@ public class GateLogicSwapRecipe implements IIntegrationRecipe {
 
 	@Override
 	public boolean isValidInputA(ItemStack inputA) {
-		if (inputA == null)
+		if (inputA == null) {
 			return false;
-		if (!(inputA.getItem() instanceof ItemGate))
+		}
+		if (!(inputA.getItem() instanceof ItemGate)) {
 			return false;
-		if (ItemGate.getMaterial(inputA) != material)
+		}
+		if (ItemGate.getMaterial(inputA) != material) {
 			return false;
-		if (ItemGate.getLogic(inputA) != logicIn)
+		}
+		if (ItemGate.getLogic(inputA) != logicIn) {
 			return false;
+		}
 		return true;
 	}
 
 	@Override
 	public boolean isValidInputB(ItemStack inputB) {
-		return StackHelper.instance().isMatchingItem(inputB, chipset);
+		return StackHelper.isMatchingItem(inputB, chipset);
 	}
 
 	@Override
 	public ItemStack getOutputForInputs(ItemStack inputA, ItemStack inputB) {
-		if (!isValidInputA(inputA))
+		if (!isValidInputA(inputA)) {
 			return null;
-		if (!isValidInputB(inputB))
+		}
+		if (!isValidInputB(inputB)) {
 			return null;
+		}
 		ItemStack output = inputA.copy();
 		output.stackSize = 1;
 		ItemGate.setLogic(output, logicOut);

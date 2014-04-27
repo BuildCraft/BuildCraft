@@ -151,7 +151,7 @@ public class PipeItemsEmerald extends PipeItemsWood implements IClientState, IGu
 					return null;
 				}
 
-				if (!StackHelper.instance().isMatchingItem(filter, stack, true, false)) {
+				if (!StackHelper.isMatchingItem(filter, stack, true, false)) {
 					continue;
 				}
 
@@ -180,7 +180,7 @@ public class PipeItemsEmerald extends PipeItemsWood implements IClientState, IGu
 				return false;
 			}
 
-			if (StackHelper.instance().isMatchingItem(filter, stack, true, false)) {
+			if (StackHelper.isMatchingItem(filter, stack, true, false)) {
 				return true;
 			}
 		}

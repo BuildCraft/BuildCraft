@@ -25,7 +25,6 @@ import buildcraft.core.blueprints.BuildingSlot;
 import buildcraft.core.blueprints.BuildingSlotBlock;
 import buildcraft.core.blueprints.BuildingSlotEntity;
 import buildcraft.core.blueprints.IBuilder;
-import buildcraft.core.utils.BlockUtil;
 
 public class BuildingItem implements IBuilder {
 
@@ -36,15 +35,7 @@ public class BuildingItem implements IBuilder {
 	double lifetime = 0;
 
 	@NetworkData
-	public LinkedList <ItemStack> stacksToBuild = new LinkedList<ItemStack>();
-
 	public LinkedList <StackAtPosition> stacksToDisplay = new LinkedList<StackAtPosition>();
-
-	public class StackAtPosition {
-		public Position pos;
-		public ItemStack stack;
-		public boolean display;
-	}
 
 	public Position posDisplay = new Position();
 	public boolean isDone = false;
@@ -114,16 +105,6 @@ public class BuildingItem implements IBuilder {
 			vy = dy / maxLifetime;
 			vz = dz / maxLifetime;
 
-			if (stacksToBuild == null) {
-				stacksToBuild = new LinkedList<ItemStack>();
-			}
-
-			for (ItemStack s : stacksToBuild) {
-				StackAtPosition sPos = new StackAtPosition();
-				sPos.stack = s;
-				stacksToDisplay.add(sPos);
-			}
-
 			if (stacksToDisplay.size() == 0) {
 				StackAtPosition sPos = new StackAtPosition();
 				sPos.stack = new ItemStack(BuildCraftBuilders.buildToolBlock);
@@ -153,7 +134,7 @@ public class BuildingItem implements IBuilder {
 
 		lifetime++;
 
-		if (lifetime > maxLifetime + stacksToBuild.size() - 1) {
+		if (lifetime > maxLifetime + stacksToDisplay.size() - 1) {
 			isDone = true;
 			build ();
 		}
@@ -163,7 +144,7 @@ public class BuildingItem implements IBuilder {
 
 		if (slotToBuild != null && lifetime > maxLifetime) {
 			slotToBuild.writeCompleted(context, (lifetime - maxLifetime)
-					/ stacksToBuild.size());
+					/ stacksToDisplay.size());
 		}
 	}
 
@@ -241,9 +222,9 @@ public class BuildingItem implements IBuilder {
 
 		NBTTagList items = new NBTTagList();
 
-		for (ItemStack s : stacksToBuild) {
+		for (StackAtPosition s : stacksToDisplay) {
 			NBTTagCompound cpt = new NBTTagCompound();
-			s.writeToNBT(cpt);
+			s.stack.writeToNBT(cpt);
 			items.appendTag(cpt);
 		}
 
@@ -277,8 +258,10 @@ public class BuildingItem implements IBuilder {
 				Constants.NBT.TAG_COMPOUND);
 
 		for (int i = 0; i < items.tagCount(); ++i) {
-			stacksToBuild.add(ItemStack.loadItemStackFromNBT(items
-					.getCompoundTagAt(i)));
+			StackAtPosition sPos = new StackAtPosition();
+			sPos.stack = ItemStack.loadItemStackFromNBT(items
+					.getCompoundTagAt(i));
+			stacksToDisplay.add(sPos);
 		}
 
 		MappingRegistry registry = new MappingRegistry();
@@ -291,5 +274,15 @@ public class BuildingItem implements IBuilder {
 		}
 
 		slotToBuild.readFromNBT(nbt.getCompoundTag("slotToBuild"), registry);
+	}
+
+	public void setStacksToDisplay(LinkedList<ItemStack> stacks) {
+		if (stacks != null) {
+			for (ItemStack s : stacks) {
+				StackAtPosition sPos = new StackAtPosition();
+				sPos.stack = s;
+				stacksToDisplay.add(sPos);
+			}
+		}
 	}
 }

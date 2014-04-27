@@ -19,10 +19,10 @@ import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.MappingRegistry;
 import buildcraft.api.blueprints.SchematicBlockBase;
 import buildcraft.api.blueprints.Translation;
+import buildcraft.api.core.BCLog;
 import buildcraft.builders.blueprints.BlueprintId;
 import buildcraft.core.Box;
 import buildcraft.core.Version;
-import buildcraft.core.utils.BCLog;
 
 public abstract class BlueprintBase {
 
