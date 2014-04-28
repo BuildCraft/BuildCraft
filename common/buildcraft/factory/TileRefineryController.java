@@ -2,10 +2,10 @@ package buildcraft.factory;
 
 import buildcraft.BuildCraftEnergy;
 import buildcraft.BuildCraftFactory;
+import buildcraft.api.core.NetworkData;
 import buildcraft.api.core.Position;
 import buildcraft.core.fluids.Tank;
 import buildcraft.core.fluids.TankManager;
-import buildcraft.core.network.NetworkData;
 import buildcraft.core.network.PacketUpdate;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;

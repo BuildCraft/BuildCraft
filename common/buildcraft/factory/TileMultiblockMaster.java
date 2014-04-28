@@ -2,7 +2,7 @@ package buildcraft.factory;
 
 import buildcraft.api.tools.IToolWrench;
 import buildcraft.core.TileBuildCraft;
-import buildcraft.core.network.NetworkData;
+import buildcraft.api.core.NetworkData;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
