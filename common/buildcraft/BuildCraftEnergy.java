@@ -8,9 +8,9 @@
  */
 package buildcraft;
 
-import java.util.TreeMap;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.logging.Level;
 
 import net.minecraft.block.Block;
@@ -29,6 +29,7 @@ import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import buildcraft.api.blueprints.SchematicRegistry;
+import buildcraft.api.core.BCLog;
 import buildcraft.api.fuels.IronEngineCoolant;
 import buildcraft.api.fuels.IronEngineFuel;
 import buildcraft.api.recipes.BuildcraftRecipes;
@@ -40,7 +41,6 @@ import buildcraft.core.InterModComms;
 import buildcraft.core.Version;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.triggers.BCTrigger;
-import buildcraft.core.utils.BCLog;
 import buildcraft.energy.BlockBuildcraftFluid;
 import buildcraft.energy.BlockEnergyEmitter;
 import buildcraft.energy.BlockEnergyReceiver;
@@ -115,7 +115,7 @@ public class BuildCraftEnergy extends BuildCraftMod {
 		oilWellScalar = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "oilWellGenerationRate", 1.0, "Probability of oil well generation").getDouble(1.0);
 		for (String id : BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "oilBiomeIDs", BiomeDictionary.Type.DESERT.toString() +","+BiomeGenBase.taiga.biomeID, "IDs or Biome Types (e.g. DESERT,OCEAN) of biomes that should have increased oil generation rates.").getString().trim().split(",")){
 			id = id.trim();
-			if(id.length() > 0){ 
+			if(id.length() > 0){
 				try{oilBiomeIDs.add(Integer.parseInt(id));}
 				catch(NumberFormatException ex){ //not an int so try and parse it as a biome type
 					try{
@@ -131,7 +131,7 @@ public class BuildCraftEnergy extends BuildCraftMod {
 		}
 		for(String id : BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "excessiveOilBiomeIDs", "", "IDs or Biome Types (e.g. DESERT,OCEAN) of biomes that should have GREATLY increased oil generation rates.").getString().trim().split(",")) {
 			id = id.trim();
-			if(id.length() > 0){ 
+			if(id.length() > 0){
 				try{excessiveOilBiomeIDs.add(Integer.parseInt(id));}
 				catch(NumberFormatException ex){ //not an int so try and parse it as a biome type
 					try{
@@ -147,7 +147,7 @@ public class BuildCraftEnergy extends BuildCraftMod {
 		}
 		for(String id : BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "excludeOilBiomeIDs", BiomeGenBase.sky.biomeID +","+BiomeGenBase.hell.biomeID, "IDs or Biome Types (e.g. DESERT,OCEAN) of biomes that are excluded from generating oil.").getString().trim().split(",")){
 			id = id.trim();
-			if(id.length() > 0){ 
+			if(id.length() > 0){
 				try{excludeOilBiomeIDs.add(Integer.parseInt(id));}
 				catch(NumberFormatException ex){ //not an int so try and parse it as a biome type
 					try{
