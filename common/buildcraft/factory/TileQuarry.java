@@ -160,8 +160,6 @@ public class TileQuarry extends TileAbstractBuilder implements IMachine {
 			return;
 		}
 
-		createUtilsIfNeeded();
-
 		if (builder != null) {
 			if (!builder.isDone(this)) {
 				builder.buildNextSlot(worldObj, this, xCoord, yCoord, zCoord);
@@ -170,6 +168,8 @@ public class TileQuarry extends TileAbstractBuilder implements IMachine {
 				dig();
 			}
 		}
+
+		createUtilsIfNeeded();
 	}
 
 	protected void dig() {

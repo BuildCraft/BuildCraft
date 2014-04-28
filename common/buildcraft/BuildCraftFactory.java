@@ -23,6 +23,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
 import buildcraft.api.blueprints.SchematicRegistry;
+import buildcraft.builders.schematics.SchematicIgnoreMeta;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.InterModComms;
 import buildcraft.core.Version;
@@ -144,6 +145,7 @@ public class BuildCraftFactory extends BuildCraftMod {
 
 		SchematicRegistry.registerSchematicBlock(refineryBlock, SchematicRefinery.class);
 		SchematicRegistry.registerSchematicBlock(tankBlock, SchematicTank.class);
+		SchematicRegistry.registerSchematicBlock(frameBlock, SchematicIgnoreMeta.class);
 
 		if (BuildCraftCore.loadDefaultRecipes) {
 			loadRecipes();
