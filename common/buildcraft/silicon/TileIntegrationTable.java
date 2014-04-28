@@ -29,6 +29,7 @@ public class TileIntegrationTable extends TileLaserTableBase implements ISidedIn
 	public static final int SLOT_OUTPUT = 2;
 	private static final int CYCLE_LENGTH = 32;
 	private static final int[] SLOTS = Utils.createSlotArray(0, 3);
+	private static final int[] SLOT_COMPONENTS = Utils.createSlotArray(3, 9);
 	private int tick = 0;
 	private SimpleInventory invRecipeOutput = new SimpleInventory(1, "integrationOutput", 64);
 	private InventoryMapper invOutput = new InventoryMapper(inv, SLOT_OUTPUT, 1, false);
@@ -37,6 +38,43 @@ public class TileIntegrationTable extends TileLaserTableBase implements ISidedIn
 
 	public IInventory getRecipeOutput() {
 		return invRecipeOutput;
+	}
+
+	private ItemStack[] getComponents() {
+		ItemStack[] components = new ItemStack[9];
+		for (int i=SLOT_OUTPUT + 1; i<12; i++) {
+			components[i - SLOT_OUTPUT - 1] = inv.getStackInSlot(i);
+		}
+		return components;
+	}
+
+	private boolean containsComponents(IIntegrationRecipe recipe) {
+		if (recipe == null) {
+			return false;
+		}
+
+		ItemStack[] components = recipe.getComponents();
+		if (components == null || components.length == 0) {
+			return true;
+		}
+
+		for (ItemStack stack : components) {
+			int found = 0;
+			for (int i=SLOT_OUTPUT + 1; i<12; i++) {
+				ItemStack stack1 = inv.getStackInSlot(i);
+
+				if (stack1 != null) {
+					if (StackHelper.isMatchingItem(stack, stack1, true, false)) {
+						found += stack1.stackSize;
+					}
+				}
+			}
+			if (found == 0) {
+				return false;
+			}
+		}
+
+		return true;
 	}
 
 	@Override
@@ -63,7 +101,8 @@ public class TileIntegrationTable extends TileLaserTableBase implements ISidedIn
 
 		ItemStack inputA = inv.getStackInSlot(SLOT_INPUT_A);
 		ItemStack inputB = inv.getStackInSlot(SLOT_INPUT_B);
-		ItemStack output = currentRecipe.getOutputForInputs(inputA, inputB);
+		ItemStack[] components = getComponents();
+		ItemStack output = currentRecipe.getOutputForInputs(inputA, inputB, components);
 		invRecipeOutput.setInventorySlotContents(0, output);
 
 		if (!isRoomForOutput(output)) {
@@ -77,6 +116,21 @@ public class TileIntegrationTable extends TileLaserTableBase implements ISidedIn
 			setEnergy(0);
 			inv.decrStackSize(SLOT_INPUT_A, 1);
 			inv.decrStackSize(SLOT_INPUT_B, 1);
+
+			// For each required component, loop through the component inventory
+			for (ItemStack stack : currentRecipe.getComponents()) {
+				for (int i=SLOT_OUTPUT + 1; i<12; i++) {
+					ItemStack stack1 = inv.getStackInSlot(i);
+
+					if (stack1 != null) {
+						if (StackHelper.isMatchingItem(stack, stack1, true, false)) {
+							inv.decrStackSize(i, 1);
+							break;
+						}
+					}
+				}
+			}
+
 			ITransactor trans = Transactor.getTransactorFor(invOutput);
 			trans.add(output, ForgeDirection.UP, true);
 		}
@@ -87,7 +141,7 @@ public class TileIntegrationTable extends TileLaserTableBase implements ISidedIn
 		ItemStack inputB = inv.getStackInSlot(SLOT_INPUT_B);
 
 		for (IIntegrationRecipe recipe : BuildcraftRecipes.integrationTable.getRecipes()) {
-			if (recipe.isValidInputA(inputA) && recipe.isValidInputB(inputB)) {
+			if (recipe.isValidInputA(inputA) && recipe.isValidInputB(inputB) && containsComponents(recipe)) {
 				return recipe;
 			}
 		}
@@ -166,7 +220,7 @@ public class TileIntegrationTable extends TileLaserTableBase implements ISidedIn
 
 	@Override
 	public int getSizeInventory() {
-		return 3;
+		return 12;
 	}
 
 	@Override

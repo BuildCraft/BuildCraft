@@ -654,7 +654,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 				FacadeMatrix matrix = getPipe(world, x, y, z).container.renderState.facadeMatrix;
 				Block block = matrix.getFacadeBlock(dir);
 				if (block != null) {
-					return ItemFacade.getStack(block,
+					return ItemFacade.getFacade(block,
 							matrix.getFacadeMetaId(dir));
 				}
 			}
@@ -671,7 +671,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 
 		if (isValid(pipe)) {
 			pipe.container.scheduleNeighborChange();
-			pipe.container.redstoneInput = world.getBlockPowerInput(x, y, z);
+			pipe.container.redstoneInput = world.isBlockIndirectlyGettingPowered(x, y, z) ? 15 : world.getBlockPowerInput(x, y, z);
 		}
 	}
 
@@ -895,7 +895,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 
 	private boolean addFacade(EntityPlayer player, Pipe pipe, ForgeDirection side) {
 		ItemStack stack = player.getCurrentEquippedItem();
-		if (pipe.container.addFacade(side, ItemFacade.getBlock(stack), ItemFacade.getMetaData(stack))) {
+		if (stack != null && stack.getItem() instanceof ItemFacade && pipe.container.addFacade(side, ItemFacade.getType(stack), ItemFacade.getWireType(stack), ItemFacade.getBlocks(stack), ItemFacade.getMetaValues(stack))) {
 			if (!player.capabilities.isCreativeMode) {
 				stack.stackSize--;
 			}

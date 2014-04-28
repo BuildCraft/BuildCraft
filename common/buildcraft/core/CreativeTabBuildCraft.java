@@ -45,10 +45,10 @@ public enum CreativeTabBuildCraft {
 		case MISC:
 			return new ItemStack (BuildCraftCore.springBlock, 1);
 		case FACADES:
-			return ItemFacade.getStack(Blocks.brick_block, 0);
+			return ItemFacade.getFacade(Blocks.brick_block, 0);
 		}
 
-		return ItemFacade.getStack(Blocks.brick_block, 0);
+		return ItemFacade.getFacade(Blocks.brick_block, 0);
 	}
 
 	private class Tab extends CreativeTabs {
