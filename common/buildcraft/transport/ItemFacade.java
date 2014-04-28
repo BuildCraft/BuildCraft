@@ -101,6 +101,13 @@ public class ItemFacade extends ItemBuildCraft {
 		return "item.Facade";
 	}
 
+	@Override
+	public void addInformation(ItemStack stack, EntityPlayer player, List list, boolean debug) {
+		if (getType(stack) == TYPE_PHASED) {
+			list.add("Wire: " + PipeWire.fromOrdinal(getWireType(stack)).getColor());
+		}
+	}
+
 	@SuppressWarnings({"unchecked", "rawtypes"})
 	@Override
 	@SideOnly(Side.CLIENT)
