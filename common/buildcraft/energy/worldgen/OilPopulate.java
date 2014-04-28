@@ -83,18 +83,15 @@ public class OilPopulate {
 		BiomeGenBase biome = world.getBiomeGenForCoords(x, z);
 
 		// Do not generate oil in the End or Nether
-		if (excludedBiomes.contains(biome.biomeID)) {
+		if (BuildCraftEnergy.excludeOilBiomeIDs.contains(biome.biomeID)) {
 			return;
 		}
 
-		boolean oilBiome = surfaceDepositBiomes.contains(biome.biomeID)
-				|| BiomeDictionary.isBiomeOfType(biome, DESERT)
-				|| (BiomeDictionary.isBiomeOfType(biome, WASTELAND) && !BiomeDictionary.isBiomeOfType(biome, FROZEN))
-				|| (BiomeDictionary.isBiomeOfType(biome, FOREST) && BiomeDictionary.isBiomeOfType(biome, FROZEN));
+		boolean oilBiome = BuildCraftEnergy.oilBiomeIDs.contains(biome.biomeID);
 
 		double bonus = oilBiome ? 3.0 : 1.0;
 		bonus *= BuildCraftEnergy.oilWellScalar;
-		if (excessiveBiomes.contains(biome.biomeID)) {
+		if (BuildCraftEnergy.excessiveOilBiomeIDs.contains(biome.biomeID)) {
 			bonus *= 30.0;
 		} else if (BuildCraftCore.debugMode) {
 			bonus *= 20.0;
