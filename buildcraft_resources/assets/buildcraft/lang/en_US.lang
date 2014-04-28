@@ -221,6 +221,7 @@ tile.refineryBlock.name=Refinery
 tile.refineryController.name=Refinery Controller
 tile.refineryComponent.valve_steel.name=Steel Valve
 tile.refineryComponent.valve_iron.name=Iron Valve
+tile.refineryComponent.hatch.name=Item Hatch
 tile.refineryComponent.machine_frame.name=Machine Frame
 tile.refineryComponent.heater.name=Boiler Heater
 tile.refineryComponent.tank.name=Iron Tank
