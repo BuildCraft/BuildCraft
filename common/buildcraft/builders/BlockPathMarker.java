@@ -33,21 +33,17 @@ public class BlockPathMarker extends BlockMarker {
 	}
 
 	@Override
-	public void breakBlock(World world, int x, int y, int z, Block block, int par6) {
-		Utils.preDestroyBlock(world, x, y, z);
-		super.breakBlock(world, x, y, z, block, par6);
-	}
-
-	@Override
 	@SuppressWarnings({ "all" })
 	// @Override (client only)
-	public IIcon getIcon(IBlockAccess iblockaccess, int i, int j, int k, int l) {
-		TilePathMarker marker = (TilePathMarker) iblockaccess.getTileEntity(i, j, k);
-
-		if (l == 1 || (marker != null && marker.tryingToConnect))
-			return activeMarker;
-		else
-			return super.getIcon(iblockaccess, i, j, k, l);
+	public IIcon getIcon(IBlockAccess access, int x, int y, int z, int meta) {
+		TileEntity tile = access.getTileEntity(x, y, z);
+		if (tile instanceof  TilePathMarker) {
+			TilePathMarker marker = ((TilePathMarker) tile);
+			if (meta == 1 || (marker != null && marker.tryingToConnect)) {
+				return activeMarker;
+			}
+		}
+		return super.getIcon(access, x, y, z, meta);
 	}
 
 	@Override

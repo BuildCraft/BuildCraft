@@ -8,11 +8,15 @@
  */
 package buildcraft.factory;
 
+import buildcraft.core.BlockBuildCraft;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
@@ -26,17 +30,43 @@ import buildcraft.core.inventory.InvUtils;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-public class BlockTank extends BlockContainer {
+import java.util.List;
+
+public class BlockTank extends BlockBuildCraft{
 
 	private IIcon textureStackedSide;
 	private IIcon textureBottomSide;
 	private IIcon textureTop;
 
 	public BlockTank() {
-		super(Material.glass);
+		super(Material.glass, CreativeTabBuildCraft.TIER_2);
 		setBlockBounds(0.125F, 0F, 0.125F, 0.875F, 1F, 0.875F);
 		setHardness(0.5F);
-		setCreativeTab(CreativeTabBuildCraft.TIER_2.get());
+	}
+
+	@Override //Nobody likes portable tanks =( But it's way too chep, so i agree.  --anti344
+	protected Item getItemToStoreData(World wrd, int x, int y, int z){
+		return null;
+	}
+
+	@Override
+	protected boolean forceMiddleClickSaving() {
+		return true;
+	}
+
+	@Override
+	public void addDescription(NBTTagCompound nbt, List<String> lines, boolean f3) {
+		if (nbt.hasKey("tank", 10)) {
+			FluidStack fluid = FluidStack.loadFluidStackFromNBT(nbt.getCompoundTag("tank"));
+			if (fluid != null && fluid.getFluid() != null) {
+				lines.add(I18n.format("tip.nbt.tank.fluid", I18n.format("tip.nbt.fluid.pattern",
+						fluid.getFluid().getLocalizedName(), fluid.amount)));
+			} else {
+				lines.add(I18n.format("tip.nbt.tank.fluid", I18n.format("tip.nbt.fluid.empty")));
+			}
+		} else {
+			super.addDescription(nbt, lines, f3);
+		}
 	}
 
 	@Override

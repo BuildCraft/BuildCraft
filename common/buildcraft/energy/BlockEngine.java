@@ -13,19 +13,19 @@ import static net.minecraft.util.AxisAlignedBB.getBoundingBox;
 import java.util.List;
 import java.util.Random;
 
+import cpw.mods.fml.client.FMLClientHandler;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.IIcon;
-import net.minecraft.util.MovingObjectPosition;
-import net.minecraft.util.Vec3;
+import net.minecraft.util.*;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
@@ -36,6 +36,8 @@ import buildcraft.core.ICustomHighlight;
 import buildcraft.core.IItemPipe;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidStack;
 
 public class BlockEngine extends BlockBuildCraft implements ICustomHighlight {
 
@@ -81,10 +83,8 @@ public class BlockEngine extends BlockBuildCraft implements ICustomHighlight {
 	}
 
 	@Override
-	public TileEntity createTileEntity(World world, int metadata) {
+	public TileEntity createNewTileEntity(World world, int metadata) {
 		switch (metadata) {
-			case 0:
-				return new TileEngineWood();
 			case 1:
 				return new TileEngineStone();
 			case 2:
@@ -99,48 +99,61 @@ public class BlockEngine extends BlockBuildCraft implements ICustomHighlight {
 	@Override
 	public boolean isSideSolid(IBlockAccess world, int x, int y, int z, ForgeDirection side) {
 		TileEntity tile = world.getTileEntity(x, y, z);
-
-		if (tile instanceof TileEngine) {
-			return ((TileEngine) tile).orientation.getOpposite() == side;
-		} else {
-			return false;
-		}
+		return tile instanceof TileEngine && ((TileEngine) tile).orientation.getOpposite() == side;
 	}
 
 	@Override
 	public boolean rotateBlock(World world, int x, int y, int z, ForgeDirection axis) {
 		TileEntity tile = world.getTileEntity(x, y, z);
+		return tile instanceof TileEngine && ((TileEngine) tile).switchOrientation(false);
+	}
 
-		if (tile instanceof TileEngine) {
-			return ((TileEngine) tile).switchOrientation(false);
-		} else {
-			return false;
+	@Override
+	public boolean recolourBlock(World wrd, int x, int y, int z, ForgeDirection side, int colour){
+		if (wrd.isRemote) { // Easter egg, as requested. --anti344
+			EntityPlayer player = FMLClientHandler.instance().getClient().thePlayer;
+			player.addChatMessage(new ChatComponentTranslation("egg.recolour_engine"));
+			player.addChatMessage(new ChatComponentTranslation("egg.insane"));
 		}
+		return false;
 	}
 
 	@Override
 	public boolean onBlockActivated(World world, int i, int j, int k, EntityPlayer player, int side, float par7, float par8, float par9) {
-
 		TileEntity tile = world.getTileEntity(i, j, k);
-
 		// REMOVED DUE TO CREATIVE ENGINE REQUIREMENTS - dmillerw
 		// Drop through if the player is sneaking
 //		if (player.isSneaking()) {
 //			return false;
 //		}
-
 		// Do not open guis when having a pipe in hand
 		if (player.getCurrentEquippedItem() != null) {
 			if (player.getCurrentEquippedItem().getItem() instanceof IItemPipe) {
 				return false;
 			}
 		}
+		return tile instanceof TileEngine && ((TileEngine) tile).onBlockActivated(player, ForgeDirection.getOrientation(side));
+	}
 
-		if (tile instanceof TileEngine) {
-			return ((TileEngine) tile).onBlockActivated(player, ForgeDirection.getOrientation(side));
+	public void addDescription(NBTTagCompound nbt, List<String> lines, boolean f3) {
+		if (nbt.hasKey("tankFuel", 10) && nbt.hasKey("tankCoolant", 10)) {
+			FluidStack fuel = FluidStack.loadFluidStackFromNBT(nbt.getCompoundTag("tankFuel"));
+			FluidStack coolant = FluidStack.loadFluidStackFromNBT(nbt.getCompoundTag("tankCoolant"));
+			if (fuel != null && fuel.getFluid() != null) {
+				lines.add(I18n.format("tip.nbt.engine.fuel", I18n.format("tip.nbt.fluid.pattern",
+						fuel.getFluid().getLocalizedName(), fuel.amount)));
+			} else {
+				lines.add(I18n.format("tip.nbt.engine.fuel", I18n.format("tip.nbt.fluid.empty")));
+			}
+			if (coolant != null && coolant.getFluid() != null) {
+				lines.add(I18n.format("tip.nbt.engine.coolant", I18n.format("tip.nbt.fluid.pattern",
+						coolant.getFluid().getLocalizedName(), coolant.amount)));
+			} else {
+				lines.add(I18n.format("tip.nbt.engine.coolant", I18n.format("tip.nbt.fluid.empty")));
+			}
+		} else {
+			super.addDescription(nbt, lines, f3);
 		}
-
-		return false;
 	}
 
 	@Override
@@ -192,11 +205,9 @@ public class BlockEngine extends BlockBuildCraft implements ICustomHighlight {
 				}
 			}
 			if (closest != null) {
-				closest.blockX = x;
-				closest.blockY = y;
-				closest.blockZ = z;
+				return new MovingObjectPosition(x, y, z, closest.sideHit, closest.hitVec);
 			}
-			return closest;
+			return null;
 		} else {
 			return super.collisionRayTrace(wrd, x, y, z, origin, direction);
 		}
@@ -242,8 +253,8 @@ public class BlockEngine extends BlockBuildCraft implements ICustomHighlight {
 
 	@SuppressWarnings({"unchecked", "rawtypes"})
 	@Override
-	public void getSubBlocks(Item item, CreativeTabs par2CreativeTabs, List itemList) {
-		if (par2CreativeTabs == CreativeTabBuildCraft.TIER_1.get()) {
+	public void getSubBlocks(Item item, CreativeTabs tab, List itemList) {
+		if (tab == CreativeTabBuildCraft.TIER_1.get()) {
 			itemList.add(new ItemStack(this, 1, 0)); // WOOD
 			itemList.add(new ItemStack(this, 1, 1)); // STONE
 		} else {
@@ -274,10 +285,5 @@ public class BlockEngine extends BlockBuildCraft implements ICustomHighlight {
 			default:
 				return null;
 		}
-	}
-
-	@Override
-	public TileEntity createNewTileEntity(World world, int metadata) {
-		return null;
 	}
 }

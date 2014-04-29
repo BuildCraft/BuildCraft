@@ -23,11 +23,6 @@ public class ItemEngine extends ItemBlockBuildCraft {
 	}
 
 	@Override
-	public int getMetadata(int i) {
-		return i;
-	}
-
-	@Override
 	public String getUnlocalizedName(ItemStack itemstack) {
 		switch (itemstack.getItemDamage()) {
 			case 0:
