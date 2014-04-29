@@ -8,7 +8,6 @@
  */
 package buildcraft.api.core;
 
-import buildcraft.core.network.NetworkData;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;

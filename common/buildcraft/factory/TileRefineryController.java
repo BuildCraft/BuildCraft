@@ -4,6 +4,7 @@ import buildcraft.BuildCraftEnergy;
 import buildcraft.BuildCraftFactory;
 import buildcraft.api.core.NetworkData;
 import buildcraft.api.core.Position;
+import buildcraft.core.GuiIds;
 import buildcraft.core.fluids.Tank;
 import buildcraft.core.fluids.TankManager;
 import buildcraft.core.network.PacketUpdate;
@@ -52,6 +53,11 @@ public class TileRefineryController extends TileMultiblockMaster implements IFlu
 
 		nbt.setInteger("orientation", orientation);
 		manager.writeToNBT(nbt);
+	}
+
+	@Override
+	public void onMultiblockActivated(EntityPlayer player) {
+		player.openGui(BuildCraftFactory.instance, GuiIds.REFINERY_CONTROLLER, worldObj, xCoord, yCoord, zCoord);
 	}
 
 	@Override

@@ -52,8 +52,12 @@ public class TileMultiblockMaster extends TileBuildCraft {
 				worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
 			}
 		} else if (formed) {
-			player.addChatComponentMessage(new ChatComponentText("You activated this multi-block!"));
+			onMultiblockActivated(player);
 		}
+	}
+
+	public void onMultiblockActivated(EntityPlayer player) {
+		player.addChatComponentMessage(new ChatComponentText("You activated this multi-block!"));
 	}
 
 	public void formMultiblock(EntityPlayer player) {
