@@ -8,9 +8,10 @@
  */
 package buildcraft.api.transport;
 
-import java.util.Locale;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+
+import java.util.Locale;
 
 public enum PipeWire {
 
@@ -33,6 +34,12 @@ public enum PipeWire {
 
 	public String getTag() {
 		return name().toLowerCase(Locale.ENGLISH) + "PipeWire";
+	}
+
+	public String getColor() {
+		String name = this.toString().toLowerCase(Locale.ENGLISH);
+		char first = Character.toUpperCase(name.charAt(0));
+		return first + name.substring(1);
 	}
 
 	public ItemStack getStack() {

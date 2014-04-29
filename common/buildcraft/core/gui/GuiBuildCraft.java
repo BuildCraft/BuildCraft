@@ -16,8 +16,6 @@ import buildcraft.core.gui.tooltips.ToolTipLine;
 import buildcraft.core.gui.widgets.Widget;
 import buildcraft.core.render.RenderUtils;
 import buildcraft.core.utils.SessionVars;
-import java.util.ArrayList;
-import java.util.Collection;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.inventory.GuiContainer;
@@ -29,6 +27,9 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
+
+import java.util.ArrayList;
+import java.util.Collection;
 
 public abstract class GuiBuildCraft extends GuiContainer {
 
@@ -129,7 +130,11 @@ public abstract class GuiBuildCraft extends GuiContainer {
 
 	@Override
 	protected void drawGuiContainerForegroundLayer(int par1, int par2) {
-		ledgerManager.drawLedgers(par1, par2);
+		drawLedgers(par1, par2);
+	}
+
+	protected void drawLedgers(int x, int y) {
+		ledgerManager.drawLedgers(x, y);
 	}
 
 	protected int getCenteredOffset(String string) {

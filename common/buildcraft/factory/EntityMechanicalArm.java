@@ -8,11 +8,11 @@
  */
 package buildcraft.factory;
 
-import buildcraft.core.EntityBlock;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+import buildcraft.core.EntityBlock;
 
 public class EntityMechanicalArm extends Entity {
 	EntityBlock xArm, yArm, zArm, head;
@@ -33,22 +33,20 @@ public class EntityMechanicalArm extends Entity {
 	public EntityMechanicalArm(World world) {
 		super(world);
 		makeParts(world);
+		noClip = true;
 	}
 
-	public EntityMechanicalArm(World world, double i, double j, double k, double width, double height, TileQuarry parent) {
+	public EntityMechanicalArm(World world, double x, double y, double z, double width, double height, TileQuarry parent) {
 		this(world);
 		setPositionAndRotation(parent.xCoord, parent.yCoord, parent.zCoord, 0, 0);
-		this.xRoot = i;
-		this.yRoot = j;
-		this.zRoot = k;
+		this.xRoot = x;
+		this.yRoot = y;
+		this.zRoot = z;
 		this.motionX = 0.0;
 		this.motionY = 0.0;
 		this.motionZ = 0.0;
 		setArmSize(width, height);
-		setHead(i, j - 2, k);
-
-		noClip = true;
-
+		setHead(x, y - 2, z);
 		this.parent = parent;
 		parent.setArm(this);
 		updatePosition();
