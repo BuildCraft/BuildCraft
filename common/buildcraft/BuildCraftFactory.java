@@ -130,6 +130,8 @@ public class BuildCraftFactory extends BuildCraftMod {
 		SchematicRegistry.registerSchematicBlock(refineryBlock, SchematicRefinery.class);
 		SchematicRegistry.registerSchematicBlock(tankBlock, SchematicTank.class);
 		SchematicRegistry.registerSchematicBlock(frameBlock, SchematicIgnoreMeta.class);
+		SchematicRegistry.registerSchematicBlock(refineryController, SchematicRefineryController.class);
+		SchematicRegistry.registerSchematicBlock(towerRegulator, SchematicMultiBlock.class);
 
 		if (BuildCraftCore.loadDefaultRecipes) {
 			loadRecipes();
