@@ -8,16 +8,15 @@
  */
 package buildcraft.builders.urbanism;
 
+import buildcraft.BuildCraftBuilders;
+import buildcraft.core.BlockBuildCraft;
+import buildcraft.core.GuiIds;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
-import buildcraft.BuildCraftBuilders;
-import buildcraft.core.BlockBuildCraft;
-import buildcraft.core.CreativeTabBuildCraft;
-import buildcraft.core.GuiIds;
 
 public class BlockUrbanist extends BlockBuildCraft {
 
@@ -33,7 +32,7 @@ public class BlockUrbanist extends BlockBuildCraft {
 	}
 
 	public BlockUrbanist() {
-		super(Material.rock, CreativeTabBuildCraft.TIER_4);
+		super(Material.rock);
 		setBlockUnbreakable();
 		setResistance(6000000.0F);
 		disableStats();

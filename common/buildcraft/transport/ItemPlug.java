@@ -8,19 +8,18 @@
  */
 package buildcraft.transport;
 
+import buildcraft.core.ItemBuildCraft;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
-import buildcraft.core.CreativeTabBuildCraft;
-import buildcraft.core.ItemBuildCraft;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 public class ItemPlug extends ItemBuildCraft {
 
 	public ItemPlug() {
-		super(CreativeTabBuildCraft.TIER_1);
+		super();
 	}
 
 	@Override

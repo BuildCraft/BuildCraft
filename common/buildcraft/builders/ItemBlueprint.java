@@ -8,23 +8,22 @@
  */
 package buildcraft.builders;
 
-import java.util.List;
-
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import buildcraft.BuildCraftBuilders;
 import buildcraft.builders.blueprints.BlueprintId;
-import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.ItemBuildCraft;
 import buildcraft.core.blueprints.BlueprintBase;
 import buildcraft.core.utils.NBTUtils;
 import buildcraft.core.utils.StringUtils;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+
+import java.util.List;
 
 public abstract class ItemBlueprint extends ItemBuildCraft {
 
 	public ItemBlueprint() {
-		super(CreativeTabBuildCraft.TIER_3);
+		super();
 		setMaxStackSize(1);
 	}
 

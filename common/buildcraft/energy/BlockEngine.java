@@ -8,11 +8,12 @@
  */
 package buildcraft.energy;
 
-import static net.minecraft.util.AxisAlignedBB.getBoundingBox;
-
-import java.util.List;
-import java.util.Random;
-
+import buildcraft.BuildCraftCore;
+import buildcraft.core.BlockBuildCraft;
+import buildcraft.core.ICustomHighlight;
+import buildcraft.core.IItemPipe;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
@@ -29,13 +30,11 @@ import net.minecraft.util.Vec3;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
-import buildcraft.BuildCraftCore;
-import buildcraft.core.BlockBuildCraft;
-import buildcraft.core.CreativeTabBuildCraft;
-import buildcraft.core.ICustomHighlight;
-import buildcraft.core.IItemPipe;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+
+import java.util.List;
+import java.util.Random;
+
+import static net.minecraft.util.AxisAlignedBB.getBoundingBox;
 
 public class BlockEngine extends BlockBuildCraft implements ICustomHighlight {
 
@@ -52,8 +51,8 @@ public class BlockEngine extends BlockBuildCraft implements ICustomHighlight {
 	private static IIcon stoneTexture;
 	private static IIcon ironTexture;
 
-	public BlockEngine(CreativeTabBuildCraft creativeTab) {
-		super(Material.iron, creativeTab);
+	public BlockEngine() {
+		super(Material.iron);
 		setBlockName("engineBlock");
 	}
 
@@ -243,13 +242,10 @@ public class BlockEngine extends BlockBuildCraft implements ICustomHighlight {
 	@SuppressWarnings({"unchecked", "rawtypes"})
 	@Override
 	public void getSubBlocks(Item item, CreativeTabs par2CreativeTabs, List itemList) {
-		if (par2CreativeTabs == CreativeTabBuildCraft.TIER_1.get()) {
-			itemList.add(new ItemStack(this, 1, 0)); // WOOD
-			itemList.add(new ItemStack(this, 1, 1)); // STONE
-		} else {
-			itemList.add(new ItemStack(this, 1, 2)); // IRON
-			itemList.add(new ItemStack(this, 1, 3)); // CREATIVE
-		}
+		itemList.add(new ItemStack(this, 1, 0)); // WOOD
+		itemList.add(new ItemStack(this, 1, 1)); // STONE
+		itemList.add(new ItemStack(this, 1, 2)); // IRON
+		itemList.add(new ItemStack(this, 1, 3)); // CREATIVE
 	}
 
 	@Override

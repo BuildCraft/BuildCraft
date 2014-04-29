@@ -24,7 +24,7 @@ public class BlockPathMarker extends BlockMarker {
 	private IIcon activeMarker;
 
     public BlockPathMarker() {
-		setCreativeTab(CreativeTabBuildCraft.TIER_3.get());
+		setCreativeTab(CreativeTabBuildCraft.BLOCK.get());
 	}
 
 	@Override

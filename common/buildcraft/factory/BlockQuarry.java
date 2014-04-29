@@ -38,7 +38,7 @@ public class BlockQuarry extends BlockBuildCraft {
 	IIcon textureSide;
 
 	public BlockQuarry() {
-		super(Material.iron, CreativeTabBuildCraft.TIER_2);
+		super(Material.iron);
 
 		setHardness(10F);
 		setResistance(10F);

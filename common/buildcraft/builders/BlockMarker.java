@@ -30,7 +30,7 @@ public class BlockMarker extends BlockContainer {
 		super(Material.circuits);
 
 		setLightLevel(0.5F);
-		setCreativeTab(CreativeTabBuildCraft.TIER_2.get());
+		setCreativeTab(CreativeTabBuildCraft.BLOCK.get());
 	}
 
 	private AxisAlignedBB getBoundingBox(int meta) {

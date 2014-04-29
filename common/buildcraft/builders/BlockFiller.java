@@ -37,7 +37,7 @@ public class BlockFiller extends BlockContainer {
 		super(Material.iron);
 
 		setHardness(5F);
-		setCreativeTab(CreativeTabBuildCraft.TIER_2.get());
+		setCreativeTab(CreativeTabBuildCraft.BLOCK.get());
 	}
 
 	@Override

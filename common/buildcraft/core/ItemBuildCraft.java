@@ -20,10 +20,10 @@ public class ItemBuildCraft extends Item {
 	private String iconName;
 	private boolean passSneakClick = false;
 
-	public ItemBuildCraft(CreativeTabBuildCraft creativeTab) {
+	public ItemBuildCraft() {
 		super();
 
-		setCreativeTab(creativeTab.get());
+		setCreativeTab(CreativeTabBuildCraft.ITEM.get());
 	}
 
 	@Override

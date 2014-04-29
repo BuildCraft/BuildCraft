@@ -8,10 +8,10 @@
  */
 package buildcraft.silicon;
 
-import static net.minecraft.util.AxisAlignedBB.getBoundingBox;
-
-import java.util.List;
-
+import buildcraft.core.CreativeTabBuildCraft;
+import buildcraft.core.ICustomHighlight;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
@@ -25,10 +25,10 @@ import net.minecraft.util.Vec3;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
-import buildcraft.core.CreativeTabBuildCraft;
-import buildcraft.core.ICustomHighlight;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+
+import java.util.List;
+
+import static net.minecraft.util.AxisAlignedBB.getBoundingBox;
 
 public class BlockLaser extends BlockContainer implements ICustomHighlight {
 
@@ -47,7 +47,7 @@ public class BlockLaser extends BlockContainer implements ICustomHighlight {
 	public BlockLaser() {
 		super(Material.iron);
 		setHardness(10F);
-		setCreativeTab(CreativeTabBuildCraft.TIER_3.get());
+		setCreativeTab(CreativeTabBuildCraft.BLOCK.get());
 	}
 
 	@Override

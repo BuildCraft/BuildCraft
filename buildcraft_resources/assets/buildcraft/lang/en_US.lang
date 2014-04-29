@@ -167,11 +167,8 @@ item.PipeFluidsSandstone.name=Sandstone Fluid Pipe
 item.Facade.name=Facade
 item.PipePlug.name=Pipe Plug
 
-itemGroup.buildcraft.tier_1=Buildcraft Tier 1 Machines
-itemGroup.buildcraft.tier_2=Buildcraft Tier 2 Machines
-itemGroup.buildcraft.tier_3=Buildcraft Tier 3 Machines
-itemGroup.buildcraft.tier_4=Buildcraft Tier 4 Machines
-itemGroup.buildcraft.misc=Buildcraft Uncategorized Machines
+itemGroup.buildcraft.block=Buildcraft Blocks
+itemGroup.buildcraft.item=Buildcraft Items
 itemGroup.buildcraft.facades=Buildcraft Facades
 
 tile.architectBlock.name=Architect Table

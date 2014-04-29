@@ -8,20 +8,19 @@
  */
 package buildcraft.silicon;
 
-import java.util.List;
-import java.util.Locale;
-
+import buildcraft.BuildCraftSilicon;
+import buildcraft.core.ItemBuildCraft;
+import cpw.mods.fml.common.registry.GameRegistry;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
-import buildcraft.BuildCraftSilicon;
-import buildcraft.core.CreativeTabBuildCraft;
-import buildcraft.core.ItemBuildCraft;
-import cpw.mods.fml.common.registry.GameRegistry;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+
+import java.util.List;
+import java.util.Locale;
 
 public class ItemRedstoneChipset extends ItemBuildCraft {
 
@@ -57,7 +56,7 @@ public class ItemRedstoneChipset extends ItemBuildCraft {
 	}
 
 	public ItemRedstoneChipset() {
-		super(CreativeTabBuildCraft.TIER_3);
+		super();
 		setHasSubtypes(true);
 		setMaxDamage(0);
 	}

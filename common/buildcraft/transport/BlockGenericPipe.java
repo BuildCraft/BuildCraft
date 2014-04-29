@@ -85,7 +85,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 
 	/* Defined subprograms ************************************************* */
 	public BlockGenericPipe() {
-		super(Material.glass, CreativeTabBuildCraft.TIER_1);
+		super(Material.glass);
 		setRenderAllSides();
 		setCreativeTab(null);
 	}
@@ -1078,8 +1078,8 @@ public class BlockGenericPipe extends BlockBuildCraft {
 	static long lastRemovedDate = -1;
 	public static Map<BlockIndex, Pipe> pipeRemoved = new HashMap<BlockIndex, Pipe>();
 
-	public static ItemPipe registerPipe(Class<? extends Pipe> clas, CreativeTabBuildCraft creativeTab) {
-		ItemPipe item = new ItemPipe(creativeTab);
+	public static ItemPipe registerPipe(Class<? extends Pipe> clas) {
+		ItemPipe item = new ItemPipe();
 		item.setUnlocalizedName("buildcraftPipe." + clas.getSimpleName().toLowerCase(Locale.ENGLISH));
 		GameRegistry.registerItem(item, item.getUnlocalizedName());
 
