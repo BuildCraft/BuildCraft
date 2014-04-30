@@ -196,20 +196,28 @@ public class TileBuilder extends TileAbstractBuilder implements IMachine {
 
 
 		if (initNBT != null) {
-			iterateBpt();
+			iterateBpt(true);
+
+			if (initNBT.hasKey("iterator")) {
+				BlockIndex expectedTo = new BlockIndex(initNBT.getCompoundTag("iterator"));
+
+				while (!done && bluePrintBuilder != null && currentPathIterator != null) {
+					BlockIndex bi = new BlockIndex((int) currentPathIterator.ix,
+							(int) currentPathIterator.iy, (int) currentPathIterator.iz);
+
+					if (bi.equals(expectedTo)) {
+						break;
+					}
+
+					iterateBpt(true);
+				}
+			}
 
 			if (bluePrintBuilder != null) {
 				NBTTagCompound builderCpt = new NBTTagCompound();
 				bluePrintBuilder.loadBuildStateToNBT(
 						initNBT.getCompoundTag("builderState"), this);
 			}
-
-			/*
-			 * if (currentPathIterator != null) { NBTTagCompound iteratorNBT =
-			 * new NBTTagCompound();
-			 * currentPathIterator.to.writeTo(iteratorNBT);
-			 * nbttagcompound.setTag ("iterator", iteratorNBT); }
-			 */
 
 			initNBT = null;
 		}
@@ -244,7 +252,7 @@ public class TileBuilder extends TileAbstractBuilder implements IMachine {
 			sendNetworkUpdate();
 		}
 
-		iterateBpt();
+		iterateBpt(false);
 	}
 
 	public void createLasersForPath() {
@@ -313,7 +321,7 @@ public class TileBuilder extends TileAbstractBuilder implements IMachine {
 		}
 	}
 
-	public void iterateBpt() {
+	public void iterateBpt(boolean forceIterate) {
 		if (items[0] == null || !(items[0].getItem() instanceof ItemBlueprint)) {
 			if (bluePrintBuilder != null) {
 				bluePrintBuilder = null;
@@ -332,7 +340,7 @@ public class TileBuilder extends TileAbstractBuilder implements IMachine {
 			return;
 		}
 
-		if (bluePrintBuilder == null || bluePrintBuilder.isDone(this)) {
+		if (bluePrintBuilder == null || (bluePrintBuilder.isDone(this) || forceIterate)) {
 			if (path != null && path.size() > 1) {
 				if (currentPathIterator == null) {
 					Iterator<BlockIndex> it = path.iterator();
@@ -403,7 +411,7 @@ public class TileBuilder extends TileAbstractBuilder implements IMachine {
 			if (i == 0) {
 				RPCHandler.rpcBroadcastPlayers(this, "setItemRequirements",
 						null, null);
-				iterateBpt();
+				iterateBpt(false);
 			}
 		}
 
@@ -416,7 +424,7 @@ public class TileBuilder extends TileAbstractBuilder implements IMachine {
 
 		if (!worldObj.isRemote) {
 			if (i == 0) {
-				iterateBpt();
+				iterateBpt(false);
 				done = false;
 			}
 		}
@@ -509,7 +517,9 @@ public class TileBuilder extends TileAbstractBuilder implements IMachine {
 
 		if (currentPathIterator != null) {
 			NBTTagCompound iteratorNBT = new NBTTagCompound();
-			currentPathIterator.to.writeTo(iteratorNBT);
+			new BlockIndex((int) currentPathIterator.ix,
+					(int) currentPathIterator.iy, (int) currentPathIterator.iz)
+					.writeTo(iteratorNBT);
 			bptNBT.setTag ("iterator", iteratorNBT);
 		}
 
@@ -551,7 +561,7 @@ public class TileBuilder extends TileAbstractBuilder implements IMachine {
 			return;
 		}
 
-		iterateBpt();
+		iterateBpt(false);
 
 		if (getWorld().getWorldInfo().getGameType() == GameType.CREATIVE) {
 			build();

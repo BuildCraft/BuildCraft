@@ -32,7 +32,6 @@ public class BlockIndex implements Comparable<BlockIndex> {
 	}
 
 	public BlockIndex(NBTTagCompound c) {
-
 		this.x = c.getInteger("i");
 		this.y = c.getInteger("j");
 		this.z = c.getInteger("k");
@@ -44,24 +43,24 @@ public class BlockIndex implements Comparable<BlockIndex> {
 	@Override
 	public int compareTo(BlockIndex o) {
 
-		if (o.x < x)
+		if (o.x < x) {
 			return 1;
-		else if (o.x > x)
+		} else if (o.x > x) {
 			return -1;
-		else if (o.z < z)
+		} else if (o.z < z) {
 			return 1;
-		else if (o.z > z)
+		} else if (o.z > z) {
 			return -1;
-		else if (o.y < y)
+		} else if (o.y < y) {
 			return 1;
-		else if (o.y > y)
+		} else if (o.y > y) {
 			return -1;
-		else
+		} else {
 			return 0;
+		}
 	}
 
 	public void writeTo(NBTTagCompound c) {
-
 		c.setInteger("i", x);
 		c.setInteger("j", y);
 		c.setInteger("k", z);
