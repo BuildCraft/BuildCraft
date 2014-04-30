@@ -350,6 +350,10 @@ public class TileBuilder extends TileAbstractBuilder implements IMachine {
 									xCoord, yCoord, zCoord)].getOpposite());
 				}
 
+				if (bluePrintBuilder != null && bluePrintBuilder.isDone(this)) {
+					bluePrintBuilder.postProcessing(worldObj);
+				}
+
 				bluePrintBuilder = currentPathIterator.next();
 
 				if (bluePrintBuilder != null) {
@@ -367,6 +371,8 @@ public class TileBuilder extends TileAbstractBuilder implements IMachine {
 				}
 			} else {
 				if (bluePrintBuilder != null && bluePrintBuilder.isDone(this)) {
+					bluePrintBuilder.postProcessing(worldObj);
+
 					done = true;
 					bluePrintBuilder = null;
 				} else {
@@ -381,6 +387,17 @@ public class TileBuilder extends TileAbstractBuilder implements IMachine {
 			}
 
 			updateRequirements();
+		}
+
+		if (done) {
+			for (int i = 1; i < items.length; ++i) {
+				if (items[i] == null) {
+					items[i] = items[0];
+					break;
+				}
+			}
+
+			items[0] = null;
 		}
 	}
 
@@ -677,20 +694,6 @@ public class TileBuilder extends TileAbstractBuilder implements IMachine {
 
 		if (bluePrintBuilder != null) {
 			bluePrintBuilder.buildNextSlot(worldObj, this, xCoord, yCoord, zCoord);
-
-			if (bluePrintBuilder.isDone(this)) {
-				bluePrintBuilder.postProcessing(worldObj);
-				bluePrintBuilder = null;
-
-				for (int i = 1; i < items.length; ++i) {
-					if (items [i] == null) {
-						items [i] = items [0];
-						break;
-					}
-				}
-
-				items [0] = null;
-			}
 
 			updateRequirements();
 		}
