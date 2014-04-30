@@ -131,4 +131,9 @@ public class SchematicPipe extends SchematicTile {
 			BptPipeExtension.get(pipeItem).postProcessing(this, context);
 		}
 	}
+
+	@Override
+	public boolean isStandalone () {
+		return true;
+	}
 }

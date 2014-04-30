@@ -93,8 +93,8 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 			}
 		}
 
-		LinkedList<BuildingSlotBlock> tmpBuildCubeList = new LinkedList<BuildingSlotBlock>();
-		LinkedList<BuildingSlotBlock> tmpBuildComplexList = new LinkedList<BuildingSlotBlock>();
+		LinkedList<BuildingSlotBlock> tmpStandalone = new LinkedList<BuildingSlotBlock>();
+		LinkedList<BuildingSlotBlock> tmpLastBlocks = new LinkedList<BuildingSlotBlock>();
 
 		for (int j = 0; j < blueprint.sizeY; ++j) {
 			for (int i = 0; i < blueprint.sizeX; ++i) {
@@ -119,11 +119,11 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 					if (!builtLocations.contains(new BlockIndex(xCoord, yCoord,
 								zCoord))) {
 
-						if (((SchematicBlock) b.schematic).block.isOpaqueCube()) {
-							tmpBuildCubeList.add(b);
+						if (slot.isStandalone()) {
+							tmpStandalone.add(b);
 							b.buildStage = 1;
 						} else {
-							tmpBuildComplexList.add(b);
+							tmpLastBlocks.add(b);
 							b.buildStage = 2;
 						}
 					} else {
@@ -133,11 +133,11 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 			}
 		}
 
-		Collections.sort(tmpBuildCubeList);
-		Collections.sort(tmpBuildComplexList);
+		Collections.sort(tmpStandalone);
+		Collections.sort(tmpLastBlocks);
 
-		buildList.addAll(tmpBuildCubeList);
-		buildList.addAll(tmpBuildComplexList);
+		buildList.addAll(tmpStandalone);
+		buildList.addAll(tmpLastBlocks);
 
 		iterator = new BuildingSlotIterator(buildList);
 
