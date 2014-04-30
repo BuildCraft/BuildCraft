@@ -64,8 +64,12 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 					int yCoord = j + y - blueprint.anchorY;
 					int zCoord = k + z - blueprint.anchorZ;
 
-					if (!clearedLocations.contains(new BlockIndex(xCoord,
-							yCoord, zCoord))) {
+					if (yCoord < 0 || yCoord >= context.world.getHeight()) {
+						continue;
+					}
+
+					if (!clearedLocations.contains(new BlockIndex(
+									xCoord, yCoord, zCoord))) {
 						SchematicBlock slot = (SchematicBlock) blueprint.contents[i][j][k];
 
 						if (slot == null && !blueprint.excavate) {
@@ -105,7 +109,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 
 					SchematicBlock slot = (SchematicBlock) blueprint.contents[i][j][k];
 
-					if (slot == null) {
+					if (slot == null || yCoord < 0 || yCoord >= context.world.getHeight()) {
 						continue;
 					}
 

@@ -15,11 +15,11 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.api.blueprints.SchematicBlockBase;
 import buildcraft.api.core.BuildCraftAPI;
+import buildcraft.api.core.IInvSlot;
 import buildcraft.builders.TileAbstractBuilder;
 import buildcraft.core.BlockIndex;
 import buildcraft.core.blueprints.BuildingSlotBlock.Mode;
 import buildcraft.core.inventory.InventoryIterator;
-import buildcraft.api.core.IInvSlot;
 import buildcraft.core.utils.BlockUtil;
 
 public class BptBuilderTemplate extends BptBuilderBase {
@@ -40,6 +40,10 @@ public class BptBuilderTemplate extends BptBuilderBase {
 						int xCoord = i + x - blueprint.anchorX;
 						int yCoord = j + y - blueprint.anchorY;
 						int zCoord = k + z - blueprint.anchorZ;
+
+						if (yCoord < 0 || yCoord >= context.world.getHeight()) {
+							continue;
+						}
 
 						SchematicBlockBase slot = blueprint.contents[i][j][k];
 
@@ -68,6 +72,10 @@ public class BptBuilderTemplate extends BptBuilderBase {
 					int xCoord = i + x - blueprint.anchorX;
 					int yCoord = j + y - blueprint.anchorY;
 					int zCoord = k + z - blueprint.anchorZ;
+
+					if (yCoord < 0 || yCoord >= context.world.getHeight()) {
+						continue;
+					}
 
 					SchematicBlockBase slot = blueprint.contents[i][j][k];
 
