@@ -15,7 +15,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.util.Constants;
-import buildcraft.core.inventory.InventoryIterator.IInvSlot;
+import buildcraft.api.core.IInvSlot;
 
 /**
  * This class allow to specify specific behavior for blocks stored in

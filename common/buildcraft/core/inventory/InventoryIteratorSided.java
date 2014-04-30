@@ -8,8 +8,9 @@
  */
 package buildcraft.core.inventory;
 
-import buildcraft.core.inventory.InventoryIterator.IInvSlot;
 import java.util.Iterator;
+
+import buildcraft.api.core.IInvSlot;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.util.ForgeDirection;

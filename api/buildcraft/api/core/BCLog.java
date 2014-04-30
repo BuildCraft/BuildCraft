@@ -8,8 +8,7 @@
  */
 package buildcraft.api.core;
 
-import buildcraft.core.Version;
-import cpw.mods.fml.common.FMLLog;
+import java.lang.reflect.Method;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -21,7 +20,7 @@ public class BCLog {
 		// TODO: check if the code below is still useful and remove otherwise.
 		//logger.setParent(FMLLog.getLogger());
 		
-		logger.info("Starting BuildCraft " + Version.getVersion());
+		logger.info("Starting BuildCraft " + getVersion());
 		logger.info("Copyright (c) SpaceToad, 2011");
 		logger.info("http://www.mod-buildcraft.com");
 	}
@@ -40,4 +39,14 @@ public class BCLog {
 			logger.log(Level.SEVERE, msg.toString());
 		}
 	}
+
+    public static String getVersion() {
+        try {
+            Class<?> clazz = Class.forName("buildcraft.core.Version");
+            Method method = clazz.getDeclaredMethod("getVersion");
+            return String.valueOf(method.invoke(null));
+        } catch (Exception e) {
+            return "UNKNOWN VERSION";
+        }
+    }
 }
