@@ -10,12 +10,18 @@ import org.lwjgl.opengl.GL11;
 
 public class GuiRefineryController extends GuiContainer {
 
+	private static final int FRAME_LOCK = 30;
+
 	private static final ResourceLocation TEXTURE_GUI = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_GUI + "/refinery_controller.png");
 	private static final ResourceLocation TEXTURE_ELEMENTS = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_GUI + "/refinery_controller_elements.png");
 
 	private final EntityPlayer player;
 
 	private final TileRefineryController tile;
+
+	private float rotation = 0;
+
+	private float lastTime = 0L;
 
 	public GuiRefineryController(EntityPlayer player, TileRefineryController tile) {
 		super(new ContainerRefineryController(player, tile));
@@ -27,6 +33,21 @@ public class GuiRefineryController extends GuiContainer {
 	}
 
 	@Override
+	public void drawScreen(int x, int y, float delta) {
+		if (System.nanoTime() > lastTime) {
+			lastTime = System.nanoTime() + (1000L / FRAME_LOCK);
+
+			rotation += (1 + delta);
+
+			if (rotation > 360) {
+				rotation = 0;
+			}
+		}
+
+		super.drawScreen(x, y, delta);
+	}
+
+	@Override
 	protected void drawGuiContainerForegroundLayer(int x, int y) {
 		float scale = 8;
 
@@ -34,20 +55,17 @@ public class GuiRefineryController extends GuiContainer {
 
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
 
-		GL11.glTranslated((xSize / 2) - 8, (ySize / 4) - 8, 100F);
+		GL11.glTranslated((xSize / 2), (ySize / 4), 100F);
+
+		GL11.glTranslated(0.5, 0.5, ((float) tile.length / (float) 2));
 
 		GL11.glScaled(-scale, scale, scale);
 
-		GL11.glRotated(180, 1, 0, 0);
 		GL11.glRotated(180, 0, 0, 1);
+		GL11.glRotated(30, 1, 0, 0);
+		GL11.glRotated(rotation, 0, 1, 0);
 
-		GL11.glTranslated(0.5, 0.5, ((float)tile.length / (float)2));
-		GL11.glRotated(45, 1, 0, 0);
-		GL11.glRotated(45, 0, 1, 0);
 		GL11.glTranslated(-0.5, -0.5, -((float)tile.length / (float)2));
-
-//		Minecraft.getMinecraft().renderEngine.bindTexture(ModelBoiler.TEXTURE_FRONT);
-//		RenderBoiler.modelFront.render(0.0625F);
 
 		TileEntityRendererDispatcher.instance.renderTileEntityAt(tile, 0, 0, 0, 0);
 
@@ -57,9 +75,14 @@ public class GuiRefineryController extends GuiContainer {
 	@Override
 	protected void drawGuiContainerBackgroundLayer(float f, int x, int y) {
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-		mc.renderEngine.bindTexture(TEXTURE_GUI);
 		int j = (width - xSize) / 2;
 		int k = (height - ySize) / 2;
+
+		// Model view background
+		mc.renderEngine.bindTexture(TEXTURE_ELEMENTS);
+		drawTexturedModalRect(j + 45, k + 24, 0, 136, 106, 76);
+
+		mc.renderEngine.bindTexture(TEXTURE_GUI);
 		drawTexturedModalRect(j, k, 0, 0, xSize, ySize);
 	}
 
