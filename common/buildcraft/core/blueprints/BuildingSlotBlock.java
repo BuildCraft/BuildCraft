@@ -21,7 +21,7 @@ import buildcraft.api.blueprints.SchematicMask;
 import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.core.Position;
 
-public class BuildingSlotBlock extends BuildingSlot implements Comparable<BuildingSlotBlock> {
+public class BuildingSlotBlock extends BuildingSlot {
 
 	public int x, y, z;
 	public SchematicBlockBase schematic;
@@ -83,36 +83,6 @@ public class BuildingSlotBlock extends BuildingSlot implements Comparable<Buildi
 			return new LinkedList<ItemStack>();
 		} else {
 			return getSchematic().getRequirements(context);
-		}
-	}
-
-	@Override
-	public int compareTo(BuildingSlotBlock o) {
-		if (o.schematic instanceof Comparable && schematic instanceof Comparable ) {
-			Comparable comp1 = (Comparable) schematic;
-			Comparable comp2 = (Comparable) o.schematic;
-
-			int cmp = comp1.compareTo(comp2);
-
-			if (cmp != 0) {
-				return cmp;
-			}
-		}
-
-		if (y < o.y) {
-			return -1;
-		} else if (y > o.y) {
-			return 1;
-		} else if (x < o.x) {
-			return -1;
-		} else if (x > o.x) {
-			return 1;
-		} else if (z < o.z) {
-			return -1;
-		} else if (z > o.z) {
-			return 1;
-		} else {
-			return 0;
 		}
 	}
 

@@ -137,9 +137,6 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 			}
 		}
 
-		Collections.sort(tmpStandalone);
-		Collections.sort(tmpLastBlocks);
-
 		buildList.addAll(tmpStandalone);
 		buildList.addAll(tmpLastBlocks);
 
