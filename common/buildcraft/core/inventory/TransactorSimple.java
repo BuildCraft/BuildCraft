@@ -14,7 +14,7 @@ import java.util.List;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.util.ForgeDirection;
-import buildcraft.core.inventory.InventoryIterator.IInvSlot;
+import buildcraft.api.core.IInvSlot;
 import buildcraft.core.inventory.filters.IStackFilter;
 
 public class TransactorSimple extends Transactor {

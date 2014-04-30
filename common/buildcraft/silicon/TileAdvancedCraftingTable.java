@@ -43,7 +43,7 @@ import buildcraft.core.TileBuffer;
 import buildcraft.core.inventory.InvUtils;
 import buildcraft.core.inventory.InventoryCopy;
 import buildcraft.core.inventory.InventoryIterator;
-import buildcraft.core.inventory.InventoryIterator.IInvSlot;
+import buildcraft.api.core.IInvSlot;
 import buildcraft.core.inventory.InventoryMapper;
 import buildcraft.core.inventory.SimpleInventory;
 import buildcraft.core.inventory.StackHelper;

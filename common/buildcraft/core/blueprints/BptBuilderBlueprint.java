@@ -35,7 +35,7 @@ import buildcraft.core.BlockIndex;
 import buildcraft.core.blueprints.BuildingSlotBlock.Mode;
 import buildcraft.core.inventory.InventoryCopy;
 import buildcraft.core.inventory.InventoryIterator;
-import buildcraft.core.inventory.InventoryIterator.IInvSlot;
+import buildcraft.api.core.IInvSlot;
 import buildcraft.core.inventory.StackHelper;
 import buildcraft.core.utils.BlockUtil;
 
