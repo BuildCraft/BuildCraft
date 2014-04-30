@@ -230,4 +230,13 @@ public abstract class Schematic {
 
 		return stackConsumed;
 	}
+
+	/**
+	 * Return true if this schematic is standalone, false if it needs other
+	 * blocks to be build on. Typically, solid blocks are standalone, others
+	 * are not. All standalone blocks are supposed to be built first.
+	 */
+	public boolean isStandalone () {
+		return true;
+	}
 }
