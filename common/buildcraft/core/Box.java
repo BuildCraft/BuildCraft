@@ -292,6 +292,10 @@ public class Box implements IBox {
 	}
 
 	public Box extendToEncompass (Box toBeContained) {
+		if (!toBeContained.initialized) {
+			return;
+		}
+
 		if (toBeContained.xMin < xMin) {
 			xMin = toBeContained.xMin;
 		}

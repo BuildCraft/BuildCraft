@@ -69,7 +69,7 @@ public class TileBuilder extends TileAbstractBuilder implements IMachine {
 		AxisAlignedBB oldBoundingBox = null;
 		ForgeDirection o = null;
 
-		public PathIterator(BlockIndex from, Iterator<BlockIndex> it) {
+		public PathIterator(BlockIndex from, Iterator<BlockIndex> it, ForgeDirection initialDir) {
 			this.to = it.next();
 
 			currentIterator = it;
@@ -91,7 +91,9 @@ public class TileBuilder extends TileAbstractBuilder implements IMachine {
 			lastDistance = (ix - to.x) * (ix - to.x) + (iy - to.y)
 					* (iy - to.y) + (iz - to.z) * (iz - to.z);
 
-			if (Math.abs(dx) > Math.abs(dz)) {
+			if (dx == 0 && dz == 0) {
+				o = initialDir;
+			} else if (Math.abs(dx) > Math.abs(dz)) {
 				if (dx > 0) {
 					o = ForgeDirection.EAST;
 				} else {
@@ -151,7 +153,7 @@ public class TileBuilder extends TileAbstractBuilder implements IMachine {
 
 		public PathIterator iterate() {
 			if (currentIterator.hasNext()) {
-				PathIterator next = new PathIterator(to, currentIterator);
+				PathIterator next = new PathIterator(to, currentIterator, o);
 				next.oldBoundingBox = oldBoundingBox;
 
 				return next;
@@ -237,10 +239,6 @@ public class TileBuilder extends TileAbstractBuilder implements IMachine {
 		}
 
 		if (path != null && pathLasers.size() == 0) {
-			path.getFirst().x = xCoord;
-			path.getFirst().y = yCoord;
-			path.getFirst().z = zCoord;
-
 			createLasersForPath();
 
 			sendNetworkUpdate();
@@ -339,7 +337,9 @@ public class TileBuilder extends TileAbstractBuilder implements IMachine {
 				if (currentPathIterator == null) {
 					Iterator<BlockIndex> it = path.iterator();
 					BlockIndex start = it.next();
-					currentPathIterator = new PathIterator(start, it);
+					currentPathIterator = new PathIterator(start, it,
+							ForgeDirection.values()[worldObj.getBlockMetadata(
+									xCoord, yCoord, zCoord)].getOpposite());
 				}
 
 				bluePrintBuilder = currentPathIterator.next();
