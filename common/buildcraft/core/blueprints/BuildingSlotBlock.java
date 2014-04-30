@@ -18,6 +18,7 @@ import buildcraft.api.blueprints.MappingRegistry;
 import buildcraft.api.blueprints.SchematicBlockBase;
 import buildcraft.api.blueprints.SchematicFactory;
 import buildcraft.api.blueprints.SchematicMask;
+import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.core.Position;
 
 public class BuildingSlotBlock extends BuildingSlot implements Comparable<BuildingSlotBlock> {
@@ -122,7 +123,9 @@ public class BuildingSlotBlock extends BuildingSlot implements Comparable<Buildi
 
 	@Override
 	public void writeCompleted (IBuilderContext context, double complete) {
-		getSchematic().writeCompleted(context, x, y, z, complete);
+		if (BuildCraftAPI.isSoftBlock(context.world(), x, y, z)) {
+			getSchematic().writeCompleted(context, x, y, z, complete);
+		}
 	}
 
 	@Override

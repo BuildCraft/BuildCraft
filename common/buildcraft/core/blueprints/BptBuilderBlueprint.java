@@ -29,13 +29,13 @@ import buildcraft.api.blueprints.SchematicBlock;
 import buildcraft.api.blueprints.SchematicEntity;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.BuildCraftAPI;
+import buildcraft.api.core.IInvSlot;
 import buildcraft.api.core.StackKey;
 import buildcraft.builders.TileAbstractBuilder;
 import buildcraft.core.BlockIndex;
 import buildcraft.core.blueprints.BuildingSlotBlock.Mode;
 import buildcraft.core.inventory.InventoryCopy;
 import buildcraft.core.inventory.InventoryIterator;
-import buildcraft.api.core.IInvSlot;
 import buildcraft.core.inventory.StackHelper;
 import buildcraft.core.utils.BlockUtil;
 
@@ -222,28 +222,25 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 						} else {
 							if (setupForDestroy(builder, context, slot)) {
 								iterator.remove();
-								postProcessing.add(slot);
 								clearedLocations.add(new BlockIndex(slot.x,
 										slot.y, slot.z));
 								return slot;
 							}
 						}
 					} else if (!slot.schematic.doNotBuild()) {
-						if (BuildCraftAPI.isSoftBlock(world, slot.x, slot.y,
-								slot.z)) {
-							if (checkRequirements(builder, slot.schematic)) {
-								useRequirements(builder, slot);
+						if (checkRequirements(builder, slot.schematic)) {
+							// At this stage, regardless of the fact that the
+							// block can actually be built or not, we'll try.
+							// When the item reaches the actual block, we'll
+							// verify that the location is indeed clear, and
+							// avoid building otherwise.
+							useRequirements(builder, slot);
 
-								iterator.remove();
-								postProcessing.add(slot);
-								builtLocations.add(new BlockIndex(slot.x,
-										slot.y, slot.z));
-								return slot;
-							}
-						} else {
-							// the block is not soft anymore, we can't build
-							// here. Forget about it.
 							iterator.remove();
+							postProcessing.add(slot);
+							builtLocations.add(new BlockIndex(slot.x,
+									slot.y, slot.z));
+							return slot;
 						}
 					} else {
 						iterator.remove();
