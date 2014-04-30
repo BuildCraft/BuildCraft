@@ -11,7 +11,7 @@ package buildcraft.core.recipes;
 import buildcraft.api.recipes.IAssemblyRecipeManager;
 import buildcraft.core.inventory.ITransactor;
 import buildcraft.core.inventory.InventoryIterator;
-import buildcraft.core.inventory.InventoryIterator.IInvSlot;
+import buildcraft.api.core.IInvSlot;
 import buildcraft.core.inventory.Transactor;
 import buildcraft.core.inventory.filters.ArrayStackFilter;
 import java.util.LinkedList;
