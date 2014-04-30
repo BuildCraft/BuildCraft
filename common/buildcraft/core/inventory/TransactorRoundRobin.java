@@ -11,7 +11,7 @@ package buildcraft.core.inventory;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.util.ForgeDirection;
-import buildcraft.core.inventory.InventoryIterator.IInvSlot;
+import buildcraft.api.core.IInvSlot;
 
 public class TransactorRoundRobin extends TransactorSimple {
 

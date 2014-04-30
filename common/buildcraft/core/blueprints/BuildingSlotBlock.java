@@ -18,9 +18,10 @@ import buildcraft.api.blueprints.MappingRegistry;
 import buildcraft.api.blueprints.SchematicBlockBase;
 import buildcraft.api.blueprints.SchematicFactory;
 import buildcraft.api.blueprints.SchematicMask;
+import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.core.Position;
 
-public class BuildingSlotBlock extends BuildingSlot implements Comparable<BuildingSlotBlock> {
+public class BuildingSlotBlock extends BuildingSlot {
 
 	public int x, y, z;
 	public SchematicBlockBase schematic;
@@ -86,43 +87,15 @@ public class BuildingSlotBlock extends BuildingSlot implements Comparable<Buildi
 	}
 
 	@Override
-	public int compareTo(BuildingSlotBlock o) {
-		if (o.schematic instanceof Comparable && schematic instanceof Comparable ) {
-			Comparable comp1 = (Comparable) schematic;
-			Comparable comp2 = (Comparable) o.schematic;
-
-			int cmp = comp1.compareTo(comp2);
-
-			if (cmp != 0) {
-				return cmp;
-			}
-		}
-
-		if (y < o.y) {
-			return -1;
-		} else if (y > o.y) {
-			return 1;
-		} else if (x < o.x) {
-			return -1;
-		} else if (x > o.x) {
-			return 1;
-		} else if (z < o.z) {
-			return -1;
-		} else if (z > o.z) {
-			return 1;
-		} else {
-			return 0;
-		}
-	}
-
-	@Override
 	public Position getDestination () {
 		return new Position (x + 0.5, y + 0.5, z + 0.5);
 	}
 
 	@Override
 	public void writeCompleted (IBuilderContext context, double complete) {
-		getSchematic().writeCompleted(context, x, y, z, complete);
+		if (BuildCraftAPI.isSoftBlock(context.world(), x, y, z)) {
+			getSchematic().writeCompleted(context, x, y, z, complete);
+		}
 	}
 
 	@Override

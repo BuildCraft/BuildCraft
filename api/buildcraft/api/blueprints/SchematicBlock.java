@@ -18,7 +18,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.util.Constants;
 
-public class SchematicBlock extends SchematicBlockBase  implements Comparable<SchematicBlock> {
+public class SchematicBlock extends SchematicBlockBase {
 
 	public Block block = null;
 	public int meta = 0;
@@ -159,7 +159,7 @@ public class SchematicBlock extends SchematicBlockBase  implements Comparable<Sc
 	}
 
 	@Override
-	public int compareTo(SchematicBlock o) {
-		return 0;
+	public boolean isStandalone () {
+		return block.isOpaqueCube();
 	}
 }

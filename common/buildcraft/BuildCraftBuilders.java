@@ -86,6 +86,7 @@ import buildcraft.builders.schematics.SchematicPortal;
 import buildcraft.builders.schematics.SchematicPumpkin;
 import buildcraft.builders.schematics.SchematicRail;
 import buildcraft.builders.schematics.SchematicRedstoneDiode;
+import buildcraft.builders.schematics.SchematicRedstoneWire;
 import buildcraft.builders.schematics.SchematicRotateMeta;
 import buildcraft.builders.schematics.SchematicSeeds;
 import buildcraft.builders.schematics.SchematicSign;
@@ -224,7 +225,7 @@ public class BuildCraftBuilders extends BuildCraftMod {
 
 		SchematicRegistry.registerSchematicBlock(Blocks.gravel, SchematicGravel.class);
 
-		SchematicRegistry.registerSchematicBlock(Blocks.redstone_wire, SchematicCustomStack.class, new ItemStack(Items.redstone));
+		SchematicRegistry.registerSchematicBlock(Blocks.redstone_wire, SchematicRedstoneWire.class, new ItemStack(Items.redstone));
 		SchematicRegistry.registerSchematicBlock(Blocks.cake, SchematicCustomStack.class, new ItemStack(Items.cake));
 		SchematicRegistry.registerSchematicBlock(Blocks.pumpkin_stem, SchematicCustomStack.class, new ItemStack(Items.pumpkin_seeds));
 		SchematicRegistry.registerSchematicBlock(Blocks.melon_stem, SchematicCustomStack.class, new ItemStack(Items.melon_seeds));

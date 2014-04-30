@@ -29,13 +29,13 @@ import buildcraft.api.blueprints.SchematicBlock;
 import buildcraft.api.blueprints.SchematicEntity;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.BuildCraftAPI;
+import buildcraft.api.core.IInvSlot;
 import buildcraft.api.core.StackKey;
 import buildcraft.builders.TileAbstractBuilder;
 import buildcraft.core.BlockIndex;
 import buildcraft.core.blueprints.BuildingSlotBlock.Mode;
 import buildcraft.core.inventory.InventoryCopy;
 import buildcraft.core.inventory.InventoryIterator;
-import buildcraft.core.inventory.InventoryIterator.IInvSlot;
 import buildcraft.core.inventory.StackHelper;
 import buildcraft.core.utils.BlockUtil;
 
@@ -64,8 +64,12 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 					int yCoord = j + y - blueprint.anchorY;
 					int zCoord = k + z - blueprint.anchorZ;
 
-					if (!clearedLocations.contains(new BlockIndex(xCoord,
-							yCoord, zCoord))) {
+					if (yCoord < 0 || yCoord >= context.world.getHeight()) {
+						continue;
+					}
+
+					if (!clearedLocations.contains(new BlockIndex(
+									xCoord, yCoord, zCoord))) {
 						SchematicBlock slot = (SchematicBlock) blueprint.contents[i][j][k];
 
 						if (slot == null && !blueprint.excavate) {
@@ -93,8 +97,8 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 			}
 		}
 
-		LinkedList<BuildingSlotBlock> tmpBuildCubeList = new LinkedList<BuildingSlotBlock>();
-		LinkedList<BuildingSlotBlock> tmpBuildComplexList = new LinkedList<BuildingSlotBlock>();
+		LinkedList<BuildingSlotBlock> tmpStandalone = new LinkedList<BuildingSlotBlock>();
+		LinkedList<BuildingSlotBlock> tmpLastBlocks = new LinkedList<BuildingSlotBlock>();
 
 		for (int j = 0; j < blueprint.sizeY; ++j) {
 			for (int i = 0; i < blueprint.sizeX; ++i) {
@@ -105,7 +109,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 
 					SchematicBlock slot = (SchematicBlock) blueprint.contents[i][j][k];
 
-					if (slot == null) {
+					if (slot == null || yCoord < 0 || yCoord >= context.world.getHeight()) {
 						continue;
 					}
 
@@ -119,11 +123,11 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 					if (!builtLocations.contains(new BlockIndex(xCoord, yCoord,
 								zCoord))) {
 
-						if (((SchematicBlock) b.schematic).block.isOpaqueCube()) {
-							tmpBuildCubeList.add(b);
+						if (slot.isStandalone()) {
+							tmpStandalone.add(b);
 							b.buildStage = 1;
 						} else {
-							tmpBuildComplexList.add(b);
+							tmpLastBlocks.add(b);
 							b.buildStage = 2;
 						}
 					} else {
@@ -133,11 +137,8 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 			}
 		}
 
-		Collections.sort(tmpBuildCubeList);
-		Collections.sort(tmpBuildComplexList);
-
-		buildList.addAll(tmpBuildCubeList);
-		buildList.addAll(tmpBuildComplexList);
+		buildList.addAll(tmpStandalone);
+		buildList.addAll(tmpLastBlocks);
 
 		iterator = new BuildingSlotIterator(buildList);
 
@@ -222,33 +223,41 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 						} else {
 							if (setupForDestroy(builder, context, slot)) {
 								iterator.remove();
-								postProcessing.add(slot);
 								clearedLocations.add(new BlockIndex(slot.x,
 										slot.y, slot.z));
 								return slot;
 							}
 						}
 					} else if (!slot.schematic.doNotBuild()) {
-						if (BuildCraftAPI.isSoftBlock(world, slot.x, slot.y,
-								slot.z)) {
-							if (checkRequirements(builder, slot.schematic)) {
-								useRequirements(builder, slot);
+						if (checkRequirements(builder, slot.schematic)) {
+							// At this stage, regardless of the fact that the
+							// block can actually be built or not, we'll try.
+							// When the item reaches the actual block, we'll
+							// verify that the location is indeed clear, and
+							// avoid building otherwise.
+							useRequirements(builder, slot);
 
-								iterator.remove();
-								postProcessing.add(slot);
-								builtLocations.add(new BlockIndex(slot.x,
-										slot.y, slot.z));
-								return slot;
-							}
-						} else {
-							// the block is not soft anymore, we can't build
-							// here. Forget about it.
 							iterator.remove();
+							postProcessing.add(slot);
+							builtLocations.add(new BlockIndex(slot.x,
+									slot.y, slot.z));
+							return slot;
 						}
 					} else {
+						// Even slots that don't need to be build may need
+						// post processing, see below for the argument.
+						postProcessing.add(slot);
 						iterator.remove();
 					}
 				} else {
+					if (slot.mode == Mode.Build) {
+						// Even slots that considered already built may need
+						// post processing calls. For example, flowing water
+						// may need to be adjusted, engines may need to be
+						// turned to the right direction, etc.
+						postProcessing.add(slot);
+					}
+
 					iterator.remove();
 				}
 			} catch (Throwable t) {

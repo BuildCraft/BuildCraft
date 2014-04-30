@@ -51,6 +51,11 @@ sourceSets {
             // include 'some inclusion'
         }
     }
+    api {
+		java {
+			srcDir 'api'
+		}
+    }
 }
 
 processResources
@@ -77,7 +82,13 @@ processResources
 // add a source jar
 task sourceJar(type: Jar) {
     from sourceSets.main.allSource
+    from sourceSets.api.allSource
     classifier = 'sources'
+}
+
+// add api classes to javadoc
+javadoc {
+    source += sourceSets.api.allSource
 }
 
 // add a javadoc jar
@@ -89,11 +100,22 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
 // because the normal output has been made to be obfuscated
 task deobfJar(type: Jar) {
     from sourceSets.main.output
+    from sourceSets.api.output
     classifier = 'dev'
 }
 
+task apiJar(type: Jar) {
+    from sourceSets.api.output
+    classifier = 'api'
+}
+
+// add api classes to main package
+jar {
+	from sourceSets.api.output
+}
+
 // make sure all of these happen when we run build
-build.dependsOn sourceJar, javadocJar, deobfJar
+build.dependsOn sourceJar, javadocJar, deobfJar, apiJar
 
 // --------------------
 // maven section
@@ -115,6 +137,7 @@ artifacts {
     archives sourceJar
     archives javadocJar
     archives deobfJar
+    archives apiJar
 }
 
 uploadArchives {

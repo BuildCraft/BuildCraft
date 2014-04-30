@@ -15,7 +15,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.util.Constants;
-import buildcraft.core.inventory.InventoryIterator.IInvSlot;
+import buildcraft.api.core.IInvSlot;
 
 /**
  * This class allow to specify specific behavior for blocks stored in
@@ -229,5 +229,14 @@ public abstract class Schematic {
 			LinkedList<ItemStack> stackConsumed) {
 
 		return stackConsumed;
+	}
+
+	/**
+	 * Return true if this schematic is standalone, false if it needs other
+	 * blocks to be build on. Typically, solid blocks are standalone, others
+	 * are not. All standalone blocks are supposed to be built first.
+	 */
+	public boolean isStandalone () {
+		return true;
 	}
 }
