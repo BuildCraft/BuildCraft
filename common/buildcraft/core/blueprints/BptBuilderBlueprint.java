@@ -244,9 +244,20 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 							return slot;
 						}
 					} else {
+						// Even slots that don't need to be build may need
+						// post processing, see below for the argument.
+						postProcessing.add(slot);
 						iterator.remove();
 					}
 				} else {
+					if (slot.mode == Mode.Build) {
+						// Even slots that considered already built may need
+						// post processing calls. For example, flowing water
+						// may need to be adjusted, engines may need to be
+						// turned to the right direction, etc.
+						postProcessing.add(slot);
+					}
+
 					iterator.remove();
 				}
 			} catch (Throwable t) {
