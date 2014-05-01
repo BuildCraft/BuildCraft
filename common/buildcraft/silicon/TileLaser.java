@@ -22,11 +22,8 @@ import buildcraft.api.core.Position;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.gates.IAction;
 import buildcraft.api.gates.IActionReceptor;
+import buildcraft.api.mj.MjBattery;
 import buildcraft.api.power.ILaserTarget;
-import buildcraft.api.power.IPowerReceptor;
-import buildcraft.api.power.PowerHandler;
-import buildcraft.api.power.PowerHandler.PowerReceiver;
-import buildcraft.api.power.PowerHandler.Type;
 import buildcraft.core.Box;
 import buildcraft.core.EntityLaser;
 import buildcraft.core.IMachine;
@@ -34,7 +31,7 @@ import buildcraft.core.LaserData;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.triggers.ActionMachineControl;
 
-public class TileLaser extends TileBuildCraft implements IPowerReceptor, IActionReceptor, IMachine {
+public class TileLaser extends TileBuildCraft implements IActionReceptor, IMachine {
 
 	private static final float LASER_OFFSET = 2.0F / 16.0F;
 
@@ -45,28 +42,19 @@ public class TileLaser extends TileBuildCraft implements IPowerReceptor, IAction
 	private final SafeTimeTracker searchTracker = new SafeTimeTracker(100, 100);
 	private final SafeTimeTracker networkTracker = new SafeTimeTracker(20, 3);
 	private ILaserTarget laserTarget;
-	protected PowerHandler powerHandler;
 	private ActionMachineControl.Mode lastMode = ActionMachineControl.Mode.Unknown;
-	private static final PowerHandler.PerditionCalculator PERDITION = new PowerHandler.PerditionCalculator(0.5F);
 
 	private static final short POWER_AVERAGING = 100;
 	private int powerIndex = 0;
+
+	@MjBattery(maxCapacity = 1000, maxReceivedPerCycle = 25, minimumConsumption = 1)
+	private double mjStored = 0;
 
 	@NetworkData
 	private double powerAverage = 0;
 
 	private final double power[] = new double[POWER_AVERAGING];
 
-
-	public TileLaser() {
-		powerHandler = new PowerHandler(this, Type.MACHINE);
-		initPowerProvider();
-	}
-
-	private void initPowerProvider() {
-		powerHandler.configure(25, 150, 25, 1000);
-		powerHandler.setPerdition(PERDITION);
-	}
 
 	@Override
 	public void initialize () {
@@ -105,7 +93,7 @@ public class TileLaser extends TileBuildCraft implements IPowerReceptor, IAction
 		}
 
 		// Disable the laser and do nothing if no energy is available.
-		if (powerHandler.getEnergyStored() == 0) {
+		if (mjStored == 0) {
 			removeLaser();
 			return;
 		}
@@ -120,7 +108,8 @@ public class TileLaser extends TileBuildCraft implements IPowerReceptor, IAction
 		}
 
 		// Consume power and transfer it to the table.
-		double power = powerHandler.useEnergy(0, getMaxPowerSent(), true);
+		double power = mjStored > getMaxPowerSent() ? getMaxPowerSent() : mjStored;
+		mjStored -= power;
 		laserTarget.receiveLaserEnergy(power);
 
 		if (laser != null) {
@@ -262,15 +251,6 @@ public class TileLaser extends TileBuildCraft implements IPowerReceptor, IAction
 	}
 
 	@Override
-	public PowerReceiver getPowerReceiver(ForgeDirection side) {
-		return powerHandler.getPowerReceiver();
-	}
-
-	@Override
-	public void doWork(PowerHandler workProvider) {
-	}
-
-	@Override
 	public void sendNetworkUpdate() {
 		if (networkTracker.markTimeIfDelay(worldObj)) {
 			super.sendNetworkUpdate();
@@ -281,15 +261,14 @@ public class TileLaser extends TileBuildCraft implements IPowerReceptor, IAction
 	public void readFromNBT(NBTTagCompound nbttagcompound) {
 		super.readFromNBT(nbttagcompound);
 
-		powerHandler.readFromNBT(nbttagcompound);
-		initPowerProvider();
+		mjStored = nbttagcompound.getDouble("mjStored");
 	}
 
 	@Override
 	public void writeToNBT(NBTTagCompound nbttagcompound) {
 		super.writeToNBT(nbttagcompound);
 
-		powerHandler.writeToNBT(nbttagcompound);
+		nbttagcompound.setDouble("mjStored", mjStored);
 	}
 
 	@Override

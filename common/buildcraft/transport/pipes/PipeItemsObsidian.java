@@ -24,7 +24,6 @@ import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.core.Position;
 import buildcraft.api.mj.MjBattery;
-import buildcraft.api.power.PowerHandler;
 import buildcraft.core.inventory.ITransactor;
 import buildcraft.core.inventory.Transactor;
 import buildcraft.core.inventory.filters.StackFilter;
@@ -43,7 +42,6 @@ public class PipeItemsObsidian extends Pipe<PipeTransportItems> {
 	@MjBattery (maxCapacity = 256, maxReceivedPerCycle = 64, minimumConsumption = 0)
 	private double mjStored = 0;
 
-	private static final PowerHandler.PerditionCalculator PERDITION = new PowerHandler.PerditionCalculator(0.5F);
 	private int[] entitiesDropped;
 	private int entitiesDroppedIndex = 0;
 

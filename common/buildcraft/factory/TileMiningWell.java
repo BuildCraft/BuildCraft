@@ -8,45 +8,41 @@
  */
 package buildcraft.factory;
 
-import buildcraft.BuildCraftCore;
-import buildcraft.BuildCraftFactory;
-import buildcraft.api.gates.IAction;
-import buildcraft.api.power.IPowerReceptor;
-import buildcraft.api.power.PowerHandler;
-import buildcraft.api.power.PowerHandler.PowerReceiver;
-import buildcraft.api.power.PowerHandler.Type;
-import buildcraft.core.IMachine;
-import buildcraft.core.TileBuildCraft;
-import buildcraft.core.utils.BlockUtil;
-import buildcraft.core.utils.Utils;
 import java.util.List;
+
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
+import buildcraft.BuildCraftCore;
+import buildcraft.BuildCraftFactory;
+import buildcraft.api.gates.IAction;
+import buildcraft.api.mj.MjBattery;
+import buildcraft.core.IMachine;
+import buildcraft.core.TileBuildCraft;
+import buildcraft.core.utils.BlockUtil;
+import buildcraft.core.utils.Utils;
 
-public class TileMiningWell extends TileBuildCraft implements IMachine, IPowerReceptor {
+public class TileMiningWell extends TileBuildCraft implements IMachine {
 
 	boolean isDigging = true;
-	private PowerHandler powerHandler;
 
-	public TileMiningWell() {
-		powerHandler = new PowerHandler(this, Type.MACHINE);
-
-		float mj = BuildCraftFactory.MINING_MJ_COST_PER_BLOCK * BuildCraftFactory.miningMultiplier;
-		powerHandler.configure(100 * BuildCraftFactory.miningMultiplier, 100 * BuildCraftFactory.miningMultiplier, mj, 1000 * BuildCraftFactory.miningMultiplier);
-		powerHandler.configurePowerPerdition(1, 1);
-	}
+	@MjBattery(maxCapacity = 1000, maxReceivedPerCycle = BuildCraftFactory.MINING_MJ_COST_PER_BLOCK, minimumConsumption = 1)
+	private double mjStored = 0;
 
 	/**
 	 * Dig the next available piece of land if not done. As soon as it reaches
 	 * bedrock, lava or goes below 0, it's considered done.
 	 */
 	@Override
-	public void doWork(PowerHandler workProvider) {
+	public void updateEntity () {
 		float mj = BuildCraftFactory.MINING_MJ_COST_PER_BLOCK * BuildCraftFactory.miningMultiplier;
-		if (powerHandler.useEnergy(mj, mj, true) != mj)
+
+		if (mjStored < mj) {
 			return;
+		} else {
+			mjStored -= mj;
+		}
 
 		World world = worldObj;
 
@@ -67,21 +63,25 @@ public class TileMiningWell extends TileBuildCraft implements IMachine, IPowerRe
 
 		world.setBlock(xCoord, depth, zCoord, BuildCraftFactory.plainPipeBlock);
 
-		if (wasAir)
+		if (wasAir) {
 			return;
+		}
 
-		if (stacks == null || stacks.isEmpty())
+		if (stacks == null || stacks.isEmpty()) {
 			return;
+		}
 
 		for (ItemStack stack : stacks) {
 
 			stack.stackSize -= Utils.addToRandomInventoryAround(worldObj, xCoord, yCoord, zCoord, stack);
-			if (stack.stackSize <= 0)
+			if (stack.stackSize <= 0) {
 				continue;
+			}
 
 			stack.stackSize -= Utils.addToRandomPipeAround(worldObj, xCoord, yCoord, zCoord, ForgeDirection.UNKNOWN, stack);
-			if (stack.stackSize <= 0)
+			if (stack.stackSize <= 0) {
 				continue;
+			}
 
 			// Throw the object away.
 			// TODO: factorize that code
@@ -114,11 +114,6 @@ public class TileMiningWell extends TileBuildCraft implements IMachine, IPowerRe
 	@Override
 	public boolean isActive() {
 		return isDigging;
-	}
-
-	@Override
-	public PowerReceiver getPowerReceiver(ForgeDirection side) {
-		return powerHandler.getPowerReceiver();
 	}
 
 	@Override

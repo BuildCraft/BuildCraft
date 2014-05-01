@@ -32,10 +32,7 @@ import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftFactory;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.gates.IAction;
-import buildcraft.api.power.IPowerReceptor;
-import buildcraft.api.power.PowerHandler;
-import buildcraft.api.power.PowerHandler.PowerReceiver;
-import buildcraft.api.power.PowerHandler.Type;
+import buildcraft.api.mj.MjBattery;
 import buildcraft.core.BlockIndex;
 import buildcraft.core.CoreConstants;
 import buildcraft.core.EntityBlock;
@@ -50,7 +47,7 @@ import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.BlockUtil;
 import buildcraft.core.utils.Utils;
 
-public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor, IFluidHandler {
+public class TilePump extends TileBuildCraft implements IMachine, IFluidHandler {
 
 	public static final int REBUID_DELAY = 512;
 	public static int MAX_LIQUID = FluidContainerRegistry.BUCKET_VOLUME * 16;
@@ -59,22 +56,15 @@ public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor
 	SingleUseTank tank = new SingleUseTank("tank", MAX_LIQUID, this);
 	double tubeY = Double.NaN;
 	int aimY = 0;
-	private PowerHandler powerHandler;
+
 	private TileBuffer[] tileBuffer = null;
 	private SafeTimeTracker timer = new SafeTimeTracker(REBUID_DELAY);
 	private int tick = Utils.RANDOM.nextInt();
 	private int numFluidBlocksFound = 0;
 	private boolean powered = false;
 
-	public TilePump() {
-		powerHandler = new PowerHandler(this, Type.MACHINE);
-		initPowerProvider();
-	}
-
-	private void initPowerProvider() {
-		powerHandler.configure(1, 15, 10, 100);
-		powerHandler.configurePowerPerdition(1, 100);
-	}
+	@MjBattery(maxCapacity = 100, maxReceivedPerCycle = 15, minimumConsumption = 1)
+	private double mjStored = 0;
 
 	@Override
 	public void updateEntity() {
@@ -119,7 +109,9 @@ public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor
 		FluidStack fluidToPump = index != null ? BlockUtil.drainBlock(worldObj, index.x, index.y, index.z, false) : null;
 		if (fluidToPump != null) {
 			if (isFluidAllowed(fluidToPump.getFluid()) && tank.fill(fluidToPump, false) == fluidToPump.amount) {
-				if (powerHandler.useEnergy(10, 10, true) == 10) {
+				if (mjStored > 10) {
+					mjStored -= 10;
+
 					if (fluidToPump.getFluid() != FluidRegistry.WATER || BuildCraftCore.consumeWaterSources || numFluidBlocksFound < 9) {
 						index = getNextIndexToPump(true);
 						BlockUtil.drainBlock(worldObj, index.x, index.y, index.z, true);
@@ -356,7 +348,6 @@ public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor
 	public void readFromNBT(NBTTagCompound data) {
 		super.readFromNBT(data);
 
-		powerHandler.readFromNBT(data);
 		tank.readFromNBT(data);
 
 		powered = data.getBoolean("powered");
@@ -364,14 +355,13 @@ public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor
 		aimY = data.getInteger("aimY");
 		tubeY = data.getFloat("tubeY");
 
-		initPowerProvider();
+		mjStored = data.getDouble("mjStored");
 	}
 
 	@Override
 	public void writeToNBT(NBTTagCompound data) {
 		super.writeToNBT(data);
 
-		powerHandler.writeToNBT(data);
 		tank.writeToNBT(data);
 
 		data.setBoolean("powered", powered);
@@ -383,6 +373,8 @@ public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor
 		} else {
 			data.setFloat("tubeY", yCoord);
 		}
+
+		data.setDouble("mjStored", mjStored);
 	}
 
 	@Override
@@ -394,15 +386,6 @@ public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor
 		} else {
 			return false;
 		}
-	}
-
-	@Override
-	public PowerReceiver getPowerReceiver(ForgeDirection side) {
-		return powerHandler.getPowerReceiver();
-	}
-
-	@Override
-	public void doWork(PowerHandler workProvider) {
 	}
 
 	@Override

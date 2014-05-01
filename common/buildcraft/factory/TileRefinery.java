@@ -28,10 +28,7 @@ import net.minecraftforge.fluids.IFluidHandler;
 import buildcraft.BuildCraftCore;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.gates.IAction;
-import buildcraft.api.power.IPowerReceptor;
-import buildcraft.api.power.PowerHandler;
-import buildcraft.api.power.PowerHandler.PowerReceiver;
-import buildcraft.api.power.PowerHandler.Type;
+import buildcraft.api.mj.MjBattery;
 import buildcraft.core.IMachine;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.fluids.SingleUseTank;
@@ -41,7 +38,7 @@ import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.recipes.RefineryRecipeManager;
 import buildcraft.core.recipes.RefineryRecipeManager.RefineryRecipe;
 
-public class TileRefinery extends TileBuildCraft implements IFluidHandler, IPowerReceptor, IInventory, IMachine {
+public class TileRefinery extends TileBuildCraft implements IFluidHandler, IInventory, IMachine {
 
 	public static int LIQUID_PER_SLOT = FluidContainerRegistry.BUCKET_VOLUME * 4;
 	public SingleUseTank tank1 = new SingleUseTank("tank1", LIQUID_PER_SLOT, this);
@@ -52,18 +49,10 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IPowe
 	private int animationStage = 0;
 	SafeTimeTracker time = new SafeTimeTracker();
 	SafeTimeTracker updateNetworkTime = new SafeTimeTracker();
-	private PowerHandler powerHandler;
 	private boolean isActive;
 
-	public TileRefinery() {
-		powerHandler = new PowerHandler(this, Type.MACHINE);
-		initPowerProvider();
-	}
-
-	private void initPowerProvider() {
-		powerHandler.configure(50, 150, 25, 1000);
-		powerHandler.configurePowerPerdition(1, 1);
-	}
+	@MjBattery(maxCapacity = 1000, maxReceivedPerCycle = 150, minimumConsumption = 1)
+	private double mjStored = 0;
 
 	@Override
 	public int getSizeInventory() {
@@ -110,15 +99,6 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IPowe
 	}
 
 	@Override
-	public PowerReceiver getPowerReceiver(ForgeDirection side) {
-		return powerHandler.getPowerReceiver();
-	}
-
-	@Override
-	public void doWork(PowerHandler workProvider) {
-	}
-
-	@Override
 	public void updateEntity() {
 		if (worldObj.isRemote) {
 			simpleAnimationIterate();
@@ -150,7 +130,7 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IPowe
 
 		isActive = true;
 
-		if (powerHandler.getEnergyStored() >= currentRecipe.energyCost) {
+		if (mjStored >= currentRecipe.energyCost) {
 			increaseAnimation();
 		} else {
 			decreaseAnimation();
@@ -160,9 +140,9 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IPowe
 			return;
 		}
 
-		double energyUsed = powerHandler.useEnergy(currentRecipe.energyCost, currentRecipe.energyCost, true);
+		if (mjStored >= currentRecipe.energyCost) {
+			mjStored -= currentRecipe.energyCost;
 
-		if (energyUsed != 0) {
 			if (consumeInput(currentRecipe.ingredient1) && consumeInput(currentRecipe.ingredient2)) {
 				result.fill(currentRecipe.result, true);
 			}
@@ -218,8 +198,7 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IPowe
 		animationStage = data.getInteger("animationStage");
 		animationSpeed = data.getFloat("animationSpeed");
 
-		powerHandler.readFromNBT(data);
-		initPowerProvider();
+		mjStored = data.getDouble("mjStored");
 	}
 
 	@Override
@@ -230,7 +209,8 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IPowe
 
 		data.setInteger("animationStage", animationStage);
 		data.setFloat("animationSpeed", animationSpeed);
-		powerHandler.writeToNBT(data);
+
+		data.setDouble("mjStored", mjStored);
 	}
 
 	public int getAnimationStage() {
