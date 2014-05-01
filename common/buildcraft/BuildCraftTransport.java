@@ -316,48 +316,44 @@ public class BuildCraftTransport extends BuildCraftMod {
 			genericPipeBlock = new BlockGenericPipe();
 			CoreProxy.proxy.registerBlock(genericPipeBlock.setBlockName("pipeBlock"), ItemBlock.class);
 
-			pipeItemsWood = buildPipe(DefaultProps.PIPE_ITEMS_WOOD_ID, PipeItemsWood.class, "Wooden Transport Pipe", CreativeTabBuildCraft.TIER_1, "plankWood", Blocks.glass, "plankWood");
-			pipeItemsEmerald = buildPipe(DefaultProps.PIPE_ITEMS_EMERALD_ID, PipeItemsEmerald.class, "Emerald Transport Pipe", CreativeTabBuildCraft.MISC, Items.emerald, Blocks.glass, Items.emerald);
-			pipeItemsCobblestone = buildPipe(DefaultProps.PIPE_ITEMS_COBBLESTONE_ID, PipeItemsCobblestone.class, "Cobblestone Transport Pipe", CreativeTabBuildCraft.TIER_1, "cobblestone", Blocks.glass, "cobblestone");
-			pipeItemsStone = buildPipe(DefaultProps.PIPE_ITEMS_STONE_ID, PipeItemsStone.class, "Stone Transport Pipe", CreativeTabBuildCraft.TIER_1, "stone", Blocks.glass, "stone");
-			pipeItemsQuartz = buildPipe(DefaultProps.PIPE_ITEMS_QUARTZ_ID, PipeItemsQuartz.class, "Quartz Transport Pipe", CreativeTabBuildCraft.TIER_1, Blocks.quartz_block, Blocks.glass, Blocks.quartz_block);
-			pipeItemsIron = buildPipe(DefaultProps.PIPE_ITEMS_IRON_ID, PipeItemsIron.class, "Iron Transport Pipe", CreativeTabBuildCraft.TIER_1, Items.iron_ingot, Blocks.glass, Items.iron_ingot);
-			pipeItemsGold = buildPipe(DefaultProps.PIPE_ITEMS_GOLD_ID, PipeItemsGold.class, "Golden Transport Pipe", CreativeTabBuildCraft.TIER_1, Items.gold_ingot, Blocks.glass, Items.gold_ingot);
-			pipeItemsDiamond = buildPipe(DefaultProps.PIPE_ITEMS_DIAMOND_ID, PipeItemsDiamond.class, "Diamond Transport Pipe", CreativeTabBuildCraft.TIER_1, Items.diamond, Blocks.glass, Items.diamond);
-			pipeItemsObsidian = buildPipe(DefaultProps.PIPE_ITEMS_OBSIDIAN_ID, PipeItemsObsidian.class, "Obsidian Transport Pipe", CreativeTabBuildCraft.TIER_1, Blocks.obsidian, Blocks.glass, Blocks.obsidian);
-			pipeItemsLapis = buildPipe(DefaultProps.PIPE_ITEMS_LAPIS_ID, PipeItemsLapis.class, "Lapis Transport Pipe", CreativeTabBuildCraft.MISC, Blocks.lapis_block, Blocks.glass, Blocks.lapis_block);
-			pipeItemsDaizuli = buildPipe(DefaultProps.PIPE_ITEMS_DAIZULI_ID, PipeItemsDaizuli.class, "Daizuli Transport Pipe", CreativeTabBuildCraft.MISC, Blocks.lapis_block, Blocks.glass, Items.diamond);
-			pipeItemsSandstone = buildPipe(DefaultProps.PIPE_ITEMS_SANDSTONE_ID, PipeItemsSandstone.class, "Sandstone Transport Pipe", CreativeTabBuildCraft.TIER_1, Blocks.sandstone, Blocks.glass, Blocks.sandstone);
-			pipeItemsVoid = buildPipe(DefaultProps.PIPE_ITEMS_VOID_ID, PipeItemsVoid.class, "Void Transport Pipe", CreativeTabBuildCraft.TIER_1, "dyeBlack", Blocks.glass, Items.redstone);
-			pipeItemsEmzuli = buildPipe(DefaultProps.PIPE_ITEMS_EMZULI_ID, PipeItemsEmzuli.class, "Emzuli Transport Pipe", CreativeTabBuildCraft.MISC, Blocks.lapis_block, Blocks.glass, Items.emerald);
-			pipeItemsStripes = buildPipe(0, PipeItemsStripes.class, "Stripes Transport Pipe", CreativeTabBuildCraft.TIER_3, Items.dye, Blocks.glass, Items.dye);
+			pipeItemsWood = buildPipe(PipeItemsWood.class, "Wooden Transport Pipe", CreativeTabBuildCraft.TIER_1, "plankWood", Blocks.glass, "plankWood");
+			pipeItemsEmerald = buildPipe(PipeItemsEmerald.class, "Emerald Transport Pipe", CreativeTabBuildCraft.MISC, Items.emerald, Blocks.glass, Items.emerald);
+			pipeItemsCobblestone = buildPipe(PipeItemsCobblestone.class, "Cobblestone Transport Pipe", CreativeTabBuildCraft.TIER_1, "cobblestone", Blocks.glass, "cobblestone");
+			pipeItemsStone = buildPipe(PipeItemsStone.class, "Stone Transport Pipe", CreativeTabBuildCraft.TIER_1, "stone", Blocks.glass, "stone");
+			pipeItemsQuartz = buildPipe(PipeItemsQuartz.class, "Quartz Transport Pipe", CreativeTabBuildCraft.TIER_1, Blocks.quartz_block, Blocks.glass, Blocks.quartz_block);
+			pipeItemsIron = buildPipe(PipeItemsIron.class, "Iron Transport Pipe", CreativeTabBuildCraft.TIER_1, Items.iron_ingot, Blocks.glass, Items.iron_ingot);
+			pipeItemsGold = buildPipe(PipeItemsGold.class, "Golden Transport Pipe", CreativeTabBuildCraft.TIER_1, Items.gold_ingot, Blocks.glass, Items.gold_ingot);
+			pipeItemsDiamond = buildPipe(PipeItemsDiamond.class, "Diamond Transport Pipe", CreativeTabBuildCraft.TIER_1, Items.diamond, Blocks.glass, Items.diamond);
+			pipeItemsObsidian = buildPipe(PipeItemsObsidian.class, "Obsidian Transport Pipe", CreativeTabBuildCraft.TIER_1, Blocks.obsidian, Blocks.glass, Blocks.obsidian);
+			pipeItemsLapis = buildPipe(PipeItemsLapis.class, "Lapis Transport Pipe", CreativeTabBuildCraft.MISC, Blocks.lapis_block, Blocks.glass, Blocks.lapis_block);
+			pipeItemsDaizuli = buildPipe(PipeItemsDaizuli.class, "Daizuli Transport Pipe", CreativeTabBuildCraft.MISC, Blocks.lapis_block, Blocks.glass, Items.diamond);
+			pipeItemsSandstone = buildPipe(PipeItemsSandstone.class, "Sandstone Transport Pipe", CreativeTabBuildCraft.TIER_1, Blocks.sandstone, Blocks.glass, Blocks.sandstone);
+			pipeItemsVoid = buildPipe(PipeItemsVoid.class, "Void Transport Pipe", CreativeTabBuildCraft.TIER_1, "dyeBlack", Blocks.glass, Items.redstone);
+			pipeItemsEmzuli = buildPipe(PipeItemsEmzuli.class, "Emzuli Transport Pipe", CreativeTabBuildCraft.MISC, Blocks.lapis_block, Blocks.glass, Items.emerald);
+			pipeItemsStripes = buildPipe(PipeItemsStripes.class, "Stripes Transport Pipe", CreativeTabBuildCraft.TIER_3, Items.dye, Blocks.glass, Items.dye);
 
-			pipeFluidsWood = buildPipe(DefaultProps.PIPE_LIQUIDS_WOOD_ID, PipeFluidsWood.class, "Wooden Waterproof Pipe", CreativeTabBuildCraft.TIER_2, pipeWaterproof, pipeItemsWood);
-			pipeFluidsCobblestone = buildPipe(DefaultProps.PIPE_LIQUIDS_COBBLESTONE_ID, PipeFluidsCobblestone.class, "Cobblestone Waterproof Pipe", CreativeTabBuildCraft.TIER_2, pipeWaterproof, pipeItemsCobblestone);
-			pipeFluidsStone = buildPipe(DefaultProps.PIPE_LIQUIDS_STONE_ID, PipeFluidsStone.class, "Stone Waterproof Pipe", CreativeTabBuildCraft.TIER_2, pipeWaterproof, pipeItemsStone);
-			pipeFluidsIron = buildPipe(DefaultProps.PIPE_LIQUIDS_IRON_ID, PipeFluidsIron.class, "Iron Waterproof Pipe", CreativeTabBuildCraft.TIER_2, pipeWaterproof, pipeItemsIron);
-			pipeFluidsGold = buildPipe(DefaultProps.PIPE_LIQUIDS_GOLD_ID, PipeFluidsGold.class, "Golden Waterproof Pipe", CreativeTabBuildCraft.TIER_2, pipeWaterproof, pipeItemsGold);
-			pipeFluidsEmerald = buildPipe(DefaultProps.PIPE_LIQUIDS_EMERALD_ID, PipeFluidsEmerald.class, "Emerald Waterproof Pipe", CreativeTabBuildCraft.MISC, pipeWaterproof, pipeItemsEmerald);
-			pipeFluidsSandstone = buildPipe(DefaultProps.PIPE_LIQUIDS_SANDSTONE_ID, PipeFluidsSandstone.class, "Sandstone Waterproof Pipe", CreativeTabBuildCraft.TIER_2, pipeWaterproof, pipeItemsSandstone);
-			pipeFluidsVoid = buildPipe(DefaultProps.PIPE_LIQUIDS_VOID_ID, PipeFluidsVoid.class, "Void Waterproof Pipe", CreativeTabBuildCraft.TIER_2, pipeWaterproof, pipeItemsVoid);
+			pipeFluidsWood = buildPipe(PipeFluidsWood.class, "Wooden Waterproof Pipe", CreativeTabBuildCraft.TIER_2, pipeWaterproof, pipeItemsWood);
+			pipeFluidsCobblestone = buildPipe(PipeFluidsCobblestone.class, "Cobblestone Waterproof Pipe", CreativeTabBuildCraft.TIER_2, pipeWaterproof, pipeItemsCobblestone);
+			pipeFluidsStone = buildPipe(PipeFluidsStone.class, "Stone Waterproof Pipe", CreativeTabBuildCraft.TIER_2, pipeWaterproof, pipeItemsStone);
+			pipeFluidsIron = buildPipe(PipeFluidsIron.class, "Iron Waterproof Pipe", CreativeTabBuildCraft.TIER_2, pipeWaterproof, pipeItemsIron);
+			pipeFluidsGold = buildPipe(PipeFluidsGold.class, "Golden Waterproof Pipe", CreativeTabBuildCraft.TIER_2, pipeWaterproof, pipeItemsGold);
+			pipeFluidsEmerald = buildPipe(PipeFluidsEmerald.class, "Emerald Waterproof Pipe", CreativeTabBuildCraft.MISC, pipeWaterproof, pipeItemsEmerald);
+			pipeFluidsSandstone = buildPipe(PipeFluidsSandstone.class, "Sandstone Waterproof Pipe", CreativeTabBuildCraft.TIER_2, pipeWaterproof, pipeItemsSandstone);
+			pipeFluidsVoid = buildPipe(PipeFluidsVoid.class, "Void Waterproof Pipe", CreativeTabBuildCraft.TIER_2, pipeWaterproof, pipeItemsVoid);
 
-			pipePowerWood = buildPipe(DefaultProps.PIPE_POWER_WOOD_ID, PipePowerWood.class, "Wooden Kinesis Pipe", CreativeTabBuildCraft.TIER_2, Items.redstone, pipeItemsWood);
-			pipePowerCobblestone = buildPipe(DefaultProps.PIPE_POWER_COBBLESTONE_ID, PipePowerCobblestone.class, "Cobblestone Kinesis Pipe", CreativeTabBuildCraft.TIER_2, Items.redstone, pipeItemsCobblestone);
-			pipePowerStone = buildPipe(DefaultProps.PIPE_POWER_STONE_ID, PipePowerStone.class, "Stone Kinesis Pipe", CreativeTabBuildCraft.TIER_2, Items.redstone, pipeItemsStone);
-			pipePowerQuartz = buildPipe(DefaultProps.PIPE_POWER_QUARTZ_ID, PipePowerQuartz.class, "Quartz Kinesis Pipe", CreativeTabBuildCraft.TIER_2, Items.redstone, pipeItemsQuartz);
-			pipePowerIron = buildPipe(DefaultProps.PIPE_POWER_IRON_ID, PipePowerIron.class, "Iron Kinesis Pipe", CreativeTabBuildCraft.TIER_2, Items.redstone, pipeItemsIron);
-			pipePowerGold = buildPipe(DefaultProps.PIPE_POWER_GOLD_ID, PipePowerGold.class, "Golden Kinesis Pipe", CreativeTabBuildCraft.TIER_2, Items.redstone, pipeItemsGold);
-			pipePowerDiamond = buildPipe(DefaultProps.PIPE_POWER_DIAMOND_ID, PipePowerDiamond.class, "Diamond Kinesis Pipe", CreativeTabBuildCraft.TIER_2, Items.redstone, pipeItemsDiamond);
+			pipePowerWood = buildPipe(PipePowerWood.class, "Wooden Kinesis Pipe", CreativeTabBuildCraft.TIER_2, Items.redstone, pipeItemsWood);
+			pipePowerCobblestone = buildPipe(PipePowerCobblestone.class, "Cobblestone Kinesis Pipe", CreativeTabBuildCraft.TIER_2, Items.redstone, pipeItemsCobblestone);
+			pipePowerStone = buildPipe(PipePowerStone.class, "Stone Kinesis Pipe", CreativeTabBuildCraft.TIER_2, Items.redstone, pipeItemsStone);
+			pipePowerQuartz = buildPipe(PipePowerQuartz.class, "Quartz Kinesis Pipe", CreativeTabBuildCraft.TIER_2, Items.redstone, pipeItemsQuartz);
+			pipePowerIron = buildPipe(PipePowerIron.class, "Iron Kinesis Pipe", CreativeTabBuildCraft.TIER_2, Items.redstone, pipeItemsIron);
+			pipePowerGold = buildPipe(PipePowerGold.class, "Golden Kinesis Pipe", CreativeTabBuildCraft.TIER_2, Items.redstone, pipeItemsGold);
+			pipePowerDiamond = buildPipe(PipePowerDiamond.class, "Diamond Kinesis Pipe", CreativeTabBuildCraft.TIER_2, Items.redstone, pipeItemsDiamond);
 
 			if (!BuildCraftCore.NEXTGEN_PREALPHA) {
-				pipePowerHeat = buildPipe(DefaultProps.PIPE_POWER_HEAT_ID, PipePowerHeat.class, "Heat Kinesis Pipe", CreativeTabBuildCraft.TIER_3, Blocks.furnace, pipeItemsDiamond);
+				pipePowerHeat = buildPipe(PipePowerHeat.class, "Heat Kinesis Pipe", CreativeTabBuildCraft.TIER_3, Blocks.furnace, pipeItemsDiamond);
 			}
 
-			pipeStructureCobblestone = buildPipe(DefaultProps.PIPE_STRUCTURE_COBBLESTONE_ID, PipeStructureCobblestone.class, "Cobblestone Structure Pipe", CreativeTabBuildCraft.TIER_1, Blocks.gravel, pipeItemsCobblestone);
-
-			// Fix the recipe
-			// pipeItemsStipes = createPipe(DefaultProps.PIPE_ITEMS_STRIPES_ID, PipeItemsStripes.class, "Stripes Transport Pipe", new ItemStack(Item.dyePowder,
-			// 1, 0), Block.glass, new ItemStack(Item.dyePowder, 1, 11));
+			pipeStructureCobblestone = buildPipe(PipeStructureCobblestone.class, "Cobblestone Structure Pipe", CreativeTabBuildCraft.TIER_1, Blocks.gravel, pipeItemsCobblestone);
 
 			pipeWire = new ItemPipeWire();
 			CoreProxy.proxy.registerItem(pipeWire);
@@ -489,7 +485,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 		InterModComms.processIMC(event);
 	}
 
-	public static Item buildPipe(int defaultID, Class<? extends Pipe> clas,
+	public static Item buildPipe(Class<? extends Pipe> clas,
 			String descr, CreativeTabBuildCraft creativeTab,
 			Object... ingredients) {
 		String name = Character.toLowerCase(clas.getSimpleName().charAt(0)) + clas.getSimpleName().substring(1);
