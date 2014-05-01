@@ -17,11 +17,11 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.tileentity.TileEntity;
 import buildcraft.BuildCraftCore;
+import buildcraft.api.core.JavaTools;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.network.serializers.ClassMapping;
 import buildcraft.core.network.serializers.ClassSerializer;
 import buildcraft.core.network.serializers.SerializationContext;
-import buildcraft.core.utils.Utils;
 import buildcraft.transport.Pipe;
 
 /**
@@ -48,7 +48,7 @@ public class RPCHandler {
 	private MethodMapping [] methods;
 
 	public RPCHandler (Class c) {
-		Method [] sortedMethods = Utils.getAllMethods (c).toArray(new Method [0]);
+		Method [] sortedMethods = JavaTools.getAllMethods (c).toArray(new Method [0]);
 
 		LinkedList <MethodMapping> mappings = new LinkedList<MethodMapping>();
 

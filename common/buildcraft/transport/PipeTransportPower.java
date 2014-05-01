@@ -19,14 +19,14 @@ import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.gates.ITrigger;
+import buildcraft.api.mj.MjAPI;
+import buildcraft.api.mj.MjAPI.BatteryObject;
 import buildcraft.api.power.IPowerEmitter;
 import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.power.PowerHandler.PowerReceiver;
 import buildcraft.api.power.PowerHandler.Type;
 import buildcraft.api.transport.IPipeTile.PipeType;
 import buildcraft.core.DefaultProps;
-import buildcraft.core.ReflectMjAPI;
-import buildcraft.core.ReflectMjAPI.BatteryObject;
 import buildcraft.transport.network.PacketPowerUpdate;
 import buildcraft.transport.pipes.PipePowerCobblestone;
 import buildcraft.transport.pipes.PipePowerDiamond;
@@ -115,7 +115,7 @@ public class PipeTransportPower extends PipeTransport {
 			}
 		}
 
-		if (ReflectMjAPI.getMjBattery(tile) != null) {
+		if (MjAPI.getMjBattery(tile) != null) {
 			return true;
 		}
 
@@ -179,7 +179,7 @@ public class PipeTransportPower extends PipeTransport {
 					if (j != i && powerQuery[j] > 0) {
 						if (tiles[j] != null
 								&& (tiles[j] instanceof TileGenericPipe
-										|| tiles[j] instanceof IPowerReceptor || ReflectMjAPI
+										|| tiles[j] instanceof IPowerReceptor || MjAPI
 										.getMjBattery(tiles[j]) != null)) {
 							totalPowerQuery += powerQuery[j];
 						}
@@ -205,7 +205,7 @@ public class PipeTransportPower extends PipeTransport {
 							internalPower[i] -= watts;
 						} else if (tiles[j] != null) {
 							// Look for the simplified power framework
-							BatteryObject battery = ReflectMjAPI.getMjBattery(tiles [j]);
+							BatteryObject battery = MjAPI.getMjBattery(tiles [j]);
 
 							if (battery != null) {
 								watts = (internalPower[i] / totalPowerQuery)
@@ -253,7 +253,7 @@ public class PipeTransportPower extends PipeTransport {
 			}
 
 			if (tile != null) {
-				BatteryObject battery = ReflectMjAPI.getMjBattery(tile);
+				BatteryObject battery = MjAPI.getMjBattery(tile);
 
 				if (battery != null) {
 					requestEnergy(dir, battery.getEnergyRequested());

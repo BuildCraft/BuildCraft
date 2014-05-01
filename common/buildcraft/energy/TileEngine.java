@@ -12,6 +12,8 @@ import buildcraft.BuildCraftEnergy;
 import buildcraft.api.core.NetworkData;
 import buildcraft.api.gates.IOverrideDefaultTriggers;
 import buildcraft.api.gates.ITrigger;
+import buildcraft.api.mj.MjAPI;
+import buildcraft.api.mj.MjAPI.BatteryObject;
 import buildcraft.api.power.IPowerEmitter;
 import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.power.PowerHandler;
@@ -21,8 +23,6 @@ import buildcraft.api.transport.IPipeConnection;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.IPipeTile.PipeType;
 import buildcraft.core.DefaultProps;
-import buildcraft.core.ReflectMjAPI;
-import buildcraft.core.ReflectMjAPI.BatteryObject;
 import buildcraft.core.TileBuffer;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.energy.gui.ContainerEngine;
@@ -283,7 +283,7 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 			return extractEnergy(receptor.getMinEnergyReceived(),
 					receptor.getMaxEnergyReceived(), false);
 		} else {
-			return extractEnergy(0, ReflectMjAPI.getMjBattery(tile)
+			return extractEnergy(0, MjAPI.getMjBattery(tile)
 					.getEnergyRequested(), false);
 		}
 	}
@@ -305,7 +305,7 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 					extractEnergy(receptor.getMinEnergyReceived(), needed, true);
 				}
 			} else {
-				BatteryObject battery = ReflectMjAPI.getMjBattery(tile);
+				BatteryObject battery = MjAPI.getMjBattery(tile);
 
 				battery.addEnergy(extractEnergy(0, battery.maxReceivedPerCycle(),
 						true));
@@ -519,7 +519,7 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 			return false;
 		} else if (tile instanceof IPowerReceptor) {
 			return ((IPowerReceptor) tile).getPowerReceiver(side.getOpposite()) != null;
-		} else if (ReflectMjAPI.getMjBattery(tile) != null) {
+		} else if (MjAPI.getMjBattery(tile) != null) {
 			return true;
 		} else {
 			return false;

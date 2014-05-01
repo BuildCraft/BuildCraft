@@ -8,7 +8,12 @@
  */
 package buildcraft.api.core;
 
+import java.lang.reflect.Array;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class JavaTools {
 
@@ -30,4 +35,47 @@ public class JavaTools {
 		return result;
 	}
 
+	public <T> T[] concatenate (T[] A, T[] B) {
+	    int aLen = A.length;
+	    int bLen = B.length;
+
+	    @SuppressWarnings("unchecked")
+	    T[] C = (T[]) Array.newInstance(A.getClass().getComponentType(), aLen+bLen);
+	    System.arraycopy(A, 0, C, 0, aLen);
+	    System.arraycopy(B, 0, C, aLen, bLen);
+
+	    return C;
+	}
+
+	public static List<Field> getAllFields(Class clas) {
+	    List<Field> result = new ArrayList<Field>();
+
+	    Class current = clas;
+
+	    while (current != null && current != Object.class) {
+	    	for (Field f : current.getDeclaredFields()) {
+	    		result.add(f);
+	    	}
+
+	        current = current.getSuperclass();
+	    }
+
+	    return result;
+	}
+
+	public static List<Method> getAllMethods(Class clas) {
+	    List<Method> result = new ArrayList<Method>();
+
+	    Class current = clas;
+
+	    while (current != null && current != Object.class) {
+	    	for (Method m : current.getDeclaredMethods()) {
+	    		result.add(m);
+	    	}
+
+	        current = current.getSuperclass();
+	    }
+
+	    return result;
+	}
 }

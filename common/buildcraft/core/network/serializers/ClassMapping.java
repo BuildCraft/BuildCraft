@@ -25,6 +25,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fluids.FluidStack;
+import buildcraft.api.core.JavaTools;
 import buildcraft.api.core.NetworkData;
 import buildcraft.core.utils.Utils;
 
@@ -124,7 +125,7 @@ public class ClassMapping extends ClassSerializer {
 					cptMapping = get (cptClass);
 				}
 			} else {
-				List <Field> fields = Utils.getAllFields(c);
+				List <Field> fields = JavaTools.getAllFields(c);
 
 				for (Field f : fields) {
 					if (!isSynchronizedField(f)) {
