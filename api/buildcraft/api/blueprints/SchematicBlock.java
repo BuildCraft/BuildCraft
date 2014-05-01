@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockFalling;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -162,10 +163,12 @@ public class SchematicBlock extends SchematicBlockBase {
 
 	@Override
 	public BuildingStage getBuildStage () {
-		if (block.isOpaqueCube()) {
-			return BuildingStage.STANDALONE;
+		if (block instanceof BlockFalling) {
+			return BuildingStage.SUPPORTED;
 		} else if (block instanceof BlockFluidBase || block instanceof BlockLiquid) {
 			return BuildingStage.EXPANDING;
+		} else if (block.isOpaqueCube()) {
+			return BuildingStage.STANDALONE;
 		} else {
 			return BuildingStage.SUPPORTED;
 		}
