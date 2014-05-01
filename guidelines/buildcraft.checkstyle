@@ -11,9 +11,7 @@
 <module name="Checker">
   <property name="severity" value="warning"/>
   <module name="TreeWalker">
-    <module name="MissingOverride">
-      <property name="severity" value="error"/>
-    </module>
+    <module name="MissingOverride"/>
     <module name="RedundantImport"/>
     <module name="UnusedImports"/>
     <module name="AvoidStarImport"/>
@@ -66,7 +64,6 @@
     <module name="HideUtilityClassConstructor"/>
   </module>
   <module name="Header">
-    <property name="severity" value="error"/>
     <property name="headerFile" value="C:\cygwin64\home\ochem\BuildCraft\guidelines\header.txt"/>
   </module>
   <module name="NewlineAtEndOfFile"/>
