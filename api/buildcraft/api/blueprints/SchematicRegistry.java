@@ -10,11 +10,15 @@ package buildcraft.api.blueprints;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
+import java.util.HashSet;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
+import net.minecraftforge.common.config.Configuration;
+import net.minecraftforge.common.config.Property;
+import buildcraft.core.BuildCraftConfiguration;
 
 public class SchematicRegistry {
 
@@ -23,13 +27,24 @@ public class SchematicRegistry {
 		Object [] params;
 	}
 
+	private static final HashSet <Block> explicitSchematicBlocks = new HashSet<Block>();
+
 	private static final HashMap <Block, SchematicConstructor> schematicBlocks =
 			new HashMap<Block, SchematicConstructor>();
 
 	private static final HashMap <Class <? extends Entity>, SchematicConstructor> schematicEntities =
 			new HashMap<Class <? extends Entity>, SchematicConstructor>();
 
+	private static final HashSet <String> modsSupporting = new HashSet<String>();
+	private static final HashSet <String> modsForbidden = new HashSet<String>();
+	private static final HashSet <String> blocksForbidden = new HashSet<String>();
+
 	public static void registerSchematicBlock (Block block, Class clas, Object ... params) {
+		explicitSchematicBlocks.add(block);
+		internalRegisterSchematicBlock(block, clas, params);
+	}
+
+	private static void internalRegisterSchematicBlock (Block block, Class clas, Object ... params) {
 		SchematicConstructor c = new SchematicConstructor ();
 		c.clas = clas;
 		c.params = params;
@@ -55,9 +70,9 @@ public class SchematicRegistry {
 
 		if (!schematicBlocks.containsKey(block)) {
 			if (block instanceof ITileEntityProvider) {
-				registerSchematicBlock(block, SchematicTile.class);
+				internalRegisterSchematicBlock(block, SchematicTile.class);
 			} else {
-				registerSchematicBlock(block, SchematicBlock.class);
+				internalRegisterSchematicBlock(block, SchematicBlock.class);
 			}
 		}
 
@@ -106,4 +121,47 @@ public class SchematicRegistry {
 		return null;
 	}
 
+	public static void declareBlueprintSupport (String modid) {
+		modsSupporting.add(modid);
+	}
+
+	public static boolean isExplicitlySupported (Block block) {
+		String modid = Block.blockRegistry.getNameForObject(block).split(":") [0];
+
+		return explicitSchematicBlocks.contains(block) || modsSupporting.contains(modid);
+	}
+
+	public static boolean isAllowedForBuilding (Block block) {
+		String name = Block.blockRegistry.getNameForObject(block);
+		String modid = name.split(":") [0];
+
+		return !modsForbidden.contains(modid) && !blocksForbidden.contains(name);
+	}
+
+	public static void readConfiguration (BuildCraftConfiguration conf) {
+		Property excludedMods = conf.get(Configuration.CATEGORY_GENERAL, "builder.excludedMods", new String [0],
+				"mods that should be excluded from the builder.");
+		Property excludedBlocks = conf.get(Configuration.CATEGORY_GENERAL, "builder.excludedBlocks", new String [0],
+				"blocks that should be excluded from the builder.");
+
+		for (String id : excludedMods.getStringList()) {
+			id = BuildCraftConfiguration.stripSurroundingQuotes (id.trim());
+
+			if (id.length() > 0) {
+				modsForbidden.add(id);
+			}
+		}
+
+		for (String id : excludedBlocks.getStringList()) {
+			id = BuildCraftConfiguration.stripSurroundingQuotes (id.trim());
+
+			if (id.length() > 0) {
+				blocksForbidden.add(id);
+			}
+		}
+	}
+
+	static {
+		modsSupporting.add ("minecraft");
+	}
 }
