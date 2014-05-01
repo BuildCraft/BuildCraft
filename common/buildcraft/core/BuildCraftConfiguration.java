@@ -9,6 +9,7 @@
 package buildcraft.core;
 
 import java.io.File;
+
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
 
@@ -23,13 +24,5 @@ public class BuildCraftConfiguration extends Configuration {
 		Property versionProp = get(CATEGORY_GENERAL, "version", Version.VERSION);
 		versionProp.set(Version.VERSION);
 		super.save();
-	}
-
-	public static String surroundWithQuotes(String stringToSurroundWithQuotes){
-		return String.format("\"%s\"", stringToSurroundWithQuotes);
-	}
-
-	public static String stripSurroundingQuotes(String stringToStripQuotes) {
-		return stringToStripQuotes.replaceAll("^\"|\"$", "");
 	}
 }

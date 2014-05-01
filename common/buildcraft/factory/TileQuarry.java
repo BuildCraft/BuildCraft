@@ -87,7 +87,9 @@ public class TileQuarry extends TileAbstractBuilder implements IMachine {
 	private Ticket chunkTicket;
 	public EntityPlayer placedBy;
 
-	boolean frameProducer = true;
+	private boolean frameProducer = true;
+
+	private NBTTagCompound initNBT = null;
 
 	public TileQuarry () {
 		box.kind = Kind.STRIPES;
@@ -167,7 +169,9 @@ public class TileQuarry extends TileAbstractBuilder implements IMachine {
 
 		if (stage == Stage.BUILDING) {
 			if (builder != null && !builder.isDone(this)) {
-				builder.buildNextSlot(worldObj, this, xCoord, yCoord, zCoord);
+				if (buildTracker.markTimeIfDelay(worldObj)) {
+					builder.buildNextSlot(worldObj, this, xCoord, yCoord, zCoord);
+				}
 			} else {
 				stage = Stage.IDLE;
 			}
@@ -360,6 +364,9 @@ public class TileQuarry extends TileAbstractBuilder implements IMachine {
 		headPosX = nbttagcompound.getDouble("headPosX");
 		headPosY = nbttagcompound.getDouble("headPosY");
 		headPosZ = nbttagcompound.getDouble("headPosZ");
+
+		// The rest of load has to be done upon initialize.
+		initNBT = (NBTTagCompound) nbttagcompound.getCompoundTag("bpt").copy();
 	}
 
 	@Override
@@ -376,6 +383,16 @@ public class TileQuarry extends TileAbstractBuilder implements IMachine {
 		NBTTagCompound boxTag = new NBTTagCompound();
 		box.writeToNBT(boxTag);
 		nbttagcompound.setTag("box", boxTag);
+
+		NBTTagCompound bptNBT = new NBTTagCompound();
+
+		if (builder != null) {
+			NBTTagCompound builderCpt = new NBTTagCompound();
+			builder.saveBuildStateToNBT(builderCpt, this);
+			bptNBT.setTag("builderState", builderCpt);
+		}
+
+		nbttagcompound.setTag("bpt", bptNBT);
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -626,6 +643,13 @@ public class TileQuarry extends TileAbstractBuilder implements IMachine {
 		}
 
 		createUtilsIfNeeded();
+
+		if (initNBT != null && builder != null) {
+			builder.loadBuildStateToNBT(
+					initNBT.getCompoundTag("builderState"), this);
+		}
+
+		initNBT = null;
 
 		sendNetworkUpdate();
 	}

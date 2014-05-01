@@ -12,13 +12,14 @@ import java.util.LinkedList;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraftforge.common.util.Constants;
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.MappingRegistry;
 import buildcraft.api.blueprints.SchematicBlockBase;
 import buildcraft.api.blueprints.SchematicFactory;
 import buildcraft.api.blueprints.SchematicMask;
-import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.core.Position;
 
 public class BuildingSlotBlock extends BuildingSlot {
@@ -93,8 +94,9 @@ public class BuildingSlotBlock extends BuildingSlot {
 
 	@Override
 	public void writeCompleted (IBuilderContext context, double complete) {
-		if (BuildCraftAPI.isSoftBlock(context.world(), x, y, z)) {
-			getSchematic().writeCompleted(context, x, y, z, complete);
+		if (mode == Mode.ClearIfInvalid) {
+			context.world().destroyBlockInWorldPartially(0, x, y, z,
+					(int) (complete * 10.0F) - 1);
 		}
 	}
 
@@ -110,10 +112,22 @@ public class BuildingSlotBlock extends BuildingSlot {
 		nbt.setInteger("y", y);
 		nbt.setInteger("z", z);
 
-		NBTTagCompound schematicNBT = new NBTTagCompound();
-		SchematicFactory.getFactory(schematic.getClass())
-				.saveSchematicToWorldNBT(schematicNBT, schematic, registry);
-		nbt.setTag("schematic", schematicNBT);
+		if (schematic != null) {
+			NBTTagCompound schematicNBT = new NBTTagCompound();
+			SchematicFactory.getFactory(schematic.getClass())
+					.saveSchematicToWorldNBT(schematicNBT, schematic, registry);
+			nbt.setTag("schematic", schematicNBT);
+		}
+
+		NBTTagList nbtStacks = new NBTTagList ();
+
+		for (ItemStack stack  : stackConsumed) {
+			NBTTagCompound nbtStack = new NBTTagCompound();
+			stack.writeToNBT(nbtStack);
+			nbtStacks.appendTag(nbtStack);
+		}
+
+		nbt.setTag("stackConsumed", nbtStacks);
 	}
 
 	@Override
@@ -123,8 +137,20 @@ public class BuildingSlotBlock extends BuildingSlot {
 		y = nbt.getInteger("y");
 		z = nbt.getInteger("z");
 
-		schematic = (SchematicBlockBase) SchematicFactory
+		if (nbt.hasKey("schematic")) {
+			schematic = (SchematicBlockBase) SchematicFactory
 				.createSchematicFromWorldNBT(nbt.getCompoundTag("schematic"), registry);
+		}
+
+		stackConsumed = new LinkedList<ItemStack>();
+
+		NBTTagList nbtStacks = nbt.getTagList("stackConsumed", Constants.NBT.TAG_COMPOUND);
+
+		for (int i = 0; i < nbtStacks.tagCount(); ++i) {
+			stackConsumed.add(ItemStack.loadItemStackFromNBT(nbtStacks
+					.getCompoundTagAt(i)));
+		}
+
 	}
 
 	@Override

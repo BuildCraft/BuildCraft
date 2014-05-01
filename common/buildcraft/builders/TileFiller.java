@@ -52,6 +52,8 @@ public class TileFiller extends TileAbstractBuilder implements IMachine, IAction
 	private ActionMachineControl.Mode lastMode = ActionMachineControl.Mode.Unknown;
 	private SimpleInventory inv = new SimpleInventory(27, "Filler", 64);
 
+	private NBTTagCompound initNBT = null;
+
 	public TileFiller() {
 		inv.addListener(this);
 		box.kind = Kind.STRIPES;
@@ -61,19 +63,35 @@ public class TileFiller extends TileAbstractBuilder implements IMachine, IAction
 	public void initialize() {
 		super.initialize();
 
-		if (!worldObj.isRemote) {
-			IAreaProvider a = Utils.getNearbyAreaProvider(worldObj, xCoord, yCoord, zCoord);
-
-			if (a != null) {
-				box.initialize(a);
-
-				if (a instanceof TileMarker) {
-					((TileMarker) a).removeFromWorld();
-				}
-
-				sendNetworkUpdate();
-			}
+		if (worldObj.isRemote) {
+			return;
 		}
+
+		IAreaProvider a = Utils.getNearbyAreaProvider(worldObj, xCoord, yCoord,
+				zCoord);
+
+		if (a != null) {
+			box.initialize(a);
+
+			if (a instanceof TileMarker) {
+				((TileMarker) a).removeFromWorld();
+			}
+
+			sendNetworkUpdate();
+		}
+
+		if (currentPattern != null && currentTemplate == null) {
+			currentTemplate = currentPattern
+					.getTemplateBuilder(box, getWorld());
+			context = currentTemplate.getContext();
+		}
+
+		if (initNBT != null && currentTemplate != null) {
+			currentTemplate.loadBuildStateToNBT(
+					initNBT.getCompoundTag("builderState"), this);
+		}
+
+		initNBT = null;
 	}
 
 	@Override
@@ -92,7 +110,7 @@ public class TileFiller extends TileAbstractBuilder implements IMachine, IAction
 			return;
 		}
 
-		if (mjStored < POWER_ACTIVATION && !buildTracker.markTimeIfDelay(worldObj)) {
+		if (mjStored < POWER_ACTIVATION || !buildTracker.markTimeIfDelay(worldObj)) {
 			return;
 		}
 
@@ -175,6 +193,9 @@ public class TileFiller extends TileAbstractBuilder implements IMachine, IAction
 
 		done = nbt.getBoolean("done");
 		lastMode = Mode.values()[nbt.getByte("lastMode")];
+
+		// The rest of load has to be done upon initialize.
+		initNBT = (NBTTagCompound) nbt.getCompoundTag("bpt").copy();
 	}
 
 	@Override
@@ -193,6 +214,16 @@ public class TileFiller extends TileAbstractBuilder implements IMachine, IAction
 
 		nbt.setBoolean("done", done);
 		nbt.setByte("lastMode", (byte) lastMode.ordinal());
+
+		NBTTagCompound bptNBT = new NBTTagCompound();
+
+		if (currentTemplate != null) {
+			NBTTagCompound builderCpt = new NBTTagCompound();
+			currentTemplate.saveBuildStateToNBT(builderCpt, this);
+			bptNBT.setTag("builderState", builderCpt);
+		}
+
+		nbt.setTag("bpt", bptNBT);
 	}
 
 	@Override

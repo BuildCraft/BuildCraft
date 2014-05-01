@@ -57,20 +57,6 @@ public class SchematicMask extends SchematicBlockBase {
 		}
 	}
 
-	// TODO: To be removed with the "real" list of items
-	@Override
-	public void addRequirements(IBuilderContext context, LinkedList<ItemStack> requirements) {
-		requirements.add(new ItemStack(Blocks.brick_block));
-	}
-
-	@Override
-	public void writeCompleted(IBuilderContext context, int x, int y, int z, double completed) {
-		if (!isConcrete) {
-			context.world().destroyBlockInWorldPartially(0, x, y, z,
-					(int) (completed * 10.0F) - 1);
-		}
-	}
-
 	@Override
 	public void writeToNBT(NBTTagCompound nbt, MappingRegistry registry) {
 		nbt.setBoolean("isConcrete", isConcrete);

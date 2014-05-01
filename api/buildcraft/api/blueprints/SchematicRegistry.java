@@ -18,7 +18,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
-import buildcraft.core.BuildCraftConfiguration;
+import buildcraft.api.core.JavaTools;
 
 public class SchematicRegistry {
 
@@ -138,14 +138,14 @@ public class SchematicRegistry {
 		return !modsForbidden.contains(modid) && !blocksForbidden.contains(name);
 	}
 
-	public static void readConfiguration (BuildCraftConfiguration conf) {
+	public static void readConfiguration (Configuration conf) {
 		Property excludedMods = conf.get(Configuration.CATEGORY_GENERAL, "builder.excludedMods", new String [0],
 				"mods that should be excluded from the builder.");
 		Property excludedBlocks = conf.get(Configuration.CATEGORY_GENERAL, "builder.excludedBlocks", new String [0],
 				"blocks that should be excluded from the builder.");
 
 		for (String id : excludedMods.getStringList()) {
-			id = BuildCraftConfiguration.stripSurroundingQuotes (id.trim());
+			id = JavaTools.stripSurroundingQuotes (id.trim());
 
 			if (id.length() > 0) {
 				modsForbidden.add(id);
@@ -153,7 +153,7 @@ public class SchematicRegistry {
 		}
 
 		for (String id : excludedBlocks.getStringList()) {
-			id = BuildCraftConfiguration.stripSurroundingQuotes (id.trim());
+			id = JavaTools.stripSurroundingQuotes (id.trim());
 
 			if (id.length() > 0) {
 				blocksForbidden.add(id);

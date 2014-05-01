@@ -23,13 +23,13 @@ import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.oredict.RecipeSorter;
 import buildcraft.api.blueprints.SchematicRegistry;
 import buildcraft.api.core.IIconProvider;
+import buildcraft.api.core.JavaTools;
 import buildcraft.api.gates.ActionManager;
 import buildcraft.api.gates.GateExpansions;
 import buildcraft.api.recipes.BuildcraftRecipes;
 import buildcraft.api.transport.IExtractionHandler;
 import buildcraft.api.transport.PipeManager;
 import buildcraft.api.transport.PipeWire;
-import buildcraft.core.BuildCraftConfiguration;
 import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.InterModComms;
@@ -295,16 +295,16 @@ public class BuildCraftTransport extends BuildCraftMod {
 					Block.blockRegistry.getNameForObject(Blocks.double_stone_slab),
 					Block.blockRegistry.getNameForObject(Blocks.double_wooden_slab),
 					Block.blockRegistry.getNameForObject(Blocks.sponge),
-					BuildCraftConfiguration.surroundWithQuotes(Block.blockRegistry.getNameForObject(BuildCraftBuilders.architectBlock)),
-					BuildCraftConfiguration.surroundWithQuotes(Block.blockRegistry.getNameForObject(BuildCraftBuilders.builderBlock)),
-					BuildCraftConfiguration.surroundWithQuotes(Block.blockRegistry.getNameForObject(BuildCraftBuilders.fillerBlock)),
-					BuildCraftConfiguration.surroundWithQuotes(Block.blockRegistry.getNameForObject(BuildCraftBuilders.libraryBlock)),
-					BuildCraftConfiguration.surroundWithQuotes(Block.blockRegistry.getNameForObject(BuildCraftFactory.autoWorkbenchBlock)),
-					BuildCraftConfiguration.surroundWithQuotes(Block.blockRegistry.getNameForObject(BuildCraftFactory.floodGateBlock)),
-					BuildCraftConfiguration.surroundWithQuotes(Block.blockRegistry.getNameForObject(BuildCraftFactory.miningWellBlock)),
-					BuildCraftConfiguration.surroundWithQuotes(Block.blockRegistry.getNameForObject(BuildCraftFactory.pumpBlock)),
-					BuildCraftConfiguration.surroundWithQuotes(Block.blockRegistry.getNameForObject(BuildCraftFactory.quarryBlock)),
-					BuildCraftConfiguration.surroundWithQuotes(Block.blockRegistry.getNameForObject(BuildCraftTransport.filteredBufferBlock)),
+					JavaTools.surroundWithQuotes(Block.blockRegistry.getNameForObject(BuildCraftBuilders.architectBlock)),
+					JavaTools.surroundWithQuotes(Block.blockRegistry.getNameForObject(BuildCraftBuilders.builderBlock)),
+					JavaTools.surroundWithQuotes(Block.blockRegistry.getNameForObject(BuildCraftBuilders.fillerBlock)),
+					JavaTools.surroundWithQuotes(Block.blockRegistry.getNameForObject(BuildCraftBuilders.libraryBlock)),
+					JavaTools.surroundWithQuotes(Block.blockRegistry.getNameForObject(BuildCraftFactory.autoWorkbenchBlock)),
+					JavaTools.surroundWithQuotes(Block.blockRegistry.getNameForObject(BuildCraftFactory.floodGateBlock)),
+					JavaTools.surroundWithQuotes(Block.blockRegistry.getNameForObject(BuildCraftFactory.miningWellBlock)),
+					JavaTools.surroundWithQuotes(Block.blockRegistry.getNameForObject(BuildCraftFactory.pumpBlock)),
+					JavaTools.surroundWithQuotes(Block.blockRegistry.getNameForObject(BuildCraftFactory.quarryBlock)),
+					JavaTools.surroundWithQuotes(Block.blockRegistry.getNameForObject(BuildCraftTransport.filteredBufferBlock)),
 			});
 
 			facadeBlacklistProp.comment = "Blocks listed here will not have facades created. The format is modid:blockname.\nFor mods with a | character, the value needs to be surrounded with quotes.";

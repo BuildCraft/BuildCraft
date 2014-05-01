@@ -8,19 +8,10 @@
  */
 package buildcraft.transport;
 
-import buildcraft.BuildCraftTransport;
-import buildcraft.api.core.Position;
-import buildcraft.api.recipes.BuildcraftRecipes;
-import buildcraft.api.transport.PipeWire;
-import buildcraft.core.BlockSpring;
-import buildcraft.core.BuildCraftConfiguration;
-import buildcraft.core.CreativeTabBuildCraft;
-import buildcraft.core.ItemBuildCraft;
-import buildcraft.core.proxy.CoreProxy;
-import com.google.common.base.Strings;
-import com.google.common.collect.Sets;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
+
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
@@ -34,10 +25,21 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
+import buildcraft.BuildCraftTransport;
+import buildcraft.api.core.JavaTools;
+import buildcraft.api.core.Position;
+import buildcraft.api.recipes.BuildcraftRecipes;
+import buildcraft.api.transport.PipeWire;
+import buildcraft.core.BlockSpring;
+import buildcraft.core.CreativeTabBuildCraft;
+import buildcraft.core.ItemBuildCraft;
+import buildcraft.core.proxy.CoreProxy;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
+import com.google.common.base.Strings;
+import com.google.common.collect.Sets;
+
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class ItemFacade extends ItemBuildCraft {
 
@@ -121,14 +123,16 @@ public class ItemFacade extends ItemBuildCraft {
 
 	@Override
 	public boolean onItemUse(ItemStack stack, EntityPlayer player, World worldObj, int x, int y, int z, int side, float hitX, float hitY, float hitZ) {
-		if (worldObj.isRemote)
+		if (worldObj.isRemote) {
 			return false;
+		}
 		Position pos = new Position(x, y, z, ForgeDirection.getOrientation(side));
 		pos.moveForwards(1.0);
 
 		TileEntity tile = worldObj.getTileEntity((int) pos.x, (int) pos.y, (int) pos.z);
-		if (!(tile instanceof TileGenericPipe))
+		if (!(tile instanceof TileGenericPipe)) {
 			return false;
+		}
 		TileGenericPipe pipeTile = (TileGenericPipe) tile;
 
 		if (pipeTile.addFacade(ForgeDirection.getOrientation(side).getOpposite(), ItemFacade.getType(stack), ItemFacade.getWireType(stack), ItemFacade.getBlocks(stack), ItemFacade.getMetaValues(stack))) {
@@ -194,7 +198,7 @@ public class ItemFacade extends ItemBuildCraft {
 		}
 
 		for (String blacklistedBlock : BuildCraftTransport.facadeBlacklist) {
-			if(blockName.equals(BuildCraftConfiguration.stripSurroundingQuotes(blacklistedBlock))) {
+			if(blockName.equals(JavaTools.stripSurroundingQuotes(blacklistedBlock))) {
 				return true;
 			}
 		}

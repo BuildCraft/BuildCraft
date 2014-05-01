@@ -34,10 +34,6 @@ package buildcraft.api.blueprints;
  */
 public abstract class SchematicBlockBase extends Schematic {
 
-	public void writeCompleted(IBuilderContext context, int x, int y, int z, double completed) {
-
-	}
-
 	/**
 	 * Return true if the block should not be placed to the world. Requirements
 	 * will not be asked on such a block, and building will not be called.

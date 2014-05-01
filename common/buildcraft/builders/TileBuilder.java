@@ -58,7 +58,7 @@ public class TileBuilder extends TileAbstractBuilder implements IMachine {
 
 	private LinkedList <ItemStack> requiredToBuild;
 
-	NBTTagCompound initNBT = null;
+	private NBTTagCompound initNBT = null;
 
 	private class PathIterator {
 
@@ -215,7 +215,6 @@ public class TileBuilder extends TileAbstractBuilder implements IMachine {
 			}
 
 			if (bluePrintBuilder != null) {
-				NBTTagCompound builderCpt = new NBTTagCompound();
 				bluePrintBuilder.loadBuildStateToNBT(
 						initNBT.getCompoundTag("builderState"), this);
 			}
