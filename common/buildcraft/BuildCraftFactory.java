@@ -128,6 +128,8 @@ public class BuildCraftFactory extends BuildCraftMod {
 
 	@Mod.EventHandler
 	public void load(FMLInitializationEvent evt) {
+		SchematicRegistry.declareBlueprintSupport("BuildCraft|Factory");
+
 		NetworkRegistry.INSTANCE.registerGuiHandler(instance, new GuiHandler());
 
 		// EntityRegistry.registerModEntity(EntityMechanicalArm.class, "bcMechanicalArm", EntityIds.MECHANICAL_ARM, instance, 50, 1, true);

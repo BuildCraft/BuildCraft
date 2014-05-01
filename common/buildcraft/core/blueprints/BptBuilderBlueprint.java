@@ -27,6 +27,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.api.blueprints.Schematic;
 import buildcraft.api.blueprints.SchematicBlock;
 import buildcraft.api.blueprints.SchematicEntity;
+import buildcraft.api.blueprints.SchematicRegistry;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.core.IInvSlot;
@@ -82,6 +83,10 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 							slot.block = Blocks.air;
 						}
 
+						if (!SchematicRegistry.isAllowedForBuilding(slot.block)) {
+							continue;
+						}
+
 						BuildingSlotBlock b = new BuildingSlotBlock();
 						b.schematic = slot;
 						b.x = xCoord;
@@ -111,6 +116,10 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 					SchematicBlock slot = (SchematicBlock) blueprint.contents[i][j][k];
 
 					if (slot == null || yCoord < 0 || yCoord >= context.world.getHeight()) {
+						continue;
+					}
+
+					if (!SchematicRegistry.isAllowedForBuilding(slot.block)) {
 						continue;
 					}
 

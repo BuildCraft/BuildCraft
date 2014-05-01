@@ -38,6 +38,7 @@ import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.glu.GLU;
 
+import buildcraft.api.blueprints.SchematicRegistry;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.core.IIconProvider;
@@ -200,6 +201,7 @@ public class BuildCraftCore extends BuildCraftMod {
 
 	@Mod.EventHandler
 	public void loadConfiguration(FMLPreInitializationEvent evt) {
+		SchematicRegistry.declareBlueprintSupport("BuildCraft|Core");
 
 		BCLog.initLog();
 

@@ -36,6 +36,7 @@ public class GuiArchitect extends GuiBuildCraft {
 	private GuiButton optionReadMods;
 	private GuiButton optionReadBlocks;
 	private GuiButton optionExcavate;
+	private GuiButton optionExplicit;
 
 	public GuiArchitect(IInventory playerInventory, TileArchitect architect) {
 		super(new ContainerArchitect(playerInventory, architect), architect, TEXTURE);
@@ -61,6 +62,9 @@ public class GuiArchitect extends GuiBuildCraft {
 		optionExcavate = new GuiButton(2, x + 5, y + 80, 77, 20, "");
 		buttonList.add(optionExcavate);
 
+		optionExplicit = new GuiButton(3, x + 5, y + 105, 77, 20, "");
+		buttonList.add(optionExplicit);
+
 		updateButtons();
 	}
 
@@ -74,6 +78,8 @@ public class GuiArchitect extends GuiBuildCraft {
 			conf.readTiles = !conf.readTiles;
 		} else if (button == optionExcavate) {
 			conf.excavate = !conf.excavate;
+		} else if (button == optionExplicit) {
+			conf.explicitOnly = !conf.explicitOnly;
 		}
 
 		architect.rpcSetConfiguration(conf);
@@ -100,6 +106,12 @@ public class GuiArchitect extends GuiBuildCraft {
 			optionExcavate.displayString = "Excavate: On";
 		} else {
 			optionExcavate.displayString = "Excavate: Off";
+		}
+
+		if (conf.explicitOnly) {
+			optionExplicit.displayString = "Mods: Support";
+		} else {
+			optionExplicit.displayString = "Mods: All";
 		}
 	}
 

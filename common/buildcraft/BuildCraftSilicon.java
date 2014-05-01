@@ -8,6 +8,13 @@
  */
 package buildcraft;
 
+import java.util.ArrayList;
+import java.util.EnumSet;
+import java.util.List;
+
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
+import net.minecraft.item.ItemStack;
 import buildcraft.api.blueprints.SchematicRegistry;
 import buildcraft.api.recipes.BuildcraftRecipes;
 import buildcraft.api.transport.PipeWire;
@@ -16,8 +23,17 @@ import buildcraft.core.DefaultProps;
 import buildcraft.core.InterModComms;
 import buildcraft.core.Version;
 import buildcraft.core.proxy.CoreProxy;
-import buildcraft.silicon.*;
+import buildcraft.silicon.BlockLaser;
+import buildcraft.silicon.BlockLaserTable;
+import buildcraft.silicon.GuiHandler;
+import buildcraft.silicon.ItemLaserTable;
+import buildcraft.silicon.ItemRedstoneChipset;
 import buildcraft.silicon.ItemRedstoneChipset.Chipset;
+import buildcraft.silicon.SiliconProxy;
+import buildcraft.silicon.TileAdvancedCraftingTable;
+import buildcraft.silicon.TileAssemblyTable;
+import buildcraft.silicon.TileIntegrationTable;
+import buildcraft.silicon.TileLaser;
 import buildcraft.silicon.network.PacketHandlerSilicon;
 import buildcraft.silicon.recipes.AdvancedFacadeRecipe;
 import buildcraft.silicon.recipes.GateExpansionRecipe;
@@ -33,13 +49,6 @@ import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLInterModComms;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
-import net.minecraft.item.ItemStack;
-
-import java.util.ArrayList;
-import java.util.EnumSet;
-import java.util.List;
 
 @Mod(name = "BuildCraft Silicon", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Silicon", dependencies = DefaultProps.DEPENDENCY_TRANSPORT)
 public class BuildCraftSilicon extends BuildCraftMod {
@@ -52,6 +61,8 @@ public class BuildCraftSilicon extends BuildCraftMod {
 
 	@Mod.EventHandler
 	public void preInit(FMLPreInitializationEvent evt) {
+		SchematicRegistry.declareBlueprintSupport("BuildCraft|Silicon");
+
 		BuildCraftCore.mainConfiguration.save();
 
 		laserBlock = new BlockLaser();

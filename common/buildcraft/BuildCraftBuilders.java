@@ -159,6 +159,8 @@ public class BuildCraftBuilders extends BuildCraftMod {
 
 	@Mod.EventHandler
 	public void init(FMLInitializationEvent evt) {
+		SchematicRegistry.declareBlueprintSupport("BuildCraft|Builders");
+
 		// Register gui handler
 		NetworkRegistry.INSTANCE.registerGuiHandler(instance, new GuiHandler());
 
@@ -372,6 +374,8 @@ public class BuildCraftBuilders extends BuildCraftMod {
 		GameRegistry.registerTileEntity(TileArchitect.class, "net.minecraft.src.builders.TileTemplate");
 		GameRegistry.registerTileEntity(TilePathMarker.class, "net.minecraft.src.builders.TilePathMarker");
 		GameRegistry.registerTileEntity(TileBlueprintLibrary.class, "net.minecraft.src.builders.TileBlueprintLibrary");
+
+		SchematicRegistry.readConfiguration(BuildCraftCore.mainConfiguration);
 
 		if (BuildCraftCore.mainConfiguration.hasChanged()) {
 			BuildCraftCore.mainConfiguration.save();

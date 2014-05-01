@@ -88,6 +88,10 @@ public class Blueprint extends BlueprintBase {
 		slot.block = block;
 		slot.meta = anchorTile.getWorldObj().getBlockMetadata(x, y, z);
 
+		if (bptContext.readConfiguration.explicitOnly && !SchematicRegistry.isExplicitlySupported(block)) {
+			return;
+		}
+
 		if (!bptContext.readConfiguration.readTiles && anchorTile.getWorldObj().getTileEntity(x, y, z) != null) {
 			return;
 		}
