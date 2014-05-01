@@ -40,6 +40,9 @@ public abstract class TileAbstractBuilder extends TileBuildCraft implements ITil
 	@MjBattery(maxReceivedPerCycle = 100, maxCapacity = FULL_CHEST_ENERGY, minimumConsumption = 1)
 	protected double mjStored = 0;
 
+	private double mjPrev = 0;
+	private int mjUnchangedCycles = 0;
+
 	@NetworkData
 	public LinkedList<LaserData> pathLasers = new LinkedList<LaserData> ();
 
@@ -67,6 +70,11 @@ public abstract class TileAbstractBuilder extends TileBuildCraft implements ITil
 	public void updateEntity() {
 		super.updateEntity();
 
+		if (mjPrev != mjStored) {
+			mjPrev = mjStored;
+			mjUnchangedCycles = 0;
+		}
+
 		BuildingItem toRemove = null;
 
 		for (BuildingItem i : buildersInAction) {
@@ -79,6 +87,27 @@ public abstract class TileAbstractBuilder extends TileBuildCraft implements ITil
 
 		if (toRemove != null) {
 			buildersInAction.remove(toRemove);
+		}
+
+		if (mjPrev != mjStored) {
+			mjPrev = mjStored;
+			mjUnchangedCycles = 0;
+		}
+
+		mjUnchangedCycles++;
+
+		/**
+		 * After 100 cycles with no consumption or additional power, start to
+		 * slowly to decrease the amount of power available in the builder.
+		 */
+		if (mjUnchangedCycles > 100) {
+			mjStored -= 100;
+
+			if (mjStored < 0) {
+				mjStored = 0;
+			}
+
+			mjPrev = mjStored;
 		}
 	}
 
