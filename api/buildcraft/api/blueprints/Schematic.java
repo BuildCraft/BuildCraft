@@ -261,4 +261,12 @@ public abstract class Schematic {
 	public BuildingStage getBuildStage () {
 		return BuildingStage.STANDALONE;
 	}
+
+	/**
+	 * Return the building permission for blueprint containing this schematic.
+	 * @return
+	 */
+	public BuildingPermission getBuildingPermission () {
+		return BuildingPermission.ALL;
+	}
 }

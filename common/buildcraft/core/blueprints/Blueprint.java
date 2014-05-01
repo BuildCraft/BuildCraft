@@ -18,6 +18,7 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.Constants;
 import buildcraft.BuildCraftBuilders;
+import buildcraft.api.blueprints.BuildingPermission;
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.SchematicBlock;
 import buildcraft.api.blueprints.SchematicEntity;
@@ -99,6 +100,19 @@ public class Blueprint extends BlueprintBase {
 			t.printStackTrace();
 			BCLog.logger.throwing("BptBlueprint", "readFromWorld", t);
 		}
+
+		switch (slot.getBuildingPermission()) {
+		case ALL:
+			break;
+		case CREATIVE_ONLY:
+			if (buildingPermission == BuildingPermission.ALL) {
+				buildingPermission = BuildingPermission.CREATIVE_ONLY;
+			}
+			break;
+		case NONE:
+			buildingPermission = BuildingPermission.NONE;
+			break;
+		}
 	}
 
 	@Override
@@ -179,6 +193,19 @@ public class Blueprint extends BlueprintBase {
 
 						contents[x][y][z] = SchematicRegistry.newSchematicBlock(mapping.getBlockForId(blockId));
 						contents[x][y][z].readFromNBT(cpt, mapping);
+
+						switch (contents[x][y][z].getBuildingPermission()) {
+						case ALL:
+							break;
+						case CREATIVE_ONLY:
+							if (buildingPermission == BuildingPermission.ALL) {
+								buildingPermission = BuildingPermission.CREATIVE_ONLY;
+							}
+							break;
+						case NONE:
+							buildingPermission = BuildingPermission.NONE;
+							break;
+						}
 					} else {
 						contents[x][y][z] = null;
 					}
@@ -208,6 +235,7 @@ public class Blueprint extends BlueprintBase {
 		id.write (nbt);
 		nbt.setString("author", author);
 		nbt.setString("name", id.name);
+		nbt.setByte ("permission", (byte) buildingPermission.ordinal());
 
 		return stack;
 	}

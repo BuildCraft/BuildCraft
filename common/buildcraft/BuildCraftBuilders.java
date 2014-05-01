@@ -67,6 +67,7 @@ import buildcraft.builders.filler.pattern.PatternHorizon;
 import buildcraft.builders.filler.pattern.PatternPyramid;
 import buildcraft.builders.filler.pattern.PatternStairs;
 import buildcraft.builders.schematics.SchematicBed;
+import buildcraft.builders.schematics.SchematicBlockCreative;
 import buildcraft.builders.schematics.SchematicCactus;
 import buildcraft.builders.schematics.SchematicCustomStack;
 import buildcraft.builders.schematics.SchematicDirt;
@@ -93,6 +94,7 @@ import buildcraft.builders.schematics.SchematicSign;
 import buildcraft.builders.schematics.SchematicSkull;
 import buildcraft.builders.schematics.SchematicStairs;
 import buildcraft.builders.schematics.SchematicStone;
+import buildcraft.builders.schematics.SchematicTileCreative;
 import buildcraft.builders.schematics.SchematicTripWireHook;
 import buildcraft.builders.schematics.SchematicWallSide;
 import buildcraft.builders.triggers.ActionFiller;
@@ -278,6 +280,10 @@ public class BuildCraftBuilders extends BuildCraftMod {
 		SchematicRegistry.registerSchematicBlock(Blocks.golden_rail, SchematicRail.class);
 
 		SchematicRegistry.registerSchematicBlock(Blocks.fire, SchematicFire.class);
+
+		SchematicRegistry.registerSchematicBlock(Blocks.bedrock, SchematicBlockCreative.class);
+
+		SchematicRegistry.registerSchematicBlock(Blocks.mob_spawner, SchematicTileCreative.class);
 
 		// Standard entities
 

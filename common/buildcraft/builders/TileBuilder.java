@@ -22,6 +22,7 @@ import net.minecraft.world.WorldSettings.GameType;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.BuildCraftBuilders;
+import buildcraft.api.blueprints.BuildingPermission;
 import buildcraft.api.blueprints.Translation;
 import buildcraft.api.core.NetworkData;
 import buildcraft.api.core.Position;
@@ -284,6 +285,12 @@ public class TileBuilder extends TileAbstractBuilder implements IMachine {
 		}
 
 		if (bpt == null) {
+			return null;
+		}
+
+		if (bpt.buildingPermission == BuildingPermission.NONE
+				|| (bpt.buildingPermission == BuildingPermission.CREATIVE_ONLY && worldObj
+						.getWorldInfo().getGameType() != GameType.CREATIVE)) {
 			return null;
 		}
 

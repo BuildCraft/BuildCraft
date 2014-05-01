@@ -15,6 +15,7 @@ import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+import buildcraft.api.blueprints.BuildingPermission;
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.MappingRegistry;
 import buildcraft.api.blueprints.SchematicBlockBase;
@@ -35,6 +36,7 @@ public abstract class BlueprintBase {
 	protected MappingRegistry mapping = new MappingRegistry();
 	public boolean rotate = true;
 	public boolean excavate = true;
+	public BuildingPermission buildingPermission = BuildingPermission.ALL;
 
 	private byte [] data;
 

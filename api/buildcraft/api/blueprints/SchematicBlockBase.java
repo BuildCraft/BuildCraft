@@ -41,6 +41,7 @@ public abstract class SchematicBlockBase extends Schematic {
 	/**
 	 * Return true if the block should not be placed to the world. Requirements
 	 * will not be asked on such a block, and building will not be called.
+	 * Post processing will still be called on these blocks though.
 	 */
 	public boolean doNotBuild() {
 		return false;
