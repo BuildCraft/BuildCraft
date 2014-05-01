@@ -8,6 +8,8 @@
  */
 package buildcraft.silicon;
 
+import buildcraft.api.gates.IAction;
+import buildcraft.core.IMachine;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
@@ -22,7 +24,7 @@ import buildcraft.core.inventory.Transactor;
 import buildcraft.core.utils.StringUtils;
 import buildcraft.core.utils.Utils;
 
-public class TileIntegrationTable extends TileLaserTableBase implements ISidedInventory {
+public class TileIntegrationTable extends TileLaserTableBase implements ISidedInventory, IMachine {
 
 	public static final int SLOT_INPUT_A = 0;
 	public static final int SLOT_INPUT_B = 1;
@@ -232,4 +234,24 @@ public class TileIntegrationTable extends TileLaserTableBase implements ISidedIn
 	public boolean hasCustomInventoryName() {
 		return false;
 	}
+
+    @Override
+    public boolean isActive() {
+        return currentRecipe != null;
+    }
+
+    @Override
+    public boolean manageFluids() {
+        return false;
+    }
+
+    @Override
+    public boolean manageSolids() {
+        return false;
+    }
+
+    @Override
+    public boolean allowAction(IAction action) {
+        return false;
+    }
 }
