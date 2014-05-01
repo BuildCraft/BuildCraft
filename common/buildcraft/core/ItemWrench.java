@@ -8,9 +8,7 @@
  */
 package buildcraft.core;
 
-import java.util.HashSet;
-import java.util.Set;
-
+import buildcraft.api.tools.IToolWrench;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockButton;
 import net.minecraft.block.BlockChest;
@@ -19,14 +17,16 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
-import buildcraft.api.tools.IToolWrench;
+
+import java.util.HashSet;
+import java.util.Set;
 
 public class ItemWrench extends ItemBuildCraft implements IToolWrench {
 
 	private final Set<Class<? extends Block>> shiftRotations = new HashSet<Class<? extends Block>>();
 
 	public ItemWrench() {
-		super(CreativeTabBuildCraft.TIER_1);
+		super();
 
 		setFull3D();
 		setMaxStackSize(1);

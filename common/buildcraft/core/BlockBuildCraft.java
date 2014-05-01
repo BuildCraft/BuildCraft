@@ -8,8 +8,7 @@
  */
 package buildcraft.core;
 
-import java.util.Random;
-
+import buildcraft.core.utils.Utils;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
@@ -18,16 +17,17 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import buildcraft.core.utils.Utils;
+
+import java.util.Random;
 
 public abstract class BlockBuildCraft extends BlockContainer {
 
 	protected static boolean keepInventory = false;
 	protected final Random rand = new Random();
 
-	protected BlockBuildCraft(Material material, CreativeTabBuildCraft creativeTab) {
+	protected BlockBuildCraft(Material material) {
 		super(material);
-		setCreativeTab(creativeTab.get());
+		setCreativeTab(CreativeTabBuildCraft.BLOCK.get());
 		setHardness(5F);
 	}
 

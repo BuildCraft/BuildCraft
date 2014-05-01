@@ -43,8 +43,4 @@ public class ItemEngine extends ItemBlockBuildCraft {
 		}
 	}
 
-	@Override
-	public CreativeTabs[] getCreativeTabs() {
-		return new CreativeTabs[]{CreativeTabBuildCraft.TIER_1.get(), CreativeTabBuildCraft.TIER_2.get()};
-	}
 }

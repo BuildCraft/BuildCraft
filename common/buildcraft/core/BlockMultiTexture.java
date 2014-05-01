@@ -8,16 +8,16 @@
  */
 package buildcraft.core;
 
-import java.util.HashMap;
-import java.util.Map;
-
+import buildcraft.core.render.IconFlipped;
+import buildcraft.core.render.RenderBlockMultiTexture;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.common.util.ForgeDirection;
-import buildcraft.core.render.IconFlipped;
-import buildcraft.core.render.RenderBlockMultiTexture;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * This whole class may need tweaking
@@ -41,8 +41,8 @@ public abstract class BlockMultiTexture extends BlockBuildCraft {
 		}
 	}
 
-	public BlockMultiTexture(Material material, CreativeTabBuildCraft tab) {
-		super(material, tab);
+	public BlockMultiTexture(Material material) {
+		super(material);
 	}
 
 	public abstract int getFrontSide(IBlockAccess world, int x, int y, int z);

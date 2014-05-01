@@ -11,7 +11,6 @@ package buildcraft.builders;
 import buildcraft.BuildCraftBuilders;
 import buildcraft.api.tools.IToolWrench;
 import buildcraft.core.BlockMultiTexture;
-import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.GuiIds;
 import buildcraft.core.utils.Utils;
 import net.minecraft.block.Block;
@@ -28,7 +27,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 public class BlockArchitect extends BlockMultiTexture {
 
 	public BlockArchitect() {
-		super(Material.iron, CreativeTabBuildCraft.TIER_3);
+		super(Material.iron);
 	}
 
 	@Override

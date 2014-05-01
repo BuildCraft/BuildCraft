@@ -8,12 +8,35 @@
  */
 package buildcraft;
 
-import java.io.File;
-import java.nio.ByteBuffer;
-import java.nio.FloatBuffer;
-import java.nio.IntBuffer;
-import java.util.TreeMap;
-
+import buildcraft.api.core.BCLog;
+import buildcraft.api.core.BuildCraftAPI;
+import buildcraft.api.core.IIconProvider;
+import buildcraft.api.gates.ActionManager;
+import buildcraft.api.recipes.BuildcraftRecipes;
+import buildcraft.builders.urbanism.EntityRobotUrbanism;
+import buildcraft.core.*;
+import buildcraft.core.network.EntityIds;
+import buildcraft.core.network.PacketHandler;
+import buildcraft.core.network.PacketUpdate;
+import buildcraft.core.proxy.CoreProxy;
+import buildcraft.core.recipes.AssemblyRecipeManager;
+import buildcraft.core.recipes.IntegrationRecipeManager;
+import buildcraft.core.recipes.RefineryRecipeManager;
+import buildcraft.core.render.BlockHighlightHandler;
+import buildcraft.core.robots.EntityRobot;
+import buildcraft.core.robots.EntityRobotBuilder;
+import buildcraft.core.robots.EntityRobotPicker;
+import buildcraft.core.triggers.*;
+import buildcraft.core.triggers.ActionMachineControl.Mode;
+import buildcraft.core.utils.CraftingHandler;
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.Mod;
+import cpw.mods.fml.common.event.*;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.common.network.NetworkRegistry;
+import cpw.mods.fml.common.registry.EntityRegistry;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.client.renderer.GLAllocation;
@@ -33,70 +56,15 @@ import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
 import net.minecraftforge.fluids.BlockFluidBase;
 import net.minecraftforge.oredict.OreDictionary;
-
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.glu.GLU;
 
-import buildcraft.api.core.BCLog;
-import buildcraft.api.core.BuildCraftAPI;
-import buildcraft.api.core.IIconProvider;
-import buildcraft.api.gates.ActionManager;
-import buildcraft.api.recipes.BuildcraftRecipes;
-import buildcraft.builders.urbanism.EntityRobotUrbanism;
-import buildcraft.core.BlockIndex;
-import buildcraft.core.BlockSpring;
-import buildcraft.core.BuildCraftConfiguration;
-import buildcraft.core.CommandBuildCraft;
-import buildcraft.core.CoreIconProvider;
-import buildcraft.core.CreativeTabBuildCraft;
-import buildcraft.core.DefaultProps;
-import buildcraft.core.InterModComms;
-import buildcraft.core.ItemBuildCraft;
-import buildcraft.core.ItemRobot;
-import buildcraft.core.ItemSpring;
-import buildcraft.core.ItemWrench;
-import buildcraft.core.SpringPopulate;
-import buildcraft.core.TickHandlerCoreClient;
-import buildcraft.core.Version;
-import buildcraft.core.network.EntityIds;
-import buildcraft.core.network.PacketHandler;
-import buildcraft.core.network.PacketUpdate;
-import buildcraft.core.proxy.CoreProxy;
-import buildcraft.core.recipes.AssemblyRecipeManager;
-import buildcraft.core.recipes.IntegrationRecipeManager;
-import buildcraft.core.recipes.RefineryRecipeManager;
-import buildcraft.core.render.BlockHighlightHandler;
-import buildcraft.core.robots.EntityRobot;
-import buildcraft.core.robots.EntityRobotBuilder;
-import buildcraft.core.robots.EntityRobotPicker;
-import buildcraft.core.triggers.ActionMachineControl;
-import buildcraft.core.triggers.ActionMachineControl.Mode;
-import buildcraft.core.triggers.ActionRedstoneOutput;
-import buildcraft.core.triggers.ActionTriggerIconProvider;
-import buildcraft.core.triggers.BCAction;
-import buildcraft.core.triggers.BCTrigger;
-import buildcraft.core.triggers.DefaultActionProvider;
-import buildcraft.core.triggers.DefaultTriggerProvider;
-import buildcraft.core.triggers.TriggerFluidContainer;
-import buildcraft.core.triggers.TriggerFluidContainerLevel;
-import buildcraft.core.triggers.TriggerInventory;
-import buildcraft.core.triggers.TriggerInventoryLevel;
-import buildcraft.core.triggers.TriggerMachine;
-import buildcraft.core.triggers.TriggerRedstoneInput;
-import buildcraft.core.utils.CraftingHandler;
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.Mod;
-import cpw.mods.fml.common.event.FMLInitializationEvent;
-import cpw.mods.fml.common.event.FMLInterModComms;
-import cpw.mods.fml.common.event.FMLPostInitializationEvent;
-import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.common.event.FMLServerStartingEvent;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.common.network.NetworkRegistry;
-import cpw.mods.fml.common.registry.EntityRegistry;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import java.io.File;
+import java.nio.ByteBuffer;
+import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
+import java.util.TreeMap;
 
 @Mod(name = "BuildCraft", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Core", acceptedMinecraftVersions = "[1.7.2,1.8)", dependencies = "required-after:Forge@[10.12.0.1024,)")
 public class BuildCraftCore extends BuildCraftMod {
@@ -258,27 +226,27 @@ public class BuildCraftCore extends BuildCraftMod {
 			consumeWaterSources = consumeWater.getBoolean(consumeWaterSources);
 			consumeWater.comment = "set to true if the Pump should consume water";
 
-			woodenGearItem = (new ItemBuildCraft(CreativeTabBuildCraft.TIER_1)).setUnlocalizedName("woodenGearItem");
+			woodenGearItem = (new ItemBuildCraft()).setUnlocalizedName("woodenGearItem");
 			CoreProxy.proxy.registerItem(woodenGearItem);
 			OreDictionary.registerOre("gearWood", new ItemStack(woodenGearItem));
 
-			stoneGearItem = (new ItemBuildCraft(CreativeTabBuildCraft.TIER_1)).setUnlocalizedName("stoneGearItem");
+			stoneGearItem = (new ItemBuildCraft()).setUnlocalizedName("stoneGearItem");
 			CoreProxy.proxy.registerItem(stoneGearItem);
 			OreDictionary.registerOre("gearStone", new ItemStack(stoneGearItem));
 
-			ironGearItem = (new ItemBuildCraft(CreativeTabBuildCraft.TIER_1)).setUnlocalizedName("ironGearItem");
+			ironGearItem = (new ItemBuildCraft()).setUnlocalizedName("ironGearItem");
 			CoreProxy.proxy.registerItem(ironGearItem);
 			OreDictionary.registerOre("gearIron", new ItemStack(ironGearItem));
 
-			goldGearItem = (new ItemBuildCraft(CreativeTabBuildCraft.TIER_1)).setUnlocalizedName("goldGearItem");
+			goldGearItem = (new ItemBuildCraft()).setUnlocalizedName("goldGearItem");
 			CoreProxy.proxy.registerItem(goldGearItem);
 			OreDictionary.registerOre("gearGold", new ItemStack(goldGearItem));
 
-			diamondGearItem = (new ItemBuildCraft(CreativeTabBuildCraft.TIER_1)).setUnlocalizedName("diamondGearItem");
+			diamondGearItem = (new ItemBuildCraft()).setUnlocalizedName("diamondGearItem");
 			CoreProxy.proxy.registerItem(diamondGearItem);
 			OreDictionary.registerOre("gearDiamond", new ItemStack(diamondGearItem));
 
-			redstoneCrystal = (new ItemBuildCraft(CreativeTabBuildCraft.TIER_3)).setUnlocalizedName("redstoneCrystal");
+			redstoneCrystal = (new ItemBuildCraft()).setUnlocalizedName("redstoneCrystal");
 			CoreProxy.proxy.registerItem(redstoneCrystal);
 			OreDictionary.registerOre("redstoneCrystal", new ItemStack(redstoneCrystal));
 
