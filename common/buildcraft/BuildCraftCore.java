@@ -280,11 +280,11 @@ public class BuildCraftCore extends BuildCraftMod {
 			CoreProxy.proxy.registerItem(diamondGearItem);
 			OreDictionary.registerOre("gearDiamond", new ItemStack(diamondGearItem));
 
-			redstoneCrystal = (new ItemBuildCraft(CreativeTabBuildCraft.TIER_3)).setUnlocalizedName("redstoneCrystal");
-			CoreProxy.proxy.registerItem(redstoneCrystal);
-			OreDictionary.registerOre("redstoneCrystal", new ItemStack(redstoneCrystal));
-
 			if (!BuildCraftCore.NEXTGEN_PREALPHA) {
+				redstoneCrystal = (new ItemBuildCraft(CreativeTabBuildCraft.TIER_3)).setUnlocalizedName("redstoneCrystal");
+				CoreProxy.proxy.registerItem(redstoneCrystal);
+				OreDictionary.registerOre("redstoneCrystal", new ItemStack(redstoneCrystal));
+
 				robotBaseItem = new ItemRobot(EntityRobot.class).setUnlocalizedName("robotBase");
 				CoreProxy.proxy.registerItem(robotBaseItem);
 

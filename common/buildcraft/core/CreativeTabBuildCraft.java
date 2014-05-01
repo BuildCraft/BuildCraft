@@ -8,6 +8,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftEnergy;
+import buildcraft.BuildCraftSilicon;
 import buildcraft.transport.ItemFacade;
 
 public enum CreativeTabBuildCraft {
@@ -39,7 +40,7 @@ public enum CreativeTabBuildCraft {
 		case TIER_2:
 			return new ItemStack (BuildCraftEnergy.bucketOil, 1);
 		case TIER_3:
-			return new ItemStack (BuildCraftCore.redstoneCrystal, 1);
+			return new ItemStack (BuildCraftSilicon.assemblyTableBlock, 1);
 		case TIER_4:
 			return new ItemStack (BuildCraftCore.springBlock, 1);
 		case MISC:

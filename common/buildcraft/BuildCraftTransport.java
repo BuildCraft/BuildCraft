@@ -332,7 +332,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 			pipeItemsSandstone = buildPipe(PipeItemsSandstone.class, "Sandstone Transport Pipe", CreativeTabBuildCraft.TIER_1, Blocks.sandstone, Blocks.glass, Blocks.sandstone);
 			pipeItemsVoid = buildPipe(PipeItemsVoid.class, "Void Transport Pipe", CreativeTabBuildCraft.TIER_1, "dyeBlack", Blocks.glass, Items.redstone);
 			pipeItemsEmzuli = buildPipe(PipeItemsEmzuli.class, "Emzuli Transport Pipe", CreativeTabBuildCraft.MISC, Blocks.lapis_block, Blocks.glass, Items.emerald);
-			pipeItemsStripes = buildPipe(PipeItemsStripes.class, "Stripes Transport Pipe", CreativeTabBuildCraft.TIER_3, Items.dye, Blocks.glass, Items.dye);
+			pipeItemsStripes = buildPipe(PipeItemsStripes.class, "Stripes Transport Pipe", CreativeTabBuildCraft.TIER_3, BuildCraftCore.goldGearItem, Blocks.glass, BuildCraftCore.goldGearItem);
 
 			pipeFluidsWood = buildPipe(PipeFluidsWood.class, "Wooden Waterproof Pipe", CreativeTabBuildCraft.TIER_2, pipeWaterproof, pipeItemsWood);
 			pipeFluidsCobblestone = buildPipe(PipeFluidsCobblestone.class, "Cobblestone Waterproof Pipe", CreativeTabBuildCraft.TIER_2, pipeWaterproof, pipeItemsCobblestone);
