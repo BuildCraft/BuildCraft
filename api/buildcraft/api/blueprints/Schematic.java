@@ -43,6 +43,30 @@ import buildcraft.api.core.IInvSlot;
 public abstract class Schematic {
 
 	/**
+	 * Blocks are build in various stages, in order to make sure that a block
+	 * can indeed be placed, and that it's unlikely to disturb other blocks.
+	 */
+	public static enum BuildingStage {
+		/**
+		 * Standalone blocks can be placed in the air, and they don't change
+		 * once placed.
+		 */
+		STANDALONE,
+
+		/**
+		 * Supported blocks may require to be placed on a standalone block,
+		 * e.g. a torch.
+		 */
+		SUPPORTED,
+
+		/**
+		 * Expanding blocks will grow and may disturb other block locations,
+		 * like e.g. water
+		 */
+		EXPANDING
+	}
+
+	/**
 	 * Return true if the block on the world correspond to the block stored in
 	 * the blueprint at the location given by the slot. By default, this
 	 * subprogram is permissive and doesn't take into account metadata.
@@ -232,11 +256,9 @@ public abstract class Schematic {
 	}
 
 	/**
-	 * Return true if this schematic is standalone, false if it needs other
-	 * blocks to be build on. Typically, solid blocks are standalone, others
-	 * are not. All standalone blocks are supposed to be built first.
+	 * Return the stage where this schematic has to be built.
 	 */
-	public boolean isStandalone () {
-		return true;
+	public BuildingStage getBuildStage () {
+		return BuildingStage.STANDALONE;
 	}
 }

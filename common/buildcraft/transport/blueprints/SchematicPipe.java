@@ -133,7 +133,7 @@ public class SchematicPipe extends SchematicTile {
 	}
 
 	@Override
-	public boolean isStandalone () {
-		return true;
+	public BuildingStage getBuildStage () {
+		return BuildingStage.STANDALONE;
 	}
 }

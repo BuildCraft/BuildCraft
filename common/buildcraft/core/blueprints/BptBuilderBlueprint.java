@@ -98,7 +98,8 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 		}
 
 		LinkedList<BuildingSlotBlock> tmpStandalone = new LinkedList<BuildingSlotBlock>();
-		LinkedList<BuildingSlotBlock> tmpLastBlocks = new LinkedList<BuildingSlotBlock>();
+		LinkedList<BuildingSlotBlock> tmpSupported = new LinkedList<BuildingSlotBlock>();
+		LinkedList<BuildingSlotBlock> tmpExpanding = new LinkedList<BuildingSlotBlock>();
 
 		for (int j = 0; j < blueprint.sizeY; ++j) {
 			for (int i = 0; i < blueprint.sizeX; ++i) {
@@ -122,13 +123,19 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 
 					if (!builtLocations.contains(new BlockIndex(xCoord, yCoord,
 								zCoord))) {
-
-						if (slot.isStandalone()) {
+						switch (slot.getBuildStage()) {
+						case STANDALONE:
 							tmpStandalone.add(b);
 							b.buildStage = 1;
-						} else {
-							tmpLastBlocks.add(b);
+							break;
+						case SUPPORTED:
+							tmpSupported.add(b);
 							b.buildStage = 2;
+							break;
+						case EXPANDING:
+							tmpExpanding.add(b);
+							b.buildStage = 3;
+							break;
 						}
 					} else {
 						postProcessing.add(b);
@@ -138,7 +145,8 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 		}
 
 		buildList.addAll(tmpStandalone);
-		buildList.addAll(tmpLastBlocks);
+		buildList.addAll(tmpSupported);
+		buildList.addAll(tmpExpanding);
 
 		iterator = new BuildingSlotIterator(buildList);
 

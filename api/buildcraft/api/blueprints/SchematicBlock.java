@@ -12,11 +12,13 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockLiquid;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.fluids.BlockFluidBase;
 
 public class SchematicBlock extends SchematicBlockBase {
 
@@ -159,7 +161,13 @@ public class SchematicBlock extends SchematicBlockBase {
 	}
 
 	@Override
-	public boolean isStandalone () {
-		return block.isOpaqueCube();
+	public BuildingStage getBuildStage () {
+		if (block.isOpaqueCube()) {
+			return BuildingStage.STANDALONE;
+		} else if (block instanceof BlockFluidBase || block instanceof BlockLiquid) {
+			return BuildingStage.EXPANDING;
+		} else {
+			return BuildingStage.SUPPORTED;
+		}
 	}
 }

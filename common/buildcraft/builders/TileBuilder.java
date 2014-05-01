@@ -368,6 +368,8 @@ public class TileBuilder extends TileAbstractBuilder implements IMachine {
 
 				if (currentPathIterator == null) {
 					done = true;
+				} else {
+					done = false;
 				}
 			} else {
 				if (bluePrintBuilder != null && bluePrintBuilder.isDone(this)) {
@@ -382,6 +384,7 @@ public class TileBuilder extends TileAbstractBuilder implements IMachine {
 					if (bluePrintBuilder != null) {
 						box.initialize(bluePrintBuilder);
 						sendNetworkUpdate();
+						done = false;
 					}
 				}
 			}
@@ -398,6 +401,7 @@ public class TileBuilder extends TileAbstractBuilder implements IMachine {
 			}
 
 			items[0] = null;
+			box.reset();
 		}
 	}
 
