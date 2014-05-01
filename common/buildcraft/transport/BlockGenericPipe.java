@@ -1299,4 +1299,8 @@ public class BlockGenericPipe extends BlockBuildCraft {
 		}
 		return super.colorMultiplier(world, x, y, z);
 	}
+
+	public Item getItemToStoreData(World wrd, int x, int y, int z){
+		return null;
+	}
 }

@@ -8,8 +8,8 @@
  */
 package buildcraft.builders;
 
+import buildcraft.core.BlockBuildCraft;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
@@ -26,7 +26,7 @@ import buildcraft.core.utils.Utils;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-public class BlockFiller extends BlockContainer {
+public class BlockFiller extends BlockBuildCraft {
 
 	IIcon textureSides;
 	IIcon textureTopOn;
@@ -34,10 +34,9 @@ public class BlockFiller extends BlockContainer {
 	public IFillerPattern currentPattern;
 
 	public BlockFiller() {
-		super(Material.iron);
+		super(Material.iron, CreativeTabBuildCraft.TIER_2);
 
 		setHardness(5F);
-		setCreativeTab(CreativeTabBuildCraft.TIER_2.get());
 	}
 
 	@Override
@@ -90,12 +89,6 @@ public class BlockFiller extends BlockContainer {
 	@Override
 	public TileEntity createNewTileEntity(World world, int metadata) {
 		return new TileFiller();
-	}
-
-	@Override
-	public void breakBlock(World world, int x, int y, int z, Block block, int par6) {
-		Utils.preDestroyBlock(world, x, y, z);
-		super.breakBlock(world, x, y, z, block, par6);
 	}
 
 	@Override

@@ -8,11 +8,12 @@
  */
 package buildcraft.builders;
 
-import net.minecraft.block.BlockContainer;
+import buildcraft.core.BlockBuildCraft;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
@@ -23,15 +24,19 @@ import buildcraft.core.GuiIds;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-public class BlockBlueprintLibrary extends BlockContainer {
+public class BlockBlueprintLibrary extends BlockBuildCraft{
 
 	private IIcon textureTop;
     private IIcon textureSide;
 
     public BlockBlueprintLibrary() {
-		super(Material.wood);
-		setCreativeTab(CreativeTabBuildCraft.TIER_3.get());
+		super(Material.wood, CreativeTabBuildCraft.TIER_3);
 		setHardness(5F);
+	}
+
+	@Override
+	protected Item getItemToStoreData(World wrd, int x, int y, int z){
+		return null;
 	}
 
 	@Override

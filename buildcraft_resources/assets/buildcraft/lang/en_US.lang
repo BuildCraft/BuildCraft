@@ -204,6 +204,13 @@ tile.spring.oil.name=Oil Spring
 tile.spring.water.name=Water Spring
 tile.tankBlock.name=Tank
 
+tip.nbt= §o§5+NBT
+tip.nbt.fluid.empty=Empty
+tip.nbt.fluid.pattern=%s, %d mB
+tip.nbt.engine.fuel=  §7Fuel: %s
+tip.nbt.engine.coolant=  §7Coolant: %s
+tip.nbt.tank.fluid=  §7Fluid: %s
+
 tip.gate.wires=§9§oCompatible Wires:
 tip.gate.wires.redstone=Red
 tip.gate.wires.iron=Red, Blue
@@ -279,3 +286,6 @@ achievement.templateAchievement=Basis
 achievement.templateAchievement.desc=Craft a template
 achievement.blueprintLibraryAchievement=Ideas live on
 achievement.blueprintLibraryAchievement.desc=Craft a blueprint library
+
+egg.insane=Insane!
+egg.recolour_engine=Are you trying to recolour BuildCraft engine??

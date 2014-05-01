@@ -42,7 +42,11 @@ public class Tank extends FluidTank {
 	@Override
 	public final NBTTagCompound writeToNBT(NBTTagCompound nbt) {
 		NBTTagCompound tankData = new NBTTagCompound();
-		super.writeToNBT(tankData);
+		if (isEmpty()) {
+			nbt.setString("Empty", "");
+		} else {
+			super.writeToNBT(tankData);
+		}
 		writeTankToNBT(tankData);
 		nbt.setTag(name, tankData);
 		return nbt;

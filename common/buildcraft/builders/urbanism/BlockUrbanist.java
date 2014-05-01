@@ -10,6 +10,7 @@ package buildcraft.builders.urbanism;
 
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -38,6 +39,10 @@ public class BlockUrbanist extends BlockBuildCraft {
 		setResistance(6000000.0F);
 		disableStats();
 		setTickRandomly(true);
+	}
+
+	public Item getItemToStoreData(World wrd, int x, int y, int z){
+		return null;
 	}
 
 	@Override

@@ -97,4 +97,8 @@ public class BlockPump extends BlockBuildCraft {
 		textureBottom = par1IconRegister.registerIcon("buildcraft:pump_bottom");
 		textureSide = par1IconRegister.registerIcon("buildcraft:pump_side");
 	}
+
+	public Item getItemToStoreData(World wrd, int x, int y, int z){
+		return null;
+	}
 }

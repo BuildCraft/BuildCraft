@@ -10,8 +10,7 @@ package buildcraft.silicon;
 
 import java.util.List;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockContainer;
+import buildcraft.core.BlockBuildCraft;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
@@ -23,21 +22,19 @@ import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
 import buildcraft.BuildCraftSilicon;
 import buildcraft.core.CreativeTabBuildCraft;
-import buildcraft.core.utils.Utils;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-public class BlockLaserTable extends BlockContainer {
+public class BlockLaserTable extends BlockBuildCraft{
 
 	@SideOnly(Side.CLIENT)
 	private IIcon[][] icons;
 
 	public BlockLaserTable() {
-		super(Material.iron);
+		super(Material.iron, CreativeTabBuildCraft.TIER_3);
 
 		setBlockBounds(0, 0, 0, 1, 9F / 16F, 1);
 		setHardness(10F);
-		setCreativeTab(CreativeTabBuildCraft.TIER_3.get());
 	}
 
 	@Override
@@ -50,28 +47,22 @@ public class BlockLaserTable extends BlockContainer {
 		return false;
 	}
 
-	public boolean isACube() {
+	public boolean isACube() { // Never used!!!
 		return false;
 	}
 
 	@Override
-	public boolean onBlockActivated(World world, int i, int j, int k, EntityPlayer entityplayer, int par6, float par7, float par8, float par9) {
+	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int par6, float par7, float par8, float par9) {
 		// Drop through if the player is sneaking
-		if (entityplayer.isSneaking()) {
+		if (player.isSneaking()) {
 			return false;
 		}
 
 		if (!world.isRemote) {
-			int meta = world.getBlockMetadata(i, j, k);
-			entityplayer.openGui(BuildCraftSilicon.instance, meta, world, i, j, k);
+			int meta = world.getBlockMetadata(x, y, z);
+			player.openGui(BuildCraftSilicon.instance, meta, world, x, y, z);
 		}
 		return true;
-	}
-
-	@Override
-	public void breakBlock(World world, int x, int y, int z, Block block, int par6) {
-		Utils.preDestroyBlock(world, x, y, z);
-		super.breakBlock(world, x, y, z, block, par6);
 	}
 
 	@Override
@@ -81,35 +72,31 @@ public class BlockLaserTable extends BlockContainer {
 	}
 
 	@Override
-	public TileEntity createTileEntity(World world, int metadata) {
-		switch (metadata) {
+	public TileEntity createNewTileEntity(World world, int meta) {
+		switch (meta) {
 			case 0:
 				return new TileAssemblyTable();
 			case 1:
 				return new TileAdvancedCraftingTable();
 			case 2:
 				return new TileIntegrationTable();
+			default:
+				return null;
 		}
-		return null;
 	}
 
 	@Override
-	public TileEntity createNewTileEntity(World world, int metadata) {
-		return null;
-	}
-
-	@Override
-	public int damageDropped(int par1) {
-		return par1;
+	public int damageDropped(int meta) {
+		return meta;
 	}
 
 	@SuppressWarnings({"rawtypes", "unchecked"})
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void getSubBlocks(Item item, CreativeTabs par2CreativeTabs, List par3List) {
-		par3List.add(new ItemStack(this, 1, 0));
-		par3List.add(new ItemStack(this, 1, 1));
-		par3List.add(new ItemStack(this, 1, 2));
+	public void getSubBlocks(Item item, CreativeTabs tab, List list) {
+		list.add(new ItemStack(this, 1, 0));
+		list.add(new ItemStack(this, 1, 1));
+		list.add(new ItemStack(this, 1, 2));
 	}
 
 	@Override

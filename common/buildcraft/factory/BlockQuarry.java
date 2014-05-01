@@ -224,4 +224,8 @@ public class BlockQuarry extends BlockBuildCraft {
 	public int getLightValue(IBlockAccess world, int x, int y, int z) {
 		return 1;
 	}
+
+	public Item getItemToStoreData(World wrd, int x, int y, int z){
+		return null;
+	}
 }

@@ -9,6 +9,7 @@
 package buildcraft.silicon;
 
 import buildcraft.api.power.ILaserTarget;
+import buildcraft.core.ISaveExclusions;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.inventory.SimpleInventory;
 import net.minecraft.entity.player.EntityPlayer;
@@ -18,7 +19,7 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
-public abstract class TileLaserTableBase extends TileBuildCraft implements ILaserTarget, IInventory {
+public abstract class TileLaserTableBase extends TileBuildCraft implements ILaserTarget, IInventory, ISaveExclusions{
 
 	public double clientRequiredEnergy = 0;
 	protected SimpleInventory inv = new SimpleInventory(getSizeInventory(), "inv", 64);
@@ -133,6 +134,11 @@ public abstract class TileLaserTableBase extends TileBuildCraft implements ILase
 
 	@Override
 	public void closeInventory() {
+	}
+
+	@Override
+	public String[] getExclusions(){
+		return new String[]{"energy"};
 	}
 
 	@Override

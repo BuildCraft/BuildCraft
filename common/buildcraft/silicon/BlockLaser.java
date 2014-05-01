@@ -74,12 +74,10 @@ public class BlockLaser extends BlockContainer implements ICustomHighlight {
 				}
 			}
 		}
-		if (closest != null){
-			closest.blockX = x;
-			closest.blockY = y;
-			closest.blockZ = z;
+		if (closest != null) {
+			return new MovingObjectPosition(x, y, z, closest.sideHit, closest.hitVec);
 		}
-		return closest;
+		return null;
 	}
 
 	@Override
