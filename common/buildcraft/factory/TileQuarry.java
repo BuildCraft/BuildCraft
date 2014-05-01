@@ -29,6 +29,7 @@ import buildcraft.BuildCraftFactory;
 import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.core.NetworkData;
+import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.filler.FillerManager;
 import buildcraft.api.gates.IAction;
 import buildcraft.builders.TileAbstractBuilder;
@@ -51,30 +52,39 @@ import com.google.common.collect.Sets;
 
 public class TileQuarry extends TileAbstractBuilder implements IMachine {
 
-	public @NetworkData
-	Box box = new Box();
-	public @NetworkData
-	boolean inProcess = false;
-	public @NetworkData
-	int targetX, targetY, targetZ;
-	public @NetworkData
-	double headPosX, headPosY, headPosZ;
-	public @NetworkData
-	double speed = 0.03;
-	public @NetworkData
-	boolean builderDone = false;
+	private static enum Stage {
+		BUILDING,
+		DIGGING,
+		IDLE,
+		DONE
+	}
+
+	@NetworkData
+	protected Box box = new Box();
+	@NetworkData
+	private int targetX, targetY, targetZ;
+	@NetworkData
+	private double headPosX, headPosY, headPosZ;
+	@NetworkData
+	private double speed = 0.03;
+	@NetworkData
+	private Stage stage = Stage.BUILDING;
+	@NetworkData
+	private boolean isAlive;
+	@NetworkData
+	private boolean movingHorizontally;
+	@NetworkData
+	private boolean movingVertically;
+	@NetworkData
+	private double headTrajectory;
+
+	private SafeTimeTracker updateTracker = new SafeTimeTracker(10);
 
 	private BptBuilderBase builder;
 	public EntityMechanicalArm arm;
-	boolean isDigging = false;
 
 	private boolean loadDefaultBoundaries = false;
-	private boolean movingHorizontally;
-	private boolean movingVertically;
-	private double headTrajectory;
 	private Ticket chunkTicket;
-	public @NetworkData
-	boolean isAlive;
 	public EntityPlayer placedBy;
 
 	boolean frameProducer = true;
@@ -94,7 +104,7 @@ public class TileQuarry extends TileAbstractBuilder implements IMachine {
 			}
 		}
 
-		if (builderDone) {
+		if (stage != Stage.BUILDING) {
 			box.isVisible = false;
 
 			if (arm == null) {
@@ -102,14 +112,12 @@ public class TileQuarry extends TileAbstractBuilder implements IMachine {
 			}
 
 			if (findTarget(false)) {
-				isDigging = true;
 				if (box != null && ((headPosX < box.xMin || headPosX > box.xMax) || (headPosZ < box.zMin || headPosZ > box.zMax))) {
 					setHead(box.xMin + 1, yCoord + 2, box.zMin + 1);
 				}
 			}
 		} else {
 			box.isVisible = true;
-			isDigging = true;
 		}
 	}
 
@@ -134,6 +142,10 @@ public class TileQuarry extends TileAbstractBuilder implements IMachine {
 		super.updateEntity();
 
 		if (worldObj.isRemote) {
+			if (stage != Stage.DONE) {
+				moveHead(speed);
+			}
+
 			return;
 		}
 
@@ -141,35 +153,33 @@ public class TileQuarry extends TileAbstractBuilder implements IMachine {
 			return;
 		}
 
-		if (inProcess) {
-			double energyToUse = 2 + mjStored / 500;
-
-			if (mjStored > energyToUse) {
-				mjStored -= energyToUse;
-				moveHead(0.1 + energyToUse / 200F);
-			}
-		}
-
-		if (!worldObj.isRemote && inProcess) {
-			// TODO: Don't send an update at each tick!!!! At most once every
-			// 20 ~ 25 ticks
-			sendNetworkUpdate();
-		}
-
-		if (inProcess || !isDigging) {
+		if (stage == Stage.DONE) {
 			return;
 		}
 
-		if (builder != null) {
-			if (!builder.isDone(this)) {
+		double energyToUse = 2 + mjStored / 500;
+
+		if (mjStored > energyToUse) {
+			mjStored -= energyToUse;
+			speed = 0.1 + energyToUse / 200F;
+			moveHead(speed);
+		}
+
+		if (stage == Stage.BUILDING) {
+			if (builder != null && !builder.isDone(this)) {
 				builder.buildNextSlot(worldObj, this, xCoord, yCoord, zCoord);
 			} else {
-				builderDone = true;
-				dig();
+				stage = Stage.IDLE;
 			}
+		} else if (stage == Stage.IDLE) {
+			dig();
 		}
 
 		createUtilsIfNeeded();
+
+		if (updateTracker.markTimeIfDelay(worldObj)) {
+			sendNetworkUpdate();
+		}
 	}
 
 	protected void dig() {
@@ -187,15 +197,17 @@ public class TileQuarry extends TileAbstractBuilder implements IMachine {
 				setTarget(box.xMin + 1, yCoord + 2, box.zMin + 1);
 			}
 
-			isDigging = false;
+			stage = Stage.DONE;
+		} else {
+			stage = Stage.DIGGING;
 		}
 
-		inProcess = true;
 		movingHorizontally = true;
 		movingVertically = true;
 		double[] head = getHead();
 		int[] target = getTarget();
 		headTrajectory = Math.atan2(target[2] - head[2], target[0] - head[0]);
+		sendNetworkUpdate();
 	}
 	private final LinkedList<int[]> visitList = Lists.newLinkedList();
 
@@ -319,8 +331,6 @@ public class TileQuarry extends TileAbstractBuilder implements IMachine {
 	public void readFromNBT(NBTTagCompound nbttagcompound) {
 		super.readFromNBT(nbttagcompound);
 
-
-
 		if (nbttagcompound.hasKey("box")) {
 			box.initialize(nbttagcompound.getCompoundTag("box"));
 
@@ -370,8 +380,6 @@ public class TileQuarry extends TileAbstractBuilder implements IMachine {
 
 	@SuppressWarnings("rawtypes")
 	public void positionReached() {
-		inProcess = false;
-
 		if (worldObj.isRemote) {
 			return;
 		}
@@ -426,6 +434,8 @@ public class TileQuarry extends TileAbstractBuilder implements IMachine {
 				mineStack(mineable);
 			}
 		}
+
+		stage = Stage.IDLE;
 	}
 
 	private void mineStack(ItemStack stack) {
@@ -488,7 +498,7 @@ public class TileQuarry extends TileAbstractBuilder implements IMachine {
 
 	@Override
 	public boolean isActive() {
-		return isDigging;
+		return stage != Stage.DONE;
 	}
 
 	private void setBoundaries(boolean useDefault) {
@@ -588,6 +598,7 @@ public class TileQuarry extends TileAbstractBuilder implements IMachine {
 				.getBlueprint(box, worldObj, BuildCraftFactory.frameBlock);
 
 		builder = new BptBuilderBlueprint(bpt, worldObj, box.xMin, yCoord, box.zMin);
+		stage = Stage.BUILDING;
 	}
 
 	@Override
@@ -621,7 +632,6 @@ public class TileQuarry extends TileAbstractBuilder implements IMachine {
 
 	public void reinitalize() {
 		initializeBlueprintBuilder();
-		isDigging = true;
 	}
 
 	@Override
