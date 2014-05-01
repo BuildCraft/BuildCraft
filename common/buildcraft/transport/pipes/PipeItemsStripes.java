@@ -8,32 +8,31 @@
  */
 package buildcraft.transport.pipes;
 
-import java.util.ArrayList;
-
-import net.minecraft.init.Blocks;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.core.Position;
 import buildcraft.api.mj.MjBattery;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.BlockUtil;
-import buildcraft.transport.BlockGenericPipe;
-import buildcraft.transport.ItemPipe;
-import buildcraft.transport.Pipe;
-import buildcraft.transport.PipeIconProvider;
-import buildcraft.transport.PipeTransportItems;
-import buildcraft.transport.TileGenericPipe;
-import buildcraft.transport.TravelingItem;
+import buildcraft.transport.*;
 import buildcraft.transport.pipes.events.PipeEventItem;
 import buildcraft.transport.utils.TransportUtils;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockLeavesBase;
+import net.minecraft.entity.projectile.EntityArrow;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemBucket;
+import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraftforge.common.util.ForgeDirection;
 
-public class PipeItemsStripes extends Pipe <PipeTransportItems> {
+import java.util.ArrayList;
 
-	@MjBattery (maxCapacity = 1, maxReceivedPerCycle = 1, minimumConsumption = 0)
+public class PipeItemsStripes extends Pipe<PipeTransportItems> {
+
+	@MjBattery(maxCapacity = 1, maxReceivedPerCycle = 1, minimumConsumption = 0)
 	private double mjStored = 0;
 
 	public PipeItemsStripes(Item item) {
@@ -64,19 +63,13 @@ public class PipeItemsStripes extends Pipe <PipeTransportItems> {
 							(int) p.y,
 							(int) p.z,
 							getWorld().getBlockMetadata((int) p.x, (int) p.y,
-									(int) p.z), 0);
+									(int) p.z), 0
+					);
 
 					if (stacks != null) {
 						for (ItemStack s : stacks) {
 							if (s != null) {
-								TravelingItem newItem = TravelingItem.make(
-										container.xCoord + 0.5,
-										container.yCoord
-												+ TransportUtils
-														.getPipeFloorOf(s),
-										container.zCoord + 0.5, s);
-
-								transport.injectItem(newItem, o.getOpposite());
+								rollbackItem(s, o);
 							}
 						}
 					}
@@ -92,25 +85,77 @@ public class PipeItemsStripes extends Pipe <PipeTransportItems> {
 	public void eventHandler(PipeEventItem.DropItem event) {
 		Position p = new Position(container.xCoord, container.yCoord,
 				container.zCoord, event.direction);
-		Position from = new Position (p);
+		Position from = new Position(p);
 		p.moveForwards(1.0);
 
 		if (convertPipe(transport, event.item)) {
 			BuildCraftTransport.pipeItemsStripes.onItemUse(new ItemStack(
-					BuildCraftTransport.pipeItemsStripes), CoreProxy
-					.proxy.getBuildCraftPlayer(getWorld()), getWorld(), (int) p.x,
-					(int) p.y, (int) p.z, 1, 0, 0, 0);
+							BuildCraftTransport.pipeItemsStripes), CoreProxy
+							.proxy.getBuildCraftPlayer(getWorld()), getWorld(), (int) p.x,
+					(int) p.y, (int) p.z, 1, 0, 0, 0
+			);
+			return;
+		} else if (event.entity.getEntityItem().getItem() == Items.shears) {
+			Block block = getWorld().getBlock((int) p.x, (int) p.y, (int) p.z);
+			if (block instanceof BlockLeavesBase) {
+				getWorld().playSoundEffect((int) p.x, (int) p.y, (int) p.z, Block.soundTypeGrass.getBreakSound(), 1, 1);
+				getWorld().setBlockToAir((int) p.x, (int) p.y, (int) p.z);
+				event.entity.getEntityItem().damageItem(1, CoreProxy.proxy.getBuildCraftPlayer(getWorld()));
+				return;
+			}
+		} else if (event.entity.getEntityItem().getItem() == Items.arrow) {
+			event.entity.getEntityItem().stackSize--;
+
+			ForgeDirection direction = event.direction;
+			EntityArrow entityArrow = new EntityArrow(getWorld(), CoreProxy.proxy.getBuildCraftPlayer(getWorld()), 0);
+			entityArrow.setPosition(p.x + 0.5d, p.y + 0.5d, p.z + 0.5d);
+			entityArrow.setDamage(3);
+			entityArrow.setKnockbackStrength(1);
+			entityArrow.setVelocity(direction.offsetX * 1.8d + getWorld().rand.nextGaussian() * 0.007499999832361937D,
+					direction.offsetY * 1.8d + getWorld().rand.nextGaussian() * 0.007499999832361937D,
+					direction.offsetZ * 1.8d + getWorld().rand.nextGaussian() * 0.007499999832361937D);
+			getWorld().spawnEntityInWorld(entityArrow);
+			return;
 		} else if (getWorld().getBlock((int) p.x, (int) p.y, (int) p.z) == Blocks.air) {
+			if (event.entity.getEntityItem().getItem() instanceof ItemBucket) {
+				Block underblock = getWorld().getBlock((int) p.x, (int) p.y - 1, (int) p.z);
+				Item newBucket = Items.bucket;
+				if (underblock == Blocks.water) newBucket = Items.water_bucket;
+				if (underblock == Blocks.lava) newBucket = Items.lava_bucket;
+				boolean rollback = false;
+				if (((ItemBucket) event.entity.getEntityItem().getItem()).tryPlaceContainedLiquid(getWorld(),
+						(int) p.x, (int) p.y - 1, (int) p.z)) {
+					rollback = true;
+				} else if (newBucket != Items.bucket) {
+					getWorld().setBlockToAir((int) p.x, (int) p.y - 1, (int) p.z);
+					rollback = true;
+				}
+				if (rollback) {
+					event.entity.getEntityItem().stackSize = 0;
+					rollbackItem(newBucket, 1, event.direction);
+					return;
+				}
+			}
 			event.entity.getEntityItem().tryPlaceItemIntoWorld(
 					CoreProxy.proxy.getBuildCraftPlayer(getWorld()),
-					getWorld(), (int) p.x, (int) p.y - 1, (int) p.z, 1, 0.0f, 0.0f,
-					0.0f);
-		} else {
-			event.entity.getEntityItem().tryPlaceItemIntoWorld(
-					CoreProxy.proxy.getBuildCraftPlayer(getWorld()),
-					getWorld(), (int) p.x, (int) p.y, (int) p.z, 1, 0.0f, 0.0f,
-					0.0f);
+					getWorld(), (int) p.x, (int) p.y - 1, (int) p.z, 1, 0.0f, 0.0f, 0.0f);
+			return;
 		}
+		event.entity.getEntityItem().tryPlaceItemIntoWorld(
+				CoreProxy.proxy.getBuildCraftPlayer(getWorld()),
+				getWorld(), (int) p.x, (int) p.y, (int) p.z, 1, 0.0f, 0.0f, 0.0f);
+	}
+
+	private void rollbackItem(Item item, int quantity, ForgeDirection direction) {
+		rollbackItem(new ItemStack(item, quantity), direction);
+	}
+
+	private void rollbackItem(ItemStack itemStack, ForgeDirection direction) {
+		TravelingItem newItem = TravelingItem.make(
+				container.xCoord + 0.5,
+				container.yCoord + TransportUtils.getPipeFloorOf(itemStack),
+				container.zCoord + 0.5, itemStack);
+		transport.injectItem(newItem, direction.getOpposite());
 	}
 
 	@SuppressWarnings("unchecked")
@@ -141,7 +186,7 @@ public class PipeItemsStripes extends Pipe <PipeTransportItems> {
 
 	@Override
 	public int getIconIndex(ForgeDirection direction) {
-		return  PipeIconProvider.TYPE.Stripes.ordinal();
+		return PipeIconProvider.TYPE.Stripes.ordinal();
 	}
 
 	@Override
