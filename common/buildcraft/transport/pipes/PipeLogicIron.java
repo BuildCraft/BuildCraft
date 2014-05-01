@@ -12,6 +12,7 @@ import buildcraft.api.tools.IToolWrench;
 import buildcraft.core.TileBuffer;
 import buildcraft.transport.Pipe;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
@@ -58,8 +59,12 @@ public abstract class PipeLogicIron {
 			return true;
 
 		TileEntity tile = tileBuffer[side.ordinal()].getTile();
-		return isValidConnectingTile(tile);
+		return isValidOutputTile(tile);
 	}
+
+    protected boolean isValidOutputTile(TileEntity tile) {
+        return !(tile instanceof IInventory && ((IInventory) tile).getInventoryStackLimit() == 0) && isValidConnectingTile(tile);
+    }
 
 	protected abstract boolean isValidConnectingTile(TileEntity tile);
 
