@@ -18,16 +18,21 @@ public class SchematicIgnore extends SchematicBlock {
 
 	@Override
 	public void addRequirements(IBuilderContext context, LinkedList<ItemStack> requirements) {
-		requirements.add(new ItemStack(block, 0, 0));
-	}
 
-	@Override
-	public boolean isAlreadyBuilt(IBuilderContext context, int x, int y, int z) {
-		return true;
 	}
 
 	@Override
 	public void rotateLeft(IBuilderContext context) {
+
+	}
+
+	@Override
+	public void readFromWorld(IBuilderContext context, int x, int y, int z) {
+
+	}
+
+	@Override
+	public void writeToWorld(IBuilderContext context, int x, int y, int z, LinkedList <ItemStack> stacks) {
 
 	}
 
