@@ -29,9 +29,9 @@ import net.minecraft.world.World;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
 import buildcraft.api.core.ICoreProxy;
-import buildcraft.api.core.LaserKind;
 import buildcraft.core.EntityBlock;
 import buildcraft.core.ItemBlockBuildCraft;
+import buildcraft.core.LaserKind;
 
 import com.mojang.authlib.GameProfile;
 
