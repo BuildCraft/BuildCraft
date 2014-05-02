@@ -132,46 +132,46 @@ public class PipeItemsStripes extends Pipe<PipeTransportItems> {
 					direction.offsetY * 1.8d + getWorld().rand.nextGaussian() * 0.007499999832361937D,
 					direction.offsetZ * 1.8d + getWorld().rand.nextGaussian() * 0.007499999832361937D);
 			getWorld().spawnEntityInWorld(entityArrow);
-		} else if (stack.getItem() == Items.potionitem) {
-			if (ItemPotion.isSplash(stack.getItemDamage())) {
-				EntityPlayer player = CoreProxy.proxy.getBuildCraftPlayer(getWorld(),
+		} else if ((stack.getItem() == Items.potionitem && ItemPotion.isSplash(stack.getItemDamage()))
+				   || stack.getItem() == Items.egg
+				   || stack.getItem() == Items.snowball) {
+			EntityPlayer player = CoreProxy.proxy.getBuildCraftPlayer(getWorld(),
 						(int) p.x, (int) p.y, (int) p.z);
 
-				switch (event.direction) {
-				case DOWN:
-					player.rotationPitch = 90;
-					player.rotationYaw = 0;
-					break;
-				case UP:
-					player.rotationPitch = 270;
-					player.rotationYaw = 0;
-					break;
-				case NORTH:
-					player.rotationPitch = 0;
-					player.rotationYaw = 180;
-					break;
-				case SOUTH:
-					player.rotationPitch = 0;
-					player.rotationYaw = 0;
-					break;
-				case WEST:
-					player.rotationPitch = 0;
-					player.rotationYaw = 90;
-					break;
-				case EAST:
-					player.rotationPitch = 0;
-					player.rotationYaw = 270;
-					break;
-				case UNKNOWN:
-					break;
-				}
-
-				stack.getItem().onItemRightClick(
-						stack,
-						getWorld(),
-						CoreProxy.proxy.getBuildCraftPlayer(getWorld(),
-								(int) p.x, (int) p.y, (int) p.z));
+			switch (event.direction) {
+			case DOWN:
+				player.rotationPitch = 90;
+				player.rotationYaw = 0;
+				break;
+			case UP:
+				player.rotationPitch = 270;
+				player.rotationYaw = 0;
+				break;
+			case NORTH:
+				player.rotationPitch = 0;
+				player.rotationYaw = 180;
+				break;
+			case SOUTH:
+				player.rotationPitch = 0;
+				player.rotationYaw = 0;
+				break;
+			case WEST:
+				player.rotationPitch = 0;
+				player.rotationYaw = 90;
+				break;
+			case EAST:
+				player.rotationPitch = 0;
+				player.rotationYaw = 270;
+				break;
+			case UNKNOWN:
+				break;
 			}
+
+			stack.getItem().onItemRightClick(
+					stack,
+					getWorld(),
+					CoreProxy.proxy.getBuildCraftPlayer(getWorld(),
+							(int) p.x, (int) p.y, (int) p.z));
 		} else if (getWorld().getBlock((int) p.x, (int) p.y, (int) p.z) == Blocks.air) {
 			if (stack.getItem() instanceof ItemBucket) {
 				Block underblock = getWorld().getBlock((int) p.x, (int) p.y - 1, (int) p.z);
