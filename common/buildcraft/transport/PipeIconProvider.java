@@ -20,6 +20,7 @@ public class PipeIconProvider implements IIconProvider {
 	public enum TYPE {
 
 		PipeStructureCobblestone("pipeStructureCobblestone"),
+        PipeStructureStriped("pipeStructureStriped"),
 		//
 		PipeItemsCobbleStone("pipeItemsCobblestone"),
 		//

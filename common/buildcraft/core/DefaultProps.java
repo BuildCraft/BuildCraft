@@ -94,6 +94,7 @@ public class DefaultProps {
 	public static int PIPE_ITEMS_SANDSTONE_ID = 19222;
 	public static int PIPE_LIQUIDS_SANDSTONE_ID = 19223;
 	public static int PIPE_STRUCTURE_COBBLESTONE_ID = 19224;
+    public static int PIPE_STRUCTURE_STRIPED_ID = 19225;
 
 	public static int ROBOT_BASE_ITEM_ID = 19300;
 	public static int ROBOT_BUILDER_ITEM_ID = 19301;

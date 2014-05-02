@@ -61,39 +61,8 @@ import buildcraft.transport.gates.GateExpansionRedstoneFader;
 import buildcraft.transport.gates.GateExpansionTimer;
 import buildcraft.transport.gates.ItemGate;
 import buildcraft.transport.network.PacketHandlerTransport;
-import buildcraft.transport.pipes.PipeFluidsCobblestone;
-import buildcraft.transport.pipes.PipeFluidsEmerald;
-import buildcraft.transport.pipes.PipeFluidsGold;
-import buildcraft.transport.pipes.PipeFluidsIron;
-import buildcraft.transport.pipes.PipeFluidsSandstone;
-import buildcraft.transport.pipes.PipeFluidsStone;
-import buildcraft.transport.pipes.PipeFluidsVoid;
-import buildcraft.transport.pipes.PipeFluidsWood;
-import buildcraft.transport.pipes.PipeItemsCobblestone;
-import buildcraft.transport.pipes.PipeItemsDaizuli;
-import buildcraft.transport.pipes.PipeItemsDiamond;
-import buildcraft.transport.pipes.PipeItemsEmerald;
-import buildcraft.transport.pipes.PipeItemsEmzuli;
-import buildcraft.transport.pipes.PipeItemsGold;
-import buildcraft.transport.pipes.PipeItemsIron;
-import buildcraft.transport.pipes.PipeItemsLapis;
-import buildcraft.transport.pipes.PipeItemsObsidian;
-import buildcraft.transport.pipes.PipeItemsQuartz;
-import buildcraft.transport.pipes.PipeItemsSandstone;
-import buildcraft.transport.pipes.PipeItemsStone;
-import buildcraft.transport.pipes.PipeItemsStripes;
-import buildcraft.transport.pipes.PipeItemsVoid;
-import buildcraft.transport.pipes.PipeItemsWood;
-import buildcraft.transport.pipes.PipePowerCobblestone;
-import buildcraft.transport.pipes.PipePowerDiamond;
-import buildcraft.transport.pipes.PipePowerGold;
-import buildcraft.transport.pipes.PipePowerHeat;
-import buildcraft.transport.pipes.PipePowerIron;
+import buildcraft.transport.pipes.*;
 import buildcraft.transport.pipes.PipePowerIron.PowerMode;
-import buildcraft.transport.pipes.PipePowerQuartz;
-import buildcraft.transport.pipes.PipePowerStone;
-import buildcraft.transport.pipes.PipePowerWood;
-import buildcraft.transport.pipes.PipeStructureCobblestone;
 import buildcraft.transport.triggers.ActionEnergyPulsar;
 import buildcraft.transport.triggers.ActionExtractionPreset;
 import buildcraft.transport.triggers.ActionPipeColor;
@@ -160,6 +129,9 @@ public class BuildCraftTransport extends BuildCraftMod {
 	public static Item robotStationItem;
 	public static BlockFilteredBuffer filteredBufferBlock;
 	public static Item pipeStructureCobblestone;
+
+    public static Item pipeStructureStriped;
+
 	public static int groupItemsTrigger;
 	public static String[] facadeBlacklist;
 
@@ -220,7 +192,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 
 			int meta = world.getBlockMetadata(i, j, k);
 
-			// TODO: the exculded list is not taken into account. This probably
+			// TODO: the excluded list is not taken into account. This probably
 			// needs to be migrated to an implementation based on names instead
 			// of ids, low priority for now.
 			/*for (String excluded : excludedBlocks) {
@@ -354,6 +326,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 			}
 
 			pipeStructureCobblestone = buildPipe(DefaultProps.PIPE_STRUCTURE_COBBLESTONE_ID, PipeStructureCobblestone.class, "Cobblestone Structure Pipe", CreativeTabBuildCraft.TIER_1, Blocks.gravel, pipeItemsCobblestone);
+            pipeStructureStriped = buildPipe(DefaultProps.PIPE_STRUCTURE_STRIPED_ID, PipeStructureStriped.class, "Striped Structure Pipe", CreativeTabBuildCraft.TIER_1, new ItemStack(Items.dye, 1, 11), pipeStructureCobblestone, new ItemStack(Items.dye, 1, 0));
 
 			// Fix the recipe
 			// pipeItemsStipes = createPipe(DefaultProps.PIPE_ITEMS_STRIPES_ID, PipeItemsStripes.class, "Stripes Transport Pipe", new ItemStack(Item.dyePowder,

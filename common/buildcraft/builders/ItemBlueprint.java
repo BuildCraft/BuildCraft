@@ -25,7 +25,6 @@ public abstract class ItemBlueprint extends ItemBuildCraft {
 
 	public ItemBlueprint() {
 		super(CreativeTabBuildCraft.TIER_3);
-		setMaxStackSize(1);
 	}
 
 	@Override

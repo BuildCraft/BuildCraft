@@ -42,8 +42,7 @@ public class BlockQuarry extends BlockBuildCraft {
 
 		setHardness(10F);
 		setResistance(10F);
-		// TODO: set proper sound
-		//setStepSound(soundAnvilFootstep);
+		setStepSound(soundTypeAnvil);
 	}
 
 	@Override
