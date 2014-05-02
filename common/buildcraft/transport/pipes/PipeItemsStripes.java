@@ -8,27 +8,34 @@
  */
 package buildcraft.transport.pipes;
 
-import buildcraft.BuildCraftTransport;
-import buildcraft.api.core.IIconProvider;
-import buildcraft.api.core.Position;
-import buildcraft.api.mj.MjBattery;
-import buildcraft.core.proxy.CoreProxy;
-import buildcraft.core.utils.BlockUtil;
-import buildcraft.transport.*;
-import buildcraft.transport.pipes.events.PipeEventItem;
-import buildcraft.transport.utils.TransportUtils;
+import java.util.ArrayList;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLeavesBase;
 import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemBucket;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
-
-import java.util.ArrayList;
+import buildcraft.BuildCraftTransport;
+import buildcraft.api.core.IIconProvider;
+import buildcraft.api.core.Position;
+import buildcraft.api.mj.MjBattery;
+import buildcraft.core.proxy.CoreProxy;
+import buildcraft.core.utils.BlockUtil;
+import buildcraft.transport.BlockGenericPipe;
+import buildcraft.transport.ItemPipe;
+import buildcraft.transport.Pipe;
+import buildcraft.transport.PipeIconProvider;
+import buildcraft.transport.PipeTransportItems;
+import buildcraft.transport.TileGenericPipe;
+import buildcraft.transport.TravelingItem;
+import buildcraft.transport.pipes.events.PipeEventItem;
+import buildcraft.transport.utils.TransportUtils;
 
 public class PipeItemsStripes extends Pipe<PipeTransportItems> {
 
@@ -94,14 +101,20 @@ public class PipeItemsStripes extends Pipe<PipeTransportItems> {
 							.proxy.getBuildCraftPlayer(getWorld()), getWorld(), (int) p.x,
 					(int) p.y, (int) p.z, 1, 0, 0, 0
 			);
-			return;
+		} else if (event.entity.getEntityItem().getItem() instanceof ItemBlock) {
+			if (getWorld().getBlock((int) p.x, (int) p.y, (int) p.z) == Blocks.air) {
+				event.entity.getEntityItem().tryPlaceItemIntoWorld(
+					CoreProxy.proxy.getBuildCraftPlayer(getWorld()),
+					getWorld(), (int) p.x, (int) p.y, (int) p.z, 1, 0.0f, 0.0f,
+					0.0f);
+			}
 		} else if (event.entity.getEntityItem().getItem() == Items.shears) {
 			Block block = getWorld().getBlock((int) p.x, (int) p.y, (int) p.z);
+
 			if (block instanceof BlockLeavesBase) {
 				getWorld().playSoundEffect((int) p.x, (int) p.y, (int) p.z, Block.soundTypeGrass.getBreakSound(), 1, 1);
 				getWorld().setBlockToAir((int) p.x, (int) p.y, (int) p.z);
 				event.entity.getEntityItem().damageItem(1, CoreProxy.proxy.getBuildCraftPlayer(getWorld()));
-				return;
 			}
 		} else if (event.entity.getEntityItem().getItem() == Items.arrow) {
 			event.entity.getEntityItem().stackSize--;
@@ -115,14 +128,21 @@ public class PipeItemsStripes extends Pipe<PipeTransportItems> {
 					direction.offsetY * 1.8d + getWorld().rand.nextGaussian() * 0.007499999832361937D,
 					direction.offsetZ * 1.8d + getWorld().rand.nextGaussian() * 0.007499999832361937D);
 			getWorld().spawnEntityInWorld(entityArrow);
-			return;
 		} else if (getWorld().getBlock((int) p.x, (int) p.y, (int) p.z) == Blocks.air) {
 			if (event.entity.getEntityItem().getItem() instanceof ItemBucket) {
 				Block underblock = getWorld().getBlock((int) p.x, (int) p.y - 1, (int) p.z);
 				Item newBucket = Items.bucket;
-				if (underblock == Blocks.water) newBucket = Items.water_bucket;
-				if (underblock == Blocks.lava) newBucket = Items.lava_bucket;
+
+				if (underblock == Blocks.water) {
+					newBucket = Items.water_bucket;
+				}
+
+				if (underblock == Blocks.lava) {
+					newBucket = Items.lava_bucket;
+				}
+
 				boolean rollback = false;
+
 				if (((ItemBucket) event.entity.getEntityItem().getItem()).tryPlaceContainedLiquid(getWorld(),
 						(int) p.x, (int) p.y - 1, (int) p.z)) {
 					rollback = true;
@@ -130,20 +150,22 @@ public class PipeItemsStripes extends Pipe<PipeTransportItems> {
 					getWorld().setBlockToAir((int) p.x, (int) p.y - 1, (int) p.z);
 					rollback = true;
 				}
+
 				if (rollback) {
 					event.entity.getEntityItem().stackSize = 0;
 					rollbackItem(newBucket, 1, event.direction);
-					return;
 				}
-			}
-			event.entity.getEntityItem().tryPlaceItemIntoWorld(
+			} else {
+				event.entity.getEntityItem().tryPlaceItemIntoWorld(
 					CoreProxy.proxy.getBuildCraftPlayer(getWorld()),
 					getWorld(), (int) p.x, (int) p.y - 1, (int) p.z, 1, 0.0f, 0.0f, 0.0f);
-			return;
+			}
+		} else {
+			event.entity.getEntityItem().tryPlaceItemIntoWorld(
+					CoreProxy.proxy.getBuildCraftPlayer(getWorld()),
+					getWorld(), (int) p.x, (int) p.y, (int) p.z, 1, 0.0f, 0.0f,
+					0.0f);
 		}
-		event.entity.getEntityItem().tryPlaceItemIntoWorld(
-				CoreProxy.proxy.getBuildCraftPlayer(getWorld()),
-				getWorld(), (int) p.x, (int) p.y, (int) p.z, 1, 0.0f, 0.0f, 0.0f);
 	}
 
 	private void rollbackItem(Item item, int quantity, ForgeDirection direction) {
