@@ -14,6 +14,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.api.blueprints.SchematicBlockBase;
+import buildcraft.api.blueprints.SchematicRegistry;
 import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.core.IInvSlot;
 import buildcraft.builders.TileAbstractBuilder;
@@ -170,8 +171,8 @@ public class BptBuilderTemplate extends BptBuilderBase {
 					iterator.remove();
 					builtLocations.add(new BlockIndex(slot.x, slot.y, slot.z));
 				} else {
-					if (builder.energyAvailable() > TileAbstractBuilder.BUILD_ENERGY && firstSlotToConsume != null) {
-						builder.consumeEnergy(TileAbstractBuilder.BUILD_ENERGY);
+					if (builder.energyAvailable() > SchematicRegistry.BUILD_ENERGY && firstSlotToConsume != null) {
+						builder.consumeEnergy(SchematicRegistry.BUILD_ENERGY);
 
 						slot.addStackConsumed(firstSlotToConsume
 								.decreaseStackInSlot());

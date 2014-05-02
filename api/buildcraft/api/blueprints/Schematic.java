@@ -269,4 +269,18 @@ public abstract class Schematic {
 	public BuildingPermission getBuildingPermission () {
 		return BuildingPermission.ALL;
 	}
+
+	/**
+	 * Returns the amount of energy required to build this slot, depends on the
+	 * stacks selected for the build.
+	 */
+	public double getEnergyRequirement(LinkedList<ItemStack> stacksUsed) {
+		double result = 0;
+
+		for (ItemStack s : stacksUsed) {
+			result += s.stackSize * SchematicRegistry.BUILD_ENERGY;
+		}
+
+		return result;
+	}
 }

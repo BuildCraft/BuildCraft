@@ -78,4 +78,9 @@ public class BuildingSlotEntity extends BuildingSlot {
 		schematic = (SchematicEntity) SchematicFactory
 				.createSchematicFromWorldNBT(nbt.getCompoundTag("schematic"), registry);
 	}
+
+	@Override
+	public double getEnergyRequirement() {
+		return schematic.getEnergyRequirement(stackConsumed);
+	}
 }

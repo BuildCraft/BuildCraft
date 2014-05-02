@@ -20,6 +20,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import buildcraft.BuildCraftBuilders;
 import buildcraft.api.blueprints.IBuilderContext;
+import buildcraft.api.blueprints.SchematicRegistry;
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.core.Position;
 import buildcraft.builders.BuildingItem;
@@ -149,10 +150,10 @@ public abstract class BptBuilderBase implements IAreaProvider {
 				.getBlockHardness(context.world(), slot.x, slot.y,
 						slot.z)+1;
 
-		if (builder.energyAvailable() < hardness * TileAbstractBuilder.BREAK_ENERGY) {
+		if (builder.energyAvailable() < hardness * SchematicRegistry.BREAK_ENERGY) {
 			return false;
 		} else {
-			builder.consumeEnergy(hardness * TileAbstractBuilder.BREAK_ENERGY);
+			builder.consumeEnergy(hardness * SchematicRegistry.BREAK_ENERGY);
 
 			for (int i = 0; i < hardness; ++i) {
 				slot.addStackConsumed(new ItemStack(BuildCraftBuilders.buildToolBlock));

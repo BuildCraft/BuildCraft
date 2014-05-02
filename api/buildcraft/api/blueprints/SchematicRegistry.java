@@ -22,6 +22,9 @@ import buildcraft.api.core.JavaTools;
 
 public class SchematicRegistry {
 
+	public static double BREAK_ENERGY = 10;
+	public static final double BUILD_ENERGY = 20;
+
 	private static class SchematicConstructor {
 		Class <? extends SchematicEntity> clas;
 		Object [] params;

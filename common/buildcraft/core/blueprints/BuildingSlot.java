@@ -58,4 +58,6 @@ public abstract class BuildingSlot {
 	public abstract void writeToNBT (NBTTagCompound nbt, MappingRegistry registry);
 
 	public abstract void readFromNBT (NBTTagCompound nbt, MappingRegistry registry);
+
+	public abstract double getEnergyRequirement();
 }

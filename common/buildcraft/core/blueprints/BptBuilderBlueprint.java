@@ -314,15 +314,12 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 	}
 
 	public boolean checkRequirements(TileAbstractBuilder builder, Schematic slot) {
-		double energyRequired = 0;
-
 		LinkedList<ItemStack> tmpReq = new LinkedList<ItemStack>();
 
 		try {
 			for (ItemStack stk : slot.getRequirements(context)) {
 				if (stk != null) {
 					tmpReq.add(stk.copy());
-					energyRequired += stk.stackSize * TileAbstractBuilder.BUILD_ENERGY;
 				}
 			}
 		} catch (Throwable t) {
@@ -331,25 +328,31 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 			BCLog.logger.throwing("BptBuilderBlueprint", "checkRequirements", t);
 		}
 
-		if (builder.energyAvailable() < energyRequired) {
-			return false;
-		}
+		LinkedList <ItemStack> stacksUsed = new LinkedList<ItemStack>();
 
 		if (context.world().getWorldInfo().getGameType() == GameType.CREATIVE) {
-			return true;
+			for (ItemStack s : tmpReq) {
+				stacksUsed.add(s);
+			}
+
+			if (builder.energyAvailable() < slot.getEnergyRequirement (stacksUsed)) {
+				return false;
+			} else {
+				return true;
+			}
 		}
 
 		for (ItemStack reqStk : tmpReq) {
 			for (IInvSlot slotInv : InventoryIterator.getIterable(new InventoryCopy(builder), ForgeDirection.UNKNOWN)) {
 				if (!builder.isBuildingMaterialSlot(slotInv.getIndex())) {
-
+					continue;
 				}
 
 				ItemStack invStk = slotInv.getStackInSlot();
 
 				if (invStk != null && invStk.stackSize > 0 && StackHelper.isCraftingEquivalent(reqStk, invStk, true)) {
 					try {
-						slot.useItem(context, reqStk, slotInv);
+						stacksUsed.add(slot.useItem(context, reqStk, slotInv));
 					} catch (Throwable t) {
 						// Defensive code against errors in implementers
 						t.printStackTrace();
@@ -367,19 +370,20 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 			}
 		}
 
-		return true;
+		if (builder.energyAvailable() < slot.getEnergyRequirement (stacksUsed)) {
+			return false;
+		} else {
+			return true;
+		}
 	}
 
 	public void useRequirements(TileAbstractBuilder builder, BuildingSlot slot) {
 		LinkedList<ItemStack> tmpReq = new LinkedList<ItemStack>();
 
-		double energyRequired = 0;
-
 		try {
 			for (ItemStack stk : slot.getRequirements(context)) {
 				if (stk != null) {
 					tmpReq.add(stk.copy());
-					energyRequired += stk.stackSize * TileAbstractBuilder.BUILD_ENERGY;
 				}
 			}
 		} catch (Throwable t) {
@@ -389,12 +393,12 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 
 		}
 
-		builder.consumeEnergy(energyRequired);
-
 		if (context.world ().getWorldInfo().getGameType() == GameType.CREATIVE) {
-			for (ItemStack s : slot.getRequirements(context)) {
+			for (ItemStack s : tmpReq) {
 				slot.addStackConsumed(s);
 			}
+
+			builder.consumeEnergy(slot.getEnergyRequirement());
 
 			return;
 		}
@@ -408,7 +412,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 
 			for (IInvSlot slotInv : InventoryIterator.getIterable(builder, ForgeDirection.UNKNOWN)) {
 				if (!builder.isBuildingMaterialSlot(slotInv.getIndex())) {
-
+					continue;
 				}
 
 				ItemStack invStk = slotInv.getStackInSlot();
@@ -437,6 +441,8 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 				itr.set(usedStack); // set to the actual item used.
 			}
 		}
+
+		builder.consumeEnergy(slot.getEnergyRequirement ());
 
 		return;
 	}

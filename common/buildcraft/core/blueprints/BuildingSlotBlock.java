@@ -161,4 +161,9 @@ public class BuildingSlotBlock extends BuildingSlot {
 			return getSchematic ().getStacksToDisplay (stackConsumed);
 		}
 	}
+
+	@Override
+	public double getEnergyRequirement() {
+		return schematic.getEnergyRequirement(stackConsumed);
+	}
 }
