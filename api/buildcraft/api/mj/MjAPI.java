@@ -81,6 +81,19 @@ public class MjAPI {
 			return 0;
 		}
 
+		public double getEnergyStored() {
+			try {
+				return f.field.getDouble(o);
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+				return 0;
+			}
+		}
+
+		public double maxCapacity() {
+			return f.battery.maxCapacity();
+		}
+
 		public double minimumConsumption() {
 			return f.battery.minimumConsumption();
 		}
