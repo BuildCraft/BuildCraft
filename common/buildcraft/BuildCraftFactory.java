@@ -8,8 +8,27 @@
  */
 package buildcraft;
 
-import java.util.List;
-
+import buildcraft.api.blueprints.SchematicRegistry;
+import buildcraft.builders.schematics.SchematicIgnoreMeta;
+import buildcraft.core.DefaultProps;
+import buildcraft.core.InterModComms;
+import buildcraft.core.Version;
+import buildcraft.core.proxy.CoreProxy;
+import buildcraft.core.utils.ConfigUtils;
+import buildcraft.factory.*;
+import buildcraft.factory.network.PacketHandlerFactory;
+import com.google.common.collect.Lists;
+import cpw.mods.fml.common.Mod;
+import cpw.mods.fml.common.Mod.EventHandler;
+import cpw.mods.fml.common.Mod.Instance;
+import cpw.mods.fml.common.event.FMLInitializationEvent;
+import cpw.mods.fml.common.event.FMLInterModComms;
+import cpw.mods.fml.common.event.FMLPostInitializationEvent;
+import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.common.network.NetworkRegistry;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.init.Blocks;
@@ -22,50 +41,8 @@ import net.minecraftforge.common.ForgeChunkManager.Ticket;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
-import buildcraft.api.blueprints.SchematicRegistry;
-import buildcraft.builders.schematics.SchematicIgnoreMeta;
-import buildcraft.core.DefaultProps;
-import buildcraft.core.InterModComms;
-import buildcraft.core.Version;
-import buildcraft.core.proxy.CoreProxy;
-import buildcraft.core.utils.ConfigUtils;
-import buildcraft.factory.BlockAutoWorkbench;
-import buildcraft.factory.BlockFloodGate;
-import buildcraft.factory.BlockFrame;
-import buildcraft.factory.BlockHopper;
-import buildcraft.factory.BlockMiningWell;
-import buildcraft.factory.BlockPlainPipe;
-import buildcraft.factory.BlockPump;
-import buildcraft.factory.BlockQuarry;
-import buildcraft.factory.BlockRefinery;
-import buildcraft.factory.BlockTank;
-import buildcraft.factory.FactoryProxy;
-import buildcraft.factory.FactoryProxyClient;
-import buildcraft.factory.GuiHandler;
-import buildcraft.factory.PumpDimensionList;
-import buildcraft.factory.SchematicRefinery;
-import buildcraft.factory.SchematicTank;
-import buildcraft.factory.TileAutoWorkbench;
-import buildcraft.factory.TileFloodGate;
-import buildcraft.factory.TileHopper;
-import buildcraft.factory.TileMiningWell;
-import buildcraft.factory.TilePump;
-import buildcraft.factory.TileQuarry;
-import buildcraft.factory.TileRefinery;
-import buildcraft.factory.TileTank;
-import buildcraft.factory.network.PacketHandlerFactory;
 
-import com.google.common.collect.Lists;
-
-import cpw.mods.fml.common.Mod;
-import cpw.mods.fml.common.event.FMLInitializationEvent;
-import cpw.mods.fml.common.event.FMLInterModComms;
-import cpw.mods.fml.common.event.FMLPostInitializationEvent;
-import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.common.network.NetworkRegistry;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import java.util.List;
 
 @Mod(name = "BuildCraft Factory", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Factory", dependencies = DefaultProps.DEPENDENCY_CORE)
 public class BuildCraftFactory extends BuildCraftMod {
@@ -81,15 +58,18 @@ public class BuildCraftFactory extends BuildCraftMod {
 	public static BlockTank tankBlock;
 	public static BlockRefinery refineryBlock;
 	public static BlockHopper hopperBlock;
+	public static BlockRefineryController refineryController;
+	public static BlockRefineryComponent refineryComponent;
+	public static BlockTowerRegulator towerRegulator;
 	public static boolean allowMining = true;
 	public static boolean quarryOneTimeUse = false;
 	public static float miningMultiplier = 1;
 	public static int miningDepth = 256;
 	public static PumpDimensionList pumpDimensionList;
-	@Mod.Instance("BuildCraft|Factory")
+	@Instance("BuildCraft|Factory")
 	public static BuildCraftFactory instance;
 
-	@Mod.EventHandler
+	@EventHandler
 	public void postInit(FMLPostInitializationEvent evt) {
 		FactoryProxy.proxy.initializeNEIIntegration();
 		ForgeChunkManager.setForcedChunkLoadingCallback(instance, new QuarryChunkloadCallback());
@@ -126,7 +106,7 @@ public class BuildCraftFactory extends BuildCraftMod {
 		}
 	}
 
-	@Mod.EventHandler
+	@EventHandler
 	public void load(FMLInitializationEvent evt) {
 		SchematicRegistry.declareBlueprintSupport("BuildCraft|Factory");
 
@@ -142,19 +122,25 @@ public class BuildCraftFactory extends BuildCraftMod {
 		CoreProxy.proxy.registerTileEntity(TileTank.class, "net.minecraft.src.buildcraft.factory.TileTank");
 		CoreProxy.proxy.registerTileEntity(TileRefinery.class, "net.minecraft.src.buildcraft.factory.Refinery");
 		CoreProxy.proxy.registerTileEntity(TileHopper.class, "net.minecraft.src.buildcraft.factory.TileHopper");
+		CoreProxy.proxy.registerTileEntity(TileRefineryController.class, "RefineryController");
+		CoreProxy.proxy.registerTileEntity(TileTowerRegulator.class, "TowerRegulator");
+		CoreProxy.proxy.registerTileEntity(TileMultiblockSlave.class, "MultiblockSlave");
+		CoreProxy.proxy.registerTileEntity(TileMultiblockValve.class, "MultiblockValve");
 
 		FactoryProxy.proxy.initializeTileEntities();
 
 		SchematicRegistry.registerSchematicBlock(refineryBlock, SchematicRefinery.class);
 		SchematicRegistry.registerSchematicBlock(tankBlock, SchematicTank.class);
 		SchematicRegistry.registerSchematicBlock(frameBlock, SchematicIgnoreMeta.class);
+		SchematicRegistry.registerSchematicBlock(refineryController, SchematicRefineryController.class);
+		SchematicRegistry.registerSchematicBlock(towerRegulator, SchematicMultiBlock.class);
 
 		if (BuildCraftCore.loadDefaultRecipes) {
 			loadRecipes();
 		}
 	}
 
-	@Mod.EventHandler
+	@EventHandler
 	public void initialize(FMLPreInitializationEvent evt) {
 		channels = NetworkRegistry.INSTANCE.newChannel
 				(DefaultProps.NET_CHANNEL_NAME + "-FACTORY", new PacketHandlerFactory());
@@ -208,7 +194,16 @@ public class BuildCraftFactory extends BuildCraftMod {
 		hopperBlock = new BlockHopper();
 		CoreProxy.proxy.registerBlock(hopperBlock.setBlockName("blockHopper"));
 
+		refineryController = new BlockRefineryController();
+		CoreProxy.proxy.registerBlock(refineryController.setBlockName("refineryController"));
 
+		refineryComponent = new BlockRefineryComponent();
+		CoreProxy.proxy.registerBlock(refineryComponent.setBlockName("refineryComponent"), ItemRefineryComponent.class);
+
+		towerRegulator = new BlockTowerRegulator();
+		CoreProxy.proxy.registerBlock(towerRegulator.setBlockName("towerRegulator"));
+
+		FactoryProxy.proxy.initializeBlockRenders();
 		FactoryProxy.proxy.initializeEntityRenders();
 		if (BuildCraftCore.mainConfiguration.hasChanged()) {
 			BuildCraftCore.mainConfiguration.save();
@@ -316,10 +311,10 @@ public class BuildCraftFactory extends BuildCraftMod {
 		}
 	}
 
-	@Mod.EventHandler
-    public void processIMCRequests(FMLInterModComms.IMCEvent event) {
-        InterModComms.processIMC(event);
-    }
+	@EventHandler
+	public void processIMCRequests(FMLInterModComms.IMCEvent event) {
+		InterModComms.processIMC(event);
+	}
 
 	@SubscribeEvent
 	@SideOnly(Side.CLIENT)

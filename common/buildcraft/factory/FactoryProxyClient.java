@@ -8,10 +8,6 @@
  */
 package buildcraft.factory;
 
-import java.lang.reflect.Method;
-
-import net.minecraft.util.IIcon;
-import net.minecraft.world.World;
 import buildcraft.BuildCraftFactory;
 import buildcraft.api.core.BCLog;
 import buildcraft.builders.RenderBuilder;
@@ -20,11 +16,13 @@ import buildcraft.core.render.RenderVoid;
 import buildcraft.core.render.RenderingEntityBlocks;
 import buildcraft.core.render.RenderingEntityBlocks.EntityRenderIndex;
 import buildcraft.factory.gui.GuiAutoCrafting;
-import buildcraft.factory.render.RenderHopper;
-import buildcraft.factory.render.RenderRefinery;
-import buildcraft.factory.render.RenderTank;
+import buildcraft.factory.render.*;
 import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.client.registry.RenderingRegistry;
+import net.minecraft.util.IIcon;
+import net.minecraft.world.World;
+
+import java.lang.reflect.Method;
 
 public class FactoryProxyClient extends FactoryProxy {
 
@@ -51,6 +49,13 @@ public class FactoryProxyClient extends FactoryProxy {
 		}
 
 		ClientRegistry.bindTileEntitySpecialRenderer(TileQuarry.class, new RenderBuilder());
+		ClientRegistry.bindTileEntitySpecialRenderer(TileRefineryController.class, new RenderBoiler());
+		ClientRegistry.bindTileEntitySpecialRenderer(TileTowerRegulator.class, new RenderTower());
+	}
+
+	@Override
+	public void initializeBlockRenders() {
+		RenderingRegistry.registerBlockHandler(new RenderMultiblockSlave());
 	}
 
 	@Override

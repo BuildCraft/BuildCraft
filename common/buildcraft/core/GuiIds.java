@@ -22,6 +22,7 @@ public class GuiIds {
 	public static final int AUTO_CRAFTING_TABLE = 30;
 	public static final int REFINERY = 31;
 	public static final int HOPPER = 32;
+	public static final int REFINERY_CONTROLLER = 33;
 
 	public static final int ASSEMBLY_TABLE = 40;
 
