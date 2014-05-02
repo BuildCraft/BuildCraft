@@ -29,7 +29,7 @@ import com.google.common.collect.MapMaker;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 
-public final class TravelingItem {
+public class TravelingItem {
 
 	public static final TravelingItemCache serverCache = new TravelingItemCache();
 	public static final TravelingItemCache clientCache = new TravelingItemCache();
