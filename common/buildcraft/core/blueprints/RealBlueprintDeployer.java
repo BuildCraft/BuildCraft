@@ -27,6 +27,23 @@ public class RealBlueprintDeployer extends BlueprintDeployer {
 		bpt.id = new BlueprintId();
 		bpt.id.kind = Kind.Blueprint;
 
+		BptContext context = bpt.getContext(world, bpt.getBoxForPos(x, y, z));
+
+		if (bpt.rotate) {
+			if (dir == ForgeDirection.EAST) {
+				// Do nothing
+			} else if (dir == ForgeDirection.SOUTH) {
+				bpt.rotateLeft(context);
+			} else if (dir == ForgeDirection.WEST) {
+				bpt.rotateLeft(context);
+				bpt.rotateLeft(context);
+			} else if (dir == ForgeDirection.NORTH) {
+				bpt.rotateLeft(context);
+				bpt.rotateLeft(context);
+				bpt.rotateLeft(context);
+			}
+		}
+
 		new BptBuilderBlueprint(bpt, world, x, y, z).deploy ();
 	}
 
