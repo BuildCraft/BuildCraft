@@ -14,6 +14,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
 
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
@@ -366,7 +367,14 @@ public class PipeTransportItems extends PipeTransport {
 			return;
 		}
 
-		container.getWorldObj().spawnEntityInWorld(event.entity);
+		final EntityItem entity = event.entity;
+		ForgeDirection direction = item.input;
+		entity.setPosition(entity.posX + direction.offsetX * 0.5d,
+				entity.posY + direction.offsetY * 0.5d,
+				entity.posZ + direction.offsetZ * 0.5d);
+		entity.setVelocity(direction.offsetX * 0.5d, direction.offsetY * 0.5d, direction.offsetZ * 0.5d);
+
+		container.getWorldObj().spawnEntityInWorld(entity);
 	}
 
 	protected boolean middleReached(TravelingItem item) {
