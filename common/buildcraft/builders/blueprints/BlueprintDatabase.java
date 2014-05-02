@@ -156,8 +156,16 @@ public class BlueprintDatabase {
 			return null;
 		}
 
-		File blueprintFile = getBlueprintFile(id);
+		BlueprintBase bpt = load (getBlueprintFile(id));
 
+		if (bpt != null) {
+			bpt.id = id;
+		}
+
+		return bpt;
+	}
+
+	public static BlueprintBase load (File blueprintFile) {
 		if (blueprintFile.exists()) {
 			try {
 				FileInputStream f = new FileInputStream(blueprintFile);
@@ -169,7 +177,6 @@ public class BlueprintDatabase {
 
 				BlueprintBase blueprint = BlueprintBase.loadBluePrint(nbt);
 				blueprint.setData(data);
-				blueprint.id = id;
 
 				return blueprint;
 			} catch (FileNotFoundException e) {

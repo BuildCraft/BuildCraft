@@ -24,6 +24,7 @@ import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
+import buildcraft.api.blueprints.BlueprintDeployer;
 import buildcraft.api.blueprints.SchematicBlock;
 import buildcraft.api.blueprints.SchematicEntity;
 import buildcraft.api.blueprints.SchematicFactory;
@@ -105,6 +106,7 @@ import buildcraft.builders.urbanism.UrbanistToolsIconProvider;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.InterModComms;
 import buildcraft.core.Version;
+import buildcraft.core.blueprints.RealBlueprintDeployer;
 import buildcraft.core.proxy.CoreProxy;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
@@ -311,6 +313,8 @@ public class BuildCraftBuilders extends BuildCraftMod {
 		SchematicFactory.registerSchematicFactory(SchematicBlock.class, new SchematicFactoryBlock());
 		SchematicFactory.registerSchematicFactory(SchematicMask.class, new SchematicFactoryMask());
 		SchematicFactory.registerSchematicFactory(SchematicEntity.class, new SchematicFactoryEntity());
+
+		BlueprintDeployer.instance = new RealBlueprintDeployer();
 
 		if (BuildCraftCore.loadDefaultRecipes) {
 			loadRecipes();

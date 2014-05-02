@@ -179,6 +179,58 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 		recomputeNeededItems();
 	}
 
+	public void deploy () {
+		for (BuildingSlotBlock b : buildList) {
+			if (b.mode == Mode.ClearIfInvalid) {
+				context.world.setBlockToAir(b.x, b.y, b.z);
+			} else {
+				b.stackConsumed = new LinkedList<ItemStack>();
+
+				try {
+					for (ItemStack stk : b.getRequirements(context)) {
+						if (stk != null) {
+							b.stackConsumed.add(stk.copy());
+						}
+					}
+				} catch (Throwable t) {
+					// Defensive code against errors in implementers
+					t.printStackTrace();
+					BCLog.logger.throwing("BptBuilderBlueprint", "checkRequirements", t);
+				}
+
+				b.writeToWorld(context);
+			}
+		}
+
+		for (BuildingSlotEntity e : entityList) {
+			e.stackConsumed = new LinkedList<ItemStack>();
+
+			try {
+				for (ItemStack stk : e.getRequirements(context)) {
+					if (stk != null) {
+						e.stackConsumed.add(stk.copy());
+					}
+				}
+			} catch (Throwable t) {
+				// Defensive code against errors in implementers
+				t.printStackTrace();
+				BCLog.logger.throwing("BptBuilderBlueprint", "checkRequirements", t);
+			}
+
+			e.writeToWorld(context);
+		}
+
+		for (BuildingSlotBlock b : buildList) {
+			if (b.mode != Mode.ClearIfInvalid) {
+				b.postProcessing(context);
+			}
+		}
+
+		for (BuildingSlotEntity e : entityList) {
+			e.postProcessing(context);
+		}
+	}
+
 	private void checkDone() {
 		recomputeNeededItems();
 
