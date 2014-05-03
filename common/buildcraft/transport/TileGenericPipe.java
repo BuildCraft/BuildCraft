@@ -131,16 +131,22 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 				nbt.setInteger("facadeTypes[" + i + "]", facadeTypes[i]);
 				nbt.setInteger("facadeWires[" + i + "]", facadeWires[i]);
 
-				if (facadeBlocks[i][0] == null) {
-					nbt.setInteger("facadeBlocks[" + i + "][0]", 0);
+				if (facadeBlocks[i][0] != null) {
+					nbt.setString("facadeBlocksStr[" + i + "][0]",
+							Block.blockRegistry.getNameForObject(facadeBlocks[i][0]));
 				} else {
-					nbt.setInteger("facadeBlocks[" + i + "][0]", Block.blockRegistry.getIDForObject(facadeBlocks[i]));
+					// remove tag is useful in case we're overwritting an NBT
+					// already set, for example in a blueprint.
+					nbt.removeTag("facadeBlocksStr[" + i + "][0]");
 				}
 
-				if (facadeBlocks[i][1] == null) {
-					nbt.setInteger("facadeBlocks[" + i + "][1]", 0);
+				if (facadeBlocks[i][1] != null) {
+					nbt.setString("facadeBlocksStr[" + i + "][1]",
+							Block.blockRegistry.getNameForObject(facadeBlocks[i][1]));
 				} else {
-					nbt.setInteger("facadeBlocks[" + i + "][1]", Block.blockRegistry.getIDForObject(facadeBlocks[i]));
+					// remove tag is useful in case we're overwritting an NBT
+					// already set, for example in a blueprint.
+					nbt.removeTag("facadeBlocksStr[" + i + "][1]");
 				}
 
 				nbt.setInteger("facadeMeta[" + i + "][0]", facadeMeta[i][0]);
@@ -156,16 +162,16 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 				facadeTypes[i] = nbt.getInteger("facadeTypes[" + i + "]");
 				facadeWires[i] = nbt.getInteger("facadeWires[" + i + "]");
 
-				int blockId = nbt.getInteger("facadeBlocks[" + i + "][0]");
-				if (blockId != 0) {
-					facadeBlocks[i][0] = (Block) Block.blockRegistry.getObjectById(blockId);
+				if (nbt.hasKey("facadeBlocksStr[" + i + "][0]")) {
+					facadeBlocks[i][0] = (Block) Block.blockRegistry.getObject
+							(nbt.getString("facadeBlocksStr[" + i + "][0]"));
 				} else {
 					facadeBlocks[i][0] = null;
 				}
 
-				blockId = nbt.getInteger("facadeBlocks[" + i + "][1]");
-				if (blockId != 0) {
-					facadeBlocks[i][1] = (Block) Block.blockRegistry.getObjectById(blockId);
+				if (nbt.hasKey("facadeBlocksStr[" + i + "][1]")) {
+					facadeBlocks[i][1] = (Block) Block.blockRegistry.getObject
+							(nbt.getString("facadeBlocksStr[" + i + "][1]"));
 				} else {
 					facadeBlocks[i][1] = null;
 				}
