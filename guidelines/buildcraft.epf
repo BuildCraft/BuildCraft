@@ -102,7 +102,7 @@
 /instance/org.eclipse.jdt.ui/sp_cleanup.format_source_code_changes_only=true
 /instance/org.eclipse.jdt.ui/sp_cleanup.remove_trailing_whitespaces_all=true
 /instance/org.eclipse.jdt.core/org.eclipse.jdt.core.formatter.align_type_members_on_columns=false
-/configuration/org.eclipse.ui.ide/RECENT_WORKSPACES=C\:\\cygwin64\\home\\ochem\\forge-1.7.2-1065\\eclipse\nC\:\\cygwin64\\home\\ochem\\forge-1.7.2-1047\\eclipse\nC\:\\cygwin64\\home\\ochem\\forge-1.7.2-1060\\eclipse\nC\:\\cygwin64\\home\\ochem\\1.6.4\\forge\\mcp\\eclipse\nC\:\\cygwin64\\home\\ochem\\forge-1.7.2-1024\\eclipse
+/configuration/org.eclipse.ui.ide/RECENT_WORKSPACES=
 /instance/org.eclipse.jdt.core/org.eclipse.jdt.core.formatter.insert_space_before_postfix_operator=do not insert
 /instance/org.eclipse.jdt.ui/sp_cleanup.remove_unnecessary_nls_tags=false
 /instance/org.eclipse.jdt.core/org.eclipse.jdt.core.formatter.insert_space_between_empty_parens_in_method_declaration=do not insert

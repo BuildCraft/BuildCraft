@@ -76,7 +76,4 @@
     <module name="UpperEll"/>
     <module name="OuterTypeFilename"/>
   </module>
-  <module name="Header">
-    <property name="headerFile" value="C:\cygwin64\home\ochem\BuildCraft\guidelines\header.txt"/>
-  </module>
 </module>
