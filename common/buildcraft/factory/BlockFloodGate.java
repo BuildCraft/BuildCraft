@@ -30,7 +30,7 @@ public class BlockFloodGate extends BlockBuildCraft {
 	private IIcon textureSide;
 
 	public BlockFloodGate() {
-		super(Material.iron, CreativeTabBuildCraft.TIER_2);
+		super(Material.iron);
 	}
 
 	@Override

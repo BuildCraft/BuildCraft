@@ -52,8 +52,8 @@ public class BlockEngine extends BlockBuildCraft implements ICustomHighlight {
 	private static IIcon stoneTexture;
 	private static IIcon ironTexture;
 
-	public BlockEngine(CreativeTabBuildCraft creativeTab) {
-		super(Material.iron, creativeTab);
+	public BlockEngine() {
+		super(Material.iron);
 		setBlockName("engineBlock");
 	}
 
@@ -243,13 +243,10 @@ public class BlockEngine extends BlockBuildCraft implements ICustomHighlight {
 	@SuppressWarnings({"unchecked", "rawtypes"})
 	@Override
 	public void getSubBlocks(Item item, CreativeTabs par2CreativeTabs, List itemList) {
-		if (par2CreativeTabs == CreativeTabBuildCraft.TIER_1.get()) {
-			itemList.add(new ItemStack(this, 1, 0)); // WOOD
-			itemList.add(new ItemStack(this, 1, 1)); // STONE
-		} else {
-			itemList.add(new ItemStack(this, 1, 2)); // IRON
-			itemList.add(new ItemStack(this, 1, 3)); // CREATIVE
-		}
+		itemList.add(new ItemStack(this, 1, 0)); // WOOD
+		itemList.add(new ItemStack(this, 1, 1)); // STONE
+		itemList.add(new ItemStack(this, 1, 2)); // IRON
+		itemList.add(new ItemStack(this, 1, 3)); // CREATIVE
 	}
 
 	@Override

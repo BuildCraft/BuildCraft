@@ -36,7 +36,7 @@ public class BlockTank extends BlockContainer {
 		super(Material.glass);
 		setBlockBounds(0.125F, 0F, 0.125F, 0.875F, 1F, 0.875F);
 		setHardness(0.5F);
-		setCreativeTab(CreativeTabBuildCraft.TIER_2.get());
+		setCreativeTab(CreativeTabBuildCraft.BLOCKS.get());
 	}
 
 	@Override

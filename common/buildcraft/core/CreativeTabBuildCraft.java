@@ -2,23 +2,18 @@ package buildcraft.core;
 
 import java.util.Locale;
 
+import buildcraft.*;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import buildcraft.BuildCraftCore;
-import buildcraft.BuildCraftEnergy;
-import buildcraft.BuildCraftSilicon;
 import buildcraft.transport.ItemFacade;
 
 public enum CreativeTabBuildCraft {
 
-	TIER_1,
-	TIER_2,
-	TIER_3,
-	TIER_4,
-	MISC,
-	FACADES;
+	BLOCKS,
+	ITEMS,
+	PIPES;
 	private final CreativeTabs tab;
 
 	private CreativeTabBuildCraft() {
@@ -35,18 +30,12 @@ public enum CreativeTabBuildCraft {
 
 	private ItemStack getItem() {
 		switch (this) {
-		case TIER_1:
-			return new ItemStack (BuildCraftCore.woodenGearItem, 1);
-		case TIER_2:
-			return new ItemStack (BuildCraftEnergy.bucketOil, 1);
-		case TIER_3:
-			return new ItemStack (BuildCraftSilicon.assemblyTableBlock, 1);
-		case TIER_4:
-			return new ItemStack (BuildCraftCore.springBlock, 1);
-		case MISC:
-			return new ItemStack (BuildCraftCore.springBlock, 1);
-		case FACADES:
-			return ItemFacade.getFacade(Blocks.brick_block, 0);
+		case BLOCKS:
+			return new ItemStack (BuildCraftFactory.quarryBlock, 1);
+		case ITEMS:
+			return new ItemStack (BuildCraftCore.wrenchItem, 1);
+		case PIPES:
+			return new ItemStack (BuildCraftTransport.pipeItemsDiamond, 1);
 		}
 
 		return ItemFacade.getFacade(Blocks.brick_block, 0);

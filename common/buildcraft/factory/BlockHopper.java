@@ -28,7 +28,7 @@ public class BlockHopper extends BlockBuildCraft {
 	private static IIcon icon;
 
 	public BlockHopper() {
-		super(Material.iron, CreativeTabBuildCraft.TIER_1);
+		super(Material.iron);
 	}
 
 	@Override

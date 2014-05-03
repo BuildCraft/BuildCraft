@@ -47,7 +47,7 @@ public class ItemGate extends ItemBuildCraft {
 	private static final String NBT_TAG_EX = "ex";
 
 	public ItemGate() {
-		super(CreativeTabBuildCraft.TIER_3);
+		super();
 		setHasSubtypes(false);
 		setMaxDamage(0);
 		setPassSneakClick(true);

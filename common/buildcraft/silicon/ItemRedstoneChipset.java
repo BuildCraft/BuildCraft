@@ -57,7 +57,7 @@ public class ItemRedstoneChipset extends ItemBuildCraft {
 	}
 
 	public ItemRedstoneChipset() {
-		super(CreativeTabBuildCraft.TIER_3);
+		super();
 		setHasSubtypes(true);
 		setMaxDamage(0);
 	}

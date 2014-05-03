@@ -28,7 +28,7 @@ public class BlockAutoWorkbench extends BlockBuildCraft {
 	IIcon sideTexture;
 
 	public BlockAutoWorkbench() {
-		super(Material.wood, CreativeTabBuildCraft.TIER_1);
+		super(Material.wood);
 		setHardness(3.0F);
 	}
 

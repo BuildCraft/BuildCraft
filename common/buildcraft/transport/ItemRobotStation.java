@@ -20,7 +20,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 public class ItemRobotStation extends ItemBuildCraft {
 
 	public ItemRobotStation() {
-		super(CreativeTabBuildCraft.TIER_4);
+		super(CreativeTabBuildCraft.ITEMS);
 	}
 
 	@Override

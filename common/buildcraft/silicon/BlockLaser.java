@@ -47,7 +47,7 @@ public class BlockLaser extends BlockContainer implements ICustomHighlight {
 	public BlockLaser() {
 		super(Material.iron);
 		setHardness(10F);
-		setCreativeTab(CreativeTabBuildCraft.TIER_3.get());
+		setCreativeTab(CreativeTabBuildCraft.BLOCKS.get());
 	}
 
 	@Override

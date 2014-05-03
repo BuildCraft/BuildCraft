@@ -18,6 +18,7 @@ public class ItemEngine extends ItemBlockBuildCraft {
 
 	public ItemEngine(Block block) {
 		super(block);
+		setCreativeTab(CreativeTabBuildCraft.BLOCKS.get());
 		setMaxDamage(0);
 		setHasSubtypes(true);
 	}
@@ -41,10 +42,5 @@ public class ItemEngine extends ItemBlockBuildCraft {
 			default:
 				return "tile.engineWood";
 		}
-	}
-
-	@Override
-	public CreativeTabs[] getCreativeTabs() {
-		return new CreativeTabs[]{CreativeTabBuildCraft.TIER_1.get(), CreativeTabBuildCraft.TIER_2.get()};
 	}
 }

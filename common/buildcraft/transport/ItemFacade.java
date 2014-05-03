@@ -50,11 +50,10 @@ public class ItemFacade extends ItemBuildCraft {
 	public static final int TYPE_PHASED = 1;
 
 	public ItemFacade() {
-		super(CreativeTabBuildCraft.FACADES);
+		super(CreativeTabBuildCraft.PIPES);
 
 		setHasSubtypes(true);
 		setMaxDamage(0);
-		setCreativeTab(CreativeTabBuildCraft.FACADES.get());
 	}
 
 	@Override

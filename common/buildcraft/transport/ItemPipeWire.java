@@ -27,7 +27,7 @@ public class ItemPipeWire extends ItemBuildCraft {
 	private IIcon[] icons;
 
 	public ItemPipeWire() {
-		super(CreativeTabBuildCraft.TIER_3);
+		super();
 		setHasSubtypes(true);
 		setMaxDamage(0);
 		setPassSneakClick(true);

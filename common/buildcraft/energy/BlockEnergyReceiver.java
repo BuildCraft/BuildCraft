@@ -17,7 +17,7 @@ import buildcraft.core.CreativeTabBuildCraft;
 public class BlockEnergyReceiver extends BlockBuildCraft {
 
 	public BlockEnergyReceiver() {
-		super(Material.iron, CreativeTabBuildCraft.TIER_4);
+		super(Material.iron);
 	}
 
 	@Override

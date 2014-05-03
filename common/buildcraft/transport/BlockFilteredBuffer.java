@@ -27,7 +27,7 @@ public class BlockFilteredBuffer extends BlockBuildCraft {
 	private static IIcon blockTexture;
 
 	public BlockFilteredBuffer() {
-		super(Material.iron, CreativeTabBuildCraft.MISC);
+		super(Material.iron);
 		setHardness(5F);
 	}
 

@@ -33,7 +33,7 @@ public class BlockUrbanist extends BlockBuildCraft {
 	}
 
 	public BlockUrbanist() {
-		super(Material.rock, CreativeTabBuildCraft.TIER_4);
+		super(Material.rock);
 		setBlockUnbreakable();
 		setResistance(6000000.0F);
 		disableStats();

@@ -30,7 +30,7 @@ public class BlockPump extends BlockBuildCraft {
 	private IIcon textureSide;
 
 	public BlockPump() {
-		super(Material.iron, CreativeTabBuildCraft.TIER_2);
+		super(Material.iron);
 	}
 
 	@Override

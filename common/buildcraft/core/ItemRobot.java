@@ -16,7 +16,7 @@ public class ItemRobot extends ItemBuildCraft {
 	Class <? extends EntityRobot> robotClass;
 
 	public ItemRobot(Class <? extends EntityRobot> robotClass) {
-		super(CreativeTabBuildCraft.TIER_4);
+		super(CreativeTabBuildCraft.ITEMS);
 
 		this.robotClass = robotClass;
 	}

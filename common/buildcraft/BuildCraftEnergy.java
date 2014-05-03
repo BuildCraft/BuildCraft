@@ -188,7 +188,7 @@ public class BuildCraftEnergy extends BuildCraftMod {
 			biomeOilOcean = BiomeGenOilOcean.makeBiome(oilOceanBiomeId);
 		}
 
-		engineBlock = new BlockEngine(CreativeTabBuildCraft.TIER_1);
+		engineBlock = new BlockEngine();
 		CoreProxy.proxy.registerBlock(engineBlock, ItemEngine.class);
 
 
@@ -241,14 +241,14 @@ public class BuildCraftEnergy extends BuildCraftMod {
 		// Buckets
 
 		if (blockOil != null) {
-			bucketOil = new ItemBucketBuildcraft(blockOil, CreativeTabBuildCraft.TIER_2);
+			bucketOil = new ItemBucketBuildcraft(blockOil);
 			bucketOil.setUnlocalizedName("bucketOil").setContainerItem(Items.bucket);
 			CoreProxy.proxy.registerItem(bucketOil);
 			FluidContainerRegistry.registerFluidContainer(FluidRegistry.getFluidStack("oil", FluidContainerRegistry.BUCKET_VOLUME), new ItemStack(bucketOil), new ItemStack(Items.bucket));
 		}
 
 		if (blockFuel != null) {
-			bucketFuel = new ItemBucketBuildcraft(blockFuel, CreativeTabBuildCraft.TIER_2);
+			bucketFuel = new ItemBucketBuildcraft(blockFuel);
 			bucketFuel.setUnlocalizedName("bucketFuel").setContainerItem(Items.bucket);
 			CoreProxy.proxy.registerItem(bucketFuel);
 			FluidContainerRegistry.registerFluidContainer(FluidRegistry.getFluidStack("fuel", FluidContainerRegistry.BUCKET_VOLUME), new ItemStack(bucketFuel), new ItemStack(Items.bucket));
@@ -256,7 +256,7 @@ public class BuildCraftEnergy extends BuildCraftMod {
 
 		if (!BuildCraftCore.NEXTGEN_PREALPHA) {
 			if (blockRedPlasma != null) {
-				bucketRedPlasma = new ItemBucketBuildcraft(blockRedPlasma, CreativeTabBuildCraft.TIER_4);
+				bucketRedPlasma = new ItemBucketBuildcraft(blockRedPlasma);
 				bucketRedPlasma.setUnlocalizedName("bucketRedPlasma").setContainerItem(Items.bucket);
 				CoreProxy.proxy.registerItem(bucketRedPlasma);
 				FluidContainerRegistry.registerFluidContainer(FluidRegistry.getFluidStack("redplasma", FluidContainerRegistry.BUCKET_VOLUME), new ItemStack(bucketRedPlasma), new ItemStack(Items.bucket));

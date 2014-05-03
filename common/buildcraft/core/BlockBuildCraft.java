@@ -25,6 +25,10 @@ public abstract class BlockBuildCraft extends BlockContainer {
 	protected static boolean keepInventory = false;
 	protected final Random rand = new Random();
 
+	protected BlockBuildCraft(Material material) {
+		this(material, CreativeTabBuildCraft.BLOCKS);
+	}
+
 	protected BlockBuildCraft(Material material, CreativeTabBuildCraft creativeTab) {
 		super(material);
 		setCreativeTab(creativeTab.get());
