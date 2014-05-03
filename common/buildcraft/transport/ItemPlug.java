@@ -20,7 +20,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 public class ItemPlug extends ItemBuildCraft {
 
 	public ItemPlug() {
-		super(CreativeTabBuildCraft.TIER_1);
+		super();
 	}
 
 	@Override

@@ -59,7 +59,7 @@ public class BlockSpring extends Block {
 
 		disableStats();
 		setTickRandomly(true);
-		setCreativeTab(CreativeTabBuildCraft.MISC.get());
+		setCreativeTab(CreativeTabBuildCraft.BLOCKS.get());
 	}
 
 	@Override

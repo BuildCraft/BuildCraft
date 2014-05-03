@@ -30,7 +30,7 @@ public class BlockBlueprintLibrary extends BlockContainer {
 
     public BlockBlueprintLibrary() {
 		super(Material.wood);
-		setCreativeTab(CreativeTabBuildCraft.TIER_3.get());
+		setCreativeTab(CreativeTabBuildCraft.BLOCKS.get());
 		setHardness(5F);
 	}
 

@@ -26,7 +26,7 @@ public class ItemWrench extends ItemBuildCraft implements IToolWrench {
 	private final Set<Class<? extends Block>> shiftRotations = new HashSet<Class<? extends Block>>();
 
 	public ItemWrench() {
-		super(CreativeTabBuildCraft.TIER_1);
+		super();
 
 		setFull3D();
 		setMaxStackSize(1);

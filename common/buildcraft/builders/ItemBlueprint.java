@@ -25,7 +25,7 @@ import buildcraft.core.utils.StringUtils;
 public abstract class ItemBlueprint extends ItemBuildCraft {
 
 	public ItemBlueprint() {
-		super(CreativeTabBuildCraft.TIER_3);
+		super(CreativeTabBuildCraft.ITEMS);
 		setMaxStackSize(1);
 	}
 

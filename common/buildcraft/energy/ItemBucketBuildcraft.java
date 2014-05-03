@@ -21,6 +21,10 @@ public class ItemBucketBuildcraft extends ItemBucket {
 
 	private String iconName;
 
+	public ItemBucketBuildcraft(Block block) {
+		this(block, CreativeTabBuildCraft.ITEMS);
+	}
+
 	public ItemBucketBuildcraft(Block block, CreativeTabBuildCraft creativeTab) {
 		super(block);
 		setContainerItem(Items.bucket);

@@ -29,7 +29,7 @@ public class BlockMiningWell extends BlockBuildCraft {
 	IIcon textureFront, textureSides, textureBack, textureTop;
 
 	public BlockMiningWell() {
-		super(Material.ground, CreativeTabBuildCraft.TIER_1);
+		super(Material.ground);
 
 		setHardness(5F);
 		setResistance(10F);

@@ -85,7 +85,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 
 	/* Defined subprograms ************************************************* */
 	public BlockGenericPipe() {
-		super(Material.glass, CreativeTabBuildCraft.TIER_1);
+		super(Material.glass);
 		setRenderAllSides();
 		setCreativeTab(null);
 	}

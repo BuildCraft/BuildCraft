@@ -28,7 +28,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 public class BlockArchitect extends BlockMultiTexture {
 
 	public BlockArchitect() {
-		super(Material.iron, CreativeTabBuildCraft.TIER_3);
+		super(Material.iron, CreativeTabBuildCraft.BLOCKS);
 	}
 
 	@Override
