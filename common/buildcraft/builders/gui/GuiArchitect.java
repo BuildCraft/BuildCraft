@@ -10,11 +10,11 @@ package buildcraft.builders.gui;
 
 import java.util.Date;
 
-import org.lwjgl.opengl.GL11;
-
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.util.ResourceLocation;
+
+import org.lwjgl.opengl.GL11;
 
 import buildcraft.builders.TileArchitect;
 import buildcraft.core.DefaultProps;
@@ -91,27 +91,27 @@ public class GuiArchitect extends GuiBuildCraft {
 		BlueprintReadConfiguration conf = architect.readConfiguration;
 
 		if (conf.rotate) {
-			optionRotate.displayString = "Rotate: On";
+			optionRotate.displayString = StringUtils.localize("tile.architect.rotate");
 		} else {
-			optionRotate.displayString = "Rotate: Off";
+			optionRotate.displayString =  StringUtils.localize("tile.architect.norotate");
 		}
 
 		if (conf.readTiles) {
-			optionReadBlocks.displayString = "Blocks: All";
+			optionReadBlocks.displayString = StringUtils.localize("tile.architect.allblocks");
 		} else {
-			optionReadBlocks.displayString = "Blocks: Simple";
+			optionReadBlocks.displayString = StringUtils.localize("tile.architect.simpleblocks");
 		}
 
 		if (conf.excavate) {
-			optionExcavate.displayString = "Excavate: On";
+			optionExcavate.displayString = StringUtils.localize("tile.architect.excavate");
 		} else {
-			optionExcavate.displayString = "Excavate: Off";
+			optionExcavate.displayString =  StringUtils.localize("tile.architect.noexcavate");
 		}
 
 		if (conf.explicitOnly) {
-			optionExplicit.displayString = "Mods: Support";
+			optionExplicit.displayString =  StringUtils.localize("tile.architect.supportmods");
 		} else {
-			optionExplicit.displayString = "Mods: All";
+			optionExplicit.displayString =  StringUtils.localize("tile.architect.allmods");
 		}
 	}
 
