@@ -2,18 +2,21 @@ package buildcraft.core;
 
 import java.util.Locale;
 
-import buildcraft.*;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import buildcraft.BuildCraftCore;
+import buildcraft.BuildCraftFactory;
+import buildcraft.BuildCraftTransport;
 import buildcraft.transport.ItemFacade;
 
 public enum CreativeTabBuildCraft {
 
 	BLOCKS,
 	ITEMS,
-	PIPES;
+	PIPES,
+	FACADES;
 	private final CreativeTabs tab;
 
 	private CreativeTabBuildCraft() {
@@ -36,6 +39,8 @@ public enum CreativeTabBuildCraft {
 			return new ItemStack (BuildCraftCore.wrenchItem, 1);
 		case PIPES:
 			return new ItemStack (BuildCraftTransport.pipeItemsDiamond, 1);
+		case FACADES:
+			return ItemFacade.getFacade(Blocks.brick_block, 0);
 		}
 
 		return ItemFacade.getFacade(Blocks.brick_block, 0);

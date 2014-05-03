@@ -171,7 +171,8 @@ item.PipePlug.name=Pipe Plug
 
 itemGroup.buildcraft.blocks=Buildcraft Blocks
 itemGroup.buildcraft.items=Buildcraft Items
-itemGroup.buildcraft.pipes=Buildcraft Pipes & Facades
+itemGroup.buildcraft.pipes=Buildcraft Pipes
+itemGroup.buildcraft.facades=Buildcraft Facades
 
 tile.architectBlock.name=Architect Table
 tile.assemblyTableBlock.name=Assembly Table
