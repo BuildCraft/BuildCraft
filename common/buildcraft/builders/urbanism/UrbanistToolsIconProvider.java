@@ -10,11 +10,13 @@ package buildcraft.builders.urbanism;
 
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.util.IIcon;
-import buildcraft.api.core.IIconProvider;
+
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-public class UrbanistToolsIconProvider implements IIconProvider {
+import buildcraft.api.core.IIconProvider;
+
+public final class UrbanistToolsIconProvider implements IIconProvider {
 
 	public static UrbanistToolsIconProvider INSTANCE = new UrbanistToolsIconProvider();
 	public static final int Tool_Block_Place = 0;

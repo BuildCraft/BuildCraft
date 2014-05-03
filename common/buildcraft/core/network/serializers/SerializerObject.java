@@ -9,6 +9,7 @@
 package buildcraft.core.network.serializers;
 
 import io.netty.buffer.ByteBuf;
+
 import buildcraft.core.utils.Utils;
 
 public class SerializerObject extends ClassSerializer {

@@ -18,7 +18,9 @@ import net.minecraft.block.BlockLever;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
+
 import net.minecraftforge.common.util.ForgeDirection;
+
 import buildcraft.api.tools.IToolWrench;
 
 public class ItemWrench extends ItemBuildCraft implements IToolWrench {
@@ -37,8 +39,9 @@ public class ItemWrench extends ItemBuildCraft implements IToolWrench {
 
 	private boolean isShiftRotation(Class<? extends Block> cls) {
 		for (Class<? extends Block> shift : shiftRotations) {
-			if (shift.isAssignableFrom(cls))
+			if (shift.isAssignableFrom(cls)) {
 				return true;
+			}
 		}
 		return false;
 	}
@@ -47,11 +50,13 @@ public class ItemWrench extends ItemBuildCraft implements IToolWrench {
 	public boolean onItemUseFirst(ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int side, float hitX, float hitY, float hitZ) {
 		Block block = world.getBlock(x, y, z);
 
-		if(block == null)
+		if (block == null) {
 			return false;
+		}
 
-		if (player.isSneaking() != isShiftRotation(block.getClass()))
+		if (player.isSneaking() != isShiftRotation(block.getClass())) {
 			return false;
+		}
 
 		if (block.rotateBlock(world, x, y, z, ForgeDirection.getOrientation(side))) {
 			player.swingItem();

@@ -8,14 +8,15 @@
  */
 package buildcraft.core.gui.buttons;
 
+import org.lwjgl.opengl.GL11;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 
-import org.lwjgl.opengl.GL11;
-
-import buildcraft.core.gui.tooltips.ToolTip;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+
+import buildcraft.core.gui.tooltips.ToolTip;
 
 @SideOnly(Side.CLIENT)
 public class GuiMultiButton extends GuiBetterButton {
@@ -37,7 +38,7 @@ public class GuiMultiButton extends GuiBetterButton {
 		if (!visible) {
 			return;
 		}
-		
+
 		FontRenderer fontrenderer = minecraft.fontRenderer;
 		bindButtonTextures(minecraft);
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
@@ -53,7 +54,7 @@ public class GuiMultiButton extends GuiBetterButton {
 		drawTexturedModalRect(xPosition + width / 2, yPosition, xOffset + w - width / 2, yOffset + hoverState * h, width / 2, h);
 		mouseDragged(minecraft, x, y);
 		displayString = state.getLabel();
-		if (!displayString.equals("")) {
+		if (!"".equals(displayString)) {
 			if (!enabled) {
 				drawCenteredString(fontrenderer, displayString, xPosition + width / 2, yPosition + (h - 8) / 2, 0xffa0a0a0);
 			} else if (flag) {

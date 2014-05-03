@@ -8,9 +8,11 @@
  */
 package buildcraft.transport;
 
-import buildcraft.api.core.Position;
 import java.util.LinkedList;
+
 import net.minecraftforge.common.util.ForgeDirection;
+
+import buildcraft.api.core.Position;
 
 /**
  * @deprecated This has been replaced by the Pipe Event system.
@@ -18,9 +20,10 @@ import net.minecraftforge.common.util.ForgeDirection;
 @Deprecated
 public interface IPipeTransportItemsHook {
 
-	public LinkedList<ForgeDirection> filterPossibleMovements(LinkedList<ForgeDirection> possibleOrientations, Position pos, TravelingItem item);
+	LinkedList<ForgeDirection> filterPossibleMovements(LinkedList<ForgeDirection> possibleOrientations, Position pos,
+			TravelingItem item);
 
-	public void entityEntered(TravelingItem item, ForgeDirection orientation);
+	void entityEntered(TravelingItem item, ForgeDirection orientation);
 
-	public void readjustSpeed(TravelingItem item);
+	void readjustSpeed(TravelingItem item);
 }

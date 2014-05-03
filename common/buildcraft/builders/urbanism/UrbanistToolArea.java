@@ -8,13 +8,19 @@
  */
 package buildcraft.builders.urbanism;
 
+import org.lwjgl.input.Mouse;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.IIcon;
 import net.minecraft.util.MovingObjectPosition;
 
-import org.lwjgl.input.Mouse;
-
 class UrbanistToolArea extends UrbanistTool {
+
+	private int step = 0;
+	private int startX, startY, startZ;
+	private int x, y, z;
+	private float baseY = 0;
+
 	@Override
 	public IIcon getIcon() {
 		return UrbanistToolsIconProvider.INSTANCE.getIcon(UrbanistToolsIconProvider.Tool_Area);
@@ -24,11 +30,6 @@ class UrbanistToolArea extends UrbanistTool {
 	public String getDescription() {
 		return "Define Area";
 	}
-
-	int step = 0;
-	int startX, startY, startZ;
-	int x, y, z;
-	float baseY = 0;
 
 	@Override
 	public void worldClicked (GuiUrbanist gui, MovingObjectPosition pos) {

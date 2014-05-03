@@ -14,7 +14,9 @@ import java.util.Map;
 
 import buildcraft.api.core.JavaTools;
 
-public class MjAPI {
+public final class MjAPI {
+
+	static Map<Class, BatteryField> MjBatteries = new HashMap<Class, BatteryField>();
 
 	private enum BatteryKind {
 		Value, Container
@@ -103,6 +105,12 @@ public class MjAPI {
 		}
 	}
 
+	/**
+	 * Deactivate constructor
+	 */
+	private MjAPI() {
+	}
+
 	public static BatteryObject getMjBattery (Object o) {
 		if (o == null) {
 			return null;
@@ -131,8 +139,6 @@ public class MjAPI {
 		}
 	}
 
-	static Map <Class, BatteryField> MjBatteries = new HashMap <Class, BatteryField> ();
-
 	private static BatteryField getMjBattery (Class c) {
 		if (!MjBatteries.containsKey(c)) {
 			for (Field f : JavaTools.getAllFields(c)) {
@@ -144,7 +150,7 @@ public class MjAPI {
 					bField.field = f;
 					bField.battery = battery;
 
-					if (f.getType().equals(double.class)) {
+					if (double.class.equals(f.getType())) {
 						bField.kind = BatteryKind.Value;
 					} else if (f.getType().isPrimitive()) {
 						throw new RuntimeException(

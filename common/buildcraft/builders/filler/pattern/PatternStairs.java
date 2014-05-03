@@ -9,21 +9,21 @@
 package buildcraft.builders.filler.pattern;
 
 import net.minecraft.world.World;
+
 import buildcraft.core.Box;
 import buildcraft.core.blueprints.Template;
 
-
 public class PatternStairs extends FillerPattern {
+
+	// TODO: These parameters need to be settable from the filler
+	private boolean param1 = true;
+	private int param2 = 0;
+	private int param3 = 0;
+	private int param4 = 0;
 
 	public PatternStairs() {
 		super("stairs");
 	}
-
-	// TODO: These parameters need to be settable from the filler
-	boolean param1 = true;
-	int param2 = 0;
-	int param3 = 0;
-	int param4 = 0;
 
 	@Override
 	public Template getTemplate(Box box, World world) {
@@ -55,7 +55,7 @@ public class PatternStairs extends FillerPattern {
 
 		int kind = 0;
 
-		int steps[] = new int[]{0, 0, 0, 0};
+		int[] steps = new int[] {0, 0, 0, 0};
 
 		int x = 0, z = 0;
 		int stepDiagX = 0, stepDiagZ = 0;

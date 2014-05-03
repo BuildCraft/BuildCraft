@@ -8,9 +8,9 @@
  */
 package buildcraft.api.recipes;
 
-import net.minecraft.item.ItemStack;
-
 import java.util.List;
+
+import net.minecraft.item.ItemStack;
 
 /**
  * The Integration Table's primary purpose is to modify an input item's NBT
@@ -19,7 +19,7 @@ import java.util.List;
  */
 public interface IIntegrationRecipeManager {
 
-	public static interface IIntegrationRecipe {
+	public interface IIntegrationRecipe {
 
 		double getEnergyCost();
 

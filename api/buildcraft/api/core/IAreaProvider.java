@@ -13,21 +13,21 @@ package buildcraft.api.core;
  */
 public interface IAreaProvider {
 
-	public int xMin();
+	int xMin();
 
-	public int yMin();
+	int yMin();
 
-	public int zMin();
+	int zMin();
 
-	public int xMax();
+	int xMax();
 
-	public int yMax();
+	int yMax();
 
-	public int zMax();
+	int zMax();
 
 	/**
 	 * Remove from the world all objects used to define the area.
 	 */
-	public void removeFromWorld();
+	void removeFromWorld();
 
 }

@@ -8,8 +8,6 @@
  */
 package buildcraft.silicon;
 
-import static net.minecraft.util.AxisAlignedBB.getBoundingBox;
-
 import java.util.List;
 
 import net.minecraft.block.BlockContainer;
@@ -24,21 +22,24 @@ import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.ForgeDirection;
-import buildcraft.core.CreativeTabBuildCraft;
-import buildcraft.core.ICustomHighlight;
+
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+
+import net.minecraftforge.common.util.ForgeDirection;
+
+import buildcraft.core.CreativeTabBuildCraft;
+import buildcraft.core.ICustomHighlight;
 
 public class BlockLaser extends BlockContainer implements ICustomHighlight {
 
 	private static final AxisAlignedBB[][] boxes = {
-			{getBoundingBox(0.0, 0.75, 0.0, 1.0, 1.0, 1.0), getBoundingBox(0.3125, 0.1875, 0.3125, 0.6875, 0.75, 0.6875)},// -Y
-			{getBoundingBox(0.0, 0.0, 0.0, 1.0, 0.25, 1.0), getBoundingBox(0.3125, 0.25, 0.3125, 0.6875, 0.8125, 0.6875)},// +Y
-			{getBoundingBox(0.0, 0.0, 0.75, 1.0, 1.0, 1.0), getBoundingBox(0.3125, 0.3125, 0.1875, 0.6875, 0.6875, 0.75)},// -Z
-			{getBoundingBox(0.0, 0.0, 0.0, 1.0, 1.0, 0.25), getBoundingBox(0.3125, 0.3125, 0.25, 0.6875, 0.6875, 0.8125)},// +Z
-			{getBoundingBox(0.75, 0.0, 0.0, 1.0, 1.0, 1.0), getBoundingBox(0.1875, 0.3125, 0.3125, 0.75, 0.6875, 0.6875)},// -X
-			{getBoundingBox(0.0, 0.0, 0.0, 0.25, 1.0, 1.0), getBoundingBox(0.25, 0.3125, 0.3125, 0.8125, 0.6875, 0.6875)} // +X
+			{AxisAlignedBB.getBoundingBox(0.0, 0.75, 0.0, 1.0, 1.0, 1.0), AxisAlignedBB.getBoundingBox(0.3125, 0.1875, 0.3125, 0.6875, 0.75, 0.6875)}, // -Y
+			{AxisAlignedBB.getBoundingBox(0.0, 0.0, 0.0, 1.0, 0.25, 1.0), AxisAlignedBB.getBoundingBox(0.3125, 0.25, 0.3125, 0.6875, 0.8125, 0.6875)}, // +Y
+			{AxisAlignedBB.getBoundingBox(0.0, 0.0, 0.75, 1.0, 1.0, 1.0), AxisAlignedBB.getBoundingBox(0.3125, 0.3125, 0.1875, 0.6875, 0.6875, 0.75)}, // -Z
+			{AxisAlignedBB.getBoundingBox(0.0, 0.0, 0.0, 1.0, 1.0, 0.25), AxisAlignedBB.getBoundingBox(0.3125, 0.3125, 0.25, 0.6875, 0.6875, 0.8125)}, // +Z
+			{AxisAlignedBB.getBoundingBox(0.75, 0.0, 0.0, 1.0, 1.0, 1.0), AxisAlignedBB.getBoundingBox(0.1875, 0.3125, 0.3125, 0.75, 0.6875, 0.6875)}, // -X
+			{AxisAlignedBB.getBoundingBox(0.0, 0.0, 0.0, 0.25, 1.0, 1.0), AxisAlignedBB.getBoundingBox(0.25, 0.3125, 0.3125, 0.8125, 0.6875, 0.6875)} // +X
 	};
 
 	@SideOnly(Side.CLIENT)
@@ -64,9 +65,9 @@ public class BlockLaser extends BlockContainer implements ICustomHighlight {
 	public MovingObjectPosition collisionRayTrace(World wrd, int x, int y, int z, Vec3 origin, Vec3 direction) {
 		AxisAlignedBB[] aabbs = boxes[wrd.getBlockMetadata(x, y, z)];
 		MovingObjectPosition closest = null;
-		for(AxisAlignedBB aabb : aabbs){
+		for (AxisAlignedBB aabb : aabbs) {
 			MovingObjectPosition mop = aabb.getOffsetBoundingBox(x, y, z).calculateIntercept(origin, direction);
-			if(mop != null){
+			if (mop != null) {
 				if (closest != null && mop.hitVec.distanceTo(origin) < closest.hitVec.distanceTo(origin)) {
 					closest = mop;
 				} else {
@@ -74,7 +75,7 @@ public class BlockLaser extends BlockContainer implements ICustomHighlight {
 				}
 			}
 		}
-		if (closest != null){
+		if (closest != null) {
 			closest.blockX = x;
 			closest.blockY = y;
 			closest.blockZ = z;
@@ -87,9 +88,9 @@ public class BlockLaser extends BlockContainer implements ICustomHighlight {
 	public void addCollisionBoxesToList(World wrd, int x, int y, int z, AxisAlignedBB mask, List list, Entity ent) {
 		AxisAlignedBB[] aabbs = boxes[wrd.getBlockMetadata(x, y, z)];
 		for (AxisAlignedBB aabb : aabbs) {
-			aabb = aabb.getOffsetBoundingBox(x, y, z);
-			if (mask.intersectsWith(aabb)){
-				list.add(aabb);
+			AxisAlignedBB aabbTmp = aabb.getOffsetBoundingBox(x, y, z);
+			if (mask.intersectsWith(aabbTmp)) {
+				list.add(aabbTmp);
 			}
 		}
 	}
@@ -134,11 +135,13 @@ public class BlockLaser extends BlockContainer implements ICustomHighlight {
 	public int onBlockPlaced(World world, int x, int y, int z, int side, float par6, float par7, float par8, int meta) {
 		super.onBlockPlaced(world, x, y, z, side, par6, par7, par8, meta);
 
+		int retMeta = meta;
+
 		if (side <= 6) {
-			meta = side;
+			retMeta = side;
 		}
 
-		return meta;
+		return retMeta;
 	}
 
 	@Override

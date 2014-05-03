@@ -8,18 +8,25 @@
  */
 package buildcraft.transport.render;
 
-import buildcraft.BuildCraftTransport;
-import buildcraft.api.core.IIconProvider;
-import buildcraft.core.CoreConstants;
-import buildcraft.core.utils.MatrixTranformations;
-import buildcraft.transport.*;
-import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.IBlockAccess;
+
+import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
+
 import net.minecraftforge.common.util.ForgeDirection;
+
+import buildcraft.BuildCraftTransport;
+import buildcraft.api.core.IIconProvider;
+import buildcraft.core.CoreConstants;
+import buildcraft.core.utils.MatrixTranformations;
+import buildcraft.transport.BlockGenericPipe;
+import buildcraft.transport.PipeIconProvider;
+import buildcraft.transport.PipeRenderState;
+import buildcraft.transport.TileGenericPipe;
+import buildcraft.transport.TransportProxy;
 
 public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
 

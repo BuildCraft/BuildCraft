@@ -10,8 +10,13 @@ package buildcraft.transport.pipes;
 
 import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
+
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.FluidStack;
+
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.transport.IPipeConnectionForced;
@@ -20,8 +25,6 @@ import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportFluids;
 import buildcraft.transport.TileGenericPipe;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 public class PipeFluidsSandstone extends Pipe<PipeTransportFluids> implements IPipeTransportFluidsHook, IPipeConnectionForced {
 
@@ -42,10 +45,11 @@ public class PipeFluidsSandstone extends Pipe<PipeTransportFluids> implements IP
 
 	@Override
 	public int fill(ForgeDirection from, FluidStack resource, boolean doFill) {
-		if (!(container.getTile(from) instanceof TileGenericPipe))
+		if (!(container.getTile(from) instanceof TileGenericPipe)) {
 			return 0;
-
-		return transport.internalTanks[from.ordinal()].fill(resource, doFill);
+		} else {
+			return transport.internalTanks[from.ordinal()].fill(resource, doFill);
+		}
 	}
 
 	@Override

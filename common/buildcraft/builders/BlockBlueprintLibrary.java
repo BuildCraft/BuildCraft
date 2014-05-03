@@ -17,11 +17,13 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
+
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
 import buildcraft.BuildCraftBuilders;
 import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.GuiIds;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 public class BlockBlueprintLibrary extends BlockContainer {
 
@@ -39,18 +41,18 @@ public class BlockBlueprintLibrary extends BlockContainer {
 		super.onBlockActivated(world, i, j, k, entityplayer, par6, par7, par8, par9);
 
 		// Drop through if the player is sneaking
-		if (entityplayer.isSneaking())
+		if (entityplayer.isSneaking()) {
 			return false;
+		}
 
 		TileEntity tile = world.getTileEntity(i, j, k);
 		if (tile instanceof TileBlueprintLibrary) {
-			TileBlueprintLibrary tileBlueprint = (TileBlueprintLibrary)tile;
-			if (!tileBlueprint.locked || entityplayer.getDisplayName().equals(tileBlueprint.owner))
-				if (!world.isRemote) {
-					entityplayer.openGui(BuildCraftBuilders.instance, GuiIds.BLUEPRINT_LIBRARY, world, i, j, k);
-				}
-		}
+			TileBlueprintLibrary tileBlueprint = (TileBlueprintLibrary) tile;
 
+			if (!world.isRemote) {
+				entityplayer.openGui(BuildCraftBuilders.instance, GuiIds.BLUEPRINT_LIBRARY, world, i, j, k);
+			}
+		}
 
 		return true;
 	}
@@ -75,15 +77,16 @@ public class BlockBlueprintLibrary extends BlockContainer {
 	public void onBlockPlacedBy(World world, int i, int j, int k, EntityLivingBase entityliving, ItemStack stack) {
 		if (!world.isRemote && entityliving instanceof EntityPlayer) {
 			TileEntity tile = world.getTileEntity(i, j, k);
-			if (tile instanceof TileBlueprintLibrary)
-				((TileBlueprintLibrary)tile).owner = ((EntityPlayer) entityliving).getDisplayName();
+
+			if (tile instanceof TileBlueprintLibrary) {
+				((TileBlueprintLibrary) tile).owner = ((EntityPlayer) entityliving).getDisplayName();
+			}
 		}
 	}
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void registerBlockIcons(IIconRegister par1IconRegister)
-	{
+	public void registerBlockIcons(IIconRegister par1IconRegister) {
 	    textureTop = par1IconRegister.registerIcon("buildcraft:library_topbottom");
         textureSide = par1IconRegister.registerIcon("buildcraft:library_side");
 	}

@@ -11,16 +11,17 @@ package buildcraft.builders.schematics;
 import java.util.LinkedList;
 
 import net.minecraft.item.ItemStack;
+
 import buildcraft.api.blueprints.IBuilderContext;
 
 public class SchematicPiston extends SchematicRotateMeta {
 
 	public SchematicPiston() {
-		super(new int[] { 2, 5, 3, 4 }, true);
+		super(new int[] {2, 5, 3, 4}, true);
 	}
 
 	@Override
-	public void writeToWorld(IBuilderContext context, int x, int y, int z, LinkedList <ItemStack> stacks) {
+	public void writeToWorld(IBuilderContext context, int x, int y, int z, LinkedList<ItemStack> stacks) {
 		int localMeta = meta & 7;
 
 		context.world().setBlock(x, y, z, block, localMeta, 3);

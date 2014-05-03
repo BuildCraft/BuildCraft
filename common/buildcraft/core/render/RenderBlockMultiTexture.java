@@ -8,17 +8,19 @@
  */
 package buildcraft.core.render;
 
+import org.lwjgl.opengl.GL11;
+
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.world.IBlockAccess;
-import net.minecraftforge.common.util.ForgeDirection;
 
-import org.lwjgl.opengl.GL11;
-
-import buildcraft.core.BlockMultiTexture;
 import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
 import cpw.mods.fml.client.registry.RenderingRegistry;
+
+import net.minecraftforge.common.util.ForgeDirection;
+
+import buildcraft.core.BlockMultiTexture;
 
 public class RenderBlockMultiTexture implements ISimpleBlockRenderingHandler {
 

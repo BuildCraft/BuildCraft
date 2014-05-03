@@ -8,14 +8,14 @@
  */
 package buildcraft.energy.render;
 
+import org.lwjgl.opengl.GL11;
+
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
-
-import org.lwjgl.opengl.GL11;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftCore.RenderMode;
@@ -27,11 +27,12 @@ import buildcraft.energy.TileEnergyEmitter.Target;
 
 public class RenderEnergyEmitter extends TileEntitySpecialRenderer {
 
+	private static final ResourceLocation CHAMBER_TEXTURE = new ResourceLocation(DefaultProps.TEXTURE_PATH_BLOCKS
+			+ "/chamber2.png");
+
 	private ModelBase model = new ModelBase() {
 	};
 	private ModelRenderer box;
-
-	private static final ResourceLocation CHAMBER_TEXTURE = new ResourceLocation(DefaultProps.TEXTURE_PATH_BLOCKS + "/chamber2.png");
 
 	public RenderEnergyEmitter() {
 		box = new ModelRenderer(model, 0, 1);
@@ -58,7 +59,7 @@ public class RenderEnergyEmitter extends TileEntitySpecialRenderer {
 
 		float step;
 
-		float[] angle = { 0, 0, 0 };
+		float[] angle = {0, 0, 0};
 
 		box.rotateAngleX = angle[0];
 		box.rotateAngleY = angle[1];
@@ -78,7 +79,7 @@ public class RenderEnergyEmitter extends TileEntitySpecialRenderer {
 
 	@Override
 	public void renderTileEntityAt(TileEntity tileentity, double x, double y, double z, float f) {
-		TileEnergyEmitter emitter = ((TileEnergyEmitter) tileentity);
+		TileEnergyEmitter emitter = (TileEnergyEmitter) tileentity;
 
 		if (emitter != null) {
 			GL11.glPushMatrix();

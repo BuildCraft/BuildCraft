@@ -10,10 +10,12 @@ package buildcraft.transport;
 
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.util.IIcon;
-import buildcraft.BuildCraftCore;
-import buildcraft.api.core.IIconProvider;
+
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+
+import buildcraft.BuildCraftCore;
+import buildcraft.api.core.IIconProvider;
 
 public class PipeIconProvider implements IIconProvider {
 
@@ -133,9 +135,9 @@ public class PipeIconProvider implements IIconProvider {
 		private final String iconTagColorBlind;
 		private IIcon icon;
 
-		private TYPE(String iconTag, String IconTagColorBlind) {
+		private TYPE(String iconTag, String iconTagColorBlind) {
 			this.iconTag = iconTag;
-			this.iconTagColorBlind = IconTagColorBlind;
+			this.iconTagColorBlind = iconTagColorBlind;
 		}
 
 		private TYPE(String iconTag) {

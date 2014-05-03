@@ -14,13 +14,14 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
-import buildcraft.BuildCraftFactory;
-import buildcraft.core.BlockBuildCraft;
-import buildcraft.core.CreativeTabBuildCraft;
-import buildcraft.core.GuiIds;
-import buildcraft.core.IItemPipe;
+
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+
+import buildcraft.BuildCraftFactory;
+import buildcraft.core.BlockBuildCraft;
+import buildcraft.core.GuiIds;
+import buildcraft.core.IItemPipe;
 
 public class BlockAutoWorkbench extends BlockBuildCraft {
 
@@ -70,8 +71,7 @@ public class BlockAutoWorkbench extends BlockBuildCraft {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void registerBlockIcons(IIconRegister par1IconRegister)
-	{
+	public void registerBlockIcons(IIconRegister par1IconRegister) {
 	    topTexture = par1IconRegister.registerIcon("buildcraft:autoWorkbench_top");
 	    sideTexture = par1IconRegister.registerIcon("buildcraft:autoWorkbench_side");
 	}

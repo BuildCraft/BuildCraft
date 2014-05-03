@@ -8,15 +8,16 @@
  */
 package buildcraft.silicon.gui;
 
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.inventory.ICrafting;
+import net.minecraft.inventory.Slot;
+
 import buildcraft.core.gui.BuildCraftContainer;
 import buildcraft.core.gui.slots.SlotOutput;
 import buildcraft.core.gui.slots.SlotUntouchable;
 import buildcraft.core.gui.slots.SlotValidated;
 import buildcraft.silicon.TileIntegrationTable;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.inventory.ICrafting;
-import net.minecraft.inventory.Slot;
 
 public class ContainerIntegrationTable extends BuildCraftContainer {
 
@@ -31,7 +32,7 @@ public class ContainerIntegrationTable extends BuildCraftContainer {
 		addSlot(new SlotOutput(table, TileIntegrationTable.SLOT_OUTPUT, 143, 44));
 		addSlot(new SlotUntouchable(table.getRecipeOutput(), 0, 116, 44));
 
-		for (int i=TileIntegrationTable.SLOT_OUTPUT + 1; i<12; i++) {
+		for (int i = TileIntegrationTable.SLOT_OUTPUT + 1; i < 12; i++) {
 			addSlot(new Slot(table, i, 8 + (i - (TileIntegrationTable.SLOT_OUTPUT + 1)) * 18, 69));
 		}
 

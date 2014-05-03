@@ -10,6 +10,7 @@ package buildcraft.api.core;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+
 import net.minecraftforge.common.util.ForgeDirection;
 
 public class Position {
@@ -159,11 +160,7 @@ public class Position {
 
 		double sqrDis = dx * dx + dy * dy + dz * dz;
 
-		if (sqrDis > f * f) {
-			return false;
-		} else {
-			return true;
-		}
+		return !(sqrDis > f * f);
 	}
 
 }

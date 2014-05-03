@@ -8,10 +8,11 @@
  */
 package buildcraft.transport.gates;
 
-import buildcraft.api.gates.IGateExpansion;
-import buildcraft.core.utils.StringUtils;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.util.IIcon;
+
+import buildcraft.api.gates.IGateExpansion;
+import buildcraft.core.utils.StringUtils;
 
 public abstract class GateExpansionBuildcraft implements IGateExpansion {
 

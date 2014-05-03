@@ -10,10 +10,10 @@ package buildcraft.core.robots;
 
 public interface IRobotTask {
 
-	public void setup(EntityRobot robot);
+	void setup(EntityRobot robot);
 
-	public void update(EntityRobot robot);
+	void update(EntityRobot robot);
 
-	public boolean done();
+	boolean done();
 
 }

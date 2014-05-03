@@ -13,5 +13,5 @@ import net.minecraftforge.fluids.FluidStack;
 
 public interface IPipeTransportFluidsHook {
 
-	public int fill(ForgeDirection from, FluidStack resource, boolean doFill);
+	int fill(ForgeDirection from, FluidStack resource, boolean doFill);
 }

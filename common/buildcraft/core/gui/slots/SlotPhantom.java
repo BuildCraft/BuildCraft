@@ -21,10 +21,9 @@ public class SlotPhantom extends SlotBase implements IPhantomSlot {
 	public boolean canAdjust() {
 		return true;
 	}
-	
+
 	@Override
-    public boolean canTakeStack(EntityPlayer par1EntityPlayer)
-    {
+	public boolean canTakeStack(EntityPlayer par1EntityPlayer) {
         return false;
     }
 }

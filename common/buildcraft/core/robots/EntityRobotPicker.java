@@ -19,7 +19,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+
 import net.minecraftforge.common.util.ForgeDirection;
+
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.inventory.TransactorSimple;
@@ -30,6 +32,7 @@ import buildcraft.transport.TravelingItem;
 public class EntityRobotPicker extends EntityRobot implements IInventory {
 
 	private static ResourceLocation texture = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_ENTITIES + "/robot_picker.png");
+	private static Set<Integer> targettedItems = new HashSet<Integer>();
 
 	SafeTimeTracker scanTracker = new SafeTimeTracker(40, 10);
 	SafeTimeTracker pickTracker = new SafeTimeTracker(20, 0);
@@ -39,7 +42,9 @@ public class EntityRobotPicker extends EntityRobot implements IInventory {
 
 	int pickTime = -1;
 
-	ItemStack inv [] = new ItemStack [6];
+	ItemStack[] inv = new ItemStack[6];
+
+	private EntityItem target;
 
 	public EntityRobotPicker(World par1World) {
 		super(par1World);
@@ -49,9 +54,6 @@ public class EntityRobotPicker extends EntityRobot implements IInventory {
 	public ResourceLocation getTexture () {
 		return texture;
 	}
-
-	private static Set <Integer> targettedItems = new HashSet<Integer>();
-	private EntityItem target;
 
 	@Override
 	public void onUpdate () {
@@ -68,7 +70,7 @@ public class EntityRobotPicker extends EntityRobot implements IInventory {
 				currentAI = new AIReturnToDock();
 				hideLaser();
 				scan ();
-			} else if (pickTime == -1){
+			} else if (pickTime == -1) {
 				if (getDistance(target.posX, target.posY, target.posZ) < 10) {
 					setLaserDestination((float) target.posX, (float) target.posY, (float) target.posZ);
 					showLaser();

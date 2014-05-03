@@ -8,14 +8,15 @@
  */
 package buildcraft.builders;
 
-import io.netty.buffer.ByteBuf;
-
 import java.io.IOException;
+
+import io.netty.buffer.ByteBuf;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
+
 import buildcraft.BuildCraftCore;
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.filler.FillerManager;
@@ -41,12 +42,13 @@ import buildcraft.core.utils.Utils;
 
 public class TileFiller extends TileAbstractBuilder implements IMachine, IActionReceptor {
 
+	private static int POWER_ACTIVATION = 50;
+
 	public FillerPattern currentPattern = PatternFill.INSTANCE;
 
 	private BptBuilderTemplate currentTemplate;
 	private BptContext context;
 
-	private static int POWER_ACTIVATION = 50;
 	private final Box box = new Box();
 	private boolean done = false;
 	private ActionMachineControl.Mode lastMode = ActionMachineControl.Mode.Unknown;
@@ -119,7 +121,7 @@ public class TileFiller extends TileAbstractBuilder implements IMachine, IAction
 		if (done) {
 			if (lastMode == Mode.Loop) {
 				done = false;
-			}else{
+			} else {
 				return;
 			}
 		}
@@ -138,7 +140,7 @@ public class TileFiller extends TileAbstractBuilder implements IMachine, IAction
 			}
 		}
 
-		if(oldDone != done){
+		if (oldDone != done) {
 			sendNetworkUpdate();
 		}
 	}

@@ -8,6 +8,17 @@
  */
 package buildcraft.energy;
 
+import java.util.LinkedList;
+
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.ICrafting;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntityFurnace;
+import net.minecraft.util.ResourceLocation;
+
+import net.minecraftforge.common.util.ForgeDirection;
+
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftEnergy;
 import buildcraft.api.gates.ITrigger;
@@ -15,21 +26,12 @@ import buildcraft.core.GuiIds;
 import buildcraft.core.inventory.InvUtils;
 import buildcraft.core.utils.MathUtils;
 import buildcraft.energy.gui.ContainerEngine;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.ICrafting;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntityFurnace;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.util.ForgeDirection;
-
-import java.util.LinkedList;
 
 public class TileEngineStone extends TileEngineWithInventory {
 
-	final float MAX_OUTPUT = 1f;
-	final float MIN_OUTPUT = MAX_OUTPUT / 3;
-	final float TARGET_OUTPUT = 0.375f;
+	static final float MAX_OUTPUT = 1f;
+	static final float MIN_OUTPUT = MAX_OUTPUT / 3;
+	static final float TARGET_OUTPUT = 0.375f;
 	final float kp = 1f;
 	final float ki = 0.05f;
 	final double eLimit = (MAX_OUTPUT - MIN_OUTPUT) / ki;
@@ -94,10 +96,11 @@ public class TileEngineStone extends TileEngineWithInventory {
 	}
 
 	private int getItemBurnTime(ItemStack itemstack) {
-		if (itemstack == null)
+		if (itemstack == null) {
 			return 0;
-
-		return TileEntityFurnace.getItemBurnTime(itemstack);
+		} else {
+			return TileEntityFurnace.getItemBurnTime(itemstack);
+		}
 	}
 
 	/* SAVING & LOADING */

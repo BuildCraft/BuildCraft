@@ -8,15 +8,16 @@
  */
 package buildcraft.silicon;
 
-import buildcraft.api.power.ILaserTarget;
-import buildcraft.core.TileBuildCraft;
-import buildcraft.core.inventory.SimpleInventory;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.ICrafting;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+
+import buildcraft.api.power.ILaserTarget;
+import buildcraft.core.TileBuildCraft;
+import buildcraft.core.inventory.SimpleInventory;
 
 public abstract class TileLaserTableBase extends TileBuildCraft implements ILaserTarget, IInventory {
 
@@ -53,11 +54,13 @@ public abstract class TileLaserTableBase extends TileBuildCraft implements ILase
 	public abstract double getRequiredEnergy();
 
 	public int getProgressScaled(int ratio) {
-		if (clientRequiredEnergy == 0.0)
+		if (clientRequiredEnergy == 0.0) {
 			return 0;
-		if (energy >= clientRequiredEnergy)
+		} else if (energy >= clientRequiredEnergy) {
 			return ratio;
-		return (int) (energy / clientRequiredEnergy * ratio);
+		} else {
+			return (int) (energy / clientRequiredEnergy * ratio);
+		}
 	}
 
 	public int getRecentEnergyAverage() {
@@ -155,19 +158,19 @@ public abstract class TileLaserTableBase extends TileBuildCraft implements ILase
 		switch (id) {
 			case 0:
 				requiredEnergy = (requiredEnergy & 0xFFFF0000) | (data & 0xFFFF);
-				clientRequiredEnergy = (requiredEnergy / 100.0f);
+			clientRequiredEnergy = requiredEnergy / 100.0f;
 				break;
 			case 1:
 				currentStored = (currentStored & 0xFFFF0000) | (data & 0xFFFF);
-				energy = (currentStored / 100.0f);
+			energy = currentStored / 100.0f;
 				break;
 			case 2:
 				requiredEnergy = (requiredEnergy & 0xFFFF) | ((data & 0xFFFF) << 16);
-				clientRequiredEnergy = (requiredEnergy / 100.0f);
+			clientRequiredEnergy = requiredEnergy / 100.0f;
 				break;
 			case 3:
 				currentStored = (currentStored & 0xFFFF) | ((data & 0xFFFF) << 16);
-				energy = (currentStored / 100.0f);
+			energy = currentStored / 100.0f;
 				break;
 			case 4:
 				recentEnergyAverage = recentEnergyAverage & 0xFFFF0000 | (data & 0xFFFF);
@@ -182,8 +185,8 @@ public abstract class TileLaserTableBase extends TileBuildCraft implements ILase
 		int requiredEnergy = (int) (getRequiredEnergy() * 100.0);
 		int currentStored = (int) (energy * 100.0);
 		int lRecentEnergy = 0;
-		for (int i = 0; i < recentEnergy.length; i++) {
-			lRecentEnergy += (int) (recentEnergy[i] * 100.0 / (recentEnergy.length - 1));
+		for (double element : recentEnergy) {
+			lRecentEnergy += (int) (element * 100.0 / (recentEnergy.length - 1));
 		}
 		iCrafting.sendProgressBarUpdate(container, 0, requiredEnergy & 0xFFFF);
 		iCrafting.sendProgressBarUpdate(container, 1, currentStored & 0xFFFF);

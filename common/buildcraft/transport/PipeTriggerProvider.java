@@ -8,15 +8,17 @@
  */
 package buildcraft.transport;
 
+import java.util.LinkedList;
+
+import net.minecraft.block.Block;
+import net.minecraft.tileentity.TileEntity;
+
 import buildcraft.api.gates.IOverrideDefaultTriggers;
 import buildcraft.api.gates.ITrigger;
 import buildcraft.api.gates.ITriggerProvider;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.transport.pipes.PipePowerWood;
 import buildcraft.transport.triggers.TriggerPipeContents;
-import java.util.LinkedList;
-import net.minecraft.block.Block;
-import net.minecraft.tileentity.TileEntity;
 
 public class PipeTriggerProvider implements ITriggerProvider {
 
@@ -24,15 +26,19 @@ public class PipeTriggerProvider implements ITriggerProvider {
 	public LinkedList<ITrigger> getPipeTriggers(IPipeTile tile) {
 		LinkedList<ITrigger> result = new LinkedList<ITrigger>();
 		Pipe pipe = null;
-		if (tile instanceof TileGenericPipe)
+		if (tile instanceof TileGenericPipe) {
 			pipe = ((TileGenericPipe) tile).pipe;
-		if (pipe == null)
-			return result;
-		if (pipe instanceof IOverrideDefaultTriggers)
-			return ((IOverrideDefaultTriggers) pipe).getTriggers();
+		}
 
-		if (pipe.hasGate())
+		if (pipe == null) {
+			return result;
+		} else if (pipe instanceof IOverrideDefaultTriggers) {
+			return ((IOverrideDefaultTriggers) pipe).getTriggers();
+		}
+
+		if (pipe.hasGate()) {
 			pipe.gate.addTrigger(result);
+		}
 
 		switch (tile.getPipeType()) {
 			case ITEM:
@@ -51,6 +57,8 @@ public class PipeTriggerProvider implements ITriggerProvider {
 					result.add(TriggerPipeContents.PipeContents.requestsEnergy.trigger);
 				}
 				break;
+		case STRUCTURE:
+			break;
 		}
 
 		return result;

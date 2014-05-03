@@ -15,7 +15,9 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.ResourceLocation;
+
 import net.minecraftforge.common.util.ForgeDirection;
+
 import buildcraft.BuildCraftCore;
 import buildcraft.api.core.NetworkData;
 import buildcraft.api.core.Position;
@@ -34,6 +36,7 @@ import buildcraft.core.triggers.ActionMachineControl;
 public class TileLaser extends TileBuildCraft implements IActionReceptor, IMachine {
 
 	private static final float LASER_OFFSET = 2.0F / 16.0F;
+	private static final short POWER_AVERAGING = 100;
 
 	@NetworkData
 	public LaserData laser = new LaserData();
@@ -43,17 +46,13 @@ public class TileLaser extends TileBuildCraft implements IActionReceptor, IMachi
 	private final SafeTimeTracker networkTracker = new SafeTimeTracker(20, 3);
 	private ILaserTarget laserTarget;
 	private ActionMachineControl.Mode lastMode = ActionMachineControl.Mode.Unknown;
-
-	private static final short POWER_AVERAGING = 100;
 	private int powerIndex = 0;
 
 	@MjBattery(maxCapacity = 1000, maxReceivedPerCycle = 25, minimumConsumption = 1)
 	private double mjStored = 0;
-
 	@NetworkData
 	private double powerAverage = 0;
-
-	private final double power[] = new double[POWER_AVERAGING];
+	private final double[] power = new double[POWER_AVERAGING];
 
 
 	@Override
@@ -108,15 +107,15 @@ public class TileLaser extends TileBuildCraft implements IActionReceptor, IMachi
 		}
 
 		// Consume power and transfer it to the table.
-		double power = mjStored > getMaxPowerSent() ? getMaxPowerSent() : mjStored;
-		mjStored -= power;
-		laserTarget.receiveLaserEnergy(power);
+		double localPower = mjStored > getMaxPowerSent() ? getMaxPowerSent() : mjStored;
+		mjStored -= localPower;
+		laserTarget.receiveLaserEnergy(localPower);
 
 		if (laser != null) {
-			pushPower(power);
+			pushPower(localPower);
 		}
 
-		onPowerSent(power);
+		onPowerSent(localPower);
 
 		sendNetworkUpdate();
 	}

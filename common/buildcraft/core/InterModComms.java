@@ -13,26 +13,34 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import buildcraft.core.recipes.AssemblyRecipeManager;
-import buildcraft.core.recipes.RefineryRecipeManager;
+import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
+import com.google.common.collect.Iterables;
+import com.google.common.primitives.Ints;
+
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.world.biome.BiomeGenBase;
-import buildcraft.energy.worldgen.OilPopulate;
-import buildcraft.transport.ItemFacade;
-
-import com.google.common.base.Splitter;
-import com.google.common.collect.Iterables;
-import com.google.common.primitives.Ints;
 
 import cpw.mods.fml.common.event.FMLInterModComms.IMCEvent;
 import cpw.mods.fml.common.event.FMLInterModComms.IMCMessage;
+
 import net.minecraftforge.fluids.FluidStack;
 
-public class InterModComms {
+import buildcraft.core.recipes.AssemblyRecipeManager;
+import buildcraft.core.recipes.RefineryRecipeManager;
+import buildcraft.energy.worldgen.OilPopulate;
+import buildcraft.transport.ItemFacade;
+
+public final class InterModComms {
+
+	/**
+	 * Deactivate constructor
+	 */
+	private InterModComms() {
+	}
 
 	public static void processIMC(IMCEvent event) {
 		for (IMCMessage m : event.getMessages()) {
@@ -44,13 +52,13 @@ public class InterModComms {
 				processOilLakeBiomeIMC(event, m);
 			} else if (m.key.equals("oil-gen-exclude")) {
 				processOilGenExcludeIMC(event, m);
-			} else if (m.key.equals("add-assembly-recipe")){
+			} else if (m.key.equals("add-assembly-recipe")) {
 				processAssemblyRecipeIMC(event, m);
-			} else if (m.key.equals("add-refinery-recipe")){
+			} else if (m.key.equals("add-refinery-recipe")) {
 				processRefineryRecipeIMC(event, m);
-			} else if (m.key.equals("remove-assembly-recipe")){
+			} else if (m.key.equals("remove-assembly-recipe")) {
 				//TODO
-			} else if (m.key.equals("remove-refinery-recipe")){
+			} else if (m.key.equals("remove-refinery-recipe")) {
 				//TODO
 			} else {
 				Logger.getLogger("Buildcraft").log(Level.WARNING, "Received IMC message with unknown key('%s') from %s!", new Object[]{m.key, m.getSender()});
@@ -58,7 +66,7 @@ public class InterModComms {
 		}
 	}
 
-	public static void processAssemblyRecipeIMC(IMCEvent event, IMCMessage msg){
+	public static void processAssemblyRecipeIMC(IMCEvent event, IMCMessage msg) {
 		boolean failed = false;
 		if (!msg.isNBTMessage()) {
 			failed = true;
@@ -88,7 +96,7 @@ public class InterModComms {
 		}
 	}
 
-	public static void processRefineryRecipeIMC(IMCEvent event, IMCMessage msg){
+	public static void processRefineryRecipeIMC(IMCEvent event, IMCMessage msg) {
 		boolean failed = false;
 		if (!msg.isNBTMessage()) {
 			failed = true;
@@ -127,11 +135,11 @@ public class InterModComms {
 					String blockName = array[0];
 					Integer metaId = Ints.tryParse(array[1]);
 
-					if (Strings.isNullOrEmpty(blockName)|| metaId == null) {
+					if (Strings.isNullOrEmpty(blockName) || metaId == null) {
 						Logger.getLogger("Buildcraft").log(Level.INFO, String.format("Received an invalid add-facade request %s from mod %s", m.getStringValue(), m.getSender()));
 					} else {
 						Block block = (Block) Block.blockRegistry.getObject(blockName);
-						if(block.getRenderType() != 0 && block.getRenderType() != 31) {
+						if (block.getRenderType() != 0 && block.getRenderType() != 31) {
 							ItemFacade.addFacade(new ItemStack(block, 1, metaId));
 						} else {
 							logRedundantAddFacadeMessage(m, block.toString());
@@ -142,7 +150,7 @@ public class InterModComms {
 				ItemStack modItemStack = m.getItemStackValue();
 
 				Block block = Block.getBlockFromItem(modItemStack.getItem());
-				if(block != null && block.getRenderType() != 0 && block.getRenderType() != 31) {
+				if (block != null && block.getRenderType() != 0 && block.getRenderType() != 31) {
 					ItemFacade.addFacade(modItemStack);
 				} else {
 					logRedundantAddFacadeMessage(m, block.toString());
@@ -152,20 +160,20 @@ public class InterModComms {
 		}
 	}
 
-	public static void processBlacklistFacadeIMC(IMCEvent event, IMCMessage message){
+	public static void processBlacklistFacadeIMC(IMCEvent event, IMCMessage message) {
 		try {
-			if(message.isItemStackMessage()) {
+			if (message.isItemStackMessage()) {
 				ItemStack modItemStack = message.getItemStackValue();
 
 				Block block = Block.getBlockFromItem(modItemStack.getItem());
-				if(block != null) {
+				if (block != null) {
 					String blockName = Block.blockRegistry.getNameForObject(block);
 					ItemFacade.blacklistFacade(blockName);
 				}
 			} else {
 				Logger.getLogger("Buildcraft").log(Level.INFO, String.format("Invalid blacklist-facade message from mod %s. Send an ItemStackMessage instead.", message.getSender()));
 			}
-		} catch (Throwable _) {
+		} catch (Throwable e) {
 		}
 	}
 

@@ -16,41 +16,43 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
+
 import net.minecraftforge.common.util.Constants;
+
 import buildcraft.core.utils.INBTTagable;
 
 public class SimpleInventory implements IInventory, INBTTagable {
 
-	private final ItemStack[] _contents;
-	private final String _name;
-	private final int _stackLimit;
-	private final LinkedList<TileEntity> _listener = new LinkedList<TileEntity>();
+	private final ItemStack[] contents;
+	private final String name;
+	private final int stackLimit;
+	private final LinkedList<TileEntity> listener = new LinkedList<TileEntity>();
 
-	public SimpleInventory(int size, String name, int stackLimit) {
-		_contents = new ItemStack[size];
-		_name = name;
-		_stackLimit = stackLimit;
+	public SimpleInventory(int size, String invName, int invStackLimit) {
+		contents = new ItemStack[size];
+		name = invName;
+		stackLimit = invStackLimit;
 	}
 
 	@Override
 	public int getSizeInventory() {
-		return _contents.length;
+		return contents.length;
 	}
 
 	@Override
 	public ItemStack getStackInSlot(int slotId) {
-		return _contents[slotId];
+		return contents[slotId];
 	}
 
 	@Override
 	public ItemStack decrStackSize(int slotId, int count) {
-		if (slotId < _contents.length && _contents[slotId] != null) {
-			if (_contents[slotId].stackSize > count) {
-				ItemStack result = _contents[slotId].splitStack(count);
+		if (slotId < contents.length && contents[slotId] != null) {
+			if (contents[slotId].stackSize > count) {
+				ItemStack result = contents[slotId].splitStack(count);
 				markDirty();
 				return result;
 			}
-			ItemStack stack = _contents[slotId];
+			ItemStack stack = contents[slotId];
 			setInventorySlotContents(slotId, null);
 			return stack;
 		}
@@ -59,10 +61,10 @@ public class SimpleInventory implements IInventory, INBTTagable {
 
 	@Override
 	public void setInventorySlotContents(int slotId, ItemStack itemstack) {
-		if (slotId >= _contents.length) {
+		if (slotId >= contents.length) {
 			return;
 		}
-		_contents[slotId] = itemstack;
+		contents[slotId] = itemstack;
 
 		if (itemstack != null && itemstack.stackSize > this.getInventoryStackLimit()) {
 			itemstack.stackSize = this.getInventoryStackLimit();
@@ -72,12 +74,12 @@ public class SimpleInventory implements IInventory, INBTTagable {
 
 	@Override
 	public String getInventoryName() {
-		return _name;
+		return name;
 	}
 
 	@Override
 	public int getInventoryStackLimit() {
-		return _stackLimit;
+		return stackLimit;
 	}
 
 	@Override
@@ -109,7 +111,7 @@ public class SimpleInventory implements IInventory, INBTTagable {
 			} else {
 				index = slot.getByte("Slot");
 			}
-			if (index >= 0 && index < _contents.length) {
+			if (index >= 0 && index < contents.length) {
 				setInventorySlotContents(index, ItemStack.loadItemStackFromNBT(slot));
 			}
 		}
@@ -122,34 +124,34 @@ public class SimpleInventory implements IInventory, INBTTagable {
 
 	public void writeToNBT(NBTTagCompound data, String tag) {
 		NBTTagList slots = new NBTTagList();
-		for (byte index = 0; index < _contents.length; ++index) {
-			if (_contents[index] != null && _contents[index].stackSize > 0) {
+		for (byte index = 0; index < contents.length; ++index) {
+			if (contents[index] != null && contents[index].stackSize > 0) {
 				NBTTagCompound slot = new NBTTagCompound();
 				slots.appendTag(slot);
 				slot.setByte("Slot", index);
-				_contents[index].writeToNBT(slot);
+				contents[index].writeToNBT(slot);
 			}
 		}
 		data.setTag(tag, slots);
 	}
 
 	public void addListener(TileEntity listner) {
-		_listener.add(listner);
+		listener.add(listner);
 	}
 
 	@Override
 	public ItemStack getStackInSlotOnClosing(int slotId) {
-		if (this._contents[slotId] == null) {
+		if (this.contents[slotId] == null) {
 			return null;
 		}
 
-		ItemStack stackToTake = this._contents[slotId];
+		ItemStack stackToTake = this.contents[slotId];
 		setInventorySlotContents(slotId, null);
 		return stackToTake;
 	}
 
 	public ItemStack[] getItemStacks() {
-		return _contents;
+		return contents;
 	}
 
 	@Override
@@ -164,7 +166,7 @@ public class SimpleInventory implements IInventory, INBTTagable {
 
 	@Override
 	public void markDirty() {
-		for (TileEntity handler : _listener) {
+		for (TileEntity handler : listener) {
 			handler.markDirty();
 		}
 	}

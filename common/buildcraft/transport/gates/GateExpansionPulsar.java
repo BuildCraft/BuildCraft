@@ -12,6 +12,7 @@ import java.util.List;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.gates.GateExpansionController;
 import buildcraft.api.gates.IAction;
@@ -22,7 +23,7 @@ import buildcraft.transport.TileGenericPipe;
 import buildcraft.transport.triggers.ActionEnergyPulsar;
 import buildcraft.transport.triggers.ActionSingleEnergyPulse;
 
-public class GateExpansionPulsar extends GateExpansionBuildcraft implements IGateExpansion {
+public final class GateExpansionPulsar extends GateExpansionBuildcraft implements IGateExpansion {
 
 	public static GateExpansionPulsar INSTANCE = new GateExpansionPulsar();
 

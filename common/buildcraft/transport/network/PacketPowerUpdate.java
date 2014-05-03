@@ -8,13 +8,10 @@
  */
 package buildcraft.transport.network;
 
-import buildcraft.core.network.PacketCoordinates;
-import buildcraft.core.network.PacketIds;
 import io.netty.buffer.ByteBuf;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
+import buildcraft.core.network.PacketCoordinates;
+import buildcraft.core.network.PacketIds;
 
 public class PacketPowerUpdate extends PacketCoordinates {
 
@@ -42,8 +39,8 @@ public class PacketPowerUpdate extends PacketCoordinates {
 	public void writeData(ByteBuf data) {
 		super.writeData(data);
 		data.writeBoolean(overload);
-		for (int i = 0; i < displayPower.length; i++) {
-			data.writeByte(displayPower[i]);
+		for (short element : displayPower) {
+			data.writeByte(element);
 		}
 	}
 }

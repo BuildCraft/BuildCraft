@@ -12,6 +12,7 @@ import java.util.LinkedList;
 
 import net.minecraft.util.IIcon;
 import net.minecraft.util.MovingObjectPosition;
+
 import buildcraft.core.gui.AdvancedSlot;
 
 class UrbanistTool {
@@ -48,7 +49,7 @@ class UrbanistTool {
 
 	}
 
-	public void createSlots (GuiUrbanist gui, LinkedList <AdvancedSlot> slots) {
+	public void createSlots(GuiUrbanist gui, LinkedList<AdvancedSlot> slots) {
 
 	}
 

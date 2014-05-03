@@ -12,7 +12,9 @@ import java.util.LinkedList;
 
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
+
 import net.minecraftforge.common.util.ForgeDirection;
+
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.SchematicTile;
 
@@ -32,7 +34,7 @@ public class SchematicSign extends SchematicTile {
 	@Override
 	public void rotateLeft(IBuilderContext context) {
 		if (!isWall) {
-			double angle = ((meta) * 360.0) / 16.0;
+			double angle = (meta * 360.0) / 16.0;
 			angle += 90.0;
 			if (angle >= 360) {
 				angle -= 360;

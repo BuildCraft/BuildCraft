@@ -21,7 +21,7 @@ import net.minecraft.item.ItemStack;
 public class InventoryCopy implements IInventory {
 
 	private IInventory orignal;
-	private ItemStack contents[];
+	private ItemStack[] contents;
 
 	public InventoryCopy(IInventory orignal) {
 		this.orignal = orignal;
@@ -113,7 +113,7 @@ public class InventoryCopy implements IInventory {
 	}
 
 	@Override
-	public void markDirty() { 
-		
+	public void markDirty() {
+
 	}
 }

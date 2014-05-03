@@ -19,6 +19,7 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
+
 import buildcraft.api.core.NetworkData;
 import buildcraft.core.Box;
 import buildcraft.core.Box.Kind;
@@ -35,20 +36,19 @@ import buildcraft.core.robots.RobotTaskProviderRegistry;
 public class TileUrbanist extends TileBuildCraft implements IInventory, IRobotTaskProvider, IBoxesProvider {
 
 	public EntityUrbanist urbanist;
-	EntityLivingBase player;
-	int thirdPersonView = 0;
-
-	double posX, posY, posZ;
-	float yaw;
-
-	int p2x = 0, p2y = 0, p2z = 0;
 
 	@NetworkData
-	public ArrayList <AnchoredBox> frames = new ArrayList <AnchoredBox> ();
+	public ArrayList<AnchoredBox> frames = new ArrayList<AnchoredBox>();
 
-	boolean isCreatingFrame = false;
-
-	LinkedList <IRobotTask> tasks = new LinkedList <IRobotTask> ();
+	private EntityLivingBase player;
+	private int thirdPersonView = 0;
+	private double posX, posY, posZ;
+	private float yaw;
+	private int p2x = 0;
+	private int p2y = 0;
+	private int p2z = 0;
+	private boolean isCreatingFrame = false;
+	private LinkedList<IRobotTask> tasks = new LinkedList<IRobotTask>();
 
 	public void createUrbanistEntity() {
 		if (worldObj.isRemote) {

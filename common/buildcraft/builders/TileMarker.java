@@ -11,6 +11,7 @@ package buildcraft.builders;
 import net.minecraft.block.Block;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
+
 import buildcraft.BuildCraftBuilders;
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.core.NetworkData;
@@ -23,13 +24,13 @@ import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
 
 public class TileMarker extends TileBuildCraft implements IAreaProvider {
-
 	private static int maxSize = 64;
 
 	public static class TileWrapper {
 
-		public @NetworkData
-		int x, y, z;
+		@NetworkData
+		public int x, y, z;
+		private TileMarker marker;
 
 		public TileWrapper() {
 			x = Integer.MAX_VALUE;
@@ -42,8 +43,6 @@ public class TileMarker extends TileBuildCraft implements IAreaProvider {
 			this.y = y;
 			this.z = z;
 		}
-
-		private TileMarker marker;
 
 		public boolean isSet() {
 			return x != Integer.MAX_VALUE;
@@ -69,27 +68,27 @@ public class TileMarker extends TileBuildCraft implements IAreaProvider {
 	}
 
 	public static class Origin {
+		@NetworkData
+		public TileWrapper vectO = new TileWrapper();
+		@NetworkData
+		public TileWrapper[] vect = {new TileWrapper(), new TileWrapper(), new TileWrapper()};
+		@NetworkData
+		public int xMin, yMin, zMin, xMax, yMax, zMax;
 
 		public boolean isSet() {
 			return vectO.isSet();
 		}
-
-		public @NetworkData
-		TileWrapper vectO = new TileWrapper();
-		public @NetworkData
-		TileWrapper[] vect = { new TileWrapper(), new TileWrapper(), new TileWrapper() };
-		public @NetworkData
-		int xMin, yMin, zMin, xMax, yMax, zMax;
 	}
 
-	public @NetworkData
-	Origin origin = new Origin();
+	@NetworkData
+	public Origin origin = new Origin();
+	@NetworkData
+	public boolean showSignals = false;
 
+	private Position initVectO;
+	private Position[] initVect;
 	private EntityBlock[] lasers;
 	private EntityBlock[] signals;
-
-	public @NetworkData
-	boolean showSignals = false;
 
 	public void updateSignals() {
 		if (!worldObj.isRemote) {
@@ -131,8 +130,6 @@ public class TileMarker extends TileBuildCraft implements IAreaProvider {
 			}
 		}
 	}
-
-	private Position initVectO, initVect[];
 
 	@Override
 	public void initialize() {

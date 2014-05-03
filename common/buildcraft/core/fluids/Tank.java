@@ -8,18 +8,28 @@
  */
 package buildcraft.core.fluids;
 
-import buildcraft.core.gui.tooltips.ToolTip;
-import buildcraft.core.gui.tooltips.ToolTipLine;
 import java.util.Locale;
+
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidTank;
 
+import buildcraft.core.gui.tooltips.ToolTip;
+import buildcraft.core.gui.tooltips.ToolTipLine;
+
 public class Tank extends FluidTank {
+	public int colorRenderCache = 0xFFFFFF;
+
+	protected final ToolTip toolTip = new ToolTip() {
+		@Override
+		public void refresh() {
+			refreshTooltip();
+		}
+	};
 
 	private final String name;
-	public int colorRenderCache = 0xFFFFFF;
 
 	public Tank(String name, int capacity, TileEntity tile) {
 		super(capacity);
@@ -79,10 +89,4 @@ public class Tank extends FluidTank {
 		}
 		toolTip.add(new ToolTipLine(String.format(Locale.ENGLISH, "%,d / %,d", amount, getCapacity())));
 	}
-	protected final ToolTip toolTip = new ToolTip() {
-		@Override
-		public void refresh() {
-			refreshTooltip();
-		}
-	};
 }

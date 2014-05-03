@@ -13,6 +13,7 @@ import java.util.TreeMap;
 
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.World;
+
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.mj.MjBattery;
 import buildcraft.core.BlockIndex;
@@ -28,6 +29,8 @@ public class TileEnergyEmitter extends TileBuildCraft {
 	@MjBattery (maxCapacity = 1024, maxReceivedPerCycle = 1204, minimumConsumption = 0)
 	public double mjStored;
 
+	public Map<BlockIndex, Target> targets = new TreeMap<BlockIndex, Target>();
+
 	public float mjAcc = 0;
 	public int accumulated = 0;
 
@@ -38,8 +41,6 @@ public class TileEnergyEmitter extends TileBuildCraft {
 		public LaserData data = new LaserData();
 		TileEnergyReceiver receiver;
 	}
-
-	public Map <BlockIndex, Target> targets = new TreeMap <BlockIndex, Target> ();
 
 	public TileEnergyEmitter () {
 

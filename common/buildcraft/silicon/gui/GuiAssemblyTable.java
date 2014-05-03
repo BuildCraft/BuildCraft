@@ -8,6 +8,17 @@
  */
 package buildcraft.silicon.gui;
 
+import java.util.Iterator;
+import java.util.List;
+
+import org.lwjgl.opengl.GL11;
+
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
+
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftSilicon;
 import buildcraft.core.CoreIconProvider;
@@ -17,22 +28,10 @@ import buildcraft.core.gui.GuiAdvancedInterface;
 import buildcraft.core.network.PacketCoordinates;
 import buildcraft.core.network.PacketIds;
 import buildcraft.core.network.PacketNBT;
-import buildcraft.core.proxy.CoreProxy;
-import buildcraft.core.utils.StringUtils;
 import buildcraft.core.recipes.AssemblyRecipeManager.AssemblyRecipe;
+import buildcraft.core.utils.StringUtils;
 import buildcraft.silicon.TileAssemblyTable;
 import buildcraft.silicon.TileAssemblyTable.SelectionMessage;
-
-import java.util.Iterator;
-import java.util.List;
-
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.texture.TextureMap;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
-
-import org.lwjgl.opengl.GL11;
 
 public class GuiAssemblyTable extends GuiAdvancedInterface {
 
@@ -59,8 +58,9 @@ public class GuiAssemblyTable extends GuiAdvancedInterface {
 			Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.locationItemsTexture);
 			drawIcon(BuildCraftCore.iconProvider.getIcon(CoreIconProvider.ENERGY), x + 3, y + 4);
 
-			if (!isFullyOpened())
+			if (!isFullyOpened()) {
 				return;
+			}
 
 			fontRendererObj.drawStringWithShadow(StringUtils.localize("gui.energy"), x + 22, y + 8, headerColour);
 			fontRendererObj.drawStringWithShadow(StringUtils.localize("gui.assemblyCurrentRequired") + ":", x + 22, y + 20, subheaderColour);
@@ -89,10 +89,11 @@ public class GuiAssemblyTable extends GuiAdvancedInterface {
 
 		@Override
 		public ItemStack getItemStack() {
-			if (this.recipe != null)
+			if (this.recipe != null) {
 				return this.recipe.getOutput();
-			else
+			} else {
 				return null;
+			}
 		}
 	}
 
@@ -155,8 +156,8 @@ public class GuiAssemblyTable extends GuiAdvancedInterface {
 
 		updateRecipes();
 
-		for (int s = 0; s < slots.length; ++s) {
-			RecipeSlot slot = (RecipeSlot) slots[s];
+		for (AdvancedSlot slot2 : slots) {
+			RecipeSlot slot = (RecipeSlot) slot2;
 
 			if (table.isAssembling(slot.recipe)) {
 				drawTexturedModalRect(cornerX + slot.x, cornerY + slot.y, 196, 1, 16, 16);
@@ -184,8 +185,9 @@ public class GuiAssemblyTable extends GuiAdvancedInterface {
 		if (position != -1) {
 			RecipeSlot slot = (RecipeSlot) slots[position];
 
-			if (slot.recipe == null)
+			if (slot.recipe == null) {
 				return;
+			}
 
 			SelectionMessage message = new SelectionMessage();
 

@@ -8,13 +8,12 @@
  */
 package buildcraft.core.utils;
 
-import buildcraft.BuildCraftCore;
-import buildcraft.api.core.BCLog;
-
 import java.util.logging.Level;
 
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
+
+import buildcraft.api.core.BCLog;
 
 public class ConfigUtils {
 
@@ -33,43 +32,45 @@ public class ConfigUtils {
 	}
 
 	public boolean get(String tag, boolean defaultValue, boolean reset, String comment) {
-		comment = COMMENT_PREFIX + comment.replace("{t}", tag) + COMMENT_SUFFIX;
 		Property prop = config.get(cat, tag, defaultValue);
-		prop.comment = comment;
+		prop.comment = COMMENT_PREFIX + comment.replace("{t}", tag) + COMMENT_SUFFIX;
+
 		boolean ret = parseBoolean(prop, defaultValue);
-		if (reset)
+
+		if (reset) {
 			prop.set(defaultValue);
+		}
+
 		return ret;
 	}
 
 	public int get(String tag, int defaultValue, String comment) {
-		comment = COMMENT_PREFIX + comment.replace("{t}", tag) + COMMENT_SUFFIX;
 		Property prop = config.get(cat, tag, defaultValue);
-		prop.comment = comment;
+		prop.comment = COMMENT_PREFIX + comment.replace("{t}", tag) + COMMENT_SUFFIX;
 		return parseInteger(prop, defaultValue);
 	}
 
 	public int get(String tag, int min, int defaultValue, int max, String comment) {
-		comment = COMMENT_PREFIX + comment.replace("{t}", tag) + COMMENT_SUFFIX;
 		Property prop = config.get(cat, tag, defaultValue);
-		prop.comment = comment;
+		prop.comment = COMMENT_PREFIX + comment.replace("{t}", tag) + COMMENT_SUFFIX;
 		int parsed = parseInteger(prop, defaultValue);
 		int clamped = Math.max(parsed, min);
 		clamped = Math.min(clamped, max);
-		if (clamped != parsed)
+		if (clamped != parsed) {
 			prop.set(clamped);
+		}
 		return clamped;
 	}
 
 	public float get(String tag, float min, float defaultValue, float max, String comment) {
-		comment = COMMENT_PREFIX + comment.replace("{t}", tag) + COMMENT_SUFFIX;
 		Property prop = config.get(cat, tag, defaultValue);
-		prop.comment = comment;
+		prop.comment = COMMENT_PREFIX + comment.replace("{t}", tag) + COMMENT_SUFFIX;
 		double parsed = parseDouble(prop, defaultValue);
 		double clamped = Math.max(parsed, min);
 		clamped = Math.min(clamped, max);
-		if (clamped != parsed)
+		if (clamped != parsed) {
 			prop.set(clamped);
+		}
 		return (float) clamped;
 	}
 

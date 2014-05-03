@@ -14,10 +14,11 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import buildcraft.core.CreativeTabBuildCraft;
-import buildcraft.core.utils.Utils;
+
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+
+import buildcraft.core.utils.Utils;
 
 public class BlockPathMarker extends BlockMarker {
 
@@ -43,16 +44,16 @@ public class BlockPathMarker extends BlockMarker {
 	public IIcon getIcon(IBlockAccess iblockaccess, int i, int j, int k, int l) {
 		TilePathMarker marker = (TilePathMarker) iblockaccess.getTileEntity(i, j, k);
 
-		if (l == 1 || (marker != null && marker.tryingToConnect))
+		if (l == 1 || (marker != null && marker.tryingToConnect)) {
 			return activeMarker;
-		else
+		} else {
 			return super.getIcon(iblockaccess, i, j, k, l);
+		}
 	}
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void registerBlockIcons(IIconRegister par1IconRegister)
-	{
+	public void registerBlockIcons(IIconRegister par1IconRegister) {
 	    blockIcon = par1IconRegister.registerIcon("buildcraft:blockPathMarker");
 	    activeMarker = par1IconRegister.registerIcon("buildcraft:blockPathMarkerActive");
 	}

@@ -17,10 +17,20 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
+
+import cpw.mods.fml.common.Mod;
+import cpw.mods.fml.common.event.FMLInitializationEvent;
+import cpw.mods.fml.common.event.FMLInterModComms.IMCEvent;
+import cpw.mods.fml.common.event.FMLPostInitializationEvent;
+import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.network.NetworkRegistry;
+import cpw.mods.fml.common.registry.GameRegistry;
+
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.oredict.RecipeSorter;
+
 import buildcraft.api.blueprints.SchematicRegistry;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.core.JavaTools;
@@ -108,13 +118,6 @@ import buildcraft.transport.triggers.TriggerPipeContents;
 import buildcraft.transport.triggers.TriggerPipeContents.PipeContents;
 import buildcraft.transport.triggers.TriggerPipeSignal;
 import buildcraft.transport.triggers.TriggerRedstoneFaderInput;
-import cpw.mods.fml.common.Mod;
-import cpw.mods.fml.common.event.FMLInitializationEvent;
-import cpw.mods.fml.common.event.FMLInterModComms.IMCEvent;
-import cpw.mods.fml.common.event.FMLPostInitializationEvent;
-import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.common.network.NetworkRegistry;
-import cpw.mods.fml.common.registry.GameRegistry;
 
 @Mod(version = Version.VERSION, modid = "BuildCraft|Transport", name = "Buildcraft Transport", dependencies = DefaultProps.DEPENDENCY_CORE)
 public class BuildCraftTransport extends BuildCraftMod {
@@ -179,11 +182,14 @@ public class BuildCraftTransport extends BuildCraftMod {
 	public static BCAction actionExtractionPresetBlue = new ActionExtractionPreset(EnumColor.BLUE);
 	public static BCAction actionExtractionPresetGreen = new ActionExtractionPreset(EnumColor.GREEN);
 	public static BCAction actionExtractionPresetYellow = new ActionExtractionPreset(EnumColor.YELLOW);
-	public IIconProvider pipeIconProvider = new PipeIconProvider();
-	public IIconProvider wireIconProvider = new WireIconProvider();
 
 	@Mod.Instance("BuildCraft|Transport")
 	public static BuildCraftTransport instance;
+
+	private static LinkedList<PipeRecipe> pipeRecipes = new LinkedList<PipeRecipe>();
+
+	public IIconProvider pipeIconProvider = new PipeIconProvider();
+	public IIconProvider wireIconProvider = new WireIconProvider();
 
 	private static class PipeRecipe {
 
@@ -234,7 +240,6 @@ public class BuildCraftTransport extends BuildCraftMod {
 			return true;
 		}
 	}
-	private static LinkedList<PipeRecipe> pipeRecipes = new LinkedList<PipeRecipe>();
 
 	@Mod.EventHandler
 	public void preInit(FMLPreInitializationEvent evt) {

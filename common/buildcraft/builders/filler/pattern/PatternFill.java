@@ -9,10 +9,11 @@
 package buildcraft.builders.filler.pattern;
 
 import net.minecraft.world.World;
+
 import buildcraft.core.Box;
 import buildcraft.core.blueprints.Template;
 
-public class PatternFill extends FillerPattern {
+public final class PatternFill extends FillerPattern {
 
 	public static final PatternFill INSTANCE = new PatternFill();
 

@@ -8,7 +8,11 @@
  */
 package buildcraft.transport;
 
+import cpw.mods.fml.client.registry.ClientRegistry;
+import cpw.mods.fml.client.registry.RenderingRegistry;
+
 import net.minecraftforge.client.MinecraftForgeClient;
+
 import buildcraft.BuildCraftTransport;
 import buildcraft.transport.render.FacadeItemRenderer;
 import buildcraft.transport.render.GateItemRenderer;
@@ -17,17 +21,15 @@ import buildcraft.transport.render.PipeRendererTESR;
 import buildcraft.transport.render.PipeRendererWorld;
 import buildcraft.transport.render.PlugItemRenderer;
 import buildcraft.transport.render.RobotStationItemRenderer;
-import cpw.mods.fml.client.registry.ClientRegistry;
-import cpw.mods.fml.client.registry.RenderingRegistry;
 
 public class TransportProxyClient extends TransportProxy {
 
-	public final static PipeItemRenderer pipeItemRenderer = new PipeItemRenderer();
-	public final static PipeRendererWorld pipeWorldRenderer = new PipeRendererWorld();
-	public final static FacadeItemRenderer facadeItemRenderer = new FacadeItemRenderer();
-	public final static PlugItemRenderer plugItemRenderer = new PlugItemRenderer();
-	public final static RobotStationItemRenderer robotStationItemRenderer = new RobotStationItemRenderer();
-	public final static GateItemRenderer gateItemRenderer = new GateItemRenderer();
+	public static final PipeItemRenderer pipeItemRenderer = new PipeItemRenderer();
+	public static final PipeRendererWorld pipeWorldRenderer = new PipeRendererWorld();
+	public static final FacadeItemRenderer facadeItemRenderer = new FacadeItemRenderer();
+	public static final PlugItemRenderer plugItemRenderer = new PlugItemRenderer();
+	public static final RobotStationItemRenderer robotStationItemRenderer = new RobotStationItemRenderer();
+	public static final GateItemRenderer gateItemRenderer = new GateItemRenderer();
 
 	@Override
 	public void registerTileEntities() {

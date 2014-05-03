@@ -12,12 +12,11 @@ import buildcraft.api.gates.IAction;
 
 public interface IMachine {
 
-	public boolean isActive();
+	boolean isActive();
 
-	public boolean manageFluids();
+	boolean manageFluids();
 
-	public boolean manageSolids();
+	boolean manageSolids();
 
-	public boolean allowAction(IAction action);
-
+	boolean allowAction(IAction action);
 }

@@ -13,6 +13,7 @@ import net.minecraft.inventory.ICrafting;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
+
 import buildcraft.builders.TileBlueprintLibrary;
 import buildcraft.core.gui.BuildCraftContainer;
 
@@ -58,7 +59,7 @@ public class ContainerBlueprintLibrary extends BuildCraftContainer {
 
 		if (slotNum == 0) {
 			library.uploadingPlayer = player;
-		} else if (slotNum == 2){
+		} else if (slotNum == 2) {
 			library.downloadingPlayer = player;
 		}
 

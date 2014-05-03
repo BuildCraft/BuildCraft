@@ -8,10 +8,11 @@
  */
 package buildcraft.builders;
 
-import buildcraft.builders.urbanism.RenderBoxProvider;
-import buildcraft.core.render.RenderBlockMultiTexture;
 import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.client.registry.RenderingRegistry;
+
+import buildcraft.builders.urbanism.RenderBoxProvider;
+import buildcraft.core.render.RenderBlockMultiTexture;
 
 public class BuilderProxyClient extends BuilderProxy {
 

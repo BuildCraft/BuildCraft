@@ -8,15 +8,18 @@
  */
 package buildcraft.core.gui.widgets;
 
+import java.io.DataInputStream;
+import java.io.IOException;
+
+import net.minecraft.inventory.ICrafting;
+
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
 import buildcraft.core.gui.BuildCraftContainer;
 import buildcraft.core.gui.GuiBuildCraft;
 import buildcraft.core.gui.tooltips.IToolTipProvider;
 import buildcraft.core.gui.tooltips.ToolTip;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import java.io.DataInputStream;
-import java.io.IOException;
-import net.minecraft.inventory.ICrafting;
 
 public class Widget implements IToolTipProvider {
 

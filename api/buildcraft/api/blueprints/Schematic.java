@@ -14,7 +14,9 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+
 import net.minecraftforge.common.util.Constants;
+
 import buildcraft.api.core.IInvSlot;
 
 /**
@@ -177,7 +179,7 @@ public abstract class Schematic {
 	 * Places the block in the world, at the location specified in the slot,
 	 * using the stack in parameters
 	 */
-	public void writeToWorld(IBuilderContext context, int x, int y, int z, LinkedList <ItemStack> stacks) {
+	public void writeToWorld(IBuilderContext context, int x, int y, int z, LinkedList<ItemStack> stacks) {
 
 	}
 

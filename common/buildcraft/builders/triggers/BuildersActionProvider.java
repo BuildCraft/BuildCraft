@@ -8,13 +8,15 @@
  */
 package buildcraft.builders.triggers;
 
+import java.util.LinkedList;
+
+import net.minecraft.block.Block;
+import net.minecraft.tileentity.TileEntity;
+
 import buildcraft.api.filler.FillerManager;
 import buildcraft.api.gates.IAction;
 import buildcraft.api.gates.IActionProvider;
 import buildcraft.builders.TileFiller;
-import java.util.LinkedList;
-import net.minecraft.block.Block;
-import net.minecraft.tileentity.TileEntity;
 
 public class BuildersActionProvider implements IActionProvider {
 

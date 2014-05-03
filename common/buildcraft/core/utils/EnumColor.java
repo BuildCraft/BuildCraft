@@ -28,8 +28,8 @@ public enum EnumColor {
 	MAGENTA,
 	ORANGE,
 	WHITE;
-	public final static EnumColor[] VALUES = values();
-	public final static String[] DYES = {
+	public static final EnumColor[] VALUES = values();
+	public static final String[] DYES = {
 		"dyeBlack",
 		"dyeRed",
 		"dyeGreen",
@@ -46,7 +46,7 @@ public enum EnumColor {
 		"dyeMagenta",
 		"dyeOrange",
 		"dyeWhite"};
-	public final static String[] NAMES = {
+	public static final String[] NAMES = {
 		"Black",
 		"Red",
 		"Green",
@@ -63,7 +63,7 @@ public enum EnumColor {
 		"Magenta",
 		"Orange",
 		"White"};
-	public final static int[] DARK_HEX = {
+	public static final int[] DARK_HEX = {
 		0x2D2D2D,
 		0xA33835,
 		0x394C1E,
@@ -80,7 +80,7 @@ public enum EnumColor {
 		0xFF64FF,
 		0xFF6A00,
 		0xFFFFFF};
-	public final static int[] LIGHT_HEX = {
+	public static final int[] LIGHT_HEX = {
 		0x181414,
 		0xBE2B27,
 		0x007F0E,

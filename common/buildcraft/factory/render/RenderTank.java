@@ -8,20 +8,23 @@
  */
 package buildcraft.factory.render;
 
+import org.lwjgl.opengl.GL11;
+
+import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
+import net.minecraft.tileentity.TileEntity;
+
+import net.minecraftforge.fluids.FluidStack;
+
 import buildcraft.core.render.FluidRenderer;
 import buildcraft.core.render.RenderUtils;
 import buildcraft.factory.TileTank;
-import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.fluids.FluidStack;
-import org.lwjgl.opengl.GL11;
 
 public class RenderTank extends TileEntitySpecialRenderer {
 
 	@Override
 	public void renderTileEntityAt(TileEntity tileentity, double x, double y, double z, float f) {
 
-		TileTank tank = ((TileTank) tileentity);
+		TileTank tank = (TileTank) tileentity;
 
 		FluidStack liquid = tank.tank.getFluid();
 		int color = tank.tank.colorRenderCache;

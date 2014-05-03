@@ -8,8 +8,6 @@
  */
 package buildcraft.core.network.serializers;
 
-import io.netty.buffer.ByteBuf;
-
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Type;
@@ -20,11 +18,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import io.netty.buffer.ByteBuf;
+
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+
 import net.minecraftforge.fluids.FluidStack;
+
 import buildcraft.api.core.JavaTools;
 import buildcraft.api.core.NetworkData;
 import buildcraft.core.utils.Utils;
@@ -68,6 +70,7 @@ import buildcraft.core.utils.Utils;
 public class ClassMapping extends ClassSerializer {
 
 	private static SerializerObject anonymousSerializer = new SerializerObject();
+	private static Map<String, ClassSerializer> classes = new TreeMap<String, ClassSerializer>();
 
 	private LinkedList<Field> floatFields = new LinkedList<Field>();
 	private LinkedList<Field> doubleFields = new LinkedList<Field>();
@@ -96,8 +99,6 @@ public class ClassMapping extends ClassSerializer {
 	private CptType cptType;
 	private ClassSerializer cptMapping;
 
-	private static Map <String, ClassSerializer> classes = new TreeMap <String, ClassSerializer> ();
-
 	public ClassMapping() {
 
 	}
@@ -108,24 +109,24 @@ public class ClassMapping extends ClassSerializer {
 			if (c.isArray()) {
 				Class cptClass = c.getComponentType();
 
-				if (cptClass.equals(byte.class)) {
+				if (byte.class.equals(cptClass)) {
 					cptType = CptType.Byte;
-				} else if (cptClass.equals(float.class)) {
+				} else if (float.class.equals(cptClass)) {
 					cptType = CptType.Float;
-				} else if (cptClass.equals(double.class)) {
+				} else if (double.class.equals(cptClass)) {
 					cptType = CptType.Double;
-				} else if (cptClass.equals(short.class)) {
+				} else if (short.class.equals(cptClass)) {
 					cptType = CptType.Short;
-				} else if (cptClass.equals(int.class)) {
+				} else if (int.class.equals(cptClass)) {
 					cptType = CptType.Int;
-				} else if (cptClass.equals(boolean.class)) {
+				} else if (boolean.class.equals(cptClass)) {
 					cptType = CptType.Byte;
 				} else {
 					cptType = CptType.Object;
 					cptMapping = get (cptClass);
 				}
 			} else {
-				List <Field> fields = JavaTools.getAllFields(c);
+				List<Field> fields = JavaTools.getAllFields(c);
 
 				for (Field f : fields) {
 					if (!isSynchronizedField(f)) {
@@ -139,17 +140,17 @@ public class ClassMapping extends ClassSerializer {
 					if (t instanceof Class) {
 						Class fieldClass = (Class) t;
 
-						if (fieldClass.equals(short.class)) {
+						if (short.class.equals(fieldClass)) {
 							shortFields.add(f);
-						} else if (fieldClass.equals(int.class)) {
+						} else if (int.class.equals(fieldClass)) {
 							intFields.add(f);
-						} else if (fieldClass.equals(boolean.class)) {
+						} else if (boolean.class.equals(fieldClass)) {
 							booleanFields.add(f);
 						} else if (Enum.class.isAssignableFrom(fieldClass)) {
 							enumFields.add(f);
-						} else if (fieldClass.equals(float.class)) {
+						} else if (float.class.equals(fieldClass)) {
 							floatFields.add(f);
-						} else if (fieldClass.equals(double.class)) {
+						} else if (double.class.equals(fieldClass)) {
 							doubleFields.add(f);
 						} else {
 							FieldObject obj = new FieldObject();
@@ -303,8 +304,10 @@ public class ClassMapping extends ClassSerializer {
 	}
 
 	@SuppressWarnings("rawtypes")
-	Object readClass(Object obj, ByteBuf data, SerializationContext context) throws IllegalArgumentException,
+	Object readClass(Object objI, ByteBuf data, SerializationContext context) throws IllegalArgumentException,
 			IllegalAccessException, InstantiationException, ClassNotFoundException {
+
+		Object obj = objI;
 
 		// The data layout for an object is the following:
 		// [boolean] does the object exist (e.g. non-null)
@@ -447,8 +450,10 @@ public class ClassMapping extends ClassSerializer {
 		}
 	}
 
-	private Object readArray(Object obj, ByteBuf data, SerializationContext context) throws IllegalArgumentException,
+	private Object readArray(Object objI, ByteBuf data, SerializationContext context) throws IllegalArgumentException,
 	IllegalAccessException, InstantiationException, ClassNotFoundException {
+		Object obj = objI;
+
 		Class<? extends Object> cpt = mappedClass.getComponentType();
 
 		int size = data.readInt();

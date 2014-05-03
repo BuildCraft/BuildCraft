@@ -12,12 +12,12 @@ import io.netty.buffer.ByteBuf;
 
 public class PacketPayload {
 
-	public static interface StreamWriter {
-		public void writeData(ByteBuf data);
-	}
-
-	private StreamWriter handler;
 	public ByteBuf stream;
+	private StreamWriter handler;
+
+	public interface StreamWriter {
+		void writeData(ByteBuf data);
+	}
 
 	public PacketPayload() {
 	}

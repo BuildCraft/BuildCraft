@@ -9,6 +9,7 @@
 package buildcraft.core.fluids;
 
 import net.minecraft.tileentity.TileEntity;
+
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 
@@ -23,16 +24,20 @@ public class RestrictedTank extends Tank {
 
 	@Override
 	public int fill(FluidStack resource, boolean doFill) {
-		if (!acceptsFluid(resource.getFluid()))
+		if (!acceptsFluid(resource.getFluid())) {
 			return 0;
-		return super.fill(resource, doFill);
+		} else {
+			return super.fill(resource, doFill);
+		}
 	}
 
 	public boolean acceptsFluid(Fluid fluid) {
 		for (Fluid accepted : acceptedFluids) {
-			if (accepted.equals(fluid))
+			if (accepted.equals(fluid)) {
 				return true;
+			}
 		}
+
 		return false;
 	}
 }

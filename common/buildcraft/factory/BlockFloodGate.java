@@ -16,12 +16,13 @@ import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
-import buildcraft.api.tools.IToolWrench;
-import buildcraft.core.BlockBuildCraft;
-import buildcraft.core.CreativeTabBuildCraft;
-import buildcraft.core.utils.Utils;
+
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+
+import buildcraft.api.tools.IToolWrench;
+import buildcraft.core.BlockBuildCraft;
+import buildcraft.core.utils.Utils;
 
 public class BlockFloodGate extends BlockBuildCraft {
 
@@ -64,8 +65,9 @@ public class BlockFloodGate extends BlockBuildCraft {
 			TileFloodGate floodGate = (TileFloodGate) tile;
 
 			// Drop through if the player is sneaking
-			if (entityplayer.isSneaking())
+			if (entityplayer.isSneaking()) {
 				return false;
+			}
 
 			// Restart the quarry if its a wrench
 			Item equipped = entityplayer.getCurrentEquippedItem() != null ? entityplayer.getCurrentEquippedItem().getItem() : null;

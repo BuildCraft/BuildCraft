@@ -19,8 +19,10 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.WorldSettings.GameType;
+
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.ForgeDirection;
+
 import buildcraft.BuildCraftBuilders;
 import buildcraft.api.blueprints.BuildingPermission;
 import buildcraft.api.blueprints.Translation;
@@ -47,18 +49,16 @@ public class TileBuilder extends TileAbstractBuilder implements IMachine {
 
 	private static int POWER_ACTIVATION = 50;
 
-	private final ItemStack items[] = new ItemStack[28];
-
-	private BptBuilderBase bluePrintBuilder;
-
 	@NetworkData
 	public Box box = new Box();
+	public PathIterator currentPathIterator;
 
+	private final ItemStack[] items = new ItemStack[28];
+	private BptBuilderBase bluePrintBuilder;
 	private LinkedList<BlockIndex> path;
-
-	private LinkedList <ItemStack> requiredToBuild;
-
+	private LinkedList<ItemStack> requiredToBuild;
 	private NBTTagCompound initNBT = null;
+	private boolean done = true;
 
 	private class PathIterator {
 
@@ -176,10 +176,6 @@ public class TileBuilder extends TileAbstractBuilder implements IMachine {
 			return true;
 		}
 	}
-
-	public PathIterator currentPathIterator;
-
-	private boolean done = true;
 
 	public TileBuilder() {
 		super();
@@ -630,7 +626,7 @@ public class TileBuilder extends TileAbstractBuilder implements IMachine {
 	}
 
 	@RPC (RPCSide.CLIENT)
-	public void setItemRequirements (LinkedList <ItemStack> rq, LinkedList <Integer> realSizes) {
+	public void setItemRequirements(LinkedList<ItemStack> rq, LinkedList<Integer> realSizes) {
 		// Item stack serialized are represented through bytes, so 0-255. In
 		// order to get the real amounts, we need to pass the real sizes of the
 		// stacks as a separate list.
@@ -638,8 +634,8 @@ public class TileBuilder extends TileAbstractBuilder implements IMachine {
 		requiredToBuild = rq;
 
 		if (rq != null && rq.size() > 0) {
-			Iterator <ItemStack> itStack = rq.iterator();
-			Iterator <Integer> size = realSizes.iterator();
+			Iterator<ItemStack> itStack = rq.iterator();
+			Iterator<Integer> size = realSizes.iterator();
 
 			while (true) {
 				ItemStack stack = itStack.next();
@@ -711,7 +707,7 @@ public class TileBuilder extends TileAbstractBuilder implements IMachine {
 
 	public void updateRequirements () {
 		if (bluePrintBuilder instanceof BptBuilderBlueprint) {
-			LinkedList <Integer> realSize = new LinkedList<Integer>();
+			LinkedList<Integer> realSize = new LinkedList<Integer>();
 
 			for (ItemStack stack : ((BptBuilderBlueprint) bluePrintBuilder).neededItems) {
 				realSize.add(stack.stackSize);

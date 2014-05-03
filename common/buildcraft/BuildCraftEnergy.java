@@ -20,6 +20,17 @@ import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.biome.BiomeGenBase;
+
+import cpw.mods.fml.common.Mod;
+import cpw.mods.fml.common.event.FMLInitializationEvent;
+import cpw.mods.fml.common.event.FMLInterModComms;
+import cpw.mods.fml.common.event.FMLPostInitializationEvent;
+import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.common.network.NetworkRegistry;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.MinecraftForge;
@@ -28,6 +39,7 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
+
 import buildcraft.api.blueprints.SchematicRegistry;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.fuels.IronEngineCoolant;
@@ -35,7 +47,6 @@ import buildcraft.api.fuels.IronEngineFuel;
 import buildcraft.api.recipes.BuildcraftRecipes;
 import buildcraft.core.BlockIndex;
 import buildcraft.core.BlockSpring;
-import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.InterModComms;
 import buildcraft.core.Version;
@@ -60,30 +71,18 @@ import buildcraft.energy.worldgen.BiomeGenOilOcean;
 import buildcraft.energy.worldgen.BiomeInitializer;
 import buildcraft.energy.worldgen.OilPopulate;
 import buildcraft.transport.network.PacketHandlerTransport;
-import cpw.mods.fml.common.Mod;
-import cpw.mods.fml.common.event.FMLInitializationEvent;
-import cpw.mods.fml.common.event.FMLInterModComms;
-import cpw.mods.fml.common.event.FMLPostInitializationEvent;
-import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.common.network.NetworkRegistry;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 @Mod(name = "BuildCraft Energy", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Energy", dependencies = DefaultProps.DEPENDENCY_CORE)
 public class BuildCraftEnergy extends BuildCraftMod {
 
-	public final static int ENERGY_REMOVE_BLOCK = 25;
-	public final static int ENERGY_EXTRACT_ITEM = 2;
+	public static final int ENERGY_REMOVE_BLOCK = 25;
+	public static final int ENERGY_EXTRACT_ITEM = 2;
 	public static boolean spawnOilSprings = true;
 	public static BiomeGenOilDesert biomeOilDesert;
 	public static BiomeGenOilOcean biomeOilOcean;
 	public static BlockEngine engineBlock;
 	public static BlockEnergyEmitter emitterBlock;
 	public static BlockEnergyReceiver receiverBlock;
-	private static Fluid buildcraftFluidOil;
-	private static Fluid buildcraftFluidFuel;
-	private static Fluid buildcraftFluidRedPlasma;
 	public static Fluid fluidOil;
 	public static Fluid fluidFuel;
 	public static Fluid fluidRedPlasma;
@@ -107,6 +106,10 @@ public class BuildCraftEnergy extends BuildCraftMod {
 	@Mod.Instance("BuildCraft|Energy")
 	public static BuildCraftEnergy instance;
 
+	private static Fluid buildcraftFluidOil;
+	private static Fluid buildcraftFluidFuel;
+	private static Fluid buildcraftFluidRedPlasma;
+
 	@Mod.EventHandler
 	public void preInit(FMLPreInitializationEvent evt) {
 		SchematicRegistry.declareBlueprintSupport("BuildCraft|Energy");
@@ -115,50 +118,77 @@ public class BuildCraftEnergy extends BuildCraftMod {
 		int oilOceanBiomeId = BuildCraftCore.mainConfiguration.get("biomes", "biomeOilOcean", DefaultProps.BIOME_OIL_OCEAN).getInt(DefaultProps.BIOME_OIL_OCEAN);
 		canOilBurn = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "burnOil", true, "Can oil burn?").getBoolean(true);
 		oilWellScalar = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "oilWellGenerationRate", 1.0, "Probability of oil well generation").getDouble(1.0);
-		for (String id : BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "oilBiomeIDs", BiomeDictionary.Type.DESERT.toString() +","+BiomeGenBase.taiga.biomeID, "IDs or Biome Types (e.g. DESERT,OCEAN) of biomes that should have increased oil generation rates.").getString().trim().split(",")){
-			id = id.trim();
-			if(id.length() > 0){
-				try{oilBiomeIDs.add(Integer.parseInt(id));}
-				catch(NumberFormatException ex){ //not an int so try and parse it as a biome type
-					try{
-						for (BiomeGenBase b : BiomeDictionary.getBiomesForType(BiomeDictionary.Type.valueOf(id.toUpperCase()))){
+		for (String id : BuildCraftCore.mainConfiguration
+				.get(Configuration.CATEGORY_GENERAL, "oilBiomeIDs", BiomeDictionary.Type.DESERT.toString() + "," + BiomeGenBase.taiga.biomeID,
+						"IDs or Biome Types (e.g. DESERT,OCEAN) of biomes that should have increased oil generation rates.").getString().trim().split(",")) {
+			String strippedId = id.trim();
+
+			if (strippedId.length() > 0) {
+				try {
+					oilBiomeIDs.add(Integer.parseInt(strippedId));
+				} catch (NumberFormatException ex) { // not an int so try and
+														// parse it as a biome
+														// type
+					try {
+						for (BiomeGenBase b : BiomeDictionary.getBiomesForType(BiomeDictionary.Type.valueOf(strippedId
+								.toUpperCase()))) {
 							oilBiomeIDs.add(b.biomeID);
 						}
-					}
-					catch (Exception e){
-						BCLog.logger.log(Level.WARNING,"config.oilBiomeIDs: Could not find biome type: " + id + " ; Skipping!");
+					} catch (Exception e) {
+						BCLog.logger.log(Level.WARNING, "config.oilBiomeIDs: Could not find biome type: " + strippedId
+								+ " ; Skipping!");
 					}
 				}
 			}
 		}
-		for(String id : BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "excessiveOilBiomeIDs", "", "IDs or Biome Types (e.g. DESERT,OCEAN) of biomes that should have GREATLY increased oil generation rates.").getString().trim().split(",")) {
-			id = id.trim();
-			if(id.length() > 0){
-				try{excessiveOilBiomeIDs.add(Integer.parseInt(id));}
-				catch(NumberFormatException ex){ //not an int so try and parse it as a biome type
-					try{
-						for (BiomeGenBase b : BiomeDictionary.getBiomesForType(BiomeDictionary.Type.valueOf(id.toUpperCase()))){
+		for (String id : BuildCraftCore.mainConfiguration
+				.get(Configuration.CATEGORY_GENERAL,
+						"excessiveOilBiomeIDs",
+						"",
+						"IDs or Biome Types (e.g. DESERT,OCEAN) of biomes that should have GREATLY increased oil generation rates.")
+				.getString().trim().split(",")) {
+			String strippedId = id.trim();
+
+			if (strippedId.length() > 0) {
+				try {
+					excessiveOilBiomeIDs.add(Integer.parseInt(strippedId));
+				} catch (NumberFormatException ex) { // not an int so try and
+														// parse it as a biome
+														// type
+					try {
+						for (BiomeGenBase b : BiomeDictionary.getBiomesForType(BiomeDictionary.Type.valueOf(strippedId
+								.toUpperCase()))) {
 							excessiveOilBiomeIDs.add(b.biomeID);
 						}
-					}
-					catch (Exception e){
-						BCLog.logger.log(Level.WARNING,"config.excessiveOilBiomeIDs: Could not find biome type: " + id + " ; Skipping!");
+					} catch (Exception e) {
+						BCLog.logger.log(Level.WARNING, "config.excessiveOilBiomeIDs: Could not find biome type: "
+								+ strippedId + " ; Skipping!");
 					}
 				}
 			}
 		}
-		for(String id : BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "excludeOilBiomeIDs", BiomeGenBase.sky.biomeID +","+BiomeGenBase.hell.biomeID, "IDs or Biome Types (e.g. DESERT,OCEAN) of biomes that are excluded from generating oil.").getString().trim().split(",")){
-			id = id.trim();
-			if(id.length() > 0){
-				try{excludeOilBiomeIDs.add(Integer.parseInt(id));}
-				catch(NumberFormatException ex){ //not an int so try and parse it as a biome type
-					try{
-						for (BiomeGenBase b : BiomeDictionary.getBiomesForType(BiomeDictionary.Type.valueOf(id.toUpperCase()))){
+		for (String id : BuildCraftCore.mainConfiguration
+				.get(Configuration.CATEGORY_GENERAL, "excludeOilBiomeIDs",
+						BiomeGenBase.sky.biomeID + "," + BiomeGenBase.hell.biomeID,
+						"IDs or Biome Types (e.g. DESERT,OCEAN) of biomes that are excluded from generating oil.")
+				.getString().trim().split(",")) {
+
+			String strippedId = id.trim();
+
+			if (strippedId.length() > 0) {
+				try {
+					excludeOilBiomeIDs.add(Integer.parseInt(strippedId));
+				} catch (NumberFormatException ex) { // not an int so try and
+														// parse it as a biome
+														// type
+					try {
+						for (BiomeGenBase b : BiomeDictionary.getBiomesForType(BiomeDictionary.Type.valueOf(strippedId
+								.toUpperCase()))) {
 							excludeOilBiomeIDs.add(b.biomeID);
 						}
-					}
-					catch (Exception e){
-						BCLog.logger.log(Level.WARNING,"config.excludeOilBiomeIDs: Could not find biome type: " + id + " ; Skipping!");
+					} catch (Exception e) {
+						BCLog.logger.log(Level.WARNING, "config.excludeOilBiomeIDs: Could not find biome type: "
+								+ strippedId + " ; Skipping!");
 					}
 				}
 			}

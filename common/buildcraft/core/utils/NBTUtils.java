@@ -9,10 +9,18 @@
 package buildcraft.core.utils;
 
 import java.util.UUID;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
-public class NBTUtils {
+public final class NBTUtils {
+
+	/**
+	 * Deactivate constructor
+	 */
+	private NBTUtils() {
+
+	}
 
 	public static NBTTagCompound getItemData(ItemStack stack) {
 		NBTTagCompound nbt = stack.getTagCompound();
@@ -24,8 +32,9 @@ public class NBTUtils {
 	}
 
 	public static void writeUUID(NBTTagCompound data, String tag, UUID uuid) {
-		if (uuid == null)
+		if (uuid == null) {
 			return;
+		}
 		NBTTagCompound nbtTag = new NBTTagCompound();
 		nbtTag.setLong("most", uuid.getMostSignificantBits());
 		nbtTag.setLong("least", uuid.getLeastSignificantBits());

@@ -9,6 +9,7 @@
 package buildcraft.api.gates;
 
 import java.util.LinkedList;
+
 import net.minecraft.block.Block;
 import net.minecraft.tileentity.TileEntity;
 
@@ -17,6 +18,5 @@ public interface IActionProvider {
 	/**
 	 * Returns the list of actions available to a gate next to the given block.
 	 */
-	public abstract LinkedList<IAction> getNeighborActions(Block block, TileEntity tile);
-
+	LinkedList<IAction> getNeighborActions(Block block, TileEntity tile);
 }

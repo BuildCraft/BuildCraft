@@ -9,13 +9,14 @@
 package buildcraft.core;
 
 import net.minecraft.world.World;
+
 import buildcraft.core.robots.EntityRobot;
 
 public class ItemRobot extends ItemBuildCraft {
 
-	Class <? extends EntityRobot> robotClass;
+	Class<? extends EntityRobot> robotClass;
 
-	public ItemRobot(Class <? extends EntityRobot> robotClass) {
+	public ItemRobot(Class<? extends EntityRobot> robotClass) {
 		super(CreativeTabBuildCraft.ITEMS);
 
 		this.robotClass = robotClass;

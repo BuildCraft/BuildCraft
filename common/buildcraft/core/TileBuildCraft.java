@@ -19,6 +19,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.Packet;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+
 import buildcraft.BuildCraftCore;
 import buildcraft.api.power.IPowerReceptor;
 import buildcraft.core.network.BuildCraftPacket;
@@ -66,7 +67,7 @@ public abstract class TileBuildCraft extends TileEntity implements ISynchronized
 		}
 
 		if (this instanceof IPowerReceptor) {
-			IPowerReceptor receptor = ((IPowerReceptor) this);
+			IPowerReceptor receptor = (IPowerReceptor) this;
 			receptor.getPowerReceiver(null).update();
 		}
 	}

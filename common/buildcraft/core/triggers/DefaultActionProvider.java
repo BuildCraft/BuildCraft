@@ -8,15 +8,19 @@
  */
 package buildcraft.core.triggers;
 
+import java.util.LinkedList;
+
+import org.apache.logging.log4j.Level;
+
+import net.minecraft.block.Block;
+import net.minecraft.tileentity.TileEntity;
+
+import cpw.mods.fml.common.FMLLog;
+
 import buildcraft.BuildCraftCore;
 import buildcraft.api.gates.IAction;
 import buildcraft.api.gates.IActionProvider;
 import buildcraft.core.IMachine;
-import cpw.mods.fml.common.FMLLog;
-import org.apache.logging.log4j.Level;
-import java.util.LinkedList;
-import net.minecraft.block.Block;
-import net.minecraft.tileentity.TileEntity;
 
 public class DefaultActionProvider implements IActionProvider {
 
@@ -29,14 +33,17 @@ public class DefaultActionProvider implements IActionProvider {
 		try {
 			if (tile instanceof IMachine) {
 				IMachine machine = (IMachine) tile;
-				if (machine.allowAction(BuildCraftCore.actionOn))
+				if (machine.allowAction(BuildCraftCore.actionOn)) {
 					res.add(BuildCraftCore.actionOn);
-				if (machine.allowAction(BuildCraftCore.actionOff))
+				}
+				if (machine.allowAction(BuildCraftCore.actionOff)) {
 					res.add(BuildCraftCore.actionOff);
-				if (machine.allowAction(BuildCraftCore.actionLoop))
+				}
+				if (machine.allowAction(BuildCraftCore.actionLoop)) {
 					res.add(BuildCraftCore.actionLoop);
+				}
 			}
-		} catch (Throwable error) {			
+		} catch (Throwable error) {
 			FMLLog.log("Buildcraft", Level.FATAL, "Outdated API detected, please update your mods!");
 		}
 

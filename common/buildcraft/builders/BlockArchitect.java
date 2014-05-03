@@ -8,12 +8,6 @@
  */
 package buildcraft.builders;
 
-import buildcraft.BuildCraftBuilders;
-import buildcraft.api.tools.IToolWrench;
-import buildcraft.core.BlockMultiTexture;
-import buildcraft.core.CreativeTabBuildCraft;
-import buildcraft.core.GuiIds;
-import buildcraft.core.utils.Utils;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.EntityLivingBase;
@@ -23,7 +17,15 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+
 import net.minecraftforge.common.util.ForgeDirection;
+
+import buildcraft.BuildCraftBuilders;
+import buildcraft.api.tools.IToolWrench;
+import buildcraft.core.BlockMultiTexture;
+import buildcraft.core.CreativeTabBuildCraft;
+import buildcraft.core.GuiIds;
+import buildcraft.core.utils.Utils;
 
 public class BlockArchitect extends BlockMultiTexture {
 
@@ -40,8 +42,9 @@ public class BlockArchitect extends BlockMultiTexture {
 	public boolean onBlockActivated(World world, int i, int j, int k, EntityPlayer entityplayer, int par6, float par7, float par8, float par9) {
 
 		// Drop through if the player is sneaking
-		if (entityplayer.isSneaking())
+		if (entityplayer.isSneaking()) {
 			return false;
+		}
 
 		Item equipped = entityplayer.getCurrentEquippedItem() != null ? entityplayer.getCurrentEquippedItem().getItem() : null;
 		if (equipped instanceof IToolWrench && ((IToolWrench) equipped).canWrench(entityplayer, i, j, k)) {
@@ -50,17 +53,17 @@ public class BlockArchitect extends BlockMultiTexture {
 
 			switch (ForgeDirection.values()[meta]) {
 			case WEST:
-				world.setBlockMetadataWithNotify(i, j, k, ForgeDirection.SOUTH.ordinal(),0);
+				world.setBlockMetadataWithNotify(i, j, k, ForgeDirection.SOUTH.ordinal(), 0);
 				break;
 			case EAST:
-				world.setBlockMetadataWithNotify(i, j, k, ForgeDirection.NORTH.ordinal(),0);
+				world.setBlockMetadataWithNotify(i, j, k, ForgeDirection.NORTH.ordinal(), 0);
 				break;
 			case NORTH:
-				world.setBlockMetadataWithNotify(i, j, k, ForgeDirection.WEST.ordinal(),0);
+				world.setBlockMetadataWithNotify(i, j, k, ForgeDirection.WEST.ordinal(), 0);
 				break;
 			case SOUTH:
 			default:
-				world.setBlockMetadataWithNotify(i, j, k, ForgeDirection.EAST.ordinal(),0);
+				world.setBlockMetadataWithNotify(i, j, k, ForgeDirection.EAST.ordinal(), 0);
 				break;
 			}
 
@@ -90,7 +93,7 @@ public class BlockArchitect extends BlockMultiTexture {
 
 		ForgeDirection orientation = Utils.get2dOrientation(entityliving);
 
-		world.setBlockMetadataWithNotify(i, j, k, orientation.getOpposite().ordinal(),1);
+		world.setBlockMetadataWithNotify(i, j, k, orientation.getOpposite().ordinal(), 1);
 	}
 
 	@Override

@@ -8,42 +8,42 @@
  */
 package buildcraft.transport;
 
-import buildcraft.api.transport.PipeWire;
-import buildcraft.BuildCraftTransport;
-import buildcraft.api.gates.ActionManager;
-import buildcraft.api.gates.IAction;
-import buildcraft.api.gates.IActionReceptor;
-import buildcraft.api.gates.ITrigger;
-import buildcraft.api.gates.ITriggerParameter;
-import buildcraft.api.gates.TriggerParameter;
-import buildcraft.core.GuiIds;
-import buildcraft.core.proxy.CoreProxy;
-import buildcraft.core.triggers.ActionRedstoneOutput;
-import buildcraft.transport.gates.GateDefinition.GateLogic;
-import buildcraft.transport.gates.GateDefinition.GateMaterial;
-import buildcraft.api.gates.GateExpansionController;
-import buildcraft.api.gates.IGateExpansion;
-import buildcraft.api.gates.ITileTrigger;
-import buildcraft.transport.gates.ItemGate;
-import buildcraft.transport.triggers.ActionRedstoneFaderOutput;
-import buildcraft.transport.triggers.ActionSignalOutput;
+import java.util.BitSet;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Multiset;
 
-import java.util.BitSet;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
+
 import net.minecraftforge.common.util.ForgeDirection;
+
+import buildcraft.BuildCraftTransport;
+import buildcraft.api.gates.ActionManager;
+import buildcraft.api.gates.GateExpansionController;
+import buildcraft.api.gates.IAction;
+import buildcraft.api.gates.IActionReceptor;
+import buildcraft.api.gates.IGateExpansion;
+import buildcraft.api.gates.ITileTrigger;
+import buildcraft.api.gates.ITrigger;
+import buildcraft.api.gates.ITriggerParameter;
+import buildcraft.api.gates.TriggerParameter;
+import buildcraft.api.transport.PipeWire;
+import buildcraft.core.GuiIds;
+import buildcraft.core.triggers.ActionRedstoneOutput;
+import buildcraft.transport.gates.GateDefinition.GateLogic;
+import buildcraft.transport.gates.GateDefinition.GateMaterial;
+import buildcraft.transport.gates.ItemGate;
+import buildcraft.transport.triggers.ActionRedstoneFaderOutput;
+import buildcraft.transport.triggers.ActionSignalOutput;
 
 public final class Gate {
 
@@ -98,8 +98,9 @@ public final class Gate {
 	}
 
 	public void addGateExpansion(IGateExpansion expansion) {
-		if (!expansions.containsKey(expansion))
+		if (!expansions.containsKey(expansion)) {
 			expansions.put(expansion, expansion.makeController(pipe.container));
+		}
 	}
 
 	// / SAVING & LOADING
@@ -118,10 +119,12 @@ public final class Gate {
 		data.setTag("expansions", exList);
 
 		for (int i = 0; i < 8; ++i) {
-			if (triggers[i] != null)
+			if (triggers[i] != null) {
 				data.setString("trigger[" + i + "]", triggers[i].getUniqueTag());
-			if (actions[i] != null)
+			}
+			if (actions[i] != null) {
 				data.setString("action[" + i + "]", actions[i].getUniqueTag());
+			}
 			if (triggerParameters[i] != null) {
 				NBTTagCompound cpt = new NBTTagCompound();
 				triggerParameters[i].writeToNBT(cpt);
@@ -137,10 +140,12 @@ public final class Gate {
 
 	public void readFromNBT(NBTTagCompound data) {
 		for (int i = 0; i < 8; ++i) {
-			if (data.hasKey("trigger[" + i + "]"))
+			if (data.hasKey("trigger[" + i + "]")) {
 				triggers[i] = ActionManager.triggers.get(data.getString("trigger[" + i + "]"));
-			if (data.hasKey("action[" + i + "]"))
+			}
+			if (data.hasKey("action[" + i + "]")) {
 				actions[i] = ActionManager.actions.get(data.getString("action[" + i + "]"));
+			}
 			if (data.hasKey("triggerParameters[" + i + "]")) {
 				triggerParameters[i] = new TriggerParameter();
 				triggerParameters[i].readFromNBT(data.getCompoundTag("triggerParameters[" + i + "]"));
@@ -199,8 +204,9 @@ public final class Gate {
 
 	public boolean isGateActive() {
 		for (GateExpansionController expansion : expansions.values()) {
-			if (expansion.isActive())
+			if (expansion.isActive()) {
 				return true;
+			}
 		}
 		return redstoneOutput > 0 || !broadcastSignal.isEmpty();
 	}
@@ -283,8 +289,9 @@ public final class Gate {
 		pipe.actionsActivated(activeActions);
 
 		if (oldRedstoneOutput != redstoneOutput) {
-			if (redstoneOutput == 0 ^ oldRedstoneOutput == 0)
+			if (redstoneOutput == 0 ^ oldRedstoneOutput == 0) {
 				pipe.container.scheduleRenderUpdate();
+			}
 			pipe.updateNeighbors(true);
 		}
 
@@ -296,33 +303,38 @@ public final class Gate {
 
 	public boolean resolveAction(IAction action, int count) {
 		for (GateExpansionController expansion : expansions.values()) {
-			if (expansion.resolveAction(action, count))
+			if (expansion.resolveAction(action, count)) {
 				return true;
+			}
 		}
 		return false;
 	}
 
 	public boolean isNearbyTriggerActive(ITrigger trigger, ITriggerParameter parameter) {
-		if (trigger == null)
+		if (trigger == null) {
 			return false;
+		}
 
-		if (trigger instanceof IPipeTrigger)
+		if (trigger instanceof IPipeTrigger) {
 			return ((IPipeTrigger) trigger).isTriggerActive(pipe, parameter);
+		}
 
 		if (trigger instanceof ITileTrigger) {
 			for (ForgeDirection o : ForgeDirection.VALID_DIRECTIONS) {
 				TileEntity tile = pipe.container.getTile(o);
 				if (tile != null && !(tile instanceof TileGenericPipe)) {
-					if (((ITileTrigger) trigger).isTriggerActive(o.getOpposite(), tile, parameter))
+					if (((ITileTrigger) trigger).isTriggerActive(o.getOpposite(), tile, parameter)) {
 						return true;
+					}
 				}
 			}
 			return false;
 		}
 
 		for (GateExpansionController expansion : expansions.values()) {
-			if (expansion.isTriggerActive(trigger, parameter))
+			if (expansion.isTriggerActive(trigger, parameter)) {
 				return true;
+			}
 		}
 
 		return false;

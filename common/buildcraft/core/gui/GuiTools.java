@@ -8,11 +8,19 @@
  */
 package buildcraft.core.gui;
 
-import buildcraft.core.gui.buttons.GuiBetterButton;
 import java.util.List;
+
 import net.minecraft.client.gui.FontRenderer;
 
-public class GuiTools {
+import buildcraft.core.gui.buttons.GuiBetterButton;
+
+public final class GuiTools {
+
+	/**
+	 * Deactivate constructor
+	 */
+	private GuiTools() {
+	}
 
     public static void drawCenteredString(FontRenderer fr, String s, int y) {
         drawCenteredString(fr, s, y, 176);

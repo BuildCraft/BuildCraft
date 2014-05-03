@@ -16,6 +16,7 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
+
 import buildcraft.BuildCraftBuilders;
 import buildcraft.api.core.NetworkData;
 import buildcraft.builders.blueprints.BlueprintId;
@@ -33,9 +34,9 @@ import buildcraft.core.network.RPCSide;
  * environment, and save blueprints to the server environment.
  */
 public class TileBlueprintLibrary extends TileBuildCraft implements IInventory {
-	public ItemStack[] stack = new ItemStack[4];
-
 	private static final int PROGRESS_TIME = 100;
+
+	public ItemStack[] stack = new ItemStack[4];
 
 	public int progressIn = 0;
 	public int progressOut = 0;
@@ -46,12 +47,11 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory {
 	public ArrayList<BlueprintId> currentPage;
 
 	public int selected = -1;
-	boolean locked = false;
 
 	public EntityPlayer uploadingPlayer = null;
 	public EntityPlayer downloadingPlayer = null;
 
-	int pageId = 0;
+	private int pageId = 0;
 
 	public TileBlueprintLibrary() {
 
@@ -106,7 +106,6 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory {
 		super.readFromNBT(nbttagcompound);
 
 		owner = nbttagcompound.getString("owner");
-		locked = nbttagcompound.getBoolean("locked");
 
 		InvUtils.readStacksFromNBT(nbttagcompound, "stack", stack);
 	}
@@ -116,7 +115,6 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory {
 		super.writeToNBT(nbttagcompound);
 
 		nbttagcompound.setString("owner", owner);
-		nbttagcompound.setBoolean("locked", locked);
 
 		InvUtils.writeStacksToNBT(nbttagcompound, "stack", stack);
 	}

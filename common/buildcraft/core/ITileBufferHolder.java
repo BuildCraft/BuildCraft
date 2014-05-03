@@ -10,16 +10,17 @@ package buildcraft.core;
 
 import net.minecraft.block.Block;
 import net.minecraft.tileentity.TileEntity;
+
 import net.minecraftforge.common.util.ForgeDirection;
 
 public interface ITileBufferHolder {
 
-	public void blockRemoved(ForgeDirection from);
+	void blockRemoved(ForgeDirection from);
 
-	public void blockCreated(ForgeDirection from, Block block, TileEntity tile);
+	void blockCreated(ForgeDirection from, Block block, TileEntity tile);
 
-	public Block getBlock(ForgeDirection to);
+	Block getBlock(ForgeDirection to);
 
-	public TileEntity getTile(ForgeDirection to);
+	TileEntity getTile(ForgeDirection to);
 
 }

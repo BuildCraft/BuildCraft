@@ -21,6 +21,9 @@ import net.minecraft.network.play.server.S27PacketExplosion;
 import net.minecraft.world.ChunkPosition;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
+
+import cpw.mods.fml.common.FMLCommonHandler;
+
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.fluids.BlockFluidBase;
 import net.minecraftforge.fluids.Fluid;
@@ -28,12 +31,18 @@ import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidBlock;
+
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftEnergy;
 import buildcraft.core.proxy.CoreProxy;
-import cpw.mods.fml.common.FMLCommonHandler;
 
-public class BlockUtil {
+public final class BlockUtil {
+
+	/**
+	 * Deactivate constructor
+	 */
+	private BlockUtil() {
+	}
 
 	public static List<ItemStack> getItemStackFromBlock(World world, int i, int j, int k) {
 		Block block = world.getBlock(i, j, k);

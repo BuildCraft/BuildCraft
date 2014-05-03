@@ -10,6 +10,8 @@ package buildcraft.core.render;
 
 import java.util.Date;
 
+import org.lwjgl.opengl.GL11;
+
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.client.renderer.GLAllocation;
@@ -17,8 +19,6 @@ import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
-
-import org.lwjgl.opengl.GL11;
 
 import buildcraft.api.core.Position;
 import buildcraft.core.EntityLaser;
@@ -201,7 +201,7 @@ public class RenderLaser extends Render {
 		}
 
 		GL11.glPushMatrix();
-		GL11.glScalef(((float) len - lasti), 1, 1);
+		GL11.glScalef((float) len - lasti, 1, 1);
 		getBox(texId).render(1F / 16F);
 		GL11.glPopMatrix();
 

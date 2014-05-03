@@ -9,39 +9,40 @@
 package buildcraft.core.robots;
 
 import io.netty.buffer.ByteBuf;
+
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+
+import cpw.mods.fml.common.registry.IEntityAdditionalSpawnData;
+
 import net.minecraftforge.common.util.ForgeDirection;
+
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.LaserData;
 import buildcraft.transport.TileGenericPipe;
-import cpw.mods.fml.common.registry.IEntityAdditionalSpawnData;
 
 public class EntityRobot extends EntityLivingBase implements
 		IEntityAdditionalSpawnData {
 
+	private static ResourceLocation defaultTexture = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_ENTITIES + "/robot_base.png");
+
 	public SafeTimeTracker scanForTasks = new SafeTimeTracker (40, 10);
 
 	public LaserData laser = new LaserData ();
-	private boolean needsUpdate = false;
-
-	private static ResourceLocation defaultTexture = new ResourceLocation(
-			"buildcraft", DefaultProps.TEXTURE_PATH_ENTITIES
-					+ "/robot_base.png");
-
 	public AIBase currentAI;
 	public IRobotTask currentTask;
+	public DockingStation dockingStation = new DockingStation();
+
+	private boolean needsUpdate = false;
 
 	public class DockingStation {
 		public int x, y, z;
 		public ForgeDirection side;
 	}
-
-	public DockingStation dockingStation = new DockingStation();
 
 	public EntityRobot(World par1World) {
 		super(par1World);
@@ -79,7 +80,7 @@ public class EntityRobot extends EntityLivingBase implements
 		laser.tail.x = dataWatcher.getWatchableObjectFloat(10);
 		laser.tail.y = dataWatcher.getWatchableObjectFloat(11);
 		laser.tail.z = dataWatcher.getWatchableObjectFloat(12);
-		laser.isVisible = (dataWatcher.getWatchableObjectByte(13) == 1);
+		laser.isVisible = dataWatcher.getWatchableObjectByte(13) == 1;
 	}
 
 	protected void updateDataServer() {

@@ -8,8 +8,6 @@
  */
 package buildcraft.factory;
 
-import io.netty.buffer.ByteBuf;
-
 import java.io.IOException;
 import java.util.Deque;
 import java.util.HashSet;
@@ -17,10 +15,13 @@ import java.util.LinkedList;
 import java.util.Set;
 import java.util.TreeMap;
 
+import io.netty.buffer.ByteBuf;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
@@ -28,6 +29,7 @@ import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
+
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftFactory;
 import buildcraft.api.core.SafeTimeTracker;
@@ -51,11 +53,12 @@ public class TilePump extends TileBuildCraft implements IMachine, IFluidHandler 
 
 	public static final int REBUID_DELAY = 512;
 	public static int MAX_LIQUID = FluidContainerRegistry.BUCKET_VOLUME * 16;
-	EntityBlock tube;
+	public SingleUseTank tank = new SingleUseTank("tank", MAX_LIQUID, this);
+
+	private EntityBlock tube;
 	private TreeMap<Integer, Deque<BlockIndex>> pumpLayerQueues = new TreeMap<Integer, Deque<BlockIndex>>();
-	SingleUseTank tank = new SingleUseTank("tank", MAX_LIQUID, this);
-	double tubeY = Double.NaN;
-	int aimY = 0;
+	private double tubeY = Double.NaN;
+	private int aimY = 0;
 
 	private TileBuffer[] tileBuffer = null;
 	private SafeTimeTracker timer = new SafeTimeTracker(REBUID_DELAY);
@@ -145,7 +148,7 @@ public class TilePump extends TileBuildCraft implements IMachine, IFluidHandler 
 		if (powered != p) {
 			powered = p;
 
-			if(!worldObj.isRemote) {
+			if (!worldObj.isRemote) {
 				sendNetworkUpdate();
 			}
 		}
@@ -319,10 +322,8 @@ public class TilePump extends TileBuildCraft implements IMachine, IFluidHandler 
 			return false;
 		} else if (!isFluidAllowed(fluid)) {
 			return false;
-		} else if (tank.getAcceptedFluid() != null && tank.getAcceptedFluid() != fluid) {
-			return false;
 		} else {
-			return true;
+			return !(tank.getAcceptedFluid() != null && tank.getAcceptedFluid() != fluid);
 		}
 	}
 

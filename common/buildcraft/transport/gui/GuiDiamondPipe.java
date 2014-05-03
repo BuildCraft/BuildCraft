@@ -8,10 +8,10 @@
  */
 package buildcraft.transport.gui;
 
+import org.lwjgl.opengl.GL11;
+
 import net.minecraft.inventory.IInventory;
 import net.minecraft.util.ResourceLocation;
-
-import org.lwjgl.opengl.GL11;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.core.DefaultProps;
@@ -26,13 +26,13 @@ public class GuiDiamondPipe extends GuiBuildCraft {
 	IInventory filterInventory;
 
 	static {
-		if (!BuildCraftCore.colorBlindMode){
+		if (!BuildCraftCore.colorBlindMode) {
 			TEXTURE = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_GUI + "/filter.png");
 		} else {
 			TEXTURE = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_GUI + "/filter_cb.png");
 		}
 	}
-	
+
 	public GuiDiamondPipe(IInventory playerInventory, PipeItemsDiamond pipe) {
 		super(new ContainerDiamondPipe(playerInventory, pipe), pipe.getFilters(), TEXTURE);
 		this.playerInventory = playerInventory;

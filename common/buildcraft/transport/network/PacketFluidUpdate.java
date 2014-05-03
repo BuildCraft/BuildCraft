@@ -8,25 +8,24 @@
  */
 package buildcraft.transport.network;
 
+import java.util.BitSet;
+
+import io.netty.buffer.ByteBuf;
+
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
+
+import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraftforge.fluids.FluidStack;
+
 import buildcraft.core.network.PacketCoordinates;
 import buildcraft.core.network.PacketIds;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.transport.PipeTransportFluids;
 import buildcraft.transport.TileGenericPipe;
-import io.netty.buffer.ByteBuf;
-
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.util.BitSet;
-
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.World;
-import net.minecraftforge.common.util.ForgeDirection;
-import net.minecraftforge.fluids.FluidStack;
 
 public class PacketFluidUpdate extends PacketCoordinates {
-	
+
 	public static int FLUID_ID_BIT = 0;
 	public static int FLUID_AMOUNT_BIT = 1;
 	public static int FLUID_DATA_NUM = 2;
@@ -52,21 +51,25 @@ public class PacketFluidUpdate extends PacketCoordinates {
 		super.readData(data);
 
 		World world = CoreProxy.proxy.getClientWorld();
-		if (!world.blockExists(posX, posY, posZ))
+		if (!world.blockExists(posX, posY, posZ)) {
 			return;
+		}
 
 		TileEntity entity = world.getTileEntity(posX, posY, posZ);
-		if (!(entity instanceof TileGenericPipe))
+		if (!(entity instanceof TileGenericPipe)) {
 			return;
+		}
 
 		TileGenericPipe pipe = (TileGenericPipe) entity;
-		if (pipe.pipe == null)
+		if (pipe.pipe == null) {
 			return;
+		}
 
-		if (!(pipe.pipe.transport instanceof PipeTransportFluids))
+		if (!(pipe.pipe.transport instanceof PipeTransportFluids)) {
 			return;
+		}
 
-		PipeTransportFluids transLiq = ((PipeTransportFluids) pipe.pipe.transport);
+		PipeTransportFluids transLiq = (PipeTransportFluids) pipe.pipe.transport;
 
 		renderCache = transLiq.renderCache;
 		colorRenderCache = transLiq.colorRenderCache;
@@ -85,7 +88,7 @@ public class PacketFluidUpdate extends PacketCoordinates {
 			}
 			if (delta.get(dir.ordinal() * FLUID_DATA_NUM + FLUID_AMOUNT_BIT)) {
 			    if (renderCache[dir.ordinal()] == null) {
-			        renderCache[dir.ordinal()] = new FluidStack(0,0);
+					renderCache[dir.ordinal()] = new FluidStack(0, 0);
 			    }
 		        renderCache[dir.ordinal()].amount = Math.min(transLiq.getCapacity(), data.readInt());
 			}

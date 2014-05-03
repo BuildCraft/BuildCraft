@@ -12,11 +12,12 @@ import io.netty.buffer.ByteBuf;
 
 public class PacketUpdate extends BuildCraftPacket {
 
-	private int packetId;
 	public int posX;
 	public int posY;
 	public int posZ;
 	public PacketPayload payload;
+
+	private int packetId;
 
 	public PacketUpdate() {
 	}

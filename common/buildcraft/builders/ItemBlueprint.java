@@ -13,6 +13,7 @@ import java.util.List;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+
 import buildcraft.BuildCraftBuilders;
 import buildcraft.api.blueprints.BuildingPermission;
 import buildcraft.builders.blueprints.BlueprintId;
@@ -34,14 +35,13 @@ public abstract class ItemBlueprint extends ItemBuildCraft {
 		if (NBTUtils.getItemData(stack).hasKey("name")) {
 			String name = NBTUtils.getItemData(stack).getString("name");
 
-			if (name.equals("")) {
+			if ("".equals(name)) {
 				list.add(String.format(StringUtils.localize("item.blueprint.unnamed")));
 			} else {
 				list.add(String.format (name));
 			}
 
-			list.add(String.format(StringUtils
-					.localize("item.blueprint.author")
+			list.add(String.format(StringUtils.localize("item.blueprint.author")
 					+ " "
 					+ NBTUtils.getItemData(stack).getString("author")));
 		} else {
@@ -49,15 +49,12 @@ public abstract class ItemBlueprint extends ItemBuildCraft {
 		}
 
 		if (NBTUtils.getItemData(stack).hasKey("permission")) {
-			BuildingPermission p = BuildingPermission.values()[NBTUtils
-					.getItemData(stack).getByte("permission")];
+			BuildingPermission p = BuildingPermission.values()[NBTUtils.getItemData(stack).getByte("permission")];
 
 			if (p == BuildingPermission.CREATIVE_ONLY) {
-				list.add(String.format(StringUtils
-					.localize("item.blueprint.creative_only")));
+				list.add(String.format(StringUtils.localize("item.blueprint.creative_only")));
 			} else if (p == BuildingPermission.NONE) {
-				list.add(String.format(StringUtils
-						.localize("item.blueprint.no_build")));
+				list.add(String.format(StringUtils.localize("item.blueprint.no_build")));
 			}
 		}
 	}

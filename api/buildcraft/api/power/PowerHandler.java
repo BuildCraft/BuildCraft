@@ -9,7 +9,9 @@
 package buildcraft.api.power;
 
 import net.minecraft.nbt.NBTTagCompound;
+
 import net.minecraftforge.common.util.ForgeDirection;
+
 import buildcraft.api.core.SafeTimeTracker;
 
 /**
@@ -77,9 +79,10 @@ public final class PowerHandler {
 		 */
 		public PerditionCalculator(double powerLoss) {
 			if (powerLoss < MIN_POWERLOSS) {
-				powerLoss = MIN_POWERLOSS;
+				this.powerLoss = MIN_POWERLOSS;
+			} else {
+				this.powerLoss = powerLoss;
 			}
-			this.powerLoss = powerLoss;
 		}
 
 		/**
@@ -93,11 +96,13 @@ public final class PowerHandler {
 		 * @return
 		 */
 		public double applyPerdition(PowerHandler powerHandler, double current, long ticksPassed) {
-			current -= powerLoss * ticksPassed;
-			if (current < 0) {
-				current = 0;
+			double newPower = current - powerLoss * ticksPassed;
+
+			if (newPower < 0) {
+				newPower = 0;
 			}
-			return current;
+
+			return newPower;
 		}
 
 		/**
@@ -115,6 +120,9 @@ public final class PowerHandler {
 	public static final double ROLLING_AVERAGE_WEIGHT = 100.0;
 	public static final double ROLLING_AVERAGE_NUMERATOR = ROLLING_AVERAGE_WEIGHT - 1;
 	public static final double ROLLING_AVERAGE_DENOMINATOR  = 1.0 / ROLLING_AVERAGE_WEIGHT;
+	public final int[] powerSources = new int[6];
+	public final IPowerReceptor receptor;
+
 	private double minEnergyReceived;
 	private double maxEnergyReceived;
 	private double maxEnergyStored;
@@ -123,8 +131,6 @@ public final class PowerHandler {
 	private final SafeTimeTracker doWorkTracker = new SafeTimeTracker();
 	private final SafeTimeTracker sourcesTracker = new SafeTimeTracker();
 	private final SafeTimeTracker perditionTracker = new SafeTimeTracker();
-	public final int[] powerSources = new int[6];
-	public final IPowerReceptor receptor;
 	private PerditionCalculator perdition;
 	private final PowerReceiver receiver;
 	private final Type type;
@@ -182,12 +188,15 @@ public final class PowerHandler {
 	 * store. Values tend to range between 100 and 5000. With 1000 and 1500
 	 * being common.
 	 */
-	public void configure(double minEnergyReceived, double maxEnergyReceived, double activationEnergy, double maxStoredEnergy) {
-		if (minEnergyReceived > maxEnergyReceived) {
-			maxEnergyReceived = minEnergyReceived;
+	public void configure(double minEnergyReceived, double maxEnergyReceivedI, double activationEnergy,
+			double maxStoredEnergy) {
+		double localMaxEnergyReceived = maxEnergyReceivedI;
+
+		if (minEnergyReceived > localMaxEnergyReceived) {
+			localMaxEnergyReceived = minEnergyReceived;
 		}
 		this.minEnergyReceived = minEnergyReceived;
-		this.maxEnergyReceived = maxEnergyReceived;
+		this.maxEnergyReceived = localMaxEnergyReceived;
 		this.maxEnergyStored = maxStoredEnergy;
 		this.activationEnergy = activationEnergy;
 	}
@@ -221,16 +230,18 @@ public final class PowerHandler {
 	 */
 	public void setPerdition(PerditionCalculator perdition) {
 		if (perdition == null) {
-			perdition = DEFAULT_PERDITION;
+			this.perdition = DEFAULT_PERDITION;
+		} else {
+			this.perdition = perdition;
 		}
-		this.perdition = perdition;
 	}
 
 	public PerditionCalculator getPerdition() {
 		if (perdition == null) {
 			return DEFAULT_PERDITION;
+		} else {
+			return perdition;
 		}
-		return perdition;
 	}
 
 	/**
@@ -438,7 +449,9 @@ public final class PowerHandler {
 	 *
 	 * @return the amount the power changed by
 	 */
-	public double addEnergy(double quantity) {
+	public double addEnergy(double quantityI) {
+		double quantity = quantityI;
+
 		energyStored += quantity;
 
 		if (energyStored > maxEnergyStored) {

@@ -8,16 +8,18 @@
  */
 package buildcraft.builders.gui;
 
-import buildcraft.builders.TileFiller;
-import buildcraft.core.gui.BuildCraftContainer;
-import buildcraft.core.gui.GuiBuildCraft;
-import buildcraft.core.gui.widgets.Widget;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
+
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
+import buildcraft.builders.TileFiller;
+import buildcraft.core.gui.BuildCraftContainer;
+import buildcraft.core.gui.GuiBuildCraft;
+import buildcraft.core.gui.widgets.Widget;
 
 public class ContainerFiller extends BuildCraftContainer {
 

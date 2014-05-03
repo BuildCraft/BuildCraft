@@ -13,15 +13,15 @@ import net.minecraft.nbt.NBTTagCompound;
 
 public interface ITriggerParameter {
 
-	public abstract ItemStack getItemStack();
+	ItemStack getItemStack();
 
-	public abstract void set(ItemStack stack);
+	void set(ItemStack stack);
 
-	public abstract void writeToNBT(NBTTagCompound compound);
+	void writeToNBT(NBTTagCompound compound);
 
-	public abstract void readFromNBT(NBTTagCompound compound);
+	void readFromNBT(NBTTagCompound compound);
 
 	@Deprecated
-	public abstract ItemStack getItem();
+	ItemStack getItem();
 
 }

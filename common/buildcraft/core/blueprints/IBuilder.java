@@ -9,7 +9,5 @@
 package buildcraft.core.blueprints;
 
 public interface IBuilder {
-
-	public boolean isDone ();
-
+	boolean isDone();
 }

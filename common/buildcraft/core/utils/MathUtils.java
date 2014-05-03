@@ -8,7 +8,13 @@
  */
 package buildcraft.core.utils;
 
-public class MathUtils {
+public final class MathUtils {
+
+	/**
+	 * Deactivate constructor
+	 */
+	private MathUtils() {
+	}
 
 	public static int clamp(int value, int min, int max) {
 		return value < min ? min : (value > max ? max : value);

@@ -13,6 +13,8 @@ import java.nio.DoubleBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
+import org.lwjgl.input.Keyboard;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.entity.EntityLivingBase;
@@ -21,21 +23,27 @@ import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 
-import org.lwjgl.input.Keyboard;
-
 import buildcraft.BuildCraftCore;
 
 public class EntityUrbanist extends EntityLivingBase {
+
+	private static FloatBuffer modelviewF = GLAllocation.createDirectFloatBuffer(16);
+	private static FloatBuffer projectionF = GLAllocation.createDirectFloatBuffer(16);
+	private static DoubleBuffer modelviewD = ByteBuffer.allocateDirect(16 * 8).asDoubleBuffer();
+	private static DoubleBuffer projectionD = ByteBuffer.allocateDirect(16 * 8).asDoubleBuffer();
+	private static IntBuffer viewport = GLAllocation.createDirectIntBuffer(16);
+	private static FloatBuffer winZ = ByteBuffer.allocateDirect(1 * 4).asFloatBuffer();
+	private static FloatBuffer pos = ByteBuffer.allocateDirect(3 * 4).asFloatBuffer();
+
+	public EntityLivingBase player;
+	public TileUrbanist tile;
 
 	/**
 	 * To be used only in debug sessions to adjust the mouse pointer parameters.
 	 */
 	private boolean debugPointer = false;
-//	private EntityEnergyLaser laser = null;
 
-	public EntityLivingBase player;
-	public TileUrbanist tile;
-
+	// private EntityEnergyLaser laser = null;
 
 	public EntityUrbanist(World par1World) {
 		super(par1World);
@@ -113,32 +121,24 @@ public class EntityUrbanist extends EntityLivingBase {
 		return null;
 	}
 
-	static FloatBuffer modelviewF = GLAllocation.createDirectFloatBuffer(16);
-	static FloatBuffer projectionF = GLAllocation.createDirectFloatBuffer(16);
-	static DoubleBuffer modelviewD = ByteBuffer.allocateDirect(16 * 8).asDoubleBuffer();
-	static DoubleBuffer projectionD = ByteBuffer.allocateDirect(16 * 8).asDoubleBuffer();
-	static IntBuffer viewport = GLAllocation.createDirectIntBuffer(16);
-	static FloatBuffer winZ = ByteBuffer.allocateDirect(1 * 4).asFloatBuffer();
-    static FloatBuffer pos = ByteBuffer.allocateDirect(3 * 4).asFloatBuffer();
-
 	public MovingObjectPosition rayTraceMouse() {
 		double distance = 1000;
 
-        Vec3 pos = this.getPosition(1.0F);
+        Vec3 localPos = this.getPosition(1.0F);
         Vec3 look = this.getLook(1.0F).normalize();
 
-        pos.xCoord += BuildCraftCore.diffX;
-        pos.yCoord += BuildCraftCore.diffY;
-        pos.zCoord += BuildCraftCore.diffZ;
+        localPos.xCoord += BuildCraftCore.diffX;
+        localPos.yCoord += BuildCraftCore.diffY;
+        localPos.zCoord += BuildCraftCore.diffZ;
 
-        Vec3 vec32 = pos.addVector(look.xCoord * distance, look.yCoord * distance, look.zCoord * distance);
+        Vec3 vec32 = localPos.addVector(look.xCoord * distance, look.yCoord * distance, look.zCoord * distance);
 
         /**
          * Note: at this stage, pos is already very close to the object to
          * trace. It's not clear if the look vector is perfect, but
          * approximations at this stage don't matter anymore.
          */
-        MovingObjectPosition result = this.worldObj.rayTraceBlocks(pos, vec32);
+        MovingObjectPosition result = this.worldObj.rayTraceBlocks(localPos, vec32);
 
 		if (debugPointer) {
 //			if (laser == null) {
@@ -151,17 +151,17 @@ public class EntityUrbanist extends EntityLivingBase {
 //				worldObj.spawnEntityInWorld(laser);
 //			}
 
-			pos = this.getPosition(1.0F);
-			pos.xCoord += BuildCraftCore.diffX;
-		    pos.yCoord += BuildCraftCore.diffY + 0.1F;
-		    pos.zCoord += BuildCraftCore.diffZ;
+			localPos = this.getPosition(1.0F);
+			localPos.xCoord += BuildCraftCore.diffX;
+		    localPos.yCoord += BuildCraftCore.diffY + 0.1F;
+		    localPos.zCoord += BuildCraftCore.diffZ;
 
 		    look = this.getLook(1.0F).normalize();
 
 			Vec3 aimed = worldObj.getWorldVec3Pool().getVecFromPool(
-					pos.xCoord + look.xCoord * 200,
-					pos.yCoord + look.yCoord * 200,
-					pos.zCoord + look.zCoord * 200);
+					localPos.xCoord + look.xCoord * 200,
+					localPos.yCoord + look.yCoord * 200,
+					localPos.zCoord + look.zCoord * 200);
 
 //			laser.setPositions(
 //					new Position(pos.xCoord, pos.yCoord, pos.zCoord),

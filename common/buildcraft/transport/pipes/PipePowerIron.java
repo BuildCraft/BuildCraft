@@ -8,6 +8,18 @@
  */
 package buildcraft.transport.pipes;
 
+import java.util.LinkedList;
+import java.util.Map;
+
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
+import net.minecraft.util.ChatComponentText;
+
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
+import net.minecraftforge.common.util.ForgeDirection;
+
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.gates.IAction;
@@ -17,16 +29,6 @@ import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportPower;
 import buildcraft.transport.triggers.ActionPowerLimiter;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-
-import java.util.LinkedList;
-import java.util.Map;
-
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
-import net.minecraft.util.ChatComponentText;
-import net.minecraftforge.common.util.ForgeDirection;
 
 public class PipePowerIron extends Pipe<PipeTransportPower> {
 
@@ -65,8 +67,9 @@ public class PipePowerIron extends Pipe<PipeTransportPower> {
 
 	@Override
 	public int getIconIndex(ForgeDirection direction) {
-		if (container == null)
+		if (container == null) {
 			return PipeIconProvider.TYPE.PipePowerIronM128.ordinal();
+		}
 		return PipeIconProvider.TYPE.PipePowerIronM2.ordinal() + container.getBlockMetadata();
 	}
 
@@ -79,10 +82,11 @@ public class PipePowerIron extends Pipe<PipeTransportPower> {
 			} else {
 				setMode(getMode().getNext());
 			}
-			if (getWorld().isRemote)
+			if (getWorld().isRemote) {
 				player.addChatMessage(new ChatComponentText(String.format(
 						StringUtils.localize("chat.pipe.power.iron.mode"),
 						getMode().maxPower)));
+			}
 
 			((IToolWrench) equipped).wrenchUsed(player, container.xCoord, container.yCoord, container.zCoord);
 			return true;

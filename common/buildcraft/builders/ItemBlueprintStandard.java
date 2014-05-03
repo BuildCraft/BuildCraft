@@ -11,9 +11,11 @@ package buildcraft.builders;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
-import buildcraft.core.utils.NBTUtils;
+
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+
+import buildcraft.core.utils.NBTUtils;
 
 public class ItemBlueprintStandard extends ItemBlueprint {
 

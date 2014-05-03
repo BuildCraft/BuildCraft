@@ -15,23 +15,23 @@ public class SchematicWallSide extends SchematicBlock {
 
 	@Override
 	public void rotateLeft(IBuilderContext context) {
-		final int XPos = 2;
-		final int XNeg = 1;
-		final int ZPos = 4;
-		final int ZNeg = 3;
+		final int xPos = 2;
+		final int xNeg = 1;
+		final int zPos = 4;
+		final int zNeg = 3;
 
 		switch (meta) {
-		case XPos:
-			meta = ZPos;
+		case xPos:
+			meta = zPos;
 			break;
-		case ZNeg:
-			meta = XPos;
+		case zNeg:
+			meta = xPos;
 			break;
-		case XNeg:
-			meta = ZNeg;
+		case xNeg:
+			meta = zNeg;
 			break;
-		case ZPos:
-			meta = XNeg;
+		case zPos:
+			meta = xNeg;
 			break;
 		}
 	}

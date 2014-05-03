@@ -19,8 +19,13 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
+
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.FluidContainerRegistry;
+
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftFactory;
 import buildcraft.api.tools.IToolWrench;
@@ -28,8 +33,6 @@ import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.GuiIds;
 import buildcraft.core.fluids.FluidUtils;
 import buildcraft.core.utils.Utils;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 public class BlockRefinery extends BlockContainer {
 
@@ -102,21 +105,23 @@ public class BlockRefinery extends BlockContainer {
 	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float hitX, float hitY, float hitZ) {
 		TileEntity tile = world.getTileEntity(x, y, z);
 
-		if (!(tile instanceof TileRefinery))
+		if (!(tile instanceof TileRefinery)) {
 			return false;
+		}
 
 		ItemStack current = player.getCurrentEquippedItem();
 		Item equipped = current != null ? current.getItem() : null;
 		if (player.isSneaking() && equipped instanceof IToolWrench && ((IToolWrench) equipped).canWrench(player, x, y, z)) {
-			((TileRefinery)tile).resetFilters();
+			((TileRefinery) tile).resetFilters();
 			((IToolWrench) equipped).wrenchUsed(player, x, y, z);
 			return true;
 		}
 
 		if (current != null && current.getItem() != Items.bucket) {
 			if (!world.isRemote) {
-				if (FluidUtils.handleRightClick((TileRefinery) tile, ForgeDirection.getOrientation(side), player, true, false))
+				if (FluidUtils.handleRightClick((TileRefinery) tile, ForgeDirection.getOrientation(side), player, true, false)) {
 					return true;
+				}
 			} else if (FluidContainerRegistry.isContainer(current)) {
 				return true;
 			}

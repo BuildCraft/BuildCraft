@@ -8,28 +8,30 @@
  */
 package buildcraft.factory.render;
 
-import buildcraft.core.DefaultProps;
-import buildcraft.core.IInventoryRenderer;
-import buildcraft.core.fluids.Tank;
-import buildcraft.core.render.FluidRenderer;
-import buildcraft.core.render.RenderUtils;
-import buildcraft.factory.TileRefinery;
+import org.lwjgl.opengl.GL11;
+
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
+
 import net.minecraftforge.fluids.FluidStack;
 
-import org.lwjgl.opengl.GL11;
+import buildcraft.core.DefaultProps;
+import buildcraft.core.IInventoryRenderer;
+import buildcraft.core.fluids.Tank;
+import buildcraft.core.render.FluidRenderer;
+import buildcraft.core.render.RenderUtils;
+import buildcraft.factory.TileRefinery;
 
 public class RenderRefinery extends TileEntitySpecialRenderer implements IInventoryRenderer {
 
 	private static final ResourceLocation TEXTURE = new ResourceLocation(DefaultProps.TEXTURE_PATH_BLOCKS + "/refinery.png");
 	private static final float pixel = (float) (1.0 / 16.0);
 	private final ModelRenderer tank;
-	private final ModelRenderer magnet[] = new ModelRenderer[4];
+	private final ModelRenderer[] magnet = new ModelRenderer[4];
 	private final ModelBase model = new ModelBase() {
 	};
 

@@ -14,11 +14,14 @@ import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
-import net.minecraftforge.event.terraingen.PopulateChunkEvent;
-import net.minecraftforge.event.terraingen.TerrainGen;
-import buildcraft.BuildCraftCore;
+
 import cpw.mods.fml.common.eventhandler.Event.Result;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+
+import net.minecraftforge.event.terraingen.PopulateChunkEvent;
+import net.minecraftforge.event.terraingen.TerrainGen;
+
+import buildcraft.BuildCraftCore;
 
 public class SpringPopulate {
 
@@ -42,44 +45,54 @@ public class SpringPopulate {
 	private void doPopulate(World world, Random random, int x, int z) {
 
 		// A spring will be generated every 40th chunk.
-		if(random.nextFloat() > 0.025f)
+		if (random.nextFloat() > 0.025f) {
 			return;
+		}
 
 		// Do not generate water in the End or the Nether
 		BiomeGenBase biomegenbase = world.getWorldChunkManager().getBiomeGenAt(x, z);
-		if (biomegenbase.biomeID == BiomeGenBase.sky.biomeID || biomegenbase.biomeID == BiomeGenBase.hell.biomeID)
+		if (biomegenbase.biomeID == BiomeGenBase.sky.biomeID || biomegenbase.biomeID == BiomeGenBase.hell.biomeID) {
 			return;
+		}
 
 		int posX = x + random.nextInt(16);
 		int posZ = z + random.nextInt(16);
 
-		for(int i = 0; i < 5; i++) {
+		for (int i = 0; i < 5; i++) {
 			Block candidate = world.getBlock(posX, i, posZ);
-			if(candidate != Blocks.bedrock)
+
+			if (candidate != Blocks.bedrock) {
 				continue;
+			}
 
 			world.setBlock(posX, i + 1, posZ, BuildCraftCore.springBlock);
-			for(int j = i + 2; j < world.getActualHeight() - 10; j++) {
-				if(!boreToSurface(world, posX, j, posZ)) {
-					if(world.isAirBlock(posX, j, posZ))
+
+			for (int j = i + 2; j < world.getActualHeight() - 10; j++) {
+				if (!boreToSurface(world, posX, j, posZ)) {
+					if (world.isAirBlock(posX, j, posZ)) {
 						world.setBlock(posX, j, posZ, Blocks.water);
+					}
+
 					break;
 				}
 			}
+
 			break;
 		}
 	}
 
 	private boolean boreToSurface(World world, int x, int y, int z) {
-		if(world.isAirBlock(x, y, z))
+		if (world.isAirBlock(x, y, z)) {
 			return false;
+		}
 
 		Block existing = world.getBlock(x, y, z);
-		if(existing != Blocks.stone
+		if (existing != Blocks.stone
 				&& existing != Blocks.dirt
 				&& existing != Blocks.gravel
-				&& existing != Blocks.grass)
+				&& existing != Blocks.grass) {
 			return false;
+		}
 
 		world.setBlock(x, y, z, Blocks.water);
 		return true;

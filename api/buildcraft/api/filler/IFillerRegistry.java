@@ -8,18 +8,19 @@
  */
 package buildcraft.api.filler;
 
-import buildcraft.api.gates.IAction;
 import java.util.Set;
+
+import buildcraft.api.gates.IAction;
 
 public interface IFillerRegistry {
 
-	public void addPattern(IFillerPattern pattern);
+	void addPattern(IFillerPattern pattern);
 
-	public IFillerPattern getPattern(String patternName);
+	IFillerPattern getPattern(String patternName);
 
-	public IFillerPattern getNextPattern(IFillerPattern currentPattern);
+	IFillerPattern getNextPattern(IFillerPattern currentPattern);
 
-	public IFillerPattern getPreviousPattern(IFillerPattern currentPattern);
-	
-	public Set<? extends IAction> getActions();
+	IFillerPattern getPreviousPattern(IFillerPattern currentPattern);
+
+	Set<? extends IAction> getActions();
 }

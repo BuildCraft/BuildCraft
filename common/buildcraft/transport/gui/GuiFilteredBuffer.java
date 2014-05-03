@@ -8,14 +8,16 @@
  */
 package buildcraft.transport.gui;
 
-import buildcraft.core.DefaultProps;
-import buildcraft.core.utils.StringUtils;
-import buildcraft.transport.TileFilteredBuffer;
+import org.lwjgl.opengl.GL11;
+
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.util.ResourceLocation;
-import org.lwjgl.opengl.GL11;
+
+import buildcraft.core.DefaultProps;
+import buildcraft.core.utils.StringUtils;
+import buildcraft.transport.TileFilteredBuffer;
 
 public class GuiFilteredBuffer extends GuiContainer {
 

@@ -8,12 +8,14 @@
  */
 package buildcraft.core.gui.widgets;
 
+import net.minecraft.util.IIcon;
+
+import net.minecraftforge.fluids.FluidStack;
+
 import buildcraft.core.fluids.Tank;
 import buildcraft.core.gui.GuiBuildCraft;
 import buildcraft.core.gui.tooltips.ToolTip;
 import buildcraft.core.render.FluidRenderer;
-import net.minecraft.util.IIcon;
-import net.minecraftforge.fluids.FluidStack;
 
 public class FluidGaugeWidget extends Widget {
 
@@ -31,16 +33,19 @@ public class FluidGaugeWidget extends Widget {
 
     @Override
     public void draw(GuiBuildCraft gui, int guiX, int guiY, int mouseX, int mouseY) {
-        if (tank == null)
-            return;
+        if (tank == null) {
+			return;
+		}
         FluidStack fluidStack = tank.getFluid();
-        if (fluidStack == null || fluidStack.amount <= 0 || fluidStack.getFluid() == null)
-            return;
+        if (fluidStack == null || fluidStack.amount <= 0 || fluidStack.getFluid() == null) {
+			return;
+		}
 
         IIcon liquidIcon = FluidRenderer.getFluidTexture(fluidStack, false);
 
-        if (liquidIcon == null)
+		if (liquidIcon == null) {
             return;
+		}
 
         float scale = Math.min(fluidStack.amount, tank.getCapacity()) / (float) tank.getCapacity();
 

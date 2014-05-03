@@ -8,13 +8,11 @@
  */
 package buildcraft.core.network;
 
-import io.netty.buffer.ByteBuf;
-
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
+
+import io.netty.buffer.ByteBuf;
 
 public class PacketTileState extends PacketCoordinates {
 

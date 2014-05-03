@@ -11,6 +11,8 @@ package buildcraft.core.proxy;
 import java.util.List;
 import java.util.Random;
 
+import com.mojang.authlib.GameProfile;
+
 import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
@@ -26,23 +28,26 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.IChatComponent;
 import net.minecraft.world.World;
-import net.minecraftforge.oredict.ShapedOreRecipe;
-import net.minecraftforge.oredict.ShapelessOreRecipe;
-import buildcraft.api.core.ICoreProxy;
-import buildcraft.core.EntityBlock;
-import buildcraft.core.ItemBlockBuildCraft;
-import buildcraft.core.LaserKind;
-
-import com.mojang.authlib.GameProfile;
 
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.registry.GameRegistry;
 
+import net.minecraftforge.oredict.ShapedOreRecipe;
+import net.minecraftforge.oredict.ShapelessOreRecipe;
+
+import buildcraft.api.core.ICoreProxy;
+import buildcraft.core.EntityBlock;
+import buildcraft.core.ItemBlockBuildCraft;
+import buildcraft.core.LaserKind;
+
 public class CoreProxy implements ICoreProxy {
 
 	@SidedProxy(clientSide = "buildcraft.core.proxy.CoreProxyClient", serverSide = "buildcraft.core.proxy.CoreProxy")
 	public static CoreProxy proxy;
+
+	/* BUILDCRAFT PLAYER */
+	protected static EntityPlayer buildCraftPlayer;
 
 	public String getMinecraftVersion() {
 		return Loader.instance().getMinecraftModContainer().getVersion();
@@ -122,9 +127,6 @@ public class CoreProxy implements ICoreProxy {
 		return new Random(world.getSeed());
 	}
 
-	/* BUILDCRAFT PLAYER */
-	protected static EntityPlayer buildCraftPlayer;
-
 	public String playerName() {
 		return "";
 	}
@@ -175,7 +177,7 @@ public class CoreProxy implements ICoreProxy {
 		if (CoreProxy.buildCraftPlayer == null) {
 			CoreProxy.buildCraftPlayer = createNewPlayer(world);
 		} else {
-			CoreProxy.buildCraftPlayer.worldObj= world;
+			CoreProxy.buildCraftPlayer.worldObj = world;
 		}
 
 		return CoreProxy.buildCraftPlayer;

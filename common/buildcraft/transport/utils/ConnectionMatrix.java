@@ -10,10 +10,6 @@ package buildcraft.transport.utils;
 
 import io.netty.buffer.ByteBuf;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-
 import net.minecraftforge.common.util.ForgeDirection;
 
 public class ConnectionMatrix {

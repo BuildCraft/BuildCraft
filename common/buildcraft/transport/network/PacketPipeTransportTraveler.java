@@ -8,20 +8,22 @@
  */
 package buildcraft.transport.network;
 
+import io.netty.buffer.ByteBuf;
+
+import net.minecraft.util.MathHelper;
+
+import net.minecraftforge.common.util.ForgeDirection;
+
 import buildcraft.core.network.BuildCraftPacket;
 import buildcraft.core.network.PacketIds;
 import buildcraft.core.utils.EnumColor;
 import buildcraft.transport.TravelingItem;
-import io.netty.buffer.ByteBuf;
-
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-
-import net.minecraft.util.MathHelper;
-import net.minecraftforge.common.util.ForgeDirection;
 
 public class PacketPipeTransportTraveler extends BuildCraftPacket {
+
+	public int posX;
+	public int posY;
+	public int posZ;
 
 	private TravelingItem item;
 	private boolean forceStackRefresh;
@@ -33,9 +35,6 @@ public class PacketPipeTransportTraveler extends BuildCraftPacket {
 	private float itemY;
 	private float itemZ;
 	private float speed;
-	public int posX;
-	public int posY;
-	public int posZ;
 
 	public PacketPipeTransportTraveler() {
 	}
@@ -79,8 +78,9 @@ public class PacketPipeTransportTraveler extends BuildCraftPacket {
 		this.output = ForgeDirection.getOrientation(data.readByte());
 
 		byte c = data.readByte();
-		if (c != -1)
+		if (c != -1) {
 			this.color = EnumColor.fromId(c);
+		}
 
 		this.speed = data.readFloat();
 

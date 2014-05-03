@@ -17,14 +17,17 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
+
 import buildcraft.BuildCraftCore;
 import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.inventory.InvUtils;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 public class BlockTank extends BlockContainer {
 
@@ -90,9 +93,9 @@ public class BlockTank extends BlockContainer {
 			FluidStack liquid = FluidContainerRegistry.getFluidForFilledItem(current);
 
 			TileEntity tile = world.getTileEntity(i, j, k);
-			if(tile instanceof TileTank)
-			{
-				TileTank tank = (TileTank)tile;
+
+			if (tile instanceof TileTank) {
+				TileTank tank = (TileTank) tile;
 				// Handle filled containers
 				if (liquid != null) {
 					int qty = tank.fill(ForgeDirection.UNKNOWN, liquid, true);

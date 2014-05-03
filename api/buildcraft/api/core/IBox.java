@@ -10,16 +10,16 @@ package buildcraft.api.core;
 
 public interface IBox {
 
-	public IBox expand(int amount);
+	IBox expand(int amount);
 
-	public IBox contract(int amount);
+	IBox contract(int amount);
 
-	public boolean contains(double x, double y, double z);
+	boolean contains(double x, double y, double z);
 
-	public Position pMin();
+	Position pMin();
 
-	public Position pMax();
+	Position pMax();
 
-	public void createLaserData();
+	void createLaserData();
 
 }

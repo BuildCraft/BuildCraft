@@ -16,6 +16,7 @@ import java.util.TreeMap;
 
 import net.minecraft.block.Block;
 import net.minecraft.nbt.NBTTagCompound;
+
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.BlockFluidBase;
 import net.minecraftforge.fluids.Fluid;
@@ -24,6 +25,7 @@ import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
+
 import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.core.BlockIndex;
 import buildcraft.core.TileBuildCraft;
@@ -108,7 +110,7 @@ public class TileFloodGate extends TileBuildCraft implements IFluidHandler {
 			boolean placed;
 			Block b = FluidUtils.getFluidBlock(fluid, true);
 
-			if(b instanceof BlockFluidBase) {
+			if (b instanceof BlockFluidBase) {
 				BlockFluidBase blockFluid = (BlockFluidBase) b;
 				placed = worldObj.setBlock(x, y, z, b, blockFluid.getMaxRenderHeightMeta(), 3);
 			} else {

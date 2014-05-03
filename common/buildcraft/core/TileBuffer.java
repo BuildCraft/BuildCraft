@@ -11,7 +11,9 @@ package buildcraft.core;
 import net.minecraft.block.Block;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+
 import net.minecraftforge.common.util.ForgeDirection;
+
 import buildcraft.api.core.SafeTimeTracker;
 
 public final class TileBuffer {
@@ -21,7 +23,7 @@ public final class TileBuffer {
 
 	private final SafeTimeTracker tracker = new SafeTimeTracker(20, 5);
 	private final World world;
-	final int x, y, z;
+	private final int x, y, z;
 	private final boolean loadUnloaded;
 
 	public TileBuffer(World world, int x, int y, int z, boolean loadUnloaded) {
@@ -34,7 +36,7 @@ public final class TileBuffer {
 		refresh();
 	}
 
-	public final void refresh() {
+	public void refresh() {
 		tile = null;
 		block = null;
 
@@ -89,7 +91,7 @@ public final class TileBuffer {
 	}
 
 	public boolean exists() {
-		if(tile != null && !tile.isInvalid()) {
+		if (tile != null && !tile.isInvalid()) {
 			return true;
 		}
 

@@ -8,10 +8,12 @@
  */
 package buildcraft.energy;
 
+import net.minecraft.util.ResourceLocation;
+
+import net.minecraftforge.common.util.ForgeDirection;
+
 import buildcraft.api.power.PowerHandler;
 import buildcraft.api.transport.IPipeTile.PipeType;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.util.ForgeDirection;
 
 public class TileEngineWood extends TileEngine {
 
@@ -45,20 +47,23 @@ public class TileEngineWood extends TileEngine {
 	@Override
 	protected EnergyStage computeEnergyStage() {
 		double energyLevel = getEnergyLevel();
-		if (energyLevel < 0.25f)
+		if (energyLevel < 0.25f) {
 			return EnergyStage.BLUE;
-		else if (energyLevel < 0.5f)
+		} else if (energyLevel < 0.5f) {
 			return EnergyStage.GREEN;
-		else if (energyLevel < 0.75f)
+		} else if (energyLevel < 0.75f) {
 			return EnergyStage.YELLOW;
-		else
+		} else {
 			return EnergyStage.RED;
+		}
 	}
 
 	@Override
 	public float getPistonSpeed() {
-		if (!worldObj.isRemote)
+		if (!worldObj.isRemote) {
 			return Math.max(0.08f * getHeatLevel(), 0.01f);
+		}
+
 		switch (getEnergyStage()) {
 			case GREEN:
 				return 0.02F;
@@ -75,9 +80,11 @@ public class TileEngineWood extends TileEngine {
 	public void engineUpdate() {
 		super.engineUpdate();
 
-		if (isRedstonePowered)
-			if (worldObj.getTotalWorldTime() % 16 == 0)
+		if (isRedstonePowered) {
+			if (worldObj.getTotalWorldTime() % 16 == 0) {
 				addEnergy(1);
+			}
+		}
 	}
 
 	@Override

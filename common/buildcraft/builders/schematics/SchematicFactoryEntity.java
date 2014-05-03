@@ -8,13 +8,14 @@
  */
 package buildcraft.builders.schematics;
 
+import net.minecraft.nbt.NBTTagCompound;
+
 import buildcraft.api.blueprints.MappingRegistry;
 import buildcraft.api.blueprints.SchematicEntity;
 import buildcraft.api.blueprints.SchematicFactory;
 import buildcraft.api.blueprints.SchematicRegistry;
-import net.minecraft.nbt.NBTTagCompound;
 
-public class SchematicFactoryEntity extends SchematicFactory <SchematicEntity> {
+public class SchematicFactoryEntity extends SchematicFactory<SchematicEntity> {
 
 	@Override
 	protected SchematicEntity loadSchematicFromWorldNBT (NBTTagCompound nbt, MappingRegistry registry) {

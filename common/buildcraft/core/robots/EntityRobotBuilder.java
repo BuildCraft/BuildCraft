@@ -15,11 +15,13 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+
+import cpw.mods.fml.common.registry.IEntityAdditionalSpawnData;
+
 import buildcraft.builders.blueprints.IBlueprintBuilderAgent;
 import buildcraft.builders.urbanism.TaskBuildSchematic;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.proxy.CoreProxy;
-import cpw.mods.fml.common.registry.IEntityAdditionalSpawnData;
 
 public class EntityRobotBuilder extends EntityRobot implements
 		IEntityAdditionalSpawnData, IBlueprintBuilderAgent, IInventory {
@@ -42,7 +44,7 @@ public class EntityRobotBuilder extends EntityRobot implements
 		Block block = worldObj.getBlock(x, y, z);
 
 		if (block != null) {
-			curBlockDamage += 1 / (block.getBlockHardness(worldObj, x,y, z) * 20);
+			curBlockDamage += 1 / (block.getBlockHardness(worldObj, x, y, z) * 20);
 		}
 
 		if (block != null && curBlockDamage < 1) {

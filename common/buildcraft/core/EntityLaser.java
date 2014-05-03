@@ -12,6 +12,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+
 import buildcraft.api.core.Position;
 
 public abstract class EntityLaser extends Entity {
@@ -104,7 +105,7 @@ public abstract class EntityLaser extends Entity {
 		data.tail.y = decodeDouble(dataWatcher.getWatchableObjectInt(12));
 		data.tail.z = decodeDouble(dataWatcher.getWatchableObjectInt(13));
 
-		data.isVisible = (dataWatcher.getWatchableObjectByte(14) == 1);
+		data.isVisible = dataWatcher.getWatchableObjectByte(14) == 1;
 	}
 
 	protected void updateDataServer() {
@@ -148,7 +149,7 @@ public abstract class EntityLaser extends Entity {
 	}
 
 	protected double decodeDouble(int i) {
-		return (i / 8192D);
+		return i / 8192D;
 	}
 
 	// The read/write to nbt seem to be useless

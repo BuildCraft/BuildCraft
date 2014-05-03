@@ -16,7 +16,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
+
 import net.minecraftforge.common.util.Constants;
+
 import buildcraft.BuildCraftBuilders;
 import buildcraft.api.blueprints.BuildingPermission;
 import buildcraft.api.blueprints.IBuilderContext;
@@ -29,7 +31,7 @@ import buildcraft.builders.blueprints.BlueprintId.Kind;
 import buildcraft.core.utils.NBTUtils;
 
 public class Blueprint extends BlueprintBase {
-	public LinkedList <SchematicEntity> entities = new LinkedList <SchematicEntity> ();
+	public LinkedList<SchematicEntity> entities = new LinkedList<SchematicEntity>();
 
 	public Blueprint() {
 		super ();

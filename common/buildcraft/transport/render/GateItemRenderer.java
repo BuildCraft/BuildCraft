@@ -8,8 +8,10 @@
  */
 package buildcraft.transport.render;
 
-import buildcraft.api.gates.IGateExpansion;
-import buildcraft.transport.gates.ItemGate;
+import java.util.Random;
+
+import org.lwjgl.opengl.GL11;
+
 import net.minecraft.client.renderer.ItemRenderer;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.RenderItem;
@@ -17,10 +19,11 @@ import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
-import net.minecraftforge.client.IItemRenderer;
-import org.lwjgl.opengl.GL11;
 
-import java.util.Random;
+import net.minecraftforge.client.IItemRenderer;
+
+import buildcraft.api.gates.IGateExpansion;
+import buildcraft.transport.gates.ItemGate;
 
 public class GateItemRenderer implements IItemRenderer {
 
@@ -28,28 +31,28 @@ public class GateItemRenderer implements IItemRenderer {
 
 	@Override
 	public boolean handleRenderType(ItemStack stack, ItemRenderType type) {
-		if (type == ItemRenderType.INVENTORY || type == ItemRenderType.ENTITY || type == ItemRenderType.EQUIPPED || type == ItemRenderType.EQUIPPED_FIRST_PERSON)
-			return true;
-		return false;
+		return type == ItemRenderType.INVENTORY
+				|| type == ItemRenderType.ENTITY
+				|| type == ItemRenderType.EQUIPPED
+				|| type == ItemRenderType.EQUIPPED_FIRST_PERSON;
 	}
 
 	@Override
 	public boolean shouldUseRenderHelper(ItemRenderType type, ItemStack stack, ItemRendererHelper helper) {
-		if (helper == ItemRendererHelper.ENTITY_BOBBING)
-			return true;
-		return false;
+		return helper == ItemRendererHelper.ENTITY_BOBBING;
 	}
 
 	@Override
 	public void renderItem(ItemRenderType type, ItemStack stack, Object... data) {
-		if (type == ItemRenderType.INVENTORY)
+		if (type == ItemRenderType.INVENTORY) {
 			render(ItemRenderType.INVENTORY, stack);
-		else if (type == ItemRenderType.ENTITY)
-			if (RenderManager.instance.options.fancyGraphics)
+		} else if (type == ItemRenderType.ENTITY) {
+			if (RenderManager.instance.options.fancyGraphics) {
 				renderAsEntity(stack, (EntityItem) data[1]);
-			else
+			} else {
 				renderAsEntityFlat(stack);
-		else if (type == ItemRenderType.EQUIPPED || type == ItemRenderType.EQUIPPED_FIRST_PERSON) {
+			}
+		} else if (type == ItemRenderType.EQUIPPED || type == ItemRenderType.EQUIPPED_FIRST_PERSON) {
 			renderIn3D(stack);
 		}
 	}
@@ -69,8 +72,9 @@ public class GateItemRenderer implements IItemRenderer {
 	}
 
 	private void renderLayerIn3D(IIcon icon) {
-		if (icon == null)
+		if (icon == null) {
 			return;
+		}
 		GL11.glPushMatrix();
 		Tessellator tessellator = Tessellator.instance;
 
@@ -86,19 +90,22 @@ public class GateItemRenderer implements IItemRenderer {
 	private void renderAsEntity(ItemStack stack, EntityItem entity) {
 		GL11.glPushMatrix();
 		byte iterations = 1;
-		if (stack.stackSize > 1)
+		if (stack.stackSize > 1) {
 			iterations = 2;
-		if (stack.stackSize > 15)
+		}
+		if (stack.stackSize > 15) {
 			iterations = 3;
-		if (stack.stackSize > 31)
+		}
+		if (stack.stackSize > 31) {
 			iterations = 4;
+		}
 
 		Random rand = new Random(187L);
 
 		float offsetZ = 0.0625F + 0.021875F;
 
-		GL11.glRotatef((((float) entity.age + 1.0F) / 20.0F + entity.hoverStart) * (180F / (float) Math.PI), 0.0F, 1.0F, 0.0F);
-		GL11.glTranslatef(-0.5F, -0.25F, -(offsetZ * (float) iterations / 2.0F));
+		GL11.glRotatef(((entity.age + 1.0F) / 20.0F + entity.hoverStart) * (180F / (float) Math.PI), 0.0F, 1.0F, 0.0F);
+		GL11.glTranslatef(-0.5F, -0.25F, -(offsetZ * iterations / 2.0F));
 
 		for (int count = 0; count < iterations; ++count) {
 			if (count > 0) {
@@ -106,8 +113,9 @@ public class GateItemRenderer implements IItemRenderer {
 				float offsetY = (rand.nextFloat() * 2.0F - 1.0F) * 0.3F / 0.5F;
 				float z = (rand.nextFloat() * 2.0F - 1.0F) * 0.3F / 0.5F;
 				GL11.glTranslatef(offsetX, offsetY, offsetZ);
-			} else
+			} else {
 				GL11.glTranslatef(0f, 0f, offsetZ);
+			}
 
 			renderIn3D(stack);
 		}
@@ -117,12 +125,15 @@ public class GateItemRenderer implements IItemRenderer {
 	private void renderAsEntityFlat(ItemStack stack) {
 		GL11.glPushMatrix();
 		byte iterations = 1;
-		if (stack.stackSize > 1)
+		if (stack.stackSize > 1) {
 			iterations = 2;
-		if (stack.stackSize > 15)
+		}
+		if (stack.stackSize > 15) {
 			iterations = 3;
-		if (stack.stackSize > 31)
+		}
+		if (stack.stackSize > 31) {
 			iterations = 4;
+		}
 
 		Random rand = new Random(187L);
 
@@ -155,17 +166,20 @@ public class GateItemRenderer implements IItemRenderer {
 		IIcon icon = ItemGate.getLogic(stack).getIconItem();
 		renderItem.renderIcon(0, 0, icon, 16, 16);
 
-		if (type == ItemRenderType.ENTITY)
+		if (type == ItemRenderType.ENTITY) {
 			GL11.glTranslatef(0, 0, -0.01f);
+		}
 
 		icon = ItemGate.getMaterial(stack).getIconItem();
-		if (icon != null)
+		if (icon != null) {
 			renderItem.renderIcon(0, 0, icon, 16, 16);
+		}
 
 		for (IGateExpansion expansion : ItemGate.getInstalledExpansions(stack)) {
 			icon = expansion.getOverlayItem();
-			if (icon != null)
+			if (icon != null) {
 				renderItem.renderIcon(0, 0, icon, 16, 16);
+			}
 		}
 		GL11.glEnable(GL11.GL_LIGHTING);
 		GL11.glPopMatrix();

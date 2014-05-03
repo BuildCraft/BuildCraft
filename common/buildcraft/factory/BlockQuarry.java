@@ -21,15 +21,17 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
 import net.minecraftforge.common.util.ForgeDirection;
+
 import buildcraft.BuildCraftFactory;
 import buildcraft.api.tools.IToolWrench;
 import buildcraft.core.BlockBuildCraft;
 import buildcraft.core.Box;
-import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.utils.Utils;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 public class BlockQuarry extends BlockBuildCraft {
 
@@ -106,19 +108,25 @@ public class BlockQuarry extends BlockBuildCraft {
 
 			for (ForgeDirection dir : dirs) {
 				switch (dir) {
-					case UP:
+				case UP:
 						searchFrames(world, i, j + 1, k);
-					case DOWN:
+					break;
+				case DOWN:
 						searchFrames(world, i, j - 1, k);
-					case SOUTH:
+					break;
+				case SOUTH:
 						searchFrames(world, i, j, k + 1);
-					case NORTH:
+					break;
+				case NORTH:
 						searchFrames(world, i, j, k - 1);
-					case EAST:
+					break;
+				case EAST:
 						searchFrames(world, i + 1, j, k);
-					case WEST:
+					break;
+				case WEST:
 					default:
 						searchFrames(world, i - 1, j, k);
+					break;
 				}
 			}
 		}

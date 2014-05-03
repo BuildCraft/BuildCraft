@@ -10,11 +10,15 @@ package buildcraft.silicon.network;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.network.INetHandler;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+
+import cpw.mods.fml.common.network.NetworkRegistry;
+
 import buildcraft.core.network.BuildCraftChannelHandler;
 import buildcraft.core.network.BuildCraftPacket;
 import buildcraft.core.network.PacketCoordinates;
@@ -26,7 +30,6 @@ import buildcraft.silicon.TileAdvancedCraftingTable;
 import buildcraft.silicon.TileAssemblyTable;
 import buildcraft.silicon.TileAssemblyTable.SelectionMessage;
 import buildcraft.silicon.gui.ContainerAssemblyTable;
-import cpw.mods.fml.common.network.NetworkRegistry;
 
 public class PacketHandlerSilicon extends BuildCraftChannelHandler {
 
@@ -75,24 +78,28 @@ public class PacketHandlerSilicon extends BuildCraftChannelHandler {
 
 	private TileAssemblyTable getAssemblyTable(World world, int x, int y, int z) {
 
-		if (!world.blockExists(x, y, z))
+		if (!world.blockExists(x, y, z)) {
 			return null;
+		}
 
 		TileEntity tile = world.getTileEntity(x, y, z);
-		if (!(tile instanceof TileAssemblyTable))
+		if (!(tile instanceof TileAssemblyTable)) {
 			return null;
+		}
 
 		return (TileAssemblyTable) tile;
 	}
 
 	private TileAdvancedCraftingTable getAdvancedWorkbench(World world, int x, int y, int z) {
 
-		if (!world.blockExists(x, y, z))
+		if (!world.blockExists(x, y, z)) {
 			return null;
+		}
 
 		TileEntity tile = world.getTileEntity(x, y, z);
-		if (!(tile instanceof TileAdvancedCraftingTable))
+		if (!(tile instanceof TileAdvancedCraftingTable)) {
 			return null;
+		}
 
 		return (TileAdvancedCraftingTable) tile;
 	}
@@ -106,8 +113,9 @@ public class PacketHandlerSilicon extends BuildCraftChannelHandler {
 	private void onAssemblyGetSelection(EntityPlayer player, PacketCoordinates packet) {
 
 		TileAssemblyTable tile = getAssemblyTable(player.worldObj, packet.posX, packet.posY, packet.posZ);
-		if (tile == null)
+		if (tile == null) {
 			return;
+		}
 
 		tile.sendSelectionTo(player);
 	}
@@ -121,8 +129,9 @@ public class PacketHandlerSilicon extends BuildCraftChannelHandler {
 	private void onAssemblySelect(EntityPlayer player, PacketNBT packetA) {
 
 		TileAssemblyTable tile = getAssemblyTable(player.worldObj, packetA.posX, packetA.posY, packetA.posZ);
-		if (tile == null)
+		if (tile == null) {
 			return;
+		}
 
 		TileAssemblyTable.SelectionMessage message = new TileAssemblyTable.SelectionMessage();
 		message.fromNBT(packetA.getTagCompound());
@@ -138,8 +147,9 @@ public class PacketHandlerSilicon extends BuildCraftChannelHandler {
 	private void onAdvancedWorkbenchSet(EntityPlayer player, PacketSlotChange packet1) {
 
 		TileAdvancedCraftingTable tile = getAdvancedWorkbench(player.worldObj, packet1.posX, packet1.posY, packet1.posZ);
-		if (tile == null)
+		if (tile == null) {
 			return;
+		}
 
 		tile.updateCraftingMatrix(packet1.slot, packet1.stack);
 	}

@@ -8,13 +8,14 @@
  */
 package buildcraft.factory;
 
-import io.netty.buffer.ByteBuf;
-
 import java.io.IOException;
+
+import io.netty.buffer.ByteBuf;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.EnumSkyBlock;
+
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
@@ -22,6 +23,7 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
+
 import buildcraft.BuildCraftCore;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.core.TileBuildCraft;
@@ -168,18 +170,18 @@ public class TileTank extends TileBuildCraft implements IFluidHandler {
 			return 0;
 		}
 
-		resource = resource.copy();
+		FluidStack resourceCopy = resource.copy();
 		int totalUsed = 0;
 		TileTank tankToFill = getBottomTank();
 
 		FluidStack liquid = tankToFill.tank.getFluid();
-		if (liquid != null && liquid.amount > 0 && !liquid.isFluidEqual(resource)) {
+		if (liquid != null && liquid.amount > 0 && !liquid.isFluidEqual(resourceCopy)) {
 			return 0;
 		}
 
-		while (tankToFill != null && resource.amount > 0) {
-			int used = tankToFill.tank.fill(resource, doFill);
-			resource.amount -= used;
+		while (tankToFill != null && resourceCopy.amount > 0) {
+			int used = tankToFill.tank.fill(resourceCopy, doFill);
+			resourceCopy.amount -= used;
 			if (used > 0) {
 				tankToFill.hasUpdate = true;
 			}

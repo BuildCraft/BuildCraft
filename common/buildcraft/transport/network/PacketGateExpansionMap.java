@@ -8,20 +8,17 @@
  */
 package buildcraft.transport.network;
 
-import buildcraft.api.gates.GateExpansions;
-import buildcraft.core.network.BuildCraftPacket;
-import buildcraft.core.network.PacketIds;
-import buildcraft.core.utils.Utils;
+import java.util.Map;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 
 import io.netty.buffer.ByteBuf;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.util.Map;
+import buildcraft.api.gates.GateExpansions;
+import buildcraft.core.network.BuildCraftPacket;
+import buildcraft.core.network.PacketIds;
+import buildcraft.core.utils.Utils;
 
 public class PacketGateExpansionMap extends BuildCraftPacket {
 

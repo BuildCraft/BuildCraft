@@ -20,28 +20,31 @@ public interface IRobotTaskProvider {
 	 * Robots will pick up tasks that are provided within a certain range.
 	 * These can be coming from e.g. tile entities or entities.
 	 */
-	public double getX ();
-	public double getY ();
-	public double getZ ();
-	public World getWorld ();
+	double getX();
+
+	double getY();
+
+	double getZ();
+
+	World getWorld();
 
 	/**
 	 * If the provider is not active, it will be eventually removed from the
 	 * list of potential providers.
 	 */
-	public boolean isActive ();
+	boolean isActive();
 
 	/**
 	 * Returns the next task that can be given to the robot in parameter. This
 	 * is a first level of filter. The robot may or may not decide to pick up
 	 * the task.
 	 */
-	public IRobotTask getNextTask (EntityRobot robot);
+	IRobotTask getNextTask(EntityRobot robot);
 
 	/**
 	 * This is called once a task has been accepted, to be removed from the
 	 * list of available tasks.
 	 */
-	public void popNextTask ();
+	void popNextTask();
 
 }

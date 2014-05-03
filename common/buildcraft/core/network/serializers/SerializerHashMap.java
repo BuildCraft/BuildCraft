@@ -8,11 +8,11 @@
  */
 package buildcraft.core.network.serializers;
 
-import io.netty.buffer.ByteBuf;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+
+import io.netty.buffer.ByteBuf;
 
 public class SerializerHashMap extends ClassSerializer {
 
@@ -30,7 +30,7 @@ public class SerializerHashMap extends ClassSerializer {
 			data.writeBoolean(true);
 			data.writeShort(map.size());
 
-			Set <Map.Entry> s = map.entrySet();
+			Set<Map.Entry> s = map.entrySet();
 
 			for (Map.Entry e : s) {
 				anonymousSerializer.write(data, e.getKey(), context);

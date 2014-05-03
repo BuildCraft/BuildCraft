@@ -10,6 +10,7 @@ package buildcraft.core.inventory;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
@@ -17,7 +18,7 @@ import net.minecraft.item.ItemStack;
 /**
  * Allows you to deal with multiple inventories through a single interface.
  */
-public class InventoryConcatenator implements IInventory {
+public final class InventoryConcatenator implements IInventory {
 
 	private final List<Integer> slotMap = new ArrayList<Integer>();
 	private final List<IInventory> invMap = new ArrayList<IInventory>();

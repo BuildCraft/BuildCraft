@@ -17,7 +17,9 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.World;
+
 import net.minecraftforge.common.util.Constants;
+
 import buildcraft.BuildCraftBuilders;
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.SchematicRegistry;
@@ -30,13 +32,13 @@ import buildcraft.core.Box;
 
 public abstract class BptBuilderBase implements IAreaProvider {
 
-	protected TreeSet <BlockIndex> clearedLocations = new TreeSet <BlockIndex> ();
-	protected TreeSet <BlockIndex> builtLocations = new TreeSet <BlockIndex> ();
-
 	public BlueprintBase blueprint;
-	int x, y, z;
-	protected boolean done;
 	public BptContext context;
+	protected boolean done;
+	protected TreeSet<BlockIndex> clearedLocations = new TreeSet<BlockIndex>();
+	protected TreeSet<BlockIndex> builtLocations = new TreeSet<BlockIndex>();
+	protected int x, y, z;
+	private boolean initialized = false;
 
 	public BptBuilderBase(BlueprintBase bluePrint, World world, int x, int y, int z) {
 		this.blueprint = bluePrint;
@@ -50,8 +52,6 @@ public abstract class BptBuilderBase implements IAreaProvider {
 
 		context = bluePrint.getContext(world, box);
 	}
-
-	private boolean initialized = false;
 
 	protected abstract void initialize ();
 
@@ -148,7 +148,7 @@ public abstract class BptBuilderBase implements IAreaProvider {
 				.world()
 				.getBlock(slot.x, slot.y, slot.z)
 				.getBlockHardness(context.world(), slot.x, slot.y,
-						slot.z)+1;
+ slot.z) + 1;
 
 		if (builder.energyAvailable() < hardness * SchematicRegistry.BREAK_ENERGY) {
 			return false;

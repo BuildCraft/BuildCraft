@@ -8,6 +8,8 @@
  */
 package buildcraft.factory;
 
+import com.mojang.authlib.GameProfile;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
@@ -20,18 +22,18 @@ import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.IChatComponent;
+
 import net.minecraftforge.common.util.ForgeDirection;
+
+import buildcraft.api.core.IInvSlot;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.inventory.InvUtils;
 import buildcraft.core.inventory.InventoryConcatenator;
 import buildcraft.core.inventory.InventoryIterator;
-import buildcraft.api.core.IInvSlot;
 import buildcraft.core.inventory.SimpleInventory;
 import buildcraft.core.inventory.StackHelper;
 import buildcraft.core.utils.CraftingHelper;
 import buildcraft.core.utils.Utils;
-
-import com.mojang.authlib.GameProfile;
 
 public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory {
 
@@ -39,14 +41,19 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
 	public static final int CRAFT_TIME = 256;
 	public static final int UPDATE_TIME = 16;
 	private static final int[] SLOTS = Utils.createSlotArray(0, 10);
-	private SimpleInventory resultInv = new SimpleInventory(1, "Auto Workbench", 64);
+
 	public InventoryCrafting craftMatrix = new LocalInventoryCrafting();
-	private IInventory inv = InventoryConcatenator.make().add(resultInv).add(craftMatrix);
 	public boolean useLast;
+	public int progress;
+
+	private SimpleInventory resultInv = new SimpleInventory(1, "Auto Workbench", 64);
+
+	private IInventory inv = InventoryConcatenator.make().add(resultInv).add(craftMatrix);
+
 	private EntityPlayer internalPlayer;
 	private SlotCrafting craftSlot;
 	private InventoryCraftResult craftResult = new InventoryCraftResult();
-	public int progress;
+
 	private int update = Utils.RANDOM.nextInt();
 
 	private class LocalInventoryCrafting extends InventoryCrafting {

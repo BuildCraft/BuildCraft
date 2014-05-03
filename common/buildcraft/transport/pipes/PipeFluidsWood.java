@@ -12,10 +12,15 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidHandler;
+
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.core.NetworkData;
@@ -25,25 +30,24 @@ import buildcraft.api.transport.PipeManager;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportFluids;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 public class PipeFluidsWood extends Pipe<PipeTransportFluids> {
 
-	@MjBattery (maxCapacity = 250, maxReceivedPerCycle = 100, minimumConsumption = 0)
-	private double mjStored = 0;
-
-	public @NetworkData
-	int liquidToExtract;
+	@NetworkData
+	public int liquidToExtract;
 
 	protected int standardIconIndex = PipeIconProvider.TYPE.PipeFluidsWood_Standard.ordinal();
 	protected int solidIconIndex = PipeIconProvider.TYPE.PipeAllWood_Solid.ordinal();
-	long lastMining = 0;
-	boolean lastPower = false;
+
+	private long lastMining = 0;
+	private boolean lastPower = false;
+	@MjBattery(maxCapacity = 250, maxReceivedPerCycle = 100, minimumConsumption = 0)
+	private double mjStored = 0;
+
 	private PipeLogicWood logic = new PipeLogicWood(this) {
 		@Override
 		protected boolean isValidConnectingTile(TileEntity tile) {
-			if(tile instanceof IPipeTile) {
+			if (tile instanceof IPipeTile) {
 				return false;
 			}
 			if (!(tile instanceof IFluidHandler)) {

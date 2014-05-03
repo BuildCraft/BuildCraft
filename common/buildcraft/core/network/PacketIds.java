@@ -8,7 +8,7 @@
  */
 package buildcraft.core.network;
 
-public class PacketIds {
+public final class PacketIds {
 
 	public static final int TILE_UPDATE = 0;
 	// public static final int PIPE_DESCRIPTION = 1;
@@ -47,4 +47,11 @@ public class PacketIds {
 
 	public static final int RPC_TILE = 110;
 	public static final int RPC_PIPE = 111;
+
+	/**
+	 * Deactivate constructor
+	 */
+	private PacketIds() {
+	}
+
 }

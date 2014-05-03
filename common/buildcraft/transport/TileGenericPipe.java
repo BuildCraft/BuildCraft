@@ -8,6 +8,33 @@
  */
 package buildcraft.transport;
 
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.Set;
+import java.util.logging.Level;
+
+import io.netty.buffer.ByteBuf;
+
+import net.minecraft.block.Block;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.Packet;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
+
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
+import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidTankInfo;
+import net.minecraftforge.fluids.IFluidHandler;
+
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.BCLog;
@@ -27,37 +54,36 @@ import buildcraft.core.IDropControlInventory;
 import buildcraft.core.ITileBufferHolder;
 import buildcraft.core.TileBuffer;
 import buildcraft.core.inventory.InvUtils;
-import buildcraft.core.network.*;
+import buildcraft.core.network.BuildCraftPacket;
+import buildcraft.core.network.IClientState;
+import buildcraft.core.network.IGuiReturnHandler;
+import buildcraft.core.network.ISyncedTile;
+import buildcraft.core.network.PacketTileState;
 import buildcraft.core.utils.Utils;
 import buildcraft.transport.gates.GateDefinition;
 import buildcraft.transport.gates.GateFactory;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import io.netty.buffer.ByteBuf;
-import net.minecraft.block.Block;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.Packet;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
-import net.minecraftforge.common.util.ForgeDirection;
-import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidTankInfo;
-import net.minecraftforge.fluids.IFluidHandler;
-
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.Set;
-import java.util.logging.Level;
 
 public class TileGenericPipe extends TileEntity implements IFluidHandler,
 		IPipeTile, IOverrideDefaultTriggers, ITileBufferHolder,
 		IDropControlInventory, ISyncedTile, ISolidSideTile, IGuiReturnHandler {
+
+	public boolean initialized = false;
+	public final PipeRenderState renderState = new PipeRenderState();
+	public final CoreState coreState = new CoreState();
+	public boolean[] pipeConnectionsBuffer = new boolean[6];
+	public SafeTimeTracker networkSyncTracker = new SafeTimeTracker();
+
+	@MjBattery
+	public Pipe pipe;
+	public int redstoneInput = 0;
+
+	private boolean deletePipe = false;
+	private TileBuffer[] tileBuffer;
+	private boolean sendClientUpdate = false;
+	private boolean blockNeighborChange = false;
+	private boolean refreshRenderState = false;
+	private boolean pipeBound = false;
+	private boolean resyncGateExpansions = false;
 
 	public class CoreState implements IClientState {
 
@@ -89,22 +115,6 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 			}
 		}
 	}
-	public final PipeRenderState renderState = new PipeRenderState();
-	public final CoreState coreState = new CoreState();
-	private boolean deletePipe = false;
-	private TileBuffer[] tileBuffer;
-	public boolean[] pipeConnectionsBuffer = new boolean[6];
-	public SafeTimeTracker networkSyncTracker = new SafeTimeTracker();
-
-	@MjBattery
-	public Pipe pipe;
-
-	private boolean sendClientUpdate = false;
-	private boolean blockNeighborChange = false;
-	private boolean refreshRenderState = false;
-	private boolean pipeBound = false;
-	private boolean resyncGateExpansions = false;
-	public int redstoneInput = 0;
 
 	public static class SideProperties {
 		int[] facadeTypes = new int[ForgeDirection.VALID_DIRECTIONS.length];
@@ -209,7 +219,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 	public void writeToNBT(NBTTagCompound nbt) {
 		super.writeToNBT(nbt);
 
-		nbt.setByte("redstoneInput", (byte)redstoneInput);
+		nbt.setByte("redstoneInput", (byte) redstoneInput);
 
 		if (pipe != null) {
 			nbt.setInteger("pipeId", Item.itemRegistry.getIDForObject(pipe.item));
@@ -261,7 +271,6 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 			pipe.validate();
 		}
 	}
-	public boolean initialized = false;
 
 	@Override
 	public void updateEntity() {
@@ -367,7 +376,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 
 		// Gate Textures and movement
 		renderState.setIsGateLit(pipe.gate != null ? pipe.gate.isGateActive() : false);
-		renderState.setIsGatePulsing(pipe.gate != null ? pipe.gate.isGatePulsing(): false);
+		renderState.setIsGatePulsing(pipe.gate != null ? pipe.gate.isGatePulsing() : false);
 
 		// Facades
 		for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
@@ -379,12 +388,12 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 			} else if (type == ItemFacade.TYPE_PHASED) {
 				PipeWire wire = PipeWire.fromOrdinal(sideProperties.facadeWires[direction.ordinal()]);
 				Block block = sideProperties.facadeBlocks[direction.ordinal()][0];
-				Block block_alt = sideProperties.facadeBlocks[direction.ordinal()][1];
+				Block blockAlt = sideProperties.facadeBlocks[direction.ordinal()][1];
 				int meta = sideProperties.facadeMeta[direction.ordinal()][0];
-				int meta_alt = sideProperties.facadeMeta[direction.ordinal()][1];
+				int metaAlt = sideProperties.facadeMeta[direction.ordinal()][1];
 
 				if (isWireActive(wire)) {
-					renderState.facadeMatrix.setFacade(direction, block_alt, meta_alt);
+					renderState.facadeMatrix.setFacade(direction, blockAlt, metaAlt);
 				} else {
 					renderState.facadeMatrix.setFacade(direction, block, meta);
 				}
@@ -709,7 +718,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 
 	@Override
 	public boolean canDrain(ForgeDirection from, Fluid fluid) {
-		if (BlockGenericPipe.isValid(pipe) && pipe.transport instanceof IFluidHandler && !hasPlug(from) &&!hasRobotStation(from)) {
+		if (BlockGenericPipe.isValid(pipe) && pipe.transport instanceof IFluidHandler && !hasPlug(from) && !hasRobotStation(from)) {
 			return ((IFluidHandler) pipe.transport).canDrain(from, fluid);
 		} else {
 			return false;
@@ -725,7 +734,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 		refreshRenderState = true;
 	}
 
-	public boolean addFacade(ForgeDirection direction, int type, int wire, Block[] blocks, int[] meta_values) {
+	public boolean addFacade(ForgeDirection direction, int type, int wire, Block[] blocks, int[] metaValues) {
 		if (this.getWorldObj().isRemote) {
 			return false;
 		}
@@ -738,13 +747,13 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 
 		if (type == ItemFacade.TYPE_BASIC || wire == -1) {
 			sideProperties.facadeBlocks[direction.ordinal()][0] = blocks[0];
-			sideProperties.facadeMeta[direction.ordinal()][0] = meta_values[0];
+			sideProperties.facadeMeta[direction.ordinal()][0] = metaValues[0];
 		} else {
 			sideProperties.facadeWires[direction.ordinal()] = wire;
 			sideProperties.facadeBlocks[direction.ordinal()][0] = blocks[0];
-			sideProperties.facadeMeta[direction.ordinal()][0] = meta_values[0];
+			sideProperties.facadeMeta[direction.ordinal()][0] = metaValues[0];
 			sideProperties.facadeBlocks[direction.ordinal()][1] = blocks[1];
-			sideProperties.facadeMeta[direction.ordinal()][1] = meta_values[1];
+			sideProperties.facadeMeta[direction.ordinal()][1] = metaValues[1];
 		}
 
 		worldObj.notifyBlockChange(this.xCoord, this.yCoord, this.zCoord, getBlock());
@@ -760,7 +769,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 		} else if (this.getWorldObj().isRemote) {
 			return renderState.facadeMatrix.getFacadeBlock(direction) != null;
 		} else {
-			return (sideProperties.facadeBlocks[direction.ordinal()][0] != null);
+			return sideProperties.facadeBlocks[direction.ordinal()][0] != null;
 		}
 	}
 

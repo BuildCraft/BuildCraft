@@ -38,11 +38,12 @@ public abstract class InventoryWrapper implements ISidedInventory {
 
 	/* STATIC HELPER */
 	public static ISidedInventory getWrappedInventory(Object inventory) {
-		if(inventory instanceof ISidedInventory)
-			return (ISidedInventory)inventory;
-		else if(inventory instanceof IInventory)
-			return new InventoryWrapperSimple(InvUtils.getInventory((IInventory)inventory));
-		else
+		if (inventory instanceof ISidedInventory) {
+			return (ISidedInventory) inventory;
+		} else if (inventory instanceof IInventory) {
+			return new InventoryWrapperSimple(InvUtils.getInventory((IInventory) inventory));
+		} else {
 			return null;
+		}
 	}
 }

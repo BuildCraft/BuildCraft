@@ -8,10 +8,10 @@
  */
 package buildcraft.api.transport;
 
+import java.util.Locale;
+
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-
-import java.util.Locale;
 
 public enum PipeWire {
 
@@ -47,22 +47,28 @@ public enum PipeWire {
 	}
 
 	public ItemStack getStack(int qty) {
-		if (item == null)
+		if (item == null) {
 			return null;
-		return new ItemStack(item, qty, ordinal());
+		} else {
+			return new ItemStack(item, qty, ordinal());
+		}
 	}
 
 	public boolean isPipeWire(ItemStack stack) {
-		if (stack == null)
+		if (stack == null) {
 			return false;
-		if (stack.getItem() != item)
+		} else if (stack.getItem() != item) {
 			return false;
-		return stack.getItemDamage() == ordinal();
+		} else {
+			return stack.getItemDamage() == ordinal();
+		}
 	}
 
 	public static PipeWire fromOrdinal(int ordinal) {
-		if (ordinal < 0 || ordinal >= VALUES.length)
+		if (ordinal < 0 || ordinal >= VALUES.length) {
 			return RED;
-		return VALUES[ordinal];
+		} else {
+			return VALUES[ordinal];
+		}
 	}
 }

@@ -16,8 +16,9 @@ import java.io.Writer;
 
 public class BptDataStream implements DataInput, DataOutput {
 
-	Writer writer;
-	Reader reader;
+	public boolean isFirst = true;
+	private Writer writer;
+	private Reader reader;
 
 	public BptDataStream(Writer writer) {
 		this.writer = writer;
@@ -26,8 +27,6 @@ public class BptDataStream implements DataInput, DataOutput {
 	public BptDataStream(Reader reader) {
 		this.reader = reader;
 	}
-
-	public boolean isFirst = true;
 
 	@Override
 	public void readFully(byte[] b) throws IOException {
@@ -159,8 +158,9 @@ public class BptDataStream implements DataInput, DataOutput {
 
 		char c = (char) reader.read();
 
-		if (c != '\"')
+		if (c != '\"') {
 			throw new IOException("String does not start with '\"' character");
+		}
 
 		while (reader.ready() && !exit) {
 			c = (char) reader.read();
@@ -172,13 +172,19 @@ public class BptDataStream implements DataInput, DataOutput {
 				switch (c) {
 				case 'n':
 					builder.append('\n');
+					break;
 				case 'r':
 					builder.append('\r');
+					break;
 				case '\\':
 					builder.append('\\');
+					break;
 				case '\"':
 					builder.append('\"');
+					break;
 				}
+
+				break;
 			case '"':
 				exit = true;
 				break;
@@ -190,10 +196,11 @@ public class BptDataStream implements DataInput, DataOutput {
 		int i = reader.read();
 		c = (char) i;
 
-		if (c != ',' && i > 0)
+		if (c != ',' && i > 0) {
 			throw new IOException("Missing ',' at end of attribute");
-
-		return builder.toString();
+		} else {
+			return builder.toString();
+		}
 	}
 
 	@Override
@@ -283,14 +290,19 @@ public class BptDataStream implements DataInput, DataOutput {
 			switch (c) {
 			case '\n':
 				writer.write("\\n");
+				break;
 			case '\r':
 				writer.write("\\r");
+				break;
 			case '\"':
 				writer.write("\\\"");
+				break;
 			case '\\':
 				writer.write("\\\\");
+				break;
 			default:
 				writer.write(c);
+				break;
 			}
 		}
 

@@ -8,8 +8,8 @@
  */
 package buildcraft.transport.render;
 
-import buildcraft.BuildCraftTransport;
-import buildcraft.core.CoreConstants;
+import org.lwjgl.opengl.GL11;
+
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.OpenGlHelper;
@@ -18,8 +18,11 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
+
 import net.minecraftforge.client.IItemRenderer;
-import org.lwjgl.opengl.GL11;
+
+import buildcraft.BuildCraftTransport;
+import buildcraft.core.CoreConstants;
 
 public class PipeItemRenderer implements IItemRenderer {
 
@@ -34,8 +37,9 @@ public class PipeItemRenderer implements IItemRenderer {
 		Block block = BuildCraftTransport.genericPipeBlock;
 		IIcon icon = item.getItem().getIconFromDamage(0);
 
-		if (icon == null)
+		if (icon == null) {
 			icon = ((TextureMap) Minecraft.getMinecraft().getTextureManager().getTexture(TextureMap.locationBlocksTexture)).getAtlasSprite("missingno");
+		}
 
 		block.setBlockBounds(CoreConstants.PIPE_MIN_POS, 0.0F, CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MAX_POS, 1.0F, CoreConstants.PIPE_MAX_POS);
 		block.setBlockBoundsForItemRender();

@@ -8,6 +8,16 @@
  */
 package buildcraft.energy;
 
+import java.util.LinkedList;
+
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.ICrafting;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ResourceLocation;
+
+import net.minecraftforge.common.util.ForgeDirection;
+
 import buildcraft.BuildCraftEnergy;
 import buildcraft.api.core.NetworkData;
 import buildcraft.api.gates.IOverrideDefaultTriggers;
@@ -26,14 +36,6 @@ import buildcraft.core.DefaultProps;
 import buildcraft.core.TileBuffer;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.energy.gui.ContainerEngine;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.ICrafting;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.util.ForgeDirection;
-
-import java.util.LinkedList;
 
 public abstract class TileEngine extends TileBuildCraft implements IPowerReceptor, IPowerEmitter, IOverrideDefaultTriggers, IPipeConnection {
 
@@ -74,22 +76,22 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 	public static final float MIN_HEAT = 20;
 	public static final float IDEAL_HEAT = 100;
 	public static final float MAX_HEAT = 250;
-	protected int progressPart = 0;
-	protected boolean lastPower = false;
-	protected PowerHandler powerHandler;
 	public double currentOutput = 0;
 	public boolean isRedstonePowered = false;
-	private boolean checkOrienation = false;
-	private TileBuffer[] tileCache;
 	public float progress;
 	public double energy;
 	public float heat = MIN_HEAT;
-
 	@NetworkData
 	public EnergyStage energyStage = EnergyStage.BLUE;
-
 	@NetworkData
 	public ForgeDirection orientation = ForgeDirection.UP;
+
+	protected int progressPart = 0;
+	protected boolean lastPower = false;
+	protected PowerHandler powerHandler;
+
+	private boolean checkOrienation = false;
+	private TileBuffer[] tileCache;
 
 	@NetworkData
 	private boolean isPumping = false; // Used for SMP synch
@@ -351,14 +353,14 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 	}
 
 	public boolean switchOrientation(boolean preferPipe) {
-		if (preferPipe && switchOrientation_do(true)) {
+		if (preferPipe && switchOrientationDo(true)) {
 			return true;
 		} else {
-			return switchOrientation_do(false);
+			return switchOrientationDo(false);
 		}
 	}
 
-	private boolean switchOrientation_do(boolean pipesOnly) {
+	private boolean switchOrientationDo(boolean pipesOnly) {
 		for (int i = orientation.ordinal() + 1; i <= orientation.ordinal() + 6; ++i) {
 			ForgeDirection o = ForgeDirection.VALID_DIRECTIONS[i % 6];
 
@@ -519,10 +521,8 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 			return false;
 		} else if (tile instanceof IPowerReceptor) {
 			return ((IPowerReceptor) tile).getPowerReceiver(side.getOpposite()) != null;
-		} else if (MjAPI.getMjBattery(tile) != null) {
-			return true;
 		} else {
-			return false;
+			return MjAPI.getMjBattery(tile) != null;
 		}
 	}
 

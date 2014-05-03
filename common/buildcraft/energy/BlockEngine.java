@@ -8,8 +8,6 @@
  */
 package buildcraft.energy;
 
-import static net.minecraft.util.AxisAlignedBB.getBoundingBox;
-
 import java.util.List;
 import java.util.Random;
 
@@ -28,24 +26,26 @@ import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.ForgeDirection;
-import buildcraft.BuildCraftCore;
-import buildcraft.core.BlockBuildCraft;
-import buildcraft.core.CreativeTabBuildCraft;
-import buildcraft.core.ICustomHighlight;
-import buildcraft.core.IItemPipe;
+
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+
+import net.minecraftforge.common.util.ForgeDirection;
+
+import buildcraft.BuildCraftCore;
+import buildcraft.core.BlockBuildCraft;
+import buildcraft.core.ICustomHighlight;
+import buildcraft.core.IItemPipe;
 
 public class BlockEngine extends BlockBuildCraft implements ICustomHighlight {
 
 	private static final AxisAlignedBB[][] boxes = {
-			{getBoundingBox(0.0, 0.5, 0.0, 1.0, 1.0, 1.0), getBoundingBox(0.25, 0.0, 0.25, 0.75, 0.5, 0.75)},// -Y
-			{getBoundingBox(0.0, 0.0, 0.0, 1.0, 0.5, 1.0), getBoundingBox(0.25, 0.5, 0.25, 0.75, 1.0, 0.75)},// +Y
-			{getBoundingBox(0.0, 0.0, 0.5, 1.0, 1.0, 1.0), getBoundingBox(0.25, 0.25, 0.0, 0.75, 0.75, 0.5)},// -Z
-			{getBoundingBox(0.0, 0.0, 0.0, 1.0, 1.0, 0.5), getBoundingBox(0.25, 0.25, 0.5, 0.75, 0.75, 1.0)},// +Z
-			{getBoundingBox(0.5, 0.0, 0.0, 1.0, 1.0, 1.0), getBoundingBox(0.0, 0.25, 0.25, 0.5, 0.75, 0.75)},// -X
-			{getBoundingBox(0.0, 0.0, 0.0, 0.5, 1.0, 1.0), getBoundingBox(0.5, 0.25, 0.25, 1.0, 0.75, 0.75)} // +X
+			{AxisAlignedBB.getBoundingBox(0.0, 0.5, 0.0, 1.0, 1.0, 1.0), AxisAlignedBB.getBoundingBox(0.25, 0.0, 0.25, 0.75, 0.5, 0.75)}, // -Y
+			{AxisAlignedBB.getBoundingBox(0.0, 0.0, 0.0, 1.0, 0.5, 1.0), AxisAlignedBB.getBoundingBox(0.25, 0.5, 0.25, 0.75, 1.0, 0.75)}, // +Y
+			{AxisAlignedBB.getBoundingBox(0.0, 0.0, 0.5, 1.0, 1.0, 1.0), AxisAlignedBB.getBoundingBox(0.25, 0.25, 0.0, 0.75, 0.75, 0.5)}, // -Z
+			{AxisAlignedBB.getBoundingBox(0.0, 0.0, 0.0, 1.0, 1.0, 0.5), AxisAlignedBB.getBoundingBox(0.25, 0.25, 0.5, 0.75, 0.75, 1.0)}, // +Z
+			{AxisAlignedBB.getBoundingBox(0.5, 0.0, 0.0, 1.0, 1.0, 1.0), AxisAlignedBB.getBoundingBox(0.0, 0.25, 0.25, 0.5, 0.75, 0.75)}, // -X
+			{AxisAlignedBB.getBoundingBox(0.0, 0.0, 0.0, 0.5, 1.0, 1.0), AxisAlignedBB.getBoundingBox(0.5, 0.25, 0.25, 1.0, 0.75, 0.75)} // +X
 	};
 
 	private static IIcon woodTexture;
@@ -150,9 +150,9 @@ public class BlockEngine extends BlockBuildCraft implements ICustomHighlight {
 		if (tile instanceof TileEngine) {
 			AxisAlignedBB[] aabbs = boxes[((TileEngine) tile).orientation.ordinal()];
 			for (AxisAlignedBB aabb : aabbs) {
-				aabb = aabb.getOffsetBoundingBox(x, y, z);
-				if (mask.intersectsWith(aabb)) {
-					list.add(aabb);
+				AxisAlignedBB aabbTmp = aabb.getOffsetBoundingBox(x, y, z);
+				if (mask.intersectsWith(aabbTmp)) {
+					list.add(aabbTmp);
 				}
 			}
 		} else {
@@ -206,7 +206,7 @@ public class BlockEngine extends BlockBuildCraft implements ICustomHighlight {
 	public void onPostBlockPlaced(World world, int x, int y, int z, int par5) {
 		TileEntity tile = world.getTileEntity(x, y, z);
 		if (tile instanceof TileEngine) {
-			TileEngine engine = (TileEngine)tile;
+			TileEngine engine = (TileEngine) tile;
 			engine.orientation = ForgeDirection.UP;
 			if (!engine.isOrientationValid()) {
 				engine.switchOrientation(true);

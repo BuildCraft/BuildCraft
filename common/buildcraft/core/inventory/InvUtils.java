@@ -17,13 +17,21 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
 import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.world.World;
+
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.ForgeDirection;
+
 import buildcraft.api.core.IInvSlot;
 import buildcraft.core.inventory.filters.ArrayStackFilter;
 import buildcraft.core.inventory.filters.IStackFilter;
 
-public class InvUtils {
+public final class InvUtils {
+
+	/**
+	 * Deactivate constructor
+	 */
+	private InvUtils() {
+	}
 
 	public static int countItems(IInventory inv, ForgeDirection side, ItemStack... filter) {
 		return countItems(inv, side, new ArrayStackFilter(filter));

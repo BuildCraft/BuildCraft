@@ -13,7 +13,12 @@ import java.util.Locale;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
+
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
 import net.minecraftforge.common.util.ForgeDirection;
+
 import buildcraft.api.gates.ITileTrigger;
 import buildcraft.api.gates.ITrigger;
 import buildcraft.api.gates.ITriggerParameter;
@@ -21,8 +26,6 @@ import buildcraft.core.triggers.BCTrigger;
 import buildcraft.core.utils.StringUtils;
 import buildcraft.energy.TileEngine;
 import buildcraft.energy.TileEngine.EnergyStage;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 public class TriggerEngineHeat extends BCTrigger implements ITileTrigger {
 
@@ -44,7 +47,7 @@ public class TriggerEngineHeat extends BCTrigger implements ITileTrigger {
 	@Override
 	public boolean isTriggerActive(ForgeDirection side, TileEntity tile, ITriggerParameter parameter) {
 		if (tile instanceof TileEngine) {
-			TileEngine engine = ((TileEngine) tile);
+			TileEngine engine = (TileEngine) tile;
 
 			return engine.getEnergyStage() == stage;
 		}

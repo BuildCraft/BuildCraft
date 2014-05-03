@@ -8,6 +8,14 @@
  */
 package buildcraft.transport.render;
 
+import net.minecraft.block.Block;
+import net.minecraft.client.renderer.RenderBlocks;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.IIcon;
+
+import net.minecraftforge.common.util.ForgeDirection;
+
 import buildcraft.BuildCraftTransport;
 import buildcraft.core.CoreConstants;
 import buildcraft.core.utils.MatrixTranformations;
@@ -15,14 +23,8 @@ import buildcraft.transport.BlockGenericPipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeRenderState;
 import buildcraft.transport.TransportConstants;
-import net.minecraft.block.Block;
-import net.minecraft.client.renderer.RenderBlocks;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.IIcon;
-import net.minecraftforge.common.util.ForgeDirection;
 
-public class FacadeRenderHelper {
+public final class FacadeRenderHelper {
 
 	private static final float zFightOffset = 1F / 4096F;
 	private static final float[][] zeroStateFacade = new float[3][2];
@@ -30,6 +32,12 @@ public class FacadeRenderHelper {
 	private static final float[] xOffsets = new float[6];
 	private static final float[] yOffsets = new float[6];
 	private static final float[] zOffsets = new float[6];
+
+	/**
+	 * Deactivate constructor
+	 */
+	private FacadeRenderHelper() {
+	}
 
 	static {
 
@@ -90,7 +98,7 @@ public class FacadeRenderHelper {
 
 		for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
 			Block renderBlock = state.facadeMatrix.getFacadeBlock(direction);
-			
+
 			if (renderBlock != null) {
 				// If the facade is meant to render in the current pass
 				if (renderBlock.canRenderInPass(PipeRendererWorld.renderPass)) {
@@ -98,10 +106,11 @@ public class FacadeRenderHelper {
 
 					for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
 						state.textureArray[side.ordinal()] = renderBlock.getIcon(side.ordinal(), renderMeta);
-						if (side == direction || side == direction.getOpposite())
+						if (side == direction || side == direction.getOpposite()) {
 							block.setRenderSide(side, true);
-						else
+						} else {
 							block.setRenderSide(side, state.facadeMatrix.getFacadeBlock(side) == null);
+						}
 					}
 
 					try {

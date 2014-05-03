@@ -12,6 +12,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
+
 import net.minecraft.block.Block;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
@@ -20,10 +23,12 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.world.ChunkCoordIntPair;
+
 import net.minecraftforge.common.ForgeChunkManager;
 import net.minecraftforge.common.ForgeChunkManager.Ticket;
 import net.minecraftforge.common.ForgeChunkManager.Type;
 import net.minecraftforge.common.util.ForgeDirection;
+
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftFactory;
 import buildcraft.api.core.BuildCraftAPI;
@@ -47,9 +52,6 @@ import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.BlockUtil;
 import buildcraft.core.utils.Utils;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
-
 public class TileQuarry extends TileAbstractBuilder implements IMachine {
 
 	private static enum Stage {
@@ -58,6 +60,9 @@ public class TileQuarry extends TileAbstractBuilder implements IMachine {
 		IDLE,
 		DONE
 	}
+
+	public EntityMechanicalArm arm;
+	public EntityPlayer placedBy;
 
 	@NetworkData
 	protected Box box = new Box();
@@ -81,11 +86,11 @@ public class TileQuarry extends TileAbstractBuilder implements IMachine {
 	private SafeTimeTracker updateTracker = new SafeTimeTracker(10);
 
 	private BptBuilderBase builder;
-	public EntityMechanicalArm arm;
+
+	private final LinkedList<int[]> visitList = Lists.newLinkedList();
 
 	private boolean loadDefaultBoundaries = false;
 	private Ticket chunkTicket;
-	public EntityPlayer placedBy;
 
 	private boolean frameProducer = true;
 
@@ -213,7 +218,6 @@ public class TileQuarry extends TileAbstractBuilder implements IMachine {
 		headTrajectory = Math.atan2(target[2] - head[2], target[0] - head[0]);
 		sendNetworkUpdate();
 	}
-	private final LinkedList<int[]> visitList = Lists.newLinkedList();
 
 	public boolean findTarget(boolean doSet) {
 		if (worldObj.isRemote) {
@@ -518,7 +522,9 @@ public class TileQuarry extends TileAbstractBuilder implements IMachine {
 		return stage != Stage.DONE;
 	}
 
-	private void setBoundaries(boolean useDefault) {
+	private void setBoundaries(boolean useDefaultI) {
+		boolean useDefault = useDefaultI;
+
 		if (chunkTicket == null) {
 			chunkTicket = ForgeChunkManager.requestTicket(BuildCraftFactory.instance, worldObj, Type.NORMAL);
 		}
@@ -567,7 +573,7 @@ public class TileQuarry extends TileAbstractBuilder implements IMachine {
 			useDefault = true;
 		}
 
-		xSize =a.xMax() - a.xMin() + 1;
+		xSize = a.xMax() - a.xMin() + 1;
 		int ySize = a.yMax() - a.yMin() + 1;
 		zSize = a.zMax() - a.zMin() + 1;
 

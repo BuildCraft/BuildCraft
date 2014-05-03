@@ -12,7 +12,12 @@ import net.minecraft.entity.item.EntityItem;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
 import net.minecraftforge.common.util.ForgeDirection;
+
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
@@ -20,8 +25,6 @@ import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportPower;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 public class PipePowerHeat extends Pipe<PipeTransportPower> {
 
@@ -70,7 +73,7 @@ public class PipePowerHeat extends Pipe<PipeTransportPower> {
 			return;
 		}
 
-		PipeTransportPower power = (transport);
+		PipeTransportPower power = transport;
 
 		power.requestEnergy(ForgeDirection.UP, 1024);
 

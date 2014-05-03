@@ -16,9 +16,9 @@ import net.minecraft.tileentity.TileEntity;
 @Deprecated
 public interface IItemTravelingHook {
 
-	public void drop(PipeTransportItems transport, TravelingItem item);
+	void drop(PipeTransportItems transport, TravelingItem item);
 
-	public void centerReached(PipeTransportItems transport, TravelingItem item);
+	void centerReached(PipeTransportItems transport, TravelingItem item);
 
 	/**
 	 * Overrides default handling of what occurs when an Item reaches the end of
@@ -30,5 +30,5 @@ public interface IItemTravelingHook {
 	 * @return false if the transport code should handle the item normally, true
 	 * if its been handled
 	 */
-	public boolean endReached(PipeTransportItems transport, TravelingItem item, TileEntity tile);
+	boolean endReached(PipeTransportItems transport, TravelingItem item, TileEntity tile);
 }

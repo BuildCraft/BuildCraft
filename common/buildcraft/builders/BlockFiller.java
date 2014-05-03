@@ -17,21 +17,24 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
 import net.minecraftforge.common.util.ForgeDirection;
+
 import buildcraft.BuildCraftBuilders;
 import buildcraft.api.filler.IFillerPattern;
 import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.GuiIds;
 import buildcraft.core.utils.Utils;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 public class BlockFiller extends BlockContainer {
 
-	IIcon textureSides;
-	IIcon textureTopOn;
-	IIcon textureTopOff;
 	public IFillerPattern currentPattern;
+	private IIcon textureSides;
+	private IIcon textureTopOn;
+	private IIcon textureTopOff;
 
 	public BlockFiller() {
 		super(Material.iron);

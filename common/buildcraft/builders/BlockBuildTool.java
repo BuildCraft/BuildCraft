@@ -12,16 +12,17 @@ import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.util.IIcon;
+
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 public class BlockBuildTool extends Block {
 
+	private IIcon texture;
+
 	public BlockBuildTool() {
 		super(Material.iron);
 	}
-
-	IIcon texture;
 
 	@Override
 	public IIcon getIcon(int i, int j) {

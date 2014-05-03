@@ -16,6 +16,7 @@ import java.util.TreeSet;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+
 import buildcraft.api.core.NetworkData;
 import buildcraft.api.core.Position;
 import buildcraft.core.BlockIndex;
@@ -24,23 +25,24 @@ import buildcraft.core.network.PacketUpdate;
 
 public class TilePathMarker extends TileMarker {
 
-	public int x0, y0, z0, x1, y1, z1;
-	public boolean loadLink0 = false, loadLink1 = false;
-
-	@NetworkData
-	public LaserData lasers[] = new LaserData [2];
-
-	@NetworkData
-	public boolean tryingToConnect = false;
-
-	public TilePathMarker links[] = new TilePathMarker[2];
-
 	// TODO: this should be moved to default props
 	// A list with the pathMarkers that aren't fully connected
 	// It only contains markers within the loaded chunks
 	public static int searchSize = 64;
 
 	private static LinkedList<TilePathMarker> availableMarkers = new LinkedList<TilePathMarker>();
+
+	public int x0, y0, z0, x1, y1, z1;
+	public boolean loadLink0 = false;
+	public boolean loadLink1 = false;
+
+	@NetworkData
+	public LaserData[] lasers = new LaserData[2];
+
+	@NetworkData
+	public boolean tryingToConnect = false;
+
+	public TilePathMarker[] links = new TilePathMarker[2];
 
 	public boolean isFullyConnected() {
 		return lasers[0] != null && lasers[1] != null;

@@ -8,15 +8,13 @@
  */
 package buildcraft.core.network;
 
-import buildcraft.core.gui.BuildCraftContainer;
-import cpw.mods.fml.client.FMLClientHandler;
 import io.netty.buffer.ByteBuf;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-
 import net.minecraft.entity.player.EntityPlayer;
+
+import cpw.mods.fml.client.FMLClientHandler;
+
+import buildcraft.core.gui.BuildCraftContainer;
 
 public class PacketGuiWidget extends BuildCraftPacket {
 

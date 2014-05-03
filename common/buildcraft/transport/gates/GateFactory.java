@@ -11,7 +11,9 @@ package buildcraft.transport.gates;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+
 import net.minecraftforge.common.util.Constants;
+
 import buildcraft.api.gates.GateExpansionController;
 import buildcraft.api.gates.GateExpansions;
 import buildcraft.api.gates.IGateExpansion;
@@ -20,7 +22,13 @@ import buildcraft.transport.Pipe;
 import buildcraft.transport.gates.GateDefinition.GateLogic;
 import buildcraft.transport.gates.GateDefinition.GateMaterial;
 
-public class GateFactory {
+public final class GateFactory {
+
+	/**
+	 * Deactivate constructor
+	 */
+	private GateFactory() {
+	}
 
 	public static Gate makeGate(Pipe pipe, GateMaterial material, GateLogic logic) {
 		return new Gate(pipe, material, logic);

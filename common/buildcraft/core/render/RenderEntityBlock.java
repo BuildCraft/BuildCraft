@@ -8,9 +8,9 @@
  */
 package buildcraft.core.render;
 
-import buildcraft.core.EntityBlock;
-
 import java.util.Arrays;
+
+import org.lwjgl.opengl.GL11;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
@@ -24,12 +24,16 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
-import org.lwjgl.opengl.GL11;
+import buildcraft.core.EntityBlock;
 
-public class RenderEntityBlock extends Render {
+public final class RenderEntityBlock extends Render {
 
 	public static RenderEntityBlock INSTANCE = new RenderEntityBlock();
 	protected RenderBlocks renderBlocks;
+
+	private RenderEntityBlock() {
+		renderBlocks = field_147909_c;
+	}
 
 	@Override
 	protected ResourceLocation getEntityTexture(Entity entity) {
@@ -111,20 +115,22 @@ public class RenderEntityBlock extends Render {
 		}
 
 		public IIcon getBlockTextureFromSide(int i) {
-			if (texture != null)
+			if (texture != null) {
 				return texture;
-			if (textureArray == null || textureArray.length == 0)
-				return baseBlock.getBlockTextureFromSide(i);
-			else {
-				if (i >= textureArray.length)
-					i = 0;
-				return textureArray[i];
+			}
+
+			int index = i;
+
+			if (textureArray == null || textureArray.length == 0) {
+				return baseBlock.getBlockTextureFromSide(index);
+			} else {
+				if (index >= textureArray.length) {
+					index = 0;
+				}
+
+				return textureArray[index];
 			}
 		}
-	}
-
-	private RenderEntityBlock() {
-		renderBlocks = field_147909_c;
 	}
 
 	@Override
@@ -133,8 +139,9 @@ public class RenderEntityBlock extends Render {
 	}
 
 	public void doRenderBlock(EntityBlock entity, double i, double j, double k) {
-		if (entity.isDead)
+		if (entity.isDead) {
 			return;
+		}
 
 		shadowSize = entity.shadowSize;
 		World world = entity.worldObj;
@@ -154,9 +161,9 @@ public class RenderEntityBlock extends Render {
 					double remainY = entity.jSize - jBase;
 					double remainZ = entity.kSize - kBase;
 
-					util.maxX = (remainX > 1.0 ? 1.0 : remainX);
-					util.maxY = (remainY > 1.0 ? 1.0 : remainY);
-					util.maxZ = (remainZ > 1.0 ? 1.0 : remainZ);
+					util.maxX = remainX > 1.0 ? 1.0 : remainX;
+					util.maxY = remainY > 1.0 ? 1.0 : remainY;
+					util.maxZ = remainZ > 1.0 ? 1.0 : remainZ;
 
 					GL11.glPushMatrix();
 					GL11.glTranslatef((float) i, (float) j, (float) k);
@@ -193,72 +200,89 @@ public class RenderEntityBlock extends Render {
 
 		Tessellator tessellator = Tessellator.instance;
 
-		if (blockAccess == null)
-			doLight = false;
+		boolean realDoLight = doLight;
 
-		// TODO: needs to cancel the test because the variable is now private... May need to 
+		if (blockAccess == null) {
+			realDoLight = false;
+		}
+
+		// TODO: needs to cancel the test because the variable is now private... May need to
 		// duplicate the tessellator code.
 		//if (doTessellating && !tessellator.isDrawing)
 			tessellator.startDrawingQuads();
 
 		float light = 0;
-		if (doLight) {
+		if (realDoLight) {
 			if (info.light < 0) {
-				light = info.baseBlock.getMixedBrightnessForBlock(blockAccess, (int) lightX, (int) lightY, (int) lightZ);
+				light = info.baseBlock.getMixedBrightnessForBlock(blockAccess, lightX, lightY, lightZ);
 				light = light + ((1.0f - light) * 0.4f);
-			} else
+			} else {
 				light = info.light;
+			}
 			int brightness = 0;
-			if (info.brightness < 0)
+			if (info.brightness < 0) {
 				brightness = info.baseBlock.getMixedBrightnessForBlock(blockAccess, lightX, lightY, lightZ);
-			else
+			} else {
 				brightness = info.brightness;
+			}
 			tessellator.setBrightness(brightness);
 			tessellator.setColorOpaque_F(lightBottom * light, lightBottom * light, lightBottom * light);
 		} else {
 //			tessellator.setColorOpaque_F(1.0F, 1.0F, 1.0F);
-			if (info.brightness >= 0)
+			if (info.brightness >= 0) {
 				tessellator.setBrightness(info.brightness);
+			}
 		}
 
 		renderBlocks.setRenderBounds(info.minX, info.minY, info.minZ, info.maxX, info.maxY, info.maxZ);
 
-		if (info.renderSide[0])
+		if (info.renderSide[0]) {
 			renderBlocks.renderFaceYNeg(info.baseBlock, x, y, z, info.getBlockTextureFromSide(0));
+		}
 
-		if (doLight)
+		if (realDoLight) {
 			tessellator.setColorOpaque_F(lightTop * light, lightTop * light, lightTop * light);
+		}
 
-		if (info.renderSide[1])
+		if (info.renderSide[1]) {
 			renderBlocks.renderFaceYPos(info.baseBlock, x, y, z, info.getBlockTextureFromSide(1));
+		}
 
-		if (doLight)
+		if (realDoLight) {
 			tessellator.setColorOpaque_F(lightEastWest * light, lightEastWest * light, lightEastWest * light);
+		}
 
-		if (info.renderSide[2])
+		if (info.renderSide[2]) {
 			renderBlocks.renderFaceZNeg(info.baseBlock, x, y, z, info.getBlockTextureFromSide(2));
+		}
 
-		if (doLight)
+		if (realDoLight) {
 			tessellator.setColorOpaque_F(lightEastWest * light, lightEastWest * light, lightEastWest * light);
+		}
 
-		if (info.renderSide[3])
+		if (info.renderSide[3]) {
 			renderBlocks.renderFaceZPos(info.baseBlock, x, y, z, info.getBlockTextureFromSide(3));
+		}
 
-		if (doLight)
+		if (realDoLight) {
 			tessellator.setColorOpaque_F(lightNorthSouth * light, lightNorthSouth * light, lightNorthSouth * light);
+		}
 
-		if (info.renderSide[4])
+		if (info.renderSide[4]) {
 			renderBlocks.renderFaceXNeg(info.baseBlock, x, y, z, info.getBlockTextureFromSide(4));
+		}
 
-		if (doLight)
+		if (realDoLight) {
 			tessellator.setColorOpaque_F(lightNorthSouth * light, lightNorthSouth * light, lightNorthSouth * light);
+		}
 
-		if (info.renderSide[5])
+		if (info.renderSide[5]) {
 			renderBlocks.renderFaceXPos(info.baseBlock, x, y, z, info.getBlockTextureFromSide(5));
+		}
 
-		// TODO: needs to cancel the test because the variable is now private... May need to 
+		// TODO: needs to cancel the test because the variable is now private... May need to
 		// duplicate the tessellator code.
 		//if (doTessellating && tessellator.isDrawing)
-			tessellator.draw();
+		tessellator.draw();
 	}
 }

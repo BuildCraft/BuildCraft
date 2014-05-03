@@ -11,6 +11,8 @@ package buildcraft.transport;
 import java.util.EnumSet;
 import java.util.Map;
 
+import com.google.common.collect.MapMaker;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.inventory.IInventory;
@@ -18,33 +20,37 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.MathHelper;
+
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.relauncher.Side;
+
 import net.minecraftforge.common.util.ForgeDirection;
+
 import buildcraft.BuildCraftCore;
 import buildcraft.api.core.Position;
 import buildcraft.core.inventory.StackHelper;
 import buildcraft.core.utils.EnumColor;
 
-import com.google.common.collect.MapMaker;
-
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.relauncher.Side;
-
-public class TravelingItem {
+public final class TravelingItem {
 
 	public static final TravelingItemCache serverCache = new TravelingItemCache();
 	public static final TravelingItemCache clientCache = new TravelingItemCache();
 	public static final InsertionHandler DEFAULT_INSERTION_HANDLER = new InsertionHandler();
 	private static int maxId = 0;
-	protected float speed = 0.01F;
-	private ItemStack itemStack;
-	private TileEntity container;
+
+	public final EnumSet<ForgeDirection> blacklist = EnumSet.noneOf(ForgeDirection.class);
+
 	public double xCoord, yCoord, zCoord;
 	public final int id;
 	public boolean toCenter = true;
 	public EnumColor color;
 	public ForgeDirection input = ForgeDirection.UNKNOWN;
 	public ForgeDirection output = ForgeDirection.UNKNOWN;
-	public final EnumSet<ForgeDirection> blacklist = EnumSet.noneOf(ForgeDirection.class);
+
+	protected float speed = 0.01F;
+
+	private ItemStack itemStack;
+	private TileEntity container;
 	private NBTTagCompound extraData;
 	private InsertionHandler insertionHandler = DEFAULT_INSERTION_HANDLER;
 
@@ -247,7 +253,7 @@ public class TravelingItem {
 	}
 
 	public boolean canBeGroupedWith(TravelingItem otherItem) {
-		if(otherItem == this) {
+		if (otherItem == this) {
 			return false;
 		}
 		if (toCenter != otherItem.toCenter) {

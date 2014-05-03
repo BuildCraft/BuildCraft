@@ -8,14 +8,11 @@
  */
 package buildcraft.core.gui;
 
-import buildcraft.core.DefaultProps;
-import buildcraft.core.gui.slots.IPhantomSlot;
-import buildcraft.core.gui.tooltips.IToolTipProvider;
-import buildcraft.core.gui.tooltips.ToolTip;
-import buildcraft.core.gui.tooltips.ToolTipLine;
-import buildcraft.core.gui.widgets.Widget;
-import buildcraft.core.render.RenderUtils;
-import buildcraft.core.utils.SessionVars;
+import java.util.ArrayList;
+import java.util.Collection;
+
+import org.lwjgl.opengl.GL11;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.inventory.GuiContainer;
@@ -26,10 +23,15 @@ import net.minecraft.inventory.Slot;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
-import org.lwjgl.opengl.GL11;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import buildcraft.core.DefaultProps;
+import buildcraft.core.gui.slots.IPhantomSlot;
+import buildcraft.core.gui.tooltips.IToolTipProvider;
+import buildcraft.core.gui.tooltips.ToolTip;
+import buildcraft.core.gui.tooltips.ToolTipLine;
+import buildcraft.core.gui.widgets.Widget;
+import buildcraft.core.render.RenderUtils;
+import buildcraft.core.utils.SessionVars;
 
 public abstract class GuiBuildCraft extends GuiContainer {
 
@@ -73,7 +75,7 @@ public abstract class GuiBuildCraft extends GuiContainer {
 		GL11.glDisable(GL11.GL_LIGHTING);
 		GL11.glDisable(GL11.GL_DEPTH_TEST);
 		GL11.glPushMatrix();
-		GL11.glTranslatef((float) left, (float) top, 0.0F);
+		GL11.glTranslatef(left, top, 0.0F);
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 		RenderHelper.disableStandardItemLighting();
 
@@ -92,14 +94,17 @@ public abstract class GuiBuildCraft extends GuiContainer {
 
 	private void drawToolTips(Collection objects, int mouseX, int mouseY) {
 		for (Object obj : objects) {
-			if (!(obj instanceof IToolTipProvider))
+			if (!(obj instanceof IToolTipProvider)) {
 				continue;
+			}
 			IToolTipProvider provider = (IToolTipProvider) obj;
-			if (!provider.isToolTipVisible())
+			if (!provider.isToolTipVisible()) {
 				continue;
+			}
 			ToolTip tips = provider.getToolTip();
-			if (tips == null)
+			if (tips == null) {
 				continue;
+			}
 			boolean mouseOver = provider.isMouseOver(mouseX - guiLeft, mouseY - guiTop);
 			tips.onTick(mouseOver);
 			if (mouseOver && tips.isReady()) {
@@ -121,8 +126,9 @@ public abstract class GuiBuildCraft extends GuiContainer {
 		int mY = mouseY - guiTop;
 
 		for (Widget widget : container.getWidgets()) {
-			if (widget.hidden)
+			if (widget.hidden) {
 				continue;
+			}
 			bindTexture(texture);
 			widget.draw(this, x, y, mX, mY);
 		}
@@ -151,9 +157,9 @@ public abstract class GuiBuildCraft extends GuiContainer {
 	private boolean isMouseOverSlot(Slot slot, int mouseX, int mouseY) {
 		int left = this.guiLeft;
 		int top = this.guiTop;
-		mouseX -= left;
-		mouseY -= top;
-		return mouseX >= slot.xDisplayPosition - 1 && mouseX < slot.xDisplayPosition + 16 + 1 && mouseY >= slot.yDisplayPosition - 1 && mouseY < slot.yDisplayPosition + 16 + 1;
+		int realMouseX = mouseX - left;
+		int realMouseY = mouseY - top;
+		return realMouseX >= slot.xDisplayPosition - 1 && realMouseX < slot.xDisplayPosition + 16 + 1 && realMouseY >= slot.yDisplayPosition - 1 && realMouseY < slot.yDisplayPosition + 16 + 1;
 	}
 
 	// / MOUSE CLICKS
@@ -163,12 +169,13 @@ public abstract class GuiBuildCraft extends GuiContainer {
 		int mY = mouseY - guiTop;
 
 		for (Widget widget : container.getWidgets()) {
-			if (widget.hidden)
+			if (widget.hidden) {
 				continue;
-			if (!widget.isMouseOver(mX, mY))
+			} else if (!widget.isMouseOver(mX, mY)) {
 				continue;
-			if (widget.handleMouseClick(mX, mY, mouseButton))
+			} else if (widget.handleMouseClick(mX, mY, mouseButton)) {
 				return;
+			}
 		}
 		super.mouseClicked(mouseX, mouseY, mouseButton);
 
@@ -181,14 +188,16 @@ public abstract class GuiBuildCraft extends GuiContainer {
 		int mX = mouseX - guiLeft;
 		int mY = mouseY - guiTop;
 		for (Widget widget : container.getWidgets()) {
-			if (widget.hidden)
+			if (widget.hidden) {
 				continue;
+			}
 			widget.handleMouseMove(mX, mY, mouseButton, time);
 		}
 
 		Slot slot = getSlotAtPosition(mouseX, mouseY);
-		if (mouseButton == 1 && slot instanceof IPhantomSlot)
+		if (mouseButton == 1 && slot instanceof IPhantomSlot) {
 			return;
+		}
 		super.mouseClickMove(mouseX, mouseY, mouseButton, time);
 	}
 
@@ -199,8 +208,9 @@ public abstract class GuiBuildCraft extends GuiContainer {
 		int mX = mouseX - guiLeft;
 		int mY = mouseY - guiTop;
 		for (Widget widget : container.getWidgets()) {
-			if (widget.hidden)
+			if (widget.hidden) {
 				continue;
+			}
 			widget.handleMouseRelease(mX, mY, eventType);
 		}
 	}
@@ -208,8 +218,9 @@ public abstract class GuiBuildCraft extends GuiContainer {
 	public Slot getSlotAtPosition(int x, int y) {
 		for (int slotIndex = 0; slotIndex < this.inventorySlots.inventorySlots.size(); ++slotIndex) {
 			Slot slot = (Slot) this.inventorySlots.inventorySlots.get(slotIndex);
-			if (isMouseOverSlot(slot, x, y))
+			if (isMouseOverSlot(slot, x, y)) {
 				return slot;
+			}
 		}
 		return null;
 	}
@@ -278,8 +289,8 @@ public abstract class GuiBuildCraft extends GuiContainer {
 
 	protected class LedgerManager {
 
-		private GuiBuildCraft gui;
 		protected ArrayList<Ledger> ledgers = new ArrayList<Ledger>();
+		private GuiBuildCraft gui;
 
 		public LedgerManager(GuiBuildCraft gui) {
 			this.gui = gui;
@@ -376,11 +387,9 @@ public abstract class GuiBuildCraft extends GuiContainer {
 	 * Side ledger for guis
 	 */
 	protected abstract class Ledger {
-
-		private boolean open;
-		protected int overlayColor = 0xffffff;
 		public int currentShiftX = 0;
 		public int currentShiftY = 0;
+		protected int overlayColor = 0xffffff;
 		protected int limitWidth = 128;
 		protected int maxWidth = 124;
 		protected int minWidth = 24;
@@ -388,6 +397,7 @@ public abstract class GuiBuildCraft extends GuiContainer {
 		protected int maxHeight = 24;
 		protected int minHeight = 24;
 		protected int currentHeight = minHeight;
+		private boolean open;
 
 		public void update() {
 			// Width

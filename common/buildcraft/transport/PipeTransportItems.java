@@ -21,8 +21,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
+
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.ForgeDirection;
+
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.Position;
@@ -379,8 +381,10 @@ public class PipeTransportItems extends PipeTransport {
 
 	protected boolean middleReached(TravelingItem item) {
 		float middleLimit = item.getSpeed() * 1.01F;
-		return (Math.abs(container.xCoord + 0.5 - item.xCoord) < middleLimit && Math.abs(container.yCoord + TransportUtils.getPipeFloorOf(item.getItemStack()) - item.yCoord) < middleLimit && Math
-				.abs(container.zCoord + 0.5 - item.zCoord) < middleLimit);
+		return Math.abs(container.xCoord + 0.5 - item.xCoord) < middleLimit
+				&& Math.abs(container.yCoord + TransportUtils.getPipeFloorOf(item.getItemStack()) - item.yCoord) < middleLimit
+				&& Math
+						.abs(container.zCoord + 0.5 - item.zCoord) < middleLimit;
 	}
 
 	protected boolean endReached(TravelingItem item) {

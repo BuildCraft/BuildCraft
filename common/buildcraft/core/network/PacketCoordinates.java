@@ -10,17 +10,13 @@ package buildcraft.core.network;
 
 import io.netty.buffer.ByteBuf;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-
 public class PacketCoordinates extends BuildCraftPacket {
-
-	private int id;
 
 	public int posX;
 	public int posY;
 	public int posZ;
+
+	private int id;
 
 	public PacketCoordinates() {
 	}

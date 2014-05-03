@@ -10,7 +10,12 @@ package buildcraft.transport.pipes;
 
 import net.minecraft.item.Item;
 import net.minecraft.nbt.NBTTagCompound;
+
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
 import net.minecraftforge.common.util.ForgeDirection;
+
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.core.SafeTimeTracker;
@@ -21,19 +26,17 @@ import buildcraft.transport.IPipeTransportPowerHook;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportPower;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 public class PipePowerWood extends Pipe<PipeTransportPower> implements IPipeTransportPowerHook {
 
-	@MjBattery (maxCapacity = 1500, maxReceivedPerCycle = 500, minimumConsumption = 0)
-	public double mjStored = 0;
+	public final boolean[] powerSources = new boolean[6];
 
 	protected int standardIconIndex = PipeIconProvider.TYPE.PipePowerWood_Standard.ordinal();
 	protected int solidIconIndex = PipeIconProvider.TYPE.PipeAllWood_Solid.ordinal();
-	public final boolean[] powerSources = new boolean[6];
-	private final SafeTimeTracker sourcesTracker = new SafeTimeTracker(1);
 
+	@MjBattery(maxCapacity = 1500, maxReceivedPerCycle = 500, minimumConsumption = 0)
+	private double mjStored = 0;
+	private final SafeTimeTracker sourcesTracker = new SafeTimeTracker(1);
 	private boolean full;
 
 	public PipePowerWood(Item item) {

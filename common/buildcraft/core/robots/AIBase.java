@@ -22,9 +22,9 @@ public abstract class AIBase {
 		destY = y;
 		destZ = z;
 
-		dirX = (destX - robot.posX);
-		dirY = (destY - robot.posY);
-		dirZ = (destZ - robot.posZ);
+		dirX = destX - robot.posX;
+		dirY = destY - robot.posY;
+		dirZ = destZ - robot.posZ;
 
 		double magnitude = Math.sqrt(dirX * dirX + dirY * dirY + dirZ * dirZ);
 

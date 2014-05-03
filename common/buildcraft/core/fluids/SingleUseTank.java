@@ -10,6 +10,7 @@ package buildcraft.core.fluids;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
@@ -24,12 +25,18 @@ public class SingleUseTank extends Tank {
 
 	@Override
 	public int fill(FluidStack resource, boolean doFill) {
-		if (resource == null)
+		if (resource == null) {
 			return 0;
-		if (doFill && acceptedFluid == null)
+		}
+
+		if (doFill && acceptedFluid == null) {
 			acceptedFluid = resource.getFluid();
-		if (acceptedFluid == null || acceptedFluid == resource.getFluid())
+		}
+
+		if (acceptedFluid == null || acceptedFluid == resource.getFluid()) {
 			return super.fill(resource, doFill);
+		}
+
 		return 0;
 	}
 
@@ -48,8 +55,9 @@ public class SingleUseTank extends Tank {
 	@Override
 	public void writeTankToNBT(NBTTagCompound nbt) {
 		super.writeTankToNBT(nbt);
-		if (acceptedFluid != null)
+		if (acceptedFluid != null) {
 			nbt.setString("acceptedFluid", acceptedFluid.getName());
+		}
 	}
 
 	@Override

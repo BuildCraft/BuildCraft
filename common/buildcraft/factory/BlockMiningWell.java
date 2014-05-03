@@ -16,13 +16,15 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.ForgeDirection;
-import buildcraft.BuildCraftFactory;
-import buildcraft.core.BlockBuildCraft;
-import buildcraft.core.CreativeTabBuildCraft;
-import buildcraft.core.utils.Utils;
+
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+
+import net.minecraftforge.common.util.ForgeDirection;
+
+import buildcraft.BuildCraftFactory;
+import buildcraft.core.BlockBuildCraft;
+import buildcraft.core.utils.Utils;
 
 public class BlockMiningWell extends BlockBuildCraft {
 
@@ -60,7 +62,7 @@ public class BlockMiningWell extends BlockBuildCraft {
 	@Override
 	public void onBlockPlacedBy(World world, int i, int j, int k, EntityLivingBase entityliving, ItemStack stack) {
 		ForgeDirection orientation = Utils.get2dOrientation(entityliving);
-		world.setBlockMetadataWithNotify(i, j, k, orientation.getOpposite().ordinal(),1);
+		world.setBlockMetadataWithNotify(i, j, k, orientation.getOpposite().ordinal(), 1);
 	}
 
 	@Override
@@ -86,8 +88,7 @@ public class BlockMiningWell extends BlockBuildCraft {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void registerBlockIcons(IIconRegister par1IconRegister)
-	{
+	public void registerBlockIcons(IIconRegister par1IconRegister) {
 	    textureFront = par1IconRegister.registerIcon("buildcraft:miningwell_front");
         textureSides = par1IconRegister.registerIcon("buildcraft:miningwell_side");
         textureBack = par1IconRegister.registerIcon("buildcraft:miningwell_back");

@@ -8,20 +8,22 @@
  */
 package buildcraft.factory.gui;
 
-import buildcraft.core.recipes.RefineryRecipeManager;
-import buildcraft.core.recipes.RefineryRecipeManager.RefineryRecipe;
-import buildcraft.core.DefaultProps;
-import buildcraft.core.gui.AdvancedSlot;
-import buildcraft.core.gui.GuiAdvancedInterface;
-import buildcraft.core.utils.StringUtils;
-import buildcraft.factory.TileRefinery;
+import org.lwjgl.opengl.GL11;
+
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.util.ResourceLocation;
+
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
 
-import org.lwjgl.opengl.GL11;
+import buildcraft.core.DefaultProps;
+import buildcraft.core.gui.AdvancedSlot;
+import buildcraft.core.gui.GuiAdvancedInterface;
+import buildcraft.core.recipes.RefineryRecipeManager;
+import buildcraft.core.recipes.RefineryRecipeManager.RefineryRecipe;
+import buildcraft.core.utils.StringUtils;
+import buildcraft.factory.TileRefinery;
 
 public class GuiRefinery extends GuiAdvancedInterface {
 
@@ -93,10 +95,11 @@ public class GuiRefinery extends GuiAdvancedInterface {
 			} else {
 				TileRefinery ref = (TileRefinery) this.tile;
 
-				if (position == 0)
+				if (position == 0) {
 					container.setFilter(position, ref.tank1.getFluidType());
-				else if (position == 1)
+				} else if (position == 1) {
 					container.setFilter(position, ref.tank2.getFluidType());
+				}
 			}
 		}
 	}

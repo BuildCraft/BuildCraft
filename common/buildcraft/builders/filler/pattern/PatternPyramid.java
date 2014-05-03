@@ -9,18 +9,19 @@
 package buildcraft.builders.filler.pattern;
 
 import net.minecraft.world.World;
+
 import buildcraft.api.blueprints.SchematicMask;
 import buildcraft.core.Box;
 import buildcraft.core.blueprints.Template;
 
 public class PatternPyramid extends FillerPattern {
 
+	// TODO: These parameters need to be settable from the filler
+	private boolean param1 = true;
+
 	public PatternPyramid() {
 		super("pyramid");
 	}
-
-	// TODO: These parameters need to be settable from the filler
-	boolean param1 = true;
 
 	@Override
 	public Template getTemplate (Box box, World world) {

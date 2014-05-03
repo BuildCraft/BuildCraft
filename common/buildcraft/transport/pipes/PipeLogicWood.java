@@ -8,14 +8,15 @@
  */
 package buildcraft.transport.pipes;
 
-import buildcraft.api.tools.IToolWrench;
-import buildcraft.core.TileBuffer;
-import buildcraft.core.proxy.CoreProxy;
-import buildcraft.transport.Pipe;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
+
 import net.minecraftforge.common.util.ForgeDirection;
+
+import buildcraft.api.tools.IToolWrench;
+import buildcraft.core.TileBuffer;
+import buildcraft.transport.Pipe;
 
 public abstract class PipeLogicWood {
 
@@ -58,11 +59,13 @@ public abstract class PipeLogicWood {
 
 	private boolean isValidFacing(ForgeDirection side) {
 		TileBuffer[] tileBuffer = pipe.container.getTileCache();
-		if (tileBuffer == null)
+		if (tileBuffer == null) {
 			return true;
+		}
 
-		if (!tileBuffer[side.ordinal()].exists())
+		if (!tileBuffer[side.ordinal()].exists()) {
 			return true;
+		}
 
 		TileEntity tile = tileBuffer[side.ordinal()].getTile();
 		return isValidConnectingTile(tile);

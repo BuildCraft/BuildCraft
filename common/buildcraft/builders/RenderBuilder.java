@@ -8,13 +8,13 @@
  */
 package buildcraft.builders;
 
+import org.lwjgl.opengl.GL11;
+
 import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.tileentity.TileEntity;
-
-import org.lwjgl.opengl.GL11;
 
 import buildcraft.builders.urbanism.RenderBoxProvider;
 import buildcraft.core.EntityLaser;

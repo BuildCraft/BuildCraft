@@ -13,7 +13,9 @@ import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
+
 import net.minecraftforge.fluids.FluidStack;
+
 import buildcraft.core.DefaultProps;
 import buildcraft.core.render.RenderUtils;
 import buildcraft.core.utils.StringUtils;
@@ -42,7 +44,7 @@ public class GuiCombustionEngine extends GuiEngine {
 		super.drawGuiContainerBackgroundLayer(f, x, y);
 		int j = (width - xSize) / 2;
 		int k = (height - ySize) / 2;
-		TileEngineIron engine = (TileEngineIron)tile;
+		TileEngineIron engine = (TileEngineIron) tile;
         	drawFluid(engine.getFuel(), engine.getScaledBurnTime(58), j + 104, k + 19, 16, 58);
         	drawFluid(engine.getCoolant(), engine.getScaledCoolant(58), j + 122, k + 19, 16, 58);
         	mc.renderEngine.bindTexture(TEXTURE);
@@ -50,8 +52,8 @@ public class GuiCombustionEngine extends GuiEngine {
         	drawTexturedModalRect(j + 122, k + 19, 176, 0, 16, 60);
 	}
 
-	private void drawFluid(FluidStack fluid, int level, int x, int y, int width, int height){
-		if(fluid == null || fluid.getFluid() == null) {
+	private void drawFluid(FluidStack fluid, int level, int x, int y, int width, int height) {
+		if (fluid == null || fluid.getFluid() == null) {
 			return;
 		}
 		IIcon icon = fluid.getFluid().getIcon(fluid);
@@ -63,18 +65,18 @@ public class GuiCombustionEngine extends GuiEngine {
 		int lastY = height - fullY * 16;
 		int fullLvl = (height - level) / 16;
 		int lastLvl = (height - level) - fullLvl * 16;
-		for(int i = 0; i < fullX; i++) {
-			for(int j = 0; j < fullY; j++) {
-				if(j >= fullLvl) {
+		for (int i = 0; i < fullX; i++) {
+			for (int j = 0; j < fullY; j++) {
+				if (j >= fullLvl) {
 					drawCutIcon(icon, x + i * 16, y + j * 16, 16, 16, j == fullLvl ? lastLvl : 0);
 				}
 			}
 		}
-		for(int i = 0; i < fullX; i++) {
+		for (int i = 0; i < fullX; i++) {
 			drawCutIcon(icon, x + i * 16, y + fullY * 16, 16, lastY, fullLvl == fullY ? lastLvl : 0);
 		}
-		for(int i = 0; i < fullY; i++) {
-			if(i >= fullLvl) {
+		for (int i = 0; i < fullY; i++) {
+			if (i >= fullLvl) {
 				drawCutIcon(icon, x + fullX * 16, y + i * 16, lastX, 16, i == fullLvl ? lastLvl : 0);
 			}
 		}
@@ -82,7 +84,7 @@ public class GuiCombustionEngine extends GuiEngine {
 	}
 
 	//The magic is here
-	private void drawCutIcon(IIcon icon, int x, int y, int width, int height, int cut){
+	private void drawCutIcon(IIcon icon, int x, int y, int width, int height, int cut) {
 		Tessellator tess = Tessellator.instance;
 		tess.startDrawingQuads();
 		tess.addVertexWithUV(x, y + height, zLevel, icon.getMinU(), icon.getInterpolatedV(height));

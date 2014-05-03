@@ -9,15 +9,16 @@
 package buildcraft.api.filler;
 
 import net.minecraft.util.IIcon;
+
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 public interface IFillerPattern {
 
-	public String getUniqueTag();
+	String getUniqueTag();
 
 	@SideOnly(Side.CLIENT)
-	public IIcon getIcon();
+	IIcon getIcon();
 
-	public String getDisplayName();
+	String getDisplayName();
 }

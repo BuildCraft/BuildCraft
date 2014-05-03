@@ -8,14 +8,15 @@
  */
 package buildcraft.transport.gui;
 
-import buildcraft.core.gui.BuildCraftContainer;
-import buildcraft.core.gui.slots.SlotPhantom;
-import buildcraft.core.gui.slots.SlotValidated;
-import buildcraft.transport.TileFilteredBuffer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
+
+import buildcraft.core.gui.BuildCraftContainer;
+import buildcraft.core.gui.slots.SlotPhantom;
+import buildcraft.core.gui.slots.SlotValidated;
+import buildcraft.transport.TileFilteredBuffer;
 
 public class ContainerFilteredBuffer extends BuildCraftContainer {
 

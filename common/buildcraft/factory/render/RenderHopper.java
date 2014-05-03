@@ -8,10 +8,8 @@
  */
 package buildcraft.factory.render;
 
-import buildcraft.BuildCraftCore;
-import buildcraft.BuildCraftCore.RenderMode;
-import buildcraft.core.DefaultProps;
-import buildcraft.core.IInventoryRenderer;
+import org.lwjgl.opengl.GL11;
+
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.client.renderer.Tessellator;
@@ -19,7 +17,11 @@ import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
-import org.lwjgl.opengl.GL11;
+
+import buildcraft.BuildCraftCore;
+import buildcraft.BuildCraftCore.RenderMode;
+import buildcraft.core.DefaultProps;
+import buildcraft.core.IInventoryRenderer;
 
 public class RenderHopper extends TileEntitySpecialRenderer implements IInventoryRenderer {
 
@@ -57,8 +59,9 @@ public class RenderHopper extends TileEntitySpecialRenderer implements IInventor
 	}
 
 	private void render(double x, double y, double z) {
-		if (BuildCraftCore.render == RenderMode.NoDynamic)
+		if (BuildCraftCore.render == RenderMode.NoDynamic) {
 			return;
+		}
 
 		GL11.glPushMatrix();
 		GL11.glDisable(GL11.GL_LIGHTING);

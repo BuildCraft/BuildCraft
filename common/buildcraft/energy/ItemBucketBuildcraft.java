@@ -13,9 +13,11 @@ import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBucket;
-import buildcraft.core.CreativeTabBuildCraft;
+
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+
+import buildcraft.core.CreativeTabBuildCraft;
 
 public class ItemBucketBuildcraft extends ItemBucket {
 

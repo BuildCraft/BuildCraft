@@ -11,11 +11,13 @@ package buildcraft.core.triggers;
 import java.util.Locale;
 
 import net.minecraft.tileentity.TileEntity;
+
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
+
 import buildcraft.api.gates.ITileTrigger;
 import buildcraft.api.gates.ITrigger;
 import buildcraft.api.gates.ITriggerParameter;
@@ -73,7 +75,7 @@ public class TriggerFluidContainerLevel extends BCTrigger implements ITileTrigge
 
 			for (FluidTankInfo c : liquids) {
 				if (c.fluid == null) {
-					if ( searchedFluid == null){
+					if (searchedFluid == null) {
 						return true;
 					}
 					return container.fill(side, searchedFluid, false) > 0;

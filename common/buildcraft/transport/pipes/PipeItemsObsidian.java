@@ -19,7 +19,12 @@ import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.AxisAlignedBB;
+
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
 import net.minecraftforge.common.util.ForgeDirection;
+
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.core.Position;
@@ -34,8 +39,6 @@ import buildcraft.transport.PipeTransportItems;
 import buildcraft.transport.TravelingItem;
 import buildcraft.transport.pipes.events.PipeEventItem;
 import buildcraft.transport.utils.TransportUtils;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 public class PipeItemsObsidian extends Pipe<PipeTransportItems> {
 
@@ -89,7 +92,7 @@ public class PipeItemsObsidian extends Pipe<PipeTransportItems> {
 				p2.x += 1 + distance;
 				break;
 			case WEST:
-				p1.x -= (distance - 1);
+			p1.x -= distance - 1;
 				p2.x -= distance;
 				break;
 			case UP:
@@ -105,7 +108,7 @@ public class PipeItemsObsidian extends Pipe<PipeTransportItems> {
 				break;
 			case NORTH:
 			default:
-				p1.z -= (distance - 1);
+			p1.z -= distance - 1;
 				p2.z -= distance;
 				break;
 		}
@@ -123,7 +126,7 @@ public class PipeItemsObsidian extends Pipe<PipeTransportItems> {
 				p2.y += distance;
 				break;
 			case DOWN:
-				p1.y -= (distance - 1);
+			p1.y -= distance - 1;
 				p2.y -= distance;
 				break;
 			case SOUTH:

@@ -9,19 +9,20 @@
 package buildcraft.core.network;
 
 import java.io.IOException;
+
 import net.minecraft.network.Packet;
 
 public interface ISynchronizedTile {
 
-	public void handleDescriptionPacket(PacketUpdate packet) throws IOException;
+	void handleDescriptionPacket(PacketUpdate packet) throws IOException;
 
-	public void handleUpdatePacket(PacketUpdate packet) throws IOException;
+	void handleUpdatePacket(PacketUpdate packet) throws IOException;
 
-	public void postPacketHandling(PacketUpdate packet);
+	void postPacketHandling(PacketUpdate packet);
 
-	public BuildCraftPacket getUpdatePacket();
+	BuildCraftPacket getUpdatePacket();
 
-	public Packet getDescriptionPacket();
+	Packet getDescriptionPacket();
 
-	public PacketPayload getPacketPayload();
+	PacketPayload getPacketPayload();
 }

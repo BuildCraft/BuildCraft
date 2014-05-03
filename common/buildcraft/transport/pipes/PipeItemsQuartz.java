@@ -8,6 +8,13 @@
  */
 package buildcraft.transport.pipes;
 
+import net.minecraft.item.Item;
+
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
+import net.minecraftforge.common.util.ForgeDirection;
+
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.transport.Pipe;
@@ -16,10 +23,6 @@ import buildcraft.transport.PipeTransportItems;
 import buildcraft.transport.TransportConstants;
 import buildcraft.transport.TravelingItem;
 import buildcraft.transport.pipes.events.PipeEventItem;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraft.item.Item;
-import net.minecraftforge.common.util.ForgeDirection;
 
 public class PipeItemsQuartz extends Pipe {
 

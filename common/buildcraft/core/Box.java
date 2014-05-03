@@ -8,14 +8,15 @@
  */
 package buildcraft.core;
 
-import io.netty.buffer.ByteBuf;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import io.netty.buffer.ByteBuf;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
+
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.core.IBox;
 import buildcraft.api.core.NetworkData;
@@ -44,7 +45,7 @@ public class Box implements IBox {
 	@NetworkData
 	public boolean isVisible = true;
 
-	public LaserData lasersData [];
+	public LaserData[] lasersData;
 
 	public Box() {
 		reset();
@@ -159,11 +160,7 @@ public class Box implements IBox {
 
 	@Override
 	public boolean contains(double x, double y, double z) {
-		if (x >= xMin && x <= xMax && y >= yMin && y <= yMax && z >= zMin && z <= zMax) {
-			return true;
-		} else {
-			return false;
-		}
+		return x >= xMin && x <= xMax && y >= yMin && y <= yMax && z >= zMin && z <= zMax;
 	}
 
 	public boolean contains(Position p) {

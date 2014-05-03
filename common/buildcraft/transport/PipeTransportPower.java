@@ -14,7 +14,9 @@ import java.util.Map;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+
 import net.minecraftforge.common.util.ForgeDirection;
+
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.SafeTimeTracker;
@@ -39,37 +41,32 @@ import buildcraft.transport.pipes.PipePowerWood;
 
 public class PipeTransportPower extends PipeTransport {
 
+	public static final Map<Class<? extends Pipe>, Integer> powerCapacities = new HashMap<Class<? extends Pipe>, Integer>();
+
 	private static final short MAX_DISPLAY = 100;
 	private static final int DISPLAY_SMOOTHING = 10;
 	private static final int OVERLOAD_TICKS = 60;
-	public static final Map<Class<? extends Pipe>, Integer> powerCapacities = new HashMap<Class<? extends Pipe>, Integer>();
 
-	static {
-		powerCapacities.put(PipePowerCobblestone.class, 8);
-		powerCapacities.put(PipePowerStone.class, 16);
-		powerCapacities.put(PipePowerWood.class, 32);
-		powerCapacities.put(PipePowerQuartz.class, 64);
-		powerCapacities.put(PipePowerIron.class, 128);
-		powerCapacities.put(PipePowerGold.class, 256);
-		powerCapacities.put(PipePowerDiamond.class, 1024);
-		powerCapacities.put(PipePowerHeat.class, 1024);
-	}
-	private boolean needsInit = true;
-	private TileEntity[] tiles = new TileEntity[6];
 	public float[] displayPower = new float[6];
-	private float[] prevDisplayPower = new float[6];
 	public short[] clientDisplayPower = new short[6];
 	public int overload;
-	private int[] powerQuery = new int[6];
 	public int[] nextPowerQuery = new int[6];
-	private long currentDate;
-	private float[] internalPower = new float[6];
 	public float[] internalNextPower = new float[6];
 	public int maxPower = 8;
-	private double highestPower;
-	SafeTimeTracker tracker = new SafeTimeTracker();
+	public float[] movementStage = new float[] {0, 0, 0};
 
-	public float[] movementStage = new float [] {0, 0, 0};
+	private boolean needsInit = true;
+	private TileEntity[] tiles = new TileEntity[6];
+
+	private float[] prevDisplayPower = new float[6];
+
+	private int[] powerQuery = new int[6];
+
+	private long currentDate;
+	private float[] internalPower = new float[6];
+
+	private double highestPower;
+	private SafeTimeTracker tracker = new SafeTimeTracker();
 
 	public PipeTransportPower() {
 		for (int i = 0; i < 6; ++i) {
@@ -361,7 +358,8 @@ public class PipeTransportPower extends PipeTransport {
 	 * All power input MUST go through designated input pipes, such as Wooden
 	 * Power Pipes or a subclass thereof.
 	 */
-	public double receiveEnergy(ForgeDirection from, double val) {
+	public double receiveEnergy(ForgeDirection from, double valI) {
+		double val = valI;
 		step();
 		if (this.container.pipe instanceof IPipeTransportPowerHook) {
 			double ret = ((IPipeTransportPowerHook) this.container.pipe).receiveEnergy(from, val);
@@ -486,6 +484,16 @@ public class PipeTransportPower extends PipeTransport {
 		}
 
 		return amount;
+	}
 
+	static {
+		powerCapacities.put(PipePowerCobblestone.class, 8);
+		powerCapacities.put(PipePowerStone.class, 16);
+		powerCapacities.put(PipePowerWood.class, 32);
+		powerCapacities.put(PipePowerQuartz.class, 64);
+		powerCapacities.put(PipePowerIron.class, 128);
+		powerCapacities.put(PipePowerGold.class, 256);
+		powerCapacities.put(PipePowerDiamond.class, 1024);
+		powerCapacities.put(PipePowerHeat.class, 1024);
 	}
 }

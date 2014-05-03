@@ -8,17 +8,19 @@
  */
 package buildcraft.transport.gates;
 
+import java.util.List;
+
+import net.minecraft.tileentity.TileEntity;
+
+import buildcraft.BuildCraftTransport;
 import buildcraft.api.gates.GateExpansionController;
 import buildcraft.api.gates.IGateExpansion;
-import buildcraft.BuildCraftTransport;
 import buildcraft.api.gates.ITrigger;
 import buildcraft.api.gates.ITriggerParameter;
 import buildcraft.transport.triggers.TriggerClockTimer;
 import buildcraft.transport.triggers.TriggerClockTimer.Time;
-import java.util.List;
-import net.minecraft.tileentity.TileEntity;
 
-public class GateExpansionTimer extends GateExpansionBuildcraft implements IGateExpansion {
+public final class GateExpansionTimer extends GateExpansionBuildcraft implements IGateExpansion {
 
 	public static GateExpansionTimer INSTANCE = new GateExpansionTimer();
 
@@ -44,10 +46,11 @@ public class GateExpansionTimer extends GateExpansionBuildcraft implements IGate
 			}
 
 			public void tick() {
-				if (clock > -ACTIVE_TIME)
+				if (clock > -ACTIVE_TIME) {
 					clock--;
-				else
+				} else {
 					clock = time.delay * 20 + ACTIVE_TIME;
+				}
 			}
 
 			public boolean isActive() {

@@ -12,6 +12,7 @@ import java.util.LinkedList;
 
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
+
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.SchematicBlock;
 
@@ -26,7 +27,7 @@ public class SchematicBed extends SchematicBlock {
 
 	@Override
 	public void rotateLeft(IBuilderContext context) {
-		int orientation = (meta & 7);
+		int orientation = meta & 7;
 		int others = meta - orientation;
 
 		switch (orientation) {
@@ -46,7 +47,7 @@ public class SchematicBed extends SchematicBlock {
 	}
 
 	@Override
-	public void writeToWorld(IBuilderContext context, int x, int y, int z, LinkedList <ItemStack> stacks) {
+	public void writeToWorld(IBuilderContext context, int x, int y, int z, LinkedList<ItemStack> stacks) {
 		if ((meta & 8) != 0) {
 			return;
 		}

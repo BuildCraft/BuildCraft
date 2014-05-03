@@ -23,11 +23,11 @@ public class SchematicRotateMeta extends SchematicTile {
 
 		for (int element : rot) {
 			if (element < 4) {
-				infoMask = (infoMask < 3 ? 3 : infoMask);
+				infoMask = infoMask < 3 ? 3 : infoMask;
 			} else if (element < 8) {
-				infoMask = (infoMask < 7 ? 7 : infoMask);
+				infoMask = infoMask < 7 ? 7 : infoMask;
 			} else if (element < 16) {
-				infoMask = (infoMask < 15 ? 15 : infoMask);
+				infoMask = infoMask < 15 ? 15 : infoMask;
 			}
 		}
 

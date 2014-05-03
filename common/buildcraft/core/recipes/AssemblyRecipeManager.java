@@ -8,20 +8,23 @@
  */
 package buildcraft.core.recipes;
 
-import buildcraft.api.recipes.IAssemblyRecipeManager;
-import buildcraft.core.inventory.ITransactor;
-import buildcraft.core.inventory.InventoryIterator;
-import buildcraft.api.core.IInvSlot;
-import buildcraft.core.inventory.Transactor;
-import buildcraft.core.inventory.filters.ArrayStackFilter;
 import java.util.LinkedList;
 import java.util.List;
+
 import net.minecraft.block.Block;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.oredict.OreDictionary;
+
+import buildcraft.api.core.IInvSlot;
+import buildcraft.api.recipes.IAssemblyRecipeManager;
+import buildcraft.core.inventory.ITransactor;
+import buildcraft.core.inventory.InventoryIterator;
+import buildcraft.core.inventory.Transactor;
+import buildcraft.core.inventory.filters.ArrayStackFilter;
 
 public class AssemblyRecipeManager implements IAssemblyRecipeManager {
 
@@ -52,18 +55,19 @@ public class AssemblyRecipeManager implements IAssemblyRecipeManager {
 
 			processedInput = new Object[inputs.length];
 			for (int i = 0; i < inputs.length; i++) {
-				if (inputs[i] instanceof String)
+				if (inputs[i] instanceof String) {
 					processedInput[i] = OreDictionary.getOres((String) inputs[i]);
-				else if (inputs[i] instanceof ItemStack)
+				} else if (inputs[i] instanceof ItemStack) {
 					processedInput[i] = inputs[i];
-				else if (inputs[i] instanceof Item)
+				} else if (inputs[i] instanceof Item) {
 					processedInput[i] = new ItemStack((Item) inputs[i]);
-				else if (inputs[i] instanceof Block)
+				} else if (inputs[i] instanceof Block) {
 					processedInput[i] = new ItemStack((Block) inputs[i], 1, OreDictionary.WILDCARD_VALUE);
-				else if (inputs[i] instanceof Integer)
+				} else if (inputs[i] instanceof Integer) {
 					processedInput[i] = inputs[i];
-				else
+				} else {
 					throw new IllegalArgumentException("Unknown Object passed to recipe!");
+				}
 			}
 		}
 
@@ -84,8 +88,9 @@ public class AssemblyRecipeManager implements IAssemblyRecipeManager {
 
 		public boolean canBeDone(IInventory inv) {
 			for (int i = 0; i < processedInput.length; i++) {
-				if (processedInput[i] == null)
+				if (processedInput[i] == null) {
 					continue;
+				}
 
 				if (processedInput[i] instanceof ItemStack) {
 					ItemStack requirement = (ItemStack) processedInput[i];
@@ -93,43 +98,52 @@ public class AssemblyRecipeManager implements IAssemblyRecipeManager {
 					int expected = requirement.stackSize;
 					for (IInvSlot slot : InventoryIterator.getIterable(inv, ForgeDirection.UNKNOWN)) {
 						ItemStack item = slot.getStackInSlot();
-						if (item == null)
+						if (item == null) {
 							continue;
+						}
 
-						if (item.isItemEqual(requirement))
+						if (item.isItemEqual(requirement)) {
 							found += item.stackSize; // Adds quantity of stack to amount found
+						}
 
-						if (found >= expected)
+						if (found >= expected) {
 							break;
+						}
 					}
 
 					// Return false if the amount of ingredient found
 					// is not enough
-					if (found < expected)
+					if (found < expected) {
 						return false;
+					}
 				} else if (processedInput[i] instanceof List) {
 					List<ItemStack> oreList = (List<ItemStack>) processedInput[i];
 					int found = 0; // Amount of ingredient found in inventory
+					// TODO: this i++ is highly dubious here, and against good
+					// programming practises. Investigate and fix or document.
 					int expected = (Integer) processedInput[i++ + 1];
 
 					for (IInvSlot slot : InventoryIterator.getIterable(inv, ForgeDirection.UNKNOWN)) {
 						ItemStack item = slot.getStackInSlot();
-						if (item == null)
+						if (item == null) {
 							continue;
+						}
 						for (ItemStack oreItem : oreList) {
 							if (OreDictionary.itemMatches(oreItem, item, true)) {
 								found += item.stackSize;
 								break;
 							}
 						}
-						if (found >= expected)
+						if (found >= expected) {
 							break;
+						}
 					}
 
 					// Return false if the amount of ingredient found
 					// is not enough
-					if (found < expected)
+					if (found < expected) {
 						return false;
+					}
 				}
 			}
 
@@ -150,11 +164,13 @@ public class AssemblyRecipeManager implements IAssemblyRecipeManager {
 					int required = (Integer) input[i + 1];
 					for (ItemStack ore : oreList) {
 						for (int num = 0; num < required; num++) {
-							if (tran.remove(new ArrayStackFilter(ore), ForgeDirection.UNKNOWN, true) != null)
+							if (tran.remove(new ArrayStackFilter(ore), ForgeDirection.UNKNOWN, true) != null) {
 								required--;
+							}
 						}
-						if (required <= 0)
+						if (required <= 0) {
 							break;
+						}
 					}
 				}
 			}

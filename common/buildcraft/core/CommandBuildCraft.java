@@ -8,8 +8,6 @@
  */
 package buildcraft.core;
 
-import buildcraft.core.proxy.CoreProxy;
-
 import java.util.List;
 
 import net.minecraft.command.CommandBase;
@@ -17,6 +15,8 @@ import net.minecraft.command.ICommand;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
 import net.minecraft.util.ChatComponentText;
+
+import buildcraft.core.proxy.CoreProxy;
 
 public class CommandBuildCraft extends CommandBase {
 
@@ -34,7 +34,7 @@ public class CommandBuildCraft extends CommandBase {
 	public String getCommandUsage(ICommandSender sender) {
 		return "/" + this.getCommandName() + " help";
 	}
-	
+
 	@Override
 	public boolean canCommandSenderUseCommand(ICommandSender par1ICommandSender) {
 		return true;
@@ -49,8 +49,9 @@ public class CommandBuildCraft extends CommandBase {
 	@Override
 	public void processCommand(ICommandSender sender, String[] arguments) {
 
-		if (arguments.length <= 0)
+		if (arguments.length <= 0) {
 			throw new WrongUsageException("Type '" + this.getCommandUsage(sender) + "' for help.");
+		}
 
 		if (arguments[0].matches("version")) {
 			commandVersion(sender, arguments);

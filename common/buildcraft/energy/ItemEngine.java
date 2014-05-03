@@ -8,11 +8,11 @@
  */
 package buildcraft.energy;
 
+import net.minecraft.block.Block;
+import net.minecraft.item.ItemStack;
+
 import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.ItemBlockBuildCraft;
-import net.minecraft.block.Block;
-import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.item.ItemStack;
 
 public class ItemEngine extends ItemBlockBuildCraft {
 

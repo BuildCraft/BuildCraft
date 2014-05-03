@@ -8,21 +8,23 @@
  */
 package buildcraft.api.gates;
 
-import buildcraft.api.transport.IPipeTile;
 import java.util.LinkedList;
+
 import net.minecraft.block.Block;
 import net.minecraft.tileentity.TileEntity;
+
+import buildcraft.api.transport.IPipeTile;
 
 public interface ITriggerProvider {
 
 	/**
 	 * Returns the list of triggers that are available from the pipe holding the gate.
 	 */
-	public abstract LinkedList<ITrigger> getPipeTriggers(IPipeTile pipe);
+	LinkedList<ITrigger> getPipeTriggers(IPipeTile pipe);
 
 	/**
 	 * Returns the list of triggers available to a gate next to the given block.
 	 */
-	public abstract LinkedList<ITrigger> getNeighborTriggers(Block block, TileEntity tile);
+	LinkedList<ITrigger> getNeighborTriggers(Block block, TileEntity tile);
 
 }

@@ -13,6 +13,7 @@ import java.util.LinkedList;
 
 import net.minecraft.inventory.IInventory;
 import net.minecraft.nbt.NBTTagCompound;
+
 import buildcraft.api.blueprints.ITileBuilder;
 import buildcraft.api.blueprints.SchematicRegistry;
 import buildcraft.api.core.NetworkData;
@@ -35,18 +36,17 @@ public abstract class TileAbstractBuilder extends TileBuildCraft implements ITil
 	 */
 	private static final double FULL_CHEST_ENERGY = 9 * 3 * 64 * SchematicRegistry.BUILD_ENERGY + 1000;
 
+	@NetworkData
+	public LinkedList<LaserData> pathLasers = new LinkedList<LaserData> ();
+
+	public ArrayList<BuildingItem> buildersInAction = new ArrayList<BuildingItem>();
+
+	protected SafeTimeTracker buildTracker = new SafeTimeTracker(5);
 	@MjBattery(maxReceivedPerCycle = 100, maxCapacity = FULL_CHEST_ENERGY, minimumConsumption = 1)
 	protected double mjStored = 0;
 
 	private double mjPrev = 0;
 	private int mjUnchangedCycles = 0;
-
-	@NetworkData
-	public LinkedList<LaserData> pathLasers = new LinkedList<LaserData> ();
-
-	public ArrayList <BuildingItem> buildersInAction = new ArrayList<BuildingItem>();
-
-	protected SafeTimeTracker buildTracker = new SafeTimeTracker(5);
 
 	@Override
 	public void initialize () {

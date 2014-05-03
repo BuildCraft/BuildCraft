@@ -8,17 +8,14 @@
  */
 package buildcraft.transport.network;
 
+import io.netty.buffer.ByteBuf;
+
+import net.minecraft.entity.player.EntityPlayer;
+
 import buildcraft.BuildCraftTransport;
 import buildcraft.core.network.BuildCraftPacket;
 import buildcraft.core.network.PacketIds;
 import buildcraft.transport.TravelingItem;
-import io.netty.buffer.ByteBuf;
-
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-
-import net.minecraft.entity.player.EntityPlayer;
 
 public class PacketPipeTransportItemStackRequest extends BuildCraftPacket {
 

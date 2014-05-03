@@ -8,18 +8,14 @@
  */
 package buildcraft.transport.network;
 
+import io.netty.buffer.ByteBuf;
+
+import net.minecraft.item.ItemStack;
+
 import buildcraft.core.network.BuildCraftPacket;
 import buildcraft.core.network.PacketIds;
 import buildcraft.core.utils.Utils;
 import buildcraft.transport.TravelingItem;
-import io.netty.buffer.ByteBuf;
-
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.Packet;
 
 public class PacketPipeTransportItemStack extends BuildCraftPacket {
 
@@ -45,8 +41,9 @@ public class PacketPipeTransportItemStack extends BuildCraftPacket {
 		this.entityId = data.readInt();
 		stack = Utils.readStack(data);
 		TravelingItem item = TravelingItem.clientCache.get(entityId);
-		if (item != null)
+		if (item != null) {
 			item.setItemStack(stack);
+		}
 	}
 
 	public int getEntityId() {

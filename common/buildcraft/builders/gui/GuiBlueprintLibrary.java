@@ -8,11 +8,11 @@
  */
 package buildcraft.builders.gui;
 
+import org.lwjgl.opengl.GL11;
+
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
-
-import org.lwjgl.opengl.GL11;
 
 import buildcraft.BuildCraftBuilders;
 import buildcraft.builders.TileBlueprintLibrary;
@@ -24,12 +24,16 @@ import buildcraft.core.utils.StringUtils;
 
 public class GuiBlueprintLibrary extends GuiBuildCraft {
 
-	private static final ResourceLocation TEXTURE = new ResourceLocation(
-			"buildcraft", DefaultProps.TEXTURE_PATH_GUI + "/library_rw.png");
-	EntityPlayer player;
-	TileBlueprintLibrary library;
-	ContainerBlueprintLibrary container;
-	boolean computeInput;
+	private static final ResourceLocation TEXTURE = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_GUI + "/library_rw.png");
+	private GuiButton nextPageButton;
+	private GuiButton prevPageButton;
+	private GuiButton lockButton;
+	private GuiButton deleteButton;
+	private EntityPlayer player;
+	private TileBlueprintLibrary library;
+	private ContainerBlueprintLibrary container;
+	private boolean computeInput;
+
 	public GuiBlueprintLibrary(EntityPlayer player, TileBlueprintLibrary library) {
 		super(new ContainerBlueprintLibrary(player, library), library, TEXTURE);
 		this.player = player;
@@ -39,11 +43,6 @@ public class GuiBlueprintLibrary extends GuiBuildCraft {
 		this.library = library;
 		container = (ContainerBlueprintLibrary) inventorySlots;
 	}
-
-	private GuiButton nextPageButton;
-	private GuiButton prevPageButton;
-	private GuiButton lockButton;
-	private GuiButton deleteButton;
 
 	@SuppressWarnings("unchecked")
 	@Override

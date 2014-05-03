@@ -8,7 +8,6 @@
  */
 package buildcraft.core.network;
 
-import buildcraft.core.DefaultProps;
 import io.netty.buffer.ByteBuf;
 
 public abstract class BuildCraftPacket {

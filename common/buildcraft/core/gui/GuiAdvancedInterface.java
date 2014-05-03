@@ -8,6 +8,8 @@
  */
 package buildcraft.core.gui;
 
+import org.lwjgl.opengl.GL11;
+
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.entity.RenderItem;
@@ -15,9 +17,8 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fluids.Fluid;
 
-import org.lwjgl.opengl.GL11;
+import net.minecraftforge.fluids.Fluid;
 
 import buildcraft.core.render.FluidRenderer;
 import buildcraft.core.render.RenderUtils;
@@ -66,8 +67,9 @@ public abstract class GuiAdvancedInterface extends GuiBuildCraft {
 	public int getSlotAtLocation(int i, int j) {
 		for (int position = 0; position < slots.length; ++position) {
 			AdvancedSlot s = slots[position];
-			if (i >= s.x && i <= s.x + 16 && j >= s.y && j <= s.y + 16)
+			if (i >= s.x && i <= s.x + 16 && j >= s.y && j <= s.y + 16) {
 				return position;
+			}
 		}
 		return -1;
 	}
@@ -85,9 +87,7 @@ public abstract class GuiAdvancedInterface extends GuiBuildCraft {
 		OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, i1 / 1.0F, k1 / 1.0F);
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 
-		for (int s = 0; s < slots.length; ++s) {
-			AdvancedSlot slot = slots[s];
-
+		for (AdvancedSlot slot : slots) {
 			if (slot != null) {
 				slot.drawSprite(cornerX, cornerY);
 			}
@@ -113,7 +113,7 @@ public abstract class GuiAdvancedInterface extends GuiBuildCraft {
 		}
 
 		if (s.length() > 0) {
-			int i2 = (mouseX - cornerX);
+			int i2 = mouseX - cornerX;
 			int k2 = mouseY - cornerY;
 			drawCreativeTabHoveringText(s, i2, k2);
 			RenderHelper.enableGUIStandardItemLighting();

@@ -8,15 +8,21 @@
  */
 package buildcraft.core.render;
 
+import org.lwjgl.opengl.GL11;
+
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.util.ResourceLocation;
-
-import org.lwjgl.opengl.GL11;
 
 import buildcraft.core.Box;
 import buildcraft.core.LaserData;
 
-public class RenderBox {
+public final class RenderBox {
+
+	/**
+	 * Deactivate constructor
+	 */
+	private RenderBox() {
+	}
 
 	public static void doRender(TextureManager t, ResourceLocation texture, Box box) {
 		GL11.glPushMatrix();

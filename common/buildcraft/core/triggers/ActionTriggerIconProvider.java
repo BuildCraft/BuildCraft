@@ -8,17 +8,19 @@
  */
 package buildcraft.core.triggers;
 
-import buildcraft.api.core.IIconProvider;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.util.IIcon;
+
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
+import buildcraft.api.core.IIconProvider;
 
 /**
  * Don't put new Trigger Icons in here please, put them in the Trigger classes
  * like the #TriggerClockTimer. This class will go away someday.
  */
-public class ActionTriggerIconProvider implements IIconProvider {
+public final class ActionTriggerIconProvider implements IIconProvider {
 
 	public static ActionTriggerIconProvider INSTANCE = new ActionTriggerIconProvider();
 	public static final int Action_MachineControl_On = 0;
@@ -60,9 +62,9 @@ public class ActionTriggerIconProvider implements IIconProvider {
 	public static final int Trigger_FluidContainer_Below25 = 36;
 	public static final int Trigger_FluidContainer_Below50 = 37;
 	public static final int Trigger_FluidContainer_Below75 = 38;
-	
+
 	public static final int MAX = 45;
-	
+
 	@SideOnly(Side.CLIENT)
 	private final IIcon[] icons = new IIcon[MAX];
 

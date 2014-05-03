@@ -15,7 +15,9 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+
 import net.minecraftforge.common.util.ForgeDirection;
+
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.SchematicTile;
 import buildcraft.api.gates.ActionManager;
@@ -71,7 +73,7 @@ public class SchematicPipe extends SchematicTile {
 	}
 
 	@Override
-	public void writeToWorld(IBuilderContext context, int x, int y, int z, LinkedList <ItemStack> stacks) {
+	public void writeToWorld(IBuilderContext context, int x, int y, int z, LinkedList<ItemStack> stacks) {
 		cpt.setInteger("x", x);
 		cpt.setInteger("y", y);
 		cpt.setInteger("z", z);
@@ -92,7 +94,7 @@ public class SchematicPipe extends SchematicTile {
 		Pipe pipe = BlockGenericPipe.getPipe(context.world(), x, y, z);
 
 		if (BlockGenericPipe.isValid(pipe)) {
-			ArrayList <ItemStack> items = pipe.computeItemDrop ();
+			ArrayList<ItemStack> items = pipe.computeItemDrop();
 			storedRequirements = new ItemStack [items.size() + 1];
 			items.toArray(storedRequirements);
 			storedRequirements[storedRequirements.length - 1] = new ItemStack(

@@ -24,7 +24,12 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldSettings.GameType;
+
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
 import net.minecraftforge.common.util.ForgeDirection;
+
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.gates.IAction;
@@ -36,21 +41,22 @@ import buildcraft.core.network.TilePacketWrapper;
 import buildcraft.core.utils.Utils;
 import buildcraft.transport.gates.GateFactory;
 import buildcraft.transport.pipes.events.PipeEvent;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 public abstract class Pipe<T extends PipeTransport> implements IDropControlInventory {
+
+	@SuppressWarnings("rawtypes")
+	private static Map<Class, TilePacketWrapper> networkWrappers = new HashMap<Class, TilePacketWrapper>();
+	private static Map<Class<? extends Pipe>, Map<Class<? extends PipeEvent>, EventHandler>> eventHandlers = new HashMap<Class<? extends Pipe>, Map<Class<? extends PipeEvent>, EventHandler>>();
 
 	public int[] signalStrength = new int[]{0, 0, 0, 0};
 	public TileGenericPipe container;
 	public final T transport;
 	public final Item item;
-	private boolean internalUpdateScheduled = false;
 	public boolean[] wireSet = new boolean[]{false, false, false, false};
 	public Gate gate;
-	@SuppressWarnings("rawtypes")
-	private static Map<Class, TilePacketWrapper> networkWrappers = new HashMap<Class, TilePacketWrapper>();
-	private static Map<Class<? extends Pipe>, Map<Class<? extends PipeEvent>, EventHandler>> eventHandlers = new HashMap<Class<? extends Pipe>, Map<Class<? extends PipeEvent>, EventHandler>>();
+
+	private boolean internalUpdateScheduled = false;
+	private boolean initialized = false;
 
 	public Pipe(T transport, Item item) {
 		this.transport = transport;
@@ -238,7 +244,6 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 			wireSet[i] = data.getBoolean("wireSet[" + i + "]");
 		}
 	}
-	private boolean initialized = false;
 
 	public boolean needsInit() {
 		return !initialized;
@@ -464,8 +469,8 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 		}
 	}
 
-	public ArrayList <ItemStack> computeItemDrop () {
-		ArrayList <ItemStack> result = new ArrayList <ItemStack> ();
+	public ArrayList<ItemStack> computeItemDrop() {
+		ArrayList<ItemStack> result = new ArrayList<ItemStack>();
 
 		for (PipeWire pipeWire : PipeWire.VALUES) {
 			if (wireSet[pipeWire.ordinal()]) {
@@ -536,8 +541,9 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 			return false;
 		}
 
-		return (tilePipe.pipe.transport instanceof PipeTransportStructure || transport instanceof PipeTransportStructure || Utils.checkPipesConnections(
-				container, tile));
+		return tilePipe.pipe.transport instanceof PipeTransportStructure || transport instanceof PipeTransportStructure
+				|| Utils.checkPipesConnections(
+						container, tile);
 	}
 
 	public void dropContents() {
@@ -548,26 +554,26 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 	 * If this pipe is open on one side, return it.
 	 */
 	public ForgeDirection getOpenOrientation() {
-		int Connections_num = 0;
+		int connectionsNum = 0;
 
-		ForgeDirection target_orientation = ForgeDirection.UNKNOWN;
+		ForgeDirection targetOrientation = ForgeDirection.UNKNOWN;
 
 		for (ForgeDirection o : ForgeDirection.VALID_DIRECTIONS) {
 			if (container.isPipeConnected(o)) {
 
-				Connections_num++;
+				connectionsNum++;
 
-				if (Connections_num == 1) {
-					target_orientation = o;
+				if (connectionsNum == 1) {
+					targetOrientation = o;
 				}
 			}
 		}
 
-		if (Connections_num > 1 || Connections_num == 0) {
+		if (connectionsNum > 1 || connectionsNum == 0) {
 			return ForgeDirection.UNKNOWN;
 		}
 
-		return target_orientation.getOpposite();
+		return targetOrientation.getOpposite();
 	}
 
 	@Override

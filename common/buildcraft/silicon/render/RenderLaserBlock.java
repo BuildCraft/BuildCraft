@@ -8,11 +8,11 @@
  */
 package buildcraft.silicon.render;
 
+import org.lwjgl.opengl.GL11;
+
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
-
-import org.lwjgl.opengl.GL11;
 
 import buildcraft.core.render.RenderLaser;
 import buildcraft.silicon.TileLaser;
@@ -21,7 +21,7 @@ public class RenderLaserBlock extends TileEntitySpecialRenderer {
 
 	@Override
 	public void renderTileEntityAt(TileEntity tileentity, double x, double y, double z, float f) {
-		TileLaser laser = ((TileLaser) tileentity);
+		TileLaser laser = (TileLaser) tileentity;
 
 		if (laser != null) {
 			GL11.glPushMatrix();

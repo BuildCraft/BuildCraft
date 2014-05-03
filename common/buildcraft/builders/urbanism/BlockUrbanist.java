@@ -13,13 +13,22 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+
 import net.minecraftforge.common.util.ForgeDirection;
+
 import buildcraft.BuildCraftBuilders;
 import buildcraft.core.BlockBuildCraft;
-import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.GuiIds;
 
 public class BlockUrbanist extends BlockBuildCraft {
+
+	public BlockUrbanist() {
+		super(Material.rock);
+		setBlockUnbreakable();
+		setResistance(6000000.0F);
+		disableStats();
+		setTickRandomly(true);
+	}
 
 	@Override
 	public boolean onBlockActivated(World world, int i, int j, int k, EntityPlayer entityplayer, int par6, float par7, float par8, float par9) {
@@ -30,14 +39,6 @@ public class BlockUrbanist extends BlockBuildCraft {
 
 		return true;
 
-	}
-
-	public BlockUrbanist() {
-		super(Material.rock);
-		setBlockUnbreakable();
-		setResistance(6000000.0F);
-		disableStats();
-		setTickRandomly(true);
 	}
 
 	@Override

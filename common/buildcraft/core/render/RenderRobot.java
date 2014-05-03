@@ -8,6 +8,8 @@
  */
 package buildcraft.core.render;
 
+import org.lwjgl.opengl.GL11;
+
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.client.renderer.RenderBlocks;
@@ -16,9 +18,8 @@ import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.IItemRenderer;
 
-import org.lwjgl.opengl.GL11;
+import net.minecraftforge.client.IItemRenderer;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.core.DefaultProps;
@@ -85,12 +86,11 @@ public class RenderRobot extends Render implements IItemRenderer {
 	@Override
 	public boolean shouldUseRenderHelper(ItemRenderType type, ItemStack item,
 			ItemRendererHelper helper) {
+
 		if (helper == ItemRendererHelper.BLOCK_3D) {
 			return true;
-		} else if (helper == ItemRendererHelper.INVENTORY_BLOCK){
-			return true;
 		} else {
-			return false;
+			return helper == ItemRendererHelper.INVENTORY_BLOCK;
 		}
 	}
 

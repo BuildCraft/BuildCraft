@@ -10,6 +10,10 @@ package buildcraft.transport.render;
 
 import java.util.HashMap;
 
+import com.google.common.collect.Maps;
+
+import org.lwjgl.opengl.GL11;
+
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.client.renderer.GLAllocation;
@@ -25,12 +29,11 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
-
-import org.lwjgl.opengl.GL11;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftCore.RenderMode;
@@ -53,14 +56,29 @@ import buildcraft.transport.PipeTransportPower;
 import buildcraft.transport.TileGenericPipe;
 import buildcraft.transport.TravelingItem;
 
-import com.google.common.collect.Maps;
-
 public class PipeRendererTESR extends TileEntitySpecialRenderer {
 
-	final static private int LIQUID_STAGES = 40;
-	final static private int MAX_ITEMS_TO_RENDER = 10;
+	public static final ResourceLocation STRIPES_TEXTURE = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_ENTITIES + "/stripes.png");
+
+	private static final int LIQUID_STAGES = 40;
+	private static final int MAX_ITEMS_TO_RENDER = 10;
+	private static final int POWER_STAGES = 100;
+
+	public int[] displayPowerList = new int[POWER_STAGES];
+	public int[] displayPowerListOverload = new int[POWER_STAGES];
+
+	protected ModelBase model = new ModelBase() {
+	};
+
+	private final HashMap<Integer, DisplayFluidList> displayFluidLists = Maps.newHashMap();
+	private final int[] angleY = {0, 0, 270, 90, 0, 180};
+	private final int[] angleZ = {90, 270, 0, 0, 0, 0};
+
+	private ModelRenderer box;
+
 	private final EntityItem dummyEntityItem = new EntityItem(null);
 	private final RenderItem customRenderItem;
+	private boolean initialized = false;
 
 	private class DisplayFluidList {
 
@@ -69,16 +87,6 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 		public int[] centerHorizontal = new int[LIQUID_STAGES];
 		public int[] centerVertical = new int[LIQUID_STAGES];
 	}
-	private final HashMap<Integer, DisplayFluidList> displayFluidLists = Maps.newHashMap();
-	private final int[] angleY = {0, 0, 270, 90, 0, 180};
-	private final int[] angleZ = {90, 270, 0, 0, 0, 0};
-	final static private int POWER_STAGES = 100;
-	public int[] displayPowerList = new int[POWER_STAGES];
-	public int[] displayPowerListOverload = new int[POWER_STAGES];
-
-	protected ModelBase model = new ModelBase() {
-	};
-	private ModelRenderer box;
 
 	public PipeRendererTESR() {
 		customRenderItem = new RenderItem() {
@@ -203,7 +211,6 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 
 		return d;
 	}
-	boolean initialized = false;
 
 	private void initializeDisplayPowerList(World world) {
 		if (initialized) {
@@ -434,37 +441,37 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 
 		bindTexture(TextureMap.locationBlocksTexture);
 
-		RenderInfo box = new RenderInfo();
-		box.texture = BuildCraftTransport.instance.wireIconProvider.getIcon(state.wireMatrix.getWireIconIndex(color));
+		RenderInfo renderBox = new RenderInfo();
+		renderBox.texture = BuildCraftTransport.instance.wireIconProvider.getIcon(state.wireMatrix.getWireIconIndex(color));
 
 		// Z render
 
 		if (minZ != CoreConstants.PIPE_MIN_POS || maxZ != CoreConstants.PIPE_MAX_POS || !found) {
-			box.setBounds(cx == CoreConstants.PIPE_MIN_POS ? cx - 0.05F : cx, cy == CoreConstants.PIPE_MIN_POS ? cy - 0.05F : cy, minZ, cx == CoreConstants.PIPE_MIN_POS ? cx
+			renderBox.setBounds(cx == CoreConstants.PIPE_MIN_POS ? cx - 0.05F : cx, cy == CoreConstants.PIPE_MIN_POS ? cy - 0.05F : cy, minZ, cx == CoreConstants.PIPE_MIN_POS ? cx
 					: cx + 0.05F, cy == CoreConstants.PIPE_MIN_POS ? cy : cy + 0.05F, maxZ);
-			RenderEntityBlock.INSTANCE.renderBlock(box, pipe.getWorldObj(), 0, 0, 0, pipe.xCoord, pipe.yCoord, pipe.zCoord, true, true);
+			RenderEntityBlock.INSTANCE.renderBlock(renderBox, pipe.getWorldObj(), 0, 0, 0, pipe.xCoord, pipe.yCoord, pipe.zCoord, true, true);
 		}
 
 		// X render
 
 		if (minX != CoreConstants.PIPE_MIN_POS || maxX != CoreConstants.PIPE_MAX_POS || !found) {
-			box.setBounds(minX, cy == CoreConstants.PIPE_MIN_POS ? cy - 0.05F : cy, cz == CoreConstants.PIPE_MIN_POS ? cz - 0.05F : cz, maxX, cy == CoreConstants.PIPE_MIN_POS ? cy
+			renderBox.setBounds(minX, cy == CoreConstants.PIPE_MIN_POS ? cy - 0.05F : cy, cz == CoreConstants.PIPE_MIN_POS ? cz - 0.05F : cz, maxX, cy == CoreConstants.PIPE_MIN_POS ? cy
 					: cy + 0.05F, cz == CoreConstants.PIPE_MIN_POS ? cz : cz + 0.05F);
-			RenderEntityBlock.INSTANCE.renderBlock(box, pipe.getWorldObj(), 0, 0, 0, pipe.xCoord, pipe.yCoord, pipe.zCoord, true, true);
+			RenderEntityBlock.INSTANCE.renderBlock(renderBox, pipe.getWorldObj(), 0, 0, 0, pipe.xCoord, pipe.yCoord, pipe.zCoord, true, true);
 		}
 
 		// Y render
 
 		if (minY != CoreConstants.PIPE_MIN_POS || maxY != CoreConstants.PIPE_MAX_POS || !found) {
-			box.setBounds(cx == CoreConstants.PIPE_MIN_POS ? cx - 0.05F : cx, minY, cz == CoreConstants.PIPE_MIN_POS ? cz - 0.05F : cz, cx == CoreConstants.PIPE_MIN_POS ? cx
+			renderBox.setBounds(cx == CoreConstants.PIPE_MIN_POS ? cx - 0.05F : cx, minY, cz == CoreConstants.PIPE_MIN_POS ? cz - 0.05F : cz, cx == CoreConstants.PIPE_MIN_POS ? cx
 					: cx + 0.05F, maxY, cz == CoreConstants.PIPE_MIN_POS ? cz : cz + 0.05F);
-			RenderEntityBlock.INSTANCE.renderBlock(box, pipe.getWorldObj(), 0, 0, 0, pipe.xCoord, pipe.yCoord, pipe.zCoord, true, true);
+			RenderEntityBlock.INSTANCE.renderBlock(renderBox, pipe.getWorldObj(), 0, 0, 0, pipe.xCoord, pipe.yCoord, pipe.zCoord, true, true);
 		}
 
 		if (center || !found) {
-			box.setBounds(cx == CoreConstants.PIPE_MIN_POS ? cx - 0.05F : cx, cy == CoreConstants.PIPE_MIN_POS ? cy - 0.05F : cy, cz == CoreConstants.PIPE_MIN_POS ? cz - 0.05F : cz,
+			renderBox.setBounds(cx == CoreConstants.PIPE_MIN_POS ? cx - 0.05F : cx, cy == CoreConstants.PIPE_MIN_POS ? cy - 0.05F : cy, cz == CoreConstants.PIPE_MIN_POS ? cz - 0.05F : cz,
 					cx == CoreConstants.PIPE_MIN_POS ? cx : cx + 0.05F, cy == CoreConstants.PIPE_MIN_POS ? cy : cy + 0.05F, cz == CoreConstants.PIPE_MIN_POS ? cz : cz + 0.05F);
-			RenderEntityBlock.INSTANCE.renderBlock(box, pipe.getWorldObj(), 0, 0, 0, pipe.xCoord, pipe.yCoord, pipe.zCoord, true, true);
+			RenderEntityBlock.INSTANCE.renderBlock(renderBox, pipe.getWorldObj(), 0, 0, 0, pipe.xCoord, pipe.yCoord, pipe.zCoord, true, true);
 		}
 
 		RenderHelper.enableStandardItemLighting();
@@ -533,8 +540,8 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 	private void renderGate(TileGenericPipe tile, IIcon icon, int layer, float trim, float translateCenter, float extraDepth) {
 		PipeRenderState state = tile.renderState;
 
-		RenderInfo box = new RenderInfo();
-		box.texture = icon;
+		RenderInfo renderBox = new RenderInfo();
+		renderBox.texture = icon;
 
 		float[][] zeroState = new float[3][2];
 		float min = CoreConstants.PIPE_MIN_POS + trim / 2F;
@@ -564,10 +571,10 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 				MatrixTranformations.transform(rotated, direction);
 
 				if (layer != 0) {
-					box.setRenderSingleSide(direction.ordinal());
+					renderBox.setRenderSingleSide(direction.ordinal());
 				}
-				box.setBounds(rotated[0][0], rotated[1][0], rotated[2][0], rotated[0][1], rotated[1][1], rotated[2][1]);
-				RenderEntityBlock.INSTANCE.renderBlock(box, tile.getWorldObj(), 0, 0, 0, tile.xCoord, tile.yCoord, tile.zCoord, true, true);
+				renderBox.setBounds(rotated[0][0], rotated[1][0], rotated[2][0], rotated[0][1], rotated[1][1], rotated[2][1]);
+				RenderEntityBlock.INSTANCE.renderBlock(renderBox, tile.getWorldObj(), 0, 0, 0, tile.xCoord, tile.yCoord, tile.zCoord, true, true);
 				GL11.glPopMatrix();
 			}
 		}
@@ -603,8 +610,6 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 
 		return targetOrientation.getOpposite() == direction;
 	}
-
-	public static final ResourceLocation STRIPES_TEXTURE = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_ENTITIES + "/stripes.png");
 
 	private void renderPower(Pipe<PipeTransportPower> pipe, double x, double y, double z) {
 		initializeDisplayPowerList(pipe.container.getWorldObj());

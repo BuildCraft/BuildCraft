@@ -8,18 +8,20 @@
  */
 package buildcraft.factory.gui;
 
+import org.lwjgl.opengl.GL11;
+
+import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.World;
+
 import buildcraft.core.DefaultProps;
 import buildcraft.core.gui.GuiBuildCraft;
 import buildcraft.core.utils.StringUtils;
 import buildcraft.factory.TileAutoWorkbench;
-import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.World;
-import org.lwjgl.opengl.GL11;
 
 public class GuiAutoCrafting extends GuiBuildCraft {
 
-    public static final ResourceLocation TEXTURE = new ResourceLocation("buildcraft",DefaultProps.TEXTURE_PATH_GUI + "/autobench.png");
+	public static final ResourceLocation TEXTURE = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_GUI + "/autobench.png");
 	private TileAutoWorkbench bench;
 
 	public GuiAutoCrafting(InventoryPlayer inventoryplayer, World world, TileAutoWorkbench tile) {

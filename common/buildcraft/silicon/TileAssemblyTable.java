@@ -19,8 +19,12 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+
+import cpw.mods.fml.common.FMLCommonHandler;
+
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.ForgeDirection;
+
 import buildcraft.BuildCraftSilicon;
 import buildcraft.api.gates.IAction;
 import buildcraft.core.DefaultProps;
@@ -31,12 +35,11 @@ import buildcraft.core.recipes.AssemblyRecipeManager;
 import buildcraft.core.recipes.AssemblyRecipeManager.AssemblyRecipe;
 import buildcraft.core.utils.StringUtils;
 import buildcraft.core.utils.Utils;
-import cpw.mods.fml.common.FMLCommonHandler;
 
 public class TileAssemblyTable extends TileLaserTableBase implements IMachine, IInventory {
 
-	Set<AssemblyRecipe> plannedOutput = new LinkedHashSet<AssemblyRecipe>();
 	public AssemblyRecipe currentRecipe;
+	private Set<AssemblyRecipe> plannedOutput = new LinkedHashSet<AssemblyRecipe>();
 
 	public static class SelectionMessage {
 

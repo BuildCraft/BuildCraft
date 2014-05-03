@@ -8,6 +8,20 @@
  */
 package buildcraft.transport.gui;
 
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.util.Arrays;
+
+import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.ICrafting;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.Slot;
+
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
 import buildcraft.BuildCraftTransport;
 import buildcraft.core.gui.BuildCraftContainer;
 import buildcraft.core.gui.GuiBuildCraft;
@@ -15,23 +29,11 @@ import buildcraft.core.gui.slots.SlotPhantom;
 import buildcraft.core.gui.tooltips.ToolTip;
 import buildcraft.core.gui.tooltips.ToolTipLine;
 import buildcraft.core.gui.widgets.ButtonWidget;
-import buildcraft.core.network.IGuiReturnHandler;
 import buildcraft.core.network.PacketGuiReturn;
 import buildcraft.core.utils.EnumColor;
 import buildcraft.core.utils.RevolvingList;
 import buildcraft.core.utils.StringUtils;
 import buildcraft.transport.pipes.PipeItemsEmzuli;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.util.Arrays;
-import net.minecraft.client.renderer.texture.TextureMap;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.ICrafting;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.Slot;
 
 public class ContainerEmzuliPipe extends BuildCraftContainer {
 
@@ -87,8 +89,9 @@ public class ContainerEmzuliPipe extends BuildCraftContainer {
 			ICrafting player = (ICrafting) crafters.get(i);
 
 			for (int slot = 0; slot < pipe.slotColors.length; slot++) {
-				if (prevSlotColors[slot] != pipe.slotColors[slot])
+				if (prevSlotColors[slot] != pipe.slotColors[slot]) {
 					player.sendProgressBarUpdate(this, slot, pipe.slotColors[slot]);
+				}
 			}
 		}
 		System.arraycopy(pipe.slotColors, 0, prevSlotColors, 0, pipe.slotColors.length);
@@ -109,6 +112,19 @@ public class ContainerEmzuliPipe extends BuildCraftContainer {
 
 		private final int slot;
 		private RevolvingList<EnumColor> colors = new RevolvingList<EnumColor>();
+
+		private ToolTip toolTip = new ToolTip(500) {
+			@Override
+			public void refresh() {
+				toolTip.clear();
+				EnumColor color = colors.getCurrent();
+				if (color != null) {
+					toolTip.add(new ToolTipLine(String.format(StringUtils.localize("gui.pipes.emzuli.paint"), color.getLocalizedName())));
+				} else {
+					toolTip.add(new ToolTipLine(StringUtils.localize("gui.pipes.emzuli.nopaint")));
+				}
+			}
+		};
 
 		public PaintWidget(int slot, int x, int y) {
 			super(x, y, 176, 0, 20, 20);
@@ -148,7 +164,7 @@ public class ContainerEmzuliPipe extends BuildCraftContainer {
 				data.writeByte(slot);
 				EnumColor color = colors.getCurrent();
 				data.writeByte(color == null ? 0 : color.ordinal() + 1);
-				PacketGuiReturn pkt = new PacketGuiReturn((IGuiReturnHandler) pipe.getContainer(), bytes.toByteArray());
+				PacketGuiReturn pkt = new PacketGuiReturn(pipe.getContainer(), bytes.toByteArray());
 				pkt.sendPacket();
 			} catch (IOException ex) {
 			}
@@ -158,16 +174,5 @@ public class ContainerEmzuliPipe extends BuildCraftContainer {
 		public ToolTip getToolTip() {
 			return toolTip;
 		}
-		private ToolTip toolTip = new ToolTip(500) {
-			@Override
-			public void refresh() {
-				toolTip.clear();
-				EnumColor color = colors.getCurrent();
-				if (color != null)
-					toolTip.add(new ToolTipLine(String.format(StringUtils.localize("gui.pipes.emzuli.paint"), color.getLocalizedName())));
-				else
-					toolTip.add(new ToolTipLine(StringUtils.localize("gui.pipes.emzuli.nopaint")));
-			}
-		};
 	}
 }

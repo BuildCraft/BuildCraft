@@ -13,7 +13,9 @@ import java.util.List;
 
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
+
 import net.minecraftforge.common.util.ForgeDirection;
+
 import buildcraft.api.core.IInvSlot;
 import buildcraft.core.inventory.filters.IStackFilter;
 
@@ -48,22 +50,26 @@ public class TransactorSimple extends Transactor {
 	}
 
 	private int tryPut(ItemStack stack, List<IInvSlot> slots, int injected, boolean doAdd) {
-		if (injected >= stack.stackSize) {
-			return injected;
+		int realInjected = injected;
+
+		if (realInjected >= stack.stackSize) {
+			return realInjected;
 		}
+
 		for (IInvSlot slot : slots) {
 			ItemStack stackInSlot = slot.getStackInSlot();
 			if (stackInSlot == null || StackHelper.canStacksMerge(stackInSlot, stack)) {
-				int used = addToSlot(slot, stack, injected, doAdd);
+				int used = addToSlot(slot, stack, realInjected, doAdd);
 				if (used > 0) {
-					injected += used;
-					if (injected >= stack.stackSize) {
-						return injected;
+					realInjected += used;
+					if (realInjected >= stack.stackSize) {
+						return realInjected;
 					}
 				}
 			}
 		}
-		return injected;
+
+		return realInjected;
 	}
 
 	/**

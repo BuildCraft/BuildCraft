@@ -10,11 +10,11 @@ package buildcraft.builders.gui;
 
 import java.util.Collection;
 
+import org.lwjgl.opengl.GL11;
+
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-
-import org.lwjgl.opengl.GL11;
 
 import buildcraft.builders.TileBuilder;
 import buildcraft.core.DefaultProps;
@@ -26,8 +26,9 @@ public class GuiBuilder extends GuiAdvancedInterface {
 
 	private static final ResourceLocation TEXTURE = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_GUI + "/builder.png");
 	private static final ResourceLocation BLUEPRINT_TEXTURE = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_GUI + "/builder_blueprint.png");
-	IInventory playerInventory;
-	TileBuilder builder;
+	private IInventory playerInventory;
+	private TileBuilder builder;
+	private int inventoryRows = 6;
 
 	public GuiBuilder(IInventory playerInventory, TileBuilder builder) {
 		super(new ContainerBuilder(playerInventory, builder), builder, TEXTURE);
@@ -96,5 +97,4 @@ public class GuiBuilder extends GuiAdvancedInterface {
 
 		drawBackgroundSlots();
 	}
-	int inventoryRows = 6;
 }

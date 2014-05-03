@@ -18,6 +18,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+
 import buildcraft.core.utils.Utils;
 
 public abstract class BlockBuildCraft extends BlockContainer {
@@ -53,8 +54,10 @@ public abstract class BlockBuildCraft extends BlockContainer {
 	@Override
 	public int getLightValue(IBlockAccess world, int x, int y, int z) {
 		TileEntity tile = world.getTileEntity(x, y, z);
-		if (tile instanceof IMachine && ((IMachine) tile).isActive())
+		if (tile instanceof IMachine && ((IMachine) tile).isActive()) {
 			return super.getLightValue(world, x, y, z) + 8;
-		return super.getLightValue(world, x, y, z);
+		} else {
+			return super.getLightValue(world, x, y, z);
+		}
 	}
 }

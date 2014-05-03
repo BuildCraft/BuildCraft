@@ -18,14 +18,16 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
+
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.IItemPipe;
 import buildcraft.core.ItemBuildCraft;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 public class ItemPipe extends ItemBuildCraft implements IItemPipe {
 
@@ -38,8 +40,14 @@ public class ItemPipe extends ItemBuildCraft implements IItemPipe {
 	}
 
 	@Override
-	public boolean onItemUse(ItemStack itemstack, EntityPlayer entityplayer, World world, int i, int j, int k, int side, float par8, float par9, float par10) {
+	public boolean onItemUse(ItemStack itemstack, EntityPlayer entityplayer, World world, int x, int y, int z,
+			int sideI, float par8, float par9, float par10) {
+		int side = sideI;
 		Block block = BuildCraftTransport.genericPipeBlock;
+
+		int i = x;
+		int j = y;
+		int k = z;
 
 		Block worldBlock = world.getBlock(i, j, k);
 

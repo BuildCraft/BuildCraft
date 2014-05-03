@@ -12,13 +12,10 @@ import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+
 import buildcraft.core.EntityBlock;
 
 public class EntityMechanicalArm extends Entity {
-	EntityBlock xArm, yArm, zArm, head;
-
-	boolean inProgressionXZ = false;
-	boolean inProgressionY = false;
 
 	protected TileQuarry parent;
 
@@ -28,7 +25,10 @@ public class EntityMechanicalArm extends Entity {
 	private double yRoot;
 	private double zRoot;
 
+	private boolean inProgressionXZ = false;
+	private boolean inProgressionY = false;
 	private int headX, headY, headZ;
+	private EntityBlock xArm, yArm, zArm, head;
 
 	public EntityMechanicalArm(World world) {
 		super(world);
@@ -129,12 +129,12 @@ public class EntityMechanicalArm extends Entity {
 	}
 
 	public void updatePosition() {
-		double[] head = getHead();
-		this.xArm.setPosition(xRoot, yRoot, head[2] + 0.25);
-		this.yArm.jSize = yRoot - head[1] - 1;
-		this.yArm.setPosition(head[0] + 0.25, head[1] + 1, head[2] + 0.25);
-		this.zArm.setPosition(head[0] + 0.25, yRoot, zRoot);
-		this.head.setPosition(head[0] + 0.4, head[1], head[2] + 0.4);
+		double[] headT = getHead();
+		this.xArm.setPosition(xRoot, yRoot, headT[2] + 0.25);
+		this.yArm.jSize = yRoot - headT[1] - 1;
+		this.yArm.setPosition(headT[0] + 0.25, headT[1] + 1, headT[2] + 0.25);
+		this.zArm.setPosition(headT[0] + 0.25, yRoot, zRoot);
+		this.head.setPosition(headT[0] + 0.4, headT[1], headT[2] + 0.4);
 	}
 
 	@Override

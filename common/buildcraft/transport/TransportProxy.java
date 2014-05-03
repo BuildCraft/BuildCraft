@@ -8,9 +8,10 @@
  */
 package buildcraft.transport;
 
-import buildcraft.BuildCraftTransport;
 import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.registry.GameRegistry;
+
+import buildcraft.BuildCraftTransport;
 
 public class TransportProxy {
 	@SidedProxy(clientSide = "buildcraft.transport.TransportProxyClient", serverSide = "buildcraft.transport.TransportProxy")

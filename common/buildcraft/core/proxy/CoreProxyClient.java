@@ -10,6 +10,8 @@ package buildcraft.core.proxy;
 
 import java.util.List;
 
+import com.mojang.authlib.GameProfile;
+
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
@@ -25,7 +27,12 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.IChatComponent;
 import net.minecraft.world.World;
+
+import cpw.mods.fml.client.FMLClientHandler;
+import cpw.mods.fml.client.registry.RenderingRegistry;
+
 import net.minecraftforge.client.MinecraftForgeClient;
+
 import buildcraft.BuildCraftCore;
 import buildcraft.core.EntityBlock;
 import buildcraft.core.LaserKind;
@@ -36,11 +43,6 @@ import buildcraft.core.render.RenderingMarkers;
 import buildcraft.core.robots.EntityRobot;
 import buildcraft.core.robots.EntityRobotBuilder;
 import buildcraft.transport.render.TileEntityPickupFX;
-
-import com.mojang.authlib.GameProfile;
-
-import cpw.mods.fml.client.FMLClientHandler;
-import cpw.mods.fml.client.registry.RenderingRegistry;
 
 public class CoreProxyClient extends CoreProxy {
 

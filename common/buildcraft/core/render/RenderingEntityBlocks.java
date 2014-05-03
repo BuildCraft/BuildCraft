@@ -8,12 +8,10 @@
  */
 package buildcraft.core.render;
 
-import buildcraft.BuildCraftCore;
-import buildcraft.core.CoreConstants;
-import buildcraft.core.IInventoryRenderer;
-import buildcraft.core.utils.Utils;
-import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
 import java.util.HashMap;
+
+import org.lwjgl.opengl.GL11;
+
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderBlocks;
@@ -21,13 +19,22 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.IBlockAccess;
-import org.lwjgl.opengl.GL11;
+
+import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
+
+import buildcraft.BuildCraftCore;
+import buildcraft.core.CoreConstants;
+import buildcraft.core.IInventoryRenderer;
+import buildcraft.core.utils.Utils;
 
 public class RenderingEntityBlocks implements ISimpleBlockRenderingHandler {
 
+	public static HashMap<EntityRenderIndex, IInventoryRenderer> blockByEntityRenders = new HashMap<EntityRenderIndex, IInventoryRenderer>();
 	private static final ResourceLocation BLOCK_TEXTURE = TextureMap.locationBlocksTexture;
 
 	public static class EntityRenderIndex {
+		Block block;
+		int damage;
 
 		public EntityRenderIndex(Block block, int damage) {
 			this.block = block;
@@ -41,17 +48,15 @@ public class RenderingEntityBlocks implements ISimpleBlockRenderingHandler {
 
 		@Override
 		public boolean equals(Object o) {
-			if (!(o instanceof EntityRenderIndex))
+			if (!(o instanceof EntityRenderIndex)) {
 				return false;
+			}
 
 			EntityRenderIndex i = (EntityRenderIndex) o;
 
 			return i.block == block && i.damage == damage;
 		}
-		Block block;
-		int damage;
 	}
-	public static HashMap<EntityRenderIndex, IInventoryRenderer> blockByEntityRenders = new HashMap<EntityRenderIndex, IInventoryRenderer>();
 
 	@Override
 	public void renderInventoryBlock(Block block, int metadata, int modelID, RenderBlocks renderer) {

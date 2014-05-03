@@ -8,14 +8,12 @@
  */
 package buildcraft.core.fluids;
 
-import buildcraft.core.TileBuffer;
-import buildcraft.core.inventory.InvUtils;
-import buildcraft.core.utils.Utils;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
@@ -24,7 +22,16 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidHandler;
 import net.minecraftforge.fluids.IFluidTank;
 
-public class FluidUtils {
+import buildcraft.core.TileBuffer;
+import buildcraft.core.inventory.InvUtils;
+
+public final class FluidUtils {
+
+	/**
+	 * Deactivate constructor
+	 */
+	private FluidUtils() {
+	}
 
 	public static boolean handleRightClick(IFluidHandler tank, ForgeDirection side, EntityPlayer player, boolean fill, boolean drain) {
 		if (player == null) {
@@ -56,8 +63,9 @@ public class FluidUtils {
 					if (liquid != null) {
 
 						if (current.stackSize > 1) {
-							if (!player.inventory.addItemStackToInventory(filled))
+							if (!player.inventory.addItemStackToInventory(filled)) {
 								return false;
+							}
 							player.inventory.setInventorySlotContents(player.inventory.currentItem, InvUtils.consumeItem(current));
 							player.inventory.markDirty();
 						} else {
@@ -76,10 +84,12 @@ public class FluidUtils {
 	}
 
 	public static Block getFluidBlock(Fluid fluid, boolean moving) {
-		if (fluid == FluidRegistry.WATER)
+		if (fluid == FluidRegistry.WATER) {
 			return moving ? Blocks.flowing_water : Blocks.water;
-		if (fluid == FluidRegistry.LAVA)
+		}
+		if (fluid == FluidRegistry.LAVA) {
 			return moving ? Blocks.flowing_lava : Blocks.lava;
+		}
 		return fluid.getBlock();
 	}
 
@@ -94,8 +104,9 @@ public class FluidUtils {
 					if (used > 0) {
 						amountToPush -= used;
 						tank.drain(used, true);
-						if (amountToPush <= 0)
+						if (amountToPush <= 0) {
 							return;
+						}
 					}
 				}
 			}

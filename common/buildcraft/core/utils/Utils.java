@@ -8,9 +8,6 @@
  */
 package buildcraft.core.utils;
 
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
-
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -18,6 +15,9 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
+
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityLivingBase;
@@ -30,8 +30,12 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+
+import cpw.mods.fml.common.network.internal.FMLProxyPacket;
+
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.ForgeDirection;
+
 import buildcraft.BuildCraftCore;
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.core.Position;
@@ -53,12 +57,17 @@ import buildcraft.core.network.ISynchronizedTile;
 import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.energy.TileEngine;
-import cpw.mods.fml.common.network.internal.FMLProxyPacket;
 
-public class Utils {
+public final class Utils {
 
 	public static final Random RANDOM = new Random();
 	private static final List<ForgeDirection> directions = new ArrayList<ForgeDirection>(Arrays.asList(ForgeDirection.VALID_DIRECTIONS));
+
+	/**
+	 * Deactivate constructor
+	 */
+	private Utils() {
+	}
 
 	/* IINVENTORY HELPERS */
 	/**
@@ -95,8 +104,7 @@ public class Utils {
 	public static ForgeDirection get2dOrientation(EntityLivingBase entityliving) {
 		ForgeDirection[] orientationTable = { ForgeDirection.SOUTH,
 				ForgeDirection.WEST, ForgeDirection.NORTH, ForgeDirection.EAST };
-		int orientationIndex = MathHelper
-				.floor_double((entityliving.rotationYaw + 45.0) / 90.0) & 3;
+		int orientationIndex = MathHelper.floor_double((entityliving.rotationYaw + 45.0) / 90.0) & 3;
 		return orientationTable[orientationIndex];
 	}
 
@@ -106,9 +114,9 @@ public class Utils {
 	 */
 	@Deprecated
 	private static ForgeDirection get2dOrientation(Position pos1, Position pos2) {
-		double Dx = pos1.x - pos2.x;
-		double Dz = pos1.z - pos2.z;
-		double angle = Math.atan2(Dz, Dx) / Math.PI * 180 + 180;
+		double dX = pos1.x - pos2.x;
+		double dZ = pos1.z - pos2.z;
+		double angle = Math.atan2(dZ, dX) / Math.PI * 180 + 180;
 
 		if (angle < 45 || angle > 315) {
 			return ForgeDirection.EAST;
@@ -122,9 +130,9 @@ public class Utils {
 	}
 
 	public static ForgeDirection get3dOrientation(Position pos1, Position pos2) {
-		double Dx = pos1.x - pos2.x;
-		double Dy = pos1.y - pos2.y;
-		double angle = Math.atan2(Dy, Dx) / Math.PI * 180 + 180;
+		double dX = pos1.x - pos2.x;
+		double dY = pos1.y - pos2.y;
+		double angle = Math.atan2(dY, dX) / Math.PI * 180 + 180;
 
 		if (angle > 45 && angle < 135) {
 			return ForgeDirection.UP;
@@ -269,7 +277,7 @@ public class Utils {
 	}
 
 	public static EntityBlock[] createLaserBox(World world, double xMin, double yMin, double zMin, double xMax, double yMax, double zMax, LaserKind kind) {
-		EntityBlock lasers[] = new EntityBlock[12];
+		EntityBlock[] lasers = new EntityBlock[12];
 		Position[] p = new Position[8];
 
 		p[0] = new Position(xMin, yMin, zMin);
@@ -298,7 +306,7 @@ public class Utils {
 	}
 
 	public static LaserData[] createLaserDataBox(double xMin, double yMin, double zMin, double xMax, double yMax, double zMax) {
-		LaserData lasers[] = new LaserData[12];
+		LaserData[] lasers = new LaserData[12];
 		Position[] p = new Position[8];
 
 		p[0] = new Position(xMin, yMin, zMin);

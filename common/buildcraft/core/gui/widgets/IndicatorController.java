@@ -13,13 +13,14 @@ import buildcraft.core.gui.tooltips.ToolTipLine;
 
 public abstract class IndicatorController implements IIndicatorController {
 
+	protected ToolTipLine tip = new ToolTipLine();
+
 	private final ToolTip tips = new ToolTip() {
 		@Override
 		public void refresh() {
 			refreshToolTip();
 		}
 	};
-	protected ToolTipLine tip = new ToolTipLine();
 
 	public IndicatorController() {
 		tips.add(tip);

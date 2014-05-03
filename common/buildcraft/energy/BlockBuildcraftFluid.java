@@ -8,11 +8,6 @@
  */
 package buildcraft.energy;
 
-import buildcraft.energy.render.EntityDropParticleFX;
-import cpw.mods.fml.client.FMLClientHandler;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-
 import java.util.Random;
 
 import net.minecraft.block.Block;
@@ -22,23 +17,30 @@ import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+
+import cpw.mods.fml.client.FMLClientHandler;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.BlockFluidClassic;
 import net.minecraftforge.fluids.Fluid;
+
+import buildcraft.energy.render.EntityDropParticleFX;
 
 public class BlockBuildcraftFluid extends BlockFluidClassic {
 
 	protected float particleRed;
 	protected float particleGreen;
 	protected float particleBlue;
-
-	public BlockBuildcraftFluid(Fluid fluid, Material material) {
-		super(fluid, material);
-	}
 	@SideOnly(Side.CLIENT)
 	protected IIcon[] theIcon;
 	protected boolean flammable;
 	protected int flammability = 0;
+
+	public BlockBuildcraftFluid(Fluid fluid, Material material) {
+		super(fluid, material);
+	}
 
 	@Override
 	public IIcon getIcon(int side, int meta) {
@@ -48,7 +50,8 @@ public class BlockBuildcraftFluid extends BlockFluidClassic {
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void registerBlockIcons(IIconRegister iconRegister) {
-		this.theIcon = new IIcon[] { iconRegister.registerIcon("buildcraft:" + fluidName + "_still"), iconRegister.registerIcon("buildcraft:" + fluidName + "_flow") };
+		this.theIcon = new IIcon[] {iconRegister.registerIcon("buildcraft:" + fluidName + "_still"),
+				iconRegister.registerIcon("buildcraft:" + fluidName + "_flow")};
 	}
 
 	@Override
@@ -105,10 +108,10 @@ public class BlockBuildcraftFluid extends BlockFluidClassic {
 		if (rand.nextInt(10) == 0
 				&& World.doesBlockHaveSolidTopSurface(world, x, y - 1, z)
 				&& !world.getBlock(x, y - 2, z).getMaterial().blocksMovement()) {
-			
-			double px = (double) ((float) x + rand.nextFloat());
-			double py = (double) y - 1.05D;
-			double pz = (double) ((float) z + rand.nextFloat());
+
+			double px = x + rand.nextFloat();
+			double py = y - 1.05D;
+			double pz = z + rand.nextFloat();
 
 			EntityFX fx = new EntityDropParticleFX(world, px, py, pz, particleRed, particleGreen, particleBlue);
 			FMLClientHandler.instance().getClient().effectRenderer.addEffect(fx);
@@ -117,15 +120,17 @@ public class BlockBuildcraftFluid extends BlockFluidClassic {
 
 	@Override
 	public boolean canDisplace(IBlockAccess world, int x, int y, int z) {
-		if (world.getBlock(x, y, z).getMaterial().isLiquid())
+		if (world.getBlock(x, y, z).getMaterial().isLiquid()) {
 			return false;
+		}
 		return super.canDisplace(world, x, y, z);
 	}
 
 	@Override
 	public boolean displaceIfPossible(World world, int x, int y, int z) {
-		if (world.getBlock(x, y, z).getMaterial().isLiquid())
+		if (world.getBlock(x, y, z).getMaterial().isLiquid()) {
 			return false;
+		}
 		return super.displaceIfPossible(world, x, y, z);
 	}
 }

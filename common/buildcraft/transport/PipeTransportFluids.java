@@ -12,6 +12,7 @@ import java.util.BitSet;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
@@ -19,6 +20,7 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
+
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.SafeTimeTracker;
@@ -26,7 +28,6 @@ import buildcraft.api.gates.ITrigger;
 import buildcraft.api.transport.IPipeTile.PipeType;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.IMachine;
-import buildcraft.core.proxy.CoreProxy;
 import buildcraft.transport.network.PacketFluidUpdate;
 
 public class PipeTransportFluids extends PipeTransport implements IFluidHandler {
@@ -44,12 +45,14 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 
 		@Override
 		public int fill(FluidStack resource, boolean doFill) {
-			if (resource == null)
+			if (resource == null) {
 				return 0;
+			}
 
 			int maxToFill = Math.min(resource.amount, flowRate - incomming[currentTime]);
-			if (maxToFill <= 0)
+			if (maxToFill <= 0) {
 				return 0;
+			}
 
 			FluidStack stackToFill = resource.copy();
 			stackToFill.amount = maxToFill;
@@ -65,12 +68,15 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 		@Override
 		public FluidStack drain(int maxDrain, boolean doDrain) {
 			int maxToDrain = getAvailable();
-			if (maxToDrain > maxDrain)
+			if (maxToDrain > maxDrain) {
 				maxToDrain = maxDrain;
-			if (maxToDrain > flowRate)
+			}
+			if (maxToDrain > flowRate) {
 				maxToDrain = flowRate;
-			if (maxToDrain <= 0)
+			}
+			if (maxToDrain <= 0) {
 				return null;
+			}
 			return super.drain(maxToDrain, doDrain);
 		}
 
@@ -171,18 +177,21 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 	public boolean canReceiveFluid(ForgeDirection o) {
 		TileEntity entity = container.getTile(o);
 
-		if (!container.isPipeConnected(o))
+		if (!container.isPipeConnected(o)) {
 			return false;
+		}
 
 		if (entity instanceof TileGenericPipe) {
 			Pipe pipe = ((TileGenericPipe) entity).pipe;
 
-			if (pipe == null || !pipe.inputOpen(o.getOpposite()))
+			if (pipe == null || !pipe.inputOpen(o.getOpposite())) {
 				return false;
+			}
 		}
 
-		if (entity instanceof IFluidHandler)
+		if (entity instanceof IFluidHandler) {
 			return true;
+		}
 
 		return false;
 	}
@@ -229,40 +238,43 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 			}
 		}
 
-		FluidStack[] renderCache = this.renderCache.clone();
-		int[] colorRenderCache = this.colorRenderCache.clone();
+		FluidStack[] renderCacheCopy = this.renderCache.clone();
+		int[] colorRenderCacheCopy = this.colorRenderCache.clone();
 
 		for (ForgeDirection dir : orientations) {
 			FluidStack current = internalTanks[dir.ordinal()].getFluid();
-			FluidStack prev = renderCache[dir.ordinal()];
+			FluidStack prev = renderCacheCopy[dir.ordinal()];
 
-			if (current != null && current.getFluid() == null)
+			if (current != null && current.getFluid() == null) {
 				continue;
+			}
 
-			if (prev == null && current == null)
+			if (prev == null && current == null) {
 				continue;
+			}
 
 			if (prev == null ^ current == null) {
 				changed = true;
 				if (current != null) {
-					renderCache[dir.ordinal()] = current.copy();
-					colorRenderCache[dir.ordinal()] = current.getFluid().getColor(current);
+					renderCacheCopy[dir.ordinal()] = current.copy();
+					colorRenderCacheCopy[dir.ordinal()] = current.getFluid().getColor(current);
 				} else {
-					renderCache[dir.ordinal()] = null;
-					colorRenderCache[dir.ordinal()] = 0xFFFFFF;
+					renderCacheCopy[dir.ordinal()] = null;
+					colorRenderCacheCopy[dir.ordinal()] = 0xFFFFFF;
 				}
 				delta.set(dir.ordinal() * PacketFluidUpdate.FLUID_DATA_NUM + PacketFluidUpdate.FLUID_ID_BIT);
 				delta.set(dir.ordinal() * PacketFluidUpdate.FLUID_DATA_NUM + PacketFluidUpdate.FLUID_AMOUNT_BIT);
 				continue;
 			}
 
-			if (prev == null || current == null)
+			if (prev == null || current == null) {
 				continue;
+			}
 
 			if (!prev.equals(current) || initPacket) {
 				changed = true;
-				renderCache[dir.ordinal()] = current;
-				colorRenderCache[dir.ordinal()] = current.getFluid().getColor(current);
+				renderCacheCopy[dir.ordinal()] = current;
+				colorRenderCacheCopy[dir.ordinal()] = current.getFluid().getColor(current);
 				delta.set(dir.ordinal() * PacketFluidUpdate.FLUID_DATA_NUM + PacketFluidUpdate.FLUID_ID_BIT);
 			}
 
@@ -274,20 +286,20 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 
 			if (prev.amount != displayQty || initPacket) {
 				changed = true;
-				renderCache[dir.ordinal()].amount = displayQty;
+				renderCacheCopy[dir.ordinal()].amount = displayQty;
 				delta.set(dir.ordinal() * PacketFluidUpdate.FLUID_DATA_NUM + PacketFluidUpdate.FLUID_AMOUNT_BIT);
 			}
 		}
 
 		if (persistChange) {
-			this.renderCache = renderCache;
-			this.colorRenderCache = colorRenderCache;
+			this.renderCache = renderCacheCopy;
+			this.colorRenderCache = colorRenderCacheCopy;
 		}
 
 		if (changed || initPacket) {
 			PacketFluidUpdate packet = new PacketFluidUpdate(container.xCoord, container.yCoord, container.zCoord, initPacket);
-			packet.renderCache = renderCache;
-			packet.colorRenderCache = colorRenderCache;
+			packet.renderCache = renderCacheCopy;
+			packet.colorRenderCache = colorRenderCacheCopy;
 			packet.delta = delta;
 			return packet;
 		}
@@ -371,8 +383,9 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 		// Split liquids moving to output equally based on flowrate, how much each side can accept and available liquid
 		FluidStack pushStack = internalTanks[ForgeDirection.UNKNOWN.ordinal()].getFluid();
 		int totalAvailable = internalTanks[ForgeDirection.UNKNOWN.ordinal()].getAvailable();
-		if (totalAvailable < 1)
+		if (totalAvailable < 1) {
 			return;
+		}
 		if (pushStack != null) {
 			FluidStack testStack = pushStack.copy();
 			testStack.amount = flowRate;
@@ -499,16 +512,18 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 	public boolean canPipeConnect(TileEntity tile, ForgeDirection side) {
 		if (tile instanceof TileGenericPipe) {
 			Pipe pipe2 = ((TileGenericPipe) tile).pipe;
-			if (BlockGenericPipe.isValid(pipe2) && !(pipe2.transport instanceof PipeTransportFluids))
+			if (BlockGenericPipe.isValid(pipe2) && !(pipe2.transport instanceof PipeTransportFluids)) {
 				return false;
+			}
 		}
 
 		if (tile instanceof IFluidHandler) {
 			IFluidHandler liq = (IFluidHandler) tile;
 
 			FluidTankInfo[] tankInfo = liq.getTankInfo(side.getOpposite());
-			if (tankInfo != null && tankInfo.length > 0)
+			if (tankInfo != null && tankInfo.length > 0) {
 				return true;
+			}
 		}
 
 		return tile instanceof TileGenericPipe || (tile instanceof IMachine && ((IMachine) tile).manageFluids());

@@ -16,31 +16,38 @@ import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
+
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
+
 import buildcraft.api.core.JavaTools;
 
-public class SchematicRegistry {
+public final class SchematicRegistry {
 
 	public static double BREAK_ENERGY = 10;
 	public static final double BUILD_ENERGY = 20;
 
-	private static class SchematicConstructor {
-		Class <? extends SchematicEntity> clas;
-		Object [] params;
-	}
+	private static final HashSet<Block> explicitSchematicBlocks = new HashSet<Block>();
 
-	private static final HashSet <Block> explicitSchematicBlocks = new HashSet<Block>();
-
-	private static final HashMap <Block, SchematicConstructor> schematicBlocks =
+	private static final HashMap<Block, SchematicConstructor> schematicBlocks =
 			new HashMap<Block, SchematicConstructor>();
 
-	private static final HashMap <Class <? extends Entity>, SchematicConstructor> schematicEntities =
-			new HashMap<Class <? extends Entity>, SchematicConstructor>();
+	private static final HashMap<Class<? extends Entity>, SchematicConstructor> schematicEntities = new HashMap<Class<? extends Entity>, SchematicConstructor>();
 
-	private static final HashSet <String> modsSupporting = new HashSet<String>();
-	private static final HashSet <String> modsForbidden = new HashSet<String>();
-	private static final HashSet <String> blocksForbidden = new HashSet<String>();
+	private static final HashSet<String> modsSupporting = new HashSet<String>();
+	private static final HashSet<String> modsForbidden = new HashSet<String>();
+	private static final HashSet<String> blocksForbidden = new HashSet<String>();
+
+	/**
+	 * Deactivate constructor
+	 */
+	private SchematicRegistry() {
+	}
+
+	private static class SchematicConstructor {
+		Class<? extends SchematicEntity> clas;
+		Object [] params;
+	}
 
 	public static void registerSchematicBlock (Block block, Class clas, Object ... params) {
 		explicitSchematicBlocks.add(block);
@@ -99,7 +106,7 @@ public class SchematicRegistry {
 		return null;
 	}
 
-	public static SchematicEntity newSchematicEntity (Class <? extends Entity> entityClass) {
+	public static SchematicEntity newSchematicEntity(Class<? extends Entity> entityClass) {
 		if (!schematicEntities.containsKey(entityClass)) {
 			return null;
 		}
@@ -148,18 +155,18 @@ public class SchematicRegistry {
 				"blocks that should be excluded from the builder.");
 
 		for (String id : excludedMods.getStringList()) {
-			id = JavaTools.stripSurroundingQuotes (id.trim());
+			String strippedId = JavaTools.stripSurroundingQuotes(id.trim());
 
-			if (id.length() > 0) {
-				modsForbidden.add(id);
+			if (strippedId.length() > 0) {
+				modsForbidden.add(strippedId);
 			}
 		}
 
 		for (String id : excludedBlocks.getStringList()) {
-			id = JavaTools.stripSurroundingQuotes (id.trim());
+			String strippedId = JavaTools.stripSurroundingQuotes(id.trim());
 
-			if (id.length() > 0) {
-				blocksForbidden.add(id);
+			if (strippedId.length() > 0) {
+				blocksForbidden.add(strippedId);
 			}
 		}
 	}

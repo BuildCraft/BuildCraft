@@ -15,7 +15,9 @@ import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+
 import net.minecraftforge.common.util.Constants;
+
 import buildcraft.BuildCraftBuilders;
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.MappingRegistry;
@@ -32,25 +34,25 @@ public class BuildingItem implements IBuilder {
 	public Position origin, destination;
 
 	@NetworkData
-	double lifetime = 0;
-
-	@NetworkData
-	public LinkedList <StackAtPosition> stacksToDisplay = new LinkedList<StackAtPosition>();
+	public LinkedList<StackAtPosition> stacksToDisplay = new LinkedList<StackAtPosition>();
 
 	public Position posDisplay = new Position();
 	public boolean isDone = false;
-
-	long previousUpdate;
-	double lifetimeDisplay = 0;
-	double maxLifetime = 0;
-	private boolean initialized = false;
-	double vx, vy, vz;
-	double maxHeight;
 
 	public BuildingSlot slotToBuild;
 	public IBuilderContext context;
 
 	public double receivedProgress = 0;
+
+	private long previousUpdate;
+	private double lifetimeDisplay = 0;
+	private double maxLifetime = 0;
+	private boolean initialized = false;
+	private double vx, vy, vz;
+	private double maxHeight;
+
+	@NetworkData
+	private double lifetime = 0;
 
 	public void initialize () {
 		if (!initialized) {
@@ -62,7 +64,7 @@ public class BuildingItem implements IBuilder {
 
 			maxLifetime = size * 5.0;
 
-			maxHeight = (5.0 + (destination.y - origin.y) / 2.0);
+			maxHeight = 5.0 + (destination.y - origin.y) / 2.0;
 
 			// the below computation is an approximation of the distance to
 			// travel for the object. It really follows a sinus, but we compute
@@ -165,9 +167,9 @@ public class BuildingItem implements IBuilder {
 
 	private void build() {
 		if (slotToBuild != null) {
-			int destX = (int)Math.floor(destination.x);
-			int destY = (int)Math.floor(destination.y);
-			int destZ = (int)Math.floor(destination.z);
+			int destX = (int) Math.floor(destination.x);
+			int destY = (int) Math.floor(destination.y);
+			int destZ = (int) Math.floor(destination.z);
 			Block block = context.world().getBlock(destX, destY, destZ);
 			int meta = context.world().getBlockMetadata(destX, destY, destZ);
 
@@ -185,7 +187,7 @@ public class BuildingItem implements IBuilder {
 		}
 	}
 
-	public LinkedList <StackAtPosition> getStacks () {
+	public LinkedList<StackAtPosition> getStacks() {
 		int d = 0;
 
 		for (StackAtPosition s : stacksToDisplay) {

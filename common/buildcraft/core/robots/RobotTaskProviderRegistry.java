@@ -11,15 +11,21 @@ package buildcraft.core.robots;
 import java.util.ArrayList;
 import java.util.Collections;
 
-public class RobotTaskProviderRegistry {
+public final class RobotTaskProviderRegistry {
+
+	public static int callNb = 0;
 
 	private static ArrayList<IRobotTaskProvider> providers = new ArrayList<IRobotTaskProvider>();
+
+	/**
+	 * Deactivate constructor
+	 */
+	private RobotTaskProviderRegistry() {
+	}
 
 	public static void registerProvider (IRobotTaskProvider provider) {
 		providers.add(provider);
 	}
-
-	public static int callNb = 0;
 
 	public static void scanForTask (EntityRobot robot) {
 		callNb++;

@@ -10,13 +10,15 @@ package buildcraft;
 
 import java.util.EnumMap;
 
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.network.Packet;
+import net.minecraft.world.World;
+
 import cpw.mods.fml.common.network.FMLEmbeddedChannel;
 import cpw.mods.fml.common.network.FMLOutboundHandler;
 import cpw.mods.fml.common.network.FMLOutboundHandler.OutboundTarget;
 import cpw.mods.fml.relauncher.Side;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.network.Packet;
-import net.minecraft.world.World;
+
 import buildcraft.core.network.BuildCraftPacket;
 
 public class BuildCraftMod {

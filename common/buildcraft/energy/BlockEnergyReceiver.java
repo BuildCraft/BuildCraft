@@ -11,8 +11,8 @@ package buildcraft.energy;
 import net.minecraft.block.material.Material;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+
 import buildcraft.core.BlockBuildCraft;
-import buildcraft.core.CreativeTabBuildCraft;
 
 public class BlockEnergyReceiver extends BlockBuildCraft {
 

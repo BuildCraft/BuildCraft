@@ -8,21 +8,18 @@
  */
 package buildcraft.transport;
 
-import buildcraft.core.utils.StringUtils;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.google.common.base.Splitter;
-import com.google.common.collect.Iterables;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
+import buildcraft.core.utils.StringUtils;
 
 @SideOnly(Side.CLIENT)
-public class PipeToolTipManager {
+public final class PipeToolTipManager {
 
 	private static final Map<Class<? extends Pipe>, String> toolTips = new HashMap<Class<? extends Pipe>, String>();
 
@@ -30,6 +27,12 @@ public class PipeToolTipManager {
 		for (Map.Entry<Class<? extends Pipe>, Integer> pipe : PipeTransportPower.powerCapacities.entrySet()) {
 			PipeToolTipManager.addToolTip(pipe.getKey(), String.format("%d MJ/t", pipe.getValue()));
 		}
+	}
+
+	/**
+	 * Deactivate constructor
+	 */
+	private PipeToolTipManager() {
 	}
 
 	public static void addToolTip(Class<? extends Pipe> pipe, String toolTip) {
@@ -47,8 +50,9 @@ public class PipeToolTipManager {
 			   }
 			}
 		String tip = toolTips.get(pipe);
-		if (tip != null)
+		if (tip != null) {
 			tips.add(tip);
+		}
 		return tips;
 	}
 }

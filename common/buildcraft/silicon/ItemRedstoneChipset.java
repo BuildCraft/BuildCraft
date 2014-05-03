@@ -16,12 +16,13 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
-import buildcraft.BuildCraftSilicon;
-import buildcraft.core.CreativeTabBuildCraft;
-import buildcraft.core.ItemBuildCraft;
+
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+
+import buildcraft.BuildCraftSilicon;
+import buildcraft.core.ItemBuildCraft;
 
 public class ItemRedstoneChipset extends ItemBuildCraft {
 
@@ -50,8 +51,9 @@ public class ItemRedstoneChipset extends ItemBuildCraft {
 		}
 
 		public static Chipset fromOrdinal(int ordinal) {
-			if (ordinal < 0 || ordinal >= VALUES.length)
+			if (ordinal < 0 || ordinal >= VALUES.length) {
 				return RED;
+			}
 			return VALUES[ordinal];
 		}
 	}

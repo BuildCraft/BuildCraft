@@ -14,7 +14,12 @@ import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
 import net.minecraftforge.common.util.ForgeDirection;
+
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.core.Position;
@@ -27,8 +32,6 @@ import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportItems;
 import buildcraft.transport.TravelingItem;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 public class PipeItemsWood extends Pipe<PipeTransportItems> {
 
@@ -100,7 +103,7 @@ public class PipeItemsWood extends Pipe<PipeTransportItems> {
 	public void updateEntity () {
 		super.updateEntity();
 
-		if(container.getWorldObj().isRemote) {
+		if (container.getWorldObj().isRemote) {
 			return;
 		}
 

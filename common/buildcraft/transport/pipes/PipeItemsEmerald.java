@@ -9,6 +9,7 @@
 package buildcraft.transport.pipes;
 
 import io.netty.buffer.ByteBuf;
+
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
@@ -16,7 +17,9 @@ import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+
 import net.minecraftforge.common.util.ForgeDirection;
+
 import buildcraft.BuildCraftTransport;
 import buildcraft.core.GuiIds;
 import buildcraft.core.inventory.InvUtils;
@@ -134,7 +137,7 @@ public class PipeItemsEmerald extends PipeItemsWood implements IClientState, IGu
 				stack = inventory.decrStackSize(k, (int) Math.floor(energyUsed));
 			}
 
-			return new ItemStack[]{ stack };
+			return new ItemStack[] {stack};
 		}
 
 		return null;
@@ -248,7 +251,7 @@ public class PipeItemsEmerald extends PipeItemsWood implements IClientState, IGu
 
 	@Override
 	public void writeGuiData(ByteBuf data) {
-		data.writeByte((byte)settings.getFilterMode().ordinal());
+		data.writeByte((byte) settings.getFilterMode().ordinal());
 	}
 
 	@Override

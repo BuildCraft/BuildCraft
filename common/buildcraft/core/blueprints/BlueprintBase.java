@@ -15,6 +15,7 @@ import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+
 import buildcraft.api.blueprints.BuildingPermission;
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.MappingRegistry;
@@ -27,17 +28,19 @@ import buildcraft.core.Version;
 
 public abstract class BlueprintBase {
 
-	public SchematicBlockBase contents[][][];
+	public SchematicBlockBase[][][] contents;
 	public int anchorX, anchorY, anchorZ;
 	public int sizeX, sizeY, sizeZ;
 	public BlueprintId id = new BlueprintId();
 	public String author;
-	private String version = "";
-	protected MappingRegistry mapping = new MappingRegistry();
 	public boolean rotate = true;
 	public boolean excavate = true;
 	public BuildingPermission buildingPermission = BuildingPermission.ALL;
 
+	protected MappingRegistry mapping = new MappingRegistry();
+
+	private String version = "";
+	private ComputeDataThread computeData;
 	private byte [] data;
 
 	public BlueprintBase() {
@@ -80,7 +83,7 @@ public abstract class BlueprintBase {
 	}
 
 	public void rotateLeft(BptContext context) {
-		SchematicBlockBase newContents[][][] = new SchematicBlockBase[sizeZ][sizeY][sizeX];
+		SchematicBlockBase[][][] newContents = new SchematicBlockBase[sizeZ][sizeY][sizeX];
 
 		for (int x = 0; x < sizeZ; ++x) {
 			for (int y = 0; y < sizeY; ++y) {
@@ -162,7 +165,7 @@ public abstract class BlueprintBase {
 	public void readFromNBT (NBTTagCompound nbt) {
 		BlueprintBase result = null;
 
-		String version = nbt.getString("version");
+		String versionRead = nbt.getString("version");
 
 		sizeX = nbt.getInteger("sizeX");
 		sizeY = nbt.getInteger("sizeY");
@@ -230,8 +233,6 @@ public abstract class BlueprintBase {
 			}
 		}
 	}
-
-	ComputeDataThread computeData;
 
 	/**
 	 * This function will return the binary data associated to this blueprint.

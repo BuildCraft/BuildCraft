@@ -8,60 +8,57 @@
  */
 package buildcraft.transport.utils;
 
-import buildcraft.transport.Pipe;
-import buildcraft.api.transport.PipeWire;
-import io.netty.buffer.ByteBuf;
-
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
 import java.util.BitSet;
 
+import io.netty.buffer.ByteBuf;
+
 import net.minecraftforge.common.util.ForgeDirection;
+
+import buildcraft.api.transport.PipeWire;
 
 public class WireMatrix {
 
 	//private final boolean[] _hasWire = new boolean[IPipe.WireColor.values().length];
-	private final BitSet _hasWire = new BitSet(PipeWire.values().length);
-	private final BitSetCodec _bitSetCodec = new BitSetCodec();
-	
-	private final ConnectionMatrix _wires[] = new ConnectionMatrix[PipeWire.values().length];
-	private final int[] _wireIconIndex = new int[PipeWire.values().length]; 
-	
+	private final BitSet hasWire = new BitSet(PipeWire.values().length);
+	private final BitSetCodec bitSetCodec = new BitSetCodec();
+
+	private final ConnectionMatrix[] wires = new ConnectionMatrix[PipeWire.values().length];
+	private final int[] wireIconIndex = new int[PipeWire.values().length];
+
 	private boolean dirty = false;
 
 	public WireMatrix() {
 		for (int i = 0; i < PipeWire.values().length; i++) {
-			_wires[i] = new ConnectionMatrix();
+			wires[i] = new ConnectionMatrix();
 		}
 	}
 
 	public boolean hasWire(PipeWire color) {
-		return _hasWire.get(color.ordinal());
+		return hasWire.get(color.ordinal());
 	}
 
 	public void setWire(PipeWire color, boolean value) {
-		if (_hasWire.get(color.ordinal()) != value) {
-			_hasWire.set(color.ordinal(), value);
+		if (hasWire.get(color.ordinal()) != value) {
+			hasWire.set(color.ordinal(), value);
 			dirty = true;
 		}
 	}
 
 	public boolean isWireConnected(PipeWire color, ForgeDirection direction) {
-		return _wires[color.ordinal()].isConnected(direction);
+		return wires[color.ordinal()].isConnected(direction);
 	}
 
 	public void setWireConnected(PipeWire color, ForgeDirection direction, boolean value) {
-		_wires[color.ordinal()].setConnected(direction, value);
+		wires[color.ordinal()].setConnected(direction, value);
 	}
-	
-	public int getWireIconIndex(PipeWire color){
-		return _wireIconIndex[color.ordinal()];
+
+	public int getWireIconIndex(PipeWire color) {
+		return wireIconIndex[color.ordinal()];
 	}
-	
-	public void setWireIndex(PipeWire color, int value){
-		if (_wireIconIndex[color.ordinal()] != value){
-			_wireIconIndex[color.ordinal()] = value;
+
+	public void setWireIndex(PipeWire color, int value) {
+		if (wireIconIndex[color.ordinal()] != value) {
+			wireIconIndex[color.ordinal()] = value;
 			dirty = true;
 		}
 	}
@@ -69,8 +66,9 @@ public class WireMatrix {
 	public boolean isDirty() {
 
 		for (int i = 0; i < PipeWire.values().length; i++) {
-			if (_wires[i].isDirty())
+			if (wires[i].isDirty()) {
 				return true;
+			}
 		}
 
 		return dirty;
@@ -78,25 +76,25 @@ public class WireMatrix {
 
 	public void clean() {
 		for (int i = 0; i < PipeWire.values().length; i++) {
-			_wires[i].clean();
+			wires[i].clean();
 		}
 		dirty = false;
 	}
 
 	public void writeData(ByteBuf data) {
-		data.writeByte(_bitSetCodec.encode(_hasWire));
+		data.writeByte(bitSetCodec.encode(hasWire));
 
 		for (int i = 0; i < PipeWire.values().length; i++) {
-			_wires[i].writeData(data);
-			data.writeByte(_wireIconIndex[i]);
+			wires[i].writeData(data);
+			data.writeByte(wireIconIndex[i]);
 		}
 	}
 
 	public void readData(ByteBuf data) {
-		_bitSetCodec.decode(data.readByte(), _hasWire);
+		bitSetCodec.decode(data.readByte(), hasWire);
 		for (int i = 0; i < PipeWire.values().length; i++) {
-			_wires[i].readData(data);
-			_wireIconIndex[i] = data.readByte();
+			wires[i].readData(data);
+			wireIconIndex[i] = data.readByte();
 		}
 	}
 }

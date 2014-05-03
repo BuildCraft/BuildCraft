@@ -10,7 +10,13 @@ package buildcraft.core.utils;
 
 import net.minecraftforge.common.util.ForgeDirection;
 
-public class MatrixTranformations {
+public final class MatrixTranformations {
+
+	/**
+	 * Deactivate constructor
+	 */
+	private MatrixTranformations() {
+	}
 
 	/**
 	 * Mirrors the array on the Y axis by calculating offsets from 0.5F

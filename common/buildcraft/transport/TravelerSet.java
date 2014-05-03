@@ -8,15 +8,18 @@
  */
 package buildcraft.transport;
 
-import com.google.common.collect.BiMap;
-import com.google.common.collect.ForwardingSet;
-import com.google.common.collect.HashBiMap;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import com.google.common.collect.BiMap;
+import com.google.common.collect.ForwardingSet;
+import com.google.common.collect.HashBiMap;
+
 public class TravelerSet extends ForwardingSet<TravelingItem> {
+
+	public boolean iterating;
 
 	private final BiMap<Integer, TravelingItem> items = HashBiMap.create();
 	private final Set<TravelingItem> toLoad = new HashSet<TravelingItem>();
@@ -24,7 +27,6 @@ public class TravelerSet extends ForwardingSet<TravelingItem> {
 	private final Set<TravelingItem> toRemove = new HashSet<TravelingItem>();
 	private int delay = 0;
 	private final PipeTransportItems transport;
-	public boolean iterating;
 
 	public TravelerSet(PipeTransportItems transport) {
 		this.transport = transport;
@@ -37,10 +39,12 @@ public class TravelerSet extends ForwardingSet<TravelingItem> {
 
 	@Override
 	public boolean add(TravelingItem item) {
-		if (iterating)
+		if (iterating) {
 			return toAdd.add(item);
-		if (items.containsValue(item))
+		}
+		if (items.containsValue(item)) {
 			return false;
+		}
 		item.setContainer(transport.container);
 		items.put(item.id, item);
 		return true;
@@ -48,15 +52,17 @@ public class TravelerSet extends ForwardingSet<TravelingItem> {
 
 	@Override
 	public boolean addAll(Collection<? extends TravelingItem> collection) {
-		if (iterating)
+		if (iterating) {
 			return toAdd.addAll(collection);
+		}
 		return standardAddAll(collection);
 	}
 
 	@Override
 	public boolean remove(Object object) {
-		if (iterating)
+		if (iterating) {
 			return toRemove.add((TravelingItem) object);
+		}
 		return delegate().remove(object);
 	}
 
@@ -110,8 +116,9 @@ public class TravelerSet extends ForwardingSet<TravelingItem> {
 		Iterator<TravelingItem> it = items.values().iterator();
 		while (it.hasNext()) {
 			TravelingItem item = it.next();
-			if (item.isCorrupted())
+			if (item.isCorrupted()) {
 				it.remove();
+			}
 		}
 	}
 
@@ -128,9 +135,10 @@ public class TravelerSet extends ForwardingSet<TravelingItem> {
 
 	@Override
 	public void clear() {
-		if (iterating)
+		if (iterating) {
 			toRemove.addAll(this);
-		else
+		} else {
 			items.clear();
+		}
 	}
 }

@@ -11,6 +11,16 @@ package buildcraft.transport.pipes;
 import java.util.LinkedList;
 import java.util.Map;
 
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
+import net.minecraft.tileentity.TileEntity;
+
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
+import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraftforge.fluids.IFluidHandler;
+
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.gates.IAction;
@@ -19,13 +29,6 @@ import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportFluids;
 import buildcraft.transport.TileGenericPipe;
 import buildcraft.transport.triggers.ActionPipeDirection;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.util.ForgeDirection;
-import net.minecraftforge.fluids.IFluidHandler;
 
 public class PipeFluidsIron extends Pipe<PipeTransportFluids> {
 
@@ -36,15 +39,14 @@ public class PipeFluidsIron extends Pipe<PipeTransportFluids> {
 		protected boolean isValidConnectingTile(TileEntity tile) {
 			if (tile instanceof TileGenericPipe) {
 				Pipe otherPipe = ((TileGenericPipe) tile).pipe;
-				if (otherPipe instanceof PipeFluidsWood || otherPipe instanceof PipeStructureCobblestone)
+				if (otherPipe instanceof PipeFluidsWood || otherPipe instanceof PipeStructureCobblestone) {
 					return false;
-				if (otherPipe.transport instanceof PipeTransportFluids)
-					return true;
-				return false;
+				} else {
+					return otherPipe.transport instanceof PipeTransportFluids;
+				}
 			}
-			if (tile instanceof IFluidHandler)
-				return true;
-			return false;
+
+			return tile instanceof IFluidHandler;
 		}
 	};
 
@@ -88,10 +90,12 @@ public class PipeFluidsIron extends Pipe<PipeTransportFluids> {
 
 	@Override
 	public int getIconIndex(ForgeDirection direction) {
-		if (direction == ForgeDirection.UNKNOWN)
+		if (direction == ForgeDirection.UNKNOWN) {
 			return standardIconIndex;
-		if (container != null && container.getBlockMetadata() == direction.ordinal())
+		}
+		if (container != null && container.getBlockMetadata() == direction.ordinal()) {
 			return standardIconIndex;
+		}
 		return solidIconIndex;
 
 	}
@@ -112,12 +116,13 @@ public class PipeFluidsIron extends Pipe<PipeTransportFluids> {
 	public LinkedList<IAction> getActions() {
 		LinkedList<IAction> action = super.getActions();
 		for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
-			if (container.isPipeConnected(direction))
+			if (container.isPipeConnected(direction)) {
 				action.add(BuildCraftTransport.actionPipeDirection[direction.ordinal()]);
+			}
 		}
 		return action;
 	}
-	
+
 	@Override
 	public boolean canConnectRedstone() {
 		return true;

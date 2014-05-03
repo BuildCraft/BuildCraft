@@ -8,17 +8,15 @@
  */
 package buildcraft.core;
 
-import buildcraft.core.proxy.CoreProxy;
-
-import java.util.EnumSet;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.ChatComponentText;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.common.gameevent.TickEvent.PlayerTickEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.ChatComponentText;
+
+import buildcraft.core.proxy.CoreProxy;
 
 public class TickHandlerCoreClient {
 

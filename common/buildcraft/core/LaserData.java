@@ -9,12 +9,15 @@
 package buildcraft.core;
 
 import net.minecraft.nbt.NBTTagCompound;
+
 import buildcraft.api.core.NetworkData;
 import buildcraft.api.core.Position;
 
 public class LaserData {
 	@NetworkData
-	public Position head = new Position (0, 0, 0), tail = new Position(0, 0, 0);
+	public Position head = new Position(0, 0, 0);
+	@NetworkData
+	public Position tail = new Position(0, 0, 0);
 
 	@NetworkData
 	public boolean isVisible = true;

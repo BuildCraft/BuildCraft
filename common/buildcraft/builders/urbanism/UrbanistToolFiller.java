@@ -15,14 +15,16 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
+
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
 import buildcraft.api.filler.IFillerPattern;
 import buildcraft.builders.filler.pattern.FillerPattern;
 import buildcraft.core.Box;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.gui.AdvancedSlot;
 import buildcraft.core.gui.GuiAdvancedInterface;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 class UrbanistToolFiller extends UrbanistToolArea {
 
@@ -129,7 +131,7 @@ class UrbanistToolFiller extends UrbanistToolArea {
 	}
 
 	@Override
-	public void createSlots (GuiUrbanist gui, LinkedList <AdvancedSlot> slots) {
+	public void createSlots(GuiUrbanist gui, LinkedList<AdvancedSlot> slots) {
 		for (int i = 0; i < 8; ++i) {
 			FillerSlot slot = new FillerSlot(gui, i);
 			fillerSlots.add(slot);

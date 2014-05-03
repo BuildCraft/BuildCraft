@@ -23,7 +23,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldSettings.GameType;
+
 import net.minecraftforge.common.util.ForgeDirection;
+
 import buildcraft.api.blueprints.Schematic;
 import buildcraft.api.blueprints.SchematicBlock;
 import buildcraft.api.blueprints.SchematicEntity;
@@ -42,15 +44,14 @@ import buildcraft.core.utils.BlockUtil;
 
 public class BptBuilderBlueprint extends BptBuilderBase {
 
+	public LinkedList<ItemStack> neededItems = new LinkedList<ItemStack>();
+
+	protected TreeSet<Integer> builtEntities = new TreeSet<Integer>();
+
 	private LinkedList<BuildingSlotBlock> buildList = new LinkedList<BuildingSlotBlock>();
 	private LinkedList<BuildingSlotEntity> entityList = new LinkedList<BuildingSlotEntity>();
 	private LinkedList<BuildingSlot> postProcessing = new LinkedList<BuildingSlot>();
-
-	protected TreeSet <Integer> builtEntities = new TreeSet <Integer> ();
-
 	private BuildingSlotIterator iterator;
-
-	public LinkedList <ItemStack> neededItems = new LinkedList <ItemStack> ();
 
 	public BptBuilderBlueprint(Blueprint bluePrint, World world, int x, int y, int z) {
 		super(bluePrint, world, x, y, z);
@@ -380,18 +381,14 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 			BCLog.logger.throwing("BptBuilderBlueprint", "checkRequirements", t);
 		}
 
-		LinkedList <ItemStack> stacksUsed = new LinkedList<ItemStack>();
+		LinkedList<ItemStack> stacksUsed = new LinkedList<ItemStack>();
 
 		if (context.world().getWorldInfo().getGameType() == GameType.CREATIVE) {
 			for (ItemStack s : tmpReq) {
 				stacksUsed.add(s);
 			}
 
-			if (builder.energyAvailable() < slot.getEnergyRequirement (stacksUsed)) {
-				return false;
-			} else {
-				return true;
-			}
+			return !(builder.energyAvailable() < slot.getEnergyRequirement(stacksUsed));
 		}
 
 		for (ItemStack reqStk : tmpReq) {
@@ -422,11 +419,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 			}
 		}
 
-		if (builder.energyAvailable() < slot.getEnergyRequirement (stacksUsed)) {
-			return false;
-		} else {
-			return true;
-		}
+		return !(builder.energyAvailable() < slot.getEnergyRequirement(stacksUsed));
 	}
 
 	public void useRequirements(TileAbstractBuilder builder, BuildingSlot slot) {
@@ -502,7 +495,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 	public void recomputeNeededItems() {
 		neededItems.clear();
 
-		HashMap <StackKey, Integer> computeStacks = new HashMap <StackKey, Integer> ();
+		HashMap<StackKey, Integer> computeStacks = new HashMap<StackKey, Integer>();
 
 		for (BuildingSlot slot : buildList) {
 			LinkedList<ItemStack> stacks = new LinkedList<ItemStack>();
@@ -569,7 +562,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 			neededItems.add(newStack);
 		}
 
-		LinkedList <ItemStack> sortedList = new LinkedList <ItemStack> ();
+		LinkedList<ItemStack> sortedList = new LinkedList<ItemStack>();
 
 		for (ItemStack toInsert : neededItems) {
 			int index = 0;

@@ -8,8 +8,11 @@
  */
 package buildcraft.core.utils;
 
+import java.util.Collection;
+import java.util.Deque;
+import java.util.LinkedList;
+
 import com.google.common.collect.ForwardingCollection;
-import java.util.*;
 
 public class RevolvingList<T> extends ForwardingCollection<T> {
 
@@ -28,28 +31,33 @@ public class RevolvingList<T> extends ForwardingCollection<T> {
 	}
 
 	public void rotateLeft() {
-		if (list.isEmpty())
+		if (list.isEmpty()) {
 			return;
-		list.addFirst(list.removeLast());
+		} else {
+			list.addFirst(list.removeLast());
+		}
 	}
 
 	public void rotateRight() {
-		if (list.isEmpty())
+		if (list.isEmpty()) {
 			return;
-		list.addLast(list.removeFirst());
+		} else {
+			list.addLast(list.removeFirst());
+		}
 	}
 
 	public T getCurrent() {
-		if (list.isEmpty())
+		if (list.isEmpty()) {
 			return null;
-		return list.getFirst();
+		} else {
+			return list.getFirst();
+		}
 	}
 
 	public void setCurrent(T e) {
-		if (!contains(e))
+		if (!contains(e)) {
 			return;
-
-		if (e == null) {
+		} else if (e == null) {
 			while (getCurrent() != null) {
 				rotateRight();
 			}

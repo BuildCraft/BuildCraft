@@ -10,13 +10,15 @@ package buildcraft.core.network;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
+
+import cpw.mods.fml.common.network.FMLIndexedMessageToMessageCodec;
+
 import buildcraft.transport.network.PacketFluidUpdate;
 import buildcraft.transport.network.PacketGateExpansionMap;
 import buildcraft.transport.network.PacketPipeTransportItemStack;
 import buildcraft.transport.network.PacketPipeTransportItemStackRequest;
 import buildcraft.transport.network.PacketPipeTransportTraveler;
 import buildcraft.transport.network.PacketPowerUpdate;
-import cpw.mods.fml.common.network.FMLIndexedMessageToMessageCodec;
 
 public class BuildCraftChannelHandler extends FMLIndexedMessageToMessageCodec<BuildCraftPacket> {
 

@@ -10,18 +10,19 @@ package buildcraft.builders.urbanism;
 
 import java.util.LinkedList;
 
+import org.lwjgl.input.Mouse;
+import org.lwjgl.opengl.GL11;
+
 import net.minecraft.inventory.IInventory;
 import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
 
-import org.lwjgl.input.Mouse;
-import org.lwjgl.opengl.GL11;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 import buildcraft.core.DefaultProps;
 import buildcraft.core.gui.AdvancedSlot;
 import buildcraft.core.gui.GuiAdvancedInterface;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 public class GuiUrbanist extends GuiAdvancedInterface {
 
@@ -29,9 +30,11 @@ public class GuiUrbanist extends GuiAdvancedInterface {
 	private static final int TOOLBAR_TEXTURE_WIDTH = 194;
 	private static final int TOOLBAR_TEXTURE_HEIGHT = 27;
 
-	IInventory playerInventory;
 	public TileUrbanist urbanist;
-	int selectedTool = -1;
+	public UrbanistTool[] tools = new UrbanistTool[10];
+
+	private IInventory playerInventory;
+	private int selectedTool = -1;
 
 	class ToolSlot extends AdvancedSlot {
 		UrbanistTool tool;
@@ -54,8 +57,6 @@ public class GuiUrbanist extends GuiAdvancedInterface {
 		}
 
 	}
-
-	public UrbanistTool [] tools = new UrbanistTool [10];
 
 	public GuiUrbanist(IInventory playerInventory, TileUrbanist urbanist) {
 		super(new ContainerUrbanist(playerInventory, urbanist), urbanist, TOOLBAR_TEXTURE);
@@ -81,7 +82,7 @@ public class GuiUrbanist extends GuiAdvancedInterface {
 		tools [8] = new UrbanistTool();
 		tools [9] = new UrbanistTool();
 
-		LinkedList <AdvancedSlot> tmpSlots = new LinkedList <AdvancedSlot> ();
+		LinkedList<AdvancedSlot> tmpSlots = new LinkedList<AdvancedSlot>();
 
 		for (int i = 0; i < 10; ++i) {
 			tmpSlots.add(new ToolSlot(tools [i]));

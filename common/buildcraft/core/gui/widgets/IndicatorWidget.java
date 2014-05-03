@@ -8,10 +8,11 @@
  */
 package buildcraft.core.gui.widgets;
 
-import buildcraft.core.gui.GuiBuildCraft;
-import buildcraft.core.gui.tooltips.ToolTip;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+
+import buildcraft.core.gui.GuiBuildCraft;
+import buildcraft.core.gui.tooltips.ToolTip;
 
 public class IndicatorWidget extends Widget {
 

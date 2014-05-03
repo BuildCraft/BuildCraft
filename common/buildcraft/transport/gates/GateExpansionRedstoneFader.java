@@ -8,19 +8,18 @@
  */
 package buildcraft.transport.gates;
 
-import buildcraft.api.gates.GateExpansionController;
-import buildcraft.api.gates.IGateExpansion;
-import buildcraft.BuildCraftTransport;
-import buildcraft.api.gates.IAction;
-import buildcraft.api.gates.ITrigger;
-import buildcraft.api.gates.ITriggerParameter;
-import buildcraft.transport.triggers.TriggerClockTimer;
-import buildcraft.transport.triggers.TriggerClockTimer.Time;
 import java.util.Arrays;
 import java.util.List;
+
 import net.minecraft.tileentity.TileEntity;
 
-public class GateExpansionRedstoneFader extends GateExpansionBuildcraft implements IGateExpansion {
+import buildcraft.BuildCraftTransport;
+import buildcraft.api.gates.GateExpansionController;
+import buildcraft.api.gates.IAction;
+import buildcraft.api.gates.IGateExpansion;
+import buildcraft.api.gates.ITrigger;
+
+public final class GateExpansionRedstoneFader extends GateExpansionBuildcraft implements IGateExpansion {
 
 	public static GateExpansionRedstoneFader INSTANCE = new GateExpansionRedstoneFader();
 

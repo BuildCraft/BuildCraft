@@ -8,9 +8,9 @@
  */
 package buildcraft.core.network.serializers;
 
-import io.netty.buffer.ByteBuf;
-
 import java.util.LinkedList;
+
+import io.netty.buffer.ByteBuf;
 
 public class SerializerLinkedList extends ClassSerializer {
 

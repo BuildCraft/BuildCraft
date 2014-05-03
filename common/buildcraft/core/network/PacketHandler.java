@@ -8,19 +8,22 @@
  */
 package buildcraft.core.network;
 
+import java.io.IOException;
+
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
-
-import java.io.IOException;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.INetHandler;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+
+import cpw.mods.fml.common.network.NetworkRegistry;
+
 import net.minecraftforge.common.DimensionManager;
+
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.transport.TileGenericPipe;
-import cpw.mods.fml.common.network.NetworkRegistry;
 
 public class PacketHandler extends BuildCraftChannelHandler {
 

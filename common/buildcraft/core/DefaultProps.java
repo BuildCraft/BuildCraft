@@ -8,7 +8,7 @@
  */
 package buildcraft.core;
 
-public class DefaultProps {
+public final class DefaultProps {
 
 	public static final String MOD = "BuildCraft";
 
@@ -36,4 +36,10 @@ public class DefaultProps {
 
 	public static int BIOME_OIL_OCEAN = 126;
 	public static int BIOME_OIL_DESERT = 127;
+
+	/**
+	 * Deactivate constructor
+	 */
+	private DefaultProps() {
+	}
 }

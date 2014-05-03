@@ -8,16 +8,18 @@
  */
 package buildcraft.energy;
 
-import buildcraft.api.core.NetworkData;
-import buildcraft.api.tools.IToolWrench;
-import buildcraft.core.utils.StringUtils;
-import buildcraft.transport.pipes.PipePowerIron;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ResourceLocation;
+
 import net.minecraftforge.common.util.ForgeDirection;
+
+import buildcraft.api.core.NetworkData;
+import buildcraft.api.tools.IToolWrench;
+import buildcraft.core.utils.StringUtils;
+import buildcraft.transport.pipes.PipePowerIron;
 
 public class TileEngineCreative extends TileEngine {
 

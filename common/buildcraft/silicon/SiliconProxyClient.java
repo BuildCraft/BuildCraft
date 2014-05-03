@@ -8,9 +8,10 @@
  */
 package buildcraft.silicon;
 
-import buildcraft.silicon.render.RenderLaserBlock;
 import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.client.registry.RenderingRegistry;
+
+import buildcraft.silicon.render.RenderLaserBlock;
 
 public class SiliconProxyClient extends SiliconProxy {
 	@Override

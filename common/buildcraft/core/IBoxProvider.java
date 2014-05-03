@@ -10,7 +10,5 @@ package buildcraft.core;
 
 
 public interface IBoxProvider {
-
-	public Box getBox ();
-
+	Box getBox();
 }

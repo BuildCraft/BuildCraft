@@ -1,23 +1,32 @@
+/**
+ * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
+ * http://www.mod-buildcraft.com
+ *
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
+ * License 1.0, or MMPL. Please check the contents of the license located in
+ * http://www.mod-buildcraft.com/MMPL-1.0.txt
+ */
 package buildcraft.core.network;
-
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Random;
 
+import org.apache.commons.lang3.ArrayUtils;
+
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
-import net.minecraftforge.common.DimensionManager;
 
-import org.apache.commons.lang3.ArrayUtils;
+import net.minecraftforge.common.DimensionManager;
 
 public class PacketRPCTile extends BuildCraftPacket {
 	public static int GLOBAL_ID = new Random(new Date().getTime()).nextInt();
-	public static HashMap <Integer, ByteBuf> bufferedPackets = new HashMap <Integer, ByteBuf> ();
+	public static HashMap<Integer, ByteBuf> bufferedPackets = new HashMap<Integer, ByteBuf>();
 	public TileEntity tile;
 
 	byte [] contents;
@@ -71,9 +80,9 @@ public class PacketRPCTile extends BuildCraftPacket {
 			world = sender.worldObj;
 		}
 
-		TileEntity tile = world.getTileEntity(x, y, z);
+		TileEntity localTile = world.getTileEntity(x, y, z);
 
-		setTile (tile);
+		setTile (localTile);
 
 		RPCMessageInfo info = new RPCMessageInfo();
 		info.sender = sender;
@@ -91,7 +100,7 @@ public class PacketRPCTile extends BuildCraftPacket {
 		}
 
 		if (!moreDataToCome) {
-			RPCHandler.receiveRPC(tile, info, completeData);
+			RPCHandler.receiveRPC(localTile, info, completeData);
 		} else {
 			bufferedPackets.put(id, completeData);
 		}
@@ -111,7 +120,7 @@ public class PacketRPCTile extends BuildCraftPacket {
 		data.writeBytes(contents);
 	}
 
-	public ArrayList <PacketRPCTile> breakIntoSmallerPackets (int maxSize) {
+	public ArrayList<PacketRPCTile> breakIntoSmallerPackets(int maxSize) {
 		ArrayList<PacketRPCTile> messages = new ArrayList<PacketRPCTile>();
 
 		if (contents.length < maxSize) {

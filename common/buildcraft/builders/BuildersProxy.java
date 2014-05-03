@@ -11,15 +11,19 @@ package buildcraft.builders;
 import net.minecraft.block.Block;
 import net.minecraft.world.World;
 
-public class BuildersProxy {
+public final class BuildersProxy {
+
+	/**
+	 * Forbid contruction of this class
+	 */
+	private BuildersProxy() {
+
+	}
 
 	public static boolean canPlaceTorch(World world, int i, int j, int k) {
 		Block block = world.getBlock(i, j, k);
 
-		if (block == null || !block.renderAsNormalBlock())
-			return false;
-		else
-			return true;
+		return !(block == null || !block.renderAsNormalBlock());
 	}
 
 	public static String getOwner(TileBlueprintLibrary library) {

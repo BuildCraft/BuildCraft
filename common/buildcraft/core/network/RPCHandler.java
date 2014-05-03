@@ -1,7 +1,12 @@
+/**
+ * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
+ * http://www.mod-buildcraft.com
+ *
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
+ * License 1.0, or MMPL. Please check the contents of the license located in
+ * http://www.mod-buildcraft.com/MMPL-1.0.txt
+ */
 package buildcraft.core.network;
-
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -13,9 +18,13 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.TreeMap;
 
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.tileentity.TileEntity;
+
 import buildcraft.BuildCraftCore;
 import buildcraft.api.core.JavaTools;
 import buildcraft.core.DefaultProps;
@@ -29,12 +38,11 @@ import buildcraft.transport.Pipe;
  * synchronization layers as a communication protocol. As a result, these
  * RPCs must be sent and received by a tile entity.
  */
-public class RPCHandler {
+public final class RPCHandler {
 
 	public static int MAX_PACKET_SIZE = 30 * 1024;
 
-	private static Map <String, RPCHandler> handlers =
-			new TreeMap <String, RPCHandler> ();
+	private static Map<String, RPCHandler> handlers = new TreeMap<String, RPCHandler>();
 
 	private Map<String, Integer> methodsMap = new TreeMap<String, Integer>();
 
@@ -47,19 +55,19 @@ public class RPCHandler {
 
 	private MethodMapping [] methods;
 
-	public RPCHandler (Class c) {
+	private RPCHandler(Class c) {
 		Method [] sortedMethods = JavaTools.getAllMethods (c).toArray(new Method [0]);
 
-		LinkedList <MethodMapping> mappings = new LinkedList<MethodMapping>();
+		LinkedList<MethodMapping> mappings = new LinkedList<MethodMapping>();
 
-		Arrays.sort(sortedMethods, new Comparator <Method> () {
+		Arrays.sort(sortedMethods, new Comparator<Method>() {
 			@Override
 			public int compare(Method o1, Method o2) {
 				return o1.getName().compareTo(o2.getName());
 			}
 		});
 
-		LinkedList <Method> rpcMethods = new LinkedList<Method>();
+		LinkedList<Method> rpcMethods = new LinkedList<Method>();
 
 		for (Method sortedMethod : sortedMethods) {
 			if (sortedMethod.getAnnotation (RPC.class) != null) {
@@ -73,11 +81,11 @@ public class RPCHandler {
 				mapping.mappings = new ClassSerializer [mapping.parameters.length];
 
 				for (int j = 0; j < mapping.parameters.length; ++j) {
-					if (mapping.parameters [j].equals(int.class)) {
+					if (int.class.equals(mapping.parameters[j])) {
 						// accepted
-					} else if (mapping.parameters [j].equals(char.class)) {
+					} else if (char.class.equals(mapping.parameters[j])) {
 						// accepted
-					} else if (mapping.parameters [j].equals(float.class)) {
+					} else if (float.class.equals(mapping.parameters[j])) {
 						// accepted
 					} else if (mapping.parameters [j].equals(RPCMessageInfo.class)) {
 						mapping.hasInfo = true;
@@ -255,7 +263,7 @@ public class RPCHandler {
 
 		int methodIndex = methodsMap.get(method);
 		MethodMapping m = methods[methodIndex];
-		Class formals[] = m.parameters;
+		Class[] formals = m.parameters;
 
 		int expectedParameters = m.hasInfo ? formals.length - 1
 				: formals.length;
@@ -274,11 +282,11 @@ public class RPCHandler {
 		SerializationContext context = new SerializationContext();
 
 		for (int i = 0; i < actuals.length; ++i) {
-			if (formals[i].equals(int.class)) {
+			if (int.class.equals(formals[i])) {
 				data.writeInt((Integer) actuals[i]);
-			} else if (formals[i].equals(float.class)) {
+			} else if (float.class.equals(formals[i])) {
 				data.writeFloat((Float) actuals[i]);
-			} else if (formals[i].equals(char.class)) {
+			} else if (char.class.equals(formals[i])) {
 				data.writeChar((Character) actuals[i]);
 			} else {
 				m.mappings[i].write(data, actuals[i], context);
@@ -291,7 +299,7 @@ public class RPCHandler {
 			short methodIndex = data.readShort();
 
 			MethodMapping m = methods [methodIndex];
-			Class formals [] = m.parameters;
+			Class[] formals = m.parameters;
 
 			Object [] actuals = new Object [formals.length];
 
@@ -300,11 +308,11 @@ public class RPCHandler {
 			SerializationContext context = new SerializationContext();
 
 			for (int i = 0; i < expectedParameters; ++i) {
-				if (formals [i].equals(int.class)) {
+				if (int.class.equals(formals[i])) {
 					actuals [i] = data.readInt();
-				} else if (formals [i].equals(float.class)) {
+				} else if (float.class.equals(formals[i])) {
 					actuals [i] = data.readFloat();
-				} else if (formals [i].equals(char.class)) {
+				} else if (char.class.equals(formals[i])) {
 					actuals [i] = data.readChar();
 				} else {
 					actuals [i] = m.mappings [i].read (data, actuals [i], context);

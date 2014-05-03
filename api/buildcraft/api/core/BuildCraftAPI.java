@@ -14,11 +14,17 @@ import java.util.Set;
 import net.minecraft.block.Block;
 import net.minecraft.world.IBlockAccess;
 
-public class BuildCraftAPI {
+public final class BuildCraftAPI {
 
 	public static ICoreProxy proxy;
 
-	public static final Set <Block> softBlocks = new HashSet<Block>();
+	public static final Set<Block> softBlocks = new HashSet<Block>();
+
+	/**
+	 * Deactivate constructor
+	 */
+	private BuildCraftAPI() {
+	}
 
 	public static boolean isSoftBlock(IBlockAccess world, int x, int y, int z) {
 		return isSoftBlock(world.getBlock(x, y, z), world, x, y, z);

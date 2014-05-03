@@ -16,18 +16,19 @@ import net.minecraft.entity.Entity;
 import net.minecraft.item.Item;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+
 import net.minecraftforge.common.util.Constants;
 
 public class MappingRegistry {
 
-	public HashMap <Block, Integer> blockToId = new HashMap<Block, Integer>();
-	public ArrayList <Block> idToBlock = new ArrayList<Block>();
+	public HashMap<Block, Integer> blockToId = new HashMap<Block, Integer>();
+	public ArrayList<Block> idToBlock = new ArrayList<Block>();
 
-	public HashMap <Item, Integer> itemToId = new HashMap<Item, Integer>();
-	public ArrayList <Item> idToItem = new ArrayList<Item>();
+	public HashMap<Item, Integer> itemToId = new HashMap<Item, Integer>();
+	public ArrayList<Item> idToItem = new ArrayList<Item>();
 
-	public HashMap <Class <? extends Entity>, Integer> entityToId = new HashMap<Class <? extends Entity>, Integer>();
-	public ArrayList <Class <? extends Entity>> idToEntity = new ArrayList<Class <? extends Entity>>();
+	public HashMap<Class<? extends Entity>, Integer> entityToId = new HashMap<Class<? extends Entity>, Integer>();
+	public ArrayList<Class<? extends Entity>> idToEntity = new ArrayList<Class<? extends Entity>>();
 
 	private void registerItem (Item item) {
 		if (!itemToId.containsKey(item)) {
@@ -43,7 +44,7 @@ public class MappingRegistry {
 		}
 	}
 
-	private void registerEntity (Class <? extends Entity> entityClass) {
+	private void registerEntity(Class<? extends Entity> entityClass) {
 		if (!entityToId.containsKey(entityClass)) {
 			idToEntity.add(entityClass);
 			entityToId.put(entityClass, idToEntity.size() - 1);
@@ -82,7 +83,7 @@ public class MappingRegistry {
 		return blockToId.get(block);
 	}
 
-	public Class <? extends Entity> getEntityForId(int id) {
+	public Class<? extends Entity> getEntityForId(int id) {
 		if (id >= idToEntity.size()) {
 			return null;
 		}
@@ -90,7 +91,7 @@ public class MappingRegistry {
 		return idToEntity.get(id);
 	}
 
-	public int getIdForEntity(Class <? extends Entity> entity) {
+	public int getIdForEntity(Class<? extends Entity> entity) {
 		if (!entityToId.containsKey(entity)) {
 			registerEntity (entity);
 		}
@@ -123,7 +124,7 @@ public class MappingRegistry {
 
 		NBTTagList entitiesMapping = new NBTTagList();
 
-		for (Class <? extends Entity> e : idToEntity) {
+		for (Class<? extends Entity> e : idToEntity) {
 			NBTTagCompound sub = new NBTTagCompound();
 			sub.setString("name", e.getCanonicalName());
 			entitiesMapping.appendTag(sub);
@@ -162,7 +163,7 @@ public class MappingRegistry {
 			Class<? extends Entity> e = null;
 
 			try {
-				e = (Class <? extends Entity>) Class.forName(name);
+				e = (Class<? extends Entity>) Class.forName(name);
 			} catch (ClassNotFoundException e1) {
 				e1.printStackTrace();
 			}
@@ -170,18 +171,4 @@ public class MappingRegistry {
 			registerEntity (e);
 		}
 	}
-
-	@Override
-	public final MappingRegistry clone() {
-		MappingRegistry result = new MappingRegistry();
-		result.blockToId = (HashMap<Block, Integer>) blockToId.clone();
-		result.idToBlock = (ArrayList<Block>) idToBlock.clone();
-		result.itemToId = (HashMap<Item, Integer>) itemToId.clone();
-		result.idToItem = (ArrayList<Item>) idToItem.clone();
-		result.entityToId = (HashMap<Class <? extends Entity>, Integer>) entityToId.clone();
-		result.idToEntity = (ArrayList<Class <? extends Entity>>) idToEntity.clone();
-
-		return result;
-	}
-
 }

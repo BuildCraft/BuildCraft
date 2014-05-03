@@ -8,10 +8,10 @@
  */
 package buildcraft.core.recipes;
 
-import buildcraft.api.recipes.IIntegrationRecipeManager;
-import buildcraft.api.recipes.IIntegrationRecipeManager.IIntegrationRecipe;
 import java.util.LinkedList;
 import java.util.List;
+
+import buildcraft.api.recipes.IIntegrationRecipeManager;
 
 public class IntegrationRecipeManager implements IIntegrationRecipeManager {
 

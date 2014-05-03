@@ -35,8 +35,10 @@ import java.lang.annotation.Target;
 @Inherited
 public @interface MjBattery {
 
-	public double maxCapacity () default 100.0;
-	public double maxReceivedPerCycle () default 10.0;
-	public double minimumConsumption () default 0.1;
+	double maxCapacity() default 100.0;
+
+	double maxReceivedPerCycle() default 10.0;
+
+	double minimumConsumption() default 0.1;
 
 }

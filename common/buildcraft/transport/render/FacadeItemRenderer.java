@@ -8,11 +8,8 @@
  */
 package buildcraft.transport.render;
 
-import buildcraft.BuildCraftTransport;
-import buildcraft.core.CoreConstants;
-import buildcraft.core.render.RenderUtils;
-import buildcraft.transport.ItemFacade;
-import buildcraft.transport.PipeIconProvider;
+import org.lwjgl.opengl.GL11;
+
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderBlocks;
@@ -20,8 +17,14 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
+
 import net.minecraftforge.client.IItemRenderer;
-import org.lwjgl.opengl.GL11;
+
+import buildcraft.BuildCraftTransport;
+import buildcraft.core.CoreConstants;
+import buildcraft.core.render.RenderUtils;
+import buildcraft.transport.ItemFacade;
+import buildcraft.transport.PipeIconProvider;
 
 public class FacadeItemRenderer implements IItemRenderer {
 
@@ -32,7 +35,7 @@ public class FacadeItemRenderer implements IItemRenderer {
 	private void renderFacadeItem(RenderBlocks render, ItemStack item, float translateX, float translateY, float translateZ) {
 		if (lastTime < System.currentTimeMillis()) {
 			renderState = !renderState;
-			lastTime = (System.currentTimeMillis() + 1000L);
+			lastTime = System.currentTimeMillis() + 1000L;
 		}
 
 		Block block = null;
@@ -65,7 +68,7 @@ public class FacadeItemRenderer implements IItemRenderer {
 			return;
 		}
 
-		if(block.getIcon(0, decodedMeta) == null) {
+		if (block.getIcon(0, decodedMeta) == null) {
 			return;
 		}
 
@@ -152,10 +155,9 @@ public class FacadeItemRenderer implements IItemRenderer {
 		block.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
 	}
 
-	private IIcon tryGetBlockIcon( Block block, int side, int decodedMeta)
-	{
+	private IIcon tryGetBlockIcon(Block block, int side, int decodedMeta) {
 		try {
-		return block.getIcon(side, decodedMeta);
+			return block.getIcon(side, decodedMeta);
 		} catch (Throwable t) {
 			return Blocks.cobblestone.getIcon(0, 0);
 		}

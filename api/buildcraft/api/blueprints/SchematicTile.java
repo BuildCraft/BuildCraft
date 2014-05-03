@@ -15,6 +15,7 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+
 import buildcraft.api.core.JavaTools;
 
 public class SchematicTile extends SchematicBlock {
@@ -41,7 +42,7 @@ public class SchematicTile extends SchematicBlock {
 	 * Places the block in the world, at the location specified in the slot.
 	 */
 	@Override
-	public void writeToWorld(IBuilderContext context, int x, int y, int z, LinkedList <ItemStack> stacks) {
+	public void writeToWorld(IBuilderContext context, int x, int y, int z, LinkedList<ItemStack> stacks) {
 		super.writeToWorld(context, x, y, z, stacks);
 
 		if (block.hasTileEntity(meta)) {
@@ -80,7 +81,7 @@ public class SchematicTile extends SchematicBlock {
 			if (tile instanceof IInventory) {
 				IInventory inv = (IInventory) tile;
 
-				ArrayList <ItemStack> rqs = new ArrayList <ItemStack> ();
+				ArrayList<ItemStack> rqs = new ArrayList<ItemStack>();
 
 				for (int i = 0; i < inv.getSizeInventory(); ++i) {
 					if (inv.getStackInSlot(i) != null) {

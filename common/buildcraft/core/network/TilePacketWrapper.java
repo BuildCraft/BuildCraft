@@ -9,21 +9,23 @@
 package buildcraft.core.network;
 
 import io.netty.buffer.ByteBuf;
+
 import net.minecraft.tileentity.TileEntity;
+
 import buildcraft.core.network.serializers.ClassMapping;
 import buildcraft.core.network.serializers.ClassSerializer;
 import buildcraft.core.network.serializers.SerializationContext;
 
 public class TilePacketWrapper {
-	ClassSerializer rootMappings[];
+	ClassSerializer[] rootMappings;
 
 	@SuppressWarnings("rawtypes")
 	public TilePacketWrapper(Class c) {
-		this(new Class[] { c });
+		this(new Class[] {c});
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public TilePacketWrapper(Class c[]) {
+	public TilePacketWrapper(Class[] c) {
 		rootMappings = new ClassSerializer [c.length];
 
 		for (int i = 0; i < c.length; ++i) {

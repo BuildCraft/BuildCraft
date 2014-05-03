@@ -8,19 +8,21 @@
  */
 package buildcraft.transport.pipes;
 
-import buildcraft.api.tools.IToolWrench;
-import buildcraft.core.TileBuffer;
-import buildcraft.transport.Pipe;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
+
 import net.minecraftforge.common.util.ForgeDirection;
+
+import buildcraft.api.tools.IToolWrench;
+import buildcraft.core.TileBuffer;
+import buildcraft.transport.Pipe;
 
 public abstract class PipeLogicIron {
 
-	private boolean lastPower = false;
 	protected final Pipe pipe;
+	private boolean lastPower = false;
 
 	public PipeLogicIron(Pipe pipe) {
 		this.pipe = pipe;
@@ -48,15 +50,17 @@ public abstract class PipeLogicIron {
 	}
 
 	private boolean isValidFacing(ForgeDirection side) {
-		if (!pipe.container.isPipeConnected(side))
+		if (!pipe.container.isPipeConnected(side)) {
 			return false;
+		}
 
 		TileBuffer[] tileBuffer = pipe.container.getTileCache();
-		if (tileBuffer == null)
-			return true;
 
-		if (!tileBuffer[side.ordinal()].exists())
+		if (tileBuffer == null) {
 			return true;
+		} else if (!tileBuffer[side.ordinal()].exists()) {
+			return true;
+		}
 
 		TileEntity tile = tileBuffer[side.ordinal()].getTile();
 		return isValidOutputTile(tile);

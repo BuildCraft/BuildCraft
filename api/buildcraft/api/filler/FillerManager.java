@@ -8,8 +8,13 @@
  */
 package buildcraft.api.filler;
 
-public class FillerManager {
+public final class FillerManager {
 
 	public static IFillerRegistry registry;
 
+	/**
+	 * Deactivate constructor
+	 */
+	private FillerManager() {
+	}
 }

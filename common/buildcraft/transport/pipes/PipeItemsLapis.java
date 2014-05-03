@@ -8,6 +8,19 @@
  */
 package buildcraft.transport.pipes;
 
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
+
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
+import net.minecraftforge.common.util.ForgeDirection;
+
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.gates.IAction;
@@ -20,15 +33,6 @@ import buildcraft.transport.TransportConstants;
 import buildcraft.transport.TravelingItem;
 import buildcraft.transport.pipes.events.PipeEventItem;
 import buildcraft.transport.triggers.ActionPipeColor;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.Map;
-import java.util.Map.Entry;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
-import net.minecraftforge.common.util.ForgeDirection;
 
 public class PipeItemsLapis extends Pipe<PipeTransportItems> {
 
@@ -44,8 +48,9 @@ public class PipeItemsLapis extends Pipe<PipeTransportItems> {
 
 	@Override
 	public int getIconIndex(ForgeDirection direction) {
-		if (container == null)
+		if (container == null) {
 			return PipeIconProvider.TYPE.PipeItemsLapis_Black.ordinal();
+		}
 		return PipeIconProvider.TYPE.PipeItemsLapis_Black.ordinal() + container.getBlockMetadata();
 	}
 

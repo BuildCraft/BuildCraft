@@ -8,7 +8,7 @@
  */
 package buildcraft.core;
 
-public class GuiIds {
+public final class GuiIds {
 
 	public static final int ARCHITECT_TABLE = 10;
 	public static final int BUILDER = 11;
@@ -31,4 +31,10 @@ public class GuiIds {
 	public static final int PIPE_LOGEMERALD_ITEM = 53;
 
 	public static final int FILTERED_BUFFER = 60;
+
+	/**
+	 * Deactivate constructor
+	 */
+	private GuiIds() {
+	}
 }

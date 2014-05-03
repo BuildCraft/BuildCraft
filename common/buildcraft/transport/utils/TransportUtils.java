@@ -8,10 +8,17 @@
  */
 package buildcraft.transport.utils;
 
-import buildcraft.core.CoreConstants;
 import net.minecraft.item.ItemStack;
 
-public class TransportUtils {
+import buildcraft.core.CoreConstants;
+
+public final class TransportUtils {
+
+	/**
+	 * Deactivate constructor
+	 */
+	private TransportUtils() {
+	}
 
 	/**
 	 * Depending on the kind of item in the pipe, set the floor at a different

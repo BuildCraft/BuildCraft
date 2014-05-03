@@ -12,5 +12,5 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 
 public interface ICoreProxy {
-	public EntityPlayer getBuildCraftPlayer(World world);
+	EntityPlayer getBuildCraftPlayer(World world);
 }

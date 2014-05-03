@@ -8,12 +8,11 @@
  */
 package buildcraft.core.render;
 
-import buildcraft.core.render.RenderEntityBlock.RenderInfo;
-
 import java.util.HashMap;
 import java.util.Map;
 
-import net.minecraft.block.Block;
+import org.lwjgl.opengl.GL11;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.client.renderer.texture.TextureMap;
@@ -21,18 +20,26 @@ import net.minecraft.init.Blocks;
 import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 
-import org.lwjgl.opengl.GL11;
+import buildcraft.core.render.RenderEntityBlock.RenderInfo;
 
-public class FluidRenderer {
+public final class FluidRenderer {
 
+	public static final int DISPLAY_STAGES = 100;
 	private static final ResourceLocation BLOCK_TEXTURE = TextureMap.locationBlocksTexture;
 	private static Map<Fluid, int[]> flowingRenderCache = new HashMap<Fluid, int[]>();
 	private static Map<Fluid, int[]> stillRenderCache = new HashMap<Fluid, int[]>();
-	public static final int DISPLAY_STAGES = 100;
 	private static final RenderInfo liquidBlock = new RenderInfo();
+
+	/**
+	 * Deactivate default constructor
+	 */
+	private FluidRenderer() {
+
+	}
 
 	public static IIcon getFluidTexture(FluidStack fluidStack, boolean flowing) {
 		if (fluidStack == null) {
@@ -53,8 +60,9 @@ public class FluidRenderer {
 	}
 
 	public static ResourceLocation getFluidSheet(FluidStack liquid) {
-		if (liquid == null)
+		if (liquid == null) {
 			return BLOCK_TEXTURE;
+		}
 		return getFluidSheet(liquid.getFluid());
 	}
 
@@ -63,8 +71,9 @@ public class FluidRenderer {
 	}
 
 	public static void setColorForFluidStack(FluidStack fluidstack) {
-		if (fluidstack == null)
+		if (fluidstack == null) {
 			return;
+		}
 
 		int color = fluidstack.getFluid().getColor(fluidstack);
 		RenderUtils.setGLColorFromInt(color);

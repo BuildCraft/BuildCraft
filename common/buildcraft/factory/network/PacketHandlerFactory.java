@@ -8,23 +8,26 @@
  */
 package buildcraft.factory.network;
 
+import java.io.IOException;
+
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
-
-import java.io.IOException;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.INetHandler;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+
+import cpw.mods.fml.common.network.NetworkRegistry;
+
 import net.minecraftforge.fluids.FluidRegistry;
+
 import buildcraft.core.network.BuildCraftChannelHandler;
 import buildcraft.core.network.BuildCraftPacket;
 import buildcraft.core.network.PacketIds;
 import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.factory.TileRefinery;
-import cpw.mods.fml.common.network.NetworkRegistry;
 
 public class PacketHandlerFactory extends BuildCraftChannelHandler {
 

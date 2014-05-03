@@ -8,12 +8,13 @@
  */
 package buildcraft.api.gates;
 
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
 
 public final class GateExpansions {
 
@@ -39,9 +40,11 @@ public final class GateExpansions {
 	}
 
 	public static IGateExpansion getExpansionClient(int id) {
-		if (id < 0 || id >= 128)
+		if (id < 0 || id >= 128) {
 			return null;
-		return expansions.get(clientIDMap.get((byte) id));
+		} else {
+			return expansions.get(clientIDMap.get((byte) id));
+		}
 	}
 
 	public static byte getServerExpansionID(String identifier) {

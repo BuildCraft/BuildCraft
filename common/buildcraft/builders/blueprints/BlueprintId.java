@@ -12,16 +12,18 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 
-import net.minecraft.nbt.NBTTagCompound;
-
 import org.apache.commons.lang3.ArrayUtils;
+
+import net.minecraft.nbt.NBTTagCompound;
 
 import buildcraft.BuildCraftBuilders;
 import buildcraft.api.core.NetworkData;
 
 public final class BlueprintId implements Comparable<BlueprintId> {
 
-	public enum Kind {Template, Blueprint};
+	public enum Kind {
+		Template, Blueprint
+	};
 
 	@NetworkData
 	public byte[] uniqueId;

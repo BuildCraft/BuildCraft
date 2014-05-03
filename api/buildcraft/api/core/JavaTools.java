@@ -35,16 +35,16 @@ public class JavaTools {
 		return result;
 	}
 
-	public <T> T[] concatenate (T[] A, T[] B) {
-	    int aLen = A.length;
-	    int bLen = B.length;
+	public <T> T[] concatenate (T[] a, T[] b) {
+	    int aLen = a.length;
+	    int bLen = b.length;
 
 	    @SuppressWarnings("unchecked")
-	    T[] C = (T[]) Array.newInstance(A.getClass().getComponentType(), aLen+bLen);
-	    System.arraycopy(A, 0, C, 0, aLen);
-	    System.arraycopy(B, 0, C, aLen, bLen);
+		T[] c = (T[]) Array.newInstance(a.getClass().getComponentType(), aLen + bLen);
+	    System.arraycopy(a, 0, c, 0, aLen);
+	    System.arraycopy(b, 0, c, aLen, bLen);
 
-	    return C;
+	    return c;
 	}
 
 	public static List<Field> getAllFields(Class clas) {
@@ -79,7 +79,7 @@ public class JavaTools {
 	    return result;
 	}
 
-	public static String surroundWithQuotes(String stringToSurroundWithQuotes){
+	public static String surroundWithQuotes(String stringToSurroundWithQuotes) {
 		return String.format("\"%s\"", stringToSurroundWithQuotes);
 	}
 

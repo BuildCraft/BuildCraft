@@ -8,9 +8,10 @@
  */
 package buildcraft.core.inventory;
 
-import buildcraft.core.utils.Utils;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
+
+import buildcraft.core.utils.Utils;
 
 public class InventoryWrapperSimple extends InventoryWrapper {
 

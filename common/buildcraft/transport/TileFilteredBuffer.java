@@ -10,16 +10,16 @@ package buildcraft.transport;
 
 import java.util.LinkedList;
 
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+
 import buildcraft.BuildCraftCore;
 import buildcraft.api.gates.IOverrideDefaultTriggers;
 import buildcraft.api.gates.ITrigger;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.inventory.SimpleInventory;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 
 public class TileFilteredBuffer extends TileBuildCraft implements IInventory, IOverrideDefaultTriggers {
 
@@ -90,14 +90,17 @@ public class TileFilteredBuffer extends TileBuildCraft implements IInventory, IO
 
 		ItemStack filterItemStack = inventoryFilters.getStackInSlot(i);
 
-		if ( filterItemStack == null || filterItemStack.getItem() != itemstack.getItem())
+		if (filterItemStack == null || filterItemStack.getItem() != itemstack.getItem()) {
 			return false;
+		}
 
-		if (itemstack.getItem().isDamageable())
+		if (itemstack.getItem().isDamageable()) {
 			return true;
+		}
 
-		if (filterItemStack.getItemDamage() == itemstack.getItemDamage())
+		if (filterItemStack.getItemDamage() == itemstack.getItemDamage()) {
 			return true;
+		}
 
 		return false;
 	}
@@ -133,7 +136,7 @@ public class TileFilteredBuffer extends TileBuildCraft implements IInventory, IO
 	@Override
 	public LinkedList<ITrigger> getTriggers() {
 		LinkedList<ITrigger> triggers = new LinkedList<ITrigger>();
-		
+
 		triggers.add(BuildCraftCore.triggerInventoryBelow25);
 		triggers.add(BuildCraftCore.triggerInventoryBelow50);
 		triggers.add(BuildCraftCore.triggerInventoryBelow75);

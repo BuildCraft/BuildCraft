@@ -8,16 +8,17 @@
  */
 package buildcraft.transport.gates;
 
-import buildcraft.core.DefaultProps;
-import buildcraft.core.utils.StringUtils;
-
 import java.util.Locale;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
+
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
+import buildcraft.core.DefaultProps;
+import buildcraft.core.utils.StringUtils;
 
 public final class GateDefinition {
 
@@ -25,9 +26,12 @@ public final class GateDefinition {
 	}
 
 	public static String getLocalizedName(GateMaterial material, GateLogic logic) {
-		if (material == GateMaterial.REDSTONE)
+		if (material == GateMaterial.REDSTONE) {
 			return StringUtils.localize("gate.name.basic");
-		return String.format(StringUtils.localize("gate.name"), StringUtils.localize("gate.material." + material.getTag()), StringUtils.localize("gate.logic." + logic.getTag()));
+		} else {
+			return String.format(StringUtils.localize("gate.name"), StringUtils.localize("gate.material." + material.getTag()),
+					StringUtils.localize("gate.logic." + logic.getTag()));
+		}
 	}
 
 	public static enum GateMaterial {
@@ -42,6 +46,13 @@ public final class GateDefinition {
 		private IIcon iconBlock;
 		@SideOnly(Side.CLIENT)
 		private IIcon iconItem;
+
+		private GateMaterial(String guiFile, int guiHeight, int numSlots, boolean hasParamterSlot) {
+			this.guiFile = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_GUI + "/" + guiFile);
+			this.guiHeight = guiHeight;
+			this.numSlots = numSlots;
+			this.hasParameterSlot = hasParamterSlot;
+		}
 
 		@SideOnly(Side.CLIENT)
 		public IIcon getIconBlock() {
@@ -59,26 +70,22 @@ public final class GateDefinition {
 
 		@SideOnly(Side.CLIENT)
 		public void registerBlockIcon(IIconRegister iconRegister) {
-			if (this != REDSTONE)
+			if (this != REDSTONE) {
 				iconBlock = iconRegister.registerIcon("buildcraft:gates/gate_material_" + getTag());
+			}
 		}
 
 		@SideOnly(Side.CLIENT)
 		public void registerItemIcon(IIconRegister iconRegister) {
-			if (this != REDSTONE)
+			if (this != REDSTONE) {
 				iconItem = iconRegister.registerIcon("buildcraft:gates/gate_material_" + getTag());
-		}
-
-		private GateMaterial(String guiFile, int guiHeight, int numSlots, boolean hasParamterSlot) {
-			this.guiFile = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_GUI + "/" + guiFile);
-			this.guiHeight = guiHeight;
-			this.numSlots = numSlots;
-			this.hasParameterSlot = hasParamterSlot;
+			}
 		}
 
 		public static GateMaterial fromOrdinal(int ordinal) {
-			if (ordinal < 0 || ordinal >= VALUES.length)
+			if (ordinal < 0 || ordinal >= VALUES.length) {
 				return REDSTONE;
+			}
 			return VALUES[ordinal];
 		}
 	}
@@ -128,8 +135,9 @@ public final class GateDefinition {
 		}
 
 		public static GateLogic fromOrdinal(int ordinal) {
-			if (ordinal < 0 || ordinal >= VALUES.length)
+			if (ordinal < 0 || ordinal >= VALUES.length) {
 				return AND;
+			}
 			return VALUES[ordinal];
 		}
 	}

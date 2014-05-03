@@ -8,20 +8,19 @@
  */
 package buildcraft.core.fluids;
 
-import com.google.common.collect.ForwardingList;
-
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import io.netty.buffer.ByteBuf;
-
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import com.google.common.collect.ForwardingList;
+
+import io.netty.buffer.ByteBuf;
+
 import net.minecraft.nbt.NBTTagCompound;
+
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
@@ -48,22 +47,26 @@ public class TankManager<T extends Tank> extends ForwardingList<T> implements IF
 	public int fill(ForgeDirection from, FluidStack resource, boolean doFill) {
 		for (Tank tank : tanks) {
 			int used = tank.fill(resource, doFill);
-			if (used > 0)
+			if (used > 0) {
 				return used;
+			}
 		}
 		return 0;
 	}
 
 	@Override
 	public FluidStack drain(ForgeDirection from, FluidStack resource, boolean doDrain) {
-		if (resource == null)
+		if (resource == null) {
 			return null;
+		}
 		for (Tank tank : tanks) {
-			if (!resource.isFluidEqual(tank.getFluid()))
+			if (!resource.isFluidEqual(tank.getFluid())) {
 				continue;
+			}
 			FluidStack drained = tank.drain(resource.amount, doDrain);
-			if (drained != null && drained.amount > 0)
+			if (drained != null && drained.amount > 0) {
 				return drained;
+			}
 		}
 		return null;
 	}
@@ -72,8 +75,9 @@ public class TankManager<T extends Tank> extends ForwardingList<T> implements IF
 	public FluidStack drain(ForgeDirection from, int maxDrain, boolean doDrain) {
 		for (Tank tank : tanks) {
 			FluidStack drained = tank.drain(maxDrain, doDrain);
-			if (drained != null && drained.amount > 0)
+			if (drained != null && drained.amount > 0) {
 				return drained;
+			}
 		}
 		return null;
 	}

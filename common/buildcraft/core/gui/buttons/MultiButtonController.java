@@ -15,7 +15,7 @@ import net.minecraft.nbt.NBTTagString;
 /**
  * T should be an Enum of button states
  */
-public class MultiButtonController<T extends IMultiButtonState> {
+public final class MultiButtonController<T extends IMultiButtonState> {
 
 	private int currentState;
 	private final T[] validStates;

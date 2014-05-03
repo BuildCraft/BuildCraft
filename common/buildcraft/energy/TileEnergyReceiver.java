@@ -11,7 +11,9 @@ package buildcraft.energy;
 import java.util.LinkedList;
 
 import net.minecraft.tileentity.TileEntity;
+
 import net.minecraftforge.common.util.ForgeDirection;
+
 import buildcraft.api.mj.MjAPI;
 import buildcraft.api.mj.MjAPI.BatteryObject;
 import buildcraft.api.power.IPowerEmitter;
@@ -24,11 +26,11 @@ import buildcraft.core.TileBuffer;
 import buildcraft.core.TileBuildCraft;
 
 public class TileEnergyReceiver extends TileBuildCraft implements IPipeConnection, IPowerEmitter {
+	public static LinkedList<TileEnergyReceiver> knownReceivers = new LinkedList<TileEnergyReceiver>();
+
 	public float energyStored = 0;
 
 	private TileBuffer[] tileCache;
-
-	public static LinkedList<TileEnergyReceiver> knownReceivers = new LinkedList<TileEnergyReceiver>();
 
 	public TileEnergyReceiver () {
 		knownReceivers.add(this);

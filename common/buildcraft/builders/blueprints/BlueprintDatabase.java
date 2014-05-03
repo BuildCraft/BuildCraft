@@ -24,18 +24,20 @@ import java.util.logging.Logger;
 
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
+
 import buildcraft.BuildCraftBuilders;
 import buildcraft.builders.blueprints.BlueprintId.Kind;
 import buildcraft.core.blueprints.BlueprintBase;
 
 public class BlueprintDatabase {
-	private final int bufferSize = 8192;
-	private final static String BPT_EXTENSION = ".bpt";
-	private final static String TPL_EXTENSION = ".tpl";
-	private File blueprintFolder;
-	private final static int PAGE_SIZE = 12;
+	private static final String BPT_EXTENSION = ".bpt";
+	private static final String TPL_EXTENSION = ".tpl";
+	private static final int PAGE_SIZE = 12;
 
-	private Set <BlueprintId> blueprintIds = new TreeSet<BlueprintId> ();
+	private final int bufferSize = 8192;
+	private File blueprintFolder;
+
+	private Set<BlueprintId> blueprintIds = new TreeSet<BlueprintId>();
 	private BlueprintId [] pages = new BlueprintId [0];
 
 	/**

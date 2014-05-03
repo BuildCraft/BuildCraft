@@ -8,8 +8,14 @@
  */
 package buildcraft.transport;
 
-public class TransportConstants {
+public final class TransportConstants {
 
 	public static final float FACADE_THICKNESS = 2F / 16F;
 	public static final float PIPE_NORMAL_SPEED = 0.01F;
+
+	/**
+	 * Deactivate constructor
+	 */
+	private TransportConstants() {
+	}
 }

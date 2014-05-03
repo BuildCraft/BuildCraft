@@ -49,10 +49,8 @@ public class StackKey {
 			return false;
 		} else if (stack.getHasSubtypes() && stack.getItemDamage() != other.stack.getItemDamage()) {
 			return false;
-		} else if (stack.stackTagCompound != null && !stack.stackTagCompound.equals(other.stack.stackTagCompound)) {
-			return false;
 		} else {
-			return true;
+			return !(stack.stackTagCompound != null && !stack.stackTagCompound.equals(other.stack.stackTagCompound));
 		}
 	}
 }

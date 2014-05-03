@@ -8,25 +8,14 @@
  */
 package buildcraft.transport;
 
-import buildcraft.BuildCraftTransport;
-import buildcraft.api.core.BCLog;
-import buildcraft.api.gates.GateExpansions;
-import buildcraft.api.gates.IGateExpansion;
-import buildcraft.api.tools.IToolWrench;
-import buildcraft.api.transport.PipeWire;
-import buildcraft.core.*;
-import buildcraft.core.robots.AIDocked;
-import buildcraft.core.robots.EntityRobot;
-import buildcraft.core.utils.MatrixTranformations;
-import buildcraft.core.utils.Utils;
-import buildcraft.transport.gates.GateDefinition;
-import buildcraft.transport.gates.GateFactory;
-import buildcraft.transport.gates.ItemGate;
-import buildcraft.transport.render.PipeRendererWorld;
-import buildcraft.transport.utils.FacadeMatrix;
-import cpw.mods.fml.common.registry.GameRegistry;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Random;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
@@ -47,11 +36,41 @@ import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+
+import cpw.mods.fml.common.registry.GameRegistry;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
 import net.minecraftforge.common.util.ForgeDirection;
 
-import java.util.*;
+import buildcraft.BuildCraftTransport;
+import buildcraft.api.core.BCLog;
+import buildcraft.api.gates.GateExpansions;
+import buildcraft.api.gates.IGateExpansion;
+import buildcraft.api.tools.IToolWrench;
+import buildcraft.api.transport.PipeWire;
+import buildcraft.core.BlockBuildCraft;
+import buildcraft.core.BlockIndex;
+import buildcraft.core.CoreConstants;
+import buildcraft.core.CreativeTabBuildCraft;
+import buildcraft.core.ItemRobot;
+import buildcraft.core.robots.AIDocked;
+import buildcraft.core.robots.EntityRobot;
+import buildcraft.core.utils.MatrixTranformations;
+import buildcraft.core.utils.Utils;
+import buildcraft.transport.gates.GateDefinition;
+import buildcraft.transport.gates.GateFactory;
+import buildcraft.transport.gates.ItemGate;
+import buildcraft.transport.render.PipeRendererWorld;
+import buildcraft.transport.utils.FacadeMatrix;
 
 public class BlockGenericPipe extends BlockBuildCraft {
+
+	public static int facadeRenderColor = -1;
+	public static Map<Item, Class<? extends Pipe>> pipes = new HashMap<Item, Class<? extends Pipe>>();
+	public static Map<BlockIndex, Pipe> pipeRemoved = new HashMap<BlockIndex, Pipe>();
+
+	private static long lastRemovedDate = -1;
 
 	static enum Part {
 		Pipe,
@@ -63,16 +82,17 @@ public class BlockGenericPipe extends BlockBuildCraft {
 
 	static class RaytraceResult {
 
+		public final Part hitPart;
+		public final MovingObjectPosition movingObjectPosition;
+		public final AxisAlignedBB boundingBox;
+		public final ForgeDirection sideHit;
+
 		RaytraceResult(Part hitPart, MovingObjectPosition movingObjectPosition, AxisAlignedBB boundingBox, ForgeDirection side) {
 			this.hitPart = hitPart;
 			this.movingObjectPosition = movingObjectPosition;
 			this.boundingBox = boundingBox;
 			this.sideHit = side;
 		}
-		public final Part hitPart;
-		public final MovingObjectPosition movingObjectPosition;
-		public final AxisAlignedBB boundingBox;
-		public final ForgeDirection sideHit;
 
 		@Override
 		public String toString() {
@@ -247,18 +267,20 @@ public class BlockGenericPipe extends BlockBuildCraft {
 		if (rayTraceResult != null && rayTraceResult.boundingBox != null) {
 			AxisAlignedBB box = rayTraceResult.boundingBox;
 			switch (rayTraceResult.hitPart) {
-				case Gate:
-				case Plug:
-				case RobotStation: {
-					float scale = 0.001F;
-					box = box.expand(scale, scale, scale);
-					break;
-				}
-				case Pipe: {
-					float scale = 0.08F;
-					box = box.expand(scale, scale, scale);
-					break;
-				}
+			case Gate:
+			case Plug:
+			case RobotStation: {
+				float scale = 0.001F;
+				box = box.expand(scale, scale, scale);
+				break;
+			}
+			case Pipe: {
+				float scale = 0.08F;
+				box = box.expand(scale, scale, scale);
+				break;
+			}
+			case Facade:
+				break;
 			}
 			return box.getOffsetBoundingBox(x, y, z);
 		}
@@ -1074,10 +1096,6 @@ public class BlockGenericPipe extends BlockBuildCraft {
 	}
 
 	/* Registration ******************************************************** */
-	public static Map<Item, Class<? extends Pipe>> pipes = new HashMap<Item, Class<? extends Pipe>>();
-	static long lastRemovedDate = -1;
-	public static Map<BlockIndex, Pipe> pipeRemoved = new HashMap<BlockIndex, Pipe>();
-
 	public static ItemPipe registerPipe(Class<? extends Pipe> clas, CreativeTabBuildCraft creativeTab) {
 		ItemPipe item = new ItemPipe(creativeTab);
 		item.setUnlocalizedName("buildcraftPipe." + clas.getSimpleName().toLowerCase(Locale.ENGLISH));
@@ -1290,7 +1308,6 @@ public class BlockGenericPipe extends BlockBuildCraft {
 		}
 		return true;
 	}
-	public static int facadeRenderColor = -1;
 
 	@Override
 	public int colorMultiplier(IBlockAccess world, int x, int y, int z) {

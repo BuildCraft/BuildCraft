@@ -9,8 +9,10 @@
 package buildcraft.energy.worldgen;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import buildcraft.BuildCraftEnergy;
+
 import net.minecraftforge.event.terraingen.WorldTypeEvent;
+
+import buildcraft.BuildCraftEnergy;
 
 public class BiomeInitializer {
 
@@ -21,12 +23,12 @@ public class BiomeInitializer {
 	public void initBiomes(WorldTypeEvent.InitBiomeGens event) {
 		int i;
 		if (BuildCraftEnergy.biomeOilDesert != null) {
-			for (i=0; i<event.newBiomeGens.length; i++) {
+			for (i = 0; i < event.newBiomeGens.length; i++) {
 				event.newBiomeGens[i] = new GenLayerAddOilDesert(event.seed, 1500L, event.newBiomeGens[i]);
 			}
 		}
 		if (BuildCraftEnergy.biomeOilOcean != null) {
-			for (i=0; i<event.newBiomeGens.length; i++) {
+			for (i = 0; i < event.newBiomeGens.length; i++) {
 				event.newBiomeGens[i] = new GenLayerAddOilOcean(event.seed, 1500L, event.newBiomeGens[i]);
 			}
 		}

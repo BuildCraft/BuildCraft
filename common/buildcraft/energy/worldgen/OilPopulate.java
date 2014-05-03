@@ -8,11 +8,6 @@
  */
 package buildcraft.energy.worldgen;
 
-import static net.minecraftforge.common.BiomeDictionary.Type.DESERT;
-import static net.minecraftforge.common.BiomeDictionary.Type.FOREST;
-import static net.minecraftforge.common.BiomeDictionary.Type.FROZEN;
-import static net.minecraftforge.common.BiomeDictionary.Type.WASTELAND;
-
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
@@ -25,7 +20,10 @@ import net.minecraft.init.Blocks;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.chunk.Chunk;
-import net.minecraftforge.common.BiomeDictionary;
+
+import cpw.mods.fml.common.eventhandler.Event.Result;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+
 import net.minecraftforge.common.util.EnumHelper;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.event.terraingen.PopulateChunkEvent;
@@ -33,12 +31,11 @@ import net.minecraftforge.event.terraingen.PopulateChunkEvent.Populate.EventType
 import net.minecraftforge.event.terraingen.TerrainGen;
 import net.minecraftforge.fluids.BlockFluidBase;
 import net.minecraftforge.fluids.IFluidBlock;
+
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftEnergy;
-import cpw.mods.fml.common.eventhandler.Event.Result;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 
-public class OilPopulate {
+public final class OilPopulate {
 
 	public static final OilPopulate INSTANCE = new OilPopulate();
 	public static final EventType EVENT_TYPE = EnumHelper.addEnum(EventType.class, "BUILDCRAFT_OIL", new Class[0], new Object[0]);
@@ -97,11 +94,14 @@ public class OilPopulate {
 			bonus *= 20.0;
 		}
 		GenType type = GenType.NONE;
-		if (rand.nextDouble() <= 0.0004 * bonus) {// 0.04%
+		if (rand.nextDouble() <= 0.0004 * bonus) {
+			// 0.04%
 			type = GenType.LARGE;
-		} else if (rand.nextDouble() <= 0.001 * bonus) {// 0.1%
+		} else if (rand.nextDouble() <= 0.001 * bonus) {
+			// 0.1%
 			type = GenType.MEDIUM;
-		} else if (oilBiome && rand.nextDouble() <= 0.02 * bonus) {// 2%
+		} else if (oilBiome && rand.nextDouble() <= 0.02 * bonus) {
+			// 2%
 			type = GenType.LAKE;
 		}
 
@@ -263,7 +263,7 @@ public class OilPopulate {
 
 	private boolean isOil(World world, int x, int y, int z) {
 		Block block = world.getBlock(x, y, z);
-		return (block == BuildCraftEnergy.blockOil);
+		return block == BuildCraftEnergy.blockOil;
 	}
 
 	private boolean isReplaceableForLake(World world, BiomeGenBase biome, int x, int y, int z) {

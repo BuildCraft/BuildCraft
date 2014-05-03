@@ -8,32 +8,33 @@
  */
 package buildcraft.energy.render;
 
-import buildcraft.BuildCraftCore;
-import buildcraft.BuildCraftCore.RenderMode;
-import buildcraft.core.IInventoryRenderer;
-import buildcraft.energy.TileEngine;
+import org.lwjgl.opengl.GL11;
+
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.util.ForgeDirection;
-import org.lwjgl.opengl.GL11;
 
-import static net.minecraftforge.common.util.ForgeDirection.*;
+import net.minecraftforge.common.util.ForgeDirection;
+
+import buildcraft.BuildCraftCore;
+import buildcraft.BuildCraftCore.RenderMode;
+import buildcraft.core.IInventoryRenderer;
+import buildcraft.energy.TileEngine;
 
 public class RenderEngine extends TileEntitySpecialRenderer implements IInventoryRenderer {
 
 	private static final float[] angleMap = new float[6];
 
 	static {
-		angleMap[EAST.ordinal()] = (float) -Math.PI / 2;
-		angleMap[WEST.ordinal()] = (float) Math.PI / 2;
-		angleMap[UP.ordinal()] = 0;
-		angleMap[DOWN.ordinal()] = (float) Math.PI;
-		angleMap[SOUTH.ordinal()] = (float) Math.PI / 2;
-		angleMap[NORTH.ordinal()] = (float) -Math.PI / 2;
+		angleMap[ForgeDirection.EAST.ordinal()] = (float) -Math.PI / 2;
+		angleMap[ForgeDirection.WEST.ordinal()] = (float) Math.PI / 2;
+		angleMap[ForgeDirection.UP.ordinal()] = 0;
+		angleMap[ForgeDirection.DOWN.ordinal()] = (float) Math.PI;
+		angleMap[ForgeDirection.SOUTH.ordinal()] = (float) Math.PI / 2;
+		angleMap[ForgeDirection.NORTH.ordinal()] = (float) -Math.PI / 2;
 	}
 
 	private ModelBase model = new ModelBase() {
@@ -90,7 +91,7 @@ public class RenderEngine extends TileEntitySpecialRenderer implements IInventor
 	@Override
 	public void renderTileEntityAt(TileEntity tileentity, double x, double y, double z, float f) {
 
-		TileEngine engine = ((TileEngine) tileentity);
+		TileEngine engine = (TileEngine) tileentity;
 
 		if (engine != null) {
 			render(engine.progress, engine.orientation, engine.getBaseTexture(), engine.getChamberTexture(), engine.getTrunkTexture(engine.getEnergyStage()), x, y, z);
@@ -122,8 +123,8 @@ public class RenderEngine extends TileEntitySpecialRenderer implements IInventor
 
 		float translatefact = step / 16;
 
-		float[] angle = { 0, 0, 0 };
-		float[] translate = { orientation.offsetX, orientation.offsetY, orientation.offsetZ };
+		float[] angle = {0, 0, 0};
+		float[] translate = {orientation.offsetX, orientation.offsetY, orientation.offsetZ};
 
 		switch (orientation) {
 			case EAST:

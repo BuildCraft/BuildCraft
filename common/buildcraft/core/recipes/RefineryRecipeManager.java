@@ -8,18 +8,23 @@
  */
 package buildcraft.core.recipes;
 
-import buildcraft.api.recipes.IRefineryRecipeManager;
-import buildcraft.api.recipes.IRefineryRecipeManager.IRefineryRecipe;
-import com.google.common.base.Objects;
 import java.util.Collections;
 import java.util.SortedSet;
 import java.util.TreeSet;
+
+import com.google.common.base.Objects;
+
 import net.minecraftforge.fluids.FluidStack;
+
+import buildcraft.api.recipes.IRefineryRecipeManager;
 
 public final class RefineryRecipeManager implements IRefineryRecipeManager {
 
 	public static final RefineryRecipeManager INSTANCE = new RefineryRecipeManager();
 	private SortedSet<RefineryRecipe> recipes = new TreeSet<RefineryRecipe>();
+
+	private RefineryRecipeManager() {
+	}
 
 	@Override
 	public void addRecipe(FluidStack ingredient, FluidStack result, int energy, int delay) {
@@ -40,14 +45,12 @@ public final class RefineryRecipeManager implements IRefineryRecipeManager {
 	@Override
 	public RefineryRecipe findRefineryRecipe(FluidStack liquid1, FluidStack liquid2) {
 		for (RefineryRecipe recipe : recipes) {
-			if (recipe.matches(liquid1, liquid2))
+			if (recipe.matches(liquid1, liquid2)) {
 				return recipe;
+			}
 		}
 
 		return null;
-	}
-
-	private RefineryRecipeManager() {
 	}
 
 	public static final class RefineryRecipe implements IRefineryRecipe, Comparable<RefineryRecipe> {
@@ -59,8 +62,9 @@ public final class RefineryRecipeManager implements IRefineryRecipeManager {
 		public final int timeRequired;
 
 		private RefineryRecipe(FluidStack ingredient1, FluidStack ingredient2, FluidStack result, int energy, int delay) {
-			if (ingredient1 == null)
+			if (ingredient1 == null) {
 				throw new IllegalArgumentException("First Ingredient cannot be null!");
+			}
 			this.ingredient1 = ingredient1;
 			this.ingredient2 = ingredient2;
 			this.result = result;
@@ -71,25 +75,31 @@ public final class RefineryRecipeManager implements IRefineryRecipeManager {
 		public boolean matches(FluidStack liquid1, FluidStack liquid2) {
 
 			// No inputs, return.
-			if (liquid1 == null && liquid2 == null)
+			if (liquid1 == null && liquid2 == null) {
 				return false;
-
-			// Return if two ingredients are required but only one was supplied.
-			if ((ingredient1 != null && ingredient2 != null) && (liquid1 == null || liquid2 == null))
-				return false;
-
-			if (liquid1 != null && liquid2 != null) {
-				if (liquid1.containsFluid(ingredient1) && liquid1.containsFluid(ingredient2))
-					return true;
-				if (liquid1.containsFluid(ingredient2) && liquid1.containsFluid(ingredient1))
-					return true;
 			}
 
-			if (liquid1 != null)
-				return liquid1.containsFluid(ingredient1) || liquid1.containsFluid(ingredient2);
+			// Return if two ingredients are required but only one was supplied.
+			if ((ingredient1 != null && ingredient2 != null) && (liquid1 == null || liquid2 == null)) {
+				return false;
+			}
 
-			if (liquid2 != null)
+			if (liquid1 != null && liquid2 != null) {
+				if (liquid1.containsFluid(ingredient1) && liquid1.containsFluid(ingredient2)) {
+					return true;
+				}
+				if (liquid1.containsFluid(ingredient2) && liquid1.containsFluid(ingredient1)) {
+					return true;
+				}
+			}
+
+			if (liquid1 != null) {
+				return liquid1.containsFluid(ingredient1) || liquid1.containsFluid(ingredient2);
+			}
+
+			if (liquid2 != null) {
 				return liquid2.containsFluid(ingredient1) || liquid2.containsFluid(ingredient2);
+			}
 
 			return false;
 		}
@@ -99,20 +109,21 @@ public final class RefineryRecipeManager implements IRefineryRecipeManager {
 		// the failure of matching two-ingredient recipes which include that liquid.
 		@Override
 		public int compareTo(RefineryRecipe other) {
-			if (other == null)
+			if (other == null) {
 				return -1;
-			else if (ingredient1.getFluid() != other.ingredient1.getFluid())
+			} else if (ingredient1.getFluid() != other.ingredient1.getFluid()) {
 				return ingredient1.getFluid().getName().compareTo(other.ingredient1.getFluid().getName());
-			else if (ingredient1.amount != other.ingredient1.amount)
+			} else if (ingredient1.amount != other.ingredient1.amount) {
 				return other.ingredient1.amount - ingredient1.amount;
-			else if (ingredient2 == null)
+			} else if (ingredient2 == null) {
 				return other.ingredient2 == null ? 0 : 1;
-			else if (other.ingredient2 == null)
+			} else if (other.ingredient2 == null) {
 				return -1;
-			else if (ingredient2.getFluid() != other.ingredient2.getFluid())
+			} else if (ingredient2.getFluid() != other.ingredient2.getFluid()) {
 				return ingredient2.getFluid().getName().compareTo(other.ingredient2.getFluid().getName());
-			else if (ingredient2.amount != other.ingredient2.amount)
+			} else if (ingredient2.amount != other.ingredient2.amount) {
 				return other.ingredient2.amount - ingredient2.amount;
+			}
 
 			return 0;
 		}

@@ -9,6 +9,7 @@
 package buildcraft.api.blueprints;
 
 import net.minecraft.world.World;
+
 import buildcraft.api.core.IBox;
 import buildcraft.api.core.Position;
 
@@ -18,11 +19,11 @@ import buildcraft.api.core.Position;
  */
 public interface IBuilderContext {
 
-	public Position rotatePositionLeft(Position pos);
+	Position rotatePositionLeft(Position pos);
 
-	public IBox surroundingBox();
+	IBox surroundingBox();
 
-	public World world();
+	World world();
 
-	public MappingRegistry getMappingRegistry ();
+	MappingRegistry getMappingRegistry();
 }

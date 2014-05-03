@@ -10,11 +10,15 @@ package buildcraft.transport.network;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.network.INetHandler;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+
+import cpw.mods.fml.common.network.NetworkRegistry;
+
 import buildcraft.core.network.BuildCraftChannelHandler;
 import buildcraft.core.network.BuildCraftPacket;
 import buildcraft.core.network.PacketCoordinates;
@@ -28,7 +32,6 @@ import buildcraft.transport.TileGenericPipe;
 import buildcraft.transport.gui.ContainerGateInterface;
 import buildcraft.transport.pipes.PipeItemsDiamond;
 import buildcraft.transport.pipes.PipeItemsEmerald;
-import cpw.mods.fml.common.network.NetworkRegistry;
 
 public class PacketHandlerTransport extends BuildCraftChannelHandler {
 
@@ -120,8 +123,9 @@ public class PacketHandlerTransport extends BuildCraftChannelHandler {
 	private void onGateActions(EntityPlayer player, PacketUpdate packet) {
 		Container container = player.openContainer;
 
-		if (!(container instanceof ContainerGateInterface))
+		if (!(container instanceof ContainerGateInterface)) {
 			return;
+		}
 
 		((ContainerGateInterface) container).updateActions(packet);
 	}
@@ -134,8 +138,9 @@ public class PacketHandlerTransport extends BuildCraftChannelHandler {
 	private void onGateTriggers(EntityPlayer player, PacketUpdate packet) {
 		Container container = player.openContainer;
 
-		if (!(container instanceof ContainerGateInterface))
+		if (!(container instanceof ContainerGateInterface)) {
 			return;
+		}
 
 		((ContainerGateInterface) container).updateTriggers(packet);
 	}
@@ -148,8 +153,9 @@ public class PacketHandlerTransport extends BuildCraftChannelHandler {
 	private void onGateSelection(EntityPlayer player, PacketUpdate packet) {
 		Container container = player.openContainer;
 
-		if (!(container instanceof ContainerGateInterface))
+		if (!(container instanceof ContainerGateInterface)) {
 			return;
+		}
 
 		((ContainerGateInterface) container).setSelection(packet, false);
 	}
@@ -162,19 +168,23 @@ public class PacketHandlerTransport extends BuildCraftChannelHandler {
 	private void onPipeTravelerUpdate(EntityPlayer player, PacketPipeTransportTraveler packet) {
 		World world = player.worldObj;
 
-		if (!world.blockExists(packet.posX, packet.posY, packet.posZ))
+		if (!world.blockExists(packet.posX, packet.posY, packet.posZ)) {
 			return;
+		}
 
 		TileEntity entity = world.getTileEntity(packet.posX, packet.posY, packet.posZ);
-		if (!(entity instanceof TileGenericPipe))
+		if (!(entity instanceof TileGenericPipe)) {
 			return;
+		}
 
 		TileGenericPipe pipe = (TileGenericPipe) entity;
-		if (pipe.pipe == null)
+		if (pipe.pipe == null) {
 			return;
+		}
 
-		if (!(pipe.pipe.transport instanceof PipeTransportItems))
+		if (!(pipe.pipe.transport instanceof PipeTransportItems)) {
 			return;
+		}
 
 		((PipeTransportItems) pipe.pipe.transport).handleTravelerPacket(packet);
 	}
@@ -186,19 +196,23 @@ public class PacketHandlerTransport extends BuildCraftChannelHandler {
 	 */
 	private void onPacketPower(EntityPlayer player, PacketPowerUpdate packetPower) {
 		World world = player.worldObj;
-		if (!world.blockExists(packetPower.posX, packetPower.posY, packetPower.posZ))
+		if (!world.blockExists(packetPower.posX, packetPower.posY, packetPower.posZ)) {
 			return;
+		}
 
 		TileEntity entity = world.getTileEntity(packetPower.posX, packetPower.posY, packetPower.posZ);
-		if (!(entity instanceof TileGenericPipe))
+		if (!(entity instanceof TileGenericPipe)) {
 			return;
+		}
 
 		TileGenericPipe pipe = (TileGenericPipe) entity;
-		if (pipe.pipe == null)
+		if (pipe.pipe == null) {
 			return;
+		}
 
-		if (!(pipe.pipe.transport instanceof PipeTransportPower))
+		if (!(pipe.pipe.transport instanceof PipeTransportPower)) {
 			return;
+		}
 
 		((PipeTransportPower) pipe.pipe.transport).handlePowerPacket(packetPower);
 
@@ -228,8 +242,9 @@ public class PacketHandlerTransport extends BuildCraftChannelHandler {
 	 * @param packet
 	 */
 	private void onGateSelectionRequest(EntityPlayer playerEntity, PacketCoordinates packet) {
-		if (!(playerEntity.openContainer instanceof ContainerGateInterface))
+		if (!(playerEntity.openContainer instanceof ContainerGateInterface)) {
 			return;
+		}
 
 		((ContainerGateInterface) playerEntity.openContainer).sendSelection(playerEntity);
 	}
@@ -241,8 +256,9 @@ public class PacketHandlerTransport extends BuildCraftChannelHandler {
 	 * @param packet
 	 */
 	private void onGateInitRequest(EntityPlayer playerEntity, PacketCoordinates packet) {
-		if (!(playerEntity.openContainer instanceof ContainerGateInterface))
+		if (!(playerEntity.openContainer instanceof ContainerGateInterface)) {
 			return;
+		}
 
 		((ContainerGateInterface) playerEntity.openContainer).handleInitRequest(playerEntity);
 	}
@@ -257,12 +273,14 @@ public class PacketHandlerTransport extends BuildCraftChannelHandler {
 	 * @return
 	 */
 	private TileGenericPipe getPipe(World world, int x, int y, int z) {
-		if (!world.blockExists(x, y, z))
+		if (!world.blockExists(x, y, z)) {
 			return null;
+		}
 
 		TileEntity tile = world.getTileEntity(x, y, z);
-		if (!(tile instanceof TileGenericPipe))
+		if (!(tile instanceof TileGenericPipe)) {
 			return null;
+		}
 
 		return (TileGenericPipe) tile;
 	}
@@ -275,11 +293,13 @@ public class PacketHandlerTransport extends BuildCraftChannelHandler {
 	 */
 	private void onDiamondPipeSelect(EntityPlayer player, PacketSlotChange packet) {
 		TileGenericPipe pipe = getPipe(player.worldObj, packet.posX, packet.posY, packet.posZ);
-		if (pipe == null)
+		if (pipe == null) {
 			return;
+		}
 
-		if (!(pipe.pipe instanceof PipeItemsDiamond))
+		if (!(pipe.pipe instanceof PipeItemsDiamond)) {
 			return;
+		}
 
 		((PipeItemsDiamond) pipe.pipe).getFilters().setInventorySlotContents(packet.slot, packet.stack);
 	}
@@ -292,11 +312,13 @@ public class PacketHandlerTransport extends BuildCraftChannelHandler {
 	 */
 	private void onEmeraldPipeSelect(EntityPlayer player, PacketSlotChange packet) {
 		TileGenericPipe pipe = getPipe(player.worldObj, packet.posX, packet.posY, packet.posZ);
-		if (pipe == null)
+		if (pipe == null) {
 			return;
+		}
 
-		if (!(pipe.pipe instanceof PipeItemsEmerald))
+		if (!(pipe.pipe instanceof PipeItemsEmerald)) {
 			return;
+		}
 
 		((PipeItemsEmerald) pipe.pipe).getFilters().setInventorySlotContents(packet.slot, packet.stack);
 	}

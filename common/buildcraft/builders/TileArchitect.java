@@ -14,8 +14,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.AxisAlignedBB;
+
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.ForgeDirection;
+
 import buildcraft.BuildCraftBuilders;
 import buildcraft.api.blueprints.Translation;
 import buildcraft.api.core.IAreaProvider;
@@ -37,25 +39,22 @@ import buildcraft.core.network.RPCSide;
 import buildcraft.core.utils.Utils;
 
 public class TileArchitect extends TileBuildCraft implements IInventory, IBoxProvider {
-	private final static int SCANNER_ITERATION = 100;
 
-	private BlueprintBase writingBlueprint;
-	private BptContext writingContext;
-	private BlockScanner blockScanner;
+	private static final int SCANNER_ITERATION = 100;
+
 	public int computingTime = 0;
-
+	public String currentAuthorName = "";
+	@NetworkData
+	public Box box = new Box();
+	@NetworkData
+	public String name = "";
 	@NetworkData
 	public BlueprintReadConfiguration readConfiguration = new BlueprintReadConfiguration();
 
-	@NetworkData
-	public Box box = new Box();
-
-	private ItemStack items[] = new ItemStack[2];
-
-	@NetworkData
-	public String name = "";
-
-	public String currentAuthorName = "";
+	private ItemStack[] items = new ItemStack[2];
+	private BlueprintBase writingBlueprint;
+	private BptContext writingContext;
+	private BlockScanner blockScanner;
 
 	public TileArchitect() {
 		box.kind = Kind.STRIPES;

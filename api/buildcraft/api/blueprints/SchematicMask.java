@@ -13,6 +13,7 @@ import java.util.LinkedList;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+
 import buildcraft.api.core.BuildCraftAPI;
 
 public class SchematicMask extends SchematicBlockBase {
@@ -28,7 +29,7 @@ public class SchematicMask extends SchematicBlockBase {
 	}
 
 	@Override
-	public void writeToWorld(IBuilderContext context, int x, int y, int z, LinkedList <ItemStack> stacks) {
+	public void writeToWorld(IBuilderContext context, int x, int y, int z, LinkedList<ItemStack> stacks) {
 		if (isConcrete) {
 			if (stacks.size() == 0 || !BuildCraftAPI.isSoftBlock(context.world(), x, y, z)) {
 				return;

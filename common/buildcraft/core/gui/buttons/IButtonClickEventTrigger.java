@@ -10,7 +10,9 @@
 package buildcraft.core.gui.buttons;
 
 public interface IButtonClickEventTrigger {
-	public void registerListener(IButtonClickEventListener listener);
-	public void removeListener(IButtonClickEventListener listener);
-	public void notifyAllListeners();
+	void registerListener(IButtonClickEventListener listener);
+
+	void removeListener(IButtonClickEventListener listener);
+
+	void notifyAllListeners();
 }

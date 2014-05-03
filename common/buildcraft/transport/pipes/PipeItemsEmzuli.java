@@ -8,12 +8,12 @@
  */
 package buildcraft.transport.pipes;
 
-import io.netty.buffer.ByteBuf;
-
 import java.util.BitSet;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import io.netty.buffer.ByteBuf;
 
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
@@ -21,7 +21,9 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+
 import net.minecraftforge.common.util.ForgeDirection;
+
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.gates.IAction;
 import buildcraft.core.GuiIds;

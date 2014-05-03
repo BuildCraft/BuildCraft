@@ -11,7 +11,5 @@ package buildcraft.core;
 import java.util.ArrayList;
 
 public interface IBoxesProvider {
-
-	public ArrayList <Box> getBoxes ();
-
+	ArrayList<Box> getBoxes();
 }

@@ -8,14 +8,16 @@
  */
 package buildcraft.silicon;
 
-import buildcraft.api.gates.IAction;
-import buildcraft.core.IMachine;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
+
 import net.minecraftforge.common.util.ForgeDirection;
+
+import buildcraft.api.gates.IAction;
 import buildcraft.api.recipes.BuildcraftRecipes;
 import buildcraft.api.recipes.IIntegrationRecipeManager.IIntegrationRecipe;
+import buildcraft.core.IMachine;
 import buildcraft.core.inventory.ITransactor;
 import buildcraft.core.inventory.InventoryMapper;
 import buildcraft.core.inventory.SimpleInventory;
@@ -44,7 +46,7 @@ public class TileIntegrationTable extends TileLaserTableBase implements ISidedIn
 
 	private ItemStack[] getComponents() {
 		ItemStack[] components = new ItemStack[9];
-		for (int i=SLOT_OUTPUT + 1; i<12; i++) {
+		for (int i = SLOT_OUTPUT + 1; i < 12; i++) {
 			components[i - SLOT_OUTPUT - 1] = inv.getStackInSlot(i);
 		}
 		return components;
@@ -62,7 +64,7 @@ public class TileIntegrationTable extends TileLaserTableBase implements ISidedIn
 
 		for (ItemStack stack : components) {
 			int found = 0;
-			for (int i=SLOT_OUTPUT + 1; i<12; i++) {
+			for (int i = SLOT_OUTPUT + 1; i < 12; i++) {
 				ItemStack stack1 = inv.getStackInSlot(i);
 
 				if (stack1 != null) {
@@ -121,7 +123,7 @@ public class TileIntegrationTable extends TileLaserTableBase implements ISidedIn
 
 			// For each required component, loop through the component inventory
 			for (ItemStack stack : currentRecipe.getComponents()) {
-				for (int i=SLOT_OUTPUT + 1; i<12; i++) {
+				for (int i = SLOT_OUTPUT + 1; i < 12; i++) {
 					ItemStack stack1 = inv.getStackInSlot(i);
 
 					if (stack1 != null) {

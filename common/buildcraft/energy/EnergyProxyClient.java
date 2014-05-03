@@ -8,6 +8,8 @@
  */
 package buildcraft.energy;
 
+import cpw.mods.fml.client.registry.ClientRegistry;
+
 import buildcraft.BuildCraftEnergy;
 import buildcraft.builders.urbanism.RenderBoxProvider;
 import buildcraft.builders.urbanism.TileUrbanist;
@@ -15,7 +17,6 @@ import buildcraft.core.render.RenderingEntityBlocks;
 import buildcraft.core.render.RenderingEntityBlocks.EntityRenderIndex;
 import buildcraft.energy.render.RenderEnergyEmitter;
 import buildcraft.energy.render.RenderEngine;
-import cpw.mods.fml.client.registry.ClientRegistry;
 
 public class EnergyProxyClient extends EnergyProxy {
 

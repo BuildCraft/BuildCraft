@@ -8,9 +8,9 @@
  */
 package buildcraft.factory;
 
-import io.netty.buffer.ByteBuf;
-
 import java.io.IOException;
+
+import io.netty.buffer.ByteBuf;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
@@ -18,6 +18,7 @@ import net.minecraft.inventory.ICrafting;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
@@ -25,6 +26,7 @@ import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
+
 import buildcraft.BuildCraftCore;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.gates.IAction;
@@ -47,8 +49,8 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IInve
 	public TankManager<SingleUseTank> tankManager = new TankManager<SingleUseTank>(tank1, tank2, result);
 	public float animationSpeed = 1;
 	private int animationStage = 0;
-	SafeTimeTracker time = new SafeTimeTracker();
-	SafeTimeTracker updateNetworkTime = new SafeTimeTracker();
+	private SafeTimeTracker time = new SafeTimeTracker();
+	private SafeTimeTracker updateNetworkTime = new SafeTimeTracker();
 	private boolean isActive;
 
 	@MjBattery(maxCapacity = 1000, maxReceivedPerCycle = 150, minimumConsumption = 1)
