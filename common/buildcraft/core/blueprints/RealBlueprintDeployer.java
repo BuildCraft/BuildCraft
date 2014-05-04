@@ -11,8 +11,11 @@ package buildcraft.core.blueprints;
 import java.io.File;
 
 import net.minecraft.world.World;
+
 import net.minecraftforge.common.util.ForgeDirection;
+
 import buildcraft.api.blueprints.BlueprintDeployer;
+import buildcraft.api.blueprints.Translation;
 import buildcraft.builders.blueprints.BlueprintDatabase;
 import buildcraft.builders.blueprints.BlueprintId;
 import buildcraft.builders.blueprints.BlueprintId.Kind;
@@ -43,6 +46,14 @@ public class RealBlueprintDeployer extends BlueprintDeployer {
 				bpt.rotateLeft(context);
 			}
 		}
+
+		Translation transform = new Translation();
+
+		transform.x = x - bpt.anchorX;
+		transform.y = y - bpt.anchorY;
+		transform.z = z - bpt.anchorZ;
+
+		bpt.transformToWorld(transform);
 
 		new BptBuilderBlueprint(bpt, world, x, y, z).deploy ();
 	}
