@@ -115,7 +115,7 @@ jar {
 	from sourceSets.api.output
 }
 
-tasks.withType(Checkstyle).all {
+checkstyle {
 	configFile = file('guidelines/buildcraft.checkstyle')
 }
 
