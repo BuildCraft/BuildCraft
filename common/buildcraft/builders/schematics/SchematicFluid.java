@@ -26,10 +26,15 @@ public class SchematicFluid extends SchematicBlock {
 	}
 
 	@Override
-	public void addRequirements(IBuilderContext context, LinkedList<ItemStack> requirements) {
+	public void writeRequirementsToBuilder(IBuilderContext context, LinkedList<ItemStack> requirements) {
 		if (meta == 0) {
 			requirements.add(bucketStack.copy());
 		}
+	}
+
+	@Override
+	public void readRequirementsFromWorld(IBuilderContext context, int x, int y, int z) {
+		// cancel requirements reading
 	}
 
 	@Override
@@ -49,11 +54,6 @@ public class SchematicFluid extends SchematicBlock {
 	@Override
 	public boolean doNotBuild() {
 		return meta != 0;
-	}
-
-	@Override
-	public void readFromWorld(IBuilderContext context, int x, int y, int z) {
-		// Cancel storage of requirements
 	}
 
 	@Override

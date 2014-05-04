@@ -14,7 +14,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
+
 import net.minecraftforge.common.util.Constants;
+
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.MappingRegistry;
 import buildcraft.api.blueprints.SchematicBlockBase;
@@ -83,7 +85,11 @@ public class BuildingSlotBlock extends BuildingSlot {
 		if (mode == Mode.ClearIfInvalid) {
 			return new LinkedList<ItemStack>();
 		} else {
-			return getSchematic().getRequirements(context);
+			LinkedList<ItemStack> req = new LinkedList<ItemStack>();
+
+			getSchematic().writeRequirementsToBuilder(context, req);
+
+			return req;
 		}
 	}
 

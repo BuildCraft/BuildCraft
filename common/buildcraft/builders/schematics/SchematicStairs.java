@@ -11,14 +11,20 @@ package buildcraft.builders.schematics;
 import java.util.LinkedList;
 
 import net.minecraft.item.ItemStack;
+
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.SchematicBlock;
 
 public class SchematicStairs extends SchematicBlock {
 
 	@Override
-	public void addRequirements(IBuilderContext context, LinkedList<ItemStack> requirements) {
+	public void writeRequirementsToBuilder(IBuilderContext context, LinkedList<ItemStack> requirements) {
 		requirements.add(new ItemStack(block, 1, 0));
+	}
+
+	@Override
+	public void readRequirementsFromWorld(IBuilderContext context, int x, int y, int z) {
+
 	}
 
 	@Override

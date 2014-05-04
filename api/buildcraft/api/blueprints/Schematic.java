@@ -77,22 +77,13 @@ public abstract class Schematic {
 		return true;
 	}
 
-	public final LinkedList<ItemStack> getRequirements(IBuilderContext context) {
-		LinkedList<ItemStack> res = new LinkedList<ItemStack>();
-
-		addRequirements(context, res);
-
-		return res;
-	}
-
-
 	/**
-	 * Returns the requirements needed to build this block. When the
-	 * requirements are met, they will be removed all at once from the builder,
-	 * before calling buildBlock.
+	 * Return true if the block should not be placed to the world. Requirements
+	 * will not be asked on such a block, and building will not be called. Post
+	 * processing will still be called on these blocks though.
 	 */
-	public void addRequirements(IBuilderContext context, LinkedList<ItemStack> requirements) {
-
+	public boolean doNotBuild() {
+		return false;
 	}
 
 	/**
@@ -202,6 +193,19 @@ public abstract class Schematic {
 	 * blocks that may not be there already at initial building.
 	 */
 	public void postProcessing(IBuilderContext context, int x, int y, int z) {
+
+	}
+
+	public void readRequirementsFromWorld(IBuilderContext context, int x, int y, int z) {
+
+	}
+
+	/**
+	 * Returns the requirements needed to build this block. When the
+	 * requirements are met, they will be removed all at once from the builder,
+	 * before calling buildBlock.
+	 */
+	public void writeRequirementsToBuilder(IBuilderContext context, LinkedList<ItemStack> requirements) {
 
 	}
 

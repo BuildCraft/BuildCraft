@@ -19,7 +19,9 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagDouble;
 import net.minecraft.nbt.NBTTagFloat;
 import net.minecraft.nbt.NBTTagList;
+
 import net.minecraftforge.common.util.Constants;
+
 import buildcraft.api.core.Position;
 
 public class SchematicEntity extends Schematic {
@@ -36,7 +38,7 @@ public class SchematicEntity extends Schematic {
 	public ItemStack[] storedRequirements = new ItemStack[0];
 
 	@Override
-	public void addRequirements(IBuilderContext context, LinkedList<ItemStack> requirements) {
+	public void writeRequirementsToBuilder(IBuilderContext context, LinkedList<ItemStack> requirements) {
 		for (ItemStack s : storedRequirements) {
 			requirements.add(s);
 		}

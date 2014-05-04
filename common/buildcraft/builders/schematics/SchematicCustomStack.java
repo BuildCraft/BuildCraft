@@ -24,8 +24,12 @@ public class SchematicCustomStack extends SchematicBlock {
 	}
 
 	@Override
-	public void addRequirements(IBuilderContext context, LinkedList<ItemStack> requirements) {
+	public void writeRequirementsToBuilder(IBuilderContext context, LinkedList<ItemStack> requirements) {
 		requirements.add(customStack.copy());
 	}
 
+	@Override
+	public void readRequirementsFromWorld(IBuilderContext context, int x, int y, int z) {
+		// cancel requirements reading
+	}
 }

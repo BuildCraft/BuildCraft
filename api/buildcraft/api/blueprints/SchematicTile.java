@@ -58,15 +58,6 @@ public class SchematicTile extends SchematicBlock {
 		}
 	}
 
-	/**
-	 * Initializes a slot from the blueprint according to an objet placed on {x,
-	 * y, z} on the world. This typically means adding entries in slot.cpt. Note
-	 * that "id" and "meta" will be set automatically, corresponding to the
-	 * block id and meta.
-	 *
-	 * By default, if the block is a BlockContainer, tile information will be to
-	 * save / load the block.
-	 */
 	@Override
 	public void readFromWorld(IBuilderContext context, int x, int y, int z) {
 		super.readFromWorld(context, x, y, z);
@@ -77,6 +68,15 @@ public class SchematicTile extends SchematicBlock {
 			if (tile != null) {
 				tile.writeToNBT(cpt);
 			}
+		}
+	}
+
+	@Override
+	public void readRequirementsFromWorld(IBuilderContext context, int x, int y, int z) {
+		super.readRequirementsFromWorld(context, x, y, z);
+
+		if (block.hasTileEntity(meta)) {
+			TileEntity tile = context.world().getTileEntity(x, y, z);
 
 			if (tile instanceof IInventory) {
 				IInventory inv = (IInventory) tile;

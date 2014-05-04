@@ -26,6 +26,7 @@ public class SchematicBlock extends SchematicBlockBase {
 
 	public Block block = null;
 	public int meta = 0;
+	public BuildingPermission defaultPermission = BuildingPermission.ALL;
 
 	/**
 	 * This field contains requirements for a given block when stored in the
@@ -34,13 +35,8 @@ public class SchematicBlock extends SchematicBlockBase {
 	 */
 	public ItemStack [] storedRequirements = new ItemStack [0];
 
-	/**
-	 * Returns the requirements needed to build this block. When the
-	 * requirements are met, they will be removed all at once from the builder,
-	 * before calling buildBlock.
-	 */
 	@Override
-	public void addRequirements(IBuilderContext context, LinkedList<ItemStack> requirements) {
+	public void writeRequirementsToBuilder(IBuilderContext context, LinkedList<ItemStack> requirements) {
 		if (block != null) {
 			if (storedRequirements.length != 0) {
 				for (ItemStack s : storedRequirements) {
@@ -52,27 +48,16 @@ public class SchematicBlock extends SchematicBlockBase {
 		}
 	}
 
-	/**
-	 * Return true if the block on the world correspond to the block stored in
-	 * the blueprint at the location given by the slot. By default, this
-	 * subprogram is permissive and doesn't take into account metadata.
-	 */
 	@Override
 	public boolean isAlreadyBuilt(IBuilderContext context, int x, int y, int z) {
 		return block == context.world().getBlock(x, y, z) && meta == context.world().getBlockMetadata(x, y, z);
 	}
 
-	/**
-	 * Perform a 90 degree rotation to the slot.
-	 */
 	@Override
 	public void rotateLeft(IBuilderContext context) {
 
 	}
 
-	/**
-	 * Places the block in the world, at the location specified in the slot.
-	 */
 	@Override
 	public void writeToWorld(IBuilderContext context, int x, int y, int z, LinkedList<ItemStack> stacks) {
 		// Meta needs to be specified twice, depending on the block behavior
@@ -80,26 +65,20 @@ public class SchematicBlock extends SchematicBlockBase {
 		context.world().setBlockMetadataWithNotify(x, y, z, meta, 3);
 	}
 
-	/**
-	 * Return true if the block should not be placed to the world. Requirements
-	 * will not be asked on such a block, and building will not be called.
-	 */
 	@Override
 	public boolean doNotBuild() {
 		return false;
 	}
 
-	/**
-	 * Initializes a slot from the blueprint according to an objet placed on {x,
-	 * y, z} on the world. This typically means adding entries in slot.cpt. Note
-	 * that "id" and "meta" will be set automatically, corresponding to the
-	 * block id and meta.
-	 *
-	 * By default, if the block is a BlockContainer, tile information will be to
-	 * save / load the block.
-	 */
 	@Override
 	public void readFromWorld(IBuilderContext context, int x, int y, int z) {
+
+	}
+
+	@Override
+	public void readRequirementsFromWorld(IBuilderContext context, int x, int y, int z) {
+		super.readRequirementsFromWorld(context, x, y, z);
+
 		if (block != null) {
 			ArrayList<ItemStack> req = block.getDrops(context.world(), x,
 					y, z, context.world().getBlockMetadata(x, y, z), 0);
@@ -116,16 +95,18 @@ public class SchematicBlock extends SchematicBlockBase {
 		nbt.setInteger("blockId", registry.getIdForBlock(block));
 		nbt.setInteger("blockMeta", meta);
 
-		NBTTagList rq = new NBTTagList();
+		if (storedRequirements.length > 0) {
+			NBTTagList rq = new NBTTagList();
 
-		for (ItemStack stack : storedRequirements) {
-			NBTTagCompound sub = new NBTTagCompound();
-			stack.writeToNBT(stack.writeToNBT(sub));
-			sub.setInteger("id", registry.getIdForItem(stack.getItem()));
-			rq.appendTag(sub);
+			for (ItemStack stack : storedRequirements) {
+				NBTTagCompound sub = new NBTTagCompound();
+				stack.writeToNBT(stack.writeToNBT(sub));
+				sub.setInteger("id", registry.getIdForItem(stack.getItem()));
+				rq.appendTag(sub);
+			}
+
+			nbt.setTag("rq", rq);
 		}
-
-		nbt.setTag("rq", rq);
 	}
 
 	@Override
@@ -133,33 +114,35 @@ public class SchematicBlock extends SchematicBlockBase {
 		block = registry.getBlockForId(nbt.getInteger("blockId"));
 		meta = nbt.getInteger("blockMeta");
 
-		NBTTagList rq = nbt.getTagList("rq", Constants.NBT.TAG_COMPOUND);
+		if (nbt.hasKey("rq")) {
+			NBTTagList rq = nbt.getTagList("rq", Constants.NBT.TAG_COMPOUND);
 
-		ArrayList<ItemStack> rqs = new ArrayList<ItemStack>();
+			ArrayList<ItemStack> rqs = new ArrayList<ItemStack>();
 
-		for (int i = 0; i < rq.tagCount(); ++i) {
-			try {
-				NBTTagCompound sub = rq.getCompoundTagAt(i);
+			for (int i = 0; i < rq.tagCount(); ++i) {
+				try {
+					NBTTagCompound sub = rq.getCompoundTagAt(i);
 
-				if (sub.getInteger("id") >= 0) {
-					// Maps the id in the blueprint to the id in the world
-					sub.setInteger("id", Item.itemRegistry
-							.getIDForObject(registry.getItemForId(sub
-									.getInteger("id"))));
+					if (sub.getInteger("id") >= 0) {
+						// Maps the id in the blueprint to the id in the world
+						sub.setInteger("id", Item.itemRegistry
+								.getIDForObject(registry.getItemForId(sub
+										.getInteger("id"))));
 
-					rqs.add(ItemStack.loadItemStackFromNBT(sub));
-				} else {
-					// TODO: requirement can't be retreived, this blueprint is
-					// only useable in creative
+						rqs.add(ItemStack.loadItemStackFromNBT(sub));
+					} else {
+						defaultPermission = BuildingPermission.CREATIVE_ONLY;
+					}
+				} catch (Throwable t) {
+					t.printStackTrace();
+					defaultPermission = BuildingPermission.CREATIVE_ONLY;
 				}
-			} catch (Throwable t) {
-				t.printStackTrace();
-				// TODO: requirement can't be retreived, this blueprint is
-				// only useable in creative
 			}
-		}
 
-		storedRequirements = rqs.toArray(new ItemStack [rqs.size()]);
+			storedRequirements = rqs.toArray(new ItemStack[rqs.size()]);
+		} else {
+			storedRequirements = new ItemStack[0];
+		}
 	}
 
 	@Override
@@ -173,5 +156,10 @@ public class SchematicBlock extends SchematicBlockBase {
 		} else {
 			return BuildingStage.SUPPORTED;
 		}
+	}
+
+	@Override
+	public BuildingPermission getBuildingPermission() {
+		return defaultPermission;
 	}
 }

@@ -94,12 +94,6 @@ public class SchematicPipe extends SchematicTile {
 		Pipe pipe = BlockGenericPipe.getPipe(context.world(), x, y, z);
 
 		if (BlockGenericPipe.isValid(pipe)) {
-			ArrayList<ItemStack> items = pipe.computeItemDrop();
-			storedRequirements = new ItemStack [items.size() + 1];
-			items.toArray(storedRequirements);
-			storedRequirements[storedRequirements.length - 1] = new ItemStack(
-					pipe.item);
-
 			tile.writeToNBT(cpt);
 
 			// This overrides the default pipeId
@@ -122,6 +116,20 @@ public class SchematicPipe extends SchematicTile {
 				cpt.removeTag("internalPower[" + i + "]");
 				cpt.removeTag("internalNextPower[" + i + "]");
 			}
+		}
+	}
+
+	@Override
+	public void readRequirementsFromWorld(IBuilderContext context, int x, int y, int z) {
+		TileEntity tile = context.world().getTileEntity(x, y, z);
+		Pipe pipe = BlockGenericPipe.getPipe(context.world(), x, y, z);
+
+		if (BlockGenericPipe.isValid(pipe)) {
+			ArrayList<ItemStack> items = pipe.computeItemDrop();
+			storedRequirements = new ItemStack[items.size() + 1];
+			items.toArray(storedRequirements);
+			storedRequirements[storedRequirements.length - 1] = new ItemStack(
+					pipe.item);
 		}
 	}
 

@@ -370,7 +370,11 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 		LinkedList<ItemStack> tmpReq = new LinkedList<ItemStack>();
 
 		try {
-			for (ItemStack stk : slot.getRequirements(context)) {
+			LinkedList<ItemStack> req = new LinkedList<ItemStack>();
+
+			slot.writeRequirementsToBuilder(context, req);
+
+			for (ItemStack stk : req) {
 				if (stk != null) {
 					tmpReq.add(stk.copy());
 				}

@@ -28,10 +28,15 @@ public class SchematicDoor extends SchematicBlock {
 	}
 
 	@Override
-	public void addRequirements(IBuilderContext context, LinkedList<ItemStack> requirements) {
+	public void writeRequirementsToBuilder(IBuilderContext context, LinkedList<ItemStack> requirements) {
 		if ((meta & 8) == 0) {
 			requirements.add(stack.copy());
 		}
+	}
+
+	@Override
+	public void readRequirementsFromWorld(IBuilderContext context, int x, int y, int z) {
+		// cancel requirements reading
 	}
 
 	@Override

@@ -13,6 +13,7 @@ import java.util.LinkedList;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
+
 import buildcraft.api.blueprints.IBuilderContext;
 
 public class SchematicEnderChest extends SchematicRotateMeta {
@@ -22,9 +23,14 @@ public class SchematicEnderChest extends SchematicRotateMeta {
 	}
 
 	@Override
-	public void addRequirements(IBuilderContext context, LinkedList<ItemStack> requirements) {
+	public void writeRequirementsToBuilder(IBuilderContext context, LinkedList<ItemStack> requirements) {
 		requirements.add(new ItemStack(Blocks.obsidian, 8));
 		requirements.add(new ItemStack(Items.ender_eye, 1));
+	}
+
+	@Override
+	public void readRequirementsFromWorld(IBuilderContext context, int x, int y, int z) {
+		// cancel requirements reading
 	}
 
 	@Override

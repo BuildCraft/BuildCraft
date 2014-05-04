@@ -20,8 +20,13 @@ import buildcraft.api.blueprints.SchematicBlock;
 public class SchematicGravel extends SchematicBlock {
 
 	@Override
-	public void addRequirements(IBuilderContext context, LinkedList<ItemStack> requirements) {
+	public void writeRequirementsToBuilder(IBuilderContext context, LinkedList<ItemStack> requirements) {
 		requirements.add(new ItemStack(Blocks.gravel));
+	}
+
+	@Override
+	public void readRequirementsFromWorld(IBuilderContext context, int x, int y, int z) {
+		// cancel requirements reading
 	}
 
 	@Override

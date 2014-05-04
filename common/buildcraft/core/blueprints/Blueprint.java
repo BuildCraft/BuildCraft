@@ -100,6 +100,7 @@ public class Blueprint extends BlueprintBase {
 
 		try {
 			slot.readFromWorld(context, x, y, z);
+			slot.readRequirementsFromWorld(context, x, y, z);
 			contents[posX][posY][posZ] = slot;
 		} catch (Throwable t) {
 			// Defensive code against errors in implementers

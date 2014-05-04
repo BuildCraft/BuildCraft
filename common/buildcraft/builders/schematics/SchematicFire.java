@@ -12,19 +12,19 @@ import java.util.LinkedList;
 
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
+
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.SchematicBlock;
 
 public class SchematicFire extends SchematicBlock {
 
 	@Override
-	public void addRequirements(IBuilderContext context, LinkedList<ItemStack> requirements) {
+	public void writeRequirementsToBuilder(IBuilderContext context, LinkedList<ItemStack> requirements) {
 		requirements.add(new ItemStack (Items.flint_and_steel));
 	}
 
 	@Override
-	public void readFromWorld(IBuilderContext context, int x, int y, int z) {
-		// No specific data to read from the world. Cancels the initialization
-		// of the requirement list.
+	public void readRequirementsFromWorld(IBuilderContext context, int x, int y, int z) {
+		// cancel requirements reading
 	}
 }
