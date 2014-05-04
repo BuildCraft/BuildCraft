@@ -51,7 +51,7 @@ public class PumpDimensionList {
 				e.dimID = Integer.parseInt(dimIDString);
 			}
 
-			e.fluidName = entryString.substring(i + 1).toLowerCase(Locale.ENGLISH);
+			e.fluidName = secondString.substring(i + 1).toLowerCase(Locale.ENGLISH);
 
 			if (e.fluidName.equals("*")) {
 				e.matchAnyFluid = true;
