@@ -196,8 +196,8 @@ tile.tankBlock.name=Tank
 tip.gate.wires=§9§oCompatible Wires:
 tip.gate.wires.redstone=Red
 tip.gate.wires.iron=Red, Blue
-tip.gate.wires.gold=Red, Blue, Yellow
-tip.gate.wires.diamond=Red, Blue, Yellow, Green
+tip.gate.wires.gold=Red, Blue, Green
+tip.gate.wires.diamond=Red, Blue, Green, Yellow
 tip.gate.expansions=§9§oInstalled Expansions:
 
 tip.PipeFluidsCobblestone=Basic pipe, 10 mB/t\nWon't connect to Stone
