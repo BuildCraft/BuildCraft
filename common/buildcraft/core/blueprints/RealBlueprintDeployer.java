@@ -63,7 +63,7 @@ public class RealBlueprintDeployer extends BlueprintDeployer {
 
 	@Override
 	public void deployBlueprintFromFileStream(World world, int x, int y, int z,
-			ForgeDirection dir, byte [] data ) {
+			ForgeDirection dir, byte [] data) {
 
 		NBTTagCompound nbt;
 		try {
