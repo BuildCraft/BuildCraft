@@ -339,6 +339,8 @@ public class TileBuilder extends TileAbstractBuilder implements IMachine {
 
 			updateRequirements();
 
+			sendNetworkUpdate();
+
 			return;
 		}
 
