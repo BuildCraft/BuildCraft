@@ -175,17 +175,27 @@ public class BlueprintDatabase {
 				f.read (data);
 				f.close();
 
-				NBTTagCompound nbt = CompressedStreamTools.decompress(data);
-
-				BlueprintBase blueprint = BlueprintBase.loadBluePrint(nbt);
-				blueprint.setData(data);
-
-				return blueprint;
+				return load(data);
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+		}
+
+		return null;
+	}
+
+	public static BlueprintBase load(byte[] data) {
+		try {
+			NBTTagCompound nbt = CompressedStreamTools.decompress(data);
+
+			BlueprintBase blueprint = BlueprintBase.loadBluePrint(nbt);
+			blueprint.setData(data);
+
+			return blueprint;
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 
 		return null;

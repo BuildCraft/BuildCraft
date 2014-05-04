@@ -181,6 +181,11 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 	}
 
 	public void deploy () {
+		if (!initialized) {
+			initialize();
+			initialized = true;
+		}
+
 		for (BuildingSlotBlock b : buildList) {
 			if (b.mode == Mode.ClearIfInvalid) {
 				context.world.setBlockToAir(b.x, b.y, b.z);

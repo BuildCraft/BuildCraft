@@ -38,7 +38,7 @@ public abstract class BptBuilderBase implements IAreaProvider {
 	protected TreeSet<BlockIndex> clearedLocations = new TreeSet<BlockIndex>();
 	protected TreeSet<BlockIndex> builtLocations = new TreeSet<BlockIndex>();
 	protected int x, y, z;
-	private boolean initialized = false;
+	protected boolean initialized = false;
 
 	public BptBuilderBase(BlueprintBase bluePrint, World world, int x, int y, int z) {
 		this.blueprint = bluePrint;
