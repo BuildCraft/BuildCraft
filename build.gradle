@@ -20,6 +20,7 @@ buildscript {
 
 apply plugin: 'forge' // adds the forge dependency
 apply plugin: 'maven' // for uploading to a maven repo
+apply plugin: 'checkstyle'
 
 version = "6.0.8"
 group= "com.mod-buildcraft"
@@ -112,6 +113,10 @@ task apiJar(type: Jar) {
 // add api classes to main package
 jar {
 	from sourceSets.api.output
+}
+
+tasks.withType(Checkstyle).all {
+	configFile = file('guidelines/buildcraft.checkstyle')
 }
 
 // make sure all of these happen when we run build
