@@ -9,13 +9,20 @@
     Description: none
 -->
 <module name="Checker">
-  <property name="severity" value="warning"/>
+  <property name="severity" value="error"/>
+  <module name="SuppressionCommentFilter">
+    <property name="offCommentFormat" value="CHECKSTYLE.OFF\: ([\w\|]+)"/>
+    <property name="onCommentFormat" value="CHECKSTYLE.ON\: ([\w\|]+)"/>
+    <property name="checkFormat" value="$1"/>
+  </module>
   <module name="TreeWalker">
     <module name="MissingOverride"/>
     <module name="RedundantImport"/>
     <module name="UnusedImports"/>
     <module name="AvoidStarImport"/>
-    <module name="MethodName"/>
+    <module name="MethodName">
+      <property name="format" value="^[a-z][a-zA-Z0-9_]*$"/>
+    </module>
     <module name="ImportOrder">
       <property name="groups" value="java,com,org,io,net.minecraft,cpw,net.minecraftforge,buildcraft"/>
     </module>
@@ -75,5 +82,6 @@
     <module name="ArrayTypeStyle"/>
     <module name="UpperEll"/>
     <module name="OuterTypeFilename"/>
+    <module name="FileContentsHolder"/>
   </module>
 </module>

@@ -121,8 +121,9 @@ public class AssemblyRecipeManager implements IAssemblyRecipeManager {
 					int found = 0; // Amount of ingredient found in inventory
 					// TODO: this i++ is highly dubious here, and against good
 					// programming practises. Investigate and fix or document.
+					//CHECKSTYLE.OFF: ModifiedControlVariable
 					int expected = (Integer) processedInput[i++ + 1];
-
+					//CHECKSTYLE.ON: ModifiedControlVariable
 					for (IInvSlot slot : InventoryIterator.getIterable(inv, ForgeDirection.UNKNOWN)) {
 						ItemStack item = slot.getStackInSlot();
 						if (item == null) {
