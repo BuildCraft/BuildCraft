@@ -401,7 +401,7 @@ public class BuildCraftCore extends BuildCraftMod {
 		// it happens to be very expensive at run time, so we need some way
 		// to operate it only when releval (e.g. in the cycle following a
 		// click request).
-		if (true) {
+		if (NEXTGEN_PREALPHA) {
 			return;
 		}
 
