@@ -9,6 +9,7 @@
 package buildcraft.api.power;
 
 import net.minecraft.nbt.NBTTagCompound;
+
 import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.api.core.SafeTimeTracker;
@@ -188,24 +189,29 @@ public final class PowerHandler {
 	/**
 	 * Setup your PowerHandler's settings.
 	 *
-	 * @param minEnergyReceived  This is the minimum about of power that will be
-	 *                           accepted by the PowerHandler. This should generally be greater than the
-	 *                           activationEnergy if you plan to use the doWork() callback. Anything
-	 *                           greater than 1 will prevent Redstone Engines from powering this Provider.
-	 * @param maxEnergyReceivedI The maximum amount of power accepted by the
-	 *                           PowerHandler. This should generally be less than 500. Too low and larger
-	 *                           engines will overheat while trying to power the machine. Too high, and
-	 *                           the engines will never warm up. Greater values also place greater strain
-	 *                           on the power net.
-	 * @param activationEnergy   If the stored energy is greater than this value,
-	 *                           the doWork() callback is called (once per tick).
-	 * @param maxStoredEnergy    The maximum amount of power this PowerHandler can
-	 *                           store. Values tend to range between 100 and 5000. With 1000 and 1500
-	 *                           being common.
+	 * @param minEnergyReceived
+	 *            This is the minimum about of power that will be accepted by
+	 *            the PowerHandler. This should generally be greater than the
+	 *            activationEnergy if you plan to use the doWork() callback.
+	 *            Anything greater than 1 will prevent Redstone Engines from
+	 *            powering this Provider.
+	 * @param maxEnergyReceived
+	 *            The maximum amount of power accepted by the PowerHandler. This
+	 *            should generally be less than 500. Too low and larger engines
+	 *            will overheat while trying to power the machine. Too high, and
+	 *            the engines will never warm up. Greater values also place
+	 *            greater strain on the power net.
+	 * @param activationEnergy
+	 *            If the stored energy is greater than this value, the doWork()
+	 *            callback is called (once per tick).
+	 * @param maxStoredEnergy
+	 *            The maximum amount of power this PowerHandler can store.
+	 *            Values tend to range between 100 and 5000. With 1000 and 1500
+	 *            being common.
 	 */
-	public void configure(double minEnergyReceived, double maxEnergyReceivedI, double activationEnergy,
+	public void configure(double minEnergyReceived, double maxEnergyReceived, double activationEnergy,
 						  double maxStoredEnergy) {
-		double localMaxEnergyReceived = maxEnergyReceivedI;
+		double localMaxEnergyReceived = maxEnergyReceived;
 
 		if (minEnergyReceived > localMaxEnergyReceived) {
 			localMaxEnergyReceived = minEnergyReceived;
@@ -496,7 +502,7 @@ public final class PowerHandler {
 		}
 	}
 
-	private class AnonymousBattery {
+	private static class AnonymousBattery {
 		@MjBattery
 		public double mjStored;
 	}
