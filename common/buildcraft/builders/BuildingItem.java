@@ -64,9 +64,11 @@ public class BuildingItem implements IBuilder {
 
 			double size = Math.sqrt(dx * dx + dy * dy + dz * dz);
 
-			maxLifetime = size * 5.0;
+			maxLifetime = size * 4;
 
-			maxHeight = 5.0 + (destination.y - origin.y) / 2.0;
+			// maxHeight = 5.0 + (destination.y - origin.y) / 2.0;
+
+			maxHeight = size / 2;
 
 			// the below computation is an approximation of the distance to
 			// travel for the object. It really follows a sinus, but we compute
