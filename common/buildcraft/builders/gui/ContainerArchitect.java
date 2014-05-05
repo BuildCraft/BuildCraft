@@ -15,6 +15,7 @@ import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import buildcraft.builders.TileArchitect;
 import buildcraft.core.gui.BuildCraftContainer;
+import buildcraft.core.gui.slots.SlotOutput;
 
 public class ContainerArchitect extends BuildCraftContainer {
 
@@ -28,7 +29,7 @@ public class ContainerArchitect extends BuildCraftContainer {
 		this.architect = template;
 
 		addSlotToContainer(new Slot(template, 0, 135, 35));
-		addSlotToContainer(new Slot(template, 1, 194, 35));
+		addSlotToContainer(new SlotOutput(template, 1, 194, 35));
 
 		for (int l = 0; l < 3; l++) {
 			for (int k1 = 0; k1 < 9; k1++) {
