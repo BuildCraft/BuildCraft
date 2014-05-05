@@ -30,12 +30,12 @@ public class ItemBlueprintTemplate extends ItemBlueprint {
 		if (!NBTUtils.getItemData(stack).hasKey("name")) {
 			setMaxStackSize(16);
 			itemIcon = cleanTemplate;
-			return itemIcon;
 		} else {
 			setMaxStackSize(1);
 			itemIcon = usedTemplate;
-			return itemIcon;
 		}
+		
+		return itemIcon;
 	}
 
 	@Override
