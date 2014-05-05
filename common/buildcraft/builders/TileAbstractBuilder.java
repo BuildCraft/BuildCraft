@@ -147,5 +147,7 @@ public abstract class TileAbstractBuilder extends TileBuildCraft implements ITil
 		super.readFromNBT(nbttagcompound);
 
 		nbttagcompound.setDouble("mjStored", mjStored);
+		mjPrev = mjStored;
+		mjUnchangedCycles = 0;
 	}
 }

@@ -148,7 +148,9 @@ public abstract class BptBuilderBase implements IAreaProvider {
 				.world()
 				.getBlock(slot.x, slot.y, slot.z)
 				.getBlockHardness(context.world(), slot.x, slot.y,
- slot.z) + 1;
+						slot.z) + 1;
+
+		hardness *= 2;
 
 		if (builder.energyAvailable() < hardness * SchematicRegistry.BREAK_ENERGY) {
 			return false;

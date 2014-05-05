@@ -30,6 +30,8 @@ import buildcraft.core.blueprints.IBuilder;
 
 public class BuildingItem implements IBuilder {
 
+	private static int ITEMS_SPACE = 2;
+
 	@NetworkData
 	public Position origin, destination;
 
@@ -136,9 +138,9 @@ public class BuildingItem implements IBuilder {
 
 		lifetime++;
 
-		if (lifetime > maxLifetime + stacksToDisplay.size() - 1) {
+		if (lifetime > maxLifetime + stacksToDisplay.size() * ITEMS_SPACE - 1) {
 			isDone = true;
-			build ();
+			build();
 		}
 
 		lifetimeDisplay = lifetime;
@@ -146,7 +148,7 @@ public class BuildingItem implements IBuilder {
 
 		if (slotToBuild != null && lifetime > maxLifetime) {
 			slotToBuild.writeCompleted(context, (lifetime - maxLifetime)
-					/ stacksToDisplay.size());
+					/ (stacksToDisplay.size() * ITEMS_SPACE));
 		}
 	}
 
@@ -200,7 +202,7 @@ public class BuildingItem implements IBuilder {
 				s.display = false;
 			}
 
-			d++;
+			d += ITEMS_SPACE;
 		}
 
 		return stacksToDisplay;
@@ -281,9 +283,12 @@ public class BuildingItem implements IBuilder {
 	public void setStacksToDisplay(LinkedList<ItemStack> stacks) {
 		if (stacks != null) {
 			for (ItemStack s : stacks) {
-				StackAtPosition sPos = new StackAtPosition();
-				sPos.stack = s;
-				stacksToDisplay.add(sPos);
+				for (int i = 0; i < s.stackSize; ++i) {
+					StackAtPosition sPos = new StackAtPosition();
+					sPos.stack = s.copy();
+					sPos.stack.stackSize = 1;
+					stacksToDisplay.add(sPos);
+				}
 			}
 		}
 	}
