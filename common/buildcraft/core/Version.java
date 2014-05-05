@@ -32,7 +32,7 @@ public class Version implements Runnable {
 	public static final int FORGE_VERSION_MINOR = 0;
 	public static final int FORGE_VERSION_PATCH = 0;
 
-	private static final String REMOTE_VERSION_FILE = "http://bit.ly/buildcraftversion";
+	private static final String REMOTE_VERSION_FILE = "http://www.mod-buildcraft.com/releases/versions.txt";
 	private static final String REMOTE_CHANGELOG_ROOT = "https://dl.dropboxusercontent.com/u/38558957/Minecraft/Buildcraft/changelogs/";
 	private static String recommendedVersion;
 	private static String[] cachedChangelog;
