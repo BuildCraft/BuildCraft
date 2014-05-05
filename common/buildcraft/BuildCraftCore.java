@@ -121,7 +121,6 @@ public class BuildCraftCore extends BuildCraftMod {
 	public static TreeMap<BlockIndex, PacketUpdate> bufferedDescriptions = new TreeMap<BlockIndex, PacketUpdate>();
 
 	public static final int trackedPassiveEntityId = 156;
-	public static boolean continuousCurrentModel;
 	public static Block springBlock;
 	public static Item woodenGearItem;
 	public static Item stoneGearItem;
@@ -227,11 +226,6 @@ public class BuildCraftCore extends BuildCraftMod {
 			if (updateCheck.getBoolean(true)) {
 				Version.check();
 			}
-
-			Property continuousCurrent = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "current.continuous",
-					DefaultProps.CURRENT_CONTINUOUS);
-			continuousCurrent.comment = "set to true for allowing machines to be driven by continuous current";
-			continuousCurrentModel = continuousCurrent.getBoolean(DefaultProps.CURRENT_CONTINUOUS);
 
 			Property dropBlock = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "dropBrokenBlocks", true);
 			dropBlock.comment = "set to false to prevent fillers from dropping blocks.";
