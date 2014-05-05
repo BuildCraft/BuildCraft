@@ -13,18 +13,20 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.api.core.SafeTimeTracker;
+import buildcraft.api.mj.MjAPI;
+import buildcraft.api.mj.MjBattery;
 
 /**
  * The PowerHandler is similar to FluidTank in that it holds your power and
  * allows standardized interaction between machines.
- *
+ * <p/>
  * To receive power to your machine you needs create an instance of PowerHandler
  * and implement IPowerReceptor on the TileEntity.
- *
+ * <p/>
  * If you plan emit power, you need only implement IPowerEmitter. You do not
  * need a PowerHandler. Engines have a PowerHandler because they can also
  * receive power from other Engines.
- *
+ * <p/>
  * See TileRefinery for a simple example of a power using machine.
  *
  * @see IPowerReceptor
@@ -59,7 +61,7 @@ public final class PowerHandler {
 
 	/**
 	 * Extend this class to create custom Perdition algorithms (its not final).
-	 *
+	 * <p/>
 	 * NOTE: It is not possible to create a Zero perdition algorithm.
 	 */
 	public static class PerditionCalculator {
@@ -91,8 +93,8 @@ public final class PowerHandler {
 		 * every tick. It is triggered by any manipulation of the stored energy.
 		 *
 		 * @param powerHandler the PowerHandler requesting the perdition update
-		 * @param current the current stored energy
-		 * @param ticksPassed ticks since the last time this function was called
+		 * @param current      the current stored energy
+		 * @param ticksPassed  ticks since the last time this function was called
 		 * @return
 		 */
 		public double applyPerdition(PowerHandler powerHandler, double current, long ticksPassed) {
@@ -107,7 +109,7 @@ public final class PowerHandler {
 
 		/**
 		 * Taxes a flat rate on all incoming power.
-		 *
+		 * <p/>
 		 * Defaults to 0% tax rate.
 		 *
 		 * @return percent of input to tax
@@ -116,34 +118,44 @@ public final class PowerHandler {
 			return 0;
 		}
 	}
+
 	public static final PerditionCalculator DEFAULT_PERDITION = new PerditionCalculator();
 	public static final double ROLLING_AVERAGE_WEIGHT = 100.0;
 	public static final double ROLLING_AVERAGE_NUMERATOR = ROLLING_AVERAGE_WEIGHT - 1;
-	public static final double ROLLING_AVERAGE_DENOMINATOR  = 1.0 / ROLLING_AVERAGE_WEIGHT;
+	public static final double ROLLING_AVERAGE_DENOMINATOR = 1.0 / ROLLING_AVERAGE_WEIGHT;
 	public final int[] powerSources = new int[6];
 	public final IPowerReceptor receptor;
 
-	private double minEnergyReceived;
-	private double maxEnergyReceived;
-	private double maxEnergyStored;
 	private double activationEnergy;
-	private double energyStored = 0;
 	private final SafeTimeTracker doWorkTracker = new SafeTimeTracker();
 	private final SafeTimeTracker sourcesTracker = new SafeTimeTracker();
 	private final SafeTimeTracker perditionTracker = new SafeTimeTracker();
 	private PerditionCalculator perdition;
 	private final PowerReceiver receiver;
 	private final Type type;
+	private MjAPI.BatteryObject battery;
 	// Tracking
 	private double averageLostPower = 0;
 	private double averageReceivedPower = 0;
 	private double averageUsedPower = 0;
 
 	public PowerHandler(IPowerReceptor receptor, Type type) {
+		this(receptor, type, null);
+	}
+
+	public PowerHandler(IPowerReceptor receptor, Type type, Object battery) {
 		this.receptor = receptor;
 		this.type = type;
 		this.receiver = new PowerReceiver();
 		this.perdition = DEFAULT_PERDITION;
+
+		if (battery instanceof MjAPI.BatteryObject) {
+			this.battery = (MjAPI.BatteryObject) battery;
+		} else if (battery != null) {
+			this.battery = MjAPI.getMjBattery(battery);
+		} else {
+			this.battery = MjAPI.getMjBattery(new AnonymousBattery());
+		}
 	}
 
 	public PowerReceiver getPowerReceiver() {
@@ -151,15 +163,15 @@ public final class PowerHandler {
 	}
 
 	public double getMinEnergyReceived() {
-		return minEnergyReceived;
+		return battery.minimumConsumption();
 	}
 
 	public double getMaxEnergyReceived() {
-		return maxEnergyReceived;
+		return battery.getEnergyRequested();
 	}
 
 	public double getMaxEnergyStored() {
-		return maxEnergyStored;
+		return battery.maxCapacity();
 	}
 
 	public double getActivationEnergy() {
@@ -167,43 +179,51 @@ public final class PowerHandler {
 	}
 
 	public double getEnergyStored() {
-		return energyStored;
+		return battery.getEnergyStored();
+	}
+
+	public MjAPI.BatteryObject getMjBattery() {
+		return battery;
 	}
 
 	/**
 	 * Setup your PowerHandler's settings.
 	 *
-	 * @param minEnergyReceived This is the minimum about of power that will be
-	 * accepted by the PowerHandler. This should generally be greater than the
-	 * activationEnergy if you plan to use the doWork() callback. Anything
-	 * greater than 1 will prevent Redstone Engines from powering this Provider.
-	 * @param maxEnergyReceived The maximum amount of power accepted by the
-	 * PowerHandler. This should generally be less than 500. Too low and larger
-	 * engines will overheat while trying to power the machine. Too high, and
-	 * the engines will never warm up. Greater values also place greater strain
-	 * on the power net.
-	 * @param activationEnergy If the stored energy is greater than this value,
-	 * the doWork() callback is called (once per tick).
-	 * @param maxStoredEnergy The maximum amount of power this PowerHandler can
-	 * store. Values tend to range between 100 and 5000. With 1000 and 1500
-	 * being common.
+	 * @param minEnergyReceived
+	 *            This is the minimum about of power that will be accepted by
+	 *            the PowerHandler. This should generally be greater than the
+	 *            activationEnergy if you plan to use the doWork() callback.
+	 *            Anything greater than 1 will prevent Redstone Engines from
+	 *            powering this Provider.
+	 * @param maxEnergyReceived
+	 *            The maximum amount of power accepted by the PowerHandler. This
+	 *            should generally be less than 500. Too low and larger engines
+	 *            will overheat while trying to power the machine. Too high, and
+	 *            the engines will never warm up. Greater values also place
+	 *            greater strain on the power net.
+	 * @param activationEnergy
+	 *            If the stored energy is greater than this value, the doWork()
+	 *            callback is called (once per tick).
+	 * @param maxStoredEnergy
+	 *            The maximum amount of power this PowerHandler can store.
+	 *            Values tend to range between 100 and 5000. With 1000 and 1500
+	 *            being common.
 	 */
-	public void configure(double minEnergyReceived, double maxEnergyReceivedI, double activationEnergy,
-			double maxStoredEnergy) {
-		double localMaxEnergyReceived = maxEnergyReceivedI;
+	public void configure(double minEnergyReceived, double maxEnergyReceived, double activationEnergy,
+						  double maxStoredEnergy) {
+		double localMaxEnergyReceived = maxEnergyReceived;
 
 		if (minEnergyReceived > localMaxEnergyReceived) {
 			localMaxEnergyReceived = minEnergyReceived;
 		}
-		this.minEnergyReceived = minEnergyReceived;
-		this.maxEnergyReceived = localMaxEnergyReceived;
-		this.maxEnergyStored = maxStoredEnergy;
 		this.activationEnergy = activationEnergy;
+
+		battery.reconfigure(maxStoredEnergy, localMaxEnergyReceived, minEnergyReceived);
 	}
 
 	/**
 	 * Allows you define perdition in terms of loss/ticks.
-	 *
+	 * <p/>
 	 * This function is mostly for legacy implementations. See
 	 * PerditionCalculator for more complex perdition formulas.
 	 *
@@ -222,7 +242,7 @@ public final class PowerHandler {
 	/**
 	 * Allows you to define a new PerditionCalculator class to handler perdition
 	 * calculations.
-	 *
+	 * <p/>
 	 * For example if you want exponentially increasing loss based on amount
 	 * stored.
 	 *
@@ -247,7 +267,7 @@ public final class PowerHandler {
 	/**
 	 * Ticks the power handler. You should call this if you can, but its not
 	 * required.
-	 *
+	 * <p/>
 	 * If you don't call it, the possibility exists for some weirdness with the
 	 * perdition algorithm and work callback as its possible they will not be
 	 * called on every tick they otherwise would be. You should be able to
@@ -260,13 +280,14 @@ public final class PowerHandler {
 	}
 
 	private void applyPerdition() {
+		double energyStored = getEnergyStored();
 		if (perditionTracker.markTimeIfDelay(receptor.getWorld(), 1) && energyStored > 0) {
 			double prev = energyStored;
 			double newEnergy = getPerdition().applyPerdition(this, energyStored, perditionTracker.durationOfLastDelay());
 			if (newEnergy == 0 || newEnergy < energyStored) {
-				energyStored = newEnergy;
+				battery.setEnergyStored(energyStored = newEnergy);
 			} else {
-				energyStored = DEFAULT_PERDITION.applyPerdition(this, energyStored, perditionTracker.durationOfLastDelay());
+				battery.setEnergyStored(energyStored = DEFAULT_PERDITION.applyPerdition(this, energyStored, perditionTracker.durationOfLastDelay()));
 			}
 			validateEnergy();
 
@@ -275,7 +296,7 @@ public final class PowerHandler {
 	}
 
 	private void applyWork() {
-		if (energyStored >= activationEnergy) {
+		if (getEnergyStored() >= activationEnergy) {
 			if (doWorkTracker.markTimeIfDelay(receptor.getWorld(), 1)) {
 				receptor.doWork(this);
 			}
@@ -311,6 +332,7 @@ public final class PowerHandler {
 
 		double result = 0;
 
+		double energyStored = getEnergyStored();
 		if (energyStored >= min) {
 			if (energyStored <= max) {
 				result = energyStored;
@@ -323,6 +345,9 @@ public final class PowerHandler {
 					energyStored -= max;
 				}
 			}
+		}
+		if (energyStored != getEnergyStored()) {
+			battery.setEnergyStored(energyStored);
 		}
 
 		validateEnergy();
@@ -340,7 +365,7 @@ public final class PowerHandler {
 
 	public void readFromNBT(NBTTagCompound data, String tag) {
 		NBTTagCompound nbt = data.getCompoundTag(tag);
-		energyStored = nbt.getDouble("energyStored");
+		battery.setEnergyStored(nbt.getDouble("energyStored"));
 	}
 
 	public void writeToNBT(NBTTagCompound data) {
@@ -349,7 +374,7 @@ public final class PowerHandler {
 
 	public void writeToNBT(NBTTagCompound data, String tag) {
 		NBTTagCompound nbt = new NBTTagCompound();
-		nbt.setDouble("energyStored", energyStored);
+		nbt.setDouble("energyStored", battery.getEnergyStored());
 		data.setTag(tag, nbt);
 	}
 
@@ -359,15 +384,15 @@ public final class PowerHandler {
 		}
 
 		public double getMinEnergyReceived() {
-			return minEnergyReceived;
+			return PowerHandler.this.getMinEnergyReceived();
 		}
 
 		public double getMaxEnergyReceived() {
-			return maxEnergyReceived;
+			return PowerHandler.this.getMaxEnergyReceived();
 		}
 
 		public double getMaxEnergyStored() {
-			return maxEnergyStored;
+			return PowerHandler.this.getMaxEnergyStored();
 		}
 
 		public double getActivationEnergy() {
@@ -375,7 +400,7 @@ public final class PowerHandler {
 		}
 
 		public double getEnergyStored() {
-			return energyStored;
+			return PowerHandler.this.getEnergyStored();
 		}
 
 		public double getAveragePowerReceived() {
@@ -405,12 +430,12 @@ public final class PowerHandler {
 		 */
 		public double powerRequest() {
 			update();
-			return Math.min(maxEnergyReceived, maxEnergyStored - energyStored);
+			return battery.getEnergyRequested();
 		}
 
 		/**
 		 * Add power to the PowerReceiver from an external source.
-		 *
+		 * <p/>
 		 * IPowerEmitters are responsible for calling this themselves.
 		 *
 		 * @param quantity
@@ -420,10 +445,10 @@ public final class PowerHandler {
 		public double receiveEnergy(Type source, final double quantity, ForgeDirection from) {
 			double used = quantity;
 			if (source == Type.ENGINE) {
-				if (used < minEnergyReceived) {
+				if (used < getMinEnergyReceived()) {
 					return 0;
-				} else if (used > maxEnergyReceived) {
-					used = maxEnergyReceived;
+				} else if (used > getMaxEnergyReceived()) {
+					used = getMaxEnergyReceived();
 				}
 			}
 
@@ -436,7 +461,7 @@ public final class PowerHandler {
 			applyWork();
 
 			if (source == Type.ENGINE && type.eatsEngineExcess()) {
-				used = Math.min(quantity, maxEnergyReceived);
+				used = Math.min(quantity, getMaxEnergyReceived());
 			}
 
 			averageReceivedPower = (averageReceivedPower * ROLLING_AVERAGE_NUMERATOR + used) * ROLLING_AVERAGE_DENOMINATOR;
@@ -446,29 +471,16 @@ public final class PowerHandler {
 	}
 
 	/**
-	 *
 	 * @return the amount the power changed by
 	 */
-	public double addEnergy(double quantityI) {
-		double quantity = quantityI;
-
-		energyStored += quantity;
-
-		if (energyStored > maxEnergyStored) {
-			quantity -= energyStored - maxEnergyStored;
-			energyStored = maxEnergyStored;
-		} else if (energyStored < 0) {
-			quantity -= energyStored;
-			energyStored = 0;
-		}
-
+	public double addEnergy(double quantity) {
+		final double used = battery.addEnergy(quantity);
 		applyPerdition();
-
-		return quantity;
+		return used;
 	}
 
 	public void setEnergy(double quantity) {
-		this.energyStored = quantity;
+		battery.setEnergyStored(quantity);
 		validateEnergy();
 	}
 
@@ -477,11 +489,21 @@ public final class PowerHandler {
 	}
 
 	private void validateEnergy() {
+		double energyStored = getEnergyStored();
+		double maxEnergyStored = getMaxEnergyStored();
 		if (energyStored < 0) {
 			energyStored = 0;
 		}
 		if (energyStored > maxEnergyStored) {
 			energyStored = maxEnergyStored;
 		}
+		if (energyStored != battery.getEnergyStored()) {
+			battery.setEnergyStored(energyStored);
+		}
+	}
+
+	private static class AnonymousBattery {
+		@MjBattery
+		public double mjStored;
 	}
 }
