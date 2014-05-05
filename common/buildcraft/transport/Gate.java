@@ -322,7 +322,7 @@ public final class Gate {
 		if (trigger instanceof ITileTrigger) {
 			for (ForgeDirection o : ForgeDirection.VALID_DIRECTIONS) {
 				TileEntity tile = pipe.container.getTile(o);
-				if (tile != null && !(tile instanceof TileGenericPipe)) {
+				if (tile != null && !(tile instanceof TileGenericPipe) && pipe.hasGate(o)) {
 					if (((ITileTrigger) trigger).isTriggerActive(o.getOpposite(), tile, parameter)) {
 						return true;
 					}
