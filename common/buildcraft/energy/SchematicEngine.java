@@ -57,4 +57,9 @@ public class SchematicEngine extends SchematicTile {
 		}
 	}
 
+	@Override
+	public BuildingStage getBuildStage() {
+		return BuildingStage.STANDALONE;
+	}
+
 }
