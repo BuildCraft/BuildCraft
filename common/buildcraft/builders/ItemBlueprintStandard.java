@@ -18,7 +18,6 @@ import cpw.mods.fml.relauncher.SideOnly;
 import buildcraft.core.utils.NBTUtils;
 
 public class ItemBlueprintStandard extends ItemBlueprint {
-
 	private IIcon cleanBlueprint;
 	private IIcon usedBlueprint;
 
@@ -29,9 +28,11 @@ public class ItemBlueprintStandard extends ItemBlueprint {
 	@Override
 	public IIcon getIconIndex(ItemStack stack) {
 		if (!NBTUtils.getItemData(stack).hasKey("name")) {
-			return cleanBlueprint;
+			itemIcon = cleanBlueprint;
+			return itemIcon;
 		} else {
-			return usedBlueprint;
+			itemIcon = usedBlueprint;
+			return itemIcon;
 		}
     }
 
