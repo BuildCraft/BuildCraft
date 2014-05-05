@@ -1,6 +1,9 @@
 # Master language file
 
 chat.pipe.power.iron.mode=Switched to %d MJ/t limit
+chat.pipe.power.energyConverter=Energy conversion: %s
+chat.pipe.power.energyConverter.from_old_to_new=From old API to new API
+chat.pipe.power.energyConverter.from_new_to_old=From new API to old API
 
 color.black=Black
 color.blue=Blue
@@ -203,6 +206,8 @@ tile.refineryBlock.name=Refinery
 tile.spring.oil.name=Oil Spring
 tile.spring.water.name=Water Spring
 tile.tankBlock.name=Tank
+tile.energyConverter.name=Energy Converter
+tile.energyConverter.tooltip=Convert BC energy between old and new power API|Added for compatibility with other mods|while they not migrated to new power API.|Could be removed in the future.
 
 tile.architect.rotate=Rotate: On
 tile.architect.norotate=Rotate: Off

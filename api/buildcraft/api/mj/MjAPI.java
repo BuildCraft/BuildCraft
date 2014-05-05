@@ -8,11 +8,13 @@
  */
 package buildcraft.api.mj;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 
 import buildcraft.api.core.JavaTools;
+import buildcraft.api.power.PowerHandler;
 
 public final class MjAPI {
 
@@ -26,56 +28,43 @@ public final class MjAPI {
 		public Field field;
 		public MjBattery battery;
 		public BatteryKind kind;
+	}
 
-		public double getEnergyRequested (Object obj) {
+	public static class BatteryObject {
+		Field f;
+		Object o;
+		MjBattery b;
+
+		public double getEnergyRequested() {
 			try {
-				double contained = field.getDouble(obj);
+				double contained = f.getDouble(o);
 
-				double left = contained + battery.maxReceivedPerCycle() > battery
-						.maxCapacity() ? battery.maxCapacity() - contained : battery
+				double left = contained + b.maxReceivedPerCycle() > b
+						.maxCapacity() ? b.maxCapacity() - contained : b
 						.maxReceivedPerCycle();
 
 				if (left > 0) {
 					return left;
 				} else {
-					return battery.minimumConsumption();
+					return b.minimumConsumption();
 				}
-			} catch (IllegalArgumentException e) {
-				e.printStackTrace();
 			} catch (IllegalAccessException e) {
 				e.printStackTrace();
 			}
 
 			return 0;
 		}
-	}
-
-	public static class BatteryObject {
-		BatteryField f;
-		Object o;
-
-		public double getEnergyRequested () {
-			return f.getEnergyRequested(o);
-		}
 
 		public double addEnergy(double watts) {
 			try {
-				double e = f.field.getDouble(o);
-				double max = f.battery.maxCapacity();
+				double e = f.getDouble(o);
+				double max = b.maxCapacity();
 
-				double used = 0;
+				double used = e + watts <= max ? watts : max - e;
 
-				if (e + watts <= max) {
-					used = watts;
-				} else {
-					used = max - e;
-				}
-
-				f.field.setDouble(o, e + used);
+				f.setDouble(o, e + used);
 
 				return used;
-			} catch (IllegalArgumentException e) {
-				e.printStackTrace();
 			} catch (IllegalAccessException e) {
 				e.printStackTrace();
 			}
@@ -85,23 +74,56 @@ public final class MjAPI {
 
 		public double getEnergyStored() {
 			try {
-				return f.field.getDouble(o);
+				return f.getDouble(o);
 			} catch (IllegalAccessException e) {
 				e.printStackTrace();
 				return 0;
 			}
 		}
 
+		public void setEnergyStored(double watts) {
+			try {
+				f.setDouble(o, watts);
+			} catch (IllegalAccessException e) {
+				throw new RuntimeException(e);
+			}
+		}
+
 		public double maxCapacity() {
-			return f.battery.maxCapacity();
+			return b.maxCapacity();
 		}
 
 		public double minimumConsumption() {
-			return f.battery.minimumConsumption();
+			return b.minimumConsumption();
 		}
 
 		public double maxReceivedPerCycle() {
-			return f.battery.maxReceivedPerCycle();
+			return b.maxReceivedPerCycle();
+		}
+
+		public BatteryObject reconfigure(final double maxCapacity, final double maxReceivedPerCycle, final double minimumConsumption) {
+			b = new MjBattery() {
+				@Override
+				public double maxCapacity() {
+					return maxCapacity;
+				}
+
+				@Override
+				public double maxReceivedPerCycle() {
+					return maxReceivedPerCycle;
+				}
+
+				@Override
+				public double minimumConsumption() {
+					return minimumConsumption;
+				}
+
+				@Override
+				public Class<? extends Annotation> annotationType() {
+					return MjBattery.class;
+				}
+			};
+			return this;
 		}
 	}
 
@@ -111,27 +133,29 @@ public final class MjAPI {
 	private MjAPI() {
 	}
 
-	public static BatteryObject getMjBattery (Object o) {
+	public static BatteryObject getMjBattery(Object o) {
 		if (o == null) {
 			return null;
 		}
 
-		BatteryField f = getMjBattery (o.getClass());
+		if (o.getClass() == PowerHandler.class) {
+			return ((PowerHandler) o).getMjBattery();
+		}
+
+		BatteryField f = getMjBattery(o.getClass());
 
 		if (f == null) {
 			return null;
 		} else if (f.kind == BatteryKind.Value) {
 			BatteryObject obj = new BatteryObject();
 			obj.o = o;
-			obj.f = f;
+			obj.f = f.field;
+			obj.b = f.battery;
 
 			return obj;
 		} else {
 			try {
 				return getMjBattery(f.field.get(o));
-			} catch (IllegalArgumentException e) {
-				e.printStackTrace();
-				return null;
 			} catch (IllegalAccessException e) {
 				e.printStackTrace();
 				return null;
@@ -139,10 +163,10 @@ public final class MjAPI {
 		}
 	}
 
-	private static BatteryField getMjBattery (Class c) {
+	private static BatteryField getMjBattery(Class c) {
 		if (!MjBatteries.containsKey(c)) {
 			for (Field f : JavaTools.getAllFields(c)) {
-				MjBattery battery = f.getAnnotation (MjBattery.class);
+				MjBattery battery = f.getAnnotation(MjBattery.class);
 
 				if (battery != null) {
 					f.setAccessible(true);
