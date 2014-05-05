@@ -36,6 +36,7 @@ public abstract class BlueprintBase {
 	public boolean rotate = true;
 	public boolean excavate = true;
 	public BuildingPermission buildingPermission = BuildingPermission.ALL;
+	public boolean isComplete = true;
 
 	protected MappingRegistry mapping = new MappingRegistry();
 

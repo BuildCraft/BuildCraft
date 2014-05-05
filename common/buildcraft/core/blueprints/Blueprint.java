@@ -196,22 +196,27 @@ public class Blueprint extends BlueprintBase {
 					index++;
 
 					if (cpt.hasKey("blockId")) {
-						int blockId = cpt.getInteger("blockId");
+						Block block = mapping.getBlockForId(cpt.getInteger("blockId"));
 
-						contents[x][y][z] = SchematicRegistry.newSchematicBlock(mapping.getBlockForId(blockId));
-						contents[x][y][z].readFromNBT(cpt, mapping);
+						if (block != null) {
+							contents[x][y][z] = SchematicRegistry.newSchematicBlock(block);
+							contents[x][y][z].readFromNBT(cpt, mapping);
 
-						switch (contents[x][y][z].getBuildingPermission()) {
-						case ALL:
-							break;
-						case CREATIVE_ONLY:
-							if (buildingPermission == BuildingPermission.ALL) {
-								buildingPermission = BuildingPermission.CREATIVE_ONLY;
+							switch (contents[x][y][z].getBuildingPermission()) {
+							case ALL:
+								break;
+							case CREATIVE_ONLY:
+								if (buildingPermission == BuildingPermission.ALL) {
+									buildingPermission = BuildingPermission.CREATIVE_ONLY;
+								}
+								break;
+							case NONE:
+								buildingPermission = BuildingPermission.NONE;
+								break;
 							}
-							break;
-						case NONE:
-							buildingPermission = BuildingPermission.NONE;
-							break;
+						} else {
+							contents[x][y][z] = null;
+							isComplete = false;
 						}
 					} else {
 						contents[x][y][z] = null;
@@ -227,10 +232,15 @@ public class Blueprint extends BlueprintBase {
 			NBTTagCompound cpt = entitiesNBT.getCompoundTagAt(i);
 
 			if (cpt.hasKey("entityId")) {
-				int entityId = cpt.getInteger("entityId");
-				SchematicEntity s = SchematicRegistry.newSchematicEntity(mapping.getEntityForId(entityId));
-				s.readFromNBT(cpt, mapping);
-				entities.add(s);
+				Class<? extends Entity> entity = mapping.getEntityForId(cpt.getInteger("entityId"));
+
+				if (entity != null) {
+					SchematicEntity s = SchematicRegistry.newSchematicEntity(entity);
+					s.readFromNBT(cpt, mapping);
+					entities.add(s);
+				} else {
+					isComplete = false;
+				}
 			}
 		}
 	}
@@ -243,6 +253,7 @@ public class Blueprint extends BlueprintBase {
 		nbt.setString("author", author);
 		nbt.setString("name", id.name);
 		nbt.setByte ("permission", (byte) buildingPermission.ordinal());
+		nbt.setBoolean("isComplete", isComplete);
 
 		return stack;
 	}

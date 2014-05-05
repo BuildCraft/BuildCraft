@@ -57,6 +57,14 @@ public abstract class ItemBlueprint extends ItemBuildCraft {
 				list.add(String.format(StringUtils.localize("item.blueprint.no_build")));
 			}
 		}
+
+		if (NBTUtils.getItemData(stack).hasKey("isComplete")) {
+			boolean isComplete = NBTUtils.getItemData(stack).getBoolean("isComplete");
+
+			if (!isComplete) {
+				list.add(String.format(StringUtils.localize("item.blueprint.incomplete")));
+			}
+		}
 	}
 
 	public static BlueprintId getId (ItemStack stack) {
