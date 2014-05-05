@@ -53,6 +53,7 @@ import buildcraft.core.Version;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.triggers.BCTrigger;
 import buildcraft.energy.BlockBuildcraftFluid;
+import buildcraft.energy.BlockEnergyConverter;
 import buildcraft.energy.BlockEnergyEmitter;
 import buildcraft.energy.BlockEnergyReceiver;
 import buildcraft.energy.BlockEngine;
@@ -60,8 +61,10 @@ import buildcraft.energy.BucketHandler;
 import buildcraft.energy.EnergyProxy;
 import buildcraft.energy.GuiHandler;
 import buildcraft.energy.ItemBucketBuildcraft;
+import buildcraft.energy.ItemEnergyConverter;
 import buildcraft.energy.ItemEngine;
 import buildcraft.energy.SchematicEngine;
+import buildcraft.energy.TileEnergyConverter;
 import buildcraft.energy.TileEnergyEmitter;
 import buildcraft.energy.TileEnergyReceiver;
 import buildcraft.energy.TileEngine.EnergyStage;
@@ -89,6 +92,7 @@ public class BuildCraftEnergy extends BuildCraftMod {
 	public static Block blockOil;
 	public static Block blockFuel;
 	public static Block blockRedPlasma;
+	public static Block blockEnergyConverter;
 	public static Item bucketOil;
 	public static Item bucketFuel;
 	public static Item bucketRedPlasma;
@@ -127,8 +131,8 @@ public class BuildCraftEnergy extends BuildCraftMod {
 				try {
 					oilBiomeIDs.add(Integer.parseInt(strippedId));
 				} catch (NumberFormatException ex) { // not an int so try and
-														// parse it as a biome
-														// type
+					// parse it as a biome
+					// type
 					try {
 						for (BiomeGenBase b : BiomeDictionary.getBiomesForType(BiomeDictionary.Type.valueOf(strippedId
 								.toUpperCase()))) {
@@ -153,8 +157,8 @@ public class BuildCraftEnergy extends BuildCraftMod {
 				try {
 					excessiveOilBiomeIDs.add(Integer.parseInt(strippedId));
 				} catch (NumberFormatException ex) { // not an int so try and
-														// parse it as a biome
-														// type
+					// parse it as a biome
+					// type
 					try {
 						for (BiomeGenBase b : BiomeDictionary.getBiomesForType(BiomeDictionary.Type.valueOf(strippedId
 								.toUpperCase()))) {
@@ -179,8 +183,8 @@ public class BuildCraftEnergy extends BuildCraftMod {
 				try {
 					excludeOilBiomeIDs.add(Integer.parseInt(strippedId));
 				} catch (NumberFormatException ex) { // not an int so try and
-														// parse it as a biome
-														// type
+					// parse it as a biome
+					// type
 					try {
 						for (BiomeGenBase b : BiomeDictionary.getBiomesForType(BiomeDictionary.Type.valueOf(strippedId
 								.toUpperCase()))) {
@@ -199,7 +203,7 @@ public class BuildCraftEnergy extends BuildCraftMod {
 		BuildCraftCore.mainConfiguration.save();
 
 		if (oilDesertBiomeId > 0) {
-			if (BiomeGenBase.getBiomeGenArray () [oilDesertBiomeId] != null) {
+			if (BiomeGenBase.getBiomeGenArray()[oilDesertBiomeId] != null) {
 				oilDesertBiomeId = findUnusedBiomeID("oilDesert");
 				// save changes to config file
 				BuildCraftCore.mainConfiguration.get("biomes", "biomeOilDesert", oilDesertBiomeId).set(oilDesertBiomeId);
@@ -209,7 +213,7 @@ public class BuildCraftEnergy extends BuildCraftMod {
 		}
 
 		if (oilOceanBiomeId > 0) {
-			if (BiomeGenBase.getBiomeGenArray () [oilOceanBiomeId] != null) {
+			if (BiomeGenBase.getBiomeGenArray()[oilOceanBiomeId] != null) {
 				oilOceanBiomeId = findUnusedBiomeID("oilOcean");
 				// save changes to config file
 				BuildCraftCore.mainConfiguration.get("biomes", "biomeOilOcean", oilOceanBiomeId).set(oilOceanBiomeId);
@@ -221,6 +225,12 @@ public class BuildCraftEnergy extends BuildCraftMod {
 		engineBlock = new BlockEngine();
 		CoreProxy.proxy.registerBlock(engineBlock, ItemEngine.class);
 
+		if (BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "energyConverter", true,
+				"Set true for enable energy converter").getBoolean(true)) {
+			blockEnergyConverter = new BlockEnergyConverter();
+			CoreProxy.proxy.registerBlock(blockEnergyConverter, ItemEnergyConverter.class);
+			CoreProxy.proxy.registerTileEntity(TileEnergyConverter.class, "EnergyConverter");
+		}
 
 		// Oil and fuel
 		buildcraftFluidOil = new Fluid("oil").setDensity(800).setViscosity(1500);
@@ -312,11 +322,11 @@ public class BuildCraftEnergy extends BuildCraftMod {
 		// Receiver / emitter
 
 		if (!BuildCraftCore.NEXTGEN_PREALPHA) {
-			emitterBlock = new BlockEnergyEmitter ();
+			emitterBlock = new BlockEnergyEmitter();
 			CoreProxy.proxy.registerBlock(emitterBlock.setBlockName("energyEmitterBlock"));
 			CoreProxy.proxy.registerTileEntity(TileEnergyEmitter.class, "net.minecraft.src.builders.TileEnergyEmitter");
 
-			receiverBlock = new BlockEnergyReceiver ();
+			receiverBlock = new BlockEnergyReceiver();
 			CoreProxy.proxy.registerBlock(receiverBlock.setBlockName("energyReceiverBlock"));
 			CoreProxy.proxy.registerTileEntity(TileEnergyReceiver.class, "net.minecraft.src.builders.TileEnergyReceiver");
 		}
@@ -361,14 +371,20 @@ public class BuildCraftEnergy extends BuildCraftMod {
 	public static void loadRecipes() {
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(engineBlock, 1, 0),
 				"www", " g ", "GpG", 'w', "plankWood", 'g', Blocks.glass, 'G',
-			BuildCraftCore.woodenGearItem, 'p', Blocks.piston);
+				BuildCraftCore.woodenGearItem, 'p', Blocks.piston);
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(engineBlock, 1, 1), "www", " g ", "GpG", 'w', "cobblestone",
-			'g', Blocks.glass, 'G', BuildCraftCore.stoneGearItem, 'p', Blocks.piston);
+				'g', Blocks.glass, 'G', BuildCraftCore.stoneGearItem, 'p', Blocks.piston);
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(engineBlock, 1, 2), "www", " g ", "GpG", 'w', Items.iron_ingot,
-			'g', Blocks.glass, 'G', BuildCraftCore.ironGearItem, 'p', Blocks.piston);
+				'g', Blocks.glass, 'G', BuildCraftCore.ironGearItem, 'p', Blocks.piston);
+
+		if (blockEnergyConverter != null) {
+			CoreProxy.proxy.addCraftingRecipe(new ItemStack(blockEnergyConverter, 1), "rcr", "sgs", "rcr",
+					'r', Items.redstone, 'c', BuildCraftTransport.pipePowerCobblestone,
+					's', BuildCraftTransport.pipePowerStone, 'g', Blocks.glass);
+		}
 	}
 
-	private int findUnusedBiomeID (String biomeName) {
+	private int findUnusedBiomeID(String biomeName) {
 		int freeBiomeID = 0;
 		// code to find a free biome
 		for (int i = 1; i < 256; i++) {
