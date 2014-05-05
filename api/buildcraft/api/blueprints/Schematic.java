@@ -270,7 +270,6 @@ public abstract class Schematic {
 
 	/**
 	 * Return the building permission for blueprint containing this schematic.
-	 * @return
 	 */
 	public BuildingPermission getBuildingPermission () {
 		return BuildingPermission.ALL;

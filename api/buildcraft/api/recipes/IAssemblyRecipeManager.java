@@ -25,11 +25,14 @@ public interface IAssemblyRecipeManager {
 
 	/**
 	 * Add an Assembly Table recipe.
-	 *
-	 * @param input Object... containing either an ItemStack, or a paired string
-	 * and integer(ex: "dyeBlue", 1)
-	 * @param energy MJ cost to produce
-	 * @param output resulting ItemStack
+	 * 
+	 * @param input
+	 *            Object... containing either an ItemStack, or a paired string
+	 *            and integer(ex: "dyeBlue", 1)
+	 * @param energyCost
+	 *            MJ cost to produce
+	 * @param output
+	 *            resulting ItemStack
 	 */
 	void addRecipe(double energyCost, ItemStack output, Object... input);
 

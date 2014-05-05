@@ -63,7 +63,6 @@ public final class MatrixTranformations {
 	 * Clones both dimensions of a float[][]
 	 *
 	 * @param source the float[][] to deepClone
-	 * @return
 	 */
 	public static float[][] deepClone(float[][] source) {
 		float[][] target = source.clone();

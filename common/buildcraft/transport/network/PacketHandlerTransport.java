@@ -270,7 +270,6 @@ public class PacketHandlerTransport extends BuildCraftChannelHandler {
 	 * @param x
 	 * @param y
 	 * @param z
-	 * @return
 	 */
 	private TileGenericPipe getPipe(World world, int x, int y, int z) {
 		if (!world.blockExists(x, y, z)) {

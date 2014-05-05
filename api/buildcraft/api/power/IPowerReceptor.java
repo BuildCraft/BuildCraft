@@ -28,7 +28,6 @@ public interface IPowerReceptor {
 	 * engines to eventually explode.
 	 *
 	 * @param side
-	 * @return
 	 */
 	PowerHandler.PowerReceiver getPowerReceiver(ForgeDirection side);
 

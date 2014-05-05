@@ -71,11 +71,11 @@ public final class IronEngineCoolant {
 	}
 
 	/**
-	 * Adds a solid coolant like Ice Blocks. The FluidStack must contain a registered
-	 * Coolant Fluid or nothing will happen. You do not need to call this for
-	 * Fluid Containers.
-	 *
-	 * @param data.stack
+	 * Adds a solid coolant like Ice Blocks. The FluidStack must contain a
+	 * registered Coolant Fluid or nothing will happen. You do not need to call
+	 * this for Fluid Containers.
+	 * 
+	 * @param item
 	 * @param coolant
 	 */
 	public static void addCoolant(final Item item, final int metadata, final FluidStack coolant) {

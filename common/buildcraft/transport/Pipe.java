@@ -165,8 +165,6 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 	 * Should return the textureindex used by the Pipe Item Renderer, as this is
 	 * done client-side the default implementation might not work if your
 	 * getTextureIndex(Orienations.Unknown) has logic. Then override this
-	 *
-	 * @return
 	 */
 	public int getIconIndexForItem() {
 		return getIconIndex(ForgeDirection.UNKNOWN);

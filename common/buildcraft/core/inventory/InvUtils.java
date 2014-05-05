@@ -79,10 +79,11 @@ public final class InvUtils {
 
 	/**
 	 * Attempts to move a single item from one inventory to another.
-	 *
+	 * 
 	 * @param source
 	 * @param dest
-	 * @param filer an IStackFilter to match against
+	 * @param filter
+	 *            an IStackFilter to match against
 	 * @return null if nothing was moved, the stack moved otherwise
 	 */
 	public static ItemStack moveOneItem(IInventory source, ForgeDirection output, IInventory dest, ForgeDirection intput, IStackFilter filter) {

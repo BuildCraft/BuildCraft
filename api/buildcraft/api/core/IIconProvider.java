@@ -18,7 +18,6 @@ public interface IIconProvider {
 
 	/**
 	 * @param iconIndex
-	 * @return
 	 */
 	@SideOnly(Side.CLIENT)
 	IIcon getIcon(int iconIndex);

@@ -32,7 +32,6 @@ public interface ITransactor {
 	 * @param filter
 	 * @param orientation
 	 * @param doRemove
-	 * @return 
 	 */
 	ItemStack remove(IStackFilter filter, ForgeDirection orientation, boolean doRemove);
 }

@@ -95,7 +95,6 @@ public final class PowerHandler {
 		 * @param powerHandler the PowerHandler requesting the perdition update
 		 * @param current      the current stored energy
 		 * @param ticksPassed  ticks since the last time this function was called
-		 * @return
 		 */
 		public double applyPerdition(PowerHandler powerHandler, double current, long ticksPassed) {
 			double newPower = current - powerLoss * ticksPassed;
@@ -425,8 +424,6 @@ public final class PowerHandler {
 
 		/**
 		 * The amount of power that this PowerHandler currently needs.
-		 *
-		 * @return
 		 */
 		public double powerRequest() {
 			update();
