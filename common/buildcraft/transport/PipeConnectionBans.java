@@ -36,6 +36,10 @@ public final class PipeConnectionBans {
 		banConnection(PipeFluidsStone.class, PipeFluidsCobblestone.class);
 
 		banConnection(PipeFluidsWood.class);
+		
+		banConnection(PipeFluidsEmerald.class);
+		
+		banConnection(PipeFluidsWood.class, PipeFluidsEmerald.class);
 
 		banConnection(PipeFluidsEmerald.class);
 
@@ -46,10 +50,12 @@ public final class PipeConnectionBans {
 
 		banConnection(PipeItemsEmerald.class);
 
-		banConnection(PipeItemsObsidian.class);
-
 		banConnection(PipeItemsEmzuli.class);
-
+		
+		banConnection(PipeItemsWood.class, PipeItemsEmerald.class, PipeItemsEmzuli.class);
+		
+		banConnection(PipeItemsObsidian.class);
+		
 		// Power Pipes
 		banConnection(PipePowerWood.class);
 	}
