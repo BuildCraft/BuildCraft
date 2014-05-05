@@ -1163,7 +1163,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 	}
 
 	public static boolean isFullyDefined(Pipe pipe) {
-		return pipe != null && pipe.transport != null;
+		return pipe != null && pipe.transport != null && pipe.container != null;
 	}
 
 	public static boolean isValid(Pipe pipe) {
