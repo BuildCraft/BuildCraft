@@ -71,11 +71,11 @@ public class CommandBuildCraft extends CommandBase {
 
 		sender.addChatMessage(new ChatComponentText(String.format(colour + "BuildCraft %s for Minecraft %s (Latest: %s).", Version.getVersion(),
 				CoreProxy.proxy.getMinecraftVersion(), Version.getRecommendedVersion())));
-		if (Version.isOutdated()) {
-			for (String updateLine : Version.getChangelog()) {
-				sender.addChatMessage(new ChatComponentText("\u00A79" + updateLine));
-			}
-		}
+
+		// TODD This takes too much realstate. See how to improve
+		// if (Version.isOutdated()) {
+		// Version.displayChangelog(sender);
+		// }
 	}
 
 }

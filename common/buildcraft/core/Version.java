@@ -14,6 +14,9 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 
+import net.minecraft.command.ICommandSender;
+import net.minecraft.util.ChatComponentText;
+
 import net.minecraftforge.common.config.Property;
 
 import buildcraft.BuildCraftCore;
@@ -26,21 +29,24 @@ public class Version implements Runnable {
 	}
 
 	public static final String VERSION = "@VERSION@";
-	public static final String BUILD_NUMBER = "@BUILD_NUMBER@";
 	public static EnumUpdateState currentVersion = EnumUpdateState.CURRENT;
 	public static final int FORGE_VERSION_MAJOR = 4;
 	public static final int FORGE_VERSION_MINOR = 0;
 	public static final int FORGE_VERSION_PATCH = 0;
 
-	private static final String REMOTE_VERSION_FILE = "http://www.mod-buildcraft.com/releases/versions.txt";
-	private static final String REMOTE_CHANGELOG_ROOT = "https://dl.dropboxusercontent.com/u/38558957/Minecraft/Buildcraft/changelogs/";
+	private static final String REMOTE_VERSION_FILE =
+			"https://raw.githubusercontent.com/BuildCraft/BuildCraft/master/buildcraft_resources/versions.txt";
+
+	private static final String REMOTE_CHANGELOG_ROOT =
+			"https://raw.githubusercontent.com/BuildCraft/BuildCraft/master/buildcraft_resources/changelog/";
+
 	private static String recommendedVersion;
 	private static String[] cachedChangelog;
 
 	private static Version instance = new Version();
 
 	public static String getVersion() {
-		return VERSION + " (:" + BUILD_NUMBER + ")";
+		return VERSION;
 	}
 
 	public static boolean isOutdated() {
@@ -104,8 +110,9 @@ public class Version implements Runnable {
 				String[] tokens = line.split(":");
 				if (mcVersion.matches(tokens[0])) {
 					if (DefaultProps.MOD.matches(tokens[1])) {
+						recommendedVersion = tokens[2];
+
 						if (VERSION.matches(tokens[2])) {
-							recommendedVersion = tokens[2];
 							BCLog.logger.finer("Using the latest version [" + getVersion() + "] for Minecraft " + mcVersion);
 							currentVersion = EnumUpdateState.CURRENT;
 							return;
@@ -114,8 +121,8 @@ public class Version implements Runnable {
 				}
 			}
 
-			BCLog.logger.warning("Using outdated version [" + VERSION + " (build:" + BUILD_NUMBER + ")] for Minecraft " + mcVersion
-					+ ". Consider updating.");
+			BCLog.logger.warning("Using outdated version [" + VERSION + "] for Minecraft " + mcVersion
+					+ ". Consider updating to " + recommendedVersion + ".");
 			currentVersion = EnumUpdateState.OUTDATED;
 
 			conn.disconnect();
@@ -138,8 +145,7 @@ public class Version implements Runnable {
 	public static String[] grabChangelog(String version) {
 
 		try {
-
-			String location = REMOTE_CHANGELOG_ROOT + version;
+			String location = REMOTE_CHANGELOG_ROOT + "/" + version;
 			HttpURLConnection conn = null;
 			while (location != null && !location.isEmpty()) {
 				URL url = new URL(location);
@@ -160,20 +166,18 @@ public class Version implements Runnable {
 			}
 
 			BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-			conn.disconnect();
 
 			String line;
 			ArrayList<String> changelog = new ArrayList<String>();
 			while ((line = reader.readLine()) != null) {
-				if (line.startsWith("#")) {
-					continue;
-				}
 				if (line.isEmpty()) {
 					continue;
 				}
 
 				changelog.add(line);
 			}
+
+			conn.disconnect();
 
 			return changelog.toArray(new String[0]);
 
@@ -213,8 +217,21 @@ public class Version implements Runnable {
 
 	}
 
-	public static void check() {
+	public static void displayChangelog(ICommandSender sender) {
+		int nb = 0;
+		for (String updateLine : Version.getChangelog()) {
+			sender.addChatMessage(new ChatComponentText("\u00A79" + updateLine));
 
+			nb++;
+
+			if (nb > 3) {
+				sender.addChatMessage(new ChatComponentText("\u00A79[...]"));
+				break;
+			}
+		}
+	}
+
+	public static void check() {
 		new Thread(instance).start();
 	}
 }

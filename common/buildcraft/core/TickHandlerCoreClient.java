@@ -40,11 +40,17 @@ public class TickHandlerCoreClient {
 							"\u00A7cNew version of BuildCraft available: %s for Minecraft %s",
 							Version.getRecommendedVersion(),
 							CoreProxy.proxy.getMinecraftVersion())));
-			for (String updateLine : Version.getChangelog()) {
-				player.addChatMessage(new ChatComponentText("\u00A79" + updateLine));
-			}
 			player.addChatMessage(new ChatComponentText(
-					"\u00A7cThis message only displays once. Type '/buildcraft version' if you want to see it again."));
+					String.format(
+							"\u00A7cDownload from http://www.mod-buildcraft.com/download",
+							Version.getRecommendedVersion(),
+							CoreProxy.proxy.getMinecraftVersion())));
+
+			// TODD This takes too much realstate. See how to improve
+			// Version.displayChangelog(player);
+
+			player.addChatMessage(new ChatComponentText("This message only displays once."));
+			player.addChatMessage(new ChatComponentText("Type '/buildcraft version' if you want to see it again."));
 		}
 
 		// }
