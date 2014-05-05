@@ -22,7 +22,7 @@ import buildcraft.BuildCraftSilicon;
 public class CraftingHandler {
 
 	@SubscribeEvent
-	public void onCrafing(PlayerEvent.ItemCraftedEvent event) {
+	public void onCrafting(PlayerEvent.ItemCraftedEvent event) {
 		Item item = event.crafting.getItem();
 
 		if (item.equals(BuildCraftCore.woodenGearItem)) {
