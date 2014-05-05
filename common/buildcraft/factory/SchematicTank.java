@@ -27,4 +27,8 @@ public class SchematicTank extends SchematicTile {
 		context.world().setBlock(x, y, z, block, meta, 3);
 	}
 
+	@Override
+	public BuildingStage getBuildStage() {
+		return BuildingStage.STANDALONE;
+	}
 }
