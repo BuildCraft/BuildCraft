@@ -46,7 +46,9 @@ sourceSets {
         }
         resources {
             srcDir 'buildcraft_resources'
-            srcDir '../BuildCraft-Localization'
+            def l10n = file('../BuildCraft-Localization')
+            if(l10n.exists())
+                srcDir l10n
             exclude '**/.md' // exclude readme from localization repo
             // exclude 'some exclusion'
             // include 'some inclusion'
