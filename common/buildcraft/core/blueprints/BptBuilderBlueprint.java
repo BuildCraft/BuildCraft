@@ -277,6 +277,16 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 	}
 
 	private BuildingSlot internalGetNextBlock(World world, TileAbstractBuilder builder, LinkedList<BuildingSlotBlock> list) {
+		if (builder.energyAvailable() < SchematicRegistry.BREAK_ENERGY) {
+			// If there's no more energy available, then set reset the list and
+			// quit. This will avoid situations where energy is given at a
+			// random point in time, and therefore builder doesn't start from
+			// the expected point.
+
+			iterator.reset();
+			return null;
+		}
+
 		iterator.startIteration();
 
 		while (iterator.hasNext()) {
