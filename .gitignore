@@ -2,6 +2,7 @@
 .project
 .classpath
 .metadata
+org.*
 bin
 
 #idea
