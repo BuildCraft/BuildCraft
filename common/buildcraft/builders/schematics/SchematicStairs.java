@@ -55,4 +55,8 @@ public class SchematicStairs extends SchematicBlock {
 		meta = pos + others;
 	}
 
+	@Override
+	public BuildingStage getBuildStage() {
+		return BuildingStage.STANDALONE;
+	}
 }
