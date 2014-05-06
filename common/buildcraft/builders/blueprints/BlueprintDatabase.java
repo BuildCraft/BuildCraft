@@ -125,7 +125,7 @@ public class BlueprintDatabase {
 		for (File blueprintFile : blueprintFolder.listFiles(filter)) {
 			String fileName = blueprintFile.getName();
 
-			int cutIndex = fileName.indexOf(BuildCraftBuilders.BPT_SEP_CHARACTER);
+			int cutIndex = fileName.lastIndexOf(BuildCraftBuilders.BPT_SEP_CHARACTER);
 
 			String prefix = fileName.substring(0, cutIndex);
 			String suffix = fileName.substring(cutIndex + 1);

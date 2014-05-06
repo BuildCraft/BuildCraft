@@ -37,7 +37,7 @@ public class GuiBlueprintLibrary extends GuiBuildCraft {
 	public GuiBlueprintLibrary(EntityPlayer player, TileBlueprintLibrary library) {
 		super(new ContainerBlueprintLibrary(player, library), library, TEXTURE);
 		this.player = player;
-		xSize = 176;
+		xSize = 234;
 		ySize = 225;
 
 		this.library = library;
@@ -51,13 +51,13 @@ public class GuiBlueprintLibrary extends GuiBuildCraft {
 
 		int j = (width - xSize) / 2;
 		int k = (height - ySize) / 2;
-		prevPageButton = new GuiButton(0, j + 100, k + 23, 20, 20, "<");
-		nextPageButton = new GuiButton(1, j + 122, k + 23, 20, 20, ">");
+		prevPageButton = new GuiButton(0, j + 158, k + 23, 20, 20, "<");
+		nextPageButton = new GuiButton(1, j + 180, k + 23, 20, 20, ">");
 
 		buttonList.add(prevPageButton);
 		buttonList.add(nextPageButton);
 
-		deleteButton = new GuiButton(2, j + 100, k + 114, 25, 20, StringUtils.localize("gui.del"));
+		deleteButton = new GuiButton(2, j + 158, k + 114, 25, 20, StringUtils.localize("gui.del"));
 		buttonList.add(deleteButton);
 	}
 
@@ -79,9 +79,9 @@ public class GuiBlueprintLibrary extends GuiBuildCraft {
 				int i2 = 24;
 
 				if (bpt.kind == Kind.Blueprint) {
-					drawGradientRect(l1, i2 + 9 * c, l1 + 88, i2 + 9 * (c + 1), 0xFFA0A0FF, 0xFFA0A0FF);
+					drawGradientRect(l1, i2 + 9 * c, l1 + 146, i2 + 9 * (c + 1), 0xFFA0A0FF, 0xFFA0A0FF);
 				} else {
-					drawGradientRect(l1, i2 + 9 * c, l1 + 88, i2 + 9 * (c + 1), 0x80ffffff, 0x80ffffff);
+					drawGradientRect(l1, i2 + 9 * c, l1 + 146, i2 + 9 * (c + 1), 0x80ffffff, 0x80ffffff);
 				}
 			}
 
@@ -107,8 +107,8 @@ public class GuiBlueprintLibrary extends GuiBuildCraft {
 		int inP = (int) (library.progressIn / 100.0 * 22.0);
 		int outP = (int) (library.progressOut / 100.0 * 22.0);
 
-		drawTexturedModalRect(j + 128 + 22 - inP, k + 61, 176 + 22 - inP, 16, inP, 16);
-		drawTexturedModalRect(j + 128, k + 78, 176, 0, outP, 16);
+		drawTexturedModalRect(j + 186 + 22 - inP, k + 61, 234 + 22 - inP, 16, inP, 16);
+		drawTexturedModalRect(j + 186, k + 78, 234, 0, outP, 16);
 	}
 
 	@Override

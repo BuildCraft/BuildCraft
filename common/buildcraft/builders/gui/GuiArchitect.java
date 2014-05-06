@@ -8,14 +8,14 @@
  */
 package buildcraft.builders.gui;
 
-import java.util.Date;
-
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.util.ResourceLocation;
 
+import buildcraft.BuildCraftBuilders;
 import buildcraft.builders.TileArchitect;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.blueprints.BlueprintReadConfiguration;
@@ -25,18 +25,24 @@ import buildcraft.core.utils.StringUtils;
 
 public class GuiArchitect extends GuiBuildCraft {
 
+	private static final int TEXT_X = 90;
+	private static final int TEXT_Y = 62;
+	private static final int TEXT_WIDTH = 156;
+	private static final int TEXT_HEIGHT = 12;
+
 	private static final ResourceLocation TEXTURE = new ResourceLocation(
 			"buildcraft", DefaultProps.TEXTURE_PATH_GUI + "/architect_gui.png");
 
-	IInventory playerInventory;
-	TileArchitect architect;
-	boolean editMode = false;
+	private IInventory playerInventory;
+	private TileArchitect architect;
 
 	private GuiButton optionRotate;
 	private GuiButton optionReadMods;
 	private GuiButton optionReadBlocks;
 	private GuiButton optionExcavate;
 	private GuiButton optionExplicit;
+
+	private GuiTextField textField;
 
 	public GuiArchitect(IInventory playerInventory, TileArchitect architect) {
 		super(new ContainerArchitect(playerInventory, architect), architect, TEXTURE);
@@ -64,6 +70,10 @@ public class GuiArchitect extends GuiBuildCraft {
 
 		optionExplicit = new GuiButton(3, x + 5, y + 105, 77, 20, "");
 		buttonList.add(optionExplicit);
+
+		textField = new GuiTextField(this.fontRendererObj, TEXT_X, TEXT_Y, TEXT_WIDTH, TEXT_HEIGHT);
+		textField.setMaxStringLength(BuildCraftBuilders.MAX_BLUEPRINTS_NAME_SIZE);
+		textField.setText(architect.name);
 
 		updateButtons();
 	}
@@ -118,15 +128,16 @@ public class GuiArchitect extends GuiBuildCraft {
 	@Override
 	protected void drawGuiContainerForegroundLayer(int par1, int par2) {
 		String title = StringUtils.localize("tile.architectBlock.name");
-		String inv = StringUtils.localize("gui.inventory");
 		fontRendererObj.drawString(title, getCenteredOffset(title), 6, 0x404040);
-		fontRendererObj.drawString(inv, getCenteredOffset(inv) + 40, ySize - 94, 0x404040);
 
-		if (editMode && ((new Date()).getTime() / 100) % 8 >= 4) {
-			fontRendererObj.drawString(architect.name + "|", 131, 62, 0x404040);
-		} else {
-			fontRendererObj.drawString(architect.name, 131, 62, 0x404040);
-		}
+		/*
+		 * if (editMode && ((new Date()).getTime() / 100) % 8 >= 4) {
+		 * fontRendererObj.drawString(architect.name + "|", 131, 62, 0x404040);
+		 * } else { fontRendererObj.drawString(architect.name, 131, 62,
+		 * 0x404040); }
+		 */
+
+		textField.drawTextBox();
 	}
 
 	@Override
@@ -146,26 +157,26 @@ public class GuiArchitect extends GuiBuildCraft {
 
 		int xMin = (width - xSize) / 2;
 		int yMin = (height - ySize) / 2;
-
 		int x = i - xMin;
 		int y = j - yMin;
 
-		if (editMode) {
-			editMode = false;
-		} else if (x >= 130 && y >= 61 && x <= 217 && y <= 139) {
-			editMode = true;
+		if (x >= TEXT_X && y >= TEXT_Y
+				&& x <= TEXT_X + TEXT_WIDTH && y <= TEXT_Y + TEXT_HEIGHT) {
+			textField.setFocused(true);
+		} else {
+			textField.setFocused(false);
 		}
 	}
 
 	@Override
 	protected void keyTyped(char c, int i) {
-		if (i != 1 && editMode) {
-			if (c == 13) {
-				editMode = false;
-				return;
+		if (textField.isFocused()) {
+			if (c == 13 || c == 27) {
+				textField.setFocused(false);
+			} else {
+				textField.textboxKeyTyped(c, i);
+				RPCHandler.rpcServer(architect, "handleClientSetName", textField.getText());
 			}
-
-			RPCHandler.rpcServer(architect, "handleClientInput", c);
 		} else {
 			super.keyTyped(c, i);
 		}

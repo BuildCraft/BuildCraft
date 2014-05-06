@@ -145,17 +145,8 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 	}
 
 	@RPC (RPCSide.SERVER)
-	public void handleClientInput(char c) {
-		if (c == 8) {
-			if (name.length() > 0) {
-				name = name.substring(0, name.length() - 1);
-			}
-		} else if (Character.isLetterOrDigit(c) || c == ' ') {
-			if (name.length() < BuildCraftBuilders.MAX_BLUEPRINTS_NAME_SIZE) {
-				name += c;
-			}
-		}
-
+	public void handleClientSetName(String nameSet) {
+		name = nameSet;
 		RPCHandler.rpcBroadcastPlayers(this, "setName", name);
 	}
 
