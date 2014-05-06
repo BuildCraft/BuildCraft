@@ -20,6 +20,7 @@ import net.minecraft.entity.item.EntityPainting;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
+import net.minecraft.launchwrapper.Launch;
 
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
@@ -34,6 +35,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.config.Configuration;
 
 import buildcraft.api.blueprints.BlueprintDeployer;
 import buildcraft.api.blueprints.SchematicBlock;
@@ -42,6 +44,7 @@ import buildcraft.api.blueprints.SchematicFactory;
 import buildcraft.api.blueprints.SchematicMask;
 import buildcraft.api.blueprints.SchematicRegistry;
 import buildcraft.api.core.BCLog;
+import buildcraft.api.core.JavaTools;
 import buildcraft.api.filler.FillerManager;
 import buildcraft.api.filler.IFillerPattern;
 import buildcraft.api.gates.ActionManager;
@@ -147,14 +150,59 @@ public class BuildCraftBuilders extends BuildCraftMod {
 	public void loadConfiguration(FMLPreInitializationEvent evt) {
 		File bptMainDir = new File(new File(evt.getModConfigurationDirectory(), "buildcraft"), "blueprints");
 
+		String blueprintServerDir = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL,
+				"blueprints.serverDir",
+				"\"$MINECRAFT" + File.separator + "config" + File.separator + "buildcraft" + File.separator
+						+ "blueprints" + File.separator + "server\"").getString();
+
+		String blueprintLibraryOutput = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL,
+				"blueprints.libraryOutput", "\"$MINECRAFT" + File.separator + "blueprints\"").getString();
+
+		String [] blueprintLibraryInput = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL,
+				"blueprints.libraryInput", new String []
+				{
+						// expected location
+						"\"$MINECRAFT" + File.separator + "blueprints\"",
+						// legacy beta BuildCraft
+						"\"$MINECRAFT" + File.separator + "config" + File.separator + "buildcraft" + File.separator
+								+ "blueprints" + File.separator + "client\"",
+						// default Windows download location
+						"\"$HOME" + File.separator + "Downloads\""
+				}
+				).getStringList().clone();
+
+		blueprintServerDir = JavaTools.stripSurroundingQuotes(replacePathVariables(blueprintServerDir));
+		blueprintLibraryOutput = JavaTools.stripSurroundingQuotes(replacePathVariables(blueprintLibraryOutput));
+
+		for (int i = 0; i < blueprintLibraryInput.length; ++i) {
+			blueprintLibraryInput[i] = JavaTools.stripSurroundingQuotes(replacePathVariables(blueprintLibraryInput[i]));
+		}
+
+		if (BuildCraftCore.mainConfiguration.hasChanged()) {
+			BuildCraftCore.mainConfiguration.save();
+		}
+
 		File serverDir = new File (bptMainDir, "server");
 		File clientDir = new File (bptMainDir, "client");
 
 		serverDB = new BlueprintDatabase();
 		clientDB = new BlueprintDatabase();
 
-		serverDB.init(serverDir);
-		clientDB.init(clientDir);
+		serverDB.init(new String[] {blueprintServerDir}, blueprintServerDir);
+		clientDB.init(blueprintLibraryInput, blueprintLibraryOutput);
+	}
+
+	private String replacePathVariables(String path) {
+		String result = path.replaceAll("\\$HOME", System.getProperty("user.home").replaceAll("\\\\", "\\\\\\\\"));
+
+		if (Launch.minecraftHome == null) {
+			result = result.replaceAll("\\$MINECRAFT", new File(".").getAbsolutePath().replaceAll("\\\\", "\\\\\\\\"));
+		} else {
+			result = result.replaceAll("\\$MINECRAFT",
+					Launch.minecraftHome.getAbsolutePath().replaceAll("\\\\", "\\\\\\\\"));
+		}
+
+		return result;
 	}
 
 	@Mod.EventHandler

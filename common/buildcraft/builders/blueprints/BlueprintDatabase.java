@@ -35,7 +35,8 @@ public class BlueprintDatabase {
 	private static final int PAGE_SIZE = 12;
 
 	private final int bufferSize = 8192;
-	private File blueprintFolder;
+	private File outputDir;
+	private File[] inputDirs;
 
 	private Set<BlueprintId> blueprintIds = new TreeSet<BlueprintId>();
 	private BlueprintId [] pages = new BlueprintId [0];
@@ -45,14 +46,20 @@ public class BlueprintDatabase {
 	 *
 	 * @param configDir config directory to read the blueprints from.
 	 */
-	public void init(File configDir) {
-		blueprintFolder = configDir;
+	public void init(String[] inputPaths, String outputPath) {
+		outputDir = new File(outputPath);
 
-		if (!blueprintFolder.exists()) {
-			blueprintFolder.mkdirs();
+		if (!outputDir.exists()) {
+			outputDir.mkdirs();
 		}
 
-		loadIndex();
+		inputDirs = new File[inputPaths.length];
+
+		for (int i = 0; i < inputDirs.length; ++i) {
+			inputDirs[i] = new File(inputPaths[i]);
+		}
+
+		loadIndex(inputDirs);
 	}
 
 	/**
@@ -74,17 +81,20 @@ public class BlueprintDatabase {
 
 	public void deleteBlueprint (BlueprintId id) {
 		File blueprintFile = getBlueprintFile(id);
-		blueprintFile.delete();
-		blueprintIds.remove(id);
-		pages = new BlueprintId [blueprintIds.size()];
-		pages = blueprintIds.toArray(pages);
+
+		if (blueprintFile != null) {
+			blueprintFile.delete();
+			blueprintIds.remove(id);
+			pages = new BlueprintId[blueprintIds.size()];
+			pages = blueprintIds.toArray(pages);
+		}
 	}
 
 	private BlueprintId save(BlueprintBase blueprint) {
 		blueprint.id.generateUniqueId(blueprint.getData());
 
 		BlueprintId id = blueprint.id;
-		File blueprintFile = getBlueprintFile (id);
+		File blueprintFile = getBlueprintFile(id, outputDir);
 
 		if (!blueprintFile.exists()) {
 			OutputStream gzOs = null;
@@ -107,14 +117,44 @@ public class BlueprintDatabase {
 	}
 
 	private File getBlueprintFile(BlueprintId id) {
+		String name = "";
+
 		if (id.kind == Kind.Blueprint) {
-			return new File(blueprintFolder, String.format(Locale.ENGLISH, "%s" + BPT_EXTENSION, id.toString()));
+			name = String.format(Locale.ENGLISH, "%s" + BPT_EXTENSION, id.toString());
 		} else {
-			return new File(blueprintFolder, String.format(Locale.ENGLISH, "%s" + TPL_EXTENSION, id.toString()));
+			name = String.format(Locale.ENGLISH, "%s" + TPL_EXTENSION, id.toString());
+		}
+
+		for (File dir : inputDirs) {
+			File f = new File(dir, name);
+
+			if (f.exists()) {
+				return f;
+			}
+		}
+
+		return null;
+	}
+
+	private File getBlueprintFile(BlueprintId id, File folder) {
+		String name = "";
+
+		if (id.kind == Kind.Blueprint) {
+			name = String.format(Locale.ENGLISH, "%s" + BPT_EXTENSION, id.toString());
+		} else {
+			name = String.format(Locale.ENGLISH, "%s" + TPL_EXTENSION, id.toString());
+		}
+
+		return new File(folder, name);
+	}
+
+	private void loadIndex(File[] dirs) {
+		for (File dir : dirs) {
+			loadIndex(dir);
 		}
 	}
 
-	private void loadIndex() {
+	private void loadIndex(File directory) {
 		FilenameFilter filter = new FilenameFilter() {
 			@Override
 			public boolean accept(File dir, String name) {
@@ -122,31 +162,33 @@ public class BlueprintDatabase {
 			}
 		};
 
-		for (File blueprintFile : blueprintFolder.listFiles(filter)) {
-			String fileName = blueprintFile.getName();
+		if (directory.exists()) {
+			for (File blueprintFile : directory.listFiles(filter)) {
+				String fileName = blueprintFile.getName();
 
-			int cutIndex = fileName.lastIndexOf(BuildCraftBuilders.BPT_SEP_CHARACTER);
+				int cutIndex = fileName.lastIndexOf(BuildCraftBuilders.BPT_SEP_CHARACTER);
 
-			String prefix = fileName.substring(0, cutIndex);
-			String suffix = fileName.substring(cutIndex + 1);
+				String prefix = fileName.substring(0, cutIndex);
+				String suffix = fileName.substring(cutIndex + 1);
 
-			BlueprintId id = new BlueprintId();
-			id.name = prefix;
+				BlueprintId id = new BlueprintId();
+				id.name = prefix;
 
-			if (suffix.contains(BPT_EXTENSION)) {
-				id.uniqueId = BlueprintId.toBytes (suffix.replaceAll(BPT_EXTENSION, ""));
-				id.kind = Kind.Blueprint;
-			} else {
-				id.uniqueId = BlueprintId.toBytes (suffix.replaceAll(TPL_EXTENSION, ""));
-				id.kind = Kind.Template;
+				if (suffix.contains(BPT_EXTENSION)) {
+					id.uniqueId = BlueprintId.toBytes(suffix.replaceAll(BPT_EXTENSION, ""));
+					id.kind = Kind.Blueprint;
+				} else {
+					id.uniqueId = BlueprintId.toBytes(suffix.replaceAll(TPL_EXTENSION, ""));
+					id.kind = Kind.Template;
+				}
+
+				if (!blueprintIds.contains(id)) {
+					blueprintIds.add(id);
+				}
 			}
 
-			if (!blueprintIds.contains(id)) {
-				blueprintIds.add(id);
-			}
+			pages = blueprintIds.toArray(pages);
 		}
-
-		pages = blueprintIds.toArray(pages);
 	}
 
 	public boolean exists (BlueprintId id) {
@@ -168,7 +210,7 @@ public class BlueprintDatabase {
 	}
 
 	public static BlueprintBase load (File blueprintFile) {
-		if (blueprintFile.exists()) {
+		if (blueprintFile != null && blueprintFile.exists()) {
 			try {
 				FileInputStream f = new FileInputStream(blueprintFile);
 				byte [] data = new byte [(int) blueprintFile.length()];
