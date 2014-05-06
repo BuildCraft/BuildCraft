@@ -82,8 +82,8 @@ public class GuiArchitect extends GuiBuildCraft {
 		updateButtons();
 	}
 
-	public void onGuiClosed()
-	{
+	@Override
+	public void onGuiClosed() {
 		Keyboard.enableRepeatEvents(false);
 	}
 
