@@ -9,7 +9,7 @@
 package buildcraft.core;
 
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.ChatComponentTranslation;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent.PlayerTickEvent;
@@ -35,22 +35,16 @@ public class TickHandlerCoreClient {
 		// if(!Config.disableVersionCheck) {
 
 		if (Version.needsUpdateNoticeAndMarkAsSeen()) {
-			player.addChatMessage(new ChatComponentText(
-					String.format(
-							"\u00A7cNew version of BuildCraft available: %s for Minecraft %s",
+			player.addChatMessage(new ChatComponentTranslation("bc_update.new_version",
 							Version.getRecommendedVersion(),
-							CoreProxy.proxy.getMinecraftVersion())));
-			player.addChatMessage(new ChatComponentText(
-					String.format(
-							"\u00A7cDownload from http://www.mod-buildcraft.com/download",
-							Version.getRecommendedVersion(),
-							CoreProxy.proxy.getMinecraftVersion())));
+							CoreProxy.proxy.getMinecraftVersion()));
+			player.addChatMessage(new ChatComponentTranslation("bc_update.download"));
 
 			// TODD This takes too much realstate. See how to improve
 			// Version.displayChangelog(player);
 
-			player.addChatMessage(new ChatComponentText("This message only displays once."));
-			player.addChatMessage(new ChatComponentText("Type '/buildcraft version' if you want to see it again."));
+			player.addChatMessage(new ChatComponentTranslation("bc_update.once"));
+			player.addChatMessage(new ChatComponentTranslation("bc_update.again"));
 		}
 
 		// }

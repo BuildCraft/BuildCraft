@@ -294,3 +294,8 @@ achievement.templateAchievement=Basis
 achievement.templateAchievement.desc=Craft a template
 achievement.blueprintLibraryAchievement=Ideas live on
 achievement.blueprintLibraryAchievement.desc=Craft a blueprint library
+
+bc_update.new_version=§cNew version of BuildCraft available: %s for Minecraft %s
+bc_update.download=§cDownload from http://www.mod-buildcraft.com/download
+bc_update.once=This message only displays once
+bc_update.again=Type '/buildcraft version' if you want to see it again
