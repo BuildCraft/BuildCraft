@@ -374,9 +374,13 @@ public class PipeTransportItems extends PipeTransport {
 		entity.setPosition(entity.posX + direction.offsetX * 0.5d,
 				entity.posY + direction.offsetY * 0.5d,
 				entity.posZ + direction.offsetZ * 0.5d);
-		entity.motionX = direction.offsetX * 0.5d;
-		entity.motionY = direction.offsetY * 0.5d;
-		entity.motionZ = direction.offsetZ * 0.5d;
+
+		entity.motionX = direction.offsetX * item.speed * 5
+				+ getWorld().rand.nextGaussian() * 0.1d;
+		entity.motionY = direction.offsetY * item.speed * 5
+				+ getWorld().rand.nextGaussian() * 0.1d;
+		entity.motionZ = direction.offsetZ * item.speed * 5
+				+ getWorld().rand.nextGaussian() * 0.1d;
 
 		container.getWorldObj().spawnEntityInWorld(entity);
 	}
