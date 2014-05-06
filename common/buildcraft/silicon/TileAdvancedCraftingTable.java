@@ -245,6 +245,7 @@ public class TileAdvancedCraftingTable extends TileLaserTableBase implements IIn
 
 	@Override
 	public void updateEntity() {
+		super.updateEntity();
 		if (internalPlayer == null) {
 			internalInventoryCrafting = new InternalInventoryCrafting();
 			internalPlayer = new InternalPlayer();
