@@ -16,6 +16,7 @@ import net.minecraft.item.ItemStack;
 
 import buildcraft.builders.TileBlueprintLibrary;
 import buildcraft.core.gui.BuildCraftContainer;
+import buildcraft.core.gui.slots.SlotOutput;
 
 public class ContainerBlueprintLibrary extends BuildCraftContainer {
 
@@ -30,10 +31,10 @@ public class ContainerBlueprintLibrary extends BuildCraftContainer {
 		this.library = library;
 
 		addSlotToContainer(new Slot(library, 0, 211, 61));
-		addSlotToContainer(new Slot(library, 1, 167, 61));
+		addSlotToContainer(new SlotOutput(library, 1, 167, 61));
 
 		addSlotToContainer(new Slot(library, 2, 167, 79));
-		addSlotToContainer(new Slot(library, 3, 211, 79));
+		addSlotToContainer(new SlotOutput(library, 3, 211, 79));
 
 		// Player inventory
 		for (int l = 0; l < 3; l++) {
