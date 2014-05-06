@@ -8,6 +8,7 @@
  */
 package buildcraft.builders.gui;
 
+import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.gui.GuiButton;
@@ -59,6 +60,8 @@ public class GuiArchitect extends GuiBuildCraft {
 		int x = (width - xSize) / 2;
 		int y = (height - ySize) / 2;
 
+		Keyboard.enableRepeatEvents(true);
+
 		optionRotate = new GuiButton(0, x + 5, y + 30, 77, 20, "");
 		buttonList.add(optionRotate);
 
@@ -77,6 +80,11 @@ public class GuiArchitect extends GuiBuildCraft {
 		textField.setFocused(true);
 
 		updateButtons();
+	}
+
+	public void onGuiClosed()
+	{
+		Keyboard.enableRepeatEvents(false);
 	}
 
 	@Override
