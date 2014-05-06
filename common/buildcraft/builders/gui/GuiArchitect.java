@@ -74,6 +74,7 @@ public class GuiArchitect extends GuiBuildCraft {
 		textField = new GuiTextField(this.fontRendererObj, TEXT_X, TEXT_Y, TEXT_WIDTH, TEXT_HEIGHT);
 		textField.setMaxStringLength(BuildCraftBuilders.MAX_BLUEPRINTS_NAME_SIZE);
 		textField.setText(architect.name);
+		textField.setFocused(true);
 
 		updateButtons();
 	}
