@@ -31,7 +31,7 @@ import buildcraft.api.core.Position;
 import buildcraft.core.inventory.StackHelper;
 import buildcraft.core.utils.EnumColor;
 
-public final class TravelingItem {
+public class TravelingItem {
 
 	public static final TravelingItemCache serverCache = new TravelingItemCache();
 	public static final TravelingItemCache clientCache = new TravelingItemCache();
@@ -49,13 +49,13 @@ public final class TravelingItem {
 
 	protected float speed = 0.01F;
 
-	private ItemStack itemStack;
-	private TileEntity container;
-	private NBTTagCompound extraData;
-	private InsertionHandler insertionHandler = DEFAULT_INSERTION_HANDLER;
+	protected ItemStack itemStack;
+	protected TileEntity container;
+	protected NBTTagCompound extraData;
+	protected InsertionHandler insertionHandler = DEFAULT_INSERTION_HANDLER;
 
 	/* CONSTRUCTORS */
-	private TravelingItem(int id) {
+	protected TravelingItem(int id) {
 		this.id = id;
 	}
 
@@ -166,7 +166,7 @@ public final class TravelingItem {
 	}
 
 	/* SAVING & LOADING */
-	private void readFromNBT(NBTTagCompound data) {
+	public void readFromNBT(NBTTagCompound data) {
 		setPosition(data.getDouble("x"), data.getDouble("y"), data.getDouble("z"));
 
 		setSpeed(data.getFloat("speed"));
