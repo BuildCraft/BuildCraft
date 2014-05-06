@@ -18,21 +18,20 @@ import net.minecraft.nbt.NBTTagCompound;
 import buildcraft.api.power.ILaserTarget;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.inventory.SimpleInventory;
+import buildcraft.core.utils.AverageUtil;
 
 public abstract class TileLaserTableBase extends TileBuildCraft implements ILaserTarget, IInventory {
 
 	public double clientRequiredEnergy = 0;
 	protected SimpleInventory inv = new SimpleInventory(getSizeInventory(), "inv", 64);
-	private double[] recentEnergy = new double[20];
 	private double energy = 0;
-	private int tick = 0;
 	private int recentEnergyAverage;
+	private AverageUtil recentEnergyAverageUtil = new AverageUtil(20);
 
 	@Override
 	public void updateEntity() {
-		tick++;
-		tick = tick % recentEnergy.length;
-		recentEnergy[tick] = 0.0f;
+		super.updateEntity();
+		recentEnergyAverageUtil.tick();
 	}
 
 	public double getEnergy() {
@@ -77,7 +76,7 @@ public abstract class TileLaserTableBase extends TileBuildCraft implements ILase
 	@Override
 	public void receiveLaserEnergy(double energy) {
 		this.energy += energy;
-		recentEnergy[tick] += energy;
+		recentEnergyAverageUtil.push(energy);
 	}
 
 	@Override
@@ -184,10 +183,7 @@ public abstract class TileLaserTableBase extends TileBuildCraft implements ILase
 	public void sendGUINetworkData(Container container, ICrafting iCrafting) {
 		int requiredEnergy = (int) (getRequiredEnergy() * 100.0);
 		int currentStored = (int) (energy * 100.0);
-		int lRecentEnergy = 0;
-		for (double element : recentEnergy) {
-			lRecentEnergy += (int) (element * 100.0 / (recentEnergy.length - 1));
-		}
+		int lRecentEnergy = (int) (recentEnergyAverageUtil.getAverage() * 100f);
 		iCrafting.sendProgressBarUpdate(container, 0, requiredEnergy & 0xFFFF);
 		iCrafting.sendProgressBarUpdate(container, 1, currentStored & 0xFFFF);
 		iCrafting.sendProgressBarUpdate(container, 2, (requiredEnergy >>> 16) & 0xFFFF);
