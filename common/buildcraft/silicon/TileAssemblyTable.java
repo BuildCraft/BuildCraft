@@ -81,6 +81,7 @@ public class TileAssemblyTable extends TileLaserTableBase implements IMachine, I
 
 	@Override
 	public void updateEntity() { // WARNING: run only server-side, see canUpdate()
+		super.updateEntity();
 		if (currentRecipe == null) {
 			return;
 		}
