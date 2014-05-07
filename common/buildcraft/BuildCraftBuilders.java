@@ -148,8 +148,6 @@ public class BuildCraftBuilders extends BuildCraftMod {
 	public static BlueprintDatabase serverDB;
 	public static BlueprintDatabase clientDB;
 
-	private static String downloadsDir;
-
 	@Mod.EventHandler
 	public void loadConfiguration(FMLPreInitializationEvent evt) {
 		File bptMainDir = new File(new File(evt.getModConfigurationDirectory(), "buildcraft"), "blueprints");
@@ -170,8 +168,8 @@ public class BuildCraftBuilders extends BuildCraftMod {
 						// legacy beta BuildCraft
 						"\"$MINECRAFT" + File.separator + "config" + File.separator + "buildcraft" + File.separator
 								+ "blueprints" + File.separator + "client\"",
-						// default user's downloads location
-						"\"$DOWNLOADS\""
+						// infered used download location
+						"\"" + getDownloadsDir() + "\""
 				}
 				).getStringList().clone();
 
@@ -197,10 +195,8 @@ public class BuildCraftBuilders extends BuildCraftMod {
 	}
 
 	private static String getDownloadsDir() {
-		if (downloadsDir != null) {
-			return downloadsDir;
-		}
 		final String os = System.getProperty("os.name").toLowerCase();
+
 		if (os.contains("nix") || os.contains("lin") || os.contains("mac")) {
 			// Linux, Mac or other UNIX
 			// According XDG specification every user-specified folder can be localized
@@ -211,8 +207,9 @@ public class BuildCraftBuilders extends BuildCraftMod {
 				process.waitFor();
 				String line = reader.readLine().trim();
 				reader.close();
+
 				if (line.length() > 0) {
-					return downloadsDir = line;
+					return line;
 				}
 			} catch (Exception ignored) {
 				// Very bad, we have a error while obtaining xdg dir :(
@@ -220,7 +217,7 @@ public class BuildCraftBuilders extends BuildCraftMod {
 			}
 		}
 		// Windows or unknown system
-		return downloadsDir = "$HOME" + File.separator + "Downloads";
+		return "$HOME" + File.separator + "Downloads";
 	}
 
 	private String replacePathVariables(String path) {
