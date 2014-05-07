@@ -67,7 +67,7 @@ public class EntityRobotPicker extends EntityRobot implements IInventory {
 			if (target.isDead) {
 				targettedItems.remove(target.getEntityId());
 				target = null;
-				currentAI = new AIReturnToDock();
+				setMainAI(new RobotAIReturnToDock(this));
 				hideLaser();
 				scan ();
 			} else if (pickTime == -1) {
@@ -91,7 +91,7 @@ public class EntityRobotPicker extends EntityRobot implements IInventory {
 				}
 			}
 		} else {
-			if (currentAI instanceof AIDocked) {
+			if (currentAI instanceof RobotAIDocked) {
 				TileGenericPipe pipe = (TileGenericPipe) worldObj
 						.getTileEntity(dockingStation.x, dockingStation.y,
 								dockingStation.z);
@@ -145,8 +145,8 @@ public class EntityRobotPicker extends EntityRobot implements IInventory {
 
 						target = item;
 						targettedItems.add(e.getEntityId());
-						currentAI = new AIMoveAround(this, (float) e.posX,
-								(float) e.posY, (float) e.posZ);
+						setMainAI(new RobotAIMoveAround(this, (float) e.posX,
+								(float) e.posY, (float) e.posZ));
 						pickTime = -1;
 
 						break;

@@ -54,8 +54,8 @@ import buildcraft.core.BlockIndex;
 import buildcraft.core.CoreConstants;
 import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.ItemRobot;
-import buildcraft.core.robots.AIDocked;
 import buildcraft.core.robots.EntityRobot;
+import buildcraft.core.robots.RobotAIDocked;
 import buildcraft.core.utils.MatrixTranformations;
 import buildcraft.core.utils.Utils;
 import buildcraft.transport.gates.GateDefinition;
@@ -795,7 +795,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 						robot.setPosition(px, py, pz);
 						robot.setDockingStation(pipe.container,
 								rayTraceResult.sideHit);
-						robot.currentAI = new AIDocked();
+						robot.setMainAI(new RobotAIDocked(robot));
 						world.spawnEntityInWorld(robot);
 
 						if (!player.capabilities.isCreativeMode) {

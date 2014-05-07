@@ -10,7 +10,7 @@ package buildcraft.core.robots;
 
 import io.netty.buffer.ByteBuf;
 
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
@@ -25,7 +25,7 @@ import buildcraft.core.DefaultProps;
 import buildcraft.core.LaserData;
 import buildcraft.transport.TileGenericPipe;
 
-public class EntityRobot extends EntityLivingBase implements
+public class EntityRobot extends EntityLiving implements
 		IEntityAdditionalSpawnData {
 
 	private static ResourceLocation defaultTexture = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_ENTITIES + "/robot_base.png");
@@ -33,7 +33,7 @@ public class EntityRobot extends EntityLivingBase implements
 	public SafeTimeTracker scanForTasks = new SafeTimeTracker (40, 10);
 
 	public LaserData laser = new LaserData ();
-	public AIBase currentAI;
+	protected RobotAIBase currentAI;
 	public IRobotTask currentTask;
 	public DockingStation dockingStation = new DockingStation();
 
@@ -66,28 +66,28 @@ public class EntityRobot extends EntityLivingBase implements
 		noClip = true;
 		isImmuneToFire = true;
 
-		dataWatcher.addObject(10, Float.valueOf(0));
-		dataWatcher.addObject(11, Float.valueOf(0));
 		dataWatcher.addObject(12, Float.valueOf(0));
-		dataWatcher.addObject(13, Byte.valueOf((byte) 0));
+		dataWatcher.addObject(13, Float.valueOf(0));
 		dataWatcher.addObject(14, Float.valueOf(0));
-		dataWatcher.addObject(15, Float.valueOf(0));
+		dataWatcher.addObject(15, Byte.valueOf((byte) 0));
 		dataWatcher.addObject(16, Float.valueOf(0));
-		dataWatcher.addObject(17, Byte.valueOf((byte) 0));
+		dataWatcher.addObject(17, Float.valueOf(0));
+		dataWatcher.addObject(18, Float.valueOf(0));
+		dataWatcher.addObject(19, Byte.valueOf((byte) 0));
 	}
 
 	protected void updateDataClient() {
-		laser.tail.x = dataWatcher.getWatchableObjectFloat(10);
-		laser.tail.y = dataWatcher.getWatchableObjectFloat(11);
-		laser.tail.z = dataWatcher.getWatchableObjectFloat(12);
-		laser.isVisible = dataWatcher.getWatchableObjectByte(13) == 1;
+		laser.tail.x = dataWatcher.getWatchableObjectFloat(12);
+		laser.tail.y = dataWatcher.getWatchableObjectFloat(13);
+		laser.tail.z = dataWatcher.getWatchableObjectFloat(14);
+		laser.isVisible = dataWatcher.getWatchableObjectByte(15) == 1;
 	}
 
 	protected void updateDataServer() {
-		dataWatcher.updateObject(10, Float.valueOf((float) laser.tail.x));
-		dataWatcher.updateObject(11, Float.valueOf((float) laser.tail.y));
-		dataWatcher.updateObject(12, Float.valueOf((float) laser.tail.z));
-		dataWatcher.updateObject(13, Byte.valueOf((byte) (laser.isVisible ? 1 : 0)));
+		dataWatcher.updateObject(12, Float.valueOf((float) laser.tail.x));
+		dataWatcher.updateObject(13, Float.valueOf((float) laser.tail.y));
+		dataWatcher.updateObject(14, Float.valueOf((float) laser.tail.z));
+		dataWatcher.updateObject(15, Byte.valueOf((byte) (laser.isVisible ? 1 : 0)));
 	}
 
 	protected void init() {
@@ -129,9 +129,10 @@ public class EntityRobot extends EntityLivingBase implements
 			updateDataClient();
 		}
 
-		if (currentAI != null) {
-			currentAI.update(this);
-		}
+		// This should be taken care of automatically by the task mechanism
+		//if (currentAI != null) {
+		//	currentAI.update(this);
+		//}
 
 		if (!worldObj.isRemote) {
 			if (currentTask == null) {
@@ -282,7 +283,7 @@ public class EntityRobot extends EntityLivingBase implements
 
 		if (nbt.hasKey("ai")) {
 			try {
-				currentAI = (AIBase) Class.forName(nbt.getString("ai")).newInstance();
+				currentAI = (RobotAIBase) Class.forName(nbt.getString("ai")).newInstance();
 			} catch (Throwable t) {
 				t.printStackTrace();
 			}
@@ -306,5 +307,19 @@ public class EntityRobot extends EntityLivingBase implements
 
 	public boolean acceptTask (IRobotTask task) {
 		return false;
+	}
+
+	@Override
+	protected boolean isAIEnabled() {
+		return true;
+	}
+
+	public void setMainAI (RobotAIBase ai) {
+		if (currentAI != null) {
+			tasks.removeTask(currentAI);
+		}
+
+		currentAI = ai;
+		tasks.addTask(0, ai);
 	}
 }
