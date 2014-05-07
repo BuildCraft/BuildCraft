@@ -25,7 +25,14 @@ public class SlotBlueprintLibrary extends SlotBase {
 		this.player = player;
 	}
 
+	@Override
 	public void onSlotChanged() {
+		// When downloading or uploading a blueprint, the server needs to know
+		// who requested it. The way to do it so far is by recording the last
+		// player that clicks on the slots. To be improved if the method is
+		// not robust enough (e.g. what if the player is not logged anymore?
+		// is that robust against race conditions? etc.)
+
 		if (slot == 0) {
 			library.uploadingPlayer = player;
 		} else if (slot == 2) {
