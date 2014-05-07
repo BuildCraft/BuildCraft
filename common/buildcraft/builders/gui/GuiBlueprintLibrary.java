@@ -59,6 +59,8 @@ public class GuiBlueprintLibrary extends GuiBuildCraft {
 
 		deleteButton = new GuiButton(2, j + 158, k + 114, 25, 20, StringUtils.localize("gui.del"));
 		buttonList.add(deleteButton);
+
+		checkDelete();
 	}
 
 	@Override
@@ -140,6 +142,17 @@ public class GuiBlueprintLibrary extends GuiBuildCraft {
 					library.selectBlueprint(ySlot);
 				}
 			}
+		}
+
+		checkDelete();
+	}
+
+	protected void checkDelete() {
+		if (library.selected != -1) {
+			deleteButton.enabled = true;
+		}
+		else {
+			deleteButton.enabled = false;
 		}
 	}
 }
