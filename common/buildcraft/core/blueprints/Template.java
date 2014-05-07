@@ -43,7 +43,7 @@ public class Template extends BlueprintBase {
 		int posY = (int) (y - context.surroundingBox().pMin().y);
 		int posZ = (int) (z - context.surroundingBox().pMin().z);
 
-		if (!BuildCraftAPI.isSoftBlock(anchorTile.getWorldObj(), posX, posY, posZ)) {
+		if (!BuildCraftAPI.isSoftBlock(anchorTile.getWorldObj(), x, y, z)) {
 			contents [posX][posY][posZ] = new SchematicMask(true);
 		}
 	}
