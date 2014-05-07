@@ -32,13 +32,9 @@ import net.minecraft.util.IChatComponent;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.oredict.OreDictionary;
 
-import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftSilicon;
 import buildcraft.api.core.IInvSlot;
-import buildcraft.api.gates.IAction;
-import buildcraft.api.gates.IActionReceptor;
 import buildcraft.api.power.ILaserTarget;
-import buildcraft.core.IMachine;
 import buildcraft.core.TileBuffer;
 import buildcraft.core.inventory.InvUtils;
 import buildcraft.core.inventory.InventoryCopy;
@@ -56,7 +52,7 @@ import buildcraft.core.utils.CraftingHelper;
 import buildcraft.core.utils.StringUtils;
 import buildcraft.core.utils.Utils;
 
-public class TileAdvancedCraftingTable extends TileLaserTableBase implements IInventory, ILaserTarget, IMachine, IActionReceptor, ISidedInventory {
+public class TileAdvancedCraftingTable extends TileLaserTableBase implements IInventory, ILaserTarget, ISidedInventory {
 
 	private static final int[] SLOTS = Utils.createSlotArray(0, 24);
 	private static final EnumSet<ForgeDirection> SEARCH_SIDES = EnumSet.of(ForgeDirection.DOWN, ForgeDirection.NORTH, ForgeDirection.SOUTH,
@@ -70,7 +66,6 @@ public class TileAdvancedCraftingTable extends TileLaserTableBase implements IIn
 	private boolean justCrafted;
 	private InternalPlayer internalPlayer;
 	private IRecipe currentRecipe;
-	private ActionMachineControl.Mode lastMode = ActionMachineControl.Mode.Unknown;
 	private TileBuffer[] cache;
 	private InventoryCraftResult craftResult;
 	private InternalInventoryCrafting internalInventoryCrafting;
@@ -252,7 +247,7 @@ public class TileAdvancedCraftingTable extends TileLaserTableBase implements IIn
 			craftSlot = new SlotCrafting(internalPlayer, internalInventoryCrafting, craftResult, 0, 0, 0);
 			updateRecipe();
 		}
-		if (!!worldObj.isRemote) {
+		if (worldObj.isRemote) {
 			return;
 		}
 		if (lastMode == ActionMachineControl.Mode.Off) {
@@ -445,22 +440,7 @@ public class TileAdvancedCraftingTable extends TileLaserTableBase implements IIn
 
 	@Override
 	public boolean isActive() {
-		return requiresLaserEnergy();
-	}
-
-	@Override
-	public boolean manageFluids() {
-		return false;
-	}
-
-	@Override
-	public boolean manageSolids() {
-		return false;
-	}
-
-	@Override
-	public boolean allowAction(IAction action) {
-		return action == BuildCraftCore.actionOn || action == BuildCraftCore.actionOff;
+		return requiresLaserEnergy() && super.isActive();
 	}
 
 	@Override
@@ -481,15 +461,6 @@ public class TileAdvancedCraftingTable extends TileLaserTableBase implements IIn
 	@Override
 	public boolean isItemValidForSlot(int slot, ItemStack stack) {
 		return slot < 15;
-	}
-
-	@Override
-	public void actionActivated(IAction action) {
-		if (action == BuildCraftCore.actionOn) {
-			lastMode = ActionMachineControl.Mode.On;
-		} else if (action == BuildCraftCore.actionOff) {
-			lastMode = ActionMachineControl.Mode.Off;
-		}
 	}
 
 	@Override
