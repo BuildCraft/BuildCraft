@@ -116,6 +116,13 @@ public final class InvUtils {
 		double d2 = (world.rand.nextFloat() * f1) + (1.0F - f1) * 0.5D;
 		EntityItem entityitem = new EntityItem(world, i + d, j + d1, k + d2, stack);
 		entityitem.delayBeforeCanPickup = 10;
+		if(stack.getItem().hasCustomEntity(stack)) {
+			Entity entity = stack.getItem().createEntity(world, entityitem, stack);
+			if(entity != null) {
+				world.spawnEntityInWorld(entity);
+				return;
+			}
+		}
 
 		world.spawnEntityInWorld(entityitem);
 	}
