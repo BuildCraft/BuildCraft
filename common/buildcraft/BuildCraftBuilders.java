@@ -8,7 +8,9 @@
  */
 package buildcraft;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.InputStreamReader;
 
 import net.minecraft.entity.item.EntityItemFrame;
 import net.minecraft.entity.item.EntityMinecartChest;
@@ -166,8 +168,8 @@ public class BuildCraftBuilders extends BuildCraftMod {
 						// legacy beta BuildCraft
 						"\"$MINECRAFT" + File.separator + "config" + File.separator + "buildcraft" + File.separator
 								+ "blueprints" + File.separator + "client\"",
-						// default Windows download location
-						"\"$HOME" + File.separator + "Downloads\""
+						// infered used download location
+						"\"" + getDownloadsDir() + "\""
 				}
 				).getStringList().clone();
 
@@ -192,14 +194,40 @@ public class BuildCraftBuilders extends BuildCraftMod {
 		clientDB.init(blueprintLibraryInput, blueprintLibraryOutput);
 	}
 
+	private static String getDownloadsDir() {
+		final String os = System.getProperty("os.name").toLowerCase();
+
+		if (os.contains("nix") || os.contains("lin") || os.contains("mac")) {
+			// Linux, Mac or other UNIX
+			// According XDG specification every user-specified folder can be localized
+			// or even moved to any destination, so we obtain real path with xdg-user-dir
+			try {
+				Process process = Runtime.getRuntime().exec(new String[] {"xdg-user-dir", "DOWNLOAD"});
+				BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream(), "utf-8"));
+				process.waitFor();
+				String line = reader.readLine().trim();
+				reader.close();
+
+				if (line.length() > 0) {
+					return line;
+				}
+			} catch (Exception ignored) {
+				// Very bad, we have a error while obtaining xdg dir :(
+				// Just ignore, uses default dir
+			}
+		}
+		// Windows or unknown system
+		return "$HOME" + File.separator + "Downloads";
+	}
+
 	private String replacePathVariables(String path) {
-		String result = path.replaceAll("\\$HOME", System.getProperty("user.home").replaceAll("\\\\", "\\\\\\\\"));
+		String result = path.replace("$DOWNLOADS", getDownloadsDir());
+		result = result.replace("$HOME", System.getProperty("user.home"));
 
 		if (Launch.minecraftHome == null) {
-			result = result.replaceAll("\\$MINECRAFT", new File(".").getAbsolutePath().replaceAll("\\\\", "\\\\\\\\"));
+			result = result.replace("$MINECRAFT", new File(".").getAbsolutePath());
 		} else {
-			result = result.replaceAll("\\$MINECRAFT",
-					Launch.minecraftHome.getAbsolutePath().replaceAll("\\\\", "\\\\\\\\"));
+			result = result.replace("$MINECRAFT", Launch.minecraftHome.getAbsolutePath());
 		}
 
 		return result;
