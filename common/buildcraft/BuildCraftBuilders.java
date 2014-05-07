@@ -247,6 +247,7 @@ public class BuildCraftBuilders extends BuildCraftMod {
 
 		SchematicRegistry.registerSchematicBlock(Blocks.snow, SchematicIgnore.class);
 		SchematicRegistry.registerSchematicBlock(Blocks.tallgrass, SchematicIgnore.class);
+		SchematicRegistry.registerSchematicBlock(Blocks.double_plant, SchematicIgnore.class);
 		SchematicRegistry.registerSchematicBlock(Blocks.ice, SchematicIgnore.class);
 		SchematicRegistry.registerSchematicBlock(Blocks.piston_head, SchematicIgnore.class);
 
