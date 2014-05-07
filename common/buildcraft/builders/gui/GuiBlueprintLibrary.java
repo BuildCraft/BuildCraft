@@ -150,8 +150,8 @@ public class GuiBlueprintLibrary extends GuiBuildCraft {
 	protected void checkDelete() {
 		if (library.selected != -1) {
 			deleteButton.enabled = true;
-		}
-		else {
+		
+		} else {
 			deleteButton.enabled = false;
 		}
 	}
