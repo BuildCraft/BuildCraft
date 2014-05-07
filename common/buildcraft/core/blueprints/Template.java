@@ -12,6 +12,7 @@ import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+
 import buildcraft.BuildCraftBuilders;
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.SchematicMask;
@@ -42,7 +43,7 @@ public class Template extends BlueprintBase {
 		int posY = (int) (y - context.surroundingBox().pMin().y);
 		int posZ = (int) (z - context.surroundingBox().pMin().z);
 
-		if (!BuildCraftAPI.softBlocks.contains(block)) {
+		if (!BuildCraftAPI.isSoftBlock(anchorTile.getWorldObj(), posX, posY, posZ)) {
 			contents [posX][posY][posZ] = new SchematicMask(true);
 		}
 	}
