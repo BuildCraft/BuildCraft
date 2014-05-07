@@ -15,15 +15,21 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
+import buildcraft.BuildCraftCore;
+import buildcraft.api.gates.IAction;
+import buildcraft.api.gates.IActionReceptor;
 import buildcraft.api.power.ILaserTarget;
+import buildcraft.core.IMachine;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.inventory.SimpleInventory;
+import buildcraft.core.triggers.ActionMachineControl;
 import buildcraft.core.utils.AverageUtil;
 
-public abstract class TileLaserTableBase extends TileBuildCraft implements ILaserTarget, IInventory {
+public abstract class TileLaserTableBase extends TileBuildCraft implements ILaserTarget, IInventory, IActionReceptor, IMachine {
 
 	public double clientRequiredEnergy = 0;
 	protected SimpleInventory inv = new SimpleInventory(getSizeInventory(), "inv", 64);
+	protected ActionMachineControl.Mode lastMode = ActionMachineControl.Mode.Unknown;
 	private double energy = 0;
 	private int recentEnergyAverage;
 	private AverageUtil recentEnergyAverageUtil = new AverageUtil(20);
@@ -190,5 +196,34 @@ public abstract class TileLaserTableBase extends TileBuildCraft implements ILase
 		iCrafting.sendProgressBarUpdate(container, 3, (currentStored >>> 16) & 0xFFFF);
 		iCrafting.sendProgressBarUpdate(container, 4, lRecentEnergy & 0xFFFF);
 		iCrafting.sendProgressBarUpdate(container, 5, (lRecentEnergy >>> 16) & 0xFFFF);
+	}
+
+	@Override
+	public boolean isActive() {
+		return lastMode != ActionMachineControl.Mode.Off;
+	}
+
+	@Override
+	public boolean manageFluids() {
+		return false;
+	}
+
+	@Override
+	public boolean manageSolids() {
+		return false;
+	}
+
+	@Override
+	public boolean allowAction(IAction action) {
+		return action == BuildCraftCore.actionOn || action == BuildCraftCore.actionOff;
+	}
+
+	@Override
+	public void actionActivated(IAction action) {
+		if (action == BuildCraftCore.actionOn) {
+			lastMode = ActionMachineControl.Mode.On;
+		} else if (action == BuildCraftCore.actionOff) {
+			lastMode = ActionMachineControl.Mode.Off;
+		}
 	}
 }
