@@ -242,7 +242,7 @@ public class BuildCraftEnergy extends BuildCraftMod {
 			FluidContainerRegistry.registerFluidContainer(FluidRegistry.getFluidStack("fuel", FluidContainerRegistry.BUCKET_VOLUME), new ItemStack(bucketFuel), new ItemStack(Items.bucket));
 		}
 
-		if (!BuildCraftCore.NEXTGEN_PREALPHA) {
+		if (!BuildCraftCore.NONRELEASED_BLOCKS) {
 			if (blockRedPlasma != null) {
 				bucketRedPlasma = new ItemBucketBuildcraft(blockRedPlasma);
 				bucketRedPlasma.setUnlocalizedName("bucketRedPlasma").setContainerItem(Items.bucket);
@@ -269,7 +269,7 @@ public class BuildCraftEnergy extends BuildCraftMod {
 
 		// Receiver / emitter
 
-		if (!BuildCraftCore.NEXTGEN_PREALPHA) {
+		if (!BuildCraftCore.NONRELEASED_BLOCKS) {
 			emitterBlock = new BlockEnergyEmitter();
 			CoreProxy.proxy.registerBlock(emitterBlock.setBlockName("energyEmitterBlock"));
 			CoreProxy.proxy.registerTileEntity(TileEnergyEmitter.class, "net.minecraft.src.builders.TileEnergyEmitter");

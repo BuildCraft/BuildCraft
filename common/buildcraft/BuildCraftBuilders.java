@@ -428,7 +428,7 @@ public class BuildCraftBuilders extends BuildCraftMod {
 		libraryBlock = new BlockBlueprintLibrary();
 		CoreProxy.proxy.registerBlock(libraryBlock.setBlockName("libraryBlock"));
 
-		if (!BuildCraftCore.NEXTGEN_PREALPHA) {
+		if (!BuildCraftCore.NONRELEASED_BLOCKS) {
 			urbanistBlock = new BlockUrbanist ();
 			CoreProxy.proxy.registerBlock(urbanistBlock.setBlockName("urbanistBlock"));
 			CoreProxy.proxy.registerTileEntity(TileUrbanist.class, "net.minecraft.src.builders.TileUrbanist");

@@ -356,7 +356,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 			pipePowerGold = buildPipe(PipePowerGold.class, "Golden Kinesis Pipe", CreativeTabBuildCraft.PIPES, Items.redstone, pipeItemsGold);
 			pipePowerDiamond = buildPipe(PipePowerDiamond.class, "Diamond Kinesis Pipe", CreativeTabBuildCraft.PIPES, Items.redstone, pipeItemsDiamond);
 
-			if (!BuildCraftCore.NEXTGEN_PREALPHA) {
+			if (!BuildCraftCore.NONRELEASED_BLOCKS) {
 				pipePowerHeat = buildPipe(PipePowerHeat.class, "Heat Kinesis Pipe", CreativeTabBuildCraft.PIPES, Blocks.furnace, pipeItemsDiamond);
 			}
 
@@ -378,12 +378,9 @@ public class BuildCraftTransport extends BuildCraftMod {
 			plugItem.setUnlocalizedName("pipePlug");
 			CoreProxy.proxy.registerItem(plugItem);
 
-			if (!BuildCraftCore.NEXTGEN_PREALPHA) {
-				robotStationItem = new ItemRobotStation();
-				robotStationItem.setUnlocalizedName("robotStation");
-				CoreProxy.proxy.registerItem(robotStationItem);
-			}
-
+			robotStationItem = new ItemRobotStation();
+			robotStationItem.setUnlocalizedName("robotStation");
+			CoreProxy.proxy.registerItem(robotStationItem);
 
 			for (PipeContents kind : PipeContents.values()) {
 				triggerPipe[kind.ordinal()] = new TriggerPipeContents(kind);

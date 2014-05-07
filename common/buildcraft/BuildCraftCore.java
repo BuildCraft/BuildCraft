@@ -102,7 +102,7 @@ import buildcraft.core.utils.CraftingHandler;
 
 @Mod(name = "BuildCraft", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Core", acceptedMinecraftVersions = "[1.7.2,1.8)", dependencies = "required-after:Forge@[10.12.0.1024,)")
 public class BuildCraftCore extends BuildCraftMod {
-	public static final boolean NEXTGEN_PREALPHA = true;
+	public static final boolean NONRELEASED_BLOCKS = true;
 
 	public static enum RenderMode {
 		Full, NoDynamic
@@ -283,20 +283,20 @@ public class BuildCraftCore extends BuildCraftMod {
 			CoreProxy.proxy.registerItem(diamondGearItem);
 			OreDictionary.registerOre("gearDiamond", new ItemStack(diamondGearItem));
 
-			if (!BuildCraftCore.NEXTGEN_PREALPHA) {
+			if (!BuildCraftCore.NONRELEASED_BLOCKS) {
 				redstoneCrystal = (new ItemBuildCraft()).setUnlocalizedName("redstoneCrystal");
 				CoreProxy.proxy.registerItem(redstoneCrystal);
 				OreDictionary.registerOre("redstoneCrystal", new ItemStack(redstoneCrystal));
-
-				robotBaseItem = new ItemRobot(EntityRobot.class).setUnlocalizedName("robotBase");
-				CoreProxy.proxy.registerItem(robotBaseItem);
-
-				robotPickerItem = new ItemRobot(EntityRobotPicker.class).setUnlocalizedName("robotPicker");
-				CoreProxy.proxy.registerItem(robotPickerItem);
-
-				robotBuilderItem = new ItemRobot(EntityRobotBuilder.class).setUnlocalizedName("robotBuilder");
-				CoreProxy.proxy.registerItem(robotBuilderItem);
 			}
+
+			robotBaseItem = new ItemRobot(EntityRobot.class).setUnlocalizedName("robotBase");
+			CoreProxy.proxy.registerItem(robotBaseItem);
+
+			robotPickerItem = new ItemRobot(EntityRobotPicker.class).setUnlocalizedName("robotPicker");
+			CoreProxy.proxy.registerItem(robotPickerItem);
+
+			robotBuilderItem = new ItemRobot(EntityRobotBuilder.class).setUnlocalizedName("robotBuilder");
+			CoreProxy.proxy.registerItem(robotBuilderItem);
 
 			MinecraftForge.EVENT_BUS.register(this);
 			MinecraftForge.EVENT_BUS.register(new BlockHighlightHandler());
@@ -401,7 +401,7 @@ public class BuildCraftCore extends BuildCraftMod {
 		// it happens to be very expensive at run time, so we need some way
 		// to operate it only when releval (e.g. in the cycle following a
 		// click request).
-		if (NEXTGEN_PREALPHA) {
+		if (NONRELEASED_BLOCKS) {
 			return;
 		}
 
