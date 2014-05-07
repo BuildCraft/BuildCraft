@@ -26,13 +26,13 @@ import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.BuildCraftSilicon;
-import buildcraft.api.gates.IAction;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.IMachine;
 import buildcraft.core.network.PacketIds;
 import buildcraft.core.network.PacketNBT;
 import buildcraft.core.recipes.AssemblyRecipeManager;
 import buildcraft.core.recipes.AssemblyRecipeManager.AssemblyRecipe;
+import buildcraft.core.triggers.ActionMachineControl;
 import buildcraft.core.utils.StringUtils;
 import buildcraft.core.utils.Utils;
 
@@ -94,7 +94,7 @@ public class TileAssemblyTable extends TileLaserTableBase implements IMachine, I
 			}
 		}
 
-		if (getEnergy() >= currentRecipe.getEnergyCost()) {
+		if (getEnergy() >= currentRecipe.getEnergyCost() && lastMode != ActionMachineControl.Mode.Off) {
 			setEnergy(0);
 
 			if (currentRecipe.canBeDone(this)) {
@@ -297,27 +297,12 @@ public class TileAssemblyTable extends TileLaserTableBase implements IMachine, I
 
 	@Override
 	public boolean isActive() {
-		return currentRecipe != null;
-	}
-
-	@Override
-	public boolean manageFluids() {
-		return false;
-	}
-
-	@Override
-	public boolean manageSolids() {
-		return false;
-	}
-
-	@Override
-	public boolean allowAction(IAction action) {
-		return false;
+		return currentRecipe != null && super.isActive();
 	}
 
 	@Override
 	public boolean canCraft() {
-		return currentRecipe != null;
+		return isActive();
 	}
 
 	@Override

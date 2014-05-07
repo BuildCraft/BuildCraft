@@ -14,19 +14,18 @@ import net.minecraft.item.ItemStack;
 
 import net.minecraftforge.common.util.ForgeDirection;
 
-import buildcraft.api.gates.IAction;
 import buildcraft.api.recipes.BuildcraftRecipes;
 import buildcraft.api.recipes.IIntegrationRecipeManager.IIntegrationRecipe;
-import buildcraft.core.IMachine;
 import buildcraft.core.inventory.ITransactor;
 import buildcraft.core.inventory.InventoryMapper;
 import buildcraft.core.inventory.SimpleInventory;
 import buildcraft.core.inventory.StackHelper;
 import buildcraft.core.inventory.Transactor;
+import buildcraft.core.triggers.ActionMachineControl;
 import buildcraft.core.utils.StringUtils;
 import buildcraft.core.utils.Utils;
 
-public class TileIntegrationTable extends TileLaserTableBase implements ISidedInventory, IMachine {
+public class TileIntegrationTable extends TileLaserTableBase implements ISidedInventory {
 
 	public static final int SLOT_INPUT_A = 0;
 	public static final int SLOT_INPUT_B = 1;
@@ -116,7 +115,7 @@ public class TileIntegrationTable extends TileLaserTableBase implements ISidedIn
 
 		canCraft = true;
 
-		if (getEnergy() >= currentRecipe.getEnergyCost()) {
+		if (getEnergy() >= currentRecipe.getEnergyCost() && lastMode != ActionMachineControl.Mode.Off) {
 			setEnergy(0);
 			inv.decrStackSize(SLOT_INPUT_A, 1);
 			inv.decrStackSize(SLOT_INPUT_B, 1);
@@ -173,7 +172,7 @@ public class TileIntegrationTable extends TileLaserTableBase implements ISidedIn
 
 	@Override
 	public boolean canCraft() {
-		return canCraft;
+		return canCraft && isActive();
 	}
 
 	@Override
@@ -239,21 +238,6 @@ public class TileIntegrationTable extends TileLaserTableBase implements ISidedIn
 
     @Override
     public boolean isActive() {
-        return currentRecipe != null;
-    }
-
-    @Override
-    public boolean manageFluids() {
-        return false;
-    }
-
-    @Override
-    public boolean manageSolids() {
-        return false;
-    }
-
-    @Override
-    public boolean allowAction(IAction action) {
-        return false;
+        return currentRecipe != null && super.isActive();
     }
 }
