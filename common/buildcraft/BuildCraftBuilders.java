@@ -124,6 +124,8 @@ import buildcraft.core.InterModComms;
 import buildcraft.core.Version;
 import buildcraft.core.blueprints.RealBlueprintDeployer;
 import buildcraft.core.proxy.CoreProxy;
+import buildcraft.transport.TileFilteredBuffer;
+import buildcraft.transport.TileGenericPipe;
 
 @Mod(name = "BuildCraft Builders", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Builders", dependencies = DefaultProps.DEPENDENCY_CORE)
 public class BuildCraftBuilders extends BuildCraftMod {
@@ -528,5 +530,21 @@ public class BuildCraftBuilders extends BuildCraftMod {
 		if (event.map.getTextureType() == 1) {
 			UrbanistToolsIconProvider.INSTANCE.registerIcons(event.map);
 		}
+	}
+	
+	@Mod.EventHandler
+	public void whiteListAppliedEnergetics(FMLInitializationEvent event) {
+		//FMLInterModComms.sendMessage("appliedenergistics2", "whitelist-spatial",
+		//		TileMarker.class.getCanonicalName());
+		//FMLInterModComms.sendMessage("appliedenergistics2", "whitelist-spatial",
+		//		TileFiller.class.getCanonicalName());
+		//FMLInterModComms.sendMessage("appliedenergistics2", "whitelist-spatial",
+		//		TileBuilder.class.getCanonicalName());
+		//FMLInterModComms.sendMessage("appliedenergistics2", "whitelist-spatial",
+		//		TileArchitect.class.getCanonicalName());
+		//FMLInterModComms.sendMessage("appliedenergistics2", "whitelist-spatial",
+		//		TilePathMarker.class.getCanonicalName());
+		FMLInterModComms.sendMessage("appliedenergistics2", "whitelist-spatial",
+				TileBlueprintLibrary.class.getCanonicalName());
 	}
 }
