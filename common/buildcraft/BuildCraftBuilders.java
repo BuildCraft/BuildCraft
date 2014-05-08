@@ -124,8 +124,6 @@ import buildcraft.core.InterModComms;
 import buildcraft.core.Version;
 import buildcraft.core.blueprints.RealBlueprintDeployer;
 import buildcraft.core.proxy.CoreProxy;
-import buildcraft.transport.TileFilteredBuffer;
-import buildcraft.transport.TileGenericPipe;
 
 @Mod(name = "BuildCraft Builders", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Builders", dependencies = DefaultProps.DEPENDENCY_CORE)
 public class BuildCraftBuilders extends BuildCraftMod {
