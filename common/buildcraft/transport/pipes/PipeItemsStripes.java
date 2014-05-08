@@ -128,9 +128,9 @@ public class PipeItemsStripes extends Pipe<PipeTransportItems> {
 			entityArrow.setPosition(p.x + 0.5d, p.y + 0.5d, p.z + 0.5d);
 			entityArrow.setDamage(3);
 			entityArrow.setKnockbackStrength(1);
-			entityArrow.setVelocity(direction.offsetX * 1.8d + getWorld().rand.nextGaussian() * 0.007499999832361937D,
-					direction.offsetY * 1.8d + getWorld().rand.nextGaussian() * 0.007499999832361937D,
-					direction.offsetZ * 1.8d + getWorld().rand.nextGaussian() * 0.007499999832361937D);
+			entityArrow.motionX = direction.offsetX * 1.8d + getWorld().rand.nextGaussian() * 0.007499999832361937D;
+			entityArrow.motionY = direction.offsetY * 1.8d + getWorld().rand.nextGaussian() * 0.007499999832361937D;
+			entityArrow.motionZ = direction.offsetZ * 1.8d + getWorld().rand.nextGaussian() * 0.007499999832361937D;
 			getWorld().spawnEntityInWorld(entityArrow);
 		} else if ((stack.getItem() == Items.potionitem && ItemPotion.isSplash(stack.getItemDamage()))
 				   || stack.getItem() == Items.egg
