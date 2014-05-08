@@ -43,7 +43,7 @@ public class GuiHandler implements IGuiHandler {
 			if (!(tile instanceof TileArchitect)) {
 				return null;
 			}
-			return new GuiArchitect(player.inventory, (TileArchitect) tile);
+			return new GuiArchitect(player, (TileArchitect) tile);
 
 		case GuiIds.BLUEPRINT_LIBRARY:
 			if (!(tile instanceof TileBlueprintLibrary)) {
@@ -91,7 +91,7 @@ public class GuiHandler implements IGuiHandler {
 			if (!(tile instanceof TileArchitect)) {
 				return null;
 			}
-			return new ContainerArchitect(player.inventory, (TileArchitect) tile);
+			return new ContainerArchitect(player, (TileArchitect) tile);
 
 		case GuiIds.BLUEPRINT_LIBRARY:
 			if (!(tile instanceof TileBlueprintLibrary)) {
