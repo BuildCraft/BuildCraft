@@ -34,6 +34,7 @@ public class EntityRobot extends EntityLiving implements
 
 	public LaserData laser = new LaserData ();
 	protected RobotAIBase currentAI;
+	protected RobotAIBase nextAI;
 	public IRobotTask currentTask;
 	public DockingStation dockingStation = new DockingStation();
 
@@ -129,10 +130,15 @@ public class EntityRobot extends EntityLiving implements
 			updateDataClient();
 		}
 
-		// This should be taken care of automatically by the task mechanism
-		//if (currentAI != null) {
-		//	currentAI.update(this);
-		//}
+		if (nextAI != null) {
+			if (currentAI != null) {
+				tasks.removeTask(currentAI);
+			}
+
+			currentAI = nextAI;
+			nextAI = null;
+			tasks.addTask(0, currentAI);
+		}
 
 		if (!worldObj.isRemote) {
 			if (currentTask == null) {
@@ -281,13 +287,11 @@ public class EntityRobot extends EntityLiving implements
 		dockingStation.z = nbt.getInteger("dockZ");
 		dockingStation.side = ForgeDirection.values () [nbt.getInteger("dockSide")];
 
-		if (nbt.hasKey("ai")) {
-			try {
-				currentAI = (RobotAIBase) Class.forName(nbt.getString("ai")).newInstance();
-			} catch (Throwable t) {
-				t.printStackTrace();
-			}
-		}
+		/*
+		 * if (nbt.hasKey("ai")) { try { nextAI = (RobotAIBase)
+		 * Class.forName(nbt.getString("ai")).newInstance(); } catch (Throwable
+		 * t) { t.printStackTrace(); } }
+		 */
 
 		laser.readFromNBT(nbt.getCompoundTag("laser"));
     }
@@ -315,11 +319,6 @@ public class EntityRobot extends EntityLiving implements
 	}
 
 	public void setMainAI (RobotAIBase ai) {
-		if (currentAI != null) {
-			tasks.removeTask(currentAI);
-		}
-
-		currentAI = ai;
-		tasks.addTask(0, ai);
+		nextAI = ai;
 	}
 }
