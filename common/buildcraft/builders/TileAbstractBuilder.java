@@ -139,14 +139,15 @@ public abstract class TileAbstractBuilder extends TileBuildCraft implements ITil
 	public void writeToNBT(NBTTagCompound nbttagcompound) {
 		super.writeToNBT(nbttagcompound);
 
-		mjStored = nbttagcompound.getDouble("mjStored");
+		nbttagcompound.setDouble("mjStored", mjStored);
 	}
 
 	@Override
 	public void readFromNBT(NBTTagCompound nbttagcompound) {
 		super.readFromNBT(nbttagcompound);
 
-		nbttagcompound.setDouble("mjStored", mjStored);
+		mjStored = nbttagcompound.getDouble("mjStored");
+
 		mjPrev = mjStored;
 		mjUnchangedCycles = 0;
 	}
