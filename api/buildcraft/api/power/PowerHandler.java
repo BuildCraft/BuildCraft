@@ -32,7 +32,7 @@ import buildcraft.api.mj.MjBattery;
  * @see IPowerReceptor
  * @see IPowerEmitter
  */
-public final class PowerHandler {
+public final class PowerHandler implements MjAPI.IBatteryProvider {
 
 	public static enum Type {
 
@@ -181,6 +181,7 @@ public final class PowerHandler {
 		return battery.getEnergyStored();
 	}
 
+	@Override
 	public MjAPI.BatteryObject getMjBattery() {
 		return battery;
 	}

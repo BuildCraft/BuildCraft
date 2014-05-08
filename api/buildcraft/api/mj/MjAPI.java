@@ -14,39 +14,71 @@ import java.util.HashMap;
 import java.util.Map;
 
 import buildcraft.api.core.JavaTools;
-import buildcraft.api.power.PowerHandler;
 
 public final class MjAPI {
-
-	static Map<Class, BatteryField> MjBatteries = new HashMap<Class, BatteryField>();
+	private static Map<Class, BatteryField> MjBatteries = new HashMap<Class, BatteryField>();
 
 	private enum BatteryKind {
 		Value, Container
 	}
 
 	private static class BatteryField {
-		public Field field;
-		public MjBattery battery;
-		public BatteryKind kind;
+		Field field;
+		MjBattery battery;
+		BatteryKind kind;
+	}
+
+	public interface IBatteryProvider {
+		BatteryObject getMjBattery();
 	}
 
 	public static class BatteryObject {
-		Field f;
-		Object o;
-		MjBattery b;
+		private Field f;
+		private Object o;
+		private MjBattery b;
 
+		/**
+		 * @return Current energy requirement for keeping machine state
+		 */
 		public double getEnergyRequested() {
 			try {
 				double contained = f.getDouble(o);
+				double max = b.maxCapacity();
+				return Math.max(Math.min(max - contained, b.maxReceivedPerCycle()), b.minimumConsumption());
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+			}
+			return 0;
+		}
 
-				double left = contained + b.maxReceivedPerCycle() > b
-						.maxCapacity() ? b.maxCapacity() - contained : b
-						.maxReceivedPerCycle();
+		/**
+		 * Add energy to this battery
+		 *
+		 * @param mj Energy amount
+		 * @return Used energy
+		 */
+		public double addEnergy(double mj) {
+			return addEnergy(mj, false);
+		}
 
-				if (left > 0) {
-					return left;
-				} else {
-					return b.minimumConsumption();
+		/**
+		 * Add energy to this battery
+		 *
+		 * @param mj               Energy amount
+		 * @param ignoreCycleLimit Force add all energy even if "maxReceivedPerCycle" limit is reached
+		 * @return Used energy
+		 */
+		public double addEnergy(double mj, boolean ignoreCycleLimit) {
+			try {
+				double contained = f.getDouble(o);
+				double maxAccepted = b.maxCapacity() - contained + b.minimumConsumption();
+				if (!ignoreCycleLimit && maxAccepted > b.maxReceivedPerCycle()) {
+					maxAccepted = b.maxReceivedPerCycle();
+				}
+				double used = Math.min(maxAccepted, mj);
+				if (used > 0) {
+					f.setDouble(o, Math.min(contained + used, b.maxCapacity()));
+					return used;
 				}
 			} catch (IllegalAccessException e) {
 				e.printStackTrace();
@@ -55,23 +87,9 @@ public final class MjAPI {
 			return 0;
 		}
 
-		public double addEnergy(double watts) {
-			try {
-				double e = f.getDouble(o);
-				double max = b.maxCapacity();
-
-				double used = e + watts <= max ? watts : max - e;
-
-				f.setDouble(o, e + used);
-
-				return used;
-			} catch (IllegalAccessException e) {
-				e.printStackTrace();
-			}
-
-			return 0;
-		}
-
+		/**
+		 * @return Current stored energy amount in this battery
+		 */
 		public double getEnergyStored() {
 			try {
 				return f.getDouble(o);
@@ -81,26 +99,56 @@ public final class MjAPI {
 			}
 		}
 
-		public void setEnergyStored(double watts) {
+		/**
+		 * Set current stored energy amount.
+		 * Doesn't use it for your machines! Decrease your battery field directly.
+		 *
+		 * @param mj New energy amount
+		 */
+		public void setEnergyStored(double mj) {
 			try {
-				f.setDouble(o, watts);
+				f.setDouble(o, mj);
 			} catch (IllegalAccessException e) {
 				throw new RuntimeException(e);
 			}
 		}
 
+		/**
+		 * Can be overrided via {@link #reconfigure(double, double, double)}
+		 *
+		 * @return Maximal energy amount for this battery.
+		 */
 		public double maxCapacity() {
 			return b.maxCapacity();
 		}
 
+		/**
+		 * Can be overrided via {@link #reconfigure(double, double, double)}
+		 *
+		 * @return Minimal energy amount for keep your machine in active state
+		 */
 		public double minimumConsumption() {
 			return b.minimumConsumption();
 		}
 
+		/**
+		 * Can be overrided via {@link #reconfigure(double, double, double)}
+		 *
+		 * @return Maximal energy received per one tick
+		 */
 		public double maxReceivedPerCycle() {
 			return b.maxReceivedPerCycle();
 		}
 
+		/**
+		 * Allow to dynamically reconfigure your battery.
+		 * Usually it's not very good change battery parameters for already present machines, but if you want...
+		 *
+		 * @param maxCapacity         {@link #maxCapacity()}
+		 * @param maxReceivedPerCycle {@link #maxReceivedPerCycle()}
+		 * @param minimumConsumption  {@link #minimumConsumption()}
+		 * @return Current battery object instance
+		 */
 		public BatteryObject reconfigure(final double maxCapacity, final double maxReceivedPerCycle, final double minimumConsumption) {
 			b = new MjBattery() {
 				@Override
@@ -138,11 +186,14 @@ public final class MjAPI {
 			return null;
 		}
 
-		if (o.getClass() == PowerHandler.class) {
-			return ((PowerHandler) o).getMjBattery();
+		if (o instanceof IBatteryProvider) {
+			BatteryObject battery = ((IBatteryProvider) o).getMjBattery();
+			if (battery != null) {
+				return battery;
+			}
 		}
 
-		BatteryField f = getMjBattery(o.getClass());
+		BatteryField f = getMjBatteryField(o.getClass());
 
 		if (f == null) {
 			return null;
@@ -151,7 +202,6 @@ public final class MjAPI {
 			obj.o = o;
 			obj.f = f.field;
 			obj.b = f.battery;
-
 			return obj;
 		} else {
 			try {
@@ -163,14 +213,15 @@ public final class MjAPI {
 		}
 	}
 
-	private static BatteryField getMjBattery(Class c) {
-		if (!MjBatteries.containsKey(c)) {
+	private static BatteryField getMjBatteryField(Class c) {
+		BatteryField bField = MjBatteries.get(c);
+		if (bField == null) {
 			for (Field f : JavaTools.getAllFields(c)) {
 				MjBattery battery = f.getAnnotation(MjBattery.class);
 
 				if (battery != null) {
 					f.setAccessible(true);
-					BatteryField bField = new BatteryField();
+					bField = new BatteryField();
 					bField.field = f;
 					bField.battery = battery;
 
@@ -188,13 +239,9 @@ public final class MjAPI {
 					return bField;
 				}
 			}
-
 			MjBatteries.put(c, null);
-
-			return null;
-		} else {
-			return MjBatteries.get(c);
 		}
+		return bField;
 	}
 
 }
