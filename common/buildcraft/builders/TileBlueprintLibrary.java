@@ -51,7 +51,7 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory {
 	public EntityPlayer uploadingPlayer = null;
 	public EntityPlayer downloadingPlayer = null;
 
-	private int pageId = 0;
+	public int pageId = 0;
 
 	public TileBlueprintLibrary() {
 
