@@ -10,17 +10,22 @@ package buildcraft.builders.schematics;
 
 import java.util.LinkedList;
 
-import net.minecraft.init.Items;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.SchematicBlock;
 
 public class SchematicRedstoneDiode extends SchematicBlock {
+	private Item baseItem;
+
+	public SchematicRedstoneDiode(Item baseItem) {
+		this.baseItem = baseItem;
+	}
 
 	@Override
 	public void writeRequirementsToBuilder(IBuilderContext context, LinkedList<ItemStack> requirements) {
-		requirements.add(new ItemStack(Items.repeater));
+		requirements.add(new ItemStack(baseItem));
 	}
 
 	@Override
