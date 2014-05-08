@@ -29,6 +29,7 @@ import buildcraft.core.gui.GuiAdvancedInterface;
 import buildcraft.core.triggers.BCAction;
 import buildcraft.core.utils.StringUtils;
 import buildcraft.transport.Pipe;
+import buildcraft.transport.gates.GateDefinition;
 
 public class GuiGateInterface extends GuiAdvancedInterface {
 
@@ -36,6 +37,8 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 	private final ContainerGateInterface container;
 	private final Pipe pipe;
 	private int numSlots;
+	private TriggerSlot[] triggerSlots;
+	private TriggerParameterSlot[] triggerParameterSlots;
 
 	class TriggerSlot extends AdvancedSlot {
 
@@ -189,20 +192,27 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 
 		if (numSlots == 1) {
 			slots = new AdvancedSlot[2];
-			slots[0] = new TriggerSlot(62, 26, pipe, 0);
+			triggerSlots = new TriggerSlot[1];
+			triggerParameterSlots = new TriggerParameterSlot[0];
+
+			slots[0] = triggerSlots[0] = new TriggerSlot(62, 26, pipe, 0);
 			slots[1] = new ActionSlot(98, 26, pipe, 0);
 		} else if (numSlots == 2) {
 			slots = new AdvancedSlot[4];
+			triggerSlots = new TriggerSlot[2];
+			triggerParameterSlots = new TriggerParameterSlot[0];
 
-			slots[0] = new TriggerSlot(62, 26, pipe, 0);
-			slots[1] = new TriggerSlot(62, 44, pipe, 1);
+			slots[0] = triggerSlots[0] = new TriggerSlot(62, 26, pipe, 0);
+			slots[1] = triggerSlots[1] = new TriggerSlot(62, 44, pipe, 1);
 			slots[2] = new ActionSlot(98, 26, pipe, 0);
 			slots[3] = new ActionSlot(98, 44, pipe, 1);
 		} else if (numSlots == 4) {
 			slots = new AdvancedSlot[12];
+			triggerSlots = new TriggerSlot[4];
+			triggerParameterSlots = new TriggerParameterSlot[4];
 
 			for (int k = 0; k < 4; ++k) {
-				slots[position] = new TriggerSlot(53, 26 + 18 * k, pipe, position);
+				slots[position] = triggerSlots[position] = new TriggerSlot(53, 26 + 18 * k, pipe, position);
 				position++;
 			}
 
@@ -212,17 +222,19 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 			}
 
 			for (int k = 0; k < 4; ++k) {
-				slots[position] = new TriggerParameterSlot(71, 26 + 18 * k, pipe, position - 8);
+				slots[position] = triggerParameterSlots[position - 8] = new TriggerParameterSlot(71, 26 + 18 * k, pipe, position - 8);
 				position++;
 
 			}
 		} else if (numSlots == 8) {
 			slots = new AdvancedSlot[24];
+			triggerSlots = new TriggerSlot[8];
+			triggerParameterSlots = new TriggerParameterSlot[8];
 
 			for (int k = 0; k < 4; ++k) {
-				slots[position] = new TriggerSlot(8, 26 + 18 * k, pipe, position);
+				slots[position] = triggerSlots[position] = new TriggerSlot(8, 26 + 18 * k, pipe, position);
 				position++;
-				slots[position] = new TriggerSlot(98, 26 + 18 * k, pipe, position);
+				slots[position] = triggerSlots[position]  = new TriggerSlot(98, 26 + 18 * k, pipe, position);
 				position++;
 			}
 
@@ -234,9 +246,9 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 			}
 
 			for (int k = 0; k < 4; ++k) {
-				slots[position] = new TriggerParameterSlot(26, 26 + 18 * k, pipe, position - 16);
+				slots[position] = triggerParameterSlots[position - 16] = new TriggerParameterSlot(26, 26 + 18 * k, pipe, position - 16);
 				position++;
-				slots[position] = new TriggerParameterSlot(116, 26 + 18 * k, pipe, position - 16);
+				slots[position] = triggerParameterSlots[position - 16] = new TriggerParameterSlot(116, 26 + 18 * k, pipe, position - 16);
 				position++;
 			}
 		}
@@ -273,13 +285,14 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 
 			if (slot instanceof TriggerSlot) {
 				ITrigger trigger = ((TriggerSlot) slot).getTrigger();
+				boolean halfWidth = pipe.gate.logic == GateDefinition.GateLogic.AND && !isAllTriggersActive();
 
 				if (pipe.gate.material.hasParameterSlot) {
 
 					if (container.triggerState[triggerTracker++]) {
 						mc.renderEngine.bindTexture(texture);
 
-						drawTexturedModalRect(cornerX + slot.x + 35, cornerY + slot.y + 6, 176, 18, 18, 4);
+						drawTexturedModalRect(cornerX + slot.x + 35, cornerY + slot.y + 6, 176, 18, halfWidth ? 9 : 18, 4);
 					}
 
 					if (trigger == null || !trigger.hasParameter()) {
@@ -290,7 +303,7 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 				} else if (container.triggerState[triggerTracker++]) {
 					mc.renderEngine.bindTexture(texture);
 
-					drawTexturedModalRect(cornerX + slot.x + 17, cornerY + slot.y + 6, 176, 18, 18, 4);
+					drawTexturedModalRect(cornerX + slot.x + 17, cornerY + slot.y + 6, 176, 18, halfWidth ? 9 : 18, 4);
 				}
 			} else if (slot instanceof TriggerParameterSlot) {
 				TriggerParameterSlot paramSlot = (TriggerParameterSlot) slot;
@@ -307,6 +320,18 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 		}
 
 		drawBackgroundSlots();
+	}
+
+	private boolean isAllTriggersActive() {
+		for (int i = 0; i < triggerSlots.length; i++) {
+			TriggerSlot slot = triggerSlots[i];
+			ITrigger trigger = slot.getTrigger();
+			ITriggerParameter parameter = triggerParameterSlots.length > i ? triggerParameterSlots[i].getTriggerParameter() : null;
+			if (trigger != null && !container.isNearbyTriggerActive(trigger, parameter)) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	@Override
