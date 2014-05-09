@@ -19,7 +19,9 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.api.blueprints.IBuilderContext;
+import buildcraft.api.blueprints.MappingRegistry;
 import buildcraft.api.blueprints.SchematicTile;
+import buildcraft.api.blueprints.Translation;
 import buildcraft.api.gates.ActionManager;
 import buildcraft.api.gates.IAction;
 import buildcraft.api.gates.ITrigger;
@@ -34,8 +36,7 @@ public class SchematicPipe extends SchematicTile {
 		Pipe pipe = BlockGenericPipe.getPipe(context.world(), x, y, z);
 
 		if (BlockGenericPipe.isValid(pipe)) {
-			return pipe.item == context.getMappingRegistry().getItemForId(
-					cpt.getInteger("pipeId"));
+			return pipe.item == Item.getItemById(cpt.getInteger("pipeId"));
 		} else {
 			return false;
 		}
@@ -49,7 +50,7 @@ public class SchematicPipe extends SchematicTile {
 		props.rotateLeft();
 		props.writeToNBT(cpt);
 
-		Item pipeItem = context.getMappingRegistry().getItemForId(cpt.getInteger("pipeId"));
+		Item pipeItem = (Item) Item.itemRegistry.getObject(cpt.getString("pipeName"));
 
 		if (BptPipeExtension.contains(pipeItem)) {
 			BptPipeExtension.get(pipeItem).rotateLeft(this, context);
@@ -77,10 +78,6 @@ public class SchematicPipe extends SchematicTile {
 		cpt.setInteger("x", x);
 		cpt.setInteger("y", y);
 		cpt.setInteger("z", z);
-		cpt.setInteger(
-				"pipeId",
-				Item.getIdFromItem(context.getMappingRegistry().getItemForId(
-						cpt.getInteger("pipeId"))));
 
 		context.world().setBlock(x, y, z, block, meta, 3);
 
@@ -95,11 +92,6 @@ public class SchematicPipe extends SchematicTile {
 
 		if (BlockGenericPipe.isValid(pipe)) {
 			tile.writeToNBT(cpt);
-
-			// This overrides the default pipeId
-
-			cpt.setInteger("pipeId", context.getMappingRegistry()
-					.getIdForItem(pipe.item));
 
 			// remove all pipe contents
 
@@ -145,5 +137,23 @@ public class SchematicPipe extends SchematicTile {
 	@Override
 	public BuildingStage getBuildStage () {
 		return BuildingStage.STANDALONE;
+	}
+
+	@Override
+	public void transformToBlueprint(MappingRegistry registry, Translation transform) {
+		super.transformToBlueprint(registry, transform);
+
+		if (cpt.hasKey("pipeId")) {
+			cpt.setString("pipeName", Item.itemRegistry.getNameForObject(Item.getItemById(cpt.getInteger("pipeId"))));
+		}
+	}
+
+	@Override
+	public void transformToWorld(MappingRegistry registry, Translation transform) {
+		super.transformToBlueprint(registry, transform);
+
+		if (cpt.hasKey("pipeId")) {
+			cpt.setInteger("pipeId", Item.getIdFromItem((Item) Item.itemRegistry.getObject(cpt.getString("pipeName"))));
+		}
 	}
 }
