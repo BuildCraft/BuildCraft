@@ -21,8 +21,8 @@ import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.gates.ITrigger;
+import buildcraft.api.mj.IBatteryObject;
 import buildcraft.api.mj.MjAPI;
-import buildcraft.api.mj.MjAPI.BatteryObject;
 import buildcraft.api.power.IPowerEmitter;
 import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.power.PowerHandler.PowerReceiver;
@@ -202,7 +202,7 @@ public class PipeTransportPower extends PipeTransport {
 							internalPower[i] -= watts;
 						} else if (tiles[j] != null) {
 							// Look for the simplified power framework
-							BatteryObject battery = MjAPI.getMjBattery(tiles [j]);
+							IBatteryObject battery = MjAPI.getMjBattery(tiles [j]);
 
 							if (battery != null) {
 								watts = (internalPower[i] / totalPowerQuery)
@@ -250,7 +250,7 @@ public class PipeTransportPower extends PipeTransport {
 			}
 
 			if (tile != null) {
-				BatteryObject battery = MjAPI.getMjBattery(tile);
+				IBatteryObject battery = MjAPI.getMjBattery(tile);
 
 				if (battery != null) {
 					requestEnergy(dir, battery.getEnergyRequested());

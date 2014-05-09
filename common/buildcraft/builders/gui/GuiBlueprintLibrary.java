@@ -59,6 +59,9 @@ public class GuiBlueprintLibrary extends GuiBuildCraft {
 
 		deleteButton = new GuiButton(2, j + 158, k + 114, 25, 20, StringUtils.localize("gui.del"));
 		buttonList.add(deleteButton);
+
+		checkDelete();
+		checkPages();
 	}
 
 	@Override
@@ -140,6 +143,31 @@ public class GuiBlueprintLibrary extends GuiBuildCraft {
 					library.selectBlueprint(ySlot);
 				}
 			}
+		}
+
+		checkDelete();
+		checkPages();
+	}
+
+	protected void checkDelete() {
+		if (library.selected != -1) {
+			deleteButton.enabled = true;
+		} else {
+			deleteButton.enabled = false;
+		}
+	}
+
+	protected void checkPages() {
+		if (library.pageId != 0) {
+			prevPageButton.enabled = true;
+		} else {
+			prevPageButton.enabled = false;
+		}
+
+		if (library.pageId < BuildCraftBuilders.clientDB.getPageNumber() - 1) {
+			nextPageButton.enabled = true;
+		} else {
+			nextPageButton.enabled = false;
 		}
 	}
 }

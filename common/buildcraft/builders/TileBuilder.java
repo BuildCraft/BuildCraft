@@ -40,6 +40,7 @@ import buildcraft.core.blueprints.BptBuilderBase;
 import buildcraft.core.blueprints.BptBuilderBlueprint;
 import buildcraft.core.blueprints.BptBuilderTemplate;
 import buildcraft.core.blueprints.BptContext;
+import buildcraft.core.inventory.InvUtils;
 import buildcraft.core.network.RPC;
 import buildcraft.core.network.RPCHandler;
 import buildcraft.core.network.RPCSide;
@@ -397,11 +398,16 @@ public class TileBuilder extends TileAbstractBuilder implements IMachine {
 		}
 
 		if (done) {
+			boolean dropBlueprint = true;
 			for (int i = 1; i < items.length; ++i) {
 				if (items[i] == null) {
 					items[i] = items[0];
+					dropBlueprint = false;
 					break;
 				}
+			}
+			if (dropBlueprint) {
+				InvUtils.dropItems(getWorld(), items[0], xCoord, yCoord, zCoord);
 			}
 
 			items[0] = null;

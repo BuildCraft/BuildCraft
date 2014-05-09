@@ -192,4 +192,16 @@ public class BuildCraftSilicon extends BuildCraftMod {
 	public void processIMCRequests(FMLInterModComms.IMCEvent event) {
 		InterModComms.processIMC(event);
 	}
+
+	@Mod.EventHandler
+	public void whiteListAppliedEnergetics(FMLInitializationEvent event) {
+		FMLInterModComms.sendMessage("appliedenergistics2", "whitelist-spatial",
+				TileLaser.class.getCanonicalName());
+		FMLInterModComms.sendMessage("appliedenergistics2", "whitelist-spatial",
+				TileAssemblyTable.class.getCanonicalName());
+		FMLInterModComms.sendMessage("appliedenergistics2", "whitelist-spatial",
+				TileAdvancedCraftingTable.class.getCanonicalName());
+		FMLInterModComms.sendMessage("appliedenergistics2", "whitelist-spatial",
+				TileIntegrationTable.class.getCanonicalName());
+	}
 }

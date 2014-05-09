@@ -13,7 +13,6 @@ import java.util.Map;
 
 import com.google.common.collect.MapMaker;
 
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
@@ -217,13 +216,6 @@ public class TravelingItem {
 
 			ItemStack stack = getItemStack();
 			EntityItem entity = new EntityItem(container.getWorldObj(), xCoord, yCoord, zCoord, getItemStack());
-			if (stack.getItem().hasCustomEntity(stack)) {
-				Entity e = stack.getItem().createEntity(container.getWorldObj(), entity, stack);
-				if (e instanceof EntityItem) {
-					entity = (EntityItem) e;
-				}
-			}
-
 			entity.lifespan = BuildCraftCore.itemLifespan;
 			entity.delayBeforeCanPickup = 10;
 

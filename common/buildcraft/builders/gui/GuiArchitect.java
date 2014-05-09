@@ -13,6 +13,7 @@ import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiTextField;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.util.ResourceLocation;
 
@@ -45,9 +46,9 @@ public class GuiArchitect extends GuiBuildCraft {
 
 	private GuiTextField textField;
 
-	public GuiArchitect(IInventory playerInventory, TileArchitect architect) {
-		super(new ContainerArchitect(playerInventory, architect), architect, TEXTURE);
-		this.playerInventory = playerInventory;
+	public GuiArchitect(EntityPlayer player, TileArchitect architect) {
+		super(new ContainerArchitect(player, architect), architect, TEXTURE);
+		this.playerInventory = player.inventory;
 		this.architect = architect;
 		xSize = 256;
 		ySize = 166;

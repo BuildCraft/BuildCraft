@@ -333,4 +333,24 @@ public class BuildCraftFactory extends BuildCraftMod {
 			FactoryProxyClient.drillHeadTexture = terrainTextures.registerIcon("buildcraft:blockDrillHeadTexture");
 		}
 	}
+
+	@Mod.EventHandler
+	public void whiteListAppliedEnergetics(FMLInitializationEvent event) {
+		//FMLInterModComms.sendMessage("appliedenergistics2", "whitelist-spatial",
+		//		TileQuarry.class.getCanonicalName());
+		//FMLInterModComms.sendMessage("appliedenergistics2", "whitelist-spatial",
+		//		TileMiningWell.class.getCanonicalName());
+		FMLInterModComms.sendMessage("appliedenergistics2", "whitelist-spatial",
+				TileAutoWorkbench.class.getCanonicalName());
+		//FMLInterModComms.sendMessage("appliedenergistics2", "whitelist-spatial",
+		//		TilePump.class.getCanonicalName());
+		FMLInterModComms.sendMessage("appliedenergistics2", "whitelist-spatial",
+				TileFloodGate.class.getCanonicalName());
+		FMLInterModComms.sendMessage("appliedenergistics2", "whitelist-spatial",
+				TileTank.class.getCanonicalName());
+		FMLInterModComms.sendMessage("appliedenergistics2", "whitelist-spatial",
+				TileRefinery.class.getCanonicalName());
+		FMLInterModComms.sendMessage("appliedenergistics2", "whitelist-spatial",
+				TileHopper.class.getCanonicalName());
+	}
 }

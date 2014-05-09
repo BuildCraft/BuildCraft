@@ -12,10 +12,10 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ICrafting;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
-import net.minecraft.item.ItemStack;
 
 import buildcraft.builders.TileBlueprintLibrary;
 import buildcraft.core.gui.BuildCraftContainer;
+import buildcraft.core.gui.slots.SlotBlueprintLibrary;
 import buildcraft.core.gui.slots.SlotOutput;
 
 public class ContainerBlueprintLibrary extends BuildCraftContainer {
@@ -30,10 +30,10 @@ public class ContainerBlueprintLibrary extends BuildCraftContainer {
 		this.playerInventory = player.inventory;
 		this.library = library;
 
-		addSlotToContainer(new Slot(library, 0, 211, 61));
+		addSlotToContainer(new SlotBlueprintLibrary(library, player, 0, 211, 61));
 		addSlotToContainer(new SlotOutput(library, 1, 167, 61));
 
-		addSlotToContainer(new Slot(library, 2, 167, 79));
+		addSlotToContainer(new SlotBlueprintLibrary(library, player, 2, 167, 79));
 		addSlotToContainer(new SlotOutput(library, 3, 211, 79));
 
 		// Player inventory
@@ -46,23 +46,6 @@ public class ContainerBlueprintLibrary extends BuildCraftContainer {
 		for (int i1 = 0; i1 < 9; i1++) {
 			addSlotToContainer(new Slot(playerInventory, i1, 66 + i1 * 18, 198));
 		}
-	}
-
-	@Override
-	public ItemStack slotClick(int slotNum, int mouseButton, int modifier, EntityPlayer player) {
-		// When downloading or uploading a blueprint, the server needs to know
-		// who requested it. The way to do it so far is by recording the last
-		// player that clicks on the slots. To be improved if the method is
-		// not robust enough (e.g. what if the player is not logged anymore?
-		// is that robust against race conditions? etc.)
-
-		if (slotNum == 0) {
-			library.uploadingPlayer = player;
-		} else if (slotNum == 2) {
-			library.downloadingPlayer = player;
-		}
-
-		return super.slotClick(slotNum, mouseButton, modifier, player);
 	}
 
 	@Override

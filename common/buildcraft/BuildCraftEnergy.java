@@ -69,6 +69,7 @@ import buildcraft.energy.SchematicEngine;
 import buildcraft.energy.TileEnergyConverter;
 import buildcraft.energy.TileEnergyEmitter;
 import buildcraft.energy.TileEnergyReceiver;
+import buildcraft.energy.TileEngine;
 import buildcraft.energy.TileEngine.EnergyStage;
 import buildcraft.energy.triggers.TriggerEngineHeat;
 import buildcraft.energy.worldgen.BiomeGenOilDesert;
@@ -396,5 +397,11 @@ public class BuildCraftEnergy extends BuildCraftMod {
 	@Mod.EventHandler
 	public void processIMCRequests(FMLInterModComms.IMCEvent event) {
 		InterModComms.processIMC(event);
+	}
+
+	@Mod.EventHandler
+	public void whiteListAppliedEnergetics(FMLInitializationEvent event) {
+		FMLInterModComms.sendMessage("appliedenergistics2", "whitelist-spatial",
+				TileEngine.class.getCanonicalName());
 	}
 }

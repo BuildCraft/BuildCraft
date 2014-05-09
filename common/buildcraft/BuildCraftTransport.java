@@ -20,6 +20,7 @@ import net.minecraft.world.World;
 
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
+import cpw.mods.fml.common.event.FMLInterModComms;
 import cpw.mods.fml.common.event.FMLInterModComms.IMCEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
@@ -60,6 +61,8 @@ import buildcraft.transport.ItemRobotStation;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTriggerProvider;
+import buildcraft.transport.TileFilteredBuffer;
+import buildcraft.transport.TileGenericPipe;
 import buildcraft.transport.TransportProxy;
 import buildcraft.transport.WireIconProvider;
 import buildcraft.transport.blueprints.BptItemPipeFilters;
@@ -522,6 +525,14 @@ public class BuildCraftTransport extends BuildCraftMod {
 		}
 
 		return res;
+	}
+
+	@Mod.EventHandler
+	public void whiteListAppliedEnergetics(FMLInitializationEvent event) {
+		FMLInterModComms.sendMessage("appliedenergistics2", "whitelist-spatial",
+				TileGenericPipe.class.getCanonicalName());
+		FMLInterModComms.sendMessage("appliedenergistics2", "whitelist-spatial",
+				TileFilteredBuffer.class.getCanonicalName());
 	}
 
 }

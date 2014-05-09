@@ -247,6 +247,7 @@ public class BuildCraftBuilders extends BuildCraftMod {
 
 		SchematicRegistry.registerSchematicBlock(Blocks.snow, SchematicIgnore.class);
 		SchematicRegistry.registerSchematicBlock(Blocks.tallgrass, SchematicIgnore.class);
+		SchematicRegistry.registerSchematicBlock(Blocks.double_plant, SchematicIgnore.class);
 		SchematicRegistry.registerSchematicBlock(Blocks.ice, SchematicIgnore.class);
 		SchematicRegistry.registerSchematicBlock(Blocks.piston_head, SchematicIgnore.class);
 
@@ -311,10 +312,10 @@ public class BuildCraftBuilders extends BuildCraftMod {
 		SchematicRegistry.registerSchematicBlock(Blocks.melon_stem, SchematicCustomStack.class, new ItemStack(Items.melon_seeds));
 		SchematicRegistry.registerSchematicBlock(Blocks.glowstone, SchematicCustomStack.class, new ItemStack(Blocks.glowstone));
 
-		SchematicRegistry.registerSchematicBlock(Blocks.powered_repeater, SchematicRedstoneDiode.class);
-		SchematicRegistry.registerSchematicBlock(Blocks.unpowered_repeater, SchematicRedstoneDiode.class);
-		SchematicRegistry.registerSchematicBlock(Blocks.powered_comparator, SchematicRedstoneDiode.class);
-		SchematicRegistry.registerSchematicBlock(Blocks.unpowered_comparator, SchematicRedstoneDiode.class);
+		SchematicRegistry.registerSchematicBlock(Blocks.powered_repeater, SchematicRedstoneDiode.class, Items.repeater);
+		SchematicRegistry.registerSchematicBlock(Blocks.unpowered_repeater, SchematicRedstoneDiode.class, Items.repeater);
+		SchematicRegistry.registerSchematicBlock(Blocks.powered_comparator, SchematicRedstoneDiode.class, Items.comparator);
+		SchematicRegistry.registerSchematicBlock(Blocks.unpowered_comparator, SchematicRedstoneDiode.class, Items.comparator);
 
 		SchematicRegistry.registerSchematicBlock(Blocks.water, SchematicFluid.class, new ItemStack(Items.water_bucket));
 		SchematicRegistry.registerSchematicBlock(Blocks.flowing_water, SchematicFluid.class, new ItemStack(Items.water_bucket));
@@ -527,5 +528,21 @@ public class BuildCraftBuilders extends BuildCraftMod {
 		if (event.map.getTextureType() == 1) {
 			UrbanistToolsIconProvider.INSTANCE.registerIcons(event.map);
 		}
+	}
+	
+	@Mod.EventHandler
+	public void whiteListAppliedEnergetics(FMLInitializationEvent event) {
+		//FMLInterModComms.sendMessage("appliedenergistics2", "whitelist-spatial",
+		//		TileMarker.class.getCanonicalName());
+		//FMLInterModComms.sendMessage("appliedenergistics2", "whitelist-spatial",
+		//		TileFiller.class.getCanonicalName());
+		//FMLInterModComms.sendMessage("appliedenergistics2", "whitelist-spatial",
+		//		TileBuilder.class.getCanonicalName());
+		//FMLInterModComms.sendMessage("appliedenergistics2", "whitelist-spatial",
+		//		TileArchitect.class.getCanonicalName());
+		//FMLInterModComms.sendMessage("appliedenergistics2", "whitelist-spatial",
+		//		TilePathMarker.class.getCanonicalName());
+		FMLInterModComms.sendMessage("appliedenergistics2", "whitelist-spatial",
+				TileBlueprintLibrary.class.getCanonicalName());
 	}
 }
