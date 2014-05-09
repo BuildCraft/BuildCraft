@@ -260,13 +260,17 @@ public final class EnergyAPI {
 					boolean isContainer = false;
 
 					if (double.class.equals(f.getType())) {
-						if (!battery.energyChannel().equals(channel)) { continue }
+						if (!battery.energyChannel().equals(channel)) {
+							continue;
+						}
 
 					} else if (f.getType().isPrimitive()) {
 						throw new RuntimeException(
 								"MJ battery needs to be object or double type");
 					} else {
-						if (!battery.energyChannel().equals(genericObjectChannel)) { continue }
+						if (!battery.energyChannel().equals(genericObjectChannel)) {
+							continue;
+						}
 
 						isContainer = true;
 					}
