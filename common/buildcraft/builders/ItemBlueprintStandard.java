@@ -28,10 +28,8 @@ public class ItemBlueprintStandard extends ItemBlueprint {
 	@Override
 	public IIcon getIconIndex(ItemStack stack) {
 		if (!NBTUtils.getItemData(stack).hasKey("name")) {
-			setMaxStackSize(16);
 			itemIcon = cleanBlueprint;
 		} else {
-			setMaxStackSize(1);
 			itemIcon = usedBlueprint;
 		}
 		
