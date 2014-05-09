@@ -541,13 +541,11 @@ public class BlockGenericPipe extends BlockBuildCraft {
 	}
 
 	public static void removePipe(Pipe pipe) {
-		if (pipe == null) {
+		if (!isValid(pipe)) {
 			return;
 		}
 
-		if (isValid(pipe)) {
-			pipe.onBlockRemoval();
-		}
+		pipe.onBlockRemoval();
 
 		World world = pipe.container.getWorldObj();
 
