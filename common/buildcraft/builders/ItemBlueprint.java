@@ -27,7 +27,6 @@ public abstract class ItemBlueprint extends ItemBuildCraft {
 
 	public ItemBlueprint() {
 		super(CreativeTabBuildCraft.ITEMS);
-		setMaxStackSize(1);
 	}
 
 	@Override
@@ -65,6 +64,11 @@ public abstract class ItemBlueprint extends ItemBuildCraft {
 				list.add(String.format(StringUtils.localize("item.blueprint.incomplete")));
 			}
 		}
+	}
+
+	@Override
+	public int getItemStackLimit(ItemStack stack) {
+		return NBTUtils.getItemData(stack).hasKey("name") ? 1 : 16;
 	}
 
 	public static BlueprintId getId (ItemStack stack) {
