@@ -104,6 +104,7 @@ import buildcraft.builders.schematics.SchematicPortal;
 import buildcraft.builders.schematics.SchematicPumpkin;
 import buildcraft.builders.schematics.SchematicRail;
 import buildcraft.builders.schematics.SchematicRedstoneDiode;
+import buildcraft.builders.schematics.SchematicRedstoneLamp;
 import buildcraft.builders.schematics.SchematicRedstoneWire;
 import buildcraft.builders.schematics.SchematicRotateMeta;
 import buildcraft.builders.schematics.SchematicSeeds;
@@ -317,6 +318,9 @@ public class BuildCraftBuilders extends BuildCraftMod {
 		SchematicRegistry.registerSchematicBlock(Blocks.powered_comparator, SchematicRedstoneDiode.class, Items.comparator);
 		SchematicRegistry.registerSchematicBlock(Blocks.unpowered_comparator, SchematicRedstoneDiode.class, Items.comparator);
 
+		SchematicRegistry.registerSchematicBlock(Blocks.redstone_lamp, SchematicRedstoneLamp.class);
+		SchematicRegistry.registerSchematicBlock(Blocks.lit_redstone_lamp, SchematicRedstoneLamp.class);
+
 		SchematicRegistry.registerSchematicBlock(Blocks.water, SchematicFluid.class, new ItemStack(Items.water_bucket));
 		SchematicRegistry.registerSchematicBlock(Blocks.flowing_water, SchematicFluid.class, new ItemStack(Items.water_bucket));
 		SchematicRegistry.registerSchematicBlock(Blocks.lava, SchematicFluid.class, new ItemStack(Items.lava_bucket));
@@ -529,7 +533,7 @@ public class BuildCraftBuilders extends BuildCraftMod {
 			UrbanistToolsIconProvider.INSTANCE.registerIcons(event.map);
 		}
 	}
-	
+
 	@Mod.EventHandler
 	public void whiteListAppliedEnergetics(FMLInitializationEvent event) {
 		//FMLInterModComms.sendMessage("appliedenergistics2", "whitelist-spatial",
