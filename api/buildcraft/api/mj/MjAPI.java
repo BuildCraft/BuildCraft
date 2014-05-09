@@ -11,21 +11,21 @@ package buildcraft.api.mj;
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
 
+import buildcraft.api.core.BCLog;
 import buildcraft.api.core.JavaTools;
 
+/**
+ * The class MjAPI provides services to the Minecraft Joules power framework.
+ * BuildCraft implements a default power model on top of this, the "kinesis"
+ * power model. Third party mods may provide they own version of Minecraft
+ * Joules batteries and provide different models.
+ */
 public final class MjAPI {
-	private static Map<Class, BatteryField> MjBatteries = new HashMap<Class, BatteryField>();
-
-	private enum BatteryKind {
-		Value, Container
-	}
-
-	private static class BatteryField {
-		Field field;
-		MjBattery battery;
-		BatteryKind kind;
-	}
+	public static final String DEFAULT_POWER_FRAMEWORK = "buildcraft.kinesis";
+	private static Map<Class, BatteryField> mjBatteries = new HashMap<Class, BatteryField>();
+	private static Map<String, Class<? extends BatteryObject>> mjBatteryKinds = new HashMap<String, Class<? extends BatteryObject>>();
 
 	/**
 	 * Deactivate constructor
@@ -33,13 +33,28 @@ public final class MjAPI {
 	private MjAPI() {
 	}
 
+	/**
+	 * Returns the default battery related to the object given in parameter. For
+	 * performance optimization, it's good to cache this object in the providing
+	 * power framework if possible.
+	 */
 	public static IBatteryObject getMjBattery(Object o) {
+		return getMjBattery(o, DEFAULT_POWER_FRAMEWORK);
+	}
+
+	/**
+	 * Returns the battery related to the object given in parameter. For
+	 * performance optimization, it's good to cache this object in the providing
+	 * power framework if possible.
+	 */
+	public static IBatteryObject getMjBattery(Object o, String kind) {
 		if (o == null) {
 			return null;
 		}
 
 		if (o instanceof IBatteryProvider) {
 			IBatteryObject battery = ((IBatteryProvider) o).getMjBattery();
+
 			if (battery != null) {
 				return battery;
 			}
@@ -49,12 +64,25 @@ public final class MjAPI {
 
 		if (f == null) {
 			return null;
+		} else if (!mjBatteryKinds.containsKey(kind)) {
+			return null;
 		} else if (f.kind == BatteryKind.Value) {
-			BatteryObject obj = new BatteryObject();
-			obj.o = o;
-			obj.f = f.field;
-			obj.b = f.battery;
-			return obj;
+			try {
+				BatteryObject obj = mjBatteryKinds.get(kind).newInstance();
+				obj.obj = o;
+				obj.energyStored = f.field;
+				obj.batteryData = f.battery;
+
+				return obj;
+			} catch (InstantiationException e) {
+				BCLog.logger.log(Level.WARNING, "can't instantiate class for energy kind \"" + kind + "\"");
+
+				return null;
+			} catch (IllegalAccessException e) {
+				BCLog.logger.log(Level.WARNING, "can't instantiate class for energy kind \"" + kind + "\"");
+
+				return null;
+			}
 		} else {
 			try {
 				return getMjBattery(f.field.get(o));
@@ -65,8 +93,41 @@ public final class MjAPI {
 		}
 	}
 
+	public static IBatteryObject[] getAllMjBatteries(Object o) {
+		IBatteryObject[] result = new IBatteryObject[mjBatteries.size()];
+
+		int id = 0;
+
+		for (String kind : mjBatteryKinds.keySet()) {
+			result[id] = getMjBattery(o, kind);
+			id++;
+		}
+
+		return result;
+	}
+
+	public static void registerMJBatteryKind(String kind, Class<? extends BatteryObject> clas) {
+		if (!mjBatteryKinds.containsKey(kind)) {
+			mjBatteryKinds.put(kind, clas);
+		} else {
+			BCLog.logger.log(Level.WARNING,
+					"energy kind \"" + kind + "\" already registered with " + clas.getCanonicalName());
+		}
+	}
+
+	private enum BatteryKind {
+		Value, Container
+	}
+
+	private static class BatteryField {
+		public Field field;
+		public MjBattery battery;
+		public BatteryKind kind;
+	}
+
 	private static BatteryField getMjBatteryField(Class c) {
-		BatteryField bField = MjBatteries.get(c);
+		BatteryField bField = mjBatteries.get(c);
+
 		if (bField == null) {
 			for (Field f : JavaTools.getAllFields(c)) {
 				MjBattery battery = f.getAnnotation(MjBattery.class);
@@ -86,14 +147,20 @@ public final class MjAPI {
 						bField.kind = BatteryKind.Container;
 					}
 
-					MjBatteries.put(c, bField);
+					mjBatteries.put(c, bField);
 
 					return bField;
 				}
 			}
-			MjBatteries.put(c, null);
+
+			mjBatteries.put(c, null);
 		}
+
 		return bField;
+	}
+
+	static {
+		mjBatteryKinds.put(MjAPI.DEFAULT_POWER_FRAMEWORK, BatteryObject.class);
 	}
 
 }

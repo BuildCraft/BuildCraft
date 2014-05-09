@@ -48,4 +48,11 @@ public @interface MjBattery {
 	 * @return Minimal energy for keep machine is active
 	 */
 	double minimumConsumption() default 0.1;
+
+	/**
+	 * @return The kind of battery stored. Specific power systems can be created
+	 *         through this system, as several battery of different kind can
+	 *         coexist in the same tile.
+	 */
+	String kind() default MjAPI.DEFAULT_POWER_FRAMEWORK;
 }
