@@ -18,7 +18,6 @@ import buildcraft.api.core.JavaTools;
 public final class EnergyAPI {
 
 	private static Map<Class<?>, Map<String, BatteryField>> batteries = new HashMap<Class<?>, Map<String, BatteryField>>();
-//	private static Map<Class, BatteryField> batteries = new HashMap<Class, BatteryField>();
 
 	private enum BatteryKind {
 		Value, Container
@@ -47,10 +46,6 @@ public final class EnergyAPI {
 		 */
 		public double getEnergyRequested() {
 			try {
-//				final double contained = f.getDouble(o);
-//
-//				double max = b.maxCapacity();
-//				return Math.max(Math.min(max - contained, b.maxReceivedPerCycle()), b.minimumConsumption());
 				return Math.max(Math.min(b.maxCapacity() - f.getDouble(o), b.maxReceivedPerCycle()), b.minimumConsumption());
 			} catch (final IllegalAccessException e) {
 				e.printStackTrace();
