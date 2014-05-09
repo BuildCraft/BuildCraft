@@ -15,15 +15,13 @@ import net.minecraft.inventory.ICrafting;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
-
 import net.minecraftforge.common.util.ForgeDirection;
-
 import buildcraft.BuildCraftEnergy;
 import buildcraft.api.core.NetworkData;
+import buildcraft.api.energy.EnergyAPI;
+import buildcraft.api.energy.EnergyAPI.BatteryObject;
 import buildcraft.api.gates.IOverrideDefaultTriggers;
 import buildcraft.api.gates.ITrigger;
-import buildcraft.api.mj.MjAPI;
-import buildcraft.api.mj.MjAPI.BatteryObject;
 import buildcraft.api.power.IPowerEmitter;
 import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.power.PowerHandler;
@@ -285,7 +283,7 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 			return extractEnergy(receptor.getMinEnergyReceived(),
 					receptor.getMaxEnergyReceived(), false);
 		} else {
-			return extractEnergy(0, MjAPI.getMjBattery(tile)
+			return extractEnergy(0, EnergyAPI.getBattery(tile, EnergyAPI.batteryChannelMJ)
 					.getEnergyRequested(), false);
 		}
 	}
@@ -307,7 +305,7 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 					extractEnergy(receptor.getMinEnergyReceived(), needed, true);
 				}
 			} else {
-				BatteryObject battery = MjAPI.getMjBattery(tile);
+				BatteryObject battery = EnergyAPI.getBattery(tile, EnergyAPI.batteryChannelMJ);
 
 				battery.addEnergy(extractEnergy(0, battery.maxReceivedPerCycle(),
 						true));
@@ -522,7 +520,7 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 		} else if (tile instanceof IPowerReceptor) {
 			return ((IPowerReceptor) tile).getPowerReceiver(side.getOpposite()) != null;
 		} else {
-			return MjAPI.getMjBattery(tile) != null;
+			return EnergyAPI.getBattery(tile, EnergyAPI.batteryChannelMJ) != null;
 		}
 	}
 

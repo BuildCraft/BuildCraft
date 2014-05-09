@@ -14,7 +14,6 @@ import java.util.Set;
 import java.util.logging.Level;
 
 import io.netty.buffer.ByteBuf;
-
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -25,27 +24,25 @@ import net.minecraft.network.Packet;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
-
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
-
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.core.Position;
 import buildcraft.api.core.SafeTimeTracker;
+import buildcraft.api.energy.EnergyAPI;
+import buildcraft.api.energy.EnergyBattery;
 import buildcraft.api.gates.GateExpansions;
 import buildcraft.api.gates.IGateExpansion;
 import buildcraft.api.gates.IOverrideDefaultTriggers;
 import buildcraft.api.gates.ITrigger;
-import buildcraft.api.mj.MjBattery;
 import buildcraft.api.transport.IPipeConnection;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.PipeWire;
@@ -73,7 +70,14 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 	public boolean[] pipeConnectionsBuffer = new boolean[6];
 	public SafeTimeTracker networkSyncTracker = new SafeTimeTracker();
 
-	@MjBattery
+	/*
+	 * This is not supposed to be EnergyAPI.batteryChannelMJ
+	 * 
+	 * First, this is an object, which MUST be generic object
+	 * Second, we, or someone else will add another type of
+	 * energy, and would like that to flow in a pipe.
+	 */
+	@EnergyBattery(energyChannel = EnergyAPI.genericObjectChannel)
 	public Pipe pipe;
 	public int redstoneInput = 0;
 

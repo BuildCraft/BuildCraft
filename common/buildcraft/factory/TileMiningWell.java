@@ -16,8 +16,9 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftFactory;
+import buildcraft.api.energy.EnergyAPI;
+import buildcraft.api.energy.EnergyBattery;
 import buildcraft.api.gates.IAction;
-import buildcraft.api.mj.MjBattery;
 import buildcraft.core.IMachine;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.utils.BlockUtil;
@@ -27,7 +28,8 @@ public class TileMiningWell extends TileBuildCraft implements IMachine {
 
 	boolean isDigging = true;
 
-	@MjBattery(maxCapacity = 1000, maxReceivedPerCycle = BuildCraftFactory.MINING_MJ_COST_PER_BLOCK, minimumConsumption = 1)
+	@EnergyBattery(maxCapacity = 1000, maxReceivedPerCycle = BuildCraftFactory.MINING_MJ_COST_PER_BLOCK,
+			minimumConsumption = 1, energyChannel = EnergyAPI.batteryChannelMJ)
 	private double mjStored = 0;
 
 	/**

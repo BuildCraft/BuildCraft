@@ -13,12 +13,12 @@ import java.util.LinkedList;
 
 import net.minecraft.inventory.IInventory;
 import net.minecraft.nbt.NBTTagCompound;
-
 import buildcraft.api.blueprints.ITileBuilder;
 import buildcraft.api.blueprints.SchematicRegistry;
 import buildcraft.api.core.NetworkData;
 import buildcraft.api.core.SafeTimeTracker;
-import buildcraft.api.mj.MjBattery;
+import buildcraft.api.energy.EnergyAPI;
+import buildcraft.api.energy.EnergyBattery;
 import buildcraft.core.IBoxProvider;
 import buildcraft.core.LaserData;
 import buildcraft.core.TileBuildCraft;
@@ -42,7 +42,8 @@ public abstract class TileAbstractBuilder extends TileBuildCraft implements ITil
 	public ArrayList<BuildingItem> buildersInAction = new ArrayList<BuildingItem>();
 
 	protected SafeTimeTracker buildTracker = new SafeTimeTracker(5);
-	@MjBattery(maxReceivedPerCycle = 100, maxCapacity = FULL_CHEST_ENERGY, minimumConsumption = 1)
+	@EnergyBattery(maxReceivedPerCycle = 100, maxCapacity = FULL_CHEST_ENERGY,
+			minimumConsumption = 1, energyChannel = EnergyAPI.batteryChannelMJ)
 	protected double mjStored = 0;
 
 	private double mjPrev = 0;

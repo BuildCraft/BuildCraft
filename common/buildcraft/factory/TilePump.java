@@ -16,12 +16,10 @@ import java.util.Set;
 import java.util.TreeMap;
 
 import io.netty.buffer.ByteBuf;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
@@ -29,12 +27,12 @@ import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
-
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftFactory;
 import buildcraft.api.core.SafeTimeTracker;
+import buildcraft.api.energy.EnergyAPI;
+import buildcraft.api.energy.EnergyBattery;
 import buildcraft.api.gates.IAction;
-import buildcraft.api.mj.MjBattery;
 import buildcraft.core.BlockIndex;
 import buildcraft.core.CoreConstants;
 import buildcraft.core.EntityBlock;
@@ -66,7 +64,8 @@ public class TilePump extends TileBuildCraft implements IMachine, IFluidHandler 
 	private int numFluidBlocksFound = 0;
 	private boolean powered = false;
 
-	@MjBattery(maxCapacity = 100, maxReceivedPerCycle = 15, minimumConsumption = 1)
+	@EnergyBattery(maxCapacity = 100, maxReceivedPerCycle = 15,
+			minimumConsumption = 1, energyChannel = EnergyAPI.batteryChannelMJ)
 	private double mjStored = 0;
 
 	@Override

@@ -15,16 +15,15 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.ResourceLocation;
-
 import net.minecraftforge.common.util.ForgeDirection;
-
 import buildcraft.BuildCraftCore;
 import buildcraft.api.core.NetworkData;
 import buildcraft.api.core.Position;
 import buildcraft.api.core.SafeTimeTracker;
+import buildcraft.api.energy.EnergyAPI;
+import buildcraft.api.energy.EnergyBattery;
 import buildcraft.api.gates.IAction;
 import buildcraft.api.gates.IActionReceptor;
-import buildcraft.api.mj.MjBattery;
 import buildcraft.api.power.ILaserTarget;
 import buildcraft.core.Box;
 import buildcraft.core.EntityLaser;
@@ -48,7 +47,8 @@ public class TileLaser extends TileBuildCraft implements IActionReceptor, IMachi
 	private ActionMachineControl.Mode lastMode = ActionMachineControl.Mode.Unknown;
 	private int powerIndex = 0;
 
-	@MjBattery(maxCapacity = 1000, maxReceivedPerCycle = 25, minimumConsumption = 1)
+	@EnergyBattery(maxCapacity = 1000, maxReceivedPerCycle = 25,
+			minimumConsumption = 1, energyChannel = EnergyAPI.batteryChannelMJ)
 	private double mjStored = 0;
 	@NetworkData
 	private double powerAverage = 0;

@@ -11,11 +11,9 @@ package buildcraft.energy;
 import java.util.LinkedList;
 
 import net.minecraft.tileentity.TileEntity;
-
 import net.minecraftforge.common.util.ForgeDirection;
-
-import buildcraft.api.mj.MjAPI;
-import buildcraft.api.mj.MjAPI.BatteryObject;
+import buildcraft.api.energy.EnergyAPI;
+import buildcraft.api.energy.EnergyAPI.BatteryObject;
 import buildcraft.api.power.IPowerEmitter;
 import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.power.PowerHandler;
@@ -52,7 +50,7 @@ public class TileEnergyReceiver extends TileBuildCraft implements IPipeConnectio
 	public boolean isPoweredTile(TileEntity tile, ForgeDirection side) {
 		if (tile instanceof IPowerReceptor) {
 			return ((IPowerReceptor) tile).getPowerReceiver(side.getOpposite()) != null;
-		} else if (MjAPI.getMjBattery(tile) != null) {
+		} else if (EnergyAPI.getBattery(tile, EnergyAPI.batteryChannelMJ) != null) {
 			return true;
 		}
 
@@ -74,7 +72,7 @@ public class TileEnergyReceiver extends TileBuildCraft implements IPipeConnectio
 					energyStored = 0;
 				}
 			} else if (tile != null) {
-				BatteryObject battery = MjAPI.getMjBattery(tile);
+				BatteryObject battery = EnergyAPI.getBattery(tile, EnergyAPI.batteryChannelMJ);
 
 				if (battery != null) {
 					battery.addEnergy(energyStored);

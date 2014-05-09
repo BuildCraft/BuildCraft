@@ -26,7 +26,8 @@ import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.core.Position;
-import buildcraft.api.mj.MjBattery;
+import buildcraft.api.energy.EnergyAPI;
+import buildcraft.api.energy.EnergyBattery;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.BlockUtil;
 import buildcraft.transport.BlockGenericPipe;
@@ -41,7 +42,8 @@ import buildcraft.transport.utils.TransportUtils;
 
 public class PipeItemsStripes extends Pipe<PipeTransportItems> {
 
-	@MjBattery(maxCapacity = 1, maxReceivedPerCycle = 1, minimumConsumption = 0)
+	@EnergyBattery(maxCapacity = 1, maxReceivedPerCycle = 1,
+			minimumConsumption = 0, energyChannel = EnergyAPI.batteryChannelMJ)
 	private double mjStored = 0;
 
 	public PipeItemsStripes(Item item) {
