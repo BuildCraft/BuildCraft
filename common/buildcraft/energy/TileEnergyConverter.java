@@ -14,12 +14,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChatComponentText;
-
 import net.minecraftforge.common.util.ForgeDirection;
-
 import buildcraft.api.core.NetworkData;
-import buildcraft.api.mj.MjAPI;
-import buildcraft.api.mj.MjBattery;
+import buildcraft.api.energy.EnergyAPI;
+import buildcraft.api.energy.EnergyBattery;
 import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.power.PowerHandler;
 import buildcraft.api.tools.IToolWrench;
@@ -44,7 +42,8 @@ public class TileEnergyConverter extends TileBuildCraft implements IPowerRecepto
 		}
 	}
 
-	@MjBattery(maxCapacity = 1000, maxReceivedPerCycle = 64, minimumConsumption = 1)
+	@EnergyBattery(maxCapacity = 1000, maxReceivedPerCycle = 64,
+			minimumConsumption = 1, energyChannel = EnergyAPI.batteryChannelMJ)
 	@NetworkData
 	private double mjStored = 0;
 	@NetworkData
@@ -53,7 +52,7 @@ public class TileEnergyConverter extends TileBuildCraft implements IPowerRecepto
 	private PowerHandler powerHandler, zeroPowerHandler;
 
 	public TileEnergyConverter() {
-		powerHandler = new PowerHandler(this, PowerHandler.Type.MACHINE, MjAPI.getMjBattery(this));
+		powerHandler = new PowerHandler(this, PowerHandler.Type.MACHINE, EnergyAPI.getBattery(this, EnergyAPI.batteryChannelMJ));
 		zeroPowerHandler = new PowerHandler(this, PowerHandler.Type.MACHINE);
 		zeroPowerHandler.configure(0, 0, 0, 0);
 	}
@@ -121,7 +120,7 @@ public class TileEnergyConverter extends TileBuildCraft implements IPowerRecepto
 				if (tile instanceof TileEnergyConverter) {
 					continue;
 				}
-				MjAPI.BatteryObject object = MjAPI.getMjBattery(tile);
+				EnergyAPI.BatteryObject object = EnergyAPI.getBattery(tile, EnergyAPI.batteryChannelMJ);
 				if (object != null && mjStored > 0) {
 					double wantToUse = Math.min(mjStored, object.getEnergyRequested());
 					object.addEnergy(wantToUse);

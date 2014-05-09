@@ -6,7 +6,7 @@
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-package buildcraft.api.mj;
+package buildcraft.api.energy;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
@@ -16,9 +16,10 @@ import java.lang.annotation.Target;
 
 /**
  * This annotation is used for tiles that need to interface with BuildCraft
- * energy framework, a.k.a MinecraftJoule or MJ. In order to receive power,
+ * energy framework, a.k.a MinecraftJoule or MJ, or any other framework
+ * that decides to reuse this. In order to receive power,
  * tiles, need to declare a double field, with the annotation
- * MjBattery. BuildCraft machines able to provide power will then connect to
+ * EnergyBattery. Machines able to provide power will then connect to
  * these tiles, and feed energy up to max capacity. It's the responsibility
  * of the implementer to manually decrease the value of the energy, as he
  * simulates energy consumption. On each cycle, per power input, machines can
@@ -26,26 +27,32 @@ import java.lang.annotation.Target;
  * the system can have a minimum amount of energy consumed even if the system
  * is at max capacity, modelized by the "minimumConsumption" value.
  *
- * If the field designated by MjBattery is an object, then BuildCraft will
+ * If the field designated by EnergyBattery is an object, then we will
  * consider that this is a case of a nested battery, and will look for the
  * field in the designated object.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
 @Inherited
-public @interface MjBattery {
+public @interface EnergyBattery {
+
 	/**
 	 * @return Max energy capacity of battery
 	 */
-	double maxCapacity() default 100.0;
+	public double maxCapacity() default 100.0;
 
 	/**
 	 * @return Max energy received per one tick
 	 */
-	double maxReceivedPerCycle() default 10.0;
+	public double maxReceivedPerCycle() default 10.0;
 
 	/**
 	 * @return Minimal energy for keep machine is active
 	 */
-	double minimumConsumption() default 0.1;
+	public double minimumConsumption() default 0.1;
+
+	/**
+	 * @return The type of energy this battery carrying, e.x MJ
+	 */
+	public String energyChannel();
 }

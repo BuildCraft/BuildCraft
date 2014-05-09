@@ -14,15 +14,13 @@ import java.util.Map;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-
 import net.minecraftforge.common.util.ForgeDirection;
-
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.SafeTimeTracker;
+import buildcraft.api.energy.EnergyAPI;
+import buildcraft.api.energy.EnergyAPI.BatteryObject;
 import buildcraft.api.gates.ITrigger;
-import buildcraft.api.mj.MjAPI;
-import buildcraft.api.mj.MjAPI.BatteryObject;
 import buildcraft.api.power.IPowerEmitter;
 import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.power.PowerHandler.PowerReceiver;
@@ -112,7 +110,7 @@ public class PipeTransportPower extends PipeTransport {
 			}
 		}
 
-		if (MjAPI.getMjBattery(tile) != null) {
+		if (EnergyAPI.getBattery(tile, EnergyAPI.batteryChannelMJ) != null) {
 			return true;
 		}
 
@@ -176,8 +174,8 @@ public class PipeTransportPower extends PipeTransport {
 					if (j != i && powerQuery[j] > 0) {
 						if (tiles[j] != null
 								&& (tiles[j] instanceof TileGenericPipe
-										|| tiles[j] instanceof IPowerReceptor || MjAPI
-										.getMjBattery(tiles[j]) != null)) {
+										|| tiles[j] instanceof IPowerReceptor || EnergyAPI
+										.getBattery(tiles[j], EnergyAPI.batteryChannelMJ) != null)) {
 							totalPowerQuery += powerQuery[j];
 						}
 					}
@@ -202,7 +200,7 @@ public class PipeTransportPower extends PipeTransport {
 							internalPower[i] -= watts;
 						} else if (tiles[j] != null) {
 							// Look for the simplified power framework
-							BatteryObject battery = MjAPI.getMjBattery(tiles [j]);
+							BatteryObject battery = EnergyAPI.getBattery(tiles[j], EnergyAPI.batteryChannelMJ);
 
 							if (battery != null) {
 								watts = (internalPower[i] / totalPowerQuery)
@@ -250,7 +248,7 @@ public class PipeTransportPower extends PipeTransport {
 			}
 
 			if (tile != null) {
-				BatteryObject battery = MjAPI.getMjBattery(tile);
+				BatteryObject battery = EnergyAPI.getBattery(tile, EnergyAPI.batteryChannelMJ);
 
 				if (battery != null) {
 					requestEnergy(dir, battery.getEnergyRequested());

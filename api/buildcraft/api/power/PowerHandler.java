@@ -9,12 +9,10 @@
 package buildcraft.api.power;
 
 import net.minecraft.nbt.NBTTagCompound;
-
 import net.minecraftforge.common.util.ForgeDirection;
-
 import buildcraft.api.core.SafeTimeTracker;
-import buildcraft.api.mj.MjAPI;
-import buildcraft.api.mj.MjBattery;
+import buildcraft.api.energy.EnergyAPI;
+import buildcraft.api.energy.EnergyBattery;
 
 /**
  * The PowerHandler is similar to FluidTank in that it holds your power and
@@ -32,7 +30,7 @@ import buildcraft.api.mj.MjBattery;
  * @see IPowerReceptor
  * @see IPowerEmitter
  */
-public final class PowerHandler implements MjAPI.IBatteryProvider {
+public final class PowerHandler implements EnergyAPI.IBatteryProvider {
 
 	public static enum Type {
 
@@ -132,7 +130,7 @@ public final class PowerHandler implements MjAPI.IBatteryProvider {
 	private PerditionCalculator perdition;
 	private final PowerReceiver receiver;
 	private final Type type;
-	private MjAPI.BatteryObject battery;
+	private EnergyAPI.BatteryObject battery;
 	// Tracking
 	private double averageLostPower = 0;
 	private double averageReceivedPower = 0;
@@ -148,12 +146,12 @@ public final class PowerHandler implements MjAPI.IBatteryProvider {
 		this.receiver = new PowerReceiver();
 		this.perdition = DEFAULT_PERDITION;
 
-		if (battery instanceof MjAPI.BatteryObject) {
-			this.battery = (MjAPI.BatteryObject) battery;
+		if (battery instanceof EnergyAPI.BatteryObject) {
+			this.battery = (EnergyAPI.BatteryObject) battery;
 		} else if (battery != null) {
-			this.battery = MjAPI.getMjBattery(battery);
+			this.battery = EnergyAPI.getBattery(battery, EnergyAPI.batteryChannelMJ);
 		} else {
-			this.battery = MjAPI.getMjBattery(new AnonymousBattery());
+			this.battery = EnergyAPI.getBattery(new AnonymousBattery(), EnergyAPI.batteryChannelMJ);
 		}
 	}
 
@@ -182,8 +180,8 @@ public final class PowerHandler implements MjAPI.IBatteryProvider {
 	}
 
 	@Override
-	public MjAPI.BatteryObject getMjBattery() {
-		return battery;
+	public EnergyAPI.BatteryObject getBattery(final String channel) {
+		return channel.equals(EnergyAPI.batteryChannelMJ) ? battery : null;
 	}
 
 	/**
@@ -218,7 +216,7 @@ public final class PowerHandler implements MjAPI.IBatteryProvider {
 		}
 		this.activationEnergy = activationEnergy;
 
-		battery.reconfigure(maxStoredEnergy, localMaxEnergyReceived, minEnergyReceived);
+		battery.reconfigure(maxStoredEnergy, localMaxEnergyReceived, minEnergyReceived, EnergyAPI.batteryChannelMJ);
 	}
 
 	/**
@@ -501,7 +499,7 @@ public final class PowerHandler implements MjAPI.IBatteryProvider {
 	}
 
 	private static class AnonymousBattery {
-		@MjBattery
+		@EnergyBattery(energyChannel = EnergyAPI.batteryChannelMJ)
 		public double mjStored;
 	}
 }

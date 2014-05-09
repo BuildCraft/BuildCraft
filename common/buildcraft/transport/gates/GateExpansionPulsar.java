@@ -12,13 +12,12 @@ import java.util.List;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-
 import buildcraft.BuildCraftTransport;
+import buildcraft.api.energy.EnergyAPI;
+import buildcraft.api.energy.EnergyAPI.BatteryObject;
 import buildcraft.api.gates.GateExpansionController;
 import buildcraft.api.gates.IAction;
 import buildcraft.api.gates.IGateExpansion;
-import buildcraft.api.mj.MjAPI;
-import buildcraft.api.mj.MjAPI.BatteryObject;
 import buildcraft.transport.TileGenericPipe;
 import buildcraft.transport.triggers.ActionEnergyPulsar;
 import buildcraft.transport.triggers.ActionSingleEnergyPulse;
@@ -97,7 +96,7 @@ public final class GateExpansionPulsar extends GateExpansionBuildcraft implement
 				return;
 			}
 
-			BatteryObject battery = MjAPI.getMjBattery(pipeTile);
+			BatteryObject battery = EnergyAPI.getBattery(pipeTile, EnergyAPI.batteryChannelMJ);
 
 			if (battery != null && (!singlePulse || !hasPulsed)) {
 				((TileGenericPipe) pipeTile).pipe.gate.setPulsing(true);

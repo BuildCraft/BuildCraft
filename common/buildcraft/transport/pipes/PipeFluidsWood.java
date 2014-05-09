@@ -12,19 +12,17 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
-
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidHandler;
-
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.core.NetworkData;
-import buildcraft.api.mj.MjBattery;
+import buildcraft.api.energy.EnergyAPI;
+import buildcraft.api.energy.EnergyBattery;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.PipeManager;
 import buildcraft.transport.Pipe;
@@ -41,7 +39,8 @@ public class PipeFluidsWood extends Pipe<PipeTransportFluids> {
 
 	private long lastMining = 0;
 	private boolean lastPower = false;
-	@MjBattery(maxCapacity = 250, maxReceivedPerCycle = 100, minimumConsumption = 0)
+	@EnergyBattery(maxCapacity = 250, maxReceivedPerCycle = 100,
+			minimumConsumption = 0, energyChannel = EnergyAPI.batteryChannelMJ)
 	private double mjStored = 0;
 
 	private PipeLogicWood logic = new PipeLogicWood(this) {
