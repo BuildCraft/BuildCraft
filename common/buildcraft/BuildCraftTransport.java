@@ -60,6 +60,7 @@ import buildcraft.transport.ItemRobotStation;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTriggerProvider;
+import buildcraft.transport.StripesHandler;
 import buildcraft.transport.TransportProxy;
 import buildcraft.transport.WireIconProvider;
 import buildcraft.transport.blueprints.BptItemPipeFilters;
@@ -276,6 +277,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 			CoreProxy.proxy.registerBlock(filteredBufferBlock.setBlockName("filteredBufferBlock"));
 
 			PipeManager.registerExtractionHandler(new ExtractionHandler(excludedItemBlocks, excludedFluidBlocks));
+			PipeManager.registerStripesHandler(new StripesHandler());
 
 			GateExpansions.registerExpansion(GateExpansionPulsar.INSTANCE);
 			GateExpansions.registerExpansion(GateExpansionTimer.INSTANCE);

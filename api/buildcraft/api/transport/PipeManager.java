@@ -16,9 +16,16 @@ import net.minecraft.world.World;
 public abstract class PipeManager {
 
 	public static List<IExtractionHandler> extractionHandlers = new ArrayList<IExtractionHandler>();
+	public static List<IStripesHandler> stripesHandlers = new ArrayList<IStripesHandler>();
+	private static IStripesHandler[] stripesHandlersArray;
 
 	public static void registerExtractionHandler(IExtractionHandler handler) {
 		extractionHandlers.add(handler);
+	}
+
+	public static void registerStripesHandler(IStripesHandler handler) {
+		stripesHandlers.add(handler);
+		stripesHandlersArray = null;
 	}
 
 	/**
@@ -45,5 +52,12 @@ public abstract class PipeManager {
 		}
 
 		return true;
+	}
+
+	public static IStripesHandler[] getStripesHandlers() {
+		if (stripesHandlersArray == null) {
+			stripesHandlersArray = stripesHandlers.toArray(new IStripesHandler[stripesHandlers.size()]);
+		}
+		return stripesHandlersArray;
 	}
 }
