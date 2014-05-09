@@ -13,6 +13,8 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.api.core.SafeTimeTracker;
+import buildcraft.api.mj.IBatteryObject;
+import buildcraft.api.mj.IBatteryProvider;
 import buildcraft.api.mj.MjAPI;
 import buildcraft.api.mj.MjBattery;
 
@@ -32,7 +34,7 @@ import buildcraft.api.mj.MjBattery;
  * @see IPowerReceptor
  * @see IPowerEmitter
  */
-public final class PowerHandler implements MjAPI.IBatteryProvider {
+public final class PowerHandler implements IBatteryProvider {
 
 	public static enum Type {
 
@@ -132,7 +134,7 @@ public final class PowerHandler implements MjAPI.IBatteryProvider {
 	private PerditionCalculator perdition;
 	private final PowerReceiver receiver;
 	private final Type type;
-	private MjAPI.BatteryObject battery;
+	private IBatteryObject battery;
 	// Tracking
 	private double averageLostPower = 0;
 	private double averageReceivedPower = 0;
@@ -148,7 +150,7 @@ public final class PowerHandler implements MjAPI.IBatteryProvider {
 		this.receiver = new PowerReceiver();
 		this.perdition = DEFAULT_PERDITION;
 
-		if (battery instanceof MjAPI.BatteryObject) {
+		if (battery instanceof IBatteryObject) {
 			this.battery = (MjAPI.BatteryObject) battery;
 		} else if (battery != null) {
 			this.battery = MjAPI.getMjBattery(battery);
@@ -182,7 +184,7 @@ public final class PowerHandler implements MjAPI.IBatteryProvider {
 	}
 
 	@Override
-	public MjAPI.BatteryObject getMjBattery() {
+	public IBatteryObject getMjBattery() {
 		return battery;
 	}
 

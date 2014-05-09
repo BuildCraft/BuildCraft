@@ -28,23 +28,18 @@ public final class MjAPI {
 		BatteryKind kind;
 	}
 
-	public interface IBatteryProvider {
-		BatteryObject getMjBattery();
-	}
-
-	public static class BatteryObject {
+	public static class BatteryObject implements IBatteryObject {
 		private Field f;
 		private Object o;
 		private MjBattery b;
 
 		/**
-		 * @return Current energy requirement for keeping machine state
+		 * {@inheritDoc}
 		 */
+		@Override
 		public double getEnergyRequested() {
 			try {
-				double contained = f.getDouble(o);
-				double max = b.maxCapacity();
-				return Math.max(Math.min(max - contained, b.maxReceivedPerCycle()), b.minimumConsumption());
+				return JavaTools.bounds(b.maxCapacity() - f.getDouble(o), b.minimumConsumption(), b.maxReceivedPerCycle());
 			} catch (IllegalAccessException e) {
 				e.printStackTrace();
 			}
@@ -52,22 +47,17 @@ public final class MjAPI {
 		}
 
 		/**
-		 * Add energy to this battery
-		 *
-		 * @param mj Energy amount
-		 * @return Used energy
+		 * {@inheritDoc}
 		 */
+		@Override
 		public double addEnergy(double mj) {
 			return addEnergy(mj, false);
 		}
 
 		/**
-		 * Add energy to this battery
-		 *
-		 * @param mj               Energy amount
-		 * @param ignoreCycleLimit Force add all energy even if "maxReceivedPerCycle" limit is reached
-		 * @return Used energy
+		 * {@inheritDoc}
 		 */
+		@Override
 		public double addEnergy(double mj, boolean ignoreCycleLimit) {
 			try {
 				double contained = f.getDouble(o);
@@ -88,8 +78,9 @@ public final class MjAPI {
 		}
 
 		/**
-		 * @return Current stored energy amount in this battery
+		 * {@inheritDoc}
 		 */
+		@Override
 		public double getEnergyStored() {
 			try {
 				return f.getDouble(o);
@@ -100,11 +91,9 @@ public final class MjAPI {
 		}
 
 		/**
-		 * Set current stored energy amount.
-		 * Doesn't use it for your machines! Decrease your battery field directly.
-		 *
-		 * @param mj New energy amount
+		 * {@inheritDoc}
 		 */
+		@Override
 		public void setEnergyStored(double mj) {
 			try {
 				f.setDouble(o, mj);
@@ -114,41 +103,33 @@ public final class MjAPI {
 		}
 
 		/**
-		 * Can be overrided via {@link #reconfigure(double, double, double)}
-		 *
-		 * @return Maximal energy amount for this battery.
+		 * {@inheritDoc}
 		 */
+		@Override
 		public double maxCapacity() {
 			return b.maxCapacity();
 		}
 
 		/**
-		 * Can be overrided via {@link #reconfigure(double, double, double)}
-		 *
-		 * @return Minimal energy amount for keep your machine in active state
+		 * {@inheritDoc}
 		 */
+		@Override
 		public double minimumConsumption() {
 			return b.minimumConsumption();
 		}
 
 		/**
-		 * Can be overrided via {@link #reconfigure(double, double, double)}
-		 *
-		 * @return Maximal energy received per one tick
+		 * {@inheritDoc}
 		 */
+		@Override
 		public double maxReceivedPerCycle() {
 			return b.maxReceivedPerCycle();
 		}
 
 		/**
-		 * Allow to dynamically reconfigure your battery.
-		 * Usually it's not very good change battery parameters for already present machines, but if you want...
-		 *
-		 * @param maxCapacity         {@link #maxCapacity()}
-		 * @param maxReceivedPerCycle {@link #maxReceivedPerCycle()}
-		 * @param minimumConsumption  {@link #minimumConsumption()}
-		 * @return Current battery object instance
+		 * {@inheritDoc}
 		 */
+		@Override
 		public BatteryObject reconfigure(final double maxCapacity, final double maxReceivedPerCycle, final double minimumConsumption) {
 			b = new MjBattery() {
 				@Override
@@ -181,13 +162,13 @@ public final class MjAPI {
 	private MjAPI() {
 	}
 
-	public static BatteryObject getMjBattery(Object o) {
+	public static IBatteryObject getMjBattery(Object o) {
 		if (o == null) {
 			return null;
 		}
 
 		if (o instanceof IBatteryProvider) {
-			BatteryObject battery = ((IBatteryProvider) o).getMjBattery();
+			IBatteryObject battery = ((IBatteryProvider) o).getMjBattery();
 			if (battery != null) {
 				return battery;
 			}
