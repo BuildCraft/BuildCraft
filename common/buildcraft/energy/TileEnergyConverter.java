@@ -18,6 +18,7 @@ import net.minecraft.util.ChatComponentText;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.api.core.NetworkData;
+import buildcraft.api.mj.IBatteryObject;
 import buildcraft.api.mj.MjAPI;
 import buildcraft.api.mj.MjBattery;
 import buildcraft.api.power.IPowerReceptor;
@@ -121,7 +122,7 @@ public class TileEnergyConverter extends TileBuildCraft implements IPowerRecepto
 				if (tile instanceof TileEnergyConverter) {
 					continue;
 				}
-				MjAPI.BatteryObject object = MjAPI.getMjBattery(tile);
+				IBatteryObject object = MjAPI.getMjBattery(tile);
 				if (object != null && mjStored > 0) {
 					double wantToUse = Math.min(mjStored, object.getEnergyRequested());
 					object.addEnergy(wantToUse);

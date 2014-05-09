@@ -16,6 +16,9 @@ import java.util.Arrays;
 import java.util.List;
 
 public class JavaTools {
+	public static double bounds(double value, double min, double max) {
+		return Math.max(min, Math.min(value, max));
+	}
 
 	public static <T> T[] concat(T[] first, T[] second) {
 		T[] result = Arrays.copyOf(first, first.length + second.length);
