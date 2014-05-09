@@ -33,10 +33,11 @@ public class EntityRobot extends EntityLiving implements
 	public SafeTimeTracker scanForTasks = new SafeTimeTracker (40, 10);
 
 	public LaserData laser = new LaserData ();
-	protected RobotAIBase currentAI;
-	protected RobotAIBase nextAI;
 	public IRobotTask currentTask;
 	public DockingStation dockingStation = new DockingStation();
+
+	protected RobotAIBase currentAI;
+	protected RobotAIBase nextAI;
 
 	private boolean needsUpdate = false;
 
