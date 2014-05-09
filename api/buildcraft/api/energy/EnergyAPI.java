@@ -17,6 +17,9 @@ import buildcraft.api.core.JavaTools;
 
 public final class EnergyAPI {
 
+	public static final String batteryChannelMJ = "BuildCraftMJ";
+	public static final String genericObjectChannel = "GenericObjectContainerChannel";
+
 	private static Map<Class<?>, Map<String, BatteryField>> batteries = new HashMap<Class<?>, Map<String, BatteryField>>();
 
 	private enum BatteryKind {
@@ -24,17 +27,14 @@ public final class EnergyAPI {
 	}
 
 	private static class BatteryField {
-		private Field field;
-		private EnergyBattery battery;
-		private BatteryKind kind;
+		Field field;
+		EnergyBattery battery;
+		BatteryKind kind;
 	}
 
 	public interface IBatteryProvider {
 		BatteryObject getBattery(final String channel);
 	}
-
-	public static final String batteryChannelMJ = "BuildCraftMJ";
-	public static final String genericObjectChannel = "GenericObjectContainerChannel";
 
 	public static class BatteryObject {
 		private Field f;
@@ -198,7 +198,7 @@ public final class EnergyAPI {
 	private EnergyAPI() {}
 
 	public static BatteryObject getBattery(final Object o, final String channel) {
-		if ((o == null) || (channel == null) || (channel.equals(""))) {
+		if ((o == null) || (channel == null) || ("".equals(channel))) {
 			return null;
 		}
 		
@@ -260,13 +260,13 @@ public final class EnergyAPI {
 					boolean isContainer = false;
 
 					if (double.class.equals(f.getType())) {
-						if (!battery.energyChannel().equals(channel)) continue;
+						if (!battery.energyChannel().equals(channel)) { continue }
 
 					} else if (f.getType().isPrimitive()) {
 						throw new RuntimeException(
 								"MJ battery needs to be object or double type");
 					} else {
-						if (!battery.energyChannel().equals(genericObjectChannel)) continue;
+						if (!battery.energyChannel().equals(genericObjectChannel)) { continue }
 
 						isContainer = true;
 					}

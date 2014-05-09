@@ -39,20 +39,20 @@ public @interface EnergyBattery {
 	/**
 	 * @return Max energy capacity of battery
 	 */
-	public double maxCapacity() default 100.0;
+	double maxCapacity() default 100.0;
 
 	/**
 	 * @return Max energy received per one tick
 	 */
-	public double maxReceivedPerCycle() default 10.0;
+	double maxReceivedPerCycle() default 10.0;
 
 	/**
 	 * @return Minimal energy for keep machine is active
 	 */
-	public double minimumConsumption() default 0.1;
+	double minimumConsumption() default 0.1;
 
 	/**
 	 * @return The type of energy this battery carrying, e.x MJ
 	 */
-	public String energyChannel();
+	String energyChannel();
 }
