@@ -51,6 +51,7 @@ import buildcraft.core.BlockIndex;
 import buildcraft.core.CoreConstants;
 import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.ItemRobot;
+import buildcraft.core.TileBuffer;
 import buildcraft.core.robots.EntityRobot;
 import buildcraft.core.robots.RobotAIDocked;
 import buildcraft.core.utils.BlockUtil;
@@ -1314,13 +1315,14 @@ public class BlockGenericPipe extends BlockBuildCraft {
 	}
 	
 	public static Pipe[] getBlockNeighboursAsPipes(IBlockAccess blockAccess, int x, int y, int z) {
-		TileEntity entities[] = BlockUtil.getBlockNeighboursAsTileEntities(blockAccess, x, y, z);
+		TileBuffer buffer[] = BlockUtil.getBlockNeighboursAsTileBuffer(blockAccess, x, y, z);
+			
 		Pipe pipes[] = new Pipe[6];
 		for(int i = 0; i < 6; i++) {
-			if (!(entities[i] instanceof TileGenericPipe) || entities[i].isInvalid()) {
+			if (!(buffer[i].getTile() instanceof TileGenericPipe) || buffer[i].getTile().isInvalid()) {
 				pipes[i] = null;
 			} else {
-				pipes[i] = ((TileGenericPipe) entities[i]).pipe;
+				pipes[i] = ((TileGenericPipe) buffer[i].getTile()).pipe;
 			}
 		}
 		

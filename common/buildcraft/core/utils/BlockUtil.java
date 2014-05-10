@@ -33,7 +33,10 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidBlock;
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftEnergy;
+import buildcraft.core.TileBuffer;
 import buildcraft.core.proxy.CoreProxy;
+import buildcraft.transport.BlockGenericPipe;
+import buildcraft.transport.Pipe;
 
 public final class BlockUtil {
 
@@ -201,17 +204,17 @@ public final class BlockUtil {
 		}
 	}
 	
-	public static TileEntity[] getBlockNeighboursAsTileEntities(IBlockAccess blockAccess, int x, int y, int z) {
+	public static TileBuffer[] getBlockNeighboursAsTileBuffer(IBlockAccess blockAccess, int x, int y, int z) {
 		
-		TileEntity[] entities = new TileEntity[6];
+		Pipe pipe = BlockGenericPipe.getPipe(blockAccess, x, y, z);
+		TileBuffer[] tiles;
 		
-		entities[0] = blockAccess.getTileEntity(x, y - 1, z);
-		entities[1] = blockAccess.getTileEntity(x, y + 1, z);
-		entities[2] = blockAccess.getTileEntity(x, y, z - 1);
-		entities[3] = blockAccess.getTileEntity(x, y, z + 1);
-		entities[4] = blockAccess.getTileEntity(x - 1, y, z);
-		entities[5] = blockAccess.getTileEntity(x + 1, y, z);
-		
-		return entities;
+		if(BlockGenericPipe.isValid(pipe)) {
+			tiles = pipe.container.getTileCache();
+		} else {
+			tiles = TileBuffer.makeBuffer((World) blockAccess, x, y, z, false);
+		}
+
+		return tiles;
 	}
 }
