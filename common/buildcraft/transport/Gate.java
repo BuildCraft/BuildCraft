@@ -193,7 +193,7 @@ public final class Gate {
 	public void resetGate() {
 		if (redstoneOutput != 0) {
 			redstoneOutput = 0;
-			pipe.updateNeighbors(true);
+			pipe.updateNeighborsOnRedstoneOutput(true);
 		}
 	}
 
@@ -285,7 +285,7 @@ public final class Gate {
 		if (oldRedstoneOutput != redstoneOutput) {
 			if (redstoneOutput == 0 ^ oldRedstoneOutput == 0)
 				pipe.container.scheduleRenderUpdate();
-			pipe.updateNeighbors(true);
+			pipe.updateNeighborsOnRedstoneOutput(true);
 		}
 
 		if (!prevBroadcastSignal.equals(broadcastSignal)) {
