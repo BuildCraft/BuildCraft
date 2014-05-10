@@ -19,18 +19,21 @@ import net.minecraftforge.common.util.ForgeDirection;
 /**
  * This annotation is used for tiles that need to interface with BuildCraft
  * energy framework, a.k.a MinecraftJoule or MJ. In order to receive power,
- * tiles, need to declare a double field, with the annotation
- * MjBattery. BuildCraft machines able to provide power will then connect to
- * these tiles, and feed energy up to max capacity. It's the responsibility
- * of the implementer to manually decrease the value of the energy, as he
- * simulates energy consumption. On each cycle, per power input, machines can
- * receive up to "maxReceivedPerCycle" units of energy. As an optional behavior,
- * the system can have a minimum amount of energy consumed even if the system
- * is at max capacity, modelized by the "minimumConsumption" value.
+ * tiles, need to declare a double field, with the annotation MjBattery. MJ
+ * provider machines able to provide power will then connect to these tiles, and
+ * feed energy up to max capacity. It's the responsibility of the implementer to
+ * manually decrease the value of the energy, as he simulates energy
+ * consumption. On each cycle, per power input, machines can receive up to
+ * "maxReceivedPerCycle" units of energy. As an optional behavior, the system
+ * can have a minimum amount of energy consumed even if the system is at max
+ * capacity, modelized by the "minimumConsumption" value.
+ * 
+ * If the field designated by MjBattery is an object, then it will be considered
+ * as a nested battery, and will look for the field in the designated object.
  *
- * If the field designated by MjBattery is an object, then BuildCraft will
- * consider that this is a case of a nested battery, and will look for the
- * field in the designated object.
+ * All the properties defined in this annotation are class wide. If you need to
+ * change them on a tile by tile basis, you will need to use interfaces, either
+ * {@link IBatteryProvider} or {@link ISidedBatteryProvider}
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
@@ -59,7 +62,7 @@ public @interface MjBattery {
 	String kind() default MjAPI.DEFAULT_POWER_FRAMEWORK;
 
 	/**
-	 * @return Sides on which this battery should works. Can be overrided by {@link ISidedBatteryProvider}
+	 * @return Sides on which this battery should works.
 	 */
 	ForgeDirection[] sides() default { ForgeDirection.UNKNOWN };
 }
