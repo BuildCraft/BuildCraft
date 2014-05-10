@@ -176,8 +176,18 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 					facadeBlocks[i][1] = null;
 				}
 
-				facadeMeta[i][0] = nbt.getInteger("facadeMeta[" + i + "][0]");
-				facadeMeta[i][1] = nbt.getInteger("facadeMeta[" + i + "][1]");
+				if (nbt.hasKey("facadeBlocks[" + i + "]")) {
+					facadeBlocks[i][0] = (Block) Block.blockRegistry.getObjectById(nbt.getInteger("facadeBlocks[" + i + "]"));
+					facadeBlocks[i][1] = null;
+				}
+
+				if (nbt.hasKey("facadeMeta[" + i + "]")) {
+					facadeMeta[i][0] = nbt.getInteger("facadeMeta[" + i + "]");
+					facadeMeta[i][1] = 0;
+				} else {
+					facadeMeta[i][0] = nbt.getInteger("facadeMeta[" + i + "][0]");
+					facadeMeta[i][1] = nbt.getInteger("facadeMeta[" + i + "][1]");
+				}
 
 				plugs[i] = nbt.getBoolean("plug[" + i + "]");
 				robotStations[i] = nbt.getBoolean("robotStation[" + i + "]");
