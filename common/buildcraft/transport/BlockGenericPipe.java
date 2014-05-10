@@ -36,13 +36,10 @@ import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-
 import net.minecraftforge.common.util.ForgeDirection;
-
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.gates.GateExpansions;
@@ -56,6 +53,7 @@ import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.ItemRobot;
 import buildcraft.core.robots.EntityRobot;
 import buildcraft.core.robots.RobotAIDocked;
+import buildcraft.core.utils.BlockUtil;
 import buildcraft.core.utils.MatrixTranformations;
 import buildcraft.core.utils.Utils;
 import buildcraft.transport.gates.GateDefinition;
@@ -1313,5 +1311,19 @@ public class BlockGenericPipe extends BlockBuildCraft {
 			return facadeRenderColor;
 		}
 		return super.colorMultiplier(world, x, y, z);
+	}
+	
+	public static Pipe[] getBlockNeighboursAsPipes(IBlockAccess blockAccess, int x, int y, int z) {
+		TileEntity entities[] = BlockUtil.getBlockNeighboursAsTileEntities(blockAccess, x, y, z);
+		Pipe pipes[] = new Pipe[6];
+		for(int i = 0; i < 6; i++) {
+			if (!(entities[i] instanceof TileGenericPipe) || entities[i].isInvalid()) {
+				pipes[i] = null;
+			} else {
+				pipes[i] = ((TileGenericPipe) entities[i]).pipe;
+			}
+		}
+		
+		return pipes;
 	}
 }

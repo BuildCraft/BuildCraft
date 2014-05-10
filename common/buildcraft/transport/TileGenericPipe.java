@@ -1019,4 +1019,12 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 			((IGuiReturnHandler) pipe).readGuiData(data, sender);
 		}
 	}
+	
+	protected boolean isBlockNeighborChange() {
+		return blockNeighborChange;
+	}
+
+	protected void setBlockNeighborChange(boolean blockNeighborChange) {
+		this.blockNeighborChange = blockNeighborChange;
+	}
 }

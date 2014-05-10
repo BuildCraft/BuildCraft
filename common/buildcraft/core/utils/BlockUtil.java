@@ -18,12 +18,12 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.server.S27PacketExplosion;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.ChunkPosition;
 import net.minecraft.world.Explosion;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-
 import cpw.mods.fml.common.FMLCommonHandler;
-
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.fluids.BlockFluidBase;
 import net.minecraftforge.fluids.Fluid;
@@ -31,7 +31,6 @@ import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidBlock;
-
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftEnergy;
 import buildcraft.core.proxy.CoreProxy;
@@ -200,5 +199,19 @@ public final class BlockUtil {
 				((EntityPlayerMP) player).playerNetServerHandler.sendPacket(new S27PacketExplosion(x + .5, y + .5, z + .5, 3f, explosion.affectedBlockPositions, null));
 			}
 		}
+	}
+	
+	public static TileEntity[] getBlockNeighboursAsTileEntities(IBlockAccess blockAccess, int x, int y, int z) {
+		
+		TileEntity[] entities = new TileEntity[6];
+		
+		entities[0] = blockAccess.getTileEntity(x, y - 1, z);
+		entities[1] = blockAccess.getTileEntity(x, y + 1, z);
+		entities[2] = blockAccess.getTileEntity(x, y, z - 1);
+		entities[3] = blockAccess.getTileEntity(x, y, z + 1);
+		entities[4] = blockAccess.getTileEntity(x - 1, y, z);
+		entities[5] = blockAccess.getTileEntity(x + 1, y, z);
+		
+		return entities;
 	}
 }
