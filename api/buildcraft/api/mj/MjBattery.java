@@ -14,6 +14,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import net.minecraftforge.common.util.ForgeDirection;
+
 /**
  * This annotation is used for tiles that need to interface with BuildCraft
  * energy framework, a.k.a MinecraftJoule or MJ. In order to receive power,
@@ -55,4 +57,9 @@ public @interface MjBattery {
 	 *         coexist in the same tile.
 	 */
 	String kind() default MjAPI.DEFAULT_POWER_FRAMEWORK;
+
+	/**
+	 * @return Sides on which this battery should works. Can be overrided by {@link ISidedBatteryProvider}
+	 */
+	ForgeDirection[] sides() default { ForgeDirection.UNKNOWN };
 }

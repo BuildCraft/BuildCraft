@@ -69,12 +69,12 @@ public final class MjAPI {
 			IBatteryObject battery;
 
 			if (o instanceof ISidedBatteryProvider) {
-				battery = ((ISidedBatteryProvider) o).getMjBattery(side);
+				battery = ((ISidedBatteryProvider) o).getMjBattery(kind, side);
 				if (battery == null && side != ForgeDirection.UNKNOWN) {
-					battery = ((ISidedBatteryProvider) o).getMjBattery(ForgeDirection.UNKNOWN);
+					battery = ((ISidedBatteryProvider) o).getMjBattery(kind, ForgeDirection.UNKNOWN);
 				}
 			} else {
-				battery = ((IBatteryProvider) o).getMjBattery();
+				battery = ((IBatteryProvider) o).getMjBattery(kind);
 			}
 
 			if (battery != null) {
@@ -82,7 +82,10 @@ public final class MjAPI {
 			}
 		}
 
-		BatteryField f = getMjBatteryField(o.getClass(), kind);
+		BatteryField f = getMjBatteryField(o.getClass(), kind, side);
+		if (f == null && side != ForgeDirection.UNKNOWN) {
+			f = getMjBatteryField(o.getClass(), kind, ForgeDirection.UNKNOWN);
+		}
 
 		if (f == null) {
 			return null;
@@ -149,6 +152,7 @@ public final class MjAPI {
 
 	private static final class BatteryHolder {
 		private String kind;
+		private ForgeDirection side;
 		private Class clazz;
 
 		@Override
@@ -162,13 +166,14 @@ public final class MjAPI {
 
 			BatteryHolder that = (BatteryHolder) o;
 
-			return kind.equals(that.kind) && clazz.equals(that.clazz);
+			return kind.equals(that.kind) && clazz.equals(that.clazz) && side.equals(that.side);
 		}
 
 		@Override
 		public int hashCode() {
 			int result = kind.hashCode();
 			result = 31 * result + clazz.hashCode();
+			result = 31 * result + side.hashCode();
 			return result;
 		}
 	}
@@ -179,10 +184,11 @@ public final class MjAPI {
 		public BatteryKind kind;
 	}
 
-	private static BatteryField getMjBatteryField(Class c, String kind) {
+	private static BatteryField getMjBatteryField(Class c, String kind, ForgeDirection side) {
 		BatteryHolder holder = new BatteryHolder();
 		holder.clazz = c;
 		holder.kind = kind;
+		holder.side = side;
 
 		BatteryField bField = mjBatteries.get(holder);
 
@@ -191,6 +197,9 @@ public final class MjAPI {
 				MjBattery battery = f.getAnnotation(MjBattery.class);
 
 				if (battery != null && kind.equals(battery.kind())) {
+					if (!contains(battery.sides(), side) && !contains(battery.sides(), ForgeDirection.UNKNOWN)) {
+						continue;
+					}
 					f.setAccessible(true);
 					bField = new BatteryField();
 					bField.field = f;
@@ -214,6 +223,15 @@ public final class MjAPI {
 		}
 
 		return bField == invalidBatteryField ? null : bField;
+	}
+
+	private static <T> boolean contains(T[] array, T value) {
+		for (T t : array) {
+			if (t == value) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	static {

@@ -185,8 +185,8 @@ public final class PowerHandler implements IBatteryProvider {
 	}
 
 	@Override
-	public IBatteryObject getMjBattery() {
-		return battery;
+	public IBatteryObject getMjBattery(String kind) {
+		return battery.kind().equals(kind) ? battery : null;
 	}
 
 	/**

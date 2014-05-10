@@ -75,4 +75,9 @@ public interface IBatteryObject {
 	 * @return Current battery object instance
 	 */
 	IBatteryObject reconfigure(double maxCapacity, double maxReceivedPerCycle, double minimumConsumption);
+
+	/**
+	 * @return kind of this energy battery
+	 */
+	String kind();
 }

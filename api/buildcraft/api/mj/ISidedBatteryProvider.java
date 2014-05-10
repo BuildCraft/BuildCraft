@@ -11,5 +11,5 @@ package buildcraft.api.mj;
 import net.minecraftforge.common.util.ForgeDirection;
 
 public interface ISidedBatteryProvider extends IBatteryProvider {
-	IBatteryObject getMjBattery(ForgeDirection direction);
+	IBatteryObject getMjBattery(String kind, ForgeDirection direction);
 }
