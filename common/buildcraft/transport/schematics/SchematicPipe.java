@@ -6,7 +6,7 @@
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-package buildcraft.transport.blueprints;
+package buildcraft.transport.schematics;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -18,10 +18,10 @@ import net.minecraft.tileentity.TileEntity;
 
 import net.minecraftforge.common.util.ForgeDirection;
 
+import buildcraft.api.blueprints.BuildingPermission;
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.MappingRegistry;
 import buildcraft.api.blueprints.SchematicTile;
-import buildcraft.api.blueprints.Translation;
 import buildcraft.api.gates.ActionManager;
 import buildcraft.api.gates.IAction;
 import buildcraft.api.gates.ITrigger;
@@ -30,6 +30,8 @@ import buildcraft.transport.Pipe;
 import buildcraft.transport.TileGenericPipe.SideProperties;
 
 public class SchematicPipe extends SchematicTile {
+
+	private BuildingPermission permission = BuildingPermission.ALL;
 
 	@Override
 	public boolean isAlreadyBuilt(IBuilderContext context, int x, int y, int z) {
@@ -50,7 +52,7 @@ public class SchematicPipe extends SchematicTile {
 		props.rotateLeft();
 		props.writeToNBT(cpt);
 
-		Item pipeItem = (Item) Item.itemRegistry.getObject(cpt.getString("pipeName"));
+		Item pipeItem = context.getMappingRegistry().getItemForId(cpt.getInteger("pipeId"));
 
 		if (BptPipeExtension.contains(pipeItem)) {
 			BptPipeExtension.get(pipeItem).rotateLeft(this, context);
@@ -86,7 +88,7 @@ public class SchematicPipe extends SchematicTile {
 	}
 
 	@Override
-	public void readFromWorld(IBuilderContext context, int x, int y, int z) {
+	public void writeToSchematic(IBuilderContext context, int x, int y, int z) {
 		TileEntity tile = context.world().getTileEntity(x, y, z);
 		Pipe pipe = BlockGenericPipe.getPipe(context.world(), x, y, z);
 
@@ -112,7 +114,7 @@ public class SchematicPipe extends SchematicTile {
 	}
 
 	@Override
-	public void readRequirementsFromWorld(IBuilderContext context, int x, int y, int z) {
+	public void writeRequirementsToSchematic(IBuilderContext context, int x, int y, int z) {
 		TileEntity tile = context.world().getTileEntity(x, y, z);
 		Pipe pipe = BlockGenericPipe.getPipe(context.world(), x, y, z);
 
@@ -140,20 +142,77 @@ public class SchematicPipe extends SchematicTile {
 	}
 
 	@Override
-	public void transformToBlueprint(MappingRegistry registry, Translation transform) {
-		super.transformToBlueprint(registry, transform);
+	public void idsToSchematic(MappingRegistry registry) {
+		super.idsToSchematic(registry);
 
 		if (cpt.hasKey("pipeId")) {
-			cpt.setString("pipeName", Item.itemRegistry.getNameForObject(Item.getItemById(cpt.getInteger("pipeId"))));
+			Item item = Item.getItemById(cpt.getInteger("pipeId"));
+
+			cpt.setInteger("pipeId", registry.getIdForItem(item));
+
+			if (cpt.hasKey("Gate")) {
+				NBTTagCompound gateNBT = cpt.getCompoundTag("Gate");
+
+				for (int i = 0; i < 8; ++i) {
+					if (gateNBT.hasKey("triggerParameters[" + i + "]")) {
+						NBTTagCompound parameterNBT = gateNBT.getCompoundTag("triggerParameters[" + i + "]");
+
+						if (parameterNBT.hasKey("stack")) {
+							registry.stackToRegistry(parameterNBT.getCompoundTag("stack"));
+						}
+					}
+				}
+			}
 		}
 	}
 
 	@Override
-	public void transformToWorld(MappingRegistry registry, Translation transform) {
-		super.transformToBlueprint(registry, transform);
+	public void idsToWorld(MappingRegistry registry) {
+		super.idsToWorld(registry);
 
 		if (cpt.hasKey("pipeId")) {
-			cpt.setInteger("pipeId", Item.getIdFromItem((Item) Item.itemRegistry.getObject(cpt.getString("pipeName"))));
+			Item item = registry.getItemForId(cpt.getInteger("pipeId"));
+
+			cpt.setInteger("pipeId", Item.getIdFromItem(item));
+
+			if (cpt.hasKey("Gate")) {
+				NBTTagCompound gateNBT = cpt.getCompoundTag("Gate");
+
+				for (int i = 0; i < 8; ++i) {
+					if (gateNBT.hasKey("triggerParameters[" + i + "]")) {
+						NBTTagCompound parameterNBT = gateNBT.getCompoundTag("triggerParameters[" + i + "]");
+
+						if (parameterNBT.hasKey("stack")) {
+							registry.stackToWorld(parameterNBT.getCompoundTag("stack"));
+						}
+					}
+				}
+			}
+
 		}
+	}
+
+	@Override
+	public void writeToNBT(NBTTagCompound nbt, MappingRegistry registry) {
+		super.writeToNBT(nbt, registry);
+		nbt.setInteger("version", 2);
+	}
+
+	@Override
+	public void readFromNBT(NBTTagCompound nbt, MappingRegistry registry) {
+		super.readFromNBT(nbt, registry);
+
+		if (!nbt.hasKey("version") || nbt.getInteger("version") < 2) {
+			// Schematics previous to the fixes in version 2 had item id
+			// translation badly broken. Building a blueprint that contains
+			// these doesn't make any sense, better to prevent the blueprint to
+			// be built altogether.
+			permission = BuildingPermission.NONE;
+		}
+	}
+
+	@Override
+	public BuildingPermission getBuildingPermission() {
+		return permission;
 	}
 }

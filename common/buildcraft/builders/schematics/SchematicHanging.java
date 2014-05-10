@@ -14,8 +14,8 @@ import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+
 import buildcraft.api.blueprints.IBuilderContext;
-import buildcraft.api.blueprints.MappingRegistry;
 import buildcraft.api.blueprints.SchematicEntity;
 import buildcraft.api.blueprints.Translation;
 import buildcraft.api.core.Position;
@@ -29,8 +29,8 @@ public class SchematicHanging extends SchematicEntity {
 	}
 
 	@Override
-	public void transformToBlueprint(MappingRegistry registry, Translation transform) {
-		super.transformToBlueprint(registry, transform);
+	public void translateToSchematic(Translation transform) {
+		super.translateToSchematic(transform);
 
 		Position pos = new Position (cpt.getInteger("TileX"), cpt.getInteger("TileY"), cpt.getInteger("TileZ"));
 		pos = transform.translate(pos);
@@ -40,8 +40,8 @@ public class SchematicHanging extends SchematicEntity {
 	}
 
 	@Override
-	public void transformToWorld(MappingRegistry registry, Translation transform) {
-		super.transformToWorld(registry, transform);
+	public void translateToWorld(Translation transform) {
+		super.translateToWorld(transform);
 
 		Position pos = new Position (cpt.getInteger("TileX"), cpt.getInteger("TileY"), cpt.getInteger("TileZ"));
 		pos = transform.translate(pos);

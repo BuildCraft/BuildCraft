@@ -6,7 +6,7 @@
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-package buildcraft.transport.blueprints;
+package buildcraft.transport.schematics;
 
 import java.util.HashMap;
 
@@ -38,4 +38,5 @@ public class BptPipeExtension {
 	public static BptPipeExtension get (Item i) {
 		return bptPipeExtensionRegistry.get(i);
 	}
+
 }

@@ -77,10 +77,6 @@ public class BlockBlueprintLibrary extends BlockContainer {
 	public void onBlockPlacedBy(World world, int i, int j, int k, EntityLivingBase entityliving, ItemStack stack) {
 		if (!world.isRemote && entityliving instanceof EntityPlayer) {
 			TileEntity tile = world.getTileEntity(i, j, k);
-
-			if (tile instanceof TileBlueprintLibrary) {
-				((TileBlueprintLibrary) tile).owner = ((EntityPlayer) entityliving).getDisplayName();
-			}
 		}
 	}
 

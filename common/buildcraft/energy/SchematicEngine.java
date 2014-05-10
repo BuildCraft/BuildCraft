@@ -29,7 +29,7 @@ public class SchematicEngine extends SchematicTile {
 	}
 
 	@Override
-	public void readFromWorld(IBuilderContext context, int x, int y, int z) {
+	public void writeToSchematic(IBuilderContext context, int x, int y, int z) {
 		TileEngine engine = (TileEngine) context.world().getTileEntity(x, y, z);
 
 		cpt.setInteger("orientation", engine.orientation.ordinal());

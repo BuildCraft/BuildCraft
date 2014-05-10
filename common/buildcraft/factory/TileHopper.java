@@ -28,16 +28,22 @@ public class TileHopper extends TileBuildCraft implements IInventory {
 	@Override
 	public void readFromNBT(NBTTagCompound nbtTagCompound) {
 		super.readFromNBT(nbtTagCompound);
-		NBTTagCompound p = (NBTTagCompound) nbtTagCompound.getTag("inventory");
+
+		NBTTagCompound p = nbtTagCompound;
+
+		if (nbtTagCompound.hasKey("inventory")) {
+			// to support pre 6.0 loading
+			p = nbtTagCompound.getCompoundTag("inventory");
+		}
+
 		inventory.readFromNBT(p);
 	}
 
 	@Override
 	public void writeToNBT(NBTTagCompound nbtTagCompound) {
 		super.writeToNBT(nbtTagCompound);
-		NBTTagCompound inventoryTag = new NBTTagCompound();
-		inventory.writeToNBT(inventoryTag);
-		nbtTagCompound.setTag("inventory", inventoryTag);
+
+		inventory.writeToNBT(nbtTagCompound);
 	}
 
 	@Override

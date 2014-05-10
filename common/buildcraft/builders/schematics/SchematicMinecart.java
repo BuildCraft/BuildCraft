@@ -13,8 +13,8 @@ import net.minecraft.entity.item.EntityMinecart;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagList;
+
 import buildcraft.api.blueprints.IBuilderContext;
-import buildcraft.api.blueprints.MappingRegistry;
 import buildcraft.api.blueprints.SchematicEntity;
 import buildcraft.api.blueprints.Translation;
 import buildcraft.api.core.Position;
@@ -28,8 +28,8 @@ public class SchematicMinecart extends SchematicEntity {
 	}
 
 	@Override
-	public void transformToBlueprint(MappingRegistry registry, Translation transform) {
-		super.transformToBlueprint(registry, transform);
+	public void translateToSchematic(Translation transform) {
+		super.translateToSchematic(transform);
 
 		NBTTagList nbttaglist = cpt.getTagList("Pos", 6);
 		Position pos = new Position(nbttaglist.func_150309_d(0),
@@ -41,8 +41,8 @@ public class SchematicMinecart extends SchematicEntity {
 
 
 	@Override
-	public void transformToWorld(MappingRegistry registry, Translation transform) {
-		super.transformToWorld(registry, transform);
+	public void translateToWorld(Translation transform) {
+		super.translateToWorld(transform);
 
 		NBTTagList nbttaglist = cpt.getTagList("Pos", 6);
 		Position pos = new Position(nbttaglist.func_150309_d(0),

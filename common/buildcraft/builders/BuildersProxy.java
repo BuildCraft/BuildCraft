@@ -25,9 +25,4 @@ public final class BuildersProxy {
 
 		return !(block == null || !block.renderAsNormalBlock());
 	}
-
-	public static String getOwner(TileBlueprintLibrary library) {
-		return library.owner;
-	}
-
 }

@@ -41,10 +41,10 @@ import buildcraft.core.blueprints.BptBuilderBlueprint;
 import buildcraft.core.blueprints.BptBuilderTemplate;
 import buildcraft.core.blueprints.BptContext;
 import buildcraft.core.inventory.InvUtils;
+import buildcraft.core.inventory.SimpleInventory;
 import buildcraft.core.network.RPC;
 import buildcraft.core.network.RPCHandler;
 import buildcraft.core.network.RPCSide;
-import buildcraft.core.utils.Utils;
 
 public class TileBuilder extends TileAbstractBuilder implements IMachine {
 
@@ -54,7 +54,7 @@ public class TileBuilder extends TileAbstractBuilder implements IMachine {
 	public Box box = new Box();
 	public PathIterator currentPathIterator;
 
-	private final ItemStack[] items = new ItemStack[28];
+	private SimpleInventory inv = new SimpleInventory(28, "Builder", 64);
 	private BptBuilderBase bluePrintBuilder;
 	private LinkedList<BlockIndex> path;
 	private LinkedList<ItemStack> requiredToBuild;
@@ -273,7 +273,7 @@ public class TileBuilder extends TileAbstractBuilder implements IMachine {
 		BlueprintBase bpt = null;
 
 		try {
-			bpt = ItemBlueprint.loadBlueprint(items [0]);
+			bpt = ItemBlueprint.loadBlueprint(getStackInSlot(0));
 		} catch (Throwable t) {
 			setInventorySlotContents(0, null);
 			t.printStackTrace();
@@ -313,11 +313,11 @@ public class TileBuilder extends TileAbstractBuilder implements IMachine {
 		transform.y = y - bpt.anchorY;
 		transform.z = z - bpt.anchorZ;
 
-		bpt.transformToWorld(transform);
+		bpt.translateToWorld(transform);
 
-		if (items[0].getItem() instanceof ItemBlueprintStandard) {
+		if (getStackInSlot(0).getItem() instanceof ItemBlueprintStandard) {
 			return new BptBuilderBlueprint((Blueprint) bpt, worldObj, x, y, z);
-		} else if (items[0].getItem() instanceof ItemBlueprintTemplate) {
+		} else if (getStackInSlot(0).getItem() instanceof ItemBlueprintTemplate) {
 			return new BptBuilderTemplate(bpt, worldObj, x, y, z);
 		} else {
 			return null;
@@ -325,7 +325,7 @@ public class TileBuilder extends TileAbstractBuilder implements IMachine {
 	}
 
 	public void iterateBpt(boolean forceIterate) {
-		if (items[0] == null || !(items[0].getItem() instanceof ItemBlueprint)) {
+		if (getStackInSlot(0) == null || !(getStackInSlot(0).getItem() instanceof ItemBlueprint)) {
 			if (bluePrintBuilder != null) {
 				bluePrintBuilder = null;
 			}
@@ -399,44 +399,35 @@ public class TileBuilder extends TileAbstractBuilder implements IMachine {
 
 		if (done) {
 			boolean dropBlueprint = true;
-			for (int i = 1; i < items.length; ++i) {
-				if (items[i] == null) {
-					items[i] = items[0];
+			for (int i = 1; i < getSizeInventory(); ++i) {
+				if (getStackInSlot(i) == null) {
+					setInventorySlotContents(i, getStackInSlot(0));
 					dropBlueprint = false;
 					break;
 				}
 			}
 			if (dropBlueprint) {
-				InvUtils.dropItems(getWorld(), items[0], xCoord, yCoord, zCoord);
+				InvUtils.dropItems(getWorld(), getStackInSlot(0), xCoord, yCoord, zCoord);
 			}
 
-			items[0] = null;
+			setInventorySlotContents(0, null);
 			box.reset();
 		}
 	}
 
 	@Override
 	public int getSizeInventory() {
-		return items.length;
+		return inv.getSizeInventory();
 	}
 
 	@Override
 	public ItemStack getStackInSlot(int i) {
-		return items[i];
+		return inv.getStackInSlot(i);
 	}
 
 	@Override
 	public ItemStack decrStackSize(int i, int j) {
-		ItemStack result;
-		if (items[i] == null) {
-			result = null;
-		} else if (items[i].stackSize > j) {
-			result = items[i].splitStack(j);
-		} else {
-			ItemStack tmp = items[i];
-			items[i] = null;
-			result = tmp;
-		}
+		ItemStack result = inv.decrStackSize(i, j);
 
 		if (!worldObj.isRemote) {
 			if (i == 0) {
@@ -451,7 +442,7 @@ public class TileBuilder extends TileAbstractBuilder implements IMachine {
 
 	@Override
 	public void setInventorySlotContents(int i, ItemStack itemstack) {
-		items[i] = itemstack;
+		inv.setInventorySlotContents(i, itemstack);
 
 		if (!worldObj.isRemote) {
 			if (i == 0) {
@@ -463,12 +454,7 @@ public class TileBuilder extends TileAbstractBuilder implements IMachine {
 
 	@Override
 	public ItemStack getStackInSlotOnClosing(int slot) {
-		if (items[slot] == null) {
-			return null;
-		}
-		ItemStack toReturn = items[slot];
-		items[slot] = null;
-		return toReturn;
+		return inv.getStackInSlotOnClosing(slot);
 	}
 
 	@Override
@@ -490,7 +476,7 @@ public class TileBuilder extends TileAbstractBuilder implements IMachine {
 	public void readFromNBT(NBTTagCompound nbttagcompound) {
 		super.readFromNBT(nbttagcompound);
 
-		Utils.readStacksFromNBT(nbttagcompound, "Items", items);
+		inv.readFromNBT(nbttagcompound);
 
 		if (nbttagcompound.hasKey("box")) {
 			box.initialize(nbttagcompound.getCompoundTag("box"));
@@ -516,7 +502,7 @@ public class TileBuilder extends TileAbstractBuilder implements IMachine {
 	public void writeToNBT(NBTTagCompound nbttagcompound) {
 		super.writeToNBT(nbttagcompound);
 
-		Utils.writeStacksToNBT(nbttagcompound, "Items", items);
+		inv.writeToNBT(nbttagcompound);
 
 		if (box.isInitialized()) {
 			NBTTagCompound boxStore = new NBTTagCompound();

@@ -23,7 +23,7 @@ public class SchematicPumpkin extends SchematicBlock {
 	}
 
 	@Override
-	public void readRequirementsFromWorld(IBuilderContext context, int x, int y, int z) {
+	public void writeRequirementsToSchematic(IBuilderContext context, int x, int y, int z) {
 		// cancel requirements reading
 	}
 

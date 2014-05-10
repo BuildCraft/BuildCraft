@@ -25,7 +25,7 @@ public class SchematicRefinery extends SchematicTile {
 	}
 
 	@Override
-	public void readFromWorld(IBuilderContext context, int x, int y, int z) {
+	public void writeToSchematic(IBuilderContext context, int x, int y, int z) {
 		TileRefinery refinery = (TileRefinery) context.world().getTileEntity(x, y, z);
 
 //		slot.cpt.setInteger("filter0", refinery.getFilter(0));

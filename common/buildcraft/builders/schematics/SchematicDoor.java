@@ -35,7 +35,7 @@ public class SchematicDoor extends SchematicBlock {
 	}
 
 	@Override
-	public void readRequirementsFromWorld(IBuilderContext context, int x, int y, int z) {
+	public void writeRequirementsToSchematic(IBuilderContext context, int x, int y, int z) {
 		// cancel requirements reading
 	}
 
@@ -83,8 +83,8 @@ public class SchematicDoor extends SchematicBlock {
 	}
 
 	@Override
-	public void readFromWorld(IBuilderContext context, int x, int y, int z) {
-		super.readFromWorld(context, x, y, z);
+	public void writeToSchematic(IBuilderContext context, int x, int y, int z) {
+		super.writeToSchematic(context, x, y, z);
 
 		if ((meta & 8) == 0) {
 			upperMeta = context.world().getBlockMetadata(x, y + 1, z);

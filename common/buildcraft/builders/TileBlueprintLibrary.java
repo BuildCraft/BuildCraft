@@ -18,12 +18,11 @@ import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 
 import buildcraft.BuildCraftBuilders;
-import buildcraft.api.core.NetworkData;
 import buildcraft.builders.blueprints.BlueprintId;
 import buildcraft.builders.blueprints.BlueprintId.Kind;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.blueprints.BlueprintBase;
-import buildcraft.core.inventory.InvUtils;
+import buildcraft.core.inventory.SimpleInventory;
 import buildcraft.core.network.RPC;
 import buildcraft.core.network.RPCHandler;
 import buildcraft.core.network.RPCSide;
@@ -36,13 +35,10 @@ import buildcraft.core.network.RPCSide;
 public class TileBlueprintLibrary extends TileBuildCraft implements IInventory {
 	private static final int PROGRESS_TIME = 100;
 
-	public ItemStack[] stack = new ItemStack[4];
+	public SimpleInventory inv = new SimpleInventory(4, "Blueprint Library", 1);
 
 	public int progressIn = 0;
 	public int progressOut = 0;
-
-	@NetworkData
-	public String owner = "";
 
 	public ArrayList<BlueprintId> currentPage;
 
@@ -105,18 +101,14 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory {
 	public void readFromNBT(NBTTagCompound nbttagcompound) {
 		super.readFromNBT(nbttagcompound);
 
-		owner = nbttagcompound.getString("owner");
-
-		InvUtils.readStacksFromNBT(nbttagcompound, "stack", stack);
+		inv.readFromNBT(nbttagcompound);
 	}
 
 	@Override
 	public void writeToNBT(NBTTagCompound nbttagcompound) {
 		super.writeToNBT(nbttagcompound);
 
-		nbttagcompound.setString("owner", owner);
-
-		InvUtils.writeStacksToNBT(nbttagcompound, "stack", stack);
+		inv.writeToNBT(nbttagcompound);
 	}
 
 	@Override
@@ -126,30 +118,20 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory {
 
 	@Override
 	public ItemStack getStackInSlot(int i) {
-		return stack[i];
+		return inv.getStackInSlot(i);
 	}
 
 	@Override
 	public ItemStack decrStackSize(int i, int j) {
-		if (stack[i] == null) {
-			return null;
-		}
-
-		ItemStack res = stack[i].splitStack(j);
-
-		if (stack[i].stackSize == 0) {
-			stack[i] = null;
-		}
-
-		return res;
+		return inv.decrStackSize(i, j);
 	}
 
 	@Override
 	public void setInventorySlotContents(int i, ItemStack itemstack) {
-		stack[i] = itemstack;
+		inv.setInventorySlotContents(i, itemstack);
 
 		if (i == 0) {
-			if (stack[0] != null && stack[0].getItem() instanceof ItemBlueprint) {
+			if (getStackInSlot(0) != null && getStackInSlot(0).getItem() instanceof ItemBlueprint) {
 				progressIn = 1;
 			} else {
 				progressIn = 0;
@@ -157,7 +139,7 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory {
 		}
 
 		if (i == 2) {
-			if (stack[2] != null && stack[2].getItem() instanceof ItemBlueprint) {
+			if (getStackInSlot(2) != null && getStackInSlot(2).getItem() instanceof ItemBlueprint) {
 				progressOut = 1;
 			} else {
 				progressOut = 0;
@@ -167,13 +149,7 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory {
 
 	@Override
 	public ItemStack getStackInSlotOnClosing(int slot) {
-		if (stack[slot] == null) {
-			return null;
-		}
-
-		ItemStack toReturn = stack[slot];
-		stack[slot] = null;
-		return toReturn;
+		return inv.getStackInSlotOnClosing(slot);
 	}
 
 	@Override
@@ -222,11 +198,11 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory {
 
 		// On progress IN, we'll download the blueprint from the server to the
 		// client, and then store it to the client.
-		if (progressIn == 100 && stack[1] == null) {
-			setInventorySlotContents(1, stack[0]);
+		if (progressIn == 100 && getStackInSlot(1) == null) {
+			setInventorySlotContents(1, getStackInSlot(0));
 			setInventorySlotContents(0, null);
 
-			BlueprintBase bpt = ItemBlueprint.loadBlueprint(stack [1]);
+			BlueprintBase bpt = ItemBlueprint.loadBlueprint(getStackInSlot(1));
 
 			if (bpt != null && uploadingPlayer != null) {
 				RPCHandler.rpcPlayer(this, "downloadBlueprintToClient",
@@ -235,7 +211,7 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory {
 			}
 		}
 
-		if (progressOut == 100 && stack[3] == null) {
+		if (progressOut == 100 && getStackInSlot(3) == null) {
 			RPCHandler.rpcPlayer(this, "requestSelectedBlueprint",
 					downloadingPlayer);
 			progressOut = 0;
@@ -274,7 +250,7 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory {
 				BuildCraftBuilders.serverDB.add(bpt);
 				setInventorySlotContents(3, bpt.getStack());
 			} else {
-				setInventorySlotContents(3, stack[2]);
+				setInventorySlotContents(3, getStackInSlot(2));
 			}
 
 			setInventorySlotContents(2, null);
@@ -307,13 +283,13 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory {
 	}
 
 	private boolean isOuputConsistent () {
-		if (selected == -1 || stack [2] == null) {
+		if (selected == -1 || getStackInSlot(2) == null) {
 			return false;
 		}
 
-		return (stack [2].getItem() instanceof ItemBlueprintStandard
+		return (getStackInSlot(2).getItem() instanceof ItemBlueprintStandard
 				&& currentPage.get(selected).kind == Kind.Blueprint) ||
-			   (stack [2].getItem() instanceof ItemBlueprintTemplate
+				(getStackInSlot(2).getItem() instanceof ItemBlueprintTemplate
 				&& currentPage.get(selected).kind == Kind.Template);
 	}
 }

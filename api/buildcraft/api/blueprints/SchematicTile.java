@@ -29,13 +29,13 @@ public class SchematicTile extends SchematicBlock {
 	public NBTTagCompound cpt = new NBTTagCompound();
 
 	@Override
-	public void transformToBlueprint(MappingRegistry registry, Translation transform) {
-		inventorySlotsToBlueprint(registry, cpt);
+	public void idsToSchematic(MappingRegistry registry) {
+		inventorySlotsToSchematic(registry, cpt, "Items");
 	}
 
 	@Override
-	public void transformToWorld(MappingRegistry registry, Translation transform) {
-		inventorySlotsToWorld(registry, cpt);
+	public void idsToWorld(MappingRegistry registry) {
+		inventorySlotsToWorld(registry, cpt, "Items");
 	}
 
 	/**
@@ -59,8 +59,8 @@ public class SchematicTile extends SchematicBlock {
 	}
 
 	@Override
-	public void readFromWorld(IBuilderContext context, int x, int y, int z) {
-		super.readFromWorld(context, x, y, z);
+	public void writeToSchematic(IBuilderContext context, int x, int y, int z) {
+		super.writeToSchematic(context, x, y, z);
 
 		if (block.hasTileEntity(meta)) {
 			TileEntity tile = context.world().getTileEntity(x, y, z);
@@ -72,8 +72,8 @@ public class SchematicTile extends SchematicBlock {
 	}
 
 	@Override
-	public void readRequirementsFromWorld(IBuilderContext context, int x, int y, int z) {
-		super.readRequirementsFromWorld(context, x, y, z);
+	public void writeRequirementsToSchematic(IBuilderContext context, int x, int y, int z) {
+		super.writeRequirementsToSchematic(context, x, y, z);
 
 		if (block.hasTileEntity(meta)) {
 			TileEntity tile = context.world().getTileEntity(x, y, z);

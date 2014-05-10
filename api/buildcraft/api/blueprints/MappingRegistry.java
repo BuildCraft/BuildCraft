@@ -67,13 +67,13 @@ public class MappingRegistry {
 		return itemToId.get(item);
 	}
 
-	public int itemIdWorldToRegistry(int id) {
+	public int itemIdToRegistry(int id) {
 		Item item = Item.getItemById(id);
 
 		return getIdForItem(item);
 	}
 
-	public int itemIdRegistryToWorld(int id) {
+	public int itemIdToWorld(int id) {
 		Item item = getItemForId(id);
 
 		return Item.getIdFromItem(item);
@@ -95,13 +95,13 @@ public class MappingRegistry {
 		return blockToId.get(block);
 	}
 
-	public int blockIdWorldToRegistry(int id) {
+	public int blockIdToRegistry(int id) {
 		Block block = Block.getBlockById(id);
 
 		return getIdForBlock(block);
 	}
 
-	public int blockIdRegistryToWorld(int id) {
+	public int blockIdToWorld(int id) {
 		Block block = getBlockForId(id);
 
 		return Block.getIdFromBlock(block);
@@ -121,6 +121,44 @@ public class MappingRegistry {
 		}
 
 		return entityToId.get(entity);
+	}
+
+	/**
+	 * Relocates a stack nbt from the world referential to the registry
+	 * referential.
+	 */
+	public void stackToRegistry(NBTTagCompound nbt) {
+		Item item = Item.getItemById(nbt.getInteger("id"));
+		nbt.setInteger("id", getIdForItem(item));
+	}
+
+	/**
+	 * Relocates a stack nbt from the registry referential to the world
+	 * referential.
+	 */
+	public void stackToWorld(NBTTagCompound nbt) {
+		Item item = getItemForId(nbt.getInteger("id"));
+		nbt.setInteger("id", Item.getIdFromItem(item));
+	}
+
+	/**
+	 * Relocates an inventory nbt from the world referential to the registry
+	 * referential.
+	 */
+	public void inventoryToRegistry(NBTTagList nbt) {
+		for (int i = 0; i < nbt.tagCount(); ++i) {
+			stackToRegistry(nbt.getCompoundTagAt(i));
+		}
+	}
+
+	/**
+	 * Relocates an inventory nbt from the registry referential to the world
+	 * referential.
+	 */
+	public void inventoryToWorld(NBTTagList nbt) {
+		for (int i = 0; i < nbt.tagCount(); ++i) {
+			stackToWorld(nbt.getCompoundTagAt(i));
+		}
 	}
 
 	public void write (NBTTagCompound nbt) {

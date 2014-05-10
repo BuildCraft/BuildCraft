@@ -14,7 +14,6 @@ import java.util.LinkedList;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFalling;
 import net.minecraft.block.BlockLiquid;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -71,13 +70,13 @@ public class SchematicBlock extends SchematicBlockBase {
 	}
 
 	@Override
-	public void readFromWorld(IBuilderContext context, int x, int y, int z) {
+	public void writeToSchematic(IBuilderContext context, int x, int y, int z) {
 
 	}
 
 	@Override
-	public void readRequirementsFromWorld(IBuilderContext context, int x, int y, int z) {
-		super.readRequirementsFromWorld(context, x, y, z);
+	public void writeRequirementsToSchematic(IBuilderContext context, int x, int y, int z) {
+		super.writeRequirementsToSchematic(context, x, y, z);
 
 		if (block != null) {
 			ArrayList<ItemStack> req = block.getDrops(context.world(), x,
@@ -92,6 +91,8 @@ public class SchematicBlock extends SchematicBlockBase {
 
 	@Override
 	public void writeToNBT(NBTTagCompound nbt, MappingRegistry registry) {
+		super.writeToNBT(nbt, registry);
+
 		nbt.setInteger("blockId", registry.getIdForBlock(block));
 		nbt.setInteger("blockMeta", meta);
 
@@ -100,8 +101,8 @@ public class SchematicBlock extends SchematicBlockBase {
 
 			for (ItemStack stack : storedRequirements) {
 				NBTTagCompound sub = new NBTTagCompound();
-				stack.writeToNBT(stack.writeToNBT(sub));
-				sub.setInteger("id", registry.getIdForItem(stack.getItem()));
+				stack.writeToNBT(sub);
+				registry.stackToRegistry(sub);
 				rq.appendTag(sub);
 			}
 
@@ -111,6 +112,8 @@ public class SchematicBlock extends SchematicBlockBase {
 
 	@Override
 	public void readFromNBT(NBTTagCompound nbt,	MappingRegistry registry) {
+		super.readFromNBT(nbt, registry);
+
 		block = registry.getBlockForId(nbt.getInteger("blockId"));
 		meta = nbt.getInteger("blockMeta");
 
@@ -124,11 +127,7 @@ public class SchematicBlock extends SchematicBlockBase {
 					NBTTagCompound sub = rq.getCompoundTagAt(i);
 
 					if (sub.getInteger("id") >= 0) {
-						// Maps the id in the blueprint to the id in the world
-						sub.setInteger("id", Item.itemRegistry
-								.getIDForObject(registry.getItemForId(sub
-										.getInteger("id"))));
-
+						registry.stackToWorld(sub);
 						rqs.add(ItemStack.loadItemStackFromNBT(sub));
 					} else {
 						defaultPermission = BuildingPermission.CREATIVE_ONLY;

@@ -12,10 +12,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.AxisAlignedBB;
 
-import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.BuildCraftBuilders;
@@ -33,6 +31,7 @@ import buildcraft.core.blueprints.BlueprintBase;
 import buildcraft.core.blueprints.BlueprintReadConfiguration;
 import buildcraft.core.blueprints.BptContext;
 import buildcraft.core.blueprints.Template;
+import buildcraft.core.inventory.SimpleInventory;
 import buildcraft.core.network.RPC;
 import buildcraft.core.network.RPCHandler;
 import buildcraft.core.network.RPCSide;
@@ -51,7 +50,7 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 	@NetworkData
 	public BlueprintReadConfiguration readConfiguration = new BlueprintReadConfiguration();
 
-	private ItemStack[] items = new ItemStack[2];
+	private SimpleInventory inv = new SimpleInventory(2, "Architect", 1);
 	private BlueprintBase writingBlueprint;
 	private BptContext writingContext;
 	private BlockScanner blockScanner;
@@ -83,7 +82,7 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 					transform.y = -writingContext.surroundingBox().pMin().y;
 					transform.z = -writingContext.surroundingBox().pMin().z;
 
-					writingBlueprint.transformToBlueprint(transform);
+					writingBlueprint.translateToBlueprint(transform);
 
 					ForgeDirection o = ForgeDirection.values()[worldObj.getBlockMetadata(
 							xCoord, yCoord, zCoord)].getOpposite();
@@ -162,22 +161,12 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 
 	@Override
 	public ItemStack getStackInSlot(int i) {
-		return items[i];
+		return inv.getStackInSlot(i);
 	}
 
 	@Override
 	public ItemStack decrStackSize(int i, int j) {
-		ItemStack result;
-
-		if (items[i] == null) {
-			result = null;
-		} else if (items[i].stackSize > j) {
-			result = items[i].splitStack(j);
-		} else {
-			ItemStack tmp = items[i];
-			items[i] = null;
-			result = tmp;
-		}
+		ItemStack result = inv.decrStackSize(i, j);
 
 		if (i == 0) {
 			initializeComputing();
@@ -188,7 +177,7 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 
 	@Override
 	public void setInventorySlotContents(int i, ItemStack itemstack) {
-		items[i] = itemstack;
+		inv.setInventorySlotContents(i, itemstack);
 
 		if (i == 0) {
 			initializeComputing();
@@ -197,13 +186,7 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 
 	@Override
 	public ItemStack getStackInSlotOnClosing(int slot) {
-		if (items[slot] == null) {
-			return null;
-		}
-
-		ItemStack toReturn = items[slot];
-		items[slot] = null;
-		return toReturn;
+		return inv.getStackInSlotOnClosing(slot);
 	}
 
 	@Override
@@ -236,18 +219,7 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 			box.initialize(nbttagcompound.getCompoundTag("box"));
 		}
 
-		NBTTagList nbttaglist = nbttagcompound.getTagList("Items",
-				Constants.NBT.TAG_COMPOUND);
-		items = new ItemStack[getSizeInventory()];
-
-		for (int i = 0; i < nbttaglist.tagCount(); i++) {
-			NBTTagCompound nbttagcompound1 = nbttaglist.getCompoundTagAt(i);
-			int j = nbttagcompound1.getByte("Slot") & 0xff;
-
-			if (j >= 0 && j < items.length) {
-				items[j] = ItemStack.loadItemStackFromNBT(nbttagcompound1);
-			}
-		}
+		inv.readFromNBT(nbttagcompound);
 
 		name = nbttagcompound.getString("name");
 		currentAuthorName = nbttagcompound.getString("lastAuthor");
@@ -275,17 +247,8 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 			nbttagcompound.setTag("box", boxStore);
 		}
 
-		NBTTagList nbttaglist = new NBTTagList();
-		for (int i = 0; i < items.length; i++) {
-			if (items[i] != null) {
-				NBTTagCompound nbttagcompound1 = new NBTTagCompound();
-				nbttagcompound1.setByte("Slot", (byte) i);
-				items[i].writeToNBT(nbttagcompound1);
-				nbttaglist.appendTag(nbttagcompound1);
-			}
-		}
+		inv.writeToNBT(nbttagcompound);
 
-		nbttagcompound.setTag("Items", nbttaglist);
 		nbttagcompound.setString("name", name);
 		nbttagcompound.setString("lastAuthor", currentAuthorName);
 
@@ -308,16 +271,17 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 		if (!box.isInitialized()) {
 			return;
 		} else if (blockScanner == null) {
-			if (items[0] != null && items[0].getItem() instanceof ItemBlueprint && items[1] == null) {
-				if (!box.isInitialized() || items[1] != null) {
+			if (getStackInSlot(0) != null && getStackInSlot(0).getItem() instanceof ItemBlueprint
+					&& getStackInSlot(1) == null) {
+				if (!box.isInitialized() || getStackInSlot(1) != null) {
 					return;
 				}
 
 				blockScanner = new BlockScanner(box, getWorld(), SCANNER_ITERATION);
 
-				if (items[0].getItem() instanceof ItemBlueprintStandard) {
+				if (getStackInSlot(0).getItem() instanceof ItemBlueprintStandard) {
 					writingBlueprint = new Blueprint(box.sizeX(), box.sizeY(), box.sizeZ());
-				} else if (items[0].getItem() instanceof ItemBlueprintTemplate) {
+				} else if (getStackInSlot(0).getItem() instanceof ItemBlueprintTemplate) {
 					writingBlueprint = new Template(box.sizeX(), box.sizeY(), box.sizeZ());
 				}
 

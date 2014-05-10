@@ -13,7 +13,6 @@ import java.util.LinkedList;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
 
 import net.minecraftforge.common.util.Constants;
 
@@ -147,22 +146,26 @@ public abstract class Schematic {
 	}
 
 	/**
-	 * Performs a transformations from world to blueprints. In particular, it should:
-	 * - use the registry to map ids from world to blueprints
-	 * - apply translations to all positions in the schematic to center in the
-	 *   blueprint referencial
+	 * Applies translations to all positions in the schematic to center in the
+	 * blueprint referencial
 	 */
-	public void transformToBlueprint(MappingRegistry registry, Translation transform) {
+	public void translateToSchematic(Translation transform) {
 
 	}
 
 	/**
-	 * Performs a transformations from blueprints to worlds. In particular, it should:
-	 * - use the registry to map ids from blueprints to world
-	 * - apply translations to all positions in the schematic to center in the
-	 *   builder referencial
+	 * Apply translations to all positions in the schematic to center in the
+	 * builder referencial
 	 */
-	public void transformToWorld(MappingRegistry registry, Translation transform) {
+	public void translateToWorld(Translation transform) {
+
+	}
+
+	public void idsToSchematic(MappingRegistry registry) {
+
+	}
+
+	public void idsToWorld(MappingRegistry registry) {
 
 	}
 
@@ -183,7 +186,7 @@ public abstract class Schematic {
 	 * By default, if the block is a BlockContainer, tile information will be to
 	 * save / load the block.
 	 */
-	public void readFromWorld(IBuilderContext context, int x, int y, int z) {
+	public void writeToSchematic(IBuilderContext context, int x, int y, int z) {
 
 	}
 
@@ -196,7 +199,7 @@ public abstract class Schematic {
 
 	}
 
-	public void readRequirementsFromWorld(IBuilderContext context, int x, int y, int z) {
+	public void writeRequirementsToSchematic(IBuilderContext context, int x, int y, int z) {
 
 	}
 
@@ -217,41 +220,21 @@ public abstract class Schematic {
 
 	}
 
-	public void inventorySlotsToBlueprint (MappingRegistry registry, NBTTagCompound nbt) {
-		inventorySlotsToBlueprint(registry, nbt, "Items");
-	}
-
-	public void inventorySlotsToBlueprint (MappingRegistry registry, NBTTagCompound nbt, String nbtName) {
+	public void inventorySlotsToSchematic (MappingRegistry registry, NBTTagCompound nbt, String nbtName) {
 		if (!nbt.hasKey(nbtName)) {
 			return;
+		} else {
+			registry.inventoryToRegistry(nbt.getTagList(nbtName,
+					Constants.NBT.TAG_COMPOUND));
 		}
-
-		NBTTagList list = nbt.getTagList(nbtName,
-				Constants.NBT.TAG_COMPOUND);
-
-		for (int i = 0; i < list.tagCount(); ++i) {
-            NBTTagCompound invSlot = list.getCompoundTagAt(i);
-            Item item = Item.getItemById(invSlot.getInteger ("id"));
-            invSlot.setInteger("id", registry.getIdForItem(item));
-		}
-	}
-
-	public void inventorySlotsToWorld (MappingRegistry registry, NBTTagCompound nbt) {
-		inventorySlotsToWorld (registry, nbt, "Items");
 	}
 
 	public void inventorySlotsToWorld (MappingRegistry registry, NBTTagCompound nbt, String nbtName) {
 		if (!nbt.hasKey(nbtName)) {
 			return;
-		}
-
-		NBTTagList list = nbt.getTagList(nbtName,
-				Constants.NBT.TAG_COMPOUND);
-
-		for (int i = 0; i < list.tagCount(); ++i) {
-            NBTTagCompound invSlot = list.getCompoundTagAt(i);
-            Item item = registry.getItemForId(invSlot.getInteger ("id"));
-            invSlot.setInteger("id", Item.getIdFromItem(item));
+		} else {
+			registry.inventoryToWorld(nbt.getTagList(nbtName,
+					Constants.NBT.TAG_COMPOUND));
 		}
 	}
 

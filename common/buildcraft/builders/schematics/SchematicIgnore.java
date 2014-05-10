@@ -28,7 +28,7 @@ public class SchematicIgnore extends SchematicBlock {
 	}
 
 	@Override
-	public void readFromWorld(IBuilderContext context, int x, int y, int z) {
+	public void writeToSchematic(IBuilderContext context, int x, int y, int z) {
 
 	}
 
@@ -38,7 +38,7 @@ public class SchematicIgnore extends SchematicBlock {
 	}
 
 	@Override
-	public void readRequirementsFromWorld(IBuilderContext context, int x, int y, int z) {
+	public void writeRequirementsToSchematic(IBuilderContext context, int x, int y, int z) {
 
 	}
 

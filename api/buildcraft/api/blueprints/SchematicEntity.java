@@ -54,8 +54,7 @@ public class SchematicEntity extends Schematic {
 	}
 
 	@Override
-	public void transformToBlueprint(MappingRegistry registry,
-			Translation transform) {
+	public void translateToSchematic(Translation transform) {
 		NBTTagList nbttaglist = cpt.getTagList("Pos", 6);
 		Position pos = new Position(nbttaglist.func_150309_d(0),
 				nbttaglist.func_150309_d(1), nbttaglist.func_150309_d(2));
@@ -63,12 +62,10 @@ public class SchematicEntity extends Schematic {
 
 		cpt.setTag("Pos",
 				this.newDoubleNBTList(pos.x, pos.y, pos.z));
-
-		inventorySlotsToBlueprint(registry, cpt);
 	}
 
 	@Override
-	public void transformToWorld(MappingRegistry registry, Translation transform) {
+	public void translateToWorld(Translation transform) {
 		NBTTagList nbttaglist = cpt.getTagList("Pos", 6);
 		Position pos = new Position(nbttaglist.func_150309_d(0),
 				nbttaglist.func_150309_d(1), nbttaglist.func_150309_d(2));
@@ -76,8 +73,16 @@ public class SchematicEntity extends Schematic {
 
 		cpt.setTag("Pos",
 				this.newDoubleNBTList(pos.x, pos.y, pos.z));
+	}
 
-		inventorySlotsToWorld(registry, cpt);
+	@Override
+	public void idsToSchematic(MappingRegistry registry) {
+		inventorySlotsToSchematic(registry, cpt, "Items");
+	}
+
+	@Override
+	public void idsToWorld(MappingRegistry registry) {
+		inventorySlotsToWorld(registry, cpt, "Items");
 	}
 
 	@Override
@@ -100,6 +105,8 @@ public class SchematicEntity extends Schematic {
 
 	@Override
 	public void writeToNBT(NBTTagCompound nbt, MappingRegistry registry) {
+		super.writeToNBT(nbt, registry);
+
 		NBTTagList nbttaglist = cpt.getTagList("Pos", 6);
 
 		nbt.setInteger("entityId", registry.getIdForEntity(entity));
@@ -119,6 +126,8 @@ public class SchematicEntity extends Schematic {
 
 	@Override
 	public void readFromNBT(NBTTagCompound nbt, MappingRegistry registry) {
+		super.readFromNBT(nbt, registry);
+
 		cpt = nbt.getCompoundTag("entity");
 
 		NBTTagList rq = nbt.getTagList("rq",
