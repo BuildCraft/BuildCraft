@@ -54,6 +54,7 @@ import buildcraft.core.BlockIndex;
 import buildcraft.core.CoreConstants;
 import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.ItemRobot;
+import buildcraft.core.TileBuffer;
 import buildcraft.core.robots.EntityRobot;
 import buildcraft.core.robots.RobotAIDocked;
 import buildcraft.core.utils.MatrixTranformations;
@@ -564,6 +565,9 @@ public class BlockGenericPipe extends BlockBuildCraft {
 
 		pipeRemoved.put(new BlockIndex(x, y, z), pipe);
 		world.removeTileEntity(x, y, z);
+		
+		updateNeighbourSignalState(pipe);
+		
 	}
 
 	@Override
@@ -859,6 +863,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 				pipe.gate.dropGate();
 			}
 			pipe.resetGate();
+			
 			return true;
 		}
 		return false;
@@ -878,7 +883,9 @@ public class BlockGenericPipe extends BlockBuildCraft {
 		if (!pipe.wireSet[color.ordinal()]) {
 			pipe.wireSet[color.ordinal()] = true;
 			pipe.signalStrength[color.ordinal()] = 0;
-			pipe.container.scheduleNeighborChange();
+			
+			pipe.updateSignalState();
+			pipe.container.scheduleRenderUpdate();
 			return true;
 		}
 		return false;
@@ -890,7 +897,17 @@ public class BlockGenericPipe extends BlockBuildCraft {
 				dropWire(color, pipe);
 			}
 			pipe.wireSet[color.ordinal()] = false;
-			pipe.container.scheduleRenderUpdate();
+			
+			pipe.updateSignalState();
+			
+			updateNeighbourSignalState(pipe);
+			
+			if (isFullyDefined(pipe) && pipe.hasGate()) {
+//				pipe.gate.resolveActions();
+			}
+			
+			pipe.container.scheduleRenderUpdate();			
+			
 			return true;
 		}
 		return false;
@@ -1313,5 +1330,18 @@ public class BlockGenericPipe extends BlockBuildCraft {
 			return facadeRenderColor;
 		}
 		return super.colorMultiplier(world, x, y, z);
+	}
+	
+	public static void updateNeighbourSignalState(Pipe pipe) {
+		TileBuffer neighbours[] = pipe.container.getTileCache();
+		
+		if(neighbours != null) {
+			for(int i = 0; i < 6; i++) {
+				if (neighbours[i] != null && neighbours[i].getTile() instanceof TileGenericPipe && !neighbours[i].getTile().isInvalid()) {
+					((TileGenericPipe) neighbours[i].getTile()).pipe.updateSignalState();
+
+				}
+			}
+		}
 	}
 }
