@@ -18,8 +18,10 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.server.S27PacketExplosion;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.ChunkPosition;
 import net.minecraft.world.Explosion;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
 import cpw.mods.fml.common.FMLCommonHandler;
@@ -34,7 +36,10 @@ import net.minecraftforge.fluids.IFluidBlock;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftEnergy;
+import buildcraft.core.TileBuffer;
 import buildcraft.core.proxy.CoreProxy;
+import buildcraft.transport.BlockGenericPipe;
+import buildcraft.transport.Pipe;
 
 public final class BlockUtil {
 
@@ -200,5 +205,19 @@ public final class BlockUtil {
 				((EntityPlayerMP) player).playerNetServerHandler.sendPacket(new S27PacketExplosion(x + .5, y + .5, z + .5, 3f, explosion.affectedBlockPositions, null));
 			}
 		}
+	}
+	
+	public static TileBuffer[] getBlockNeighboursAsTileBuffer(IBlockAccess blockAccess, int x, int y, int z) {
+		
+		Pipe pipe = BlockGenericPipe.getPipe(blockAccess, x, y, z);
+		TileBuffer[] tiles;
+		
+		if(BlockGenericPipe.isValid(pipe)) {
+			tiles = pipe.container.getTileCache();
+		} else {
+			tiles = TileBuffer.makeBuffer((World) blockAccess, x, y, z, false);
+		}
+
+		return tiles;
 	}
 }

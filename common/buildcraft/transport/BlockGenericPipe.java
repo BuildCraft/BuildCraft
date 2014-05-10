@@ -54,8 +54,10 @@ import buildcraft.core.BlockIndex;
 import buildcraft.core.CoreConstants;
 import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.ItemRobot;
+import buildcraft.core.TileBuffer;
 import buildcraft.core.robots.EntityRobot;
 import buildcraft.core.robots.RobotAIDocked;
+import buildcraft.core.utils.BlockUtil;
 import buildcraft.core.utils.MatrixTranformations;
 import buildcraft.core.utils.Utils;
 import buildcraft.transport.gates.GateDefinition;
@@ -1313,5 +1315,20 @@ public class BlockGenericPipe extends BlockBuildCraft {
 			return facadeRenderColor;
 		}
 		return super.colorMultiplier(world, x, y, z);
+	}
+	
+	public static Pipe[] getBlockNeighboursAsPipes(IBlockAccess blockAccess, int x, int y, int z) {
+		TileBuffer buffer[] = BlockUtil.getBlockNeighboursAsTileBuffer(blockAccess, x, y, z);
+			
+		Pipe pipes[] = new Pipe[6];
+		for(int i = 0; i < 6; i++) {
+			if (!(buffer[i].getTile() instanceof TileGenericPipe) || buffer[i].getTile().isInvalid()) {
+				pipes[i] = null;
+			} else {
+				pipes[i] = ((TileGenericPipe) buffer[i].getTile()).pipe;
+			}
+		}
+		
+		return pipes;
 	}
 }
