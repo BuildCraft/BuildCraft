@@ -141,7 +141,6 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 	public void onNeighborBlockChange(int blockId) {
 		transport.onNeighborBlockChange(blockId);
 
-		updateSignalState();
 	}
 
 	public boolean canPipeConnect(TileEntity tile, ForgeDirection side) {
