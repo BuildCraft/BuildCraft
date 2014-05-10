@@ -38,6 +38,8 @@ public class SchematicEngine extends SchematicTile {
 		cpt.removeTag("progress");
 		cpt.removeTag("energy");
 		cpt.removeTag("heat");
+		cpt.removeTag("tankFuel");
+		cpt.removeTag("tankCoolant");
 	}
 
 	@Override

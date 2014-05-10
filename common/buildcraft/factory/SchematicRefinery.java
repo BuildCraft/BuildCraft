@@ -21,7 +21,7 @@ public class SchematicRefinery extends SchematicTile {
 
 	@Override
 	public void rotateLeft(IBuilderContext context) {
-		meta = ForgeDirection.values()[meta].getRotation(ForgeDirection.DOWN).ordinal();
+		meta = ForgeDirection.values()[meta].getRotation(ForgeDirection.UP).ordinal();
 	}
 
 	@Override
