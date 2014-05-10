@@ -67,6 +67,18 @@ public class MappingRegistry {
 		return itemToId.get(item);
 	}
 
+	public int itemIdWorldToRegistry(int id) {
+		Item item = Item.getItemById(id);
+
+		return getIdForItem(item);
+	}
+
+	public int itemIdRegistryToWorld(int id) {
+		Item item = getItemForId(id);
+
+		return Item.getIdFromItem(item);
+	}
+
 	public Block getBlockForId(int id) {
 		if (id >= idToBlock.size()) {
 			return null;
@@ -81,6 +93,18 @@ public class MappingRegistry {
 		}
 
 		return blockToId.get(block);
+	}
+
+	public int blockIdWorldToRegistry(int id) {
+		Block block = Block.getBlockById(id);
+
+		return getIdForBlock(block);
+	}
+
+	public int blockIdRegistryToWorld(int id) {
+		Block block = getBlockForId(id);
+
+		return Block.getIdFromBlock(block);
 	}
 
 	public Class<? extends Entity> getEntityForId(int id) {
