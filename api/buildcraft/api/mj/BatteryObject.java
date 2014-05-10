@@ -124,8 +124,7 @@ public class BatteryObject implements IBatteryObject {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public BatteryObject reconfigure(final double maxCapacity, final double maxReceivedPerCycle,
-			final double minimumConsumption) {
+	public BatteryObject reconfigure(final double maxCapacity, final double maxReceivedPerCycle, final double minimumConsumption) {
 		batteryData = new MjBattery() {
 			@Override
 			public double maxCapacity() {

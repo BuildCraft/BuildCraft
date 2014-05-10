@@ -112,7 +112,7 @@ public class PipeTransportPower extends PipeTransport {
 			}
 		}
 
-		if (MjAPI.getMjBattery(tile) != null) {
+		if (MjAPI.getMjBattery(tile, MjAPI.DEFAULT_POWER_FRAMEWORK, side.getOpposite()) != null) {
 			return true;
 		}
 
@@ -177,7 +177,7 @@ public class PipeTransportPower extends PipeTransport {
 						if (tiles[j] != null
 								&& (tiles[j] instanceof TileGenericPipe
 										|| tiles[j] instanceof IPowerReceptor || MjAPI
-										.getMjBattery(tiles[j]) != null)) {
+										.getMjBattery(tiles[j], MjAPI.DEFAULT_POWER_FRAMEWORK, ForgeDirection.VALID_DIRECTIONS[j].getOpposite()) != null)) {
 							totalPowerQuery += powerQuery[j];
 						}
 					}
@@ -202,7 +202,7 @@ public class PipeTransportPower extends PipeTransport {
 							internalPower[i] -= watts;
 						} else if (tiles[j] != null) {
 							// Look for the simplified power framework
-							IBatteryObject battery = MjAPI.getMjBattery(tiles [j]);
+							IBatteryObject battery = MjAPI.getMjBattery(tiles[j], MjAPI.DEFAULT_POWER_FRAMEWORK, ForgeDirection.VALID_DIRECTIONS[j].getOpposite());
 
 							if (battery != null) {
 								watts = (internalPower[i] / totalPowerQuery)
@@ -250,7 +250,7 @@ public class PipeTransportPower extends PipeTransport {
 			}
 
 			if (tile != null) {
-				IBatteryObject battery = MjAPI.getMjBattery(tile);
+				IBatteryObject battery = MjAPI.getMjBattery(tile, MjAPI.DEFAULT_POWER_FRAMEWORK, dir.getOpposite());
 
 				if (battery != null) {
 					requestEnergy(dir, battery.getEnergyRequested());
