@@ -459,6 +459,7 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 	}
 
 	public void onBlockRemoval() {
+		
 		if (getWorld().getWorldInfo().getGameType() != GameType.CREATIVE) {
 			for (ItemStack stack : computeItemDrop()) {
 				dropItem(stack);
@@ -513,6 +514,8 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 	public void resetGate() {
 		gate.resetGate();
 		gate = null;
+		
+		internalUpdateScheduled = true;
 		container.scheduleRenderUpdate();
 	}
 
