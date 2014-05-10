@@ -23,7 +23,7 @@ public class SchematicEngine extends SchematicTile {
 	public void rotateLeft(IBuilderContext context) {
 		int o = cpt.getInteger("orientation");
 
-		o = ForgeDirection.values()[o].getRotation(ForgeDirection.DOWN).ordinal();
+		o = ForgeDirection.values()[o].getRotation(ForgeDirection.UP).ordinal();
 
 		cpt.setInteger("orientation", o);
 	}
