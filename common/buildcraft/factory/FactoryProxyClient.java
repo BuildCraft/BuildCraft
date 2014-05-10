@@ -33,6 +33,7 @@ public class FactoryProxyClient extends FactoryProxy {
 	public static IIcon pumpTexture;
 	public static IIcon drillTexture;
 	public static IIcon drillHeadTexture;
+	public static IIcon drillArmTexture;
 
 	@Override
 	public void initializeTileEntities() {
@@ -90,6 +91,13 @@ public class FactoryProxyClient extends FactoryProxy {
 	public EntityBlock newDrillHead(World w, double i, double j, double k, double l, double d, double e) {
 		EntityBlock eb = super.newDrillHead(w, i, j, k, l, d, e);
 		eb.texture = drillHeadTexture;
+		return eb;
+	}
+
+	@Override
+	public EntityBlock newDrillArm(World w, double i, double j, double k, double l, double d, double e) {
+		EntityBlock eb = super.newDrillArm(w, i, j, k, l, d, e);
+		eb.texture = drillArmTexture;
 		return eb;
 	}
 }
