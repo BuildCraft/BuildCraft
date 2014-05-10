@@ -9,5 +9,5 @@
 package buildcraft.api.mj;
 
 public interface IBatteryProvider {
-	IBatteryObject getMjBattery();
+	IBatteryObject getMjBattery(String kind);
 }
