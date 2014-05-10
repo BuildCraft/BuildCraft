@@ -53,11 +53,6 @@ public class SchematicBlock extends SchematicBlockBase {
 	}
 
 	@Override
-	public void rotateLeft(IBuilderContext context) {
-
-	}
-
-	@Override
 	public void writeToWorld(IBuilderContext context, int x, int y, int z, LinkedList<ItemStack> stacks) {
 		// Meta needs to be specified twice, depending on the block behavior
 		context.world().setBlock(x, y, z, block, meta, 3);
