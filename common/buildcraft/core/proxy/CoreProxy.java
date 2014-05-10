@@ -36,6 +36,7 @@ import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
 
+import buildcraft.BuildCraftCore;
 import buildcraft.api.core.ICoreProxy;
 import buildcraft.core.EntityBlock;
 import buildcraft.core.ItemBlockBuildCraft;
@@ -110,13 +111,23 @@ public class CoreProxy implements ICoreProxy {
 
 	@SuppressWarnings("unchecked")
 	public void addCraftingRecipe(ItemStack result, Object... recipe) {
+		String name = Item.itemRegistry.getNameForObject(result.getItem());
+
+		if (BuildCraftCore.recipesBlacklist.contains(name)) {
+			return;
+		}
+
 		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(result, recipe));
-		//GameRegistry.addRecipe(result, recipe);
 	}
 
 	public void addShapelessRecipe(ItemStack result, Object... recipe) {
-	        CraftingManager.getInstance().getRecipeList().add(new ShapelessOreRecipe(result, recipe));
-	        //GameRegistry.addShapelessRecipe(result, recipe);
+		String name = Item.itemRegistry.getNameForObject(result.getItem());
+
+		if (BuildCraftCore.recipesBlacklist.contains(name)) {
+			return;
+		}
+
+		CraftingManager.getInstance().getRecipeList().add(new ShapelessOreRecipe(result, recipe));
 	}
 
 	public int addCustomTexture(String pathToTexture) {

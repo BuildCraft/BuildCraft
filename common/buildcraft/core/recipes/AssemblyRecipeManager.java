@@ -19,6 +19,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.oredict.OreDictionary;
 
+import buildcraft.BuildCraftCore;
 import buildcraft.api.core.IInvSlot;
 import buildcraft.api.recipes.IAssemblyRecipeManager;
 import buildcraft.core.inventory.ITransactor;
@@ -33,6 +34,12 @@ public class AssemblyRecipeManager implements IAssemblyRecipeManager {
 
 	@Override
 	public void addRecipe(double energyCost, ItemStack output, Object... input) {
+		String name = Item.itemRegistry.getNameForObject(output.getItem());
+
+		if (BuildCraftCore.recipesBlacklist.contains(name)) {
+			return;
+		}
+
 		assemblyRecipes.add(new AssemblyRecipe(output, energyCost, input));
 	}
 
