@@ -35,6 +35,9 @@ public class SchematicEngine extends SchematicTile {
 		TileEngine engine = (TileEngine) context.world().getTileEntity(x, y, z);
 
 		cpt.setInteger("orientation", engine.orientation.ordinal());
+		cpt.removeTag("progress");
+		cpt.removeTag("energy");
+		cpt.removeTag("heat");
 	}
 
 	@Override
