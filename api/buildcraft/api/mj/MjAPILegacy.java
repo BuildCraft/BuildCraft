@@ -29,23 +29,18 @@ public class MjAPILegacy implements IPowerReceptor {
 	}
 
 	public static MjAPILegacy from(World world, IBatteryObject battery, PowerHandler.Type type) {
+		if (battery == null) {
+			return null;
+		}
 		return new MjAPILegacy(world, battery, type);
 	}
 
 	public static MjAPILegacy from(World world, Object object, PowerHandler.Type type) {
-		return new MjAPILegacy(world, battery(object), type);
+		return from(world, MjAPI.getMjBattery(object), type);
 	}
 
 	public static MjAPILegacy from(TileEntity tileEntity, PowerHandler.Type type) {
-		return new MjAPILegacy(tileEntity.getWorldObj(), battery(tileEntity), type);
-	}
-
-	private static IBatteryObject battery(Object object) {
-		IBatteryObject battery = MjAPI.getMjBattery(object);
-		if (battery == null) {
-			throw new IllegalArgumentException(String.format("Object %s not using MjAPI, can't create legacy wrapper", object));
-		}
-		return battery;
+		return from(tileEntity.getWorldObj(), MjAPI.getMjBattery(tileEntity), type);
 	}
 
 	@Override

@@ -122,7 +122,7 @@ public class TileEnergyConverter extends TileBuildCraft implements IPowerRecepto
 				if (tile instanceof TileEnergyConverter) {
 					continue;
 				}
-				IBatteryObject object = MjAPI.getMjBattery(tile);
+				IBatteryObject object = MjAPI.getMjBattery(tile, MjAPI.DEFAULT_POWER_FRAMEWORK, side.getOpposite());
 				if (object != null && mjStored > 0) {
 					double wantToUse = Math.min(mjStored, object.getEnergyRequested());
 					object.addEnergy(wantToUse);
