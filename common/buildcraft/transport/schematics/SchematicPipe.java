@@ -204,10 +204,24 @@ public class SchematicPipe extends SchematicTile {
 
 		if (!nbt.hasKey("version") || nbt.getInteger("version") < 2) {
 			// Schematics previous to the fixes in version 2 had item id
-			// translation badly broken. Building a blueprint that contains
-			// these doesn't make any sense, better to prevent the blueprint to
-			// be built altogether.
-			permission = BuildingPermission.NONE;
+			// translation badly broken. We need to flush out information that
+			// would be otherwise corrupted - that is the inventory (with the
+			// old formalism "items") and gate parameters.
+			cpt.removeTag("items");
+
+			if (cpt.hasKey("Gate")) {
+				NBTTagCompound gateNBT = cpt.getCompoundTag("Gate");
+
+				for (int i = 0; i < 8; ++i) {
+					if (gateNBT.hasKey("triggerParameters[" + i + "]")) {
+						NBTTagCompound parameterNBT = gateNBT.getCompoundTag("triggerParameters[" + i + "]");
+
+						if (parameterNBT.hasKey("stack")) {
+							parameterNBT.removeTag("stack");
+						}
+					}
+				}
+			}
 		}
 	}
 
