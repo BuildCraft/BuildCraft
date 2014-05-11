@@ -39,6 +39,7 @@ import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftCore.RenderMode;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.gates.IGateExpansion;
+import buildcraft.api.transport.IPipeTile.PipeType;
 import buildcraft.api.transport.PipeWire;
 import buildcraft.core.CoreConstants;
 import buildcraft.core.DefaultProps;
