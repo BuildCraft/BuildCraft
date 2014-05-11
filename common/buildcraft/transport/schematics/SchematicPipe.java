@@ -20,6 +20,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.api.blueprints.BuildingPermission;
 import buildcraft.api.blueprints.IBuilderContext;
+import buildcraft.api.blueprints.MappingNotFoundException;
 import buildcraft.api.blueprints.MappingRegistry;
 import buildcraft.api.blueprints.SchematicTile;
 import buildcraft.api.gates.ActionManager;
@@ -157,9 +158,13 @@ public class SchematicPipe extends SchematicTile {
 		super.idsToWorld(registry);
 
 		if (cpt.hasKey("pipeId")) {
-			Item item = registry.getItemForId(cpt.getInteger("pipeId"));
+			try {
+				Item item = registry.getItemForId(cpt.getInteger("pipeId"));
 
-			cpt.setInteger("pipeId", Item.getIdFromItem(item));
+				cpt.setInteger("pipeId", Item.getIdFromItem(item));
+			} catch (MappingNotFoundException e) {
+				cpt.removeTag("pipeId");
+			}
 		}
 	}
 

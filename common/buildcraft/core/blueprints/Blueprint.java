@@ -22,6 +22,7 @@ import net.minecraftforge.common.util.Constants;
 import buildcraft.BuildCraftBuilders;
 import buildcraft.api.blueprints.BuildingPermission;
 import buildcraft.api.blueprints.IBuilderContext;
+import buildcraft.api.blueprints.MappingNotFoundException;
 import buildcraft.api.blueprints.SchematicBlock;
 import buildcraft.api.blueprints.SchematicEntity;
 import buildcraft.api.blueprints.SchematicRegistry;
@@ -205,7 +206,14 @@ public class Blueprint extends BlueprintBase {
 					index++;
 
 					if (cpt.hasKey("blockId")) {
-						Block block = mapping.getBlockForId(cpt.getInteger("blockId"));
+						Block block;
+
+						try {
+							block = mapping.getBlockForId(cpt.getInteger("blockId"));
+						} catch (MappingNotFoundException e) {
+							block = null;
+							buildingPermission = BuildingPermission.CREATIVE_ONLY;
+						}
 
 						if (block != null) {
 							contents[x][y][z] = SchematicRegistry.newSchematicBlock(block);
@@ -242,7 +250,14 @@ public class Blueprint extends BlueprintBase {
 			NBTTagCompound cpt = entitiesNBT.getCompoundTagAt(i);
 
 			if (cpt.hasKey("entityId")) {
-				Class<? extends Entity> entity = mapping.getEntityForId(cpt.getInteger("entityId"));
+				Class<? extends Entity> entity;
+
+				try {
+					entity = mapping.getEntityForId(cpt.getInteger("entityId"));
+				} catch (MappingNotFoundException e) {
+					entity = null;
+					buildingPermission = BuildingPermission.CREATIVE_ONLY;
+				}
 
 				if (entity != null) {
 					SchematicEntity s = SchematicRegistry.newSchematicEntity(entity);

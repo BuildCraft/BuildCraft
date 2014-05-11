@@ -35,7 +35,11 @@ public class SchematicTile extends SchematicBlock {
 
 	@Override
 	public void idsToWorld(MappingRegistry registry) {
-		registry.scanAndTranslateStacksToWorld(cpt);
+		try {
+			registry.scanAndTranslateStacksToWorld(cpt);
+		} catch (MappingNotFoundException e) {
+			cpt = new NBTTagCompound();
+		}
 	}
 
 	/**

@@ -109,7 +109,14 @@ public class SchematicBlock extends SchematicBlockBase {
 	public void readFromNBT(NBTTagCompound nbt,	MappingRegistry registry) {
 		super.readFromNBT(nbt, registry);
 
-		block = registry.getBlockForId(nbt.getInteger("blockId"));
+		try {
+			block = registry.getBlockForId(nbt.getInteger("blockId"));
+		} catch (MappingNotFoundException e) {
+			defaultPermission = BuildingPermission.CREATIVE_ONLY;
+
+			return;
+		}
+
 		meta = nbt.getInteger("blockMeta");
 
 		if (nbt.hasKey("rq")) {
@@ -127,6 +134,8 @@ public class SchematicBlock extends SchematicBlockBase {
 					} else {
 						defaultPermission = BuildingPermission.CREATIVE_ONLY;
 					}
+				} catch (MappingNotFoundException e) {
+					defaultPermission = BuildingPermission.CREATIVE_ONLY;
 				} catch (Throwable t) {
 					t.printStackTrace();
 					defaultPermission = BuildingPermission.CREATIVE_ONLY;

@@ -10,6 +10,7 @@ package buildcraft.builders.schematics;
 
 import net.minecraft.nbt.NBTTagCompound;
 
+import buildcraft.api.blueprints.MappingNotFoundException;
 import buildcraft.api.blueprints.MappingRegistry;
 import buildcraft.api.blueprints.SchematicEntity;
 import buildcraft.api.blueprints.SchematicFactory;
@@ -18,7 +19,8 @@ import buildcraft.api.blueprints.SchematicRegistry;
 public class SchematicFactoryEntity extends SchematicFactory<SchematicEntity> {
 
 	@Override
-	protected SchematicEntity loadSchematicFromWorldNBT (NBTTagCompound nbt, MappingRegistry registry) {
+	protected SchematicEntity loadSchematicFromWorldNBT(NBTTagCompound nbt, MappingRegistry registry)
+			throws MappingNotFoundException {
 		int entityId = nbt.getInteger("entityId");
 		SchematicEntity s = SchematicRegistry.newSchematicEntity(registry.getEntityForId(entityId));
 

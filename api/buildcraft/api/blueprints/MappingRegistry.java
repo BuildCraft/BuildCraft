@@ -10,6 +10,7 @@ package buildcraft.api.blueprints;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.logging.Level;
 
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
@@ -20,6 +21,8 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagShort;
 
 import net.minecraftforge.common.util.Constants;
+
+import buildcraft.api.core.BCLog;
 
 public class MappingRegistry {
 
@@ -53,12 +56,18 @@ public class MappingRegistry {
 		}
 	}
 
-	public Item getItemForId(int id) {
+	public Item getItemForId(int id) throws MappingNotFoundException {
 		if (id >= idToItem.size()) {
-			return null;
+			throw new MappingNotFoundException("no item mapping at position " + id);
 		}
 
-		return idToItem.get(id);
+		Item result = idToItem.get(id);
+
+		if (result == null) {
+			throw new MappingNotFoundException("no item mapping at position " + id);
+		} else {
+			return result;
+		}
 	}
 
 	public int getIdForItem(Item item) {
@@ -75,18 +84,24 @@ public class MappingRegistry {
 		return getIdForItem(item);
 	}
 
-	public int itemIdToWorld(int id) {
+	public int itemIdToWorld(int id) throws MappingNotFoundException {
 		Item item = getItemForId(id);
 
 		return Item.getIdFromItem(item);
 	}
 
-	public Block getBlockForId(int id) {
+	public Block getBlockForId(int id) throws MappingNotFoundException {
 		if (id >= idToBlock.size()) {
-			return null;
+			throw new MappingNotFoundException("no block mapping at position " + id);
 		}
 
-		return idToBlock.get(id);
+		Block result = idToBlock.get(id);
+
+		if (result == null) {
+			throw new MappingNotFoundException("no block mapping at position " + id);
+		} else {
+			return result;
+		}
 	}
 
 	public int getIdForBlock(Block block) {
@@ -103,18 +118,24 @@ public class MappingRegistry {
 		return getIdForBlock(block);
 	}
 
-	public int blockIdToWorld(int id) {
+	public int blockIdToWorld(int id) throws MappingNotFoundException {
 		Block block = getBlockForId(id);
 
 		return Block.getIdFromBlock(block);
 	}
 
-	public Class<? extends Entity> getEntityForId(int id) {
+	public Class<? extends Entity> getEntityForId(int id) throws MappingNotFoundException {
 		if (id >= idToEntity.size()) {
-			return null;
+			throw new MappingNotFoundException("no entity mapping at position " + id);
 		}
 
-		return idToEntity.get(id);
+		Class<? extends Entity> result = idToEntity.get(id);
+
+		if (result == null) {
+			throw new MappingNotFoundException("no entity mapping at position " + id);
+		} else {
+			return result;
+		}
 	}
 
 	public int getIdForEntity(Class<? extends Entity> entity) {
@@ -138,7 +159,7 @@ public class MappingRegistry {
 	 * Relocates a stack nbt from the registry referential to the world
 	 * referential.
 	 */
-	public void stackToWorld(NBTTagCompound nbt) {
+	public void stackToWorld(NBTTagCompound nbt) throws MappingNotFoundException {
 		Item item = getItemForId(nbt.getShort("id"));
 		nbt.setShort("id", (short) Item.getIdFromItem(item));
 	}
@@ -180,7 +201,7 @@ public class MappingRegistry {
 		}
 	}
 
-	public void scanAndTranslateStacksToWorld(NBTTagCompound nbt) {
+	public void scanAndTranslateStacksToWorld(NBTTagCompound nbt) throws MappingNotFoundException {
 		// First, check if this nbt is itself a stack
 
 		if (isStackLayout(nbt)) {
@@ -193,15 +214,23 @@ public class MappingRegistry {
 			String key = (String) keyO;
 
 			if (nbt.getTag(key) instanceof NBTTagCompound) {
-				scanAndTranslateStacksToWorld(nbt.getCompoundTag(key));
+				try {
+					scanAndTranslateStacksToWorld(nbt.getCompoundTag(key));
+				} catch (MappingNotFoundException e) {
+					nbt.removeTag(key);
+				}
 			}
 
 			if (nbt.getTag(key) instanceof NBTTagList) {
 				NBTTagList list = (NBTTagList) nbt.getTag(key);
 
 				if (list.func_150303_d() == Constants.NBT.TAG_COMPOUND) {
-					for (int i = 0; i < list.tagCount(); ++i) {
-						scanAndTranslateStacksToWorld(list.getCompoundTagAt(i));
+					for (int i = list.tagCount() - 1; i >= 0; --i) {
+						try {
+							scanAndTranslateStacksToWorld(list.getCompoundTagAt(i));
+						} catch (MappingNotFoundException e) {
+							list.removeTag(i);
+						}
 					}
 				}
 			}
@@ -250,7 +279,14 @@ public class MappingRegistry {
 			NBTTagCompound sub = blocksMapping.getCompoundTagAt(i);
 			String name = sub.getString("name");
 			Block b = (Block) Block.blockRegistry.getObject(name);
-			registerBlock (b);
+
+			if (b != null) {
+				registerBlock(b);
+			} else {
+				// Keeping the order correct
+				idToBlock.add(null);
+				BCLog.logger.log(Level.WARNING, "Can't load block " + name);
+			}
 		}
 
 		NBTTagList itemsMapping = nbt.getTagList("itemsMapping",
@@ -260,7 +296,14 @@ public class MappingRegistry {
 			NBTTagCompound sub = itemsMapping.getCompoundTagAt(i);
 			String name = sub.getString("name");
 			Item item = (Item) Item.itemRegistry.getObject(name);
-			registerItem (item);
+
+			if (item != null) {
+				registerItem(item);
+			} else {
+				// Keeping the order correct
+				idToItem.add(null);
+				BCLog.logger.log(Level.WARNING, "Can't load item " + name);
+			}
 		}
 
 		NBTTagList entitiesMapping = nbt.getTagList("entitiesMapping",
@@ -277,7 +320,13 @@ public class MappingRegistry {
 				e1.printStackTrace();
 			}
 
-			registerEntity (e);
+			if (e != null) {
+				registerEntity(e);
+			} else {
+				// Keeping the order correct
+				idToEntity.add(null);
+				BCLog.logger.log(Level.WARNING, "Can't load entity " + name);
+			}
 		}
 	}
 }

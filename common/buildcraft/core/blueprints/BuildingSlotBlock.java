@@ -18,6 +18,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.Constants;
 
 import buildcraft.api.blueprints.IBuilderContext;
+import buildcraft.api.blueprints.MappingNotFoundException;
 import buildcraft.api.blueprints.MappingRegistry;
 import buildcraft.api.blueprints.SchematicBlockBase;
 import buildcraft.api.blueprints.SchematicFactory;
@@ -137,7 +138,7 @@ public class BuildingSlotBlock extends BuildingSlot {
 	}
 
 	@Override
-	public void readFromNBT (NBTTagCompound nbt, MappingRegistry registry) {
+	public void readFromNBT(NBTTagCompound nbt, MappingRegistry registry) throws MappingNotFoundException {
 		mode = Mode.values() [nbt.getByte("mode")];
 		x = nbt.getInteger("x");
 		y = nbt.getInteger("y");
