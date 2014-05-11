@@ -14,8 +14,10 @@ import java.util.HashMap;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.Item;
+import net.minecraft.nbt.NBTTagByte;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.NBTTagShort;
 
 import net.minecraftforge.common.util.Constants;
 
@@ -128,8 +130,8 @@ public class MappingRegistry {
 	 * referential.
 	 */
 	public void stackToRegistry(NBTTagCompound nbt) {
-		Item item = Item.getItemById(nbt.getInteger("id"));
-		nbt.setInteger("id", getIdForItem(item));
+		Item item = Item.getItemById(nbt.getShort("id"));
+		nbt.setShort("id", (short) getIdForItem(item));
 	}
 
 	/**
@@ -137,27 +139,72 @@ public class MappingRegistry {
 	 * referential.
 	 */
 	public void stackToWorld(NBTTagCompound nbt) {
-		Item item = getItemForId(nbt.getInteger("id"));
-		nbt.setInteger("id", Item.getIdFromItem(item));
+		Item item = getItemForId(nbt.getShort("id"));
+		nbt.setShort("id", (short) Item.getIdFromItem(item));
 	}
 
-	/**
-	 * Relocates an inventory nbt from the world referential to the registry
-	 * referential.
-	 */
-	public void inventoryToRegistry(NBTTagList nbt) {
-		for (int i = 0; i < nbt.tagCount(); ++i) {
-			stackToRegistry(nbt.getCompoundTagAt(i));
+	private boolean isStackLayout(NBTTagCompound nbt) {
+		return nbt.hasKey("id") &&
+				nbt.hasKey("Count") &&
+				nbt.hasKey("Damage") &&
+				nbt.getTag("id") instanceof NBTTagShort &&
+				nbt.getTag("Count") instanceof NBTTagByte &&
+				nbt.getTag("Damage") instanceof NBTTagShort;
+	}
+
+	public void scanAndTranslateStacksToRegistry(NBTTagCompound nbt) {
+		// First, check if this nbt is itself a stack
+
+		if (isStackLayout(nbt)) {
+			stackToRegistry(nbt);
+		}
+
+		// Then, look at the nbt compound contained in this nbt (even if it's a
+		// stack) and checks for stacks in it.
+		for (Object keyO : nbt.func_150296_c()) {
+			String key = (String) keyO;
+
+			if (nbt.getTag(key) instanceof NBTTagCompound) {
+				scanAndTranslateStacksToRegistry(nbt.getCompoundTag(key));
+			}
+
+			if (nbt.getTag(key) instanceof NBTTagList) {
+				NBTTagList list = (NBTTagList) nbt.getTag(key);
+
+				if (list.func_150303_d() == Constants.NBT.TAG_COMPOUND) {
+					for (int i = 0; i < list.tagCount(); ++i) {
+						scanAndTranslateStacksToRegistry(list.getCompoundTagAt(i));
+					}
+				}
+			}
 		}
 	}
 
-	/**
-	 * Relocates an inventory nbt from the registry referential to the world
-	 * referential.
-	 */
-	public void inventoryToWorld(NBTTagList nbt) {
-		for (int i = 0; i < nbt.tagCount(); ++i) {
-			stackToWorld(nbt.getCompoundTagAt(i));
+	public void scanAndTranslateStacksToWorld(NBTTagCompound nbt) {
+		// First, check if this nbt is itself a stack
+
+		if (isStackLayout(nbt)) {
+			stackToWorld(nbt);
+		}
+
+		// Then, look at the nbt compound contained in this nbt (even if it's a
+		// stack) and checks for stacks in it.
+		for (Object keyO : nbt.func_150296_c()) {
+			String key = (String) keyO;
+
+			if (nbt.getTag(key) instanceof NBTTagCompound) {
+				scanAndTranslateStacksToWorld(nbt.getCompoundTag(key));
+			}
+
+			if (nbt.getTag(key) instanceof NBTTagList) {
+				NBTTagList list = (NBTTagList) nbt.getTag(key);
+
+				if (list.func_150303_d() == Constants.NBT.TAG_COMPOUND) {
+					for (int i = 0; i < list.tagCount(); ++i) {
+						scanAndTranslateStacksToWorld(list.getCompoundTagAt(i));
+					}
+				}
+			}
 		}
 	}
 

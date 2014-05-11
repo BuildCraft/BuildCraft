@@ -52,7 +52,7 @@ public class SchematicPipe extends SchematicTile {
 		props.rotateLeft();
 		props.writeToNBT(cpt);
 
-		Item pipeItem = context.getMappingRegistry().getItemForId(cpt.getInteger("pipeId"));
+		Item pipeItem = Item.getItemById(cpt.getInteger("pipeId"));
 
 		if (BptPipeExtension.contains(pipeItem)) {
 			BptPipeExtension.get(pipeItem).rotateLeft(this, context);
@@ -129,7 +129,7 @@ public class SchematicPipe extends SchematicTile {
 
 	@Override
 	public void postProcessing(IBuilderContext context, int x, int y, int z) {
-		Item pipeItem = context.getMappingRegistry().getItemForId(cpt.getInteger("pipeId"));
+		Item pipeItem = Item.getItemById(cpt.getInteger("pipeId"));
 
 		if (BptPipeExtension.contains(pipeItem)) {
 			BptPipeExtension.get(pipeItem).postProcessing(this, context);
@@ -149,20 +149,6 @@ public class SchematicPipe extends SchematicTile {
 			Item item = Item.getItemById(cpt.getInteger("pipeId"));
 
 			cpt.setInteger("pipeId", registry.getIdForItem(item));
-
-			if (cpt.hasKey("Gate")) {
-				NBTTagCompound gateNBT = cpt.getCompoundTag("Gate");
-
-				for (int i = 0; i < 8; ++i) {
-					if (gateNBT.hasKey("triggerParameters[" + i + "]")) {
-						NBTTagCompound parameterNBT = gateNBT.getCompoundTag("triggerParameters[" + i + "]");
-
-						if (parameterNBT.hasKey("stack")) {
-							registry.stackToRegistry(parameterNBT.getCompoundTag("stack"));
-						}
-					}
-				}
-			}
 		}
 	}
 
@@ -174,21 +160,6 @@ public class SchematicPipe extends SchematicTile {
 			Item item = registry.getItemForId(cpt.getInteger("pipeId"));
 
 			cpt.setInteger("pipeId", Item.getIdFromItem(item));
-
-			if (cpt.hasKey("Gate")) {
-				NBTTagCompound gateNBT = cpt.getCompoundTag("Gate");
-
-				for (int i = 0; i < 8; ++i) {
-					if (gateNBT.hasKey("triggerParameters[" + i + "]")) {
-						NBTTagCompound parameterNBT = gateNBT.getCompoundTag("triggerParameters[" + i + "]");
-
-						if (parameterNBT.hasKey("stack")) {
-							registry.stackToWorld(parameterNBT.getCompoundTag("stack"));
-						}
-					}
-				}
-			}
-
 		}
 	}
 

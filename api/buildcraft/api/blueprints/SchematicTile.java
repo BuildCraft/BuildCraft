@@ -30,12 +30,12 @@ public class SchematicTile extends SchematicBlock {
 
 	@Override
 	public void idsToSchematic(MappingRegistry registry) {
-		inventorySlotsToSchematic(registry, cpt, "Items");
+		registry.scanAndTranslateStacksToRegistry(cpt);
 	}
 
 	@Override
 	public void idsToWorld(MappingRegistry registry) {
-		inventorySlotsToWorld(registry, cpt, "Items");
+		registry.scanAndTranslateStacksToWorld(cpt);
 	}
 
 	/**

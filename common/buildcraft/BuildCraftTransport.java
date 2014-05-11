@@ -106,7 +106,6 @@ import buildcraft.transport.pipes.PipeStructureCobblestone;
 import buildcraft.transport.schematics.BptItemPipeFilters;
 import buildcraft.transport.schematics.BptPipeIron;
 import buildcraft.transport.schematics.BptPipeWooden;
-import buildcraft.transport.schematics.SchematicFilteredBuffer;
 import buildcraft.transport.schematics.SchematicPipe;
 import buildcraft.transport.triggers.ActionEnergyPulsar;
 import buildcraft.transport.triggers.ActionExtractionPreset;
@@ -437,7 +436,6 @@ public class BuildCraftTransport extends BuildCraftMod {
 		TransportProxy.proxy.registerTileEntities();
 
 		SchematicRegistry.registerSchematicBlock(genericPipeBlock, SchematicPipe.class);
-		SchematicRegistry.registerSchematicBlock(filteredBufferBlock, SchematicFilteredBuffer.class);
 
 		new BptPipeIron(pipeItemsIron);
 		new BptPipeIron(pipeFluidsIron);

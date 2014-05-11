@@ -14,8 +14,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
-import net.minecraftforge.common.util.Constants;
-
 import buildcraft.api.core.IInvSlot;
 
 /**
@@ -218,24 +216,6 @@ public abstract class Schematic {
 
 	public void readFromNBT(NBTTagCompound nbt,	MappingRegistry registry) {
 
-	}
-
-	public void inventorySlotsToSchematic (MappingRegistry registry, NBTTagCompound nbt, String nbtName) {
-		if (!nbt.hasKey(nbtName)) {
-			return;
-		} else {
-			registry.inventoryToRegistry(nbt.getTagList(nbtName,
-					Constants.NBT.TAG_COMPOUND));
-		}
-	}
-
-	public void inventorySlotsToWorld (MappingRegistry registry, NBTTagCompound nbt, String nbtName) {
-		if (!nbt.hasKey(nbtName)) {
-			return;
-		} else {
-			registry.inventoryToWorld(nbt.getTagList(nbtName,
-					Constants.NBT.TAG_COMPOUND));
-		}
 	}
 
 	public LinkedList<ItemStack> getStacksToDisplay(

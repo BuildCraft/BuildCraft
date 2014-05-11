@@ -9,7 +9,6 @@
 package buildcraft.silicon.schematics;
 
 import buildcraft.api.blueprints.IBuilderContext;
-import buildcraft.api.blueprints.MappingRegistry;
 import buildcraft.api.blueprints.SchematicTile;
 
 public class SchematicLaserTableBase extends SchematicTile {
@@ -20,21 +19,4 @@ public class SchematicLaserTableBase extends SchematicTile {
 
 		cpt.removeTag("energy");
 	}
-
-	@Override
-	public void idsToSchematic(MappingRegistry registry) {
-		super.idsToSchematic(registry);
-
-		inventorySlotsToSchematic(registry, cpt, "inv");
-		inventorySlotsToSchematic(registry, cpt, "craftingSlots");
-	}
-
-	@Override
-	public void idsToWorld(MappingRegistry registry) {
-		super.idsToWorld(registry);
-
-		inventorySlotsToWorld(registry, cpt, "inv");
-		inventorySlotsToWorld(registry, cpt, "craftingSlots");
-	}
-
 }
