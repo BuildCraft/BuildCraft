@@ -66,21 +66,6 @@ public class SchematicHanging extends SchematicEntity {
 	}
 
 	@Override
-	public void writeToWorld(IBuilderContext context) {
-		if (baseItem == Items.item_frame) {
-			if (cpt.hasKey("Item")) {
-				NBTTagCompound tag = cpt.getCompoundTag("Item");
-				tag.setInteger("id", Item.itemRegistry.getIDForObject(context
-						.getMappingRegistry()
-						.getItemForId(tag.getInteger("id"))));
-				cpt.setTag("Item", tag);
-			}
-		}
-
-		super.writeToWorld(context);
-	}
-
-	@Override
 	public void readFromWorld(IBuilderContext context, Entity entity) {
 		super.readFromWorld(context, entity);
 
@@ -92,9 +77,6 @@ public class SchematicHanging extends SchematicEntity {
 				storedRequirements = new ItemStack [2];
 				storedRequirements [0] = new ItemStack(baseItem);
 				storedRequirements [1] = stack;
-
-				tag.setInteger("id", context.getMappingRegistry().getIdForItem(stack.getItem()));
-				cpt.setTag("Item", tag);
 			} else {
 				storedRequirements = new ItemStack [1];
 				storedRequirements [0] = new ItemStack(baseItem);
