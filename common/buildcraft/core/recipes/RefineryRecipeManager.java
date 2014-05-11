@@ -16,6 +16,7 @@ import com.google.common.base.Objects;
 
 import net.minecraftforge.fluids.FluidStack;
 
+import buildcraft.BuildCraftCore;
 import buildcraft.api.recipes.IRefineryRecipeManager;
 
 public final class RefineryRecipeManager implements IRefineryRecipeManager {
@@ -28,11 +29,23 @@ public final class RefineryRecipeManager implements IRefineryRecipeManager {
 
 	@Override
 	public void addRecipe(FluidStack ingredient, FluidStack result, int energy, int delay) {
+		String name = result.getFluid().getName();
+
+		if (BuildCraftCore.recipesBlacklist.contains(name)) {
+			return;
+		}
+
 		addRecipe(ingredient, null, result, energy, delay);
 	}
 
 	@Override
 	public void addRecipe(FluidStack ingredient1, FluidStack ingredient2, FluidStack result, int energy, int delay) {
+		String name = result.getFluid().getName();
+
+		if (BuildCraftCore.recipesBlacklist.contains(name)) {
+			return;
+		}
+
 		RefineryRecipe recipe = new RefineryRecipe(ingredient1, ingredient2, result, energy, delay);
 		recipes.add(recipe);
 	}

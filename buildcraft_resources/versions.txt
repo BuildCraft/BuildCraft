@@ -1,2 +1,2 @@
 1.6.4:BuildCraft:4.2.2
-1.7.2:BuildCraft:6.0.10
+1.7.2:BuildCraft:6.0.11

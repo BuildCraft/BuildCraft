@@ -289,7 +289,7 @@ public class Box implements IBox {
 	}
 
 	public Box extendToEncompass (Box toBeContained) {
-		if (!toBeContained.initialized) {
+		if (toBeContained == null || !toBeContained.initialized) {
 			return this;
 		}
 

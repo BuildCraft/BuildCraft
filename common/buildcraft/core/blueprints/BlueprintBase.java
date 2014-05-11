@@ -59,24 +59,24 @@ public abstract class BlueprintBase {
 		anchorZ = 0;
 	}
 
-	public void transformToBlueprint(Translation transform) {
+	public void translateToBlueprint(Translation transform) {
 		for (int x = 0; x < sizeX; ++x) {
 			for (int y = 0; y < sizeY; ++y) {
 				for (int z = 0; z < sizeZ; ++z) {
 					if (contents [x][y][z] != null) {
-						contents [x][y][z].transformToBlueprint(mapping, transform);
+						contents[x][y][z].translateToSchematic(transform);
 					}
 				}
 			}
 		}
 	}
 
-	public void transformToWorld(Translation transform) {
+	public void translateToWorld(Translation transform) {
 		for (int x = 0; x < sizeX; ++x) {
 			for (int y = 0; y < sizeY; ++y) {
 				for (int z = 0; z < sizeZ; ++z) {
 					if (contents [x][y][z] != null) {
-						contents [x][y][z].transformToWorld(mapping, transform);
+						contents[x][y][z].translateToWorld(transform);
 					}
 				}
 			}

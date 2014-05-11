@@ -13,7 +13,9 @@ import java.util.LinkedList;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+
 import buildcraft.api.blueprints.IBuilderContext;
+import buildcraft.api.blueprints.MappingNotFoundException;
 import buildcraft.api.blueprints.MappingRegistry;
 import buildcraft.api.blueprints.SchematicEntity;
 import buildcraft.api.blueprints.SchematicFactory;
@@ -74,7 +76,7 @@ public class BuildingSlotEntity extends BuildingSlot {
 	}
 
 	@Override
-	public void readFromNBT (NBTTagCompound nbt, MappingRegistry registry) {
+	public void readFromNBT(NBTTagCompound nbt, MappingRegistry registry) throws MappingNotFoundException {
 		schematic = (SchematicEntity) SchematicFactory
 				.createSchematicFromWorldNBT(nbt.getCompoundTag("schematic"), registry);
 	}

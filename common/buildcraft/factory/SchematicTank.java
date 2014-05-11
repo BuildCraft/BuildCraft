@@ -18,7 +18,17 @@ import buildcraft.api.blueprints.SchematicTile;
 public class SchematicTank extends SchematicTile {
 
 	@Override
-	public void readFromWorld(IBuilderContext context, int x, int y, int z) {
+	public void writeRequirementsToBuilder(IBuilderContext context, LinkedList<ItemStack> requirements) {
+		requirements.add(new ItemStack(block));
+	}
+
+	@Override
+	public void writeRequirementsToSchematic(IBuilderContext context, int x, int y, int z) {
+
+	}
+
+	@Override
+	public void writeToSchematic(IBuilderContext context, int x, int y, int z) {
 
 	}
 

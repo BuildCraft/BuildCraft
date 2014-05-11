@@ -20,6 +20,7 @@ import net.minecraftforge.common.util.Constants;
 
 import buildcraft.BuildCraftBuilders;
 import buildcraft.api.blueprints.IBuilderContext;
+import buildcraft.api.blueprints.MappingNotFoundException;
 import buildcraft.api.blueprints.MappingRegistry;
 import buildcraft.api.core.NetworkData;
 import buildcraft.api.core.Position;
@@ -255,7 +256,7 @@ public class BuildingItem implements IBuilder {
 		nbt.setTag("slotToBuild", slotNBT);
 	}
 
-	public void readFromNBT (NBTTagCompound nbt) {
+	public void readFromNBT(NBTTagCompound nbt) throws MappingNotFoundException {
 		origin = new Position(nbt.getCompoundTag("origin"));
 		destination = new Position (nbt.getCompoundTag("destination"));
 		lifetime = nbt.getDouble("lifetime");

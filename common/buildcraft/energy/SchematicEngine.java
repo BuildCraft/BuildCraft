@@ -23,16 +23,23 @@ public class SchematicEngine extends SchematicTile {
 	public void rotateLeft(IBuilderContext context) {
 		int o = cpt.getInteger("orientation");
 
-		o = ForgeDirection.values()[o].getRotation(ForgeDirection.DOWN).ordinal();
+		o = ForgeDirection.values()[o].getRotation(ForgeDirection.UP).ordinal();
 
 		cpt.setInteger("orientation", o);
 	}
 
 	@Override
-	public void readFromWorld(IBuilderContext context, int x, int y, int z) {
+	public void writeToSchematic(IBuilderContext context, int x, int y, int z) {
+		super.writeToSchematic(context, x, y, z);
+
 		TileEngine engine = (TileEngine) context.world().getTileEntity(x, y, z);
 
 		cpt.setInteger("orientation", engine.orientation.ordinal());
+		cpt.removeTag("progress");
+		cpt.removeTag("energy");
+		cpt.removeTag("heat");
+		cpt.removeTag("tankFuel");
+		cpt.removeTag("tankCoolant");
 	}
 
 	@Override

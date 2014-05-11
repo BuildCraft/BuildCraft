@@ -14,6 +14,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
 import buildcraft.api.blueprints.IBuilderContext;
+import buildcraft.api.blueprints.MappingNotFoundException;
 import buildcraft.api.blueprints.MappingRegistry;
 import buildcraft.api.blueprints.Schematic;
 import buildcraft.api.core.Position;
@@ -58,7 +59,7 @@ public abstract class BuildingSlot {
 
 	public abstract void writeToNBT (NBTTagCompound nbt, MappingRegistry registry);
 
-	public abstract void readFromNBT (NBTTagCompound nbt, MappingRegistry registry);
+	public abstract void readFromNBT(NBTTagCompound nbt, MappingRegistry registry) throws MappingNotFoundException;
 
 	public abstract double getEnergyRequirement();
 }

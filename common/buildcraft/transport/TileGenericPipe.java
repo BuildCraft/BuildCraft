@@ -162,22 +162,33 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 				facadeTypes[i] = nbt.getInteger("facadeTypes[" + i + "]");
 				facadeWires[i] = nbt.getInteger("facadeWires[" + i + "]");
 
-				if (nbt.hasKey("facadeBlocksStr[" + i + "][0]")) {
-					facadeBlocks[i][0] = (Block) Block.blockRegistry.getObject
-							(nbt.getString("facadeBlocksStr[" + i + "][0]"));
-				} else {
-					facadeBlocks[i][0] = null;
-				}
-
-				if (nbt.hasKey("facadeBlocksStr[" + i + "][1]")) {
-					facadeBlocks[i][1] = (Block) Block.blockRegistry.getObject
-							(nbt.getString("facadeBlocksStr[" + i + "][1]"));
-				} else {
+				if (nbt.hasKey("facadeBlocks[" + i + "]")) {
+					// In this case, we're on legacy pre-6.0 facade loading
+					// mode.
+					facadeBlocks[i][0] = (Block) Block.blockRegistry.getObjectById
+							(nbt.getInteger("facadeBlocks[" + i + "]"));
 					facadeBlocks[i][1] = null;
-				}
 
-				facadeMeta[i][0] = nbt.getInteger("facadeMeta[" + i + "][0]");
-				facadeMeta[i][1] = nbt.getInteger("facadeMeta[" + i + "][1]");
+					facadeMeta[i][0] = nbt.getInteger("facadeMeta[" + i + "]");
+					facadeMeta[i][1] = 0;
+				} else {
+					if (nbt.hasKey("facadeBlocksStr[" + i + "][0]")) {
+						facadeBlocks[i][0] = (Block) Block.blockRegistry.getObject
+								(nbt.getString("facadeBlocksStr[" + i + "][0]"));
+					} else {
+						facadeBlocks[i][0] = null;
+					}
+
+					if (nbt.hasKey("facadeBlocksStr[" + i + "][1]")) {
+						facadeBlocks[i][1] = (Block) Block.blockRegistry.getObject
+								(nbt.getString("facadeBlocksStr[" + i + "][1]"));
+					} else {
+						facadeBlocks[i][1] = null;
+					}
+
+					facadeMeta[i][0] = nbt.getInteger("facadeMeta[" + i + "][0]");
+					facadeMeta[i][1] = nbt.getInteger("facadeMeta[" + i + "][1]");
+				}
 
 				plugs[i] = nbt.getBoolean("plug[" + i + "]");
 				robotStations[i] = nbt.getBoolean("robotStation[" + i + "]");

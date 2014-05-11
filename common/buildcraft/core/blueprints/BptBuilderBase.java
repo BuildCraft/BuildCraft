@@ -11,6 +11,7 @@ package buildcraft.core.blueprints;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.TreeSet;
+import java.util.logging.Level;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -22,7 +23,9 @@ import net.minecraftforge.common.util.Constants;
 
 import buildcraft.BuildCraftBuilders;
 import buildcraft.api.blueprints.IBuilderContext;
+import buildcraft.api.blueprints.MappingNotFoundException;
 import buildcraft.api.blueprints.SchematicRegistry;
+import buildcraft.api.core.BCLog;
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.core.Position;
 import buildcraft.builders.BuildingItem;
@@ -220,9 +223,14 @@ public abstract class BptBuilderBase implements IAreaProvider {
 
 		for (int i = 0; i < buildingList.tagCount(); ++i) {
 			BuildingItem item = new BuildingItem();
-			item.readFromNBT(buildingList.getCompoundTagAt(i));
-			item.context = getContext();
-			builder.buildersInAction.add(item);
+
+			try {
+				item.readFromNBT(buildingList.getCompoundTagAt(i));
+				item.context = getContext();
+				builder.buildersInAction.add(item);
+			} catch (MappingNotFoundException e) {
+				BCLog.logger.log(Level.WARNING, "can't load building item", e);
+			}
 		}
 	}
 }

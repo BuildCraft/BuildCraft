@@ -12,6 +12,8 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.logging.Level;
 
+import net.minecraftforge.common.util.ForgeDirection;
+
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.JavaTools;
 
@@ -124,8 +126,8 @@ public class BatteryObject implements IBatteryObject {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public BatteryObject reconfigure(final double maxCapacity, final double maxReceivedPerCycle,
-			final double minimumConsumption) {
+	public BatteryObject reconfigure(final double maxCapacity, final double maxReceivedPerCycle, final double minimumConsumption) {
+		final ForgeDirection[] sides = batteryData != null ? batteryData.sides() : new ForgeDirection[] { ForgeDirection.UNKNOWN };
 		batteryData = new MjBattery() {
 			@Override
 			public double maxCapacity() {
@@ -151,8 +153,18 @@ public class BatteryObject implements IBatteryObject {
 			public String kind() {
 				return MjAPI.DEFAULT_POWER_FRAMEWORK;
 			}
+
+			@Override
+			public ForgeDirection[] sides() {
+				return sides;
+			}
 		};
 
 		return this;
+	}
+
+	@Override
+	public String kind() {
+		return batteryData.kind();
 	}
 }

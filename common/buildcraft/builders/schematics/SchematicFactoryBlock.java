@@ -12,6 +12,7 @@ import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 
+import buildcraft.api.blueprints.MappingNotFoundException;
 import buildcraft.api.blueprints.MappingRegistry;
 import buildcraft.api.blueprints.SchematicBlock;
 import buildcraft.api.blueprints.SchematicFactory;
@@ -20,7 +21,8 @@ import buildcraft.api.blueprints.SchematicRegistry;
 public class SchematicFactoryBlock extends SchematicFactory<SchematicBlock> {
 
 	@Override
-	protected SchematicBlock loadSchematicFromWorldNBT (NBTTagCompound nbt, MappingRegistry registry) {
+	protected SchematicBlock loadSchematicFromWorldNBT(NBTTagCompound nbt, MappingRegistry registry)
+			throws MappingNotFoundException {
 		int blockId = nbt.getInteger("blockId");
 		Block b = registry.getBlockForId(blockId);
 

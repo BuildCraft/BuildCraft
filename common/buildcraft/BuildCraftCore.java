@@ -12,6 +12,7 @@ import java.io.File;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+import java.util.HashSet;
 import java.util.TreeMap;
 
 import org.lwjgl.input.Mouse;
@@ -56,6 +57,7 @@ import buildcraft.api.blueprints.SchematicRegistry;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.core.IIconProvider;
+import buildcraft.api.core.JavaTools;
 import buildcraft.api.gates.ActionManager;
 import buildcraft.api.recipes.BuildcraftRecipes;
 import buildcraft.builders.urbanism.EntityRobotUrbanism;
@@ -199,6 +201,8 @@ public class BuildCraftCore extends BuildCraftMod {
 
 	public static AchievementPage BuildcraftAchievements;
 
+	public static HashSet<String> recipesBlacklist = new HashSet<String>();
+
 	public static float diffX, diffY, diffZ;
 
 	private static FloatBuffer modelviewF;
@@ -320,6 +324,15 @@ public class BuildCraftCore extends BuildCraftMod {
 
 		if (BuildCraftCore.modifyWorld) {
 			MinecraftForge.EVENT_BUS.register(new SpringPopulate());
+		}
+
+		for (String l : BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL,
+				"recipesBlacklist", new String[0]).getStringList()) {
+			recipesBlacklist.add(JavaTools.stripSurroundingQuotes(l.trim()));
+		}
+
+		if (mainConfiguration.hasChanged()) {
+			mainConfiguration.save();
 		}
 
 		if (BuildCraftCore.loadDefaultRecipes) {

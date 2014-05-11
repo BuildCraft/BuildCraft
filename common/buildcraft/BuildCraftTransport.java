@@ -65,10 +65,6 @@ import buildcraft.transport.TileFilteredBuffer;
 import buildcraft.transport.TileGenericPipe;
 import buildcraft.transport.TransportProxy;
 import buildcraft.transport.WireIconProvider;
-import buildcraft.transport.blueprints.BptItemPipeFilters;
-import buildcraft.transport.blueprints.BptPipeIron;
-import buildcraft.transport.blueprints.BptPipeWooden;
-import buildcraft.transport.blueprints.SchematicPipe;
 import buildcraft.transport.gates.GateExpansionPulsar;
 import buildcraft.transport.gates.GateExpansionRedstoneFader;
 import buildcraft.transport.gates.GateExpansionTimer;
@@ -107,6 +103,10 @@ import buildcraft.transport.pipes.PipePowerQuartz;
 import buildcraft.transport.pipes.PipePowerStone;
 import buildcraft.transport.pipes.PipePowerWood;
 import buildcraft.transport.pipes.PipeStructureCobblestone;
+import buildcraft.transport.schematics.BptItemPipeFilters;
+import buildcraft.transport.schematics.BptPipeIron;
+import buildcraft.transport.schematics.BptPipeWooden;
+import buildcraft.transport.schematics.SchematicPipe;
 import buildcraft.transport.triggers.ActionEnergyPulsar;
 import buildcraft.transport.triggers.ActionExtractionPreset;
 import buildcraft.transport.triggers.ActionPipeColor;
@@ -381,6 +381,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 			plugItem.setUnlocalizedName("pipePlug");
 			CoreProxy.proxy.registerItem(plugItem);
 
+
 			robotStationItem = new ItemRobotStation();
 			robotStationItem.setUnlocalizedName("robotStation");
 			CoreProxy.proxy.registerItem(robotStationItem);
@@ -442,9 +443,9 @@ public class BuildCraftTransport extends BuildCraftMod {
 		new BptPipeWooden(pipeItemsWood);
 		new BptPipeWooden(pipeFluidsWood);
 		new BptPipeWooden(pipePowerWood);
+		new BptPipeWooden(pipeItemsEmerald);
 
 		new BptItemPipeFilters(pipeItemsDiamond);
-		new BptItemPipeFilters(pipeItemsEmerald);
 
 		ActionManager.registerTriggerProvider(new PipeTriggerProvider());
 

@@ -14,8 +14,8 @@ import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+
 import buildcraft.api.blueprints.IBuilderContext;
-import buildcraft.api.blueprints.MappingRegistry;
 import buildcraft.api.blueprints.SchematicEntity;
 import buildcraft.api.blueprints.Translation;
 import buildcraft.api.core.Position;
@@ -29,8 +29,8 @@ public class SchematicHanging extends SchematicEntity {
 	}
 
 	@Override
-	public void transformToBlueprint(MappingRegistry registry, Translation transform) {
-		super.transformToBlueprint(registry, transform);
+	public void translateToSchematic(Translation transform) {
+		super.translateToSchematic(transform);
 
 		Position pos = new Position (cpt.getInteger("TileX"), cpt.getInteger("TileY"), cpt.getInteger("TileZ"));
 		pos = transform.translate(pos);
@@ -40,8 +40,8 @@ public class SchematicHanging extends SchematicEntity {
 	}
 
 	@Override
-	public void transformToWorld(MappingRegistry registry, Translation transform) {
-		super.transformToWorld(registry, transform);
+	public void translateToWorld(Translation transform) {
+		super.translateToWorld(transform);
 
 		Position pos = new Position (cpt.getInteger("TileX"), cpt.getInteger("TileY"), cpt.getInteger("TileZ"));
 		pos = transform.translate(pos);
@@ -66,21 +66,6 @@ public class SchematicHanging extends SchematicEntity {
 	}
 
 	@Override
-	public void writeToWorld(IBuilderContext context) {
-		if (baseItem == Items.item_frame) {
-			if (cpt.hasKey("Item")) {
-				NBTTagCompound tag = cpt.getCompoundTag("Item");
-				tag.setInteger("id", Item.itemRegistry.getIDForObject(context
-						.getMappingRegistry()
-						.getItemForId(tag.getInteger("id"))));
-				cpt.setTag("Item", tag);
-			}
-		}
-
-		super.writeToWorld(context);
-	}
-
-	@Override
 	public void readFromWorld(IBuilderContext context, Entity entity) {
 		super.readFromWorld(context, entity);
 
@@ -92,9 +77,6 @@ public class SchematicHanging extends SchematicEntity {
 				storedRequirements = new ItemStack [2];
 				storedRequirements [0] = new ItemStack(baseItem);
 				storedRequirements [1] = stack;
-
-				tag.setInteger("id", context.getMappingRegistry().getIdForItem(stack.getItem()));
-				cpt.setTag("Item", tag);
 			} else {
 				storedRequirements = new ItemStack [1];
 				storedRequirements [0] = new ItemStack(baseItem);

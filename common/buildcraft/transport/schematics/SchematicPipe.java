@@ -6,7 +6,7 @@
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-package buildcraft.transport.blueprints;
+package buildcraft.transport.schematics;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -18,7 +18,10 @@ import net.minecraft.tileentity.TileEntity;
 
 import net.minecraftforge.common.util.ForgeDirection;
 
+import buildcraft.api.blueprints.BuildingPermission;
 import buildcraft.api.blueprints.IBuilderContext;
+import buildcraft.api.blueprints.MappingNotFoundException;
+import buildcraft.api.blueprints.MappingRegistry;
 import buildcraft.api.blueprints.SchematicTile;
 import buildcraft.api.gates.ActionManager;
 import buildcraft.api.gates.IAction;
@@ -29,13 +32,14 @@ import buildcraft.transport.TileGenericPipe.SideProperties;
 
 public class SchematicPipe extends SchematicTile {
 
+	private BuildingPermission permission = BuildingPermission.ALL;
+
 	@Override
 	public boolean isAlreadyBuilt(IBuilderContext context, int x, int y, int z) {
 		Pipe pipe = BlockGenericPipe.getPipe(context.world(), x, y, z);
 
 		if (BlockGenericPipe.isValid(pipe)) {
-			return pipe.item == context.getMappingRegistry().getItemForId(
-					cpt.getInteger("pipeId"));
+			return pipe.item == Item.getItemById(cpt.getInteger("pipeId"));
 		} else {
 			return false;
 		}
@@ -49,7 +53,7 @@ public class SchematicPipe extends SchematicTile {
 		props.rotateLeft();
 		props.writeToNBT(cpt);
 
-		Item pipeItem = context.getMappingRegistry().getItemForId(cpt.getInteger("pipeId"));
+		Item pipeItem = Item.getItemById(cpt.getInteger("pipeId"));
 
 		if (BptPipeExtension.contains(pipeItem)) {
 			BptPipeExtension.get(pipeItem).rotateLeft(this, context);
@@ -77,10 +81,6 @@ public class SchematicPipe extends SchematicTile {
 		cpt.setInteger("x", x);
 		cpt.setInteger("y", y);
 		cpt.setInteger("z", z);
-		cpt.setInteger(
-				"pipeId",
-				Item.getIdFromItem(context.getMappingRegistry().getItemForId(
-						cpt.getInteger("pipeId"))));
 
 		context.world().setBlock(x, y, z, block, meta, 3);
 
@@ -89,17 +89,12 @@ public class SchematicPipe extends SchematicTile {
 	}
 
 	@Override
-	public void readFromWorld(IBuilderContext context, int x, int y, int z) {
+	public void writeToSchematic(IBuilderContext context, int x, int y, int z) {
 		TileEntity tile = context.world().getTileEntity(x, y, z);
 		Pipe pipe = BlockGenericPipe.getPipe(context.world(), x, y, z);
 
 		if (BlockGenericPipe.isValid(pipe)) {
 			tile.writeToNBT(cpt);
-
-			// This overrides the default pipeId
-
-			cpt.setInteger("pipeId", context.getMappingRegistry()
-					.getIdForItem(pipe.item));
 
 			// remove all pipe contents
 
@@ -120,7 +115,7 @@ public class SchematicPipe extends SchematicTile {
 	}
 
 	@Override
-	public void readRequirementsFromWorld(IBuilderContext context, int x, int y, int z) {
+	public void writeRequirementsToSchematic(IBuilderContext context, int x, int y, int z) {
 		TileEntity tile = context.world().getTileEntity(x, y, z);
 		Pipe pipe = BlockGenericPipe.getPipe(context.world(), x, y, z);
 
@@ -135,7 +130,7 @@ public class SchematicPipe extends SchematicTile {
 
 	@Override
 	public void postProcessing(IBuilderContext context, int x, int y, int z) {
-		Item pipeItem = context.getMappingRegistry().getItemForId(cpt.getInteger("pipeId"));
+		Item pipeItem = Item.getItemById(cpt.getInteger("pipeId"));
 
 		if (BptPipeExtension.contains(pipeItem)) {
 			BptPipeExtension.get(pipeItem).postProcessing(this, context);
@@ -145,5 +140,69 @@ public class SchematicPipe extends SchematicTile {
 	@Override
 	public BuildingStage getBuildStage () {
 		return BuildingStage.STANDALONE;
+	}
+
+	@Override
+	public void idsToSchematic(MappingRegistry registry) {
+		super.idsToSchematic(registry);
+
+		if (cpt.hasKey("pipeId")) {
+			Item item = Item.getItemById(cpt.getInteger("pipeId"));
+
+			cpt.setInteger("pipeId", registry.getIdForItem(item));
+		}
+	}
+
+	@Override
+	public void idsToWorld(MappingRegistry registry) {
+		super.idsToWorld(registry);
+
+		if (cpt.hasKey("pipeId")) {
+			try {
+				Item item = registry.getItemForId(cpt.getInteger("pipeId"));
+
+				cpt.setInteger("pipeId", Item.getIdFromItem(item));
+			} catch (MappingNotFoundException e) {
+				cpt.removeTag("pipeId");
+			}
+		}
+	}
+
+	@Override
+	public void writeToNBT(NBTTagCompound nbt, MappingRegistry registry) {
+		super.writeToNBT(nbt, registry);
+		nbt.setInteger("version", 2);
+	}
+
+	@Override
+	public void readFromNBT(NBTTagCompound nbt, MappingRegistry registry) {
+		super.readFromNBT(nbt, registry);
+
+		if (!nbt.hasKey("version") || nbt.getInteger("version") < 2) {
+			// Schematics previous to the fixes in version 2 had item id
+			// translation badly broken. We need to flush out information that
+			// would be otherwise corrupted - that is the inventory (with the
+			// old formalism "items") and gate parameters.
+			cpt.removeTag("items");
+
+			if (cpt.hasKey("Gate")) {
+				NBTTagCompound gateNBT = cpt.getCompoundTag("Gate");
+
+				for (int i = 0; i < 8; ++i) {
+					if (gateNBT.hasKey("triggerParameters[" + i + "]")) {
+						NBTTagCompound parameterNBT = gateNBT.getCompoundTag("triggerParameters[" + i + "]");
+
+						if (parameterNBT.hasKey("stack")) {
+							parameterNBT.removeTag("stack");
+						}
+					}
+				}
+			}
+		}
+	}
+
+	@Override
+	public BuildingPermission getBuildingPermission() {
+		return permission;
 	}
 }

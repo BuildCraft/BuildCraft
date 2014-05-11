@@ -10,44 +10,29 @@ package buildcraft.builders.schematics;
 
 import java.util.LinkedList;
 
+import net.minecraft.block.Block;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.SchematicBlock;
 
-public class SchematicPumpkin extends SchematicBlock {
+public class SchematicRedstoneLamp extends SchematicBlock {
 
 	@Override
 	public void writeRequirementsToBuilder(IBuilderContext context, LinkedList<ItemStack> requirements) {
-		requirements.add(new ItemStack(block, 1, 0));
+		requirements.add(new ItemStack(Blocks.redstone_lamp, 1, 0));
 	}
 
 	@Override
 	public void writeRequirementsToSchematic(IBuilderContext context, int x, int y, int z) {
-		// cancel requirements reading
+
 	}
 
 	@Override
 	public boolean isAlreadyBuilt(IBuilderContext context, int x, int y, int z) {
-		return block == context.world().getBlock(x, y, z);
-	}
+		Block block = context.world().getBlock(x, y, z);
 
-	@Override
-	public void rotateLeft(IBuilderContext context) {
-		switch (meta) {
-		case 0:
-			meta = 1;
-			break;
-		case 1:
-			meta = 2;
-			break;
-		case 2:
-			meta = 3;
-			break;
-		case 3:
-			meta = 0;
-			break;
-		}
+		return block == Blocks.redstone_lamp || block == Blocks.lit_redstone_lamp;
 	}
-
 }

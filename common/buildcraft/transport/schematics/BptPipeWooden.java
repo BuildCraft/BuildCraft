@@ -6,17 +6,17 @@
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-package buildcraft.transport.blueprints;
+package buildcraft.transport.schematics;
 
 import net.minecraft.item.Item;
 import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.SchematicTile;
 
-public class BptPipeIron extends BptPipeExtension {
+public class BptPipeWooden extends BptPipeExtension {
 
-	public BptPipeIron(Item i) {
-		super(i);
+	public BptPipeWooden(Item i) {
+		super (i);
 	}
 
 	@Override

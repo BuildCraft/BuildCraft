@@ -6,8 +6,10 @@
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-package buildcraft.api.mj;
+package buildcraft.api.blueprints;
 
-public interface IBatteryProvider {
-	IBatteryObject getMjBattery(String kind);
+public class MappingNotFoundException extends Exception {
+	public MappingNotFoundException(String msg) {
+		super(msg);
+	}
 }

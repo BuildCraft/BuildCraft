@@ -109,8 +109,15 @@ public class TileFilteredBuffer extends TileBuildCraft implements IInventory, IO
 	public void readFromNBT(NBTTagCompound nbtTagCompound) {
 		super.readFromNBT(nbtTagCompound);
 
-		NBTTagCompound inventoryStorageTag = (NBTTagCompound) nbtTagCompound.getTag("inventoryStorage");
+		NBTTagCompound inventoryStorageTag = nbtTagCompound;
+
+		if (nbtTagCompound.hasKey("inventoryStorage")) {
+			// To support pre 6.0 load
+			inventoryStorageTag = (NBTTagCompound) nbtTagCompound.getTag("inventoryStorage");
+		}
+
 		inventoryStorage.readFromNBT(inventoryStorageTag);
+
 		NBTTagCompound inventoryFiltersTag = (NBTTagCompound) nbtTagCompound.getTag("inventoryFilters");
 		inventoryFilters.readFromNBT(inventoryFiltersTag);
 	}
@@ -119,9 +126,7 @@ public class TileFilteredBuffer extends TileBuildCraft implements IInventory, IO
 	public void writeToNBT(NBTTagCompound nbtTagCompound) {
 		super.writeToNBT(nbtTagCompound);
 
-		NBTTagCompound inventoryStorageTag = new NBTTagCompound();
-		inventoryStorage.writeToNBT(inventoryStorageTag);
-		nbtTagCompound.setTag("inventoryStorage", inventoryStorageTag);
+		inventoryStorage.writeToNBT(nbtTagCompound);
 
 		NBTTagCompound inventoryFiltersTag = new NBTTagCompound();
 		inventoryFilters.writeToNBT(inventoryFiltersTag);

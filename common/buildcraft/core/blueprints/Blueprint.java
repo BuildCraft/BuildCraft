@@ -22,6 +22,7 @@ import net.minecraftforge.common.util.Constants;
 import buildcraft.BuildCraftBuilders;
 import buildcraft.api.blueprints.BuildingPermission;
 import buildcraft.api.blueprints.IBuilderContext;
+import buildcraft.api.blueprints.MappingNotFoundException;
 import buildcraft.api.blueprints.SchematicBlock;
 import buildcraft.api.blueprints.SchematicEntity;
 import buildcraft.api.blueprints.SchematicRegistry;
@@ -55,20 +56,20 @@ public class Blueprint extends BlueprintBase {
 	}
 
 	@Override
-	public void transformToBlueprint(Translation transform) {
-		super.transformToBlueprint(transform);
+	public void translateToBlueprint(Translation transform) {
+		super.translateToBlueprint(transform);
 
 		for (SchematicEntity e : entities) {
-			e.transformToBlueprint(mapping, transform);
+			e.translateToSchematic(transform);
 		}
 	}
 
 	@Override
-	public void transformToWorld(Translation transform) {
-		super.transformToWorld(transform);
+	public void translateToWorld(Translation transform) {
+		super.translateToWorld(transform);
 
 		for (SchematicEntity e : entities) {
-			e.transformToWorld(mapping, transform);
+			e.translateToWorld(transform);
 		}
 	}
 
@@ -106,8 +107,8 @@ public class Blueprint extends BlueprintBase {
 		}
 
 		try {
-			slot.readFromWorld(context, x, y, z);
-			slot.readRequirementsFromWorld(context, x, y, z);
+			slot.writeToSchematic(context, x, y, z);
+			slot.writeRequirementsToSchematic(context, x, y, z);
 			contents[posX][posY][posZ] = slot;
 		} catch (Throwable t) {
 			// Defensive code against errors in implementers
@@ -162,6 +163,7 @@ public class Blueprint extends BlueprintBase {
 					NBTTagCompound cpt = new NBTTagCompound();
 
 					if (contents [x][y][z] != null) {
+						contents[x][y][z].idsToSchematic(mapping);
 						contents[x][y][z].writeToNBT(cpt, mapping);
 					}
 
@@ -176,6 +178,7 @@ public class Blueprint extends BlueprintBase {
 
 		for (SchematicEntity s : entities) {
 			NBTTagCompound subNBT = new NBTTagCompound();
+			s.idsToSchematic(mapping);
 			s.writeToNBT(subNBT, mapping);
 			entitiesNBT.appendTag(subNBT);
 		}
@@ -203,11 +206,19 @@ public class Blueprint extends BlueprintBase {
 					index++;
 
 					if (cpt.hasKey("blockId")) {
-						Block block = mapping.getBlockForId(cpt.getInteger("blockId"));
+						Block block;
+
+						try {
+							block = mapping.getBlockForId(cpt.getInteger("blockId"));
+						} catch (MappingNotFoundException e) {
+							block = null;
+							buildingPermission = BuildingPermission.CREATIVE_ONLY;
+						}
 
 						if (block != null) {
 							contents[x][y][z] = SchematicRegistry.newSchematicBlock(block);
 							contents[x][y][z].readFromNBT(cpt, mapping);
+							contents[x][y][z].idsToWorld(mapping);
 
 							switch (contents[x][y][z].getBuildingPermission()) {
 							case ALL:
@@ -239,11 +250,19 @@ public class Blueprint extends BlueprintBase {
 			NBTTagCompound cpt = entitiesNBT.getCompoundTagAt(i);
 
 			if (cpt.hasKey("entityId")) {
-				Class<? extends Entity> entity = mapping.getEntityForId(cpt.getInteger("entityId"));
+				Class<? extends Entity> entity;
+
+				try {
+					entity = mapping.getEntityForId(cpt.getInteger("entityId"));
+				} catch (MappingNotFoundException e) {
+					entity = null;
+					buildingPermission = BuildingPermission.CREATIVE_ONLY;
+				}
 
 				if (entity != null) {
 					SchematicEntity s = SchematicRegistry.newSchematicEntity(entity);
 					s.readFromNBT(cpt, mapping);
+					s.idsToWorld(mapping);
 					entities.add(s);
 				} else {
 					isComplete = false;

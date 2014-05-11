@@ -97,7 +97,13 @@ public class SimpleInventory implements IInventory, INBTTagable {
 
 	@Override
 	public void readFromNBT(NBTTagCompound data) {
-		readFromNBT(data, "items");
+		if (data.hasKey("items")) {
+			// this is to support legacy item load, the new format should be
+			// "Items"
+			readFromNBT(data, "items");
+		} else {
+			readFromNBT(data, "Items");
+		}
 	}
 
 	public void readFromNBT(NBTTagCompound data, String tag) {
@@ -119,7 +125,7 @@ public class SimpleInventory implements IInventory, INBTTagable {
 
 	@Override
 	public void writeToNBT(NBTTagCompound data) {
-		writeToNBT(data, "items");
+		writeToNBT(data, "Items");
 	}
 
 	public void writeToNBT(NBTTagCompound data, String tag) {

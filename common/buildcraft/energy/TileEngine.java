@@ -285,7 +285,7 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 			return extractEnergy(receptor.getMinEnergyReceived(),
 					receptor.getMaxEnergyReceived(), false);
 		} else {
-			return extractEnergy(0, MjAPI.getMjBattery(tile)
+			return extractEnergy(0, MjAPI.getMjBattery(tile, MjAPI.DEFAULT_POWER_FRAMEWORK, orientation.getOpposite())
 					.getEnergyRequested(), false);
 		}
 	}
@@ -307,7 +307,7 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 					extractEnergy(receptor.getMinEnergyReceived(), needed, true);
 				}
 			} else {
-				IBatteryObject battery = MjAPI.getMjBattery(tile);
+				IBatteryObject battery = MjAPI.getMjBattery(tile, MjAPI.DEFAULT_POWER_FRAMEWORK, orientation.getOpposite());
 
 				battery.addEnergy(extractEnergy(0, battery.maxReceivedPerCycle(),
 						true));
@@ -522,7 +522,7 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 		} else if (tile instanceof IPowerReceptor) {
 			return ((IPowerReceptor) tile).getPowerReceiver(side.getOpposite()) != null;
 		} else {
-			return MjAPI.getMjBattery(tile) != null;
+			return MjAPI.getMjBattery(tile, MjAPI.DEFAULT_POWER_FRAMEWORK, orientation.getOpposite()) != null;
 		}
 	}
 
