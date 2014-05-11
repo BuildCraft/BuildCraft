@@ -88,7 +88,7 @@ public class BuildingSlotBlock extends BuildingSlot {
 		} else {
 			LinkedList<ItemStack> req = new LinkedList<ItemStack>();
 
-			getSchematic().writeRequirementsToBuilder(context, req);
+			getSchematic().writeRequirementsToWorld(context, req);
 
 			return req;
 		}

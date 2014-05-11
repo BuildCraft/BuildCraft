@@ -28,14 +28,14 @@ public class SchematicDoor extends SchematicBlock {
 	}
 
 	@Override
-	public void writeRequirementsToBuilder(IBuilderContext context, LinkedList<ItemStack> requirements) {
+	public void writeRequirementsToWorld(IBuilderContext context, LinkedList<ItemStack> requirements) {
 		if ((meta & 8) == 0) {
 			requirements.add(stack.copy());
 		}
 	}
 
 	@Override
-	public void writeRequirementsToSchematic(IBuilderContext context, int x, int y, int z) {
+	public void writeRequirementsToBlueprint(IBuilderContext context, int x, int y, int z) {
 		// cancel requirements reading
 	}
 
@@ -83,8 +83,8 @@ public class SchematicDoor extends SchematicBlock {
 	}
 
 	@Override
-	public void writeToSchematic(IBuilderContext context, int x, int y, int z) {
-		super.writeToSchematic(context, x, y, z);
+	public void writeToBlueprint(IBuilderContext context, int x, int y, int z) {
+		super.writeToBlueprint(context, x, y, z);
 
 		if ((meta & 8) == 0) {
 			upperMeta = context.world().getBlockMetadata(x, y + 1, z);

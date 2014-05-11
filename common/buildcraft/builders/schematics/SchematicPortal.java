@@ -19,12 +19,12 @@ import buildcraft.api.blueprints.SchematicBlock;
 public class SchematicPortal extends SchematicBlock {
 
 	@Override
-	public void writeRequirementsToBuilder(IBuilderContext context, LinkedList<ItemStack> requirements) {
+	public void writeRequirementsToWorld(IBuilderContext context, LinkedList<ItemStack> requirements) {
 
 	}
 
 	@Override
-	public void writeRequirementsToSchematic(IBuilderContext context, int x, int y, int z) {
+	public void writeRequirementsToBlueprint(IBuilderContext context, int x, int y, int z) {
 
 	}
 

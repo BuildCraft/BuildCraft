@@ -14,9 +14,9 @@ import buildcraft.api.blueprints.SchematicTile;
 public class SchematicLaserTableBase extends SchematicTile {
 
 	@Override
-	public void writeToSchematic(IBuilderContext context, int x, int y, int z) {
-		super.writeToSchematic(context, x, y, z);
+	public void writeToBlueprint(IBuilderContext context, int x, int y, int z) {
+		super.writeToBlueprint(context, x, y, z);
 
-		cpt.removeTag("energy");
+		tileNBT.removeTag("energy");
 	}
 }

@@ -15,11 +15,11 @@ public class SchematicSkull extends SchematicTile {
 
 	@Override
 	public void rotateLeft(IBuilderContext context) {
-		int rot = cpt.getByte("Rot");
+		int rot = tileNBT.getByte("Rot");
 
 		rot = (rot + 4) % 16;
 
-		cpt.setByte("Rot", (byte) rot);
+		tileNBT.setByte("Rot", (byte) rot);
 	}
 
 }

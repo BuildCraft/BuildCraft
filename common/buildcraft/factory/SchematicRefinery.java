@@ -25,7 +25,7 @@ public class SchematicRefinery extends SchematicTile {
 	}
 
 	@Override
-	public void writeToSchematic(IBuilderContext context, int x, int y, int z) {
+	public void writeToBlueprint(IBuilderContext context, int x, int y, int z) {
 		TileRefinery refinery = (TileRefinery) context.world().getTileEntity(x, y, z);
 
 //		slot.cpt.setInteger("filter0", refinery.getFilter(0));
@@ -38,16 +38,16 @@ public class SchematicRefinery extends SchematicTile {
 
 		TileRefinery refinery = (TileRefinery) context.world().getTileEntity(x, y, z);
 
-		int filter0 = cpt.getInteger("filter0");
-		int filter1 = cpt.getInteger("filter1");
+		int filter0 = tileNBT.getInteger("filter0");
+		int filter1 = tileNBT.getInteger("filter1");
 		int filterMeta0 = 0;
 		int filterMeta1 = 0;
 
-		if (cpt.hasKey("filterMeta0")) {
-			filterMeta0 = cpt.getInteger("filterMeta0");
+		if (tileNBT.hasKey("filterMeta0")) {
+			filterMeta0 = tileNBT.getInteger("filterMeta0");
 		}
-		if (cpt.hasKey("filterMeta1")) {
-			filterMeta1 = cpt.getInteger("filterMeta1");
+		if (tileNBT.hasKey("filterMeta1")) {
+			filterMeta1 = tileNBT.getInteger("filterMeta1");
 		}
 
 //		refinery.setFilter(0, filter0, filterMeta0);

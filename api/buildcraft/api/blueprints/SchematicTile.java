@@ -22,23 +22,23 @@ public class SchematicTile extends SchematicBlock {
 
 	/**
 	 * This tree contains additional data to be stored in the blueprint. By
-	 * default, it will be initialized from Schematic.readFromWord with
-	 * the standard readNBT function of the corresponding tile (if any) and will
-	 * be loaded from BptBlock.buildBlock using the standard writeNBT function.
+	 * default, it will be initialized from Schematic.readFromWord with the
+	 * standard readNBT function of the corresponding tile (if any) and will be
+	 * loaded from BptBlock.writeToWorld using the standard writeNBT function.
 	 */
-	public NBTTagCompound cpt = new NBTTagCompound();
+	public NBTTagCompound tileNBT = new NBTTagCompound();
 
 	@Override
-	public void idsToSchematic(MappingRegistry registry) {
-		registry.scanAndTranslateStacksToRegistry(cpt);
+	public void idsToBlueprint(MappingRegistry registry) {
+		registry.scanAndTranslateStacksToRegistry(tileNBT);
 	}
 
 	@Override
 	public void idsToWorld(MappingRegistry registry) {
 		try {
-			registry.scanAndTranslateStacksToWorld(cpt);
+			registry.scanAndTranslateStacksToWorld(tileNBT);
 		} catch (MappingNotFoundException e) {
-			cpt = new NBTTagCompound();
+			tileNBT = new NBTTagCompound();
 		}
 	}
 
@@ -52,32 +52,32 @@ public class SchematicTile extends SchematicBlock {
 		if (block.hasTileEntity(meta)) {
 			TileEntity tile = context.world().getTileEntity(x, y, z);
 
-			cpt.setInteger("x", x);
-			cpt.setInteger("y", y);
-			cpt.setInteger("z", z);
+			tileNBT.setInteger("x", x);
+			tileNBT.setInteger("y", y);
+			tileNBT.setInteger("z", z);
 
 			if (tile != null) {
-				tile.readFromNBT(cpt);
+				tile.readFromNBT(tileNBT);
 			}
 		}
 	}
 
 	@Override
-	public void writeToSchematic(IBuilderContext context, int x, int y, int z) {
-		super.writeToSchematic(context, x, y, z);
+	public void writeToBlueprint(IBuilderContext context, int x, int y, int z) {
+		super.writeToBlueprint(context, x, y, z);
 
 		if (block.hasTileEntity(meta)) {
 			TileEntity tile = context.world().getTileEntity(x, y, z);
 
 			if (tile != null) {
-				tile.writeToNBT(cpt);
+				tile.writeToNBT(tileNBT);
 			}
 		}
 	}
 
 	@Override
-	public void writeRequirementsToSchematic(IBuilderContext context, int x, int y, int z) {
-		super.writeRequirementsToSchematic(context, x, y, z);
+	public void writeRequirementsToBlueprint(IBuilderContext context, int x, int y, int z) {
+		super.writeRequirementsToBlueprint(context, x, y, z);
 
 		if (block.hasTileEntity(meta)) {
 			TileEntity tile = context.world().getTileEntity(x, y, z);
@@ -103,13 +103,13 @@ public class SchematicTile extends SchematicBlock {
 	public void writeToNBT(NBTTagCompound nbt, MappingRegistry registry) {
 		super.writeToNBT(nbt, registry);
 
-		nbt.setTag("blockCpt", cpt);
+		nbt.setTag("blockCpt", tileNBT);
 	}
 
 	@Override
 	public void readFromNBT(NBTTagCompound nbt,	MappingRegistry registry) {
 		super.readFromNBT(nbt, registry);
 
-		cpt = nbt.getCompoundTag("blockCpt");
+		tileNBT = nbt.getCompoundTag("blockCpt");
 	}
 }

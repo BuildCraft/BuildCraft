@@ -21,25 +21,25 @@ public class SchematicEngine extends SchematicTile {
 
 	@Override
 	public void rotateLeft(IBuilderContext context) {
-		int o = cpt.getInteger("orientation");
+		int o = tileNBT.getInteger("orientation");
 
 		o = ForgeDirection.values()[o].getRotation(ForgeDirection.UP).ordinal();
 
-		cpt.setInteger("orientation", o);
+		tileNBT.setInteger("orientation", o);
 	}
 
 	@Override
-	public void writeToSchematic(IBuilderContext context, int x, int y, int z) {
-		super.writeToSchematic(context, x, y, z);
+	public void writeToBlueprint(IBuilderContext context, int x, int y, int z) {
+		super.writeToBlueprint(context, x, y, z);
 
 		TileEngine engine = (TileEngine) context.world().getTileEntity(x, y, z);
 
-		cpt.setInteger("orientation", engine.orientation.ordinal());
-		cpt.removeTag("progress");
-		cpt.removeTag("energy");
-		cpt.removeTag("heat");
-		cpt.removeTag("tankFuel");
-		cpt.removeTag("tankCoolant");
+		tileNBT.setInteger("orientation", engine.orientation.ordinal());
+		tileNBT.removeTag("progress");
+		tileNBT.removeTag("energy");
+		tileNBT.removeTag("heat");
+		tileNBT.removeTag("tankFuel");
+		tileNBT.removeTag("tankCoolant");
 	}
 
 	@Override
@@ -48,7 +48,7 @@ public class SchematicEngine extends SchematicTile {
 
 		TileEngine engine = (TileEngine) context.world().getTileEntity(x, y, z);
 
-		engine.orientation = ForgeDirection.getOrientation(cpt.getInteger("orientation"));
+		engine.orientation = ForgeDirection.getOrientation(tileNBT.getInteger("orientation"));
 		engine.sendNetworkUpdate();
 	}
 
@@ -57,7 +57,7 @@ public class SchematicEngine extends SchematicTile {
 		TileEngine engine = (TileEngine) context.world().getTileEntity(x, y, z);
 
 		if (engine != null) {
-			engine.orientation = ForgeDirection.getOrientation(cpt.getInteger("orientation"));
+			engine.orientation = ForgeDirection.getOrientation(tileNBT.getInteger("orientation"));
 			engine.sendNetworkUpdate();
 			context.world().markBlockForUpdate(x, y, z);
 			context.world().notifyBlocksOfNeighborChange(x, y, z, block);

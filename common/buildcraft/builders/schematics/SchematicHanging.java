@@ -29,40 +29,40 @@ public class SchematicHanging extends SchematicEntity {
 	}
 
 	@Override
-	public void translateToSchematic(Translation transform) {
-		super.translateToSchematic(transform);
+	public void translateToBlueprint(Translation transform) {
+		super.translateToBlueprint(transform);
 
-		Position pos = new Position (cpt.getInteger("TileX"), cpt.getInteger("TileY"), cpt.getInteger("TileZ"));
+		Position pos = new Position (entityNBT.getInteger("TileX"), entityNBT.getInteger("TileY"), entityNBT.getInteger("TileZ"));
 		pos = transform.translate(pos);
-		cpt.setInteger("TileX", (int) pos.x);
-		cpt.setInteger("TileY", (int) pos.y);
-		cpt.setInteger("TileZ", (int) pos.z);
+		entityNBT.setInteger("TileX", (int) pos.x);
+		entityNBT.setInteger("TileY", (int) pos.y);
+		entityNBT.setInteger("TileZ", (int) pos.z);
 	}
 
 	@Override
 	public void translateToWorld(Translation transform) {
 		super.translateToWorld(transform);
 
-		Position pos = new Position (cpt.getInteger("TileX"), cpt.getInteger("TileY"), cpt.getInteger("TileZ"));
+		Position pos = new Position (entityNBT.getInteger("TileX"), entityNBT.getInteger("TileY"), entityNBT.getInteger("TileZ"));
 		pos = transform.translate(pos);
-		cpt.setInteger("TileX", (int) pos.x);
-		cpt.setInteger("TileY", (int) pos.y);
-		cpt.setInteger("TileZ", (int) pos.z);
+		entityNBT.setInteger("TileX", (int) pos.x);
+		entityNBT.setInteger("TileY", (int) pos.y);
+		entityNBT.setInteger("TileZ", (int) pos.z);
 	}
 
 	@Override
 	public void rotateLeft(IBuilderContext context) {
 		super.rotateLeft(context);
 
-		Position pos = new Position (cpt.getInteger("TileX"), cpt.getInteger("TileY"), cpt.getInteger("TileZ"));
+		Position pos = new Position (entityNBT.getInteger("TileX"), entityNBT.getInteger("TileY"), entityNBT.getInteger("TileZ"));
 		pos = context.rotatePositionLeft(pos);
-		cpt.setInteger("TileX", (int) pos.x);
-		cpt.setInteger("TileY", (int) pos.y);
-		cpt.setInteger("TileZ", (int) pos.z);
+		entityNBT.setInteger("TileX", (int) pos.x);
+		entityNBT.setInteger("TileY", (int) pos.y);
+		entityNBT.setInteger("TileZ", (int) pos.z);
 
-		int direction = cpt.getByte("Direction");
+		int direction = entityNBT.getByte("Direction");
 		direction = direction < 3 ? direction + 1 : 0;
-		cpt.setInteger("Direction", direction);
+		entityNBT.setInteger("Direction", direction);
 	}
 
 	@Override
@@ -70,7 +70,7 @@ public class SchematicHanging extends SchematicEntity {
 		super.readFromWorld(context, entity);
 
 		if (baseItem == Items.item_frame) {
-			NBTTagCompound tag = cpt.getCompoundTag("Item");
+			NBTTagCompound tag = entityNBT.getCompoundTag("Item");
 			ItemStack stack = ItemStack.loadItemStackFromNBT(tag);
 
 			if (stack != null) {
@@ -89,9 +89,9 @@ public class SchematicHanging extends SchematicEntity {
 
 	@Override
 	public boolean isAlreadyBuilt(IBuilderContext context) {
-		Position newPosition = new Position (cpt.getInteger("TileX"), cpt.getInteger("TileY"), cpt.getInteger("TileZ"));
+		Position newPosition = new Position (entityNBT.getInteger("TileX"), entityNBT.getInteger("TileY"), entityNBT.getInteger("TileZ"));
 
-		int dir = cpt.getInteger("Direction");
+		int dir = entityNBT.getInteger("Direction");
 
 		for (Object o : context.world().loadedEntityList) {
 			Entity e = (Entity) o;

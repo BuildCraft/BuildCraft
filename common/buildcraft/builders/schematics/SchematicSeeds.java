@@ -25,12 +25,12 @@ public class SchematicSeeds extends SchematicBlock {
 	}
 
 	@Override
-	public void writeRequirementsToBuilder(IBuilderContext context, LinkedList<ItemStack> requirements) {
+	public void writeRequirementsToWorld(IBuilderContext context, LinkedList<ItemStack> requirements) {
 		requirements.add(new ItemStack(seeds));
 	}
 
 	@Override
-	public void writeRequirementsToSchematic(IBuilderContext context, int x, int y, int z) {
+	public void writeRequirementsToBlueprint(IBuilderContext context, int x, int y, int z) {
 
 	}
 
