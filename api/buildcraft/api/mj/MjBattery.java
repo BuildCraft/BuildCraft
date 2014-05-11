@@ -65,4 +65,9 @@ public @interface MjBattery {
 	 * @return Sides on which this battery should works.
 	 */
 	ForgeDirection[] sides() default { ForgeDirection.UNKNOWN };
+
+	/**
+	 * @return Current battery input/output mode
+	 */
+	IOMode mode() default IOMode.Receive;
 }

@@ -22,7 +22,7 @@ import buildcraft.api.core.JavaTools;
  * battery field is of type double, and is the only piece of data specific to
  * this object. Others are class-wide.
  */
-public class BatteryObject implements IBatteryObject {
+public class BatteryObject implements IBatteryIOObject {
 	protected Field energyStored;
 	protected Object obj;
 	protected MjBattery batteryData;
@@ -32,6 +32,9 @@ public class BatteryObject implements IBatteryObject {
 	 */
 	@Override
 	public double getEnergyRequested() {
+		if (!batteryData.mode().canReceive) {
+			return 0;
+		}
 		try {
 			return JavaTools.bounds(batteryData.maxCapacity() - energyStored.getDouble(obj),
 					batteryData.minimumConsumption(), batteryData.maxReceivedPerCycle());
@@ -54,6 +57,9 @@ public class BatteryObject implements IBatteryObject {
 	 */
 	@Override
 	public double addEnergy(double mj, boolean ignoreCycleLimit) {
+		if (!batteryData.mode().canReceive) {
+			return 0;
+		}
 		try {
 			double contained = energyStored.getDouble(obj);
 			double maxAccepted = batteryData.maxCapacity() - contained + batteryData.minimumConsumption();
@@ -126,8 +132,14 @@ public class BatteryObject implements IBatteryObject {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public BatteryObject reconfigure(final double maxCapacity, final double maxReceivedPerCycle, final double minimumConsumption) {
-		final ForgeDirection[] sides = batteryData != null ? batteryData.sides() : new ForgeDirection[] { ForgeDirection.UNKNOWN };
+	public BatteryObject reconfigure(double maxCapacity, double maxReceivedPerCycle, double minimumConsumption) {
+		overrideBattery(maxCapacity, maxReceivedPerCycle, minimumConsumption,
+					batteryData.kind(), batteryData.sides(), batteryData.mode());
+		return this;
+	}
+
+	public void overrideBattery(final double maxCapacity, final double maxReceivedPerCycle, final double minimumConsumption,
+								 final String kind, final ForgeDirection[] sides, final IOMode mode) {
 		batteryData = new MjBattery() {
 			@Override
 			public double maxCapacity() {
@@ -151,20 +163,38 @@ public class BatteryObject implements IBatteryObject {
 
 			@Override
 			public String kind() {
-				return MjAPI.DEFAULT_POWER_FRAMEWORK;
+				return kind;
 			}
 
 			@Override
 			public ForgeDirection[] sides() {
 				return sides;
 			}
-		};
 
-		return this;
+			@Override
+			public IOMode mode() {
+				return mode;
+			}
+		};
 	}
 
 	@Override
 	public String kind() {
 		return batteryData.kind();
+	}
+
+	@Override
+	public IOMode mode() {
+		return batteryData.mode();
+	}
+
+	@Override
+	public boolean canSend() {
+		return batteryData.mode().canSend;
+	}
+
+	@Override
+	public boolean canReceive() {
+		return batteryData.mode().canReceive;
 	}
 }
