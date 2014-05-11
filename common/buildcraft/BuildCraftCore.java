@@ -170,7 +170,6 @@ public class BuildCraftCore extends BuildCraftMod {
 	public static BCAction actionOff = new ActionMachineControl(Mode.Off);
 	public static BCAction actionLoop = new ActionMachineControl(Mode.Loop);
 	public static boolean loadDefaultRecipes = true;
-	public static boolean forcePneumaticPower = true;
 	public static boolean consumeWaterSources = false;
 	//public static BptItem[] itemBptProps = new BptItem[Item.itemsList.length];
 	@Mod.Instance("BuildCraft|Core")
