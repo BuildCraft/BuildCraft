@@ -287,20 +287,18 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 
 		renderGatesWires(pipe, x, y, z);
 
-		switch (pipe.getPipeType()) {
-			case ITEM:
-				renderSolids(pipe.pipe, x, y, z);
-				break;
-			case FLUID:
-				renderFluids(pipe.pipe, x, y, z);
-				break;
-			case POWER:
-				renderPower(pipe.pipe, x, y, z);
-				break;
-			case STRUCTURE:
-				// no object to render in a structure pipe;
-				break;
-		}
+		PipeType pipeType = pipe.getPipeType();
+
+		// do not use switch. we will be transitioning away from the enum
+		if (pipeType == PipeType.ITEM) { 
+			renderSolids(pipe.pipe, x, y, z);
+		} else if (pipeType == PipeType.FLUID) {
+			renderFluids(pipe.pipe, x, y, z);
+		} else if (pipeType == PipeType.POWER) {
+			renderPower(pipe.pipe, x, y, z);
+		} /* else if (pipeType == PipeType.STRUCTURE) {
+			// no object to render in a structure pipe;
+		} */
 	}
 
 	private void renderGatesWires(TileGenericPipe pipe, double x, double y, double z) {
