@@ -40,6 +40,10 @@ public class Position {
 		y = cj;
 		z = ck;
 		orientation = corientation;
+
+		if (orientation == null) {
+			orientation = ForgeDirection.UNKNOWN;
+		}
 	}
 
 	public Position(Position p) {
@@ -57,6 +61,7 @@ public class Position {
 		x = tile.xCoord;
 		y = tile.yCoord;
 		z = tile.zCoord;
+		orientation = ForgeDirection.UNKNOWN;
 	}
 
 	public void moveRight(double step) {
@@ -127,6 +132,10 @@ public class Position {
 	}
 
 	public void writeToNBT(NBTTagCompound nbttagcompound) {
+		if (orientation == null) {
+			orientation = ForgeDirection.UNKNOWN;
+		}
+
 		nbttagcompound.setDouble("i", x);
 		nbttagcompound.setDouble("j", y);
 		nbttagcompound.setDouble("k", z);
