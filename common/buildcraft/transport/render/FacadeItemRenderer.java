@@ -68,19 +68,19 @@ public class FacadeItemRenderer implements IItemRenderer {
 			return;
 		}
 
-		if (block.getIcon(0, decodedMeta) == null) {
+		if (tryGetBlockIcon(block, 0, decodedMeta) == null) {
 			return;
 		}
 
 		// Render Facade
 		GL11.glPushMatrix();
 
-	        // Enable glBlending for transparency
-	    	if (block.getRenderBlockPass() > 0) {
-	    		GL11.glAlphaFunc(GL11.GL_GREATER, 0.1F);
-	    		GL11.glEnable(GL11.GL_BLEND);
-	    		OpenGlHelper.glBlendFunc(770, 771, 1, 0);
-	    	}
+		// Enable glBlending for transparency
+		if (block.getRenderBlockPass() > 0) {
+			GL11.glAlphaFunc(GL11.GL_GREATER, 0.1F);
+			GL11.glEnable(GL11.GL_BLEND);
+			OpenGlHelper.glBlendFunc(770, 771, 1, 0);
+		}
 
 		block.setBlockBounds(0F, 0F, 1F - 1F / 16F, 1F, 1F, 1F);
 		render.setRenderBoundsFromBlock(block);
@@ -111,10 +111,10 @@ public class FacadeItemRenderer implements IItemRenderer {
 		tessellator.draw();
 		block.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
 
-	        // Disable blending
-	    	if (block.getRenderBlockPass() > 0) {
-	    		GL11.glDisable(GL11.GL_BLEND);
-	    	}
+		// Disable blending
+		if (block.getRenderBlockPass() > 0) {
+			GL11.glDisable(GL11.GL_BLEND);
+		}
 
 		GL11.glPopMatrix();
 
@@ -159,7 +159,11 @@ public class FacadeItemRenderer implements IItemRenderer {
 		try {
 			return block.getIcon(side, decodedMeta);
 		} catch (Throwable t) {
-			return Blocks.cobblestone.getIcon(0, 0);
+			try {
+				return block.getBlockTextureFromSide(side);
+			} catch (Throwable t2) {
+				return Blocks.cobblestone.getIcon(0, 0);
+			}
 		}
 	}
 
