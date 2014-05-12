@@ -8,11 +8,12 @@
  */
 package buildcraft.transport;
 
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import net.minecraft.block.Block;
+import net.minecraft.block.*;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -23,6 +24,7 @@ import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+import net.minecraftforge.common.IShearable;
 import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.Position;
@@ -138,6 +140,7 @@ public class ItemFacade extends ItemBuildCraft {
 
 		for(int i=0; i <= 15; i++) {
 			try {
+				if (block.hasTileEntity(i)) continue;
 				ItemStack stack = new ItemStack(item, 1, i);
 
 				if(!Strings.isNullOrEmpty(stack.getUnlocalizedName())
@@ -188,7 +191,18 @@ public class ItemFacade extends ItemBuildCraft {
 			return false;
 		}
 
-		if(block instanceof BlockSpring || block instanceof BlockGenericPipe) {
+		if(block instanceof BlockSpring || block instanceof BlockGenericPipe 
+				|| block instanceof BlockLeavesBase || block instanceof BlockContainer) {
+			return false;
+		}
+		
+		if (IShearable.class.isAssignableFrom(block.getClass()))
+		{
+			return false;
+		}
+		
+		if (!block.isBlockNormalCube())
+		{
 			return false;
 		}
 
