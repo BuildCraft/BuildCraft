@@ -13,6 +13,7 @@ import java.util.LinkedList;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.world.WorldServer;
 
 import buildcraft.api.core.BuildCraftAPI;
 
@@ -41,7 +42,7 @@ public class SchematicMask extends SchematicBlockBase {
 				context.world().setBlock(x, y, z, Blocks.air, 0, 3);
 
 				stack.tryPlaceItemIntoWorld(
-						BuildCraftAPI.proxy.getBuildCraftPlayer(context.world()),
+						BuildCraftAPI.proxy.getBuildCraftPlayer((WorldServer) context.world()).get(),
 						context.world(), x, y, z, 1, 0.0f, 0.0f, 0.0f);
 			}
 		} else {

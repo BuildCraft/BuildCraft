@@ -15,6 +15,8 @@ import java.nio.IntBuffer;
 import java.util.HashSet;
 import java.util.TreeMap;
 
+import com.mojang.authlib.GameProfile;
+
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.glu.GLU;
@@ -203,6 +205,8 @@ public class BuildCraftCore extends BuildCraftMod {
 	public static HashSet<String> recipesBlacklist = new HashSet<String>();
 
 	public static float diffX, diffY, diffZ;
+
+	public static GameProfile gameProfile = new GameProfile("buildcraft.core", "[BuildCraft]");
 
 	private static FloatBuffer modelviewF;
 	private static FloatBuffer projectionF;

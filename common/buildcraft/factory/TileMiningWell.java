@@ -13,7 +13,10 @@ import java.util.List;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
+
 import net.minecraftforge.common.util.ForgeDirection;
+
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftFactory;
 import buildcraft.api.gates.IAction;
@@ -36,6 +39,10 @@ public class TileMiningWell extends TileBuildCraft implements IMachine {
 	 */
 	@Override
 	public void updateEntity () {
+		if (worldObj.isRemote) {
+			return;
+		}
+
 		float mj = BuildCraftFactory.MINING_MJ_COST_PER_BLOCK * BuildCraftFactory.miningMultiplier;
 
 		if (mjStored < mj) {
@@ -59,7 +66,7 @@ public class TileMiningWell extends TileBuildCraft implements IMachine {
 
 		boolean wasAir = world.isAirBlock(xCoord, depth, zCoord);
 
-		List<ItemStack> stacks = BlockUtil.getItemStackFromBlock(worldObj, xCoord, depth, zCoord);
+		List<ItemStack> stacks = BlockUtil.getItemStackFromBlock((WorldServer) worldObj, xCoord, depth, zCoord);
 
 		world.setBlock(xCoord, depth, zCoord, BuildCraftFactory.plainPipeBlock);
 

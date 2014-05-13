@@ -10,8 +10,6 @@ package buildcraft.core.proxy;
 
 import java.util.List;
 
-import com.mojang.authlib.GameProfile;
-
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
@@ -24,8 +22,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.network.INetHandler;
 import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ChunkCoordinates;
-import net.minecraft.util.IChatComponent;
 import net.minecraft.world.World;
 
 import cpw.mods.fml.client.FMLClientHandler;
@@ -119,35 +115,6 @@ public class CoreProxyClient extends CoreProxy {
 	@Override
 	public String playerName() {
 		return FMLClientHandler.instance().getClient().thePlayer.getDisplayName();
-	}
-
-	private EntityPlayer createNewPlayer(World world) {
-		EntityPlayer player = new EntityPlayer(world, new GameProfile(null, "[BuildCraft]")) {
-			@Override
-			public void addChatMessage(IChatComponent var1) {
-			}
-
-			@Override
-			public boolean canCommandSenderUseCommand(int var1, String var2) {
-				return false;
-			}
-
-			@Override
-			public ChunkCoordinates getPlayerCoordinates() {
-				return null;
-			}
-		};
-
-		return player;
-	}
-
-	@Override
-	public EntityPlayer getBuildCraftPlayer(World world) {
-		if (CoreProxy.buildCraftPlayer == null) {
-			CoreProxy.buildCraftPlayer = createNewPlayer(world);
-		}
-
-		return CoreProxy.buildCraftPlayer;
 	}
 
 	@Override

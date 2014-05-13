@@ -21,6 +21,7 @@ import net.minecraft.network.play.server.S27PacketExplosion;
 import net.minecraft.world.ChunkPosition;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
 
 import cpw.mods.fml.common.FMLCommonHandler;
 
@@ -44,7 +45,7 @@ public final class BlockUtil {
 	private BlockUtil() {
 	}
 
-	public static List<ItemStack> getItemStackFromBlock(World world, int i, int j, int k) {
+	public static List<ItemStack> getItemStackFromBlock(WorldServer world, int i, int j, int k) {
 		Block block = world.getBlock(i, j, k);
 
 		if (block == null) {
@@ -58,7 +59,8 @@ public final class BlockUtil {
 		int meta = world.getBlockMetadata(i, j, k);
 
 		ArrayList<ItemStack> dropsList = block.getDrops(world, i, j, k, meta, 0);
-		float dropChance = ForgeEventFactory.fireBlockHarvesting(dropsList, world, block, i, j, k, meta, 0, 1.0F, false, CoreProxy.proxy.getBuildCraftPlayer(world));
+		float dropChance = ForgeEventFactory.fireBlockHarvesting(dropsList, world, block, i, j, k, meta, 0, 1.0F,
+				false, CoreProxy.proxy.getBuildCraftPlayer(world).get());
 
 		ArrayList<ItemStack> returnList = new ArrayList<ItemStack>();
 		for (ItemStack s : dropsList) {
@@ -70,11 +72,11 @@ public final class BlockUtil {
 		return returnList;
 	}
 
-	public static void breakBlock(World world, int x, int y, int z) {
+	public static void breakBlock(WorldServer world, int x, int y, int z) {
 		breakBlock(world, x, y, z, BuildCraftCore.itemLifespan);
 	}
 
-	public static void breakBlock(World world, int x, int y, int z, int forcedLifespan) {
+	public static void breakBlock(WorldServer world, int x, int y, int z, int forcedLifespan) {
 		if (!world.isAirBlock(x, y, z) && BuildCraftCore.dropBrokenBlocks && !world.isRemote && world.getGameRules().getGameRuleBooleanValue("doTileDrops")) {
 			List<ItemStack> items = getItemStackFromBlock(world, x, y, z);
 

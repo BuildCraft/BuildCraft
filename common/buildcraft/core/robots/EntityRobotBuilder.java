@@ -15,6 +15,7 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
 
 import cpw.mods.fml.common.registry.IEntityAdditionalSpawnData;
 
@@ -85,7 +86,7 @@ public class EntityRobotBuilder extends EntityRobot implements
 
 			if (buildEnergy >= 25) {
 				buildingStack.getItem().onItemUse(buildingStack,
-						CoreProxy.proxy.getBuildCraftPlayer(worldObj),
+						CoreProxy.proxy.getBuildCraftPlayer((WorldServer) worldObj).get(),
 						worldObj, x, y - 1, z, 1, 0.0f, 0.0f, 0.0f);
 
 				buildingStack = null;

@@ -22,7 +22,10 @@ import net.minecraft.item.ItemBucket;
 import net.minecraft.item.ItemPotion;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.WorldServer;
+
 import net.minecraftforge.common.util.ForgeDirection;
+
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.core.Position;
@@ -102,13 +105,13 @@ public class PipeItemsStripes extends Pipe<PipeTransportItems> {
 		if (convertPipe(transport, event.item)) {
 			BuildCraftTransport.pipeItemsStripes.onItemUse(new ItemStack(
 							BuildCraftTransport.pipeItemsStripes), CoreProxy
-							.proxy.getBuildCraftPlayer(getWorld()), getWorld(), (int) p.x,
+					.proxy.getBuildCraftPlayer((WorldServer) getWorld()).get(), getWorld(), (int) p.x,
 					(int) p.y, (int) p.z, 1, 0, 0, 0
 			);
 		} else if (stack.getItem() instanceof ItemBlock) {
 			if (getWorld().getBlock((int) p.x, (int) p.y, (int) p.z) == Blocks.air) {
 				stack.tryPlaceItemIntoWorld(
-					CoreProxy.proxy.getBuildCraftPlayer(getWorld()),
+						CoreProxy.proxy.getBuildCraftPlayer((WorldServer) getWorld()).get(),
 					getWorld(), (int) p.x, (int) p.y, (int) p.z, 1, 0.0f, 0.0f,
 					0.0f);
 			}
@@ -118,13 +121,14 @@ public class PipeItemsStripes extends Pipe<PipeTransportItems> {
 			if (block instanceof BlockLeavesBase) {
 				getWorld().playSoundEffect((int) p.x, (int) p.y, (int) p.z, Block.soundTypeGrass.getBreakSound(), 1, 1);
 				getWorld().setBlockToAir((int) p.x, (int) p.y, (int) p.z);
-				stack.damageItem(1, CoreProxy.proxy.getBuildCraftPlayer(getWorld()));
+				stack.damageItem(1, CoreProxy.proxy.getBuildCraftPlayer((WorldServer) getWorld()).get());
 			}
 		} else if (stack.getItem() == Items.arrow) {
 			stack.stackSize--;
 
 			ForgeDirection direction = event.direction;
-			EntityArrow entityArrow = new EntityArrow(getWorld(), CoreProxy.proxy.getBuildCraftPlayer(getWorld()), 0);
+			EntityArrow entityArrow = new EntityArrow(getWorld(),
+					CoreProxy.proxy.getBuildCraftPlayer((WorldServer) getWorld()).get(), 0);
 			entityArrow.setPosition(p.x + 0.5d, p.y + 0.5d, p.z + 0.5d);
 			entityArrow.setDamage(3);
 			entityArrow.setKnockbackStrength(1);
@@ -135,8 +139,8 @@ public class PipeItemsStripes extends Pipe<PipeTransportItems> {
 		} else if ((stack.getItem() == Items.potionitem && ItemPotion.isSplash(stack.getItemDamage()))
 				   || stack.getItem() == Items.egg
 				   || stack.getItem() == Items.snowball) {
-			EntityPlayer player = CoreProxy.proxy.getBuildCraftPlayer(getWorld(),
-						(int) p.x, (int) p.y, (int) p.z);
+			EntityPlayer player = CoreProxy.proxy.getBuildCraftPlayer((WorldServer) getWorld(),
+					(int) p.x, (int) p.y, (int) p.z).get();
 
 			switch (event.direction) {
 			case DOWN:
@@ -170,8 +174,8 @@ public class PipeItemsStripes extends Pipe<PipeTransportItems> {
 			stack.getItem().onItemRightClick(
 					stack,
 					getWorld(),
-					CoreProxy.proxy.getBuildCraftPlayer(getWorld(),
-							(int) p.x, (int) p.y, (int) p.z));
+					CoreProxy.proxy.getBuildCraftPlayer((WorldServer) getWorld(),
+							(int) p.x, (int) p.y, (int) p.z).get());
 		} else if (getWorld().getBlock((int) p.x, (int) p.y, (int) p.z) == Blocks.air) {
 			if (stack.getItem() instanceof ItemBucket) {
 				Block underblock = getWorld().getBlock((int) p.x, (int) p.y - 1, (int) p.z);
@@ -201,12 +205,12 @@ public class PipeItemsStripes extends Pipe<PipeTransportItems> {
 				}
 			} else {
 				stack.tryPlaceItemIntoWorld(
-					CoreProxy.proxy.getBuildCraftPlayer(getWorld()),
+						CoreProxy.proxy.getBuildCraftPlayer((WorldServer) getWorld()).get(),
 					getWorld(), (int) p.x, (int) p.y - 1, (int) p.z, 1, 0.0f, 0.0f, 0.0f);
 			}
 		} else {
 			stack.tryPlaceItemIntoWorld(
-					CoreProxy.proxy.getBuildCraftPlayer(getWorld()),
+					CoreProxy.proxy.getBuildCraftPlayer((WorldServer) getWorld()).get(),
 					getWorld(), (int) p.x, (int) p.y, (int) p.z, 1, 0.0f, 0.0f,
 					0.0f);
 		}
