@@ -524,12 +524,10 @@ public class TileQuarry extends TileAbstractBuilder implements IMachine {
 	}
 
 	private boolean isQuarriableBlock(int bx, int by, int bz) {
-		boolean cantMine = false;
 		Block block = worldObj.getBlock(bx, by, bz);
-		cantMine = cantMine || !BlockUtil.canChangeBlock(block, worldObj, bx, by, bz);
-		cantMine = cantMine || BuildCraftAPI.isSoftBlock(block, worldObj, bx, by, bz);
-		cantMine = cantMine || (block.getBlockHardness(worldObj, bx, by, bz) > MAX_BREAK_HARDNESS);
-		return !cantMine;
+		return !BlockUtil.canChangeBlock(block, worldObj, bx, by, bz) ||
+			BuildCraftAPI.isSoftBlock(block, worldObj, bx, by, bz) ||
+			(block.getBlockHardness(worldObj, bx, by, bz) > MAX_BREAK_HARDNESS);
 	}
 
 	@Override
@@ -863,7 +861,7 @@ public class TileQuarry extends TileAbstractBuilder implements IMachine {
 		this.targetZ = z;
 		Block b = worldObj.getBlock(x, y - 1, z);
 		this.nextDigRequiredEnergy = DIG_BASE_REQUIRED_ENERGY +
-			(b.getBlockHardness(null, 0, 0, 0) * DIG_HARDNESS_ENERGY_MULTIPLIER);
+			(b.getBlockHardness(worldObj, x, y - 1, z) * DIG_HARDNESS_ENERGY_MULTIPLIER);
 	}
 
 	public void forceChunkLoading(Ticket ticket) {
