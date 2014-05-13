@@ -156,16 +156,16 @@ public class TileAdvancedCraftingTable extends TileLaserTableBase implements IIn
 		}
 	}
 
-	public WeakReference<EntityPlayer> getInternalPlayer() {
-		return CoreProxy.proxy.getBuildCraftPlayer((WorldServer) worldObj, xCoord, yCoord + 1, zCoord);
-	}
-
 	public TileAdvancedCraftingTable() {
 		craftingSlots = new CraftingGrid();
 		inv.addListener(this);
 		invInput = new InventoryMapper(inv, 0, 15);
 		invOutput = new InventoryMapper(inv, 15, 9);
 		craftResult = new InventoryCraftResult();
+	}
+
+	public WeakReference<EntityPlayer> getInternalPlayer() {
+		return CoreProxy.proxy.getBuildCraftPlayer((WorldServer) worldObj, xCoord, yCoord + 1, zCoord);
 	}
 
 	@Override
@@ -309,10 +309,8 @@ public class TileAdvancedCraftingTable extends TileLaserTableBase implements IIn
 			return false;
 		} else if (StackHelper.isMatchingItem(craftingSlots.getStackInSlot(gridSlot), inputStack, true, false)) {
 			return true;
-		} else if (StackHelper.isCraftingEquivalent(craftingSlots.oreIDs[gridSlot], inputStack)) {
-			return true;
 		} else {
-			return false;
+			return StackHelper.isCraftingEquivalent(craftingSlots.oreIDs[gridSlot], inputStack);
 		}
 	}
 
