@@ -525,9 +525,9 @@ public class TileQuarry extends TileAbstractBuilder implements IMachine {
 
 	private boolean isQuarriableBlock(int bx, int by, int bz) {
 		Block block = worldObj.getBlock(bx, by, bz);
-		return !BlockUtil.canChangeBlock(block, worldObj, bx, by, bz) ||
-			BuildCraftAPI.isSoftBlock(block, worldObj, bx, by, bz) ||
-			(block.getBlockHardness(worldObj, bx, by, bz) > MAX_BREAK_HARDNESS);
+		return BlockUtil.canChangeBlock(block, worldObj, bx, by, bz) &&
+			!BuildCraftAPI.isSoftBlock(block, worldObj, bx, by, bz) &&
+			(block.getBlockHardness(worldObj, bx, by, bz) < MAX_BREAK_HARDNESS);
 	}
 
 	@Override
