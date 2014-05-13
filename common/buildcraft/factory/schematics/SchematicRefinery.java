@@ -6,7 +6,7 @@
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-package buildcraft.factory;
+package buildcraft.factory.schematics;
 
 import java.util.LinkedList;
 
@@ -14,10 +14,21 @@ import net.minecraft.item.ItemStack;
 
 import net.minecraftforge.common.util.ForgeDirection;
 
+import buildcraft.BuildCraftFactory;
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.SchematicTile;
 
 public class SchematicRefinery extends SchematicTile {
+
+	@Override
+	public void writeRequirementsToWorld(IBuilderContext context, LinkedList<ItemStack> requirements) {
+		requirements.add(new ItemStack(BuildCraftFactory.refineryBlock));
+	}
+
+	@Override
+	public void writeRequirementsToBlueprint(IBuilderContext context, int x, int y, int z) {
+
+	}
 
 	@Override
 	public void rotateLeft(IBuilderContext context) {
@@ -26,32 +37,23 @@ public class SchematicRefinery extends SchematicTile {
 
 	@Override
 	public void writeToBlueprint(IBuilderContext context, int x, int y, int z) {
-		TileRefinery refinery = (TileRefinery) context.world().getTileEntity(x, y, z);
+		super.writeToBlueprint(context, x, y, z);
 
-//		slot.cpt.setInteger("filter0", refinery.getFilter(0));
-//		slot.cpt.setInteger("filter1", refinery.getFilter(1));
+		tileNBT.removeTag("tank1");
+		tileNBT.removeTag("tank2");
+		tileNBT.removeTag("result");
+		tileNBT.removeTag("mjStored");
 	}
 
 	@Override
 	public void writeToWorld(IBuilderContext context, int x, int y, int z, LinkedList<ItemStack> stacks) {
+		// to support refineries coming from older blueprints
+		tileNBT.removeTag("tank1");
+		tileNBT.removeTag("tank2");
+		tileNBT.removeTag("result");
+		tileNBT.removeTag("mjStored");
+
 		super.writeToWorld(context, x, y, z, stacks);
-
-		TileRefinery refinery = (TileRefinery) context.world().getTileEntity(x, y, z);
-
-		int filter0 = tileNBT.getInteger("filter0");
-		int filter1 = tileNBT.getInteger("filter1");
-		int filterMeta0 = 0;
-		int filterMeta1 = 0;
-
-		if (tileNBT.hasKey("filterMeta0")) {
-			filterMeta0 = tileNBT.getInteger("filterMeta0");
-		}
-		if (tileNBT.hasKey("filterMeta1")) {
-			filterMeta1 = tileNBT.getInteger("filterMeta1");
-		}
-
-//		refinery.setFilter(0, filter0, filterMeta0);
-//		refinery.setFilter(1, filter1, filterMeta1);
 	}
 
 }

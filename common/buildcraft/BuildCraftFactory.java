@@ -57,8 +57,6 @@ import buildcraft.factory.FactoryProxy;
 import buildcraft.factory.FactoryProxyClient;
 import buildcraft.factory.GuiHandler;
 import buildcraft.factory.PumpDimensionList;
-import buildcraft.factory.SchematicRefinery;
-import buildcraft.factory.SchematicTank;
 import buildcraft.factory.TileAutoWorkbench;
 import buildcraft.factory.TileFloodGate;
 import buildcraft.factory.TileHopper;
@@ -68,6 +66,9 @@ import buildcraft.factory.TileQuarry;
 import buildcraft.factory.TileRefinery;
 import buildcraft.factory.TileTank;
 import buildcraft.factory.network.PacketHandlerFactory;
+import buildcraft.factory.schematics.SchematicPump;
+import buildcraft.factory.schematics.SchematicRefinery;
+import buildcraft.factory.schematics.SchematicTank;
 
 @Mod(name = "BuildCraft Factory", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Factory", dependencies = DefaultProps.DEPENDENCY_CORE)
 public class BuildCraftFactory extends BuildCraftMod {
@@ -150,6 +151,8 @@ public class BuildCraftFactory extends BuildCraftMod {
 		SchematicRegistry.registerSchematicBlock(refineryBlock, SchematicRefinery.class);
 		SchematicRegistry.registerSchematicBlock(tankBlock, SchematicTank.class);
 		SchematicRegistry.registerSchematicBlock(frameBlock, SchematicIgnoreMeta.class);
+		SchematicRegistry.registerSchematicBlock(pumpBlock, SchematicPump.class);
+		SchematicRegistry.registerSchematicBlock(refineryBlock, SchematicRefinery.class);
 
 		if (BuildCraftCore.loadDefaultRecipes) {
 			loadRecipes();
