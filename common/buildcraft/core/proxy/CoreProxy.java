@@ -8,10 +8,9 @@
  */
 package buildcraft.core.proxy;
 
+import java.lang.ref.WeakReference;
 import java.util.List;
 import java.util.Random;
-
-import com.mojang.authlib.GameProfile;
 
 import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
@@ -25,14 +24,14 @@ import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.network.INetHandler;
 import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ChunkCoordinates;
-import net.minecraft.util.IChatComponent;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
 
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.registry.GameRegistry;
 
+import net.minecraftforge.common.util.FakePlayerFactory;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
 
@@ -48,7 +47,7 @@ public class CoreProxy implements ICoreProxy {
 	public static CoreProxy proxy;
 
 	/* BUILDCRAFT PLAYER */
-	protected static EntityPlayer buildCraftPlayer;
+	protected static WeakReference<EntityPlayer> buildCraftPlayer = new WeakReference<EntityPlayer>(null);
 
 	public String getMinecraftVersion() {
 		return Loader.instance().getMinecraftModContainer().getVersion();
@@ -142,66 +141,38 @@ public class CoreProxy implements ICoreProxy {
 		return "";
 	}
 
-	private EntityPlayer createNewPlayer(World world) {
-		EntityPlayer player = new EntityPlayer(world, new GameProfile (null, "[BuildCraft]")) {
-			@Override
-			public void addChatMessage(IChatComponent var1) {
-			}
+	private WeakReference<EntityPlayer> createNewPlayer(WorldServer world) {
+		EntityPlayer player = FakePlayerFactory.get(world, BuildCraftCore.gameProfile);
 
-			@Override
-			public boolean canCommandSenderUseCommand(int var1, String var2) {
-				return false;
-			}
-
-			@Override
-			public ChunkCoordinates getPlayerCoordinates() {
-				return null;
-			}
-		};
-		return player;
+		return new WeakReference<EntityPlayer>(player);
 	}
 
-	private EntityPlayer createNewPlayer(World world, int x, int y, int z) {
-		EntityPlayer player = new EntityPlayer(world, new GameProfile (null, "[BuildCraft]")) {
-			@Override
-			public void addChatMessage(IChatComponent var1) {
-			}
-
-			@Override
-			public boolean canCommandSenderUseCommand(int var1, String var2) {
-				return false;
-			}
-
-			@Override
-			public ChunkCoordinates getPlayerCoordinates() {
-				return null;
-			}
-		};
-		player.posX = x;
+	private WeakReference<EntityPlayer> createNewPlayer(WorldServer world, int x, int y, int z) {
+		EntityPlayer player = FakePlayerFactory.get(world, BuildCraftCore.gameProfile);
 		player.posY = y;
 		player.posZ = z;
-		return player;
+		return new WeakReference<EntityPlayer>(player);
 	}
 
 	@Override
-	public EntityPlayer getBuildCraftPlayer(World world) {
-		if (CoreProxy.buildCraftPlayer == null) {
+	public final WeakReference<EntityPlayer> getBuildCraftPlayer(WorldServer world) {
+		if (CoreProxy.buildCraftPlayer.get() == null) {
 			CoreProxy.buildCraftPlayer = createNewPlayer(world);
 		} else {
-			CoreProxy.buildCraftPlayer.worldObj = world;
+			CoreProxy.buildCraftPlayer.get().worldObj = world;
 		}
 
 		return CoreProxy.buildCraftPlayer;
 	}
 
-	public EntityPlayer getBuildCraftPlayer(World world, int x, int y, int z) {
-		if (CoreProxy.buildCraftPlayer == null) {
+	public final WeakReference<EntityPlayer> getBuildCraftPlayer(WorldServer world, int x, int y, int z) {
+		if (CoreProxy.buildCraftPlayer.get() == null) {
 			CoreProxy.buildCraftPlayer = createNewPlayer(world, x, y, z);
 		} else {
-			CoreProxy.buildCraftPlayer.worldObj = world;
-			CoreProxy.buildCraftPlayer.posX = x;
-			CoreProxy.buildCraftPlayer.posY = y;
-			CoreProxy.buildCraftPlayer.posZ = z;
+			CoreProxy.buildCraftPlayer.get().worldObj = world;
+			CoreProxy.buildCraftPlayer.get().posX = x;
+			CoreProxy.buildCraftPlayer.get().posY = y;
+			CoreProxy.buildCraftPlayer.get().posZ = z;
 		}
 
 		return CoreProxy.buildCraftPlayer;

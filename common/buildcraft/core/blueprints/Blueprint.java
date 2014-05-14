@@ -60,7 +60,7 @@ public class Blueprint extends BlueprintBase {
 		super.translateToBlueprint(transform);
 
 		for (SchematicEntity e : entities) {
-			e.translateToSchematic(transform);
+			e.translateToBlueprint(transform);
 		}
 	}
 
@@ -107,8 +107,8 @@ public class Blueprint extends BlueprintBase {
 		}
 
 		try {
-			slot.writeToSchematic(context, x, y, z);
-			slot.writeRequirementsToSchematic(context, x, y, z);
+			slot.writeToBlueprint(context, x, y, z);
+			slot.writeRequirementsToBlueprint(context, x, y, z);
 			contents[posX][posY][posZ] = slot;
 		} catch (Throwable t) {
 			// Defensive code against errors in implementers
@@ -163,7 +163,7 @@ public class Blueprint extends BlueprintBase {
 					NBTTagCompound cpt = new NBTTagCompound();
 
 					if (contents [x][y][z] != null) {
-						contents[x][y][z].idsToSchematic(mapping);
+						contents[x][y][z].idsToBlueprint(mapping);
 						contents[x][y][z].writeToNBT(cpt, mapping);
 					}
 
@@ -178,7 +178,7 @@ public class Blueprint extends BlueprintBase {
 
 		for (SchematicEntity s : entities) {
 			NBTTagCompound subNBT = new NBTTagCompound();
-			s.idsToSchematic(mapping);
+			s.idsToBlueprint(mapping);
 			s.writeToNBT(subNBT, mapping);
 			entitiesNBT.appendTag(subNBT);
 		}
@@ -218,19 +218,25 @@ public class Blueprint extends BlueprintBase {
 						if (block != null) {
 							contents[x][y][z] = SchematicRegistry.newSchematicBlock(block);
 							contents[x][y][z].readFromNBT(cpt, mapping);
-							contents[x][y][z].idsToWorld(mapping);
 
-							switch (contents[x][y][z].getBuildingPermission()) {
-							case ALL:
-								break;
-							case CREATIVE_ONLY:
-								if (buildingPermission == BuildingPermission.ALL) {
-									buildingPermission = BuildingPermission.CREATIVE_ONLY;
+							if (!contents[x][y][z].doNotUse()) {
+								contents[x][y][z].idsToWorld(mapping);
+
+								switch (contents[x][y][z].getBuildingPermission()) {
+								case ALL:
+									break;
+								case CREATIVE_ONLY:
+									if (buildingPermission == BuildingPermission.ALL) {
+										buildingPermission = BuildingPermission.CREATIVE_ONLY;
+									}
+									break;
+								case NONE:
+									buildingPermission = BuildingPermission.NONE;
+									break;
 								}
-								break;
-							case NONE:
-								buildingPermission = BuildingPermission.NONE;
-								break;
+							} else {
+								contents[x][y][z] = null;
+								isComplete = false;
 							}
 						} else {
 							contents[x][y][z] = null;

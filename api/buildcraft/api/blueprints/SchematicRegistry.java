@@ -55,6 +55,11 @@ public final class SchematicRegistry {
 	}
 
 	private static void internalRegisterSchematicBlock (Block block, Class clas, Object ... params) {
+		if (schematicBlocks.containsKey(block)) {
+			throw new RuntimeException("Block " + Block.blockRegistry.getNameForObject(block)
+					+ " is already associated with a schematic.");
+		}
+
 		SchematicConstructor c = new SchematicConstructor ();
 		c.clas = clas;
 		c.params = params;

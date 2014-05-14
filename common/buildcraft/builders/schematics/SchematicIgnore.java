@@ -18,7 +18,7 @@ import buildcraft.api.blueprints.SchematicBlock;
 public class SchematicIgnore extends SchematicBlock {
 
 	@Override
-	public void writeRequirementsToBuilder(IBuilderContext context, LinkedList<ItemStack> requirements) {
+	public void writeRequirementsToWorld(IBuilderContext context, LinkedList<ItemStack> requirements) {
 
 	}
 
@@ -28,7 +28,7 @@ public class SchematicIgnore extends SchematicBlock {
 	}
 
 	@Override
-	public void writeToSchematic(IBuilderContext context, int x, int y, int z) {
+	public void writeToBlueprint(IBuilderContext context, int x, int y, int z) {
 
 	}
 
@@ -38,7 +38,7 @@ public class SchematicIgnore extends SchematicBlock {
 	}
 
 	@Override
-	public void writeRequirementsToSchematic(IBuilderContext context, int x, int y, int z) {
+	public void writeRequirementsToBlueprint(IBuilderContext context, int x, int y, int z) {
 
 	}
 

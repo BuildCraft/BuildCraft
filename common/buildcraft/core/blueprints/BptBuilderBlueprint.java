@@ -298,13 +298,24 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 			}
 
 			try {
-				if (!slot.isAlreadyBuilt(context)) {
+				if (BlockUtil.isUnbreakableBlock(world, slot.x, slot.y, slot.z)) {
+					// if the block can't be broken, just forget this iterator
+					iterator.remove();
+
+					if (slot.mode == Mode.ClearIfInvalid) {
+						clearedLocations.add(new BlockIndex(slot.x,
+								slot.y, slot.z));
+					} else {
+						builtLocations.add(new BlockIndex(slot.x,
+								slot.y, slot.z));
+					}
+				} else if (!slot.isAlreadyBuilt(context)) {
 					if (slot.mode == Mode.ClearIfInvalid) {
 						if (BuildCraftAPI.isSoftBlock(world, slot.x, slot.y,
-								slot.z)
-								|| BlockUtil.isUnbreakableBlock(world, slot.x,
-										slot.y, slot.z)) {
+								slot.z)) {
 							iterator.remove();
+							clearedLocations.add(new BlockIndex(slot.x,
+									slot.y, slot.z));
 						} else {
 							if (setupForDestroy(builder, context, slot)) {
 								iterator.remove();
@@ -387,7 +398,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 		try {
 			LinkedList<ItemStack> req = new LinkedList<ItemStack>();
 
-			slot.writeRequirementsToBuilder(context, req);
+			slot.writeRequirementsToWorld(context, req);
 
 			for (ItemStack stk : req) {
 				if (stk != null) {

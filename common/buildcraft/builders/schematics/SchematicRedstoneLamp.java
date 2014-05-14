@@ -20,12 +20,12 @@ import buildcraft.api.blueprints.SchematicBlock;
 public class SchematicRedstoneLamp extends SchematicBlock {
 
 	@Override
-	public void writeRequirementsToBuilder(IBuilderContext context, LinkedList<ItemStack> requirements) {
+	public void writeRequirementsToWorld(IBuilderContext context, LinkedList<ItemStack> requirements) {
 		requirements.add(new ItemStack(Blocks.redstone_lamp, 1, 0));
 	}
 
 	@Override
-	public void writeRequirementsToSchematic(IBuilderContext context, int x, int y, int z) {
+	public void writeRequirementsToBlueprint(IBuilderContext context, int x, int y, int z) {
 
 	}
 

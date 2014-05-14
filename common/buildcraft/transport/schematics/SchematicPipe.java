@@ -39,7 +39,7 @@ public class SchematicPipe extends SchematicTile {
 		Pipe pipe = BlockGenericPipe.getPipe(context.world(), x, y, z);
 
 		if (BlockGenericPipe.isValid(pipe)) {
-			return pipe.item == Item.getItemById(cpt.getInteger("pipeId"));
+			return pipe.item == Item.getItemById(tileNBT.getInteger("pipeId"));
 		} else {
 			return false;
 		}
@@ -49,17 +49,17 @@ public class SchematicPipe extends SchematicTile {
 	public void rotateLeft(IBuilderContext context) {
 		SideProperties props = new SideProperties ();
 
-		props.readFromNBT(cpt);
+		props.readFromNBT(tileNBT);
 		props.rotateLeft();
-		props.writeToNBT(cpt);
+		props.writeToNBT(tileNBT);
 
-		Item pipeItem = Item.getItemById(cpt.getInteger("pipeId"));
+		Item pipeItem = Item.getItemById(tileNBT.getInteger("pipeId"));
 
 		if (BptPipeExtension.contains(pipeItem)) {
 			BptPipeExtension.get(pipeItem).rotateLeft(this, context);
 		}
 
-		NBTTagCompound gateNBT = cpt.getCompoundTag("Gate");
+		NBTTagCompound gateNBT = tileNBT.getCompoundTag("Gate");
 
 		for (int i = 0; i < 8; ++i) {
 			if (gateNBT.hasKey("trigger[" + i + "]")) {
@@ -78,44 +78,44 @@ public class SchematicPipe extends SchematicTile {
 
 	@Override
 	public void writeToWorld(IBuilderContext context, int x, int y, int z, LinkedList<ItemStack> stacks) {
-		cpt.setInteger("x", x);
-		cpt.setInteger("y", y);
-		cpt.setInteger("z", z);
+		tileNBT.setInteger("x", x);
+		tileNBT.setInteger("y", y);
+		tileNBT.setInteger("z", z);
 
 		context.world().setBlock(x, y, z, block, meta, 3);
 
 		TileEntity tile = context.world().getTileEntity(x, y, z);
-		tile.readFromNBT(cpt);
+		tile.readFromNBT(tileNBT);
 	}
 
 	@Override
-	public void writeToSchematic(IBuilderContext context, int x, int y, int z) {
+	public void writeToBlueprint(IBuilderContext context, int x, int y, int z) {
 		TileEntity tile = context.world().getTileEntity(x, y, z);
 		Pipe pipe = BlockGenericPipe.getPipe(context.world(), x, y, z);
 
 		if (BlockGenericPipe.isValid(pipe)) {
-			tile.writeToNBT(cpt);
+			tile.writeToNBT(tileNBT);
 
 			// remove all pipe contents
 
-			cpt.removeTag("travelingEntities");
+			tileNBT.removeTag("travelingEntities");
 
 			for (ForgeDirection direction : ForgeDirection.values()) {
-				cpt.removeTag("tank[" + direction.ordinal() + "]");
-				cpt.removeTag("transferState[" + direction.ordinal() + "]");
+				tileNBT.removeTag("tank[" + direction.ordinal() + "]");
+				tileNBT.removeTag("transferState[" + direction.ordinal() + "]");
 			}
 
 			for (int i = 0; i < 6; ++i) {
-				cpt.removeTag("powerQuery[" + i + "]");
-				cpt.removeTag("nextPowerQuery[" + i + "]");
-				cpt.removeTag("internalPower[" + i + "]");
-				cpt.removeTag("internalNextPower[" + i + "]");
+				tileNBT.removeTag("powerQuery[" + i + "]");
+				tileNBT.removeTag("nextPowerQuery[" + i + "]");
+				tileNBT.removeTag("internalPower[" + i + "]");
+				tileNBT.removeTag("internalNextPower[" + i + "]");
 			}
 		}
 	}
 
 	@Override
-	public void writeRequirementsToSchematic(IBuilderContext context, int x, int y, int z) {
+	public void writeRequirementsToBlueprint(IBuilderContext context, int x, int y, int z) {
 		TileEntity tile = context.world().getTileEntity(x, y, z);
 		Pipe pipe = BlockGenericPipe.getPipe(context.world(), x, y, z);
 
@@ -130,7 +130,7 @@ public class SchematicPipe extends SchematicTile {
 
 	@Override
 	public void postProcessing(IBuilderContext context, int x, int y, int z) {
-		Item pipeItem = Item.getItemById(cpt.getInteger("pipeId"));
+		Item pipeItem = Item.getItemById(tileNBT.getInteger("pipeId"));
 
 		if (BptPipeExtension.contains(pipeItem)) {
 			BptPipeExtension.get(pipeItem).postProcessing(this, context);
@@ -143,13 +143,13 @@ public class SchematicPipe extends SchematicTile {
 	}
 
 	@Override
-	public void idsToSchematic(MappingRegistry registry) {
-		super.idsToSchematic(registry);
+	public void idsToBlueprint(MappingRegistry registry) {
+		super.idsToBlueprint(registry);
 
-		if (cpt.hasKey("pipeId")) {
-			Item item = Item.getItemById(cpt.getInteger("pipeId"));
+		if (tileNBT.hasKey("pipeId")) {
+			Item item = Item.getItemById(tileNBT.getInteger("pipeId"));
 
-			cpt.setInteger("pipeId", registry.getIdForItem(item));
+			tileNBT.setInteger("pipeId", registry.getIdForItem(item));
 		}
 	}
 
@@ -157,13 +157,13 @@ public class SchematicPipe extends SchematicTile {
 	public void idsToWorld(MappingRegistry registry) {
 		super.idsToWorld(registry);
 
-		if (cpt.hasKey("pipeId")) {
+		if (tileNBT.hasKey("pipeId")) {
 			try {
-				Item item = registry.getItemForId(cpt.getInteger("pipeId"));
+				Item item = registry.getItemForId(tileNBT.getInteger("pipeId"));
 
-				cpt.setInteger("pipeId", Item.getIdFromItem(item));
+				tileNBT.setInteger("pipeId", Item.getIdFromItem(item));
 			} catch (MappingNotFoundException e) {
-				cpt.removeTag("pipeId");
+				tileNBT.removeTag("pipeId");
 			}
 		}
 	}
@@ -183,10 +183,10 @@ public class SchematicPipe extends SchematicTile {
 			// translation badly broken. We need to flush out information that
 			// would be otherwise corrupted - that is the inventory (with the
 			// old formalism "items") and gate parameters.
-			cpt.removeTag("items");
+			tileNBT.removeTag("items");
 
-			if (cpt.hasKey("Gate")) {
-				NBTTagCompound gateNBT = cpt.getCompoundTag("Gate");
+			if (tileNBT.hasKey("Gate")) {
+				NBTTagCompound gateNBT = tileNBT.getCompoundTag("Gate");
 
 				for (int i = 0; i < 8; ++i) {
 					if (gateNBT.hasKey("triggerParameters[" + i + "]")) {

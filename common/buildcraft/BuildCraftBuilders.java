@@ -93,10 +93,10 @@ import buildcraft.builders.schematics.SchematicFactoryMask;
 import buildcraft.builders.schematics.SchematicFarmland;
 import buildcraft.builders.schematics.SchematicFire;
 import buildcraft.builders.schematics.SchematicFluid;
+import buildcraft.builders.schematics.SchematicGlassPane;
 import buildcraft.builders.schematics.SchematicGravel;
 import buildcraft.builders.schematics.SchematicHanging;
 import buildcraft.builders.schematics.SchematicIgnore;
-import buildcraft.builders.schematics.SchematicIgnoreMeta;
 import buildcraft.builders.schematics.SchematicLever;
 import buildcraft.builders.schematics.SchematicMinecart;
 import buildcraft.builders.schematics.SchematicPiston;
@@ -111,6 +111,7 @@ import buildcraft.builders.schematics.SchematicSeeds;
 import buildcraft.builders.schematics.SchematicSign;
 import buildcraft.builders.schematics.SchematicSkull;
 import buildcraft.builders.schematics.SchematicStairs;
+import buildcraft.builders.schematics.SchematicStandalone;
 import buildcraft.builders.schematics.SchematicStone;
 import buildcraft.builders.schematics.SchematicTileCreative;
 import buildcraft.builders.schematics.SchematicTripWireHook;
@@ -309,8 +310,6 @@ public class BuildCraftBuilders extends BuildCraftMod {
 
 		SchematicRegistry.registerSchematicBlock(Blocks.redstone_wire, SchematicRedstoneWire.class, new ItemStack(Items.redstone));
 		SchematicRegistry.registerSchematicBlock(Blocks.cake, SchematicCustomStack.class, new ItemStack(Items.cake));
-		SchematicRegistry.registerSchematicBlock(Blocks.pumpkin_stem, SchematicCustomStack.class, new ItemStack(Items.pumpkin_seeds));
-		SchematicRegistry.registerSchematicBlock(Blocks.melon_stem, SchematicCustomStack.class, new ItemStack(Items.melon_seeds));
 		SchematicRegistry.registerSchematicBlock(Blocks.glowstone, SchematicCustomStack.class, new ItemStack(Blocks.glowstone));
 
 		SchematicRegistry.registerSchematicBlock(Blocks.powered_repeater, SchematicRedstoneDiode.class, Items.repeater);
@@ -326,7 +325,8 @@ public class BuildCraftBuilders extends BuildCraftMod {
 		SchematicRegistry.registerSchematicBlock(Blocks.lava, SchematicFluid.class, new ItemStack(Items.lava_bucket));
 		SchematicRegistry.registerSchematicBlock(Blocks.flowing_lava, SchematicFluid.class, new ItemStack(Items.lava_bucket));
 
-		SchematicRegistry.registerSchematicBlock(Blocks.glass_pane, SchematicIgnoreMeta.class);
+		SchematicRegistry.registerSchematicBlock(Blocks.glass_pane, SchematicGlassPane.class);
+		SchematicRegistry.registerSchematicBlock(Blocks.stained_glass_pane, SchematicGlassPane.class);
 
 		SchematicRegistry.registerSchematicBlock(Blocks.piston, SchematicPiston.class);
 		SchematicRegistry.registerSchematicBlock(Blocks.piston_extension, SchematicPiston.class);
@@ -367,6 +367,16 @@ public class BuildCraftBuilders extends BuildCraftMod {
 		SchematicRegistry.registerSchematicBlock(Blocks.bedrock, SchematicBlockCreative.class);
 
 		SchematicRegistry.registerSchematicBlock(Blocks.mob_spawner, SchematicTileCreative.class);
+
+		SchematicRegistry.registerSchematicBlock(Blocks.glass, SchematicStandalone.class);
+		SchematicRegistry.registerSchematicBlock(Blocks.stone_slab, SchematicStandalone.class);
+		SchematicRegistry.registerSchematicBlock(Blocks.double_stone_slab, SchematicStandalone.class);
+		SchematicRegistry.registerSchematicBlock(Blocks.wooden_slab, SchematicStandalone.class);
+		SchematicRegistry.registerSchematicBlock(Blocks.double_wooden_slab, SchematicStandalone.class);
+		SchematicRegistry.registerSchematicBlock(Blocks.stained_glass, SchematicStandalone.class);
+		SchematicRegistry.registerSchematicBlock(Blocks.fence, SchematicStandalone.class);
+		SchematicRegistry.registerSchematicBlock(Blocks.daylight_detector, SchematicStandalone.class);
+		SchematicRegistry.registerSchematicBlock(Blocks.iron_bars, SchematicStandalone.class);
 
 		// Standard entities
 

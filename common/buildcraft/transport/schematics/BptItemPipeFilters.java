@@ -26,7 +26,7 @@ public class BptItemPipeFilters extends BptPipeExtension {
 	public void rotateLeft(SchematicTile slot, IBuilderContext context) {
 		SimpleInventory inv = new SimpleInventory(54, "Filters", 1);
 		SimpleInventory newInv = new SimpleInventory(54, "Filters", 1);
-		inv.readFromNBT(slot.cpt);
+		inv.readFromNBT(slot.tileNBT);
 
 		for (int dir = 0; dir <= 5; ++dir) {
 			ForgeDirection r = ForgeDirection.values()[dir].getRotation(ForgeDirection.UP);
@@ -36,6 +36,6 @@ public class BptItemPipeFilters extends BptPipeExtension {
 			}
 		}
 
-		newInv.writeToNBT(slot.cpt);
+		newInv.writeToNBT(slot.tileNBT);
 	}
 }

@@ -28,7 +28,13 @@ public class SchematicEntity extends Schematic {
 
 	public Class<? extends Entity> entity;
 
-	public NBTTagCompound cpt = new NBTTagCompound();
+	/**
+	 * This tree contains additional data to be stored in the blueprint. By
+	 * default, it will be initialized from Schematic.readFromWord with the
+	 * standard readNBT function of the corresponding tile (if any) and will be
+	 * loaded from BptBlock.writeToWorld using the standard writeNBT function.
+	 */
+	public NBTTagCompound entityNBT = new NBTTagCompound();
 
 	/**
 	 * This field contains requirements for a given block when stored in the
@@ -38,70 +44,70 @@ public class SchematicEntity extends Schematic {
 	public ItemStack[] storedRequirements = new ItemStack[0];
 
 	@Override
-	public void writeRequirementsToBuilder(IBuilderContext context, LinkedList<ItemStack> requirements) {
+	public void writeRequirementsToWorld(IBuilderContext context, LinkedList<ItemStack> requirements) {
 		for (ItemStack s : storedRequirements) {
 			requirements.add(s);
 		}
 	}
 
 	public void writeToWorld(IBuilderContext context) {
-		Entity e = EntityList.createEntityFromNBT(cpt, context.world());
+		Entity e = EntityList.createEntityFromNBT(entityNBT, context.world());
 		context.world().spawnEntityInWorld(e);
 	}
 
 	public void readFromWorld(IBuilderContext context, Entity entity) {
-		entity.writeToNBTOptional(cpt);
+		entity.writeToNBTOptional(entityNBT);
 	}
 
 	@Override
-	public void translateToSchematic(Translation transform) {
-		NBTTagList nbttaglist = cpt.getTagList("Pos", 6);
+	public void translateToBlueprint(Translation transform) {
+		NBTTagList nbttaglist = entityNBT.getTagList("Pos", 6);
 		Position pos = new Position(nbttaglist.func_150309_d(0),
 				nbttaglist.func_150309_d(1), nbttaglist.func_150309_d(2));
 		pos = transform.translate(pos);
 
-		cpt.setTag("Pos",
+		entityNBT.setTag("Pos",
 				this.newDoubleNBTList(pos.x, pos.y, pos.z));
 	}
 
 	@Override
 	public void translateToWorld(Translation transform) {
-		NBTTagList nbttaglist = cpt.getTagList("Pos", 6);
+		NBTTagList nbttaglist = entityNBT.getTagList("Pos", 6);
 		Position pos = new Position(nbttaglist.func_150309_d(0),
 				nbttaglist.func_150309_d(1), nbttaglist.func_150309_d(2));
 		pos = transform.translate(pos);
 
-		cpt.setTag("Pos",
+		entityNBT.setTag("Pos",
 				this.newDoubleNBTList(pos.x, pos.y, pos.z));
 	}
 
 	@Override
-	public void idsToSchematic(MappingRegistry registry) {
-		registry.scanAndTranslateStacksToRegistry(cpt);
+	public void idsToBlueprint(MappingRegistry registry) {
+		registry.scanAndTranslateStacksToRegistry(entityNBT);
 	}
 
 	@Override
 	public void idsToWorld(MappingRegistry registry) {
 		try {
-			registry.scanAndTranslateStacksToWorld(cpt);
+			registry.scanAndTranslateStacksToWorld(entityNBT);
 		} catch (MappingNotFoundException e) {
-			cpt = new NBTTagCompound();
+			entityNBT = new NBTTagCompound();
 		}
 	}
 
 	@Override
 	public void rotateLeft(IBuilderContext context) {
-		NBTTagList nbttaglist = cpt.getTagList("Pos", 6);
+		NBTTagList nbttaglist = entityNBT.getTagList("Pos", 6);
 		Position pos = new Position(nbttaglist.func_150309_d(0),
 				nbttaglist.func_150309_d(1), nbttaglist.func_150309_d(2));
 		pos = context.rotatePositionLeft(pos);
-		cpt.setTag("Pos",
+		entityNBT.setTag("Pos",
 				this.newDoubleNBTList(pos.x, pos.y, pos.z));
 
-		nbttaglist = cpt.getTagList("Rotation", 5);
+		nbttaglist = entityNBT.getTagList("Rotation", 5);
 		float yaw = nbttaglist.func_150308_e(0);
 		yaw += 90;
-		cpt.setTag(
+		entityNBT.setTag(
 				"Rotation",
 				this.newFloatNBTList(yaw,
 						nbttaglist.func_150308_e(1)));
@@ -111,10 +117,10 @@ public class SchematicEntity extends Schematic {
 	public void writeToNBT(NBTTagCompound nbt, MappingRegistry registry) {
 		super.writeToNBT(nbt, registry);
 
-		NBTTagList nbttaglist = cpt.getTagList("Pos", 6);
+		NBTTagList nbttaglist = entityNBT.getTagList("Pos", 6);
 
 		nbt.setInteger("entityId", registry.getIdForEntity(entity));
-		nbt.setTag("entity", cpt);
+		nbt.setTag("entity", entityNBT);
 
 		NBTTagList rq = new NBTTagList();
 
@@ -132,7 +138,7 @@ public class SchematicEntity extends Schematic {
 	public void readFromNBT(NBTTagCompound nbt, MappingRegistry registry) {
 		super.readFromNBT(nbt, registry);
 
-		cpt = nbt.getCompoundTag("entity");
+		entityNBT = nbt.getCompoundTag("entity");
 
 		NBTTagList rq = nbt.getTagList("rq",
 				Constants.NBT.TAG_COMPOUND);
@@ -191,7 +197,7 @@ public class SchematicEntity extends Schematic {
 	}
 
 	public boolean isAlreadyBuilt(IBuilderContext context) {
-		NBTTagList nbttaglist = cpt.getTagList("Pos", 6);
+		NBTTagList nbttaglist = entityNBT.getTagList("Pos", 6);
 		Position newPosition = new Position(nbttaglist.func_150309_d(0),
 				nbttaglist.func_150309_d(1), nbttaglist.func_150309_d(2));
 

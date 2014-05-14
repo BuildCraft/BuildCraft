@@ -8,12 +8,12 @@
  */
 package buildcraft.silicon;
 
+import java.lang.ref.WeakReference;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.List;
 
 import com.google.common.collect.Lists;
-import com.mojang.authlib.GameProfile;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
@@ -26,8 +26,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ChunkCoordinates;
-import net.minecraft.util.IChatComponent;
+import net.minecraft.world.WorldServer;
 
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.oredict.OreDictionary;
@@ -47,6 +46,7 @@ import buildcraft.core.inventory.filters.CraftingFilter;
 import buildcraft.core.inventory.filters.IStackFilter;
 import buildcraft.core.network.PacketIds;
 import buildcraft.core.network.PacketSlotChange;
+import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.triggers.ActionMachineControl;
 import buildcraft.core.utils.CraftingHelper;
 import buildcraft.core.utils.StringUtils;
@@ -64,7 +64,6 @@ public class TileAdvancedCraftingTable extends TileLaserTableBase implements IIn
 	private SlotCrafting craftSlot;
 	private boolean craftable;
 	private boolean justCrafted;
-	private InternalPlayer internalPlayer;
 	private IRecipe currentRecipe;
 	private TileBuffer[] cache;
 	private InventoryCraftResult craftResult;
@@ -90,6 +89,7 @@ public class TileAdvancedCraftingTable extends TileLaserTableBase implements IIn
 		@Override
 		public void setInventorySlotContents(int slotId, ItemStack itemstack) {
 			super.setInventorySlotContents(slotId, itemstack);
+
 			if (TileAdvancedCraftingTable.this.getWorldObj() == null || !TileAdvancedCraftingTable.this.getWorldObj().isRemote) {
 				oreIDs[slotId] = itemstack == null ? -1 : OreDictionary.getOreID(itemstack);
 			}
@@ -139,9 +139,11 @@ public class TileAdvancedCraftingTable extends TileLaserTableBase implements IIn
 					return result;
 				} else {
 					ItemStack result = tempStacks[bindings[slot]].splitStack(amount);
+
 					if (tempStacks[bindings[slot]].stackSize <= 0) {
 						tempStacks[bindings[slot]] = null;
 					}
+
 					return result;
 				}
 			} else {
@@ -154,36 +156,16 @@ public class TileAdvancedCraftingTable extends TileLaserTableBase implements IIn
 		}
 	}
 
-	private final class InternalPlayer extends EntityPlayer {
-
-		public InternalPlayer() {
-			super(TileAdvancedCraftingTable.this.getWorldObj(), new GameProfile(null, "[BuildCraft]"));
-			posX = TileAdvancedCraftingTable.this.xCoord;
-			posY = TileAdvancedCraftingTable.this.yCoord + 1;
-			posZ = TileAdvancedCraftingTable.this.zCoord;
-		}
-
-		@Override
-		public void addChatMessage(IChatComponent var1) {
-		}
-
-		@Override
-		public boolean canCommandSenderUseCommand(int var1, String var2) {
-			return false;
-		}
-
-		@Override
-		public ChunkCoordinates getPlayerCoordinates() {
-			return null;
-		}
-	}
-
 	public TileAdvancedCraftingTable() {
 		craftingSlots = new CraftingGrid();
 		inv.addListener(this);
 		invInput = new InventoryMapper(inv, 0, 15);
 		invOutput = new InventoryMapper(inv, 15, 9);
 		craftResult = new InventoryCraftResult();
+	}
+
+	public WeakReference<EntityPlayer> getInternalPlayer() {
+		return CoreProxy.proxy.getBuildCraftPlayer((WorldServer) worldObj, xCoord, yCoord + 1, zCoord);
 	}
 
 	@Override
@@ -241,10 +223,14 @@ public class TileAdvancedCraftingTable extends TileLaserTableBase implements IIn
 	@Override
 	public void updateEntity() {
 		super.updateEntity();
-		if (internalPlayer == null) {
+
+		if (worldObj.isRemote) {
+			return;
+		}
+
+		if (internalInventoryCrafting == null) {
 			internalInventoryCrafting = new InternalInventoryCrafting();
-			internalPlayer = new InternalPlayer();
-			craftSlot = new SlotCrafting(internalPlayer, internalInventoryCrafting, craftResult, 0, 0, 0);
+			craftSlot = new SlotCrafting(getInternalPlayer().get(), internalInventoryCrafting, craftResult, 0, 0, 0);
 			updateRecipe();
 		}
 		if (worldObj.isRemote) {
@@ -286,16 +272,21 @@ public class TileAdvancedCraftingTable extends TileLaserTableBase implements IIn
 		internalInventoryCrafting.tempStacks = new InventoryCopy(inv).getItemStacks();
 		internalInventoryCrafting.hitCount = new int[internalInventoryCrafting.tempStacks.length];
 		ItemStack[] inputSlots = internalInventoryCrafting.tempStacks;
+
 		for (int gridSlot = 0; gridSlot < craftingSlots.getSizeInventory(); gridSlot++) {
 			internalInventoryCrafting.bindings[gridSlot] = -1;
+
 			if (craftingSlots.getStackInSlot(gridSlot) == null) {
 				continue;
 			}
+
 			boolean foundMatch = false;
+
 			for (int inputSlot = 0; inputSlot < inputSlots.length; inputSlot++) {
 				if (!isMatchingIngredient(gridSlot, inputSlot)) {
 					continue;
 				}
+
 				if (internalInventoryCrafting.hitCount[inputSlot] < inputSlots[inputSlot].stackSize
 						&& internalInventoryCrafting.hitCount[inputSlot] < inputSlots[inputSlot].getMaxStackSize()) {
 					internalInventoryCrafting.bindings[gridSlot] = inputSlot;
@@ -304,6 +295,7 @@ public class TileAdvancedCraftingTable extends TileLaserTableBase implements IIn
 					break;
 				}
 			}
+
 			if (!foundMatch) {
 				return;
 			}
@@ -312,16 +304,14 @@ public class TileAdvancedCraftingTable extends TileLaserTableBase implements IIn
 
 	private boolean isMatchingIngredient(int gridSlot, int inputSlot) {
 		ItemStack inputStack = internalInventoryCrafting.tempStacks[inputSlot];
+
 		if (inputStack == null) {
 			return false;
-		}
-		if (StackHelper.isMatchingItem(craftingSlots.getStackInSlot(gridSlot), inputStack, true, false)) {
+		} else if (StackHelper.isMatchingItem(craftingSlots.getStackInSlot(gridSlot), inputStack, true, false)) {
 			return true;
+		} else {
+			return StackHelper.isCraftingEquivalent(craftingSlots.oreIDs[gridSlot], inputStack);
 		}
-		if (StackHelper.isCraftingEquivalent(craftingSlots.oreIDs[gridSlot], inputStack)) {
-			return true;
-		}
-		return false;
 	}
 
 	private boolean hasIngredients() {
@@ -329,28 +319,36 @@ public class TileAdvancedCraftingTable extends TileLaserTableBase implements IIn
 	}
 
 	private void craftItem() {
+		EntityPlayer internalPlayer = getInternalPlayer().get();
 		ItemStack recipeOutput = getRecipeOutput();
 		craftSlot.onPickupFromSlot(internalPlayer, recipeOutput);
 		ItemStack[] tempStorage = internalInventoryCrafting.tempStacks;
+
 		for (int i = 0; i < tempStorage.length; i++) {
 			if (tempStorage[i] != null && tempStorage[i].stackSize <= 0) {
 				tempStorage[i] = null;
 			}
+
 			inv.getItemStacks()[i] = tempStorage[i];
 		}
+
 		subtractEnergy(getRequiredEnergy());
 		List<ItemStack> outputs = Lists.newArrayList(recipeOutput.copy());
+
 		for (int i = 0; i < internalPlayer.inventory.mainInventory.length; i++) {
 			if (internalPlayer.inventory.mainInventory[i] != null) {
 				outputs.add(internalPlayer.inventory.mainInventory[i]);
 				internalPlayer.inventory.mainInventory[i] = null;
 			}
 		}
+
 		for (ItemStack output : outputs) {
 			output.stackSize -= Transactor.getTransactorFor(invOutput).add(output, ForgeDirection.UP, true).stackSize;
+
 			if (output.stackSize > 0) {
 				output.stackSize -= Utils.addToRandomInventoryAround(worldObj, xCoord, yCoord, zCoord, output);
 			}
+
 			if (output.stackSize > 0) {
 				InvUtils.dropItems(worldObj, output, xCoord, yCoord + 1, zCoord);
 			}
@@ -361,18 +359,24 @@ public class TileAdvancedCraftingTable extends TileLaserTableBase implements IIn
 		if (cache == null) {
 			cache = TileBuffer.makeBuffer(worldObj, xCoord, yCoord, zCoord, false);
 		}
+
 		for (IInvSlot slot : InventoryIterator.getIterable(craftingSlots, ForgeDirection.UP)) {
 			ItemStack ingred = slot.getStackInSlot();
+
 			if (ingred == null) {
 				continue;
 			}
+
 			IStackFilter filter = new CraftingFilter(ingred);
+
 			if (InvUtils.countItems(invInput, ForgeDirection.UP, filter) < InvUtils.countItems(craftingSlots, ForgeDirection.UP, filter)) {
 				for (ForgeDirection side : SEARCH_SIDES) {
 					TileEntity tile = cache[side.ordinal()].getTile();
+
 					if (tile instanceof IInventory) {
 						IInventory inv = InvUtils.getInventory((IInventory) tile);
 						ItemStack result = InvUtils.moveOneItem(inv, side.getOpposite(), invInput, side, filter);
+
 						if (result != null) {
 							return;
 						}
@@ -385,6 +389,7 @@ public class TileAdvancedCraftingTable extends TileLaserTableBase implements IIn
 	public void updateCraftingMatrix(int slot, ItemStack stack) {
 		craftingSlots.setInventorySlotContents(slot, stack);
 		updateRecipe();
+
 		if (worldObj.isRemote) {
 			PacketSlotChange packet = new PacketSlotChange(PacketIds.ADVANCED_WORKBENCH_SETSLOT, xCoord, yCoord, zCoord, slot, stack);
 			BuildCraftSilicon.instance.sendToServer(packet);
@@ -395,10 +400,13 @@ public class TileAdvancedCraftingTable extends TileLaserTableBase implements IIn
 		if (internalInventoryCrafting == null) {
 			return;
 		}
+
 		internalInventoryCrafting.recipeUpdate(true);
+
 		if (this.currentRecipe == null || !this.currentRecipe.matches(internalInventoryCrafting, worldObj)) {
 			currentRecipe = CraftingHelper.findMatchingRecipe(internalInventoryCrafting, worldObj);
 		}
+
 		internalInventoryCrafting.recipeUpdate(false);
 		markDirty();
 	}
@@ -408,12 +416,15 @@ public class TileAdvancedCraftingTable extends TileLaserTableBase implements IIn
 			craftResult.setInventorySlotContents(0, null);
 			return;
 		}
+
 		ItemStack resultStack = getRecipeOutput();
+
 		if (resultStack == null) {
 			internalInventoryCrafting.recipeUpdate(true);
 			resultStack = getRecipeOutput();
 			internalInventoryCrafting.recipeUpdate(false);
 		}
+
 		craftResult.setInventorySlotContents(0, resultStack);
 		markDirty();
 	}
@@ -421,8 +432,9 @@ public class TileAdvancedCraftingTable extends TileLaserTableBase implements IIn
 	private ItemStack getRecipeOutput() {
 		if (internalInventoryCrafting == null || currentRecipe == null) {
 			return null;
+		} else {
+			return currentRecipe.getCraftingResult(internalInventoryCrafting);
 		}
-		return currentRecipe.getCraftingResult(internalInventoryCrafting);
 	}
 
 	public IInventory getCraftingSlots() {

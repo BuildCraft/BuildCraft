@@ -19,12 +19,12 @@ import buildcraft.api.blueprints.SchematicBlock;
 public class SchematicCactus extends SchematicBlock {
 
 	@Override
-	public void writeRequirementsToBuilder(IBuilderContext context, LinkedList<ItemStack> requirements) {
+	public void writeRequirementsToWorld(IBuilderContext context, LinkedList<ItemStack> requirements) {
 		requirements.add(new ItemStack(Blocks.cactus));
 	}
 
 	@Override
-	public void writeRequirementsToSchematic(IBuilderContext context, int x, int y, int z) {
+	public void writeRequirementsToBlueprint(IBuilderContext context, int x, int y, int z) {
 		// cancel requirements reading
 	}
 

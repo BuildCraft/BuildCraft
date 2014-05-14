@@ -8,8 +8,13 @@
  */
 package buildcraft.api.mj;
 
-import net.minecraftforge.common.util.ForgeDirection;
+public enum IOMode {
+	Both(true, true), Receive(true, false), Send(false, true), None(false, false);
 
-public interface ISidedBatteryProvider {
-	IBatteryObject getMjBattery(String kind, ForgeDirection direction);
+	public final boolean canReceive, canSend;
+
+	IOMode(boolean canReceive, boolean canSend) {
+		this.canReceive = canReceive;
+		this.canSend = canSend;
+	}
 }

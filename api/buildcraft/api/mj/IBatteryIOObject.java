@@ -8,8 +8,10 @@
  */
 package buildcraft.api.mj;
 
-import net.minecraftforge.common.util.ForgeDirection;
+public interface IBatteryIOObject extends IBatteryObject {
+	IOMode mode();
 
-public interface ISidedBatteryProvider {
-	IBatteryObject getMjBattery(String kind, ForgeDirection direction);
+	boolean canSend();
+
+	boolean canReceive();
 }

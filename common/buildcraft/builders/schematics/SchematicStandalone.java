@@ -8,18 +8,13 @@
  */
 package buildcraft.builders.schematics;
 
-import buildcraft.api.blueprints.IBuilderContext;
-import buildcraft.api.blueprints.SchematicTile;
+import buildcraft.api.blueprints.SchematicBlock;
 
-public class SchematicSkull extends SchematicTile {
+public class SchematicStandalone extends SchematicBlock {
 
 	@Override
-	public void rotateLeft(IBuilderContext context) {
-		int rot = tileNBT.getByte("Rot");
-
-		rot = (rot + 4) % 16;
-
-		tileNBT.setByte("Rot", (byte) rot);
+	public BuildingStage getBuildStage() {
+		return BuildingStage.STANDALONE;
 	}
 
 }

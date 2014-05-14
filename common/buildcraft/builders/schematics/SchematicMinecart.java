@@ -28,15 +28,15 @@ public class SchematicMinecart extends SchematicEntity {
 	}
 
 	@Override
-	public void translateToSchematic(Translation transform) {
-		super.translateToSchematic(transform);
+	public void translateToBlueprint(Translation transform) {
+		super.translateToBlueprint(transform);
 
-		NBTTagList nbttaglist = cpt.getTagList("Pos", 6);
+		NBTTagList nbttaglist = entityNBT.getTagList("Pos", 6);
 		Position pos = new Position(nbttaglist.func_150309_d(0),
 				nbttaglist.func_150309_d(1), nbttaglist.func_150309_d(2));
 		pos.x -= 0.5;
 		pos.z -= 0.5;
-		cpt.setTag("Pos", this.newDoubleNBTList(new double[] {pos.x, pos.y, pos.z}));
+		entityNBT.setTag("Pos", this.newDoubleNBTList(new double[] {pos.x, pos.y, pos.z}));
 	}
 
 
@@ -44,12 +44,12 @@ public class SchematicMinecart extends SchematicEntity {
 	public void translateToWorld(Translation transform) {
 		super.translateToWorld(transform);
 
-		NBTTagList nbttaglist = cpt.getTagList("Pos", 6);
+		NBTTagList nbttaglist = entityNBT.getTagList("Pos", 6);
 		Position pos = new Position(nbttaglist.func_150309_d(0),
 				nbttaglist.func_150309_d(1), nbttaglist.func_150309_d(2));
 		pos.x += 0.5;
 		pos.z += 0.5;
-		cpt.setTag("Pos", this.newDoubleNBTList(new double[] {pos.x, pos.y, pos.z}));
+		entityNBT.setTag("Pos", this.newDoubleNBTList(new double[] {pos.x, pos.y, pos.z}));
 	}
 
 	@Override
@@ -62,7 +62,7 @@ public class SchematicMinecart extends SchematicEntity {
 
 	@Override
 	public boolean isAlreadyBuilt(IBuilderContext context) {
-		NBTTagList nbttaglist = cpt.getTagList("Pos", 6);
+		NBTTagList nbttaglist = entityNBT.getTagList("Pos", 6);
 		Position newPosition = new Position(nbttaglist.func_150309_d(0),
 				nbttaglist.func_150309_d(1), nbttaglist.func_150309_d(2));
 

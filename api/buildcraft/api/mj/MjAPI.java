@@ -65,21 +65,21 @@ public final class MjAPI {
 			return null;
 		}
 
+		IBatteryObject battery = null;
+
+		if (o instanceof ISidedBatteryProvider) {
+			battery = ((ISidedBatteryProvider) o).getMjBattery(kind, side);
+			if (battery == null && side != ForgeDirection.UNKNOWN) {
+				battery = ((ISidedBatteryProvider) o).getMjBattery(kind, ForgeDirection.UNKNOWN);
+			}
+		}
+
 		if (o instanceof IBatteryProvider) {
-			IBatteryObject battery;
+			battery = ((IBatteryProvider) o).getMjBattery(kind);
+		}
 
-			if (o instanceof ISidedBatteryProvider) {
-				battery = ((ISidedBatteryProvider) o).getMjBattery(kind, side);
-				if (battery == null && side != ForgeDirection.UNKNOWN) {
-					battery = ((ISidedBatteryProvider) o).getMjBattery(kind, ForgeDirection.UNKNOWN);
-				}
-			} else {
-				battery = ((IBatteryProvider) o).getMjBattery(kind);
-			}
-
-			if (battery != null) {
-				return battery;
-			}
+		if (battery != null) {
+			return battery;
 		}
 
 		BatteryField f = getMjBatteryField(o.getClass(), kind, side);

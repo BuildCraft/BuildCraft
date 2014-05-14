@@ -8,7 +8,7 @@
  */
 package buildcraft.factory;
 
-import com.mojang.authlib.GameProfile;
+import java.lang.ref.WeakReference;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
@@ -20,8 +20,7 @@ import net.minecraft.inventory.SlotCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.ChunkCoordinates;
-import net.minecraft.util.IChatComponent;
+import net.minecraft.world.WorldServer;
 
 import net.minecraftforge.common.util.ForgeDirection;
 
@@ -32,6 +31,7 @@ import buildcraft.core.inventory.InventoryConcatenator;
 import buildcraft.core.inventory.InventoryIterator;
 import buildcraft.core.inventory.SimpleInventory;
 import buildcraft.core.inventory.StackHelper;
+import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.CraftingHelper;
 import buildcraft.core.utils.Utils;
 
@@ -50,7 +50,6 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
 
 	private IInventory inv = InventoryConcatenator.make().add(resultInv).add(craftMatrix);
 
-	private EntityPlayer internalPlayer;
 	private SlotCrafting craftSlot;
 	private InventoryCraftResult craftResult = new InventoryCraftResult();
 
@@ -68,30 +67,8 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
 		}
 	}
 
-	private final class InternalPlayer extends EntityPlayer {
-
-		public InternalPlayer() {
-			super(TileAutoWorkbench.this.worldObj, new GameProfile(null, "[BuildCraft]"));
-			posX = TileAutoWorkbench.this.xCoord;
-			posY = TileAutoWorkbench.this.yCoord + 1;
-			posZ = TileAutoWorkbench.this.zCoord;
-		}
-
-		@Override
-		public void addChatMessage(IChatComponent var1) {
-		}
-
-		@Override
-		public boolean canCommandSenderUseCommand(int var1, String var2) {
-			return false;
-		}
-
-		@Override
-		public ChunkCoordinates getPlayerCoordinates() {
-			return null;
-		}
-
-
+	public WeakReference<EntityPlayer> getInternalPlayer() {
+		return CoreProxy.proxy.getBuildCraftPlayer((WorldServer) worldObj, xCoord, yCoord + 1, zCoord);
 	}
 
 	@Override
@@ -194,6 +171,7 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
 	@Override
 	public void updateEntity() {
 		super.updateEntity();
+
 		if (worldObj.isRemote) {
 			return;
 		}
@@ -201,8 +179,7 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
 		balanceSlots();
 
 		if (craftSlot == null) {
-			internalPlayer = new InternalPlayer();
-			craftSlot = new SlotCrafting(internalPlayer, craftMatrix, craftResult, 0, 0, 0);
+			craftSlot = new SlotCrafting(getInternalPlayer().get(), craftMatrix, craftResult, 0, 0, 0);
 		}
 		if (resultInv.getStackInSlot(SLOT_RESULT) != null) {
 			return;
@@ -269,11 +246,11 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
 			return;
 		}
 		result = result.copy();
-		craftSlot.onPickupFromSlot(internalPlayer, result);
+		craftSlot.onPickupFromSlot(getInternalPlayer().get(), result);
 		resultInv.setInventorySlotContents(SLOT_RESULT, result);
 
 		// clean fake player inventory (crafting handler support)
-		for (IInvSlot slot : InventoryIterator.getIterable(internalPlayer.inventory, ForgeDirection.UP)) {
+		for (IInvSlot slot : InventoryIterator.getIterable(getInternalPlayer().get().inventory, ForgeDirection.UP)) {
 			ItemStack stack = slot.getStackInSlot();
 			if (stack != null) {
 				slot.setStackInSlot(null);

@@ -35,7 +35,7 @@ public class SchematicBlock extends SchematicBlockBase {
 	public ItemStack [] storedRequirements = new ItemStack [0];
 
 	@Override
-	public void writeRequirementsToBuilder(IBuilderContext context, LinkedList<ItemStack> requirements) {
+	public void writeRequirementsToWorld(IBuilderContext context, LinkedList<ItemStack> requirements) {
 		if (block != null) {
 			if (storedRequirements.length != 0) {
 				for (ItemStack s : storedRequirements) {
@@ -54,24 +54,16 @@ public class SchematicBlock extends SchematicBlockBase {
 
 	@Override
 	public void writeToWorld(IBuilderContext context, int x, int y, int z, LinkedList<ItemStack> stacks) {
+		super.writeToWorld(context, x, y, z, stacks);
+
 		// Meta needs to be specified twice, depending on the block behavior
 		context.world().setBlock(x, y, z, block, meta, 3);
 		context.world().setBlockMetadataWithNotify(x, y, z, meta, 3);
 	}
 
 	@Override
-	public boolean doNotBuild() {
-		return false;
-	}
-
-	@Override
-	public void writeToSchematic(IBuilderContext context, int x, int y, int z) {
-
-	}
-
-	@Override
-	public void writeRequirementsToSchematic(IBuilderContext context, int x, int y, int z) {
-		super.writeRequirementsToSchematic(context, x, y, z);
+	public void writeRequirementsToBlueprint(IBuilderContext context, int x, int y, int z) {
+		super.writeRequirementsToBlueprint(context, x, y, z);
 
 		if (block != null) {
 			ArrayList<ItemStack> req = block.getDrops(context.world(), x,

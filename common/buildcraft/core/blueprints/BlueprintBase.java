@@ -64,7 +64,7 @@ public abstract class BlueprintBase {
 			for (int y = 0; y < sizeY; ++y) {
 				for (int z = 0; z < sizeZ; ++z) {
 					if (contents [x][y][z] != null) {
-						contents[x][y][z].translateToSchematic(transform);
+						contents[x][y][z].translateToBlueprint(transform);
 					}
 				}
 			}

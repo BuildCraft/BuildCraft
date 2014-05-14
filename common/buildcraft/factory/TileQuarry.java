@@ -23,6 +23,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.world.ChunkCoordIntPair;
+import net.minecraft.world.WorldServer;
 
 import net.minecraftforge.common.ForgeChunkManager;
 import net.minecraftforge.common.ForgeChunkManager.Ticket;
@@ -415,7 +416,7 @@ public class TileQuarry extends TileAbstractBuilder implements IMachine {
 
 			// Share this with mining well!
 
-			List<ItemStack> stacks = BlockUtil.getItemStackFromBlock(worldObj, i, j, k);
+			List<ItemStack> stacks = BlockUtil.getItemStackFromBlock((WorldServer) worldObj, i, j, k);
 
 			if (stacks != null) {
 				for (ItemStack s : stacks) {

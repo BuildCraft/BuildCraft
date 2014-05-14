@@ -15,6 +15,8 @@ import java.nio.IntBuffer;
 import java.util.HashSet;
 import java.util.TreeMap;
 
+import com.mojang.authlib.GameProfile;
+
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.glu.GLU;
@@ -102,7 +104,7 @@ import buildcraft.core.triggers.TriggerMachine;
 import buildcraft.core.triggers.TriggerRedstoneInput;
 import buildcraft.core.utils.CraftingHandler;
 
-@Mod(name = "BuildCraft", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Core", acceptedMinecraftVersions = "[1.7.2,1.8)", dependencies = "required-after:Forge@[10.12.0.1024,)")
+@Mod(name = "BuildCraft", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Core", acceptedMinecraftVersions = "[1.7.2,1.8)", dependencies = "required-after:Forge@[10.12.1.1079,)")
 public class BuildCraftCore extends BuildCraftMod {
 	public static final boolean NONRELEASED_BLOCKS = true;
 
@@ -170,7 +172,6 @@ public class BuildCraftCore extends BuildCraftMod {
 	public static BCAction actionOff = new ActionMachineControl(Mode.Off);
 	public static BCAction actionLoop = new ActionMachineControl(Mode.Loop);
 	public static boolean loadDefaultRecipes = true;
-	public static boolean forcePneumaticPower = true;
 	public static boolean consumeWaterSources = false;
 	//public static BptItem[] itemBptProps = new BptItem[Item.itemsList.length];
 	@Mod.Instance("BuildCraft|Core")
@@ -204,6 +205,8 @@ public class BuildCraftCore extends BuildCraftMod {
 	public static HashSet<String> recipesBlacklist = new HashSet<String>();
 
 	public static float diffX, diffY, diffZ;
+
+	public static GameProfile gameProfile = new GameProfile("buildcraft.core", "[BuildCraft]");
 
 	private static FloatBuffer modelviewF;
 	private static FloatBuffer projectionF;

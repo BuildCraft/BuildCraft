@@ -10,34 +10,30 @@ package buildcraft.builders.schematics;
 
 import java.util.LinkedList;
 
-import net.minecraft.block.Block;
-import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.SchematicBlock;
 
-public class SchematicGravel extends SchematicBlock {
+public class SchematicGlassPane extends SchematicBlock {
 
 	@Override
 	public void writeRequirementsToWorld(IBuilderContext context, LinkedList<ItemStack> requirements) {
-		requirements.add(new ItemStack(Blocks.gravel));
+		requirements.add(new ItemStack(block, 1, 0));
 	}
 
 	@Override
 	public void writeRequirementsToBlueprint(IBuilderContext context, int x, int y, int z) {
-		// cancel requirements reading
-	}
 
-	@Override
-	public void writeToWorld(IBuilderContext context, int x, int y, int z, LinkedList<ItemStack> stacks) {
-		context.world().setBlock(x, y, z, Blocks.gravel, 0, 3);
 	}
 
 	@Override
 	public boolean isAlreadyBuilt(IBuilderContext context, int x, int y, int z) {
-		Block block = context.world().getBlock(x, y, z);
+		return block == context.world().getBlock(x, y, z);
+	}
 
-		return block == Blocks.gravel;
+	@Override
+	public BuildingStage getBuildStage() {
+		return BuildingStage.STANDALONE;
 	}
 }

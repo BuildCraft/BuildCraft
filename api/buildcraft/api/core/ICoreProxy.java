@@ -8,9 +8,11 @@
  */
 package buildcraft.api.core;
 
+import java.lang.ref.WeakReference;
+
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
 
 public interface ICoreProxy {
-	EntityPlayer getBuildCraftPlayer(World world);
+	WeakReference<EntityPlayer> getBuildCraftPlayer(WorldServer world);
 }

@@ -12,7 +12,9 @@ import java.util.LinkedList;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
+
 import net.minecraftforge.common.util.ForgeDirection;
+
 import buildcraft.api.blueprints.SchematicBlockBase;
 import buildcraft.api.blueprints.SchematicRegistry;
 import buildcraft.api.core.BuildCraftAPI;
@@ -152,9 +154,15 @@ public class BptBuilderTemplate extends BptBuilderBase {
 				return null;
 			}
 
-			if (slot.mode == Mode.ClearIfInvalid) {
-				if (BuildCraftAPI.isSoftBlock(world, slot.x, slot.y, slot.z)
-						|| BlockUtil.isUnbreakableBlock(world, slot.x, slot.y, slot.z)) {
+			if (BlockUtil.isUnbreakableBlock(world, slot.x, slot.y, slot.z)) {
+				iterator.remove();
+				if (slot.mode == Mode.ClearIfInvalid) {
+					clearedLocations.add(new BlockIndex(slot.x, slot.y, slot.z));
+				} else {
+					builtLocations.add(new BlockIndex(slot.x, slot.y, slot.z));
+				}
+			} else if (slot.mode == Mode.ClearIfInvalid) {
+				if (BuildCraftAPI.isSoftBlock(world, slot.x, slot.y, slot.z)) {
 					iterator.remove();
 					clearedLocations.add(new BlockIndex(slot.x, slot.y, slot.z));
 				} else {
