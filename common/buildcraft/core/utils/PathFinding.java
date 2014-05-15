@@ -14,6 +14,7 @@ import java.util.HashMap;
 
 import net.minecraft.world.IBlockAccess;
 
+import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.core.BlockIndex;
 
 /**
@@ -87,6 +88,10 @@ public class PathFinding {
 			for (int y = from.index.y - 1; y <= from.index.y + 1; ++y) {
 				for (int z = from.index.z - 1; y <= from.index.z + 1; ++z) {
 					if (x == from.index.x && y == from.index.y && z == from.index.z) {
+						continue;
+					}
+
+					if (!BuildCraftAPI.isSoftBlock(world, x, y, z)) {
 						continue;
 					}
 
