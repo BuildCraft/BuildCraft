@@ -21,6 +21,7 @@ import buildcraft.api.core.NetworkData;
 import buildcraft.api.mj.IBatteryObject;
 import buildcraft.api.mj.MjAPI;
 import buildcraft.api.mj.MjBattery;
+import buildcraft.api.power.IPowerEmitter;
 import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.power.PowerHandler;
 import buildcraft.api.tools.IToolWrench;
@@ -28,7 +29,7 @@ import buildcraft.core.TileBuffer;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.utils.StringUtils;
 
-public class TileEnergyConverter extends TileBuildCraft implements IPowerReceptor {
+public class TileEnergyConverter extends TileBuildCraft implements IPowerReceptor, IPowerEmitter {
 	private static enum Mode {
 		FromOldToNew("from_old_to_new"), FromNewToOld("from_new_to_old");
 		private final String localizeName;
@@ -155,5 +156,10 @@ public class TileEnergyConverter extends TileBuildCraft implements IPowerRecepto
 
 	@Override
 	public void doWork(PowerHandler workProvider) {
+	}
+
+	@Override
+	public boolean canEmitPowerFrom(ForgeDirection side) {
+		return mode == Mode.FromOldToNew;
 	}
 }
