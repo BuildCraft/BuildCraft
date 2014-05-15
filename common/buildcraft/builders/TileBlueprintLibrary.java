@@ -123,7 +123,21 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory {
 
 	@Override
 	public ItemStack decrStackSize(int i, int j) {
-		return inv.decrStackSize(i, j);
+		ItemStack result = inv.decrStackSize(i, j);
+
+		if (i == 0) {
+			if (getStackInSlot(0) == null) {
+				progressIn = 0;
+			}
+		}
+
+		if (i == 2) {
+			if (getStackInSlot(2) == null) {
+				progressOut = 0;
+			}
+		}
+
+		return result;
 	}
 
 	@Override
