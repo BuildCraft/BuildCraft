@@ -26,7 +26,6 @@ import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -119,7 +118,6 @@ public class ItemFacade extends ItemBuildCraft {
 		for (ItemStack stack : allFacades) {
 			itemList.add(stack.copy());
 		}
-		itemList.add(getAdvancedFacade(PipeWire.RED, Blocks.diamond_block, 0, Blocks.emerald_block, 0));
 	}
 
 	@Override
