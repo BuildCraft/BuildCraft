@@ -80,7 +80,7 @@ public class ItemFacade extends ItemBuildCraft {
 		}
 
 		ItemStack stack = new ItemStack(block, 1, meta);
-		ItemStack stackAlt = new ItemStack(blockAlt, 1, meta);
+		ItemStack stackAlt = new ItemStack(blockAlt, 1, metaAlt);
 
 		if (getType(itemstack) == TYPE_BASIC) {
 			if (Item.getItemFromBlock(block) != null) {
