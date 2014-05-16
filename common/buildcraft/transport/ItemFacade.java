@@ -8,13 +8,20 @@
  */
 package buildcraft.transport;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
-
+import buildcraft.BuildCraftTransport;
+import buildcraft.api.core.JavaTools;
+import buildcraft.api.core.Position;
+import buildcraft.api.recipes.BuildcraftRecipes;
+import buildcraft.api.transport.PipeWire;
+import buildcraft.core.BlockSpring;
+import buildcraft.core.CreativeTabBuildCraft;
+import buildcraft.core.ItemBuildCraft;
+import buildcraft.core.proxy.CoreProxy;
+import buildcraft.core.utils.StringUtils;
 import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
-
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
@@ -27,21 +34,11 @@ import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
-
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-
 import net.minecraftforge.common.util.ForgeDirection;
 
-import buildcraft.BuildCraftTransport;
-import buildcraft.api.core.JavaTools;
-import buildcraft.api.core.Position;
-import buildcraft.api.recipes.BuildcraftRecipes;
-import buildcraft.api.transport.PipeWire;
-import buildcraft.core.BlockSpring;
-import buildcraft.core.CreativeTabBuildCraft;
-import buildcraft.core.ItemBuildCraft;
-import buildcraft.core.proxy.CoreProxy;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
 
 public class ItemFacade extends ItemBuildCraft {
 
@@ -66,7 +63,7 @@ public class ItemFacade extends ItemBuildCraft {
 		String name = super.getItemStackDisplayName(itemstack);
 
 		if (getType(itemstack) == TYPE_PHASED) {
-			name = "Phased " + name;
+			name = StringUtils.localize("item.FacadePhased.name");
 		}
 
 		Block block = ItemFacade.getBlocks(itemstack)[0];
