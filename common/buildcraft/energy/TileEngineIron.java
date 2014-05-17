@@ -31,6 +31,8 @@ import buildcraft.api.fuels.IronEngineCoolant.Coolant;
 import buildcraft.api.fuels.IronEngineFuel;
 import buildcraft.api.fuels.IronEngineFuel.Fuel;
 import buildcraft.api.gates.ITrigger;
+import buildcraft.api.mj.IOMode;
+import buildcraft.api.mj.MjBattery;
 import buildcraft.core.GuiIds;
 import buildcraft.core.IItemPipe;
 import buildcraft.core.fluids.FluidUtils;
@@ -55,6 +57,8 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
 	private int penaltyCooling = 0;
 	private boolean lastPowered = false;
 	private BiomeGenBase biomeCache;
+	@MjBattery(mode = IOMode.Send, maxCapacity = 10000, maxReceivedPerCycle = 15)
+	private double mjStored;
 
 	public TileEngineIron() {
 		super(1);
@@ -411,29 +415,6 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
 
 	public FluidStack getCoolant() {
 		return tankCoolant.getFluid();
-	}
-
-	@Override
-	public double maxEnergyReceived() {
-		return 2000;
-	}
-
-	@Override
-	public double maxEnergyExtracted() {
-		return 500;
-	}
-
-	@Override
-	public double getMaxEnergy() {
-		return 10000;
-	}
-
-	@Override
-	public double getCurrentOutput() {
-		if (currentFuel == null) {
-			return 0;
-		}
-		return currentFuel.powerPerCycle;
 	}
 
 	@Override

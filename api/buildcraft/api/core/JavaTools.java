@@ -20,6 +20,26 @@ public class JavaTools {
 		return Math.max(min, Math.min(value, max));
 	}
 
+	public static double min(double value, double... values) {
+		double min = value;
+		for (double candidate : values) {
+			if (candidate < min) {
+				min = candidate;
+			}
+		}
+		return min;
+	}
+
+	public static double max(double value, double... values) {
+		double max = value;
+		for (double candidate : values) {
+			if (candidate > max) {
+				max = candidate;
+			}
+		}
+		return max;
+	}
+
 	public static <T> T[] concat(T[] first, T[] second) {
 		T[] result = Arrays.copyOf(first, first.length + second.length);
 		System.arraycopy(second, 0, result, first.length, second.length);

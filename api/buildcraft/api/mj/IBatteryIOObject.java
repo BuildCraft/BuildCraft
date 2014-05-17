@@ -9,6 +9,8 @@
 package buildcraft.api.mj;
 
 public interface IBatteryIOObject extends IBatteryObject {
+	double maxSendedPerCycle();
+
 	IOMode mode();
 
 	boolean canSend();
