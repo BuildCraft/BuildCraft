@@ -19,7 +19,6 @@ import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -42,6 +41,7 @@ import buildcraft.core.BlockSpring;
 import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.ItemBuildCraft;
 import buildcraft.core.proxy.CoreProxy;
+import buildcraft.core.utils.StringUtils;
 
 public class ItemFacade extends ItemBuildCraft {
 
@@ -66,7 +66,7 @@ public class ItemFacade extends ItemBuildCraft {
 		String name = super.getItemStackDisplayName(itemstack);
 
 		if (getType(itemstack) == TYPE_PHASED) {
-			name = "Phased " + name;
+			name = StringUtils.localize("item.FacadePhased.name");
 		}
 
 		Block block = ItemFacade.getBlocks(itemstack)[0];
@@ -83,7 +83,7 @@ public class ItemFacade extends ItemBuildCraft {
 		}
 
 		ItemStack stack = new ItemStack(block, 1, meta);
-		ItemStack stackAlt = new ItemStack(blockAlt, 1, meta);
+		ItemStack stackAlt = new ItemStack(blockAlt, 1, metaAlt);
 
 		if (getType(itemstack) == TYPE_BASIC) {
 			if (Item.getItemFromBlock(block) != null) {
@@ -122,7 +122,6 @@ public class ItemFacade extends ItemBuildCraft {
 		for (ItemStack stack : allFacades) {
 			itemList.add(stack.copy());
 		}
-		itemList.add(getAdvancedFacade(PipeWire.RED, Blocks.diamond_block, 0, Blocks.emerald_block, 0));
 	}
 
 	@Override

@@ -171,6 +171,7 @@ item.PipeFluidsVoid.name=Void Fluid Pipe
 item.PipeItemsSandstone.name=Sandstone Transport Pipe
 item.PipeFluidsSandstone.name=Sandstone Fluid Pipe
 item.Facade.name=Facade
+item.FacadePhased.name=Phased Facade
 item.PipePlug.name=Pipe Plug
 
 itemGroup.buildcraft.blocks=Buildcraft Blocks
