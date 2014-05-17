@@ -21,6 +21,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.Packet;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
@@ -29,6 +30,7 @@ import net.minecraft.world.WorldServer;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
+import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
@@ -117,41 +119,19 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 	}
 
 	public static class SideProperties {
-		int[] facadeTypes = new int[ForgeDirection.VALID_DIRECTIONS.length];
-		int[] facadeWires = new int[ForgeDirection.VALID_DIRECTIONS.length];
-
-		Block[][] facadeBlocks = new Block[ForgeDirection.VALID_DIRECTIONS.length][2];
-		int[][] facadeMeta = new int[ForgeDirection.VALID_DIRECTIONS.length][2];
+		ItemFacade.FacadeState[][] facadeStates = new ItemFacade.FacadeState[ForgeDirection.VALID_DIRECTIONS.length][];
 
 		boolean[] plugs = new boolean[ForgeDirection.VALID_DIRECTIONS.length];
 		boolean[] robotStations = new boolean[ForgeDirection.VALID_DIRECTIONS.length];
 
 		public void writeToNBT (NBTTagCompound nbt) {
 			for (int i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
-				nbt.setInteger("facadeTypes[" + i + "]", facadeTypes[i]);
-				nbt.setInteger("facadeWires[" + i + "]", facadeWires[i]);
-
-				if (facadeBlocks[i][0] != null) {
-					nbt.setString("facadeBlocksStr[" + i + "][0]",
-							Block.blockRegistry.getNameForObject(facadeBlocks[i][0]));
+				NBTTagList list = ItemFacade.FacadeState.writeArray(facadeStates[i]);
+				if (list != null) {
+					nbt.setTag("facadeState[" + i + "]", list);
 				} else {
-					// remove tag is useful in case we're overwritting an NBT
-					// already set, for example in a blueprint.
-					nbt.removeTag("facadeBlocksStr[" + i + "][0]");
+					nbt.removeTag("facadeState[" + i + "]");
 				}
-
-				if (facadeBlocks[i][1] != null) {
-					nbt.setString("facadeBlocksStr[" + i + "][1]",
-							Block.blockRegistry.getNameForObject(facadeBlocks[i][1]));
-				} else {
-					// remove tag is useful in case we're overwritting an NBT
-					// already set, for example in a blueprint.
-					nbt.removeTag("facadeBlocksStr[" + i + "][1]");
-				}
-
-				nbt.setInteger("facadeMeta[" + i + "][0]", facadeMeta[i][0]);
-				nbt.setInteger("facadeMeta[" + i + "][1]", facadeMeta[i][1]);
-
 				nbt.setBoolean("plug[" + i + "]", plugs[i]);
 				nbt.setBoolean("robotStation[" + i + "]", robotStations[i]);
 			}
@@ -159,35 +139,32 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 
 		public void readFromNBT (NBTTagCompound nbt) {
 			for (int i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
-				facadeTypes[i] = nbt.getInteger("facadeTypes[" + i + "]");
-				facadeWires[i] = nbt.getInteger("facadeWires[" + i + "]");
-
-				if (nbt.hasKey("facadeBlocks[" + i + "]")) {
-					// In this case, we're on legacy pre-6.0 facade loading
-					// mode.
-					facadeBlocks[i][0] = (Block) Block.blockRegistry.getObjectById
-							(nbt.getInteger("facadeBlocks[" + i + "]"));
-					facadeBlocks[i][1] = null;
-
-					facadeMeta[i][0] = nbt.getInteger("facadeMeta[" + i + "]");
-					facadeMeta[i][1] = 0;
+				if (nbt.hasKey("facadeState[" + i + "]")) {
+					facadeStates[i] = ItemFacade.FacadeState.readArray(nbt.getTagList("facadeState[" + i + "]", Constants.NBT.TAG_COMPOUND));
 				} else {
-					if (nbt.hasKey("facadeBlocksStr[" + i + "][0]")) {
-						facadeBlocks[i][0] = (Block) Block.blockRegistry.getObject
-								(nbt.getString("facadeBlocksStr[" + i + "][0]"));
-					} else {
-						facadeBlocks[i][0] = null;
+					// Migration support for 5.0.x and 6.0.x
+					if (nbt.hasKey("facadeBlocks[" + i + "]")) {
+						// 5.0.x
+						Block block = (Block) Block.blockRegistry.getObjectById(nbt.getInteger("facadeBlocks[" + i + "]"));
+						int metadata = nbt.getInteger("facadeMeta[" + i + "]");
+						facadeStates[i] = new ItemFacade.FacadeState[] {ItemFacade.FacadeState.create(block, metadata)};
+					} else if (nbt.hasKey("facadeBlocksStr[" + i + "][0]")) {
+						// 6.0.x
+						ItemFacade.FacadeState mainState = ItemFacade.FacadeState.create(
+								(Block) Block.blockRegistry.getObject(nbt.getString("facadeBlocksStr[" + i + "][0]")),
+								nbt.getInteger("facadeMeta[" + i + "][0]")
+						);
+						if (nbt.hasKey("facadeBlocksStr[" + i + "][1]")) {
+							ItemFacade.FacadeState phasedState = ItemFacade.FacadeState.create(
+									(Block) Block.blockRegistry.getObject(nbt.getString("facadeBlocksStr[" + i + "][1]")),
+									nbt.getInteger("facadeMeta[" + i + "][1]"),
+									PipeWire.fromOrdinal(nbt.getInteger("facadeWires[" + i + "]"))
+							);
+							facadeStates[i] = new ItemFacade.FacadeState[] {mainState, phasedState};
+						} else {
+							facadeStates[i] = new ItemFacade.FacadeState[] {mainState};
+						}
 					}
-
-					if (nbt.hasKey("facadeBlocksStr[" + i + "][1]")) {
-						facadeBlocks[i][1] = (Block) Block.blockRegistry.getObject
-								(nbt.getString("facadeBlocksStr[" + i + "][1]"));
-					} else {
-						facadeBlocks[i][1] = null;
-					}
-
-					facadeMeta[i][0] = nbt.getInteger("facadeMeta[" + i + "][0]");
-					facadeMeta[i][1] = nbt.getInteger("facadeMeta[" + i + "][1]");
 				}
 
 				plugs[i] = nbt.getBoolean("plug[" + i + "]");
@@ -196,32 +173,19 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 		}
 
 		public void rotateLeft() {
-			int[] newFacadeTypes = new int[ForgeDirection.VALID_DIRECTIONS.length];
-			int[] newFacadeWires = new int[ForgeDirection.VALID_DIRECTIONS.length];
-
-			Block[][] newFacadeBlocks = new Block[ForgeDirection.VALID_DIRECTIONS.length][2];
-			int[][] newFacadeMeta = new int[ForgeDirection.VALID_DIRECTIONS.length][2];
-
+			ItemFacade.FacadeState[][] newFacadeStates = new ItemFacade.FacadeState[ForgeDirection.VALID_DIRECTIONS.length][];
 			boolean[] newPlugs = new boolean[ForgeDirection.VALID_DIRECTIONS.length];
 			boolean[] newRobotStations = new boolean[ForgeDirection.VALID_DIRECTIONS.length];
 
 			for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
 				ForgeDirection r = dir.getRotation(ForgeDirection.UP);
 
-				newFacadeTypes[r.ordinal()] = facadeTypes[dir.ordinal()];
-				newFacadeWires[r.ordinal()] = facadeWires[dir.ordinal()];
-				newFacadeBlocks[r.ordinal()][0] = facadeBlocks[dir.ordinal()][0];
-				newFacadeBlocks[r.ordinal()][1] = facadeBlocks[dir.ordinal()][1];
-				newFacadeMeta[r.ordinal()][0] = facadeMeta[dir.ordinal()][0];
-				newFacadeMeta[r.ordinal()][1] = facadeMeta[dir.ordinal()][1];
+				newFacadeStates[r.ordinal()] = facadeStates[dir.ordinal()];
 				newPlugs[r.ordinal()] = plugs[dir.ordinal()];
 				newRobotStations[r.ordinal()] = robotStations[dir.ordinal()];
 			}
 
-			facadeTypes = newFacadeTypes;
-			facadeWires = newFacadeWires;
-			facadeBlocks = newFacadeBlocks;
-			facadeMeta = newFacadeMeta;
+			facadeStates = newFacadeStates;
 			plugs = newPlugs;
 			robotStations = newRobotStations;
 		}
@@ -397,23 +361,28 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 
 		// Facades
 		for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
-			int type = sideProperties.facadeTypes[direction.ordinal()];
-
-			if (type == ItemFacade.TYPE_BASIC) {
-				Block block = sideProperties.facadeBlocks[direction.ordinal()][0];
-				renderState.facadeMatrix.setFacade(direction, block, sideProperties.facadeMeta[direction.ordinal()][0]);
-			} else if (type == ItemFacade.TYPE_PHASED) {
-				PipeWire wire = PipeWire.fromOrdinal(sideProperties.facadeWires[direction.ordinal()]);
-				Block block = sideProperties.facadeBlocks[direction.ordinal()][0];
-				Block blockAlt = sideProperties.facadeBlocks[direction.ordinal()][1];
-				int meta = sideProperties.facadeMeta[direction.ordinal()][0];
-				int metaAlt = sideProperties.facadeMeta[direction.ordinal()][1];
-
-				if (isWireActive(wire)) {
-					renderState.facadeMatrix.setFacade(direction, blockAlt, metaAlt);
-				} else {
-					renderState.facadeMatrix.setFacade(direction, block, meta);
+			ItemFacade.FacadeState[] states = sideProperties.facadeStates[direction.ordinal()];
+			if (states == null) {
+				renderState.facadeMatrix.setFacade(direction, null, 0);
+				continue;
+			}
+			// Iterate over all states and activate first proper
+			ItemFacade.FacadeState defaultState = null, activeState = null;
+			for (ItemFacade.FacadeState state : states) {
+				if (state.wire == null) {
+					defaultState = state;
+					continue;
 				}
+				if (isWireActive(state.wire)) {
+					activeState = state;
+					break;
+				}
+			}
+			if (activeState == null) {
+				activeState = defaultState;
+			}
+			if (activeState != null) {
+				renderState.facadeMatrix.setFacade(direction, activeState.block, activeState.metadata);
 			}
 		}
 
@@ -751,7 +720,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 		refreshRenderState = true;
 	}
 
-	public boolean addFacade(ForgeDirection direction, int type, int wire, Block[] blocks, int[] metaValues) {
+	public boolean addFacade(ForgeDirection direction, ItemFacade.FacadeState[] states) {
 		if (this.getWorldObj().isRemote) {
 			return false;
 		}
@@ -760,18 +729,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 			dropFacadeItem(direction);
 		}
 
-		sideProperties.facadeTypes[direction.ordinal()] = type;
-
-		if (type == ItemFacade.TYPE_BASIC || wire == -1) {
-			sideProperties.facadeBlocks[direction.ordinal()][0] = blocks[0];
-			sideProperties.facadeMeta[direction.ordinal()][0] = metaValues[0];
-		} else {
-			sideProperties.facadeWires[direction.ordinal()] = wire;
-			sideProperties.facadeBlocks[direction.ordinal()][0] = blocks[0];
-			sideProperties.facadeMeta[direction.ordinal()][0] = metaValues[0];
-			sideProperties.facadeBlocks[direction.ordinal()][1] = blocks[1];
-			sideProperties.facadeMeta[direction.ordinal()][1] = metaValues[1];
-		}
+		sideProperties.facadeStates[direction.ordinal()] = states;
 
 		worldObj.notifyBlockChange(this.xCoord, this.yCoord, this.zCoord, getBlock());
 
@@ -786,7 +744,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 		} else if (this.getWorldObj().isRemote) {
 			return renderState.facadeMatrix.getFacadeBlock(direction) != null;
 		} else {
-			return sideProperties.facadeBlocks[direction.ordinal()][0] != null;
+			return sideProperties.facadeStates[direction.ordinal()] != null;
 		}
 	}
 
@@ -795,13 +753,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 	}
 
 	public ItemStack getFacade(ForgeDirection direction) {
-		int type = sideProperties.facadeTypes[direction.ordinal()];
-
-		if (type == ItemFacade.TYPE_BASIC) {
-			return ItemFacade.getFacade(sideProperties.facadeBlocks[direction.ordinal()][0], sideProperties.facadeMeta[direction.ordinal()][0]);
-		} else {
-			return ItemFacade.getAdvancedFacade(PipeWire.fromOrdinal(sideProperties.facadeWires[direction.ordinal()]), sideProperties.facadeBlocks[direction.ordinal()][0], sideProperties.facadeMeta[direction.ordinal()][0], sideProperties.facadeBlocks[direction.ordinal()][1], sideProperties.facadeMeta[direction.ordinal()][1]);
-		}
+		return ItemFacade.getFacade(sideProperties.facadeStates[direction.ordinal()]);
 	}
 
 	public boolean dropFacade(ForgeDirection direction) {
@@ -811,12 +763,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 
 		if (!worldObj.isRemote) {
 			dropFacadeItem(direction);
-			sideProperties.facadeTypes[direction.ordinal()] = 0;
-			sideProperties.facadeWires[direction.ordinal()] = -1;
-			sideProperties.facadeBlocks[direction.ordinal()][0] = null;
-			sideProperties.facadeMeta[direction.ordinal()][0] = 0;
-			sideProperties.facadeBlocks[direction.ordinal()][1] = null;
-			sideProperties.facadeMeta[direction.ordinal()][1] = 0;
+			sideProperties.facadeStates[direction.ordinal()] = null;
 			worldObj.notifyBlockChange(this.xCoord, this.yCoord, this.zCoord, getBlock());
 			scheduleRenderUpdate();
 		}

@@ -13,6 +13,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
 
 import buildcraft.BuildCraftTransport;
+import buildcraft.api.core.JavaTools;
 import buildcraft.api.recipes.IIntegrationRecipeManager;
 import buildcraft.api.transport.PipeWire;
 import buildcraft.silicon.ItemRedstoneChipset;
@@ -28,12 +29,12 @@ public class AdvancedFacadeRecipe implements IIntegrationRecipeManager.IIntegrat
 
 	@Override
 	public boolean isValidInputA(ItemStack inputA) {
-		return inputA != null && inputA.getItem() instanceof ItemFacade && ItemFacade.getType(inputA) == ItemFacade.TYPE_BASIC;
+		return inputA != null && inputA.getItem() instanceof ItemFacade;
 	}
 
 	@Override
 	public boolean isValidInputB(ItemStack inputB) {
-		return inputB != null && inputB.getItem() instanceof ItemFacade && ItemFacade.getType(inputB) == ItemFacade.TYPE_BASIC;
+		return inputB != null && inputB.getItem() instanceof ItemFacade && ItemFacade.getType(inputB) == ItemFacade.FacadeType.Basic;
 	}
 
 	@Override
@@ -56,7 +57,21 @@ public class AdvancedFacadeRecipe implements IIntegrationRecipeManager.IIntegrat
 		}
 
 		if (wire != null) {
-			return ItemFacade.getAdvancedFacade(wire, ItemFacade.getBlocks(inputA)[0], ItemFacade.getMetaValues(inputA)[0], ItemFacade.getBlocks(inputB)[0], ItemFacade.getMetaValues(inputB)[0]);
+			ItemFacade.FacadeState[] statesA = ItemFacade.getFacadeStates(inputA),
+					statesB = ItemFacade.getFacadeStates(inputB);
+
+			ItemFacade.FacadeState additionalState = statesB[0];
+			additionalState = new ItemFacade.FacadeState(additionalState.block, additionalState.metadata, wire);
+
+			// if in statesA exists state with the same wire just override it
+			for (int i = 0; i < statesA.length; i++) {
+				if (statesA[i].wire == wire) {
+					statesA[i] = additionalState;
+					return ItemFacade.getFacade(statesA);
+				}
+			}
+			// otherwise concat all states into one facade
+			return ItemFacade.getFacade(JavaTools.concat(statesA, new ItemFacade.FacadeState[] {additionalState}));
 		} else {
 			return null;
 		}
