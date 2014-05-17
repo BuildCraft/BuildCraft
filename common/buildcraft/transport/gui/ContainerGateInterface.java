@@ -249,7 +249,7 @@ public class ContainerGateInterface extends BuildCraftContainer {
 		if (id == 0 /* Action state update */) {
 			for (int i = 0; i < 8; i++) {
 				/* Bit mask of triggers */
-				actionsState[i] = ActionState.values()[((state >> (i * 2)) & 0x03)];
+				actionsState[i] = ActionState.values()[(state >> (i * 2)) & 0x03];
 			}
 		}
 	}
