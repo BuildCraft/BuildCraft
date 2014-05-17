@@ -172,6 +172,8 @@ item.PipeItemsSandstone.name=Sandstone Transport Pipe
 item.PipeFluidsSandstone.name=Sandstone Fluid Pipe
 item.Facade.name=Facade
 item.FacadePhased.name=Phased Facade
+item.FacadePhased.state=%s: %s
+item.FacadePhase.state_default=Default: %s
 item.PipePlug.name=Pipe Plug
 
 itemGroup.buildcraft.blocks=Buildcraft Blocks
