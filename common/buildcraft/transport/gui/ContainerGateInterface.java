@@ -39,12 +39,12 @@ import buildcraft.core.network.PacketIds;
 import buildcraft.core.network.PacketPayload;
 import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.utils.Utils;
+import buildcraft.transport.ActionState;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.gates.GateDefinition;
 
 public class ContainerGateInterface extends BuildCraftContainer {
-
-	public boolean[] triggerState = new boolean[8];
+	public ActionState[] actionsState = new ActionState[8];
 
 	IInventory playerIInventory;
 	Pipe pipe;
@@ -246,10 +246,10 @@ public class ContainerGateInterface extends BuildCraftContainer {
 
 	@Override
 	public void updateProgressBar(int id, int state) {
-		if (id == 0 /* Trigger state update */) {
+		if (id == 0 /* Action state update */) {
 			for (int i = 0; i < 8; i++) {
 				/* Bit mask of triggers */
-				triggerState[i] = ((state >> i) & 0x01) == 0x01;
+				actionsState[i] = ActionState.values()[((state >> (i * 2)) & 0x03)];
 			}
 		}
 	}
@@ -264,12 +264,9 @@ public class ContainerGateInterface extends BuildCraftContainer {
 
 		int state = 0;
 
-		for (int i = 0; i < triggerState.length; i++) {
-			if (pipe.gate.triggers[i] != null) {
-				triggerState[i] = isNearbyTriggerActive(pipe.gate.triggers[i], pipe.gate.getTriggerParameter(i));
-			}
-
-			state |= triggerState[i] ? 0x01 << i : 0x0;
+		for (int i = 0; i < actionsState.length; i++) {
+			actionsState[i] = getActionState(i);
+			state |= (actionsState[i].ordinal() & 0x03) << i * 2;
 		}
 
 		return state;
@@ -392,11 +389,11 @@ public class ContainerGateInterface extends BuildCraftContainer {
 		return descending ? potentialTriggers.descendingIterator() : potentialTriggers.iterator();
 	}
 
-	public boolean isNearbyTriggerActive(ITrigger trigger, ITriggerParameter parameter) {
+	public ActionState getActionState(int i) {
 		if (pipe.gate == null) {
-			return false;
+			return ActionState.Deactivated;
 		} else {
-			return pipe.gate.isNearbyTriggerActive(trigger, parameter);
+			return pipe.gate.actionsState [i];
 		}
 	}
 
