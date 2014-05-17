@@ -45,7 +45,8 @@ public class PathFinding {
 		startNode.movementCost = 0;
 		startNode.destinationCost = distance(start, end);
 		startNode.totalWeight = startNode.movementCost + startNode.destinationCost;
-		closedList.put(start, startNode);
+		startNode.index = iStart;
+		openList.put(start, startNode);
 		nextIteration = startNode;
 	}
 
@@ -86,7 +87,7 @@ public class PathFinding {
 
 		for (int x = from.index.x - 1; x <= from.index.x + 1; ++x) {
 			for (int y = from.index.y - 1; y <= from.index.y + 1; ++y) {
-				for (int z = from.index.z - 1; y <= from.index.z + 1; ++z) {
+				for (int z = from.index.z - 1; z <= from.index.z + 1; ++z) {
 					if (x == from.index.x && y == from.index.y && z == from.index.z) {
 						continue;
 					}
@@ -102,6 +103,7 @@ public class PathFinding {
 					nextNode.movementCost = from.movementCost + distance(index, from.index);
 					nextNode.destinationCost = distance(index, end);
 					nextNode.totalWeight = nextNode.movementCost + nextNode.destinationCost;
+					nextNode.index = index;
 
 					if (closedList.containsKey(index)) {
 						continue;
