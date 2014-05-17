@@ -22,6 +22,8 @@ import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.gates.ITrigger;
 import buildcraft.api.mj.IBatteryObject;
+import buildcraft.api.mj.IBatteryProvider;
+import buildcraft.api.mj.ISidedBatteryProvider;
 import buildcraft.api.mj.MjAPI;
 import buildcraft.api.power.IPowerEmitter;
 import buildcraft.api.power.IPowerReceptor;
@@ -89,12 +91,14 @@ public class PipeTransportPower extends PipeTransport {
 
 	@Override
 	public boolean canPipeConnect(TileEntity tile, ForgeDirection side) {
+		if (tile instanceof IBatteryProvider || tile instanceof ISidedBatteryProvider
+				|| MjAPI.getMjBattery(tile, MjAPI.DEFAULT_POWER_FRAMEWORK, side.getOpposite()) != null) {
+			return true;
+		}
+
 		if (tile instanceof TileGenericPipe) {
 			Pipe pipe2 = ((TileGenericPipe) tile).pipe;
-			if (BlockGenericPipe.isValid(pipe2) && !(pipe2.transport instanceof PipeTransportPower)) {
-				return false;
-			}
-			return true;
+			return BlockGenericPipe.isValid(pipe2) && pipe2.transport instanceof PipeTransportPower;
 		}
 
 		if (tile instanceof IPowerReceptor) {
@@ -110,10 +114,6 @@ public class PipeTransportPower extends PipeTransport {
 			if (emitter.canEmitPowerFrom(side.getOpposite())) {
 				return true;
 			}
-		}
-
-		if (MjAPI.getMjBattery(tile, MjAPI.DEFAULT_POWER_FRAMEWORK, side.getOpposite()) != null) {
-			return true;
 		}
 
 		return false;

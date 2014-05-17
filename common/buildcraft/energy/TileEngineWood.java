@@ -12,12 +12,13 @@ import net.minecraft.util.ResourceLocation;
 
 import net.minecraftforge.common.util.ForgeDirection;
 
-import buildcraft.api.power.PowerHandler;
+import buildcraft.api.mj.IOMode;
+import buildcraft.api.mj.MjBattery;
 import buildcraft.api.transport.IPipeTile.PipeType;
 
 public class TileEngineWood extends TileEngine {
-
-	public static final float OUTPUT = 0.05F;
+	@MjBattery(mode = IOMode.Send, maxCapacity = 100, maxReceivedPerCycle = 0.15)
+	private double mjStored;
 
 	@Override
 	public ResourceLocation getBaseTexture() {
@@ -32,16 +33,6 @@ public class TileEngineWood extends TileEngine {
 	@Override
 	public float explosionRange() {
 		return 1;
-	}
-
-	@Override
-	public double minEnergyReceived() {
-		return 0;
-	}
-
-	@Override
-	public double maxEnergyReceived() {
-		return 50;
 	}
 
 	@Override
@@ -100,20 +91,5 @@ public class TileEngineWood extends TileEngine {
 	@Override
 	public int getScaledBurnTime(int i) {
 		return 0;
-	}
-
-	@Override
-	public double getMaxEnergy() {
-		return 100;
-	}
-
-	@Override
-	public double getCurrentOutput() {
-		return OUTPUT;
-	}
-
-	@Override
-	public double maxEnergyExtracted() {
-		return 1 + PowerHandler.PerditionCalculator.MIN_POWERLOSS;
 	}
 }

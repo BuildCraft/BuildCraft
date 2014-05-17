@@ -38,7 +38,7 @@ public class BatteryObject implements IBatteryIOObject {
 		try {
 			return JavaTools.bounds(batteryData.maxCapacity() - energyStored.getDouble(obj),
 					batteryData.minimumConsumption(), batteryData.maxReceivedPerCycle());
-		} catch (IllegalAccessException e) {
+		} catch (Exception e) {
 			BCLog.logger.log(Level.WARNING, "can't get energy requested", e);
 		}
 		return 0;
@@ -71,7 +71,7 @@ public class BatteryObject implements IBatteryIOObject {
 				energyStored.setDouble(obj, Math.min(contained + used, batteryData.maxCapacity()));
 				return used;
 			}
-		} catch (IllegalAccessException e) {
+		} catch (Exception e) {
 			BCLog.logger.log(Level.WARNING, "can't add energy", e);
 		}
 
@@ -85,7 +85,7 @@ public class BatteryObject implements IBatteryIOObject {
 	public double getEnergyStored() {
 		try {
 			return energyStored.getDouble(obj);
-		} catch (IllegalAccessException e) {
+		} catch (Exception e) {
 			BCLog.logger.log(Level.WARNING, "can't get return energy stored", e);
 			return 0;
 		}
@@ -98,9 +98,8 @@ public class BatteryObject implements IBatteryIOObject {
 	public void setEnergyStored(double mj) {
 		try {
 			energyStored.setDouble(obj, mj);
-		} catch (IllegalAccessException e) {
+		} catch (Exception e) {
 			BCLog.logger.log(Level.WARNING, "can't set energy stored", e);
-			throw new RuntimeException(e);
 		}
 	}
 
@@ -181,6 +180,11 @@ public class BatteryObject implements IBatteryIOObject {
 	@Override
 	public String kind() {
 		return batteryData.kind();
+	}
+
+	@Override
+	public double maxSendedPerCycle() {
+		return maxReceivedPerCycle();
 	}
 
 	@Override

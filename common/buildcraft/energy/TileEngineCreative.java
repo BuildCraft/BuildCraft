@@ -17,11 +17,15 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.api.core.NetworkData;
+import buildcraft.api.mj.IOMode;
+import buildcraft.api.mj.MjBattery;
 import buildcraft.api.tools.IToolWrench;
 import buildcraft.core.utils.StringUtils;
 import buildcraft.transport.pipes.PipePowerIron;
 
 public class TileEngineCreative extends TileEngine {
+	@MjBattery(mode = IOMode.Send, maxCapacity = 10000, maxReceivedPerCycle = 128, minimumConsumption = 0)
+	private double mjStored;
 
 	@NetworkData
 	private PipePowerIron.PowerMode powerMode = PipePowerIron.PowerMode.M2;
@@ -53,7 +57,7 @@ public class TileEngineCreative extends TileEngine {
 
 			if (equipped instanceof IToolWrench && ((IToolWrench) equipped).canWrench(player, xCoord, yCoord, zCoord)) {
 				powerMode = powerMode.getNext();
-				energy = 0;
+				mjStored = 0;
 
 				player.addChatMessage(new ChatComponentText(String.format(StringUtils.localize("chat.pipe.power.iron.mode"), powerMode.maxPower)));
 
@@ -88,10 +92,8 @@ public class TileEngineCreative extends TileEngine {
 
 	@Override
 	public void engineUpdate() {
-		super.engineUpdate();
-
 		if (isRedstonePowered) {
-			addEnergy(getCurrentOutput());
+			mjStored = powerMode.maxPower;
 		}
 	}
 
@@ -103,26 +105,6 @@ public class TileEngineCreative extends TileEngine {
 	@Override
 	public int getScaledBurnTime(int scale) {
 		return 0;
-	}
-
-	@Override
-	public double maxEnergyReceived() {
-		return getCurrentOutput();
-	}
-
-	@Override
-	public double maxEnergyExtracted() {
-		return getCurrentOutput();
-	}
-
-	@Override
-	public double getMaxEnergy() {
-		return getCurrentOutput();
-	}
-
-	@Override
-	public double getCurrentOutput() {
-		return powerMode.maxPower;
 	}
 
 	@Override
