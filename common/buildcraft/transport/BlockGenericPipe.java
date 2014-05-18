@@ -227,32 +227,32 @@ public class BlockGenericPipe extends BlockBuildCraft {
 
 			float facadeThickness = TransportConstants.FACADE_THICKNESS;
 
-			if (tileG.hasFacade(ForgeDirection.EAST)) {
+			if (tileG.hasEnabledFacade(ForgeDirection.EAST)) {
 				setBlockBounds(1 - facadeThickness, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
 				super.addCollisionBoxesToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
 			}
 
-			if (tileG.hasFacade(ForgeDirection.WEST)) {
+			if (tileG.hasEnabledFacade(ForgeDirection.WEST)) {
 				setBlockBounds(0.0F, 0.0F, 0.0F, facadeThickness, 1.0F, 1.0F);
 				super.addCollisionBoxesToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
 			}
 
-			if (tileG.hasFacade(ForgeDirection.UP)) {
+			if (tileG.hasEnabledFacade(ForgeDirection.UP)) {
 				setBlockBounds(0.0F, 1 - facadeThickness, 0.0F, 1.0F, 1.0F, 1.0F);
 				super.addCollisionBoxesToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
 			}
 
-			if (tileG.hasFacade(ForgeDirection.DOWN)) {
+			if (tileG.hasEnabledFacade(ForgeDirection.DOWN)) {
 				setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, facadeThickness, 1.0F);
 				super.addCollisionBoxesToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
 			}
 
-			if (tileG.hasFacade(ForgeDirection.SOUTH)) {
+			if (tileG.hasEnabledFacade(ForgeDirection.SOUTH)) {
 				setBlockBounds(0.0F, 0.0F, 1 - facadeThickness, 1.0F, 1.0F, 1.0F);
 				super.addCollisionBoxesToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
 			}
 
-			if (tileG.hasFacade(ForgeDirection.NORTH)) {
+			if (tileG.hasEnabledFacade(ForgeDirection.NORTH)) {
 				setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, facadeThickness);
 				super.addCollisionBoxesToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
 			}
