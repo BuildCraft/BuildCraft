@@ -23,6 +23,9 @@ public final class NBTUtils {
 	}
 
 	public static NBTTagCompound getItemData(ItemStack stack) {
+		if (stack == null) {
+			return null;
+		}
 		NBTTagCompound nbt = stack.getTagCompound();
 		if (nbt == null) {
 			nbt = new NBTTagCompound();
