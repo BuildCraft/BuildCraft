@@ -366,7 +366,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 		for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
 			ItemFacade.FacadeState[] states = sideProperties.facadeStates[direction.ordinal()];
 			if (states == null) {
-				renderState.facadeMatrix.setFacade(direction, null, 0);
+				renderState.facadeMatrix.setFacade(direction, null, 0, true);
 				continue;
 			}
 			// Iterate over all states and activate first proper
@@ -384,9 +384,10 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 			if (activeState == null) {
 				activeState = defaultState;
 			}
-			if (activeState != null) {
-				renderState.facadeMatrix.setFacade(direction, activeState.block, activeState.metadata);
-			}
+			Block block = activeState != null ? activeState.block : null;
+			int metadata = activeState != null ? activeState.metadata : 0;
+			boolean transparent = activeState == null || block == null;
+			renderState.facadeMatrix.setFacade(direction, block, metadata, transparent);
 		}
 
 		//Plugs
@@ -749,6 +750,10 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 		} else {
 			return sideProperties.facadeStates[direction.ordinal()] != null;
 		}
+	}
+
+	public boolean hasEnabledFacade(ForgeDirection direction) {
+		return hasFacade(direction) && !renderState.facadeMatrix.getFacadeTransparent(direction);
 	}
 
 	private void dropFacadeItem(ForgeDirection direction) {

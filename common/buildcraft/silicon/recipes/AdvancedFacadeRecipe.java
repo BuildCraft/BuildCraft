@@ -34,7 +34,8 @@ public class AdvancedFacadeRecipe implements IIntegrationRecipeManager.IIntegrat
 
 	@Override
 	public boolean isValidInputB(ItemStack inputB) {
-		return inputB != null && inputB.getItem() instanceof ItemFacade && ItemFacade.getType(inputB) == ItemFacade.FacadeType.Basic;
+		return inputB != null && (inputB.getItem() instanceof ItemFacade && ItemFacade.getType(inputB) == ItemFacade.FacadeType.Basic ||
+				inputB.getItem() == BuildCraftTransport.plugItem);
 	}
 
 	@Override
@@ -57,21 +58,24 @@ public class AdvancedFacadeRecipe implements IIntegrationRecipeManager.IIntegrat
 		}
 
 		if (wire != null) {
-			ItemFacade.FacadeState[] statesA = ItemFacade.getFacadeStates(inputA),
-					statesB = ItemFacade.getFacadeStates(inputB);
+			ItemFacade.FacadeState[] states = ItemFacade.getFacadeStates(inputA);
+			ItemFacade.FacadeState additionalState;
+			if (inputB.getItem() == BuildCraftTransport.plugItem) {
+				additionalState = ItemFacade.FacadeState.createTransparent(wire);
+			} else {
+				additionalState = ItemFacade.getFacadeStates(inputB)[0];
+				additionalState = ItemFacade.FacadeState.create(additionalState.block, additionalState.metadata, wire);
+			}
 
-			ItemFacade.FacadeState additionalState = statesB[0];
-			additionalState = new ItemFacade.FacadeState(additionalState.block, additionalState.metadata, wire);
-
-			// if in statesA exists state with the same wire just override it
-			for (int i = 0; i < statesA.length; i++) {
-				if (statesA[i].wire == wire) {
-					statesA[i] = additionalState;
-					return ItemFacade.getFacade(statesA);
+			// if in states array exists state with the same wire just override it
+			for (int i = 0; i < states.length; i++) {
+				if (states[i].wire == wire) {
+					states[i] = additionalState;
+					return ItemFacade.getFacade(states);
 				}
 			}
 			// otherwise concat all states into one facade
-			return ItemFacade.getFacade(JavaTools.concat(statesA, new ItemFacade.FacadeState[] {additionalState}));
+			return ItemFacade.getFacade(JavaTools.concat(states, new ItemFacade.FacadeState[] {additionalState}));
 		} else {
 			return null;
 		}
