@@ -19,18 +19,19 @@ import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
+import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.BuildCraftTransport;
@@ -42,14 +43,84 @@ import buildcraft.core.BlockSpring;
 import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.ItemBuildCraft;
 import buildcraft.core.proxy.CoreProxy;
+import buildcraft.core.utils.StringUtils;
 
 public class ItemFacade extends ItemBuildCraft {
+	public static final int MAX_STATES = PipeWire.values().length;
+
+	public static class FacadeState {
+		public final Block block;
+		public final int metadata;
+		public final PipeWire wire;
+
+		public FacadeState(Block block, int metadata, PipeWire wire) {
+			this.block = block;
+			this.metadata = metadata;
+			this.wire = wire;
+		}
+
+		public FacadeState(NBTTagCompound nbt) {
+			block = (Block) Block.blockRegistry.getObject(nbt.getString("block"));
+			metadata = nbt.getInteger("metadata");
+			if (nbt.hasKey("wire")) {
+				wire = PipeWire.fromOrdinal(nbt.getInteger("wire"));
+			} else {
+				wire = null;
+			}
+		}
+
+		public static FacadeState create(Block block, int metadata) {
+			return create(block, metadata, null);
+		}
+
+		public static FacadeState create(Block block, int metadata, PipeWire wire) {
+			return new FacadeState(block, metadata, wire);
+		}
+
+		public void writeToNBT(NBTTagCompound nbt) {
+			nbt.setString("block", Block.blockRegistry.getNameForObject(block));
+			nbt.setInteger("metadata", metadata);
+			if (wire != null) {
+				nbt.setInteger("wire", wire.ordinal());
+			}
+		}
+
+		public static NBTTagList writeArray(FacadeState[] states) {
+			if (states == null) {
+				return null;
+			}
+			NBTTagList list = new NBTTagList();
+			for (FacadeState state : states) {
+				NBTTagCompound stateNBT = new NBTTagCompound();
+				state.writeToNBT(stateNBT);
+				list.appendTag(stateNBT);
+			}
+			return list;
+		}
+
+		public static FacadeState[] readArray(NBTTagList list) {
+			if (list == null) {
+				return null;
+			}
+			final int length = list.tagCount();
+			FacadeState[] states = new FacadeState[length];
+			for (int i = 0; i < length; i++) {
+				states[i] = new FacadeState(list.getCompoundTagAt(i));
+			}
+			return states;
+		}
+	}
+
+	public static enum FacadeType {
+		Basic, Phased;
+
+		public static FacadeType fromOrdinal(int ordinal) {
+			return ordinal == 1 ? Phased : Basic;
+		}
+	}
 
 	public static final LinkedList<ItemStack> allFacades = new LinkedList<ItemStack>();
 	public static final LinkedList<String> blacklistedFacades = new LinkedList<String>();
-
-	public static final int TYPE_BASIC = 0;
-	public static final int TYPE_PHASED = 1;
 
 	private static final Block NULL_BLOCK = null;
 	private static final ItemStack NO_MATCH = new ItemStack(NULL_BLOCK, 0, 0);
@@ -63,43 +134,14 @@ public class ItemFacade extends ItemBuildCraft {
 
 	@Override
 	public String getItemStackDisplayName(ItemStack itemstack) {
-		String name = super.getItemStackDisplayName(itemstack);
-
-		if (getType(itemstack) == TYPE_PHASED) {
-			name = "Phased " + name;
+		switch(getType(itemstack)) {
+			case Basic:
+				return super.getItemStackDisplayName(itemstack) + ": " + getFacadeStateDisplayName(getFacadeStates(itemstack)[0]);
+			case Phased:
+				return StringUtils.localize("item.FacadePhased.name");
+			default:
+				return "";
 		}
-
-		Block block = ItemFacade.getBlocks(itemstack)[0];
-		int meta = ItemFacade.getMetaValues(itemstack)[0];
-		Block blockAlt = ItemFacade.getBlocks(itemstack)[1];
-		int metaAlt = ItemFacade.getMetaValues(itemstack)[1];
-
-		if (block != null && block.getRenderType() == 31) {
-			meta &= 0x3;
-		}
-
-		if (blockAlt != null && blockAlt.getRenderType() == 31) {
-			metaAlt &= 0x3;
-		}
-
-		ItemStack stack = new ItemStack(block, 1, meta);
-		ItemStack stackAlt = new ItemStack(blockAlt, 1, meta);
-
-		if (getType(itemstack) == TYPE_BASIC) {
-			if (Item.getItemFromBlock(block) != null) {
-				name += ": " + CoreProxy.proxy.getItemDisplayName(stack);
-			}
-		} else if (getType(itemstack) == TYPE_PHASED) {
-			if (Item.getItemFromBlock(block) != null) {
-				name += ": " + CoreProxy.proxy.getItemDisplayName(stack);
-			}
-
-			if (Item.getItemFromBlock(blockAlt) != null) {
-				name += " / " + CoreProxy.proxy.getItemDisplayName(stackAlt);
-			}
-		}
-
-		return name;
 	}
 
 	@Override
@@ -109,9 +151,28 @@ public class ItemFacade extends ItemBuildCraft {
 
 	@Override
 	public void addInformation(ItemStack stack, EntityPlayer player, List list, boolean debug) {
-		if (getType(stack) == TYPE_PHASED) {
-			list.add("Wire: " + PipeWire.fromOrdinal(getWireType(stack)).getColor());
+		if (getType(stack) == FacadeType.Phased) {
+			String stateString = StringUtils.localize("item.FacadePhased.state");
+			FacadeState defaultState = null;
+			for (FacadeState state : getFacadeStates(stack)) {
+				if (state.wire == null) {
+					defaultState = state;
+					continue;
+				}
+				list.add(String.format(stateString, state.wire.getColor(), getFacadeStateDisplayName(state)));
+			}
+			if (defaultState != null) {
+				list.add(1, String.format(StringUtils.localize("item.FacadePhase.state_default"), getFacadeStateDisplayName(defaultState)));
+			}
 		}
+	}
+
+	public static String getFacadeStateDisplayName(FacadeState state) {
+		int meta = state.metadata;
+		if (state.block != null && state.block.getRenderType() == 31) {
+			meta &= 0x3;
+		}
+		return CoreProxy.proxy.getItemDisplayName(new ItemStack(state.block, 1, meta));
 	}
 
 	@SuppressWarnings({"unchecked", "rawtypes"})
@@ -122,7 +183,6 @@ public class ItemFacade extends ItemBuildCraft {
 		for (ItemStack stack : allFacades) {
 			itemList.add(stack.copy());
 		}
-		itemList.add(getAdvancedFacade(PipeWire.RED, Blocks.diamond_block, 0, Blocks.emerald_block, 0));
 	}
 
 	@Override
@@ -139,7 +199,7 @@ public class ItemFacade extends ItemBuildCraft {
 		}
 		TileGenericPipe pipeTile = (TileGenericPipe) tile;
 
-		if (pipeTile.addFacade(ForgeDirection.getOrientation(side).getOpposite(), ItemFacade.getType(stack), ItemFacade.getWireType(stack), ItemFacade.getBlocks(stack), ItemFacade.getMetaValues(stack))) {
+		if (pipeTile.addFacade(ForgeDirection.getOrientation(side).getOpposite(), getFacadeStates(stack))) {
 			stack.stackSize--;
 
 			return true;
@@ -217,94 +277,104 @@ public class ItemFacade extends ItemBuildCraft {
 	}
 
 	private static boolean isBlockValidForFacade(Block block) {
-		if (block.getRenderType() != 0 && block.getRenderType() != 31) {
+		try {
+			if (block.getRenderType() != 0 && block.getRenderType() != 31) {
+				return false;
+			}
+
+			if (block.getBlockBoundsMaxX() != 1.0 || block.getBlockBoundsMaxY() != 1.0 || block.getBlockBoundsMaxZ() != 1.0) {
+				return false;
+			}
+
+			if (block instanceof BlockSpring || block instanceof BlockGenericPipe) {
+				return false;
+			}
+
+			return true;
+		} catch (Throwable ignored) {
 			return false;
 		}
-
-		if (block.getBlockBoundsMaxX() != 1.0 || block.getBlockBoundsMaxY() != 1.0 || block.getBlockBoundsMaxZ() != 1.0) {
-			return false;
-		}
-
-		if (block instanceof BlockSpring || block instanceof BlockGenericPipe) {
-			return false;
-		}
-
-		return true;
 	}
 
-	// GETTERS FOR FACADE DATA
-	public static int getType(ItemStack stack) {
-		// Type is based on various other data included in the stack
-		int wireType = getWireType(stack);
-
-		if (wireType == -1) {
-			// Automatically considered a basic facade
-			return TYPE_BASIC;
+	public static FacadeState[] getFacadeStates(ItemStack stack) {
+		if (!stack.hasTagCompound()) {
+			return new FacadeState[0];
 		}
-
-		Block[] blocks = getBlocks(stack);
-
-		if (blocks.length == 1 || blocks[1] == null) {
-			return TYPE_BASIC;
+		NBTTagCompound nbt = stack.getTagCompound();
+		nbt = migrate(stack, nbt);
+		if (!nbt.hasKey("states")) {
+			return new FacadeState[0];
 		}
-
-		return TYPE_PHASED;
+		return FacadeState.readArray(nbt.getTagList("states", Constants.NBT.TAG_COMPOUND));
 	}
 
-	public static int getWireType(ItemStack stack) {
-		int type = -1;
-
-		if (stack.hasTagCompound() && stack.getTagCompound().hasKey("wire")) {
-			type = stack.getTagCompound().getInteger("wire");
+	private static NBTTagCompound migrate(ItemStack stack, NBTTagCompound nbt) {
+		Block block = null, blockAlt = null;
+		int metadata = 0, metadataAlt;
+		PipeWire wire = null;
+		if (nbt.hasKey("id")) {
+			block = (Block) Block.blockRegistry.getObjectById(nbt.getInteger("id"));
+		} else if (nbt.hasKey("name")) {
+			block = (Block) Block.blockRegistry.getObject(nbt.getString("name"));
 		}
-
-		return type;
+		if (nbt.hasKey("name_alt")) {
+			blockAlt = (Block) Block.blockRegistry.getObject(nbt.getString("name_alt"));
+		}
+		if (nbt.hasKey("meta")) {
+			metadata = nbt.getInteger("meta");
+		}
+		if (nbt.hasKey("meta_alt")) {
+			metadataAlt = nbt.getInteger("meta_alt");
+		} else {
+			metadataAlt = stack.getItemDamage() & 0x0000F;
+		}
+		if (nbt.hasKey("wire")) {
+			wire = PipeWire.fromOrdinal(nbt.getInteger("wire"));
+		}
+		if (block != null) {
+			FacadeState[] states;
+			FacadeState mainState = FacadeState.create(block, metadata);
+			if (blockAlt != null && wire != null) {
+				FacadeState altState = FacadeState.create(blockAlt, metadataAlt, wire);
+				states = new FacadeState[] {mainState, altState};
+			} else {
+				states = new FacadeState[] {mainState};
+			}
+			NBTTagCompound newNbt = getFacade(states).getTagCompound();
+			stack.setTagCompound(newNbt);
+			return newNbt;
+		}
+		return nbt;
 	}
 
 	public static Block[] getBlocks(ItemStack stack) {
-		if (!stack.hasTagCompound()) {
-			return null;
+		FacadeState[] states = getFacadeStates(stack);
+		Block[] blocks = new Block[states.length];
+		for (int i = 0; i < states.length; i++) {
+			blocks[i] = states[i].block;
 		}
-
-		Block facadeBlock = null;
-		Block facadeBlockAlt = null;
-
-		NBTTagCompound stackTagCompound = stack.getTagCompound();
-
-		// reading the 'id' tag is kept to maintain back-compat.
-		// The stack gets upgraded the first time this code is run.
-		if (stackTagCompound.hasKey("id")) {
-			facadeBlock = (Block) Block.blockRegistry.getObjectById(stackTagCompound.getInteger("id"));
-			stackTagCompound.removeTag("id");
-			stackTagCompound.setString("name", Block.blockRegistry.getNameForObject(facadeBlock));
-		} else if (stackTagCompound.hasKey("name")) {
-			 facadeBlock = (Block) Block.blockRegistry.getObject(stackTagCompound.getString("name"));
-		}
-
-		if (stackTagCompound.hasKey("name_alt")) {
-			facadeBlockAlt = (Block) Block.blockRegistry.getObject(stack.getTagCompound().getString("name_alt"));
-		}
-
-		return new Block[] {facadeBlock, facadeBlockAlt};
+		return blocks;
 	}
 
 	public static int[] getMetaValues(ItemStack stack) {
-		int meta = 0;
-		int metaAlt = 0;
-
-		if (stack.hasTagCompound() && stack.getTagCompound().hasKey("meta")) {
-			meta = stack.getTagCompound().getInteger("meta");
-		} else {
-			meta = stack.getItemDamage() & 0x0000F;
+		FacadeState[] states = getFacadeStates(stack);
+		int[] meta = new int[states.length];
+		for (int i = 0; i < states.length; i++) {
+			meta[i] = states[i].metadata;
 		}
+		return meta;
+	}
 
-		if (stack.hasTagCompound() && stack.getTagCompound().hasKey("meta_alt")) {
-			metaAlt = stack.getTagCompound().getInteger("meta_alt");
-		} else {
-			metaAlt = stack.getItemDamage() & 0x0000F;
+	// GETTERS FOR FACADE DATA
+	public static FacadeType getType(ItemStack stack) {
+		if (!stack.hasTagCompound()) {
+			return FacadeType.Basic;
 		}
-
-		return new int[] {meta, metaAlt};
+		NBTTagCompound nbt = stack.getTagCompound();
+		if (!nbt.hasKey("type")) {
+			return FacadeType.Basic;
+		}
+		return FacadeType.fromOrdinal(nbt.getInteger("type"));
 	}
 
 	@Override
@@ -443,22 +513,25 @@ public class ItemFacade extends ItemBuildCraft {
 	}
 
 	public static ItemStack getFacade(Block block, int metadata) {
-		ItemStack stack = new ItemStack(BuildCraftTransport.facadeItem, 1, 0);
-		NBTTagCompound nbt = new NBTTagCompound();
-		nbt.setInteger("meta", metadata);
-		nbt.setString("name", Block.blockRegistry.getNameForObject(block));
-		stack.setTagCompound(nbt);
-		return stack;
+		return getFacade(FacadeState.create(block, metadata));
 	}
 
 	public static ItemStack getAdvancedFacade(PipeWire wire, Block block, int metadata, Block blockAlt, int metaDataAlt) {
+		return getFacade(FacadeState.create(block, metadata), FacadeState.create(blockAlt, metaDataAlt, wire));
+	}
+
+	public static ItemStack getFacade(FacadeState... states) {
+		if (states == null || states.length == 0) {
+			return null;
+		}
+		final boolean basic = states.length == 1 && states[0].wire == null;
+
 		ItemStack stack = new ItemStack(BuildCraftTransport.facadeItem, 1, 0);
+
 		NBTTagCompound nbt = new NBTTagCompound();
-		nbt.setInteger("wire", wire.ordinal());
-		nbt.setString("name", Block.blockRegistry.getNameForObject(block));
-		nbt.setInteger("meta", metadata);
-		nbt.setString("name_alt", Block.blockRegistry.getNameForObject(blockAlt));
-		nbt.setInteger("meta_alt", metaDataAlt);
+		nbt.setInteger("type", (basic ? FacadeType.Basic : FacadeType.Phased).ordinal());
+		nbt.setTag("states", FacadeState.writeArray(states));
+
 		stack.setTagCompound(nbt);
 		return stack;
 	}

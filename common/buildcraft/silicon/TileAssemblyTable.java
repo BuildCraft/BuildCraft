@@ -149,6 +149,9 @@ public class TileAssemblyTable extends TileLaserTableBase implements IMachine, I
 			NBTTagCompound cpt = list.getCompoundTagAt(i);
 
 			ItemStack stack = ItemStack.loadItemStackFromNBT(cpt);
+			if (stack == null) {
+				continue;
+			}
 
 			for (AssemblyRecipe r : AssemblyRecipeManager.INSTANCE.getRecipes()) {
 				if (r.output.getItem() == stack.getItem() && r.output.getItemDamage() == stack.getItemDamage()) {

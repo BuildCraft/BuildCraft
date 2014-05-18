@@ -582,8 +582,13 @@ public class ClassMapping extends ClassSerializer {
 	}
 
 	private static void registerSerializer (Class clas, ClassSerializer s) {
-		s.mappedClass = clas;
-		classes.put(clas.getCanonicalName(), s);
+		try {
+			s.mappedClass = clas;
+			classes.put(clas.getCanonicalName(), s);
+		} catch (Throwable t) {
+			t.printStackTrace();
+			throw new RuntimeException("Can't register " + clas.getCanonicalName() + " in serializers");
+		}
 	}
 
 	public static ClassSerializer get (Class clas) {

@@ -54,6 +54,8 @@ public final class Gate {
 	public ITrigger[] triggers = new ITrigger[8];
 	public ITriggerParameter[] triggerParameters = new ITriggerParameter[8];
 	public IAction[] actions = new IAction[8];
+	public ActionState[] actionsState = new ActionState[8];
+
 	public BitSet broadcastSignal = new BitSet(PipeWire.VALUES.length);
 	public BitSet prevBroadcastSignal = new BitSet(PipeWire.VALUES.length);
 	public int redstoneOutput = 0;
@@ -71,6 +73,10 @@ public final class Gate {
 		this.pipe = pipe;
 		this.material = material;
 		this.logic = logic;
+
+		for (int i = 0; i < actionsState.length; ++i) {
+			actionsState[i] = ActionState.Deactivated;
+		}
 	}
 
 	public void setTrigger(int position, ITrigger trigger) {
@@ -246,14 +252,33 @@ public final class Gate {
 			IAction action = actions[it];
 			ITriggerParameter parameter = triggerParameters[it];
 
+			actionsState [it] = ActionState.Deactivated;
+
 			if (trigger != null && action != null) {
 				actionCount.add(action);
+
+				boolean active = isNearbyTriggerActive(trigger, parameter);
+
 				if (!activeActions.containsKey(action)) {
-					activeActions.put(action, isNearbyTriggerActive(trigger, parameter));
+					activeActions.put(action, active);
 				} else if (logic == GateLogic.AND) {
-					activeActions.put(action, activeActions.get(action) && isNearbyTriggerActive(trigger, parameter));
+					activeActions.put(action, activeActions.get(action) && active);
 				} else {
-					activeActions.put(action, activeActions.get(action) || isNearbyTriggerActive(trigger, parameter));
+					activeActions.put(action, activeActions.get(action) || active);
+				}
+
+				if (active) {
+					actionsState [it] = ActionState.Partial;
+				}
+			}
+		}
+
+		for (int it = 0; it < 8; ++it) {
+			IAction action = actions[it];
+
+			if (activeActions.containsKey(action)) {
+				if (activeActions.get(action)) {
+					actionsState[it] = ActionState.Activated;
 				}
 			}
 		}

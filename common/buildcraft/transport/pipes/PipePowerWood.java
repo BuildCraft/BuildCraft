@@ -19,15 +19,20 @@ import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.core.SafeTimeTracker;
+import buildcraft.api.mj.MjAPILegacy;
 import buildcraft.api.mj.MjBattery;
 import buildcraft.api.power.IPowerEmitter;
+import buildcraft.api.power.IPowerReceptor;
+import buildcraft.api.power.PowerHandler;
+import buildcraft.api.power.PowerHandler.PowerReceiver;
+import buildcraft.api.power.PowerHandler.Type;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.transport.IPipeTransportPowerHook;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportPower;
 
-public class PipePowerWood extends Pipe<PipeTransportPower> implements IPipeTransportPowerHook {
+public class PipePowerWood extends Pipe<PipeTransportPower> implements IPowerReceptor, IPipeTransportPowerHook {
 
 	public final boolean[] powerSources = new boolean[6];
 
@@ -38,6 +43,8 @@ public class PipePowerWood extends Pipe<PipeTransportPower> implements IPipeTran
 	private double mjStored = 0;
 	private final SafeTimeTracker sourcesTracker = new SafeTimeTracker(1);
 	private boolean full;
+
+	private MjAPILegacy powerHandler;
 
 	public PipePowerWood(Item item) {
 		super(new PipeTransportPower(), item);
@@ -164,5 +171,19 @@ public class PipePowerWood extends Pipe<PipeTransportPower> implements IPipeTran
 
 	public boolean isPowerSource(ForgeDirection from) {
 		return container.getTile(from) instanceof IPowerEmitter;
+	}
+
+	@Override
+	public PowerReceiver getPowerReceiver(ForgeDirection side) {
+		if (powerHandler == null) {
+			powerHandler = MjAPILegacy.from(container, Type.PIPE);
+		}
+
+		return powerHandler.getPowerReceiver(ForgeDirection.UNKNOWN);
+	}
+
+	@Override
+	public void doWork(PowerHandler workProvider) {
+
 	}
 }

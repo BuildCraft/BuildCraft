@@ -28,8 +28,8 @@ import buildcraft.core.gui.AdvancedSlot;
 import buildcraft.core.gui.GuiAdvancedInterface;
 import buildcraft.core.triggers.BCAction;
 import buildcraft.core.utils.StringUtils;
+import buildcraft.transport.ActionState;
 import buildcraft.transport.Pipe;
-import buildcraft.transport.gates.GateDefinition;
 
 public class GuiGateInterface extends GuiAdvancedInterface {
 
@@ -269,29 +269,18 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 		int cornerY = (height - ySize) / 2;
 		drawTexturedModalRect(cornerX, cornerY, 0, 0, xSize, ySize);
 
-		int triggerTracker = 0;
-		boolean allTriggersActive = true;
-		for (AdvancedSlot slot : slots) {
-			if (slot instanceof TriggerSlot) {
-				boolean active = container.triggerState[triggerTracker++];
-				if (slot.isDefined() && ((TriggerSlot) slot).getTrigger() != null && !active) {
-					allTriggersActive = false;
-					break;
-				}
-			}
-		}
+		int actionTracker = 0;
 
-		triggerTracker = 0;
+		actionTracker = 0;
 		for (int s = 0; s < slots.length; ++s) {
 			AdvancedSlot slot = slots[s];
 
 			if (slot instanceof TriggerSlot) {
 				ITrigger trigger = ((TriggerSlot) slot).getTrigger();
-				boolean halfWidth = pipe.gate.logic == GateDefinition.GateLogic.AND && !allTriggersActive;
+				boolean halfWidth = container.actionsState[actionTracker] == ActionState.Partial;
 
 				if (pipe.gate.material.hasParameterSlot) {
-
-					if (container.triggerState[triggerTracker++]) {
+					if (container.actionsState[actionTracker] != ActionState.Deactivated) {
 						mc.renderEngine.bindTexture(texture);
 
 						drawTexturedModalRect(cornerX + slot.x + 35, cornerY + slot.y + 6, 176, 18, halfWidth ? 9 : 18, 4);
@@ -302,11 +291,13 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 
 						drawTexturedModalRect(cornerX + slot.x + 17, cornerY + slot.y - 1, 176, 0, 18, 18);
 					}
-				} else if (container.triggerState[triggerTracker++]) {
+				} else if (container.actionsState[actionTracker] != ActionState.Deactivated) {
 					mc.renderEngine.bindTexture(texture);
 
 					drawTexturedModalRect(cornerX + slot.x + 17, cornerY + slot.y + 6, 176, 18, halfWidth ? 9 : 18, 4);
 				}
+
+				actionTracker++;
 			} else if (slot instanceof TriggerParameterSlot) {
 				TriggerParameterSlot paramSlot = (TriggerParameterSlot) slot;
 				TriggerSlot trigger = (TriggerSlot) slots[s - numSlots * 2];

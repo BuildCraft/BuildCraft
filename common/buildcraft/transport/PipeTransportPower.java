@@ -50,9 +50,9 @@ public class PipeTransportPower extends PipeTransport {
 	public float[] displayPower = new float[6];
 	public short[] clientDisplayPower = new short[6];
 	public int overload;
-	public int[] nextPowerQuery = new int[6];
-	public float[] internalNextPower = new float[6];
-	public int maxPower = 8;
+	public double[] nextPowerQuery = new double[6];
+	public double[] internalNextPower = new double[6];
+	public double maxPower = 8;
 	public float[] movementStage = new float[] {0, 0, 0};
 
 	private boolean needsInit = true;
@@ -60,13 +60,13 @@ public class PipeTransportPower extends PipeTransport {
 
 	private float[] prevDisplayPower = new float[6];
 
-	private int[] powerQuery = new int[6];
+	private double[] powerQuery = new double[6];
 
 	private long currentDate;
-	private float[] internalPower = new float[6];
+	private double[] internalPower = new double[6];
 
 	private double highestPower;
-	private SafeTimeTracker tracker = new SafeTimeTracker();
+	private SafeTimeTracker tracker = new SafeTimeTracker(2 * BuildCraftCore.updateFactor);
 
 	public PipeTransportPower() {
 		for (int i = 0; i < 6; ++i) {
@@ -168,62 +168,86 @@ public class PipeTransportPower extends PipeTransport {
 		System.arraycopy(displayPower, 0, prevDisplayPower, 0, 6);
 		Arrays.fill(displayPower, 0.0F);
 
-		for (int i = 0; i < 6; ++i) {
-			if (internalPower[i] > 0) {
-				float totalPowerQuery = 0;
+		// STEP 1 - computes the total amount of power contained and total
+		// amount of power queried
 
-				for (int j = 0; j < 6; ++j) {
-					if (j != i && powerQuery[j] > 0) {
-						if (tiles[j] != null
-								&& (tiles[j] instanceof TileGenericPipe
-										|| tiles[j] instanceof IPowerReceptor || MjAPI
-										.getMjBattery(tiles[j], MjAPI.DEFAULT_POWER_FRAMEWORK, ForgeDirection.VALID_DIRECTIONS[j].getOpposite()) != null)) {
-							totalPowerQuery += powerQuery[j];
-						}
-					}
-				}
+		double totalPowerContained = 0;
 
-				for (int j = 0; j < 6; ++j) {
-					if (j != i && powerQuery[j] > 0) {
-						double watts = 0.0F;
+		for (int in = 0; in < 6; ++in) {
+			totalPowerContained += internalPower[in];
+		}
 
-						PowerReceiver prov = getReceiverOnSide(ForgeDirection.VALID_DIRECTIONS[j]);
-						if (prov != null && prov.powerRequest() > 0) {
-							watts = (internalPower[i] / totalPowerQuery) * powerQuery[j];
-							watts = prov.receiveEnergy(Type.PIPE, watts, ForgeDirection.VALID_DIRECTIONS[j].getOpposite());
-							internalPower[i] -= watts;
-						} else if (tiles[j] instanceof TileGenericPipe) {
-							watts = (internalPower[i] / totalPowerQuery) * powerQuery[j];
-							TileGenericPipe nearbyTile = (TileGenericPipe) tiles[j];
+		double totalPowerQuery = 0;
 
-							PipeTransportPower nearbyTransport = (PipeTransportPower) nearbyTile.pipe.transport;
+		for (int out = 0; out < 6; ++out) {
+			totalPowerQuery += powerQuery[out];
+		}
 
-							watts = nearbyTransport.receiveEnergy(ForgeDirection.VALID_DIRECTIONS[j].getOpposite(), watts);
-							internalPower[i] -= watts;
-						} else if (tiles[j] != null) {
-							// Look for the simplified power framework
-							IBatteryObject battery = MjAPI.getMjBattery(tiles[j], MjAPI.DEFAULT_POWER_FRAMEWORK, ForgeDirection.VALID_DIRECTIONS[j].getOpposite());
+		// STEP 2 - sends the power to all directions and computes the actual
+		// amount of power that was consumed
 
-							if (battery != null) {
-								watts = (internalPower[i] / totalPowerQuery)
-										* powerQuery[j];
+		double totalPowerConsumed = 0;
 
-								internalPower[i] -= battery.addEnergy(watts);
+		if (totalPowerContained > 0) {
+			for (int out = 0; out < 6; ++out) {
+				if (powerQuery[out] > 0) {
+					double powerConsumed = powerQuery[out] / totalPowerQuery * totalPowerContained;
+
+					if (tiles[out] instanceof TileGenericPipe) {
+						// Transmit power to the nearby pipe
+
+						TileGenericPipe nearbyTile = (TileGenericPipe) tiles[out];
+						PipeTransportPower nearbyTransport = (PipeTransportPower) nearbyTile.pipe.transport;
+						powerConsumed = nearbyTransport.receiveEnergy(
+								ForgeDirection.VALID_DIRECTIONS[out].getOpposite(),
+								powerConsumed);
+					} else {
+						IBatteryObject battery = MjAPI.getMjBattery(tiles[out], MjAPI.DEFAULT_POWER_FRAMEWORK,
+								ForgeDirection.VALID_DIRECTIONS[out].getOpposite());
+
+						if (battery != null) {
+							// Transmit power to the simplified power framework
+							powerConsumed = battery.addEnergy(powerConsumed);
+						} else {
+							PowerReceiver prov = getReceiverOnSide(ForgeDirection.VALID_DIRECTIONS[out]);
+
+							if (prov != null) {
+								// Transmit power to the legacy power framework
+
+								powerConsumed = prov.receiveEnergy(Type.PIPE, powerConsumed,
+										ForgeDirection.VALID_DIRECTIONS[out].getOpposite());
 							}
 						}
-
-						displayPower[j] += watts;
-						displayPower[i] += watts;
 					}
+
+					displayPower[out] += powerConsumed;
+					totalPowerConsumed += powerConsumed;
 				}
 			}
 		}
 
+		// STEP 3 - assume equal repartition of all consumed locations and
+		// compute display for each source of power
+
+		if (totalPowerConsumed > 0) {
+			for (int in = 0; in < 6; ++in) {
+				double powerConsumed = internalPower[in] / totalPowerContained * totalPowerConsumed;
+				displayPower[in] += powerConsumed;
+			}
+		}
+
+		// NEXT STEPS... other things to do...
+
 		highestPower = 0;
 		for (int i = 0; i < 6; i++) {
 			displayPower[i] = (prevDisplayPower[i] * (DISPLAY_SMOOTHING - 1.0F) + displayPower[i]) / DISPLAY_SMOOTHING;
+
 			if (displayPower[i] > highestPower) {
 				highestPower = displayPower[i];
+			}
+
+			if (displayPower[i] < 0.01) {
+				displayPower[i] = 0;
 			}
 		}
 
@@ -240,27 +264,29 @@ public class PipeTransportPower extends PipeTransport {
 		for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
 			TileEntity tile = tiles [dir.ordinal()];
 
-			PowerReceiver prov = getReceiverOnSide(dir);
-			if (prov != null) {
-				float request = (float) prov.powerRequest();
+			if (!(tile instanceof TileGenericPipe)) {
+				PowerReceiver prov = getReceiverOnSide(dir);
+				if (prov != null) {
+					double request = prov.powerRequest();
 
-				if (request > 0) {
-					requestEnergy(dir, request);
+					if (request > 0) {
+						requestEnergy(dir, request);
+					}
 				}
-			}
 
-			if (tile != null) {
-				IBatteryObject battery = MjAPI.getMjBattery(tile, MjAPI.DEFAULT_POWER_FRAMEWORK, dir.getOpposite());
+				if (tile != null) {
+					IBatteryObject battery = MjAPI.getMjBattery(tile, MjAPI.DEFAULT_POWER_FRAMEWORK, dir.getOpposite());
 
-				if (battery != null) {
-					requestEnergy(dir, battery.getEnergyRequested());
+					if (battery != null) {
+						requestEnergy(dir, battery.getEnergyRequested());
+					}
 				}
 			}
 		}
 
 		// Sum the amount of energy requested on each side
 
-		int[] transferQuery = new int[6];
+		double[] transferQuery = new double[6];
 
 		for (int i = 0; i < 6; ++i) {
 			transferQuery[i] = 0;
@@ -295,12 +321,12 @@ public class PipeTransportPower extends PipeTransport {
 			}
 		}
 
-		if (tracker.markTimeIfDelay(container.getWorldObj(), 2 * BuildCraftCore.updateFactor)) {
+		if (tracker.markTimeIfDelay(container.getWorldObj())) {
 			PacketPowerUpdate packet = new PacketPowerUpdate(container.xCoord, container.yCoord, container.zCoord);
 
 			double displayFactor = MAX_DISPLAY / 1024.0;
 			for (int i = 0; i < clientDisplayPower.length; i++) {
-				clientDisplayPower[i] = (short) (displayPower[i] * displayFactor + .9999);
+				clientDisplayPower[i] = (short) (Math.ceil(displayPower[i] * displayFactor));
 			}
 
 			packet.displayPower = clientDisplayPower;
@@ -330,26 +356,20 @@ public class PipeTransportPower extends PipeTransport {
 	}
 
 	private void step() {
-		if (currentDate != container.getWorldObj().getTotalWorldTime()) {
+		if (container != null && container.getWorldObj() != null
+				&& currentDate != container.getWorldObj().getTotalWorldTime()) {
 			currentDate = container.getWorldObj().getTotalWorldTime();
 
 			powerQuery = nextPowerQuery;
-			nextPowerQuery = new int[6];
+			nextPowerQuery = new double[6];
 
-			float[] next = internalPower;
 			internalPower = internalNextPower;
-			internalNextPower = next;
-//			for (int i = 0; i < powerQuery.length; i++) {
-//				int sum = 0;
-//				for (int j = 0; j < powerQuery.length; j++) {
-//					if (i != j) {
-//						sum += powerQuery[j];
-//					}
-//				}
-//				if (sum == 0 && internalNextPower[i] > 0) {
-//					internalNextPower[i] -= 1;
-//				}
-//			}
+			internalNextPower = new double[6];
+
+			for (int i = 0; i < internalNextPower.length; ++i) {
+				internalNextPower[i] = 0;
+				nextPowerQuery[i] = 0;
+			}
 		}
 	}
 
@@ -381,6 +401,7 @@ public class PipeTransportPower extends PipeTransport {
 				val = 0;
 			}
 		}
+
 		return val;
 	}
 
@@ -404,8 +425,8 @@ public class PipeTransportPower extends PipeTransport {
 		super.readFromNBT(nbttagcompound);
 
 		for (int i = 0; i < 6; ++i) {
-			powerQuery[i] = nbttagcompound.getInteger("powerQuery[" + i + "]");
-			nextPowerQuery[i] = nbttagcompound.getInteger("nextPowerQuery[" + i + "]");
+			powerQuery[i] = nbttagcompound.getDouble("powerQuery[" + i + "]");
+			nextPowerQuery[i] = nbttagcompound.getDouble("nextPowerQuery[" + i + "]");
 			internalPower[i] = (float) nbttagcompound.getDouble("internalPower[" + i + "]");
 			internalNextPower[i] = (float) nbttagcompound.getDouble("internalNextPower[" + i + "]");
 		}
@@ -417,8 +438,8 @@ public class PipeTransportPower extends PipeTransport {
 		super.writeToNBT(nbttagcompound);
 
 		for (int i = 0; i < 6; ++i) {
-			nbttagcompound.setInteger("powerQuery[" + i + "]", powerQuery[i]);
-			nbttagcompound.setInteger("nextPowerQuery[" + i + "]", nextPowerQuery[i]);
+			nbttagcompound.setDouble("powerQuery[" + i + "]", powerQuery[i]);
+			nbttagcompound.setDouble("nextPowerQuery[" + i + "]", nextPowerQuery[i]);
 			nbttagcompound.setDouble("internalPower[" + i + "]", internalPower[i]);
 			nbttagcompound.setDouble("internalNextPower[" + i + "]", internalNextPower[i]);
 		}

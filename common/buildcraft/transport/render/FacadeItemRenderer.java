@@ -30,31 +30,28 @@ public class FacadeItemRenderer implements IItemRenderer {
 
 	private long lastTime = 0L;
 
-	private boolean renderState = false;
+	private int renderState = 0;
 
 	private void renderFacadeItem(RenderBlocks render, ItemStack item, float translateX, float translateY, float translateZ) {
 		if (lastTime < System.currentTimeMillis()) {
-			renderState = !renderState;
+			// 12 = LCM(1, 2, 3, 4)
+			renderState = (renderState + 1) % 12;
 			lastTime = System.currentTimeMillis() + 1000L;
 		}
 
-		Block block = null;
-		int decodedMeta = 0;
-
-		int type = ItemFacade.getType(item);
-
-		if (type == ItemFacade.TYPE_BASIC) {
-			block = ItemFacade.getBlocks(item)[0];
-			decodedMeta = ItemFacade.getMetaValues(item)[0];
-		} else if (type == ItemFacade.TYPE_PHASED) {
-			if (renderState) {
-				block = ItemFacade.getBlocks(item)[1];
-				decodedMeta = ItemFacade.getMetaValues(item)[1];
-			} else {
-				block = ItemFacade.getBlocks(item)[0];
-				decodedMeta = ItemFacade.getMetaValues(item)[0];
-			}
+		ItemFacade.FacadeType type = ItemFacade.getType(item);
+		ItemFacade.FacadeState[] states = ItemFacade.getFacadeStates(item);
+		ItemFacade.FacadeState activeState = null;
+		if (type == ItemFacade.FacadeType.Basic) {
+			activeState = states[0];
+		} else if (type == ItemFacade.FacadeType.Phased) {
+			activeState = states[renderState % states.length];
 		}
+		if (activeState == null) {
+			return;
+		}
+		Block block = activeState.block;
+		int decodedMeta = activeState.metadata;
 
 		try {
 			int color = item.getItem().getColorFromItemStack(new ItemStack(block, 1, decodedMeta), 0);
