@@ -278,15 +278,18 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 	private double getPowerToExtract() {
 		TileEntity tile = getTileBuffer(orientation).getTile();
 
-		if (tile instanceof IPowerReceptor) {
+		IBatteryObject battery = MjAPI.getMjBattery(tile, MjAPI.DEFAULT_POWER_FRAMEWORK, orientation.getOpposite());
+
+		if (battery != null) {
+			return extractEnergy(0, battery.getEnergyRequested(), false);
+		} else if (tile instanceof IPowerReceptor) {
 			PowerReceiver receptor = ((IPowerReceptor) tile)
 					.getPowerReceiver(orientation.getOpposite());
 
 			return extractEnergy(receptor.getMinEnergyReceived(),
 					receptor.getMaxEnergyReceived(), false);
 		} else {
-			return extractEnergy(0, MjAPI.getMjBattery(tile, MjAPI.DEFAULT_POWER_FRAMEWORK, orientation.getOpposite())
-					.getEnergyRequested(), false);
+			return 0;
 		}
 	}
 
@@ -295,7 +298,12 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 		if (isPoweredTile(tile, orientation)) {
 			double extracted = getPowerToExtract();
 
-			if (tile instanceof IPowerReceptor) {
+			IBatteryObject battery = MjAPI.getMjBattery(tile, MjAPI.DEFAULT_POWER_FRAMEWORK, orientation.getOpposite());
+
+			if (battery != null) {
+				battery.addEnergy(extractEnergy(0, battery.maxReceivedPerCycle(),
+						true));
+			} else if (tile instanceof IPowerReceptor) {
 				PowerReceiver receptor = ((IPowerReceptor) tile)
 						.getPowerReceiver(orientation.getOpposite());
 
@@ -306,11 +314,6 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 
 					extractEnergy(receptor.getMinEnergyReceived(), needed, true);
 				}
-			} else {
-				IBatteryObject battery = MjAPI.getMjBattery(tile, MjAPI.DEFAULT_POWER_FRAMEWORK, orientation.getOpposite());
-
-				battery.addEnergy(extractEnergy(0, battery.maxReceivedPerCycle(),
-						true));
 			}
 		}
 	}
@@ -519,10 +522,12 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 	public boolean isPoweredTile(TileEntity tile, ForgeDirection side) {
 		if (tile == null) {
 			return false;
+		} else if (MjAPI.getMjBattery(tile, MjAPI.DEFAULT_POWER_FRAMEWORK, orientation.getOpposite()) != null) {
+			return true;
 		} else if (tile instanceof IPowerReceptor) {
 			return ((IPowerReceptor) tile).getPowerReceiver(side.getOpposite()) != null;
 		} else {
-			return MjAPI.getMjBattery(tile, MjAPI.DEFAULT_POWER_FRAMEWORK, orientation.getOpposite()) != null;
+			return false;
 		}
 	}
 

@@ -264,7 +264,7 @@ public class PipeTransportPower extends PipeTransport {
 		for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
 			TileEntity tile = tiles [dir.ordinal()];
 
-			if (!(tile instanceof TileGenericPipe)) {
+			if (!(tile instanceof TileGenericPipe && ((TileGenericPipe) tile).pipe.transport instanceof PipeTransportPower)) {
 				PowerReceiver prov = getReceiverOnSide(dir);
 				if (prov != null) {
 					double request = prov.powerRequest();
