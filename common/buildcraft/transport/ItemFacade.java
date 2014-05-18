@@ -216,19 +216,23 @@ public class ItemFacade extends ItemBuildCraft {
 	}
 
 	private static boolean isBlockValidForFacade(Block block) {
-		if (block.getRenderType() != 0 && block.getRenderType() != 31) {
+		try {
+			if (block.getRenderType() != 0 && block.getRenderType() != 31) {
+				return false;
+			}
+
+			if (block.getBlockBoundsMaxX() != 1.0 || block.getBlockBoundsMaxY() != 1.0 || block.getBlockBoundsMaxZ() != 1.0) {
+				return false;
+			}
+
+			if (block instanceof BlockSpring || block instanceof BlockGenericPipe) {
+				return false;
+			}
+
+			return true;
+		} catch (Throwable ignored) {
 			return false;
 		}
-
-		if (block.getBlockBoundsMaxX() != 1.0 || block.getBlockBoundsMaxY() != 1.0 || block.getBlockBoundsMaxZ() != 1.0) {
-			return false;
-		}
-
-		if (block instanceof BlockSpring || block instanceof BlockGenericPipe) {
-			return false;
-		}
-
-		return true;
 	}
 
 	// GETTERS FOR FACADE DATA
