@@ -51,22 +51,28 @@ public class ItemFacade extends ItemBuildCraft {
 	public static class FacadeState {
 		public final Block block;
 		public final int metadata;
+		public final boolean transparent;
 		public final PipeWire wire;
 
 		public FacadeState(Block block, int metadata, PipeWire wire) {
 			this.block = block;
 			this.metadata = metadata;
 			this.wire = wire;
+			this.transparent = false;
 		}
 
 		public FacadeState(NBTTagCompound nbt) {
-			block = (Block) Block.blockRegistry.getObject(nbt.getString("block"));
-			metadata = nbt.getInteger("metadata");
-			if (nbt.hasKey("wire")) {
-				wire = PipeWire.fromOrdinal(nbt.getInteger("wire"));
-			} else {
-				wire = null;
-			}
+			this.block = nbt.hasKey("block") ? (Block) Block.blockRegistry.getObject(nbt.getString("block")) : null;
+			this.metadata = nbt.getInteger("metadata");
+			this.wire = nbt.hasKey("wire") ? PipeWire.fromOrdinal(nbt.getInteger("wire")) : null;
+			this.transparent = nbt.hasKey("transparent") && nbt.getBoolean("transparent");
+		}
+
+		private FacadeState(PipeWire wire) {
+			this.block = null;
+			this.metadata = 0;
+			this.wire = wire;
+			this.transparent = true;
 		}
 
 		public static FacadeState create(Block block, int metadata) {
@@ -77,12 +83,19 @@ public class ItemFacade extends ItemBuildCraft {
 			return new FacadeState(block, metadata, wire);
 		}
 
+		public static FacadeState createTransparent(PipeWire wire) {
+			return new FacadeState(wire);
+		}
+
 		public void writeToNBT(NBTTagCompound nbt) {
-			nbt.setString("block", Block.blockRegistry.getNameForObject(block));
+			if (block != null) {
+				nbt.setString("block", Block.blockRegistry.getNameForObject(block));
+			}
 			nbt.setInteger("metadata", metadata);
 			if (wire != null) {
 				nbt.setInteger("wire", wire.ordinal());
 			}
+			nbt.setBoolean("transparent", transparent);
 		}
 
 		public static NBTTagList writeArray(FacadeState[] states) {
@@ -162,14 +175,17 @@ public class ItemFacade extends ItemBuildCraft {
 				list.add(String.format(stateString, state.wire.getColor(), getFacadeStateDisplayName(state)));
 			}
 			if (defaultState != null) {
-				list.add(1, String.format(StringUtils.localize("item.FacadePhase.state_default"), getFacadeStateDisplayName(defaultState)));
+				list.add(1, String.format(StringUtils.localize("item.FacadePhased.state_default"), getFacadeStateDisplayName(defaultState)));
 			}
 		}
 	}
 
 	public static String getFacadeStateDisplayName(FacadeState state) {
+		if (state.block == null) {
+			return StringUtils.localize("item.FacadePhased.state_transparent");
+		}
 		int meta = state.metadata;
-		if (state.block != null && state.block.getRenderType() == 31) {
+		if (state.block.getRenderType() == 31) {
 			meta &= 0x3;
 		}
 		return CoreProxy.proxy.getItemDisplayName(new ItemStack(state.block, 1, meta));

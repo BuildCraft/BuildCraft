@@ -14,7 +14,6 @@ import net.minecraft.block.Block;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
 
@@ -47,11 +46,8 @@ public class FacadeItemRenderer implements IItemRenderer {
 		} else if (type == ItemFacade.FacadeType.Phased) {
 			activeState = states[renderState % states.length];
 		}
-		if (activeState == null) {
-			return;
-		}
-		Block block = activeState.block;
-		int decodedMeta = activeState.metadata;
+		Block block = activeState != null ? activeState.block : null;
+		int decodedMeta = activeState != null ? activeState.metadata : 0;
 
 		try {
 			int color = item.getItem().getColorFromItemStack(new ItemStack(block, 1, decodedMeta), 0);
@@ -61,10 +57,6 @@ public class FacadeItemRenderer implements IItemRenderer {
 
 		Tessellator tessellator = Tessellator.instance;
 
-		if (block == null) {
-			return;
-		}
-
 		if (tryGetBlockIcon(block, 0, decodedMeta) == null) {
 			return;
 		}
@@ -73,14 +65,13 @@ public class FacadeItemRenderer implements IItemRenderer {
 		GL11.glPushMatrix();
 
 		// Enable glBlending for transparency
-		if (block.getRenderBlockPass() > 0) {
+		if (block != null && block.getRenderBlockPass() > 0) {
 			GL11.glAlphaFunc(GL11.GL_GREATER, 0.1F);
 			GL11.glEnable(GL11.GL_BLEND);
 			OpenGlHelper.glBlendFunc(770, 771, 1, 0);
 		}
 
-		block.setBlockBounds(0F, 0F, 1F - 1F / 16F, 1F, 1F, 1F);
-		render.setRenderBoundsFromBlock(block);
+		render.setRenderBounds(0F, 0F, 1F - 1F / 16F, 1F, 1F, 1F);
 		GL11.glTranslatef(translateX, translateY, translateZ);
 		tessellator.startDrawingQuads();
 		tessellator.setNormal(0.0F, -1F, 0.0F);
@@ -106,10 +97,9 @@ public class FacadeItemRenderer implements IItemRenderer {
 		tessellator.setNormal(1.0F, 0.0F, 0.0F);
 		render.renderFaceXPos(block, 0.0D, 0.0D, 0.0D, tryGetBlockIcon(block, 5, decodedMeta));
 		tessellator.draw();
-		block.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
 
 		// Disable blending
-		if (block.getRenderBlockPass() > 0) {
+		if (block != null && block.getRenderBlockPass() > 0) {
 			GL11.glDisable(GL11.GL_BLEND);
 		}
 
@@ -159,7 +149,7 @@ public class FacadeItemRenderer implements IItemRenderer {
 			try {
 				return block.getBlockTextureFromSide(side);
 			} catch (Throwable t2) {
-				return Blocks.cobblestone.getIcon(0, 0);
+				return PipeIconProvider.TYPE.TransparentFacade.getIcon();
 			}
 		}
 	}
