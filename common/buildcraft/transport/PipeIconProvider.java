@@ -129,6 +129,8 @@ public class PipeIconProvider implements IIconProvider {
 		Power_Overload("texture_red_lit"),
 		Stripes("pipeStripes"),
 		//
+		TransparentFacade("transparent_facade"),
+		//
 		ItemBox("itemBox");
 		public static final TYPE[] VALUES = values();
 		private final String iconTag;

@@ -18,15 +18,17 @@ public class FacadeMatrix {
 
 	private final Block[] blocks = new Block[ForgeDirection.VALID_DIRECTIONS.length];
 	private final int[] blockMetas = new int[ForgeDirection.VALID_DIRECTIONS.length];
+	private final boolean[] transparent = new boolean[ForgeDirection.VALID_DIRECTIONS.length];
 	private boolean dirty = false;
 
 	public FacadeMatrix() {
 	}
 
-	public void setFacade(ForgeDirection direction, Block block, int blockMeta) {
-		if (blocks[direction.ordinal()] != block || blockMetas[direction.ordinal()] != blockMeta) {
+	public void setFacade(ForgeDirection direction, Block block, int blockMeta, boolean trans) {
+		if (blocks[direction.ordinal()] != block || blockMetas[direction.ordinal()] != blockMeta || transparent[direction.ordinal()] != trans) {
 			blocks[direction.ordinal()] = block;
 			blockMetas[direction.ordinal()] = blockMeta;
+			transparent[direction.ordinal()] = trans;
 			dirty = true;
 		}
 	}
@@ -37,6 +39,10 @@ public class FacadeMatrix {
 
 	public int getFacadeMetaId(ForgeDirection direction) {
 		return blockMetas[direction.ordinal()];
+	}
+
+	public boolean getFacadeTransparent(ForgeDirection direction) {
+		return transparent[direction.ordinal()];
 	}
 
 	public boolean isDirty() {
@@ -54,7 +60,7 @@ public class FacadeMatrix {
 			} else {
 				data.writeShort(Block.blockRegistry.getIDForObject(blocks[i]));
 			}
-			
+			data.writeBoolean(transparent[i]);
 			data.writeByte(blockMetas[i]);
 		}
 	}
@@ -73,6 +79,11 @@ public class FacadeMatrix {
 			
 			if (blocks[i] != block) {
 				blocks[i] = block;
+				dirty = true;
+			}
+			boolean trans = data.readBoolean();
+			if (transparent[i] != trans) {
+				transparent[i] = trans;
 				dirty = true;
 			}
 			byte meta = data.readByte();
