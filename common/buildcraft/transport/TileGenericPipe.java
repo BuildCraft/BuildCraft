@@ -48,6 +48,9 @@ import buildcraft.api.gates.IGateExpansion;
 import buildcraft.api.gates.IOverrideDefaultTriggers;
 import buildcraft.api.gates.ITrigger;
 import buildcraft.api.mj.MjBattery;
+import buildcraft.api.power.IPowerReceptor;
+import buildcraft.api.power.PowerHandler;
+import buildcraft.api.power.PowerHandler.PowerReceiver;
 import buildcraft.api.transport.IPipeConnection;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.PipeWire;
@@ -65,7 +68,7 @@ import buildcraft.core.utils.Utils;
 import buildcraft.transport.gates.GateDefinition;
 import buildcraft.transport.gates.GateFactory;
 
-public class TileGenericPipe extends TileEntity implements IFluidHandler,
+public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFluidHandler,
 		IPipeTile, IOverrideDefaultTriggers, ITileBufferHolder,
 		IDropControlInventory, ISyncedTile, ISolidSideTile, IGuiReturnHandler {
 
@@ -975,6 +978,22 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 	public void readGuiData(ByteBuf data, EntityPlayer sender) {
 		if (BlockGenericPipe.isValid(pipe) && pipe instanceof IGuiReturnHandler) {
 			((IGuiReturnHandler) pipe).readGuiData(data, sender);
+		}
+	}
+
+	@Override
+	public PowerReceiver getPowerReceiver(ForgeDirection side) {
+		if (BlockGenericPipe.isValid(pipe) && pipe instanceof IPowerReceptor) {
+			return ((IPowerReceptor) pipe).getPowerReceiver(null);
+		} else {
+			return null;
+		}
+	}
+
+	@Override
+	public void doWork(PowerHandler workProvider) {
+		if (BlockGenericPipe.isValid(pipe) && pipe instanceof IPowerReceptor) {
+			((IPowerReceptor) pipe).doWork(workProvider);
 		}
 	}
 }
