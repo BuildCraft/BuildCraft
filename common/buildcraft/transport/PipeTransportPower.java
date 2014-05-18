@@ -356,7 +356,8 @@ public class PipeTransportPower extends PipeTransport {
 	}
 
 	private void step() {
-		if (currentDate != container.getWorldObj().getTotalWorldTime()) {
+		if (container != null && container.getWorldObj() != null
+				&& currentDate != container.getWorldObj().getTotalWorldTime()) {
 			currentDate = container.getWorldObj().getTotalWorldTime();
 
 			powerQuery = nextPowerQuery;
