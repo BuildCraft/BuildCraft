@@ -29,13 +29,15 @@ public class TileTestPathfinding extends TileEntity {
 				PathFinding p = new PathFinding(worldObj, new BlockIndex(xCoord, yCoord, zCoord), new BlockIndex(
 						firstEntity.xCoord, firstEntity.yCoord, firstEntity.zCoord));
 
-				p.iterate(100);
+				p.iterate(10000);
 
 				ArrayList<BlockIndex> r = p.getResult();
 
 				for (BlockIndex b : r) {
 					worldObj.setBlock(b.x, b.y, b.z, Blocks.sponge);
 				}
+
+				firstEntity = null;
 			}
 		}
 	}

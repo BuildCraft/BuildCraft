@@ -57,10 +57,14 @@ public class PathFinding {
 
 		for (int i = 0; i < itNumber; ++i) {
 			if (nextIteration.index.equals(end)) {
+				result = new ArrayList<BlockIndex>();
+
 				while (nextIteration != null) {
 					result.add(nextIteration.index);
 					nextIteration = nextIteration.parent;
 				}
+
+				return;
 			} else {
 				nextIteration = iterate(nextIteration);
 			}
@@ -92,11 +96,11 @@ public class PathFinding {
 						continue;
 					}
 
-					if (!BuildCraftAPI.isSoftBlock(world, x, y, z)) {
+					BlockIndex index = new BlockIndex(x, y, z);
+
+					if (!index.equals(end) && !BuildCraftAPI.isSoftBlock(world, x, y, z)) {
 						continue;
 					}
-
-					BlockIndex index = new BlockIndex(x, y, z);
 
 					Node nextNode = new Node();
 					nextNode.parent = from;
@@ -139,7 +143,7 @@ public class PathFinding {
 		for (Node n : collection) {
 			if (found == null) {
 				found = n;
-			} else if (found.totalWeight < n.totalWeight) {
+			} else if (n.totalWeight < found.totalWeight) {
 				found = n;
 			}
 		}
