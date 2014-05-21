@@ -96,7 +96,7 @@ public class EntityRobotPicker extends EntityRobot implements IInventory {
 						.getTileEntity(dockingStation.x, dockingStation.y,
 								dockingStation.z);
 
-				if (pipe.pipe.transport instanceof PipeTransportItems) {
+				if (pipe != null && pipe.pipe.transport instanceof PipeTransportItems) {
 					if (unloadTracker.markTimeIfDelay(worldObj)) {
 						for (int i = 0; i < inv.length; ++i) {
 							if (inv[i] != null) {
