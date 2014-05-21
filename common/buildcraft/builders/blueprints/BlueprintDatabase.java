@@ -166,6 +166,10 @@ public class BlueprintDatabase {
 			for (File blueprintFile : directory.listFiles(filter)) {
 				String fileName = blueprintFile.getName();
 
+				if (fileName.indexOf(BuildCraftBuilders.BPT_SEP_CHARACTER) < 0) {
+					return;
+				}
+
 				int cutIndex = fileName.lastIndexOf(BuildCraftBuilders.BPT_SEP_CHARACTER);
 
 				String prefix = fileName.substring(0, cutIndex);
