@@ -112,7 +112,7 @@ public class PipeTransportPower extends PipeTransport {
 			}
 		}
 
-		if (MjAPI.getMjBattery(tile, MjAPI.DEFAULT_POWER_FRAMEWORK, side.getOpposite()) != null) {
+		if (MjAPI.canReceive(MjAPI.getMjBattery(tile, MjAPI.DEFAULT_POWER_FRAMEWORK, side.getOpposite()))) {
 			return true;
 		}
 

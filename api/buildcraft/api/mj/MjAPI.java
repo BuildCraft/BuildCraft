@@ -12,12 +12,19 @@ import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.WeakHashMap;
 import java.util.logging.Level;
 
+import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.JavaTools;
+import buildcraft.api.power.IPowerReceptor;
+import buildcraft.api.power.PowerHandler;
+
+import gnu.trove.map.TIntObjectMap;
+import gnu.trove.map.hash.TIntObjectHashMap;
 
 /**
  * The class MjAPI provides services to the Minecraft Joules power framework.
@@ -27,10 +34,11 @@ import buildcraft.api.core.JavaTools;
  */
 public final class MjAPI {
 	public static final String DEFAULT_POWER_FRAMEWORK = "buildcraft.kinesis";
-	private static Map<BatteryHolder, BatteryField> mjBatteries = new HashMap<BatteryHolder, BatteryField>();
+	private static Map<BatteryHolder, BatteryField> mjBatteryFields = new HashMap<BatteryHolder, BatteryField>();
 	private static Map<String, Class<? extends BatteryObject>> mjBatteryKinds = new HashMap<String, Class<? extends BatteryObject>>();
 	private static final BatteryField invalidBatteryField = new BatteryField();
-
+	private static final MjReconfigurator reconfigurator = new MjReconfigurator();
+	private static final Map<Object, BatteryCache> mjBatteryCache = new WeakHashMap<Object, BatteryCache>();
 	/**
 	 * Deactivate constructor
 	 */
@@ -43,7 +51,7 @@ public final class MjAPI {
 	 * power framework if possible.
 	 */
 	public static IBatteryObject getMjBattery(Object o) {
-		return getMjBattery(o, DEFAULT_POWER_FRAMEWORK);
+		return getMjBattery(o, DEFAULT_POWER_FRAMEWORK, ForgeDirection.UNKNOWN);
 	}
 
 	/**
@@ -60,26 +68,57 @@ public final class MjAPI {
 	 * performance optimization, it's good to cache this object in the providing
 	 * power framework if possible.
 	 */
+	public static IBatteryObject getMjBattery(Object o, ForgeDirection side) {
+		return getMjBattery(o, DEFAULT_POWER_FRAMEWORK, side);
+	}
+
+	/**
+	 * Returns the battery related to the object given in parameter. For
+	 * performance optimization, it's good to cache this object in the providing
+	 * power framework if possible.
+	 */
 	public static IBatteryObject getMjBattery(Object o, String kind, ForgeDirection side) {
 		if (o == null) {
 			return null;
 		}
-
-		IBatteryObject battery = null;
-
+		IBatteryObject battery;
+		BatteryCache cache = mjBatteryCache.get(o);
+		if (cache == null) {
+			cache = new BatteryCache();
+			mjBatteryCache.put(o, cache);
+		} else {
+			battery = cache.get(kind, side);
+			if (isCacheable(battery)) {
+				return battery;
+			}
+		}
 		if (o instanceof ISidedBatteryProvider) {
 			battery = ((ISidedBatteryProvider) o).getMjBattery(kind, side);
 			if (battery == null && side != ForgeDirection.UNKNOWN) {
 				battery = ((ISidedBatteryProvider) o).getMjBattery(kind, ForgeDirection.UNKNOWN);
 			}
-		}
-
-		if (o instanceof IBatteryProvider) {
+		} else if (o instanceof IBatteryProvider) {
 			battery = ((IBatteryProvider) o).getMjBattery(kind);
+		} else {
+			battery = createBattery(o, kind, side);
 		}
+		if (battery == null && o instanceof IPowerReceptor) {
+			PowerHandler.PowerReceiver receiver = ((IPowerReceptor) o).getPowerReceiver(side);
+			if (receiver != null) {
+				battery = receiver.getMjBattery();
+			}
+		}
+		cache.put(kind, side, battery);
+		return battery;
+	}
 
-		if (battery != null) {
-			return battery;
+	private static boolean isCacheable(IBatteryObject battery) {
+		return battery != null && battery instanceof IBatteryIOObject && ((IBatteryIOObject) battery).isCacheable();
+	}
+
+	public static IBatteryObject createBattery(Object o, String kind, ForgeDirection side) {
+		if (o == null) {
+			return null;
 		}
 
 		BatteryField f = getMjBatteryField(o.getClass(), kind, side);
@@ -97,7 +136,6 @@ public final class MjAPI {
 				obj.obj = o;
 				obj.energyStored = f.field;
 				obj.batteryData = f.battery;
-
 				return obj;
 			} catch (InstantiationException e) {
 				BCLog.logger.log(Level.WARNING, "can't instantiate class for energy kind \"" + kind + "\"");
@@ -110,7 +148,7 @@ public final class MjAPI {
 			}
 		} else {
 			try {
-				return getMjBattery(f.field.get(o), kind, side);
+				return createBattery(f.field.get(o), kind, side);
 			} catch (IllegalAccessException e) {
 				e.printStackTrace();
 				return null;
@@ -123,7 +161,7 @@ public final class MjAPI {
 	}
 
 	public static IBatteryObject[] getAllMjBatteries(Object o, ForgeDirection direction) {
-		IBatteryObject[] result = new IBatteryObject[mjBatteries.size()];
+		IBatteryObject[] result = new IBatteryObject[mjBatteryFields.size()];
 
 		int id = 0;
 
@@ -146,8 +184,91 @@ public final class MjAPI {
 		}
 	}
 
+	public static boolean canReceive(IBatteryObject battery) {
+		return battery != null && (!(battery instanceof IBatteryIOObject) || ((IBatteryIOObject) battery).canReceive());
+	}
+
+	public static boolean canSend(IBatteryObject battery) {
+		return battery != null && battery instanceof IBatteryIOObject && ((IBatteryIOObject) battery).canSend();
+	}
+
+	public static boolean isActive(IBatteryObject battery) {
+		return battery != null && battery instanceof IBatteryIOObject && ((IBatteryIOObject) battery).isActive();
+	}
+
+	public static double getIOLimit(IBatteryObject batteryObject, IOMode mode) {
+		if (mode == IOMode.Receive && canReceive(batteryObject)) {
+			return batteryObject.maxReceivedPerCycle();
+		} else if (mode == IOMode.Send && canSend(batteryObject)) {
+			return ((IBatteryIOObject) batteryObject).maxSendedPerCycle();
+		}
+		return 0;
+	}
+
+	public static MjReconfigurator reconfigure() {
+		return reconfigurator;
+	}
+
+	public static double transferEnergy(IBatteryObject fromBattery, IBatteryObject toBattery, double mj) {
+		if (!canSend(fromBattery) || !canReceive(toBattery)) {
+			return 0;
+		}
+		IBatteryIOObject from = (IBatteryIOObject) fromBattery;
+		double attemptToTransfer = Math.min(getIOLimit(from, IOMode.Send), mj);
+		attemptToTransfer = Math.min(attemptToTransfer, getIOLimit(toBattery, IOMode.Receive));
+		double extracted = from.extractEnergy(attemptToTransfer);
+		double received = toBattery.addEnergy(extracted);
+		if (extracted > received) {
+			from.addEnergy(extracted - received);
+		}
+		return received;
+	}
+
+	public static double transferEnergy(IBatteryObject fromBattery, IBatteryObject toBattery) {
+		return transferEnergy(fromBattery, toBattery, Math.min(
+				getIOLimit(fromBattery, IOMode.Send),
+				getIOLimit(toBattery, IOMode.Receive)));
+	}
+
+	public static void updateEntity(TileEntity tile) {
+		for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
+			IBatteryObject batteryObject = getMjBattery(tile, direction);
+			TileEntity anotherTile = tile.getWorldObj().getTileEntity(tile.xCoord + direction.offsetX, tile.yCoord + direction.offsetY, tile.zCoord + direction.offsetZ);
+			IBatteryObject anotherBattery = getMjBattery(anotherTile, direction.getOpposite());
+			if (batteryObject == null || anotherBattery == null) {
+				continue;
+			}
+			if (canSend(batteryObject) && canReceive(anotherBattery) && isActive(batteryObject)) {
+				transferEnergy(batteryObject, anotherBattery);
+			}
+			if (canReceive(batteryObject) && canSend(anotherBattery) && isActive(anotherBattery) && !isActive(batteryObject)) {
+				transferEnergy(anotherBattery, batteryObject);
+			}
+		}
+	}
+
+	public static void resetBatteriesCache(TileEntity tile) {
+		mjBatteryCache.remove(tile);
+	}
+
 	private enum BatteryKind {
 		Value, Container
+	}
+
+	private static final class BatteryCache {
+		TIntObjectMap<IBatteryObject> cache = new TIntObjectHashMap<IBatteryObject>();
+
+		IBatteryObject get(String kind, ForgeDirection side) {
+			return cache.get(hash(kind, side));
+		}
+
+		void put(String kind, ForgeDirection side, IBatteryObject battery) {
+			cache.put(hash(kind, side), battery);
+		}
+
+		private int hash(String kind, ForgeDirection side) {
+			return kind.hashCode() * 31 + side.hashCode();
+		}
 	}
 
 	private static final class BatteryHolder {
@@ -190,7 +311,7 @@ public final class MjAPI {
 		holder.kind = kind;
 		holder.side = side;
 
-		BatteryField bField = mjBatteries.get(holder);
+		BatteryField bField = mjBatteryFields.get(holder);
 
 		if (bField == null) {
 			for (Field f : JavaTools.getAllFields(c)) {
@@ -214,12 +335,12 @@ public final class MjAPI {
 						bField.kind = BatteryKind.Container;
 					}
 
-					mjBatteries.put(holder, bField);
+					mjBatteryFields.put(holder, bField);
 
 					return bField;
 				}
 			}
-			mjBatteries.put(holder, invalidBatteryField);
+			mjBatteryFields.put(holder, invalidBatteryField);
 		}
 
 		return bField == invalidBatteryField ? null : bField;

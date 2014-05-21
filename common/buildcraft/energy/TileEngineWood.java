@@ -12,12 +12,15 @@ import net.minecraft.util.ResourceLocation;
 
 import net.minecraftforge.common.util.ForgeDirection;
 
-import buildcraft.api.power.PowerHandler;
+import buildcraft.api.core.NetworkData;
+import buildcraft.api.mj.IOMode;
+import buildcraft.api.mj.MjBattery;
 import buildcraft.api.transport.IPipeTile.PipeType;
 
 public class TileEngineWood extends TileEngine {
-
-	public static final float OUTPUT = 0.05F;
+	@MjBattery(mode = IOMode.SendActive, maxCapacity = 100, maxSendedPerCycle = 1, minimumConsumption = 0)
+	@NetworkData
+	private double mjStored;
 
 	@Override
 	public ResourceLocation getBaseTexture() {
@@ -32,16 +35,6 @@ public class TileEngineWood extends TileEngine {
 	@Override
 	public float explosionRange() {
 		return 1;
-	}
-
-	@Override
-	public double minEnergyReceived() {
-		return 0;
-	}
-
-	@Override
-	public double maxEnergyReceived() {
-		return 50;
 	}
 
 	@Override
@@ -80,10 +73,8 @@ public class TileEngineWood extends TileEngine {
 	public void engineUpdate() {
 		super.engineUpdate();
 
-		if (isRedstonePowered) {
-			if (worldObj.getTotalWorldTime() % 16 == 0) {
-				addEnergy(1);
-			}
+		if (isRedstonePowered && worldObj.getTotalWorldTime() % 16 == 0) {
+			addEnergy(1);
 		}
 	}
 
@@ -100,20 +91,5 @@ public class TileEngineWood extends TileEngine {
 	@Override
 	public int getScaledBurnTime(int i) {
 		return 0;
-	}
-
-	@Override
-	public double getMaxEnergy() {
-		return 100;
-	}
-
-	@Override
-	public double getCurrentOutput() {
-		return OUTPUT;
-	}
-
-	@Override
-	public double maxEnergyExtracted() {
-		return 1 + PowerHandler.PerditionCalculator.MIN_POWERLOSS;
 	}
 }
