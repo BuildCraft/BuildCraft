@@ -30,7 +30,9 @@ public class BuildCraftMod {
 		try {
 			channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGET)
 					.set(FMLOutboundHandler.OutboundTarget.ALL);
-			channels.get(Side.SERVER).writeOutbound(packet);
+			if (packet != null) {
+				channels.get(Side.SERVER).writeOutbound(packet);
+			}
 		} catch (Throwable t) {
 			BCLog.logger.log(Level.WARNING, "sentToPlayers crash", t);
 		}
@@ -40,7 +42,9 @@ public class BuildCraftMod {
 		try {
 			channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGET)
 					.set(FMLOutboundHandler.OutboundTarget.ALL);
-			channels.get(Side.SERVER).writeOutbound(packet);
+			if (packet != null) {
+				channels.get(Side.SERVER).writeOutbound(packet);
+			}
 		} catch (Throwable t) {
 			BCLog.logger.log(Level.WARNING, "sentToPlayers crash", t);
 		}
@@ -51,7 +55,9 @@ public class BuildCraftMod {
 			channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGET)
 					.set(FMLOutboundHandler.OutboundTarget.PLAYER);
 			channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGETARGS).set(entityplayer);
-			channels.get(Side.SERVER).writeOutbound(packet);
+			if (packet != null) {
+				channels.get(Side.SERVER).writeOutbound(packet);
+			}
 		} catch (Throwable t) {
 			String name = entityplayer.getDisplayName();
 
@@ -66,7 +72,9 @@ public class BuildCraftMod {
 	public void sendToServer(BuildCraftPacket packet) {
 		try {
 			channels.get(Side.CLIENT).attr(FMLOutboundHandler.FML_MESSAGETARGET).set(OutboundTarget.TOSERVER);
-			channels.get(Side.CLIENT).writeOutbound(packet);
+			if (packet != null) {
+				channels.get(Side.CLIENT).writeOutbound(packet);
+			}
 		} catch (Throwable t) {
 			BCLog.logger.log(Level.WARNING, "sentToServer crash", t);
 		}
