@@ -166,19 +166,27 @@ public class BlueprintDatabase {
 			for (File blueprintFile : directory.listFiles(filter)) {
 				String fileName = blueprintFile.getName();
 
-				int cutIndex = fileName.lastIndexOf(BuildCraftBuilders.BPT_SEP_CHARACTER);
-
-				String prefix = fileName.substring(0, cutIndex);
-				String suffix = fileName.substring(cutIndex + 1);
-
 				BlueprintId id = new BlueprintId();
-				id.name = prefix;
 
-				if (suffix.contains(BPT_EXTENSION)) {
-					id.uniqueId = BlueprintId.toBytes(suffix.replaceAll(BPT_EXTENSION, ""));
+				int sepIndex = fileName.lastIndexOf(BuildCraftBuilders.BPT_SEP_CHARACTER);
+				int dotIndex = fileName.lastIndexOf('.');
+
+				String extension = fileName.substring(dotIndex);
+
+				if (sepIndex > 0) {
+					String prefix = fileName.substring(0, sepIndex);
+					String suffix = fileName.substring(sepIndex + 1);
+
+					id.name = prefix;
+					id.uniqueId = BlueprintId.toBytes(suffix.substring(0, suffix.length() - 4));
+				} else {
+					id.name = fileName.substring(0, dotIndex);
+					id.uniqueId = new byte[0];
+				}
+
+				if (extension.equals(BPT_EXTENSION)) {
 					id.kind = Kind.Blueprint;
 				} else {
-					id.uniqueId = BlueprintId.toBytes(suffix.replaceAll(TPL_EXTENSION, ""));
 					id.kind = Kind.Template;
 				}
 
