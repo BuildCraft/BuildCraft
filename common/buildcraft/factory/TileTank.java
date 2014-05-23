@@ -253,7 +253,7 @@ public class TileTank extends TileBuildCraft implements IFluidHandler {
 
 	@Override
 	public boolean canDrain(ForgeDirection from, Fluid fluid) {
-		return false;
+		return true;
 	}
 
 	public int getFluidLightLevel() {
