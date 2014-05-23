@@ -42,18 +42,18 @@ public class FacadeItemRenderer implements IItemRenderer {
 		int decodedMeta = 0;
 
 		int type = ItemFacade.getType(item);
+		Block[] blocks = ItemFacade.getBlocks(item);
+		int[] metas = ItemFacade.getMetaValues(item);
+		if (blocks == null || blocks.length == 0 || metas == null || metas.length != blocks.length) {
+			return;
+		}
 
-		if (type == ItemFacade.TYPE_BASIC) {
-			block = ItemFacade.getBlocks(item)[0];
-			decodedMeta = ItemFacade.getMetaValues(item)[0];
-		} else if (type == ItemFacade.TYPE_PHASED) {
-			if (renderState) {
-				block = ItemFacade.getBlocks(item)[1];
-				decodedMeta = ItemFacade.getMetaValues(item)[1];
-			} else {
-				block = ItemFacade.getBlocks(item)[0];
-				decodedMeta = ItemFacade.getMetaValues(item)[0];
-			}
+		if (type == ItemFacade.TYPE_BASIC || (type == ItemFacade.TYPE_PHASED && renderState)) {
+			block = blocks[0];
+			decodedMeta = metas[0];
+		} else if (type == ItemFacade.TYPE_PHASED && blocks.length >= 2) {
+			block = blocks[1];
+			decodedMeta = metas[1];
 		}
 
 		try {
