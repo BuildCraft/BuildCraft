@@ -293,8 +293,6 @@ public class BuildCraftTransport extends BuildCraftMod {
 					Block.blockRegistry.getNameForObject(Blocks.command_block),
 					Block.blockRegistry.getNameForObject(Blocks.end_portal_frame),
 					Block.blockRegistry.getNameForObject(Blocks.grass),
-					Block.blockRegistry.getNameForObject(Blocks.leaves),
-					Block.blockRegistry.getNameForObject(Blocks.leaves2),
 					Block.blockRegistry.getNameForObject(Blocks.lit_pumpkin),
 					Block.blockRegistry.getNameForObject(Blocks.lit_redstone_lamp),
 					Block.blockRegistry.getNameForObject(Blocks.mob_spawner),

@@ -8,6 +8,8 @@
  */
 package buildcraft.transport;
 
+import java.util.Arrays;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -16,6 +18,8 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockContainer;
+import net.minecraft.block.BlockLeavesBase;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -26,12 +30,10 @@ import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
-
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-
+import net.minecraftforge.common.IShearable;
 import net.minecraftforge.common.util.ForgeDirection;
-
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.JavaTools;
 import buildcraft.api.core.Position;
@@ -46,7 +48,8 @@ import buildcraft.core.utils.StringUtils;
 public class ItemFacade extends ItemBuildCraft {
 
 	public static final LinkedList<ItemStack> allFacades = new LinkedList<ItemStack>();
-	public static final LinkedList<String> blacklistedFacades = new LinkedList<String>();
+	public static final LinkedList<String> blacklistedFacades = 
+			new LinkedList<String>(Arrays.asList(BuildCraftTransport.facadeBlacklist));
 
 	public static final int TYPE_BASIC = 0;
 	public static final int TYPE_PHASED = 1;
@@ -171,43 +174,42 @@ public class ItemFacade extends ItemBuildCraft {
 
 	private static void registerValidFacades(Block block, Item item) {
 		Set<String> names = Sets.newHashSet();
-
+		String name;
+		
 		for (int i = 0; i <= 15; i++) {
 			try {
+				if (block.hasTileEntity(i)) continue;
 				ItemStack stack = new ItemStack(item, 1, i);
 
-				if (!Strings.isNullOrEmpty(stack.getUnlocalizedName())
-						&& names.add(stack.getUnlocalizedName())) {
-						ItemFacade.addFacade(stack);
+				name = stack.getDisplayName();
+				if (Strings.isNullOrEmpty(name) || name.contains("tile.") || name.contains(".name")) continue;
+				
+				name = stack.getUnlocalizedName();
+				if (!Strings.isNullOrEmpty(name) && names.add(name)) {
+					ItemFacade.addFacade(stack);
 
-						// prevent adding multiple facades if it's a rotatable block
+					// prevent adding multiple facades if it's a rotatable block
 					if (block.getRenderType() == 31) {
-							break;
-						}
+						break;
 					}
+				}
 			} catch (IndexOutOfBoundsException e) {
 
 			} catch (Throwable t) {
-					t.printStackTrace();
-				}
+				t.printStackTrace();
+			}
 		}
 	}
 
 	private static boolean isBlockBlacklisted(Block block) {
 		String blockName = Block.blockRegistry.getNameForObject(block);
 
-		if (blockName == null) {
+		if (blockName == null || blockName.isEmpty()) {
 			return true;
 		}
 
-		for (String blacklistedBlock : BuildCraftTransport.facadeBlacklist) {
-			if (blockName.equals(JavaTools.stripSurroundingQuotes(blacklistedBlock))) {
-				return true;
-			}
-		}
-
 		for (String blacklistedBlock : blacklistedFacades) {
-			if (blockName.equals(blacklistedBlock)) {
+			if (blockName.equals(JavaTools.stripSurroundingQuotes(blacklistedBlock))) {
 				return true;
 			}
 		}
@@ -226,6 +228,18 @@ public class ItemFacade extends ItemBuildCraft {
 			}
 
 			if (block instanceof BlockSpring || block instanceof BlockGenericPipe) {
+				return false;
+			}
+			
+			if (block instanceof BlockLeavesBase || block instanceof BlockContainer) {
+				return false;
+			}
+			
+			if (IShearable.class.isAssignableFrom(block.getClass())) {
+				return false;
+			}
+			
+			if (!block.isBlockNormalCube()) {
 				return false;
 			}
 
@@ -336,6 +350,18 @@ public class ItemFacade extends ItemBuildCraft {
 	public static void blacklistFacade(String blockName) {
 		if (!blacklistedFacades.contains(blockName)) {
 			blacklistedFacades.add(blockName);
+		}
+		
+		ItemStack is;
+		NBTTagCompound nbt;
+		for (Iterator<ItemStack> iis = allFacades.iterator(); iis.hasNext();) {
+			is = iis.next();
+			nbt = is.getTagCompound();
+			
+			if ((nbt.hasKey("name") && nbt.getString("name").equalsIgnoreCase(blockName)) 
+					|| (nbt.hasKey("name_alt") && nbt.getString("name_alt").equalsIgnoreCase(blockName))) {
+				iis.remove();
+			}
 		}
 	}
 
