@@ -40,6 +40,8 @@ import buildcraft.transport.Pipe;
  */
 public final class RPCHandler {
 
+	Class handledClass;
+
 	public static int MAX_PACKET_SIZE = 30 * 1024;
 
 	private static Map<String, RPCHandler> handlers = new TreeMap<String, RPCHandler>();
@@ -56,6 +58,7 @@ public final class RPCHandler {
 	private MethodMapping [] methods;
 
 	private RPCHandler(Class c) {
+		handledClass = c;
 		Method [] sortedMethods = JavaTools.getAllMethods (c).toArray(new Method [0]);
 
 		LinkedList<MethodMapping> mappings = new LinkedList<MethodMapping>();
@@ -258,7 +261,7 @@ public final class RPCHandler {
 			IllegalAccessException {
 		if (!methodsMap.containsKey(method)) {
 			throw new RuntimeException(method + " is not a callable method of "
-					+ getClass().getName());
+					+ handledClass.getName());
 		}
 
 		int methodIndex = methodsMap.get(method);
