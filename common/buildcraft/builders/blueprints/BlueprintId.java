@@ -78,8 +78,12 @@ public final class BlueprintId implements Comparable<BlueprintId> {
 
 	public String getCompleteId () {
 		if (completeId == null) {
-			completeId = name + BuildCraftBuilders.BPT_SEP_CHARACTER
+			if (uniqueId.length > 0) {
+				completeId = name + BuildCraftBuilders.BPT_SEP_CHARACTER
 					+ toString(uniqueId);
+			} else {
+				completeId = name;
+			}
 		}
 
 		return completeId;
