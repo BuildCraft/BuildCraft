@@ -180,7 +180,9 @@ public class PipeTransportPower extends PipeTransport {
 		double totalPowerQuery = 0;
 
 		for (int out = 0; out < 6; ++out) {
-			totalPowerQuery += powerQuery[out];
+			if (internalPower[out] == 0) {
+				totalPowerQuery += powerQuery[out];
+			}
 		}
 
 		// STEP 2 - sends the power to all directions and computes the actual
@@ -190,7 +192,7 @@ public class PipeTransportPower extends PipeTransport {
 
 		if (totalPowerContained > 0) {
 			for (int out = 0; out < 6; ++out) {
-				if (powerQuery[out] > 0) {
+				if (powerQuery[out] > 0 && internalPower[out] == 0) {
 					double powerConsumed = powerQuery[out] / totalPowerQuery * totalPowerContained;
 
 					if (tiles[out] instanceof TileGenericPipe) {
@@ -264,7 +266,7 @@ public class PipeTransportPower extends PipeTransport {
 		for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
 			TileEntity tile = tiles [dir.ordinal()];
 
-			if (!(tile instanceof TileGenericPipe)) {
+			if (!(tile instanceof TileGenericPipe && ((TileGenericPipe) tile).pipe.transport instanceof PipeTransportPower)) {
 				PowerReceiver prov = getReceiverOnSide(dir);
 				if (prov != null) {
 					double request = prov.powerRequest();

@@ -70,6 +70,10 @@ public class ContainerGateInterface extends BuildCraftContainer {
 	public ContainerGateInterface(IInventory playerInventory, Pipe pipe) {
 		super(0);
 
+		for (int i = 0; i < actionsState.length; ++i) {
+			actionsState[i] = ActionState.Deactivated;
+		}
+
 		this.playerIInventory = playerInventory;
 
 		for (int y = 0; y < 3; y++) {
