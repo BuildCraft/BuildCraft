@@ -30,6 +30,7 @@ public class SequenceActionUseItem extends SequenceAction {
 		y = iy;
 		z = iz;
 		world = iWorld;
+		date = world.getTotalWorldTime();
 	}
 
 	@Override
@@ -40,6 +41,8 @@ public class SequenceActionUseItem extends SequenceAction {
 
 	@Override
 	public void writeToNBT(NBTTagCompound nbt) {
+		super.writeToNBT(nbt);
+
 		nbt.setInteger("x", x);
 		nbt.setInteger("y", y);
 		nbt.setInteger("z", z);
@@ -51,6 +54,8 @@ public class SequenceActionUseItem extends SequenceAction {
 
 	@Override
 	public void readFromNBT(NBTTagCompound nbt) {
+		super.readFromNBT(nbt);
+
 		x = nbt.getInteger("x");
 		y = nbt.getInteger("y");
 		z = nbt.getInteger("z");

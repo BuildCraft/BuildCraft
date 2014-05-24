@@ -24,12 +24,16 @@ public class Sequence {
 	public LinkedList<SequenceAction> actions = new LinkedList<SequenceAction>();
 
 	public World world;
+	public long initialDate;
 
 	public Sequence(World iWorld) {
 		world = iWorld;
+		initialDate = iWorld.getTotalWorldTime();
 	}
 
 	public void writeToNBT(NBTTagCompound nbt) {
+		nbt.setLong("initialDate", initialDate);
+
 		MappingRegistry registry = new MappingRegistry();
 
 		NBTTagList list = new NBTTagList();
@@ -50,6 +54,8 @@ public class Sequence {
 	}
 
 	public void readFromNBT(NBTTagCompound nbt) {
+		initialDate = nbt.getLong("initialDate");
+
 		MappingRegistry registry = new MappingRegistry();
 		registry.read(nbt.getCompoundTag("registry"));
 
@@ -63,6 +69,9 @@ public class Sequence {
 				SequenceAction action = (SequenceAction) Class.forName(cpt.getString("class")).newInstance();
 				action.world = world;
 				action.readFromNBT(cpt);
+
+				action.date = (action.date - initialDate) + world.getTotalWorldTime();
+
 				actions.add(action);
 			} catch (MappingNotFoundException e) {
 				e.printStackTrace();
@@ -81,7 +90,12 @@ public class Sequence {
 	}
 
 	public void iterate() {
-		actions.pop().execute();
+		SequenceAction next = actions.getFirst();
+
+		if (world.getTotalWorldTime() >= next.date) {
+			next.execute();
+			actions.removeFirst();
+		}
 	}
 
 }

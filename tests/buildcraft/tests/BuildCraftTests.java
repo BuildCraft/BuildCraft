@@ -121,6 +121,9 @@ public class BuildCraftTests extends BuildCraftMod {
 		} else {
 			if (!testSequence.done()) {
 				testSequence.iterate();
+			} else {
+				MinecraftServer.getServer().stopServer();
+				System.exit(0);
 			}
 		}
 	}

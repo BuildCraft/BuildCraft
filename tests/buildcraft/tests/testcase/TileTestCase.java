@@ -31,11 +31,25 @@ import buildcraft.tests.ItemTester;
 
 public class TileTestCase extends TileEntity {
 
+	/**
+	 * This way of handling the current test case means that test cases only
+	 * work on single player, as this field needs to be share between both
+	 * threads.
+	 */
+	public static TileTestCase currentTestCase;
+
 	Sequence sequence;
 	String testName = "test";
 
 	public TileTestCase() {
 		MinecraftForge.EVENT_BUS.register(this);
+	}
+
+	@Override
+	public void updateEntity() {
+		if (currentTestCase == null && !worldObj.isRemote) {
+			currentTestCase = this;
+		}
 	}
 
 	@SubscribeEvent
@@ -49,10 +63,14 @@ public class TileTestCase extends TileEntity {
 				ItemStack usedItem = evt.entityPlayer.inventory.getCurrentItem();
 
 				if (usedItem != null && !(usedItem.getItem() instanceof ItemTester)) {
-					sequence.actions.add(new SequenceActionUseItem(evt.entity.worldObj, usedItem, evt.x, evt.y, evt.z));
+					registerAction(new SequenceActionUseItem(evt.entity.worldObj, usedItem, evt.x, evt.y, evt.z));
 				}
 			}
 		}
+	}
+
+	public synchronized void registerAction(SequenceAction action) {
+		sequence.actions.add(action);
 	}
 
 	@Override
@@ -83,6 +101,8 @@ public class TileTestCase extends TileEntity {
 				}
 			}
 		}
+
+		currentTestCase = null;
 	}
 
 	@RPC(RPCSide.SERVER)

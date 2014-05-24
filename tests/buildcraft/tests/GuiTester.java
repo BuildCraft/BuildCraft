@@ -16,33 +16,42 @@ import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.World;
 
 import buildcraft.BuildCraftBuilders;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.utils.StringUtils;
+import buildcraft.tests.testcase.SequenceActionCheckBlockMeta;
+import buildcraft.tests.testcase.TileTestCase;
 
 public class GuiTester extends GuiContainer {
 
-	private static final int TEXT_X = 90;
-	private static final int TEXT_Y = 62;
+	private static final int TEXT_X = 10;
+	private static final int TEXT_Y = 10;
 	private static final int TEXT_WIDTH = 156;
 	private static final int TEXT_HEIGHT = 12;
 
 	private static final ResourceLocation TEXTURE = new ResourceLocation(
 			"buildcraft", DefaultProps.TEXTURE_PATH_GUI + "/tester.png");
 
-	private GuiButton optionRotate;
-	private GuiButton optionReadMods;
-	private GuiButton optionReadBlocks;
-	private GuiButton optionExcavate;
-	private GuiButton optionExplicit;
+	private GuiButton checkBlockAndMeta;
+	private GuiButton checkTileMethod;
+	private GuiButton checkTestCommand;
+	private GuiButton cancel;
 
 	private GuiTextField textField;
 
-	public GuiTester(EntityPlayer player, int x, int y, int z) {
-		super(new ContainerTester(player, x, y, z));
+	World world;
+	int x, y, z;
+
+	public GuiTester(EntityPlayer player, int ix, int iy, int iz) {
+		super(new ContainerTester(player, ix, iy, iz));
+		x = ix;
+		y = iy;
+		z = iz;
 		xSize = 256;
 		ySize = 166;
+		world = player.worldObj;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -54,17 +63,21 @@ public class GuiTester extends GuiContainer {
 
 		Keyboard.enableRepeatEvents(true);
 
-		optionRotate = new GuiButton(0, x + 5, y + 30, 77, 20, "");
-		buttonList.add(optionRotate);
+		checkBlockAndMeta = new GuiButton(0, x + 5, y + 30, 120, 20, "");
+		checkBlockAndMeta.displayString = "Check Block and Meta";
+		buttonList.add(checkBlockAndMeta);
 
-		optionReadBlocks = new GuiButton(1, x + 5, y + 55, 77, 20, "");
-		buttonList.add(optionReadBlocks);
+		checkTileMethod = new GuiButton(1, x + 5, y + 55, 120, 20, "");
+		checkTileMethod.displayString = "Check Tile Method";
+		buttonList.add(checkTileMethod);
 
-		optionExcavate = new GuiButton(2, x + 5, y + 80, 77, 20, "");
-		buttonList.add(optionExcavate);
+		checkTestCommand = new GuiButton(2, x + 5, y + 80, 120, 20, "");
+		checkTestCommand.displayString = "Check Test Command";
+		buttonList.add(checkTestCommand);
 
-		optionExplicit = new GuiButton(3, x + 5, y + 105, 77, 20, "");
-		buttonList.add(optionExplicit);
+		cancel = new GuiButton(2, x + 5, y + 105, 120, 20, "");
+		cancel.displayString = "Cancel";
+		buttonList.add(cancel);
 
 		textField = new GuiTextField(this.fontRendererObj, TEXT_X, TEXT_Y, TEXT_WIDTH, TEXT_HEIGHT);
 		textField.setMaxStringLength(BuildCraftBuilders.MAX_BLUEPRINTS_NAME_SIZE);
@@ -82,6 +95,13 @@ public class GuiTester extends GuiContainer {
 	@Override
 	protected void actionPerformed(GuiButton button) {
 		updateButtons();
+
+		if (button == checkBlockAndMeta) {
+			TileTestCase.currentTestCase.registerAction(new SequenceActionCheckBlockMeta(world, x, y, z));
+			mc.thePlayer.closeScreen();
+		} else if (button == cancel) {
+			mc.thePlayer.closeScreen();
+		}
 	}
 
 	private void updateButtons () {

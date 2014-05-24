@@ -13,6 +13,7 @@ import net.minecraft.world.World;
 
 public class SequenceAction {
 
+	public long date;
 	public World world;
 
 	public void execute() {
@@ -20,11 +21,11 @@ public class SequenceAction {
 	}
 
 	public void writeToNBT(NBTTagCompound nbt) {
-
+		nbt.setLong("date", date);
 	}
 
 	public void readFromNBT(NBTTagCompound nbt) {
-
+		date = nbt.getLong("date");
 	}
 
 }
