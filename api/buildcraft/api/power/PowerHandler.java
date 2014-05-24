@@ -35,7 +35,7 @@ import buildcraft.api.mj.MjBattery;
  * @see IPowerReceptor
  * @see IPowerEmitter
  */
-public final class PowerHandler implements IBatteryProvider {
+public class PowerHandler implements IBatteryProvider {
 
 	public static enum Type {
 
@@ -381,7 +381,7 @@ public final class PowerHandler implements IBatteryProvider {
 		data.setTag(tag, nbt);
 	}
 
-	public final class PowerReceiver {
+	public class PowerReceiver {
 
 		private PowerReceiver() {
 		}
