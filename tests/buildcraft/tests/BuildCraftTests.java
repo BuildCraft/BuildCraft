@@ -9,6 +9,7 @@
 package buildcraft.tests;
 
 import net.minecraft.block.Block;
+import net.minecraft.item.Item;
 
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
@@ -23,6 +24,8 @@ public class BuildCraftTests extends BuildCraftMod {
 
 	public static Block blockTestPathfinding;
 
+	public static Item tester;
+
 	@Mod.Instance("BuildCraft|Tests")
 	public static BuildCraftTests instance;
 
@@ -31,5 +34,9 @@ public class BuildCraftTests extends BuildCraftMod {
 		blockTestPathfinding = new BlockTestPathfinding();
 		CoreProxy.proxy.registerBlock(blockTestPathfinding);
 		CoreProxy.proxy.registerTileEntity(TileTestPathfinding.class, "net.minecraft.src.builders.TileTestPathfinding");
+
+		tester = new ItemTester();
+		tester.setUnlocalizedName("tester");
+		CoreProxy.proxy.registerItem(tester);
 	}
 }
