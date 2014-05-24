@@ -43,10 +43,6 @@ import buildcraft.tests.testcase.TileTestCase;
 @Mod(name = "BuildCraft Tests", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Tests", dependencies = DefaultProps.DEPENDENCY_CORE)
 public class BuildCraftTests extends BuildCraftMod {
 
-	private long startTestTime = 0;
-	private String testFile = "";
-	private Sequence testSequence;
-
 	public static Block blockTestPathfinding;
 	public static Block blockTestCase;
 
@@ -54,6 +50,10 @@ public class BuildCraftTests extends BuildCraftMod {
 
 	@Mod.Instance("BuildCraft|Tests")
 	public static BuildCraftTests instance;
+
+	private long startTestTime = 0;
+	private String testFile = "";
+	private Sequence testSequence;
 
 	@Mod.EventHandler
 	public void preInit(FMLPreInitializationEvent evt) {

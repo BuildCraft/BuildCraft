@@ -40,11 +40,11 @@ import buildcraft.transport.Pipe;
  */
 public final class RPCHandler {
 
-	Class handledClass;
-
 	public static int MAX_PACKET_SIZE = 30 * 1024;
 
 	private static Map<String, RPCHandler> handlers = new TreeMap<String, RPCHandler>();
+
+	private Class handledClass;
 
 	private Map<String, Integer> methodsMap = new TreeMap<String, Integer>();
 

@@ -33,8 +33,7 @@ public class GuiTestCase extends GuiContainer {
 			"buildcraft", DefaultProps.TEXTURE_PATH_GUI + "/tester.png");
 
 	private GuiTextField textField;
-
-	TileTestCase testCase;
+	private TileTestCase testCase;
 
 	public GuiTestCase(EntityPlayer player, int x, int y, int z) {
 		super(new ContainerTestCase(player, x, y, z));
