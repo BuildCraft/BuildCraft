@@ -20,7 +20,6 @@ import net.minecraft.util.ResourceLocation;
 import buildcraft.BuildCraftBuilders;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.network.RPCHandler;
-import buildcraft.core.utils.StringUtils;
 
 public class GuiTestCase extends GuiContainer {
 
@@ -34,6 +33,8 @@ public class GuiTestCase extends GuiContainer {
 
 	private GuiTextField textField;
 	private TileTestCase testCase;
+
+	private GuiButton compress;
 
 	public GuiTestCase(EntityPlayer player, int x, int y, int z) {
 		super(new ContainerTestCase(player, x, y, z));
@@ -54,10 +55,12 @@ public class GuiTestCase extends GuiContainer {
 
 		textField = new GuiTextField(this.fontRendererObj, TEXT_X, TEXT_Y, TEXT_WIDTH, TEXT_HEIGHT);
 		textField.setMaxStringLength(BuildCraftBuilders.MAX_BLUEPRINTS_NAME_SIZE);
-		textField.setText("");
+		textField.setText(testCase.testName);
 		textField.setFocused(true);
 
-		updateButtons();
+		compress = new GuiButton(0, x + 5, y + 50, 120, 20, "");
+		compress.displayString = "Compress";
+		buttonList.add(compress);
 	}
 
 	@Override
@@ -67,25 +70,14 @@ public class GuiTestCase extends GuiContainer {
 
 	@Override
 	protected void actionPerformed(GuiButton button) {
-		updateButtons();
-	}
-
-	private void updateButtons () {
+		if (button == compress) {
+			RPCHandler.rpcServer(testCase, "compress");
+		}
 	}
 
 	@Override
 	protected void drawGuiContainerForegroundLayer(int par1, int par2) {
-		String title = StringUtils.localize("tile.architectBlock.name");
-		// fontRendererObj.drawString(title, getCenteredOffset(title), 6,
-		// 0x404040);
-
-		/*
-		 * if (editMode && ((new Date()).getTime() / 100) % 8 >= 4) {
-		 * fontRendererObj.drawString(architect.name + "|", 131, 62, 0x404040);
-		 * } else { fontRendererObj.drawString(architect.name, 131, 62,
-		 * 0x404040); }
-		 */
-
+		fontRendererObj.drawString(testCase.information, 10, 30, 0x404040);
 		textField.drawTextBox();
 	}
 

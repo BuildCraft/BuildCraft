@@ -12,10 +12,17 @@ import net.minecraft.block.Block;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 
+import buildcraft.api.core.NetworkData;
+
 public class SequenceActionCheckBlockMeta extends SequenceAction {
 
+	@NetworkData
 	String blockName;
+
+	@NetworkData
 	int meta;
+
+	@NetworkData
 	int x, y, z;
 
 	public SequenceActionCheckBlockMeta() {
@@ -39,11 +46,15 @@ public class SequenceActionCheckBlockMeta extends SequenceAction {
 		int worldMeta = world.getBlockMetadata(x, y, z);
 
 		if (!worldBlockName.equals(blockName)) {
-			System.err.println("[TESTCASE ERROR] block " + blockName + " expected, " + worldBlockName + " found.");
+			System.out.println("[TEST " + date + "] [ERROR] " + x + ", " + y + ", " + z + " block " + blockName
+					+ " expected, " + worldBlockName + " found.");
 		} else if (meta != worldMeta) {
-			System.err.println("[TESTCASE ERROR] meta " + meta + " expected, " + worldMeta + " found.");
+			System.out.println("[TEST " + date + "] [ERROR] " + x + ", " + y + ", " + z + " meta " + meta
+					+ " expected, " + worldMeta + " found.");
 		} else {
-			System.out.println("[TESTCASE OK] " + x + ", " + y + ", " + z + " is {" + blockName + ", " + meta + "}");
+			System.out.println("[TEST " + date + "] [OK] " + x + ", " + y + ", " + z + " is {" + blockName + ", "
+					+ meta
+					+ "}");
 		}
 	}
 

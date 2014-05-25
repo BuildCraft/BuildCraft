@@ -13,22 +13,27 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 
+import buildcraft.api.core.NetworkData;
 import buildcraft.core.proxy.CoreProxy;
 
 public class SequenceActionUseItem extends SequenceAction {
 
+	@NetworkData
 	ItemStack stack;
-	int x, y, z;
+
+	@NetworkData
+	int x, y, z, face;
 
 	public SequenceActionUseItem() {
 
 	}
 
-	public SequenceActionUseItem(World iWorld, ItemStack iStack, int ix, int iy, int iz) {
+	public SequenceActionUseItem(World iWorld, ItemStack iStack, int ix, int iy, int iz, int iface) {
 		stack = iStack;
 		x = ix;
 		y = iy;
 		z = iz;
+		face = iface;
 		world = iWorld;
 		date = world.getTotalWorldTime();
 	}
@@ -36,7 +41,8 @@ public class SequenceActionUseItem extends SequenceAction {
 	@Override
 	public void execute() {
 		stack.getItem().onItemUse(stack, CoreProxy.proxy.getBuildCraftPlayer((WorldServer) world).get(), world, x, y,
-				z, 1, x, y, z);
+				z, face, x, y, z);
+		System.out.println("[TEST " + date + "] [USE ITEM] " + x + ", " + y + ", " + z + ": " + stack.toString());
 	}
 
 	@Override
@@ -46,6 +52,7 @@ public class SequenceActionUseItem extends SequenceAction {
 		nbt.setInteger("x", x);
 		nbt.setInteger("y", y);
 		nbt.setInteger("z", z);
+		nbt.setInteger("face", face);
 
 		NBTTagCompound stackNBT = new NBTTagCompound();
 		stack.writeToNBT(stackNBT);
@@ -59,6 +66,7 @@ public class SequenceActionUseItem extends SequenceAction {
 		x = nbt.getInteger("x");
 		y = nbt.getInteger("y");
 		z = nbt.getInteger("z");
+		face = nbt.getInteger("face");
 		stack = ItemStack.loadItemStackFromNBT(nbt.getCompoundTag("stack"));
 	}
 

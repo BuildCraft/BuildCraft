@@ -20,7 +20,6 @@ import net.minecraft.world.World;
 
 import buildcraft.BuildCraftBuilders;
 import buildcraft.core.DefaultProps;
-import buildcraft.core.utils.StringUtils;
 import buildcraft.tests.testcase.SequenceActionCheckBlockMeta;
 import buildcraft.tests.testcase.TileTestCase;
 
@@ -83,8 +82,6 @@ public class GuiTester extends GuiContainer {
 		textField.setMaxStringLength(BuildCraftBuilders.MAX_BLUEPRINTS_NAME_SIZE);
 		textField.setText("");
 		textField.setFocused(true);
-
-		updateButtons();
 	}
 
 	@Override
@@ -94,8 +91,6 @@ public class GuiTester extends GuiContainer {
 
 	@Override
 	protected void actionPerformed(GuiButton button) {
-		updateButtons();
-
 		if (button == checkBlockAndMeta) {
 			TileTestCase.currentTestCase.registerAction(new SequenceActionCheckBlockMeta(world, x, y, z));
 			mc.thePlayer.closeScreen();
@@ -104,22 +99,8 @@ public class GuiTester extends GuiContainer {
 		}
 	}
 
-	private void updateButtons () {
-	}
-
 	@Override
 	protected void drawGuiContainerForegroundLayer(int par1, int par2) {
-		String title = StringUtils.localize("tile.architectBlock.name");
-		// fontRendererObj.drawString(title, getCenteredOffset(title), 6,
-		// 0x404040);
-
-		/*
-		 * if (editMode && ((new Date()).getTime() / 100) % 8 >= 4) {
-		 * fontRendererObj.drawString(architect.name + "|", 131, 62, 0x404040);
-		 * } else { fontRendererObj.drawString(architect.name, 131, 62,
-		 * 0x404040); }
-		 */
-
 		textField.drawTextBox();
 	}
 

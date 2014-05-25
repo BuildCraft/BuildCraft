@@ -11,9 +11,14 @@ package buildcraft.tests.testcase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 
+import buildcraft.api.core.NetworkData;
+
 public class SequenceAction {
 
+	@NetworkData
 	public long date;
+
+	@NetworkData
 	public World world;
 
 	public void execute() {

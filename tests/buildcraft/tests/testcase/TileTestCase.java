@@ -26,6 +26,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 
 import buildcraft.core.network.RPC;
+import buildcraft.core.network.RPCHandler;
 import buildcraft.core.network.RPCSide;
 import buildcraft.tests.ItemTester;
 
@@ -40,6 +41,7 @@ public class TileTestCase extends TileEntity {
 
 	Sequence sequence;
 	String testName = "test";
+	String information = "";
 
 	public TileTestCase() {
 		MinecraftForge.EVENT_BUS.register(this);
@@ -54,23 +56,57 @@ public class TileTestCase extends TileEntity {
 
 	@SubscribeEvent
 	public void itemUsed(PlayerInteractEvent evt) {
-		if (!evt.entity.worldObj.isRemote) {
+		// For some reason, this called 4 times with all combinaisons of world.
+		// we're only interested in one call from the server side.
+		if (!worldObj.isRemote && !evt.entity.worldObj.isRemote) {
 			if (sequence == null) {
-				sequence = new Sequence(evt.entity.worldObj);
+				sequence = new Sequence(worldObj);
 			}
 
 			if (evt.action == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK) {
 				ItemStack usedItem = evt.entityPlayer.inventory.getCurrentItem();
 
 				if (usedItem != null && !(usedItem.getItem() instanceof ItemTester)) {
-					registerAction(new SequenceActionUseItem(evt.entity.worldObj, usedItem, evt.x, evt.y, evt.z));
+					registerAction(new SequenceActionUseItem(worldObj, usedItem, evt.x, evt.y, evt.z, evt.face));
 				}
 			}
 		}
 	}
 
+	@RPC(RPCSide.SERVER)
 	public synchronized void registerAction(SequenceAction action) {
 		sequence.actions.add(action);
+		updateInformation();
+	}
+
+	private void updateInformation() {
+		long time = sequence.actions.getLast().date - sequence.initialDate;
+		information = sequence.actions.size() + " actions in " + time + " cycles, starting " + sequence.initialDate;
+		RPCHandler.rpcBroadcastPlayers(this, "setInformation", information);
+	}
+
+	@RPC(RPCSide.CLIENT)
+	private void setInformation(String info) {
+		information = info;
+	}
+
+	@RPC (RPCSide.SERVER)
+	public synchronized void compress() {
+		long date = -1;
+
+		sequence.initialDate = worldObj.getTotalWorldTime();
+
+		for (SequenceAction action : sequence.actions) {
+			if (date == -1) {
+				date = sequence.initialDate;
+			} else {
+				date = date + 1;
+			}
+
+			action.date = date;
+		}
+
+		updateInformation();
 	}
 
 	@Override
@@ -107,6 +143,12 @@ public class TileTestCase extends TileEntity {
 
 	@RPC(RPCSide.SERVER)
 	private void setName(String name) {
+		testName = name;
+		RPCHandler.rpcBroadcastPlayers(this, "setNameClient", name);
+	}
+
+	@RPC(RPCSide.CLIENT)
+	private void setNameClient(String name) {
 		testName = name;
 	}
 }

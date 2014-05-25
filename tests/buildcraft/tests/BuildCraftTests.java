@@ -16,6 +16,7 @@ import java.io.IOException;
 import joptsimple.ArgumentAcceptingOptionSpec;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
+import joptsimple.OptionSpecBuilder;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
@@ -55,6 +56,8 @@ public class BuildCraftTests extends BuildCraftMod {
 	private String testFile = "";
 	private Sequence testSequence;
 
+	private boolean quitAfterRun = false;
+
 	@Mod.EventHandler
 	public void preInit(FMLPreInitializationEvent evt) {
 		blockTestPathfinding = new BlockTestPathfinding();
@@ -80,13 +83,15 @@ public class BuildCraftTests extends BuildCraftMod {
 		optionparser.allowsUnrecognizedOptions();
 
 		ArgumentAcceptingOptionSpec<String> testOption = optionparser.accepts("test").withRequiredArg();
+		OptionSpecBuilder quitOption = optionparser.accepts("quit");
 
 		OptionSet optionset = optionparser.parse(commandLine.split(" "));
 		testFile = optionset.valueOf(testOption);
-		System.out.println("LOADING TEST: " + testFile);
+		quitAfterRun = optionset.has(quitOption);
 
 		if (testFile != null && !"".equals(testFile)) {
 			FMLCommonHandler.instance().bus().register(this);
+			System.out.println("[TEST 0] [LOAD TEST] \"" + testFile + "\"");
 		}
 	}
 
@@ -122,8 +127,10 @@ public class BuildCraftTests extends BuildCraftMod {
 			if (!testSequence.done()) {
 				testSequence.iterate();
 			} else {
-				MinecraftServer.getServer().stopServer();
-				System.exit(0);
+				if (quitAfterRun) {
+					MinecraftServer.getServer().stopServer();
+					System.exit(0);
+				}
 			}
 		}
 	}
