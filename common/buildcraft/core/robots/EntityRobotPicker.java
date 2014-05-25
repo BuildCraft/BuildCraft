@@ -71,7 +71,7 @@ public class EntityRobotPicker extends EntityRobot implements IInventory {
 				hideLaser();
 				scan ();
 			} else if (pickTime == -1) {
-				if (getDistance(target.posX, target.posY, target.posZ) < 10) {
+				if (getDistance(target.posX, target.posY, target.posZ) < 1) {
 					setLaserDestination((float) target.posX, (float) target.posY, (float) target.posZ);
 					showLaser();
 					pickTracker = new SafeTimeTracker (200);
@@ -145,7 +145,7 @@ public class EntityRobotPicker extends EntityRobot implements IInventory {
 
 						target = item;
 						targettedItems.add(e.getEntityId());
-						setMainAI(new RobotAIMoveAround(this, (float) e.posX,
+						setMainAI(new RobotAIMoveTo(this, (float) e.posX,
 								(float) e.posY, (float) e.posZ));
 						pickTime = -1;
 
@@ -247,5 +247,7 @@ public class EntityRobotPicker extends EntityRobot implements IInventory {
 		for (int i = 0; i < inv.length; ++i) {
 			inv [i] = ItemStack.loadItemStackFromNBT(nbt.getCompoundTag("inv[" + i + "]"));
 		}
+
+		setDead();
 	}
 }

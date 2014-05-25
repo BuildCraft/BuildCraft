@@ -22,6 +22,8 @@ public class RobotAIReturnToDock extends RobotAIBase {
 
 	@Override
 	public void updateTask() {
+		super.updateTask();
+
 		if (phase == 0) {
 			float x = robot.dockingStation.x + 0.5F + robot.dockingStation.side.offsetX * 1.5F;
 			float y = robot.dockingStation.y + 0.5F +  robot.dockingStation.side.offsetY * 1.5F;

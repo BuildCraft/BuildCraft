@@ -11,6 +11,7 @@ package buildcraft.core.utils;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedList;
 
 import net.minecraft.world.IBlockAccess;
 
@@ -33,7 +34,7 @@ public class PathFinding {
 
 	private Node nextIteration;
 
-	private ArrayList<BlockIndex> result;
+	private LinkedList<BlockIndex> result;
 
 	public PathFinding(IBlockAccess iWorld, BlockIndex iStart, BlockIndex iEnd) {
 		world = iWorld;
@@ -57,10 +58,10 @@ public class PathFinding {
 
 		for (int i = 0; i < itNumber; ++i) {
 			if (nextIteration.index.equals(end)) {
-				result = new ArrayList<BlockIndex>();
+				result = new LinkedList<BlockIndex>();
 
 				while (nextIteration != null) {
-					result.add(nextIteration.index);
+					result.addFirst(nextIteration.index);
 					nextIteration = nextIteration.parent;
 				}
 
@@ -75,11 +76,11 @@ public class PathFinding {
 		return nextIteration == null;
 	}
 
-	public ArrayList<BlockIndex> getResult() {
+	public LinkedList<BlockIndex> getResult() {
 		if (result != null) {
 			return result;
 		} else {
-			return new ArrayList<BlockIndex>();
+			return new LinkedList<BlockIndex>();
 		}
 	}
 

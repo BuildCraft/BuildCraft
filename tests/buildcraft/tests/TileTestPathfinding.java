@@ -1,6 +1,6 @@
 package buildcraft.tests;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 
 import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntity;
@@ -31,7 +31,7 @@ public class TileTestPathfinding extends TileEntity {
 
 				p.iterate(10000);
 
-				ArrayList<BlockIndex> r = p.getResult();
+				LinkedList<BlockIndex> r = p.getResult();
 
 				for (BlockIndex b : r) {
 					worldObj.setBlock(b.x, b.y, b.z, Blocks.sponge);

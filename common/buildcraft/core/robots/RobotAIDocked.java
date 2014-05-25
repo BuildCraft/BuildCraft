@@ -16,6 +16,8 @@ public class RobotAIDocked extends RobotAIBase {
 
 	@Override
 	public void updateTask() {
+		super.updateTask();
+
 		robot.motionX = 0;
 		robot.motionY = 0;
 		robot.motionZ = 0;

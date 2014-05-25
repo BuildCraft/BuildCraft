@@ -34,6 +34,8 @@ public class RobotAIMoveAround extends RobotAIBase {
 
 	@Override
 	public void updateTask() {
+		super.updateTask();
+
 		double distance = robot.getDistance(destX, destY, destZ);
 
 		if (distance >= prevDistance) {
