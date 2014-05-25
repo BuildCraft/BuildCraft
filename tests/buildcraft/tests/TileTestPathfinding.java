@@ -41,5 +41,4 @@ public class TileTestPathfinding extends TileEntity {
 			}
 		}
 	}
-
 }

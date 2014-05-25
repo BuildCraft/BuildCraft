@@ -64,6 +64,7 @@ public class BuildCraftTests extends BuildCraftMod {
 	public void preInit(FMLPreInitializationEvent evt) {
 		blockTestPathfinding = new BlockTestPathfinding();
 		CoreProxy.proxy.registerBlock(blockTestPathfinding);
+		blockTestPathfinding.setBlockName("testPathFinding");
 		CoreProxy.proxy.registerTileEntity(TileTestPathfinding.class, "net.minecraft.src.builders.TileTestPathfinding");
 
 		blockTestCase = new BlockTestCase();
