@@ -10,6 +10,7 @@ package buildcraft.transport.pipes;
 
 import net.minecraft.item.Item;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -19,7 +20,9 @@ import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.core.SafeTimeTracker;
-import buildcraft.api.mj.MjAPILegacy;
+import buildcraft.api.mj.IBatteryObject;
+import buildcraft.api.mj.IOMode;
+import buildcraft.api.mj.MjAPI;
 import buildcraft.api.mj.MjBattery;
 import buildcraft.api.power.IPowerEmitter;
 import buildcraft.api.power.IPowerReceptor;
@@ -39,15 +42,17 @@ public class PipePowerWood extends Pipe<PipeTransportPower> implements IPowerRec
 	protected int standardIconIndex = PipeIconProvider.TYPE.PipePowerWood_Standard.ordinal();
 	protected int solidIconIndex = PipeIconProvider.TYPE.PipeAllWood_Solid.ordinal();
 
-	@MjBattery(maxCapacity = 1500, maxReceivedPerCycle = 500, minimumConsumption = 0)
+	@MjBattery(mode = IOMode.ReceiveActive, maxCapacity = 1500, maxReceivedPerCycle = 500, minimumConsumption = 0)
 	private double mjStored = 0;
 	private final SafeTimeTracker sourcesTracker = new SafeTimeTracker(1);
 	private boolean full;
 
-	private MjAPILegacy powerHandler;
+	private PowerHandler powerHandler;
 
 	public PipePowerWood(Item item) {
 		super(new PipeTransportPower(), item);
+		powerHandler = new PowerHandler(this, Type.PIPE);
+		powerHandler.configurePowerPerdition(0, 0);
 		transport.initFromPipe(getClass());
 	}
 
@@ -70,51 +75,51 @@ public class PipePowerWood extends Pipe<PipeTransportPower> implements IPowerRec
 			return;
 		}
 
-		if (mjStored > 0) {
-			int sources = 0;
+		int sources = 0;
 
-			for (ForgeDirection o : ForgeDirection.VALID_DIRECTIONS) {
-				if (!container.isPipeConnected(o)) {
-					powerSources[o.ordinal()] = false;
-					continue;
-				}
-
-				if (isPowerSource(o)) {
-					powerSources[o.ordinal()] = true;
-				}
-
-				if (powerSources[o.ordinal()]) {
-					sources++;
-				}
+		for (ForgeDirection o : ForgeDirection.VALID_DIRECTIONS) {
+			if (!container.isPipeConnected(o)) {
+				powerSources[o.ordinal()] = false;
+				continue;
 			}
 
-			if (sources <= 0) {
-				mjStored = mjStored > 5 ? mjStored - 5 : 0;
-				return;
+			TileEntity tile = container.getTile(o);
+
+			if (powerSources[o.ordinal()] = isPowerSource(tile, o)) {
+				sources++;
+			}
+		}
+
+		if (sources <= 0) {
+			mjStored = mjStored > 5 ? mjStored - 5 : 0;
+			return;
+		}
+
+		if (mjStored == 0) {
+			return;
+		}
+
+		double energyToRemove;
+
+		if (mjStored > 40) {
+			energyToRemove = mjStored / 40 + 4;
+		} else if (mjStored > 10) {
+			energyToRemove = mjStored / 10;
+		} else {
+			energyToRemove = 1;
+		}
+		energyToRemove /= sources;
+
+		for (ForgeDirection o : ForgeDirection.VALID_DIRECTIONS) {
+			if (!powerSources[o.ordinal()]) {
+				continue;
 			}
 
-			double energyToRemove;
+			double energyUsable = mjStored > energyToRemove ? energyToRemove : mjStored;
+			double energySent = transport.receiveEnergy(o, energyUsable);
 
-			if (mjStored > 40) {
-				energyToRemove = mjStored / 40 + 4;
-			} else if (mjStored > 10) {
-				energyToRemove = mjStored / 10;
-			} else {
-				energyToRemove = 1;
-			}
-			energyToRemove /= sources;
-
-			for (ForgeDirection o : ForgeDirection.VALID_DIRECTIONS) {
-				if (!powerSources[o.ordinal()]) {
-					continue;
-				}
-
-				double energyUsable = mjStored > energyToRemove ? energyToRemove : mjStored;
-				double energySent = transport.receiveEnergy(o, energyUsable);
-
-				if (energySent > 0) {
-					mjStored -= energySent;
-				}
+			if (energySent > 0) {
+				mjStored -= energySent;
 			}
 		}
 	}
@@ -169,17 +174,17 @@ public class PipePowerWood extends Pipe<PipeTransportPower> implements IPowerRec
 		}
 	}
 
-	public boolean isPowerSource(ForgeDirection from) {
-		return container.getTile(from) instanceof IPowerEmitter;
+	public boolean isPowerSource(TileEntity tile, ForgeDirection from) {
+		if (tile instanceof IPowerEmitter && ((IPowerEmitter) tile).canEmitPowerFrom(from.getOpposite())) {
+			return true;
+		}
+		IBatteryObject battery = MjAPI.getMjBattery(tile, MjAPI.DEFAULT_POWER_FRAMEWORK, from.getOpposite());
+		return MjAPI.canSend(battery) && MjAPI.isActive(battery);
 	}
 
 	@Override
 	public PowerReceiver getPowerReceiver(ForgeDirection side) {
-		if (powerHandler == null) {
-			powerHandler = MjAPILegacy.from(container, Type.PIPE);
-		}
-
-		return powerHandler.getPowerReceiver(ForgeDirection.UNKNOWN);
+		return powerHandler.getPowerReceiver();
 	}
 
 	@Override

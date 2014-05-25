@@ -16,6 +16,7 @@ import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.mj.BatteryObject;
 import buildcraft.api.mj.IBatteryObject;
 import buildcraft.api.mj.IBatteryProvider;
+import buildcraft.api.mj.IOMode;
 import buildcraft.api.mj.MjAPI;
 import buildcraft.api.mj.MjBattery;
 
@@ -83,11 +84,7 @@ public final class PowerHandler implements IBatteryProvider {
 		 * @param powerLoss power loss per tick
 		 */
 		public PerditionCalculator(double powerLoss) {
-			if (powerLoss < MIN_POWERLOSS) {
-				this.powerLoss = MIN_POWERLOSS;
-			} else {
-				this.powerLoss = powerLoss;
-			}
+			this.powerLoss = powerLoss;
 		}
 
 		/**
@@ -129,9 +126,9 @@ public final class PowerHandler implements IBatteryProvider {
 	public final IPowerReceptor receptor;
 
 	private double activationEnergy;
-	private final SafeTimeTracker doWorkTracker = new SafeTimeTracker();
-	private final SafeTimeTracker sourcesTracker = new SafeTimeTracker();
-	private final SafeTimeTracker perditionTracker = new SafeTimeTracker();
+	private final SafeTimeTracker doWorkTracker = new SafeTimeTracker(1);
+	private final SafeTimeTracker sourcesTracker = new SafeTimeTracker(1);
+	private final SafeTimeTracker perditionTracker = new SafeTimeTracker(1);
 	private PerditionCalculator perdition;
 	private final PowerReceiver receiver;
 	private final Type type;
@@ -151,12 +148,18 @@ public final class PowerHandler implements IBatteryProvider {
 		this.receiver = new PowerReceiver();
 		this.perdition = DEFAULT_PERDITION;
 
+		boolean created = false;
 		if (battery instanceof IBatteryObject) {
 			this.battery = (BatteryObject) battery;
 		} else if (battery != null) {
-			this.battery = MjAPI.getMjBattery(battery);
+			this.battery = MjAPI.createBattery(battery, MjAPI.DEFAULT_POWER_FRAMEWORK, ForgeDirection.UNKNOWN);
+			created = true;
 		} else {
-			this.battery = MjAPI.getMjBattery(new AnonymousBattery());
+			this.battery = MjAPI.createBattery(new AnonymousBattery(), MjAPI.DEFAULT_POWER_FRAMEWORK, ForgeDirection.UNKNOWN);
+			created = true;
+		}
+		if (receptor instanceof IPowerEmitter && created) {
+			MjAPI.reconfigure().mode(this.battery, IOMode.Send);
 		}
 	}
 
@@ -221,7 +224,9 @@ public final class PowerHandler implements IBatteryProvider {
 		}
 		this.activationEnergy = activationEnergy;
 
-		battery.reconfigure(maxStoredEnergy, localMaxEnergyReceived, minEnergyReceived);
+		MjAPI.reconfigure().maxCapacity(battery, maxStoredEnergy);
+		MjAPI.reconfigure().maxReceivedPerCycle(battery, localMaxEnergyReceived);
+		MjAPI.reconfigure().minimumConsumption(battery, minEnergyReceived);
 	}
 
 	/**
@@ -284,30 +289,27 @@ public final class PowerHandler implements IBatteryProvider {
 
 	private void applyPerdition() {
 		double energyStored = getEnergyStored();
-		if (perditionTracker.markTimeIfDelay(receptor.getWorld(), 1) && energyStored > 0) {
-			double prev = energyStored;
+		if (perditionTracker.markTimeIfDelay(receptor.getWorld()) && energyStored > 0) {
 			double newEnergy = getPerdition().applyPerdition(this, energyStored, perditionTracker.durationOfLastDelay());
-			if (newEnergy == 0 || newEnergy < energyStored) {
+			if (newEnergy != energyStored) {
 				battery.setEnergyStored(energyStored = newEnergy);
-			} else {
-				battery.setEnergyStored(energyStored = DEFAULT_PERDITION.applyPerdition(this, energyStored, perditionTracker.durationOfLastDelay()));
 			}
 			validateEnergy();
 
-			averageLostPower = (averageLostPower * ROLLING_AVERAGE_NUMERATOR + (prev - energyStored)) * ROLLING_AVERAGE_DENOMINATOR;
+			averageLostPower = (averageLostPower * ROLLING_AVERAGE_NUMERATOR + (getEnergyStored() - energyStored)) * ROLLING_AVERAGE_DENOMINATOR;
 		}
 	}
 
 	private void applyWork() {
 		if (getEnergyStored() >= activationEnergy) {
-			if (doWorkTracker.markTimeIfDelay(receptor.getWorld(), 1)) {
+			if (doWorkTracker.markTimeIfDelay(receptor.getWorld())) {
 				receptor.doWork(this);
 			}
 		}
 	}
 
 	private void updateSources(ForgeDirection source) {
-		if (sourcesTracker.markTimeIfDelay(receptor.getWorld(), 1)) {
+		if (sourcesTracker.markTimeIfDelay(receptor.getWorld())) {
 			for (int i = 0; i < 6; ++i) {
 				powerSources[i] -= sourcesTracker.durationOfLastDelay();
 				if (powerSources[i] < 0) {
@@ -468,6 +470,10 @@ public final class PowerHandler implements IBatteryProvider {
 			averageReceivedPower = (averageReceivedPower * ROLLING_AVERAGE_NUMERATOR + used) * ROLLING_AVERAGE_DENOMINATOR;
 
 			return used;
+		}
+
+		public IBatteryObject getMjBattery() {
+			return battery;
 		}
 	}
 

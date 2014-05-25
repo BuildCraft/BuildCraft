@@ -55,7 +55,7 @@ public class TileEnergyConverter extends TileBuildCraft implements IPowerRecepto
 	private PowerHandler powerHandler, zeroPowerHandler;
 
 	public TileEnergyConverter() {
-		powerHandler = new PowerHandler(this, PowerHandler.Type.MACHINE, MjAPI.getMjBattery(this));
+		powerHandler = new PowerHandler(this, PowerHandler.Type.MACHINE, MjAPI.createBattery(this, MjAPI.DEFAULT_POWER_FRAMEWORK, ForgeDirection.UNKNOWN));
 		zeroPowerHandler = new PowerHandler(this, PowerHandler.Type.MACHINE);
 		zeroPowerHandler.configure(0, 0, 0, 0);
 	}

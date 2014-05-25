@@ -26,11 +26,14 @@ import net.minecraftforge.fluids.IFluidHandler;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftEnergy;
+import buildcraft.api.core.NetworkData;
 import buildcraft.api.fuels.IronEngineCoolant;
 import buildcraft.api.fuels.IronEngineCoolant.Coolant;
 import buildcraft.api.fuels.IronEngineFuel;
 import buildcraft.api.fuels.IronEngineFuel.Fuel;
 import buildcraft.api.gates.ITrigger;
+import buildcraft.api.mj.IOMode;
+import buildcraft.api.mj.MjBattery;
 import buildcraft.core.GuiIds;
 import buildcraft.core.IItemPipe;
 import buildcraft.core.fluids.FluidUtils;
@@ -55,6 +58,10 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
 	private int penaltyCooling = 0;
 	private boolean lastPowered = false;
 	private BiomeGenBase biomeCache;
+
+	@MjBattery(mode = IOMode.SendActive, maxCapacity = 10000, maxSendedPerCycle = 500, minimumConsumption = 0)
+	@NetworkData
+	private double mjStored;
 
 	public TileEngineIron() {
 		super(1);
@@ -173,7 +180,6 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
 						return;
 					}
 				}
-				currentOutput = currentFuel.powerPerCycle; // Comment out for constant power
 				addEnergy(currentFuel.powerPerCycle);
 				heat += currentFuel.powerPerCycle * HEAT_PER_MJ * getBiomeTempScalar();
 			}
@@ -339,7 +345,7 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
 
 	@Override
 	public boolean isActive() {
-		return penaltyCooling <= 0;
+		return currentFuel != null && penaltyCooling <= 0;
 	}
 
 	/* ITANKCONTAINER */
@@ -411,29 +417,6 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
 
 	public FluidStack getCoolant() {
 		return tankCoolant.getFluid();
-	}
-
-	@Override
-	public double maxEnergyReceived() {
-		return 2000;
-	}
-
-	@Override
-	public double maxEnergyExtracted() {
-		return 500;
-	}
-
-	@Override
-	public double getMaxEnergy() {
-		return 10000;
-	}
-
-	@Override
-	public double getCurrentOutput() {
-		if (currentFuel == null) {
-			return 0;
-		}
-		return currentFuel.powerPerCycle;
 	}
 
 	@Override
