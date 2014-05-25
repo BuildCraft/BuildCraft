@@ -8,6 +8,7 @@
  */
 package buildcraft.tests.testcase;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 
 import net.minecraft.nbt.NBTTagCompound;
@@ -21,6 +22,9 @@ import buildcraft.api.blueprints.MappingRegistry;
 
 public class Sequence {
 
+	private static HashMap<String, Class> strToClass = new HashMap<String, Class>();
+	private static HashMap<Class, String> classToStr = new HashMap<Class, String>();
+
 	public LinkedList<SequenceAction> actions = new LinkedList<SequenceAction>();
 
 	public World world;
@@ -29,6 +33,11 @@ public class Sequence {
 	public Sequence(World iWorld) {
 		world = iWorld;
 		initialDate = iWorld.getTotalWorldTime();
+	}
+
+	public static void registerSequenceAction(String name, Class clas) {
+		strToClass.put(name, clas);
+		classToStr.put(clas, name);
 	}
 
 	public void writeToNBT(NBTTagCompound nbt) {
@@ -41,7 +50,7 @@ public class Sequence {
 		for (SequenceAction action : actions) {
 			NBTTagCompound cpt = new NBTTagCompound();
 			action.writeToNBT(cpt);
-			cpt.setString("class", action.getClass().getCanonicalName());
+			cpt.setString("class", classToStr.get(action.getClass()));
 			registry.scanAndTranslateStacksToRegistry(cpt);
 			list.appendTag(cpt);
 		}
@@ -66,7 +75,7 @@ public class Sequence {
 
 			try {
 				registry.scanAndTranslateStacksToWorld(cpt);
-				SequenceAction action = (SequenceAction) Class.forName(cpt.getString("class")).newInstance();
+				SequenceAction action = (SequenceAction) strToClass.get(cpt.getString("class")).newInstance();
 				action.world = world;
 				action.readFromNBT(cpt);
 
@@ -78,8 +87,6 @@ public class Sequence {
 			} catch (InstantiationException e) {
 				e.printStackTrace();
 			} catch (IllegalAccessException e) {
-				e.printStackTrace();
-			} catch (ClassNotFoundException e) {
 				e.printStackTrace();
 			}
 		}

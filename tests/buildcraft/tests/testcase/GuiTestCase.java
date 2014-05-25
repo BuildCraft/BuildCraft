@@ -35,6 +35,7 @@ public class GuiTestCase extends GuiContainer {
 	private TileTestCase testCase;
 
 	private GuiButton compress;
+	private GuiButton save;
 
 	public GuiTestCase(EntityPlayer player, int x, int y, int z) {
 		super(new ContainerTestCase(player, x, y, z));
@@ -61,6 +62,10 @@ public class GuiTestCase extends GuiContainer {
 		compress = new GuiButton(0, x + 5, y + 50, 120, 20, "");
 		compress.displayString = "Compress";
 		buttonList.add(compress);
+
+		save = new GuiButton(0, x + 5, y + 75, 120, 20, "");
+		save.displayString = "Save";
+		buttonList.add(save);
 	}
 
 	@Override
@@ -72,6 +77,8 @@ public class GuiTestCase extends GuiContainer {
 	protected void actionPerformed(GuiButton button) {
 		if (button == compress) {
 			RPCHandler.rpcServer(testCase, "compress");
+		} else if (button == save) {
+			RPCHandler.rpcServer(testCase, "save");
 		}
 	}
 

@@ -41,7 +41,7 @@ public class TileTestCase extends TileEntity {
 
 	Sequence sequence;
 	String testName = "test";
-	String information = "";
+	String information = "test clear";
 
 	public TileTestCase() {
 		MinecraftForge.EVENT_BUS.register(this);
@@ -80,8 +80,13 @@ public class TileTestCase extends TileEntity {
 	}
 
 	private void updateInformation() {
-		long time = sequence.actions.getLast().date - sequence.initialDate;
-		information = sequence.actions.size() + " actions in " + time + " cycles, starting " + sequence.initialDate;
+		if (sequence.actions.size() > 0) {
+			long time = sequence.actions.getLast().date - sequence.initialDate;
+			information = sequence.actions.size() + " actions in " + time + " cycles, starting " + sequence.initialDate;
+		} else {
+			information = "test clear";
+		}
+
 		RPCHandler.rpcBroadcastPlayers(this, "setInformation", information);
 	}
 
@@ -113,7 +118,11 @@ public class TileTestCase extends TileEntity {
 	public void invalidate() {
 		super.invalidate();
 		MinecraftForge.EVENT_BUS.unregister(this);
+		currentTestCase = null;
+	}
 
+	@RPC(RPCSide.SERVER)
+	private void save() {
 		if (sequence != null) {
 			File sequenceFile = new File(testName + ".seq");
 
@@ -138,7 +147,8 @@ public class TileTestCase extends TileEntity {
 			}
 		}
 
-		currentTestCase = null;
+		sequence.actions.clear();
+		updateInformation();
 	}
 
 	@RPC(RPCSide.SERVER)

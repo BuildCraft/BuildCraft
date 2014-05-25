@@ -39,6 +39,8 @@ import buildcraft.core.Version;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.tests.testcase.BlockTestCase;
 import buildcraft.tests.testcase.Sequence;
+import buildcraft.tests.testcase.SequenceActionCheckBlockMeta;
+import buildcraft.tests.testcase.SequenceActionUseItem;
 import buildcraft.tests.testcase.TileTestCase;
 
 @Mod(name = "BuildCraft Tests", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Tests", dependencies = DefaultProps.DEPENDENCY_CORE)
@@ -72,6 +74,9 @@ public class BuildCraftTests extends BuildCraftMod {
 		tester = new ItemTester();
 		tester.setUnlocalizedName("tester");
 		CoreProxy.proxy.registerItem(tester);
+
+		Sequence.registerSequenceAction("useItem", SequenceActionUseItem.class);
+		Sequence.registerSequenceAction("checkBlockMeta", SequenceActionCheckBlockMeta.class);
 	}
 
 	@Mod.EventHandler
