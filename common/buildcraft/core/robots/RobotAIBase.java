@@ -17,6 +17,8 @@ public class RobotAIBase extends EntityAIBase {
 	protected double dirX, dirY, dirZ;
 	protected EntityRobot robot;
 
+	private boolean isStarted = false;
+
 	public RobotAIBase(EntityRobot iRobot) {
 		robot = iRobot;
 	}
@@ -39,6 +41,16 @@ public class RobotAIBase extends EntityAIBase {
 		robot.motionX = dirX / 10F;
 		robot.motionY = dirY / 10F;
 		robot.motionZ = dirZ / 10F;
+	}
+
+	@Override
+	public void updateTask() {
+		super.updateTask();
+
+		if (!isStarted) {
+			start();
+			isStarted = true;
+		}
 	}
 
 	public void writeToNBT(NBTTagCompound nbt) {
@@ -68,5 +80,9 @@ public class RobotAIBase extends EntityAIBase {
 
 	public boolean isDone() {
 		return false;
+	}
+
+	public void start() {
+
 	}
 }

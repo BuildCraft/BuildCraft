@@ -18,9 +18,12 @@ public class RobotAIDocked extends RobotAIBase {
 	public void updateTask() {
 		super.updateTask();
 
+		robot.isDocked = true;
 		robot.motionX = 0;
 		robot.motionY = 0;
 		robot.motionZ = 0;
+		robot.posX = robot.dockingStation.x + 0.5F + robot.dockingStation.side.offsetX * 0.5F;
+		robot.posY = robot.dockingStation.y + 0.5F + robot.dockingStation.side.offsetY * 0.5F;
+		robot.posZ = robot.dockingStation.z + 0.5F + robot.dockingStation.side.offsetZ * 0.5F;
 	}
-
 }

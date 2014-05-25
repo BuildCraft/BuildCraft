@@ -91,7 +91,7 @@ public class EntityRobotPicker extends EntityRobot implements IInventory {
 				}
 			}
 		} else {
-			if (currentAI instanceof RobotAIDocked) {
+			if (isDocked) {
 				TileGenericPipe pipe = (TileGenericPipe) worldObj
 						.getTileEntity(dockingStation.x, dockingStation.y,
 								dockingStation.z);
@@ -145,6 +145,7 @@ public class EntityRobotPicker extends EntityRobot implements IInventory {
 
 						target = item;
 						targettedItems.add(e.getEntityId());
+						isDocked = false;
 						setMainAI(new RobotAIMoveTo(this, (float) e.posX,
 								(float) e.posY, (float) e.posZ));
 						pickTime = -1;

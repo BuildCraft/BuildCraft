@@ -35,6 +35,7 @@ public class EntityRobot extends EntityLiving implements
 	public LaserData laser = new LaserData ();
 	public IRobotTask currentTask;
 	public DockingStation dockingStation = new DockingStation();
+	public boolean isDocked = false;
 
 	protected RobotAIBase currentAI;
 	protected RobotAIBase nextAI;
