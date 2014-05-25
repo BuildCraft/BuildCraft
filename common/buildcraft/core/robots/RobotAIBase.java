@@ -65,4 +65,8 @@ public class RobotAIBase extends EntityAIBase {
 	public boolean shouldExecute() {
 		return true;
 	}
+
+	public boolean isDone() {
+		return false;
+	}
 }

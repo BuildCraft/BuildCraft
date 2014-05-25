@@ -129,13 +129,9 @@ public class PathFinding {
 			}
 		}
 
-		Node bestMatch = findSmallerWeight(nodes);
+		nodes.addAll(openList.values());
 
-		if (bestMatch == null) {
-			bestMatch = findSmallerWeight(openList.values());
-		}
-
-		return bestMatch;
+		return findSmallerWeight(nodes);
 	}
 
 	private Node findSmallerWeight(Collection<Node> collection) {

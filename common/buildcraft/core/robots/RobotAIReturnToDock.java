@@ -8,19 +8,22 @@
  */
 package buildcraft.core.robots;
 
-import net.minecraft.nbt.NBTTagCompound;
 
-public class RobotAIReturnToDock extends RobotAIBase {
+public class RobotAIReturnToDock extends RobotAIComposite {
 
 	double prevDistance = Double.MAX_VALUE;
 
 	int phase = 0;
 
 	public RobotAIReturnToDock(EntityRobot iRobot) {
-		super(iRobot);
+		super(iRobot,
+				new RobotAIMoveTo(iRobot,
+						iRobot.dockingStation.x + iRobot.dockingStation.side.offsetX * 2,
+						iRobot.dockingStation.y + 0.5F + iRobot.dockingStation.side.offsetY * 1.5F,
+						iRobot.dockingStation.z + 0.5F + iRobot.dockingStation.side.offsetZ * 1.5F));
 	}
 
-	@Override
+	/*@Override
 	public void updateTask() {
 		super.updateTask();
 
@@ -77,5 +80,5 @@ public class RobotAIReturnToDock extends RobotAIBase {
 		super.readFromNBT(nbt);
 
 		phase = nbt.getInteger("phase");
-	}
+	}*/
 }

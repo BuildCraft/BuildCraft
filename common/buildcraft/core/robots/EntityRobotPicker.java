@@ -71,7 +71,7 @@ public class EntityRobotPicker extends EntityRobot implements IInventory {
 				hideLaser();
 				scan ();
 			} else if (pickTime == -1) {
-				if (getDistance(target.posX, target.posY, target.posZ) < 1) {
+				if (currentAI.isDone()) {
 					setLaserDestination((float) target.posX, (float) target.posY, (float) target.posZ);
 					showLaser();
 					pickTracker = new SafeTimeTracker (200);
