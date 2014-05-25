@@ -139,6 +139,9 @@ public class TileEnergyConverter extends TileBuildCraft implements IPowerRecepto
 				if (tile instanceof IPowerReceptor && mjStored > 0) {
 					IPowerReceptor receptor = (IPowerReceptor) tile;
 					PowerHandler.PowerReceiver powerReceiver = receptor.getPowerReceiver(side.getOpposite());
+					if (powerReceiver == null) {
+						continue;
+					}
 					double wantToUse = Math.min(mjStored, powerReceiver.getMaxEnergyReceived());
 					if (wantToUse > powerReceiver.getMinEnergyReceived()) {
 						powerReceiver.receiveEnergy(PowerHandler.Type.MACHINE, wantToUse, side);
