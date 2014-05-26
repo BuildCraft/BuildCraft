@@ -8,11 +8,6 @@
  */
 package buildcraft.core.robots;
 
-import java.util.HashSet;
-import java.util.Set;
-
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
@@ -20,34 +15,22 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 
-import net.minecraftforge.common.util.ForgeDirection;
-
-import buildcraft.api.core.SafeTimeTracker;
+import buildcraft.api.boards.IRedstoneBoard;
 import buildcraft.core.DefaultProps;
-import buildcraft.core.inventory.TransactorSimple;
-import buildcraft.transport.PipeTransportItems;
-import buildcraft.transport.TileGenericPipe;
-import buildcraft.transport.TravelingItem;
+import buildcraft.core.robots.boards.BoardRobotPicker;
 
 public class EntityRobotPicker extends EntityRobot implements IInventory {
 
 	private static ResourceLocation texture = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_ENTITIES + "/robot_picker.png");
-	private static Set<Integer> targettedItems = new HashSet<Integer>();
-
-	SafeTimeTracker scanTracker = new SafeTimeTracker(40, 10);
-	SafeTimeTracker pickTracker = new SafeTimeTracker(20, 0);
-	SafeTimeTracker unloadTracker = new SafeTimeTracker(20, 0);
-
-	TransactorSimple inventoryInsert = new TransactorSimple(this);
-
-	int pickTime = -1;
 
 	ItemStack[] inv = new ItemStack[6];
 
-	private EntityItem target;
+	private IRedstoneBoard<EntityRobotPicker> board;
 
 	public EntityRobotPicker(World par1World) {
 		super(par1World);
+
+		board = new BoardRobotPicker();
 	}
 
 	@Override
@@ -59,102 +42,7 @@ public class EntityRobotPicker extends EntityRobot implements IInventory {
 	public void onUpdate () {
 		super.onUpdate();
 
-		if (worldObj.isRemote) {
-			return;
-		}
-
-		if (target != null) {
-			if (target.isDead) {
-				targettedItems.remove(target.getEntityId());
-				target = null;
-				setMainAI(new RobotAIReturnToDock(this));
-				hideLaser();
-				scan ();
-			} else if (pickTime == -1) {
-				if (currentAI.isDone()) {
-					setLaserDestination((float) target.posX, (float) target.posY, (float) target.posZ);
-					showLaser();
-					pickTracker = new SafeTimeTracker (200);
-					pickTime = 0;
-				}
-			} else {
-				pickTime++;
-
-				if (pickTime > 20) {
-					target.getEntityItem().stackSize -= inventoryInsert.inject(
-							target.getEntityItem(), ForgeDirection.UNKNOWN,
-							true);
-
-					if (target.getEntityItem().stackSize <= 0) {
-						target.setDead();
-					}
-				}
-			}
-		} else {
-			if (isDocked) {
-				TileGenericPipe pipe = (TileGenericPipe) worldObj
-						.getTileEntity(dockingStation.x, dockingStation.y,
-								dockingStation.z);
-
-				if (pipe != null && pipe.pipe.transport instanceof PipeTransportItems) {
-					if (unloadTracker.markTimeIfDelay(worldObj)) {
-						for (int i = 0; i < inv.length; ++i) {
-							if (inv[i] != null) {
-								float cx = dockingStation.x + 0.5F + 0.2F * dockingStation.side.offsetX;
-								float cy = dockingStation.y + 0.5F + 0.2F * dockingStation.side.offsetY;
-								float cz = dockingStation.z + 0.5F + 0.2F * dockingStation.side.offsetZ;
-
-								TravelingItem item = TravelingItem.make(cx, cy,
-										cz, inv[i]);
-
-								((PipeTransportItems) pipe.pipe.transport)
-										.injectItem(item, dockingStation.side.getOpposite());
-
-								inv[i] = null;
-
-								break;
-							}
-						}
-					}
-				}
-			}
-
-			if (scanTracker.markTimeIfDelay(worldObj)) {
-				scan ();
-			}
-		}
-	}
-
-	public void scan () {
-		for (Object o : worldObj.loadedEntityList) {
-			Entity e = (Entity) o;
-
-			if (!e.isDead && e instanceof EntityItem && !targettedItems.contains(e.getEntityId())) {
-				double dx = e.posX - posX;
-				double dy = e.posY - posY;
-				double dz = e.posZ - posZ;
-
-				double sqrDistance = dx * dx + dy * dy + dz * dz;
-				double maxDistance = 100 * 100;
-
-				if (sqrDistance <= maxDistance) {
-					EntityItem item = (EntityItem) e;
-
-					if (inventoryInsert.inject(item.getEntityItem(),
-							ForgeDirection.UNKNOWN, false) > 0) {
-
-						target = item;
-						targettedItems.add(e.getEntityId());
-						isDocked = false;
-						setMainAI(new RobotAIMoveTo(this, (float) e.posX,
-								(float) e.posY, (float) e.posZ));
-						pickTime = -1;
-
-						break;
-					}
-				}
-			}
-		}
+		board.updateBoard(this);
 	}
 
 	@Override

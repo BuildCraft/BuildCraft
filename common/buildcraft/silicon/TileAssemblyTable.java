@@ -26,20 +26,20 @@ import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.BuildCraftSilicon;
+import buildcraft.api.recipes.IAssemblyRecipe;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.IMachine;
 import buildcraft.core.network.PacketIds;
 import buildcraft.core.network.PacketNBT;
 import buildcraft.core.recipes.AssemblyRecipeManager;
-import buildcraft.core.recipes.AssemblyRecipeManager.AssemblyRecipe;
 import buildcraft.core.triggers.ActionMachineControl;
 import buildcraft.core.utils.StringUtils;
 import buildcraft.core.utils.Utils;
 
 public class TileAssemblyTable extends TileLaserTableBase implements IMachine, IInventory {
 
-	public AssemblyRecipe currentRecipe;
-	private Set<AssemblyRecipe> plannedOutput = new LinkedHashSet<AssemblyRecipe>();
+	public IAssemblyRecipe currentRecipe;
+	private Set<IAssemblyRecipe> plannedOutput = new LinkedHashSet<IAssemblyRecipe>();
 
 	public static class SelectionMessage {
 
@@ -62,10 +62,10 @@ public class TileAssemblyTable extends TileLaserTableBase implements IMachine, I
 		}
 	}
 
-	public List<AssemblyRecipe> getPotentialOutputs() {
-		List<AssemblyRecipe> result = new LinkedList<AssemblyRecipe>();
+	public List<IAssemblyRecipe> getPotentialOutputs() {
+		List<IAssemblyRecipe> result = new LinkedList<IAssemblyRecipe>();
 
-		for (AssemblyRecipe recipe : AssemblyRecipeManager.INSTANCE.getRecipes()) {
+		for (IAssemblyRecipe recipe : AssemblyRecipeManager.INSTANCE.getRecipes()) {
 			if (recipe.canBeDone(this)) {
 				result.add(recipe);
 			}
@@ -98,10 +98,9 @@ public class TileAssemblyTable extends TileLaserTableBase implements IMachine, I
 			setEnergy(0);
 
 			if (currentRecipe.canBeDone(this)) {
-
 				currentRecipe.useItems(this);
 
-				ItemStack remaining = currentRecipe.output.copy();
+				ItemStack remaining = currentRecipe.makeOutput();
 				remaining.stackSize -= Utils.addToRandomInventoryAround(worldObj, xCoord, yCoord, zCoord, remaining);
 
 				if (remaining.stackSize > 0) {
@@ -109,7 +108,8 @@ public class TileAssemblyTable extends TileLaserTableBase implements IMachine, I
 				}
 
 				if (remaining.stackSize > 0) {
-					EntityItem entityitem = new EntityItem(worldObj, xCoord + 0.5, yCoord + 0.7, zCoord + 0.5, currentRecipe.output.copy());
+					EntityItem entityitem = new EntityItem(worldObj, xCoord + 0.5, yCoord + 0.7, zCoord + 0.5,
+							remaining);
 
 					worldObj.spawnEntityInWorld(entityitem);
 				}
@@ -153,8 +153,9 @@ public class TileAssemblyTable extends TileLaserTableBase implements IMachine, I
 				continue;
 			}
 
-			for (AssemblyRecipe r : AssemblyRecipeManager.INSTANCE.getRecipes()) {
-				if (r.output.getItem() == stack.getItem() && r.output.getItemDamage() == stack.getItemDamage()) {
+			for (IAssemblyRecipe r : AssemblyRecipeManager.INSTANCE.getRecipes()) {
+				if (r.getOutput().getItem() == stack.getItem()
+						&& r.getOutput().getItemDamage() == stack.getItemDamage()) {
 					plannedOutput.add(r);
 					break;
 				}
@@ -164,8 +165,9 @@ public class TileAssemblyTable extends TileLaserTableBase implements IMachine, I
 		if (nbt.hasKey("recipe")) {
 			ItemStack stack = ItemStack.loadItemStackFromNBT(nbt.getCompoundTag("recipe"));
 
-			for (AssemblyRecipe r : plannedOutput) {
-				if (r.output.getItem() == stack.getItem() && r.output.getItemDamage() == stack.getItemDamage()) {
+			for (IAssemblyRecipe r : plannedOutput) {
+				if (r.getOutput().getItem() == stack.getItem()
+						&& r.getOutput().getItemDamage() == stack.getItemDamage()) {
 					setCurrentRecipe(r);
 					break;
 				}
@@ -179,9 +181,9 @@ public class TileAssemblyTable extends TileLaserTableBase implements IMachine, I
 
 		NBTTagList list = new NBTTagList();
 
-		for (AssemblyRecipe recipe : plannedOutput) {
+		for (IAssemblyRecipe recipe : plannedOutput) {
 			NBTTagCompound cpt = new NBTTagCompound();
-			recipe.output.writeToNBT(cpt);
+			recipe.getOutput().writeToNBT(cpt);
 			list.appendTag(cpt);
 		}
 
@@ -189,12 +191,12 @@ public class TileAssemblyTable extends TileLaserTableBase implements IMachine, I
 
 		if (currentRecipe != null) {
 			NBTTagCompound recipe = new NBTTagCompound();
-			currentRecipe.output.writeToNBT(recipe);
+			currentRecipe.getOutput().writeToNBT(recipe);
 			nbt.setTag("recipe", recipe);
 		}
 	}
 
-	public boolean isPlanned(AssemblyRecipe recipe) {
+	public boolean isPlanned(IAssemblyRecipe recipe) {
 		if (recipe == null) {
 			return false;
 		}
@@ -202,11 +204,11 @@ public class TileAssemblyTable extends TileLaserTableBase implements IMachine, I
 		return plannedOutput.contains(recipe);
 	}
 
-	public boolean isAssembling(AssemblyRecipe recipe) {
+	public boolean isAssembling(IAssemblyRecipe recipe) {
 		return recipe != null && recipe == currentRecipe;
 	}
 
-	private void setCurrentRecipe(AssemblyRecipe recipe) {
+	private void setCurrentRecipe(IAssemblyRecipe recipe) {
 		this.currentRecipe = recipe;
 	}
 
@@ -218,7 +220,7 @@ public class TileAssemblyTable extends TileLaserTableBase implements IMachine, I
 		return 0;
 	}
 
-	public void planOutput(AssemblyRecipe recipe) {
+	public void planOutput(IAssemblyRecipe recipe) {
 		if (recipe != null && !isPlanned(recipe)) {
 			plannedOutput.add(recipe);
 
@@ -228,7 +230,7 @@ public class TileAssemblyTable extends TileLaserTableBase implements IMachine, I
 		}
 	}
 
-	public void cancelPlanOutput(AssemblyRecipe recipe) {
+	public void cancelPlanOutput(IAssemblyRecipe recipe) {
 		if (isAssembling(recipe)) {
 			setCurrentRecipe(null);
 		}
@@ -243,7 +245,7 @@ public class TileAssemblyTable extends TileLaserTableBase implements IMachine, I
 	public void setNextCurrentRecipe() {
 		boolean takeNext = false;
 
-		for (AssemblyRecipe recipe : plannedOutput) {
+		for (IAssemblyRecipe recipe : plannedOutput) {
 			if (recipe == currentRecipe) {
 				takeNext = true;
 			} else if (takeNext && recipe.canBeDone(this)) {
@@ -252,7 +254,7 @@ public class TileAssemblyTable extends TileLaserTableBase implements IMachine, I
 			}
 		}
 
-		for (AssemblyRecipe recipe : plannedOutput) {
+		for (IAssemblyRecipe recipe : plannedOutput) {
 			if (recipe.canBeDone(this)) {
 				setCurrentRecipe(recipe);
 				return;
@@ -263,8 +265,9 @@ public class TileAssemblyTable extends TileLaserTableBase implements IMachine, I
 	}
 
 	public void handleSelectionMessage(SelectionMessage message) {
-		for (AssemblyRecipe recipe : AssemblyRecipeManager.INSTANCE.getRecipes()) {
-			if (recipe.output.isItemEqual(message.stack) && ItemStack.areItemStackTagsEqual(recipe.output, message.stack)) {
+		for (IAssemblyRecipe recipe : AssemblyRecipeManager.INSTANCE.getRecipes()) {
+			if (recipe.getOutput().isItemEqual(message.stack)
+					&& ItemStack.areItemStackTagsEqual(recipe.getOutput(), message.stack)) {
 				if (message.select) {
 					planOutput(recipe);
 				} else {
@@ -277,10 +280,10 @@ public class TileAssemblyTable extends TileLaserTableBase implements IMachine, I
 	}
 
 	public void sendSelectionTo(EntityPlayer player) {
-		for (AssemblyRecipe recipe : AssemblyRecipeManager.INSTANCE.getRecipes()) {
+		for (IAssemblyRecipe recipe : AssemblyRecipeManager.INSTANCE.getRecipes()) {
 			SelectionMessage message = new SelectionMessage();
 
-			message.stack = recipe.output;
+			message.stack = recipe.getOutput();
 
 			if (isPlanned(recipe)) {
 				message.select = true;

@@ -26,6 +26,7 @@ import cpw.mods.fml.common.network.NetworkRegistry;
 import net.minecraftforge.oredict.OreDictionary;
 
 import buildcraft.api.blueprints.SchematicRegistry;
+import buildcraft.api.boards.RedstoneBoardRegistry;
 import buildcraft.api.recipes.BuildcraftRecipes;
 import buildcraft.api.transport.PipeWire;
 import buildcraft.builders.schematics.SchematicRotateMeta;
@@ -50,6 +51,7 @@ import buildcraft.silicon.TileAdvancedCraftingTable;
 import buildcraft.silicon.TileAssemblyTable;
 import buildcraft.silicon.TileIntegrationTable;
 import buildcraft.silicon.TileLaser;
+import buildcraft.silicon.boards.ImplRedstoneBoardRegistry;
 import buildcraft.silicon.network.PacketHandlerSilicon;
 import buildcraft.silicon.recipes.AdvancedFacadeRecipe;
 import buildcraft.silicon.recipes.GateExpansionRecipe;
@@ -110,6 +112,8 @@ public class BuildCraftSilicon extends BuildCraftMod {
 
 		robotBuilderItem = new ItemRobot(EntityRobotBuilder.class).setUnlocalizedName("robotBuilder");
 		CoreProxy.proxy.registerItem(robotBuilderItem);
+
+		RedstoneBoardRegistry.instance = new ImplRedstoneBoardRegistry();
 	}
 
 	@Mod.EventHandler
@@ -191,6 +195,25 @@ public class BuildCraftSilicon extends BuildCraftMod {
 		addGateRecipe(20000, GateMaterial.IRON, Chipset.IRON, PipeWire.RED, PipeWire.BLUE);
 		addGateRecipe(40000, GateMaterial.GOLD, Chipset.GOLD, PipeWire.RED, PipeWire.BLUE, PipeWire.GREEN);
 		addGateRecipe(80000, GateMaterial.DIAMOND, Chipset.DIAMOND, PipeWire.RED, PipeWire.BLUE, PipeWire.GREEN, PipeWire.YELLOW);
+
+		// ROBOTS AND BOARDS
+		BuildcraftRecipes.assemblyTable.addRecipe(100000, new ItemStack(redstoneCrystal), new ItemStack(
+				Blocks.redstone_block));
+
+		CoreProxy.proxy.addCraftingRecipe(new ItemStack(redstoneBoard),
+				"PPP",
+				"PRP",
+				"PPP",
+				'R', Items.redstone,
+				'P', Items.paper);
+
+		CoreProxy.proxy.addCraftingRecipe(new ItemStack(robotBaseItem),
+				"PPP",
+				"PRP",
+				"C C",
+				'P', Items.iron_ingot,
+				'R', redstoneCrystal,
+				'C', Chipset.DIAMOND.getStack());
 
 		// REVERSAL RECIPES
 		EnumSet<GateMaterial> materials = EnumSet.allOf(GateMaterial.class);

@@ -21,6 +21,7 @@ import net.minecraftforge.oredict.OreDictionary;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.api.core.IInvSlot;
+import buildcraft.api.recipes.IAssemblyRecipe;
 import buildcraft.api.recipes.IAssemblyRecipeManager;
 import buildcraft.core.inventory.ITransactor;
 import buildcraft.core.inventory.InventoryIterator;
@@ -30,7 +31,7 @@ import buildcraft.core.inventory.filters.ArrayStackFilter;
 public class AssemblyRecipeManager implements IAssemblyRecipeManager {
 
 	public static final AssemblyRecipeManager INSTANCE = new AssemblyRecipeManager();
-	private List<AssemblyRecipe> assemblyRecipes = new LinkedList<AssemblyRecipe>();
+	private List<IAssemblyRecipe> assemblyRecipes = new LinkedList<IAssemblyRecipe>();
 
 	@Override
 	public void addRecipe(double energyCost, ItemStack output, Object... input) {
@@ -44,7 +45,12 @@ public class AssemblyRecipeManager implements IAssemblyRecipeManager {
 	}
 
 	@Override
-	public List<AssemblyRecipe> getRecipes() {
+	public void addRecipe(IAssemblyRecipe recipe) {
+		assemblyRecipes.add(recipe);
+	}
+
+	@Override
+	public List<IAssemblyRecipe> getRecipes() {
 		return assemblyRecipes;
 	}
 
@@ -93,6 +99,7 @@ public class AssemblyRecipeManager implements IAssemblyRecipeManager {
 			return energyCost;
 		}
 
+		@Override
 		public boolean canBeDone(IInventory inv) {
 			for (int i = 0; i < processedInput.length; i++) {
 				if (processedInput[i] == null) {
@@ -158,6 +165,7 @@ public class AssemblyRecipeManager implements IAssemblyRecipeManager {
 			return true;
 		}
 
+		@Override
 		public void useItems(IInventory inv) {
 			ITransactor tran = Transactor.getTransactorFor(inv);
 			Object[] input = processedInput;
@@ -182,6 +190,11 @@ public class AssemblyRecipeManager implements IAssemblyRecipeManager {
 					}
 				}
 			}
+		}
+
+		@Override
+		public ItemStack makeOutput() {
+			return getOutput().copy();
 		}
 	}
 }

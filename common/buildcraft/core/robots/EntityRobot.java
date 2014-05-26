@@ -37,7 +37,7 @@ public class EntityRobot extends EntityLiving implements
 	public DockingStation dockingStation = new DockingStation();
 	public boolean isDocked = false;
 
-	protected RobotAIBase currentAI;
+	public RobotAIBase currentAI;
 	protected RobotAIBase nextAI;
 
 	private boolean needsUpdate = false;

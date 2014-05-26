@@ -14,18 +14,9 @@ import net.minecraft.item.ItemStack;
 
 public interface IAssemblyRecipeManager {
 
-	public interface IAssemblyRecipe {
-
-		ItemStack getOutput();
-
-		Object[] getInputs();
-
-		double getEnergyCost();
-	}
-
 	/**
 	 * Add an Assembly Table recipe.
-	 * 
+	 *
 	 * @param input
 	 *            Object... containing either an ItemStack, or a paired string
 	 *            and integer(ex: "dyeBlue", 1)
@@ -35,6 +26,8 @@ public interface IAssemblyRecipeManager {
 	 *            resulting ItemStack
 	 */
 	void addRecipe(double energyCost, ItemStack output, Object... input);
+
+	void addRecipe(IAssemblyRecipe recipe);
 
 	List<? extends IAssemblyRecipe> getRecipes();
 }

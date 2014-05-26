@@ -21,6 +21,7 @@ import net.minecraft.util.ResourceLocation;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftSilicon;
+import buildcraft.api.recipes.IAssemblyRecipe;
 import buildcraft.core.CoreIconProvider;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.gui.AdvancedSlot;
@@ -28,7 +29,6 @@ import buildcraft.core.gui.GuiAdvancedInterface;
 import buildcraft.core.network.PacketCoordinates;
 import buildcraft.core.network.PacketIds;
 import buildcraft.core.network.PacketNBT;
-import buildcraft.core.recipes.AssemblyRecipeManager.AssemblyRecipe;
 import buildcraft.core.utils.StringUtils;
 import buildcraft.silicon.TileAssemblyTable;
 import buildcraft.silicon.TileAssemblyTable.SelectionMessage;
@@ -81,7 +81,7 @@ public class GuiAssemblyTable extends GuiAdvancedInterface {
 
 	class RecipeSlot extends AdvancedSlot {
 
-		public AssemblyRecipe recipe;
+		public IAssemblyRecipe recipe;
 
 		public RecipeSlot(int x, int y) {
 			super(GuiAssemblyTable.this, x, y);
@@ -125,8 +125,8 @@ public class GuiAssemblyTable extends GuiAdvancedInterface {
 	}
 
 	public void updateRecipes() {
-		List<AssemblyRecipe> potentialRecipes = table.getPotentialOutputs();
-		Iterator<AssemblyRecipe> cur = potentialRecipes.iterator();
+		List<IAssemblyRecipe> potentialRecipes = table.getPotentialOutputs();
+		Iterator<IAssemblyRecipe> cur = potentialRecipes.iterator();
 
 		for (int p = 0; p < 8; ++p) {
 			if (cur.hasNext()) {
@@ -199,7 +199,7 @@ public class GuiAssemblyTable extends GuiAdvancedInterface {
 				message.select = true;
 			}
 
-			message.stack = slot.recipe.output;
+			message.stack = slot.recipe.getOutput();
 
 			if (table.getWorldObj().isRemote) {
 				PacketNBT packet = new PacketNBT(PacketIds.SELECTION_ASSEMBLY, message.getNBT(), table.xCoord, table.yCoord, table.zCoord);
