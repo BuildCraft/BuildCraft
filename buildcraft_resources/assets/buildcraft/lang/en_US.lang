@@ -132,6 +132,7 @@ item.redstone_diamond_chipset.name=Diamond Chipset
 item.redstone_pulsating_chipset.name=Pulsating Chipset
 item.redstone_quartz_chipset.name=Quartz Chipset
 item.redstone_comp_chipset.name=Redstone Comp Chipset
+item.redstone_board.name=Redstone Board
 item.blueprintItem.name=Blueprint
 item.blueprint.unnamed=<unnamed>
 item.blueprint.author=by

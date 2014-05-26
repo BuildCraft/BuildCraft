@@ -71,7 +71,6 @@ import buildcraft.core.CoreIconProvider;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.InterModComms;
 import buildcraft.core.ItemBuildCraft;
-import buildcraft.core.ItemRobot;
 import buildcraft.core.ItemSpring;
 import buildcraft.core.ItemWrench;
 import buildcraft.core.SpringPopulate;
@@ -132,10 +131,6 @@ public class BuildCraftCore extends BuildCraftMod {
 	public static Item goldGearItem;
 	public static Item diamondGearItem;
 	public static Item wrenchItem;
-	public static Item redstoneCrystal;
-	public static Item robotBaseItem;
-	public static Item robotBuilderItem;
-	public static Item robotPickerItem;
 	@SideOnly(Side.CLIENT)
 	public static IIcon redLaserTexture;
 	@SideOnly(Side.CLIENT)
@@ -289,21 +284,6 @@ public class BuildCraftCore extends BuildCraftMod {
 			diamondGearItem = (new ItemBuildCraft()).setUnlocalizedName("diamondGearItem");
 			CoreProxy.proxy.registerItem(diamondGearItem);
 			OreDictionary.registerOre("gearDiamond", new ItemStack(diamondGearItem));
-
-			if (!BuildCraftCore.NONRELEASED_BLOCKS) {
-				redstoneCrystal = (new ItemBuildCraft()).setUnlocalizedName("redstoneCrystal");
-				CoreProxy.proxy.registerItem(redstoneCrystal);
-				OreDictionary.registerOre("redstoneCrystal", new ItemStack(redstoneCrystal));
-			}
-
-			robotBaseItem = new ItemRobot(EntityRobot.class).setUnlocalizedName("robotBase");
-			CoreProxy.proxy.registerItem(robotBaseItem);
-
-			robotPickerItem = new ItemRobot(EntityRobotPicker.class).setUnlocalizedName("robotPicker");
-			CoreProxy.proxy.registerItem(robotPickerItem);
-
-			robotBuilderItem = new ItemRobot(EntityRobotBuilder.class).setUnlocalizedName("robotBuilder");
-			CoreProxy.proxy.registerItem(robotBuilderItem);
 
 			MinecraftForge.EVENT_BUS.register(this);
 			MinecraftForge.EVENT_BUS.register(new BlockHighlightHandler());

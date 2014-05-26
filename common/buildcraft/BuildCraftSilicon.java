@@ -14,6 +14,7 @@ import java.util.List;
 
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
 import cpw.mods.fml.common.Mod;
@@ -22,18 +23,26 @@ import cpw.mods.fml.common.event.FMLInterModComms;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
 
+import net.minecraftforge.oredict.OreDictionary;
+
 import buildcraft.api.blueprints.SchematicRegistry;
 import buildcraft.api.recipes.BuildcraftRecipes;
 import buildcraft.api.transport.PipeWire;
 import buildcraft.builders.schematics.SchematicRotateMeta;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.InterModComms;
+import buildcraft.core.ItemBuildCraft;
+import buildcraft.core.ItemRobot;
 import buildcraft.core.Version;
 import buildcraft.core.proxy.CoreProxy;
+import buildcraft.core.robots.EntityRobot;
+import buildcraft.core.robots.EntityRobotBuilder;
+import buildcraft.core.robots.EntityRobotPicker;
 import buildcraft.silicon.BlockLaser;
 import buildcraft.silicon.BlockLaserTable;
 import buildcraft.silicon.GuiHandler;
 import buildcraft.silicon.ItemLaserTable;
+import buildcraft.silicon.ItemRedstoneBoard;
 import buildcraft.silicon.ItemRedstoneChipset;
 import buildcraft.silicon.ItemRedstoneChipset.Chipset;
 import buildcraft.silicon.SiliconProxy;
@@ -56,10 +65,16 @@ import buildcraft.transport.gates.ItemGate;
 public class BuildCraftSilicon extends BuildCraftMod {
 
 	public static ItemRedstoneChipset redstoneChipset;
+	public static ItemRedstoneBoard redstoneBoard;
 	public static BlockLaser laserBlock;
 	public static BlockLaserTable assemblyTableBlock;
 	@Mod.Instance("BuildCraft|Silicon")
 	public static BuildCraftSilicon instance;
+
+	public static Item redstoneCrystal;
+	public static Item robotBaseItem;
+	public static Item robotBuilderItem;
+	public static Item robotPickerItem;
 
 	@Mod.EventHandler
 	public void preInit(FMLPreInitializationEvent evt) {
@@ -78,6 +93,23 @@ public class BuildCraftSilicon extends BuildCraftMod {
 		redstoneChipset.setUnlocalizedName("redstoneChipset");
 		CoreProxy.proxy.registerItem(redstoneChipset);
 		redstoneChipset.registerItemStacks();
+
+		redstoneBoard = new ItemRedstoneBoard();
+		redstoneBoard.setUnlocalizedName("redstone_board");
+		CoreProxy.proxy.registerItem(redstoneBoard);
+
+		redstoneCrystal = (new ItemBuildCraft()).setUnlocalizedName("redstoneCrystal");
+		CoreProxy.proxy.registerItem(redstoneCrystal);
+		OreDictionary.registerOre("redstoneCrystal", new ItemStack(redstoneCrystal));
+
+		robotBaseItem = new ItemRobot(EntityRobot.class).setUnlocalizedName("robotBase");
+		CoreProxy.proxy.registerItem(robotBaseItem);
+
+		robotPickerItem = new ItemRobot(EntityRobotPicker.class).setUnlocalizedName("robotPicker");
+		CoreProxy.proxy.registerItem(robotPickerItem);
+
+		robotBuilderItem = new ItemRobot(EntityRobotBuilder.class).setUnlocalizedName("robotBuilder");
+		CoreProxy.proxy.registerItem(robotBuilderItem);
 	}
 
 	@Mod.EventHandler

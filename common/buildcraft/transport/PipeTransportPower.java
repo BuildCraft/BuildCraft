@@ -33,7 +33,6 @@ import buildcraft.transport.network.PacketPowerUpdate;
 import buildcraft.transport.pipes.PipePowerCobblestone;
 import buildcraft.transport.pipes.PipePowerDiamond;
 import buildcraft.transport.pipes.PipePowerGold;
-import buildcraft.transport.pipes.PipePowerHeat;
 import buildcraft.transport.pipes.PipePowerIron;
 import buildcraft.transport.pipes.PipePowerQuartz;
 import buildcraft.transport.pipes.PipePowerStone;
@@ -517,6 +516,5 @@ public class PipeTransportPower extends PipeTransport {
 		powerCapacities.put(PipePowerIron.class, 128);
 		powerCapacities.put(PipePowerGold.class, 256);
 		powerCapacities.put(PipePowerDiamond.class, 1024);
-		powerCapacities.put(PipePowerHeat.class, 1024);
 	}
 }

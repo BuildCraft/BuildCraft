@@ -30,6 +30,7 @@ import cpw.mods.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.client.MinecraftForgeClient;
 
 import buildcraft.BuildCraftCore;
+import buildcraft.BuildCraftSilicon;
 import buildcraft.core.EntityBlock;
 import buildcraft.core.LaserKind;
 import buildcraft.core.render.RenderEntityBlock;
@@ -99,9 +100,10 @@ public class CoreProxyClient extends CoreProxy {
 		RenderingRegistry.registerBlockHandler(BuildCraftCore.legacyPipeModel, new RenderingEntityBlocks());
 		RenderingRegistry.registerBlockHandler(new RenderingMarkers());
 
-		MinecraftForgeClient.registerItemRenderer(BuildCraftCore.robotBaseItem, new RenderRobot());
-		MinecraftForgeClient.registerItemRenderer(BuildCraftCore.robotBuilderItem, new RenderRobot());
-		MinecraftForgeClient.registerItemRenderer(BuildCraftCore.robotPickerItem, new RenderRobot());
+		// TODO: Move these to a Silicon proxy renderer
+		MinecraftForgeClient.registerItemRenderer(BuildCraftSilicon.robotBaseItem, new RenderRobot());
+		MinecraftForgeClient.registerItemRenderer(BuildCraftSilicon.robotBuilderItem, new RenderRobot());
+		MinecraftForgeClient.registerItemRenderer(BuildCraftSilicon.robotPickerItem, new RenderRobot());
 	}
 
 	@Override

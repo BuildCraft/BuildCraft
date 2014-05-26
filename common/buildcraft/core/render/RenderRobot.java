@@ -21,7 +21,7 @@ import net.minecraft.util.ResourceLocation;
 
 import net.minecraftforge.client.IItemRenderer;
 
-import buildcraft.BuildCraftCore;
+import buildcraft.BuildCraftSilicon;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.EntityLaser;
 import buildcraft.core.robots.EntityRobot;
@@ -108,11 +108,11 @@ public class RenderRobot extends Render implements IItemRenderer {
 
 		// FIXME: Texture localisation should be factorized between items and
 		// entities.
-		if (item.getItem() == BuildCraftCore.robotBaseItem) {
+		if (item.getItem() == BuildCraftSilicon.robotBaseItem) {
 			RenderManager.instance.renderEngine.bindTexture(TEXTURE_BASE);
-		} else if (item.getItem() == BuildCraftCore.robotBuilderItem) {
+		} else if (item.getItem() == BuildCraftSilicon.robotBuilderItem) {
 			RenderManager.instance.renderEngine.bindTexture(TEXTURE_BUILDER);
-		} else if (item.getItem() == BuildCraftCore.robotPickerItem) {
+		} else if (item.getItem() == BuildCraftSilicon.robotPickerItem) {
 			RenderManager.instance.renderEngine.bindTexture(TEXTURE_PICKER);
 		}
 
