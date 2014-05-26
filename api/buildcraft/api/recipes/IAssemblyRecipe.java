@@ -23,5 +23,5 @@ public interface IAssemblyRecipe {
 
 	boolean canBeDone(IInventory inv);
 
-	public void useItems(IInventory inv);
+	void useItems(IInventory inv);
 }

@@ -22,13 +22,11 @@ public class BoardRobotPicker implements IRedstoneBoard<EntityRobotPicker> {
 
 	private static Set<Integer> targettedItems = new HashSet<Integer>();
 
-	SafeTimeTracker scanTracker = new SafeTimeTracker(40, 10);
-	SafeTimeTracker pickTracker = new SafeTimeTracker(20, 0);
-	SafeTimeTracker unloadTracker = new SafeTimeTracker(20, 0);
-
+	private SafeTimeTracker scanTracker = new SafeTimeTracker(40, 10);
+	private SafeTimeTracker pickTracker = new SafeTimeTracker(20, 0);
+	private SafeTimeTracker unloadTracker = new SafeTimeTracker(20, 0);
 	private EntityItem target;
-
-	int pickTime = -1;
+	private int pickTime = -1;
 
 	@Override
 	public void updateBoard(EntityRobotPicker robot) {
