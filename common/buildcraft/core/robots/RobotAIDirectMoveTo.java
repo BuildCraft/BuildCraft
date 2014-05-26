@@ -14,7 +14,7 @@ public class RobotAIDirectMoveTo extends RobotAIBase {
 	private double prevDistance = Double.MAX_VALUE;
 	private boolean done = false;
 
-	float x, y, z;
+	private float x, y, z;
 
 	public RobotAIDirectMoveTo(EntityRobot iRobot, float ix, float iy, float iz) {
 		super(iRobot);

@@ -40,8 +40,8 @@ public class GuiTester extends GuiContainer {
 
 	private GuiTextField textField;
 
-	World world;
-	int x, y, z;
+	private World world;
+	private int x, y, z;
 
 	public GuiTester(EntityPlayer player, int ix, int iy, int iz) {
 		super(new ContainerTester(player, ix, iy, iz));
@@ -57,24 +57,24 @@ public class GuiTester extends GuiContainer {
 	@Override
 	public void initGui() {
 		super.initGui();
-		int x = (width - xSize) / 2;
-		int y = (height - ySize) / 2;
+		int xscreen = (width - xSize) / 2;
+		int yscreen = (height - ySize) / 2;
 
 		Keyboard.enableRepeatEvents(true);
 
-		checkBlockAndMeta = new GuiButton(0, x + 5, y + 30, 120, 20, "");
+		checkBlockAndMeta = new GuiButton(0, xscreen + 5, yscreen + 30, 120, 20, "");
 		checkBlockAndMeta.displayString = "Check Block and Meta";
 		buttonList.add(checkBlockAndMeta);
 
-		checkTileMethod = new GuiButton(1, x + 5, y + 55, 120, 20, "");
+		checkTileMethod = new GuiButton(1, xscreen + 5, yscreen + 55, 120, 20, "");
 		checkTileMethod.displayString = "Check Tile Method";
 		buttonList.add(checkTileMethod);
 
-		checkTestCommand = new GuiButton(2, x + 5, y + 80, 120, 20, "");
+		checkTestCommand = new GuiButton(2, xscreen + 5, yscreen + 80, 120, 20, "");
 		checkTestCommand.displayString = "Check Test Command";
 		buttonList.add(checkTestCommand);
 
-		cancel = new GuiButton(2, x + 5, y + 105, 120, 20, "");
+		cancel = new GuiButton(2, xscreen + 5, yscreen + 105, 120, 20, "");
 		cancel.displayString = "Cancel";
 		buttonList.add(cancel);
 
@@ -119,11 +119,11 @@ public class GuiTester extends GuiContainer {
 
 		int xMin = (width - xSize) / 2;
 		int yMin = (height - ySize) / 2;
-		int x = i - xMin;
-		int y = j - yMin;
+		int xscreen = i - xMin;
+		int yscreen = j - yMin;
 
-		if (x >= TEXT_X && y >= TEXT_Y
-				&& x <= TEXT_X + TEXT_WIDTH && y <= TEXT_Y + TEXT_HEIGHT) {
+		if (xscreen >= TEXT_X && yscreen >= TEXT_Y
+				&& xscreen <= TEXT_X + TEXT_WIDTH && yscreen <= TEXT_Y + TEXT_HEIGHT) {
 			textField.setFocused(true);
 		} else {
 			textField.setFocused(false);
