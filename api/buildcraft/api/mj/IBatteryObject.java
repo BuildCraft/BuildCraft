@@ -8,6 +8,8 @@
  */
 package buildcraft.api.mj;
 
+import java.lang.reflect.Field;
+
 public interface IBatteryObject {
 	/**
 	 * @return Current energy requirement for keeping machine state
@@ -63,4 +65,13 @@ public interface IBatteryObject {
 	 * @return kind of this energy battery
 	 */
 	String kind();
+
+	/**
+	 * Basic initialization method
+	 *
+	 * @param object      Basic object which hold a battery field
+	 * @param storedField Field for energy storing
+	 * @param battery     Battery data
+	 */
+	void init(Object object, Field storedField, MjBattery battery);
 }

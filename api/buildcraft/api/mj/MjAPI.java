@@ -35,10 +35,11 @@ import gnu.trove.map.hash.TIntObjectHashMap;
 public final class MjAPI {
 	public static final String DEFAULT_POWER_FRAMEWORK = "buildcraft.kinesis";
 	private static Map<BatteryHolder, BatteryField> mjBatteryFields = new HashMap<BatteryHolder, BatteryField>();
-	private static Map<String, Class<? extends BatteryObject>> mjBatteryKinds = new HashMap<String, Class<? extends BatteryObject>>();
+	private static Map<String, Class<? extends IBatteryObject>> mjBatteryKinds = new HashMap<String, Class<? extends IBatteryObject>>();
 	private static final BatteryField invalidBatteryField = new BatteryField();
 	private static final MjReconfigurator reconfigurator = new MjReconfigurator();
 	private static final Map<Object, BatteryCache> mjBatteryCache = new WeakHashMap<Object, BatteryCache>();
+
 	/**
 	 * Deactivate constructor
 	 */
@@ -46,41 +47,36 @@ public final class MjAPI {
 	}
 
 	/**
-	 * Returns the default battery related to the object given in parameter. For
-	 * performance optimization, it's good to cache this object in the providing
-	 * power framework if possible.
+	 * @see #getMjBattery(Object, String, ForgeDirection)
 	 */
 	public static IBatteryObject getMjBattery(Object o) {
-		return getMjBattery(o, DEFAULT_POWER_FRAMEWORK, ForgeDirection.UNKNOWN);
+		return getMjBattery(o, null, null);
 	}
 
 	/**
-	 * Returns the battery related to the object given in parameter. For
-	 * performance optimization, it's good to cache this object in the providing
-	 * power framework if possible.
+	 * @see #getMjBattery(Object, String, ForgeDirection)
 	 */
 	public static IBatteryObject getMjBattery(Object o, String kind) {
-		return getMjBattery(o, kind, ForgeDirection.UNKNOWN);
+		return getMjBattery(o, kind, null);
 	}
 
 	/**
-	 * Returns the battery related to the object given in parameter. For
-	 * performance optimization, it's good to cache this object in the providing
-	 * power framework if possible.
+	 * @see #getMjBattery(Object, String, ForgeDirection)
 	 */
 	public static IBatteryObject getMjBattery(Object o, ForgeDirection side) {
-		return getMjBattery(o, DEFAULT_POWER_FRAMEWORK, side);
+		return getMjBattery(o, null, side);
 	}
 
 	/**
-	 * Returns the battery related to the object given in parameter. For
-	 * performance optimization, it's good to cache this object in the providing
-	 * power framework if possible.
+	 * Returns the battery related to the object given in parameter.
 	 */
-	public static IBatteryObject getMjBattery(Object o, String kind, ForgeDirection side) {
+	public static IBatteryObject getMjBattery(Object o, String kindRaw, ForgeDirection sideRaw) {
 		if (o == null) {
 			return null;
 		}
+		String kind = kindRaw == null ? DEFAULT_POWER_FRAMEWORK : kindRaw;
+		ForgeDirection side = sideRaw == null ? ForgeDirection.UNKNOWN : sideRaw;
+
 		IBatteryObject battery;
 		BatteryCache cache = mjBatteryCache.get(o);
 		if (cache == null) {
@@ -104,6 +100,9 @@ public final class MjAPI {
 		}
 		if (battery == null && o instanceof IPowerReceptor) {
 			PowerHandler.PowerReceiver receiver = ((IPowerReceptor) o).getPowerReceiver(side);
+			if (receiver == null && side != ForgeDirection.UNKNOWN) {
+				receiver = ((IPowerReceptor) o).getPowerReceiver(ForgeDirection.UNKNOWN);
+			}
 			if (receiver != null) {
 				battery = receiver.getMjBattery();
 			}
@@ -112,38 +111,37 @@ public final class MjAPI {
 		return battery;
 	}
 
-	private static boolean isCacheable(IBatteryObject battery) {
-		return battery != null && battery instanceof IBatteryIOObject && ((IBatteryIOObject) battery).isCacheable();
-	}
-
+	/**
+	 * Create new battery instance.
+	 * This method ignore all providers/caches and only create battery for given kind/side.
+	 *
+	 * @param o Object which contains {@link MjBattery}
+	 * @param kind Kind of power
+	 * @param side Side of block
+	 * @return New {@link IBatteryObject} implementation registered for given kind of power
+	 */
 	public static IBatteryObject createBattery(Object o, String kind, ForgeDirection side) {
 		if (o == null) {
 			return null;
 		}
-
 		BatteryField f = getMjBatteryField(o.getClass(), kind, side);
 		if (f == null && side != ForgeDirection.UNKNOWN) {
 			f = getMjBatteryField(o.getClass(), kind, ForgeDirection.UNKNOWN);
 		}
-
 		if (f == null) {
 			return null;
 		} else if (!mjBatteryKinds.containsKey(kind)) {
 			return null;
 		} else if (f.kind == BatteryKind.Value) {
 			try {
-				BatteryObject obj = mjBatteryKinds.get(kind).newInstance();
-				obj.obj = o;
-				obj.energyStored = f.field;
-				obj.batteryData = f.battery;
+				IBatteryObject obj = mjBatteryKinds.get(kind).newInstance();
+				obj.init(o, f.field, f.battery);
 				return obj;
 			} catch (InstantiationException e) {
 				BCLog.logger.log(Level.WARNING, "can't instantiate class for energy kind \"" + kind + "\"");
-
 				return null;
 			} catch (IllegalAccessException e) {
 				BCLog.logger.log(Level.WARNING, "can't instantiate class for energy kind \"" + kind + "\"");
-
 				return null;
 			}
 		} else {
@@ -156,10 +154,17 @@ public final class MjAPI {
 		}
 	}
 
+	/**
+	 * @return All non-sided batteries for passed object
+	 */
 	public static IBatteryObject[] getAllMjBatteries(Object o) {
 		return getAllMjBatteries(o, ForgeDirection.UNKNOWN);
 	}
 
+	/**
+	 * @param direction Side of block
+	 * @return All sided batteries for passed object
+	 */
 	public static IBatteryObject[] getAllMjBatteries(Object o, ForgeDirection direction) {
 		IBatteryObject[] result = new IBatteryObject[mjBatteryFields.size()];
 
@@ -175,27 +180,54 @@ public final class MjAPI {
 		return Arrays.copyOfRange(result, 0, id);
 	}
 
-	public static void registerMJBatteryKind(String kind, Class<? extends BatteryObject> clas) {
+	/**
+	 * Register new battery kind implementation.
+	 * Allowing to have a custom power types alongside default "kinesis" kind
+	 * @param kind Kind name
+	 * @param clazz Battery implementation class
+	 */
+	public static void registerMJBatteryKind(String kind, Class<? extends IBatteryObject> clazz) {
 		if (!mjBatteryKinds.containsKey(kind)) {
-			mjBatteryKinds.put(kind, clas);
+			mjBatteryKinds.put(kind, clazz);
 		} else {
 			BCLog.logger.log(Level.WARNING,
-					"energy kind \"" + kind + "\" already registered with " + clas.getCanonicalName());
+					"energy kind \"" + kind + "\" already registered with " + clazz.getCanonicalName());
 		}
 	}
 
+	/**
+	 * @see IOMode#canReceive
+	 */
 	public static boolean canReceive(IBatteryObject battery) {
 		return battery != null && (!(battery instanceof IBatteryIOObject) || ((IBatteryIOObject) battery).canReceive());
 	}
 
+	/**
+	 * @see IOMode#canSend
+	 */
 	public static boolean canSend(IBatteryObject battery) {
 		return battery != null && battery instanceof IBatteryIOObject && ((IBatteryIOObject) battery).canSend();
 	}
 
+	/**
+	 * @see IOMode#active
+	 */
 	public static boolean isActive(IBatteryObject battery) {
 		return battery != null && battery instanceof IBatteryIOObject && ((IBatteryIOObject) battery).isActive();
 	}
 
+	/**
+	 * @see MjBattery#cacheable()
+	 */
+	public static boolean isCacheable(IBatteryObject battery) {
+		return battery != null && battery instanceof IBatteryIOObject && ((IBatteryIOObject) battery).isCacheable();
+	}
+
+	/**
+	 * @see MjBattery#maxReceivedPerCycle()
+	 * @see MjBattery#maxSendedPerCycle()
+	 * @return Actual IO limit for passed mode (only send/receive supported)
+	 */
 	public static double getIOLimit(IBatteryObject batteryObject, IOMode mode) {
 		if (mode == IOMode.Receive && canReceive(batteryObject)) {
 			return batteryObject.maxReceivedPerCycle();
@@ -205,10 +237,25 @@ public final class MjAPI {
 		return 0;
 	}
 
+	/**
+	 * Obtain battery parameters reconfigurator.
+	 * Usage:<br />
+	 * <code>
+	 *     MjAPI.reconfigure().maxCapacity(battery, 15000);
+	 * </code>
+	 * @return Reconfigurator instance
+	 */
 	public static MjReconfigurator reconfigure() {
 		return reconfigurator;
 	}
 
+	/**
+	 * Transfer mj energy amount from battery "fromBattery" to "toBattery"
+	 * @param fromBattery Source battery
+	 * @param toBattery Target battery
+	 * @param mj Amount of energy
+	 * @return Transferred amount
+	 */
 	public static double transferEnergy(IBatteryObject fromBattery, IBatteryObject toBattery, double mj) {
 		if (!canSend(fromBattery) || !canReceive(toBattery)) {
 			return 0;
@@ -224,12 +271,22 @@ public final class MjAPI {
 		return received;
 	}
 
+	/**
+	 * Transfer maximal energy amount from battery "fromBattery" to "toBattery"
+	 * @param fromBattery Source battery
+	 * @param toBattery Target battery
+	 * @return Transferred amount
+	 */
 	public static double transferEnergy(IBatteryObject fromBattery, IBatteryObject toBattery) {
 		return transferEnergy(fromBattery, toBattery, Math.min(
 				getIOLimit(fromBattery, IOMode.Send),
 				getIOLimit(toBattery, IOMode.Receive)));
 	}
 
+	/**
+	 * Helper method which you should invoke in every game tick for supporting Active IO modes
+	 * @param tile Tile which contains active battery
+	 */
 	public static void updateEntity(TileEntity tile) {
 		for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
 			IBatteryObject batteryObject = getMjBattery(tile, direction);
@@ -247,8 +304,20 @@ public final class MjAPI {
 		}
 	}
 
+	/**
+	 * Reset all caches for passed tile
+	 */
 	public static void resetBatteriesCache(TileEntity tile) {
 		mjBatteryCache.remove(tile);
+	}
+
+	/**
+	 * Remove cached instance of passed battery
+	 */
+	public static void resetBatteriesCache(IBatteryObject battery) {
+		for (BatteryCache cache : mjBatteryCache.values()) {
+			cache.reset(battery);
+		}
 	}
 
 	private enum BatteryKind {
@@ -264,6 +333,14 @@ public final class MjAPI {
 
 		void put(String kind, ForgeDirection side, IBatteryObject battery) {
 			cache.put(hash(kind, side), battery);
+		}
+
+		void reset(IBatteryObject battery) {
+			for (int key : cache.keys()) {
+				if (cache.get(key) == battery) {
+					cache.remove(key);
+				}
+			}
 		}
 
 		private int hash(String kind, ForgeDirection side) {
@@ -356,7 +433,6 @@ public final class MjAPI {
 	}
 
 	static {
-		mjBatteryKinds.put(MjAPI.DEFAULT_POWER_FRAMEWORK, BatteryObject.class);
+		registerMJBatteryKind(DEFAULT_POWER_FRAMEWORK, BatteryObject.class);
 	}
-
 }
