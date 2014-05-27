@@ -196,7 +196,7 @@ public class BuildCraftEnergy extends BuildCraftMod {
 
 		if (fluidOil.getBlock() == null) {
 			blockOil = new BlockBuildcraftFluid(fluidOil, Material.water).setFlammable(canOilBurn).setFlammability(0);
-			blockOil.setBlockName("blockOil").setLightOpacity(6);
+			blockOil.setBlockName("blockOil").setLightOpacity(15);
 			CoreProxy.proxy.registerBlock(blockOil);
 			fluidOil.setBlock(blockOil);
 		} else {
