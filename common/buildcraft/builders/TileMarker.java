@@ -10,6 +10,7 @@ package buildcraft.builders;
 
 import net.minecraft.block.Block;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 
 import buildcraft.BuildCraftBuilders;
@@ -54,7 +55,10 @@ public class TileMarker extends TileBuildCraft implements IAreaProvider {
 			}
 
 			if (marker == null) {
-				marker = (TileMarker) world.getTileEntity(x, y, z);
+				TileEntity tile = world.getTileEntity(x, y, z);
+				if (tile instanceof TileMarker) {
+					marker = (TileMarker) tile;
+				}
 			}
 
 			return marker;
