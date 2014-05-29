@@ -36,9 +36,7 @@ import buildcraft.core.ItemBuildCraft;
 import buildcraft.core.ItemRobot;
 import buildcraft.core.Version;
 import buildcraft.core.proxy.CoreProxy;
-import buildcraft.core.robots.EntityRobot;
-import buildcraft.core.robots.EntityRobotBuilder;
-import buildcraft.core.robots.EntityRobotPicker;
+import buildcraft.core.robots.RobotIntegrationRecipe;
 import buildcraft.core.robots.boards.BoardRobotPickerNBT;
 import buildcraft.silicon.BlockLaser;
 import buildcraft.silicon.BlockLaserTable;
@@ -76,9 +74,7 @@ public class BuildCraftSilicon extends BuildCraftMod {
 	public static BuildCraftSilicon instance;
 
 	public static Item redstoneCrystal;
-	public static Item robotBaseItem;
-	public static Item robotBuilderItem;
-	public static Item robotPickerItem;
+	public static Item robotItem;
 
 	@Mod.EventHandler
 	public void preInit(FMLPreInitializationEvent evt) {
@@ -106,14 +102,8 @@ public class BuildCraftSilicon extends BuildCraftMod {
 		CoreProxy.proxy.registerItem(redstoneCrystal);
 		OreDictionary.registerOre("redstoneCrystal", new ItemStack(redstoneCrystal));
 
-		robotBaseItem = new ItemRobot(EntityRobot.class).setUnlocalizedName("robotBase");
-		CoreProxy.proxy.registerItem(robotBaseItem);
-
-		robotPickerItem = new ItemRobot(EntityRobotPicker.class).setUnlocalizedName("robotPicker");
-		CoreProxy.proxy.registerItem(robotPickerItem);
-
-		robotBuilderItem = new ItemRobot(EntityRobotBuilder.class).setUnlocalizedName("robotBuilder");
-		CoreProxy.proxy.registerItem(robotBuilderItem);
+		robotItem = new ItemRobot().setUnlocalizedName("robot");
+		CoreProxy.proxy.registerItem(robotItem);
 
 		RedstoneBoardRegistry.instance = new ImplRedstoneBoardRegistry();
 
@@ -211,7 +201,7 @@ public class BuildCraftSilicon extends BuildCraftMod {
 				'R', Items.redstone,
 				'P', Items.paper);
 
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(robotBaseItem),
+		CoreProxy.proxy.addCraftingRecipe(new ItemStack(robotItem),
 				"PPP",
 				"PRP",
 				"C C",
@@ -220,6 +210,7 @@ public class BuildCraftSilicon extends BuildCraftMod {
 				'C', Chipset.DIAMOND.getStack());
 
 		BuildcraftRecipes.assemblyTable.addRecipe(new BoardRecipe());
+		BuildcraftRecipes.integrationTable.addRecipe(new RobotIntegrationRecipe());
 
 		// REVERSAL RECIPES
 		EnumSet<GateMaterial> materials = EnumSet.allOf(GateMaterial.class);

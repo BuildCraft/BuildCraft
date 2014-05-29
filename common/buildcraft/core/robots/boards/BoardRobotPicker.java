@@ -5,20 +5,21 @@ import java.util.Set;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
+import net.minecraft.util.ResourceLocation;
 
 import net.minecraftforge.common.util.ForgeDirection;
 
-import buildcraft.api.boards.IRedstoneBoard;
+import buildcraft.api.boards.IRedstoneBoardRobot;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.core.inventory.TransactorSimple;
-import buildcraft.core.robots.EntityRobotPicker;
+import buildcraft.core.robots.EntityRobot;
 import buildcraft.core.robots.RobotAIMoveTo;
 import buildcraft.core.robots.RobotAIReturnToDock;
 import buildcraft.transport.PipeTransportItems;
 import buildcraft.transport.TileGenericPipe;
 import buildcraft.transport.TravelingItem;
 
-public class BoardRobotPicker implements IRedstoneBoard<EntityRobotPicker> {
+public class BoardRobotPicker implements IRedstoneBoardRobot<EntityRobot> {
 
 	private static Set<Integer> targettedItems = new HashSet<Integer>();
 
@@ -29,7 +30,7 @@ public class BoardRobotPicker implements IRedstoneBoard<EntityRobotPicker> {
 	private int pickTime = -1;
 
 	@Override
-	public void updateBoard(EntityRobotPicker robot) {
+	public void updateBoard(EntityRobot robot) {
 		TransactorSimple inventoryInsert = new TransactorSimple(robot);
 
 		if (robot.worldObj.isRemote) {
@@ -96,7 +97,7 @@ public class BoardRobotPicker implements IRedstoneBoard<EntityRobotPicker> {
 		}
 	}
 
-	public void scan(EntityRobotPicker robot) {
+	public void scan(EntityRobot robot) {
 		TransactorSimple inventoryInsert = new TransactorSimple(robot);
 
 		for (Object o : robot.worldObj.loadedEntityList) {
@@ -128,5 +129,15 @@ public class BoardRobotPicker implements IRedstoneBoard<EntityRobotPicker> {
 				}
 			}
 		}
+	}
+
+	@Override
+	public ResourceLocation getRobotTexture() {
+		return EntityRobot.ROBOT_TRANSPORT;
+	}
+
+	@Override
+	public String getID() {
+		return "buildcraft:boardRobotPicker";
 	}
 }

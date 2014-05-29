@@ -8,9 +8,10 @@
  */
 package buildcraft.api.boards;
 
-public interface IRedstoneBoard<T> {
+import net.minecraft.util.ResourceLocation;
 
-	void updateBoard(T container);
+public interface IRedstoneBoardRobot<T> extends IRedstoneBoard<T> {
 
-	String getID();
+	ResourceLocation getRobotTexture();
+
 }

@@ -58,7 +58,18 @@ public class ImplRedstoneBoardRegistry extends RedstoneBoardRegistry {
 
 	@Override
 	public IRedstoneBoardNBT getRedstoneBoard(NBTTagCompound nbt) {
-		return boards.get(nbt.getString("id")).boardNBT;
+		return getRedstoneBoard(nbt.getString("id"));
+	}
+
+	@Override
+	public IRedstoneBoardNBT getRedstoneBoard(String id) {
+		BoardFactory factory = boards.get(id);
+
+		if (factory != null) {
+			return factory.boardNBT;
+		} else {
+			return null;
+		}
 	}
 
 	@Override
@@ -67,4 +78,5 @@ public class ImplRedstoneBoardRegistry extends RedstoneBoardRegistry {
 			f.boardNBT.registerIcons(par1IconRegister);
 		}
 	}
+
 }

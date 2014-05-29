@@ -8,27 +8,75 @@
  */
 package buildcraft.core;
 
+import java.util.List;
+
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 
+import buildcraft.api.boards.IRedstoneBoardNBT;
+import buildcraft.api.boards.IRedstoneBoardRobot;
+import buildcraft.api.boards.IRedstoneBoardRobotNBT;
+import buildcraft.api.boards.RedstoneBoardRegistry;
 import buildcraft.core.robots.EntityRobot;
+import buildcraft.core.utils.NBTUtils;
 
 public class ItemRobot extends ItemBuildCraft {
 
-	Class<? extends EntityRobot> robotClass;
-
-	public ItemRobot(Class<? extends EntityRobot> robotClass) {
+	public ItemRobot() {
 		super(CreativeTabBuildCraft.ITEMS);
-
-		this.robotClass = robotClass;
 	}
 
-	public EntityRobot createRobot (World world) {
+	public EntityRobot createRobot(ItemStack stack, World world) {
 		try {
-			return this.robotClass.getConstructor(World.class).newInstance(world);
+			IRedstoneBoardRobot board = null;
+			NBTTagCompound nbt = NBTUtils.getItemData(stack);
+
+			if (nbt.hasKey("board")) {
+				NBTTagCompound boardCpt = nbt.getCompoundTag("board");
+				IRedstoneBoardNBT boardNBT = RedstoneBoardRegistry.instance.getRedstoneBoard(boardCpt);
+
+				if (boardNBT instanceof IRedstoneBoardRobotNBT) {
+					board = ((IRedstoneBoardRobotNBT) boardNBT).create(boardCpt);
+				}
+			}
+
+			EntityRobot robot = new EntityRobot(world, board);
+
+			return robot;
 		} catch (Throwable e) {
 			e.printStackTrace();
 			return null;
 		}
+	}
+
+	public ResourceLocation getTextureRobot(ItemStack stack) {
+		NBTTagCompound nbt = NBTUtils.getItemData(stack);
+
+		if (!nbt.hasKey("board")) {
+			return EntityRobot.ROBOT_BASE;
+		} else {
+			NBTTagCompound board = nbt.getCompoundTag("board");
+			IRedstoneBoardNBT boardNBT = RedstoneBoardRegistry.instance.getRedstoneBoard(board);
+
+			if (boardNBT instanceof IRedstoneBoardRobotNBT) {
+				return ((IRedstoneBoardRobotNBT) boardNBT).getRobotTexture();
+			} else {
+				return EntityRobot.ROBOT_BASE;
+			}
+		}
+	}
+
+	@Override
+	public void addInformation(ItemStack stack, EntityPlayer player, List list, boolean advanced) {
+		NBTTagCompound cpt = NBTUtils.getItemData(stack).getCompoundTag("board");
+
+		if (cpt.hasKey("id") && !cpt.getString("id").equals("<unknown>")) {
+			RedstoneBoardRegistry.instance.getRedstoneBoard(cpt).addInformation(stack, player, list, advanced);
+		}
+
 	}
 
 }

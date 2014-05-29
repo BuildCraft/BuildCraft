@@ -22,15 +22,11 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.IItemRenderer;
 
 import buildcraft.BuildCraftSilicon;
-import buildcraft.core.DefaultProps;
 import buildcraft.core.EntityLaser;
+import buildcraft.core.ItemRobot;
 import buildcraft.core.robots.EntityRobot;
 
 public class RenderRobot extends Render implements IItemRenderer {
-
-	public static final ResourceLocation TEXTURE_BASE = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_ENTITIES + "/robot_base.png");
-	public static final ResourceLocation TEXTURE_BUILDER = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_ENTITIES + "/robot_builder.png");
-	public static final ResourceLocation TEXTURE_PICKER = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_ENTITIES + "/robot_picker.png");
 
 	protected ModelBase model = new ModelBase() {
 	};
@@ -75,7 +71,7 @@ public class RenderRobot extends Render implements IItemRenderer {
 
 	@Override
 	protected ResourceLocation getEntityTexture(Entity entity) {
-		return TEXTURE_BASE;
+		return ((EntityRobot) entity).getTexture();
 	}
 
 	@Override
@@ -106,14 +102,9 @@ public class RenderRobot extends Render implements IItemRenderer {
 		GL11.glPushMatrix();
 		GL11.glDisable(GL11.GL_LIGHTING);
 
-		// FIXME: Texture localisation should be factorized between items and
-		// entities.
-		if (item.getItem() == BuildCraftSilicon.robotBaseItem) {
-			RenderManager.instance.renderEngine.bindTexture(TEXTURE_BASE);
-		} else if (item.getItem() == BuildCraftSilicon.robotBuilderItem) {
-			RenderManager.instance.renderEngine.bindTexture(TEXTURE_BUILDER);
-		} else if (item.getItem() == BuildCraftSilicon.robotPickerItem) {
-			RenderManager.instance.renderEngine.bindTexture(TEXTURE_PICKER);
+		if (item.getItem() == BuildCraftSilicon.robotItem) {
+			ItemRobot robot = (ItemRobot) item.getItem();
+			RenderManager.instance.renderEngine.bindTexture(robot.getTextureRobot(item));
 		}
 
 		float factor = (float) (1.0 / 16.0);

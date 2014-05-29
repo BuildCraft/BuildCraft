@@ -15,12 +15,14 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.IIcon;
+import net.minecraft.util.ResourceLocation;
 
-import buildcraft.api.boards.IRedstoneBoard;
-import buildcraft.api.boards.IRedstoneBoardNBT;
+import buildcraft.api.boards.IRedstoneBoardRobot;
+import buildcraft.api.boards.IRedstoneBoardRobotNBT;
+import buildcraft.core.robots.EntityRobot;
 import buildcraft.core.utils.StringUtils;
 
-public class BoardRobotPickerNBT implements IRedstoneBoardNBT {
+public class BoardRobotPickerNBT implements IRedstoneBoardRobotNBT {
 
 	public IIcon icon;
 
@@ -35,7 +37,7 @@ public class BoardRobotPickerNBT implements IRedstoneBoardNBT {
 	}
 
 	@Override
-	public IRedstoneBoard create(NBTTagCompound nbt) {
+	public IRedstoneBoardRobot create(NBTTagCompound nbt) {
 		return new BoardRobotPicker();
 	}
 
@@ -47,6 +49,11 @@ public class BoardRobotPickerNBT implements IRedstoneBoardNBT {
 	@Override
 	public void registerIcons(IIconRegister iconRegister) {
 		icon = iconRegister.registerIcon("buildcraft:board_green");
+	}
+
+	@Override
+	public ResourceLocation getRobotTexture() {
+		return EntityRobot.ROBOT_TRANSPORT;
 	}
 
 }

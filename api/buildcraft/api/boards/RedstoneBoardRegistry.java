@@ -21,5 +21,7 @@ public abstract class RedstoneBoardRegistry {
 
 	public abstract IRedstoneBoardNBT getRedstoneBoard(NBTTagCompound nbt);
 
+	public abstract IRedstoneBoardNBT getRedstoneBoard(String id);
+
 	public abstract void registerIcons(IIconRegister par1IconRegister);
 }

@@ -38,7 +38,6 @@ import buildcraft.core.render.RenderRobot;
 import buildcraft.core.render.RenderingEntityBlocks;
 import buildcraft.core.render.RenderingMarkers;
 import buildcraft.core.robots.EntityRobot;
-import buildcraft.core.robots.EntityRobotBuilder;
 import buildcraft.transport.render.TileEntityPickupFX;
 
 public class CoreProxyClient extends CoreProxy {
@@ -101,16 +100,13 @@ public class CoreProxyClient extends CoreProxy {
 		RenderingRegistry.registerBlockHandler(new RenderingMarkers());
 
 		// TODO: Move these to a Silicon proxy renderer
-		MinecraftForgeClient.registerItemRenderer(BuildCraftSilicon.robotBaseItem, new RenderRobot());
-		MinecraftForgeClient.registerItemRenderer(BuildCraftSilicon.robotBuilderItem, new RenderRobot());
-		MinecraftForgeClient.registerItemRenderer(BuildCraftSilicon.robotPickerItem, new RenderRobot());
+		MinecraftForgeClient.registerItemRenderer(BuildCraftSilicon.robotItem, new RenderRobot());
 	}
 
 	@Override
 	public void initializeEntityRendering() {
 		RenderingRegistry.registerEntityRenderingHandler(EntityBlock.class, RenderEntityBlock.INSTANCE);
 		RenderingRegistry.registerEntityRenderingHandler(EntityRobot.class, new RenderRobot());
-		RenderingRegistry.registerEntityRenderingHandler(EntityRobotBuilder.class, new RenderRobot());
 	}
 
 	/* BUILDCRAFT PLAYER */

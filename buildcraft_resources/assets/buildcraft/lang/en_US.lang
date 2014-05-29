@@ -1,5 +1,7 @@
 # Master language file
 
+buildcraft.boardRobotPicker=Picker Program
+
 chat.pipe.power.iron.mode=Switched to %d MJ/t limit
 chat.pipe.power.energyConverter=Energy conversion: %s
 chat.pipe.power.energyConverter.from_old_to_new=From old API to new API
@@ -133,6 +135,7 @@ item.redstone_pulsating_chipset.name=Pulsating Chipset
 item.redstone_quartz_chipset.name=Quartz Chipset
 item.redstone_comp_chipset.name=Redstone Comp Chipset
 item.redstone_board.name=Redstone Board
+item.robot.name=Robot
 item.blueprintItem.name=Blueprint
 item.blueprint.unnamed=<unnamed>
 item.blueprint.author=by

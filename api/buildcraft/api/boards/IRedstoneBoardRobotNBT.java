@@ -8,9 +8,14 @@
  */
 package buildcraft.api.boards;
 
-public interface IRedstoneBoard<T> {
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.ResourceLocation;
 
-	void updateBoard(T container);
+public interface IRedstoneBoardRobotNBT extends IRedstoneBoardNBT {
 
-	String getID();
+	@Override
+	IRedstoneBoardRobot create(NBTTagCompound nbt);
+
+	ResourceLocation getRobotTexture();
+
 }

@@ -11,6 +11,8 @@ package buildcraft.core.robots;
 import io.netty.buffer.ByteBuf;
 
 import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
@@ -20,13 +22,24 @@ import cpw.mods.fml.common.registry.IEntityAdditionalSpawnData;
 
 import net.minecraftforge.common.util.ForgeDirection;
 
+import buildcraft.api.boards.IRedstoneBoardNBT;
+import buildcraft.api.boards.IRedstoneBoardRobot;
+import buildcraft.api.boards.IRedstoneBoardRobotNBT;
+import buildcraft.api.boards.RedstoneBoardRegistry;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.LaserData;
 import buildcraft.transport.TileGenericPipe;
 
 public class EntityRobot extends EntityLiving implements
-		IEntityAdditionalSpawnData {
+		IEntityAdditionalSpawnData, IInventory {
+
+	public static final ResourceLocation ROBOT_BASE = new ResourceLocation("buildcraft",
+			DefaultProps.TEXTURE_PATH_ENTITIES + "/robot_base.png");
+	public static final ResourceLocation ROBOT_BUILDER = new ResourceLocation("buildcraft",
+			DefaultProps.TEXTURE_PATH_ENTITIES + "/robot_builder.png");
+	public static final ResourceLocation ROBOT_TRANSPORT = new ResourceLocation("buildcraft",
+			DefaultProps.TEXTURE_PATH_ENTITIES + "/robot_picker.png");
 
 	private static ResourceLocation defaultTexture = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_ENTITIES + "/robot_base.png");
 
@@ -37,14 +50,26 @@ public class EntityRobot extends EntityLiving implements
 	public DockingStation dockingStation = new DockingStation();
 	public boolean isDocked = false;
 
+	public IRedstoneBoardRobot board;
+
 	public RobotAIBase currentAI;
 	protected RobotAIBase nextAI;
 
 	private boolean needsUpdate = false;
+	private ItemStack[] inv = new ItemStack[6];
+	private String boardID;
+	private ResourceLocation texture;
 
 	public class DockingStation {
 		public int x, y, z;
 		public ForgeDirection side;
+	}
+
+	public EntityRobot(World world, IRedstoneBoardRobot iBoard) {
+		this(world);
+
+		board = iBoard;
+		dataWatcher.updateObject(16, board.getID());
 	}
 
 	public EntityRobot(World par1World) {
@@ -73,10 +98,7 @@ public class EntityRobot extends EntityLiving implements
 		dataWatcher.addObject(13, Float.valueOf(0));
 		dataWatcher.addObject(14, Float.valueOf(0));
 		dataWatcher.addObject(15, Byte.valueOf((byte) 0));
-		dataWatcher.addObject(16, Float.valueOf(0));
-		dataWatcher.addObject(17, Float.valueOf(0));
-		dataWatcher.addObject(18, Float.valueOf(0));
-		dataWatcher.addObject(19, Byte.valueOf((byte) 0));
+		dataWatcher.addObject(16, "");
 	}
 
 	protected void updateDataClient() {
@@ -84,6 +106,13 @@ public class EntityRobot extends EntityLiving implements
 		laser.tail.y = dataWatcher.getWatchableObjectFloat(13);
 		laser.tail.z = dataWatcher.getWatchableObjectFloat(14);
 		laser.isVisible = dataWatcher.getWatchableObjectByte(15) == 1;
+
+		IRedstoneBoardNBT boardNBT = RedstoneBoardRegistry.instance.getRedstoneBoard(dataWatcher
+				.getWatchableObjectString(16));
+
+		if (boardNBT != null) {
+			texture = ((IRedstoneBoardRobotNBT) boardNBT).getRobotTexture();
+		}
 	}
 
 	protected void updateDataServer() {
@@ -143,6 +172,8 @@ public class EntityRobot extends EntityLiving implements
 		}
 
 		if (!worldObj.isRemote) {
+			board.updateBoard(this);
+
 			if (currentTask == null) {
 				if (scanForTasks.markTimeIfDelay(worldObj)) {
 					RobotTaskProviderRegistry.scanForTask(this);
@@ -259,7 +290,7 @@ public class EntityRobot extends EntityLiving implements
     }
 
 	public ResourceLocation getTexture () {
-		return defaultTexture;
+		return texture;
 	}
 
 	@Override
@@ -278,6 +309,14 @@ public class EntityRobot extends EntityLiving implements
 		NBTTagCompound nbtLaser = new NBTTagCompound();
 		laser.writeToNBT(nbtLaser);
 		nbt.setTag("laser", nbtLaser);
+
+		for (int i = 0; i < inv.length; ++i) {
+			NBTTagCompound stackNbt = new NBTTagCompound();
+
+			if (inv[i] != null) {
+				nbt.setTag("inv[" + i + "]", inv[i].writeToNBT(stackNbt));
+			}
+		}
     }
 
 	@Override
@@ -296,6 +335,12 @@ public class EntityRobot extends EntityLiving implements
 		 */
 
 		laser.readFromNBT(nbt.getCompoundTag("laser"));
+
+		for (int i = 0; i < inv.length; ++i) {
+			inv[i] = ItemStack.loadItemStackFromNBT(nbt.getCompoundTag("inv[" + i + "]"));
+		}
+
+		setDead();
     }
 
 	public void setDockingStation (TileGenericPipe tile, ForgeDirection side) {
@@ -322,5 +367,76 @@ public class EntityRobot extends EntityLiving implements
 
 	public void setMainAI (RobotAIBase ai) {
 		nextAI = ai;
+	}
+
+	@Override
+	public int getSizeInventory() {
+		return inv.length;
+	}
+
+	@Override
+	public ItemStack getStackInSlot(int var1) {
+		return inv[var1];
+	}
+
+	@Override
+	public ItemStack decrStackSize(int var1, int var2) {
+		ItemStack result = inv[var1].splitStack(var2);
+
+		if (inv[var1].stackSize == 0) {
+			inv[var1] = null;
+		}
+
+		return result;
+	}
+
+	@Override
+	public ItemStack getStackInSlotOnClosing(int var1) {
+		return inv[var1].splitStack(var1);
+	}
+
+	@Override
+	public void setInventorySlotContents(int var1, ItemStack var2) {
+		inv[var1] = var2;
+	}
+
+	@Override
+	public String getInventoryName() {
+		return null;
+	}
+
+	@Override
+	public boolean hasCustomInventoryName() {
+		return false;
+	}
+
+	@Override
+	public int getInventoryStackLimit() {
+		return 64;
+	}
+
+	@Override
+	public void markDirty() {
+	}
+
+	@Override
+	public boolean isUseableByPlayer(EntityPlayer var1) {
+		return false;
+	}
+
+	@Override
+	public void openInventory() {
+	}
+
+	@Override
+	public void closeInventory() {
+	}
+
+	@Override
+	public boolean isItemValidForSlot(int var1, ItemStack var2) {
+		return inv[var1] == null
+				|| (inv[var1].isItemEqual(var2) && inv[var1].isStackable() && inv[var1].stackSize
+						+ var2.stackSize <= inv[var1].getItem()
+						.getItemStackLimit());
 	}
 }
