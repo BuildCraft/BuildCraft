@@ -39,6 +39,7 @@ import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.robots.EntityRobot;
 import buildcraft.core.robots.EntityRobotBuilder;
 import buildcraft.core.robots.EntityRobotPicker;
+import buildcraft.core.robots.boards.BoardRobotPickerNBT;
 import buildcraft.silicon.BlockLaser;
 import buildcraft.silicon.BlockLaserTable;
 import buildcraft.silicon.GuiHandler;
@@ -51,6 +52,7 @@ import buildcraft.silicon.TileAdvancedCraftingTable;
 import buildcraft.silicon.TileAssemblyTable;
 import buildcraft.silicon.TileIntegrationTable;
 import buildcraft.silicon.TileLaser;
+import buildcraft.silicon.boards.BoardRecipe;
 import buildcraft.silicon.boards.ImplRedstoneBoardRegistry;
 import buildcraft.silicon.network.PacketHandlerSilicon;
 import buildcraft.silicon.recipes.AdvancedFacadeRecipe;
@@ -114,6 +116,8 @@ public class BuildCraftSilicon extends BuildCraftMod {
 		CoreProxy.proxy.registerItem(robotBuilderItem);
 
 		RedstoneBoardRegistry.instance = new ImplRedstoneBoardRegistry();
+
+		RedstoneBoardRegistry.instance.registerBoardClass(new BoardRobotPickerNBT(), 10);
 	}
 
 	@Mod.EventHandler
@@ -214,6 +218,8 @@ public class BuildCraftSilicon extends BuildCraftMod {
 				'P', Items.iron_ingot,
 				'R', redstoneCrystal,
 				'C', Chipset.DIAMOND.getStack());
+
+		BuildcraftRecipes.assemblyTable.addRecipe(new BoardRecipe());
 
 		// REVERSAL RECIPES
 		EnumSet<GateMaterial> materials = EnumSet.allOf(GateMaterial.class);

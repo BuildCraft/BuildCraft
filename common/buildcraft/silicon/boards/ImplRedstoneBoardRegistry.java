@@ -8,57 +8,55 @@
  */
 package buildcraft.silicon.boards;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Random;
 
-import buildcraft.api.boards.IRedstoneBoard;
+import net.minecraft.nbt.NBTTagCompound;
+
+import buildcraft.api.boards.IRedstoneBoardNBT;
 import buildcraft.api.boards.RedstoneBoardRegistry;
 
 public class ImplRedstoneBoardRegistry extends RedstoneBoardRegistry {
 
 	private static class BoardFactory {
-		public Class<? extends IRedstoneBoard> clas;
+		public IRedstoneBoardNBT boardNBT;
 		public float probability;
 	}
 
 	private float totalProbability;
 
-	private ArrayList<BoardFactory> boards = new ArrayList<BoardFactory>();
+	private HashMap<String, BoardFactory> boards = new HashMap<String, BoardFactory>();
 
 	private Random rand = new Random();
 
 	@Override
-	public void registerBoardClass(Class<? extends IRedstoneBoard> boardClass, float probability) {
+	public void registerBoardClass(IRedstoneBoardNBT redstoneBoardNBT, float probability) {
 		BoardFactory factory = new BoardFactory();
-		factory.clas = boardClass;
+		factory.boardNBT = redstoneBoardNBT;
 		factory.probability = probability;
 
 		totalProbability += probability;
-		boards.add(factory);
+		boards.put(redstoneBoardNBT.getID(), factory);
 	}
 
 	@Override
-	public IRedstoneBoard createRandomBoard() {
+	public void createRandomBoard(NBTTagCompound nbt) {
 		float value = rand.nextFloat() * totalProbability;
 
 		float accumulatedSearch = 0;
 
-		for (BoardFactory f : boards) {
+		for (BoardFactory f : boards.values()) {
 			accumulatedSearch += f.probability;
 
 			if (accumulatedSearch < value) {
-				try {
-					return f.clas.newInstance();
-				} catch (InstantiationException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (IllegalAccessException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				nbt.setString("id", f.boardNBT.getID());
+				return;
 			}
 		}
+	}
 
-		return null;
+	@Override
+	public IRedstoneBoardNBT getRedstoneBoard(NBTTagCompound nbt) {
+		return boards.get(nbt.getString("id")).boardNBT;
 	}
 }

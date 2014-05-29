@@ -11,31 +11,42 @@ package buildcraft.silicon.boards;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 
+import net.minecraftforge.common.util.ForgeDirection;
+
 import buildcraft.BuildCraftSilicon;
+import buildcraft.api.boards.RedstoneBoardRegistry;
+import buildcraft.api.core.IInvSlot;
 import buildcraft.api.recipes.IAssemblyRecipe;
-import buildcraft.api.transport.PipeWire;
+import buildcraft.core.inventory.ITransactor;
+import buildcraft.core.inventory.InventoryIterator;
+import buildcraft.core.inventory.Transactor;
+import buildcraft.core.inventory.filters.ArrayStackFilter;
+import buildcraft.core.utils.NBTUtils;
 
 public class BoardRecipe implements IAssemblyRecipe {
 
-	private Object[] inputs;
+	private ItemStack[] inputs;
+	private ItemStack output;
 
 	public BoardRecipe () {
-		inputs = new Object[] {
-				new ItemStack(BuildCraftSilicon.redstoneBoard, 1, 0),
-				PipeWire.RED.getStack(1),
-				PipeWire.BLUE.getStack(1),
-				PipeWire.YELLOW.getStack(1),
-				PipeWire.GREEN.getStack(1)};
+		inputs = new ItemStack[] {
+				new ItemStack(BuildCraftSilicon.redstoneBoard)};
+
+		output = new ItemStack(BuildCraftSilicon.redstoneBoard);
+		NBTUtils.getItemData(output).setString("id", "<unknown>");
 	}
 
 	@Override
 	public ItemStack getOutput() {
-		return new ItemStack(BuildCraftSilicon.redstoneBoard, 1, 1);
+		return output;
 	}
 
 	@Override
 	public ItemStack makeOutput() {
-		return null;
+		ItemStack stack = new ItemStack(BuildCraftSilicon.redstoneBoard);
+		RedstoneBoardRegistry.instance.createRandomBoard(stack.stackTagCompound);
+
+		return stack;
 	}
 
 	@Override
@@ -48,16 +59,53 @@ public class BoardRecipe implements IAssemblyRecipe {
 		return 10;
 	}
 
+	// FIXME: canBeDone and useItems could use some improvements and
+	// factorization. See AssemblyRecipe as well.
+
 	@Override
 	public boolean canBeDone(IInventory inv) {
-		// TODO Auto-generated method stub
-		return false;
+		for (ItemStack requirement : inputs) {
+			if (requirement == null) {
+				continue;
+			}
+
+			int found = 0; // Amount of ingredient found in inventory
+			int expected = requirement.stackSize;
+
+			for (IInvSlot slot : InventoryIterator.getIterable(inv, ForgeDirection.UNKNOWN)) {
+				ItemStack item = slot.getStackInSlot();
+				if (item == null) {
+					continue;
+				}
+
+				if (item.isItemEqual(requirement)) {
+					found += item.stackSize; // Adds quantity of stack to
+												// amount found
+				}
+
+				if (found >= expected) {
+					break;
+				}
+			}
+
+			// Return false if the amount of ingredient found
+			// is not enough
+			if (found < expected) {
+				return false;
+			}
+		}
+
+		return true;
 	}
 
 	@Override
 	public void useItems(IInventory inv) {
-		// TODO Auto-generated method stub
+		ITransactor tran = Transactor.getTransactorFor(inv);
 
+		for (ItemStack requirement : inputs) {
+			for (int num = 0; num < requirement.stackSize; num++) {
+				tran.remove(new ArrayStackFilter(requirement), ForgeDirection.UNKNOWN, true);
+			}
+		}
 	}
-
 }

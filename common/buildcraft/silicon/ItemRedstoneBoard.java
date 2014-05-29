@@ -10,18 +10,20 @@ package buildcraft.silicon;
 
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.IIcon;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
+import buildcraft.api.boards.RedstoneBoardRegistry;
 import buildcraft.core.ItemBuildCraft;
 import buildcraft.core.utils.NBTUtils;
 
 public class ItemRedstoneBoard extends ItemBuildCraft {
 
 	public IIcon cleanBoard;
-	public IIcon usedBoard;
+	public IIcon unknownBoard;
 
 	public ItemRedstoneBoard() {
 		super();
@@ -29,15 +31,19 @@ public class ItemRedstoneBoard extends ItemBuildCraft {
 
 	@Override
 	public int getItemStackLimit(ItemStack stack) {
-		return NBTUtils.getItemData(stack).hasKey("kind") ? 1 : 16;
+		return NBTUtils.getItemData(stack).hasKey("id") ? 1 : 16;
 	}
 
 	@Override
 	public IIcon getIconIndex(ItemStack stack) {
-		if (!NBTUtils.getItemData(stack).hasKey("kind")) {
+		NBTTagCompound cpt = NBTUtils.getItemData(stack);
+
+		if (!cpt.hasKey("id")) {
 			itemIcon = cleanBoard;
+		} else if (cpt.getString("id").equals("<unknown>")) {
+			itemIcon = unknownBoard;
 		} else {
-			itemIcon = usedBoard;
+			itemIcon = RedstoneBoardRegistry.instance.getRedstoneBoard(cpt).getIcon(cpt);
 		}
 
 		return itemIcon;
@@ -47,7 +53,7 @@ public class ItemRedstoneBoard extends ItemBuildCraft {
 	@SideOnly(Side.CLIENT)
 	public void registerIcons(IIconRegister par1IconRegister) {
 		cleanBoard = par1IconRegister.registerIcon("buildcraft:board_clean");
-		usedBoard = par1IconRegister.registerIcon("buildcraft:board_used");
+		unknownBoard = par1IconRegister.registerIcon("buildcraft:board_unknown");
 	}
 
 }

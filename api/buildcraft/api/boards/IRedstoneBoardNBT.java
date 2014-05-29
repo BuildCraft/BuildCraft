@@ -9,14 +9,15 @@
 package buildcraft.api.boards;
 
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.IIcon;
 
-public abstract class RedstoneBoardRegistry {
+public interface IRedstoneBoardNBT {
 
-	public static RedstoneBoardRegistry instance;
+	String getID();
 
-	public abstract void registerBoardClass(IRedstoneBoardNBT redstoneBoardNBT, float probability);
+	String getName(NBTTagCompound nbt);
 
-	public abstract void createRandomBoard(NBTTagCompound nbt);
+	IRedstoneBoard create(NBTTagCompound nbt);
 
-	public abstract IRedstoneBoardNBT getRedstoneBoard(NBTTagCompound nbt);
+	IIcon getIcon(NBTTagCompound nbt);
 }
