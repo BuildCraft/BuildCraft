@@ -163,7 +163,7 @@ public final class BlockUtil {
 	public static FluidStack drainBlock(Block block, World world, int x, int y, int z, boolean doDrain) {
 		Fluid fluid = FluidRegistry.lookupFluidForBlock(block);
 
-		if (fluid != null) {
+		if (fluid != null && FluidRegistry.isFluidRegistered(fluid)) {
 			int meta = world.getBlockMetadata(x, y, z);
 
 			if (meta != 0) {
