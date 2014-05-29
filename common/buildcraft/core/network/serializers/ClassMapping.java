@@ -29,6 +29,7 @@ import net.minecraftforge.fluids.FluidStack;
 
 import buildcraft.api.core.JavaTools;
 import buildcraft.api.core.NetworkData;
+import buildcraft.core.network.INBTSerializable;
 import buildcraft.core.utils.Utils;
 
 /**
@@ -598,6 +599,8 @@ public class ClassMapping extends ClassSerializer {
 			mapping = classes.get(Block.class.getCanonicalName());
 		} else if (Item.class.isAssignableFrom(clas)) {
 			mapping = classes.get(Item.class.getCanonicalName());
+		} else if (INBTSerializable.class.isAssignableFrom(clas)) {
+			mapping = classes.get(INBTSerializable.class.getCanonicalName());
 		} else if (!classes.containsKey(clas.getCanonicalName())) {
 			mapping = new ClassMapping ();
 			registerSerializer(clas, mapping);
@@ -620,5 +623,6 @@ public class ClassMapping extends ClassSerializer {
 		registerSerializer(ItemStack.class, new SerializerItemStack());
 		registerSerializer(FluidStack.class, new SerializerFluidStack());
 		registerSerializer(Integer.class, new SerializerInteger());
+		registerSerializer(INBTSerializable.class, new SerializerINBTSerializable());
 	}
 }
