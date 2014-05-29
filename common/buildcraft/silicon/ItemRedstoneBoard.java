@@ -41,7 +41,7 @@ public class ItemRedstoneBoard extends ItemBuildCraft {
 	public void addInformation(ItemStack stack, EntityPlayer player, List list, boolean advanced) {
 		NBTTagCompound cpt = NBTUtils.getItemData(stack);
 
-		if (cpt.hasKey("id") && !cpt.getString("id").equals("<unknown>")) {
+		if (cpt.hasKey("id") && !"<unknown>".equals(cpt.getString("id"))) {
 			RedstoneBoardRegistry.instance.getRedstoneBoard(cpt).addInformation(stack, player, list, advanced);
 		}
 
@@ -53,7 +53,7 @@ public class ItemRedstoneBoard extends ItemBuildCraft {
 
 		if (!cpt.hasKey("id")) {
 			itemIcon = cleanBoard;
-		} else if (cpt.getString("id").equals("<unknown>")) {
+		} else if ("<unknown>".equals(cpt.getString("id"))) {
 			itemIcon = unknownBoard;
 		} else {
 			itemIcon = RedstoneBoardRegistry.instance.getRedstoneBoard(cpt).getIcon(cpt);
