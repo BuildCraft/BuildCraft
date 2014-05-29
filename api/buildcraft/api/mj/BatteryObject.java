@@ -151,6 +151,13 @@ public class BatteryObject implements IBatteryIOObject, MjReconfigurator.IConfig
 	}
 
 	@Override
+	public void init(Object object, Field storedField, MjBattery battery) {
+		this.obj = object;
+		this.energyStored = storedField;
+		this.batteryData = battery;
+	}
+
+	@Override
 	public double maxSendedPerCycle() {
 		return batteryData.maxSendedPerCycle();
 	}
