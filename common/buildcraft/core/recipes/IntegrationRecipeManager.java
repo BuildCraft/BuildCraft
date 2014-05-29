@@ -11,10 +11,10 @@ package buildcraft.core.recipes;
 import java.util.LinkedList;
 import java.util.List;
 
+import buildcraft.api.recipes.IIntegrationRecipe;
 import buildcraft.api.recipes.IIntegrationRecipeManager;
 
 public class IntegrationRecipeManager implements IIntegrationRecipeManager {
-
 	public static final IntegrationRecipeManager INSTANCE = new IntegrationRecipeManager();
 	private List<IIntegrationRecipe> integrationRecipes = new LinkedList<IIntegrationRecipe>();
 
@@ -24,7 +24,7 @@ public class IntegrationRecipeManager implements IIntegrationRecipeManager {
 	}
 
 	@Override
-	public List<IIntegrationRecipe> getRecipes() {
+	public List<? extends IIntegrationRecipe> getRecipes() {
 		return integrationRecipes;
 	}
 }

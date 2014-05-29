@@ -9,7 +9,6 @@
 package buildcraft;
 
 import java.util.ArrayList;
-import java.util.EnumSet;
 import java.util.List;
 
 import net.minecraft.init.Blocks;
@@ -213,13 +212,8 @@ public class BuildCraftSilicon extends BuildCraftMod {
 		BuildcraftRecipes.assemblyTable.addRecipe(new BoardRecipe());
 		BuildcraftRecipes.integrationTable.addRecipe(new RobotIntegrationRecipe());
 
-		// REVERSAL RECIPES
-		EnumSet<GateMaterial> materials = EnumSet.allOf(GateMaterial.class);
-		materials.remove(GateMaterial.REDSTONE);
-		for (GateMaterial material : materials) {
-			BuildcraftRecipes.integrationTable.addRecipe(new GateLogicSwapRecipe(material, GateLogic.AND, GateLogic.OR));
-			BuildcraftRecipes.integrationTable.addRecipe(new GateLogicSwapRecipe(material, GateLogic.OR, GateLogic.AND));
-		}
+		// REVERSAL RECIPE
+		BuildcraftRecipes.integrationTable.addRecipe(new GateLogicSwapRecipe());
 
 		// EXPANSIONS
 		BuildcraftRecipes.integrationTable.addRecipe(new GateExpansionRecipe(GateExpansionPulsar.INSTANCE, Chipset.PULSATING.getStack()));
