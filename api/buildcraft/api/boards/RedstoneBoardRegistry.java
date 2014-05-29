@@ -8,6 +8,7 @@
  */
 package buildcraft.api.boards;
 
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.nbt.NBTTagCompound;
 
 public abstract class RedstoneBoardRegistry {
@@ -19,4 +20,6 @@ public abstract class RedstoneBoardRegistry {
 	public abstract void createRandomBoard(NBTTagCompound nbt);
 
 	public abstract IRedstoneBoardNBT getRedstoneBoard(NBTTagCompound nbt);
+
+	public abstract void registerIcons(IIconRegister par1IconRegister);
 }

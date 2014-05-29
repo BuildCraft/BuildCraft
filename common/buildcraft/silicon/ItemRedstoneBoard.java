@@ -8,7 +8,10 @@
  */
 package buildcraft.silicon;
 
+import java.util.List;
+
 import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.IIcon;
@@ -35,6 +38,16 @@ public class ItemRedstoneBoard extends ItemBuildCraft {
 	}
 
 	@Override
+	public void addInformation(ItemStack stack, EntityPlayer player, List list, boolean advanced) {
+		NBTTagCompound cpt = NBTUtils.getItemData(stack);
+
+		if (cpt.hasKey("id") && !cpt.getString("id").equals("<unknown>")) {
+			RedstoneBoardRegistry.instance.getRedstoneBoard(cpt).addInformation(stack, player, list, advanced);
+		}
+
+	}
+
+	@Override
 	public IIcon getIconIndex(ItemStack stack) {
 		NBTTagCompound cpt = NBTUtils.getItemData(stack);
 
@@ -54,6 +67,8 @@ public class ItemRedstoneBoard extends ItemBuildCraft {
 	public void registerIcons(IIconRegister par1IconRegister) {
 		cleanBoard = par1IconRegister.registerIcon("buildcraft:board_clean");
 		unknownBoard = par1IconRegister.registerIcon("buildcraft:board_unknown");
+
+		RedstoneBoardRegistry.instance.registerIcons(par1IconRegister);
 	}
 
 }

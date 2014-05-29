@@ -201,7 +201,7 @@ public class BuildCraftSilicon extends BuildCraftMod {
 		addGateRecipe(80000, GateMaterial.DIAMOND, Chipset.DIAMOND, PipeWire.RED, PipeWire.BLUE, PipeWire.GREEN, PipeWire.YELLOW);
 
 		// ROBOTS AND BOARDS
-		BuildcraftRecipes.assemblyTable.addRecipe(100000, new ItemStack(redstoneCrystal), new ItemStack(
+		BuildcraftRecipes.assemblyTable.addRecipe(1000000, new ItemStack(redstoneCrystal), new ItemStack(
 				Blocks.redstone_block));
 
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(redstoneBoard),

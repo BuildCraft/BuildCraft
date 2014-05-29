@@ -11,6 +11,7 @@ package buildcraft.silicon.boards;
 import java.util.HashMap;
 import java.util.Random;
 
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.nbt.NBTTagCompound;
 
 import buildcraft.api.boards.IRedstoneBoardNBT;
@@ -48,7 +49,7 @@ public class ImplRedstoneBoardRegistry extends RedstoneBoardRegistry {
 		for (BoardFactory f : boards.values()) {
 			accumulatedSearch += f.probability;
 
-			if (accumulatedSearch < value) {
+			if (accumulatedSearch > value) {
 				nbt.setString("id", f.boardNBT.getID());
 				return;
 			}
@@ -58,5 +59,12 @@ public class ImplRedstoneBoardRegistry extends RedstoneBoardRegistry {
 	@Override
 	public IRedstoneBoardNBT getRedstoneBoard(NBTTagCompound nbt) {
 		return boards.get(nbt.getString("id")).boardNBT;
+	}
+
+	@Override
+	public void registerIcons(IIconRegister par1IconRegister) {
+		for (BoardFactory f : boards.values()) {
+			f.boardNBT.registerIcons(par1IconRegister);
+		}
 	}
 }

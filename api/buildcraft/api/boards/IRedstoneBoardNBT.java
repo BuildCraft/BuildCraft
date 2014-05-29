@@ -8,16 +8,28 @@
  */
 package buildcraft.api.boards;
 
+import java.util.List;
+
+import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.IIcon;
+
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public interface IRedstoneBoardNBT {
 
 	String getID();
 
-	String getName(NBTTagCompound nbt);
+	void addInformation(ItemStack stack, EntityPlayer player, List list, boolean advanced);
 
 	IRedstoneBoard create(NBTTagCompound nbt);
 
+	@SideOnly(Side.CLIENT)
+	void registerIcons(IIconRegister iconRegister);
+
+	@SideOnly(Side.CLIENT)
 	IIcon getIcon(NBTTagCompound nbt);
 }

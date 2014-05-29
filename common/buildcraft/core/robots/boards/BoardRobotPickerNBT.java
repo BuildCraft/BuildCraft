@@ -8,12 +8,17 @@
  */
 package buildcraft.core.robots.boards;
 
-import net.minecraft.client.Minecraft;
+import java.util.List;
+
+import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.IIcon;
 
 import buildcraft.api.boards.IRedstoneBoard;
 import buildcraft.api.boards.IRedstoneBoardNBT;
+import buildcraft.core.utils.StringUtils;
 
 public class BoardRobotPickerNBT implements IRedstoneBoardNBT {
 
@@ -25,8 +30,8 @@ public class BoardRobotPickerNBT implements IRedstoneBoardNBT {
 	}
 
 	@Override
-	public String getName(NBTTagCompound nbt) {
-		return getID();
+	public void addInformation(ItemStack stack, EntityPlayer player, List list, boolean advanced) {
+		list.add(StringUtils.localize("buildcraft.boardRobotPicker"));
 	}
 
 	@Override
@@ -36,11 +41,12 @@ public class BoardRobotPickerNBT implements IRedstoneBoardNBT {
 
 	@Override
 	public IIcon getIcon(NBTTagCompound nbt) {
-		if (icon == null) {
-			icon = Minecraft.getMinecraft().getTextureMapBlocks().registerIcon("buildcraft:board_green");
-		}
-
 		return icon;
+	}
+
+	@Override
+	public void registerIcons(IIconRegister iconRegister) {
+		icon = iconRegister.registerIcon("buildcraft:board_green");
 	}
 
 }

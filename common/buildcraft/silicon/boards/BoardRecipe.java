@@ -44,7 +44,7 @@ public class BoardRecipe implements IAssemblyRecipe {
 	@Override
 	public ItemStack makeOutput() {
 		ItemStack stack = new ItemStack(BuildCraftSilicon.redstoneBoard);
-		RedstoneBoardRegistry.instance.createRandomBoard(stack.stackTagCompound);
+		RedstoneBoardRegistry.instance.createRandomBoard(NBTUtils.getItemData(stack));
 
 		return stack;
 	}
@@ -56,7 +56,7 @@ public class BoardRecipe implements IAssemblyRecipe {
 
 	@Override
 	public double getEnergyCost() {
-		return 10;
+		return 10000;
 	}
 
 	// FIXME: canBeDone and useItems could use some improvements and
