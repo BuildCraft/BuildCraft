@@ -80,7 +80,7 @@ public @interface MjBattery {
 	 * @return Ability to cache this battery instance for performance reasons. Usual
 	 * not required to modify it for every battery, you can dynamicaly reconfigure
 	 * your batteries with {@link MjAPI#reconfigure()} and reset cache
-	 * for tile with {@link MjAPI#resetBatteriesCache()}
+	 * for tile with {@link MjAPI#resetBatteriesCache(IBatteryObject)}
 	 */
 	boolean cacheable() default true;
 }

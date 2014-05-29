@@ -9,11 +9,18 @@
 package buildcraft.api.mj;
 
 import java.lang.annotation.Annotation;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.api.core.BCLog;
 
+/**
+ * Reconfiguration helper.
+ * Allow to change battery parameters in runtime.
+ */
 public class MjReconfigurator {
 	private static final class ConfigurableMjBattery implements MjBattery {
 		double maxCapacity, maxReceivedPerCycle, maxSendedPerCycle, minimumConsumption;
@@ -68,6 +75,9 @@ public class MjReconfigurator {
 		}
 	}
 
+	/**
+	 * Helper interface which should implement all configurable batteries.
+	 */
 	public interface IConfigurableBatteryObject extends IBatteryObject {
 		MjBattery getMjBattery();
 
@@ -129,14 +139,32 @@ public class MjReconfigurator {
 		ConfigurableMjBattery battery = obtainConfigurableBattery(batteryObject);
 		if (battery != null) {
 			battery.kind = kind;
+			MjAPI.resetBatteriesCache(batteryObject);
 		}
 	}
 
-	public void sides(IBatteryObject batteryObject, ForgeDirection[] sides) {
+	/**
+	 * Reconfigure passed battery instance for working with passed sides only
+	 * @param sides Enabled sides
+	 */
+	public void sides(IBatteryObject batteryObject, ForgeDirection... sides) {
 		ConfigurableMjBattery battery = obtainConfigurableBattery(batteryObject);
 		if (battery != null) {
 			battery.sides = sides;
+			MjAPI.resetBatteriesCache(batteryObject);
 		}
+	}
+
+	/**
+	 * Reconfigure passed battery instance for working with all sides exclude passed
+	 * @param sides Disabled sides
+	 */
+	public void sidesExclude(IBatteryObject batteryObject, ForgeDirection... sides) {
+		List<ForgeDirection> newSides = new ArrayList<ForgeDirection>(Arrays.asList(ForgeDirection.VALID_DIRECTIONS));
+		for (ForgeDirection side : sides) {
+			newSides.remove(side);
+		}
+		sides(batteryObject, newSides.toArray(new ForgeDirection[newSides.size()]));
 	}
 
 	public void mode(IBatteryObject batteryObject, IOMode mode) {
