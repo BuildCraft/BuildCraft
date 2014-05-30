@@ -9,6 +9,7 @@
 package buildcraft.api.boards;
 
 import java.util.List;
+import java.util.Random;
 
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
@@ -32,4 +33,11 @@ public interface IRedstoneBoardNBT {
 
 	@SideOnly(Side.CLIENT)
 	IIcon getIcon(NBTTagCompound nbt);
+
+	BoardParameter[] getParameters();
+
+	void setParameters(BoardParameter[] parameters);
+
+	void createRandomBoard(NBTTagCompound nbt, Random rand);
+
 }

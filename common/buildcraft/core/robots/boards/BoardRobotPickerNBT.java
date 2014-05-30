@@ -9,6 +9,7 @@
 package buildcraft.core.robots.boards;
 
 import java.util.List;
+import java.util.Random;
 
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
@@ -17,9 +18,11 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
 
+import buildcraft.api.boards.BoardParameter;
 import buildcraft.api.boards.IRedstoneBoardRobot;
 import buildcraft.api.boards.IRedstoneBoardRobotNBT;
 import buildcraft.core.robots.EntityRobot;
+import buildcraft.core.utils.NBTUtils;
 import buildcraft.core.utils.StringUtils;
 
 public class BoardRobotPickerNBT implements IRedstoneBoardRobotNBT {
@@ -34,6 +37,12 @@ public class BoardRobotPickerNBT implements IRedstoneBoardRobotNBT {
 	@Override
 	public void addInformation(ItemStack stack, EntityPlayer player, List list, boolean advanced) {
 		list.add(StringUtils.localize("buildcraft.boardRobotPicker"));
+
+		NBTTagCompound nbt = NBTUtils.getItemData(stack);
+
+		if (nbt.getInteger("params") == 1) {
+			list.add(StringUtils.localize("buildcraft.boardDetail.oneParameter"));
+		}
 	}
 
 	@Override
@@ -54,6 +63,26 @@ public class BoardRobotPickerNBT implements IRedstoneBoardRobotNBT {
 	@Override
 	public ResourceLocation getRobotTexture() {
 		return EntityRobot.ROBOT_TRANSPORT;
+	}
+
+	@Override
+	public BoardParameter[] getParameters() {
+		return null;
+	}
+
+	@Override
+	public void setParameters(BoardParameter[] parameters) {
+	}
+
+	@Override
+	public void createRandomBoard(NBTTagCompound nbt, Random rand) {
+		float value = rand.nextFloat();
+
+		if (value < 0.5) {
+			nbt.setInteger("params", 0);
+		} else {
+			nbt.setInteger("params", 1);
+		}
 	}
 
 }

@@ -1,6 +1,7 @@
 # Master language file
 
 buildcraft.boardRobotPicker=Picker Program
+buildcraft.boardDetail.oneParameter=One Parameter
 
 chat.pipe.power.iron.mode=Switched to %d MJ/t limit
 chat.pipe.power.energyConverter=Energy conversion: %s
