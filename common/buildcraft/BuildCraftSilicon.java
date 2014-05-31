@@ -29,6 +29,7 @@ import buildcraft.builders.schematics.SchematicRotateMeta;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.InterModComms;
 import buildcraft.core.Version;
+import buildcraft.core.network.BuildCraftChannelHandler;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.silicon.BlockLaser;
 import buildcraft.silicon.BlockLaserTable;
@@ -83,7 +84,7 @@ public class BuildCraftSilicon extends BuildCraftMod {
 	@Mod.EventHandler
 	public void init(FMLInitializationEvent evt) {
 		channels = NetworkRegistry.INSTANCE.newChannel
-				(DefaultProps.NET_CHANNEL_NAME + "-SILICON", new PacketHandlerSilicon());
+				(DefaultProps.NET_CHANNEL_NAME + "-SILICON", new BuildCraftChannelHandler(), new PacketHandlerSilicon());
 
 		NetworkRegistry.INSTANCE.registerGuiHandler(instance, new GuiHandler());
 		CoreProxy.proxy.registerTileEntity(TileLaser.class, "net.minecraft.src.buildcraft.factory.TileLaser");

@@ -14,6 +14,7 @@ import net.minecraft.entity.player.EntityPlayer;
 
 import buildcraft.transport.Pipe;
 
+// TODO: This is not yet used
 public class PacketRPCPipe extends BuildCraftPacket {
 
 	public Pipe pipe;

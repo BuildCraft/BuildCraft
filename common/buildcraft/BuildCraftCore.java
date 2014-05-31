@@ -77,6 +77,7 @@ import buildcraft.core.ItemWrench;
 import buildcraft.core.SpringPopulate;
 import buildcraft.core.TickHandlerCoreClient;
 import buildcraft.core.Version;
+import buildcraft.core.network.BuildCraftChannelHandler;
 import buildcraft.core.network.EntityIds;
 import buildcraft.core.network.PacketHandler;
 import buildcraft.core.network.PacketUpdate;
@@ -320,7 +321,7 @@ public class BuildCraftCore extends BuildCraftMod {
 		BuildCraftAPI.proxy = CoreProxy.proxy;
 
 		channels = NetworkRegistry.INSTANCE.newChannel
-				(DefaultProps.NET_CHANNEL_NAME + "-CORE", new PacketHandler());
+				(DefaultProps.NET_CHANNEL_NAME + "-CORE", new BuildCraftChannelHandler(), new PacketHandler());
 
 		ActionManager.registerTriggerProvider(new DefaultTriggerProvider());
 		ActionManager.registerActionProvider(new DefaultActionProvider());

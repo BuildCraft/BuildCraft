@@ -41,6 +41,7 @@ import buildcraft.builders.schematics.SchematicIgnoreMeta;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.InterModComms;
 import buildcraft.core.Version;
+import buildcraft.core.network.BuildCraftChannelHandler;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.ConfigUtils;
 import buildcraft.factory.BlockAutoWorkbench;
@@ -161,7 +162,7 @@ public class BuildCraftFactory extends BuildCraftMod {
 	@Mod.EventHandler
 	public void initialize(FMLPreInitializationEvent evt) {
 		channels = NetworkRegistry.INSTANCE.newChannel
-				(DefaultProps.NET_CHANNEL_NAME + "-FACTORY", new PacketHandlerFactory());
+				(DefaultProps.NET_CHANNEL_NAME + "-FACTORY", new BuildCraftChannelHandler(), new PacketHandlerFactory());
 
 		ConfigUtils genCat = new ConfigUtils(BuildCraftCore.mainConfiguration, Configuration.CATEGORY_GENERAL);
 

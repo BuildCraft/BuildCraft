@@ -46,6 +46,7 @@ import buildcraft.core.DefaultProps;
 import buildcraft.core.InterModComms;
 import buildcraft.core.ItemBuildCraft;
 import buildcraft.core.Version;
+import buildcraft.core.network.BuildCraftChannelHandler;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.triggers.BCAction;
 import buildcraft.core.triggers.BCTrigger;
@@ -425,7 +426,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 	@Mod.EventHandler
 	public void init(FMLInitializationEvent evt) {
 		channels = NetworkRegistry.INSTANCE.newChannel
-				(DefaultProps.NET_CHANNEL_NAME + "-TRANSPORT", new PacketHandlerTransport());
+				(DefaultProps.NET_CHANNEL_NAME + "-TRANSPORT", new BuildCraftChannelHandler(), new PacketHandlerTransport());
 
 		// Register connection handler
 		// MinecraftForge.registerConnectionHandler(new ConnectionHandler());

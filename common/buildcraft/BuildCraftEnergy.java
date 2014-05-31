@@ -52,6 +52,7 @@ import buildcraft.core.BlockSpring;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.InterModComms;
 import buildcraft.core.Version;
+import buildcraft.core.network.BuildCraftChannelHandler;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.triggers.BCTrigger;
 import buildcraft.energy.BlockBuildcraftFluid;
@@ -328,7 +329,7 @@ public class BuildCraftEnergy extends BuildCraftMod {
 	@Mod.EventHandler
 	public void init(FMLInitializationEvent evt) {
 		channels = NetworkRegistry.INSTANCE.newChannel
-				(DefaultProps.NET_CHANNEL_NAME + "-ENERGY", new PacketHandlerTransport());
+				(DefaultProps.NET_CHANNEL_NAME + "-ENERGY", new BuildCraftChannelHandler(),  new PacketHandlerTransport());
 
 		NetworkRegistry.INSTANCE.registerGuiHandler(instance, new GuiHandler());
 

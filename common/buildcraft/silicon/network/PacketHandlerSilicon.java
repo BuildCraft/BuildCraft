@@ -8,8 +8,9 @@
  */
 package buildcraft.silicon.network;
 
-import io.netty.buffer.ByteBuf;
+import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.SimpleChannelInboundHandler;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
@@ -19,7 +20,6 @@ import net.minecraft.world.World;
 
 import cpw.mods.fml.common.network.NetworkRegistry;
 
-import buildcraft.core.network.BuildCraftChannelHandler;
 import buildcraft.core.network.BuildCraftPacket;
 import buildcraft.core.network.PacketCoordinates;
 import buildcraft.core.network.PacketIds;
@@ -31,12 +31,11 @@ import buildcraft.silicon.TileAssemblyTable;
 import buildcraft.silicon.TileAssemblyTable.SelectionMessage;
 import buildcraft.silicon.gui.ContainerAssemblyTable;
 
-public class PacketHandlerSilicon extends BuildCraftChannelHandler {
+@Sharable
+public class PacketHandlerSilicon extends SimpleChannelInboundHandler<BuildCraftPacket>  {
 
 	@Override
-	public void decodeInto(ChannelHandlerContext ctx, ByteBuf data, BuildCraftPacket packet) {
-		super.decodeInto(ctx, data, packet);
-
+	protected  void channelRead0(ChannelHandlerContext ctx, BuildCraftPacket packet) {
 		try {
 			INetHandler netHandler = ctx.channel().attr(NetworkRegistry.NET_HANDLER).get();
 
