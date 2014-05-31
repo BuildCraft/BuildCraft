@@ -10,8 +10,9 @@ package buildcraft.core.network;
 
 import java.io.IOException;
 
-import io.netty.buffer.ByteBuf;
+import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.SimpleChannelInboundHandler;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.INetHandler;
@@ -20,13 +21,10 @@ import net.minecraft.world.World;
 
 import cpw.mods.fml.common.network.NetworkRegistry;
 
-import net.minecraftforge.common.DimensionManager;
-
 import buildcraft.core.proxy.CoreProxy;
-import buildcraft.transport.TileGenericPipe;
 
-public class PacketHandler extends BuildCraftChannelHandler {
-
+@Sharable
+public class PacketHandler extends SimpleChannelInboundHandler<BuildCraftPacket>  {
 	private void onTileUpdate(EntityPlayer player, PacketTileUpdate packet) throws IOException {
 		World world = player.worldObj;
 
@@ -46,10 +44,7 @@ public class PacketHandler extends BuildCraftChannelHandler {
 	}
 
 	@Override
-
-	public void decodeInto(ChannelHandlerContext ctx, ByteBuf data, BuildCraftPacket packet) {
-		super.decodeInto(ctx, data, packet);
-
+	protected  void channelRead0(ChannelHandlerContext ctx, BuildCraftPacket packet) {
 		try {
 			INetHandler netHandler = ctx.channel().attr(NetworkRegistry.NET_HANDLER).get();
 			EntityPlayer player = CoreProxy.proxy.getPlayerFromNetHandler(netHandler);
@@ -69,7 +64,7 @@ public class PacketHandler extends BuildCraftChannelHandler {
 					TileEntity tile = world.getTileEntity(pkt.posX, pkt.posY, pkt.posZ);
 
 					if (tile instanceof ISyncedTile) {
-						pkt.applyStates(data, (ISyncedTile) tile);
+						pkt.applyStates((ISyncedTile) tile);
 					}
 
 					break;
@@ -92,36 +87,32 @@ public class PacketHandler extends BuildCraftChannelHandler {
 				}
 
 				case PacketIds.RPC_PIPE: {
-					PacketRPCPipe rpc = new PacketRPCPipe();
-					rpc.sender = player;
+				// TODO: RPC pipes are not used right now. Ressurect this
+				// code if needed later.
+				/*
+				 * PacketRPCPipe rpc = new PacketRPCPipe(); rpc.sender = player;
+				 *
+				 * int dimId = data.readShort(); World world = null;
+				 *
+				 * if (!rpc.sender.worldObj.isRemote) { // if this is a server,
+				 * then get the world
+				 *
+				 * world = DimensionManager.getProvider(dimId).worldObj; } else
+				 * if (rpc.sender.worldObj.provider.dimensionId == dimId) { //
+				 * if the player is on this world, then synchronize things
+				 *
+				 * world = rpc.sender.worldObj; }
+				 *
+				 * if (world != null) { int x = data.readInt(); int y =
+				 * data.readInt(); int z = data.readInt();
+				 *
+				 * TileEntity tile = world.getTileEntity(x, y, z);
+				 *
+				 * if (tile instanceof TileGenericPipe) { rpc.setPipe
+				 * (((TileGenericPipe) tile).pipe); rpc.readData(data); } }
+				 */
+				break;
 
-					int dimId = data.readShort();
-					World world = null;
-
-					if (!rpc.sender.worldObj.isRemote) {
-						// if this is a server, then get the world
-
-						world = DimensionManager.getProvider(dimId).worldObj;
-					} else if (rpc.sender.worldObj.provider.dimensionId == dimId) {
-						// if the player is on this world, then synchronize things
-
-						world = rpc.sender.worldObj;
-					}
-
-					if (world != null) {
-						int x = data.readInt();
-						int y = data.readInt();
-						int z = data.readInt();
-
-						TileEntity tile = world.getTileEntity(x, y, z);
-
-						if (tile instanceof TileGenericPipe) {
-							rpc.setPipe (((TileGenericPipe) tile).pipe);
-							rpc.readData(data);
-						}
-					}
-
-					break;
 				}
 			}
 		} catch (Exception ex) {

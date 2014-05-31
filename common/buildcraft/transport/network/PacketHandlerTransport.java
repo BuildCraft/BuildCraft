@@ -8,8 +8,9 @@
  */
 package buildcraft.transport.network;
 
-import io.netty.buffer.ByteBuf;
+import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.SimpleChannelInboundHandler;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
@@ -19,7 +20,6 @@ import net.minecraft.world.World;
 
 import cpw.mods.fml.common.network.NetworkRegistry;
 
-import buildcraft.core.network.BuildCraftChannelHandler;
 import buildcraft.core.network.BuildCraftPacket;
 import buildcraft.core.network.PacketCoordinates;
 import buildcraft.core.network.PacketIds;
@@ -33,7 +33,8 @@ import buildcraft.transport.gui.ContainerGateInterface;
 import buildcraft.transport.pipes.PipeItemsDiamond;
 import buildcraft.transport.pipes.PipeItemsEmerald;
 
-public class PacketHandlerTransport extends BuildCraftChannelHandler {
+@Sharable
+public class PacketHandlerTransport extends SimpleChannelInboundHandler<BuildCraftPacket>  {
 
 	/**
 	 * TODO: A lot of this is based on the player to retrieve the world.
@@ -42,8 +43,7 @@ public class PacketHandlerTransport extends BuildCraftChannelHandler {
 	 * RPCs.
 	 */
 	@Override
-	public void decodeInto(ChannelHandlerContext ctx, ByteBuf data, BuildCraftPacket packet) {
-		super.decodeInto(ctx, data, packet);
+	protected  void channelRead0(ChannelHandlerContext ctx, BuildCraftPacket packet) {
 		try {
 			INetHandler netHandler = ctx.channel().attr(NetworkRegistry.NET_HANDLER).get();
 			EntityPlayer player = CoreProxy.proxy.getPlayerFromNetHandler(netHandler);

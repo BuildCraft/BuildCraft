@@ -11,7 +11,9 @@ package buildcraft.factory.network;
 import java.io.IOException;
 
 import io.netty.buffer.ByteBuf;
+import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.SimpleChannelInboundHandler;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.INetHandler;
@@ -22,19 +24,17 @@ import cpw.mods.fml.common.network.NetworkRegistry;
 
 import net.minecraftforge.fluids.FluidRegistry;
 
-import buildcraft.core.network.BuildCraftChannelHandler;
 import buildcraft.core.network.BuildCraftPacket;
 import buildcraft.core.network.PacketIds;
 import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.factory.TileRefinery;
 
-public class PacketHandlerFactory extends BuildCraftChannelHandler {
+@Sharable
+public class PacketHandlerFactory extends SimpleChannelInboundHandler<BuildCraftPacket> {
 
 	@Override
-	public void decodeInto(ChannelHandlerContext ctx, ByteBuf data, BuildCraftPacket packet) {
-		super.decodeInto(ctx, data, packet);
-
+	protected  void channelRead0(ChannelHandlerContext ctx, BuildCraftPacket packet) {
 		try {
 			INetHandler netHandler = ctx.channel().attr(NetworkRegistry.NET_HANDLER).get();
 			EntityPlayer player = CoreProxy.proxy.getPlayerFromNetHandler(netHandler);
