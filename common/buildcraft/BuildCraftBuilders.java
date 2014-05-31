@@ -65,9 +65,11 @@ import buildcraft.core.InterModComms;
 import buildcraft.core.Version;
 import buildcraft.core.blueprints.BptPlayerIndex;
 import buildcraft.core.blueprints.BptRootIndex;
+import buildcraft.core.network.BuildCraftChannelHandler;
 import buildcraft.core.network.PacketHandler;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.BCLog;
+
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
@@ -92,6 +94,7 @@ import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.MinecraftForge;
@@ -123,7 +126,7 @@ public class BuildCraftBuilders extends BuildCraftMod {
 	@EventHandler
 	public void init(FMLInitializationEvent evt) {
 		channels = NetworkRegistry.INSTANCE.newChannel
-				(DefaultProps.NET_CHANNEL_NAME + "-BUILDERS", new PacketHandlerBuilders());
+				(DefaultProps.NET_CHANNEL_NAME + "-BUILDERS", new BuildCraftChannelHandler(), new PacketHandlerBuilders());
 		
 		// Register gui handler
 		NetworkRegistry.INSTANCE.registerGuiHandler(instance, new GuiHandler());

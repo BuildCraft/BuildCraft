@@ -18,6 +18,7 @@ import buildcraft.core.BuildCraftConfiguration;
 import buildcraft.core.InterModComms;
 import buildcraft.core.ItemBuildCraft;
 import buildcraft.core.Version;
+import buildcraft.core.network.BuildCraftChannelHandler;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.triggers.BCAction;
 import buildcraft.core.triggers.BCTrigger;
@@ -86,6 +87,7 @@ import buildcraft.transport.triggers.TriggerPipeContents.PipeContents;
 import buildcraft.transport.triggers.TriggerPipeSignal;
 import buildcraft.transport.triggers.TriggerRedstoneFaderInput;
 import buildcraft.transport.triggers.ActionRedstoneFaderOutput;
+
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
@@ -106,6 +108,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
+
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.common.config.Property;
@@ -399,7 +402,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 	@EventHandler
 	public void init(FMLInitializationEvent evt) {
 		channels = NetworkRegistry.INSTANCE.newChannel
-				(DefaultProps.NET_CHANNEL_NAME + "-TRANSPORT", new PacketHandlerTransport());
+				(DefaultProps.NET_CHANNEL_NAME + "-TRANSPORT", new BuildCraftChannelHandler(), new PacketHandlerTransport());
 		
 		// Register connection handler
 		// MinecraftForge.registerConnectionHandler(new ConnectionHandler());

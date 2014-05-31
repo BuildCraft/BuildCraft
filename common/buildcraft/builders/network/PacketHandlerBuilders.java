@@ -10,9 +10,13 @@ package buildcraft.builders.network;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.channel.ChannelHandler.Sharable;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.INetHandler;
 import net.minecraft.tileentity.TileEntity;
+
 import buildcraft.builders.TileArchitect;
 import buildcraft.builders.TileBlueprintLibrary;
 import buildcraft.core.network.BuildCraftChannelHandler;
@@ -21,14 +25,14 @@ import buildcraft.core.network.PacketIds;
 import buildcraft.core.network.PacketPayloadArrays;
 import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.proxy.CoreProxy;
+
 import cpw.mods.fml.common.network.NetworkRegistry;
 
-public class PacketHandlerBuilders extends BuildCraftChannelHandler {
+@Sharable
+public class PacketHandlerBuilders extends SimpleChannelInboundHandler<BuildCraftPacket>  {
 
 	@Override
-	public void decodeInto(ChannelHandlerContext ctx, ByteBuf data, BuildCraftPacket packet) {
-		super.decodeInto(ctx, data, packet);
-
+	protected  void channelRead0(ChannelHandlerContext ctx, BuildCraftPacket packet) {		
 		try {
 			INetHandler netHandler = ctx.channel().attr(NetworkRegistry.NET_HANDLER).get();
 			EntityPlayer player = CoreProxy.proxy.getPlayerFromNetHandler(netHandler);

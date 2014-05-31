@@ -11,6 +11,7 @@ package buildcraft;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.InterModComms;
 import buildcraft.core.Version;
+import buildcraft.core.network.BuildCraftChannelHandler;
 import buildcraft.core.network.PacketHandler;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.ConfigUtils;
@@ -65,6 +66,7 @@ import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
+
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.ForgeChunkManager;
@@ -161,7 +163,7 @@ public class BuildCraftFactory extends BuildCraftMod {
 	@EventHandler
 	public void initialize(FMLPreInitializationEvent evt) {
 		channels = NetworkRegistry.INSTANCE.newChannel
-				(DefaultProps.NET_CHANNEL_NAME + "-FACTORY", new PacketHandlerFactory());
+				(DefaultProps.NET_CHANNEL_NAME + "-FACTORY", new BuildCraftChannelHandler(), new PacketHandlerFactory());
 		
 		ConfigUtils genCat = new ConfigUtils(BuildCraftCore.mainConfiguration, Configuration.CATEGORY_GENERAL);
 

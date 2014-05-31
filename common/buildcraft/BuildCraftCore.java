@@ -26,6 +26,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.network.Packet;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
+
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.IPlantable;
@@ -34,6 +35,7 @@ import net.minecraftforge.common.config.Property;
 import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.fluids.BlockFluidBase;
 import net.minecraftforge.fluids.IFluidBlock;
+
 import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.gates.ActionManager;
@@ -56,6 +58,7 @@ import buildcraft.core.SpringPopulate;
 import buildcraft.core.TickHandlerCoreClient;
 import buildcraft.core.Version;
 import buildcraft.core.blueprints.BptItem;
+import buildcraft.core.network.BuildCraftChannelHandler;
 import buildcraft.core.network.BuildCraftPacket;
 import buildcraft.core.network.EntityIds;
 import buildcraft.core.network.PacketHandler;
@@ -78,6 +81,7 @@ import buildcraft.core.utils.BCLog;
 import buildcraft.core.recipes.AssemblyRecipeManager;
 import buildcraft.core.recipes.IntegrationRecipeManager;
 import buildcraft.core.triggers.TriggerRedstoneInput;
+
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
@@ -270,7 +274,7 @@ public class BuildCraftCore extends BuildCraftMod {
 	@EventHandler
 	public void initialize(FMLInitializationEvent evt) {
 		channels = NetworkRegistry.INSTANCE.newChannel
-				(DefaultProps.NET_CHANNEL_NAME + "-CORE", new PacketHandler());
+				(DefaultProps.NET_CHANNEL_NAME + "-CORE", new BuildCraftChannelHandler(), new PacketHandler());
 		
 		ActionManager.registerTriggerProvider(new DefaultTriggerProvider());
 		ActionManager.registerActionProvider(new DefaultActionProvider());

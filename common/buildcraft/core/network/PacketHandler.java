@@ -10,6 +10,8 @@ package buildcraft.core.network;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.channel.ChannelHandler.Sharable;
 
 import java.io.IOException;
 
@@ -17,10 +19,13 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.INetHandler;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+
 import buildcraft.core.proxy.CoreProxy;
+
 import cpw.mods.fml.common.network.NetworkRegistry;
 
-public class PacketHandler extends BuildCraftChannelHandler {
+@Sharable
+public class PacketHandler extends SimpleChannelInboundHandler<BuildCraftPacket>  {
 
 	private void onTileUpdate(EntityPlayer player, PacketTileUpdate packet) throws IOException {
 		World world = player.worldObj;
@@ -41,9 +46,7 @@ public class PacketHandler extends BuildCraftChannelHandler {
 	}
 
 	@Override
-	public void decodeInto(ChannelHandlerContext ctx, ByteBuf data, BuildCraftPacket packet) {
-		super.decodeInto(ctx, data, packet);
-
+	protected  void channelRead0(ChannelHandlerContext ctx, BuildCraftPacket packet) {
 		try {
 			INetHandler netHandler = ctx.channel().attr(NetworkRegistry.NET_HANDLER).get();
 			EntityPlayer player = CoreProxy.proxy.getPlayerFromNetHandler(netHandler);
@@ -63,7 +66,7 @@ public class PacketHandler extends BuildCraftChannelHandler {
 					TileEntity tile = world.getTileEntity(pkt.posX, pkt.posY, pkt.posZ);
 
 					if (tile instanceof ISyncedTile) {
-						pkt.applyStates(data, (ISyncedTile) tile);
+						pkt.applyStates((ISyncedTile) tile);
 					}
 
 					break;

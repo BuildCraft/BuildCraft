@@ -8,15 +8,16 @@
  */
 package buildcraft.core.network;
 
-import io.netty.buffer.ByteBuf;
-
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
+
 public class PacketTileState extends PacketCoordinates {
+
+	private ByteBuf state;
 
 	private class StateWithId {
 		public byte stateId;
@@ -38,7 +39,7 @@ public class PacketTileState extends PacketCoordinates {
 
 	/**
 	 * Constructor for outgoing packets
-	 * 
+	 *
 	 * @param x
 	 *            , y, z - the coordinates the tile to sync
 	 */
@@ -52,16 +53,11 @@ public class PacketTileState extends PacketCoordinates {
 		return PacketIds.STATE_UPDATE;
 	}
 
-	@Override
-	public void readData(ByteBuf data) {
-		super.readData(data);
-	}
-
-	public void applyStates(ByteBuf data, ISyncedTile tile) throws IOException {
-		byte stateCount = data.readByte();
+	public void applyStates(ISyncedTile tile) throws IOException {
+		byte stateCount = state.readByte();
 		for (int i = 0; i < stateCount; i++) {
-			byte stateId = data.readByte();
-			tile.getStateInstance(stateId).readData(data);
+			byte stateId = state.readByte();
+			tile.getStateInstance(stateId).readData(state);
 			tile.afterStateUpdated(stateId);
 		}
 	}
@@ -73,10 +69,25 @@ public class PacketTileState extends PacketCoordinates {
 	@Override
 	public void writeData(ByteBuf data) {
 		super.writeData(data);
-		data.writeByte(stateList.size());
+
+		ByteBuf tmpState = Unpooled.buffer();
+
+		tmpState.writeByte(stateList.size());
 		for (StateWithId stateWithId : stateList) {
-			data.writeByte(stateWithId.stateId);
-			stateWithId.state.writeData(data);
+			tmpState.writeByte(stateWithId.stateId);
+			stateWithId.state.writeData(tmpState);
 		}
+
+		data.writeInt(tmpState.readableBytes());
+		data.writeBytes(tmpState.readBytes(tmpState.readableBytes()));
+	}
+
+	@Override
+	public void readData(ByteBuf data) {
+		super.readData(data);
+
+		state = Unpooled.buffer();
+		int length = data.readInt();
+		state.writeBytes(data.readBytes(length));
 	}
 }
