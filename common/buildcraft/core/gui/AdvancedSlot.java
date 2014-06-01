@@ -14,10 +14,16 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
 
+import buildcraft.core.DefaultProps;
+
 public abstract class AdvancedSlot {
 
 	public int x, y;
 	public GuiAdvancedInterface gui;
+	public boolean drawBackround = false;
+
+	private static final ResourceLocation TEXTURE_SLOT = new ResourceLocation(
+			"buildcraft", DefaultProps.TEXTURE_PATH_GUI + "/slot.png");
 
 	public AdvancedSlot(GuiAdvancedInterface gui, int x, int y) {
 		this.x = x;
@@ -51,6 +57,11 @@ public abstract class AdvancedSlot {
 
 	public void drawSprite(int cornerX, int cornerY) {
 		Minecraft mc = Minecraft.getMinecraft();
+
+		if (drawBackround) {
+			mc.renderEngine.bindTexture(TEXTURE_SLOT);
+			gui.drawTexturedModalRect(cornerX + x - 1, cornerY + y - 1, 0, 0, 18, 18);
+		}
 
 		if (!isDefined()) {
 			return;

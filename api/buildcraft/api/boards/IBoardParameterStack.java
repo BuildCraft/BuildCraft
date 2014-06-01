@@ -8,9 +8,12 @@
  */
 package buildcraft.api.boards;
 
-public interface IRedstoneBoardRobot<T> extends IRedstoneBoard<T> {
+import net.minecraft.item.ItemStack;
 
-	@Override
-	RedstoneBoardRobotNBT getNBTHandler();
+public interface IBoardParameterStack extends IBoardParameter {
+
+	ItemStack getStack();
+
+	void setStack(ItemStack stack);
 
 }

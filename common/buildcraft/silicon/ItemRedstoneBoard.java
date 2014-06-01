@@ -15,11 +15,14 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.IIcon;
+import net.minecraft.world.World;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
+import buildcraft.BuildCraftSilicon;
 import buildcraft.api.boards.RedstoneBoardRegistry;
+import buildcraft.core.GuiIds;
 import buildcraft.core.ItemBuildCraft;
 import buildcraft.core.utils.NBTUtils;
 
@@ -69,6 +72,17 @@ public class ItemRedstoneBoard extends ItemBuildCraft {
 		unknownBoard = par1IconRegister.registerIcon("buildcraft:board_unknown");
 
 		RedstoneBoardRegistry.instance.registerIcons(par1IconRegister);
+	}
+
+	@Override
+	public boolean onItemUse(ItemStack par1ItemStack, EntityPlayer entityplayer, World world, int x,
+			int y, int z, int i, float par8, float par9, float par10) {
+
+		if (!world.isRemote) {
+			entityplayer.openGui(BuildCraftSilicon.instance, GuiIds.REDSTONE_BOARD, world, x, y, z);
+		}
+
+		return true;
 	}
 
 }

@@ -14,13 +14,15 @@ import java.util.Random;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.nbt.NBTTagCompound;
 
-import buildcraft.api.boards.IRedstoneBoardNBT;
+import buildcraft.api.boards.IBoardParameter;
+import buildcraft.api.boards.IBoardParameterStack;
+import buildcraft.api.boards.RedstoneBoardNBT;
 import buildcraft.api.boards.RedstoneBoardRegistry;
 
 public class ImplRedstoneBoardRegistry extends RedstoneBoardRegistry {
 
 	private static class BoardFactory {
-		public IRedstoneBoardNBT boardNBT;
+		public RedstoneBoardNBT boardNBT;
 		public float probability;
 	}
 
@@ -31,7 +33,7 @@ public class ImplRedstoneBoardRegistry extends RedstoneBoardRegistry {
 	private Random rand = new Random();
 
 	@Override
-	public void registerBoardClass(IRedstoneBoardNBT redstoneBoardNBT, float probability) {
+	public void registerBoardClass(RedstoneBoardNBT redstoneBoardNBT, float probability) {
 		BoardFactory factory = new BoardFactory();
 		factory.boardNBT = redstoneBoardNBT;
 		factory.probability = probability;
@@ -58,12 +60,12 @@ public class ImplRedstoneBoardRegistry extends RedstoneBoardRegistry {
 	}
 
 	@Override
-	public IRedstoneBoardNBT getRedstoneBoard(NBTTagCompound nbt) {
+	public RedstoneBoardNBT getRedstoneBoard(NBTTagCompound nbt) {
 		return getRedstoneBoard(nbt.getString("id"));
 	}
 
 	@Override
-	public IRedstoneBoardNBT getRedstoneBoard(String id) {
+	public RedstoneBoardNBT getRedstoneBoard(String id) {
 		BoardFactory factory = boards.get(id);
 
 		if (factory != null) {
@@ -77,6 +79,29 @@ public class ImplRedstoneBoardRegistry extends RedstoneBoardRegistry {
 	public void registerIcons(IIconRegister par1IconRegister) {
 		for (BoardFactory f : boards.values()) {
 			f.boardNBT.registerIcons(par1IconRegister);
+		}
+	}
+
+	@Override
+	public IBoardParameterStack createParameterStack() {
+		return new BoardParameterStack();
+	}
+
+	@Override
+	public IBoardParameterStack createParameter(String kind) {
+		if ("stack".equals(kind)) {
+			return createParameterStack();
+		} else {
+			return null;
+		}
+	}
+
+	@Override
+	public String getKindForParam(IBoardParameter param) {
+		if (param instanceof BoardParameterStack) {
+			return "stack";
+		} else {
+			return null;
 		}
 	}
 

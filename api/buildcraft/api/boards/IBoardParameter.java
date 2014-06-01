@@ -8,9 +8,13 @@
  */
 package buildcraft.api.boards;
 
-public interface IRedstoneBoardRobot<T> extends IRedstoneBoard<T> {
+import net.minecraft.nbt.NBTTagCompound;
 
-	@Override
-	RedstoneBoardRobotNBT getNBTHandler();
+public interface IBoardParameter {
 
+	String getName();
+
+	void writeToNBT(NBTTagCompound nbt);
+
+	void readFromNBT(NBTTagCompound nbt);
 }

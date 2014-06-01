@@ -6,11 +6,21 @@
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-package buildcraft.api.boards;
+package buildcraft.silicon.boards;
 
-public interface IRedstoneBoardRobot<T> extends IRedstoneBoard<T> {
+import buildcraft.api.boards.IBoardParameter;
+
+public abstract class BoardParameter implements IBoardParameter {
+
+	private String name = "<unnamed>";
 
 	@Override
-	RedstoneBoardRobotNBT getNBTHandler();
+	public final String getName () {
+		return name;
+	}
+
+	public void setName(String iName) {
+		name = iName;
+	}
 
 }

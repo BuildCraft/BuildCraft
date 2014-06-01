@@ -15,13 +15,20 @@ public abstract class RedstoneBoardRegistry {
 
 	public static RedstoneBoardRegistry instance;
 
-	public abstract void registerBoardClass(IRedstoneBoardNBT redstoneBoardNBT, float probability);
+	public abstract void registerBoardClass(RedstoneBoardNBT redstoneBoardNBT, float probability);
 
 	public abstract void createRandomBoard(NBTTagCompound nbt);
 
-	public abstract IRedstoneBoardNBT getRedstoneBoard(NBTTagCompound nbt);
+	public abstract RedstoneBoardNBT getRedstoneBoard(NBTTagCompound nbt);
 
-	public abstract IRedstoneBoardNBT getRedstoneBoard(String id);
+	public abstract RedstoneBoardNBT getRedstoneBoard(String id);
 
 	public abstract void registerIcons(IIconRegister par1IconRegister);
+
+	public abstract IBoardParameterStack createParameter(String kind);
+
+	public abstract IBoardParameterStack createParameterStack();
+
+	public abstract String getKindForParam(IBoardParameter param);
+
 }

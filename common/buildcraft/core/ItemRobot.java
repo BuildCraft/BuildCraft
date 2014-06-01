@@ -16,10 +16,10 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 
-import buildcraft.api.boards.IRedstoneBoardNBT;
 import buildcraft.api.boards.IRedstoneBoardRobot;
-import buildcraft.api.boards.IRedstoneBoardRobotNBT;
+import buildcraft.api.boards.RedstoneBoardNBT;
 import buildcraft.api.boards.RedstoneBoardRegistry;
+import buildcraft.api.boards.RedstoneBoardRobotNBT;
 import buildcraft.core.robots.EntityRobot;
 import buildcraft.core.utils.NBTUtils;
 
@@ -36,10 +36,10 @@ public class ItemRobot extends ItemBuildCraft {
 
 			if (nbt.hasKey("board")) {
 				NBTTagCompound boardCpt = nbt.getCompoundTag("board");
-				IRedstoneBoardNBT boardNBT = RedstoneBoardRegistry.instance.getRedstoneBoard(boardCpt);
+				RedstoneBoardNBT boardNBT = RedstoneBoardRegistry.instance.getRedstoneBoard(boardCpt);
 
-				if (boardNBT instanceof IRedstoneBoardRobotNBT) {
-					board = ((IRedstoneBoardRobotNBT) boardNBT).create(boardCpt);
+				if (boardNBT instanceof RedstoneBoardRobotNBT) {
+					board = ((RedstoneBoardRobotNBT) boardNBT).create(boardCpt);
 				}
 			}
 
@@ -59,10 +59,10 @@ public class ItemRobot extends ItemBuildCraft {
 			return EntityRobot.ROBOT_BASE;
 		} else {
 			NBTTagCompound board = nbt.getCompoundTag("board");
-			IRedstoneBoardNBT boardNBT = RedstoneBoardRegistry.instance.getRedstoneBoard(board);
+			RedstoneBoardNBT boardNBT = RedstoneBoardRegistry.instance.getRedstoneBoard(board);
 
-			if (boardNBT instanceof IRedstoneBoardRobotNBT) {
-				return ((IRedstoneBoardRobotNBT) boardNBT).getRobotTexture();
+			if (boardNBT instanceof RedstoneBoardRobotNBT) {
+				return ((RedstoneBoardRobotNBT) boardNBT).getRobotTexture();
 			} else {
 				return EntityRobot.ROBOT_BASE;
 			}

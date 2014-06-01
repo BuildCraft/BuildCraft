@@ -8,9 +8,7 @@
  */
 package buildcraft.api.boards;
 
-public interface IRedstoneBoardRobot<T> extends IRedstoneBoard<T> {
+public interface IBoardParameterString extends IBoardParameter {
 
-	@Override
-	RedstoneBoardRobotNBT getNBTHandler();
 
 }

@@ -32,6 +32,8 @@ public final class GuiIds {
 
 	public static final int FILTERED_BUFFER = 60;
 
+	public static final int REDSTONE_BOARD = 60;
+
 	/**
 	 * Deactivate constructor
 	 */

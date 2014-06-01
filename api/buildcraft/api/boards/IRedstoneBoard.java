@@ -12,5 +12,5 @@ public interface IRedstoneBoard<T> {
 
 	void updateBoard(T container);
 
-	String getID();
+	RedstoneBoardNBT getNBTHandler();
 }

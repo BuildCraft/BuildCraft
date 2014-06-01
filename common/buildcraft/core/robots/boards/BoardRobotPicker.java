@@ -5,11 +5,11 @@ import java.util.Set;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
-import net.minecraft.util.ResourceLocation;
 
 import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.api.boards.IRedstoneBoardRobot;
+import buildcraft.api.boards.RedstoneBoardRobotNBT;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.core.inventory.TransactorSimple;
 import buildcraft.core.robots.EntityRobot;
@@ -132,12 +132,7 @@ public class BoardRobotPicker implements IRedstoneBoardRobot<EntityRobot> {
 	}
 
 	@Override
-	public ResourceLocation getRobotTexture() {
-		return EntityRobot.ROBOT_TRANSPORT;
-	}
-
-	@Override
-	public String getID() {
-		return "buildcraft:boardRobotPicker";
+	public RedstoneBoardRobotNBT getNBTHandler() {
+		return BoardRobotPickerNBT.instance;
 	}
 }

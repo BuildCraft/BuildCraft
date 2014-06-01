@@ -108,7 +108,7 @@ public class BuildCraftSilicon extends BuildCraftMod {
 
 		RedstoneBoardRegistry.instance = new ImplRedstoneBoardRegistry();
 
-		RedstoneBoardRegistry.instance.registerBoardClass(new BoardRobotPickerNBT(), 10);
+		RedstoneBoardRegistry.instance.registerBoardClass(BoardRobotPickerNBT.instance, 10);
 	}
 
 	@Mod.EventHandler

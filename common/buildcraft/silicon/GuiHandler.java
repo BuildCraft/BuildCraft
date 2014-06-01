@@ -14,12 +14,15 @@ import net.minecraft.world.World;
 
 import cpw.mods.fml.common.network.IGuiHandler;
 
+import buildcraft.core.GuiIds;
 import buildcraft.silicon.gui.ContainerAdvancedCraftingTable;
 import buildcraft.silicon.gui.ContainerAssemblyTable;
 import buildcraft.silicon.gui.ContainerIntegrationTable;
+import buildcraft.silicon.gui.ContainerRedstoneBoard;
 import buildcraft.silicon.gui.GuiAdvancedCraftingTable;
 import buildcraft.silicon.gui.GuiAssemblyTable;
 import buildcraft.silicon.gui.GuiIntegrationTable;
+import buildcraft.silicon.gui.GuiRedstoneBoard;
 
 public class GuiHandler implements IGuiHandler {
 
@@ -34,28 +37,32 @@ public class GuiHandler implements IGuiHandler {
 
 		switch (id) {
 
-			case 0:
-				if (!(tile instanceof TileAssemblyTable)) {
-					return null;
-				} else {
-					return new GuiAssemblyTable(player.inventory, (TileAssemblyTable) tile);
-				}
-
-			case 1:
-				if (!(tile instanceof TileAdvancedCraftingTable)) {
-					return null;
-				} else {
-					return new GuiAdvancedCraftingTable(player.inventory, (TileAdvancedCraftingTable) tile);
-				}
-
-			case 2:
-				if (!(tile instanceof TileIntegrationTable)) {
-					return null;
-				} else {
-					return new GuiIntegrationTable(player.inventory, (TileIntegrationTable) tile);
-				}
-			default:
+		case 0:
+			if (!(tile instanceof TileAssemblyTable)) {
 				return null;
+			} else {
+				return new GuiAssemblyTable(player.inventory, (TileAssemblyTable) tile);
+			}
+
+		case 1:
+			if (!(tile instanceof TileAdvancedCraftingTable)) {
+				return null;
+			} else {
+				return new GuiAdvancedCraftingTable(player.inventory, (TileAdvancedCraftingTable) tile);
+			}
+
+		case 2:
+			if (!(tile instanceof TileIntegrationTable)) {
+				return null;
+			} else {
+				return new GuiIntegrationTable(player.inventory, (TileIntegrationTable) tile);
+			}
+
+		case GuiIds.REDSTONE_BOARD:
+			return new GuiRedstoneBoard(player, x, y, z);
+
+		default:
+			return null;
 		}
 	}
 
@@ -90,6 +97,10 @@ public class GuiHandler implements IGuiHandler {
 			} else {
 				return new ContainerIntegrationTable(player.inventory, (TileIntegrationTable) tile);
 			}
+
+		case GuiIds.REDSTONE_BOARD:
+			return new ContainerRedstoneBoard(player, x, y, z);
+
 		default:
 			return null;
 		}

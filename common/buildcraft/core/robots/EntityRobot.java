@@ -22,10 +22,10 @@ import cpw.mods.fml.common.registry.IEntityAdditionalSpawnData;
 
 import net.minecraftforge.common.util.ForgeDirection;
 
-import buildcraft.api.boards.IRedstoneBoardNBT;
 import buildcraft.api.boards.IRedstoneBoardRobot;
-import buildcraft.api.boards.IRedstoneBoardRobotNBT;
+import buildcraft.api.boards.RedstoneBoardNBT;
 import buildcraft.api.boards.RedstoneBoardRegistry;
+import buildcraft.api.boards.RedstoneBoardRobotNBT;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.LaserData;
@@ -69,7 +69,7 @@ public class EntityRobot extends EntityLiving implements
 		this(world);
 
 		board = iBoard;
-		dataWatcher.updateObject(16, board.getID());
+		dataWatcher.updateObject(16, board.getNBTHandler().getID());
 	}
 
 	public EntityRobot(World par1World) {
@@ -107,11 +107,11 @@ public class EntityRobot extends EntityLiving implements
 		laser.tail.z = dataWatcher.getWatchableObjectFloat(14);
 		laser.isVisible = dataWatcher.getWatchableObjectByte(15) == 1;
 
-		IRedstoneBoardNBT boardNBT = RedstoneBoardRegistry.instance.getRedstoneBoard(dataWatcher
+		RedstoneBoardNBT boardNBT = RedstoneBoardRegistry.instance.getRedstoneBoard(dataWatcher
 				.getWatchableObjectString(16));
 
 		if (boardNBT != null) {
-			texture = ((IRedstoneBoardRobotNBT) boardNBT).getRobotTexture();
+			texture = ((RedstoneBoardRobotNBT) boardNBT).getRobotTexture();
 		}
 	}
 
