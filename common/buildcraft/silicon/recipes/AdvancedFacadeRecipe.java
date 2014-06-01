@@ -14,18 +14,14 @@ import net.minecraftforge.oredict.OreDictionary;
 
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.JavaTools;
-import buildcraft.api.recipes.IIntegrationRecipeManager;
+import buildcraft.api.recipes.IIntegrationRecipe;
 import buildcraft.api.transport.PipeWire;
 import buildcraft.silicon.ItemRedstoneChipset;
 import buildcraft.transport.ItemFacade;
 import buildcraft.transport.ItemPipeWire;
 
-public class AdvancedFacadeRecipe implements IIntegrationRecipeManager.IIntegrationRecipe {
-
-	@Override
-	public double getEnergyCost() {
-		return 2500;
-	}
+public class AdvancedFacadeRecipe implements IIntegrationRecipe {
+	private final ItemStack[] requiredComponents = new ItemStack[] {new ItemStack(BuildCraftTransport.pipeWire, 1, OreDictionary.WILDCARD_VALUE), ItemRedstoneChipset.Chipset.RED.getStack()};
 
 	@Override
 	public boolean isValidInputA(ItemStack inputA) {
@@ -39,12 +35,8 @@ public class AdvancedFacadeRecipe implements IIntegrationRecipeManager.IIntegrat
 	}
 
 	@Override
-	public ItemStack getOutputForInputs(ItemStack inputA, ItemStack inputB, ItemStack[] components) {
-		if (!isValidInputA(inputA)) {
-			return null;
-		}
-
-		if (!isValidInputB(inputB)) {
+	public IntegrationResult integrate(ItemStack inputA, ItemStack inputB, ItemStack[] components) {
+		if (!IntegrationResult.enoughComponents(components, requiredComponents)) {
 			return null;
 		}
 
@@ -56,6 +48,7 @@ public class AdvancedFacadeRecipe implements IIntegrationRecipeManager.IIntegrat
 				break;
 			}
 		}
+
 
 		if (wire != null) {
 			ItemFacade.FacadeState[] states = ItemFacade.getFacadeStates(inputA);
@@ -71,30 +64,13 @@ public class AdvancedFacadeRecipe implements IIntegrationRecipeManager.IIntegrat
 			for (int i = 0; i < states.length; i++) {
 				if (states[i].wire == wire) {
 					states[i] = additionalState;
-					return ItemFacade.getFacade(states);
+					return IntegrationResult.create(2000, ItemFacade.getFacade(states), requiredComponents);
 				}
 			}
 			// otherwise concat all states into one facade
-			return ItemFacade.getFacade(JavaTools.concat(states, new ItemFacade.FacadeState[] {additionalState}));
+			return IntegrationResult.create(5000, ItemFacade.getFacade(JavaTools.concat(states, new ItemFacade.FacadeState[] {additionalState})), requiredComponents);
 		} else {
 			return null;
 		}
 	}
-
-	@Override
-	public ItemStack[] getComponents() {
-		// Any pipe wire and redstone chipset
-		return new ItemStack[] {new ItemStack(BuildCraftTransport.pipeWire, 1, OreDictionary.WILDCARD_VALUE), ItemRedstoneChipset.Chipset.RED.getStack()};
-	}
-
-	@Override
-	public ItemStack[] getExampleInputsA() {
-		return new ItemStack[0];
-	}
-
-	@Override
-	public ItemStack[] getExampleInputsB() {
-		return new ItemStack[0];
-	}
-
 }

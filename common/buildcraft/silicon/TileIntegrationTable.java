@@ -15,7 +15,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.api.recipes.BuildcraftRecipes;
-import buildcraft.api.recipes.IIntegrationRecipeManager.IIntegrationRecipe;
+import buildcraft.api.recipes.IIntegrationRecipe;
 import buildcraft.core.inventory.ITransactor;
 import buildcraft.core.inventory.InventoryMapper;
 import buildcraft.core.inventory.SimpleInventory;
@@ -36,7 +36,7 @@ public class TileIntegrationTable extends TileLaserTableBase implements ISidedIn
 	private int tick = 0;
 	private SimpleInventory invRecipeOutput = new SimpleInventory(1, "integrationOutput", 64);
 	private InventoryMapper invOutput = new InventoryMapper(inv, SLOT_OUTPUT, 1, false);
-	private IIntegrationRecipe currentRecipe;
+	private IIntegrationRecipe.IntegrationResult integrationResult;
 	private boolean canCraft = false;
 
 	public IInventory getRecipeOutput() {
@@ -49,35 +49,6 @@ public class TileIntegrationTable extends TileLaserTableBase implements ISidedIn
 			components[i - SLOT_OUTPUT - 1] = inv.getStackInSlot(i);
 		}
 		return components;
-	}
-
-	private boolean containsComponents(IIntegrationRecipe recipe) {
-		if (recipe == null) {
-			return false;
-		}
-
-		ItemStack[] components = recipe.getComponents();
-		if (components == null || components.length == 0) {
-			return true;
-		}
-
-		for (ItemStack stack : components) {
-			int found = 0;
-			for (int i = SLOT_OUTPUT + 1; i < 12; i++) {
-				ItemStack stack1 = inv.getStackInSlot(i);
-
-				if (stack1 != null) {
-					if (StackHelper.isMatchingItem(stack, stack1, true, false)) {
-						found += stack1.stackSize;
-					}
-				}
-			}
-			if (found == 0) {
-				return false;
-			}
-		}
-
-		return true;
 	}
 
 	@Override
@@ -95,57 +66,58 @@ public class TileIntegrationTable extends TileLaserTableBase implements ISidedIn
 
 		canCraft = false;
 
-		currentRecipe = findMatchingRecipe();
-
-		if (currentRecipe == null) {
+		ItemStack inputA = inv.getStackInSlot(SLOT_INPUT_A);
+		ItemStack inputB = inv.getStackInSlot(SLOT_INPUT_B);
+		ItemStack[] components = getComponents();
+		integrationResult = integrate(inputA, inputB, components);
+		if (integrationResult == null || integrationResult.output == null) {
 			setEnergy(0);
 			return;
 		}
 
-		ItemStack inputA = inv.getStackInSlot(SLOT_INPUT_A);
-		ItemStack inputB = inv.getStackInSlot(SLOT_INPUT_B);
-		ItemStack[] components = getComponents();
-		ItemStack output = currentRecipe.getOutputForInputs(inputA, inputB, components);
-		invRecipeOutput.setInventorySlotContents(0, output);
+		invRecipeOutput.setInventorySlotContents(0, integrationResult.output);
 
-		if (!isRoomForOutput(output)) {
+		if (!isRoomForOutput(integrationResult.output)) {
 			setEnergy(0);
 			return;
 		}
 
 		canCraft = true;
 
-		if (getEnergy() >= currentRecipe.getEnergyCost() && lastMode != ActionMachineControl.Mode.Off) {
+		if (getEnergy() >= integrationResult.energyCost && lastMode != ActionMachineControl.Mode.Off) {
 			setEnergy(0);
 			inv.decrStackSize(SLOT_INPUT_A, 1);
 			inv.decrStackSize(SLOT_INPUT_B, 1);
 
 			// For each required component, loop through the component inventory
-			for (ItemStack stack : currentRecipe.getComponents()) {
+			for (ItemStack stack : integrationResult.usedComponents) {
+				int decreased = 0;
 				for (int i = SLOT_OUTPUT + 1; i < 12; i++) {
 					ItemStack stack1 = inv.getStackInSlot(i);
 
 					if (stack1 != null) {
 						if (StackHelper.isMatchingItem(stack, stack1, true, false)) {
-							inv.decrStackSize(i, 1);
-							break;
+							decreased += stack1.stackSize;
+							inv.decrStackSize(i, stack.stackSize - decreased);
 						}
+					}
+					if (decreased >= stack.stackSize) {
+						break;
 					}
 				}
 			}
 
 			ITransactor trans = Transactor.getTransactorFor(invOutput);
-			trans.add(output, ForgeDirection.UP, true);
+			trans.add(integrationResult.output, ForgeDirection.UP, true);
 		}
 	}
 
-	private IIntegrationRecipe findMatchingRecipe() {
-		ItemStack inputA = inv.getStackInSlot(SLOT_INPUT_A);
-		ItemStack inputB = inv.getStackInSlot(SLOT_INPUT_B);
-
+	private IIntegrationRecipe.IntegrationResult integrate(ItemStack inputA, ItemStack inputB, ItemStack[] components) {
+		IIntegrationRecipe.IntegrationResult result;
 		for (IIntegrationRecipe recipe : BuildcraftRecipes.integrationTable.getRecipes()) {
-			if (recipe.isValidInputA(inputA) && recipe.isValidInputB(inputB) && containsComponents(recipe)) {
-				return recipe;
+			if (recipe.isValidInputA(inputA) && recipe.isValidInputB(inputB) &&
+					(result = recipe.integrate(inputA, inputB, components)) != null) {
+				return result;
 			}
 		}
 		return null;
@@ -164,8 +136,8 @@ public class TileIntegrationTable extends TileLaserTableBase implements ISidedIn
 
 	@Override
 	public double getRequiredEnergy() {
-		if (currentRecipe != null) {
-			return currentRecipe.getEnergyCost();
+		if (integrationResult != null) {
+			return integrationResult.energyCost;
 		}
 		return 0.0;
 	}
@@ -238,6 +210,7 @@ public class TileIntegrationTable extends TileLaserTableBase implements ISidedIn
 
     @Override
     public boolean isActive() {
-        return currentRecipe != null && super.isActive();
+        return integrationResult != null && super.isActive();
     }
+
 }

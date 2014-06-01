@@ -11,19 +11,12 @@ package buildcraft.core.robots;
 import net.minecraft.item.ItemStack;
 
 import buildcraft.BuildCraftSilicon;
-import buildcraft.api.recipes.IIntegrationRecipeManager.IIntegrationRecipe;
+import buildcraft.api.recipes.IIntegrationRecipe;
 import buildcraft.core.ItemRobot;
 import buildcraft.core.utils.NBTUtils;
 import buildcraft.silicon.ItemRedstoneBoard;
 
 public class RobotIntegrationRecipe implements IIntegrationRecipe {
-
-	@Override
-	public double getEnergyCost() {
-		// return 10000;
-		return 100;
-	}
-
 	@Override
 	public boolean isValidInputA(ItemStack inputA) {
 		return inputA != null && inputA.getItem() instanceof ItemRobot;
@@ -35,27 +28,11 @@ public class RobotIntegrationRecipe implements IIntegrationRecipe {
 	}
 
 	@Override
-	public ItemStack getOutputForInputs(ItemStack inputA, ItemStack inputB, ItemStack[] components) {
+	public IntegrationResult integrate(ItemStack inputA, ItemStack inputB, ItemStack[] components) {
 		ItemStack robot = new ItemStack(BuildCraftSilicon.robotItem);
 
 		NBTUtils.getItemData(robot).setTag("board", NBTUtils.getItemData(inputB));
 
-		return robot;
+		return IntegrationResult.create(10000, robot);
 	}
-
-	@Override
-	public ItemStack[] getComponents() {
-		return new ItemStack[0];
-	}
-
-	@Override
-	public ItemStack[] getExampleInputsA() {
-		return null;
-	}
-
-	@Override
-	public ItemStack[] getExampleInputsB() {
-		return null;
-	}
-
 }
