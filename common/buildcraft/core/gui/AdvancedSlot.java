@@ -18,12 +18,12 @@ import buildcraft.core.DefaultProps;
 
 public abstract class AdvancedSlot {
 
+	private static final ResourceLocation TEXTURE_SLOT = new ResourceLocation(
+			"buildcraft", DefaultProps.TEXTURE_PATH_GUI + "/slot.png");
+
 	public int x, y;
 	public GuiAdvancedInterface gui;
 	public boolean drawBackround = false;
-
-	private static final ResourceLocation TEXTURE_SLOT = new ResourceLocation(
-			"buildcraft", DefaultProps.TEXTURE_PATH_GUI + "/slot.png");
 
 	public AdvancedSlot(GuiAdvancedInterface gui, int x, int y) {
 		this.x = x;

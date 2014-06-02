@@ -26,11 +26,11 @@ import buildcraft.core.robots.EntityRobot;
 import buildcraft.core.utils.NBTUtils;
 import buildcraft.core.utils.StringUtils;
 
-public class BoardRobotPickerNBT extends RedstoneBoardRobotNBT {
-
-	public IIcon icon;
+public final class BoardRobotPickerNBT extends RedstoneBoardRobotNBT {
 
 	public static BoardRobotPickerNBT instance = new BoardRobotPickerNBT();
+
+	public IIcon icon;
 
 	private BoardRobotPickerNBT() {
 

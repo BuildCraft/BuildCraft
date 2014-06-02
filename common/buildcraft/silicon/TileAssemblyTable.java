@@ -40,12 +40,12 @@ import buildcraft.core.utils.Utils;
 public class TileAssemblyTable extends TileLaserTableBase implements IMachine, IInventory {
 
 	@NetworkData
-	private HashSet<String> plannedOutput = new HashSet<String>();
-
-	@NetworkData
 	public String currentRecipeId = "";
 
 	public IFlexibleRecipe currentRecipe;
+
+	@NetworkData
+	private HashSet<String> plannedOutput = new HashSet<String>();
 
 	public List<CraftingResult> getPotentialOutputs() {
 		List<CraftingResult> result = new LinkedList<CraftingResult>();

@@ -30,8 +30,8 @@ public class GuiRedstoneBoard extends GuiAdvancedInterface {
 
 	private World world;
 	private int x, y, z;
-	RedstoneBoardNBT board;
-	IBoardParameter[] params;
+	private RedstoneBoardNBT board;
+	private IBoardParameter[] params;
 
 	public GuiRedstoneBoard(EntityPlayer player, int ix, int iy, int iz) {
 		super(new ContainerRedstoneBoard(player, ix, iy, iz), player.inventory, TEXTURE);

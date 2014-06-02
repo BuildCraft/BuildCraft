@@ -33,8 +33,8 @@ public class TileIntegrationTable extends TileLaserTableBase implements ISidedIn
 	public static final int SLOT_INPUT_B = 1;
 	public static final int SLOT_OUTPUT = 2;
 	private static final int CYCLE_LENGTH = 32;
-	private final int[] SLOTS = Utils.createSlotArray(0, 3);
-	private final int[] SLOT_COMPONENTS = Utils.createSlotArray(3, 9);
+	private static final int[] SLOTS = Utils.createSlotArray(0, 3);
+	private static final int[] SLOT_COMPONENTS = Utils.createSlotArray(3, 9);
 	private int tick = 0;
 	private SimpleInventory invRecipeOutput = new SimpleInventory(1, "integrationOutput", 64);
 	private InventoryMapper invOutput = new InventoryMapper(inv, SLOT_OUTPUT, 1, false);
