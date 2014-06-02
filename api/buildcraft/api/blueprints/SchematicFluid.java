@@ -6,29 +6,26 @@
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-package buildcraft.builders.schematics;
+package buildcraft.api.blueprints;
 
 import java.util.LinkedList;
 
 import net.minecraft.item.ItemStack;
 
-import net.minecraftforge.fluids.FluidContainerRegistry;
-
-import buildcraft.api.blueprints.IBuilderContext;
-import buildcraft.api.blueprints.SchematicBlock;
+import net.minecraftforge.fluids.FluidStack;
 
 public class SchematicFluid extends SchematicBlock {
 
-	private final ItemStack bucketStack;
+	private final ItemStack fluidItem;
 
-	public SchematicFluid(ItemStack bucketStack) {
-		this.bucketStack = bucketStack;
+	public SchematicFluid(FluidStack fluidStack) {
+		this.fluidItem = new ItemStack(fluidStack.getFluid().getBlock(), 1);
 	}
 
 	@Override
 	public void writeRequirementsToWorld(IBuilderContext context, LinkedList<ItemStack> requirements) {
 		if (meta == 0) {
-			requirements.add(bucketStack.copy());
+			requirements.add(fluidItem);
 		}
 	}
 
@@ -74,11 +71,9 @@ public class SchematicFluid extends SchematicBlock {
 	public LinkedList<ItemStack> getStacksToDisplay(
 			LinkedList<ItemStack> stackConsumed) {
 
-		ItemStack s = new ItemStack(FluidContainerRegistry
-				.getFluidForFilledItem(bucketStack).getFluid().getBlock());
 		LinkedList<ItemStack> result = new LinkedList<ItemStack>();
 
-		result.add(s);
+		result.add(fluidItem);
 
 		return result;
 	}

@@ -15,14 +15,13 @@ import net.minecraft.util.ResourceLocation;
 
 import buildcraft.core.DefaultProps;
 import buildcraft.core.utils.StringUtils;
-import buildcraft.energy.TileEngine;
-import buildcraft.energy.TileEngineWithInventory;
+import buildcraft.energy.TileEngineStone;
 
 public class GuiStoneEngine extends GuiEngine {
 
 	private static final ResourceLocation TEXTURE = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_GUI + "/steam_engine_gui.png");
 
-	public GuiStoneEngine(InventoryPlayer inventoryplayer, TileEngineWithInventory tileEngine) {
+	public GuiStoneEngine(InventoryPlayer inventoryplayer, TileEngineStone tileEngine) {
 		super(new ContainerEngine(inventoryplayer, tileEngine), tileEngine, TEXTURE);
 	}
 
@@ -42,7 +41,7 @@ public class GuiStoneEngine extends GuiEngine {
 		int k = (height - ySize) / 2;
 		drawTexturedModalRect(j, k, 0, 0, xSize, ySize);
 
-		TileEngine engine = (TileEngine) tile;
+		TileEngineStone engine = (TileEngineStone) tile;
 		if (engine.getScaledBurnTime(12) > 0) {
 			int l = engine.getScaledBurnTime(12);
 

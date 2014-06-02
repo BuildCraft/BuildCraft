@@ -8,6 +8,7 @@
  */
 package buildcraft.api.blueprints;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -16,11 +17,15 @@ import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
-
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidContainerRegistry;
+import net.minecraftforge.fluids.FluidRegistry;
+import net.minecraftforge.fluids.FluidStack;
 
 import buildcraft.api.core.JavaTools;
+
 
 public final class SchematicRegistry {
 
@@ -45,40 +50,75 @@ public final class SchematicRegistry {
 	}
 
 	private static class SchematicConstructor {
-		Class<? extends SchematicEntity> clas;
-		Object [] params;
-	}
+		public final Class<? extends Schematic> clazz;
+		public final Object[] params;
 
-	public static void registerSchematicBlock (Block block, Class clas, Object ... params) {
-		explicitSchematicBlocks.add(block);
-		internalRegisterSchematicBlock(block, clas, params);
-	}
+		private final Constructor constructor;
 
-	private static void internalRegisterSchematicBlock (Block block, Class clas, Object ... params) {
-		if (schematicBlocks.containsKey(block)) {
-			throw new RuntimeException("Block " + Block.blockRegistry.getNameForObject(block)
-					+ " is already associated with a schematic.");
+		SchematicConstructor(Class<? extends Schematic> clazz, Object[] params) throws IllegalArgumentException {
+			this.clazz = clazz;
+			this.params = params;
+			this.constructor = findConstructor();
 		}
 
-		SchematicConstructor c = new SchematicConstructor ();
-		c.clas = clas;
-		c.params = params;
+		public Schematic newInstance() throws IllegalAccessException, InvocationTargetException, InstantiationException {
+			return (Schematic) constructor.newInstance(params);
+		}
 
-		schematicBlocks.put(block, c);
+		private Constructor findConstructor() throws IllegalArgumentException {
+			for (Constructor<?> c : clazz.getConstructors()) {
+				Class<?>[] typesSignature = c.getParameterTypes();
+				if (typesSignature.length != params.length) {
+					// non-matching constructor count arguments, skip
+					continue;
+				}
+				boolean valid = true;
+				for (int i = 0; i < params.length; i++) {
+					if (params[i] == null) {
+						// skip checking for null parameters
+						continue;
+					}
+					Class<?> paramClass = params[i].getClass();
+					if (!(typesSignature[i].isAssignableFrom(paramClass)
+							|| (typesSignature[i] == int.class && paramClass == Integer.class)
+							|| (typesSignature[i] == double.class && paramClass == Double.class)
+							|| (typesSignature[i] == boolean.class && paramClass == Boolean.class))) {
+						// constructor has non assignable parameters skip constructor...
+						valid = false;
+						break;
+					}
+				}
+				if (!valid) {
+					continue;
+				}
+				return c;
+			}
+			throw new IllegalArgumentException("Could not find matching constructor for class " + clazz);
+		}
+	}
+
+	public static void registerSchematicBlock(Block block, Class<? extends Schematic> clazz, Object... params) {
+		explicitSchematicBlocks.add(block);
+		internalRegisterSchematicBlock(block, clazz, params);
+	}
+
+	private static void internalRegisterSchematicBlock(Block block, Class<? extends Schematic> clazz, Object... params) {
+		if (schematicBlocks.containsKey(block)) {
+			throw new RuntimeException("Block " + Block.blockRegistry.getNameForObject(block) + " is already associated with a schematic.");
+		}
+		schematicBlocks.put(block, new SchematicConstructor(clazz, params));
 	}
 
 	public static void registerSchematicEntity(
 			Class<? extends Entity> entityClass,
 			Class<? extends SchematicEntity> schematicClass, Object... params) {
-
-		SchematicConstructor c = new SchematicConstructor ();
-		c.clas = schematicClass;
-		c.params = params;
-
-		schematicEntities.put(entityClass, c);
+		if (schematicEntities.containsKey(entityClass)) {
+			throw new RuntimeException("Entity " + entityClass.getName() + " is already associated with a schematic.");
+		}
+		schematicEntities.put(entityClass, new SchematicConstructor(schematicClass, params));
 	}
 
-	public static SchematicBlock newSchematicBlock (Block block) {
+	public static SchematicBlock newSchematicBlock(Block block) {
 		if (block == Blocks.air) {
 			return null;
 		}
@@ -87,24 +127,27 @@ public final class SchematicRegistry {
 			if (block instanceof ITileEntityProvider) {
 				internalRegisterSchematicBlock(block, SchematicTile.class);
 			} else {
-				internalRegisterSchematicBlock(block, SchematicBlock.class);
+				Fluid fluid = FluidRegistry.lookupFluidForBlock(block);
+				if (fluid != null) {
+					internalRegisterSchematicBlock(block, SchematicFluid.class, new FluidStack(fluid, FluidContainerRegistry.BUCKET_VOLUME));
+				} else {
+					internalRegisterSchematicBlock(block, SchematicBlock.class);
+				}
 			}
 		}
 
 		try {
 			SchematicConstructor c = schematicBlocks.get(block);
-			SchematicBlock s = (SchematicBlock) c.clas.getConstructors() [0].newInstance(c.params);
+			SchematicBlock s = (SchematicBlock) c.newInstance();
 			s.block = block;
 			return s;
-		} catch (InstantiationException e) {
-			e.printStackTrace();
 		} catch (IllegalAccessException e) {
 			e.printStackTrace();
 		} catch (IllegalArgumentException e) {
 			e.printStackTrace();
 		} catch (InvocationTargetException e) {
 			e.printStackTrace();
-		} catch (SecurityException e) {
+		} catch (InstantiationException e) {
 			e.printStackTrace();
 		}
 
@@ -118,45 +161,39 @@ public final class SchematicRegistry {
 
 		try {
 			SchematicConstructor c = schematicEntities.get(entityClass);
-			SchematicEntity s = (SchematicEntity) c.clas.getConstructors() [0].newInstance(c.params);
+			SchematicEntity s = (SchematicEntity) c.newInstance();
 			s.entity = entityClass;
 			return s;
-		} catch (InstantiationException e) {
-			e.printStackTrace();
 		} catch (IllegalAccessException e) {
 			e.printStackTrace();
 		} catch (IllegalArgumentException e) {
 			e.printStackTrace();
 		} catch (InvocationTargetException e) {
 			e.printStackTrace();
-		} catch (SecurityException e) {
+		} catch (InstantiationException e) {
 			e.printStackTrace();
 		}
 
 		return null;
 	}
 
-	public static void declareBlueprintSupport (String modid) {
+	public static void declareBlueprintSupport(String modid) {
 		modsSupporting.add(modid);
 	}
 
-	public static boolean isExplicitlySupported (Block block) {
-		String modid = Block.blockRegistry.getNameForObject(block).split(":") [0];
-
-		return explicitSchematicBlocks.contains(block) || modsSupporting.contains(modid);
+	public static boolean isExplicitlySupported(Block block) {
+		return explicitSchematicBlocks.contains(block) || modsSupporting.contains(Block.blockRegistry.getNameForObject(block).split(":", 2)[0]);
 	}
 
-	public static boolean isAllowedForBuilding (Block block) {
+	public static boolean isAllowedForBuilding(Block block) {
 		String name = Block.blockRegistry.getNameForObject(block);
-		String modid = name.split(":") [0];
-
-		return !modsForbidden.contains(modid) && !blocksForbidden.contains(name);
+		return !blocksForbidden.contains(name) && !modsForbidden.contains(name.split(":", 2)[0]);
 	}
 
-	public static void readConfiguration (Configuration conf) {
-		Property excludedMods = conf.get(Configuration.CATEGORY_GENERAL, "builder.excludedMods", new String [0],
+	public static void readConfiguration(Configuration conf) {
+		Property excludedMods = conf.get(Configuration.CATEGORY_GENERAL, "builder.excludedMods", new String[0],
 				"mods that should be excluded from the builder.");
-		Property excludedBlocks = conf.get(Configuration.CATEGORY_GENERAL, "builder.excludedBlocks", new String [0],
+		Property excludedBlocks = conf.get(Configuration.CATEGORY_GENERAL, "builder.excludedBlocks", new String[0],
 				"blocks that should be excluded from the builder.");
 
 		for (String id : excludedMods.getStringList()) {
@@ -177,6 +214,6 @@ public final class SchematicRegistry {
 	}
 
 	static {
-		modsSupporting.add ("minecraft");
+		modsSupporting.add("minecraft");
 	}
 }

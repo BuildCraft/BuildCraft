@@ -22,6 +22,11 @@ import net.minecraft.world.WorldSettings.GameType;
 
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidContainerRegistry;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidTankInfo;
+import net.minecraftforge.fluids.IFluidHandler;
 
 import buildcraft.BuildCraftBuilders;
 import buildcraft.api.blueprints.BuildingPermission;
@@ -40,19 +45,30 @@ import buildcraft.core.blueprints.BptBuilderBase;
 import buildcraft.core.blueprints.BptBuilderBlueprint;
 import buildcraft.core.blueprints.BptBuilderTemplate;
 import buildcraft.core.blueprints.BptContext;
+import buildcraft.core.fluids.Tank;
+import buildcraft.core.fluids.TankManager;
 import buildcraft.core.inventory.InvUtils;
 import buildcraft.core.inventory.SimpleInventory;
 import buildcraft.core.network.RPC;
 import buildcraft.core.network.RPCHandler;
+import buildcraft.core.network.RPCMessageInfo;
 import buildcraft.core.network.RPCSide;
 
-public class TileBuilder extends TileAbstractBuilder implements IMachine {
+public class TileBuilder extends TileAbstractBuilder implements IMachine, IFluidHandler {
 
 	private static int POWER_ACTIVATION = 50;
 
 	@NetworkData
 	public Box box = new Box();
 	public PathIterator currentPathIterator;
+	public Tank[] fluidTanks = new Tank[] {
+			new Tank("fluid1", FluidContainerRegistry.BUCKET_VOLUME * 8, this),
+			new Tank("fluid2", FluidContainerRegistry.BUCKET_VOLUME * 8, this),
+			new Tank("fluid3", FluidContainerRegistry.BUCKET_VOLUME * 8, this),
+			new Tank("fluid4", FluidContainerRegistry.BUCKET_VOLUME * 8, this)
+	};
+	@NetworkData
+	public TankManager<Tank> fluidTank = new TankManager<Tank>(fluidTanks);
 
 	private SimpleInventory inv = new SimpleInventory(28, "Builder", 64);
 	private BptBuilderBase bluePrintBuilder;
@@ -493,6 +509,7 @@ public class TileBuilder extends TileAbstractBuilder implements IMachine {
 		}
 
 		done = nbttagcompound.getBoolean("done");
+		fluidTank.readFromNBT(nbttagcompound);
 
 		// The rest of load has to be done upon initialize.
 		initNBT = (NBTTagCompound) nbttagcompound.getCompoundTag("bptBuilder").copy();
@@ -523,6 +540,7 @@ public class TileBuilder extends TileAbstractBuilder implements IMachine {
 		}
 
 		nbttagcompound.setBoolean("done", done);
+		fluidTank.writeToNBT(nbttagcompound);
 
 		NBTTagCompound bptNBT = new NBTTagCompound();
 
@@ -603,7 +621,7 @@ public class TileBuilder extends TileAbstractBuilder implements IMachine {
 
 	@Override
 	public boolean manageFluids() {
-		return false;
+		return true;
 	}
 
 	@Override
@@ -724,4 +742,83 @@ public class TileBuilder extends TileAbstractBuilder implements IMachine {
 		}
 	}
 
+	@Override
+	public boolean canDrain(ForgeDirection from, Fluid fluid) {
+		return false;
+	}
+
+	@Override
+	public FluidStack drain(ForgeDirection from, FluidStack resource, boolean doDrain) {
+		return null;
+	}
+
+	@Override
+	public FluidStack drain(ForgeDirection from, int maxDrain, boolean doDrain) {
+		return null;
+	}
+
+	public boolean drainBuild(FluidStack fluidStack, boolean realDrain) {
+		for (Tank tank : fluidTanks) {
+			if (tank.getFluidType() == fluidStack.getFluid()) {
+				return tank.getFluidAmount() >= fluidStack.amount && tank.drain(fluidStack.amount, realDrain).amount > 0;
+			}
+		}
+		return false;
+	}
+
+	@Override
+	public int fill(ForgeDirection from, FluidStack resource, boolean doFill) {
+		Fluid fluid = resource.getFluid();
+		Tank emptyTank = null;
+		for (Tank tank : fluidTanks) {
+			Fluid type = tank.getFluidType();
+			if (type == fluid) {
+				int used = tank.fill(resource, doFill);
+				if (used > 0 && doFill) {
+					sendNetworkUpdate();
+				}
+				return used;
+			} else if (emptyTank == null && tank.isEmpty()) {
+				emptyTank = tank;
+			}
+		}
+		if (emptyTank != null) {
+			int used = emptyTank.fill(resource, doFill);
+			if (used > 0 && doFill) {
+				sendNetworkUpdate();
+			}
+			return used;
+		}
+		return 0;
+	}
+
+	@Override
+	public boolean canFill(ForgeDirection from, Fluid fluid) {
+		boolean emptyAvailable = false;
+		for (Tank tank : fluidTanks) {
+			Fluid type = tank.getFluidType();
+			if (type == fluid) {
+				return !tank.isFull();
+			} else if (!emptyAvailable) {
+				emptyAvailable = tank.isEmpty();
+			}
+		}
+		return emptyAvailable;
+	}
+
+	@Override
+	public FluidTankInfo[] getTankInfo(ForgeDirection from) {
+		return fluidTank.getTankInfo(from);
+	}
+
+	@RPC(RPCSide.SERVER)
+	public void eraseFluidTank(int id, RPCMessageInfo info) {
+		if (id < 0 || id >= fluidTanks.length) {
+			return;
+		}
+		if (isUseableByPlayer(info.sender) && info.sender.getDistanceSq(xCoord, yCoord, zCoord) <= 64) {
+			fluidTanks[id].setFluid(null);
+			sendNetworkUpdate();
+		}
+	}
 }

@@ -27,7 +27,9 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
 
-public class TankManager<T extends Tank> extends ForwardingList<T> implements IFluidHandler, List<T> {
+import buildcraft.core.network.INBTSerializable;
+
+public class TankManager<T extends Tank> extends ForwardingList<T> implements IFluidHandler, List<T>, INBTSerializable {
 
 	private List<T> tanks = new ArrayList<T>();
 
@@ -138,5 +140,17 @@ public class TankManager<T extends Tank> extends ForwardingList<T> implements IF
 				tank.colorRenderCache = 0xFFFFFF;
 			}
 		}
+	}
+
+	@Override
+	public NBTTagCompound serializeNBT() {
+		NBTTagCompound nbt = new NBTTagCompound();
+		writeToNBT(nbt);
+		return nbt;
+	}
+
+	@Override
+	public void serializeNBT(NBTTagCompound nbt) {
+		readFromNBT(nbt);
 	}
 }

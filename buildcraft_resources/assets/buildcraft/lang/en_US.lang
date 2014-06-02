@@ -91,6 +91,7 @@ gate.trigger.pipe.wire.inactive=%s Pipe Signal Off
 gate.trigger.timer=%s Sec Timer
 
 gui.building.resources=Building Resources
+gui.building.fluids=Fluid Tanks
 gui.del=Del
 gui.filling.resources=Filling Resources
 gui.inventory=Inventory

@@ -19,12 +19,17 @@ import java.util.TreeSet;
 
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldSettings.GameType;
 
 import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidContainerRegistry;
+import net.minecraftforge.fluids.FluidRegistry;
+import net.minecraftforge.fluids.FluidStack;
 
 import buildcraft.api.blueprints.Schematic;
 import buildcraft.api.blueprints.SchematicBlock;
@@ -35,6 +40,7 @@ import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.core.IInvSlot;
 import buildcraft.api.core.StackKey;
 import buildcraft.builders.TileAbstractBuilder;
+import buildcraft.builders.TileBuilder;
 import buildcraft.core.BlockIndex;
 import buildcraft.core.blueprints.BuildingSlotBlock.Mode;
 import buildcraft.core.inventory.InventoryCopy;
@@ -45,6 +51,7 @@ import buildcraft.core.utils.BlockUtil;
 public class BptBuilderBlueprint extends BptBuilderBase {
 
 	public LinkedList<ItemStack> neededItems = new LinkedList<ItemStack>();
+	public LinkedList<FluidStack> neededFluids = new LinkedList<FluidStack>();
 
 	protected TreeSet<Integer> builtEntities = new TreeSet<Integer>();
 
@@ -422,14 +429,27 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 		}
 
 		for (ItemStack reqStk : tmpReq) {
+			boolean itemBlock = reqStk.getItem() instanceof ItemBlock;
+			Fluid fluid = itemBlock ? FluidRegistry.lookupFluidForBlock(((ItemBlock) reqStk.getItem()).field_150939_a) : null;
+
+			if (fluid != null && builder instanceof TileBuilder && ((TileBuilder) builder).drainBuild(new FluidStack(fluid, FluidContainerRegistry.BUCKET_VOLUME), true)) {
+				continue;
+			}
+
 			for (IInvSlot slotInv : InventoryIterator.getIterable(new InventoryCopy(builder), ForgeDirection.UNKNOWN)) {
 				if (!builder.isBuildingMaterialSlot(slotInv.getIndex())) {
 					continue;
 				}
 
 				ItemStack invStk = slotInv.getStackInSlot();
+				if (invStk == null || invStk.stackSize == 0) {
+					continue;
+				}
 
-				if (invStk != null && invStk.stackSize > 0 && StackHelper.isCraftingEquivalent(reqStk, invStk, true)) {
+				FluidStack fluidStack = fluid != null ? FluidContainerRegistry.getFluidForFilledItem(invStk) : null;
+				boolean compatibleContainer = fluidStack != null && fluidStack.getFluid() == fluid && fluidStack.amount >= FluidContainerRegistry.BUCKET_VOLUME;
+
+				if (StackHelper.isCraftingEquivalent(reqStk, invStk, true) || compatibleContainer) {
 					try {
 						stacksUsed.add(slot.useItem(context, reqStk, slotInv));
 					} catch (Throwable t) {
@@ -485,6 +505,13 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 			boolean smallStack = reqStk.stackSize == 1;
 			ItemStack usedStack = reqStk;
 
+			boolean itemBlock = reqStk.getItem() instanceof ItemBlock;
+			Fluid fluid = itemBlock ? FluidRegistry.lookupFluidForBlock(((ItemBlock) reqStk.getItem()).field_150939_a) : null;
+
+			if (fluid != null && builder instanceof TileBuilder && ((TileBuilder) builder).drainBuild(new FluidStack(fluid, FluidContainerRegistry.BUCKET_VOLUME), true)) {
+				continue;
+			}
+
 			for (IInvSlot slotInv : InventoryIterator.getIterable(builder, ForgeDirection.UNKNOWN)) {
 				if (!builder.isBuildingMaterialSlot(slotInv.getIndex())) {
 					continue;
@@ -492,7 +519,14 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 
 				ItemStack invStk = slotInv.getStackInSlot();
 
-				if (invStk != null && invStk.stackSize > 0 && StackHelper.isCraftingEquivalent(reqStk, invStk, true)) {
+				if (invStk == null || invStk.stackSize == 0) {
+					continue;
+				}
+
+				FluidStack fluidStack = fluid != null ? FluidContainerRegistry.getFluidForFilledItem(invStk) : null;
+				boolean fluidFound = fluidStack != null && fluidStack.getFluid() == fluid && fluidStack.amount >= FluidContainerRegistry.BUCKET_VOLUME;
+
+				if (fluidFound || StackHelper.isCraftingEquivalent(reqStk, invStk, true)) {
 					try {
 						usedStack = slot.getSchematic().useItem(context, reqStk, slotInv);
 						slot.addStackConsumed (usedStack);
@@ -524,6 +558,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 
 	public void recomputeNeededItems() {
 		neededItems.clear();
+		neededFluids.clear();
 
 		HashMap<StackKey, Integer> computeStacks = new HashMap<StackKey, Integer>();
 
@@ -589,30 +624,11 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 		for (Entry<StackKey, Integer> e : computeStacks.entrySet()) {
 			ItemStack newStack = e.getKey().stack.copy();
 			newStack.stackSize = e.getValue();
+
+
+
 			neededItems.add(newStack);
 		}
-
-		LinkedList<ItemStack> sortedList = new LinkedList<ItemStack>();
-
-		for (ItemStack toInsert : neededItems) {
-			int index = 0;
-			boolean didInsert = false;
-
-			for (ItemStack inserted : sortedList) {
-				if (inserted.stackSize < toInsert.stackSize) {
-					sortedList.add(index, toInsert);
-					didInsert = true;
-					break;
-				}
-
-				index++;
-			}
-
-			if (!didInsert) {
-				sortedList.addLast(toInsert);
-			}
-		}
-
 
 		Collections.sort (neededItems, new Comparator<ItemStack>() {
 			@Override

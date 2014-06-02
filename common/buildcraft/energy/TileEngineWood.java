@@ -87,9 +87,4 @@ public class TileEngineWood extends TileEngine {
 	public boolean isBurning() {
 		return isRedstonePowered;
 	}
-
-	@Override
-	public int getScaledBurnTime(int i) {
-		return 0;
-	}
 }

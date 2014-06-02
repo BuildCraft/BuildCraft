@@ -34,7 +34,7 @@ public final class FluidUtils {
 	}
 
 	public static boolean handleRightClick(IFluidHandler tank, ForgeDirection side, EntityPlayer player, boolean fill, boolean drain) {
-		if (player == null) {
+		if (player == null || tank == null) {
 			return false;
 		}
 		ItemStack current = player.inventory.getCurrentItem();
