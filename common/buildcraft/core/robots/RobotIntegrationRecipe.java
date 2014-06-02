@@ -20,12 +20,12 @@ import buildcraft.core.ItemRobot;
 import buildcraft.core.recipes.FlexibleRecipe;
 import buildcraft.core.utils.NBTUtils;
 import buildcraft.silicon.ItemRedstoneBoard;
+import buildcraft.silicon.TileIntegrationTable;
 
 public class RobotIntegrationRecipe extends FlexibleRecipe implements IIntegrationRecipeFactory {
 
 	public RobotIntegrationRecipe(String id) {
-		setContents(id, new ItemStack(BuildCraftSilicon.robotItem), 10000, new ItemStack(
-				BuildCraftSilicon.redstoneBoard));
+		setContents(id, new ItemStack(BuildCraftSilicon.robotItem), 10000);
 	}
 
 	@Override
@@ -40,6 +40,9 @@ public class RobotIntegrationRecipe extends FlexibleRecipe implements IIntegrati
 
 	@Override
 	public CraftingResult craft(IInventory items, IFluidHandler fluids) {
+		ItemStack inputA = items.decrStackSize(TileIntegrationTable.SLOT_INPUT_A, 1);
+		ItemStack inputB = items.decrStackSize(TileIntegrationTable.SLOT_INPUT_B, 1);
+
 		CraftingResult result = super.craft(items, fluids);
 
 		if (result != null) {

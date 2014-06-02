@@ -31,7 +31,7 @@ public class GateExpansionRecipe extends FlexibleRecipe implements IIntegrationR
 		this.expansion = expansion;
 		this.chipset = chipset.copy();
 
-		setContents(id, BuildCraftTransport.pipeGate, 10000, BuildCraftTransport.pipeGate, chipset);
+		setContents(id, BuildCraftTransport.pipeGate, 10000);
 	}
 
 	@Override
@@ -52,13 +52,12 @@ public class GateExpansionRecipe extends FlexibleRecipe implements IIntegrationR
 
 	@Override
 	public CraftingResult craft(IInventory items, IFluidHandler fluids) {
-		ItemStack inputA = items.getStackInSlot(TileIntegrationTable.SLOT_INPUT_A);
+		ItemStack inputA = items.decrStackSize(TileIntegrationTable.SLOT_INPUT_A, 1);
+		ItemStack inputB = items.decrStackSize(TileIntegrationTable.SLOT_INPUT_B, 1);
 
 		if (inputA == null) {
 			return null;
 		}
-
-		inputA = inputA.copy();
 
 		CraftingResult result = super.craft(items, fluids);
 

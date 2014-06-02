@@ -9,7 +9,6 @@
 package buildcraft.silicon;
 
 import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 
 import net.minecraftforge.common.util.ForgeDirection;
@@ -25,16 +24,13 @@ import buildcraft.core.inventory.StackHelper;
 import buildcraft.core.inventory.Transactor;
 import buildcraft.core.triggers.ActionMachineControl;
 import buildcraft.core.utils.StringUtils;
-import buildcraft.core.utils.Utils;
 
-public class TileIntegrationTable extends TileLaserTableBase implements ISidedInventory {
+public class TileIntegrationTable extends TileLaserTableBase {
 
 	public static final int SLOT_INPUT_A = 0;
 	public static final int SLOT_INPUT_B = 1;
 	public static final int SLOT_OUTPUT = 2;
 	private static final int CYCLE_LENGTH = 32;
-	private static final int[] SLOTS = Utils.createSlotArray(0, 3);
-	private static final int[] SLOT_COMPONENTS = Utils.createSlotArray(3, 9);
 	private int tick = 0;
 	private SimpleInventory invRecipeOutput = new SimpleInventory(1, "integrationOutput", 64);
 	private InventoryMapper invOutput = new InventoryMapper(inv, SLOT_OUTPUT, 1, false);
@@ -130,14 +126,8 @@ public class TileIntegrationTable extends TileLaserTableBase implements ISidedIn
 
 	@Override
 	public double getRequiredEnergy() {
-		if (activeRecipe != null) {
-			CraftingResult result = activeRecipe.craftPreview(this, null);
-
-			if (result != null) {
-				return result.energyCost;
-			} else {
-				return 0;
-			}
+		if (craftingPreview != null) {
+			return craftingPreview.energyCost;
 		} else {
 			return 0;
 		}
@@ -177,22 +167,6 @@ public class TileIntegrationTable extends TileLaserTableBase implements ISidedIn
 			}
 		}
 		return false;
-	}
-
-	@Override
-	public int[] getAccessibleSlotsFromSide(int side) {
-		return SLOTS;
-	}
-
-	@Override
-	public boolean canInsertItem(int slot, ItemStack stack, int side) {
-		return isItemValidForSlot(slot, stack);
-	}
-
-	@Override
-	public boolean canExtractItem(int slot, ItemStack stack, int side) {
-		// return slot == SLOT_OUTPUT;
-		return true;
 	}
 
 	@Override

@@ -45,6 +45,13 @@ public class AdvancedFacadeRecipe extends FlexibleRecipe implements IIntegration
 
 	@Override
 	public CraftingResult craft(IInventory items, IFluidHandler fluids) {
+		ItemStack inputA = items.decrStackSize(TileIntegrationTable.SLOT_INPUT_A, 1);
+		ItemStack inputB = items.decrStackSize(TileIntegrationTable.SLOT_INPUT_B, 1);
+
+		if (inputA == null || inputB == null) {
+			return null;
+		}
+
 		CraftingResult result = super.craft(items, fluids);
 
 		if (result == null) {
@@ -52,9 +59,6 @@ public class AdvancedFacadeRecipe extends FlexibleRecipe implements IIntegration
 		}
 
 		PipeWire wire = null;
-
-		ItemStack inputA = items.getStackInSlot(TileIntegrationTable.SLOT_INPUT_A);
-		ItemStack inputB = items.getStackInSlot(TileIntegrationTable.SLOT_INPUT_B);
 
 		for (ItemStack stack : result.usedItems) {
 			if (stack != null && stack.getItem() instanceof ItemPipeWire) {

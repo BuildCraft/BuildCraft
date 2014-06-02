@@ -27,7 +27,7 @@ import buildcraft.transport.gates.ItemGate;
 public class GateLogicSwapRecipe extends FlexibleRecipe implements IIntegrationRecipeFactory {
 
 	public GateLogicSwapRecipe(String id) {
-		setContents(id, BuildCraftTransport.pipeGate, 2000, BuildCraftTransport.pipeGate);
+		setContents(id, BuildCraftTransport.pipeGate, 2000);
 	}
 
 	@Override
@@ -42,7 +42,8 @@ public class GateLogicSwapRecipe extends FlexibleRecipe implements IIntegrationR
 
 	@Override
 	public CraftingResult craft(IInventory items, IFluidHandler fluids) {
-		ItemStack inputA = items.getStackInSlot(TileIntegrationTable.SLOT_INPUT_A).copy();
+		ItemStack inputA = items.decrStackSize(TileIntegrationTable.SLOT_INPUT_A, 1);
+		ItemStack inputB = items.decrStackSize(TileIntegrationTable.SLOT_INPUT_B, 1);
 
 		CraftingResult result = super.craft(items, fluids);
 
