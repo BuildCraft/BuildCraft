@@ -26,7 +26,7 @@ import net.minecraftforge.oredict.OreDictionary;
 
 import buildcraft.api.blueprints.SchematicRegistry;
 import buildcraft.api.boards.RedstoneBoardRegistry;
-import buildcraft.api.recipes.BuildcraftRecipes;
+import buildcraft.api.recipes.BuildcraftRecipeRegistry;
 import buildcraft.api.transport.PipeWire;
 import buildcraft.builders.schematics.SchematicRotateMeta;
 import buildcraft.core.DefaultProps;
@@ -169,29 +169,44 @@ public class BuildCraftSilicon extends BuildCraftMod {
 				'G', BuildCraftCore.diamondGearItem);
 
 		// PIPE WIRE
-		BuildcraftRecipes.assemblyTable.addRecipe(500, PipeWire.RED.getStack(8), "dyeRed", 1, Items.redstone, Items.iron_ingot);
-		BuildcraftRecipes.assemblyTable.addRecipe(500, PipeWire.BLUE.getStack(8), "dyeBlue", 1, Items.redstone, Items.iron_ingot);
-		BuildcraftRecipes.assemblyTable.addRecipe(500, PipeWire.GREEN.getStack(8), "dyeGreen", 1, Items.redstone, Items.iron_ingot);
-		BuildcraftRecipes.assemblyTable.addRecipe(500, PipeWire.YELLOW.getStack(8), "dyeYellow", 1, Items.redstone, Items.iron_ingot);
+		BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:redWire", 500, PipeWire.RED.getStack(8),
+				OreDictionary.getOres("dyeRed"), Items.redstone, Items.iron_ingot);
+		BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:blueWire", 500, PipeWire.BLUE.getStack(8),
+				OreDictionary.getOres("dyeBlue"), Items.redstone, Items.iron_ingot);
+		BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:greenWire", 500, PipeWire.GREEN.getStack(8),
+				OreDictionary.getOres("dyeGreen"), Items.redstone, Items.iron_ingot);
+		BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:yellowWire", 500, PipeWire.YELLOW.getStack(8),
+				OreDictionary.getOres("dyeYellow"), Items.redstone, Items.iron_ingot);
 
 		// CHIPSETS
-		BuildcraftRecipes.assemblyTable.addRecipe(10000, Chipset.RED.getStack(), Items.redstone);
-		BuildcraftRecipes.assemblyTable.addRecipe(20000, Chipset.IRON.getStack(), Items.redstone, Items.iron_ingot);
-		BuildcraftRecipes.assemblyTable.addRecipe(40000, Chipset.GOLD.getStack(), Items.redstone, Items.gold_ingot);
-		BuildcraftRecipes.assemblyTable.addRecipe(80000, Chipset.DIAMOND.getStack(), Items.redstone, Items.diamond);
-		BuildcraftRecipes.assemblyTable.addRecipe(40000, Chipset.PULSATING.getStack(2), Items.redstone, Items.ender_pearl);
-		BuildcraftRecipes.assemblyTable.addRecipe(60000, Chipset.QUARTZ.getStack(), Items.redstone, Items.quartz);
-		BuildcraftRecipes.assemblyTable.addRecipe(60000, Chipset.COMP.getStack(), Items.redstone, Items.comparator);
+		BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:redstoneChipset", 10000, Chipset.RED.getStack(),
+				Items.redstone);
+		BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:ironChipset", 20000, Chipset.IRON.getStack(),
+				Items.redstone, Items.iron_ingot);
+		BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:goldChipset", 40000, Chipset.GOLD.getStack(),
+				Items.redstone, Items.gold_ingot);
+		BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:diamondChipset", 80000,
+				Chipset.DIAMOND.getStack(), Items.redstone, Items.diamond);
+		BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:pulsatingChipset", 40000,
+				Chipset.PULSATING.getStack(2), Items.redstone, Items.ender_pearl);
+		BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:quartzChipset", 60000, Chipset.QUARTZ.getStack(),
+				Items.redstone, Items.quartz);
+		BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:compChipset", 60000, Chipset.COMP.getStack(),
+				Items.redstone, Items.comparator);
 
 		// GATES
-		BuildcraftRecipes.assemblyTable.addRecipe(10000, ItemGate.makeGateItem(GateMaterial.REDSTONE, GateLogic.AND), Chipset.RED.getStack(), PipeWire.RED.getStack());
+		BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:simpleGate", 10000,
+				ItemGate.makeGateItem(GateMaterial.REDSTONE, GateLogic.AND), Chipset.RED.getStack(),
+				PipeWire.RED.getStack());
 
-		addGateRecipe(20000, GateMaterial.IRON, Chipset.IRON, PipeWire.RED, PipeWire.BLUE);
-		addGateRecipe(40000, GateMaterial.GOLD, Chipset.GOLD, PipeWire.RED, PipeWire.BLUE, PipeWire.GREEN);
-		addGateRecipe(80000, GateMaterial.DIAMOND, Chipset.DIAMOND, PipeWire.RED, PipeWire.BLUE, PipeWire.GREEN, PipeWire.YELLOW);
+		addGateRecipe("Iron", 20000, GateMaterial.IRON, Chipset.IRON, PipeWire.RED, PipeWire.BLUE);
+		addGateRecipe("Gold", 40000, GateMaterial.GOLD, Chipset.GOLD, PipeWire.RED, PipeWire.BLUE, PipeWire.GREEN);
+		addGateRecipe("Diamond", 80000, GateMaterial.DIAMOND, Chipset.DIAMOND, PipeWire.RED, PipeWire.BLUE,
+				PipeWire.GREEN, PipeWire.YELLOW);
 
 		// ROBOTS AND BOARDS
-		BuildcraftRecipes.assemblyTable.addRecipe(1000000, new ItemStack(redstoneCrystal), new ItemStack(
+		BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:redstoneCrystal", 1000000, new ItemStack(
+				redstoneCrystal), new ItemStack(
 				Blocks.redstone_block));
 
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(redstoneBoard),
@@ -209,30 +224,36 @@ public class BuildCraftSilicon extends BuildCraftMod {
 				'R', redstoneCrystal,
 				'C', Chipset.DIAMOND.getStack());
 
-		BuildcraftRecipes.assemblyTable.addRecipe(new BoardRecipe());
-		BuildcraftRecipes.integrationTable.addRecipe(new RobotIntegrationRecipe());
+		BuildcraftRecipeRegistry.assemblyTable.addRecipe(new BoardRecipe("buildcraft:redstoneBoard"));
+		BuildcraftRecipeRegistry.integrationTable.addRecipe(new RobotIntegrationRecipe("buildcraft:robotIntegration"));
 
 		// REVERSAL RECIPE
-		BuildcraftRecipes.integrationTable.addRecipe(new GateLogicSwapRecipe());
+		BuildcraftRecipeRegistry.integrationTable.addRecipe(new GateLogicSwapRecipe("buildcraft:gateSwap"));
 
 		// EXPANSIONS
-		BuildcraftRecipes.integrationTable.addRecipe(new GateExpansionRecipe(GateExpansionPulsar.INSTANCE, Chipset.PULSATING.getStack()));
-		BuildcraftRecipes.integrationTable.addRecipe(new GateExpansionRecipe(GateExpansionTimer.INSTANCE, Chipset.QUARTZ.getStack()));
-		BuildcraftRecipes.integrationTable.addRecipe(new GateExpansionRecipe(GateExpansionRedstoneFader.INSTANCE, Chipset.COMP.getStack()));
+		BuildcraftRecipeRegistry.integrationTable.addRecipe(new GateExpansionRecipe("buildcraft:expansionPulsar",
+				GateExpansionPulsar.INSTANCE, Chipset.PULSATING.getStack()));
+		BuildcraftRecipeRegistry.integrationTable.addRecipe(new GateExpansionRecipe("buildcraft:expansionQuartz",
+				GateExpansionTimer.INSTANCE, Chipset.QUARTZ.getStack()));
+		BuildcraftRecipeRegistry.integrationTable.addRecipe(new GateExpansionRecipe("buildcraft:expansionComp",
+				GateExpansionRedstoneFader.INSTANCE, Chipset.COMP.getStack()));
 
 		// FACADE
-		BuildcraftRecipes.integrationTable.addRecipe(new AdvancedFacadeRecipe());
+		BuildcraftRecipeRegistry.integrationTable.addRecipe(new AdvancedFacadeRecipe("buildcraft:advancedFacade"));
 	}
 
-	private static void addGateRecipe(double energyCost, GateMaterial material, Chipset chipset, PipeWire... pipeWire) {
+	private static void addGateRecipe(String materialName, double energyCost, GateMaterial material, Chipset chipset,
+			PipeWire... pipeWire) {
 		List temp = new ArrayList();
 		temp.add(chipset.getStack());
 		for (PipeWire wire : pipeWire) {
 			temp.add(wire.getStack());
 		}
 		Object[] inputs = temp.toArray();
-		BuildcraftRecipes.assemblyTable.addRecipe(energyCost, ItemGate.makeGateItem(material, GateLogic.AND), inputs);
-		BuildcraftRecipes.assemblyTable.addRecipe(energyCost, ItemGate.makeGateItem(material, GateLogic.OR), inputs);
+		BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:andGate" + materialName, energyCost,
+				ItemGate.makeGateItem(material, GateLogic.AND), inputs);
+		BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:orGate" + materialName, energyCost,
+				ItemGate.makeGateItem(material, GateLogic.OR), inputs);
 	}
 
 	@Mod.EventHandler

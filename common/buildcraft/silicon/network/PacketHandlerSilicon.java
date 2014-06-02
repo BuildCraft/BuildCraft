@@ -13,7 +13,6 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.Container;
 import net.minecraft.network.INetHandler;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
@@ -21,15 +20,11 @@ import net.minecraft.world.World;
 import cpw.mods.fml.common.network.NetworkRegistry;
 
 import buildcraft.core.network.BuildCraftPacket;
-import buildcraft.core.network.PacketCoordinates;
 import buildcraft.core.network.PacketIds;
-import buildcraft.core.network.PacketNBT;
 import buildcraft.core.network.PacketSlotChange;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.silicon.TileAdvancedCraftingTable;
 import buildcraft.silicon.TileAssemblyTable;
-import buildcraft.silicon.TileAssemblyTable.SelectionMessage;
-import buildcraft.silicon.gui.ContainerAssemblyTable;
 
 @Sharable
 public class PacketHandlerSilicon extends SimpleChannelInboundHandler<BuildCraftPacket>  {
@@ -44,15 +39,6 @@ public class PacketHandlerSilicon extends SimpleChannelInboundHandler<BuildCraft
 			int packetID = packet.getID();
 
 			switch (packetID) {
-			case PacketIds.SELECTION_ASSEMBLY_SEND:
-				onSelectionUpdate(player, (PacketNBT) packet);
-				break;
-			case PacketIds.SELECTION_ASSEMBLY:
-				onAssemblySelect(player, (PacketNBT) packet);
-				break;
-			case PacketIds.SELECTION_ASSEMBLY_GET:
-				onAssemblyGetSelection(player, (PacketCoordinates) packet);
-				break;
 			case PacketIds.ADVANCED_WORKBENCH_SETSLOT:
 				onAdvancedWorkbenchSet(player, (PacketSlotChange) packet);
 				break;
@@ -62,17 +48,6 @@ public class PacketHandlerSilicon extends SimpleChannelInboundHandler<BuildCraft
 			ex.printStackTrace();
 		}
 
-	}
-
-	private void onSelectionUpdate(EntityPlayer player, PacketNBT packet) {
-
-		Container container = player.openContainer;
-
-		if (container instanceof ContainerAssemblyTable) {
-			SelectionMessage message = new SelectionMessage();
-			message.fromNBT(packet.getTagCompound());
-			((ContainerAssemblyTable) container).handleSelectionMessage(message);
-		}
 	}
 
 	private TileAssemblyTable getAssemblyTable(World world, int x, int y, int z) {
@@ -101,40 +76,6 @@ public class PacketHandlerSilicon extends SimpleChannelInboundHandler<BuildCraft
 		}
 
 		return (TileAdvancedCraftingTable) tile;
-	}
-
-	/**
-	 * Sends the current selection on the assembly table to a player.
-	 *
-	 * @param player
-	 * @param packet
-	 */
-	private void onAssemblyGetSelection(EntityPlayer player, PacketCoordinates packet) {
-
-		TileAssemblyTable tile = getAssemblyTable(player.worldObj, packet.posX, packet.posY, packet.posZ);
-		if (tile == null) {
-			return;
-		}
-
-		tile.sendSelectionTo(player);
-	}
-
-	/**
-	 * Sets the selection on an assembly table according to player request.
-	 *
-	 * @param player
-	 * @param packetA
-	 */
-	private void onAssemblySelect(EntityPlayer player, PacketNBT packetA) {
-
-		TileAssemblyTable tile = getAssemblyTable(player.worldObj, packetA.posX, packetA.posY, packetA.posZ);
-		if (tile == null) {
-			return;
-		}
-
-		TileAssemblyTable.SelectionMessage message = new TileAssemblyTable.SelectionMessage();
-		message.fromNBT(packetA.getTagCompound());
-		tile.handleSelectionMessage(message);
 	}
 
 	/**

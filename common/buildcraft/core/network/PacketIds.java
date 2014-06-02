@@ -19,12 +19,6 @@ public final class PacketIds {
 	public static final int PIPE_ITEMSTACK = 6;
 	public static final int PIPE_GATE_EXPANSION_MAP = 7;
 
-	public static final int SELECTION_ASSEMBLY_GET = 20;
-	/** Packet sent to server when a recipe is clicked on in the assembly table */
-	public static final int SELECTION_ASSEMBLY = 21;
-	/** Packet to send recipes to client */
-	public static final int SELECTION_ASSEMBLY_SEND = 22;
-
 	public static final int DIAMOND_PIPE_SELECT = 31;
 	public static final int EMERALD_PIPE_SELECT = 32;
 

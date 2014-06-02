@@ -8,12 +8,12 @@
  */
 package buildcraft.api.recipes;
 
-public final class BuildcraftRecipes {
+public final class BuildcraftRecipeRegistry {
 
 	public static IAssemblyRecipeManager assemblyTable;
 	public static IIntegrationRecipeManager integrationTable;
 	public static IRefineryRecipeManager refinery;
 
-	private BuildcraftRecipes() {
+	private BuildcraftRecipeRegistry() {
 	}
 }

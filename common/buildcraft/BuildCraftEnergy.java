@@ -46,7 +46,7 @@ import buildcraft.api.core.BCLog;
 import buildcraft.api.core.JavaTools;
 import buildcraft.api.fuels.IronEngineCoolant;
 import buildcraft.api.fuels.IronEngineFuel;
-import buildcraft.api.recipes.BuildcraftRecipes;
+import buildcraft.api.recipes.BuildcraftRecipeRegistry;
 import buildcraft.core.BlockIndex;
 import buildcraft.core.BlockSpring;
 import buildcraft.core.DefaultProps;
@@ -258,7 +258,7 @@ public class BuildCraftEnergy extends BuildCraftMod {
 		BucketHandler.INSTANCE.buckets.put(blockFuel, bucketFuel);
 		MinecraftForge.EVENT_BUS.register(BucketHandler.INSTANCE);
 
-		BuildcraftRecipes.refinery.addRecipe(new FluidStack(fluidOil, 1), new FluidStack(fluidFuel, 1), 12, 1);
+		BuildcraftRecipeRegistry.refinery.addRecipe(new FluidStack(fluidOil, 1), new FluidStack(fluidFuel, 1), 12, 1);
 
 		// Iron Engine Fuels
 //		IronEngineFuel.addFuel("lava", 1, 20000);

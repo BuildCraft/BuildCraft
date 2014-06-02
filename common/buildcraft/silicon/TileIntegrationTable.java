@@ -14,8 +14,10 @@ import net.minecraft.item.ItemStack;
 
 import net.minecraftforge.common.util.ForgeDirection;
 
-import buildcraft.api.recipes.BuildcraftRecipes;
-import buildcraft.api.recipes.IIntegrationRecipe;
+import buildcraft.api.recipes.BuildcraftRecipeRegistry;
+import buildcraft.api.recipes.CraftingResult;
+import buildcraft.api.recipes.IFlexibleRecipe;
+import buildcraft.api.recipes.IIntegrationRecipeFactory;
 import buildcraft.core.inventory.ITransactor;
 import buildcraft.core.inventory.InventoryMapper;
 import buildcraft.core.inventory.SimpleInventory;
@@ -31,12 +33,13 @@ public class TileIntegrationTable extends TileLaserTableBase implements ISidedIn
 	public static final int SLOT_INPUT_B = 1;
 	public static final int SLOT_OUTPUT = 2;
 	private static final int CYCLE_LENGTH = 32;
-	private static final int[] SLOTS = Utils.createSlotArray(0, 3);
-	private static final int[] SLOT_COMPONENTS = Utils.createSlotArray(3, 9);
+	private final int[] SLOTS = Utils.createSlotArray(0, 3);
+	private final int[] SLOT_COMPONENTS = Utils.createSlotArray(3, 9);
 	private int tick = 0;
 	private SimpleInventory invRecipeOutput = new SimpleInventory(1, "integrationOutput", 64);
 	private InventoryMapper invOutput = new InventoryMapper(inv, SLOT_OUTPUT, 1, false);
-	private IIntegrationRecipe.IntegrationResult integrationResult;
+	private IFlexibleRecipe activeRecipe;
+	private CraftingResult craftingPreview;
 	private boolean canCraft = false;
 
 	public IInventory getRecipeOutput() {
@@ -69,58 +72,49 @@ public class TileIntegrationTable extends TileLaserTableBase implements ISidedIn
 		ItemStack inputA = inv.getStackInSlot(SLOT_INPUT_A);
 		ItemStack inputB = inv.getStackInSlot(SLOT_INPUT_B);
 		ItemStack[] components = getComponents();
-		integrationResult = integrate(inputA, inputB, components);
-		if (integrationResult == null || integrationResult.output == null) {
+		setNewActiveRecipe(inputA, inputB, components);
+
+		if (activeRecipe == null || craftingPreview == null) {
 			setEnergy(0);
 			return;
 		}
 
-		invRecipeOutput.setInventorySlotContents(0, integrationResult.output);
+		invRecipeOutput.setInventorySlotContents(0, (ItemStack) craftingPreview.crafted);
 
-		if (!isRoomForOutput(integrationResult.output)) {
+		if (!isRoomForOutput((ItemStack) craftingPreview.crafted)) {
 			setEnergy(0);
 			return;
 		}
 
 		canCraft = true;
 
-		if (getEnergy() >= integrationResult.energyCost && lastMode != ActionMachineControl.Mode.Off) {
+		if (getEnergy() >= craftingPreview.energyCost
+				&& lastMode != ActionMachineControl.Mode.Off) {
 			setEnergy(0);
-			inv.decrStackSize(SLOT_INPUT_A, 1);
-			inv.decrStackSize(SLOT_INPUT_B, 1);
+			craftingPreview = null;
 
-			// For each required component, loop through the component inventory
-			for (ItemStack stack : integrationResult.usedComponents) {
-				int decreased = 0;
-				for (int i = SLOT_OUTPUT + 1; i < 12; i++) {
-					ItemStack stack1 = inv.getStackInSlot(i);
+			CraftingResult craftResult = activeRecipe.craft(this, null);
 
-					if (stack1 != null) {
-						if (StackHelper.isMatchingItem(stack, stack1, true, false)) {
-							decreased += stack1.stackSize;
-							inv.decrStackSize(i, stack.stackSize - decreased);
-						}
-					}
-					if (decreased >= stack.stackSize) {
-						break;
-					}
-				}
+			if (craftResult != null) {
+				ItemStack result = (ItemStack) craftResult.crafted;
+
+						ITransactor trans = Transactor.getTransactorFor(invOutput);
+				trans.add(result, ForgeDirection.UP, true);
 			}
-
-			ITransactor trans = Transactor.getTransactorFor(invOutput);
-			trans.add(integrationResult.output, ForgeDirection.UP, true);
 		}
 	}
 
-	private IIntegrationRecipe.IntegrationResult integrate(ItemStack inputA, ItemStack inputB, ItemStack[] components) {
-		IIntegrationRecipe.IntegrationResult result;
-		for (IIntegrationRecipe recipe : BuildcraftRecipes.integrationTable.getRecipes()) {
-			if (recipe.isValidInputA(inputA) && recipe.isValidInputB(inputB) &&
-					(result = recipe.integrate(inputA, inputB, components)) != null) {
-				return result;
+	private void setNewActiveRecipe(ItemStack inputA, ItemStack inputB, ItemStack[] components) {
+		for (IIntegrationRecipeFactory recipe : BuildcraftRecipeRegistry.integrationTable.getRecipes()) {
+			if (recipe.isValidInputA(inputA) && recipe.isValidInputB(inputB)) {
+				craftingPreview = recipe.craftPreview(this, null);
+
+				if (craftingPreview != null) {
+					activeRecipe = recipe;
+					break;
+				}
 			}
 		}
-		return null;
 	}
 
 	private boolean isRoomForOutput(ItemStack output) {
@@ -136,10 +130,17 @@ public class TileIntegrationTable extends TileLaserTableBase implements ISidedIn
 
 	@Override
 	public double getRequiredEnergy() {
-		if (integrationResult != null) {
-			return integrationResult.energyCost;
+		if (activeRecipe != null) {
+			CraftingResult result = activeRecipe.craftPreview(this, null);
+
+			if (result != null) {
+				return result.energyCost;
+			} else {
+				return 0;
+			}
+		} else {
+			return 0;
 		}
-		return 0.0;
 	}
 
 	@Override
@@ -160,7 +161,7 @@ public class TileIntegrationTable extends TileLaserTableBase implements ISidedIn
 
 	private boolean isValidInputA(ItemStack stack) {
 		ItemStack inputB = inv.getStackInSlot(SLOT_INPUT_B);
-		for (IIntegrationRecipe recipe : BuildcraftRecipes.integrationTable.getRecipes()) {
+		for (IIntegrationRecipeFactory recipe : BuildcraftRecipeRegistry.integrationTable.getRecipes()) {
 			if (recipe.isValidInputA(stack) && (inputB == null || recipe.isValidInputB(inputB))) {
 				return true;
 			}
@@ -170,7 +171,7 @@ public class TileIntegrationTable extends TileLaserTableBase implements ISidedIn
 
 	private boolean isValidInputB(ItemStack stack) {
 		ItemStack inputA = inv.getStackInSlot(SLOT_INPUT_A);
-		for (IIntegrationRecipe recipe : BuildcraftRecipes.integrationTable.getRecipes()) {
+		for (IIntegrationRecipeFactory recipe : BuildcraftRecipeRegistry.integrationTable.getRecipes()) {
 			if (recipe.isValidInputB(stack) && (inputA == null || recipe.isValidInputA(inputA))) {
 				return true;
 			}
@@ -190,7 +191,8 @@ public class TileIntegrationTable extends TileLaserTableBase implements ISidedIn
 
 	@Override
 	public boolean canExtractItem(int slot, ItemStack stack, int side) {
-		return slot == SLOT_OUTPUT;
+		// return slot == SLOT_OUTPUT;
+		return true;
 	}
 
 	@Override
@@ -210,7 +212,7 @@ public class TileIntegrationTable extends TileLaserTableBase implements ISidedIn
 
     @Override
     public boolean isActive() {
-        return integrationResult != null && super.isActive();
+		return activeRecipe != null && super.isActive();
     }
 
 }

@@ -72,7 +72,8 @@ public final class InterModComms {
 			failed = true;
 		} else {
 			NBTTagCompound recipe = msg.getNBTValue();
-			if (!recipe.hasKey("input", 9) || !recipe.hasKey("output", 10) || !recipe.hasKey("energy", 6)) { //Ints - NBTBase#NBTTypes
+			if (!recipe.hasKey("id") || !recipe.hasKey("input", 9) || !recipe.hasKey("output", 10)
+					|| !recipe.hasKey("energy", 6)) { // Ints - NBTBase#NBTTypes
 				failed = true;
 			} else {
 				NBTTagList list = (NBTTagList) recipe.getTag("input");
@@ -85,7 +86,7 @@ public final class InterModComms {
 				}
 				ItemStack is = ItemStack.loadItemStackFromNBT(recipe.getCompoundTag("output"));
 				if (is != null && !input.isEmpty()) {
-					AssemblyRecipeManager.INSTANCE.addRecipe(recipe.getDouble("energy"), is,
+					AssemblyRecipeManager.INSTANCE.addRecipe(recipe.getString("id"), recipe.getDouble("energy"), is,
 							(Object[]) input.toArray(new ItemStack[input.size()]));
 				} else {
 					failed = true;
@@ -141,7 +142,8 @@ public final class InterModComms {
 					} else {
 						Block block = (Block) Block.blockRegistry.getObject(blockName);
 						if (block.getRenderType() != 0 && block.getRenderType() != 31) {
-							ItemFacade.addFacade(new ItemStack(block, 1, metaId));
+							ItemFacade.addFacade("buildcraft:facade{" + blockName + "}",
+									new ItemStack(block, 1, metaId));
 						} else {
 							logRedundantAddFacadeMessage(m, block.toString());
 						}
@@ -152,7 +154,8 @@ public final class InterModComms {
 
 				Block block = Block.getBlockFromItem(modItemStack.getItem());
 				if (block != null && block.getRenderType() != 0 && block.getRenderType() != 31) {
-					ItemFacade.addFacade(modItemStack);
+					ItemFacade.addFacade("buildcraft:facade{" + Block.blockRegistry.getNameForObject(block) + "}",
+							modItemStack);
 				} else {
 					logRedundantAddFacadeMessage(m, block.toString());
 				}

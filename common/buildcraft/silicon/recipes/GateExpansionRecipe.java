@@ -8,31 +8,41 @@
  */
 package buildcraft.silicon.recipes;
 
+import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
+
+import net.minecraftforge.fluids.IFluidHandler;
+
+import buildcraft.BuildCraftTransport;
 import buildcraft.api.gates.IGateExpansion;
-import buildcraft.api.recipes.IIntegrationRecipe;
+import buildcraft.api.recipes.CraftingResult;
+import buildcraft.api.recipes.IIntegrationRecipeFactory;
 import buildcraft.core.inventory.StackHelper;
+import buildcraft.core.recipes.FlexibleRecipe;
+import buildcraft.silicon.TileIntegrationTable;
 import buildcraft.transport.gates.ItemGate;
 
-public class GateExpansionRecipe implements IIntegrationRecipe {
+public class GateExpansionRecipe extends FlexibleRecipe implements IIntegrationRecipeFactory {
 
 	private final IGateExpansion expansion;
 	private final ItemStack chipset;
 
-	public GateExpansionRecipe(IGateExpansion expansion, ItemStack chipset) {
+	public GateExpansionRecipe(String id, IGateExpansion expansion, ItemStack chipset) {
 		this.expansion = expansion;
 		this.chipset = chipset.copy();
+
+		setContents(id, BuildCraftTransport.pipeGate, 10000, BuildCraftTransport.pipeGate, chipset);
 	}
 
 	@Override
 	public boolean isValidInputA(ItemStack inputA) {
 		if (inputA == null) {
 			return false;
-		}
-		if (!(inputA.getItem() instanceof ItemGate)) {
+		} else if (!(inputA.getItem() instanceof ItemGate)) {
 			return false;
+		} else {
+			return !ItemGate.hasGateExpansion(inputA, expansion);
 		}
-		return !ItemGate.hasGateExpansion(inputA, expansion);
 	}
 
 	@Override
@@ -41,10 +51,28 @@ public class GateExpansionRecipe implements IIntegrationRecipe {
 	}
 
 	@Override
-	public IntegrationResult integrate(ItemStack inputA, ItemStack inputB, ItemStack[] components) {
-		ItemStack output = inputA.copy();
+	public CraftingResult craft(IInventory items, IFluidHandler fluids) {
+		ItemStack inputA = items.getStackInSlot(TileIntegrationTable.SLOT_INPUT_A);
+
+		if (inputA == null) {
+			return null;
+		}
+
+		inputA = inputA.copy();
+
+		CraftingResult result = super.craft(items, fluids);
+
+		if (result == null) {
+			return null;
+		}
+
+		ItemStack output = inputA;
+
 		output.stackSize = 1;
 		ItemGate.addGateExpansion(output, expansion);
-		return IntegrationResult.create(10000, output);
+
+		result.crafted = output;
+
+		return result;
 	}
 }

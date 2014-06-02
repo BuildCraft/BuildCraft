@@ -13,6 +13,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -615,6 +616,7 @@ public class ClassMapping extends ClassSerializer {
 	static {
 		registerSerializer(String.class, new SerializerString());
 		registerSerializer(HashMap.class, new SerializerHashMap());
+		registerSerializer(HashSet.class, new SerializerHashSet());
 		registerSerializer(LinkedList.class, new SerializerLinkedList());
 		registerSerializer(ArrayList.class, new SerializerArrayList());
 		registerSerializer(Block.class, new SerializerBlock());

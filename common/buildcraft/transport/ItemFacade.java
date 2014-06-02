@@ -37,7 +37,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.JavaTools;
 import buildcraft.api.core.Position;
-import buildcraft.api.recipes.BuildcraftRecipes;
+import buildcraft.api.recipes.BuildcraftRecipeRegistry;
 import buildcraft.api.transport.PipeWire;
 import buildcraft.core.BlockSpring;
 import buildcraft.core.CreativeTabBuildCraft;
@@ -242,11 +242,11 @@ public class ItemFacade extends ItemBuildCraft {
 				continue;
 			}
 
-			registerValidFacades(b, item);
+			registerValidFacades("buildcraft:facade{" + Block.blockRegistry.getNameForObject(b) + "}", b, item);
 		}
 	}
 
-	private static void registerValidFacades(Block block, Item item) {
+	private static void registerValidFacades(String id, Block block, Item item) {
 		Set<String> names = Sets.newHashSet();
 
 		for (int i = 0; i <= 15; i++) {
@@ -255,7 +255,7 @@ public class ItemFacade extends ItemBuildCraft {
 
 				if (!Strings.isNullOrEmpty(stack.getUnlocalizedName())
 						&& names.add(stack.getUnlocalizedName())) {
-						ItemFacade.addFacade(stack);
+					ItemFacade.addFacade(id, stack);
 
 						// prevent adding multiple facades if it's a rotatable block
 					if (block.getRenderType() == 31) {
@@ -399,7 +399,7 @@ public class ItemFacade extends ItemBuildCraft {
 		return true;
 	}
 
-	public static void addFacade(ItemStack itemStack) {
+	public static void addFacade(String id, ItemStack itemStack) {
 		if (itemStack.stackSize == 0) {
 			itemStack.stackSize = 1;
 		}
@@ -412,7 +412,8 @@ public class ItemFacade extends ItemBuildCraft {
 			facade6.stackSize = 6;
 
 			// 3 Structurepipes + this block makes 6 facades
-			BuildcraftRecipes.assemblyTable.addRecipe(8000, facade6, new ItemStack(BuildCraftTransport.pipeStructureCobblestone, 3), itemStack);
+			BuildcraftRecipeRegistry.assemblyTable.addRecipe(id, 8000, facade6, new ItemStack(
+					BuildCraftTransport.pipeStructureCobblestone, 3), itemStack);
 		}
 	}
 

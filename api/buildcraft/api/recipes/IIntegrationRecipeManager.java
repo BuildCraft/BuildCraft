@@ -19,7 +19,7 @@ public interface IIntegrationRecipeManager {
 	/**
 	 * Add an Integration Table recipe.
 	 */
-	void addRecipe(IIntegrationRecipe recipe);
+	void addRecipe(IIntegrationRecipeFactory recipe);
 
-	List<? extends IIntegrationRecipe> getRecipes();
+	List<? extends IIntegrationRecipeFactory> getRecipes();
 }

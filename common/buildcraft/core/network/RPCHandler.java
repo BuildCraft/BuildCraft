@@ -291,6 +291,8 @@ public final class RPCHandler {
 				data.writeFloat((Float) actuals[i]);
 			} else if (char.class.equals(formals[i])) {
 				data.writeChar((Character) actuals[i]);
+			} else if (boolean.class.equals(formals[i])) {
+				data.writeBoolean((Boolean) actuals[i]);
 			} else {
 				m.mappings[i].write(data, actuals[i], context);
 			}
@@ -317,6 +319,8 @@ public final class RPCHandler {
 					actuals [i] = data.readFloat();
 				} else if (char.class.equals(formals[i])) {
 					actuals [i] = data.readChar();
+				} else if (boolean.class.equals(formals[i])) {
+					actuals[i] = data.readBoolean();
 				} else {
 					actuals [i] = m.mappings [i].read (data, actuals [i], context);
 				}

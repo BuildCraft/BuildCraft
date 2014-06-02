@@ -37,7 +37,7 @@ import buildcraft.api.core.IIconProvider;
 import buildcraft.api.core.JavaTools;
 import buildcraft.api.gates.ActionManager;
 import buildcraft.api.gates.GateExpansions;
-import buildcraft.api.recipes.BuildcraftRecipes;
+import buildcraft.api.recipes.BuildcraftRecipeRegistry;
 import buildcraft.api.transport.IExtractionHandler;
 import buildcraft.api.transport.PipeManager;
 import buildcraft.api.transport.PipeWire;
@@ -481,7 +481,8 @@ public class BuildCraftTransport extends BuildCraftMod {
 		GameRegistry.addRecipe(facadeItem.new FacadeRecipe());
 		RecipeSorter.register("facadeTurningHelper", ItemFacade.FacadeRecipe.class, RecipeSorter.Category.SHAPELESS, "");
 
-		BuildcraftRecipes.assemblyTable.addRecipe(1000, new ItemStack(plugItem, 8), new ItemStack(pipeStructureCobblestone));
+		BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:pipePlug", 1000, new ItemStack(plugItem, 8),
+				new ItemStack(pipeStructureCobblestone));
 	}
 
 	@Mod.EventHandler

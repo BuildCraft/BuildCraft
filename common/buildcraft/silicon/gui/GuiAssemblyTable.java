@@ -20,18 +20,13 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
 import buildcraft.BuildCraftCore;
-import buildcraft.BuildCraftSilicon;
-import buildcraft.api.recipes.IAssemblyRecipe;
+import buildcraft.api.recipes.CraftingResult;
 import buildcraft.core.CoreIconProvider;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.gui.AdvancedSlot;
 import buildcraft.core.gui.GuiAdvancedInterface;
-import buildcraft.core.network.PacketCoordinates;
-import buildcraft.core.network.PacketIds;
-import buildcraft.core.network.PacketNBT;
 import buildcraft.core.utils.StringUtils;
 import buildcraft.silicon.TileAssemblyTable;
-import buildcraft.silicon.TileAssemblyTable.SelectionMessage;
 
 public class GuiAssemblyTable extends GuiAdvancedInterface {
 
@@ -80,8 +75,7 @@ public class GuiAssemblyTable extends GuiAdvancedInterface {
 	private final TileAssemblyTable table;
 
 	class RecipeSlot extends AdvancedSlot {
-
-		public IAssemblyRecipe recipe;
+		public CraftingResult crafting;
 
 		public RecipeSlot(int x, int y) {
 			super(GuiAssemblyTable.this, x, y);
@@ -89,8 +83,8 @@ public class GuiAssemblyTable extends GuiAdvancedInterface {
 
 		@Override
 		public ItemStack getItemStack() {
-			if (this.recipe != null) {
-				return this.recipe.getOutput();
+			if (crafting != null) {
+				return (ItemStack) crafting.crafted;
 			} else {
 				return null;
 			}
@@ -116,23 +110,17 @@ public class GuiAssemblyTable extends GuiAdvancedInterface {
 		}
 
 		updateRecipes();
-
-		// Request current selection from server
-		if (assemblyTable.getWorldObj().isRemote) {
-			BuildCraftSilicon.instance.sendToServer(new PacketCoordinates(PacketIds.SELECTION_ASSEMBLY_GET, assemblyTable.xCoord, assemblyTable.yCoord,
-					assemblyTable.zCoord));
-		}
 	}
 
 	public void updateRecipes() {
-		List<IAssemblyRecipe> potentialRecipes = table.getPotentialOutputs();
-		Iterator<IAssemblyRecipe> cur = potentialRecipes.iterator();
+		List<CraftingResult> potentialRecipes = table.getPotentialOutputs();
+		Iterator<CraftingResult> cur = potentialRecipes.iterator();
 
 		for (int p = 0; p < 8; ++p) {
 			if (cur.hasNext()) {
-				((RecipeSlot) slots[p]).recipe = cur.next();
+				((RecipeSlot) slots[p]).crafting = cur.next();
 			} else {
-				((RecipeSlot) slots[p]).recipe = null;
+				((RecipeSlot) slots[p]).crafting = null;
 			}
 		}
 	}
@@ -159,10 +147,12 @@ public class GuiAssemblyTable extends GuiAdvancedInterface {
 		for (AdvancedSlot slot2 : slots) {
 			RecipeSlot slot = (RecipeSlot) slot2;
 
-			if (table.isAssembling(slot.recipe)) {
-				drawTexturedModalRect(cornerX + slot.x, cornerY + slot.y, 196, 1, 16, 16);
-			} else if (table.isPlanned(slot.recipe)) {
-				drawTexturedModalRect(cornerX + slot.x, cornerY + slot.y, 177, 1, 16, 16);
+			if (slot.crafting != null) {
+				if (table.isAssembling(slot.crafting.recipe)) {
+					drawTexturedModalRect(cornerX + slot.x, cornerY + slot.y, 196, 1, 16, 16);
+				} else if (table.isPlanned(slot.crafting.recipe)) {
+					drawTexturedModalRect(cornerX + slot.x, cornerY + slot.y, 177, 1, 16, 16);
+				}
 			}
 		}
 
@@ -185,26 +175,21 @@ public class GuiAssemblyTable extends GuiAdvancedInterface {
 		if (position != -1) {
 			RecipeSlot slot = (RecipeSlot) slots[position];
 
-			if (slot.recipe == null) {
+			if (slot.crafting == null) {
 				return;
 			}
 
-			SelectionMessage message = new SelectionMessage();
+			boolean select;
 
-			if (table.isPlanned(slot.recipe)) {
-				table.cancelPlanOutput(slot.recipe);
-				message.select = false;
+			if (table.isPlanned(slot.crafting.recipe)) {
+				select = false;
 			} else {
-				table.planOutput(slot.recipe);
-				message.select = true;
+				select = true;
 			}
 
-			message.stack = slot.recipe.getOutput();
+			String id = slot.crafting.recipe.getId();
 
-			if (table.getWorldObj().isRemote) {
-				PacketNBT packet = new PacketNBT(PacketIds.SELECTION_ASSEMBLY, message.getNBT(), table.xCoord, table.yCoord, table.zCoord);
-				BuildCraftSilicon.instance.sendToServer(packet);
-			}
+			table.rpcSelectRecipe(id, select);
 		}
 	}
 

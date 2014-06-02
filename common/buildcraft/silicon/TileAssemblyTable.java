@@ -8,29 +8,30 @@
  */
 package buildcraft.silicon;
 
-import java.util.LinkedHashSet;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 
 import net.minecraft.entity.item.EntityItem;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.NBTTagString;
 
 import cpw.mods.fml.common.FMLCommonHandler;
 
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.ForgeDirection;
 
-import buildcraft.BuildCraftSilicon;
-import buildcraft.api.recipes.IAssemblyRecipe;
-import buildcraft.core.DefaultProps;
+import buildcraft.api.core.NetworkData;
+import buildcraft.api.recipes.CraftingResult;
+import buildcraft.api.recipes.IFlexibleRecipe;
 import buildcraft.core.IMachine;
-import buildcraft.core.network.PacketIds;
-import buildcraft.core.network.PacketNBT;
+import buildcraft.core.network.PacketUpdate;
+import buildcraft.core.network.RPC;
+import buildcraft.core.network.RPCHandler;
+import buildcraft.core.network.RPCSide;
 import buildcraft.core.recipes.AssemblyRecipeManager;
 import buildcraft.core.triggers.ActionMachineControl;
 import buildcraft.core.utils.StringUtils;
@@ -38,36 +39,22 @@ import buildcraft.core.utils.Utils;
 
 public class TileAssemblyTable extends TileLaserTableBase implements IMachine, IInventory {
 
-	public IAssemblyRecipe currentRecipe;
-	private Set<IAssemblyRecipe> plannedOutput = new LinkedHashSet<IAssemblyRecipe>();
+	@NetworkData
+	private HashSet<String> plannedOutput = new HashSet<String>();
 
-	public static class SelectionMessage {
+	@NetworkData
+	public String currentRecipeId = "";
 
-		public boolean select;
-		public ItemStack stack;
+	public IFlexibleRecipe currentRecipe;
 
-		public NBTTagCompound getNBT() {
-			NBTTagCompound nbt = new NBTTagCompound();
-			nbt.setBoolean("s", select);
-			NBTTagCompound itemNBT = new NBTTagCompound();
-			stack.writeToNBT(itemNBT);
-			nbt.setTag("i", itemNBT);
-			return nbt;
-		}
+	public List<CraftingResult> getPotentialOutputs() {
+		List<CraftingResult> result = new LinkedList<CraftingResult>();
 
-		public void fromNBT(NBTTagCompound nbt) {
-			select = nbt.getBoolean("s");
-			NBTTagCompound itemNBT = nbt.getCompoundTag("i");
-			stack = ItemStack.loadItemStackFromNBT(itemNBT);
-		}
-	}
+		for (IFlexibleRecipe recipe : AssemblyRecipeManager.INSTANCE.getRecipes()) {
+			CraftingResult r = recipe.craftPreview(this, null);
 
-	public List<IAssemblyRecipe> getPotentialOutputs() {
-		List<IAssemblyRecipe> result = new LinkedList<IAssemblyRecipe>();
-
-		for (IAssemblyRecipe recipe : AssemblyRecipeManager.INSTANCE.getRecipes()) {
-			if (recipe.canBeDone(this)) {
-				result.add(recipe);
+			if (r != null) {
+				result.add(r);
 			}
 		}
 
@@ -82,11 +69,12 @@ public class TileAssemblyTable extends TileLaserTableBase implements IMachine, I
 	@Override
 	public void updateEntity() { // WARNING: run only server-side, see canUpdate()
 		super.updateEntity();
+
 		if (currentRecipe == null) {
 			return;
 		}
 
-		if (!currentRecipe.canBeDone(this)) {
+		if (!currentRecipe.canBeCrafted(this, null)) {
 			setNextCurrentRecipe();
 
 			if (currentRecipe == null) {
@@ -94,13 +82,12 @@ public class TileAssemblyTable extends TileLaserTableBase implements IMachine, I
 			}
 		}
 
-		if (getEnergy() >= currentRecipe.getEnergyCost() && lastMode != ActionMachineControl.Mode.Off) {
+		if (getEnergy() >= currentRecipe.craftPreview(this, null).energyCost
+				&& lastMode != ActionMachineControl.Mode.Off) {
 			setEnergy(0);
 
-			if (currentRecipe.canBeDone(this)) {
-				currentRecipe.useItems(this);
-
-				ItemStack remaining = currentRecipe.makeOutput();
+			if (currentRecipe.canBeCrafted(this, null)) {
+				ItemStack remaining = (ItemStack) currentRecipe.craft(this, null).crafted;
 				remaining.stackSize -= Utils.addToRandomInventoryAround(worldObj, xCoord, yCoord, zCoord, remaining);
 
 				if (remaining.stackSize > 0) {
@@ -143,34 +130,21 @@ public class TileAssemblyTable extends TileLaserTableBase implements IMachine, I
 	public void readFromNBT(NBTTagCompound nbt) {
 		super.readFromNBT(nbt);
 
-		NBTTagList list = nbt.getTagList("planned", Constants.NBT.TAG_COMPOUND);
+		NBTTagList list = nbt.getTagList("plannedIds", Constants.NBT.TAG_STRING);
 
 		for (int i = 0; i < list.tagCount(); ++i) {
-			NBTTagCompound cpt = list.getCompoundTagAt(i);
+			IFlexibleRecipe recipe = AssemblyRecipeManager.INSTANCE.getRecipe(list.getStringTagAt(i));
 
-			ItemStack stack = ItemStack.loadItemStackFromNBT(cpt);
-			if (stack == null) {
-				continue;
-			}
-
-			for (IAssemblyRecipe r : AssemblyRecipeManager.INSTANCE.getRecipes()) {
-				if (r.getOutput().getItem() == stack.getItem()
-						&& r.getOutput().getItemDamage() == stack.getItemDamage()) {
-					plannedOutput.add(r);
-					break;
-				}
+			if (recipe != null) {
+				plannedOutput.add(recipe.getId());
 			}
 		}
 
-		if (nbt.hasKey("recipe")) {
-			ItemStack stack = ItemStack.loadItemStackFromNBT(nbt.getCompoundTag("recipe"));
+		if (nbt.hasKey("recipeId")) {
+			IFlexibleRecipe recipe = AssemblyRecipeManager.INSTANCE.getRecipe(nbt.getString("recipeId"));
 
-			for (IAssemblyRecipe r : plannedOutput) {
-				if (r.getOutput().getItem() == stack.getItem()
-						&& r.getOutput().getItemDamage() == stack.getItemDamage()) {
-					setCurrentRecipe(r);
-					break;
-				}
+			if (recipe != null) {
+				setCurrentRecipe(recipe);
 			}
 		}
 	}
@@ -181,48 +155,61 @@ public class TileAssemblyTable extends TileLaserTableBase implements IMachine, I
 
 		NBTTagList list = new NBTTagList();
 
-		for (IAssemblyRecipe recipe : plannedOutput) {
-			NBTTagCompound cpt = new NBTTagCompound();
-			recipe.getOutput().writeToNBT(cpt);
-			list.appendTag(cpt);
+		for (String recipe : plannedOutput) {
+			list.appendTag(new NBTTagString(recipe));
 		}
 
-		nbt.setTag("planned", list);
+		nbt.setTag("plannedIds", list);
 
 		if (currentRecipe != null) {
-			NBTTagCompound recipe = new NBTTagCompound();
-			currentRecipe.getOutput().writeToNBT(recipe);
-			nbt.setTag("recipe", recipe);
+			nbt.setString("recipeId", currentRecipe.getId());
 		}
 	}
 
-	public boolean isPlanned(IAssemblyRecipe recipe) {
+	public boolean isPlanned(IFlexibleRecipe recipe) {
 		if (recipe == null) {
 			return false;
 		}
 
-		return plannedOutput.contains(recipe);
+		return plannedOutput.contains(recipe.getId());
 	}
 
-	public boolean isAssembling(IAssemblyRecipe recipe) {
+	public boolean isAssembling(IFlexibleRecipe recipe) {
 		return recipe != null && recipe == currentRecipe;
 	}
 
-	private void setCurrentRecipe(IAssemblyRecipe recipe) {
-		this.currentRecipe = recipe;
+	private void setCurrentRecipe(IFlexibleRecipe recipe) {
+		currentRecipe = recipe;
+
+		if (recipe != null) {
+			currentRecipeId = recipe.getId();
+		} else {
+			currentRecipeId = "";
+		}
+
+		if (!worldObj.isRemote) {
+			sendNetworkUpdate();
+		}
 	}
 
 	@Override
 	public double getRequiredEnergy() {
 		if (currentRecipe != null) {
-			return currentRecipe.getEnergyCost();
+			CraftingResult result = currentRecipe.craftPreview(this, null);
+
+			if (result != null) {
+				return result.energyCost;
+			} else {
+				return 0;
+			}
+		} else {
+			return 0;
 		}
-		return 0;
 	}
 
-	public void planOutput(IAssemblyRecipe recipe) {
+	public void planOutput(IFlexibleRecipe recipe) {
 		if (recipe != null && !isPlanned(recipe)) {
-			plannedOutput.add(recipe);
+			plannedOutput.add(recipe.getId());
 
 			if (!isAssembling(currentRecipe) || !isPlanned(currentRecipe)) {
 				setCurrentRecipe(recipe);
@@ -230,32 +217,36 @@ public class TileAssemblyTable extends TileLaserTableBase implements IMachine, I
 		}
 	}
 
-	public void cancelPlanOutput(IAssemblyRecipe recipe) {
+	public void cancelPlanOutput(IFlexibleRecipe recipe) {
 		if (isAssembling(recipe)) {
 			setCurrentRecipe(null);
 		}
 
-		plannedOutput.remove(recipe);
+		plannedOutput.remove(recipe.getId());
 
 		if (!plannedOutput.isEmpty()) {
-			setCurrentRecipe(plannedOutput.iterator().next());
+			setCurrentRecipe(AssemblyRecipeManager.INSTANCE.getRecipe(plannedOutput.iterator().next()));
 		}
 	}
 
 	public void setNextCurrentRecipe() {
 		boolean takeNext = false;
 
-		for (IAssemblyRecipe recipe : plannedOutput) {
+		for (String recipeId : plannedOutput) {
+			IFlexibleRecipe recipe = AssemblyRecipeManager.INSTANCE.getRecipe(recipeId);
+
 			if (recipe == currentRecipe) {
 				takeNext = true;
-			} else if (takeNext && recipe.canBeDone(this)) {
+			} else if (takeNext && recipe.canBeCrafted(this, null)) {
 				setCurrentRecipe(recipe);
 				return;
 			}
 		}
 
-		for (IAssemblyRecipe recipe : plannedOutput) {
-			if (recipe.canBeDone(this)) {
+		for (String recipeId : plannedOutput) {
+			IFlexibleRecipe recipe = AssemblyRecipeManager.INSTANCE.getRecipe(recipeId);
+
+			if (recipe.canBeCrafted(this, null)) {
 				setCurrentRecipe(recipe);
 				return;
 			}
@@ -264,41 +255,23 @@ public class TileAssemblyTable extends TileLaserTableBase implements IMachine, I
 		setCurrentRecipe(null);
 	}
 
-	public void handleSelectionMessage(SelectionMessage message) {
-		for (IAssemblyRecipe recipe : AssemblyRecipeManager.INSTANCE.getRecipes()) {
-			if (recipe.getOutput().isItemEqual(message.stack)
-					&& ItemStack.areItemStackTagsEqual(recipe.getOutput(), message.stack)) {
-				if (message.select) {
-					planOutput(recipe);
-				} else {
-					cancelPlanOutput(recipe);
-				}
-
-				break;
-			}
-		}
+	public void rpcSelectRecipe(String id, boolean select) {
+		RPCHandler.rpcServer(this, "selectRecipe", id, select);
 	}
 
-	public void sendSelectionTo(EntityPlayer player) {
-		for (IAssemblyRecipe recipe : AssemblyRecipeManager.INSTANCE.getRecipes()) {
-			SelectionMessage message = new SelectionMessage();
+	@RPC(RPCSide.SERVER)
+	private void selectRecipe(String id, boolean select) {
+		IFlexibleRecipe recipe = AssemblyRecipeManager.INSTANCE.getRecipe(id);
 
-			message.stack = recipe.getOutput();
-
-			if (isPlanned(recipe)) {
-				message.select = true;
+		if (recipe != null) {
+			if (select) {
+				planOutput(recipe);
 			} else {
-				message.select = false;
+				cancelPlanOutput(recipe);
 			}
-
-			PacketNBT packet = new PacketNBT(PacketIds.SELECTION_ASSEMBLY_SEND, message.getNBT(), xCoord, yCoord, zCoord);
-			packet.posX = xCoord;
-			packet.posY = yCoord;
-			packet.posZ = zCoord;
-			// FIXME: This needs to be switched over to new synch system.
-			BuildCraftSilicon.instance.sendToPlayers(packet, worldObj, (int) player.posX, (int) player.posY, (int) player.posZ,
-					DefaultProps.NETWORK_UPDATE_RANGE);
 		}
+
+		sendNetworkUpdate();
 	}
 
 	@Override
@@ -320,4 +293,10 @@ public class TileAssemblyTable extends TileLaserTableBase implements IMachine, I
 	public boolean hasCustomInventoryName() {
 		return false;
 	}
+
+	@Override
+	public void postPacketHandling(PacketUpdate packet) {
+		currentRecipe = AssemblyRecipeManager.INSTANCE.getRecipe(currentRecipeId);
+	}
+
 }

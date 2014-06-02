@@ -61,7 +61,7 @@ import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.core.JavaTools;
 import buildcraft.api.gates.ActionManager;
-import buildcraft.api.recipes.BuildcraftRecipes;
+import buildcraft.api.recipes.BuildcraftRecipeRegistry;
 import buildcraft.builders.urbanism.EntityRobotUrbanism;
 import buildcraft.core.BlockIndex;
 import buildcraft.core.BlockSpring;
@@ -214,9 +214,9 @@ public class BuildCraftCore extends BuildCraftMod {
 
 		BCLog.initLog();
 
-		BuildcraftRecipes.assemblyTable = AssemblyRecipeManager.INSTANCE;
-		BuildcraftRecipes.integrationTable = IntegrationRecipeManager.INSTANCE;
-		BuildcraftRecipes.refinery = RefineryRecipeManager.INSTANCE;
+		BuildcraftRecipeRegistry.assemblyTable = AssemblyRecipeManager.INSTANCE;
+		BuildcraftRecipeRegistry.integrationTable = IntegrationRecipeManager.INSTANCE;
+		BuildcraftRecipeRegistry.refinery = RefineryRecipeManager.INSTANCE;
 
 		mainConfiguration = new BuildCraftConfiguration(new File(evt.getModConfigurationDirectory(), "buildcraft/main.conf"));
 		try {

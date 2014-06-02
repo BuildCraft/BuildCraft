@@ -8,7 +8,7 @@
  */
 package buildcraft.api.recipes;
 
-import java.util.List;
+import java.util.Collection;
 
 import net.minecraft.item.ItemStack;
 
@@ -25,9 +25,9 @@ public interface IAssemblyRecipeManager {
 	 * @param output
 	 *            resulting ItemStack
 	 */
-	void addRecipe(double energyCost, ItemStack output, Object... input);
+	void addRecipe(String id, double energyCost, ItemStack output, Object... input);
 
-	void addRecipe(IAssemblyRecipe recipe);
+	void addRecipe(IFlexibleRecipe recipe);
 
-	List<? extends IAssemblyRecipe> getRecipes();
+	Collection<IFlexibleRecipe> getRecipes();
 }

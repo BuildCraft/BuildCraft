@@ -8,15 +8,26 @@
  */
 package buildcraft.core.robots;
 
+import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 
+import net.minecraftforge.fluids.IFluidHandler;
+
 import buildcraft.BuildCraftSilicon;
-import buildcraft.api.recipes.IIntegrationRecipe;
+import buildcraft.api.recipes.CraftingResult;
+import buildcraft.api.recipes.IIntegrationRecipeFactory;
 import buildcraft.core.ItemRobot;
+import buildcraft.core.recipes.FlexibleRecipe;
 import buildcraft.core.utils.NBTUtils;
 import buildcraft.silicon.ItemRedstoneBoard;
 
-public class RobotIntegrationRecipe implements IIntegrationRecipe {
+public class RobotIntegrationRecipe extends FlexibleRecipe implements IIntegrationRecipeFactory {
+
+	public RobotIntegrationRecipe(String id) {
+		setContents(id, new ItemStack(BuildCraftSilicon.robotItem), 10000, new ItemStack(
+				BuildCraftSilicon.redstoneBoard));
+	}
+
 	@Override
 	public boolean isValidInputA(ItemStack inputA) {
 		return inputA != null && inputA.getItem() instanceof ItemRobot;
@@ -28,11 +39,19 @@ public class RobotIntegrationRecipe implements IIntegrationRecipe {
 	}
 
 	@Override
-	public IntegrationResult integrate(ItemStack inputA, ItemStack inputB, ItemStack[] components) {
-		ItemStack robot = new ItemStack(BuildCraftSilicon.robotItem);
+	public CraftingResult craft(IInventory items, IFluidHandler fluids) {
+		CraftingResult result = super.craft(items, fluids);
 
-		NBTUtils.getItemData(robot).setTag("board", NBTUtils.getItemData(inputB));
+		if (result != null) {
+			ItemStack robot = new ItemStack(BuildCraftSilicon.robotItem);
 
-		return IntegrationResult.create(10000, robot);
+			NBTUtils.getItemData(robot).setTag("board", NBTUtils.getItemData(items.getStackInSlot(1)));
+
+			result.crafted = robot;
+
+			return result;
+		} else {
+			return null;
+		}
 	}
 }

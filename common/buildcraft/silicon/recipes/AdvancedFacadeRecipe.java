@@ -8,20 +8,29 @@
  */
 package buildcraft.silicon.recipes;
 
+import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 
+import net.minecraftforge.fluids.IFluidHandler;
 import net.minecraftforge.oredict.OreDictionary;
 
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.JavaTools;
-import buildcraft.api.recipes.IIntegrationRecipe;
+import buildcraft.api.recipes.CraftingResult;
+import buildcraft.api.recipes.IIntegrationRecipeFactory;
 import buildcraft.api.transport.PipeWire;
+import buildcraft.core.recipes.FlexibleRecipe;
 import buildcraft.silicon.ItemRedstoneChipset;
+import buildcraft.silicon.TileIntegrationTable;
 import buildcraft.transport.ItemFacade;
 import buildcraft.transport.ItemPipeWire;
 
-public class AdvancedFacadeRecipe implements IIntegrationRecipe {
-	private final ItemStack[] requiredComponents = new ItemStack[] {new ItemStack(BuildCraftTransport.pipeWire, 1, OreDictionary.WILDCARD_VALUE), ItemRedstoneChipset.Chipset.RED.getStack()};
+public class AdvancedFacadeRecipe extends FlexibleRecipe implements IIntegrationRecipeFactory {
+	public AdvancedFacadeRecipe(String id) {
+		setContents(id, new ItemFacade(), 5000,
+				new ItemStack(BuildCraftTransport.pipeWire, 1, OreDictionary.WILDCARD_VALUE),
+				ItemRedstoneChipset.Chipset.RED.getStack());
+	}
 
 	@Override
 	public boolean isValidInputA(ItemStack inputA) {
@@ -35,24 +44,29 @@ public class AdvancedFacadeRecipe implements IIntegrationRecipe {
 	}
 
 	@Override
-	public IntegrationResult integrate(ItemStack inputA, ItemStack inputB, ItemStack[] components) {
-		if (!IntegrationResult.enoughComponents(components, requiredComponents)) {
+	public CraftingResult craft(IInventory items, IFluidHandler fluids) {
+		CraftingResult result = super.craft(items, fluids);
+
+		if (result == null) {
 			return null;
 		}
 
 		PipeWire wire = null;
 
-		for (ItemStack stack : components) {
+		ItemStack inputA = items.getStackInSlot(TileIntegrationTable.SLOT_INPUT_A);
+		ItemStack inputB = items.getStackInSlot(TileIntegrationTable.SLOT_INPUT_B);
+
+		for (ItemStack stack : result.usedItems) {
 			if (stack != null && stack.getItem() instanceof ItemPipeWire) {
 				wire = PipeWire.fromOrdinal(stack.getItemDamage());
 				break;
 			}
 		}
 
-
 		if (wire != null) {
 			ItemFacade.FacadeState[] states = ItemFacade.getFacadeStates(inputA);
 			ItemFacade.FacadeState additionalState;
+
 			if (inputB.getItem() == BuildCraftTransport.plugItem) {
 				additionalState = ItemFacade.FacadeState.createTransparent(wire);
 			} else {
@@ -64,11 +78,19 @@ public class AdvancedFacadeRecipe implements IIntegrationRecipe {
 			for (int i = 0; i < states.length; i++) {
 				if (states[i].wire == wire) {
 					states[i] = additionalState;
-					return IntegrationResult.create(2000, ItemFacade.getFacade(states), requiredComponents);
+
+					result.energyCost = 2000;
+					result.crafted = ItemFacade.getFacade(states);
+
+					return result;
 				}
 			}
-			// otherwise concat all states into one facade
-			return IntegrationResult.create(5000, ItemFacade.getFacade(JavaTools.concat(states, new ItemFacade.FacadeState[] {additionalState})), requiredComponents);
+
+			result.energyCost = 5000;
+			result.crafted = ItemFacade.getFacade(JavaTools.concat(states,
+					new ItemFacade.FacadeState[] {additionalState}));
+
+			return result;
 		} else {
 			return null;
 		}

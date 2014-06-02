@@ -9,19 +9,17 @@
 package buildcraft.api.recipes;
 
 import net.minecraft.inventory.IInventory;
-import net.minecraft.item.ItemStack;
 
-public interface IAssemblyRecipe {
+import net.minecraftforge.fluids.IFluidHandler;
 
-	ItemStack getOutput();
+public interface IFlexibleRecipe {
 
-	ItemStack makeOutput();
+	boolean canBeCrafted(IInventory items, IFluidHandler fluids);
 
-	Object[] getInputs();
+	CraftingResult craftPreview(IInventory items, IFluidHandler fluids);
 
-	double getEnergyCost();
+	CraftingResult craft(IInventory items, IFluidHandler fluids);
 
-	boolean canBeDone(IInventory inv);
+	String getId();
 
-	void useItems(IInventory inv);
 }

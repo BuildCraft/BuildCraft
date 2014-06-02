@@ -15,13 +15,10 @@ import net.minecraft.inventory.Slot;
 
 import buildcraft.core.gui.BuildCraftContainer;
 import buildcraft.silicon.TileAssemblyTable;
-import buildcraft.silicon.TileAssemblyTable.SelectionMessage;
 
 public class ContainerAssemblyTable extends BuildCraftContainer {
 	IInventory playerIInventory;
 	TileAssemblyTable table;
-
-	boolean networkSynchronized = false;
 
 	public ContainerAssemblyTable(IInventory playerInventory, TileAssemblyTable table) {
 		super(table.getSizeInventory());
@@ -51,10 +48,6 @@ public class ContainerAssemblyTable extends BuildCraftContainer {
 	@Override
 	public boolean canInteractWith(EntityPlayer entityplayer) {
 		return table.isUseableByPlayer(entityplayer);
-	}
-
-	public void handleSelectionMessage(SelectionMessage message) {
-		table.handleSelectionMessage(message);
 	}
 
 	@Override
