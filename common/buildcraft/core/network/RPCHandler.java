@@ -11,7 +11,6 @@ package buildcraft.core.network;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.LinkedList;
@@ -112,8 +111,6 @@ public final class RPCHandler {
 		PacketRPCTile packet = handlers.get (tile.getClass().getName()).createRCPPacket(tile, method, actuals);
 
 		if (packet != null) {
-			ArrayList<PacketRPCTile> packets = packet.breakIntoSmallerPackets(30 * 1024);
-
 			for (PacketRPCTile p : packet.breakIntoSmallerPackets(MAX_PACKET_SIZE)) {
 				BuildCraftCore.instance.sendToServer(p);
 			}

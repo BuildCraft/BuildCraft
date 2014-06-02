@@ -104,7 +104,6 @@ public class TileEngineStone extends TileEngineWithInventory {
 		}
 	}
 
-	@Override
 	public int getScaledBurnTime(int i) {
 		return (int) (((float) burnTime / (float) totalBurnTime) * i);
 	}

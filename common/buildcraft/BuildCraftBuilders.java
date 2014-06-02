@@ -92,7 +92,6 @@ import buildcraft.builders.schematics.SchematicFactoryEntity;
 import buildcraft.builders.schematics.SchematicFactoryMask;
 import buildcraft.builders.schematics.SchematicFarmland;
 import buildcraft.builders.schematics.SchematicFire;
-import buildcraft.builders.schematics.SchematicFluid;
 import buildcraft.builders.schematics.SchematicGlassPane;
 import buildcraft.builders.schematics.SchematicGravel;
 import buildcraft.builders.schematics.SchematicHanging;
@@ -319,11 +318,6 @@ public class BuildCraftBuilders extends BuildCraftMod {
 
 		SchematicRegistry.registerSchematicBlock(Blocks.redstone_lamp, SchematicRedstoneLamp.class);
 		SchematicRegistry.registerSchematicBlock(Blocks.lit_redstone_lamp, SchematicRedstoneLamp.class);
-
-		SchematicRegistry.registerSchematicBlock(Blocks.water, SchematicFluid.class, new ItemStack(Items.water_bucket));
-		SchematicRegistry.registerSchematicBlock(Blocks.flowing_water, SchematicFluid.class, new ItemStack(Items.water_bucket));
-		SchematicRegistry.registerSchematicBlock(Blocks.lava, SchematicFluid.class, new ItemStack(Items.lava_bucket));
-		SchematicRegistry.registerSchematicBlock(Blocks.flowing_lava, SchematicFluid.class, new ItemStack(Items.lava_bucket));
 
 		SchematicRegistry.registerSchematicBlock(Blocks.glass_pane, SchematicGlassPane.class);
 		SchematicRegistry.registerSchematicBlock(Blocks.stained_glass_pane, SchematicGlassPane.class);

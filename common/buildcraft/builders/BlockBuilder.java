@@ -30,6 +30,7 @@ import buildcraft.BuildCraftBuilders;
 import buildcraft.api.tools.IToolWrench;
 import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.GuiIds;
+import buildcraft.core.fluids.FluidUtils;
 import buildcraft.core.utils.Utils;
 
 public class BlockBuilder extends BlockContainer {
@@ -75,6 +76,9 @@ public class BlockBuilder extends BlockContainer {
 			return false;
 		}
 
+		TileEntity tile = world.getTileEntity(i, j, k);
+		TileBuilder builder = tile instanceof TileBuilder ? (TileBuilder) tile : null;
+
 		Item equipped = entityplayer.getCurrentEquippedItem() != null ? entityplayer.getCurrentEquippedItem().getItem() : null;
 		if (equipped instanceof IToolWrench && ((IToolWrench) equipped).canWrench(entityplayer, i, j, k)) {
 
@@ -99,6 +103,8 @@ public class BlockBuilder extends BlockContainer {
 			world.markBlockForUpdate(i, j, k);
 			((IToolWrench) equipped).wrenchUsed(entityplayer, i, j, k);
 
+			return true;
+		} else if (builder != null && FluidUtils.handleRightClick(builder, ForgeDirection.UNKNOWN, entityplayer, true, false)) {
 			return true;
 		} else {
 			if (!world.isRemote) {

@@ -112,11 +112,6 @@ public class TileEngineCreative extends TileEngine {
 	}
 
 	@Override
-	public int getScaledBurnTime(int scale) {
-		return 0;
-	}
-
-	@Override
 	public float explosionRange() {
 		return 0;
 	}

@@ -255,12 +255,6 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
 	}
 
 	@Override
-	public int getScaledBurnTime(int i) {
-		return this.tankFuel.getFluid() != null ? (int) (((float) this.tankFuel.getFluid().amount / (float) MAX_LIQUID) * i)
-				: 0;
-	}
-
-	@Override
 	public void readFromNBT(NBTTagCompound data) {
 		super.readFromNBT(data);
 		tankManager.readFromNBT(data);
@@ -278,11 +272,6 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
 		data.setInteger("burnTime", burnTime);
 		data.setInteger("penaltyCooling", penaltyCooling);
 
-	}
-
-	public int getScaledCoolant(int i) {
-		return tankCoolant.getFluid() != null ? (int) (((float) tankCoolant.getFluid().amount / (float) MAX_LIQUID) * i)
-				: 0;
 	}
 
 	@Override

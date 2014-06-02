@@ -411,8 +411,6 @@ public abstract class TileEngine extends TileBuildCraft implements ISidedBattery
 	/* STATE INFORMATION */
 	public abstract boolean isBurning();
 
-	public abstract int getScaledBurnTime(int scale);
-
 	@Override
 	public PowerReceiver getPowerReceiver(ForgeDirection side) {
 		return powerHandler.getPowerReceiver();
