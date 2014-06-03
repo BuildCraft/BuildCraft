@@ -36,7 +36,6 @@ public class TileIntegrationTable extends TileLaserTableBase {
 	private InventoryMapper invOutput = new InventoryMapper(inv, SLOT_OUTPUT, 1, false);
 	private IFlexibleRecipe activeRecipe;
 	private CraftingResult craftingPreview;
-	private boolean canCraft = false;
 
 	public IInventory getRecipeOutput() {
 		return invRecipeOutput;
@@ -51,10 +50,22 @@ public class TileIntegrationTable extends TileLaserTableBase {
 	}
 
 	@Override
+	public void initialize() {
+		super.initialize();
+
+		updateRecipe();
+	}
+
+	@Override
 	public void updateEntity() {
 		super.updateEntity();
 
 		if (worldObj.isRemote) {
+			return;
+		}
+
+		if (activeRecipe == null || craftingPreview == null) {
+			setEnergy(0);
 			return;
 		}
 
@@ -63,26 +74,10 @@ public class TileIntegrationTable extends TileLaserTableBase {
 			return;
 		}
 
-		canCraft = false;
-
-		ItemStack inputA = inv.getStackInSlot(SLOT_INPUT_A);
-		ItemStack inputB = inv.getStackInSlot(SLOT_INPUT_B);
-		ItemStack[] components = getComponents();
-		setNewActiveRecipe(inputA, inputB, components);
-
-		if (activeRecipe == null || craftingPreview == null) {
-			setEnergy(0);
-			return;
-		}
-
-		invRecipeOutput.setInventorySlotContents(0, (ItemStack) craftingPreview.crafted);
-
 		if (!isRoomForOutput((ItemStack) craftingPreview.crafted)) {
 			setEnergy(0);
 			return;
 		}
-
-		canCraft = true;
 
 		if (getEnergy() >= craftingPreview.energyCost
 				&& lastMode != ActionMachineControl.Mode.Off) {
@@ -101,6 +96,8 @@ public class TileIntegrationTable extends TileLaserTableBase {
 	}
 
 	private void setNewActiveRecipe(ItemStack inputA, ItemStack inputB, ItemStack[] components) {
+		craftingPreview = null;
+
 		for (IIntegrationRecipeFactory recipe : BuildcraftRecipeRegistry.integrationTable.getRecipes()) {
 			if (recipe.isValidInputA(inputA) && recipe.isValidInputB(inputB)) {
 				craftingPreview = recipe.craftPreview(this, null);
@@ -135,7 +132,7 @@ public class TileIntegrationTable extends TileLaserTableBase {
 
 	@Override
 	public boolean canCraft() {
-		return canCraft && isActive();
+		return isActive();
 	}
 
 	@Override
@@ -161,11 +158,13 @@ public class TileIntegrationTable extends TileLaserTableBase {
 
 	private boolean isValidInputB(ItemStack stack) {
 		ItemStack inputA = inv.getStackInSlot(SLOT_INPUT_A);
+
 		for (IIntegrationRecipeFactory recipe : BuildcraftRecipeRegistry.integrationTable.getRecipes()) {
 			if (recipe.isValidInputB(stack) && (inputA == null || recipe.isValidInputA(inputA))) {
 				return true;
 			}
 		}
+
 		return false;
 	}
 
@@ -186,7 +185,36 @@ public class TileIntegrationTable extends TileLaserTableBase {
 
     @Override
     public boolean isActive() {
-		return activeRecipe != null && super.isActive();
+		return craftingPreview != null && super.isActive();
     }
+
+	@Override
+	public void setInventorySlotContents(int slot, ItemStack stack) {
+		super.setInventorySlotContents(slot, stack);
+
+		updateRecipe();
+	}
+
+	@Override
+	public ItemStack decrStackSize(int slot, int amount) {
+		ItemStack result = super.decrStackSize(slot, amount);
+
+		updateRecipe();
+
+		return result;
+	}
+
+	private void updateRecipe() {
+		ItemStack inputA = inv.getStackInSlot(SLOT_INPUT_A);
+		ItemStack inputB = inv.getStackInSlot(SLOT_INPUT_B);
+		ItemStack[] components = getComponents();
+		setNewActiveRecipe(inputA, inputB, components);
+
+		if (craftingPreview != null) {
+			invRecipeOutput.setInventorySlotContents(0, (ItemStack) craftingPreview.crafted);
+		} else {
+			invRecipeOutput.setInventorySlotContents(0, null);
+		}
+	}
 
 }

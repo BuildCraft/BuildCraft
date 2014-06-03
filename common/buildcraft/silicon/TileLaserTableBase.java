@@ -160,29 +160,30 @@ public abstract class TileLaserTableBase extends TileBuildCraft implements ILase
 	public void getGUINetworkData(int id, int data) {
 		int currentStored = (int) (energy * 100.0);
 		int requiredEnergy = (int) (clientRequiredEnergy * 100.0);
+
 		switch (id) {
-			case 0:
-				requiredEnergy = (requiredEnergy & 0xFFFF0000) | (data & 0xFFFF);
+		case 0:
+			requiredEnergy = (requiredEnergy & 0xFFFF0000) | (data & 0xFFFF);
 			clientRequiredEnergy = requiredEnergy / 100.0f;
-				break;
-			case 1:
-				currentStored = (currentStored & 0xFFFF0000) | (data & 0xFFFF);
+			break;
+		case 1:
+			currentStored = (currentStored & 0xFFFF0000) | (data & 0xFFFF);
 			energy = currentStored / 100.0f;
-				break;
-			case 2:
-				requiredEnergy = (requiredEnergy & 0xFFFF) | ((data & 0xFFFF) << 16);
+			break;
+		case 2:
+			requiredEnergy = (requiredEnergy & 0xFFFF) | ((data & 0xFFFF) << 16);
 			clientRequiredEnergy = requiredEnergy / 100.0f;
-				break;
-			case 3:
-				currentStored = (currentStored & 0xFFFF) | ((data & 0xFFFF) << 16);
+			break;
+		case 3:
+			currentStored = (currentStored & 0xFFFF) | ((data & 0xFFFF) << 16);
 			energy = currentStored / 100.0f;
-				break;
-			case 4:
-				recentEnergyAverage = recentEnergyAverage & 0xFFFF0000 | (data & 0xFFFF);
-				break;
-			case 5:
-				recentEnergyAverage = (recentEnergyAverage & 0xFFFF) | ((data & 0xFFFF) << 16);
-				break;
+			break;
+		case 4:
+			recentEnergyAverage = recentEnergyAverage & 0xFFFF0000 | (data & 0xFFFF);
+			break;
+		case 5:
+			recentEnergyAverage = (recentEnergyAverage & 0xFFFF) | ((data & 0xFFFF) << 16);
+			break;
 		}
 	}
 
