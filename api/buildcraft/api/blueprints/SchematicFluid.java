@@ -70,12 +70,13 @@ public class SchematicFluid extends SchematicBlock {
 	@Override
 	public LinkedList<ItemStack> getStacksToDisplay(
 			LinkedList<ItemStack> stackConsumed) {
-
 		LinkedList<ItemStack> result = new LinkedList<ItemStack>();
-
 		result.add(fluidItem);
-
 		return result;
 	}
 
+	@Override
+	public double getEnergyRequirement(LinkedList<ItemStack> stacksUsed) {
+		return 1 * SchematicRegistry.BUILD_ENERGY;
+	}
 }

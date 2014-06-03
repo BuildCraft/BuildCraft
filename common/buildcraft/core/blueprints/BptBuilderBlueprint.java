@@ -51,7 +51,6 @@ import buildcraft.core.utils.BlockUtil;
 public class BptBuilderBlueprint extends BptBuilderBase {
 
 	public LinkedList<ItemStack> neededItems = new LinkedList<ItemStack>();
-	public LinkedList<FluidStack> neededFluids = new LinkedList<FluidStack>();
 
 	protected TreeSet<Integer> builtEntities = new TreeSet<Integer>();
 
@@ -551,14 +550,11 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 			}
 		}
 
-		builder.consumeEnergy(slot.getEnergyRequirement ());
-
-		return;
+		builder.consumeEnergy(slot.getEnergyRequirement());
 	}
 
 	public void recomputeNeededItems() {
 		neededItems.clear();
-		neededFluids.clear();
 
 		HashMap<StackKey, Integer> computeStacks = new HashMap<StackKey, Integer>();
 
