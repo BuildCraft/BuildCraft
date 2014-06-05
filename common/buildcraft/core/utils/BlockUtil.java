@@ -27,7 +27,6 @@ import net.minecraft.world.WorldServer;
 import cpw.mods.fml.common.FMLCommonHandler;
 
 import net.minecraftforge.event.ForgeEventFactory;
-import net.minecraftforge.fluids.BlockFluidBase;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidRegistry;
