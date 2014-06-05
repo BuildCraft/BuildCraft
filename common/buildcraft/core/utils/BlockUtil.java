@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockStaticLiquid;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -146,7 +147,7 @@ public final class BlockUtil {
 	}
 
 	public static boolean isFullFluidBlock(Block block, World world, int x, int y, int z) {
-		if (block instanceof BlockFluidBase || block instanceof IFluidBlock) {
+		if (block instanceof IFluidBlock || block instanceof BlockStaticLiquid) {
 			return world.getBlockMetadata(x, y, z) == 0;
 		}
 		return false;
