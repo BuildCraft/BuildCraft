@@ -28,9 +28,13 @@ import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
 
 import buildcraft.BuildCraftCore;
+import buildcraft.api.core.NetworkData;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.gates.IAction;
 import buildcraft.api.mj.MjBattery;
+import buildcraft.api.recipes.CraftingResult;
+import buildcraft.api.recipes.IFlexibleCrafter;
+import buildcraft.api.recipes.IFlexibleRecipe;
 import buildcraft.core.IMachine;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.fluids.SingleUseTank;
@@ -38,20 +42,27 @@ import buildcraft.core.fluids.TankManager;
 import buildcraft.core.network.PacketPayload;
 import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.recipes.RefineryRecipeManager;
-import buildcraft.core.recipes.RefineryRecipeManager.RefineryRecipe;
 
-public class TileRefinery extends TileBuildCraft implements IFluidHandler, IInventory, IMachine {
+public class TileRefinery extends TileBuildCraft implements IFluidHandler, IInventory, IMachine, IFlexibleCrafter {
 
 	public static int LIQUID_PER_SLOT = FluidContainerRegistry.BUCKET_VOLUME * 4;
-	public SingleUseTank tank1 = new SingleUseTank("tank1", LIQUID_PER_SLOT, this);
-	public SingleUseTank tank2 = new SingleUseTank("tank2", LIQUID_PER_SLOT, this);
+
+	public IFlexibleRecipe<FluidStack> currentRecipe;
+	public CraftingResult<FluidStack> craftingResult;
+
+	public SingleUseTank[] tanks = {new SingleUseTank("tank1", LIQUID_PER_SLOT, this),
+			new SingleUseTank("tank2", LIQUID_PER_SLOT, this)};
+
 	public SingleUseTank result = new SingleUseTank("result", LIQUID_PER_SLOT, this);
-	public TankManager<SingleUseTank> tankManager = new TankManager<SingleUseTank>(tank1, tank2, result);
+	public TankManager<SingleUseTank> tankManager = new TankManager<SingleUseTank>(tanks[0], tanks[1], result);
 	public float animationSpeed = 1;
 	private int animationStage = 0;
 	private SafeTimeTracker time = new SafeTimeTracker();
-	private SafeTimeTracker updateNetworkTime = new SafeTimeTracker();
+	private SafeTimeTracker updateNetworkTime = new SafeTimeTracker(BuildCraftCore.updateFactor);
 	private boolean isActive;
+
+	@NetworkData
+	private String currentRecipeId = "";
 
 	@MjBattery(maxCapacity = 1000, maxReceivedPerCycle = 150, minimumConsumption = 1)
 	private double mjStored = 0;
@@ -107,47 +118,39 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IInve
 			return;
 		}
 
-		if (updateNetworkTime.markTimeIfDelay(worldObj, BuildCraftCore.updateFactor)) {
+		if (updateNetworkTime.markTimeIfDelay(worldObj)) {
 			sendNetworkUpdate();
 		}
 
 		isActive = false;
-
-		RefineryRecipe currentRecipe = RefineryRecipeManager.INSTANCE.findRefineryRecipe(tank1.getFluid(), tank2.getFluid());
 
 		if (currentRecipe == null) {
 			decreaseAnimation();
 			return;
 		}
 
-		if (result.fill(currentRecipe.result.copy(), false) != currentRecipe.result.amount) {
-			decreaseAnimation();
-			return;
-		}
-
-		if (!containsInput(currentRecipe.ingredient1) || !containsInput(currentRecipe.ingredient2)) {
+		if (result.fill(craftingResult.crafted.copy(), false) != craftingResult.crafted.amount) {
 			decreaseAnimation();
 			return;
 		}
 
 		isActive = true;
 
-		if (mjStored >= currentRecipe.energyCost) {
+		if (mjStored >= craftingResult.energyCost) {
 			increaseAnimation();
 		} else {
 			decreaseAnimation();
 		}
 
-		if (!time.markTimeIfDelay(worldObj, currentRecipe.timeRequired)) {
+		if (!time.markTimeIfDelay(worldObj, craftingResult.craftingTime)) {
 			return;
 		}
 
-		if (mjStored >= currentRecipe.energyCost) {
-			mjStored -= currentRecipe.energyCost;
+		if (mjStored >= craftingResult.energyCost) {
+			mjStored -= craftingResult.energyCost;
 
-			if (consumeInput(currentRecipe.ingredient1) && consumeInput(currentRecipe.ingredient2)) {
-				result.fill(currentRecipe.result, true);
-			}
+			CraftingResult<FluidStack> r = currentRecipe.craft(this, false);
+			result.fill(r.crafted.copy(), true);
 		}
 	}
 
@@ -156,8 +159,8 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IInve
 			return true;
 		}
 
-		return (tank1.getFluid() != null && tank1.getFluid().containsFluid(ingredient))
-				|| (tank2.getFluid() != null && tank2.getFluid().containsFluid(ingredient));
+		return (tanks[0].getFluid() != null && tanks[0].getFluid().containsFluid(ingredient))
+				|| (tanks[1].getFluid() != null && tanks[1].getFluid().containsFluid(ingredient));
 	}
 
 	private boolean consumeInput(FluidStack liquid) {
@@ -165,11 +168,11 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IInve
 			return true;
 		}
 
-		if (tank1.getFluid() != null && tank1.getFluid().containsFluid(liquid)) {
-			tank1.drain(liquid.amount, true);
+		if (tanks[0].getFluid() != null && tanks[0].getFluid().containsFluid(liquid)) {
+			tanks[0].drain(liquid.amount, true);
 			return true;
-		} else if (tank2.getFluid() != null && tank2.getFluid().containsFluid(liquid)) {
-			tank2.drain(liquid.amount, true);
+		} else if (tanks[1].getFluid() != null && tanks[1].getFluid().containsFluid(liquid)) {
+			tanks[1].drain(liquid.amount, true);
 			return true;
 		}
 
@@ -201,6 +204,8 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IInve
 		animationSpeed = data.getFloat("animationSpeed");
 
 		mjStored = data.getDouble("mjStored");
+
+		updateRecipe();
 	}
 
 	@Override
@@ -318,16 +323,39 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IInve
 		int used = 0;
 		FluidStack resourceUsing = resource.copy();
 
-		used += tank1.fill(resourceUsing, doFill);
+		used += tanks[0].fill(resourceUsing, doFill);
 		resourceUsing.amount -= used;
-		used += tank2.fill(resourceUsing, doFill);
+		used += tanks[1].fill(resourceUsing, doFill);
+
+		updateRecipe();
 
 		return used;
 	}
 
 	@Override
 	public FluidStack drain(ForgeDirection from, int maxEmpty, boolean doDrain) {
-		return result.drain(maxEmpty, doDrain);
+		FluidStack r = result.drain(maxEmpty, doDrain);
+
+		updateRecipe();
+
+		return r;
+	}
+
+	private void updateRecipe() {
+		currentRecipe = null;
+		craftingResult = null;
+
+		for (IFlexibleRecipe recipe : RefineryRecipeManager.INSTANCE.getRecipes()) {
+			craftingResult = recipe.craft(this, true);
+
+			if (craftingResult != null) {
+				currentRecipe = recipe;
+				currentRecipeId = currentRecipe.getId();
+				break;
+			}
+		}
+
+		sendNetworkUpdate();
 	}
 
 	@Override
@@ -376,5 +404,59 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IInve
 	@Override
 	public boolean hasCustomInventoryName() {
 		return false;
+	}
+
+	@Override
+	public void postPacketHandling(PacketUpdate packet) {
+		super.postPacketHandling(packet);
+
+		currentRecipe = RefineryRecipeManager.INSTANCE.getRecipe(currentRecipeId);
+
+		if (currentRecipe != null) {
+			craftingResult = currentRecipe.craft(this, true);
+		}
+	}
+
+	@Override
+	public int getCraftingItemStackSize() {
+		return 0;
+	}
+
+	@Override
+	public ItemStack getCraftingItemStack(int slotid) {
+		return null;
+	}
+
+	@Override
+	public ItemStack decrCraftingItemgStack(int slotid, int val) {
+		return null;
+	}
+
+	@Override
+	public FluidStack getCraftingFluidStack(int tankid) {
+		return tanks[tankid].getFluid();
+	}
+
+	@Override
+	public FluidStack decrCraftingFluidStack(int tankid, int val) {
+		FluidStack result;
+
+		if (val >= tanks[tankid].getFluid().amount) {
+			result = tanks[tankid].getFluid();
+			tanks[tankid].setFluid(null);
+		} else {
+			result = tanks[tankid].getFluid().copy();
+			result.amount = val;
+			tanks[tankid].getFluid().amount -= val;
+		}
+
+		updateRecipe();
+
+		return result;
+	}
+
+	@Override
+	public int getCraftingFluidStackSize() {
+		return tanks.length;
 	}
 }

@@ -12,30 +12,23 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.minecraft.block.Block;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
-import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidTankInfo;
-import net.minecraftforge.fluids.IFluidHandler;
 
 import buildcraft.api.recipes.CraftingResult;
+import buildcraft.api.recipes.IFlexibleCrafter;
 import buildcraft.api.recipes.IFlexibleRecipe;
-import buildcraft.core.inventory.FluidHandlerCopy;
-import buildcraft.core.inventory.ITransactor;
-import buildcraft.core.inventory.InventoryCopy;
-import buildcraft.core.inventory.Transactor;
 import buildcraft.core.inventory.filters.ArrayStackFilter;
 import buildcraft.core.inventory.filters.IStackFilter;
 
-public class FlexibleRecipe implements IFlexibleRecipe {
+public class FlexibleRecipe<T> implements IFlexibleRecipe<T> {
 	public double energyCost = 0;
+	public long craftingTime = 0;
 	public String id;
 
-	public ItemStack outputItems = null;
-	public FluidStack outputFluids = null;
+	public T output = null;
 
 	public ArrayList<ItemStack> inputItems = new ArrayList<ItemStack>();
 	public ArrayList<List<ItemStack>> inputItemsWithAlternatives = new ArrayList<List<ItemStack>>();
@@ -46,26 +39,27 @@ public class FlexibleRecipe implements IFlexibleRecipe {
 
 	}
 
-	public FlexibleRecipe(String id, Object output, double iEnergyCost, Object... input) {
-		setContents(id, output, iEnergyCost, input);
+	public FlexibleRecipe(String id, T output, double iEnergyCost, long craftingTime, Object... input) {
+		setContents(id, output, iEnergyCost, craftingTime, input);
 	}
 
-	public void setContents(String iid, Object output, double iEnergyCost, Object... input) {
+	public void setContents(String iid, Object ioutput, double iEnergyCost, long iCraftingTime, Object... input) {
 		id = iid;
 
-		if (output instanceof ItemStack) {
-			outputItems = (ItemStack) output;
-		} else if (output instanceof Item) {
-			outputItems = new ItemStack((Item) output);
-		} else if (output instanceof Block) {
-			outputItems = new ItemStack((Block) output);
-		} else if (output instanceof FluidStack) {
-			outputFluids = (FluidStack) output;
+		if (ioutput instanceof ItemStack) {
+			output = (T) ioutput;
+		} else if (ioutput instanceof Item) {
+			output = (T) new ItemStack((Item) ioutput);
+		} else if (ioutput instanceof Block) {
+			output = (T) new ItemStack((Block) ioutput);
+		} else if (ioutput instanceof FluidStack) {
+			output = (T) ioutput;
 		} else {
 			throw new IllegalArgumentException("Unknown Object passed to recipe!");
 		}
 
 		energyCost = iEnergyCost;
+		craftingTime = iCraftingTime;
 
 		for (Object i : input) {
 			if (i instanceof ItemStack) {
@@ -79,140 +73,140 @@ public class FlexibleRecipe implements IFlexibleRecipe {
 			} else if (i instanceof List) {
 				inputItemsWithAlternatives.add((List) i);
 			} else {
-				throw new IllegalArgumentException("Unknown Object passed to recipe!");
+				throw new IllegalArgumentException("Unknown Object passed to recipe (" + i.getClass() + ")");
 			}
 		}
 	}
 
 
 	@Override
-	public boolean canBeCrafted(IInventory items, IFluidHandler fluids) {
-		return craftPreview(items, fluids) != null;
+	public boolean canBeCrafted(IFlexibleCrafter crafter) {
+		return craft(crafter, true) != null;
 	}
 
 	@Override
-	public final CraftingResult craftPreview(IInventory items, IFluidHandler fluids) {
-		return craft(items == null ? null : new InventoryCopy(items),
-				fluids == null ? null : new FluidHandlerCopy(fluids));
-	}
-
-	@Override
-	public CraftingResult craft(IInventory items, IFluidHandler fluids) {
-		CraftingResult result = new CraftingResult();
-
-		result.recipe = this;
-		result.energyCost = energyCost;
-
-		// Item simple stacks consumption
-
-		if (items == null && inputItems.size() > 0) {
+	public CraftingResult<T> craft(IFlexibleCrafter crafter, boolean preview) {
+		if (output == null) {
 			return null;
 		}
 
-		if (items != null) {
-			ITransactor tran = Transactor.getTransactorFor(items);
+		CraftingResult<T> result = new CraftingResult();
 
-			for (ItemStack requirement : inputItems) {
-				IStackFilter filter = new ArrayStackFilter(requirement);
+		result.recipe = this;
+		result.energyCost = energyCost;
+		result.craftingTime = craftingTime;
 
-				for (int num = 0; num < requirement.stackSize; num++) {
-					ItemStack s = tran.remove(filter, ForgeDirection.UNKNOWN, true);
+		for (ItemStack requirement : inputItems) {
+			IStackFilter filter = new ArrayStackFilter(requirement);
+			int amount = requirement.stackSize;
 
-					if (s == null) {
-						return null;
-					} else {
-						result.usedItems.add(s);
-					}
-				}
+			if (consumeItems(crafter, result, filter, amount, preview) != 0) {
+				return null;
 			}
 		}
 
 		// Item stacks with alternatives consumption
 
-		if (items == null && inputItemsWithAlternatives.size() > 0) {
-			return null;
-		}
+		for (List<ItemStack> requirements : inputItemsWithAlternatives) {
+			IStackFilter filter = new ArrayStackFilter(requirements.toArray(new ItemStack[0]));
+			int amount = requirements.get(0).stackSize;
 
-		if (items != null) {
-			ITransactor tran = Transactor.getTransactorFor(items);
-
-			for (List<ItemStack> requirements : inputItemsWithAlternatives) {
-
-				int required = requirements.get(0).stackSize;
-
-				IStackFilter filter = new ArrayStackFilter(requirements.toArray(new ItemStack [0]));
-
-				for (int num = 0; num < required; num++) {
-					ItemStack s = tran.remove(filter, ForgeDirection.UNKNOWN, true);
-
-					if (s != null) {
-						result.usedItems.add(s);
-
-						required--;
-
-						if (required == 0) {
-							break;
-						}
-					}
-				}
-
-				if (required > 0) {
-					return null;
-				}
+			if (consumeItems(crafter, result, filter, amount, preview) != 0) {
+				return null;
 			}
 		}
 
 		// Fluid stacks consumption
 
-		if (fluids == null && inputFluids.size() > 0) {
-			return null;
-		}
+		for (FluidStack requirement : inputFluids) {
+			int amount = requirement.amount;
 
-		if (fluids != null) {
-			for (FluidStack requirement : inputFluids) {
-				for (FluidTankInfo info : fluids.getTankInfo(ForgeDirection.UNKNOWN)) {
-					if (info.fluid.isFluidEqual(requirement)) {
-						int amountUsed = 0;
+			for (int tankid = 0; tankid < crafter.getCraftingFluidStackSize(); tankid++) {
+				FluidStack fluid = crafter.getCraftingFluidStack(tankid);
 
-						if (info.fluid.amount > requirement.amount) {
-							requirement.amount = 0;
-							info.fluid.amount -= requirement.amount;
-							amountUsed += requirement.amount;
-						} else {
-							requirement.amount -= info.fluid.amount;
-							info.fluid.amount = 0;
-							amountUsed += info.fluid.amount;
+				if (fluid != null && fluid.isFluidEqual(requirement)) {
+					int amountUsed = 0;
+
+					if (fluid.amount > amount) {
+						amountUsed = amount;
+
+						if (!preview) {
+							crafter.decrCraftingFluidStack(tankid, amount);
 						}
 
-						result.usedFluids.add(new FluidStack(requirement.fluidID, amountUsed));
+						amount = 0;
+					} else {
+						amountUsed = fluid.amount;
+
+						if (!preview) {
+							crafter.decrCraftingFluidStack(tankid, fluid.amount);
+						}
+
+						amount -= fluid.amount;
 					}
+
+					result.usedFluids.add(new FluidStack(requirement.fluidID, amountUsed));
+				}
+
+				if (amount == 0) {
+					break;
 				}
 			}
-		}
 
-		for (FluidStack requirement : inputFluids) {
-			if (requirement.amount > 0) {
+			if (amount != 0) {
 				return null;
 			}
 		}
 
 		// Output generation
 
-		if (outputItems != null) {
-			result.crafted = outputItems;
+		result.crafted = output;
 
-			return result;
-		} else if (outputFluids != null) {
-			result.crafted = outputFluids;
-
-			return result;
-		} else {
-			return null;
-		}
+		return result;
 	}
 
 	@Override
 	public String getId() {
 		return id;
+	}
+
+	private int consumeItems(IFlexibleCrafter crafter, CraftingResult<T> result, IStackFilter filter,
+			int amount, boolean preview) {
+		int expected = amount;
+
+		for (int slotid = 0; slotid < crafter.getCraftingItemStackSize(); ++slotid) {
+			ItemStack stack = crafter.getCraftingItemStack(slotid);
+
+			if (stack != null && filter.matches(stack)) {
+				ItemStack removed = null;
+
+				if (stack.stackSize >= expected) {
+					if (preview) {
+						removed = stack.copy();
+						removed.stackSize = expected;
+					} else {
+						removed = crafter.decrCraftingItemgStack(slotid, expected);
+					}
+
+					expected = 0;
+				} else {
+					if (preview) {
+						removed = stack.copy();
+					} else {
+						removed = crafter.decrCraftingItemgStack(slotid, stack.stackSize);
+					}
+
+					expected -= removed.stackSize;
+				}
+
+				result.usedItems.add(removed);
+			}
+
+			if (expected == 0) {
+				return 0;
+			}
+		}
+
+		return amount;
 	}
 }

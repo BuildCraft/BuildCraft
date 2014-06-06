@@ -75,7 +75,7 @@ public class GuiAssemblyTable extends GuiAdvancedInterface {
 	private final TileAssemblyTable table;
 
 	class RecipeSlot extends AdvancedSlot {
-		public CraftingResult crafting;
+		public CraftingResult<ItemStack> crafting;
 
 		public RecipeSlot(int x, int y) {
 			super(GuiAssemblyTable.this, x, y);
@@ -84,7 +84,7 @@ public class GuiAssemblyTable extends GuiAdvancedInterface {
 		@Override
 		public ItemStack getItemStack() {
 			if (crafting != null) {
-				return (ItemStack) crafting.crafted;
+				return crafting.crafted;
 			} else {
 				return null;
 			}
@@ -113,8 +113,8 @@ public class GuiAssemblyTable extends GuiAdvancedInterface {
 	}
 
 	public void updateRecipes() {
-		List<CraftingResult> potentialRecipes = table.getPotentialOutputs();
-		Iterator<CraftingResult> cur = potentialRecipes.iterator();
+		List<CraftingResult<ItemStack>> potentialRecipes = table.getPotentialOutputs();
+		Iterator<CraftingResult<ItemStack>> cur = potentialRecipes.iterator();
 
 		for (int p = 0; p < 8; ++p) {
 			if (cur.hasNext()) {

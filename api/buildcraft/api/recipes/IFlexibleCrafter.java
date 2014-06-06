@@ -8,19 +8,22 @@
  */
 package buildcraft.api.recipes;
 
-import java.util.ArrayList;
-
 import net.minecraft.item.ItemStack;
 
 import net.minecraftforge.fluids.FluidStack;
 
-public class CraftingResult<T> {
+public interface IFlexibleCrafter {
 
-	public T crafted = null;
-	public ArrayList<ItemStack> usedItems = new ArrayList<ItemStack>();
-	public ArrayList<FluidStack> usedFluids = new ArrayList<FluidStack>();
-	public double energyCost = 0;
-	public long craftingTime = 0;
-	public IFlexibleRecipe recipe;
+	public int getCraftingItemStackSize();
+
+	public ItemStack getCraftingItemStack(int slotid);
+
+	public ItemStack decrCraftingItemgStack(int slotid, int val);
+
+	public FluidStack getCraftingFluidStack(int tankid);
+
+	public FluidStack decrCraftingFluidStack(int tankid, int val);
+
+	public int getCraftingFluidStackSize();
 
 }

@@ -8,17 +8,11 @@
  */
 package buildcraft.api.recipes;
 
-import net.minecraft.inventory.IInventory;
+public interface IFlexibleRecipe<T> {
 
-import net.minecraftforge.fluids.IFluidHandler;
+	boolean canBeCrafted(IFlexibleCrafter crafter);
 
-public interface IFlexibleRecipe {
-
-	boolean canBeCrafted(IInventory items, IFluidHandler fluids);
-
-	CraftingResult craftPreview(IInventory items, IFluidHandler fluids);
-
-	CraftingResult craft(IInventory items, IFluidHandler fluids);
+	CraftingResult<T> craft(IFlexibleCrafter crafter, boolean preview);
 
 	String getId();
 

@@ -81,14 +81,14 @@ public class RenderRefinery extends TileEntitySpecialRenderer implements IInvent
 		int angle = 0;
 		ModelRenderer theMagnet = magnet[0];
 		if (tile != null) {
-			if (tile.tank1.getFluid() != null) {
-				liquid1 = tile.tank1.getFluid();
-				color1 = tile.tank1.colorRenderCache;
+			if (tile.tanks[0].getFluid() != null) {
+				liquid1 = tile.tanks[0].getFluid();
+				color1 = tile.tanks[0].colorRenderCache;
 			}
 
-			if (tile.tank2.getFluid() != null) {
-				liquid2 = tile.tank2.getFluid();
-				color2 = tile.tank2.colorRenderCache;
+			if (tile.tanks[1].getFluid() != null) {
+				liquid2 = tile.tanks[1].getFluid();
+				color2 = tile.tanks[1].colorRenderCache;
 			}
 
 			if (tile.result.getFluid() != null) {
@@ -193,7 +193,7 @@ public class RenderRefinery extends TileEntitySpecialRenderer implements IInvent
 				if (list1 != null) {
 					bindTexture(FluidRenderer.getFluidSheet(liquid1));
 					RenderUtils.setGLColorFromInt(color1);
-					GL11.glCallList(list1[getDisplayListIndex(tile.tank1)]);
+					GL11.glCallList(list1[getDisplayListIndex(tile.tanks[0])]);
 				}
 			}
 
@@ -205,7 +205,7 @@ public class RenderRefinery extends TileEntitySpecialRenderer implements IInvent
 					GL11.glTranslatef(0, 0, 1);
 					bindTexture(FluidRenderer.getFluidSheet(liquid2));
 					RenderUtils.setGLColorFromInt(color2);
-					GL11.glCallList(list2[getDisplayListIndex(tile.tank2)]);
+					GL11.glCallList(list2[getDisplayListIndex(tile.tanks[1])]);
 					GL11.glPopMatrix();
 				}
 			}

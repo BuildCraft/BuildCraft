@@ -104,17 +104,20 @@ public final class InterModComms {
 			failed = true;
 		} else {
 			NBTTagCompound recipe = msg.getNBTValue();
-			if (!recipe.hasKey("input", 10) || !recipe.hasKey("output", 10) || !recipe.hasKey("energy", 3) || !recipe.hasKey("delay", 3)) {
+			if (!recipe.hasKey("id") && !recipe.hasKey("input", 10) || !recipe.hasKey("output", 10)
+					|| !recipe.hasKey("energy", 3) || !recipe.hasKey("delay", 3)) {
 				failed = true;
 			} else {
 				FluidStack output = FluidStack.loadFluidStackFromNBT(recipe.getCompoundTag("output"));
 				FluidStack input = FluidStack.loadFluidStackFromNBT(recipe.getCompoundTag("input"));
 				FluidStack input2 = null;
+				String id = recipe.getString("id");
 				if (recipe.hasKey("input_2", 10)) {
 					input2 = FluidStack.loadFluidStackFromNBT(recipe.getCompoundTag("input_2"));
 				}
 				if (input != null && output != null) {
-					RefineryRecipeManager.INSTANCE.addRecipe(input, input2, output, recipe.getInteger("energy"), recipe.getInteger("delay"));
+					RefineryRecipeManager.INSTANCE.addRecipe(id, input, input2, output, recipe.getInteger("energy"),
+							recipe.getInteger("delay"));
 				} else {
 					failed = true;
 				}

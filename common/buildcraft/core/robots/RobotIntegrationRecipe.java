@@ -8,24 +8,20 @@
  */
 package buildcraft.core.robots;
 
-import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
-
-import net.minecraftforge.fluids.IFluidHandler;
 
 import buildcraft.BuildCraftSilicon;
 import buildcraft.api.recipes.CraftingResult;
-import buildcraft.api.recipes.IIntegrationRecipeFactory;
 import buildcraft.core.ItemRobot;
-import buildcraft.core.recipes.FlexibleRecipe;
 import buildcraft.core.utils.NBTUtils;
 import buildcraft.silicon.ItemRedstoneBoard;
 import buildcraft.silicon.TileIntegrationTable;
+import buildcraft.silicon.recipes.IntegrationTableRecipe;
 
-public class RobotIntegrationRecipe extends FlexibleRecipe implements IIntegrationRecipeFactory {
+public class RobotIntegrationRecipe extends IntegrationTableRecipe {
 
 	public RobotIntegrationRecipe(String id) {
-		setContents(id, new ItemStack(BuildCraftSilicon.robotItem), 10000);
+		setContents(id, new ItemStack(BuildCraftSilicon.robotItem), 10000, 0);
 	}
 
 	@Override
@@ -39,16 +35,15 @@ public class RobotIntegrationRecipe extends FlexibleRecipe implements IIntegrati
 	}
 
 	@Override
-	public CraftingResult craft(IInventory items, IFluidHandler fluids) {
-		ItemStack inputA = items.decrStackSize(TileIntegrationTable.SLOT_INPUT_A, 1);
-		ItemStack inputB = items.decrStackSize(TileIntegrationTable.SLOT_INPUT_B, 1);
+	public CraftingResult craft(TileIntegrationTable crafter, boolean preview, ItemStack inputA,
+			ItemStack inputB) {
 
-		CraftingResult result = super.craft(items, fluids);
+		CraftingResult<ItemStack> result = super.craft(crafter, preview, inputA, inputB);
 
 		if (result != null) {
 			ItemStack robot = new ItemStack(BuildCraftSilicon.robotItem);
 
-			NBTUtils.getItemData(robot).setTag("board", NBTUtils.getItemData(items.getStackInSlot(1)));
+			NBTUtils.getItemData(robot).setTag("board", NBTUtils.getItemData(inputA));
 
 			result.crafted = robot;
 

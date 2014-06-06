@@ -8,26 +8,21 @@
  */
 package buildcraft.silicon.recipes;
 
-import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
-
-import net.minecraftforge.fluids.IFluidHandler;
 
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.recipes.CraftingResult;
-import buildcraft.api.recipes.IIntegrationRecipeFactory;
 import buildcraft.core.inventory.StackHelper;
-import buildcraft.core.recipes.FlexibleRecipe;
 import buildcraft.silicon.ItemRedstoneChipset;
 import buildcraft.silicon.TileIntegrationTable;
 import buildcraft.transport.gates.GateDefinition.GateLogic;
 import buildcraft.transport.gates.GateDefinition.GateMaterial;
 import buildcraft.transport.gates.ItemGate;
 
-public class GateLogicSwapRecipe extends FlexibleRecipe implements IIntegrationRecipeFactory {
+public class GateLogicSwapRecipe extends IntegrationTableRecipe {
 
 	public GateLogicSwapRecipe(String id) {
-		setContents(id, BuildCraftTransport.pipeGate, 2000);
+		setContents(id, BuildCraftTransport.pipeGate, 2000, 0);
 	}
 
 	@Override
@@ -41,17 +36,16 @@ public class GateLogicSwapRecipe extends FlexibleRecipe implements IIntegrationR
 	}
 
 	@Override
-	public CraftingResult craft(IInventory items, IFluidHandler fluids) {
-		ItemStack inputA = items.decrStackSize(TileIntegrationTable.SLOT_INPUT_A, 1);
-		ItemStack inputB = items.decrStackSize(TileIntegrationTable.SLOT_INPUT_B, 1);
+	public CraftingResult craft(TileIntegrationTable crafter, boolean preview, ItemStack inputA,
+			ItemStack inputB) {
 
-		CraftingResult result = super.craft(items, fluids);
+		CraftingResult<ItemStack> result = super.craft(crafter, preview, inputA, inputB);
 
 		if (result == null) {
 			return null;
 		}
 
-		ItemStack output = (ItemStack) result.crafted;
+		ItemStack output = result.crafted;
 
 		output.stackSize = 1;
 		ItemGate.setLogic(output, ItemGate.getLogic(output) == GateLogic.AND ? GateLogic.OR : GateLogic.AND);

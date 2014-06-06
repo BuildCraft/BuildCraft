@@ -28,7 +28,11 @@ public class FluidHandlerCopy implements IFluidHandler {
 
 		for (int i = 0; i < contents.length; i++) {
 			if (originalInfo[i] != null) {
-				contents[i] = new FluidTankInfo(originalInfo[i].fluid.copy(), originalInfo[i].capacity);
+				if (originalInfo[i].fluid != null) {
+					contents[i] = new FluidTankInfo(originalInfo[i].fluid.copy(), originalInfo[i].capacity);
+				} else {
+					contents[i] = new FluidTankInfo(null, originalInfo[i].capacity);
+				}
 			}
 		}
 	}

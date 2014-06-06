@@ -242,11 +242,11 @@ public class ItemFacade extends ItemBuildCraft {
 				continue;
 			}
 
-			registerValidFacades("buildcraft:facade{" + Block.blockRegistry.getNameForObject(b) + "}", b, item);
+			registerValidFacades(b, item);
 		}
 	}
 
-	private static void registerValidFacades(String id, Block block, Item item) {
+	private static void registerValidFacades(Block block, Item item) {
 		Set<String> names = Sets.newHashSet();
 
 		for (int i = 0; i <= 15; i++) {
@@ -255,7 +255,9 @@ public class ItemFacade extends ItemBuildCraft {
 
 				if (!Strings.isNullOrEmpty(stack.getUnlocalizedName())
 						&& names.add(stack.getUnlocalizedName())) {
-					ItemFacade.addFacade(id, stack);
+					ItemFacade.addFacade(
+							"buildcraft:facade{" + Block.blockRegistry.getNameForObject(block) + "#"
+									+ stack.getItemDamage() + "}", stack);
 
 						// prevent adding multiple facades if it's a rotatable block
 					if (block.getRenderType() == 31) {

@@ -22,7 +22,7 @@ import buildcraft.api.recipes.IFlexibleRecipe;
 public class AssemblyRecipeManager implements IAssemblyRecipeManager {
 
 	public static final AssemblyRecipeManager INSTANCE = new AssemblyRecipeManager();
-	private Map<String, IFlexibleRecipe> assemblyRecipes = new HashMap<String, IFlexibleRecipe>();
+	private Map<String, IFlexibleRecipe<ItemStack>> assemblyRecipes = new HashMap<String, IFlexibleRecipe<ItemStack>>();
 
 	@Override
 	public void addRecipe(String id, double energyCost, ItemStack output, Object... input) {
@@ -32,7 +32,7 @@ public class AssemblyRecipeManager implements IAssemblyRecipeManager {
 			return;
 		}
 
-		addRecipe(id, new FlexibleRecipe(id, output, energyCost, input));
+		addRecipe(id, new FlexibleRecipe(id, output, energyCost, 0, input));
 	}
 
 	@Override
@@ -49,7 +49,7 @@ public class AssemblyRecipeManager implements IAssemblyRecipeManager {
 	}
 
 	@Override
-	public Collection<IFlexibleRecipe> getRecipes() {
+	public Collection<IFlexibleRecipe<ItemStack>> getRecipes() {
 		return assemblyRecipes.values();
 	}
 

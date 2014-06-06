@@ -10,7 +10,7 @@ package buildcraft.api.recipes;
 
 import net.minecraft.item.ItemStack;
 
-public interface IIntegrationRecipeFactory extends IFlexibleRecipe {
+public interface IIntegrationRecipe extends IFlexibleRecipe<ItemStack> {
 
 	boolean isValidInputA(ItemStack inputA);
 

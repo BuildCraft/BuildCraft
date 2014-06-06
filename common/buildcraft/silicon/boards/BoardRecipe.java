@@ -8,14 +8,12 @@
  */
 package buildcraft.silicon.boards;
 
-import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
-
-import net.minecraftforge.fluids.IFluidHandler;
 
 import buildcraft.BuildCraftSilicon;
 import buildcraft.api.boards.RedstoneBoardRegistry;
 import buildcraft.api.recipes.CraftingResult;
+import buildcraft.api.recipes.IFlexibleCrafter;
 import buildcraft.core.recipes.FlexibleRecipe;
 import buildcraft.core.utils.NBTUtils;
 
@@ -25,12 +23,12 @@ public class BoardRecipe extends FlexibleRecipe {
 		ItemStack output = new ItemStack(BuildCraftSilicon.redstoneBoard);
 		NBTUtils.getItemData(output).setString("id", "<unknown>");
 
-		setContents(id, output, 1000, new ItemStack(BuildCraftSilicon.redstoneBoard));
+		setContents(id, output, 1000, 0, new ItemStack(BuildCraftSilicon.redstoneBoard));
 	}
 
 	@Override
-	public CraftingResult craft(IInventory items, IFluidHandler fluids) {
-		CraftingResult result = super.craft(items, fluids);
+	public CraftingResult craft(IFlexibleCrafter crafter, boolean preview) {
+		CraftingResult<ItemStack> result = super.craft(crafter, preview);
 
 		if (result != null) {
 			ItemStack stack = new ItemStack(BuildCraftSilicon.redstoneBoard);

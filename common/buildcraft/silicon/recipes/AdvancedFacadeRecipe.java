@@ -8,26 +8,23 @@
  */
 package buildcraft.silicon.recipes;
 
-import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 
-import net.minecraftforge.fluids.IFluidHandler;
 import net.minecraftforge.oredict.OreDictionary;
 
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.JavaTools;
 import buildcraft.api.recipes.CraftingResult;
-import buildcraft.api.recipes.IIntegrationRecipeFactory;
 import buildcraft.api.transport.PipeWire;
-import buildcraft.core.recipes.FlexibleRecipe;
 import buildcraft.silicon.ItemRedstoneChipset;
 import buildcraft.silicon.TileIntegrationTable;
 import buildcraft.transport.ItemFacade;
 import buildcraft.transport.ItemPipeWire;
 
-public class AdvancedFacadeRecipe extends FlexibleRecipe implements IIntegrationRecipeFactory {
+public class AdvancedFacadeRecipe extends IntegrationTableRecipe {
+
 	public AdvancedFacadeRecipe(String id) {
-		setContents(id, new ItemFacade(), 5000,
+		setContents(id, new ItemFacade(), 5000, 0,
 				new ItemStack(BuildCraftTransport.pipeWire, 1, OreDictionary.WILDCARD_VALUE),
 				ItemRedstoneChipset.Chipset.RED.getStack());
 	}
@@ -44,15 +41,10 @@ public class AdvancedFacadeRecipe extends FlexibleRecipe implements IIntegration
 	}
 
 	@Override
-	public CraftingResult craft(IInventory items, IFluidHandler fluids) {
-		ItemStack inputA = items.decrStackSize(TileIntegrationTable.SLOT_INPUT_A, 1);
-		ItemStack inputB = items.decrStackSize(TileIntegrationTable.SLOT_INPUT_B, 1);
+	public CraftingResult craft(TileIntegrationTable crafter, boolean preview, ItemStack inputA,
+			ItemStack inputB) {
 
-		if (inputA == null || inputB == null) {
-			return null;
-		}
-
-		CraftingResult result = super.craft(items, fluids);
+		CraftingResult<ItemStack> result = super.craft(crafter, preview, inputA, inputB);
 
 		if (result == null) {
 			return null;

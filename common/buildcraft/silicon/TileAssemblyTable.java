@@ -23,9 +23,11 @@ import cpw.mods.fml.common.FMLCommonHandler;
 
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraftforge.fluids.FluidStack;
 
 import buildcraft.api.core.NetworkData;
 import buildcraft.api.recipes.CraftingResult;
+import buildcraft.api.recipes.IFlexibleCrafter;
 import buildcraft.api.recipes.IFlexibleRecipe;
 import buildcraft.core.IMachine;
 import buildcraft.core.network.PacketUpdate;
@@ -37,21 +39,21 @@ import buildcraft.core.triggers.ActionMachineControl;
 import buildcraft.core.utils.StringUtils;
 import buildcraft.core.utils.Utils;
 
-public class TileAssemblyTable extends TileLaserTableBase implements IMachine, IInventory {
+public class TileAssemblyTable extends TileLaserTableBase implements IMachine, IInventory, IFlexibleCrafter {
 
 	@NetworkData
 	public String currentRecipeId = "";
 
-	public IFlexibleRecipe currentRecipe;
+	public IFlexibleRecipe<ItemStack> currentRecipe;
 
 	@NetworkData
 	private HashSet<String> plannedOutput = new HashSet<String>();
 
-	public List<CraftingResult> getPotentialOutputs() {
-		List<CraftingResult> result = new LinkedList<CraftingResult>();
+	public List<CraftingResult<ItemStack>> getPotentialOutputs() {
+		List<CraftingResult<ItemStack>> result = new LinkedList<CraftingResult<ItemStack>>();
 
 		for (IFlexibleRecipe recipe : AssemblyRecipeManager.INSTANCE.getRecipes()) {
-			CraftingResult r = recipe.craftPreview(this, null);
+			CraftingResult<ItemStack> r = recipe.craft(this, true);
 
 			if (r != null) {
 				result.add(r);
@@ -74,7 +76,7 @@ public class TileAssemblyTable extends TileLaserTableBase implements IMachine, I
 			return;
 		}
 
-		if (!currentRecipe.canBeCrafted(this, null)) {
+		if (!currentRecipe.canBeCrafted(this)) {
 			setNextCurrentRecipe();
 
 			if (currentRecipe == null) {
@@ -82,12 +84,12 @@ public class TileAssemblyTable extends TileLaserTableBase implements IMachine, I
 			}
 		}
 
-		if (getEnergy() >= currentRecipe.craftPreview(this, null).energyCost
+		if (getEnergy() >= currentRecipe.craft(this, true).energyCost
 				&& lastMode != ActionMachineControl.Mode.Off) {
 			setEnergy(0);
 
-			if (currentRecipe.canBeCrafted(this, null)) {
-				ItemStack remaining = (ItemStack) currentRecipe.craft(this, null).crafted;
+			if (currentRecipe.canBeCrafted(this)) {
+				ItemStack remaining = currentRecipe.craft(this, false).crafted.copy();
 				remaining.stackSize -= Utils.addToRandomInventoryAround(worldObj, xCoord, yCoord, zCoord, remaining);
 
 				if (remaining.stackSize > 0) {
@@ -187,7 +189,7 @@ public class TileAssemblyTable extends TileLaserTableBase implements IMachine, I
 			currentRecipeId = "";
 		}
 
-		if (!worldObj.isRemote) {
+		if (worldObj != null && !worldObj.isRemote) {
 			sendNetworkUpdate();
 		}
 	}
@@ -195,7 +197,7 @@ public class TileAssemblyTable extends TileLaserTableBase implements IMachine, I
 	@Override
 	public double getRequiredEnergy() {
 		if (currentRecipe != null) {
-			CraftingResult result = currentRecipe.craftPreview(this, null);
+			CraftingResult<ItemStack> result = currentRecipe.craft(this, true);
 
 			if (result != null) {
 				return result.energyCost;
@@ -237,7 +239,7 @@ public class TileAssemblyTable extends TileLaserTableBase implements IMachine, I
 
 			if (recipe == currentRecipe) {
 				takeNext = true;
-			} else if (takeNext && recipe.canBeCrafted(this, null)) {
+			} else if (takeNext && recipe.canBeCrafted(this)) {
 				setCurrentRecipe(recipe);
 				return;
 			}
@@ -246,7 +248,7 @@ public class TileAssemblyTable extends TileLaserTableBase implements IMachine, I
 		for (String recipeId : plannedOutput) {
 			IFlexibleRecipe recipe = AssemblyRecipeManager.INSTANCE.getRecipe(recipeId);
 
-			if (recipe.canBeCrafted(this, null)) {
+			if (recipe.canBeCrafted(this)) {
 				setCurrentRecipe(recipe);
 				return;
 			}
@@ -298,5 +300,36 @@ public class TileAssemblyTable extends TileLaserTableBase implements IMachine, I
 	public void postPacketHandling(PacketUpdate packet) {
 		currentRecipe = AssemblyRecipeManager.INSTANCE.getRecipe(currentRecipeId);
 	}
+
+	@Override
+	public int getCraftingItemStackSize() {
+		return getSizeInventory();
+	}
+
+	@Override
+	public ItemStack getCraftingItemStack(int slotid) {
+		return getStackInSlot(slotid);
+	}
+
+	@Override
+	public ItemStack decrCraftingItemgStack(int slotid, int val) {
+		return decrStackSize(slotid, val);
+	}
+
+	@Override
+	public FluidStack getCraftingFluidStack(int tankid) {
+		return null;
+	}
+
+	@Override
+	public FluidStack decrCraftingFluidStack(int tankid, int val) {
+		return null;
+	}
+
+	@Override
+	public int getCraftingFluidStackSize() {
+		return 0;
+	}
+
 
 }

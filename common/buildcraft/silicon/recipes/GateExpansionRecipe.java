@@ -8,21 +8,16 @@
  */
 package buildcraft.silicon.recipes;
 
-import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
-
-import net.minecraftforge.fluids.IFluidHandler;
 
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.gates.IGateExpansion;
 import buildcraft.api.recipes.CraftingResult;
-import buildcraft.api.recipes.IIntegrationRecipeFactory;
 import buildcraft.core.inventory.StackHelper;
-import buildcraft.core.recipes.FlexibleRecipe;
 import buildcraft.silicon.TileIntegrationTable;
 import buildcraft.transport.gates.ItemGate;
 
-public class GateExpansionRecipe extends FlexibleRecipe implements IIntegrationRecipeFactory {
+public class GateExpansionRecipe extends IntegrationTableRecipe {
 
 	private final IGateExpansion expansion;
 	private final ItemStack chipset;
@@ -31,7 +26,7 @@ public class GateExpansionRecipe extends FlexibleRecipe implements IIntegrationR
 		this.expansion = expansion;
 		this.chipset = chipset.copy();
 
-		setContents(id, BuildCraftTransport.pipeGate, 10000);
+		setContents(id, BuildCraftTransport.pipeGate, 10000, 0);
 	}
 
 	@Override
@@ -51,15 +46,14 @@ public class GateExpansionRecipe extends FlexibleRecipe implements IIntegrationR
 	}
 
 	@Override
-	public CraftingResult craft(IInventory items, IFluidHandler fluids) {
-		ItemStack inputA = items.decrStackSize(TileIntegrationTable.SLOT_INPUT_A, 1);
-		ItemStack inputB = items.decrStackSize(TileIntegrationTable.SLOT_INPUT_B, 1);
+	public CraftingResult craft(TileIntegrationTable crafter, boolean preview, ItemStack inputA,
+			ItemStack inputB) {
 
 		if (inputA == null) {
 			return null;
 		}
 
-		CraftingResult result = super.craft(items, fluids);
+		CraftingResult<ItemStack> result = super.craft(crafter, preview, inputA, inputB);
 
 		if (result == null) {
 			return null;

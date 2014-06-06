@@ -27,7 +27,7 @@ public interface IAssemblyRecipeManager {
 	 */
 	void addRecipe(String id, double energyCost, ItemStack output, Object... input);
 
-	void addRecipe(IFlexibleRecipe recipe);
+	void addRecipe(IFlexibleRecipe<ItemStack> recipe);
 
-	Collection<IFlexibleRecipe> getRecipes();
+	Collection<IFlexibleRecipe<ItemStack>> getRecipes();
 }
