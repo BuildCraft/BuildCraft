@@ -33,7 +33,6 @@ public class BoardRobotLumberjack implements IRedstoneBoardRobot<EntityRobot> {
 	private int range;
 	private boolean initialized = false;
 	private PathFinding woodScanner = null;
-	private LinkedList<BlockIndex> path;
 	private Stages stage = Stages.LOOK_FOR_WOOD;
 	private BlockIndex woodToChop;
 	private float blockDamage;
@@ -93,7 +92,6 @@ public class BoardRobotLumberjack implements IRedstoneBoardRobot<EntityRobot> {
             	blockDamage = 0;
 				robot.worldObj.setBlockToAir(woodToChop.x, woodToChop.y, woodToChop.z);
 				stage = Stages.LOOK_FOR_WOOD;
-				path = null;
 				woodToChop = null;
 				woodScanner = null;
 			} else {
@@ -110,7 +108,7 @@ public class BoardRobotLumberjack implements IRedstoneBoardRobot<EntityRobot> {
 
 	private float getBreakSpeed(EntityRobot robot, ItemStack usingItem, Block block, int meta) {
 		ItemStack stack = usingItem;
-		float f = (stack == null ? 1.0F : stack.getItem().getDigSpeed(stack, block, meta));
+		float f = stack == null ? 1.0F : stack.getItem().getDigSpeed(stack, block, meta);
 
 		if (f > 1.0F) {
 			int i = EnchantmentHelper.getEfficiencyModifier(robot);
