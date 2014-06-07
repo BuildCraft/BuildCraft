@@ -22,6 +22,7 @@ import io.netty.buffer.Unpooled;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.inventory.Container;
 import net.minecraft.tileentity.TileEntity;
 
 import buildcraft.BuildCraftCore;
@@ -103,30 +104,51 @@ public final class RPCHandler {
 		methods = mappings.toArray(new MethodMapping [mappings.size()]);
 	}
 
-	public static void rpcServer (TileEntity tile, String method, Object ... actuals) {
-		if (!handlers.containsKey(tile.getClass().getName())) {
-			handlers.put (tile.getClass().getName(), new RPCHandler (tile.getClass()));
+	public static void rpcServer(Object object, String method, Object... actuals) {
+		if (!handlers.containsKey(object.getClass().getName())) {
+			handlers.put(object.getClass().getName(), new RPCHandler(object.getClass()));
 		}
 
-		PacketRPCTile packet = handlers.get (tile.getClass().getName()).createRCPPacket(tile, method, actuals);
+		BuildCraftPacket packet = null;
+
+		if (object instanceof Container) {
+			packet = handlers.get(object.getClass().getName()).createRCPPacketContainer(method, actuals);
+		} else if (object instanceof TileEntity) {
+			packet = handlers.get(object.getClass().getName()).createRCPPacketTile((TileEntity) object, method, actuals);
+		}
 
 		if (packet != null) {
-			for (PacketRPCTile p : packet.breakIntoSmallerPackets(MAX_PACKET_SIZE)) {
-				BuildCraftCore.instance.sendToServer(p);
+			if (packet instanceof PacketRPCTile) {
+				for (PacketRPCTile p : ((PacketRPCTile) packet).breakIntoSmallerPackets(MAX_PACKET_SIZE)) {
+					BuildCraftCore.instance.sendToServer(p);
+				}
+			} else {
+				BuildCraftCore.instance.sendToServer(packet);
 			}
 		}
 	}
 
-	public static void rpcPlayer (TileEntity tile, String method, EntityPlayer player, Object ... actuals) {
-		if (!handlers.containsKey(tile.getClass().getName())) {
-			handlers.put (tile.getClass().getName(), new RPCHandler (tile.getClass()));
+	public static void rpcPlayer(Object object, String method, EntityPlayer player, Object... actuals) {
+		if (!handlers.containsKey(object.getClass().getName())) {
+			handlers.put(object.getClass().getName(), new RPCHandler(object.getClass()));
 		}
 
-		PacketRPCTile packet = handlers.get (tile.getClass().getName()).createRCPPacket(tile, method, actuals);
+		BuildCraftPacket packet = null;
+
+		if (object instanceof Container) {
+			packet = handlers.get(object.getClass().getName()).createRCPPacketContainer(method, actuals);
+		} else if (object instanceof TileEntity) {
+			packet = handlers.get(object.getClass().getName())
+					.createRCPPacketTile((TileEntity) object, method, actuals);
+		}
 
 		if (packet != null) {
-			for (PacketRPCTile p : packet.breakIntoSmallerPackets(MAX_PACKET_SIZE)) {
-				BuildCraftCore.instance.sendToPlayer(player, p);
+			if (packet instanceof PacketRPCTile) {
+				for (PacketRPCTile p : ((PacketRPCTile) packet).breakIntoSmallerPackets(MAX_PACKET_SIZE)) {
+					BuildCraftCore.instance.sendToPlayer(player, p);
+				}
+			} else {
+				BuildCraftCore.instance.sendToPlayer(player, packet);
 			}
 		}
 	}
@@ -144,7 +166,7 @@ public final class RPCHandler {
 			handlers.put (tile.getClass().getName(), new RPCHandler (tile.getClass()));
 		}
 
-		PacketRPCTile packet = handlers.get (tile.getClass().getName()).createRCPPacket(tile, method, actuals);
+		PacketRPCTile packet = handlers.get (tile.getClass().getName()).createRCPPacketTile(tile, method, actuals);
 
 		if (packet != null) {
 			for (PacketRPCTile p : packet
@@ -167,7 +189,7 @@ public final class RPCHandler {
 			handlers.put (pipe.getClass().getName(), new RPCHandler (pipe.getClass()));
 		}
 
-		PacketRPCPipe packet = handlers.get (pipe.getClass().getName()).createRCPPacket(pipe, method, actuals);
+		PacketRPCPipe packet = handlers.get (pipe.getClass().getName()).createRCPPacketPipe(pipe, method, actuals);
 
 		if (packet != null) {
 			for (Object o : pipe.container.getWorld().playerEntities) {
@@ -182,31 +204,19 @@ public final class RPCHandler {
 		}
 	}
 
-	public static void receiveRPC (TileEntity tile, RPCMessageInfo info, ByteBuf data) {
-		if (tile != null) {
-			if (!handlers.containsKey(tile.getClass().getName())) {
-				handlers.put(tile.getClass().getName(),
-						new RPCHandler(tile.getClass()));
+	public static void receiveRPC(Object obj, RPCMessageInfo info, ByteBuf data) {
+		if (obj != null) {
+			if (!handlers.containsKey(obj.getClass().getName())) {
+				handlers.put(obj.getClass().getName(),
+						new RPCHandler(obj.getClass()));
 			}
 
-			handlers.get(tile.getClass().getName()).internalRpcReceive(tile,
+			handlers.get(obj.getClass().getName()).internalRpcReceive(obj,
 					info, data);
 		}
 	}
 
-	public static void receiveRPC (Pipe pipe, RPCMessageInfo info, ByteBuf data) {
-		if (pipe != null) {
-			if (!handlers.containsKey(pipe.getClass().getName())) {
-				handlers.put(pipe.getClass().getName(),
-						new RPCHandler(pipe.getClass()));
-			}
-
-			handlers.get(pipe.getClass().getName()).internalRpcReceive(pipe,
-					info, data);
-		}
-	}
-
-	private PacketRPCPipe createRCPPacket (Pipe pipe, String method, Object ... actuals) {
+	private PacketRPCPipe createRCPPacketPipe (Pipe pipe, String method, Object ... actuals) {
 		ByteBuf data = Unpooled.buffer();
 
 		try {
@@ -234,7 +244,7 @@ public final class RPCHandler {
 		return new PacketRPCPipe(bytes);
 	}
 
-	private PacketRPCTile createRCPPacket (TileEntity tile, String method, Object ... actuals) {
+	private PacketRPCTile createRCPPacketTile (TileEntity tile, String method, Object ... actuals) {
 		ByteBuf data = Unpooled.buffer();
 
 		try {
@@ -251,6 +261,25 @@ public final class RPCHandler {
 		data.readBytes(bytes);
 
 		return new PacketRPCTile(tile, bytes);
+	}
+
+	private PacketRPCGui createRCPPacketContainer(String method, Object... actuals) {
+		ByteBuf data = Unpooled.buffer();
+
+		try {
+			writeParameters(method, data, actuals);
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		}
+
+		byte[] bytes = new byte[data.readableBytes()];
+		data.readBytes(bytes);
+
+		return new PacketRPCGui(bytes);
 	}
 
 	private void writeParameters(String method, ByteBuf data, Object... actuals)

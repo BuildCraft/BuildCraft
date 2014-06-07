@@ -75,14 +75,12 @@ public class ItemRedstoneBoard extends ItemBuildCraft {
 	}
 
 	@Override
-	public boolean onItemUse(ItemStack par1ItemStack, EntityPlayer entityplayer, World world, int x,
-			int y, int z, int i, float par8, float par9, float par10) {
-
+	public ItemStack onItemRightClick(ItemStack par1ItemStack, World world, EntityPlayer entityPlayer) {
 		if (!world.isRemote) {
-			entityplayer.openGui(BuildCraftSilicon.instance, GuiIds.REDSTONE_BOARD, world, x, y, z);
+			entityPlayer.openGui(BuildCraftSilicon.instance, GuiIds.REDSTONE_BOARD, world, 0, 0, 0);
 		}
 
-		return true;
+		return par1ItemStack;
 	}
 
 }

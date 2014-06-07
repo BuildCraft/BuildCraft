@@ -52,39 +52,45 @@ public class PacketHandler extends SimpleChannelInboundHandler<BuildCraftPacket>
 			int packetID = packet.getID();
 
 			switch (packetID) {
-				case PacketIds.TILE_UPDATE: {
-					onTileUpdate(player, (PacketTileUpdate) packet);
-					break;
+			case PacketIds.TILE_UPDATE: {
+				onTileUpdate(player, (PacketTileUpdate) packet);
+				break;
+			}
+
+			case PacketIds.STATE_UPDATE: {
+				PacketTileState pkt = (PacketTileState) packet;
+				World world = player.worldObj;
+
+				TileEntity tile = world.getTileEntity(pkt.posX, pkt.posY, pkt.posZ);
+
+				if (tile instanceof ISyncedTile) {
+					pkt.applyStates((ISyncedTile) tile);
 				}
 
-				case PacketIds.STATE_UPDATE: {
-					PacketTileState pkt = (PacketTileState) packet;
-					World world = player.worldObj;
+				break;
+			}
 
-					TileEntity tile = world.getTileEntity(pkt.posX, pkt.posY, pkt.posZ);
+			case PacketIds.GUI_RETURN: {
+				// action will have happened already at read time
+				break;
+			}
 
-					if (tile instanceof ISyncedTile) {
-						pkt.applyStates((ISyncedTile) tile);
-					}
+			case PacketIds.GUI_WIDGET: {
+				// action will have happened already at read time
+				break;
+			}
 
-					break;
-				}
+			case PacketIds.RPC_TILE: {
+				((PacketRPCTile) packet).call(player);
 
-				case PacketIds.GUI_RETURN: {
-					// action will have happened already at read time
-					break;
-				}
+				break;
+			}
 
-				case PacketIds.GUI_WIDGET: {
-					// action will have happened already at read time
-					break;
-				}
+			case PacketIds.RPC_GUI: {
+				((PacketRPCGui) packet).call(player);
 
-				case PacketIds.RPC_TILE: {
-					((PacketRPCTile) packet).call(player);
-
-					break;
-				}
+				break;
+			}
 
 				case PacketIds.RPC_PIPE: {
 				// TODO: RPC pipes are not used right now. Ressurect this

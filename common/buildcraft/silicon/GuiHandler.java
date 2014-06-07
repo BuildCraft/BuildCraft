@@ -28,6 +28,9 @@ public class GuiHandler implements IGuiHandler {
 
 	@Override
 	public Object getClientGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
+		if (id == GuiIds.REDSTONE_BOARD) {
+			return new GuiRedstoneBoard(player, x, y, z);
+		}
 
 		if (!world.blockExists(x, y, z)) {
 			return null;
@@ -58,9 +61,6 @@ public class GuiHandler implements IGuiHandler {
 				return new GuiIntegrationTable(player.inventory, (TileIntegrationTable) tile);
 			}
 
-		case GuiIds.REDSTONE_BOARD:
-			return new GuiRedstoneBoard(player, x, y, z);
-
 		default:
 			return null;
 		}
@@ -68,6 +68,10 @@ public class GuiHandler implements IGuiHandler {
 
 	@Override
 	public Object getServerGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
+
+		if (id == GuiIds.REDSTONE_BOARD) {
+			return new ContainerRedstoneBoard(player, x, y, z);
+		}
 
 		if (!world.blockExists(x, y, z)) {
 			return null;

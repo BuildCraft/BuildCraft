@@ -20,6 +20,7 @@ import net.minecraftforge.fluids.FluidStack;
 import buildcraft.api.recipes.CraftingResult;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.gui.AdvancedSlot;
+import buildcraft.core.gui.FluidSlot;
 import buildcraft.core.gui.GuiAdvancedInterface;
 import buildcraft.core.utils.StringUtils;
 import buildcraft.factory.TileRefinery;
@@ -39,9 +40,9 @@ public class GuiRefinery extends GuiAdvancedInterface {
 
 		this.slots = new AdvancedSlot[3];
 
-		this.slots[0] = new FluidSlot(38, 54);
-		this.slots[1] = new FluidSlot(126, 54);
-		this.slots[2] = new FluidSlot(82, 54);
+		this.slots[0] = new FluidSlot(this, 38, 54);
+		this.slots[1] = new FluidSlot(this, 126, 54);
+		this.slots[2] = new FluidSlot(this, 82, 54);
 	}
 
 	@Override

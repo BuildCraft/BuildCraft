@@ -10,13 +10,32 @@ package buildcraft.silicon.gui;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Slot;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 
+import buildcraft.api.boards.IBoardParameter;
+import buildcraft.api.boards.IBoardParameterStack;
+import buildcraft.api.boards.RedstoneBoardNBT;
+import buildcraft.api.boards.RedstoneBoardRegistry;
 import buildcraft.core.gui.BuildCraftContainer;
+import buildcraft.core.network.RPC;
+import buildcraft.core.network.RPCSide;
+import buildcraft.core.utils.NBTUtils;
 
 public class ContainerRedstoneBoard extends BuildCraftContainer {
 
-	public ContainerRedstoneBoard(EntityPlayer player, int x, int y, int z) {
-		super(player.inventory.getSizeInventory());
+	private EntityPlayer player;
+	private RedstoneBoardNBT board;
+	private IBoardParameter[] params;
+
+	public ContainerRedstoneBoard(EntityPlayer iPlayer, int x, int y, int z) {
+		super(iPlayer.inventory.getSizeInventory());
+
+		player = iPlayer;
+
+		NBTTagCompound boardNBT = NBTUtils.getItemData(player.getHeldItem());
+		board = RedstoneBoardRegistry.instance.getRedstoneBoard(boardNBT);
+		params = board.getParameters(boardNBT);
 
 		for (int sy = 0; sy < 3; sy++) {
 			for (int sx = 0; sx < 9; sx++) {
@@ -33,5 +52,12 @@ public class ContainerRedstoneBoard extends BuildCraftContainer {
 	@Override
 	public boolean canInteractWith(EntityPlayer entityplayer) {
 		return true;
+	}
+
+	@RPC(RPCSide.SERVER)
+	public void setParameterStack(int position, ItemStack stack) {
+		NBTTagCompound boardNBT = NBTUtils.getItemData(player.getHeldItem());
+		((IBoardParameterStack) params[position]).setStack(stack);
+		board.setParameters(NBTUtils.getItemData(player.getHeldItem()), params);
 	}
 }

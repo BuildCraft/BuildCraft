@@ -10,6 +10,7 @@ package buildcraft.core;
 
 import java.util.List;
 
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -76,7 +77,10 @@ public class ItemRobot extends ItemBuildCraft {
 		if (cpt.hasKey("id") && !"<unknown>".equals(cpt.getString("id"))) {
 			RedstoneBoardRegistry.instance.getRedstoneBoard(cpt).addInformation(stack, player, list, advanced);
 		}
-
 	}
 
+	@Override
+	public void registerIcons(IIconRegister par1IconRegister) {
+		// cancels default BC icon registering
+	}
 }

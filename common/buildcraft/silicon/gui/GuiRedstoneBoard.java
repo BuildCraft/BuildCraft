@@ -16,11 +16,14 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 
 import buildcraft.api.boards.IBoardParameter;
+import buildcraft.api.boards.IBoardParameterStack;
 import buildcraft.api.boards.RedstoneBoardNBT;
 import buildcraft.api.boards.RedstoneBoardRegistry;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.gui.AdvancedSlot;
 import buildcraft.core.gui.GuiAdvancedInterface;
+import buildcraft.core.gui.ItemSlot;
+import buildcraft.core.network.RPCHandler;
 import buildcraft.core.utils.NBTUtils;
 
 public class GuiRedstoneBoard extends GuiAdvancedInterface {
@@ -47,9 +50,13 @@ public class GuiRedstoneBoard extends GuiAdvancedInterface {
 		board = RedstoneBoardRegistry.instance.getRedstoneBoard(boardNBT);
 		params = board.getParameters(boardNBT);
 
-		slots = new AdvancedSlot [1];
-		slots[0] = new ItemSlot(10, 10);
-		slots[0].drawBackround = true;
+		slots = new AdvancedSlot[params.length];
+
+		for (int i = 0; i < params.length; ++i) {
+			slots[i] = new ItemSlot(this, 10, 10 + i * 20);
+			slots[i].drawBackround = true;
+			((ItemSlot) slots[i]).stack = ((IBoardParameterStack) params[i]).getStack();
+		}
 	}
 
 	@SuppressWarnings("unchecked")
@@ -91,6 +98,7 @@ public class GuiRedstoneBoard extends GuiAdvancedInterface {
 
 		if (slot instanceof ItemSlot) {
 			((ItemSlot) slot).stack = mc.thePlayer.inventory.getItemStack();
+			RPCHandler.rpcServer(container, "setParameterStack", position, mc.thePlayer.inventory.getItemStack());
 		}
 	}
 }
