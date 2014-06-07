@@ -62,6 +62,12 @@ public class TileQuarry extends TileAbstractBuilder implements IMachine {
 		DONE
 	}
 
+	public static final int MAX_BREAK_HARDNESS = 700;
+
+	public static final double CREATE_ARM_ENERGY = 7.0D;
+	public static final double DIG_BASE_REQUIRED_ENERGY = 11.5D;
+	public static final double DIG_HARDNESS_ENERGY_MULTIPLIER = 35.0D;
+
 	public EntityMechanicalArm arm;
 	public EntityPlayer placedBy;
 
@@ -69,6 +75,9 @@ public class TileQuarry extends TileAbstractBuilder implements IMachine {
 	protected Box box = new Box();
 	@NetworkData
 	private int targetX, targetY, targetZ;
+	private double nextDigRequiredEnergy = 1.0D;
+	private boolean armCreated = false;
+	private boolean execPosReachedCall = false; //call the position reached method if this is true
 	@NetworkData
 	private double headPosX, headPosY, headPosZ;
 	@NetworkData
@@ -101,7 +110,9 @@ public class TileQuarry extends TileAbstractBuilder implements IMachine {
 		box.kind = Kind.STRIPES;
 	}
 
-	public void createUtilsIfNeeded() {
+	public boolean createUtilsIfNeeded() {
+		boolean result = true;
+
 		if (!worldObj.isRemote) {
 			if (builder == null) {
 				if (!box.isInitialized()) {
@@ -116,20 +127,34 @@ public class TileQuarry extends TileAbstractBuilder implements IMachine {
 			box.isVisible = false;
 
 			if (arm == null) {
+				armCreated = false;
 				createArm();
 			}
 
+			if (!armCreated) {
+				//allow the arm to be created first
+				//then collect the energy
+				if (mjStored > CREATE_ARM_ENERGY) {
+					mjStored -= CREATE_ARM_ENERGY;
+				} else {
+					result = false; //do not return here
+				}
+			}
+
 			if (findTarget(false)) {
-				if (box != null && ((headPosX < box.xMin || headPosX > box.xMax) || (headPosZ < box.zMin || headPosZ > box.zMax))) {
+				if (box != null && arm != null && ((headPosX < box.xMin || headPosX > box.xMax) || (headPosZ < box.zMin || headPosZ > box.zMax))) {
 					setHead(box.xMin + 1, yCoord + 2, box.zMin + 1);
 				}
 			}
 		} else {
 			box.isVisible = true;
 		}
+
+		return result;
 	}
 
 	private void createArm() {
+		armCreated = true;
 		worldObj.spawnEntityInWorld
 		(new EntityMechanicalArm(worldObj,
 				box.xMin + CoreConstants.PIPE_MAX_POS,
@@ -165,6 +190,10 @@ public class TileQuarry extends TileAbstractBuilder implements IMachine {
 			return;
 		}
 
+		if (!createUtilsIfNeeded()) {
+			return;
+		}
+
 		double energyToUse = 2 + mjStored / 500;
 
 		if (mjStored > energyToUse) {
@@ -182,25 +211,15 @@ public class TileQuarry extends TileAbstractBuilder implements IMachine {
 				stage = Stage.IDLE;
 			}
 		} else if (stage == Stage.IDLE) {
-			dig();
+			prepareNextDig();
 		}
-
-		createUtilsIfNeeded();
 
 		if (updateTracker.markTimeIfDelay(worldObj)) {
 			sendNetworkUpdate();
 		}
 	}
 
-	protected void dig() {
-		float mj = BuildCraftFactory.MINING_MJ_COST_PER_BLOCK * BuildCraftFactory.miningMultiplier;
-
-		if (mjStored < mj) {
-			return;
-		} else {
-			mjStored -= mj;
-		}
-
+	protected void prepareNextDig() {
 		if (!findTarget(true)) {
 			// I believe the issue is box going null becuase of bad chunkloader positioning
 			if (arm != null && box != null) {
@@ -217,6 +236,7 @@ public class TileQuarry extends TileAbstractBuilder implements IMachine {
 		double[] head = getHead();
 		int[] target = getTarget();
 		headTrajectory = Math.atan2(target[2] - head[2], target[0] - head[0]);
+
 		sendNetworkUpdate();
 	}
 
@@ -226,6 +246,8 @@ public class TileQuarry extends TileAbstractBuilder implements IMachine {
 		}
 
 		boolean columnVisitListIsUpdated = false;
+
+		visitList.clear(); //fix quarry ignoring blocks being added
 
 		if (visitList.isEmpty()) {
 			createColumnVisitList();
@@ -372,6 +394,9 @@ public class TileQuarry extends TileAbstractBuilder implements IMachine {
 
 		// The rest of load has to be done upon initialize.
 		initNBT = (NBTTagCompound) nbttagcompound.getCompoundTag("bpt").copy();
+
+		nextDigRequiredEnergy = nbttagcompound.getDouble("nextDigEnergy");
+		execPosReachedCall = nbttagcompound.getBoolean("checkBlockReachedCallNextTick");
 	}
 
 	@Override
@@ -398,12 +423,21 @@ public class TileQuarry extends TileAbstractBuilder implements IMachine {
 		}
 
 		nbttagcompound.setTag("bpt", bptNBT);
+
+		nbttagcompound.setDouble("nextDigEnergy", nextDigRequiredEnergy);
+		nbttagcompound.setBoolean("checkBlockReachedCallNextTick", execPosReachedCall);
 	}
 
 	@SuppressWarnings("rawtypes")
-	public void positionReached() {
+	public boolean onPositionReached() {
 		if (worldObj.isRemote) {
-			return;
+			return true;
+		}
+
+		if (mjStored > nextDigRequiredEnergy) {
+			mjStored -= nextDigRequiredEnergy;
+		} else {
+			return false;
 		}
 
 		int i = targetX;
@@ -458,6 +492,8 @@ public class TileQuarry extends TileAbstractBuilder implements IMachine {
 		}
 
 		stage = Stage.IDLE;
+
+		return true;
 	}
 
 	private void mineStack(ItemStack stack) {
@@ -490,7 +526,9 @@ public class TileQuarry extends TileAbstractBuilder implements IMachine {
 
 	private boolean isQuarriableBlock(int bx, int by, int bz) {
 		Block block = worldObj.getBlock(bx, by, bz);
-		return BlockUtil.canChangeBlock(block, worldObj, bx, by, bz) && !BuildCraftAPI.isSoftBlock(block, worldObj, bx, by, bz);
+		return BlockUtil.canChangeBlock(block, worldObj, bx, by, bz) &&
+			!BuildCraftAPI.isSoftBlock(block, worldObj, bx, by, bz) &&
+			(block.getBlockHardness(worldObj, bx, by, bz) < MAX_BREAK_HARDNESS);
 	}
 
 	@Override
@@ -757,8 +795,7 @@ public class TileQuarry extends TileAbstractBuilder implements IMachine {
 				movingHorizontally = false;
 
 				if (!movingVertically) {
-					positionReached();
-					head[1] = target[1];
+					execPosReachedCall = true;
 				}
 			} else {
 				head[0] += Math.cos(headTrajectory) * instantSpeed;
@@ -772,10 +809,9 @@ public class TileQuarry extends TileAbstractBuilder implements IMachine {
 				head[1] = target[1];
 
 				movingVertically = false;
+
 				if (!movingHorizontally) {
-					positionReached();
-					head[0] = target[0];
-					head[2] = target[2];
+					execPosReachedCall = true;
 				}
 			} else {
 				if (target[1] > head[1]) {
@@ -785,6 +821,15 @@ public class TileQuarry extends TileAbstractBuilder implements IMachine {
 				}
 			}
 			setHead(head[0], head[1], head[2]);
+		}
+
+		if (execPosReachedCall) {
+			if (onPositionReached()) {
+				head[0] = target[0];
+				head[1] = target[1];
+				head[2] = target[2];
+				execPosReachedCall = false;
+			}
 		}
 
 		updatePosition();
@@ -815,6 +860,9 @@ public class TileQuarry extends TileAbstractBuilder implements IMachine {
 		this.targetX = x;
 		this.targetY = y;
 		this.targetZ = z;
+		Block b = worldObj.getBlock(x, y - 1, z);
+		this.nextDigRequiredEnergy = DIG_BASE_REQUIRED_ENERGY +
+			(b.getBlockHardness(worldObj, x, y - 1, z) * DIG_HARDNESS_ENERGY_MULTIPLIER);
 	}
 
 	public void forceChunkLoading(Ticket ticket) {
