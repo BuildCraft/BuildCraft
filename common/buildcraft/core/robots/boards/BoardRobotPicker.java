@@ -63,7 +63,6 @@ public class BoardRobotPicker implements IRedstoneBoardRobot<EntityRobot> {
 		if (!initialized) {
 			range = data.getInteger("range");
 
-			IBoardParameter[] params = board.getParameters(data);
 			ItemStack[] stacks = new ItemStack[params.length];
 
 			for (int i = 0; i < stacks.length; ++i) {
