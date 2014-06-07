@@ -40,6 +40,8 @@ public class EntityRobot extends EntityLiving implements
 			DefaultProps.TEXTURE_PATH_ENTITIES + "/robot_builder.png");
 	public static final ResourceLocation ROBOT_TRANSPORT = new ResourceLocation("buildcraft",
 			DefaultProps.TEXTURE_PATH_ENTITIES + "/robot_picker.png");
+	public static final ResourceLocation ROBOT_FACTORY = new ResourceLocation("buildcraft",
+			DefaultProps.TEXTURE_PATH_ENTITIES + "/robot_factory.png");
 
 	private static ResourceLocation defaultTexture = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_ENTITIES + "/robot_base.png");
 

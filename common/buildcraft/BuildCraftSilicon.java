@@ -37,6 +37,7 @@ import buildcraft.core.Version;
 import buildcraft.core.network.BuildCraftChannelHandler;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.robots.RobotIntegrationRecipe;
+import buildcraft.core.robots.boards.BoardRobotLumberjackNBT;
 import buildcraft.core.robots.boards.BoardRobotPickerNBT;
 import buildcraft.silicon.BlockLaser;
 import buildcraft.silicon.BlockLaserTable;
@@ -108,6 +109,7 @@ public class BuildCraftSilicon extends BuildCraftMod {
 		RedstoneBoardRegistry.instance = new ImplRedstoneBoardRegistry();
 
 		RedstoneBoardRegistry.instance.registerBoardClass(BoardRobotPickerNBT.instance, 10);
+		RedstoneBoardRegistry.instance.registerBoardClass(BoardRobotLumberjackNBT.instance, 10);
 	}
 
 	@Mod.EventHandler
