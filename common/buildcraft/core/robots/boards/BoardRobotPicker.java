@@ -5,13 +5,21 @@ import java.util.Set;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 
 import net.minecraftforge.common.util.ForgeDirection;
 
+import buildcraft.api.boards.IBoardParameter;
+import buildcraft.api.boards.IBoardParameterStack;
 import buildcraft.api.boards.IRedstoneBoardRobot;
+import buildcraft.api.boards.RedstoneBoardNBT;
+import buildcraft.api.boards.RedstoneBoardRegistry;
 import buildcraft.api.boards.RedstoneBoardRobotNBT;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.core.inventory.TransactorSimple;
+import buildcraft.core.inventory.filters.ArrayStackFilter;
+import buildcraft.core.inventory.filters.IStackFilter;
 import buildcraft.core.robots.EntityRobot;
 import buildcraft.core.robots.RobotAIMoveTo;
 import buildcraft.core.robots.RobotAIReturnToDock;
@@ -29,12 +37,47 @@ public class BoardRobotPicker implements IRedstoneBoardRobot<EntityRobot> {
 	private EntityItem target;
 	private int pickTime = -1;
 
+	private NBTTagCompound data;
+
+	private RedstoneBoardNBT board;
+	private IBoardParameter[] params;
+	private int range;
+	private IStackFilter stackFilter;
+	private boolean initialized = false;
+
+	public BoardRobotPicker(NBTTagCompound nbt) {
+		data = nbt;
+
+		board = RedstoneBoardRegistry.instance.getRedstoneBoard(nbt);
+		params = board.getParameters(nbt);
+	}
+
 	@Override
 	public void updateBoard(EntityRobot robot) {
 		TransactorSimple inventoryInsert = new TransactorSimple(robot);
 
 		if (robot.worldObj.isRemote) {
 			return;
+		}
+
+		if (!initialized) {
+			range = data.getInteger("range");
+
+			IBoardParameter[] params = board.getParameters(data);
+			ItemStack[] stacks = new ItemStack[params.length];
+
+			for (int i = 0; i < stacks.length; ++i) {
+				IBoardParameterStack pStak = (IBoardParameterStack) params[i];
+				stacks[i] = pStak.getStack();
+			}
+
+			if (stacks.length > 0) {
+				stackFilter = new ArrayStackFilter(stacks);
+			} else {
+				stackFilter = null;
+			}
+
+			initialized = true;
 		}
 
 		if (target != null) {
@@ -109,9 +152,13 @@ public class BoardRobotPicker implements IRedstoneBoardRobot<EntityRobot> {
 				double dz = e.posZ - robot.posZ;
 
 				double sqrDistance = dx * dx + dy * dy + dz * dz;
-				double maxDistance = 100 * 100;
+				double maxDistance = range * range;
 
-				if (sqrDistance <= maxDistance) {
+				if (sqrDistance >= maxDistance) {
+					continue;
+				} else if (stackFilter != null && !stackFilter.matches(((EntityItem) e).getEntityItem())) {
+					continue;
+				} else {
 					EntityItem item = (EntityItem) e;
 
 					if (inventoryInsert.inject(item.getEntityItem(),

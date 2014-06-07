@@ -57,7 +57,7 @@ public final class BoardRobotPickerNBT extends RedstoneBoardRobotNBT {
 
 	@Override
 	public IRedstoneBoardRobot create(NBTTagCompound nbt) {
-		return new BoardRobotPicker();
+		return new BoardRobotPicker(nbt);
 	}
 
 	@Override

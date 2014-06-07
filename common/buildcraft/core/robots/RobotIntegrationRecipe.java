@@ -43,7 +43,7 @@ public class RobotIntegrationRecipe extends IntegrationTableRecipe {
 		if (result != null) {
 			ItemStack robot = new ItemStack(BuildCraftSilicon.robotItem);
 
-			NBTUtils.getItemData(robot).setTag("board", NBTUtils.getItemData(inputA));
+			NBTUtils.getItemData(robot).setTag("board", NBTUtils.getItemData(inputB));
 
 			result.crafted = robot;
 

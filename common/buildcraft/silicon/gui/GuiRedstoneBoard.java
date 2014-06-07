@@ -11,6 +11,7 @@ package buildcraft.silicon.gui;
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
@@ -80,6 +81,13 @@ public class GuiRedstoneBoard extends GuiAdvancedInterface {
 	}
 
 	@Override
+	protected void drawGuiContainerForegroundLayer(int par1, int par2) {
+		super.drawGuiContainerForegroundLayer(par1, par2);
+
+		drawForegroundSelection(par1, par2);
+	}
+
+	@Override
 	protected void mouseClicked(int i, int j, int k) {
 		super.mouseClicked(i, j, k);
 
@@ -97,8 +105,10 @@ public class GuiRedstoneBoard extends GuiAdvancedInterface {
 		slot = slots[position];
 
 		if (slot instanceof ItemSlot) {
-			((ItemSlot) slot).stack = mc.thePlayer.inventory.getItemStack();
-			RPCHandler.rpcServer(container, "setParameterStack", position, mc.thePlayer.inventory.getItemStack());
+			ItemStack stackCopy = mc.thePlayer.inventory.getItemStack().copy();
+			stackCopy.stackSize = 1;
+			((ItemSlot) slot).stack = stackCopy;
+			RPCHandler.rpcServer(container, "setParameterStack", position, stackCopy);
 		}
 	}
 }

@@ -47,7 +47,6 @@ public class ItemRedstoneBoard extends ItemBuildCraft {
 		if (cpt.hasKey("id") && !"<unknown>".equals(cpt.getString("id"))) {
 			RedstoneBoardRegistry.instance.getRedstoneBoard(cpt).addInformation(stack, player, list, advanced);
 		}
-
 	}
 
 	@Override
