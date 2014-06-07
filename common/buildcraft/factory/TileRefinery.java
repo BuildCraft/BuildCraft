@@ -439,20 +439,20 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IInve
 
 	@Override
 	public FluidStack decrCraftingFluidStack(int tankid, int val) {
-		FluidStack resultC;
+		FluidStack resultF;
 
 		if (val >= tanks[tankid].getFluid().amount) {
-			resultC = tanks[tankid].getFluid();
+			resultF = tanks[tankid].getFluid();
 			tanks[tankid].setFluid(null);
 		} else {
-			resultC = tanks[tankid].getFluid().copy();
-			resultC.amount = val;
+			resultF = tanks[tankid].getFluid().copy();
+			resultF.amount = val;
 			tanks[tankid].getFluid().amount -= val;
 		}
 
 		updateRecipe();
 
-		return resultC;
+		return resultF;
 	}
 
 	@Override
