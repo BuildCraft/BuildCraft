@@ -9,7 +9,6 @@
 package buildcraft.core.robots.boards;
 
 import java.util.List;
-import java.util.Random;
 
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
@@ -47,9 +46,13 @@ public final class BoardRobotPickerNBT extends RedstoneBoardRobotNBT {
 
 		NBTTagCompound nbt = NBTUtils.getItemData(stack);
 
-		if (getParameterNumber(nbt) > 0) {
-			list.add(StringUtils.localize("buildcraft.boardDetail.oneParameter"));
+		int parameterNumber = getParameterNumber(nbt);
+
+		if (parameterNumber > 0) {
+			list.add(parameterNumber + " " + StringUtils.localize("buildcraft.boardDetail.parameters"));
 		}
+
+		list.add(StringUtils.localize("buildcraft.boardDetail.range") + ": " + nbt.getInteger("range"));
 	}
 
 	@Override
@@ -68,12 +71,21 @@ public final class BoardRobotPickerNBT extends RedstoneBoardRobotNBT {
 	}
 
 	@Override
-	public void createRandomBoard(NBTTagCompound nbt, Random rand) {
-		float value = rand.nextFloat();
+	public void createRandomBoard(NBTTagCompound nbt) {
+		int parameterNumber = (int) Math.floor(nextFloat(3) * 5);
+		int range = (int) Math.floor(nextFloat(10) * 500) + 10;
 
-		if (value > 0.5) {
-			setParameters(nbt, new IBoardParameter[] {RedstoneBoardRegistry.instance.createParameterStack()});
+		if (parameterNumber > 0) {
+			IBoardParameter[] parameters = new IBoardParameter[parameterNumber];
+
+			for (int i = 0; i < parameterNumber; ++i) {
+				parameters[i] = RedstoneBoardRegistry.instance.createParameterStack();
+			}
+
+			setParameters(nbt, parameters);
 		}
+
+		nbt.setInteger("range", range);
 	}
 
 	@Override

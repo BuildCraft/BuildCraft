@@ -53,7 +53,7 @@ public class ImplRedstoneBoardRegistry extends RedstoneBoardRegistry {
 
 			if (accumulatedSearch > value) {
 				nbt.setString("id", f.boardNBT.getID());
-				f.boardNBT.createRandomBoard(nbt, rand);
+				f.boardNBT.createRandomBoard(nbt);
 				return;
 			}
 		}
