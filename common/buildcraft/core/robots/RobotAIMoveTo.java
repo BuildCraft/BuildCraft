@@ -17,8 +17,6 @@ import buildcraft.core.utils.PathFinding;
 
 public class RobotAIMoveTo extends RobotAIBase {
 
-	private static int PATH_ITERATIONS = 1000;
-
 	private PathFinding pathSearch;
 	private LinkedList<BlockIndex> path;
 	private double prevDistance = Double.MAX_VALUE;
@@ -31,22 +29,23 @@ public class RobotAIMoveTo extends RobotAIBase {
 		dz = z;
 	}
 
+	public RobotAIMoveTo(EntityRobot robot, LinkedList<BlockIndex> iPath) {
+		super(robot);
+		path = iPath;
+		dx = path.getLast().x;
+		dy = path.getLast().y;
+		dz = path.getLast().z;
+		setNextInPath();
+	}
+
 	@Override
 	public void updateTask() {
 		super.updateTask();
 
-		if (pathSearch == null) {
-			pathSearch = new PathFinding
-					(robot.worldObj,
-							new BlockIndex((int) Math.floor(robot.posX), (int) Math.floor(robot.posY),
-									(int) Math.floor(robot.posZ)),
-							new BlockIndex((int) Math.floor(dx), (int) Math.floor(dy), (int) Math.floor(dz)));
-
-			pathSearch.iterate(PATH_ITERATIONS);
-		} else if (path != null) {
+		if (path != null) {
 			double distance = robot.getDistance(destX, destY, destZ);
 
-			if (distance > prevDistance) {
+			if (!robot.isMoving() || distance > prevDistance) {
 				if (path.size() > 0) {
 					path.removeFirst();
 				}
@@ -61,11 +60,17 @@ public class RobotAIMoveTo extends RobotAIBase {
 				robot.motionY = 0;
 				robot.motionZ = 0;
 			}
+		} else if (pathSearch == null) {
+			pathSearch = new PathFinding
+					(robot.worldObj,
+							new BlockIndex((int) Math.floor(robot.posX), (int) Math.floor(robot.posY),
+									(int) Math.floor(robot.posZ)),
+							new BlockIndex((int) Math.floor(dx), (int) Math.floor(dy), (int) Math.floor(dz)));
 		} else if (!pathSearch.isDone()) {
-			pathSearch.iterate(PATH_ITERATIONS);
-		} else {
 			path = pathSearch.getResult();
 			setNextInPath();
+		} else {
+			pathSearch.iterate(PathFinding.PATH_ITERATIONS);
 		}
 	}
 

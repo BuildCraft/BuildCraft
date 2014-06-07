@@ -441,4 +441,8 @@ public class EntityRobot extends EntityLiving implements
 						+ var2.stackSize <= inv[var1].getItem()
 						.getItemStackLimit());
 	}
+
+	public boolean isMoving() {
+		return motionX != 0 || motionY != 0 || motionZ != 0;
+	}
 }

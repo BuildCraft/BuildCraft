@@ -25,9 +25,12 @@ import buildcraft.core.BlockIndex;
  */
 public class PathFinding {
 
+	public static int PATH_ITERATIONS = 1000;
+
 	private IBlockAccess world;
 	private BlockIndex start;
 	private BlockIndex end;
+	private IPathFound pathFound;
 
 	private HashMap<BlockIndex, Node> openList = new HashMap<BlockIndex, PathFinding.Node>();
 	private HashMap<BlockIndex, Node> closedList = new HashMap<BlockIndex, PathFinding.Node>();
@@ -51,13 +54,28 @@ public class PathFinding {
 		nextIteration = startNode;
 	}
 
+	public PathFinding(IBlockAccess iWorld, BlockIndex iStart, IPathFound iPathFound) {
+		world = iWorld;
+		start = iStart;
+		pathFound = iPathFound;
+
+		Node startNode = new Node();
+		startNode.parent = null;
+		startNode.movementCost = 0;
+		startNode.destinationCost = 0;
+		startNode.totalWeight = startNode.movementCost + startNode.destinationCost;
+		startNode.index = iStart;
+		openList.put(start, startNode);
+		nextIteration = startNode;
+	}
+
 	public void iterate(int itNumber) {
 		if (nextIteration == null) {
 			return;
 		}
 
 		for (int i = 0; i < itNumber; ++i) {
-			if (nextIteration.index.equals(end)) {
+			if (endReached(nextIteration.index.x, nextIteration.index.y, nextIteration.index.z)) {
 				result = new LinkedList<BlockIndex>();
 
 				while (nextIteration != null) {
@@ -99,16 +117,28 @@ public class PathFinding {
 
 					BlockIndex index = new BlockIndex(x, y, z);
 
-					if (!index.equals(end) && !BuildCraftAPI.isSoftBlock(world, x, y, z)) {
+					Node nextNode = new Node();
+					nextNode.parent = from;
+					nextNode.index = index;
+
+					if (endReached(x, y, z)) {
+						return nextNode;
+					}
+
+					if (!BuildCraftAPI.isSoftBlock(world, x, y, z)) {
 						continue;
 					}
 
-					Node nextNode = new Node();
-					nextNode.parent = from;
 					nextNode.movementCost = from.movementCost + distance(index, from.index);
-					nextNode.destinationCost = distance(index, end);
+
+					if (end != null) {
+						nextNode.destinationCost = distance(index, end);
+					} else {
+						nextNode.destinationCost = 0;
+					}
+
 					nextNode.totalWeight = nextNode.movementCost + nextNode.destinationCost;
-					nextNode.index = index;
+
 
 					if (closedList.containsKey(index)) {
 						continue;
@@ -162,6 +192,14 @@ public class PathFinding {
 		double dz = (double) i1.z - (double) i2.z;
 
 		return Math.sqrt(dx * dx + dy * dy + dz * dz);
+	}
+
+	private boolean endReached(int x, int y, int z) {
+		if (pathFound != null) {
+			return pathFound.endReached(world, x, y, z);
+		} else {
+			return end.x == x && end.y == y && end.z == z;
+		}
 	}
 
 }

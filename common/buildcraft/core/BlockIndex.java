@@ -9,6 +9,7 @@
 package buildcraft.core;
 
 import net.minecraft.block.Block;
+import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 
@@ -35,6 +36,12 @@ public class BlockIndex implements Comparable<BlockIndex> {
 		this.x = c.getInteger("i");
 		this.y = c.getInteger("j");
 		this.z = c.getInteger("k");
+	}
+
+	public BlockIndex(Entity entity) {
+		x = (int) Math.floor(entity.posX);
+		y = (int) Math.floor(entity.posY);
+		z = (int) Math.floor(entity.posZ);
 	}
 
 	/**
