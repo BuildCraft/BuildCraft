@@ -108,55 +108,44 @@ public class PathFinding {
 
 		ArrayList nodes = new ArrayList<Node>();
 
-		for (int x = from.index.x - 1; x <= from.index.x + 1; ++x) {
-			for (int y = from.index.y - 1; y <= from.index.y + 1; ++y) {
-				for (int z = from.index.z - 1; z <= from.index.z + 1; ++z) {
-					if (x == from.index.x && y == from.index.y && z == from.index.z) {
-						continue;
-					}
+		for (BlockIndex index : movements(from)) {
+			Node nextNode = new Node();
+			nextNode.parent = from;
+			nextNode.index = index;
 
-					BlockIndex index = new BlockIndex(x, y, z);
-
-					Node nextNode = new Node();
-					nextNode.parent = from;
-					nextNode.index = index;
-
-					if (endReached(x, y, z)) {
-						return nextNode;
-					}
-
-					if (!BuildCraftAPI.isSoftBlock(world, x, y, z)) {
-						continue;
-					}
-
-					nextNode.movementCost = from.movementCost + distance(index, from.index);
-
-					if (end != null) {
-						nextNode.destinationCost = distance(index, end);
-					} else {
-						nextNode.destinationCost = 0;
-					}
-
-					nextNode.totalWeight = nextNode.movementCost + nextNode.destinationCost;
-
-
-					if (closedList.containsKey(index)) {
-						continue;
-					} else if (openList.containsKey(index)) {
-						Node tentative = openList.get(index);
-
-						if (tentative.movementCost < nextNode.movementCost) {
-							nextNode = tentative;
-						} else {
-							openList.put(index, nextNode);
-						}
-					} else {
-						openList.put(index, nextNode);
-					}
-
-					nodes.add(nextNode);
-				}
+			if (endReached(index.x, index.y, index.z)) {
+				return nextNode;
 			}
+
+			if (!BuildCraftAPI.isSoftBlock(world, index.x, index.y, index.z)) {
+				continue;
+			}
+
+			nextNode.movementCost = from.movementCost + distance(index, from.index);
+
+			if (end != null) {
+				nextNode.destinationCost = distance(index, end);
+			} else {
+				nextNode.destinationCost = 0;
+			}
+
+			nextNode.totalWeight = nextNode.movementCost + nextNode.destinationCost;
+
+			if (closedList.containsKey(index)) {
+				continue;
+			} else if (openList.containsKey(index)) {
+				Node tentative = openList.get(index);
+
+				if (tentative.movementCost < nextNode.movementCost) {
+					nextNode = tentative;
+				} else {
+					openList.put(index, nextNode);
+				}
+			} else {
+				openList.put(index, nextNode);
+			}
+
+			nodes.add(nextNode);
 		}
 
 		nodes.addAll(openList.values());
@@ -200,6 +189,156 @@ public class PathFinding {
 		} else {
 			return end.x == x && end.y == y && end.z == z;
 		}
+	}
+
+	private ArrayList<BlockIndex> movements(Node from) {
+		boolean[][][] result = new boolean[3][3][3];
+
+		for (int dx = -1; dx <= +1; ++dx) {
+			for (int dy = -1; dy <= +1; ++dy) {
+				for (int dz = -1; dz <= +1; ++dz) {
+					int x = from.index.x + dx;
+					int y = from.index.y + dy;
+					int z = from.index.z + dz;
+
+					if (endReached(x, y, z)) {
+						result[dx + 1][dy + 1][dz + 1] = true;
+					} else if (!BuildCraftAPI.isSoftBlock(world, x, y, z)) {
+						result[dx + 1][dy + 1][dz + 1] = false;
+					} else {
+						result[dx + 1][dy + 1][dz + 1] = true;
+					}
+				}
+			}
+		}
+
+		result[1][1][1] = false;
+
+		if (!result[0][1][1]) {
+			for (int i = 0; i <= 1; ++i) {
+				for (int j = 0; j <= 1; ++j) {
+					result[0][i][j] = false;
+				}
+			}
+		}
+
+		if (!result[2][1][1]) {
+			for (int i = 0; i <= 1; ++i) {
+				for (int j = 0; j <= 1; ++j) {
+					result[2][i][j] = false;
+				}
+			}
+		}
+
+		if (!result[1][0][1]) {
+			for (int i = 0; i <= 1; ++i) {
+				for (int j = 0; j <= 1; ++j) {
+					result[i][0][j] = false;
+				}
+			}
+		}
+
+		if (!result[1][2][1]) {
+			for (int i = 0; i <= 1; ++i) {
+				for (int j = 0; j <= 1; ++j) {
+					result[i][2][j] = false;
+				}
+			}
+		}
+
+		if (!result[1][1][0]) {
+			for (int i = 0; i <= 1; ++i) {
+				for (int j = 0; j <= 1; ++j) {
+					result[i][j][0] = false;
+				}
+			}
+		}
+
+		if (!result[1][1][2]) {
+			for (int i = 0; i <= 1; ++i) {
+				for (int j = 0; j <= 1; ++j) {
+					result[i][j][2] = false;
+				}
+			}
+		}
+
+		if (!result[0][0][1]) {
+			result[0][0][0] = false;
+			result[0][0][2] = false;
+		}
+
+		if (!result[0][2][1]) {
+			result[0][2][0] = false;
+			result[0][2][2] = false;
+		}
+
+		if (!result[2][0][1]) {
+			result[2][0][0] = false;
+			result[2][0][2] = false;
+		}
+
+		if (!result[2][2][1]) {
+			result[2][2][0] = false;
+			result[2][2][2] = false;
+		}
+
+		if (!result[0][1][0]) {
+			result[0][0][0] = false;
+			result[0][2][0] = false;
+		}
+
+		if (!result[0][1][2]) {
+			result[0][0][2] = false;
+			result[0][2][2] = false;
+		}
+
+		if (!result[2][1][0]) {
+			result[2][0][0] = false;
+			result[2][2][0] = false;
+		}
+
+		if (!result[2][1][2]) {
+			result[2][0][2] = false;
+			result[2][2][2] = false;
+		}
+
+		if (!result[1][0][0]) {
+			result[0][0][0] = false;
+			result[2][0][0] = false;
+		}
+
+		if (!result[1][0][2]) {
+			result[0][0][2] = false;
+			result[2][0][2] = false;
+		}
+
+		if (!result[1][2][0]) {
+			result[0][2][0] = false;
+			result[2][2][0] = false;
+		}
+
+		if (!result[1][2][2]) {
+			result[0][2][2] = false;
+			result[2][2][2] = false;
+		}
+
+		ArrayList<BlockIndex> possibleMovements = new ArrayList<BlockIndex>();
+
+		for (int dx = -1; dx <= +1; ++dx) {
+			for (int dy = -1; dy <= +1; ++dy) {
+				for (int dz = -1; dz <= +1; ++dz) {
+					if (result[dx + 1][dy + 1][dz + 1]) {
+						int x = from.index.x + dx;
+						int y = from.index.y + dy;
+						int z = from.index.z + dz;
+
+						possibleMovements.add(new BlockIndex(x, y, z));
+					}
+				}
+			}
+		}
+
+		return possibleMovements;
 	}
 
 }
