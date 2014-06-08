@@ -80,7 +80,7 @@ public class EntityRobot extends EntityLiving implements
 		dataWatcher.updateObject(16, board.getNBTHandler().getID());
 
 		if (world.isRemote) {
-
+			RPCHandler.rpcServer(this, "requestInitialization", itemInUse);
 		}
 	}
 
@@ -470,5 +470,10 @@ public class EntityRobot extends EntityLiving implements
 	@RPC(RPCSide.SERVER)
 	public void requestInitialization(RPCMessageInfo info) {
 		RPCHandler.rpcPlayer(info.sender, this, "clientSetItemInUse", itemInUse);
+	}
+
+	@Override
+	public void setHealth(float par1) {
+		// deactivate healh management
 	}
 }
