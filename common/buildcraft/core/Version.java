@@ -15,7 +15,9 @@ import java.net.URL;
 import java.util.ArrayList;
 
 import net.minecraft.command.ICommandSender;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ChatComponentText;
+import cpw.mods.fml.common.event.FMLInterModComms;
 
 import net.minecraftforge.common.config.Property;
 
@@ -45,6 +47,8 @@ public class Version implements Runnable {
 
 	private static Version instance = new Version();
 
+	private static boolean sentIMCOutdatedMessage = false;
+
 	public static String getVersion() {
 		return VERSION;
 	}
@@ -54,7 +58,7 @@ public class Version implements Runnable {
 	}
 
 	public static boolean needsUpdateNoticeAndMarkAsSeen() {
-		if (!isOutdated()) {
+		if (!isOutdated() || sentIMCOutdatedMessage) {
 			return false;
 		}
 
@@ -124,6 +128,7 @@ public class Version implements Runnable {
 			BCLog.logger.warning("Using outdated version [" + VERSION + "] for Minecraft " + mcVersion
 					+ ". Consider updating to " + recommendedVersion + ".");
 			currentVersion = EnumUpdateState.OUTDATED;
+			sendIMCOutdatedMessage();
 
 			conn.disconnect();
 			reader.close();
@@ -145,7 +150,7 @@ public class Version implements Runnable {
 	public static String[] grabChangelog(String version) {
 
 		try {
-			String location = REMOTE_CHANGELOG_ROOT + "/" + version;
+			String location = REMOTE_CHANGELOG_ROOT + version;
 			HttpURLConnection conn = null;
 			while (location != null && !location.isEmpty()) {
 				URL url = new URL(location);
@@ -215,6 +220,25 @@ public class Version implements Runnable {
 			BCLog.logger.info("Version check failed");
 		}
 
+	}
+
+	public static void sendIMCOutdatedMessage() {
+		NBTTagCompound compound = new NBTTagCompound();
+		compound.setString("modDisplayName", "BuildCraft");
+		compound.setString("oldVersion", VERSION);
+		compound.setString("newVersion", getRecommendedVersion());
+
+		//TODO: Decide if we want to grab a direct link for easy updating (maybe from the Maven repo?)
+		compound.setString("updateUrl", "http://www.mod-buildcraft.com/download/");
+		compound.setBoolean("isDirectLink", false);
+
+		String changeLogString = "";
+		for (String changeLogLine : getChangelog()) {
+			changeLogString = changeLogString + changeLogLine + "\n";
+		}
+		compound.setString("changeLog", changeLogString);
+
+		sentIMCOutdatedMessage = FMLInterModComms.sendMessage("VersionChecker", "addUpdate", compound);
 	}
 
 	public static void displayChangelog(ICommandSender sender) {
