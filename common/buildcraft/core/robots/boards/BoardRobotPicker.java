@@ -87,7 +87,6 @@ public class BoardRobotPicker implements IRedstoneBoardRobot<EntityRobot> {
 				scan(robot);
 			} else if (pickTime == -1) {
 				if (robot.currentAI.isDone()) {
-					robot.setLaserDestination((float) target.posX, (float) target.posY, (float) target.posZ);
 					pickTracker = new SafeTimeTracker(200);
 					pickTime = 0;
 				}
@@ -160,9 +159,7 @@ public class BoardRobotPicker implements IRedstoneBoardRobot<EntityRobot> {
 				} else {
 					EntityItem item = (EntityItem) e;
 
-					if (inventoryInsert.inject(item.getEntityItem(),
-							ForgeDirection.UNKNOWN, false) > 0) {
-
+					if (inventoryInsert.inject(item.getEntityItem(), ForgeDirection.UNKNOWN, false) > 0) {
 						target = item;
 						targettedItems.add(e.getEntityId());
 						robot.isDocked = false;

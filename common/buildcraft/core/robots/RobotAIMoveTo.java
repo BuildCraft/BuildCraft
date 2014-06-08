@@ -66,7 +66,7 @@ public class RobotAIMoveTo extends RobotAIBase {
 							new BlockIndex((int) Math.floor(robot.posX), (int) Math.floor(robot.posY),
 									(int) Math.floor(robot.posZ)),
 							new BlockIndex((int) Math.floor(dx), (int) Math.floor(dy), (int) Math.floor(dz)));
-		} else if (!pathSearch.isDone()) {
+		} else if (pathSearch.isDone()) {
 			path = pathSearch.getResult();
 			setNextInPath();
 		} else {

@@ -93,6 +93,7 @@ public class EntityRobot extends EntityLiving implements
 
 		ignoreFrustumCheck = true;
 		laser.isVisible = false;
+		entityCollisionReduction = 1F;
 
 		width = 0.5F;
 		height = 0.5F;
