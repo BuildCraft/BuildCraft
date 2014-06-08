@@ -8,6 +8,8 @@
  */
 package buildcraft.core.render;
 
+import java.util.Date;
+
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.block.Block;
@@ -63,8 +65,41 @@ public class RenderRobot extends Render implements IItemRenderer {
 
 		if (robot.itemInUse != null) {
 			GL11.glPushMatrix();
-			GL11.glRotatef(robot.worldObj.getTotalWorldTime() % 45 + 90, 1, 0, 0);
-			doRenderItemAtHand(robot, robot.itemInUse);
+
+			GL11.glRotatef((float) (-robot.itemAngle1 / (2 * Math.PI) * 360) + 180, 0, 1, 0);
+			GL11.glRotatef((float) (robot.itemAngle2 / (2 * Math.PI) * 360), 0, 0, 1);
+
+			if (robot.itemActive) {
+				long newDate = new Date().getTime();
+				robot.itemActiveStage = (robot.itemActiveStage + (newDate - robot.lastUpdateTime) / 10) % 45;
+				GL11.glRotatef(robot.itemActiveStage, 0, 0, 1);
+				robot.lastUpdateTime = newDate;
+			}
+
+			GL11.glTranslatef(-0.4F, 0, 0);
+			GL11.glRotatef(-45F + 180F, 0, 1, 0);
+			GL11.glScalef(0.8F, 0.8F, 0.8F);
+
+			ItemStack itemstack1 = robot.itemInUse;
+
+			if (itemstack1.getItem().requiresMultipleRenderPasses()) {
+				for (int k = 0; k < itemstack1.getItem().getRenderPasses(itemstack1.getItemDamage()); ++k) {
+					int i = itemstack1.getItem().getColorFromItemStack(itemstack1, k);
+					float f12 = (i >> 16 & 255) / 255.0F;
+					float f4 = (i >> 8 & 255) / 255.0F;
+					float f5 = (i & 255) / 255.0F;
+					GL11.glColor4f(f12, f4, f5, 1.0F);
+					this.renderManager.itemRenderer.renderItem(robot, itemstack1, k);
+				}
+			} else {
+				int k = itemstack1.getItem().getColorFromItemStack(itemstack1, 0);
+				float f11 = (k >> 16 & 255) / 255.0F;
+				float f12 = (k >> 8 & 255) / 255.0F;
+				float f4 = (k & 255) / 255.0F;
+				GL11.glColor4f(f11, f12, f4, 1.0F);
+				this.renderManager.itemRenderer.renderItem(robot, itemstack1, 0);
+			}
+
 			GL11.glPopMatrix();
 		}
 

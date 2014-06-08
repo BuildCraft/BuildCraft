@@ -786,7 +786,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 					RaytraceResult rayTraceResult = doRayTrace(world, x, y, z,
 							player);
 
-					if (rayTraceResult.hitPart == Part.RobotStation) {
+					if (rayTraceResult != null && rayTraceResult.hitPart == Part.RobotStation) {
 						EntityRobot robot = ((ItemRobot) currentItem.getItem())
 								.createRobot(currentItem, world);
 

@@ -8,6 +8,8 @@
  */
 package buildcraft.core.robots;
 
+import java.util.Date;
+
 import io.netty.buffer.ByteBuf;
 
 import net.minecraft.entity.EntityLiving;
@@ -60,6 +62,11 @@ public class EntityRobot extends EntityLiving implements
 
 	public RobotAIBase currentAI;
 	public ItemStack itemInUse;
+	public float itemAngle1 = 0;
+	public float itemAngle2 = 0;
+	public boolean itemActive = false;
+	public float itemActiveStage = 0;
+	public long lastUpdateTime = 0;
 
 	protected RobotAIBase nextAI;
 
@@ -103,6 +110,8 @@ public class EntityRobot extends EntityLiving implements
 	protected void entityInit() {
 		super.entityInit();
 
+		setNullBoundingBox();
+
 		preventEntitySpawning = false;
 		noClip = true;
 		isImmuneToFire = true;
@@ -112,6 +121,8 @@ public class EntityRobot extends EntityLiving implements
 		dataWatcher.addObject(14, Float.valueOf(0));
 		dataWatcher.addObject(15, Byte.valueOf((byte) 0));
 		dataWatcher.addObject(16, "");
+		dataWatcher.addObject(17, Float.valueOf(0));
+		dataWatcher.addObject(18, Float.valueOf(0));
 	}
 
 	protected void updateDataClient() {
@@ -126,6 +137,9 @@ public class EntityRobot extends EntityLiving implements
 		if (boardNBT != null) {
 			texture = ((RedstoneBoardRobotNBT) boardNBT).getRobotTexture();
 		}
+
+		itemAngle1 = dataWatcher.getWatchableObjectFloat(17);
+		itemAngle2 = dataWatcher.getWatchableObjectFloat(18);
 	}
 
 	protected void updateDataServer() {
@@ -133,6 +147,8 @@ public class EntityRobot extends EntityLiving implements
 		dataWatcher.updateObject(13, Float.valueOf((float) laser.tail.y));
 		dataWatcher.updateObject(14, Float.valueOf((float) laser.tail.z));
 		dataWatcher.updateObject(15, Byte.valueOf((byte) (laser.isVisible ? 1 : 0)));
+		dataWatcher.updateObject(17, Float.valueOf(itemAngle1));
+		dataWatcher.updateObject(18, Float.valueOf(itemAngle2));
 	}
 
 	protected void init() {
@@ -475,5 +491,22 @@ public class EntityRobot extends EntityLiving implements
 	@Override
 	public void setHealth(float par1) {
 		// deactivate healh management
+	}
+
+	public void setItemAngle(float a1, float a2) {
+		itemAngle1 = a1;
+		itemAngle2 = a2;
+		updateDataServer();
+	}
+
+	public void setItemActive(boolean isActive) {
+		RPCHandler.rpcBroadcastPlayers(worldObj, this, "rpcSetItemActive", isActive);
+	}
+
+	@RPC(RPCSide.CLIENT)
+	private void rpcSetItemActive(boolean isActive) {
+		itemActive = isActive;
+		itemActiveStage = 0;
+		lastUpdateTime = new Date().getTime();
 	}
 }

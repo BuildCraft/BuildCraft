@@ -80,6 +80,28 @@ public class BoardRobotLumberjack implements IRedstoneBoardRobot<EntityRobot> {
 			if (robot.currentAI.isDone()) {
 				stage = Stages.CUT_WOOD;
 				blockDamage = 0;
+
+				float a1 = (float) Math.atan2(woodToChop.z - Math.floor(robot.posZ),
+						woodToChop.x - Math.floor(robot.posX));
+
+				float a2 = 0;
+
+				if (Math.floor(robot.posY) < woodToChop.y) {
+					a2 = (float) -Math.PI / 4;
+
+					if (Math.floor(robot.posX) == woodToChop.x && Math.floor(robot.posZ) == woodToChop.z) {
+						a2 -= (float) Math.PI / 4;
+					}
+				} else if (Math.floor(robot.posY) > woodToChop.y) {
+					a2 = (float) Math.PI / 2;
+
+					if (Math.floor(robot.posX) == woodToChop.x && Math.floor(robot.posZ) == woodToChop.z) {
+						a2 += (float) Math.PI / 4;
+					}
+				}
+
+				robot.setItemAngle(a1, a2);
+				robot.setItemActive(true);
 			}
 		} else if (stage == Stages.CUT_WOOD) {
 			Block block = robot.worldObj.getBlock(woodToChop.x, woodToChop.y, woodToChop.z);
@@ -97,6 +119,7 @@ public class BoardRobotLumberjack implements IRedstoneBoardRobot<EntityRobot> {
 				stage = Stages.LOOK_FOR_WOOD;
 				woodToChop = null;
 				woodScanner = null;
+				robot.setItemActive(false);
 			} else {
 				robot.worldObj.destroyBlockInWorldPartially(robot.getEntityId(), woodToChop.x,
 						woodToChop.y, woodToChop.z, (int) (blockDamage * 10.0F) - 1);
