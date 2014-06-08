@@ -29,6 +29,10 @@ import buildcraft.api.boards.RedstoneBoardRobotNBT;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.LaserData;
+import buildcraft.core.network.RPC;
+import buildcraft.core.network.RPCHandler;
+import buildcraft.core.network.RPCMessageInfo;
+import buildcraft.core.network.RPCSide;
 import buildcraft.transport.TileGenericPipe;
 
 public class EntityRobot extends EntityLiving implements
@@ -55,6 +59,8 @@ public class EntityRobot extends EntityLiving implements
 	public IRedstoneBoardRobot board;
 
 	public RobotAIBase currentAI;
+	public ItemStack itemInUse;
+
 	protected RobotAIBase nextAI;
 
 	private boolean needsUpdate = false;
@@ -72,6 +78,10 @@ public class EntityRobot extends EntityLiving implements
 
 		board = iBoard;
 		dataWatcher.updateObject(16, board.getNBTHandler().getID());
+
+		if (world.isRemote) {
+
+		}
 	}
 
 	public EntityRobot(World par1World) {
@@ -444,5 +454,20 @@ public class EntityRobot extends EntityLiving implements
 
 	public boolean isMoving() {
 		return motionX != 0 || motionY != 0 || motionZ != 0;
+	}
+
+	public void setItemInUse(ItemStack stack) {
+		itemInUse = stack;
+		RPCHandler.rpcBroadcastPlayers(worldObj, this, "clientSetItemInUse", stack);
+	}
+
+	@RPC(RPCSide.CLIENT)
+	private void clientSetItemInUse(ItemStack stack) {
+		itemInUse = stack;
+	}
+
+	@RPC(RPCSide.SERVER)
+	public void requestInitialization(RPCMessageInfo info) {
+		RPCHandler.rpcPlayer(info.sender, this, "clientSetItemInUse", itemInUse);
 	}
 }

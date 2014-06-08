@@ -9,6 +9,7 @@ import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.WorldServer;
 
 import net.minecraftforge.common.ForgeHooks;
 
@@ -19,6 +20,7 @@ import buildcraft.api.boards.RedstoneBoardRobotNBT;
 import buildcraft.core.BlockIndex;
 import buildcraft.core.robots.EntityRobot;
 import buildcraft.core.robots.RobotAIMoveTo;
+import buildcraft.core.utils.BlockUtil;
 import buildcraft.core.utils.IPathFound;
 import buildcraft.core.utils.PathFinding;
 
@@ -51,6 +53,7 @@ public class BoardRobotLumberjack implements IRedstoneBoardRobot<EntityRobot> {
 
 		if (!initialized) {
 			range = data.getInteger("range");
+			robot.setItemInUse(new ItemStack(Items.wooden_axe));
 
 			initialized = true;
 		}
@@ -82,14 +85,14 @@ public class BoardRobotLumberjack implements IRedstoneBoardRobot<EntityRobot> {
 			Block block = robot.worldObj.getBlock(woodToChop.x, woodToChop.y, woodToChop.z);
 			int meta = robot.worldObj.getBlockMetadata(woodToChop.x, woodToChop.y, woodToChop.z);
 			float hardness = block.getBlockHardness(robot.worldObj, woodToChop.x, woodToChop.y, woodToChop.z);
-			float speed = getBreakSpeed(robot, new ItemStack(Items.wooden_axe), block, meta);
+			float speed = getBreakSpeed(robot, robot.itemInUse, block, meta);
 			blockDamage += speed / hardness / 30F;
-
 
             if (blockDamage > 1.0F) {
 				robot.worldObj.destroyBlockInWorldPartially(robot.getEntityId(), woodToChop.x,
 						woodToChop.y, woodToChop.z, -1);
             	blockDamage = 0;
+				BlockUtil.breakBlock((WorldServer) robot.worldObj, woodToChop.x, woodToChop.y, woodToChop.z, 6000);
 				robot.worldObj.setBlockToAir(woodToChop.x, woodToChop.y, woodToChop.z);
 				stage = Stages.LOOK_FOR_WOOD;
 				woodToChop = null;

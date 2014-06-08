@@ -61,10 +61,12 @@ public class RenderRobot extends Render implements IItemRenderer {
 
 		box.render(factor);
 
-		// GL11.glTranslated(0.5, 0, 0);
-		GL11.glRotatef(robot.worldObj.getTotalWorldTime() % 45 + 90, 1, 0, 0);
-		doRenderItemAtHand(robot, new ItemStack(Items.diamond_axe));
-		// GL11.glTranslated(-0.5, 0, 0);
+		if (robot.itemInUse != null) {
+			GL11.glPushMatrix();
+			GL11.glRotatef(robot.worldObj.getTotalWorldTime() % 45 + 90, 1, 0, 0);
+			doRenderItemAtHand(robot, robot.itemInUse);
+			GL11.glPopMatrix();
+		}
 
 		if (robot.laser.isVisible) {
 			robot.laser.head.x = robot.posX;

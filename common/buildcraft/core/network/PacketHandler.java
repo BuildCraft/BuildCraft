@@ -92,6 +92,12 @@ public class PacketHandler extends SimpleChannelInboundHandler<BuildCraftPacket>
 				break;
 			}
 
+			case PacketIds.RPC_ENTITY: {
+				((PacketRPCEntity) packet).call(player);
+
+				break;
+			}
+
 				case PacketIds.RPC_PIPE: {
 				// TODO: RPC pipes are not used right now. Ressurect this
 				// code if needed later.

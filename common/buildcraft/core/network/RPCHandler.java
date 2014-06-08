@@ -20,10 +20,12 @@ import java.util.TreeMap;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.Container;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.api.core.JavaTools;
@@ -39,7 +41,6 @@ import buildcraft.transport.Pipe;
  * RPCs must be sent and received by a tile entity.
  */
 public final class RPCHandler {
-
 	public static int MAX_PACKET_SIZE = 30 * 1024;
 
 	private static Map<String, RPCHandler> handlers = new TreeMap<String, RPCHandler>();
@@ -109,13 +110,7 @@ public final class RPCHandler {
 			handlers.put(object.getClass().getName(), new RPCHandler(object.getClass()));
 		}
 
-		BuildCraftPacket packet = null;
-
-		if (object instanceof Container) {
-			packet = handlers.get(object.getClass().getName()).createRCPPacketContainer(method, actuals);
-		} else if (object instanceof TileEntity) {
-			packet = handlers.get(object.getClass().getName()).createRCPPacketTile((TileEntity) object, method, actuals);
-		}
+		BuildCraftPacket packet = createPacket(object, method, actuals);
 
 		if (packet != null) {
 			if (packet instanceof PacketRPCTile) {
@@ -128,19 +123,12 @@ public final class RPCHandler {
 		}
 	}
 
-	public static void rpcPlayer(Object object, String method, EntityPlayer player, Object... actuals) {
+	public static void rpcPlayer(EntityPlayer player, Object object, String method, Object... actuals) {
 		if (!handlers.containsKey(object.getClass().getName())) {
 			handlers.put(object.getClass().getName(), new RPCHandler(object.getClass()));
 		}
 
-		BuildCraftPacket packet = null;
-
-		if (object instanceof Container) {
-			packet = handlers.get(object.getClass().getName()).createRCPPacketContainer(method, actuals);
-		} else if (object instanceof TileEntity) {
-			packet = handlers.get(object.getClass().getName())
-					.createRCPPacketTile((TileEntity) object, method, actuals);
-		}
+		BuildCraftPacket packet = createPacket(object, method, actuals);
 
 		if (packet != null) {
 			if (packet instanceof PacketRPCTile) {
@@ -153,51 +141,39 @@ public final class RPCHandler {
 		}
 	}
 
-	public static void rpcBroadcastDefaultPlayers (Pipe pipe, String method, Object ... actuals) {
-		RPCHandler.rpcBroadcastPlayers(pipe, method, DefaultProps.NETWORK_UPDATE_RANGE, actuals);
+	public static void rpcBroadcastPlayers(World world, Object object, String method, Object... actuals) {
+		RPCHandler.rpcBroadcastPlayersAtDistance(world, object, method, DefaultProps.NETWORK_UPDATE_RANGE, actuals);
 	}
 
-	public static void rpcBroadcastPlayers (TileEntity tile, String method, Object ... actuals) {
-		RPCHandler.rpcBroadcastPlayersAtDistance(tile, method, DefaultProps.NETWORK_UPDATE_RANGE, actuals);
-	}
-
-	public static void rpcBroadcastPlayersAtDistance (TileEntity tile, String method, int maxDistance, Object ... actuals) {
-		if (!handlers.containsKey(tile.getClass().getName())) {
-			handlers.put (tile.getClass().getName(), new RPCHandler (tile.getClass()));
+	public static void rpcBroadcastPlayersAtDistance(World world, Object object, String method, int maxDistance,
+			Object... actuals) {
+		if (!handlers.containsKey(object.getClass().getName())) {
+			handlers.put(object.getClass().getName(), new RPCHandler(object.getClass()));
 		}
 
-		PacketRPCTile packet = handlers.get (tile.getClass().getName()).createRCPPacketTile(tile, method, actuals);
+		BuildCraftPacket packet = createPacket(object, method, actuals);
 
 		if (packet != null) {
-			for (PacketRPCTile p : packet
-					.breakIntoSmallerPackets(MAX_PACKET_SIZE)) {
-				for (Object o : tile.getWorldObj().playerEntities) {
-					EntityPlayerMP player = (EntityPlayerMP) o;
+			if (packet instanceof PacketRPCTile) {
+				TileEntity tile = (TileEntity) object;
 
-					if (Math.abs(player.posX - tile.xCoord) <= maxDistance
-							&& Math.abs(player.posY - tile.yCoord) <= maxDistance
-							&& Math.abs(player.posZ - tile.zCoord) <= maxDistance) {
-						BuildCraftCore.instance.sendToPlayer(player, p);
+				for (PacketRPCTile p : ((PacketRPCTile) packet)
+						.breakIntoSmallerPackets(MAX_PACKET_SIZE)) {
+
+					for (Object o : world.playerEntities) {
+						EntityPlayerMP player = (EntityPlayerMP) o;
+
+						if (Math.abs(player.posX - tile.xCoord) <= maxDistance
+								&& Math.abs(player.posY - tile.yCoord) <= maxDistance
+								&& Math.abs(player.posZ - tile.zCoord) <= maxDistance) {
+							BuildCraftCore.instance.sendToPlayer(player, p);
+						}
 					}
 				}
-			}
-		}
-	}
+			} else {
+				for (Object o : world.playerEntities) {
+					EntityPlayerMP player = (EntityPlayerMP) o;
 
-	public static void rpcBroadcastPlayers (Pipe pipe, String method, int maxDistance, Object ... actuals) {
-		if (!handlers.containsKey(pipe.getClass().getName())) {
-			handlers.put (pipe.getClass().getName(), new RPCHandler (pipe.getClass()));
-		}
-
-		PacketRPCPipe packet = handlers.get (pipe.getClass().getName()).createRCPPacketPipe(pipe, method, actuals);
-
-		if (packet != null) {
-			for (Object o : pipe.container.getWorld().playerEntities) {
-				EntityPlayerMP player = (EntityPlayerMP) o;
-
-				if (Math.abs(player.posX - pipe.container.xCoord) <= maxDistance
-						&& Math.abs(player.posY - pipe.container.yCoord) <= maxDistance
-						&& Math.abs(player.posZ - pipe.container.zCoord) <= maxDistance) {
 					BuildCraftCore.instance.sendToPlayer(player, packet);
 				}
 			}
@@ -244,7 +220,22 @@ public final class RPCHandler {
 		return new PacketRPCPipe(bytes);
 	}
 
-	private PacketRPCTile createRCPPacketTile (TileEntity tile, String method, Object ... actuals) {
+	private static BuildCraftPacket createPacket(Object object, String method, Object... actuals) {
+		BuildCraftPacket packet = null;
+
+		if (object instanceof Container) {
+			packet = handlers.get(object.getClass().getName()).createRCPPacketContainer(method, actuals);
+		} else if (object instanceof TileEntity) {
+			packet = handlers.get(object.getClass().getName())
+					.createRCPPacketTile((TileEntity) object, method, actuals);
+		} else if (object instanceof Entity) {
+			packet = handlers.get(object.getClass().getName()).createRCPPacketEntity((Entity) object, method, actuals);
+		}
+
+		return packet;
+	}
+
+	private byte[] getBytes(String method, Object... actuals) {
 		ByteBuf data = Unpooled.buffer();
 
 		try {
@@ -260,26 +251,19 @@ public final class RPCHandler {
 		byte [] bytes = new byte [data.readableBytes()];
 		data.readBytes(bytes);
 
-		return new PacketRPCTile(tile, bytes);
+		return bytes;
+	}
+
+	private PacketRPCTile createRCPPacketTile(TileEntity tile, String method, Object... actuals) {
+		return new PacketRPCTile(tile, getBytes(method, actuals));
 	}
 
 	private PacketRPCGui createRCPPacketContainer(String method, Object... actuals) {
-		ByteBuf data = Unpooled.buffer();
+		return new PacketRPCGui(getBytes(method, actuals));
+	}
 
-		try {
-			writeParameters(method, data, actuals);
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (IllegalArgumentException e) {
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-		}
-
-		byte[] bytes = new byte[data.readableBytes()];
-		data.readBytes(bytes);
-
-		return new PacketRPCGui(bytes);
+	private PacketRPCEntity createRCPPacketEntity(Entity entity, String method, Object... actuals) {
+		return new PacketRPCEntity(entity, getBytes(method, actuals));
 	}
 
 	private void writeParameters(String method, ByteBuf data, Object... actuals)

@@ -219,15 +219,14 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory {
 			BlueprintBase bpt = ItemBlueprint.loadBlueprint(getStackInSlot(1));
 
 			if (bpt != null && uploadingPlayer != null) {
-				RPCHandler.rpcPlayer(this, "downloadBlueprintToClient",
-						uploadingPlayer, bpt.id, bpt.getData());
+				RPCHandler.rpcPlayer(uploadingPlayer, this, "downloadBlueprintToClient",
+						bpt.id, bpt.getData());
 				uploadingPlayer = null;
 			}
 		}
 
 		if (progressOut == 100 && getStackInSlot(3) == null) {
-			RPCHandler.rpcPlayer(this, "requestSelectedBlueprint",
-					downloadingPlayer);
+			RPCHandler.rpcPlayer(downloadingPlayer, this, "requestSelectedBlueprint");
 			progressOut = 0;
 		}
 	}

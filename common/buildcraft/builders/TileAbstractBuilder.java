@@ -60,7 +60,7 @@ public abstract class TileAbstractBuilder extends TileBuildCraft implements ITil
 	@RPC (RPCSide.SERVER)
 	private void uploadBuildersInAction (RPCMessageInfo info) {
 		for (BuildingItem i : buildersInAction) {
-			RPCHandler.rpcPlayer(this, "launchItem", info.sender, i);
+			RPCHandler.rpcPlayer(info.sender, this, "launchItem", i);
 		}
 	}
 
@@ -124,7 +124,7 @@ public abstract class TileAbstractBuilder extends TileBuildCraft implements ITil
 
 	public void addBuildingItem(BuildingItem item) {
 		buildersInAction.add(item);
-		RPCHandler.rpcBroadcastPlayers(this, "launchItem", item);
+		RPCHandler.rpcBroadcastPlayers(worldObj, this, "launchItem", item);
 	}
 
 	public final double energyAvailable() {

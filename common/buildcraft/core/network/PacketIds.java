@@ -42,6 +42,7 @@ public final class PacketIds {
 	public static final int RPC_TILE = 110;
 	public static final int RPC_PIPE = 111;
 	public static final int RPC_GUI = 112;
+	public static final int RPC_ENTITY = 113;
 
 	/**
 	 * Deactivate constructor

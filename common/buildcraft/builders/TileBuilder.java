@@ -447,7 +447,7 @@ public class TileBuilder extends TileAbstractBuilder implements IMachine, IFluid
 
 		if (!worldObj.isRemote) {
 			if (i == 0) {
-				RPCHandler.rpcBroadcastPlayers(this, "setItemRequirements",
+				RPCHandler.rpcBroadcastPlayers(worldObj, this, "setItemRequirements",
 						null, null);
 				iterateBpt(false);
 			}
@@ -726,10 +726,10 @@ public class TileBuilder extends TileAbstractBuilder implements IMachine, IFluid
 				stack.stackSize = 0;
 			}
 
-			RPCHandler.rpcBroadcastPlayers(this, "setItemRequirements",
+			RPCHandler.rpcBroadcastPlayers(worldObj, this, "setItemRequirements",
 					((BptBuilderBlueprint) bluePrintBuilder).neededItems, realSize);
 		} else {
-			RPCHandler.rpcBroadcastPlayers(this, "setItemRequirements", null, null);
+			RPCHandler.rpcBroadcastPlayers(worldObj, this, "setItemRequirements", null, null);
 		}
 
 	}
