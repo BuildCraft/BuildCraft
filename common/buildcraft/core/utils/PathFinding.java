@@ -215,48 +215,48 @@ public class PathFinding {
 		result[1][1][1] = false;
 
 		if (!result[0][1][1]) {
-			for (int i = 0; i <= 1; ++i) {
-				for (int j = 0; j <= 1; ++j) {
+			for (int i = 0; i <= 2; ++i) {
+				for (int j = 0; j <= 2; ++j) {
 					result[0][i][j] = false;
 				}
 			}
 		}
 
 		if (!result[2][1][1]) {
-			for (int i = 0; i <= 1; ++i) {
-				for (int j = 0; j <= 1; ++j) {
+			for (int i = 0; i <= 2; ++i) {
+				for (int j = 0; j <= 2; ++j) {
 					result[2][i][j] = false;
 				}
 			}
 		}
 
 		if (!result[1][0][1]) {
-			for (int i = 0; i <= 1; ++i) {
-				for (int j = 0; j <= 1; ++j) {
+			for (int i = 0; i <= 2; ++i) {
+				for (int j = 0; j <= 2; ++j) {
 					result[i][0][j] = false;
 				}
 			}
 		}
 
 		if (!result[1][2][1]) {
-			for (int i = 0; i <= 1; ++i) {
-				for (int j = 0; j <= 1; ++j) {
+			for (int i = 0; i <= 2; ++i) {
+				for (int j = 0; j <= 2; ++j) {
 					result[i][2][j] = false;
 				}
 			}
 		}
 
 		if (!result[1][1][0]) {
-			for (int i = 0; i <= 1; ++i) {
-				for (int j = 0; j <= 1; ++j) {
+			for (int i = 0; i <= 2; ++i) {
+				for (int j = 0; j <= 2; ++j) {
 					result[i][j][0] = false;
 				}
 			}
 		}
 
 		if (!result[1][1][2]) {
-			for (int i = 0; i <= 1; ++i) {
-				for (int j = 0; j <= 1; ++j) {
+			for (int i = 0; i <= 2; ++i) {
+				for (int j = 0; j <= 2; ++j) {
 					result[i][j][2] = false;
 				}
 			}
