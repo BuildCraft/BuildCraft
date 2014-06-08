@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ChatComponentText;
+
 import cpw.mods.fml.common.event.FMLInterModComms;
 
 import net.minecraftforge.common.config.Property;
@@ -222,13 +223,16 @@ public class Version implements Runnable {
 
 	}
 
+	/**
+	 * This is an integration with Dynious Version Checker See
+	 * http://www.minecraftforum.net/topic/2721902-172
+	 */
 	public static void sendIMCOutdatedMessage() {
 		NBTTagCompound compound = new NBTTagCompound();
 		compound.setString("modDisplayName", "BuildCraft");
 		compound.setString("oldVersion", VERSION);
 		compound.setString("newVersion", getRecommendedVersion());
 
-		//TODO: Decide if we want to grab a direct link for easy updating (maybe from the Maven repo?)
 		compound.setString("updateUrl", "http://www.mod-buildcraft.com/download/");
 		compound.setBoolean("isDirectLink", false);
 
