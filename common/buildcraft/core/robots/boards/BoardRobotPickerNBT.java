@@ -18,12 +18,13 @@ import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
 
 import buildcraft.api.boards.IBoardParameter;
-import buildcraft.api.boards.IRedstoneBoardRobot;
 import buildcraft.api.boards.RedstoneBoardRegistry;
+import buildcraft.api.boards.RedstoneBoardRobot;
 import buildcraft.api.boards.RedstoneBoardRobotNBT;
 import buildcraft.core.robots.EntityRobot;
 import buildcraft.core.utils.NBTUtils;
 import buildcraft.core.utils.StringUtils;
+import buildcraft.robots.EntityRobotBase;
 
 public final class BoardRobotPickerNBT extends RedstoneBoardRobotNBT {
 
@@ -56,8 +57,8 @@ public final class BoardRobotPickerNBT extends RedstoneBoardRobotNBT {
 	}
 
 	@Override
-	public IRedstoneBoardRobot create(NBTTagCompound nbt) {
-		return new BoardRobotPicker(nbt);
+	public RedstoneBoardRobot create(NBTTagCompound nbt, EntityRobotBase object) {
+		return new BoardRobotPicker(object, nbt);
 	}
 
 	@Override

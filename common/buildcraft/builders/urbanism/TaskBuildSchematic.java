@@ -12,7 +12,6 @@ import buildcraft.builders.urbanism.TileUrbanist.FrameTask;
 import buildcraft.core.blueprints.BuildingSlotBlock;
 import buildcraft.core.robots.EntityRobot;
 import buildcraft.core.robots.IRobotTask;
-import buildcraft.core.robots.RobotAIMoveAround;
 
 public class TaskBuildSchematic implements IRobotTask {
 
@@ -27,7 +26,8 @@ public class TaskBuildSchematic implements IRobotTask {
 
 	@Override
 	public void setup(EntityRobot robot) {
-		robot.setMainAI(new RobotAIMoveAround(robot, builder.x, builder.y, builder.z));
+		// robot.setMainAI(new RobotAIMoveAround(robot, builder.x, builder.y,
+		// builder.z));
 	}
 
 	@Override

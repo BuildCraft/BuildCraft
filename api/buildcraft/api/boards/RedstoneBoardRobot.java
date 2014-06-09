@@ -8,16 +8,22 @@
  */
 package buildcraft.api.boards;
 
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.ResourceLocation;
-
+import buildcraft.robots.AIRobot;
 import buildcraft.robots.EntityRobotBase;
 
-public abstract class RedstoneBoardRobotNBT extends RedstoneBoardNBT<EntityRobotBase> {
+public abstract class RedstoneBoardRobot extends AIRobot implements IRedstoneBoard<EntityRobotBase> {
+
+	public RedstoneBoardRobot(EntityRobotBase iRobot) {
+		super(iRobot);
+	}
 
 	@Override
-	public abstract RedstoneBoardRobot create(NBTTagCompound nbt, EntityRobotBase object);
+	public abstract RedstoneBoardRobotNBT getNBTHandler();
 
-	public abstract ResourceLocation getRobotTexture();
+	@Override
+	public final void updateBoard(EntityRobotBase container) {
+		// TODO Auto-generated method stub
+
+	}
 
 }

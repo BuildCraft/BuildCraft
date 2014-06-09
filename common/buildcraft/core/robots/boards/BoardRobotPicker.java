@@ -3,175 +3,104 @@ package buildcraft.core.robots.boards;
 import java.util.HashSet;
 import java.util.Set;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
-import net.minecraftforge.common.util.ForgeDirection;
-
 import buildcraft.api.boards.IBoardParameter;
 import buildcraft.api.boards.IBoardParameterStack;
-import buildcraft.api.boards.IRedstoneBoardRobot;
 import buildcraft.api.boards.RedstoneBoardNBT;
 import buildcraft.api.boards.RedstoneBoardRegistry;
+import buildcraft.api.boards.RedstoneBoardRobot;
 import buildcraft.api.boards.RedstoneBoardRobotNBT;
 import buildcraft.api.core.SafeTimeTracker;
-import buildcraft.core.inventory.TransactorSimple;
 import buildcraft.core.inventory.filters.ArrayStackFilter;
 import buildcraft.core.inventory.filters.IStackFilter;
-import buildcraft.core.robots.EntityRobot;
-import buildcraft.core.robots.RobotAIMoveTo;
-import buildcraft.core.robots.RobotAIReturnToDock;
+import buildcraft.core.robots.AIRobotGoToDock;
+import buildcraft.robots.AIRobot;
+import buildcraft.robots.DockingStation;
+import buildcraft.robots.EntityRobotBase;
 import buildcraft.transport.PipeTransportItems;
 import buildcraft.transport.TileGenericPipe;
 import buildcraft.transport.TravelingItem;
 
-public class BoardRobotPicker implements IRedstoneBoardRobot<EntityRobot> {
+public class BoardRobotPicker extends RedstoneBoardRobot {
 
-	private static Set<Integer> targettedItems = new HashSet<Integer>();
+	public static Set<Integer> targettedItems = new HashSet<Integer>();
 
 	private SafeTimeTracker scanTracker = new SafeTimeTracker(40, 10);
-	private SafeTimeTracker pickTracker = new SafeTimeTracker(20, 0);
-	private SafeTimeTracker unloadTracker = new SafeTimeTracker(20, 0);
-	private EntityItem target;
-	private int pickTime = -1;
 
 	private NBTTagCompound data;
-
 	private RedstoneBoardNBT board;
 	private IBoardParameter[] params;
 	private int range;
 	private IStackFilter stackFilter;
-	private boolean initialized = false;
 
-	public BoardRobotPicker(NBTTagCompound nbt) {
+	public BoardRobotPicker(EntityRobotBase robot, NBTTagCompound nbt) {
+		super(robot);
 		data = nbt;
 
 		board = RedstoneBoardRegistry.instance.getRedstoneBoard(nbt);
 		params = board.getParameters(nbt);
+
+		range = nbt.getInteger("range");
+
+		ItemStack[] stacks = new ItemStack[params.length];
+
+		for (int i = 0; i < stacks.length; ++i) {
+			IBoardParameterStack pStak = (IBoardParameterStack) params[i];
+			stacks[i] = pStak.getStack();
+		}
+
+		if (stacks.length > 0) {
+			stackFilter = new ArrayStackFilter(stacks);
+		} else {
+			stackFilter = null;
+		}
 	}
 
 	@Override
-	public void updateBoard(EntityRobot robot) {
-		TransactorSimple inventoryInsert = new TransactorSimple(robot);
-
-		if (robot.worldObj.isRemote) {
-			return;
-		}
-
-		if (!initialized) {
-			range = data.getInteger("range");
-
-			ItemStack[] stacks = new ItemStack[params.length];
-
-			for (int i = 0; i < stacks.length; ++i) {
-				IBoardParameterStack pStak = (IBoardParameterStack) params[i];
-				stacks[i] = pStak.getStack();
-			}
-
-			if (stacks.length > 0) {
-				stackFilter = new ArrayStackFilter(stacks);
-			} else {
-				stackFilter = null;
-			}
-
-			initialized = true;
-		}
-
-		if (target != null) {
-			if (target.isDead) {
-				targettedItems.remove(target.getEntityId());
-				target = null;
-				robot.setMainAI(new RobotAIReturnToDock(robot));
-				scan(robot);
-			} else if (pickTime == -1) {
-				if (robot.currentAI.isDone()) {
-					pickTracker = new SafeTimeTracker(200);
-					pickTime = 0;
-				}
-			} else {
-				pickTime++;
-
-				if (pickTime > 20) {
-					target.getEntityItem().stackSize -= inventoryInsert.inject(
-							target.getEntityItem(), ForgeDirection.UNKNOWN,
-							true);
-
-					if (target.getEntityItem().stackSize <= 0) {
-						target.setDead();
-					}
-				}
-			}
-		} else {
-			if (robot.isDocked) {
-				TileGenericPipe pipe = (TileGenericPipe) robot.worldObj
-						.getTileEntity(robot.currentDockingStation.pipe.xCoord, robot.currentDockingStation.pipe.yCoord,
-								robot.currentDockingStation.pipe.zCoord);
-
-				if (pipe != null && pipe.pipe.transport instanceof PipeTransportItems) {
-					if (unloadTracker.markTimeIfDelay(robot.worldObj)) {
-						for (int i = 0; i < robot.getSizeInventory(); ++i) {
-							if (robot.getStackInSlot(i) != null) {
-								float cx = robot.currentDockingStation.pipe.xCoord + 0.5F + 0.2F
-										* robot.currentDockingStation.side.offsetX;
-								float cy = robot.currentDockingStation.pipe.yCoord + 0.5F + 0.2F
-										* robot.currentDockingStation.side.offsetY;
-								float cz = robot.currentDockingStation.pipe.zCoord + 0.5F + 0.2F
-										* robot.currentDockingStation.side.offsetZ;
-
-								TravelingItem item = TravelingItem.make(cx, cy,
-										cz, robot.getStackInSlot(i));
-
-								((PipeTransportItems) pipe.pipe.transport)
-										.injectItem(item, robot.currentDockingStation.side.getOpposite());
-
-								robot.setInventorySlotContents(i, null);
-
-								break;
-							}
-						}
-					}
-				}
-			}
-
-			if (scanTracker.markTimeIfDelay(robot.worldObj)) {
-				scan(robot);
-			}
+	public void update() {
+		if (scanTracker.markTimeIfDelay(robot.worldObj)) {
+			startDelegateAI(new AIRobotFetchItem(robot, range, stackFilter));
 		}
 	}
 
-	public void scan(EntityRobot robot) {
-		TransactorSimple inventoryInsert = new TransactorSimple(robot);
+	@Override
+	public void delegateAIEnded(AIRobot ai) {
+		if (ai instanceof AIRobotFetchItem) {
+			if (((AIRobotFetchItem) ai).target != null) {
+				// if we could get an item, let's try to get another one
+				startDelegateAI(new AIRobotFetchItem(robot, range, stackFilter));
+			} else {
+				// otherwise, let's return to base
+				startDelegateAI(new AIRobotGoToDock(robot, robot.getMainDockingStation()));
+			}
+		} else if (ai instanceof AIRobotGoToDock) {
+			emptyContainerInStation();
+		}
+	}
 
-		for (Object o : robot.worldObj.loadedEntityList) {
-			Entity e = (Entity) o;
+	private void emptyContainerInStation() {
+		DockingStation station = robot.getCurrentDockingStation();
 
-			if (!e.isDead && e instanceof EntityItem && !targettedItems.contains(e.getEntityId())) {
-				double dx = e.posX - robot.posX;
-				double dy = e.posY - robot.posY;
-				double dz = e.posZ - robot.posZ;
+		TileGenericPipe pipe = (TileGenericPipe) robot.worldObj
+				.getTileEntity(station.pipe.xCoord, station.pipe.yCoord, station.pipe.zCoord);
 
-				double sqrDistance = dx * dx + dy * dy + dz * dz;
-				double maxDistance = range * range;
+		if (pipe != null && pipe.pipe.transport instanceof PipeTransportItems) {
+			for (int i = 0; i < robot.getSizeInventory(); ++i) {
+				if (robot.getStackInSlot(i) != null) {
+					float cx = station.pipe.xCoord + 0.5F + 0.2F * station.side.offsetX;
+					float cy = station.pipe.yCoord + 0.5F + 0.2F * station.side.offsetY;
+					float cz = station.pipe.zCoord + 0.5F + 0.2F * station.side.offsetZ;
 
-				if (sqrDistance >= maxDistance) {
-					continue;
-				} else if (stackFilter != null && !stackFilter.matches(((EntityItem) e).getEntityItem())) {
-					continue;
-				} else {
-					EntityItem item = (EntityItem) e;
+					TravelingItem item = TravelingItem.make(cx, cy,
+							cz, robot.getStackInSlot(i));
 
-					if (inventoryInsert.inject(item.getEntityItem(), ForgeDirection.UNKNOWN, false) > 0) {
-						target = item;
-						targettedItems.add(e.getEntityId());
-						robot.isDocked = false;
-						robot.setMainAI(new RobotAIMoveTo(robot, (float) e.posX,
-								(float) e.posY, (float) e.posZ));
-						pickTime = -1;
+					((PipeTransportItems) pipe.pipe.transport).injectItem(item, station.side.getOpposite());
 
-						break;
-					}
+					robot.setInventorySlotContents(i, null);
+
+					break;
 				}
 			}
 		}

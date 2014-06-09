@@ -17,11 +17,12 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
 
-import buildcraft.api.boards.IRedstoneBoardRobot;
+import buildcraft.api.boards.RedstoneBoardRobot;
 import buildcraft.api.boards.RedstoneBoardRobotNBT;
 import buildcraft.core.robots.EntityRobot;
 import buildcraft.core.utils.NBTUtils;
 import buildcraft.core.utils.StringUtils;
+import buildcraft.robots.EntityRobotBase;
 
 public final class BoardRobotLumberjackNBT extends RedstoneBoardRobotNBT {
 
@@ -48,8 +49,8 @@ public final class BoardRobotLumberjackNBT extends RedstoneBoardRobotNBT {
 	}
 
 	@Override
-	public IRedstoneBoardRobot create(NBTTagCompound nbt) {
-		return new BoardRobotLumberjack(nbt);
+	public RedstoneBoardRobot create(NBTTagCompound nbt, EntityRobotBase robot) {
+		return new BoardRobotLumberjack(robot, nbt);
 	}
 
 	@Override

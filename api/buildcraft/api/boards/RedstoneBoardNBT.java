@@ -23,7 +23,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 import net.minecraftforge.common.util.Constants;
 
-public abstract class RedstoneBoardNBT {
+public abstract class RedstoneBoardNBT<T> {
 
 	private static Random rand = new Random();
 
@@ -31,7 +31,7 @@ public abstract class RedstoneBoardNBT {
 
 	public abstract void addInformation(ItemStack stack, EntityPlayer player, List list, boolean advanced);
 
-	public abstract IRedstoneBoard create(NBTTagCompound nbt);
+	public abstract IRedstoneBoard<T> create(NBTTagCompound nbt, T object);
 
 	@SideOnly(Side.CLIENT)
 	public abstract void registerIcons(IIconRegister iconRegister);

@@ -17,9 +17,9 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 
-import buildcraft.api.boards.IRedstoneBoardRobot;
 import buildcraft.api.boards.RedstoneBoardNBT;
 import buildcraft.api.boards.RedstoneBoardRegistry;
+import buildcraft.api.boards.RedstoneBoardRobot;
 import buildcraft.api.boards.RedstoneBoardRobotNBT;
 import buildcraft.core.robots.EntityRobot;
 import buildcraft.core.utils.NBTUtils;
@@ -32,19 +32,11 @@ public class ItemRobot extends ItemBuildCraft {
 
 	public EntityRobot createRobot(ItemStack stack, World world) {
 		try {
-			IRedstoneBoardRobot board = null;
+			RedstoneBoardRobot board = null;
 			NBTTagCompound nbt = NBTUtils.getItemData(stack);
 
-			if (nbt.hasKey("board")) {
-				NBTTagCompound boardCpt = nbt.getCompoundTag("board");
-				RedstoneBoardNBT boardNBT = RedstoneBoardRegistry.instance.getRedstoneBoard(boardCpt);
-
-				if (boardNBT instanceof RedstoneBoardRobotNBT) {
-					board = ((RedstoneBoardRobotNBT) boardNBT).create(boardCpt);
-				}
-			}
-
-			EntityRobot robot = new EntityRobot(world, board);
+			NBTTagCompound boardCpt = nbt.getCompoundTag("board");
+			EntityRobot robot = new EntityRobot(world, boardCpt);
 
 			return robot;
 		} catch (Throwable e) {

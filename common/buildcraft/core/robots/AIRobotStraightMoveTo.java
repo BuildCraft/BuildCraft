@@ -8,15 +8,15 @@
  */
 package buildcraft.core.robots;
 
+import buildcraft.robots.EntityRobotBase;
 
-public class RobotAIDirectMoveTo extends RobotAIBase {
+public class AIRobotStraightMoveTo extends AIRobotMove {
 
 	private double prevDistance = Double.MAX_VALUE;
-	private boolean done = false;
 
 	private float x, y, z;
 
-	public RobotAIDirectMoveTo(EntityRobot iRobot, float ix, float iy, float iz) {
+	public AIRobotStraightMoveTo(EntityRobotBase iRobot, float ix, float iy, float iz) {
 		super(iRobot);
 		robot = iRobot;
 		x = ix;
@@ -26,32 +26,29 @@ public class RobotAIDirectMoveTo extends RobotAIBase {
 
 	@Override
 	public void start() {
+		robot.setCurrentDockingStation(null);
 		setDestination(robot, x, y, z);
 	}
 
 	@Override
-	public void updateTask() {
-		super.updateTask();
-
-		double distance = robot.getDistance(destX, destY, destZ);
+	public void update() {
+		double distance = robot.getDistance(nextX, nextY, nextZ);
 
 		if (distance < prevDistance) {
 			prevDistance = distance;
 		} else {
-			robot.motionX = 0;
-			robot.motionY = 0;
-			robot.motionZ = 0;
-
-			robot.posX = x;
-			robot.posY = y;
-			robot.posZ = z;
-
-			done = true;
+			terminate();
 		}
 	}
 
 	@Override
-	public boolean isDone() {
-		return done;
+	public void end() {
+		robot.motionX = 0;
+		robot.motionY = 0;
+		robot.motionZ = 0;
+
+		robot.posX = x;
+		robot.posY = y;
+		robot.posZ = z;
 	}
 }

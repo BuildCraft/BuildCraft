@@ -12,7 +12,6 @@ import java.util.Date;
 
 import io.netty.buffer.ByteBuf;
 
-import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
@@ -21,12 +20,14 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 
 import cpw.mods.fml.common.registry.IEntityAdditionalSpawnData;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 import net.minecraftforge.common.util.ForgeDirection;
 
-import buildcraft.api.boards.IRedstoneBoardRobot;
 import buildcraft.api.boards.RedstoneBoardNBT;
 import buildcraft.api.boards.RedstoneBoardRegistry;
+import buildcraft.api.boards.RedstoneBoardRobot;
 import buildcraft.api.boards.RedstoneBoardRobotNBT;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.core.DefaultProps;
@@ -37,8 +38,9 @@ import buildcraft.core.network.RPCMessageInfo;
 import buildcraft.core.network.RPCSide;
 import buildcraft.robots.DockingStation;
 import buildcraft.robots.DockingStationRegistry;
+import buildcraft.robots.EntityRobotBase;
 
-public class EntityRobot extends EntityLiving implements
+public class EntityRobot extends EntityRobotBase implements
 		IEntityAdditionalSpawnData, IInventory {
 
 	public static final ResourceLocation ROBOT_BASE = new ResourceLocation("buildcraft",
@@ -60,9 +62,9 @@ public class EntityRobot extends EntityLiving implements
 	public DockingStation mainDockingStation;
 	public boolean isDocked = false;
 
-	public IRedstoneBoardRobot board;
+	public RedstoneBoardRobot board;
+	public AIRobotMain mainAI;
 
-	public RobotAIBase currentAI;
 	public ItemStack itemInUse;
 	public float itemAngle1 = 0;
 	public float itemAngle2 = 0;
@@ -70,21 +72,22 @@ public class EntityRobot extends EntityLiving implements
 	public float itemActiveStage = 0;
 	public long lastUpdateTime = 0;
 
-	protected RobotAIBase nextAI;
-
 	private boolean needsUpdate = false;
 	private ItemStack[] inv = new ItemStack[6];
 	private String boardID;
 	private ResourceLocation texture;
 
-	public EntityRobot(World world, IRedstoneBoardRobot iBoard) {
+	public EntityRobot(World world, NBTTagCompound boardNBT) {
 		this(world);
 
-		board = iBoard;
+		board = (RedstoneBoardRobot) RedstoneBoardRegistry.instance.getRedstoneBoard(boardNBT).create(boardNBT, this);
 		dataWatcher.updateObject(16, board.getNBTHandler().getID());
 
 		if (world.isRemote) {
 			RPCHandler.rpcServer(this, "requestInitialization", itemInUse);
+		} else {
+			mainAI = new AIRobotMain(this);
+			mainAI.start();
 		}
 	}
 
@@ -187,18 +190,17 @@ public class EntityRobot extends EntityLiving implements
 			updateDataClient();
 		}
 
-		if (nextAI != null) {
-			if (currentAI != null) {
-				tasks.removeTask(currentAI);
-			}
-
-			currentAI = nextAI;
-			nextAI = null;
-			tasks.addTask(0, currentAI);
+		if (currentDockingStation != null) {
+			motionX = 0;
+			motionY = 0;
+			motionZ = 0;
+			posX = currentDockingStation.pipe.xCoord + 0.5F + currentDockingStation.side.offsetX * 0.5F;
+			posY = currentDockingStation.pipe.yCoord + 0.5F + currentDockingStation.side.offsetY * 0.5F;
+			posZ = currentDockingStation.pipe.zCoord + 0.5F + currentDockingStation.side.offsetZ * 0.5F;
 		}
 
 		if (!worldObj.isRemote) {
-			board.updateBoard(this);
+			mainAI.cycle();
 
 			if (currentTask == null) {
 				if (scanForTasks.markTimeIfDelay(worldObj)) {
@@ -330,10 +332,6 @@ public class EntityRobot extends EntityLiving implements
 			nbt.setInteger("dockSide", mainDockingStation.side.ordinal());
 		}
 
-		if (currentAI != null) {
-			nbt.setString("ai", currentAI.getClass().getCanonicalName());
-		}
-
 		NBTTagCompound nbtLaser = new NBTTagCompound();
 		laser.writeToNBT(nbtLaser);
 		nbt.setTag("laser", nbtLaser);
@@ -388,10 +386,6 @@ public class EntityRobot extends EntityLiving implements
 	@Override
 	protected boolean isAIEnabled() {
 		return true;
-	}
-
-	public void setMainAI (RobotAIBase ai) {
-		nextAI = ai;
 	}
 
 	@Override
@@ -465,10 +459,12 @@ public class EntityRobot extends EntityLiving implements
 						.getItemStackLimit());
 	}
 
+	@Override
 	public boolean isMoving() {
 		return motionX != 0 || motionY != 0 || motionZ != 0;
 	}
 
+	@Override
 	public void setItemInUse(ItemStack stack) {
 		itemInUse = stack;
 		RPCHandler.rpcBroadcastPlayers(worldObj, this, "clientSetItemInUse", stack);
@@ -489,12 +485,14 @@ public class EntityRobot extends EntityLiving implements
 		// deactivate healh management
 	}
 
-	public void setItemAngle(float a1, float a2) {
+	@Override
+	public void setItemAngles(float a1, float a2) {
 		itemAngle1 = a1;
 		itemAngle2 = a2;
 		updateDataServer();
 	}
 
+	@Override
 	public void setItemActive(boolean isActive) {
 		RPCHandler.rpcBroadcastPlayers(worldObj, this, "rpcSetItemActive", isActive);
 	}
@@ -505,4 +503,36 @@ public class EntityRobot extends EntityLiving implements
 		itemActiveStage = 0;
 		lastUpdateTime = new Date().getTime();
 	}
+
+	@Override
+	public void setCurrentDockingStation(DockingStation station) {
+		currentDockingStation = station;
+	}
+
+	@Override
+	public ItemStack getItemInUse() {
+		return itemInUse;
+	}
+
+	@Override
+	public RedstoneBoardRobot getBoard() {
+		return board;
+	}
+
+	@Override
+	public DockingStation getCurrentDockingStation() {
+		return currentDockingStation;
+	}
+
+	@Override
+	public DockingStation getMainDockingStation() {
+		return mainDockingStation;
+	}
+
+	@SideOnly(Side.CLIENT)
+	@Override
+	public boolean isInRangeToRenderDist(double par1) {
+		return true;
+    }
+
 }
