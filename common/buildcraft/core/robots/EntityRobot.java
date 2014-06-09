@@ -35,7 +35,8 @@ import buildcraft.core.network.RPC;
 import buildcraft.core.network.RPCHandler;
 import buildcraft.core.network.RPCMessageInfo;
 import buildcraft.core.network.RPCSide;
-import buildcraft.transport.TileGenericPipe;
+import buildcraft.robots.DockingStation;
+import buildcraft.robots.DockingStationRegistry;
 
 public class EntityRobot extends EntityLiving implements
 		IEntityAdditionalSpawnData, IInventory {
@@ -55,7 +56,8 @@ public class EntityRobot extends EntityLiving implements
 
 	public LaserData laser = new LaserData ();
 	public IRobotTask currentTask;
-	public DockingStation dockingStation = new DockingStation();
+	public DockingStation currentDockingStation;
+	public DockingStation mainDockingStation;
 	public boolean isDocked = false;
 
 	public IRedstoneBoardRobot board;
@@ -74,11 +76,6 @@ public class EntityRobot extends EntityLiving implements
 	private ItemStack[] inv = new ItemStack[6];
 	private String boardID;
 	private ResourceLocation texture;
-
-	public class DockingStation {
-		public int x, y, z;
-		public ForgeDirection side;
-	}
 
 	public EntityRobot(World world, IRedstoneBoardRobot iBoard) {
 		this(world);
@@ -326,10 +323,12 @@ public class EntityRobot extends EntityLiving implements
     public void writeEntityToNBT(NBTTagCompound nbt) {
 		super.writeEntityToNBT(nbt);
 
-		nbt.setInteger("dockX", dockingStation.x);
-		nbt.setInteger("dockY", dockingStation.y);
-		nbt.setInteger("dockZ", dockingStation.z);
-		nbt.setInteger("dockSide", dockingStation.side.ordinal());
+		if (mainDockingStation != null) {
+			nbt.setInteger("dockX", mainDockingStation.pipe.xCoord);
+			nbt.setInteger("dockY", mainDockingStation.pipe.yCoord);
+			nbt.setInteger("dockZ", mainDockingStation.pipe.zCoord);
+			nbt.setInteger("dockSide", mainDockingStation.side.ordinal());
+		}
 
 		if (currentAI != null) {
 			nbt.setString("ai", currentAI.getClass().getCanonicalName());
@@ -352,10 +351,10 @@ public class EntityRobot extends EntityLiving implements
 	public void readEntityFromNBT(NBTTagCompound nbt) {
 		super.readEntityFromNBT(nbt);
 
-		dockingStation.x = nbt.getInteger("dockX");
-		dockingStation.y = nbt.getInteger("dockY");
-		dockingStation.z = nbt.getInteger("dockZ");
-		dockingStation.side = ForgeDirection.values () [nbt.getInteger("dockSide")];
+		if (nbt.hasKey("dockX")) {
+			mainDockingStation = DockingStationRegistry.getStation(nbt.getInteger("dockX"), nbt.getInteger("dockY"),
+				nbt.getInteger("dockZ"), ForgeDirection.values()[nbt.getInteger("dockSide")]);
+		}
 
 		/*
 		 * if (nbt.hasKey("ai")) { try { nextAI = (RobotAIBase)
@@ -372,11 +371,8 @@ public class EntityRobot extends EntityLiving implements
 		setDead();
     }
 
-	public void setDockingStation (TileGenericPipe tile, ForgeDirection side) {
-		dockingStation.x = tile.xCoord;
-		dockingStation.y = tile.yCoord;
-		dockingStation.z = tile.zCoord;
-		dockingStation.side = side;
+	public void setMainDockingStation(DockingStation station) {
+		mainDockingStation = station;
 	}
 
 	@Override

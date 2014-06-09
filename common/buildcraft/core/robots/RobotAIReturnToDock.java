@@ -8,18 +8,9 @@
  */
 package buildcraft.core.robots;
 
-public class RobotAIReturnToDock extends RobotAIComposite {
+public class RobotAIReturnToDock extends RobotAIGoToDock {
 
 	public RobotAIReturnToDock(EntityRobot iRobot) {
-		super(iRobot,
-				new RobotAIMoveTo(iRobot,
-						iRobot.dockingStation.x + 0.5F + iRobot.dockingStation.side.offsetX * 1.5F,
-						iRobot.dockingStation.y + 0.5F + iRobot.dockingStation.side.offsetY * 1.5F,
-						iRobot.dockingStation.z + 0.5F + iRobot.dockingStation.side.offsetZ * 1.5F),
-				new RobotAIDirectMoveTo(iRobot,
-						iRobot.dockingStation.x + 0.5F + iRobot.dockingStation.side.offsetX * 0.5F,
-						iRobot.dockingStation.y + 0.5F + iRobot.dockingStation.side.offsetY * 0.5F,
-						iRobot.dockingStation.z + 0.5F + iRobot.dockingStation.side.offsetZ * 0.5F),
-				new RobotAIDocked(iRobot));
+		super(iRobot, iRobot.mainDockingStation);
 	}
 }

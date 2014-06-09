@@ -24,6 +24,9 @@ public class RobotAIBase extends EntityAIBase {
 	}
 
 	public void setDestination(EntityRobot robot, float x, float y, float z) {
+		robot.isDocked = false;
+		robot.currentDockingStation = null;
+
 		destX = x;
 		destY = y;
 		destZ = z;

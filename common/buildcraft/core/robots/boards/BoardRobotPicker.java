@@ -106,22 +106,25 @@ public class BoardRobotPicker implements IRedstoneBoardRobot<EntityRobot> {
 		} else {
 			if (robot.isDocked) {
 				TileGenericPipe pipe = (TileGenericPipe) robot.worldObj
-						.getTileEntity(robot.dockingStation.x, robot.dockingStation.y,
-								robot.dockingStation.z);
+						.getTileEntity(robot.currentDockingStation.pipe.xCoord, robot.currentDockingStation.pipe.yCoord,
+								robot.currentDockingStation.pipe.zCoord);
 
 				if (pipe != null && pipe.pipe.transport instanceof PipeTransportItems) {
 					if (unloadTracker.markTimeIfDelay(robot.worldObj)) {
 						for (int i = 0; i < robot.getSizeInventory(); ++i) {
 							if (robot.getStackInSlot(i) != null) {
-								float cx = robot.dockingStation.x + 0.5F + 0.2F * robot.dockingStation.side.offsetX;
-								float cy = robot.dockingStation.y + 0.5F + 0.2F * robot.dockingStation.side.offsetY;
-								float cz = robot.dockingStation.z + 0.5F + 0.2F * robot.dockingStation.side.offsetZ;
+								float cx = robot.currentDockingStation.pipe.xCoord + 0.5F + 0.2F
+										* robot.currentDockingStation.side.offsetX;
+								float cy = robot.currentDockingStation.pipe.yCoord + 0.5F + 0.2F
+										* robot.currentDockingStation.side.offsetY;
+								float cz = robot.currentDockingStation.pipe.zCoord + 0.5F + 0.2F
+										* robot.currentDockingStation.side.offsetZ;
 
 								TravelingItem item = TravelingItem.make(cx, cy,
 										cz, robot.getStackInSlot(i));
 
 								((PipeTransportItems) pipe.pipe.transport)
-										.injectItem(item, robot.dockingStation.side.getOpposite());
+										.injectItem(item, robot.currentDockingStation.side.getOpposite());
 
 								robot.setInventorySlotContents(i, null);
 

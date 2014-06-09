@@ -69,6 +69,10 @@ public class PathFinding {
 		nextIteration = startNode;
 	}
 
+	public void iterate() {
+		iterate(PATH_ITERATIONS);
+	}
+
 	public void iterate(int itNumber) {
 		if (nextIteration == null) {
 			return;

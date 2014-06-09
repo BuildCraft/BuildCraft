@@ -6,28 +6,37 @@ import net.minecraft.block.Block;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.WorldServer;
 
 import net.minecraftforge.common.ForgeHooks;
+import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.api.boards.IRedstoneBoardRobot;
 import buildcraft.api.boards.RedstoneBoardNBT;
 import buildcraft.api.boards.RedstoneBoardRegistry;
 import buildcraft.api.boards.RedstoneBoardRobotNBT;
 import buildcraft.core.BlockIndex;
+import buildcraft.core.inventory.ITransactor;
+import buildcraft.core.inventory.Transactor;
+import buildcraft.core.inventory.filters.ArrayStackFilter;
 import buildcraft.core.robots.EntityRobot;
+import buildcraft.core.robots.RobotAIGoToDock;
 import buildcraft.core.robots.RobotAIMoveTo;
 import buildcraft.core.utils.BlockUtil;
 import buildcraft.core.utils.IPathFound;
 import buildcraft.core.utils.PathFinding;
+import buildcraft.robots.DockingStation;
+import buildcraft.robots.DockingStationRegistry;
 
 public class BoardRobotLumberjack implements IRedstoneBoardRobot<EntityRobot> {
 
 	private static enum Stages {
-		LOOK_FOR_WOOD, GO_TO_WOOD, CUT_WOOD
+		LOOK_FOR_AXE, GO_TO_AXE_INVENTORY, LOOK_FOR_WOOD, GO_TO_WOOD, CUT_WOOD
 	};
 
 	private NBTTagCompound data;
@@ -35,7 +44,8 @@ public class BoardRobotLumberjack implements IRedstoneBoardRobot<EntityRobot> {
 	private int range;
 	private boolean initialized = false;
 	private PathFinding woodScanner = null;
-	private Stages stage = Stages.LOOK_FOR_WOOD;
+	private DockingStation axeDocking = null;
+	private Stages stage = Stages.LOOK_FOR_AXE;
 	private BlockIndex woodToChop;
 	private float blockDamage;
 
@@ -53,12 +63,60 @@ public class BoardRobotLumberjack implements IRedstoneBoardRobot<EntityRobot> {
 
 		if (!initialized) {
 			range = data.getInteger("range");
-			robot.setItemInUse(new ItemStack(Items.wooden_axe));
-
 			initialized = true;
 		}
 
-		if (stage == Stages.LOOK_FOR_WOOD) {
+		if (stage == Stages.LOOK_FOR_AXE) {
+			for (DockingStation d : DockingStationRegistry.getStations()) {
+				for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
+					TileEntity nearbyTile = robot.worldObj.getTileEntity(d.pipe.xCoord + dir.offsetX, d.pipe.yCoord
+							+ dir.offsetY, d.pipe.zCoord
+							+ dir.offsetZ);
+
+					if (nearbyTile != null && nearbyTile instanceof IInventory) {
+						ArrayStackFilter filter = new ArrayStackFilter(new ItemStack(Items.wooden_axe));
+						ITransactor trans = Transactor.getTransactorFor(nearbyTile);
+
+						if (trans.remove(filter, dir.getOpposite(), false) != null) {
+							axeDocking = d;
+							robot.setMainAI(new RobotAIGoToDock(robot, axeDocking));
+							stage = Stages.GO_TO_AXE_INVENTORY;
+							return;
+						}
+					}
+				}
+			}
+		} else if (stage == Stages.GO_TO_AXE_INVENTORY) {
+			if (robot.currentDockingStation != null && robot.currentDockingStation.equals(axeDocking)) {
+				ItemStack axeFound = null;
+
+				for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
+					TileEntity nearbyTile = robot.worldObj.getTileEntity(axeDocking.pipe.xCoord + dir.offsetX,
+							axeDocking.pipe.yCoord
+									+ dir.offsetY, axeDocking.pipe.zCoord + dir.offsetZ);
+
+					if (nearbyTile != null && nearbyTile instanceof IInventory) {
+						ArrayStackFilter filter = new ArrayStackFilter(new ItemStack(Items.wooden_axe));
+						ITransactor trans = Transactor.getTransactorFor(nearbyTile);
+
+						axeFound = trans.remove(filter, dir.getOpposite(), true);
+
+						if (axeFound != null) {
+							break;
+						}
+					}
+				}
+
+				reset();
+
+				if (axeFound == null) {
+					stage = Stages.LOOK_FOR_AXE;
+				} else {
+					robot.setItemInUse(axeFound);
+					stage = Stages.LOOK_FOR_WOOD;
+				}
+			}
+		} else if (stage == Stages.LOOK_FOR_WOOD) {
 			if (woodScanner == null) {
 				woodScanner = new PathFinding(robot.worldObj, new BlockIndex(robot), new IPathFound() {
 					@Override
@@ -117,14 +175,27 @@ public class BoardRobotLumberjack implements IRedstoneBoardRobot<EntityRobot> {
 				BlockUtil.breakBlock((WorldServer) robot.worldObj, woodToChop.x, woodToChop.y, woodToChop.z, 6000);
 				robot.worldObj.setBlockToAir(woodToChop.x, woodToChop.y, woodToChop.z);
 				stage = Stages.LOOK_FOR_WOOD;
-				woodToChop = null;
-				woodScanner = null;
 				robot.setItemActive(false);
+				robot.itemInUse.getItem().onBlockDestroyed(robot.itemInUse, robot.worldObj, block, woodToChop.x,
+						woodToChop.y, woodToChop.z, robot);
+
+				if (robot.itemInUse.getItemDamage() >= robot.itemInUse.getMaxDamage()) {
+					robot.setItemInUse(null);
+					stage = Stages.LOOK_FOR_AXE;
+				}
+
+				reset();
 			} else {
 				robot.worldObj.destroyBlockInWorldPartially(robot.getEntityId(), woodToChop.x,
 						woodToChop.y, woodToChop.z, (int) (blockDamage * 10.0F) - 1);
 			}
 		}
+	}
+
+	private void reset() {
+		axeDocking = null;
+		woodToChop = null;
+		woodScanner = null;
 	}
 
 	@Override

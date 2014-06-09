@@ -65,6 +65,8 @@ import buildcraft.core.network.IGuiReturnHandler;
 import buildcraft.core.network.ISyncedTile;
 import buildcraft.core.network.PacketTileState;
 import buildcraft.core.utils.Utils;
+import buildcraft.robots.DockingStation;
+import buildcraft.robots.DockingStationRegistry;
 import buildcraft.transport.gates.GateDefinition;
 import buildcraft.transport.gates.GateFactory;
 
@@ -233,6 +235,12 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 		}
 
 		sideProperties.readFromNBT(nbt);
+
+		for (int i = 0; i < 6; ++i) {
+			if (sideProperties.robotStations[i]) {
+				DockingStationRegistry.registerStation(new DockingStation(this, ForgeDirection.VALID_DIRECTIONS[i]));
+			}
+		}
 	}
 
 	@Override
@@ -955,6 +963,9 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 		worldObj.notifyBlockChange(this.xCoord, this.yCoord, this.zCoord, getBlock());
 		scheduleNeighborChange(); //To force recalculation of connections
 		scheduleRenderUpdate();
+
+		DockingStationRegistry.registerStation(new DockingStation(this, forgeDirection));
+
 		return true;
 	}
 
