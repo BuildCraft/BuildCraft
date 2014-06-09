@@ -13,9 +13,13 @@ import java.util.HashMap;
 
 import net.minecraftforge.common.util.ForgeDirection;
 
-public class DockingStationRegistry {
+public final class DockingStationRegistry {
 
 	private static HashMap<StationIndex, DockingStation> stations = new HashMap<StationIndex, DockingStation>();
+
+	private DockingStationRegistry() {
+
+	}
 
 	private static class StationIndex {
 		public int x, y, z;

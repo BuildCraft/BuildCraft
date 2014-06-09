@@ -196,7 +196,7 @@ public class PathFinding {
 	}
 
 	private ArrayList<BlockIndex> movements(Node from) {
-		boolean[][][] result = new boolean[3][3][3];
+		boolean[][][] resultMoves = new boolean[3][3][3];
 
 		for (int dx = -1; dx <= +1; ++dx) {
 			for (int dy = -1; dy <= +1; ++dy) {
@@ -206,124 +206,124 @@ public class PathFinding {
 					int z = from.index.z + dz;
 
 					if (endReached(x, y, z)) {
-						result[dx + 1][dy + 1][dz + 1] = true;
+						resultMoves[dx + 1][dy + 1][dz + 1] = true;
 					} else if (!BuildCraftAPI.isSoftBlock(world, x, y, z)) {
-						result[dx + 1][dy + 1][dz + 1] = false;
+						resultMoves[dx + 1][dy + 1][dz + 1] = false;
 					} else {
-						result[dx + 1][dy + 1][dz + 1] = true;
+						resultMoves[dx + 1][dy + 1][dz + 1] = true;
 					}
 				}
 			}
 		}
 
-		result[1][1][1] = false;
+		resultMoves[1][1][1] = false;
 
-		if (!result[0][1][1]) {
+		if (!resultMoves[0][1][1]) {
 			for (int i = 0; i <= 2; ++i) {
 				for (int j = 0; j <= 2; ++j) {
-					result[0][i][j] = false;
+					resultMoves[0][i][j] = false;
 				}
 			}
 		}
 
-		if (!result[2][1][1]) {
+		if (!resultMoves[2][1][1]) {
 			for (int i = 0; i <= 2; ++i) {
 				for (int j = 0; j <= 2; ++j) {
-					result[2][i][j] = false;
+					resultMoves[2][i][j] = false;
 				}
 			}
 		}
 
-		if (!result[1][0][1]) {
+		if (!resultMoves[1][0][1]) {
 			for (int i = 0; i <= 2; ++i) {
 				for (int j = 0; j <= 2; ++j) {
-					result[i][0][j] = false;
+					resultMoves[i][0][j] = false;
 				}
 			}
 		}
 
-		if (!result[1][2][1]) {
+		if (!resultMoves[1][2][1]) {
 			for (int i = 0; i <= 2; ++i) {
 				for (int j = 0; j <= 2; ++j) {
-					result[i][2][j] = false;
+					resultMoves[i][2][j] = false;
 				}
 			}
 		}
 
-		if (!result[1][1][0]) {
+		if (!resultMoves[1][1][0]) {
 			for (int i = 0; i <= 2; ++i) {
 				for (int j = 0; j <= 2; ++j) {
-					result[i][j][0] = false;
+					resultMoves[i][j][0] = false;
 				}
 			}
 		}
 
-		if (!result[1][1][2]) {
+		if (!resultMoves[1][1][2]) {
 			for (int i = 0; i <= 2; ++i) {
 				for (int j = 0; j <= 2; ++j) {
-					result[i][j][2] = false;
+					resultMoves[i][j][2] = false;
 				}
 			}
 		}
 
-		if (!result[0][0][1]) {
-			result[0][0][0] = false;
-			result[0][0][2] = false;
+		if (!resultMoves[0][0][1]) {
+			resultMoves[0][0][0] = false;
+			resultMoves[0][0][2] = false;
 		}
 
-		if (!result[0][2][1]) {
-			result[0][2][0] = false;
-			result[0][2][2] = false;
+		if (!resultMoves[0][2][1]) {
+			resultMoves[0][2][0] = false;
+			resultMoves[0][2][2] = false;
 		}
 
-		if (!result[2][0][1]) {
-			result[2][0][0] = false;
-			result[2][0][2] = false;
+		if (!resultMoves[2][0][1]) {
+			resultMoves[2][0][0] = false;
+			resultMoves[2][0][2] = false;
 		}
 
-		if (!result[2][2][1]) {
-			result[2][2][0] = false;
-			result[2][2][2] = false;
+		if (!resultMoves[2][2][1]) {
+			resultMoves[2][2][0] = false;
+			resultMoves[2][2][2] = false;
 		}
 
-		if (!result[0][1][0]) {
-			result[0][0][0] = false;
-			result[0][2][0] = false;
+		if (!resultMoves[0][1][0]) {
+			resultMoves[0][0][0] = false;
+			resultMoves[0][2][0] = false;
 		}
 
-		if (!result[0][1][2]) {
-			result[0][0][2] = false;
-			result[0][2][2] = false;
+		if (!resultMoves[0][1][2]) {
+			resultMoves[0][0][2] = false;
+			resultMoves[0][2][2] = false;
 		}
 
-		if (!result[2][1][0]) {
-			result[2][0][0] = false;
-			result[2][2][0] = false;
+		if (!resultMoves[2][1][0]) {
+			resultMoves[2][0][0] = false;
+			resultMoves[2][2][0] = false;
 		}
 
-		if (!result[2][1][2]) {
-			result[2][0][2] = false;
-			result[2][2][2] = false;
+		if (!resultMoves[2][1][2]) {
+			resultMoves[2][0][2] = false;
+			resultMoves[2][2][2] = false;
 		}
 
-		if (!result[1][0][0]) {
-			result[0][0][0] = false;
-			result[2][0][0] = false;
+		if (!resultMoves[1][0][0]) {
+			resultMoves[0][0][0] = false;
+			resultMoves[2][0][0] = false;
 		}
 
-		if (!result[1][0][2]) {
-			result[0][0][2] = false;
-			result[2][0][2] = false;
+		if (!resultMoves[1][0][2]) {
+			resultMoves[0][0][2] = false;
+			resultMoves[2][0][2] = false;
 		}
 
-		if (!result[1][2][0]) {
-			result[0][2][0] = false;
-			result[2][2][0] = false;
+		if (!resultMoves[1][2][0]) {
+			resultMoves[0][2][0] = false;
+			resultMoves[2][2][0] = false;
 		}
 
-		if (!result[1][2][2]) {
-			result[0][2][2] = false;
-			result[2][2][2] = false;
+		if (!resultMoves[1][2][2]) {
+			resultMoves[0][2][2] = false;
+			resultMoves[2][2][2] = false;
 		}
 
 		ArrayList<BlockIndex> possibleMovements = new ArrayList<BlockIndex>();
@@ -331,7 +331,7 @@ public class PathFinding {
 		for (int dx = -1; dx <= +1; ++dx) {
 			for (int dy = -1; dy <= +1; ++dy) {
 				for (int dz = -1; dz <= +1; ++dz) {
-					if (result[dx + 1][dy + 1][dz + 1]) {
+					if (resultMoves[dx + 1][dy + 1][dz + 1]) {
 						int x = from.index.x + dx;
 						int y = from.index.y + dy;
 						int z = from.index.z + dz;
