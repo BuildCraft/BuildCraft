@@ -91,4 +91,8 @@ public final class DockingStationRegistry {
 	private static StationIndex toIndex(DockingStation station) {
 		return new StationIndex(station.pipe.xCoord, station.pipe.yCoord, station.pipe.zCoord, station.side);
 	}
+
+	public static void clear() {
+		stations.clear();
+	}
 }

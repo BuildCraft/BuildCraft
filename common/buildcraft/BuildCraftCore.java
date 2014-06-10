@@ -52,6 +52,7 @@ import net.minecraftforge.common.IPlantable;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
+import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fluids.BlockFluidBase;
 import net.minecraftforge.oredict.OreDictionary;
 
@@ -101,6 +102,7 @@ import buildcraft.core.triggers.TriggerInventoryLevel;
 import buildcraft.core.triggers.TriggerMachine;
 import buildcraft.core.triggers.TriggerRedstoneInput;
 import buildcraft.core.utils.CraftingHandler;
+import buildcraft.robots.DockingStationRegistry;
 
 @Mod(name = "BuildCraft", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Core", acceptedMinecraftVersions = "[1.7.2,1.8)", dependencies = "required-after:Forge@[10.12.1.1079,)")
 public class BuildCraftCore extends BuildCraftMod {
@@ -442,6 +444,11 @@ public class BuildCraftCore extends BuildCraftMod {
 		diffX = pos.get(0);
 		diffY = pos.get(1);
 		diffZ = pos.get(2);
+	}
+
+	@SubscribeEvent
+	public void cleanRegistries(WorldEvent.Load load) {
+		DockingStationRegistry.clear();
 	}
 
 	@Mod.EventHandler
