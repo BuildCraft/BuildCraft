@@ -8,6 +8,7 @@
  */
 package buildcraft.robots;
 
+import java.security.InvalidParameterException;
 import java.util.Collection;
 import java.util.HashMap;
 
@@ -70,7 +71,13 @@ public final class DockingStationRegistry {
 	}
 
 	public static void registerStation(DockingStation station) {
-		stations.put(toIndex(station), station);
+		StationIndex index = toIndex(station);
+
+		if (stations.containsKey(index)) {
+			throw new InvalidParameterException("Station " + index + " already registerd");
+		} else {
+			stations.put(index, station);
+		}
 	}
 
 	public static void removeStation(DockingStation station) {

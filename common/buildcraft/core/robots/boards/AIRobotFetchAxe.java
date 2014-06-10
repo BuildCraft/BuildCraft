@@ -35,6 +35,10 @@ public class AIRobotFetchAxe extends AIRobot {
 	@Override
 	public void update() {
 		for (DockingStation d : DockingStationRegistry.getStations()) {
+			if (d.reserved != null) {
+				continue;
+			}
+
 			for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
 				TileEntity nearbyTile = robot.worldObj.getTileEntity(d.pipe.xCoord + dir.offsetX, d.pipe.yCoord
 						+ dir.offsetY, d.pipe.zCoord

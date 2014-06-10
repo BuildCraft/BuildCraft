@@ -56,9 +56,7 @@ public class EntityRobot extends EntityRobotBase implements
 
 	public SafeTimeTracker scanForTasks = new SafeTimeTracker (40, 10);
 
-	public LaserData laser = new LaserData ();
-	public IRobotTask currentTask;
-	public DockingStation currentDockingStation;
+	public LaserData laser = new LaserData();
 	public DockingStation mainDockingStation;
 	public boolean isDocked = false;
 
@@ -76,6 +74,9 @@ public class EntityRobot extends EntityRobotBase implements
 	private ItemStack[] inv = new ItemStack[6];
 	private String boardID;
 	private ResourceLocation texture;
+	private DockingStation currentDockingStation;
+
+	private double mjStored;
 
 	public EntityRobot(World world, NBTTagCompound boardNBT) {
 		this(world);
@@ -201,18 +202,6 @@ public class EntityRobot extends EntityRobotBase implements
 
 		if (!worldObj.isRemote) {
 			mainAI.cycle();
-
-			if (currentTask == null) {
-				if (scanForTasks.markTimeIfDelay(worldObj)) {
-					RobotTaskProviderRegistry.scanForTask(this);
-				}
-			} else {
-				if (currentTask.done()) {
-					currentTask = null;
-				} else {
-					currentTask.update(this);
-				}
-			}
 		}
 
 		super.onUpdate();
@@ -270,10 +259,6 @@ public class EntityRobot extends EntityRobotBase implements
 		setNullBoundingBox ();
 	}
 
-	protected void move() {
-
-	}
-
 	@Override
 	public void writeSpawnData(ByteBuf data) {
 
@@ -286,13 +271,11 @@ public class EntityRobot extends EntityRobotBase implements
 
 	@Override
 	public ItemStack getHeldItem() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public void setCurrentItemOrArmor(int i, ItemStack itemstack) {
-		// TODO Auto-generated method stub
 	}
 
 	@Override
@@ -375,7 +358,6 @@ public class EntityRobot extends EntityRobotBase implements
 
 	@Override
 	public ItemStack getEquipmentInSlot(int var1) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -506,7 +488,15 @@ public class EntityRobot extends EntityRobotBase implements
 
 	@Override
 	public void setCurrentDockingStation(DockingStation station) {
+		if (currentDockingStation != null) {
+			currentDockingStation.reserved = null;
+		}
+
 		currentDockingStation = station;
+
+		if (currentDockingStation != null) {
+			currentDockingStation.reserved = this;
+		}
 	}
 
 	@Override
@@ -534,5 +524,19 @@ public class EntityRobot extends EntityRobotBase implements
 	public boolean isInRangeToRenderDist(double par1) {
 		return true;
     }
+
+	@Override
+	public double getEnergy() {
+		return mjStored;
+	}
+
+	@Override
+	public void setEnergy(double energy) {
+		mjStored = energy;
+
+		if (mjStored > MAX_ENERGY) {
+			mjStored = MAX_ENERGY;
+		}
+	}
 
 }

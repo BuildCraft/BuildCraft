@@ -6,7 +6,7 @@
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-package buildcraft.core.robots.boards;
+package buildcraft.core.robots;
 
 import java.util.LinkedList;
 
@@ -26,7 +26,7 @@ public class AIRobotGoToWood extends AIRobot {
 	private PathFinding woodScanner = null;
 
 	public AIRobotGoToWood(EntityRobotBase iRobot) {
-		super(iRobot, 2);
+		super(iRobot);
 	}
 
 	@Override

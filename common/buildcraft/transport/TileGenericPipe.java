@@ -964,7 +964,9 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 		scheduleNeighborChange(); //To force recalculation of connections
 		scheduleRenderUpdate();
 
-		DockingStationRegistry.registerStation(new DockingStation(this, forgeDirection));
+		if (!worldObj.isRemote) {
+			DockingStationRegistry.registerStation(new DockingStation(this, forgeDirection));
+		}
 
 		return true;
 	}

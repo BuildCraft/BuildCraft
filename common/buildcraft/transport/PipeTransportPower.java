@@ -63,6 +63,7 @@ public class PipeTransportPower extends PipeTransport {
 
 	private long currentDate;
 	private double[] internalPower = new double[6];
+	private double[] externalPower = new double[6];
 
 	private double highestPower;
 	private SafeTimeTracker tracker = new SafeTimeTracker(2 * BuildCraftCore.updateFactor);
@@ -191,8 +192,11 @@ public class PipeTransportPower extends PipeTransport {
 
 		if (totalPowerContained > 0) {
 			for (int out = 0; out < 6; ++out) {
+				externalPower[out] = 0;
+
 				if (powerQuery[out] > 0 && internalPower[out] == 0) {
 					double powerConsumed = powerQuery[out] / totalPowerQuery * totalPowerContained;
+					boolean tilePowered = false;
 
 					if (tiles[out] instanceof TileGenericPipe) {
 						// Transmit power to the nearby pipe
@@ -202,6 +206,7 @@ public class PipeTransportPower extends PipeTransport {
 						powerConsumed = nearbyTransport.receiveEnergy(
 								ForgeDirection.VALID_DIRECTIONS[out].getOpposite(),
 								powerConsumed);
+						tilePowered = true;
 					} else {
 						IBatteryObject battery = MjAPI.getMjBattery(tiles[out], MjAPI.DEFAULT_POWER_FRAMEWORK,
 								ForgeDirection.VALID_DIRECTIONS[out].getOpposite());
@@ -209,6 +214,7 @@ public class PipeTransportPower extends PipeTransport {
 						if (battery != null) {
 							// Transmit power to the simplified power framework
 							powerConsumed = battery.addEnergy(powerConsumed);
+							tilePowered = true;
 						} else {
 							PowerReceiver prov = getReceiverOnSide(ForgeDirection.VALID_DIRECTIONS[out]);
 
@@ -217,8 +223,13 @@ public class PipeTransportPower extends PipeTransport {
 
 								powerConsumed = prov.receiveEnergy(Type.PIPE, powerConsumed,
 										ForgeDirection.VALID_DIRECTIONS[out].getOpposite());
+								tilePowered = true;
 							}
 						}
+					}
+
+					if (!tilePowered) {
+						externalPower[out] = powerConsumed;
 					}
 
 					displayPower[out] += powerConsumed;
@@ -506,6 +517,19 @@ public class PipeTransportPower extends PipeTransport {
 		}
 
 		return amount;
+	}
+
+	public double consumePower(ForgeDirection dir, double max) {
+		double result;
+
+		if (externalPower[dir.ordinal()] < max) {
+			result = externalPower[dir.ordinal()];
+		} else {
+			result = max;
+			externalPower[dir.ordinal()] -= max;
+		}
+
+		return result;
 	}
 
 	static {

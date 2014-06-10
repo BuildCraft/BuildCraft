@@ -27,6 +27,8 @@ public class AIRobotGoToDock extends AIRobot {
 		if (station == robot.getCurrentDockingStation()) {
 			terminate();
 		} else {
+			station.reserved = robot;
+
 			startDelegateAI(new AIRobotMoveToBlock(robot,
 				station.pipe.xCoord + station.side.offsetX * 2,
 				station.pipe.yCoord + station.side.offsetY * 2,
@@ -43,7 +45,17 @@ public class AIRobotGoToDock extends AIRobot {
 					station.pipe.zCoord + 0.5F + station.side.offsetZ * 0.5F));
 		} else {
 			robot.setCurrentDockingStation(station);
+			station = null;
 			terminate();
+		}
+	}
+
+	@Override
+	public void end() {
+		// If there's still a station targeted, it was not reached. The AI has
+		// probably been interrupted. Cancel reservation.
+		if (station != null) {
+			station.reserved = null;
 		}
 	}
 }

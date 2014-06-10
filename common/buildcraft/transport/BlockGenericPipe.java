@@ -789,6 +789,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 					if (rayTraceResult != null && rayTraceResult.hitPart == Part.RobotStation) {
 						EntityRobot robot = ((ItemRobot) currentItem.getItem())
 								.createRobot(currentItem, world);
+						robot.setEnergy(EntityRobot.MAX_ENERGY / 5.0);
 
 						float px = x + 0.5F + rayTraceResult.sideHit.offsetX * 0.5F;
 						float py = y + 0.5F + rayTraceResult.sideHit.offsetY * 0.5F;

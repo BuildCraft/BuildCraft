@@ -36,6 +36,7 @@ public class AIRobotFetchItem extends AIRobot {
 
 	@Override
 	public void start() {
+		double previousDistance = Double.MAX_VALUE;
 		TransactorSimple inventoryInsert = new TransactorSimple(robot);
 
 		for (Object o : robot.worldObj.loadedEntityList) {
@@ -57,24 +58,34 @@ public class AIRobotFetchItem extends AIRobot {
 					EntityItem item = (EntityItem) e;
 
 					if (inventoryInsert.inject(item.getEntityItem(), ForgeDirection.UNKNOWN, false) > 0) {
-						target = item;
-						BoardRobotPicker.targettedItems.add(e.getEntityId());
-
-						startDelegateAI(new AIRobotMoveToBlock(robot, (int) Math.floor(e.posX),
-								(int) Math.floor(e.posY), (int) Math.floor(e.posZ)));
-
-						return;
+						if (target == null) {
+							previousDistance = sqrDistance;
+							target = item;
+						} else {
+							if (sqrDistance < previousDistance) {
+								previousDistance = sqrDistance;
+								target = item;
+							}
+						}
 					}
 				}
 			}
 		}
 
-		// No item was found, terminate this AI
-		terminate();
+		if (target != null) {
+			BoardRobotPicker.targettedItems.add(target.getEntityId());
+
+			startDelegateAI(new AIRobotMoveToBlock(robot, (int) Math.floor(target.posX),
+					(int) Math.floor(target.posY), (int) Math.floor(target.posZ)));
+
+		} else {
+			// No item was found, terminate this AI
+			terminate();
+		}
 	}
 
 	@Override
-	public void preempt() {
+	public void preempt(AIRobot ai) {
 		if (target.isDead) {
 			BoardRobotPicker.targettedItems.remove(target.getEntityId());
 			terminate();

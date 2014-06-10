@@ -17,6 +17,8 @@ import buildcraft.api.boards.RedstoneBoardRobot;
 
 public abstract class EntityRobotBase extends EntityLiving implements IInventory {
 
+	public static double MAX_ENERGY = 10000;
+
 	public EntityRobotBase(World par1World) {
 		super(par1World);
 	}
@@ -38,5 +40,9 @@ public abstract class EntityRobotBase extends EntityLiving implements IInventory
 	public abstract RedstoneBoardRobot getBoard();
 
 	public abstract void setItemAngles(float a1, float a2);
+
+	public abstract double getEnergy();
+
+	public abstract void setEnergy(double energy);
 
 }

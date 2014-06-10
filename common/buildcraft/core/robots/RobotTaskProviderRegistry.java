@@ -51,7 +51,7 @@ public final class RobotTaskProviderRegistry {
 						IRobotTask task = provider.getNextTask(robot);
 
 						if (task != null && robot.acceptTask(task)) {
-							robot.currentTask = task;
+							// robot.currentTask = task;
 							task.setup(robot);
 							provider.popNextTask();
 

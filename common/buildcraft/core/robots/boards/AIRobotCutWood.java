@@ -31,10 +31,13 @@ public class AIRobotCutWood extends AIRobot {
 	private float speed;
 
 	public AIRobotCutWood(EntityRobotBase iRobot, BlockIndex iWoodToChop) {
-		super(iRobot);
+		super(iRobot, 2);
 
 		woodToChop = iWoodToChop;
+	}
 
+	@Override
+	public void start() {
 		float a1 = (float) Math.atan2(woodToChop.z - Math.floor(robot.posZ),
 				woodToChop.x - Math.floor(robot.posX));
 
@@ -73,7 +76,6 @@ public class AIRobotCutWood extends AIRobot {
 			blockDamage = 0;
 			BlockUtil.breakBlock((WorldServer) robot.worldObj, woodToChop.x, woodToChop.y, woodToChop.z, 6000);
 			robot.worldObj.setBlockToAir(woodToChop.x, woodToChop.y, woodToChop.z);
-			robot.setItemActive(false);
 			robot.getItemInUse().getItem().onBlockDestroyed(robot.getItemInUse(), robot.worldObj, block, woodToChop.x,
 					woodToChop.y, woodToChop.z, robot);
 
@@ -86,6 +88,11 @@ public class AIRobotCutWood extends AIRobot {
 			robot.worldObj.destroyBlockInWorldPartially(robot.getEntityId(), woodToChop.x,
 					woodToChop.y, woodToChop.z, (int) (blockDamage * 10.0F) - 1);
 		}
+	}
+
+	@Override
+	public void end() {
+		robot.setItemActive(false);
 	}
 
 	private float getBreakSpeed(EntityRobotBase robot, ItemStack usingItem, Block block, int meta) {

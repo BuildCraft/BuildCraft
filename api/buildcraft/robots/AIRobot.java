@@ -6,16 +6,23 @@ public class AIRobot {
 
 	private AIRobot delegateAI;
 	private AIRobot parentAI;
+	private double energyCost;
+
+	public AIRobot(EntityRobotBase iRobot, double iEnergyCost) {
+		robot = iRobot;
+		energyCost = iEnergyCost;
+	}
 
 	public AIRobot(EntityRobotBase iRobot) {
 		robot = iRobot;
+		energyCost = 0;
 	}
 
 	public void start() {
 
 	}
 
-	public void preempt() {
+	public void preempt(AIRobot ai) {
 
 	}
 
@@ -42,11 +49,12 @@ public class AIRobot {
 	}
 
 	public final void cycle() {
-		preempt();
+		preempt(delegateAI);
 
 		if (delegateAI != null) {
 			delegateAI.cycle();
 		} else {
+			robot.setEnergy(robot.getEnergy() - energyCost);
 			update();
 		}
 	}

@@ -8,6 +8,7 @@
  */
 package buildcraft.core.robots;
 
+import buildcraft.api.boards.RedstoneBoardRobot;
 import buildcraft.robots.AIRobot;
 import buildcraft.robots.EntityRobotBase;
 
@@ -20,6 +21,23 @@ public class AIRobotMain extends AIRobot {
 	@Override
 	public void start() {
 		startDelegateAI(robot.getBoard());
+	}
+
+	@Override
+	public void preempt(AIRobot ai) {
+		if (ai instanceof RedstoneBoardRobot) {
+			if (robot.getEnergy() < EntityRobotBase.MAX_ENERGY / 4.0) {
+				abortDelegateAI();
+				startDelegateAI(new AIRobotRecharge(robot));
+			}
+		}
+	}
+
+	@Override
+	public void delegateAIEnded(AIRobot ai) {
+		if (ai instanceof AIRobotRecharge) {
+			startDelegateAI(robot.getBoard());
+		}
 	}
 
 }

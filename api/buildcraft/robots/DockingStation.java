@@ -15,6 +15,7 @@ import buildcraft.transport.TileGenericPipe;
 public class DockingStation {
 	public TileGenericPipe pipe;
 	public ForgeDirection side;
+	public EntityRobotBase reserved;
 
 	public DockingStation(TileGenericPipe iPipe, ForgeDirection iSide) {
 		pipe = iPipe;
