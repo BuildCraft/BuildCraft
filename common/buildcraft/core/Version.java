@@ -19,6 +19,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ChatComponentText;
 
 import cpw.mods.fml.common.event.FMLInterModComms;
+import cpw.mods.fml.common.Loader;
 
 import net.minecraftforge.common.config.Property;
 
@@ -225,24 +226,27 @@ public class Version implements Runnable {
 
 	/**
 	 * This is an integration with Dynious Version Checker See
-	 * http://www.minecraftforum.net/topic/2721902-172
+	 * http://www.minecraftforum.net/topic/2721902-
 	 */
 	public static void sendIMCOutdatedMessage() {
-		NBTTagCompound compound = new NBTTagCompound();
-		compound.setString("modDisplayName", "BuildCraft");
-		compound.setString("oldVersion", VERSION);
-		compound.setString("newVersion", getRecommendedVersion());
+		if (Loader.isModLoaded("VersionChecker")) {
+			NBTTagCompound compound = new NBTTagCompound();
+			compound.setString("modDisplayName", "BuildCraft");
+			compound.setString("oldVersion", VERSION);
+			compound.setString("newVersion", getRecommendedVersion());
 
-		compound.setString("updateUrl", "http://www.mod-buildcraft.com/download/");
-		compound.setBoolean("isDirectLink", false);
+			compound.setString("updateUrl", "http://www.mod-buildcraft.com/download/");
+			compound.setBoolean("isDirectLink", false);
 
-		String changeLogString = "";
-		for (String changeLogLine : getChangelog()) {
-			changeLogString = changeLogString + changeLogLine + "\n";
+			StringBuilder stringBuilder = new StringBuilder();
+			for (String changeLogLine : getChangelog()) {
+				stringBuilder.append(changeLogLine).append("\n");
+			}
+			compound.setString("changeLog", stringBuilder.toString());
+
+			FMLInterModComms.sendRuntimeMessage("BuildCraft|Core", "VersionChecker", "addUpdate", compound);
+			sentIMCOutdatedMessage = true;
 		}
-		compound.setString("changeLog", changeLogString);
-
-		sentIMCOutdatedMessage = FMLInterModComms.sendMessage("VersionChecker", "addUpdate", compound);
 	}
 
 	public static void displayChangelog(ICommandSender sender) {
