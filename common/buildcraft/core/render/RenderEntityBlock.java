@@ -206,9 +206,7 @@ public final class RenderEntityBlock extends Render {
 			realDoLight = false;
 		}
 
-		// TODO: needs to cancel the test because the variable is now private... May need to
-		// duplicate the tessellator code.
-		//if (doTessellating && !tessellator.isDrawing)
+		if (doTessellating)
 			tessellator.startDrawingQuads();
 
 		float light = 0;
@@ -280,9 +278,7 @@ public final class RenderEntityBlock extends Render {
 			renderBlocks.renderFaceXPos(info.baseBlock, x, y, z, info.getBlockTextureFromSide(5));
 		}
 
-		// TODO: needs to cancel the test because the variable is now private... May need to
-		// duplicate the tessellator code.
-		//if (doTessellating && tessellator.isDrawing)
-		tessellator.draw();
+		if (doTessellating)
+			tessellator.draw();
 	}
 }
