@@ -15,7 +15,11 @@ import java.net.URL;
 import java.util.ArrayList;
 
 import net.minecraft.command.ICommandSender;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ChatComponentText;
+
+import cpw.mods.fml.common.Loader;
+import cpw.mods.fml.common.event.FMLInterModComms;
 
 import net.minecraftforge.common.config.Property;
 
@@ -45,6 +49,8 @@ public class Version implements Runnable {
 
 	private static Version instance = new Version();
 
+	private static boolean sentIMCOutdatedMessage = false;
+
 	public static String getVersion() {
 		return VERSION;
 	}
@@ -54,7 +60,7 @@ public class Version implements Runnable {
 	}
 
 	public static boolean needsUpdateNoticeAndMarkAsSeen() {
-		if (!isOutdated()) {
+		if (!isOutdated() || sentIMCOutdatedMessage) {
 			return false;
 		}
 
@@ -124,6 +130,7 @@ public class Version implements Runnable {
 			BCLog.logger.warning("Using outdated version [" + VERSION + "] for Minecraft " + mcVersion
 					+ ". Consider updating to " + recommendedVersion + ".");
 			currentVersion = EnumUpdateState.OUTDATED;
+			sendIMCOutdatedMessage();
 
 			conn.disconnect();
 			reader.close();
@@ -145,7 +152,7 @@ public class Version implements Runnable {
 	public static String[] grabChangelog(String version) {
 
 		try {
-			String location = REMOTE_CHANGELOG_ROOT + "/" + version;
+			String location = REMOTE_CHANGELOG_ROOT + version;
 			HttpURLConnection conn = null;
 			while (location != null && !location.isEmpty()) {
 				URL url = new URL(location);
@@ -215,6 +222,31 @@ public class Version implements Runnable {
 			BCLog.logger.info("Version check failed");
 		}
 
+	}
+
+	/**
+	 * This is an integration with Dynious Version Checker See
+	 * http://www.minecraftforum.net/topic/2721902-
+	 */
+	public static void sendIMCOutdatedMessage() {
+		if (Loader.isModLoaded("VersionChecker")) {
+			NBTTagCompound compound = new NBTTagCompound();
+			compound.setString("modDisplayName", "BuildCraft");
+			compound.setString("oldVersion", VERSION);
+			compound.setString("newVersion", getRecommendedVersion());
+
+			compound.setString("updateUrl", "http://www.mod-buildcraft.com/download/");
+			compound.setBoolean("isDirectLink", false);
+
+			StringBuilder stringBuilder = new StringBuilder();
+			for (String changeLogLine : getChangelog()) {
+				stringBuilder.append(changeLogLine).append("\n");
+			}
+			compound.setString("changeLog", stringBuilder.toString());
+
+			FMLInterModComms.sendRuntimeMessage("BuildCraft|Core", "VersionChecker", "addUpdate", compound);
+			sentIMCOutdatedMessage = true;
+		}
 	}
 
 	public static void displayChangelog(ICommandSender sender) {
