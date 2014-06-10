@@ -447,7 +447,7 @@ public class BuildCraftCore extends BuildCraftMod {
 	}
 
 	@SubscribeEvent
-	public void cleanRegistries(WorldEvent.Load load) {
+	public void cleanRegistries(WorldEvent.Unload unload) {
 		DockingStationRegistry.clear();
 	}
 
