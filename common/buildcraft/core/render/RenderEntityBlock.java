@@ -206,8 +206,9 @@ public final class RenderEntityBlock extends Render {
 			realDoLight = false;
 		}
 
-		if (doTessellating)
+		if (doTessellating) {
 			tessellator.startDrawingQuads();
+		}
 
 		float light = 0;
 		if (realDoLight) {
@@ -278,7 +279,8 @@ public final class RenderEntityBlock extends Render {
 			renderBlocks.renderFaceXPos(info.baseBlock, x, y, z, info.getBlockTextureFromSide(5));
 		}
 
-		if (doTessellating)
+		if (doTessellating) {
 			tessellator.draw();
+		}
 	}
 }

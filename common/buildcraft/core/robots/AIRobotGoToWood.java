@@ -14,7 +14,6 @@ import net.minecraft.init.Blocks;
 import net.minecraft.world.IBlockAccess;
 
 import buildcraft.core.BlockIndex;
-import buildcraft.core.robots.AIRobotMoveToBlock;
 import buildcraft.core.utils.IPathFound;
 import buildcraft.core.utils.PathFinding;
 import buildcraft.robots.AIRobot;
