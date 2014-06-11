@@ -84,16 +84,14 @@ public class EntityRobot extends EntityRobotBase implements
 		board = (RedstoneBoardRobot) RedstoneBoardRegistry.instance.getRedstoneBoard(boardNBT).create(boardNBT, this);
 		dataWatcher.updateObject(16, board.getNBTHandler().getID());
 
-		if (world.isRemote) {
-			RPCHandler.rpcServer(this, "requestInitialization", itemInUse);
-		} else {
+		if (!world.isRemote) {
 			mainAI = new AIRobotMain(this);
 			mainAI.start();
 		}
 	}
 
-	public EntityRobot(World par1World) {
-		super(par1World);
+	public EntityRobot(World world) {
+		super(world);
 
 		motionX = 0;
 		motionY = 0;
@@ -153,7 +151,9 @@ public class EntityRobot extends EntityRobotBase implements
 	}
 
 	protected void init() {
-
+		if (worldObj.isRemote) {
+			RPCHandler.rpcServer(this, "requestInitialization");
+		}
 	}
 
 	public void setLaserDestination (float x, float y, float z) {
@@ -459,7 +459,13 @@ public class EntityRobot extends EntityRobotBase implements
 
 	@RPC(RPCSide.SERVER)
 	public void requestInitialization(RPCMessageInfo info) {
-		RPCHandler.rpcPlayer(info.sender, this, "clientSetItemInUse", itemInUse);
+		RPCHandler.rpcPlayer(info.sender, this, "rpcInitialize", itemInUse, itemActive);
+	}
+
+	@RPC(RPCSide.CLIENT)
+	private void rpcInitialize(ItemStack stack, boolean active) {
+		itemInUse = stack;
+		itemActive = active;
 	}
 
 	@Override
@@ -537,6 +543,11 @@ public class EntityRobot extends EntityRobotBase implements
 		if (mjStored > MAX_ENERGY) {
 			mjStored = MAX_ENERGY;
 		}
+	}
+
+	@Override
+	protected boolean canDespawn() {
+		return false;
 	}
 
 }
