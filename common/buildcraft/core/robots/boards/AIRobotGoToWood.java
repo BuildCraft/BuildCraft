@@ -17,6 +17,7 @@ import buildcraft.core.BlockIndex;
 import buildcraft.core.robots.AIRobotMoveToBlock;
 import buildcraft.core.utils.IPathFound;
 import buildcraft.core.utils.PathFinding;
+import buildcraft.core.utils.PathFindingJob;
 import buildcraft.robots.AIRobot;
 import buildcraft.robots.EntityRobotBase;
 
@@ -24,6 +25,7 @@ public class AIRobotGoToWood extends AIRobot {
 
 	public BlockIndex woodFound;
 	private PathFinding woodScanner = null;
+	private PathFindingJob woodScannerJob;
 
 	public AIRobotGoToWood(EntityRobotBase iRobot) {
 		super(iRobot, 2);
@@ -34,20 +36,26 @@ public class AIRobotGoToWood extends AIRobot {
 		woodScanner = new PathFinding(robot.worldObj, new BlockIndex(robot), new IPathFound() {
 			@Override
 			public boolean endReached(World world, int x, int y, int z) {
-				return BuildCraftAPI.isWoodProperty.get(world, x, y, z)
-						&& !BoardRobotLumberjack.woodTargets.contains(new BlockIndex(x, y, z));
+				if (BuildCraftAPI.isWoodProperty.get(world, x, y, z)) {
+					return BoardRobotLumberjack.isFreeWoodTarget(new BlockIndex(x, y, z));
+				} else {
+					return false;
+				}
 			}
 		});
+
+		woodScannerJob = new PathFindingJob(woodScanner);
+		woodScannerJob.start();
 	}
 
 	@Override
 	public void update() {
-		woodScanner.iterate(PathFinding.PATH_ITERATIONS);
-
-		if (woodScanner.isDone()) {
-			LinkedList<BlockIndex> path = woodScanner.getResult();
-			woodFound = path.removeLast();
-			startDelegateAI(new AIRobotMoveToBlock(robot, path));
+		if (!woodScannerJob.isAlive()) {
+			if (woodScanner.isDone()) {
+				LinkedList<BlockIndex> path = woodScanner.getResult();
+				woodFound = path.removeLast();
+				startDelegateAI(new AIRobotMoveToBlock(robot, path));
+			}
 		}
 	}
 

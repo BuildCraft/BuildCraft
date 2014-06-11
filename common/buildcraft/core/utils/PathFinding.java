@@ -39,6 +39,8 @@ public class PathFinding {
 
 	private LinkedList<BlockIndex> result;
 
+	public boolean endReached = false;
+
 	public PathFinding(World iWorld, BlockIndex iStart, BlockIndex iEnd) {
 		world = iWorld;
 		start = iStart;
@@ -79,7 +81,7 @@ public class PathFinding {
 		}
 
 		for (int i = 0; i < itNumber; ++i) {
-			if (endReached(nextIteration.index.x, nextIteration.index.y, nextIteration.index.z)) {
+			if (endReached) {
 				result = new LinkedList<BlockIndex>();
 
 				while (nextIteration != null) {
@@ -129,6 +131,7 @@ public class PathFinding {
 					nextNode.index = new BlockIndex(x, y, z);
 
 					if (resultMoves[dx + 1][dy + 1][dz + 1] == 2) {
+						endReached = true;
 						return nextNode;
 					}
 

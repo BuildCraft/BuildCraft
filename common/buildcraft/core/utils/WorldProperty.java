@@ -19,7 +19,7 @@ public abstract class WorldProperty {
 
 	public ArrayList<DimensionProperty> properties = new ArrayList<DimensionProperty>();
 
-	public boolean get(World world, int x, int y, int z) {
+	public synchronized boolean get(World world, int x, int y, int z) {
 		return getDimension(world).get(x, y, z);
 	}
 

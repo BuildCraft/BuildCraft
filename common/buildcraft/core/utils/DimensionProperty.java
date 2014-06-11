@@ -17,6 +17,8 @@ import net.minecraft.world.IWorldAccess;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 
+import buildcraft.core.TickHandlerCoreClient;
+
 public class DimensionProperty implements IWorldAccess {
 
 	private LongHashMap chunkMapping = new LongHashMap();
@@ -31,7 +33,7 @@ public class DimensionProperty implements IWorldAccess {
 		worldProperty = iProp;
 	}
 
-	public boolean get(int x, int y, int z) {
+	public synchronized boolean get(int x, int y, int z) {
 		int xChunk = x >> 4;
 		int zChunk = z >> 4;
 		long chunkId = ChunkCoordIntPair.chunkXZ2Int(xChunk, zChunk);
@@ -50,22 +52,31 @@ public class DimensionProperty implements IWorldAccess {
 	}
 
 	private void load(Chunk chunk, ChunkProperty property) {
-		for (int x = 0; x < 16; ++x) {
-			for (int y = 0; y < worldHeight; ++y) {
-				for (int z = 0; z < 16; ++z) {
-					Block block = chunk.getBlock(x, y, z);
-					int meta = chunk.getBlockMetadata(x, y, z);
+		synchronized (TickHandlerCoreClient.startSynchronousComputation) {
+			try {
+				TickHandlerCoreClient.startSynchronousComputation.wait();
 
-					boolean prop = worldProperty.
-							get(world, block, meta, chunk.xPosition * 16 + x, y, chunk.zPosition * 16 + z);
-					property.set(x, y, z, prop);
+				for (int x = 0; x < 16; ++x) {
+					for (int y = 0; y < worldHeight; ++y) {
+						for (int z = 0; z < 16; ++z) {
+							Block block = chunk.getBlock(x, y, z);
+							int meta = chunk.getBlockMetadata(x, y, z);
+
+							boolean prop = worldProperty.
+									get(world, block, meta, chunk.xPosition * 16 + x, y, chunk.zPosition * 16 + z);
+							property.set(x, y, z, prop);
+						}
+					}
 				}
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 		}
 	}
 
 	@Override
-	public void markBlockForUpdate(int x, int y, int z) {
+	public synchronized void markBlockForUpdate(int x, int y, int z) {
 		int xChunk = x >> 4;
 		int zChunk = z >> 4;
 		long chunkId = ChunkCoordIntPair.chunkXZ2Int(xChunk, zChunk);
@@ -87,13 +98,6 @@ public class DimensionProperty implements IWorldAccess {
 
 	@Override
 	public void markBlockRangeForRenderUpdate(int x1, int y1, int z1, int x2, int y2, int z2) {
-		for (int x = x1; x <= x2; ++x) {
-			for (int y = y1; y <= y2; ++y) {
-				for (int z = z1; z <= z2; ++z) {
-					markBlockForUpdate(x, y, z);
-				}
-			}
-		}
 	}
 
 	@Override

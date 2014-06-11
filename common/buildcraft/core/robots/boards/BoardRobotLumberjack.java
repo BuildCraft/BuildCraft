@@ -38,10 +38,36 @@ public class BoardRobotLumberjack extends RedstoneBoardRobot {
 	@Override
 	public void delegateAIEnded(AIRobot ai) {
 		if (ai instanceof AIRobotGoToWood) {
-			woodTargets.add(((AIRobotGoToWood) ai).woodFound);
-			startDelegateAI(new AIRobotCutWood(robot, ((AIRobotGoToWood) ai).woodFound));
+			BlockIndex index = ((AIRobotGoToWood) ai).woodFound;
+
+			if (reserveWoodTarget(index)) {
+				startDelegateAI(new AIRobotCutWood(robot, ((AIRobotGoToWood) ai).woodFound));
+			}
 		} else if (ai instanceof AIRobotCutWood) {
-			woodTargets.remove(((AIRobotCutWood) ai).woodToChop);
+			synchronized (woodTargets) {
+				woodTargets.remove(((AIRobotCutWood) ai).woodToChop);
+			}
+		}
+	}
+
+	public static boolean isFreeWoodTarget(BlockIndex index) {
+		synchronized (woodTargets) {
+			if (!woodTargets.contains(index)) {
+				return true;
+			} else {
+				return false;
+			}
+		}
+	}
+
+	public static boolean reserveWoodTarget (BlockIndex index) {
+		synchronized (woodTargets) {
+			if (!woodTargets.contains(index)) {
+				woodTargets.add(index);
+				return true;
+			} else {
+				return false;
+			}
 		}
 	}
 
