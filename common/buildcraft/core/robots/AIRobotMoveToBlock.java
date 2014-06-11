@@ -12,14 +12,15 @@ import java.util.LinkedList;
 
 import buildcraft.core.BlockIndex;
 import buildcraft.core.utils.PathFinding;
+import buildcraft.core.utils.PathFindingJob;
 import buildcraft.robots.EntityRobotBase;
 
 public class AIRobotMoveToBlock extends AIRobotMove {
 
 	private PathFinding pathSearch;
+	private PathFindingJob pathSearchJob;
 	private LinkedList<BlockIndex> path;
 	private double prevDistance = Double.MAX_VALUE;
-
 	private float finalX, finalY, finalZ;
 
 	public AIRobotMoveToBlock(EntityRobotBase robot, int x, int y, int z) {
@@ -46,6 +47,9 @@ public class AIRobotMoveToBlock extends AIRobotMove {
 			pathSearch = new PathFinding(robot.worldObj, new BlockIndex((int) Math.floor(robot.posX),
 					(int) Math.floor(robot.posY), (int) Math.floor(robot.posZ)), new BlockIndex(
 					(int) Math.floor(finalX), (int) Math.floor(finalY), (int) Math.floor(finalZ)));
+
+			pathSearchJob = new PathFindingJob(pathSearch);
+			pathSearchJob.start();
 		}
 	}
 
@@ -64,11 +68,11 @@ public class AIRobotMoveToBlock extends AIRobotMove {
 				prevDistance = robot.getDistance(nextX, nextY, nextZ);
 			}
 		} else {
-			pathSearch.iterate(PathFinding.PATH_ITERATIONS);
-
-			if (pathSearch.isDone()) {
-				path = pathSearch.getResult();
-				setNextInPath();
+			if (!pathSearchJob.isAlive()) {
+				if (pathSearch.isDone()) {
+					path = pathSearch.getResult();
+					setNextInPath();
+				}
 			}
 		}
 

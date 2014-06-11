@@ -39,7 +39,7 @@ public class PathFinding {
 
 	private LinkedList<BlockIndex> result;
 
-	public boolean endReached = false;
+	private boolean endReached = false;
 
 	public PathFinding(World iWorld, BlockIndex iStart, BlockIndex iEnd) {
 		world = iWorld;

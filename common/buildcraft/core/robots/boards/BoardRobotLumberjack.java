@@ -52,11 +52,7 @@ public class BoardRobotLumberjack extends RedstoneBoardRobot {
 
 	public static boolean isFreeWoodTarget(BlockIndex index) {
 		synchronized (woodTargets) {
-			if (!woodTargets.contains(index)) {
-				return true;
-			} else {
-				return false;
-			}
+			return !woodTargets.contains(index);
 		}
 	}
 
