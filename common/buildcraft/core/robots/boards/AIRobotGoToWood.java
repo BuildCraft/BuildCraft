@@ -10,9 +10,9 @@ package buildcraft.core.robots.boards;
 
 import java.util.LinkedList;
 
-import net.minecraft.init.Blocks;
-import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.World;
 
+import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.core.BlockIndex;
 import buildcraft.core.robots.AIRobotMoveToBlock;
 import buildcraft.core.utils.IPathFound;
@@ -33,8 +33,9 @@ public class AIRobotGoToWood extends AIRobot {
 	public void start() {
 		woodScanner = new PathFinding(robot.worldObj, new BlockIndex(robot), new IPathFound() {
 			@Override
-			public boolean endReached(IBlockAccess world, int x, int y, int z) {
-				return world.getBlock(x, y, z) == Blocks.log || world.getBlock(x, y, z) == Blocks.log2;
+			public boolean endReached(World world, int x, int y, int z) {
+				return BuildCraftAPI.isWoodProperty.get(world, x, y, z)
+						&& !BoardRobotLumberjack.woodTargets.contains(new BlockIndex(x, y, z));
 			}
 		});
 	}
@@ -56,5 +57,4 @@ public class AIRobotGoToWood extends AIRobot {
 			terminate();
 		}
 	}
-
 }

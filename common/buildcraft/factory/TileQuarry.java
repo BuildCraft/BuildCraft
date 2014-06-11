@@ -245,7 +245,8 @@ public class TileQuarry extends TileAbstractBuilder implements IMachine {
 		if (!columnVisitListIsUpdated) { // nextTarget may not be accurate, at least search the target column for changes
 			for (int y = nextTarget[1] + 1; y < yCoord + 3; y++) {
 				Block block = worldObj.getBlock(nextTarget[0], y, nextTarget[2]);
-				if (BlockUtil.isAnObstructingBlock(block, worldObj, nextTarget[0], y, nextTarget[2]) || !BuildCraftAPI.isSoftBlock(block, worldObj, nextTarget[0], y, nextTarget[2])) {
+				if (BlockUtil.isAnObstructingBlock(block, worldObj, nextTarget[0], y, nextTarget[2])
+						|| !BuildCraftAPI.isSoftBlock(worldObj, nextTarget[0], y, nextTarget[2])) {
 					createColumnVisitList();
 					columnVisitListIsUpdated = true;
 					nextTarget = null;
@@ -317,7 +318,7 @@ public class TileQuarry extends TileAbstractBuilder implements IMachine {
 
 						if (!BlockUtil.canChangeBlock(block, worldObj, bx, by, bz)) {
 							blockedColumns[searchX][searchZ] = true;
-						} else if (!BuildCraftAPI.isSoftBlock(block, worldObj, bx, by, bz)) {
+						} else if (!BuildCraftAPI.isSoftBlock(worldObj, bx, by, bz)) {
 							visitList.add(new int[]{bx, by, bz});
 						}
 
@@ -490,7 +491,8 @@ public class TileQuarry extends TileAbstractBuilder implements IMachine {
 
 	private boolean isQuarriableBlock(int bx, int by, int bz) {
 		Block block = worldObj.getBlock(bx, by, bz);
-		return BlockUtil.canChangeBlock(block, worldObj, bx, by, bz) && !BuildCraftAPI.isSoftBlock(block, worldObj, bx, by, bz);
+		return BlockUtil.canChangeBlock(block, worldObj, bx, by, bz)
+				&& !BuildCraftAPI.isSoftBlock(worldObj, bx, by, bz);
 	}
 
 	@Override

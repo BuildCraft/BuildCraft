@@ -22,8 +22,8 @@ import buildcraft.robots.EntityRobotBase;
 
 public class AIRobotCutWood extends AIRobot {
 
+	public BlockIndex woodToChop;
 	private float blockDamage = 0;
-	private BlockIndex woodToChop;
 
 	private Block block;
 	private int meta;

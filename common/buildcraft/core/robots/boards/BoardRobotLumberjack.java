@@ -8,14 +8,19 @@
  */
 package buildcraft.core.robots.boards;
 
+import java.util.HashSet;
+
 import net.minecraft.nbt.NBTTagCompound;
 
 import buildcraft.api.boards.RedstoneBoardRobot;
 import buildcraft.api.boards.RedstoneBoardRobotNBT;
+import buildcraft.core.BlockIndex;
 import buildcraft.robots.AIRobot;
 import buildcraft.robots.EntityRobotBase;
 
 public class BoardRobotLumberjack extends RedstoneBoardRobot {
+
+	public static HashSet<BlockIndex> woodTargets = new HashSet<BlockIndex>();
 
 	public BoardRobotLumberjack(EntityRobotBase iRobot, NBTTagCompound nbt) {
 		super(iRobot);
@@ -33,7 +38,10 @@ public class BoardRobotLumberjack extends RedstoneBoardRobot {
 	@Override
 	public void delegateAIEnded(AIRobot ai) {
 		if (ai instanceof AIRobotGoToWood) {
+			woodTargets.add(((AIRobotGoToWood) ai).woodFound);
 			startDelegateAI(new AIRobotCutWood(robot, ((AIRobotGoToWood) ai).woodFound));
+		} else if (ai instanceof AIRobotCutWood) {
+			woodTargets.remove(((AIRobotCutWood) ai).woodToChop);
 		}
 	}
 

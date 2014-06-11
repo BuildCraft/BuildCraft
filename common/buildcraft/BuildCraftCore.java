@@ -102,6 +102,8 @@ import buildcraft.core.triggers.TriggerInventoryLevel;
 import buildcraft.core.triggers.TriggerMachine;
 import buildcraft.core.triggers.TriggerRedstoneInput;
 import buildcraft.core.utils.CraftingHandler;
+import buildcraft.core.utils.WorldPropertyIsSoft;
+import buildcraft.core.utils.WorldPropertyIsWood;
 import buildcraft.robots.DockingStationRegistry;
 
 @Mod(name = "BuildCraft", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Core", acceptedMinecraftVersions = "[1.7.2,1.8)", dependencies = "required-after:Forge@[10.12.1.1079,)")
@@ -350,6 +352,9 @@ public class BuildCraftCore extends BuildCraftMod {
 		BuildCraftAPI.softBlocks.add(Blocks.air);
 
 		FMLCommonHandler.instance().bus().register(new TickHandlerCoreClient());
+
+		BuildCraftAPI.isSoftProperty = new WorldPropertyIsSoft();
+		BuildCraftAPI.isWoodProperty = new WorldPropertyIsWood();
 	}
 
 	@Mod.EventHandler
@@ -449,6 +454,8 @@ public class BuildCraftCore extends BuildCraftMod {
 	@SubscribeEvent
 	public void cleanRegistries(WorldEvent.Unload unload) {
 		DockingStationRegistry.clear();
+		BuildCraftAPI.isSoftProperty.clear();
+		BuildCraftAPI.isWoodProperty.clear();
 	}
 
 	@Mod.EventHandler
