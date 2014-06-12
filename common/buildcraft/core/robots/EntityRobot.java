@@ -475,10 +475,10 @@ public class EntityRobot extends EntityRobotBase implements
 
 	@Override
 	public void aimItemAt(int x, int y, int z) {
-		float itemAngle1 = (float) Math.atan2(z - Math.floor(posZ),
+		itemAngle1 = (float) Math.atan2(z - Math.floor(posZ),
 				x - Math.floor(posX));
 
-		float itemAngle2 = 0;
+		itemAngle2 = 0;
 
 		if (Math.floor(posY) < y) {
 			itemAngle2 = (float) -Math.PI / 4;
