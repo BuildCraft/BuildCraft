@@ -10,42 +10,37 @@ package buildcraft.core.inventory.filters;
 
 import net.minecraft.item.ItemStack;
 
-import buildcraft.core.inventory.StackHelper;
+import net.minecraftforge.oredict.OreDictionary;
 
 /**
  * Returns true if the stack matches any one one of the filter stacks.
  */
-public class ArrayStackFilter implements IStackFilter {
+public class OreStackFilter implements IStackFilter {
 
-	private final ItemStack[] stacks;
+	private final String[] ores;
 
-	public ArrayStackFilter(ItemStack... stacks) {
-		this.stacks = stacks;
+	public OreStackFilter(String... iOres) {
+		ores = iOres;
 	}
 
 	@Override
 	public boolean matches(ItemStack stack) {
-		if (stacks.length == 0 || !hasFilter()) {
-			return true;
+		int[] ids = OreDictionary.getOreIDs(stack);
+
+		if (ids.length == 0) {
+			return false;
 		}
-		for (ItemStack s : stacks) {
-			if (StackHelper.isMatchingItem(s, stack)) {
-				return true;
+
+		for (String ore : ores) {
+			int expected = OreDictionary.getOreID(ore);
+
+			for (int id : ids) {
+				if (id == expected) {
+					return true;
+				}
 			}
 		}
-		return false;
-	}
 
-	public ItemStack[] getStacks() {
-		return stacks;
-	}
-
-	public boolean hasFilter() {
-		for (ItemStack filter : stacks) {
-			if (filter != null) {
-				return true;
-			}
-		}
 		return false;
 	}
 }

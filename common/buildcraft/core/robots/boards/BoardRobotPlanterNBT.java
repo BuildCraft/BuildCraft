@@ -20,45 +20,36 @@ import net.minecraft.util.ResourceLocation;
 import buildcraft.api.boards.RedstoneBoardRobot;
 import buildcraft.api.boards.RedstoneBoardRobotNBT;
 import buildcraft.core.DefaultProps;
-import buildcraft.core.utils.NBTUtils;
 import buildcraft.core.utils.StringUtils;
 import buildcraft.robots.EntityRobotBase;
 
-public final class BoardRobotLumberjackNBT extends RedstoneBoardRobotNBT {
+public class BoardRobotPlanterNBT extends RedstoneBoardRobotNBT {
 
-	public static BoardRobotLumberjackNBT instance = new BoardRobotLumberjackNBT();
-
+	public static BoardRobotPlanterNBT instance = new BoardRobotPlanterNBT();
 	private static final ResourceLocation TEXTURE = new ResourceLocation("buildcraft",
-			DefaultProps.TEXTURE_PATH_ENTITIES + "/robot_lumberjack.png");
+			DefaultProps.TEXTURE_PATH_ENTITIES + "/robot_planter.png");
 
-	public IIcon icon;
+	private IIcon icon;
 
-	private BoardRobotLumberjackNBT() {
+	@Override
+	public RedstoneBoardRobot create(NBTTagCompound nbt, EntityRobotBase robot) {
+		return new BoardRobotPlanter(robot);
+	}
 
+	@Override
+	public ResourceLocation getRobotTexture() {
+		return TEXTURE;
 	}
 
 	@Override
 	public String getID() {
-		return "buildcraft:boardRobotLumberjack";
+		return "buildcraft:boardRobotPlanter";
 	}
 
 	@Override
 	public void addInformation(ItemStack stack, EntityPlayer player, List list, boolean advanced) {
-		list.add(StringUtils.localize("buildcraft.boardRobotLumberjack"));
+		list.add(StringUtils.localize("buildcraft.boardRobotPlanter"));
 
-		NBTTagCompound nbt = NBTUtils.getItemData(stack);
-
-		list.add(StringUtils.localize("buildcraft.boardDetail.range") + ": " + nbt.getInteger("range"));
-	}
-
-	@Override
-	public RedstoneBoardRobot create(NBTTagCompound nbt, EntityRobotBase robot) {
-		return new BoardRobotLumberjack(robot, nbt);
-	}
-
-	@Override
-	public IIcon getIcon(NBTTagCompound nbt) {
-		return icon;
 	}
 
 	@Override
@@ -67,14 +58,13 @@ public final class BoardRobotLumberjackNBT extends RedstoneBoardRobotNBT {
 	}
 
 	@Override
-	public void createRandomBoard(NBTTagCompound nbt) {
-		int range = (int) Math.floor(nextFloat(10) * 500) + 10;
-
-		nbt.setInteger("range", range);
+	public IIcon getIcon(NBTTagCompound nbt) {
+		return icon;
 	}
 
 	@Override
-	public ResourceLocation getRobotTexture() {
-		return TEXTURE;
+	public void createRandomBoard(NBTTagCompound nbt) {
+
 	}
+
 }

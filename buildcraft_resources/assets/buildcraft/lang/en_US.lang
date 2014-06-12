@@ -1,7 +1,8 @@
 # Master language file
 
-buildcraft.boardRobotPicker=Picker Program
-buildcraft.boardRobotLumberjack=Lumberjack Program
+buildcraft.boardRobotPicker=Picker
+buildcraft.boardRobotLumberjack=Lumberjack
+buildcraft.boardRobotPlanter=Planter
 buildcraft.boardDetail.parameters=Parameters
 buildcraft.boardDetail.range=Range
 

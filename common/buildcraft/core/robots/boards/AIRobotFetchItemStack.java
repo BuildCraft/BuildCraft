@@ -8,7 +8,6 @@
  */
 package buildcraft.core.robots.boards;
 
-import net.minecraft.init.Items;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -17,19 +16,22 @@ import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.core.inventory.ITransactor;
 import buildcraft.core.inventory.Transactor;
-import buildcraft.core.inventory.filters.ArrayStackFilter;
+import buildcraft.core.inventory.filters.IStackFilter;
 import buildcraft.core.robots.AIRobotGoToDock;
 import buildcraft.robots.AIRobot;
 import buildcraft.robots.DockingStation;
 import buildcraft.robots.DockingStationRegistry;
 import buildcraft.robots.EntityRobotBase;
 
-public class AIRobotFetchAxe extends AIRobot {
+public class AIRobotFetchItemStack extends AIRobot {
 
-	private DockingStation axeDocking = null;
+	private DockingStation station = null;
+	private IStackFilter filter;
 
-	public AIRobotFetchAxe(EntityRobotBase iRobot) {
+	public AIRobotFetchItemStack(EntityRobotBase iRobot, IStackFilter iFilter) {
 		super(iRobot);
+
+		filter = iFilter;
 	}
 
 	@Override
@@ -45,12 +47,11 @@ public class AIRobotFetchAxe extends AIRobot {
 						+ dir.offsetZ);
 
 				if (nearbyTile != null && nearbyTile instanceof IInventory) {
-					ArrayStackFilter filter = new ArrayStackFilter(new ItemStack(Items.wooden_axe));
 					ITransactor trans = Transactor.getTransactorFor(nearbyTile);
 
 					if (trans.remove(filter, dir.getOpposite(), false) != null) {
-						axeDocking = d;
-						startDelegateAI(new AIRobotGoToDock(robot, axeDocking));
+						station = d;
+						startDelegateAI(new AIRobotGoToDock(robot, station));
 						return;
 					}
 				}
@@ -60,27 +61,26 @@ public class AIRobotFetchAxe extends AIRobot {
 
 	@Override
 	public void delegateAIEnded(AIRobot ai) {
-		ItemStack axeFound = null;
+		ItemStack itemFound = null;
 
 		for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
-			TileEntity nearbyTile = robot.worldObj.getTileEntity(axeDocking.pipe.xCoord + dir.offsetX,
-					axeDocking.pipe.yCoord
-							+ dir.offsetY, axeDocking.pipe.zCoord + dir.offsetZ);
+			TileEntity nearbyTile = robot.worldObj.getTileEntity(station.pipe.xCoord + dir.offsetX,
+					station.pipe.yCoord
+							+ dir.offsetY, station.pipe.zCoord + dir.offsetZ);
 
 			if (nearbyTile != null && nearbyTile instanceof IInventory) {
-				ArrayStackFilter filter = new ArrayStackFilter(new ItemStack(Items.wooden_axe));
 				ITransactor trans = Transactor.getTransactorFor(nearbyTile);
 
-				axeFound = trans.remove(filter, dir.getOpposite(), true);
+				itemFound = trans.remove(filter, dir.getOpposite(), true);
 
-				if (axeFound != null) {
+				if (itemFound != null) {
 					break;
 				}
 			}
 		}
 
-		if (axeFound != null) {
-			robot.setItemInUse(axeFound);
+		if (itemFound != null) {
+			robot.setItemInUse(itemFound);
 			terminate();
 		}
 	}

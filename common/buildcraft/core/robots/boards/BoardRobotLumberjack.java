@@ -10,11 +10,14 @@ package buildcraft.core.robots.boards;
 
 import java.util.HashSet;
 
+import net.minecraft.init.Items;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
 import buildcraft.api.boards.RedstoneBoardRobot;
 import buildcraft.api.boards.RedstoneBoardRobotNBT;
 import buildcraft.core.BlockIndex;
+import buildcraft.core.inventory.filters.ArrayStackFilter;
 import buildcraft.robots.AIRobot;
 import buildcraft.robots.EntityRobotBase;
 
@@ -29,7 +32,8 @@ public class BoardRobotLumberjack extends RedstoneBoardRobot {
 	@Override
 	public void update() {
 		if (robot.getItemInUse() == null) {
-			startDelegateAI(new AIRobotFetchAxe(robot));
+			startDelegateAI(new AIRobotFetchItemStack(robot, new ArrayStackFilter(new ItemStack(
+					Items.wooden_axe))));
 		} else {
 			startDelegateAI(new AIRobotGoToWood(robot));
 		}
