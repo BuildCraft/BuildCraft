@@ -3,6 +3,7 @@
 buildcraft.boardRobotPicker=Picker
 buildcraft.boardRobotLumberjack=Lumberjack
 buildcraft.boardRobotPlanter=Planter
+buildcraft.boardRobotLeaveCutter=Leave Cutter
 buildcraft.boardDetail.parameters=Parameters
 buildcraft.boardDetail.range=Range
 

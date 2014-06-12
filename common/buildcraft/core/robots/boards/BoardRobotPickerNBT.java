@@ -90,6 +90,11 @@ public final class BoardRobotPickerNBT extends RedstoneBoardRobotNBT {
 	}
 
 	@Override
+	public void createDefaultBoard(NBTTagCompound nbt) {
+		nbt.setInteger("range", 250);
+	}
+
+	@Override
 	public ResourceLocation getRobotTexture() {
 		return EntityRobot.ROBOT_TRANSPORT;
 	}

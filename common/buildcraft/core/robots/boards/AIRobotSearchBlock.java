@@ -10,9 +10,6 @@ package buildcraft.core.robots.boards;
 
 import java.util.LinkedList;
 
-import net.minecraft.world.World;
-
-import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.core.BlockIndex;
 import buildcraft.core.robots.AIRobotMoveToBlock;
 import buildcraft.core.utils.IPathFound;
@@ -21,39 +18,32 @@ import buildcraft.core.utils.PathFindingJob;
 import buildcraft.robots.AIRobot;
 import buildcraft.robots.EntityRobotBase;
 
-public class AIRobotGoToWood extends AIRobot {
+public class AIRobotSearchBlock extends AIRobot {
 
-	public BlockIndex woodFound;
-	private PathFinding woodScanner = null;
-	private PathFindingJob woodScannerJob;
+	public BlockIndex blockFound;
+	private PathFinding blockScanner = null;
+	private PathFindingJob blockScannerJob;
+	private IPathFound pathFound;
 
-	public AIRobotGoToWood(EntityRobotBase iRobot) {
+	public AIRobotSearchBlock(EntityRobotBase iRobot, IPathFound iPathFound) {
 		super(iRobot, 2);
+
+		pathFound = iPathFound;
 	}
 
 	@Override
 	public void start() {
-		woodScanner = new PathFinding(robot.worldObj, new BlockIndex(robot), new IPathFound() {
-			@Override
-			public boolean endReached(World world, int x, int y, int z) {
-				if (BuildCraftAPI.isWoodProperty.get(world, x, y, z)) {
-					return BoardRobotLumberjack.isFreeWoodTarget(new BlockIndex(x, y, z));
-				} else {
-					return false;
-				}
-			}
-		});
-
-		woodScannerJob = new PathFindingJob(woodScanner);
-		woodScannerJob.start();
+		blockScanner = new PathFinding(robot.worldObj, new BlockIndex(robot), pathFound);
+		blockScannerJob = new PathFindingJob(blockScanner);
+		blockScannerJob.start();
 	}
 
 	@Override
 	public void update() {
-		if (!woodScannerJob.isAlive()) {
-			if (woodScanner.isDone()) {
-				LinkedList<BlockIndex> path = woodScanner.getResult();
-				woodFound = path.removeLast();
+		if (!blockScannerJob.isAlive()) {
+			if (blockScanner.isDone()) {
+				LinkedList<BlockIndex> path = blockScanner.getResult();
+				blockFound = path.removeLast();
 				startDelegateAI(new AIRobotMoveToBlock(robot, path));
 			}
 		}

@@ -11,7 +11,9 @@ package buildcraft.silicon;
 import java.util.List;
 
 import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.IIcon;
@@ -21,7 +23,9 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 import buildcraft.BuildCraftSilicon;
+import buildcraft.api.boards.RedstoneBoardNBT;
 import buildcraft.api.boards.RedstoneBoardRegistry;
+import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.GuiIds;
 import buildcraft.core.ItemBuildCraft;
 import buildcraft.core.utils.NBTUtils;
@@ -32,7 +36,7 @@ public class ItemRedstoneBoard extends ItemBuildCraft {
 	public IIcon unknownBoard;
 
 	public ItemRedstoneBoard() {
-		super();
+		super(CreativeTabBuildCraft.BOARDS);
 	}
 
 	@Override
@@ -80,6 +84,20 @@ public class ItemRedstoneBoard extends ItemBuildCraft {
 		}
 
 		return par1ItemStack;
+	}
+
+	@SuppressWarnings({"unchecked", "rawtypes"})
+	@Override
+	@SideOnly(Side.CLIENT)
+	public void getSubItems(Item item, CreativeTabs par2CreativeTabs, List itemList) {
+		for (RedstoneBoardNBT nbt : RedstoneBoardRegistry.instance.getAllBoardNBTs()) {
+			ItemStack stack = new ItemStack(BuildCraftSilicon.redstoneBoard);
+			NBTTagCompound nbtData = NBTUtils.getItemData(stack);
+			nbtData.setString("id", nbt.getID());
+			nbt.createDefaultBoard(nbtData);
+			itemList.add(stack.copy());
+
+		}
 	}
 
 }

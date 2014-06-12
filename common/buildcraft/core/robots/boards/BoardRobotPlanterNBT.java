@@ -23,9 +23,10 @@ import buildcraft.core.DefaultProps;
 import buildcraft.core.utils.StringUtils;
 import buildcraft.robots.EntityRobotBase;
 
-public class BoardRobotPlanterNBT extends RedstoneBoardRobotNBT {
+public final class BoardRobotPlanterNBT extends RedstoneBoardRobotNBT {
 
 	public static BoardRobotPlanterNBT instance = new BoardRobotPlanterNBT();
+
 	private static final ResourceLocation TEXTURE = new ResourceLocation("buildcraft",
 			DefaultProps.TEXTURE_PATH_ENTITIES + "/robot_planter.png");
 
@@ -49,7 +50,6 @@ public class BoardRobotPlanterNBT extends RedstoneBoardRobotNBT {
 	@Override
 	public void addInformation(ItemStack stack, EntityPlayer player, List list, boolean advanced) {
 		list.add(StringUtils.localize("buildcraft.boardRobotPlanter"));
-
 	}
 
 	@Override
@@ -67,4 +67,8 @@ public class BoardRobotPlanterNBT extends RedstoneBoardRobotNBT {
 
 	}
 
+	@Override
+	public void createDefaultBoard(NBTTagCompound nbt) {
+
+	}
 }

@@ -16,13 +16,14 @@ import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.ForgeHooks;
 
 import buildcraft.core.BlockIndex;
+import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.BlockUtil;
 import buildcraft.robots.AIRobot;
 import buildcraft.robots.EntityRobotBase;
 
-public class AIRobotCutWood extends AIRobot {
+public class AIRobotBreakWithTool extends AIRobot {
 
-	public BlockIndex woodToChop;
+	public BlockIndex blockToBreak;
 	private float blockDamage = 0;
 
 	private Block block;
@@ -30,20 +31,20 @@ public class AIRobotCutWood extends AIRobot {
 	private float hardness;
 	private float speed;
 
-	public AIRobotCutWood(EntityRobotBase iRobot, BlockIndex iWoodToChop) {
+	public AIRobotBreakWithTool(EntityRobotBase iRobot, BlockIndex iBlockToBreak) {
 		super(iRobot, 2);
 
-		woodToChop = iWoodToChop;
+		blockToBreak = iBlockToBreak;
 	}
 
 	@Override
 	public void start() {
-		robot.aimItemAt(woodToChop.x, woodToChop.y, woodToChop.z);
+		robot.aimItemAt(blockToBreak.x, blockToBreak.y, blockToBreak.z);
 
 		robot.setItemActive(true);
-		block = robot.worldObj.getBlock(woodToChop.x, woodToChop.y, woodToChop.z);
-		meta = robot.worldObj.getBlockMetadata(woodToChop.x, woodToChop.y, woodToChop.z);
-		hardness = block.getBlockHardness(robot.worldObj, woodToChop.x, woodToChop.y, woodToChop.z);
+		block = robot.worldObj.getBlock(blockToBreak.x, blockToBreak.y, blockToBreak.z);
+		meta = robot.worldObj.getBlockMetadata(blockToBreak.x, blockToBreak.y, blockToBreak.z);
+		hardness = block.getBlockHardness(robot.worldObj, blockToBreak.x, blockToBreak.y, blockToBreak.z);
 		speed = getBreakSpeed(robot, robot.getItemInUse(), block, meta);
 	}
 
@@ -52,12 +53,15 @@ public class AIRobotCutWood extends AIRobot {
 		blockDamage += speed / hardness / 30F;
 
 		if (blockDamage > 1.0F) {
-			robot.worldObj.destroyBlockInWorldPartially(robot.getEntityId(), woodToChop.x,
-					woodToChop.y, woodToChop.z, -1);
+			robot.worldObj.destroyBlockInWorldPartially(robot.getEntityId(), blockToBreak.x,
+					blockToBreak.y, blockToBreak.z, -1);
 			blockDamage = 0;
-			BlockUtil.breakBlock((WorldServer) robot.worldObj, woodToChop.x, woodToChop.y, woodToChop.z, 6000);
-			robot.getItemInUse().getItem().onBlockDestroyed(robot.getItemInUse(), robot.worldObj, block, woodToChop.x,
-					woodToChop.y, woodToChop.z, robot);
+			robot.getItemInUse().getItem()
+					.onBlockStartBreak(robot.getItemInUse(), blockToBreak.x, blockToBreak.y, blockToBreak.z,
+							CoreProxy.proxy.getBuildCraftPlayer((WorldServer) robot.worldObj).get());
+			BlockUtil.breakBlock((WorldServer) robot.worldObj, blockToBreak.x, blockToBreak.y, blockToBreak.z, 6000);
+			robot.getItemInUse().getItem().onBlockDestroyed(robot.getItemInUse(), robot.worldObj, block, blockToBreak.x,
+					blockToBreak.y, blockToBreak.z, robot);
 
 			if (robot.getItemInUse().getItemDamage() >= robot.getItemInUse().getMaxDamage()) {
 				robot.setItemInUse(null);
@@ -65,16 +69,16 @@ public class AIRobotCutWood extends AIRobot {
 
 			terminate();
 		} else {
-			robot.worldObj.destroyBlockInWorldPartially(robot.getEntityId(), woodToChop.x,
-					woodToChop.y, woodToChop.z, (int) (blockDamage * 10.0F) - 1);
+			robot.worldObj.destroyBlockInWorldPartially(robot.getEntityId(), blockToBreak.x,
+					blockToBreak.y, blockToBreak.z, (int) (blockDamage * 10.0F) - 1);
 		}
 	}
 
 	@Override
 	public void end() {
 		robot.setItemActive(false);
-		robot.worldObj.destroyBlockInWorldPartially(robot.getEntityId(), woodToChop.x,
-				woodToChop.y, woodToChop.z, -1);
+		robot.worldObj.destroyBlockInWorldPartially(robot.getEntityId(), blockToBreak.x,
+				blockToBreak.y, blockToBreak.z, -1);
 	}
 
 	private float getBreakSpeed(EntityRobotBase robot, ItemStack usingItem, Block block, int meta) {

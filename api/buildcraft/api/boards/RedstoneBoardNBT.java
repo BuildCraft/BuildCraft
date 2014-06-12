@@ -41,6 +41,8 @@ public abstract class RedstoneBoardNBT<T> {
 
 	public abstract void createRandomBoard(NBTTagCompound nbt);
 
+	public abstract void createDefaultBoard(NBTTagCompound nbt);
+
 	public IBoardParameter[] getParameters(NBTTagCompound nbt) {
 		NBTTagList paramsNBT = nbt.getTagList("parameters", Constants.NBT.TAG_COMPOUND);
 		IBoardParameter[] result = new IBoardParameter[paramsNBT.tagCount()];
@@ -79,4 +81,5 @@ public abstract class RedstoneBoardNBT<T> {
 	public float nextFloat(int difficulty) {
 		return 1F - (float) Math.pow(rand.nextFloat(), 1F / difficulty);
 	}
+
 }

@@ -8,6 +8,8 @@
  */
 package buildcraft.silicon.boards;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Random;
 
@@ -103,6 +105,17 @@ public class ImplRedstoneBoardRegistry extends RedstoneBoardRegistry {
 		} else {
 			return null;
 		}
+	}
+
+	@Override
+	public Collection<RedstoneBoardNBT> getAllBoardNBTs() {
+		ArrayList<RedstoneBoardNBT> result = new ArrayList<RedstoneBoardNBT>();
+
+		for (BoardFactory f : boards.values()) {
+			result.add(f.boardNBT);
+		}
+
+		return result;
 	}
 
 }

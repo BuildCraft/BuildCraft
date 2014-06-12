@@ -57,6 +57,7 @@ import net.minecraftforge.fluids.BlockFluidBase;
 import net.minecraftforge.oredict.OreDictionary;
 
 import buildcraft.api.blueprints.SchematicRegistry;
+import buildcraft.api.boards.RedstoneBoardRobot;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.core.IIconProvider;
@@ -102,6 +103,7 @@ import buildcraft.core.triggers.TriggerInventoryLevel;
 import buildcraft.core.triggers.TriggerMachine;
 import buildcraft.core.triggers.TriggerRedstoneInput;
 import buildcraft.core.utils.CraftingHandler;
+import buildcraft.core.utils.WorldPropertyIsLeave;
 import buildcraft.core.utils.WorldPropertyIsSoft;
 import buildcraft.core.utils.WorldPropertyIsWood;
 import buildcraft.robots.DockingStationRegistry;
@@ -355,6 +357,7 @@ public class BuildCraftCore extends BuildCraftMod {
 
 		BuildCraftAPI.isSoftProperty = new WorldPropertyIsSoft();
 		BuildCraftAPI.isWoodProperty = new WorldPropertyIsWood();
+		BuildCraftAPI.isLeavesProperty = new WorldPropertyIsLeave();
 	}
 
 	@Mod.EventHandler
@@ -456,6 +459,8 @@ public class BuildCraftCore extends BuildCraftMod {
 		DockingStationRegistry.clear();
 		BuildCraftAPI.isSoftProperty.clear();
 		BuildCraftAPI.isWoodProperty.clear();
+		BuildCraftAPI.isLeavesProperty.clear();
+		RedstoneBoardRobot.reservedBlocks.clear();
 	}
 
 	@Mod.EventHandler

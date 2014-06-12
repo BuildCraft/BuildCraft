@@ -1,0 +1,67 @@
+/**
+ * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
+ * http://www.mod-buildcraft.com
+ *
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
+ * License 1.0, or MMPL. Please check the contents of the license located in
+ * http://www.mod-buildcraft.com/MMPL-1.0.txt
+ */
+package buildcraft.core.robots.boards;
+
+import net.minecraft.item.ItemStack;
+import net.minecraft.world.World;
+
+import buildcraft.api.boards.RedstoneBoardRobot;
+import buildcraft.core.BlockIndex;
+import buildcraft.core.inventory.filters.IStackFilter;
+import buildcraft.core.utils.IPathFound;
+import buildcraft.robots.AIRobot;
+import buildcraft.robots.EntityRobotBase;
+
+public abstract class BoardRobotGenericBreakBlock extends RedstoneBoardRobot {
+
+	public BoardRobotGenericBreakBlock(EntityRobotBase iRobot) {
+		super(iRobot);
+	}
+
+	public abstract boolean isExpectedTool(ItemStack stack);
+
+	public abstract boolean isExpectedBlock(World world, int x, int y, int z);
+
+	@Override
+	public final void update() {
+		if (robot.getItemInUse() == null) {
+			startDelegateAI(new AIRobotFetchItemStack(robot, new IStackFilter() {
+				@Override
+				public boolean matches(ItemStack stack) {
+					return isExpectedTool(stack);
+				}
+			}));
+		} else {
+			startDelegateAI(new AIRobotSearchBlock(robot, new IPathFound() {
+				@Override
+				public boolean endReached(World world, int x, int y, int z) {
+					if (isExpectedBlock(world, x, y, z)) {
+						return RedstoneBoardRobot.isFreeBlock(new BlockIndex(x, y, z));
+					} else {
+						return false;
+					}
+				}
+			}));
+		}
+	}
+
+	@Override
+	public final void delegateAIEnded(AIRobot ai) {
+		if (ai instanceof AIRobotSearchBlock) {
+			BlockIndex index = ((AIRobotSearchBlock) ai).blockFound;
+
+			if (reserveBlock(index)) {
+				startDelegateAI(new AIRobotBreakWithTool(robot, ((AIRobotSearchBlock) ai).blockFound));
+			}
+		} else if (ai instanceof AIRobotBreakWithTool) {
+			releaseBlock(((AIRobotBreakWithTool) ai).blockToBreak);
+		}
+	}
+
+}

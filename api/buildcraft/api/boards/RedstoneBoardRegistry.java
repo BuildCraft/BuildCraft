@@ -8,6 +8,8 @@
  */
 package buildcraft.api.boards;
 
+import java.util.Collection;
+
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.nbt.NBTTagCompound;
 
@@ -30,5 +32,7 @@ public abstract class RedstoneBoardRegistry {
 	public abstract IBoardParameterStack createParameterStack();
 
 	public abstract String getKindForParam(IBoardParameter param);
+
+	public abstract Collection<RedstoneBoardNBT> getAllBoardNBTs();
 
 }

@@ -8,10 +8,15 @@
  */
 package buildcraft.api.boards;
 
+import java.util.HashSet;
+
+import buildcraft.core.BlockIndex;
 import buildcraft.robots.AIRobot;
 import buildcraft.robots.EntityRobotBase;
 
 public abstract class RedstoneBoardRobot extends AIRobot implements IRedstoneBoard<EntityRobotBase> {
+
+	public static HashSet<BlockIndex> reservedBlocks = new HashSet<BlockIndex>();
 
 	public RedstoneBoardRobot(EntityRobotBase iRobot) {
 		super(iRobot);
@@ -24,6 +29,31 @@ public abstract class RedstoneBoardRobot extends AIRobot implements IRedstoneBoa
 	public final void updateBoard(EntityRobotBase container) {
 		// TODO Auto-generated method stub
 
+	}
+
+	public static boolean isFreeBlock(BlockIndex index) {
+		synchronized (reservedBlocks) {
+			return !reservedBlocks.contains(index);
+		}
+	}
+
+	public static boolean reserveBlock(BlockIndex index) {
+		synchronized (reservedBlocks) {
+			if (!reservedBlocks.contains(index)) {
+				reservedBlocks.add(index);
+				return true;
+			} else {
+				return false;
+			}
+		}
+	}
+
+	public static void releaseBlock(BlockIndex index) {
+		synchronized (reservedBlocks) {
+			if (reservedBlocks.contains(index)) {
+				reservedBlocks.remove(index);
+			}
+		}
 	}
 
 }

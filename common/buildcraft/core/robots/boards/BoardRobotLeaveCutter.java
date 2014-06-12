@@ -8,33 +8,33 @@
  */
 package buildcraft.core.robots.boards;
 
-import net.minecraft.item.ItemAxe;
+import net.minecraft.item.ItemShears;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 
 import buildcraft.api.boards.RedstoneBoardRobotNBT;
 import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.robots.EntityRobotBase;
 
-public class BoardRobotLumberjack extends BoardRobotGenericBreakBlock {
+public class BoardRobotLeaveCutter extends BoardRobotGenericBreakBlock {
 
-	public BoardRobotLumberjack(EntityRobotBase iRobot, NBTTagCompound nbt) {
+	public BoardRobotLeaveCutter(EntityRobotBase iRobot) {
 		super(iRobot);
 	}
 
 	@Override
 	public RedstoneBoardRobotNBT getNBTHandler() {
-		return BoardRobotLumberjackNBT.instance;
+		return BoardRobotLeaveCutterNBT.instance;
 	}
 
 	@Override
 	public boolean isExpectedTool(ItemStack stack) {
-		return stack.getItem() instanceof ItemAxe;
+		return stack.getItem() instanceof ItemShears;
 	}
 
 	@Override
 	public boolean isExpectedBlock(World world, int x, int y, int z) {
-		return BuildCraftAPI.isWoodProperty.get(world, x, y, z);
+		return BuildCraftAPI.isLeavesProperty.get(world, x, y, z);
 	}
+
 }

@@ -24,6 +24,7 @@ public final class BuildCraftAPI {
 
 	public static WorldProperty isSoftProperty;
 	public static WorldProperty isWoodProperty;
+	public static WorldProperty isLeavesProperty;
 
 	/**
 	 * Deactivate constructor
