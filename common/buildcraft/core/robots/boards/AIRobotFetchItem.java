@@ -100,7 +100,7 @@ public class AIRobotFetchItem extends AIRobot {
 		} else {
 			pickTime++;
 
-			if (pickTime > 20) {
+			if (pickTime > 5) {
 				TransactorSimple inventoryInsert = new TransactorSimple(robot);
 
 				target.getEntityItem().stackSize -= inventoryInsert.inject(
