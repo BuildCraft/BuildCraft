@@ -108,7 +108,7 @@ import buildcraft.core.utils.WorldPropertyIsSoft;
 import buildcraft.core.utils.WorldPropertyIsWood;
 import buildcraft.robots.DockingStationRegistry;
 
-@Mod(name = "BuildCraft", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Core", acceptedMinecraftVersions = "[1.7.2,1.8)", dependencies = "required-after:Forge@[10.12.1.1079,)")
+@Mod(name = "BuildCraft", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Core", acceptedMinecraftVersions = "[1.7.2,1.8)", dependencies = "required-after:Forge@[10.12.2.1121,)")
 public class BuildCraftCore extends BuildCraftMod {
 	public static final boolean NONRELEASED_BLOCKS = true;
 
