@@ -24,7 +24,7 @@ public class TilePacketWrapper {
 		this(new Class[] {c});
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@SuppressWarnings({ "rawtypes" })
 	public TilePacketWrapper(Class[] c) {
 		rootMappings = new ClassSerializer [c.length];
 

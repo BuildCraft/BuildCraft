@@ -57,8 +57,6 @@ public class RenderEnergyEmitter extends TileEntitySpecialRenderer {
 
 		GL11.glTranslatef((float) x, (float) y, (float) z);
 
-		float step;
-
 		float[] angle = {0, 0, 0};
 
 		box.rotateAngleX = angle[0];

@@ -11,7 +11,6 @@ package buildcraft.transport.pipes;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.World;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -110,8 +109,6 @@ public class PipeFluidsWood extends Pipe<PipeTransportFluids> {
 		}
 
 		if (mjStored >= 1) {
-			World w = container.getWorld();
-
 			if (meta > 5) {
 				return;
 			}

@@ -228,7 +228,6 @@ public class PipeItemsStripes extends Pipe<PipeTransportItems> {
 		transport.injectItem(newItem, direction.getOpposite());
 	}
 
-	@SuppressWarnings("unchecked")
 	public boolean convertPipe(PipeTransportItems pipe, TravelingItem item) {
 		if (item.getItemStack().getItem() instanceof ItemPipe) {
 			if (!(item.getItemStack().getItem() == BuildCraftTransport.pipeItemsStripes)) {

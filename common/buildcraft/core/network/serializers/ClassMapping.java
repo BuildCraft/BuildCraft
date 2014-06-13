@@ -105,7 +105,7 @@ public class ClassMapping extends ClassSerializer {
 
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@SuppressWarnings({ "rawtypes" })
 	public void analyzeClass(final Class<? extends Object> c) {
 		try {
 			if (c.isArray()) {
