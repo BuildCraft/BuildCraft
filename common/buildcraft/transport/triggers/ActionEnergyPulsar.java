@@ -10,6 +10,7 @@ package buildcraft.transport.triggers;
 
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.util.IIcon;
+
 import buildcraft.api.gates.IAction;
 import buildcraft.core.triggers.BCAction;
 import buildcraft.core.utils.StringUtils;
@@ -41,5 +42,4 @@ public class ActionEnergyPulsar extends BCAction {
 	public IAction rotateLeft() {
 		return this;
 	}
-
 }

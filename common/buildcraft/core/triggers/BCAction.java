@@ -8,59 +8,12 @@
  */
 package buildcraft.core.triggers;
 
-import net.minecraft.client.renderer.texture.IIconRegister;
-import net.minecraft.util.IIcon;
-
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-
-import buildcraft.api.gates.ActionManager;
 import buildcraft.api.gates.IAction;
 
-public abstract class BCAction implements IAction {
+public abstract class BCAction extends BCStatement implements IAction {
 
-	protected final String uniqueTag;
-
-	/**
-	 * UniqueTag accepts multiple possible tags, use this feature to migrate to
-	 * more standardized tags if needed, otherwise just pass a single string.
-	 * The first passed string will be the one used when saved to disk.
-	 *
-	 * @param uniqueTag
-	 */
 	public BCAction(String... uniqueTag) {
-		this.uniqueTag = uniqueTag[0];
-		for (String tag : uniqueTag) {
-			ActionManager.actions.put(tag, this);
-		}
+		super(uniqueTag);
 	}
 
-	@Override
-	public String getUniqueTag() {
-		return uniqueTag;
-	}
-
-	public int getIconIndex() {
-		return 0;
-	}
-
-	@Override
-	@SideOnly(Side.CLIENT)
-	public IIcon getIcon() {
-		return ActionTriggerIconProvider.INSTANCE.getIcon(getIconIndex());
-	}
-
-	public int getTextureMap() {
-		return 1;
-	}
-
-	@Override
-	@SideOnly(Side.CLIENT)
-	public void registerIcons(IIconRegister iconRegister) {
-	}
-
-	@Override
-	public boolean hasParameter() {
-		return false;
-	}
 }

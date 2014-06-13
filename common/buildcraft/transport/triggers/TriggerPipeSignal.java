@@ -33,8 +33,8 @@ public class TriggerPipeSignal extends BCTrigger implements IPipeTrigger {
 	}
 
 	@Override
-	public boolean hasParameter() {
-		return false;
+	public int maxParameters() {
+		return 3;
 	}
 
 	@Override

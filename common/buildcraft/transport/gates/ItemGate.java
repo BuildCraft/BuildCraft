@@ -30,11 +30,10 @@ import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraftforge.common.util.Constants;
 
 import buildcraft.BuildCraftTransport;
-import buildcraft.api.gates.ActionManager;
 import buildcraft.api.gates.GateExpansions;
-import buildcraft.api.gates.IAction;
 import buildcraft.api.gates.IGateExpansion;
-import buildcraft.api.gates.ITrigger;
+import buildcraft.api.gates.IStatement;
+import buildcraft.api.gates.StatementManager;
 import buildcraft.core.ItemBuildCraft;
 import buildcraft.core.inventory.InvUtils;
 import buildcraft.core.utils.StringUtils;
@@ -257,12 +256,8 @@ public class ItemGate extends ItemBuildCraft {
 			expansion.registerItemOverlay(iconRegister);
 		}
 
-		for (IAction action : ActionManager.actions.values()) {
-			action.registerIcons(iconRegister);
-		}
-
-		for (ITrigger trigger : ActionManager.triggers.values()) {
-			trigger.registerIcons(iconRegister);
+		for (IStatement statement : StatementManager.statements.values()) {
+			statement.registerIcons(iconRegister);
 		}
 	}
 }

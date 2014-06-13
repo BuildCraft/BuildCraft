@@ -27,11 +27,11 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.BuildCraftTransport;
-import buildcraft.api.gates.ActionManager;
 import buildcraft.api.gates.IAction;
 import buildcraft.api.gates.IOverrideDefaultTriggers;
 import buildcraft.api.gates.ITrigger;
 import buildcraft.api.gates.ITriggerParameter;
+import buildcraft.api.gates.StatementManager;
 import buildcraft.api.gates.TriggerParameter;
 import buildcraft.core.gui.BuildCraftContainer;
 import buildcraft.core.network.PacketCoordinates;
@@ -92,7 +92,7 @@ public class ContainerGateInterface extends BuildCraftContainer {
 		// the client.
 		if (!pipe.container.getWorldObj().isRemote) {
 			potentialActions.addAll(pipe.getActions());
-			potentialTriggers.addAll(ActionManager.getPipeTriggers(pipe.container));
+			potentialTriggers.addAll(StatementManager.getPipeTriggers(pipe.container));
 
 			if (pipe.container instanceof IOverrideDefaultTriggers) {
 				potentialTriggers.addAll(((IOverrideDefaultTriggers) pipe.container).getTriggers());
@@ -102,18 +102,30 @@ public class ContainerGateInterface extends BuildCraftContainer {
 				if (pipe.hasGate(o)) {
 					TileEntity tile = pipe.container.getTile(o);
 					Block block = pipe.container.getBlock(o);
-					potentialTriggers.addAll(ActionManager.getNeighborTriggers(block, tile));
-					potentialActions.addAll(ActionManager.getNeighborActions(block, tile));
+					potentialTriggers.addAll(StatementManager.getNeighborTriggers(block, tile));
+					potentialActions.addAll(StatementManager.getNeighborActions(block, tile));
 				}
 			}
 
-			if (!pipe.gate.material.hasParameterSlot) {
+			if (pipe.gate.material.numTriggerParameters == 0) {
 				Iterator<ITrigger> it = potentialTriggers.iterator();
 
 				while (it.hasNext()) {
 					ITrigger trigger = it.next();
 
-					if (trigger.requiresParameter()) {
+					if (trigger.minParameters() > 0) {
+						it.remove();
+					}
+				}
+			}
+
+			if (pipe.gate.material.numActionParameters == 0) {
+				Iterator<IAction> it = potentialActions.iterator();
+
+				while (it.hasNext()) {
+					IAction action = it.next();
+
+					if (action.minParameters() > 0) {
 						it.remove();
 					}
 				}
@@ -148,7 +160,7 @@ public class ContainerGateInterface extends BuildCraftContainer {
 
 		int length = payload.stream.readInt();
 		for (int i = 0; i < length; i++) {
-			potentialActions.add(ActionManager.actions.get(Utils.readUTF(payload.stream)));
+			potentialActions.add((IAction) StatementManager.statements.get(Utils.readUTF(payload.stream)));
 		}
 	}
 
@@ -165,7 +177,7 @@ public class ContainerGateInterface extends BuildCraftContainer {
 
 		for (int i = 0; i < length; i++) {
 			String trigger = Utils.readUTF(payload.stream);
-			potentialTriggers.add(ActionManager.triggers.get(trigger));
+			potentialTriggers.add((ITrigger) StatementManager.statements.get(trigger));
 		}
 	}
 
@@ -180,8 +192,8 @@ public class ContainerGateInterface extends BuildCraftContainer {
 
 		int position = data.readInt();
 
-		setTrigger(position, ActionManager.triggers.get(Utils.readUTF(data)), notify);
-		setAction(position, ActionManager.actions.get(Utils.readUTF(data)), notify);
+		setTrigger(position, (ITrigger) StatementManager.statements.get(Utils.readUTF(data)), notify);
+		setAction(position, (IAction) StatementManager.statements.get(Utils.readUTF(data)), notify);
 
 		ItemStack parameter = Utils.readStack(data);
 

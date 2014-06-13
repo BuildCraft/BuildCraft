@@ -8,6 +8,6 @@
  */
 package buildcraft.api.gates;
 
-public interface ITrigger extends IStatement {
+public interface IActionParameter extends IStatementParameter {
 
 }

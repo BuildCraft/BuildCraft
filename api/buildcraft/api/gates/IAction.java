@@ -8,24 +8,6 @@
  */
 package buildcraft.api.gates;
 
-import net.minecraft.client.renderer.texture.IIconRegister;
-import net.minecraft.util.IIcon;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+public interface IAction extends IStatement {
 
-public interface IAction {
-
-	String getUniqueTag();
-
-	@SideOnly(Side.CLIENT)
-	IIcon getIcon();
-
-	@SideOnly(Side.CLIENT)
-	void registerIcons(IIconRegister iconRegister);
-
-	boolean hasParameter();
-
-	String getDescription();
-
-	IAction rotateLeft();
 }

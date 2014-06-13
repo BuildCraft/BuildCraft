@@ -18,17 +18,16 @@ import net.minecraft.tileentity.TileEntity;
 
 import buildcraft.api.transport.IPipeTile;
 
-public final class ActionManager {
+public final class StatementManager {
 
-	public static Map<String, ITrigger> triggers = new HashMap<String, ITrigger>();
-	public static Map<String, IAction> actions = new HashMap<String, IAction>();
+	public static Map<String, IStatement> statements = new HashMap<String, IStatement>();
 	private static List<ITriggerProvider> triggerProviders = new LinkedList<ITriggerProvider>();
 	private static List<IActionProvider> actionProviders = new LinkedList<IActionProvider>();
 
 	/**
 	 * Deactivate constructor
 	 */
-	private ActionManager() {
+	private StatementManager() {
 	}
 
 	public static void registerTriggerProvider(ITriggerProvider provider) {
@@ -37,12 +36,8 @@ public final class ActionManager {
 		}
 	}
 
-	public static void registerTrigger(ITrigger trigger) {
-		triggers.put(trigger.getUniqueTag(), trigger);
-	}
-
-	public static void registerAction(IAction action) {
-		actions.put(action.getUniqueTag(), action);
+	public static void registerStatement(IStatement statement) {
+		statements.put(statement.getUniqueTag(), statement);
 	}
 
 	public static List<ITrigger> getNeighborTriggers(Block block, TileEntity entity) {

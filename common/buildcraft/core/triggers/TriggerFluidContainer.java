@@ -37,8 +37,8 @@ public class TriggerFluidContainer extends BCTrigger implements ITileTrigger {
 	}
 
 	@Override
-	public boolean hasParameter() {
-		return state == State.Contains || state == State.Space;
+	public int maxParameters() {
+		return state == State.Contains || state == State.Space ? 1 : 0;
 	}
 
 	@Override

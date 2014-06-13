@@ -45,13 +45,13 @@ public class TriggerInventoryLevel extends BCTrigger implements ITileTrigger {
 	}
 
 	@Override
-	public boolean hasParameter() {
-		return true;
+	public int maxParameters() {
+		return 1;
 	}
 
 	@Override
-	public boolean requiresParameter() {
-		return true;
+	public int minParameters() {
+		return 1;
 	}
 
 	@Override

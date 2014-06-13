@@ -49,7 +49,7 @@ import buildcraft.api.core.BCLog;
 import buildcraft.api.core.JavaTools;
 import buildcraft.api.filler.FillerManager;
 import buildcraft.api.filler.IFillerPattern;
-import buildcraft.api.gates.ActionManager;
+import buildcraft.api.gates.StatementManager;
 import buildcraft.builders.BlockArchitect;
 import buildcraft.builders.BlockBlueprintLibrary;
 import buildcraft.builders.BlockBuildTool;
@@ -477,7 +477,7 @@ public class BuildCraftBuilders extends BuildCraftMod {
 			throw error;
 		}
 
-		ActionManager.registerActionProvider(new BuildersActionProvider());
+		StatementManager.registerActionProvider(new BuildersActionProvider());
 	}
 
 	public static void loadRecipes() {

@@ -62,7 +62,7 @@ import buildcraft.api.core.BCLog;
 import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.core.JavaTools;
-import buildcraft.api.gates.ActionManager;
+import buildcraft.api.gates.StatementManager;
 import buildcraft.api.recipes.BuildcraftRecipeRegistry;
 import buildcraft.builders.urbanism.EntityRobotUrbanism;
 import buildcraft.core.BlockIndex;
@@ -307,8 +307,8 @@ public class BuildCraftCore extends BuildCraftMod {
 		channels = NetworkRegistry.INSTANCE.newChannel
 				(DefaultProps.NET_CHANNEL_NAME + "-CORE", new BuildCraftChannelHandler(), new PacketHandler());
 
-		ActionManager.registerTriggerProvider(new DefaultTriggerProvider());
-		ActionManager.registerActionProvider(new DefaultActionProvider());
+		StatementManager.registerTriggerProvider(new DefaultTriggerProvider());
+		StatementManager.registerActionProvider(new DefaultActionProvider());
 
 		if (BuildCraftCore.modifyWorld) {
 			MinecraftForge.EVENT_BUS.register(new SpringPopulate());

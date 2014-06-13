@@ -55,13 +55,13 @@ public class TriggerPipeContents extends BCTrigger implements IPipeTrigger {
 	}
 
 	@Override
-	public boolean hasParameter() {
+	public int maxParameters() {
 		switch (kind) {
-			case containsItems:
-			case containsFluids:
-				return true;
-			default:
-				return false;
+		case containsItems:
+		case containsFluids:
+			return 1;
+		default:
+			return 0;
 		}
 	}
 

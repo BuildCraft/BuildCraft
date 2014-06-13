@@ -199,6 +199,8 @@ public class BuildCraftSilicon extends BuildCraftMod {
 				Items.redstone, Items.quartz);
 		BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:compChipset", 60000, Chipset.COMP.getStack(),
 				Items.redstone, Items.comparator);
+		BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:emeraldChipset", 120000,
+				Chipset.EMERALD.getStack(), Items.redstone, Items.emerald);
 
 		// GATES
 		BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:simpleGate", 10000,
@@ -208,6 +210,8 @@ public class BuildCraftSilicon extends BuildCraftMod {
 		addGateRecipe("Iron", 20000, GateMaterial.IRON, Chipset.IRON, PipeWire.RED, PipeWire.BLUE);
 		addGateRecipe("Gold", 40000, GateMaterial.GOLD, Chipset.GOLD, PipeWire.RED, PipeWire.BLUE, PipeWire.GREEN);
 		addGateRecipe("Diamond", 80000, GateMaterial.DIAMOND, Chipset.DIAMOND, PipeWire.RED, PipeWire.BLUE,
+				PipeWire.GREEN, PipeWire.YELLOW);
+		addGateRecipe("Emerald", 120000, GateMaterial.EMERALD, Chipset.DIAMOND, PipeWire.RED, PipeWire.BLUE,
 				PipeWire.GREEN, PipeWire.YELLOW);
 
 		// ROBOTS AND BOARDS

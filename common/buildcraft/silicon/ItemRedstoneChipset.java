@@ -34,7 +34,8 @@ public class ItemRedstoneChipset extends ItemBuildCraft {
 		DIAMOND,
 		PULSATING,
 		QUARTZ,
-		COMP;
+		COMP,
+		EMERALD;
 		public static final Chipset[] VALUES = values();
 		private IIcon icon;
 

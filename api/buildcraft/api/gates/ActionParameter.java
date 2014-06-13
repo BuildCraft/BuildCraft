@@ -12,13 +12,13 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
-public class TriggerParameter implements ITriggerParameter {
+public class ActionParameter implements IActionParameter {
 
 	protected ItemStack stack;
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see net.minecraft.src.buildcraft.api.gates.ITriggerParameter#getItemStack()
 	 */
 	@Override
@@ -28,7 +28,7 @@ public class TriggerParameter implements ITriggerParameter {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see net.minecraft.src.buildcraft.api.gates.ITriggerParameter#set(net.minecraft.src.ItemStack)
 	 */
 	@Override
@@ -41,7 +41,7 @@ public class TriggerParameter implements ITriggerParameter {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see net.minecraft.src.buildcraft.api.gates.ITriggerParameter#writeToNBT(net.minecraft.src.NBTTagCompound)
 	 */
 	@Override
@@ -55,7 +55,7 @@ public class TriggerParameter implements ITriggerParameter {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see net.minecraft.src.buildcraft.api.gates.ITriggerParameter#readFromNBT(net.minecraft.src.NBTTagCompound)
 	 */
 	@Override
@@ -66,7 +66,7 @@ public class TriggerParameter implements ITriggerParameter {
 			stack = new ItemStack((Item) Item.itemRegistry.getObject(itemID), 1, compound.getInteger("itemDMG"));
 			return;
 		}
-		
+
 		stack = ItemStack.loadItemStackFromNBT(compound.getCompoundTag("stack"));
 	}
 

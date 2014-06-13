@@ -44,8 +44,8 @@ public class TriggerFluidContainerLevel extends BCTrigger implements ITileTrigge
 	}
 
 	@Override
-	public boolean hasParameter() {
-		return true;
+	public int maxParameters() {
+		return 1;
 	}
 
 	@Override

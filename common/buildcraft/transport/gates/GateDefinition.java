@@ -36,22 +36,29 @@ public final class GateDefinition {
 
 	public static enum GateMaterial {
 
-		REDSTONE("gate_interface_1.png", 146, 1, false), IRON("gate_interface_2.png", 164, 2, false), GOLD("gate_interface_3.png", 200, 4, true), DIAMOND("gate_interface_4.png", 200, 8, true);
+		REDSTONE("gate_interface_1.png", 146, 1, 0, 0),
+		IRON("gate_interface_2.png", 164, 2, 0, 0),
+		GOLD("gate_interface_3.png", 200, 4, 1, 0),
+		DIAMOND("gate_interface_4.png", 200, 8, 1, 0),
+		EMERALD("gate_interface_5.png", 200, 4, 3, 3);
 		public static final GateMaterial[] VALUES = values();
 		public final ResourceLocation guiFile;
 		public final int guiHeight;
 		public final int numSlots;
-		public final boolean hasParameterSlot;
+		public final int numTriggerParameters;
+		public final int numActionParameters;
 		@SideOnly(Side.CLIENT)
 		private IIcon iconBlock;
 		@SideOnly(Side.CLIENT)
 		private IIcon iconItem;
 
-		private GateMaterial(String guiFile, int guiHeight, int numSlots, boolean hasParamterSlot) {
+		private GateMaterial(String guiFile, int guiHeight, int numSlots, int triggerParameterSlots,
+				int actionParameterSlots) {
 			this.guiFile = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_GUI + "/" + guiFile);
 			this.guiHeight = guiHeight;
 			this.numSlots = numSlots;
-			this.hasParameterSlot = hasParamterSlot;
+			this.numTriggerParameters = triggerParameterSlots;
+			this.numActionParameters = actionParameterSlots;
 		}
 
 		@SideOnly(Side.CLIENT)

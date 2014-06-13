@@ -6,13 +6,15 @@
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-package buildcraft.api.gates;
+package buildcraft.transport.triggers;
 
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
-public class TriggerParameter implements ITriggerParameter {
+import buildcraft.api.gates.ITriggerParameter;
+
+public class TriggerParameterSignal implements ITriggerParameter {
 
 	protected ItemStack stack;
 

@@ -8,11 +8,11 @@
  */
 package buildcraft.transport.gui;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 
 import org.lwjgl.opengl.GL11;
 
-import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
@@ -22,14 +22,16 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 import buildcraft.api.gates.IAction;
+import buildcraft.api.gates.IStatement;
+import buildcraft.api.gates.IStatementParameter;
 import buildcraft.api.gates.ITrigger;
 import buildcraft.api.gates.ITriggerParameter;
 import buildcraft.core.gui.AdvancedSlot;
 import buildcraft.core.gui.GuiAdvancedInterface;
-import buildcraft.core.triggers.BCAction;
 import buildcraft.core.utils.StringUtils;
 import buildcraft.transport.ActionState;
 import buildcraft.transport.Pipe;
+import buildcraft.transport.gates.GateDefinition.GateMaterial;
 
 public class GuiGateInterface extends GuiAdvancedInterface {
 
@@ -38,12 +40,13 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 	private final Pipe pipe;
 	private int numSlots;
 
-	class TriggerSlot extends AdvancedSlot {
+	private abstract class StatementSlot extends AdvancedSlot {
 
-		Pipe pipe;
-		int slot;
+		public Pipe pipe;
+		public int slot;
+		public ArrayList<StatementParameterSlot> parameters = new ArrayList<StatementParameterSlot>();
 
-		public TriggerSlot(int x, int y, Pipe pipe, int slot) {
+		public StatementSlot(int x, int y, Pipe pipe, int slot) {
 			super(GuiGateInterface.this, x, y);
 
 			this.pipe = pipe;
@@ -78,80 +81,47 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 			return pipe.gate.getTrigger(slot) != null;
 		}
 
-		public ITrigger getTrigger() {
+		public abstract IStatement getStatement();
+	}
+
+	private class TriggerSlot extends StatementSlot {
+		public TriggerSlot(int x, int y, Pipe pipe, int slot) {
+			super(x, y, pipe, slot);
+		}
+
+		@Override
+		public IStatement getStatement() {
 			return pipe.gate.getTrigger(slot);
 		}
 	}
 
-	class ActionSlot extends AdvancedSlot {
-
-		Pipe pipe;
-		int slot;
-
+	private class ActionSlot extends StatementSlot {
 		public ActionSlot(int x, int y, Pipe pipe, int slot) {
-			super(GuiGateInterface.this, x, y);
-
-			this.pipe = pipe;
-			this.slot = slot;
+			super(x, y, pipe, slot);
 		}
 
 		@Override
-		public String getDescription() {
-			IAction action = pipe.gate.getAction(slot);
-			if (action != null) {
-				return action.getDescription();
-			} else {
-				return "";
-			}
-		}
-
-		@SideOnly(Side.CLIENT)
-		@Override
-		public IIcon getIcon() {
-			IAction action = pipe.gate.getAction(slot);
-
-			if (action != null) {
-				return action.getIcon();
-			} else {
-				return null;
-			}
-		}
-
-		@Override
-		public ResourceLocation getTexture() {
-			IAction action = pipe.gate.getAction(slot);
-
-			if (action instanceof BCAction) {
-				BCAction bcAction = (BCAction) action;
-
-				if (bcAction.getTextureMap() == 0) {
-					return TextureMap.locationBlocksTexture;
-				}
-			}
-
-			return super.getTexture();
-		}
-
-		@Override
-		public boolean isDefined() {
-			return pipe.gate.getAction(slot) != null;
-		}
-
-		public IAction getAction() {
+		public IStatement getStatement() {
 			return pipe.gate.getAction(slot);
 		}
 	}
 
-	class TriggerParameterSlot extends AdvancedSlot {
+	private abstract class StatementParameterSlot extends AdvancedSlot {
 
-		Pipe pipe;
-		int slot;
+		public Pipe pipe;
+		public int slot;
+		public StatementSlot statementSlot;
+		public int indexInStatement;
 
-		public TriggerParameterSlot(int x, int y, Pipe pipe, int slot) {
+		public StatementParameterSlot(int x, int y, Pipe pipe, int slot, StatementSlot iStatementSlot,
+				int iIIndexInStatement) {
 			super(GuiGateInterface.this, x, y);
 
 			this.pipe = pipe;
 			this.slot = slot;
+			this.statementSlot = iStatementSlot;
+			statementSlot.parameters.add(this);
+			indexInStatement = iIIndexInStatement;
 		}
 
 		@Override
@@ -170,8 +140,38 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 			}
 		}
 
-		public ITriggerParameter getTriggerParameter() {
+		public abstract IStatementParameter getParameter();
+
+		public boolean isAllowed() {
+			return indexInStatement < statementSlot.getStatement().maxParameters();
+		}
+
+		public boolean isRequired() {
+			return indexInStatement < statementSlot.getStatement().minParameters();
+		}
+	}
+
+	class TriggerParameterSlot extends StatementParameterSlot {
+		public TriggerParameterSlot(int x, int y, Pipe pipe, int slot, StatementSlot iStatementSlot,
+				int iIIndexInStatement) {
+			super(x, y, pipe, slot, iStatementSlot, iIIndexInStatement);
+		}
+
+		@Override
+		public IStatementParameter getParameter() {
 			return pipe.gate.getTriggerParameter(slot);
+		}
+	}
+
+	class ActionParameterSlot extends StatementParameterSlot {
+		public ActionParameterSlot(int x, int y, Pipe pipe, int slot, StatementSlot iStatementSlot,
+				int iIIndexInStatement) {
+			super(x, y, pipe, slot, iStatementSlot, iIIndexInStatement);
+		}
+
+		@Override
+		public IStatementParameter getParameter() {
+			return pipe.gate.getActionParameter(slot);
 		}
 	}
 
@@ -188,19 +188,19 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 		int position = 0;
 		numSlots = pipe.gate.material.numSlots;
 
-		if (numSlots == 1) {
+		if (pipe.gate.material == GateMaterial.REDSTONE) {
 			slots = new AdvancedSlot[2];
 
 			slots[0] = new TriggerSlot(62, 26, pipe, 0);
 			slots[1] = new ActionSlot(98, 26, pipe, 0);
-		} else if (numSlots == 2) {
+		} else if (pipe.gate.material == GateMaterial.IRON) {
 			slots = new AdvancedSlot[4];
 
 			slots[0] = new TriggerSlot(62, 26, pipe, 0);
 			slots[1] = new TriggerSlot(62, 44, pipe, 1);
 			slots[2] = new ActionSlot(98, 26, pipe, 0);
 			slots[3] = new ActionSlot(98, 44, pipe, 1);
-		} else if (numSlots == 4) {
+		} else if (pipe.gate.material == GateMaterial.GOLD) {
 			slots = new AdvancedSlot[12];
 
 			for (int k = 0; k < 4; ++k) {
@@ -214,11 +214,12 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 			}
 
 			for (int k = 0; k < 4; ++k) {
-				slots[position] = new TriggerParameterSlot(71, 26 + 18 * k, pipe, position - 8);
+				slots[position] = new TriggerParameterSlot(71, 26 + 18 * k, pipe, position - 8, (TriggerSlot) slots[k],
+						k);
 				position++;
 
 			}
-		} else if (numSlots == 8) {
+		} else if (pipe.gate.material == GateMaterial.DIAMOND) {
 			slots = new AdvancedSlot[24];
 
 			for (int k = 0; k < 4; ++k) {
@@ -236,10 +237,37 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 			}
 
 			for (int k = 0; k < 4; ++k) {
-				slots[position] = new TriggerParameterSlot(26, 26 + 18 * k, pipe, position - 16);
+				slots[position] = new TriggerParameterSlot(26, 26 + 18 * k, pipe, position - 16,
+						(TriggerSlot) slots[k], k);
 				position++;
-				slots[position] = new TriggerParameterSlot(116, 26 + 18 * k, pipe, position - 16);
+				slots[position] = new TriggerParameterSlot(116, 26 + 18 * k, pipe, position - 16,
+						(TriggerSlot) slots[k + 4], k);
 				position++;
+			}
+		} else if (pipe.gate.material == GateMaterial.EMERALD) {
+			slots = new AdvancedSlot[32];
+			int lastPos;
+
+			for (int y = 0; y < 4; ++y) {
+				slots[position] = new TriggerSlot(8, 26 + 18 * y, pipe, y);
+				lastPos = position;
+				position++;
+
+				for (int x = 0; x < 3; ++x) {
+					slots[position] = new TriggerParameterSlot(8 + 18 * (x + 1), 26 + 18 * y, pipe, y * 3 + x,
+							(TriggerSlot) slots[lastPos], x);
+					position++;
+				}
+
+				slots[position] = new ActionSlot(98, 26 + 18 * y, pipe, y);
+				lastPos = position;
+				position++;
+
+				for (int x = 0; x < 3; ++x) {
+					slots[position] = new ActionParameterSlot(98 + 18 * (x + 1), 26 + 18 * y, pipe, y * 3 + x,
+							(ActionSlot) slots[lastPos], x);
+					position++;
+				}
 			}
 		}
 
@@ -257,7 +285,6 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 
 	@Override
 	protected void drawGuiContainerBackgroundLayer(float f, int x, int y) {
-
 		container.synchronize();
 
 		ResourceLocation texture = container.getGateGuiFile();
@@ -272,24 +299,16 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 		int actionTracker = 0;
 
 		actionTracker = 0;
-		for (int s = 0; s < slots.length; ++s) {
-			AdvancedSlot slot = slots[s];
-
+		for (AdvancedSlot slot : slots) {
 			if (slot instanceof TriggerSlot) {
-				ITrigger trigger = ((TriggerSlot) slot).getTrigger();
+				ITrigger trigger = (ITrigger) ((TriggerSlot) slot).getStatement();
 				boolean halfWidth = container.actionsState[actionTracker] == ActionState.Partial;
 
-				if (pipe.gate.material.hasParameterSlot) {
+				if (pipe.gate.material.numTriggerParameters > 0) {
 					if (container.actionsState[actionTracker] != ActionState.Deactivated) {
 						mc.renderEngine.bindTexture(texture);
 
 						drawTexturedModalRect(cornerX + slot.x + 35, cornerY + slot.y + 6, 176, 18, halfWidth ? 9 : 18, 4);
-					}
-
-					if (trigger == null || !trigger.hasParameter()) {
-						mc.renderEngine.bindTexture(texture);
-
-						drawTexturedModalRect(cornerX + slot.x + 17, cornerY + slot.y - 1, 176, 0, 18, 18);
 					}
 				} else if (container.actionsState[actionTracker] != ActionState.Deactivated) {
 					mc.renderEngine.bindTexture(texture);
@@ -298,16 +317,20 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 				}
 
 				actionTracker++;
-			} else if (slot instanceof TriggerParameterSlot) {
-				TriggerParameterSlot paramSlot = (TriggerParameterSlot) slot;
-				TriggerSlot trigger = (TriggerSlot) slots[s - numSlots * 2];
+			} else if (slot instanceof StatementParameterSlot) {
+				StatementParameterSlot paramSlot = (StatementParameterSlot) slot;
+				StatementSlot trigger = paramSlot.statementSlot;
 
-				if (trigger.isDefined() && trigger.getTrigger().requiresParameter()) {
-					if (paramSlot.getItemStack() == null) {
-						mc.renderEngine.bindTexture(texture);
+				mc.renderEngine.bindTexture(texture);
 
+				if (trigger.isDefined()) {
+					if (!paramSlot.isAllowed()) {
+						drawTexturedModalRect(cornerX + slot.x - 1, cornerY + slot.y - 1, 176, 0, 18, 18);
+					} else if (paramSlot.isRequired() && paramSlot.getItemStack() == null) {
 						drawTexturedModalRect(cornerX + slot.x - 1, cornerY + slot.y - 1, 176, 22, 18, 18);
 					}
+				} else {
+					drawTexturedModalRect(cornerX + slot.x - 1, cornerY + slot.y - 1, 176, 0, 18, 18);
 				}
 			}
 		}
@@ -336,7 +359,7 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 			TriggerSlot triggerSlot = (TriggerSlot) slot;
 
 			ITrigger changed = null;
-			if (triggerSlot.getTrigger() == null) {
+			if (triggerSlot.getStatement() == null) {
 
 				if (k == 0) {
 					changed = container.getFirstTrigger();
@@ -355,23 +378,23 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 						break;
 					}
 
-					if (trigger == triggerSlot.getTrigger()) {
+					if (trigger == triggerSlot.getStatement()) {
 						changed = it.next();
 						break;
 					}
 				}
 			}
 
-			container.setTrigger(position, changed, true);
+			container.setTrigger(triggerSlot.slot, changed, true);
 
-			if (pipe.gate.material.hasParameterSlot) {
-				container.setTriggerParameter(position, null, true);
+			for (StatementParameterSlot p : triggerSlot.parameters) {
+				container.setTriggerParameter(p.slot, null, true);
 			}
 		} else if (slot instanceof ActionSlot) {
 			ActionSlot actionSlot = (ActionSlot) slot;
 
 			IAction changed = null;
-			if (actionSlot.getAction() == null) {
+			if (actionSlot.getStatement() == null) {
 
 				if (k == 0) {
 					changed = container.getFirstAction();
@@ -390,23 +413,25 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 						break;
 					}
 
-					if (action == actionSlot.getAction()) {
+					if (action == actionSlot.getStatement()) {
 						changed = it.next();
 						break;
 					}
 				}
 			}
 
-			container.setAction(position - numSlots, changed, true);
+			container.setAction(actionSlot.slot, changed, true);
 		} else if (slot instanceof TriggerParameterSlot) {
-			TriggerSlot trigger = (TriggerSlot) slots[position - numSlots * 2];
+			TriggerParameterSlot paramSlot = (TriggerParameterSlot) slot;
+			TriggerSlot trigger = (TriggerSlot) paramSlot.statementSlot;
 
-			if (trigger.isDefined() && trigger.getTrigger().hasParameter()) {
-				ITriggerParameter param = trigger.getTrigger().createParameter();
+			if (trigger.isDefined() && trigger.getStatement().maxParameters() != 0) {
+				ITriggerParameter param = (ITriggerParameter) trigger.getStatement().createParameter(
+						paramSlot.indexInStatement);
 
 				if (param != null) {
 					param.set(mc.thePlayer.inventory.getItemStack());
-					container.setTriggerParameter(position - numSlots * 2, param, true);
+					container.setTriggerParameter(((TriggerParameterSlot) slot).slot, param, true);
 				}
 			}
 		}

@@ -27,14 +27,15 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.BuildCraftTransport;
-import buildcraft.api.gates.ActionManager;
 import buildcraft.api.gates.GateExpansionController;
 import buildcraft.api.gates.IAction;
+import buildcraft.api.gates.IActionParameter;
 import buildcraft.api.gates.IActionReceptor;
 import buildcraft.api.gates.IGateExpansion;
 import buildcraft.api.gates.ITileTrigger;
 import buildcraft.api.gates.ITrigger;
 import buildcraft.api.gates.ITriggerParameter;
+import buildcraft.api.gates.StatementManager;
 import buildcraft.api.gates.TriggerParameter;
 import buildcraft.api.transport.PipeWire;
 import buildcraft.core.GuiIds;
@@ -52,7 +53,8 @@ public final class Gate {
 	public final GateLogic logic;
 	public final BiMap<IGateExpansion, GateExpansionController> expansions = HashBiMap.create();
 	public ITrigger[] triggers = new ITrigger[8];
-	public ITriggerParameter[] triggerParameters = new ITriggerParameter[8];
+	public ITriggerParameter[] triggerParameters = new ITriggerParameter[12];
+	public IActionParameter[] actionParameters = new IActionParameter[12];
 	public IAction[] actions = new IAction[8];
 	public ActionState[] actionsState = new ActionState[8];
 
@@ -103,6 +105,10 @@ public final class Gate {
 		return triggerParameters[position];
 	}
 
+	public IActionParameter getActionParameter(int position) {
+		return actionParameters[position];
+	}
+
 	public void addGateExpansion(IGateExpansion expansion) {
 		if (!expansions.containsKey(expansion)) {
 			expansions.put(expansion, expansion.makeController(pipe.container));
@@ -147,10 +153,10 @@ public final class Gate {
 	public void readFromNBT(NBTTagCompound data) {
 		for (int i = 0; i < 8; ++i) {
 			if (data.hasKey("trigger[" + i + "]")) {
-				triggers[i] = ActionManager.triggers.get(data.getString("trigger[" + i + "]"));
+				triggers[i] = (ITrigger) StatementManager.statements.get(data.getString("trigger[" + i + "]"));
 			}
 			if (data.hasKey("action[" + i + "]")) {
-				actions[i] = ActionManager.actions.get(data.getString("action[" + i + "]"));
+				actions[i] = (IAction) StatementManager.statements.get(data.getString("action[" + i + "]"));
 			}
 			if (data.hasKey("triggerParameters[" + i + "]")) {
 				triggerParameters[i] = new TriggerParameter();

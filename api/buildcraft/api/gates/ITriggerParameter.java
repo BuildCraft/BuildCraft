@@ -8,20 +8,6 @@
  */
 package buildcraft.api.gates;
 
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-
-public interface ITriggerParameter {
-
-	ItemStack getItemStack();
-
-	void set(ItemStack stack);
-
-	void writeToNBT(NBTTagCompound compound);
-
-	void readFromNBT(NBTTagCompound compound);
-
-	@Deprecated
-	ItemStack getItem();
+public interface ITriggerParameter extends IStatementParameter {
 
 }
