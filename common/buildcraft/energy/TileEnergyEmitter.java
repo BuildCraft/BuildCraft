@@ -14,9 +14,9 @@ import java.util.TreeMap;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.World;
 
+import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.mj.MjBattery;
-import buildcraft.core.BlockIndex;
 import buildcraft.core.LaserData;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.network.RPC;

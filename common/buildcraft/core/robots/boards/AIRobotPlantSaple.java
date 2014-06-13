@@ -11,10 +11,10 @@ package buildcraft.core.robots.boards;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.WorldServer;
 
-import buildcraft.core.BlockIndex;
+import buildcraft.api.core.BlockIndex;
+import buildcraft.api.robots.AIRobot;
+import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.proxy.CoreProxy;
-import buildcraft.robots.AIRobot;
-import buildcraft.robots.EntityRobotBase;
 
 public class AIRobotPlantSaple extends AIRobot {
 

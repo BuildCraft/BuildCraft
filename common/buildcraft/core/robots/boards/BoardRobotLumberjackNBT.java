@@ -19,10 +19,10 @@ import net.minecraft.util.ResourceLocation;
 
 import buildcraft.api.boards.RedstoneBoardRobot;
 import buildcraft.api.boards.RedstoneBoardRobotNBT;
+import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.utils.NBTUtils;
 import buildcraft.core.utils.StringUtils;
-import buildcraft.robots.EntityRobotBase;
 
 public final class BoardRobotLumberjackNBT extends RedstoneBoardRobotNBT {
 

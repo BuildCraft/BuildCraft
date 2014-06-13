@@ -26,8 +26,8 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
 
+import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.BuildCraftAPI;
-import buildcraft.core.BlockIndex;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.fluids.FluidUtils;
 import buildcraft.core.fluids.Tank;

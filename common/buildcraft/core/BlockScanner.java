@@ -13,6 +13,8 @@ import java.util.Iterator;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 
+import buildcraft.api.core.BlockIndex;
+
 public class BlockScanner implements Iterable<BlockIndex> {
 
 	Box box = new Box ();

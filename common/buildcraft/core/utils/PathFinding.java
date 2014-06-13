@@ -15,8 +15,8 @@ import java.util.LinkedList;
 
 import net.minecraft.world.World;
 
+import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.BuildCraftAPI;
-import buildcraft.core.BlockIndex;
 
 /**
  * This class implements a 3D path finding based on the A* algorithm, following

@@ -10,10 +10,10 @@ package buildcraft.core.robots;
 
 import java.util.LinkedList;
 
-import buildcraft.core.BlockIndex;
+import buildcraft.api.core.BlockIndex;
+import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.utils.PathFinding;
 import buildcraft.core.utils.PathFindingJob;
-import buildcraft.robots.EntityRobotBase;
 
 public class AIRobotMoveToBlock extends AIRobotMove {
 

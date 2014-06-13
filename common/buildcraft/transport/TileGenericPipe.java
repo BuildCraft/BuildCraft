@@ -51,6 +51,7 @@ import buildcraft.api.mj.MjBattery;
 import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.power.PowerHandler;
 import buildcraft.api.power.PowerHandler.PowerReceiver;
+import buildcraft.api.robots.DockingStationRegistry;
 import buildcraft.api.transport.IPipeConnection;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.PipeWire;
@@ -64,9 +65,8 @@ import buildcraft.core.network.IClientState;
 import buildcraft.core.network.IGuiReturnHandler;
 import buildcraft.core.network.ISyncedTile;
 import buildcraft.core.network.PacketTileState;
+import buildcraft.core.robots.DockingStation;
 import buildcraft.core.utils.Utils;
-import buildcraft.robots.DockingStation;
-import buildcraft.robots.DockingStationRegistry;
 import buildcraft.transport.gates.GateDefinition;
 import buildcraft.transport.gates.GateFactory;
 

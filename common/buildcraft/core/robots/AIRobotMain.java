@@ -9,8 +9,8 @@
 package buildcraft.core.robots;
 
 import buildcraft.api.boards.RedstoneBoardRobot;
-import buildcraft.robots.AIRobot;
-import buildcraft.robots.EntityRobotBase;
+import buildcraft.api.robots.AIRobot;
+import buildcraft.api.robots.EntityRobotBase;
 
 public class AIRobotMain extends AIRobot {
 

@@ -59,13 +59,14 @@ import net.minecraftforge.oredict.OreDictionary;
 import buildcraft.api.blueprints.SchematicRegistry;
 import buildcraft.api.boards.RedstoneBoardRobot;
 import buildcraft.api.core.BCLog;
+import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.core.JavaTools;
 import buildcraft.api.gates.StatementManager;
 import buildcraft.api.recipes.BuildcraftRecipeRegistry;
+import buildcraft.api.robots.DockingStationRegistry;
 import buildcraft.builders.urbanism.EntityRobotUrbanism;
-import buildcraft.core.BlockIndex;
 import buildcraft.core.BlockSpring;
 import buildcraft.core.BuildCraftConfiguration;
 import buildcraft.core.CommandBuildCraft;
@@ -106,7 +107,6 @@ import buildcraft.core.utils.CraftingHandler;
 import buildcraft.core.utils.WorldPropertyIsLeave;
 import buildcraft.core.utils.WorldPropertyIsSoft;
 import buildcraft.core.utils.WorldPropertyIsWood;
-import buildcraft.robots.DockingStationRegistry;
 
 @Mod(name = "BuildCraft", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Core", acceptedMinecraftVersions = "[1.7.2,1.8)", dependencies = "required-after:Forge@[10.12.2.1121,)")
 public class BuildCraftCore extends BuildCraftMod {

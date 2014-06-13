@@ -14,11 +14,13 @@ import net.minecraft.block.Block;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
+import buildcraft.api.core.IWorldProperty;
 
-public abstract class WorldProperty {
+public abstract class WorldProperty implements IWorldProperty {
 
 	public ArrayList<DimensionProperty> properties = new ArrayList<DimensionProperty>();
 
+	@Override
 	public synchronized boolean get(World world, int x, int y, int z) {
 		return getDimension(world).get(x, y, z);
 	}
@@ -44,6 +46,7 @@ public abstract class WorldProperty {
 		return result;
 	}
 
+	@Override
 	public void clear() {
 		for (DimensionProperty p : properties) {
 			p.clear();

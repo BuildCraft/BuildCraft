@@ -15,12 +15,12 @@ import net.minecraft.block.BlockAir;
 import net.minecraft.block.BlockDirt;
 import net.minecraft.block.BlockGrass;
 
-import buildcraft.core.BlockIndex;
+import buildcraft.api.core.BlockIndex;
+import buildcraft.api.robots.AIRobot;
+import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.robots.AIRobotMoveToBlock;
 import buildcraft.core.utils.PathFinding;
 import buildcraft.core.utils.PathFindingJob;
-import buildcraft.robots.AIRobot;
-import buildcraft.robots.EntityRobotBase;
 
 public class AIRobotGoToRandomDirt extends AIRobot {
 

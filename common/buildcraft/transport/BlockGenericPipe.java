@@ -45,20 +45,21 @@ import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.BCLog;
+import buildcraft.api.core.BlockIndex;
 import buildcraft.api.gates.GateExpansions;
 import buildcraft.api.gates.IGateExpansion;
+import buildcraft.api.robots.DockingStationRegistry;
 import buildcraft.api.tools.IToolWrench;
 import buildcraft.api.transport.PipeWire;
 import buildcraft.core.BlockBuildCraft;
-import buildcraft.core.BlockIndex;
 import buildcraft.core.CoreConstants;
 import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.ItemRobot;
 import buildcraft.core.TileBuffer;
+import buildcraft.core.robots.DockingStation;
 import buildcraft.core.robots.EntityRobot;
 import buildcraft.core.utils.MatrixTranformations;
 import buildcraft.core.utils.Utils;
-import buildcraft.robots.DockingStationRegistry;
 import buildcraft.transport.gates.GateDefinition;
 import buildcraft.transport.gates.GateFactory;
 import buildcraft.transport.gates.ItemGate;
@@ -796,7 +797,8 @@ public class BlockGenericPipe extends BlockBuildCraft {
 						float pz = z + 0.5F + rayTraceResult.sideHit.offsetZ * 0.5F;
 
 						robot.setPosition(px, py, pz);
-						robot.setMainDockingStation(DockingStationRegistry.getStation(x, y, z, rayTraceResult.sideHit));
+						robot.setMainDockingStation((DockingStation) DockingStationRegistry.getStation(x, y, z,
+								rayTraceResult.sideHit));
 						robot.setCurrentDockingStation(robot.getMainDockingStation());
 						world.spawnEntityInWorld(robot);
 

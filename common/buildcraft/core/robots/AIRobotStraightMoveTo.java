@@ -8,7 +8,7 @@
  */
 package buildcraft.core.robots;
 
-import buildcraft.robots.EntityRobotBase;
+import buildcraft.api.robots.EntityRobotBase;
 
 public class AIRobotStraightMoveTo extends AIRobotMove {
 

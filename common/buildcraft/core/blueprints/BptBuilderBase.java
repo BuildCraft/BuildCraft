@@ -26,11 +26,11 @@ import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.MappingNotFoundException;
 import buildcraft.api.blueprints.SchematicRegistry;
 import buildcraft.api.core.BCLog;
+import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.core.Position;
 import buildcraft.builders.BuildingItem;
 import buildcraft.builders.TileAbstractBuilder;
-import buildcraft.core.BlockIndex;
 import buildcraft.core.Box;
 
 public abstract class BptBuilderBase implements IAreaProvider {

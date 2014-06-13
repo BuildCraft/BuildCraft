@@ -14,17 +14,15 @@ import java.util.Set;
 import net.minecraft.block.Block;
 import net.minecraft.world.World;
 
-import buildcraft.core.utils.WorldProperty;
-
 public final class BuildCraftAPI {
 
 	public static ICoreProxy proxy;
 
 	public static final Set<Block> softBlocks = new HashSet<Block>();
 
-	public static WorldProperty isSoftProperty;
-	public static WorldProperty isWoodProperty;
-	public static WorldProperty isLeavesProperty;
+	public static IWorldProperty isSoftProperty;
+	public static IWorldProperty isWoodProperty;
+	public static IWorldProperty isLeavesProperty;
 
 	/**
 	 * Deactivate constructor

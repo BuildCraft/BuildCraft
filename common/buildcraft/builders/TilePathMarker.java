@@ -17,9 +17,9 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 
+import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.NetworkData;
 import buildcraft.api.core.Position;
-import buildcraft.core.BlockIndex;
 import buildcraft.core.LaserData;
 import buildcraft.core.network.PacketUpdate;
 

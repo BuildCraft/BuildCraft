@@ -15,11 +15,11 @@ import net.minecraft.world.WorldServer;
 
 import net.minecraftforge.common.ForgeHooks;
 
-import buildcraft.core.BlockIndex;
+import buildcraft.api.core.BlockIndex;
+import buildcraft.api.robots.AIRobot;
+import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.BlockUtil;
-import buildcraft.robots.AIRobot;
-import buildcraft.robots.EntityRobotBase;
 
 public class AIRobotBreakWithTool extends AIRobot {
 

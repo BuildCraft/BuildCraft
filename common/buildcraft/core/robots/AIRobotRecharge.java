@@ -8,11 +8,11 @@
  */
 package buildcraft.core.robots;
 
+import buildcraft.api.robots.AIRobot;
+import buildcraft.api.robots.DockingStationRegistry;
+import buildcraft.api.robots.EntityRobotBase;
+import buildcraft.api.robots.IDockingStation;
 import buildcraft.api.transport.IPipeTile.PipeType;
-import buildcraft.robots.AIRobot;
-import buildcraft.robots.DockingStation;
-import buildcraft.robots.DockingStationRegistry;
-import buildcraft.robots.EntityRobotBase;
 import buildcraft.transport.PipeTransportPower;
 
 public class AIRobotRecharge extends AIRobot {
@@ -26,23 +26,26 @@ public class AIRobotRecharge extends AIRobot {
 	@Override
 	public void update() {
 		if (robot.getCurrentDockingStation() == null
-				|| robot.getCurrentDockingStation().pipe.getPipeType() != PipeType.POWER) {
+				|| ((DockingStation) robot.getCurrentDockingStation()).pipe.getPipeType() != PipeType.POWER) {
 
-			for (DockingStation d : DockingStationRegistry.getStations()) {
-				if (d.reserved != null) {
+			for (IDockingStation d : DockingStationRegistry.getStations()) {
+				DockingStation station = (DockingStation) d;
+
+				if (station.reserved != null) {
 					continue;
 				}
 
-				if (d.pipe.getPipeType() == PipeType.POWER) {
-					startDelegateAI(new AIRobotGoToDock(robot, d));
+				if (station.pipe.getPipeType() == PipeType.POWER) {
+					startDelegateAI(new AIRobotGoToDock(robot, station));
 					break;
 				}
 			}
 		} else {
-			PipeTransportPower powerProvider = (PipeTransportPower) robot.getCurrentDockingStation().pipe.pipe.transport;
+			PipeTransportPower powerProvider = (PipeTransportPower) ((DockingStation) robot.getCurrentDockingStation()).pipe.pipe.transport;
 
-			powerProvider.requestEnergy(robot.getCurrentDockingStation().side, 100);
-			robot.setEnergy(robot.getEnergy() + powerProvider.consumePower(robot.getCurrentDockingStation().side, 100));
+			powerProvider.requestEnergy(robot.getCurrentDockingStation().side(), 100);
+			robot.setEnergy(robot.getEnergy()
+					+ powerProvider.consumePower(robot.getCurrentDockingStation().side(), 100));
 
 			if (robot.getEnergy() >= EntityRobotBase.MAX_ENERGY) {
 				terminate();

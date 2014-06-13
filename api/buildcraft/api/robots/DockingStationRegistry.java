@@ -6,7 +6,7 @@
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-package buildcraft.robots;
+package buildcraft.api.robots;
 
 import java.security.InvalidParameterException;
 import java.util.Collection;
@@ -16,7 +16,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 
 public final class DockingStationRegistry {
 
-	private static HashMap<StationIndex, DockingStation> stations = new HashMap<StationIndex, DockingStation>();
+	private static HashMap<StationIndex, IDockingStation> stations = new HashMap<StationIndex, IDockingStation>();
 
 	private DockingStationRegistry() {
 
@@ -56,7 +56,7 @@ public final class DockingStationRegistry {
 		}
 	}
 
-	public static DockingStation getStation(int x, int y, int z, ForgeDirection side) {
+	public static IDockingStation getStation(int x, int y, int z, ForgeDirection side) {
 		StationIndex index = new StationIndex(x, y, z, side);
 
 		if (stations.containsKey(index)) {
@@ -66,11 +66,11 @@ public final class DockingStationRegistry {
 		}
 	}
 
-	public static Collection<DockingStation> getStations() {
+	public static Collection<IDockingStation> getStations() {
 		return stations.values();
 	}
 
-	public static void registerStation(DockingStation station) {
+	public static void registerStation(IDockingStation station) {
 		StationIndex index = toIndex(station);
 
 		if (stations.containsKey(index)) {
@@ -80,7 +80,7 @@ public final class DockingStationRegistry {
 		}
 	}
 
-	public static void removeStation(DockingStation station) {
+	public static void removeStation(IDockingStation station) {
 		StationIndex index = toIndex(station);
 
 		if (stations.containsKey(index)) {
@@ -88,8 +88,8 @@ public final class DockingStationRegistry {
 		}
 	}
 
-	private static StationIndex toIndex(DockingStation station) {
-		return new StationIndex(station.pipe.xCoord, station.pipe.yCoord, station.pipe.zCoord, station.side);
+	private static StationIndex toIndex(IDockingStation station) {
+		return new StationIndex(station.x(), station.y(), station.z(), station.side());
 	}
 
 	public static void clear() {

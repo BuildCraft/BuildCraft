@@ -30,15 +30,15 @@ import buildcraft.api.boards.RedstoneBoardRegistry;
 import buildcraft.api.boards.RedstoneBoardRobot;
 import buildcraft.api.boards.RedstoneBoardRobotNBT;
 import buildcraft.api.core.SafeTimeTracker;
+import buildcraft.api.robots.DockingStationRegistry;
+import buildcraft.api.robots.EntityRobotBase;
+import buildcraft.api.robots.IDockingStation;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.LaserData;
 import buildcraft.core.network.RPC;
 import buildcraft.core.network.RPCHandler;
 import buildcraft.core.network.RPCMessageInfo;
 import buildcraft.core.network.RPCSide;
-import buildcraft.robots.DockingStation;
-import buildcraft.robots.DockingStationRegistry;
-import buildcraft.robots.EntityRobotBase;
 
 public class EntityRobot extends EntityRobotBase implements
 		IEntityAdditionalSpawnData, IInventory {
@@ -333,8 +333,11 @@ public class EntityRobot extends EntityRobotBase implements
 		super.readEntityFromNBT(nbt);
 
 		if (nbt.hasKey("dockX")) {
-			mainDockingStation = DockingStationRegistry.getStation(nbt.getInteger("dockX"), nbt.getInteger("dockY"),
-				nbt.getInteger("dockZ"), ForgeDirection.values()[nbt.getInteger("dockSide")]);
+			mainDockingStation = (DockingStation) DockingStationRegistry.getStation(
+					nbt.getInteger("dockX"),
+					nbt.getInteger("dockY"),
+					nbt.getInteger("dockZ"),
+					ForgeDirection.values()[nbt.getInteger("dockSide")]);
 		}
 
 		/*
@@ -510,12 +513,12 @@ public class EntityRobot extends EntityRobotBase implements
 	}
 
 	@Override
-	public void setCurrentDockingStation(DockingStation station) {
+	public void setCurrentDockingStation(IDockingStation station) {
 		if (currentDockingStation != null) {
 			currentDockingStation.reserved = null;
 		}
 
-		currentDockingStation = station;
+		currentDockingStation = (DockingStation) station;
 
 		if (currentDockingStation != null) {
 			currentDockingStation.reserved = this;

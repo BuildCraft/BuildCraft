@@ -14,7 +14,7 @@ import net.minecraft.world.World;
 
 import buildcraft.api.boards.RedstoneBoardRobotNBT;
 import buildcraft.api.core.BuildCraftAPI;
-import buildcraft.robots.EntityRobotBase;
+import buildcraft.api.robots.EntityRobotBase;
 
 public class BoardRobotLeaveCutter extends BoardRobotGenericBreakBlock {
 

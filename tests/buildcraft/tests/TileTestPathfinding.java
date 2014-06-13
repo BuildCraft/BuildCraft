@@ -5,7 +5,7 @@ import java.util.LinkedList;
 import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntity;
 
-import buildcraft.core.BlockIndex;
+import buildcraft.api.core.BlockIndex;
 import buildcraft.core.utils.PathFinding;
 
 public class TileTestPathfinding extends TileEntity {

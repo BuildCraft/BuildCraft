@@ -10,13 +10,13 @@ package buildcraft.core.robots.boards;
 
 import java.util.LinkedList;
 
-import buildcraft.core.BlockIndex;
+import buildcraft.api.core.BlockIndex;
+import buildcraft.api.robots.AIRobot;
+import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.robots.AIRobotMoveToBlock;
 import buildcraft.core.utils.IPathFound;
 import buildcraft.core.utils.PathFinding;
 import buildcraft.core.utils.PathFindingJob;
-import buildcraft.robots.AIRobot;
-import buildcraft.robots.EntityRobotBase;
 
 public class AIRobotSearchBlock extends AIRobot {
 

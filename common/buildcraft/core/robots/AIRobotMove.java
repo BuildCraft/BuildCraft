@@ -8,8 +8,8 @@
  */
 package buildcraft.core.robots;
 
-import buildcraft.robots.AIRobot;
-import buildcraft.robots.EntityRobotBase;
+import buildcraft.api.robots.AIRobot;
+import buildcraft.api.robots.EntityRobotBase;
 
 public abstract class AIRobotMove extends AIRobot {
 

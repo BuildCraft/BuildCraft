@@ -13,11 +13,11 @@ import net.minecraft.entity.item.EntityItem;
 
 import net.minecraftforge.common.util.ForgeDirection;
 
+import buildcraft.api.robots.AIRobot;
+import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.inventory.TransactorSimple;
 import buildcraft.core.inventory.filters.IStackFilter;
 import buildcraft.core.robots.AIRobotMoveToBlock;
-import buildcraft.robots.AIRobot;
-import buildcraft.robots.EntityRobotBase;
 
 public class AIRobotFetchItem extends AIRobot {
 

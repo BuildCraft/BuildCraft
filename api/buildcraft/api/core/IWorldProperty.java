@@ -6,15 +6,13 @@
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-package buildcraft.core;
+package buildcraft.api.core;
 
-import net.minecraft.block.Block;
-import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
 
-import buildcraft.api.core.BlockIndex;
+public interface IWorldProperty {
 
-public class BlockWrapper {
-	public BlockIndex index;
-	public TileEntity tile;
-	public Block block;
+	boolean get(World world, int x, int y, int z);
+
+	void clear();
 }

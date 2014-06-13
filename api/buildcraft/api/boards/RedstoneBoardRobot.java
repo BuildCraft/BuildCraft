@@ -10,9 +10,9 @@ package buildcraft.api.boards;
 
 import java.util.HashSet;
 
-import buildcraft.core.BlockIndex;
-import buildcraft.robots.AIRobot;
-import buildcraft.robots.EntityRobotBase;
+import buildcraft.api.core.BlockIndex;
+import buildcraft.api.robots.AIRobot;
+import buildcraft.api.robots.EntityRobotBase;
 
 public abstract class RedstoneBoardRobot extends AIRobot implements IRedstoneBoard<EntityRobotBase> {
 

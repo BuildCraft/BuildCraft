@@ -1,5 +1,5 @@
 
-package buildcraft.robots;
+package buildcraft.api.robots;
 
 public class AIRobot {
 	public EntityRobotBase robot;

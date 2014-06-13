@@ -32,10 +32,10 @@ import net.minecraftforge.fluids.IFluidHandler;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftFactory;
+import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.gates.IAction;
 import buildcraft.api.mj.MjBattery;
-import buildcraft.core.BlockIndex;
 import buildcraft.core.CoreConstants;
 import buildcraft.core.EntityBlock;
 import buildcraft.core.IMachine;

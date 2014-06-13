@@ -18,9 +18,9 @@ import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.BuildCraftBuilders;
 import buildcraft.api.blueprints.Translation;
+import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.core.NetworkData;
-import buildcraft.core.BlockIndex;
 import buildcraft.core.BlockScanner;
 import buildcraft.core.Box;
 import buildcraft.core.Box.Kind;

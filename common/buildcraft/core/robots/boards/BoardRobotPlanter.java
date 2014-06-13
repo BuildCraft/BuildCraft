@@ -10,9 +10,9 @@ package buildcraft.core.robots.boards;
 
 import buildcraft.api.boards.RedstoneBoardRobot;
 import buildcraft.api.boards.RedstoneBoardRobotNBT;
+import buildcraft.api.robots.AIRobot;
+import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.inventory.filters.OreStackFilter;
-import buildcraft.robots.AIRobot;
-import buildcraft.robots.EntityRobotBase;
 
 public class BoardRobotPlanter extends RedstoneBoardRobot {
 

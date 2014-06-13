@@ -21,12 +21,12 @@ import buildcraft.api.boards.RedstoneBoardRegistry;
 import buildcraft.api.boards.RedstoneBoardRobot;
 import buildcraft.api.boards.RedstoneBoardRobotNBT;
 import buildcraft.api.core.SafeTimeTracker;
+import buildcraft.api.robots.AIRobot;
+import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.inventory.filters.ArrayStackFilter;
 import buildcraft.core.inventory.filters.IStackFilter;
 import buildcraft.core.robots.AIRobotGoToDock;
-import buildcraft.robots.AIRobot;
-import buildcraft.robots.DockingStation;
-import buildcraft.robots.EntityRobotBase;
+import buildcraft.core.robots.DockingStation;
 import buildcraft.transport.PipeTransportItems;
 import buildcraft.transport.TileGenericPipe;
 import buildcraft.transport.TravelingItem;
@@ -81,7 +81,7 @@ public class BoardRobotPicker extends RedstoneBoardRobot {
 				startDelegateAI(new AIRobotFetchItem(robot, range, stackFilter));
 			} else {
 				// otherwise, let's return to base
-				startDelegateAI(new AIRobotGoToDock(robot, robot.getMainDockingStation()));
+				startDelegateAI(new AIRobotGoToDock(robot, (DockingStation) robot.getMainDockingStation()));
 			}
 		} else if (ai instanceof AIRobotGoToDock) {
 			emptyContainerInStation();
@@ -89,7 +89,7 @@ public class BoardRobotPicker extends RedstoneBoardRobot {
 	}
 
 	private void emptyContainerInStation() {
-		DockingStation station = robot.getCurrentDockingStation();
+		DockingStation station = (DockingStation) robot.getCurrentDockingStation();
 
 		TileGenericPipe pipe = (TileGenericPipe) robot.worldObj
 				.getTileEntity(station.pipe.xCoord, station.pipe.yCoord, station.pipe.zCoord);

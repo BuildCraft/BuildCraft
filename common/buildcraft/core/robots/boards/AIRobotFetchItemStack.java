@@ -14,18 +14,19 @@ import net.minecraft.tileentity.TileEntity;
 
 import net.minecraftforge.common.util.ForgeDirection;
 
+import buildcraft.api.robots.AIRobot;
+import buildcraft.api.robots.DockingStationRegistry;
+import buildcraft.api.robots.EntityRobotBase;
+import buildcraft.api.robots.IDockingStation;
 import buildcraft.core.inventory.ITransactor;
 import buildcraft.core.inventory.Transactor;
 import buildcraft.core.inventory.filters.IStackFilter;
 import buildcraft.core.robots.AIRobotGoToDock;
-import buildcraft.robots.AIRobot;
-import buildcraft.robots.DockingStation;
-import buildcraft.robots.DockingStationRegistry;
-import buildcraft.robots.EntityRobotBase;
+import buildcraft.core.robots.DockingStation;
 
 public class AIRobotFetchItemStack extends AIRobot {
 
-	private DockingStation station = null;
+	private DockingStation stationToDock = null;
 	private IStackFilter filter;
 
 	public AIRobotFetchItemStack(EntityRobotBase iRobot, IStackFilter iFilter) {
@@ -36,22 +37,24 @@ public class AIRobotFetchItemStack extends AIRobot {
 
 	@Override
 	public void update() {
-		for (DockingStation d : DockingStationRegistry.getStations()) {
-			if (d.reserved != null) {
+		for (IDockingStation d : DockingStationRegistry.getStations()) {
+			DockingStation station = (DockingStation) d;
+
+			if (station.reserved != null) {
 				continue;
 			}
 
 			for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
-				TileEntity nearbyTile = robot.worldObj.getTileEntity(d.pipe.xCoord + dir.offsetX, d.pipe.yCoord
-						+ dir.offsetY, d.pipe.zCoord
+				TileEntity nearbyTile = robot.worldObj.getTileEntity(d.x() + dir.offsetX, d.y()
+						+ dir.offsetY, d.z()
 						+ dir.offsetZ);
 
 				if (nearbyTile != null && nearbyTile instanceof IInventory) {
 					ITransactor trans = Transactor.getTransactorFor(nearbyTile);
 
 					if (trans.remove(filter, dir.getOpposite(), false) != null) {
-						station = d;
-						startDelegateAI(new AIRobotGoToDock(robot, station));
+						stationToDock = station;
+						startDelegateAI(new AIRobotGoToDock(robot, stationToDock));
 						return;
 					}
 				}
@@ -64,9 +67,9 @@ public class AIRobotFetchItemStack extends AIRobot {
 		ItemStack itemFound = null;
 
 		for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
-			TileEntity nearbyTile = robot.worldObj.getTileEntity(station.pipe.xCoord + dir.offsetX,
-					station.pipe.yCoord
-							+ dir.offsetY, station.pipe.zCoord + dir.offsetZ);
+			TileEntity nearbyTile = robot.worldObj.getTileEntity(stationToDock.pipe.xCoord + dir.offsetX,
+					stationToDock.pipe.yCoord
+							+ dir.offsetY, stationToDock.pipe.zCoord + dir.offsetZ);
 
 			if (nearbyTile != null && nearbyTile instanceof IInventory) {
 				ITransactor trans = Transactor.getTransactorFor(nearbyTile);

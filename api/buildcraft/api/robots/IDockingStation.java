@@ -6,20 +6,18 @@
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-package buildcraft.robots;
+package buildcraft.api.robots;
 
 import net.minecraftforge.common.util.ForgeDirection;
 
-import buildcraft.transport.TileGenericPipe;
+public interface IDockingStation {
 
-public class DockingStation {
-	public TileGenericPipe pipe;
-	public ForgeDirection side;
-	public EntityRobotBase reserved;
+	int x();
 
-	public DockingStation(TileGenericPipe iPipe, ForgeDirection iSide) {
-		pipe = iPipe;
-		side = iSide;
-	}
+	int y();
+
+	int z();
+
+	ForgeDirection side();
+
 }
-

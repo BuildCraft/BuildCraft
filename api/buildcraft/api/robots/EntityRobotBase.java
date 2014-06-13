@@ -6,7 +6,7 @@
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-package buildcraft.robots;
+package buildcraft.api.robots;
 
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.inventory.IInventory;
@@ -31,11 +31,11 @@ public abstract class EntityRobotBase extends EntityLiving implements IInventory
 
 	public abstract boolean isMoving();
 
-	public abstract void setCurrentDockingStation(DockingStation station);
+	public abstract void setCurrentDockingStation(IDockingStation station);
 
-	public abstract DockingStation getCurrentDockingStation();
+	public abstract IDockingStation getCurrentDockingStation();
 
-	public abstract DockingStation getMainDockingStation();
+	public abstract IDockingStation getMainDockingStation();
 
 	public abstract RedstoneBoardRobot getBoard();
 
