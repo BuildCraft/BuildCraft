@@ -167,7 +167,6 @@ public class PipeItemsObsidian extends Pipe<PipeTransportItems> {
 			return false;
 		}
 
-		@SuppressWarnings("rawtypes")
 		List<Entity> discoveredEntities = container.getWorldObj().getEntitiesWithinAABB(Entity.class, box);
 
 		for (Entity entity : discoveredEntities) {

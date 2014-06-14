@@ -227,7 +227,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 				return false;
 			}
 
-			int meta = world.getBlockMetadata(i, j, k);
+			//int meta = world.getBlockMetadata(i, j, k);
 
 			// TODO: the exculded list is not taken into account. This probably
 			// needs to be migrated to an implementation based on names instead
@@ -493,8 +493,6 @@ public class BuildCraftTransport extends BuildCraftMod {
 	public static Item buildPipe(Class<? extends Pipe> clas,
 			String descr, CreativeTabBuildCraft creativeTab,
 			Object... ingredients) {
-		String name = Character.toLowerCase(clas.getSimpleName().charAt(0)) + clas.getSimpleName().substring(1);
-
 		ItemPipe res = BlockGenericPipe.registerPipe(clas, creativeTab);
 		res.setUnlocalizedName(clas.getSimpleName());
 

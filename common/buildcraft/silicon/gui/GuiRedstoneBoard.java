@@ -60,13 +60,9 @@ public class GuiRedstoneBoard extends GuiAdvancedInterface {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public void initGui() {
 		super.initGui();
-		int xscreen = (width - xSize) / 2;
-		int yscreen = (height - ySize) / 2;
-
 	}
 
 	@Override

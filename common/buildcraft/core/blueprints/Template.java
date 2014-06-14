@@ -8,7 +8,6 @@
  */
 package buildcraft.core.blueprints;
 
-import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -37,14 +36,12 @@ public class Template extends BlueprintBase {
 
 	@Override
 	public void readFromWorld(IBuilderContext context, TileEntity anchorTile, int x, int y, int z) {
-		Block block = anchorTile.getWorldObj().getBlock(x, y, z);
-
 		int posX = (int) (x - context.surroundingBox().pMin().x);
 		int posY = (int) (y - context.surroundingBox().pMin().y);
 		int posZ = (int) (z - context.surroundingBox().pMin().z);
 
 		if (!BuildCraftAPI.isSoftBlock(anchorTile.getWorldObj(), x, y, z)) {
-			contents [posX][posY][posZ] = new SchematicMask(true);
+			contents[posX][posY][posZ] = new SchematicMask(true);
 		}
 	}
 
@@ -54,7 +51,7 @@ public class Template extends BlueprintBase {
 		// per mask entry, not a byte. However, this is fine, as compression
 		// will fix it.
 
-		byte [] data = new byte [sizeX * sizeY * sizeZ];
+		byte [] data = new byte[sizeX * sizeY * sizeZ];
 		int ind = 0;
 
 		for (int x = 0; x < sizeX; ++x) {
@@ -78,7 +75,7 @@ public class Template extends BlueprintBase {
 			for (int y = 0; y < sizeY; ++y) {
 				for (int z = 0; z < sizeZ; ++z) {
 					if (data [ind] == 1) {
-						contents [x][y][z] = new SchematicMask(true);
+						contents[x][y][z] = new SchematicMask(true);
 					}
 
 					ind++;

@@ -40,7 +40,6 @@ public abstract class BlueprintBase {
 
 	protected MappingRegistry mapping = new MappingRegistry();
 
-	private String version = "";
 	private ComputeDataThread computeData;
 	private byte [] data;
 
@@ -122,7 +121,7 @@ public abstract class BlueprintBase {
 		context.rotateLeft();
 	}
 
-	public void writeToNBT (NBTTagCompound nbt) {
+	public void writeToNBT(NBTTagCompound nbt) {
 		nbt.setString("version", Version.VERSION);
 
 		if (this instanceof Template) {
@@ -164,10 +163,6 @@ public abstract class BlueprintBase {
 	}
 
 	public void readFromNBT (NBTTagCompound nbt) {
-		BlueprintBase result = null;
-
-		String versionRead = nbt.getString("version");
-
 		sizeX = nbt.getInteger("sizeX");
 		sizeY = nbt.getInteger("sizeY");
 		sizeZ = nbt.getInteger("sizeZ");
@@ -189,10 +184,10 @@ public abstract class BlueprintBase {
 			excavate = true;
 		}
 
-		contents = new SchematicBlockBase [sizeX][sizeY][sizeZ];
+		contents = new SchematicBlockBase[sizeX][sizeY][sizeZ];
 
 		try {
-			loadContents (nbt);
+			loadContents(nbt);
 		} catch (BptError e) {
 			e.printStackTrace();
 		}
@@ -217,7 +212,7 @@ public abstract class BlueprintBase {
 		return res;
 	}
 
-	public BptContext getContext (World world, Box box) {
+	public BptContext getContext(World world, Box box) {
 		return new BptContext(world, box, mapping);
 	}
 
@@ -240,7 +235,7 @@ public abstract class BlueprintBase {
 	 * This data is computed asynchronously. If the data is not yet available,
 	 * null will be returned.
 	 */
-	public synchronized byte [] getData () {
+	public synchronized byte[] getData() {
 		if (data != null) {
 			return data;
 		} else if (computeData == null) {
@@ -263,7 +258,7 @@ public abstract class BlueprintBase {
 
 	public abstract void readFromWorld(IBuilderContext context, TileEntity anchorTile, int x, int y, int z);
 
-	public abstract ItemStack getStack ();
+	public abstract ItemStack getStack();
 
 	public void readEntitiesFromWorld(IBuilderContext context, TileEntity anchorTile) {
 

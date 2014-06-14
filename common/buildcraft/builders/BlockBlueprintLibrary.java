@@ -47,8 +47,6 @@ public class BlockBlueprintLibrary extends BlockContainer {
 
 		TileEntity tile = world.getTileEntity(i, j, k);
 		if (tile instanceof TileBlueprintLibrary) {
-			TileBlueprintLibrary tileBlueprint = (TileBlueprintLibrary) tile;
-
 			if (!world.isRemote) {
 				entityplayer.openGui(BuildCraftBuilders.instance, GuiIds.BLUEPRINT_LIBRARY, world, i, j, k);
 			}
