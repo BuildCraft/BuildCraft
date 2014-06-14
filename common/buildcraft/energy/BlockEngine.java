@@ -166,7 +166,7 @@ public class BlockEngine extends BlockBuildCraft implements ICustomHighlight {
 		if (tile instanceof TileEngine) {
 			return boxes[((TileEngine) tile).orientation.ordinal()];
 		} else {
-			return new AxisAlignedBB[]{AxisAlignedBB.getAABBPool().getAABB(0.0, 0.0, 0.0, 1.0, 1.0, 1.0)};
+			return new AxisAlignedBB[]{AxisAlignedBB.getBoundingBox(0.0, 0.0, 0.0, 1.0, 1.0, 1.0)};
 		}
 	}
 
