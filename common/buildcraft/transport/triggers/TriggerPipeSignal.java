@@ -76,11 +76,17 @@ public class TriggerPipeSignal extends BCTrigger {
 					return StatementIconProvider.Trigger_PipeSignal_Yellow_Inactive;
 			}
 		}
+
 		return -1;
 	}
 
 	@Override
 	public ITrigger rotateLeft() {
 		return this;
+	}
+
+	@Override
+	public ITriggerParameter createParameter(int index) {
+		return new TriggerParameterSignal(this);
 	}
 }

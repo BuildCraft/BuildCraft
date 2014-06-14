@@ -22,10 +22,18 @@ import buildcraft.core.triggers.StatementIconProvider;
 public class TriggerParameterSignal implements ITriggerParameter {
 
 	@NetworkData
-	boolean active;
+	private boolean active;
 
 	@NetworkData
-	PipeWire color;
+	private PipeWire color = PipeWire.RED;
+
+	public TriggerParameterSignal() {
+
+	}
+
+	public TriggerParameterSignal(TriggerPipeSignal trigger) {
+
+	}
 
 	@Override
 	public ItemStack getItemStackToDraw() {
@@ -87,6 +95,4 @@ public class TriggerParameterSignal implements ITriggerParameter {
 	@Override
 	public void readFromNBT(NBTTagCompound compound) {
 	}
-
-
 }

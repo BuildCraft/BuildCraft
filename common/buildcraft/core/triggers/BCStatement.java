@@ -73,7 +73,7 @@ public abstract class BCStatement implements IStatement {
 	}
 
 	@Override
-	public final ITriggerParameter createParameter(int index) {
+	public ITriggerParameter createParameter(int index) {
 		return new TriggerParameter();
 	}
 

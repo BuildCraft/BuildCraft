@@ -288,7 +288,12 @@ public class ClassMapping extends ClassSerializer {
 		}
 
 		for (Field f : enumFields) {
-			data.writeByte(((Enum) f.get(obj)).ordinal());
+			if (f.get(obj) == null) {
+				data.writeBoolean(false);
+			} else {
+				data.writeBoolean(true);
+				data.writeByte(((Enum) f.get(obj)).ordinal());
+			}
 		}
 
 		for (Field f : floatFields) {
@@ -358,7 +363,9 @@ public class ClassMapping extends ClassSerializer {
 		}
 
 		for (Field f : enumFields) {
-			f.set(obj, ((Class) f.getGenericType()).getEnumConstants()[data.readByte()]);
+			if (data.readBoolean()) {
+				f.set(obj, ((Class) f.getGenericType()).getEnumConstants()[data.readByte()]);
+			}
 		}
 
 		for (Field f : floatFields) {
