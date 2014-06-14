@@ -155,7 +155,7 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
 			if (!stack.isStackable()) {
 				return null;
 			}
-			if (stack.getItem().hasContainerItem()) {
+			if (stack.getItem().hasContainerItem(stack)) {
 				return null;
 			}
 		}
@@ -278,7 +278,7 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
 		if (!stack.isStackable()) {
 			return false;
 		}
-		if (stack.getItem().hasContainerItem()) {
+		if (stack.getItem().hasContainerItem(stack)) {
 			return false;
 		}
 		if (getStackInSlot(slot) == null) {
