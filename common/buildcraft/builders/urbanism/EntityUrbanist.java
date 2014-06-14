@@ -56,7 +56,7 @@ public class EntityUrbanist extends EntityLivingBase {
 	public void onUpdate() {
         Vec3 look = this.getLook(1.0F).normalize();
 
-        Vec3 worldUp = worldObj.getWorldVec3Pool().getVecFromPool(0, 1, 0);
+        Vec3 worldUp = Vec3.createVectorHelper(0, 1, 0);
         Vec3 side = worldUp.crossProduct(look).normalize();
         Vec3 forward = side.crossProduct(worldUp).normalize();
 
@@ -158,7 +158,7 @@ public class EntityUrbanist extends EntityLivingBase {
 
 		    look = this.getLook(1.0F).normalize();
 
-			Vec3 aimed = worldObj.getWorldVec3Pool().getVecFromPool(
+			Vec3 aimed = Vec3.createVectorHelper(
 					localPos.xCoord + look.xCoord * 200,
 					localPos.yCoord + look.yCoord * 200,
 					localPos.zCoord + look.zCoord * 200);
