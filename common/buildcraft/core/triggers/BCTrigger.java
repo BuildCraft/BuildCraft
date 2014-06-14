@@ -8,7 +8,13 @@
  */
 package buildcraft.core.triggers;
 
+import net.minecraft.tileentity.TileEntity;
+
+import net.minecraftforge.common.util.ForgeDirection;
+
 import buildcraft.api.gates.ITrigger;
+import buildcraft.api.gates.ITriggerParameter;
+import buildcraft.api.transport.IPipe;
 
 /**
  * This class has to be implemented to create new triggers kinds to BuildCraft
@@ -19,6 +25,23 @@ public abstract class BCTrigger extends BCStatement implements ITrigger {
 
 	public BCTrigger(String... uniqueTag) {
 		super(uniqueTag);
+	}
+
+	@Override
+	public boolean isTriggerActive(IPipe pipe, ITriggerParameter[] parameters) {
+		ITriggerParameter p = parameters[0];
+
+		for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
+			if (isTriggerActive(side.getOpposite(), pipe.getAdjacentTile(side), p)) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	public boolean isTriggerActive(ForgeDirection side, TileEntity tile, ITriggerParameter parameter) {
+		return false;
 	}
 
 }

@@ -92,7 +92,7 @@ import buildcraft.core.robots.EntityRobot;
 import buildcraft.core.triggers.ActionMachineControl;
 import buildcraft.core.triggers.ActionMachineControl.Mode;
 import buildcraft.core.triggers.ActionRedstoneOutput;
-import buildcraft.core.triggers.ActionTriggerIconProvider;
+import buildcraft.core.triggers.StatementIconProvider;
 import buildcraft.core.triggers.BCAction;
 import buildcraft.core.triggers.BCTrigger;
 import buildcraft.core.triggers.DefaultActionProvider;
@@ -371,7 +371,7 @@ public class BuildCraftCore extends BuildCraftMod {
 		if (event.map.getTextureType() == 1) {
 			iconProvider = new CoreIconProvider();
 			iconProvider.registerIcons(event.map);
-			ActionTriggerIconProvider.INSTANCE.registerIcons(event.map);
+			StatementIconProvider.INSTANCE.registerIcons(event.map);
 		} else if (event.map.getTextureType() == 0) {
 			BuildCraftCore.redLaserTexture = event.map.registerIcon("buildcraft:blockRedLaser");
 			BuildCraftCore.blueLaserTexture = event.map.registerIcon("buildcraft:blockBlueLaser");

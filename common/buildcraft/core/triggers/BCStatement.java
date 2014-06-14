@@ -49,7 +49,7 @@ public abstract class BCStatement implements IStatement {
 	@Override
 	@SideOnly(Side.CLIENT)
 	public IIcon getIcon() {
-		return ActionTriggerIconProvider.INSTANCE.getIcon(getIconIndex());
+		return StatementIconProvider.INSTANCE.getIcon(getIconIndex());
 	}
 
 	@Override

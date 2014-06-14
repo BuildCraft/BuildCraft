@@ -8,68 +8,77 @@
  */
 package buildcraft.transport.triggers;
 
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.IIcon;
 
+import buildcraft.api.core.NetworkData;
+import buildcraft.api.gates.IStatement;
 import buildcraft.api.gates.ITriggerParameter;
+import buildcraft.api.transport.IPipeTile;
+import buildcraft.api.transport.PipeWire;
+import buildcraft.core.triggers.StatementIconProvider;
 
 public class TriggerParameterSignal implements ITriggerParameter {
 
-	protected ItemStack stack;
+	@NetworkData
+	boolean active;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see net.minecraft.src.buildcraft.api.gates.ITriggerParameter#getItemStack()
-	 */
+	@NetworkData
+	PipeWire color;
+
 	@Override
-	public ItemStack getItemStack() {
-		return stack;
+	public ItemStack getItemStackToDraw() {
+		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see net.minecraft.src.buildcraft.api.gates.ITriggerParameter#set(net.minecraft.src.ItemStack)
-	 */
 	@Override
-	public void set(ItemStack stack) {
-		if (stack != null) {
-			this.stack = stack.copy();
-			this.stack.stackSize = 1;
+	public IIcon getIconToDraw() {
+		int id = 0;
+
+		if (active) {
+			switch (color) {
+				case RED:
+					id = StatementIconProvider.Trigger_PipeSignal_Red_Active;
+				case BLUE:
+					id = StatementIconProvider.Trigger_PipeSignal_Blue_Active;
+				case GREEN:
+					id = StatementIconProvider.Trigger_PipeSignal_Green_Active;
+				case YELLOW:
+					id = StatementIconProvider.Trigger_PipeSignal_Yellow_Active;
+			}
+		} else {
+			switch (color) {
+				case RED:
+					id = StatementIconProvider.Trigger_PipeSignal_Red_Inactive;
+				case BLUE:
+					id = StatementIconProvider.Trigger_PipeSignal_Blue_Inactive;
+				case GREEN:
+					id = StatementIconProvider.Trigger_PipeSignal_Green_Inactive;
+				case YELLOW:
+					id = StatementIconProvider.Trigger_PipeSignal_Yellow_Inactive;
+			}
 		}
+
+		return StatementIconProvider.INSTANCE.getIcon(id);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see net.minecraft.src.buildcraft.api.gates.ITriggerParameter#writeToNBT(net.minecraft.src.NBTTagCompound)
-	 */
+	@Override
+	public void clicked(IPipeTile pipe, IStatement stmt, ItemStack stack) {
+		if (stmt instanceof TriggerPipeSignal) {
+			TriggerPipeSignal signal = (TriggerPipeSignal) stmt;
+
+		}
+
+	}
+
 	@Override
 	public void writeToNBT(NBTTagCompound compound) {
-		if (stack != null) {
-			NBTTagCompound tagCompound = new NBTTagCompound();
-			stack.writeToNBT(tagCompound);
-			compound.setTag("stack", tagCompound);
-		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see net.minecraft.src.buildcraft.api.gates.ITriggerParameter#readFromNBT(net.minecraft.src.NBTTagCompound)
-	 */
 	@Override
 	public void readFromNBT(NBTTagCompound compound) {
-		// Legacy code to prevent existing gates from losing their contents
-		int itemID = compound.getInteger("itemID");
-		if (itemID != 0) {
-			stack = new ItemStack((Item) Item.itemRegistry.getObject(itemID), 1, compound.getInteger("itemDMG"));
-			return;
-		}
-		
-		stack = ItemStack.loadItemStackFromNBT(compound.getCompoundTag("stack"));
 	}
+
 
 }

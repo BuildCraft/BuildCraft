@@ -9,14 +9,15 @@
 package buildcraft.core.triggers;
 
 import net.minecraft.tileentity.TileEntity;
+
 import net.minecraftforge.common.util.ForgeDirection;
-import buildcraft.api.gates.ITileTrigger;
+
 import buildcraft.api.gates.ITrigger;
 import buildcraft.api.gates.ITriggerParameter;
 import buildcraft.core.IMachine;
 import buildcraft.core.utils.StringUtils;
 
-public class TriggerMachine extends BCTrigger implements ITileTrigger {
+public class TriggerMachine extends BCTrigger {
 
 	boolean active;
 
@@ -49,9 +50,9 @@ public class TriggerMachine extends BCTrigger implements ITileTrigger {
 	@Override
 	public int getIconIndex() {
 		if (active) {
-			return ActionTriggerIconProvider.Trigger_Machine_Active;
+			return StatementIconProvider.Trigger_Machine_Active;
 		} else {
-			return ActionTriggerIconProvider.Trigger_Machine_Inactive;
+			return StatementIconProvider.Trigger_Machine_Inactive;
 		}
 	}
 

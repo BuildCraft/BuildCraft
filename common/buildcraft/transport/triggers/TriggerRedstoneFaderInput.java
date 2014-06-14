@@ -16,12 +16,12 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 import buildcraft.api.gates.ITrigger;
 import buildcraft.api.gates.ITriggerParameter;
+import buildcraft.api.transport.IPipe;
 import buildcraft.core.triggers.BCTrigger;
 import buildcraft.core.utils.StringUtils;
-import buildcraft.transport.IPipeTrigger;
-import buildcraft.transport.Pipe;
+import buildcraft.transport.TileGenericPipe;
 
-public class TriggerRedstoneFaderInput extends BCTrigger implements IPipeTrigger {
+public class TriggerRedstoneFaderInput extends BCTrigger {
 
 	public final int level;
 	@SideOnly(Side.CLIENT)
@@ -39,8 +39,8 @@ public class TriggerRedstoneFaderInput extends BCTrigger implements IPipeTrigger
 	}
 
 	@Override
-	public boolean isTriggerActive(Pipe pipe, ITriggerParameter parameter) {
-		return pipe.container.redstoneInput == level;
+	public boolean isTriggerActive(IPipe pipe, ITriggerParameter[] parameters) {
+		return ((TileGenericPipe) pipe.getTile()).redstoneInput == level;
 	}
 
 	@Override

@@ -10,11 +10,11 @@ package buildcraft.core.triggers;
 
 import buildcraft.api.gates.ITrigger;
 import buildcraft.api.gates.ITriggerParameter;
+import buildcraft.api.transport.IPipe;
 import buildcraft.core.utils.StringUtils;
-import buildcraft.transport.IPipeTrigger;
 import buildcraft.transport.Pipe;
 
-public class TriggerRedstoneInput extends BCTrigger implements IPipeTrigger {
+public class TriggerRedstoneInput extends BCTrigger {
 
 	boolean active;
 
@@ -29,11 +29,12 @@ public class TriggerRedstoneInput extends BCTrigger implements IPipeTrigger {
 	}
 
 	@Override
-	public boolean isTriggerActive(Pipe pipe, ITriggerParameter parameter) {
+	public boolean isTriggerActive(IPipe pipe, ITriggerParameter[] parameters) {
 		if (active) {
-			return isBeingPowered(pipe);
+			return isBeingPowered((Pipe) pipe);
+		} else {
+			return !isBeingPowered((Pipe) pipe);
 		}
-		return !isBeingPowered(pipe);
 	}
 
 	private boolean isBeingPowered(Pipe pipe) {
@@ -42,7 +43,7 @@ public class TriggerRedstoneInput extends BCTrigger implements IPipeTrigger {
 
 	@Override
 	public int getIconIndex() {
-		return active ? ActionTriggerIconProvider.Trigger_RedstoneInput_Active : ActionTriggerIconProvider.Trigger_RedstoneInput_Inactive;
+		return active ? StatementIconProvider.Trigger_RedstoneInput_Active : StatementIconProvider.Trigger_RedstoneInput_Inactive;
 	}
 
 	@Override

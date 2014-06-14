@@ -20,7 +20,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ICrafting;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
-import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 
@@ -32,12 +31,14 @@ import buildcraft.api.gates.IOverrideDefaultTriggers;
 import buildcraft.api.gates.ITrigger;
 import buildcraft.api.gates.ITriggerParameter;
 import buildcraft.api.gates.StatementManager;
-import buildcraft.api.gates.TriggerParameter;
 import buildcraft.core.gui.BuildCraftContainer;
 import buildcraft.core.network.PacketCoordinates;
 import buildcraft.core.network.PacketIds;
 import buildcraft.core.network.PacketPayload;
 import buildcraft.core.network.PacketUpdate;
+import buildcraft.core.network.RPC;
+import buildcraft.core.network.RPCHandler;
+import buildcraft.core.network.RPCSide;
 import buildcraft.core.utils.Utils;
 import buildcraft.transport.ActionState;
 import buildcraft.transport.Pipe;
@@ -182,69 +183,6 @@ public class ContainerGateInterface extends BuildCraftContainer {
 	}
 
 	/**
-	 * Sets the currently selected actions and triggers according to packet.
-	 *
-	 * @param packet
-	 */
-	public void setSelection(PacketUpdate packet, boolean notify) {
-		PacketPayload payload = packet.payload;
-		ByteBuf data = payload.stream;
-
-		int position = data.readInt();
-
-		setTrigger(position, (ITrigger) StatementManager.statements.get(Utils.readUTF(data)), notify);
-		setAction(position, (IAction) StatementManager.statements.get(Utils.readUTF(data)), notify);
-
-		ItemStack parameter = Utils.readStack(data);
-
-		if (parameter != null) {
-			ITriggerParameter param = new TriggerParameter();
-			param.set(parameter);
-			setTriggerParameter(position, param, notify);
-		} else {
-			setTriggerParameter(position, null, notify);
-		}
-	}
-
-	private PacketPayload getSelectionPayload(final int position) {
-		PacketPayload payload = new PacketPayload(new PacketPayload.StreamWriter() {
-			@Override
-			public void writeData(ByteBuf data) {
-				data.writeInt(position);
-
-				if (pipe.gate.triggers[position] != null) {
-					Utils.writeUTF(data, pipe.gate.triggers[position].getUniqueTag());
-				} else {
-					Utils.writeUTF(data, "");
-				}
-
-				if (pipe.gate.actions[position] != null) {
-					Utils.writeUTF(data, pipe.gate.actions[position].getUniqueTag());
-				} else {
-					Utils.writeUTF(data, "");
-				}
-
-				if (pipe.gate.triggerParameters[position] != null && pipe.gate.triggerParameters[position].getItemStack() != null) {
-					Utils.writeStack(data, pipe.gate.triggerParameters[position].getItemStack());
-				} else {
-					Utils.writeStack(data, null);
-				}
-			}
-		});
-
-		return payload;
-	}
-
-	public void sendSelectionChange(int position) {
-		if (pipe.container.getWorld().isRemote) {
-			BuildCraftTransport.instance.sendToServer(new PacketUpdate(
-					PacketIds.GATE_SELECTION_CHANGE, pipe.container.xCoord,
-					pipe.container.yCoord, pipe.container.zCoord,
-					getSelectionPayload(position)));
-		}
-	}
-
-	/**
 	 * Initializes the list of triggers and actions on the gate and
 	 * (re-)requests the current selection on the gate if needed.
 	 */
@@ -374,7 +312,10 @@ public class ContainerGateInterface extends BuildCraftContainer {
 		}
 
 		for (int position = 0; position < pipe.gate.material.numSlots; position++) {
-			BuildCraftTransport.instance.sendToPlayer(player, new PacketUpdate(PacketIds.GATE_SELECTION, pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord, getSelectionPayload(position)));
+			for (int p = 0; p < 3; ++p) {
+				RPCHandler.rpcPlayer(player, this, "setTriggerParameter", position, p,
+						pipe.gate.getTriggerParameter(position, p), false);
+			}
 		}
 	}
 
@@ -413,27 +354,33 @@ public class ContainerGateInterface extends BuildCraftContainer {
 		}
 	}
 
-	public void setTrigger(int position, ITrigger trigger, boolean notify) {
+	@RPC(RPCSide.BOTH)
+	public void setTrigger(int trigger, String tag, boolean notifyServer) {
 		if (pipe.gate == null) {
 			return;
 		}
 
-		pipe.gate.setTrigger(position, trigger);
+		if (tag != null) {
+			pipe.gate.setTrigger(trigger, (ITrigger) StatementManager.statements.get(tag));
+		} else {
+			pipe.gate.setTrigger(trigger, null);
+		}
 
-		if (pipe.container.getWorldObj().isRemote && notify) {
-			sendSelectionChange(position);
+		if (pipe.container.getWorldObj().isRemote && notifyServer) {
+			RPCHandler.rpcServer(this, "setTrigger", trigger, tag, false);
 		}
 	}
 
-	public void setTriggerParameter(int position, ITriggerParameter parameter, boolean notify) {
+	@RPC(RPCSide.BOTH)
+	public void setTriggerParameter(int trigger, int param, ITriggerParameter parameter, boolean notifyServer) {
 		if (pipe.gate == null) {
 			return;
 		}
 
-		pipe.gate.setTriggerParameter(position, parameter);
+		pipe.gate.setTriggerParameter(trigger, param, parameter);
 
-		if (pipe.container.getWorldObj().isRemote && notify) {
-			sendSelectionChange(position);
+		if (pipe.container.getWorldObj().isRemote && notifyServer) {
+			RPCHandler.rpcServer(this, "setTriggerParameter", trigger, param, parameter, false);
 		}
 	}
 
@@ -464,11 +411,20 @@ public class ContainerGateInterface extends BuildCraftContainer {
 		return descending ? potentialActions.descendingIterator() : potentialActions.iterator();
 	}
 
-	public void setAction(int position, IAction action, boolean notify) {
-		pipe.gate.setAction(position, action);
+	@RPC(RPCSide.BOTH)
+	public void setAction(int action, String tag, boolean notifyServer) {
+		if (pipe.gate == null) {
+			return;
+		}
 
-		if (pipe.container.getWorldObj().isRemote && notify) {
-			sendSelectionChange(position);
+		if (tag != null) {
+			pipe.gate.setAction(action, (IAction) StatementManager.statements.get(tag));
+		} else {
+			pipe.gate.setAction(action, null);
+		}
+
+		if (pipe.container.getWorldObj().isRemote && notifyServer) {
+			RPCHandler.rpcServer(this, "setAction", action, tag, false);
 		}
 	}
 

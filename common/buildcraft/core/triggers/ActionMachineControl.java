@@ -36,12 +36,12 @@ public class ActionMachineControl extends BCAction {
 	public int getIconIndex() {
 		switch (mode) {
 			case On:
-				return ActionTriggerIconProvider.Action_MachineControl_On;
+				return StatementIconProvider.Action_MachineControl_On;
 			case Off:
-				return ActionTriggerIconProvider.Action_MachineControl_Off;
+				return StatementIconProvider.Action_MachineControl_Off;
 			case Loop:
 			default:
-				return ActionTriggerIconProvider.Action_MachineControl_Loop;
+				return StatementIconProvider.Action_MachineControl_Loop;
 		}
 	}
 

@@ -11,39 +11,34 @@ package buildcraft.api.gates;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.IIcon;
+
+import buildcraft.api.core.NetworkData;
+import buildcraft.api.transport.IPipeTile;
 
 public class TriggerParameter implements ITriggerParameter {
 
+	@NetworkData
 	protected ItemStack stack;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see net.minecraft.src.buildcraft.api.gates.ITriggerParameter#getItemStack()
-	 */
 	@Override
-	public ItemStack getItemStack() {
+	public ItemStack getItemStackToDraw() {
 		return stack;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see net.minecraft.src.buildcraft.api.gates.ITriggerParameter#set(net.minecraft.src.ItemStack)
-	 */
 	@Override
-	public void set(ItemStack stack) {
+	public IIcon getIconToDraw() {
+		return null;
+	}
+
+	@Override
+	public void clicked(IPipeTile pipe, IStatement stmt, ItemStack stack) {
 		if (stack != null) {
 			this.stack = stack.copy();
 			this.stack.stackSize = 1;
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see net.minecraft.src.buildcraft.api.gates.ITriggerParameter#writeToNBT(net.minecraft.src.NBTTagCompound)
-	 */
 	@Override
 	public void writeToNBT(NBTTagCompound compound) {
 		if (stack != null) {
@@ -53,11 +48,6 @@ public class TriggerParameter implements ITriggerParameter {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see net.minecraft.src.buildcraft.api.gates.ITriggerParameter#readFromNBT(net.minecraft.src.NBTTagCompound)
-	 */
 	@Override
 	public void readFromNBT(NBTTagCompound compound) {
 		// Legacy code to prevent existing gates from losing their contents
@@ -66,7 +56,7 @@ public class TriggerParameter implements ITriggerParameter {
 			stack = new ItemStack((Item) Item.itemRegistry.getObject(itemID), 1, compound.getInteger("itemDMG"));
 			return;
 		}
-		
+
 		stack = ItemStack.loadItemStackFromNBT(compound.getCompoundTag("stack"));
 	}
 

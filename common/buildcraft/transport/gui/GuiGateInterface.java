@@ -55,10 +55,10 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 
 		@Override
 		public String getDescription() {
-			ITrigger trigger = pipe.gate.getTrigger(slot);
-
-			if (trigger != null) {
-				return trigger.getDescription();
+			IStatement stmt = getStatement();
+			
+			if (stmt != null) {
+				return stmt.getDescription();
 			} else {
 				return "";
 			}
@@ -67,10 +67,10 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 		@SideOnly(Side.CLIENT)
 		@Override
 		public IIcon getIcon() {
-			ITrigger trigger = pipe.gate.getTrigger(slot);
+			IStatement stmt = getStatement();
 
-			if (trigger != null) {
-				return trigger.getIcon();
+			if (stmt != null) {
+				return stmt.getIcon();
 			} else {
 				return null;
 			}
@@ -78,7 +78,7 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 
 		@Override
 		public boolean isDefined() {
-			return pipe.gate.getTrigger(slot) != null;
+			return getStatement() != null;
 		}
 
 		public abstract IStatement getStatement();
@@ -111,30 +111,38 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 		public Pipe pipe;
 		public int slot;
 		public StatementSlot statementSlot;
-		public int indexInStatement;
 
-		public StatementParameterSlot(int x, int y, Pipe pipe, int slot, StatementSlot iStatementSlot,
-				int iIIndexInStatement) {
+		public StatementParameterSlot(int x, int y, Pipe pipe, int slot, StatementSlot iStatementSlot) {
 			super(GuiGateInterface.this, x, y);
 
 			this.pipe = pipe;
 			this.slot = slot;
 			this.statementSlot = iStatementSlot;
 			statementSlot.parameters.add(this);
-			indexInStatement = iIIndexInStatement;
 		}
 
 		@Override
 		public boolean isDefined() {
-			return pipe.gate.getTriggerParameter(slot) != null;
+			return pipe.gate.getTriggerParameter(statementSlot.slot, slot) != null;
 		}
 
 		@Override
 		public ItemStack getItemStack() {
-			ITriggerParameter parameter = pipe.gate.getTriggerParameter(slot);
+			IStatementParameter parameter = getParameter();
 
 			if (parameter != null) {
-				return parameter.getItemStack();
+				return parameter.getItemStackToDraw();
+			} else {
+				return null;
+			}
+		}
+
+		@Override
+		public IIcon getIcon() {
+			IStatementParameter parameter = getParameter();
+
+			if (parameter != null) {
+				return parameter.getIconToDraw();
 			} else {
 				return null;
 			}
@@ -143,35 +151,33 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 		public abstract IStatementParameter getParameter();
 
 		public boolean isAllowed() {
-			return indexInStatement < statementSlot.getStatement().maxParameters();
+			return statementSlot.getStatement() != null && slot < statementSlot.getStatement().maxParameters();
 		}
 
 		public boolean isRequired() {
-			return indexInStatement < statementSlot.getStatement().minParameters();
+			return statementSlot.getStatement() != null && slot < statementSlot.getStatement().minParameters();
 		}
 	}
 
 	class TriggerParameterSlot extends StatementParameterSlot {
-		public TriggerParameterSlot(int x, int y, Pipe pipe, int slot, StatementSlot iStatementSlot,
-				int iIIndexInStatement) {
-			super(x, y, pipe, slot, iStatementSlot, iIIndexInStatement);
+		public TriggerParameterSlot(int x, int y, Pipe pipe, int slot, StatementSlot iStatementSlot) {
+			super(x, y, pipe, slot, iStatementSlot);
 		}
 
 		@Override
 		public IStatementParameter getParameter() {
-			return pipe.gate.getTriggerParameter(slot);
+			return pipe.gate.getTriggerParameter(statementSlot.slot, slot);
 		}
 	}
 
 	class ActionParameterSlot extends StatementParameterSlot {
-		public ActionParameterSlot(int x, int y, Pipe pipe, int slot, StatementSlot iStatementSlot,
-				int iIIndexInStatement) {
-			super(x, y, pipe, slot, iStatementSlot, iIIndexInStatement);
+		public ActionParameterSlot(int x, int y, Pipe pipe, int slot, StatementSlot iStatementSlot) {
+			super(x, y, pipe, slot, iStatementSlot);
 		}
 
 		@Override
 		public IStatementParameter getParameter() {
-			return pipe.gate.getActionParameter(slot);
+			return pipe.gate.getActionParameter(statementSlot.slot, slot);
 		}
 	}
 
@@ -214,8 +220,7 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 			}
 
 			for (int k = 0; k < 4; ++k) {
-				slots[position] = new TriggerParameterSlot(71, 26 + 18 * k, pipe, position - 8, (TriggerSlot) slots[k],
-						k);
+				slots[position] = new TriggerParameterSlot(71, 26 + 18 * k, pipe, k, (TriggerSlot) slots[k]);
 				position++;
 
 			}
@@ -237,11 +242,11 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 			}
 
 			for (int k = 0; k < 4; ++k) {
-				slots[position] = new TriggerParameterSlot(26, 26 + 18 * k, pipe, position - 16,
-						(TriggerSlot) slots[k], k);
+				slots[position] = new TriggerParameterSlot(26, 26 + 18 * k, pipe, k,
+						(TriggerSlot) slots[k]);
 				position++;
-				slots[position] = new TriggerParameterSlot(116, 26 + 18 * k, pipe, position - 16,
-						(TriggerSlot) slots[k + 4], k);
+				slots[position] = new TriggerParameterSlot(116, 26 + 18 * k, pipe, k,
+						(TriggerSlot) slots[k + 4]);
 				position++;
 			}
 		} else if (pipe.gate.material == GateMaterial.EMERALD) {
@@ -254,8 +259,13 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 				position++;
 
 				for (int x = 0; x < 3; ++x) {
-					slots[position] = new TriggerParameterSlot(8 + 18 * (x + 1), 26 + 18 * y, pipe, y * 3 + x,
-							(TriggerSlot) slots[lastPos], x);
+					slots[position] = new TriggerParameterSlot(
+							8 + 18 * (x + 1), 
+							26 + 18 * y, 
+							pipe,
+							x,
+							(TriggerSlot) slots[lastPos]);
+					
 					position++;
 				}
 
@@ -264,8 +274,12 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 				position++;
 
 				for (int x = 0; x < 3; ++x) {
-					slots[position] = new ActionParameterSlot(98 + 18 * (x + 1), 26 + 18 * y, pipe, y * 3 + x,
-							(ActionSlot) slots[lastPos], x);
+					slots[position] = new ActionParameterSlot(							
+							98 + 18 * (x + 1), 
+							26 + 18 * y, 
+							pipe, 
+							x,
+							(ActionSlot) slots[lastPos]);
 					position++;
 				}
 			}
@@ -359,6 +373,7 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 			TriggerSlot triggerSlot = (TriggerSlot) slot;
 
 			ITrigger changed = null;
+
 			if (triggerSlot.getStatement() == null) {
 
 				if (k == 0) {
@@ -385,10 +400,14 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 				}
 			}
 
-			container.setTrigger(triggerSlot.slot, changed, true);
+			if (changed == null) {
+				container.setTrigger(triggerSlot.slot, null, true);
+			} else {
+				container.setTrigger(triggerSlot.slot, changed.getUniqueTag(), true);
+			}
 
 			for (StatementParameterSlot p : triggerSlot.parameters) {
-				container.setTriggerParameter(p.slot, null, true);
+				container.setTriggerParameter(triggerSlot.slot, p.slot, null, true);
 			}
 		} else if (slot instanceof ActionSlot) {
 			ActionSlot actionSlot = (ActionSlot) slot;
@@ -420,18 +439,21 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 				}
 			}
 
-			container.setAction(actionSlot.slot, changed, true);
+			if (changed == null) {
+				container.setAction(actionSlot.slot, null, true);
+			} else {
+				container.setAction(actionSlot.slot, changed.getUniqueTag(), true);
+			}
 		} else if (slot instanceof TriggerParameterSlot) {
 			TriggerParameterSlot paramSlot = (TriggerParameterSlot) slot;
 			TriggerSlot trigger = (TriggerSlot) paramSlot.statementSlot;
 
 			if (trigger.isDefined() && trigger.getStatement().maxParameters() != 0) {
-				ITriggerParameter param = (ITriggerParameter) trigger.getStatement().createParameter(
-						paramSlot.indexInStatement);
+				ITriggerParameter param = (ITriggerParameter) trigger.getStatement().createParameter(paramSlot.slot);
 
 				if (param != null) {
-					param.set(mc.thePlayer.inventory.getItemStack());
-					container.setTriggerParameter(((TriggerParameterSlot) slot).slot, param, true);
+					param.clicked(pipe.container, trigger.getStatement(), mc.thePlayer.inventory.getItemStack());
+					container.setTriggerParameter(trigger.slot, paramSlot.slot, param, true);
 				}
 			}
 		}

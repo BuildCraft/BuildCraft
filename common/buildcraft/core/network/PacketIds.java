@@ -25,8 +25,6 @@ public final class PacketIds {
 	public static final int GATE_ACTIONS = 40;
 	public static final int GATE_REQUEST_INIT = 41;
 	public static final int GATE_REQUEST_SELECTION = 42;
-	public static final int GATE_SELECTION = 43;
-	public static final int GATE_SELECTION_CHANGE = 44;
 	public static final int GATE_TRIGGERS = 45;
 
 	public static final int REFINERY_FILTER_SET = 50;

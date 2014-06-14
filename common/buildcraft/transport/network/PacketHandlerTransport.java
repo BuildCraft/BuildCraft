@@ -61,14 +61,11 @@ public class PacketHandlerTransport extends SimpleChannelInboundHandler<BuildCra
 					onPipeTravelerUpdate(player, (PacketPipeTransportTraveler) packet);
 					break;
 				}
-				case PacketIds.GATE_ACTIONS:
+				case PacketIds.GATE_ACTIONS: // TODO: change to a RPC
 					onGateActions(player, (PacketUpdate) packet);
 					break;
-				case PacketIds.GATE_TRIGGERS:
+				case PacketIds.GATE_TRIGGERS: // TODO: change to a RPC
 					onGateTriggers(player, (PacketUpdate) packet);
-					break;
-				case PacketIds.GATE_SELECTION:
-					onGateSelection(player, (PacketUpdate) packet);
 					break;
 				case PacketIds.PIPE_ITEMSTACK: {
 					// action will have happened already at read time
@@ -98,10 +95,6 @@ public class PacketHandlerTransport extends SimpleChannelInboundHandler<BuildCra
 
 				case PacketIds.GATE_REQUEST_SELECTION:
 					onGateSelectionRequest(player, (PacketCoordinates) packet);
-					break;
-
-				case PacketIds.GATE_SELECTION_CHANGE:
-					onGateSelectionChange(player, (PacketUpdate) packet);
 					break;
 
 				case PacketIds.PIPE_ITEMSTACK_REQUEST: {
@@ -143,21 +136,6 @@ public class PacketHandlerTransport extends SimpleChannelInboundHandler<BuildCra
 		}
 
 		((ContainerGateInterface) container).updateTriggers(packet);
-	}
-
-	/**
-	 * Handles received current gate selection on a gate
-	 *
-	 * @param packet
-	 */
-	private void onGateSelection(EntityPlayer player, PacketUpdate packet) {
-		Container container = player.openContainer;
-
-		if (!(container instanceof ContainerGateInterface)) {
-			return;
-		}
-
-		((ContainerGateInterface) container).setSelection(packet, false);
 	}
 
 	/**
@@ -216,23 +194,6 @@ public class PacketHandlerTransport extends SimpleChannelInboundHandler<BuildCra
 
 		((PipeTransportPower) pipe.pipe.transport).handlePowerPacket(packetPower);
 
-	}
-
-	/**
-	 * ****************** SERVER ******************** *
-	 */
-	/**
-	 * Handles selection changes on a gate.
-	 *
-	 * @param playerEntity
-	 * @param packet
-	 */
-	private void onGateSelectionChange(EntityPlayer playerEntity, PacketUpdate packet) {
-		if (!(playerEntity.openContainer instanceof ContainerGateInterface)) {
-			return;
-		}
-
-		((ContainerGateInterface) playerEntity.openContainer).setSelection(packet, true);
 	}
 
 	/**

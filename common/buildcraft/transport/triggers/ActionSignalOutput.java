@@ -12,7 +12,7 @@ import java.util.Locale;
 
 import buildcraft.api.gates.IAction;
 import buildcraft.api.transport.PipeWire;
-import buildcraft.core.triggers.ActionTriggerIconProvider;
+import buildcraft.core.triggers.StatementIconProvider;
 import buildcraft.core.triggers.BCAction;
 import buildcraft.core.utils.StringUtils;
 
@@ -35,14 +35,14 @@ public class ActionSignalOutput extends BCAction {
 	public int getIconIndex() {
 		switch (color) {
 			case RED:
-				return ActionTriggerIconProvider.Trigger_PipeSignal_Red_Active;
+				return StatementIconProvider.Trigger_PipeSignal_Red_Active;
 			case BLUE:
-				return ActionTriggerIconProvider.Trigger_PipeSignal_Blue_Active;
+				return StatementIconProvider.Trigger_PipeSignal_Blue_Active;
 			case GREEN:
-				return ActionTriggerIconProvider.Trigger_PipeSignal_Green_Active;
+				return StatementIconProvider.Trigger_PipeSignal_Green_Active;
 			case YELLOW:
 			default:
-				return ActionTriggerIconProvider.Trigger_PipeSignal_Yellow_Active;
+				return StatementIconProvider.Trigger_PipeSignal_Yellow_Active;
 		}
 	}
 

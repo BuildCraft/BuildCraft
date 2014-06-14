@@ -18,12 +18,11 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
 
-import buildcraft.api.gates.ITileTrigger;
 import buildcraft.api.gates.ITrigger;
 import buildcraft.api.gates.ITriggerParameter;
 import buildcraft.core.utils.StringUtils;
 
-public class TriggerFluidContainer extends BCTrigger implements ITileTrigger {
+public class TriggerFluidContainer extends BCTrigger {
 
 	public enum State {
 
@@ -53,8 +52,8 @@ public class TriggerFluidContainer extends BCTrigger implements ITileTrigger {
 
 			FluidStack searchedFluid = null;
 
-			if (parameter != null && parameter.getItemStack() != null) {
-				searchedFluid = FluidContainerRegistry.getFluidForFilledItem(parameter.getItemStack());
+			if (parameter != null && parameter.getItemStackToDraw() != null) {
+				searchedFluid = FluidContainerRegistry.getFluidForFilledItem(parameter.getItemStackToDraw());
 			}
 
 			if (searchedFluid != null) {
@@ -111,13 +110,13 @@ public class TriggerFluidContainer extends BCTrigger implements ITileTrigger {
 	public int getIconIndex() {
 		switch (state) {
 			case Empty:
-				return ActionTriggerIconProvider.Trigger_FluidContainer_Empty;
+			return StatementIconProvider.Trigger_FluidContainer_Empty;
 			case Contains:
-				return ActionTriggerIconProvider.Trigger_FluidContainer_Contains;
+			return StatementIconProvider.Trigger_FluidContainer_Contains;
 			case Space:
-				return ActionTriggerIconProvider.Trigger_FluidContainer_Space;
+			return StatementIconProvider.Trigger_FluidContainer_Space;
 			default:
-				return ActionTriggerIconProvider.Trigger_FluidContainer_Full;
+			return StatementIconProvider.Trigger_FluidContainer_Full;
 		}
 	}
 

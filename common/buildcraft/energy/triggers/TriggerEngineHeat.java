@@ -19,7 +19,6 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 import net.minecraftforge.common.util.ForgeDirection;
 
-import buildcraft.api.gates.ITileTrigger;
 import buildcraft.api.gates.ITrigger;
 import buildcraft.api.gates.ITriggerParameter;
 import buildcraft.core.triggers.BCTrigger;
@@ -27,7 +26,7 @@ import buildcraft.core.utils.StringUtils;
 import buildcraft.energy.TileEngine;
 import buildcraft.energy.TileEngine.EnergyStage;
 
-public class TriggerEngineHeat extends BCTrigger implements ITileTrigger {
+public class TriggerEngineHeat extends BCTrigger {
 
 	public EnergyStage stage;
 	@SideOnly(Side.CLIENT)

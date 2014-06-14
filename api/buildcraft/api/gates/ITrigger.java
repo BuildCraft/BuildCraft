@@ -8,6 +8,10 @@
  */
 package buildcraft.api.gates;
 
+import buildcraft.api.transport.IPipe;
+
 public interface ITrigger extends IStatement {
+
+	boolean isTriggerActive(IPipe pipe, ITriggerParameter[] parameters);
 
 }

@@ -18,12 +18,11 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
 
-import buildcraft.api.gates.ITileTrigger;
 import buildcraft.api.gates.ITrigger;
 import buildcraft.api.gates.ITriggerParameter;
 import buildcraft.core.utils.StringUtils;
 
-public class TriggerFluidContainerLevel extends BCTrigger implements ITileTrigger {
+public class TriggerFluidContainerLevel extends BCTrigger {
 
 	public enum TriggerType {
 
@@ -60,8 +59,8 @@ public class TriggerFluidContainerLevel extends BCTrigger implements ITileTrigge
 
 			FluidStack searchedFluid = null;
 
-			if (parameter != null && parameter.getItemStack() != null) {
-				searchedFluid = FluidContainerRegistry.getFluidForFilledItem(parameter.getItemStack());
+			if (parameter != null && parameter.getItemStackToDraw() != null) {
+				searchedFluid = FluidContainerRegistry.getFluidForFilledItem(parameter.getItemStackToDraw());
 			}
 
 			if (searchedFluid != null) {
@@ -95,12 +94,12 @@ public class TriggerFluidContainerLevel extends BCTrigger implements ITileTrigge
 	public int getIconIndex() {
 		switch (type) {
 			case BELOW_25:
-				return ActionTriggerIconProvider.Trigger_FluidContainer_Below25;
+			return StatementIconProvider.Trigger_FluidContainer_Below25;
 			case BELOW_50:
-				return ActionTriggerIconProvider.Trigger_FluidContainer_Below50;
+			return StatementIconProvider.Trigger_FluidContainer_Below50;
 			case BELOW_75:
 			default:
-				return ActionTriggerIconProvider.Trigger_FluidContainer_Below75;
+			return StatementIconProvider.Trigger_FluidContainer_Below75;
 		}
 	}
 

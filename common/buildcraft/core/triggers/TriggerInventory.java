@@ -17,14 +17,13 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.api.core.IInvSlot;
-import buildcraft.api.gates.ITileTrigger;
 import buildcraft.api.gates.ITrigger;
 import buildcraft.api.gates.ITriggerParameter;
 import buildcraft.core.inventory.InventoryIterator;
 import buildcraft.core.inventory.StackHelper;
 import buildcraft.core.utils.StringUtils;
 
-public class TriggerInventory extends BCTrigger implements ITileTrigger {
+public class TriggerInventory extends BCTrigger {
 
 	public enum State {
 
@@ -53,7 +52,7 @@ public class TriggerInventory extends BCTrigger implements ITileTrigger {
 		ItemStack searchedStack = null;
 
 		if (parameter != null) {
-			searchedStack = parameter.getItemStack();
+			searchedStack = parameter.getItemStackToDraw();
 		}
 
 		if (tile instanceof IInventory) {
@@ -93,13 +92,13 @@ public class TriggerInventory extends BCTrigger implements ITileTrigger {
 	public int getIconIndex() {
 		switch (state) {
 			case Empty:
-				return ActionTriggerIconProvider.Trigger_Inventory_Empty;
+			return StatementIconProvider.Trigger_Inventory_Empty;
 			case Contains:
-				return ActionTriggerIconProvider.Trigger_Inventory_Contains;
+			return StatementIconProvider.Trigger_Inventory_Contains;
 			case Space:
-				return ActionTriggerIconProvider.Trigger_Inventory_Space;
+			return StatementIconProvider.Trigger_Inventory_Space;
 			default:
-				return ActionTriggerIconProvider.Trigger_Inventory_Full;
+			return StatementIconProvider.Trigger_Inventory_Full;
 		}
 	}
 

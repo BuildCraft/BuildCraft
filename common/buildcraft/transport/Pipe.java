@@ -34,6 +34,8 @@ import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.gates.IAction;
 import buildcraft.api.gates.ITrigger;
+import buildcraft.api.transport.IPipe;
+import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.PipeWire;
 import buildcraft.core.IDropControlInventory;
 import buildcraft.core.inventory.InvUtils;
@@ -42,7 +44,7 @@ import buildcraft.core.utils.Utils;
 import buildcraft.transport.gates.GateFactory;
 import buildcraft.transport.pipes.events.PipeEvent;
 
-public abstract class Pipe<T extends PipeTransport> implements IDropControlInventory {
+public abstract class Pipe<T extends PipeTransport> implements IDropControlInventory, IPipe {
 
 	@SuppressWarnings("rawtypes")
 	private static Map<Class, TilePacketWrapper> networkWrappers = new HashMap<Class, TilePacketWrapper>();
@@ -459,7 +461,7 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 	}
 
 	public void onBlockRemoval() {
-		
+
 		if (getWorld().getWorldInfo().getGameType() != GameType.CREATIVE) {
 			for (ItemStack stack : computeItemDrop()) {
 				dropItem(stack);
@@ -514,7 +516,7 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 	public void resetGate() {
 		gate.resetGate();
 		gate = null;
-		
+
 		internalUpdateScheduled = true;
 		container.scheduleRenderUpdate();
 	}
@@ -601,5 +603,30 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 
 	public World getWorld() {
 		return container.getWorldObj();
+	}
+
+	@Override
+	public int x() {
+		return container.xCoord;
+	}
+
+	@Override
+	public int y() {
+		return container.yCoord;
+	}
+
+	@Override
+	public int z() {
+		return container.zCoord;
+	}
+
+	@Override
+	public IPipeTile getTile() {
+		return container;
+	}
+
+	@Override
+	public TileEntity getAdjacentTile(ForgeDirection dir) {
+		return container.getTile(dir);
 	}
 }

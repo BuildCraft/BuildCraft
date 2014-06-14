@@ -32,7 +32,6 @@ import buildcraft.api.gates.IAction;
 import buildcraft.api.gates.IActionParameter;
 import buildcraft.api.gates.IActionReceptor;
 import buildcraft.api.gates.IGateExpansion;
-import buildcraft.api.gates.ITileTrigger;
 import buildcraft.api.gates.ITrigger;
 import buildcraft.api.gates.ITriggerParameter;
 import buildcraft.api.gates.StatementManager;
@@ -52,10 +51,13 @@ public final class Gate {
 	public final GateMaterial material;
 	public final GateLogic logic;
 	public final BiMap<IGateExpansion, GateExpansionController> expansions = HashBiMap.create();
+
 	public ITrigger[] triggers = new ITrigger[8];
-	public ITriggerParameter[] triggerParameters = new ITriggerParameter[12];
-	public IActionParameter[] actionParameters = new IActionParameter[12];
+	public ITriggerParameter[][] triggerParameters = new ITriggerParameter[8][3];
+
 	public IAction[] actions = new IAction[8];
+	public IActionParameter[][] actionParameters = new IActionParameter[8][3];
+
 	public ActionState[] actionsState = new ActionState[8];
 
 	public BitSet broadcastSignal = new BitSet(PipeWire.VALUES.length);
@@ -97,16 +99,20 @@ public final class Gate {
 		return actions[position];
 	}
 
-	public void setTriggerParameter(int position, ITriggerParameter p) {
-		triggerParameters[position] = p;
+	public void setTriggerParameter(int trigger, int param, ITriggerParameter p) {
+		triggerParameters[trigger][param] = p;
 	}
 
-	public ITriggerParameter getTriggerParameter(int position) {
-		return triggerParameters[position];
+	public void setActionParameter(int action, int param, IActionParameter p) {
+		actionParameters[action][param] = p;
 	}
 
-	public IActionParameter getActionParameter(int position) {
-		return actionParameters[position];
+	public ITriggerParameter getTriggerParameter(int trigger, int param) {
+		return triggerParameters[trigger][param];
+	}
+
+	public IActionParameter getActionParameter(int action, int param) {
+		return actionParameters[action][param];
 	}
 
 	public void addGateExpansion(IGateExpansion expansion) {
@@ -134,19 +140,32 @@ public final class Gate {
 			if (triggers[i] != null) {
 				data.setString("trigger[" + i + "]", triggers[i].getUniqueTag());
 			}
+
 			if (actions[i] != null) {
 				data.setString("action[" + i + "]", actions[i].getUniqueTag());
 			}
-			if (triggerParameters[i] != null) {
-				NBTTagCompound cpt = new NBTTagCompound();
-				triggerParameters[i].writeToNBT(cpt);
-				data.setTag("triggerParameters[" + i + "]", cpt);
+
+			for (int j = 0; j < 3; ++j) {
+				if (triggerParameters[i][j] != null) {
+					NBTTagCompound cpt = new NBTTagCompound();
+					triggerParameters[i][j].writeToNBT(cpt);
+					data.setTag("triggerParameters[" + i + "][" + j + "]", cpt);
+				}
+			}
+
+			for (int j = 0; j < 3; ++j) {
+				if (actionParameters[i][j] != null) {
+					NBTTagCompound cpt = new NBTTagCompound();
+					actionParameters[i][j].writeToNBT(cpt);
+					data.setTag("actionParameters[" + i + "][" + j + "]", cpt);
+				}
 			}
 		}
 
 		for (PipeWire wire : PipeWire.VALUES) {
 			data.setBoolean("wireState[" + wire.ordinal() + "]", broadcastSignal.get(wire.ordinal()));
 		}
+
 		data.setByte("redstoneOutput", (byte) redstoneOutput);
 	}
 
@@ -155,12 +174,33 @@ public final class Gate {
 			if (data.hasKey("trigger[" + i + "]")) {
 				triggers[i] = (ITrigger) StatementManager.statements.get(data.getString("trigger[" + i + "]"));
 			}
+
 			if (data.hasKey("action[" + i + "]")) {
 				actions[i] = (IAction) StatementManager.statements.get(data.getString("action[" + i + "]"));
 			}
+
+			// This is for legacy trigger loading
 			if (data.hasKey("triggerParameters[" + i + "]")) {
-				triggerParameters[i] = new TriggerParameter();
-				triggerParameters[i].readFromNBT(data.getCompoundTag("triggerParameters[" + i + "]"));
+				triggerParameters[i][0] = new TriggerParameter();
+				triggerParameters[i][0].readFromNBT(data.getCompoundTag("triggerParameters[" + i + "]"));
+			}
+
+			for (int j = 0; j < 3; ++j) {
+				if (data.hasKey("triggerParameters[" + i + "][" + j + "]")) {
+					NBTTagCompound cpt = new NBTTagCompound();
+					// we need the real parameter type here
+					triggerParameters[i][j] = new TriggerParameter();
+					triggerParameters[i][j].readFromNBT(data.getCompoundTag("triggerParameters[" + i + "][" + j + "]"));
+				}
+			}
+
+			for (int j = 0; j < 3; ++j) {
+				if (data.hasKey("triggerParameters[" + i + "][" + j + "]")) {
+					NBTTagCompound cpt = new NBTTagCompound();
+					// actionParameters[i][j] = new ActionParameter();
+					// actionParameters[i][j].readFromNBT(data.getCompoundTag("actionParameters["
+					// + i + "][" + j + "]"));
+				}
 			}
 		}
 
@@ -256,7 +296,8 @@ public final class Gate {
 		for (int it = 0; it < 8; ++it) {
 			ITrigger trigger = triggers[it];
 			IAction action = actions[it];
-			ITriggerParameter parameter = triggerParameters[it];
+
+			ITriggerParameter[] parameter = triggerParameters[it];
 
 			actionsState [it] = ActionState.Deactivated;
 
@@ -274,7 +315,7 @@ public final class Gate {
 				}
 
 				if (active) {
-					actionsState [it] = ActionState.Partial;
+					actionsState[it] = ActionState.Partial;
 				}
 			}
 		}
@@ -341,29 +382,19 @@ public final class Gate {
 		return false;
 	}
 
-	public boolean isNearbyTriggerActive(ITrigger trigger, ITriggerParameter parameter) {
+	public boolean isNearbyTriggerActive(ITrigger trigger, ITriggerParameter[] parameters) {
 		if (trigger == null) {
 			return false;
 		}
 
-		if (trigger instanceof IPipeTrigger) {
-			return ((IPipeTrigger) trigger).isTriggerActive(pipe, parameter);
+		if (trigger.isTriggerActive(pipe, parameters)) {
+			return true;
 		}
 
-		if (trigger instanceof ITileTrigger) {
-			for (ForgeDirection o : ForgeDirection.VALID_DIRECTIONS) {
-				TileEntity tile = pipe.container.getTile(o);
-				if (tile != null && !(tile instanceof TileGenericPipe) && pipe.hasGate(o)) {
-					if (((ITileTrigger) trigger).isTriggerActive(o.getOpposite(), tile, parameter)) {
-						return true;
-					}
-				}
-			}
-			return false;
-		}
-
+		// TODO: This can probably be refactored with regular triggers instead
+		// of yet another system.
 		for (GateExpansionController expansion : expansions.values()) {
-			if (expansion.isTriggerActive(trigger, parameter)) {
+			if (expansion.isTriggerActive(trigger, parameters[0])) {
 				return true;
 			}
 		}

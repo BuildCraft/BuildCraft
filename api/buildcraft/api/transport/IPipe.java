@@ -6,12 +6,21 @@
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-package buildcraft.transport;
+package buildcraft.api.transport;
 
-import buildcraft.api.gates.ITrigger;
-import buildcraft.api.gates.ITriggerParameter;
+import net.minecraft.tileentity.TileEntity;
 
-public interface IPipeTrigger extends ITrigger {
+import net.minecraftforge.common.util.ForgeDirection;
 
-	boolean isTriggerActive(Pipe pipe, ITriggerParameter parameter);
+public interface IPipe {
+
+	int x();
+
+	int y();
+
+	int z();
+
+	IPipeTile getTile();
+
+	TileEntity getAdjacentTile(ForgeDirection dir);
 }

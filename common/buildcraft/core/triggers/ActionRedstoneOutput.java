@@ -23,7 +23,7 @@ public class ActionRedstoneOutput extends BCAction {
 
 	@Override
 	public int getIconIndex() {
-		return ActionTriggerIconProvider.Trigger_RedstoneInput_Active;
+		return StatementIconProvider.Trigger_RedstoneInput_Active;
 	}
 
 	@Override

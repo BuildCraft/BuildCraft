@@ -10,12 +10,17 @@ package buildcraft.api.gates;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.IIcon;
+
+import buildcraft.api.transport.IPipeTile;
 
 public interface IStatementParameter {
 
-	ItemStack getItemStack();
+	ItemStack getItemStackToDraw();
 
-	void set(ItemStack stack);
+	IIcon getIconToDraw();
+
+	void clicked(IPipeTile pipe, IStatement stmt, ItemStack stack);
 
 	void writeToNBT(NBTTagCompound compound);
 
