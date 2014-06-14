@@ -54,6 +54,7 @@ import buildcraft.api.transport.PipeWire;
 import buildcraft.core.BlockBuildCraft;
 import buildcraft.core.CoreConstants;
 import buildcraft.core.CreativeTabBuildCraft;
+import buildcraft.core.ItemMapSpot;
 import buildcraft.core.ItemRobot;
 import buildcraft.core.TileBuffer;
 import buildcraft.core.robots.DockingStation;
@@ -750,6 +751,9 @@ public class BlockGenericPipe extends BlockBuildCraft {
 				// Only check the instance at this point. Call the IToolWrench
 				// interface callbacks for the individual pipe/logic calls
 				return pipe.blockActivated(player);
+			} else if (currentItem.getItem() instanceof ItemMapSpot) {
+				// We want to be able to record pipe locations
+				return false;
 			} else if (PipeWire.RED.isPipeWire(currentItem)) {
 				if (addOrStripWire(player, pipe, PipeWire.RED)) {
 					return true;

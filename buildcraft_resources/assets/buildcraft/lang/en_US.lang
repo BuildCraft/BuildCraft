@@ -149,6 +149,7 @@ item.blueprint.blank=Blank
 item.blueprint.creative_only=Creative Only
 item.blueprint.no_build=No Building
 item.blueprint.incomplete=Incomplete
+item.mapSpot.name=Map Spot
 item.PipeItemsWood.name=Wooden Transport Pipe
 item.PipeItemsCobblestone.name=Cobblestone Transport Pipe
 item.PipeItemsStone.name=Stone Transport Pipe
