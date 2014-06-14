@@ -34,9 +34,6 @@ public class Version implements Runnable {
 
 	public static final String VERSION = "@VERSION@";
 	public static EnumUpdateState currentVersion = EnumUpdateState.CURRENT;
-	public static final int FORGE_VERSION_MAJOR = 4;
-	public static final int FORGE_VERSION_MINOR = 0;
-	public static final int FORGE_VERSION_PATCH = 0;
 
 	private static final String REMOTE_VERSION_FILE =
 			"https://raw.githubusercontent.com/BuildCraft/BuildCraft/master/buildcraft_resources/versions.txt";

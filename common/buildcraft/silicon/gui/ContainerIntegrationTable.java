@@ -52,7 +52,6 @@ public class ContainerIntegrationTable extends BuildCraftContainer {
 		return table.isUseableByPlayer(var1);
 	}
 
-	@SuppressWarnings("rawtypes")
 	@Override
 	public void detectAndSendChanges() {
 		super.detectAndSendChanges();

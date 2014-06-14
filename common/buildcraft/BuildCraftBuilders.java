@@ -151,8 +151,6 @@ public class BuildCraftBuilders extends BuildCraftMod {
 
 	@Mod.EventHandler
 	public void loadConfiguration(FMLPreInitializationEvent evt) {
-		File bptMainDir = new File(new File(evt.getModConfigurationDirectory(), "buildcraft"), "blueprints");
-
 		String blueprintServerDir = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL,
 				"blueprints.serverDir",
 				"\"$MINECRAFT" + File.separator + "config" + File.separator + "buildcraft" + File.separator
@@ -184,9 +182,6 @@ public class BuildCraftBuilders extends BuildCraftMod {
 		if (BuildCraftCore.mainConfiguration.hasChanged()) {
 			BuildCraftCore.mainConfiguration.save();
 		}
-
-		File serverDir = new File (bptMainDir, "server");
-		File clientDir = new File (bptMainDir, "client");
 
 		serverDB = new BlueprintDatabase();
 		clientDB = new BlueprintDatabase();
