@@ -220,7 +220,7 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 			}
 
 			for (int k = 0; k < 4; ++k) {
-				slots[position] = new TriggerParameterSlot(71, 26 + 18 * k, pipe, k, (TriggerSlot) slots[k]);
+				slots[position] = new TriggerParameterSlot(71, 26 + 18 * k, pipe, 0, (TriggerSlot) slots[k]);
 				position++;
 
 			}
@@ -242,10 +242,10 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 			}
 
 			for (int k = 0; k < 4; ++k) {
-				slots[position] = new TriggerParameterSlot(26, 26 + 18 * k, pipe, k,
+				slots[position] = new TriggerParameterSlot(26, 26 + 18 * k, pipe, 0,
 						(TriggerSlot) slots[k]);
 				position++;
-				slots[position] = new TriggerParameterSlot(116, 26 + 18 * k, pipe, k,
+				slots[position] = new TriggerParameterSlot(116, 26 + 18 * k, pipe, 0,
 						(TriggerSlot) slots[k + 4]);
 				position++;
 			}
