@@ -56,7 +56,7 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 		@Override
 		public String getDescription() {
 			IStatement stmt = getStatement();
-			
+
 			if (stmt != null) {
 				return stmt.getDescription();
 			} else {
@@ -260,12 +260,12 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 
 				for (int x = 0; x < 3; ++x) {
 					slots[position] = new TriggerParameterSlot(
-							8 + 18 * (x + 1), 
-							26 + 18 * y, 
+							8 + 18 * (x + 1),
+							26 + 18 * y,
 							pipe,
 							x,
 							(TriggerSlot) slots[lastPos]);
-					
+
 					position++;
 				}
 
@@ -274,10 +274,10 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 				position++;
 
 				for (int x = 0; x < 3; ++x) {
-					slots[position] = new ActionParameterSlot(							
-							98 + 18 * (x + 1), 
-							26 + 18 * y, 
-							pipe, 
+					slots[position] = new ActionParameterSlot(
+							98 + 18 * (x + 1),
+							26 + 18 * y,
+							pipe,
 							x,
 							(ActionSlot) slots[lastPos]);
 					position++;

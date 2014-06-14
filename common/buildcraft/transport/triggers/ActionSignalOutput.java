@@ -12,8 +12,8 @@ import java.util.Locale;
 
 import buildcraft.api.gates.IAction;
 import buildcraft.api.transport.PipeWire;
-import buildcraft.core.triggers.StatementIconProvider;
 import buildcraft.core.triggers.BCAction;
+import buildcraft.core.triggers.StatementIconProvider;
 import buildcraft.core.utils.StringUtils;
 
 public class ActionSignalOutput extends BCAction {

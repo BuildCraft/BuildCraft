@@ -38,25 +38,33 @@ public class TriggerParameterSignal implements ITriggerParameter {
 
 		if (active) {
 			switch (color) {
-				case RED:
-					id = StatementIconProvider.Trigger_PipeSignal_Red_Active;
-				case BLUE:
-					id = StatementIconProvider.Trigger_PipeSignal_Blue_Active;
-				case GREEN:
-					id = StatementIconProvider.Trigger_PipeSignal_Green_Active;
-				case YELLOW:
-					id = StatementIconProvider.Trigger_PipeSignal_Yellow_Active;
+			case RED:
+				id = StatementIconProvider.Trigger_PipeSignal_Red_Active;
+				break;
+			case BLUE:
+				id = StatementIconProvider.Trigger_PipeSignal_Blue_Active;
+				break;
+			case GREEN:
+				id = StatementIconProvider.Trigger_PipeSignal_Green_Active;
+				break;
+			case YELLOW:
+				id = StatementIconProvider.Trigger_PipeSignal_Yellow_Active;
+				break;
 			}
 		} else {
 			switch (color) {
-				case RED:
-					id = StatementIconProvider.Trigger_PipeSignal_Red_Inactive;
-				case BLUE:
-					id = StatementIconProvider.Trigger_PipeSignal_Blue_Inactive;
-				case GREEN:
-					id = StatementIconProvider.Trigger_PipeSignal_Green_Inactive;
-				case YELLOW:
-					id = StatementIconProvider.Trigger_PipeSignal_Yellow_Inactive;
+			case RED:
+				id = StatementIconProvider.Trigger_PipeSignal_Red_Inactive;
+				break;
+			case BLUE:
+				id = StatementIconProvider.Trigger_PipeSignal_Blue_Inactive;
+				break;
+			case GREEN:
+				id = StatementIconProvider.Trigger_PipeSignal_Green_Inactive;
+				break;
+			case YELLOW:
+				id = StatementIconProvider.Trigger_PipeSignal_Yellow_Inactive;
+				break;
 			}
 		}
 
