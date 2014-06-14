@@ -28,7 +28,7 @@ public abstract class BCTrigger extends BCStatement implements ITrigger {
 	}
 
 	@Override
-	public boolean isTriggerActive(IPipe pipe, ITriggerParameter[] parameters) {
+	public boolean isTriggerActive(IPipe pipe, ForgeDirection direction, ITriggerParameter[] parameters) {
 		ITriggerParameter p = parameters[0];
 
 		for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {

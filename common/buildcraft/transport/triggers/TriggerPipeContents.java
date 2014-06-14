@@ -72,12 +72,11 @@ public class TriggerPipeContents extends BCTrigger {
 	}
 
 	@Override
-	public boolean isTriggerActive(IPipe pipe, ITriggerParameter[] parameters) {
+	public boolean isTriggerActive(IPipe pipe, ForgeDirection direction, ITriggerParameter[] parameters) {
 		ITriggerParameter parameter = parameters[0];
 
 		if (((Pipe) pipe).transport instanceof PipeTransportItems) {
 			PipeTransportItems transportItems = (PipeTransportItems) ((Pipe) pipe).transport;
-
 			if (kind == PipeContents.empty) {
 				return transportItems.items.isEmpty();
 			} else if (kind == PipeContents.containsItems) {

@@ -13,6 +13,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import io.netty.buffer.ByteBuf;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -28,20 +29,153 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.gates.GateExpansions;
 import buildcraft.api.gates.IGateExpansion;
 import buildcraft.api.gates.IStatement;
 import buildcraft.api.gates.StatementManager;
+import buildcraft.api.transport.IPipePluggable;
+import buildcraft.api.transport.IPipeTile;
 import buildcraft.core.ItemBuildCraft;
 import buildcraft.core.inventory.InvUtils;
 import buildcraft.core.utils.StringUtils;
 import buildcraft.transport.Gate;
+import buildcraft.transport.TileGenericPipe;
 import buildcraft.transport.gates.GateDefinition.GateLogic;
 import buildcraft.transport.gates.GateDefinition.GateMaterial;
 
 public class ItemGate extends ItemBuildCraft {
+	public static class GatePluggable implements IPipePluggable {
+		public GateMaterial material;
+		public GateLogic logic;
+		public IGateExpansion[] expansions;
+
+		public GatePluggable() {
+
+		}
+
+		public GatePluggable(Gate gate) {
+			this.material = gate.material;
+			this.logic = gate.logic;
+
+			Set<IGateExpansion> gateExpansions = gate.expansions.keySet();
+			this.expansions = gateExpansions.toArray(new IGateExpansion[gateExpansions.size()]);
+		}
+
+		@Override
+		public void writeToNBT(NBTTagCompound nbt) {
+			nbt.setByte(NBT_TAG_MAT, (byte) material.ordinal());
+			nbt.setByte(NBT_TAG_LOGIC, (byte) logic.ordinal());
+
+			NBTTagList expansionsList = nbt.getTagList(NBT_TAG_EX, Constants.NBT.TAG_STRING);
+			for (IGateExpansion expansion : expansions) {
+				expansionsList.appendTag(new NBTTagString(expansion.getUniqueIdentifier()));
+			}
+			nbt.setTag(NBT_TAG_EX, expansionsList);
+		}
+
+		@Override
+		public void readFromNBT(NBTTagCompound nbt) {
+			material = GateMaterial.fromOrdinal(nbt.getByte(NBT_TAG_MAT));
+			logic = GateLogic.fromOrdinal(nbt.getByte(NBT_TAG_LOGIC));
+
+			NBTTagList expansionsList = nbt.getTagList(NBT_TAG_EX, Constants.NBT.TAG_STRING);
+			final int expansionsSize = expansionsList.tagCount();
+			expansions = new IGateExpansion[expansionsSize];
+			for (int i = 0; i < expansionsSize; i++) {
+				expansions[i] = GateExpansions.getExpansion(expansionsList.getStringTagAt(i));
+			}
+		}
+
+		public void writeToByteByf(ByteBuf buf) {
+			buf.writeByte(material.ordinal());
+			buf.writeByte(logic.ordinal());
+
+			final int expansionsSize = expansions.length;
+			buf.writeInt(expansionsSize);
+			for (IGateExpansion expansion : expansions) {
+				buf.writeByte(GateExpansions.getServerExpansionID(expansion.getUniqueIdentifier()));
+			}
+		}
+
+		public void readFromByteBuf(ByteBuf buf) {
+			material = GateMaterial.fromOrdinal(buf.readByte());
+			logic = GateLogic.fromOrdinal(buf.readByte());
+
+			final int expansionsSize = buf.readInt();
+			expansions = new IGateExpansion[expansionsSize];
+			for (int i = 0; i < expansionsSize; i++) {
+				expansions[i] = GateExpansions.getExpansionClient(buf.readByte());
+			}
+		}
+
+		@Override
+		public ItemStack[] getDropItems(IPipeTile pipe) {
+			ItemStack gate = makeGateItem(material, logic);
+			for (IGateExpansion expansion : expansions) {
+				addGateExpansion(gate, expansion);
+			}
+			return new ItemStack[] { gate };
+		}
+
+		@Override
+		public void onAttachedPipe(IPipeTile pipe, ForgeDirection direction) {
+			TileGenericPipe pipeReal = (TileGenericPipe) pipe;
+			if (!pipeReal.getWorld().isRemote) {
+				Gate gate = pipeReal.pipe.gates[direction.ordinal()];
+				if (gate == null || gate.material != material || gate.logic != logic) {
+					pipeReal.pipe.gates[direction.ordinal()] = GateFactory.makeGate(pipeReal.pipe, material, logic, direction);
+					pipeReal.scheduleRenderUpdate();
+				}
+			}
+		}
+
+		@Override
+		public void onDetachedPipe(IPipeTile pipe, ForgeDirection direction) {
+			TileGenericPipe pipeReal = (TileGenericPipe) pipe;
+			if (!pipeReal.getWorld().isRemote) {
+				Gate gate = pipeReal.pipe.gates[direction.ordinal()];
+				if (gate != null) {
+					gate.resetGate();
+					pipeReal.pipe.gates[direction.ordinal()] = null;
+				}
+				pipeReal.scheduleRenderUpdate();
+			}
+		}
+
+		@Override
+		public boolean blocking(IPipeTile pipe, ForgeDirection direction) {
+			return true;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (obj == this) {
+				return true;
+			}
+			if (!(obj instanceof GatePluggable)) {
+				return false;
+			}
+			GatePluggable o = (GatePluggable) obj;
+			if (o.material.ordinal() != material.ordinal()) {
+				return false;
+			}
+			if (o.logic.ordinal() != logic.ordinal()) {
+				return false;
+			}
+			if (o.expansions.length != expansions.length) {
+				return false;
+			}
+			for (int i = 0; i < expansions.length; i++) {
+				if (o.expansions[i] != expansions[i]) {
+					return false;
+				}
+			}
+			return true;
+		}
+	}
 
 	private static final String NBT_TAG_MAT = "mat";
 	private static final String NBT_TAG_LOGIC = "logic";

@@ -666,7 +666,8 @@ public class BlockGenericPipe extends BlockBuildCraft {
 			switch (rayTraceResult.hitPart) {
 			case Gate:
 					Pipe pipe = getPipe(world, x, y, z);
-					return pipe.gate.getGateItem();
+					Gate gate = pipe.gates[rayTraceResult.sideHit.ordinal()];
+					return gate != null ? gate.getGateItem() : null;
 			case Plug:
 					return new ItemStack(BuildCraftTransport.plugItem);
 			case RobotStation:
@@ -696,7 +697,10 @@ public class BlockGenericPipe extends BlockBuildCraft {
 
 		if (isValid(pipe)) {
 			pipe.container.scheduleNeighborChange();
-			pipe.container.redstoneInput = world.isBlockIndirectlyGettingPowered(x, y, z) ? 15 : world.getBlockPowerInput(x, y, z);
+			for (int i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
+				ForgeDirection d = ForgeDirection.getOrientation(i);
+				pipe.container.redstoneInput[i] = world.isBlockProvidingPowerTo(x + d.offsetY, y + d.offsetY, z + d.offsetZ, i);
+			}
 		}
 	}
 
@@ -770,7 +774,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 					return true;
 				}
 			} else if (currentItem.getItem() instanceof ItemGate) {
-				if (addOrStripGate(world, x, y, z, player, pipe)) {
+				if (addOrStripGate(world, x, y, z, player, ForgeDirection.getOrientation(side), pipe)) {
 					return true;
 				}
 			} else if (currentItem.getItem() instanceof ItemPlug) {
@@ -791,7 +795,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 							player);
 
 					if (rayTraceResult != null && rayTraceResult.hitPart == Part.RobotStation) {
-						DockingStation station = (DockingStation) pipe.container.getStation(rayTraceResult.sideHit);
+						DockingStation station = pipe.container.getStation(rayTraceResult.sideHit);
 
 						if (station.linked == null && station.reserved == null) {
 							EntityRobot robot = ((ItemRobot) currentItem.getItem())
@@ -817,18 +821,16 @@ public class BlockGenericPipe extends BlockBuildCraft {
 				}
 			}
 
-			boolean clickedOnGate = false;
+			Gate clickedGate = null;
 
-			if (pipe.hasGate()) {
-				RaytraceResult rayTraceResult = doRayTrace(world, x, y, z, player);
+			RaytraceResult rayTraceResult = doRayTrace(world, x, y, z, player);
 
-				if (rayTraceResult != null && rayTraceResult.hitPart == Part.Gate) {
-					clickedOnGate = true;
-				}
+			if (rayTraceResult != null && rayTraceResult.hitPart == Part.Gate) {
+				clickedGate = pipe.gates[rayTraceResult.sideHit.ordinal()];
 			}
 
-			if (clickedOnGate) {
-				pipe.gate.openGui(player);
+			if (clickedGate != null) {
+				clickedGate.openGui(player);
 				return true;
 			} else {
 				return pipe.blockActivated(player);
@@ -838,40 +840,29 @@ public class BlockGenericPipe extends BlockBuildCraft {
 		return false;
 	}
 
-	private boolean addOrStripGate(World world, int x, int y, int z, EntityPlayer player, Pipe pipe) {
-		if (addGate(player, pipe)) {
-			return true;
-		}
+	private boolean addOrStripGate(World world, int x, int y, int z, EntityPlayer player, ForgeDirection side, Pipe pipe) {
+		RaytraceResult rayTraceResult = doRayTrace(world, x, y, z, player);
 		if (player.isSneaking()) {
-			RaytraceResult rayTraceResult = doRayTrace(world, x, y, z, player);
 			if (rayTraceResult != null && rayTraceResult.hitPart == Part.Gate) {
-				if (stripGate(pipe)) {
-					return true;
+				if (pipe.container.hasGate(rayTraceResult.sideHit)) {
+					return pipe.container.dropSideItems(rayTraceResult.sideHit);
 				}
 			}
 		}
-		return false;
-	}
-
-	private boolean addGate(EntityPlayer player, Pipe pipe) {
-		if (!pipe.hasGate()) {
-			pipe.gate = GateFactory.makeGate(pipe, player.getCurrentEquippedItem());
-			if (!player.capabilities.isCreativeMode) {
-				player.getCurrentEquippedItem().splitStack(1);
+		if (rayTraceResult != null && (rayTraceResult.hitPart != Part.Facade)) {
+			if (!pipe.hasGate(side) && addGate(player, pipe, rayTraceResult.sideHit != null && rayTraceResult.sideHit != ForgeDirection.UNKNOWN ? rayTraceResult.sideHit : side)) {
+				return true;
 			}
-			pipe.container.scheduleRenderUpdate();
-			return true;
 		}
 		return false;
 	}
 
-	private boolean stripGate(Pipe pipe) {
-		if (pipe.hasGate()) {
-			if (!pipe.container.getWorldObj().isRemote) {
-				pipe.gate.dropGate();
+	private boolean addGate(EntityPlayer player, Pipe pipe, ForgeDirection side) {
+		ItemStack stack = player.getCurrentEquippedItem();
+		if (stack != null && stack.getItem() instanceof ItemGate && pipe.container.addGate(side, GateFactory.makeGate(pipe, stack, side))) {
+			if (!player.capabilities.isCreativeMode) {
+				stack.stackSize--;
 			}
-			pipe.resetGate();
-
 			return true;
 		}
 		return false;
@@ -912,8 +903,8 @@ public class BlockGenericPipe extends BlockBuildCraft {
 
 			updateNeighbourSignalState(pipe);
 
-			if (isFullyDefined(pipe) && pipe.hasGate()) {
-				pipe.gate.resolveActions();
+			if (isFullyDefined(pipe)) {
+				pipe.resolveActions();
 			}
 
 			pipe.container.scheduleRenderUpdate();
@@ -927,8 +918,8 @@ public class BlockGenericPipe extends BlockBuildCraft {
 		RaytraceResult rayTraceResult = doRayTrace(world, x, y, z, player);
 		if (player.isSneaking()) {
 			if (rayTraceResult != null && rayTraceResult.hitPart == Part.Facade) {
-				if (stripFacade(pipe, rayTraceResult.sideHit)) {
-					return true;
+				if (pipe.container.hasFacade(rayTraceResult.sideHit)) {
+					return pipe.container.dropSideItems(rayTraceResult.sideHit);
 				}
 			}
 		}
@@ -951,15 +942,11 @@ public class BlockGenericPipe extends BlockBuildCraft {
 		return false;
 	}
 
-	private boolean stripFacade(Pipe pipe, ForgeDirection side) {
-		return pipe.container.dropFacade(side);
-	}
-
 	private boolean addOrStripPlug(World world, int x, int y, int z, EntityPlayer player, ForgeDirection side, Pipe pipe) {
 		RaytraceResult rayTraceResult = doRayTrace(world, x, y, z, player);
 		if (player.isSneaking()) {
 			if (rayTraceResult != null && rayTraceResult.hitPart == Part.Plug) {
-				if (stripPlug(pipe, rayTraceResult.sideHit)) {
+				if (pipe.container.dropSideItems(rayTraceResult.sideHit)) {
 					return true;
 				}
 			}
@@ -976,7 +963,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 		RaytraceResult rayTraceResult = doRayTrace(world, x, y, z, player);
 		if (player.isSneaking()) {
 			if (rayTraceResult != null && rayTraceResult.hitPart == Part.RobotStation) {
-				if (stripRobotStation(pipe, rayTraceResult.sideHit)) {
+				if (pipe.container.dropSideItems(rayTraceResult.sideHit)) {
 					return true;
 				}
 			}
@@ -1011,19 +998,11 @@ public class BlockGenericPipe extends BlockBuildCraft {
 		return false;
 	}
 
-	private boolean stripPlug(Pipe pipe, ForgeDirection side) {
-		return pipe.container.removeAndDropPlug(side);
-	}
-
-	private boolean stripRobotStation(Pipe pipe, ForgeDirection side) {
-		return pipe.container.removeAndDropPlug(side);
-	}
-
 	private boolean stripEquipment(World world, int x, int y, int z, EntityPlayer player, Pipe pipe) {
 		// Try to strip facades first
 		RaytraceResult rayTraceResult = doRayTrace(world, x, y, z, player);
-		if (rayTraceResult != null && rayTraceResult.hitPart == Part.Facade) {
-			if (stripFacade(pipe, rayTraceResult.sideHit)) {
+		if (rayTraceResult != null && rayTraceResult.hitPart != Part.Pipe) {
+			if (pipe.container.dropSideItems(rayTraceResult.sideHit)) {
 				return true;
 			}
 		}
@@ -1035,7 +1014,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 			}
 		}
 
-		return stripGate(pipe);
+		return false;
 	}
 
 	/**
@@ -1152,6 +1131,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 			}
 
 		} catch (Throwable t) {
+			t.printStackTrace();
 			BCLog.logger.warning("Failed to create pipe with (" + key + "). No valid constructor found. Possibly a item ID conflit.");
 		}
 

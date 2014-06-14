@@ -13,7 +13,6 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.Container;
 import net.minecraft.network.INetHandler;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
@@ -21,15 +20,12 @@ import net.minecraft.world.World;
 import cpw.mods.fml.common.network.NetworkRegistry;
 
 import buildcraft.core.network.BuildCraftPacket;
-import buildcraft.core.network.PacketCoordinates;
 import buildcraft.core.network.PacketIds;
 import buildcraft.core.network.PacketSlotChange;
-import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.transport.PipeTransportItems;
 import buildcraft.transport.PipeTransportPower;
 import buildcraft.transport.TileGenericPipe;
-import buildcraft.transport.gui.ContainerGateInterface;
 import buildcraft.transport.pipes.PipeItemsDiamond;
 import buildcraft.transport.pipes.PipeItemsEmerald;
 
@@ -61,12 +57,6 @@ public class PacketHandlerTransport extends SimpleChannelInboundHandler<BuildCra
 					onPipeTravelerUpdate(player, (PacketPipeTransportTraveler) packet);
 					break;
 				}
-				case PacketIds.GATE_ACTIONS: // TODO: change to a RPC
-					onGateActions(player, (PacketUpdate) packet);
-					break;
-				case PacketIds.GATE_TRIGGERS: // TODO: change to a RPC
-					onGateTriggers(player, (PacketUpdate) packet);
-					break;
 				case PacketIds.PIPE_ITEMSTACK: {
 					// action will have happened already at read time
 					break;
@@ -89,14 +79,6 @@ public class PacketHandlerTransport extends SimpleChannelInboundHandler<BuildCra
 					break;
 				}
 
-				case PacketIds.GATE_REQUEST_INIT:
-					onGateInitRequest(player, (PacketCoordinates) packet);
-					break;
-
-				case PacketIds.GATE_REQUEST_SELECTION:
-					onGateSelectionRequest(player, (PacketCoordinates) packet);
-					break;
-
 				case PacketIds.PIPE_ITEMSTACK_REQUEST: {
 					((PacketPipeTransportItemStackRequest) packet).sendDataToPlayer(player);
 					break;
@@ -106,36 +88,6 @@ public class PacketHandlerTransport extends SimpleChannelInboundHandler<BuildCra
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
-	}
-
-	/**
-	 * Handles received list of potential actions on a gate
-	 *
-	 * @param packet
-	 */
-	private void onGateActions(EntityPlayer player, PacketUpdate packet) {
-		Container container = player.openContainer;
-
-		if (!(container instanceof ContainerGateInterface)) {
-			return;
-		}
-
-		((ContainerGateInterface) container).updateActions(packet);
-	}
-
-	/**
-	 * Handles received list of potential triggers on a gate.
-	 *
-	 * @param packet
-	 */
-	private void onGateTriggers(EntityPlayer player, PacketUpdate packet) {
-		Container container = player.openContainer;
-
-		if (!(container instanceof ContainerGateInterface)) {
-			return;
-		}
-
-		((ContainerGateInterface) container).updateTriggers(packet);
 	}
 
 	/**
@@ -194,34 +146,6 @@ public class PacketHandlerTransport extends SimpleChannelInboundHandler<BuildCra
 
 		((PipeTransportPower) pipe.pipe.transport).handlePowerPacket(packetPower);
 
-	}
-
-	/**
-	 * Handles gate gui (current) selection requests.
-	 *
-	 * @param playerEntity
-	 * @param packet
-	 */
-	private void onGateSelectionRequest(EntityPlayer playerEntity, PacketCoordinates packet) {
-		if (!(playerEntity.openContainer instanceof ContainerGateInterface)) {
-			return;
-		}
-
-		((ContainerGateInterface) playerEntity.openContainer).sendSelection(playerEntity);
-	}
-
-	/**
-	 * Handles received gate gui initialization requests.
-	 *
-	 * @param playerEntity
-	 * @param packet
-	 */
-	private void onGateInitRequest(EntityPlayer playerEntity, PacketCoordinates packet) {
-		if (!(playerEntity.openContainer instanceof ContainerGateInterface)) {
-			return;
-		}
-
-		((ContainerGateInterface) playerEntity.openContainer).handleInitRequest(playerEntity);
 	}
 
 	/**

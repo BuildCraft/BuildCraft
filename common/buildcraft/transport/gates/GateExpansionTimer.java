@@ -14,6 +14,7 @@ import net.minecraft.tileentity.TileEntity;
 
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.gates.GateExpansionController;
+import buildcraft.api.gates.IGate;
 import buildcraft.api.gates.IGateExpansion;
 import buildcraft.api.gates.ITrigger;
 import buildcraft.api.gates.ITriggerParameter;
@@ -84,7 +85,7 @@ public final class GateExpansionTimer extends GateExpansionBuildcraft implements
 		}
 
 		@Override
-		public void tick() {
+		public void tick(IGate gate) {
 			for (Timer timer : timers) {
 				timer.tick();
 			}

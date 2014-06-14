@@ -10,6 +10,8 @@ package buildcraft.transport.triggers;
 
 import java.util.Locale;
 
+import net.minecraftforge.common.util.ForgeDirection;
+
 import buildcraft.api.gates.ITrigger;
 import buildcraft.api.gates.ITriggerParameter;
 import buildcraft.api.transport.IPipe;
@@ -43,7 +45,7 @@ public class TriggerPipeSignal extends BCTrigger {
 	}
 
 	@Override
-	public boolean isTriggerActive(IPipe pipe, ITriggerParameter[] parameters) {
+	public boolean isTriggerActive(IPipe pipe, ForgeDirection direction, ITriggerParameter[] parameter) {
 		if (active) {
 			return ((Pipe) pipe).signalStrength[color.ordinal()] > 0;
 		} else {

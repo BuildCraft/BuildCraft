@@ -8,12 +8,11 @@
  */
 package buildcraft.transport.gui;
 
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.NavigableSet;
 import java.util.TreeSet;
-
-import io.netty.buffer.ByteBuf;
 
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
@@ -25,31 +24,30 @@ import net.minecraft.util.ResourceLocation;
 
 import net.minecraftforge.common.util.ForgeDirection;
 
-import buildcraft.BuildCraftTransport;
 import buildcraft.api.gates.IAction;
-import buildcraft.api.gates.IOverrideDefaultTriggers;
+import buildcraft.api.gates.IActionParameter;
+import buildcraft.api.gates.IStatement;
 import buildcraft.api.gates.ITrigger;
 import buildcraft.api.gates.ITriggerParameter;
 import buildcraft.api.gates.StatementManager;
 import buildcraft.core.gui.BuildCraftContainer;
-import buildcraft.core.network.PacketCoordinates;
-import buildcraft.core.network.PacketIds;
-import buildcraft.core.network.PacketPayload;
-import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.network.RPC;
 import buildcraft.core.network.RPCHandler;
+import buildcraft.core.network.RPCMessageInfo;
 import buildcraft.core.network.RPCSide;
-import buildcraft.core.utils.Utils;
 import buildcraft.transport.ActionState;
+import buildcraft.transport.Gate;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.gates.GateDefinition;
 
 public class ContainerGateInterface extends BuildCraftContainer {
+
 	public ActionState[] actionsState = new ActionState[8];
+	public GuiGateInterface gateCallback;
 
 	IInventory playerIInventory;
-	Pipe pipe;
-
+	private final Pipe pipe;
+	private Gate gate;
 	private final NavigableSet<ITrigger> potentialTriggers = new TreeSet<ITrigger>(new Comparator<ITrigger>() {
 		@Override
 		public int compare(ITrigger o1, ITrigger o2) {
@@ -75,19 +73,34 @@ public class ContainerGateInterface extends BuildCraftContainer {
 			actionsState[i] = ActionState.Deactivated;
 		}
 
+		this.pipe = pipe;
 		this.playerIInventory = playerInventory;
 
 		for (int y = 0; y < 3; y++) {
 			for (int x = 0; x < 9; x++) {
-				addSlotToContainer(new Slot(playerInventory, x + y * 9 + 9, 8 + x * 18, pipe.gate.material.guiHeight - 84 + y * 18));
+				addSlotToContainer(new Slot(playerIInventory, x + y * 9 + 9, 8 + x * 18, 0));
 			}
 		}
 
 		for (int x = 0; x < 9; x++) {
-			addSlotToContainer(new Slot(playerInventory, x, 8 + x * 18, pipe.gate.material.guiHeight - 26));
+			addSlotToContainer(new Slot(playerIInventory, x, 8 + x * 18, 0));
+		}
+	}
+
+	public void init() {
+		if (gate == null) {
+			return;
 		}
 
-		this.pipe = pipe;
+		for (int y = 0; y < 3; y++) {
+			for (int x = 0; x < 9; x++) {
+				getSlot(x + y * 9).yDisplayPosition = gate.material.guiHeight - 84 + y * 18;
+			}
+		}
+
+		for (int x = 0; x < 9; x++) {
+			getSlot(x + 27).yDisplayPosition = gate.material.guiHeight - 26;
+		}
 
 		// Do not attempt to create a list of potential actions and triggers on
 		// the client.
@@ -95,10 +108,7 @@ public class ContainerGateInterface extends BuildCraftContainer {
 			potentialActions.addAll(pipe.getActions());
 			potentialTriggers.addAll(StatementManager.getPipeTriggers(pipe.container));
 			potentialActions.addAll(StatementManager.getPipeActions(pipe.container));
-
-			if (pipe.container instanceof IOverrideDefaultTriggers) {
-				potentialTriggers.addAll(((IOverrideDefaultTriggers) pipe.container).getTriggers());
-			}
+			potentialTriggers.addAll(pipe.container.getTriggers());
 
 			for (ForgeDirection o : ForgeDirection.VALID_DIRECTIONS) {
 				if (pipe.hasGate(o)) {
@@ -109,7 +119,7 @@ public class ContainerGateInterface extends BuildCraftContainer {
 				}
 			}
 
-			if (pipe.gate.material.numTriggerParameters == 0) {
+			if (gate.material.numTriggerParameters == 0) {
 				Iterator<ITrigger> it = potentialTriggers.iterator();
 
 				while (it.hasNext()) {
@@ -121,7 +131,7 @@ public class ContainerGateInterface extends BuildCraftContainer {
 				}
 			}
 
-			if (pipe.gate.material.numActionParameters == 0) {
+			if (gate.material.numActionParameters == 0) {
 				Iterator<IAction> it = potentialActions.iterator();
 
 				while (it.hasNext()) {
@@ -133,11 +143,31 @@ public class ContainerGateInterface extends BuildCraftContainer {
 				}
 			}
 		}
+		if (gateCallback != null) {
+			gateCallback.setGate(gate);
+		}
+	}
+
+	private static <T extends IStatement> String[] statementsToStrings(Collection<T> statements) {
+		final int size = statements.size();
+		String[] array = new String[size];
+		int pos = 0;
+		for (T statement : statements) {
+			array[pos++] = statement.getUniqueTag();
+		}
+		return array;
+	}
+
+	private static <T extends IStatement> void stringsToStatements(Collection<T> statements, String[] strings) {
+		statements.clear();
+		for (String id : strings) {
+			statements.add((T) StatementManager.statements.get(id));
+		}
 	}
 
 	@Override
 	public boolean canInteractWith(EntityPlayer player) {
-		return !(pipe == null || pipe.gate == null);
+		return gate != null;
 	}
 
 	/**
@@ -152,50 +182,18 @@ public class ContainerGateInterface extends BuildCraftContainer {
 	}
 
 	/**
-	 * Clears list of potential actions and refills it according to packet.
-	 *
-	 * @param packet
-	 */
-	public void updateActions(PacketUpdate packet) {
-		potentialActions.clear();
-		PacketPayload payload = packet.payload;
-
-		int length = payload.stream.readInt();
-		for (int i = 0; i < length; i++) {
-			potentialActions.add((IAction) StatementManager.statements.get(Utils.readUTF(payload.stream)));
-		}
-	}
-
-	/**
-	 * Clears list of potential triggers and refills it according to packet.
-	 *
-	 * @param packet
-	 */
-	public void updateTriggers(PacketUpdate packet) {
-		potentialTriggers.clear();
-		PacketPayload payload = packet.payload;
-
-		int length = payload.stream.readInt();
-
-		for (int i = 0; i < length; i++) {
-			String trigger = Utils.readUTF(payload.stream);
-			potentialTriggers.add((ITrigger) StatementManager.statements.get(trigger));
-		}
-	}
-
-	/**
 	 * Initializes the list of triggers and actions on the gate and
 	 * (re-)requests the current selection on the gate if needed.
 	 */
 	public void synchronize() {
 		if (!isNetInitialized && pipe.container.getWorldObj().isRemote) {
 			isNetInitialized = true;
-			BuildCraftTransport.instance.sendToServer(new PacketCoordinates(PacketIds.GATE_REQUEST_INIT, pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord));
+			RPCHandler.rpcServer(this, "initRequest");
 		}
 
-		if (!isSynchronized && pipe.container.getWorldObj().isRemote) {
+		if (!isSynchronized && pipe.container.getWorldObj().isRemote && gate != null) {
 			isSynchronized = true;
-			BuildCraftTransport.instance.sendToServer(new PacketCoordinates(PacketIds.GATE_REQUEST_SELECTION, pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord));
+			RPCHandler.rpcServer(this, "selectionRequest");
 		}
 	}
 
@@ -213,7 +211,7 @@ public class ContainerGateInterface extends BuildCraftContainer {
 	 * SERVER SIDE *
 	 */
 	private int calculateTriggerState() {
-		if (pipe.gate == null) {
+		if (gate == null) {
 			return 0;
 		}
 
@@ -244,78 +242,42 @@ public class ContainerGateInterface extends BuildCraftContainer {
 		}
 	}
 
-	public void handleInitRequest(EntityPlayer player) {
-		sendActions(player);
-		sendTriggers(player);
-		sendSelection(player);
-	}
 
 	/**
-	 * Sends the list of potential actions to the client
-	 *
-	 * @param player
+	 * Sends gate info to the client
 	 */
-	private void sendActions(EntityPlayer player) {
-		// Compose update packet
-		PacketPayload payload = new PacketPayload(
-				new PacketPayload.StreamWriter() {
-					@Override
-					public void writeData(ByteBuf data) {
-						int length = potentialActions.size();
-						data.writeInt(length);
-
-						for (IAction action : potentialActions) {
-							Utils.writeUTF(data, action.getUniqueTag());
-						}
-					}
-				});
-
-		PacketUpdate packet = new PacketUpdate(PacketIds.GATE_ACTIONS, pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord, payload);
-
-		// Send to player
-		BuildCraftTransport.instance.sendToPlayer(player, packet);
+	@RPC(RPCSide.SERVER)
+	public void initRequest(RPCMessageInfo info) {
+		EntityPlayer player = info.sender;
+		RPCHandler.rpcPlayer(player, this, "setGate", gate.getDirection().ordinal());
+		RPCHandler.rpcPlayer(player, this, "setPotential", statementsToStrings(potentialActions), statementsToStrings(potentialTriggers));
 	}
 
-	/**
-	 * Sends the list of potential triggers to the client
-	 *
-	 * @param player
-	 */
-	private void sendTriggers(EntityPlayer player) {
-		PacketPayload payload = new PacketPayload(
-				new PacketPayload.StreamWriter() {
-					@Override
-					public void writeData(ByteBuf data) {
-
-						int length = potentialTriggers.size();
-						data.writeInt(length);
-
-						for (ITrigger trigger : potentialTriggers) {
-							Utils.writeUTF(data, trigger.getUniqueTag());
-						}
-					}
-				});
-
-		PacketUpdate packet = new PacketUpdate(PacketIds.GATE_TRIGGERS, pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord, payload);
-
-		// Send to player
-		BuildCraftTransport.instance.sendToPlayer(player, packet);
+	@RPC(RPCSide.CLIENT)
+	public void setPotential(String[] potentialActions, String[] potentialTriggers) {
+		stringsToStatements(this.potentialActions, potentialActions);
+		stringsToStatements(this.potentialTriggers, potentialTriggers);
 	}
 
-	/**
-	 * Sends the current selection on the gate to the client.
-	 *
-	 * @param player
-	 */
-	public void sendSelection(EntityPlayer player) {
-		if (pipe == null || pipe.gate == null) {
-			return;
-		}
+	@RPC(RPCSide.CLIENT)
+	public void setGate(int direction) {
+		this.gate = pipe.gates[direction];
+		init();
+	}
 
-		for (int position = 0; position < pipe.gate.material.numSlots; position++) {
+	@RPC(RPCSide.SERVER)
+	public void selectionRequest(RPCMessageInfo info) {
+		EntityPlayer player = info.sender;
+		for (int position = 0; position < gate.material.numSlots; position++) {
+			IAction action = gate.getAction(position);
+			ITrigger trigger = gate.getTrigger(position);
+			RPCHandler.rpcPlayer(player, this, "setAction", position, action != null ? action.getUniqueTag() : null, false);
+			RPCHandler.rpcPlayer(player, this, "setTrigger", position, trigger != null ? trigger.getUniqueTag() : null, false);
 			for (int p = 0; p < 3; ++p) {
+				RPCHandler.rpcPlayer(player, this, "setActionParameter", position, p,
+						gate.getActionParameter(position, p), false);
 				RPCHandler.rpcPlayer(player, this, "setTriggerParameter", position, p,
-						pipe.gate.getTriggerParameter(position, p), false);
+						gate.getTriggerParameter(position, p), false);
 			}
 		}
 	}
@@ -348,23 +310,23 @@ public class ContainerGateInterface extends BuildCraftContainer {
 	}
 
 	public ActionState getActionState(int i) {
-		if (pipe.gate == null) {
+		if (gate == null) {
 			return ActionState.Deactivated;
 		} else {
-			return pipe.gate.actionsState [i];
+			return gate.actionsState [i];
 		}
 	}
 
 	@RPC(RPCSide.BOTH)
 	public void setTrigger(int trigger, String tag, boolean notifyServer) {
-		if (pipe.gate == null) {
+		if (gate == null) {
 			return;
 		}
 
 		if (tag != null) {
-			pipe.gate.setTrigger(trigger, (ITrigger) StatementManager.statements.get(tag));
+			gate.setTrigger(trigger, (ITrigger) StatementManager.statements.get(tag));
 		} else {
-			pipe.gate.setTrigger(trigger, null);
+			gate.setTrigger(trigger, null);
 		}
 
 		if (pipe.container.getWorldObj().isRemote && notifyServer) {
@@ -374,11 +336,11 @@ public class ContainerGateInterface extends BuildCraftContainer {
 
 	@RPC(RPCSide.BOTH)
 	public void setTriggerParameter(int trigger, int param, ITriggerParameter parameter, boolean notifyServer) {
-		if (pipe.gate == null) {
+		if (gate == null) {
 			return;
 		}
 
-		pipe.gate.setTriggerParameter(trigger, param, parameter);
+		gate.setTriggerParameter(trigger, param, parameter);
 
 		if (pipe.container.getWorldObj().isRemote && notifyServer) {
 			RPCHandler.rpcServer(this, "setTriggerParameter", trigger, param, parameter, false);
@@ -414,14 +376,14 @@ public class ContainerGateInterface extends BuildCraftContainer {
 
 	@RPC(RPCSide.BOTH)
 	public void setAction(int action, String tag, boolean notifyServer) {
-		if (pipe.gate == null) {
+		if (gate == null) {
 			return;
 		}
 
 		if (tag != null) {
-			pipe.gate.setAction(action, (IAction) StatementManager.statements.get(tag));
+			gate.setAction(action, (IAction) StatementManager.statements.get(tag));
 		} else {
-			pipe.gate.setAction(action, null);
+			gate.setAction(action, null);
 		}
 
 		if (pipe.container.getWorldObj().isRemote && notifyServer) {
@@ -429,14 +391,27 @@ public class ContainerGateInterface extends BuildCraftContainer {
 		}
 	}
 
+	@RPC(RPCSide.BOTH)
+	public void setActionParameter(int action, int param, IActionParameter parameter, boolean notifyServer) {
+		if (gate == null) {
+			return;
+		}
+
+		gate.setActionParameter(action, param, parameter);
+
+		if (pipe.container.getWorldObj().isRemote && notifyServer) {
+			RPCHandler.rpcServer(this, "setActionParameter", action, param, parameter, false);
+		}
+	}
+
 	/**
 	 * GATE INFORMATION *
 	 */
 	public ResourceLocation getGateGuiFile() {
-		return pipe.gate.material.guiFile;
+		return gate.material.guiFile;
 	}
 
 	public String getGateName() {
-		return GateDefinition.getLocalizedName(pipe.gate.material, pipe.gate.logic);
+		return GateDefinition.getLocalizedName(gate.material, gate.logic);
 	}
 }

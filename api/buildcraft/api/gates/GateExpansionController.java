@@ -9,6 +9,7 @@
 package buildcraft.api.gates;
 
 import java.util.List;
+
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 
@@ -30,7 +31,7 @@ public abstract class GateExpansionController {
 		return false;
 	}
 
-	public void tick() {
+	public void tick(IGate gate) {
 	}
 
 	public void startResolution() {

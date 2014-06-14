@@ -8,9 +8,8 @@
  */
 package buildcraft.transport;
 
-import java.util.HashSet;
+import java.util.Arrays;
 import java.util.LinkedList;
-import java.util.Set;
 import java.util.logging.Level;
 
 import io.netty.buffer.ByteBuf;
@@ -21,7 +20,6 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.Packet;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
@@ -42,8 +40,6 @@ import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.core.Position;
-import buildcraft.api.core.SafeTimeTracker;
-import buildcraft.api.gates.GateExpansions;
 import buildcraft.api.gates.IGateExpansion;
 import buildcraft.api.gates.IOverrideDefaultTriggers;
 import buildcraft.api.gates.ITrigger;
@@ -51,9 +47,8 @@ import buildcraft.api.mj.MjBattery;
 import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.power.PowerHandler;
 import buildcraft.api.power.PowerHandler.PowerReceiver;
-import buildcraft.api.robots.DockingStationRegistry;
-import buildcraft.api.robots.IDockingStation;
 import buildcraft.api.transport.IPipeConnection;
+import buildcraft.api.transport.IPipePluggable;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.PipeWire;
 import buildcraft.core.DefaultProps;
@@ -68,8 +63,8 @@ import buildcraft.core.network.ISyncedTile;
 import buildcraft.core.network.PacketTileState;
 import buildcraft.core.robots.DockingStation;
 import buildcraft.core.utils.Utils;
-import buildcraft.transport.gates.GateDefinition;
 import buildcraft.transport.gates.GateFactory;
+import buildcraft.transport.gates.ItemGate;
 
 public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFluidHandler,
 		IPipeTile, IOverrideDefaultTriggers, ITileBufferHolder,
@@ -79,11 +74,10 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 	public final PipeRenderState renderState = new PipeRenderState();
 	public final CoreState coreState = new CoreState();
 	public boolean[] pipeConnectionsBuffer = new boolean[6];
-	public SafeTimeTracker networkSyncTracker = new SafeTimeTracker();
 
 	@MjBattery
 	public Pipe pipe;
-	public int redstoneInput = 0;
+	public int[] redstoneInput = new int[ForgeDirection.VALID_DIRECTIONS.length];
 
 	private boolean deletePipe = false;
 	private TileBuffer[] tileBuffer;
@@ -92,73 +86,95 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 	private boolean refreshRenderState = false;
 	private boolean pipeBound = false;
 	private boolean resyncGateExpansions = false;
+	private boolean attachPluggables = false;
 
-	public class CoreState implements IClientState {
-
+	public static class CoreState implements IClientState {
 		public int pipeId = -1;
-		public int gateMaterial = -1;
-		public int gateLogic = -1;
-		public final Set<Byte> expansions = new HashSet<Byte>();
+		public ItemGate.GatePluggable[] gates = new ItemGate.GatePluggable[ForgeDirection.VALID_DIRECTIONS.length];
 
 		@Override
 		public void writeData(ByteBuf data) {
 			data.writeInt(pipeId);
-			data.writeByte(gateMaterial);
-			data.writeByte(gateLogic);
-			data.writeByte(expansions.size());
-			for (Byte expansion : expansions) {
-				data.writeByte(expansion);
+			for (int i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
+				ItemGate.GatePluggable gate = gates[i];
+
+				boolean gateValid = gate != null;
+				data.writeBoolean(gateValid);
+				if (gateValid) {
+					gate.writeToByteByf(data);
+				}
 			}
 		}
 
 		@Override
 		public void readData(ByteBuf data) {
 			pipeId = data.readInt();
-			gateMaterial = data.readByte();
-			gateLogic = data.readByte();
-			expansions.clear();
-			int numExp = data.readByte();
-			for (int i = 0; i < numExp; i++) {
-				expansions.add(data.readByte());
+			for (int i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
+				if (data.readBoolean()) {
+					ItemGate.GatePluggable gate = gates[i];
+					if (gate == null) {
+						gates[i] = gate = new ItemGate.GatePluggable();
+					}
+					gate.readFromByteBuf(data);
+				} else {
+					gates[i] = null;
+				}
 			}
 		}
 	}
 
 	public static class SideProperties {
-		ItemFacade.FacadeState[][] facadeStates = new ItemFacade.FacadeState[ForgeDirection.VALID_DIRECTIONS.length][];
+		IPipePluggable[] pluggables = new IPipePluggable[ForgeDirection.VALID_DIRECTIONS.length];
 
-		boolean[] plugs = new boolean[ForgeDirection.VALID_DIRECTIONS.length];
-		DockingStation[] robotStations = new DockingStation[ForgeDirection.VALID_DIRECTIONS.length];
-
-		public void writeToNBT (NBTTagCompound nbt) {
+		public void writeToNBT(NBTTagCompound nbt) {
 			for (int i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
-				NBTTagList list = ItemFacade.FacadeState.writeArray(facadeStates[i]);
-				if (list != null) {
-					nbt.setTag("facadeState[" + i + "]", list);
+				IPipePluggable pluggable = pluggables[i];
+				final String key = "pluggable[" + i + "]";
+				if (pluggable == null) {
+					nbt.removeTag(key);
 				} else {
-					nbt.removeTag("facadeState[" + i + "]");
-				}
-				nbt.setBoolean("plug[" + i + "]", plugs[i]);
-
-				if (robotStations[i] != null) {
-					nbt.setBoolean("robotStation[" + i + "]", true);
-				} else {
-					nbt.setBoolean("robotStation[" + i + "]", false);
+					NBTTagCompound pluggableData = new NBTTagCompound();
+					pluggableData.setString("pluggableClass", pluggable.getClass().getName());
+					pluggable.writeToNBT(pluggableData);
+					nbt.setTag(key, pluggableData);
 				}
 			}
 		}
 
-		public void readFromNBT (NBTTagCompound nbt) {
+		public void readFromNBT(NBTTagCompound nbt) {
 			for (int i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
+				final String key = "pluggable[" + i + "]";
+				if (!nbt.hasKey(key)) {
+					continue;
+				}
+				try {
+					NBTTagCompound pluggableData = nbt.getCompoundTag(key);
+					Class<?> pluggableClass = Class.forName(pluggableData.getString("pluggableClass"));
+					if (!IPipePluggable.class.isAssignableFrom(pluggableClass)) {
+						BCLog.logger.warning("Wrong pluggable class: " + pluggableClass);
+						continue;
+					}
+					IPipePluggable pluggable = (IPipePluggable) pluggableClass.newInstance();
+					pluggable.readFromNBT(pluggableData);
+					pluggables[i] = pluggable;
+				} catch (Exception e) {
+					BCLog.logger.warning("Failed to load side state");
+					e.printStackTrace();
+				}
+			}
+
+			// Migration code
+			for (int i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
+				IPipePluggable pluggable = null;
 				if (nbt.hasKey("facadeState[" + i + "]")) {
-					facadeStates[i] = ItemFacade.FacadeState.readArray(nbt.getTagList("facadeState[" + i + "]", Constants.NBT.TAG_COMPOUND));
+					pluggable = new ItemFacade.FacadePluggable(ItemFacade.FacadeState.readArray(nbt.getTagList("facadeState[" + i + "]", Constants.NBT.TAG_COMPOUND)));
 				} else {
 					// Migration support for 5.0.x and 6.0.x
 					if (nbt.hasKey("facadeBlocks[" + i + "]")) {
 						// 5.0.x
 						Block block = (Block) Block.blockRegistry.getObjectById(nbt.getInteger("facadeBlocks[" + i + "]"));
 						int metadata = nbt.getInteger("facadeMeta[" + i + "]");
-						facadeStates[i] = new ItemFacade.FacadeState[] {ItemFacade.FacadeState.create(block, metadata)};
+						pluggable = new ItemFacade.FacadePluggable(new ItemFacade.FacadeState[]{ItemFacade.FacadeState.create(block, metadata)});
 					} else if (nbt.hasKey("facadeBlocksStr[" + i + "][0]")) {
 						// 6.0.x
 						ItemFacade.FacadeState mainState = ItemFacade.FacadeState.create(
@@ -171,37 +187,50 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 									nbt.getInteger("facadeMeta[" + i + "][1]"),
 									PipeWire.fromOrdinal(nbt.getInteger("facadeWires[" + i + "]"))
 							);
-							facadeStates[i] = new ItemFacade.FacadeState[] {mainState, phasedState};
+							pluggable = new ItemFacade.FacadePluggable(new ItemFacade.FacadeState[]{mainState, phasedState});
 						} else {
-							facadeStates[i] = new ItemFacade.FacadeState[] {mainState};
+							pluggable = new ItemFacade.FacadePluggable(new ItemFacade.FacadeState[]{mainState});
 						}
 					}
 				}
 
-				plugs[i] = nbt.getBoolean("plug[" + i + "]");
-
+				if (nbt.getBoolean("plug[" + i + "]")) {
+					pluggable = new ItemPlug.PlugPluggable();
+				}
 				if (nbt.getBoolean("robotStation[" + i + "]")) {
-					robotStations[i] = new DockingStation();
+					pluggable = new ItemRobotStation.RobotStationPluggable();
+				}
+
+				if (pluggable != null) {
+					pluggables[i] = pluggable;
 				}
 			}
 		}
 
 		public void rotateLeft() {
-			ItemFacade.FacadeState[][] newFacadeStates = new ItemFacade.FacadeState[ForgeDirection.VALID_DIRECTIONS.length][];
-			boolean[] newPlugs = new boolean[ForgeDirection.VALID_DIRECTIONS.length];
-			DockingStation[] newRobotStations = new DockingStation[ForgeDirection.VALID_DIRECTIONS.length];
-
+			IPipePluggable[] newPluggables = new IPipePluggable[ForgeDirection.VALID_DIRECTIONS.length];
 			for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
-				ForgeDirection r = dir.getRotation(ForgeDirection.UP);
-
-				newFacadeStates[r.ordinal()] = facadeStates[dir.ordinal()];
-				newPlugs[r.ordinal()] = plugs[dir.ordinal()];
-				newRobotStations[r.ordinal()] = robotStations[dir.ordinal()];
+				newPluggables[dir.getRotation(ForgeDirection.UP).ordinal()] = pluggables[dir.ordinal()];
 			}
+			pluggables = newPluggables;
+		}
 
-			facadeStates = newFacadeStates;
-			plugs = newPlugs;
-			robotStations = newRobotStations;
+		public boolean dropItem(TileGenericPipe pipe, ForgeDirection direction) {
+			boolean result = false;
+			IPipePluggable pluggable = pluggables[direction.ordinal()];
+			if (pluggable != null) {
+				pluggable.onDetachedPipe(pipe, direction);
+				ItemStack[] stacks = pluggable.getDropItems(pipe);
+				if (stacks != null) {
+					for (ItemStack stack : stacks) {
+						InvUtils.dropItems(pipe.worldObj, stack, pipe.xCoord, pipe.yCoord, pipe.zCoord);
+					}
+				}
+				result = true;
+			}
+			pluggables[direction.ordinal()] = null;
+			pipe.notifyBlockChanged();
+			return result;
 		}
 	}
 
@@ -214,7 +243,10 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 	public void writeToNBT(NBTTagCompound nbt) {
 		super.writeToNBT(nbt);
 
-		nbt.setByte("redstoneInput", (byte) redstoneInput);
+		for (int i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
+			final String key = "redstoneInput[" + i + "]";
+			nbt.setInteger(key, redstoneInput[i]);
+		}
 
 		if (pipe != null) {
 			nbt.setInteger("pipeId", Item.itemRegistry.getIDForObject(pipe.item));
@@ -230,7 +262,15 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 	public void readFromNBT(NBTTagCompound nbt) {
 		super.readFromNBT(nbt);
 
-		redstoneInput = nbt.getByte("redstoneInput");
+		// Legacy
+		if (nbt.hasKey("redstoneInput")) {
+			Arrays.fill(redstoneInput, nbt.getByte("redstoneInput"));
+		}
+
+		for (int i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
+			final String key = "redstoneInput[" + i + "]";
+			redstoneInput[i] = nbt.hasKey(key) ? nbt.getInteger(key) : 0;
+		}
 
 		coreState.pipeId = nbt.getInteger("pipeId");
 		pipe = BlockGenericPipe.createPipe((Item) Item.itemRegistry.getObjectById(coreState.pipeId));
@@ -244,14 +284,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 		}
 
 		sideProperties.readFromNBT(nbt);
-
-		for (int i = 0; i < 6; ++i) {
-			if (sideProperties.robotStations[i] != null) {
-				sideProperties.robotStations[i].pipe = this;
-				sideProperties.robotStations[i].side = ForgeDirection.VALID_DIRECTIONS[i];
-				DockingStationRegistry.registerStation(sideProperties.robotStations[i]);
-			}
-		}
+		attachPluggables = true;
 	}
 
 	@Override
@@ -275,8 +308,25 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 		}
 	}
 
+	private void notifyBlockChanged() {
+		worldObj.notifyBlockOfNeighborChange(xCoord, yCoord, zCoord, getBlock());
+		scheduleRenderUpdate();
+		sendUpdateToClient();
+		BlockGenericPipe.updateNeighbourSignalState(pipe);
+	}
+
 	@Override
 	public void updateEntity() {
+		if (attachPluggables) {
+			attachPluggables = false;
+			// Attach callback
+			for (int i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
+				if (sideProperties.pluggables[i] != null) {
+					sideProperties.pluggables[i].onAttachedPipe(this, ForgeDirection.getOrientation(i));
+				}
+			}
+		}
+
 		if (!worldObj.isRemote) {
 			if (deletePipe) {
 				worldObj.setBlockToAir(xCoord, yCoord, zCoord);
@@ -378,12 +428,21 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 		}
 
 		// Gate Textures and movement
-		renderState.setIsGateLit(pipe.gate != null ? pipe.gate.isGateActive() : false);
-		renderState.setIsGatePulsing(pipe.gate != null ? pipe.gate.isGatePulsing() : false);
+		for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
+			final Gate gate = pipe.gates[direction.ordinal()];
+			renderState.gateMatrix.setIsGateExists(gate != null, direction);
+			renderState.gateMatrix.setIsGateLit(gate != null && gate.isGateActive(), direction);
+			renderState.gateMatrix.setIsGatePulsing(gate != null && gate.isGatePulsing(), direction);
+		}
 
 		// Facades
 		for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
-			ItemFacade.FacadeState[] states = sideProperties.facadeStates[direction.ordinal()];
+			IPipePluggable pluggable = sideProperties.pluggables[direction.ordinal()];
+			if (!(pluggable instanceof ItemFacade.FacadePluggable)) {
+				renderState.facadeMatrix.setFacade(direction, null, 0, true);
+				continue;
+			}
+			ItemFacade.FacadeState[] states = ((ItemFacade.FacadePluggable) pluggable).states;
 			if (states == null) {
 				renderState.facadeMatrix.setFacade(direction, null, 0, true);
 				continue;
@@ -411,13 +470,9 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 
 		//Plugs
 		for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
-			renderState.plugMatrix.setConnected(direction, sideProperties.plugs[direction.ordinal()]);
-		}
-
-		//RobotStations
-		for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
-			renderState.robotStationMatrix.setConnected(direction,
-					sideProperties.robotStations[direction.ordinal()] != null);
+			IPipePluggable pluggable = sideProperties.pluggables[direction.ordinal()];
+			renderState.plugMatrix.setConnected(direction, pluggable instanceof ItemPlug.PlugPluggable);
+			renderState.robotStationMatrix.setConnected(direction, pluggable instanceof ItemRobotStation.RobotStationPluggable);
 		}
 
 		if (renderState.isDirty()) {
@@ -504,20 +559,9 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 
 	public BuildCraftPacket getBCDescriptionPacket() {
 		bindPipe();
+		updateCoreState();
 
 		PacketTileState packet = new PacketTileState(this.xCoord, this.yCoord, this.zCoord);
-		coreState.expansions.clear();
-
-		if (pipe != null && pipe.gate != null) {
-			coreState.gateMaterial = pipe.gate.material.ordinal();
-			coreState.gateLogic = pipe.gate.logic.ordinal();
-			for (IGateExpansion ex : pipe.gate.expansions.keySet()) {
-				coreState.expansions.add(GateExpansions.getServerExpansionID(ex.getUniqueIdentifier()));
-			}
-		} else {
-			coreState.gateMaterial = -1;
-			coreState.gateLogic = -1;
-		}
 
 		if (pipe != null && pipe.transport != null) {
 			pipe.transport.sendDescriptionPacket();
@@ -606,7 +650,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 			return false;
 		}
 
-		if (hasPlug(side) || hasRobotStation(side)) {
+		if (hasBlockingPluggable(side)) {
 			return false;
 		}
 
@@ -618,13 +662,13 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 			if (with instanceof IPipeConnection) {
 				IPipeConnection.ConnectOverride override = ((IPipeConnection) with).overridePipeConnection(pipe.transport.getPipeType(), side.getOpposite());
 				if (override != IPipeConnection.ConnectOverride.DEFAULT) {
-					return override == IPipeConnection.ConnectOverride.CONNECT ? true : false;
+					return override == IPipeConnection.ConnectOverride.CONNECT;
 				}
 			}
 		}
 
 		if (with instanceof TileGenericPipe) {
-			if (((TileGenericPipe) with).hasPlug(side.getOpposite())) {
+			if (((TileGenericPipe) with).hasBlockingPluggable(side.getOpposite())) {
 				return false;
 			}
 			Pipe otherPipe = ((TileGenericPipe) with).pipe;
@@ -639,6 +683,11 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 		}
 
 		return pipe.canPipeConnect(with, side);
+	}
+
+	private boolean hasBlockingPluggable(ForgeDirection side) {
+		IPipePluggable pluggable = sideProperties.pluggables[side.ordinal()];
+		return pluggable != null && pluggable.blocking(this, side);
 	}
 
 	private void computeConnections() {
@@ -745,21 +794,20 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 	}
 
 	public boolean addFacade(ForgeDirection direction, ItemFacade.FacadeState[] states) {
-		if (this.getWorldObj().isRemote) {
-			return false;
-		}
+		return setPluggable(direction, new ItemFacade.FacadePluggable(states));
+	}
 
-		if (hasFacade(direction)) {
-			dropFacadeItem(direction);
-		}
+	public boolean addPlug(ForgeDirection direction) {
+		return setPluggable(direction, new ItemPlug.PlugPluggable());
+	}
 
-		sideProperties.facadeStates[direction.ordinal()] = states;
+	public boolean addRobotStation(ForgeDirection direction) {
+		return setPluggable(direction, new ItemRobotStation.RobotStationPluggable());
+	}
 
-		worldObj.notifyBlockChange(this.xCoord, this.yCoord, this.zCoord, getBlock());
-
-		scheduleRenderUpdate();
-
-		return true;
+	public boolean addGate(ForgeDirection direction, Gate gate) {
+		gate.setDirection(direction);
+		return setPluggable(direction, new ItemGate.GatePluggable(gate));
 	}
 
 	public boolean hasFacade(ForgeDirection direction) {
@@ -768,7 +816,35 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 		} else if (this.getWorldObj().isRemote) {
 			return renderState.facadeMatrix.getFacadeBlock(direction) != null;
 		} else {
-			return sideProperties.facadeStates[direction.ordinal()] != null;
+			return sideProperties.pluggables[direction.ordinal()] instanceof ItemFacade.FacadePluggable;
+		}
+	}
+
+	public boolean hasGate(ForgeDirection direction) {
+		if (direction == null || direction == ForgeDirection.UNKNOWN) {
+			return false;
+		} else if (this.getWorldObj().isRemote) {
+			return renderState.gateMatrix.isGateExists(direction);
+		} else {
+			return sideProperties.pluggables[direction.ordinal()] instanceof ItemGate.GatePluggable;
+		}
+	}
+
+	public boolean setPluggable(ForgeDirection direction, IPipePluggable pluggable) {
+		if (worldObj != null && worldObj.isRemote || pluggable == null) {
+			return false;
+		}
+		sideProperties.dropItem(this, direction);
+		sideProperties.pluggables[direction.ordinal()] = pluggable;
+		pluggable.onAttachedPipe(this, direction);
+		notifyBlockChanged();
+		return true;
+	}
+
+	private void updateCoreState() {
+		for (int i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
+			IPipePluggable pluggable = sideProperties.pluggables[i];
+			coreState.gates[i] = pluggable instanceof ItemGate.GatePluggable ? (ItemGate.GatePluggable) pluggable : null;
 		}
 	}
 
@@ -776,27 +852,33 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 		return hasFacade(direction) && !renderState.facadeMatrix.getFacadeTransparent(direction);
 	}
 
-	private void dropFacadeItem(ForgeDirection direction) {
-		InvUtils.dropItems(worldObj, getFacade(direction), this.xCoord, this.yCoord, this.zCoord);
-	}
-
 	public ItemStack getFacade(ForgeDirection direction) {
-		return ItemFacade.getFacade(sideProperties.facadeStates[direction.ordinal()]);
+		IPipePluggable pluggable = sideProperties.pluggables[direction.ordinal()];
+		return pluggable instanceof ItemFacade.FacadePluggable ?
+				ItemFacade.getFacade(((ItemFacade.FacadePluggable) pluggable).states) : null;
 	}
 
-	public boolean dropFacade(ForgeDirection direction) {
-		if (!hasFacade(direction)) {
-			return false;
-		}
+	public Gate getGate(ForgeDirection direction) {
+		return pipe.gates[direction.ordinal()];
+	}
 
-		if (!worldObj.isRemote) {
-			dropFacadeItem(direction);
-			sideProperties.facadeStates[direction.ordinal()] = null;
-			worldObj.notifyBlockChange(this.xCoord, this.yCoord, this.zCoord, getBlock());
-			scheduleRenderUpdate();
-		}
+	public DockingStation getStation(ForgeDirection direction) {
+		IPipePluggable pluggable = sideProperties.pluggables[direction.ordinal()];
+		return pluggable instanceof ItemRobotStation.RobotStationPluggable ?
+				((ItemRobotStation.RobotStationPluggable) pluggable).getStation() : null;
+	}
 
-		return true;
+	// Legacy
+	public void setGate(Gate gate, int direction) {
+		if (sideProperties.pluggables[direction] == null) {
+			gate.setDirection(ForgeDirection.getOrientation(direction));
+			pipe.gates[direction] = gate;
+			sideProperties.pluggables[direction] = new ItemGate.GatePluggable(gate);
+		}
+	}
+
+	public boolean dropSideItems(ForgeDirection direction) {
+		return sideProperties.dropItem(this, direction);
 	}
 
 	@SideOnly(Side.CLIENT)
@@ -836,10 +918,16 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 					break;
 				}
 
-				if (coreState.gateMaterial == -1) {
-					pipe.gate = null;
-				} else if (pipe.gate == null) {
-					pipe.gate = GateFactory.makeGate(pipe, GateDefinition.GateMaterial.fromOrdinal(coreState.gateMaterial), GateDefinition.GateLogic.fromOrdinal(coreState.gateLogic));
+				for (int i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
+					final ItemGate.GatePluggable gatePluggable = coreState.gates[i];
+					if (gatePluggable == null) {
+						pipe.gates[i] = null;
+						continue;
+					}
+					Gate gate = pipe.gates[i];
+					if (gate == null || gate.logic != gatePluggable.logic || gate.material != gatePluggable.material) {
+						pipe.gates[i] = GateFactory.makeGate(pipe, gatePluggable.material, gatePluggable.logic, ForgeDirection.getOrientation(i));
+					}
 				}
 
 				syncGateExpansions();
@@ -859,15 +947,18 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 
 	private void syncGateExpansions() {
 		resyncGateExpansions = false;
-		if (pipe.gate != null && !coreState.expansions.isEmpty()) {
-			for (byte id : coreState.expansions) {
-				IGateExpansion ex = GateExpansions.getExpansionClient(id);
-				if (ex != null) {
-					if (!pipe.gate.expansions.containsKey(ex)) {
-						pipe.gate.addGateExpansion(ex);
+		for (int i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
+			Gate gate = pipe.gates[i];
+			ItemGate.GatePluggable gatePluggable = coreState.gates[i];
+			if (gate != null && gatePluggable.expansions.length > 0) {
+				for (IGateExpansion expansion : gatePluggable.expansions) {
+					if (expansion != null) {
+						if (!gate.expansions.containsKey(expansion)) {
+							gate.addGateExpansion(expansion);
+						}
+					} else {
+						resyncGateExpansions = true;
 					}
-				} else {
-					resyncGateExpansions = true;
 				}
 			}
 		}
@@ -907,7 +998,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 			return renderState.plugMatrix.isConnected(side);
 		}
 
-		return sideProperties.plugs[side.ordinal()];
+		return sideProperties.pluggables[side.ordinal()] instanceof ItemPlug.PlugPluggable;
 	}
 
 	public boolean hasRobotStation(ForgeDirection side) {
@@ -919,74 +1010,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 			return renderState.robotStationMatrix.isConnected(side);
 		}
 
-		return sideProperties.robotStations[side.ordinal()] != null;
-	}
-
-	public boolean removeAndDropPlug(ForgeDirection side) {
-		if (!hasPlug(side)) {
-			return false;
-		}
-
-		if (!worldObj.isRemote) {
-			sideProperties.plugs[side.ordinal()] = false;
-			InvUtils.dropItems(worldObj, new ItemStack(BuildCraftTransport.plugItem), this.xCoord, this.yCoord, this.zCoord);
-			worldObj.notifyBlockChange(this.xCoord, this.yCoord, this.zCoord, getBlock());
-			scheduleNeighborChange(); //To force recalculation of connections
-			scheduleRenderUpdate();
-		}
-
-		return true;
-	}
-
-	public boolean removeAndDropRobotStation(ForgeDirection side) {
-		if (!hasRobotStation(side)) {
-			return false;
-		}
-
-		if (!worldObj.isRemote) {
-			DockingStationRegistry.registerStation(sideProperties.robotStations[side.ordinal()]);
-			sideProperties.robotStations[side.ordinal()] = null;
-			InvUtils.dropItems(worldObj, new ItemStack(BuildCraftTransport.robotStationItem), this.xCoord, this.yCoord, this.zCoord);
-			worldObj.notifyBlockChange(this.xCoord, this.yCoord, this.zCoord, getBlock());
-			scheduleNeighborChange(); //To force recalculation of connections
-			scheduleRenderUpdate();
-		}
-
-		return true;
-	}
-
-	public boolean addPlug(ForgeDirection forgeDirection) {
-		if (hasPlug(forgeDirection)) {
-			return false;
-		}
-
-		sideProperties.plugs[forgeDirection.ordinal()] = true;
-		worldObj.notifyBlockChange(this.xCoord, this.yCoord, this.zCoord, getBlock());
-		scheduleNeighborChange(); //To force recalculation of connections
-		scheduleRenderUpdate();
-		return true;
-	}
-
-	public boolean addRobotStation(ForgeDirection forgeDirection) {
-		if (hasRobotStation(forgeDirection)) {
-			return false;
-		}
-
-		sideProperties.robotStations[forgeDirection.ordinal()] = new DockingStation(this, forgeDirection);
-
-		if (!worldObj.isRemote) {
-			DockingStationRegistry.registerStation(sideProperties.robotStations[forgeDirection.ordinal()]);
-		}
-
-		worldObj.notifyBlockChange(this.xCoord, this.yCoord, this.zCoord, getBlock());
-		scheduleNeighborChange(); //To force recalculation of connections
-		scheduleRenderUpdate();
-
-		return true;
-	}
-
-	public IDockingStation getStation(ForgeDirection side) {
-		return sideProperties.robotStations[side.ordinal()];
+		return sideProperties.pluggables[side.ordinal()] instanceof ItemRobotStation.RobotStationPluggable;
 	}
 
 	public Block getBlock() {

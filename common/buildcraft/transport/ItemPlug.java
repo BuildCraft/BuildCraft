@@ -11,11 +11,17 @@ package buildcraft.transport;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
+import net.minecraftforge.common.util.ForgeDirection;
+
+import buildcraft.BuildCraftTransport;
+import buildcraft.api.transport.IPipePluggable;
+import buildcraft.api.transport.IPipeTile;
 import buildcraft.core.ItemBuildCraft;
 
 public class ItemPlug extends ItemBuildCraft {
@@ -28,31 +34,6 @@ public class ItemPlug extends ItemBuildCraft {
 	public String getUnlocalizedName(ItemStack itemstack) {
 		return "item.PipePlug";
 	}
-
-//	@Override
-//	public boolean onItemUseFirst(ItemStack stack, EntityPlayer player, World worldObj, int x, int y, int z, int side, float hitX, float hitY, float hitZ) {
-//		if (worldObj.isRemote)
-//			return false;
-//		TileEntity tile = worldObj.getTileEntity(x, y, z);
-//		if (!(tile instanceof TileGenericPipe))
-//			return false;
-//		TileGenericPipe pipeTile = (TileGenericPipe) tile;
-//
-//		if (player.isSneaking()) { // Strip plug
-//			if (!pipeTile.hasPlug(ForgeDirection.VALID_DIRECTIONS[side]))
-//				return false;
-//			pipeTile.removeAndDropPlug(ForgeDirection.VALID_DIRECTIONS[side]);
-//			return true;
-//		} else {
-//			if (((TileGenericPipe) tile).addPlug(ForgeDirection.VALID_DIRECTIONS[side])){
-//				if (!player.capabilities.isCreativeMode) {
-//					stack.stackSize--;
-//				}
-//				return true;
-//			}
-//			return false;
-//		}
-//	}
 
 	@Override
 	public boolean doesSneakBypassUse(World world, int x, int y, int z, EntityPlayer player) {
@@ -71,4 +52,39 @@ public class ItemPlug extends ItemBuildCraft {
         return 0;
     }
 
+	public static class PlugPluggable implements IPipePluggable {
+		public PlugPluggable() {
+
+		}
+
+		@Override
+		public void writeToNBT(NBTTagCompound nbt) {
+
+		}
+
+		@Override
+		public void readFromNBT(NBTTagCompound nbt) {
+
+		}
+
+		@Override
+		public ItemStack[] getDropItems(IPipeTile pipe) {
+			return new ItemStack[] { new ItemStack(BuildCraftTransport.plugItem) };
+		}
+
+		@Override
+		public void onAttachedPipe(IPipeTile pipe, ForgeDirection direction) {
+
+		}
+
+		@Override
+		public void onDetachedPipe(IPipeTile pipe, ForgeDirection direction) {
+
+		}
+
+		@Override
+		public boolean blocking(IPipeTile pipe, ForgeDirection direction) {
+			return true;
+		}
+	}
 }
