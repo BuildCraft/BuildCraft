@@ -142,7 +142,7 @@ public class PipeItemsObsidian extends Pipe<PipeTransportItems> {
 		Position min = p1.min(p2);
 		Position max = p1.max(p2);
 
-		return AxisAlignedBB.getAABBPool().getAABB(min.x, min.y, min.z, max.x, max.y, max.z);
+		return AxisAlignedBB.getBoundingBox(min.x, min.y, min.z, max.x, max.y, max.z);
 	}
 
 	@Override

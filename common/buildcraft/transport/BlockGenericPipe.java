@@ -307,7 +307,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 
 		double eyeHeight = world.isRemote ? player.getEyeHeight() - player.getDefaultEyeHeight() : player.getEyeHeight();
 		Vec3 lookVec = player.getLookVec();
-		Vec3 origin = world.getWorldVec3Pool().getVecFromPool(player.posX, player.posY + eyeHeight, player.posZ);
+		Vec3 origin = Vec3.createVectorHelper(player.posX, player.posY + eyeHeight, player.posZ);
 		Vec3 direction = origin.addVector(lookVec.xCoord * reachDistance, lookVec.yCoord * reachDistance, lookVec.zCoord * reachDistance);
 
 		return doRayTrace(world, x, y, z, origin, direction);
@@ -466,7 +466,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 		bounds[2][1] = max;
 
 		MatrixTranformations.transform(bounds, side);
-		return AxisAlignedBB.getAABBPool().getAABB(bounds[0][0], bounds[1][0], bounds[2][0], bounds[0][1], bounds[1][1], bounds[2][1]);
+		return AxisAlignedBB.getBoundingBox(bounds[0][0], bounds[1][0], bounds[2][0], bounds[0][1], bounds[1][1], bounds[2][1]);
 	}
 
 	private AxisAlignedBB getFacadeBoundingBox(ForgeDirection side) {
@@ -482,7 +482,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 		bounds[2][1] = 1.0F;
 
 		MatrixTranformations.transform(bounds, side);
-		return AxisAlignedBB.getAABBPool().getAABB(bounds[0][0], bounds[1][0], bounds[2][0], bounds[0][1], bounds[1][1], bounds[2][1]);
+		return AxisAlignedBB.getBoundingBox(bounds[0][0], bounds[1][0], bounds[2][0], bounds[0][1], bounds[1][1], bounds[2][1]);
 	}
 
 	private AxisAlignedBB getPlugBoundingBox(ForgeDirection side) {
@@ -498,7 +498,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 		bounds[2][1] = 0.75F;
 
 		MatrixTranformations.transform(bounds, side);
-		return AxisAlignedBB.getAABBPool().getAABB(bounds[0][0], bounds[1][0], bounds[2][0], bounds[0][1], bounds[1][1], bounds[2][1]);
+		return AxisAlignedBB.getBoundingBox(bounds[0][0], bounds[1][0], bounds[2][0], bounds[0][1], bounds[1][1], bounds[2][1]);
 	}
 
 	private AxisAlignedBB getRobotStationBoundingBox(ForgeDirection side) {
@@ -514,7 +514,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 		bounds[2][1] = 0.75F;
 
 		MatrixTranformations.transform(bounds, side);
-		return AxisAlignedBB.getAABBPool().getAABB(bounds[0][0], bounds[1][0], bounds[2][0], bounds[0][1], bounds[1][1], bounds[2][1]);
+		return AxisAlignedBB.getBoundingBox(bounds[0][0], bounds[1][0], bounds[2][0], bounds[0][1], bounds[1][1], bounds[2][1]);
 	}
 
 	private AxisAlignedBB getPipeBoundingBox(ForgeDirection side) {
@@ -522,7 +522,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 		float max = CoreConstants.PIPE_MAX_POS;
 
 		if (side == ForgeDirection.UNKNOWN) {
-			return AxisAlignedBB.getAABBPool().getAABB(min, min, min, max, max, max);
+			return AxisAlignedBB.getBoundingBox(min, min, min, max, max, max);
 		}
 
 		float[][] bounds = new float[3][2];
@@ -537,7 +537,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 		bounds[2][1] = max;
 
 		MatrixTranformations.transform(bounds, side);
-		return AxisAlignedBB.getAABBPool().getAABB(bounds[0][0], bounds[1][0], bounds[2][0], bounds[0][1], bounds[1][1], bounds[2][1]);
+		return AxisAlignedBB.getBoundingBox(bounds[0][0], bounds[1][0], bounds[2][0], bounds[0][1], bounds[1][1], bounds[2][1]);
 	}
 
 	public static void removePipe(Pipe pipe) {
