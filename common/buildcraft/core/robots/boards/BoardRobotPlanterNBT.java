@@ -64,11 +64,9 @@ public final class BoardRobotPlanterNBT extends RedstoneBoardRobotNBT {
 
 	@Override
 	public void createRandomBoard(NBTTagCompound nbt) {
-
 	}
 
 	@Override
 	public void createDefaultBoard(NBTTagCompound nbt) {
-
 	}
 }

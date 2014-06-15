@@ -90,7 +90,7 @@ public class FlexibleRecipe<T> implements IFlexibleRecipe<T> {
 			return null;
 		}
 
-		CraftingResult<T> result = new CraftingResult();
+		CraftingResult<T> result = new CraftingResult<T>();
 
 		result.recipe = this;
 		result.energyCost = energyCost;

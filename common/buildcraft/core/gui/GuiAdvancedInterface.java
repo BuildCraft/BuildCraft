@@ -17,6 +17,7 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.util.ResourceLocation;
 
 public abstract class GuiAdvancedInterface extends GuiBuildCraft {
+
 	public AdvancedSlot[] slots;
 
 	public GuiAdvancedInterface(BuildCraftContainer container, IInventory inventory, ResourceLocation texture) {

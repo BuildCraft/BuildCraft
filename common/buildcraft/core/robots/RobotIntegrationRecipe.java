@@ -37,7 +37,6 @@ public class RobotIntegrationRecipe extends IntegrationTableRecipe {
 	@Override
 	public CraftingResult craft(TileIntegrationTable crafter, boolean preview, ItemStack inputA,
 			ItemStack inputB) {
-
 		CraftingResult<ItemStack> result = super.craft(crafter, preview, inputA, inputB);
 
 		if (result != null) {

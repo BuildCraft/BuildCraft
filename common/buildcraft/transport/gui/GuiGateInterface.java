@@ -39,19 +39,16 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 
 	IInventory playerInventory;
 	private final ContainerGateInterface container;
-	private final Pipe pipe;
+	private final Pipe<?> pipe;
 	private Gate gate;
 
 	private abstract class StatementSlot extends AdvancedSlot {
-
-		public Pipe pipe;
 		public int slot;
 		public ArrayList<StatementParameterSlot> parameters = new ArrayList<StatementParameterSlot>();
 
-		public StatementSlot(int x, int y, Pipe pipe, int slot) {
+		public StatementSlot(int x, int y, Pipe<?> pipe, int slot) {
 			super(GuiGateInterface.this, x, y);
 
-			this.pipe = pipe;
 			this.slot = slot;
 		}
 
@@ -87,7 +84,7 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 	}
 
 	private class TriggerSlot extends StatementSlot {
-		public TriggerSlot(int x, int y, Pipe pipe, int slot) {
+		public TriggerSlot(int x, int y, Pipe<?> pipe, int slot) {
 			super(x, y, pipe, slot);
 		}
 
@@ -98,7 +95,7 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 	}
 
 	private class ActionSlot extends StatementSlot {
-		public ActionSlot(int x, int y, Pipe pipe, int slot) {
+		public ActionSlot(int x, int y, Pipe<?> pipe, int slot) {
 			super(x, y, pipe, slot);
 		}
 
@@ -110,11 +107,11 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 
 	private abstract class StatementParameterSlot extends AdvancedSlot {
 
-		public Pipe pipe;
+		public Pipe<?> pipe;
 		public int slot;
 		public StatementSlot statementSlot;
 
-		public StatementParameterSlot(int x, int y, Pipe pipe, int slot, StatementSlot iStatementSlot) {
+		public StatementParameterSlot(int x, int y, Pipe<?> pipe, int slot, StatementSlot iStatementSlot) {
 			super(GuiGateInterface.this, x, y);
 
 			this.pipe = pipe;
@@ -164,7 +161,7 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 	}
 
 	class TriggerParameterSlot extends StatementParameterSlot {
-		public TriggerParameterSlot(int x, int y, Pipe pipe, int slot, StatementSlot iStatementSlot) {
+		public TriggerParameterSlot(int x, int y, Pipe<?> pipe, int slot, StatementSlot iStatementSlot) {
 			super(x, y, pipe, slot, iStatementSlot);
 		}
 
@@ -180,7 +177,7 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 	}
 
 	class ActionParameterSlot extends StatementParameterSlot {
-		public ActionParameterSlot(int x, int y, Pipe pipe, int slot, StatementSlot iStatementSlot) {
+		public ActionParameterSlot(int x, int y, Pipe<?> pipe, int slot, StatementSlot iStatementSlot) {
 			super(x, y, pipe, slot, iStatementSlot);
 		}
 
@@ -195,7 +192,7 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 		}
 	}
 
-	public GuiGateInterface(IInventory playerInventory, Pipe pipe) {
+	public GuiGateInterface(IInventory playerInventory, Pipe<?> pipe) {
 		super(new ContainerGateInterface(playerInventory, pipe), null, null);
 
 		container = (ContainerGateInterface) this.inventorySlots;

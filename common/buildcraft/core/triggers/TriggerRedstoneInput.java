@@ -32,10 +32,10 @@ public class TriggerRedstoneInput extends BCTrigger {
 
 	@Override
 	public boolean isTriggerActive(IGate gate, ITriggerParameter[] parameters) {
-		return !(active ^ isBeingPowered((Pipe) gate.getPipe(), gate.getSide()));
+		return !(active ^ isBeingPowered((Pipe<?>) gate.getPipe(), gate.getSide()));
 	}
 
-	private boolean isBeingPowered(Pipe pipe, ForgeDirection direction) {
+	private boolean isBeingPowered(Pipe<?> pipe, ForgeDirection direction) {
 		return direction != ForgeDirection.UNKNOWN && pipe.container.redstoneInput[direction.ordinal()] > 0;
 	}
 

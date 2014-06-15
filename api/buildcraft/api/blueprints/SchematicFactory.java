@@ -36,7 +36,7 @@ public abstract class SchematicFactory<S extends Schematic> {
 		}
 	}
 
-	public static void registerSchematicFactory(Class<? extends Schematic> clas, SchematicFactory factory) {
+	public static void registerSchematicFactory(Class<? extends Schematic> clas, SchematicFactory<?> factory) {
 		schematicToFactory.put(clas, factory);
 		factories.put(factory.getClass().getCanonicalName(), factory);
 	}

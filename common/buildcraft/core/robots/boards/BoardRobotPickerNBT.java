@@ -33,7 +33,6 @@ public final class BoardRobotPickerNBT extends RedstoneBoardRobotNBT {
 	public IIcon icon;
 
 	private BoardRobotPickerNBT() {
-
 	}
 
 	@Override

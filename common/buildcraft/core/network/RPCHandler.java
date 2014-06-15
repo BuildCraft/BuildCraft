@@ -43,24 +43,25 @@ import buildcraft.transport.Pipe;
  * RPCs must be sent and received by a tile entity.
  */
 public final class RPCHandler {
+
 	public static int MAX_PACKET_SIZE = 30 * 1024;
 
 	private static Map<String, RPCHandler> handlers = new TreeMap<String, RPCHandler>();
 
-	private Class handledClass;
+	private Class<? extends Object> handledClass;
 
 	private Map<String, Integer> methodsMap = new TreeMap<String, Integer>();
 
 	class MethodMapping {
 		Method method;
-		Class [] parameters;
+		Class[] parameters;
 		ClassSerializer [] mappings;
 		boolean hasInfo = false;
 	}
 
 	private MethodMapping [] methods;
 
-	private RPCHandler(Class c) {
+	private RPCHandler(Class<? extends Object> c) {
 		handledClass = c;
 		Method [] sortedMethods = JavaTools.getAllMethods (c).toArray(new Method [0]);
 
@@ -194,7 +195,7 @@ public final class RPCHandler {
 		}
 	}
 
-	private PacketRPCPipe createRCPPacketPipe (Pipe pipe, String method, Object ... actuals) {
+	private PacketRPCPipe createRCPPacketPipe(Pipe<?> pipe, String method, Object ... actuals) {
 		ByteBuf data = Unpooled.buffer();
 
 		try {
@@ -303,7 +304,7 @@ public final class RPCHandler {
 		}
 	}
 
-	private boolean writePrimitive(ByteBuf data, Class formal, Object actual) {
+	private boolean writePrimitive(ByteBuf data, Class<?> formal, Object actual) {
 		if (int.class.equals(formal)) {
 			data.writeInt((Integer) actual);
 		} else if (float.class.equals(formal)) {
@@ -318,7 +319,7 @@ public final class RPCHandler {
 			Utils.writeUTF(data, (String) actual);
 		} else if (formal.isArray()) {
 			Object[] array = (Object[]) actual;
-			Class componentType = formal.getComponentType();
+			Class<?> componentType = formal.getComponentType();
 			data.writeInt(array.length);
 			for (int i = 0; i < array.length; i++) {
 				writePrimitive(data, componentType, array[i]);
@@ -336,7 +337,7 @@ public final class RPCHandler {
 			MethodMapping m = methods [methodIndex];
 			Class[] formals = m.parameters;
 
-			Object [] actuals = new Object [formals.length];
+			Object[] actuals = new Object [formals.length];
 
 			int expectedParameters = m.hasInfo ? formals.length - 1 : formals.length;
 
@@ -367,7 +368,7 @@ public final class RPCHandler {
 
 	}
 
-	private boolean readPrimitive(ByteBuf data, Class formal, Object[] actuals, int i) {
+	private boolean readPrimitive(ByteBuf data, Class<?> formal, Object[] actuals, int i) {
 		if (int.class.equals(formal)) {
 			actuals[i] = data.readInt();
 		} else if (float.class.equals(formal)) {
@@ -382,7 +383,7 @@ public final class RPCHandler {
 			actuals[i] = Utils.readUTF(data);
 		} else if (formal.isArray()) {
 			final int size = data.readInt();
-			Class componentType = formal.getComponentType();
+			Class<?> componentType = formal.getComponentType();
 			Object[] a = (Object[]) Array.newInstance(componentType, size);
 			for (int z = 0; z < size; z++) {
 				readPrimitive(data, componentType, a, z);

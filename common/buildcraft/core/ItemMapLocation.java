@@ -53,7 +53,6 @@ public class ItemMapLocation extends ItemBuildCraft {
 		NBTTagCompound cpt = NBTUtils.getItemData(stack);
 
 		if (!cpt.hasKey("kind")) {
-
 		} else {
 			switch (cpt.getByte("kind")) {
 			case 0: {
@@ -91,7 +90,6 @@ public class ItemMapLocation extends ItemBuildCraft {
 		}
 
 		if (cpt.hasKey("kind")) {
-
 		}
 	}
 
@@ -132,7 +130,6 @@ public class ItemMapLocation extends ItemBuildCraft {
 	@Override
 	public boolean onItemUse(ItemStack stack, EntityPlayer par2EntityPlayer, World world, int x,
 			int y, int z, int side, float par8, float par9, float par10) {
-
 		TileEntity tile = world.getTileEntity(x, y, z);
 		NBTTagCompound cpt = NBTUtils.getItemData(stack);
 
@@ -171,8 +168,6 @@ public class ItemMapLocation extends ItemBuildCraft {
 			cpt.setInteger("z", z);
 		}
 
-
 		return true;
 	}
-
 }

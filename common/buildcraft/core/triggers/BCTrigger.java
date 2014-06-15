@@ -32,7 +32,7 @@ public abstract class BCTrigger extends BCStatement implements ITrigger {
 	@Override
 	public boolean isTriggerActive(IGate gate, ITriggerParameter[] parameters) {
 		ITriggerParameter p = parameters[0];
-		Pipe pipe = (Pipe) gate.getPipe();
+		Pipe<?> pipe = (Pipe<?>) gate.getPipe();
 
 		for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
 			if (isTriggerActive(side.getOpposite(), pipe.getAdjacentTile(side), p)) {
@@ -51,5 +51,4 @@ public abstract class BCTrigger extends BCStatement implements ITrigger {
 	public ITriggerParameter createParameter(int index) {
 		return new TriggerParameter();
 	}
-
 }

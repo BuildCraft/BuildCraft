@@ -17,12 +17,11 @@ public class SerializerObject extends ClassSerializer {
 	@Override
 	public void write(ByteBuf data, Object o, SerializationContext context)
 			throws IllegalArgumentException, IllegalAccessException {
-
 		if (o == null) {
 			data.writeBoolean(false);
 		} else {
 			data.writeBoolean(true);
-			Class realClass = o.getClass();
+			Class<? extends Object> realClass = o.getClass();
 
 			ClassSerializer delegateMapping;
 
@@ -52,7 +51,6 @@ public class SerializerObject extends ClassSerializer {
 	public Object read(ByteBuf data, Object o, SerializationContext context)
 			throws IllegalArgumentException, IllegalAccessException,
 			InstantiationException, ClassNotFoundException {
-
 		if (!data.readBoolean()) {
 			return null;
 		} else {
@@ -63,7 +61,7 @@ public class SerializerObject extends ClassSerializer {
 			if (context.idToClass.size() < index) {
 				String className = Utils.readUTF(data);
 
-				Class cls = Class.forName(className);
+				Class<?> cls = Class.forName(className);
 				delegateMapping = ClassMapping.get(cls);
 
 				context.idToClass.add(ClassMapping.get(cls));
@@ -78,5 +76,4 @@ public class SerializerObject extends ClassSerializer {
 			}
 		}
 	}
-
 }

@@ -131,7 +131,7 @@ public class EntityRobot extends EntityRobotBase implements
 		laser.tail.z = dataWatcher.getWatchableObjectFloat(14);
 		laser.isVisible = dataWatcher.getWatchableObjectByte(15) == 1;
 
-		RedstoneBoardNBT boardNBT = RedstoneBoardRegistry.instance.getRedstoneBoard(dataWatcher
+		RedstoneBoardNBT<?> boardNBT = RedstoneBoardRegistry.instance.getRedstoneBoard(dataWatcher
 				.getWatchableObjectString(16));
 
 		if (boardNBT != null) {
@@ -167,14 +167,14 @@ public class EntityRobot extends EntityRobotBase implements
 		}
 	}
 
-	public void showLaser () {
+	public void showLaser() {
 		if (!laser.isVisible) {
 			laser.isVisible = true;
 			needsUpdate = true;
 		}
 	}
 
-	public void hideLaser () {
+	public void hideLaser() {
 		if (laser.isVisible) {
 			laser.isVisible = false;
 			needsUpdate = true;
@@ -208,7 +208,7 @@ public class EntityRobot extends EntityRobotBase implements
 		super.onUpdate();
 	}
 
-	public void setRegularBoundingBox () {
+	public void setRegularBoundingBox() {
 		width = 0.5F;
 		height = 0.5F;
 
@@ -239,7 +239,7 @@ public class EntityRobot extends EntityRobotBase implements
 		}
 	}
 
-	public void setNullBoundingBox () {
+	public void setNullBoundingBox() {
 		width = 0F;
 		height = 0F;
 
@@ -252,7 +252,7 @@ public class EntityRobot extends EntityRobotBase implements
 		boundingBox.maxZ = posZ;
 	}
 
-	private void iterateBehaviorDocked () {
+	private void iterateBehaviorDocked() {
 		motionX = 0F;
 		motionY = 0F;
 		motionZ = 0F;
@@ -497,8 +497,7 @@ public class EntityRobot extends EntityRobotBase implements
 	public boolean isItemValidForSlot(int var1, ItemStack var2) {
 		return inv[var1] == null
 				|| (inv[var1].isItemEqual(var2) && inv[var1].isStackable() && inv[var1].stackSize
-						+ var2.stackSize <= inv[var1].getItem()
-						.getItemStackLimit());
+						+ var2.stackSize <= inv[var1].getItem().getItemStackLimit());
 	}
 
 	@Override

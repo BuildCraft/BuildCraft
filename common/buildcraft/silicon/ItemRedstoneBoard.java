@@ -96,8 +96,6 @@ public class ItemRedstoneBoard extends ItemBuildCraft {
 			nbtData.setString("id", nbt.getID());
 			nbt.createDefaultBoard(nbtData);
 			itemList.add(stack.copy());
-
 		}
 	}
-
 }

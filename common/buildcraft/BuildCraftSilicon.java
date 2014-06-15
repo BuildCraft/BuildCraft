@@ -269,7 +269,7 @@ public class BuildCraftSilicon extends BuildCraftMod {
 
 	private static void addGateRecipe(String materialName, double energyCost, GateMaterial material, Chipset chipset,
 			PipeWire... pipeWire) {
-		List temp = new ArrayList();
+		List<ItemStack> temp = new ArrayList<ItemStack>();
 		temp.add(chipset.getStack());
 		for (PipeWire wire : pipeWire) {
 			temp.add(wire.getStack());
