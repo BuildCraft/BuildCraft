@@ -15,7 +15,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.api.gates.IGate;
 import buildcraft.api.gates.ITrigger;
 import buildcraft.api.gates.ITriggerParameter;
-import buildcraft.api.gates.TriggerParameter;
+import buildcraft.api.gates.TriggerParameterItemStack;
 import buildcraft.transport.Pipe;
 
 /**
@@ -49,7 +49,7 @@ public abstract class BCTrigger extends BCStatement implements ITrigger {
 
 	@Override
 	public ITriggerParameter createParameter(int index) {
-		return new TriggerParameter();
+		return new TriggerParameterItemStack();
 	}
 
 }

@@ -91,6 +91,10 @@ public class BoardRobotPicker extends RedstoneBoardRobot {
 	private void emptyContainerInStation() {
 		DockingStation station = (DockingStation) robot.getDockingStation();
 
+		if (station == null) {
+			return;
+		}
+
 		TileGenericPipe pipe = (TileGenericPipe) robot.worldObj
 				.getTileEntity(station.pipe.xCoord, station.pipe.yCoord, station.pipe.zCoord);
 

@@ -26,8 +26,9 @@ import net.minecraftforge.oredict.OreDictionary;
 
 import buildcraft.api.blueprints.SchematicRegistry;
 import buildcraft.api.boards.RedstoneBoardRegistry;
+import buildcraft.api.gates.ActionParameterItemStack;
 import buildcraft.api.gates.StatementManager;
-import buildcraft.api.gates.TriggerParameter;
+import buildcraft.api.gates.TriggerParameterItemStack;
 import buildcraft.api.recipes.BuildcraftRecipeRegistry;
 import buildcraft.api.transport.PipeWire;
 import buildcraft.builders.schematics.SchematicRotateMeta;
@@ -146,8 +147,9 @@ public class BuildCraftSilicon extends BuildCraftMod {
 
 		SiliconProxy.proxy.registerRenderers();
 
-		StatementManager.registerParameterClass("buildcraft:stackTrigger", TriggerParameter.class);
+		StatementManager.registerParameterClass("buildcraft:stackTrigger", TriggerParameterItemStack.class);
 		StatementManager.registerParameterClass("buildcraft:pipeWireTrigger", TriggerParameterSignal.class);
+		StatementManager.registerParameterClass("buildcraft:stackAction", ActionParameterItemStack.class);
 		StatementManager.registerParameterClass("buildcraft:pipeWireAction", ActionParameterSignal.class);
 	}
 

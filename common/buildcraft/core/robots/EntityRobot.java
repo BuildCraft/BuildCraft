@@ -30,6 +30,7 @@ import buildcraft.api.boards.RedstoneBoardRegistry;
 import buildcraft.api.boards.RedstoneBoardRobot;
 import buildcraft.api.boards.RedstoneBoardRobotNBT;
 import buildcraft.api.core.SafeTimeTracker;
+import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.DockingStationRegistry;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.api.robots.IDockingStation;
@@ -607,6 +608,14 @@ public class EntityRobot extends EntityRobotBase implements
 	@Override
 	protected boolean canDespawn() {
 		return false;
+	}
+
+	public AIRobot getOverridingAI() {
+		return mainAI.getOverridingAI();
+	}
+
+	public void overrideAI(AIRobot ai) {
+		mainAI.setOverridingAI(ai);
 	}
 
 }

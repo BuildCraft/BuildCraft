@@ -9,11 +9,26 @@
 package buildcraft.silicon.statements;
 
 import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
 
+import net.minecraftforge.common.util.ForgeDirection;
+
+import buildcraft.api.core.BlockIndex;
+import buildcraft.api.gates.ActionParameterItemStack;
 import buildcraft.api.gates.IAction;
+import buildcraft.api.gates.IActionParameter;
+import buildcraft.api.gates.IGate;
+import buildcraft.api.robots.AIRobot;
+import buildcraft.api.robots.DockingStationRegistry;
+import buildcraft.core.ItemMapLocation;
+import buildcraft.core.robots.AIRobotGoAndLinkToDock;
+import buildcraft.core.robots.DockingStation;
+import buildcraft.core.robots.EntityRobot;
 import buildcraft.core.triggers.BCAction;
 import buildcraft.core.utils.StringUtils;
+import buildcraft.transport.Pipe;
+import buildcraft.transport.TileGenericPipe;
 
 public class ActionRobotGoToStation extends BCAction {
 
@@ -43,4 +58,52 @@ public class ActionRobotGoToStation extends BCAction {
 		return this;
 	}
 
+	@Override
+	public void actionActivate(IGate gate, IActionParameter[] parameters) {
+		Pipe pipe = (Pipe) gate.getPipe();
+		TileGenericPipe tile = pipe.container;
+
+		for (ForgeDirection d : ForgeDirection.VALID_DIRECTIONS) {
+			DockingStation station = tile.getStation(d);
+
+			if (station != null && station.linked() != null) {
+				EntityRobot robot = (EntityRobot) station.linked();
+				AIRobot ai = robot.getOverridingAI();
+				DockingStation newStation = station;
+
+				if (parameters[0] != null) {
+					ActionParameterItemStack stackParam = (ActionParameterItemStack) parameters[0];
+					ItemStack item = stackParam.getItemStackToDraw();
+
+					if (item.getItem() instanceof ItemMapLocation) {
+						BlockIndex index = ItemMapLocation.getBlockIndex (item);
+
+						if (index != null) {
+							ForgeDirection side = ItemMapLocation.getSide(item);
+							DockingStation paramStation = (DockingStation) DockingStationRegistry.getStation(index.x,
+									index.y, index.z, side);
+
+							if (paramStation != null) {
+								newStation = paramStation;
+							}
+						}
+					}
+				}
+
+				if (!(ai instanceof AIRobotGoAndLinkToDock) || ((AIRobotGoAndLinkToDock) ai).station != newStation) {
+					robot.overrideAI(new AIRobotGoAndLinkToDock(robot, newStation));
+				}
+			}
+		}
+	}
+
+	@Override
+	public int maxParameters() {
+		return 1;
+	}
+
+	@Override
+	public IActionParameter createParameter(int index) {
+		return new ActionParameterItemStack();
+	}
 }

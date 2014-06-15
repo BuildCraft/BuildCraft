@@ -16,7 +16,7 @@ import net.minecraft.util.IIcon;
 import buildcraft.api.core.NetworkData;
 import buildcraft.api.transport.IPipeTile;
 
-public class TriggerParameter implements ITriggerParameter {
+public class TriggerParameterItemStack implements ITriggerParameter {
 
 	@NetworkData
 	protected ItemStack stack;

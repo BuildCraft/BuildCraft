@@ -36,7 +36,7 @@ import buildcraft.api.gates.IGateExpansion;
 import buildcraft.api.gates.ITrigger;
 import buildcraft.api.gates.ITriggerParameter;
 import buildcraft.api.gates.StatementManager;
-import buildcraft.api.gates.TriggerParameter;
+import buildcraft.api.gates.TriggerParameterItemStack;
 import buildcraft.api.transport.IPipe;
 import buildcraft.api.transport.PipeWire;
 import buildcraft.core.GuiIds;
@@ -196,7 +196,7 @@ public final class Gate implements IGate {
 
 			// This is for legacy trigger loading
 			if (data.hasKey("triggerParameters[" + i + "]")) {
-				triggerParameters[i][0] = new TriggerParameter();
+				triggerParameters[i][0] = new TriggerParameterItemStack();
 				triggerParameters[i][0].readFromNBT(data.getCompoundTag("triggerParameters[" + i + "]"));
 			}
 

@@ -8,36 +8,45 @@
  */
 package buildcraft.core.robots;
 
-import buildcraft.api.boards.RedstoneBoardRobot;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
 
 public class AIRobotMain extends AIRobot {
+
+	private AIRobot overridingAI;
 
 	public AIRobotMain(EntityRobotBase iRobot) {
 		super(iRobot);
 	}
 
 	@Override
-	public void start() {
-		startDelegateAI(robot.getBoard());
-	}
-
-	@Override
 	public void preempt(AIRobot ai) {
-		if (ai instanceof RedstoneBoardRobot) {
+		if (!(ai instanceof AIRobotRecharge)) {
 			if (robot.getEnergy() < EntityRobotBase.MAX_ENERGY / 4.0) {
-				abortDelegateAI();
 				startDelegateAI(new AIRobotRecharge(robot));
+			} else if (overridingAI != null && ai != overridingAI) {
+				startDelegateAI(overridingAI);
 			}
 		}
 	}
 
 	@Override
+	public void update() {
+		startDelegateAI(robot.getBoard());
+	}
+
+	@Override
 	public void delegateAIEnded(AIRobot ai) {
-		if (ai instanceof AIRobotRecharge) {
-			startDelegateAI(robot.getBoard());
+		if (ai == overridingAI) {
+			overridingAI = null;
 		}
 	}
 
+	public void setOverridingAI(AIRobot ai) {
+		overridingAI = ai;
+	}
+
+	public AIRobot getOverridingAI() {
+		return overridingAI;
+	}
 }

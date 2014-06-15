@@ -175,4 +175,28 @@ public class ItemMapLocation extends ItemBuildCraft {
 		return true;
 	}
 
+	public static BlockIndex getBlockIndex(ItemStack item) {
+		NBTTagCompound cpt = NBTUtils.getItemData(item);
+
+		if (cpt.hasKey("kind") && cpt.getByte("kind") == 0) {
+			int x = cpt.getInteger("x");
+			int y = cpt.getInteger("y");
+			int z = cpt.getInteger("z");
+
+			return new BlockIndex(x, y, z);
+		} else {
+			return null;
+		}
+	}
+
+	public static ForgeDirection getSide(ItemStack item) {
+		NBTTagCompound cpt = NBTUtils.getItemData(item);
+
+		if (cpt.hasKey("kind") && cpt.getByte("kind") == 0) {
+			return ForgeDirection.values()[cpt.getByte("side")];
+		} else {
+			return ForgeDirection.UNKNOWN;
+		}
+	}
+
 }

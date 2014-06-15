@@ -60,6 +60,7 @@ public class AIRobot {
 	}
 
 	public final void startDelegateAI(AIRobot ai) {
+		abortDelegateAI();
 		delegateAI = ai;
 		ai.parentAI = this;
 		delegateAI.start();
