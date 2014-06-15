@@ -14,7 +14,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
 import buildcraft.api.boards.RedstoneBoardRobot;
-import buildcraft.core.robots.DockingStation;
 
 public abstract class EntityRobotBase extends EntityLiving implements IInventory {
 
@@ -48,8 +47,8 @@ public abstract class EntityRobotBase extends EntityLiving implements IInventory
 
 	public abstract void undock();
 
-	public abstract boolean reserveStation(DockingStation station);
+	public abstract boolean reserveStation(IDockingStation station);
 
-	public abstract boolean linkToStation(DockingStation station);
+	public abstract boolean linkToStation(IDockingStation station);
 
 }

@@ -375,7 +375,9 @@ public class EntityRobot extends EntityRobotBase implements
 	}
 
 	@Override
-	public boolean reserveStation(DockingStation station) {
+	public boolean reserveStation(IDockingStation iStation) {
+		DockingStation station = (DockingStation) iStation;
+
 		if (station == null) {
 			if (reservedDockingStation != null) {
 				reservedDockingStation.release(this);
@@ -399,7 +401,9 @@ public class EntityRobot extends EntityRobotBase implements
 	}
 
 	@Override
-	public boolean linkToStation(DockingStation station) {
+	public boolean linkToStation(IDockingStation iStation) {
+		DockingStation station = (DockingStation) iStation;
+
 		if (station.link(this)) {
 			if (linkedDockingStation != null) {
 				linkedDockingStation.unlink(this);
