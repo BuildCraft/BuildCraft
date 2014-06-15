@@ -27,7 +27,7 @@ public class BoardRecipe extends FlexibleRecipe {
 	}
 
 	@Override
-	public CraftingResult craft(IFlexibleCrafter crafter, boolean preview) {
+	public CraftingResult<ItemStack> craft(IFlexibleCrafter crafter, boolean preview) {
 		CraftingResult<ItemStack> result = super.craft(crafter, preview);
 
 		if (result != null) {
@@ -41,6 +41,4 @@ public class BoardRecipe extends FlexibleRecipe {
 			return null;
 		}
 	}
-
-
 }

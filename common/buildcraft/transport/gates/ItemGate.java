@@ -53,7 +53,6 @@ public class ItemGate extends ItemBuildCraft {
 		public IGateExpansion[] expansions;
 
 		public GatePluggable() {
-
 		}
 
 		public GatePluggable(Gate gate) {

@@ -91,7 +91,7 @@ public class TransportProxyClient extends TransportProxy {
 	}
 
 	@Override
-	public void setIconProviderFromPipe(ItemPipe item, Pipe dummyPipe) {
+	public void setIconProviderFromPipe(ItemPipe item, Pipe<?> dummyPipe) {
 		item.setPipesIcons(dummyPipe.getIconProvider());
 	}
 }

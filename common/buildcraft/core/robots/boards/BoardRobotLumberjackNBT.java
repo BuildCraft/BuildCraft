@@ -34,7 +34,6 @@ public final class BoardRobotLumberjackNBT extends RedstoneBoardRobotNBT {
 	public IIcon icon;
 
 	private BoardRobotLumberjackNBT() {
-
 	}
 
 	@Override

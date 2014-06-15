@@ -31,11 +31,11 @@ public final class GateFactory {
 	private GateFactory() {
 	}
 
-	public static Gate makeGate(Pipe pipe, GateMaterial material, GateLogic logic, ForgeDirection direction) {
+	public static Gate makeGate(Pipe<?> pipe, GateMaterial material, GateLogic logic, ForgeDirection direction) {
 		return new Gate(pipe, material, logic, direction);
 	}
 
-	public static Gate makeGate(Pipe pipe, ItemStack stack, ForgeDirection direction) {
+	public static Gate makeGate(Pipe<?> pipe, ItemStack stack, ForgeDirection direction) {
 		if (stack == null || stack.stackSize <= 0 || !(stack.getItem() instanceof ItemGate)) {
 			return null;
 		}
@@ -49,7 +49,7 @@ public final class GateFactory {
 		return gate;
 	}
 
-	public static Gate makeGate(Pipe pipe, NBTTagCompound nbt) {
+	public static Gate makeGate(Pipe<?> pipe, NBTTagCompound nbt) {
 		GateMaterial material = GateMaterial.REDSTONE;
 		GateLogic logic = GateLogic.AND;
 		ForgeDirection direction = ForgeDirection.UNKNOWN;

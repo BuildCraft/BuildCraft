@@ -14,6 +14,7 @@ import cpw.mods.fml.common.registry.GameRegistry;
 import buildcraft.BuildCraftTransport;
 
 public class TransportProxy {
+
 	@SidedProxy(clientSide = "buildcraft.transport.TransportProxyClient", serverSide = "buildcraft.transport.TransportProxy")
 	public static TransportProxy proxy;
 	public static int pipeModel = -1;
@@ -29,11 +30,8 @@ public class TransportProxy {
 	}
 
 	public void initIconProviders(BuildCraftTransport instance){
-		
 	}
 
-	public void setIconProviderFromPipe(ItemPipe item, Pipe dummyPipe) {
-		
+	public void setIconProviderFromPipe(ItemPipe item, Pipe<?> dummyPipe) {
 	}
-
 }

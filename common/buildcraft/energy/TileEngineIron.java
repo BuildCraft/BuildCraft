@@ -53,7 +53,7 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
 	public Tank tankCoolant = new Tank("tankCoolant", MAX_LIQUID, this);
 
 	private int burnTime = 0;
-	private TankManager tankManager = new TankManager();
+	private TankManager<Tank> tankManager = new TankManager<Tank>();
 	private Fuel currentFuel = null;
 	private int penaltyCooling = 0;
 	private boolean lastPowered = false;

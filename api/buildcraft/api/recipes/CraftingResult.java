@@ -21,6 +21,5 @@ public class CraftingResult<T> {
 	public ArrayList<FluidStack> usedFluids = new ArrayList<FluidStack>();
 	public double energyCost = 0;
 	public long craftingTime = 0;
-	public IFlexibleRecipe recipe;
-
+	public IFlexibleRecipe<?> recipe;
 }

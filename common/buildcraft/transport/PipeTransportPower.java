@@ -90,7 +90,7 @@ public class PipeTransportPower extends PipeTransport {
 	@Override
 	public boolean canPipeConnect(TileEntity tile, ForgeDirection side) {
 		if (tile instanceof TileGenericPipe) {
-			Pipe pipe2 = ((TileGenericPipe) tile).pipe;
+			Pipe<?> pipe2 = ((TileGenericPipe) tile).pipe;
 			if (BlockGenericPipe.isValid(pipe2) && !(pipe2.transport instanceof PipeTransportPower)) {
 				return false;
 			}
@@ -500,7 +500,7 @@ public class PipeTransportPower extends PipeTransport {
 		return amount;
 	}
 
-	public float getPistonStage (int i) {
+	public float getPistonStage(int i) {
 		if (movementStage [i] < 0.5F) {
 			return movementStage [i] * 2;
 		} else {
@@ -508,7 +508,7 @@ public class PipeTransportPower extends PipeTransport {
 		}
 	}
 
-	public double clearInstantPower () {
+	public double clearInstantPower() {
 		double amount = 0.0;
 
 		for (int i = 0; i < internalPower.length; ++i) {

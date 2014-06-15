@@ -64,12 +64,9 @@ public final class BoardRobotLeaveCutterNBT extends RedstoneBoardRobotNBT {
 
 	@Override
 	public void createRandomBoard(NBTTagCompound nbt) {
-
 	}
 
 	@Override
 	public void createDefaultBoard(NBTTagCompound itemData) {
-
 	}
-
 }

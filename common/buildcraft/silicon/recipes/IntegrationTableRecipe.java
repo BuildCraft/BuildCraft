@@ -46,8 +46,6 @@ public abstract class IntegrationTableRecipe extends FlexibleRecipe<ItemStack> i
 
 	public CraftingResult craft(TileIntegrationTable crafter, boolean preview, ItemStack inputA,
 			ItemStack inputB) {
-
 		return super.craft(crafter, preview);
-
 	}
 }

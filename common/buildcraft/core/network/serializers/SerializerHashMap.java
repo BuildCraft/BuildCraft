@@ -21,8 +21,7 @@ public class SerializerHashMap extends ClassSerializer {
 	@Override
 	public void write(ByteBuf data, Object o, SerializationContext context)
 			throws IllegalArgumentException, IllegalAccessException {
-
-		HashMap map = (HashMap) o;
+		HashMap map = (HashMap<?, ?>) o;
 
 		if (o == null) {
 			data.writeBoolean(false);
@@ -43,13 +42,12 @@ public class SerializerHashMap extends ClassSerializer {
 	public Object read(ByteBuf data, Object o, SerializationContext context)
 			throws IllegalArgumentException, IllegalAccessException,
 			InstantiationException, ClassNotFoundException {
-
 		if (!data.readBoolean()) {
 			return null;
 		} else {
 			int size = data.readShort();
 
-			HashMap map = new HashMap ();
+			HashMap<Object, Object> map = new HashMap<Object, Object> ();
 
 			for (int i = 0; i < size; ++i) {
 				Object key = anonymousSerializer.read(data, null, context);
@@ -61,5 +59,4 @@ public class SerializerHashMap extends ClassSerializer {
 			return map;
 		}
 	}
-
 }

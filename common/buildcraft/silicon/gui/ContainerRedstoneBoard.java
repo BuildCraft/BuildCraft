@@ -25,7 +25,7 @@ import buildcraft.core.utils.NBTUtils;
 public class ContainerRedstoneBoard extends BuildCraftContainer {
 
 	private EntityPlayer player;
-	private RedstoneBoardNBT board;
+	private RedstoneBoardNBT<?> board;
 	private IBoardParameter[] params;
 
 	public ContainerRedstoneBoard(EntityPlayer iPlayer, int x, int y, int z) {
