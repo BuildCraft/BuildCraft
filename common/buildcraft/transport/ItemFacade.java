@@ -38,6 +38,8 @@ import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.JavaTools;
 import buildcraft.api.core.Position;
 import buildcraft.api.recipes.BuildcraftRecipeRegistry;
+import buildcraft.api.transport.IPipePluggable;
+import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.PipeWire;
 import buildcraft.core.BlockSpring;
 import buildcraft.core.CreativeTabBuildCraft;
@@ -45,9 +47,8 @@ import buildcraft.core.ItemBuildCraft;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.StringUtils;
 
-public class ItemFacade extends ItemBuildCraft {
-	public static final int MAX_STATES = PipeWire.values().length;
 
+public class ItemFacade extends ItemBuildCraft {
 	public static class FacadeState {
 		public final Block block;
 		public final int metadata;
@@ -147,7 +148,7 @@ public class ItemFacade extends ItemBuildCraft {
 
 	@Override
 	public String getItemStackDisplayName(ItemStack itemstack) {
-		switch(getType(itemstack)) {
+		switch (getType(itemstack)) {
 			case Basic:
 				return super.getItemStackDisplayName(itemstack) + ": " + getFacadeStateDisplayName(getFacadeStates(itemstack)[0]);
 			case Phased:
@@ -259,16 +260,16 @@ public class ItemFacade extends ItemBuildCraft {
 							"buildcraft:facade{" + Block.blockRegistry.getNameForObject(block) + "#"
 									+ stack.getItemDamage() + "}", stack);
 
-						// prevent adding multiple facades if it's a rotatable block
+					// prevent adding multiple facades if it's a rotatable block
 					if (block.getRenderType() == 31) {
-							break;
-						}
+						break;
 					}
+				}
 			} catch (IndexOutOfBoundsException e) {
 
 			} catch (Throwable t) {
-					t.printStackTrace();
-				}
+				t.printStackTrace();
+			}
 		}
 	}
 
@@ -354,9 +355,9 @@ public class ItemFacade extends ItemBuildCraft {
 			FacadeState mainState = FacadeState.create(block, metadata);
 			if (blockAlt != null && wire != null) {
 				FacadeState altState = FacadeState.create(blockAlt, metadataAlt, wire);
-				states = new FacadeState[] {mainState, altState};
+				states = new FacadeState[]{mainState, altState};
 			} else {
-				states = new FacadeState[] {mainState};
+				states = new FacadeState[]{mainState};
 			}
 			NBTTagCompound newNbt = getFacade(states).getTagCompound();
 			stack.setTagCompound(newNbt);
@@ -425,6 +426,51 @@ public class ItemFacade extends ItemBuildCraft {
 		}
 	}
 
+	public static class FacadePluggable implements IPipePluggable {
+		public FacadeState[] states;
+
+		public FacadePluggable(FacadeState[] states) {
+			this.states = states;
+		}
+
+		public FacadePluggable() {
+		}
+
+		@Override
+		public void writeToNBT(NBTTagCompound nbt) {
+			if (states != null) {
+				nbt.setTag("states", FacadeState.writeArray(states));
+			}
+		}
+
+		@Override
+		public void readFromNBT(NBTTagCompound nbt) {
+			if (nbt.hasKey("states")) {
+				states = FacadeState.readArray(nbt.getTagList("states", Constants.NBT.TAG_COMPOUND));
+			}
+		}
+
+		@Override
+		public ItemStack[] getDropItems(IPipeTile pipe) {
+			return states == null ? null : new ItemStack[] { getFacade(states) };
+		}
+
+		@Override
+		public void onAttachedPipe(IPipeTile pipe, ForgeDirection direction) {
+
+		}
+
+		@Override
+		public void onDetachedPipe(IPipeTile pipe, ForgeDirection direction) {
+
+		}
+
+		@Override
+		public boolean blocking(IPipeTile pipe, ForgeDirection direction) {
+			return false;
+		}
+	}
+
 	public class FacadeRecipe implements IRecipe {
 
 		@Override
@@ -470,35 +516,34 @@ public class ItemFacade extends ItemBuildCraft {
 			}
 
 			if (slotmatch != null && slotmatch != NO_MATCH) {
-				return new Object[] { ItemFacade.getBlocks(slotmatch), slotmatch };
+				return new Object[]{ItemFacade.getBlocks(slotmatch), slotmatch};
 			}
 
 			return null;
 		}
 
-		private ItemStack getNextFacadeItemStack(Block block, ItemStack originalFacade)
-		{
+		private ItemStack getNextFacadeItemStack(Block block, ItemStack originalFacade) {
 			int blockMeta = ItemFacade.getMetaValues(originalFacade)[0];
 			int stackMeta = 0;
 
-			switch(block.getRenderType()) {
+			switch (block.getRenderType()) {
 				case 1:
 					//supports cycling through variants (wool, planks, etc)
-				if (blockMeta >= 15) {
+					if (blockMeta >= 15) {
 						stackMeta = 0;
 					} else {
 						stackMeta = blockMeta + 1;
 					}
 					break;
 				case 31:
-					if ((blockMeta & 0xC) == 0)	{
+					if ((blockMeta & 0xC) == 0) {
 						// Meta | 4 = true
 						stackMeta = (blockMeta & 0x3) | 4;
 					} else if ((blockMeta & 0x8) == 0) {
 						// Meta | 8 = true
 						stackMeta = (blockMeta & 0x3) | 8;
 					} else if ((blockMeta & 0x4) == 0) {
-					stackMeta = blockMeta & 0x3;
+						stackMeta = blockMeta & 0x3;
 					}
 					break;
 				default:

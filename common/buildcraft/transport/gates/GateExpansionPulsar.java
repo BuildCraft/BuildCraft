@@ -16,10 +16,10 @@ import net.minecraft.tileentity.TileEntity;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.gates.GateExpansionController;
 import buildcraft.api.gates.IAction;
+import buildcraft.api.gates.IGate;
 import buildcraft.api.gates.IGateExpansion;
 import buildcraft.api.mj.IBatteryObject;
 import buildcraft.api.mj.MjAPI;
-import buildcraft.transport.TileGenericPipe;
 import buildcraft.transport.triggers.ActionEnergyPulsar;
 import buildcraft.transport.triggers.ActionSingleEnergyPulse;
 
@@ -82,7 +82,7 @@ public final class GateExpansionPulsar extends GateExpansionBuildcraft implement
 		}
 
 		@Override
-		public void tick() {
+		public void tick(IGate gate) {
 			if (!isActive && hasPulsed) {
 				hasPulsed = false;
 			}
@@ -93,18 +93,18 @@ public final class GateExpansionPulsar extends GateExpansionBuildcraft implement
 			}
 
 			if (!isActive) {
-				((TileGenericPipe) pipeTile).pipe.gate.setPulsing(false);
+				gate.setPulsing(false);
 				return;
 			}
 
 			IBatteryObject battery = MjAPI.getMjBattery(pipeTile);
 
 			if (battery != null && (!singlePulse || !hasPulsed)) {
-				((TileGenericPipe) pipeTile).pipe.gate.setPulsing(true);
+				gate.setPulsing(true);
 				battery.addEnergy(Math.min(1 << (pulseCount - 1), 64) * 1.01f);
 				hasPulsed = true;
 			} else {
-				((TileGenericPipe) pipeTile).pipe.gate.setPulsing(true);
+				gate.setPulsing(true);
 			}
 		}
 

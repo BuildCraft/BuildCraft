@@ -9,6 +9,7 @@
 package buildcraft.core.network;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -33,6 +34,7 @@ import buildcraft.core.DefaultProps;
 import buildcraft.core.network.serializers.ClassMapping;
 import buildcraft.core.network.serializers.ClassSerializer;
 import buildcraft.core.network.serializers.SerializationContext;
+import buildcraft.core.utils.Utils;
 import buildcraft.transport.Pipe;
 
 /**
@@ -295,18 +297,36 @@ public final class RPCHandler {
 		SerializationContext context = new SerializationContext();
 
 		for (int i = 0; i < actuals.length; ++i) {
-			if (int.class.equals(formals[i])) {
-				data.writeInt((Integer) actuals[i]);
-			} else if (float.class.equals(formals[i])) {
-				data.writeFloat((Float) actuals[i]);
-			} else if (char.class.equals(formals[i])) {
-				data.writeChar((Character) actuals[i]);
-			} else if (boolean.class.equals(formals[i])) {
-				data.writeBoolean((Boolean) actuals[i]);
-			} else {
+			if (!writePrimitive(data, formals[i], actuals[i])) {
 				m.mappings[i].write(data, actuals[i], context);
 			}
 		}
+	}
+
+	private boolean writePrimitive(ByteBuf data, Class formal, Object actual) {
+		if (int.class.equals(formal)) {
+			data.writeInt((Integer) actual);
+		} else if (float.class.equals(formal)) {
+			data.writeFloat((Float) actual);
+		} else if (double.class.equals(formal)) {
+			data.writeDouble((Double) actual);
+		} else if (char.class.equals(formal)) {
+			data.writeChar((Character) actual);
+		} else if (boolean.class.equals(formal)) {
+			data.writeBoolean((Boolean) actual);
+		} else if (String.class.equals(formal)) {
+			Utils.writeUTF(data, (String) actual);
+		} else if (formal.isArray()) {
+			Object[] array = (Object[]) actual;
+			Class componentType = formal.getComponentType();
+			data.writeInt(array.length);
+			for (int i = 0; i < array.length; i++) {
+				writePrimitive(data, componentType, array[i]);
+			}
+		} else {
+			return false;
+		}
+		return true;
 	}
 
 	private void internalRpcReceive (Object o, RPCMessageInfo info, ByteBuf data) {
@@ -323,15 +343,7 @@ public final class RPCHandler {
 			SerializationContext context = new SerializationContext();
 
 			for (int i = 0; i < expectedParameters; ++i) {
-				if (int.class.equals(formals[i])) {
-					actuals [i] = data.readInt();
-				} else if (float.class.equals(formals[i])) {
-					actuals [i] = data.readFloat();
-				} else if (char.class.equals(formals[i])) {
-					actuals [i] = data.readChar();
-				} else if (boolean.class.equals(formals[i])) {
-					actuals[i] = data.readBoolean();
-				} else {
+				if (!readPrimitive(data, formals[i], actuals, i)) {
 					actuals [i] = m.mappings [i].read (data, actuals [i], context);
 				}
 			}
@@ -355,4 +367,30 @@ public final class RPCHandler {
 
 	}
 
+	private boolean readPrimitive(ByteBuf data, Class formal, Object[] actuals, int i) {
+		if (int.class.equals(formal)) {
+			actuals[i] = data.readInt();
+		} else if (float.class.equals(formal)) {
+			actuals[i] = data.readFloat();
+		} else if (double.class.equals(formal)) {
+			actuals[i] = data.readDouble();
+		} else if (char.class.equals(formal)) {
+			actuals[i] = data.readChar();
+		} else if (boolean.class.equals(formal)) {
+			actuals[i] = data.readBoolean();
+		} else if (String.class.equals(formal)) {
+			actuals[i] = Utils.readUTF(data);
+		} else if (formal.isArray()) {
+			final int size = data.readInt();
+			Class componentType = formal.getComponentType();
+			Object[] a = (Object[]) Array.newInstance(componentType, size);
+			for (int z = 0; z < size; z++) {
+				readPrimitive(data, componentType, a, z);
+			}
+			actuals[i] = a;
+		} else {
+			return false;
+		}
+		return true;
+	}
 }
