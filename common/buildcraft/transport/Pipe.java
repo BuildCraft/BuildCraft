@@ -45,7 +45,6 @@ import buildcraft.transport.gates.GateFactory;
 import buildcraft.transport.pipes.events.PipeEvent;
 
 public abstract class Pipe<T extends PipeTransport> implements IDropControlInventory, IPipe {
-
 	@SuppressWarnings("rawtypes")
 	private static Map<Class, TilePacketWrapper> networkWrappers = new HashMap<Class, TilePacketWrapper>();
 	private static Map<Class<? extends Pipe>, Map<Class<? extends PipeEvent>, EventHandler>> eventHandlers = new HashMap<Class<? extends Pipe>, Map<Class<? extends PipeEvent>, EventHandler>>();
@@ -55,7 +54,7 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 	public final T transport;
 	public final Item item;
 	public boolean[] wireSet = new boolean[]{false, false, false, false};
-	public Gate gate;
+	public final Gate[] gates = new Gate[ForgeDirection.VALID_DIRECTIONS.length];
 
 	private boolean internalUpdateScheduled = false;
 	private boolean initialized = false;
@@ -75,15 +74,23 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 		transport.setTile((TileGenericPipe) tile);
 	}
 
-//	public final void handlePipeEvent(PipeEvent event) {
+	public void resolveActions() {
+		for (Gate gate : gates) {
+			if (gate != null) {
+				gate.resolveActions();
+			}
+		}
+	}
+
+	//	public final void handlePipeEvent(PipeEvent event) {
 //		try {
 //			Method method = getClass().getDeclaredMethod("eventHandler", event.getClass());
 //			method.invoke(this, event);
 //		} catch (Exception ex) {
 //		}
 //	}
-	private static class EventHandler {
 
+	private static class EventHandler {
 		public final Method method;
 
 		public EventHandler(Method method) {
@@ -146,7 +153,7 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 	}
 
 	public boolean canPipeConnect(TileEntity tile, ForgeDirection side) {
-		Pipe otherPipe;
+		Pipe<?> otherPipe;
 
 		if (tile instanceof TileGenericPipe) {
 			otherPipe = ((TileGenericPipe) tile).pipe;
@@ -199,7 +206,10 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 		}
 
 		// Update the gate if we have any
-		if (gate != null) {
+		for (Gate gate : gates) {
+			if (gate == null) {
+				continue;
+			}
 			if (container.getWorldObj().isRemote) {
 				// on client, only update the graphical pulse if needed
 				gate.updatePulse();
@@ -219,10 +229,16 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 		transport.writeToNBT(data);
 
 		// Save gate if any
-		if (gate != null) {
-			NBTTagCompound gateNBT = new NBTTagCompound();
-			gate.writeToNBT(gateNBT);
-			data.setTag("Gate", gateNBT);
+		for (int i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
+			final String key = "Gate[" + i + "]";
+			Gate gate = gates[i];
+			if (gate != null) {
+				NBTTagCompound gateNBT = new NBTTagCompound();
+				gate.writeToNBT(gateNBT);
+				data.setTag(key, gateNBT);
+			} else {
+				data.removeTag(key);
+			}
 		}
 
 		for (int i = 0; i < 4; ++i) {
@@ -233,10 +249,17 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 	public void readFromNBT(NBTTagCompound data) {
 		transport.readFromNBT(data);
 
-		// Load gate if any
+		for (int i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
+			final String key = "Gate[" + i + "]";
+			gates[i] = data.hasKey(key) ? GateFactory.makeGate(this, data.getCompoundTag(key)) : null;
+		}
+
+		// Legacy support
 		if (data.hasKey("Gate")) {
-			NBTTagCompound gateNBT = data.getCompoundTag("Gate");
-			gate = GateFactory.makeGate(this, gateNBT);
+			for (int i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
+				transport.container.setGate(GateFactory.makeGate(this, data.getCompoundTag("Gate")), i);
+			}
+			data.removeTag("Gate");
 		}
 
 		for (int i = 0; i < 4; ++i) {
@@ -303,9 +326,15 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 
 		// STEP 1: compute internal signal strength
 
-		if (gate != null && gate.broadcastSignal.get(wire.ordinal())) {
-			receiveSignal(255, wire);
-		} else {
+		boolean readNearbySignal = true;
+		for (Gate gate : gates) {
+			if (gate != null && gate.broadcastSignal.get(wire.ordinal())) {
+				receiveSignal(255, wire);
+				readNearbySignal = false;
+			}
+		}
+
+		if (readNearbySignal) {
 			readNearbyPipesSignal(wire);
 		}
 
@@ -361,16 +390,18 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 	}
 
 	public boolean canConnectRedstone() {
-		if (hasGate()) {
-			return true;
+		for (Gate gate : gates) {
+			if (gate != null) {
+				return true;
+			}
 		}
-
 		return false;
 	}
 
 	public int isPoweringTo(int side) {
+		ForgeDirection o = ForgeDirection.getOrientation(side).getOpposite();
+		Gate gate = gates[o.ordinal()];
 		if (gate != null && gate.getRedstoneOutput() > 0) {
-			ForgeDirection o = ForgeDirection.getOrientation(side).getOpposite();
 			TileEntity tile = container.getTile(o);
 
 			if (tile instanceof TileGenericPipe && container.isPipeConnected(o)) {
@@ -404,43 +435,18 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 		return wireSet[color.ordinal()];
 	}
 
+	@Deprecated
 	public boolean hasGate() {
-		return gate != null;
+		for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
+			if (hasGate(direction)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public boolean hasGate(ForgeDirection side) {
-		if (!hasGate()) {
-			return false;
-		}
-
-		if (container.hasFacade(side)) {
-			return false;
-		}
-
-		if (container.hasPlug(side)) {
-			return false;
-		}
-
-		if (container.hasRobotStation(side)) {
-			return false;
-		}
-
-		int connections = 0;
-		ForgeDirection targetOrientation = ForgeDirection.UNKNOWN;
-		for (ForgeDirection o : ForgeDirection.VALID_DIRECTIONS) {
-			if (container.isPipeConnected(o)) {
-				connections++;
-				if (connections == 1) {
-					targetOrientation = o;
-				}
-			}
-		}
-
-		if (connections > 1 || connections == 0) {
-			return true;
-		}
-
-		return targetOrientation.getOpposite() != side;
+		return container.hasGate(side);
 	}
 
 	protected void notifyBlocksOfNeighborChange(ForgeDirection side) {
@@ -478,8 +484,10 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 			}
 		}
 
-		if (hasGate()) {
-			result.add(gate.getGateItem());
+		for (Gate gate : gates) {
+			if (gate != null) {
+				result.add(gate.getGateItem());
+			}
 		}
 
 		for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
@@ -506,16 +514,23 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 	public LinkedList<IAction> getActions() {
 		LinkedList<IAction> result = new LinkedList<IAction>();
 
-		if (hasGate()) {
-			gate.addActions(result);
+		for (Gate gate : gates) {
+			if (gate != null) {
+				gate.addActions(result);
+			}
 		}
 
 		return result;
 	}
 
-	public void resetGate() {
-		gate.resetGate();
-		gate = null;
+	public void resetGates() {
+		for (int i = 0; i < gates.length; i++) {
+			Gate gate = gates[i];
+			if (gate != null) {
+				gate.resetGate();
+			}
+			gates[i] = null;
+		}
 
 		internalUpdateScheduled = true;
 		container.scheduleRenderUpdate();

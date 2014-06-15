@@ -31,6 +31,7 @@ import buildcraft.api.gates.GateExpansionController;
 import buildcraft.api.gates.IAction;
 import buildcraft.api.gates.IActionParameter;
 import buildcraft.api.gates.IActionReceptor;
+import buildcraft.api.gates.IGate;
 import buildcraft.api.gates.IGateExpansion;
 import buildcraft.api.gates.ITrigger;
 import buildcraft.api.gates.ITriggerParameter;
@@ -42,12 +43,12 @@ import buildcraft.core.triggers.ActionRedstoneOutput;
 import buildcraft.transport.gates.GateDefinition.GateLogic;
 import buildcraft.transport.gates.GateDefinition.GateMaterial;
 import buildcraft.transport.gates.ItemGate;
+import buildcraft.transport.gui.ContainerGateInterface;
 import buildcraft.transport.triggers.ActionRedstoneFaderOutput;
 import buildcraft.transport.triggers.ActionSignalOutput;
 
-public final class Gate {
-
-	public final Pipe pipe;
+public final class Gate implements IGate {
+	public final Pipe<?> pipe;
 	public final GateMaterial material;
 	public final GateLogic logic;
 	public final BiMap<IGateExpansion, GateExpansionController> expansions = HashBiMap.create();
@@ -71,12 +72,14 @@ public final class Gate {
 	 */
 	public boolean isPulsing = false;
 	private float pulseStage = 0;
+	private ForgeDirection direction;
 
-	// / CONSTRUCTOR
-	public Gate(Pipe pipe, GateMaterial material, GateLogic logic) {
+	// CONSTRUCTOR
+	public Gate(Pipe<?> pipe, GateMaterial material, GateLogic logic, ForgeDirection direction) {
 		this.pipe = pipe;
 		this.material = material;
 		this.logic = logic;
+		this.direction = direction;
 
 		for (int i = 0; i < actionsState.length; ++i) {
 			actionsState[i] = ActionState.Deactivated;
@@ -115,6 +118,14 @@ public final class Gate {
 		return actionParameters[action][param];
 	}
 
+	public ForgeDirection getDirection() {
+		return direction;
+	}
+
+	public void setDirection(ForgeDirection direction) {
+		this.direction = direction;
+	}
+
 	public void addGateExpansion(IGateExpansion expansion) {
 		if (!expansions.containsKey(expansion)) {
 			expansions.put(expansion, expansion.makeController(pipe.container));
@@ -125,6 +136,7 @@ public final class Gate {
 	public void writeToNBT(NBTTagCompound data) {
 		data.setString("material", material.name());
 		data.setString("logic", logic.name());
+		data.setInteger("direction", direction.ordinal());
 		NBTTagList exList = new NBTTagList();
 		for (GateExpansionController con : expansions.values()) {
 			NBTTagCompound conNBT = new NBTTagCompound();
@@ -214,6 +226,7 @@ public final class Gate {
 	public void openGui(EntityPlayer player) {
 		if (!player.worldObj.isRemote) {
 			player.openGui(BuildCraftTransport.instance, GuiIds.GATES, pipe.container.getWorldObj(), pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord);
+			((ContainerGateInterface) player.openContainer).setGate(direction.ordinal());
 		}
 	}
 
@@ -223,7 +236,7 @@ public final class Gate {
 	 *  or to synchronize that with the server as this is only for animation.
 	 */
 	public void updatePulse () {
-		if (pipe.container.renderState.isGatePulsing () || pulseStage > 0.11F) {
+		if (pipe.container.renderState.gateMatrix.isGatePulsing(direction) || pulseStage > 0.11F) {
 			// if it is moving, or is still in a moved state, then complete
 			// the current movement
 			pulseStage = (pulseStage + 0.01F) % 1F;
@@ -235,7 +248,7 @@ public final class Gate {
 	// / UPDATING
 	public void tick() {
 		for (GateExpansionController expansion : expansions.values()) {
-			expansion.tick();
+			expansion.tick(this);
 		}
 	}
 
@@ -387,7 +400,7 @@ public final class Gate {
 			return false;
 		}
 
-		if (trigger.isTriggerActive(pipe, parameters)) {
+		if (trigger.isTriggerActive(pipe, direction, parameters)) {
 			return true;
 		}
 
@@ -430,7 +443,7 @@ public final class Gate {
 		}
 	}
 
-	public void setPulsing (boolean pulsing) {
+	public void setPulsing(boolean pulsing) {
 		if (pulsing != isPulsing) {
 			isPulsing = pulsing;
 			pipe.container.scheduleRenderUpdate();

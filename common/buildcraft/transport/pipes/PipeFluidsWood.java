@@ -31,15 +31,12 @@ import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportFluids;
 
 public class PipeFluidsWood extends Pipe<PipeTransportFluids> {
-
 	@NetworkData
 	public int liquidToExtract;
 
 	protected int standardIconIndex = PipeIconProvider.TYPE.PipeFluidsWood_Standard.ordinal();
 	protected int solidIconIndex = PipeIconProvider.TYPE.PipeAllWood_Solid.ordinal();
 
-	private long lastMining = 0;
-	private boolean lastPower = false;
 	@MjBattery(maxCapacity = 250, maxReceivedPerCycle = 100, minimumConsumption = 0)
 	private double mjStored = 0;
 

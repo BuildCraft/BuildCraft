@@ -24,7 +24,6 @@ import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportFluids;
 
 public class PipeFluidsVoid extends Pipe implements IPipeTransportFluidsHook {
-
 	public PipeFluidsVoid(Item item) {
 		super(new PipeTransportFluids(), item);
 	}

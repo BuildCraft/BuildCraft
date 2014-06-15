@@ -14,6 +14,8 @@ import net.minecraft.util.IIcon;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
+import net.minecraftforge.common.util.ForgeDirection;
+
 import buildcraft.api.gates.ITrigger;
 import buildcraft.api.gates.ITriggerParameter;
 import buildcraft.api.transport.IPipe;
@@ -39,8 +41,8 @@ public class TriggerRedstoneFaderInput extends BCTrigger {
 	}
 
 	@Override
-	public boolean isTriggerActive(IPipe pipe, ITriggerParameter[] parameters) {
-		return ((TileGenericPipe) pipe.getTile()).redstoneInput == level;
+	public boolean isTriggerActive(IPipe pipe, ForgeDirection direction, ITriggerParameter[] parameter) {
+		return ((TileGenericPipe) pipe.getTile()).redstoneInput[direction.ordinal()] == level;
 	}
 
 	@Override

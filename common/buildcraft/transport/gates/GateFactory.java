@@ -13,6 +13,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.api.gates.GateExpansionController;
 import buildcraft.api.gates.GateExpansions;
@@ -23,23 +24,22 @@ import buildcraft.transport.gates.GateDefinition.GateLogic;
 import buildcraft.transport.gates.GateDefinition.GateMaterial;
 
 public final class GateFactory {
-
 	/**
 	 * Deactivate constructor
 	 */
 	private GateFactory() {
 	}
 
-	public static Gate makeGate(Pipe pipe, GateMaterial material, GateLogic logic) {
-		return new Gate(pipe, material, logic);
+	public static Gate makeGate(Pipe<?> pipe, GateMaterial material, GateLogic logic, ForgeDirection direction) {
+		return new Gate(pipe, material, logic, direction);
 	}
 
-	public static Gate makeGate(Pipe pipe, ItemStack stack) {
+	public static Gate makeGate(Pipe<?> pipe, ItemStack stack, ForgeDirection direction) {
 		if (stack == null || stack.stackSize <= 0 || !(stack.getItem() instanceof ItemGate)) {
 			return null;
 		}
 
-		Gate gate = makeGate(pipe, ItemGate.getMaterial(stack), ItemGate.getLogic(stack));
+		Gate gate = makeGate(pipe, ItemGate.getMaterial(stack), ItemGate.getLogic(stack), direction);
 
 		for (IGateExpansion expansion : ItemGate.getInstalledExpansions(stack)) {
 			gate.addGateExpansion(expansion);
@@ -48,9 +48,10 @@ public final class GateFactory {
 		return gate;
 	}
 
-	public static Gate makeGate(Pipe pipe, NBTTagCompound nbt) {
+	public static Gate makeGate(Pipe<?> pipe, NBTTagCompound nbt) {
 		GateMaterial material = GateMaterial.REDSTONE;
 		GateLogic logic = GateLogic.AND;
+		ForgeDirection direction = ForgeDirection.UNKNOWN;
 
 		// Legacy Support
 		if (nbt.hasKey("Kind")) {
@@ -92,8 +93,11 @@ public final class GateFactory {
 				return null;
 			}
 		}
+		if (nbt.hasKey("direction")) {
+			direction = ForgeDirection.getOrientation(nbt.getInteger("direction"));
+		}
 
-		Gate gate = makeGate(pipe, material, logic);
+		Gate gate = makeGate(pipe, material, logic, direction);
 		gate.readFromNBT(nbt);
 
 		// Legacy support

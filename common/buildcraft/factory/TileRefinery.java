@@ -44,7 +44,6 @@ import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.recipes.RefineryRecipeManager;
 
 public class TileRefinery extends TileBuildCraft implements IFluidHandler, IInventory, IMachine, IFlexibleCrafter {
-
 	public static int LIQUID_PER_SLOT = FluidContainerRegistry.BUCKET_VOLUME * 4;
 
 	public IFlexibleRecipe<FluidStack> currentRecipe;

@@ -25,6 +25,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.core.CreativeTabBuildCraft;
+import buildcraft.core.ItemMapLocation;
 import buildcraft.core.utils.Utils;
 
 public class BlockMarker extends BlockContainer {
@@ -88,6 +89,11 @@ public class BlockMarker extends BlockContainer {
 
 	@Override
 	public boolean onBlockActivated(World world, int i, int j, int k, EntityPlayer entityplayer, int par6, float par7, float par8, float par9) {
+		if (entityplayer.inventory.getCurrentItem() != null
+				&& entityplayer.inventory.getCurrentItem().getItem() instanceof ItemMapLocation) {
+			return false;
+		}
+
 		TileEntity tile = world.getTileEntity(i, j, k);
 		if (tile instanceof TileMarker) {
 			((TileMarker) tile).tryConnection();

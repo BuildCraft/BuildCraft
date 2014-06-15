@@ -70,8 +70,6 @@ import buildcraft.core.utils.Utils;
  *
  */
 public class ClassMapping extends ClassSerializer {
-
-	private static SerializerObject anonymousSerializer = new SerializerObject();
 	private static Map<String, ClassSerializer> classes = new TreeMap<String, ClassSerializer>();
 
 	private LinkedList<Field> floatFields = new LinkedList<Field>();
@@ -385,8 +383,6 @@ public class ClassMapping extends ClassSerializer {
 
 	private void writeArray(Object obj, ByteBuf data, SerializationContext context) throws IllegalArgumentException,
 	IllegalAccessException {
-		Class<? extends Object> cpt = mappedClass.getComponentType();
-
 		switch (cptType) {
 			case Byte: {
 				byte [] arr = (byte []) obj;
@@ -590,7 +586,7 @@ public class ClassMapping extends ClassSerializer {
 		return obj;
 	}
 
-	private static void registerSerializer (Class clas, ClassSerializer s) {
+	private static void registerSerializer (Class<?> clas, ClassSerializer s) {
 		try {
 			s.mappedClass = clas;
 			classes.put(clas.getCanonicalName(), s);
@@ -600,7 +596,7 @@ public class ClassMapping extends ClassSerializer {
 		}
 	}
 
-	public static ClassSerializer get (Class clas) {
+	public static ClassSerializer get (Class<?> clas) {
 		ClassSerializer mapping;
 
 		if (Block.class.isAssignableFrom(clas)) {

@@ -74,7 +74,7 @@ import buildcraft.core.CoreIconProvider;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.InterModComms;
 import buildcraft.core.ItemBuildCraft;
-import buildcraft.core.ItemMapSpot;
+import buildcraft.core.ItemMapLocation;
 import buildcraft.core.ItemSpring;
 import buildcraft.core.ItemWrench;
 import buildcraft.core.SpringPopulate;
@@ -137,7 +137,7 @@ public class BuildCraftCore extends BuildCraftMod {
 	public static Item goldGearItem;
 	public static Item diamondGearItem;
 	public static Item wrenchItem;
-	public static Item mapSpotItem;
+	public static Item mapLocationItem;
 	@SideOnly(Side.CLIENT)
 	public static IIcon redLaserTexture;
 	@SideOnly(Side.CLIENT)
@@ -258,8 +258,8 @@ public class BuildCraftCore extends BuildCraftMod {
 			wrenchItem = (new ItemWrench()).setUnlocalizedName("wrenchItem");
 			CoreProxy.proxy.registerItem(wrenchItem);
 
-			mapSpotItem = (new ItemMapSpot()).setUnlocalizedName("mapSpot");
-			CoreProxy.proxy.registerItem(mapSpotItem);
+			mapLocationItem = (new ItemMapLocation()).setUnlocalizedName("mapLocation");
+			CoreProxy.proxy.registerItem(mapLocationItem);
 
 			Property modifyWorldProp = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "modifyWorld", true);
 			modifyWorldProp.comment = "set to false if BuildCraft should not generate custom blocks (e.g. oil)";
@@ -394,7 +394,7 @@ public class BuildCraftCore extends BuildCraftMod {
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(ironGearItem), " I ", "IGI", " I ", 'I', Items.iron_ingot, 'G', stoneGearItem);
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(goldGearItem), " I ", "IGI", " I ", 'I', Items.gold_ingot, 'G', ironGearItem);
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(diamondGearItem), " I ", "IGI", " I ", 'I', Items.diamond, 'G', goldGearItem);
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(mapSpotItem), "ppp", "pYp", "ppp", 'p', Items.paper, 'Y', new ItemStack(Items.dye, 1, 11));
+		CoreProxy.proxy.addCraftingRecipe(new ItemStack(mapLocationItem), "ppp", "pYp", "ppp", 'p', Items.paper, 'Y', new ItemStack(Items.dye, 1, 11));
 	}
 
 	@Mod.EventHandler
@@ -440,8 +440,6 @@ public class BuildCraftCore extends BuildCraftMod {
 		GL11.glGetFloat(GL11.GL_MODELVIEW_MATRIX, modelviewF);
 		GL11.glGetFloat(GL11.GL_PROJECTION_MATRIX, projectionF);
 		GL11.glGetInteger(GL11.GL_VIEWPORT, viewport);
-		float f = (viewport.get(0) + viewport.get(2)) / 2;
-		float f1 = (viewport.get(1) + viewport.get(3)) / 2;
 
 		float x = Mouse.getX();
 		float y = Mouse.getY();

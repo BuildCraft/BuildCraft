@@ -13,7 +13,6 @@ import java.util.HashMap;
 import net.minecraft.nbt.NBTTagCompound;
 
 public abstract class SchematicFactory<S extends Schematic> {
-
 	private static final HashMap<String, SchematicFactory> factories = new HashMap<String, SchematicFactory>();
 
 	private static final HashMap<Class<? extends Schematic>, SchematicFactory> schematicToFactory = new HashMap<Class<? extends Schematic>, SchematicFactory>();
@@ -21,7 +20,7 @@ public abstract class SchematicFactory<S extends Schematic> {
 	protected abstract S loadSchematicFromWorldNBT(NBTTagCompound nbt, MappingRegistry registry)
 			throws MappingNotFoundException;
 
-	public void saveSchematicToWorldNBT (NBTTagCompound nbt, S object, MappingRegistry registry) {
+	public void saveSchematicToWorldNBT(NBTTagCompound nbt, S schematic, MappingRegistry registry) {
 		nbt.setString("factoryID", getClass().getCanonicalName());
 	}
 
@@ -36,7 +35,7 @@ public abstract class SchematicFactory<S extends Schematic> {
 		}
 	}
 
-	public static void registerSchematicFactory(Class<? extends Schematic> clas, SchematicFactory factory) {
+	public static void registerSchematicFactory(Class<? extends Schematic> clas, SchematicFactory<?> factory) {
 		schematicToFactory.put(clas, factory);
 		factories.put(factory.getClass().getCanonicalName(), factory);
 	}
@@ -52,5 +51,4 @@ public abstract class SchematicFactory<S extends Schematic> {
 			return null;
 		}
 	}
-
 }

@@ -20,7 +20,6 @@ import buildcraft.api.transport.PipeWire;
 import buildcraft.core.triggers.StatementIconProvider;
 
 public class TriggerParameterSignal implements ITriggerParameter {
-
 	@NetworkData
 	private boolean active;
 
@@ -28,11 +27,9 @@ public class TriggerParameterSignal implements ITriggerParameter {
 	private PipeWire color = PipeWire.RED;
 
 	public TriggerParameterSignal() {
-
 	}
 
 	public TriggerParameterSignal(TriggerPipeSignal trigger) {
-
 	}
 
 	@Override

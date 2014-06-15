@@ -22,7 +22,6 @@ import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportFluids;
 
 public class PipeFluidsStone extends Pipe {
-
 	public PipeFluidsStone(Item item) {
 		super(new PipeTransportFluids(), item);
 		// ((PipeTransportFluids) transport).flowRate = 40;

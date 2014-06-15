@@ -25,7 +25,6 @@ import buildcraft.core.utils.NBTUtils;
 import buildcraft.core.utils.StringUtils;
 
 public final class BoardRobotLumberjackNBT extends RedstoneBoardRobotNBT {
-
 	public static BoardRobotLumberjackNBT instance = new BoardRobotLumberjackNBT();
 
 	private static final ResourceLocation TEXTURE = new ResourceLocation("buildcraft",

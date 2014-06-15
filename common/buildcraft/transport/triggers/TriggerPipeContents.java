@@ -35,9 +35,7 @@ import buildcraft.transport.pipes.PipePowerWood;
 
 
 public class TriggerPipeContents extends BCTrigger {
-
 	public enum PipeContents {
-
 		empty,
 		containsItems,
 		containsFluids,
@@ -72,11 +70,11 @@ public class TriggerPipeContents extends BCTrigger {
 	}
 
 	@Override
-	public boolean isTriggerActive(IPipe pipe, ITriggerParameter[] parameters) {
+	public boolean isTriggerActive(IPipe pipe, ForgeDirection direction, ITriggerParameter[] parameters) {
 		ITriggerParameter parameter = parameters[0];
 
-		if (((Pipe) pipe).transport instanceof PipeTransportItems) {
-			PipeTransportItems transportItems = (PipeTransportItems) ((Pipe) pipe).transport;
+		if (((Pipe<?>) pipe).transport instanceof PipeTransportItems) {
+			PipeTransportItems transportItems = (PipeTransportItems) ((Pipe<?>) pipe).transport;
 
 			if (kind == PipeContents.empty) {
 				return transportItems.items.isEmpty();
@@ -93,8 +91,8 @@ public class TriggerPipeContents extends BCTrigger {
 					return !transportItems.items.isEmpty();
 				}
 			}
-		} else if (((Pipe) pipe).transport instanceof PipeTransportFluids) {
-			PipeTransportFluids transportFluids = (PipeTransportFluids) ((Pipe) pipe).transport;
+		} else if (((Pipe<?>) pipe).transport instanceof PipeTransportFluids) {
+			PipeTransportFluids transportFluids = (PipeTransportFluids) ((Pipe<?>) pipe).transport;
 
 			FluidStack searchedFluid = null;
 
@@ -121,8 +119,8 @@ public class TriggerPipeContents extends BCTrigger {
 
 				return false;
 			}
-		} else if (((Pipe) pipe).transport instanceof PipeTransportPower) {
-			PipeTransportPower transportPower = (PipeTransportPower) ((Pipe) pipe).transport;
+		} else if (((Pipe<?>) pipe).transport instanceof PipeTransportPower) {
+			PipeTransportPower transportPower = (PipeTransportPower) ((Pipe<?>) pipe).transport;
 
 			switch (kind) {
 				case empty:

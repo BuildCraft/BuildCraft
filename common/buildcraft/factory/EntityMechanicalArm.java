@@ -16,7 +16,6 @@ import net.minecraft.world.World;
 import buildcraft.core.EntityBlock;
 
 public class EntityMechanicalArm extends Entity {
-
 	protected TileQuarry parent;
 
 	private double armSizeX;
@@ -25,8 +24,6 @@ public class EntityMechanicalArm extends Entity {
 	private double yRoot;
 	private double zRoot;
 
-	private boolean inProgressionXZ = false;
-	private boolean inProgressionY = false;
 	private int headX, headY, headZ;
 	private EntityBlock xArm, yArm, zArm, head;
 

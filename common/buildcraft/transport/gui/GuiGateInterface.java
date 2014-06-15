@@ -30,6 +30,7 @@ import buildcraft.core.gui.AdvancedSlot;
 import buildcraft.core.gui.GuiAdvancedInterface;
 import buildcraft.core.utils.StringUtils;
 import buildcraft.transport.ActionState;
+import buildcraft.transport.Gate;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.gates.GateDefinition.GateMaterial;
 
@@ -37,19 +38,16 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 
 	IInventory playerInventory;
 	private final ContainerGateInterface container;
-	private final Pipe pipe;
-	private int numSlots;
+	private final Pipe<?> pipe;
+	private Gate gate;
 
 	private abstract class StatementSlot extends AdvancedSlot {
-
-		public Pipe pipe;
 		public int slot;
 		public ArrayList<StatementParameterSlot> parameters = new ArrayList<StatementParameterSlot>();
 
-		public StatementSlot(int x, int y, Pipe pipe, int slot) {
+		public StatementSlot(int x, int y, Pipe<?> pipe, int slot) {
 			super(GuiGateInterface.this, x, y);
 
-			this.pipe = pipe;
 			this.slot = slot;
 		}
 
@@ -85,34 +83,33 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 	}
 
 	private class TriggerSlot extends StatementSlot {
-		public TriggerSlot(int x, int y, Pipe pipe, int slot) {
+		public TriggerSlot(int x, int y, Pipe<?> pipe, int slot) {
 			super(x, y, pipe, slot);
 		}
 
 		@Override
 		public IStatement getStatement() {
-			return pipe.gate.getTrigger(slot);
+			return gate.getTrigger(slot);
 		}
 	}
 
 	private class ActionSlot extends StatementSlot {
-		public ActionSlot(int x, int y, Pipe pipe, int slot) {
+		public ActionSlot(int x, int y, Pipe<?> pipe, int slot) {
 			super(x, y, pipe, slot);
 		}
 
 		@Override
 		public IStatement getStatement() {
-			return pipe.gate.getAction(slot);
+			return gate.getAction(slot);
 		}
 	}
 
 	private abstract class StatementParameterSlot extends AdvancedSlot {
-
-		public Pipe pipe;
+		public Pipe<?> pipe;
 		public int slot;
 		public StatementSlot statementSlot;
 
-		public StatementParameterSlot(int x, int y, Pipe pipe, int slot, StatementSlot iStatementSlot) {
+		public StatementParameterSlot(int x, int y, Pipe<?> pipe, int slot, StatementSlot iStatementSlot) {
 			super(GuiGateInterface.this, x, y);
 
 			this.pipe = pipe;
@@ -123,7 +120,7 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 
 		@Override
 		public boolean isDefined() {
-			return pipe.gate.getTriggerParameter(statementSlot.slot, slot) != null;
+			return gate.getTriggerParameter(statementSlot.slot, slot) != null;
 		}
 
 		@Override
@@ -160,53 +157,63 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 	}
 
 	class TriggerParameterSlot extends StatementParameterSlot {
-		public TriggerParameterSlot(int x, int y, Pipe pipe, int slot, StatementSlot iStatementSlot) {
+		public TriggerParameterSlot(int x, int y, Pipe<?> pipe, int slot, StatementSlot iStatementSlot) {
 			super(x, y, pipe, slot, iStatementSlot);
 		}
 
 		@Override
 		public IStatementParameter getParameter() {
-			return pipe.gate.getTriggerParameter(statementSlot.slot, slot);
+			return gate.getTriggerParameter(statementSlot.slot, slot);
 		}
 	}
 
 	class ActionParameterSlot extends StatementParameterSlot {
-		public ActionParameterSlot(int x, int y, Pipe pipe, int slot, StatementSlot iStatementSlot) {
+		public ActionParameterSlot(int x, int y, Pipe<?> pipe, int slot, StatementSlot iStatementSlot) {
 			super(x, y, pipe, slot, iStatementSlot);
 		}
 
 		@Override
 		public IStatementParameter getParameter() {
-			return pipe.gate.getActionParameter(statementSlot.slot, slot);
+			return gate.getActionParameter(statementSlot.slot, slot);
 		}
 	}
 
-	public GuiGateInterface(IInventory playerInventory, Pipe pipe) {
+	public GuiGateInterface(IInventory playerInventory, Pipe<?> pipe) {
 		super(new ContainerGateInterface(playerInventory, pipe), null, null);
 
 		container = (ContainerGateInterface) this.inventorySlots;
+		container.gateCallback = this;
 		this.pipe = pipe;
-
 		this.playerInventory = playerInventory;
+	}
+
+	public void setGate(Gate gate) {
+		this.gate = gate;
+		init();
+	}
+
+	public void init() {
+		if (gate == null) {
+			return;
+		}
 		xSize = 176;
-		ySize = pipe.gate.material.guiHeight;
+		ySize = gate.material.guiHeight;
 
 		int position = 0;
-		numSlots = pipe.gate.material.numSlots;
 
-		if (pipe.gate.material == GateMaterial.REDSTONE) {
+		if (gate.material == GateMaterial.REDSTONE) {
 			slots = new AdvancedSlot[2];
 
 			slots[0] = new TriggerSlot(62, 26, pipe, 0);
 			slots[1] = new ActionSlot(98, 26, pipe, 0);
-		} else if (pipe.gate.material == GateMaterial.IRON) {
+		} else if (gate.material == GateMaterial.IRON) {
 			slots = new AdvancedSlot[4];
 
 			slots[0] = new TriggerSlot(62, 26, pipe, 0);
 			slots[1] = new TriggerSlot(62, 44, pipe, 1);
 			slots[2] = new ActionSlot(98, 26, pipe, 0);
 			slots[3] = new ActionSlot(98, 44, pipe, 1);
-		} else if (pipe.gate.material == GateMaterial.GOLD) {
+		} else if (gate.material == GateMaterial.GOLD) {
 			slots = new AdvancedSlot[12];
 
 			for (int k = 0; k < 4; ++k) {
@@ -224,7 +231,7 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 				position++;
 
 			}
-		} else if (pipe.gate.material == GateMaterial.DIAMOND) {
+		} else if (gate.material == GateMaterial.DIAMOND) {
 			slots = new AdvancedSlot[24];
 
 			for (int k = 0; k < 4; ++k) {
@@ -249,7 +256,7 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 						(TriggerSlot) slots[k + 4]);
 				position++;
 			}
-		} else if (pipe.gate.material == GateMaterial.EMERALD) {
+		} else if (gate.material == GateMaterial.EMERALD) {
 			slots = new AdvancedSlot[32];
 			int lastPos;
 
@@ -284,11 +291,14 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 				}
 			}
 		}
-
+		initGui();
 	}
 
 	@Override
 	protected void drawGuiContainerForegroundLayer(int par1, int par2) {
+		if (gate == null) {
+			return;
+		}
 		String name = container.getGateName();
 
 		fontRendererObj.drawString(name, getCenteredOffset(name), 10, 0x404040);
@@ -300,6 +310,10 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 	@Override
 	protected void drawGuiContainerBackgroundLayer(float f, int x, int y) {
 		container.synchronize();
+
+		if (gate == null) {
+			return;
+		}
 
 		ResourceLocation texture = container.getGateGuiFile();
 
@@ -315,10 +329,9 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 		actionTracker = 0;
 		for (AdvancedSlot slot : slots) {
 			if (slot instanceof TriggerSlot) {
-				ITrigger trigger = (ITrigger) ((TriggerSlot) slot).getStatement();
 				boolean halfWidth = container.actionsState[actionTracker] == ActionState.Partial;
 
-				if (pipe.gate.material.numTriggerParameters > 0) {
+				if (gate.material.numTriggerParameters > 0) {
 					if (container.actionsState[actionTracker] != ActionState.Deactivated) {
 						mc.renderEngine.bindTexture(texture);
 
@@ -354,6 +367,9 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 
 	@Override
 	protected void mouseClicked(int i, int j, int k) {
+		if (gate == null) {
+			return;
+		}
 		super.mouseClicked(i, j, k);
 
 		int cornerX = (width - xSize) / 2;

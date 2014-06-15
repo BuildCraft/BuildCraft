@@ -23,7 +23,6 @@ import buildcraft.transport.PipeTransportItems;
 import buildcraft.transport.pipes.events.PipeEventItem;
 
 public class PipeItemsVoid extends Pipe<PipeTransportItems> {
-
 	public PipeItemsVoid(Item item) {
 		super(new PipeTransportItems(), item);
 	}

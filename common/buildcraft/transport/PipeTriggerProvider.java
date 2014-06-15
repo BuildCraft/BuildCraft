@@ -25,7 +25,7 @@ public class PipeTriggerProvider implements ITriggerProvider {
 	@Override
 	public LinkedList<ITrigger> getPipeTriggers(IPipeTile tile) {
 		LinkedList<ITrigger> result = new LinkedList<ITrigger>();
-		Pipe pipe = null;
+		Pipe<?> pipe = null;
 		if (tile instanceof TileGenericPipe) {
 			pipe = ((TileGenericPipe) tile).pipe;
 		}
@@ -36,8 +36,10 @@ public class PipeTriggerProvider implements ITriggerProvider {
 			return ((IOverrideDefaultTriggers) pipe).getTriggers();
 		}
 
-		if (pipe.hasGate()) {
-			pipe.gate.addTrigger(result);
+		for (Gate gate : pipe.gates) {
+			if (gate != null) {
+				gate.addTrigger(result);
+			}
 		}
 
 		switch (tile.getPipeType()) {

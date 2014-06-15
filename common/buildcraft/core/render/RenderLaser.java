@@ -8,8 +8,6 @@
  */
 package buildcraft.core.render;
 
-import java.util.Date;
-
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.model.ModelBase;
@@ -132,13 +130,10 @@ public class RenderLaser extends Render {
 
 		textureManager.bindTexture(texture);
 
-		float factor = (float) (1.0 / 16.0);
-
 		int indexList = 0;
 
 		initScaledBoxes();
 
-		double x0 = 0;
 		double x1 = laser.wavePosition;
 		double x2 = x1 + scaledBoxes [0].length * STEP;
 		double x3 = laser.renderSize;
@@ -174,12 +169,6 @@ public class RenderLaser extends Render {
 		GL11.glRotatef((float) laser.angleY, 0, 0, 1);
 
 		textureManager.bindTexture(texture);
-
-		float factor = (float) (1.0 / 16.0);
-
-		float lasti = 0;
-
-		int indexList = (int) ((new Date ().getTime() / 100) % 20);
 
 		initScaledBoxes();
 

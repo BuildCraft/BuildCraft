@@ -48,6 +48,7 @@ import buildcraft.core.render.RenderEntityBlock.RenderInfo;
 import buildcraft.core.render.RenderUtils;
 import buildcraft.core.utils.EnumColor;
 import buildcraft.core.utils.MatrixTranformations;
+import buildcraft.transport.Gate;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeRenderState;
@@ -287,6 +288,7 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 		}
 
 		renderGatesWires(pipe, x, y, z);
+		renderGates(pipe, x, y, z);
 
 		PipeType pipeType = pipe.getPipeType();
 
@@ -319,10 +321,6 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 
 		if (state.wireMatrix.hasWire(PipeWire.YELLOW)) {
 			pipeWireRender(pipe, CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MAX_POS, PipeWire.YELLOW, x, y, z);
-		}
-
-		if (pipe.pipe.gate != null) {
-			pipeGateRender(pipe, x, y, z);
 		}
 	}
 
@@ -479,7 +477,15 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 		GL11.glPopMatrix();
 	}
 
-	private void pipeGateRender(TileGenericPipe pipe, double x, double y, double z) {
+	private void renderGates(TileGenericPipe pipe, double x, double y, double z) {
+		for (Gate gate : pipe.pipe.gates) {
+			if (gate != null) {
+				renderGate(pipe, x, y, z, gate, gate.getDirection());
+			}
+		}
+	}
+
+	private void renderGate(TileGenericPipe pipe, double x, double y, double z, Gate gate, ForgeDirection direction) {
 		GL11.glPushMatrix();
 		GL11.glPushAttrib(GL11.GL_ENABLE_BIT);
 //		GL11.glEnable(GL11.GL_LIGHTING);
@@ -494,20 +500,20 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 		bindTexture(TextureMap.locationBlocksTexture);
 
 		IIcon iconLogic;
-		if (pipe.renderState.isGateLit()) {
-			iconLogic = pipe.pipe.gate.logic.getIconLit();
+		if (pipe.renderState.gateMatrix.isGateLit(direction)) {
+			iconLogic = gate.logic.getIconLit();
 		} else {
-			iconLogic = pipe.pipe.gate.logic.getIconDark();
+			iconLogic = gate.logic.getIconDark();
 		}
 
 		float translateCenter = 0;
 
 		// Render base gate
-		renderGate(pipe, iconLogic, 0, 0.1F, 0, 0);
+		renderGate(pipe, iconLogic, 0, 0.1F, 0, 0, direction);
 
-		float pulseStage = pipe.pipe.gate.getPulseStage() * 2F;
+		float pulseStage = gate.getPulseStage() * 2F;
 
-		if (pipe.renderState.isGatePulsing() || pulseStage != 0) {
+		if (pipe.renderState.gateMatrix.isGatePulsing(direction) || pulseStage != 0) {
 			// Render pulsing gate
 			float amplitude = 0.10F;
 			float start = 0.01F;
@@ -518,16 +524,16 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 				translateCenter = amplitude - ((pulseStage - 1F) * amplitude) + start;
 			}
 
-			renderGate(pipe, iconLogic, 0, 0.13F, translateCenter, translateCenter);
+			renderGate(pipe, iconLogic, 0, 0.13F, translateCenter, translateCenter, direction);
 		}
 
-		IIcon materialIcon = pipe.pipe.gate.material.getIconBlock();
+		IIcon materialIcon = gate.material.getIconBlock();
 		if (materialIcon != null) {
-			renderGate(pipe, materialIcon, 1, 0.13F, translateCenter, translateCenter);
+			renderGate(pipe, materialIcon, 1, 0.13F, translateCenter, translateCenter, direction);
 		}
 
-		for (IGateExpansion expansion : pipe.pipe.gate.expansions.keySet()) {
-			renderGate(pipe, expansion.getOverlayBlock(), 2, 0.13F, translateCenter, translateCenter);
+		for (IGateExpansion expansion : gate.expansions.keySet()) {
+			renderGate(pipe, expansion.getOverlayBlock(), 2, 0.13F, translateCenter, translateCenter, direction);
 		}
 
 		RenderHelper.enableStandardItemLighting();
@@ -536,7 +542,7 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 		GL11.glPopMatrix();
 	}
 
-	private void renderGate(TileGenericPipe tile, IIcon icon, int layer, float trim, float translateCenter, float extraDepth) {
+	private void renderGate(TileGenericPipe tile, IIcon icon, int layer, float trim, float translateCenter, float extraDepth, ForgeDirection direction) {
 		PipeRenderState state = tile.renderState;
 
 		RenderInfo renderBox = new RenderInfo();
@@ -556,26 +562,24 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 		zeroState[2][0] = min;
 		zeroState[2][1] = max;
 
-		for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
-			if (shouldRenderNormalPipeSide(state, direction)) {
-				GL11.glPushMatrix();
+		if (shouldRenderNormalPipeSide(state, direction)) {
+			GL11.glPushMatrix();
 
-				float xt = direction.offsetX * translateCenter,
-						yt = direction.offsetY * translateCenter,
-						zt = direction.offsetZ * translateCenter;
+			float xt = direction.offsetX * translateCenter,
+					yt = direction.offsetY * translateCenter,
+					zt = direction.offsetZ * translateCenter;
 
-				GL11.glTranslatef(xt, yt, zt);
+			GL11.glTranslatef(xt, yt, zt);
 
-				float[][] rotated = MatrixTranformations.deepClone(zeroState);
-				MatrixTranformations.transform(rotated, direction);
+			float[][] rotated = MatrixTranformations.deepClone(zeroState);
+			MatrixTranformations.transform(rotated, direction);
 
-				if (layer != 0) {
-					renderBox.setRenderSingleSide(direction.ordinal());
-				}
-				renderBox.setBounds(rotated[0][0], rotated[1][0], rotated[2][0], rotated[0][1], rotated[1][1], rotated[2][1]);
-				RenderEntityBlock.INSTANCE.renderBlock(renderBox, tile.getWorldObj(), 0, 0, 0, tile.xCoord, tile.yCoord, tile.zCoord, true, true);
-				GL11.glPopMatrix();
+			if (layer != 0) {
+				renderBox.setRenderSingleSide(direction.ordinal());
 			}
+			renderBox.setBounds(rotated[0][0], rotated[1][0], rotated[2][0], rotated[0][1], rotated[1][1], rotated[2][1]);
+			RenderEntityBlock.INSTANCE.renderBlock(renderBox, tile.getWorldObj(), 0, 0, 0, tile.xCoord, tile.yCoord, tile.zCoord, true, true);
+			GL11.glPopMatrix();
 		}
 	}
 

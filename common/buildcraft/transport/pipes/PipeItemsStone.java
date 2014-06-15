@@ -25,7 +25,6 @@ import buildcraft.transport.TravelingItem;
 import buildcraft.transport.pipes.events.PipeEventItem;
 
 public class PipeItemsStone extends Pipe {
-
 	public PipeItemsStone(Item item) {
 		super(new PipeTransportItems(), item);
 	}

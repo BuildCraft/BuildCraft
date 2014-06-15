@@ -8,6 +8,8 @@
  */
 package buildcraft.core.triggers;
 
+import net.minecraftforge.common.util.ForgeDirection;
+
 import buildcraft.api.gates.ITrigger;
 import buildcraft.api.gates.ITriggerParameter;
 import buildcraft.api.transport.IPipe;
@@ -15,7 +17,6 @@ import buildcraft.core.utils.StringUtils;
 import buildcraft.transport.Pipe;
 
 public class TriggerRedstoneInput extends BCTrigger {
-
 	boolean active;
 
 	public TriggerRedstoneInput(boolean active) {
@@ -29,16 +30,12 @@ public class TriggerRedstoneInput extends BCTrigger {
 	}
 
 	@Override
-	public boolean isTriggerActive(IPipe pipe, ITriggerParameter[] parameters) {
-		if (active) {
-			return isBeingPowered((Pipe) pipe);
-		} else {
-			return !isBeingPowered((Pipe) pipe);
-		}
+	public boolean isTriggerActive(IPipe pipe, ForgeDirection direction, ITriggerParameter[] parameters) {
+		return !(active ^ isBeingPowered((Pipe<?>) pipe, direction));
 	}
 
-	private boolean isBeingPowered(Pipe pipe) {
-		return pipe.container.redstoneInput > 0;
+	private boolean isBeingPowered(Pipe<?> pipe, ForgeDirection direction) {
+		return direction != ForgeDirection.UNKNOWN && pipe.container.redstoneInput[direction.ordinal()] > 0;
 	}
 
 	@Override

@@ -30,12 +30,11 @@ import buildcraft.transport.Pipe;
 import buildcraft.transport.TileGenericPipe.SideProperties;
 
 public class SchematicPipe extends SchematicTile {
-
 	private BuildingPermission permission = BuildingPermission.ALL;
 
 	@Override
 	public boolean isAlreadyBuilt(IBuilderContext context, int x, int y, int z) {
-		Pipe pipe = BlockGenericPipe.getPipe(context.world(), x, y, z);
+		Pipe<?> pipe = BlockGenericPipe.getPipe(context.world(), x, y, z);
 
 		if (BlockGenericPipe.isValid(pipe)) {
 			return pipe.item == Item.getItemById(tileNBT.getInteger("pipeId"));
@@ -90,7 +89,7 @@ public class SchematicPipe extends SchematicTile {
 	@Override
 	public void writeToBlueprint(IBuilderContext context, int x, int y, int z) {
 		TileEntity tile = context.world().getTileEntity(x, y, z);
-		Pipe pipe = BlockGenericPipe.getPipe(context.world(), x, y, z);
+		Pipe<?> pipe = BlockGenericPipe.getPipe(context.world(), x, y, z);
 
 		if (BlockGenericPipe.isValid(pipe)) {
 			tile.writeToNBT(tileNBT);
@@ -115,8 +114,7 @@ public class SchematicPipe extends SchematicTile {
 
 	@Override
 	public void writeRequirementsToBlueprint(IBuilderContext context, int x, int y, int z) {
-		TileEntity tile = context.world().getTileEntity(x, y, z);
-		Pipe pipe = BlockGenericPipe.getPipe(context.world(), x, y, z);
+		Pipe<?> pipe = BlockGenericPipe.getPipe(context.world(), x, y, z);
 
 		if (BlockGenericPipe.isValid(pipe)) {
 			ArrayList<ItemStack> items = pipe.computeItemDrop();

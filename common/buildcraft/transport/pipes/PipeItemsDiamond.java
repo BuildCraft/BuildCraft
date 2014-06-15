@@ -38,7 +38,6 @@ import buildcraft.transport.PipeTransportItems;
 import buildcraft.transport.pipes.events.PipeEventItem;
 
 public class PipeItemsDiamond extends Pipe<PipeTransportItems> implements IClientState {
-
 	private SimpleInventory filters = new SimpleInventory(54, "Filters", 1);
 
 	public PipeItemsDiamond(Item item) {

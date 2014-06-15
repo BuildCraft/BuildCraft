@@ -28,32 +28,22 @@ import buildcraft.transport.pipes.PipePowerWood;
  * Controls whether one type of pipe can connect to another.
  */
 public final class PipeConnectionBans {
-
 	private static final SetMultimap<Class<? extends Pipe>, Class<? extends Pipe>> connectionBans = HashMultimap.create();
 
 	static {
 		// Fluid pipes
 		banConnection(PipeFluidsStone.class, PipeFluidsCobblestone.class);
-
 		banConnection(PipeFluidsWood.class);
-		
 		banConnection(PipeFluidsEmerald.class);
-		
 		banConnection(PipeFluidsWood.class, PipeFluidsEmerald.class);
-
 		banConnection(PipeFluidsEmerald.class);
 
 		// Item Pipes
 		banConnection(PipeItemsStone.class, PipeItemsCobblestone.class, PipeItemsQuartz.class);
-
 		banConnection(PipeItemsWood.class);
-
 		banConnection(PipeItemsEmerald.class);
-
 		banConnection(PipeItemsEmzuli.class);
-		
 		banConnection(PipeItemsWood.class, PipeItemsEmerald.class, PipeItemsEmzuli.class);
-		
 		banConnection(PipeItemsObsidian.class);
 		
 		// Power Pipes

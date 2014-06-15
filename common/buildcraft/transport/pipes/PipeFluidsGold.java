@@ -22,7 +22,6 @@ import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportFluids;
 
 public class PipeFluidsGold extends Pipe<PipeTransportFluids> {
-
 	public PipeFluidsGold(Item item) {
 		super(new PipeTransportFluids(), item);
 

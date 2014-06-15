@@ -26,7 +26,6 @@ import buildcraft.transport.TravelingItem;
 import buildcraft.transport.pipes.events.PipeEventItem;
 
 public class PipeItemsGold extends Pipe {
-
 	public PipeItemsGold(Item item) {
 		super(new PipeTransportItems(), item);
 	}

@@ -432,6 +432,10 @@ public final class Utils {
 
 	public static void writeUTF (ByteBuf data, String str) {
 		try {
+			if (str == null) {
+				data.writeInt(0);
+				return;
+			}
 			byte [] b = str.getBytes("UTF-8");
 			data.writeInt (b.length);
 			data.writeBytes(b);
@@ -444,6 +448,9 @@ public final class Utils {
 	public static String readUTF (ByteBuf data) {
 		try {
 			int len = data.readInt();
+			if (len == 0) {
+				return "";
+			}
 			byte [] b = new byte [len];
 			data.readBytes(b);
 			return new String (b, "UTF-8");
