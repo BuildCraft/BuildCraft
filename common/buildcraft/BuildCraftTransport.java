@@ -530,5 +530,4 @@ public class BuildCraftTransport extends BuildCraftMod {
 		FMLInterModComms.sendMessage("appliedenergistics2", "whitelist-spatial",
 				TileFilteredBuffer.class.getCanonicalName());
 	}
-
 }

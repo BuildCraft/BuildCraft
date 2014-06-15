@@ -33,6 +33,7 @@ import gnu.trove.map.hash.TIntObjectHashMap;
  * Joules batteries and provide different models.
  */
 public final class MjAPI {
+
 	public static final String DEFAULT_POWER_FRAMEWORK = "buildcraft.kinesis";
 	private static Map<BatteryHolder, BatteryField> mjBatteryFields = new HashMap<BatteryHolder, BatteryField>();
 	private static Map<String, Class<? extends IBatteryObject>> mjBatteryKinds = new HashMap<String, Class<? extends IBatteryObject>>();
@@ -351,7 +352,7 @@ public final class MjAPI {
 	private static final class BatteryHolder {
 		private String kind;
 		private ForgeDirection side;
-		private Class clazz;
+		private Class<? extends Object> clazz;
 
 		@Override
 		public boolean equals(Object o) {
@@ -382,7 +383,7 @@ public final class MjAPI {
 		public BatteryKind kind;
 	}
 
-	private static BatteryField getMjBatteryField(Class c, String kind, ForgeDirection side) {
+	private static BatteryField getMjBatteryField(Class<?> c, String kind, ForgeDirection side) {
 		BatteryHolder holder = new BatteryHolder();
 		holder.clazz = c;
 		holder.kind = kind;

@@ -34,7 +34,7 @@ public class GuiRedstoneBoard extends GuiAdvancedInterface {
 
 	private World world;
 	private int x, y, z;
-	private RedstoneBoardNBT board;
+	private RedstoneBoardNBT<?> board;
 	private IBoardParameter[] params;
 
 	public GuiRedstoneBoard(EntityPlayer player, int ix, int iy, int iz) {

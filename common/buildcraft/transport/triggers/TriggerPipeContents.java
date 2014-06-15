@@ -37,7 +37,6 @@ import buildcraft.transport.pipes.PipePowerWood;
 public class TriggerPipeContents extends BCTrigger {
 
 	public enum PipeContents {
-
 		empty,
 		containsItems,
 		containsFluids,
@@ -73,7 +72,7 @@ public class TriggerPipeContents extends BCTrigger {
 
 	@Override
 	public boolean isTriggerActive(IGate gate, ITriggerParameter[] parameters) {
-		Pipe pipe = (Pipe) gate.getPipe();
+		Pipe<?> pipe = (Pipe<?>) gate.getPipe();
 		ITriggerParameter parameter = parameters[0];
 
 		if (pipe.transport instanceof PipeTransportItems) {

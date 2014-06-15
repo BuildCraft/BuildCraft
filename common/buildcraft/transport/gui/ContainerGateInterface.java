@@ -46,7 +46,7 @@ public class ContainerGateInterface extends BuildCraftContainer {
 	public GuiGateInterface gateCallback;
 
 	IInventory playerIInventory;
-	private final Pipe pipe;
+	private final Pipe<?> pipe;
 	private Gate gate;
 	private final NavigableSet<ITrigger> potentialTriggers = new TreeSet<ITrigger>(new Comparator<ITrigger>() {
 		@Override
@@ -66,7 +66,7 @@ public class ContainerGateInterface extends BuildCraftContainer {
 	private boolean isNetInitialized = false;
 	private int lastTriggerState = 0;
 
-	public ContainerGateInterface(IInventory playerInventory, Pipe pipe) {
+	public ContainerGateInterface(IInventory playerInventory, Pipe<?> pipe) {
 		super(0);
 
 		for (int i = 0; i < actionsState.length; ++i) {

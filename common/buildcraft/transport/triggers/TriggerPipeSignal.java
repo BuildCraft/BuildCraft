@@ -44,7 +44,7 @@ public class TriggerPipeSignal extends BCTrigger {
 
 	@Override
 	public boolean isTriggerActive(IGate gate, ITriggerParameter[] parameters) {
-		Pipe pipe = (Pipe) gate.getPipe();
+		Pipe<?> pipe = (Pipe<?>) gate.getPipe();
 
 		if (active) {
 			if (pipe.signalStrength[color.ordinal()] == 0) {

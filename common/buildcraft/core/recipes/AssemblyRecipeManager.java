@@ -32,15 +32,15 @@ public class AssemblyRecipeManager implements IAssemblyRecipeManager {
 			return;
 		}
 
-		addRecipe(id, new FlexibleRecipe(id, output, energyCost, 0, input));
+		addRecipe(id, new FlexibleRecipe<ItemStack>(id, output, energyCost, 0, input));
 	}
 
 	@Override
-	public void addRecipe(IFlexibleRecipe recipe) {
+	public void addRecipe(IFlexibleRecipe<ItemStack> recipe) {
 		addRecipe(recipe.getId(), recipe);
 	}
 
-	private void addRecipe(String id, IFlexibleRecipe recipe) {
+	private void addRecipe(String id, IFlexibleRecipe<ItemStack> recipe) {
 		if (assemblyRecipes.containsKey(id)) {
 			throw new RuntimeException("Recipe \"" + id + "\" already registered");
 		}

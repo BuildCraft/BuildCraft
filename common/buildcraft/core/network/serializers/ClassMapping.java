@@ -71,7 +71,6 @@ import buildcraft.core.utils.Utils;
  */
 public class ClassMapping extends ClassSerializer {
 
-	private static SerializerObject anonymousSerializer = new SerializerObject();
 	private static Map<String, ClassSerializer> classes = new TreeMap<String, ClassSerializer>();
 
 	private LinkedList<Field> floatFields = new LinkedList<Field>();
@@ -388,11 +387,9 @@ public class ClassMapping extends ClassSerializer {
 
 	private void writeArray(Object obj, ByteBuf data, SerializationContext context) throws IllegalArgumentException,
 	IllegalAccessException {
-		Class<? extends Object> cpt = mappedClass.getComponentType();
-
 		switch (cptType) {
 			case Byte: {
-				byte [] arr = (byte []) obj;
+				byte[] arr = (byte[]) obj;
 				data.writeInt (arr.length);
 
 				data.writeBytes(arr);
@@ -400,7 +397,7 @@ public class ClassMapping extends ClassSerializer {
 				break;
 			}
 			case Float: {
-				float [] arr = (float []) obj;
+				float[] arr = (float[]) obj;
 				data.writeInt (arr.length);
 
 				for (float element : arr) {
@@ -410,7 +407,7 @@ public class ClassMapping extends ClassSerializer {
 				break;
 			}
 			case Double: {
-				double [] arr = (double []) obj;
+				double[] arr = (double[]) obj;
 				data.writeInt (arr.length);
 
 				for (double element : arr) {
@@ -420,7 +417,7 @@ public class ClassMapping extends ClassSerializer {
 				break;
 			}
 			case Short: {
-				short [] arr = (short []) obj;
+				short[] arr = (short[]) obj;
 				data.writeInt (arr.length);
 
 				for (short element : arr) {
@@ -430,7 +427,7 @@ public class ClassMapping extends ClassSerializer {
 				break;
 			}
 			case Int: {
-				int [] arr = (int []) obj;
+				int[] arr = (int[]) obj;
 				data.writeInt (arr.length);
 
 				for (int element : arr) {
@@ -440,7 +437,7 @@ public class ClassMapping extends ClassSerializer {
 				break;
 			}
 			case Boolean: {
-				boolean [] arr = (boolean []) obj;
+				boolean[] arr = (boolean[]) obj;
 				data.writeInt (arr.length);
 
 				for (boolean element : arr) {
@@ -450,10 +447,10 @@ public class ClassMapping extends ClassSerializer {
 				break;
 			}
 			case Enum: {
-				Enum [] arr = (Enum []) obj;
+				Enum[] arr = (Enum[]) obj;
 				data.writeInt (arr.length);
 
-				for (Enum element : arr) {
+				for (Enum<?> element : arr) {
 					data.writeBoolean(element != null);
 					
 					if (element != null) {
@@ -464,8 +461,8 @@ public class ClassMapping extends ClassSerializer {
 				break;
 			}
 			case Object: {
-				Object [] arr = (Object []) obj;
-				data.writeInt (arr.length);
+				Object[] arr = (Object[]) obj;
+				data.writeInt(arr.length);
 
 				for (Object element : arr) {
 					cptMapping.write(data, element, context);
@@ -486,12 +483,12 @@ public class ClassMapping extends ClassSerializer {
 
 		switch (cptType) {
 			case Byte: {
-				byte [] arr;
+				byte[] arr;
 
 				if (obj == null) {
-					arr = new byte [size];
+					arr = new byte[size];
 				} else {
-					arr = (byte []) obj;
+					arr = (byte[]) obj;
 				}
 
 				data.readBytes (arr);
@@ -501,16 +498,16 @@ public class ClassMapping extends ClassSerializer {
 				break;
 			}
 			case Float: {
-				float [] arr;
+				float[] arr;
 
 				if (obj == null) {
-					arr = new float [size];
+					arr = new float[size];
 				} else {
-					arr = (float []) obj;
+					arr = (float[]) obj;
 				}
 
 				for (int i = 0; i < arr.length; ++i) {
-					arr [i] = data.readFloat();
+					arr[i] = data.readFloat();
 				}
 
 				obj = arr;
@@ -518,16 +515,16 @@ public class ClassMapping extends ClassSerializer {
 				break;
 			}
 			case Double: {
-				double [] arr;
+				double[] arr;
 
 				if (obj == null) {
-					arr = new double [size];
+					arr = new double[size];
 				} else {
-					arr = (double []) obj;
+					arr = (double[]) obj;
 				}
 
 				for (int i = 0; i < arr.length; ++i) {
-					arr [i] = data.readDouble();
+					arr[i] = data.readDouble();
 				}
 
 				obj = arr;
@@ -535,16 +532,16 @@ public class ClassMapping extends ClassSerializer {
 				break;
 			}
 			case Short: {
-				short [] arr;
+				short[] arr;
 
 				if (obj == null) {
-					arr = new short [size];
+					arr = new short[size];
 				} else {
-					arr = (short []) obj;
+					arr = (short[]) obj;
 				}
 
 				for (int i = 0; i < arr.length; ++i) {
-					arr [i] = data.readShort();
+					arr[i] = data.readShort();
 				}
 
 				obj = arr;
@@ -552,16 +549,16 @@ public class ClassMapping extends ClassSerializer {
 				break;
 			}
 			case Int: {
-				int [] arr;
+				int[] arr;
 
 				if (obj == null) {
-					arr = new int [size];
+					arr = new int[size];
 				} else {
-					arr = (int []) obj;
+					arr = (int[]) obj;
 				}
 
 				for (int i = 0; i < arr.length; ++i) {
-					arr [i] = data.readInt();
+					arr[i] = data.readInt();
 				}
 
 				obj = arr;
@@ -569,16 +566,16 @@ public class ClassMapping extends ClassSerializer {
 				break;
 			}
 			case Boolean: {
-				boolean [] arr;
+				boolean[] arr;
 
 				if (obj == null) {
-					arr = new boolean [size];
+					arr = new boolean[size];
 				} else {
-					arr = (boolean []) obj;
+					arr = (boolean[]) obj;
 				}
 
 				for (int i = 0; i < arr.length; ++i) {
-					arr [i] = data.readBoolean();
+					arr[i] = data.readBoolean();
 				}
 
 				obj = arr;
@@ -596,7 +593,7 @@ public class ClassMapping extends ClassSerializer {
 
 				for (int i = 0; i < arr.length; ++i) {
 					if (data.readBoolean()) {
-						arr[i] = (Enum) cpt.getEnumConstants()[data.readByte()];
+						arr[i] = (Enum<?>) cpt.getEnumConstants()[data.readByte()];
 					} else {
 						arr[i] = null;
 					}
@@ -607,16 +604,16 @@ public class ClassMapping extends ClassSerializer {
 				break;
 			}
 			case Object: {
-				Object [] arr;
+				Object[] arr;
 
 				if (obj == null) {
 					arr = (Object[]) Array.newInstance(cpt, size);
 				} else {
-					arr = (Object []) obj;
+					arr = (Object[]) obj;
 				}
 
 				for (int i = 0; i < arr.length; ++i) {
-					arr [i] = cptMapping.read(data, arr[i], context);
+					arr[i] = cptMapping.read(data, arr[i], context);
 				}
 
 				obj = arr;
@@ -628,7 +625,7 @@ public class ClassMapping extends ClassSerializer {
 		return obj;
 	}
 
-	private static void registerSerializer (Class clas, ClassSerializer s) {
+	private static void registerSerializer (Class<?> clas, ClassSerializer s) {
 		try {
 			s.mappedClass = clas;
 			classes.put(clas.getCanonicalName(), s);
@@ -638,7 +635,7 @@ public class ClassMapping extends ClassSerializer {
 		}
 	}
 
-	public static ClassSerializer get (Class clas) {
+	public static ClassSerializer get (Class<?> clas) {
 		ClassSerializer mapping;
 
 		if (Block.class.isAssignableFrom(clas)) {

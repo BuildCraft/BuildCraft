@@ -108,7 +108,7 @@ public class BlockSpring extends Block {
 
 	// Prevents updates on chunk generation
 	@Override
-	public boolean func_149698_L () {
+	public boolean func_149698_L() {
 		return false;
 	}
 

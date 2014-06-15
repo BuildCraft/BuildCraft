@@ -15,5 +15,4 @@ public interface IFlexibleRecipe<T> {
 	CraftingResult<T> craft(IFlexibleCrafter crafter, boolean preview);
 
 	String getId();
-
 }

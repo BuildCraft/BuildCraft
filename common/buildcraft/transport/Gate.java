@@ -49,7 +49,7 @@ import buildcraft.transport.triggers.ActionRedstoneFaderOutput;
 
 public final class Gate implements IGate {
 
-	public final Pipe pipe;
+	public final Pipe<?> pipe;
 	public final GateMaterial material;
 	public final GateLogic logic;
 	public final BiMap<IGateExpansion, GateExpansionController> expansions = HashBiMap.create();
@@ -76,7 +76,7 @@ public final class Gate implements IGate {
 	private ForgeDirection direction;
 
 	// / CONSTRUCTOR
-	public Gate(Pipe pipe, GateMaterial material, GateLogic logic, ForgeDirection direction) {
+	public Gate(Pipe<?> pipe, GateMaterial material, GateLogic logic, ForgeDirection direction) {
 		this.pipe = pipe;
 		this.material = material;
 		this.logic = logic;
@@ -247,7 +247,7 @@ public final class Gate implements IGate {
 		}
 	}
 
-	// / UPDATING
+	// UPDATING
 	public void tick() {
 		for (GateExpansionController expansion : expansions.values()) {
 			expansion.tick(this);
@@ -419,7 +419,7 @@ public final class Gate implements IGate {
 		return false;
 	}
 
-	// / TRIGGERS
+	// TRIGGERS
 	public void addTrigger(List<ITrigger> list) {
 
 		for (PipeWire wire : PipeWire.VALUES) {
@@ -434,7 +434,7 @@ public final class Gate implements IGate {
 		}
 	}
 
-	// / ACTIONS
+	// ACTIONS
 	public void addActions(List<IAction> list) {
 		for (PipeWire wire : PipeWire.VALUES) {
 			if (pipe.wireSet[wire.ordinal()] && material.ordinal() >= wire.ordinal()) {
@@ -448,14 +448,14 @@ public final class Gate implements IGate {
 	}
 
 	@Override
-	public void setPulsing (boolean pulsing) {
+	public void setPulsing(boolean pulsing) {
 		if (pulsing != isPulsing) {
 			isPulsing = pulsing;
 			pipe.container.scheduleRenderUpdate();
 		}
 	}
 
-	public float getPulseStage () {
+	public float getPulseStage() {
 		return pulseStage;
 	}
 

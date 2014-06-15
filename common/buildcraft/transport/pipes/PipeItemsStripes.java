@@ -97,7 +97,6 @@ public class PipeItemsStripes extends Pipe<PipeTransportItems> {
 	public void eventHandler(PipeEventItem.DropItem event) {
 		Position p = new Position(container.xCoord, container.yCoord,
 				container.zCoord, event.direction);
-		Position from = new Position(p);
 		p.moveForwards(1.0);
 
 		ItemStack stack = event.entity.getEntityItem();
@@ -231,7 +230,7 @@ public class PipeItemsStripes extends Pipe<PipeTransportItems> {
 	public boolean convertPipe(PipeTransportItems pipe, TravelingItem item) {
 		if (item.getItemStack().getItem() instanceof ItemPipe) {
 			if (!(item.getItemStack().getItem() == BuildCraftTransport.pipeItemsStripes)) {
-				Pipe newPipe = BlockGenericPipe.createPipe(item.getItemStack().getItem());
+				Pipe<?> newPipe = BlockGenericPipe.createPipe(item.getItemStack().getItem());
 				newPipe.setTile(this.container);
 				this.container.pipe = newPipe;
 
