@@ -23,7 +23,6 @@ import buildcraft.core.LaserData;
 import buildcraft.core.render.RenderLaser;
 
 public class RenderPathMarker extends TileEntitySpecialRenderer {
-
 	private static final ResourceLocation CHAMBER_TEXTURE = new ResourceLocation(DefaultProps.TEXTURE_PATH_BLOCKS
 			+ "/chamber2.png");
 
@@ -57,8 +56,7 @@ public class RenderPathMarker extends TileEntitySpecialRenderer {
 			for (LaserData laser : marker.lasers) {
 				if (laser != null) {
 					GL11.glPushMatrix();
-					RenderLaser
-							.doRenderLaser(
+					RenderLaser.doRenderLaser(
 									TileEntityRendererDispatcher.instance.field_147553_e,
 									laser, EntityLaser.LASER_TEXTURES[3]);
 					GL11.glPopMatrix();

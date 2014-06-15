@@ -20,7 +20,7 @@ public class SerializerLinkedList extends ClassSerializer {
 	public void write(ByteBuf data, Object o, SerializationContext context)
 			throws IllegalArgumentException, IllegalAccessException {
 
-		LinkedList list = (LinkedList) o;
+		LinkedList<?> list = (LinkedList<?>) o;
 
 		if (o == null) {
 			data.writeBoolean(false);
@@ -44,7 +44,7 @@ public class SerializerLinkedList extends ClassSerializer {
 		} else {
 			int size = data.readShort();
 
-			LinkedList list = new LinkedList ();
+			LinkedList<Object> list = new LinkedList<Object> ();
 
 			for (int i = 0; i < size; ++i) {
 				Object val = anonymousSerializer.read(data, null, context);

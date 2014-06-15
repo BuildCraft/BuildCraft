@@ -15,7 +15,6 @@ import net.minecraft.tileentity.TileEntity;
  */
 @Deprecated
 public interface IItemTravelingHook {
-
 	void drop(PipeTransportItems transport, TravelingItem item);
 
 	void centerReached(PipeTransportItems transport, TravelingItem item);

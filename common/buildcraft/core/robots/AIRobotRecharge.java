@@ -16,7 +16,6 @@ import buildcraft.api.transport.IPipeTile.PipeType;
 import buildcraft.transport.PipeTransportPower;
 
 public class AIRobotRecharge extends AIRobot {
-
 	private DockingStation axeDocking = null;
 
 	public AIRobotRecharge(EntityRobotBase iRobot) {

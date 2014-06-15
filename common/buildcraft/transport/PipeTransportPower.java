@@ -39,7 +39,6 @@ import buildcraft.transport.pipes.PipePowerStone;
 import buildcraft.transport.pipes.PipePowerWood;
 
 public class PipeTransportPower extends PipeTransport {
-
 	public static final Map<Class<? extends Pipe>, Integer> powerCapacities = new HashMap<Class<? extends Pipe>, Integer>();
 
 	private static final short MAX_DISPLAY = 100;
@@ -90,7 +89,7 @@ public class PipeTransportPower extends PipeTransport {
 	@Override
 	public boolean canPipeConnect(TileEntity tile, ForgeDirection side) {
 		if (tile instanceof TileGenericPipe) {
-			Pipe pipe2 = ((TileGenericPipe) tile).pipe;
+			Pipe<?> pipe2 = ((TileGenericPipe) tile).pipe;
 			if (BlockGenericPipe.isValid(pipe2) && !(pipe2.transport instanceof PipeTransportPower)) {
 				return false;
 			}
@@ -508,7 +507,7 @@ public class PipeTransportPower extends PipeTransport {
 		}
 	}
 
-	public double clearInstantPower () {
+	public double clearInstantPower() {
 		double amount = 0.0;
 
 		for (int i = 0; i < internalPower.length; ++i) {

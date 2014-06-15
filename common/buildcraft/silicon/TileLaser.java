@@ -34,7 +34,6 @@ import buildcraft.core.TileBuildCraft;
 import buildcraft.core.triggers.ActionMachineControl;
 
 public class TileLaser extends TileBuildCraft implements IActionReceptor, IMachine {
-
 	private static final float LASER_OFFSET = 2.0F / 16.0F;
 	private static final short POWER_AVERAGING = 100;
 
@@ -56,7 +55,7 @@ public class TileLaser extends TileBuildCraft implements IActionReceptor, IMachi
 
 
 	@Override
-	public void initialize () {
+	public void initialize() {
 		super.initialize();
 		
 		laser.isVisible = false;

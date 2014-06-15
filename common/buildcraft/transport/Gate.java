@@ -46,8 +46,7 @@ import buildcraft.transport.triggers.ActionRedstoneFaderOutput;
 import buildcraft.transport.triggers.ActionSignalOutput;
 
 public final class Gate {
-
-	public final Pipe pipe;
+	public final Pipe<?> pipe;
 	public final GateMaterial material;
 	public final GateLogic logic;
 	public final BiMap<IGateExpansion, GateExpansionController> expansions = HashBiMap.create();
@@ -73,7 +72,7 @@ public final class Gate {
 	private float pulseStage = 0;
 
 	// / CONSTRUCTOR
-	public Gate(Pipe pipe, GateMaterial material, GateLogic logic) {
+	public Gate(Pipe<?> pipe, GateMaterial material, GateLogic logic) {
 		this.pipe = pipe;
 		this.material = material;
 		this.logic = logic;
@@ -430,7 +429,7 @@ public final class Gate {
 		}
 	}
 
-	public void setPulsing (boolean pulsing) {
+	public void setPulsing(boolean pulsing) {
 		if (pulsing != isPulsing) {
 			isPulsing = pulsing;
 			pipe.container.scheduleRenderUpdate();

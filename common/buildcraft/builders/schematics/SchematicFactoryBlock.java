@@ -45,7 +45,7 @@ public class SchematicFactoryBlock extends SchematicFactory<SchematicBlock> {
 	}
 
 	@Override
-	public void saveSchematicToWorldNBT (NBTTagCompound nbt, SchematicBlock object, MappingRegistry registry) {
+	public void saveSchematicToWorldNBT(NBTTagCompound nbt, SchematicBlock object, MappingRegistry registry) {
 		super.saveSchematicToWorldNBT(nbt, object, registry);
 
 		nbt.setInteger("blockId", registry.getIdForBlock(object.block));

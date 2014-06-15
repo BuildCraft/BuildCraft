@@ -17,7 +17,6 @@ import buildcraft.core.recipes.FlexibleRecipe;
 import buildcraft.silicon.TileIntegrationTable;
 
 public abstract class IntegrationTableRecipe extends FlexibleRecipe<ItemStack> implements IIntegrationRecipe {
-
 	@Override
 	public final CraftingResult craft(IFlexibleCrafter crafter, boolean preview) {
 		TileIntegrationTable table = (TileIntegrationTable) crafter;

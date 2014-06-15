@@ -20,11 +20,10 @@ import buildcraft.core.TileBuffer;
 import buildcraft.transport.Pipe;
 
 public abstract class PipeLogicIron {
-
-	protected final Pipe pipe;
+	protected final Pipe<?> pipe;
 	private boolean lastPower = false;
 
-	public PipeLogicIron(Pipe pipe) {
+	public PipeLogicIron(Pipe<?> pipe) {
 		this.pipe = pipe;
 	}
 

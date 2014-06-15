@@ -15,7 +15,6 @@ import buildcraft.core.utils.StringUtils;
 import buildcraft.transport.Pipe;
 
 public class TriggerRedstoneInput extends BCTrigger {
-
 	boolean active;
 
 	public TriggerRedstoneInput(boolean active) {
@@ -31,13 +30,13 @@ public class TriggerRedstoneInput extends BCTrigger {
 	@Override
 	public boolean isTriggerActive(IPipe pipe, ITriggerParameter[] parameters) {
 		if (active) {
-			return isBeingPowered((Pipe) pipe);
+			return isBeingPowered((Pipe<?>) pipe);
 		} else {
-			return !isBeingPowered((Pipe) pipe);
+			return !isBeingPowered((Pipe<?>) pipe);
 		}
 	}
 
-	private boolean isBeingPowered(Pipe pipe) {
+	private boolean isBeingPowered(Pipe<?> pipe) {
 		return pipe.container.redstoneInput > 0;
 	}
 

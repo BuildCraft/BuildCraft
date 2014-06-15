@@ -18,7 +18,6 @@ import buildcraft.core.recipes.FlexibleRecipe;
 import buildcraft.core.utils.NBTUtils;
 
 public class BoardRecipe extends FlexibleRecipe {
-
 	public BoardRecipe(String id) {
 		ItemStack output = new ItemStack(BuildCraftSilicon.redstoneBoard);
 		NBTUtils.getItemData(output).setString("id", "<unknown>");
@@ -27,7 +26,7 @@ public class BoardRecipe extends FlexibleRecipe {
 	}
 
 	@Override
-	public CraftingResult craft(IFlexibleCrafter crafter, boolean preview) {
+	public CraftingResult<ItemStack> craft(IFlexibleCrafter crafter, boolean preview) {
 		CraftingResult<ItemStack> result = super.craft(crafter, preview);
 
 		if (result != null) {
@@ -41,6 +40,4 @@ public class BoardRecipe extends FlexibleRecipe {
 			return null;
 		}
 	}
-
-
 }

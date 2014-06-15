@@ -74,7 +74,6 @@ import buildcraft.transport.gates.GateFactory;
 public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFluidHandler,
 		IPipeTile, IOverrideDefaultTriggers, ITileBufferHolder,
 		IDropControlInventory, ISyncedTile, ISolidSideTile, IGuiReturnHandler {
-
 	public boolean initialized = false;
 	public final PipeRenderState renderState = new PipeRenderState();
 	public final CoreState coreState = new CoreState();
@@ -426,7 +425,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 		}
 	}
 
-	public void initialize(Pipe pipe) {
+	public void initialize(Pipe<?> pipe) {
 		this.blockType = getBlockType();
 
 		if (pipe == null) {
@@ -627,7 +626,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 			if (((TileGenericPipe) with).hasPlug(side.getOpposite())) {
 				return false;
 			}
-			Pipe otherPipe = ((TileGenericPipe) with).pipe;
+			Pipe<?> otherPipe = ((TileGenericPipe) with).pipe;
 
 			if (!BlockGenericPipe.isValid(otherPipe)) {
 				return false;

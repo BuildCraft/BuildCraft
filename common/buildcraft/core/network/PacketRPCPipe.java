@@ -16,21 +16,20 @@ import buildcraft.transport.Pipe;
 
 // TODO: This is not yet used
 public class PacketRPCPipe extends BuildCraftPacket {
-
-	public Pipe pipe;
+	public Pipe<?> pipe;
 	public EntityPlayer sender;
 
 	private byte[] contents;
 
-	public PacketRPCPipe () {
+	public PacketRPCPipe() {
 
 	}
 
-	public PacketRPCPipe (byte [] bytes) {
+	public PacketRPCPipe(byte [] bytes) {
 		contents = bytes;
 	}
 
-	public void setPipe (Pipe aPipe) {
+	public void setPipe(Pipe<?> aPipe) {
 		pipe = aPipe;
 	}
 
@@ -51,5 +50,4 @@ public class PacketRPCPipe extends BuildCraftPacket {
 	public void writeData(ByteBuf data) {
 		data.writeBytes(contents);
 	}
-
 }

@@ -36,7 +36,7 @@ public final class GuiTools {
         fr.drawString(s, sPos, y, color, shadow);
     }
 
-    public static void newButtonRowAuto(List buttonList, int xStart, int xSize, List<? extends GuiBetterButton> buttons) {
+    public static void newButtonRowAuto(List<GuiBetterButton> buttonList, int xStart, int xSize, List<? extends GuiBetterButton> buttons) {
         int buttonWidth = 0;
         for (GuiBetterButton b : buttons) {
             buttonWidth += b.getWidth();
@@ -52,7 +52,7 @@ public final class GuiTools {
         }
     }
 
-    public static void newButtonRow(List buttonList, int xStart, int spacing, List<? extends GuiBetterButton> buttons) {
+    public static void newButtonRow(List<GuiBetterButton> buttonList, int xStart, int spacing, List<? extends GuiBetterButton> buttons) {
         int pointer = 0;
         for (GuiBetterButton b : buttons) {
             b.xPosition = xStart + pointer;

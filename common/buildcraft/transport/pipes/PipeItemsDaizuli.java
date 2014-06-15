@@ -40,7 +40,6 @@ import buildcraft.transport.triggers.ActionPipeColor;
 import buildcraft.transport.triggers.ActionPipeDirection;
 
 public class PipeItemsDaizuli extends Pipe<PipeTransportItems> {
-
 	private int standardIconIndex = PipeIconProvider.TYPE.PipeItemsDaizuli_Black.ordinal();
 	private int solidIconIndex = PipeIconProvider.TYPE.PipeAllDaizuli_Solid.ordinal();
 	@NetworkData
@@ -49,7 +48,7 @@ public class PipeItemsDaizuli extends Pipe<PipeTransportItems> {
 		@Override
 		protected boolean isValidConnectingTile(TileEntity tile) {
 			if (tile instanceof TileGenericPipe) {
-				Pipe otherPipe = ((TileGenericPipe) tile).pipe;
+				Pipe<?> otherPipe = ((TileGenericPipe) tile).pipe;
 				if (otherPipe instanceof PipeItemsWood) {
 					return false;
 				}

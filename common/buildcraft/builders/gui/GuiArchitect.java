@@ -14,7 +14,6 @@ import org.lwjgl.opengl.GL11;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.util.ResourceLocation;
 
 import buildcraft.BuildCraftBuilders;
@@ -26,7 +25,6 @@ import buildcraft.core.network.RPCHandler;
 import buildcraft.core.utils.StringUtils;
 
 public class GuiArchitect extends GuiBuildCraft {
-
 	private static final int TEXT_X = 90;
 	private static final int TEXT_Y = 62;
 	private static final int TEXT_WIDTH = 156;
@@ -35,7 +33,6 @@ public class GuiArchitect extends GuiBuildCraft {
 	private static final ResourceLocation TEXTURE = new ResourceLocation(
 			"buildcraft", DefaultProps.TEXTURE_PATH_GUI + "/architect_gui.png");
 
-	private IInventory playerInventory;
 	private TileArchitect architect;
 
 	private GuiButton optionRotate;
@@ -48,7 +45,6 @@ public class GuiArchitect extends GuiBuildCraft {
 
 	public GuiArchitect(EntityPlayer player, TileArchitect architect) {
 		super(new ContainerArchitect(player, architect), architect, TEXTURE);
-		this.playerInventory = player.inventory;
 		this.architect = architect;
 		xSize = 256;
 		ySize = 166;
@@ -107,7 +103,7 @@ public class GuiArchitect extends GuiBuildCraft {
 		updateButtons();
 	}
 
-	private void updateButtons () {
+	private void updateButtons() {
 		BlueprintReadConfiguration conf = architect.readConfiguration;
 
 		if (conf.rotate) {

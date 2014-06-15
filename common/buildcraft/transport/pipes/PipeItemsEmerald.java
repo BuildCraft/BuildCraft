@@ -33,7 +33,6 @@ import buildcraft.transport.BlockGenericPipe;
 import buildcraft.transport.PipeIconProvider;
 
 public class PipeItemsEmerald extends PipeItemsWood implements IClientState, IGuiReturnHandler {
-
 	public enum FilterMode {
 		WHITE_LIST, BLACK_LIST, ROUND_ROBIN;
 	}

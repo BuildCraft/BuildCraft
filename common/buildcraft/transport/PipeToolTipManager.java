@@ -20,7 +20,6 @@ import buildcraft.core.utils.StringUtils;
 
 @SideOnly(Side.CLIENT)
 public final class PipeToolTipManager {
-
 	private static final Map<Class<? extends Pipe>, String> toolTips = new HashMap<Class<? extends Pipe>, String>();
 
 	static {

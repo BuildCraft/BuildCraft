@@ -24,12 +24,11 @@ import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraftforge.common.util.Constants;
 
 public abstract class RedstoneBoardNBT<T> {
-
 	private static Random rand = new Random();
 
 	public abstract String getID();
 
-	public abstract void addInformation(ItemStack stack, EntityPlayer player, List list, boolean advanced);
+	public abstract void addInformation(ItemStack stack, EntityPlayer player, List<?> list, boolean advanced);
 
 	public abstract IRedstoneBoard<T> create(NBTTagCompound nbt, T object);
 
@@ -81,5 +80,4 @@ public abstract class RedstoneBoardNBT<T> {
 	public float nextFloat(int difficulty) {
 		return 1F - (float) Math.pow(rand.nextFloat(), 1F / difficulty);
 	}
-
 }

@@ -96,7 +96,7 @@ public abstract class GuiBuildCraft extends GuiContainer {
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
 	}
 
-	private void drawToolTips(Collection objects, int mouseX, int mouseY) {
+	private void drawToolTips(Collection<?> objects, int mouseX, int mouseY) {
 		for (Object obj : objects) {
 			if (!(obj instanceof IToolTipProvider)) {
 				continue;

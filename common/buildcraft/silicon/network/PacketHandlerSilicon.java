@@ -28,7 +28,6 @@ import buildcraft.silicon.TileAssemblyTable;
 
 @Sharable
 public class PacketHandlerSilicon extends SimpleChannelInboundHandler<BuildCraftPacket>  {
-
 	@Override
 	protected  void channelRead0(ChannelHandlerContext ctx, BuildCraftPacket packet) {
 		try {
@@ -47,11 +46,9 @@ public class PacketHandlerSilicon extends SimpleChannelInboundHandler<BuildCraft
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
-
 	}
 
 	private TileAssemblyTable getAssemblyTable(World world, int x, int y, int z) {
-
 		if (!world.blockExists(x, y, z)) {
 			return null;
 		}
@@ -65,7 +62,6 @@ public class PacketHandlerSilicon extends SimpleChannelInboundHandler<BuildCraft
 	}
 
 	private TileAdvancedCraftingTable getAdvancedWorkbench(World world, int x, int y, int z) {
-
 		if (!world.blockExists(x, y, z)) {
 			return null;
 		}
@@ -85,7 +81,6 @@ public class PacketHandlerSilicon extends SimpleChannelInboundHandler<BuildCraft
 	 * @param packet1
 	 */
 	private void onAdvancedWorkbenchSet(EntityPlayer player, PacketSlotChange packet1) {
-
 		TileAdvancedCraftingTable tile = getAdvancedWorkbench(player.worldObj, packet1.posX, packet1.posY, packet1.posZ);
 		if (tile == null) {
 			return;

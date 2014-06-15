@@ -35,7 +35,6 @@ import buildcraft.transport.pipes.events.PipeEventItem;
 import buildcraft.transport.triggers.ActionPipeColor;
 
 public class PipeItemsLapis extends Pipe<PipeTransportItems> {
-
 	public PipeItemsLapis(Item item) {
 		super(new PipeTransportItems(), item);
 	}

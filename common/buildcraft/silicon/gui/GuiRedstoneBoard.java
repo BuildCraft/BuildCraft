@@ -28,13 +28,12 @@ import buildcraft.core.network.RPCHandler;
 import buildcraft.core.utils.NBTUtils;
 
 public class GuiRedstoneBoard extends GuiAdvancedInterface {
-
 	private static final ResourceLocation TEXTURE = new ResourceLocation(
 			"buildcraft", DefaultProps.TEXTURE_PATH_GUI + "/generic_ui.png");
 
 	private World world;
 	private int x, y, z;
-	private RedstoneBoardNBT board;
+	private RedstoneBoardNBT<?> board;
 	private IBoardParameter[] params;
 
 	public GuiRedstoneBoard(EntityPlayer player, int ix, int iy, int iz) {

@@ -14,16 +14,15 @@ import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.nbt.NBTTagCompound;
 
 public abstract class RedstoneBoardRegistry {
-
 	public static RedstoneBoardRegistry instance;
 
-	public abstract void registerBoardClass(RedstoneBoardNBT redstoneBoardNBT, float probability);
+	public abstract void registerBoardClass(RedstoneBoardNBT<?> redstoneBoardNBT, float probability);
 
 	public abstract void createRandomBoard(NBTTagCompound nbt);
 
 	public abstract RedstoneBoardNBT getRedstoneBoard(NBTTagCompound nbt);
 
-	public abstract RedstoneBoardNBT getRedstoneBoard(String id);
+	public abstract RedstoneBoardNBT<?> getRedstoneBoard(String id);
 
 	public abstract void registerIcons(IIconRegister par1IconRegister);
 
@@ -34,5 +33,4 @@ public abstract class RedstoneBoardRegistry {
 	public abstract String getKindForParam(IBoardParameter param);
 
 	public abstract Collection<RedstoneBoardNBT> getAllBoardNBTs();
-
 }

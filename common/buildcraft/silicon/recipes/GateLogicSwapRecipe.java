@@ -20,7 +20,6 @@ import buildcraft.transport.gates.GateDefinition.GateMaterial;
 import buildcraft.transport.gates.ItemGate;
 
 public class GateLogicSwapRecipe extends IntegrationTableRecipe {
-
 	public GateLogicSwapRecipe(String id) {
 		setContents(id, BuildCraftTransport.pipeGate, 2000, 0);
 	}
@@ -36,7 +35,7 @@ public class GateLogicSwapRecipe extends IntegrationTableRecipe {
 	}
 
 	@Override
-	public CraftingResult craft(TileIntegrationTable crafter, boolean preview, ItemStack inputA,
+	public CraftingResult<ItemStack> craft(TileIntegrationTable crafter, boolean preview, ItemStack inputA,
 			ItemStack inputB) {
 
 		CraftingResult<ItemStack> result = super.craft(crafter, preview, inputA, inputB);

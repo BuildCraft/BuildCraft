@@ -27,7 +27,6 @@ import buildcraft.transport.PipeTransportFluids;
 import buildcraft.transport.TileGenericPipe;
 
 public class PipeFluidsSandstone extends Pipe<PipeTransportFluids> implements IPipeTransportFluidsHook, IPipeConnectionForced {
-
 	public PipeFluidsSandstone(Item item) {
 		super(new PipeTransportFluids(), item);
 	}

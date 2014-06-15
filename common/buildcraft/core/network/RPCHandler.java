@@ -45,20 +45,20 @@ public final class RPCHandler {
 
 	private static Map<String, RPCHandler> handlers = new TreeMap<String, RPCHandler>();
 
-	private Class handledClass;
+	private Class<? extends Object> handledClass;
 
 	private Map<String, Integer> methodsMap = new TreeMap<String, Integer>();
 
 	class MethodMapping {
 		Method method;
-		Class [] parameters;
+		Class[] parameters;
 		ClassSerializer [] mappings;
 		boolean hasInfo = false;
 	}
 
 	private MethodMapping [] methods;
 
-	private RPCHandler(Class c) {
+	private RPCHandler(Class<? extends Object> c) {
 		handledClass = c;
 		Method [] sortedMethods = JavaTools.getAllMethods (c).toArray(new Method [0]);
 
@@ -192,7 +192,7 @@ public final class RPCHandler {
 		}
 	}
 
-	private PacketRPCPipe createRCPPacketPipe (Pipe pipe, String method, Object ... actuals) {
+	private PacketRPCPipe createRCPPacketPipe(Pipe<?> pipe, String method, Object ... actuals) {
 		ByteBuf data = Unpooled.buffer();
 
 		try {
@@ -309,7 +309,7 @@ public final class RPCHandler {
 		}
 	}
 
-	private void internalRpcReceive (Object o, RPCMessageInfo info, ByteBuf data) {
+	private void internalRpcReceive(Object o, RPCMessageInfo info, ByteBuf data) {
 		try {
 			short methodIndex = data.readShort();
 
@@ -352,7 +352,5 @@ public final class RPCHandler {
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
-
 	}
-
 }

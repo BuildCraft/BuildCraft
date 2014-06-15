@@ -15,7 +15,6 @@ import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.api.transport.IPipeTile.PipeType;
 
 public class PipeTransportStructure extends PipeTransport {
-
 	@Override
 	public PipeType getPipeType() {
 		return PipeType.STRUCTURE;
@@ -24,7 +23,7 @@ public class PipeTransportStructure extends PipeTransport {
 	@Override
 	public boolean canPipeConnect(TileEntity tile, ForgeDirection side) {
 		if (tile instanceof TileGenericPipe) {
-			Pipe pipe2 = ((TileGenericPipe) tile).pipe;
+			Pipe<?> pipe2 = ((TileGenericPipe) tile).pipe;
 
 			if (BlockGenericPipe.isValid(pipe2) && !(pipe2.transport instanceof PipeTransportStructure)) {
 				return false;

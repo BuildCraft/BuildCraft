@@ -43,7 +43,6 @@ import buildcraft.core.inventory.InvUtils;
 import buildcraft.energy.gui.ContainerEngine;
 
 public class TileEngineIron extends TileEngineWithInventory implements IFluidHandler {
-
 	public static int MAX_LIQUID = FluidContainerRegistry.BUCKET_VOLUME * 10;
 	public static float HEAT_PER_MJ = 0.0023F;
 	public static float COOLDOWN_RATE = 0.05F;
@@ -53,7 +52,7 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
 	public Tank tankCoolant = new Tank("tankCoolant", MAX_LIQUID, this);
 
 	private int burnTime = 0;
-	private TankManager tankManager = new TankManager();
+	private TankManager<Tank> tankManager = new TankManager<Tank>();
 	private Fuel currentFuel = null;
 	private int penaltyCooling = 0;
 	private boolean lastPowered = false;

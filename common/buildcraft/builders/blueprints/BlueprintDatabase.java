@@ -34,7 +34,6 @@ public class BlueprintDatabase {
 	private static final String TPL_EXTENSION = ".tpl";
 	private static final int PAGE_SIZE = 12;
 
-	private final int bufferSize = 8192;
 	private File outputDir;
 	private File[] inputDirs;
 

@@ -23,7 +23,6 @@ import buildcraft.transport.render.PlugItemRenderer;
 import buildcraft.transport.render.RobotStationItemRenderer;
 
 public class TransportProxyClient extends TransportProxy {
-
 	public static final PipeItemRenderer pipeItemRenderer = new PipeItemRenderer();
 	public static final PipeRendererWorld pipeWorldRenderer = new PipeRendererWorld();
 	public static final FacadeItemRenderer facadeItemRenderer = new FacadeItemRenderer();
@@ -42,7 +41,6 @@ public class TransportProxyClient extends TransportProxy {
 
 	@Override
 	public void registerRenderers() {
-
 		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipeItemsWood, pipeItemRenderer);
 		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipeItemsCobblestone, pipeItemRenderer);
 		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipeItemsStone, pipeItemRenderer);
@@ -91,7 +89,7 @@ public class TransportProxyClient extends TransportProxy {
 	}
 
 	@Override
-	public void setIconProviderFromPipe(ItemPipe item, Pipe dummyPipe) {
+	public void setIconProviderFromPipe(ItemPipe item, Pipe<?> dummyPipe) {
 		item.setPipesIcons(dummyPipe.getIconProvider());
 	}
 }

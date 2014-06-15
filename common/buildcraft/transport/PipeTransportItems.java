@@ -41,7 +41,6 @@ import buildcraft.transport.pipes.events.PipeEventItem;
 import buildcraft.transport.utils.TransportUtils;
 
 public class PipeTransportItems extends PipeTransport {
-
 	public static final int MAX_PIPE_STACKS = 64;
 	public static final int MAX_PIPE_ITEMS = 1024;
 	public boolean allowBouncing = false;
@@ -504,7 +503,7 @@ public class PipeTransportItems extends PipeTransport {
 	@Override
 	public boolean canPipeConnect(TileEntity tile, ForgeDirection side) {
 		if (tile instanceof TileGenericPipe) {
-			Pipe pipe2 = ((TileGenericPipe) tile).pipe;
+			Pipe<?> pipe2 = ((TileGenericPipe) tile).pipe;
 			if (BlockGenericPipe.isValid(pipe2) && !(pipe2.transport instanceof PipeTransportItems)) {
 				return false;
 			}
