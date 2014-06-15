@@ -70,7 +70,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 
 	public static int facadeRenderColor = -1;
 	public static Map<Item, Class<? extends Pipe>> pipes = new HashMap<Item, Class<? extends Pipe>>();
-	public static Map<BlockIndex, Pipe> pipeRemoved = new HashMap<BlockIndex, Pipe>();
+	public static Map<BlockIndex, Pipe<?>> pipeRemoved = new HashMap<BlockIndex, Pipe<?>>();
 
 	private static long lastRemovedDate = -1;
 

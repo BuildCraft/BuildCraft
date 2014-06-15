@@ -19,7 +19,7 @@ import buildcraft.silicon.TileIntegrationTable;
 public abstract class IntegrationTableRecipe extends FlexibleRecipe<ItemStack> implements IIntegrationRecipe {
 
 	@Override
-	public final CraftingResult craft(IFlexibleCrafter crafter, boolean preview) {
+	public final CraftingResult<ItemStack> craft(IFlexibleCrafter crafter, boolean preview) {
 		TileIntegrationTable table = (TileIntegrationTable) crafter;
 
 		ItemStack inputA;
@@ -44,7 +44,7 @@ public abstract class IntegrationTableRecipe extends FlexibleRecipe<ItemStack> i
 		return craft(table, preview, inputA, inputB);
 	}
 
-	public CraftingResult craft(TileIntegrationTable crafter, boolean preview, ItemStack inputA,
+	public CraftingResult<ItemStack> craft(TileIntegrationTable crafter, boolean preview, ItemStack inputA,
 			ItemStack inputB) {
 		return super.craft(crafter, preview);
 	}

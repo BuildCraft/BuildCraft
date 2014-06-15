@@ -46,7 +46,7 @@ public class GateExpansionRecipe extends IntegrationTableRecipe {
 	}
 
 	@Override
-	public CraftingResult craft(TileIntegrationTable crafter, boolean preview, ItemStack inputA,
+	public CraftingResult<ItemStack> craft(TileIntegrationTable crafter, boolean preview, ItemStack inputA,
 			ItemStack inputB) {
 
 		if (inputA == null) {
