@@ -65,6 +65,7 @@ import buildcraft.core.robots.DockingStation;
 import buildcraft.core.utils.Utils;
 import buildcraft.transport.gates.GateFactory;
 import buildcraft.transport.gates.ItemGate;
+import buildcraft.transport.utils.RobotStationState;
 
 public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFluidHandler,
 		IPipeTile, IOverrideDefaultTriggers, ITileBufferHolder,
@@ -472,7 +473,24 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 		for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
 			IPipePluggable pluggable = sideProperties.pluggables[direction.ordinal()];
 			renderState.plugMatrix.setConnected(direction, pluggable instanceof ItemPlug.PlugPluggable);
-			renderState.robotStationMatrix.setConnected(direction, pluggable instanceof ItemRobotStation.RobotStationPluggable);
+
+			if (pluggable instanceof ItemRobotStation.RobotStationPluggable) {
+				DockingStation station = ((ItemRobotStation.RobotStationPluggable) pluggable).getStation();
+
+				if (station.linked != null) {
+					renderState.robotStationMatrix.setState(direction,
+							RobotStationState.Linked);
+				} else if (station.reserved() != null) {
+					renderState.robotStationMatrix.setState(direction,
+							RobotStationState.Reserved);
+				} else {
+					renderState.robotStationMatrix.setState(direction,
+							RobotStationState.Available);
+				}
+			} else {
+				renderState.robotStationMatrix.setState(direction, RobotStationState.None);
+			}
+
 		}
 
 		if (renderState.isDirty()) {

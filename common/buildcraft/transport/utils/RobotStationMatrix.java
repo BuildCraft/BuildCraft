@@ -17,30 +17,35 @@ import buildcraft.core.network.serializers.ClassMapping;
 import buildcraft.core.network.serializers.SerializationContext;
 
 public class RobotStationMatrix {
-	public enum State {
-		None,
-		Available,
-		Reserved,
-		Linked
-	}
+
 
 	// TODO: All these matrixes should be passed by RPC, instead of having a
 	// single state carrying everything
 
 	@NetworkData
-	private State[] states = new State[6];
+	private RobotStationState[] states = new RobotStationState[6];
 
 	private boolean dirty = false;
 
-	public boolean isConnected(ForgeDirection direction) {
-		return states[direction.ordinal()] == State.None;
+	public RobotStationMatrix() {
+		for (int i = 0; i < states.length; ++i) {
+			states[i] = RobotStationState.None;
+		}
 	}
 
-	public void setState(ForgeDirection direction, State value) {
+	public boolean isConnected(ForgeDirection direction) {
+		return states[direction.ordinal()] != RobotStationState.None;
+	}
+
+	public void setState(ForgeDirection direction, RobotStationState value) {
 		if (states[direction.ordinal()] != value) {
 			states[direction.ordinal()] = value;
 			dirty = true;
 		}
+	}
+
+	public RobotStationState getState(ForgeDirection direction) {
+		return states[direction.ordinal()];
 	}
 
 	public boolean isDirty() {

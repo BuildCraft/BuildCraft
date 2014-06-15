@@ -35,7 +35,7 @@ public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
 	public void renderPipe(RenderBlocks renderblocks, IBlockAccess iblockaccess, BlockGenericPipe block, TileGenericPipe tile, int x, int y, int z) {
 		PipeRenderState state = tile.renderState;
 		IIconProvider icons = tile.getPipeIcons();
-		
+
 		if (icons == null) {
 			return;
 		}
@@ -96,7 +96,7 @@ public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
 		for (int i = 0; i < 3; i++) {
 			dim[i] = CoreConstants.PIPE_MIN_POS;
 		}
-		
+
 		for (int i = 3; i < 6; i++) {
 			dim[i] = CoreConstants.PIPE_MAX_POS;
 		}
@@ -124,7 +124,7 @@ public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
 	private void pipePlugRenderer(RenderBlocks renderblocks, Block block, PipeRenderState state, int x, int y, int z) {
 		float zFightOffset = 1F / 4096F;
 		float[][] zeroState = new float[3][2];
-		
+
 		// X START - END
 		zeroState[0][0] = 0.25F + zFightOffset;
 		zeroState[0][1] = 0.75F - zFightOffset;
@@ -189,12 +189,24 @@ public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
 		zeroState[2][0] = zStart + zFightOffset;
 		zeroState[2][1] = zEnd - zFightOffset;
 
-		state.currentTexture = BuildCraftTransport.instance.pipeIconProvider
-				.getIcon(PipeIconProvider.TYPE.PipeRobotStation.ordinal()); // Structure
-																			// Pipe
-
 		for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
 			if (state.robotStationMatrix.isConnected(direction)) {
+				switch (state.robotStationMatrix.getState(direction)) {
+				case None:
+				case Available:
+					state.currentTexture = BuildCraftTransport.instance.pipeIconProvider
+							.getIcon(PipeIconProvider.TYPE.PipeRobotStation.ordinal());
+					break;
+				case Reserved:
+					state.currentTexture = BuildCraftTransport.instance.pipeIconProvider
+							.getIcon(PipeIconProvider.TYPE.PipeRobotStationReserved.ordinal());
+					break;
+				case Linked:
+					state.currentTexture = BuildCraftTransport.instance.pipeIconProvider
+							.getIcon(PipeIconProvider.TYPE.PipeRobotStationLinked.ordinal());
+					break;
+				}
+
 				float[][] rotated = MatrixTranformations.deepClone(zeroState);
 				MatrixTranformations.transform(rotated, direction);
 
@@ -252,12 +264,24 @@ public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
 		zeroState[2][0] = 0.25F + zFightOffset;
 		zeroState[2][1] = 0.75F - zFightOffset;
 
-		state.currentTexture = BuildCraftTransport.instance.pipeIconProvider
-				.getIcon(PipeIconProvider.TYPE.PipeRobotStation.ordinal()); // Structure
-																			// Pipe
-
 		for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
 			if (state.robotStationMatrix.isConnected(direction)) {
+				switch (state.robotStationMatrix.getState(direction)) {
+				case None:
+				case Available:
+					state.currentTexture = BuildCraftTransport.instance.pipeIconProvider
+							.getIcon(PipeIconProvider.TYPE.PipeRobotStation.ordinal());
+					break;
+				case Reserved:
+					state.currentTexture = BuildCraftTransport.instance.pipeIconProvider
+							.getIcon(PipeIconProvider.TYPE.PipeRobotStationReserved.ordinal());
+					break;
+				case Linked:
+					state.currentTexture = BuildCraftTransport.instance.pipeIconProvider
+							.getIcon(PipeIconProvider.TYPE.PipeRobotStationLinked.ordinal());
+					break;
+				}
+
 				float[][] rotated = MatrixTranformations.deepClone(zeroState);
 				MatrixTranformations.transform(rotated, direction);
 
@@ -288,7 +312,7 @@ public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
 			TileGenericPipe pipeTile = (TileGenericPipe) tile;
 			renderPipe(renderer, world, (BlockGenericPipe) block, pipeTile, x, y, z);
 		}
-		
+
 		return true;
 	}
 

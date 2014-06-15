@@ -95,6 +95,7 @@ public class ClassMapping extends ClassSerializer {
 		Short,
 		Int,
 		Boolean,
+		Enum,
 		Object
 	}
 
@@ -123,6 +124,8 @@ public class ClassMapping extends ClassSerializer {
 					cptType = CptType.Int;
 				} else if (boolean.class.equals(cptClass)) {
 					cptType = CptType.Byte;
+				} else if (Enum.class.isAssignableFrom(cptClass)) {
+					cptType = CptType.Enum;
 				} else {
 					cptType = CptType.Object;
 					cptMapping = get (cptClass);
@@ -446,6 +449,20 @@ public class ClassMapping extends ClassSerializer {
 
 				break;
 			}
+			case Enum: {
+				Enum [] arr = (Enum []) obj;
+				data.writeInt (arr.length);
+
+				for (Enum element : arr) {
+					data.writeBoolean(element != null);
+					
+					if (element != null) {
+						data.writeByte(element.ordinal());
+					}
+				}
+
+				break;
+			}
 			case Object: {
 				Object [] arr = (Object []) obj;
 				data.writeInt (arr.length);
@@ -562,6 +579,27 @@ public class ClassMapping extends ClassSerializer {
 
 				for (int i = 0; i < arr.length; ++i) {
 					arr [i] = data.readBoolean();
+				}
+
+				obj = arr;
+
+				break;
+			}
+			case Enum: {
+				Enum[] arr;
+
+				if (obj == null) {
+					arr = new Enum[size];
+				} else {
+					arr = (Enum[]) obj;
+				}
+
+				for (int i = 0; i < arr.length; ++i) {
+					if (data.readBoolean()) {
+						arr[i] = (Enum) cpt.getEnumConstants()[data.readByte()];
+					} else {
+						arr[i] = null;
+					}
 				}
 
 				obj = arr;

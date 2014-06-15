@@ -19,6 +19,7 @@ import buildcraft.core.network.IClientState;
 import buildcraft.transport.utils.ConnectionMatrix;
 import buildcraft.transport.utils.FacadeMatrix;
 import buildcraft.transport.utils.GateMatrix;
+import buildcraft.transport.utils.RobotStationMatrix;
 import buildcraft.transport.utils.TextureMatrix;
 import buildcraft.transport.utils.WireMatrix;
 
@@ -28,7 +29,7 @@ public class PipeRenderState implements IClientState {
 	public final TextureMatrix textureMatrix = new TextureMatrix();
 	public final WireMatrix wireMatrix = new WireMatrix();
 	public final ConnectionMatrix plugMatrix = new ConnectionMatrix();
-	public final ConnectionMatrix robotStationMatrix = new ConnectionMatrix();
+	public final RobotStationMatrix robotStationMatrix = new RobotStationMatrix();
 	public final FacadeMatrix facadeMatrix = new FacadeMatrix();
 	public final GateMatrix gateMatrix = new GateMatrix();
 

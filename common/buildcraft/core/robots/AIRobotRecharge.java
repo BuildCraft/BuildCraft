@@ -31,7 +31,7 @@ public class AIRobotRecharge extends AIRobot {
 			for (IDockingStation d : DockingStationRegistry.getStations()) {
 				DockingStation station = (DockingStation) d;
 
-				if (station.reserved != null) {
+				if (station.reserved() != null) {
 					continue;
 				}
 

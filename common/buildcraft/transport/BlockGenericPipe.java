@@ -797,7 +797,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 					if (rayTraceResult != null && rayTraceResult.hitPart == Part.RobotStation) {
 						DockingStation station = pipe.container.getStation(rayTraceResult.sideHit);
 
-						if (station.linked == null && station.reserved == null) {
+						if (station.linked == null && station.reserved() == null) {
 							EntityRobot robot = ((ItemRobot) currentItem.getItem())
 									.createRobot(currentItem, world);
 							robot.setEnergy(EntityRobot.MAX_ENERGY / 5.0);

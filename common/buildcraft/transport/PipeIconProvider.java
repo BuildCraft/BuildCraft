@@ -114,6 +114,8 @@ public class PipeIconProvider implements IIconProvider {
 		PipePowerIronM128("pipePowerIronM128"),
 		//
 		PipeRobotStation("pipeRobotStation"),
+		PipeRobotStationReserved("pipeRobotStationReserved"),
+		PipeRobotStationLinked("pipeRobotStationLinked"),
 		//
 		Power_Normal("texture_cyan"),
 		Power_Overload("texture_red_lit"),

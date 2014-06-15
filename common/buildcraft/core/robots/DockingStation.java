@@ -17,8 +17,8 @@ import buildcraft.transport.TileGenericPipe;
 public class DockingStation implements IDockingStation {
 	public TileGenericPipe pipe;
 	public ForgeDirection side;
-	public EntityRobotBase reserved;
 	public EntityRobotBase linked;
+	private EntityRobotBase reserved;
 
 	public DockingStation(TileGenericPipe iPipe, ForgeDirection iSide) {
 		pipe = iPipe;
@@ -46,6 +46,27 @@ public class DockingStation implements IDockingStation {
 	@Override
 	public ForgeDirection side() {
 		return side;
+	}
+
+	public EntityRobotBase reserved() {
+		return reserved;
+	}
+
+	public boolean reserve(EntityRobotBase robot) {
+		if (linked == null && reserved == null) {
+			reserved = robot;
+			pipe.scheduleRenderUpdate();
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	public void release(EntityRobotBase robot) {
+		if (reserved == robot) {
+			reserved = null;
+			pipe.scheduleRenderUpdate();
+		}
 	}
 }
 

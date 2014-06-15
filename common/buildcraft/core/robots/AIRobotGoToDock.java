@@ -26,12 +26,14 @@ public class AIRobotGoToDock extends AIRobot {
 		if (station == robot.getCurrentDockingStation()) {
 			terminate();
 		} else {
-			station.reserved = robot;
-
-			startDelegateAI(new AIRobotMoveToBlock(robot,
-				station.pipe.xCoord + station.side.offsetX * 2,
-				station.pipe.yCoord + station.side.offsetY * 2,
-				station.pipe.zCoord + station.side.offsetZ * 2));
+			if (station.reserve(robot)) {
+				startDelegateAI(new AIRobotMoveToBlock(robot,
+						station.pipe.xCoord + station.side.offsetX * 2,
+						station.pipe.yCoord + station.side.offsetY * 2,
+						station.pipe.zCoord + station.side.offsetZ * 2));
+			} else {
+				terminate();
+			}
 		}
 	}
 
@@ -54,7 +56,7 @@ public class AIRobotGoToDock extends AIRobot {
 		// If there's still a station targeted, it was not reached. The AI has
 		// probably been interrupted. Cancel reservation.
 		if (station != null) {
-			station.reserved = null;
+			station.release(robot);
 		}
 	}
 }

@@ -358,6 +358,7 @@ public class EntityRobot extends EntityRobotBase implements
 	public void setLinkedDockingStation(DockingStation station) {
 		linkedDockingStation = station;
 		station.linked = this;
+		station.pipe.scheduleRenderUpdate();
 	}
 
 	@Override
@@ -515,15 +516,7 @@ public class EntityRobot extends EntityRobotBase implements
 
 	@Override
 	public void setCurrentDockingStation(IDockingStation station) {
-		if (currentDockingStation != null) {
-			currentDockingStation.reserved = null;
-		}
-
 		currentDockingStation = (DockingStation) station;
-
-		if (currentDockingStation != null) {
-			currentDockingStation.reserved = this;
-		}
 	}
 
 	@Override
