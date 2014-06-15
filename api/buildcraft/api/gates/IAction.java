@@ -8,6 +8,9 @@
  */
 package buildcraft.api.gates;
 
+
 public interface IAction extends IStatement {
+
+	void actionActivate(IGate gate, IActionParameter[] parameters);
 
 }

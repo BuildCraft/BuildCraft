@@ -347,6 +347,14 @@ public class ContainerGateInterface extends BuildCraftContainer {
 		}
 	}
 
+	public ITriggerParameter getTriggerParameter(int trigger, int param) {
+		if (gate == null) {
+			return null;
+		} else {
+			return gate.getTriggerParameter(trigger, param);
+		}
+	}
+
 	/**
 	 * ACTIONS *
 	 */

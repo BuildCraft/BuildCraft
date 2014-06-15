@@ -11,10 +11,13 @@ package buildcraft.transport.triggers;
 import java.util.Locale;
 
 import buildcraft.api.gates.IAction;
+import buildcraft.api.gates.IActionParameter;
+import buildcraft.api.gates.IGate;
 import buildcraft.api.transport.PipeWire;
 import buildcraft.core.triggers.BCAction;
 import buildcraft.core.triggers.StatementIconProvider;
 import buildcraft.core.utils.StringUtils;
+import buildcraft.transport.Gate;
 
 public class ActionSignalOutput extends BCAction {
 
@@ -49,5 +52,32 @@ public class ActionSignalOutput extends BCAction {
 	@Override
 	public IAction rotateLeft() {
 		return this;
+	}
+
+	@Override
+	public int maxParameters() {
+		return 3;
+	}
+
+	@Override
+	public IActionParameter createParameter(int index) {
+		return new ActionParameterSignal();
+	}
+
+	@Override
+	public void actionActivate(IGate iGate, IActionParameter[] parameters) {
+		Gate gate = (Gate) iGate;
+
+		gate.broadcastSignal(color);
+
+		for (IActionParameter param : parameters) {
+			if (param != null) {
+				ActionParameterSignal signal = (ActionParameterSignal) param;
+
+				if (signal.color != null) {
+					gate.broadcastSignal(signal.color);
+				}
+			}
+		}
 	}
 }

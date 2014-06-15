@@ -12,9 +12,11 @@ import net.minecraft.tileentity.TileEntity;
 
 import net.minecraftforge.common.util.ForgeDirection;
 
+import buildcraft.api.gates.IGate;
 import buildcraft.api.gates.ITrigger;
 import buildcraft.api.gates.ITriggerParameter;
-import buildcraft.api.transport.IPipe;
+import buildcraft.api.gates.TriggerParameter;
+import buildcraft.transport.Pipe;
 
 /**
  * This class has to be implemented to create new triggers kinds to BuildCraft
@@ -28,8 +30,9 @@ public abstract class BCTrigger extends BCStatement implements ITrigger {
 	}
 
 	@Override
-	public boolean isTriggerActive(IPipe pipe, ForgeDirection direction, ITriggerParameter[] parameters) {
+	public boolean isTriggerActive(IGate gate, ITriggerParameter[] parameters) {
 		ITriggerParameter p = parameters[0];
+		Pipe pipe = (Pipe) gate.getPipe();
 
 		for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
 			if (isTriggerActive(side.getOpposite(), pipe.getAdjacentTile(side), p)) {
@@ -42,6 +45,11 @@ public abstract class BCTrigger extends BCStatement implements ITrigger {
 
 	public boolean isTriggerActive(ForgeDirection side, TileEntity tile, ITriggerParameter parameter) {
 		return false;
+	}
+
+	@Override
+	public ITriggerParameter createParameter(int index) {
+		return new TriggerParameter();
 	}
 
 }

@@ -22,6 +22,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 import buildcraft.api.gates.IAction;
+import buildcraft.api.gates.IActionParameter;
 import buildcraft.api.gates.IStatement;
 import buildcraft.api.gates.IStatementParameter;
 import buildcraft.api.gates.ITrigger;
@@ -124,7 +125,7 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 
 		@Override
 		public boolean isDefined() {
-			return gate.getTriggerParameter(statementSlot.slot, slot) != null;
+			return getParameter() != null;
 		}
 
 		@Override
@@ -158,6 +159,8 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 		public boolean isRequired() {
 			return statementSlot.getStatement() != null && slot < statementSlot.getStatement().minParameters();
 		}
+
+		public abstract void setParameter(IStatementParameter param, boolean notifyServer);
 	}
 
 	class TriggerParameterSlot extends StatementParameterSlot {
@@ -169,6 +172,11 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 		public IStatementParameter getParameter() {
 			return gate.getTriggerParameter(statementSlot.slot, slot);
 		}
+
+		@Override
+		public void setParameter(IStatementParameter param, boolean notifyServer) {
+			container.setTriggerParameter(statementSlot.slot, slot, (ITriggerParameter) param, notifyServer);
+		}
 	}
 
 	class ActionParameterSlot extends StatementParameterSlot {
@@ -179,6 +187,11 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 		@Override
 		public IStatementParameter getParameter() {
 			return gate.getActionParameter(statementSlot.slot, slot);
+		}
+
+		@Override
+		public void setParameter(IStatementParameter param, boolean notifyServer) {
+			container.setActionParameter(statementSlot.slot, slot, (IActionParameter) param, notifyServer);
 		}
 	}
 
@@ -335,26 +348,21 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 			if (slot instanceof TriggerSlot) {
 				boolean halfWidth = container.actionsState[actionTracker] == ActionState.Partial;
 
-				if (gate.material.numTriggerParameters > 0) {
-					if (container.actionsState[actionTracker] != ActionState.Deactivated) {
-						mc.renderEngine.bindTexture(texture);
-
-						drawTexturedModalRect(cornerX + slot.x + 35, cornerY + slot.y + 6, 176, 18, halfWidth ? 9 : 18, 4);
-					}
-				} else if (container.actionsState[actionTracker] != ActionState.Deactivated) {
+				if (container.actionsState[actionTracker] != ActionState.Deactivated) {
 					mc.renderEngine.bindTexture(texture);
 
-					drawTexturedModalRect(cornerX + slot.x + 17, cornerY + slot.y + 6, 176, 18, halfWidth ? 9 : 18, 4);
+					drawTexturedModalRect(cornerX + slot.x + 17 + 18 * gate.material.numTriggerParameters, cornerY
+							+ slot.y + 6, 176, 18, halfWidth ? 9 : 18, 4);
 				}
 
 				actionTracker++;
 			} else if (slot instanceof StatementParameterSlot) {
 				StatementParameterSlot paramSlot = (StatementParameterSlot) slot;
-				StatementSlot trigger = paramSlot.statementSlot;
+				StatementSlot statement = paramSlot.statementSlot;
 
 				mc.renderEngine.bindTexture(texture);
 
-				if (trigger.isDefined()) {
+				if (statement.isDefined()) {
 					if (!paramSlot.isAllowed()) {
 						drawTexturedModalRect(cornerX + slot.x - 1, cornerY + slot.y - 1, 176, 0, 18, 18);
 					} else if (paramSlot.isRequired() && paramSlot.getItemStack() == null) {
@@ -464,16 +472,24 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 			} else {
 				container.setAction(actionSlot.slot, changed.getUniqueTag(), true);
 			}
-		} else if (slot instanceof TriggerParameterSlot) {
-			TriggerParameterSlot paramSlot = (TriggerParameterSlot) slot;
-			TriggerSlot trigger = (TriggerSlot) paramSlot.statementSlot;
 
-			if (trigger.isDefined() && trigger.getStatement().maxParameters() != 0) {
-				ITriggerParameter param = (ITriggerParameter) trigger.getStatement().createParameter(paramSlot.slot);
+			for (StatementParameterSlot p : actionSlot.parameters) {
+				container.setActionParameter(actionSlot.slot, p.slot, null, true);
+			}
+		} else if (slot instanceof StatementParameterSlot) {
+			StatementParameterSlot paramSlot = (StatementParameterSlot) slot;
+			StatementSlot statement = paramSlot.statementSlot;
+
+			if (statement.isDefined() && statement.getStatement().maxParameters() != 0) {
+				IStatementParameter param = paramSlot.getParameter();
+
+				if (param == null) {
+					param = statement.getStatement().createParameter(paramSlot.slot);
+				}
 
 				if (param != null) {
-					param.clicked(pipe.container, trigger.getStatement(), mc.thePlayer.inventory.getItemStack());
-					container.setTriggerParameter(trigger.slot, paramSlot.slot, param, true);
+					param.clicked(pipe.container, statement.getStatement(), mc.thePlayer.inventory.getItemStack());
+					paramSlot.setParameter(param, true);
 				}
 			}
 		}

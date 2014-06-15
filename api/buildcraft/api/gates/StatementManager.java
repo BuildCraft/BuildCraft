@@ -22,6 +22,8 @@ import buildcraft.api.transport.IPipeTile;
 public final class StatementManager {
 
 	public static Map<String, IStatement> statements = new HashMap<String, IStatement>();
+	public static Map<String, Class<? extends IStatementParameter>> idToParameter = new HashMap<String, Class<? extends IStatementParameter>>();
+	public static Map<Class<? extends IStatementParameter>, String> parameterToId = new HashMap<Class<? extends IStatementParameter>, String>();
 	private static List<ITriggerProvider> triggerProviders = new LinkedList<ITriggerProvider>();
 	private static List<IActionProvider> actionProviders = new LinkedList<IActionProvider>();
 
@@ -37,8 +39,19 @@ public final class StatementManager {
 		}
 	}
 
+	public static void registerActionProvider(IActionProvider provider) {
+		if (provider != null && !actionProviders.contains(provider)) {
+			actionProviders.add(provider);
+		}
+	}
+
 	public static void registerStatement(IStatement statement) {
 		statements.put(statement.getUniqueTag(), statement);
+	}
+
+	public static void registerParameterClass(String name, Class<? extends IStatementParameter> param) {
+		idToParameter.put(name, param);
+		parameterToId.put(param, name);
 	}
 
 	public static List<ITrigger> getNeighborTriggers(Block block, TileEntity entity) {
@@ -57,12 +70,6 @@ public final class StatementManager {
 		}
 
 		return result;
-	}
-
-	public static void registerActionProvider(IActionProvider provider) {
-		if (provider != null && !actionProviders.contains(provider)) {
-			actionProviders.add(provider);
-		}
 	}
 
 	public static List<IAction> getNeighborActions(Block block, TileEntity entity) {
@@ -100,7 +107,7 @@ public final class StatementManager {
 
 		return result;
 	}
-	
+
 	public static List<IAction> getPipeActions(IPipeTile pipe) {
 		List<IAction> result = new LinkedList<IAction>();
 
@@ -117,5 +124,21 @@ public final class StatementManager {
 		}
 
 		return result;
+	}
+
+	public static String getParameterKind(IStatementParameter param) {
+		return parameterToId.get(param.getClass());
+	}
+
+	public static IStatementParameter createParameter(String kind) {
+		try {
+			return idToParameter.get(kind).newInstance();
+		} catch (InstantiationException e) {
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		}
+
+		return null;
 	}
 }

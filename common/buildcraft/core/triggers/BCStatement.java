@@ -15,9 +15,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 import buildcraft.api.gates.IStatement;
-import buildcraft.api.gates.ITriggerParameter;
 import buildcraft.api.gates.StatementManager;
-import buildcraft.api.gates.TriggerParameter;
 
 public abstract class BCStatement implements IStatement {
 
@@ -70,11 +68,6 @@ public abstract class BCStatement implements IStatement {
 	@Override
 	public String getDescription() {
 		return "";
-	}
-
-	@Override
-	public ITriggerParameter createParameter(int index) {
-		return new TriggerParameter();
 	}
 
 }

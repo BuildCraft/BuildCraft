@@ -10,9 +10,9 @@ package buildcraft.core.triggers;
 
 import net.minecraftforge.common.util.ForgeDirection;
 
+import buildcraft.api.gates.IGate;
 import buildcraft.api.gates.ITrigger;
 import buildcraft.api.gates.ITriggerParameter;
-import buildcraft.api.transport.IPipe;
 import buildcraft.core.utils.StringUtils;
 import buildcraft.transport.Pipe;
 
@@ -31,8 +31,8 @@ public class TriggerRedstoneInput extends BCTrigger {
 	}
 
 	@Override
-	public boolean isTriggerActive(IPipe pipe, ForgeDirection direction, ITriggerParameter[] parameters) {
-		return !(active ^ isBeingPowered((Pipe) pipe, direction));
+	public boolean isTriggerActive(IGate gate, ITriggerParameter[] parameters) {
+		return !(active ^ isBeingPowered((Pipe) gate.getPipe(), gate.getSide()));
 	}
 
 	private boolean isBeingPowered(Pipe pipe, ForgeDirection direction) {

@@ -8,6 +8,15 @@
  */
 package buildcraft.api.gates;
 
+import net.minecraftforge.common.util.ForgeDirection;
+
+import buildcraft.api.transport.IPipe;
+
 public interface IGate {
+
 	void setPulsing(boolean pulsing);
+
+	IPipe getPipe();
+
+	ForgeDirection getSide();
 }

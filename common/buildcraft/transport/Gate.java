@@ -37,6 +37,7 @@ import buildcraft.api.gates.ITrigger;
 import buildcraft.api.gates.ITriggerParameter;
 import buildcraft.api.gates.StatementManager;
 import buildcraft.api.gates.TriggerParameter;
+import buildcraft.api.transport.IPipe;
 import buildcraft.api.transport.PipeWire;
 import buildcraft.core.GuiIds;
 import buildcraft.core.triggers.ActionRedstoneOutput;
@@ -45,7 +46,6 @@ import buildcraft.transport.gates.GateDefinition.GateMaterial;
 import buildcraft.transport.gates.ItemGate;
 import buildcraft.transport.gui.ContainerGateInterface;
 import buildcraft.transport.triggers.ActionRedstoneFaderOutput;
-import buildcraft.transport.triggers.ActionSignalOutput;
 
 public final class Gate implements IGate {
 
@@ -161,6 +161,7 @@ public final class Gate implements IGate {
 			for (int j = 0; j < 3; ++j) {
 				if (triggerParameters[i][j] != null) {
 					NBTTagCompound cpt = new NBTTagCompound();
+					cpt.setString("kind", StatementManager.getParameterKind(triggerParameters[i][j]));
 					triggerParameters[i][j].writeToNBT(cpt);
 					data.setTag("triggerParameters[" + i + "][" + j + "]", cpt);
 				}
@@ -169,6 +170,7 @@ public final class Gate implements IGate {
 			for (int j = 0; j < 3; ++j) {
 				if (actionParameters[i][j] != null) {
 					NBTTagCompound cpt = new NBTTagCompound();
+					cpt.setString("kind", StatementManager.getParameterKind(actionParameters[i][j]));
 					actionParameters[i][j].writeToNBT(cpt);
 					data.setTag("actionParameters[" + i + "][" + j + "]", cpt);
 				}
@@ -200,19 +202,18 @@ public final class Gate implements IGate {
 
 			for (int j = 0; j < 3; ++j) {
 				if (data.hasKey("triggerParameters[" + i + "][" + j + "]")) {
-					NBTTagCompound cpt = new NBTTagCompound();
-					// we need the real parameter type here
-					triggerParameters[i][j] = new TriggerParameter();
-					triggerParameters[i][j].readFromNBT(data.getCompoundTag("triggerParameters[" + i + "][" + j + "]"));
+					NBTTagCompound cpt = data.getCompoundTag("triggerParameters[" + i + "][" + j + "]");
+					triggerParameters[i][j] = (ITriggerParameter) StatementManager.createParameter(cpt
+							.getString("kind"));
+					triggerParameters[i][j].readFromNBT(cpt);
 				}
 			}
 
 			for (int j = 0; j < 3; ++j) {
-				if (data.hasKey("triggerParameters[" + i + "][" + j + "]")) {
-					NBTTagCompound cpt = new NBTTagCompound();
-					// actionParameters[i][j] = new ActionParameter();
-					// actionParameters[i][j].readFromNBT(data.getCompoundTag("actionParameters["
-					// + i + "][" + j + "]"));
+				if (data.hasKey("actionParameters[" + i + "][" + j + "]")) {
+					NBTTagCompound cpt = data.getCompoundTag("actionParameters[" + i + "][" + j + "]");
+					actionParameters[i][j] = (IActionParameter) StatementManager.createParameter(cpt.getString("kind"));
+					actionParameters[i][j].readFromNBT(cpt);
 				}
 			}
 		}
@@ -345,9 +346,13 @@ public final class Gate implements IGate {
 		}
 
 		// Activate the actions
-		for (Map.Entry<IAction, Boolean> entry : activeActions.entrySet()) {
-			if (entry.getValue()) {
-				IAction action = entry.getKey();
+		for (int it = 0; it < activeActions.size(); ++it) {
+			if (actionsState[it] == ActionState.Activated) {
+				IAction action = actions[it];
+				action.actionActivate(this, actionParameters[it]);
+
+				// TODO: A lot of the code below should be removed in favor
+				// of calls to actionActivate
 
 				// Custom gate actions take precedence over defaults.
 				if (resolveAction(action, actionCount.count(action))) {
@@ -358,8 +363,6 @@ public final class Gate implements IGate {
 					redstoneOutput = 15;
 				} else if (action instanceof ActionRedstoneFaderOutput) {
 					redstoneOutput = ((ActionRedstoneFaderOutput) action).level;
-				} else if (action instanceof ActionSignalOutput) {
-					broadcastSignal.set(((ActionSignalOutput) action).color.ordinal());
 				} else {
 					for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
 						TileEntity tile = pipe.container.getTile(side);
@@ -401,7 +404,7 @@ public final class Gate implements IGate {
 			return false;
 		}
 
-		if (trigger.isTriggerActive(pipe, direction, parameters)) {
+		if (trigger.isTriggerActive(this, parameters)) {
 			return true;
 		}
 
@@ -444,6 +447,7 @@ public final class Gate implements IGate {
 		}
 	}
 
+	@Override
 	public void setPulsing (boolean pulsing) {
 		if (pulsing != isPulsing) {
 			isPulsing = pulsing;
@@ -453,5 +457,19 @@ public final class Gate implements IGate {
 
 	public float getPulseStage () {
 		return pulseStage;
+	}
+
+	public void broadcastSignal(PipeWire color) {
+		broadcastSignal.set(color.ordinal());
+	}
+
+	@Override
+	public IPipe getPipe() {
+		return pipe;
+	}
+
+	@Override
+	public ForgeDirection getSide() {
+		return direction;
 	}
 }

@@ -21,9 +21,9 @@ import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 
+import buildcraft.api.gates.IGate;
 import buildcraft.api.gates.ITrigger;
 import buildcraft.api.gates.ITriggerParameter;
-import buildcraft.api.transport.IPipe;
 import buildcraft.core.triggers.BCTrigger;
 import buildcraft.core.utils.StringUtils;
 import buildcraft.transport.Pipe;
@@ -72,11 +72,12 @@ public class TriggerPipeContents extends BCTrigger {
 	}
 
 	@Override
-	public boolean isTriggerActive(IPipe pipe, ForgeDirection direction, ITriggerParameter[] parameters) {
+	public boolean isTriggerActive(IGate gate, ITriggerParameter[] parameters) {
+		Pipe pipe = (Pipe) gate.getPipe();
 		ITriggerParameter parameter = parameters[0];
 
-		if (((Pipe) pipe).transport instanceof PipeTransportItems) {
-			PipeTransportItems transportItems = (PipeTransportItems) ((Pipe) pipe).transport;
+		if (pipe.transport instanceof PipeTransportItems) {
+			PipeTransportItems transportItems = (PipeTransportItems) pipe.transport;
 			if (kind == PipeContents.empty) {
 				return transportItems.items.isEmpty();
 			} else if (kind == PipeContents.containsItems) {
@@ -92,8 +93,8 @@ public class TriggerPipeContents extends BCTrigger {
 					return !transportItems.items.isEmpty();
 				}
 			}
-		} else if (((Pipe) pipe).transport instanceof PipeTransportFluids) {
-			PipeTransportFluids transportFluids = (PipeTransportFluids) ((Pipe) pipe).transport;
+		} else if (pipe.transport instanceof PipeTransportFluids) {
+			PipeTransportFluids transportFluids = (PipeTransportFluids) pipe.transport;
 
 			FluidStack searchedFluid = null;
 
@@ -120,8 +121,8 @@ public class TriggerPipeContents extends BCTrigger {
 
 				return false;
 			}
-		} else if (((Pipe) pipe).transport instanceof PipeTransportPower) {
-			PipeTransportPower transportPower = (PipeTransportPower) ((Pipe) pipe).transport;
+		} else if (pipe.transport instanceof PipeTransportPower) {
+			PipeTransportPower transportPower = (PipeTransportPower) pipe.transport;
 
 			switch (kind) {
 				case empty:

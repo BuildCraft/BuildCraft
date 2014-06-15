@@ -10,11 +10,9 @@ package buildcraft.transport.triggers;
 
 import java.util.Locale;
 
-import net.minecraftforge.common.util.ForgeDirection;
-
+import buildcraft.api.gates.IGate;
 import buildcraft.api.gates.ITrigger;
 import buildcraft.api.gates.ITriggerParameter;
-import buildcraft.api.transport.IPipe;
 import buildcraft.api.transport.PipeWire;
 import buildcraft.core.triggers.BCTrigger;
 import buildcraft.core.triggers.StatementIconProvider;
@@ -45,12 +43,38 @@ public class TriggerPipeSignal extends BCTrigger {
 	}
 
 	@Override
-	public boolean isTriggerActive(IPipe pipe, ForgeDirection direction, ITriggerParameter[] parameter) {
+	public boolean isTriggerActive(IGate gate, ITriggerParameter[] parameters) {
+		Pipe pipe = (Pipe) gate.getPipe();
+
 		if (active) {
-			return ((Pipe) pipe).signalStrength[color.ordinal()] > 0;
+			if (pipe.signalStrength[color.ordinal()] == 0) {
+				return false;
+			}
 		} else {
-			return ((Pipe) pipe).signalStrength[color.ordinal()] == 0;
+			if (pipe.signalStrength[color.ordinal()] > 0) {
+				return false;
+			}
 		}
+
+		for (ITriggerParameter param : parameters) {
+			if (param != null) {
+				TriggerParameterSignal signal = (TriggerParameterSignal) param;
+
+				if (signal.color != null) {
+					if (signal.active) {
+						if (pipe.signalStrength[signal.color.ordinal()] == 0) {
+							return false;
+						}
+					} else {
+						if (pipe.signalStrength[signal.color.ordinal()] > 0) {
+							return false;
+						}
+					}
+				}
+			}
+		}
+
+		return true;
 	}
 
 	@Override
@@ -89,6 +113,6 @@ public class TriggerPipeSignal extends BCTrigger {
 
 	@Override
 	public ITriggerParameter createParameter(int index) {
-		return new TriggerParameterSignal(this);
+		return new TriggerParameterSignal();
 	}
 }

@@ -27,6 +27,7 @@ import net.minecraftforge.oredict.OreDictionary;
 import buildcraft.api.blueprints.SchematicRegistry;
 import buildcraft.api.boards.RedstoneBoardRegistry;
 import buildcraft.api.gates.StatementManager;
+import buildcraft.api.gates.TriggerParameter;
 import buildcraft.api.recipes.BuildcraftRecipeRegistry;
 import buildcraft.api.transport.PipeWire;
 import buildcraft.builders.schematics.SchematicRotateMeta;
@@ -69,6 +70,8 @@ import buildcraft.transport.gates.GateExpansionPulsar;
 import buildcraft.transport.gates.GateExpansionRedstoneFader;
 import buildcraft.transport.gates.GateExpansionTimer;
 import buildcraft.transport.gates.ItemGate;
+import buildcraft.transport.triggers.ActionParameterSignal;
+import buildcraft.transport.triggers.TriggerParameterSignal;
 
 @Mod(name = "BuildCraft Silicon", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Silicon", dependencies = DefaultProps.DEPENDENCY_TRANSPORT)
 public class BuildCraftSilicon extends BuildCraftMod {
@@ -142,6 +145,10 @@ public class BuildCraftSilicon extends BuildCraftMod {
 		}
 
 		SiliconProxy.proxy.registerRenderers();
+
+		StatementManager.registerParameterClass("buildcraft:stackTrigger", TriggerParameter.class);
+		StatementManager.registerParameterClass("buildcraft:pipeWireTrigger", TriggerParameterSignal.class);
+		StatementManager.registerParameterClass("buildcraft:pipeWireAction", ActionParameterSignal.class);
 	}
 
 	public static void loadRecipes() {

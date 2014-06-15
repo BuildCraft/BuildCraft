@@ -8,12 +8,9 @@
  */
 package buildcraft.api.gates;
 
-import net.minecraftforge.common.util.ForgeDirection;
-
-import buildcraft.api.transport.IPipe;
 
 public interface ITrigger extends IStatement {
 
-	boolean isTriggerActive(IPipe pipe, ForgeDirection direction, ITriggerParameter[] parameters);
+	boolean isTriggerActive(IGate gate, ITriggerParameter[] parameters);
 
 }
