@@ -37,7 +37,7 @@ public abstract class GateExpansionController {
 	public void startResolution() {
 	}
 
-	public boolean resolveAction(IAction action, int count) {
+	public boolean resolveAction(IAction action) {
 		return false;
 	}
 

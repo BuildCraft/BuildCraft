@@ -9,9 +9,8 @@
 package buildcraft.transport.pipes;
 
 import java.util.BitSet;
+import java.util.Collection;
 import java.util.LinkedList;
-import java.util.Map;
-import java.util.Map.Entry;
 
 import io.netty.buffer.ByteBuf;
 
@@ -142,14 +141,14 @@ public class PipeItemsEmzuli extends PipeItemsWood implements IGuiReturnHandler 
 	}
 
 	@Override
-	protected void actionsActivated(Map<IAction, Boolean> actions) {
+	protected void actionsActivated(Collection<IAction> actions) {
 		super.actionsActivated(actions);
 
 		activeFlags.clear();
 
-		for (Entry<IAction, Boolean> action : actions.entrySet()) {
-			if (action.getKey() instanceof ActionExtractionPreset && action.getValue() != null && action.getValue()) {
-				setActivePreset(((ActionExtractionPreset) action.getKey()).color);
+		for (IAction action : actions) {
+			if (action instanceof ActionExtractionPreset) {
+				setActivePreset(((ActionExtractionPreset) action).color);
 			}
 		}
 	}

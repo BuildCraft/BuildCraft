@@ -83,4 +83,15 @@ public class ActionParameterSignal implements IActionParameter {
 			color = PipeWire.values()[nbt.getByte("color")];
 		}
 	}
+
+	@Override
+	public boolean equals(Object object) {
+		if (object instanceof ActionParameterSignal) {
+			ActionParameterSignal param = (ActionParameterSignal) object;
+
+			return param.color == color;
+		} else {
+			return false;
+		}
+	}
 }

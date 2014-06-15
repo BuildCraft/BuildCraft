@@ -10,6 +10,7 @@ package buildcraft.transport;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
@@ -537,7 +538,7 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 		container.scheduleRenderUpdate();
 	}
 
-	protected void actionsActivated(Map<IAction, Boolean> actions) {
+	protected void actionsActivated(Collection<IAction> actions) {
 	}
 
 	public TileGenericPipe getContainer() {

@@ -9,9 +9,8 @@
 package buildcraft.transport.pipes;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.LinkedList;
-import java.util.Map;
-import java.util.Map.Entry;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -100,12 +99,12 @@ public class PipeItemsLapis extends Pipe<PipeTransportItems> {
 	}
 
 	@Override
-	protected void actionsActivated(Map<IAction, Boolean> actions) {
+	protected void actionsActivated(Collection<IAction> actions) {
 		super.actionsActivated(actions);
 
-		for (Entry<IAction, Boolean> action : actions.entrySet()) {
-			if (action.getKey() instanceof ActionPipeColor && action.getValue() != null && action.getValue()) {
-				setColor(((ActionPipeColor) action.getKey()).color);
+		for (IAction action : actions) {
+			if (action instanceof ActionPipeColor) {
+				setColor(((ActionPipeColor) action).color);
 				break;
 			}
 		}

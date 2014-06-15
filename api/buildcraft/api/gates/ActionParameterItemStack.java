@@ -51,4 +51,15 @@ public class ActionParameterItemStack implements IActionParameter {
 	public void readFromNBT(NBTTagCompound compound) {
 		stack = ItemStack.loadItemStackFromNBT(compound.getCompoundTag("stack"));
 	}
+
+	@Override
+	public boolean equals(Object object) {
+		if (object instanceof ActionParameterItemStack) {
+			ActionParameterItemStack param = (ActionParameterItemStack) object;
+
+			return ItemStack.areItemStackTagsEqual(stack, param.stack);
+		} else {
+			return false;
+		}
+	}
 }

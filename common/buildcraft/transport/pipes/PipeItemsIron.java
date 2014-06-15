@@ -8,8 +8,8 @@
  */
 package buildcraft.transport.pipes;
 
+import java.util.Collection;
 import java.util.LinkedList;
-import java.util.Map;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
@@ -110,12 +110,12 @@ public class PipeItemsIron extends Pipe<PipeTransportItems> {
 	}
 
 	@Override
-	protected void actionsActivated(Map<IAction, Boolean> actions) {
+	protected void actionsActivated(Collection<IAction> actions) {
 		super.actionsActivated(actions);
 
-		for (Map.Entry<IAction, Boolean> action : actions.entrySet()) {
-			if (action.getKey() instanceof ActionPipeDirection && action.getValue() != null && action.getValue()) {
-				logic.setFacing(((ActionPipeDirection) action.getKey()).direction);
+		for (IAction action : actions) {
+			if (action instanceof ActionPipeDirection) {
+				logic.setFacing(((ActionPipeDirection) action).direction);
 				break;
 			}
 		}

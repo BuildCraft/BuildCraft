@@ -8,8 +8,8 @@
  */
 package buildcraft.transport.pipes;
 
+import java.util.Collection;
 import java.util.LinkedList;
-import java.util.Map;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -119,12 +119,12 @@ public class PipePowerIron extends Pipe<PipeTransportPower> {
 	}
 
 	@Override
-	protected void actionsActivated(Map<IAction, Boolean> actions) {
+	protected void actionsActivated(Collection<IAction> actions) {
 		super.actionsActivated(actions);
 
-		for (Map.Entry<IAction, Boolean> action : actions.entrySet()) {
-			if (action.getKey() instanceof ActionPowerLimiter && action.getValue() == Boolean.TRUE) {
-				setMode(((ActionPowerLimiter) action.getKey()).limit);
+		for (IAction action : actions) {
+			if (action instanceof ActionPowerLimiter) {
+				setMode(((ActionPowerLimiter) action).limit);
 				break;
 			}
 		}

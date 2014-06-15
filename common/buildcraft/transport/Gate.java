@@ -9,14 +9,11 @@
 package buildcraft.transport;
 
 import java.util.BitSet;
-import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
-import com.google.common.collect.HashMultiset;
-import com.google.common.collect.Multiset;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -49,18 +46,21 @@ import buildcraft.transport.triggers.ActionRedstoneFaderOutput;
 
 public final class Gate implements IGate {
 
+	public static int MAX_STATEMENTS = 8;
+	public static int MAX_PARAMETERS = 3;
+
 	public final Pipe<?> pipe;
 	public final GateMaterial material;
 	public final GateLogic logic;
 	public final BiMap<IGateExpansion, GateExpansionController> expansions = HashBiMap.create();
 
-	public ITrigger[] triggers = new ITrigger[8];
-	public ITriggerParameter[][] triggerParameters = new ITriggerParameter[8][3];
+	public ITrigger[] triggers = new ITrigger[MAX_STATEMENTS];
+	public ITriggerParameter[][] triggerParameters = new ITriggerParameter[8][MAX_PARAMETERS];
 
-	public IAction[] actions = new IAction[8];
-	public IActionParameter[][] actionParameters = new IActionParameter[8][3];
+	public IAction[] actions = new IAction[MAX_STATEMENTS];
+	public IActionParameter[][] actionParameters = new IActionParameter[8][MAX_PARAMETERS];
 
-	public ActionState[] actionsState = new ActionState[8];
+	public ActionState[] actionsState = new ActionState[MAX_STATEMENTS];
 
 	public BitSet broadcastSignal = new BitSet(PipeWire.VALUES.length);
 	public BitSet prevBroadcastSignal = new BitSet(PipeWire.VALUES.length);
@@ -304,50 +304,59 @@ public final class Gate implements IGate {
 		// Tell the gate to prepare for resolving actions. (Disable pulser)
 		startResolution();
 
-		Map<IAction, Boolean> activeActions = new HashMap<IAction, Boolean>();
-		Multiset<IAction> actionCount = HashMultiset.create();
+		int [] actionGroups = new int [] {0, 1, 2, 3, 4, 5, 6, 7};
 
-		// Computes the actions depending on the triggers
-		for (int it = 0; it < 8; ++it) {
-			ITrigger trigger = triggers[it];
-			IAction action = actions[it];
+		for (int i = 0; i < MAX_PARAMETERS; ++i) {
+			for (int j = i - 1; j >= 0; --j) {
+				if (actions[i] != null && actions[j] != null
+						&& actions[i].getUniqueTag().equals(actions[j].getUniqueTag())) {
 
-			ITriggerParameter[] parameter = triggerParameters[it];
+					boolean sameParams = true;
 
-			actionsState [it] = ActionState.Deactivated;
+					for (int p = 0; p < MAX_PARAMETERS; ++p) {
+						if ((actionParameters[i][p] != null && actionParameters[j][p] == null)
+								|| (actionParameters[i][p] == null && actionParameters[j][p] != null)
+								|| (actionParameters[i][p] != null
+										&& actionParameters[j][p] != null
+										&& !actionParameters[i][p].equals(actionParameters[j][p]))) {
+							sameParams = false;
+						}
+					}
 
-			if (trigger != null && action != null) {
-				actionCount.add(action);
-
-				boolean active = isNearbyTriggerActive(trigger, parameter);
-
-				if (!activeActions.containsKey(action)) {
-					activeActions.put(action, active);
-				} else if (logic == GateLogic.AND) {
-					activeActions.put(action, activeActions.get(action) && active);
-				} else {
-					activeActions.put(action, activeActions.get(action) || active);
-				}
-
-				if (active) {
-					actionsState[it] = ActionState.Partial;
+					if (sameParams) {
+						actionGroups[i] = j;
+					}
 				}
 			}
 		}
 
-		for (int it = 0; it < 8; ++it) {
-			IAction action = actions[it];
+		// Computes the actions depending on the triggers
+		for (int it = 0; it < MAX_STATEMENTS; ++it) {
+			actionsState[it] = ActionState.Deactivated;
 
-			if (activeActions.containsKey(action)) {
-				if (activeActions.get(action)) {
-					actionsState[it] = ActionState.Activated;
+			ITrigger trigger = triggers[it];
+			ITriggerParameter[] parameter = triggerParameters[it];
+
+			if (trigger != null) {
+				boolean active = isTriggerActive(trigger, parameter);
+
+				if (actionGroups[it] == it) {
+					if (active) {
+						actionsState[it] = ActionState.Activated;
+					}
+				} else {
+					if (active && actionsState[actionGroups[it]] != ActionState.Activated) {
+						actionsState[actionGroups[it]] = ActionState.Partial;
+					} else if (!active && actionsState[actionGroups[it]] == ActionState.Activated) {
+						actionsState[actionGroups[it]] = ActionState.Partial;
+					}
 				}
 			}
 		}
 
 		// Activate the actions
-		for (int it = 0; it < activeActions.size(); ++it) {
-			if (actionsState[it] == ActionState.Activated) {
+		for (int it = 0; it < MAX_STATEMENTS; ++it) {
+			if (actions[it] != null && actionGroups[it] == it && actionsState[it] == ActionState.Activated) {
 				IAction action = actions[it];
 				action.actionActivate(this, actionParameters[it]);
 
@@ -355,7 +364,7 @@ public final class Gate implements IGate {
 				// of calls to actionActivate
 
 				// Custom gate actions take precedence over defaults.
-				if (resolveAction(action, actionCount.count(action))) {
+				if (resolveAction(action)) {
 					continue;
 				}
 
@@ -375,6 +384,14 @@ public final class Gate implements IGate {
 			}
 		}
 
+		LinkedList<IAction> activeActions = new LinkedList<IAction>();
+
+		for (int it = 0; it < MAX_STATEMENTS; ++it) {
+			if (actionGroups[it] == it && actionsState[it] == ActionState.Activated) {
+				activeActions.add(actions[it]);
+			}
+		}
+
 		pipe.actionsActivated(activeActions);
 
 		if (oldRedstoneOutput != redstoneOutput) {
@@ -390,16 +407,16 @@ public final class Gate implements IGate {
 		}
 	}
 
-	public boolean resolveAction(IAction action, int count) {
+	public boolean resolveAction(IAction action) {
 		for (GateExpansionController expansion : expansions.values()) {
-			if (expansion.resolveAction(action, count)) {
+			if (expansion.resolveAction(action)) {
 				return true;
 			}
 		}
 		return false;
 	}
 
-	public boolean isNearbyTriggerActive(ITrigger trigger, ITriggerParameter[] parameters) {
+	public boolean isTriggerActive(ITrigger trigger, ITriggerParameter[] parameters) {
 		if (trigger == null) {
 			return false;
 		}
