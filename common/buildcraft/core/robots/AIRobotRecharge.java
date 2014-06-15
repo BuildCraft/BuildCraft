@@ -25,8 +25,8 @@ public class AIRobotRecharge extends AIRobot {
 
 	@Override
 	public void update() {
-		if (robot.getCurrentDockingStation() == null
-				|| ((DockingStation) robot.getCurrentDockingStation()).pipe.getPipeType() != PipeType.POWER) {
+		if (robot.getDockingStation() == null
+				|| ((DockingStation) robot.getDockingStation()).pipe.getPipeType() != PipeType.POWER) {
 
 			for (IDockingStation d : DockingStationRegistry.getStations()) {
 				DockingStation station = (DockingStation) d;
@@ -41,11 +41,11 @@ public class AIRobotRecharge extends AIRobot {
 				}
 			}
 		} else {
-			PipeTransportPower powerProvider = (PipeTransportPower) ((DockingStation) robot.getCurrentDockingStation()).pipe.pipe.transport;
+			PipeTransportPower powerProvider = (PipeTransportPower) ((DockingStation) robot.getDockingStation()).pipe.pipe.transport;
 
-			powerProvider.requestEnergy(robot.getCurrentDockingStation().side(), 100);
+			powerProvider.requestEnergy(robot.getDockingStation().side(), 100);
 			robot.setEnergy(robot.getEnergy()
-					+ powerProvider.consumePower(robot.getCurrentDockingStation().side(), 100));
+					+ powerProvider.consumePower(robot.getDockingStation().side(), 100));
 
 			if (robot.getEnergy() >= EntityRobotBase.MAX_ENERGY) {
 				terminate();

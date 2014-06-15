@@ -41,7 +41,7 @@ public class AIRobotMoveToBlock extends AIRobotMove {
 
 	@Override
 	public void start() {
-		robot.setCurrentDockingStation(null);
+		robot.undock();
 
 		if (path == null) {
 			pathSearch = new PathFinding(robot.worldObj, new BlockIndex((int) Math.floor(robot.posX),

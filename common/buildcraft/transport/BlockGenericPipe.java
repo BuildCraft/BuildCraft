@@ -797,7 +797,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 					if (rayTraceResult != null && rayTraceResult.hitPart == Part.RobotStation) {
 						DockingStation station = pipe.container.getStation(rayTraceResult.sideHit);
 
-						if (station.linked == null && station.reserved() == null) {
+						if (station.linked() == null && station.reserved() == null) {
 							EntityRobot robot = ((ItemRobot) currentItem.getItem())
 									.createRobot(currentItem, world);
 							robot.setEnergy(EntityRobot.MAX_ENERGY / 5.0);
@@ -807,8 +807,8 @@ public class BlockGenericPipe extends BlockBuildCraft {
 							float pz = z + 0.5F + rayTraceResult.sideHit.offsetZ * 0.5F;
 
 							robot.setPosition(px, py, pz);
-							robot.setLinkedDockingStation(station);
-							robot.setCurrentDockingStation(robot.getMainDockingStation());
+							robot.linkToStation(station);
+							robot.dock(robot.getLinkedStation());
 							world.spawnEntityInWorld(robot);
 
 							if (!player.capabilities.isCreativeMode) {

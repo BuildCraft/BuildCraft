@@ -57,6 +57,7 @@ public class EntityRobot extends EntityRobotBase implements
 	public SafeTimeTracker scanForTasks = new SafeTimeTracker (40, 10);
 
 	public LaserData laser = new LaserData();
+	public DockingStation reservedDockingStation;
 	public DockingStation linkedDockingStation;
 	public boolean isDocked = false;
 
@@ -355,10 +356,60 @@ public class EntityRobot extends EntityRobotBase implements
 		setDead();
     }
 
-	public void setLinkedDockingStation(DockingStation station) {
-		linkedDockingStation = station;
-		station.linked = this;
-		station.pipe.scheduleRenderUpdate();
+	@Override
+	public void dock(IDockingStation station) {
+		currentDockingStation = (DockingStation) station;
+	}
+
+	@Override
+	public void undock() {
+		if (currentDockingStation != null) {
+			currentDockingStation.release(this);
+			currentDockingStation = null;
+		}
+	}
+
+	@Override
+	public DockingStation getDockingStation() {
+		return currentDockingStation;
+	}
+
+	@Override
+	public boolean reserveStation(DockingStation station) {
+		if (station == null) {
+			if (reservedDockingStation != null) {
+				reservedDockingStation.release(this);
+			}
+
+			reservedDockingStation = null;
+
+			return true;
+		}
+
+		if (station.reserve(this)) {
+			if (reservedDockingStation != null) {
+				reservedDockingStation.release(this);
+			}
+
+			reservedDockingStation = station;
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	@Override
+	public boolean linkToStation(DockingStation station) {
+		if (station.link(this)) {
+			if (linkedDockingStation != null) {
+				linkedDockingStation.unlink(this);
+			}
+
+			linkedDockingStation = station;
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	@Override
@@ -515,11 +566,6 @@ public class EntityRobot extends EntityRobotBase implements
 	}
 
 	@Override
-	public void setCurrentDockingStation(IDockingStation station) {
-		currentDockingStation = (DockingStation) station;
-	}
-
-	@Override
 	public ItemStack getItemInUse() {
 		return itemInUse;
 	}
@@ -530,12 +576,7 @@ public class EntityRobot extends EntityRobotBase implements
 	}
 
 	@Override
-	public DockingStation getCurrentDockingStation() {
-		return currentDockingStation;
-	}
-
-	@Override
-	public DockingStation getMainDockingStation() {
+	public DockingStation getLinkedStation() {
 		return linkedDockingStation;
 	}
 

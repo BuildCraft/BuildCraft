@@ -81,7 +81,7 @@ public class BoardRobotPicker extends RedstoneBoardRobot {
 				startDelegateAI(new AIRobotFetchItem(robot, range, stackFilter));
 			} else {
 				// otherwise, let's return to base
-				startDelegateAI(new AIRobotGoToDock(robot, (DockingStation) robot.getMainDockingStation()));
+				startDelegateAI(new AIRobotGoToDock(robot, (DockingStation) robot.getLinkedStation()));
 			}
 		} else if (ai instanceof AIRobotGoToDock) {
 			emptyContainerInStation();
@@ -89,7 +89,7 @@ public class BoardRobotPicker extends RedstoneBoardRobot {
 	}
 
 	private void emptyContainerInStation() {
-		DockingStation station = (DockingStation) robot.getCurrentDockingStation();
+		DockingStation station = (DockingStation) robot.getDockingStation();
 
 		TileGenericPipe pipe = (TileGenericPipe) robot.worldObj
 				.getTileEntity(station.pipe.xCoord, station.pipe.yCoord, station.pipe.zCoord);

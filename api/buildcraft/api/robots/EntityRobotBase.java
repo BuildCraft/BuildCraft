@@ -14,6 +14,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
 import buildcraft.api.boards.RedstoneBoardRobot;
+import buildcraft.core.robots.DockingStation;
 
 public abstract class EntityRobotBase extends EntityLiving implements IInventory {
 
@@ -31,11 +32,7 @@ public abstract class EntityRobotBase extends EntityLiving implements IInventory
 
 	public abstract boolean isMoving();
 
-	public abstract void setCurrentDockingStation(IDockingStation station);
-
-	public abstract IDockingStation getCurrentDockingStation();
-
-	public abstract IDockingStation getMainDockingStation();
+	public abstract IDockingStation getLinkedStation();
 
 	public abstract RedstoneBoardRobot getBoard();
 
@@ -44,5 +41,15 @@ public abstract class EntityRobotBase extends EntityLiving implements IInventory
 	public abstract double getEnergy();
 
 	public abstract void setEnergy(double energy);
+
+	public abstract IDockingStation getDockingStation();
+
+	public abstract void dock(IDockingStation station);
+
+	public abstract void undock();
+
+	public abstract boolean reserveStation(DockingStation station);
+
+	public abstract boolean linkToStation(DockingStation station);
 
 }

@@ -26,7 +26,7 @@ public class AIRobotStraightMoveTo extends AIRobotMove {
 
 	@Override
 	public void start() {
-		robot.setCurrentDockingStation(null);
+		robot.undock();
 		setDestination(robot, x, y, z);
 	}
 
