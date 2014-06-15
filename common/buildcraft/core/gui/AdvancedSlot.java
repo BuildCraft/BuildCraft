@@ -32,10 +32,26 @@ public abstract class AdvancedSlot {
 	}
 
 	public String getDescription() {
-		if (getItemStack() != null) {
-			return getItemStack().getItem().getItemStackDisplayName(getItemStack());
+		return null;
+	}
+
+	public final void drawTooltip(GuiAdvancedInterface gui, int x, int y) {
+		String s = getDescription();
+
+		if (s != null) {
+			gui.drawTooltip(s, x, y);
 		} else {
-			return "";
+			ItemStack stack = getItemStack();
+
+			if (stack != null) {
+				int cornerX = (gui.width - gui.getXSize()) / 2;
+				int cornerY = (gui.height - gui.getYSize()) / 2;
+
+				int xS = x - cornerX;
+				int yS = y - cornerY;
+
+				gui.renderToolTip(stack, xS, yS);
+			}
 		}
 	}
 

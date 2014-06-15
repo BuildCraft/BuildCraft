@@ -60,7 +60,7 @@ public class GuiBuilder extends GuiAdvancedInterface {
 		fontRendererObj.drawString(StringUtils.localize("gui.needed"), 178, 7, 0x404040);
 		fontRendererObj.drawString(StringUtils.localize("gui.building.fluids"), 178, 133, 0x404040);
 
-		drawForegroundSelection(par1, par2);
+		drawTooltipForSlotAt(par1, par2);
 	}
 
 	@Override

@@ -114,7 +114,7 @@ public class GuiUrbanist extends GuiAdvancedInterface {
 	protected void drawGuiContainerForegroundLayer(int par1, int par2) {
 		super.drawGuiContainerForegroundLayer(par1, par2);
 
-		drawForegroundSelection(par1, par2);
+		drawTooltipForSlotAt(par1, par2);
 
 		if (selectedTool != -1) {
 			tools [selectedTool].drawGuiContainerForegroundLayer(this, par1, par2);

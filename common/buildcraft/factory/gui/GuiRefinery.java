@@ -53,7 +53,7 @@ public class GuiRefinery extends GuiAdvancedInterface {
 		fontRendererObj.drawString("<-", 106, 59, 0x404040);
 		fontRendererObj.drawString(StringUtils.localize("gui.inventory"), 8, (ySize - 96) + 2, 0x404040);
 
-		drawForegroundSelection(par1, par2);
+		drawTooltipForSlotAt(par1, par2);
 	}
 
 	@Override

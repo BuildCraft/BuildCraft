@@ -14,6 +14,7 @@ import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
 public abstract class GuiAdvancedInterface extends GuiBuildCraft {
@@ -56,9 +57,7 @@ public abstract class GuiAdvancedInterface extends GuiBuildCraft {
 		GL11.glPopMatrix();
 	}
 
-	protected void drawForegroundSelection(int mouseX, int mouseY) {
-		String s = "";
-
+	public void drawTooltipForSlotAt(int mouseX, int mouseY) {
 		int cornerX = (width - xSize) / 2;
 		int cornerY = (height - ySize) / 2;
 
@@ -68,14 +67,19 @@ public abstract class GuiAdvancedInterface extends GuiBuildCraft {
 			AdvancedSlot slot = slots[position];
 
 			if (slot != null) {
-				s = slot.getDescription();
+				slot.drawTooltip(this, mouseX, mouseY);
 			}
 		}
+	}
 
-		if (s.length() > 0) {
+	public void drawTooltip(String caption, int mouseX, int mouseY) {
+		int cornerX = (width - xSize) / 2;
+		int cornerY = (height - ySize) / 2;
+
+		if (caption.length() > 0) {
 			int i2 = mouseX - cornerX;
 			int k2 = mouseY - cornerY;
-			drawCreativeTabHoveringText(s, i2, k2);
+			drawCreativeTabHoveringText(caption, i2, k2);
 			RenderHelper.enableGUIStandardItemLighting();
 		}
 	}
@@ -90,5 +94,10 @@ public abstract class GuiAdvancedInterface extends GuiBuildCraft {
 
     public int getYSize () {
     	return ySize;
+    }
+
+    @Override
+	public void renderToolTip(ItemStack stack, int x, int y) {
+    	super.renderToolTip(stack, x, y);
     }
 }
