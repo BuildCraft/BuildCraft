@@ -69,6 +69,7 @@ public class AIRobot {
 	public final void abortDelegateAI() {
 		if (delegateAI != null) {
 			delegateAI.terminate();
+			delegateAI = null;
 		}
 	}
 }

@@ -389,6 +389,10 @@ public class EntityRobot extends EntityRobotBase implements
 			return true;
 		}
 
+		if (station.reserved() == this) {
+			return true;
+		}
+
 		if (station.reserve(this)) {
 			if (reservedDockingStation != null) {
 				reservedDockingStation.release(this);
@@ -404,6 +408,10 @@ public class EntityRobot extends EntityRobotBase implements
 	@Override
 	public boolean linkToStation(IDockingStation iStation) {
 		DockingStation station = (DockingStation) iStation;
+
+		if (station.linked() == this) {
+			return true;
+		}
 
 		if (station.link(this)) {
 			if (linkedDockingStation != null) {

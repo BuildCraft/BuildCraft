@@ -77,6 +77,13 @@ public class AIRobotMoveToBlock extends AIRobotMove {
 		}
 
 		if (path != null && path.size() == 0) {
+			robot.motionX = 0;
+			robot.motionY = 0;
+			robot.motionZ = 0;
+			robot.posX = finalX + 0.5F;
+			robot.posY = finalY + 0.5F;
+			robot.posZ = finalZ + 0.5F;
+
 			terminate();
 		}
 	}
@@ -87,15 +94,5 @@ public class AIRobotMoveToBlock extends AIRobotMove {
 			setDestination(robot, next.x + 0.5F, next.y + 0.5F, next.z + 0.5F);
 			prevDistance = Double.MAX_VALUE;
 		}
-	}
-
-	@Override
-	public void end() {
-		robot.motionX = 0;
-		robot.motionY = 0;
-		robot.motionZ = 0;
-		robot.posX = finalX + 0.5F;
-		robot.posY = finalY + 0.5F;
-		robot.posZ = finalZ + 0.5F;
 	}
 }

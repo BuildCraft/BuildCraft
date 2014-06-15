@@ -95,7 +95,6 @@ public class AIRobotFetchItem extends AIRobot {
 	@Override
 	public void update() {
 		if (target.isDead) {
-			BoardRobotPicker.targettedItems.remove(target.getEntityId());
 			terminate();
 		} else {
 			pickTime++;
@@ -111,9 +110,15 @@ public class AIRobotFetchItem extends AIRobot {
 					target.setDead();
 				}
 
-				BoardRobotPicker.targettedItems.remove(target.getEntityId());
 				terminate();
 			}
+		}
+	}
+
+	@Override
+	public void end() {
+		if (target != null) {
+			BoardRobotPicker.targettedItems.remove(target.getEntityId());
 		}
 	}
 }

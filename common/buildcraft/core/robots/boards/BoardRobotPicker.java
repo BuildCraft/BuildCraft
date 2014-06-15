@@ -33,6 +33,7 @@ import buildcraft.transport.TravelingItem;
 
 public class BoardRobotPicker extends RedstoneBoardRobot {
 
+	// TODO: Clean this when world unloaded
 	public static Set<Integer> targettedItems = new HashSet<Integer>();
 
 	private SafeTimeTracker scanTracker = new SafeTimeTracker(40, 10);

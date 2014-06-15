@@ -69,6 +69,11 @@ public class ActionRobotGoToStation extends BCAction {
 			if (station != null && station.linked() != null) {
 				EntityRobot robot = (EntityRobot) station.linked();
 				AIRobot ai = robot.getOverridingAI();
+
+				if (ai != null) {
+					continue;
+				}
+
 				DockingStation newStation = station;
 
 				if (parameters[0] != null) {
@@ -90,9 +95,7 @@ public class ActionRobotGoToStation extends BCAction {
 					}
 				}
 
-				if (!(ai instanceof AIRobotGoAndLinkToDock) || ((AIRobotGoAndLinkToDock) ai).station != newStation) {
-					robot.overrideAI(new AIRobotGoAndLinkToDock(robot, newStation));
-				}
+				robot.overrideAI(new AIRobotGoAndLinkToDock(robot, newStation));
 			}
 		}
 	}

@@ -43,7 +43,9 @@ public class AIRobotMain extends AIRobot {
 	}
 
 	public void setOverridingAI(AIRobot ai) {
-		overridingAI = ai;
+		if (overridingAI == null) {
+			overridingAI = ai;
+		}
 	}
 
 	public AIRobot getOverridingAI() {

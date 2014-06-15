@@ -37,18 +37,15 @@ public class AIRobotStraightMoveTo extends AIRobotMove {
 		if (distance < prevDistance) {
 			prevDistance = distance;
 		} else {
+			robot.motionX = 0;
+			robot.motionY = 0;
+			robot.motionZ = 0;
+
+			robot.posX = x;
+			robot.posY = y;
+			robot.posZ = z;
+
 			terminate();
 		}
-	}
-
-	@Override
-	public void end() {
-		robot.motionX = 0;
-		robot.motionY = 0;
-		robot.motionZ = 0;
-
-		robot.posX = x;
-		robot.posY = y;
-		robot.posZ = z;
 	}
 }
