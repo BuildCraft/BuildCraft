@@ -270,12 +270,13 @@ public final class Gate implements IGate {
 	}
 
 	public boolean isGateActive() {
-		for (GateExpansionController expansion : expansions.values()) {
-			if (expansion.isActive()) {
+		for (ActionState state : actionsState) {
+			if (state == ActionState.Activated) {
 				return true;
 			}
 		}
-		return redstoneOutput > 0 || !broadcastSignal.isEmpty();
+
+		return false;
 	}
 
 	public boolean isGatePulsing() {
