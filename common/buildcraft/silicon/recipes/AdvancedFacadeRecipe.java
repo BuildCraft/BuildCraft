@@ -22,7 +22,6 @@ import buildcraft.transport.ItemFacade;
 import buildcraft.transport.ItemPipeWire;
 
 public class AdvancedFacadeRecipe extends IntegrationTableRecipe {
-
 	public AdvancedFacadeRecipe(String id) {
 		setContents(id, new ItemFacade(), 5000, 0,
 				new ItemStack(BuildCraftTransport.pipeWire, 1, OreDictionary.WILDCARD_VALUE),
@@ -41,7 +40,7 @@ public class AdvancedFacadeRecipe extends IntegrationTableRecipe {
 	}
 
 	@Override
-	public CraftingResult craft(TileIntegrationTable crafter, boolean preview, ItemStack inputA,
+	public CraftingResult<ItemStack> craft(TileIntegrationTable crafter, boolean preview, ItemStack inputA,
 			ItemStack inputB) {
 
 		CraftingResult<ItemStack> result = super.craft(crafter, preview, inputA, inputB);

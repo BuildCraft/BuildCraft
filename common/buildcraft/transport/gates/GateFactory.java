@@ -23,18 +23,17 @@ import buildcraft.transport.gates.GateDefinition.GateLogic;
 import buildcraft.transport.gates.GateDefinition.GateMaterial;
 
 public final class GateFactory {
-
 	/**
 	 * Deactivate constructor
 	 */
 	private GateFactory() {
 	}
 
-	public static Gate makeGate(Pipe pipe, GateMaterial material, GateLogic logic) {
+	public static Gate makeGate(Pipe<?> pipe, GateMaterial material, GateLogic logic) {
 		return new Gate(pipe, material, logic);
 	}
 
-	public static Gate makeGate(Pipe pipe, ItemStack stack) {
+	public static Gate makeGate(Pipe<?> pipe, ItemStack stack) {
 		if (stack == null || stack.stackSize <= 0 || !(stack.getItem() instanceof ItemGate)) {
 			return null;
 		}
@@ -48,7 +47,7 @@ public final class GateFactory {
 		return gate;
 	}
 
-	public static Gate makeGate(Pipe pipe, NBTTagCompound nbt) {
+	public static Gate makeGate(Pipe<?> pipe, NBTTagCompound nbt) {
 		GateMaterial material = GateMaterial.REDSTONE;
 		GateLogic logic = GateLogic.AND;
 

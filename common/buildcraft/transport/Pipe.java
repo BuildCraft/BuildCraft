@@ -45,7 +45,6 @@ import buildcraft.transport.gates.GateFactory;
 import buildcraft.transport.pipes.events.PipeEvent;
 
 public abstract class Pipe<T extends PipeTransport> implements IDropControlInventory, IPipe {
-
 	@SuppressWarnings("rawtypes")
 	private static Map<Class, TilePacketWrapper> networkWrappers = new HashMap<Class, TilePacketWrapper>();
 	private static Map<Class<? extends Pipe>, Map<Class<? extends PipeEvent>, EventHandler>> eventHandlers = new HashMap<Class<? extends Pipe>, Map<Class<? extends PipeEvent>, EventHandler>>();
@@ -82,8 +81,8 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 //		} catch (Exception ex) {
 //		}
 //	}
-	private static class EventHandler {
 
+	private static class EventHandler {
 		public final Method method;
 
 		public EventHandler(Method method) {
@@ -146,7 +145,7 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 	}
 
 	public boolean canPipeConnect(TileEntity tile, ForgeDirection side) {
-		Pipe otherPipe;
+		Pipe<?> otherPipe;
 
 		if (tile instanceof TileGenericPipe) {
 			otherPipe = ((TileGenericPipe) tile).pipe;

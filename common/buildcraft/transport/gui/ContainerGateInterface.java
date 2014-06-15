@@ -48,7 +48,7 @@ public class ContainerGateInterface extends BuildCraftContainer {
 	public ActionState[] actionsState = new ActionState[8];
 
 	IInventory playerIInventory;
-	Pipe pipe;
+	Pipe<?> pipe;
 
 	private final NavigableSet<ITrigger> potentialTriggers = new TreeSet<ITrigger>(new Comparator<ITrigger>() {
 		@Override
@@ -68,7 +68,7 @@ public class ContainerGateInterface extends BuildCraftContainer {
 	private boolean isNetInitialized = false;
 	private int lastTriggerState = 0;
 
-	public ContainerGateInterface(IInventory playerInventory, Pipe pipe) {
+	public ContainerGateInterface(IInventory playerInventory, Pipe<?> pipe) {
 		super(0);
 
 		for (int i = 0; i < actionsState.length; ++i) {

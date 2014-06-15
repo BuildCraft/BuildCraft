@@ -22,9 +22,8 @@ import buildcraft.api.boards.RedstoneBoardNBT;
 import buildcraft.api.boards.RedstoneBoardRegistry;
 
 public class ImplRedstoneBoardRegistry extends RedstoneBoardRegistry {
-
 	private static class BoardFactory {
-		public RedstoneBoardNBT boardNBT;
+		public RedstoneBoardNBT<?> boardNBT;
 		public float probability;
 	}
 
@@ -35,7 +34,7 @@ public class ImplRedstoneBoardRegistry extends RedstoneBoardRegistry {
 	private Random rand = new Random();
 
 	@Override
-	public void registerBoardClass(RedstoneBoardNBT redstoneBoardNBT, float probability) {
+	public void registerBoardClass(RedstoneBoardNBT<?> redstoneBoardNBT, float probability) {
 		BoardFactory factory = new BoardFactory();
 		factory.boardNBT = redstoneBoardNBT;
 		factory.probability = probability;
@@ -62,7 +61,7 @@ public class ImplRedstoneBoardRegistry extends RedstoneBoardRegistry {
 	}
 
 	@Override
-	public RedstoneBoardNBT getRedstoneBoard(NBTTagCompound nbt) {
+	public RedstoneBoardNBT<?> getRedstoneBoard(NBTTagCompound nbt) {
 		return getRedstoneBoard(nbt.getString("id"));
 	}
 
@@ -117,5 +116,4 @@ public class ImplRedstoneBoardRegistry extends RedstoneBoardRegistry {
 
 		return result;
 	}
-
 }

@@ -15,12 +15,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 
 public class CraftingResult<T> {
-
 	public T crafted = null;
 	public ArrayList<ItemStack> usedItems = new ArrayList<ItemStack>();
 	public ArrayList<FluidStack> usedFluids = new ArrayList<FluidStack>();
 	public double energyCost = 0;
 	public long craftingTime = 0;
-	public IFlexibleRecipe recipe;
-
+	public IFlexibleRecipe<?> recipe;
 }

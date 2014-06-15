@@ -24,7 +24,6 @@ import buildcraft.core.DefaultProps;
 import buildcraft.core.utils.StringUtils;
 
 public final class BoardRobotPlanterNBT extends RedstoneBoardRobotNBT {
-
 	public static BoardRobotPlanterNBT instance = new BoardRobotPlanterNBT();
 
 	private static final ResourceLocation TEXTURE = new ResourceLocation("buildcraft",
@@ -64,11 +63,9 @@ public final class BoardRobotPlanterNBT extends RedstoneBoardRobotNBT {
 
 	@Override
 	public void createRandomBoard(NBTTagCompound nbt) {
-
 	}
 
 	@Override
 	public void createDefaultBoard(NBTTagCompound nbt) {
-
 	}
 }

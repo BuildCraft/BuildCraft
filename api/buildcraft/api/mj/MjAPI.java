@@ -351,7 +351,7 @@ public final class MjAPI {
 	private static final class BatteryHolder {
 		private String kind;
 		private ForgeDirection side;
-		private Class clazz;
+		private Class<? extends Object> clazz;
 
 		@Override
 		public boolean equals(Object o) {
@@ -382,7 +382,7 @@ public final class MjAPI {
 		public BatteryKind kind;
 	}
 
-	private static BatteryField getMjBatteryField(Class c, String kind, ForgeDirection side) {
+	private static BatteryField getMjBatteryField(Class<?> c, String kind, ForgeDirection side) {
 		BatteryHolder holder = new BatteryHolder();
 		holder.clazz = c;
 		holder.kind = kind;

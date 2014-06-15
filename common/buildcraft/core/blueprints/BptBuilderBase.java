@@ -9,7 +9,6 @@
 package buildcraft.core.blueprints;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.TreeSet;
 import java.util.logging.Level;
 
@@ -34,7 +33,6 @@ import buildcraft.builders.TileAbstractBuilder;
 import buildcraft.core.Box;
 
 public abstract class BptBuilderBase implements IAreaProvider {
-
 	public BlueprintBase blueprint;
 	public BptContext context;
 	protected boolean done;
@@ -60,7 +58,7 @@ public abstract class BptBuilderBase implements IAreaProvider {
 
 	public abstract BuildingSlot getNextBlock(World world, TileAbstractBuilder inv);
 
-	public boolean buildNextSlot (World world, TileAbstractBuilder builder, int x, int y, int z) {
+	public boolean buildNextSlot(World world, TileAbstractBuilder builder, int x, int y, int z) {
 		if (!initialized) {
 			initialize();
 			initialized = true;
@@ -130,7 +128,7 @@ public abstract class BptBuilderBase implements IAreaProvider {
 		return context;
 	}
 
-	public void removeDoneBuilders (TileAbstractBuilder builder) {
+	public void removeDoneBuilders(TileAbstractBuilder builder) {
 		ArrayList<BuildingItem> items = builder.getBuilders();
 
 		for (int i = items.size() - 1; i >= 0; --i) {
@@ -140,13 +138,11 @@ public abstract class BptBuilderBase implements IAreaProvider {
 		}
 	}
 
-	public boolean isDone (TileAbstractBuilder builder) {
+	public boolean isDone(TileAbstractBuilder builder) {
 		return done && builder.getBuilders().size() == 0;
 	}
 
-	protected boolean setupForDestroy (TileAbstractBuilder builder, IBuilderContext context, BuildingSlotBlock slot) {
-		LinkedList<ItemStack> result = new LinkedList<ItemStack>();
-
+	protected boolean setupForDestroy(TileAbstractBuilder builder, IBuilderContext context, BuildingSlotBlock slot) {
 		int hardness = (int) context
 				.world()
 				.getBlock(slot.x, slot.y, slot.z)
@@ -168,7 +164,7 @@ public abstract class BptBuilderBase implements IAreaProvider {
 		}
 	}
 
-	public void saveBuildStateToNBT (NBTTagCompound nbt, TileAbstractBuilder builder) {
+	public void saveBuildStateToNBT(NBTTagCompound nbt, TileAbstractBuilder builder) {
 		NBTTagList clearList = new NBTTagList();
 
 		for (BlockIndex loc : clearedLocations) {
@@ -200,7 +196,7 @@ public abstract class BptBuilderBase implements IAreaProvider {
 		nbt.setTag("buildersInAction", buildingList);
 	}
 
-	public void loadBuildStateToNBT (NBTTagCompound nbt, TileAbstractBuilder builder) {
+	public void loadBuildStateToNBT(NBTTagCompound nbt, TileAbstractBuilder builder) {
 		NBTTagList clearList = nbt.getTagList("clearList", Constants.NBT.TAG_COMPOUND);
 
 		for (int i = 0; i < clearList.tagCount(); ++i) {

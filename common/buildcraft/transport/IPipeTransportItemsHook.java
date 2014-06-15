@@ -19,7 +19,6 @@ import buildcraft.api.core.Position;
  */
 @Deprecated
 public interface IPipeTransportItemsHook {
-
 	LinkedList<ForgeDirection> filterPossibleMovements(LinkedList<ForgeDirection> possibleOrientations, Position pos,
 			TravelingItem item);
 

@@ -25,10 +25,8 @@ import buildcraft.transport.TravelingItem;
 import buildcraft.transport.pipes.events.PipeEventItem;
 
 public class PipeItemsQuartz extends Pipe {
-
 	public PipeItemsQuartz(Item item) {
 		super(new PipeTransportItems(), item);
-
 	}
 
 	@Override

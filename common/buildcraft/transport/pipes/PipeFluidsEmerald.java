@@ -12,7 +12,6 @@ import net.minecraft.item.Item;
 import buildcraft.transport.PipeIconProvider;
 
 public class PipeFluidsEmerald extends PipeFluidsWood {
-
 	public PipeFluidsEmerald(Item item) {
 		super(item);
 

@@ -53,7 +53,7 @@ public final class SchematicRegistry {
 		public final Class<? extends Schematic> clazz;
 		public final Object[] params;
 
-		private final Constructor constructor;
+		private final Constructor<?> constructor;
 
 		SchematicConstructor(Class<? extends Schematic> clazz, Object[] params) throws IllegalArgumentException {
 			this.clazz = clazz;
@@ -65,7 +65,7 @@ public final class SchematicRegistry {
 			return (Schematic) constructor.newInstance(params);
 		}
 
-		private Constructor findConstructor() throws IllegalArgumentException {
+		private Constructor<?> findConstructor() throws IllegalArgumentException {
 			for (Constructor<?> c : clazz.getConstructors()) {
 				Class<?>[] typesSignature = c.getParameterTypes();
 				if (typesSignature.length != params.length) {

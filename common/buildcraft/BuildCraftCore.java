@@ -440,8 +440,6 @@ public class BuildCraftCore extends BuildCraftMod {
 		GL11.glGetFloat(GL11.GL_MODELVIEW_MATRIX, modelviewF);
 		GL11.glGetFloat(GL11.GL_PROJECTION_MATRIX, projectionF);
 		GL11.glGetInteger(GL11.GL_VIEWPORT, viewport);
-		float f = (viewport.get(0) + viewport.get(2)) / 2;
-		float f1 = (viewport.get(1) + viewport.get(3)) / 2;
 
 		float x = Mouse.getX();
 		float y = Mouse.getY();

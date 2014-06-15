@@ -38,7 +38,6 @@ import buildcraft.core.network.RPCSide;
 import buildcraft.core.utils.Utils;
 
 public class TileArchitect extends TileBuildCraft implements IInventory, IBoxProvider {
-
 	private static final int SCANNER_ITERATION = 100;
 
 	public int computingTime = 0;
@@ -150,7 +149,7 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 	}
 
 	@RPC
-	public void setName (String name) {
+	public void setName(String name) {
 		this.name = name;
 	}
 
@@ -333,13 +332,13 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 		return new Box (this).extendToEncompass(box).getBoundingBox();
 	}
 
-	@RPC (RPCSide.SERVER)
-	private void setReadConfiguration (BlueprintReadConfiguration conf) {
+	@RPC(RPCSide.SERVER)
+	private void setReadConfiguration(BlueprintReadConfiguration conf) {
 		readConfiguration = conf;
 		sendNetworkUpdate();
 	}
 
-	public void rpcSetConfiguration (BlueprintReadConfiguration conf) {
+	public void rpcSetConfiguration(BlueprintReadConfiguration conf) {
 		readConfiguration = conf;
 		RPCHandler.rpcServer(this, "setReadConfiguration", conf);
 	}

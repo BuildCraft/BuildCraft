@@ -39,7 +39,7 @@ public class BuildingSlotBlock extends BuildingSlot {
 	public int buildStage = 0;
 
 	@Override
-	public SchematicBlockBase getSchematic () {
+	public SchematicBlockBase getSchematic() {
 		if (schematic == null) {
 			return new SchematicMask(false);
 		} else {
@@ -77,12 +77,12 @@ public class BuildingSlotBlock extends BuildingSlot {
 	}
 
 	@Override
-	public void postProcessing (IBuilderContext context) {
+	public void postProcessing(IBuilderContext context) {
 		getSchematic().postProcessing(context, x, y, z);
 	}
 
 	@Override
-	public LinkedList<ItemStack> getRequirements (IBuilderContext context) {
+	public LinkedList<ItemStack> getRequirements(IBuilderContext context) {
 		if (mode == Mode.ClearIfInvalid) {
 			return new LinkedList<ItemStack>();
 		} else {
@@ -100,7 +100,7 @@ public class BuildingSlotBlock extends BuildingSlot {
 	}
 
 	@Override
-	public void writeCompleted (IBuilderContext context, double complete) {
+	public void writeCompleted(IBuilderContext context, double complete) {
 		if (mode == Mode.ClearIfInvalid) {
 			context.world().destroyBlockInWorldPartially(0, x, y, z,
 					(int) (complete * 10.0F) - 1);
@@ -113,7 +113,7 @@ public class BuildingSlotBlock extends BuildingSlot {
 	}
 
 	@Override
-	public void writeToNBT (NBTTagCompound nbt, MappingRegistry registry) {
+	public void writeToNBT(NBTTagCompound nbt, MappingRegistry registry) {
 		nbt.setByte("mode", (byte) mode.ordinal());
 		nbt.setInteger("x", x);
 		nbt.setInteger("y", y);

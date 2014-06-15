@@ -37,7 +37,6 @@ import buildcraft.transport.TravelingItem;
 import buildcraft.transport.triggers.ActionExtractionPreset;
 
 public class PipeItemsEmzuli extends PipeItemsWood implements IGuiReturnHandler {
-
 	public final byte[] slotColors = new byte[4];
 	private final SimpleInventory filters = new SimpleInventory(4, "Filters", 1);
 	private final BitSet activeFlags = new BitSet(4);

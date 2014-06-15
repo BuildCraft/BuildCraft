@@ -40,7 +40,6 @@ import buildcraft.core.utils.StringUtils;
 import buildcraft.core.utils.Utils;
 
 public class TileAssemblyTable extends TileLaserTableBase implements IMachine, IInventory, IFlexibleCrafter {
-
 	@NetworkData
 	public String currentRecipeId = "";
 
@@ -135,7 +134,7 @@ public class TileAssemblyTable extends TileLaserTableBase implements IMachine, I
 		NBTTagList list = nbt.getTagList("plannedIds", Constants.NBT.TAG_STRING);
 
 		for (int i = 0; i < list.tagCount(); ++i) {
-			IFlexibleRecipe recipe = AssemblyRecipeManager.INSTANCE.getRecipe(list.getStringTagAt(i));
+			IFlexibleRecipe<ItemStack> recipe = AssemblyRecipeManager.INSTANCE.getRecipe(list.getStringTagAt(i));
 
 			if (recipe != null) {
 				plannedOutput.add(recipe.getId());
@@ -143,7 +142,7 @@ public class TileAssemblyTable extends TileLaserTableBase implements IMachine, I
 		}
 
 		if (nbt.hasKey("recipeId")) {
-			IFlexibleRecipe recipe = AssemblyRecipeManager.INSTANCE.getRecipe(nbt.getString("recipeId"));
+			IFlexibleRecipe<ItemStack> recipe = AssemblyRecipeManager.INSTANCE.getRecipe(nbt.getString("recipeId"));
 
 			if (recipe != null) {
 				setCurrentRecipe(recipe);
@@ -180,7 +179,7 @@ public class TileAssemblyTable extends TileLaserTableBase implements IMachine, I
 		return recipe != null && recipe == currentRecipe;
 	}
 
-	private void setCurrentRecipe(IFlexibleRecipe recipe) {
+	private void setCurrentRecipe(IFlexibleRecipe<ItemStack> recipe) {
 		currentRecipe = recipe;
 
 		if (recipe != null) {
@@ -209,7 +208,7 @@ public class TileAssemblyTable extends TileLaserTableBase implements IMachine, I
 		}
 	}
 
-	public void planOutput(IFlexibleRecipe recipe) {
+	public void planOutput(IFlexibleRecipe<ItemStack> recipe) {
 		if (recipe != null && !isPlanned(recipe)) {
 			plannedOutput.add(recipe.getId());
 
@@ -219,7 +218,7 @@ public class TileAssemblyTable extends TileLaserTableBase implements IMachine, I
 		}
 	}
 
-	public void cancelPlanOutput(IFlexibleRecipe recipe) {
+	public void cancelPlanOutput(IFlexibleRecipe<ItemStack> recipe) {
 		if (isAssembling(recipe)) {
 			setCurrentRecipe(null);
 		}
@@ -235,7 +234,7 @@ public class TileAssemblyTable extends TileLaserTableBase implements IMachine, I
 		boolean takeNext = false;
 
 		for (String recipeId : plannedOutput) {
-			IFlexibleRecipe recipe = AssemblyRecipeManager.INSTANCE.getRecipe(recipeId);
+			IFlexibleRecipe<ItemStack> recipe = AssemblyRecipeManager.INSTANCE.getRecipe(recipeId);
 
 			if (recipe == currentRecipe) {
 				takeNext = true;
@@ -246,7 +245,7 @@ public class TileAssemblyTable extends TileLaserTableBase implements IMachine, I
 		}
 
 		for (String recipeId : plannedOutput) {
-			IFlexibleRecipe recipe = AssemblyRecipeManager.INSTANCE.getRecipe(recipeId);
+			IFlexibleRecipe<ItemStack> recipe = AssemblyRecipeManager.INSTANCE.getRecipe(recipeId);
 
 			if (recipe.canBeCrafted(this)) {
 				setCurrentRecipe(recipe);
@@ -263,7 +262,7 @@ public class TileAssemblyTable extends TileLaserTableBase implements IMachine, I
 
 	@RPC(RPCSide.SERVER)
 	private void selectRecipe(String id, boolean select) {
-		IFlexibleRecipe recipe = AssemblyRecipeManager.INSTANCE.getRecipe(id);
+		IFlexibleRecipe<ItemStack> recipe = AssemblyRecipeManager.INSTANCE.getRecipe(id);
 
 		if (recipe != null) {
 			if (select) {
@@ -330,6 +329,4 @@ public class TileAssemblyTable extends TileLaserTableBase implements IMachine, I
 	public int getCraftingFluidStackSize() {
 		return 0;
 	}
-
-
 }

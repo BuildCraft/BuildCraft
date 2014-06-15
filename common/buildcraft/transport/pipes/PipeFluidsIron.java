@@ -31,14 +31,13 @@ import buildcraft.transport.TileGenericPipe;
 import buildcraft.transport.triggers.ActionPipeDirection;
 
 public class PipeFluidsIron extends Pipe<PipeTransportFluids> {
-
 	protected int standardIconIndex = PipeIconProvider.TYPE.PipeFluidsIron_Standard.ordinal();
 	protected int solidIconIndex = PipeIconProvider.TYPE.PipeAllIron_Solid.ordinal();
 	private PipeLogicIron logic = new PipeLogicIron(this) {
 		@Override
 		protected boolean isValidConnectingTile(TileEntity tile) {
 			if (tile instanceof TileGenericPipe) {
-				Pipe otherPipe = ((TileGenericPipe) tile).pipe;
+				Pipe<?> otherPipe = ((TileGenericPipe) tile).pipe;
 				if (otherPipe instanceof PipeFluidsWood || otherPipe instanceof PipeStructureCobblestone) {
 					return false;
 				} else {

@@ -17,15 +17,12 @@ import buildcraft.core.gui.slots.SlotPhantom;
 import buildcraft.transport.pipes.PipeItemsEmerald;
 
 public class ContainerEmeraldPipe extends BuildCraftContainer {
-
 	private final PipeItemsEmerald pipe;
-	private final IInventory playerInv;
 	private final IInventory filterInv;
 
 	public ContainerEmeraldPipe(IInventory playerInventory, PipeItemsEmerald pipe) {
 		super(pipe.getFilters().getSizeInventory());
 		this.pipe = pipe;
-		this.playerInv = playerInventory;
 		this.filterInv = pipe.getFilters();
 
 		for (int i = 0; i < 9; i++) {

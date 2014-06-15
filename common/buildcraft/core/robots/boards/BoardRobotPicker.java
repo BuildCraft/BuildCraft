@@ -32,13 +32,12 @@ import buildcraft.transport.TileGenericPipe;
 import buildcraft.transport.TravelingItem;
 
 public class BoardRobotPicker extends RedstoneBoardRobot {
-
 	public static Set<Integer> targettedItems = new HashSet<Integer>();
 
 	private SafeTimeTracker scanTracker = new SafeTimeTracker(40, 10);
 
 	private NBTTagCompound data;
-	private RedstoneBoardNBT board;
+	private RedstoneBoardNBT<?> board;
 	private IBoardParameter[] params;
 	private int range;
 	private IStackFilter stackFilter;

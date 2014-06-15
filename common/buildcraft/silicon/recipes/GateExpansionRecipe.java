@@ -18,7 +18,6 @@ import buildcraft.silicon.TileIntegrationTable;
 import buildcraft.transport.gates.ItemGate;
 
 public class GateExpansionRecipe extends IntegrationTableRecipe {
-
 	private final IGateExpansion expansion;
 	private final ItemStack chipset;
 
@@ -46,7 +45,7 @@ public class GateExpansionRecipe extends IntegrationTableRecipe {
 	}
 
 	@Override
-	public CraftingResult craft(TileIntegrationTable crafter, boolean preview, ItemStack inputA,
+	public CraftingResult<ItemStack> craft(TileIntegrationTable crafter, boolean preview, ItemStack inputA,
 			ItemStack inputB) {
 
 		if (inputA == null) {

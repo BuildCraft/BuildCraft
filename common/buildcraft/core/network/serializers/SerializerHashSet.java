@@ -20,7 +20,7 @@ public class SerializerHashSet extends ClassSerializer {
 	public void write(ByteBuf data, Object o, SerializationContext context)
 			throws IllegalArgumentException, IllegalAccessException {
 
-		HashSet set = (HashSet) o;
+		HashSet<?> set = (HashSet<?>) o;
 
 		if (o == null) {
 			data.writeBoolean(false);
@@ -44,7 +44,7 @@ public class SerializerHashSet extends ClassSerializer {
 		} else {
 			int size = data.readShort();
 
-			HashSet set = new HashSet();
+			HashSet<Object> set = new HashSet<Object>();
 
 			for (int i = 0; i < size; ++i) {
 				Object value = anonymousSerializer.read(data, null, context);

@@ -34,7 +34,6 @@ import buildcraft.transport.PipeTransportItems;
 import buildcraft.transport.TravelingItem;
 
 public class PipeItemsWood extends Pipe<PipeTransportItems> {
-
 	@MjBattery (maxCapacity = 64, maxReceivedPerCycle = 64, minimumConsumption = 0)
 	public double mjStored = 0;
 

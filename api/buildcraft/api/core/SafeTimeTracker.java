@@ -11,7 +11,6 @@ package buildcraft.api.core;
 import net.minecraft.world.World;
 
 public class SafeTimeTracker {
-
 	private long lastMark = Long.MIN_VALUE;
 	private long duration = -1;
 	private long randomRange = 0;
@@ -21,11 +20,10 @@ public class SafeTimeTracker {
 	/**
 	 * @deprecated should use constructors with parameters instead
 	 */
-	public SafeTimeTracker () {
-
+	public SafeTimeTracker() {
 	}
 
-	public SafeTimeTracker (long delay) {
+	public SafeTimeTracker(long delay) {
 		internalDelay = delay;
 	}
 
@@ -38,7 +36,7 @@ public class SafeTimeTracker {
 	 * between [0, range[, meaning that the event will take between 0 and range
 	 * more tick to run.
 	 */
-	public SafeTimeTracker (long delay, long random) {
+	public SafeTimeTracker(long delay, long random) {
 		internalDelay = delay;
 		randomRange = random;
 	}
