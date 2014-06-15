@@ -8,6 +8,7 @@
  */
 package buildcraft.core.triggers;
 
+import java.util.Collection;
 import java.util.LinkedList;
 
 import org.apache.logging.log4j.Level;
@@ -20,12 +21,18 @@ import cpw.mods.fml.common.FMLLog;
 import buildcraft.BuildCraftCore;
 import buildcraft.api.gates.IAction;
 import buildcraft.api.gates.IActionProvider;
+import buildcraft.api.transport.IPipeTile;
 import buildcraft.core.IMachine;
 
 public class DefaultActionProvider implements IActionProvider {
 
 	@Override
-	public LinkedList<IAction> getNeighborActions(Block block, TileEntity tile) {
+	public Collection<IAction> getPipeActions(IPipeTile pipe) {
+		return null;
+	}
+
+	@Override
+	public Collection<IAction> getNeighborActions(Block block, TileEntity tile) {
 		LinkedList<IAction> res = new LinkedList<IAction>();
 
 		res.add(BuildCraftCore.actionRedstone);

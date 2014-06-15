@@ -8,6 +8,7 @@
  */
 package buildcraft.api.gates;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -44,7 +45,7 @@ public final class StatementManager {
 		List<ITrigger> result = new LinkedList<ITrigger>();
 
 		for (ITriggerProvider provider : triggerProviders) {
-			List<ITrigger> toAdd = provider.getNeighborTriggers(block, entity);
+			Collection<ITrigger> toAdd = provider.getNeighborTriggers(block, entity);
 
 			if (toAdd != null) {
 				for (ITrigger t : toAdd) {
@@ -68,7 +69,7 @@ public final class StatementManager {
 		List<IAction> result = new LinkedList<IAction>();
 
 		for (IActionProvider provider : actionProviders) {
-			List<IAction> toAdd = provider.getNeighborActions(block, entity);
+			Collection<IAction> toAdd = provider.getNeighborActions(block, entity);
 
 			if (toAdd != null) {
 				for (IAction t : toAdd) {
@@ -86,10 +87,28 @@ public final class StatementManager {
 		List<ITrigger> result = new LinkedList<ITrigger>();
 
 		for (ITriggerProvider provider : triggerProviders) {
-			List<ITrigger> toAdd = provider.getPipeTriggers(pipe);
+			Collection<ITrigger> toAdd = provider.getPipeTriggers(pipe);
 
 			if (toAdd != null) {
 				for (ITrigger t : toAdd) {
+					if (!result.contains(t)) {
+						result.add(t);
+					}
+				}
+			}
+		}
+
+		return result;
+	}
+	
+	public static List<IAction> getPipeActions(IPipeTile pipe) {
+		List<IAction> result = new LinkedList<IAction>();
+
+		for (IActionProvider provider : actionProviders) {
+			Collection<IAction> toAdd = provider.getPipeActions(pipe);
+
+			if (toAdd != null) {
+				for (IAction t : toAdd) {
 					if (!result.contains(t)) {
 						result.add(t);
 					}

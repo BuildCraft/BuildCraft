@@ -8,15 +8,23 @@
  */
 package buildcraft.api.gates;
 
-import java.util.LinkedList;
+import java.util.Collection;
 
 import net.minecraft.block.Block;
 import net.minecraft.tileentity.TileEntity;
 
+import buildcraft.api.transport.IPipeTile;
+
 public interface IActionProvider {
+
+	/**
+	 * Returns the list of actions that are available from the pipe holding the
+	 * gate.
+	 */
+	Collection<IAction> getPipeActions(IPipeTile pipe);
 
 	/**
 	 * Returns the list of actions available to a gate next to the given block.
 	 */
-	LinkedList<IAction> getNeighborActions(Block block, TileEntity tile);
+	Collection<IAction> getNeighborActions(Block block, TileEntity tile);
 }

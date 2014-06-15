@@ -94,6 +94,7 @@ public class ContainerGateInterface extends BuildCraftContainer {
 		if (!pipe.container.getWorldObj().isRemote) {
 			potentialActions.addAll(pipe.getActions());
 			potentialTriggers.addAll(StatementManager.getPipeTriggers(pipe.container));
+			potentialActions.addAll(StatementManager.getPipeActions(pipe.container));
 
 			if (pipe.container instanceof IOverrideDefaultTriggers) {
 				potentialTriggers.addAll(((IOverrideDefaultTriggers) pipe.container).getTriggers());

@@ -6,7 +6,7 @@
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-package buildcraft.builders.triggers;
+package buildcraft.silicon.statements;
 
 import java.util.Collection;
 import java.util.LinkedList;
@@ -14,25 +14,33 @@ import java.util.LinkedList;
 import net.minecraft.block.Block;
 import net.minecraft.tileentity.TileEntity;
 
-import buildcraft.api.filler.FillerManager;
+import net.minecraftforge.common.util.ForgeDirection;
+
+import buildcraft.BuildCraftSilicon;
 import buildcraft.api.gates.IAction;
 import buildcraft.api.gates.IActionProvider;
 import buildcraft.api.transport.IPipeTile;
-import buildcraft.builders.TileFiller;
+import buildcraft.transport.TileGenericPipe;
 
-public class BuildersActionProvider implements IActionProvider {
+public class RobotsActionProvider implements IActionProvider {
 
 	@Override
 	public Collection<IAction> getPipeActions(IPipeTile pipe) {
-		return null;
+		LinkedList<IAction> result = new LinkedList<IAction>();
+
+		for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
+			if (((TileGenericPipe) pipe).getStation(dir) != null) {
+				result.add(BuildCraftSilicon.actionRobotGotoStation);
+				break;
+			}
+		}
+
+		return result;
 	}
 
 	@Override
 	public Collection<IAction> getNeighborActions(Block block, TileEntity tile) {
-		LinkedList<IAction> actions = new LinkedList<IAction>();
-		if (tile instanceof TileFiller) {
-			actions.addAll(FillerManager.registry.getActions());
-		}
-		return actions;
+		return null;
 	}
+
 }

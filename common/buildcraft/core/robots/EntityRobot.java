@@ -57,7 +57,7 @@ public class EntityRobot extends EntityRobotBase implements
 	public SafeTimeTracker scanForTasks = new SafeTimeTracker (40, 10);
 
 	public LaserData laser = new LaserData();
-	public DockingStation mainDockingStation;
+	public DockingStation linkedDockingStation;
 	public boolean isDocked = false;
 
 	public RedstoneBoardRobot board;
@@ -308,11 +308,11 @@ public class EntityRobot extends EntityRobotBase implements
     public void writeEntityToNBT(NBTTagCompound nbt) {
 		super.writeEntityToNBT(nbt);
 
-		if (mainDockingStation != null) {
-			nbt.setInteger("dockX", mainDockingStation.pipe.xCoord);
-			nbt.setInteger("dockY", mainDockingStation.pipe.yCoord);
-			nbt.setInteger("dockZ", mainDockingStation.pipe.zCoord);
-			nbt.setInteger("dockSide", mainDockingStation.side.ordinal());
+		if (linkedDockingStation != null) {
+			nbt.setInteger("dockX", linkedDockingStation.pipe.xCoord);
+			nbt.setInteger("dockY", linkedDockingStation.pipe.yCoord);
+			nbt.setInteger("dockZ", linkedDockingStation.pipe.zCoord);
+			nbt.setInteger("dockSide", linkedDockingStation.side.ordinal());
 		}
 
 		NBTTagCompound nbtLaser = new NBTTagCompound();
@@ -333,7 +333,7 @@ public class EntityRobot extends EntityRobotBase implements
 		super.readEntityFromNBT(nbt);
 
 		if (nbt.hasKey("dockX")) {
-			mainDockingStation = (DockingStation) DockingStationRegistry.getStation(
+			linkedDockingStation = (DockingStation) DockingStationRegistry.getStation(
 					nbt.getInteger("dockX"),
 					nbt.getInteger("dockY"),
 					nbt.getInteger("dockZ"),
@@ -355,8 +355,9 @@ public class EntityRobot extends EntityRobotBase implements
 		setDead();
     }
 
-	public void setMainDockingStation(DockingStation station) {
-		mainDockingStation = station;
+	public void setLinkedDockingStation(DockingStation station) {
+		linkedDockingStation = station;
+		station.linked = this;
 	}
 
 	@Override
@@ -542,7 +543,7 @@ public class EntityRobot extends EntityRobotBase implements
 
 	@Override
 	public DockingStation getMainDockingStation() {
-		return mainDockingStation;
+		return linkedDockingStation;
 	}
 
 	@SideOnly(Side.CLIENT)

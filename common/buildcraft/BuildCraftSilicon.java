@@ -26,6 +26,7 @@ import net.minecraftforge.oredict.OreDictionary;
 
 import buildcraft.api.blueprints.SchematicRegistry;
 import buildcraft.api.boards.RedstoneBoardRegistry;
+import buildcraft.api.gates.StatementManager;
 import buildcraft.api.recipes.BuildcraftRecipeRegistry;
 import buildcraft.api.transport.PipeWire;
 import buildcraft.builders.schematics.SchematicRotateMeta;
@@ -41,6 +42,7 @@ import buildcraft.core.robots.boards.BoardRobotLeaveCutterNBT;
 import buildcraft.core.robots.boards.BoardRobotLumberjackNBT;
 import buildcraft.core.robots.boards.BoardRobotPickerNBT;
 import buildcraft.core.robots.boards.BoardRobotPlanterNBT;
+import buildcraft.core.triggers.BCAction;
 import buildcraft.silicon.BlockLaser;
 import buildcraft.silicon.BlockLaserTable;
 import buildcraft.silicon.GuiHandler;
@@ -59,6 +61,8 @@ import buildcraft.silicon.network.PacketHandlerSilicon;
 import buildcraft.silicon.recipes.AdvancedFacadeRecipe;
 import buildcraft.silicon.recipes.GateExpansionRecipe;
 import buildcraft.silicon.recipes.GateLogicSwapRecipe;
+import buildcraft.silicon.statements.ActionRobotGoToStation;
+import buildcraft.silicon.statements.RobotsActionProvider;
 import buildcraft.transport.gates.GateDefinition.GateLogic;
 import buildcraft.transport.gates.GateDefinition.GateMaterial;
 import buildcraft.transport.gates.GateExpansionPulsar;
@@ -78,6 +82,8 @@ public class BuildCraftSilicon extends BuildCraftMod {
 
 	public static Item redstoneCrystal;
 	public static Item robotItem;
+
+	public static BCAction actionRobotGotoStation = new ActionRobotGoToStation();
 
 	@Mod.EventHandler
 	public void preInit(FMLPreInitializationEvent evt) {
@@ -114,6 +120,8 @@ public class BuildCraftSilicon extends BuildCraftMod {
 		RedstoneBoardRegistry.instance.registerBoardClass(BoardRobotLumberjackNBT.instance, 10);
 		RedstoneBoardRegistry.instance.registerBoardClass(BoardRobotPlanterNBT.instance, 5);
 		RedstoneBoardRegistry.instance.registerBoardClass(BoardRobotLeaveCutterNBT.instance, 5);
+
+		StatementManager.registerActionProvider(new RobotsActionProvider());
 	}
 
 	@Mod.EventHandler

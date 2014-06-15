@@ -18,10 +18,14 @@ public class DockingStation implements IDockingStation {
 	public TileGenericPipe pipe;
 	public ForgeDirection side;
 	public EntityRobotBase reserved;
+	public EntityRobotBase linked;
 
 	public DockingStation(TileGenericPipe iPipe, ForgeDirection iSide) {
 		pipe = iPipe;
 		side = iSide;
+	}
+
+	public DockingStation() {
 	}
 
 	@Override

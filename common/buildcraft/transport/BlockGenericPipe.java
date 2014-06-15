@@ -48,7 +48,6 @@ import buildcraft.api.core.BCLog;
 import buildcraft.api.core.BlockIndex;
 import buildcraft.api.gates.GateExpansions;
 import buildcraft.api.gates.IGateExpansion;
-import buildcraft.api.robots.DockingStationRegistry;
 import buildcraft.api.tools.IToolWrench;
 import buildcraft.api.transport.PipeWire;
 import buildcraft.core.BlockBuildCraft;
@@ -792,22 +791,25 @@ public class BlockGenericPipe extends BlockBuildCraft {
 							player);
 
 					if (rayTraceResult != null && rayTraceResult.hitPart == Part.RobotStation) {
-						EntityRobot robot = ((ItemRobot) currentItem.getItem())
-								.createRobot(currentItem, world);
-						robot.setEnergy(EntityRobot.MAX_ENERGY / 5.0);
+						DockingStation station = (DockingStation) pipe.container.getStation(rayTraceResult.sideHit);
 
-						float px = x + 0.5F + rayTraceResult.sideHit.offsetX * 0.5F;
-						float py = y + 0.5F + rayTraceResult.sideHit.offsetY * 0.5F;
-						float pz = z + 0.5F + rayTraceResult.sideHit.offsetZ * 0.5F;
+						if (station.linked == null && station.reserved == null) {
+							EntityRobot robot = ((ItemRobot) currentItem.getItem())
+									.createRobot(currentItem, world);
+							robot.setEnergy(EntityRobot.MAX_ENERGY / 5.0);
 
-						robot.setPosition(px, py, pz);
-						robot.setMainDockingStation((DockingStation) DockingStationRegistry.getStation(x, y, z,
-								rayTraceResult.sideHit));
-						robot.setCurrentDockingStation(robot.getMainDockingStation());
-						world.spawnEntityInWorld(robot);
+							float px = x + 0.5F + rayTraceResult.sideHit.offsetX * 0.5F;
+							float py = y + 0.5F + rayTraceResult.sideHit.offsetY * 0.5F;
+							float pz = z + 0.5F + rayTraceResult.sideHit.offsetZ * 0.5F;
 
-						if (!player.capabilities.isCreativeMode) {
-							player.getCurrentEquippedItem().stackSize--;
+							robot.setPosition(px, py, pz);
+							robot.setLinkedDockingStation(station);
+							robot.setCurrentDockingStation(robot.getMainDockingStation());
+							world.spawnEntityInWorld(robot);
+
+							if (!player.capabilities.isCreativeMode) {
+								player.getCurrentEquippedItem().stackSize--;
+							}
 						}
 
 						return true;

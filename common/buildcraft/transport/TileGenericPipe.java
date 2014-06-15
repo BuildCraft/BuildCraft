@@ -52,6 +52,7 @@ import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.power.PowerHandler;
 import buildcraft.api.power.PowerHandler.PowerReceiver;
 import buildcraft.api.robots.DockingStationRegistry;
+import buildcraft.api.robots.IDockingStation;
 import buildcraft.api.transport.IPipeConnection;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.PipeWire;
@@ -127,7 +128,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 		ItemFacade.FacadeState[][] facadeStates = new ItemFacade.FacadeState[ForgeDirection.VALID_DIRECTIONS.length][];
 
 		boolean[] plugs = new boolean[ForgeDirection.VALID_DIRECTIONS.length];
-		boolean[] robotStations = new boolean[ForgeDirection.VALID_DIRECTIONS.length];
+		DockingStation[] robotStations = new DockingStation[ForgeDirection.VALID_DIRECTIONS.length];
 
 		public void writeToNBT (NBTTagCompound nbt) {
 			for (int i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
@@ -138,7 +139,12 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 					nbt.removeTag("facadeState[" + i + "]");
 				}
 				nbt.setBoolean("plug[" + i + "]", plugs[i]);
-				nbt.setBoolean("robotStation[" + i + "]", robotStations[i]);
+
+				if (robotStations[i] != null) {
+					nbt.setBoolean("robotStation[" + i + "]", true);
+				} else {
+					nbt.setBoolean("robotStation[" + i + "]", false);
+				}
 			}
 		}
 
@@ -173,14 +179,17 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 				}
 
 				plugs[i] = nbt.getBoolean("plug[" + i + "]");
-				robotStations[i] = nbt.getBoolean("robotStation[" + i + "]");
+
+				if (nbt.getBoolean("robotStation[" + i + "]")) {
+					robotStations[i] = new DockingStation();
+				}
 			}
 		}
 
 		public void rotateLeft() {
 			ItemFacade.FacadeState[][] newFacadeStates = new ItemFacade.FacadeState[ForgeDirection.VALID_DIRECTIONS.length][];
 			boolean[] newPlugs = new boolean[ForgeDirection.VALID_DIRECTIONS.length];
-			boolean[] newRobotStations = new boolean[ForgeDirection.VALID_DIRECTIONS.length];
+			DockingStation[] newRobotStations = new DockingStation[ForgeDirection.VALID_DIRECTIONS.length];
 
 			for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
 				ForgeDirection r = dir.getRotation(ForgeDirection.UP);
@@ -237,8 +246,10 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 		sideProperties.readFromNBT(nbt);
 
 		for (int i = 0; i < 6; ++i) {
-			if (sideProperties.robotStations[i]) {
-				DockingStationRegistry.registerStation(new DockingStation(this, ForgeDirection.VALID_DIRECTIONS[i]));
+			if (sideProperties.robotStations[i] != null) {
+				sideProperties.robotStations[i].pipe = this;
+				sideProperties.robotStations[i].side = ForgeDirection.VALID_DIRECTIONS[i];
+				DockingStationRegistry.registerStation(sideProperties.robotStations[i]);
 			}
 		}
 	}
@@ -405,7 +416,8 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 
 		//RobotStations
 		for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
-			renderState.robotStationMatrix.setConnected(direction, sideProperties.robotStations[direction.ordinal()]);
+			renderState.robotStationMatrix.setConnected(direction,
+					sideProperties.robotStations[direction.ordinal()] != null);
 		}
 
 		if (renderState.isDirty()) {
@@ -907,7 +919,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 			return renderState.robotStationMatrix.isConnected(side);
 		}
 
-		return sideProperties.robotStations[side.ordinal()];
+		return sideProperties.robotStations[side.ordinal()] != null;
 	}
 
 	public boolean removeAndDropPlug(ForgeDirection side) {
@@ -932,7 +944,8 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 		}
 
 		if (!worldObj.isRemote) {
-			sideProperties.robotStations[side.ordinal()] = false;
+			DockingStationRegistry.registerStation(sideProperties.robotStations[side.ordinal()]);
+			sideProperties.robotStations[side.ordinal()] = null;
 			InvUtils.dropItems(worldObj, new ItemStack(BuildCraftTransport.robotStationItem), this.xCoord, this.yCoord, this.zCoord);
 			worldObj.notifyBlockChange(this.xCoord, this.yCoord, this.zCoord, getBlock());
 			scheduleNeighborChange(); //To force recalculation of connections
@@ -959,18 +972,22 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 			return false;
 		}
 
-		sideProperties.robotStations[forgeDirection.ordinal()] = true;
+		sideProperties.robotStations[forgeDirection.ordinal()] = new DockingStation(this, forgeDirection);
+
+		if (!worldObj.isRemote) {
+			DockingStationRegistry.registerStation(sideProperties.robotStations[forgeDirection.ordinal()]);
+		}
+
 		worldObj.notifyBlockChange(this.xCoord, this.yCoord, this.zCoord, getBlock());
 		scheduleNeighborChange(); //To force recalculation of connections
 		scheduleRenderUpdate();
 
-		if (!worldObj.isRemote) {
-			DockingStationRegistry.registerStation(new DockingStation(this, forgeDirection));
-		}
-
 		return true;
 	}
 
+	public IDockingStation getStation(ForgeDirection side) {
+		return sideProperties.robotStations[side.ordinal()];
+	}
 
 	public Block getBlock() {
 		return getBlockType();
