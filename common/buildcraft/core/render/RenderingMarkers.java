@@ -36,12 +36,13 @@ public class RenderingMarkers implements ISimpleBlockRenderingHandler {
 
 	@Override
 	public boolean renderWorldBlock(IBlockAccess world, int x, int y, int z, Block block, int modelId, RenderBlocks renderer) {
-
 		Tessellator tessellator = Tessellator.instance;
 		float f = block.getMixedBrightnessForBlock(world, x, y, z);
+
 		if (block.getLightValue() > 0) {
 			f = 1.0F;
 		}
+
 		tessellator.setColorOpaque_F(f, f, f);
 		renderMarkerWithMeta(world, block, x, y, z, world.getBlockMetadata(x, y, z));
 
@@ -94,7 +95,7 @@ public class RenderingMarkers implements ISimpleBlockRenderingHandler {
 		rotateFace(frontX[0]);
 		rotateFace(frontX[0]);
 
-		double[][] frontZBase = { {-0.5, -0.5, 0.5, 0.5}, {1, 0, 0, 1}, {0.0625, 0.0625, 0.0625, 0.0625}};
+		double[][] frontZBase = {{-0.5, -0.5, 0.5, 0.5}, {1, 0, 0, 1}, {0.0625, 0.0625, 0.0625, 0.0625}};
 
 		frontZ[5] = safeClone(frontZBase);
 
@@ -110,7 +111,7 @@ public class RenderingMarkers implements ISimpleBlockRenderingHandler {
 		rotateFace(frontZ[0]);
 		rotateFace(frontZ[0]);
 
-		double[][] frontYBase = { {-0.5, -0.5, 0.5, 0.5}, {-0.0625, -0.0625, -0.0625, -0.0625}, {0.5, -0.5, -0.5, 0.5}};
+		double[][] frontYBase = {{-0.5, -0.5, 0.5, 0.5}, {-0.0625, -0.0625, -0.0625, -0.0625}, {0.5, -0.5, -0.5, 0.5}};
 
 		frontY[4] = safeClone(frontYBase);
 		rotateFace(frontY[4]);
@@ -130,6 +131,11 @@ public class RenderingMarkers implements ISimpleBlockRenderingHandler {
 
 	public void renderMarkerWithMeta(IBlockAccess iblockaccess, Block block, double xi, double yi, double zi, int meta) {
 		Tessellator tessellator = Tessellator.instance;
+		int metadata = meta;
+
+		if (metadata > 5 || metadata < 0) {
+			metadata = 1;
+		}
 
 		double x = xi;
 		double y = yi;
@@ -141,7 +147,7 @@ public class RenderingMarkers implements ISimpleBlockRenderingHandler {
 
 		IIcon i = block.getIcon(iblockaccess, xCoord, yCoord, zCoord, 1);
 
-		int m = metaToOld[meta];
+		int m = metaToOld[metadata];
 		x += 0.5D;
 		z += 0.5D;
 
