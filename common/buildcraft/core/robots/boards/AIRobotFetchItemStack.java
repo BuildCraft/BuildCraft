@@ -25,7 +25,6 @@ import buildcraft.core.robots.IStationFilter;
 
 public class AIRobotFetchItemStack extends AIRobot {
 
-	private DockingStation stationToDock = null;
 	private IStackFilter filter;
 
 	public AIRobotFetchItemStack(EntityRobotBase iRobot, IStackFilter iFilter) {
@@ -41,27 +40,31 @@ public class AIRobotFetchItemStack extends AIRobot {
 
 	@Override
 	public void delegateAIEnded(AIRobot ai) {
-		ItemStack itemFound = null;
+		if (robot.getDockingStation() != null) {
+			DockingStation station = (DockingStation) robot.getDockingStation();
 
-		for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
-			TileEntity nearbyTile = robot.worldObj.getTileEntity(stationToDock.pipe.xCoord + dir.offsetX,
-					stationToDock.pipe.yCoord
-							+ dir.offsetY, stationToDock.pipe.zCoord + dir.offsetZ);
+			ItemStack itemFound = null;
 
-			if (nearbyTile != null && nearbyTile instanceof IInventory) {
-				ITransactor trans = Transactor.getTransactorFor(nearbyTile);
+			for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
+				TileEntity nearbyTile = robot.worldObj.getTileEntity(station.pipe.xCoord + dir.offsetX,
+						station.pipe.yCoord
+								+ dir.offsetY, station.pipe.zCoord + dir.offsetZ);
 
-				itemFound = trans.remove(filter, dir.getOpposite(), true);
+				if (nearbyTile != null && nearbyTile instanceof IInventory) {
+					ITransactor trans = Transactor.getTransactorFor(nearbyTile);
 
-				if (itemFound != null) {
-					break;
+					itemFound = trans.remove(filter, dir.getOpposite(), true);
+
+					if (itemFound != null) {
+						break;
+					}
 				}
 			}
-		}
 
-		if (itemFound != null) {
-			robot.setItemInUse(itemFound);
-			terminate();
+			if (itemFound != null) {
+				robot.setItemInUse(itemFound);
+				terminate();
+			}
 		}
 	}
 
@@ -78,7 +81,6 @@ public class AIRobotFetchItemStack extends AIRobot {
 					ITransactor trans = Transactor.getTransactorFor(nearbyTile);
 
 					if (trans.remove(filter, dir.getOpposite(), false) != null) {
-						stationToDock = station;
 						return true;
 					}
 				}
