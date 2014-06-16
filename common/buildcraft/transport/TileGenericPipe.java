@@ -8,7 +8,6 @@
  */
 package buildcraft.transport;
 
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.logging.Level;
 
@@ -78,7 +77,8 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 
 	@MjBattery
 	public Pipe pipe;
-	public int[] redstoneInput = new int[ForgeDirection.VALID_DIRECTIONS.length];
+	public int redstoneInput;
+	public int[] redstoneInputSide = new int[ForgeDirection.VALID_DIRECTIONS.length];
 
 	private boolean deletePipe = false;
 	private TileBuffer[] tileBuffer;
@@ -245,9 +245,11 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 		super.writeToNBT(nbt);
 
 		for (int i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
-			final String key = "redstoneInput[" + i + "]";
-			nbt.setInteger(key, redstoneInput[i]);
+			final String key = "redstoneInputSide[" + i + "]";
+			nbt.setInteger(key, redstoneInputSide[i]);
 		}
+
+		nbt.setInteger("redstoneInput", redstoneInput);
 
 		if (pipe != null) {
 			nbt.setInteger("pipeId", Item.itemRegistry.getIDForObject(pipe.item));
@@ -263,14 +265,11 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 	public void readFromNBT(NBTTagCompound nbt) {
 		super.readFromNBT(nbt);
 
-		// Legacy
-		if (nbt.hasKey("redstoneInput")) {
-			Arrays.fill(redstoneInput, nbt.getByte("redstoneInput"));
-		}
+		redstoneInput = nbt.getInteger("redstoneInput");
 
 		for (int i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
-			final String key = "redstoneInput[" + i + "]";
-			redstoneInput[i] = nbt.hasKey(key) ? nbt.getInteger(key) : 0;
+			final String key = "redstoneInputSide[" + i + "]";
+			redstoneInputSide[i] = nbt.hasKey(key) ? nbt.getInteger(key) : 0;
 		}
 
 		coreState.pipeId = nbt.getInteger("pipeId");
