@@ -11,8 +11,12 @@ package buildcraft.core.robots.boards;
 import java.util.HashSet;
 import java.util.Set;
 
+import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
+
+import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.api.boards.IBoardParameter;
 import buildcraft.api.boards.IBoardParameterStack;
@@ -23,13 +27,13 @@ import buildcraft.api.boards.RedstoneBoardRobotNBT;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
+import buildcraft.core.inventory.ITransactor;
+import buildcraft.core.inventory.Transactor;
 import buildcraft.core.inventory.filters.ArrayStackFilter;
 import buildcraft.core.inventory.filters.IStackFilter;
-import buildcraft.core.robots.AIRobotGoToDock;
+import buildcraft.core.robots.AIRobotLookForStation;
 import buildcraft.core.robots.DockingStation;
-import buildcraft.transport.PipeTransportItems;
-import buildcraft.transport.TileGenericPipe;
-import buildcraft.transport.TravelingItem;
+import buildcraft.core.robots.IStationFilter;
 
 public class BoardRobotPicker extends RedstoneBoardRobot {
 
@@ -81,39 +85,36 @@ public class BoardRobotPicker extends RedstoneBoardRobot {
 				// if we could get an item, let's try to get another one
 				startDelegateAI(new AIRobotFetchItem(robot, range, stackFilter));
 			} else {
-				// otherwise, let's return to base
-				startDelegateAI(new AIRobotGoToDock(robot, (DockingStation) robot.getLinkedStation()));
+				// otherwise, let's deliver items
+				startDelegateAI(new AIRobotLookForStation(robot, new StationInventory()));
 			}
-		} else if (ai instanceof AIRobotGoToDock) {
-			emptyContainerInStation();
+		} else if (ai instanceof AIRobotLookForStation) {
+			emptyContainerInInventory();
 		}
 	}
 
-	private void emptyContainerInStation() {
+	private void emptyContainerInInventory() {
 		DockingStation station = (DockingStation) robot.getDockingStation();
 
 		if (station == null) {
 			return;
 		}
 
-		TileGenericPipe pipe = (TileGenericPipe) robot.worldObj
-				.getTileEntity(station.pipe.xCoord, station.pipe.yCoord, station.pipe.zCoord);
+		for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
+			TileEntity nearbyTile = robot.worldObj.getTileEntity(station.x() + dir.offsetX, station.y()
+					+ dir.offsetY, station.z()
+					+ dir.offsetZ);
 
-		if (pipe != null && pipe.pipe.transport instanceof PipeTransportItems) {
-			for (int i = 0; i < robot.getSizeInventory(); ++i) {
-				if (robot.getStackInSlot(i) != null) {
-					float cx = station.pipe.xCoord + 0.5F + 0.2F * station.side.offsetX;
-					float cy = station.pipe.yCoord + 0.5F + 0.2F * station.side.offsetY;
-					float cz = station.pipe.zCoord + 0.5F + 0.2F * station.side.offsetZ;
+			if (nearbyTile != null && nearbyTile instanceof IInventory) {
+				ITransactor trans = Transactor.getTransactorFor(nearbyTile);
 
-					TravelingItem item = TravelingItem.make(cx, cy,
-							cz, robot.getStackInSlot(i));
+				for (int i = 0; i < robot.getSizeInventory(); ++i) {
+					ItemStack stackToAdd = robot.getStackInSlot(i);
 
-					((PipeTransportItems) pipe.pipe.transport).injectItem(item, station.side.getOpposite());
-
-					robot.setInventorySlotContents(i, null);
-
-					break;
+					if (stackToAdd != null) {
+						ItemStack added = trans.add(stackToAdd, dir, true);
+						robot.decrStackSize(i, added.stackSize);
+					}
 				}
 			}
 		}
@@ -122,5 +123,32 @@ public class BoardRobotPicker extends RedstoneBoardRobot {
 	@Override
 	public RedstoneBoardRobotNBT getNBTHandler() {
 		return BoardRobotPickerNBT.instance;
+	}
+
+	private class StationInventory implements IStationFilter {
+		@Override
+		public boolean matches(DockingStation station) {
+			for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
+				TileEntity nearbyTile = robot.worldObj.getTileEntity(station.x() + dir.offsetX, station.y()
+						+ dir.offsetY, station.z()
+						+ dir.offsetZ);
+
+				if (nearbyTile != null && nearbyTile instanceof IInventory) {
+					ITransactor trans = Transactor.getTransactorFor(nearbyTile);
+
+					for (int i = 0; i < robot.getSizeInventory(); ++i) {
+						ItemStack stackToAdd = robot.getStackInSlot(i);
+
+						if (stackToAdd != null && trans.add(stackToAdd, dir, false) != null) {
+							return true;
+						}
+					}
+				}
+			}
+
+			return false;
+		}
+
+
 	}
 }

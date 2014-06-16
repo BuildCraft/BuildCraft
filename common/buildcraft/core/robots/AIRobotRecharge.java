@@ -9,9 +9,7 @@
 package buildcraft.core.robots;
 
 import buildcraft.api.robots.AIRobot;
-import buildcraft.api.robots.DockingStationRegistry;
 import buildcraft.api.robots.EntityRobotBase;
-import buildcraft.api.robots.IDockingStation;
 import buildcraft.api.transport.IPipeTile.PipeType;
 import buildcraft.transport.PipeTransportPower;
 
@@ -24,32 +22,33 @@ public class AIRobotRecharge extends AIRobot {
 	}
 
 	@Override
+	public void start() {
+		startDelegateAI(new AIRobotLookForStation(robot, new IStationFilter() {
+			@Override
+			public boolean matches(DockingStation station) {
+				return station.pipe.getPipeType() == PipeType.POWER;
+			}
+		}));
+	}
+
+	@Override
 	public void update() {
+		PipeTransportPower powerProvider = (PipeTransportPower) ((DockingStation) robot.getDockingStation()).pipe.pipe.transport;
+
+		powerProvider.requestEnergy(robot.getDockingStation().side(), 100);
+		robot.setEnergy(robot.getEnergy()
+				+ powerProvider.consumePower(robot.getDockingStation().side(), 100));
+
+		if (robot.getEnergy() >= EntityRobotBase.MAX_ENERGY) {
+			terminate();
+		}
+	}
+
+	@Override
+	public void delegateAIEnded(AIRobot ai) {
 		if (robot.getDockingStation() == null
-				|| ((DockingStation) robot.getDockingStation()).pipe.getPipeType() != PipeType.POWER) {
-
-			for (IDockingStation d : DockingStationRegistry.getStations()) {
-				DockingStation station = (DockingStation) d;
-
-				if (station.reserved() != null) {
-					continue;
-				}
-
-				if (station.pipe.getPipeType() == PipeType.POWER) {
-					startDelegateAI(new AIRobotGoToDock(robot, station));
-					break;
-				}
-			}
-		} else {
-			PipeTransportPower powerProvider = (PipeTransportPower) ((DockingStation) robot.getDockingStation()).pipe.pipe.transport;
-
-			powerProvider.requestEnergy(robot.getDockingStation().side(), 100);
-			robot.setEnergy(robot.getEnergy()
-					+ powerProvider.consumePower(robot.getDockingStation().side(), 100));
-
-			if (robot.getEnergy() >= EntityRobotBase.MAX_ENERGY) {
-				terminate();
-			}
+				|| !(((DockingStation) robot.getDockingStation()).pipe.pipe.transport instanceof PipeTransportPower)) {
+			terminate ();
 		}
 	}
 }

@@ -1179,9 +1179,9 @@ public class BlockGenericPipe extends BlockBuildCraft {
 			skippedFirstIconRegister = true;
 			return;
 		}
-		
+
 		BuildCraftTransport.instance.wireIconProvider.registerIcons(iconRegister);
-		
+
 		for (Item i : pipes.keySet()) {
 			Pipe<?> dummyPipe = createPipe(i);
 			if (dummyPipe != null) {
@@ -1317,7 +1317,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 		if (facadeRenderColor != -1) {
 			return facadeRenderColor;
 		}
-		
+
 		return super.colorMultiplier(world, x, y, z);
 	}
 

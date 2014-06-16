@@ -24,6 +24,20 @@ public class WorldPropertyIsWood extends WorldProperty {
 
 	@Override
 	public boolean get(IBlockAccess blockAccess, Block block, int meta, int x, int y, int z) {
-		return block != null && OreDictionary.getOreID(new ItemStack(block, 1, OreDictionary.WILDCARD_VALUE)) == woodId;
+		if (block == null) {
+			return false;
+		} else {
+			ItemStack stack = new ItemStack(block);
+
+			if (stack.getItem() != null) {
+				for (int id : OreDictionary.getOreIDs(stack)) {
+					if (id == woodId) {
+						return true;
+					}
+				}
+			}
+		}
+
+		return false;
 	}
 }

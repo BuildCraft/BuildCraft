@@ -24,7 +24,20 @@ public class WorldPropertyIsLeave extends WorldProperty {
 
 	@Override
 	public boolean get(IBlockAccess blockAccess, Block block, int meta, int x, int y, int z) {
-		return block != null
-				&& OreDictionary.getOreID(new ItemStack(block, 1, OreDictionary.WILDCARD_VALUE)) == leavesId;
+		if (block == null) {
+			return false;
+		} else {
+			ItemStack stack = new ItemStack(block);
+
+			if (stack.getItem() != null) {
+				for (int id : OreDictionary.getOreIDs(stack)) {
+					if (id == leavesId) {
+						return true;
+					}
+				}
+			}
+		}
+
+		return false;
 	}
 }

@@ -15,14 +15,13 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.api.robots.AIRobot;
-import buildcraft.api.robots.DockingStationRegistry;
 import buildcraft.api.robots.EntityRobotBase;
-import buildcraft.api.robots.IDockingStation;
 import buildcraft.core.inventory.ITransactor;
 import buildcraft.core.inventory.Transactor;
 import buildcraft.core.inventory.filters.IStackFilter;
-import buildcraft.core.robots.AIRobotGoToDock;
+import buildcraft.core.robots.AIRobotLookForStation;
 import buildcraft.core.robots.DockingStation;
+import buildcraft.core.robots.IStationFilter;
 
 public class AIRobotFetchItemStack extends AIRobot {
 
@@ -37,29 +36,7 @@ public class AIRobotFetchItemStack extends AIRobot {
 
 	@Override
 	public void update() {
-		for (IDockingStation d : DockingStationRegistry.getStations()) {
-			DockingStation station = (DockingStation) d;
-
-			if (station.reserved() != null) {
-				continue;
-			}
-
-			for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
-				TileEntity nearbyTile = robot.worldObj.getTileEntity(d.x() + dir.offsetX, d.y()
-						+ dir.offsetY, d.z()
-						+ dir.offsetZ);
-
-				if (nearbyTile != null && nearbyTile instanceof IInventory) {
-					ITransactor trans = Transactor.getTransactorFor(nearbyTile);
-
-					if (trans.remove(filter, dir.getOpposite(), false) != null) {
-						stationToDock = station;
-						startDelegateAI(new AIRobotGoToDock(robot, stationToDock));
-						return;
-					}
-				}
-			}
-		}
+		startDelegateAI(new AIRobotLookForStation(robot, new StationFilter()));
 	}
 
 	@Override
@@ -86,5 +63,29 @@ public class AIRobotFetchItemStack extends AIRobot {
 			robot.setItemInUse(itemFound);
 			terminate();
 		}
+	}
+
+	private class StationFilter implements IStationFilter {
+
+		@Override
+		public boolean matches(DockingStation station) {
+			for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
+				TileEntity nearbyTile = robot.worldObj.getTileEntity(station.x() + dir.offsetX, station.y()
+						+ dir.offsetY, station.z()
+						+ dir.offsetZ);
+
+				if (nearbyTile != null && nearbyTile instanceof IInventory) {
+					ITransactor trans = Transactor.getTransactorFor(nearbyTile);
+
+					if (trans.remove(filter, dir.getOpposite(), false) != null) {
+						stationToDock = station;
+						return true;
+					}
+				}
+			}
+
+			return false;
+		}
+
 	}
 }
