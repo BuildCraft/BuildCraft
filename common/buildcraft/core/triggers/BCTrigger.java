@@ -35,7 +35,7 @@ public abstract class BCTrigger extends BCStatement implements ITrigger {
 		Pipe<?> pipe = (Pipe<?>) gate.getPipe();
 
 		for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
-			if (isTriggerActive(side.getOpposite(), pipe.getAdjacentTile(side), p)) {
+			if (isTriggerActive(side, pipe.getAdjacentTile(side), p)) {
 				return true;
 			}
 		}

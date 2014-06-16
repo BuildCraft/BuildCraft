@@ -111,12 +111,10 @@ public class ContainerGateInterface extends BuildCraftContainer {
 			potentialTriggers.addAll(pipe.container.getTriggers());
 
 			for (ForgeDirection o : ForgeDirection.VALID_DIRECTIONS) {
-				if (pipe.hasGate(o)) {
-					TileEntity tile = pipe.container.getTile(o);
-					Block block = pipe.container.getBlock(o);
-					potentialTriggers.addAll(StatementManager.getNeighborTriggers(block, tile));
-					potentialActions.addAll(StatementManager.getNeighborActions(block, tile));
-				}
+				TileEntity tile = pipe.container.getTile(o);
+				Block block = pipe.container.getBlock(o);
+				potentialTriggers.addAll(StatementManager.getNeighborTriggers(block, tile));
+				potentialActions.addAll(StatementManager.getNeighborActions(block, tile));
 			}
 
 			if (gate.material.numTriggerParameters == 0) {
