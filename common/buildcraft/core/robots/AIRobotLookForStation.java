@@ -32,8 +32,6 @@ public class AIRobotLookForStation extends AIRobot {
 			return;
 		}
 
-		// TODO: replace FetchItemStack and Recharge with this implementation
-
 		double potentialStationDistance = Float.MAX_VALUE;
 		DockingStation potentialStation = null;
 
