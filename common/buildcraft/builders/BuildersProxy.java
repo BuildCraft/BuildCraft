@@ -17,7 +17,6 @@ public final class BuildersProxy {
 	 * Forbid contruction of this class
 	 */
 	private BuildersProxy() {
-
 	}
 
 	public static boolean canPlaceTorch(World world, int i, int j, int k) {

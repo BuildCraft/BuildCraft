@@ -44,7 +44,7 @@ public class BlueprintDatabase {
 	/**
 	 * Initialize the blueprint database.
 	 *
-	 * @param configDir config directory to read the blueprints from.
+	 * @param inputPaths directories to read the blueprints from.
 	 */
 	public void init(String[] inputPaths, String outputPath) {
 		outputDir = new File(outputPath);
