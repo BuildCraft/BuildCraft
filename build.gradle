@@ -1,4 +1,4 @@
-// DON'T TOUCH THE BUILDSCTPT[] BLOCK
+// DON'T TOUCH THE BUILDSCRIPT[] BLOCK
 // its special, and it is only there to make ForgeGradle work correctly.
 
 buildscript {
@@ -27,7 +27,7 @@ group= "com.mod-buildcraft"
 archivesBaseName = "buildcraft" // the name that all artifacts will use as a base. artifacts names follow this pattern: [baseName]-[appendix]-[version]-[classifier].[extension]
 
 minecraft {
-    version = "1.7.2-10.12.1.1079" // McVersion-ForgeVersion     this variable is later changed to contain only the MC version, while the apiVersion variable is used for the forge version.  Yeah its stupid, and will be changed eentually.
+    version = "1.7.2-10.12.1.1121" // McVersion-ForgeVersion this variable is later changed to contain only the MC version, while the apiVersion variable is used for the forge version.  Yeah its stupid, and will be changed eventually.
 
     assetDir = "run/assets" // the place for ForgeGradle to download the assets. The assets that the launcher gets and stuff
 
@@ -36,7 +36,7 @@ minecraft {
     replace '@MC_VERSION@', version
 }
 
-// configure  the source folders
+// configure the source folders
 sourceSets {
     main {
         java {
