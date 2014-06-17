@@ -40,7 +40,7 @@ import buildcraft.transport.pipes.PipePowerWood;
 
 public class PipeTransportPower extends PipeTransport {
 
-	public static final Map<Class<? extends Pipe>, Integer> powerCapacities = new HashMap<Class<? extends Pipe>, Integer>();
+	public static final Map<Class<? extends Pipe<?>>, Integer> powerCapacities = new HashMap<Class<? extends Pipe<?>>, Integer>();
 
 	private static final short MAX_DISPLAY = 100;
 	private static final int DISPLAY_SMOOTHING = 10;

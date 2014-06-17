@@ -113,13 +113,6 @@ public class GuiRefinery extends GuiAdvancedInterface {
 		((FluidSlot) slots[1]).fluid = filter1;
 		((FluidSlot) slots[1]).colorRenderCache = container.refinery.tanks[1].colorRenderCache;
 
-		if (filter0 != null) {
-			FluidStack liquid0 = new FluidStack(filter0, FluidContainerRegistry.BUCKET_VOLUME);
-		}
-		if (filter1 != null) {
-			FluidStack liquid1 = new FluidStack(filter1, FluidContainerRegistry.BUCKET_VOLUME);
-		}
-
 		CraftingResult<FluidStack> crafting = container.refinery.craftingResult;
 
 		if (crafting != null) {

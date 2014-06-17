@@ -447,7 +447,7 @@ public class ClassMapping extends ClassSerializer {
 				break;
 			}
 			case Enum: {
-				Enum[] arr = (Enum[]) obj;
+				Enum<?>[] arr = (Enum[]) obj;
 				data.writeInt (arr.length);
 
 				for (Enum<?> element : arr) {
@@ -583,7 +583,7 @@ public class ClassMapping extends ClassSerializer {
 				break;
 			}
 			case Enum: {
-				Enum[] arr;
+				Enum<?>[] arr;
 
 				if (obj == null) {
 					arr = new Enum[size];

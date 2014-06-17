@@ -60,7 +60,7 @@ public class ActionRobotGoToStation extends BCAction {
 
 	@Override
 	public void actionActivate(IGate gate, IActionParameter[] parameters) {
-		Pipe pipe = (Pipe) gate.getPipe();
+		Pipe<?> pipe = (Pipe<?>) gate.getPipe();
 		TileGenericPipe tile = pipe.container;
 
 		for (ForgeDirection d : ForgeDirection.VALID_DIRECTIONS) {

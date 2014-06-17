@@ -155,7 +155,7 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 	}
 
 	public boolean canPipeConnect(TileEntity tile, ForgeDirection side) {
-		Pipe otherPipe;
+		Pipe<?> otherPipe;
 
 		if (tile instanceof TileGenericPipe) {
 			otherPipe = ((TileGenericPipe) tile).pipe;
