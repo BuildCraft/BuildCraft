@@ -124,7 +124,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 			if (this.getFluid() != null) {
 				this.getFluid().writeToNBT(subTag);
 			}
-			
+
 			return subTag;
 		}
 	}
@@ -174,7 +174,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 		return LIQUID_IN_PIPE;
 	}
 
-	public boolean canReceiveFluid(ForgeDirection o) {
+	private boolean canReceiveFluid(ForgeDirection o) {
 		TileEntity entity = container.getTile(o);
 
 		if (!container.isPipeConnected(o)) {
@@ -184,7 +184,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 		if (entity instanceof TileGenericPipe) {
 			Pipe<?> pipe = ((TileGenericPipe) entity).pipe;
 
-			if (pipe == null || !pipe.inputOpen(o.getOpposite())) {
+			if (pipe == null || !pipe.inputOpen(o.getOpposite()) || pipe.isClosed()) {
 				return false;
 			}
 		}
@@ -542,6 +542,10 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 	}
 
 	private int fill(int tankIndex, FluidStack resource, boolean doFill) {
+		if (container.pipe.isClosed()) {
+			return 0;
+		}
+
 		int filled;
 
 		if (this.container.pipe instanceof IPipeTransportFluidsHook) {
@@ -554,6 +558,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 			transferState[tankIndex] = TransferState.Input;
 			inputTTL[tankIndex] = INPUT_TTL;
 		}
+
 		return filled;
 	}
 

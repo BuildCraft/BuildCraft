@@ -551,6 +551,10 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 	/* IPIPEENTRY */
 	@Override
 	public int injectItem(ItemStack payload, boolean doAdd, ForgeDirection from) {
+		if (pipe.isClosed()) {
+			return 0;
+		}
+
 		if (BlockGenericPipe.isValid(pipe) && pipe.transport instanceof PipeTransportItems && isPipeConnected(from)) {
 			if (doAdd) {
 				Position itemPos = new Position(xCoord + 0.5, yCoord + 0.5, zCoord + 0.5, from.getOpposite());
@@ -561,6 +565,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 			}
 			return payload.stackSize;
 		}
+
 		return 0;
 	}
 

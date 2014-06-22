@@ -239,7 +239,7 @@ public class PipeTransportItems extends PipeTransport {
 		return result;
 	}
 
-	public boolean canReceivePipeObjects(ForgeDirection o, TravelingItem item) {
+	private boolean canReceivePipeObjects(ForgeDirection o, TravelingItem item) {
 		TileEntity entity = container.getTile(o);
 
 		if (!container.isPipeConnected(o)) {
@@ -249,7 +249,7 @@ public class PipeTransportItems extends PipeTransport {
 		if (entity instanceof TileGenericPipe) {
 			TileGenericPipe pipe = (TileGenericPipe) entity;
 
-			return pipe.pipe.transport instanceof PipeTransportItems;
+			return !pipe.pipe.isClosed() && pipe.pipe.transport instanceof PipeTransportItems;
 		} else if (entity instanceof IInventory && item.getInsertionHandler().canInsertItem(item, (IInventory) entity)) {
 			if (Transactor.getTransactorFor(entity).add(item.getItemStack(), o.getOpposite(), false).stackSize > 0) {
 				return true;

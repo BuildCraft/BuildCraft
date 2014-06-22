@@ -51,6 +51,7 @@ gate.action.pulsar.constant=Energy Pulsar
 gate.action.pulsar.single=Single Energy Pulse
 gate.action.pipe.wire=%s Pipe Signal
 gate.action.robot.goto_station=Goto Station
+gate.action.pipe.close=Close Pipe
 
 gate.expansion.fader=Redstone Fader
 gate.expansion.pulsar=Autarchic Pulsar

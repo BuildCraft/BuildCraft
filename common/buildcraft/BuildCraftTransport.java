@@ -48,6 +48,7 @@ import buildcraft.core.ItemBuildCraft;
 import buildcraft.core.Version;
 import buildcraft.core.network.BuildCraftChannelHandler;
 import buildcraft.core.proxy.CoreProxy;
+import buildcraft.core.triggers.ActionPipeClose;
 import buildcraft.core.triggers.BCAction;
 import buildcraft.core.triggers.BCTrigger;
 import buildcraft.core.utils.EnumColor;
@@ -175,6 +176,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 	public static BCTrigger[] triggerTimer = new BCTrigger[TriggerClockTimer.Time.VALUES.length];
 	public static BCTrigger[] triggerRedstoneLevel = new BCTrigger[15];
 	public static BCAction[] actionPipeWire = new ActionSignalOutput[PipeWire.values().length];
+	public static BCAction actionPipeClose = new ActionPipeClose();
 	public static BCAction actionEnergyPulser = new ActionEnergyPulsar();
 	public static BCAction actionSingleEnergyPulse = new ActionSingleEnergyPulse();
 	public static BCAction[] actionPipeColor = new BCAction[16];

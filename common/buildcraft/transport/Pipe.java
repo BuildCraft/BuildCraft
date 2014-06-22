@@ -60,6 +60,7 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 
 	private boolean internalUpdateScheduled = false;
 	private boolean initialized = false;
+	private int closeTime;
 
 	public Pipe(T transport, Item item) {
 		this.transport = transport;
@@ -200,6 +201,10 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 	public abstract int getIconIndex(ForgeDirection direction);
 
 	public void updateEntity() {
+		if (closeTime > 0) {
+			closeTime--;
+		}
+
 		transport.updateEntity();
 
 		if (internalUpdateScheduled) {
@@ -525,7 +530,11 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 	}
 
 	public LinkedList<IAction> getActions() {
-		return new LinkedList<IAction>();
+		LinkedList<IAction> result = new LinkedList<IAction>();
+
+		result.add(BuildCraftTransport.actionPipeClose);
+
+		return result;
 	}
 
 	public void resetGates() {
@@ -648,5 +657,13 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 	@Override
 	public TileEntity getAdjacentTile(ForgeDirection dir) {
 		return container.getTile(dir);
+	}
+
+	public void close() {
+		closeTime = 2;
+	}
+
+	public boolean isClosed() {
+		return closeTime > 0;
 	}
 }
