@@ -22,13 +22,13 @@ import buildcraft.transport.network.PacketPowerUpdate;
 public class BuildCraftChannelHandler extends FMLIndexedMessageToMessageCodec<BuildCraftPacket> {
 
     public BuildCraftChannelHandler() {
-    	addDiscriminator(0, PacketTileUpdate.class);
-    	addDiscriminator(1, PacketTileState.class);
-    	addDiscriminator(2, PacketCoordinates.class);
-    	addDiscriminator(3, PacketFluidUpdate.class);
-    	addDiscriminator(4, PacketNBT.class);
-    	addDiscriminator(5, PacketPowerUpdate.class);
-    	addDiscriminator(6, PacketSlotChange.class);
+		addDiscriminator(0, PacketTileUpdate.class);
+		addDiscriminator(1, PacketTileState.class);
+		addDiscriminator(2, PacketCoordinates.class);
+		addDiscriminator(3, PacketFluidUpdate.class);
+		addDiscriminator(4, PacketNBT.class);
+		addDiscriminator(5, PacketPowerUpdate.class);
+		addDiscriminator(6, PacketSlotChange.class);
 		addDiscriminator(7, PacketGuiReturn.class);
 		addDiscriminator(8, PacketGuiWidget.class);
 		addDiscriminator(9, PacketPipeTransportItemStack.class);
