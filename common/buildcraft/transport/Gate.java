@@ -149,7 +149,7 @@ public final class Gate implements IGate {
 		}
 		data.setTag("expansions", exList);
 
-		for (int i = 0; i < 8; ++i) {
+		for (int i = 0; i < MAX_STATEMENTS; ++i) {
 			if (triggers[i] != null) {
 				data.setString("trigger[" + i + "]", triggers[i].getUniqueTag());
 			}
@@ -158,7 +158,7 @@ public final class Gate implements IGate {
 				data.setString("action[" + i + "]", actions[i].getUniqueTag());
 			}
 
-			for (int j = 0; j < 3; ++j) {
+			for (int j = 0; j < MAX_PARAMETERS; ++j) {
 				if (triggerParameters[i][j] != null) {
 					NBTTagCompound cpt = new NBTTagCompound();
 					cpt.setString("kind", StatementManager.getParameterKind(triggerParameters[i][j]));
@@ -167,7 +167,7 @@ public final class Gate implements IGate {
 				}
 			}
 
-			for (int j = 0; j < 3; ++j) {
+			for (int j = 0; j < MAX_PARAMETERS; ++j) {
 				if (actionParameters[i][j] != null) {
 					NBTTagCompound cpt = new NBTTagCompound();
 					cpt.setString("kind", StatementManager.getParameterKind(actionParameters[i][j]));
@@ -185,7 +185,7 @@ public final class Gate implements IGate {
 	}
 
 	public void readFromNBT(NBTTagCompound data) {
-		for (int i = 0; i < 8; ++i) {
+		for (int i = 0; i < MAX_STATEMENTS; ++i) {
 			if (data.hasKey("trigger[" + i + "]")) {
 				triggers[i] = (ITrigger) StatementManager.statements.get(data.getString("trigger[" + i + "]"));
 			}
@@ -200,7 +200,7 @@ public final class Gate implements IGate {
 				triggerParameters[i][0].readFromNBT(data.getCompoundTag("triggerParameters[" + i + "]"));
 			}
 
-			for (int j = 0; j < 3; ++j) {
+			for (int j = 0; j < MAX_PARAMETERS; ++j) {
 				if (data.hasKey("triggerParameters[" + i + "][" + j + "]")) {
 					NBTTagCompound cpt = data.getCompoundTag("triggerParameters[" + i + "][" + j + "]");
 					triggerParameters[i][j] = (ITriggerParameter) StatementManager.createParameter(cpt
@@ -209,7 +209,7 @@ public final class Gate implements IGate {
 				}
 			}
 
-			for (int j = 0; j < 3; ++j) {
+			for (int j = 0; j < MAX_PARAMETERS; ++j) {
 				if (data.hasKey("actionParameters[" + i + "][" + j + "]")) {
 					NBTTagCompound cpt = data.getCompoundTag("actionParameters[" + i + "][" + j + "]");
 					actionParameters[i][j] = (IActionParameter) StatementManager.createParameter(cpt.getString("kind"));
@@ -221,6 +221,7 @@ public final class Gate implements IGate {
 		for (PipeWire wire : PipeWire.VALUES) {
 			broadcastSignal.set(wire.ordinal(), data.getBoolean("wireState[" + wire.ordinal() + "]"));
 		}
+
 		redstoneOutput = data.getByte("redstoneOutput");
 	}
 
@@ -463,6 +464,14 @@ public final class Gate implements IGate {
 		for (GateExpansionController expansion : expansions.values()) {
 			expansion.addActions(list);
 		}
+	}
+
+	public LinkedList<IAction> getActions() {
+		LinkedList<IAction> result = new LinkedList<IAction>();
+
+		addActions(result);
+
+		return result;
 	}
 
 	@Override

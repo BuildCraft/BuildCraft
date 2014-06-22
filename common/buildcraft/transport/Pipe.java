@@ -525,15 +525,7 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 	}
 
 	public LinkedList<IAction> getActions() {
-		LinkedList<IAction> result = new LinkedList<IAction>();
-
-		for (Gate gate : gates) {
-			if (gate != null) {
-				gate.addActions(result);
-			}
-		}
-
-		return result;
+		return new LinkedList<IAction>();
 	}
 
 	public void resetGates() {
