@@ -76,11 +76,11 @@ public class PathFinding {
 	}
 
 	public void iterate(int itNumber) {
-		if (nextIteration == null) {
-			return;
-		}
-
 		for (int i = 0; i < itNumber; ++i) {
+			if (nextIteration == null) {
+				return;
+			}
+
 			if (endReached) {
 				result = new LinkedList<BlockIndex>();
 

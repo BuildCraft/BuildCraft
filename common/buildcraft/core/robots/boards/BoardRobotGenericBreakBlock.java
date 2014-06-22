@@ -56,7 +56,7 @@ public abstract class BoardRobotGenericBreakBlock extends RedstoneBoardRobot {
 		if (ai instanceof AIRobotSearchBlock) {
 			BlockIndex index = ((AIRobotSearchBlock) ai).blockFound;
 
-			if (reserveBlock(index)) {
+			if (index != null && reserveBlock(index)) {
 				startDelegateAI(new AIRobotBreakWithTool(robot, ((AIRobotSearchBlock) ai).blockFound));
 			}
 		} else if (ai instanceof AIRobotBreakWithTool) {

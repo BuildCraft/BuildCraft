@@ -40,6 +40,10 @@ public class AIRobot {
 
 	}
 
+	public void delegateAIAborted(AIRobot ai) {
+
+	}
+
 	public final void terminate() {
 		abortDelegateAI();
 		end();
@@ -47,6 +51,16 @@ public class AIRobot {
 		if (parentAI != null) {
 			parentAI.delegateAI = null;
 			parentAI.delegateAIEnded(this);
+		}
+	}
+
+	public final void abort() {
+		abortDelegateAI();
+		end();
+
+		if (parentAI != null) {
+			parentAI.delegateAI = null;
+			parentAI.delegateAIAborted(this);
 		}
 	}
 
@@ -72,7 +86,7 @@ public class AIRobot {
 
 	public final void abortDelegateAI() {
 		if (delegateAI != null) {
-			delegateAI.terminate();
+			delegateAI.abort();
 		}
 	}
 }

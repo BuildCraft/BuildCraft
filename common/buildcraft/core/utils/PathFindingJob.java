@@ -21,8 +21,12 @@ public class PathFindingJob extends Thread {
 
 	@Override
 	public void run() {
-		while (!isTerminated() && !pathFinding.isDone()) {
-			pathFinding.iterate();
+		try {
+			while (!isTerminated() && !pathFinding.isDone()) {
+				pathFinding.iterate();
+			}
+		} catch (Throwable t) {
+			t.printStackTrace();
 		}
 	}
 
