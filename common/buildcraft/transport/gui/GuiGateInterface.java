@@ -30,7 +30,7 @@ import buildcraft.api.gates.ITriggerParameter;
 import buildcraft.core.gui.AdvancedSlot;
 import buildcraft.core.gui.GuiAdvancedInterface;
 import buildcraft.core.utils.StringUtils;
-import buildcraft.transport.ActionState;
+import buildcraft.transport.ActionActiveState;
 import buildcraft.transport.Gate;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.gates.GateDefinition.GateMaterial;
@@ -343,9 +343,9 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 		actionTracker = 0;
 		for (AdvancedSlot slot : slots) {
 			if (slot instanceof TriggerSlot) {
-				boolean halfWidth = container.actionsState[actionTracker] == ActionState.Partial;
+				boolean halfWidth = container.actionsState[actionTracker] == ActionActiveState.Partial;
 
-				if (container.actionsState[actionTracker] != ActionState.Deactivated) {
+				if (container.actionsState[actionTracker] != ActionActiveState.Deactivated) {
 					mc.renderEngine.bindTexture(texture);
 
 					drawTexturedModalRect(cornerX + slot.x + 17 + 18 * gate.material.numTriggerParameters, cornerY

@@ -60,7 +60,7 @@ public final class Gate implements IGate {
 	public IAction[] actions = new IAction[MAX_STATEMENTS];
 	public IActionParameter[][] actionParameters = new IActionParameter[8][MAX_PARAMETERS];
 
-	public ActionState[] actionsState = new ActionState[MAX_STATEMENTS];
+	public ActionActiveState[] actionsState = new ActionActiveState[MAX_STATEMENTS];
 
 	public BitSet broadcastSignal = new BitSet(PipeWire.VALUES.length);
 	public BitSet prevBroadcastSignal = new BitSet(PipeWire.VALUES.length);
@@ -83,7 +83,7 @@ public final class Gate implements IGate {
 		this.direction = direction;
 
 		for (int i = 0; i < actionsState.length; ++i) {
-			actionsState[i] = ActionState.Deactivated;
+			actionsState[i] = ActionActiveState.Deactivated;
 		}
 	}
 
@@ -271,8 +271,8 @@ public final class Gate implements IGate {
 	}
 
 	public boolean isGateActive() {
-		for (ActionState state : actionsState) {
-			if (state == ActionState.Activated) {
+		for (ActionActiveState state : actionsState) {
+			if (state == ActionActiveState.Activated) {
 				return true;
 			}
 		}
@@ -334,7 +334,7 @@ public final class Gate implements IGate {
 
 		// Computes the actions depending on the triggers
 		for (int it = 0; it < MAX_STATEMENTS; ++it) {
-			actionsState[it] = ActionState.Deactivated;
+			actionsState[it] = ActionActiveState.Deactivated;
 
 			ITrigger trigger = triggers[it];
 			ITriggerParameter[] parameter = triggerParameters[it];
@@ -344,13 +344,13 @@ public final class Gate implements IGate {
 
 				if (actionGroups[it] == it) {
 					if (active) {
-						actionsState[it] = ActionState.Activated;
+						actionsState[it] = ActionActiveState.Activated;
 					}
 				} else {
-					if (active && actionsState[actionGroups[it]] != ActionState.Activated) {
-						actionsState[actionGroups[it]] = ActionState.Partial;
-					} else if (!active && actionsState[actionGroups[it]] == ActionState.Activated) {
-						actionsState[actionGroups[it]] = ActionState.Partial;
+					if (active && actionsState[actionGroups[it]] != ActionActiveState.Activated) {
+						actionsState[actionGroups[it]] = ActionActiveState.Partial;
+					} else if (!active && actionsState[actionGroups[it]] == ActionActiveState.Activated) {
+						actionsState[actionGroups[it]] = ActionActiveState.Partial;
 					}
 				}
 			}
@@ -358,7 +358,7 @@ public final class Gate implements IGate {
 
 		// Activate the actions
 		for (int it = 0; it < MAX_STATEMENTS; ++it) {
-			if (actions[it] != null && actionGroups[it] == it && actionsState[it] == ActionState.Activated) {
+			if (actions[it] != null && actionGroups[it] == it && actionsState[it] == ActionActiveState.Activated) {
 				IAction action = actions[it];
 				action.actionActivate(this, actionParameters[it]);
 
@@ -389,7 +389,7 @@ public final class Gate implements IGate {
 		LinkedList<IAction> activeActions = new LinkedList<IAction>();
 
 		for (int it = 0; it < MAX_STATEMENTS; ++it) {
-			if (actionGroups[it] == it && actionsState[it] == ActionState.Activated) {
+			if (actionGroups[it] == it && actionsState[it] == ActionActiveState.Activated) {
 				activeActions.add(actions[it]);
 			}
 		}

@@ -22,6 +22,8 @@ import buildcraft.core.inventory.filters.IStackFilter;
 import buildcraft.core.robots.AIRobotLookForStation;
 import buildcraft.core.robots.DockingStation;
 import buildcraft.core.robots.IStationFilter;
+import buildcraft.silicon.statements.StateStationProvideItems;
+import buildcraft.transport.Pipe;
 
 public class AIRobotFetchItemStack extends AIRobot {
 
@@ -72,6 +74,23 @@ public class AIRobotFetchItemStack extends AIRobot {
 
 		@Override
 		public boolean matches(DockingStation station) {
+			boolean found = false;
+
+			Pipe pipe = station.pipe.pipe;
+
+			for (Object s : pipe.getActionStates()) {
+				if (s instanceof StateStationProvideItems) {
+					if (((StateStationProvideItems) s).matches(filter)) {
+						found = true;
+						break;
+					}
+				}
+			}
+
+			if (!found) {
+				return false;
+			}
+
 			for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
 				TileEntity nearbyTile = robot.worldObj.getTileEntity(station.x() + dir.offsetX, station.y()
 						+ dir.offsetY, station.z()

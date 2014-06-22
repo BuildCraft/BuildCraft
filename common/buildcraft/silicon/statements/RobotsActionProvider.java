@@ -12,6 +12,7 @@ import java.util.Collection;
 import java.util.LinkedList;
 
 import net.minecraft.block.Block;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.tileentity.TileEntity;
 
 import net.minecraftforge.common.util.ForgeDirection;
@@ -28,10 +29,25 @@ public class RobotsActionProvider implements IActionProvider {
 	public Collection<IAction> getPipeActions(IPipeTile pipe) {
 		LinkedList<IAction> result = new LinkedList<IAction>();
 
+		boolean stationFound = false;
+
 		for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
 			if (((TileGenericPipe) pipe).getStation(dir) != null) {
-				result.add(BuildCraftSilicon.actionRobotGotoStation);
+				stationFound = true;
 				break;
+			}
+		}
+
+		if (!stationFound) {
+			return result;
+		}
+
+		result.add(BuildCraftSilicon.actionRobotGotoStation);
+
+		for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
+			if (((TileGenericPipe) pipe).getTile(dir) instanceof IInventory) {
+				result.add(BuildCraftSilicon.actionStationProvideItems);
+				result.add(BuildCraftSilicon.actionStationRequestItems);
 			}
 		}
 

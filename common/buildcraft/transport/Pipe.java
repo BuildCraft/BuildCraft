@@ -33,6 +33,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
+import buildcraft.api.gates.ActionState;
 import buildcraft.api.gates.IAction;
 import buildcraft.api.gates.ITrigger;
 import buildcraft.api.transport.IPipe;
@@ -60,7 +61,9 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 
 	private boolean internalUpdateScheduled = false;
 	private boolean initialized = false;
-	private int closeTime;
+	private boolean closed = false;
+
+	private ArrayList<ActionState> actionStates = new ArrayList<ActionState>();
 
 	public Pipe(T transport, Item item) {
 		this.transport = transport;
@@ -201,16 +204,15 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 	public abstract int getIconIndex(ForgeDirection direction);
 
 	public void updateEntity() {
-		if (closeTime > 0) {
-			closeTime--;
-		}
-
 		transport.updateEntity();
 
 		if (internalUpdateScheduled) {
 			internalUpdate();
 			internalUpdateScheduled = false;
 		}
+
+		closed = false;
+		actionStates.clear();
 
 		// Update the gate if we have any
 		for (Gate gate : gates) {
@@ -660,10 +662,18 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 	}
 
 	public void close() {
-		closeTime = 2;
+		closed = true;
 	}
 
 	public boolean isClosed() {
-		return closeTime > 0;
+		return closed;
+	}
+
+	public void pushActionState(ActionState state) {
+		actionStates.add(state);
+	}
+
+	public Collection<ActionState> getActionStates() {
+		return actionStates;
 	}
 }

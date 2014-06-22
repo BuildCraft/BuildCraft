@@ -64,6 +64,8 @@ import buildcraft.silicon.recipes.AdvancedFacadeRecipe;
 import buildcraft.silicon.recipes.GateExpansionRecipe;
 import buildcraft.silicon.recipes.GateLogicSwapRecipe;
 import buildcraft.silicon.statements.ActionRobotGoToStation;
+import buildcraft.silicon.statements.ActionStationProvideItems;
+import buildcraft.silicon.statements.ActionStationRequestItems;
 import buildcraft.silicon.statements.RobotsActionProvider;
 import buildcraft.transport.gates.GateDefinition.GateLogic;
 import buildcraft.transport.gates.GateDefinition.GateMaterial;
@@ -88,6 +90,8 @@ public class BuildCraftSilicon extends BuildCraftMod {
 	public static Item robotItem;
 
 	public static BCAction actionRobotGotoStation = new ActionRobotGoToStation();
+	public static BCAction actionStationRequestItems = new ActionStationRequestItems();
+	public static BCAction actionStationProvideItems = new ActionStationProvideItems();
 
 	@Mod.EventHandler
 	public void preInit(FMLPreInitializationEvent evt) {

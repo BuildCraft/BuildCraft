@@ -35,14 +35,14 @@ import buildcraft.core.network.RPC;
 import buildcraft.core.network.RPCHandler;
 import buildcraft.core.network.RPCMessageInfo;
 import buildcraft.core.network.RPCSide;
-import buildcraft.transport.ActionState;
+import buildcraft.transport.ActionActiveState;
 import buildcraft.transport.Gate;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.gates.GateDefinition;
 
 public class ContainerGateInterface extends BuildCraftContainer {
 
-	public ActionState[] actionsState = new ActionState[8];
+	public ActionActiveState[] actionsState = new ActionActiveState[8];
 	public GuiGateInterface gateCallback;
 
 	IInventory playerIInventory;
@@ -70,7 +70,7 @@ public class ContainerGateInterface extends BuildCraftContainer {
 		super(0);
 
 		for (int i = 0; i < actionsState.length; ++i) {
-			actionsState[i] = ActionState.Deactivated;
+			actionsState[i] = ActionActiveState.Deactivated;
 		}
 
 		this.pipe = pipe;
@@ -201,7 +201,7 @@ public class ContainerGateInterface extends BuildCraftContainer {
 		if (id == 0 /* Action state update */) {
 			for (int i = 0; i < 8; i++) {
 				/* Bit mask of triggers */
-				actionsState[i] = ActionState.values()[(state >> (i * 2)) & 0x03];
+				actionsState[i] = ActionActiveState.values()[(state >> (i * 2)) & 0x03];
 			}
 		}
 	}
@@ -308,9 +308,9 @@ public class ContainerGateInterface extends BuildCraftContainer {
 		return descending ? potentialTriggers.descendingIterator() : potentialTriggers.iterator();
 	}
 
-	public ActionState getActionState(int i) {
+	public ActionActiveState getActionState(int i) {
 		if (gate == null) {
-			return ActionState.Deactivated;
+			return ActionActiveState.Deactivated;
 		} else {
 			return gate.actionsState [i];
 		}

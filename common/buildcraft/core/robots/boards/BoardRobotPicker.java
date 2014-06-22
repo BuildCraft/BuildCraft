@@ -34,6 +34,8 @@ import buildcraft.core.inventory.filters.IStackFilter;
 import buildcraft.core.robots.AIRobotLookForStation;
 import buildcraft.core.robots.DockingStation;
 import buildcraft.core.robots.IStationFilter;
+import buildcraft.silicon.statements.StateStationRequestItems;
+import buildcraft.transport.Pipe;
 
 public class BoardRobotPicker extends RedstoneBoardRobot {
 
@@ -100,16 +102,34 @@ public class BoardRobotPicker extends RedstoneBoardRobot {
 			return;
 		}
 
-		for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
-			TileEntity nearbyTile = robot.worldObj.getTileEntity(station.x() + dir.offsetX, station.y()
-					+ dir.offsetY, station.z()
-					+ dir.offsetZ);
+		Pipe pipe = station.pipe.pipe;
 
-			if (nearbyTile != null && nearbyTile instanceof IInventory) {
-				ITransactor trans = Transactor.getTransactorFor(nearbyTile);
+		for (int i = 0; i < robot.getSizeInventory(); ++i) {
+			boolean found = false;
+			ItemStack stackToAdd = robot.getStackInSlot(i);
 
-				for (int i = 0; i < robot.getSizeInventory(); ++i) {
-					ItemStack stackToAdd = robot.getStackInSlot(i);
+			for (Object s : pipe.getActionStates()) {
+				if (s instanceof StateStationRequestItems) {
+					if (((StateStationRequestItems) s).matches(new ArrayStackFilter(stackToAdd))) {
+						found = true;
+						break;
+					}
+				}
+			}
+
+			if (!found) {
+				// This stack is not accepted by any of the action states
+				// currently active on this pipe - look for another one
+				continue;
+			}
+
+			for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
+				TileEntity nearbyTile = robot.worldObj.getTileEntity(station.x() + dir.offsetX, station.y()
+						+ dir.offsetY, station.z()
+						+ dir.offsetZ);
+
+				if (nearbyTile != null && nearbyTile instanceof IInventory) {
+					ITransactor trans = Transactor.getTransactorFor(nearbyTile);
 
 					if (stackToAdd != null) {
 						ItemStack added = trans.add(stackToAdd, dir, true);
@@ -128,27 +148,48 @@ public class BoardRobotPicker extends RedstoneBoardRobot {
 	private class StationInventory implements IStationFilter {
 		@Override
 		public boolean matches(DockingStation station) {
-			for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
-				TileEntity nearbyTile = robot.worldObj.getTileEntity(station.x() + dir.offsetX, station.y()
-						+ dir.offsetY, station.z()
-						+ dir.offsetZ);
+			Pipe pipe = station.pipe.pipe;
 
-				if (nearbyTile != null && nearbyTile instanceof IInventory) {
-					ITransactor trans = Transactor.getTransactorFor(nearbyTile);
+			for (int i = 0; i < robot.getSizeInventory(); ++i) {
+				boolean found = false;
+				ItemStack stackToAdd = robot.getStackInSlot(i);
 
-					for (int i = 0; i < robot.getSizeInventory(); ++i) {
-						ItemStack stackToAdd = robot.getStackInSlot(i);
-
-						if (stackToAdd != null && trans.add(stackToAdd, dir, false) != null) {
-							return true;
+				for (Object s : pipe.getActionStates()) {
+					if (s instanceof StateStationRequestItems) {
+						if (((StateStationRequestItems) s).matches(new ArrayStackFilter(stackToAdd))) {
+							found = true;
+							break;
 						}
 					}
 				}
+
+				if (!found) {
+					// This stack is not accepted by any of the action states
+					// currently active on this pipe - look for another one
+					continue;
+				}
+
+				for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
+					TileEntity nearbyTile = robot.worldObj.getTileEntity(station.x() + dir.offsetX, station.y()
+							+ dir.offsetY, station.z()
+							+ dir.offsetZ);
+
+					if (nearbyTile != null && nearbyTile instanceof IInventory) {
+						ITransactor trans = Transactor.getTransactorFor(nearbyTile);
+
+						if (stackToAdd != null && trans.add(stackToAdd, dir, false) != null) {
+							// We can add the item to this inventory, go to this
+							// station.
+
+							return true;
+						}
+
+					}
+				}
+
 			}
 
 			return false;
 		}
-
-
 	}
 }
