@@ -30,7 +30,7 @@ public final class MultiButtonController<T extends IMultiButtonState> {
 	}
 
 	public MultiButtonController<?> copy() {
-		return new MultiButtonController(currentState, validStates.clone());
+		return new MultiButtonController<T>(currentState, validStates.clone());
 	}
 
 	public T[] getValidStates() {

@@ -19,7 +19,6 @@ import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
-import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.mj.IBatteryObject;
 import buildcraft.api.mj.IOMode;
 import buildcraft.api.mj.MjAPI;
@@ -44,7 +43,6 @@ public class PipePowerWood extends Pipe<PipeTransportPower> implements IPowerRec
 
 	@MjBattery(mode = IOMode.ReceiveActive, maxCapacity = 1500, maxReceivedPerCycle = 500, minimumConsumption = 0)
 	private double mjStored = 0;
-	private final SafeTimeTracker sourcesTracker = new SafeTimeTracker(1);
 	private boolean full;
 
 	private PowerHandler powerHandler;

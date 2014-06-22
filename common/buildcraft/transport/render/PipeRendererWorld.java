@@ -220,8 +220,7 @@ public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
 	}
 
 	private void pipeRobotStationRenderer(RenderBlocks renderblocks, Block block, PipeRenderState state, int x, int y, int z) {
-
-		float width = 0.075F;
+		//float width = 0.075F;
 
 		pipeRobotStationPartRender (renderblocks, block, state, x, y, z,
 				0.45F, 0.55F,

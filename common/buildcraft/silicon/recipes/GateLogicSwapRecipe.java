@@ -36,7 +36,7 @@ public class GateLogicSwapRecipe extends IntegrationTableRecipe {
 	}
 
 	@Override
-	public CraftingResult craft(TileIntegrationTable crafter, boolean preview, ItemStack inputA,
+	public CraftingResult<ItemStack> craft(TileIntegrationTable crafter, boolean preview, ItemStack inputA,
 			ItemStack inputB) {
 		CraftingResult<ItemStack> result = super.craft(crafter, preview, inputA, inputB);
 

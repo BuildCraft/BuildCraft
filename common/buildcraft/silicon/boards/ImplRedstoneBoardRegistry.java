@@ -108,8 +108,8 @@ public class ImplRedstoneBoardRegistry extends RedstoneBoardRegistry {
 	}
 
 	@Override
-	public Collection<RedstoneBoardNBT> getAllBoardNBTs() {
-		ArrayList<RedstoneBoardNBT> result = new ArrayList<RedstoneBoardNBT>();
+	public Collection<RedstoneBoardNBT<?>> getAllBoardNBTs() {
+		ArrayList<RedstoneBoardNBT<?>> result = new ArrayList<RedstoneBoardNBT<?>>();
 
 		for (BoardFactory f : boards.values()) {
 			result.add(f.boardNBT);

@@ -21,10 +21,10 @@ import buildcraft.core.utils.StringUtils;
 @SideOnly(Side.CLIENT)
 public final class PipeToolTipManager {
 
-	private static final Map<Class<? extends Pipe>, String> toolTips = new HashMap<Class<? extends Pipe>, String>();
+	private static final Map<Class<? extends Pipe<?>>, String> toolTips = new HashMap<Class<? extends Pipe<?>>, String>();
 
 	static {
-		for (Map.Entry<Class<? extends Pipe>, Integer> pipe : PipeTransportPower.powerCapacities.entrySet()) {
+		for (Map.Entry<Class<? extends Pipe<?>>, Integer> pipe : PipeTransportPower.powerCapacities.entrySet()) {
 			PipeToolTipManager.addToolTip(pipe.getKey(), String.format("%d MJ/t", pipe.getValue()));
 		}
 	}
@@ -35,7 +35,7 @@ public final class PipeToolTipManager {
 	private PipeToolTipManager() {
 	}
 
-	public static void addToolTip(Class<? extends Pipe> pipe, String toolTip) {
+	public static void addToolTip(Class<? extends Pipe<?>> pipe, String toolTip) {
 		toolTips.put(pipe, toolTip);
 	}
 

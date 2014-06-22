@@ -273,7 +273,6 @@ public class TileFiller extends TileAbstractBuilder implements IMachine, IAction
 	}
 
 	public void handlePacketPayload(ByteBuf data) {
-		boolean initialized = box.isInitialized();
 		box.readFromStream(data);
 		done = data.readBoolean();
 		setPattern((FillerPattern) FillerManager.registry.getPattern(Utils.readUTF(data)));

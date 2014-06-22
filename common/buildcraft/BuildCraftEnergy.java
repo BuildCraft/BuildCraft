@@ -388,6 +388,8 @@ public class BuildCraftEnergy extends BuildCraftMod {
 		}
 		// failed to find any free biome IDs
 		class BiomeIdLimitException extends RuntimeException {
+			private static final long serialVersionUID = 1L;
+
 			public BiomeIdLimitException(String biome) {
 				super(String.format("You have run out of free Biome ID spaces for %s", biome));
 			}

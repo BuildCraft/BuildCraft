@@ -56,16 +56,16 @@ public final class RPCHandler {
 
 	class MethodMapping {
 		Method method;
-		Class[] parameters;
-		ClassSerializer [] mappings;
+		Class<?>[] parameters;
+		ClassSerializer[] mappings;
 		boolean hasInfo = false;
 	}
 
-	private MethodMapping [] methods;
+	private MethodMapping[] methods;
 
 	private RPCHandler(Class<? extends Object> c) {
 		handledClass = c;
-		Method [] sortedMethods = JavaTools.getAllMethods (c).toArray(new Method [0]);
+		Method[] sortedMethods = JavaTools.getAllMethods(c).toArray(new Method[0]);
 
 		LinkedList<MethodMapping> mappings = new LinkedList<MethodMapping>();
 
@@ -79,7 +79,7 @@ public final class RPCHandler {
 		LinkedList<Method> rpcMethods = new LinkedList<Method>();
 
 		for (Method sortedMethod : sortedMethods) {
-			if (sortedMethod.getAnnotation (RPC.class) != null) {
+			if (sortedMethod.getAnnotation(RPC.class) != null) {
 				sortedMethod.setAccessible(true);
 				methodsMap.put(sortedMethod.getName(), rpcMethods.size());
 				rpcMethods.add(sortedMethod);
@@ -87,7 +87,7 @@ public final class RPCHandler {
 				MethodMapping mapping = new MethodMapping();
 				mapping.method = sortedMethod;
 				mapping.parameters = sortedMethod.getParameterTypes();
-				mapping.mappings = new ClassSerializer [mapping.parameters.length];
+				mapping.mappings = new ClassSerializer[mapping.parameters.length];
 
 				for (int j = 0; j < mapping.parameters.length; ++j) {
 					if (int.class.equals(mapping.parameters[j])) {
@@ -303,7 +303,7 @@ public final class RPCHandler {
 
 		int methodIndex = methodsMap.get(method);
 		MethodMapping m = methods[methodIndex];
-		Class[] formals = m.parameters;
+		Class<?>[] formals = m.parameters;
 
 		int expectedParameters = m.hasInfo ? formals.length - 1
 				: formals.length;
@@ -359,7 +359,7 @@ public final class RPCHandler {
 			short methodIndex = data.readShort();
 
 			MethodMapping m = methods [methodIndex];
-			Class[] formals = m.parameters;
+			Class<?>[] formals = m.parameters;
 
 			Object[] actuals = new Object [formals.length];
 

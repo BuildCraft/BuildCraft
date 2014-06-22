@@ -112,7 +112,7 @@ public class PathFinding {
 		openList.remove(from.index);
 		closedList.put(from.index, from);
 
-		ArrayList nodes = new ArrayList<Node>();
+		ArrayList<Node> nodes = new ArrayList<Node>();
 		byte[][][] resultMoves = movements(from);
 
 		for (int dx = -1; dx <= +1; ++dx) {

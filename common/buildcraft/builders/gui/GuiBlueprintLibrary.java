@@ -27,21 +27,15 @@ public class GuiBlueprintLibrary extends GuiBuildCraft {
 	private static final ResourceLocation TEXTURE = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_GUI + "/library_rw.png");
 	private GuiButton nextPageButton;
 	private GuiButton prevPageButton;
-	private GuiButton lockButton;
 	private GuiButton deleteButton;
-	private EntityPlayer player;
 	private TileBlueprintLibrary library;
-	private ContainerBlueprintLibrary container;
-	private boolean computeInput;
 
 	public GuiBlueprintLibrary(EntityPlayer player, TileBlueprintLibrary library) {
 		super(new ContainerBlueprintLibrary(player, library), library, TEXTURE);
-		this.player = player;
 		xSize = 234;
 		ySize = 225;
 
 		this.library = library;
-		container = (ContainerBlueprintLibrary) inventorySlots;
 	}
 
 	@SuppressWarnings("unchecked")

@@ -33,5 +33,5 @@ public abstract class RedstoneBoardRegistry {
 
 	public abstract String getKindForParam(IBoardParameter param);
 
-	public abstract Collection<RedstoneBoardNBT> getAllBoardNBTs();
+	public abstract Collection<RedstoneBoardNBT<?>> getAllBoardNBTs();
 }
