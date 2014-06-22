@@ -18,7 +18,7 @@ public class AIRobotRecharge extends AIRobot {
 	private DockingStation axeDocking = null;
 
 	public AIRobotRecharge(EntityRobotBase iRobot) {
-		super(iRobot);
+		super(iRobot, 0, 1);
 	}
 
 	@Override

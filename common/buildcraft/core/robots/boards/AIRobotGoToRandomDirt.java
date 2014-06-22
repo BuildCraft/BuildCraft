@@ -31,7 +31,7 @@ public class AIRobotGoToRandomDirt extends AIRobot {
 	private PathFindingJob pathFindingJob;
 
 	public AIRobotGoToRandomDirt(EntityRobotBase iRobot, int iRange) {
-		super(iRobot, 2);
+		super(iRobot, 2, 1);
 
 		range = iRange;
 	}

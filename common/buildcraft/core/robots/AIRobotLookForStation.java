@@ -15,11 +15,11 @@ import buildcraft.api.robots.IDockingStation;
 
 public class AIRobotLookForStation extends AIRobot {
 
-	private DockingStation axeDocking = null;
+	public DockingStation targetStation;
 	private IStationFilter filter;
 
 	public AIRobotLookForStation(EntityRobotBase iRobot, IStationFilter iFilter) {
-		super(iRobot);
+		super(iRobot, 0, 1);
 
 		filter = iFilter;
 	}
@@ -56,6 +56,7 @@ public class AIRobotLookForStation extends AIRobot {
 		}
 
 		if (potentialStation != null) {
+			targetStation = potentialStation;
 			startDelegateAI(new AIRobotGoToDock(robot, potentialStation));
 		} else {
 			terminate();

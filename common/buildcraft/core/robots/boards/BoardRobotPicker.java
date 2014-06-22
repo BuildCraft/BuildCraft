@@ -24,7 +24,6 @@ import buildcraft.api.boards.RedstoneBoardNBT;
 import buildcraft.api.boards.RedstoneBoardRegistry;
 import buildcraft.api.boards.RedstoneBoardRobot;
 import buildcraft.api.boards.RedstoneBoardRobotNBT;
-import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.inventory.ITransactor;
@@ -42,8 +41,6 @@ public class BoardRobotPicker extends RedstoneBoardRobot {
 	// TODO: Clean this when world unloaded
 	public static Set<Integer> targettedItems = new HashSet<Integer>();
 
-	private SafeTimeTracker scanTracker = new SafeTimeTracker(40, 10);
-
 	private NBTTagCompound data;
 	private RedstoneBoardNBT<?> board;
 	private IBoardParameter[] params;
@@ -51,7 +48,7 @@ public class BoardRobotPicker extends RedstoneBoardRobot {
 	private IStackFilter stackFilter;
 
 	public BoardRobotPicker(EntityRobotBase robot, NBTTagCompound nbt) {
-		super(robot);
+		super(robot, 40);
 		data = nbt;
 
 		board = RedstoneBoardRegistry.instance.getRedstoneBoard(nbt);
@@ -75,9 +72,7 @@ public class BoardRobotPicker extends RedstoneBoardRobot {
 
 	@Override
 	public void update() {
-		if (scanTracker.markTimeIfDelay(robot.worldObj)) {
-			startDelegateAI(new AIRobotFetchItem(robot, range, stackFilter));
-		}
+		startDelegateAI(new AIRobotFetchItem(robot, range, stackFilter));
 	}
 
 	@Override
@@ -107,6 +102,10 @@ public class BoardRobotPicker extends RedstoneBoardRobot {
 		for (int i = 0; i < robot.getSizeInventory(); ++i) {
 			boolean found = false;
 			ItemStack stackToAdd = robot.getStackInSlot(i);
+
+			if (stackToAdd == null) {
+				continue;
+			}
 
 			for (Object s : pipe.getActionStates()) {
 				if (s instanceof StateStationRequestItems) {
@@ -153,6 +152,10 @@ public class BoardRobotPicker extends RedstoneBoardRobot {
 			for (int i = 0; i < robot.getSizeInventory(); ++i) {
 				boolean found = false;
 				ItemStack stackToAdd = robot.getStackInSlot(i);
+
+				if (stackToAdd == null) {
+					continue;
+				}
 
 				for (Object s : pipe.getActionStates()) {
 					if (s instanceof StateStationRequestItems) {

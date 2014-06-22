@@ -30,7 +30,7 @@ public class AIRobotFetchItemStack extends AIRobot {
 	private IStackFilter filter;
 
 	public AIRobotFetchItemStack(EntityRobotBase iRobot, IStackFilter iFilter) {
-		super(iRobot);
+		super(iRobot, 0, 1);
 
 		filter = iFilter;
 	}

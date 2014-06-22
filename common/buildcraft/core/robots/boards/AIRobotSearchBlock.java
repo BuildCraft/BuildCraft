@@ -26,7 +26,7 @@ public class AIRobotSearchBlock extends AIRobot {
 	private IPathFound pathFound;
 
 	public AIRobotSearchBlock(EntityRobotBase iRobot, IPathFound iPathFound) {
-		super(iRobot, 2);
+		super(iRobot, 2, 1);
 
 		pathFound = iPathFound;
 	}

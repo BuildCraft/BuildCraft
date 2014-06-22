@@ -1,21 +1,23 @@
 
 package buildcraft.api.robots;
 
+import buildcraft.api.core.SafeTimeTracker;
+
 public class AIRobot {
 	public EntityRobotBase robot;
 
 	private AIRobot delegateAI;
 	private AIRobot parentAI;
 	private double energyCost;
+	private SafeTimeTracker updateTracker;
 
-	public AIRobot(EntityRobotBase iRobot, double iEnergyCost) {
+	public AIRobot(EntityRobotBase iRobot, double iEnergyCost, int updateLatency) {
 		robot = iRobot;
 		energyCost = iEnergyCost;
-	}
 
-	public AIRobot(EntityRobotBase iRobot) {
-		robot = iRobot;
-		energyCost = 0;
+		if (updateLatency > 1) {
+			updateTracker = new SafeTimeTracker(updateLatency, updateLatency / 5);
+		}
 	}
 
 	public void start() {
@@ -54,8 +56,10 @@ public class AIRobot {
 		if (delegateAI != null) {
 			delegateAI.cycle();
 		} else {
-			robot.setEnergy(robot.getEnergy() - energyCost);
-			update();
+			if (updateTracker == null || updateTracker.markTimeIfDelay(robot.worldObj)) {
+				robot.setEnergy(robot.getEnergy() - energyCost);
+				update();
+			}
 		}
 	}
 

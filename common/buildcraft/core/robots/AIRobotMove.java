@@ -17,7 +17,7 @@ public abstract class AIRobotMove extends AIRobot {
 	protected double dirX, dirY, dirZ;
 
 	public AIRobotMove(EntityRobotBase iRobot) {
-		super(iRobot, 1);
+		super(iRobot, 1, 1);
 	}
 
 	protected void setDestination(EntityRobotBase robot, float x, float y, float z) {
