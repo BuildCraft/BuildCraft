@@ -24,22 +24,21 @@ public class BuildCraftChannelHandler extends FMLIndexedMessageToMessageCodec<Bu
     public BuildCraftChannelHandler() {
 		addDiscriminator(0, PacketTileUpdate.class);
 		addDiscriminator(1, PacketTileState.class);
-		addDiscriminator(2, PacketCoordinates.class);
-		addDiscriminator(3, PacketFluidUpdate.class);
-		addDiscriminator(4, PacketNBT.class);
-		addDiscriminator(5, PacketPowerUpdate.class);
-		addDiscriminator(6, PacketSlotChange.class);
-		addDiscriminator(7, PacketGuiReturn.class);
-		addDiscriminator(8, PacketGuiWidget.class);
-		addDiscriminator(9, PacketPipeTransportItemStack.class);
-		addDiscriminator(10, PacketPipeTransportItemStackRequest.class);
-		addDiscriminator(11, PacketPipeTransportTraveler.class);
-		addDiscriminator(12, PacketUpdate.class);
-		addDiscriminator(13, PacketRPCTile.class);
-		addDiscriminator(14, PacketRPCPipe.class);
-		addDiscriminator(15, PacketRPCGui.class);
-		addDiscriminator(16, PacketRPCEntity.class);
-		addDiscriminator(17, PacketRPCStatic.class);
+		addDiscriminator(2, PacketFluidUpdate.class);
+		addDiscriminator(3, PacketNBT.class);
+		addDiscriminator(4, PacketPowerUpdate.class);
+		addDiscriminator(5, PacketSlotChange.class);
+		addDiscriminator(6, PacketGuiReturn.class);
+		addDiscriminator(7, PacketGuiWidget.class);
+		addDiscriminator(8, PacketPipeTransportItemStack.class);
+		addDiscriminator(9, PacketPipeTransportItemStackRequest.class);
+		addDiscriminator(10, PacketPipeTransportTraveler.class);
+		addDiscriminator(11, PacketUpdate.class);
+		addDiscriminator(12, PacketRPCTile.class);
+		addDiscriminator(13, PacketRPCPipe.class);
+		addDiscriminator(14, PacketRPCGui.class);
+		addDiscriminator(15, PacketRPCEntity.class);
+		addDiscriminator(16, PacketRPCStatic.class);
     }
 
     @Override
