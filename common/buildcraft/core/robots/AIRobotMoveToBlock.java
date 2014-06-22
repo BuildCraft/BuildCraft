@@ -95,4 +95,11 @@ public class AIRobotMoveToBlock extends AIRobotMove {
 			prevDistance = Double.MAX_VALUE;
 		}
 	}
+
+	@Override
+	public void end() {
+		if (pathSearchJob != null) {
+			pathSearchJob.terminate();
+		}
+	}
 }

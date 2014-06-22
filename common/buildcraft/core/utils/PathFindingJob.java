@@ -12,6 +12,8 @@ public class PathFindingJob extends Thread {
 
 	private PathFinding pathFinding;
 
+	private boolean stop = false;
+
 	public PathFindingJob(PathFinding iPathFinding) {
 		super("Path Finding");
 		pathFinding = iPathFinding;
@@ -19,9 +21,17 @@ public class PathFindingJob extends Thread {
 
 	@Override
 	public void run() {
-		while (!pathFinding.isDone()) {
+		while (!isTerminated() && !pathFinding.isDone()) {
 			pathFinding.iterate();
 		}
+	}
+
+	public synchronized void terminate() {
+		stop = true;
+	}
+
+	public synchronized boolean isTerminated() {
+		return stop;
 	}
 
 }

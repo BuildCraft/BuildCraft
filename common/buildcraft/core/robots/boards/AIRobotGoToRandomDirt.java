@@ -74,4 +74,10 @@ public class AIRobotGoToRandomDirt extends AIRobot {
 		}
 	}
 
+	@Override
+	public void end() {
+		if (pathFindingJob != null) {
+			pathFindingJob.terminate();
+		}
+	}
 }

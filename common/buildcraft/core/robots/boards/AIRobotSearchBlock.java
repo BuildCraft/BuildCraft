@@ -55,4 +55,11 @@ public class AIRobotSearchBlock extends AIRobot {
 			terminate();
 		}
 	}
+
+	@Override
+	public void end() {
+		if (blockScannerJob != null) {
+			blockScannerJob.terminate();
+		}
+	}
 }
