@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Set;
 
 import io.netty.buffer.ByteBuf;
+
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -40,6 +41,7 @@ import buildcraft.api.transport.IPipePluggable;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.core.ItemBuildCraft;
 import buildcraft.core.inventory.InvUtils;
+import buildcraft.core.network.NetworkIdRegistry;
 import buildcraft.core.utils.StringUtils;
 import buildcraft.transport.Gate;
 import buildcraft.transport.TileGenericPipe;
@@ -95,7 +97,7 @@ public class ItemGate extends ItemBuildCraft {
 			final int expansionsSize = expansions.length;
 			buf.writeInt(expansionsSize);
 			for (IGateExpansion expansion : expansions) {
-				buf.writeByte(GateExpansions.getServerExpansionID(expansion.getUniqueIdentifier()));
+				NetworkIdRegistry.write(buf, expansion.getUniqueIdentifier());
 			}
 		}
 
@@ -106,7 +108,7 @@ public class ItemGate extends ItemBuildCraft {
 			final int expansionsSize = buf.readInt();
 			expansions = new IGateExpansion[expansionsSize];
 			for (int i = 0; i < expansionsSize; i++) {
-				expansions[i] = GateExpansions.getExpansionClient(buf.readByte());
+				expansions[i] = GateExpansions.getExpansion(NetworkIdRegistry.read(buf));
 			}
 		}
 

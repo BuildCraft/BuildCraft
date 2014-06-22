@@ -6,8 +6,16 @@
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-package buildcraft.core.network.serializers;
+package buildcraft.core.network;
 
-public class SerializationContext {
-	
+import net.minecraft.entity.player.EntityPlayer;
+
+public abstract class PacketRPC extends BuildCraftPacket {
+
+	@Override
+	public final int getID() {
+		return PacketIds.RPC;
+	}
+
+	public abstract void call(EntityPlayer sender);
 }

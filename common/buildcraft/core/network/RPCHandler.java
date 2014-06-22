@@ -28,6 +28,8 @@ import net.minecraft.inventory.Container;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 
+import cpw.mods.fml.common.FMLCommonHandler;
+
 import buildcraft.BuildCraftCore;
 import buildcraft.api.core.JavaTools;
 import buildcraft.core.DefaultProps;
@@ -108,11 +110,24 @@ public final class RPCHandler {
 		methods = mappings.toArray(new MethodMapping [mappings.size()]);
 	}
 
-	public static void rpcServer(Object object, String method, Object... actuals) {
-		if (!handlers.containsKey(object.getClass().getName())) {
-			handlers.put(object.getClass().getName(), new RPCHandler(object.getClass()));
+	private static RPCHandler getHandler(Object object) {
+		Class<?> clas;
+
+		if (object instanceof Class<?>) {
+			clas = (Class<?>) object;
+		} else {
+			clas = object.getClass();
 		}
 
+		if (!handlers.containsKey(clas.getName())) {
+			handlers.put(clas.getName(), new RPCHandler(clas));
+		}
+
+		return handlers.get(clas.getName());
+
+	}
+
+	public static void rpcServer(Object object, String method, Object... actuals) {
 		BuildCraftPacket packet = createPacket(object, method, actuals);
 
 		if (packet != null) {
@@ -127,10 +142,6 @@ public final class RPCHandler {
 	}
 
 	public static void rpcPlayer(EntityPlayer player, Object object, String method, Object... actuals) {
-		if (!handlers.containsKey(object.getClass().getName())) {
-			handlers.put(object.getClass().getName(), new RPCHandler(object.getClass()));
-		}
-
 		BuildCraftPacket packet = createPacket(object, method, actuals);
 
 		if (packet != null) {
@@ -144,16 +155,12 @@ public final class RPCHandler {
 		}
 	}
 
-	public static void rpcBroadcastPlayers(World world, Object object, String method, Object... actuals) {
+	public static void rpcBroadcastWorldPlayers(World world, Object object, String method, Object... actuals) {
 		RPCHandler.rpcBroadcastPlayersAtDistance(world, object, method, DefaultProps.NETWORK_UPDATE_RANGE, actuals);
 	}
 
 	public static void rpcBroadcastPlayersAtDistance(World world, Object object, String method, int maxDistance,
 			Object... actuals) {
-		if (!handlers.containsKey(object.getClass().getName())) {
-			handlers.put(object.getClass().getName(), new RPCHandler(object.getClass()));
-		}
-
 		BuildCraftPacket packet = createPacket(object, method, actuals);
 
 		if (packet != null) {
@@ -183,15 +190,27 @@ public final class RPCHandler {
 		}
 	}
 
+	public static void rpcBroadcastAllPlayers(Object object, String method, Object... actuals) {
+		BuildCraftPacket packet = createPacket(object, method, actuals);
+
+		if (packet != null) {
+			for (Object o : FMLCommonHandler.instance().getMinecraftServerInstance().getConfigurationManager().playerEntityList) {
+				EntityPlayerMP player = (EntityPlayerMP) o;
+
+				BuildCraftCore.instance.sendToPlayer(player, packet);
+			}
+		}
+	}
+
+	public static void receiveStaticRPC(Class clas, RPCMessageInfo info, ByteBuf data) {
+		if (clas != null) {
+			getHandler(clas).internalRpcReceive(clas, info, data);
+		}
+	}
+
 	public static void receiveRPC(Object obj, RPCMessageInfo info, ByteBuf data) {
 		if (obj != null) {
-			if (!handlers.containsKey(obj.getClass().getName())) {
-				handlers.put(obj.getClass().getName(),
-						new RPCHandler(obj.getClass()));
-			}
-
-			handlers.get(obj.getClass().getName()).internalRpcReceive(obj,
-					info, data);
+			getHandler(obj.getClass()).internalRpcReceive(obj, info, data);
 		}
 	}
 
@@ -227,12 +246,13 @@ public final class RPCHandler {
 		BuildCraftPacket packet = null;
 
 		if (object instanceof Container) {
-			packet = handlers.get(object.getClass().getName()).createRCPPacketContainer(method, actuals);
+			packet = getHandler(object).createRCPPacketContainer(method, actuals);
 		} else if (object instanceof TileEntity) {
-			packet = handlers.get(object.getClass().getName())
-					.createRCPPacketTile((TileEntity) object, method, actuals);
+			packet = getHandler(object).createRCPPacketTile((TileEntity) object, method, actuals);
 		} else if (object instanceof Entity) {
-			packet = handlers.get(object.getClass().getName()).createRCPPacketEntity((Entity) object, method, actuals);
+			packet = getHandler(object).createRCPPacketEntity((Entity) object, method, actuals);
+		} else if (object instanceof Class<?>) {
+			packet = getHandler(object).createRCPPacketStatic((Class<?>) object, method, actuals);
 		}
 
 		return packet;
@@ -267,6 +287,10 @@ public final class RPCHandler {
 
 	private PacketRPCEntity createRCPPacketEntity(Entity entity, String method, Object... actuals) {
 		return new PacketRPCEntity(entity, getBytes(method, actuals));
+	}
+
+	private BuildCraftPacket createRCPPacketStatic(Class<?> clas, String method, Object[] actuals) {
+		return new PacketRPCStatic(clas, getBytes(method, actuals));
 	}
 
 	private void writeParameters(String method, ByteBuf data, Object... actuals)
@@ -321,8 +345,8 @@ public final class RPCHandler {
 			Object[] array = (Object[]) actual;
 			Class<?> componentType = formal.getComponentType();
 			data.writeInt(array.length);
-			for (int i = 0; i < array.length; i++) {
-				writePrimitive(data, componentType, array[i]);
+			for (Object element : array) {
+				writePrimitive(data, componentType, element);
 			}
 		} else {
 			return false;

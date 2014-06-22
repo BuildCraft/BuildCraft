@@ -10,7 +10,7 @@ package buildcraft.core.network.serializers;
 
 import io.netty.buffer.ByteBuf;
 
-import buildcraft.core.utils.Utils;
+import buildcraft.core.network.NetworkIdRegistry;
 
 public class SerializerObject extends ClassSerializer {
 
@@ -23,21 +23,8 @@ public class SerializerObject extends ClassSerializer {
 			data.writeBoolean(true);
 			Class<? extends Object> realClass = o.getClass();
 
-			ClassSerializer delegateMapping;
-
-			if (context.classToId.containsKey(realClass.getCanonicalName())) {
-				int index = context.classToId.get(realClass.getCanonicalName()) + 1;
-				data.writeByte(index);
-				delegateMapping = context.idToClass.get(index - 1);
-			} else {
-				int index = context.classToId.size() + 1;
-				delegateMapping = ClassMapping.get(realClass);
-				data.writeByte(index);
-				Utils.writeUTF(data, realClass.getCanonicalName());
-				context.classToId.put(realClass.getCanonicalName(),
-						context.classToId.size());
-				context.idToClass.add(delegateMapping);
-			}
+			NetworkIdRegistry.write(data, realClass.getCanonicalName());
+			ClassSerializer delegateMapping = ClassMapping.get(realClass);
 
 			if (delegateMapping instanceof ClassMapping) {
 				((ClassMapping) delegateMapping).writeClass(o, data, context);
@@ -54,20 +41,9 @@ public class SerializerObject extends ClassSerializer {
 		if (!data.readBoolean()) {
 			return null;
 		} else {
-			int index = data.readByte();
-
-			ClassSerializer delegateMapping;
-
-			if (context.idToClass.size() < index) {
-				String className = Utils.readUTF(data);
-
-				Class<?> cls = Class.forName(className);
-				delegateMapping = ClassMapping.get(cls);
-
-				context.idToClass.add(ClassMapping.get(cls));
-			} else {
-				delegateMapping = context.idToClass.get(index - 1);
-			}
+			String className = NetworkIdRegistry.read(data);
+			Class cls = Class.forName(className);
+			ClassSerializer delegateMapping = ClassMapping.get(cls);
 
 			if (delegateMapping instanceof ClassMapping) {
 				return ((ClassMapping) delegateMapping).readClass(o, data, context);

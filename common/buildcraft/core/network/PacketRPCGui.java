@@ -13,7 +13,7 @@ import io.netty.buffer.Unpooled;
 
 import net.minecraft.entity.player.EntityPlayer;
 
-public class PacketRPCGui extends BuildCraftPacket {
+public class PacketRPCGui extends PacketRPC {
 	byte [] contents;
 
 	public PacketRPCGui() {
@@ -24,16 +24,12 @@ public class PacketRPCGui extends BuildCraftPacket {
 	}
 
 	@Override
-	public int getID() {
-		return PacketIds.RPC_GUI;
-	}
-
-	@Override
 	public void readData(ByteBuf data) {
 		contents = new byte [data.readableBytes()];
 		data.readBytes(contents);
 	}
 
+	@Override
 	public void call (EntityPlayer sender) {
 		RPCMessageInfo info = new RPCMessageInfo();
 		info.sender = sender;

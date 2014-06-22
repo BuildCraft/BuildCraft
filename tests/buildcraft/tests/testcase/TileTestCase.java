@@ -87,7 +87,7 @@ public class TileTestCase extends TileEntity {
 			information = "test clear";
 		}
 
-		RPCHandler.rpcBroadcastPlayers(worldObj, this, "setInformation", information);
+		RPCHandler.rpcBroadcastWorldPlayers(worldObj, this, "setInformation", information);
 	}
 
 	@RPC(RPCSide.CLIENT)
@@ -154,7 +154,7 @@ public class TileTestCase extends TileEntity {
 	@RPC(RPCSide.SERVER)
 	private void setName(String name) {
 		testName = name;
-		RPCHandler.rpcBroadcastPlayers(worldObj, this, "setNameClient", name);
+		RPCHandler.rpcBroadcastWorldPlayers(worldObj, this, "setNameClient", name);
 	}
 
 	@RPC(RPCSide.CLIENT)

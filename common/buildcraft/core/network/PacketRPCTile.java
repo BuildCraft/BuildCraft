@@ -24,7 +24,7 @@ import net.minecraft.world.World;
 
 import net.minecraftforge.common.DimensionManager;
 
-public class PacketRPCTile extends BuildCraftPacket {
+public class PacketRPCTile extends PacketRPC {
 	public static int GLOBAL_ID = new Random(new Date().getTime()).nextInt();
 	public static HashMap<Integer, ByteBuf> bufferedPackets = new HashMap<Integer, ByteBuf>();
 	public TileEntity tile;
@@ -40,18 +40,13 @@ public class PacketRPCTile extends BuildCraftPacket {
 		id = GLOBAL_ID++;
 	}
 
-	public PacketRPCTile (TileEntity tile, byte [] bytes) {
+	public PacketRPCTile(TileEntity tile, byte[] bytes) {
 		this.tile = tile;
 		contents = bytes;
 	}
 
 	public void setTile (TileEntity aTile) {
 		tile = aTile;
-	}
-
-	@Override
-	public int getID() {
-		return PacketIds.RPC_TILE;
 	}
 
 	@Override
@@ -67,6 +62,7 @@ public class PacketRPCTile extends BuildCraftPacket {
 		data.readBytes(contents);
 	}
 
+	@Override
 	public void call (EntityPlayer sender) {
 		World world = null;
 

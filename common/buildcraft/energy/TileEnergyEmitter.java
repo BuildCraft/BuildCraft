@@ -94,7 +94,7 @@ public class TileEnergyEmitter extends TileBuildCraft {
 						addLaser(receiver.xCoord, receiver.yCoord,
 								receiver.zCoord);
 
-						RPCHandler.rpcBroadcastPlayers(worldObj, this, "addLaser",
+						RPCHandler.rpcBroadcastWorldPlayers(worldObj, this, "addLaser",
 								receiver.xCoord, receiver.yCoord,
 								receiver.zCoord);
 
@@ -111,7 +111,7 @@ public class TileEnergyEmitter extends TileBuildCraft {
 		accumulated++;
 
 		if (syncMJ.markTimeIfDelay(worldObj)) {
-			RPCHandler.rpcBroadcastPlayers(worldObj, this, "synchronizeMJ", mjAcc
+			RPCHandler.rpcBroadcastWorldPlayers(worldObj, this, "synchronizeMJ", mjAcc
 					/ accumulated);
 			mjAcc = 0;
 			accumulated = 0;
@@ -121,7 +121,7 @@ public class TileEnergyEmitter extends TileBuildCraft {
 			for (Target t : targets.values()) {
 				if (t.data.isVisible) {
 					t.data.isVisible = false;
-					RPCHandler.rpcBroadcastPlayers(worldObj, this, "disableLaser",
+					RPCHandler.rpcBroadcastWorldPlayers(worldObj, this, "disableLaser",
 							t.receiver.xCoord, t.receiver.yCoord,
 							t.receiver.zCoord);
 				}
@@ -139,7 +139,7 @@ public class TileEnergyEmitter extends TileBuildCraft {
 			for (Target t : targets.values()) {
 				if (!t.data.isVisible) {
 					t.data.isVisible = true;
-					RPCHandler.rpcBroadcastPlayers(worldObj, this, "enableLaser",
+					RPCHandler.rpcBroadcastWorldPlayers(worldObj, this, "enableLaser",
 							t.receiver.xCoord, t.receiver.yCoord,
 							t.receiver.zCoord);
 				}

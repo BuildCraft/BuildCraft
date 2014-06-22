@@ -82,6 +82,7 @@ import buildcraft.core.TickHandlerCoreClient;
 import buildcraft.core.Version;
 import buildcraft.core.network.BuildCraftChannelHandler;
 import buildcraft.core.network.EntityIds;
+import buildcraft.core.network.NetworkIdRegistry;
 import buildcraft.core.network.PacketHandler;
 import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.proxy.CoreProxy;
@@ -311,6 +312,8 @@ public class BuildCraftCore extends BuildCraftMod {
 
 		channels = NetworkRegistry.INSTANCE.newChannel
 				(DefaultProps.NET_CHANNEL_NAME + "-CORE", new BuildCraftChannelHandler(), new PacketHandler());
+
+		NetworkIdRegistry.instance = new NetworkIdRegistry();
 
 		StatementManager.registerTriggerProvider(new DefaultTriggerProvider());
 		StatementManager.registerActionProvider(new DefaultActionProvider());

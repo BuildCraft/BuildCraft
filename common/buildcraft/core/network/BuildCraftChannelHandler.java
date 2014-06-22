@@ -14,7 +14,6 @@ import io.netty.channel.ChannelHandlerContext;
 import cpw.mods.fml.common.network.FMLIndexedMessageToMessageCodec;
 
 import buildcraft.transport.network.PacketFluidUpdate;
-import buildcraft.transport.network.PacketGateExpansionMap;
 import buildcraft.transport.network.PacketPipeTransportItemStack;
 import buildcraft.transport.network.PacketPipeTransportItemStackRequest;
 import buildcraft.transport.network.PacketPipeTransportTraveler;
@@ -30,17 +29,17 @@ public class BuildCraftChannelHandler extends FMLIndexedMessageToMessageCodec<Bu
     	addDiscriminator(4, PacketNBT.class);
     	addDiscriminator(5, PacketPowerUpdate.class);
     	addDiscriminator(6, PacketSlotChange.class);
-    	addDiscriminator(7, PacketGateExpansionMap.class);
-    	addDiscriminator(8, PacketGuiReturn.class);
-    	addDiscriminator(9, PacketGuiWidget.class);
-    	addDiscriminator(10, PacketPipeTransportItemStack.class);
-    	addDiscriminator(11, PacketPipeTransportItemStackRequest.class);
-    	addDiscriminator(12, PacketPipeTransportTraveler.class);
-    	addDiscriminator(13, PacketUpdate.class);
-    	addDiscriminator(14, PacketRPCTile.class);
-    	addDiscriminator(15, PacketRPCPipe.class);
-		addDiscriminator(16, PacketRPCGui.class);
-		addDiscriminator(17, PacketRPCEntity.class);
+		addDiscriminator(7, PacketGuiReturn.class);
+		addDiscriminator(8, PacketGuiWidget.class);
+		addDiscriminator(9, PacketPipeTransportItemStack.class);
+		addDiscriminator(10, PacketPipeTransportItemStackRequest.class);
+		addDiscriminator(11, PacketPipeTransportTraveler.class);
+		addDiscriminator(12, PacketUpdate.class);
+		addDiscriminator(13, PacketRPCTile.class);
+		addDiscriminator(14, PacketRPCPipe.class);
+		addDiscriminator(15, PacketRPCGui.class);
+		addDiscriminator(16, PacketRPCEntity.class);
+		addDiscriminator(17, PacketRPCStatic.class);
     }
 
     @Override

@@ -124,7 +124,7 @@ public abstract class TileAbstractBuilder extends TileBuildCraft implements ITil
 
 	public void addBuildingItem(BuildingItem item) {
 		buildersInAction.add(item);
-		RPCHandler.rpcBroadcastPlayers(worldObj, this, "launchItem", item);
+		RPCHandler.rpcBroadcastWorldPlayers(worldObj, this, "launchItem", item);
 	}
 
 	public final double energyAvailable() {

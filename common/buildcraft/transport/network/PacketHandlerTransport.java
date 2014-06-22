@@ -61,10 +61,6 @@ public class PacketHandlerTransport extends SimpleChannelInboundHandler<BuildCra
 					// action will have happened already at read time
 					break;
 				}
-				case PacketIds.PIPE_GATE_EXPANSION_MAP: {
-					// action will have happened already at read time
-					break;
-				}
 
 				/**
 				 * SERVER SIDE *

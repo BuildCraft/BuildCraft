@@ -80,20 +80,8 @@ public class PacketHandler extends SimpleChannelInboundHandler<BuildCraftPacket>
 				break;
 			}
 
-			case PacketIds.RPC_TILE: {
-				((PacketRPCTile) packet).call(player);
-
-				break;
-			}
-
-			case PacketIds.RPC_GUI: {
-				((PacketRPCGui) packet).call(player);
-
-				break;
-			}
-
-			case PacketIds.RPC_ENTITY: {
-				((PacketRPCEntity) packet).call(player);
+			case PacketIds.RPC: {
+				((PacketRPC) packet).call(player);
 
 				break;
 			}

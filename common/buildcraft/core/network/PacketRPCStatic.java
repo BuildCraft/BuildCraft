@@ -11,47 +11,46 @@ package buildcraft.core.network;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 
-public class PacketRPCEntity extends PacketRPC {
+public class PacketRPCStatic extends PacketRPC {
 	private byte[] contents;
-	private Entity entity;
-	private int entityId;
+	private Class<?> clas;
 
-	public PacketRPCEntity() {
+	public PacketRPCStatic() {
 	}
 
-	public PacketRPCEntity(Entity iEntity, byte[] bytes) {
-		entity = iEntity;
+	public PacketRPCStatic(Class iClass, byte[] bytes) {
 		contents = bytes;
+		clas = iClass;
 	}
 
 	@Override
-	public void call(EntityPlayer sender) {
+	public void readData(ByteBuf data) {
+		contents = new byte [data.readableBytes()];
+		data.readBytes(contents);
+	}
+
+	@Override
+	public void call (EntityPlayer sender) {
 		RPCMessageInfo info = new RPCMessageInfo();
 		info.sender = sender;
 
 		ByteBuf completeData = Unpooled.buffer();
 		completeData.writeBytes(contents);
 
-		entity = sender.worldObj.getEntityByID(entityId);
+		String classId = NetworkIdRegistry.read(completeData);
 
-		if (entity != null) {
-			RPCHandler.receiveRPC(entity, info, completeData);
+		try {
+			RPCHandler.receiveStaticRPC(Class.forName(classId), info, completeData);
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
 		}
 	}
 
 	@Override
-	public void readData(ByteBuf data) {
-		entityId = data.readInt();
-		contents = new byte[data.readableBytes()];
-		data.readBytes(contents);
-	}
-
-	@Override
 	public void writeData(ByteBuf data) {
-		data.writeInt(entity.getEntityId());
+		NetworkIdRegistry.write(data, clas.getCanonicalName());
 		data.writeBytes(contents);
 	}
 }

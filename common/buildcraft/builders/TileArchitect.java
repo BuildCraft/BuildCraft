@@ -146,7 +146,7 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 	@RPC (RPCSide.SERVER)
 	public void handleClientSetName(String nameSet) {
 		name = nameSet;
-		RPCHandler.rpcBroadcastPlayers(worldObj, this, "setName", name);
+		RPCHandler.rpcBroadcastWorldPlayers(worldObj, this, "setName", name);
 	}
 
 	@RPC

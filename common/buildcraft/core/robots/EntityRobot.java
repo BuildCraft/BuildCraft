@@ -517,7 +517,7 @@ public class EntityRobot extends EntityRobotBase implements
 	@Override
 	public void setItemInUse(ItemStack stack) {
 		itemInUse = stack;
-		RPCHandler.rpcBroadcastPlayers(worldObj, this, "clientSetItemInUse", stack);
+		RPCHandler.rpcBroadcastWorldPlayers(worldObj, this, "clientSetItemInUse", stack);
 	}
 
 	@RPC(RPCSide.CLIENT)
@@ -567,7 +567,7 @@ public class EntityRobot extends EntityRobotBase implements
 
 	@Override
 	public void setItemActive(boolean isActive) {
-		RPCHandler.rpcBroadcastPlayers(worldObj, this, "rpcSetItemActive", isActive);
+		RPCHandler.rpcBroadcastWorldPlayers(worldObj, this, "rpcSetItemActive", isActive);
 	}
 
 	@RPC(RPCSide.CLIENT)

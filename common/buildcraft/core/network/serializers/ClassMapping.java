@@ -31,7 +31,7 @@ import net.minecraftforge.fluids.FluidStack;
 import buildcraft.api.core.JavaTools;
 import buildcraft.api.core.NetworkData;
 import buildcraft.core.network.INBTSerializable;
-import buildcraft.core.utils.Utils;
+import buildcraft.core.network.NetworkIdRegistry;
 
 /**
  * This class implements custom class mapping. There are three advantages in
@@ -255,24 +255,8 @@ public class ClassMapping extends ClassSerializer {
 		if (realClass.equals(this.mappedClass)) {
 			data.writeByte(0);
 		} else {
-			ClassMapping delegateMapping;
-
-			if (context.classToId.containsKey(realClass.getCanonicalName())) {
-				int index = context.classToId.get(realClass.getCanonicalName()) + 1;
-				data.writeByte(index);
-				delegateMapping = (ClassMapping) context.idToClass.get(index - 1);
-			} else {
-				int index = context.classToId.size() + 1;
-				delegateMapping = (ClassMapping) get(realClass);
-
-				data.writeByte(index);
-				Utils.writeUTF(data, realClass.getCanonicalName());
-				context.classToId.put(realClass.getCanonicalName(),
-						context.classToId.size());
-				context.idToClass.add(delegateMapping);
-			}
-
-			delegateMapping.writeClass(obj, data, context);
+			NetworkIdRegistry.write(data, realClass.getCanonicalName());
+			ClassMapping delegateMapping = (ClassMapping) get(realClass);
 
 			return;
 		}
@@ -323,27 +307,15 @@ public class ClassMapping extends ClassSerializer {
 		// {false} exit
 		// [int] what is the object real class?
 		// {0} the same as the declared class
-		// {1-x} a different one
-		// [string] if the number is not yet registered, the name of the
-		// class
+		// {1-x} the network id of the class
 		// [bytes] the actual contents
 
 		int index = data.readByte();
 
 		if (index != 0) {
-			ClassMapping delegateMapping;
-
-			if (context.idToClass.size() < index) {
-				String className = Utils.readUTF(data);
-
-				Class cls = Class.forName(className);
-
-				delegateMapping = (ClassMapping) get(cls);
-
-				context.idToClass.add(get(cls));
-			} else {
-				delegateMapping = (ClassMapping) context.idToClass.get(index - 1);
-			}
+			String className = NetworkIdRegistry.read(data);
+			Class cls = Class.forName(className);
+			ClassMapping delegateMapping = (ClassMapping) get(cls);
 
 			return delegateMapping.readClass(obj, data, context);
 		}
@@ -452,7 +424,7 @@ public class ClassMapping extends ClassSerializer {
 
 				for (Enum<?> element : arr) {
 					data.writeBoolean(element != null);
-					
+
 					if (element != null) {
 						data.writeByte(element.ordinal());
 					}
