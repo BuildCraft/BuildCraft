@@ -31,6 +31,8 @@ public class PathFinding {
 	private BlockIndex start;
 	private BlockIndex end;
 	private IPathFound pathFound;
+	private float maxDistance = -1;
+	private float sqrMaxDistance = -1;
 
 	private HashMap<BlockIndex, Node> openList = new HashMap<BlockIndex, PathFinding.Node>();
 	private HashMap<BlockIndex, Node> closedList = new HashMap<BlockIndex, PathFinding.Node>();
@@ -56,7 +58,7 @@ public class PathFinding {
 		nextIteration = startNode;
 	}
 
-	public PathFinding(World iWorld, BlockIndex iStart, IPathFound iPathFound) {
+	public PathFinding(World iWorld, BlockIndex iStart, IPathFound iPathFound, float iMaxDistance) {
 		world = iWorld;
 		start = iStart;
 		pathFound = iPathFound;
@@ -69,6 +71,8 @@ public class PathFinding {
 		startNode.index = iStart;
 		openList.put(start, startNode);
 		nextIteration = startNode;
+		maxDistance = iMaxDistance;
+		sqrMaxDistance = maxDistance * maxDistance;
 	}
 
 	public void iterate() {
@@ -336,6 +340,27 @@ public class PathFinding {
 		if (resultMoves[1][2][2] == 0) {
 			resultMoves[0][2][2] = 0;
 			resultMoves[2][2][2] = 0;
+		}
+
+		if (maxDistance > 0) {
+			for (int dx = -1; dx <= +1; ++dx) {
+				for (int dy = -1; dy <= +1; ++dy) {
+					for (int dz = -1; dz <= +1; ++dz) {
+						int x = from.index.x + dx;
+						int y = from.index.y + dy;
+						int z = from.index.z + dz;
+
+						float distX = x - start.x;
+						float distY = y - start.y;
+						float distZ = z - start.z;
+						float sqrDist = distX * distX + distY * distY + distZ * distZ;
+
+						if (sqrDist > sqrMaxDistance) {
+							resultMoves[dx + 1][dy + 1][dz + 1] = 0;
+						}
+					}
+				}
+			}
 		}
 
 		return resultMoves;
