@@ -253,10 +253,12 @@ public class ClassMapping extends ClassSerializer {
 		Class realClass = obj.getClass();
 
 		if (realClass.equals(this.mappedClass)) {
-			data.writeByte(0);
+			data.writeBoolean(true);
 		} else {
+			data.writeBoolean(false);
 			NetworkIdRegistry.write(data, realClass.getCanonicalName());
 			ClassMapping delegateMapping = (ClassMapping) get(realClass);
+			delegateMapping.writeClass(obj, data, context);
 
 			return;
 		}
@@ -303,16 +305,12 @@ public class ClassMapping extends ClassSerializer {
 		Object obj = objI;
 
 		// The data layout for an object is the following:
-		// [boolean] does the object exist (e.g. non-null)
-		// {false} exit
-		// [int] what is the object real class?
-		// {0} the same as the declared class
-		// {1-x} the network id of the class
+		// [boolean] what is the object real class?
+		// {false} the same as the declared class
+		// {true} the network id of the class
 		// [bytes] the actual contents
 
-		int index = data.readByte();
-
-		if (index != 0) {
+		if (!data.readBoolean()) {
 			String className = NetworkIdRegistry.read(data);
 			Class cls = Class.forName(className);
 			ClassMapping delegateMapping = (ClassMapping) get(cls);
