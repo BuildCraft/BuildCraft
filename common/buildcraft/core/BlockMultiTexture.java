@@ -27,6 +27,7 @@ import buildcraft.core.render.RenderBlockMultiTexture;
 public abstract class BlockMultiTexture extends BlockBuildCraft {
 
 	private static Map<String, IIcon> iconMap = new HashMap<String, IIcon>();
+	public String modId = "buildcraft";
 
 	public BlockMultiTexture(Material material, CreativeTabBuildCraft tab) {
 		super(material, tab);
@@ -116,7 +117,7 @@ public abstract class BlockMultiTexture extends BlockBuildCraft {
 	public void registerBlockIcons(IIconRegister register) {
 		for (int i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
 			String name = getIconName(i);
-			iconMap.put(name, register.registerIcon("buildcraft:" + name));
+			iconMap.put(name, register.registerIcon(modid + ":" + name));
 		}
 	}
 
