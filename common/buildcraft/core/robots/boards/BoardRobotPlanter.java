@@ -28,7 +28,7 @@ public class BoardRobotPlanter extends RedstoneBoardRobot {
 	@Override
 	public void update() {
 		if (robot.getItemInUse() == null) {
-			startDelegateAI(new AIRobotFetchItemStack(robot, new OreStackFilter("treeSapling")));
+			startDelegateAI(new AIRobotFetchAndEquipItemStack(robot, new OreStackFilter("treeSapling")));
 		} else {
 			startDelegateAI(new AIRobotGoToRandomDirt(robot, 100));
 		}

@@ -65,7 +65,11 @@ public class ItemRobot extends ItemBuildCraft {
 		NBTTagCompound cpt = NBTUtils.getItemData(stack).getCompoundTag("board");
 
 		if (cpt.hasKey("id") && !"<unknown>".equals(cpt.getString("id"))) {
-			RedstoneBoardRegistry.instance.getRedstoneBoard(cpt).addInformation(stack, player, list, advanced);
+			RedstoneBoardNBT<?> nbt = RedstoneBoardRegistry.instance.getRedstoneBoard(cpt);
+
+			if (nbt != null) {
+				nbt.addInformation(stack, player, list, advanced);
+			}
 		}
 	}
 

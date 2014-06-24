@@ -19,17 +19,13 @@ import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.inventory.ITransactor;
 import buildcraft.core.inventory.Transactor;
 import buildcraft.core.inventory.filters.IStackFilter;
-import buildcraft.core.robots.AIRobotLookForStation;
 import buildcraft.core.robots.DockingStation;
-import buildcraft.core.robots.IStationFilter;
-import buildcraft.silicon.statements.StateStationProvideItems;
-import buildcraft.transport.Pipe;
 
-public class AIRobotFetchItemStack extends AIRobot {
+public class AIRobotFetchAndEquipItemStack extends AIRobot {
 
 	private IStackFilter filter;
 
-	public AIRobotFetchItemStack(EntityRobotBase iRobot, IStackFilter iFilter) {
+	public AIRobotFetchAndEquipItemStack(EntityRobotBase iRobot, IStackFilter iFilter) {
 		super(iRobot, 0, 1);
 
 		filter = iFilter;
@@ -37,7 +33,7 @@ public class AIRobotFetchItemStack extends AIRobot {
 
 	@Override
 	public void update() {
-		startDelegateAI(new AIRobotLookForStation(robot, new StationFilter()));
+		startDelegateAI(new AIRobotGotoItemStack(robot, filter));
 	}
 
 	@Override
@@ -68,45 +64,5 @@ public class AIRobotFetchItemStack extends AIRobot {
 				terminate();
 			}
 		}
-	}
-
-	private class StationFilter implements IStationFilter {
-
-		@Override
-		public boolean matches(DockingStation station) {
-			boolean found = false;
-
-			Pipe pipe = station.pipe.pipe;
-
-			for (Object s : pipe.getActionStates()) {
-				if (s instanceof StateStationProvideItems) {
-					if (((StateStationProvideItems) s).matches(filter)) {
-						found = true;
-						break;
-					}
-				}
-			}
-
-			if (!found) {
-				return false;
-			}
-
-			for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
-				TileEntity nearbyTile = robot.worldObj.getTileEntity(station.x() + dir.offsetX, station.y()
-						+ dir.offsetY, station.z()
-						+ dir.offsetZ);
-
-				if (nearbyTile != null && nearbyTile instanceof IInventory) {
-					ITransactor trans = Transactor.getTransactorFor(nearbyTile);
-
-					if (trans.remove(filter, dir.getOpposite(), false) != null) {
-						return true;
-					}
-				}
-			}
-
-			return false;
-		}
-
 	}
 }
