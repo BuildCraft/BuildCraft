@@ -24,11 +24,11 @@ import buildcraft.core.robots.IStationFilter;
 import buildcraft.silicon.statements.StateStationProvideItems;
 import buildcraft.transport.Pipe;
 
-public class AIRobotGotoItemStack extends AIRobot {
+public class AIRobotGotoStationToLoad extends AIRobot {
 
 	private IStackFilter filter;
 
-	public AIRobotGotoItemStack(EntityRobotBase iRobot, IStackFilter iFilter) {
+	public AIRobotGotoStationToLoad(EntityRobotBase iRobot, IStackFilter iFilter) {
 		super(iRobot, 0, 1);
 
 		filter = iFilter;

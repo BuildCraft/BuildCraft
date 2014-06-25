@@ -8,20 +8,11 @@
  */
 package buildcraft.core.robots.boards;
 
-import net.minecraft.inventory.IInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
-
-import net.minecraftforge.common.util.ForgeDirection;
-
 import buildcraft.api.boards.RedstoneBoardRobot;
 import buildcraft.api.boards.RedstoneBoardRobotNBT;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
-import buildcraft.core.inventory.ITransactor;
-import buildcraft.core.inventory.Transactor;
 import buildcraft.core.inventory.filters.PassThroughStackFilter;
-import buildcraft.core.robots.DockingStation;
 
 public class BoardRobotCarrier extends RedstoneBoardRobot {
 
@@ -45,51 +36,22 @@ public class BoardRobotCarrier extends RedstoneBoardRobot {
 		}
 
 		if (!containItems) {
-			startDelegateAI(new AIRobotGotoItemStack(robot, new PassThroughStackFilter()));
+			startDelegateAI(new AIRobotGotoStationToLoad(robot, new PassThroughStackFilter()));
+		} else {
+			startDelegateAI(new AIRobotGoToStationToUnload(robot));
 		}
 	}
 
 	@Override
 	public void delegateAIEnded(AIRobot ai) {
-		if (ai instanceof AIRobotGotoItemStack) {
-			load();
+		if (ai instanceof AIRobotGotoStationToLoad) {
+			startDelegateAI(new AIRobotLoad(robot));
+		} else if (ai instanceof AIRobotGoToStationToUnload) {
+			startDelegateAI(new AIRobotUnload(robot));
 		}
 	}
 
-	private void load() {
-		if (robot.getDockingStation() != null) {
-			DockingStation station = (DockingStation) robot.getDockingStation();
 
-			ItemStack itemFound = null;
 
-			for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
-				TileEntity nearbyTile = robot.worldObj.getTileEntity(station.pipe.xCoord + dir.offsetX,
-						station.pipe.yCoord
-								+ dir.offsetY, station.pipe.zCoord + dir.offsetZ);
-
-				if (nearbyTile != null && nearbyTile instanceof IInventory) {
-					IInventory tileInventory = (IInventory) nearbyTile;
-					ITransactor robotTransactor = Transactor.getTransactorFor(robot);
-
-					for (int i = 0; i < robot.getSizeInventory(); ++i) {
-						if (robot.getStackInSlot(i) == null) {
-							for (int j = 0; j < robot.getSizeInventory(); ++j) {
-								ItemStack stack = tileInventory.getStackInSlot(j);
-
-								if (tileInventory.getStackInSlot(j) != null) {
-									tileInventory.setInventorySlotContents(j, null);
-									robot.setInventorySlotContents(i, stack);
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-
-	private void unload() {
-
-	}
 
 }

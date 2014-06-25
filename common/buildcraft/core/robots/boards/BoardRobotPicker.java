@@ -11,12 +11,8 @@ package buildcraft.core.robots.boards;
 import java.util.HashSet;
 import java.util.Set;
 
-import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
-
-import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.api.boards.IBoardParameter;
 import buildcraft.api.boards.IBoardParameterStack;
@@ -26,15 +22,9 @@ import buildcraft.api.boards.RedstoneBoardRobot;
 import buildcraft.api.boards.RedstoneBoardRobotNBT;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
-import buildcraft.core.inventory.ITransactor;
-import buildcraft.core.inventory.Transactor;
 import buildcraft.core.inventory.filters.ArrayStackFilter;
 import buildcraft.core.inventory.filters.IStackFilter;
 import buildcraft.core.robots.AIRobotLookForStation;
-import buildcraft.core.robots.DockingStation;
-import buildcraft.core.robots.IStationFilter;
-import buildcraft.silicon.statements.StateStationRequestItems;
-import buildcraft.transport.Pipe;
 
 public class BoardRobotPicker extends RedstoneBoardRobot {
 
@@ -83,116 +73,15 @@ public class BoardRobotPicker extends RedstoneBoardRobot {
 				startDelegateAI(new AIRobotFetchItem(robot, range, stackFilter));
 			} else {
 				// otherwise, let's deliver items
-				startDelegateAI(new AIRobotLookForStation(robot, new StationInventory()));
+				startDelegateAI(new AIRobotGoToStationToUnload(robot));
 			}
 		} else if (ai instanceof AIRobotLookForStation) {
-			emptyContainerInInventory();
-		}
-	}
-
-	private void emptyContainerInInventory() {
-		DockingStation station = (DockingStation) robot.getDockingStation();
-
-		if (station == null) {
-			return;
-		}
-
-		Pipe pipe = station.pipe.pipe;
-
-		for (int i = 0; i < robot.getSizeInventory(); ++i) {
-			boolean found = false;
-			ItemStack stackToAdd = robot.getStackInSlot(i);
-
-			if (stackToAdd == null) {
-				continue;
-			}
-
-			for (Object s : pipe.getActionStates()) {
-				if (s instanceof StateStationRequestItems) {
-					if (((StateStationRequestItems) s).matches(new ArrayStackFilter(stackToAdd))) {
-						found = true;
-						break;
-					}
-				}
-			}
-
-			if (!found) {
-				// This stack is not accepted by any of the action states
-				// currently active on this pipe - look for another one
-				continue;
-			}
-
-			for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
-				TileEntity nearbyTile = robot.worldObj.getTileEntity(station.x() + dir.offsetX, station.y()
-						+ dir.offsetY, station.z()
-						+ dir.offsetZ);
-
-				if (nearbyTile != null && nearbyTile instanceof IInventory) {
-					ITransactor trans = Transactor.getTransactorFor(nearbyTile);
-
-					if (stackToAdd != null) {
-						ItemStack added = trans.add(stackToAdd, dir, true);
-						robot.decrStackSize(i, added.stackSize);
-					}
-				}
-			}
+			startDelegateAI(new AIRobotUnload(robot));
 		}
 	}
 
 	@Override
 	public RedstoneBoardRobotNBT getNBTHandler() {
 		return BoardRobotPickerNBT.instance;
-	}
-
-	private class StationInventory implements IStationFilter {
-		@Override
-		public boolean matches(DockingStation station) {
-			Pipe pipe = station.pipe.pipe;
-
-			for (int i = 0; i < robot.getSizeInventory(); ++i) {
-				boolean found = false;
-				ItemStack stackToAdd = robot.getStackInSlot(i);
-
-				if (stackToAdd == null) {
-					continue;
-				}
-
-				for (Object s : pipe.getActionStates()) {
-					if (s instanceof StateStationRequestItems) {
-						if (((StateStationRequestItems) s).matches(new ArrayStackFilter(stackToAdd))) {
-							found = true;
-							break;
-						}
-					}
-				}
-
-				if (!found) {
-					// This stack is not accepted by any of the action states
-					// currently active on this pipe - look for another one
-					continue;
-				}
-
-				for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
-					TileEntity nearbyTile = robot.worldObj.getTileEntity(station.x() + dir.offsetX, station.y()
-							+ dir.offsetY, station.z()
-							+ dir.offsetZ);
-
-					if (nearbyTile != null && nearbyTile instanceof IInventory) {
-						ITransactor trans = Transactor.getTransactorFor(nearbyTile);
-
-						if (stackToAdd != null && trans.add(stackToAdd, dir, false) != null) {
-							// We can add the item to this inventory, go to this
-							// station.
-
-							return true;
-						}
-
-					}
-				}
-
-			}
-
-			return false;
-		}
 	}
 }

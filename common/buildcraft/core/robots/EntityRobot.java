@@ -73,7 +73,7 @@ public class EntityRobot extends EntityRobotBase implements
 	public long lastUpdateTime = 0;
 
 	private boolean needsUpdate = false;
-	private ItemStack[] inv = new ItemStack[6];
+	private ItemStack[] inv = new ItemStack[4];
 	private String boardID;
 	private ResourceLocation texture;
 	private DockingStation currentDockingStation;

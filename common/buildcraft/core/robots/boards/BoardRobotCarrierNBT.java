@@ -34,7 +34,7 @@ public final class BoardRobotCarrierNBT extends RedstoneBoardRobotNBT {
 
 	@Override
 	public RedstoneBoardRobot create(NBTTagCompound nbt, EntityRobotBase robot) {
-		return new BoardRobotPlanter(robot);
+		return new BoardRobotCarrier(robot);
 	}
 
 	@Override
