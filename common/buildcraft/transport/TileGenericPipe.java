@@ -174,8 +174,12 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 					if (nbt.hasKey("facadeBlocks[" + i + "]")) {
 						// 5.0.x
 						Block block = (Block) Block.blockRegistry.getObjectById(nbt.getInteger("facadeBlocks[" + i + "]"));
-						int metadata = nbt.getInteger("facadeMeta[" + i + "]");
-						pluggable = new ItemFacade.FacadePluggable(new ItemFacade.FacadeState[]{ItemFacade.FacadeState.create(block, metadata)});
+						int blockId = nbt.getInteger("facadeBlocks[" + i + "]");
+						
+						if (blockId != 0) {
+							int metadata = nbt.getInteger("facadeMeta[" + i + "]");
+							pluggable = new ItemFacade.FacadePluggable(new ItemFacade.FacadeState[]{ItemFacade.FacadeState.create(block, metadata)});
+						}
 					} else if (nbt.hasKey("facadeBlocksStr[" + i + "][0]")) {
 						// 6.0.x
 						ItemFacade.FacadeState mainState = ItemFacade.FacadeState.create(
