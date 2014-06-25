@@ -17,7 +17,7 @@ public class PassThroughStackFilter implements IStackFilter {
 
 	@Override
 	public boolean matches(ItemStack stack) {
-		return (stack != null && stack.stackSize > 0);
+		return stack != null && stack.stackSize > 0;
 	}
 
 }
