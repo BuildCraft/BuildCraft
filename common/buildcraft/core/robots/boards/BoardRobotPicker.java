@@ -24,7 +24,10 @@ import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.inventory.filters.ArrayStackFilter;
 import buildcraft.core.inventory.filters.IStackFilter;
+import buildcraft.core.robots.AIRobotFetchItem;
+import buildcraft.core.robots.AIRobotGoToStationToUnload;
 import buildcraft.core.robots.AIRobotLookForStation;
+import buildcraft.core.robots.AIRobotUnload;
 
 public class BoardRobotPicker extends RedstoneBoardRobot {
 

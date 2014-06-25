@@ -6,7 +6,7 @@
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-package buildcraft.core.robots.boards;
+package buildcraft.core.robots;
 
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
@@ -14,22 +14,29 @@ import net.minecraft.tileentity.TileEntity;
 
 import net.minecraftforge.common.util.ForgeDirection;
 
-import buildcraft.api.core.IInvSlot;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.inventory.ITransactor;
-import buildcraft.core.inventory.InventoryIterator;
 import buildcraft.core.inventory.Transactor;
-import buildcraft.core.robots.DockingStation;
+import buildcraft.core.inventory.filters.IStackFilter;
 
-public class AIRobotLoad extends AIRobot {
+public class AIRobotFetchAndEquipItemStack extends AIRobot {
 
-	public AIRobotLoad(EntityRobotBase iRobot) {
+	private IStackFilter filter;
+
+	public AIRobotFetchAndEquipItemStack(EntityRobotBase iRobot, IStackFilter iFilter) {
 		super(iRobot, 0, 1);
+
+		filter = iFilter;
 	}
 
 	@Override
-	public void start() {
+	public void update() {
+		startDelegateAI(new AIRobotGotoStationToLoad(robot, filter));
+	}
+
+	@Override
+	public void delegateAIEnded(AIRobot ai) {
 		if (robot.getDockingStation() != null) {
 			DockingStation station = (DockingStation) robot.getDockingStation();
 
@@ -41,26 +48,20 @@ public class AIRobotLoad extends AIRobot {
 								+ dir.offsetY, station.pipe.zCoord + dir.offsetZ);
 
 				if (nearbyTile != null && nearbyTile instanceof IInventory) {
-					IInventory tileInventory = (IInventory) nearbyTile;
-					ITransactor robotTransactor = Transactor.getTransactorFor(robot);
+					ITransactor trans = Transactor.getTransactorFor(nearbyTile);
 
-					for (int i = 0; i < robot.getSizeInventory(); ++i) {
-						if (robot.getStackInSlot(i) == null) {
-							for (IInvSlot slot : InventoryIterator.getIterable(tileInventory, dir.getOpposite())) {
-								ItemStack stack = slot.getStackInSlot();
+					itemFound = trans.remove(filter, dir.getOpposite(), true);
 
-								if (stack != null) {
-									slot.setStackInSlot(null);
-									robot.setInventorySlotContents(i, stack);
-									break;
-								}
-							}
-						}
+					if (itemFound != null) {
+						break;
 					}
 				}
 			}
-		}
 
-		terminate();
+			if (itemFound != null) {
+				robot.setItemInUse(itemFound);
+				terminate();
+			}
+		}
 	}
 }

@@ -6,7 +6,7 @@
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-package buildcraft.core.robots.boards;
+package buildcraft.core.robots;
 
 import java.util.LinkedList;
 
@@ -18,7 +18,6 @@ import net.minecraft.block.BlockGrass;
 import buildcraft.api.core.BlockIndex;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
-import buildcraft.core.robots.AIRobotMoveToBlock;
 import buildcraft.core.utils.PathFinding;
 import buildcraft.core.utils.PathFindingJob;
 

@@ -6,7 +6,7 @@
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-package buildcraft.core.robots.boards;
+package buildcraft.core.robots;
 
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
@@ -19,9 +19,6 @@ import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.inventory.ITransactor;
 import buildcraft.core.inventory.Transactor;
 import buildcraft.core.inventory.filters.ArrayStackFilter;
-import buildcraft.core.robots.AIRobotLookForStation;
-import buildcraft.core.robots.DockingStation;
-import buildcraft.core.robots.IStationFilter;
 import buildcraft.silicon.statements.StateStationRequestItems;
 import buildcraft.transport.Pipe;
 

@@ -13,6 +13,9 @@ import buildcraft.api.boards.RedstoneBoardRobotNBT;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.inventory.filters.OreStackFilter;
+import buildcraft.core.robots.AIRobotFetchAndEquipItemStack;
+import buildcraft.core.robots.AIRobotGoToRandomDirt;
+import buildcraft.core.robots.AIRobotPlantSaple;
 
 public class BoardRobotPlanter extends RedstoneBoardRobot {
 

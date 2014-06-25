@@ -6,9 +6,10 @@
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-package buildcraft.core.robots.boards;
+package buildcraft.core.robots;
 
 import net.minecraft.inventory.IInventory;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 
 import net.minecraftforge.common.util.ForgeDirection;
@@ -17,44 +18,37 @@ import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.inventory.ITransactor;
 import buildcraft.core.inventory.Transactor;
-import buildcraft.core.inventory.filters.IStackFilter;
-import buildcraft.core.robots.AIRobotLookForStation;
-import buildcraft.core.robots.DockingStation;
-import buildcraft.core.robots.IStationFilter;
-import buildcraft.silicon.statements.StateStationProvideItems;
+import buildcraft.core.inventory.filters.ArrayStackFilter;
+import buildcraft.silicon.statements.StateStationRequestItems;
 import buildcraft.transport.Pipe;
 
-public class AIRobotGotoStationToLoad extends AIRobot {
+public class AIRobotUnload extends AIRobot {
 
-	private IStackFilter filter;
-
-	public AIRobotGotoStationToLoad(EntityRobotBase iRobot, IStackFilter iFilter) {
+	public AIRobotUnload(EntityRobotBase iRobot) {
 		super(iRobot, 0, 1);
-
-		filter = iFilter;
 	}
 
 	@Override
-	public void update() {
-		startDelegateAI(new AIRobotLookForStation(robot, new StationFilter()));
-	}
+	public void start() {
+		DockingStation station = (DockingStation) robot.getDockingStation();
 
-	@Override
-	public void delegateAIEnded(AIRobot ai) {
-		terminate();
-	}
+		if (station == null) {
+			return;
+		}
 
-	private class StationFilter implements IStationFilter {
+		Pipe pipe = station.pipe.pipe;
 
-		@Override
-		public boolean matches(DockingStation station) {
+		for (int i = 0; i < robot.getSizeInventory(); ++i) {
 			boolean found = false;
+			ItemStack stackToAdd = robot.getStackInSlot(i);
 
-			Pipe pipe = station.pipe.pipe;
+			if (stackToAdd == null) {
+				continue;
+			}
 
 			for (Object s : pipe.getActionStates()) {
-				if (s instanceof StateStationProvideItems) {
-					if (((StateStationProvideItems) s).matches(filter)) {
+				if (s instanceof StateStationRequestItems) {
+					if (((StateStationRequestItems) s).matches(new ArrayStackFilter(stackToAdd))) {
 						found = true;
 						break;
 					}
@@ -62,7 +56,9 @@ public class AIRobotGotoStationToLoad extends AIRobot {
 			}
 
 			if (!found) {
-				return false;
+				// This stack is not accepted by any of the action states
+				// currently active on this pipe - look for another one
+				continue;
 			}
 
 			for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
@@ -73,14 +69,14 @@ public class AIRobotGotoStationToLoad extends AIRobot {
 				if (nearbyTile != null && nearbyTile instanceof IInventory) {
 					ITransactor trans = Transactor.getTransactorFor(nearbyTile);
 
-					if (trans.remove(filter, dir.getOpposite(), false) != null) {
-						return true;
+					if (stackToAdd != null) {
+						ItemStack added = trans.add(stackToAdd, dir, true);
+						robot.decrStackSize(i, added.stackSize);
 					}
 				}
 			}
-
-			return false;
 		}
 
+		terminate();
 	}
 }

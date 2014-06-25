@@ -6,10 +6,9 @@
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-package buildcraft.core.robots.boards;
+package buildcraft.core.robots;
 
 import net.minecraft.inventory.IInventory;
-import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 
 import net.minecraftforge.common.util.ForgeDirection;
@@ -18,38 +17,41 @@ import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.inventory.ITransactor;
 import buildcraft.core.inventory.Transactor;
-import buildcraft.core.inventory.filters.ArrayStackFilter;
-import buildcraft.core.robots.DockingStation;
-import buildcraft.silicon.statements.StateStationRequestItems;
+import buildcraft.core.inventory.filters.IStackFilter;
+import buildcraft.silicon.statements.StateStationProvideItems;
 import buildcraft.transport.Pipe;
 
-public class AIRobotUnload extends AIRobot {
+public class AIRobotGotoStationToLoad extends AIRobot {
 
-	public AIRobotUnload(EntityRobotBase iRobot) {
+	private IStackFilter filter;
+
+	public AIRobotGotoStationToLoad(EntityRobotBase iRobot, IStackFilter iFilter) {
 		super(iRobot, 0, 1);
+
+		filter = iFilter;
 	}
 
 	@Override
-	public void start() {
-		DockingStation station = (DockingStation) robot.getDockingStation();
+	public void update() {
+		startDelegateAI(new AIRobotLookForStation(robot, new StationFilter()));
+	}
 
-		if (station == null) {
-			return;
-		}
+	@Override
+	public void delegateAIEnded(AIRobot ai) {
+		terminate();
+	}
 
-		Pipe pipe = station.pipe.pipe;
+	private class StationFilter implements IStationFilter {
 
-		for (int i = 0; i < robot.getSizeInventory(); ++i) {
+		@Override
+		public boolean matches(DockingStation station) {
 			boolean found = false;
-			ItemStack stackToAdd = robot.getStackInSlot(i);
 
-			if (stackToAdd == null) {
-				continue;
-			}
+			Pipe pipe = station.pipe.pipe;
 
 			for (Object s : pipe.getActionStates()) {
-				if (s instanceof StateStationRequestItems) {
-					if (((StateStationRequestItems) s).matches(new ArrayStackFilter(stackToAdd))) {
+				if (s instanceof StateStationProvideItems) {
+					if (((StateStationProvideItems) s).matches(filter)) {
 						found = true;
 						break;
 					}
@@ -57,9 +59,7 @@ public class AIRobotUnload extends AIRobot {
 			}
 
 			if (!found) {
-				// This stack is not accepted by any of the action states
-				// currently active on this pipe - look for another one
-				continue;
+				return false;
 			}
 
 			for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
@@ -70,14 +70,14 @@ public class AIRobotUnload extends AIRobot {
 				if (nearbyTile != null && nearbyTile instanceof IInventory) {
 					ITransactor trans = Transactor.getTransactorFor(nearbyTile);
 
-					if (stackToAdd != null) {
-						ItemStack added = trans.add(stackToAdd, dir, true);
-						robot.decrStackSize(i, added.stackSize);
+					if (trans.remove(filter, dir.getOpposite(), false) != null) {
+						return true;
 					}
 				}
 			}
+
+			return false;
 		}
 
-		terminate();
 	}
 }

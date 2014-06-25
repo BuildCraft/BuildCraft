@@ -12,10 +12,14 @@ import java.util.Date;
 
 import io.netty.buffer.ByteBuf;
 
+import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.EntityDamageSource;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 
@@ -567,7 +571,10 @@ public class EntityRobot extends EntityRobotBase implements
 
 	@Override
 	public void setItemActive(boolean isActive) {
-		RPCHandler.rpcBroadcastWorldPlayers(worldObj, this, "rpcSetItemActive", isActive);
+		if (isActive != itemActive) {
+			itemActive = isActive;
+			RPCHandler.rpcBroadcastWorldPlayers(worldObj, this, "rpcSetItemActive", isActive);
+		}
 	}
 
 	@RPC(RPCSide.CLIENT)
@@ -623,6 +630,26 @@ public class EntityRobot extends EntityRobotBase implements
 
 	public void overrideAI(AIRobot ai) {
 		mainAI.setOverridingAI(ai);
+	}
+
+	public void attackTargetEntityWithCurrentItem(Entity par1Entity) {
+		ItemStack stack = itemInUse;
+
+		if (par1Entity.canAttackWithItem()) {
+			if (!par1Entity.hitByEntity(this)) {
+				this.setLastAttacker(par1Entity);
+				boolean flag2 = par1Entity.attackEntityFrom(new EntityDamageSource("robot", this), 2.0F);
+
+				EnchantmentHelper.func_151385_b(this, par1Entity);
+				ItemStack itemstack = itemInUse;
+				Object object = par1Entity;
+
+				if (itemstack != null && object instanceof EntityLivingBase) {
+					itemstack.getItem().hitEntity(itemstack, (EntityLivingBase) object, this);
+				}
+
+			}
+		}
 	}
 
 }

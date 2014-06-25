@@ -6,7 +6,7 @@
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-package buildcraft.core.robots.boards;
+package buildcraft.core.robots;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
@@ -17,7 +17,7 @@ import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.inventory.TransactorSimple;
 import buildcraft.core.inventory.filters.IStackFilter;
-import buildcraft.core.robots.AIRobotMoveToBlock;
+import buildcraft.core.robots.boards.BoardRobotPicker;
 
 public class AIRobotFetchItem extends AIRobot {
 

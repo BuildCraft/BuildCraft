@@ -16,6 +16,9 @@ import buildcraft.api.core.BlockIndex;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.inventory.filters.IStackFilter;
+import buildcraft.core.robots.AIRobotBreakWithTool;
+import buildcraft.core.robots.AIRobotFetchAndEquipItemStack;
+import buildcraft.core.robots.AIRobotSearchBlock;
 import buildcraft.core.utils.IPathFound;
 
 public abstract class BoardRobotGenericBreakBlock extends RedstoneBoardRobot {

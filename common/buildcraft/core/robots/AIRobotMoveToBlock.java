@@ -100,6 +100,9 @@ public class AIRobotMoveToBlock extends AIRobotMove {
 	public void end() {
 		if (pathSearchJob != null) {
 			pathSearchJob.terminate();
+			robot.motionX = 0;
+			robot.motionY = 0;
+			robot.motionZ = 0;
 		}
 	}
 }
