@@ -33,6 +33,7 @@ import buildcraft.api.boards.RedstoneBoardNBT;
 import buildcraft.api.boards.RedstoneBoardRegistry;
 import buildcraft.api.boards.RedstoneBoardRobot;
 import buildcraft.api.boards.RedstoneBoardRobotNBT;
+import buildcraft.api.core.IBox;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.DockingStationRegistry;
@@ -83,6 +84,9 @@ public class EntityRobot extends EntityRobotBase implements
 	private DockingStation currentDockingStation;
 
 	private double mjStored;
+
+	private IBox areaToWork;
+	private long areaResetDate;
 
 	public EntityRobot(World world, NBTTagCompound boardNBT) {
 		this(world);
@@ -652,4 +656,14 @@ public class EntityRobot extends EntityRobotBase implements
 		}
 	}
 
+	@Override
+	public void workInArea(IBox box) {
+		areaToWork = box;
+		areaResetDate = worldObj.getTotalWorldTime() + 5;
+	}
+
+	@Override
+	public IBox getAreaToWork() {
+		return areaToWork;
+	}
 }

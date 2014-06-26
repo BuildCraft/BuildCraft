@@ -40,6 +40,7 @@ import buildcraft.core.Version;
 import buildcraft.core.network.BuildCraftChannelHandler;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.robots.RobotIntegrationRecipe;
+import buildcraft.core.robots.boards.BoardRobotBomberNBT;
 import buildcraft.core.robots.boards.BoardRobotCarrierNBT;
 import buildcraft.core.robots.boards.BoardRobotKnightNBT;
 import buildcraft.core.robots.boards.BoardRobotLeaveCutterNBT;
@@ -66,6 +67,7 @@ import buildcraft.silicon.recipes.AdvancedFacadeRecipe;
 import buildcraft.silicon.recipes.GateExpansionRecipe;
 import buildcraft.silicon.recipes.GateLogicSwapRecipe;
 import buildcraft.silicon.statements.ActionRobotGoToStation;
+import buildcraft.silicon.statements.ActionRobotWorkInArea;
 import buildcraft.silicon.statements.ActionStationProvideItems;
 import buildcraft.silicon.statements.ActionStationRequestItems;
 import buildcraft.silicon.statements.RobotsActionProvider;
@@ -92,6 +94,7 @@ public class BuildCraftSilicon extends BuildCraftMod {
 	public static Item robotItem;
 
 	public static BCAction actionRobotGotoStation = new ActionRobotGoToStation();
+	public static BCAction actionRobotWorkInArea = new ActionRobotWorkInArea();
 	public static BCAction actionStationRequestItems = new ActionStationRequestItems();
 	public static BCAction actionStationProvideItems = new ActionStationProvideItems();
 
@@ -132,6 +135,7 @@ public class BuildCraftSilicon extends BuildCraftMod {
 		RedstoneBoardRegistry.instance.registerBoardClass(BoardRobotPlanterNBT.instance, 5);
 		RedstoneBoardRegistry.instance.registerBoardClass(BoardRobotLeaveCutterNBT.instance, 5);
 		RedstoneBoardRegistry.instance.registerBoardClass(BoardRobotKnightNBT.instance, 1);
+		RedstoneBoardRegistry.instance.registerBoardClass(BoardRobotBomberNBT.instance, 1);
 
 		StatementManager.registerActionProvider(new RobotsActionProvider());
 	}

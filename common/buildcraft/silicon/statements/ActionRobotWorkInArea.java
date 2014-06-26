@@ -14,28 +14,23 @@ import net.minecraft.util.IIcon;
 
 import net.minecraftforge.common.util.ForgeDirection;
 
-import buildcraft.api.core.BlockIndex;
+import buildcraft.api.core.IBox;
 import buildcraft.api.gates.ActionParameterItemStack;
-import buildcraft.api.gates.IAction;
 import buildcraft.api.gates.IActionParameter;
 import buildcraft.api.gates.IGate;
-import buildcraft.api.robots.AIRobot;
-import buildcraft.api.robots.DockingStationRegistry;
 import buildcraft.core.ItemMapLocation;
-import buildcraft.core.robots.AIRobotGoAndLinkToDock;
 import buildcraft.core.robots.DockingStation;
-import buildcraft.core.robots.EntityRobot;
 import buildcraft.core.triggers.BCAction;
 import buildcraft.core.utils.StringUtils;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.TileGenericPipe;
 
-public class ActionRobotGoToStation extends BCAction {
+public class ActionRobotWorkInArea extends BCAction {
 
 	private IIcon icon;
 
-	public ActionRobotGoToStation() {
-		super("buildcraft:robot.goto_station");
+	public ActionRobotWorkInArea() {
+		super("buildcraft:robot.work_in_area");
 	}
 
 	@Override
@@ -45,21 +40,32 @@ public class ActionRobotGoToStation extends BCAction {
 
 	@Override
 	public String getDescription() {
-		return StringUtils.localize("gate.action.robot.goto_station");
+		return StringUtils.localize("gate.action.robot.work_in_area");
 	}
 
 	@Override
 	public void registerIcons(IIconRegister iconRegister) {
-		icon = iconRegister.registerIcon("buildcraft:triggers/action_robot_goto_station");
-	}
-
-	@Override
-	public IAction rotateLeft() {
-		return this;
+		icon = iconRegister.registerIcon("buildcraft:triggers/action_robot_in_area");
 	}
 
 	@Override
 	public void actionActivate(IGate gate, IActionParameter[] parameters) {
+		if (parameters[0] == null) {
+			return;
+		}
+
+		ItemStack stack = ((ActionParameterItemStack) parameters[0]).getItemStackToDraw();
+
+		if (!(stack.getItem() instanceof ItemMapLocation)) {
+			return;
+		}
+
+		IBox box = ItemMapLocation.getBlox(stack);
+
+		if (box == null) {
+			return;
+		}
+
 		Pipe<?> pipe = (Pipe<?>) gate.getPipe();
 		TileGenericPipe tile = pipe.container;
 
@@ -67,35 +73,7 @@ public class ActionRobotGoToStation extends BCAction {
 			DockingStation station = tile.getStation(d);
 
 			if (station != null && station.linked() != null) {
-				EntityRobot robot = (EntityRobot) station.linked();
-				AIRobot ai = robot.getOverridingAI();
-
-				if (ai != null) {
-					continue;
-				}
-
-				DockingStation newStation = station;
-
-				if (parameters[0] != null) {
-					ActionParameterItemStack stackParam = (ActionParameterItemStack) parameters[0];
-					ItemStack item = stackParam.getItemStackToDraw();
-
-					if (item.getItem() instanceof ItemMapLocation) {
-						BlockIndex index = ItemMapLocation.getBlockIndex(item);
-
-						if (index != null) {
-							ForgeDirection side = ItemMapLocation.getSide(item);
-							DockingStation paramStation = (DockingStation) DockingStationRegistry.getStation(index.x,
-									index.y, index.z, side);
-
-							if (paramStation != null) {
-								newStation = paramStation;
-							}
-						}
-					}
-				}
-
-				robot.overrideAI(new AIRobotGoAndLinkToDock(robot, newStation));
+				station.linked().workInArea(box);
 			}
 		}
 	}
@@ -109,5 +87,4 @@ public class ActionRobotGoToStation extends BCAction {
 	public IActionParameter createParameter(int index) {
 		return new ActionParameterItemStack();
 	}
-
 }

@@ -20,11 +20,16 @@ import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.inventory.ITransactor;
 import buildcraft.core.inventory.InventoryIterator;
 import buildcraft.core.inventory.Transactor;
+import buildcraft.core.inventory.filters.IStackFilter;
 
 public class AIRobotLoad extends AIRobot {
 
-	public AIRobotLoad(EntityRobotBase iRobot) {
+	private IStackFilter filter;
+
+	public AIRobotLoad(EntityRobotBase iRobot, IStackFilter iFilter) {
 		super(iRobot, 0, 1);
+
+		filter = iFilter;
 	}
 
 	@Override
@@ -48,7 +53,7 @@ public class AIRobotLoad extends AIRobot {
 							for (IInvSlot slot : InventoryIterator.getIterable(tileInventory, dir.getOpposite())) {
 								ItemStack stack = slot.getStackInSlot();
 
-								if (stack != null) {
+								if (stack != null && filter.matches(stack)) {
 									slot.setStackInSlot(null);
 									robot.setInventorySlotContents(i, stack);
 									break;

@@ -8,29 +8,33 @@
  */
 package buildcraft.core.robots.boards;
 
+import net.minecraft.init.Blocks;
+import net.minecraft.item.ItemStack;
+
 import buildcraft.api.boards.RedstoneBoardRobot;
 import buildcraft.api.boards.RedstoneBoardRobotNBT;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
-import buildcraft.core.inventory.filters.PassThroughStackFilter;
-import buildcraft.core.robots.AIRobotGoToStationToUnload;
+import buildcraft.core.inventory.filters.ArrayStackFilter;
+import buildcraft.core.inventory.filters.IStackFilter;
 import buildcraft.core.robots.AIRobotGotoStationToLoad;
 import buildcraft.core.robots.AIRobotLoad;
-import buildcraft.core.robots.AIRobotUnload;
 
-public class BoardRobotCarrier extends RedstoneBoardRobot {
+public class BoardRobotBomber extends RedstoneBoardRobot {
 
-	public BoardRobotCarrier(EntityRobotBase iRobot) {
+	private static final IStackFilter TNT_FILTER = new ArrayStackFilter(new ItemStack(Blocks.tnt));
+
+	public BoardRobotBomber(EntityRobotBase iRobot) {
 		super(iRobot, 0);
 	}
 
 	@Override
 	public RedstoneBoardRobotNBT getNBTHandler() {
-		return BoardRobotCarrierNBT.instance;
+		return BoardRobotBomberNBT.instance;
 	}
 
 	@Override
-	public void update() {
+	public final void update() {
 		boolean containItems = false;
 
 		for (int i = 0; i < robot.getSizeInventory(); ++i) {
@@ -40,22 +44,14 @@ public class BoardRobotCarrier extends RedstoneBoardRobot {
 		}
 
 		if (!containItems) {
-			startDelegateAI(new AIRobotGotoStationToLoad(robot, new PassThroughStackFilter()));
-		} else {
-			startDelegateAI(new AIRobotGoToStationToUnload(robot));
+			startDelegateAI(new AIRobotGotoStationToLoad(robot, TNT_FILTER));
 		}
 	}
 
 	@Override
 	public void delegateAIEnded(AIRobot ai) {
 		if (ai instanceof AIRobotGotoStationToLoad) {
-			startDelegateAI(new AIRobotLoad(robot, new PassThroughStackFilter()));
-		} else if (ai instanceof AIRobotGoToStationToUnload) {
-			startDelegateAI(new AIRobotUnload(robot));
+			startDelegateAI(new AIRobotLoad(robot, TNT_FILTER));
 		}
 	}
-
-
-
-
 }

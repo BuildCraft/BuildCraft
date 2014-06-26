@@ -43,6 +43,7 @@ public class RobotsActionProvider implements IActionProvider {
 		}
 
 		result.add(BuildCraftSilicon.actionRobotGotoStation);
+		result.add(BuildCraftSilicon.actionRobotWorkInArea);
 
 		for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
 			if (((TileGenericPipe) pipe).getTile(dir) instanceof IInventory) {

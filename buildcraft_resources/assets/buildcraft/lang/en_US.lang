@@ -5,6 +5,8 @@ buildcraft.boardRobotLumberjack=Lumberjack
 buildcraft.boardRobotPlanter=Planter
 buildcraft.boardRobotLeaveCutter=Leave Cutter
 buildcraft.boardRobotCarrier=Carrier
+buildcraft.boardRobotBomber=Bomber
+buildcraft.boardRobotKnight=Knight
 buildcraft.boardDetail.parameters=Parameters
 buildcraft.boardDetail.range=Range
 
@@ -55,6 +57,7 @@ gate.action.robot.goto_station=Goto Station
 gate.action.pipe.close=Close Pipe
 gate.action.station.provide_items=Provide Items
 gate.action.station.request_items=Request Items
+gate.action.robot.work_in_area=Work in Area
 
 gate.expansion.fader=Redstone Fader
 gate.expansion.pulsar=Autarchic Pulsar

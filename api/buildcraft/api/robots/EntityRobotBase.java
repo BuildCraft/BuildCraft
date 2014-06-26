@@ -14,6 +14,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
 import buildcraft.api.boards.RedstoneBoardRobot;
+import buildcraft.api.core.IBox;
 
 public abstract class EntityRobotBase extends EntityLiving implements IInventory {
 
@@ -50,5 +51,9 @@ public abstract class EntityRobotBase extends EntityLiving implements IInventory
 	public abstract boolean reserveStation(IDockingStation station);
 
 	public abstract boolean linkToStation(IDockingStation station);
+
+	public abstract void workInArea(IBox box);
+
+	public abstract IBox getAreaToWork();
 
 }

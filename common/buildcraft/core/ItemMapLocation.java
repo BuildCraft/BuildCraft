@@ -27,6 +27,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.api.boards.RedstoneBoardRegistry;
 import buildcraft.api.core.BlockIndex;
+import buildcraft.api.core.IBox;
 import buildcraft.builders.TileMarker;
 import buildcraft.builders.TilePathMarker;
 import buildcraft.core.utils.NBTUtils;
@@ -180,6 +181,23 @@ public class ItemMapLocation extends ItemBuildCraft {
 			int z = cpt.getInteger("z");
 
 			return new BlockIndex(x, y, z);
+		} else {
+			return null;
+		}
+	}
+
+	public static IBox getBlox(ItemStack item) {
+		NBTTagCompound cpt = NBTUtils.getItemData(item);
+
+		if (cpt.hasKey("kind") && cpt.getByte("kind") == 1) {
+			int xMin = cpt.getInteger("xMin");
+			int yMin = cpt.getInteger("yMin");
+			int zMin = cpt.getInteger("zMin");
+			int xMax = cpt.getInteger("xMax");
+			int yMax = cpt.getInteger("yMax");
+			int zMax = cpt.getInteger("zMax");
+
+			return new Box(xMin, yMin, zMin, xMax, yMax, zMax);
 		} else {
 			return null;
 		}

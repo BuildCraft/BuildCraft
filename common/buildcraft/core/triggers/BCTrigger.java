@@ -51,4 +51,9 @@ public abstract class BCTrigger extends BCStatement implements ITrigger {
 	public ITriggerParameter createParameter(int index) {
 		return new TriggerParameterItemStack();
 	}
+
+	@Override
+	public ITrigger rotateLeft() {
+		return this;
+	}
 }
