@@ -22,10 +22,10 @@ import buildcraft.core.inventory.filters.ArrayStackFilter;
 import buildcraft.silicon.statements.StateStationRequestItems;
 import buildcraft.transport.Pipe;
 
-public class AIRobotGoToStationToUnload extends AIRobot {
+public class AIRobotGotoStationToUnload extends AIRobot {
 
 
-	public AIRobotGoToStationToUnload(EntityRobotBase iRobot) {
+	public AIRobotGotoStationToUnload(EntityRobotBase iRobot) {
 		super(iRobot, 0, 1);
 
 	}

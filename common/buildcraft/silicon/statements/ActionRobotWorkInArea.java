@@ -71,6 +71,11 @@ public class ActionRobotWorkInArea extends BCAction {
 	}
 
 	@Override
+	public int minParameters() {
+		return 1;
+	}
+
+	@Override
 	public int maxParameters() {
 		return 1;
 	}

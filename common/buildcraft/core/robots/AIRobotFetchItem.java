@@ -75,7 +75,7 @@ public class AIRobotFetchItem extends AIRobot {
 		if (target != null) {
 			BoardRobotPicker.targettedItems.add(target.getEntityId());
 
-			startDelegateAI(new AIRobotMoveToBlock(robot, (int) Math.floor(target.posX),
+			startDelegateAI(new AIRobotGotoBlock(robot, (int) Math.floor(target.posX),
 					(int) Math.floor(target.posY), (int) Math.floor(target.posZ)));
 
 		} else {

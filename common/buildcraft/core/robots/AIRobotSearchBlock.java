@@ -43,14 +43,14 @@ public class AIRobotSearchBlock extends AIRobot {
 			if (blockScanner.isDone()) {
 				LinkedList<BlockIndex> path = blockScanner.getResult();
 				blockFound = path.removeLast();
-				startDelegateAI(new AIRobotMoveToBlock(robot, path));
+				startDelegateAI(new AIRobotGotoBlock(robot, path));
 			}
 		}
 	}
 
 	@Override
 	public void delegateAIEnded(AIRobot ai) {
-		if (ai instanceof AIRobotMoveToBlock) {
+		if (ai instanceof AIRobotGotoBlock) {
 			terminate();
 		}
 	}

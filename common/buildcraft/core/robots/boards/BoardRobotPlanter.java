@@ -8,14 +8,20 @@
  */
 package buildcraft.core.robots.boards;
 
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockDirt;
+import net.minecraft.block.BlockGrass;
+import net.minecraft.world.World;
+
 import buildcraft.api.boards.RedstoneBoardRobot;
 import buildcraft.api.boards.RedstoneBoardRobotNBT;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.inventory.filters.OreStackFilter;
 import buildcraft.core.robots.AIRobotFetchAndEquipItemStack;
-import buildcraft.core.robots.AIRobotGoToRandomDirt;
+import buildcraft.core.robots.AIRobotGotoRandomGroundBlock;
 import buildcraft.core.robots.AIRobotPlantSaple;
+import buildcraft.core.robots.IBlockFilter;
 
 public class BoardRobotPlanter extends RedstoneBoardRobot {
 
@@ -33,14 +39,21 @@ public class BoardRobotPlanter extends RedstoneBoardRobot {
 		if (robot.getItemInUse() == null) {
 			startDelegateAI(new AIRobotFetchAndEquipItemStack(robot, new OreStackFilter("treeSapling")));
 		} else {
-			startDelegateAI(new AIRobotGoToRandomDirt(robot, 100));
+			startDelegateAI(new AIRobotGotoRandomGroundBlock(robot, 100, new IBlockFilter() {
+				@Override
+				public boolean matches(World world, int x, int y, int z) {
+					Block b = robot.worldObj.getBlock(x, y, z);
+
+					return b instanceof BlockDirt || b instanceof BlockGrass;
+				}
+			}, robot.getAreaToWork()));
 		}
 	}
 
 	@Override
 	public void delegateAIEnded(AIRobot ai) {
-		if (ai instanceof AIRobotGoToRandomDirt) {
-			startDelegateAI(new AIRobotPlantSaple(robot, ((AIRobotGoToRandomDirt) ai).dirtFound));
+		if (ai instanceof AIRobotGotoRandomGroundBlock) {
+			startDelegateAI(new AIRobotPlantSaple(robot, ((AIRobotGotoRandomGroundBlock) ai).blockFound));
 		}
 	}
 

@@ -57,7 +57,7 @@ public class AIRobotLookForStation extends AIRobot {
 
 		if (potentialStation != null) {
 			targetStation = potentialStation;
-			startDelegateAI(new AIRobotGoToDock(robot, potentialStation));
+			startDelegateAI(new AIRobotGotoDock(robot, potentialStation));
 		} else {
 			terminate();
 		}

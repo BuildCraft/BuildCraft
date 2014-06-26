@@ -11,11 +11,11 @@ package buildcraft.core.robots;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
 
-public class AIRobotGoToDock extends AIRobot {
+public class AIRobotGotoDock extends AIRobot {
 
 	private DockingStation station;
 
-	public AIRobotGoToDock(EntityRobotBase iRobot, DockingStation iStation) {
+	public AIRobotGotoDock(EntityRobotBase iRobot, DockingStation iStation) {
 		super(iRobot, 0, 1);
 
 		station = iStation;
@@ -27,7 +27,7 @@ public class AIRobotGoToDock extends AIRobot {
 			terminate();
 		} else {
 			if (robot.reserveStation(station)) {
-				startDelegateAI(new AIRobotMoveToBlock(robot,
+				startDelegateAI(new AIRobotGotoBlock(robot,
 						station.pipe.xCoord + station.side.offsetX * 2,
 						station.pipe.yCoord + station.side.offsetY * 2,
 						station.pipe.zCoord + station.side.offsetZ * 2));
@@ -39,7 +39,7 @@ public class AIRobotGoToDock extends AIRobot {
 
 	@Override
 	public void delegateAIEnded(AIRobot ai) {
-		if (ai instanceof AIRobotMoveToBlock) {
+		if (ai instanceof AIRobotGotoBlock) {
 			startDelegateAI(new AIRobotStraightMoveTo(robot,
 					station.pipe.xCoord + 0.5F + station.side.offsetX * 0.5F,
 					station.pipe.yCoord + 0.5F + station.side.offsetY * 0.5F,

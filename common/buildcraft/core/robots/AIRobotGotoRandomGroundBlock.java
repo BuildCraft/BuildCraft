@@ -10,65 +10,58 @@ package buildcraft.core.robots;
 
 import java.util.LinkedList;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockAir;
-import net.minecraft.block.BlockDirt;
-import net.minecraft.block.BlockGrass;
-
 import buildcraft.api.core.BlockIndex;
+import buildcraft.api.core.IBox;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.utils.PathFinding;
 import buildcraft.core.utils.PathFindingJob;
 
-public class AIRobotGoToRandomDirt extends AIRobot {
+public class AIRobotGotoRandomGroundBlock extends AIRobot {
 
-	public BlockIndex dirtFound;
+	public BlockIndex blockFound;
 
 	private int range;
 	private PathFinding pathFinding;
 	private PathFindingJob pathFindingJob;
+	private IBlockFilter filter;
+	private IBox area;
 
-	public AIRobotGoToRandomDirt(EntityRobotBase iRobot, int iRange) {
+	public AIRobotGotoRandomGroundBlock(EntityRobotBase iRobot, int iRange, IBlockFilter iFilter, IBox iArea) {
 		super(iRobot, 2, 1);
 
 		range = iRange;
+		filter = iFilter;
+		area = iArea;
 	}
 
 	@Override
 	public void update() {
 		if (pathFindingJob == null) {
-			double r = robot.worldObj.rand.nextFloat() * range;
-			double a = robot.worldObj.rand.nextFloat() * 2.0 * Math.PI;
-
-			int x = (int) (Math.cos(a) * r + Math.floor(robot.posX));
-			int z = (int) (Math.sin(a) * r + Math.floor(robot.posZ));
-
-			for (int y = robot.worldObj.getHeight(); y >= 0; --y) {
-				Block b = robot.worldObj.getBlock(x, y, z);
-
-				if (b instanceof BlockDirt || b instanceof BlockGrass) {
-					dirtFound = new BlockIndex(x, y, z);
-					pathFinding = new PathFinding(robot.worldObj, new BlockIndex(robot), dirtFound);
-					pathFindingJob = new PathFindingJob(pathFinding);
-					pathFindingJob.start();
-					return;
-				} else if (!(b instanceof BlockAir)) {
-					return;
-				}
-			}
+			startDelegateAI(new AIRobotFindRandomGroundBlock(robot, range, filter, area));
 		} else {
 			if (!pathFindingJob.isAlive()) {
 				LinkedList<BlockIndex> path = pathFinding.getResult();
 				path.removeLast();
-				startDelegateAI(new AIRobotMoveToBlock(robot, path));
+				startDelegateAI(new AIRobotGotoBlock(robot, path));
 			}
 		}
 	}
 
 	@Override
 	public void delegateAIEnded(AIRobot ai) {
-		if (ai instanceof AIRobotMoveToBlock) {
+		if (ai instanceof AIRobotFindRandomGroundBlock) {
+			AIRobotFindRandomGroundBlock aiFind = (AIRobotFindRandomGroundBlock) ai;
+
+			if (aiFind.blockFound == null) {
+				terminate();
+			}
+
+			blockFound = aiFind.blockFound;
+			pathFinding = new PathFinding(robot.worldObj, new BlockIndex(robot), blockFound);
+			pathFindingJob = new PathFindingJob(pathFinding);
+			pathFindingJob.start();
+		} else if (ai instanceof AIRobotGotoBlock) {
 			terminate();
 		}
 	}

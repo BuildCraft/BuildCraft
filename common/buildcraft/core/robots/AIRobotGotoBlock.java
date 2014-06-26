@@ -15,7 +15,7 @@ import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.utils.PathFinding;
 import buildcraft.core.utils.PathFindingJob;
 
-public class AIRobotMoveToBlock extends AIRobotMove {
+public class AIRobotGotoBlock extends AIRobotGoto {
 
 	private PathFinding pathSearch;
 	private PathFindingJob pathSearchJob;
@@ -23,14 +23,14 @@ public class AIRobotMoveToBlock extends AIRobotMove {
 	private double prevDistance = Double.MAX_VALUE;
 	private float finalX, finalY, finalZ;
 
-	public AIRobotMoveToBlock(EntityRobotBase robot, int x, int y, int z) {
+	public AIRobotGotoBlock(EntityRobotBase robot, int x, int y, int z) {
 		super(robot);
 		finalX = x;
 		finalY = y;
 		finalZ = z;
 	}
 
-	public AIRobotMoveToBlock(EntityRobotBase robot, LinkedList<BlockIndex> iPath) {
+	public AIRobotGotoBlock(EntityRobotBase robot, LinkedList<BlockIndex> iPath) {
 		super(robot);
 		path = iPath;
 		finalX = path.getLast().x;

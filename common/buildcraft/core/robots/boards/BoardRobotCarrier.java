@@ -13,7 +13,7 @@ import buildcraft.api.boards.RedstoneBoardRobotNBT;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.inventory.filters.PassThroughStackFilter;
-import buildcraft.core.robots.AIRobotGoToStationToUnload;
+import buildcraft.core.robots.AIRobotGotoStationToUnload;
 import buildcraft.core.robots.AIRobotGotoStationToLoad;
 import buildcraft.core.robots.AIRobotLoad;
 import buildcraft.core.robots.AIRobotUnload;
@@ -42,7 +42,7 @@ public class BoardRobotCarrier extends RedstoneBoardRobot {
 		if (!containItems) {
 			startDelegateAI(new AIRobotGotoStationToLoad(robot, new PassThroughStackFilter()));
 		} else {
-			startDelegateAI(new AIRobotGoToStationToUnload(robot));
+			startDelegateAI(new AIRobotGotoStationToUnload(robot));
 		}
 	}
 
@@ -50,7 +50,7 @@ public class BoardRobotCarrier extends RedstoneBoardRobot {
 	public void delegateAIEnded(AIRobot ai) {
 		if (ai instanceof AIRobotGotoStationToLoad) {
 			startDelegateAI(new AIRobotLoad(robot, new PassThroughStackFilter()));
-		} else if (ai instanceof AIRobotGoToStationToUnload) {
+		} else if (ai instanceof AIRobotGotoStationToUnload) {
 			startDelegateAI(new AIRobotUnload(robot));
 		}
 	}

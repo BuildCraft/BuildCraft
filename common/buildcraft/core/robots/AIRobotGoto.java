@@ -11,12 +11,12 @@ package buildcraft.core.robots;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
 
-public abstract class AIRobotMove extends AIRobot {
+public abstract class AIRobotGoto extends AIRobot {
 
 	protected float nextX, nextY, nextZ;
 	protected double dirX, dirY, dirZ;
 
-	public AIRobotMove(EntityRobotBase iRobot) {
+	public AIRobotGoto(EntityRobotBase iRobot) {
 		super(iRobot, 1, 1);
 	}
 
