@@ -12,7 +12,6 @@ import net.minecraft.tileentity.TileEntity;
 
 import net.minecraftforge.common.util.ForgeDirection;
 
-import buildcraft.api.gates.ITrigger;
 import buildcraft.api.gates.ITriggerParameter;
 import buildcraft.core.IMachine;
 import buildcraft.core.utils.StringUtils;
@@ -54,10 +53,5 @@ public class TriggerMachine extends BCTrigger {
 		} else {
 			return StatementIconProvider.Trigger_Machine_Inactive;
 		}
-	}
-
-	@Override
-	public ITrigger rotateLeft() {
-		return this;
 	}
 }

@@ -9,7 +9,6 @@
 package buildcraft.core.triggers;
 
 import buildcraft.api.gates.IGate;
-import buildcraft.api.gates.ITrigger;
 import buildcraft.api.gates.ITriggerParameter;
 import buildcraft.core.utils.StringUtils;
 import buildcraft.transport.Pipe;
@@ -40,10 +39,5 @@ public class TriggerRedstoneInput extends BCTrigger {
 	@Override
 	public int getIconIndex() {
 		return active ? StatementIconProvider.Trigger_RedstoneInput_Active : StatementIconProvider.Trigger_RedstoneInput_Inactive;
-	}
-
-	@Override
-	public ITrigger rotateLeft() {
-		return this;
 	}
 }

@@ -11,16 +11,13 @@ package buildcraft.transport.triggers;
 import java.util.Locale;
 
 import net.minecraft.client.renderer.texture.IIconRegister;
-import net.minecraft.util.IIcon;
 
-import buildcraft.api.gates.IAction;
 import buildcraft.core.triggers.BCAction;
 import buildcraft.transport.pipes.PipePowerIron.PowerMode;
 
 public class ActionPowerLimiter extends BCAction {
 
 	public final PowerMode limit;
-	private IIcon icon;
 
 	public ActionPowerLimiter(PowerMode limit) {
 		super("buildcraft:power.limiter." + limit.name().toLowerCase(Locale.ENGLISH), "buildcraft.power.limiter." + limit.name().toLowerCase(Locale.ENGLISH));
@@ -34,17 +31,7 @@ public class ActionPowerLimiter extends BCAction {
 	}
 
 	@Override
-	public IIcon getIcon() {
-		return icon;
-	}
-
-	@Override
 	public void registerIcons(IIconRegister iconRegister) {
 		icon = iconRegister.registerIcon("buildcraft:triggers/trigger_limiter_" + limit.name().toLowerCase(Locale.ENGLISH));
-	}
-
-	@Override
-	public IAction rotateLeft() {
-		return this;
 	}
 }

@@ -26,9 +26,4 @@ public abstract class BCAction extends BCStatement implements IAction {
 	@Override
 	public void actionActivate(IGate gate, IActionParameter[] parameters) {
 	}
-
-	@Override
-	public IAction rotateLeft() {
-		return this;
-	}
 }

@@ -11,7 +11,6 @@ package buildcraft.transport.triggers;
 import java.util.Locale;
 
 import net.minecraft.client.renderer.texture.IIconRegister;
-import net.minecraft.util.IIcon;
 
 import net.minecraftforge.common.util.ForgeDirection;
 
@@ -22,7 +21,6 @@ import buildcraft.core.triggers.BCAction;
 public class ActionPipeDirection extends BCAction {
 
 	public final ForgeDirection direction;
-	private IIcon icon;
 
 	public ActionPipeDirection(ForgeDirection direction) {
 		super("buildcraft:pipe.dir." + direction.name().toLowerCase(Locale.ENGLISH), "buildcraft.pipe.dir." + direction.name().toLowerCase(Locale.ENGLISH));
@@ -33,11 +31,6 @@ public class ActionPipeDirection extends BCAction {
 	@Override
 	public String getDescription() {
 		return direction.name().substring(0, 1) + direction.name().substring(1).toLowerCase(Locale.ENGLISH) + " Pipe Direction";
-	}
-
-	@Override
-	public IIcon getIcon() {
-		return icon;
 	}
 
 	@Override

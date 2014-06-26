@@ -9,13 +9,11 @@
 package buildcraft.transport.triggers;
 
 import net.minecraft.client.renderer.texture.IIconRegister;
-import net.minecraft.util.IIcon;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 import buildcraft.api.gates.IGate;
-import buildcraft.api.gates.ITrigger;
 import buildcraft.api.gates.ITriggerParameter;
 import buildcraft.core.triggers.BCTrigger;
 import buildcraft.core.utils.StringUtils;
@@ -24,8 +22,6 @@ import buildcraft.transport.TileGenericPipe;
 public class TriggerRedstoneFaderInput extends BCTrigger {
 
 	public final int level;
-	@SideOnly(Side.CLIENT)
-	private IIcon icon;
 
 	public TriggerRedstoneFaderInput(int level) {
 		super(String.format("buildcraft:redtone.input.%02d", level));
@@ -45,18 +41,7 @@ public class TriggerRedstoneFaderInput extends BCTrigger {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public IIcon getIcon() {
-		return icon;
-	}
-
-	@Override
-	@SideOnly(Side.CLIENT)
 	public void registerIcons(IIconRegister iconRegister) {
 		icon = iconRegister.registerIcon(String.format("buildcraft:triggers/redstone_%02d", level));
-	}
-
-	@Override
-	public ITrigger rotateLeft() {
-		return this;
 	}
 }

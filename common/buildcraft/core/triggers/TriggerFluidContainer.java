@@ -18,7 +18,6 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
 
-import buildcraft.api.gates.ITrigger;
 import buildcraft.api.gates.ITriggerParameter;
 import buildcraft.core.utils.StringUtils;
 
@@ -118,10 +117,5 @@ public class TriggerFluidContainer extends BCTrigger {
 			default:
 			return StatementIconProvider.Trigger_FluidContainer_Full;
 		}
-	}
-
-	@Override
-	public ITrigger rotateLeft() {
-		return this;
 	}
 }

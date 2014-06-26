@@ -21,6 +21,8 @@ public abstract class BCStatement implements IStatement {
 
 	protected final String uniqueTag;
 
+	protected IIcon icon;
+
 	/**
 	 * UniqueTag accepts multiple possible tags, use this feature to migrate to
 	 * more standardized tags if needed, otherwise just pass a single string.
@@ -47,7 +49,11 @@ public abstract class BCStatement implements IStatement {
 	@Override
 	@SideOnly(Side.CLIENT)
 	public IIcon getIcon() {
-		return StatementIconProvider.INSTANCE.getIcon(getIconIndex());
+		if (icon != null) {
+			return icon;
+		} else {
+			return StatementIconProvider.INSTANCE.getIcon(getIconIndex());
+		}
 	}
 
 	@Override
@@ -68,6 +74,11 @@ public abstract class BCStatement implements IStatement {
 	@Override
 	public String getDescription() {
 		return "";
+	}
+
+	@Override
+	public IStatement rotateLeft() {
+		return this;
 	}
 
 }

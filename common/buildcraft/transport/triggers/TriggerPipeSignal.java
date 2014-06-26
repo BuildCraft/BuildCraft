@@ -11,7 +11,6 @@ package buildcraft.transport.triggers;
 import java.util.Locale;
 
 import buildcraft.api.gates.IGate;
-import buildcraft.api.gates.ITrigger;
 import buildcraft.api.gates.ITriggerParameter;
 import buildcraft.api.transport.PipeWire;
 import buildcraft.core.triggers.BCTrigger;
@@ -104,11 +103,6 @@ public class TriggerPipeSignal extends BCTrigger {
 		}
 
 		return -1;
-	}
-
-	@Override
-	public ITrigger rotateLeft() {
-		return this;
 	}
 
 	@Override

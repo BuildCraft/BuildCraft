@@ -17,7 +17,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.api.core.IInvSlot;
-import buildcraft.api.gates.ITrigger;
 import buildcraft.api.gates.ITriggerParameter;
 import buildcraft.core.inventory.InventoryIterator;
 import buildcraft.core.inventory.StackHelper;
@@ -100,10 +99,5 @@ public class TriggerInventoryLevel extends BCTrigger {
 			default:
 				return StatementIconProvider.Trigger_Inventory_Below75;
 		}
-	}
-
-	@Override
-	public ITrigger rotateLeft() {
-		return this;
 	}
 }

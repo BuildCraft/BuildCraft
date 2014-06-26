@@ -10,7 +10,6 @@ package buildcraft.builders.triggers;
 
 import net.minecraft.util.IIcon;
 
-import buildcraft.api.gates.IAction;
 import buildcraft.builders.filler.pattern.FillerPattern;
 import buildcraft.core.triggers.BCAction;
 
@@ -31,10 +30,5 @@ public class ActionFiller extends BCAction {
 	@Override
 	public IIcon getIcon() {
 		return pattern.getIcon();
-	}
-
-	@Override
-	public IAction rotateLeft() {
-		return this;
 	}
 }

@@ -10,13 +10,11 @@ package buildcraft.silicon.statements;
 
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.IIcon;
 
 import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.api.core.BlockIndex;
 import buildcraft.api.gates.ActionParameterItemStack;
-import buildcraft.api.gates.IAction;
 import buildcraft.api.gates.IActionParameter;
 import buildcraft.api.gates.IGate;
 import buildcraft.api.robots.AIRobot;
@@ -32,15 +30,8 @@ import buildcraft.transport.TileGenericPipe;
 
 public class ActionRobotGoToStation extends BCAction {
 
-	private IIcon icon;
-
 	public ActionRobotGoToStation() {
 		super("buildcraft:robot.goto_station");
-	}
-
-	@Override
-	public IIcon getIcon() {
-		return icon;
 	}
 
 	@Override
@@ -51,11 +42,6 @@ public class ActionRobotGoToStation extends BCAction {
 	@Override
 	public void registerIcons(IIconRegister iconRegister) {
 		icon = iconRegister.registerIcon("buildcraft:triggers/action_robot_goto_station");
-	}
-
-	@Override
-	public IAction rotateLeft() {
-		return this;
 	}
 
 	@Override

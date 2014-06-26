@@ -11,8 +11,7 @@ package buildcraft.transport.triggers;
 import java.util.Locale;
 
 import net.minecraft.client.renderer.texture.IIconRegister;
-import net.minecraft.util.IIcon;
-import buildcraft.api.gates.ITrigger;
+
 import buildcraft.core.triggers.BCTrigger;
 import buildcraft.core.utils.StringUtils;
 
@@ -29,17 +28,11 @@ public class TriggerClockTimer extends BCTrigger {
 		}
 	}
 	public final Time time;
-	private IIcon icon;
 
 	public TriggerClockTimer(Time time) {
 		super("buildcraft:timer." + time.name().toLowerCase(Locale.ENGLISH));
 
 		this.time = time;
-	}
-
-	@Override
-	public IIcon getIcon() {
-		return icon;
 	}
 
 	@Override
@@ -50,10 +43,5 @@ public class TriggerClockTimer extends BCTrigger {
 	@Override
 	public void registerIcons(IIconRegister iconRegister) {
 		icon = iconRegister.registerIcon("buildcraft:triggers/trigger_timer_" + time.name().toLowerCase(Locale.ENGLISH));
-	}
-
-	@Override
-	public ITrigger rotateLeft() {
-		return this;
 	}
 }

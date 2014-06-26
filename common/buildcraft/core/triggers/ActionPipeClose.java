@@ -9,9 +9,7 @@
 package buildcraft.core.triggers;
 
 import net.minecraft.client.renderer.texture.IIconRegister;
-import net.minecraft.util.IIcon;
 
-import buildcraft.api.gates.IAction;
 import buildcraft.api.gates.IActionParameter;
 import buildcraft.api.gates.IGate;
 import buildcraft.core.utils.StringUtils;
@@ -19,15 +17,8 @@ import buildcraft.transport.Pipe;
 
 public class ActionPipeClose extends BCAction {
 
-	private IIcon icon;
-
 	public ActionPipeClose() {
 		super("buildcraft:pipe.close");
-	}
-
-	@Override
-	public IIcon getIcon() {
-		return icon;
 	}
 
 	@Override
@@ -38,11 +29,6 @@ public class ActionPipeClose extends BCAction {
 	@Override
 	public void registerIcons(IIconRegister iconRegister) {
 		icon = iconRegister.registerIcon("buildcraft:triggers/action_pipe_close");
-	}
-
-	@Override
-	public IAction rotateLeft() {
-		return this;
 	}
 
 	@Override

@@ -14,15 +14,12 @@ import net.minecraft.util.IIcon;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-import buildcraft.api.gates.IAction;
 import buildcraft.core.triggers.BCAction;
 import buildcraft.core.utils.StringUtils;
 
 public class ActionRedstoneFaderOutput extends BCAction {
 
 	public final int level;
-	@SideOnly(Side.CLIENT)
-	private IIcon icon;
 
 	public ActionRedstoneFaderOutput(int level) {
 		super(String.format("buildcraft:redstone.output.%02d", level));
@@ -45,10 +42,5 @@ public class ActionRedstoneFaderOutput extends BCAction {
 	@SideOnly(Side.CLIENT)
 	public void registerIcons(IIconRegister iconRegister) {
 		icon = iconRegister.registerIcon(String.format("buildcraft:triggers/redstone_%02d", level));
-	}
-
-	@Override
-	public IAction rotateLeft() {
-		return this;
 	}
 }

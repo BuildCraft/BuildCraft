@@ -12,14 +12,12 @@ import java.util.Locale;
 
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.IIcon;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 import net.minecraftforge.common.util.ForgeDirection;
 
-import buildcraft.api.gates.ITrigger;
 import buildcraft.api.gates.ITriggerParameter;
 import buildcraft.core.triggers.BCTrigger;
 import buildcraft.core.utils.StringUtils;
@@ -29,8 +27,6 @@ import buildcraft.energy.TileEngine.EnergyStage;
 public class TriggerEngineHeat extends BCTrigger {
 
 	public EnergyStage stage;
-	@SideOnly(Side.CLIENT)
-	private IIcon icon;
 
 	public TriggerEngineHeat(EnergyStage stage) {
 		super("buildcraft:engine.stage." + stage.name().toLowerCase(Locale.ENGLISH), "buildcraft.engine.stage." + stage.name().toLowerCase(Locale.ENGLISH));
@@ -56,18 +52,7 @@ public class TriggerEngineHeat extends BCTrigger {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public IIcon getIcon() {
-		return icon;
-	}
-
-	@Override
-	@SideOnly(Side.CLIENT)
 	public void registerIcons(IIconRegister iconRegister) {
 		icon = iconRegister.registerIcon("buildcraft:triggers/trigger_engineheat_" + stage.name().toLowerCase(Locale.ENGLISH));
-	}
-
-	@Override
-	public ITrigger rotateLeft() {
-		return this;
 	}
 }

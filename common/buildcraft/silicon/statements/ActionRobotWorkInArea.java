@@ -10,7 +10,6 @@ package buildcraft.silicon.statements;
 
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.IIcon;
 
 import net.minecraftforge.common.util.ForgeDirection;
 
@@ -27,15 +26,8 @@ import buildcraft.transport.TileGenericPipe;
 
 public class ActionRobotWorkInArea extends BCAction {
 
-	private IIcon icon;
-
 	public ActionRobotWorkInArea() {
 		super("buildcraft:robot.work_in_area");
-	}
-
-	@Override
-	public IIcon getIcon() {
-		return icon;
 	}
 
 	@Override
