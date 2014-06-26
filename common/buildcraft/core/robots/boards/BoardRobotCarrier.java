@@ -13,8 +13,8 @@ import buildcraft.api.boards.RedstoneBoardRobotNBT;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.inventory.filters.PassThroughStackFilter;
-import buildcraft.core.robots.AIRobotGotoStationToUnload;
 import buildcraft.core.robots.AIRobotGotoStationToLoad;
+import buildcraft.core.robots.AIRobotGotoStationToUnload;
 import buildcraft.core.robots.AIRobotLoad;
 import buildcraft.core.robots.AIRobotUnload;
 
