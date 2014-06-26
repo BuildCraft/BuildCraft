@@ -107,6 +107,7 @@ import buildcraft.core.triggers.TriggerMachine;
 import buildcraft.core.triggers.TriggerRedstoneInput;
 import buildcraft.core.utils.CraftingHandler;
 import buildcraft.core.utils.WorldPropertyIsLeave;
+import buildcraft.core.utils.WorldPropertyIsOre;
 import buildcraft.core.utils.WorldPropertyIsSoft;
 import buildcraft.core.utils.WorldPropertyIsWood;
 
@@ -366,6 +367,8 @@ public class BuildCraftCore extends BuildCraftMod {
 		BuildCraftAPI.isSoftProperty = new WorldPropertyIsSoft();
 		BuildCraftAPI.isWoodProperty = new WorldPropertyIsWood();
 		BuildCraftAPI.isLeavesProperty = new WorldPropertyIsLeave();
+		BuildCraftAPI.isBasicOreProperty = new WorldPropertyIsOre(false);
+		BuildCraftAPI.isExtendedOreProperty = new WorldPropertyIsOre(true);
 	}
 
 	@Mod.EventHandler
@@ -469,6 +472,8 @@ public class BuildCraftCore extends BuildCraftMod {
 		BuildCraftAPI.isSoftProperty.clear();
 		BuildCraftAPI.isWoodProperty.clear();
 		BuildCraftAPI.isLeavesProperty.clear();
+		BuildCraftAPI.isBasicOreProperty.clear();
+		BuildCraftAPI.isExtendedOreProperty.clear();
 		RedstoneBoardRobot.reservedBlocks.clear();
 	}
 

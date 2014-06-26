@@ -45,6 +45,7 @@ import buildcraft.core.robots.boards.BoardRobotCarrierNBT;
 import buildcraft.core.robots.boards.BoardRobotKnightNBT;
 import buildcraft.core.robots.boards.BoardRobotLeaveCutterNBT;
 import buildcraft.core.robots.boards.BoardRobotLumberjackNBT;
+import buildcraft.core.robots.boards.BoardRobotMinerNBT;
 import buildcraft.core.robots.boards.BoardRobotPickerNBT;
 import buildcraft.core.robots.boards.BoardRobotPlanterNBT;
 import buildcraft.core.triggers.BCAction;
@@ -129,9 +130,10 @@ public class BuildCraftSilicon extends BuildCraftMod {
 
 		RedstoneBoardRegistry.instance = new ImplRedstoneBoardRegistry();
 
-		RedstoneBoardRegistry.instance.registerBoardClass(BoardRobotPickerNBT.instance, 10);
+		RedstoneBoardRegistry.instance.registerBoardClass(BoardRobotPickerNBT.instance, 20);
 		RedstoneBoardRegistry.instance.registerBoardClass(BoardRobotCarrierNBT.instance, 10);
 		RedstoneBoardRegistry.instance.registerBoardClass(BoardRobotLumberjackNBT.instance, 10);
+		RedstoneBoardRegistry.instance.registerBoardClass(BoardRobotMinerNBT.instance, 10);
 		RedstoneBoardRegistry.instance.registerBoardClass(BoardRobotPlanterNBT.instance, 5);
 		RedstoneBoardRegistry.instance.registerBoardClass(BoardRobotLeaveCutterNBT.instance, 5);
 		RedstoneBoardRegistry.instance.registerBoardClass(BoardRobotKnightNBT.instance, 1);
