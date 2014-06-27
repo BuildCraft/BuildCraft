@@ -25,7 +25,7 @@ public class AIRobotFetchAndEquipItemStack extends AIRobot {
 	private IStackFilter filter;
 
 	public AIRobotFetchAndEquipItemStack(EntityRobotBase iRobot, IStackFilter iFilter) {
-		super(iRobot, 0, 1);
+		super(iRobot, 0);
 
 		filter = iFilter;
 	}

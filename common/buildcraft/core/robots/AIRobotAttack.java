@@ -20,7 +20,7 @@ public class AIRobotAttack extends AIRobot {
 	private int delay = 10;
 
 	public AIRobotAttack(EntityRobotBase iRobot, EntityMob iTarget) {
-		super(iRobot, 5, 1);
+		super(iRobot, 5);
 
 		target = iTarget;
 	}

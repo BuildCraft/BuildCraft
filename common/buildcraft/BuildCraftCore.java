@@ -96,7 +96,6 @@ import buildcraft.core.robots.EntityRobot;
 import buildcraft.core.triggers.ActionMachineControl;
 import buildcraft.core.triggers.ActionMachineControl.Mode;
 import buildcraft.core.triggers.ActionRedstoneOutput;
-import buildcraft.core.triggers.BCTrigger;
 import buildcraft.core.triggers.DefaultActionProvider;
 import buildcraft.core.triggers.DefaultTriggerProvider;
 import buildcraft.core.triggers.StatementIconProvider;

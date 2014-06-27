@@ -27,7 +27,7 @@ public class AIRobotLoad extends AIRobot {
 	private IStackFilter filter;
 
 	public AIRobotLoad(EntityRobotBase iRobot, IStackFilter iFilter) {
-		super(iRobot, 0, 1);
+		super(iRobot, 0);
 
 		filter = iFilter;
 	}

@@ -22,7 +22,7 @@ public class AIRobotGotoMob extends AIRobot {
 	private float maxRange;
 
 	public AIRobotGotoMob(EntityRobotBase iRobot, float iMaxRange) {
-		super(iRobot, 0, 1);
+		super(iRobot, 0);
 
 		maxRange = iMaxRange;
 	}

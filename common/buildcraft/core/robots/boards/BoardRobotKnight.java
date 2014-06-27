@@ -23,7 +23,7 @@ import buildcraft.core.robots.AIRobotGotoMob;
 public class BoardRobotKnight extends RedstoneBoardRobot {
 
 	public BoardRobotKnight(EntityRobotBase iRobot) {
-		super(iRobot, 0);
+		super(iRobot);
 	}
 
 	@Override

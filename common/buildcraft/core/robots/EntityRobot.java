@@ -670,4 +670,15 @@ public class EntityRobot extends EntityRobotBase implements
 
 		return null;
 	}
+
+	@Override
+	public boolean containsItems() {
+		for (ItemStack element : inv) {
+			if (element != null) {
+				return true;
+			}
+		}
+
+		return false;
+	}
 }

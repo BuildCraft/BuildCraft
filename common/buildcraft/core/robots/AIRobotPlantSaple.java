@@ -22,7 +22,7 @@ public class AIRobotPlantSaple extends AIRobot {
 	private int plantCycles = 0;
 
 	public AIRobotPlantSaple(EntityRobotBase iRobot, BlockIndex index) {
-		super(iRobot, 2, 1);
+		super(iRobot, 2);
 
 		toPlant = index;
 	}

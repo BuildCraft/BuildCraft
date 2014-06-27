@@ -25,7 +25,7 @@ import buildcraft.transport.Pipe;
 public class AIRobotUnload extends AIRobot {
 
 	public AIRobotUnload(EntityRobotBase iRobot) {
-		super(iRobot, 0, 1);
+		super(iRobot, 0);
 	}
 
 	@Override

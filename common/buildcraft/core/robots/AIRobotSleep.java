@@ -20,7 +20,7 @@ public class AIRobotSleep extends AIRobot {
 	private int sleptTime = 0;
 
 	public AIRobotSleep(EntityRobotBase iRobot) {
-		super(iRobot, 0, 1);
+		super(iRobot, 0);
 	}
 
 	@Override

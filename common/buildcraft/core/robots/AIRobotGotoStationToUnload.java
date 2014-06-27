@@ -24,9 +24,8 @@ import buildcraft.transport.Pipe;
 
 public class AIRobotGotoStationToUnload extends AIRobot {
 
-
 	public AIRobotGotoStationToUnload(EntityRobotBase iRobot) {
-		super(iRobot, 0, 1);
+		super(iRobot, 0);
 
 	}
 

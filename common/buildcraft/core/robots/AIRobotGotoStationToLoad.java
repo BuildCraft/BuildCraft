@@ -26,7 +26,7 @@ public class AIRobotGotoStationToLoad extends AIRobot {
 	private IStackFilter filter;
 
 	public AIRobotGotoStationToLoad(EntityRobotBase iRobot, IStackFilter iFilter) {
-		super(iRobot, 0, 1);
+		super(iRobot, 0);
 
 		filter = iFilter;
 	}

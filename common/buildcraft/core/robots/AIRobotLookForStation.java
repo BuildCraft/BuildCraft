@@ -20,7 +20,7 @@ public class AIRobotLookForStation extends AIRobot {
 	private IStationFilter filter;
 
 	public AIRobotLookForStation(EntityRobotBase iRobot, IStationFilter iFilter) {
-		super(iRobot, 0, 1);
+		super(iRobot, 0);
 
 		filter = iFilter;
 	}

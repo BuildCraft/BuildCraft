@@ -32,7 +32,7 @@ public class AIRobotBreakWithTool extends AIRobot {
 	private float speed;
 
 	public AIRobotBreakWithTool(EntityRobotBase iRobot, BlockIndex iBlockToBreak) {
-		super(iRobot, 2, 1);
+		super(iRobot, 2);
 
 		blockToBreak = iBlockToBreak;
 	}

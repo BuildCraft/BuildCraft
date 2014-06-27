@@ -54,4 +54,6 @@ public abstract class EntityRobotBase extends EntityLiving implements IInventory
 
 	public abstract IBox getAreaToWork();
 
+	public abstract boolean containsItems();
+
 }

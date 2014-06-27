@@ -21,7 +21,7 @@ import buildcraft.core.robots.AIRobotUnload;
 public class BoardRobotCarrier extends RedstoneBoardRobot {
 
 	public BoardRobotCarrier(EntityRobotBase iRobot) {
-		super(iRobot, 0);
+		super(iRobot);
 	}
 
 	@Override

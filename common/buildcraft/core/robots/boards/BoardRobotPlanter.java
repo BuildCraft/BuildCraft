@@ -27,7 +27,7 @@ import buildcraft.core.robots.IBlockFilter;
 public class BoardRobotPlanter extends RedstoneBoardRobot {
 
 	public BoardRobotPlanter(EntityRobotBase iRobot) {
-		super(iRobot, 1);
+		super(iRobot);
 	}
 
 	@Override

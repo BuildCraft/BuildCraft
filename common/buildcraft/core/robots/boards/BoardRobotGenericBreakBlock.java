@@ -24,7 +24,7 @@ import buildcraft.core.utils.IPathFound;
 public abstract class BoardRobotGenericBreakBlock extends RedstoneBoardRobot {
 
 	public BoardRobotGenericBreakBlock(EntityRobotBase iRobot) {
-		super(iRobot, 1);
+		super(iRobot);
 	}
 
 	public abstract boolean isExpectedTool(ItemStack stack);
