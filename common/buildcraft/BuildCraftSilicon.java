@@ -27,6 +27,8 @@ import net.minecraftforge.oredict.OreDictionary;
 import buildcraft.api.blueprints.SchematicRegistry;
 import buildcraft.api.boards.RedstoneBoardRegistry;
 import buildcraft.api.gates.ActionParameterItemStack;
+import buildcraft.api.gates.IAction;
+import buildcraft.api.gates.ITrigger;
 import buildcraft.api.gates.StatementManager;
 import buildcraft.api.gates.TriggerParameterItemStack;
 import buildcraft.api.recipes.BuildcraftRecipeRegistry;
@@ -48,7 +50,6 @@ import buildcraft.core.robots.boards.BoardRobotLumberjackNBT;
 import buildcraft.core.robots.boards.BoardRobotMinerNBT;
 import buildcraft.core.robots.boards.BoardRobotPickerNBT;
 import buildcraft.core.robots.boards.BoardRobotPlanterNBT;
-import buildcraft.core.triggers.BCAction;
 import buildcraft.silicon.BlockLaser;
 import buildcraft.silicon.BlockLaserTable;
 import buildcraft.silicon.GuiHandler;
@@ -67,11 +68,14 @@ import buildcraft.silicon.network.PacketHandlerSilicon;
 import buildcraft.silicon.recipes.AdvancedFacadeRecipe;
 import buildcraft.silicon.recipes.GateExpansionRecipe;
 import buildcraft.silicon.recipes.GateLogicSwapRecipe;
-import buildcraft.silicon.statements.ActionRobotGoToStation;
+import buildcraft.silicon.statements.ActionRobotGotoStation;
+import buildcraft.silicon.statements.ActionRobotWakeUp;
 import buildcraft.silicon.statements.ActionRobotWorkInArea;
 import buildcraft.silicon.statements.ActionStationProvideItems;
 import buildcraft.silicon.statements.ActionStationRequestItems;
 import buildcraft.silicon.statements.RobotsActionProvider;
+import buildcraft.silicon.statements.RobotsTriggerProvider;
+import buildcraft.silicon.statements.TriggerRobotSleep;
 import buildcraft.transport.gates.GateDefinition.GateLogic;
 import buildcraft.transport.gates.GateDefinition.GateMaterial;
 import buildcraft.transport.gates.GateExpansionPulsar;
@@ -94,10 +98,13 @@ public class BuildCraftSilicon extends BuildCraftMod {
 	public static Item redstoneCrystal;
 	public static Item robotItem;
 
-	public static BCAction actionRobotGotoStation = new ActionRobotGoToStation();
-	public static BCAction actionRobotWorkInArea = new ActionRobotWorkInArea();
-	public static BCAction actionStationRequestItems = new ActionStationRequestItems();
-	public static BCAction actionStationProvideItems = new ActionStationProvideItems();
+	public static IAction actionRobotGotoStation = new ActionRobotGotoStation();
+	public static IAction actionRobotWakeUp = new ActionRobotWakeUp();
+	public static IAction actionRobotWorkInArea = new ActionRobotWorkInArea();
+	public static IAction actionStationRequestItems = new ActionStationRequestItems();
+	public static IAction actionStationProvideItems = new ActionStationProvideItems();
+
+	public static ITrigger triggerRobotSleep = new TriggerRobotSleep();
 
 	@Mod.EventHandler
 	public void preInit(FMLPreInitializationEvent evt) {
@@ -140,6 +147,7 @@ public class BuildCraftSilicon extends BuildCraftMod {
 		RedstoneBoardRegistry.instance.registerBoardClass(BoardRobotBomberNBT.instance, 1);
 
 		StatementManager.registerActionProvider(new RobotsActionProvider());
+		StatementManager.registerTriggerProvider(new RobotsTriggerProvider());
 	}
 
 	@Mod.EventHandler

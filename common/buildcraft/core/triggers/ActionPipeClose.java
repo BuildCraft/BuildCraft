@@ -15,7 +15,7 @@ import buildcraft.api.gates.IGate;
 import buildcraft.core.utils.StringUtils;
 import buildcraft.transport.Pipe;
 
-public class ActionPipeClose extends BCAction {
+public class ActionPipeClose extends BCActionActive {
 
 	public ActionPipeClose() {
 		super("buildcraft:pipe.close");

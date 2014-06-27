@@ -16,11 +16,11 @@ import net.minecraft.item.ItemStack;
 import buildcraft.api.gates.ActionParameterItemStack;
 import buildcraft.api.gates.IActionParameter;
 import buildcraft.api.gates.IGate;
-import buildcraft.core.triggers.BCAction;
+import buildcraft.core.triggers.BCActionActive;
 import buildcraft.core.utils.StringUtils;
 import buildcraft.transport.Pipe;
 
-public class ActionStationRequestItems extends BCAction {
+public class ActionStationRequestItems extends BCActionActive {
 
 	public ActionStationRequestItems() {
 		super("buildcraft:station.request_items");

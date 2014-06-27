@@ -9,7 +9,7 @@
 package buildcraft.core.triggers;
 
 
-public class ActionRedstoneOutput extends BCAction {
+public class ActionRedstoneOutput extends BCActionPassive {
 
 	public ActionRedstoneOutput() {
 		super("buildcraft:redstone.output", "buildcraft.redstone.output");

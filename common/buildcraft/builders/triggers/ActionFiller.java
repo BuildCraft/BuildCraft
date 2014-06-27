@@ -11,9 +11,9 @@ package buildcraft.builders.triggers;
 import net.minecraft.util.IIcon;
 
 import buildcraft.builders.filler.pattern.FillerPattern;
-import buildcraft.core.triggers.BCAction;
+import buildcraft.core.triggers.BCActionPassive;
 
-public class ActionFiller extends BCAction {
+public class ActionFiller extends BCActionPassive {
 
 	public final FillerPattern pattern;
 

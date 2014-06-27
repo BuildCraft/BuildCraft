@@ -13,12 +13,12 @@ import java.util.Locale;
 import buildcraft.api.gates.IActionParameter;
 import buildcraft.api.gates.IGate;
 import buildcraft.api.transport.PipeWire;
-import buildcraft.core.triggers.BCAction;
+import buildcraft.core.triggers.BCActionActive;
 import buildcraft.core.triggers.StatementIconProvider;
 import buildcraft.core.utils.StringUtils;
 import buildcraft.transport.Gate;
 
-public class ActionSignalOutput extends BCAction {
+public class ActionSignalOutput extends BCActionActive {
 
 	public PipeWire color;
 

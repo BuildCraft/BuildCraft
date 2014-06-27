@@ -23,14 +23,14 @@ import buildcraft.core.ItemMapLocation;
 import buildcraft.core.robots.AIRobotGoAndLinkToDock;
 import buildcraft.core.robots.DockingStation;
 import buildcraft.core.robots.EntityRobot;
-import buildcraft.core.triggers.BCAction;
+import buildcraft.core.triggers.BCActionActive;
 import buildcraft.core.utils.StringUtils;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.TileGenericPipe;
 
-public class ActionRobotGoToStation extends BCAction {
+public class ActionRobotGotoStation extends BCActionActive {
 
-	public ActionRobotGoToStation() {
+	public ActionRobotGotoStation() {
 		super("buildcraft:robot.goto_station");
 	}
 

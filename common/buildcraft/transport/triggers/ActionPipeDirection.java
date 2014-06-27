@@ -16,9 +16,9 @@ import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.gates.IAction;
-import buildcraft.core.triggers.BCAction;
+import buildcraft.core.triggers.BCActionPassive;
 
-public class ActionPipeDirection extends BCAction {
+public class ActionPipeDirection extends BCActionPassive {
 
 	public final ForgeDirection direction;
 

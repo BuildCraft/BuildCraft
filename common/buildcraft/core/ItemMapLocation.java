@@ -186,7 +186,7 @@ public class ItemMapLocation extends ItemBuildCraft {
 		}
 	}
 
-	public static IBox getBlox(ItemStack item) {
+	public static IBox getBox(ItemStack item) {
 		NBTTagCompound cpt = NBTUtils.getItemData(item);
 
 		if (cpt.hasKey("kind") && cpt.getByte("kind") == 1) {

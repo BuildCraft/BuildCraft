@@ -20,6 +20,7 @@ import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.inventory.filters.OreStackFilter;
 import buildcraft.core.robots.AIRobotFetchAndEquipItemStack;
 import buildcraft.core.robots.AIRobotGotoRandomGroundBlock;
+import buildcraft.core.robots.AIRobotGotoSleep;
 import buildcraft.core.robots.AIRobotPlantSaple;
 import buildcraft.core.robots.IBlockFilter;
 
@@ -53,7 +54,17 @@ public class BoardRobotPlanter extends RedstoneBoardRobot {
 	@Override
 	public void delegateAIEnded(AIRobot ai) {
 		if (ai instanceof AIRobotGotoRandomGroundBlock) {
-			startDelegateAI(new AIRobotPlantSaple(robot, ((AIRobotGotoRandomGroundBlock) ai).blockFound));
+			AIRobotGotoRandomGroundBlock gotoBlock = (AIRobotGotoRandomGroundBlock) ai;
+
+			if (((AIRobotGotoRandomGroundBlock) ai).blockFound == null) {
+				startDelegateAI(new AIRobotGotoSleep(robot));
+			} else {
+				startDelegateAI(new AIRobotPlantSaple(robot, ((AIRobotGotoRandomGroundBlock) ai).blockFound));
+			}
+		} else if (ai instanceof AIRobotFetchAndEquipItemStack) {
+			if (robot.getItemInUse() == null) {
+				startDelegateAI(new AIRobotGotoSleep(robot));
+			}
 		}
 	}
 

@@ -12,7 +12,7 @@ import java.util.Locale;
 
 import buildcraft.core.utils.StringUtils;
 
-public class ActionMachineControl extends BCAction {
+public class ActionMachineControl extends BCActionPassive {
 
 	public enum Mode {
 

@@ -14,10 +14,10 @@ import net.minecraft.util.IIcon;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-import buildcraft.core.triggers.BCAction;
+import buildcraft.core.triggers.BCActionPassive;
 import buildcraft.core.utils.StringUtils;
 
-public class ActionRedstoneFaderOutput extends BCAction {
+public class ActionRedstoneFaderOutput extends BCActionPassive {
 
 	public final int level;
 

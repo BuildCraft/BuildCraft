@@ -12,11 +12,11 @@ import java.util.Locale;
 
 import net.minecraft.client.renderer.texture.IIconRegister;
 
-import buildcraft.core.triggers.BCAction;
+import buildcraft.core.triggers.BCActionPassive;
 import buildcraft.core.utils.EnumColor;
 import buildcraft.core.utils.StringUtils;
 
-public class ActionPipeColor extends BCAction {
+public class ActionPipeColor extends BCActionPassive {
 
 	public final EnumColor color;
 

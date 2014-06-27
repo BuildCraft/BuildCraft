@@ -10,20 +10,15 @@ package buildcraft.core.triggers;
 
 import buildcraft.api.gates.IAction;
 import buildcraft.api.gates.IActionParameter;
-import buildcraft.api.gates.IGate;
 
-public abstract class BCAction extends BCStatement implements IAction {
+public abstract class BCActionActive extends BCStatement implements IAction {
 
-	public BCAction(String... uniqueTag) {
+	public BCActionActive(String... uniqueTag) {
 		super(uniqueTag);
 	}
 
 	@Override
 	public IActionParameter createParameter(int index) {
 		return null;
-	}
-
-	@Override
-	public void actionActivate(IGate gate, IActionParameter[] parameters) {
 	}
 }

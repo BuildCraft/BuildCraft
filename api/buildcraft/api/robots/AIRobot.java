@@ -89,4 +89,12 @@ public class AIRobot {
 			delegateAI.abort();
 		}
 	}
+
+	public final AIRobot getActiveAI() {
+		if (delegateAI != null) {
+			return delegateAI.getActiveAI();
+		} else {
+			return this;
+		}
+	}
 }

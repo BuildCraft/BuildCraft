@@ -16,11 +16,14 @@ import buildcraft.core.Box;
 
 public class AIRobotFindRandomGroundBlock extends AIRobot {
 
+	private static final int MAX_ATTEMPTS = 4096;
+
 	public BlockIndex blockFound;
 
 	private int range;
 	private IBlockFilter filter;
 	private IBox area;
+	private int attempts = 0;
 
 	public AIRobotFindRandomGroundBlock(EntityRobotBase iRobot, int iRange, IBlockFilter iFilter, IBox iArea) {
 		super(iRobot, 2, 1);
@@ -32,29 +35,33 @@ public class AIRobotFindRandomGroundBlock extends AIRobot {
 
 	@Override
 	public void update() {
-		if (blockFound == null) {
-			int x = 0;
-			int z = 0;
+		attempts++;
 
-			if (area == null) {
-				double r = robot.worldObj.rand.nextFloat() * range;
-				double a = robot.worldObj.rand.nextFloat() * 2.0 * Math.PI;
+		if (attempts > MAX_ATTEMPTS) {
+			terminate();
+		}
 
-				x = (int) (Math.cos(a) * r + Math.floor(robot.posX));
-				z = (int) (Math.sin(a) * r + Math.floor(robot.posZ));
-			} else {
-				x = (int) area.pMin().x + robot.worldObj.rand.nextInt(((Box) area).sizeX());
-				z = (int) area.pMin().z + robot.worldObj.rand.nextInt(((Box) area).sizeZ());
-			}
+		int x = 0;
+		int z = 0;
 
-			for (int y = robot.worldObj.getHeight(); y >= 0; --y) {
-				if (filter.matches(robot.worldObj, x, y, z)) {
-					blockFound = new BlockIndex(x, y, z);
-					terminate();
-					return;
-				} else if (!robot.worldObj.isAirBlock(x, y, z)) {
-					return;
-				}
+		if (area == null) {
+			double r = robot.worldObj.rand.nextFloat() * range;
+			double a = robot.worldObj.rand.nextFloat() * 2.0 * Math.PI;
+
+			x = (int) (Math.cos(a) * r + Math.floor(robot.posX));
+			z = (int) (Math.sin(a) * r + Math.floor(robot.posZ));
+		} else {
+			x = (int) area.pMin().x + robot.worldObj.rand.nextInt(((Box) area).sizeX());
+			z = (int) area.pMin().z + robot.worldObj.rand.nextInt(((Box) area).sizeZ());
+		}
+
+		for (int y = robot.worldObj.getHeight(); y >= 0; --y) {
+			if (filter.matches(robot.worldObj, x, y, z)) {
+				blockFound = new BlockIndex(x, y, z);
+				terminate();
+				return;
+			} else if (!robot.worldObj.isAirBlock(x, y, z)) {
+				return;
 			}
 		}
 	}

@@ -12,22 +12,21 @@ import java.util.Collection;
 import java.util.LinkedList;
 
 import net.minecraft.block.Block;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.tileentity.TileEntity;
 
 import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.BuildCraftSilicon;
-import buildcraft.api.gates.IAction;
-import buildcraft.api.gates.IActionProvider;
+import buildcraft.api.gates.ITrigger;
+import buildcraft.api.gates.ITriggerProvider;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.transport.TileGenericPipe;
 
-public class RobotsActionProvider implements IActionProvider {
+public class RobotsTriggerProvider implements ITriggerProvider {
 
 	@Override
-	public Collection<IAction> getPipeActions(IPipeTile pipe) {
-		LinkedList<IAction> result = new LinkedList<IAction>();
+	public Collection<ITrigger> getPipeTriggers(IPipeTile pipe) {
+		LinkedList<ITrigger> result = new LinkedList<ITrigger>();
 
 		boolean stationFound = false;
 
@@ -42,22 +41,13 @@ public class RobotsActionProvider implements IActionProvider {
 			return result;
 		}
 
-		result.add(BuildCraftSilicon.actionRobotGotoStation);
-		result.add(BuildCraftSilicon.actionRobotWorkInArea);
-		result.add(BuildCraftSilicon.actionRobotWakeUp);
-
-		for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
-			if (((TileGenericPipe) pipe).getTile(dir) instanceof IInventory) {
-				result.add(BuildCraftSilicon.actionStationProvideItems);
-				result.add(BuildCraftSilicon.actionStationRequestItems);
-			}
-		}
+		result.add(BuildCraftSilicon.triggerRobotSleep);
 
 		return result;
 	}
 
 	@Override
-	public Collection<IAction> getNeighborActions(Block block, TileEntity tile) {
+	public Collection<ITrigger> getNeighborTriggers(Block block, TileEntity tile) {
 		return null;
 	}
 

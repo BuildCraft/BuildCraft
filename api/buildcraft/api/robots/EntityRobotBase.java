@@ -52,8 +52,6 @@ public abstract class EntityRobotBase extends EntityLiving implements IInventory
 
 	public abstract boolean linkToStation(IDockingStation station);
 
-	public abstract void workInArea(IBox box);
-
 	public abstract IBox getAreaToWork();
 
 }

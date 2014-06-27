@@ -12,10 +12,10 @@ import java.util.Locale;
 
 import net.minecraft.client.renderer.texture.IIconRegister;
 
-import buildcraft.core.triggers.BCAction;
+import buildcraft.core.triggers.BCActionPassive;
 import buildcraft.transport.pipes.PipePowerIron.PowerMode;
 
-public class ActionPowerLimiter extends BCAction {
+public class ActionPowerLimiter extends BCActionPassive {
 
 	public final PowerMode limit;
 

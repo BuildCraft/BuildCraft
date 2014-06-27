@@ -10,10 +10,10 @@ package buildcraft.transport.triggers;
 
 import net.minecraft.client.renderer.texture.IIconRegister;
 
-import buildcraft.core.triggers.BCAction;
+import buildcraft.core.triggers.BCActionPassive;
 import buildcraft.core.utils.StringUtils;
 
-public class ActionEnergyPulsar extends BCAction {
+public class ActionEnergyPulsar extends BCActionPassive {
 
 	public ActionEnergyPulsar() {
 		super("buildcraft:pulsar.constant", "buildcraft.pulser.constant");

@@ -58,6 +58,7 @@ gate.action.pipe.close=Close Pipe
 gate.action.station.provide_items=Provide Items
 gate.action.station.request_items=Request Items
 gate.action.robot.work_in_area=Work in Area
+gate.action.robot.wakeup=Wake Up
 
 gate.expansion.fader=Redstone Fader
 gate.expansion.pulsar=Autarchic Pulsar
@@ -101,6 +102,7 @@ gate.trigger.pipe.tooMuchEnergy=Power Overloaded
 gate.trigger.pipe.wire.active=%s Pipe Signal On
 gate.trigger.pipe.wire.inactive=%s Pipe Signal Off
 gate.trigger.timer=%s Sec Timer
+gate.trigger.robot.sleep=Sleep
 
 gui.building.resources=Building Resources
 gui.building.fluids=Fluid Tanks

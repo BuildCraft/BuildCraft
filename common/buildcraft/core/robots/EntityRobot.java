@@ -45,6 +45,9 @@ import buildcraft.core.network.RPC;
 import buildcraft.core.network.RPCHandler;
 import buildcraft.core.network.RPCMessageInfo;
 import buildcraft.core.network.RPCSide;
+import buildcraft.silicon.statements.ActionRobotWorkInArea;
+import buildcraft.transport.gates.ActionIterator;
+import buildcraft.transport.gates.ActionSlot;
 
 public class EntityRobot extends EntityRobotBase implements
 		IEntityAdditionalSpawnData, IInventory {
@@ -84,9 +87,6 @@ public class EntityRobot extends EntityRobotBase implements
 	private DockingStation currentDockingStation;
 
 	private double mjStored;
-
-	private IBox areaToWork;
-	private long areaResetDate;
 
 	public EntityRobot(World world, NBTTagCompound boardNBT) {
 		this(world);
@@ -657,13 +657,17 @@ public class EntityRobot extends EntityRobotBase implements
 	}
 
 	@Override
-	public void workInArea(IBox box) {
-		areaToWork = box;
-		areaResetDate = worldObj.getTotalWorldTime() + 5;
-	}
-
-	@Override
 	public IBox getAreaToWork() {
-		return areaToWork;
+		for (ActionSlot s : new ActionIterator(linkedDockingStation.pipe.pipe)) {
+			if (s.action instanceof ActionRobotWorkInArea) {
+				IBox box = ActionRobotWorkInArea.getArea(s);
+
+				if (box != null) {
+					return box;
+				}
+			}
+		}
+
+		return null;
 	}
 }

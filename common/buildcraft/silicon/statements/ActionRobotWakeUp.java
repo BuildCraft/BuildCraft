@@ -6,26 +6,26 @@
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-package buildcraft.transport.triggers;
+package buildcraft.silicon.statements;
 
 import net.minecraft.client.renderer.texture.IIconRegister;
 
 import buildcraft.core.triggers.BCActionPassive;
 import buildcraft.core.utils.StringUtils;
 
-public class ActionSingleEnergyPulse extends BCActionPassive {
+public class ActionRobotWakeUp extends BCActionPassive {
 
-	public ActionSingleEnergyPulse() {
-		super("buildcraft:pulsar.single", "buildcraft.pulser.single");
+	public ActionRobotWakeUp() {
+		super("buildcraft:robot.wakeup");
 	}
 
 	@Override
 	public String getDescription() {
-		return StringUtils.localize("gate.action.pulsar.single");
+		return StringUtils.localize("gate.action.robot.wakeup");
 	}
 
 	@Override
 	public void registerIcons(IIconRegister iconRegister) {
-		icon = iconRegister.registerIcon("buildcraft:triggers/action_single_pulsar");
+		icon = iconRegister.registerIcon("buildcraft:triggers/action_robot_wakeup");
 	}
 }

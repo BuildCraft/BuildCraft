@@ -63,5 +63,7 @@ public class AIRobotFetchAndEquipItemStack extends AIRobot {
 				terminate();
 			}
 		}
+
+		terminate();
 	}
 }
