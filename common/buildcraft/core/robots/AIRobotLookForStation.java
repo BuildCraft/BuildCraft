@@ -12,6 +12,7 @@ import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.DockingStationRegistry;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.api.robots.IDockingStation;
+import buildcraft.silicon.statements.ActionStationForbidRobot;
 
 public class AIRobotLookForStation extends AIRobot {
 
@@ -43,6 +44,10 @@ public class AIRobotLookForStation extends AIRobot {
 			}
 
 			if (filter.matches(station)) {
+				if (ActionStationForbidRobot.isForbidden(station, robot)) {
+					continue;
+				}
+
 				double dx = robot.posX - d.x();
 				double dy = robot.posY - d.y();
 				double dz = robot.posZ - d.z();

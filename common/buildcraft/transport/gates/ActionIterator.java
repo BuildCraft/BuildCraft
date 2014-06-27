@@ -72,6 +72,10 @@ public class ActionIterator implements Iterable<ActionSlot> {
 				} else {
 					break;
 				}
+
+				if (isValid()) {
+					break;
+				}
 			}
 
 			if (isValid()) {

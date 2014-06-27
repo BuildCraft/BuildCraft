@@ -43,6 +43,18 @@ public class ItemRobot extends ItemBuildCraft {
 		}
 	}
 
+	public static RedstoneBoardNBT getRobotNBT(ItemStack stack) {
+		try {
+			NBTTagCompound nbt = NBTUtils.getItemData(stack);
+
+			NBTTagCompound boardCpt = nbt.getCompoundTag("board");
+			return RedstoneBoardRegistry.instance.getRedstoneBoard(boardCpt);
+		} catch (Throwable e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
 	public ResourceLocation getTextureRobot(ItemStack stack) {
 		NBTTagCompound nbt = NBTUtils.getItemData(stack);
 
