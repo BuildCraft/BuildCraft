@@ -56,8 +56,12 @@ public class TileLaser extends TileBuildCraft implements IActionReceptor, IMachi
 
 
 	@Override
-	public void initialize () {
+	public void initialize() {
 		super.initialize();
+
+		if (laser == null) {
+			laser = new LaserData();
+		}
 		
 		laser.isVisible = false;
 		laser.head = new Position(xCoord, yCoord, zCoord);
