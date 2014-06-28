@@ -68,7 +68,7 @@ public class BoardRobotPicker extends RedstoneBoardRobot {
 
 	@Override
 	public void update() {
-		startDelegateAI(new AIRobotFetchItem(robot, range, stackFilter));
+		startDelegateAI(new AIRobotFetchItem(robot, range, stackFilter, robot.getAreaToWork()));
 	}
 
 	@Override
@@ -78,12 +78,12 @@ public class BoardRobotPicker extends RedstoneBoardRobot {
 				startDelegateAI(new AIRobotGotoDock(robot, (DockingStation) robot.getLinkedStation()));
 			} if (((AIRobotFetchItem) ai).target != null) {
 				// if we could get an item, let's try to get another one
-				startDelegateAI(new AIRobotFetchItem(robot, range, stackFilter));
+				startDelegateAI(new AIRobotFetchItem(robot, range, stackFilter, robot.getAreaToWork()));
 			} else {
 				// otherwise, let's deliver items if any
 
 				if (robot.containsItems()) {
-					startDelegateAI(new AIRobotGotoStationToUnload(robot));
+					startDelegateAI(new AIRobotGotoStationToUnload(robot, null));
 				} else {
 					startDelegateAI(new AIRobotGotoSleep(robot));
 				}

@@ -14,6 +14,7 @@ import net.minecraft.tileentity.TileEntity;
 
 import net.minecraftforge.common.util.ForgeDirection;
 
+import buildcraft.api.core.IBox;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.inventory.ITransactor;
@@ -24,14 +25,18 @@ import buildcraft.transport.Pipe;
 
 public class AIRobotGotoStationToUnload extends AIRobot {
 
-	public AIRobotGotoStationToUnload(EntityRobotBase iRobot) {
+	private IBox box;
+
+	public AIRobotGotoStationToUnload(EntityRobotBase iRobot, IBox iBox) {
 		super(iRobot, 0);
+
+		box = iBox;
 
 	}
 
 	@Override
 	public void start() {
-		startDelegateAI(new AIRobotLookForStation(robot, new StationInventory()));
+		startDelegateAI(new AIRobotLookForStation(robot, new StationInventory(), box));
 	}
 
 	@Override

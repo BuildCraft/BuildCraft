@@ -13,6 +13,7 @@ import net.minecraft.entity.item.EntityItem;
 
 import net.minecraftforge.common.util.ForgeDirection;
 
+import buildcraft.api.core.IBox;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.inventory.TransactorSimple;
@@ -27,12 +28,14 @@ public class AIRobotFetchItem extends AIRobot {
 	private float maxRange;
 	private IStackFilter stackFilter;
 	private int pickTime = -1;
+	private IBox box;
 
-	public AIRobotFetchItem(EntityRobotBase iRobot, float iMaxRange, IStackFilter iStackFilter) {
+	public AIRobotFetchItem(EntityRobotBase iRobot, float iMaxRange, IStackFilter iStackFilter, IBox iBox) {
 		super(iRobot, 0);
 
 		maxRange = iMaxRange;
 		stackFilter = iStackFilter;
+		box = iBox;
 	}
 
 	@Override
@@ -93,7 +96,8 @@ public class AIRobotFetchItem extends AIRobot {
 
 			if (!e.isDead && e instanceof EntityItem
 					&& !BoardRobotPicker.targettedItems.contains(e.getEntityId())
-					&& !robot.isKnownUnreachable(e)) {
+					&& !robot.isKnownUnreachable(e)
+					&& (box == null || box.contains(e.posX, e.posY, e.posZ))) {
 				double dx = e.posX - robot.posX;
 				double dy = e.posY - robot.posY;
 				double dz = e.posZ - robot.posZ;

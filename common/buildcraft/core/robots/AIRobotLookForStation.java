@@ -8,6 +8,7 @@
  */
 package buildcraft.core.robots;
 
+import buildcraft.api.core.IBox;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.DockingStationRegistry;
 import buildcraft.api.robots.EntityRobotBase;
@@ -18,11 +19,13 @@ public class AIRobotLookForStation extends AIRobot {
 
 	public DockingStation targetStation;
 	private IStationFilter filter;
+	private IBox box;
 
-	public AIRobotLookForStation(EntityRobotBase iRobot, IStationFilter iFilter) {
+	public AIRobotLookForStation(EntityRobotBase iRobot, IStationFilter iFilter, IBox iBox) {
 		super(iRobot, 0);
 
 		filter = iFilter;
+		box = iBox;
 	}
 
 	@Override
@@ -40,6 +43,10 @@ public class AIRobotLookForStation extends AIRobot {
 			DockingStation station = (DockingStation) d;
 
 			if (station.reserved() != null) {
+				continue;
+			}
+
+			if (box == null || !box.contains(d.x(), d.y(), d.z())) {
 				continue;
 			}
 

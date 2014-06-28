@@ -11,6 +11,7 @@ package buildcraft.core.robots;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.monster.EntityMob;
 
+import buildcraft.api.core.IBox;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.inventory.TransactorSimple;
@@ -20,11 +21,13 @@ public class AIRobotGotoMob extends AIRobot {
 	public EntityMob target;
 
 	private float maxRange;
+	private IBox box;
 
-	public AIRobotGotoMob(EntityRobotBase iRobot, float iMaxRange) {
+	public AIRobotGotoMob(EntityRobotBase iRobot, float iMaxRange, IBox iBox) {
 		super(iRobot, 0);
 
 		maxRange = iMaxRange;
+		box = iBox;
 	}
 
 	@Override
@@ -35,7 +38,9 @@ public class AIRobotGotoMob extends AIRobot {
 		for (Object o : robot.worldObj.loadedEntityList) {
 			Entity e = (Entity) o;
 
-			if (!e.isDead && e instanceof EntityMob) {
+			if (!e.isDead
+					&& e instanceof EntityMob
+					&& (box == null || box.contains(e.posX, e.posY, e.posZ))) {
 				double dx = e.posX - robot.posX;
 				double dy = e.posY - robot.posY;
 				double dz = e.posZ - robot.posZ;

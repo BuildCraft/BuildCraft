@@ -40,9 +40,9 @@ public class BoardRobotCarrier extends RedstoneBoardRobot {
 		}
 
 		if (!containItems) {
-			startDelegateAI(new AIRobotGotoStationToLoad(robot, new PassThroughStackFilter()));
+			startDelegateAI(new AIRobotGotoStationToLoad(robot, new PassThroughStackFilter(), robot.getAreaToWork()));
 		} else {
-			startDelegateAI(new AIRobotGotoStationToUnload(robot));
+			startDelegateAI(new AIRobotGotoStationToUnload(robot, robot.getAreaToWork()));
 		}
 	}
 

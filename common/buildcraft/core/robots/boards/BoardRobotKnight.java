@@ -52,7 +52,7 @@ public class BoardRobotKnight extends RedstoneBoardRobot {
 				}
 			}));
 		} else {
-			startDelegateAI(new AIRobotGotoMob(robot, 250));
+			startDelegateAI(new AIRobotGotoMob(robot, 250, robot.getAreaToWork()));
 		}
 	}
 

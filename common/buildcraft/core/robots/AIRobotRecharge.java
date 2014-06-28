@@ -28,7 +28,7 @@ public class AIRobotRecharge extends AIRobot {
 			public boolean matches(DockingStation station) {
 				return station.pipe.getPipeType() == PipeType.POWER;
 			}
-		}));
+		}, null));
 	}
 
 	@Override
