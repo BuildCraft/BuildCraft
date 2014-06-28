@@ -32,7 +32,7 @@ public class AIRobotSearchBlock extends AIRobot {
 
 	@Override
 	public void start() {
-		blockScanner = new PathFinding(robot.worldObj, new BlockIndex(robot), pathFound, 64);
+		blockScanner = new PathFinding(robot.worldObj, new BlockIndex(robot), pathFound, 64, robot.getAreaToWork());
 		blockScannerJob = new PathFindingJob(blockScanner);
 		blockScannerJob.start();
 	}

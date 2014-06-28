@@ -22,6 +22,10 @@ public class BlockIndex implements Comparable<BlockIndex> {
 	public int y;
 	public int z;
 
+	public BlockIndex() {
+	
+	}
+
 	/**
 	 * Creates an index for a block located on x, y. z
 	 */
