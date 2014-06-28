@@ -8,19 +8,14 @@
  */
 package buildcraft.silicon.statements;
 
-import java.util.LinkedList;
-
 import net.minecraft.client.renderer.texture.IIconRegister;
-import net.minecraft.item.ItemStack;
 
 import buildcraft.api.gates.ActionParameterItemStack;
 import buildcraft.api.gates.IActionParameter;
-import buildcraft.api.gates.IGate;
-import buildcraft.core.triggers.BCActionActive;
+import buildcraft.core.triggers.BCActionPassive;
 import buildcraft.core.utils.StringUtils;
-import buildcraft.transport.Pipe;
 
-public class ActionStationProvideItems extends BCActionActive {
+public class ActionStationProvideItems extends BCActionPassive {
 
 	public ActionStationProvideItems() {
 		super("buildcraft:station.provide_items");
@@ -44,24 +39,5 @@ public class ActionStationProvideItems extends BCActionActive {
 	@Override
 	public IActionParameter createParameter(int index) {
 		return new ActionParameterItemStack();
-	}
-
-	@Override
-	public void actionActivate(IGate gate, IActionParameter[] parameters) {
-		Pipe pipe = (Pipe) gate.getPipe();
-
-		LinkedList<ItemStack> filter = new LinkedList<ItemStack>();
-
-		for (IActionParameter p : parameters) {
-			if (p != null && p instanceof ActionParameterItemStack) {
-				ActionParameterItemStack param = (ActionParameterItemStack) p;
-
-				if (param.getItemStackToDraw() != null) {
-					filter.add(param.getItemStackToDraw());
-				}
-			}
-		}
-
-		pipe.pushActionState(new StateStationProvideItems(filter));
 	}
 }

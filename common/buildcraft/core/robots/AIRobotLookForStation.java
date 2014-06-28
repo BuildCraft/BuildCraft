@@ -46,7 +46,7 @@ public class AIRobotLookForStation extends AIRobot {
 				continue;
 			}
 
-			if (box == null || !box.contains(d.x(), d.y(), d.z())) {
+			if (box != null && !box.contains(d.x(), d.y(), d.z())) {
 				continue;
 			}
 
@@ -58,7 +58,7 @@ public class AIRobotLookForStation extends AIRobot {
 				double dx = robot.posX - d.x();
 				double dy = robot.posY - d.y();
 				double dz = robot.posZ - d.z();
-				double distance = dx * dx + dy + dy + dz * dz;
+				double distance = dx * dx + dy * dy + dz * dz;
 
 				if (potentialStation == null || distance < potentialStationDistance) {
 					potentialStation = station;

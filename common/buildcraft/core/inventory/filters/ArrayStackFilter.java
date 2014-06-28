@@ -17,7 +17,7 @@ import buildcraft.core.inventory.StackHelper;
  */
 public class ArrayStackFilter implements IStackFilter {
 
-	private final ItemStack[] stacks;
+	protected ItemStack[] stacks;
 
 	public ArrayStackFilter(ItemStack... stacks) {
 		this.stacks = stacks;
@@ -33,6 +33,16 @@ public class ArrayStackFilter implements IStackFilter {
 				return true;
 			}
 		}
+		return false;
+	}
+
+	public boolean matches(IStackFilter filter2) {
+		for (ItemStack s : stacks) {
+			if (filter2.matches(s)) {
+				return true;
+			}
+		}
+
 		return false;
 	}
 

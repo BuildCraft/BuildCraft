@@ -73,7 +73,8 @@ import buildcraft.silicon.statements.ActionRobotWakeUp;
 import buildcraft.silicon.statements.ActionRobotWorkInArea;
 import buildcraft.silicon.statements.ActionStationForbidRobot;
 import buildcraft.silicon.statements.ActionStationProvideItems;
-import buildcraft.silicon.statements.ActionStationRequestItems;
+import buildcraft.silicon.statements.ActionStationRequestItemsInv;
+import buildcraft.silicon.statements.ActionStationRequestItemsPipe;
 import buildcraft.silicon.statements.RobotsActionProvider;
 import buildcraft.silicon.statements.RobotsTriggerProvider;
 import buildcraft.silicon.statements.TriggerRobotSleep;
@@ -102,9 +103,10 @@ public class BuildCraftSilicon extends BuildCraftMod {
 	public static IAction actionRobotGotoStation = new ActionRobotGotoStation();
 	public static IAction actionRobotWakeUp = new ActionRobotWakeUp();
 	public static IAction actionRobotWorkInArea = new ActionRobotWorkInArea();
-	public static IAction actionStationRequestItems = new ActionStationRequestItems();
+	public static IAction actionStationRequestItems = new ActionStationRequestItemsInv();
 	public static IAction actionStationProvideItems = new ActionStationProvideItems();
 	public static IAction actionStationForbidRobot = new ActionStationForbidRobot();
+	public static IAction actionStationDropInPipe = new ActionStationRequestItemsPipe();
 
 	public static ITrigger triggerRobotSleep = new TriggerRobotSleep();
 

@@ -59,7 +59,7 @@ public class TriggerInventory extends BCTrigger {
 			boolean foundItems = false;
 			boolean foundSpace = false;
 
-			for (IInvSlot slot : InventoryIterator.getIterable((IInventory) tile, side)) {
+			for (IInvSlot slot : InventoryIterator.getIterable((IInventory) tile, side.getOpposite())) {
 				hasSlots = true;
 				ItemStack stack = slot.getStackInSlot();
 

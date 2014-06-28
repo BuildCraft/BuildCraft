@@ -669,11 +669,11 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 		return closed;
 	}
 
-	public void pushActionState(ActionState state) {
+	private void pushActionState(ActionState state) {
 		actionStates.add(state);
 	}
 
-	public Collection<ActionState> getActionStates() {
+	private Collection<ActionState> getActionStates() {
 		return actionStates;
 	}
 }

@@ -21,6 +21,7 @@ import buildcraft.BuildCraftSilicon;
 import buildcraft.api.gates.IAction;
 import buildcraft.api.gates.IActionProvider;
 import buildcraft.api.transport.IPipeTile;
+import buildcraft.transport.PipeTransportItems;
 import buildcraft.transport.TileGenericPipe;
 
 public class RobotsActionProvider implements IActionProvider {
@@ -51,6 +52,10 @@ public class RobotsActionProvider implements IActionProvider {
 			if (((TileGenericPipe) pipe).getTile(dir) instanceof IInventory) {
 				result.add(BuildCraftSilicon.actionStationProvideItems);
 				result.add(BuildCraftSilicon.actionStationRequestItems);
+			}
+
+			if (((TileGenericPipe) pipe).pipe.transport instanceof PipeTransportItems) {
+				result.add(BuildCraftSilicon.actionStationDropInPipe);
 			}
 		}
 

@@ -86,7 +86,7 @@ public abstract class Schematic {
 			}
 
 			if (stack.getItemDamage() >= stack.getMaxDamage()) {
-				slot.decreaseStackInSlot();
+				slot.decreaseStackInSlot(1);
 			}
 		} else {
 			if (stack.stackSize >= req.stackSize) {

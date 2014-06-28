@@ -13,27 +13,27 @@ import net.minecraft.client.renderer.texture.IIconRegister;
 import buildcraft.api.core.IInvSlot;
 import buildcraft.api.gates.ActionParameterItemStack;
 import buildcraft.api.gates.IActionParameter;
-import buildcraft.core.inventory.filters.StatementParameterStackFilter;
 import buildcraft.core.robots.DockingStation;
 import buildcraft.core.robots.EntityRobot;
-import buildcraft.core.triggers.BCActionPassive;
 import buildcraft.core.utils.StringUtils;
+import buildcraft.transport.PipeTransportItems;
+import buildcraft.transport.TravelingItem;
 import buildcraft.transport.gates.ActionSlot;
 
-public abstract class ActionStationRequestItems extends BCActionPassive {
+public class ActionStationRequestItemsPipe extends ActionStationRequestItems {
 
-	public ActionStationRequestItems(String name) {
-		super(name);
+	public ActionStationRequestItemsPipe() {
+		super("buildcraft:station.drop_in_pipe");
 	}
 
 	@Override
 	public String getDescription() {
-		return StringUtils.localize("gate.action.station.request_items");
+		return StringUtils.localize("gate.action.station.drop_items_in_pipe");
 	}
 
 	@Override
 	public void registerIcons(IIconRegister iconRegister) {
-		icon = iconRegister.registerIcon("buildcraft:triggers/action_station_request_items");
+		icon = iconRegister.registerIcon("buildcraft:triggers/action_station_drop_in_pipe");
 	}
 
 	@Override
@@ -46,10 +46,32 @@ public abstract class ActionStationRequestItems extends BCActionPassive {
 		return new ActionParameterItemStack();
 	}
 
+	@Override
 	public boolean insert(DockingStation station, EntityRobot robot, ActionSlot actionSlot, IInvSlot invSlot,
 			boolean doInsert) {
-		StatementParameterStackFilter param = new StatementParameterStackFilter(actionSlot.parameters);
+		if (!super.insert(station, robot, actionSlot, invSlot, doInsert)) {
+			return false;
+		}
 
-		return !param.hasFilter() || param.matches(invSlot.getStackInSlot());
+		if (!doInsert) {
+			return true;
+		}
+
+		if (station.pipe.pipe.transport instanceof PipeTransportItems) {
+			float cx = station.x() + 0.5F + 0.2F * station.side().offsetX;
+			float cy = station.y() + 0.5F + 0.2F * station.side().offsetY;
+			float cz = station.z() + 0.5F + 0.2F * station.side().offsetZ;
+
+			TravelingItem item = TravelingItem.make(cx, cy, cz, invSlot.getStackInSlot());
+
+			((PipeTransportItems) station.pipe.pipe.transport).injectItem(item, station.side().getOpposite());
+
+			invSlot.setStackInSlot(null);
+
+			return true;
+		}
+
+		return false;
 	}
+
 }

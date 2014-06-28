@@ -121,7 +121,7 @@ public class TransactorSimple extends Transactor {
 			ItemStack stack = slot.getStackInSlot();
 			if (stack != null && slot.canTakeStackFromSlot(stack) && filter.matches(stack)) {
 				if (doRemove) {
-					return slot.decreaseStackInSlot();
+					return slot.decreaseStackInSlot(1);
 				} else {
 					ItemStack output = stack.copy();
 					output.stackSize = 1;

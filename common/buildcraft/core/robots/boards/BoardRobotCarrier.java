@@ -31,15 +31,7 @@ public class BoardRobotCarrier extends RedstoneBoardRobot {
 
 	@Override
 	public void update() {
-		boolean containItems = false;
-
-		for (int i = 0; i < robot.getSizeInventory(); ++i) {
-			if (robot.getStackInSlot(i) != null) {
-				containItems = true;
-			}
-		}
-
-		if (!containItems) {
+		if (!robot.containsItems()) {
 			startDelegateAI(new AIRobotGotoStationToLoad(robot, new PassThroughStackFilter(), robot.getAreaToWork()));
 		} else {
 			startDelegateAI(new AIRobotGotoStationToUnload(robot, robot.getAreaToWork()));

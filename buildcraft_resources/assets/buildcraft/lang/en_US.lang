@@ -57,6 +57,7 @@ gate.action.robot.goto_station=Goto Station
 gate.action.pipe.close=Close Pipe
 gate.action.station.provide_items=Provide Items
 gate.action.station.request_items=Request Items
+gate.action.station.drop_items_in_pipe=Drop Items In Pipe
 gate.action.robot.work_in_area=Work in Area
 gate.action.robot.wakeup=Wake Up
 
@@ -70,6 +71,7 @@ gate.logic.or=OR
 gate.material.iron=Iron
 gate.material.gold=Gold
 gate.material.diamond=Diamond
+gate.material.emerald=Emerald
 
 gate.name=%s %s Gate
 gate.name.basic=Basic Gate

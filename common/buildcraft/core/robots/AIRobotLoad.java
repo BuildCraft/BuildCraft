@@ -21,10 +21,15 @@ import buildcraft.core.inventory.ITransactor;
 import buildcraft.core.inventory.InventoryIterator;
 import buildcraft.core.inventory.Transactor;
 import buildcraft.core.inventory.filters.IStackFilter;
+import buildcraft.core.inventory.filters.StatementParameterStackFilter;
+import buildcraft.silicon.statements.ActionStationProvideItems;
+import buildcraft.transport.gates.ActionIterator;
+import buildcraft.transport.gates.ActionSlot;
 
 public class AIRobotLoad extends AIRobot {
 
 	private IStackFilter filter;
+	private int waitedCycles = 0;
 
 	public AIRobotLoad(EntityRobotBase iRobot, IStackFilter iFilter) {
 		super(iRobot, 0);
@@ -33,7 +38,16 @@ public class AIRobotLoad extends AIRobot {
 	}
 
 	@Override
-	public void start() {
+	public void update() {
+		waitedCycles++;
+
+		if (waitedCycles > 40) {
+			doLoad();
+			terminate();
+		}
+	}
+
+	private void doLoad() {
 		if (robot.getDockingStation() != null) {
 			DockingStation station = (DockingStation) robot.getDockingStation();
 
@@ -53,10 +67,26 @@ public class AIRobotLoad extends AIRobot {
 							for (IInvSlot slot : InventoryIterator.getIterable(tileInventory, dir.getOpposite())) {
 								ItemStack stack = slot.getStackInSlot();
 
-								if (stack != null && filter.matches(stack)) {
-									slot.setStackInSlot(null);
-									robot.setInventorySlotContents(i, stack);
-									break;
+								if (stack != null) {
+									boolean allowed = false;
+
+									for (ActionSlot s : new ActionIterator(station.pipe.pipe)) {
+										if (s.action instanceof ActionStationProvideItems) {
+											StatementParameterStackFilter param = new StatementParameterStackFilter(
+													s.parameters);
+
+											if (!param.hasFilter() || param.matches(stack)) {
+												allowed = true;
+												break;
+											}
+										}
+									}
+
+									if (allowed && filter.matches(stack)) {
+										slot.setStackInSlot(null);
+										robot.setInventorySlotContents(i, stack);
+										break;
+									}
 								}
 							}
 						}
@@ -64,7 +94,5 @@ public class AIRobotLoad extends AIRobot {
 				}
 			}
 		}
-
-		terminate();
 	}
 }
