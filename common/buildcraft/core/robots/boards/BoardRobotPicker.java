@@ -25,6 +25,7 @@ import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.inventory.filters.ArrayStackFilter;
 import buildcraft.core.inventory.filters.IStackFilter;
 import buildcraft.core.robots.AIRobotFetchItem;
+import buildcraft.core.robots.AIRobotGotoDock;
 import buildcraft.core.robots.AIRobotGotoSleep;
 import buildcraft.core.robots.AIRobotGotoStationToUnload;
 import buildcraft.core.robots.AIRobotSleep;
@@ -73,7 +74,9 @@ public class BoardRobotPicker extends RedstoneBoardRobot {
 	@Override
 	public void delegateAIEnded(AIRobot ai) {
 		if (ai instanceof AIRobotFetchItem) {
-			if (((AIRobotFetchItem) ai).target != null) {
+			if (((AIRobotFetchItem) ai).noItemPicked) {
+				startDelegateAI(new AIRobotGotoDock(robot, (DockingStation) robot.getLinkedStation()));
+			} if (((AIRobotFetchItem) ai).target != null) {
 				// if we could get an item, let's try to get another one
 				startDelegateAI(new AIRobotFetchItem(robot, range, stackFilter));
 			} else {

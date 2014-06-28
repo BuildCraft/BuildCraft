@@ -39,12 +39,10 @@ public class AIRobotSearchBlock extends AIRobot {
 
 	@Override
 	public void update() {
-		if (!blockScannerJob.isAlive()) {
-			if (blockScanner.isDone()) {
-				LinkedList<BlockIndex> path = blockScanner.getResult();
-				blockFound = path.removeLast();
-				startDelegateAI(new AIRobotGotoBlock(robot, path));
-			}
+		if (blockScannerJob.isDone()) {
+			LinkedList<BlockIndex> path = blockScanner.getResult();
+			blockFound = path.removeLast();
+			startDelegateAI(new AIRobotGotoBlock(robot, path));
 		}
 	}
 

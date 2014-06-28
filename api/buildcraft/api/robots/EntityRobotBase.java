@@ -8,6 +8,7 @@
  */
 package buildcraft.api.robots;
 
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
@@ -55,5 +56,9 @@ public abstract class EntityRobotBase extends EntityLiving implements IInventory
 	public abstract IBox getAreaToWork();
 
 	public abstract boolean containsItems();
+
+	public abstract void unreachableEntityDetected(Entity entity);
+
+	public abstract boolean isKnownUnreachable(Entity entity);
 
 }

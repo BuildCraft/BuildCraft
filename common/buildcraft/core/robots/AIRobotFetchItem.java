@@ -22,6 +22,7 @@ import buildcraft.core.robots.boards.BoardRobotPicker;
 public class AIRobotFetchItem extends AIRobot {
 
 	public EntityItem target;
+	public boolean noItemPicked = false;
 
 	private float maxRange;
 	private IStackFilter stackFilter;
@@ -35,14 +36,64 @@ public class AIRobotFetchItem extends AIRobot {
 	}
 
 	@Override
-	public void start() {
+	public void preempt(AIRobot ai) {
+		if (target != null && target.isDead) {
+			noItemPicked = true;
+			terminate();
+		}
+	}
+
+	@Override
+	public void update() {
+		if (target == null) {
+			scanForItem();
+		} else {
+			pickTime++;
+
+			if (pickTime > 5) {
+				TransactorSimple inventoryInsert = new TransactorSimple(robot);
+
+				target.getEntityItem().stackSize -= inventoryInsert.inject(
+						target.getEntityItem(), ForgeDirection.UNKNOWN,
+						true);
+
+				if (target.getEntityItem().stackSize <= 0) {
+					target.setDead();
+				}
+
+				terminate();
+			}
+		}
+	}
+
+	@Override
+	public void delegateAIEnded(AIRobot ai) {
+		if (ai instanceof AIRobotGotoBlock) {
+			if (((AIRobotGotoBlock) ai).unreachable) {
+				robot.unreachableEntityDetected(target);
+				noItemPicked = true;
+				terminate();
+			}
+		}
+	}
+
+	@Override
+	public void end() {
+		if (target != null) {
+			BoardRobotPicker.targettedItems.remove(target.getEntityId());
+		}
+	}
+
+	private void scanForItem() {
 		double previousDistance = Double.MAX_VALUE;
 		TransactorSimple inventoryInsert = new TransactorSimple(robot);
 
 		for (Object o : robot.worldObj.loadedEntityList) {
 			Entity e = (Entity) o;
 
-			if (!e.isDead && e instanceof EntityItem && !BoardRobotPicker.targettedItems.contains(e.getEntityId())) {
+			if (!e.isDead && e instanceof EntityItem
+					&& !BoardRobotPicker.targettedItems.contains(e.getEntityId())
+					&& !robot.isKnownUnreachable(e)) {
 				double dx = e.posX - robot.posX;
 				double dy = e.posY - robot.posY;
 				double dz = e.posZ - robot.posZ;
@@ -80,45 +131,8 @@ public class AIRobotFetchItem extends AIRobot {
 
 		} else {
 			// No item was found, terminate this AI
+			noItemPicked = true;
 			terminate();
-		}
-	}
-
-	@Override
-	public void preempt(AIRobot ai) {
-		if (target.isDead) {
-			BoardRobotPicker.targettedItems.remove(target.getEntityId());
-			terminate();
-		}
-	}
-
-	@Override
-	public void update() {
-		if (target.isDead) {
-			terminate();
-		} else {
-			pickTime++;
-
-			if (pickTime > 5) {
-				TransactorSimple inventoryInsert = new TransactorSimple(robot);
-
-				target.getEntityItem().stackSize -= inventoryInsert.inject(
-						target.getEntityItem(), ForgeDirection.UNKNOWN,
-						true);
-
-				if (target.getEntityItem().stackSize <= 0) {
-					target.setDead();
-				}
-
-				terminate();
-			}
-		}
-	}
-
-	@Override
-	public void end() {
-		if (target != null) {
-			BoardRobotPicker.targettedItems.remove(target.getEntityId());
 		}
 	}
 }

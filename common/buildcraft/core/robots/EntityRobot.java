@@ -9,6 +9,7 @@
 package buildcraft.core.robots;
 
 import java.util.Date;
+import java.util.WeakHashMap;
 
 import io.netty.buffer.ByteBuf;
 
@@ -85,6 +86,7 @@ public class EntityRobot extends EntityRobotBase implements
 	private String boardID;
 	private ResourceLocation texture;
 	private DockingStation currentDockingStation;
+	private WeakHashMap<Entity, Boolean> unreachableEntities = new WeakHashMap<Entity, Boolean>();
 
 	private double mjStored;
 
@@ -680,5 +682,15 @@ public class EntityRobot extends EntityRobotBase implements
 		}
 
 		return false;
+	}
+
+	@Override
+	public void unreachableEntityDetected(Entity entity) {
+		unreachableEntities.put(entity, true);
+	}
+
+	@Override
+	public boolean isKnownUnreachable(Entity entity) {
+		return unreachableEntities.containsKey(entity);
 	}
 }
