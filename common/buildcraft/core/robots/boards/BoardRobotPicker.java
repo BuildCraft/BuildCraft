@@ -76,7 +76,7 @@ public class BoardRobotPicker extends RedstoneBoardRobot {
 		if (ai instanceof AIRobotFetchItem) {
 			if (((AIRobotFetchItem) ai).noItemPicked) {
 				startDelegateAI(new AIRobotGotoDock(robot, (DockingStation) robot.getLinkedStation()));
-			} if (((AIRobotFetchItem) ai).target != null) {
+			} else if (((AIRobotFetchItem) ai).target != null) {
 				// if we could get an item, let's try to get another one
 				startDelegateAI(new AIRobotFetchItem(robot, range, stackFilter, robot.getAreaToWork()));
 			} else {
