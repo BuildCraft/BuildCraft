@@ -7,6 +7,7 @@ buildcraft.boardRobotLeaveCutter=Leave Cutter
 buildcraft.boardRobotCarrier=Carrier
 buildcraft.boardRobotBomber=Bomber
 buildcraft.boardRobotKnight=Knight
+buildcraft.boardRobotMiner=Miner
 buildcraft.boardDetail.parameters=Parameters
 buildcraft.boardDetail.range=Range
 
@@ -60,6 +61,7 @@ gate.action.station.request_items=Request Items
 gate.action.station.drop_items_in_pipe=Drop Items In Pipe
 gate.action.robot.work_in_area=Work in Area
 gate.action.robot.wakeup=Wake Up
+gate.action.station.forbid_robot=Robot Forbidden
 
 gate.expansion.fader=Redstone Fader
 gate.expansion.pulsar=Autarchic Pulsar
