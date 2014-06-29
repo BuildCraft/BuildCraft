@@ -42,6 +42,12 @@ public class AIRobotGotoDock extends AIRobot {
 	}
 
 	@Override
+	public void update() {
+		// this should not happen, always terminate in this situation
+		terminate();
+	}
+
+	@Override
 	public void delegateAIEnded(AIRobot ai) {
 		if (ai instanceof AIRobotGotoBlock) {
 			startDelegateAI(new AIRobotStraightMoveTo(robot,

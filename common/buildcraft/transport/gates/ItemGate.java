@@ -183,7 +183,7 @@ public class ItemGate extends ItemBuildCraft {
 		}
 
 		@Override
-		public void validate() {
+		public void validate(IPipeTile pipe, ForgeDirection direction) {
 
 		}
 	}

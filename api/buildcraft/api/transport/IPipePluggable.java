@@ -28,5 +28,5 @@ public interface IPipePluggable {
 
 	void invalidate();
 
-	void validate();
+	void validate(IPipeTile pipe, ForgeDirection direction);
 }

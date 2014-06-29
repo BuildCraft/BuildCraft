@@ -57,6 +57,7 @@ public class ItemRobotStation extends ItemBuildCraft {
 
 	public static class RobotStationPluggable implements IPipePluggable {
 		private DockingStation station;
+		private boolean isValid = false;
 
 		public RobotStationPluggable() {
 
@@ -79,22 +80,12 @@ public class ItemRobotStation extends ItemBuildCraft {
 
 		@Override
 		public void onAttachedPipe(IPipeTile pipe, ForgeDirection direction) {
-			TileGenericPipe realPipe = (TileGenericPipe) pipe;
-			if (!realPipe.getWorld().isRemote) {
-				station = new DockingStation(realPipe, direction);
-				validate();
-				//DockingStationRegistry.registerStation(station = new DockingStation(realPipe, direction));
-			}
+			validate(pipe, direction);
 		}
 
 		@Override
 		public void onDetachedPipe(IPipeTile pipe, ForgeDirection direction) {
 			invalidate();
-			/*
-			 * TileGenericPipe realPipe = (TileGenericPipe) pipe; if
-			 * (!realPipe.getWorld().isRemote && station != null) {
-			 * DockingStationRegistry.removeStation(station); }
-			 */
 		}
 
 		public DockingStation getStation() {
@@ -110,13 +101,19 @@ public class ItemRobotStation extends ItemBuildCraft {
 		public void invalidate() {
 			if (station != null && !station.pipe.getWorld().isRemote) {
 				DockingStationRegistry.removeStation(station);
+				isValid = false;
 			}
 		}
 
 		@Override
-		public void validate() {
-			if (station != null && !station.pipe.getWorld().isRemote) {
+		public void validate(IPipeTile pipe, ForgeDirection direction) {
+			if (!isValid && !((TileGenericPipe) pipe).getWorld().isRemote) {
+				if (station == null) {
+					station = new DockingStation((TileGenericPipe) pipe, direction);
+				}
+
 				DockingStationRegistry.registerStation(station);
+				isValid = true;
 			}
 		}
 	}

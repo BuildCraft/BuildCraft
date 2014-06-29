@@ -23,6 +23,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EntityDamageSource;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import net.minecraft.world.chunk.Chunk;
 
 import cpw.mods.fml.common.registry.IEntityAdditionalSpawnData;
 import cpw.mods.fml.relauncher.Side;
@@ -92,6 +93,11 @@ public class EntityRobot extends EntityRobotBase implements
 	private WeakHashMap<Entity, Boolean> unreachableEntities = new WeakHashMap<Entity, Boolean>();
 
 	private double mjStored;
+
+	private int loadedDockX = 0;
+	private int loadedDockY = 0;
+	private int loadedDockZ = 0;
+	private ForgeDirection loadedDockSide = null;
 
 	public EntityRobot(World world, NBTTagCompound boardNBT) {
 		this(world);
@@ -217,18 +223,33 @@ public class EntityRobot extends EntityRobotBase implements
 		}
 
 		if (!worldObj.isRemote) {
-			mainAI.cycle();
+			if (linkedDockingStation == null) {
+				// try to load the docking station. If the chunk can be loaded
+				// but not the docking station, then the expecting docking
+				// station is not around, kill the robot.
+				Chunk chunk = worldObj.getChunkFromChunkCoords(loadedDockX >> 4, loadedDockZ >> 4);
 
-			if (mjStored <= 0) {
-				setDead();
+				if (chunk != null) {
+					DockingStation station = (DockingStation) DockingStationRegistry.getStation(
+							loadedDockX,
+							loadedDockY,
+							loadedDockZ,
+							loadedDockSide);
+
+					if (station == null) {
+						setDead();
+					} else {
+						linkToStation(station);
+					}
+				}
 			}
 
-			if (linkedDockingStation == null) {
-				// Defensive code. There should always be a station linked, but
-				// in case there's not (consecutive to a wrong load for
-				// example), just kill the robot.
+			if (linkedDockingStation != null) {
+				mainAI.cycle();
 
-				setDead();
+				if (mjStored <= 0) {
+					setDead();
+				}
 			}
 		}
 
@@ -340,6 +361,11 @@ public class EntityRobot extends EntityRobotBase implements
 			nbt.setInteger("dockY", linkedDockingStation.pipe.yCoord);
 			nbt.setInteger("dockZ", linkedDockingStation.pipe.zCoord);
 			nbt.setInteger("dockSide", linkedDockingStation.side.ordinal());
+		} else {
+			nbt.setInteger("dockX", loadedDockX);
+			nbt.setInteger("dockY", loadedDockY);
+			nbt.setInteger("dockZ", loadedDockZ);
+			nbt.setInteger("dockSide", loadedDockSide.ordinal());
 		}
 
 		NBTTagCompound nbtLaser = new NBTTagCompound();
@@ -347,6 +373,13 @@ public class EntityRobot extends EntityRobotBase implements
 		nbt.setTag("laser", nbtLaser);
 
 		nbt.setDouble("mjStored", mjStored);
+
+		if (itemInUse != null) {
+			NBTTagCompound itemNBT = new NBTTagCompound();
+			itemInUse.writeToNBT(itemNBT);
+			nbt.setTag("itemInUse", itemNBT);
+			nbt.setBoolean("itemActive", itemActive);
+		}
 
 		for (int i = 0; i < inv.length; ++i) {
 			NBTTagCompound stackNbt = new NBTTagCompound();
@@ -373,18 +406,19 @@ public class EntityRobot extends EntityRobotBase implements
 	public void readEntityFromNBT(NBTTagCompound nbt) {
 		super.readEntityFromNBT(nbt);
 
-		if (nbt.hasKey("dockX")) {
-			// FIXME: what happens if the chunk is not yet loaded?
-			linkedDockingStation = (DockingStation) DockingStationRegistry.getStation(
-					nbt.getInteger("dockX"),
-					nbt.getInteger("dockY"),
-					nbt.getInteger("dockZ"),
-					ForgeDirection.values()[nbt.getInteger("dockSide")]);
-		}
+		loadedDockX = nbt.getInteger("dockX");
+		loadedDockY = nbt.getInteger("dockY");
+		loadedDockZ = nbt.getInteger("dockZ");
+		loadedDockSide = ForgeDirection.values()[nbt.getInteger("dockSide")];
 
 		laser.readFromNBT(nbt.getCompoundTag("laser"));
 
 		mjStored = nbt.getDouble("mjStored");
+
+		if (nbt.hasKey("itemInUse")) {
+			itemInUse = ItemStack.loadItemStackFromNBT(nbt.getCompoundTag("itemInUse"));
+			itemActive = nbt.getBoolean("itemActive");
+		}
 
 		for (int i = 0; i < inv.length; ++i) {
 			inv[i] = ItemStack.loadItemStackFromNBT(nbt.getCompoundTag("inv[" + i + "]"));
@@ -724,9 +758,18 @@ public class EntityRobot extends EntityRobotBase implements
 	@Override
 	public void setDead() {
 		if (!worldObj.isRemote && !isDead) {
+			// FIXME: placing a robot gives it full energy, so if it's dropped
+			// for lack of energy, it's a cheap way to refuel it. Find
+			// some other way to cope with that problem - such as a manual
+			// charger?
+
 			ItemStack robotStack = new ItemStack (BuildCraftSilicon.robotItem);
 			NBTUtils.getItemData(robotStack).setTag("board", originalBoardNBT);
 			entityDropItem(robotStack, 0);
+
+			if (linkedDockingStation != null) {
+				linkedDockingStation.unlink(this);
+			}
 		}
 
 		super.setDead();

@@ -70,11 +70,21 @@ public class AIRobot {
 
 	public final void abort() {
 		abortDelegateAI();
-		end();
 
-		if (parentAI != null) {
-			parentAI.delegateAI = null;
-			parentAI.delegateAIAborted(this);
+		try {
+			end();
+
+			if (parentAI != null) {
+				parentAI.delegateAI = null;
+				parentAI.delegateAIAborted(this);
+			}
+		} catch (Throwable e) {
+			e.printStackTrace();
+			delegateAI = null;
+
+			if (parentAI != null) {
+				parentAI.delegateAI = null;
+			}
 		}
 	}
 

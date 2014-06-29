@@ -246,10 +246,12 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 			}
 		}
 
-		public void validate() {
-			for (IPipePluggable p : pluggables) {
+		public void validate(TileGenericPipe pipe) {
+			for (ForgeDirection d : ForgeDirection.VALID_DIRECTIONS) {
+				IPipePluggable p = pluggables[d.ordinal()];
+
 				if (p != null) {
-					p.validate();
+					p.validate(pipe, d);
 				}
 			}
 		}
@@ -332,7 +334,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 			pipe.validate();
 		}
 
-		sideProperties.validate();
+		sideProperties.validate(this);
 	}
 
 	private void notifyBlockChanged() {
