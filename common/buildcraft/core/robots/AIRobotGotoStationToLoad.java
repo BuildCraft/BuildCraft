@@ -57,7 +57,7 @@ public class AIRobotGotoStationToLoad extends AIRobot {
 
 		@Override
 		public boolean matches(DockingStation station) {
-			boolean found = false;
+			boolean actionFound = false;
 
 			Pipe pipe = station.pipe.pipe;
 
@@ -66,13 +66,13 @@ public class AIRobotGotoStationToLoad extends AIRobot {
 					StatementParameterStackFilter param = new StatementParameterStackFilter(s.parameters);
 
 					if (!param.hasFilter() || param.matches(filter)) {
-						found = true;
+						actionFound = true;
 						break;
 					}
 				}
 			}
 
-			if (!found) {
+			if (!actionFound) {
 				return false;
 			}
 

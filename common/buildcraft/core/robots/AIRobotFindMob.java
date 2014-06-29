@@ -16,14 +16,14 @@ import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.inventory.TransactorSimple;
 
-public class AIRobotGotoMob extends AIRobot {
+public class AIRobotFindMob extends AIRobot {
 
 	public EntityMob target;
 
 	private float maxRange;
 	private IBox box;
 
-	public AIRobotGotoMob(EntityRobotBase iRobot, float iMaxRange, IBox iBox) {
+	public AIRobotFindMob(EntityRobotBase iRobot, float iMaxRange, IBox iBox) {
 		super(iRobot, 0);
 
 		maxRange = iMaxRange;
@@ -40,7 +40,8 @@ public class AIRobotGotoMob extends AIRobot {
 
 			if (!e.isDead
 					&& e instanceof EntityMob
-					&& (box == null || box.contains(e.posX, e.posY, e.posZ))) {
+					&& (box == null || box.contains(e.posX, e.posY, e.posZ))
+					&& (!robot.isKnownUnreachable(e))) {
 				double dx = e.posX - robot.posX;
 				double dy = e.posY - robot.posY;
 				double dz = e.posZ - robot.posZ;
@@ -64,30 +65,6 @@ public class AIRobotGotoMob extends AIRobot {
 			}
 		}
 
-		if (target != null) {
-			startDelegateAI(new AIRobotGotoBlock(robot, (int) Math.floor(target.posX),
-					(int) Math.floor(target.posY), (int) Math.floor(target.posZ)));
-
-		} else {
-			// No mob was found, terminate this AI
-			terminate();
-		}
-	}
-
-	@Override
-	public void preempt(AIRobot ai) {
-		if (target.isDead) {
-			terminate();
-		}
-	}
-
-	@Override
-	public void update() {
-		if (target.isDead) {
-			terminate();
-		} else {
-			// fight
-			terminate();
-		}
+		terminate();
 	}
 }

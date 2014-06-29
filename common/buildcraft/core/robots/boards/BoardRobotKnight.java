@@ -18,7 +18,8 @@ import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.inventory.filters.IStackFilter;
 import buildcraft.core.robots.AIRobotAttack;
 import buildcraft.core.robots.AIRobotFetchAndEquipItemStack;
-import buildcraft.core.robots.AIRobotGotoMob;
+import buildcraft.core.robots.AIRobotFindMob;
+import buildcraft.core.robots.AIRobotGotoSleep;
 
 public class BoardRobotKnight extends RedstoneBoardRobot {
 
@@ -32,17 +33,6 @@ public class BoardRobotKnight extends RedstoneBoardRobot {
 	}
 
 	@Override
-	public void preempt(AIRobot ai) {
-		if (ai instanceof AIRobotGotoMob) {
-			AIRobotGotoMob mobAI = (AIRobotGotoMob) ai;
-
-			if (robot.getDistanceToEntity(mobAI.target) < 2.0) {
-				startDelegateAI(new AIRobotAttack(robot, mobAI.target));
-			}
-		}
-	}
-
-	@Override
 	public final void update() {
 		if (robot.getItemInUse() == null) {
 			startDelegateAI(new AIRobotFetchAndEquipItemStack(robot, new IStackFilter() {
@@ -52,7 +42,24 @@ public class BoardRobotKnight extends RedstoneBoardRobot {
 				}
 			}));
 		} else {
-			startDelegateAI(new AIRobotGotoMob(robot, 250, robot.getAreaToWork()));
+			startDelegateAI(new AIRobotFindMob(robot, 250, robot.getAreaToWork()));
+		}
+	}
+
+	@Override
+	public void delegateAIEnded(AIRobot ai) {
+		if (ai instanceof AIRobotFetchAndEquipItemStack) {
+			if (robot.getItemInUse() == null) {
+				startDelegateAI(new AIRobotGotoSleep(robot));
+			}
+		} else if (ai instanceof AIRobotFindMob) {
+			AIRobotFindMob mobAI = (AIRobotFindMob) ai;
+
+			if (mobAI.target != null) {
+				startDelegateAI(new AIRobotAttack(robot, ((AIRobotFindMob) ai).target));
+			} else {
+				startDelegateAI(new AIRobotGotoSleep(robot));
+			}
 		}
 	}
 

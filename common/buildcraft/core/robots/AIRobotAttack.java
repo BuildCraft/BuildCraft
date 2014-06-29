@@ -26,10 +26,13 @@ public class AIRobotAttack extends AIRobot {
 	}
 
 	@Override
-	public void start() {
-		robot.setItemActive(true);
-		robot.aimItemAt((int) Math.floor(target.posX), (int) Math.floor(target.posY),
-				(int) Math.floor(target.posZ));
+	public void preempt(AIRobot ai) {
+		if (ai instanceof AIRobotGotoBlock) {
+			if (robot.getDistanceToEntity(target) <= 2.0) {
+				abortDelegateAI();
+				robot.setItemActive(true);
+			}
+		}
 	}
 
 	@Override
@@ -40,7 +43,11 @@ public class AIRobotAttack extends AIRobot {
 		}
 
 		if (robot.getDistanceToEntity(target) > 2.0) {
-			terminate();
+			startDelegateAI(new AIRobotGotoBlock(robot, (int) Math.floor(target.posX),
+					(int) Math.floor(target.posY), (int) Math.floor(target.posZ)));
+			robot.setItemActive(false);
+
+			return;
 		}
 
 		delay++;
@@ -56,5 +63,18 @@ public class AIRobotAttack extends AIRobot {
 	@Override
 	public void end() {
 		robot.setItemActive(false);
+	}
+
+	@Override
+	public void delegateAIEnded(AIRobot ai) {
+		if (ai instanceof AIRobotGotoBlock) {
+			AIRobotGotoBlock aiGoto = (AIRobotGotoBlock) ai;
+
+			if (((AIRobotGotoBlock) ai).unreachable) {
+				robot.unreachableEntityDetected(target);
+			}
+
+			terminate();
+		}
 	}
 }
