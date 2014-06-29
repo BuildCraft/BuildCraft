@@ -10,6 +10,11 @@ package buildcraft.core.robots;
 
 import java.util.LinkedList;
 
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+
+import net.minecraftforge.common.util.Constants;
+
 import buildcraft.api.core.BlockIndex;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.utils.PathFinding;
@@ -48,20 +53,18 @@ public class AIRobotGotoBlock extends AIRobotGoto {
 	@Override
 	public void start() {
 		robot.undock();
+	}
 
-		if (path == null) {
+	@Override
+	public void update() {
+		if (path == null && pathSearch == null) {
 			pathSearch = new PathFinding(robot.worldObj, new BlockIndex((int) Math.floor(robot.posX),
 					(int) Math.floor(robot.posY), (int) Math.floor(robot.posZ)), new BlockIndex(
 					(int) Math.floor(finalX), (int) Math.floor(finalY), (int) Math.floor(finalZ)));
 
 			pathSearchJob = new PathFindingJob(pathSearch, 100);
 			pathSearchJob.start();
-		}
-	}
-
-	@Override
-	public void update() {
-		if (path != null) {
+		} else if (path != null) {
 			double distance = robot.getDistance(nextX, nextY, nextZ);
 
 			if (!robot.isMoving() || distance > prevDistance) {
@@ -114,6 +117,48 @@ public class AIRobotGotoBlock extends AIRobotGoto {
 			robot.motionX = 0;
 			robot.motionY = 0;
 			robot.motionZ = 0;
+		}
+	}
+
+	@Override
+	public void writeSelfToNBT(NBTTagCompound nbt) {
+		super.writeSelfToNBT(nbt);
+
+		nbt.setFloat("finalX", finalX);
+		nbt.setFloat("finalY", finalY);
+		nbt.setFloat("finalZ", finalZ);
+
+		if (path != null) {
+			NBTTagList pathList = new NBTTagList();
+
+			for (BlockIndex i : path) {
+				NBTTagCompound subNBT = new NBTTagCompound();
+				i.writeTo(subNBT);
+				pathList.appendTag(subNBT);
+			}
+
+			nbt.setTag("path", pathList);
+		}
+	}
+
+	@Override
+	public void loadSelfFromNBT(NBTTagCompound nbt) {
+		super.loadSelfFromNBT(nbt);
+
+		finalX = nbt.getFloat("finalX");
+		finalY = nbt.getFloat("finalY");
+		finalZ = nbt.getFloat("finalZ");
+
+		if (nbt.hasKey("path")) {
+			NBTTagList pathList = nbt.getTagList("path", Constants.NBT.TAG_COMPOUND);
+
+			path = new LinkedList<BlockIndex>();
+
+			for (int i = 0; i < pathList.tagCount(); ++i) {
+				path.add(new BlockIndex(pathList.getCompoundTagAt(i)));
+			}
+
+			setNextInPath();
 		}
 	}
 }

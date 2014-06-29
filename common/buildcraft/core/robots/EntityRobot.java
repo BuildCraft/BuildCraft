@@ -222,6 +222,14 @@ public class EntityRobot extends EntityRobotBase implements
 			if (mjStored <= 0) {
 				setDead();
 			}
+
+			if (linkedDockingStation == null) {
+				// Defensive code. There should always be a station linked, but
+				// in case there's not (consecutive to a wrong load for
+				// example), just kill the robot.
+
+				setDead();
+			}
 		}
 
 		super.onUpdate();
@@ -338,6 +346,8 @@ public class EntityRobot extends EntityRobotBase implements
 		laser.writeToNBT(nbtLaser);
 		nbt.setTag("laser", nbtLaser);
 
+		nbt.setDouble("mjStored", mjStored);
+
 		for (int i = 0; i < inv.length; ++i) {
 			NBTTagCompound stackNbt = new NBTTagCompound();
 
@@ -350,7 +360,7 @@ public class EntityRobot extends EntityRobotBase implements
 
 		NBTTagCompound ai = new NBTTagCompound();
 		mainAI.writeToNBT(ai);
-		nbt.setTag("mainAi", ai);
+		nbt.setTag("mainAI", ai);
 
 		if (mainAI.getDelegateAI() != board) {
 			NBTTagCompound boardNBT = new NBTTagCompound();
@@ -374,6 +384,8 @@ public class EntityRobot extends EntityRobotBase implements
 
 		laser.readFromNBT(nbt.getCompoundTag("laser"));
 
+		mjStored = nbt.getDouble("mjStored");
+
 		for (int i = 0; i < inv.length; ++i) {
 			inv[i] = ItemStack.loadItemStackFromNBT(nbt.getCompoundTag("inv[" + i + "]"));
 		}
@@ -388,6 +400,8 @@ public class EntityRobot extends EntityRobotBase implements
 		} else {
 			board = (RedstoneBoardRobot) mainAI.getDelegateAI();
 		}
+
+		dataWatcher.updateObject(16, board.getNBTHandler().getID());
     }
 
 	@Override

@@ -68,7 +68,6 @@ import buildcraft.api.gates.ITrigger;
 import buildcraft.api.gates.StatementManager;
 import buildcraft.api.recipes.BuildcraftRecipeRegistry;
 import buildcraft.api.robots.DockingStationRegistry;
-import buildcraft.builders.urbanism.EntityRobotUrbanism;
 import buildcraft.core.BlockSpring;
 import buildcraft.core.BuildCraftConfiguration;
 import buildcraft.core.CommandBuildCraft;
@@ -336,8 +335,6 @@ public class BuildCraftCore extends BuildCraftMod {
 			loadRecipes();
 		}
 		EntityRegistry.registerModEntity(EntityRobot.class, "bcRobot", EntityIds.ROBOT, instance, 50, 1, true);
-		EntityRegistry.registerModEntity(EntityRobotUrbanism.class, "bcRobotUrbanism", EntityIds.ROBOT_URBANISM, instance, 50, 1, true);
-		EntityList.stringToClassMapping.remove("BuildCraft|Core.bcRobot");
 		EntityList.stringToClassMapping.remove("BuildCraft|Core.bcLaser");
 		EntityList.stringToClassMapping.remove("BuildCraft|Core.bcEnergyLaser");
 

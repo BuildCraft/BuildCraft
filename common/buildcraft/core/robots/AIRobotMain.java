@@ -32,7 +32,11 @@ public class AIRobotMain extends AIRobot {
 
 	@Override
 	public void update() {
-		startDelegateAI(robot.getBoard());
+		AIRobot board = robot.getBoard();
+
+		if (board != null) {
+			startDelegateAI(board);
+		}
 	}
 
 	@Override

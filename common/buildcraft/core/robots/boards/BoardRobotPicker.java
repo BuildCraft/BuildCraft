@@ -42,6 +42,10 @@ public class BoardRobotPicker extends RedstoneBoardRobot {
 	private int range;
 	private IStackFilter stackFilter;
 
+	public BoardRobotPicker(EntityRobotBase iRobot) {
+		super(iRobot);
+	}
+
 	public BoardRobotPicker(EntityRobotBase robot, NBTTagCompound nbt) {
 		super(robot);
 		data = nbt;

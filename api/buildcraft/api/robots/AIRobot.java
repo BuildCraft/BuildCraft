@@ -79,13 +79,18 @@ public class AIRobot {
 	}
 
 	public final void cycle() {
-		preempt(delegateAI);
+		try {
+			preempt(delegateAI);
 
-		if (delegateAI != null) {
-			delegateAI.cycle();
-		} else {
-			robot.setEnergy(robot.getEnergy() - getEnergyCost());
-			update();
+			if (delegateAI != null) {
+				delegateAI.cycle();
+			} else {
+				robot.setEnergy(robot.getEnergy() - getEnergyCost());
+				update();
+			}
+		} catch (Throwable e) {
+			e.printStackTrace();
+			abort();
 		}
 	}
 

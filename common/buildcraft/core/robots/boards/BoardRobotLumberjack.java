@@ -19,6 +19,10 @@ import buildcraft.api.robots.EntityRobotBase;
 
 public class BoardRobotLumberjack extends BoardRobotGenericBreakBlock {
 
+	public BoardRobotLumberjack(EntityRobotBase iRobot) {
+		super(iRobot);
+	}
+
 	public BoardRobotLumberjack(EntityRobotBase iRobot, NBTTagCompound nbt) {
 		super(iRobot);
 	}
