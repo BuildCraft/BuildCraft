@@ -10,8 +10,6 @@ package buildcraft.api.robots;
 
 import net.minecraft.nbt.NBTTagCompound;
 
-import buildcraft.core.robots.EntityRobot;
-
 public class AIRobot {
 	public EntityRobotBase robot;
 
@@ -161,7 +159,7 @@ public class AIRobot {
 		}
 	}
 
-	public static AIRobot loadAI(NBTTagCompound nbt, EntityRobot robot) {
+	public static AIRobot loadAI(NBTTagCompound nbt, EntityRobotBase robot) {
 		AIRobot ai = null;
 
 		try {
