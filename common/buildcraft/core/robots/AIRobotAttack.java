@@ -19,8 +19,12 @@ public class AIRobotAttack extends AIRobot {
 
 	private int delay = 10;
 
+	public AIRobotAttack(EntityRobotBase iRobot) {
+		super(iRobot);
+	}
+
 	public AIRobotAttack(EntityRobotBase iRobot, EntityMob iTarget) {
-		super(iRobot, 5);
+		super(iRobot);
 
 		target = iTarget;
 	}
@@ -76,5 +80,10 @@ public class AIRobotAttack extends AIRobot {
 
 			terminate();
 		}
+	}
+
+	@Override
+	public double getEnergyCost() {
+		return 5;
 	}
 }

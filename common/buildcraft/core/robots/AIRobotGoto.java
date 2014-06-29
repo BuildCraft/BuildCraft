@@ -17,7 +17,7 @@ public abstract class AIRobotGoto extends AIRobot {
 	protected double dirX, dirY, dirZ;
 
 	public AIRobotGoto(EntityRobotBase iRobot) {
-		super(iRobot, 1);
+		super(iRobot);
 	}
 
 	protected void setDestination(EntityRobotBase robot, float x, float y, float z) {
@@ -46,4 +46,8 @@ public abstract class AIRobotGoto extends AIRobot {
 		robot.motionZ = dirZ / 10F;
 	}
 
+	@Override
+	public double getEnergyCost() {
+		return 1;
+	}
 }

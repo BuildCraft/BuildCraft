@@ -31,8 +31,12 @@ public class AIRobotBreakWithTool extends AIRobot {
 	private float hardness;
 	private float speed;
 
+	public AIRobotBreakWithTool(EntityRobotBase iRobot) {
+		super(iRobot);
+	}
+
 	public AIRobotBreakWithTool(EntityRobotBase iRobot, BlockIndex iBlockToBreak) {
-		super(iRobot, 2);
+		super(iRobot);
 
 		blockToBreak = iBlockToBreak;
 	}
@@ -45,7 +49,7 @@ public class AIRobotBreakWithTool extends AIRobot {
 		block = robot.worldObj.getBlock(blockToBreak.x, blockToBreak.y, blockToBreak.z);
 		meta = robot.worldObj.getBlockMetadata(blockToBreak.x, blockToBreak.y, blockToBreak.z);
 		hardness = block.getBlockHardness(robot.worldObj, blockToBreak.x, blockToBreak.y, blockToBreak.z);
-		speed = getBreakSpeed(robot, robot.getItemInUse(), block, meta);
+		speed = getBreakSpeed(robot, robot.getHeldItem(), block, meta);
 	}
 
 	@Override
@@ -56,14 +60,14 @@ public class AIRobotBreakWithTool extends AIRobot {
 			robot.worldObj.destroyBlockInWorldPartially(robot.getEntityId(), blockToBreak.x,
 					blockToBreak.y, blockToBreak.z, -1);
 			blockDamage = 0;
-			robot.getItemInUse().getItem()
-					.onBlockStartBreak(robot.getItemInUse(), blockToBreak.x, blockToBreak.y, blockToBreak.z,
+			robot.getHeldItem().getItem()
+					.onBlockStartBreak(robot.getHeldItem(), blockToBreak.x, blockToBreak.y, blockToBreak.z,
 							CoreProxy.proxy.getBuildCraftPlayer((WorldServer) robot.worldObj).get());
 			BlockUtil.breakBlock((WorldServer) robot.worldObj, blockToBreak.x, blockToBreak.y, blockToBreak.z, 6000);
-			robot.getItemInUse().getItem().onBlockDestroyed(robot.getItemInUse(), robot.worldObj, block, blockToBreak.x,
+			robot.getHeldItem().getItem().onBlockDestroyed(robot.getHeldItem(), robot.worldObj, block, blockToBreak.x,
 					blockToBreak.y, blockToBreak.z, robot);
 
-			if (robot.getItemInUse().getItemDamage() >= robot.getItemInUse().getMaxDamage()) {
+			if (robot.getHeldItem().getItemDamage() >= robot.getHeldItem().getMaxDamage()) {
 				robot.setItemInUse(null);
 			}
 
@@ -103,5 +107,10 @@ public class AIRobotBreakWithTool extends AIRobot {
 		}
 
 		return f;
+	}
+
+	@Override
+	public double getEnergyCost() {
+		return 2;
 	}
 }

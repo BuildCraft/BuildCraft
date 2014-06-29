@@ -33,7 +33,7 @@ public abstract class BoardRobotGenericBreakBlock extends RedstoneBoardRobot {
 
 	@Override
 	public final void update() {
-		if (robot.getItemInUse() == null) {
+		if (robot.getHeldItem() == null) {
 			startDelegateAI(new AIRobotFetchAndEquipItemStack(robot, new IStackFilter() {
 				@Override
 				public boolean matches(ItemStack stack) {

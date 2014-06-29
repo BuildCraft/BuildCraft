@@ -86,5 +86,15 @@ public class ItemPlug extends ItemBuildCraft {
 		public boolean blocking(IPipeTile pipe, ForgeDirection direction) {
 			return true;
 		}
+
+		@Override
+		public void invalidate() {
+
+		}
+
+		@Override
+		public void validate() {
+
+		}
 	}
 }

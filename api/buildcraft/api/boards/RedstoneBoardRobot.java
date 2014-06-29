@@ -19,7 +19,7 @@ public abstract class RedstoneBoardRobot extends AIRobot implements IRedstoneBoa
 	public static HashSet<BlockIndex> reservedBlocks = new HashSet<BlockIndex>();
 
 	public RedstoneBoardRobot(EntityRobotBase iRobot) {
-		super(iRobot, 0);
+		super(iRobot);
 	}
 
 	@Override

@@ -81,16 +81,20 @@ public class ItemRobotStation extends ItemBuildCraft {
 		public void onAttachedPipe(IPipeTile pipe, ForgeDirection direction) {
 			TileGenericPipe realPipe = (TileGenericPipe) pipe;
 			if (!realPipe.getWorld().isRemote) {
-				DockingStationRegistry.registerStation(station = new DockingStation(realPipe, direction));
+				station = new DockingStation(realPipe, direction);
+				validate();
+				//DockingStationRegistry.registerStation(station = new DockingStation(realPipe, direction));
 			}
 		}
 
 		@Override
 		public void onDetachedPipe(IPipeTile pipe, ForgeDirection direction) {
-			TileGenericPipe realPipe = (TileGenericPipe) pipe;
-			if (!realPipe.getWorld().isRemote && station != null) {
-				DockingStationRegistry.removeStation(station);
-			}
+			invalidate();
+			/*
+			 * TileGenericPipe realPipe = (TileGenericPipe) pipe; if
+			 * (!realPipe.getWorld().isRemote && station != null) {
+			 * DockingStationRegistry.removeStation(station); }
+			 */
 		}
 
 		public DockingStation getStation() {
@@ -100,6 +104,20 @@ public class ItemRobotStation extends ItemBuildCraft {
 		@Override
 		public boolean blocking(IPipeTile pipe, ForgeDirection direction) {
 			return true;
+		}
+
+		@Override
+		public void invalidate() {
+			if (station != null && !station.pipe.getWorld().isRemote) {
+				DockingStationRegistry.removeStation(station);
+			}
+		}
+
+		@Override
+		public void validate() {
+			if (station != null && !station.pipe.getWorld().isRemote) {
+				DockingStationRegistry.registerStation(station);
+			}
 		}
 	}
 }

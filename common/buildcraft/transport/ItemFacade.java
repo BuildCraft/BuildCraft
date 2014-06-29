@@ -47,7 +47,6 @@ import buildcraft.core.ItemBuildCraft;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.StringUtils;
 
-
 public class ItemFacade extends ItemBuildCraft {
 	public static class FacadeState {
 		public final Block block;
@@ -468,6 +467,16 @@ public class ItemFacade extends ItemBuildCraft {
 		@Override
 		public boolean blocking(IPipeTile pipe, ForgeDirection direction) {
 			return false;
+		}
+
+		@Override
+		public void invalidate() {
+
+		}
+
+		@Override
+		public void validate() {
+
 		}
 	}
 

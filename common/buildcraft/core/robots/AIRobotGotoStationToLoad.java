@@ -32,8 +32,12 @@ public class AIRobotGotoStationToLoad extends AIRobot {
 	private IStackFilter filter;
 	private IBox box;
 
+	public AIRobotGotoStationToLoad(EntityRobotBase iRobot) {
+		super(iRobot);
+	}
+
 	public AIRobotGotoStationToLoad(EntityRobotBase iRobot, IStackFilter iFilter, IBox iBox) {
-		super(iRobot, 0);
+		super(iRobot);
 
 		filter = iFilter;
 		box = iBox;

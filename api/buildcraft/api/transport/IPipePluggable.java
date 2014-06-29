@@ -10,6 +10,7 @@ package buildcraft.api.transport;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+
 import net.minecraftforge.common.util.ForgeDirection;
 
 public interface IPipePluggable {
@@ -24,4 +25,8 @@ public interface IPipePluggable {
 	void onDetachedPipe(IPipeTile pipe, ForgeDirection direction);
 
 	boolean blocking(IPipeTile pipe, ForgeDirection direction);
+
+	void invalidate();
+
+	void validate();
 }

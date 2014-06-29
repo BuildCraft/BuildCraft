@@ -14,7 +14,7 @@ import buildcraft.api.robots.EntityRobotBase;
 public class AIRobotGotoSleep extends AIRobot {
 
 	public AIRobotGotoSleep(EntityRobotBase iRobot) {
-		super(iRobot, 0);
+		super(iRobot);
 	}
 
 	@Override

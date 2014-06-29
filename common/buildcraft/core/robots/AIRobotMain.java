@@ -16,7 +16,7 @@ public class AIRobotMain extends AIRobot {
 	private AIRobot overridingAI;
 
 	public AIRobotMain(EntityRobotBase iRobot) {
-		super(iRobot, 0);
+		super(iRobot);
 	}
 
 	@Override

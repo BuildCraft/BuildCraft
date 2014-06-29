@@ -32,7 +32,7 @@ public class BoardRobotMiner extends BoardRobotGenericBreakBlock {
 		super.delegateAIEnded(ai);
 
 		if (ai instanceof AIRobotFetchAndEquipItemStack) {
-			ItemStack stack = robot.getItemInUse();
+			ItemStack stack = robot.getHeldItem();
 
 			if (stack != null && stack.getItem() instanceof ItemPickaxe) {
 				ItemPickaxe pickaxe = (ItemPickaxe) stack.getItem();

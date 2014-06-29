@@ -21,8 +21,12 @@ public class AIRobotSearchAndGotoStation extends AIRobot {
 	private IStationFilter filter;
 	private IBox box;
 
+	public AIRobotSearchAndGotoStation(EntityRobotBase iRobot) {
+		super(iRobot);
+	}
+
 	public AIRobotSearchAndGotoStation(EntityRobotBase iRobot, IStationFilter iFilter, IBox iBox) {
-		super(iRobot, 0);
+		super(iRobot);
 
 		filter = iFilter;
 		box = iBox;

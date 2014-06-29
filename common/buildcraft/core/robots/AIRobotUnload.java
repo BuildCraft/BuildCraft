@@ -24,7 +24,7 @@ public class AIRobotUnload extends AIRobot {
 	private int waitedCycles = 0;
 
 	public AIRobotUnload(EntityRobotBase iRobot) {
-		super(iRobot, 2);
+		super(iRobot);
 	}
 
 	@Override
@@ -65,5 +65,10 @@ public class AIRobotUnload extends AIRobot {
 		}
 
 		return false;
+	}
+
+	@Override
+	public double getEnergyCost() {
+		return 2;
 	}
 }

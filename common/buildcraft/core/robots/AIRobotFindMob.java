@@ -23,8 +23,12 @@ public class AIRobotFindMob extends AIRobot {
 	private float maxRange;
 	private IBox box;
 
+	public AIRobotFindMob(EntityRobotBase iRobot) {
+		super(iRobot);
+	}
+
 	public AIRobotFindMob(EntityRobotBase iRobot, float iMaxRange, IBox iBox) {
-		super(iRobot, 0);
+		super(iRobot);
 
 		maxRange = iMaxRange;
 		box = iBox;

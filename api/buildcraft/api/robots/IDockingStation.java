@@ -20,4 +20,7 @@ public interface IDockingStation {
 
 	ForgeDirection side();
 
+	EntityRobotBase reserved();
+
+	EntityRobotBase linked();
 }

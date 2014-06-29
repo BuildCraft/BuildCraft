@@ -21,8 +21,12 @@ public class AIRobotPlantSaple extends AIRobot {
 	private BlockIndex toPlant;
 	private int plantCycles = 0;
 
+	public AIRobotPlantSaple(EntityRobotBase iRobot) {
+		super(iRobot);
+	}
+
 	public AIRobotPlantSaple(EntityRobotBase iRobot, BlockIndex index) {
-		super(iRobot, 2);
+		super(iRobot);
 
 		toPlant = index;
 	}
@@ -38,7 +42,7 @@ public class AIRobotPlantSaple extends AIRobot {
 		plantCycles++;
 
 		if (plantCycles > 40) {
-			ItemStack stack = robot.getItemInUse();
+			ItemStack stack = robot.getHeldItem();
 			robot.setItemInUse(null);
 
 			stack.getItem().onItemUse(stack, CoreProxy.proxy.getBuildCraftPlayer((WorldServer) robot.worldObj).get(),
@@ -53,4 +57,8 @@ public class AIRobotPlantSaple extends AIRobot {
 		robot.setItemActive(false);
 	}
 
+	@Override
+	public double getEnergyCost() {
+		return 2;
+	}
 }

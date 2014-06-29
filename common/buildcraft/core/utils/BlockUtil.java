@@ -81,20 +81,24 @@ public final class BlockUtil {
 			List<ItemStack> items = getItemStackFromBlock(world, x, y, z);
 
 			for (ItemStack item : items) {
-				float var = 0.7F;
-				double dx = world.rand.nextFloat() * var + (1.0F - var) * 0.5D;
-				double dy = world.rand.nextFloat() * var + (1.0F - var) * 0.5D;
-				double dz = world.rand.nextFloat() * var + (1.0F - var) * 0.5D;
-				EntityItem entityitem = new EntityItem(world, x + dx, y + dy, z + dz, item);
-
-				entityitem.lifespan = forcedLifespan;
-				entityitem.delayBeforeCanPickup = 10;
-
-				world.spawnEntityInWorld(entityitem);
+				dropItem(world, x, y, z, forcedLifespan, item);
 			}
 		}
 
 		world.setBlockToAir(x, y, z);
+	}
+
+	public static void dropItem(WorldServer world, int x, int y, int z, int forcedLifespan, ItemStack stack) {
+		float var = 0.7F;
+		double dx = world.rand.nextFloat() * var + (1.0F - var) * 0.5D;
+		double dy = world.rand.nextFloat() * var + (1.0F - var) * 0.5D;
+		double dz = world.rand.nextFloat() * var + (1.0F - var) * 0.5D;
+		EntityItem entityitem = new EntityItem(world, x + dx, y + dy, z + dz, stack);
+
+		entityitem.lifespan = forcedLifespan;
+		entityitem.delayBeforeCanPickup = 10;
+
+		world.spawnEntityInWorld(entityitem);
 	}
 
 	public static boolean isAnObstructingBlock(Block block, World world, int x, int y, int z) {

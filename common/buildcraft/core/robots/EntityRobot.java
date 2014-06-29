@@ -30,6 +30,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 import net.minecraftforge.common.util.ForgeDirection;
 
+import buildcraft.BuildCraftSilicon;
 import buildcraft.api.boards.RedstoneBoardNBT;
 import buildcraft.api.boards.RedstoneBoardRegistry;
 import buildcraft.api.boards.RedstoneBoardRobot;
@@ -46,6 +47,7 @@ import buildcraft.core.network.RPC;
 import buildcraft.core.network.RPCHandler;
 import buildcraft.core.network.RPCMessageInfo;
 import buildcraft.core.network.RPCSide;
+import buildcraft.core.utils.NBTUtils;
 import buildcraft.silicon.statements.ActionRobotWorkInArea;
 import buildcraft.transport.gates.ActionIterator;
 import buildcraft.transport.gates.ActionSlot;
@@ -71,6 +73,7 @@ public class EntityRobot extends EntityRobotBase implements
 	public DockingStation linkedDockingStation;
 	public boolean isDocked = false;
 
+	public NBTTagCompound originalBoardNBT;
 	public RedstoneBoardRobot board;
 	public AIRobotMain mainAI;
 
@@ -93,6 +96,7 @@ public class EntityRobot extends EntityRobotBase implements
 	public EntityRobot(World world, NBTTagCompound boardNBT) {
 		this(world);
 
+		originalBoardNBT = boardNBT;
 		board = (RedstoneBoardRobot) RedstoneBoardRegistry.instance.getRedstoneBoard(boardNBT).create(boardNBT, this);
 		dataWatcher.updateObject(16, board.getNBTHandler().getID());
 
@@ -214,6 +218,10 @@ public class EntityRobot extends EntityRobotBase implements
 
 		if (!worldObj.isRemote) {
 			mainAI.cycle();
+
+			if (mjStored <= 0) {
+				setDead();
+			}
 		}
 
 		super.onUpdate();
@@ -283,7 +291,7 @@ public class EntityRobot extends EntityRobotBase implements
 
 	@Override
 	public ItemStack getHeldItem() {
-		return null;
+		return itemInUse;
 	}
 
 	@Override
@@ -294,7 +302,6 @@ public class EntityRobot extends EntityRobotBase implements
 	public ItemStack[] getLastActiveItems() {
 		return new ItemStack [0];
 	}
-
 
 	@Override
     protected void fall(float par1) {}
@@ -312,7 +319,7 @@ public class EntityRobot extends EntityRobotBase implements
         return false;
     }
 
-	public ResourceLocation getTexture () {
+	public ResourceLocation getTexture() {
 		return texture;
 	}
 
@@ -338,6 +345,18 @@ public class EntityRobot extends EntityRobotBase implements
 				nbt.setTag("inv[" + i + "]", inv[i].writeToNBT(stackNbt));
 			}
 		}
+
+		nbt.setTag("originalBoardNBT", originalBoardNBT);
+
+		NBTTagCompound ai = new NBTTagCompound();
+		mainAI.writeToNBT(ai);
+		nbt.setTag("mainAi", ai);
+
+		if (mainAI.getDelegateAI() != board) {
+			NBTTagCompound boardNBT = new NBTTagCompound();
+			board.writeToNBT(boardNBT);
+			nbt.setTag("board", boardNBT);
+		}
     }
 
 	@Override
@@ -345,6 +364,7 @@ public class EntityRobot extends EntityRobotBase implements
 		super.readEntityFromNBT(nbt);
 
 		if (nbt.hasKey("dockX")) {
+			// FIXME: what happens if the chunk is not yet loaded?
 			linkedDockingStation = (DockingStation) DockingStationRegistry.getStation(
 					nbt.getInteger("dockX"),
 					nbt.getInteger("dockY"),
@@ -352,19 +372,22 @@ public class EntityRobot extends EntityRobotBase implements
 					ForgeDirection.values()[nbt.getInteger("dockSide")]);
 		}
 
-		/*
-		 * if (nbt.hasKey("ai")) { try { nextAI = (RobotAIBase)
-		 * Class.forName(nbt.getString("ai")).newInstance(); } catch (Throwable
-		 * t) { t.printStackTrace(); } }
-		 */
-
 		laser.readFromNBT(nbt.getCompoundTag("laser"));
 
 		for (int i = 0; i < inv.length; ++i) {
 			inv[i] = ItemStack.loadItemStackFromNBT(nbt.getCompoundTag("inv[" + i + "]"));
 		}
 
-		setDead();
+		originalBoardNBT = nbt.getCompoundTag("originalBoardNBT");
+
+		NBTTagCompound ai = nbt.getCompoundTag("mainAI");
+		mainAI = (AIRobotMain) AIRobot.loadAI(ai, this);
+
+		if (nbt.hasKey("board")) {
+			board = (RedstoneBoardRobot) AIRobot.loadAI(nbt.getCompoundTag("board"), this);
+		} else {
+			board = (RedstoneBoardRobot) mainAI.getDelegateAI();
+		}
     }
 
 	@Override
@@ -442,11 +465,6 @@ public class EntityRobot extends EntityRobotBase implements
 
 	public boolean acceptTask (IRobotTask task) {
 		return false;
-	}
-
-	@Override
-	protected boolean isAIEnabled() {
-		return true;
 	}
 
 	@Override
@@ -591,11 +609,6 @@ public class EntityRobot extends EntityRobotBase implements
 	}
 
 	@Override
-	public ItemStack getItemInUse() {
-		return itemInUse;
-	}
-
-	@Override
 	public RedstoneBoardRobot getBoard() {
 		return board;
 	}
@@ -692,5 +705,16 @@ public class EntityRobot extends EntityRobotBase implements
 	@Override
 	public boolean isKnownUnreachable(Entity entity) {
 		return unreachableEntities.containsKey(entity);
+	}
+
+	@Override
+	public void setDead() {
+		if (!worldObj.isRemote && !isDead) {
+			ItemStack robotStack = new ItemStack (BuildCraftSilicon.robotItem);
+			NBTUtils.getItemData(robotStack).setTag("board", originalBoardNBT);
+			entityDropItem(robotStack, 0);
+		}
+
+		super.setDead();
 	}
 }

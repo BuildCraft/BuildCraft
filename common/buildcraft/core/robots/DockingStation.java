@@ -48,10 +48,12 @@ public class DockingStation implements IDockingStation {
 		return side;
 	}
 
+	@Override
 	public EntityRobotBase reserved() {
 		return reserved;
 	}
 
+	@Override
 	public EntityRobotBase linked() {
 		return linked;
 	}

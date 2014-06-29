@@ -26,8 +26,12 @@ public class AIRobotGotoStationToUnload extends AIRobot {
 
 	private IBox box;
 
+	public AIRobotGotoStationToUnload(EntityRobotBase iRobot) {
+		super(iRobot);
+	}
+
 	public AIRobotGotoStationToUnload(EntityRobotBase iRobot, IBox iBox) {
-		super(iRobot, 0);
+		super(iRobot);
 
 		box = iBox;
 

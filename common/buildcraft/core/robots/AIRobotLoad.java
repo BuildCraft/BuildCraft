@@ -31,8 +31,12 @@ public class AIRobotLoad extends AIRobot {
 	private IStackFilter filter;
 	private int waitedCycles = 0;
 
+	public AIRobotLoad(EntityRobotBase iRobot) {
+		super(iRobot);
+	}
+
 	public AIRobotLoad(EntityRobotBase iRobot, IStackFilter iFilter) {
-		super(iRobot, 2);
+		super(iRobot);
 
 		filter = iFilter;
 	}
@@ -94,5 +98,10 @@ public class AIRobotLoad extends AIRobot {
 				}
 			}
 		}
+	}
+
+	@Override
+	public double getEnergyCost() {
+		return 2;
 	}
 }

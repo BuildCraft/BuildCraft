@@ -20,7 +20,7 @@ public class AIRobotSleep extends AIRobot {
 	private int sleptTime = 0;
 
 	public AIRobotSleep(EntityRobotBase iRobot) {
-		super(iRobot, 0);
+		super(iRobot);
 	}
 
 	@Override
@@ -39,5 +39,10 @@ public class AIRobotSleep extends AIRobot {
 		if (sleptTime > SLEEPING_TIME) {
 			terminate();
 		}
+	}
+
+	@Override
+	public double getEnergyCost() {
+		return 0.01;
 	}
 }

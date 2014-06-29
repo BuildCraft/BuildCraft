@@ -175,7 +175,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 						// 5.0.x
 						Block block = (Block) Block.blockRegistry.getObjectById(nbt.getInteger("facadeBlocks[" + i + "]"));
 						int blockId = nbt.getInteger("facadeBlocks[" + i + "]");
-						
+
 						if (blockId != 0) {
 							int metadata = nbt.getInteger("facadeMeta[" + i + "]");
 							pluggable = new ItemFacade.FacadePluggable(new ItemFacade.FacadeState[]{ItemFacade.FacadeState.create(block, metadata)});
@@ -237,6 +237,22 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 			pipe.notifyBlockChanged();
 			return result;
 		}
+
+		public void invalidate() {
+			for (IPipePluggable p : pluggables) {
+				if (p != null) {
+					p.invalidate();
+				}
+			}
+		}
+
+		public void validate() {
+			for (IPipePluggable p : pluggables) {
+				if (p != null) {
+					p.validate();
+				}
+			}
+		}
 	}
 
 	private SideProperties sideProperties = new SideProperties();
@@ -295,9 +311,13 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 	public void invalidate() {
 		initialized = false;
 		tileBuffer = null;
+
 		if (pipe != null) {
 			pipe.invalidate();
 		}
+
+		sideProperties.invalidate();
+
 		super.invalidate();
 	}
 
@@ -307,9 +327,12 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 		initialized = false;
 		tileBuffer = null;
 		bindPipe();
+
 		if (pipe != null) {
 			pipe.validate();
 		}
+
+		sideProperties.validate();
 	}
 
 	private void notifyBlockChanged() {

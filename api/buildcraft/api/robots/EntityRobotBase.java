@@ -27,8 +27,6 @@ public abstract class EntityRobotBase extends EntityLiving implements IInventory
 
 	public abstract void setItemInUse(ItemStack stack);
 
-	public abstract ItemStack getItemInUse();
-
 	public abstract void setItemActive(boolean b);
 
 	public abstract boolean isMoving();

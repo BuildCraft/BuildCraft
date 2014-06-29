@@ -25,6 +25,10 @@ public class AIRobotGotoBlock extends AIRobotGoto {
 	private double prevDistance = Double.MAX_VALUE;
 	private float finalX, finalY, finalZ;
 
+	public AIRobotGotoBlock(EntityRobotBase iRobot) {
+		super(iRobot);
+	}
+
 	public AIRobotGotoBlock(EntityRobotBase robot, int x, int y, int z) {
 		super(robot);
 		finalX = x;

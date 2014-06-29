@@ -176,6 +176,16 @@ public class ItemGate extends ItemBuildCraft {
 			}
 			return true;
 		}
+
+		@Override
+		public void invalidate() {
+
+		}
+
+		@Override
+		public void validate() {
+
+		}
 	}
 
 	private static final String NBT_TAG_MAT = "mat";

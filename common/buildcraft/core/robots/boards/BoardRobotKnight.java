@@ -34,7 +34,7 @@ public class BoardRobotKnight extends RedstoneBoardRobot {
 
 	@Override
 	public final void update() {
-		if (robot.getItemInUse() == null) {
+		if (robot.getHeldItem() == null) {
 			startDelegateAI(new AIRobotFetchAndEquipItemStack(robot, new IStackFilter() {
 				@Override
 				public boolean matches(ItemStack stack) {
@@ -49,7 +49,7 @@ public class BoardRobotKnight extends RedstoneBoardRobot {
 	@Override
 	public void delegateAIEnded(AIRobot ai) {
 		if (ai instanceof AIRobotFetchAndEquipItemStack) {
-			if (robot.getItemInUse() == null) {
+			if (robot.getHeldItem() == null) {
 				startDelegateAI(new AIRobotGotoSleep(robot));
 			}
 		} else if (ai instanceof AIRobotFindMob) {

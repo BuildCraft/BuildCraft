@@ -84,6 +84,14 @@ public final class DockingStationRegistry {
 		StationIndex index = toIndex(station);
 
 		if (stations.containsKey(index)) {
+			if (station.linked() != null) {
+				station.linked().setDead();
+			}
+
+			if (station.reserved() != null) {
+				station.reserved().reserveStation(null);
+			}
+
 			stations.remove(index);
 		}
 	}

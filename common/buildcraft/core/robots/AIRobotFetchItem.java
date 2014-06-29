@@ -30,8 +30,12 @@ public class AIRobotFetchItem extends AIRobot {
 	private int pickTime = -1;
 	private IBox box;
 
+	public AIRobotFetchItem(EntityRobotBase iRobot) {
+		super(iRobot);
+	}
+
 	public AIRobotFetchItem(EntityRobotBase iRobot, float iMaxRange, IStackFilter iStackFilter, IBox iBox) {
-		super(iRobot, 0);
+		super(iRobot);
 
 		maxRange = iMaxRange;
 		stackFilter = iStackFilter;

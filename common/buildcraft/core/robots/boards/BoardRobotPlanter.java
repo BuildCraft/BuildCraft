@@ -37,7 +37,7 @@ public class BoardRobotPlanter extends RedstoneBoardRobot {
 
 	@Override
 	public void update() {
-		if (robot.getItemInUse() == null) {
+		if (robot.getHeldItem() == null) {
 			startDelegateAI(new AIRobotFetchAndEquipItemStack(robot, new OreStackFilter("treeSapling")));
 		} else {
 			startDelegateAI(new AIRobotGotoRandomGroundBlock(robot, 100, new IBlockFilter() {
@@ -62,7 +62,7 @@ public class BoardRobotPlanter extends RedstoneBoardRobot {
 				startDelegateAI(new AIRobotPlantSaple(robot, ((AIRobotGotoRandomGroundBlock) ai).blockFound));
 			}
 		} else if (ai instanceof AIRobotFetchAndEquipItemStack) {
-			if (robot.getItemInUse() == null) {
+			if (robot.getHeldItem() == null) {
 				startDelegateAI(new AIRobotGotoSleep(robot));
 			}
 		}

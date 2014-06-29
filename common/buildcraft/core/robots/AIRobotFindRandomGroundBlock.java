@@ -25,8 +25,12 @@ public class AIRobotFindRandomGroundBlock extends AIRobot {
 	private IBox area;
 	private int attempts = 0;
 
+	public AIRobotFindRandomGroundBlock(EntityRobotBase iRobot) {
+		super(iRobot);
+	}
+
 	public AIRobotFindRandomGroundBlock(EntityRobotBase iRobot, int iRange, IBlockFilter iFilter, IBox iArea) {
-		super(iRobot, 0);
+		super(iRobot);
 
 		range = iRange;
 		filter = iFilter;
