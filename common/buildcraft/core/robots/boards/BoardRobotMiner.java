@@ -50,7 +50,7 @@ public class BoardRobotMiner extends BoardRobotGenericBreakBlock {
 
 	@Override
 	public boolean isExpectedTool(ItemStack stack) {
-		return stack.getItem() instanceof ItemPickaxe;
+		return stack != null && stack.getItem() instanceof ItemPickaxe;
 	}
 
 	@Override

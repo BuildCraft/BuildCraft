@@ -25,6 +25,7 @@ public final class BuildCraftAPI {
 	public static IWorldProperty isLeavesProperty;
 	public static IWorldProperty isBasicOreProperty;
 	public static IWorldProperty isExtendedOreProperty;
+	public static IWorldProperty isHarvestableProperty;
 
 	/**
 	 * Deactivate constructor

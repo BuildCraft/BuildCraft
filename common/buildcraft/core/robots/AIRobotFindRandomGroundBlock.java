@@ -39,6 +39,11 @@ public class AIRobotFindRandomGroundBlock extends AIRobot {
 
 	@Override
 	public void update() {
+		if (filter == null) {
+			// defensive code
+			terminate();
+		}
+
 		attempts++;
 
 		if (attempts > MAX_ATTEMPTS) {

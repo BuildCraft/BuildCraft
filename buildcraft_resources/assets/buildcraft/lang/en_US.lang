@@ -8,6 +8,8 @@ buildcraft.boardRobotCarrier=Carrier
 buildcraft.boardRobotBomber=Bomber
 buildcraft.boardRobotKnight=Knight
 buildcraft.boardRobotMiner=Miner
+buildcraft.boardRobotFarmer=Farmer
+buildcraft.boardRobotHarvester=Harvester
 buildcraft.boardDetail.parameters=Parameters
 buildcraft.boardDetail.range=Range
 

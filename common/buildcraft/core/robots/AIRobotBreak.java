@@ -21,7 +21,7 @@ import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.BlockUtil;
 
-public class AIRobotBreakWithTool extends AIRobot {
+public class AIRobotBreak extends AIRobot {
 
 	public BlockIndex blockToBreak;
 	private float blockDamage = 0;
@@ -31,11 +31,11 @@ public class AIRobotBreakWithTool extends AIRobot {
 	private float hardness;
 	private float speed;
 
-	public AIRobotBreakWithTool(EntityRobotBase iRobot) {
+	public AIRobotBreak(EntityRobotBase iRobot) {
 		super(iRobot);
 	}
 
-	public AIRobotBreakWithTool(EntityRobotBase iRobot, BlockIndex iBlockToBreak) {
+	public AIRobotBreak(EntityRobotBase iRobot, BlockIndex iBlockToBreak) {
 		super(iRobot);
 
 		blockToBreak = iBlockToBreak;
@@ -60,15 +60,27 @@ public class AIRobotBreakWithTool extends AIRobot {
 			robot.worldObj.destroyBlockInWorldPartially(robot.getEntityId(), blockToBreak.x,
 					blockToBreak.y, blockToBreak.z, -1);
 			blockDamage = 0;
-			robot.getHeldItem().getItem()
-					.onBlockStartBreak(robot.getHeldItem(), blockToBreak.x, blockToBreak.y, blockToBreak.z,
+
+			if (robot.getHeldItem() != null) {
+				robot.getHeldItem().getItem()
+						.onBlockStartBreak(robot.getHeldItem(), blockToBreak.x, blockToBreak.y, blockToBreak.z,
 							CoreProxy.proxy.getBuildCraftPlayer((WorldServer) robot.worldObj).get());
+			}
+
 			BlockUtil.breakBlock((WorldServer) robot.worldObj, blockToBreak.x, blockToBreak.y, blockToBreak.z, 6000);
-			robot.getHeldItem().getItem().onBlockDestroyed(robot.getHeldItem(), robot.worldObj, block, blockToBreak.x,
+
+			robot.worldObj.playAuxSFXAtEntity(null, 2001,
+					blockToBreak.x, blockToBreak.y, blockToBreak.z,
+					Block.getIdFromBlock(block) + (meta << 12));
+
+			if (robot.getHeldItem() != null) {
+				robot.getHeldItem().getItem()
+						.onBlockDestroyed(robot.getHeldItem(), robot.worldObj, block, blockToBreak.x,
 					blockToBreak.y, blockToBreak.z, robot);
 
-			if (robot.getHeldItem().getItemDamage() >= robot.getHeldItem().getMaxDamage()) {
-				robot.setItemInUse(null);
+				if (robot.getHeldItem().getItemDamage() >= robot.getHeldItem().getMaxDamage()) {
+					robot.setItemInUse(null);
+				}
 			}
 
 			terminate();

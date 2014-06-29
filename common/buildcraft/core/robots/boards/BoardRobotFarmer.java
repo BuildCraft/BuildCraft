@@ -11,34 +11,41 @@ package buildcraft.core.robots.boards;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockDirt;
 import net.minecraft.block.BlockGrass;
+import net.minecraft.item.ItemHoe;
+import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
 import buildcraft.api.boards.RedstoneBoardRobot;
 import buildcraft.api.boards.RedstoneBoardRobotNBT;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
-import buildcraft.core.inventory.filters.OreStackFilter;
+import buildcraft.core.inventory.filters.IStackFilter;
 import buildcraft.core.robots.AIRobotFetchAndEquipItemStack;
 import buildcraft.core.robots.AIRobotGotoRandomGroundBlock;
 import buildcraft.core.robots.AIRobotGotoSleep;
 import buildcraft.core.robots.AIRobotUseToolOnBlock;
 import buildcraft.core.robots.IBlockFilter;
 
-public class BoardRobotPlanter extends RedstoneBoardRobot {
+public class BoardRobotFarmer extends RedstoneBoardRobot {
 
-	public BoardRobotPlanter(EntityRobotBase iRobot) {
+	public BoardRobotFarmer(EntityRobotBase iRobot) {
 		super(iRobot);
 	}
 
 	@Override
 	public RedstoneBoardRobotNBT getNBTHandler() {
-		return BoardRobotPlanterNBT.instance;
+		return BoardRobotFarmerNBT.instance;
 	}
 
 	@Override
 	public void update() {
 		if (robot.getHeldItem() == null) {
-			startDelegateAI(new AIRobotFetchAndEquipItemStack(robot, new OreStackFilter("treeSapling")));
+			startDelegateAI(new AIRobotFetchAndEquipItemStack(robot, new IStackFilter() {
+				@Override
+				public boolean matches(ItemStack stack) {
+					return stack != null && stack.getItem() instanceof ItemHoe;
+				}
+			}));
 		} else {
 			startDelegateAI(new AIRobotGotoRandomGroundBlock(robot, 100, new IBlockFilter() {
 				@Override

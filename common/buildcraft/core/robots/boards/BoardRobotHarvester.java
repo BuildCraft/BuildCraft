@@ -8,33 +8,36 @@
  */
 package buildcraft.core.robots.boards;
 
-import net.minecraft.item.ItemShears;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 
 import buildcraft.api.boards.RedstoneBoardRobotNBT;
 import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.robots.EntityRobotBase;
 
-public class BoardRobotLeaveCutter extends BoardRobotGenericBreakBlock {
+public class BoardRobotHarvester extends BoardRobotGenericBreakBlock {
 
-	public BoardRobotLeaveCutter(EntityRobotBase iRobot) {
+	public BoardRobotHarvester(EntityRobotBase iRobot) {
+		super(iRobot);
+	}
+
+	public BoardRobotHarvester(EntityRobotBase iRobot, NBTTagCompound nbt) {
 		super(iRobot);
 	}
 
 	@Override
 	public RedstoneBoardRobotNBT getNBTHandler() {
-		return BoardRobotLeaveCutterNBT.instance;
+		return BoardRobotHarvesterNBT.instance;
 	}
 
 	@Override
 	public boolean isExpectedTool(ItemStack stack) {
-		return stack != null && stack.getItem() instanceof ItemShears;
+		return true;
 	}
 
 	@Override
 	public boolean isExpectedBlock(World world, int x, int y, int z) {
-		return BuildCraftAPI.isLeavesProperty.get(world, x, y, z);
+		return BuildCraftAPI.isHarvestableProperty.get(world, x, y, z);
 	}
-
 }

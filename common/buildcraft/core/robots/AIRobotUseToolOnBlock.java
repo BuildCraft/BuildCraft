@@ -11,42 +11,53 @@ package buildcraft.core.robots;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.WorldServer;
 
+import net.minecraftforge.common.util.ForgeDirection;
+
 import buildcraft.api.core.BlockIndex;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.proxy.CoreProxy;
 
-public class AIRobotPlantSaple extends AIRobot {
+public class AIRobotUseToolOnBlock extends AIRobot {
 
-	private BlockIndex toPlant;
-	private int plantCycles = 0;
+	private BlockIndex useToBlock;
+	private int useCycles = 0;
 
-	public AIRobotPlantSaple(EntityRobotBase iRobot) {
+	public AIRobotUseToolOnBlock(EntityRobotBase iRobot) {
 		super(iRobot);
 	}
 
-	public AIRobotPlantSaple(EntityRobotBase iRobot, BlockIndex index) {
+	public AIRobotUseToolOnBlock(EntityRobotBase iRobot, BlockIndex index) {
 		super(iRobot);
 
-		toPlant = index;
+		useToBlock = index;
 	}
 
 	@Override
 	public void start() {
-		robot.aimItemAt(toPlant.x, toPlant.y, toPlant.z);
+		robot.aimItemAt(useToBlock.x, useToBlock.y, useToBlock.z);
 		robot.setItemActive(true);
 	}
 
 	@Override
 	public void update() {
-		plantCycles++;
+		useCycles++;
 
-		if (plantCycles > 40) {
+		if (useCycles > 40) {
 			ItemStack stack = robot.getHeldItem();
-			robot.setItemInUse(null);
+
+			if (robot.getHeldItem().isItemStackDamageable()) {
+				robot.getHeldItem().damageItem(1, robot);
+
+				if (robot.getHeldItem().getItemDamage() >= robot.getHeldItem().getMaxDamage()) {
+					robot.setItemInUse(null);
+				}
+			} else {
+				robot.setItemInUse(null);
+			}
 
 			stack.getItem().onItemUse(stack, CoreProxy.proxy.getBuildCraftPlayer((WorldServer) robot.worldObj).get(),
-					robot.worldObj, toPlant.x, toPlant.y + 1, toPlant.z, 0, 0, 0, 0);
+					robot.worldObj, useToBlock.x, useToBlock.y, useToBlock.z, ForgeDirection.UP.ordinal(), 0, 0, 0);
 
 			terminate();
 		}

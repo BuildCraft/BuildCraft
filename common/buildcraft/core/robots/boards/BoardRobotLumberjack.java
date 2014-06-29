@@ -34,7 +34,7 @@ public class BoardRobotLumberjack extends BoardRobotGenericBreakBlock {
 
 	@Override
 	public boolean isExpectedTool(ItemStack stack) {
-		return stack.getItem() instanceof ItemAxe;
+		return stack != null && stack.getItem() instanceof ItemAxe;
 	}
 
 	@Override

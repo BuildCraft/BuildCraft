@@ -16,12 +16,15 @@ import buildcraft.api.core.BlockIndex;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.inventory.filters.IStackFilter;
-import buildcraft.core.robots.AIRobotBreakWithTool;
+import buildcraft.core.robots.AIRobotBreak;
 import buildcraft.core.robots.AIRobotFetchAndEquipItemStack;
+import buildcraft.core.robots.AIRobotGotoSleep;
 import buildcraft.core.robots.AIRobotSearchBlock;
 import buildcraft.core.utils.IPathFound;
 
 public abstract class BoardRobotGenericBreakBlock extends RedstoneBoardRobot {
+
+	private BlockIndex indexStored;
 
 	public BoardRobotGenericBreakBlock(EntityRobotBase iRobot) {
 		super(iRobot);
@@ -31,9 +34,19 @@ public abstract class BoardRobotGenericBreakBlock extends RedstoneBoardRobot {
 
 	public abstract boolean isExpectedBlock(World world, int x, int y, int z);
 
+	public final void preemt(AIRobot ai) {
+		if (ai instanceof AIRobotSearchBlock) {
+			BlockIndex index = ((AIRobotSearchBlock) ai).blockFound;
+
+			if (!RedstoneBoardRobot.isFreeBlock(index)) {
+				abortDelegateAI();
+			}
+		}
+	}
+
 	@Override
 	public final void update() {
-		if (robot.getHeldItem() == null) {
+		if (!isExpectedTool(null) && robot.getHeldItem() == null) {
 			startDelegateAI(new AIRobotFetchAndEquipItemStack(robot, new IStackFilter() {
 				@Override
 				public boolean matches(ItemStack stack) {
@@ -57,13 +70,25 @@ public abstract class BoardRobotGenericBreakBlock extends RedstoneBoardRobot {
 	@Override
 	public void delegateAIEnded(AIRobot ai) {
 		if (ai instanceof AIRobotSearchBlock) {
-			BlockIndex index = ((AIRobotSearchBlock) ai).blockFound;
+			indexStored = ((AIRobotSearchBlock) ai).blockFound;
 
-			if (index != null && reserveBlock(index)) {
-				startDelegateAI(new AIRobotBreakWithTool(robot, ((AIRobotSearchBlock) ai).blockFound));
+			if (indexStored == null) {
+				startDelegateAI(new AIRobotGotoSleep(robot));
+			} else {
+				if (reserveBlock(indexStored)) {
+					startDelegateAI(new AIRobotBreak(robot, indexStored));
+				}
 			}
-		} else if (ai instanceof AIRobotBreakWithTool) {
-			releaseBlock(((AIRobotBreakWithTool) ai).blockToBreak);
+		} else if (ai instanceof AIRobotBreak) {
+			releaseBlock(indexStored);
+			indexStored = null;
+		}
+	}
+
+	@Override
+	public void end() {
+		if (indexStored != null) {
+			releaseBlock(indexStored);
 		}
 	}
 
