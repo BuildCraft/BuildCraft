@@ -15,13 +15,13 @@ import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.api.robots.IDockingStation;
 import buildcraft.silicon.statements.ActionStationForbidRobot;
 
-public class AIRobotLookForStation extends AIRobot {
+public class AIRobotSearchAndGotoStation extends AIRobot {
 
 	public DockingStation targetStation;
 	private IStationFilter filter;
 	private IBox box;
 
-	public AIRobotLookForStation(EntityRobotBase iRobot, IStationFilter iFilter, IBox iBox) {
+	public AIRobotSearchAndGotoStation(EntityRobotBase iRobot, IStationFilter iFilter, IBox iBox) {
 		super(iRobot, 0);
 
 		filter = iFilter;

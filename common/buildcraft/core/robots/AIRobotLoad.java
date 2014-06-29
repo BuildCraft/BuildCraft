@@ -32,7 +32,7 @@ public class AIRobotLoad extends AIRobot {
 	private int waitedCycles = 0;
 
 	public AIRobotLoad(EntityRobotBase iRobot, IStackFilter iFilter) {
-		super(iRobot, 0);
+		super(iRobot, 2);
 
 		filter = iFilter;
 	}

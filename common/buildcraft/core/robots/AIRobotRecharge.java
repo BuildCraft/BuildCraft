@@ -23,7 +23,7 @@ public class AIRobotRecharge extends AIRobot {
 
 	@Override
 	public void start() {
-		startDelegateAI(new AIRobotLookForStation(robot, new IStationFilter() {
+		startDelegateAI(new AIRobotSearchAndGotoStation(robot, new IStationFilter() {
 			@Override
 			public boolean matches(DockingStation station) {
 				return station.pipe.getPipeType() == PipeType.POWER;
@@ -46,7 +46,7 @@ public class AIRobotRecharge extends AIRobot {
 
 	@Override
 	public void delegateAIEnded(AIRobot ai) {
-		if (ai instanceof AIRobotLookForStation) {
+		if (ai instanceof AIRobotSearchAndGotoStation) {
 			if (robot.getDockingStation() == null
 				|| !(((DockingStation) robot.getDockingStation()).pipe.pipe.transport instanceof PipeTransportPower)) {
 				terminate();

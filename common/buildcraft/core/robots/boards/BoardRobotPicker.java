@@ -25,7 +25,6 @@ import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.inventory.filters.ArrayStackFilter;
 import buildcraft.core.inventory.filters.IStackFilter;
 import buildcraft.core.robots.AIRobotFetchItem;
-import buildcraft.core.robots.AIRobotGotoDock;
 import buildcraft.core.robots.AIRobotGotoSleep;
 import buildcraft.core.robots.AIRobotGotoStationToUnload;
 import buildcraft.core.robots.AIRobotSleep;
@@ -74,19 +73,15 @@ public class BoardRobotPicker extends RedstoneBoardRobot {
 	@Override
 	public void delegateAIEnded(AIRobot ai) {
 		if (ai instanceof AIRobotFetchItem) {
-			if (((AIRobotFetchItem) ai).noItemPicked) {
-				startDelegateAI(new AIRobotGotoDock(robot, (DockingStation) robot.getLinkedStation()));
-			} else if (((AIRobotFetchItem) ai).target != null) {
+			AIRobotFetchItem fetching = (AIRobotFetchItem) ai;
+
+			if (!fetching.noItemPicked && fetching.target != null) {
 				// if we could get an item, let's try to get another one
 				startDelegateAI(new AIRobotFetchItem(robot, range, stackFilter, robot.getAreaToWork()));
+			} else if (robot.containsItems()) {
+				startDelegateAI(new AIRobotGotoStationToUnload(robot, null));
 			} else {
-				// otherwise, let's deliver items if any
-
-				if (robot.containsItems()) {
-					startDelegateAI(new AIRobotGotoStationToUnload(robot, null));
-				} else {
-					startDelegateAI(new AIRobotGotoSleep(robot));
-				}
+				startDelegateAI(new AIRobotGotoSleep(robot));
 			}
 		} else if (ai instanceof AIRobotGotoStationToUnload) {
 			DockingStation station = (DockingStation) robot.getDockingStation();

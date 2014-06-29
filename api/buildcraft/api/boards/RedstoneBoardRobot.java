@@ -27,7 +27,6 @@ public abstract class RedstoneBoardRobot extends AIRobot implements IRedstoneBoa
 
 	@Override
 	public final void updateBoard(EntityRobotBase container) {
-		// TODO Auto-generated method stub
 
 	}
 

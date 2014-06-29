@@ -27,6 +27,8 @@ import buildcraft.transport.gates.ActionSlot;
 
 public class AIRobotGotoStationToLoad extends AIRobot {
 
+	public boolean found = false;
+
 	private IStackFilter filter;
 	private IBox box;
 
@@ -39,12 +41,16 @@ public class AIRobotGotoStationToLoad extends AIRobot {
 
 	@Override
 	public void update() {
-		startDelegateAI(new AIRobotLookForStation(robot, new StationFilter(), box));
+		startDelegateAI(new AIRobotSearchAndGotoStation(robot, new StationFilter(), box));
 	}
 
 	@Override
 	public void delegateAIEnded(AIRobot ai) {
-		terminate();
+		if (ai instanceof AIRobotSearchAndGotoStation) {
+			found = ((AIRobotSearchAndGotoStation) ai).targetStation != null;
+
+			terminate();
+		}
 	}
 
 	private class StationFilter implements IStationFilter {
