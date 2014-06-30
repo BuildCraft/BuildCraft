@@ -64,6 +64,7 @@ gate.action.station.drop_items_in_pipe=Drop Items In Pipe
 gate.action.robot.work_in_area=Work in Area
 gate.action.robot.wakeup=Wake Up
 gate.action.station.forbid_robot=Robot Forbidden
+gate.action.robot.filter=Filter
 
 gate.expansion.fader=Redstone Fader
 gate.expansion.pulsar=Autarchic Pulsar
@@ -197,6 +198,7 @@ item.PipeItemsVoid.name=Void Transport Pipe
 item.PipeFluidsVoid.name=Void Fluid Pipe
 item.PipeItemsSandstone.name=Sandstone Transport Pipe
 item.PipeFluidsSandstone.name=Sandstone Fluid Pipe
+item.PipeRobotStation.name=Docking Station
 item.Facade.name=Facade
 item.FacadePhased.name=Phased Facade
 item.FacadePhased.state=%s: %s

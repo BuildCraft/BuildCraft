@@ -70,6 +70,7 @@ import buildcraft.silicon.network.PacketHandlerSilicon;
 import buildcraft.silicon.recipes.AdvancedFacadeRecipe;
 import buildcraft.silicon.recipes.GateExpansionRecipe;
 import buildcraft.silicon.recipes.GateLogicSwapRecipe;
+import buildcraft.silicon.statements.ActionRobotFilter;
 import buildcraft.silicon.statements.ActionRobotGotoStation;
 import buildcraft.silicon.statements.ActionRobotWakeUp;
 import buildcraft.silicon.statements.ActionRobotWorkInArea;
@@ -105,6 +106,7 @@ public class BuildCraftSilicon extends BuildCraftMod {
 	public static IAction actionRobotGotoStation = new ActionRobotGotoStation();
 	public static IAction actionRobotWakeUp = new ActionRobotWakeUp();
 	public static IAction actionRobotWorkInArea = new ActionRobotWorkInArea();
+	public static IAction actionRobotFilter = new ActionRobotFilter();
 	public static IAction actionStationRequestItems = new ActionStationRequestItemsInv();
 	public static IAction actionStationProvideItems = new ActionStationProvideItems();
 	public static IAction actionStationForbidRobot = new ActionStationForbidRobot();

@@ -46,6 +46,7 @@ public class RobotsActionProvider implements IActionProvider {
 		result.add(BuildCraftSilicon.actionRobotGotoStation);
 		result.add(BuildCraftSilicon.actionRobotWorkInArea);
 		result.add(BuildCraftSilicon.actionRobotWakeUp);
+		result.add(BuildCraftSilicon.actionRobotFilter);
 		result.add(BuildCraftSilicon.actionStationForbidRobot);
 
 		for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {

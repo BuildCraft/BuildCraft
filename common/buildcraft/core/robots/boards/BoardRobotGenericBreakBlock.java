@@ -8,19 +8,30 @@
  */
 package buildcraft.core.robots.boards;
 
+import java.util.ArrayList;
+
+import net.minecraft.block.Block;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
 import buildcraft.api.boards.RedstoneBoardRobot;
 import buildcraft.api.core.BlockIndex;
+import buildcraft.api.gates.ActionParameterItemStack;
+import buildcraft.api.gates.IActionParameter;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
+import buildcraft.core.TickHandlerCoreClient;
 import buildcraft.core.inventory.filters.IStackFilter;
 import buildcraft.core.robots.AIRobotBreak;
 import buildcraft.core.robots.AIRobotFetchAndEquipItemStack;
 import buildcraft.core.robots.AIRobotGotoSleep;
 import buildcraft.core.robots.AIRobotSearchBlock;
+import buildcraft.core.robots.DockingStation;
 import buildcraft.core.utils.IPathFound;
+import buildcraft.silicon.statements.ActionRobotFilter;
+import buildcraft.transport.gates.ActionIterator;
+import buildcraft.transport.gates.ActionSlot;
 
 public abstract class BoardRobotGenericBreakBlock extends RedstoneBoardRobot {
 
@@ -32,7 +43,36 @@ public abstract class BoardRobotGenericBreakBlock extends RedstoneBoardRobot {
 
 	public abstract boolean isExpectedTool(ItemStack stack);
 
+	/**
+	 * This function has to be derived in a thread safe manner, as it may be
+	 * called from parallel jobs. In particular, world should not be directly
+	 * used, only through WorldProperty class and subclasses.
+	 */
 	public abstract boolean isExpectedBlock(World world, int x, int y, int z);
+
+	private ArrayList<Block> blockFilter = new ArrayList<Block>();
+	private ArrayList<Integer> metaFilter = new ArrayList<Integer>();
+
+	@Override
+	public final void start() {
+		DockingStation station = (DockingStation) robot.getLinkedStation();
+
+		for (ActionSlot slot : new ActionIterator(station.pipe.pipe)) {
+			if (slot.action instanceof ActionRobotFilter) {
+				for (IActionParameter p : slot.parameters) {
+					if (p != null && p instanceof ActionParameterItemStack) {
+						ActionParameterItemStack param = (ActionParameterItemStack) p;
+						ItemStack stack = param.getItemStackToDraw();
+
+						if (stack != null && stack.getItem() instanceof ItemBlock) {
+							blockFilter.add(((ItemBlock) stack.getItem()).field_150939_a);
+							metaFilter.add(stack.getItemDamage());
+						}
+					}
+				}
+			}
+		}
+	}
 
 	public final void preemt(AIRobot ai) {
 		if (ai instanceof AIRobotSearchBlock) {
@@ -57,7 +97,7 @@ public abstract class BoardRobotGenericBreakBlock extends RedstoneBoardRobot {
 			startDelegateAI(new AIRobotSearchBlock(robot, new IPathFound() {
 				@Override
 				public boolean endReached(World world, int x, int y, int z) {
-					if (isExpectedBlock(world, x, y, z)) {
+					if (isExpectedBlock(world, x, y, z) && matchesGateFilter(world, x, y, z)) {
 						return RedstoneBoardRobot.isFreeBlock(new BlockIndex(x, y, z));
 					} else {
 						return false;
@@ -89,6 +129,32 @@ public abstract class BoardRobotGenericBreakBlock extends RedstoneBoardRobot {
 	public void end() {
 		if (indexStored != null) {
 			releaseBlock(indexStored);
+		}
+	}
+
+	private boolean matchesGateFilter(World world, int x, int y, int z) {
+		if (blockFilter.size() == 0) {
+			return true;
+		}
+
+		synchronized (TickHandlerCoreClient.startSynchronousComputation) {
+			try {
+				TickHandlerCoreClient.startSynchronousComputation.wait();
+
+				Block block = world.getBlock(x, y, z);
+				int meta = world.getBlockMetadata(x, y, z);
+
+				for (int i = 0; i < blockFilter.size(); ++i) {
+					if (blockFilter.get(i) == block && metaFilter.get(i) == meta) {
+						return true;
+					}
+				}
+
+				return false;
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+				return false;
+			}
 		}
 	}
 
