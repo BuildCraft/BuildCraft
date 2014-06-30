@@ -36,6 +36,8 @@ import buildcraft.transport.gates.ActionSlot;
 public abstract class BoardRobotGenericBreakBlock extends RedstoneBoardRobot {
 
 	private BlockIndex indexStored;
+	private ArrayList<Block> blockFilter = new ArrayList<Block>();
+	private ArrayList<Integer> metaFilter = new ArrayList<Integer>();
 
 	public BoardRobotGenericBreakBlock(EntityRobotBase iRobot) {
 		super(iRobot);
@@ -49,9 +51,6 @@ public abstract class BoardRobotGenericBreakBlock extends RedstoneBoardRobot {
 	 * used, only through WorldProperty class and subclasses.
 	 */
 	public abstract boolean isExpectedBlock(World world, int x, int y, int z);
-
-	private ArrayList<Block> blockFilter = new ArrayList<Block>();
-	private ArrayList<Integer> metaFilter = new ArrayList<Integer>();
 
 	@Override
 	public final void start() {
