@@ -98,7 +98,8 @@ public class AIRobotFetchItem extends AIRobot {
 		for (Object o : robot.worldObj.loadedEntityList) {
 			Entity e = (Entity) o;
 
-			if (!e.isDead && e instanceof EntityItem
+			if (!e.isDead
+					&& e instanceof EntityItem
 					&& !BoardRobotPicker.targettedItems.contains(e.getEntityId())
 					&& !robot.isKnownUnreachable(e)
 					&& (box == null || box.contains(e.posX, e.posY, e.posZ))) {

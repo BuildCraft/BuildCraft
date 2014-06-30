@@ -12,12 +12,12 @@ import buildcraft.api.boards.RedstoneBoardRobot;
 import buildcraft.api.boards.RedstoneBoardRobotNBT;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
-import buildcraft.core.inventory.filters.PassThroughStackFilter;
 import buildcraft.core.robots.AIRobotGotoSleep;
 import buildcraft.core.robots.AIRobotGotoStationToLoad;
 import buildcraft.core.robots.AIRobotGotoStationToUnload;
 import buildcraft.core.robots.AIRobotLoad;
 import buildcraft.core.robots.AIRobotUnload;
+import buildcraft.silicon.statements.ActionRobotFilter;
 
 public class BoardRobotCarrier extends RedstoneBoardRobot {
 
@@ -36,7 +36,8 @@ public class BoardRobotCarrier extends RedstoneBoardRobot {
 	@Override
 	public void update() {
 		if (!robot.containsItems()) {
-			startDelegateAI(new AIRobotGotoStationToLoad(robot, new PassThroughStackFilter(), robot.getAreaToWork()));
+			startDelegateAI(new AIRobotGotoStationToLoad(robot, ActionRobotFilter.getGateFilter(robot
+					.getLinkedStation()), robot.getAreaToWork()));
 		} else {
 			startDelegateAI(new AIRobotGotoStationToUnload(robot, robot.getAreaToWork()));
 		}
@@ -47,7 +48,8 @@ public class BoardRobotCarrier extends RedstoneBoardRobot {
 		if (ai instanceof AIRobotGotoStationToLoad) {
 			if (((AIRobotGotoStationToLoad) ai).found) {
 				loadFound = true;
-				startDelegateAI(new AIRobotLoad(robot, new PassThroughStackFilter()));
+				startDelegateAI(new AIRobotLoad(robot, ActionRobotFilter.getGateFilter(robot
+						.getLinkedStation())));
 			} else {
 				loadFound = false;
 
@@ -63,7 +65,8 @@ public class BoardRobotCarrier extends RedstoneBoardRobot {
 				startDelegateAI(new AIRobotUnload(robot));
 			} else {
 				unloadFound = false;
-				startDelegateAI(new AIRobotGotoStationToLoad(robot, new PassThroughStackFilter(), robot.getAreaToWork()));
+				startDelegateAI(new AIRobotGotoStationToLoad(robot, ActionRobotFilter.getGateFilter(robot
+						.getLinkedStation()), robot.getAreaToWork()));
 			}
 		}
 
@@ -75,8 +78,4 @@ public class BoardRobotCarrier extends RedstoneBoardRobot {
 			unloadFound = true;
 		}
 	}
-
-
-
-
 }

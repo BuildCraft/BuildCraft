@@ -8,6 +8,9 @@
  */
 package buildcraft.core.robots.boards;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockDirt;
 import net.minecraft.block.BlockGrass;
@@ -21,6 +24,7 @@ import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.TickHandlerCoreClient;
+import buildcraft.core.inventory.filters.ArrayStackFilter;
 import buildcraft.core.inventory.filters.CompositeFilter;
 import buildcraft.core.inventory.filters.IStackFilter;
 import buildcraft.core.inventory.filters.OreStackFilter;
@@ -29,9 +33,13 @@ import buildcraft.core.robots.AIRobotGotoRandomGroundBlock;
 import buildcraft.core.robots.AIRobotGotoSleep;
 import buildcraft.core.robots.AIRobotSearchAndGotoBlock;
 import buildcraft.core.robots.AIRobotUseToolOnBlock;
+import buildcraft.core.robots.DockingStation;
 import buildcraft.core.robots.IBlockFilter;
+import buildcraft.silicon.statements.ActionRobotFilter;
 
 public class BoardRobotPlanter extends RedstoneBoardRobot {
+
+	private IStackFilter stackFilter = new CompositeFilter(new OreStackFilter("treeSapling"), new SeedFilter());
 
 	public BoardRobotPlanter(EntityRobotBase iRobot) {
 		super(iRobot);
@@ -45,8 +53,29 @@ public class BoardRobotPlanter extends RedstoneBoardRobot {
 	@Override
 	public void update() {
 		if (robot.getHeldItem() == null) {
-			startDelegateAI(new AIRobotFetchAndEquipItemStack(robot,
-					new CompositeFilter(new OreStackFilter("treeSapling"), new SeedFilter())));
+			Collection<ItemStack> gateFilter = ActionRobotFilter.getGateFilterStacks((DockingStation) robot
+					.getLinkedStation());
+
+			if (gateFilter.size() != 0) {
+				ArrayList<ItemStack> filteredFilter = new ArrayList<ItemStack>();
+
+				for (ItemStack tentative : gateFilter) {
+					if (stackFilter.matches(tentative)) {
+						filteredFilter.add(tentative);
+					}
+				}
+
+				if (filteredFilter.size() > 0) {
+					ArrayStackFilter arrayFilter = new ArrayStackFilter(
+							filteredFilter.toArray(new ItemStack[filteredFilter.size()]));
+
+					startDelegateAI(new AIRobotFetchAndEquipItemStack(robot, arrayFilter));
+				} else {
+					startDelegateAI(new AIRobotGotoSleep(robot));
+				}
+			} else {
+				startDelegateAI(new AIRobotFetchAndEquipItemStack(robot, stackFilter));
+			}
 		} else {
 			if (robot.getHeldItem().getItem() instanceof ItemSeeds) {
 				startDelegateAI(new AIRobotSearchAndGotoBlock(robot, new IBlockFilter() {

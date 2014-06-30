@@ -8,12 +8,23 @@
  */
 package buildcraft.silicon.statements;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.item.ItemStack;
 
 import buildcraft.api.gates.ActionParameterItemStack;
 import buildcraft.api.gates.IActionParameter;
+import buildcraft.api.robots.IDockingStation;
+import buildcraft.core.inventory.filters.ArrayStackFilter;
+import buildcraft.core.inventory.filters.IStackFilter;
+import buildcraft.core.inventory.filters.PassThroughStackFilter;
+import buildcraft.core.robots.DockingStation;
 import buildcraft.core.triggers.BCActionPassive;
 import buildcraft.core.utils.StringUtils;
+import buildcraft.transport.gates.ActionIterator;
+import buildcraft.transport.gates.ActionSlot;
 
 public class ActionRobotFilter extends BCActionPassive {
 
@@ -44,5 +55,36 @@ public class ActionRobotFilter extends BCActionPassive {
 	@Override
 	public IActionParameter createParameter(int index) {
 		return new ActionParameterItemStack();
+	}
+
+	public static Collection<ItemStack> getGateFilterStacks(IDockingStation station) {
+		ArrayList<ItemStack> result = new ArrayList<ItemStack>();
+
+		for (ActionSlot slot : new ActionIterator(((DockingStation) station).pipe.pipe)) {
+			if (slot.action instanceof ActionRobotFilter) {
+				for (IActionParameter p : slot.parameters) {
+					if (p != null && p instanceof ActionParameterItemStack) {
+						ActionParameterItemStack param = (ActionParameterItemStack) p;
+						ItemStack stack = param.getItemStackToDraw();
+
+						if (stack != null) {
+							result.add(stack);
+						}
+					}
+				}
+			}
+		}
+
+		return result;
+	}
+
+	public static IStackFilter getGateFilter(IDockingStation station) {
+		Collection<ItemStack> stacks = getGateFilterStacks(station);
+
+		if (stacks.size() == 0) {
+			return new PassThroughStackFilter();
+		} else {
+			return new ArrayStackFilter(stacks.toArray(new ItemStack[stacks.size()]));
+		}
 	}
 }

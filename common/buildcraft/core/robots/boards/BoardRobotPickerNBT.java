@@ -17,8 +17,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
 
-import buildcraft.api.boards.IBoardParameter;
-import buildcraft.api.boards.RedstoneBoardRegistry;
 import buildcraft.api.boards.RedstoneBoardRobot;
 import buildcraft.api.boards.RedstoneBoardRobotNBT;
 import buildcraft.api.robots.EntityRobotBase;
@@ -45,13 +43,6 @@ public final class BoardRobotPickerNBT extends RedstoneBoardRobotNBT {
 		list.add(StringUtils.localize("buildcraft.boardRobotPicker"));
 
 		NBTTagCompound nbt = NBTUtils.getItemData(stack);
-
-		int parameterNumber = getParameterNumber(nbt);
-
-		if (parameterNumber > 0) {
-			list.add(parameterNumber + " " + StringUtils.localize("buildcraft.boardDetail.parameters"));
-		}
-
 		list.add(StringUtils.localize("buildcraft.boardDetail.range") + ": " + nbt.getInteger("range"));
 	}
 
@@ -72,19 +63,7 @@ public final class BoardRobotPickerNBT extends RedstoneBoardRobotNBT {
 
 	@Override
 	public void createRandomBoard(NBTTagCompound nbt) {
-		int parameterNumber = (int) Math.floor(nextFloat(3) * 5);
 		int range = (int) Math.floor(nextFloat(10) * 500) + 10;
-
-		if (parameterNumber > 0) {
-			IBoardParameter[] parameters = new IBoardParameter[parameterNumber];
-
-			for (int i = 0; i < parameterNumber; ++i) {
-				parameters[i] = RedstoneBoardRegistry.instance.createParameterStack();
-			}
-
-			setParameters(nbt, parameters);
-		}
-
 		nbt.setInteger("range", range);
 	}
 
