@@ -24,10 +24,10 @@ import buildcraft.core.inventory.ITransactor;
 import buildcraft.core.inventory.Transactor;
 import buildcraft.core.inventory.filters.ArrayStackFilter;
 import buildcraft.core.inventory.filters.IStackFilter;
-import buildcraft.core.robots.AIRobotSearchRandomGroundBlock;
 import buildcraft.core.robots.AIRobotGotoBlock;
 import buildcraft.core.robots.AIRobotGotoStationToLoad;
 import buildcraft.core.robots.AIRobotLoad;
+import buildcraft.core.robots.AIRobotSearchRandomGroundBlock;
 import buildcraft.core.robots.IBlockFilter;
 
 public class BoardRobotBomber extends RedstoneBoardRobot {

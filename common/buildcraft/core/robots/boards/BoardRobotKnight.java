@@ -18,8 +18,8 @@ import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.inventory.filters.IStackFilter;
 import buildcraft.core.robots.AIRobotAttack;
 import buildcraft.core.robots.AIRobotFetchAndEquipItemStack;
-import buildcraft.core.robots.AIRobotSearchMob;
 import buildcraft.core.robots.AIRobotGotoSleep;
+import buildcraft.core.robots.AIRobotSearchMob;
 
 public class BoardRobotKnight extends RedstoneBoardRobot {
 
