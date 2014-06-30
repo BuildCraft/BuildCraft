@@ -18,7 +18,7 @@ import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.inventory.filters.IStackFilter;
 import buildcraft.core.robots.AIRobotAttack;
 import buildcraft.core.robots.AIRobotFetchAndEquipItemStack;
-import buildcraft.core.robots.AIRobotFindMob;
+import buildcraft.core.robots.AIRobotSearchMob;
 import buildcraft.core.robots.AIRobotGotoSleep;
 
 public class BoardRobotKnight extends RedstoneBoardRobot {
@@ -42,7 +42,7 @@ public class BoardRobotKnight extends RedstoneBoardRobot {
 				}
 			}));
 		} else {
-			startDelegateAI(new AIRobotFindMob(robot, 250, robot.getAreaToWork()));
+			startDelegateAI(new AIRobotSearchMob(robot, 250, robot.getAreaToWork()));
 		}
 	}
 
@@ -52,11 +52,11 @@ public class BoardRobotKnight extends RedstoneBoardRobot {
 			if (robot.getHeldItem() == null) {
 				startDelegateAI(new AIRobotGotoSleep(robot));
 			}
-		} else if (ai instanceof AIRobotFindMob) {
-			AIRobotFindMob mobAI = (AIRobotFindMob) ai;
+		} else if (ai instanceof AIRobotSearchMob) {
+			AIRobotSearchMob mobAI = (AIRobotSearchMob) ai;
 
 			if (mobAI.target != null) {
-				startDelegateAI(new AIRobotAttack(robot, ((AIRobotFindMob) ai).target));
+				startDelegateAI(new AIRobotAttack(robot, ((AIRobotSearchMob) ai).target));
 			} else {
 				startDelegateAI(new AIRobotGotoSleep(robot));
 			}

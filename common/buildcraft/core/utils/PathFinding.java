@@ -18,6 +18,7 @@ import net.minecraft.world.World;
 import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.core.IBox;
+import buildcraft.core.robots.IBlockFilter;
 
 /**
  * This class implements a 3D path finding based on the A* algorithm, following
@@ -32,7 +33,7 @@ public class PathFinding {
 	private BlockIndex start;
 	private BlockIndex end;
 	private BlockIndex boxEnd;
-	private IPathFound pathFound;
+	private IBlockFilter pathFound;
 	private float maxDistance = -1;
 	private float sqrMaxDistance = -1;
 	private IBox box;
@@ -62,7 +63,7 @@ public class PathFinding {
 		nextIteration = startNode;
 	}
 
-	public PathFinding(World iWorld, BlockIndex iStart, IPathFound iPathFound, float iMaxDistance, IBox iBox) {
+	public PathFinding(World iWorld, BlockIndex iStart, IBlockFilter iPathFound, float iMaxDistance, IBox iBox) {
 		world = iWorld;
 		start = iStart;
 		pathFound = iPathFound;
@@ -225,7 +226,7 @@ public class PathFinding {
 		if (box != null && !box.contains(x, y, z)) {
 			return false;
 		} else if (pathFound != null) {
-			return pathFound.endReached(world, x, y, z);
+			return pathFound.matches(world, x, y, z);
 		} else {
 			return end.x == x && end.y == y && end.z == z;
 		}

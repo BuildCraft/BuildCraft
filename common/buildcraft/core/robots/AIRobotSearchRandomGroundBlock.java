@@ -14,7 +14,7 @@ import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.Box;
 
-public class AIRobotFindRandomGroundBlock extends AIRobot {
+public class AIRobotSearchRandomGroundBlock extends AIRobot {
 
 	private static final int MAX_ATTEMPTS = 4096;
 
@@ -25,11 +25,11 @@ public class AIRobotFindRandomGroundBlock extends AIRobot {
 	private IBox area;
 	private int attempts = 0;
 
-	public AIRobotFindRandomGroundBlock(EntityRobotBase iRobot) {
+	public AIRobotSearchRandomGroundBlock(EntityRobotBase iRobot) {
 		super(iRobot);
 	}
 
-	public AIRobotFindRandomGroundBlock(EntityRobotBase iRobot, int iRange, IBlockFilter iFilter, IBox iArea) {
+	public AIRobotSearchRandomGroundBlock(EntityRobotBase iRobot, int iRange, IBlockFilter iFilter, IBox iArea) {
 		super(iRobot);
 
 		range = iRange;

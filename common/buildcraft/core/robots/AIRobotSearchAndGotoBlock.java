@@ -13,25 +13,26 @@ import java.util.LinkedList;
 import buildcraft.api.core.BlockIndex;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
-import buildcraft.core.utils.IPathFound;
 import buildcraft.core.utils.PathFinding;
 import buildcraft.core.utils.PathFindingJob;
 
-public class AIRobotSearchBlock extends AIRobot {
+public class AIRobotSearchAndGotoBlock extends AIRobot {
 
 	public BlockIndex blockFound;
 	private PathFinding blockScanner = null;
 	private PathFindingJob blockScannerJob;
-	private IPathFound pathFound;
+	private IBlockFilter pathFound;
+	private int stopBefore = 0;
 
-	public AIRobotSearchBlock(EntityRobotBase iRobot) {
+	public AIRobotSearchAndGotoBlock(EntityRobotBase iRobot) {
 		super(iRobot);
 	}
 
-	public AIRobotSearchBlock(EntityRobotBase iRobot, IPathFound iPathFound) {
+	public AIRobotSearchAndGotoBlock(EntityRobotBase iRobot, IBlockFilter iPathFound) {
 		super(iRobot);
 
 		pathFound = iPathFound;
+		stopBefore = 0;
 	}
 
 	@Override

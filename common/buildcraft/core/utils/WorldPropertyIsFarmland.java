@@ -8,10 +8,14 @@
  */
 package buildcraft.core.utils;
 
-import net.minecraft.world.World;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockFarmland;
+import net.minecraft.world.IBlockAccess;
 
-public interface IPathFound {
+public class WorldPropertyIsFarmland extends WorldProperty {
 
-	boolean endReached(World world, int x, int y, int z);
-
+	@Override
+	public boolean get(IBlockAccess blockAccess, Block block, int meta, int x, int y, int z) {
+		return block instanceof BlockFarmland;
+	}
 }

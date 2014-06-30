@@ -105,6 +105,7 @@ import buildcraft.core.triggers.TriggerInventoryLevel;
 import buildcraft.core.triggers.TriggerMachine;
 import buildcraft.core.triggers.TriggerRedstoneInput;
 import buildcraft.core.utils.CraftingHandler;
+import buildcraft.core.utils.WorldPropertyIsFarmland;
 import buildcraft.core.utils.WorldPropertyIsHarvestable;
 import buildcraft.core.utils.WorldPropertyIsLeave;
 import buildcraft.core.utils.WorldPropertyIsOre;
@@ -368,6 +369,7 @@ public class BuildCraftCore extends BuildCraftMod {
 		BuildCraftAPI.isBasicOreProperty = new WorldPropertyIsOre(false);
 		BuildCraftAPI.isExtendedOreProperty = new WorldPropertyIsOre(true);
 		BuildCraftAPI.isHarvestableProperty = new WorldPropertyIsHarvestable();
+		BuildCraftAPI.isFarmlandProperty = new WorldPropertyIsFarmland();
 	}
 
 	@Mod.EventHandler
@@ -474,6 +476,7 @@ public class BuildCraftCore extends BuildCraftMod {
 		BuildCraftAPI.isBasicOreProperty.clear();
 		BuildCraftAPI.isExtendedOreProperty.clear();
 		BuildCraftAPI.isHarvestableProperty.clear();
+		BuildCraftAPI.isFarmlandProperty.clear();
 		RedstoneBoardRobot.reservedBlocks.clear();
 	}
 

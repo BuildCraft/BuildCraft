@@ -42,7 +42,7 @@ public class AIRobotGotoRandomGroundBlock extends AIRobot {
 	@Override
 	public void update() {
 		if (pathFindingJob == null) {
-			startDelegateAI(new AIRobotFindRandomGroundBlock(robot, range, filter, area));
+			startDelegateAI(new AIRobotSearchRandomGroundBlock(robot, range, filter, area));
 		} else {
 			if (!pathFindingJob.isAlive()) {
 				LinkedList<BlockIndex> path = pathFinding.getResult();
@@ -54,8 +54,8 @@ public class AIRobotGotoRandomGroundBlock extends AIRobot {
 
 	@Override
 	public void delegateAIEnded(AIRobot ai) {
-		if (ai instanceof AIRobotFindRandomGroundBlock) {
-			AIRobotFindRandomGroundBlock aiFind = (AIRobotFindRandomGroundBlock) ai;
+		if (ai instanceof AIRobotSearchRandomGroundBlock) {
+			AIRobotSearchRandomGroundBlock aiFind = (AIRobotSearchRandomGroundBlock) ai;
 
 			if (aiFind.blockFound == null) {
 				terminate();

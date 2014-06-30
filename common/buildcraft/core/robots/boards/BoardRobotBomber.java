@@ -24,7 +24,7 @@ import buildcraft.core.inventory.ITransactor;
 import buildcraft.core.inventory.Transactor;
 import buildcraft.core.inventory.filters.ArrayStackFilter;
 import buildcraft.core.inventory.filters.IStackFilter;
-import buildcraft.core.robots.AIRobotFindRandomGroundBlock;
+import buildcraft.core.robots.AIRobotSearchRandomGroundBlock;
 import buildcraft.core.robots.AIRobotGotoBlock;
 import buildcraft.core.robots.AIRobotGotoStationToLoad;
 import buildcraft.core.robots.AIRobotLoad;
@@ -60,7 +60,7 @@ public class BoardRobotBomber extends RedstoneBoardRobot {
 		if (!containItems) {
 			startDelegateAI(new AIRobotGotoStationToLoad(robot, TNT_FILTER, null));
 		} else {
-			startDelegateAI(new AIRobotFindRandomGroundBlock(robot, 100, new IBlockFilter() {
+			startDelegateAI(new AIRobotSearchRandomGroundBlock(robot, 100, new IBlockFilter() {
 				@Override
 				public boolean matches(World world, int x, int y, int z) {
 					return y < world.getActualHeight() - flyingHeight && !world.isAirBlock(x, y, z);
@@ -73,8 +73,8 @@ public class BoardRobotBomber extends RedstoneBoardRobot {
 	public void delegateAIEnded(AIRobot ai) {
 		if (ai instanceof AIRobotGotoStationToLoad) {
 			startDelegateAI(new AIRobotLoad(robot, TNT_FILTER));
-		} else if (ai instanceof AIRobotFindRandomGroundBlock) {
-			AIRobotFindRandomGroundBlock aiFind = (AIRobotFindRandomGroundBlock) ai;
+		} else if (ai instanceof AIRobotSearchRandomGroundBlock) {
+			AIRobotSearchRandomGroundBlock aiFind = (AIRobotSearchRandomGroundBlock) ai;
 
 			startDelegateAI(new AIRobotGotoBlock(robot, aiFind.blockFound.x, aiFind.blockFound.y + flyingHeight,
 					aiFind.blockFound.z));

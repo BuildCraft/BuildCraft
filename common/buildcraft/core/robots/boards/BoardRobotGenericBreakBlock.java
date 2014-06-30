@@ -26,9 +26,9 @@ import buildcraft.core.inventory.filters.IStackFilter;
 import buildcraft.core.robots.AIRobotBreak;
 import buildcraft.core.robots.AIRobotFetchAndEquipItemStack;
 import buildcraft.core.robots.AIRobotGotoSleep;
-import buildcraft.core.robots.AIRobotSearchBlock;
+import buildcraft.core.robots.AIRobotSearchAndGotoBlock;
 import buildcraft.core.robots.DockingStation;
-import buildcraft.core.utils.IPathFound;
+import buildcraft.core.robots.IBlockFilter;
 import buildcraft.silicon.statements.ActionRobotFilter;
 import buildcraft.transport.gates.ActionIterator;
 import buildcraft.transport.gates.ActionSlot;
@@ -74,8 +74,8 @@ public abstract class BoardRobotGenericBreakBlock extends RedstoneBoardRobot {
 	}
 
 	public final void preemt(AIRobot ai) {
-		if (ai instanceof AIRobotSearchBlock) {
-			BlockIndex index = ((AIRobotSearchBlock) ai).blockFound;
+		if (ai instanceof AIRobotSearchAndGotoBlock) {
+			BlockIndex index = ((AIRobotSearchAndGotoBlock) ai).blockFound;
 
 			if (!RedstoneBoardRobot.isFreeBlock(index)) {
 				abortDelegateAI();
@@ -93,9 +93,9 @@ public abstract class BoardRobotGenericBreakBlock extends RedstoneBoardRobot {
 				}
 			}));
 		} else {
-			startDelegateAI(new AIRobotSearchBlock(robot, new IPathFound() {
+			startDelegateAI(new AIRobotSearchAndGotoBlock(robot, new IBlockFilter() {
 				@Override
-				public boolean endReached(World world, int x, int y, int z) {
+				public boolean matches(World world, int x, int y, int z) {
 					if (isExpectedBlock(world, x, y, z) && matchesGateFilter(world, x, y, z)) {
 						return RedstoneBoardRobot.isFreeBlock(new BlockIndex(x, y, z));
 					} else {
@@ -108,8 +108,8 @@ public abstract class BoardRobotGenericBreakBlock extends RedstoneBoardRobot {
 
 	@Override
 	public void delegateAIEnded(AIRobot ai) {
-		if (ai instanceof AIRobotSearchBlock) {
-			indexStored = ((AIRobotSearchBlock) ai).blockFound;
+		if (ai instanceof AIRobotSearchAndGotoBlock) {
+			indexStored = ((AIRobotSearchAndGotoBlock) ai).blockFound;
 
 			if (indexStored == null) {
 				startDelegateAI(new AIRobotGotoSleep(robot));

@@ -21,10 +21,6 @@ import net.minecraft.world.IBlockAccess;
 
 public class WorldPropertyIsHarvestable extends WorldProperty {
 
-	public WorldPropertyIsHarvestable() {
-
-	}
-
 	@Override
 	public boolean get(IBlockAccess blockAccess, Block block, int meta, int x, int y, int z) {
 		if (block == null) {

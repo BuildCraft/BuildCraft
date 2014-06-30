@@ -16,18 +16,18 @@ import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.inventory.TransactorSimple;
 
-public class AIRobotFindMob extends AIRobot {
+public class AIRobotSearchMob extends AIRobot {
 
 	public EntityMob target;
 
 	private float maxRange;
 	private IBox box;
 
-	public AIRobotFindMob(EntityRobotBase iRobot) {
+	public AIRobotSearchMob(EntityRobotBase iRobot) {
 		super(iRobot);
 	}
 
-	public AIRobotFindMob(EntityRobotBase iRobot, float iMaxRange, IBox iBox) {
+	public AIRobotSearchMob(EntityRobotBase iRobot, float iMaxRange, IBox iBox) {
 		super(iRobot);
 
 		maxRange = iMaxRange;

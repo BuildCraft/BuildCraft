@@ -26,6 +26,7 @@ public final class BuildCraftAPI {
 	public static IWorldProperty isBasicOreProperty;
 	public static IWorldProperty isExtendedOreProperty;
 	public static IWorldProperty isHarvestableProperty;
+	public static IWorldProperty isFarmlandProperty;
 
 	/**
 	 * Deactivate constructor
