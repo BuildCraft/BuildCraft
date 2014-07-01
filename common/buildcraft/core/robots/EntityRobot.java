@@ -763,6 +763,8 @@ public class EntityRobot extends EntityRobotBase implements
 			// some other way to cope with that problem - such as a manual
 			// charger?
 
+			mainAI.abort();
+
 			ItemStack robotStack = new ItemStack (BuildCraftSilicon.robotItem);
 			NBTUtils.getItemData(robotStack).setTag("board", originalBoardNBT);
 			entityDropItem(robotStack, 0);

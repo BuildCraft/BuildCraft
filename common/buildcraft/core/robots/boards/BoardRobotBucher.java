@@ -8,6 +8,8 @@
  */
 package buildcraft.core.robots.boards;
 
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.passive.EntityAnimal;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemSword;
 
@@ -19,7 +21,8 @@ import buildcraft.core.inventory.filters.IStackFilter;
 import buildcraft.core.robots.AIRobotAttack;
 import buildcraft.core.robots.AIRobotFetchAndEquipItemStack;
 import buildcraft.core.robots.AIRobotGotoSleep;
-import buildcraft.core.robots.AIRobotSearchMob;
+import buildcraft.core.robots.AIRobotSearchEntity;
+import buildcraft.core.robots.IEntityFilter;
 
 public class BoardRobotBucher extends RedstoneBoardRobot {
 
@@ -42,7 +45,12 @@ public class BoardRobotBucher extends RedstoneBoardRobot {
 				}
 			}));
 		} else {
-			startDelegateAI(new AIRobotSearchMob(robot, 250, robot.getAreaToWork()));
+			startDelegateAI(new AIRobotSearchEntity(robot, new IEntityFilter() {
+				@Override
+				public boolean matches(Entity entity) {
+					return entity instanceof EntityAnimal;
+				}
+			}, 250, robot.getAreaToWork()));
 		}
 	}
 
@@ -52,11 +60,11 @@ public class BoardRobotBucher extends RedstoneBoardRobot {
 			if (robot.getHeldItem() == null) {
 				startDelegateAI(new AIRobotGotoSleep(robot));
 			}
-		} else if (ai instanceof AIRobotSearchMob) {
-			AIRobotSearchMob mobAI = (AIRobotSearchMob) ai;
+		} else if (ai instanceof AIRobotSearchEntity) {
+			AIRobotSearchEntity mobAI = (AIRobotSearchEntity) ai;
 
 			if (mobAI.target != null) {
-				startDelegateAI(new AIRobotAttack(robot, ((AIRobotSearchMob) ai).target));
+				startDelegateAI(new AIRobotAttack(robot, ((AIRobotSearchEntity) ai).target));
 			} else {
 				startDelegateAI(new AIRobotGotoSleep(robot));
 			}

@@ -8,14 +8,14 @@
  */
 package buildcraft.core.robots;
 
-import net.minecraft.entity.monster.EntityMob;
+import net.minecraft.entity.Entity;
 
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
 
 public class AIRobotAttack extends AIRobot {
 
-	public EntityMob target;
+	public Entity target;
 
 	private int delay = 10;
 
@@ -23,7 +23,7 @@ public class AIRobotAttack extends AIRobot {
 		super(iRobot);
 	}
 
-	public AIRobotAttack(EntityRobotBase iRobot, EntityMob iTarget) {
+	public AIRobotAttack(EntityRobotBase iRobot, Entity iTarget) {
 		super(iRobot);
 
 		target = iTarget;

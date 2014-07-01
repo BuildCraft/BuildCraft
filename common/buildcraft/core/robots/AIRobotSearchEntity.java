@@ -9,29 +9,30 @@
 package buildcraft.core.robots;
 
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.monster.EntityMob;
 
 import buildcraft.api.core.IBox;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.inventory.TransactorSimple;
 
-public class AIRobotSearchMob extends AIRobot {
+public class AIRobotSearchEntity extends AIRobot {
 
-	public EntityMob target;
+	public Entity target;
 
 	private float maxRange;
 	private IBox box;
+	private IEntityFilter filter;
 
-	public AIRobotSearchMob(EntityRobotBase iRobot) {
+	public AIRobotSearchEntity(EntityRobotBase iRobot) {
 		super(iRobot);
 	}
 
-	public AIRobotSearchMob(EntityRobotBase iRobot, float iMaxRange, IBox iBox) {
+	public AIRobotSearchEntity(EntityRobotBase iRobot, IEntityFilter iFilter, float iMaxRange, IBox iBox) {
 		super(iRobot);
 
 		maxRange = iMaxRange;
 		box = iBox;
+		filter = iFilter;
 	}
 
 	@Override
@@ -43,7 +44,7 @@ public class AIRobotSearchMob extends AIRobot {
 			Entity e = (Entity) o;
 
 			if (!e.isDead
-					&& e instanceof EntityMob
+					&& filter.matches(e)
 					&& (box == null || box.contains(e.posX, e.posY, e.posZ))
 					&& (!robot.isKnownUnreachable(e))) {
 				double dx = e.posX - robot.posX;
@@ -58,11 +59,11 @@ public class AIRobotSearchMob extends AIRobot {
 				} else {
 					if (target == null) {
 						previousDistance = sqrDistance;
-						target = (EntityMob) e;
+						target = e;
 					} else {
 						if (sqrDistance < previousDistance) {
 							previousDistance = sqrDistance;
-							target = (EntityMob) e;
+							target = e;
 						}
 					}
 				}
