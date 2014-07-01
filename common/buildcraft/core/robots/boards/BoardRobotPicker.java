@@ -56,8 +56,9 @@ public class BoardRobotPicker extends RedstoneBoardRobot {
 		if (ai instanceof AIRobotFetchItem) {
 			AIRobotFetchItem fetching = (AIRobotFetchItem) ai;
 
-			if (!fetching.noItemPicked && fetching.target != null) {
-				// if we could get an item, let's try to get another one
+			if (fetching.itemPickupCancelled || fetching.target != null) {
+				// if we find an item - that may have been cancelled.
+				// let's try to get another one
 				startDelegateAI(new AIRobotFetchItem(robot, range, ActionRobotFilter.getGateFilter(robot
 						.getLinkedStation()), robot.getAreaToWork()));
 			} else if (robot.containsItems()) {
@@ -79,5 +80,19 @@ public class BoardRobotPicker extends RedstoneBoardRobot {
 	@Override
 	public RedstoneBoardRobotNBT getNBTHandler() {
 		return BoardRobotPickerNBT.instance;
+	}
+
+	@Override
+	public void writeSelfToNBT(NBTTagCompound nbt) {
+		super.writeSelfToNBT(nbt);
+
+		nbt.setInteger("range", range);
+	}
+
+	@Override
+	public void loadSelfFromNBT(NBTTagCompound nbt) {
+		super.loadSelfFromNBT(nbt);
+
+		range = nbt.getInteger("range");
 	}
 }
