@@ -10,10 +10,11 @@ package buildcraft.core.robots;
 
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
+import buildcraft.api.robots.IDockingStation;
 
 public class AIRobotGotoDock extends AIRobot {
 
-	private DockingStation station;
+	private IDockingStation station;
 
 	public AIRobotGotoDock(EntityRobotBase iRobot) {
 		super(iRobot);
@@ -32,9 +33,9 @@ public class AIRobotGotoDock extends AIRobot {
 		} else {
 			if (robot.reserveStation(station)) {
 				startDelegateAI(new AIRobotGotoBlock(robot,
-						station.pipe.xCoord + station.side.offsetX * 2,
-						station.pipe.yCoord + station.side.offsetY * 2,
-						station.pipe.zCoord + station.side.offsetZ * 2));
+						station.x() + station.side().offsetX * 2,
+						station.y() + station.side().offsetY * 2,
+						station.z() + station.side().offsetZ * 2));
 			} else {
 				terminate();
 			}
@@ -50,11 +51,21 @@ public class AIRobotGotoDock extends AIRobot {
 	@Override
 	public void delegateAIEnded(AIRobot ai) {
 		if (ai instanceof AIRobotGotoBlock) {
+			if (station == null) {
+				// in case of a load from disk
+				station = robot.getReservedStation();
+			}
+
 			startDelegateAI(new AIRobotStraightMoveTo(robot,
-					station.pipe.xCoord + 0.5F + station.side.offsetX * 0.5F,
-					station.pipe.yCoord + 0.5F + station.side.offsetY * 0.5F,
-					station.pipe.zCoord + 0.5F + station.side.offsetZ * 0.5F));
+					station.x() + 0.5F + station.side().offsetX * 0.5F,
+					station.y() + 0.5F + station.side().offsetY * 0.5F,
+					station.z() + 0.5F + station.side().offsetZ * 0.5F));
 		} else {
+			if (station == null) {
+				// in case of a load from disk
+				station = robot.getReservedStation();
+			}
+
 			robot.dock(station);
 			station = null;
 			terminate();

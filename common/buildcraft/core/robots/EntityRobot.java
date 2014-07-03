@@ -23,13 +23,10 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EntityDamageSource;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
-import net.minecraft.world.chunk.Chunk;
 
 import cpw.mods.fml.common.registry.IEntityAdditionalSpawnData;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-
-import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.BuildCraftSilicon;
 import buildcraft.api.boards.RedstoneBoardNBT;
@@ -39,7 +36,6 @@ import buildcraft.api.boards.RedstoneBoardRobotNBT;
 import buildcraft.api.core.IBox;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.robots.AIRobot;
-import buildcraft.api.robots.DockingStationRegistry;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.api.robots.IDockingStation;
 import buildcraft.core.DefaultProps;
@@ -70,8 +66,8 @@ public class EntityRobot extends EntityRobotBase implements
 	public SafeTimeTracker scanForTasks = new SafeTimeTracker (40, 10);
 
 	public LaserData laser = new LaserData();
-	public DockingStation reservedDockingStation;
-	public DockingStation linkedDockingStation;
+	public IDockingStation reservedDockingStation;
+	public IDockingStation linkedDockingStation;
 	public boolean isDocked = false;
 
 	public NBTTagCompound originalBoardNBT;
@@ -89,15 +85,10 @@ public class EntityRobot extends EntityRobotBase implements
 	private ItemStack[] inv = new ItemStack[4];
 	private String boardID;
 	private ResourceLocation texture;
-	private DockingStation currentDockingStation;
+	private IDockingStation currentDockingStation;
 	private WeakHashMap<Entity, Boolean> unreachableEntities = new WeakHashMap<Entity, Boolean>();
 
 	private double mjStored;
-
-	private int loadedDockX = 0;
-	private int loadedDockY = 0;
-	private int loadedDockZ = 0;
-	private ForgeDirection loadedDockSide = null;
 
 	public EntityRobot(World world, NBTTagCompound boardNBT) {
 		this(world);
@@ -217,31 +208,35 @@ public class EntityRobot extends EntityRobotBase implements
 			motionX = 0;
 			motionY = 0;
 			motionZ = 0;
-			posX = currentDockingStation.pipe.xCoord + 0.5F + currentDockingStation.side.offsetX * 0.5F;
-			posY = currentDockingStation.pipe.yCoord + 0.5F + currentDockingStation.side.offsetY * 0.5F;
-			posZ = currentDockingStation.pipe.zCoord + 0.5F + currentDockingStation.side.offsetZ * 0.5F;
+			posX = currentDockingStation.x() + 0.5F + currentDockingStation.side().offsetX * 0.5F;
+			posY = currentDockingStation.y() + 0.5F + currentDockingStation.side().offsetY * 0.5F;
+			posZ = currentDockingStation.z() + 0.5F + currentDockingStation.side().offsetZ * 0.5F;
 		}
 
 		if (!worldObj.isRemote) {
-			if (linkedDockingStation == null) {
+			if (linkedDockingStation instanceof FakeDockingStation) {
 				// try to load the docking station. If the chunk can be loaded
 				// but not the docking station, then the expecting docking
 				// station is not around, kill the robot.
-				Chunk chunk = worldObj.getChunkFromChunkCoords(loadedDockX >> 4, loadedDockZ >> 4);
+				IDockingStation station = ((FakeDockingStation) linkedDockingStation).getRealStation(worldObj);
 
-				if (chunk != null) {
-					DockingStation station = (DockingStation) DockingStationRegistry.getStation(
-							loadedDockX,
-							loadedDockY,
-							loadedDockZ,
-							loadedDockSide);
-
-					if (station == null) {
-						setDead();
-					} else {
-						linkToStation(station);
-					}
+				if (station != null) {
+					linkToStation(station);
+				} else {
+					setDead();
 				}
+			}
+
+			if (reservedDockingStation instanceof FakeDockingStation) {
+				IDockingStation station = ((FakeDockingStation) reservedDockingStation).getRealStation(worldObj);
+
+				if (station != null) {
+					reserveStation(station);
+				}
+			}
+
+			if (currentDockingStation instanceof FakeDockingStation) {
+				currentDockingStation = ((FakeDockingStation) currentDockingStation).getRealStation(worldObj);
 			}
 
 			if (linkedDockingStation != null) {
@@ -356,16 +351,20 @@ public class EntityRobot extends EntityRobotBase implements
     public void writeEntityToNBT(NBTTagCompound nbt) {
 		super.writeEntityToNBT(nbt);
 
-		if (linkedDockingStation != null) {
-			nbt.setInteger("dockX", linkedDockingStation.pipe.xCoord);
-			nbt.setInteger("dockY", linkedDockingStation.pipe.yCoord);
-			nbt.setInteger("dockZ", linkedDockingStation.pipe.zCoord);
-			nbt.setInteger("dockSide", linkedDockingStation.side.ordinal());
-		} else {
-			nbt.setInteger("dockX", loadedDockX);
-			nbt.setInteger("dockY", loadedDockY);
-			nbt.setInteger("dockZ", loadedDockZ);
-			nbt.setInteger("dockSide", loadedDockSide.ordinal());
+		NBTTagCompound linkedStationNBT = new NBTTagCompound();
+		linkedDockingStation.writeToNBT(linkedStationNBT);
+		nbt.setTag("linkedStation", linkedStationNBT);
+
+		if (reservedDockingStation != null) {
+			NBTTagCompound stationNBT = new NBTTagCompound();
+			reservedDockingStation.writeToNBT(stationNBT);
+			nbt.setTag("reservedStation", stationNBT);
+		}
+
+		if (currentDockingStation != null) {
+			NBTTagCompound stationNBT = new NBTTagCompound();
+			currentDockingStation.writeToNBT(stationNBT);
+			nbt.setTag("currentStation", stationNBT);
 		}
 
 		NBTTagCompound nbtLaser = new NBTTagCompound();
@@ -406,10 +405,18 @@ public class EntityRobot extends EntityRobotBase implements
 	public void readEntityFromNBT(NBTTagCompound nbt) {
 		super.readEntityFromNBT(nbt);
 
-		loadedDockX = nbt.getInteger("dockX");
-		loadedDockY = nbt.getInteger("dockY");
-		loadedDockZ = nbt.getInteger("dockZ");
-		loadedDockSide = ForgeDirection.values()[nbt.getInteger("dockSide")];
+		linkedDockingStation = new FakeDockingStation();
+		linkedDockingStation.readFromNBT(nbt.getCompoundTag("linkedStation"));
+
+		if (nbt.hasKey("reservedStation")) {
+			reservedDockingStation = new FakeDockingStation();
+			reservedDockingStation.readFromNBT(nbt.getCompoundTag("reservedStation"));
+		}
+
+		if (nbt.hasKey("currentStation")) {
+			currentDockingStation = new FakeDockingStation();
+			currentDockingStation.readFromNBT(nbt.getCompoundTag("currentStation"));
+		}
 
 		laser.readFromNBT(nbt.getCompoundTag("laser"));
 
@@ -440,20 +447,20 @@ public class EntityRobot extends EntityRobotBase implements
 
 	@Override
 	public void dock(IDockingStation station) {
-		currentDockingStation = (DockingStation) station;
+		currentDockingStation = station;
 	}
 
 	@Override
 	public void undock() {
-		if (currentDockingStation != null) {
-			currentDockingStation.release(this);
+		if (currentDockingStation != null && currentDockingStation instanceof DockingStation) {
+			((DockingStation) currentDockingStation).unreserve(this);
 			currentDockingStation = null;
 		}
 	}
 
 	@Override
 	public DockingStation getDockingStation() {
-		return currentDockingStation;
+		return (DockingStation) currentDockingStation;
 	}
 
 	@Override
@@ -461,22 +468,18 @@ public class EntityRobot extends EntityRobotBase implements
 		DockingStation station = (DockingStation) iStation;
 
 		if (station == null) {
-			if (reservedDockingStation != null) {
-				reservedDockingStation.release(this);
+			if (reservedDockingStation != null && reservedDockingStation instanceof DockingStation) {
+				((DockingStation) reservedDockingStation).unreserve(this);
 			}
 
 			reservedDockingStation = null;
 
 			return true;
-		}
-
-		if (station.reserved() == this) {
+		} else if (station.reserved() == this) {
 			return true;
-		}
-
-		if (station.reserve(this)) {
-			if (reservedDockingStation != null) {
-				reservedDockingStation.release(this);
+		} else if (station.reserve(this)) {
+			if (reservedDockingStation != null && reservedDockingStation instanceof DockingStation) {
+				((DockingStation) reservedDockingStation).unreserve(this);
 			}
 
 			reservedDockingStation = station;
@@ -492,11 +495,9 @@ public class EntityRobot extends EntityRobotBase implements
 
 		if (station.linked() == this) {
 			return true;
-		}
-
-		if (station.link(this)) {
-			if (linkedDockingStation != null) {
-				linkedDockingStation.unlink(this);
+		} else if (station.link(this)) {
+			if (linkedDockingStation != null && linkedDockingStation instanceof DockingStation) {
+				((DockingStation) linkedDockingStation).unlink(this);
 			}
 
 			linkedDockingStation = station;
@@ -662,8 +663,13 @@ public class EntityRobot extends EntityRobotBase implements
 	}
 
 	@Override
-	public DockingStation getLinkedStation() {
+	public IDockingStation getLinkedStation() {
 		return linkedDockingStation;
+	}
+
+	@Override
+	public IDockingStation getReservedStation() {
+		return reservedDockingStation;
 	}
 
 	@SideOnly(Side.CLIENT)
@@ -721,12 +727,14 @@ public class EntityRobot extends EntityRobotBase implements
 
 	@Override
 	public IBox getAreaToWork() {
-		for (ActionSlot s : new ActionIterator(linkedDockingStation.pipe.pipe)) {
-			if (s.action instanceof ActionRobotWorkInArea) {
-				IBox box = ActionRobotWorkInArea.getArea(s);
+		if (linkedDockingStation instanceof DockingStation) {
+			for (ActionSlot s : new ActionIterator(((DockingStation) linkedDockingStation).pipe.pipe)) {
+				if (s.action instanceof ActionRobotWorkInArea) {
+					IBox box = ActionRobotWorkInArea.getArea(s);
 
-				if (box != null) {
-					return box;
+					if (box != null) {
+						return box;
+					}
 				}
 			}
 		}
@@ -769,8 +777,12 @@ public class EntityRobot extends EntityRobotBase implements
 			NBTUtils.getItemData(robotStack).setTag("board", originalBoardNBT);
 			entityDropItem(robotStack, 0);
 
-			if (linkedDockingStation != null) {
-				linkedDockingStation.unlink(this);
+			if (linkedDockingStation != null && linkedDockingStation instanceof DockingStation) {
+				((DockingStation) linkedDockingStation).unlink(this);
+			}
+
+			if (reservedDockingStation != null && reservedDockingStation instanceof DockingStation) {
+				((DockingStation) reservedDockingStation).unreserve(this);
 			}
 		}
 

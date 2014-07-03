@@ -8,6 +8,8 @@
  */
 package buildcraft.core.robots;
 
+import net.minecraft.nbt.NBTTagCompound;
+
 import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.api.robots.EntityRobotBase;
@@ -78,7 +80,7 @@ public class DockingStation implements IDockingStation {
 		}
 	}
 
-	public void release(EntityRobotBase robot) {
+	public void unreserve(EntityRobotBase robot) {
 		if (reserved == robot) {
 			reserved = null;
 			pipe.scheduleRenderUpdate();
@@ -90,6 +92,19 @@ public class DockingStation implements IDockingStation {
 			linked = null;
 			pipe.scheduleRenderUpdate();
 		}
+	}
+
+	@Override
+	public void writeToNBT(NBTTagCompound nbt) {
+		nbt.setInteger("x", pipe.xCoord);
+		nbt.setInteger("y", pipe.yCoord);
+		nbt.setInteger("z", pipe.zCoord);
+		nbt.setInteger("side", side.ordinal());
+	}
+
+	@Override
+	public void readFromNBT(NBTTagCompound nbt) {
+
 	}
 }
 

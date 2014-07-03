@@ -33,6 +33,8 @@ public abstract class EntityRobotBase extends EntityLiving implements IInventory
 
 	public abstract IDockingStation getLinkedStation();
 
+	public abstract IDockingStation getReservedStation();
+
 	public abstract RedstoneBoardRobot getBoard();
 
 	public abstract void aimItemAt(int x, int y, int z);

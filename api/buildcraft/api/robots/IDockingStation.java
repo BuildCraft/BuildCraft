@@ -8,6 +8,8 @@
  */
 package buildcraft.api.robots;
 
+import net.minecraft.nbt.NBTTagCompound;
+
 import net.minecraftforge.common.util.ForgeDirection;
 
 public interface IDockingStation {
@@ -23,4 +25,8 @@ public interface IDockingStation {
 	EntityRobotBase reserved();
 
 	EntityRobotBase linked();
+
+	void writeToNBT(NBTTagCompound nbt);
+
+	void readFromNBT(NBTTagCompound nbt);
 }
