@@ -92,9 +92,9 @@ public class TileAdvancedCraftingTable extends TileLaserTableBase implements IIn
 
 			if (TileAdvancedCraftingTable.this.getWorldObj() == null || !TileAdvancedCraftingTable.this.getWorldObj().isRemote) {
                 int[] id = new int[0];
-                if(itemstack != null){
+                if (itemstack != null) {
                     int[] ids = OreDictionary.getOreIDs(itemstack);
-                    if(ids.length > 0){
+                    if (ids.length > 0) {
                         id = ids;
                     }
                 }
