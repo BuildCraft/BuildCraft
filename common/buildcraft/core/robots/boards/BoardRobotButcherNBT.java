@@ -23,18 +23,18 @@ import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.utils.StringUtils;
 
-public final class BoardRobotBucherNBT extends RedstoneBoardRobotNBT {
+public final class BoardRobotButcherNBT extends RedstoneBoardRobotNBT {
 
-	public static BoardRobotBucherNBT instance = new BoardRobotBucherNBT();
+	public static BoardRobotButcherNBT instance = new BoardRobotButcherNBT();
 
 	private static final ResourceLocation TEXTURE = new ResourceLocation("buildcraft",
-			DefaultProps.TEXTURE_PATH_ENTITIES + "/robot_bucher.png");
+			DefaultProps.TEXTURE_PATH_ENTITIES + "/robot_butcher.png");
 
 	private IIcon icon;
 
 	@Override
 	public RedstoneBoardRobot create(NBTTagCompound nbt, EntityRobotBase robot) {
-		return new BoardRobotBucher(robot);
+		return new BoardRobotButcher(robot);
 	}
 
 	@Override
@@ -44,12 +44,12 @@ public final class BoardRobotBucherNBT extends RedstoneBoardRobotNBT {
 
 	@Override
 	public String getID() {
-		return "buildcraft:boardRobotBucher";
+		return "buildcraft:boardRobotButcher";
 	}
 
 	@Override
 	public void addInformation(ItemStack stack, EntityPlayer player, List list, boolean advanced) {
-		list.add(StringUtils.localize("buildcraft.boardRobotBucher"));
+		list.add(StringUtils.localize("buildcraft.boardRobotButcher"));
 	}
 
 	@Override

@@ -24,15 +24,15 @@ import buildcraft.core.robots.AIRobotGotoSleep;
 import buildcraft.core.robots.AIRobotSearchEntity;
 import buildcraft.core.robots.IEntityFilter;
 
-public class BoardRobotBucher extends RedstoneBoardRobot {
+public class BoardRobotButcher extends RedstoneBoardRobot {
 
-	public BoardRobotBucher(EntityRobotBase iRobot) {
+	public BoardRobotButcher(EntityRobotBase iRobot) {
 		super(iRobot);
 	}
 
 	@Override
 	public RedstoneBoardRobotNBT getNBTHandler() {
-		return BoardRobotBucherNBT.instance;
+		return BoardRobotButcherNBT.instance;
 	}
 
 	@Override
