@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 
 import buildcraft.api.boards.RedstoneBoardRobot;
@@ -157,4 +158,27 @@ public abstract class BoardRobotGenericBreakBlock extends RedstoneBoardRobot {
 		}
 	}
 
+	@Override
+	public void writeSelfToNBT(NBTTagCompound nbt) {
+		super.writeSelfToNBT(nbt);
+
+		if (indexStored != null) {
+			NBTTagCompound sub = new NBTTagCompound();
+			indexStored.writeTo(sub);
+			nbt.setTag("indexStored", sub);
+		}
+	}
+
+	@Override
+	public void loadSelfFromNBT(NBTTagCompound nbt) {
+		super.loadSelfFromNBT(nbt);
+
+		if (nbt.hasKey("indexStored")) {
+			indexStored = new BlockIndex (nbt.getCompoundTag("indexStored"));
+
+			if (!reserveBlock(indexStored)) {
+				indexStored = null;
+			}
+		}
+	}
 }

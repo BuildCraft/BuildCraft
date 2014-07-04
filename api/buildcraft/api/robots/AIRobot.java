@@ -29,7 +29,10 @@ public class AIRobot {
 	}
 
 	public void update() {
-
+		// Update should always handle terminate. Some AI are not using update
+		// at all, their code being in start() and end(). In these case,
+		// calling update is a malfunction, the ai should be terminated.
+		terminate();
 	}
 
 	public void end() {

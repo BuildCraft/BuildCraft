@@ -19,7 +19,7 @@ public class AIRobotGotoSleep extends AIRobot {
 
 	@Override
 	public void start() {
-		startDelegateAI(new AIRobotGotoDock(robot, (DockingStation) robot.getLinkedStation()));
+		startDelegateAI(new AIRobotGotoDock(robot, robot.getLinkedStation()));
 	}
 
 	@Override

@@ -20,7 +20,7 @@ public class AIRobotGotoDock extends AIRobot {
 		super(iRobot);
 	}
 
-	public AIRobotGotoDock(EntityRobotBase iRobot, DockingStation iStation) {
+	public AIRobotGotoDock(EntityRobotBase iRobot, IDockingStation iStation) {
 		super(iRobot);
 
 		station = iStation;

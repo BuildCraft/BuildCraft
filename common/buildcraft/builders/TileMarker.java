@@ -470,7 +470,7 @@ public class TileMarker extends TileBuildCraft implements IAreaProvider {
 
 		switchSignals();
 
-		if (origin.vectO.isSet()) {
+		if (origin.vectO.isSet() && origin.vectO.getMarker(worldObj) != null) {
 			origin.vectO.getMarker(worldObj).updateSignals();
 
 			for (TileWrapper w : origin.vect) {

@@ -70,5 +70,4 @@ public class BoardRobotBucher extends RedstoneBoardRobot {
 			}
 		}
 	}
-
 }

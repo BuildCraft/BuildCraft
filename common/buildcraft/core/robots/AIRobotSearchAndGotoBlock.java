@@ -10,6 +10,8 @@ package buildcraft.core.robots;
 
 import java.util.LinkedList;
 
+import net.minecraft.nbt.NBTTagCompound;
+
 import buildcraft.api.core.BlockIndex;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
@@ -67,6 +69,26 @@ public class AIRobotSearchAndGotoBlock extends AIRobot {
 	public void end() {
 		if (blockScannerJob != null) {
 			blockScannerJob.terminate();
+		}
+	}
+
+	@Override
+	public void writeSelfToNBT(NBTTagCompound nbt) {
+		super.writeSelfToNBT(nbt);
+
+		if (blockFound != null) {
+			NBTTagCompound sub = new NBTTagCompound();
+			blockFound.writeTo(sub);
+			nbt.setTag("blockFound", sub);
+		}
+	}
+
+	@Override
+	public void loadSelfFromNBT(NBTTagCompound nbt) {
+		super.loadSelfFromNBT(nbt);
+
+		if (nbt.hasKey("blockFound")) {
+			blockFound = new BlockIndex(nbt.getCompoundTag("blockFound"));
 		}
 	}
 }

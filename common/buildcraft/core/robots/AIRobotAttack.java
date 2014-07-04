@@ -32,7 +32,9 @@ public class AIRobotAttack extends AIRobot {
 	@Override
 	public void preempt(AIRobot ai) {
 		if (ai instanceof AIRobotGotoBlock) {
-			if (robot.getDistanceToEntity(target) <= 2.0) {
+			// target may become null in the event of a load. In that case, just
+			// go to the expected location.
+			if (target != null && robot.getDistanceToEntity(target) <= 2.0) {
 				abortDelegateAI();
 				robot.setItemActive(true);
 			}
