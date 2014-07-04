@@ -91,13 +91,13 @@ public class TileAdvancedCraftingTable extends TileLaserTableBase implements IIn
 			super.setInventorySlotContents(slotId, itemstack);
 
 			if (TileAdvancedCraftingTable.this.getWorldObj() == null || !TileAdvancedCraftingTable.this.getWorldObj().isRemote) {
-                int[] id = new int[0];
-                if (itemstack != null) {
-                    int[] ids = OreDictionary.getOreIDs(itemstack);
-                    if (ids.length > 0) {
-                        id = ids;
-                    }
-                }
+				int[] id = new int[0];
+				if (itemstack != null) {
+					int[] ids = OreDictionary.getOreIDs(itemstack);
+					if (ids.length > 0) {
+						id = ids;
+					}
+				}
 				oreIDs[slotId] = id;
 			}
 		}

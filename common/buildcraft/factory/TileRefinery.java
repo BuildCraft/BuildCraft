@@ -138,9 +138,9 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IInve
 			decreaseAnimation();
 		}
 
-        if (time == null) {
-            time = new SafeTimeTracker(currentRecipe.timeRequired);
-        }
+		if (time == null) {
+			time = new SafeTimeTracker(currentRecipe.timeRequired);
+		}
 
 		if (!time.markTimeIfDelay(worldObj)) {
 			return;
