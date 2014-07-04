@@ -129,9 +129,9 @@ public final class PowerHandler implements IBatteryProvider {
 	public final IPowerReceptor receptor;
 
 	private double activationEnergy;
-	private final SafeTimeTracker doWorkTracker = new SafeTimeTracker();
-	private final SafeTimeTracker sourcesTracker = new SafeTimeTracker();
-	private final SafeTimeTracker perditionTracker = new SafeTimeTracker();
+	private final SafeTimeTracker doWorkTracker = new SafeTimeTracker(1);
+	private final SafeTimeTracker sourcesTracker = new SafeTimeTracker(1);
+	private final SafeTimeTracker perditionTracker = new SafeTimeTracker(1);
 	private PerditionCalculator perdition;
 	private final PowerReceiver receiver;
 	private final Type type;
@@ -284,7 +284,7 @@ public final class PowerHandler implements IBatteryProvider {
 
 	private void applyPerdition() {
 		double energyStored = getEnergyStored();
-		if (perditionTracker.markTimeIfDelay(receptor.getWorld(), 1) && energyStored > 0) {
+		if (perditionTracker.markTimeIfDelay(receptor.getWorld()) && energyStored > 0) {
 			double prev = energyStored;
 			double newEnergy = getPerdition().applyPerdition(this, energyStored, perditionTracker.durationOfLastDelay());
 			if (newEnergy == 0 || newEnergy < energyStored) {
@@ -300,14 +300,14 @@ public final class PowerHandler implements IBatteryProvider {
 
 	private void applyWork() {
 		if (getEnergyStored() >= activationEnergy) {
-			if (doWorkTracker.markTimeIfDelay(receptor.getWorld(), 1)) {
+			if (doWorkTracker.markTimeIfDelay(receptor.getWorld())) {
 				receptor.doWork(this);
 			}
 		}
 	}
 
 	private void updateSources(ForgeDirection source) {
-		if (sourcesTracker.markTimeIfDelay(receptor.getWorld(), 1)) {
+		if (sourcesTracker.markTimeIfDelay(receptor.getWorld())) {
 			for (int i = 0; i < 6; ++i) {
 				powerSources[i] -= sourcesTracker.durationOfLastDelay();
 				if (powerSources[i] < 0) {

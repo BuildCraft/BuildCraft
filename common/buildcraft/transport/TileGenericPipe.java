@@ -74,7 +74,6 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 	public final PipeRenderState renderState = new PipeRenderState();
 	public final CoreState coreState = new CoreState();
 	public boolean[] pipeConnectionsBuffer = new boolean[6];
-	public SafeTimeTracker networkSyncTracker = new SafeTimeTracker();
 
 	@MjBattery
 	public Pipe pipe;

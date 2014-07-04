@@ -19,7 +19,7 @@ public class SlotWorkbench extends SlotBase {
 
 	@Override
 	public boolean isItemValid(ItemStack stack) {
-		return stack != null && stack.isStackable() && !stack.getItem().hasContainerItem();
+		return stack != null && stack.isStackable() && !stack.getItem().hasContainerItem(stack);
 	}
 
 	@Override

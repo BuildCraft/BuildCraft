@@ -23,6 +23,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import net.minecraft.nbt.CompressedStreamTools;
+import net.minecraft.nbt.NBTSizeTracker;
 import net.minecraft.nbt.NBTTagCompound;
 
 import buildcraft.BuildCraftBuilders;
@@ -238,7 +239,7 @@ public class BlueprintDatabase {
 
 	public static BlueprintBase load(byte[] data) {
 		try {
-			NBTTagCompound nbt = CompressedStreamTools.decompress(data);
+			NBTTagCompound nbt = CompressedStreamTools.func_152457_a(data, NBTSizeTracker.field_152451_a);
 
 			BlueprintBase blueprint = BlueprintBase.loadBluePrint(nbt);
 			blueprint.setData(data);

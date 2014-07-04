@@ -15,6 +15,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompressedStreamTools;
+import net.minecraft.nbt.NBTSizeTracker;
 import net.minecraft.nbt.NBTTagCompound;
 
 import buildcraft.BuildCraftBuilders;
@@ -257,7 +258,7 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory {
 	public void uploadBlueprintToServer (BlueprintId id, byte [] data) {
 		try {
 			if (data != null) {
-				NBTTagCompound nbt = CompressedStreamTools.decompress(data);
+				NBTTagCompound nbt = CompressedStreamTools.func_152457_a(data, NBTSizeTracker.field_152451_a);
 				BlueprintBase bpt = BlueprintBase.loadBluePrint(nbt);
 				bpt.setData(data);
 				bpt.id = id;
@@ -279,7 +280,7 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory {
 	@RPC (RPCSide.CLIENT)
 	public void downloadBlueprintToClient (BlueprintId id, byte [] data) {
 		try {
-			NBTTagCompound nbt = CompressedStreamTools.decompress(data);
+			NBTTagCompound nbt = CompressedStreamTools.func_152457_a(data, NBTSizeTracker.field_152451_a);
 			BlueprintBase bpt = BlueprintBase.loadBluePrint(nbt);
 			bpt.setData(data);
 			bpt.id = id;

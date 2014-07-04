@@ -79,11 +79,11 @@ public class TileAdvancedCraftingTable extends TileLaserTableBase implements IIn
 
 	private final class CraftingGrid extends SimpleInventory {
 
-		public int[] oreIDs = new int[9];
+		public int[][] oreIDs = new int[9][];
 
 		public CraftingGrid() {
 			super(9, "CraftingSlots", 1);
-			Arrays.fill(oreIDs, -1);
+			Arrays.fill(oreIDs, new int[0]);
 		}
 
 		@Override
@@ -91,7 +91,14 @@ public class TileAdvancedCraftingTable extends TileLaserTableBase implements IIn
 			super.setInventorySlotContents(slotId, itemstack);
 
 			if (TileAdvancedCraftingTable.this.getWorldObj() == null || !TileAdvancedCraftingTable.this.getWorldObj().isRemote) {
-				oreIDs[slotId] = itemstack == null ? -1 : OreDictionary.getOreID(itemstack);
+                int[] id = new int[0];
+                if(itemstack != null){
+                    int[] ids = OreDictionary.getOreIDs(itemstack);
+                    if(ids.length > 0){
+                        id = ids;
+                    }
+                }
+				oreIDs[slotId] = id;
 			}
 		}
 	}
