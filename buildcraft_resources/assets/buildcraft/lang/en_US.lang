@@ -112,6 +112,8 @@ gate.trigger.pipe.wire.active=%s Pipe Signal On
 gate.trigger.pipe.wire.inactive=%s Pipe Signal Off
 gate.trigger.timer=%s Sec Timer
 gate.trigger.robot.sleep=Sleep
+gate.trigger.machine.energyStoredHigh=High Energy Stored
+gate.trigger.machine.energyStoredLow=Low Energy Stored 
 
 gui.building.resources=Building Resources
 gui.building.fluids=Fluid Tanks

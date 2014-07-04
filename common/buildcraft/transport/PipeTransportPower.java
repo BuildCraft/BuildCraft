@@ -535,6 +535,16 @@ public class PipeTransportPower extends PipeTransport {
 		return result;
 	}
 
+	public boolean isQueryingPower() {
+		for (double d : powerQuery) {
+			if (d > 1e-4) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
 	static {
 		powerCapacities.put(PipePowerCobblestone.class, 8);
 		powerCapacities.put(PipePowerStone.class, 16);

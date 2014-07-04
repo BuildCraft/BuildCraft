@@ -98,6 +98,7 @@ import buildcraft.core.triggers.ActionRedstoneOutput;
 import buildcraft.core.triggers.DefaultActionProvider;
 import buildcraft.core.triggers.DefaultTriggerProvider;
 import buildcraft.core.triggers.StatementIconProvider;
+import buildcraft.core.triggers.TriggerEnergy;
 import buildcraft.core.triggers.TriggerFluidContainer;
 import buildcraft.core.triggers.TriggerFluidContainerLevel;
 import buildcraft.core.triggers.TriggerInventory;
@@ -157,6 +158,8 @@ public class BuildCraftCore extends BuildCraftMod {
 	public static int markerModel;
 	public static ITrigger triggerMachineActive = new TriggerMachine(true);
 	public static ITrigger triggerMachineInactive = new TriggerMachine(false);
+	public static ITrigger triggerEnergyHigh = new TriggerEnergy(true);
+	public static ITrigger triggerEnergyLow = new TriggerEnergy(false);
 	public static ITrigger triggerEmptyInventory = new TriggerInventory(TriggerInventory.State.Empty);
 	public static ITrigger triggerContainsInventory = new TriggerInventory(TriggerInventory.State.Contains);
 	public static ITrigger triggerSpaceInventory = new TriggerInventory(TriggerInventory.State.Space);

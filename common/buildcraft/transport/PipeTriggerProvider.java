@@ -13,11 +13,13 @@ import java.util.LinkedList;
 import net.minecraft.block.Block;
 import net.minecraft.tileentity.TileEntity;
 
+import buildcraft.BuildCraftCore;
 import buildcraft.api.gates.IOverrideDefaultTriggers;
 import buildcraft.api.gates.ITrigger;
 import buildcraft.api.gates.ITriggerProvider;
+import buildcraft.api.mj.IBatteryObject;
+import buildcraft.api.mj.MjAPI;
 import buildcraft.api.transport.IPipeTile;
-import buildcraft.transport.pipes.PipePowerWood;
 import buildcraft.transport.triggers.TriggerPipeContents;
 
 public class PipeTriggerProvider implements ITriggerProvider {
@@ -55,12 +57,18 @@ public class PipeTriggerProvider implements ITriggerProvider {
 				result.add(TriggerPipeContents.PipeContents.empty.trigger);
 				result.add(TriggerPipeContents.PipeContents.containsEnergy.trigger);
 				result.add(TriggerPipeContents.PipeContents.tooMuchEnergy.trigger);
-				if (pipe instanceof PipePowerWood) {
-					result.add(TriggerPipeContents.PipeContents.requestsEnergy.trigger);
-				}
+			result.add(TriggerPipeContents.PipeContents.requestsEnergy.trigger);
+
 				break;
 		case STRUCTURE:
 			break;
+		}
+
+		IBatteryObject battery = MjAPI.getMjBattery(tile);
+
+		if (battery != null && battery.maxCapacity() > 0) {
+			result.add(BuildCraftCore.triggerEnergyHigh);
+			result.add(BuildCraftCore.triggerEnergyLow);
 		}
 
 		return result;

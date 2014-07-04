@@ -138,8 +138,7 @@ public class TriggerPipeContents extends BCTrigger {
 
 					return false;
 				case requestsEnergy:
-					PipePowerWood wood = (PipePowerWood) pipe;
-					return wood.requestsPower();
+					return transportPower.isQueryingPower();
 				default:
 				case tooMuchEnergy:
 					return transportPower.isOverloaded();
