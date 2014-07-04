@@ -49,9 +49,9 @@ public class TriggerEnergy extends BCTrigger {
 
 			if (maxCapacity > 0) {
 				if (high) {
-					return (battery.getEnergyStored() / maxCapacity > 0.95);
+					return battery.getEnergyStored() / maxCapacity > 0.95;
 				} else {
-					return (battery.getEnergyStored() / maxCapacity < 0.05);
+					return battery.getEnergyStored() / maxCapacity < 0.05;
 				}
 			}
 		}
@@ -71,9 +71,9 @@ public class TriggerEnergy extends BCTrigger {
 
 			if (maxCapacity > 0) {
 				if (high) {
-					return (battery.getEnergyStored() / maxCapacity > 0.95);
+					return battery.getEnergyStored() / maxCapacity > 0.95;
 				} else {
-					return (battery.getEnergyStored() / maxCapacity < 0.05);
+					return battery.getEnergyStored() / maxCapacity < 0.05;
 				}
 			}
 		}

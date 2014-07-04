@@ -29,8 +29,6 @@ import buildcraft.transport.PipeTransportFluids;
 import buildcraft.transport.PipeTransportItems;
 import buildcraft.transport.PipeTransportPower;
 import buildcraft.transport.TravelingItem;
-import buildcraft.transport.pipes.PipePowerWood;
-
 
 public class TriggerPipeContents extends BCTrigger {
 
