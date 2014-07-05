@@ -8,25 +8,28 @@
  */
 package buildcraft.core.robots.boards;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockDirt;
-import net.minecraft.block.BlockGrass;
 import net.minecraft.item.ItemHoe;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 
 import buildcraft.api.boards.RedstoneBoardRobot;
 import buildcraft.api.boards.RedstoneBoardRobotNBT;
+import buildcraft.api.core.BlockIndex;
+import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.inventory.filters.IStackFilter;
 import buildcraft.core.robots.AIRobotFetchAndEquipItemStack;
-import buildcraft.core.robots.AIRobotGotoRandomGroundBlock;
+import buildcraft.core.robots.AIRobotGotoBlock;
 import buildcraft.core.robots.AIRobotGotoSleep;
+import buildcraft.core.robots.AIRobotSearchBlock;
 import buildcraft.core.robots.AIRobotUseToolOnBlock;
 import buildcraft.core.robots.IBlockFilter;
 
 public class BoardRobotFarmer extends RedstoneBoardRobot {
+
+	private BlockIndex blockFound;
 
 	public BoardRobotFarmer(EntityRobotBase iRobot) {
 		super(iRobot);
@@ -47,27 +50,30 @@ public class BoardRobotFarmer extends RedstoneBoardRobot {
 				}
 			}));
 		} else {
-			startDelegateAI(new AIRobotGotoRandomGroundBlock(robot, 100, new IBlockFilter() {
+			startDelegateAI(new AIRobotSearchBlock(robot, new IBlockFilter() {
 				@Override
 				public boolean matches(World world, int x, int y, int z) {
-					Block b = robot.worldObj.getBlock(x, y, z);
-
-					return b instanceof BlockDirt || b instanceof BlockGrass;
+					return BuildCraftAPI.isDirtProperty.get(world, x, y, z);
 				}
-			}, robot.getAreaToWork()));
+			}));
 		}
 	}
 
 	@Override
 	public void delegateAIEnded(AIRobot ai) {
-		if (ai instanceof AIRobotGotoRandomGroundBlock) {
-			AIRobotGotoRandomGroundBlock gotoBlock = (AIRobotGotoRandomGroundBlock) ai;
+		if (ai instanceof AIRobotSearchBlock) {
+			AIRobotSearchBlock searchAI = (AIRobotSearchBlock) ai;
 
-			if (((AIRobotGotoRandomGroundBlock) ai).blockFound == null) {
+			if (searchAI.blockFound == null) {
 				startDelegateAI(new AIRobotGotoSleep(robot));
 			} else {
-				startDelegateAI(new AIRobotUseToolOnBlock(robot, ((AIRobotGotoRandomGroundBlock) ai).blockFound));
+				blockFound = searchAI.blockFound;
+				startDelegateAI(new AIRobotGotoBlock(robot, searchAI.path));
 			}
+		} else if (ai instanceof AIRobotGotoBlock) {
+			AIRobotGotoBlock gotoBlock = (AIRobotGotoBlock) ai;
+
+			startDelegateAI(new AIRobotUseToolOnBlock(robot, blockFound));
 		} else if (ai instanceof AIRobotFetchAndEquipItemStack) {
 			if (robot.getHeldItem() == null) {
 				startDelegateAI(new AIRobotGotoSleep(robot));
@@ -75,4 +81,23 @@ public class BoardRobotFarmer extends RedstoneBoardRobot {
 		}
 	}
 
+	@Override
+	public void writeSelfToNBT(NBTTagCompound nbt) {
+		super.writeSelfToNBT(nbt);
+
+		if (blockFound != null) {
+			NBTTagCompound sub = new NBTTagCompound();
+			blockFound.writeTo(sub);
+			nbt.setTag("blockFound", sub);
+		}
+	}
+
+	@Override
+	public void loadSelfFromNBT(NBTTagCompound nbt) {
+		super.loadSelfFromNBT(nbt);
+
+		if (nbt.hasKey("blockFound")) {
+			blockFound = new BlockIndex(nbt.getCompoundTag("blockFound"));
+		}
+	}
 }

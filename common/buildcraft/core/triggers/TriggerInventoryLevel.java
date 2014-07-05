@@ -67,6 +67,10 @@ public class TriggerInventoryLevel extends BCTrigger {
 		if (tile instanceof IInventory) {
 			ItemStack searchStack = parameter.getItemStackToDraw();
 
+			if (searchStack == null) {
+				return false;
+			}
+
 			int stackSpace = 0;
 			int foundItems = 0;
 			for (IInvSlot slot : InventoryIterator.getIterable((IInventory) tile, side.getOpposite())) {

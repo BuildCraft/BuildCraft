@@ -47,11 +47,20 @@ public class AIRobotSearchBlock extends AIRobot {
 
 	@Override
 	public void update() {
+		if (blockScannerJob == null) {
+			// This is probably due to a load from NBT. Abort the ai in
+			// that case, since there's no filter to analyze either.
+			abort();
+			return;
+		}
+
 		if (blockScannerJob.isDone()) {
 			path = blockScanner.getResult();
 
-			if (path != null) {
+			if (path != null && path.size() > 0) {
 				blockFound = path.removeLast();
+			} else {
+				path = null;
 			}
 
 			terminate();
