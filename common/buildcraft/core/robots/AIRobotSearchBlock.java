@@ -18,19 +18,20 @@ import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.utils.PathFinding;
 import buildcraft.core.utils.PathFindingJob;
 
-public class AIRobotSearchAndGotoBlock extends AIRobot {
+public class AIRobotSearchBlock extends AIRobot {
 
 	public BlockIndex blockFound;
+	public LinkedList<BlockIndex> path;
 	private PathFinding blockScanner = null;
 	private PathFindingJob blockScannerJob;
 	private IBlockFilter pathFound;
 	private int stopBefore = 0;
 
-	public AIRobotSearchAndGotoBlock(EntityRobotBase iRobot) {
+	public AIRobotSearchBlock(EntityRobotBase iRobot) {
 		super(iRobot);
 	}
 
-	public AIRobotSearchAndGotoBlock(EntityRobotBase iRobot, IBlockFilter iPathFound) {
+	public AIRobotSearchBlock(EntityRobotBase iRobot, IBlockFilter iPathFound) {
 		super(iRobot);
 
 		pathFound = iPathFound;
@@ -47,20 +48,12 @@ public class AIRobotSearchAndGotoBlock extends AIRobot {
 	@Override
 	public void update() {
 		if (blockScannerJob.isDone()) {
-			LinkedList<BlockIndex> path = blockScanner.getResult();
+			path = blockScanner.getResult();
 
 			if (path != null) {
 				blockFound = path.removeLast();
-				startDelegateAI(new AIRobotGotoBlock(robot, path));
-			} else {
-				terminate();
 			}
-		}
-	}
 
-	@Override
-	public void delegateAIEnded(AIRobot ai) {
-		if (ai instanceof AIRobotGotoBlock) {
 			terminate();
 		}
 	}

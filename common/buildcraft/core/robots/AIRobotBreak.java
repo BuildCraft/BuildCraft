@@ -11,6 +11,7 @@ package buildcraft.core.robots;
 import net.minecraft.block.Block;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.WorldServer;
 
 import net.minecraftforge.common.ForgeHooks;
@@ -124,5 +125,25 @@ public class AIRobotBreak extends AIRobot {
 	@Override
 	public double getEnergyCost() {
 		return 2;
+	}
+
+	@Override
+	public void writeSelfToNBT(NBTTagCompound nbt) {
+		super.writeSelfToNBT(nbt);
+
+		if (blockToBreak != null) {
+			NBTTagCompound sub = new NBTTagCompound();
+			blockToBreak.writeTo(sub);
+			nbt.setTag("blockToBreak", sub);
+		}
+	}
+
+	@Override
+	public void loadSelfFromNBT(NBTTagCompound nbt) {
+		super.loadSelfFromNBT(nbt);
+
+		if (nbt.hasKey("blockToBreak")) {
+			blockToBreak = new BlockIndex(nbt.getCompoundTag("blockToBreak"));
+		}
 	}
 }

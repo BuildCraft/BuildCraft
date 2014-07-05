@@ -38,6 +38,11 @@ public class ActionStationForbidRobot extends BCActionPassive {
 	}
 
 	@Override
+	public int minParameters() {
+		return 1;
+	}
+
+	@Override
 	public int maxParameters() {
 		return 3;
 	}

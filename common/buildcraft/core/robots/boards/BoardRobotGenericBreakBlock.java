@@ -26,8 +26,9 @@ import buildcraft.core.TickHandlerCoreClient;
 import buildcraft.core.inventory.filters.IStackFilter;
 import buildcraft.core.robots.AIRobotBreak;
 import buildcraft.core.robots.AIRobotFetchAndEquipItemStack;
+import buildcraft.core.robots.AIRobotGotoBlock;
 import buildcraft.core.robots.AIRobotGotoSleep;
-import buildcraft.core.robots.AIRobotSearchAndGotoBlock;
+import buildcraft.core.robots.AIRobotSearchBlock;
 import buildcraft.core.robots.DockingStation;
 import buildcraft.core.robots.IBlockFilter;
 import buildcraft.silicon.statements.ActionRobotFilter;
@@ -75,8 +76,8 @@ public abstract class BoardRobotGenericBreakBlock extends RedstoneBoardRobot {
 	}
 
 	public final void preemt(AIRobot ai) {
-		if (ai instanceof AIRobotSearchAndGotoBlock) {
-			BlockIndex index = ((AIRobotSearchAndGotoBlock) ai).blockFound;
+		if (ai instanceof AIRobotSearchBlock) {
+			BlockIndex index = ((AIRobotSearchBlock) ai).blockFound;
 
 			if (!RedstoneBoardRobot.isFreeBlock(index)) {
 				abortDelegateAI();
@@ -94,7 +95,7 @@ public abstract class BoardRobotGenericBreakBlock extends RedstoneBoardRobot {
 				}
 			}));
 		} else {
-			startDelegateAI(new AIRobotSearchAndGotoBlock(robot, new IBlockFilter() {
+			startDelegateAI(new AIRobotSearchBlock(robot, new IBlockFilter() {
 				@Override
 				public boolean matches(World world, int x, int y, int z) {
 					if (isExpectedBlock(world, x, y, z) && matchesGateFilter(world, x, y, z)) {
@@ -109,16 +110,18 @@ public abstract class BoardRobotGenericBreakBlock extends RedstoneBoardRobot {
 
 	@Override
 	public void delegateAIEnded(AIRobot ai) {
-		if (ai instanceof AIRobotSearchAndGotoBlock) {
-			indexStored = ((AIRobotSearchAndGotoBlock) ai).blockFound;
+		if (ai instanceof AIRobotSearchBlock) {
+			indexStored = ((AIRobotSearchBlock) ai).blockFound;
 
 			if (indexStored == null) {
 				startDelegateAI(new AIRobotGotoSleep(robot));
 			} else {
 				if (reserveBlock(indexStored)) {
-					startDelegateAI(new AIRobotBreak(robot, indexStored));
+					startDelegateAI(new AIRobotGotoBlock(robot, ((AIRobotSearchBlock) ai).path));
 				}
 			}
+		} else if (ai instanceof AIRobotGotoBlock) {
+			startDelegateAI(new AIRobotBreak(robot, indexStored));
 		} else if (ai instanceof AIRobotBreak) {
 			releaseBlock(indexStored);
 			indexStored = null;
