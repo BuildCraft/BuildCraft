@@ -28,6 +28,7 @@ import buildcraft.core.utils.StringUtils;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportPower;
+import buildcraft.transport.gates.ActionSlot;
 import buildcraft.transport.triggers.ActionPowerLimiter;
 
 public class PipePowerIron extends Pipe<PipeTransportPower> {
@@ -119,12 +120,12 @@ public class PipePowerIron extends Pipe<PipeTransportPower> {
 	}
 
 	@Override
-	protected void actionsActivated(Collection<IAction> actions) {
+	protected void actionsActivated(Collection<ActionSlot> actions) {
 		super.actionsActivated(actions);
 
-		for (IAction action : actions) {
-			if (action instanceof ActionPowerLimiter) {
-				setMode(((ActionPowerLimiter) action).limit);
+		for (ActionSlot action : actions) {
+			if (action.action instanceof ActionPowerLimiter) {
+				setMode(((ActionPowerLimiter) action.action).limit);
 				break;
 			}
 		}

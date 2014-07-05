@@ -35,6 +35,7 @@ import buildcraft.transport.PipeTransportItems;
 import buildcraft.transport.TileGenericPipe;
 import buildcraft.transport.TransportConstants;
 import buildcraft.transport.TravelingItem;
+import buildcraft.transport.gates.ActionSlot;
 import buildcraft.transport.pipes.events.PipeEventItem;
 import buildcraft.transport.triggers.ActionPipeColor;
 import buildcraft.transport.triggers.ActionPipeDirection;
@@ -152,19 +153,19 @@ public class PipeItemsDaizuli extends Pipe<PipeTransportItems> {
 	}
 
 	@Override
-	protected void actionsActivated(Collection<IAction> actions) {
+	protected void actionsActivated(Collection<ActionSlot> actions) {
 		super.actionsActivated(actions);
 
-		for (IAction action : actions) {
-			if (action instanceof ActionPipeColor) {
-				setColor(((ActionPipeColor) action).color);
+		for (ActionSlot action : actions) {
+			if (action.action instanceof ActionPipeColor) {
+				setColor(((ActionPipeColor) action.action).color);
 				break;
 			}
 		}
 
-		for (IAction action : actions) {
-			if (action instanceof ActionPipeDirection) {
-				logic.setFacing(((ActionPipeDirection) action).direction);
+		for (ActionSlot action : actions) {
+			if (action.action instanceof ActionPipeDirection) {
+				logic.setFacing(((ActionPipeDirection) action.action).direction);
 				break;
 			}
 		}

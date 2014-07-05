@@ -33,6 +33,7 @@ import buildcraft.core.utils.EnumColor;
 import buildcraft.transport.BlockGenericPipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.TravelingItem;
+import buildcraft.transport.gates.ActionSlot;
 import buildcraft.transport.triggers.ActionExtractionPreset;
 
 public class PipeItemsEmzuli extends PipeItemsWood implements IGuiReturnHandler {
@@ -141,14 +142,14 @@ public class PipeItemsEmzuli extends PipeItemsWood implements IGuiReturnHandler 
 	}
 
 	@Override
-	protected void actionsActivated(Collection<IAction> actions) {
+	protected void actionsActivated(Collection<ActionSlot> actions) {
 		super.actionsActivated(actions);
 
 		activeFlags.clear();
 
-		for (IAction action : actions) {
-			if (action instanceof ActionExtractionPreset) {
-				setActivePreset(((ActionExtractionPreset) action).color);
+		for (ActionSlot action : actions) {
+			if (action.action instanceof ActionExtractionPreset) {
+				setActivePreset(((ActionExtractionPreset) action.action).color);
 			}
 		}
 	}

@@ -8,6 +8,7 @@
  */
 package buildcraft.transport;
 
+import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -38,6 +39,7 @@ import buildcraft.api.transport.IPipe;
 import buildcraft.api.transport.PipeWire;
 import buildcraft.core.GuiIds;
 import buildcraft.core.triggers.ActionRedstoneOutput;
+import buildcraft.transport.gates.ActionSlot;
 import buildcraft.transport.gates.GateDefinition.GateLogic;
 import buildcraft.transport.gates.GateDefinition.GateMaterial;
 import buildcraft.transport.gates.ItemGate;
@@ -61,6 +63,7 @@ public final class Gate implements IGate {
 	public IActionParameter[][] actionParameters = new IActionParameter[8][MAX_PARAMETERS];
 
 	public ActionActiveState[] actionsState = new ActionActiveState[MAX_STATEMENTS];
+	public ArrayList<ActionSlot> activeActions = new ArrayList<ActionSlot>();
 
 	public BitSet broadcastSignal = new BitSet(PipeWire.VALUES.length);
 	public BitSet prevBroadcastSignal = new BitSet(PipeWire.VALUES.length);
@@ -340,57 +343,77 @@ public final class Gate implements IGate {
 			ITriggerParameter[] parameter = triggerParameters[it];
 
 			if (trigger != null) {
-				boolean active = isTriggerActive(trigger, parameter);
+				if (isTriggerActive(trigger, parameter)) {
+					actionsState[it] = ActionActiveState.Partial;
+				}
+			}
+		}
 
-				if (actionGroups[it] == it) {
-					if (active) {
-						actionsState[it] = ActionActiveState.Activated;
-					}
-				} else {
-					if (active && actionsState[actionGroups[it]] != ActionActiveState.Activated) {
-						actionsState[actionGroups[it]] = ActionActiveState.Partial;
-					} else if (!active && actionsState[actionGroups[it]] == ActionActiveState.Activated) {
-						actionsState[actionGroups[it]] = ActionActiveState.Partial;
+		activeActions = new ArrayList<ActionSlot>();
+
+		for (int it = 0; it < MAX_STATEMENTS; ++it) {
+			boolean andActivate = true;
+			boolean orActivate = false;
+
+			if (actions[it] == null) {
+				continue;
+			}
+
+			for (int j = 0; j < MAX_STATEMENTS; ++j) {
+				if (actionGroups[j] == it) {
+					if (actionsState[j] != ActionActiveState.Partial) {
+						andActivate = false;
+					} else {
+						orActivate = true;
 					}
 				}
+			}
+
+			if ((logic == GateLogic.AND && andActivate) || (logic == GateLogic.OR && orActivate)) {
+				if (logic == GateLogic.AND) {
+					for (int j = 0; j < MAX_STATEMENTS; ++j) {
+						if (actionGroups[j] == it) {
+							actionsState[j] = ActionActiveState.Activated;
+						}
+					}
+				}
+
+				ActionSlot slot = new ActionSlot();
+				slot.action = actions[it];
+				slot.parameters = actionParameters[it];
+				activeActions.add(slot);
+			}
+
+			if (logic == GateLogic.OR && actionsState[it] == ActionActiveState.Partial) {
+				actionsState[it] = ActionActiveState.Activated;
 			}
 		}
 
 		// Activate the actions
-		for (int it = 0; it < MAX_STATEMENTS; ++it) {
-			if (actions[it] != null && actionGroups[it] == it && actionsState[it] == ActionActiveState.Activated) {
-				IAction action = actions[it];
-				action.actionActivate(this, actionParameters[it]);
+		for (ActionSlot slot : activeActions) {
+			IAction action = slot.action;
+			action.actionActivate(this, slot.parameters);
 
-				// TODO: A lot of the code below should be removed in favor
-				// of calls to actionActivate
+			// TODO: A lot of the code below should be removed in favor
+			// of calls to actionActivate
 
-				// Custom gate actions take precedence over defaults.
-				if (resolveAction(action)) {
-					continue;
-				}
+			// Custom gate actions take precedence over defaults.
+			if (resolveAction(action)) {
+				continue;
+			}
 
-				if (action instanceof ActionRedstoneOutput) {
-					redstoneOutput = 15;
-				} else if (action instanceof ActionRedstoneFaderOutput) {
-					redstoneOutput = ((ActionRedstoneFaderOutput) action).level;
-				} else {
-					for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
-						TileEntity tile = pipe.container.getTile(side);
-						if (tile instanceof IActionReceptor) {
-							IActionReceptor recept = (IActionReceptor) tile;
-							recept.actionActivated(action);
-						}
+			if (action instanceof ActionRedstoneOutput) {
+				redstoneOutput = 15;
+			} else if (action instanceof ActionRedstoneFaderOutput) {
+				redstoneOutput = ((ActionRedstoneFaderOutput) action).level;
+			} else {
+				for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
+					TileEntity tile = pipe.container.getTile(side);
+					if (tile instanceof IActionReceptor) {
+						IActionReceptor recept = (IActionReceptor) tile;
+						recept.actionActivated(action);
 					}
 				}
-			}
-		}
-
-		LinkedList<IAction> activeActions = new LinkedList<IAction>();
-
-		for (int it = 0; it < MAX_STATEMENTS; ++it) {
-			if (actionGroups[it] == it && actionsState[it] == ActionActiveState.Activated) {
-				activeActions.add(actions[it]);
 			}
 		}
 

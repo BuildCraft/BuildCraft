@@ -43,6 +43,7 @@ import buildcraft.core.IDropControlInventory;
 import buildcraft.core.inventory.InvUtils;
 import buildcraft.core.network.TilePacketWrapper;
 import buildcraft.core.utils.Utils;
+import buildcraft.transport.gates.ActionSlot;
 import buildcraft.transport.gates.GateFactory;
 import buildcraft.transport.pipes.events.PipeEvent;
 
@@ -552,7 +553,7 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 		container.scheduleRenderUpdate();
 	}
 
-	protected void actionsActivated(Collection<IAction> actions) {
+	protected void actionsActivated(Collection<ActionSlot> actions) {
 	}
 
 	public TileGenericPipe getContainer() {

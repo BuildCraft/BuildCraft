@@ -57,7 +57,8 @@ public class ActionParameterItemStack implements IActionParameter {
 		if (object instanceof ActionParameterItemStack) {
 			ActionParameterItemStack param = (ActionParameterItemStack) object;
 
-			return ItemStack.areItemStackTagsEqual(stack, param.stack);
+			return ItemStack.areItemStacksEqual(stack, param.stack)
+					&& ItemStack.areItemStackTagsEqual(stack, param.stack);
 		} else {
 			return false;
 		}

@@ -28,6 +28,7 @@ import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportFluids;
 import buildcraft.transport.TileGenericPipe;
+import buildcraft.transport.gates.ActionSlot;
 import buildcraft.transport.triggers.ActionPipeDirection;
 
 public class PipeFluidsIron extends Pipe<PipeTransportFluids> {
@@ -101,12 +102,12 @@ public class PipeFluidsIron extends Pipe<PipeTransportFluids> {
 	}
 
 	@Override
-	protected void actionsActivated(Collection<IAction> actions) {
+	protected void actionsActivated(Collection<ActionSlot> actions) {
 		super.actionsActivated(actions);
 
-		for (IAction action : actions) {
-			if (action instanceof ActionPipeDirection) {
-				logic.setFacing(((ActionPipeDirection) action).direction);
+		for (ActionSlot action : actions) {
+			if (action.action instanceof ActionPipeDirection) {
+				logic.setFacing(((ActionPipeDirection) action.action).direction);
 				break;
 			}
 		}
