@@ -342,11 +342,17 @@ public final class RPCHandler {
 		} else if (String.class.equals(formal)) {
 			Utils.writeUTF(data, (String) actual);
 		} else if (formal.isArray()) {
-			Object[] array = (Object[]) actual;
-			Class<?> componentType = formal.getComponentType();
-			data.writeInt(array.length);
-			for (Object element : array) {
-				writePrimitive(data, componentType, element);
+			if (formal.getComponentType() == byte.class) {
+				byte[] array = (byte[]) actual;
+				data.writeInt(array.length);
+				data.writeBytes(array);
+			} else {
+				Object[] array = (Object[]) actual;
+				Class<?> componentType = formal.getComponentType();
+				data.writeInt(array.length);
+				for (Object element : array) {
+					writePrimitive(data, componentType, element);
+				}
 			}
 		} else {
 			return false;
@@ -407,12 +413,19 @@ public final class RPCHandler {
 			actuals[i] = Utils.readUTF(data);
 		} else if (formal.isArray()) {
 			final int size = data.readInt();
-			Class<?> componentType = formal.getComponentType();
-			Object[] a = (Object[]) Array.newInstance(componentType, size);
-			for (int z = 0; z < size; z++) {
-				readPrimitive(data, componentType, a, z);
+
+			if (formal.getComponentType() == byte.class) {
+				byte[] array = new byte[size];
+				data.readBytes(array);
+				actuals[i] = array;
+			} else {
+				Class<?> componentType = formal.getComponentType();
+				Object[] a = (Object[]) Array.newInstance(componentType, size);
+				for (int z = 0; z < size; z++) {
+					readPrimitive(data, componentType, a, z);
+				}
+				actuals[i] = a;
 			}
-			actuals[i] = a;
 		} else {
 			return false;
 		}
