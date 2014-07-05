@@ -26,6 +26,7 @@ import buildcraft.api.blueprints.SchematicTile;
 import buildcraft.api.gates.IStatement;
 import buildcraft.api.gates.StatementManager;
 import buildcraft.transport.BlockGenericPipe;
+import buildcraft.transport.Gate;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.TileGenericPipe.SideProperties;
 
@@ -58,20 +59,55 @@ public class SchematicPipe extends SchematicTile {
 			BptPipeExtension.get(pipeItem).rotateLeft(this, context);
 		}
 
-		NBTTagCompound gateNBT = tileNBT.getCompoundTag("Gate");
+		if (tileNBT.hasKey("Gate")) {
+			// This code is handling specifically BuildCraft 6.0 gates. Sided
+			// gates starting BuildCraft 6.1 work differently.
 
-		for (int i = 0; i < 8; ++i) {
+			NBTTagCompound gateNBT = tileNBT.getCompoundTag("Gate");
+			rotateGateLeft(gateNBT);
+		} else {
+			// Post 6.1 treatment
+
+			NBTTagCompound gatesNBT[] = new NBTTagCompound[6];
+
+			for (int i = 0; i < 6; ++i) {
+				if (tileNBT.hasKey("Gate[" + i + "]")) {
+					gatesNBT[i] = tileNBT.getCompoundTag("Gate[" + i + "]");
+				}
+			}
+
+			for (int i = 0; i < 6; ++i) {
+				int newI = ForgeDirection.values()[i].getRotation(ForgeDirection.UP).ordinal();
+
+				if (gatesNBT[i] != null) {
+					rotateGateLeft(gatesNBT[i]);
+					tileNBT.setTag("Gate[" + newI + "]", gatesNBT[i]);
+				} else {
+					tileNBT.removeTag("Gate[" + newI + "]");
+				}
+			}
+		}
+	}
+
+	private void rotateGateLeft(NBTTagCompound gateNBT) {
+		for (int i = 0; i < Gate.MAX_STATEMENTS; ++i) {
 			if (gateNBT.hasKey("trigger[" + i + "]")) {
 				IStatement t = StatementManager.statements.get(gateNBT.getString("trigger[" + i + "]"));
-				t = t.rotateLeft ();
+				t = t.rotateLeft();
 				gateNBT.setString("trigger[" + i + "]", t.getUniqueTag());
 			}
 
 			if (gateNBT.hasKey("action[" + i + "]")) {
 				IStatement a = StatementManager.statements.get(gateNBT.getString("action[" + i + "]"));
-				a = a.rotateLeft ();
+				a = a.rotateLeft();
 				gateNBT.setString("action[" + i + "]", a.getUniqueTag());
 			}
+		}
+
+		if (gateNBT.hasKey("direction")) {
+			gateNBT.setInteger("direction",
+					ForgeDirection.values()[gateNBT.getInteger("direction")].
+							getRotation(ForgeDirection.UP).ordinal());
 		}
 	}
 
