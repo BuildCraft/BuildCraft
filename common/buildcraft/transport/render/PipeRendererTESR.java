@@ -293,7 +293,7 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 		PipeType pipeType = pipe.getPipeType();
 
 		// do not use switch. we will be transitioning away from the enum
-		if (pipeType == PipeType.ITEM) { 
+		if (pipeType == PipeType.ITEM) {
 			renderSolids(pipe.pipe, x, y, z);
 		} else if (pipeType == PipeType.FLUID) {
 			renderFluids(pipe.pipe, x, y, z);
@@ -562,33 +562,24 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 		zeroState[2][0] = min;
 		zeroState[2][1] = max;
 
-		if (shouldRenderNormalPipeSide(state, direction)) {
-			GL11.glPushMatrix();
+		GL11.glPushMatrix();
 
-			float xt = direction.offsetX * translateCenter,
-					yt = direction.offsetY * translateCenter,
-					zt = direction.offsetZ * translateCenter;
+		float xt = direction.offsetX * translateCenter, yt = direction.offsetY * translateCenter, zt = direction.offsetZ
+				* translateCenter;
 
-			GL11.glTranslatef(xt, yt, zt);
+		GL11.glTranslatef(xt, yt, zt);
 
-			float[][] rotated = MatrixTranformations.deepClone(zeroState);
-			MatrixTranformations.transform(rotated, direction);
+		float[][] rotated = MatrixTranformations.deepClone(zeroState);
+		MatrixTranformations.transform(rotated, direction);
 
-			if (layer != 0) {
-				renderBox.setRenderSingleSide(direction.ordinal());
-			}
-			renderBox.setBounds(rotated[0][0], rotated[1][0], rotated[2][0], rotated[0][1], rotated[1][1], rotated[2][1]);
-			RenderEntityBlock.INSTANCE.renderBlock(renderBox, tile.getWorldObj(), 0, 0, 0, tile.xCoord, tile.yCoord, tile.zCoord, true, true);
-			GL11.glPopMatrix();
+		if (layer != 0) {
+			renderBox.setRenderSingleSide(direction.ordinal());
 		}
-	}
 
-	private boolean shouldRenderNormalPipeSide(PipeRenderState state, ForgeDirection direction) {
-		return !state.pipeConnectionMatrix.isConnected(direction)
-				&& state.facadeMatrix.getFacadeBlock(direction) == null
-				&& !state.plugMatrix.isConnected(direction)
-				&& !state.robotStationMatrix.isConnected(direction)
-				&& !isOpenOrientation(state, direction);
+		renderBox.setBounds(rotated[0][0], rotated[1][0], rotated[2][0], rotated[0][1], rotated[1][1], rotated[2][1]);
+		RenderEntityBlock.INSTANCE.renderBlock(renderBox, tile.getWorldObj(), 0, 0, 0, tile.xCoord, tile.yCoord,
+				tile.zCoord, true, true);
+		GL11.glPopMatrix();
 	}
 
 	public boolean isOpenOrientation(PipeRenderState state, ForgeDirection direction) {

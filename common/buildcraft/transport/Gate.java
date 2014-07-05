@@ -301,6 +301,8 @@ public final class Gate implements IGate {
 		int oldRedstoneOutput = redstoneOutput;
 		redstoneOutput = 0;
 
+		boolean wasActive = activeActions.size() > 0;
+
 		BitSet temp = prevBroadcastSignal;
 		temp.clear();
 		prevBroadcastSignal = broadcastSignal;
@@ -311,7 +313,7 @@ public final class Gate implements IGate {
 
 		int [] actionGroups = new int [] {0, 1, 2, 3, 4, 5, 6, 7};
 
-		for (int i = 0; i < MAX_PARAMETERS; ++i) {
+		for (int i = 0; i < MAX_STATEMENTS; ++i) {
 			for (int j = i - 1; j >= 0; --j) {
 				if (actions[i] != null && actions[j] != null
 						&& actions[i].getUniqueTag().equals(actions[j].getUniqueTag())) {
@@ -352,8 +354,8 @@ public final class Gate implements IGate {
 		activeActions = new ArrayList<ActionSlot>();
 
 		for (int it = 0; it < MAX_STATEMENTS; ++it) {
-			boolean andActivate = true;
-			boolean orActivate = false;
+			boolean allActive = true;
+			boolean oneActive = false;
 
 			if (actions[it] == null) {
 				continue;
@@ -362,14 +364,14 @@ public final class Gate implements IGate {
 			for (int j = 0; j < MAX_STATEMENTS; ++j) {
 				if (actionGroups[j] == it) {
 					if (actionsState[j] != ActionActiveState.Partial) {
-						andActivate = false;
+						allActive = false;
 					} else {
-						orActivate = true;
+						oneActive = true;
 					}
 				}
 			}
 
-			if ((logic == GateLogic.AND && andActivate) || (logic == GateLogic.OR && orActivate)) {
+			if ((logic == GateLogic.AND && allActive && oneActive) || (logic == GateLogic.OR && oneActive)) {
 				if (logic == GateLogic.AND) {
 					for (int j = 0; j < MAX_STATEMENTS; ++j) {
 						if (actionGroups[j] == it) {
@@ -420,15 +422,17 @@ public final class Gate implements IGate {
 		pipe.actionsActivated(activeActions);
 
 		if (oldRedstoneOutput != redstoneOutput) {
-			if (redstoneOutput == 0 ^ oldRedstoneOutput == 0) {
-				pipe.container.scheduleRenderUpdate();
-			}
 			pipe.updateNeighbors(true);
 		}
 
 		if (!prevBroadcastSignal.equals(broadcastSignal)) {
-			pipe.container.scheduleRenderUpdate();
 			pipe.updateSignalState();
+		}
+
+		boolean isActive = activeActions.size() > 0;
+
+		if (wasActive != isActive) {
+			pipe.container.scheduleRenderUpdate();
 		}
 	}
 
