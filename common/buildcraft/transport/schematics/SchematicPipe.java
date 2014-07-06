@@ -68,7 +68,7 @@ public class SchematicPipe extends SchematicTile {
 		} else {
 			// Post 6.1 treatment
 
-			NBTTagCompound gatesNBT[] = new NBTTagCompound[6];
+			NBTTagCompound[] gatesNBT = new NBTTagCompound[6];
 
 			for (int i = 0; i < 6; ++i) {
 				if (tileNBT.hasKey("Gate[" + i + "]")) {
