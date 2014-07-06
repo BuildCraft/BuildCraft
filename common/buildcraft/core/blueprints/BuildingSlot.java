@@ -23,6 +23,8 @@ public abstract class BuildingSlot {
 
 	public LinkedList<ItemStack> stackConsumed;
 
+	public boolean reserved = false;
+
 	public void writeToWorld(IBuilderContext context) {
 
 	}

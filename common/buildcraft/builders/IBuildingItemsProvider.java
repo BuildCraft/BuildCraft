@@ -12,5 +12,5 @@ import java.util.ArrayList;
 
 public interface IBuildingItemsProvider {
 
-	ArrayList<BuildingItem> getBuildersInAction();
+	ArrayList<BuildingItem> getBuilders();
 }

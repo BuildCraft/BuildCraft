@@ -255,9 +255,24 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 	}
 
 	@Override
+	public BuildingSlot reserveNextBlock(World world) {
+		if (buildList.size() != 0) {
+			BuildingSlot slot = internalGetNextBlock(world, null);
+
+			if (slot != null) {
+				slot.reserved = true;
+			}
+
+			return slot;
+		}
+
+		return null;
+	}
+
+	@Override
 	public BuildingSlot getNextBlock(World world, TileAbstractBuilder inv) {
 		if (buildList.size() != 0) {
-			BuildingSlot slot = internalGetNextBlock(world, inv, buildList);
+			BuildingSlot slot = internalGetNextBlock(world, inv);
 			checkDone();
 
 			if (slot != null) {
@@ -268,7 +283,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 		}
 
 		if (entityList.size() != 0) {
-			BuildingSlot slot = internalGetNextEntity(world, inv, entityList);
+			BuildingSlot slot = internalGetNextEntity(world, inv);
 			checkDone ();
 
 			if (slot != null) {
@@ -283,8 +298,13 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 		return null;
 	}
 
-	private BuildingSlot internalGetNextBlock(World world, TileAbstractBuilder builder, LinkedList<BuildingSlotBlock> list) {
-		if (builder.energyAvailable() < SchematicRegistry.BREAK_ENERGY) {
+	/**
+	 * Gets the next available block. If builder is not null, then building will
+	 * be verified and performed. Otherwise, the next possible building slot is
+	 * returned, possibly for reservation, with no building.
+	 */
+	private BuildingSlot internalGetNextBlock(World world, TileAbstractBuilder builder) {
+		if (builder != null && builder.energyAvailable() < SchematicRegistry.BREAK_ENERGY) {
 			// If there's no more energy available, then set reset the list and
 			// quit. This will avoid situations where energy is given at a
 			// random point in time, and therefore builder doesn't start from
@@ -302,6 +322,10 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 			if (slot.buildStage > buildList.getFirst().buildStage) {
 				iterator.reset ();
 				return null;
+			}
+
+			if (slot.reserved) {
+				continue;
 			}
 
 			try {
@@ -324,15 +348,17 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 							clearedLocations.add(new BlockIndex(slot.x,
 									slot.y, slot.z));
 						} else {
-							if (setupForDestroy(builder, context, slot)) {
+							if (builder != null && setupForDestroy(builder, context, slot)) {
 								iterator.remove();
 								clearedLocations.add(new BlockIndex(slot.x,
 										slot.y, slot.z));
 								return slot;
+							} else {
+								return slot;
 							}
 						}
 					} else if (!slot.schematic.doNotBuild()) {
-						if (checkRequirements(builder, slot.schematic)) {
+						if (builder != null && checkRequirements(builder, slot.schematic)) {
 							// At this stage, regardless of the fact that the
 							// block can actually be built or not, we'll try.
 							// When the item reaches the actual block, we'll
@@ -344,6 +370,8 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 							postProcessing.add(slot);
 							builtLocations.add(new BlockIndex(slot.x,
 									slot.y, slot.z));
+							return slot;
+						} else {
 							return slot;
 						}
 					} else {
@@ -375,9 +403,8 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 		return null;
 	}
 
-	private BuildingSlot internalGetNextEntity(World world,
-			TileAbstractBuilder builder, LinkedList<BuildingSlotEntity> list) {
-		Iterator<BuildingSlotEntity> it = list.iterator();
+	private BuildingSlot internalGetNextEntity(World world, TileAbstractBuilder builder) {
+		Iterator<BuildingSlotEntity> it = entityList.iterator();
 
 		while (it.hasNext()) {
 			BuildingSlotEntity slot = it.next();

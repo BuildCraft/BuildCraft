@@ -59,7 +59,9 @@ public abstract class BptBuilderBase implements IAreaProvider {
 
 	protected abstract void initialize ();
 
-	public abstract BuildingSlot getNextBlock(World world, TileAbstractBuilder inv);
+	protected abstract BuildingSlot reserveNextBlock(World world);
+
+	protected abstract BuildingSlot getNextBlock(World world, TileAbstractBuilder inv);
 
 	public boolean buildNextSlot (World world, TileAbstractBuilder builder, int x, int y, int z) {
 		if (!initialized) {
@@ -82,6 +84,15 @@ public abstract class BptBuilderBase implements IAreaProvider {
 		}
 
 		return false;
+	}
+
+	public BuildingSlot reserveNextSlot(World world) {
+		if (!initialized) {
+			initialize();
+			initialized = true;
+		}
+
+		return reserveNextBlock(world);
 	}
 
 	@Override
@@ -141,7 +152,7 @@ public abstract class BptBuilderBase implements IAreaProvider {
 		}
 	}
 
-	public boolean isDone (TileAbstractBuilder builder) {
+	public boolean isDone(IBuildingItemsProvider builder) {
 		return done && builder.getBuilders().size() == 0;
 	}
 
@@ -192,7 +203,7 @@ public abstract class BptBuilderBase implements IAreaProvider {
 
 		NBTTagList buildingList = new NBTTagList();
 
-		for (BuildingItem item : builder.getBuildersInAction()) {
+		for (BuildingItem item : builder.getBuilders()) {
 			NBTTagCompound sub = new NBTTagCompound();
 			item.writeToNBT(sub);
 			buildingList.appendTag(sub);
@@ -228,7 +239,7 @@ public abstract class BptBuilderBase implements IAreaProvider {
 			try {
 				item.readFromNBT(buildingList.getCompoundTagAt(i));
 				item.context = getContext();
-				builder.getBuildersInAction().add(item);
+				builder.getBuilders().add(item);
 			} catch (MappingNotFoundException e) {
 				BCLog.logger.log(Level.WARNING, "can't load building item", e);
 			}

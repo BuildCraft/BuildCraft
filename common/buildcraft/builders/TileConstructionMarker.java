@@ -9,6 +9,7 @@
 package buildcraft.builders;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -25,6 +26,8 @@ import buildcraft.core.blueprints.BptBuilderBlueprint;
 
 public class TileConstructionMarker extends TileBuildCraft implements IBuildingItemsProvider {
 
+	public static HashSet<TileConstructionMarker> currentMarkers = new HashSet<TileConstructionMarker>();
+
 	public ForgeDirection direction = ForgeDirection.UNKNOWN;
 
 	@NetworkData
@@ -33,7 +36,8 @@ public class TileConstructionMarker extends TileBuildCraft implements IBuildingI
 	@NetworkData
 	public ItemStack itemBlueprint;
 
-	private BptBuilderBase bluePrintBuilder;
+	public BptBuilderBase bluePrintBuilder;
+
 	private ArrayList<BuildingItem> buildersInAction = new ArrayList<BuildingItem>();
 	private NBTTagCompound initNBT;
 
@@ -47,8 +51,7 @@ public class TileConstructionMarker extends TileBuildCraft implements IBuildingI
 
 		if (itemBlueprint != null && bluePrintBuilder == null) {
 			bluePrintBuilder = new BptBuilderBlueprint((Blueprint) ItemBlueprint.loadBlueprint(itemBlueprint),
-					worldObj, xCoord,
-					yCoord, zCoord);
+					worldObj, xCoord, yCoord, zCoord);
 		}
 
 		if (laser == null && direction != ForgeDirection.UNKNOWN) {
@@ -113,7 +116,25 @@ public class TileConstructionMarker extends TileBuildCraft implements IBuildingI
 	}
 
 	@Override
-	public ArrayList<BuildingItem> getBuildersInAction() {
+	public ArrayList<BuildingItem> getBuilders() {
 		return buildersInAction;
+	}
+
+	@Override
+	public void validate() {
+		if (!worldObj.isRemote) {
+			currentMarkers.add(this);
+		}
+	}
+
+	@Override
+	public void invalidate() {
+		if (!worldObj.isRemote) {
+			currentMarkers.remove(this);
+		}
+	}
+
+	public boolean needsToBuild() {
+		return bluePrintBuilder != null && !bluePrintBuilder.isDone(this);
 	}
 }

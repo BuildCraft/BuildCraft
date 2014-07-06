@@ -12,6 +12,7 @@ buildcraft.boardRobotFarmer=Farmer
 buildcraft.boardRobotHarvester=Harvester
 buildcraft.boardRobotShovelman=Shovelman
 buildcraft.boardRobotButcher=Butcher
+buildcraft.boardRobotBuilder=Builder
 buildcraft.boardDetail.parameters=Parameters
 buildcraft.boardDetail.range=Range
 

@@ -110,6 +110,7 @@ public abstract class TileAbstractBuilder extends TileBuildCraft implements ITil
 		}
 	}
 
+	@Override
 	public ArrayList<BuildingItem> getBuilders() {
 		return buildersInAction;
 	}
@@ -151,10 +152,5 @@ public abstract class TileAbstractBuilder extends TileBuildCraft implements ITil
 
 		mjPrev = mjStored;
 		mjUnchangedCycles = 0;
-	}
-
-	@Override
-	public ArrayList<BuildingItem> getBuildersInAction() {
-		return buildersInAction;
 	}
 }

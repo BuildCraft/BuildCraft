@@ -111,9 +111,14 @@ public class BptBuilderTemplate extends BptBuilderBase {
 	}
 
 	@Override
+	public BuildingSlot reserveNextBlock(World world) {
+		return null;
+	}
+
+	@Override
 	public BuildingSlot getNextBlock(World world, TileAbstractBuilder inv) {
 		if (buildList.size() != 0) {
-			BuildingSlotBlock slot = internalGetNextBlock(world, inv, buildList);
+			BuildingSlotBlock slot = internalGetNextBlock(world, inv);
 			checkDone();
 
 			if (slot != null) {
@@ -126,7 +131,7 @@ public class BptBuilderTemplate extends BptBuilderBase {
 		return null;
 	}
 
-	public BuildingSlotBlock internalGetNextBlock(World world, TileAbstractBuilder builder, LinkedList<BuildingSlotBlock> list) {
+	public BuildingSlotBlock internalGetNextBlock(World world, TileAbstractBuilder builder) {
 		BuildingSlotBlock result = null;
 
 		IInvSlot firstSlotToConsume = null;
