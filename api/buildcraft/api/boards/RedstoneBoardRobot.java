@@ -30,6 +30,9 @@ public abstract class RedstoneBoardRobot extends AIRobot implements IRedstoneBoa
 
 	}
 
+	// TODO: we should put the three calls below into one object making sure
+	// that blocks are released before being assigned again, and which has a
+	// finalize () method to free potential block upon garbage collection.
 	public static boolean isFreeBlock(BlockIndex index) {
 		synchronized (reservedBlocks) {
 			return !reservedBlocks.contains(index);

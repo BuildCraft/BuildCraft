@@ -19,6 +19,7 @@ import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
+import buildcraft.core.TickHandlerCoreClient;
 import buildcraft.core.inventory.filters.IStackFilter;
 import buildcraft.core.robots.AIRobotFetchAndEquipItemStack;
 import buildcraft.core.robots.AIRobotGotoBlock;
@@ -53,7 +54,9 @@ public class BoardRobotFarmer extends RedstoneBoardRobot {
 			startDelegateAI(new AIRobotSearchBlock(robot, new IBlockFilter() {
 				@Override
 				public boolean matches(World world, int x, int y, int z) {
-					return BuildCraftAPI.isDirtProperty.get(world, x, y, z);
+					return BuildCraftAPI.isDirtProperty.get(world, x, y, z)
+							&& RedstoneBoardRobot.isFreeBlock(new BlockIndex(x, y, z))
+							&& isAirAbove(world, x, y, z);
 				}
 			}));
 		}
@@ -64,11 +67,15 @@ public class BoardRobotFarmer extends RedstoneBoardRobot {
 		if (ai instanceof AIRobotSearchBlock) {
 			AIRobotSearchBlock searchAI = (AIRobotSearchBlock) ai;
 
-			if (searchAI.blockFound == null) {
-				startDelegateAI(new AIRobotGotoSleep(robot));
-			} else {
+			if (searchAI.blockFound != null && RedstoneBoardRobot.reserveBlock(searchAI.blockFound)) {
+				if (blockFound != null) {
+					RedstoneBoardRobot.releaseBlock(blockFound);
+				}
+
 				blockFound = searchAI.blockFound;
 				startDelegateAI(new AIRobotGotoBlock(robot, searchAI.path));
+			} else {
+				startDelegateAI(new AIRobotGotoSleep(robot));
 			}
 		} else if (ai instanceof AIRobotGotoBlock) {
 			AIRobotGotoBlock gotoBlock = (AIRobotGotoBlock) ai;
@@ -78,6 +85,16 @@ public class BoardRobotFarmer extends RedstoneBoardRobot {
 			if (robot.getHeldItem() == null) {
 				startDelegateAI(new AIRobotGotoSleep(robot));
 			}
+		} else if (ai instanceof AIRobotUseToolOnBlock) {
+			RedstoneBoardRobot.releaseBlock(blockFound);
+			blockFound = null;
+		}
+	}
+
+	@Override
+	public void end() {
+		if (blockFound != null) {
+			RedstoneBoardRobot.releaseBlock(blockFound);
 		}
 	}
 
@@ -98,6 +115,23 @@ public class BoardRobotFarmer extends RedstoneBoardRobot {
 
 		if (nbt.hasKey("blockFound")) {
 			blockFound = new BlockIndex(nbt.getCompoundTag("blockFound"));
+
+			if (!RedstoneBoardRobot.reserveBlock(blockFound)) {
+				blockFound = null;
+			}
+		}
+	}
+
+	private boolean isAirAbove(World world, int x, int y, int z) {
+		synchronized (TickHandlerCoreClient.startSynchronousComputation) {
+			try {
+				TickHandlerCoreClient.startSynchronousComputation.wait();
+
+				return world.isAirBlock(x, y + 1, z);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+				return false;
+			}
 		}
 	}
 }

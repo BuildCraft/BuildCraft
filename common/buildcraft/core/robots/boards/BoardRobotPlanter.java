@@ -84,7 +84,9 @@ public class BoardRobotPlanter extends RedstoneBoardRobot {
 				startDelegateAI(new AIRobotSearchBlock(robot, new IBlockFilter() {
 					@Override
 					public boolean matches(World world, int x, int y, int z) {
-						return BuildCraftAPI.isFarmlandProperty.get(world, x, y, z) && isAirAbove(world, x, y, z);
+						return BuildCraftAPI.isFarmlandProperty.get(world, x, y, z)
+								&& RedstoneBoardRobot.isFreeBlock(new BlockIndex(x, y, z))
+								&& isAirAbove(world, x, y, z);
 					}
 				}));
 			} else {
@@ -113,11 +115,15 @@ public class BoardRobotPlanter extends RedstoneBoardRobot {
 		} else if (ai instanceof AIRobotSearchBlock) {
 			AIRobotSearchBlock gotoBlock = (AIRobotSearchBlock) ai;
 
-			if (gotoBlock.blockFound == null) {
-				startDelegateAI(new AIRobotGotoSleep(robot));
-			} else {
+			if (gotoBlock.blockFound != null && RedstoneBoardRobot.reserveBlock(gotoBlock.blockFound)) {
+				if (blockFound != null) {
+					RedstoneBoardRobot.releaseBlock(blockFound);
+				}
+
 				blockFound = gotoBlock.blockFound;
 				startDelegateAI(new AIRobotGotoBlock(robot, gotoBlock.path));
+			} else {
+				startDelegateAI(new AIRobotGotoSleep(robot));
 			}
 		} else if (ai instanceof AIRobotGotoBlock) {
 			startDelegateAI(new AIRobotUseToolOnBlock(robot, blockFound));
@@ -165,6 +171,10 @@ public class BoardRobotPlanter extends RedstoneBoardRobot {
 
 		if (nbt.hasKey("blockFound")) {
 			blockFound = new BlockIndex(nbt.getCompoundTag("blockFound"));
+
+			if (!RedstoneBoardRobot.reserveBlock(blockFound)) {
+				blockFound = null;
+			}
 		}
 	}
 }

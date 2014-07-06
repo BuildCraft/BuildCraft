@@ -111,6 +111,10 @@ public abstract class BoardRobotGenericBreakBlock extends RedstoneBoardRobot {
 	@Override
 	public void delegateAIEnded(AIRobot ai) {
 		if (ai instanceof AIRobotSearchBlock) {
+			if (indexStored != null) {
+				RedstoneBoardRobot.releaseBlock(indexStored);
+			}
+
 			indexStored = ((AIRobotSearchBlock) ai).blockFound;
 
 			if (indexStored == null) {
