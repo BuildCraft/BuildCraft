@@ -27,7 +27,8 @@ import buildcraft.core.network.RPCHandler;
 import buildcraft.core.network.RPCMessageInfo;
 import buildcraft.core.network.RPCSide;
 
-public abstract class TileAbstractBuilder extends TileBuildCraft implements ITileBuilder, IInventory, IBoxProvider {
+public abstract class TileAbstractBuilder extends TileBuildCraft implements ITileBuilder, IInventory, IBoxProvider,
+		IBuildingItemsProvider {
 
 	/**
 	 * Computes the maximum amount of energy required to build a full chest,
@@ -150,5 +151,10 @@ public abstract class TileAbstractBuilder extends TileBuildCraft implements ITil
 
 		mjPrev = mjStored;
 		mjUnchangedCycles = 0;
+	}
+
+	@Override
+	public ArrayList<BuildingItem> getBuildersInAction() {
+		return buildersInAction;
 	}
 }

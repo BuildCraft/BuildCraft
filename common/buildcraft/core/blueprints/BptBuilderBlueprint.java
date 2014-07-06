@@ -40,6 +40,7 @@ import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.core.IInvSlot;
 import buildcraft.api.core.StackKey;
+import buildcraft.builders.IBuildingItemsProvider;
 import buildcraft.builders.TileAbstractBuilder;
 import buildcraft.builders.TileBuilder;
 import buildcraft.core.blueprints.BuildingSlotBlock.Mode;
@@ -663,7 +664,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 	}
 
 	@Override
-	public void saveBuildStateToNBT (NBTTagCompound nbt, TileAbstractBuilder builder) {
+	public void saveBuildStateToNBT(NBTTagCompound nbt, IBuildingItemsProvider builder) {
 		super.saveBuildStateToNBT(nbt, builder);
 
 		int [] entitiesBuiltArr = new int [builtEntities.size()];
@@ -679,7 +680,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 	}
 
 	@Override
-	public void loadBuildStateToNBT (NBTTagCompound nbt, TileAbstractBuilder builder) {
+	public void loadBuildStateToNBT(NBTTagCompound nbt, IBuildingItemsProvider builder) {
 		super.loadBuildStateToNBT(nbt, builder);
 
 		int [] entitiesBuiltArr = nbt.getIntArray("builtEntities");

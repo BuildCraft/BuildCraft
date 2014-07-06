@@ -38,7 +38,6 @@ public class BlockPathMarker extends BlockMarker {
 		super.breakBlock(world, x, y, z, block, par6);
 	}
 
-	@Override
 	@SuppressWarnings({ "all" })
 	// @Override (client only)
 	public IIcon getIcon(IBlockAccess iblockaccess, int i, int j, int k, int l) {
@@ -55,6 +54,5 @@ public class BlockPathMarker extends BlockMarker {
 	@SideOnly(Side.CLIENT)
 	public void registerBlockIcons(IIconRegister par1IconRegister) {
 	    blockIcon = par1IconRegister.registerIcon("buildcraft:blockPathMarker");
-	    activeMarker = par1IconRegister.registerIcon("buildcraft:blockPathMarkerActive");
 	}
 }

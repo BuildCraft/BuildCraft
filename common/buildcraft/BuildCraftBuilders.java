@@ -54,6 +54,7 @@ import buildcraft.builders.BlockArchitect;
 import buildcraft.builders.BlockBlueprintLibrary;
 import buildcraft.builders.BlockBuildTool;
 import buildcraft.builders.BlockBuilder;
+import buildcraft.builders.BlockConstructionMarker;
 import buildcraft.builders.BlockFiller;
 import buildcraft.builders.BlockMarker;
 import buildcraft.builders.BlockPathMarker;
@@ -65,6 +66,7 @@ import buildcraft.builders.ItemBlueprintTemplate;
 import buildcraft.builders.TileArchitect;
 import buildcraft.builders.TileBlueprintLibrary;
 import buildcraft.builders.TileBuilder;
+import buildcraft.builders.TileConstructionMarker;
 import buildcraft.builders.TileFiller;
 import buildcraft.builders.TileMarker;
 import buildcraft.builders.TilePathMarker;
@@ -135,6 +137,7 @@ public class BuildCraftBuilders extends BuildCraftMod {
 	public static BlockBuildTool buildToolBlock;
 	public static BlockMarker markerBlock;
 	public static BlockPathMarker pathMarkerBlock;
+	public static BlockConstructionMarker constructionMarkerBlock;
 	public static BlockFiller fillerBlock;
 	public static BlockBuilder builderBlock;
 	public static BlockArchitect architectBlock;
@@ -385,6 +388,7 @@ public class BuildCraftBuilders extends BuildCraftMod {
 
 		SchematicRegistry.registerSchematicBlock(markerBlock, SchematicWallSide.class);
 		SchematicRegistry.registerSchematicBlock(pathMarkerBlock, SchematicWallSide.class);
+		SchematicRegistry.registerSchematicBlock(constructionMarkerBlock, SchematicWallSide.class);
 
 		// Factories required to save entities in world
 
@@ -420,6 +424,9 @@ public class BuildCraftBuilders extends BuildCraftMod {
 		pathMarkerBlock = new BlockPathMarker();
 		CoreProxy.proxy.registerBlock(pathMarkerBlock.setBlockName("pathMarkerBlock"));
 
+		constructionMarkerBlock = new BlockConstructionMarker();
+		CoreProxy.proxy.registerBlock(constructionMarkerBlock.setBlockName("constructionMarkerBlock"));
+
 		fillerBlock = new BlockFiller();
 		CoreProxy.proxy.registerBlock(fillerBlock.setBlockName("fillerBlock"));
 
@@ -443,6 +450,7 @@ public class BuildCraftBuilders extends BuildCraftMod {
 		GameRegistry.registerTileEntity(TileBuilder.class, "net.minecraft.src.builders.TileBuilder");
 		GameRegistry.registerTileEntity(TileArchitect.class, "net.minecraft.src.builders.TileTemplate");
 		GameRegistry.registerTileEntity(TilePathMarker.class, "net.minecraft.src.builders.TilePathMarker");
+		GameRegistry.registerTileEntity(TileConstructionMarker.class, "net.minecraft.src.builders.TileConstructionMarker");
 		GameRegistry.registerTileEntity(TileBlueprintLibrary.class, "net.minecraft.src.builders.TileBlueprintLibrary");
 
 		SchematicRegistry.readConfiguration(BuildCraftCore.mainConfiguration);

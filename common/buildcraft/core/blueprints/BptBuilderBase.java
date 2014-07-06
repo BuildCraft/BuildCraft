@@ -30,6 +30,7 @@ import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.core.Position;
 import buildcraft.builders.BuildingItem;
+import buildcraft.builders.IBuildingItemsProvider;
 import buildcraft.builders.TileAbstractBuilder;
 import buildcraft.core.Box;
 
@@ -168,7 +169,7 @@ public abstract class BptBuilderBase implements IAreaProvider {
 		}
 	}
 
-	public void saveBuildStateToNBT (NBTTagCompound nbt, TileAbstractBuilder builder) {
+	public void saveBuildStateToNBT(NBTTagCompound nbt, IBuildingItemsProvider builder) {
 		NBTTagList clearList = new NBTTagList();
 
 		for (BlockIndex loc : clearedLocations) {
@@ -191,7 +192,7 @@ public abstract class BptBuilderBase implements IAreaProvider {
 
 		NBTTagList buildingList = new NBTTagList();
 
-		for (BuildingItem item : builder.buildersInAction) {
+		for (BuildingItem item : builder.getBuildersInAction()) {
 			NBTTagCompound sub = new NBTTagCompound();
 			item.writeToNBT(sub);
 			buildingList.appendTag(sub);
@@ -200,7 +201,7 @@ public abstract class BptBuilderBase implements IAreaProvider {
 		nbt.setTag("buildersInAction", buildingList);
 	}
 
-	public void loadBuildStateToNBT (NBTTagCompound nbt, TileAbstractBuilder builder) {
+	public void loadBuildStateToNBT(NBTTagCompound nbt, IBuildingItemsProvider builder) {
 		NBTTagList clearList = nbt.getTagList("clearList", Constants.NBT.TAG_COMPOUND);
 
 		for (int i = 0; i < clearList.tagCount(); ++i) {
@@ -227,7 +228,7 @@ public abstract class BptBuilderBase implements IAreaProvider {
 			try {
 				item.readFromNBT(buildingList.getCompoundTagAt(i));
 				item.context = getContext();
-				builder.buildersInAction.add(item);
+				builder.getBuildersInAction().add(item);
 			} catch (MappingNotFoundException e) {
 				BCLog.logger.log(Level.WARNING, "can't load building item", e);
 			}

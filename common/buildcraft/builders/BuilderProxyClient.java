@@ -31,5 +31,6 @@ public class BuilderProxyClient extends BuilderProxy {
 		ClientRegistry.bindTileEntitySpecialRenderer(TileFiller.class, new RenderBuilder());
 		ClientRegistry.bindTileEntitySpecialRenderer(TileBuilder.class, new RenderBuilder());
 		ClientRegistry.bindTileEntitySpecialRenderer(TilePathMarker.class, new RenderPathMarker());
+		ClientRegistry.bindTileEntitySpecialRenderer(TileConstructionMarker.class, new RenderConstructionMarker());
 	}
 }
