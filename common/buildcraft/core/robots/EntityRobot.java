@@ -35,6 +35,7 @@ import buildcraft.api.boards.RedstoneBoardRobot;
 import buildcraft.api.boards.RedstoneBoardRobotNBT;
 import buildcraft.api.core.IBox;
 import buildcraft.api.core.SafeTimeTracker;
+import buildcraft.api.mj.MjBattery;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.api.robots.IDockingStation;
@@ -88,6 +89,7 @@ public class EntityRobot extends EntityRobotBase implements
 	private IDockingStation currentDockingStation;
 	private WeakHashMap<Entity, Boolean> unreachableEntities = new WeakHashMap<Entity, Boolean>();
 
+	@MjBattery
 	private double mjStored;
 
 	public EntityRobot(World world, NBTTagCompound boardNBT) {

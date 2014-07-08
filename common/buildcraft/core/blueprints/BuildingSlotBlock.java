@@ -173,4 +173,5 @@ public class BuildingSlotBlock extends BuildingSlot {
 	public double getEnergyRequirement() {
 		return schematic.getEnergyRequirement(stackConsumed);
 	}
+
 }

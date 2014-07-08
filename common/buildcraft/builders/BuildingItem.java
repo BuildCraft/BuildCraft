@@ -27,9 +27,9 @@ import buildcraft.api.core.Position;
 import buildcraft.core.blueprints.BuildingSlot;
 import buildcraft.core.blueprints.BuildingSlotBlock;
 import buildcraft.core.blueprints.BuildingSlotEntity;
-import buildcraft.core.blueprints.IBuilder;
+import buildcraft.core.blueprints.IBuilingItem;
 
-public class BuildingItem implements IBuilder {
+public class BuildingItem implements IBuilingItem {
 
 	private static int ITEMS_SPACE = 2;
 

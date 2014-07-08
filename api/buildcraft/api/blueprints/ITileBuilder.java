@@ -11,5 +11,7 @@ package buildcraft.api.blueprints;
 import net.minecraft.inventory.IInventory;
 
 public interface ITileBuilder extends IInventory {
+
 	boolean isBuildingMaterialSlot(int i);
+
 }

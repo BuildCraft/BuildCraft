@@ -23,6 +23,7 @@ import buildcraft.core.TileBuildCraft;
 import buildcraft.core.blueprints.Blueprint;
 import buildcraft.core.blueprints.BptBuilderBase;
 import buildcraft.core.blueprints.BptBuilderBlueprint;
+import buildcraft.core.blueprints.BptContext;
 
 public class TileConstructionMarker extends TileBuildCraft implements IBuildingItemsProvider {
 
@@ -37,6 +38,7 @@ public class TileConstructionMarker extends TileBuildCraft implements IBuildingI
 	public ItemStack itemBlueprint;
 
 	public BptBuilderBase bluePrintBuilder;
+	public BptContext bptContext;
 
 	private ArrayList<BuildingItem> buildersInAction = new ArrayList<BuildingItem>();
 	private NBTTagCompound initNBT;
@@ -52,6 +54,7 @@ public class TileConstructionMarker extends TileBuildCraft implements IBuildingI
 		if (itemBlueprint != null && bluePrintBuilder == null) {
 			bluePrintBuilder = new BptBuilderBlueprint((Blueprint) ItemBlueprint.loadBlueprint(itemBlueprint),
 					worldObj, xCoord, yCoord, zCoord);
+			bptContext = bluePrintBuilder.getContext();
 		}
 
 		if (laser == null && direction != ForgeDirection.UNKNOWN) {
@@ -136,5 +139,9 @@ public class TileConstructionMarker extends TileBuildCraft implements IBuildingI
 
 	public boolean needsToBuild() {
 		return bluePrintBuilder != null && !bluePrintBuilder.isDone(this);
+	}
+
+	public BptContext getContext () {
+		return bptContext;
 	}
 }

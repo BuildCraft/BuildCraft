@@ -8,6 +8,6 @@
  */
 package buildcraft.core.blueprints;
 
-public interface IBuilder {
+public interface IBuilingItem {
 	boolean isDone();
 }
