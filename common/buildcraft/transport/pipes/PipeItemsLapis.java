@@ -21,10 +21,10 @@ import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.BuildCraftTransport;
+import buildcraft.api.core.EnumColor;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.gates.IAction;
 import buildcraft.api.tools.IToolWrench;
-import buildcraft.core.utils.EnumColor;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportItems;

@@ -11,9 +11,8 @@ package buildcraft.transport.triggers;
 import java.util.Locale;
 
 import net.minecraft.client.renderer.texture.IIconRegister;
-
+import buildcraft.api.core.EnumColor;
 import buildcraft.core.triggers.BCActionPassive;
-import buildcraft.core.utils.EnumColor;
 import buildcraft.core.utils.StringUtils;
 
 public class ActionPipeColor extends BCActionPassive {
