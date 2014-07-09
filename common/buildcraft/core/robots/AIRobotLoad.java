@@ -29,6 +29,7 @@ import buildcraft.transport.gates.ActionSlot;
 public class AIRobotLoad extends AIRobot {
 
 	private IStackFilter filter;
+	private int quantity = -1;
 	private int waitedCycles = 0;
 
 	public AIRobotLoad(EntityRobotBase iRobot) {
@@ -39,6 +40,13 @@ public class AIRobotLoad extends AIRobot {
 		super(iRobot);
 
 		filter = iFilter;
+	}
+
+	public AIRobotLoad(EntityRobotBase iRobot, IStackFilter iFilter, int iQuantity) {
+		super(iRobot);
+
+		filter = iFilter;
+		quantity = iQuantity;
 	}
 
 	@Override
@@ -55,8 +63,6 @@ public class AIRobotLoad extends AIRobot {
 		if (robot.getDockingStation() != null) {
 			DockingStation station = (DockingStation) robot.getDockingStation();
 
-			ItemStack itemFound = null;
-
 			for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
 				TileEntity nearbyTile = robot.worldObj.getTileEntity(station.pipe.xCoord + dir.offsetX,
 						station.pipe.yCoord
@@ -67,6 +73,9 @@ public class AIRobotLoad extends AIRobot {
 					ITransactor robotTransactor = Transactor.getTransactorFor(robot);
 
 					for (int i = 0; i < robot.getSizeInventory(); ++i) {
+						// TODO: This is suboptimal. We should try to put items
+						// on existing stacks. Look fo AIRobotGotoStationToLoad
+						// as well to fix this problem
 						if (robot.getStackInSlot(i) == null) {
 							for (IInvSlot slot : InventoryIterator.getIterable(tileInventory, dir.getOpposite())) {
 								ItemStack stack = slot.getStackInSlot();
@@ -87,9 +96,15 @@ public class AIRobotLoad extends AIRobot {
 									}
 
 									if (allowed && filter.matches(stack)) {
-										slot.setStackInSlot(null);
-										robot.setInventorySlotContents(i, stack);
-										break;
+										if (quantity == -1) {
+											slot.setStackInSlot(null);
+											robot.setInventorySlotContents(i, stack);
+											return;
+										} else {
+											robot.setInventorySlotContents
+													(i, slot.decreaseStackInSlot(quantity));
+											return;
+										}
 									}
 								}
 							}

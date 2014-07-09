@@ -63,7 +63,7 @@ public abstract class BptBuilderBase implements IAreaProvider {
 
 	protected abstract BuildingSlot getNextBlock(World world, TileAbstractBuilder inv);
 
-	public boolean buildNextSlot (World world, TileAbstractBuilder builder, int x, int y, int z) {
+	public boolean buildNextSlot(World world, TileAbstractBuilder builder, double x, double y, double z) {
 		if (!initialized) {
 			initialize();
 			initialized = true;
@@ -71,14 +71,24 @@ public abstract class BptBuilderBase implements IAreaProvider {
 
 		BuildingSlot slot = getNextBlock(world, builder);
 
+		return buildSlot(world, builder, slot, x, y, z);
+	}
+
+	public boolean buildSlot(World world, IBuildingItemsProvider builder, BuildingSlot slot, double x, double y,
+			double z) {
+		if (!initialized) {
+			initialize();
+			initialized = true;
+		}
+
 		if (slot != null) {
 			BuildingItem i = new BuildingItem();
-			i.origin = new Position (x + 0.5, y + 0.5, z + 0.5);
+			i.origin = new Position(x + 0.5, y + 0.5, z + 0.5);
 			i.destination = slot.getDestination();
 			i.slotToBuild = slot;
 			i.context = getContext();
-			i.setStacksToDisplay (slot.getStacksToDisplay ());
-			builder.addBuildingItem(i);
+			i.setStacksToDisplay(slot.getStacksToDisplay());
+			builder.addAndLaunchBuildingItem(i);
 
 			return true;
 		}

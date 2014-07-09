@@ -74,14 +74,14 @@ public class BoardRobotBuilder extends RedstoneBoardRobot {
 			currentBuildingSlot = markerToBuild.bluePrintBuilder.reserveNextSlot(robot.worldObj);
 
 			if (currentBuildingSlot != null) {
+				// The above may return null even if not done, if it's scanning
+				// for available blocks.
 				requirementsToLookFor = currentBuildingSlot.getRequirements(markerToBuild.getContext());
-			} else {
-				startDelegateAI(new AIRobotGotoSleep(robot));
-				return;
 			}
 
 			// TODO: what if there's more requirements that this robot can
-			// handle e.g. not enough free spots?
+			// handle e.g. not enough free spots? If there's more than X slots
+			// found that can't be built, go to sleep.
 		}
 
 		if (requirementsToLookFor != null && requirementsToLookFor.size() > 0) {
@@ -106,7 +106,8 @@ public class BoardRobotBuilder extends RedstoneBoardRobot {
 		if (ai instanceof AIRobotGotoStationToLoad) {
 			if (((AIRobotGotoStationToLoad) ai).found) {
 				// TODO: How to load only the required amount of items there?
-				startDelegateAI(new AIRobotLoad(robot, new ArrayStackFilter(requirementsToLookFor.getFirst())));
+				startDelegateAI(new AIRobotLoad(robot, new ArrayStackFilter(requirementsToLookFor.getFirst()),
+						requirementsToLookFor.getFirst().stackSize));
 			} else {
 				startDelegateAI(new AIRobotGotoSleep(robot));
 			}
@@ -114,10 +115,13 @@ public class BoardRobotBuilder extends RedstoneBoardRobot {
 			// TODO: check that we get the proper items in
 			requirementsToLookFor.removeFirst();
 		} else if (ai instanceof AIRobotGotoBlock) {
-			// TODO: here we want to start the animation, and to update the
+			// TODO: we want to update the
 			// builder state (remove slot from list, add to post processing,
 			// etc);
-			currentBuildingSlot.writeToWorld(markerToBuild.getContext());
+			// TODO: We need to add destroy animation in the renderer.
+			markerToBuild.bluePrintBuilder.buildSlot
+					(robot.worldObj, markerToBuild, currentBuildingSlot,
+							robot.posX, robot.posY, robot.posZ);
 			currentBuildingSlot = null;
 			requirementsToLookFor = null;
 		}

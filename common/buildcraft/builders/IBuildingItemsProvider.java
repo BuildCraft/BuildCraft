@@ -13,4 +13,6 @@ import java.util.ArrayList;
 public interface IBuildingItemsProvider {
 
 	ArrayList<BuildingItem> getBuilders();
+
+	void addAndLaunchBuildingItem(BuildingItem item);
 }

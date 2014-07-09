@@ -24,6 +24,9 @@ import buildcraft.core.blueprints.Blueprint;
 import buildcraft.core.blueprints.BptBuilderBase;
 import buildcraft.core.blueprints.BptBuilderBlueprint;
 import buildcraft.core.blueprints.BptContext;
+import buildcraft.core.network.RPC;
+import buildcraft.core.network.RPCHandler;
+import buildcraft.core.network.RPCSide;
 
 public class TileConstructionMarker extends TileBuildCraft implements IBuildingItemsProvider {
 
@@ -143,5 +146,16 @@ public class TileConstructionMarker extends TileBuildCraft implements IBuildingI
 
 	public BptContext getContext () {
 		return bptContext;
+	}
+
+	@Override
+	public void addAndLaunchBuildingItem(BuildingItem item) {
+		buildersInAction.add(item);
+		RPCHandler.rpcBroadcastWorldPlayers(worldObj, this, "launchItem", item);
+	}
+
+	@RPC(RPCSide.CLIENT)
+	public void launchItem(BuildingItem item) {
+		buildersInAction.add(item);
 	}
 }
