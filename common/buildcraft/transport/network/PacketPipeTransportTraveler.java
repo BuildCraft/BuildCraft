@@ -13,10 +13,9 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.util.MathHelper;
 
 import net.minecraftforge.common.util.ForgeDirection;
-
+import buildcraft.api.core.EnumColor;
 import buildcraft.core.network.BuildCraftPacket;
 import buildcraft.core.network.PacketIds;
-import buildcraft.core.utils.EnumColor;
 import buildcraft.transport.TravelingItem;
 
 public class PacketPipeTransportTraveler extends BuildCraftPacket {

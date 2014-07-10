@@ -6,9 +6,12 @@
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-package buildcraft.core.utils;
+package buildcraft.api.core;
 
 import java.util.Locale;
+import java.util.Random;
+
+import net.minecraft.util.StatCollector;
 
 public enum EnumColor {
 
@@ -132,7 +135,7 @@ public enum EnumColor {
 	}
 
 	public static EnumColor getRand() {
-		return VALUES[Utils.RANDOM.nextInt(VALUES.length)];
+		return VALUES[new Random().nextInt(VALUES.length)];
 	}
 
 	public EnumColor getNext() {
@@ -162,7 +165,7 @@ public enum EnumColor {
 	}
 
 	public String getLocalizedName() {
-		return StringUtils.localize(getTag());
+		return StatCollector.translateToLocal(getTag());
 	}
 
 	public String getDye() {

@@ -37,6 +37,7 @@ import net.minecraftforge.fluids.IFluidHandler;
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.BCLog;
+import buildcraft.api.core.EnumColor;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.core.Position;
 import buildcraft.api.gates.IGateExpansion;
@@ -579,7 +580,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 
 	/* IPIPEENTRY */
 	@Override
-	public int injectItem(ItemStack payload, boolean doAdd, ForgeDirection from) {
+	public int injectItem(ItemStack payload, boolean doAdd, ForgeDirection from, EnumColor color) {
 		if (pipe.isClosed()) {
 			return 0;
 		}
@@ -590,12 +591,18 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 				itemPos.moveBackwards(0.4);
 
 				TravelingItem pipedItem = TravelingItem.make(itemPos.x, itemPos.y, itemPos.z, payload);
+				pipedItem.color = color;
 				((PipeTransportItems) pipe.transport).injectItem(pipedItem, itemPos.orientation);
 			}
 			return payload.stackSize;
 		}
 
 		return 0;
+	}
+
+	@Override
+	public int injectItem(ItemStack payload, boolean doAdd, ForgeDirection from) {
+		return injectItem(payload, doAdd, from, null);
 	}
 
 	@Override
