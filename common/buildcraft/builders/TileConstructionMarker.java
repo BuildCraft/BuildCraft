@@ -13,11 +13,15 @@ import java.util.HashSet;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.AxisAlignedBB;
 
 import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.api.core.NetworkData;
 import buildcraft.api.core.Position;
+import buildcraft.core.Box;
+import buildcraft.core.Box.Kind;
+import buildcraft.core.IBoxProvider;
 import buildcraft.core.LaserData;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.blueprints.Blueprint;
@@ -26,9 +30,10 @@ import buildcraft.core.blueprints.BptBuilderBlueprint;
 import buildcraft.core.blueprints.BptContext;
 import buildcraft.core.network.RPC;
 import buildcraft.core.network.RPCHandler;
+import buildcraft.core.network.RPCMessageInfo;
 import buildcraft.core.network.RPCSide;
 
-public class TileConstructionMarker extends TileBuildCraft implements IBuildingItemsProvider {
+public class TileConstructionMarker extends TileBuildCraft implements IBuildingItemsProvider, IBoxProvider {
 
 	public static HashSet<TileConstructionMarker> currentMarkers = new HashSet<TileConstructionMarker>();
 
@@ -40,6 +45,9 @@ public class TileConstructionMarker extends TileBuildCraft implements IBuildingI
 	@NetworkData
 	public ItemStack itemBlueprint;
 
+	@NetworkData
+	public Box box = new Box();
+
 	public BptBuilderBase bluePrintBuilder;
 	public BptContext bptContext;
 
@@ -47,8 +55,31 @@ public class TileConstructionMarker extends TileBuildCraft implements IBuildingI
 	private NBTTagCompound initNBT;
 
 	@Override
+	public void initialize() {
+		box.kind = Kind.STRIPES;
+
+		if (worldObj.isRemote) {
+			RPCHandler.rpcServer(this, "uploadBuildersInAction");
+		}
+	}
+
+	@Override
 	public void updateEntity() {
 		super.updateEntity();
+
+		BuildingItem toRemove = null;
+
+		for (BuildingItem i : buildersInAction) {
+			i.update();
+
+			if (i.isDone) {
+				toRemove = i;
+			}
+		}
+
+		if (toRemove != null) {
+			buildersInAction.remove(toRemove);
+		}
 
 		if (worldObj.isRemote) {
 			return;
@@ -58,6 +89,8 @@ public class TileConstructionMarker extends TileBuildCraft implements IBuildingI
 			bluePrintBuilder = new BptBuilderBlueprint((Blueprint) ItemBlueprint.loadBlueprint(itemBlueprint),
 					worldObj, xCoord, yCoord, zCoord);
 			bptContext = bluePrintBuilder.getContext();
+			box.initialize(bluePrintBuilder);
+			sendNetworkUpdate();
 		}
 
 		if (laser == null && direction != ForgeDirection.UNKNOWN) {
@@ -155,7 +188,26 @@ public class TileConstructionMarker extends TileBuildCraft implements IBuildingI
 	}
 
 	@RPC(RPCSide.CLIENT)
-	public void launchItem(BuildingItem item) {
+	private void launchItem(BuildingItem item) {
 		buildersInAction.add(item);
+	}
+
+	@Override
+	public Box getBox() {
+		return box;
+	}
+
+	@Override
+	public AxisAlignedBB getRenderBoundingBox() {
+		Box renderBox = new Box(this).extendToEncompass(box);
+
+		return renderBox.expand(50).getBoundingBox();
+	}
+
+	@RPC(RPCSide.SERVER)
+	private void uploadBuildersInAction(RPCMessageInfo info) {
+		for (BuildingItem i : buildersInAction) {
+			RPCHandler.rpcPlayer(info.sender, this, "launchItem", i);
+		}
 	}
 }

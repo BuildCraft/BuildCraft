@@ -31,7 +31,7 @@ import buildcraft.core.blueprints.IBuilingItem;
 
 public class BuildingItem implements IBuilingItem {
 
-	private static int ITEMS_SPACE = 2;
+	public static int ITEMS_SPACE = 2;
 
 	@NetworkData
 	public Position origin, destination;

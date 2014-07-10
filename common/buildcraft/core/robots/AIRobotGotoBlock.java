@@ -29,6 +29,8 @@ public class AIRobotGotoBlock extends AIRobotGoto {
 	private LinkedList<BlockIndex> path;
 	private double prevDistance = Double.MAX_VALUE;
 	private float finalX, finalY, finalZ;
+	private double maxDistance = 0;
+	private BlockIndex lastBlockInPath;
 
 	public AIRobotGotoBlock(EntityRobotBase iRobot) {
 		super(iRobot);
@@ -39,6 +41,12 @@ public class AIRobotGotoBlock extends AIRobotGoto {
 		finalX = x;
 		finalY = y;
 		finalZ = z;
+	}
+
+	public AIRobotGotoBlock(EntityRobotBase robot, int x, int y, int z, double iMaxDistance) {
+		this(robot, x, y, z);
+
+		maxDistance = iMaxDistance;
 	}
 
 	public AIRobotGotoBlock(EntityRobotBase robot, LinkedList<BlockIndex> iPath) {
@@ -60,7 +68,7 @@ public class AIRobotGotoBlock extends AIRobotGoto {
 		if (path == null && pathSearch == null) {
 			pathSearch = new PathFinding(robot.worldObj, new BlockIndex((int) Math.floor(robot.posX),
 					(int) Math.floor(robot.posY), (int) Math.floor(robot.posZ)), new BlockIndex(
-					(int) Math.floor(finalX), (int) Math.floor(finalY), (int) Math.floor(finalZ)));
+					(int) Math.floor(finalX), (int) Math.floor(finalY), (int) Math.floor(finalZ)), maxDistance);
 
 			pathSearchJob = new PathFindingJob(pathSearch, 100);
 			pathSearchJob.start();
@@ -79,6 +87,7 @@ public class AIRobotGotoBlock extends AIRobotGoto {
 		} else {
 			if (pathSearchJob.isDone()) {
 				path = pathSearch.getResult();
+				lastBlockInPath = path.getLast();
 
 				if (path.size() == 0) {
 					unreachable = true;
@@ -94,9 +103,12 @@ public class AIRobotGotoBlock extends AIRobotGoto {
 			robot.motionX = 0;
 			robot.motionY = 0;
 			robot.motionZ = 0;
-			robot.posX = finalX + 0.5F;
-			robot.posY = finalY + 0.5F;
-			robot.posZ = finalZ + 0.5F;
+
+			if (lastBlockInPath != null) {
+				robot.posX = lastBlockInPath.x + 0.5F;
+				robot.posY = lastBlockInPath.y + 0.5F;
+				robot.posZ = lastBlockInPath.z + 0.5F;
+			}
 
 			terminate();
 		}
@@ -127,6 +139,7 @@ public class AIRobotGotoBlock extends AIRobotGoto {
 		nbt.setFloat("finalX", finalX);
 		nbt.setFloat("finalY", finalY);
 		nbt.setFloat("finalZ", finalZ);
+		nbt.setDouble("maxDistance", maxDistance);
 
 		if (path != null) {
 			NBTTagList pathList = new NBTTagList();
@@ -148,6 +161,7 @@ public class AIRobotGotoBlock extends AIRobotGoto {
 		finalX = nbt.getFloat("finalX");
 		finalY = nbt.getFloat("finalY");
 		finalZ = nbt.getFloat("finalZ");
+		maxDistance = nbt.getDouble("maxDistance");
 
 		if (nbt.hasKey("path")) {
 			NBTTagList pathList = nbt.getTagList("path", Constants.NBT.TAG_COMPOUND);

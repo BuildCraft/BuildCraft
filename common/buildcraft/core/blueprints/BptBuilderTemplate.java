@@ -131,7 +131,7 @@ public class BptBuilderTemplate extends BptBuilderBase {
 		return null;
 	}
 
-	public BuildingSlotBlock internalGetNextBlock(World world, TileAbstractBuilder builder) {
+	private BuildingSlotBlock internalGetNextBlock(World world, TileAbstractBuilder builder) {
 		BuildingSlotBlock result = null;
 
 		IInvSlot firstSlotToConsume = null;
@@ -171,7 +171,10 @@ public class BptBuilderTemplate extends BptBuilderBase {
 					iterator.remove();
 					clearedLocations.add(new BlockIndex(slot.x, slot.y, slot.z));
 				} else {
-					if (setupForDestroy(builder, context, slot)) {
+					if (canDestroy(builder, context, slot)) {
+						consumeEnergyToDestroy(builder, slot);
+						createDestroyItems(slot);
+
 						result = slot;
 						iterator.remove();
 						clearedLocations.add(new BlockIndex(slot.x, slot.y, slot.z));

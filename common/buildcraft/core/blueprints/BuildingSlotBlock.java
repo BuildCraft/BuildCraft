@@ -128,10 +128,12 @@ public class BuildingSlotBlock extends BuildingSlot {
 
 		NBTTagList nbtStacks = new NBTTagList ();
 
-		for (ItemStack stack  : stackConsumed) {
-			NBTTagCompound nbtStack = new NBTTagCompound();
-			stack.writeToNBT(nbtStack);
-			nbtStacks.appendTag(nbtStack);
+		if (stackConsumed != null) {
+			for (ItemStack stack : stackConsumed) {
+				NBTTagCompound nbtStack = new NBTTagCompound();
+				stack.writeToNBT(nbtStack);
+				nbtStacks.appendTag(nbtStack);
+			}
 		}
 
 		nbt.setTag("stackConsumed", nbtStacks);

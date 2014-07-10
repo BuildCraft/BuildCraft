@@ -348,17 +348,23 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 							clearedLocations.add(new BlockIndex(slot.x,
 									slot.y, slot.z));
 						} else {
-							if (builder != null && setupForDestroy(builder, context, slot)) {
+							if (builder == null) {
+								createDestroyItems(slot);
+								return slot;
+							} else if (canDestroy(builder, context, slot)) {
+								consumeEnergyToDestroy(builder, slot);
+								createDestroyItems(slot);
+
 								iterator.remove();
 								clearedLocations.add(new BlockIndex(slot.x,
 										slot.y, slot.z));
 								return slot;
-							} else {
-								return slot;
 							}
 						}
 					} else if (!slot.schematic.doNotBuild()) {
-						if (builder != null && checkRequirements(builder, slot.schematic)) {
+						if (builder == null) {
+							return slot;
+						} else if (checkRequirements(builder, slot.schematic)) {
 							// At this stage, regardless of the fact that the
 							// block can actually be built or not, we'll try.
 							// When the item reaches the actual block, we'll
@@ -370,8 +376,6 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 							postProcessing.add(slot);
 							builtLocations.add(new BlockIndex(slot.x,
 									slot.y, slot.z));
-							return slot;
-						} else {
 							return slot;
 						}
 					} else {

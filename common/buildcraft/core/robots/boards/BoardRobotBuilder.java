@@ -11,11 +11,13 @@ package buildcraft.core.robots.boards;
 import java.util.LinkedList;
 
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 
 import buildcraft.api.boards.RedstoneBoardRobot;
 import buildcraft.api.boards.RedstoneBoardRobotNBT;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
+import buildcraft.builders.BuildingItem;
 import buildcraft.builders.TileConstructionMarker;
 import buildcraft.core.blueprints.BuildingSlot;
 import buildcraft.core.inventory.filters.ArrayStackFilter;
@@ -29,6 +31,7 @@ public class BoardRobotBuilder extends RedstoneBoardRobot {
 	private TileConstructionMarker markerToBuild;
 	private BuildingSlot currentBuildingSlot;
 	private LinkedList<ItemStack> requirementsToLookFor;
+	private int launchingDelay = 0;
 
 	public BoardRobotBuilder(EntityRobotBase iRobot) {
 		super(iRobot);
@@ -41,6 +44,11 @@ public class BoardRobotBuilder extends RedstoneBoardRobot {
 
 	@Override
 	public void update() {
+		if (launchingDelay > 0) {
+			launchingDelay--;
+			return;
+		}
+
 		if (markerToBuild == null) {
 			double minDistance = Double.MAX_VALUE;
 
@@ -91,13 +99,13 @@ public class BoardRobotBuilder extends RedstoneBoardRobot {
 		}
 
 		if (currentBuildingSlot != null && requirementsToLookFor != null && requirementsToLookFor.size() == 0) {
-			// TODO: It's probably OK to get at least X units away from
-			// destination. something to handle at the path-finding level (e.g.
-			// end computation) to be brought up to here as a parameter.
 			startDelegateAI(new AIRobotGotoBlock(robot,
 					(int) currentBuildingSlot.getDestination().x,
 					(int) currentBuildingSlot.getDestination().y,
-					(int) currentBuildingSlot.getDestination().z));
+					(int) currentBuildingSlot.getDestination().z,
+					8));
+			// TODO: take into account cases where the robot can't reach the
+			// destination - go to work on another block
 		}
 	}
 
@@ -115,15 +123,35 @@ public class BoardRobotBuilder extends RedstoneBoardRobot {
 			// TODO: check that we get the proper items in
 			requirementsToLookFor.removeFirst();
 		} else if (ai instanceof AIRobotGotoBlock) {
+			if (markerToBuild == null || markerToBuild.bluePrintBuilder == null) {
+				// defensive code, in case of a wrong load from NBT
+				return;
+			}
+
 			// TODO: we want to update the
 			// builder state (remove slot from list, add to post processing,
 			// etc);
-			// TODO: We need to add destroy animation in the renderer.
+
+			launchingDelay = currentBuildingSlot.getStacksToDisplay().size() * BuildingItem.ITEMS_SPACE;
 			markerToBuild.bluePrintBuilder.buildSlot
 					(robot.worldObj, markerToBuild, currentBuildingSlot,
-							robot.posX, robot.posY, robot.posZ);
+							robot.posX + 0.125F, robot.posY + 0.125F, robot.posZ + 0.125F);
 			currentBuildingSlot = null;
 			requirementsToLookFor = null;
 		}
+	}
+
+	@Override
+	public void writeSelfToNBT(NBTTagCompound nbt) {
+		super.writeSelfToNBT(nbt);
+
+		nbt.setInteger("launchingDelay", launchingDelay);
+	}
+
+	@Override
+	public void loadSelfFromNBT(NBTTagCompound nbt) {
+		super.loadSelfFromNBT(nbt);
+
+		launchingDelay = nbt.getInteger("launchingDelay");
 	}
 }

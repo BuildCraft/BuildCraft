@@ -71,7 +71,7 @@ public abstract class BptBuilderBase implements IAreaProvider {
 
 		BuildingSlot slot = getNextBlock(world, builder);
 
-		return buildSlot(world, builder, slot, x, y, z);
+		return buildSlot(world, builder, slot, x + 0.5F, y + 0.5F, z + 0.5F);
 	}
 
 	public boolean buildSlot(World world, IBuildingItemsProvider builder, BuildingSlot slot, double x, double y,
@@ -83,7 +83,7 @@ public abstract class BptBuilderBase implements IAreaProvider {
 
 		if (slot != null) {
 			BuildingItem i = new BuildingItem();
-			i.origin = new Position(x + 0.5, y + 0.5, z + 0.5);
+			i.origin = new Position(x, y, z);
 			i.destination = slot.getDestination();
 			i.slotToBuild = slot;
 			i.context = getContext();
@@ -166,9 +166,7 @@ public abstract class BptBuilderBase implements IAreaProvider {
 		return done && builder.getBuilders().size() == 0;
 	}
 
-	protected boolean setupForDestroy (TileAbstractBuilder builder, IBuilderContext context, BuildingSlotBlock slot) {
-		LinkedList<ItemStack> result = new LinkedList<ItemStack>();
-
+	private int getHardness(BuildingSlotBlock slot) {
 		int hardness = (int) context
 				.world()
 				.getBlock(slot.x, slot.y, slot.z)
@@ -177,16 +175,28 @@ public abstract class BptBuilderBase implements IAreaProvider {
 
 		hardness *= 2;
 
-		if (builder.energyAvailable() < hardness * SchematicRegistry.BREAK_ENERGY) {
-			return false;
-		} else {
-			builder.consumeEnergy(hardness * SchematicRegistry.BREAK_ENERGY);
+		return hardness;
+	}
 
-			for (int i = 0; i < hardness; ++i) {
-				slot.addStackConsumed(new ItemStack(BuildCraftBuilders.buildToolBlock));
-			}
+	protected final boolean canDestroy(TileAbstractBuilder builder, IBuilderContext context, BuildingSlotBlock slot) {
+		LinkedList<ItemStack> result = new LinkedList<ItemStack>();
 
-			return true;
+		int hardness = getHardness(slot);
+
+		return builder.energyAvailable() >= hardness * SchematicRegistry.BREAK_ENERGY;
+	}
+
+	public void consumeEnergyToDestroy(TileAbstractBuilder builder, BuildingSlotBlock slot) {
+		int hardness = getHardness(slot);
+
+		builder.consumeEnergy(hardness * SchematicRegistry.BREAK_ENERGY);
+	}
+
+	public void createDestroyItems(BuildingSlotBlock slot) {
+		int hardness = getHardness(slot);
+
+		for (int i = 0; i < hardness; ++i) {
+			slot.addStackConsumed(new ItemStack(BuildCraftBuilders.buildToolBlock));
 		}
 	}
 

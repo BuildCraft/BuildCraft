@@ -15,15 +15,17 @@ import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
-import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 
+import buildcraft.builders.urbanism.RenderBoxProvider;
 import buildcraft.core.EntityLaser;
 import buildcraft.core.render.RenderLaser;
 
-public class RenderConstructionMarker extends TileEntitySpecialRenderer {
+public class RenderConstructionMarker extends RenderBoxProvider {
+
+	private final RenderBuildingItems renderItems = new RenderBuildingItems();
 
 	private final EntityItem dummyEntityItem = new EntityItem(null);
 	private final RenderItem customRenderItem;
@@ -55,6 +57,8 @@ public class RenderConstructionMarker extends TileEntitySpecialRenderer {
 
 	@Override
 	public void renderTileEntityAt(TileEntity tileentity, double x, double y, double z, float f) {
+		super.renderTileEntityAt(tileentity, x, y, z, f);
+
 		TileConstructionMarker marker = (TileConstructionMarker) tileentity;
 
 		if (marker != null) {
@@ -87,6 +91,8 @@ public class RenderConstructionMarker extends TileEntitySpecialRenderer {
 			//GL11.glEnable(GL11.GL_LIGHTING);
 			GL11.glPopAttrib();
 			GL11.glPopMatrix();
+
+			renderItems.render(tileentity, x, y, z);
 		}
 	}
 

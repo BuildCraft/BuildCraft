@@ -38,6 +38,7 @@ public class PathFinding {
 	private float sqrMaxDistance = -1;
 	private IBox box;
 	private BlockIndex boxCenter;
+	private double maxDistanceToEnd = 0;
 
 	private HashMap<BlockIndex, Node> openList = new HashMap<BlockIndex, PathFinding.Node>();
 	private HashMap<BlockIndex, Node> closedList = new HashMap<BlockIndex, PathFinding.Node>();
@@ -61,6 +62,12 @@ public class PathFinding {
 		startNode.index = iStart;
 		openList.put(start, startNode);
 		nextIteration = startNode;
+	}
+
+	public PathFinding(World iWorld, BlockIndex iStart, BlockIndex iEnd, double iMaxDistanceToEnd) {
+		this(iWorld, iStart, iEnd);
+
+		maxDistanceToEnd = iMaxDistanceToEnd;
 	}
 
 	public PathFinding(World iWorld, BlockIndex iStart, IBlockFilter iPathFound, float iMaxDistance, IBox iBox) {
@@ -228,7 +235,12 @@ public class PathFinding {
 		} else if (pathFound != null) {
 			return pathFound.matches(world, x, y, z);
 		} else {
-			return end.x == x && end.y == y && end.z == z;
+			if (maxDistanceToEnd == 0) {
+				return end.x == x && end.y == y && end.z == z;
+			} else {
+				return BuildCraftAPI.isSoftBlock(world, x, y, z)
+						&& distance(new BlockIndex(x, y, z), end) <= maxDistanceToEnd;
+			}
 		}
 	}
 
