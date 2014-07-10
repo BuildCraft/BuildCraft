@@ -116,8 +116,8 @@ public class EntityRobot extends EntityRobotBase implements
 		laser.isVisible = false;
 		entityCollisionReduction = 1F;
 
-		width = 0.5F;
-		height = 0.5F;
+		width = 0.25F;
+		height = 0.25F;
 	}
 
 	@Override
@@ -789,5 +789,20 @@ public class EntityRobot extends EntityRobotBase implements
 		}
 
 		super.setDead();
+	}
+
+	@Override
+	public boolean canBePushed() {
+		return false;
+	}
+
+	@Override
+	protected void collideWithEntity(Entity par1Entity) {
+
+	}
+
+	@Override
+	public void applyEntityCollision(Entity par1Entity) {
+
 	}
 }
