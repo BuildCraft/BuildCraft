@@ -24,12 +24,12 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.BuildCraftTransport;
+import buildcraft.api.core.EnumColor;
 import buildcraft.api.gates.IAction;
 import buildcraft.core.GuiIds;
 import buildcraft.core.inventory.InvUtils;
 import buildcraft.core.inventory.SimpleInventory;
 import buildcraft.core.network.IGuiReturnHandler;
-import buildcraft.core.utils.EnumColor;
 import buildcraft.transport.BlockGenericPipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.TravelingItem;

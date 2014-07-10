@@ -23,6 +23,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 import buildcraft.BuildCraftTransport;
+import buildcraft.api.core.EnumColor;
 import buildcraft.core.gui.BuildCraftContainer;
 import buildcraft.core.gui.GuiBuildCraft;
 import buildcraft.core.gui.slots.SlotPhantom;
@@ -30,7 +31,6 @@ import buildcraft.core.gui.tooltips.ToolTip;
 import buildcraft.core.gui.tooltips.ToolTipLine;
 import buildcraft.core.gui.widgets.ButtonWidget;
 import buildcraft.core.network.PacketGuiReturn;
-import buildcraft.core.utils.EnumColor;
 import buildcraft.core.utils.RevolvingList;
 import buildcraft.core.utils.StringUtils;
 import buildcraft.transport.pipes.PipeItemsEmzuli;
