@@ -8,39 +8,46 @@
  */
 package buildcraft;
 
-import static buildcraft.BuildCraftEnergy.spawnOilSprings;
-
 import java.io.File;
-import java.util.EnumMap;
 import java.util.TreeMap;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.entity.EntityList;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.network.Packet;
 import net.minecraft.util.IIcon;
-import net.minecraft.world.World;
+
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.Mod;
+import cpw.mods.fml.common.Mod.EventHandler;
+import cpw.mods.fml.common.Mod.Instance;
+import cpw.mods.fml.common.event.FMLInitializationEvent;
+import cpw.mods.fml.common.event.FMLInterModComms;
+import cpw.mods.fml.common.event.FMLPostInitializationEvent;
+import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.event.FMLServerStartingEvent;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.common.network.NetworkRegistry;
+import cpw.mods.fml.common.registry.EntityRegistry;
+import cpw.mods.fml.common.registry.LanguageRegistry;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 import net.minecraftforge.client.event.TextureStitchEvent;
-import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.IPlantable;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
-import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.fluids.BlockFluidBase;
-import net.minecraftforge.fluids.IFluidBlock;
+import net.minecraftforge.oredict.OreDictionary;
 
 import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.gates.ActionManager;
 import buildcraft.api.recipes.BuildcraftRecipes;
-import buildcraft.core.recipes.RefineryRecipeManager;
 import buildcraft.core.BlockIndex;
 import buildcraft.core.BlockSpring;
 import buildcraft.core.BuildCraftConfiguration;
@@ -57,13 +64,14 @@ import buildcraft.core.ItemWrench;
 import buildcraft.core.SpringPopulate;
 import buildcraft.core.TickHandlerCoreClient;
 import buildcraft.core.Version;
-import buildcraft.core.blueprints.BptItem;
 import buildcraft.core.network.BuildCraftChannelHandler;
-import buildcraft.core.network.BuildCraftPacket;
 import buildcraft.core.network.EntityIds;
 import buildcraft.core.network.PacketHandler;
 import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.proxy.CoreProxy;
+import buildcraft.core.recipes.AssemblyRecipeManager;
+import buildcraft.core.recipes.IntegrationRecipeManager;
+import buildcraft.core.recipes.RefineryRecipeManager;
 import buildcraft.core.triggers.ActionMachineControl;
 import buildcraft.core.triggers.ActionMachineControl.Mode;
 import buildcraft.core.triggers.ActionRedstoneOutput;
@@ -77,29 +85,10 @@ import buildcraft.core.triggers.TriggerFluidContainerLevel;
 import buildcraft.core.triggers.TriggerInventory;
 import buildcraft.core.triggers.TriggerInventoryLevel;
 import buildcraft.core.triggers.TriggerMachine;
-import buildcraft.core.utils.BCLog;
-import buildcraft.core.recipes.AssemblyRecipeManager;
-import buildcraft.core.recipes.IntegrationRecipeManager;
 import buildcraft.core.triggers.TriggerRedstoneInput;
+import buildcraft.core.utils.BCLog;
 
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.Mod;
-import cpw.mods.fml.common.Mod.EventHandler;
-import cpw.mods.fml.common.Mod.Instance;
-import cpw.mods.fml.common.event.FMLInitializationEvent;
-import cpw.mods.fml.common.event.FMLInterModComms;
-import cpw.mods.fml.common.event.FMLPostInitializationEvent;
-import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.common.event.FMLServerStartingEvent;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.common.network.FMLEmbeddedChannel;
-import cpw.mods.fml.common.network.NetworkRegistry;
-import cpw.mods.fml.common.registry.EntityRegistry;
-import cpw.mods.fml.common.registry.LanguageRegistry;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-
-@Mod(name = "BuildCraft", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Core", acceptedMinecraftVersions = "[1.7.2,1.8)", dependencies = "required-after:Forge@[10.12.0.1024,)")
+@Mod(name = "BuildCraft", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Core", acceptedMinecraftVersions = "[1.7.10,1.8)", dependencies = "required-after:Forge@[10.13.0.1179,)")
 public class BuildCraftCore extends BuildCraftMod {
 	public static enum RenderMode {
 		Full, NoDynamic
@@ -114,10 +103,10 @@ public class BuildCraftCore extends BuildCraftMod {
 	public static int updateFactor = 10;
 	public static long longUpdateFactor = 40;
 	public static BuildCraftConfiguration mainConfiguration;
-	
+
 	// TODO: This doesn't seem used anymore. Remove if it's the case.
 	public static TreeMap<BlockIndex, PacketUpdate> bufferedDescriptions = new TreeMap<BlockIndex, PacketUpdate>();
-	
+
 	public static final int trackedPassiveEntityId = 156;
 	public static boolean continuousCurrentModel;
 	public static Block springBlock;
@@ -275,7 +264,7 @@ public class BuildCraftCore extends BuildCraftMod {
 	public void initialize(FMLInitializationEvent evt) {
 		channels = NetworkRegistry.INSTANCE.newChannel
 				(DefaultProps.NET_CHANNEL_NAME + "-CORE", new BuildCraftChannelHandler(), new PacketHandler());
-		
+
 		ActionManager.registerTriggerProvider(new DefaultTriggerProvider());
 		ActionManager.registerActionProvider(new DefaultActionProvider());
 
@@ -304,16 +293,16 @@ public class BuildCraftCore extends BuildCraftMod {
 	public void postInit(FMLPostInitializationEvent event) {
 		for (Object o : Block.blockRegistry) {
 			Block block = (Block) o;
-			
+
 			if (block instanceof BlockFluidBase || block instanceof BlockLiquid || block instanceof IPlantable) {
 				BuildCraftAPI.softBlocks.add(block);
 			}
 		}
-		
+
 		BuildCraftAPI.softBlocks.add(Blocks.snow);
 		BuildCraftAPI.softBlocks.add(Blocks.vine);
 		BuildCraftAPI.softBlocks.add(Blocks.fire);
-		
+
 		FMLCommonHandler.instance().bus().register(new TickHandlerCoreClient());
 	}
 
