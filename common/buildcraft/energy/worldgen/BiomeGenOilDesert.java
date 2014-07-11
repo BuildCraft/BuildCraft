@@ -28,7 +28,7 @@ public final class BiomeGenOilDesert extends BiomeGenDesert {
 
 	public static BiomeGenOilDesert makeBiome(int id) {
 		BiomeGenOilDesert biome = new BiomeGenOilDesert(id);
-		BiomeDictionary.registerBiomeType(biome, BiomeDictionary.Type.DESERT);
+		BiomeDictionary.registerBiomeType(biome, BiomeDictionary.Type.SANDY);
 		OilPopulate.INSTANCE.excessiveBiomes.add(biome.biomeID);
 		OilPopulate.INSTANCE.surfaceDepositBiomes.add(biome.biomeID);
 		return biome;
