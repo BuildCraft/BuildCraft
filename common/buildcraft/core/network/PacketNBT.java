@@ -13,6 +13,7 @@ import java.io.IOException;
 import io.netty.buffer.ByteBuf;
 
 import net.minecraft.nbt.CompressedStreamTools;
+import net.minecraft.nbt.NBTSizeTracker;
 import net.minecraft.nbt.NBTTagCompound;
 
 public class PacketNBT extends PacketCoordinates {
@@ -50,7 +51,7 @@ public class PacketNBT extends PacketCoordinates {
 		data.readBytes(compressed);
 		
 		try {
-			this.nbttagcompound = CompressedStreamTools.decompress(compressed);
+			this.nbttagcompound = CompressedStreamTools.func_152457_a(compressed, NBTSizeTracker.field_152451_a);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

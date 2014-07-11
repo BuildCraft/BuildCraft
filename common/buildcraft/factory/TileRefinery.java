@@ -58,6 +58,7 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IInve
 	public float animationSpeed = 1;
 	private int animationStage = 0;
 	private SafeTimeTracker time = new SafeTimeTracker();
+
 	private SafeTimeTracker updateNetworkTime = new SafeTimeTracker(BuildCraftCore.updateFactor);
 	private boolean isActive;
 
@@ -148,7 +149,6 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IInve
 
 		if (mjStored >= craftingResult.energyCost) {
 			mjStored -= craftingResult.energyCost;
-
 			CraftingResult<FluidStack> r = currentRecipe.craft(this, false);
 			result.fill(r.crafted.copy(), true);
 		}

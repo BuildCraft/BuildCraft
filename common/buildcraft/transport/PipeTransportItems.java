@@ -45,8 +45,6 @@ public class PipeTransportItems extends PipeTransport {
 	public static final int MAX_PIPE_STACKS = 64;
 	public static final int MAX_PIPE_ITEMS = 1024;
 	public boolean allowBouncing = false;
-	// TODO: generalize the use of this hook in particular for obsidian pipe
-	public IItemTravelingHook travelHook;
 	public final TravelerSet items = new TravelerSet(this);
 
 	@Override
@@ -55,10 +53,6 @@ public class PipeTransportItems extends PipeTransport {
 	}
 
 	public void readjustSpeed(TravelingItem item) {
-		if (container.pipe instanceof IPipeTransportItemsHook) {
-			((IPipeTransportItemsHook) container.pipe).readjustSpeed(item);
-			return;
-		}
 		PipeEventItem.AdjustSpeed event = new PipeEventItem.AdjustSpeed(item);
 		container.pipe.handlePipeEvent(event);
 		if (!event.handled) {
@@ -108,10 +102,6 @@ public class PipeTransportItems extends PipeTransport {
 
 		if (!container.getWorldObj().isRemote) {
 			item.output = resolveDestination(item);
-		}
-
-		if (container.pipe instanceof IPipeTransportItemsHook) {
-			((IPipeTransportItemsHook) container.pipe).entityEntered(item, inputOrientation);
 		}
 
 		PipeEventItem.Entered event = new PipeEventItem.Entered(item);
@@ -177,9 +167,6 @@ public class PipeTransportItems extends PipeTransport {
 			item.output = resolveDestination(item);
 		}
 
-		if (container.pipe instanceof IPipeTransportItemsHook) {
-			((IPipeTransportItemsHook) container.pipe).entityEntered(item, item.input);
-		}
 		PipeEventItem.Entered event = new PipeEventItem.Entered(item);
 		container.pipe.handlePipeEvent(event);
 		if (event.cancelled) {
@@ -221,10 +208,6 @@ public class PipeTransportItems extends PipeTransport {
 			}
 		}
 
-		if (this.container.pipe instanceof IPipeTransportItemsHook) {
-			Position pos = new Position(container.xCoord, container.yCoord, container.zCoord, item.input);
-			result = ((IPipeTransportItemsHook) this.container.pipe).filterPossibleMovements(result, pos, item);
-		}
 		PipeEventItem.FindDest event = new PipeEventItem.FindDest(item, result);
 		container.pipe.handlePipeEvent(event);
 
@@ -294,9 +277,6 @@ public class PipeTransportItems extends PipeTransport {
 						dropItem(item);
 					}
 				} else {
-					if (travelHook != null) {
-						travelHook.centerReached(this, item);
-					}
 					PipeEventItem.ReachedCenter event = new PipeEventItem.ReachedCenter(item);
 					container.pipe.handlePipeEvent(event);
 				}
@@ -307,10 +287,6 @@ public class PipeTransportItems extends PipeTransport {
 				PipeEventItem.ReachedEnd event = new PipeEventItem.ReachedEnd(item, tile);
 				container.pipe.handlePipeEvent(event);
 				boolean handleItem = !event.handled;
-
-				if (travelHook != null) {
-					handleItem = !travelHook.endReached(this, item, tile);
-				}
 
 				// If the item has not been scheduled to removal by the hook
 				if (handleItem && items.scheduleRemoval(item)) {
@@ -356,10 +332,6 @@ public class PipeTransportItems extends PipeTransport {
 	private void dropItem(TravelingItem item) {
 		if (container.getWorldObj().isRemote) {
 			return;
-		}
-
-		if (travelHook != null) {
-			travelHook.drop(this, item);
 		}
 
 		PipeEventItem.DropItem event = new PipeEventItem.DropItem(item, item.toEntityItem());

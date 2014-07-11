@@ -153,7 +153,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 	private final short[] inputTTL = new short[]{0, 0, 0, 0, 0, 0};
 	private final short[] outputTTL = new short[]{OUTPUT_TTL, OUTPUT_TTL, OUTPUT_TTL, OUTPUT_TTL, OUTPUT_TTL, OUTPUT_TTL};
 	private final short[] outputCooldown = new short[]{0, 0, 0, 0, 0, 0};
-	private final SafeTimeTracker tracker = new SafeTimeTracker();
+	private final SafeTimeTracker tracker = new SafeTimeTracker(BuildCraftCore.updateFactor);
 	private int clientSyncCounter = 0;
 
 	public PipeTransportFluids() {
@@ -204,7 +204,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 
 		moveFluids();
 
-		if (tracker.markTimeIfDelay(container.getWorldObj(), BuildCraftCore.updateFactor)) {
+		if (tracker.markTimeIfDelay(container.getWorldObj())) {
 
 			boolean init = false;
 			if (++clientSyncCounter > BuildCraftCore.longUpdateFactor) {
