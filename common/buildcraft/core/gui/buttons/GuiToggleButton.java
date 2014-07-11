@@ -31,7 +31,7 @@ public class GuiToggleButton extends GuiBetterButton {
 	}
 
 	@Override
-	protected int getHoverState(boolean mouseOver) {
+	public int getHoverState(boolean mouseOver) {
 		int state = 1;
 		if (!enabled) {
 			state = 0;

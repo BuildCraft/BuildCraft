@@ -24,6 +24,7 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompressedStreamTools;
+import net.minecraft.nbt.NBTSizeTracker;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.MathHelper;
@@ -468,7 +469,7 @@ public final class Utils {
 			int length = data.readInt();
 			byte[] compressed = new byte[length];
 			data.readBytes(compressed);
-			return CompressedStreamTools.decompress(compressed);
+			return CompressedStreamTools.func_152457_a(compressed, NBTSizeTracker.field_152451_a);
 		} catch (IOException e) {
 			e.printStackTrace();
 			return null;
