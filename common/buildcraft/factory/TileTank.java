@@ -37,7 +37,7 @@ public class TileTank extends TileBuildCraft implements IFluidHandler {
 	public final Tank tank = new Tank("tank", FluidContainerRegistry.BUCKET_VOLUME * 16, this);
 	public final TankManager tankManager = new TankManager(tank);
 	public boolean hasUpdate = false;
-	public SafeTimeTracker tracker = new SafeTimeTracker();
+	public SafeTimeTracker tracker = new SafeTimeTracker(2 * BuildCraftCore.updateFactor);
 	private int prevLightValue = 0;
 
 	/* UPDATING */
@@ -57,7 +57,7 @@ public class TileTank extends TileBuildCraft implements IFluidHandler {
 			moveFluidBelow();
 		}
 
-		if (hasUpdate && tracker.markTimeIfDelay(worldObj, 2 * BuildCraftCore.updateFactor)) {
+		if (hasUpdate && tracker.markTimeIfDelay(worldObj)) {
 			sendNetworkUpdate();
 			hasUpdate = false;
 		}

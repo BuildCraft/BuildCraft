@@ -14,6 +14,7 @@ import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.HashSet;
 import java.util.TreeMap;
+import java.util.UUID;
 
 import com.mojang.authlib.GameProfile;
 
@@ -207,7 +208,7 @@ public class BuildCraftCore extends BuildCraftMod {
 
 	public static float diffX, diffY, diffZ;
 
-	public static GameProfile gameProfile = new GameProfile("buildcraft.core", "[BuildCraft]");
+	public static GameProfile gameProfile = new GameProfile(UUID.nameUUIDFromBytes("buildcraft.core".getBytes()), "[BuildCraft]");
 
 	private static FloatBuffer modelviewF;
 	private static FloatBuffer projectionF;

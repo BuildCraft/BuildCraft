@@ -79,11 +79,13 @@ public class StackHelper {
 		}
 
 		if (oreDictionary) {
-			int idBase = OreDictionary.getOreID(base);
-			if (idBase >= 0) {
-				for (ItemStack itemstack : OreDictionary.getOres(idBase)) {
-					if (comparison.getItem() == itemstack.getItem() && (itemstack.getItemDamage() == OreDictionary.WILDCARD_VALUE || comparison.getItemDamage() == itemstack.getItemDamage())) {
-						return true;
+			int[] idBase = OreDictionary.getOreIDs(base);
+			if (idBase.length > 0) {
+				for (int id : idBase) {
+					for (ItemStack itemstack : OreDictionary.getOres(OreDictionary.getOreName(id))) {
+						if (comparison.getItem() == itemstack.getItem() && (itemstack.getItemDamage() == OreDictionary.WILDCARD_VALUE || comparison.getItemDamage() == itemstack.getItemDamage())) {
+							return true;
+						}
 					}
 				}
 			}
@@ -92,11 +94,13 @@ public class StackHelper {
 		return false;
 	}
 
-	public static boolean isCraftingEquivalent(int oreID, ItemStack comparison) {
-		if (oreID >= 0) {
-			for (ItemStack itemstack : OreDictionary.getOres(oreID)) {
-				if (comparison.getItem() == itemstack.getItem() && (itemstack.getItemDamage() == OreDictionary.WILDCARD_VALUE || comparison.getItemDamage() == itemstack.getItemDamage())) {
-					return true;
+	public static boolean isCraftingEquivalent(int[] oreIDs, ItemStack comparison) {
+		if (oreIDs.length > 0) {
+			for (int id : oreIDs) {
+				for (ItemStack itemstack : OreDictionary.getOres(OreDictionary.getOreName(id))) {
+					if (comparison.getItem() == itemstack.getItem() && (itemstack.getItemDamage() == OreDictionary.WILDCARD_VALUE || comparison.getItemDamage() == itemstack.getItemDamage())) {
+						return true;
+					}
 				}
 			}
 		}

@@ -49,8 +49,8 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IInve
 	public TankManager<SingleUseTank> tankManager = new TankManager<SingleUseTank>(tank1, tank2, result);
 	public float animationSpeed = 1;
 	private int animationStage = 0;
-	private SafeTimeTracker time = new SafeTimeTracker();
-	private SafeTimeTracker updateNetworkTime = new SafeTimeTracker();
+	private SafeTimeTracker time = null;
+	private SafeTimeTracker updateNetworkTime = new SafeTimeTracker(BuildCraftCore.updateFactor);
 	private boolean isActive;
 
 	@MjBattery(maxCapacity = 1000, maxReceivedPerCycle = 150, minimumConsumption = 1)
@@ -107,7 +107,7 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IInve
 			return;
 		}
 
-		if (updateNetworkTime.markTimeIfDelay(worldObj, BuildCraftCore.updateFactor)) {
+		if (updateNetworkTime.markTimeIfDelay(worldObj)) {
 			sendNetworkUpdate();
 		}
 
@@ -138,9 +138,15 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IInve
 			decreaseAnimation();
 		}
 
-		if (!time.markTimeIfDelay(worldObj, currentRecipe.timeRequired)) {
+		if (time == null) {
+			time = new SafeTimeTracker(currentRecipe.timeRequired);
+		}
+
+		if (!time.markTimeIfDelay(worldObj)) {
 			return;
 		}
+
+        time = null;
 
 		if (mjStored >= currentRecipe.energyCost) {
 			mjStored -= currentRecipe.energyCost;
