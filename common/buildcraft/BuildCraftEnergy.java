@@ -132,8 +132,8 @@ public class BuildCraftEnergy extends BuildCraftMod {
 				oilBiomeIDs,
 				BuildCraftCore.mainConfiguration
 						.get(Configuration.CATEGORY_GENERAL, "oil.increasedBiomeIDs",
-								new String[] {BiomeDictionary.Type.DESERT.toString(), BiomeGenBase.taiga.biomeName},
-								"IDs or Biome Types (e.g. DESERT,OCEAN) of biomes that should have increased oil generation rates."));
+								new String[] {BiomeDictionary.Type.SANDY.toString(), BiomeGenBase.taiga.biomeName},
+								"IDs or Biome Types (e.g. SANDY,OCEAN) of biomes that should have increased oil generation rates."));
 
 		setBiomeList(
 				excessiveOilBiomeIDs,
@@ -141,12 +141,12 @@ public class BuildCraftEnergy extends BuildCraftMod {
 				.get(Configuration.CATEGORY_GENERAL,
 								"oil.excessiveBiomeIDs",
 								new String[] {},
-								"IDs or Biome Types (e.g. DESERT,OCEAN) of biomes that should have GREATLY increased oil generation rates."));
+								"IDs or Biome Types (e.g. SANDY,OCEAN) of biomes that should have GREATLY increased oil generation rates."));
 
 		setBiomeList(excludeOilBiomeIDs, BuildCraftCore.mainConfiguration
 				.get(Configuration.CATEGORY_GENERAL, "oil.excludeBiomeIDs",
 						new String[] {BiomeGenBase.sky.biomeName, BiomeGenBase.hell.biomeName},
-						"IDs or Biome Types (e.g. DESERT,OCEAN) of biomes that are excluded from generating oil."));
+						"IDs or Biome Types (e.g. SANDY,OCEAN) of biomes that are excluded from generating oil."));
 
 		double fuelOilMultiplier = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "fuel.oil.combustion", 1.0F, "adjust energy value of Oil in Combustion Engines").getDouble(1.0F);
 		double fuelFuelMultiplier = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "fuel.fuel.combustion", 1.0F, "adjust energy value of Fuel in Combustion Engines").getDouble(1.0F);
