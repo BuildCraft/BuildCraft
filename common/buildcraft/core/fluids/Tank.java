@@ -86,7 +86,7 @@ public class Tank extends FluidTank implements INBTSerializable {
 		toolTip.clear();
 		int amount = 0;
 		if (getFluid() != null && getFluid().amount > 0) {
-			ToolTipLine fluidName = new ToolTipLine(getFluid().getFluid().getLocalizedName());
+			ToolTipLine fluidName = new ToolTipLine(getFluid().getFluid().getLocalizedName(getFluid()));
 			fluidName.setSpacing(2);
 			toolTip.add(fluidName);
 			amount = getFluid().amount;
