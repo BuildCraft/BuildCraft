@@ -9,12 +9,6 @@
 package buildcraft.transport;
 
 import io.netty.buffer.ByteBuf;
-
-import net.minecraft.util.IIcon;
-
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-
 import buildcraft.core.network.IClientState;
 import buildcraft.transport.utils.ConnectionMatrix;
 import buildcraft.transport.utils.FacadeMatrix;
@@ -33,13 +27,6 @@ public class PipeRenderState implements IClientState {
 	public final FacadeMatrix facadeMatrix = new FacadeMatrix();
 	public final GateMatrix gateMatrix = new GateMatrix();
 
-	/*
-	 * This is a placeholder for the pipe renderer to set to a value that the BlockGenericPipe->TileGenericPipe will then return the the WorldRenderer
-	 */
-	@SideOnly(Side.CLIENT)
-	public IIcon currentTexture;
-	@SideOnly(Side.CLIENT)
-	public IIcon[] textureArray;
 
 	private boolean dirty = true;
 

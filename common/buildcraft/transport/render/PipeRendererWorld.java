@@ -8,15 +8,15 @@
  */
 package buildcraft.transport.render;
 
+
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.IBlockAccess;
+import net.minecraftforge.common.util.ForgeDirection;
 
 import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
-
-import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
@@ -28,10 +28,13 @@ import buildcraft.transport.PipeRenderState;
 import buildcraft.transport.TileGenericPipe;
 import buildcraft.transport.TransportProxy;
 
-public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
 
+public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
+	
 	public static int renderPass = -1;
 
+	public FakePluggablesStateBlock fakeBlock = new FakePluggablesStateBlock();	
+	
 	public void renderPipe(RenderBlocks renderblocks, IBlockAccess iblockaccess, BlockGenericPipe block, TileGenericPipe tile, int x, int y, int z) {
 		PipeRenderState state = tile.renderState;
 		IIconProvider icons = tile.getPipeIcons();
@@ -39,6 +42,8 @@ public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
 		if (icons == null) {
 			return;
 		}
+		
+
 
 		// Force pipe render into pass 0
 		if (renderPass == 0) {
@@ -49,8 +54,8 @@ public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
 
 			if (connectivity != 0x3f) { // note: 0x3f = 0x111111 = all sides
 				resetToCenterDimensions(dim);
-
-				state.currentTexture = icons.getIcon(state.textureMatrix.getTextureIndex(ForgeDirection.UNKNOWN));
+				
+				block.getTextureState().set(icons.getIcon(state.textureMatrix.getTextureIndex(ForgeDirection.UNKNOWN)));
 				renderTwoWayBlock(renderblocks, block, x, y, z, dim, connectivity ^ 0x3f);
 			}
 
@@ -74,7 +79,7 @@ public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
 				int renderMask = (3 << (dir / 2 * 2)) ^ 0x3f;
 
 				// render sub block
-				state.currentTexture = icons.getIcon(state.textureMatrix.getTextureIndex(ForgeDirection.VALID_DIRECTIONS[dir]));
+				block.getTextureState().set(icons.getIcon(state.textureMatrix.getTextureIndex(ForgeDirection.VALID_DIRECTIONS[dir])));
 
 				renderTwoWayBlock(renderblocks, block, x, y, z, dim, renderMask);
 			}
@@ -83,12 +88,13 @@ public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
 		renderblocks.setRenderBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
 
 		// Facade renderer handles rendering in both passes
-		pipeFacadeRenderer(renderblocks, block, state, x, y, z);
+		pipeFacadeRenderer(renderblocks, fakeBlock, state, x, y, z);
+		//block.setRenderAllSides();//Start fresh
 
 		// Force other opaque renders into pass 0
 		if (renderPass == 0) {
-			pipePlugRenderer(renderblocks, block, state, x, y, z);
-			pipeRobotStationRenderer(renderblocks, block, state, x, y, z);
+			pipePlugRenderer(renderblocks, fakeBlock, state, x, y, z);
+			pipeRobotStationRenderer(renderblocks, fakeBlock, state, x, y, z);
 		}
 	}
 
@@ -117,11 +123,11 @@ public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
 		renderblocks.renderStandardBlock(block, x, y, z);
 	}
 
-	private void pipeFacadeRenderer(RenderBlocks renderblocks, BlockGenericPipe block, PipeRenderState state, int x, int y, int z) {
-		FacadeRenderHelper.pipeFacadeRenderer(renderblocks, block, state, x, y, z);
+	private void pipeFacadeRenderer(RenderBlocks renderblocks, ITextureStates blockStateMachine, PipeRenderState state, int x, int y, int z) {
+		FacadeRenderHelper.pipeFacadeRenderer(renderblocks, blockStateMachine, state, x, y, z);
 	}
 
-	private void pipePlugRenderer(RenderBlocks renderblocks, Block block, PipeRenderState state, int x, int y, int z) {
+	private void pipePlugRenderer(RenderBlocks renderblocks, ITextureStates blockStateMachine, PipeRenderState state, int x, int y, int z) {
 		float zFightOffset = 1F / 4096F;
 		float[][] zeroState = new float[3][2];
 
@@ -135,7 +141,7 @@ public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
 		zeroState[2][0] = 0.25F + zFightOffset;
 		zeroState[2][1] = 0.75F - zFightOffset;
 
-		state.currentTexture = BuildCraftTransport.instance.pipeIconProvider.getIcon(PipeIconProvider.TYPE.PipeStructureCobblestone.ordinal()); // Structure Pipe
+		blockStateMachine.getTextureState().set(BuildCraftTransport.instance.pipeIconProvider.getIcon(PipeIconProvider.TYPE.PipeStructureCobblestone.ordinal())); // Structure Pipe
 
 		for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
 			if (state.plugMatrix.isConnected(direction)) {
@@ -143,7 +149,7 @@ public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
 				MatrixTranformations.transform(rotated, direction);
 
 				renderblocks.setRenderBounds(rotated[0][0], rotated[1][0], rotated[2][0], rotated[0][1], rotated[1][1], rotated[2][1]);
-				renderblocks.renderStandardBlock(block, x, y, z);
+				renderblocks.renderStandardBlock(blockStateMachine.getBlock(), x, y, z);
 			}
 		}
 
@@ -157,7 +163,7 @@ public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
 		zeroState[2][0] = 0.25F + 0.125F / 2;
 		zeroState[2][1] = 0.75F - 0.125F / 2;
 
-		state.currentTexture = BuildCraftTransport.instance.pipeIconProvider.getIcon(PipeIconProvider.TYPE.PipeStructureCobblestone.ordinal()); // Structure Pipe
+		blockStateMachine.getTextureState().set(BuildCraftTransport.instance.pipeIconProvider.getIcon(PipeIconProvider.TYPE.PipeStructureCobblestone.ordinal())); // Structure Pipe
 
 		for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
 			if (state.plugMatrix.isConnected(direction)) {
@@ -165,14 +171,14 @@ public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
 				MatrixTranformations.transform(rotated, direction);
 
 				renderblocks.setRenderBounds(rotated[0][0], rotated[1][0], rotated[2][0], rotated[0][1], rotated[1][1], rotated[2][1]);
-				renderblocks.renderStandardBlock(block, x, y, z);
+				renderblocks.renderStandardBlock(blockStateMachine.getBlock(), x, y, z);
 			}
 		}
 
 	}
 
 	private void pipeRobotStationPartRender(RenderBlocks renderblocks,
-			Block block, PipeRenderState state, int x, int y, int z,
+			ITextureStates blockStateMachine, PipeRenderState state, int x, int y, int z,
 			float xStart, float xEnd, float yStart, float yEnd, float zStart,
 			float zEnd) {
 
@@ -194,16 +200,16 @@ public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
 				switch (state.robotStationMatrix.getState(direction)) {
 				case None:
 				case Available:
-					state.currentTexture = BuildCraftTransport.instance.pipeIconProvider
-							.getIcon(PipeIconProvider.TYPE.PipeRobotStation.ordinal());
+					blockStateMachine.getTextureState().set(BuildCraftTransport.instance.pipeIconProvider
+							.getIcon(PipeIconProvider.TYPE.PipeRobotStation.ordinal()));
 					break;
 				case Reserved:
-					state.currentTexture = BuildCraftTransport.instance.pipeIconProvider
-							.getIcon(PipeIconProvider.TYPE.PipeRobotStationReserved.ordinal());
+					blockStateMachine.getTextureState().set(BuildCraftTransport.instance.pipeIconProvider
+							.getIcon(PipeIconProvider.TYPE.PipeRobotStationReserved.ordinal()));
 					break;
 				case Linked:
-					state.currentTexture = BuildCraftTransport.instance.pipeIconProvider
-							.getIcon(PipeIconProvider.TYPE.PipeRobotStationLinked.ordinal());
+					blockStateMachine.getTextureState().set(BuildCraftTransport.instance.pipeIconProvider
+							.getIcon(PipeIconProvider.TYPE.PipeRobotStationLinked.ordinal()));
 					break;
 				}
 
@@ -213,16 +219,16 @@ public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
 				renderblocks.setRenderBounds(rotated[0][0], rotated[1][0],
 						rotated[2][0], rotated[0][1], rotated[1][1],
 						rotated[2][1]);
-				renderblocks.renderStandardBlock(block, x, y, z);
+				renderblocks.renderStandardBlock(blockStateMachine.getBlock(), x, y, z);
 			}
 		}
 
 	}
 
-	private void pipeRobotStationRenderer(RenderBlocks renderblocks, Block block, PipeRenderState state, int x, int y, int z) {
+	private void pipeRobotStationRenderer(RenderBlocks renderblocks, ITextureStates blockStateMachine, PipeRenderState state, int x, int y, int z) {
 		//float width = 0.075F;
 
-		pipeRobotStationPartRender (renderblocks, block, state, x, y, z,
+		pipeRobotStationPartRender (renderblocks, blockStateMachine, state, x, y, z,
 				0.45F, 0.55F,
 				0.0F, 0.224F,
 				0.45F, 0.55F);
@@ -268,16 +274,16 @@ public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
 				switch (state.robotStationMatrix.getState(direction)) {
 				case None:
 				case Available:
-					state.currentTexture = BuildCraftTransport.instance.pipeIconProvider
-							.getIcon(PipeIconProvider.TYPE.PipeRobotStation.ordinal());
+					blockStateMachine.getTextureState().set(BuildCraftTransport.instance.pipeIconProvider
+							.getIcon(PipeIconProvider.TYPE.PipeRobotStation.ordinal()));
 					break;
 				case Reserved:
-					state.currentTexture = BuildCraftTransport.instance.pipeIconProvider
-							.getIcon(PipeIconProvider.TYPE.PipeRobotStationReserved.ordinal());
+					blockStateMachine.getTextureState().set(BuildCraftTransport.instance.pipeIconProvider
+							.getIcon(PipeIconProvider.TYPE.PipeRobotStationReserved.ordinal()));
 					break;
 				case Linked:
-					state.currentTexture = BuildCraftTransport.instance.pipeIconProvider
-							.getIcon(PipeIconProvider.TYPE.PipeRobotStationLinked.ordinal());
+					blockStateMachine.getTextureState().set(BuildCraftTransport.instance.pipeIconProvider
+							.getIcon(PipeIconProvider.TYPE.PipeRobotStationLinked.ordinal()));
 					break;
 				}
 
@@ -287,7 +293,7 @@ public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
 				renderblocks.setRenderBounds(rotated[0][0], rotated[1][0],
 						rotated[2][0], rotated[0][1], rotated[1][1],
 						rotated[2][1]);
-				renderblocks.renderStandardBlock(block, x, y, z);
+				renderblocks.renderStandardBlock(blockStateMachine.getBlock(), x, y, z);
 			}
 		}
 	}

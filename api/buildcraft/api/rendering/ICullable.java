@@ -1,0 +1,29 @@
+/**
+ * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
+ * http://www.mod-buildcraft.com
+ *
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
+ * License 1.0, or MMPL. Please check the contents of the license located in
+ * http://www.mod-buildcraft.com/MMPL-1.0.txt
+ * 
+ * Facade API extraction performed by Itaros(Semion Nadezhdin)
+ */
+package buildcraft.api.rendering;
+
+import net.minecraft.world.IBlockAccess;
+import net.minecraftforge.common.util.ForgeDirection;
+
+/*
+ * Implement on Block class to make it able to respond to facade render helper queries
+ * For implementation details look into BlockGenericPipe implementation
+ */
+public interface ICullable {
+
+	//Side Rendering States
+	//They are used to effectively cull obstructed sides while processing facades.
+	//Make sure your implementation is correct otherwise expect FPS drop
+	void setRenderSide(ForgeDirection side, boolean render);
+	void setRenderAllSides();
+	boolean shouldSideBeRendered(IBlockAccess blockAccess, int x, int y, int z, int side);	
+	
+}

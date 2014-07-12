@@ -16,6 +16,10 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
 
+import cpw.mods.fml.common.registry.GameRegistry;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
@@ -36,13 +40,7 @@ import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-
-import cpw.mods.fml.common.registry.GameRegistry;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-
 import net.minecraftforge.common.util.ForgeDirection;
-
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.BlockIndex;
@@ -63,17 +61,22 @@ import buildcraft.core.utils.Utils;
 import buildcraft.transport.gates.GateDefinition;
 import buildcraft.transport.gates.GateFactory;
 import buildcraft.transport.gates.ItemGate;
+import buildcraft.transport.render.ITextureStates;
 import buildcraft.transport.render.PipeRendererWorld;
+import buildcraft.transport.render.TextureStateManager;
 import buildcraft.transport.utils.FacadeMatrix;
 
-public class BlockGenericPipe extends BlockBuildCraft {
+
+public class BlockGenericPipe extends BlockBuildCraft implements ITextureStates{
 
 	public static int facadeRenderColor = -1;
 	public static Map<Item, Class<? extends Pipe>> pipes = new HashMap<Item, Class<? extends Pipe>>();
 	public static Map<BlockIndex, Pipe<?>> pipeRemoved = new HashMap<BlockIndex, Pipe<?>>();
 
 	private static long lastRemovedDate = -1;
-
+	
+	private static final ForgeDirection[] DIR_VALUES = ForgeDirection.values();
+	
 	static enum Part {
 		Pipe,
 		Gate,
@@ -82,6 +85,9 @@ public class BlockGenericPipe extends BlockBuildCraft {
 		RobotStation
 	}
 
+	@SideOnly(Side.CLIENT)
+	private TextureStateManager textureState;	
+	
 	static class RaytraceResult {
 		public final Part hitPart;
 		public final MovingObjectPosition movingObjectPosition;
@@ -100,7 +106,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 			return String.format("RayTraceResult: %s, %s", hitPart == null ? "null" : hitPart.name(), boundingBox == null ? "null" : boundingBox.toString());
 		}
 	}
-	private static final ForgeDirection[] DIR_VALUES = ForgeDirection.values();
+	
 	private boolean skippedFirstIconRegister;
 	private int renderMask = 0;
 
@@ -1028,20 +1034,17 @@ public class BlockGenericPipe extends BlockBuildCraft {
 		pipe.dropItem(pipeWire.getStack());
 	}
 
-	@SuppressWarnings({"all"})
 	@SideOnly(Side.CLIENT)
-	@Override
-	public IIcon getIcon(IBlockAccess iblockaccess, int x, int y, int z, int side) {
-		TileEntity tile = iblockaccess.getTileEntity(x, y, z);
-		if (!(tile instanceof TileGenericPipe)) {
-			return null;
-		}
-		if (((TileGenericPipe) tile).renderState.textureArray != null) {
-			return ((TileGenericPipe) tile).renderState.textureArray[side];
-		}
-		return ((TileGenericPipe) tile).renderState.currentTexture;
+	public TextureStateManager getTextureState() {
+		return textureState;
 	}
-
+	@SideOnly(Side.CLIENT)
+	@Override	
+	public IIcon getIcon(int side, int meta) {
+		return textureState.isSided() ? textureState.getTextureArray()[side] : textureState.getTexture();
+	}
+	
+			
 	@Override
 	public void onEntityCollidedWithBlock(World world, int i, int j, int k, Entity entity) {
 		super.onEntityCollidedWithBlock(world, i, j, k, entity);
@@ -1184,6 +1187,8 @@ public class BlockGenericPipe extends BlockBuildCraft {
 			skippedFirstIconRegister = true;
 			return;
 		}
+		
+		textureState = new TextureStateManager(null);
 
 		BuildCraftTransport.instance.wireIconProvider.registerIcons(iconRegister);
 
@@ -1205,12 +1210,6 @@ public class BlockGenericPipe extends BlockBuildCraft {
 		for (IGateExpansion expansion : GateExpansions.getExpansions()) {
 			expansion.registerBlockOverlay(iconRegister);
 		}
-	}
-
-	@Override
-	@SideOnly(Side.CLIENT)
-	public IIcon getIcon(int par1, int par2) {
-		return BuildCraftTransport.instance.pipeIconProvider.getIcon(PipeIconProvider.TYPE.Stripes.ordinal());
 	}
 
 	/**
@@ -1337,4 +1336,11 @@ public class BlockGenericPipe extends BlockBuildCraft {
 			}
 		}
 	}
+
+	@Override
+	public Block getBlock() {
+		return this;
+	}
+
+
 }

@@ -11,6 +11,9 @@ package buildcraft.transport;
 import java.util.LinkedList;
 import java.util.logging.Level;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
 import io.netty.buffer.ByteBuf;
 
 import net.minecraft.block.Block;
@@ -23,17 +26,12 @@ import net.minecraft.network.Packet;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
-
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
-
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.BCLog;
@@ -67,9 +65,10 @@ import buildcraft.transport.gates.GateFactory;
 import buildcraft.transport.gates.ItemGate;
 import buildcraft.transport.utils.RobotStationState;
 
+
 public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFluidHandler,
 		IPipeTile, IOverrideDefaultTriggers, ITileBufferHolder,
-		IDropControlInventory, ISyncedTile, ISolidSideTile, IGuiReturnHandler {
+		IDropControlInventory, ISyncedTile, ISolidSideTile, IGuiReturnHandler{
 
 	public boolean initialized = false;
 	public final PipeRenderState renderState = new PipeRenderState();
@@ -1113,4 +1112,5 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 			((IPowerReceptor) pipe).doWork(workProvider);
 		}
 	}
+
 }
