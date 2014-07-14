@@ -11,11 +11,14 @@ package buildcraft;
 import java.util.LinkedList;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockDispenser;
+import net.minecraft.dispenser.IBehaviorDispenseItem;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.RegistryDefaulted;
 import net.minecraft.world.World;
 
 import cpw.mods.fml.common.Mod;
@@ -108,6 +111,7 @@ import buildcraft.transport.schematics.BptItemPipeFilters;
 import buildcraft.transport.schematics.BptPipeIron;
 import buildcraft.transport.schematics.BptPipeWooden;
 import buildcraft.transport.schematics.SchematicPipe;
+import buildcraft.transport.stripes.DispenserStripesHandler;
 import buildcraft.transport.triggers.ActionEnergyPulsar;
 import buildcraft.transport.triggers.ActionExtractionPreset;
 import buildcraft.transport.triggers.ActionPipeColor;
@@ -453,6 +457,18 @@ public class BuildCraftTransport extends BuildCraftMod {
 
 		TransportProxy.proxy.registerRenderers();
 		NetworkRegistry.INSTANCE.registerGuiHandler(instance, new GuiHandler());
+
+
+
+	RegistryDefaulted registry = (RegistryDefaulted) BlockDispenser.dispenseBehaviorRegistry;
+		for (Object obj : registry.getKeys()) {
+			if (obj instanceof Item) {
+				Item item = (Item) obj;
+				if (!JavaTools.contains(PipeItemsStripes.DISPENCER_EXCLUSIONS, item)) {
+					PipeManager.registerStripesHandler(new DispenserStripesHandler((IBehaviorDispenseItem) registry.getObject(item)), item);
+				}
+			}
+		}
 	}
 
 	@Mod.EventHandler

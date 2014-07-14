@@ -25,9 +25,11 @@ import cpw.mods.fml.relauncher.SideOnly;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.IIconProvider;
+import buildcraft.api.transport.PipeManager;
 import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.IItemPipe;
 import buildcraft.core.ItemBuildCraft;
+import buildcraft.transport.stripes.PipePlacingHandler;
 
 public class ItemPipe extends ItemBuildCraft implements IItemPipe {
 
@@ -37,6 +39,10 @@ public class ItemPipe extends ItemBuildCraft implements IItemPipe {
 
 	protected ItemPipe(CreativeTabBuildCraft creativeTab) {
 		super(creativeTab);
+
+		if (this != BuildCraftTransport.pipeItemsStripes) {
+			PipeManager.registerStripesHandler(new PipePlacingHandler(), this);
+		}
 	}
 
 	@Override
@@ -138,6 +144,7 @@ public class ItemPipe extends ItemBuildCraft implements IItemPipe {
 
 	@Override
 	@SideOnly(Side.CLIENT)
+	@SuppressWarnings("unchecked")
 	public void addInformation(ItemStack stack, EntityPlayer player, List list, boolean advanced) {
 		super.addInformation(stack, player, list, advanced);
 		Class<? extends Pipe> pipe = BlockGenericPipe.pipes.get(this);
