@@ -8,7 +8,6 @@
  */
 package buildcraft.transport.render;
 
-
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.init.Blocks;
@@ -23,28 +22,23 @@ import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.core.CoreConstants;
 import buildcraft.core.utils.MatrixTranformations;
-import buildcraft.transport.BlockGenericPipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeRenderState;
 import buildcraft.transport.TileGenericPipe;
 import buildcraft.transport.TransportProxy;
 
-
 public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
 	
-	public static int renderPass = -1;
-
-	public FakePluggablesStateBlock fakeBlock = new FakePluggablesStateBlock();	
+	public static int renderPass = -1;	
 	
-	public void renderPipe(RenderBlocks renderblocks, IBlockAccess iblockaccess, BlockGenericPipe block, TileGenericPipe tile, int x, int y, int z) {
+	public void renderPipe(RenderBlocks renderblocks, IBlockAccess iblockaccess, TileGenericPipe tile, int x, int y, int z) {
 		PipeRenderState state = tile.renderState;
 		IIconProvider icons = tile.getPipeIcons();
-
+		FakeBlock fakeBlock = FakeBlock.getInstance();
+		
 		if (icons == null) {
 			return;
-		}
-		
-
+		}	
 
 		// Force pipe render into pass 0
 		if (renderPass == 0) {
@@ -56,8 +50,8 @@ public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
 			if (connectivity != 0x3f) { // note: 0x3f = 0x111111 = all sides
 				resetToCenterDimensions(dim);
 				
-				block.getTextureState().set(icons.getIcon(state.textureMatrix.getTextureIndex(ForgeDirection.UNKNOWN)));
-				renderTwoWayBlock(renderblocks, block, x, y, z, dim, connectivity ^ 0x3f);
+				fakeBlock.getTextureState().set(icons.getIcon(state.textureMatrix.getTextureIndex(ForgeDirection.UNKNOWN)));
+				renderTwoWayBlock(renderblocks, fakeBlock, x, y, z, dim, connectivity ^ 0x3f);
 			}
 
 			// render the connecting pipe faces
@@ -80,9 +74,9 @@ public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
 				int renderMask = (3 << (dir / 2 * 2)) ^ 0x3f;
 
 				// render sub block
-				block.getTextureState().set(icons.getIcon(state.textureMatrix.getTextureIndex(ForgeDirection.VALID_DIRECTIONS[dir])));
+				fakeBlock.getTextureState().set(icons.getIcon(state.textureMatrix.getTextureIndex(ForgeDirection.VALID_DIRECTIONS[dir])));
 
-				renderTwoWayBlock(renderblocks, block, x, y, z, dim, renderMask);
+				renderTwoWayBlock(renderblocks, fakeBlock, x, y, z, dim, renderMask);
 			}
 		}
 
@@ -113,15 +107,15 @@ public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
 	 * Render a block with normal and inverted vertex order so back face culling
 	 * doesn't have any effect.
 	 */
-	private void renderTwoWayBlock(RenderBlocks renderblocks, BlockGenericPipe block, int x, int y, int z, float[] dim, int mask) {
+	private void renderTwoWayBlock(RenderBlocks renderblocks, FakeBlock stateHost, int x, int y, int z, float[] dim, int mask) {
 		assert mask != 0;
-
-		block.setRenderMask(mask);
+		
+		stateHost.setRenderMask(mask);
 		renderblocks.setRenderBounds(dim[2], dim[0], dim[1], dim[5], dim[3], dim[4]);
-		renderblocks.renderStandardBlock(block, x, y, z);
-		block.setRenderMask((mask & 0x15) << 1 | (mask & 0x2a) >> 1); // pairwise swapped mask
+		renderblocks.renderStandardBlock(stateHost, x, y, z);
+		stateHost.setRenderMask((mask & 0x15) << 1 | (mask & 0x2a) >> 1); // pairwise swapped mask
 		renderblocks.setRenderBounds(dim[5], dim[3], dim[4], dim[2], dim[0], dim[1]);
-		renderblocks.renderStandardBlock(block, x, y, z);
+		renderblocks.renderStandardBlock(stateHost, x, y, z);
 	}
 
 	private void pipeFacadeRenderer(RenderBlocks renderblocks, ITextureStates blockStateMachine, PipeRenderState state, int x, int y, int z) {
@@ -316,7 +310,7 @@ public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
 
 		if (tile instanceof TileGenericPipe) {
 			TileGenericPipe pipeTile = (TileGenericPipe) tile;
-			renderPipe(renderer, world, (BlockGenericPipe) block, pipeTile, x, y, z);
+			renderPipe(renderer, world, pipeTile, x, y, z);
 		}
 
 		return true;

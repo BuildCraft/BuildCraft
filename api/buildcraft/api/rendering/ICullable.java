@@ -22,8 +22,13 @@ public interface ICullable {
 	//Side Rendering States
 	//They are used to effectively cull obstructed sides while processing facades.
 	//Make sure your implementation is correct otherwise expect FPS drop
+	
 	void setRenderSide(ForgeDirection side, boolean render);
+	
 	void setRenderAllSides();
-	boolean shouldSideBeRendered(IBlockAccess blockAccess, int x, int y, int z, int side);	
+	
+	boolean shouldSideBeRendered(IBlockAccess blockAccess, int x, int y, int z, int side);
+	
+	void setRenderMask(int mask);	
 	
 }

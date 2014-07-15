@@ -33,6 +33,7 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
+
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.BCLog;
@@ -66,10 +67,9 @@ import buildcraft.transport.gates.GateFactory;
 import buildcraft.transport.gates.ItemGate;
 import buildcraft.transport.utils.RobotStationState;
 
-
 public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFluidHandler,
 		IPipeTile, IOverrideDefaultTriggers, ITileBufferHolder,
-		IDropControlInventory, ISyncedTile, ISolidSideTile, IGuiReturnHandler{
+		IDropControlInventory, ISyncedTile, ISolidSideTile, IGuiReturnHandler {
 
 	public boolean initialized = false;
 	public final PipeRenderState renderState = new PipeRenderState();
@@ -1113,5 +1113,4 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 			((IPowerReceptor) pipe).doWork(workProvider);
 		}
 	}
-
 }

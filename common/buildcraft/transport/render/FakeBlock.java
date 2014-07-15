@@ -12,22 +12,29 @@ import net.minecraftforge.common.util.ForgeDirection;
 
 
 /*
- * This is fake block to render pluggables without altering host state
- * May prove useful if we will make API for roboports, plugs and facades
+ * This is fake block to render pluggables and pipes without altering host state
+ * May prove useful if we will make API for roboports, pipes, plugs and facades
  */
 @SideOnly(Side.CLIENT)
-public class FakePluggablesStateBlock extends Block implements ITextureStates {
+public final class FakeBlock extends Block implements ITextureStates {
 	
 	private int renderMask = 0;	
 	
 	private TextureStateManager textureState;
 	
-	
-	protected FakePluggablesStateBlock() {
-		super(Material.glass);
-		textureState = new TextureStateManager(null); //Always Clientside
+	private static class FakeBlockHolder{
+		public static final FakeBlock INSTANCE = new FakeBlock();
 	}
 	
+	private FakeBlock() {
+		super(Material.glass);
+		textureState = new TextureStateManager(null); //Always Clientside
+	}	
+	
+	public static FakeBlock getInstance() {
+		return FakeBlockHolder.INSTANCE;
+	}
+		
 	public TextureStateManager getTextureState() {
 		return textureState;
 	}
@@ -47,6 +54,12 @@ public class FakePluggablesStateBlock extends Block implements ITextureStates {
 	public void setRenderAllSides() {
 		renderMask = 0x3f;
 	}
+	
+	@Override
+	public void setRenderMask(int mask) {
+		renderMask = mask;
+	}	
+	
 	@Override
 	public Block getBlock() {
 		return this;
@@ -57,5 +70,4 @@ public class FakePluggablesStateBlock extends Block implements ITextureStates {
 	public boolean shouldSideBeRendered(IBlockAccess blockAccess, int x, int y, int z, int side) {
 		return (renderMask & (1 << side)) != 0;
 	}	
-
 }

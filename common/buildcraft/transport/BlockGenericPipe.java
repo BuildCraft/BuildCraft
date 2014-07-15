@@ -63,13 +63,11 @@ import buildcraft.core.utils.Utils;
 import buildcraft.transport.gates.GateDefinition;
 import buildcraft.transport.gates.GateFactory;
 import buildcraft.transport.gates.ItemGate;
-import buildcraft.transport.render.ITextureStates;
 import buildcraft.transport.render.PipeRendererWorld;
-import buildcraft.transport.render.TextureStateManager;
 import buildcraft.transport.utils.FacadeMatrix;
 
 
-public class BlockGenericPipe extends BlockBuildCraft implements ITextureStates{
+public class BlockGenericPipe extends BlockBuildCraft {
 
 	public static int facadeRenderColor = -1;
 	public static Map<Item, Class<? extends Pipe>> pipes = new HashMap<Item, Class<? extends Pipe>>();
@@ -86,9 +84,6 @@ public class BlockGenericPipe extends BlockBuildCraft implements ITextureStates{
 		Plug,
 		RobotStation
 	}
-
-	@SideOnly(Side.CLIENT)
-	private TextureStateManager textureState;	
 	
 	static class RaytraceResult {
 		public final Part hitPart;
@@ -115,7 +110,6 @@ public class BlockGenericPipe extends BlockBuildCraft implements ITextureStates{
 	/* Defined subprograms ************************************************* */
 	public BlockGenericPipe() {
 		super(Material.glass);
-		setRenderAllSides();
 		setCreativeTab(null);
 	}
 
@@ -124,6 +118,7 @@ public class BlockGenericPipe extends BlockBuildCraft implements ITextureStates{
 		return BuildCraftTransport.pipeDurability;
 	}
 
+	/* Rendering Delegation Attributes ************************************* */
 	@Override
 	public int getRenderType() {
 		return TransportProxy.pipeModel;
@@ -144,37 +139,15 @@ public class BlockGenericPipe extends BlockBuildCraft implements ITextureStates{
 	public boolean isOpaqueCube() {
 		return false;
 	}
+	
+	@Override
+	public boolean renderAsNormalBlock() {
+		return false;
+	}	
 
 	@Override
 	public boolean canBeReplacedByLeaves(IBlockAccess world, int x, int y, int z) {
 		return false;
-	}
-
-	@Override
-	public boolean renderAsNormalBlock() {
-		return false;
-	}
-
-	public void setRenderMask(int mask) {
-		renderMask = mask;
-	}
-
-	public final void setRenderAllSides() {
-		renderMask = 0x3f;
-	}
-
-	public void setRenderSide(ForgeDirection side, boolean render) {
-		if (render) {
-			renderMask |= 1 << side.ordinal();
-		} else {
-			renderMask &= ~(1 << side.ordinal());
-		}
-	}
-
-	@Override
-	@SideOnly(Side.CLIENT)
-	public boolean shouldSideBeRendered(IBlockAccess blockAccess, int x, int y, int z, int side) {
-		return (renderMask & (1 << side)) != 0;
 	}
 
 	@Override
@@ -1035,16 +1008,6 @@ public class BlockGenericPipe extends BlockBuildCraft implements ITextureStates{
 	private void dropWire(PipeWire pipeWire, Pipe<?> pipe) {
 		pipe.dropItem(pipeWire.getStack());
 	}
-
-	@SideOnly(Side.CLIENT)
-	public TextureStateManager getTextureState() {
-		return textureState;
-	}
-	@SideOnly(Side.CLIENT)
-	@Override	
-	public IIcon getIcon(int side, int meta) {
-		return textureState.isSided() ? textureState.getTextureArray()[side] : textureState.getTexture();
-	}
 	
 			
 	@Override
@@ -1189,8 +1152,6 @@ public class BlockGenericPipe extends BlockBuildCraft implements ITextureStates{
 			skippedFirstIconRegister = true;
 			return;
 		}
-		
-		textureState = new TextureStateManager(null);
 
 		BuildCraftTransport.instance.wireIconProvider.registerIcons(iconRegister);
 
@@ -1338,11 +1299,5 @@ public class BlockGenericPipe extends BlockBuildCraft implements ITextureStates{
 			}
 		}
 	}
-
-	@Override
-	public Block getBlock() {
-		return this;
-	}
-
 
 }

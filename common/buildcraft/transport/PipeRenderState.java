@@ -9,6 +9,7 @@
 package buildcraft.transport;
 
 import io.netty.buffer.ByteBuf;
+
 import buildcraft.core.network.IClientState;
 import buildcraft.transport.utils.ConnectionMatrix;
 import buildcraft.transport.utils.FacadeMatrix;
@@ -26,7 +27,6 @@ public class PipeRenderState implements IClientState {
 	public final RobotStationMatrix robotStationMatrix = new RobotStationMatrix();
 	public final FacadeMatrix facadeMatrix = new FacadeMatrix();
 	public final GateMatrix gateMatrix = new GateMatrix();
-
 
 	private boolean dirty = true;
 
