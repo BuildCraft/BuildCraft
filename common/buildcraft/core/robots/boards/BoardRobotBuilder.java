@@ -25,6 +25,7 @@ import buildcraft.core.robots.AIRobotGotoBlock;
 import buildcraft.core.robots.AIRobotGotoSleep;
 import buildcraft.core.robots.AIRobotGotoStationToLoad;
 import buildcraft.core.robots.AIRobotLoad;
+import buildcraft.core.robots.AIRobotRecharge;
 
 public class BoardRobotBuilder extends RedstoneBoardRobot {
 
@@ -99,11 +100,21 @@ public class BoardRobotBuilder extends RedstoneBoardRobot {
 		}
 
 		if (currentBuildingSlot != null && requirementsToLookFor != null && requirementsToLookFor.size() == 0) {
-			startDelegateAI(new AIRobotGotoBlock(robot,
+			if (currentBuildingSlot.stackConsumed == null) {
+				// Once all the element are in, if not already, use them to
+				// prepare the slot.
+				markerToBuild.bluePrintBuilder.useRequirements(robot, currentBuildingSlot);
+			}
+
+			if (robot.getEnergy() - currentBuildingSlot.getEnergyRequirement() < EntityRobotBase.SAFETY_ENERGY) {
+				startDelegateAI(new AIRobotRecharge(robot));
+			} else {
+				startDelegateAI(new AIRobotGotoBlock(robot,
 					(int) currentBuildingSlot.getDestination().x,
 					(int) currentBuildingSlot.getDestination().y,
 					(int) currentBuildingSlot.getDestination().z,
 					8));
+			}
 			// TODO: take into account cases where the robot can't reach the
 			// destination - go to work on another block
 		}
@@ -113,7 +124,6 @@ public class BoardRobotBuilder extends RedstoneBoardRobot {
 	public void delegateAIEnded(AIRobot ai) {
 		if (ai instanceof AIRobotGotoStationToLoad) {
 			if (((AIRobotGotoStationToLoad) ai).found) {
-				// TODO: How to load only the required amount of items there?
 				startDelegateAI(new AIRobotLoad(robot, new ArrayStackFilter(requirementsToLookFor.getFirst()),
 						requirementsToLookFor.getFirst().stackSize));
 			} else {
@@ -128,7 +138,12 @@ public class BoardRobotBuilder extends RedstoneBoardRobot {
 				return;
 			}
 
-			markerToBuild.bluePrintBuilder.useRequirements(robot, currentBuildingSlot);
+			if (robot.getEnergy() - currentBuildingSlot.getEnergyRequirement() < EntityRobotBase.SAFETY_ENERGY) {
+				startDelegateAI(new AIRobotRecharge(robot));
+				return;
+			}
+
+			robot.setEnergy(robot.getEnergy() - currentBuildingSlot.getEnergyRequirement());
 			launchingDelay = currentBuildingSlot.getStacksToDisplay().size() * BuildingItem.ITEMS_SPACE;
 			markerToBuild.bluePrintBuilder.buildSlot
 					(robot.worldObj, markerToBuild, currentBuildingSlot,
