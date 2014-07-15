@@ -13,6 +13,7 @@ import java.util.LinkedList;
 import java.util.TreeSet;
 import java.util.logging.Level;
 
+import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -82,6 +83,7 @@ public abstract class BptBuilderBase implements IAreaProvider {
 		}
 
 		if (slot != null) {
+			slot.built = true;
 			BuildingItem i = new BuildingItem();
 			i.origin = new Position(x, y, z);
 			i.destination = slot.getDestination();
@@ -198,6 +200,10 @@ public abstract class BptBuilderBase implements IAreaProvider {
 		for (int i = 0; i < hardness; ++i) {
 			slot.addStackConsumed(new ItemStack(BuildCraftBuilders.buildToolBlock));
 		}
+	}
+
+	public void useRequirements(IInventory inv, BuildingSlot slot) {
+
 	}
 
 	public void saveBuildStateToNBT(NBTTagCompound nbt, IBuildingItemsProvider builder) {

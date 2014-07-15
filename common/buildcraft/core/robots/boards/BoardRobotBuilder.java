@@ -128,10 +128,7 @@ public class BoardRobotBuilder extends RedstoneBoardRobot {
 				return;
 			}
 
-			// TODO: we want to update the
-			// builder state (remove slot from list, add to post processing,
-			// etc);
-
+			markerToBuild.bluePrintBuilder.useRequirements(robot, currentBuildingSlot);
 			launchingDelay = currentBuildingSlot.getStacksToDisplay().size() * BuildingItem.ITEMS_SPACE;
 			markerToBuild.bluePrintBuilder.buildSlot
 					(robot.worldObj, markerToBuild, currentBuildingSlot,

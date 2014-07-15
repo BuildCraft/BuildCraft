@@ -25,6 +25,8 @@ public abstract class BuildingSlot {
 
 	public boolean reserved = false;
 
+	public boolean built = false;
+
 	public void writeToWorld(IBuilderContext context) {
 
 	}

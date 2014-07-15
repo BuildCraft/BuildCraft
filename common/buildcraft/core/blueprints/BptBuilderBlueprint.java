@@ -18,6 +18,7 @@ import java.util.Map.Entry;
 import java.util.TreeSet;
 
 import net.minecraft.init.Blocks;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
@@ -320,8 +321,24 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 			BuildingSlotBlock slot = iterator.next();
 
 			if (slot.buildStage > buildList.getFirst().buildStage) {
-				iterator.reset ();
+				iterator.reset();
 				return null;
+			}
+
+			if (slot.built) {
+				iterator.remove();
+
+				if (slot.mode == Mode.ClearIfInvalid) {
+					clearedLocations.add(new BlockIndex(slot.x,
+							slot.y, slot.z));
+				} else {
+					builtLocations.add(new BlockIndex(slot.x,
+							slot.y, slot.z));
+				}
+
+				postProcessing.add(slot);
+
+				continue;
 			}
 
 			if (slot.reserved) {
@@ -370,6 +387,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 							// When the item reaches the actual block, we'll
 							// verify that the location is indeed clear, and
 							// avoid building otherwise.
+							builder.consumeEnergy(slot.getEnergyRequirement());
 							useRequirements(builder, slot);
 
 							iterator.remove();
@@ -417,6 +435,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 				it.remove();
 			} else {
 				if (checkRequirements(builder, slot.schematic)) {
+					builder.consumeEnergy(slot.getEnergyRequirement());
 					useRequirements(builder, slot);
 
 					it.remove();
@@ -503,7 +522,12 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 		return !(builder.energyAvailable() < slot.getEnergyRequirement(stacksUsed));
 	}
 
-	public void useRequirements(TileAbstractBuilder builder, BuildingSlot slot) {
+	@Override
+	public void useRequirements(IInventory inv, BuildingSlot slot) {
+		if (slot instanceof BuildingSlotBlock && ((BuildingSlotBlock) slot).mode == Mode.ClearIfInvalid) {
+			return;
+		}
+
 		LinkedList<ItemStack> tmpReq = new LinkedList<ItemStack>();
 
 		try {
@@ -524,8 +548,6 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 				slot.addStackConsumed(s);
 			}
 
-			builder.consumeEnergy(slot.getEnergyRequirement());
-
 			return;
 		}
 
@@ -539,12 +561,16 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 			boolean itemBlock = reqStk.getItem() instanceof ItemBlock;
 			Fluid fluid = itemBlock ? FluidRegistry.lookupFluidForBlock(((ItemBlock) reqStk.getItem()).field_150939_a) : null;
 
-			if (fluid != null && builder instanceof TileBuilder && ((TileBuilder) builder).drainBuild(new FluidStack(fluid, FluidContainerRegistry.BUCKET_VOLUME), true)) {
+			if (fluid != null
+					&& inv instanceof TileBuilder
+					&& ((TileBuilder) inv)
+							.drainBuild(new FluidStack(fluid, FluidContainerRegistry.BUCKET_VOLUME), true)) {
 				continue;
 			}
 
-			for (IInvSlot slotInv : InventoryIterator.getIterable(builder, ForgeDirection.UNKNOWN)) {
-				if (!builder.isBuildingMaterialSlot(slotInv.getIndex())) {
+			for (IInvSlot slotInv : InventoryIterator.getIterable(inv, ForgeDirection.UNKNOWN)) {
+				if (inv instanceof TileAbstractBuilder &&
+						!((TileAbstractBuilder) inv).isBuildingMaterialSlot(slotInv.getIndex())) {
 					continue;
 				}
 
@@ -581,8 +607,6 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 				itr.set(usedStack); // set to the actual item used.
 			}
 		}
-
-		builder.consumeEnergy(slot.getEnergyRequirement());
 	}
 
 	public void recomputeNeededItems() {
