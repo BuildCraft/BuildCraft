@@ -14,6 +14,7 @@ import java.util.TreeMap;
 import java.util.logging.Level;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
@@ -196,7 +197,7 @@ public class BuildCraftEnergy extends BuildCraftMod {
 		fluidRedPlasma = FluidRegistry.getFluid("redplasma");
 
 		if (fluidOil.getBlock() == null) {
-			blockOil = new BlockBuildcraftFluid(fluidOil, Material.water).setFlammable(canOilBurn).setFlammability(0);
+			blockOil = new BlockBuildcraftFluid(fluidOil, Material.water, MapColor.blackColor).setFlammable(canOilBurn).setFlammability(0);
 			blockOil.setBlockName("blockOil").setLightOpacity(8);
 			CoreProxy.proxy.registerBlock(blockOil);
 			fluidOil.setBlock(blockOil);
@@ -211,7 +212,7 @@ public class BuildCraftEnergy extends BuildCraftMod {
 		}
 
 		if (fluidFuel.getBlock() == null) {
-			blockFuel = new BlockBuildcraftFluid(fluidFuel, Material.water).setFlammable(true).setFlammability(5).setParticleColor(0.7F, 0.7F, 0.0F);
+			blockFuel = new BlockBuildcraftFluid(fluidFuel, Material.water, MapColor.yellowColor).setFlammable(true).setFlammability(5).setParticleColor(0.7F, 0.7F, 0.0F);
 			blockFuel.setBlockName("blockFuel").setLightOpacity(3);
 			CoreProxy.proxy.registerBlock(blockFuel);
 			fluidFuel.setBlock(blockFuel);
@@ -220,7 +221,8 @@ public class BuildCraftEnergy extends BuildCraftMod {
 		}
 
 		if (fluidRedPlasma.getBlock() == null) {
-			blockRedPlasma = new BlockBuildcraftFluid(fluidRedPlasma, Material.water).setFlammable(false).setParticleColor(0.9F, 0, 0);
+			blockRedPlasma = new BlockBuildcraftFluid(fluidRedPlasma, Material.water, MapColor.redColor).setFlammable(
+					false).setParticleColor(0.9F, 0, 0);
 			blockRedPlasma.setBlockName("blockRedPlasma");
 			CoreProxy.proxy.registerBlock(blockRedPlasma);
 			fluidRedPlasma.setBlock(blockRedPlasma);

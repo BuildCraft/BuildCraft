@@ -11,6 +11,7 @@ package buildcraft.energy;
 import java.util.Random;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.particle.EntityFX;
 import net.minecraft.client.renderer.texture.IIconRegister;
@@ -37,9 +38,12 @@ public class BlockBuildcraftFluid extends BlockFluidClassic {
 	protected IIcon[] theIcon;
 	protected boolean flammable;
 	protected int flammability = 0;
+	private MapColor mapColor;
 
-	public BlockBuildcraftFluid(Fluid fluid, Material material) {
+	public BlockBuildcraftFluid(Fluid fluid, Material material, MapColor iMapColor) {
 		super(fluid, material);
+
+		mapColor = iMapColor;
 	}
 
 	@Override
@@ -132,5 +136,10 @@ public class BlockBuildcraftFluid extends BlockFluidClassic {
 			return false;
 		}
 		return super.displaceIfPossible(world, x, y, z);
+	}
+
+	@Override
+	public MapColor getMapColor(int p_149728_1_) {
+		return mapColor;
 	}
 }

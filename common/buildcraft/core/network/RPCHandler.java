@@ -346,6 +346,13 @@ public final class RPCHandler {
 				byte[] array = (byte[]) actual;
 				data.writeInt(array.length);
 				data.writeBytes(array);
+			} else if (formal.getComponentType() == int.class) {
+				int[] array = (int[]) actual;
+				data.writeInt(array.length);
+
+				for (int element : array) {
+					data.writeInt(element);
+				}
 			} else {
 				Object[] array = (Object[]) actual;
 				Class<?> componentType = formal.getComponentType();
@@ -417,6 +424,14 @@ public final class RPCHandler {
 			if (formal.getComponentType() == byte.class) {
 				byte[] array = new byte[size];
 				data.readBytes(array);
+				actuals[i] = array;
+			} else if (formal.getComponentType() == int.class) {
+				int[] array = new int[size];
+
+				for (int ind = 0; ind < size; ++ind) {
+					array[ind] = data.readInt();
+				}
+
 				actuals[i] = array;
 			} else {
 				Class<?> componentType = formal.getComponentType();
