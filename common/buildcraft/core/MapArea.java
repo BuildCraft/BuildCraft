@@ -8,12 +8,18 @@
  */
 package buildcraft.core;
 
-import net.minecraft.util.LongHashMap;
+import java.util.HashMap;
+
 import net.minecraft.world.ChunkCoordIntPair;
+
+import buildcraft.api.core.NetworkData;
 
 public class MapArea {
 
-	private LongHashMap chunkMapping = new LongHashMap();
+	// TODO: This can exceed 32k of data. Generalize the slicing code used
+	// in tiles.
+	@NetworkData
+	private HashMap chunkMapping = new HashMap<Long, MapChunk>();
 
 	public boolean get(int x, int z) {
 		int xChunk = x >> 4;
@@ -21,14 +27,12 @@ public class MapArea {
 		long chunkId = ChunkCoordIntPair.chunkXZ2Int(xChunk, zChunk);
 		MapChunk property;
 
-		if (!chunkMapping.containsItem(chunkId)) {
-			property = new MapChunk(xChunk, zChunk);
-			chunkMapping.add(chunkId, property);
+		if (!chunkMapping.containsKey(chunkId)) {
+			return false;
 		} else {
-			property = (MapChunk) chunkMapping.getValueByKey(chunkId);
+			property = (MapChunk) chunkMapping.get(chunkId);
+			return property.get(x & 0xF, z & 0xF);
 		}
-
-		return property.get(x & 0xF, z & 0xF);
 	}
 
 	public void set(int x, int z, boolean val) {
@@ -37,11 +41,11 @@ public class MapArea {
 		long chunkId = ChunkCoordIntPair.chunkXZ2Int(xChunk, zChunk);
 		MapChunk property;
 
-		if (!chunkMapping.containsItem(chunkId)) {
-			property = new MapChunk(xChunk, zChunk);
-			chunkMapping.add(chunkId, property);
+		if (!chunkMapping.containsKey(chunkId)) {
+			property = new MapChunk();
+			chunkMapping.put(chunkId, property);
 		} else {
-			property = (MapChunk) chunkMapping.getValueByKey(chunkId);
+			property = (MapChunk) chunkMapping.get(chunkId);
 		}
 
 		property.set(x & 0xF, z & 0xF, val);

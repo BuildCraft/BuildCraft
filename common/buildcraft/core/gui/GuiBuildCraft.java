@@ -536,4 +536,8 @@ public abstract class GuiBuildCraft extends GuiContainer {
 			drawTexturedModelRectFromIcon(x, y, icon, 16, 16);
 		}
 	}
+
+	protected BuildCraftContainer getContainer() {
+		return container;
+	}
 }

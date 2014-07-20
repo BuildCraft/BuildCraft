@@ -62,6 +62,7 @@ import buildcraft.api.boards.RedstoneBoardRobot;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.BuildCraftAPI;
+import buildcraft.api.core.EnumColor;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.core.JavaTools;
 import buildcraft.api.gates.IAction;
@@ -393,6 +394,7 @@ public class BuildCraftCore extends BuildCraftMod {
 			iconProvider = new CoreIconProvider();
 			iconProvider.registerIcons(event.map);
 			StatementIconProvider.INSTANCE.registerIcons(event.map);
+			EnumColor.registerIcons(event.map);
 		} else if (event.map.getTextureType() == 0) {
 			BuildCraftCore.redLaserTexture = event.map.registerIcon("buildcraft:blockRedLaser");
 			BuildCraftCore.blueLaserTexture = event.map.registerIcon("buildcraft:blockBlueLaser");

@@ -12,6 +12,7 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.BitSet;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -637,6 +638,8 @@ public class ClassMapping extends ClassSerializer {
 		registerSerializer(ItemStack.class, new SerializerItemStack());
 		registerSerializer(FluidStack.class, new SerializerFluidStack());
 		registerSerializer(Integer.class, new SerializerInteger());
+		registerSerializer(Long.class, new SerializerLong());
+		registerSerializer(BitSet.class, new SerializerBitSet());
 		registerSerializer(INBTSerializable.class, new SerializerINBTSerializable());
 	}
 }

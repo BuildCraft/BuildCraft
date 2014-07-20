@@ -54,6 +54,12 @@ public class BCDynamicTexture {
 		colorMap[x + y * height] = 255 << 24 | color;
 	}
 
+	public void setColor(int x, int y, int color, float alpha) {
+		int a = (int) (alpha * 255.0F);
+
+		colorMap[x + y * height] = a << 24 | color;
+	}
+
 	@SideOnly(Side.CLIENT)
 	public void drawMap(int screenX, int screenY, float zLevel) {
 		drawMap(screenX, screenY, zLevel, 0, 0, width, height);

@@ -10,23 +10,49 @@ package buildcraft.core;
 
 import java.util.BitSet;
 
+import buildcraft.api.core.NetworkData;
+
 public class MapChunk {
 
+	@NetworkData
 	private BitSet property;
-	private int xPosition, zPosition;
 
-	public MapChunk(int iXPosition, int iZPosition) {
-		property = new BitSet(16 * 16);
-		xPosition = iXPosition;
-		zPosition = iZPosition;
+	@NetworkData
+	private boolean fullSet = false;
+
+	public MapChunk() {
 	}
 
 	public boolean get(int xChunk, int zChunk) {
-		return property.get(xChunk * 16 + zChunk);
+		if (fullSet) {
+			return true;
+		} else if (property == null) {
+			return false;
+		} else {
+			return property.get(xChunk * 16 + zChunk);
+		}
 	}
 
 	public void set(int xChunk, int zChunk, boolean value) {
-		property.set(xChunk * 16 + zChunk, value);
+		if (property == null && !fullSet) {
+			property = new BitSet(16 * 16);
+		}
+
+		if (property == null && !value) {
+			property = new BitSet(16 * 16);
+			property.flip(0, 16 * 16 - 1);
+		}
+
+		if (property != null) {
+			property.set(xChunk * 16 + zChunk, value);
+		}
+
+		if (value && !fullSet) {
+			if (property.nextClearBit(0) >= 16 * 16) {
+				property = null;
+				fullSet = true;
+			}
+		}
 	}
 
 }

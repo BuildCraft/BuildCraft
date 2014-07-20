@@ -130,7 +130,7 @@ public class GuiHandler implements IGuiHandler {
 			if (!(tile instanceof TileMap)) {
 				return null;
 			} else {
-				return new ContainerMap(0);
+				return new ContainerMap((TileMap) tile);
 			}
 
 		default:

@@ -8,10 +8,12 @@
  */
 package buildcraft.commander;
 
+import net.minecraft.block.material.MapColor;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.chunk.Chunk;
 
 import buildcraft.core.BCDynamicTexture;
+import buildcraft.core.MapArea;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.network.RPC;
 import buildcraft.core.network.RPCHandler;
@@ -20,17 +22,18 @@ import buildcraft.core.network.RPCSide;
 
 public class TileMap extends TileBuildCraft {
 
-	private static int RESOLUTION = 1024;
+	public static final int RESOLUTION = 2048;
 	private static int RESOLUTION_CHUNKS = RESOLUTION >> 4;
 
 	public BCDynamicTexture bcTexture;
 
-	private int[][] colors = new int[RESOLUTION][RESOLUTION];
+	private byte[] colors = new byte[RESOLUTION * RESOLUTION];
 
 	private boolean scan = false;
 	private int chunkStartX, chunkStartZ;
-	// private int curChunkX, curChunkZ;
 	private int chunkIt = 0;
+
+	private MapArea[] selectedAreas = new MapArea[16];
 
 	@Override
 	public void initialize() {
@@ -41,14 +44,6 @@ public class TileMap extends TileBuildCraft {
 		if (!scan) {
 			chunkIt = 0;
 			scan = true;
-		} else {
-			if (chunkIt > RESOLUTION_CHUNKS * RESOLUTION_CHUNKS) {
-
-				// In this case, there's been a load problem (resolution
-				// change?). just reset the scan.
-
-				chunkIt = 0;
-			}
 		}
 	}
 
@@ -111,6 +106,7 @@ public class TileMap extends TileBuildCraft {
 
 			if (chunkIt > RESOLUTION_CHUNKS * RESOLUTION_CHUNKS) {
 				scan = false;
+				chunkIt = 0;
 			} else {
 				chunkIt++;
 			}
@@ -138,7 +134,7 @@ public class TileMap extends TileBuildCraft {
 						int iz = z - (chunkStartX << 4);
 
 						if (ix > 0 && ix < RESOLUTION && iz > 0 && iz < RESOLUTION) {
-							int color = colors[ix][iz];
+							int color = MapColor.mapColorArray[colors[ix + iz * RESOLUTION]].colorValue;
 
 							r += (color >> 16) & 255;
 							g += (color >> 8) & 255;
@@ -200,7 +196,7 @@ public class TileMap extends TileBuildCraft {
 
 				for (int y = getWorld().getHeight() - 1; y >= 0; --y) {
 					if (!chunk.getBlock(cx, y, cz).isAir(worldObj, x, y, z)) {
-						color = chunk.getBlock(cx, y, cz).getMapColor(0).colorValue;
+						color = chunk.getBlock(cx, y, cz).getMapColor(0).colorIndex;
 						break;
 					}
 				}
@@ -208,7 +204,7 @@ public class TileMap extends TileBuildCraft {
 				int ix = x - chunkStartX * 16;
 				int iz = z - chunkStartZ * 16;
 
-				colors[ix][iz] = 255 << 24 | color;
+				colors[ix + iz * RESOLUTION] = (byte) color;
 			}
 		}
 	}
@@ -219,10 +215,7 @@ public class TileMap extends TileBuildCraft {
 
 		nbt.setBoolean("scan", scan);
 		nbt.setInteger("chunkIt", chunkIt);
-
-		for (int i = 0; i < RESOLUTION; ++i) {
-			nbt.setIntArray("colors[" + i + "]", colors[i]);
-		}
+		nbt.setByteArray("colors", colors);
 	}
 
 	@Override
@@ -231,15 +224,24 @@ public class TileMap extends TileBuildCraft {
 
 		scan = nbt.getBoolean("scan");
 		chunkIt = nbt.getInteger("chunkIt");
+		colors = nbt.getByteArray("colors");
 
-		for (int i = 0; i < RESOLUTION; ++i) {
-			int[] loadedArray =
-					nbt.getIntArray("colors[" + i + "]");
-
-			if (loadedArray.length == RESOLUTION) {
-				colors[i] = loadedArray;
-			}
+		if (colors.length != RESOLUTION * RESOLUTION || chunkIt >= colors.length) {
+			colors = new byte[RESOLUTION * RESOLUTION];
+			scan = true;
+			chunkIt = 0;
 		}
 	}
 
+	public Object getArea(int index) {
+		if (selectedAreas[index] == null) {
+			selectedAreas[index] = new MapArea();
+		}
+
+		return selectedAreas[index];
+	}
+
+	public void setArea(int index, MapArea area) {
+		selectedAreas[index] = area;
+	}
 }

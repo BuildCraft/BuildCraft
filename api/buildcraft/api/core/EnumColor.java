@@ -11,7 +11,12 @@ package buildcraft.api.core;
 import java.util.Locale;
 import java.util.Random;
 
+import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.util.IIcon;
 import net.minecraft.util.StatCollector;
+
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public enum EnumColor {
 
@@ -101,6 +106,9 @@ public enum EnumColor {
 		0xEA7835,
 		0xe4e4e4};
 
+	@SideOnly(Side.CLIENT)
+	private static IIcon brushIcons[] = new IIcon[16];
+
 	public int getDarkHex() {
 		return DARK_HEX[ordinal()];
 	}
@@ -181,5 +189,18 @@ public enum EnumColor {
 			b.append(word.charAt(0)).append(word.substring(1).toLowerCase(Locale.ENGLISH)).append(" ");
 		}
 		return b.toString().trim();
+	}
+
+	@SideOnly(Side.CLIENT)
+	public static void registerIcons(IIconRegister iconRegister) {
+		for (EnumColor c : values()) {
+			brushIcons[c.ordinal()] = iconRegister.registerIcon("buildcraft:triggers/color_"
+					+ c.name().toLowerCase(Locale.ENGLISH));
+		}
+	}
+
+	@SideOnly(Side.CLIENT)
+	public IIcon getIcon() {
+		return brushIcons [ordinal()];
 	}
 }
