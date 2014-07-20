@@ -8,7 +8,8 @@
  */
 package buildcraft.commander;
 
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.world.chunk.Chunk;
 
 import buildcraft.core.BCDynamicTexture;
 import buildcraft.core.TileBuildCraft;
@@ -19,53 +20,129 @@ import buildcraft.core.network.RPCSide;
 
 public class TileMap extends TileBuildCraft {
 
+	private static int RESOLUTION = 1024;
+	private static int RESOLUTION_CHUNKS = RESOLUTION >> 4;
+
 	public BCDynamicTexture bcTexture;
 
-	private boolean currentComputation = false;
-	private int curI, curJ;
-	private int itPerCycles;
-	private int blocksPerPixel;
-	private EntityPlayer playerRequesting;
-	private int lastIndexUpdate = 0;
+	private int[][] colors = new int[RESOLUTION][RESOLUTION];
+
+	private boolean scan = false;
+	private int chunkStartX, chunkStartZ;
+	// private int curChunkX, curChunkZ;
+	private int chunkIt = 0;
+
+	@Override
+	public void initialize() {
+		super.initialize();
+		chunkStartX = (xCoord >> 4) - RESOLUTION_CHUNKS / 2;
+		chunkStartZ = (zCoord >> 4) - RESOLUTION_CHUNKS / 2;
+
+		if (!scan) {
+			chunkIt = 0;
+			scan = true;
+		} else {
+			if (chunkIt > RESOLUTION_CHUNKS * RESOLUTION_CHUNKS) {
+
+				// In this case, there's been a load problem (resolution
+				// change?). just reset the scan.
+
+				chunkIt = 0;
+			}
+		}
+	}
+
+	private int[] getCoords() {
+		int chunkCenterX = (xCoord >> 4);
+		int chunkCenterZ = (zCoord >> 4);
+
+		if (chunkIt == 0) {
+			return new int[] {chunkCenterX, chunkCenterZ};
+		}
+
+		int radius = 1;
+		int left = chunkIt;
+
+		while (radius < RESOLUTION_CHUNKS / 2) {
+			int lineLength = radius * 2;
+			int perimeter = lineLength * 4;
+
+			if (left <= perimeter) {
+				int chunkX = 0, chunkZ = 0;
+				int remained = (left - 1) % lineLength;
+
+				if ((left - 1) / lineLength == 0) {
+					chunkX = chunkCenterX + radius;
+					chunkZ = chunkCenterZ - lineLength / 2 + remained;
+				} else if ((left - 1) / lineLength == 1) {
+					chunkX = chunkCenterX - radius;
+					chunkZ = chunkCenterZ - lineLength / 2 + remained + 1;
+				} else if ((left - 1) / lineLength == 2) {
+					chunkX = chunkCenterX - lineLength / 2 + remained + 1;
+					chunkZ = chunkCenterZ + radius;
+				} else {
+					chunkX = chunkCenterX - lineLength / 2 + remained;
+					chunkZ = chunkCenterZ - radius;
+				}
+
+				return new int[] {chunkX, chunkZ};
+			} else {
+				left -= perimeter;
+			}
+
+			radius += 1;
+		}
+
+		return new int[] {chunkCenterX, chunkCenterZ};
+	}
 
 	@Override
 	public void updateEntity() {
-		if (currentComputation) {
-			for (int k = 0; k < itPerCycles; ++k) {
-				curI++;
+		super.updateEntity();
 
-				if (curI >= bcTexture.width) {
-					curI = 0;
-					curJ++;
-				}
+		if (worldObj.isRemote) {
+			return;
+		}
 
-				if (curJ >= bcTexture.height) {
-					curJ = 0;
-					currentComputation = false;
+		if (scan) {
+			int[] coords = getCoords();
+			Chunk chunk = worldObj.getChunkFromChunkCoords(coords[0], coords[1]);
+			loadChunk(chunk);
 
-					sendPixels(lastIndexUpdate, bcTexture.colorMap.length - lastIndexUpdate);
-					return;
-				}
+			if (chunkIt > RESOLUTION_CHUNKS * RESOLUTION_CHUNKS) {
+				scan = false;
+			} else {
+				chunkIt++;
+			}
+		}
+	}
 
+	@RPC(RPCSide.SERVER)
+	private void computeMap(int cx, int cz, int width, int height, int blocksPerPixel, RPCMessageInfo info) {
+		bcTexture = new BCDynamicTexture(width, height);
+
+		int startX = cx - width * blocksPerPixel / 2;
+		int startZ = cz - height * blocksPerPixel / 2;
+
+		for (int i = 0; i < width; ++i) {
+			for (int j = 0; j < height; ++j) {
 				double r = 0;
 				double g = 0;
 				double b = 0;
 
 				for (int stepi = 0; stepi < blocksPerPixel; ++stepi) {
 					for (int stepj = 0; stepj < blocksPerPixel; ++stepj) {
-						int x = xCoord - bcTexture.width * blocksPerPixel / 2 + curI * blocksPerPixel + stepi;
-						int z = zCoord - bcTexture.height * blocksPerPixel / 2 + curJ * blocksPerPixel + stepj;
+						int x = startX + i * blocksPerPixel + stepi;
+						int z = startZ + j * blocksPerPixel + stepj;
+						int ix = x - (chunkStartX << 4);
+						int iz = z - (chunkStartX << 4);
 
-						for (int y = getWorld().getHeight() - 1; y >= 0; --y) {
-							if (!getWorld().isAirBlock(x, y, z)) {
-								int color = worldObj.getBlock(x, y, z).getMapColor(0).colorValue;
+						if (ix > 0 && ix < RESOLUTION && iz > 0 && iz < RESOLUTION) {
+							int color = colors[ix][iz];
 
-								r += (color >> 16) & 255;
-								g += (color >> 8) & 255;
-								b += color & 255;
-
-								break;
-							}
+							r += (color >> 16) & 255;
+							g += (color >> 8) & 255;
+							b += color & 255;
 						}
 					}
 				}
@@ -78,46 +155,17 @@ public class TileMap extends TileBuildCraft {
 				g /= 255F;
 				b /= 255F;
 
-				bcTexture.setColor(curI, curJ, r, g, b, 1);
-			}
-
-			if (currentComputation && worldObj.getTotalWorldTime() % 5 == 0) {
-				int curIndexUpdate = curI + curJ * bcTexture.width;
-				sendPixels(lastIndexUpdate, curIndexUpdate - lastIndexUpdate);
-				lastIndexUpdate = curIndexUpdate;
+				bcTexture.setColor(i, j, r, g, b, 1);
 			}
 		}
-	}
 
-
-	@RPC(RPCSide.SERVER)
-	private void computeMap(int width, int height, int iBlocksPerPixel, RPCMessageInfo info) {
-		currentComputation = true;
-		curI = 0;
-		curJ = 0;
-		bcTexture = new BCDynamicTexture(width, height);
-		blocksPerPixel = iBlocksPerPixel;
-		itPerCycles = 1000 / blocksPerPixel;
-		playerRequesting = info.sender;
-		lastIndexUpdate = 0;
-	}
-
-	private void sendPixels(int from, int number) {
-		int[] pixels = new int[number];
-
-		for (int i = 0; i < pixels.length; ++i) {
-			pixels[i] = bcTexture.colorMap[i + from];
-		}
-
-		RPCHandler.rpcPlayer(playerRequesting, this, "receivePixels", pixels, from);
+		RPCHandler.rpcPlayer(info.sender, this, "receiveImage", bcTexture.colorMap);
 	}
 
 	@RPC(RPCSide.CLIENT)
-	private void receivePixels(int[] pixels, int from) {
-		// TODO: add safety in these functions in case of one player calling
-		// several times in a row
-		for (int i = 0; i < pixels.length; ++i) {
-			bcTexture.colorMap[i + from] = pixels[i];
+	private void receiveImage(int[] colors) {
+		for (int i = 0; i < colors.length; ++i) {
+			bcTexture.colorMap[i] = colors[i];
 		}
 	}
 
@@ -139,6 +187,59 @@ public class TileMap extends TileBuildCraft {
 
 	private void setColor(int[] map, int width, int height, int x, int y, int color) {
 		map[x + y * width] = 255 << 24 | color;
+	}
+
+
+	private void loadChunk(Chunk chunk) {
+		for (int cx = 0; cx < 16; ++cx) {
+			for (int cz = 0; cz < 16; ++cz) {
+				int x = (chunk.xPosition << 4) + cx;
+				int z = (chunk.zPosition << 4) + cz;
+
+				int color = 0;
+
+				for (int y = getWorld().getHeight() - 1; y >= 0; --y) {
+					if (!chunk.getBlock(cx, y, cz).isAir(worldObj, x, y, z)) {
+						color = chunk.getBlock(cx, y, cz).getMapColor(0).colorValue;
+						break;
+					}
+				}
+
+				int ix = x - chunkStartX * 16;
+				int iz = z - chunkStartZ * 16;
+
+				colors[ix][iz] = 255 << 24 | color;
+			}
+		}
+	}
+
+	@Override
+	public void writeToNBT(NBTTagCompound nbt) {
+		super.writeToNBT(nbt);
+
+		nbt.setBoolean("scan", scan);
+		nbt.setInteger("chunkIt", chunkIt);
+
+		for (int i = 0; i < RESOLUTION; ++i) {
+			nbt.setIntArray("colors[" + i + "]", colors[i]);
+		}
+	}
+
+	@Override
+	public void readFromNBT(NBTTagCompound nbt) {
+		super.readFromNBT(nbt);
+
+		scan = nbt.getBoolean("scan");
+		chunkIt = nbt.getInteger("chunkIt");
+
+		for (int i = 0; i < RESOLUTION; ++i) {
+			int[] loadedArray =
+					nbt.getIntArray("colors[" + i + "]");
+
+			if (loadedArray.length == RESOLUTION) {
+				colors[i] = loadedArray;
+			}
+		}
 	}
 
 }

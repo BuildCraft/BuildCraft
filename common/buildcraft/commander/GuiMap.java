@@ -22,7 +22,7 @@ import buildcraft.core.network.RPCHandler;
 
 public class GuiMap extends GuiAdvancedInterface {
 
-	private static final int MAP_WIDTH = 400;
+	private static final int MAP_WIDTH = 300;
 	private static final int MAP_HEIGHT = 200;
 
 	private TileMap map;
@@ -43,6 +43,10 @@ public class GuiMap extends GuiAdvancedInterface {
 	private int mapXMin = 0;
 	private int mapYMin = 0;
 
+	private int zoomLevel = 1;
+	private int cx;
+	private int cz;
+
 	public GuiMap(IInventory inventory, TileMap iMap) {
 		super(new ContainerMap(0), inventory, TMP_TEXTURE);
 
@@ -57,7 +61,15 @@ public class GuiMap extends GuiAdvancedInterface {
 
 		areaSelection = new MapArea();
 
-		RPCHandler.rpcServer(map, "computeMap", map.bcTexture.width, map.bcTexture.height, 2);
+		cx = map.xCoord;
+		cz = map.zCoord;
+
+		uploadMap();
+	}
+
+	private void uploadMap() {
+		RPCHandler.rpcServer(map, "computeMap", cx, cz, map.bcTexture.width, map.bcTexture.height,
+				zoomLevel);
 	}
 
 	@Override
@@ -87,17 +99,30 @@ public class GuiMap extends GuiAdvancedInterface {
 	protected void mouseClicked(int mouseX, int mouseY, int mouseButton) {
 		super.mouseClicked(mouseX, mouseY, mouseButton);
 
-		if (inSelection) {
-			inSelection = false;
-		} else if (mouseX >= mapXMin && mouseX <= mapXMin + map.bcTexture.width
-				&& mouseY >= mapYMin && mouseY <= mapYMin + map.bcTexture.height) {
+		int blocksX = (mouseX - mapXMin) * zoomLevel;
+		int blocksZ = (mouseY - mapYMin) * zoomLevel;
 
-			inSelection = true;
-			selX1 = mouseX;
-			selY1 = mouseY;
-			selX2 = 0;
-			selY2 = 0;
+		int blockStartX = cx - MAP_WIDTH * zoomLevel / 2;
+		int blockStartZ = cz - MAP_HEIGHT * zoomLevel / 2;
+
+		boolean clickOnMap = mouseX >= mapXMin
+				&& mouseX <= mapXMin + map.bcTexture.width && mouseY >= mapYMin &&
+				mouseY <= mapYMin + map.bcTexture.height;
+
+		if (clickOnMap) {
+			cx = blockStartX + blocksX;
+			cz = blockStartZ + blocksZ;
+			uploadMap();
 		}
+
+		/*
+		 * if (inSelection) { inSelection = false; } else if (mouseX >= mapXMin
+		 * && mouseX <= mapXMin + map.bcTexture.width && mouseY >= mapYMin &&
+		 * mouseY <= mapYMin + map.bcTexture.height) {
+		 *
+		 * inSelection = true; selX1 = mouseX; selY1 = mouseY; selX2 = 0; selY2
+		 * = 0; }
+		 */
 	}
 
 	@Override
@@ -113,6 +138,19 @@ public class GuiMap extends GuiAdvancedInterface {
 
 			selX2 = x;
 			selY2 = y;
+		}
+	}
+
+	@Override
+	protected void keyTyped(char carac, int val) {
+		super.keyTyped(carac, val);
+
+		if (carac == 'z' && zoomLevel > 1) {
+			zoomLevel--;
+			uploadMap();
+		} else if (carac == 'Z' && zoomLevel < 6) {
+			zoomLevel++;
+			uploadMap();
 		}
 	}
 }
