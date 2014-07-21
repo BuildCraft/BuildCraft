@@ -57,6 +57,7 @@ public class ZoneChunk {
 			if (fullSet) {
 				property = new BitSet(16 * 16);
 				property.flip(0, 16 * 16 - 1);
+				fullSet = false;
 			} else if (property == null) {
 				// Note - ZonePlan should usually destroy such chunks
 				property = new BitSet(16 * 16);

@@ -10,6 +10,7 @@ package buildcraft.commander;
 
 import org.lwjgl.opengl.GL11;
 
+import net.minecraft.client.gui.GuiButton;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
@@ -52,6 +53,8 @@ public class GuiZonePlan extends GuiAdvancedInterface {
 
 	private float alpha = 0.8F;
 
+	private GuiButton tool;
+
 	private static class AreaSlot extends AdvancedSlot {
 
 		public EnumColor color;
@@ -76,6 +79,8 @@ public class GuiZonePlan extends GuiAdvancedInterface {
 	public GuiZonePlan(IInventory inventory, TileZonePlan iZonePlan) {
 		super(new ContainerZonePlan(inventory, iZonePlan), inventory, TMP_TEXTURE);
 
+		getContainer().gui = this;
+
 		xSize = 256;
 		ySize = 220;
 
@@ -89,7 +94,6 @@ public class GuiZonePlan extends GuiAdvancedInterface {
 
 		newSelection = new BCDynamicTexture(1, 1);
 		newSelection.createDynamicTexture();
-
 
 		getContainer().currentAreaSelection = new ZonePlan();
 
@@ -109,7 +113,18 @@ public class GuiZonePlan extends GuiAdvancedInterface {
 		newSelection.setColor(0, 0, colorSelected.color.getDarkHex(), alpha);
 
 		uploadMap();
-		getContainer().gui = this;
+		getContainer().loadArea(colorSelected.color.ordinal());
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public void initGui() {
+		super.initGui();
+		int x = (width - xSize) / 2;
+		int y = (height - ySize) / 2;
+
+		tool = new GuiButton(0, x + 5, y + 20, 20, 20, "+");
+		buttonList.add(tool);
 	}
 
 	private void uploadMap() {
@@ -236,6 +251,7 @@ public class GuiZonePlan extends GuiAdvancedInterface {
 		super.mouseMovedOrUp(mouseX, mouseY, eventType);
 
 		if (eventType != -1 && inSelection) {
+			boolean val = tool.displayString.equals("+");
 			int blockStartX = cx - mapWidth * zoomLevel / 2;
 			int blockStartZ = cz - mapHeight * zoomLevel / 2;
 
@@ -252,7 +268,7 @@ public class GuiZonePlan extends GuiAdvancedInterface {
 					int x = blockStartX + (x1 - mapXMin) * zoomLevel + i;
 					int z = blockStartZ + (y1 - mapYMin) * zoomLevel + j;
 
-					getContainer().currentAreaSelection.set(x, z, true);
+					getContainer().currentAreaSelection.set(x, z, val);
 				}
 			}
 
@@ -350,5 +366,16 @@ public class GuiZonePlan extends GuiAdvancedInterface {
 	@Override
 	protected ContainerZonePlan getContainer() {
 		return (ContainerZonePlan) super.getContainer();
+	}
+
+	@Override
+	protected void actionPerformed(GuiButton button) {
+		if (button == tool) {
+			if (tool.displayString.equals("+")) {
+				tool.displayString = "-";
+			} else {
+				tool.displayString = "+";
+			}
+		}
 	}
 }

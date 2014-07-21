@@ -8,15 +8,7 @@
  */
 package buildcraft.core.network;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Random;
-
-import org.apache.commons.lang3.ArrayUtils;
-
 import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
@@ -25,22 +17,17 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
 
 public class PacketRPCTile extends PacketRPC {
-	public static int GLOBAL_ID = new Random(new Date().getTime()).nextInt();
-	public static HashMap<Integer, ByteBuf> bufferedPackets = new HashMap<Integer, ByteBuf>();
-	public TileEntity tile;
 
-	byte [] contents;
-	int id;
-	boolean moreDataToCome = false;
+	public TileEntity tile;
 
 	int dimId;
 	int x, y, z;
 
 	public PacketRPCTile () {
-		id = GLOBAL_ID++;
+
 	}
 
-	public PacketRPCTile(TileEntity tile, byte[] bytes) {
+	public PacketRPCTile(TileEntity tile, ByteBuf bytes) {
 		this.tile = tile;
 		contents = bytes;
 	}
@@ -51,15 +38,24 @@ public class PacketRPCTile extends PacketRPC {
 
 	@Override
 	public void readData(ByteBuf data) {
-		dimId = data.readShort();
+		super.readData(data);
 
+		dimId = data.readShort();
 		x = data.readInt();
 		y = data.readInt();
 		z = data.readInt();
-		id = data.readInt ();
-		moreDataToCome = data.readBoolean();
-		contents = new byte [data.readableBytes()];
-		data.readBytes(contents);
+	}
+
+	@Override
+	public void writeData(ByteBuf data) {
+		super.writeData(data);
+
+		// In order to save space on message, we assuming dimensions ids
+		// small. Maybe worth using a varint instead
+		data.writeShort(tile.getWorldObj().provider.dimensionId);
+		data.writeInt(tile.xCoord);
+		data.writeInt(tile.yCoord);
+		data.writeInt(tile.zCoord);
 	}
 
 	@Override
@@ -83,70 +79,6 @@ public class PacketRPCTile extends PacketRPC {
 		RPCMessageInfo info = new RPCMessageInfo();
 		info.sender = sender;
 
-		ByteBuf previousData = bufferedPackets.get(id);
-		bufferedPackets.remove(id);
-
-		ByteBuf completeData;
-
-		if (previousData != null) {
-			completeData = previousData.writeBytes(contents);
-		} else {
-			completeData = Unpooled.buffer();
-			completeData.writeBytes(contents);
-		}
-
-		if (!moreDataToCome) {
-			RPCHandler.receiveRPC(localTile, info, completeData);
-		} else {
-			bufferedPackets.put(id, completeData);
-		}
+		RPCHandler.receiveRPC(localTile, info, contents);
 	}
-
-	@Override
-	public void writeData(ByteBuf data) {
-		// In order to save space on message, we assuming dimensions ids
-		// small. Maybe worth using a varint instead
-		data.writeShort(tile.getWorldObj().provider.dimensionId);
-		data.writeInt(tile.xCoord);
-		data.writeInt(tile.yCoord);
-		data.writeInt(tile.zCoord);
-
-		data.writeInt(id);
-		data.writeBoolean(moreDataToCome);
-		data.writeBytes(contents);
-	}
-
-	public ArrayList<PacketRPCTile> breakIntoSmallerPackets(int maxSize) {
-		ArrayList<PacketRPCTile> messages = new ArrayList<PacketRPCTile>();
-
-		if (contents.length < maxSize) {
-			messages.add(this);
-			return messages;
-		}
-
-		int start = 0;
-
-		while (true) {
-			byte [] subContents = ArrayUtils.subarray(contents, start, start + maxSize);
-
-			PacketRPCTile subPacket = new PacketRPCTile();
-			subPacket.id = id;
-			subPacket.contents = subContents;
-			subPacket.tile = tile;
-
-			messages.add(subPacket);
-
-			start += maxSize;
-
-			if (start >= contents.length) {
-				subPacket.moreDataToCome = false;
-				break;
-			} else {
-				subPacket.moreDataToCome = true;
-			}
-		}
-
-		return messages;
-	}
-
 }

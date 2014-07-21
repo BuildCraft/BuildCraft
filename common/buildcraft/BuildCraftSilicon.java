@@ -34,7 +34,7 @@ import buildcraft.api.gates.TriggerParameterItemStack;
 import buildcraft.api.recipes.BuildcraftRecipeRegistry;
 import buildcraft.api.transport.PipeWire;
 import buildcraft.builders.schematics.SchematicRotateMeta;
-import buildcraft.commander.BlockMap;
+import buildcraft.commander.BlockZonePlan;
 import buildcraft.commander.TileZonePlan;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.InterModComms;
@@ -102,7 +102,7 @@ public class BuildCraftSilicon extends BuildCraftMod {
 	public static ItemRedstoneBoard redstoneBoard;
 	public static BlockLaser laserBlock;
 	public static BlockLaserTable assemblyTableBlock;
-	public static BlockMap zonePlanBlock;
+	public static BlockZonePlan zonePlanBlock;
 
 	@Mod.Instance("BuildCraft|Silicon")
 	public static BuildCraftSilicon instance;
@@ -134,7 +134,7 @@ public class BuildCraftSilicon extends BuildCraftMod {
 		assemblyTableBlock = new BlockLaserTable();
 		CoreProxy.proxy.registerBlock(assemblyTableBlock, ItemLaserTable.class);
 
-		zonePlanBlock = new BlockMap();
+		zonePlanBlock = new BlockZonePlan();
 		zonePlanBlock.setBlockName("zonePlan");
 		CoreProxy.proxy.registerBlock(zonePlanBlock);
 

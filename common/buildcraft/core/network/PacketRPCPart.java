@@ -8,25 +8,14 @@
  */
 package buildcraft.core.network;
 
-import io.netty.buffer.ByteBuf;
-
 import net.minecraft.entity.player.EntityPlayer;
 
-public class PacketRPCGui extends PacketRPC {
-	public PacketRPCGui() {
-	}
-
-	public PacketRPCGui(ByteBuf bytes) {
-		contents = bytes;
-	}
+public class PacketRPCPart extends PacketRPC {
 
 	@Override
-	public void call (EntityPlayer sender) {
+	public void call(EntityPlayer sender) {
 		super.call(sender);
 
-		RPCMessageInfo info = new RPCMessageInfo();
-		info.sender = sender;
-
-		RPCHandler.receiveRPC(sender.openContainer, info, contents);
+		bufferedPackets.put(id, contents);
 	}
 }

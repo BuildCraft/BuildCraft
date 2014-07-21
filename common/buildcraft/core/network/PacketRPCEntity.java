@@ -9,49 +9,47 @@
 package buildcraft.core.network;
 
 import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 
 public class PacketRPCEntity extends PacketRPC {
-	private byte[] contents;
 	private Entity entity;
 	private int entityId;
 
 	public PacketRPCEntity() {
 	}
 
-	public PacketRPCEntity(Entity iEntity, byte[] bytes) {
+	public PacketRPCEntity(Entity iEntity, ByteBuf bytes) {
 		entity = iEntity;
 		contents = bytes;
 	}
 
 	@Override
 	public void call(EntityPlayer sender) {
+		super.call(sender);
+
 		RPCMessageInfo info = new RPCMessageInfo();
 		info.sender = sender;
-
-		ByteBuf completeData = Unpooled.buffer();
-		completeData.writeBytes(contents);
 
 		entity = sender.worldObj.getEntityByID(entityId);
 
 		if (entity != null) {
-			RPCHandler.receiveRPC(entity, info, completeData);
+			RPCHandler.receiveRPC(entity, info, contents);
 		}
 	}
 
 	@Override
 	public void readData(ByteBuf data) {
+		super.readData(data);
+
 		entityId = data.readInt();
-		contents = new byte[data.readableBytes()];
-		data.readBytes(contents);
 	}
 
 	@Override
 	public void writeData(ByteBuf data) {
+		super.writeData(data);
+
 		data.writeInt(entity.getEntityId());
-		data.writeBytes(contents);
 	}
 }

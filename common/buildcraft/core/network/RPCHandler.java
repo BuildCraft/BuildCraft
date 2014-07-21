@@ -128,29 +128,21 @@ public final class RPCHandler {
 	}
 
 	public static void rpcServer(Object object, String method, Object... actuals) {
-		BuildCraftPacket packet = createPacket(object, method, actuals);
+		PacketRPC packet = createPacket(object, method, actuals);
 
 		if (packet != null) {
-			if (packet instanceof PacketRPCTile) {
-				for (PacketRPCTile p : ((PacketRPCTile) packet).breakIntoSmallerPackets(MAX_PACKET_SIZE)) {
-					BuildCraftCore.instance.sendToServer(p);
-				}
-			} else {
-				BuildCraftCore.instance.sendToServer(packet);
+			for (PacketRPC p : packet.breakIntoSmallerPackets(MAX_PACKET_SIZE)) {
+				BuildCraftCore.instance.sendToServer(p);
 			}
 		}
 	}
 
 	public static void rpcPlayer(EntityPlayer player, Object object, String method, Object... actuals) {
-		BuildCraftPacket packet = createPacket(object, method, actuals);
+		PacketRPC packet = createPacket(object, method, actuals);
 
 		if (packet != null) {
-			if (packet instanceof PacketRPCTile) {
-				for (PacketRPCTile p : ((PacketRPCTile) packet).breakIntoSmallerPackets(MAX_PACKET_SIZE)) {
-					BuildCraftCore.instance.sendToPlayer(player, p);
-				}
-			} else {
-				BuildCraftCore.instance.sendToPlayer(player, packet);
+			for (PacketRPC p : packet.breakIntoSmallerPackets(MAX_PACKET_SIZE)) {
+				BuildCraftCore.instance.sendToPlayer(player, p);
 			}
 		}
 	}
@@ -161,15 +153,13 @@ public final class RPCHandler {
 
 	public static void rpcBroadcastPlayersAtDistance(World world, Object object, String method, int maxDistance,
 			Object... actuals) {
-		BuildCraftPacket packet = createPacket(object, method, actuals);
+		PacketRPC packet = createPacket(object, method, actuals);
 
 		if (packet != null) {
 			if (packet instanceof PacketRPCTile) {
 				TileEntity tile = (TileEntity) object;
 
-				for (PacketRPCTile p : ((PacketRPCTile) packet)
-						.breakIntoSmallerPackets(MAX_PACKET_SIZE)) {
-
+				for (PacketRPC p : packet.breakIntoSmallerPackets(MAX_PACKET_SIZE)) {
 					for (Object o : world.playerEntities) {
 						EntityPlayerMP player = (EntityPlayerMP) o;
 
@@ -184,20 +174,24 @@ public final class RPCHandler {
 				for (Object o : world.playerEntities) {
 					EntityPlayerMP player = (EntityPlayerMP) o;
 
-					BuildCraftCore.instance.sendToPlayer(player, packet);
+					for (PacketRPC p : packet.breakIntoSmallerPackets(MAX_PACKET_SIZE)) {
+						BuildCraftCore.instance.sendToPlayer(player, p);
+					}
 				}
 			}
 		}
 	}
 
 	public static void rpcBroadcastAllPlayers(Object object, String method, Object... actuals) {
-		BuildCraftPacket packet = createPacket(object, method, actuals);
+		PacketRPC packet = createPacket(object, method, actuals);
 
 		if (packet != null) {
 			for (Object o : FMLCommonHandler.instance().getMinecraftServerInstance().getConfigurationManager().playerEntityList) {
 				EntityPlayerMP player = (EntityPlayerMP) o;
 
-				BuildCraftCore.instance.sendToPlayer(player, packet);
+				for (PacketRPC p : packet.breakIntoSmallerPackets(MAX_PACKET_SIZE)) {
+					BuildCraftCore.instance.sendToPlayer(player, p);
+				}
 			}
 		}
 	}
@@ -242,8 +236,8 @@ public final class RPCHandler {
 		return new PacketRPCPipe(bytes);
 	}
 
-	private static BuildCraftPacket createPacket(Object object, String method, Object... actuals) {
-		BuildCraftPacket packet = null;
+	private static PacketRPC createPacket(Object object, String method, Object... actuals) {
+		PacketRPC packet = null;
 
 		if (object instanceof Container) {
 			packet = getHandler(object).createRCPPacketContainer(method, actuals);
@@ -258,7 +252,7 @@ public final class RPCHandler {
 		return packet;
 	}
 
-	private byte[] getBytes(String method, Object... actuals) {
+	private ByteBuf getBytes(String method, Object... actuals) {
 		ByteBuf data = Unpooled.buffer();
 
 		try {
@@ -271,10 +265,7 @@ public final class RPCHandler {
 			e.printStackTrace();
 		}
 
-		byte [] bytes = new byte [data.readableBytes()];
-		data.readBytes(bytes);
-
-		return bytes;
+		return data;
 	}
 
 	private PacketRPCTile createRCPPacketTile(TileEntity tile, String method, Object... actuals) {
@@ -289,7 +280,7 @@ public final class RPCHandler {
 		return new PacketRPCEntity(entity, getBytes(method, actuals));
 	}
 
-	private BuildCraftPacket createRCPPacketStatic(Class<?> clas, String method, Object[] actuals) {
+	private PacketRPC createRCPPacketStatic(Class<?> clas, String method, Object[] actuals) {
 		return new PacketRPCStatic(clas, getBytes(method, actuals));
 	}
 

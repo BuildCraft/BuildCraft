@@ -176,6 +176,14 @@ public class TileZonePlan extends TileBuildCraft implements IInventory {
 		NBTTagCompound invNBT = new NBTTagCompound();
 		inv.writeToNBT(invNBT);
 		nbt.setTag("inv", invNBT);
+
+		for (int i = 0; i < selectedAreas.length; ++i) {
+			if (selectedAreas[i] != null) {
+				NBTTagCompound subNBT = new NBTTagCompound();
+				selectedAreas[i].writeToNBT(subNBT);
+				nbt.setTag("selectedArea[" + i + "]", subNBT);
+			}
+		}
 	}
 
 	@Override
@@ -193,6 +201,13 @@ public class TileZonePlan extends TileBuildCraft implements IInventory {
 		}
 
 		inv.readFromNBT(nbt.getCompoundTag("inv"));
+
+		for (int i = 0; i < selectedAreas.length; ++i) {
+			if (nbt.hasKey("selectedArea[" + i + "]")) {
+				selectedAreas[i] = new ZonePlan();
+				selectedAreas[i].readFromNBT(nbt.getCompoundTag("selectedArea[" + i + "]"));
+			}
+		}
 	}
 
 	public Object selectArea(int index) {

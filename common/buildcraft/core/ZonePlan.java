@@ -23,8 +23,6 @@ import buildcraft.api.core.NetworkData;
 
 public class ZonePlan implements IZone {
 
-	// TODO: This can exceed 32k of data. Generalize the slicing code used
-	// in tiles.
 	@NetworkData
 	private HashMap<ChunkIndex, ZoneChunk> chunkMapping = new HashMap<ChunkIndex, ZoneChunk>();
 

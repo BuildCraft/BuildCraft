@@ -39,6 +39,7 @@ public class BuildCraftChannelHandler extends FMLIndexedMessageToMessageCodec<Bu
 		addDiscriminator(14, PacketRPCGui.class);
 		addDiscriminator(15, PacketRPCEntity.class);
 		addDiscriminator(16, PacketRPCStatic.class);
+		addDiscriminator(17, PacketRPCPart.class);
     }
 
     @Override
