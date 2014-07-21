@@ -11,7 +11,7 @@ package buildcraft.silicon.statements;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.item.ItemStack;
 
-import buildcraft.api.core.IBox;
+import buildcraft.api.core.IZone;
 import buildcraft.api.gates.ActionParameterItemStack;
 import buildcraft.api.gates.IActionParameter;
 import buildcraft.core.ItemMapLocation;
@@ -35,7 +35,7 @@ public class ActionRobotWorkInArea extends BCActionPassive {
 		icon = iconRegister.registerIcon("buildcraft:triggers/action_robot_in_area");
 	}
 
-	public static IBox getArea(ActionSlot slot) {
+	public static IZone getArea(ActionSlot slot) {
 		if (slot.parameters[0] == null) {
 			return null;
 		}
@@ -46,7 +46,7 @@ public class ActionRobotWorkInArea extends BCActionPassive {
 			return null;
 		}
 
-		return ItemMapLocation.getBox(stack);
+		return ItemMapLocation.getZone(stack);
 	}
 
 	@Override

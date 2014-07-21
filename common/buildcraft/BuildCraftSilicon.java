@@ -35,7 +35,7 @@ import buildcraft.api.recipes.BuildcraftRecipeRegistry;
 import buildcraft.api.transport.PipeWire;
 import buildcraft.builders.schematics.SchematicRotateMeta;
 import buildcraft.commander.BlockMap;
-import buildcraft.commander.TileMap;
+import buildcraft.commander.TileZonePlan;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.InterModComms;
 import buildcraft.core.ItemBuildCraft;
@@ -102,7 +102,7 @@ public class BuildCraftSilicon extends BuildCraftMod {
 	public static ItemRedstoneBoard redstoneBoard;
 	public static BlockLaser laserBlock;
 	public static BlockLaserTable assemblyTableBlock;
-	public static BlockMap mapBlock;
+	public static BlockMap zonePlanBlock;
 
 	@Mod.Instance("BuildCraft|Silicon")
 	public static BuildCraftSilicon instance;
@@ -134,9 +134,9 @@ public class BuildCraftSilicon extends BuildCraftMod {
 		assemblyTableBlock = new BlockLaserTable();
 		CoreProxy.proxy.registerBlock(assemblyTableBlock, ItemLaserTable.class);
 
-		mapBlock = new BlockMap();
-		mapBlock.setBlockName("map");
-		CoreProxy.proxy.registerBlock(mapBlock);
+		zonePlanBlock = new BlockMap();
+		zonePlanBlock.setBlockName("zonePlan");
+		CoreProxy.proxy.registerBlock(zonePlanBlock);
 
 		redstoneChipset = new ItemRedstoneChipset();
 		redstoneChipset.setUnlocalizedName("redstoneChipset");
@@ -184,7 +184,7 @@ public class BuildCraftSilicon extends BuildCraftMod {
 		CoreProxy.proxy.registerTileEntity(TileAssemblyTable.class, "net.minecraft.src.buildcraft.factory.TileAssemblyTable");
 		CoreProxy.proxy.registerTileEntity(TileAdvancedCraftingTable.class, "net.minecraft.src.buildcraft.factory.TileAssemblyAdvancedWorkbench");
 		CoreProxy.proxy.registerTileEntity(TileIntegrationTable.class, "net.minecraft.src.buildcraft.factory.TileIntegrationTable");
-		CoreProxy.proxy.registerTileEntity(TileMap.class, "net.minecraft.src.buildcraft.commander.TileMap");
+		CoreProxy.proxy.registerTileEntity(TileZonePlan.class, "net.minecraft.src.buildcraft.commander.TileZonePlan");
 
 		SchematicRegistry.registerSchematicBlock(laserBlock, SchematicRotateMeta.class, new int[]{2, 5, 3, 4}, true);
 

@@ -10,7 +10,7 @@ package buildcraft.core.robots;
 
 import net.minecraft.entity.Entity;
 
-import buildcraft.api.core.IBox;
+import buildcraft.api.core.IZone;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.inventory.TransactorSimple;
@@ -20,18 +20,18 @@ public class AIRobotSearchEntity extends AIRobot {
 	public Entity target;
 
 	private float maxRange;
-	private IBox box;
+	private IZone zone;
 	private IEntityFilter filter;
 
 	public AIRobotSearchEntity(EntityRobotBase iRobot) {
 		super(iRobot);
 	}
 
-	public AIRobotSearchEntity(EntityRobotBase iRobot, IEntityFilter iFilter, float iMaxRange, IBox iBox) {
+	public AIRobotSearchEntity(EntityRobotBase iRobot, IEntityFilter iFilter, float iMaxRange, IZone iZone) {
 		super(iRobot);
 
 		maxRange = iMaxRange;
-		box = iBox;
+		zone = iZone;
 		filter = iFilter;
 	}
 
@@ -45,7 +45,7 @@ public class AIRobotSearchEntity extends AIRobot {
 
 			if (!e.isDead
 					&& filter.matches(e)
-					&& (box == null || box.contains(e.posX, e.posY, e.posZ))
+					&& (zone == null || zone.contains(e.posX, e.posY, e.posZ))
 					&& (!robot.isKnownUnreachable(e))) {
 				double dx = e.posX - robot.posX;
 				double dy = e.posY - robot.posY;

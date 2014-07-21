@@ -11,7 +11,7 @@ package buildcraft.core.robots;
 import java.util.LinkedList;
 
 import buildcraft.api.core.BlockIndex;
-import buildcraft.api.core.IBox;
+import buildcraft.api.core.IZone;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.utils.PathFinding;
@@ -25,24 +25,24 @@ public class AIRobotGotoRandomGroundBlock extends AIRobot {
 	private PathFinding pathFinding;
 	private PathFindingJob pathFindingJob;
 	private IBlockFilter filter;
-	private IBox area;
+	private IZone zone;
 
 	public AIRobotGotoRandomGroundBlock(EntityRobotBase iRobot) {
 		super(iRobot);
 	}
 
-	public AIRobotGotoRandomGroundBlock(EntityRobotBase iRobot, int iRange, IBlockFilter iFilter, IBox iArea) {
+	public AIRobotGotoRandomGroundBlock(EntityRobotBase iRobot, int iRange, IBlockFilter iFilter, IZone iZone) {
 		super(iRobot);
 
 		range = iRange;
 		filter = iFilter;
-		area = iArea;
+		zone = iZone;
 	}
 
 	@Override
 	public void update() {
 		if (pathFindingJob == null) {
-			startDelegateAI(new AIRobotSearchRandomGroundBlock(robot, range, filter, area));
+			startDelegateAI(new AIRobotSearchRandomGroundBlock(robot, range, filter, zone));
 		} else {
 			if (!pathFindingJob.isAlive()) {
 				LinkedList<BlockIndex> path = pathFinding.getResult();

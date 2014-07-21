@@ -10,6 +10,7 @@ package buildcraft.core;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import io.netty.buffer.ByteBuf;
 
@@ -352,5 +353,24 @@ public class Box implements IBox {
 		}
 
 		return this;
+	}
+
+	@Override
+	public double distanceTo(BlockIndex index) {
+		int dx = index.x - (xMin + (xMax - xMin + 1));
+		int dy = index.y - (yMin + (yMax - yMin + 1));
+		int dz = index.z - (zMin + (zMax - zMin + 1));
+
+		return Math.sqrt(dx * dx + dy * dy + dz * dz);
+	}
+
+	@Override
+	public BlockIndex getRandomBlockIndex(Random rand) {
+		int x = xMin + rand.nextInt(xMax - xMin);
+		int y = yMin + rand.nextInt(yMax - yMin);
+		int z = zMin + rand.nextInt(zMax - zMin);
+
+		return new BlockIndex(x, y, z);
+
 	}
 }

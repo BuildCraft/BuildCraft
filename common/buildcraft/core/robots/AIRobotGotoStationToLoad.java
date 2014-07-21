@@ -13,7 +13,7 @@ import net.minecraft.tileentity.TileEntity;
 
 import net.minecraftforge.common.util.ForgeDirection;
 
-import buildcraft.api.core.IBox;
+import buildcraft.api.core.IZone;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.inventory.ITransactor;
@@ -30,22 +30,22 @@ public class AIRobotGotoStationToLoad extends AIRobot {
 	public boolean found = false;
 
 	private IStackFilter filter;
-	private IBox box;
+	private IZone zone;
 
 	public AIRobotGotoStationToLoad(EntityRobotBase iRobot) {
 		super(iRobot);
 	}
 
-	public AIRobotGotoStationToLoad(EntityRobotBase iRobot, IStackFilter iFilter, IBox iBox) {
+	public AIRobotGotoStationToLoad(EntityRobotBase iRobot, IStackFilter iFilter, IZone iZone) {
 		super(iRobot);
 
 		filter = iFilter;
-		box = iBox;
+		zone = iZone;
 	}
 
 	@Override
 	public void update() {
-		startDelegateAI(new AIRobotSearchAndGotoStation(robot, new StationFilter(), box));
+		startDelegateAI(new AIRobotSearchAndGotoStation(robot, new StationFilter(), zone));
 	}
 
 	@Override

@@ -17,17 +17,17 @@ import net.minecraft.util.ResourceLocation;
 import buildcraft.api.core.EnumColor;
 import buildcraft.core.BCDynamicTexture;
 import buildcraft.core.DefaultProps;
-import buildcraft.core.MapArea;
+import buildcraft.core.ZonePlan;
 import buildcraft.core.gui.AdvancedSlot;
 import buildcraft.core.gui.GuiAdvancedInterface;
 import buildcraft.core.network.RPCHandler;
 
-public class GuiMap extends GuiAdvancedInterface {
+public class GuiZonePlan extends GuiAdvancedInterface {
 
 	private int mapWidth = 200;
 	private int mapHeight = 100;
 
-	private TileMap map;
+	private TileZonePlan zonePlan;
 
 	private BCDynamicTexture newSelection;
 	private int selX1 = 0,
@@ -73,16 +73,16 @@ public class GuiMap extends GuiAdvancedInterface {
 		}
 	}
 
-	public GuiMap(IInventory inventory, TileMap iMap) {
-		super(new ContainerMap(iMap), inventory, TMP_TEXTURE);
+	public GuiZonePlan(IInventory inventory, TileZonePlan iZonePlan) {
+		super(new ContainerZonePlan(inventory, iZonePlan), inventory, TMP_TEXTURE);
 
 		xSize = 256;
 		ySize = 220;
 
-		map = iMap;
+		zonePlan = iZonePlan;
 
-		map.bcTexture = new BCDynamicTexture(mapWidth, mapHeight);
-		map.bcTexture.createDynamicTexture();
+		getContainer().mapTexture = new BCDynamicTexture(mapWidth, mapHeight);
+		getContainer().mapTexture.createDynamicTexture();
 
 		currentSelection = new BCDynamicTexture(mapWidth, mapHeight);
 		currentSelection.createDynamicTexture();
@@ -91,10 +91,10 @@ public class GuiMap extends GuiAdvancedInterface {
 		newSelection.createDynamicTexture();
 
 
-		getContainer().currentAreaSelection = new MapArea();
+		getContainer().currentAreaSelection = new ZonePlan();
 
-		cx = map.xCoord;
-		cz = map.zCoord;
+		cx = zonePlan.xCoord;
+		cz = zonePlan.zCoord;
 
 		slots = new AdvancedSlot[16];
 
@@ -113,7 +113,8 @@ public class GuiMap extends GuiAdvancedInterface {
 	}
 
 	private void uploadMap() {
-		RPCHandler.rpcServer(map, "computeMap", cx, cz, map.bcTexture.width, map.bcTexture.height,
+		RPCHandler.rpcServer(getContainer(), "computeMap", cx, cz, getContainer().mapTexture.width,
+				getContainer().mapTexture.height,
 				zoomLevel);
 	}
 
@@ -124,15 +125,15 @@ public class GuiMap extends GuiAdvancedInterface {
 		int cornerX = (width - xSize) / 2;
 		int cornerY = (height - ySize) / 2;
 
-		mapXMin = (width - map.bcTexture.width) / 2;
+		mapXMin = (width - getContainer().mapTexture.width) / 2;
 
-		if (map.bcTexture.height <= 200) {
+		if (getContainer().mapTexture.height <= 200) {
 			mapYMin = cornerY + 20;
 		} else {
-			mapYMin = (height - map.bcTexture.height) / 2;
+			mapYMin = (height - getContainer().mapTexture.height) / 2;
 		}
 
-		map.bcTexture.drawMap(mapXMin, mapYMin, zLevel);
+		getContainer().mapTexture.drawMap(mapXMin, mapYMin, zLevel);
 
 		GL11.glPushAttrib(GL11.GL_ENABLE_BIT);
 		GL11.glEnable(GL11.GL_BLEND);
@@ -156,11 +157,13 @@ public class GuiMap extends GuiAdvancedInterface {
 			GL11.glPopAttrib();
 		}
 
-		if (map.bcTexture.height <= 200) {
+		if (getContainer().mapTexture.height <= 200) {
 			drawBackgroundSlots();
 
 			bindTexture(texture);
 			drawTexturedModalRect(cornerX + colorSelected.x, cornerY + colorSelected.y, 0, 220, 16, 16);
+			drawTexturedModalRect(cornerX + 236, cornerY + 38, 16, 220, 8,
+					(int) ((zonePlan.progress / (float) TileZonePlan.CRAFT_TIME) * 27));
 		}
 	}
 
@@ -175,8 +178,8 @@ public class GuiMap extends GuiAdvancedInterface {
 		int blockStartZ = cz - mapHeight * zoomLevel / 2;
 
 		boolean clickOnMap = mouseX >= mapXMin
-				&& mouseX <= mapXMin + map.bcTexture.width && mouseY >= mapYMin &&
-				mouseY <= mapYMin + map.bcTexture.height;
+				&& mouseX <= mapXMin + getContainer().mapTexture.width && mouseY >= mapYMin &&
+				mouseY <= mapYMin + getContainer().mapTexture.height;
 
 		if (clickOnMap) {
 			if (mouseButton == 1) {
@@ -220,8 +223,8 @@ public class GuiMap extends GuiAdvancedInterface {
 		super.mouseClickMove(mouseX, mouseY, lastButtonBlicked, time);
 
 		if (inSelection
-				&& mouseX >= mapXMin && mouseX <= mapXMin + map.bcTexture.width
-				&& mouseY >= mapYMin && mouseY <= mapYMin + map.bcTexture.height) {
+				&& mouseX >= mapXMin && mouseX <= mapXMin + getContainer().mapTexture.width
+				&& mouseY >= mapYMin && mouseY <= mapYMin + getContainer().mapTexture.height) {
 
 			selX2 = mouseX;
 			selY2 = mouseY;
@@ -275,8 +278,8 @@ public class GuiMap extends GuiAdvancedInterface {
 			mapWidth = 200;
 			mapHeight = 100;
 
-			map.bcTexture = new BCDynamicTexture(mapWidth, mapHeight);
-			map.bcTexture.createDynamicTexture();
+			getContainer().mapTexture = new BCDynamicTexture(mapWidth, mapHeight);
+			getContainer().mapTexture.createDynamicTexture();
 
 			currentSelection = new BCDynamicTexture(mapWidth, mapHeight);
 			currentSelection.createDynamicTexture();
@@ -287,8 +290,8 @@ public class GuiMap extends GuiAdvancedInterface {
 			mapWidth = this.mc.displayWidth;
 			mapHeight = this.mc.displayHeight;
 
-			map.bcTexture = new BCDynamicTexture(mapWidth, mapHeight);
-			map.bcTexture.createDynamicTexture();
+			getContainer().mapTexture = new BCDynamicTexture(mapWidth, mapHeight);
+			getContainer().mapTexture.createDynamicTexture();
 
 			currentSelection = new BCDynamicTexture(mapWidth, mapHeight);
 			currentSelection.createDynamicTexture();
@@ -345,7 +348,7 @@ public class GuiMap extends GuiAdvancedInterface {
 	}
 
 	@Override
-	protected ContainerMap getContainer() {
-		return (ContainerMap) super.getContainer();
+	protected ContainerZonePlan getContainer() {
+		return (ContainerZonePlan) super.getContainer();
 	}
 }

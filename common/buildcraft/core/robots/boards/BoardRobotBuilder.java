@@ -96,7 +96,7 @@ public class BoardRobotBuilder extends RedstoneBoardRobot {
 		if (requirementsToLookFor != null && requirementsToLookFor.size() > 0) {
 			startDelegateAI(new AIRobotGotoStationToLoad(robot,
 					new ArrayStackFilter(requirementsToLookFor.getFirst()),
-					robot.getAreaToWork()));
+					robot.getZoneToWork()));
 		}
 
 		if (currentBuildingSlot != null && requirementsToLookFor != null && requirementsToLookFor.size() == 0) {

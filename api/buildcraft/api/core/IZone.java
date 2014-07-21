@@ -8,16 +8,14 @@
  */
 package buildcraft.api.core;
 
-public interface IBox extends IZone {
+import java.util.Random;
 
-	IBox expand(int amount);
+public interface IZone {
 
-	IBox contract(int amount);
+	double distanceTo(BlockIndex index);
 
-	Position pMin();
+	boolean contains(double x, double y, double z);
 
-	Position pMax();
-
-	void createLaserData();
+	BlockIndex getRandomBlockIndex(Random rand);
 
 }

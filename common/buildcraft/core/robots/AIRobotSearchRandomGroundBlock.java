@@ -9,10 +9,9 @@
 package buildcraft.core.robots;
 
 import buildcraft.api.core.BlockIndex;
-import buildcraft.api.core.IBox;
+import buildcraft.api.core.IZone;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
-import buildcraft.core.Box;
 
 public class AIRobotSearchRandomGroundBlock extends AIRobot {
 
@@ -22,19 +21,19 @@ public class AIRobotSearchRandomGroundBlock extends AIRobot {
 
 	private int range;
 	private IBlockFilter filter;
-	private IBox area;
+	private IZone zone;
 	private int attempts = 0;
 
 	public AIRobotSearchRandomGroundBlock(EntityRobotBase iRobot) {
 		super(iRobot);
 	}
 
-	public AIRobotSearchRandomGroundBlock(EntityRobotBase iRobot, int iRange, IBlockFilter iFilter, IBox iArea) {
+	public AIRobotSearchRandomGroundBlock(EntityRobotBase iRobot, int iRange, IBlockFilter iFilter, IZone iZone) {
 		super(iRobot);
 
 		range = iRange;
 		filter = iFilter;
-		area = iArea;
+		zone = iZone;
 	}
 
 	@Override
@@ -53,15 +52,16 @@ public class AIRobotSearchRandomGroundBlock extends AIRobot {
 		int x = 0;
 		int z = 0;
 
-		if (area == null) {
+		if (zone == null) {
 			double r = robot.worldObj.rand.nextFloat() * range;
 			double a = robot.worldObj.rand.nextFloat() * 2.0 * Math.PI;
 
 			x = (int) (Math.cos(a) * r + Math.floor(robot.posX));
 			z = (int) (Math.sin(a) * r + Math.floor(robot.posZ));
 		} else {
-			x = (int) area.pMin().x + robot.worldObj.rand.nextInt(((Box) area).sizeX());
-			z = (int) area.pMin().z + robot.worldObj.rand.nextInt(((Box) area).sizeZ());
+			BlockIndex b = zone.getRandomBlockIndex(robot.worldObj.rand);
+			x = b.x;
+			z = b.z;
 		}
 
 		for (int y = robot.worldObj.getHeight(); y >= 0; --y) {

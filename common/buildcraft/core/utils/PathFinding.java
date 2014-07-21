@@ -17,7 +17,7 @@ import net.minecraft.world.World;
 
 import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.BuildCraftAPI;
-import buildcraft.api.core.IBox;
+import buildcraft.api.core.IZone;
 import buildcraft.core.robots.IBlockFilter;
 
 /**
@@ -36,8 +36,7 @@ public class PathFinding {
 	private IBlockFilter pathFound;
 	private float maxDistance = -1;
 	private float sqrMaxDistance = -1;
-	private IBox box;
-	private BlockIndex boxCenter;
+	private IZone zone;
 	private double maxDistanceToEnd = 0;
 
 	private HashMap<BlockIndex, Node> openList = new HashMap<BlockIndex, PathFinding.Node>();
@@ -70,7 +69,7 @@ public class PathFinding {
 		maxDistanceToEnd = iMaxDistanceToEnd;
 	}
 
-	public PathFinding(World iWorld, BlockIndex iStart, IBlockFilter iPathFound, float iMaxDistance, IBox iBox) {
+	public PathFinding(World iWorld, BlockIndex iStart, IBlockFilter iPathFound, float iMaxDistance, IZone iZone) {
 		world = iWorld;
 		start = iStart;
 		pathFound = iPathFound;
@@ -85,14 +84,7 @@ public class PathFinding {
 		nextIteration = startNode;
 		maxDistance = iMaxDistance;
 		sqrMaxDistance = maxDistance * maxDistance;
-		box = iBox;
-
-		if (box != null) {
-			boxCenter = new BlockIndex();
-			boxCenter.x = (int) (box.pMin().x + (box.pMax().x - box.pMin().x) / 2);
-			boxCenter.y = (int) (box.pMin().y + (box.pMax().y - box.pMin().y) / 2);
-			boxCenter.z = (int) (box.pMin().z + (box.pMax().z - box.pMin().z) / 2);
-		}
+		zone = iZone;
 	}
 
 	public void iterate() {
@@ -163,11 +155,11 @@ public class PathFinding {
 
 					if (end != null) {
 						nextNode.destinationCost = distance(nextNode.index, end);
-					} else if (box != null) {
-						if (box.contains(x, y, z)) {
+					} else if (zone != null) {
+						if (zone.contains(x, y, z)) {
 							nextNode.destinationCost = 0;
 						} else {
-							nextNode.destinationCost = distance(nextNode.index, boxCenter);
+							nextNode.destinationCost = zone.distanceTo(nextNode.index);
 						}
 					} else {
 						nextNode.destinationCost = 0;
@@ -230,7 +222,7 @@ public class PathFinding {
 	}
 
 	private boolean endReached(int x, int y, int z) {
-		if (box != null && !box.contains(x, y, z)) {
+		if (zone != null && !zone.contains(x, y, z)) {
 			return false;
 		} else if (pathFound != null) {
 			return pathFound.matches(world, x, y, z);

@@ -50,7 +50,7 @@ public class BoardRobotKnight extends RedstoneBoardRobot {
 				public boolean matches(Entity entity) {
 					return entity instanceof EntityMob;
 				}
-			}, 250, robot.getAreaToWork()));
+			}, 250, robot.getZoneToWork()));
 		}
 	}
 

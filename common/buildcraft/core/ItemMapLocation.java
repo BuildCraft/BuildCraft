@@ -28,6 +28,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.api.boards.RedstoneBoardRegistry;
 import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.IBox;
+import buildcraft.api.core.IZone;
 import buildcraft.builders.TileMarker;
 import buildcraft.builders.TilePathMarker;
 import buildcraft.core.utils.NBTUtils;
@@ -39,6 +40,7 @@ public class ItemMapLocation extends ItemBuildCraft {
 	public IIcon spot;
 	public IIcon area;
 	public IIcon path;
+	public IIcon zone;
 
 	public ItemMapLocation() {
 		super(CreativeTabBuildCraft.ITEMS);
@@ -87,6 +89,9 @@ public class ItemMapLocation extends ItemBuildCraft {
 				list.add(StringUtils.localize("{" + x + ", " + y + ", " + z + "} + " + pathNBT.tagCount() + " elements"));
 				break;
 			}
+			case 3: {
+				break;
+			}
 			}
 		}
 
@@ -111,6 +116,9 @@ public class ItemMapLocation extends ItemBuildCraft {
 			case 2:
 				itemIcon = path;
 				break;
+			case 3:
+				itemIcon = zone;
+				break;
 			}
 		}
 
@@ -124,6 +132,7 @@ public class ItemMapLocation extends ItemBuildCraft {
 		spot = par1IconRegister.registerIcon("buildcraft:map_spot");
 		area = par1IconRegister.registerIcon("buildcraft:map_area");
 		path = par1IconRegister.registerIcon("buildcraft:map_path");
+		zone = par1IconRegister.registerIcon("buildcraft:map_zone");
 
 		RedstoneBoardRegistry.instance.registerIcons(par1IconRegister);
 	}
@@ -211,5 +220,27 @@ public class ItemMapLocation extends ItemBuildCraft {
 		} else {
 			return ForgeDirection.UNKNOWN;
 		}
+	}
+
+	public static IZone getZone(ItemStack item) {
+		NBTTagCompound cpt = NBTUtils.getItemData(item);
+
+		if (cpt.hasKey("kind") && cpt.getByte("kind") == 3) {
+			ZonePlan plan = new ZonePlan();
+			plan.readFromNBT(cpt);
+
+			return plan;
+		} else if (cpt.hasKey("kind") && cpt.getByte("kind") == 1) {
+			return getBox(item);
+		} else {
+			return null;
+		}
+	}
+
+	public static void setZone(ItemStack item, ZonePlan plan) {
+		NBTTagCompound cpt = NBTUtils.getItemData(item);
+
+		cpt.setByte("kind", (byte) 3);
+		plan.writeToNBT(cpt);
 	}
 }

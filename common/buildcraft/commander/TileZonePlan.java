@@ -8,32 +8,37 @@
  */
 package buildcraft.commander;
 
-import net.minecraft.block.material.MapColor;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.chunk.Chunk;
 
-import buildcraft.core.BCDynamicTexture;
-import buildcraft.core.MapArea;
+import buildcraft.api.core.NetworkData;
+import buildcraft.core.ItemMapLocation;
 import buildcraft.core.TileBuildCraft;
-import buildcraft.core.network.RPC;
-import buildcraft.core.network.RPCHandler;
-import buildcraft.core.network.RPCMessageInfo;
-import buildcraft.core.network.RPCSide;
+import buildcraft.core.ZonePlan;
+import buildcraft.core.inventory.SimpleInventory;
 
-public class TileMap extends TileBuildCraft {
+public class TileZonePlan extends TileBuildCraft implements IInventory {
 
 	public static final int RESOLUTION = 2048;
+	public static final int CRAFT_TIME = 120;
 	private static int RESOLUTION_CHUNKS = RESOLUTION >> 4;
 
-	public BCDynamicTexture bcTexture;
+	public int chunkStartX, chunkStartZ;
+	public byte[] colors = new byte[RESOLUTION * RESOLUTION];
 
-	private byte[] colors = new byte[RESOLUTION * RESOLUTION];
+	@NetworkData
+	public int progress = 0;
 
 	private boolean scan = false;
-	private int chunkStartX, chunkStartZ;
 	private int chunkIt = 0;
 
-	private MapArea[] selectedAreas = new MapArea[16];
+	private ZonePlan[] selectedAreas = new ZonePlan[16];
+	private int currentSelectedArea = 0;
+
+	private SimpleInventory inv = new SimpleInventory(2, "inv", 64);
 
 	@Override
 	public void initialize() {
@@ -111,80 +116,31 @@ public class TileMap extends TileBuildCraft {
 				chunkIt++;
 			}
 		}
-	}
 
-	@RPC(RPCSide.SERVER)
-	private void computeMap(int cx, int cz, int width, int height, int blocksPerPixel, RPCMessageInfo info) {
-		bcTexture = new BCDynamicTexture(width, height);
+		if (inv.getStackInSlot(0) != null
+				&& inv.getStackInSlot(1) == null
+				&& inv.getStackInSlot(0).getItem() instanceof ItemMapLocation) {
 
-		int startX = cx - width * blocksPerPixel / 2;
-		int startZ = cz - height * blocksPerPixel / 2;
+			if (progress < CRAFT_TIME) {
+				progress++;
 
-		for (int i = 0; i < width; ++i) {
-			for (int j = 0; j < height; ++j) {
-				double r = 0;
-				double g = 0;
-				double b = 0;
+				if (worldObj.getTotalWorldTime() % 5 == 0) {
+					sendNetworkUpdate();
+				}
+			} else {
+				ItemStack stack = inv.decrStackSize(0, 1);
 
-				for (int stepi = 0; stepi < blocksPerPixel; ++stepi) {
-					for (int stepj = 0; stepj < blocksPerPixel; ++stepj) {
-						int x = startX + i * blocksPerPixel + stepi;
-						int z = startZ + j * blocksPerPixel + stepj;
-						int ix = x - (chunkStartX << 4);
-						int iz = z - (chunkStartX << 4);
-
-						if (ix > 0 && ix < RESOLUTION && iz > 0 && iz < RESOLUTION) {
-							int color = MapColor.mapColorArray[colors[ix + iz * RESOLUTION]].colorValue;
-
-							r += (color >> 16) & 255;
-							g += (color >> 8) & 255;
-							b += color & 255;
-						}
-					}
+				if (selectedAreas[currentSelectedArea] != null) {
+					ItemMapLocation.setZone(stack, selectedAreas[currentSelectedArea]);
 				}
 
-				r /= (blocksPerPixel * blocksPerPixel);
-				g /= (blocksPerPixel * blocksPerPixel);
-				b /= (blocksPerPixel * blocksPerPixel);
-
-				r /= 255F;
-				g /= 255F;
-				b /= 255F;
-
-				bcTexture.setColor(i, j, r, g, b, 1);
+				inv.setInventorySlotContents(1, stack);
 			}
-		}
-
-		RPCHandler.rpcPlayer(info.sender, this, "receiveImage", bcTexture.colorMap);
-	}
-
-	@RPC(RPCSide.CLIENT)
-	private void receiveImage(int[] colors) {
-		for (int i = 0; i < colors.length; ++i) {
-			bcTexture.colorMap[i] = colors[i];
+		} else if (progress != 0) {
+			progress = 0;
+			sendNetworkUpdate();
 		}
 	}
-
-	private void setColor(int[] map, int width, int height, int index, double r, double g, double b, double a) {
-		int i = (int) (a * 255.0F);
-		int j = (int) (r * 255.0F);
-		int k = (int) (g * 255.0F);
-		int l = (int) (b * 255.0F);
-		map[index] = i << 24 | j << 16 | k << 8 | l;
-	}
-
-	private void setColor(int[] map, int width, int height, int x, int y, double r, double g, double b, double a) {
-		int i = (int) (a * 255.0F);
-		int j = (int) (r * 255.0F);
-		int k = (int) (g * 255.0F);
-		int l = (int) (b * 255.0F);
-		map[x + y * width] = i << 24 | j << 16 | k << 8 | l;
-	}
-
-	private void setColor(int[] map, int width, int height, int x, int y, int color) {
-		map[x + y * width] = 255 << 24 | color;
-	}
-
 
 	private void loadChunk(Chunk chunk) {
 		for (int cx = 0; cx < 16; ++cx) {
@@ -216,6 +172,10 @@ public class TileMap extends TileBuildCraft {
 		nbt.setBoolean("scan", scan);
 		nbt.setInteger("chunkIt", chunkIt);
 		nbt.setByteArray("colors", colors);
+
+		NBTTagCompound invNBT = new NBTTagCompound();
+		inv.writeToNBT(invNBT);
+		nbt.setTag("inv", invNBT);
 	}
 
 	@Override
@@ -231,17 +191,82 @@ public class TileMap extends TileBuildCraft {
 			scan = true;
 			chunkIt = 0;
 		}
+
+		inv.readFromNBT(nbt.getCompoundTag("inv"));
 	}
 
-	public Object getArea(int index) {
+	public Object selectArea(int index) {
 		if (selectedAreas[index] == null) {
-			selectedAreas[index] = new MapArea();
+			selectedAreas[index] = new ZonePlan();
 		}
+
+		currentSelectedArea = index;
 
 		return selectedAreas[index];
 	}
 
-	public void setArea(int index, MapArea area) {
+	public void setArea(int index, ZonePlan area) {
 		selectedAreas[index] = area;
+	}
+
+	@Override
+	public int getSizeInventory() {
+		return inv.getSizeInventory();
+	}
+
+	@Override
+	public ItemStack getStackInSlot(int slotId) {
+		return inv.getStackInSlot(slotId);
+	}
+
+	@Override
+	public ItemStack decrStackSize(int slotId, int count) {
+		return inv.decrStackSize(slotId, count);
+	}
+
+	@Override
+	public ItemStack getStackInSlotOnClosing(int slotId) {
+		return inv.getStackInSlotOnClosing(slotId);
+	}
+
+	@Override
+	public void setInventorySlotContents(int slotId, ItemStack itemstack) {
+		inv.setInventorySlotContents(slotId, itemstack);
+
+	}
+
+	@Override
+	public String getInventoryName() {
+		return inv.getInventoryName();
+	}
+
+	@Override
+	public boolean hasCustomInventoryName() {
+		return inv.hasCustomInventoryName();
+	}
+
+	@Override
+	public int getInventoryStackLimit() {
+		return inv.getInventoryStackLimit();
+	}
+
+	@Override
+	public boolean isUseableByPlayer(EntityPlayer entityplayer) {
+		return inv.isUseableByPlayer(entityplayer);
+	}
+
+	@Override
+	public void openInventory() {
+		inv.openInventory();
+	}
+
+	@Override
+	public void closeInventory() {
+		inv.closeInventory();
+	}
+
+	@Override
+	public boolean isItemValidForSlot(int i, ItemStack itemstack) {
+		return inv.isItemValidForSlot(i, itemstack);
 	}
 }

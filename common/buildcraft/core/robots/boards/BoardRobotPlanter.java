@@ -97,7 +97,7 @@ public class BoardRobotPlanter extends RedstoneBoardRobot {
 
 						return b instanceof BlockDirt || b instanceof BlockGrass;
 					}
-				}, robot.getAreaToWork()));
+				}, robot.getZoneToWork()));
 			}
 		}
 	}

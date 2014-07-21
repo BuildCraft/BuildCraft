@@ -13,7 +13,7 @@ import net.minecraft.entity.item.EntityItem;
 
 import net.minecraftforge.common.util.ForgeDirection;
 
-import buildcraft.api.core.IBox;
+import buildcraft.api.core.IZone;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.inventory.TransactorSimple;
@@ -28,7 +28,7 @@ public class AIRobotFetchItem extends AIRobot {
 	private float maxRange;
 	private IStackFilter stackFilter;
 	private int pickTime = -1;
-	private IBox box;
+	private IZone zone;
 
 	private int targetToLoad = -1;
 
@@ -36,12 +36,12 @@ public class AIRobotFetchItem extends AIRobot {
 		super(iRobot);
 	}
 
-	public AIRobotFetchItem(EntityRobotBase iRobot, float iMaxRange, IStackFilter iStackFilter, IBox iBox) {
+	public AIRobotFetchItem(EntityRobotBase iRobot, float iMaxRange, IStackFilter iStackFilter, IZone iZone) {
 		super(iRobot);
 
 		maxRange = iMaxRange;
 		stackFilter = iStackFilter;
-		box = iBox;
+		zone = iZone;
 	}
 
 	@Override
@@ -114,7 +114,7 @@ public class AIRobotFetchItem extends AIRobot {
 					&& e instanceof EntityItem
 					&& !BoardRobotPicker.targettedItems.contains(e.getEntityId())
 					&& !robot.isKnownUnreachable(e)
-					&& (box == null || box.contains(e.posX, e.posY, e.posZ))) {
+					&& (zone == null || zone.contains(e.posX, e.posY, e.posZ))) {
 				double dx = e.posX - robot.posX;
 				double dy = e.posY - robot.posY;
 				double dz = e.posZ - robot.posZ;

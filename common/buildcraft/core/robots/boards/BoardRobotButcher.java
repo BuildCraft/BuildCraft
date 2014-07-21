@@ -50,7 +50,7 @@ public class BoardRobotButcher extends RedstoneBoardRobot {
 				public boolean matches(Entity entity) {
 					return entity instanceof EntityAnimal;
 				}
-			}, 250, robot.getAreaToWork()));
+			}, 250, robot.getZoneToWork()));
 		}
 	}
 

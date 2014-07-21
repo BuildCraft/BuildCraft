@@ -37,9 +37,9 @@ public class BoardRobotCarrier extends RedstoneBoardRobot {
 	public void update() {
 		if (!robot.containsItems()) {
 			startDelegateAI(new AIRobotGotoStationToLoad(robot, ActionRobotFilter.getGateFilter(robot
-					.getLinkedStation()), robot.getAreaToWork()));
+					.getLinkedStation()), robot.getZoneToWork()));
 		} else {
-			startDelegateAI(new AIRobotGotoStationToUnload(robot, robot.getAreaToWork()));
+			startDelegateAI(new AIRobotGotoStationToUnload(robot, robot.getZoneToWork()));
 		}
 	}
 
@@ -54,7 +54,7 @@ public class BoardRobotCarrier extends RedstoneBoardRobot {
 				loadFound = false;
 
 				if (robot.containsItems()) {
-					startDelegateAI(new AIRobotGotoStationToUnload(robot, robot.getAreaToWork()));
+					startDelegateAI(new AIRobotGotoStationToUnload(robot, robot.getZoneToWork()));
 				} else {
 					unloadFound = false;
 				}
@@ -66,7 +66,7 @@ public class BoardRobotCarrier extends RedstoneBoardRobot {
 			} else {
 				unloadFound = false;
 				startDelegateAI(new AIRobotGotoStationToLoad(robot, ActionRobotFilter.getGateFilter(robot
-						.getLinkedStation()), robot.getAreaToWork()));
+						.getLinkedStation()), robot.getZoneToWork()));
 			}
 		}
 

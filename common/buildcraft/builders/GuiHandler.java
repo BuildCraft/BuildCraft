@@ -25,9 +25,9 @@ import buildcraft.builders.gui.GuiFiller;
 import buildcraft.builders.urbanism.ContainerUrbanist;
 import buildcraft.builders.urbanism.GuiUrbanist;
 import buildcraft.builders.urbanism.TileUrbanist;
-import buildcraft.commander.ContainerMap;
-import buildcraft.commander.GuiMap;
-import buildcraft.commander.TileMap;
+import buildcraft.commander.ContainerZonePlan;
+import buildcraft.commander.GuiZonePlan;
+import buildcraft.commander.TileZonePlan;
 import buildcraft.core.GuiIds;
 
 public class GuiHandler implements IGuiHandler {
@@ -73,10 +73,10 @@ public class GuiHandler implements IGuiHandler {
 			return new GuiUrbanist(player.inventory, (TileUrbanist) tile);
 
 		case GuiIds.MAP:
-			if (!(tile instanceof TileMap)) {
+			if (!(tile instanceof TileZonePlan)) {
 				return null;
 			}
-			return new GuiMap(player.inventory, (TileMap) tile);
+			return new GuiZonePlan(player.inventory, (TileZonePlan) tile);
 
 		default:
 			return null;
@@ -127,10 +127,10 @@ public class GuiHandler implements IGuiHandler {
 			}
 
 		case GuiIds.MAP:
-			if (!(tile instanceof TileMap)) {
+			if (!(tile instanceof TileZonePlan)) {
 				return null;
 			} else {
-				return new ContainerMap((TileMap) tile);
+				return new ContainerZonePlan(player.inventory, (TileZonePlan) tile);
 			}
 
 		default:

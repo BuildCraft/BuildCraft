@@ -33,7 +33,7 @@ import buildcraft.api.boards.RedstoneBoardNBT;
 import buildcraft.api.boards.RedstoneBoardRegistry;
 import buildcraft.api.boards.RedstoneBoardRobot;
 import buildcraft.api.boards.RedstoneBoardRobotNBT;
-import buildcraft.api.core.IBox;
+import buildcraft.api.core.IZone;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.mj.MjBattery;
 import buildcraft.api.robots.AIRobot;
@@ -728,14 +728,14 @@ public class EntityRobot extends EntityRobotBase implements
 	}
 
 	@Override
-	public IBox getAreaToWork() {
+	public IZone getZoneToWork() {
 		if (linkedDockingStation instanceof DockingStation) {
 			for (ActionSlot s : new ActionIterator(((DockingStation) linkedDockingStation).pipe.pipe)) {
 				if (s.action instanceof ActionRobotWorkInArea) {
-					IBox box = ActionRobotWorkInArea.getArea(s);
+					IZone zone = ActionRobotWorkInArea.getArea(s);
 
-					if (box != null) {
-						return box;
+					if (zone != null) {
+						return zone;
 					}
 				}
 			}
