@@ -8,6 +8,9 @@
  */
 package buildcraft.commander;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.gui.GuiButton;
@@ -54,6 +57,9 @@ public class GuiZonePlan extends GuiAdvancedInterface {
 	private float alpha = 0.8F;
 
 	private GuiButton tool;
+
+	private List inventorySlots;
+	private List savedButtonList;
 
 	private static class AreaSlot extends AdvancedSlot {
 
@@ -114,6 +120,8 @@ public class GuiZonePlan extends GuiAdvancedInterface {
 
 		uploadMap();
 		getContainer().loadArea(colorSelected.color.ordinal());
+
+		inventorySlots = container.inventorySlots;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -125,6 +133,8 @@ public class GuiZonePlan extends GuiAdvancedInterface {
 
 		tool = new GuiButton(0, x + 5, y + 20, 20, 20, "+");
 		buttonList.add(tool);
+
+		savedButtonList = buttonList;
 	}
 
 	private void uploadMap() {
@@ -302,6 +312,8 @@ public class GuiZonePlan extends GuiAdvancedInterface {
 
 			uploadMap();
 			refreshSelectedArea();
+			container.inventorySlots = inventorySlots;
+			buttonList = savedButtonList;
 		} else if (carac == 'M') {
 			mapWidth = this.mc.displayWidth;
 			mapHeight = this.mc.displayHeight;
@@ -314,6 +326,8 @@ public class GuiZonePlan extends GuiAdvancedInterface {
 
 			uploadMap();
 			refreshSelectedArea();
+			container.inventorySlots = new LinkedList();
+			buttonList = new LinkedList();
 		}
 	}
 
