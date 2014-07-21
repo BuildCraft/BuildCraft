@@ -105,7 +105,6 @@ public class BlockGenericPipe extends BlockBuildCraft {
 	}
 	
 	private boolean skippedFirstIconRegister;
-	private int renderMask = 0;
 
 	/* Defined subprograms ************************************************* */
 	public BlockGenericPipe() {
@@ -1300,4 +1299,8 @@ public class BlockGenericPipe extends BlockBuildCraft {
 		}
 	}
 
+	@Override
+	public IIcon getIcon(int side, int meta) {
+		return PipeIconProvider.TYPE.PipeItemsStone.getIcon();
+	}
 }
