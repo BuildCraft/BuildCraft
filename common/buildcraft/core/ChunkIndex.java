@@ -40,7 +40,7 @@ public class ChunkIndex {
 
 	@Override
 	public int hashCode() {
-		return (x * 37 + z);
+		return x * 37 + z;
 	}
 
 	public void writeToNBT(NBTTagCompound nbt) {

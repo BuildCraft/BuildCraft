@@ -53,8 +53,8 @@ public class TileZonePlan extends TileBuildCraft implements IInventory {
 	}
 
 	private int[] getCoords() {
-		int chunkCenterX = (xCoord >> 4);
-		int chunkCenterZ = (zCoord >> 4);
+		int chunkCenterX = xCoord >> 4;
+		int chunkCenterZ = zCoord >> 4;
 
 		if (chunkIt == 0) {
 			return new int[] {chunkCenterX, chunkCenterZ};

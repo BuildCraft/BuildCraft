@@ -28,22 +28,23 @@ import buildcraft.core.network.RPCHandler;
 
 public class GuiZonePlan extends GuiAdvancedInterface {
 
+	private static final ResourceLocation TMP_TEXTURE = new ResourceLocation("buildcraft",
+			DefaultProps.TEXTURE_PATH_GUI + "/map_gui.png");
+
 	private int mapWidth = 200;
 	private int mapHeight = 100;
 
 	private TileZonePlan zonePlan;
 
 	private BCDynamicTexture newSelection;
-	private int selX1 = 0,
-			selX2 = 0,
-			selY1 = 0,
-			selY2 = 0;
+	private int selX1 = 0;
+	private int selX2 = 0;
+	private int selY1 = 0;
+	private int selY2 = 0;
+
 	private boolean inSelection = false;
 
 	private BCDynamicTexture currentSelection;
-
-	private static final ResourceLocation TMP_TEXTURE = new ResourceLocation("buildcraft",
-			DefaultProps.TEXTURE_PATH_GUI + "/map_gui.png");
 
 	private int mapXMin = 0;
 	private int mapYMin = 0;
@@ -360,9 +361,9 @@ public class GuiZonePlan extends GuiAdvancedInterface {
 					}
 				}
 
-				r /= (zoomLevel * zoomLevel);
-				g /= (zoomLevel * zoomLevel);
-				b /= (zoomLevel * zoomLevel);
+				r /= zoomLevel * zoomLevel;
+				g /= zoomLevel * zoomLevel;
+				b /= zoomLevel * zoomLevel;
 
 				r /= 255F;
 				g /= 255F;

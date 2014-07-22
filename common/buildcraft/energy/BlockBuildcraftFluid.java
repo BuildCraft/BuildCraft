@@ -139,7 +139,7 @@ public class BlockBuildcraftFluid extends BlockFluidClassic {
 	}
 
 	@Override
-	public MapColor getMapColor(int p_149728_1_) {
+	public MapColor getMapColor(int meta) {
 		return mapColor;
 	}
 }

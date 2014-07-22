@@ -51,7 +51,7 @@ public class ContainerZonePlan extends BuildCraftContainer {
 	}
 
 	@Override
-	public boolean canInteractWith(EntityPlayer p_75145_1_) {
+	public boolean canInteractWith(EntityPlayer player) {
 		return true;
 	}
 
@@ -109,9 +109,9 @@ public class ContainerZonePlan extends BuildCraftContainer {
 					}
 				}
 
-				r /= (blocksPerPixel * blocksPerPixel);
-				g /= (blocksPerPixel * blocksPerPixel);
-				b /= (blocksPerPixel * blocksPerPixel);
+				r /= blocksPerPixel * blocksPerPixel;
+				g /= blocksPerPixel * blocksPerPixel;
+				b /= blocksPerPixel * blocksPerPixel;
 
 				r /= 255F;
 				g /= 255F;

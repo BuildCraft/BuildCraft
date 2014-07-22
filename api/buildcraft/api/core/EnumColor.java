@@ -107,7 +107,7 @@ public enum EnumColor {
 		0xe4e4e4};
 
 	@SideOnly(Side.CLIENT)
-	private static IIcon brushIcons[] = new IIcon[16];
+	private static IIcon[] brushIcons = new IIcon[16];
 
 	public int getDarkHex() {
 		return DARK_HEX[ordinal()];
