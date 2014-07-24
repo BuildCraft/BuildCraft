@@ -26,22 +26,16 @@ import net.minecraftforge.common.util.ForgeDirection;
 @SideOnly(Side.CLIENT)
 public final class FakeBlock extends Block implements ITextureStates {
 	
+	public static final FakeBlock INSTANCE = new FakeBlock();
+	
 	private int renderMask = 0;	
 	
 	private TextureStateManager textureState;
-	
-	private static class FakeBlockHolder{
-		public static final FakeBlock INSTANCE = new FakeBlock();
-	}
 	
 	private FakeBlock() {
 		super(Material.glass);
 		textureState = new TextureStateManager(null); //Always Clientside
 	}	
-	
-	public static FakeBlock getInstance() {
-		return FakeBlockHolder.INSTANCE;
-	}
 		
 	public TextureStateManager getTextureState() {
 		return textureState;
