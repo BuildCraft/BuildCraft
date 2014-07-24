@@ -5,17 +5,15 @@
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
- * 
- * Facade API extraction performed by Itaros(Semion Nadezhdin)
  */
-package buildcraft.api.rendering;
+package buildcraft.transport.render;
 
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.common.util.ForgeDirection;
 
 /*
- * Implement on Block class to make it able to respond to facade render helper queries
- * For implementation details look into BlockGenericPipe implementation
+ * This interface designates a block as a state machine responsible for culling
+ * For implementation details look into FakeBlock implementation
  */
 public interface ICullable {
 
