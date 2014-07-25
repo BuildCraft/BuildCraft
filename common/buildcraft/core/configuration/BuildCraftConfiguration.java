@@ -6,10 +6,11 @@
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-package buildcraft.core;
+package buildcraft.core.configuration;
 
 import java.io.File;
 
+import buildcraft.core.Version;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
 
