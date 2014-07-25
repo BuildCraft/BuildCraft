@@ -9,10 +9,11 @@
 package buildcraft.core.configuration;
 
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraftforge.common.config.ConfigElement;
-import net.minecraftforge.common.config.Configuration;
 
 import cpw.mods.fml.client.config.GuiConfig;
+
+import net.minecraftforge.common.config.ConfigElement;
+import net.minecraftforge.common.config.Configuration;
 
 import buildcraft.BuildCraftCore;
 

@@ -16,7 +16,6 @@ import java.util.HashSet;
 import java.util.TreeMap;
 import java.util.UUID;
 
-import buildcraft.core.configuration.ConfigHandeler;
 import com.mojang.authlib.GameProfile;
 
 import org.lwjgl.input.Mouse;
@@ -72,6 +71,7 @@ import buildcraft.api.recipes.BuildcraftRecipeRegistry;
 import buildcraft.api.robots.DockingStationRegistry;
 import buildcraft.core.BlockSpring;
 import buildcraft.core.configuration.BuildCraftConfiguration;
+import buildcraft.core.configuration.ConfigHandeler;
 import buildcraft.core.CommandBuildCraft;
 import buildcraft.core.CoreIconProvider;
 import buildcraft.core.DefaultProps;

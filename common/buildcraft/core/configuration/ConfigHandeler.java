@@ -15,6 +15,10 @@ import buildcraft.core.Version;
 
 public class ConfigHandeler {
 
+    private ConfigHandeler() {
+        
+    }
+
     public static void readConfiguration() {
         try {
             if (BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "update.check", true, "set to true for version check on startup").getBoolean()) {
