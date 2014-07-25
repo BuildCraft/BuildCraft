@@ -66,6 +66,7 @@ import buildcraft.transport.gates.ItemGate;
 import buildcraft.transport.render.PipeRendererWorld;
 import buildcraft.transport.utils.FacadeMatrix;
 
+
 public class BlockGenericPipe extends BlockBuildCraft {
 
 	public static int facadeRenderColor = -1;
@@ -73,7 +74,9 @@ public class BlockGenericPipe extends BlockBuildCraft {
 	public static Map<BlockIndex, Pipe<?>> pipeRemoved = new HashMap<BlockIndex, Pipe<?>>();
 
 	private static long lastRemovedDate = -1;
-
+	
+	private static final ForgeDirection[] DIR_VALUES = ForgeDirection.values();
+	
 	static enum Part {
 		Pipe,
 		Gate,
@@ -81,7 +84,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 		Plug,
 		RobotStation
 	}
-
+	
 	static class RaytraceResult {
 		public final Part hitPart;
 		public final MovingObjectPosition movingObjectPosition;
@@ -100,14 +103,12 @@ public class BlockGenericPipe extends BlockBuildCraft {
 			return String.format("RayTraceResult: %s, %s", hitPart == null ? "null" : hitPart.name(), boundingBox == null ? "null" : boundingBox.toString());
 		}
 	}
-	private static final ForgeDirection[] DIR_VALUES = ForgeDirection.values();
+	
 	private boolean skippedFirstIconRegister;
-	private int renderMask = 0;
 
 	/* Defined subprograms ************************************************* */
 	public BlockGenericPipe() {
 		super(Material.glass);
-		setRenderAllSides();
 		setCreativeTab(null);
 	}
 
@@ -116,6 +117,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 		return BuildCraftTransport.pipeDurability;
 	}
 
+	/* Rendering Delegation Attributes ************************************* */
 	@Override
 	public int getRenderType() {
 		return TransportProxy.pipeModel;
@@ -136,37 +138,15 @@ public class BlockGenericPipe extends BlockBuildCraft {
 	public boolean isOpaqueCube() {
 		return false;
 	}
+	
+	@Override
+	public boolean renderAsNormalBlock() {
+		return false;
+	}	
 
 	@Override
 	public boolean canBeReplacedByLeaves(IBlockAccess world, int x, int y, int z) {
 		return false;
-	}
-
-	@Override
-	public boolean renderAsNormalBlock() {
-		return false;
-	}
-
-	public void setRenderMask(int mask) {
-		renderMask = mask;
-	}
-
-	public final void setRenderAllSides() {
-		renderMask = 0x3f;
-	}
-
-	public void setRenderSide(ForgeDirection side, boolean render) {
-		if (render) {
-			renderMask |= 1 << side.ordinal();
-		} else {
-			renderMask &= ~(1 << side.ordinal());
-		}
-	}
-
-	@Override
-	@SideOnly(Side.CLIENT)
-	public boolean shouldSideBeRendered(IBlockAccess blockAccess, int x, int y, int z, int side) {
-		return (renderMask & (1 << side)) != 0;
 	}
 
 	@Override
@@ -1027,21 +1007,8 @@ public class BlockGenericPipe extends BlockBuildCraft {
 	private void dropWire(PipeWire pipeWire, Pipe<?> pipe) {
 		pipe.dropItem(pipeWire.getStack());
 	}
-
-	@SuppressWarnings({"all"})
-	@SideOnly(Side.CLIENT)
-	@Override
-	public IIcon getIcon(IBlockAccess iblockaccess, int x, int y, int z, int side) {
-		TileEntity tile = iblockaccess.getTileEntity(x, y, z);
-		if (!(tile instanceof TileGenericPipe)) {
-			return null;
-		}
-		if (((TileGenericPipe) tile).renderState.textureArray != null) {
-			return ((TileGenericPipe) tile).renderState.textureArray[side];
-		}
-		return ((TileGenericPipe) tile).renderState.currentTexture;
-	}
-
+	
+			
 	@Override
 	public void onEntityCollidedWithBlock(World world, int i, int j, int k, Entity entity) {
 		super.onEntityCollidedWithBlock(world, i, j, k, entity);
@@ -1207,12 +1174,6 @@ public class BlockGenericPipe extends BlockBuildCraft {
 		}
 	}
 
-	@Override
-	@SideOnly(Side.CLIENT)
-	public IIcon getIcon(int par1, int par2) {
-		return BuildCraftTransport.instance.pipeIconProvider.getIcon(PipeIconProvider.TYPE.Stripes.ordinal());
-	}
-
 	/**
 	 * Spawn a digging particle effect in the world, this is a wrapper around
 	 * EffectRenderer.addBlockHitEffects to allow the block more control over
@@ -1336,5 +1297,10 @@ public class BlockGenericPipe extends BlockBuildCraft {
 				}
 			}
 		}
+	}
+
+	@Override
+	public IIcon getIcon(int side, int meta) {
+		return PipeIconProvider.TYPE.PipeItemsStone.getIcon();
 	}
 }
