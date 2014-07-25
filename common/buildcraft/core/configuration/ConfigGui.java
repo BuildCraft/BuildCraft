@@ -1,22 +1,21 @@
+/**
+ * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
+ * http://www.mod-buildcraft.com
+ *
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
+ * License 1.0, or MMPL. Please check the contents of the license located in
+ * http://www.mod-buildcraft.com/MMPL-1.0.txt
+ */
 package buildcraft.core.configuration;
 
-import buildcraft.BuildCraftCore;
-import cpw.mods.fml.client.config.GuiConfig;
-import cpw.mods.fml.client.config.IConfigElement;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraftforge.common.config.ConfigElement;
 import net.minecraftforge.common.config.Configuration;
 
-import java.util.ArrayList;
-import java.util.List;
+import cpw.mods.fml.client.config.GuiConfig;
 
-/**
- * Copyright (c) 2014, AEnterprise
- * http://buildcraftadditions.wordpress.com/
- * Buildcraft Additions is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
- * http://buildcraftadditions.wordpress.com/wiki/licensing-stuff/
- */
+import buildcraft.BuildCraftCore;
+
 public class ConfigGui extends GuiConfig {
 
     public ConfigGui(GuiScreen parentScreen) {

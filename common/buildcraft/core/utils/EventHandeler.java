@@ -8,10 +8,9 @@
  */
 package buildcraft.core.utils;
 
-import buildcraft.core.configuration.ConfigHandeler;
-import cpw.mods.fml.client.event.ConfigChangedEvent;
 import net.minecraft.item.Item;
 
+import cpw.mods.fml.client.event.ConfigChangedEvent;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.PlayerEvent;
 
@@ -20,6 +19,7 @@ import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftEnergy;
 import buildcraft.BuildCraftFactory;
 import buildcraft.BuildCraftSilicon;
+import buildcraft.core.configuration.ConfigHandeler;
 
 public class EventHandeler {
 
@@ -75,9 +75,10 @@ public class EventHandeler {
 	}
 
     @SubscribeEvent
-    public void onConfigChanged(ConfigChangedEvent.OnConfigChangedEvent event){
-        if (event.modID.equals("BuildCraft|Core"))
+    public void onConfigChanged(ConfigChangedEvent.OnConfigChangedEvent event) {
+        if (event.modID.equals("BuildCraft|Core")) {
             ConfigHandeler.readConfiguration();
+        }
     }
 
 }
