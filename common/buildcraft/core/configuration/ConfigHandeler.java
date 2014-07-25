@@ -13,10 +13,10 @@ import net.minecraftforge.common.config.Configuration;
 import buildcraft.BuildCraftCore;
 import buildcraft.core.Version;
 
-public class ConfigHandeler {
+public final class ConfigHandeler {
 
     private ConfigHandeler() {
-        
+
     }
 
     public static void readConfiguration() {
