@@ -75,9 +75,11 @@ import buildcraft.core.BuildCraftConfiguration;
 import buildcraft.core.CommandBuildCraft;
 import buildcraft.core.CoreIconProvider;
 import buildcraft.core.DefaultProps;
+import buildcraft.core.GuiHandler;
 import buildcraft.core.InterModComms;
 import buildcraft.core.ItemBuildCraft;
 import buildcraft.core.ItemMapLocation;
+import buildcraft.core.ItemScienceBook;
 import buildcraft.core.ItemSpring;
 import buildcraft.core.ItemWrench;
 import buildcraft.core.SpringPopulate;
@@ -94,6 +96,9 @@ import buildcraft.core.recipes.IntegrationRecipeManager;
 import buildcraft.core.recipes.RefineryRecipeManager;
 import buildcraft.core.render.BlockHighlightHandler;
 import buildcraft.core.robots.EntityRobot;
+import buildcraft.core.science.TechnoTier;
+import buildcraft.core.science.Technology;
+import buildcraft.core.science.Tier;
 import buildcraft.core.triggers.ActionMachineControl;
 import buildcraft.core.triggers.ActionMachineControl.Mode;
 import buildcraft.core.triggers.ActionRedstoneOutput;
@@ -139,6 +144,7 @@ public class BuildCraftCore extends BuildCraftMod {
 
 	public static final int trackedPassiveEntityId = 156;
 	public static Block springBlock;
+	public static Item scienceBookItem;
 	public static Item woodenGearItem;
 	public static Item stoneGearItem;
 	public static Item ironGearItem;
@@ -183,6 +189,13 @@ public class BuildCraftCore extends BuildCraftMod {
 	public static IAction actionOn = new ActionMachineControl(Mode.On);
 	public static IAction actionOff = new ActionMachineControl(Mode.Off);
 	public static IAction actionLoop = new ActionMachineControl(Mode.Loop);
+
+	public static Technology technoWoodenGear;
+	public static Technology technoStoneGear;
+	public static Technology technoIronGear;
+	public static Technology technoGoldenGear;
+	public static Technology technoDiamondGear;
+
 	public static boolean loadDefaultRecipes = true;
 	public static boolean consumeWaterSources = false;
 	//public static BptItem[] itemBptProps = new BptItem[Item.itemsList.length];
@@ -285,6 +298,9 @@ public class BuildCraftCore extends BuildCraftMod {
 			consumeWaterSources = consumeWater.getBoolean(consumeWaterSources);
 			consumeWater.comment = "set to true if the Pump should consume water";
 
+			scienceBookItem = (new ItemScienceBook()).setUnlocalizedName("scienceBook");
+			CoreProxy.proxy.registerItem(scienceBookItem);
+
 			woodenGearItem = (new ItemBuildCraft()).setUnlocalizedName("woodenGearItem");
 			CoreProxy.proxy.registerItem(woodenGearItem);
 			OreDictionary.registerOre("gearWood", new ItemStack(woodenGearItem));
@@ -352,6 +368,7 @@ public class BuildCraftCore extends BuildCraftMod {
 		CoreProxy.proxy.initializeRendering();
 		CoreProxy.proxy.initializeEntityRendering();
 
+		NetworkRegistry.INSTANCE.registerGuiHandler(instance, new GuiHandler());
 	}
 
 	@Mod.EventHandler
@@ -405,13 +422,26 @@ public class BuildCraftCore extends BuildCraftMod {
 	}
 
 	public void loadRecipes() {
+		technoWoodenGear = new TechnoTier(Tier.WoodenGear, null);
+		technoStoneGear = new TechnoTier(Tier.StoneGear, new ItemStack(woodenGearItem, 50), technoWoodenGear);
+		technoIronGear = new TechnoTier(Tier.IronGear, new ItemStack(stoneGearItem, 50), technoStoneGear);
+		technoGoldenGear = new TechnoTier(Tier.GoldenGear, new ItemStack(ironGearItem, 30), technoIronGear);
+		technoDiamondGear = new TechnoTier(Tier.DiamondGear, new ItemStack(goldGearItem, 25), technoGoldenGear);
+
+		CoreProxy.proxy.addCraftingRecipe(new ItemStack(scienceBookItem), "R ", "B ", 'R', Blocks.redstone_torch, 'B',
+				Items.book);
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(wrenchItem), "I I", " G ", " I ", 'I', Items.iron_ingot, 'G', stoneGearItem);
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(woodenGearItem), " S ", "S S", " S ", 'S', "stickWood");
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(stoneGearItem), " I ", "IGI", " I ", 'I', "cobblestone", 'G',
+		CoreProxy.proxy.addCraftingRecipe(technoWoodenGear, new ItemStack(woodenGearItem), " S ", "S S", " S ", 'S',
+				"stickWood");
+		CoreProxy.proxy.addCraftingRecipe(technoStoneGear, new ItemStack(stoneGearItem), " I ", "IGI", " I ", 'I',
+				"cobblestone", 'G',
 				woodenGearItem);
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(ironGearItem), " I ", "IGI", " I ", 'I', Items.iron_ingot, 'G', stoneGearItem);
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(goldGearItem), " I ", "IGI", " I ", 'I', Items.gold_ingot, 'G', ironGearItem);
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(diamondGearItem), " I ", "IGI", " I ", 'I', Items.diamond, 'G', goldGearItem);
+		CoreProxy.proxy.addCraftingRecipe(technoIronGear, new ItemStack(ironGearItem), " I ", "IGI", " I ", 'I',
+				Items.iron_ingot, 'G', stoneGearItem);
+		CoreProxy.proxy.addCraftingRecipe(technoGoldenGear, new ItemStack(goldGearItem), " I ", "IGI", " I ", 'I',
+				Items.gold_ingot, 'G', ironGearItem);
+		CoreProxy.proxy.addCraftingRecipe(technoDiamondGear,
+				new ItemStack(diamondGearItem), " I ", "IGI", " I ", 'I', Items.diamond, 'G', goldGearItem);
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(mapLocationItem), "ppp", "pYp", "ppp", 'p', Items.paper, 'Y', new ItemStack(Items.dye, 1, 11));
 	}
 

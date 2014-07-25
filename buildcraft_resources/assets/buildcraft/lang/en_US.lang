@@ -140,6 +140,7 @@ gui.pipes.emzuli.title=Extraction Presets
 gui.pipes.emzuli.paint=Paint Items %s
 gui.pipes.emzuli.nopaint=Don't Paint Items
 
+item.scienceBook.name=Engineering Science Book
 item.bucketFuel.name=Fuel Bucket
 item.bucketOil.name=Oil Bucket
 item.woodenGearItem.name=Wood Gear

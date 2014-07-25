@@ -51,6 +51,9 @@ import buildcraft.core.ItemBuildCraft;
 import buildcraft.core.Version;
 import buildcraft.core.network.BuildCraftChannelHandler;
 import buildcraft.core.proxy.CoreProxy;
+import buildcraft.core.science.TechnoSimpleItem;
+import buildcraft.core.science.Technology;
+import buildcraft.core.science.Tier;
 import buildcraft.core.triggers.ActionPipeClose;
 import buildcraft.transport.BlockFilteredBuffer;
 import buildcraft.transport.BlockGenericPipe;
@@ -187,6 +190,8 @@ public class BuildCraftTransport extends BuildCraftMod {
 	public static IAction actionExtractionPresetBlue = new ActionExtractionPreset(EnumColor.BLUE);
 	public static IAction actionExtractionPresetGreen = new ActionExtractionPreset(EnumColor.GREEN);
 	public static IAction actionExtractionPresetYellow = new ActionExtractionPreset(EnumColor.YELLOW);
+
+	public static Technology technoWoodenPipe;
 
 	@Mod.Instance("BuildCraft|Transport")
 	public static BuildCraftTransport instance;
@@ -461,6 +466,10 @@ public class BuildCraftTransport extends BuildCraftMod {
 	}
 
 	public void loadRecipes() {
+		technoWoodenPipe = new TechnoSimpleItem
+				(Tier.WoodenGear,
+						pipeItemsWood,
+						new ItemStack(BuildCraftCore.woodenGearItem, 5));
 
 		// Add base recipe for pipe waterproof.
 		GameRegistry.addShapelessRecipe(new ItemStack(pipeWaterproof, 1), new ItemStack(Items.dye, 1, 2));

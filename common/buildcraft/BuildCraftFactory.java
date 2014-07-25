@@ -43,6 +43,9 @@ import buildcraft.core.InterModComms;
 import buildcraft.core.Version;
 import buildcraft.core.network.BuildCraftChannelHandler;
 import buildcraft.core.proxy.CoreProxy;
+import buildcraft.core.science.TechnoSimpleItem;
+import buildcraft.core.science.Technology;
+import buildcraft.core.science.Tier;
 import buildcraft.core.utils.ConfigUtils;
 import buildcraft.factory.BlockAutoWorkbench;
 import buildcraft.factory.BlockFloodGate;
@@ -85,6 +88,9 @@ public class BuildCraftFactory extends BuildCraftMod {
 	public static BlockTank tankBlock;
 	public static BlockRefinery refineryBlock;
 	public static BlockHopper hopperBlock;
+
+	public static Technology technoAutoWorkbench;
+
 	public static boolean allowMining = true;
 	public static boolean quarryOneTimeUse = false;
 	public static float miningMultiplier = 1;
@@ -223,6 +229,13 @@ public class BuildCraftFactory extends BuildCraftMod {
 	}
 
 	public static void loadRecipes() {
+		technoAutoWorkbench = new TechnoSimpleItem
+				(Tier.WoodenGear,
+				 autoWorkbenchBlock,
+						new ItemStack(BuildCraftCore.woodenGearItem, 10),
+						BuildCraftEnergy.technoRedstoneEngine,
+						BuildCraftTransport.technoWoodenPipe);
+
 
 		if (allowMining) {
 			if (miningWellBlock != null) {
@@ -273,7 +286,7 @@ public class BuildCraftFactory extends BuildCraftMod {
 		}
 
 		if (autoWorkbenchBlock != null) {
-			CoreProxy.proxy.addCraftingRecipe(new ItemStack(autoWorkbenchBlock),
+			CoreProxy.proxy.addCraftingRecipe(technoAutoWorkbench, new ItemStack(autoWorkbenchBlock),
 					" g ",
 					"gwg",
 					" g ",
