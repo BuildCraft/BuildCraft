@@ -56,7 +56,6 @@ import buildcraft.core.Version;
 import buildcraft.core.network.BuildCraftChannelHandler;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.science.TechnoSimpleItem;
-import buildcraft.core.science.Technology;
 import buildcraft.core.science.Tier;
 import buildcraft.core.triggers.BCTrigger;
 import buildcraft.energy.BlockBuildcraftFluid;
@@ -105,9 +104,11 @@ public class BuildCraftEnergy extends BuildCraftMod {
 	public static Item bucketFuel;
 	public static Item bucketRedPlasma;
 	public static Item fuel;
-	public static Technology technoRedstoneEngine;
-	public static Technology technoStoneEngine;
-	public static Technology technoIronEngine;
+
+	public static TechnoSimpleItem technoRedstoneEngine = new TechnoSimpleItem();
+	public static TechnoSimpleItem technoStoneEngine = new TechnoSimpleItem();
+	public static TechnoSimpleItem technoIronEngine = new TechnoSimpleItem();
+
 	public static boolean canOilBurn;
 	public static double oilWellScalar = 1.0;
 	public static Set<Integer> oilBiomeIDs = new HashSet<Integer>();
@@ -370,16 +371,19 @@ public class BuildCraftEnergy extends BuildCraftMod {
 		}
 	}
 
-	public static void loadRecipes() {
-		technoRedstoneEngine = new TechnoSimpleItem(Tier.WoodenGear, new ItemStack(engineBlock, 1, 0),
+	@Mod.EventHandler
+	public void loadTechnology(FMLPostInitializationEvent evt) {
+		technoRedstoneEngine.initialize(Tier.WoodenGear, new ItemStack(engineBlock, 1, 0),
 				new ItemStack(BuildCraftCore.woodenGearItem, 5));
 
-		technoStoneEngine = new TechnoSimpleItem(Tier.StoneGear, new ItemStack(engineBlock, 1, 1),
+		technoStoneEngine.initialize(Tier.StoneGear, new ItemStack(engineBlock, 1, 1),
 				new ItemStack(BuildCraftCore.stoneGearItem, 10), technoRedstoneEngine);
 
-		technoIronEngine = new TechnoSimpleItem(Tier.IronGear, new ItemStack(engineBlock, 1, 2),
+		technoIronEngine.initialize(Tier.IronGear, new ItemStack(engineBlock, 1, 2),
 				new ItemStack(BuildCraftCore.ironGearItem, 20), technoStoneEngine);
+	}
 
+	public static void loadRecipes() {
 		CoreProxy.proxy.addCraftingRecipe(technoRedstoneEngine,
 				new ItemStack(engineBlock, 1, 0),
 				"www", " g ", "GpG", 'w', "plankWood", 'g', Blocks.glass, 'G',

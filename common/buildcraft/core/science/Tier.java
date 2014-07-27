@@ -33,17 +33,19 @@ public enum Tier {
 
 	private static ItemStack[] stacksToDisplay;
 
+	private static TechnoTier[] technologies;
+
 	public ItemStack getStackToDisplay () {
 		if (stacksToDisplay == null) {
 			stacksToDisplay = new ItemStack[Tier.values().length];
 
-			stacksToDisplay [WoodenGear.ordinal()] = new ItemStack (BuildCraftCore.woodenGearItem);
-			stacksToDisplay [StoneGear.ordinal()] = new ItemStack (BuildCraftCore.stoneGearItem);
-			stacksToDisplay [IronGear.ordinal()] =  new ItemStack (BuildCraftCore.ironGearItem);
-			stacksToDisplay [GoldenGear.ordinal()] =  new ItemStack (BuildCraftCore.goldGearItem);
+			stacksToDisplay[WoodenGear.ordinal()] = new ItemStack(BuildCraftCore.woodenGearItem);
+			stacksToDisplay[StoneGear.ordinal()] = new ItemStack(BuildCraftCore.stoneGearItem);
+			stacksToDisplay[IronGear.ordinal()] = new ItemStack(BuildCraftCore.ironGearItem);
+			stacksToDisplay[GoldenGear.ordinal()] = new ItemStack(BuildCraftCore.goldGearItem);
 			stacksToDisplay[DiamondGear.ordinal()] = new ItemStack(BuildCraftCore.diamondGearItem);
-			stacksToDisplay [EmeraldGear.ordinal()] =  new ItemStack (Blocks.bedrock);
-			stacksToDisplay [RedstoneCrystalGear.ordinal()] =  new ItemStack (Blocks.bedrock);
+			stacksToDisplay[EmeraldGear.ordinal()] = new ItemStack(Blocks.bedrock);
+			stacksToDisplay[RedstoneCrystalGear.ordinal()] = new ItemStack(Blocks.bedrock);
 			stacksToDisplay[Chipset.ordinal()] = ItemRedstoneChipset.Chipset.RED.getStack();
 			stacksToDisplay[IronChipset.ordinal()] = ItemRedstoneChipset.Chipset.IRON.getStack();
 			stacksToDisplay[GoldenChipset.ordinal()] = ItemRedstoneChipset.Chipset.GOLD.getStack();
@@ -54,5 +56,58 @@ public enum Tier {
 		}
 
 		return stacksToDisplay[ordinal()];
+	}
+
+	public Technology getTechnology() {
+		return technologies[ordinal()];
+	}
+
+	public static void initializeTechnologies() {
+		technologies[WoodenGear.ordinal()].initialize(
+				WoodenGear);
+		technologies[StoneGear.ordinal()].initialize(
+				StoneGear,
+				new ItemStack(BuildCraftCore.woodenGearItem, 50));
+		technologies[IronGear.ordinal()].initialize(
+				IronGear,
+				new ItemStack(BuildCraftCore.woodenGearItem, 75),
+				new ItemStack(BuildCraftCore.stoneGearItem, 50));
+		technologies[GoldenGear.ordinal()].initialize(
+				GoldenGear,
+				new ItemStack(BuildCraftCore.woodenGearItem, 125),
+				new ItemStack(BuildCraftCore.stoneGearItem, 75),
+				new ItemStack(BuildCraftCore.ironGearItem, 10));
+		technologies[DiamondGear.ordinal()].initialize(
+				DiamondGear,
+				new ItemStack(BuildCraftCore.stoneGearItem, 125),
+				new ItemStack(BuildCraftCore.ironGearItem, 15),
+				new ItemStack(BuildCraftCore.goldGearItem, 5));
+		technologies[EmeraldGear.ordinal()].initialize(
+				EmeraldGear,
+				new ItemStack(BuildCraftCore.stoneGearItem, 200));
+		technologies[RedstoneCrystalGear.ordinal()].initialize(
+				RedstoneCrystalGear);
+		technologies[Chipset.ordinal()].initialize(
+				Chipset);
+		technologies[IronChipset.ordinal()].initialize(
+				IronChipset);
+		technologies[GoldenChipset.ordinal()].initialize(
+				GoldenChipset);
+		technologies[DiamondChipset.ordinal()].initialize(
+				DiamondChipset);
+		technologies[EmeraldChipset.ordinal()].initialize(
+				EmeraldChipset);
+		technologies[RedstoneCrystalChipset.ordinal()].initialize(
+				RedstoneCrystalChipset);
+		technologies[Unrevealed.ordinal()].initialize(
+				Unrevealed);
+	}
+
+	static {
+		technologies = new TechnoTier[Tier.values().length];
+
+		for (int i = 0; i < technologies.length; ++i) {
+			technologies[i] = new TechnoTier();
+		}
 	}
 }

@@ -28,7 +28,7 @@ public class BuildCraftRecipe extends ShapedOreRecipe {
 	public BuildCraftRecipe(Technology iTechno, ItemStack result, Object[] recipe) {
 		super(result, recipe);
 
-		iTechno = techno;
+		techno = iTechno;
 	}
 
 	@Override

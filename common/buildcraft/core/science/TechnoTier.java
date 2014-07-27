@@ -12,30 +12,38 @@ import net.minecraft.item.ItemStack;
 
 public class TechnoTier extends Technology {
 
+	private Tier technoTier;
 	private ItemStack itemToDisplay;
 	private Technology[] prerequisites;
 	private ItemStack[] requirements;
 
-	public TechnoTier(Tier iTier,
-			Object requirement,
+	public void initialize(Tier iTier,
 			Technology... iPrerequisites) {
-		this(iTier, requirement, null, null, iPrerequisites);
+		initialize(iTier, null, null, null, iPrerequisites);
 	}
 
-	public TechnoTier(Tier iTier,
+	public void initialize(Tier iTier,
+			Object requirement,
+			Technology... iPrerequisites) {
+		initialize(iTier, requirement, null, null, iPrerequisites);
+	}
+
+	public void initialize(Tier iTier,
 			Object requirement1,
 			Object requirement2,
 			Technology... iPrerequisites) {
-		this(iTier, requirement1, requirement2, null, iPrerequisites);
+		initialize(iTier, requirement1, requirement2, null, iPrerequisites);
 	}
 
-	public TechnoTier(Tier iTier,
+	public void initialize(Tier iTier,
 			Object requirement1,
 			Object requirement2,
 			Object requirement3,
 			Technology... iPrerequisites) {
 
-		super(Tier.values()[(iTier.ordinal() > 0 ? iTier.ordinal() - 1 : 0)],
+		super.initialize(
+				"tier:" + iTier.ordinal(),
+				Tier.values()[iTier.ordinal() > 0 ? iTier.ordinal() - 1 : 0],
 				requirement1,
 				requirement2,
 				requirement3);
@@ -43,6 +51,12 @@ public class TechnoTier extends Technology {
 		itemToDisplay = toStack(iTier.getStackToDisplay());
 
 		prerequisites = iPrerequisites;
+
+		technoTier = iTier;
+
+		if (iTier.ordinal() > 0) {
+			Tier.values()[iTier.ordinal() - 1].getTechnology().followups.add(this);
+		}
 	}
 
 	@Override

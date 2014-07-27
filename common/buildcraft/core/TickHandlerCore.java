@@ -9,6 +9,7 @@
 package buildcraft.core;
 
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ChatComponentTranslation;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
@@ -16,21 +17,28 @@ import cpw.mods.fml.common.gameevent.TickEvent.PlayerTickEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
+import buildcraft.api.core.IInvSlot;
+import buildcraft.core.inventory.InventoryIterator;
 import buildcraft.core.proxy.CoreProxy;
+import buildcraft.core.science.TechnologyNBT;
+import buildcraft.core.utils.NBTUtils;
 
-public class TickHandlerCoreClient {
+public class TickHandlerCore {
 
 	public static Integer startSynchronousComputation = new Integer(0);
 
 	private boolean nagged;
 
-	@SideOnly(Side.CLIENT)
 	@SubscribeEvent
-	public void tickEnd(PlayerTickEvent evt) {
+	public void synchonizationControl(PlayerTickEvent evt) {
 		synchronized (startSynchronousComputation) {
 			startSynchronousComputation.notify();
 		}
+	}
 
+	@SideOnly(Side.CLIENT)
+	@SubscribeEvent
+	public void checkUpToDate(PlayerTickEvent evt) {
 		if (nagged) {
 			return;
 		}
@@ -55,5 +63,24 @@ public class TickHandlerCoreClient {
 		// }
 
 		nagged = true;
+	}
+
+	@SubscribeEvent
+	public void updateScienceBooks(PlayerTickEvent evt) {
+		if (evt.player.worldObj.isRemote) {
+			return;
+		}
+
+		for (IInvSlot slot : InventoryIterator.getIterable(evt.player.inventory)) {
+			if (slot.getStackInSlot() != null
+					&& slot.getStackInSlot().getItem() instanceof ItemScienceBook) {
+
+				ItemStack stack = slot.getStackInSlot();
+
+				TechnologyNBT techno = TechnologyNBT.getTechnology(evt.player, stack);
+				techno.update();
+				techno.writeToNBT(NBTUtils.getItemData(stack));
+			}
+		}
 	}
 }

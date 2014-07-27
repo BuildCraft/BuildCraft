@@ -10,9 +10,11 @@ package buildcraft.core.science;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedList;
 
 import net.minecraft.block.Block;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
@@ -22,19 +24,26 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 public abstract class Technology {
 
+	private static final HashMap<String, Technology> technologies = new HashMap<String, Technology>();
 	private static final LinkedList[] registry = new LinkedList[Tier.values().length];
+
+	protected ArrayList<Technology> followups = new ArrayList<Technology>();
 
 	private Tier tier;
 	private ItemStack[] requirements;
 	private ArrayList<Technology> prerequisites = new ArrayList<Technology>();
-	protected ArrayList<Technology> followups = new ArrayList<Technology>();;
+	private String id;
 
-	public Technology(Tier iTier,
+	protected void initialize(String iId,
+			Tier iTier,
 			Object requirement1,
 			Object requirement2,
 			Object requirement3,
 			Technology... iPrerequisites) {
 		getTechnologies(iTier).add(this);
+		technologies.put(iId, this);
+
+		id = iId;
 
 		tier = iTier;
 
@@ -42,6 +51,8 @@ public abstract class Technology {
 		{toStack(requirement1),
 				toStack(requirement2),
 				toStack(requirement3)};
+
+		prerequisites.add(iTier.getTechnology());
 
 		for (Technology t : iPrerequisites) {
 			prerequisites.add(t);
@@ -84,6 +95,10 @@ public abstract class Technology {
 		return registry[tier.ordinal()];
 	}
 
+	public static Technology getTechnology(String id) {
+		return technologies.get(id);
+	}
+
 	public static ItemStack toStack(Object obj) {
 		if (obj instanceof ItemStack) {
 			return (ItemStack) obj;
@@ -96,4 +111,12 @@ public abstract class Technology {
 		}
 	}
 
+	public final String getID() {
+		return id;
+	}
+
+	@SideOnly(Side.CLIENT)
+	public void registerIcons(IIconRegister par1IconRegister) {
+
+	}
 }

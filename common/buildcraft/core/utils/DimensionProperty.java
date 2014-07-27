@@ -17,7 +17,7 @@ import net.minecraft.world.IWorldAccess;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 
-import buildcraft.core.TickHandlerCoreClient;
+import buildcraft.core.TickHandlerCore;
 
 public class DimensionProperty implements IWorldAccess {
 
@@ -52,9 +52,9 @@ public class DimensionProperty implements IWorldAccess {
 	}
 
 	private void load(Chunk chunk, ChunkProperty property) {
-		synchronized (TickHandlerCoreClient.startSynchronousComputation) {
+		synchronized (TickHandlerCore.startSynchronousComputation) {
 			try {
-				TickHandlerCoreClient.startSynchronousComputation.wait();
+				TickHandlerCore.startSynchronousComputation.wait();
 
 				for (int x = 0; x < 16; ++x) {
 					for (int y = 0; y < worldHeight; ++y) {

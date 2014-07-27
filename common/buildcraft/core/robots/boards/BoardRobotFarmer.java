@@ -19,7 +19,7 @@ import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
-import buildcraft.core.TickHandlerCoreClient;
+import buildcraft.core.TickHandlerCore;
 import buildcraft.core.inventory.filters.IStackFilter;
 import buildcraft.core.robots.AIRobotFetchAndEquipItemStack;
 import buildcraft.core.robots.AIRobotGotoBlock;
@@ -123,9 +123,9 @@ public class BoardRobotFarmer extends RedstoneBoardRobot {
 	}
 
 	private boolean isAirAbove(World world, int x, int y, int z) {
-		synchronized (TickHandlerCoreClient.startSynchronousComputation) {
+		synchronized (TickHandlerCore.startSynchronousComputation) {
 			try {
-				TickHandlerCoreClient.startSynchronousComputation.wait();
+				TickHandlerCore.startSynchronousComputation.wait();
 
 				return world.isAirBlock(x, y + 1, z);
 			} catch (InterruptedException e) {

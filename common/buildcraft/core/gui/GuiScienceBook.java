@@ -8,17 +8,20 @@
  */
 package buildcraft.core.gui;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
+import org.lwjgl.opengl.GL11;
+
+import net.minecraft.client.gui.GuiButton;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
 
 import buildcraft.core.DefaultProps;
+import buildcraft.core.gui.slots.SlotHidden;
 import buildcraft.core.science.Technology;
+import buildcraft.core.science.TechnologyNBT;
 import buildcraft.core.science.Tier;
 
 public class GuiScienceBook extends GuiAdvancedInterface {
@@ -30,11 +33,13 @@ public class GuiScienceBook extends GuiAdvancedInterface {
 	private static final ResourceLocation TEXTURE_ICONS = new ResourceLocation(
 			"buildcraft", DefaultProps.TEXTURE_PATH_GUI + "/science_icons.png");
 
+	private static final int EXTRA_ADVANCED_SLOTS = 1;
+
 	private Tier currentTier = null;
 
 	private Technology inFocus = null;
 
-	private List baseInventorySlots;
+	private GuiButton startResearch;
 
 	static class EmptySlot extends AdvancedSlot {
 		public EmptySlot(GuiAdvancedInterface gui, int x, int y) {
@@ -60,6 +65,68 @@ public class GuiScienceBook extends GuiAdvancedInterface {
 		public ItemStack getItemStack() {
 			return techno.getStackToDisplay();
 		}
+
+		@Override
+		public void drawSprite(int cornerX, int cornerY) {
+			super.drawSprite(cornerX, cornerY);
+
+			if (!getBook().isKnown(techno)) {
+				GL11.glDisable(GL11.GL_LIGHTING);
+				GL11.glDisable(GL11.GL_DEPTH_TEST);
+				int j1 = cornerX + x;
+				int k1 = cornerY + y;
+				GL11.glColorMask(true, true, true, false);
+
+				int color;
+
+				if (getBook().canBeResearched(techno)) {
+					color = 0x550000FF;
+				} else {
+					color = 0x55FF0000;
+				}
+
+				((GuiScienceBook) gui).drawGradientRect(j1, k1, j1 + 16, k1 + 16, color, color);
+				GL11.glColorMask(true, true, true, true);
+				GL11.glEnable(GL11.GL_LIGHTING);
+				GL11.glEnable(GL11.GL_DEPTH_TEST);
+			}
+		}
+
+		public TechnologyNBT getBook() {
+			return ((ContainerScienceBook) gui.getContainer()).book;
+		}
+	}
+
+	static class ResearchedSlot extends AdvancedSlot {
+		public ResearchedSlot(GuiAdvancedInterface gui, int x, int y) {
+			super(gui, x, y);
+		}
+
+		@Override
+		public IIcon getIcon() {
+			Technology t = getResearchedTechnology();
+
+			if (t != null) {
+				return t.getIcon();
+			} else {
+				return null;
+			}
+		}
+
+		@Override
+		public ItemStack getItemStack() {
+			Technology t = getResearchedTechnology();
+
+			if (t != null) {
+				return t.getStackToDisplay();
+			} else {
+				return null;
+			}
+		}
+
+		public Technology getResearchedTechnology() {
+			return ((ContainerScienceBook) gui.getContainer()).book.getResearchedTechnology();
+		}
 	}
 
 	public GuiScienceBook(EntityPlayer player) {
@@ -70,9 +137,17 @@ public class GuiScienceBook extends GuiAdvancedInterface {
 
 		slots = new AdvancedSlot[50];
 
-		baseInventorySlots = container.inventorySlots;
-
 		setTier(Tier.WoodenGear);
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public void initGui() {
+		super.initGui();
+
+		int j = (width - xSize) / 2;
+		int k = (height - ySize) / 2;
+		startResearch = new GuiButton(0, j + 10, k + 145, 70, 20, "Start");
 	}
 
 	@Override
@@ -112,6 +187,15 @@ public class GuiScienceBook extends GuiAdvancedInterface {
 			}
 		}
 
+		int arrowHeight = (int) (22 * getContainer().progress);
+		drawTexturedModalRect(
+				cornerX + 215,
+				cornerY + 73 + (22 - arrowHeight),
+				0,
+				128 + (22 - arrowHeight),
+				16,
+				arrowHeight);
+
 		for (int i = 0; i < 7; ++i) {
 			drawStack(Tier.values()[i].getStackToDisplay(), cornerX + 28 * i + 6, cornerY - 28 + 9);
 
@@ -128,7 +212,12 @@ public class GuiScienceBook extends GuiAdvancedInterface {
 		drawTooltipForSlotAt(par1, par2);
 	}
 
-
+	@Override
+	protected void actionPerformed(GuiButton button) {
+		if (button == startResearch) {
+			getContainer().startResearch(inFocus);
+		}
+	}
 
 	@Override
 	protected void mouseClicked(int mouseX, int mouseY, int mouseButton) {
@@ -169,7 +258,7 @@ public class GuiScienceBook extends GuiAdvancedInterface {
 
 	private void setTier(Tier newTier) {
 		if (inFocus != null || newTier != currentTier) {
-			slots = new AdvancedSlot[50];
+			slots = new AdvancedSlot[50 + EXTRA_ADVANCED_SLOTS];
 			currentTier = newTier;
 
 			int id = 0;
@@ -194,13 +283,32 @@ public class GuiScienceBook extends GuiAdvancedInterface {
 		}
 
 		inFocus = null;
-		container.inventorySlots = baseInventorySlots;
+
+		for (Object s : container.inventorySlots) {
+			if (s instanceof SlotHidden) {
+				SlotHidden h = (SlotHidden) s;
+
+				h.show();
+			}
+		}
+
+		buttonList.clear();
+
+		setExtraAdvancedSlots();
 	}
 
 	private void setFocus(Technology techno) {
 		inFocus = techno;
-		container.inventorySlots = new ArrayList();
-		slots = new AdvancedSlot[5 + 3 + 1 + 10];
+
+		for (Object s : container.inventorySlots) {
+			if (s instanceof SlotHidden) {
+				SlotHidden h = (SlotHidden) s;
+
+				h.hide();
+			}
+		}
+
+		slots = new AdvancedSlot[5 + 3 + 1 + 10 + EXTRA_ADVANCED_SLOTS];
 
 		int id = 0;
 
@@ -215,7 +323,7 @@ public class GuiScienceBook extends GuiAdvancedInterface {
 
 		for (int i = 0; i < 3; ++i) {
 			if (techno.getRequirements() != null) {
-				slots[id++] = new ItemSlot(this, 71, 115 + 18 * i, techno.getRequirements()[i]);
+				slots[id++] = new ItemSlot(this, 71 + 18 * i, 115, techno.getRequirements()[i]);
 			} else {
 				id++;
 			}
@@ -235,5 +343,27 @@ public class GuiScienceBook extends GuiAdvancedInterface {
 				}
 			}
 		}
+
+		buttonList.clear();
+
+		if (getContainer().book.canBeResearched(techno)) {
+			buttonList.add(startResearch);
+		}
+
+		setExtraAdvancedSlots();
+	}
+
+	@Override
+	protected ContainerScienceBook getContainer() {
+		return (ContainerScienceBook) super.getContainer();
+	}
+
+	public void setExtraAdvancedSlots() {
+		slots[slots.length - 1] = new ResearchedSlot(this, 216, 28);
+	}
+
+	@Override
+	public void drawGradientRect(int p1, int p2, int p3, int p4, int p5, int p6) {
+		super.drawGradientRect(p1, p2, p3, p4, p5, p6);
 	}
 }

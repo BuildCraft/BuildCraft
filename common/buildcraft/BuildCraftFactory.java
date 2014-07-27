@@ -44,7 +44,6 @@ import buildcraft.core.Version;
 import buildcraft.core.network.BuildCraftChannelHandler;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.science.TechnoSimpleItem;
-import buildcraft.core.science.Technology;
 import buildcraft.core.science.Tier;
 import buildcraft.core.utils.ConfigUtils;
 import buildcraft.factory.BlockAutoWorkbench;
@@ -89,7 +88,14 @@ public class BuildCraftFactory extends BuildCraftMod {
 	public static BlockRefinery refineryBlock;
 	public static BlockHopper hopperBlock;
 
-	public static Technology technoAutoWorkbench;
+	public static TechnoSimpleItem technoQuarryBlock = new TechnoSimpleItem();
+	public static TechnoSimpleItem technoMiningWellBlock = new TechnoSimpleItem();
+	public static TechnoSimpleItem technoAutoWorkbench = new TechnoSimpleItem();
+	public static TechnoSimpleItem technoPumpBlock = new TechnoSimpleItem();
+	public static TechnoSimpleItem technoFloodGateBlock = new TechnoSimpleItem();
+	public static TechnoSimpleItem technoTankBlock = new TechnoSimpleItem();
+	public static TechnoSimpleItem techoRefineryBlock = new TechnoSimpleItem();
+	public static TechnoSimpleItem technoHopperBlock = new TechnoSimpleItem();
 
 	public static boolean allowMining = true;
 	public static boolean quarryOneTimeUse = false;
@@ -228,15 +234,62 @@ public class BuildCraftFactory extends BuildCraftMod {
 		MinecraftForge.EVENT_BUS.register(this);
 	}
 
+	@Mod.EventHandler
+	public void loadTechnology(FMLPostInitializationEvent evt) {
+		technoAutoWorkbench.initialize(
+				Tier.WoodenGear,
+				autoWorkbenchBlock,
+				new ItemStack(BuildCraftCore.woodenGearItem, 10),
+				BuildCraftEnergy.technoRedstoneEngine,
+				BuildCraftTransport.technoPipeItemsWood);
+
+		technoTankBlock.initialize(
+				Tier.WoodenGear,
+				tankBlock,
+				new ItemStack(BuildCraftCore.woodenGearItem, 15));
+
+		technoHopperBlock.initialize(
+				Tier.StoneGear,
+				hopperBlock,
+				new ItemStack(BuildCraftCore.stoneGearItem, 10),
+				BuildCraftTransport.technoPipeItemsStone);
+
+		technoMiningWellBlock.initialize(
+				Tier.IronGear,
+				miningWellBlock,
+				new ItemStack(BuildCraftCore.ironGearItem, 5),
+				BuildCraftTransport.technoPipeItemsIron);
+
+		technoPumpBlock.initialize(
+				Tier.IronGear,
+				pumpBlock,
+				new ItemStack(BuildCraftCore.ironGearItem, 5),
+				BuildCraftTransport.technoPipeFluidsIron,
+				technoMiningWellBlock);
+
+		technoFloodGateBlock.initialize(
+				Tier.IronGear,
+				floodGateBlock,
+				new ItemStack(BuildCraftCore.ironGearItem, 10),
+				BuildCraftTransport.technoPipeFluidsStone);
+
+		techoRefineryBlock.initialize(
+				Tier.DiamondGear,
+				refineryBlock,
+				new ItemStack(BuildCraftCore.diamondGearItem, 2),
+				technoPumpBlock,
+				technoTankBlock);
+
+		technoQuarryBlock.initialize(
+				Tier.DiamondGear,
+				quarryBlock,
+				new ItemStack(BuildCraftCore.diamondGearItem, 5),
+				technoMiningWellBlock,
+				BuildCraftTransport.technoPipeStructureCobblestone
+				/* TODO: add generic building here */);
+	}
+
 	public static void loadRecipes() {
-		technoAutoWorkbench = new TechnoSimpleItem
-				(Tier.WoodenGear,
-				 autoWorkbenchBlock,
-						new ItemStack(BuildCraftCore.woodenGearItem, 10),
-						BuildCraftEnergy.technoRedstoneEngine,
-						BuildCraftTransport.technoWoodenPipe);
-
-
 		if (allowMining) {
 			if (miningWellBlock != null) {
 				CoreProxy.proxy.addCraftingRecipe(new ItemStack(miningWellBlock, 1),

@@ -9,44 +9,50 @@
 package buildcraft.core.science;
 
 import net.minecraft.block.Block;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.IIcon;
 
-public class TechnoSimpleItem extends Technology {
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
-	private ItemStack itemToDisplay;
+public class TechnoField extends Technology {
+
+	IIcon icon;
+	String iconResource;
+	String unlocalizedName;
 
 	public void initialize(Tier iTier,
-			Object iItemToDisplay,
+			String iconResource,
+			String unlocalizedName,
 			ItemStack requirement,
 			Technology... iPrerequisites) {
-		initialize(iTier, iItemToDisplay, requirement, null, null, iPrerequisites);
+		initialize(iTier, iconResource, unlocalizedName, requirement, null, null, iPrerequisites);
 	}
 
 	public void initialize(Tier iTier,
-			Object iItemToDisplay,
+			String iconResource,
+			String unlocalizedName,
 			ItemStack requirement1,
 			ItemStack requirement2,
 			Technology... iPrerequisites) {
-		initialize(iTier, iItemToDisplay, requirement1, requirement2, null, iPrerequisites);
+		initialize(iTier, iconResource, unlocalizedName, requirement1, requirement2, null, iPrerequisites);
 	}
 
 	public void initialize(Tier iTier,
-			Object iItemToDisplay,
+			String iIconResource,
+			String iUnlocalizedName,
 			ItemStack requirement1,
 			ItemStack requirement2,
 			ItemStack requirement3,
 			Technology... iPrerequisites) {
 
-		super.initialize("item:" + toStack(iItemToDisplay).getUnlocalizedName(),
+		super.initialize("field:" + iUnlocalizedName,
 				iTier, requirement1, requirement2, requirement3, iPrerequisites);
 
-		itemToDisplay = toStack(iItemToDisplay);
-	}
-
-	@Override
-	public ItemStack getStackToDisplay() {
-		return itemToDisplay;
+		unlocalizedName = iUnlocalizedName;
+		iconResource = iIconResource;
 	}
 
 	@Override
@@ -64,5 +70,11 @@ public class TechnoSimpleItem extends Technology {
 		} else {
 			return null;
 		}
+	}
+
+	@Override
+	@SideOnly(Side.CLIENT)
+	public void registerIcons(IIconRegister par1IconRegister) {
+
 	}
 }
