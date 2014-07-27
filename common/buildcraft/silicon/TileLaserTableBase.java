@@ -91,17 +91,17 @@ public abstract class TileLaserTableBase extends TileBuildCraft implements ILase
 	}
 
 	@Override
-	public int getXCoord() {
+	public double getXCoord() {
 		return xCoord;
 	}
 
 	@Override
-	public int getYCoord() {
+	public double getYCoord() {
 		return yCoord;
 	}
 
 	@Override
-	public int getZCoord() {
+	public double getZCoord() {
 		return zCoord;
 	}
 
