@@ -22,7 +22,7 @@ import buildcraft.api.gates.ActionParameterItemStack;
 import buildcraft.api.gates.IActionParameter;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
-import buildcraft.core.TickHandlerCoreClient;
+import buildcraft.core.TickHandlerCore;
 import buildcraft.core.inventory.filters.IStackFilter;
 import buildcraft.core.robots.AIRobotBreak;
 import buildcraft.core.robots.AIRobotFetchAndEquipItemStack;
@@ -144,9 +144,9 @@ public abstract class BoardRobotGenericBreakBlock extends RedstoneBoardRobot {
 			return true;
 		}
 
-		synchronized (TickHandlerCoreClient.startSynchronousComputation) {
+		synchronized (TickHandlerCore.startSynchronousComputation) {
 			try {
-				TickHandlerCoreClient.startSynchronousComputation.wait();
+				TickHandlerCore.startSynchronousComputation.wait();
 
 				Block block = world.getBlock(x, y, z);
 				int meta = world.getBlockMetadata(x, y, z);

@@ -94,17 +94,10 @@ public abstract class AdvancedSlot {
 	}
 
 	public void drawStack(ItemStack item) {
-		Minecraft mc = Minecraft.getMinecraft();
+		int cornerX = (gui.width - gui.getXSize()) / 2;
+		int cornerY = (gui.height - gui.getYSize()) / 2;
 
-		if (item != null) {
-			int cornerX = (gui.width - gui.getXSize()) / 2;
-			int cornerY = (gui.height - gui.getYSize()) / 2;
-
-			GuiAdvancedInterface.getItemRenderer().zLevel = 200F;
-			GuiAdvancedInterface.getItemRenderer().renderItemAndEffectIntoGUI(gui.getFontRenderer (), mc.renderEngine, item, cornerX + x, cornerY + y);
-			GuiAdvancedInterface.getItemRenderer().renderItemOverlayIntoGUI(gui.getFontRenderer (), mc.renderEngine, item, cornerX + x, cornerY + y);
-			GuiAdvancedInterface.getItemRenderer().zLevel = 0.0F;
-		}
+		gui.drawStack(item, cornerX + x, cornerY + y);
 	}
 
 	public void selected () {

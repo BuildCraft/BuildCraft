@@ -42,8 +42,8 @@ public abstract class GuiBuildCraft extends GuiContainer {
 	public static final ResourceLocation LEDGER_TEXTURE = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_GUI + "/ledger.png");
 	public final LedgerManager ledgerManager = new LedgerManager(this);
 	public final TileEntity tile;
-	public final ResourceLocation texture;
 	public final BuildCraftContainer container;
+	public ResourceLocation texture;
 
 	public GuiBuildCraft(BuildCraftContainer container, IInventory inventory, ResourceLocation texture) {
 		super(container);

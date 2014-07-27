@@ -10,6 +10,7 @@ package buildcraft.core.gui;
 
 import org.lwjgl.opengl.GL11;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.entity.RenderItem;
@@ -28,7 +29,8 @@ public abstract class GuiAdvancedInterface extends GuiBuildCraft {
 	public int getSlotAtLocation(int i, int j) {
 		for (int position = 0; position < slots.length; ++position) {
 			AdvancedSlot s = slots[position];
-			if (i >= s.x && i <= s.x + 16 && j >= s.y && j <= s.y + 16) {
+
+			if (s != null && i >= s.x && i <= s.x + 16 && j >= s.y && j <= s.y + 16) {
 				return position;
 			}
 		}
@@ -48,9 +50,11 @@ public abstract class GuiAdvancedInterface extends GuiBuildCraft {
 		OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, i1 / 1.0F, k1 / 1.0F);
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 
-		for (AdvancedSlot slot : slots) {
-			if (slot != null) {
-				slot.drawSprite(cornerX, cornerY);
+		if (slots != null) {
+			for (AdvancedSlot slot : slots) {
+				if (slot != null) {
+					slot.drawSprite(cornerX, cornerY);
+				}
 			}
 		}
 
@@ -100,4 +104,43 @@ public abstract class GuiAdvancedInterface extends GuiBuildCraft {
 	public void renderToolTip(ItemStack stack, int x, int y) {
     	super.renderToolTip(stack, x, y);
     }
+
+	public void drawStack(ItemStack item, int x, int y) {
+		Minecraft mc = Minecraft.getMinecraft();
+
+		if (item != null) {
+			GL11.glEnable(GL11.GL_LIGHTING);
+			float prevZ = GuiAdvancedInterface.getItemRenderer().zLevel;
+			GuiAdvancedInterface.getItemRenderer().zLevel = 200F;
+			GuiAdvancedInterface.getItemRenderer().renderItemAndEffectIntoGUI(getFontRenderer(), mc.renderEngine, item, x, y);
+			GuiAdvancedInterface.getItemRenderer().renderItemOverlayIntoGUI(getFontRenderer(), mc.renderEngine, item, x, y);
+			GuiAdvancedInterface.getItemRenderer().zLevel = prevZ;
+			GL11.glDisable(GL11.GL_LIGHTING);
+		}
+	}
+
+	@Override
+	protected void mouseClicked(int mouseX, int mouseY, int mouseButton) {
+		super.mouseClicked(mouseX, mouseY, mouseButton);
+
+		int cornerX = (width - xSize) / 2;
+		int cornerY = (height - ySize) / 2;
+
+		int position = getSlotAtLocation(mouseX - cornerX, mouseY - cornerY);
+
+		AdvancedSlot slot = null;
+
+		if (position < 0) {
+			return;
+		}
+
+		if (slots[position].isDefined()) {
+			slotClicked(slots[position]);
+		}
+	}
+
+	// TODO: Use this for all children of this class
+	protected void slotClicked(AdvancedSlot slot) {
+
+	}
 }

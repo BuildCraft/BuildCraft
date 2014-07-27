@@ -18,6 +18,12 @@ public class ItemSlot extends AdvancedSlot {
 		super(gui, x, y);
 	}
 
+	public ItemSlot(GuiAdvancedInterface gui, int x, int y, ItemStack iStack) {
+		super(gui, x, y);
+
+		stack = iStack;
+	}
+
 	@Override
 	public ItemStack getItemStack() {
 		return stack;

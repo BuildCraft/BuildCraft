@@ -23,6 +23,10 @@ public final class InventoryIterator {
 	private InventoryIterator() {
 	}
 
+	public static Iterable<IInvSlot> getIterable(IInventory inv) {
+		return getIterable(inv, ForgeDirection.UNKNOWN);
+	}
+
 	/**
 	 * Returns an Iterable object for the specified side of the inventory.
 	 *

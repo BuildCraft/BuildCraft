@@ -19,6 +19,7 @@ import net.minecraft.item.ItemStack;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLInterModComms;
+import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
 
@@ -57,6 +58,8 @@ import buildcraft.core.robots.boards.BoardRobotMinerNBT;
 import buildcraft.core.robots.boards.BoardRobotPickerNBT;
 import buildcraft.core.robots.boards.BoardRobotPlanterNBT;
 import buildcraft.core.robots.boards.BoardRobotShovelmanNBT;
+import buildcraft.core.science.TechnoSimpleItem;
+import buildcraft.core.science.Tier;
 import buildcraft.silicon.BlockLaser;
 import buildcraft.silicon.BlockLaserTable;
 import buildcraft.silicon.GuiHandler;
@@ -98,15 +101,14 @@ import buildcraft.transport.triggers.TriggerParameterSignal;
 @Mod(name = "BuildCraft Silicon", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Silicon", dependencies = DefaultProps.DEPENDENCY_TRANSPORT)
 public class BuildCraftSilicon extends BuildCraftMod {
 
+	@Mod.Instance("BuildCraft|Silicon")
+	public static BuildCraftSilicon instance;
+
 	public static ItemRedstoneChipset redstoneChipset;
 	public static ItemRedstoneBoard redstoneBoard;
 	public static BlockLaser laserBlock;
 	public static BlockLaserTable assemblyTableBlock;
 	public static BlockZonePlan zonePlanBlock;
-
-	@Mod.Instance("BuildCraft|Silicon")
-	public static BuildCraftSilicon instance;
-
 	public static Item redstoneCrystal;
 	public static Item robotItem;
 
@@ -120,6 +122,15 @@ public class BuildCraftSilicon extends BuildCraftMod {
 	public static IAction actionStationDropInPipe = new ActionStationRequestItemsPipe();
 
 	public static ITrigger triggerRobotSleep = new TriggerRobotSleep();
+
+	public static TechnoSimpleItem technoRedstoneBoard = new TechnoSimpleItem();
+	public static TechnoSimpleItem technoLaserBlock = new TechnoSimpleItem();
+	public static TechnoSimpleItem technoAssemblyTableBlock = new TechnoSimpleItem();
+	public static TechnoSimpleItem technoAdvancedCraftingTableBlock = new TechnoSimpleItem();
+	public static TechnoSimpleItem technoIntegrationTableBlock = new TechnoSimpleItem();
+	public static TechnoSimpleItem technoZonePlanBlock = new TechnoSimpleItem();
+	public static TechnoSimpleItem technoRedstoneCrystal = new TechnoSimpleItem();
+	public static TechnoSimpleItem technoRobotItem = new TechnoSimpleItem();
 
 	@Mod.EventHandler
 	public void preInit(FMLPreInitializationEvent evt) {
@@ -198,6 +209,49 @@ public class BuildCraftSilicon extends BuildCraftMod {
 		StatementManager.registerParameterClass("buildcraft:pipeWireTrigger", TriggerParameterSignal.class);
 		StatementManager.registerParameterClass("buildcraft:stackAction", ActionParameterItemStack.class);
 		StatementManager.registerParameterClass("buildcraft:pipeWireAction", ActionParameterSignal.class);
+	}
+
+	@Mod.EventHandler
+	public void loadTechnology(FMLPostInitializationEvent evt) {
+		technoLaserBlock.initialize(
+				Tier.EmeraldGear,
+				laserBlock,
+				new ItemStack(BuildCraftCore.diamondGearItem /* emerald */, 5));
+
+		technoAssemblyTableBlock.initialize(
+				Tier.EmeraldGear,
+				new ItemStack(assemblyTableBlock, 1, 0),
+				new ItemStack(BuildCraftCore.diamondGearItem /* emerald */, 5));
+
+		technoRedstoneCrystal.initialize(
+				Tier.EmeraldGear,
+				redstoneCrystal,
+				new ItemStack(BuildCraftCore.diamondGearItem /* emerald */, 10));
+
+		technoAdvancedCraftingTableBlock.initialize(
+				Tier.RedstoneCrystalGear,
+				new ItemStack(assemblyTableBlock, 1, 1),
+				new ItemStack(BuildCraftCore.diamondGearItem /* emerald */, 5));
+
+		technoIntegrationTableBlock.initialize(
+				Tier.RedstoneCrystalGear,
+				new ItemStack(assemblyTableBlock, 1, 2),
+				new ItemStack(BuildCraftCore.diamondGearItem /* emerald */, 5));
+
+		technoRedstoneBoard.initialize(
+				Tier.DiamondChipset,
+				redstoneBoard,
+				new ItemStack(BuildCraftCore.diamondGearItem /* */, 5));
+
+		technoRobotItem.initialize(
+				Tier.DiamondChipset,
+				robotItem,
+				new ItemStack(BuildCraftCore.diamondGearItem /* */, 5));
+
+		technoZonePlanBlock.initialize(
+				Tier.RedstoneCrystalChipset,
+				zonePlanBlock,
+				new ItemStack(BuildCraftCore.diamondGearItem /* */, 5));
 	}
 
 	public static void loadRecipes() {

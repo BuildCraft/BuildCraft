@@ -40,6 +40,8 @@ import buildcraft.api.core.ICoreProxy;
 import buildcraft.core.EntityBlock;
 import buildcraft.core.ItemBlockBuildCraft;
 import buildcraft.core.LaserKind;
+import buildcraft.core.recipes.BuildCraftRecipe;
+import buildcraft.core.science.Technology;
 
 public class CoreProxy implements ICoreProxy {
 
@@ -106,6 +108,17 @@ public class CoreProxy implements ICoreProxy {
 
 	public void onCraftingPickup(World world, EntityPlayer player, ItemStack stack) {
 		stack.onCrafting(world, player, stack.stackSize);
+	}
+
+	@SuppressWarnings("unchecked")
+	public void addCraftingRecipe(Technology techno, ItemStack result, Object... recipe) {
+		String name = Item.itemRegistry.getNameForObject(result.getItem());
+
+		if (BuildCraftCore.recipesBlacklist.contains(name)) {
+			return;
+		}
+
+		CraftingManager.getInstance().getRecipeList().add(new BuildCraftRecipe(techno, result, recipe));
 	}
 
 	@SuppressWarnings("unchecked")

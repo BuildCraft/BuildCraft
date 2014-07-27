@@ -51,6 +51,8 @@ import buildcraft.core.ItemBuildCraft;
 import buildcraft.core.Version;
 import buildcraft.core.network.BuildCraftChannelHandler;
 import buildcraft.core.proxy.CoreProxy;
+import buildcraft.core.science.TechnoSimpleItem;
+import buildcraft.core.science.Tier;
 import buildcraft.core.triggers.ActionPipeClose;
 import buildcraft.transport.BlockFilteredBuffer;
 import buildcraft.transport.BlockGenericPipe;
@@ -161,7 +163,6 @@ public class BuildCraftTransport extends BuildCraftMod {
 	public static Item pipePowerIron;
 	public static Item pipePowerGold;
 	public static Item pipePowerDiamond;
-	public static Item pipePowerHeat;
 	public static ItemFacade facadeItem;
 	public static Item plugItem;
 	public static Item robotStationItem;
@@ -187,6 +188,40 @@ public class BuildCraftTransport extends BuildCraftMod {
 	public static IAction actionExtractionPresetBlue = new ActionExtractionPreset(EnumColor.BLUE);
 	public static IAction actionExtractionPresetGreen = new ActionExtractionPreset(EnumColor.GREEN);
 	public static IAction actionExtractionPresetYellow = new ActionExtractionPreset(EnumColor.YELLOW);
+
+	public static TechnoSimpleItem technoPipeItemsWood = new TechnoSimpleItem();
+	public static TechnoSimpleItem technoPipeItemsEmerald = new TechnoSimpleItem();
+	public static TechnoSimpleItem technoPipeItemsStone = new TechnoSimpleItem();
+	public static TechnoSimpleItem technoPipeItemsCobblestone = new TechnoSimpleItem();
+	public static TechnoSimpleItem technoPipeItemsIron = new TechnoSimpleItem();
+	public static TechnoSimpleItem technoPipeItemsQuartz = new TechnoSimpleItem();
+	public static TechnoSimpleItem technoPipeItemsGold = new TechnoSimpleItem();
+	public static TechnoSimpleItem technoPipeItemsDiamond = new TechnoSimpleItem();
+	public static TechnoSimpleItem technoPipeItemsObsidian = new TechnoSimpleItem();
+	public static TechnoSimpleItem technoPipeItemsLapis = new TechnoSimpleItem();
+	public static TechnoSimpleItem technoPipeItemsDaizuli = new TechnoSimpleItem();
+	public static TechnoSimpleItem technoPipeItemsVoid = new TechnoSimpleItem();
+	public static TechnoSimpleItem technoPipeItemsSandstone = new TechnoSimpleItem();
+	public static TechnoSimpleItem technoPipeItemsEmzuli = new TechnoSimpleItem();
+	public static TechnoSimpleItem technoPipeItemsStripes = new TechnoSimpleItem();
+	public static TechnoSimpleItem technoPipeStructureCobblestone = new TechnoSimpleItem();
+
+	public static TechnoSimpleItem technoPipeFluidsWood = new TechnoSimpleItem();
+	public static TechnoSimpleItem technoPipeFluidsCobblestone = new TechnoSimpleItem();
+	public static TechnoSimpleItem technoPipeFluidsStone = new TechnoSimpleItem();
+	public static TechnoSimpleItem technoPipeFluidsIron = new TechnoSimpleItem();
+	public static TechnoSimpleItem technoPipeFluidsGold = new TechnoSimpleItem();
+	public static TechnoSimpleItem technoPipeFluidsVoid = new TechnoSimpleItem();
+	public static TechnoSimpleItem technoPipeFluidsSandstone = new TechnoSimpleItem();
+	public static TechnoSimpleItem technoPipeFluidsEmerald = new TechnoSimpleItem();
+
+	public static TechnoSimpleItem technoPipePowerWood = new TechnoSimpleItem();
+	public static TechnoSimpleItem technoPipePowerCobblestone = new TechnoSimpleItem();
+	public static TechnoSimpleItem technoPipePowerStone = new TechnoSimpleItem();
+	public static TechnoSimpleItem technoPipePowerQuartz = new TechnoSimpleItem();
+	public static TechnoSimpleItem technoPipePowerIron = new TechnoSimpleItem();
+	public static TechnoSimpleItem technoPipePowerGold = new TechnoSimpleItem();
+	public static TechnoSimpleItem technoPipePowerDiamond = new TechnoSimpleItem();
 
 	@Mod.Instance("BuildCraft|Transport")
 	public static BuildCraftTransport instance;
@@ -460,8 +495,216 @@ public class BuildCraftTransport extends BuildCraftMod {
 		ItemFacade.initialize();
 	}
 
-	public void loadRecipes() {
+	@Mod.EventHandler
+	public void loadTechnology(FMLPostInitializationEvent evt) {
+		// Item pipes
 
+		technoPipeItemsWood.initialize(
+				Tier.WoodenGear,
+				pipeItemsWood,
+				new ItemStack(BuildCraftCore.woodenGearItem, 5));
+
+		technoPipeItemsCobblestone.initialize(
+				Tier.WoodenGear,
+				pipeItemsCobblestone,
+				new ItemStack(BuildCraftCore.woodenGearItem, 5),
+				technoPipeItemsWood);
+
+		technoPipeItemsStone.initialize(
+				Tier.WoodenGear,
+				pipeItemsStone,
+				new ItemStack(BuildCraftCore.woodenGearItem, 5),
+				technoPipeItemsWood);
+
+		technoPipeItemsSandstone.initialize(
+				Tier.WoodenGear,
+				pipeItemsSandstone,
+				new ItemStack(BuildCraftCore.woodenGearItem, 5),
+				technoPipeItemsWood);
+
+		technoPipeItemsQuartz.initialize(
+				Tier.WoodenGear,
+				pipeItemsQuartz,
+				new ItemStack(BuildCraftCore.woodenGearItem, 5),
+				technoPipeItemsWood);
+
+		technoPipeStructureCobblestone.initialize(
+				Tier.WoodenGear,
+				pipeStructureCobblestone,
+				new ItemStack(BuildCraftCore.woodenGearItem, 5),
+				technoPipeItemsCobblestone);
+
+		technoPipeItemsIron.initialize(
+				Tier.StoneGear,
+				pipeItemsIron,
+				new ItemStack(BuildCraftCore.stoneGearItem, 5),
+				technoPipeItemsStone);
+
+		technoPipeItemsGold.initialize(
+				Tier.StoneGear,
+				pipeItemsGold,
+				new ItemStack(BuildCraftCore.stoneGearItem, 5),
+				technoPipeItemsStone);
+
+		technoPipeItemsObsidian.initialize(
+				Tier.StoneGear,
+				pipeItemsObsidian,
+				new ItemStack(BuildCraftCore.stoneGearItem, 5),
+				technoPipeItemsStone);
+
+		technoPipeItemsVoid.initialize(
+				Tier.StoneGear,
+				pipeItemsVoid,
+				new ItemStack(BuildCraftCore.stoneGearItem, 5),
+				technoPipeItemsObsidian);
+
+		technoPipeItemsDiamond.initialize(
+				Tier.IronGear,
+				pipeItemsDiamond,
+				new ItemStack(BuildCraftCore.ironGearItem, 5),
+				technoPipeItemsIron);
+
+		technoPipeItemsDaizuli.initialize(
+				Tier.IronGear,
+				pipeItemsDaizuli,
+				new ItemStack(BuildCraftCore.ironGearItem, 5),
+				technoPipeItemsDiamond);
+
+		technoPipeItemsLapis.initialize(
+				Tier.IronGear,
+				pipeItemsLapis,
+				new ItemStack(BuildCraftCore.ironGearItem, 5),
+				technoPipeItemsDiamond);
+
+		technoPipeItemsEmerald.initialize(
+				Tier.GoldenGear,
+				pipeItemsEmerald,
+				new ItemStack(BuildCraftCore.goldGearItem, 5),
+				technoPipeItemsDiamond);
+
+		technoPipeItemsStripes.initialize(
+				Tier.GoldenGear,
+				pipeItemsStripes,
+				new ItemStack(BuildCraftCore.goldGearItem, 5),
+				technoPipeItemsObsidian);
+
+		technoPipeItemsEmzuli.initialize(
+				Tier.GoldenGear,
+				pipeItemsEmzuli,
+				new ItemStack(BuildCraftCore.goldGearItem, 5),
+				technoPipeItemsDiamond);
+
+		// Fluid pipes
+
+		technoPipeFluidsWood.initialize(
+				Tier.WoodenGear,
+				pipeFluidsWood,
+				new ItemStack(BuildCraftCore.woodenGearItem, 5),
+				technoPipeItemsWood,
+				BuildCraftFactory.technoTankBlock);
+
+		technoPipeFluidsCobblestone.initialize(
+				Tier.WoodenGear,
+				pipeFluidsCobblestone,
+				new ItemStack(BuildCraftCore.woodenGearItem, 5),
+				technoPipeItemsCobblestone,
+				technoPipeFluidsWood);
+
+		technoPipeFluidsStone.initialize(
+				Tier.WoodenGear,
+				pipeFluidsStone,
+				new ItemStack(BuildCraftCore.woodenGearItem, 5),
+				technoPipeItemsStone,
+				technoPipeFluidsWood);
+
+		technoPipeFluidsSandstone.initialize(
+				Tier.WoodenGear,
+				pipeFluidsSandstone,
+				new ItemStack(BuildCraftCore.woodenGearItem, 5),
+				technoPipeItemsSandstone,
+				technoPipeFluidsWood);
+
+		technoPipeFluidsIron.initialize(
+				Tier.StoneGear,
+				pipeFluidsIron,
+				new ItemStack(BuildCraftCore.stoneGearItem, 5),
+				technoPipeItemsIron,
+				technoPipeFluidsStone);
+
+		technoPipeFluidsGold.initialize(
+				Tier.StoneGear,
+				pipeFluidsGold,
+				new ItemStack(BuildCraftCore.stoneGearItem, 5),
+				technoPipeItemsGold,
+				technoPipeFluidsStone);
+
+		technoPipeFluidsVoid.initialize(
+				Tier.StoneGear,
+				pipeFluidsVoid,
+				new ItemStack(BuildCraftCore.stoneGearItem, 5),
+				technoPipeItemsVoid,
+				technoPipeFluidsStone);
+
+		technoPipeFluidsEmerald.initialize(
+				Tier.GoldenGear,
+				pipeFluidsEmerald,
+				new ItemStack(BuildCraftCore.goldGearItem, 2),
+				technoPipeItemsDiamond,
+				technoPipeFluidsStone);
+
+		// Power pipes
+
+		technoPipePowerWood.initialize(
+				Tier.IronGear,
+				pipePowerWood,
+				new ItemStack(BuildCraftCore.ironGearItem, 5),
+				technoPipeItemsWood);
+
+		technoPipePowerCobblestone.initialize(
+				Tier.IronGear,
+				pipePowerCobblestone,
+				new ItemStack(BuildCraftCore.ironGearItem, 5),
+				technoPipeItemsWood,
+				technoPipePowerWood);
+
+		technoPipePowerStone.initialize(
+				Tier.IronGear,
+				pipePowerStone,
+				new ItemStack(BuildCraftCore.ironGearItem, 5),
+				technoPipeItemsStone,
+				technoPipePowerWood);
+
+		technoPipePowerQuartz.initialize(
+				Tier.IronGear,
+				pipePowerQuartz,
+				new ItemStack(BuildCraftCore.ironGearItem, 5),
+				technoPipeItemsQuartz,
+				technoPipePowerWood);
+
+		technoPipePowerIron.initialize(
+				Tier.GoldenGear,
+				pipePowerIron,
+				new ItemStack(BuildCraftCore.goldGearItem, 5),
+				technoPipeItemsIron,
+				technoPipePowerWood);
+
+		technoPipePowerGold.initialize(
+				Tier.GoldenGear,
+				pipePowerGold,
+				new ItemStack(BuildCraftCore.goldGearItem, 5),
+				technoPipeItemsGold,
+				technoPipePowerWood);
+
+		technoPipePowerDiamond.initialize(
+				Tier.GoldenGear,
+				pipePowerDiamond,
+				new ItemStack(BuildCraftCore.goldGearItem, 5),
+				technoPipeItemsDiamond,
+				technoPipePowerWood);
+
+	}
+
+	public void loadRecipes() {
 		// Add base recipe for pipe waterproof.
 		GameRegistry.addShapelessRecipe(new ItemStack(pipeWaterproof, 1), new ItemStack(Items.dye, 1, 2));
 
