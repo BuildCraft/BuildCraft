@@ -33,9 +33,9 @@ public interface ILaserTarget {
 	 */
 	boolean isInvalidTarget();
 
-	int getXCoord();
+	double getXCoord();
 
-	int getYCoord();
+	double getYCoord();
 
-	int getZCoord();
+	double getZCoord();
 }
