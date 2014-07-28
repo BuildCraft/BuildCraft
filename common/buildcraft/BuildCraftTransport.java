@@ -52,8 +52,10 @@ import buildcraft.core.Version;
 import buildcraft.core.network.BuildCraftChannelHandler;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.science.TechnoSimpleItem;
+import buildcraft.core.science.TechnoStatement;
 import buildcraft.core.science.Tier;
 import buildcraft.core.triggers.ActionPipeClose;
+import buildcraft.silicon.ItemRedstoneChipset.Chipset;
 import buildcraft.transport.BlockFilteredBuffer;
 import buildcraft.transport.BlockGenericPipe;
 import buildcraft.transport.GuiHandler;
@@ -127,6 +129,9 @@ import buildcraft.transport.triggers.TriggerRedstoneFaderInput;
 
 @Mod(version = Version.VERSION, modid = "BuildCraft|Transport", name = "Buildcraft Transport", dependencies = DefaultProps.DEPENDENCY_CORE)
 public class BuildCraftTransport extends BuildCraftMod {
+
+	@Mod.Instance("BuildCraft|Transport")
+	public static BuildCraftTransport instance;
 
 	public static BlockGenericPipe genericPipeBlock;
 	public static float pipeDurability;
@@ -223,8 +228,14 @@ public class BuildCraftTransport extends BuildCraftMod {
 	public static TechnoSimpleItem technoPipePowerGold = new TechnoSimpleItem();
 	public static TechnoSimpleItem technoPipePowerDiamond = new TechnoSimpleItem();
 
-	@Mod.Instance("BuildCraft|Transport")
-	public static BuildCraftTransport instance;
+	public static TechnoStatement technoTriggerPipe = new TechnoStatement();
+	public static TechnoStatement technoTriggerPipeWireActive = new TechnoStatement();
+	public static TechnoStatement technoActionPipeWire = new TechnoStatement();
+	public static TechnoStatement technoActionPipeClose = new TechnoStatement();
+	public static TechnoStatement technoActionPipeColor = new TechnoStatement();
+	public static TechnoStatement technoActionPipeDirection = new TechnoStatement();
+	public static TechnoStatement technoActionPowerLimiter = new TechnoStatement();
+	public static TechnoStatement technoActionExtractionPresetRed = new TechnoStatement();
 
 	private static LinkedList<PipeRecipe> pipeRecipes = new LinkedList<PipeRecipe>();
 
@@ -702,6 +713,65 @@ public class BuildCraftTransport extends BuildCraftMod {
 				technoPipeItemsDiamond,
 				technoPipePowerWood);
 
+		// Statements
+
+		technoTriggerPipe.initialize(
+				Tier.Chipset,
+				triggerPipe [0],
+				"",
+				Chipset.RED.getStack(5),
+				BuildCraftCore.technoSilicon);
+
+		technoTriggerPipeWireActive.initialize(
+				Tier.Chipset,
+				triggerPipeWireActive[0],
+				"",
+				Chipset.RED.getStack(5),
+				BuildCraftCore.technoSilicon);
+
+		technoActionPipeWire.initialize(
+				Tier.Chipset,
+				actionPipeWire[0],
+				"",
+				Chipset.RED.getStack(5),
+				BuildCraftCore.technoSilicon);
+
+		technoActionPipeClose.initialize(
+				Tier.IronChipset,
+				actionPipeClose,
+				"",
+				Chipset.RED.getStack(5),
+				BuildCraftCore.technoSilicon);
+
+		technoActionPipeColor.initialize(
+				Tier.Chipset,
+				actionPipeColor[0],
+				"",
+				Chipset.RED.getStack(5),
+				BuildCraftCore.technoSilicon);
+
+		technoActionPipeDirection.initialize(
+				Tier.Chipset,
+				actionPipeDirection[0],
+				"",
+				Chipset.RED.getStack(5),
+				BuildCraftCore.technoSilicon,
+				BuildCraftTransport.technoPipeItemsIron);
+
+		technoActionPowerLimiter.initialize(
+				Tier.Chipset,
+				actionPowerLimiter[1],
+				"",
+				Chipset.RED.getStack(5),
+				BuildCraftCore.technoSilicon,
+				BuildCraftTransport.technoPipePowerIron);
+
+		technoActionExtractionPresetRed.initialize(
+				Tier.Chipset,
+				actionExtractionPresetRed,
+				"",
+				Chipset.RED.getStack(5),
+				BuildCraftCore.technoSilicon);
 	}
 
 	public void loadRecipes() {

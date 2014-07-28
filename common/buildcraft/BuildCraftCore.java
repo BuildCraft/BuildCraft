@@ -96,7 +96,10 @@ import buildcraft.core.recipes.IntegrationRecipeManager;
 import buildcraft.core.recipes.RefineryRecipeManager;
 import buildcraft.core.render.BlockHighlightHandler;
 import buildcraft.core.robots.EntityRobot;
+import buildcraft.core.science.TechnoField;
 import buildcraft.core.science.TechnoSimpleItem;
+import buildcraft.core.science.TechnoStatement;
+import buildcraft.core.science.Technology;
 import buildcraft.core.science.Tier;
 import buildcraft.core.triggers.ActionMachineControl;
 import buildcraft.core.triggers.ActionMachineControl.Mode;
@@ -120,9 +123,14 @@ import buildcraft.core.utils.WorldPropertyIsOre;
 import buildcraft.core.utils.WorldPropertyIsShoveled;
 import buildcraft.core.utils.WorldPropertyIsSoft;
 import buildcraft.core.utils.WorldPropertyIsWood;
+import buildcraft.silicon.ItemRedstoneChipset.Chipset;
 
 @Mod(name = "BuildCraft", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Core", acceptedMinecraftVersions = "[1.7.10,1.8)", dependencies = "required-after:Forge@[10.13.0.1179,)")
 public class BuildCraftCore extends BuildCraftMod {
+
+	@Mod.Instance("BuildCraft|Core")
+	public static BuildCraftCore instance;
+
 	public static final boolean NONRELEASED_BLOCKS = true;
 
 	public static enum RenderMode {
@@ -192,9 +200,6 @@ public class BuildCraftCore extends BuildCraftMod {
 	public static boolean loadDefaultRecipes = true;
 	public static boolean consumeWaterSources = false;
 
-	@Mod.Instance("BuildCraft|Core")
-	public static BuildCraftCore instance;
-
 	public static Achievement woodenGearAchievement;
 	public static Achievement stoneGearAchievement;
 	public static Achievement ironGearAchievement;
@@ -226,7 +231,28 @@ public class BuildCraftCore extends BuildCraftMod {
 
 	public static GameProfile gameProfile = new GameProfile(UUID.nameUUIDFromBytes("buildcraft.core".getBytes()), "[BuildCraft]");
 
-	private static TechnoSimpleItem technoWrenchItem = new TechnoSimpleItem();
+	public static TechnoField technoTransport = new TechnoField();
+	public static TechnoField technoEnergy = new TechnoField();
+	public static TechnoField technoLiquid = new TechnoField();
+	public static TechnoField technoCrafting = new TechnoField();
+	public static TechnoField technoMining = new TechnoField();
+	public static TechnoField technoBuilding = new TechnoField();
+	public static TechnoField technoSilicon = new TechnoField();
+	public static TechnoField technoRobotics = new TechnoField();
+	public static TechnoField technoCommander = new TechnoField();
+
+	public static TechnoSimpleItem technoWrenchItem = new TechnoSimpleItem();
+	public static TechnoSimpleItem technoMapLocation = new TechnoSimpleItem();
+
+	public static TechnoStatement technoTriggerMachineActive = new TechnoStatement();
+	public static TechnoStatement technoTriggerEnergyHigh = new TechnoStatement();
+	public static TechnoStatement technoTriggerContainsInventory = new TechnoStatement();
+	public static TechnoStatement technoTriggerContainsFluid = new TechnoStatement();
+	public static TechnoStatement technoTriggerRedstoneActive = new TechnoStatement();
+	public static TechnoStatement technoTriggerInventoryBelow25 = new TechnoStatement();
+	public static TechnoStatement technoTriggerFluidContainerBelow25 = new TechnoStatement();
+	public static TechnoStatement technoActionRedstone = new TechnoStatement();
+	public static TechnoStatement technoActionOn = new TechnoStatement();
 
 	private static FloatBuffer modelviewF;
 	private static FloatBuffer projectionF;
@@ -407,6 +433,10 @@ public class BuildCraftCore extends BuildCraftMod {
 			iconProvider.registerIcons(event.map);
 			StatementIconProvider.INSTANCE.registerIcons(event.map);
 			EnumColor.registerIcons(event.map);
+
+			for (Technology t : Technology.technologies.values()) {
+				t.registerIcons(event.map);
+			}
 		} else if (event.map.getTextureType() == 0) {
 			BuildCraftCore.redLaserTexture = event.map.registerIcon("buildcraft:blockRedLaser");
 			BuildCraftCore.blueLaserTexture = event.map.registerIcon("buildcraft:blockBlueLaser");
@@ -420,10 +450,139 @@ public class BuildCraftCore extends BuildCraftMod {
 	public void loadTechnology(FMLPostInitializationEvent evt) {
 		Tier.initializeTechnologies();
 
+		// Technology Clusters
+
+		technoTransport.initialize(
+				Tier.WoodenGear,
+				"buildcraft:unknown",
+				"technology.field.Transport",
+				new ItemStack(woodenGearItem, 15));
+
+		technoEnergy.initialize(
+				Tier.WoodenGear,
+				"buildcraft:unknown",
+				"technology.field.Energy",
+				new ItemStack(woodenGearItem, 15));
+
+		technoLiquid.initialize(
+				Tier.WoodenGear,
+				"buildcraft:unknown",
+				"technology.field.Liquid",
+				new ItemStack(woodenGearItem, 15));
+
+		technoCrafting.initialize(
+				Tier.WoodenGear,
+				"buildcraft:unknown",
+				"technology.field.Crafting",
+				new ItemStack(woodenGearItem, 15));
+
+		technoMining.initialize(
+				Tier.IronGear,
+				"buildcraft:unknown",
+				"technology.field.Mining",
+				new ItemStack(woodenGearItem, 15));
+
+		technoBuilding.initialize(
+				Tier.GoldenGear,
+				"buildcraft:unknown",
+				"technology.field.Building",
+				new ItemStack(woodenGearItem, 15));
+
+		technoSilicon.initialize(
+				Tier.RedstoneCrystalGear,
+				"buildcraft:unknown",
+				"technology.field.Silicon",
+				new ItemStack(woodenGearItem, 15));
+
+		technoRobotics.initialize(
+				Tier.DiamondChipset,
+				"buildcraft:unknown",
+				"technology.field.Robotics",
+				new ItemStack(woodenGearItem, 15));
+
+		technoCommander.initialize(
+				Tier.RedstoneCrystalChipset,
+				"buildcraft:unknown",
+				"technology.field.Commander",
+				new ItemStack(woodenGearItem, 15));
+
+		// Items
+
 		technoWrenchItem.initialize(
 				Tier.StoneGear,
 				wrenchItem,
 				new ItemStack(stoneGearItem, 10));
+
+		technoMapLocation.initialize(
+				Tier.DiamondChipset,
+				mapLocationItem,
+				new ItemStack(stoneGearItem, 10),
+				technoRobotics);
+
+		// Statements
+
+		technoTriggerMachineActive.initialize(
+				Tier.Chipset,
+				triggerMachineActive,
+				"",
+				Chipset.RED.getStack(5),
+				technoSilicon);
+
+		technoTriggerEnergyHigh.initialize(
+				Tier.Chipset,
+				triggerEnergyHigh,
+				"",
+				Chipset.RED.getStack(5),
+				technoSilicon);
+
+		technoTriggerContainsInventory.initialize(
+				Tier.Chipset,
+				triggerContainsInventory,
+				"",
+				Chipset.RED.getStack(5),
+				technoSilicon);
+
+		technoTriggerContainsFluid.initialize(
+				Tier.Chipset,
+				triggerContainsFluid,
+				"",
+				Chipset.RED.getStack(5),
+				technoSilicon);
+
+		technoTriggerRedstoneActive.initialize(
+				Tier.Chipset,
+				triggerRedstoneActive,
+				"",
+				Chipset.RED.getStack(5),
+				technoSilicon);
+
+		technoTriggerInventoryBelow25.initialize(
+				Tier.Chipset,
+				triggerInventoryBelow25,
+				"",
+				Chipset.RED.getStack(5),
+				technoSilicon);
+
+		technoTriggerFluidContainerBelow25.initialize(
+				Tier.Chipset,
+				triggerFluidContainerBelow25,
+				"",
+				Chipset.RED.getStack(5),
+				technoSilicon);
+
+		technoActionRedstone.initialize(
+				Tier.Chipset,
+				actionRedstone,
+				"",
+				Chipset.RED.getStack(5),
+				technoSilicon);
+
+		technoActionOn.initialize(
+				Tier.Chipset,
+				actionOn,
+				"",
+				Chipset.RED.getStack(5),
+				technoSilicon);
 	}
 
 	public void loadRecipes() {

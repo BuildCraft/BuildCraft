@@ -67,6 +67,11 @@ public class GuiScienceBook extends GuiAdvancedInterface {
 		}
 
 		@Override
+		public String getDescription() {
+			return techno.getLocalizedName();
+		}
+
+		@Override
 		public void drawSprite(int cornerX, int cornerY) {
 			super.drawSprite(cornerX, cornerY);
 
@@ -122,6 +127,18 @@ public class GuiScienceBook extends GuiAdvancedInterface {
 			} else {
 				return null;
 			}
+		}
+
+		@Override
+		public String getDescription() {
+			Technology t = getResearchedTechnology();
+
+			if (t != null) {
+				return t.getLocalizedName();
+			} else {
+				return null;
+			}
+
 		}
 
 		public Technology getResearchedTechnology() {

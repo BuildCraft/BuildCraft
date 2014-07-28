@@ -24,7 +24,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 public abstract class Technology {
 
-	private static final HashMap<String, Technology> technologies = new HashMap<String, Technology>();
+	public static final HashMap<String, Technology> technologies = new HashMap<String, Technology>();
 	private static final LinkedList[] registry = new LinkedList[Tier.values().length];
 
 	protected ArrayList<Technology> followups = new ArrayList<Technology>();

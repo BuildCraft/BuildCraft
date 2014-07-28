@@ -48,6 +48,7 @@ import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.JavaTools;
 import buildcraft.api.fuels.IronEngineCoolant;
 import buildcraft.api.fuels.IronEngineFuel;
+import buildcraft.api.gates.ITrigger;
 import buildcraft.api.recipes.BuildcraftRecipeRegistry;
 import buildcraft.core.BlockSpring;
 import buildcraft.core.DefaultProps;
@@ -56,8 +57,8 @@ import buildcraft.core.Version;
 import buildcraft.core.network.BuildCraftChannelHandler;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.science.TechnoSimpleItem;
+import buildcraft.core.science.TechnoStatement;
 import buildcraft.core.science.Tier;
-import buildcraft.core.triggers.BCTrigger;
 import buildcraft.energy.BlockBuildcraftFluid;
 import buildcraft.energy.BlockEnergyConverter;
 import buildcraft.energy.BlockEnergyEmitter;
@@ -80,10 +81,14 @@ import buildcraft.energy.worldgen.BiomeGenOilDesert;
 import buildcraft.energy.worldgen.BiomeGenOilOcean;
 import buildcraft.energy.worldgen.BiomeInitializer;
 import buildcraft.energy.worldgen.OilPopulate;
+import buildcraft.silicon.ItemRedstoneChipset.Chipset;
 import buildcraft.transport.network.PacketHandlerTransport;
 
 @Mod(name = "BuildCraft Energy", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Energy", dependencies = DefaultProps.DEPENDENCY_CORE)
 public class BuildCraftEnergy extends BuildCraftMod {
+
+	@Mod.Instance("BuildCraft|Energy")
+	public static BuildCraftEnergy instance;
 
 	public static final int ENERGY_REMOVE_BLOCK = 25;
 	public static final int ENERGY_EXTRACT_ITEM = 2;
@@ -105,22 +110,22 @@ public class BuildCraftEnergy extends BuildCraftMod {
 	public static Item bucketRedPlasma;
 	public static Item fuel;
 
-	public static TechnoSimpleItem technoRedstoneEngine = new TechnoSimpleItem();
-	public static TechnoSimpleItem technoStoneEngine = new TechnoSimpleItem();
-	public static TechnoSimpleItem technoIronEngine = new TechnoSimpleItem();
-
 	public static boolean canOilBurn;
 	public static double oilWellScalar = 1.0;
 	public static Set<Integer> oilBiomeIDs = new HashSet<Integer>();
 	public static Set<Integer> excessiveOilBiomeIDs = new HashSet<Integer>();
 	public static Set<Integer> excludeOilBiomeIDs = new HashSet<Integer>();
 	public static TreeMap<BlockIndex, Integer> saturationStored = new TreeMap<BlockIndex, Integer>();
-	public static BCTrigger triggerBlueEngineHeat = new TriggerEngineHeat(EnergyStage.BLUE);
-	public static BCTrigger triggerGreenEngineHeat = new TriggerEngineHeat(EnergyStage.GREEN);
-	public static BCTrigger triggerYellowEngineHeat = new TriggerEngineHeat(EnergyStage.YELLOW);
-	public static BCTrigger triggerRedEngineHeat = new TriggerEngineHeat(EnergyStage.RED);
-	@Mod.Instance("BuildCraft|Energy")
-	public static BuildCraftEnergy instance;
+	public static ITrigger triggerBlueEngineHeat = new TriggerEngineHeat(EnergyStage.BLUE);
+	public static ITrigger triggerGreenEngineHeat = new TriggerEngineHeat(EnergyStage.GREEN);
+	public static ITrigger triggerYellowEngineHeat = new TriggerEngineHeat(EnergyStage.YELLOW);
+	public static ITrigger triggerRedEngineHeat = new TriggerEngineHeat(EnergyStage.RED);
+
+	public static TechnoSimpleItem technoRedstoneEngine = new TechnoSimpleItem();
+	public static TechnoSimpleItem technoStoneEngine = new TechnoSimpleItem();
+	public static TechnoSimpleItem technoIronEngine = new TechnoSimpleItem();
+
+	public static TechnoStatement technologyTriggerRedEngineHeat = new TechnoStatement();
 
 	private static Fluid buildcraftFluidOil;
 	private static Fluid buildcraftFluidFuel;
@@ -381,6 +386,13 @@ public class BuildCraftEnergy extends BuildCraftMod {
 
 		technoIronEngine.initialize(Tier.IronGear, new ItemStack(engineBlock, 1, 2),
 				new ItemStack(BuildCraftCore.ironGearItem, 20), technoStoneEngine);
+
+		technologyTriggerRedEngineHeat.initialize(
+				Tier.IronChipset,
+				triggerRedEngineHeat,
+				"",
+				Chipset.IRON.getStack(5),
+				BuildCraftCore.technoSilicon);
 	}
 
 	public static void loadRecipes() {

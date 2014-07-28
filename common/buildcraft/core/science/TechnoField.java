@@ -57,7 +57,12 @@ public class TechnoField extends Technology {
 
 	@Override
 	public String getLocalizedName() {
-		return "";
+		return unlocalizedName;
+	}
+
+	@Override
+	public IIcon getIcon() {
+		return icon;
 	}
 
 	public static ItemStack toStack(Object obj) {
@@ -74,7 +79,7 @@ public class TechnoField extends Technology {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void registerIcons(IIconRegister par1IconRegister) {
-
+	public void registerIcons(IIconRegister register) {
+		icon = register.registerIcon(iconResource);
 	}
 }

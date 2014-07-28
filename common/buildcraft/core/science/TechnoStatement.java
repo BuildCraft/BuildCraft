@@ -8,61 +8,54 @@
  */
 package buildcraft.core.science;
 
-import net.minecraft.block.Block;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.IIcon;
 
-public class TechnoSimpleItem extends Technology {
+import buildcraft.api.gates.IStatement;
 
-	private ItemStack itemToDisplay;
+public class TechnoStatement extends Technology {
+
+	private IStatement statementToDisplay;
+	private String unlocalizedName;
 
 	public void initialize(Tier iTier,
-			Object iItemToDisplay,
+			IStatement statementToDisplay,
+			String unlocalizedName,
 			ItemStack requirement,
 			Technology... iPrerequisites) {
-		initialize(iTier, iItemToDisplay, requirement, null, null, iPrerequisites);
+		initialize(iTier, statementToDisplay, unlocalizedName, requirement, null, null, iPrerequisites);
 	}
 
 	public void initialize(Tier iTier,
-			Object iItemToDisplay,
+			IStatement statementToDisplay,
+			String unlocalizedName,
 			ItemStack requirement1,
 			ItemStack requirement2,
 			Technology... iPrerequisites) {
-		initialize(iTier, iItemToDisplay, requirement1, requirement2, null, iPrerequisites);
+		initialize(iTier, statementToDisplay, unlocalizedName, requirement1, requirement2, null, iPrerequisites);
 	}
 
 	public void initialize(Tier iTier,
-			Object iItemToDisplay,
+			IStatement iStatementToDisplay,
+			String unlocalizedName,
 			ItemStack requirement1,
 			ItemStack requirement2,
 			ItemStack requirement3,
 			Technology... iPrerequisites) {
 
-		super.initialize("item:" + toStack(iItemToDisplay).getUnlocalizedName(),
+		super.initialize("statement:" + iStatementToDisplay.getUniqueTag(),
 				iTier, requirement1, requirement2, requirement3, iPrerequisites);
 
-		itemToDisplay = toStack(iItemToDisplay);
+		statementToDisplay = iStatementToDisplay;
 	}
 
 	@Override
-	public ItemStack getStackToDisplay() {
-		return itemToDisplay;
+	public IIcon getIcon() {
+		return statementToDisplay.getIcon();
 	}
 
 	@Override
 	public String getLocalizedName() {
-		return null;
-	}
-
-	public static ItemStack toStack(Object obj) {
-		if (obj instanceof ItemStack) {
-			return (ItemStack) obj;
-		} else if (obj instanceof Item) {
-			return new ItemStack((Item) obj);
-		} else if (obj instanceof Block) {
-			return new ItemStack((Block) obj);
-		} else {
-			return null;
-		}
+		return unlocalizedName;
 	}
 }

@@ -76,6 +76,9 @@ import buildcraft.factory.schematics.SchematicTank;
 @Mod(name = "BuildCraft Factory", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Factory", dependencies = DefaultProps.DEPENDENCY_CORE)
 public class BuildCraftFactory extends BuildCraftMod {
 
+	@Mod.Instance("BuildCraft|Factory")
+	public static BuildCraftFactory instance;
+
 	public static final int MINING_MJ_COST_PER_BLOCK = 64;
 	public static BlockQuarry quarryBlock;
 	public static BlockMiningWell miningWellBlock;
@@ -102,8 +105,6 @@ public class BuildCraftFactory extends BuildCraftMod {
 	public static float miningMultiplier = 1;
 	public static int miningDepth = 256;
 	public static PumpDimensionList pumpDimensionList;
-	@Mod.Instance("BuildCraft|Factory")
-	public static BuildCraftFactory instance;
 
 	@Mod.EventHandler
 	public void postInit(FMLPostInitializationEvent evt) {

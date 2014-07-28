@@ -134,6 +134,9 @@ import buildcraft.core.science.Tier;
 @Mod(name = "BuildCraft Builders", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Builders", dependencies = DefaultProps.DEPENDENCY_CORE)
 public class BuildCraftBuilders extends BuildCraftMod {
 
+	@Mod.Instance("BuildCraft|Builders")
+	public static BuildCraftBuilders instance;
+
 	public static final char BPT_SEP_CHARACTER = '-';
 	public static final int LIBRARY_PAGE_SIZE = 12;
 	public static final int MAX_BLUEPRINTS_NAME_SIZE = 32;
@@ -161,8 +164,6 @@ public class BuildCraftBuilders extends BuildCraftMod {
 	public static TechnoSimpleItem technoBlueprintItem = new TechnoSimpleItem();
 
 	public static ActionFiller[] fillerActions;
-	@Mod.Instance("BuildCraft|Builders")
-	public static BuildCraftBuilders instance;
 
 	public static BlueprintDatabase serverDB;
 	public static BlueprintDatabase clientDB;

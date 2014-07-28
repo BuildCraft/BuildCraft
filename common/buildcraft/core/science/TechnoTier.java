@@ -66,6 +66,6 @@ public class TechnoTier extends Technology {
 
 	@Override
 	public String getLocalizedName() {
-		return "";
+		return "Tier " + (technoTier.ordinal() + 1) + " (" + itemToDisplay.getDisplayName() + ")";
 	}
 }
