@@ -58,6 +58,7 @@ import buildcraft.core.robots.boards.BoardRobotMinerNBT;
 import buildcraft.core.robots.boards.BoardRobotPickerNBT;
 import buildcraft.core.robots.boards.BoardRobotPlanterNBT;
 import buildcraft.core.robots.boards.BoardRobotShovelmanNBT;
+import buildcraft.core.science.TechnoRobot;
 import buildcraft.core.science.TechnoSimpleItem;
 import buildcraft.core.science.TechnoStatement;
 import buildcraft.core.science.Tier;
@@ -141,6 +142,20 @@ public class BuildCraftSilicon extends BuildCraftMod {
 	public static TechnoStatement technoActionStationRequestItems = new TechnoStatement();
 	public static TechnoStatement technoActionStationForbidRobot = new TechnoStatement();
 	public static TechnoStatement technoActionStationDropInPipe = new TechnoStatement();
+
+	public static TechnoRobot technoRobotPicker = new TechnoRobot();
+	public static TechnoRobot technoRobotCarrier = new TechnoRobot();
+	public static TechnoRobot technoRobotLumberjack = new TechnoRobot();
+	public static TechnoRobot technoRobotHarvester = new TechnoRobot();
+	public static TechnoRobot technoRobotMiner = new TechnoRobot();
+	public static TechnoRobot technoRobotPlanter = new TechnoRobot();
+	public static TechnoRobot technoRobotFarmer = new TechnoRobot();
+	public static TechnoRobot technoRobotLeaveCutter = new TechnoRobot();
+	public static TechnoRobot technoRobotButcher = new TechnoRobot();
+	public static TechnoRobot technoRobotShovelman = new TechnoRobot();
+	public static TechnoRobot technoRobotKnight = new TechnoRobot();
+	public static TechnoRobot technoRobotBomber = new TechnoRobot();
+	public static TechnoRobot technoRobotBuilder = new TechnoRobot();
 
 	@Mod.EventHandler
 	public void preInit(FMLPreInitializationEvent evt) {
@@ -322,6 +337,87 @@ public class BuildCraftSilicon extends BuildCraftMod {
 				"",
 				Chipset.RED.getStack(5),
 				BuildCraftCore.technoRobotics);
+
+		// Robots
+
+		technoRobotPicker.initialize(
+				Tier.DiamondChipset,
+				BoardRobotPickerNBT.instance,
+				Chipset.RED.getStack(5),
+				BuildCraftCore.technoRobotics);
+
+		technoRobotCarrier.initialize(
+				Tier.DiamondChipset,
+				BoardRobotCarrierNBT.instance,
+				Chipset.RED.getStack(5),
+				BuildCraftCore.technoRobotics);
+
+		technoRobotLumberjack.initialize(
+				Tier.DiamondChipset,
+				BoardRobotLumberjackNBT.instance,
+				Chipset.RED.getStack(5),
+				BuildCraftCore.technoRobotics);
+
+		technoRobotHarvester.initialize(
+				Tier.DiamondChipset,
+				BoardRobotHarvesterNBT.instance,
+				Chipset.RED.getStack(5),
+				BuildCraftCore.technoRobotics);
+
+		technoRobotMiner.initialize(
+				Tier.DiamondChipset,
+				BoardRobotMinerNBT.instance,
+				Chipset.RED.getStack(5),
+				BuildCraftCore.technoRobotics);
+
+		technoRobotPlanter.initialize(
+				Tier.DiamondChipset,
+				BoardRobotPlanterNBT.instance,
+				Chipset.RED.getStack(5),
+				BuildCraftCore.technoRobotics);
+
+		technoRobotFarmer.initialize(
+				Tier.DiamondChipset,
+				BoardRobotFarmerNBT.instance,
+				Chipset.RED.getStack(5),
+				BuildCraftCore.technoRobotics);
+
+		technoRobotLeaveCutter.initialize(
+				Tier.DiamondChipset,
+				BoardRobotLeaveCutterNBT.instance,
+				Chipset.RED.getStack(5),
+				BuildCraftCore.technoRobotics);
+
+		technoRobotButcher.initialize(
+				Tier.DiamondChipset,
+				BoardRobotButcherNBT.instance,
+				Chipset.RED.getStack(5),
+				BuildCraftCore.technoRobotics);
+
+		technoRobotShovelman.initialize(
+				Tier.DiamondChipset,
+				BoardRobotShovelmanNBT.instance,
+				Chipset.RED.getStack(5),
+				BuildCraftCore.technoRobotics);
+
+		technoRobotBuilder.initialize(
+				Tier.EmeraldChipset,
+				BoardRobotBuilderNBT.instance,
+				Chipset.RED.getStack(5),
+				BuildCraftCore.technoRobotics);
+
+		technoRobotKnight.initialize(
+				Tier.EmeraldChipset,
+				BoardRobotKnightNBT.instance,
+				Chipset.RED.getStack(5),
+				BuildCraftCore.technoRobotics);
+
+		technoRobotBomber.initialize(
+				Tier.EmeraldChipset,
+				BoardRobotBomberNBT.instance,
+				Chipset.RED.getStack(5),
+				BuildCraftCore.technoRobotics);
+
 	}
 
 	public static void loadRecipes() {

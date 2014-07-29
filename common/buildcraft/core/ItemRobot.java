@@ -17,6 +17,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 
+import buildcraft.BuildCraftSilicon;
 import buildcraft.api.boards.RedstoneBoardNBT;
 import buildcraft.api.boards.RedstoneBoardRegistry;
 import buildcraft.api.boards.RedstoneBoardRobotNBT;
@@ -88,5 +89,12 @@ public class ItemRobot extends ItemBuildCraft {
 	@Override
 	public void registerIcons(IIconRegister par1IconRegister) {
 		// cancels default BC icon registering
+	}
+
+	public static ItemStack createRobotStack(ItemStack board) {
+		ItemStack robot = new ItemStack(BuildCraftSilicon.robotItem);
+		NBTUtils.getItemData(robot).setTag("board", NBTUtils.getItemData(board));
+
+		return robot;
 	}
 }

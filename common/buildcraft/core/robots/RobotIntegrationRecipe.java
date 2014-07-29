@@ -13,7 +13,6 @@ import net.minecraft.item.ItemStack;
 import buildcraft.BuildCraftSilicon;
 import buildcraft.api.recipes.CraftingResult;
 import buildcraft.core.ItemRobot;
-import buildcraft.core.utils.NBTUtils;
 import buildcraft.silicon.ItemRedstoneBoard;
 import buildcraft.silicon.TileIntegrationTable;
 import buildcraft.silicon.recipes.IntegrationTableRecipe;
@@ -40,11 +39,7 @@ public class RobotIntegrationRecipe extends IntegrationTableRecipe {
 		CraftingResult<ItemStack> result = super.craft(crafter, preview, inputA, inputB);
 
 		if (result != null) {
-			ItemStack robot = new ItemStack(BuildCraftSilicon.robotItem);
-
-			NBTUtils.getItemData(robot).setTag("board", NBTUtils.getItemData(inputB));
-
-			result.crafted = robot;
+			result.crafted = ItemRobot.createRobotStack(inputB);
 
 			return result;
 		} else {

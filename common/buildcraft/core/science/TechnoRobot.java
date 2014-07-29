@@ -8,56 +8,54 @@
  */
 package buildcraft.core.science;
 
-import net.minecraft.block.Block;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 
-public class TechnoSimpleItem extends Technology {
+import buildcraft.BuildCraftSilicon;
+import buildcraft.api.boards.RedstoneBoardRobotNBT;
+import buildcraft.core.ItemRobot;
+import buildcraft.core.utils.NBTUtils;
 
-	private ItemStack itemToDisplay;
+public class TechnoRobot extends Technology {
+
+	ItemStack robotItem;
+	RedstoneBoardRobotNBT robot;
 
 	public void initialize(Tier iTier,
-			Object iItemToDisplay,
+			RedstoneBoardRobotNBT robot,
 			ItemStack requirement,
 			Technology... iPrerequisites) {
-		initialize(iTier, iItemToDisplay, requirement, null, null, iPrerequisites);
+		initialize(iTier, robot, requirement, null, null, iPrerequisites);
 	}
 
 	public void initialize(Tier iTier,
-			Object iItemToDisplay,
+			RedstoneBoardRobotNBT robot,
 			ItemStack requirement1,
 			ItemStack requirement2,
 			Technology... iPrerequisites) {
-		initialize(iTier, iItemToDisplay, requirement1, requirement2, null, iPrerequisites);
+		initialize(iTier, robot, requirement1, requirement2, null, iPrerequisites);
 	}
 
 	public void initialize(Tier iTier,
-			Object iItemToDisplay,
+			RedstoneBoardRobotNBT iRobot,
 			ItemStack requirement1,
 			ItemStack requirement2,
 			ItemStack requirement3,
 			Technology... iPrerequisites) {
 
-		super.initialize("item:" + toStack(iItemToDisplay).getUnlocalizedName(),
+		super.initialize("robot:" + iRobot.getID(),
 				iTier, requirement1, requirement2, requirement3, iPrerequisites);
 
-		itemToDisplay = toStack(iItemToDisplay);
+		robot = iRobot;
+		ItemStack robotStack = new ItemStack(BuildCraftSilicon.robotItem);
+		NBTTagCompound nbt = NBTUtils.getItemData(robotStack);
+		nbt.setString("id", robot.getID());
+		robot.createDefaultBoard(nbt);
+		robotItem = ItemRobot.createRobotStack(robotStack);
 	}
 
 	@Override
 	public ItemStack getStackToDisplay() {
-		return itemToDisplay;
-	}
-
-	public static ItemStack toStack(Object obj) {
-		if (obj instanceof ItemStack) {
-			return (ItemStack) obj;
-		} else if (obj instanceof Item) {
-			return new ItemStack((Item) obj);
-		} else if (obj instanceof Block) {
-			return new ItemStack((Block) obj);
-		} else {
-			return null;
-		}
+		return robotItem;
 	}
 }

@@ -69,7 +69,9 @@ public abstract class Technology {
 		return null;
 	}
 
-	public abstract String getLocalizedName();
+	public String getLocalizedName() {
+		return null;
+	}
 
 	public final ArrayList<Technology> getPrerequisites() {
 		return prerequisites;
