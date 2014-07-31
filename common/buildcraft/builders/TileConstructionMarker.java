@@ -85,7 +85,7 @@ public class TileConstructionMarker extends TileBuildCraft implements IBuildingI
 			return;
 		}
 
-		if (itemBlueprint != null && bluePrintBuilder == null) {
+		if (itemBlueprint != null && ItemBlueprint.getId(itemBlueprint) != null && bluePrintBuilder == null) {
 			bluePrintBuilder = new BptBuilderBlueprint((Blueprint) ItemBlueprint.loadBlueprint(itemBlueprint),
 					worldObj, xCoord, yCoord, zCoord);
 			bptContext = bluePrintBuilder.getContext();
