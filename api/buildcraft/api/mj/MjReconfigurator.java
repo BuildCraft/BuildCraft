@@ -86,7 +86,7 @@ public class MjReconfigurator {
 
 	private ConfigurableMjBattery obtainConfigurableBattery(IBatteryObject battery) {
 		if (!(battery instanceof IConfigurableBatteryObject)) {
-			BCLog.logger.warning("Attempt to reconfigure unsupported battery: " + battery);
+			BCLog.logger.warn("Attempt to reconfigure unsupported battery: " + battery);
 			return null;
 		}
 		IConfigurableBatteryObject configurableBattery = (IConfigurableBatteryObject) battery;

@@ -13,7 +13,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.WeakHashMap;
-import java.util.logging.Level;
+
+import org.apache.logging.log4j.Level;
 
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
@@ -139,10 +140,10 @@ public final class MjAPI {
 				obj.init(o, f.field, f.battery);
 				return obj;
 			} catch (InstantiationException e) {
-				BCLog.logger.log(Level.WARNING, "can't instantiate class for energy kind \"" + kind + "\"");
+				BCLog.logger.log(Level.WARN, "can't instantiate class for energy kind \"" + kind + "\"");
 				return null;
 			} catch (IllegalAccessException e) {
-				BCLog.logger.log(Level.WARNING, "can't instantiate class for energy kind \"" + kind + "\"");
+				BCLog.logger.log(Level.WARN, "can't instantiate class for energy kind \"" + kind + "\"");
 				return null;
 			}
 		} else {
@@ -191,7 +192,7 @@ public final class MjAPI {
 		if (!mjBatteryKinds.containsKey(kind)) {
 			mjBatteryKinds.put(kind, clazz);
 		} else {
-			BCLog.logger.log(Level.WARNING,
+			BCLog.logger.log(Level.WARN,
 					"energy kind \"" + kind + "\" already registered with " + clazz.getCanonicalName());
 		}
 	}

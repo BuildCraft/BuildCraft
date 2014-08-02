@@ -8,7 +8,7 @@
  */
 package buildcraft.transport;
 
-import java.util.logging.Level;
+import org.apache.logging.log4j.Level;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
@@ -75,7 +75,7 @@ public class GuiHandler implements IGuiHandler {
 					return null;
 			}
 		} catch (Exception ex) {
-			BCLog.logger.log(Level.SEVERE, "Failed to open GUI", ex);
+			BCLog.logger.log(Level.ERROR, "Failed to open GUI", ex);
 		}
 		return null;
 	}
@@ -121,7 +121,7 @@ public class GuiHandler implements IGuiHandler {
 					return null;
 			}
 		} catch (Exception ex) {
-			BCLog.logger.log(Level.SEVERE, "Failed to open GUI", ex);
+			BCLog.logger.log(Level.ERROR, "Failed to open GUI", ex);
 		}
 		return null;
 	}

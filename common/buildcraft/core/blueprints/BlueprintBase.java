@@ -96,7 +96,7 @@ public abstract class BlueprintBase {
 						} catch (Throwable t) {
 							// Defensive code against errors in implementers
 							t.printStackTrace();
-							BCLog.logger.throwing("BptBase", "rotateLeft", t);
+							BCLog.logger.throwing(t);
 						}
 					}
 				}

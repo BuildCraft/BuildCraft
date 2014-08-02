@@ -9,7 +9,8 @@
 package buildcraft.api.mj;
 
 import java.lang.reflect.Field;
-import java.util.logging.Level;
+
+import org.apache.logging.log4j.Level;
 
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.JavaTools;
@@ -36,7 +37,7 @@ public class BatteryObject implements IBatteryIOObject, MjReconfigurator.IConfig
 			return JavaTools.bounds(batteryData.maxCapacity() - energyStored.getDouble(obj),
 					batteryData.minimumConsumption(), batteryData.maxReceivedPerCycle());
 		} catch (IllegalAccessException e) {
-			BCLog.logger.log(Level.WARNING, "can't get energy requested", e);
+			BCLog.logger.log(Level.WARN, "can't get energy requested", e);
 		}
 		return 0;
 	}
@@ -66,7 +67,7 @@ public class BatteryObject implements IBatteryIOObject, MjReconfigurator.IConfig
 				return used;
 			}
 		} catch (IllegalAccessException e) {
-			BCLog.logger.log(Level.WARNING, "can't add energy", e);
+			BCLog.logger.log(Level.WARN, "can't add energy", e);
 		}
 		return 0;
 	}
@@ -90,7 +91,7 @@ public class BatteryObject implements IBatteryIOObject, MjReconfigurator.IConfig
 				return used;
 			}
 		} catch (IllegalAccessException e) {
-			BCLog.logger.log(Level.WARNING, "can't extract energy", e);
+			BCLog.logger.log(Level.WARN, "can't extract energy", e);
 		}
 		return 0;
 	}
@@ -103,7 +104,7 @@ public class BatteryObject implements IBatteryIOObject, MjReconfigurator.IConfig
 		try {
 			return energyStored.getDouble(obj);
 		} catch (IllegalAccessException e) {
-			BCLog.logger.log(Level.WARNING, "can't get return energy stored", e);
+			BCLog.logger.log(Level.WARN, "can't get return energy stored", e);
 			return 0;
 		}
 	}
@@ -116,7 +117,7 @@ public class BatteryObject implements IBatteryIOObject, MjReconfigurator.IConfig
 		try {
 			energyStored.setDouble(obj, mj);
 		} catch (IllegalAccessException e) {
-			BCLog.logger.log(Level.WARNING, "can't set energy stored", e);
+			BCLog.logger.log(Level.WARN, "can't set energy stored", e);
 			throw new RuntimeException(e);
 		}
 	}

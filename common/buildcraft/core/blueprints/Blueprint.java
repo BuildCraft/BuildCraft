@@ -113,7 +113,7 @@ public class Blueprint extends BlueprintBase {
 		} catch (Throwable t) {
 			// Defensive code against errors in implementers
 			t.printStackTrace();
-			BCLog.logger.throwing("BptBlueprint", "readFromWorld", t);
+			BCLog.logger.throwing(t);
 		}
 
 		switch (slot.getBuildingPermission()) {

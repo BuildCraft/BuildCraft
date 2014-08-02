@@ -9,7 +9,8 @@
 package buildcraft;
 
 import java.util.EnumMap;
-import java.util.logging.Level;
+
+import org.apache.logging.log4j.Level;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.Packet;
@@ -32,7 +33,7 @@ public class BuildCraftMod {
 					.set(FMLOutboundHandler.OutboundTarget.ALL);
 			channels.get(Side.SERVER).writeOutbound(packet);
 		} catch (Throwable t) {
-			BCLog.logger.log(Level.WARNING, "sentToPlayers crash", t);
+			BCLog.logger.log(Level.WARN, "sentToPlayers crash", t);
 		}
 	}
 
@@ -42,7 +43,7 @@ public class BuildCraftMod {
 					.set(FMLOutboundHandler.OutboundTarget.ALL);
 			channels.get(Side.SERVER).writeOutbound(packet);
 		} catch (Throwable t) {
-			BCLog.logger.log(Level.WARNING, "sentToPlayers crash", t);
+			BCLog.logger.log(Level.WARN, "sentToPlayers crash", t);
 		}
 	}
 
@@ -59,7 +60,7 @@ public class BuildCraftMod {
 				name = "<no name>";
 			}
 
-			BCLog.logger.log(Level.WARNING, "sentToPlayer \"" + name + "\" crash", t);
+			BCLog.logger.log(Level.WARN, "sentToPlayer \"" + name + "\" crash", t);
 		}
 	}
 
@@ -68,7 +69,7 @@ public class BuildCraftMod {
 			channels.get(Side.CLIENT).attr(FMLOutboundHandler.FML_MESSAGETARGET).set(OutboundTarget.TOSERVER);
 			channels.get(Side.CLIENT).writeOutbound(packet);
 		} catch (Throwable t) {
-			BCLog.logger.log(Level.WARNING, "sentToServer crash", t);
+			BCLog.logger.log(Level.WARN, "sentToServer crash", t);
 		}
 	}
 }
