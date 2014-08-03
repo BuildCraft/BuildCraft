@@ -319,8 +319,10 @@ public class BuildCraftCore extends BuildCraftMod {
 			consumeWaterSources = consumeWater.getBoolean(consumeWaterSources);
 			consumeWater.comment = "set to true if the Pump should consume water";
 
-			scienceBookItem = (new ItemScienceBook()).setUnlocalizedName("scienceBook");
-			CoreProxy.proxy.registerItem(scienceBookItem);
+			if (!NONRELEASED_BLOCKS) {
+				scienceBookItem = (new ItemScienceBook()).setUnlocalizedName("scienceBook");
+				CoreProxy.proxy.registerItem(scienceBookItem);
+			}
 
 			woodenGearItem = (new ItemGear(10 * 20)).setUnlocalizedName("woodenGearItem");
 			CoreProxy.proxy.registerItem(woodenGearItem);
@@ -586,8 +588,11 @@ public class BuildCraftCore extends BuildCraftMod {
 	}
 
 	public void loadRecipes() {
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(scienceBookItem), "R ", "B ", 'R', Blocks.redstone_torch, 'B',
-				Items.book);
+		if (!NONRELEASED_BLOCKS) {
+			CoreProxy.proxy.addCraftingRecipe(new ItemStack(scienceBookItem), "R ", "B ", 'R', Blocks.redstone_torch, 'B',
+					Items.book);
+		}
+
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(wrenchItem), "I I", " G ", " I ", 'I', Items.iron_ingot, 'G', stoneGearItem);
 		CoreProxy.proxy.addCraftingRecipe(Tier.WoodenGear.getTechnology(), new ItemStack(woodenGearItem), " S ", "S S",
 				" S ", 'S',

@@ -61,12 +61,4 @@ public final class BoardRobotShovelmanNBT extends RedstoneBoardRobotNBT {
 	public IIcon getIcon(NBTTagCompound nbt) {
 		return icon;
 	}
-
-	@Override
-	public void createRandomBoard(NBTTagCompound nbt) {
-	}
-
-	@Override
-	public void createDefaultBoard(NBTTagCompound itemData) {
-	}
 }

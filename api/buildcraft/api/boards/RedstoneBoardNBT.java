@@ -15,7 +15,6 @@ import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.IIcon;
 
 import cpw.mods.fml.relauncher.Side;
@@ -39,35 +38,8 @@ public abstract class RedstoneBoardNBT<T> {
 	@SideOnly(Side.CLIENT)
 	public abstract IIcon getIcon(NBTTagCompound nbt);
 
-	public abstract void createRandomBoard(NBTTagCompound nbt);
-
-	public abstract void createDefaultBoard(NBTTagCompound nbt);
-
-	public IBoardParameter[] getParameters(NBTTagCompound nbt) {
-		NBTTagList paramsNBT = nbt.getTagList("parameters", Constants.NBT.TAG_COMPOUND);
-		IBoardParameter[] result = new IBoardParameter[paramsNBT.tagCount()];
-
-		for (int i = 0; i < paramsNBT.tagCount(); ++i) {
-			NBTTagCompound subNBT = paramsNBT.getCompoundTagAt(i);
-			IBoardParameter p = RedstoneBoardRegistry.instance.createParameter(subNBT.getString("kind"));
-			p.readFromNBT(subNBT);
-			result[i] = p;
-		}
-
-		return result;
-	}
-
-	public void setParameters(NBTTagCompound nbt, IBoardParameter[] params) {
-		NBTTagList paramsNBT = new NBTTagList();
-
-		for (IBoardParameter p : params) {
-			NBTTagCompound subNBT = new NBTTagCompound();
-			subNBT.setString("kind", RedstoneBoardRegistry.instance.getKindForParam(p));
-			p.writeToNBT(subNBT);
-			paramsNBT.appendTag(subNBT);
-		}
-
-		nbt.setTag("parameters", paramsNBT);
+	public void createBoard(NBTTagCompound nbt) {
+		nbt.setString("id", getID());
 	}
 
 	public int getParameterNumber(NBTTagCompound nbt) {

@@ -14,24 +14,17 @@ import net.minecraft.world.World;
 
 import cpw.mods.fml.common.network.IGuiHandler;
 
-import buildcraft.core.GuiIds;
 import buildcraft.silicon.gui.ContainerAdvancedCraftingTable;
 import buildcraft.silicon.gui.ContainerAssemblyTable;
 import buildcraft.silicon.gui.ContainerIntegrationTable;
-import buildcraft.silicon.gui.ContainerRedstoneBoard;
 import buildcraft.silicon.gui.GuiAdvancedCraftingTable;
 import buildcraft.silicon.gui.GuiAssemblyTable;
 import buildcraft.silicon.gui.GuiIntegrationTable;
-import buildcraft.silicon.gui.GuiRedstoneBoard;
 
 public class GuiHandler implements IGuiHandler {
 
 	@Override
 	public Object getClientGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
-		if (id == GuiIds.REDSTONE_BOARD) {
-			return new GuiRedstoneBoard(player, x, y, z);
-		}
-
 		if (!world.blockExists(x, y, z)) {
 			return null;
 		}
@@ -68,11 +61,6 @@ public class GuiHandler implements IGuiHandler {
 
 	@Override
 	public Object getServerGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
-
-		if (id == GuiIds.REDSTONE_BOARD) {
-			return new ContainerRedstoneBoard(player, x, y, z);
-		}
-
 		if (!world.blockExists(x, y, z)) {
 			return null;
 		}
@@ -101,9 +89,6 @@ public class GuiHandler implements IGuiHandler {
 			} else {
 				return new ContainerIntegrationTable(player.inventory, (TileIntegrationTable) tile);
 			}
-
-		case GuiIds.REDSTONE_BOARD:
-			return new ContainerRedstoneBoard(player, x, y, z);
 
 		default:
 			return null;

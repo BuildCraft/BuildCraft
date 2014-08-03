@@ -16,8 +16,6 @@ import java.util.Random;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.nbt.NBTTagCompound;
 
-import buildcraft.api.boards.IBoardParameter;
-import buildcraft.api.boards.IBoardParameterStack;
 import buildcraft.api.boards.RedstoneBoardNBT;
 import buildcraft.api.boards.RedstoneBoardRegistry;
 
@@ -54,8 +52,7 @@ public class ImplRedstoneBoardRegistry extends RedstoneBoardRegistry {
 			accumulatedSearch += f.probability;
 
 			if (accumulatedSearch > value) {
-				nbt.setString("id", f.boardNBT.getID());
-				f.boardNBT.createRandomBoard(nbt);
+				f.boardNBT.createBoard(nbt);
 				return;
 			}
 		}
@@ -81,29 +78,6 @@ public class ImplRedstoneBoardRegistry extends RedstoneBoardRegistry {
 	public void registerIcons(IIconRegister par1IconRegister) {
 		for (BoardFactory f : boards.values()) {
 			f.boardNBT.registerIcons(par1IconRegister);
-		}
-	}
-
-	@Override
-	public IBoardParameterStack createParameterStack() {
-		return new BoardParameterStack();
-	}
-
-	@Override
-	public IBoardParameterStack createParameter(String kind) {
-		if ("stack".equals(kind)) {
-			return createParameterStack();
-		} else {
-			return null;
-		}
-	}
-
-	@Override
-	public String getKindForParam(IBoardParameter param) {
-		if (param instanceof BoardParameterStack) {
-			return "stack";
-		} else {
-			return null;
 		}
 	}
 

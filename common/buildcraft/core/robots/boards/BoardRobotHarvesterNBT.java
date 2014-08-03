@@ -61,16 +61,6 @@ public final class BoardRobotHarvesterNBT extends RedstoneBoardRobotNBT {
 	}
 
 	@Override
-	public void createRandomBoard(NBTTagCompound nbt) {
-
-	}
-
-	@Override
-	public void createDefaultBoard(NBTTagCompound nbt) {
-
-	}
-
-	@Override
 	public ResourceLocation getRobotTexture() {
 		return TEXTURE;
 	}

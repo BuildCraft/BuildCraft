@@ -43,7 +43,8 @@ public class PathFindingJob extends Thread {
 				pathFinding.iterate();
 
 				elapsedtime = new Date().getTime() - startTime;
-				sleep(elapsedtime);
+				double timeToWait = elapsedtime * 1.5;
+				sleep((long) timeToWait);
 			}
 		} catch (Throwable t) {
 			t.printStackTrace();

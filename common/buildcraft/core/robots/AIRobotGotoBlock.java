@@ -87,13 +87,14 @@ public class AIRobotGotoBlock extends AIRobotGoto {
 		} else {
 			if (pathSearchJob.isDone()) {
 				path = pathSearch.getResult();
-				lastBlockInPath = path.getLast();
 
 				if (path.size() == 0) {
 					unreachable = true;
 					terminate();
 					return;
 				}
+
+				lastBlockInPath = path.getLast();
 
 				setNextInPath();
 			}

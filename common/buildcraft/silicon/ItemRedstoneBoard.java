@@ -17,7 +17,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.IIcon;
-import net.minecraft.world.World;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -26,7 +25,6 @@ import buildcraft.BuildCraftSilicon;
 import buildcraft.api.boards.RedstoneBoardNBT;
 import buildcraft.api.boards.RedstoneBoardRegistry;
 import buildcraft.core.CreativeTabBuildCraft;
-import buildcraft.core.GuiIds;
 import buildcraft.core.ItemBuildCraft;
 import buildcraft.core.utils.NBTUtils;
 
@@ -77,15 +75,6 @@ public class ItemRedstoneBoard extends ItemBuildCraft {
 		RedstoneBoardRegistry.instance.registerIcons(par1IconRegister);
 	}
 
-	@Override
-	public ItemStack onItemRightClick(ItemStack par1ItemStack, World world, EntityPlayer entityPlayer) {
-		if (!world.isRemote) {
-			entityPlayer.openGui(BuildCraftSilicon.instance, GuiIds.REDSTONE_BOARD, world, 0, 0, 0);
-		}
-
-		return par1ItemStack;
-	}
-
 	@SuppressWarnings({"unchecked", "rawtypes"})
 	@Override
 	@SideOnly(Side.CLIENT)
@@ -93,8 +82,7 @@ public class ItemRedstoneBoard extends ItemBuildCraft {
 		for (RedstoneBoardNBT nbt : RedstoneBoardRegistry.instance.getAllBoardNBTs()) {
 			ItemStack stack = new ItemStack(BuildCraftSilicon.redstoneBoard);
 			NBTTagCompound nbtData = NBTUtils.getItemData(stack);
-			nbtData.setString("id", nbt.getID());
-			nbt.createDefaultBoard(nbtData);
+			nbt.createBoard(nbtData);
 			itemList.add(stack.copy());
 		}
 	}

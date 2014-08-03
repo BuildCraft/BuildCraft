@@ -802,6 +802,10 @@ public class BuildCraftTransport extends BuildCraftMod {
 
 		BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:pipePlug", 1000, new ItemStack(plugItem, 8),
 				new ItemStack(pipeStructureCobblestone));
+
+		CoreProxy.proxy.addCraftingRecipe(new ItemStack(robotStationItem), "   ", " I ", "ICI",
+				'I', Items.iron_ingot,
+				'C', Chipset.GOLD.getStack());
 	}
 
 	@Mod.EventHandler

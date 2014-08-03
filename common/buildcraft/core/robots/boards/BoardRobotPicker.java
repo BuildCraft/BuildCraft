@@ -13,7 +13,6 @@ import java.util.Set;
 
 import net.minecraft.nbt.NBTTagCompound;
 
-import buildcraft.api.boards.IBoardParameter;
 import buildcraft.api.boards.RedstoneBoardRobot;
 import buildcraft.api.boards.RedstoneBoardRobotNBT;
 import buildcraft.api.robots.AIRobot;
@@ -32,8 +31,6 @@ public class BoardRobotPicker extends RedstoneBoardRobot {
 	public static Set<Integer> targettedItems = new HashSet<Integer>();
 
 	private NBTTagCompound data;
-	private IBoardParameter[] params;
-	private int range;
 
 	public BoardRobotPicker(EntityRobotBase iRobot) {
 		super(iRobot);
@@ -42,12 +39,11 @@ public class BoardRobotPicker extends RedstoneBoardRobot {
 	public BoardRobotPicker(EntityRobotBase robot, NBTTagCompound nbt) {
 		super(robot);
 		data = nbt;
-		range = nbt.getInteger("range");
 	}
 
 	@Override
 	public void update() {
-		startDelegateAI(new AIRobotFetchItem(robot, range, ActionRobotFilter.getGateFilter(robot
+		startDelegateAI(new AIRobotFetchItem(robot, 250, ActionRobotFilter.getGateFilter(robot
 				.getLinkedStation()), robot.getZoneToWork()));
 	}
 
@@ -59,7 +55,7 @@ public class BoardRobotPicker extends RedstoneBoardRobot {
 			if (fetching.itemPickupCancelled || fetching.target != null) {
 				// if we find an item - that may have been cancelled.
 				// let's try to get another one
-				startDelegateAI(new AIRobotFetchItem(robot, range, ActionRobotFilter.getGateFilter(robot
+				startDelegateAI(new AIRobotFetchItem(robot, 250, ActionRobotFilter.getGateFilter(robot
 						.getLinkedStation()), robot.getZoneToWork()));
 			} else if (robot.containsItems()) {
 				startDelegateAI(new AIRobotGotoStationToUnload(robot, null));
@@ -85,14 +81,10 @@ public class BoardRobotPicker extends RedstoneBoardRobot {
 	@Override
 	public void writeSelfToNBT(NBTTagCompound nbt) {
 		super.writeSelfToNBT(nbt);
-
-		nbt.setInteger("range", range);
 	}
 
 	@Override
 	public void loadSelfFromNBT(NBTTagCompound nbt) {
 		super.loadSelfFromNBT(nbt);
-
-		range = nbt.getInteger("range");
 	}
 }

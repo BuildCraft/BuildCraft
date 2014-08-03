@@ -49,8 +49,7 @@ public class TechnoRobot extends Technology {
 		robot = iRobot;
 		ItemStack robotStack = new ItemStack(BuildCraftSilicon.robotItem);
 		NBTTagCompound nbt = NBTUtils.getItemData(robotStack);
-		nbt.setString("id", robot.getID());
-		robot.createDefaultBoard(nbt);
+		robot.createBoard(nbt);
 		robotItem = ItemRobot.createRobotStack(robotStack);
 	}
 

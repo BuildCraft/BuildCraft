@@ -27,11 +27,5 @@ public abstract class RedstoneBoardRegistry {
 
 	public abstract void registerIcons(IIconRegister par1IconRegister);
 
-	public abstract IBoardParameterStack createParameter(String kind);
-
-	public abstract IBoardParameterStack createParameterStack();
-
-	public abstract String getKindForParam(IBoardParameter param);
-
 	public abstract Collection<RedstoneBoardNBT<?>> getAllBoardNBTs();
 }

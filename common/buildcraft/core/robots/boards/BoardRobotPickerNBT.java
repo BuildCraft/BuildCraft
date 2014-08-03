@@ -21,7 +21,6 @@ import buildcraft.api.boards.RedstoneBoardRobot;
 import buildcraft.api.boards.RedstoneBoardRobotNBT;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.robots.EntityRobot;
-import buildcraft.core.utils.NBTUtils;
 import buildcraft.core.utils.StringUtils;
 
 public final class BoardRobotPickerNBT extends RedstoneBoardRobotNBT {
@@ -41,9 +40,6 @@ public final class BoardRobotPickerNBT extends RedstoneBoardRobotNBT {
 	@Override
 	public void addInformation(ItemStack stack, EntityPlayer player, List list, boolean advanced) {
 		list.add(StringUtils.localize("buildcraft.boardRobotPicker"));
-
-		NBTTagCompound nbt = NBTUtils.getItemData(stack);
-		list.add(StringUtils.localize("buildcraft.boardDetail.range") + ": " + nbt.getInteger("range"));
 	}
 
 	@Override
@@ -59,17 +55,6 @@ public final class BoardRobotPickerNBT extends RedstoneBoardRobotNBT {
 	@Override
 	public void registerIcons(IIconRegister iconRegister) {
 		icon = iconRegister.registerIcon("buildcraft:board_green");
-	}
-
-	@Override
-	public void createRandomBoard(NBTTagCompound nbt) {
-		int range = (int) Math.floor(nextFloat(10) * 500) + 10;
-		nbt.setInteger("range", range);
-	}
-
-	@Override
-	public void createDefaultBoard(NBTTagCompound nbt) {
-		nbt.setInteger("range", 250);
 	}
 
 	@Override
