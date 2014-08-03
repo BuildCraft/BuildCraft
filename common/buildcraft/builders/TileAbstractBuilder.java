@@ -151,4 +151,9 @@ public abstract class TileAbstractBuilder extends TileBuildCraft implements ITil
 		mjPrev = mjStored;
 		mjUnchangedCycles = 0;
 	}
+	
+	@Override
+        public double getMaxRenderDistanceSquared() {
+        	return Double.MAX_VALUE;
+    	}
 }
