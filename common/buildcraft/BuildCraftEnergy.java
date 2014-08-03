@@ -11,7 +11,8 @@ package buildcraft;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeMap;
-import java.util.logging.Level;
+
+import org.apache.logging.log4j.Level;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.MapColor;
@@ -309,7 +310,7 @@ public class BuildCraftEnergy extends BuildCraftMod {
 						list.add(Integer.parseInt(strippedId));
 					} catch (NumberFormatException ex) {
 						BCLog.logger.log
-								(Level.WARNING,
+								(Level.WARN,
 										configuration.getName() + ": Could not find biome id: "
 								+ strippedId + " ; Skipping!");
 					}
@@ -332,7 +333,7 @@ public class BuildCraftEnergy extends BuildCraftMod {
 
 					if (!found) {
 						BCLog.logger.log
-								(Level.WARNING,
+								(Level.WARN,
 									 configuration.getName() + ": Could not find biome id: "
 								+ strippedId + " ; Skipping!");
 					}

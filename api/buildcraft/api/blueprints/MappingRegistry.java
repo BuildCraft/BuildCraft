@@ -10,7 +10,8 @@ package buildcraft.api.blueprints;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.logging.Level;
+
+import org.apache.logging.log4j.Level;
 
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
@@ -285,7 +286,7 @@ public class MappingRegistry {
 			} else {
 				// Keeping the order correct
 				idToBlock.add(null);
-				BCLog.logger.log(Level.WARNING, "Can't load block " + name);
+				BCLog.logger.log(Level.WARN, "Can't load block " + name);
 			}
 		}
 
@@ -302,7 +303,7 @@ public class MappingRegistry {
 			} else {
 				// Keeping the order correct
 				idToItem.add(null);
-				BCLog.logger.log(Level.WARNING, "Can't load item " + name);
+				BCLog.logger.log(Level.WARN, "Can't load item " + name);
 			}
 		}
 
@@ -325,7 +326,7 @@ public class MappingRegistry {
 			} else {
 				// Keeping the order correct
 				idToEntity.add(null);
-				BCLog.logger.log(Level.WARNING, "Can't load entity " + name);
+				BCLog.logger.log(Level.WARN, "Can't load entity " + name);
 			}
 		}
 	}

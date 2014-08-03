@@ -9,7 +9,8 @@
 package buildcraft.transport;
 
 import java.util.List;
-import java.util.logging.Level;
+
+import org.apache.logging.log4j.Level;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.IIconRegister;
@@ -83,7 +84,7 @@ public class ItemPipe extends ItemBuildCraft implements IItemPipe {
 			Pipe<?> pipe = BlockGenericPipe.createPipe(this);
 
 			if (pipe == null) {
-				BCLog.logger.log(Level.WARNING, "Pipe failed to create during placement at {0},{1},{2}", new Object[]{i, j, k});
+				BCLog.logger.log(Level.WARN, "Pipe failed to create during placement at {0},{1},{2}", new Object[]{i, j, k});
 				return true;
 			}
 

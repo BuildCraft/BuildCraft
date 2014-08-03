@@ -209,7 +209,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 				} catch (Throwable t) {
 					// Defensive code against errors in implementers
 					t.printStackTrace();
-					BCLog.logger.throwing("BptBuilderBlueprint", "checkRequirements", t);
+					BCLog.logger.throwing(t);
 				}
 
 				b.writeToWorld(context);
@@ -228,7 +228,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 			} catch (Throwable t) {
 				// Defensive code against errors in implementers
 				t.printStackTrace();
-				BCLog.logger.throwing("BptBuilderBlueprint", "checkRequirements", t);
+				BCLog.logger.throwing(t);
 			}
 
 			e.writeToWorld(context);
@@ -416,8 +416,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 			} catch (Throwable t) {
 				// Defensive code against errors in implementers
 				t.printStackTrace();
-				BCLog.logger.throwing("BptBuilderBlueprint",
-						"internalGetBlock", t);
+				BCLog.logger.throwing(t);
 				iterator.remove();
 			}
 		}
@@ -465,7 +464,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 		} catch (Throwable t) {
 			// Defensive code against errors in implementers
 			t.printStackTrace();
-			BCLog.logger.throwing("BptBuilderBlueprint", "checkRequirements", t);
+			BCLog.logger.throwing(t);
 		}
 
 		LinkedList<ItemStack> stacksUsed = new LinkedList<ItemStack>();
@@ -505,7 +504,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 					} catch (Throwable t) {
 						// Defensive code against errors in implementers
 						t.printStackTrace();
-						BCLog.logger.throwing("BptBuilderBlueprint", "checkRequirements", t);
+						BCLog.logger.throwing(t);
 					}
 
 					if (reqStk.stackSize == 0) {
@@ -539,7 +538,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 		} catch (Throwable t) {
 			// Defensive code against errors in implementers
 			t.printStackTrace();
-			BCLog.logger.throwing("BptBuilderBlueprint", "useRequirements", t);
+			BCLog.logger.throwing(t);
 
 		}
 
@@ -590,7 +589,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 					} catch (Throwable t) {
 						// Defensive code against errors in implementers
 						t.printStackTrace();
-						BCLog.logger.throwing("BptBuilderBlueprint", "useRequirements", t);
+						BCLog.logger.throwing(t);
 					}
 
 					if (reqStk.stackSize == 0) {
@@ -622,7 +621,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 			} catch (Throwable t) {
 				// Defensive code against errors in implementers
 				t.printStackTrace();
-				BCLog.logger.throwing("BptBuilderBlueprint", "recomputeIfNeeded", t);
+				BCLog.logger.throwing(t);
 			}
 
 			for (ItemStack stack : stacks) {
@@ -651,7 +650,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 			} catch (Throwable t) {
 				// Defensive code against errors in implementers
 				t.printStackTrace();
-				BCLog.logger.throwing("BptBuilderBlueprint", "recomputeIfNeeded", t);
+				BCLog.logger.throwing(t);
 			}
 
 			for (ItemStack stack : stacks) {
@@ -713,7 +712,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 			} catch (Throwable t) {
 				// Defensive code against errors in implementers
 				t.printStackTrace();
-				BCLog.logger.throwing("BptBuilderBlueprint", "postProcessing", t);
+				BCLog.logger.throwing(t);
 			}
 		}
 	}

@@ -9,7 +9,8 @@
 package buildcraft.transport;
 
 import java.util.LinkedList;
-import java.util.logging.Level;
+
+import org.apache.logging.log4j.Level;
 
 import io.netty.buffer.ByteBuf;
 
@@ -153,14 +154,14 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 					NBTTagCompound pluggableData = nbt.getCompoundTag(key);
 					Class<?> pluggableClass = Class.forName(pluggableData.getString("pluggableClass"));
 					if (!IPipePluggable.class.isAssignableFrom(pluggableClass)) {
-						BCLog.logger.warning("Wrong pluggable class: " + pluggableClass);
+						BCLog.logger.warn("Wrong pluggable class: " + pluggableClass);
 						continue;
 					}
 					IPipePluggable pluggable = (IPipePluggable) pluggableClass.newInstance();
 					pluggable.readFromNBT(pluggableData);
 					pluggables[i] = pluggable;
 				} catch (Exception e) {
-					BCLog.logger.warning("Failed to load side state");
+					BCLog.logger.warn("Failed to load side state");
 					e.printStackTrace();
 				}
 			}
@@ -302,7 +303,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 		if (pipe != null) {
 			pipe.readFromNBT(nbt);
 		} else {
-			BCLog.logger.log(Level.WARNING, "Pipe failed to load from NBT at {0},{1},{2}", new Object[]{xCoord, yCoord, zCoord});
+			BCLog.logger.log(Level.WARN, "Pipe failed to load from NBT at {0},{1},{2}", new Object[]{xCoord, yCoord, zCoord});
 			deletePipe = true;
 		}
 
@@ -532,7 +533,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 		this.blockType = getBlockType();
 
 		if (pipe == null) {
-			BCLog.logger.log(Level.WARNING, "Pipe failed to initialize at {0},{1},{2}, deleting", new Object[]{xCoord, yCoord, zCoord});
+			BCLog.logger.log(Level.WARN, "Pipe failed to initialize at {0},{1},{2}, deleting", new Object[]{xCoord, yCoord, zCoord});
 			worldObj.setBlockToAir(xCoord, yCoord, zCoord);
 			return;
 		}

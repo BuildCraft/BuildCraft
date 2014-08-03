@@ -1096,12 +1096,12 @@ public class BlockGenericPipe extends BlockBuildCraft {
 			if (pipe != null) {
 				return pipe.getConstructor(Item.class).newInstance(key);
 			} else {
-				BCLog.logger.warning("Detected pipe with unknown key (" + key + "). Did you remove a buildcraft addon?");
+				BCLog.logger.warn("Detected pipe with unknown key (" + key + "). Did you remove a buildcraft addon?");
 			}
 
 		} catch (Throwable t) {
 			t.printStackTrace();
-			BCLog.logger.warning("Failed to create pipe with (" + key + "). No valid constructor found. Possibly a item ID conflit.");
+			BCLog.logger.warn("Failed to create pipe with (" + key + "). No valid constructor found. Possibly a item ID conflit.");
 		}
 
 		return null;

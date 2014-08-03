@@ -8,7 +8,7 @@
  */
 package buildcraft.core.utils;
 
-import java.util.logging.Level;
+import org.apache.logging.log4j.Level;
 
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
@@ -80,7 +80,7 @@ public class ConfigUtils {
 		try {
 			parsed = Boolean.parseBoolean(value);
 		} catch (NumberFormatException ex) {
-			BCLog.logger.log(Level.WARNING, "Failed to parse config tag, reseting to default: " + prop.getName(), ex);
+			BCLog.logger.log(Level.WARN, "Failed to parse config tag, reseting to default: " + prop.getName(), ex);
 			prop.set(defaultValue);
 			return defaultValue;
 		}
@@ -93,7 +93,7 @@ public class ConfigUtils {
 		try {
 			parsed = Integer.parseInt(value);
 		} catch (NumberFormatException ex) {
-			BCLog.logger.log(Level.WARNING, "Failed to parse config tag, reseting to default: " + prop.getName(), ex);
+			BCLog.logger.log(Level.WARN, "Failed to parse config tag, reseting to default: " + prop.getName(), ex);
 			prop.set(defaultValue);
 			return defaultValue;
 		}
@@ -106,7 +106,7 @@ public class ConfigUtils {
 		try {
 			parsed = Double.parseDouble(value);
 		} catch (NumberFormatException ex) {
-			BCLog.logger.log(Level.WARNING, "Failed to parse config tag, reseting to default: " + prop.getName(), ex);
+			BCLog.logger.log(Level.WARN, "Failed to parse config tag, reseting to default: " + prop.getName(), ex);
 			prop.set(defaultValue);
 			return defaultValue;
 		}

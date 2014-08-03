@@ -66,9 +66,9 @@ public class FactoryProxyClient extends FactoryProxy {
 			Class<?> neiRenderer = Class.forName("codechicken.nei.DefaultOverlayRenderer");
 			Method method = neiRenderer.getMethod("registerGuiOverlay", Class.class, String.class, int.class, int.class);
 			method.invoke(null, GuiAutoCrafting.class, "crafting", 5, 11);
-			BCLog.logger.fine("NEI detected, adding NEI overlay");
+			BCLog.logger.debug("NEI detected, adding NEI overlay");
 		} catch (Exception e) {
-			BCLog.logger.fine("NEI not detected.");
+			BCLog.logger.debug("NEI not detected.");
 		}
 	}
 
