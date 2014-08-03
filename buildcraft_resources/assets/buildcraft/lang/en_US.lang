@@ -209,7 +209,7 @@ tile.spring.oil.name=Oil Spring
 tile.spring.water.name=Water Spring
 tile.tankBlock.name=Tank
 tile.energyConverter.name=Energy Converter
-tile.energyConverter.tooltip=Convert BC energy between old and new power API|Added for compatibility with other mods|while they not migrated to new power API.|Could be removed in the future.
+tile.energyConverter.tooltip=Convert BC energy between old and new power API|Added for compatibility with other mods|while they are not migrated to the new power API.|Could be removed in the future.
 
 tile.architect.rotate=Rotate: On
 tile.architect.norotate=Rotate: Off
