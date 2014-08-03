@@ -107,15 +107,15 @@ public class GuiZonePlan extends GuiAdvancedInterface {
 		cx = zonePlan.xCoord;
 		cz = zonePlan.zCoord;
 
-		slots = new AdvancedSlot[16];
+		resetNullSlots(16);
 
 		for (int i = 0; i < 4; ++i) {
 			for (int j = 0; j < 4; ++j) {
-				slots[i * 4 + j] = new AreaSlot(this, 8 + 18 * i, 138 + 18 * j, EnumColor.values()[i * 4 + j]);
+				slots.set(i * 4 + j, new AreaSlot(this, 8 + 18 * i, 138 + 18 * j, EnumColor.values()[i * 4 + j]));
 			}
 		}
 
-		colorSelected = (AreaSlot) slots[0];
+		colorSelected = (AreaSlot) slots.get(0);
 
 		newSelection.setColor(0, 0, colorSelected.color.getDarkHex(), alpha);
 
@@ -225,15 +225,7 @@ public class GuiZonePlan extends GuiAdvancedInterface {
 			int cornerX = (width - xSize) / 2;
 			int cornerY = (height - ySize) / 2;
 
-			int position = getSlotAtLocation(mouseX - cornerX, mouseY - cornerY);
-
-			AdvancedSlot slot = null;
-
-			if (position < 0) {
-				return;
-			}
-
-			slot = slots[position];
+			AdvancedSlot slot = getSlotAtLocation(mouseX - cornerX, mouseY - cornerY);
 
 			if (slot instanceof AreaSlot) {
 				colorSelected = (AreaSlot) slot;
@@ -379,7 +371,7 @@ public class GuiZonePlan extends GuiAdvancedInterface {
 	}
 
 	@Override
-	protected ContainerZonePlan getContainer() {
+	public ContainerZonePlan getContainer() {
 		return (ContainerZonePlan) super.getContainer();
 	}
 

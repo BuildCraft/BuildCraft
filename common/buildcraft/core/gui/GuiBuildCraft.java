@@ -537,7 +537,7 @@ public abstract class GuiBuildCraft extends GuiContainer {
 		}
 	}
 
-	protected BuildCraftContainer getContainer() {
+	public BuildCraftContainer getContainer() {
 		return container;
 	}
 }

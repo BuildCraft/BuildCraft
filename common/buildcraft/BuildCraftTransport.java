@@ -133,11 +133,19 @@ public class BuildCraftTransport extends BuildCraftMod {
 	@Mod.Instance("BuildCraft|Transport")
 	public static BuildCraftTransport instance;
 
-	public static BlockGenericPipe genericPipeBlock;
 	public static float pipeDurability;
+
+	public static BlockGenericPipe genericPipeBlock;
+	public static BlockFilteredBuffer filteredBufferBlock;
+
 	public static Item pipeWaterproof;
 	public static Item pipeGate;
 	public static Item pipeWire;
+	public static Item plugItem;
+	public static Item robotStationItem;
+	public static Item pipeStructureCobblestone;
+	public static ItemFacade facadeItem;
+
 	public static Item pipeItemsWood;
 	public static Item pipeItemsEmerald;
 	public static Item pipeItemsStone;
@@ -168,11 +176,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 	public static Item pipePowerIron;
 	public static Item pipePowerGold;
 	public static Item pipePowerDiamond;
-	public static ItemFacade facadeItem;
-	public static Item plugItem;
-	public static Item robotStationItem;
-	public static BlockFilteredBuffer filteredBufferBlock;
-	public static Item pipeStructureCobblestone;
+
 	public static int groupItemsTrigger;
 	public static String[] facadeBlacklist;
 

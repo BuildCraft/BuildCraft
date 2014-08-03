@@ -14,7 +14,7 @@ import net.minecraft.world.World;
 import cpw.mods.fml.common.network.IGuiHandler;
 
 import buildcraft.core.gui.ContainerScienceBook;
-import buildcraft.core.gui.GuiScienceBook;
+import buildcraft.core.science.GuiScienceBook;
 
 public class GuiHandler implements IGuiHandler {
 

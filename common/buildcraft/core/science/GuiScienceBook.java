@@ -6,8 +6,10 @@
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-package buildcraft.core.gui;
+package buildcraft.core.science;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
 
 import org.lwjgl.opengl.GL11;
@@ -19,10 +21,11 @@ import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
 
 import buildcraft.core.DefaultProps;
+import buildcraft.core.gui.AdvancedSlot;
+import buildcraft.core.gui.ContainerScienceBook;
+import buildcraft.core.gui.GuiAdvancedInterface;
+import buildcraft.core.gui.ItemSlot;
 import buildcraft.core.gui.slots.SlotHidden;
-import buildcraft.core.science.Technology;
-import buildcraft.core.science.TechnologyNBT;
-import buildcraft.core.science.Tier;
 
 public class GuiScienceBook extends GuiAdvancedInterface {
 
@@ -30,8 +33,13 @@ public class GuiScienceBook extends GuiAdvancedInterface {
 			"buildcraft", DefaultProps.TEXTURE_PATH_GUI + "/science_gui.png");
 	private static final ResourceLocation TEXTURE_FOCUS = new ResourceLocation(
 			"buildcraft", DefaultProps.TEXTURE_PATH_GUI + "/science_focus_gui.png");
+	private static final ResourceLocation TEXTURE_INFO = new ResourceLocation(
+			"buildcraft", DefaultProps.TEXTURE_PATH_GUI + "/science_blank.png");
+
 	private static final ResourceLocation TEXTURE_ICONS = new ResourceLocation(
 			"buildcraft", DefaultProps.TEXTURE_PATH_GUI + "/science_icons.png");
+	private static final ResourceLocation TEXTURE_TAB = new ResourceLocation(
+			"buildcraft", DefaultProps.TEXTURE_PATH_GUI + "/science_tab.png");
 
 	private static final int EXTRA_ADVANCED_SLOTS = 1;
 
@@ -40,6 +48,8 @@ public class GuiScienceBook extends GuiAdvancedInterface {
 	private Technology inFocus = null;
 
 	private GuiButton startResearch;
+	private GuiButton wiki;
+	private ArrayList<String> infoText = new ArrayList<String>();
 
 	static class EmptySlot extends AdvancedSlot {
 		public EmptySlot(GuiAdvancedInterface gui, int x, int y) {
@@ -152,7 +162,7 @@ public class GuiScienceBook extends GuiAdvancedInterface {
 		xSize = 256;
 		ySize = 181;
 
-		slots = new AdvancedSlot[50];
+		resetNullSlots(50);
 
 		setTier(Tier.WoodenGear);
 	}
@@ -165,6 +175,7 @@ public class GuiScienceBook extends GuiAdvancedInterface {
 		int j = (width - xSize) / 2;
 		int k = (height - ySize) / 2;
 		startResearch = new GuiButton(0, j + 10, k + 145, 70, 20, "Start");
+		wiki = new GuiButton(0, j + 115, k + 145, 70, 20, "Wiki");
 	}
 
 	@Override
@@ -184,11 +195,8 @@ public class GuiScienceBook extends GuiAdvancedInterface {
 			}
 		}
 
-		if (inFocus == null) {
-			texture = TEXTURE_BASE;
-		} else {
-			texture = TEXTURE_FOCUS;
-		}
+		bindTexture(TEXTURE_TAB);
+		drawTexturedModalRect(cornerX, cornerY, 0, 0, xSize, ySize);
 
 		super.drawGuiContainerBackgroundLayer(f, mouseX, mouseY);
 
@@ -226,6 +234,12 @@ public class GuiScienceBook extends GuiAdvancedInterface {
 	protected void drawGuiContainerForegroundLayer(int par1, int par2) {
 		super.drawGuiContainerForegroundLayer(par1, par2);
 
+		if (infoText != null) {
+			for (int i = 0; i < infoText.size(); ++i) {
+				fontRendererObj.drawString(infoText.get(i), 10, 25 + i * 10, 0x404040);
+			}
+		}
+
 		drawTooltipForSlotAt(par1, par2);
 	}
 
@@ -233,6 +247,13 @@ public class GuiScienceBook extends GuiAdvancedInterface {
 	protected void actionPerformed(GuiButton button) {
 		if (button == startResearch) {
 			getContainer().startResearch(inFocus);
+		} else if (button == wiki) {
+			try {
+				java.awt.Desktop.getDesktop().browse(
+						java.net.URI.create(inFocus.getWikiLink()));
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 
@@ -274,8 +295,11 @@ public class GuiScienceBook extends GuiAdvancedInterface {
 	}
 
 	private void setTier(Tier newTier) {
+		texture = TEXTURE_BASE;
+
 		if (inFocus != null || newTier != currentTier) {
-			slots = new AdvancedSlot[50 + EXTRA_ADVANCED_SLOTS];
+			resetNullSlots(50);
+
 			currentTier = newTier;
 
 			int id = 0;
@@ -286,7 +310,7 @@ public class GuiScienceBook extends GuiAdvancedInterface {
 				int j = id / 10;
 				int i = id - j * 10;
 
-				slots[id] = new TechnologySlot(this, 9 + i * 18, 7 + j * 18, t);
+				slots.set(id, new TechnologySlot(this, 9 + i * 18, 7 + j * 18, t));
 				id++;
 			}
 
@@ -294,7 +318,7 @@ public class GuiScienceBook extends GuiAdvancedInterface {
 				int j = id / 10;
 				int i = id - j * 10;
 
-				slots[id] = new EmptySlot(this, 9 + i * 18, 7 + j * 18);
+				slots.set(id, new EmptySlot(this, 9 + i * 18, 7 + j * 18));
 				id++;
 			}
 		}
@@ -316,6 +340,7 @@ public class GuiScienceBook extends GuiAdvancedInterface {
 
 	private void setFocus(Technology techno) {
 		inFocus = techno;
+		texture = TEXTURE_FOCUS;
 
 		for (Object s : container.inventorySlots) {
 			if (s instanceof SlotHidden) {
@@ -325,38 +350,36 @@ public class GuiScienceBook extends GuiAdvancedInterface {
 			}
 		}
 
-		slots = new AdvancedSlot[5 + 3 + 1 + 10 + EXTRA_ADVANCED_SLOTS];
-
-		int id = 0;
+		slots.clear();
 
 		for (int i = 0; i < 5; ++i) {
 			if (techno.getPrerequisites().size() > i
 					&& techno.getPrerequisites().get(i) != null) {
-				slots[id++] = new TechnologySlot(this, 33, 43 + 18 * i, techno.getPrerequisites().get(i));
+				slots.add(new TechnologySlot(this, 33, 43 + 18 * i, techno.getPrerequisites().get(i)));
 			} else {
-				id++;
+				slots.add(null);
 			}
 		}
 
 		for (int i = 0; i < 3; ++i) {
 			if (techno.getRequirements() != null) {
-				slots[id++] = new ItemSlot(this, 71 + 18 * i, 115, techno.getRequirements()[i]);
+				slots.add(new ItemSlot(this, 71 + 18 * i, 115, techno.getRequirements()[i]));
 			} else {
-				id++;
+				slots.add(null);
 			}
 		}
 
-		slots[id++] = new TechnologySlot(this, 89, 79, techno);
+		slots.add(new TechnologySlot(this, 89, 79, techno));
 
 		for (int i = 0; i < 5; ++i) {
 			for (int j = 0; j < 2; ++j) {
 				int followupId = i * 2 + j;
 				if (techno.getFollowups().size() > followupId
 						&& techno.getFollowups().get(followupId) != null) {
-					slots[id++] = new TechnologySlot(this, 145 + 18 * j, 43 + 18 * i, techno.getFollowups().get(
-							followupId));
+					slots.add(new TechnologySlot(this, 145 + 18 * j, 43 + 18 * i, techno.getFollowups().get(
+							followupId)));
 				} else {
-					id++;
+					slots.add(null);
 				}
 			}
 		}
@@ -367,16 +390,20 @@ public class GuiScienceBook extends GuiAdvancedInterface {
 			buttonList.add(startResearch);
 		}
 
+		if (wiki != null) {
+			buttonList.add(wiki);
+		}
+
 		setExtraAdvancedSlots();
 	}
 
 	@Override
-	protected ContainerScienceBook getContainer() {
+	public ContainerScienceBook getContainer() {
 		return (ContainerScienceBook) super.getContainer();
 	}
 
 	public void setExtraAdvancedSlots() {
-		slots[slots.length - 1] = new ResearchedSlot(this, 216, 28);
+		slots.add(new ResearchedSlot(this, 216, 28));
 	}
 
 	@Override

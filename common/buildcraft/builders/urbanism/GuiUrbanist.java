@@ -8,8 +8,6 @@
  */
 package buildcraft.builders.urbanism;
 
-import java.util.LinkedList;
-
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
@@ -67,8 +65,6 @@ public class GuiUrbanist extends GuiAdvancedInterface {
 		this.playerInventory = playerInventory;
 		this.urbanist = urbanist;
 
-		slots = new AdvancedSlot[0];
-
 		urbanist.createUrbanistEntity();
 
 		tools [0] = new UrbanistToolBlock();
@@ -82,17 +78,13 @@ public class GuiUrbanist extends GuiAdvancedInterface {
 		tools [8] = new UrbanistTool();
 		tools [9] = new UrbanistTool();
 
-		LinkedList<AdvancedSlot> tmpSlots = new LinkedList<AdvancedSlot>();
-
 		for (int i = 0; i < 10; ++i) {
-			tmpSlots.add(new ToolSlot(tools [i]));
+			slots.add(new ToolSlot(tools[i]));
 		}
 
 		for (UrbanistTool t : tools) {
-			t.createSlots(this, tmpSlots);
+			t.createSlots(this, slots);
 		}
-
-		slots = tmpSlots.toArray(new AdvancedSlot [tmpSlots.size()]);
 	}
 
 	@Override
@@ -131,8 +123,8 @@ public class GuiUrbanist extends GuiAdvancedInterface {
 		drawTexturedModalRect(cornerX, cornerY, 0, 0, TOOLBAR_TEXTURE_WIDTH, TOOLBAR_TEXTURE_HEIGHT);
 
 		for (int i = 0; i < 10; ++i) {
-			slots [i].x = cornerX + 8 + i * 18;
-			slots [i].y = cornerY + 8;
+			slots.get(i).x = cornerX + 8 + i * 18;
+			slots.get(i).y = cornerY + 8;
 		}
 
 		if (selectedTool != -1) {
@@ -185,7 +177,7 @@ public class GuiUrbanist extends GuiAdvancedInterface {
 			return;
 		}
 
-		int clicked = getSlotAtLocation(mouseX, mouseY);
+		int clicked = getSlotIndexAtLocation(mouseX, mouseY);
 
 		if (clicked != -1 && clicked < 10) {
 			if (clicked != selectedTool) {
@@ -199,7 +191,7 @@ public class GuiUrbanist extends GuiAdvancedInterface {
 		}
 
 		if (clicked != -1) {
-			slots [clicked].selected();
+			slots.get(clicked).selected();
 		}
 	}
 

@@ -216,91 +216,82 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 		int position = 0;
 
 		if (gate.material == GateMaterial.REDSTONE) {
-			slots = new AdvancedSlot[2];
-
-			slots[0] = new TriggerSlot(62, 26, pipe, 0);
-			slots[1] = new ActionSlot(98, 26, pipe, 0);
+			slots.add(new TriggerSlot(62, 26, pipe, 0));
+			slots.add(new ActionSlot(98, 26, pipe, 0));
 		} else if (gate.material == GateMaterial.IRON) {
-			slots = new AdvancedSlot[4];
-
-			slots[0] = new TriggerSlot(62, 26, pipe, 0);
-			slots[1] = new TriggerSlot(62, 44, pipe, 1);
-			slots[2] = new ActionSlot(98, 26, pipe, 0);
-			slots[3] = new ActionSlot(98, 44, pipe, 1);
+			slots.add(new TriggerSlot(62, 26, pipe, 0));
+			slots.add(new TriggerSlot(62, 44, pipe, 1));
+			slots.add(new ActionSlot(98, 26, pipe, 0));
+			slots.add(new ActionSlot(98, 44, pipe, 1));
 		} else if (gate.material == GateMaterial.GOLD) {
-			slots = new AdvancedSlot[12];
-
 			for (int k = 0; k < 4; ++k) {
-				slots[position] = new TriggerSlot(53, 26 + 18 * k, pipe, position);
+				slots.add(new TriggerSlot(53, 26 + 18 * k, pipe, position));
 				position++;
 			}
 
 			for (int k = 0; k < 4; ++k) {
-				slots[position] = new ActionSlot(107, 26 + 18 * k, pipe, position - 4);
+				slots.add(new ActionSlot(107, 26 + 18 * k, pipe, position - 4));
 				position++;
 			}
 
 			for (int k = 0; k < 4; ++k) {
-				slots[position] = new TriggerParameterSlot(71, 26 + 18 * k, pipe, 0, (TriggerSlot) slots[k]);
+				slots.add(new TriggerParameterSlot(71, 26 + 18 * k, pipe, 0, (TriggerSlot) slots.get(k)));
 				position++;
 
 			}
 		} else if (gate.material == GateMaterial.DIAMOND) {
-			slots = new AdvancedSlot[24];
-
 			for (int k = 0; k < 4; ++k) {
-				slots[position] = new TriggerSlot(8, 26 + 18 * k, pipe, position);
+				slots.add(new TriggerSlot(8, 26 + 18 * k, pipe, position));
 				position++;
-				slots[position] = new TriggerSlot(98, 26 + 18 * k, pipe, position);
+				slots.add(new TriggerSlot(98, 26 + 18 * k, pipe, position));
 				position++;
 			}
 
 			for (int k = 0; k < 4; ++k) {
-				slots[position] = new ActionSlot(62, 26 + 18 * k, pipe, position - 8);
+				slots.add(new ActionSlot(62, 26 + 18 * k, pipe, position - 8));
 				position++;
-				slots[position] = new ActionSlot(152, 26 + 18 * k, pipe, position - 8);
+				slots.add(new ActionSlot(152, 26 + 18 * k, pipe, position - 8));
 				position++;
 			}
 
 			for (int k = 0; k < 4; ++k) {
-				slots[position] = new TriggerParameterSlot(26, 26 + 18 * k, pipe, 0,
-						(TriggerSlot) slots[k]);
+				slots.add(new TriggerParameterSlot(26, 26 + 18 * k, pipe, 0,
+						(TriggerSlot) slots.get(k)));
 				position++;
-				slots[position] = new TriggerParameterSlot(116, 26 + 18 * k, pipe, 0,
-						(TriggerSlot) slots[k + 4]);
+				slots.add(new TriggerParameterSlot(116, 26 + 18 * k, pipe, 0,
+						(TriggerSlot) slots.get(k + 4)));
 				position++;
 			}
 		} else if (gate.material == GateMaterial.EMERALD) {
-			slots = new AdvancedSlot[32];
 			int lastPos;
 
 			for (int y = 0; y < 4; ++y) {
-				slots[position] = new TriggerSlot(8, 26 + 18 * y, pipe, y);
+				slots.add(new TriggerSlot(8, 26 + 18 * y, pipe, y));
 				lastPos = position;
 				position++;
 
 				for (int x = 0; x < 3; ++x) {
-					slots[position] = new TriggerParameterSlot(
+					slots.add(new TriggerParameterSlot(
 							8 + 18 * (x + 1),
 							26 + 18 * y,
 							pipe,
 							x,
-							(TriggerSlot) slots[lastPos]);
+							(TriggerSlot) slots.get(lastPos)));
 
 					position++;
 				}
 
-				slots[position] = new ActionSlot(98, 26 + 18 * y, pipe, y);
+				slots.add(new ActionSlot(98, 26 + 18 * y, pipe, y));
 				lastPos = position;
 				position++;
 
 				for (int x = 0; x < 3; ++x) {
-					slots[position] = new ActionParameterSlot(
+					slots.add(new ActionParameterSlot(
 							98 + 18 * (x + 1),
 							26 + 18 * y,
 							pipe,
 							x,
-							(ActionSlot) slots[lastPos]);
+							(ActionSlot) slots.get(lastPos)));
 					position++;
 				}
 			}
@@ -384,15 +375,8 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 		int cornerX = (width - xSize) / 2;
 		int cornerY = (height - ySize) / 2;
 
-		int position = getSlotAtLocation(i - cornerX, j - cornerY);
 
-		AdvancedSlot slot = null;
-
-		if (position < 0) {
-			return;
-		}
-
-		slot = slots[position];
+		AdvancedSlot slot = getSlotAtLocation(i - cornerX, j - cornerY);
 
 		if (slot instanceof TriggerSlot && container.hasTriggers()) {
 			TriggerSlot triggerSlot = (TriggerSlot) slot;

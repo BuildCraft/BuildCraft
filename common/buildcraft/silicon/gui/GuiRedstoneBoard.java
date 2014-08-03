@@ -51,12 +51,11 @@ public class GuiRedstoneBoard extends GuiAdvancedInterface {
 		board = RedstoneBoardRegistry.instance.getRedstoneBoard(boardNBT);
 		params = board.getParameters(boardNBT);
 
-		slots = new AdvancedSlot[params.length];
-
 		for (int i = 0; i < params.length; ++i) {
-			slots[i] = new ItemSlot(this, 10, 10 + i * 20);
-			slots[i].drawBackround = true;
-			((ItemSlot) slots[i]).stack = ((IBoardParameterStack) params[i]).getStack();
+			ItemSlot s = new ItemSlot(this, 10, 10 + i * 20);
+			slots.add(s);
+			s.drawBackround = true;
+			s.stack = ((IBoardParameterStack) params[i]).getStack();
 		}
 	}
 
@@ -90,7 +89,7 @@ public class GuiRedstoneBoard extends GuiAdvancedInterface {
 		int cornerX = (width - xSize) / 2;
 		int cornerY = (height - ySize) / 2;
 
-		int position = getSlotAtLocation(i - cornerX, j - cornerY);
+		int position = getSlotIndexAtLocation(i - cornerX, j - cornerY);
 
 		AdvancedSlot slot = null;
 
@@ -98,7 +97,7 @@ public class GuiRedstoneBoard extends GuiAdvancedInterface {
 			return;
 		}
 
-		slot = slots[position];
+		slot = slots.get(position);
 
 		if (slot instanceof ItemSlot) {
 			ItemStack stackCopy = mc.thePlayer.inventory.getItemStack().copy();

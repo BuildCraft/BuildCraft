@@ -19,7 +19,6 @@ import net.minecraftforge.fluids.FluidStack;
 
 import buildcraft.api.recipes.CraftingResult;
 import buildcraft.core.DefaultProps;
-import buildcraft.core.gui.AdvancedSlot;
 import buildcraft.core.gui.FluidSlot;
 import buildcraft.core.gui.GuiAdvancedInterface;
 import buildcraft.core.utils.StringUtils;
@@ -38,11 +37,9 @@ public class GuiRefinery extends GuiAdvancedInterface {
 
 		this.container = (ContainerRefinery) this.inventorySlots;
 
-		this.slots = new AdvancedSlot[3];
-
-		this.slots[0] = new FluidSlot(this, 38, 54);
-		this.slots[1] = new FluidSlot(this, 126, 54);
-		this.slots[2] = new FluidSlot(this, 82, 54);
+		this.slots.add(new FluidSlot(this, 38, 54));
+		this.slots.add(new FluidSlot(this, 126, 54));
+		this.slots.add(new FluidSlot(this, 82, 54));
 	}
 
 	@Override
@@ -75,7 +72,7 @@ public class GuiRefinery extends GuiAdvancedInterface {
 		int cornerX = (width - xSize) / 2;
 		int cornerY = (height - ySize) / 2;
 
-		int position = getSlotAtLocation(i - cornerX, j - cornerY);
+		int position = getSlotIndexAtLocation(i - cornerX, j - cornerY);
 
 		if (position >= 0 && position < 2) {
 			if (k == 0) {
@@ -108,18 +105,18 @@ public class GuiRefinery extends GuiAdvancedInterface {
 		Fluid filter0 = container.getFilter(0);
 		Fluid filter1 = container.getFilter(1);
 
-		((FluidSlot) slots[0]).fluid = filter0;
-		((FluidSlot) slots[0]).colorRenderCache = container.refinery.tanks[0].colorRenderCache;
-		((FluidSlot) slots[1]).fluid = filter1;
-		((FluidSlot) slots[1]).colorRenderCache = container.refinery.tanks[1].colorRenderCache;
+		((FluidSlot) slots.get(0)).fluid = filter0;
+		((FluidSlot) slots.get(0)).colorRenderCache = container.refinery.tanks[0].colorRenderCache;
+		((FluidSlot) slots.get(1)).fluid = filter1;
+		((FluidSlot) slots.get(1)).colorRenderCache = container.refinery.tanks[1].colorRenderCache;
 
 		CraftingResult<FluidStack> crafting = container.refinery.craftingResult;
 
 		if (crafting != null) {
-			((FluidSlot) slots[2]).fluid = crafting.crafted.getFluid();
-			((FluidSlot) slots[2]).colorRenderCache = crafting.crafted.getFluid().getColor(crafting.crafted);
+			((FluidSlot) slots.get(2)).fluid = crafting.crafted.getFluid();
+			((FluidSlot) slots.get(2)).colorRenderCache = crafting.crafted.getFluid().getColor(crafting.crafted);
 		} else {
-			((FluidSlot) slots[2]).fluid = null;
+			((FluidSlot) slots.get(2)).fluid = null;
 		}
 	}
 }

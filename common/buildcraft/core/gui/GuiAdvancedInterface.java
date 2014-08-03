@@ -8,6 +8,8 @@
  */
 package buildcraft.core.gui;
 
+import java.util.ArrayList;
+
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.Minecraft;
@@ -20,21 +22,31 @@ import net.minecraft.util.ResourceLocation;
 
 public abstract class GuiAdvancedInterface extends GuiBuildCraft {
 
-	public AdvancedSlot[] slots;
+	public ArrayList<AdvancedSlot> slots = new ArrayList<AdvancedSlot>();
 
 	public GuiAdvancedInterface(BuildCraftContainer container, IInventory inventory, ResourceLocation texture) {
 		super(container, inventory, texture);
 	}
 
-	public int getSlotAtLocation(int i, int j) {
-		for (int position = 0; position < slots.length; ++position) {
-			AdvancedSlot s = slots[position];
+	public int getSlotIndexAtLocation(int i, int j) {
+		for (int position = 0; position < slots.size(); ++position) {
+			AdvancedSlot s = slots.get(position);
 
 			if (s != null && i >= s.x && i <= s.x + 16 && j >= s.y && j <= s.y + 16) {
 				return position;
 			}
 		}
 		return -1;
+	}
+
+	public AdvancedSlot getSlotAtLocation(int i, int j) {
+		int id = getSlotIndexAtLocation(i, j);
+
+		if (id != -1) {
+			return slots.get(id);
+		} else {
+			return null;
+		}
 	}
 
 	protected void drawBackgroundSlots() {
@@ -65,14 +77,10 @@ public abstract class GuiAdvancedInterface extends GuiBuildCraft {
 		int cornerX = (width - xSize) / 2;
 		int cornerY = (height - ySize) / 2;
 
-		int position = getSlotAtLocation(mouseX - cornerX, mouseY - cornerY);
+		AdvancedSlot slot = getSlotAtLocation(mouseX - cornerX, mouseY - cornerY);
 
-		if (position != -1) {
-			AdvancedSlot slot = slots[position];
-
-			if (slot != null) {
-				slot.drawTooltip(this, mouseX, mouseY);
-			}
+		if (slot != null) {
+			slot.drawTooltip(this, mouseX, mouseY);
 		}
 	}
 
@@ -126,16 +134,18 @@ public abstract class GuiAdvancedInterface extends GuiBuildCraft {
 		int cornerX = (width - xSize) / 2;
 		int cornerY = (height - ySize) / 2;
 
-		int position = getSlotAtLocation(mouseX - cornerX, mouseY - cornerY);
+		AdvancedSlot slot = getSlotAtLocation(mouseX - cornerX, mouseY - cornerY);
 
-		AdvancedSlot slot = null;
-
-		if (position < 0) {
-			return;
+		if (slot != null && slot.isDefined()) {
+			slotClicked(slot);
 		}
+	}
 
-		if (slots[position].isDefined()) {
-			slotClicked(slots[position]);
+	public void resetNullSlots(int size) {
+		slots.clear();
+
+		for (int i = 0; i < size; ++i) {
+			slots.add(null);
 		}
 	}
 

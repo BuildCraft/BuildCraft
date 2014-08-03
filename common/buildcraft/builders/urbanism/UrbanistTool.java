@@ -8,7 +8,7 @@
  */
 package buildcraft.builders.urbanism;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 
 import net.minecraft.util.IIcon;
 import net.minecraft.util.MovingObjectPosition;
@@ -49,7 +49,7 @@ class UrbanistTool {
 
 	}
 
-	public void createSlots(GuiUrbanist gui, LinkedList<AdvancedSlot> slots) {
+	public void createSlots(GuiUrbanist gui, ArrayList<AdvancedSlot> slots) {
 
 	}
 

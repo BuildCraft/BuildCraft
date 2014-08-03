@@ -160,6 +160,7 @@ item.redstone_red_chipset.name=Redstone Chipset
 item.redstone_iron_chipset.name=Iron Chipset
 item.redstone_gold_chipset.name=Golden Chipset
 item.redstone_diamond_chipset.name=Diamond Chipset
+item.redstone_emerald_chipset.name=Emerald Chipset
 item.redstone_pulsating_chipset.name=Pulsating Chipset
 item.redstone_quartz_chipset.name=Quartz Chipset
 item.redstone_comp_chipset.name=Redstone Comp Chipset
@@ -248,6 +249,7 @@ tile.spring.water.name=Water Spring
 tile.tankBlock.name=Tank
 tile.energyConverter.name=Energy Converter
 tile.energyConverter.tooltip=Convert BC energy between old and new power API|Added for compatibility with other mods|while they not migrated to new power API.|Could be removed in the future.
+tile.zonePlan.name=Zone Planner
 
 tile.architect.rotate=Rotate: On
 tile.architect.norotate=Rotate: Off

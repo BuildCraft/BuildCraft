@@ -98,14 +98,9 @@ public class GuiAssemblyTable extends GuiAdvancedInterface {
 		xSize = 175;
 		ySize = 207;
 
-		slots = new AdvancedSlot[8];
-
-		int p = 0;
-
 		for (int j = 0; j < 2; ++j) {
 			for (int i = 0; i < 4; ++i) {
-				slots[p] = new RecipeSlot(134 + 18 * j, 36 + 18 * i);
-				p++;
+				slots.add(new RecipeSlot(134 + 18 * j, 36 + 18 * i));
 			}
 		}
 
@@ -116,11 +111,11 @@ public class GuiAssemblyTable extends GuiAdvancedInterface {
 		List<CraftingResult<ItemStack>> potentialRecipes = table.getPotentialOutputs();
 		Iterator<CraftingResult<ItemStack>> cur = potentialRecipes.iterator();
 
-		for (int p = 0; p < 8; ++p) {
+		for (AdvancedSlot s : slots) {
 			if (cur.hasNext()) {
-				((RecipeSlot) slots[p]).crafting = cur.next();
+				((RecipeSlot) s).crafting = cur.next();
 			} else {
-				((RecipeSlot) slots[p]).crafting = null;
+				((RecipeSlot) s).crafting = null;
 			}
 		}
 	}
@@ -170,11 +165,9 @@ public class GuiAssemblyTable extends GuiAdvancedInterface {
 		int cornerX = (width - xSize) / 2;
 		int cornerY = (height - ySize) / 2;
 
-		int position = getSlotAtLocation(i - cornerX, j - cornerY);
+		RecipeSlot slot = (RecipeSlot) getSlotAtLocation(i - cornerX, j - cornerY);
 
-		if (position != -1) {
-			RecipeSlot slot = (RecipeSlot) slots[position];
-
+		if (slot != null) {
 			if (slot.crafting == null) {
 				return;
 			}

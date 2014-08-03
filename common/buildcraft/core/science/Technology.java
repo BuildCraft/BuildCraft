@@ -121,4 +121,8 @@ public abstract class Technology {
 	public void registerIcons(IIconRegister par1IconRegister) {
 
 	}
+
+	public String getWikiLink() {
+		return "http://www.mod-buildcraft.com/wiki/doku.php?id=techno:" + getID().replaceAll(":", "_");
+	}
 }

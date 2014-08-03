@@ -131,7 +131,7 @@ class UrbanistToolFiller extends UrbanistToolArea {
 	}
 
 	@Override
-	public void createSlots(GuiUrbanist gui, LinkedList<AdvancedSlot> slots) {
+	public void createSlots(GuiUrbanist gui, ArrayList<AdvancedSlot> slots) {
 		for (int i = 0; i < 8; ++i) {
 			FillerSlot slot = new FillerSlot(gui, i);
 			fillerSlots.add(slot);

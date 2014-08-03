@@ -41,11 +41,11 @@ public class GuiBuilder extends GuiAdvancedInterface {
 		xSize = 176;
 		ySize = 225;
 
-		slots = new AdvancedSlot[6 * 4];
+		resetNullSlots(6 * 4);
 
 		for (int i = 0; i < 6; ++i) {
 			for (int j = 0; j < 4; ++j) {
-				slots[i * 4 + j] = new ItemSlot(this, 179 + j * 18, 18 + i * 18);
+				slots.set(i * 4 + j, new ItemSlot(this, 179 + j * 18, 18 + i * 18));
 			}
 		}
 	}
@@ -70,8 +70,8 @@ public class GuiBuilder extends GuiAdvancedInterface {
 		mc.renderEngine.bindTexture(BLUEPRINT_TEXTURE);
 		drawTexturedModalRect(guiLeft, guiTop, 0, 0, 256, ySize);
 
-		for (int s = 0; s < slots.length; ++s) {
-			((ItemSlot) slots[s]).stack = null;
+		for (AdvancedSlot s : slots) {
+			((ItemSlot) s).stack = null;
 		}
 
 		Collection<ItemStack> needs = builder.getNeededItems();
@@ -80,11 +80,11 @@ public class GuiBuilder extends GuiAdvancedInterface {
 			int s = 0;
 
 			for (ItemStack stack : needs) {
-				if (s >= slots.length) {
+				if (s >= slots.size()) {
 					break;
 				}
 
-				((ItemSlot) slots[s]).stack = stack.copy();
+				((ItemSlot) slots.get(s)).stack = stack.copy();
 				s++;
 			}
 		}
