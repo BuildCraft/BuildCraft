@@ -13,6 +13,7 @@ import java.util.HashSet;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockWorkbench;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.item.crafting.IRecipe;
@@ -20,6 +21,8 @@ import net.minecraft.item.crafting.ShapedRecipes;
 import net.minecraft.item.crafting.ShapelessRecipes;
 
 import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraftforge.oredict.ShapedOreRecipe;
+import net.minecraftforge.oredict.ShapelessOreRecipe;
 
 import buildcraft.api.boards.RedstoneBoardRobot;
 import buildcraft.api.boards.RedstoneBoardRobotNBT;
@@ -30,6 +33,7 @@ import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.api.robots.IDockingStation;
 import buildcraft.core.inventory.ITransactor;
+import buildcraft.core.inventory.InventoryCopy;
 import buildcraft.core.inventory.InventoryIterator;
 import buildcraft.core.inventory.StackHelper;
 import buildcraft.core.inventory.Transactor;
@@ -52,7 +56,7 @@ public class BoardRobotCrafter extends RedstoneBoardRobot {
 	private ItemStack order;
 	private ArrayList<ItemStack> craftingBlacklist = new ArrayList<ItemStack>();
 	private HashSet<IDockingStation> reservedStations = new HashSet<IDockingStation>();
-	private ArrayList<ItemStack> requirements = new ArrayList<ItemStack>();
+	private ArrayList<ArrayStackFilter> requirements = new ArrayList<ArrayStackFilter>();
 	private IRecipe recipe;
 	private int craftingTimer = 0;
 
@@ -103,15 +107,13 @@ public class BoardRobotCrafter extends RedstoneBoardRobot {
 				return;
 			}
 
-			requirements = getRequirements(recipe);
+			requirements = tryCraft(false);
 
 			if (requirements == null) {
 				craftingBlacklist.add(order);
 				order = null;
 				return;
 			}
-
-			mergeRequirements();
 		} else if (requirements.size() > 0) {
 			startDelegateAI(new AIRobotGotoStationToLoad(robot, new ReqStackFilter(), robot.getZoneToWork()));
 		} else {
@@ -135,20 +137,7 @@ public class BoardRobotCrafter extends RedstoneBoardRobot {
 		} else if (ai instanceof AIRobotLoad) {
 			// Check requirements v.s. contents
 
-			for (int i = requirements.size() - 1; i >= 0; --i) {
-				ItemStack req = requirements.get(i);
-				int qty = 0;
-
-				for (IInvSlot slot : InventoryIterator.getIterable(robot)) {
-					if (StackHelper.isMatchingItem(req, slot.getStackInSlot())) {
-						qty += slot.getStackInSlot().stackSize;
-					}
-				}
-
-				if (qty >= req.stackSize) {
-					requirements.remove(i);
-				}
-			}
+			requirements = tryCraft(false);
 		} else if (ai instanceof AIRobotGotoStationToUnload) {
 			if (((AIRobotGotoStationToUnload) ai).found) {
 				startDelegateAI(new AIRobotUnload(robot));
@@ -162,56 +151,73 @@ public class BoardRobotCrafter extends RedstoneBoardRobot {
 		}
 	}
 
-	private void mergeRequirements() {
-		for (int i = 0; i < requirements.size(); ++i) {
-			for (int j = i + 1; j < requirements.size(); ++j) {
-				if (StackHelper.isMatchingItem(requirements.get(i), requirements.get(j))) {
-					requirements.get(i).stackSize += requirements.get(j).stackSize;
-					requirements.get(j).stackSize = 0;
+	private ArrayList<ArrayStackFilter> tryCraft(boolean doRemove) {
+		Object[] items = new Object[0];
+
+		if (recipe instanceof ShapedRecipes) {
+			items = ((ShapedRecipes) recipe).recipeItems;
+		} else if (recipe instanceof ShapelessRecipes) {
+			items = ((ShapelessRecipes) recipe).recipeItems.toArray();
+		} else if (recipe instanceof ShapedOreRecipe) {
+			items = ((ShapedOreRecipe) recipe).getInput();
+		} else if (recipe instanceof ShapelessOreRecipe) {
+			items = ((ShapelessOreRecipe) recipe).getInput().toArray();
+		}
+
+		ArrayList<ArrayStackFilter> result = new ArrayList<ArrayStackFilter>();
+
+		IInventory inv = robot;
+
+		if (!doRemove) {
+			inv = new InventoryCopy(robot);
+		}
+
+		for (Object tmp : items) {
+			if (tmp == null) {
+				continue;
+			}
+
+			int qty = 0;
+			ArrayStackFilter filter;
+
+			if (tmp instanceof ItemStack) {
+				ItemStack stack = (ItemStack) tmp;
+				qty = stack.stackSize;
+				filter = new ArrayStackFilter(stack);
+			} else {
+				ArrayList<ItemStack> stacks = (ArrayList<ItemStack>) tmp;
+				qty = stacks.get(0).stackSize;
+				filter = new ArrayStackFilter(stacks.toArray(new ItemStack[stacks.size()]));
+			}
+
+			for (IInvSlot s : InventoryIterator.getIterable(inv)) {
+				if (filter.matches(s.getStackInSlot())) {
+					ItemStack removed = s.decreaseStackInSlot(qty);
+
+					qty = qty - removed.stackSize;
+
+					if (removed.stackSize == 0) {
+						break;
+					}
 				}
 			}
-		}
 
-		for (int i = requirements.size() - 1; i >= 0; --i) {
-			if (requirements.get(i).stackSize == 0) {
-				requirements.remove(i);
+			if (qty > 0) {
+				result.add(filter);
 			}
 		}
-	}
 
-	private ArrayList<ItemStack> getRequirements(IRecipe recipe) {
-		if (recipe instanceof ShapelessRecipes) {
-			ArrayList<ItemStack> result = new ArrayList<ItemStack>();
-
-			ShapelessRecipes r = (ShapelessRecipes) recipe;
-
-			for (Object o : r.recipeItems) {
-				result.add(((ItemStack) o).copy());
-			}
-
-			return result;
-		} else if (recipe instanceof ShapedRecipes) {
-			ArrayList<ItemStack> result = new ArrayList<ItemStack>();
-
-			ShapedRecipes r = (ShapedRecipes) recipe;
-
-			for (ItemStack s : r.recipeItems) {
-				if (s != null) {
-					result.add(s.copy());
-				}
-			}
-
-			return result;
-		} else {
-			return null;
-		}
+		return result;
 	}
 
 	private IRecipe lookForRecipe(ItemStack order) {
 		for (Object o : CraftingManager.getInstance().getRecipeList()) {
 			IRecipe r = (IRecipe) o;
 
-			if (r instanceof ShapedRecipes || r instanceof ShapelessRecipes) {
+			if (r instanceof ShapedRecipes
+					|| r instanceof ShapelessRecipes
+					|| r instanceof ShapedOreRecipe
+					|| r instanceof ShapelessOreRecipe) {
 				if (StackHelper.isMatchingItem(r.getRecipeOutput(), order)) {
 					return r;
 				}
@@ -259,28 +265,32 @@ public class BoardRobotCrafter extends RedstoneBoardRobot {
 	}
 
 	private void craft() {
-		ArrayList<ItemStack> tmpReq = getRequirements(recipe);
+		if (tryCraft(true).size() == 0) {
+			ITransactor transactor = Transactor.getTransactorFor(robot);
 
-		ITransactor transactor = Transactor.getTransactorFor(robot);
-
-		for (ItemStack s : tmpReq) {
-			for (int i = 0; i < s.stackSize; ++i) {
-				transactor.remove(new ArrayStackFilter(s), ForgeDirection.UNKNOWN, true);
-			}
+			transactor.add(order, ForgeDirection.UNKNOWN, true);
 		}
-
-		transactor.add(order, ForgeDirection.UNKNOWN, true);
 
 		order = null;
 		recipe = null;
+	}
+
+	private ArrayStackFilter getStackFilter(Object o) {
+		if (o instanceof ArrayList) {
+			return new ArrayStackFilter((ItemStack[]) ((ArrayList<ItemStack>) o).toArray());
+		} else if (o instanceof ItemStack) {
+			return new ArrayStackFilter((ItemStack) o);
+		} else {
+			return null;
+		}
 	}
 
 	private class ReqStackFilter implements IStackFilter {
 
 		@Override
 		public boolean matches(ItemStack stack) {
-			for (ItemStack s : requirements) {
-				if (StackHelper.isMatchingItem(stack, s)) {
+			for (ArrayStackFilter s : requirements) {
+				if (s.matches(stack)) {
 					return true;
 				}
 			}
