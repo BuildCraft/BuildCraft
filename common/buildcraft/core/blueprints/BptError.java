@@ -20,7 +20,7 @@ public class BptError extends Exception {
 	public BptError(String str) {
 		super(str);
 
-		BCLog.logger.fine("BLUEPRINT ERROR:" + str);
+		BCLog.logger.debug("BLUEPRINT ERROR:" + str);
 
 	}
 

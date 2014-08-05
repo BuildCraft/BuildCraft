@@ -12,7 +12,8 @@ import java.util.Collections;
 import java.util.EnumSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Level;
+
+import org.apache.logging.log4j.Level;
 
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.inventory.IInventory;
@@ -120,7 +121,7 @@ public class PipeTransportItems extends PipeTransport {
 			}
 
 			if (items.size() > MAX_PIPE_STACKS) {
-				BCLog.logger.log(Level.WARNING, String.format("Pipe exploded at %d,%d,%d because it had too many stacks: %d", container.xCoord, container.yCoord, container.zCoord, items.size()));
+				BCLog.logger.log(Level.WARN, String.format("Pipe exploded at %d,%d,%d because it had too many stacks: %d", container.xCoord, container.yCoord, container.zCoord, items.size()));
 				destroyPipe();
 				return;
 			}
@@ -134,7 +135,7 @@ public class PipeTransportItems extends PipeTransport {
 			}
 
 			if (numItems > MAX_PIPE_ITEMS) {
-				BCLog.logger.log(Level.WARNING, String.format("Pipe exploded at %d,%d,%d because it had too many items: %d", container.xCoord, container.yCoord, container.zCoord, numItems));
+				BCLog.logger.log(Level.WARN, String.format("Pipe exploded at %d,%d,%d because it had too many items: %d", container.xCoord, container.yCoord, container.zCoord, numItems));
 				destroyPipe();
 			}
 		}

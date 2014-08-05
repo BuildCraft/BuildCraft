@@ -116,7 +116,7 @@ public class Version implements Runnable {
 						recommendedVersion = tokens[2];
 
 						if (VERSION.matches(tokens[2])) {
-							BCLog.logger.finer("Using the latest version [" + getVersion() + "] for Minecraft " + mcVersion);
+							BCLog.logger.trace("Using the latest version [" + getVersion() + "] for Minecraft " + mcVersion);
 							currentVersion = EnumUpdateState.CURRENT;
 							return;
 						}
@@ -124,7 +124,7 @@ public class Version implements Runnable {
 				}
 			}
 
-			BCLog.logger.warning("Using outdated version [" + VERSION + "] for Minecraft " + mcVersion
+			BCLog.logger.warn("Using outdated version [" + VERSION + "] for Minecraft " + mcVersion
 					+ ". Consider updating to " + recommendedVersion + ".");
 			currentVersion = EnumUpdateState.OUTDATED;
 			sendIMCOutdatedMessage();
@@ -132,8 +132,8 @@ public class Version implements Runnable {
 			conn.disconnect();
 			reader.close();
 		} catch (Exception e) {
-			BCLog.logger.warning("Unable to read from remote version authority.");
-			BCLog.logger.warning(e.toString());
+			BCLog.logger.warn("Unable to read from remote version authority.");
+			BCLog.logger.warn(e.toString());
 			currentVersion = EnumUpdateState.CONNECTION_ERROR;
 		}
 	}
@@ -187,7 +187,7 @@ public class Version implements Runnable {
 
 		} catch (Exception ex) {
 			ex.printStackTrace();
-			BCLog.logger.warning("Unable to read changelog from remote site.");
+			BCLog.logger.warn("Unable to read changelog from remote site.");
 		}
 
 		return new String[]{String.format("Unable to retrieve changelog for %s %s", DefaultProps.MOD, version)};

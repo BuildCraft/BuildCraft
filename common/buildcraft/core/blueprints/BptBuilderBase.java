@@ -11,7 +11,8 @@ package buildcraft.core.blueprints;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.TreeSet;
-import java.util.logging.Level;
+
+import org.apache.logging.log4j.Level;
 
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
@@ -267,7 +268,7 @@ public abstract class BptBuilderBase implements IAreaProvider {
 				item.context = getContext();
 				builder.getBuilders().add(item);
 			} catch (MappingNotFoundException e) {
-				BCLog.logger.log(Level.WARNING, "can't load building item", e);
+				BCLog.logger.log(Level.WARN, "can't load building item", e);
 			}
 		}
 	}
