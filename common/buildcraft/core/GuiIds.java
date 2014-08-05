@@ -16,6 +16,7 @@ public final class GuiIds {
 	public static final int BLUEPRINT_LIBRARY = 13;
 	public static final int URBANIST = 14;
 	public static final int MAP = 15;
+	public static final int REQUESTER = 16;
 
 	public static final int ENGINE_IRON = 20;
 	public static final int ENGINE_STONE = 21;

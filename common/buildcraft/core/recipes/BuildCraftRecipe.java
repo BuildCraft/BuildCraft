@@ -52,8 +52,6 @@ public class BuildCraftRecipe extends ShapedOreRecipe {
 
 			for (Object p : crafters) {
 				EntityPlayer player = (EntityPlayer) p;
-
-				System.out.println(player.getEntityId());
 			}
 		} catch (Throwable e) {
 			e.printStackTrace();

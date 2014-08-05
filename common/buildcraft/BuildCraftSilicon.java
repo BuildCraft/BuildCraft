@@ -35,6 +35,7 @@ import buildcraft.api.gates.TriggerParameterItemStack;
 import buildcraft.api.recipes.BuildcraftRecipeRegistry;
 import buildcraft.api.transport.PipeWire;
 import buildcraft.builders.schematics.SchematicRotateMeta;
+import buildcraft.commander.BlockRequester;
 import buildcraft.commander.BlockZonePlan;
 import buildcraft.commander.TileZonePlan;
 import buildcraft.core.DefaultProps;
@@ -49,6 +50,7 @@ import buildcraft.core.robots.boards.BoardRobotBomberNBT;
 import buildcraft.core.robots.boards.BoardRobotBuilderNBT;
 import buildcraft.core.robots.boards.BoardRobotButcherNBT;
 import buildcraft.core.robots.boards.BoardRobotCarrierNBT;
+import buildcraft.core.robots.boards.BoardRobotCrafterNBT;
 import buildcraft.core.robots.boards.BoardRobotFarmerNBT;
 import buildcraft.core.robots.boards.BoardRobotHarvesterNBT;
 import buildcraft.core.robots.boards.BoardRobotKnightNBT;
@@ -80,6 +82,7 @@ import buildcraft.silicon.network.PacketHandlerSilicon;
 import buildcraft.silicon.recipes.AdvancedFacadeRecipe;
 import buildcraft.silicon.recipes.GateExpansionRecipe;
 import buildcraft.silicon.recipes.GateLogicSwapRecipe;
+import buildcraft.silicon.statements.ActionRobotCraft;
 import buildcraft.silicon.statements.ActionRobotFilter;
 import buildcraft.silicon.statements.ActionRobotGotoStation;
 import buildcraft.silicon.statements.ActionRobotWakeUp;
@@ -111,6 +114,7 @@ public class BuildCraftSilicon extends BuildCraftMod {
 	public static BlockLaser laserBlock;
 	public static BlockLaserTable assemblyTableBlock;
 	public static BlockZonePlan zonePlanBlock;
+	public static BlockRequester requesterBlock;
 	public static Item redstoneCrystal;
 	public static Item robotItem;
 
@@ -120,6 +124,7 @@ public class BuildCraftSilicon extends BuildCraftMod {
 	public static IAction actionRobotWakeUp = new ActionRobotWakeUp();
 	public static IAction actionRobotWorkInArea = new ActionRobotWorkInArea();
 	public static IAction actionRobotFilter = new ActionRobotFilter();
+	public static IAction actionRobotCraft = new ActionRobotCraft();
 	public static IAction actionStationRequestItems = new ActionStationRequestItemsInv();
 	public static IAction actionStationProvideItems = new ActionStationProvideItems();
 	public static IAction actionStationForbidRobot = new ActionStationForbidRobot();
@@ -174,6 +179,10 @@ public class BuildCraftSilicon extends BuildCraftMod {
 		zonePlanBlock.setBlockName("zonePlan");
 		CoreProxy.proxy.registerBlock(zonePlanBlock);
 
+		requesterBlock = new BlockRequester();
+		requesterBlock.setBlockName("requester");
+		CoreProxy.proxy.registerBlock(requesterBlock);
+
 		redstoneChipset = new ItemRedstoneChipset();
 		redstoneChipset.setUnlocalizedName("redstoneChipset");
 		CoreProxy.proxy.registerItem(redstoneChipset);
@@ -202,6 +211,7 @@ public class BuildCraftSilicon extends BuildCraftMod {
 		RedstoneBoardRegistry.instance.registerBoardClass(BoardRobotLeaveCutterNBT.instance, 5);
 		RedstoneBoardRegistry.instance.registerBoardClass(BoardRobotButcherNBT.instance, 5);
 		RedstoneBoardRegistry.instance.registerBoardClass(BoardRobotShovelmanNBT.instance, 5);
+		RedstoneBoardRegistry.instance.registerBoardClass(BoardRobotCrafterNBT.instance, 5);
 		RedstoneBoardRegistry.instance.registerBoardClass(BoardRobotKnightNBT.instance, 1);
 		RedstoneBoardRegistry.instance.registerBoardClass(BoardRobotBomberNBT.instance, 1);
 		RedstoneBoardRegistry.instance.registerBoardClass(BoardRobotBuilderNBT.instance, 0.5F);

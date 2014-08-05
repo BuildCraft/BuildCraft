@@ -8,6 +8,7 @@
  */
 package buildcraft.silicon.statements;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 
@@ -21,6 +22,8 @@ import buildcraft.BuildCraftSilicon;
 import buildcraft.api.gates.IAction;
 import buildcraft.api.gates.IActionProvider;
 import buildcraft.api.transport.IPipeTile;
+import buildcraft.core.robots.DockingStation;
+import buildcraft.core.robots.boards.BoardRobotCrafter;
 import buildcraft.transport.PipeTransportItems;
 import buildcraft.transport.TileGenericPipe;
 
@@ -30,16 +33,15 @@ public class RobotsActionProvider implements IActionProvider {
 	public Collection<IAction> getPipeActions(IPipeTile pipe) {
 		LinkedList<IAction> result = new LinkedList<IAction>();
 
-		boolean stationFound = false;
+		ArrayList<DockingStation> stations = new ArrayList<DockingStation>();
 
 		for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
 			if (((TileGenericPipe) pipe).getStation(dir) != null) {
-				stationFound = true;
-				break;
+				stations.add(((TileGenericPipe) pipe).getStation(dir));
 			}
 		}
 
-		if (!stationFound) {
+		if (stations.size() == 0) {
 			return result;
 		}
 
@@ -48,6 +50,12 @@ public class RobotsActionProvider implements IActionProvider {
 		result.add(BuildCraftSilicon.actionRobotWakeUp);
 		result.add(BuildCraftSilicon.actionRobotFilter);
 		result.add(BuildCraftSilicon.actionStationForbidRobot);
+
+		for (DockingStation s : stations) {
+			if (s.linked() != null && s.linked().getBoard() instanceof BoardRobotCrafter) {
+				result.add(BuildCraftSilicon.actionRobotCraft);
+			}
+		}
 
 		for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
 			if (((TileGenericPipe) pipe).getTile(dir) instanceof IInventory) {

@@ -162,10 +162,7 @@ public class GuiAssemblyTable extends GuiAdvancedInterface {
 	protected void mouseClicked(int i, int j, int k) {
 		super.mouseClicked(i, j, k);
 
-		int cornerX = (width - xSize) / 2;
-		int cornerY = (height - ySize) / 2;
-
-		RecipeSlot slot = (RecipeSlot) getSlotAtLocation(i - cornerX, j - cornerY);
+		RecipeSlot slot = (RecipeSlot) getSlotAtLocation(i, j);
 
 		if (slot != null) {
 			if (slot.crafting == null) {

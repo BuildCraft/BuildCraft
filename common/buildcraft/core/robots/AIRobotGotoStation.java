@@ -12,15 +12,15 @@ import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.api.robots.IDockingStation;
 
-public class AIRobotGotoDock extends AIRobot {
+public class AIRobotGotoStation extends AIRobot {
 
 	private IDockingStation station;
 
-	public AIRobotGotoDock(EntityRobotBase iRobot) {
+	public AIRobotGotoStation(EntityRobotBase iRobot) {
 		super(iRobot);
 	}
 
-	public AIRobotGotoDock(EntityRobotBase iRobot, IDockingStation iStation) {
+	public AIRobotGotoStation(EntityRobotBase iRobot, IDockingStation iStation) {
 		super(iRobot);
 
 		station = iStation;

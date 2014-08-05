@@ -9,6 +9,7 @@
 package buildcraft.core.robots;
 
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.WeakHashMap;
 
 import io.netty.buffer.ByteBuf;
@@ -20,6 +21,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.EntityDamageSource;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
@@ -27,6 +29,8 @@ import net.minecraft.world.World;
 import cpw.mods.fml.common.registry.IEntityAdditionalSpawnData;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+
+import net.minecraftforge.common.util.Constants;
 
 import buildcraft.BuildCraftSilicon;
 import buildcraft.api.boards.RedstoneBoardNBT;
@@ -39,6 +43,7 @@ import buildcraft.api.mj.MjBattery;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.api.robots.IDockingStation;
+import buildcraft.commander.StackRequest;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.LaserData;
 import buildcraft.core.network.RPC;
@@ -89,8 +94,13 @@ public class EntityRobot extends EntityRobotBase implements
 	private IDockingStation currentDockingStation;
 	private WeakHashMap<Entity, Boolean> unreachableEntities = new WeakHashMap<Entity, Boolean>();
 
+	private NBTTagList stackRequestNBT;
+	private LinkedList<StackRequest> stackRequests = new LinkedList<StackRequest>();
+
 	@MjBattery
 	private double mjStored;
+
+	private boolean firstUpdateDone = false;
 
 	public EntityRobot(World world, NBTTagCompound boardNBT) {
 		this(world);
@@ -195,8 +205,19 @@ public class EntityRobot extends EntityRobotBase implements
 		}
 	}
 
+	protected void firstUpdate() {
+		if (stackRequestNBT != null) {
+
+		}
+	}
+
 	@Override
 	public void onUpdate() {
+		if (!firstUpdateDone) {
+			firstUpdate();
+			firstUpdateDone = true;
+		}
+
 		if (!worldObj.isRemote && needsUpdate) {
 			updateDataServer();
 			needsUpdate = false;
@@ -401,6 +422,22 @@ public class EntityRobot extends EntityRobotBase implements
 			board.writeToNBT(boardNBT);
 			nbt.setTag("board", boardNBT);
 		}
+
+		NBTTagList requestsNBT = new NBTTagList();
+
+		for (StackRequest r : stackRequests) {
+			NBTTagCompound cpt = new NBTTagCompound();
+
+			NBTTagCompound index = new NBTTagCompound();
+			r.holder.writeTo(index);
+			cpt.setTag("index", index);
+
+			cpt.setInteger("indexInHolder", r.indexInHolder);
+
+			requestsNBT.appendTag(cpt);
+		}
+
+		nbt.setTag("stackRequests", requestsNBT);
     }
 
 	@Override
@@ -445,6 +482,8 @@ public class EntityRobot extends EntityRobotBase implements
 		}
 
 		dataWatcher.updateObject(16, board.getNBTHandler().getID());
+
+		stackRequestNBT = nbt.getTagList("stackRequests", Constants.NBT.TAG_COMPOUND);
     }
 
 	@Override

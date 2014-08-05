@@ -36,6 +36,7 @@ public class AIRobotSearchAndGotoStation extends AIRobot {
 	public void start() {
 		if (robot.getDockingStation() != null
 				&& filter.matches((DockingStation) robot.getDockingStation())) {
+			targetStation = (DockingStation) robot.getDockingStation();
 			terminate();
 			return;
 		}
@@ -73,7 +74,7 @@ public class AIRobotSearchAndGotoStation extends AIRobot {
 
 		if (potentialStation != null) {
 			targetStation = potentialStation;
-			startDelegateAI(new AIRobotGotoDock(robot, potentialStation));
+			startDelegateAI(new AIRobotGotoStation(robot, potentialStation));
 		} else {
 			terminate();
 		}

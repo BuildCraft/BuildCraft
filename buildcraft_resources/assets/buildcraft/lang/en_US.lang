@@ -13,6 +13,7 @@ buildcraft.boardRobotHarvester=Harvester
 buildcraft.boardRobotShovelman=Shovelman
 buildcraft.boardRobotButcher=Butcher
 buildcraft.boardRobotBuilder=Builder
+buildcraft.boardRobotCrafter=Crafter
 buildcraft.boardDetail.parameters=Parameters
 buildcraft.boardDetail.range=Range
 
@@ -64,6 +65,7 @@ gate.action.pipe.close=Close Pipe
 gate.action.station.provide_items=Provide Items
 gate.action.station.request_items=Request Items
 gate.action.station.drop_items_in_pipe=Drop Items In Pipe
+gate.action.station.craft=Craft
 gate.action.robot.work_in_area=Work in Area
 gate.action.robot.wakeup=Wake Up
 gate.action.station.forbid_robot=Robot Forbidden

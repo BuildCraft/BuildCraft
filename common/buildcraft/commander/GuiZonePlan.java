@@ -222,10 +222,7 @@ public class GuiZonePlan extends GuiAdvancedInterface {
 				selY2 = 0;
 			}
 		} else {
-			int cornerX = (width - xSize) / 2;
-			int cornerY = (height - ySize) / 2;
-
-			AdvancedSlot slot = getSlotAtLocation(mouseX - cornerX, mouseY - cornerY);
+			AdvancedSlot slot = getSlotAtLocation(mouseX, mouseY);
 
 			if (slot instanceof AreaSlot) {
 				colorSelected = (AreaSlot) slot;

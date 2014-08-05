@@ -29,10 +29,13 @@ public abstract class GuiAdvancedInterface extends GuiBuildCraft {
 	}
 
 	public int getSlotIndexAtLocation(int i, int j) {
+		int x = i - (width - xSize) / 2;
+		int y = j - (height - ySize) / 2;
+
 		for (int position = 0; position < slots.size(); ++position) {
 			AdvancedSlot s = slots.get(position);
 
-			if (s != null && i >= s.x && i <= s.x + 16 && j >= s.y && j <= s.y + 16) {
+			if (s != null && x >= s.x && x <= s.x + 16 && y >= s.y && y <= s.y + 16) {
 				return position;
 			}
 		}
@@ -74,10 +77,7 @@ public abstract class GuiAdvancedInterface extends GuiBuildCraft {
 	}
 
 	public void drawTooltipForSlotAt(int mouseX, int mouseY) {
-		int cornerX = (width - xSize) / 2;
-		int cornerY = (height - ySize) / 2;
-
-		AdvancedSlot slot = getSlotAtLocation(mouseX - cornerX, mouseY - cornerY);
+		AdvancedSlot slot = getSlotAtLocation(mouseX, mouseY);
 
 		if (slot != null) {
 			slot.drawTooltip(this, mouseX, mouseY);
@@ -131,10 +131,7 @@ public abstract class GuiAdvancedInterface extends GuiBuildCraft {
 	protected void mouseClicked(int mouseX, int mouseY, int mouseButton) {
 		super.mouseClicked(mouseX, mouseY, mouseButton);
 
-		int cornerX = (width - xSize) / 2;
-		int cornerY = (height - ySize) / 2;
-
-		AdvancedSlot slot = getSlotAtLocation(mouseX - cornerX, mouseY - cornerY);
+		AdvancedSlot slot = getSlotAtLocation(mouseX, mouseY);
 
 		if (slot != null && slot.isDefined()) {
 			slotClicked(slot);

@@ -69,10 +69,7 @@ public class GuiRefinery extends GuiAdvancedInterface {
 	protected void mouseClicked(int i, int j, int k) {
 		super.mouseClicked(i, j, k);
 
-		int cornerX = (width - xSize) / 2;
-		int cornerY = (height - ySize) / 2;
-
-		int position = getSlotIndexAtLocation(i - cornerX, j - cornerY);
+		int position = getSlotIndexAtLocation(i, j);
 
 		if (position >= 0 && position < 2) {
 			if (k == 0) {

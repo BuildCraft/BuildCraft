@@ -72,40 +72,42 @@ public class AIRobotLoad extends AIRobot {
 					IInventory tileInventory = (IInventory) nearbyTile;
 					ITransactor robotTransactor = Transactor.getTransactorFor(robot);
 
-					for (int i = 0; i < robot.getSizeInventory(); ++i) {
-						// TODO: This is suboptimal. We should try to put items
-						// on existing stacks. Look fo AIRobotGotoStationToLoad
-						// as well to fix this problem
-						if (robot.getStackInSlot(i) == null) {
-							for (IInvSlot slot : InventoryIterator.getIterable(tileInventory, dir.getOpposite())) {
-								ItemStack stack = slot.getStackInSlot();
+					for (IInvSlot slot : InventoryIterator.getIterable(tileInventory, dir.getOpposite())) {
+						ItemStack stack = slot.getStackInSlot();
 
-								if (stack != null) {
-									boolean allowed = false;
+						if (stack != null) {
+							boolean allowed = false;
 
-									for (ActionSlot s : new ActionIterator(station.pipe.pipe)) {
-										if (s.action instanceof ActionStationProvideItems) {
-											StatementParameterStackFilter param = new StatementParameterStackFilter(
-													s.parameters);
+							for (ActionSlot s : new ActionIterator(station.pipe.pipe)) {
+								if (s.action instanceof ActionStationProvideItems) {
+									StatementParameterStackFilter param = new StatementParameterStackFilter(
+											s.parameters);
 
-											if (!param.hasFilter() || param.matches(stack)) {
-												allowed = true;
-												break;
-											}
-										}
+									if (!param.hasFilter() || param.matches(stack)) {
+										allowed = true;
+										break;
+									}
+								}
+							}
+
+							if (allowed && filter.matches(stack)) {
+								ITransactor t = Transactor.getTransactorFor(robot);
+
+								if (quantity == -1) {
+
+									ItemStack added = t.add(slot.getStackInSlot(), ForgeDirection.UNKNOWN, true);
+									slot.decreaseStackInSlot(added.stackSize);
+									return;
+								} else {
+									ItemStack toAdd = slot.getStackInSlot().copy();
+
+									if (toAdd.stackSize >= quantity) {
+										toAdd.stackSize = quantity;
 									}
 
-									if (allowed && filter.matches(stack)) {
-										if (quantity == -1) {
-											slot.setStackInSlot(null);
-											robot.setInventorySlotContents(i, stack);
-											return;
-										} else {
-											robot.setInventorySlotContents
-													(i, slot.decreaseStackInSlot(quantity));
-											return;
-										}
-									}
+									ItemStack added = t.add(toAdd, ForgeDirection.UNKNOWN, true);
+									slot.decreaseStackInSlot(added.stackSize);
+									return;
 								}
 							}
 						}

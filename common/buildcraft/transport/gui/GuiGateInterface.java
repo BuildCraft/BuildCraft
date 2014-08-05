@@ -372,11 +372,7 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 		}
 		super.mouseClicked(i, j, k);
 
-		int cornerX = (width - xSize) / 2;
-		int cornerY = (height - ySize) / 2;
-
-
-		AdvancedSlot slot = getSlotAtLocation(i - cornerX, j - cornerY);
+		AdvancedSlot slot = getSlotAtLocation(i, j);
 
 		if (slot instanceof TriggerSlot && container.hasTriggers()) {
 			TriggerSlot triggerSlot = (TriggerSlot) slot;
