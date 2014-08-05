@@ -20,16 +20,16 @@ public class JavaTools {
 		return Math.max(min, Math.min(value, max));
 	}
 
-    public static <T> boolean contains(T[] array, T element) {
-        if (element != null) {
-            for (T elem : array) {
-                if (elem.equals(element)) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
+	public static <T> boolean contains(T[] array, T element) {
+		if (element != null) {
+			for (T elem : array) {
+				if (elem.equals(element)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
 
 	public static <T> T[] concat(T[] first, T[] second) {
 		T[] result = Arrays.copyOf(first, first.length + second.length);

@@ -460,7 +460,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 
 
 
-	RegistryDefaulted registry = (RegistryDefaulted) BlockDispenser.dispenseBehaviorRegistry;
+		RegistryDefaulted registry = (RegistryDefaulted) BlockDispenser.dispenseBehaviorRegistry;
 		for (Object obj : registry.getKeys()) {
 			if (obj instanceof Item) {
 				Item item = (Item) obj;

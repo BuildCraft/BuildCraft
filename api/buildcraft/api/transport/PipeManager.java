@@ -25,16 +25,16 @@ public abstract class PipeManager {
 		extractionHandlers.add(handler);
 	}
 
-    /**
-     * Registry for custom classes.
-     * This handler has a higher priority, so use it carefully.
-     *
-     * @param handler Handler to register.
-     * @param item Item to handle(NBT and meta should be handled by yourself).
-     */
-    public static void registerStripesHandler(IStripesHandler handler, Item item) {
-        stripesHandlers.put(item, handler);
-    }
+	/**
+	 * Registry for custom classes.
+	 * This handler has a higher priority, so use it carefully.
+	 *
+	 * @param handler Handler to register.
+	 * @param item Item to handle(NBT and meta should be handled by yourself).
+	 */
+	public static void registerStripesHandler(IStripesHandler handler, Item item) {
+		stripesHandlers.put(item, handler);
+	}
 
 	/**
 	 * param extractor can be null

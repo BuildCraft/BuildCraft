@@ -9,13 +9,14 @@
 package buildcraft.transport.stripes;
 
 import net.minecraft.item.ItemStack;
+
 import buildcraft.api.transport.IStripesHandler;
 import buildcraft.api.transport.IStripesPipe;
 
 public class DefaultHandler implements IStripesHandler {
 
-    @Override
-    public StripesBehavior behave(IStripesPipe pipe, StripesAction act, ItemStack is) {
-        return StripesBehavior.DEFAULT;
-    }
+	@Override
+	public StripesBehavior behave(IStripesPipe pipe, StripesAction act, ItemStack is) {
+		return StripesBehavior.DEFAULT;
+	}
 }
