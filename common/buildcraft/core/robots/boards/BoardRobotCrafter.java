@@ -11,42 +11,30 @@ package buildcraft.core.robots.boards;
 import java.util.ArrayList;
 import java.util.HashSet;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockWorkbench;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.ShapedRecipes;
 import net.minecraft.item.crafting.ShapelessRecipes;
 
-import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
 
 import buildcraft.api.boards.RedstoneBoardRobot;
 import buildcraft.api.boards.RedstoneBoardRobotNBT;
-import buildcraft.api.core.IInvSlot;
 import buildcraft.api.gates.ActionParameterItemStack;
 import buildcraft.api.gates.IActionParameter;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.api.robots.IDockingStation;
-import buildcraft.core.inventory.ITransactor;
-import buildcraft.core.inventory.InventoryCopy;
-import buildcraft.core.inventory.InventoryIterator;
 import buildcraft.core.inventory.StackHelper;
-import buildcraft.core.inventory.Transactor;
-import buildcraft.core.inventory.filters.ArrayStackFilter;
-import buildcraft.core.inventory.filters.IStackFilter;
-import buildcraft.core.robots.AIRobotGotoStationToLoad;
+import buildcraft.core.robots.AIRobotCraftGeneric;
+import buildcraft.core.robots.AIRobotCraftWorkbench;
+import buildcraft.core.robots.AIRobotGotoSleep;
 import buildcraft.core.robots.AIRobotGotoStationToUnload;
-import buildcraft.core.robots.AIRobotLoad;
-import buildcraft.core.robots.AIRobotSearchAndGotoStation;
 import buildcraft.core.robots.AIRobotSleep;
 import buildcraft.core.robots.AIRobotUnload;
 import buildcraft.core.robots.DockingStation;
-import buildcraft.core.robots.IStationFilter;
 import buildcraft.silicon.statements.ActionRobotCraft;
 import buildcraft.transport.gates.ActionIterator;
 import buildcraft.transport.gates.ActionSlot;
@@ -56,9 +44,6 @@ public class BoardRobotCrafter extends RedstoneBoardRobot {
 	private ItemStack order;
 	private ArrayList<ItemStack> craftingBlacklist = new ArrayList<ItemStack>();
 	private HashSet<IDockingStation> reservedStations = new HashSet<IDockingStation>();
-	private ArrayList<ArrayStackFilter> requirements = new ArrayList<ArrayStackFilter>();
-	private IRecipe recipe;
-	private int craftingTimer = 0;
 
 	public BoardRobotCrafter(EntityRobotBase iRobot) {
 		super(iRobot);
@@ -71,146 +56,68 @@ public class BoardRobotCrafter extends RedstoneBoardRobot {
 
 	@Override
 	public void update() {
+		if (robot.containsItems()) {
+			// Always makes sure that when starting a craft, the inventory is
+			// clean.
 
-		// [1] look for a crafting order
-		// -- if none, clear temporary item blacklist and sleep
-		// [2] look and fetch items needed to craft (problem with 9 slots inv?)
-		// -- if can't be done, add item to temporary blacklist, drop inv either
-		// -- in a inventory accepting items or drop in the world, then look for
-		// -- another order
-		// [3] look and goto a station next to a workbench, craft
-		// -- if not, sleep
-		// [4] drop the crafting item where possible
-		// -- if not, sleep
-
-		if (craftingTimer > 0) {
-			craftingTimer--;
-
-			if (craftingTimer == 0) {
-				craft();
-				startDelegateAI(new AIRobotGotoStationToUnload(robot, robot.getZoneToWork()));
-			}
-		} else if (order == null) {
-			order = getCraftingOrder();
-
-			if (order == null) {
-				craftingBlacklist.clear();
-				startDelegateAI(new AIRobotSleep(robot));
-				return;
-			}
-
-			recipe = lookForRecipe(order);
-
-			if (recipe == null) {
-				craftingBlacklist.add(order);
-				order = null;
-				return;
-			}
-
-			requirements = tryCraft(false);
-
-			if (requirements == null) {
-				craftingBlacklist.add(order);
-				order = null;
-				return;
-			}
-		} else if (requirements.size() > 0) {
-			startDelegateAI(new AIRobotGotoStationToLoad(robot, new ReqStackFilter(), robot.getZoneToWork()));
-		} else {
-			startDelegateAI(new AIRobotSearchAndGotoStation(robot, new StationWorkbenchFilter(), robot.getZoneToWork()));
+			// TODO: We should call load or drop, in order to clean items even
+			// if no destination is to be found
+			startDelegateAI(new AIRobotGotoStationToUnload(robot, robot.getZoneToWork()));
+			return;
 		}
+
+		order = getCraftingOrder();
+
+		if (order == null) {
+			craftingBlacklist.clear();
+			startDelegateAI(new AIRobotSleep(robot));
+			return;
+		}
+
+		IRecipe recipe = lookForWorkbenchRecipe(order);
+
+		if (recipe != null) {
+			startDelegateAI(new AIRobotCraftWorkbench(robot, recipe));
+			return;
+		}
+
+		/*
+		 * if (hasFurnaceRecipe(order)) { startDelegateAI(new
+		 * AIRobotCraftFurnace(robot)); }
+		 *
+		 * recipe = lookForAssemblyTableRecipe(order);
+		 *
+		 * if (recipe != null) { startDelegateAI(new
+		 * AIRobotCraftAssemblyTable(robot)); }
+		 *
+		 * recipe = lookForIntegrationTableRecipe(order);
+		 *
+		 * if (recipe != null) { startDelegateAI(new
+		 * AIRobotCraftIntegrationTable(robot)); }
+		 */
+
+		craftingBlacklist.add(order);
 	}
 
 	@Override
 	public void delegateAIEnded(AIRobot ai) {
-		if (ai instanceof AIRobotGotoStationToLoad) {
-			if (((AIRobotGotoStationToLoad) ai).found) {
-				startDelegateAI(new AIRobotLoad(robot, new ReqStackFilter(), 1));
-			} else {
+		if (ai instanceof AIRobotCraftGeneric) {
+			if (!ai.success()) {
 				craftingBlacklist.add(order);
-				order = null;
-				requirements.clear();
-
-				// drop items in inventory.
-				startDelegateAI(new AIRobotGotoStationToUnload(robot, robot.getZoneToWork()));
+			} else {
+				// The extra crafted items may make some crafting possible
+				craftingBlacklist.clear();
 			}
-		} else if (ai instanceof AIRobotLoad) {
-			// Check requirements v.s. contents
-
-			requirements = tryCraft(false);
 		} else if (ai instanceof AIRobotGotoStationToUnload) {
-			if (((AIRobotGotoStationToUnload) ai).found) {
+			if (ai.success()) {
 				startDelegateAI(new AIRobotUnload(robot));
-			}
-		} else if (ai instanceof AIRobotSearchAndGotoStation) {
-			if (new StationWorkbenchFilter().matches((DockingStation) robot.getDockingStation())) {
-				craftingTimer = 40;
 			} else {
-				startDelegateAI(new AIRobotSleep(robot));
+				startDelegateAI(new AIRobotGotoSleep(robot));
 			}
 		}
 	}
 
-	private ArrayList<ArrayStackFilter> tryCraft(boolean doRemove) {
-		Object[] items = new Object[0];
-
-		if (recipe instanceof ShapedRecipes) {
-			items = ((ShapedRecipes) recipe).recipeItems;
-		} else if (recipe instanceof ShapelessRecipes) {
-			items = ((ShapelessRecipes) recipe).recipeItems.toArray();
-		} else if (recipe instanceof ShapedOreRecipe) {
-			items = ((ShapedOreRecipe) recipe).getInput();
-		} else if (recipe instanceof ShapelessOreRecipe) {
-			items = ((ShapelessOreRecipe) recipe).getInput().toArray();
-		}
-
-		ArrayList<ArrayStackFilter> result = new ArrayList<ArrayStackFilter>();
-
-		IInventory inv = robot;
-
-		if (!doRemove) {
-			inv = new InventoryCopy(robot);
-		}
-
-		for (Object tmp : items) {
-			if (tmp == null) {
-				continue;
-			}
-
-			int qty = 0;
-			ArrayStackFilter filter;
-
-			if (tmp instanceof ItemStack) {
-				ItemStack stack = (ItemStack) tmp;
-				qty = stack.stackSize;
-				filter = new ArrayStackFilter(stack);
-			} else {
-				ArrayList<ItemStack> stacks = (ArrayList<ItemStack>) tmp;
-				qty = stacks.get(0).stackSize;
-				filter = new ArrayStackFilter(stacks.toArray(new ItemStack[stacks.size()]));
-			}
-
-			for (IInvSlot s : InventoryIterator.getIterable(inv)) {
-				if (filter.matches(s.getStackInSlot())) {
-					ItemStack removed = s.decreaseStackInSlot(qty);
-
-					qty = qty - removed.stackSize;
-
-					if (removed.stackSize == 0) {
-						break;
-					}
-				}
-			}
-
-			if (qty > 0) {
-				result.add(filter);
-			}
-		}
-
-		return result;
-	}
-
-	private IRecipe lookForRecipe(ItemStack order) {
+	private IRecipe lookForWorkbenchRecipe(ItemStack order) {
 		for (Object o : CraftingManager.getInstance().getRecipeList()) {
 			IRecipe r = (IRecipe) o;
 
@@ -262,60 +169,6 @@ public class BoardRobotCrafter extends RedstoneBoardRobot {
 		// when taking a "request" order, lock the target station
 
 		return null;
-	}
-
-	private void craft() {
-		if (tryCraft(true).size() == 0) {
-			ITransactor transactor = Transactor.getTransactorFor(robot);
-
-			transactor.add(order, ForgeDirection.UNKNOWN, true);
-		}
-
-		order = null;
-		recipe = null;
-	}
-
-	private ArrayStackFilter getStackFilter(Object o) {
-		if (o instanceof ArrayList) {
-			return new ArrayStackFilter((ItemStack[]) ((ArrayList<ItemStack>) o).toArray());
-		} else if (o instanceof ItemStack) {
-			return new ArrayStackFilter((ItemStack) o);
-		} else {
-			return null;
-		}
-	}
-
-	private class ReqStackFilter implements IStackFilter {
-
-		@Override
-		public boolean matches(ItemStack stack) {
-			for (ArrayStackFilter s : requirements) {
-				if (s.matches(stack)) {
-					return true;
-				}
-			}
-
-			return false;
-		}
-	}
-
-	private class StationWorkbenchFilter implements IStationFilter {
-
-		@Override
-		public boolean matches(DockingStation station) {
-			for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
-				Block nearbyBlock = robot.worldObj.getBlock(station.x() + dir.offsetX, station.y()
-						+ dir.offsetY, station.z()
-						+ dir.offsetZ);
-
-				if (nearbyBlock instanceof BlockWorkbench) {
-					return true;
-				}
-			}
-
-			return false;
-		}
-
 	}
 
 }

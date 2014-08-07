@@ -27,8 +27,7 @@ import buildcraft.transport.gates.ActionSlot;
 
 public class AIRobotGotoStationToLoad extends AIRobot {
 
-	public boolean found = false;
-
+	private boolean found = false;
 	private IStackFilter filter;
 	private IZone zone;
 
@@ -55,6 +54,11 @@ public class AIRobotGotoStationToLoad extends AIRobot {
 
 			terminate();
 		}
+	}
+
+	@Override
+	public boolean success() {
+		return found;
 	}
 
 	private class StationFilter implements IStationFilter {

@@ -123,7 +123,7 @@ public class BoardRobotBuilder extends RedstoneBoardRobot {
 	@Override
 	public void delegateAIEnded(AIRobot ai) {
 		if (ai instanceof AIRobotGotoStationToLoad) {
-			if (((AIRobotGotoStationToLoad) ai).found) {
+			if (ai.success()) {
 				startDelegateAI(new AIRobotLoad(robot, new ArrayStackFilter(requirementsToLookFor.getFirst()),
 						requirementsToLookFor.getFirst().stackSize));
 			} else {

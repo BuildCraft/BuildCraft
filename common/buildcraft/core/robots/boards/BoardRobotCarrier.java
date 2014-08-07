@@ -46,7 +46,7 @@ public class BoardRobotCarrier extends RedstoneBoardRobot {
 	@Override
 	public void delegateAIEnded(AIRobot ai) {
 		if (ai instanceof AIRobotGotoStationToLoad) {
-			if (((AIRobotGotoStationToLoad) ai).found) {
+			if (ai.success()) {
 				loadFound = true;
 				startDelegateAI(new AIRobotLoad(robot, ActionRobotFilter.getGateFilter(robot
 						.getLinkedStation())));
@@ -60,7 +60,7 @@ public class BoardRobotCarrier extends RedstoneBoardRobot {
 				}
 			}
 		} else if (ai instanceof AIRobotGotoStationToUnload) {
-			if (((AIRobotGotoStationToUnload) ai).found) {
+			if (ai.success()) {
 				unloadFound = true;
 				startDelegateAI(new AIRobotUnload(robot));
 			} else {

@@ -22,8 +22,7 @@ import buildcraft.transport.gates.ActionSlot;
 
 public class AIRobotGotoStationToUnload extends AIRobot {
 
-	public boolean found = false;
-
+	private boolean found = false;
 	private IZone zone;
 
 	public AIRobotGotoStationToUnload(EntityRobotBase iRobot) {
@@ -49,6 +48,11 @@ public class AIRobotGotoStationToUnload extends AIRobot {
 
 			terminate();
 		}
+	}
+
+	@Override
+	public boolean success() {
+		return found;
 	}
 
 	private class StationInventory implements IStationFilter {

@@ -55,6 +55,10 @@ public class AIRobot {
 
 	}
 
+	public boolean success() {
+		return true;
+	}
+
 	public double getEnergyCost() {
 		return 0.1;
 	}
