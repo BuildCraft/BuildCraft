@@ -11,6 +11,7 @@ package buildcraft.api.core;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 
 /**
@@ -23,7 +24,7 @@ public class BlockIndex implements Comparable<BlockIndex> {
 	public int z;
 
 	public BlockIndex() {
-	
+
 	}
 
 	/**
@@ -46,6 +47,10 @@ public class BlockIndex implements Comparable<BlockIndex> {
 		x = (int) Math.floor(entity.posX);
 		y = (int) Math.floor(entity.posY);
 		z = (int) Math.floor(entity.posZ);
+	}
+
+	public BlockIndex(TileEntity entity) {
+		this(entity.xCoord, entity.yCoord, entity.xCoord);
 	}
 
 	/**

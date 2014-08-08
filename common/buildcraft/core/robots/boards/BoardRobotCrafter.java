@@ -10,9 +10,11 @@ package buildcraft.core.robots.boards;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Map;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
+import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.ShapedRecipes;
 import net.minecraft.item.crafting.ShapelessRecipes;
@@ -28,6 +30,7 @@ import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.api.robots.IDockingStation;
 import buildcraft.core.inventory.StackHelper;
+import buildcraft.core.robots.AIRobotCraftFurnace;
 import buildcraft.core.robots.AIRobotCraftGeneric;
 import buildcraft.core.robots.AIRobotCraftWorkbench;
 import buildcraft.core.robots.AIRobotGotoSleep;
@@ -81,10 +84,13 @@ public class BoardRobotCrafter extends RedstoneBoardRobot {
 			return;
 		}
 
+		ItemStack furnaceInput = lookForFurnaceRecipe(order);
+
+		if (furnaceInput != null) {
+			startDelegateAI(new AIRobotCraftFurnace(robot, furnaceInput));
+		}
+
 		/*
-		 * if (hasFurnaceRecipe(order)) { startDelegateAI(new
-		 * AIRobotCraftFurnace(robot)); }
-		 *
 		 * recipe = lookForAssemblyTableRecipe(order);
 		 *
 		 * if (recipe != null) { startDelegateAI(new
@@ -128,6 +134,20 @@ public class BoardRobotCrafter extends RedstoneBoardRobot {
 				if (StackHelper.isMatchingItem(r.getRecipeOutput(), order)) {
 					return r;
 				}
+			}
+		}
+
+		return null;
+	}
+
+	private ItemStack lookForFurnaceRecipe(ItemStack order) {
+		for (Object o : FurnaceRecipes.smelting().getSmeltingList().entrySet()) {
+			Map.Entry e = (Map.Entry) o;
+			ItemStack input = (ItemStack) e.getKey();
+			ItemStack output = (ItemStack) e.getValue();
+
+			if (StackHelper.isMatchingItem(output, order)) {
+				return input;
 			}
 		}
 

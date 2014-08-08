@@ -69,6 +69,9 @@ public class PathFinding {
 		maxDistanceToEnd = iMaxDistanceToEnd;
 	}
 
+	// TODO: It's probably more efficient to start a search first, and then to
+	// compute the path, instead of computing all possible path from the get
+	// go.
 	public PathFinding(World iWorld, BlockIndex iStart, IBlockFilter iPathFound, float iMaxDistance, IZone iZone) {
 		world = iWorld;
 		start = iStart;

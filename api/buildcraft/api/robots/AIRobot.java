@@ -8,9 +8,20 @@
  */
 package buildcraft.api.robots;
 
+import java.util.HashSet;
+
 import net.minecraft.nbt.NBTTagCompound;
 
+import buildcraft.api.core.BlockIndex;
+
 public class AIRobot {
+	// TODO: we need a more generic resource handler here, for:
+	//   - blocks taken by robots
+	//   - stations reserved by robots
+	//   - orders taken by robots
+	// and possibly others.
+	public static HashSet<BlockIndex> reservedBlocks = new HashSet<BlockIndex>();
+
 	public EntityRobotBase robot;
 
 	private AIRobot delegateAI;
@@ -178,5 +189,33 @@ public class AIRobot {
 		}
 
 		return ai;
+	}
+
+	// TODO: we should put the three calls below into one object making sure
+	// that blocks are released before being assigned again, and which has a
+	// finalize () method to free potential block upon garbage collection.
+	public static boolean isFreeBlock(BlockIndex index) {
+		synchronized (reservedBlocks) {
+			return !reservedBlocks.contains(index);
+		}
+	}
+
+	public static boolean reserveBlock(BlockIndex index) {
+		synchronized (reservedBlocks) {
+			if (!reservedBlocks.contains(index)) {
+				reservedBlocks.add(index);
+				return true;
+			} else {
+				return false;
+			}
+		}
+	}
+
+	public static void releaseBlock(BlockIndex index) {
+		synchronized (reservedBlocks) {
+			if (reservedBlocks.contains(index)) {
+				reservedBlocks.remove(index);
+			}
+		}
 	}
 }

@@ -8,15 +8,10 @@
  */
 package buildcraft.api.boards;
 
-import java.util.HashSet;
-
-import buildcraft.api.core.BlockIndex;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
 
 public abstract class RedstoneBoardRobot extends AIRobot implements IRedstoneBoard<EntityRobotBase> {
-
-	public static HashSet<BlockIndex> reservedBlocks = new HashSet<BlockIndex>();
 
 	public RedstoneBoardRobot(EntityRobotBase iRobot) {
 		super(iRobot);
@@ -28,34 +23,6 @@ public abstract class RedstoneBoardRobot extends AIRobot implements IRedstoneBoa
 	@Override
 	public final void updateBoard(EntityRobotBase container) {
 
-	}
-
-	// TODO: we should put the three calls below into one object making sure
-	// that blocks are released before being assigned again, and which has a
-	// finalize () method to free potential block upon garbage collection.
-	public static boolean isFreeBlock(BlockIndex index) {
-		synchronized (reservedBlocks) {
-			return !reservedBlocks.contains(index);
-		}
-	}
-
-	public static boolean reserveBlock(BlockIndex index) {
-		synchronized (reservedBlocks) {
-			if (!reservedBlocks.contains(index)) {
-				reservedBlocks.add(index);
-				return true;
-			} else {
-				return false;
-			}
-		}
-	}
-
-	public static void releaseBlock(BlockIndex index) {
-		synchronized (reservedBlocks) {
-			if (reservedBlocks.contains(index)) {
-				reservedBlocks.remove(index);
-			}
-		}
 	}
 
 }

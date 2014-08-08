@@ -11,18 +11,19 @@ package buildcraft.core.robots;
 import buildcraft.api.core.IZone;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
+import buildcraft.core.inventory.filters.IStackFilter;
 
-public class AIRobotSearchAndGotoStation extends AIRobot {
+public class AIRobotGotoStationAndLoad extends AIRobot {
 
-	public DockingStation targetStation;
-	private IStationFilter filter;
+	private boolean found = false;
+	private IStackFilter filter;
 	private IZone zone;
 
-	public AIRobotSearchAndGotoStation(EntityRobotBase iRobot) {
+	public AIRobotGotoStationAndLoad(EntityRobotBase iRobot) {
 		super(iRobot);
 	}
 
-	public AIRobotSearchAndGotoStation(EntityRobotBase iRobot, IStationFilter iFilter, IZone iZone) {
+	public AIRobotGotoStationAndLoad(EntityRobotBase iRobot, IStackFilter iFilter, IZone iZone) {
 		super(iRobot);
 
 		filter = iFilter;
@@ -31,21 +32,23 @@ public class AIRobotSearchAndGotoStation extends AIRobot {
 
 	@Override
 	public void start() {
-		startDelegateAI(new AIRobotSearchStation(robot, filter, zone));
+		startDelegateAI(new AIRobotGotoStationToLoad(robot, filter, zone));
 	}
 
 	@Override
 	public void delegateAIEnded(AIRobot ai) {
-		if (ai instanceof AIRobotSearchStation) {
+		if (ai instanceof AIRobotGotoStationToLoad) {
 			if (ai.success()) {
-				targetStation = ((AIRobotSearchStation) ai).targetStation;
-				startDelegateAI(new AIRobotGotoStation(robot, targetStation));
+				found = true;
+				startDelegateAI(new AIRobotLoad(robot, filter, 1));
+			} else {
+				terminate();
 			}
 		}
 	}
 
 	@Override
 	public boolean success() {
-		return targetStation != null;
+		return found;
 	}
 }
