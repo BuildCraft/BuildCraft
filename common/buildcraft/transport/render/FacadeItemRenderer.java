@@ -11,6 +11,7 @@ package buildcraft.transport.render;
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.block.Block;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.Tessellator;
@@ -144,7 +145,8 @@ public class FacadeItemRenderer implements IItemRenderer {
 
 	private IIcon tryGetBlockIcon(Block block, int side, int decodedMeta) {
 		try {
-			return block.getIcon(side, decodedMeta);
+			IIcon icon = block.getIcon(side, decodedMeta);
+			return icon == null ? Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite("missingno") : icon;
 		} catch (Throwable t) {
 			try {
 				return block.getBlockTextureFromSide(side);
