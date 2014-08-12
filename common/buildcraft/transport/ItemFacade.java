@@ -177,7 +177,8 @@ public class ItemFacade extends ItemBuildCraft {
 				ItemStack stack = new ItemStack(item, 1, i);
 
 				if (!Strings.isNullOrEmpty(stack.getUnlocalizedName())
-						&& names.add(stack.getUnlocalizedName())) {
+						&& names.add(stack.getUnlocalizedName())
+						&& hasNoNullIcons(block, i)) {
 						ItemFacade.addFacade(stack);
 
 						// prevent adding multiple facades if it's a rotatable block
@@ -189,8 +190,17 @@ public class ItemFacade extends ItemBuildCraft {
 
 			} catch (Throwable t) {
 					t.printStackTrace();
-				}
+			}
 		}
+	}
+	
+	private static boolean hasNoNullIcons(Block block, int meta) {
+	    for (int i = 0; i < 6; i++) {
+	        if (block.getIcon(i, meta) == null) {
+	            return false;
+	        }
+	    }
+	    return true;
 	}
 
 	private static boolean isBlockBlacklisted(Block block) {
