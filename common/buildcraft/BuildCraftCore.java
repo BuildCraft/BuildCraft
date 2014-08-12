@@ -58,7 +58,6 @@ import net.minecraftforge.fluids.BlockFluidBase;
 import net.minecraftforge.oredict.OreDictionary;
 
 import buildcraft.api.blueprints.SchematicRegistry;
-import buildcraft.api.boards.RedstoneBoardRobot;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.BuildCraftAPI;
@@ -69,7 +68,6 @@ import buildcraft.api.gates.IAction;
 import buildcraft.api.gates.ITrigger;
 import buildcraft.api.gates.StatementManager;
 import buildcraft.api.recipes.BuildcraftRecipeRegistry;
-import buildcraft.api.robots.DockingStationRegistry;
 import buildcraft.core.BlockSpring;
 import buildcraft.core.BuildCraftConfiguration;
 import buildcraft.core.CommandBuildCraft;
@@ -677,7 +675,6 @@ public class BuildCraftCore extends BuildCraftMod {
 
 	@SubscribeEvent
 	public void cleanRegistries(WorldEvent.Unload unload) {
-		DockingStationRegistry.clear();
 		BuildCraftAPI.isSoftProperty.clear();
 		BuildCraftAPI.isWoodProperty.clear();
 		BuildCraftAPI.isLeavesProperty.clear();
@@ -687,7 +684,6 @@ public class BuildCraftCore extends BuildCraftMod {
 		BuildCraftAPI.isFarmlandProperty.clear();
 		BuildCraftAPI.isShoveled.clear();
 		BuildCraftAPI.isDirtProperty.clear();
-		RedstoneBoardRobot.reservedBlocks.clear();
 	}
 
 	@Mod.EventHandler

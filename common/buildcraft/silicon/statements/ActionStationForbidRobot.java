@@ -53,7 +53,7 @@ public class ActionStationForbidRobot extends BCActionPassive {
 	}
 
 	public static boolean isForbidden(DockingStation station, EntityRobotBase robot) {
-		for (ActionSlot s : new ActionIterator(station.pipe.pipe)) {
+		for (ActionSlot s : new ActionIterator(station.getPipe().pipe)) {
 			if (s.action instanceof ActionStationForbidRobot) {
 				if (ActionStationForbidRobot.isForbidden(s, robot)) {
 					return true;

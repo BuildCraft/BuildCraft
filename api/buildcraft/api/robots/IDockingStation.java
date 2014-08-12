@@ -12,6 +12,8 @@ import net.minecraft.nbt.NBTTagCompound;
 
 import net.minecraftforge.common.util.ForgeDirection;
 
+import buildcraft.api.core.BlockIndex;
+
 public interface IDockingStation {
 
 	int x();
@@ -22,11 +24,17 @@ public interface IDockingStation {
 
 	ForgeDirection side();
 
-	EntityRobotBase reserved();
+	EntityRobotBase robotTaking();
 
-	EntityRobotBase linked();
+	long robotIdTaking();
+
+	long linkedId();
+
+	boolean isTaken();
 
 	void writeToNBT(NBTTagCompound nbt);
 
 	void readFromNBT(NBTTagCompound nbt);
+
+	BlockIndex index();
 }

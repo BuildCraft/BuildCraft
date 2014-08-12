@@ -26,7 +26,18 @@ public abstract class AIRobotCraftGeneric extends AIRobot {
 	protected abstract ArrayList<ArrayStackFilter> tryCraft(boolean doRemove);
 
 	@Override
+	public void end() {
+		robot.releaseResources();
+	}
+
+	@Override
 	public boolean success() {
 		return crafted;
 	}
+
+	@Override
+	public double getEnergyCost() {
+		return 3;
+	}
+
 }

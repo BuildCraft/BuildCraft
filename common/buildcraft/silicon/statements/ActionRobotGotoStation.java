@@ -18,11 +18,11 @@ import buildcraft.api.gates.ActionParameterItemStack;
 import buildcraft.api.gates.IActionParameter;
 import buildcraft.api.gates.IGate;
 import buildcraft.api.robots.AIRobot;
-import buildcraft.api.robots.DockingStationRegistry;
 import buildcraft.core.ItemMapLocation;
 import buildcraft.core.robots.AIRobotGoAndLinkToDock;
 import buildcraft.core.robots.DockingStation;
 import buildcraft.core.robots.EntityRobot;
+import buildcraft.core.robots.RobotRegistry;
 import buildcraft.core.triggers.BCActionActive;
 import buildcraft.core.utils.StringUtils;
 import buildcraft.transport.Pipe;
@@ -48,12 +48,13 @@ public class ActionRobotGotoStation extends BCActionActive {
 	public void actionActivate(IGate gate, IActionParameter[] parameters) {
 		Pipe<?> pipe = (Pipe<?>) gate.getPipe();
 		TileGenericPipe tile = pipe.container;
+		RobotRegistry registry = RobotRegistry.getRegistry(pipe.getWorld());
 
 		for (ForgeDirection d : ForgeDirection.VALID_DIRECTIONS) {
 			DockingStation station = tile.getStation(d);
 
-			if (station != null && station.linked() != null) {
-				EntityRobot robot = (EntityRobot) station.linked();
+			if (station != null && station.robotTaking() != null) {
+				EntityRobot robot = (EntityRobot) station.robotTaking();
 				AIRobot ai = robot.getOverridingAI();
 
 				if (ai != null) {
@@ -71,7 +72,7 @@ public class ActionRobotGotoStation extends BCActionActive {
 
 						if (index != null) {
 							ForgeDirection side = ItemMapLocation.getSide(item);
-							DockingStation paramStation = (DockingStation) DockingStationRegistry.getStation(index.x,
+							DockingStation paramStation = registry.getStation(index.x,
 									index.y, index.z, side);
 
 							if (paramStation != null) {

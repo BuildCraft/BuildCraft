@@ -47,14 +47,14 @@ public class AIRobotUnload extends AIRobot {
 			return false;
 		}
 
-		Pipe pipe = station.pipe.pipe;
+		Pipe pipe = station.getPipe().pipe;
 
 		for (IInvSlot robotSlot : InventoryIterator.getIterable(robot, ForgeDirection.UNKNOWN)) {
 			if (robotSlot.getStackInSlot() == null) {
 				continue;
 			}
 
-			for (ActionSlot s : new ActionIterator(station.pipe.pipe)) {
+			for (ActionSlot s : new ActionIterator(pipe)) {
 				if (s.action instanceof ActionStationRequestItems) {
 					if (((ActionStationRequestItems) s.action)
 							.insert(station, (EntityRobot) robot, s, robotSlot, true)) {

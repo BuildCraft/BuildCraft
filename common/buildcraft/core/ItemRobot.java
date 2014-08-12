@@ -11,11 +11,16 @@ package buildcraft.core;
 import java.util.List;
 
 import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 import buildcraft.BuildCraftSilicon;
 import buildcraft.api.boards.RedstoneBoardNBT;
@@ -27,7 +32,7 @@ import buildcraft.core.utils.NBTUtils;
 public class ItemRobot extends ItemBuildCraft {
 
 	public ItemRobot() {
-		super(CreativeTabBuildCraft.ITEMS);
+		super(CreativeTabBuildCraft.BOARDS);
 	}
 
 	public EntityRobot createRobot(ItemStack stack, World world) {
@@ -96,5 +101,22 @@ public class ItemRobot extends ItemBuildCraft {
 		NBTUtils.getItemData(robot).setTag("board", NBTUtils.getItemData(board));
 
 		return robot;
+	}
+
+	@SuppressWarnings({"unchecked", "rawtypes"})
+	@Override
+	@SideOnly(Side.CLIENT)
+	public void getSubItems(Item item, CreativeTabs par2CreativeTabs, List itemList) {
+		itemList.add(new ItemStack(BuildCraftSilicon.robotItem));
+
+		for (RedstoneBoardNBT nbt : RedstoneBoardRegistry.instance.getAllBoardNBTs()) {
+			ItemStack boardStack = new ItemStack(BuildCraftSilicon.redstoneBoard);
+			NBTTagCompound nbtData = NBTUtils.getItemData(boardStack);
+			nbt.createBoard(nbtData);
+
+			ItemStack robotStack = createRobotStack(boardStack);
+
+			itemList.add(robotStack.copy());
+		}
 	}
 }

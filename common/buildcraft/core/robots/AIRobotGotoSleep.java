@@ -19,6 +19,7 @@ public class AIRobotGotoSleep extends AIRobot {
 
 	@Override
 	public void start() {
+		robot.getRegistry().releaseResources(robot);
 		startDelegateAI(new AIRobotGotoStation(robot, robot.getLinkedStation()));
 	}
 

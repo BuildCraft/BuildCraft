@@ -27,6 +27,8 @@ import buildcraft.core.robots.AIRobotGotoSleep;
 import buildcraft.core.robots.AIRobotSearchBlock;
 import buildcraft.core.robots.AIRobotUseToolOnBlock;
 import buildcraft.core.robots.IBlockFilter;
+import buildcraft.core.robots.ResourceIdBlock;
+import buildcraft.core.robots.RobotRegistry;
 
 public class BoardRobotFarmer extends RedstoneBoardRobot {
 
@@ -55,7 +57,7 @@ public class BoardRobotFarmer extends RedstoneBoardRobot {
 				@Override
 				public boolean matches(World world, int x, int y, int z) {
 					return BuildCraftAPI.isDirtProperty.get(world, x, y, z)
-							&& RedstoneBoardRobot.isFreeBlock(new BlockIndex(x, y, z))
+							&& robot.getRegistry().isTaken(new ResourceIdBlock(x, y, z))
 							&& isAirAbove(world, x, y, z);
 				}
 			}));
@@ -67,9 +69,12 @@ public class BoardRobotFarmer extends RedstoneBoardRobot {
 		if (ai instanceof AIRobotSearchBlock) {
 			AIRobotSearchBlock searchAI = (AIRobotSearchBlock) ai;
 
-			if (searchAI.blockFound != null && RedstoneBoardRobot.reserveBlock(searchAI.blockFound)) {
+			if (searchAI.blockFound != null
+					&& RobotRegistry.getRegistry(robot.worldObj).take(
+							new ResourceIdBlock(searchAI.blockFound), robot)) {
+
 				if (blockFound != null) {
-					RedstoneBoardRobot.releaseBlock(blockFound);
+					robot.getRegistry().release(new ResourceIdBlock(blockFound));
 				}
 
 				blockFound = searchAI.blockFound;
@@ -86,7 +91,7 @@ public class BoardRobotFarmer extends RedstoneBoardRobot {
 				startDelegateAI(new AIRobotGotoSleep(robot));
 			}
 		} else if (ai instanceof AIRobotUseToolOnBlock) {
-			RedstoneBoardRobot.releaseBlock(blockFound);
+			robot.getRegistry().release(new ResourceIdBlock(blockFound));
 			blockFound = null;
 		}
 	}
@@ -94,7 +99,7 @@ public class BoardRobotFarmer extends RedstoneBoardRobot {
 	@Override
 	public void end() {
 		if (blockFound != null) {
-			RedstoneBoardRobot.releaseBlock(blockFound);
+			robot.getRegistry().release(new ResourceIdBlock(blockFound));
 		}
 	}
 
@@ -115,10 +120,6 @@ public class BoardRobotFarmer extends RedstoneBoardRobot {
 
 		if (nbt.hasKey("blockFound")) {
 			blockFound = new BlockIndex(nbt.getCompoundTag("blockFound"));
-
-			if (!RedstoneBoardRobot.reserveBlock(blockFound)) {
-				blockFound = null;
-			}
 		}
 	}
 

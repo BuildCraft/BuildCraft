@@ -20,12 +20,12 @@ import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.BuildCraftTransport;
-import buildcraft.api.robots.DockingStationRegistry;
 import buildcraft.api.transport.IPipePluggable;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.ItemBuildCraft;
 import buildcraft.core.robots.DockingStation;
+import buildcraft.core.robots.RobotRegistry;
 
 public class ItemRobotStation extends ItemBuildCraft {
 
@@ -99,20 +99,27 @@ public class ItemRobotStation extends ItemBuildCraft {
 
 		@Override
 		public void invalidate() {
-			if (station != null && !station.pipe.getWorld().isRemote) {
-				DockingStationRegistry.removeStation(station);
+			if (station != null && !station.getPipe().getWorld().isRemote) {
+				RobotRegistry.getRegistry(station.world).removeStation(station);
 				isValid = false;
 			}
 		}
 
 		@Override
 		public void validate(IPipeTile pipe, ForgeDirection direction) {
-			if (!isValid && !((TileGenericPipe) pipe).getWorld().isRemote) {
+			TileGenericPipe gPipe = (TileGenericPipe) pipe;
+			if (!isValid && !gPipe.getWorld().isRemote) {
+				station = RobotRegistry.getRegistry(gPipe.getWorld()).getStation(
+						gPipe.xCoord,
+						gPipe.yCoord,
+						gPipe.zCoord,
+						direction);
+
 				if (station == null) {
-					station = new DockingStation((TileGenericPipe) pipe, direction);
+					station = new DockingStation(gPipe, direction);
+					RobotRegistry.getRegistry(gPipe.getWorld()).registerStation(station);
 				}
 
-				DockingStationRegistry.registerStation(station);
 				isValid = true;
 			}
 		}

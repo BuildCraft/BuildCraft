@@ -52,7 +52,7 @@ public class RobotsActionProvider implements IActionProvider {
 		result.add(BuildCraftSilicon.actionStationForbidRobot);
 
 		for (DockingStation s : stations) {
-			if (s.linked() != null && s.linked().getBoard() instanceof BoardRobotCrafter) {
+			if (s.robotTaking() != null && s.robotTaking().getBoard() instanceof BoardRobotCrafter) {
 				result.add(BuildCraftSilicon.actionRobotCraft);
 			}
 		}

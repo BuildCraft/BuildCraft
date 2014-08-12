@@ -23,17 +23,19 @@ public class AIRobotRecharge extends AIRobot {
 
 	@Override
 	public void start() {
+		robot.getRegistry().releaseResources(robot);
+
 		startDelegateAI(new AIRobotSearchAndGotoStation(robot, new IStationFilter() {
 			@Override
 			public boolean matches(DockingStation station) {
-				return station.pipe.getPipeType() == PipeType.POWER;
+				return station.getPipe().getPipeType() == PipeType.POWER;
 			}
 		}, null));
 	}
 
 	@Override
 	public void update() {
-		PipeTransportPower powerProvider = (PipeTransportPower) ((DockingStation) robot.getDockingStation()).pipe.pipe.transport;
+		PipeTransportPower powerProvider = (PipeTransportPower) ((DockingStation) robot.getDockingStation()).getPipe().pipe.transport;
 
 		powerProvider.requestEnergy(robot.getDockingStation().side(), 100);
 		robot.setEnergy(robot.getEnergy()
@@ -48,7 +50,7 @@ public class AIRobotRecharge extends AIRobot {
 	public void delegateAIEnded(AIRobot ai) {
 		if (ai instanceof AIRobotSearchAndGotoStation) {
 			if (robot.getDockingStation() == null
-				|| !(((DockingStation) robot.getDockingStation()).pipe.pipe.transport instanceof PipeTransportPower)) {
+					|| !(((DockingStation) robot.getDockingStation()).getPipe().pipe.transport instanceof PipeTransportPower)) {
 				terminate();
 			}
 		}

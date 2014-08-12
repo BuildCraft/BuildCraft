@@ -60,7 +60,7 @@ public class ActionRobotFilter extends BCActionPassive {
 	public static Collection<ItemStack> getGateFilterStacks(IDockingStation station) {
 		ArrayList<ItemStack> result = new ArrayList<ItemStack>();
 
-		for (ActionSlot slot : new ActionIterator(((DockingStation) station).pipe.pipe)) {
+		for (ActionSlot slot : new ActionIterator(((DockingStation) station).getPipe().pipe)) {
 			if (slot.action instanceof ActionRobotFilter) {
 				for (IActionParameter p : slot.parameters) {
 					if (p != null && p instanceof ActionParameterItemStack) {

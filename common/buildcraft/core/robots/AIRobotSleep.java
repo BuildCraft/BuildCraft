@@ -25,7 +25,7 @@ public class AIRobotSleep extends AIRobot {
 
 	@Override
 	public void preempt(AIRobot ai) {
-		for (ActionSlot s : new ActionIterator(((DockingStation) robot.getLinkedStation()).pipe.pipe)) {
+		for (ActionSlot s : new ActionIterator(((DockingStation) robot.getLinkedStation()).getPipe().pipe)) {
 			if (s.action instanceof ActionRobotWakeUp) {
 				terminate();
 			}

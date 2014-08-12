@@ -57,14 +57,14 @@ public class ActionStationRequestItemsPipe extends ActionStationRequestItems {
 			return true;
 		}
 
-		if (station.pipe.pipe.transport instanceof PipeTransportItems) {
+		if (station.getPipe().pipe.transport instanceof PipeTransportItems) {
 			float cx = station.x() + 0.5F + 0.2F * station.side().offsetX;
 			float cy = station.y() + 0.5F + 0.2F * station.side().offsetY;
 			float cz = station.z() + 0.5F + 0.2F * station.side().offsetZ;
 
 			TravelingItem item = TravelingItem.make(cx, cy, cz, invSlot.getStackInSlot());
 
-			((PipeTransportItems) station.pipe.pipe.transport).injectItem(item, station.side().getOpposite());
+			((PipeTransportItems) station.getPipe().pipe.transport).injectItem(item, station.side().getOpposite());
 
 			invSlot.setStackInSlot(null);
 

@@ -58,14 +58,14 @@ public class AIRobotGotoStationToUnload extends AIRobot {
 	private class StationInventory implements IStationFilter {
 		@Override
 		public boolean matches(DockingStation station) {
-			Pipe pipe = station.pipe.pipe;
+			Pipe pipe = station.getPipe().pipe;
 
 			for (IInvSlot robotSlot : InventoryIterator.getIterable(robot, ForgeDirection.UNKNOWN)) {
 				if (robotSlot.getStackInSlot() == null) {
 					continue;
 				}
 
-				for (ActionSlot s : new ActionIterator(station.pipe.pipe)) {
+				for (ActionSlot s : new ActionIterator(pipe)) {
 					if (s.action instanceof ActionStationRequestItems) {
 						if (((ActionStationRequestItems) s.action).insert(station, (EntityRobot) robot, s, robotSlot, false)) {
 							return true;

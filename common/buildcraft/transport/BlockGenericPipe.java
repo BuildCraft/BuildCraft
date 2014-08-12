@@ -74,9 +74,9 @@ public class BlockGenericPipe extends BlockBuildCraft {
 	public static Map<BlockIndex, Pipe<?>> pipeRemoved = new HashMap<BlockIndex, Pipe<?>>();
 
 	private static long lastRemovedDate = -1;
-	
+
 	private static final ForgeDirection[] DIR_VALUES = ForgeDirection.values();
-	
+
 	static enum Part {
 		Pipe,
 		Gate,
@@ -84,7 +84,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 		Plug,
 		RobotStation
 	}
-	
+
 	static class RaytraceResult {
 		public final Part hitPart;
 		public final MovingObjectPosition movingObjectPosition;
@@ -103,7 +103,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 			return String.format("RayTraceResult: %s, %s", hitPart == null ? "null" : hitPart.name(), boundingBox == null ? "null" : boundingBox.toString());
 		}
 	}
-	
+
 	private boolean skippedFirstIconRegister;
 
 	/* Defined subprograms ************************************************* */
@@ -138,11 +138,11 @@ public class BlockGenericPipe extends BlockBuildCraft {
 	public boolean isOpaqueCube() {
 		return false;
 	}
-	
+
 	@Override
 	public boolean renderAsNormalBlock() {
 		return false;
-	}	
+	}
 
 	@Override
 	public boolean canBeReplacedByLeaves(IBlockAccess world, int x, int y, int z) {
@@ -779,9 +779,10 @@ public class BlockGenericPipe extends BlockBuildCraft {
 					if (rayTraceResult != null && rayTraceResult.hitPart == Part.RobotStation) {
 						DockingStation station = pipe.container.getStation(rayTraceResult.sideHit);
 
-						if (station.linked() == null && station.reserved() == null) {
+						if (!station.isTaken()) {
 							EntityRobot robot = ((ItemRobot) currentItem.getItem())
 									.createRobot(currentItem, world);
+							robot.setUniqueRobotId(robot.getRegistry().getNextRobotId());
 							robot.setEnergy(EntityRobot.MAX_ENERGY);
 
 							float px = x + 0.5F + rayTraceResult.sideHit.offsetX * 0.5F;
@@ -789,7 +790,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 							float pz = z + 0.5F + rayTraceResult.sideHit.offsetZ * 0.5F;
 
 							robot.setPosition(px, py, pz);
-							robot.linkToStation(station);
+							station.takeAsMain(robot);
 							robot.dock(robot.getLinkedStation());
 							world.spawnEntityInWorld(robot);
 
@@ -1007,8 +1008,8 @@ public class BlockGenericPipe extends BlockBuildCraft {
 	private void dropWire(PipeWire pipeWire, Pipe<?> pipe) {
 		pipe.dropItem(pipeWire.getStack());
 	}
-	
-			
+
+
 	@Override
 	public void onEntityCollidedWithBlock(World world, int i, int j, int k, Entity entity) {
 		super.onEntityCollidedWithBlock(world, i, j, k, entity);

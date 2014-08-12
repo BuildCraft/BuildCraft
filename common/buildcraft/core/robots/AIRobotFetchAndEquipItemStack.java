@@ -55,9 +55,9 @@ public class AIRobotFetchAndEquipItemStack extends AIRobot {
 			ItemStack itemFound = null;
 
 			for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
-				TileEntity nearbyTile = robot.worldObj.getTileEntity(station.pipe.xCoord + dir.offsetX,
-						station.pipe.yCoord
-								+ dir.offsetY, station.pipe.zCoord + dir.offsetZ);
+				TileEntity nearbyTile = robot.worldObj.getTileEntity(station.x() + dir.offsetX,
+						station.y()
+								+ dir.offsetY, station.z() + dir.offsetZ);
 
 				if (nearbyTile != null && nearbyTile instanceof IInventory) {
 					ITransactor trans = Transactor.getTransactorFor(nearbyTile);

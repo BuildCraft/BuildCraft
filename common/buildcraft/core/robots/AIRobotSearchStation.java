@@ -10,7 +10,6 @@ package buildcraft.core.robots;
 
 import buildcraft.api.core.IZone;
 import buildcraft.api.robots.AIRobot;
-import buildcraft.api.robots.DockingStationRegistry;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.api.robots.IDockingStation;
 import buildcraft.silicon.statements.ActionStationForbidRobot;
@@ -44,10 +43,10 @@ public class AIRobotSearchStation extends AIRobot {
 		double potentialStationDistance = Float.MAX_VALUE;
 		DockingStation potentialStation = null;
 
-		for (IDockingStation d : DockingStationRegistry.getStations()) {
+		for (IDockingStation d : robot.getRegistry().getStations()) {
 			DockingStation station = (DockingStation) d;
 
-			if (station.reserved() != null) {
+			if (d.isTaken() && d.robotIdTaking() != robot.getRobotId()) {
 				continue;
 			}
 

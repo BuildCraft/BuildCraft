@@ -507,12 +507,14 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 			if (pluggable instanceof ItemRobotStation.RobotStationPluggable) {
 				DockingStation station = ((ItemRobotStation.RobotStationPluggable) pluggable).getStation();
 
-				if (station.linked() != null) {
-					renderState.robotStationMatrix.setState(direction,
+				if (station.isTaken()) {
+					if (station.isMainStation()) {
+						renderState.robotStationMatrix.setState(direction,
 							RobotStationState.Linked);
-				} else if (station.reserved() != null) {
-					renderState.robotStationMatrix.setState(direction,
-							RobotStationState.Reserved);
+					} else {
+						renderState.robotStationMatrix.setState(direction,
+								RobotStationState.Reserved);
+					}
 				} else {
 					renderState.robotStationMatrix.setState(direction,
 							RobotStationState.Available);

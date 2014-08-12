@@ -30,11 +30,11 @@ public class AIRobotGoAndLinkToDock extends AIRobot {
 		if (station == robot.getLinkedStation() && station == robot.getDockingStation()) {
 			terminate();
 		} else {
-			if (robot.linkToStation(station)) {
+			if (station.takeAsMain(robot)) {
 				startDelegateAI(new AIRobotGotoBlock(robot,
-						station.pipe.xCoord + station.side.offsetX * 2,
-						station.pipe.yCoord + station.side.offsetY * 2,
-						station.pipe.zCoord + station.side.offsetZ * 2));
+						station.x() + station.side.offsetX * 2,
+						station.y() + station.side.offsetY * 2,
+						station.z() + station.side.offsetZ * 2));
 			} else {
 				terminate();
 			}
@@ -45,9 +45,9 @@ public class AIRobotGoAndLinkToDock extends AIRobot {
 	public void delegateAIEnded(AIRobot ai) {
 		if (ai instanceof AIRobotGotoBlock) {
 			startDelegateAI(new AIRobotStraightMoveTo(robot,
-					station.pipe.xCoord + 0.5F + station.side.offsetX * 0.5F,
-					station.pipe.yCoord + 0.5F + station.side.offsetY * 0.5F,
-					station.pipe.zCoord + 0.5F + station.side.offsetZ * 0.5F));
+					station.x() + 0.5F + station.side.offsetX * 0.5F,
+					station.y() + 0.5F + station.side.offsetY * 0.5F,
+					station.z() + 0.5F + station.side.offsetZ * 0.5F));
 		} else {
 			robot.dock(station);
 			station = null;
@@ -60,7 +60,7 @@ public class AIRobotGoAndLinkToDock extends AIRobot {
 		// If there's still a station targeted, it was not reached. The AI has
 		// probably been interrupted. Cancel reservation.
 		if (station != null) {
-			robot.reserveStation(null);
+			station.release(robot);
 		}
 	}
 }

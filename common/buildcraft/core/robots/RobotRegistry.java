@@ -1,0 +1,320 @@
+/**
+ * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
+ * http://www.mod-buildcraft.com
+ *
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
+ * License 1.0, or MMPL. Please check the contents of the license located in
+ * http://www.mod-buildcraft.com/MMPL-1.0.txt
+ */
+package buildcraft.core.robots;
+
+import java.security.InvalidParameterException;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.world.World;
+import net.minecraft.world.WorldSavedData;
+
+import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.common.util.ForgeDirection;
+
+import buildcraft.api.robots.EntityRobotBase;
+
+public class RobotRegistry extends WorldSavedData {
+
+	public static RobotRegistry[] registries = new RobotRegistry[256];
+
+	protected World world;
+
+	private long nextRobotID = Long.MIN_VALUE;
+
+	// TODO: we'll need a way to release resources from "lost robots" at some
+	// point - one possibility:
+	// when asking if a resource is available, look for the robot
+	// if the robot is loaded, ok, keep the resource
+	// if not, then release the resource automatically
+	// don't do this for stations, only for resources (stations can be manually
+	// freed from in-game)
+
+	private HashMap<Long, EntityRobot> robotsLoaded = new HashMap<Long, EntityRobot>();
+	private HashMap<ResourceId, Long> resourcesTaken = new HashMap<ResourceId, Long>();
+	private HashMap<Long, HashSet<ResourceId>> resourcesTakenByRobot = new HashMap<Long, HashSet<ResourceId>>();
+
+	private HashMap<StationIndex, DockingStation> stations = new HashMap<StationIndex, DockingStation>();
+	private HashMap<Long, HashSet<StationIndex>> stationsTakenByRobot = new HashMap<Long, HashSet<StationIndex>>();
+
+	public RobotRegistry(String id) {
+		super(id);
+	}
+
+	public long getNextRobotId() {
+		long result = nextRobotID;
+
+		nextRobotID = nextRobotID + 1;
+
+		return result;
+	}
+
+	public void registerRobot(EntityRobot robot) {
+		markDirty();
+
+		if (robot.getRobotId() == EntityRobotBase.NULL_ROBOT_ID) {
+			robot.setUniqueRobotId(getNextRobotId());
+		}
+
+		robotsLoaded.put(robot.getRobotId(), robot);
+	}
+
+	public void killRobot(EntityRobot robot) {
+		markDirty();
+
+		releaseResources(robot, true);
+		robotsLoaded.remove(robot.getRobotId());
+	}
+
+	public EntityRobot getLoadedRobot(long id) {
+		if (robotsLoaded.containsKey(id)) {
+			return robotsLoaded.get(id);
+		} else {
+			return null;
+		}
+	}
+
+	public boolean isTaken(ResourceId resourceId) {
+		return resourcesTaken.containsKey(resourceId);
+	}
+
+	public long robotTaking(ResourceId resourceId) {
+		if (resourcesTaken.containsKey(resourceId)) {
+			return resourcesTaken.get(resourceId);
+		} else {
+			return EntityRobotBase.NULL_ROBOT_ID;
+		}
+	}
+
+	public boolean take(ResourceId resourceId, EntityRobotBase robot) {
+		markDirty();
+
+		return take(resourceId, robot.getRobotId());
+	}
+
+	public boolean take(ResourceId resourceId, long robotId) {
+		if (resourceId == null) {
+			return false;
+		}
+
+		markDirty();
+
+		if (!resourcesTaken.containsKey(resourceId)) {
+			resourcesTaken.put(resourceId, robotId);
+
+			if (!resourcesTakenByRobot.containsKey(robotId)) {
+				resourcesTakenByRobot.put(robotId, new HashSet<ResourceId>());
+			}
+
+			resourcesTakenByRobot.get(robotId).add(resourceId);
+
+			resourceId.taken(robotId);
+
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	public void release(ResourceId resourceId) {
+		if (resourceId == null) {
+			return;
+		}
+
+		markDirty();
+
+		if (resourcesTaken.containsKey(resourceId)) {
+			long robotId = resourcesTaken.get(resourceId);
+
+			resourcesTakenByRobot.get(resourcesTaken.get(resourceId)).remove(resourceId);
+			resourcesTaken.remove(resourceId);
+			resourceId.released(robotId);
+		}
+	}
+
+	public void releaseResources(EntityRobotBase robot) {
+		releaseResources(robot, false);
+	}
+
+	private void releaseResources(EntityRobotBase robot, boolean forceAll) {
+		markDirty();
+
+		if (resourcesTakenByRobot.containsKey(robot.getRobotId())) {
+			HashSet<ResourceId> resourceSet = resourcesTakenByRobot.get(robot.getRobotId());
+
+			ResourceId mainId = null;
+
+			for (ResourceId id : resourceSet) {
+				release(id);
+			}
+
+			resourcesTakenByRobot.remove(robot.getRobotId());
+		}
+
+		if (stationsTakenByRobot.containsKey(robot.getRobotId())) {
+			HashSet<StationIndex> stationSet = (HashSet<StationIndex>) stationsTakenByRobot.get(robot.getRobotId())
+					.clone();
+
+			for (StationIndex s : stationSet) {
+				DockingStation d = stations.get(s);
+
+				if (!d.canRelease()) {
+					if (forceAll) {
+						d.unsafeRelease(robot);
+					}
+				} else {
+					d.unsafeRelease(robot);
+				}
+			}
+
+			if (forceAll) {
+				stationsTakenByRobot.remove(robot.getRobotId());
+			}
+		}
+	}
+
+	public DockingStation getStation(int x, int y, int z, ForgeDirection side) {
+		StationIndex index = new StationIndex(side, x, y, z);
+
+		if (stations.containsKey(index)) {
+			return stations.get(index);
+		} else {
+			return null;
+		}
+	}
+
+	public Collection<DockingStation> getStations() {
+		return stations.values();
+	}
+
+	public void registerStation(DockingStation station) {
+		markDirty();
+
+		StationIndex index = new StationIndex(station);
+
+		if (stations.containsKey(index)) {
+			throw new InvalidParameterException("Station " + index + " already registerd");
+		} else {
+			stations.put(index, station);
+		}
+	}
+
+	public void removeStation(DockingStation station) {
+		markDirty();
+
+		StationIndex index = new StationIndex(station);
+
+		if (stations.containsKey(index)) {
+			if (station.robotTaking() != null) {
+				station.robotTaking().setDead();
+			}
+
+			stations.remove(index);
+		}
+	}
+
+	public void take(DockingStation station, long robotId) {
+		if (!stationsTakenByRobot.containsKey(robotId)) {
+			stationsTakenByRobot.put(robotId, new HashSet<StationIndex>());
+		}
+
+		stationsTakenByRobot.get(robotId).add(new StationIndex(station));
+	}
+
+	public void release(DockingStation station, long robotId) {
+		if (stationsTakenByRobot.containsKey(robotId)) {
+			stationsTakenByRobot.get(robotId).remove(new StationIndex(station));
+		}
+	}
+
+	public static RobotRegistry getRegistry (World world) {
+		if (registries[world.provider.dimensionId] == null
+				|| registries[world.provider.dimensionId].world != world) {
+
+			RobotRegistry newRegistry = (RobotRegistry) world.perWorldStorage.loadData(RobotRegistry.class, "robotRegistry");
+
+			if (newRegistry == null) {
+				newRegistry = new RobotRegistry("robotRegistry");
+				world.perWorldStorage.setData("robotRegistry", newRegistry);
+			}
+
+			newRegistry.world = world;
+
+			for (DockingStation d : newRegistry.stations.values()) {
+				d.world = world;
+			}
+
+			registries[world.provider.dimensionId] = newRegistry;
+		}
+
+		return registries[world.provider.dimensionId];
+	}
+
+	@Override
+	public void writeToNBT(NBTTagCompound nbt) {
+		nbt.setLong("nextRobotID", nextRobotID);
+
+		NBTTagList resourceList = new NBTTagList();
+
+		for (Map.Entry<ResourceId, Long> e : resourcesTaken.entrySet()) {
+			NBTTagCompound cpt = new NBTTagCompound();
+			NBTTagCompound resourceId = new NBTTagCompound();
+			e.getKey().writeToNBT(resourceId);
+			cpt.setTag("resourceId", resourceId);
+			cpt.setLong("robotId", e.getValue());
+
+			resourceList.appendTag(cpt);
+		}
+
+		nbt.setTag("resourceList", resourceList);
+
+		NBTTagList stationList = new NBTTagList();
+
+		for (Map.Entry<StationIndex, DockingStation> e : stations.entrySet()) {
+			NBTTagCompound cpt = new NBTTagCompound();
+			e.getValue().writeToNBT(cpt);
+			stationList.appendTag(cpt);
+		}
+
+		nbt.setTag("stationList", stationList);
+	}
+
+	@Override
+	public void readFromNBT(NBTTagCompound nbt) {
+		nextRobotID = nbt.getLong("nextRobotID");
+
+		NBTTagList resourceList = nbt.getTagList("resourceList", Constants.NBT.TAG_COMPOUND);
+
+		for (int i = 0; i < resourceList.tagCount(); ++i) {
+			NBTTagCompound cpt = resourceList.getCompoundTagAt(i);
+			ResourceId resourceId = ResourceId.load(cpt.getCompoundTag("resourceId"));
+			long robotId = cpt.getLong("robotId");
+
+			take(resourceId, robotId);
+		}
+
+		NBTTagList stationList = nbt.getTagList("stationList", Constants.NBT.TAG_COMPOUND);
+
+		for (int i = 0; i < stationList.tagCount(); ++i) {
+			NBTTagCompound cpt = stationList.getCompoundTagAt(i);
+			DockingStation station = new DockingStation();
+			station.readFromNBT(cpt);
+
+			registerStation(station);
+
+			if (station.linkedId() != EntityRobotBase.NULL_ROBOT_ID) {
+				take(station, station.linkedId());
+			}
+		}
+	}
+}

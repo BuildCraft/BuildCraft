@@ -8,30 +8,41 @@
  */
 package buildcraft.core.robots;
 
+import net.minecraft.nbt.NBTTagCompound;
+
+import net.minecraftforge.common.util.ForgeDirection;
+
+import buildcraft.api.core.BlockIndex;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.api.robots.IDockingStation;
 
 public class AIRobotGotoStation extends AIRobot {
 
-	private IDockingStation station;
+	private BlockIndex stationIndex;
+	private ForgeDirection stationSide;
 
 	public AIRobotGotoStation(EntityRobotBase iRobot) {
 		super(iRobot);
 	}
 
-	public AIRobotGotoStation(EntityRobotBase iRobot, IDockingStation iStation) {
+	public AIRobotGotoStation(EntityRobotBase iRobot, IDockingStation station) {
 		super(iRobot);
 
-		station = iStation;
+		stationIndex = station.index();
+		stationSide = station.side();
 	}
 
 	@Override
 	public void start() {
-		if (station == robot.getDockingStation()) {
+		DockingStation station =
+				robot.getRegistry().getStation(stationIndex.x, stationIndex.y, stationIndex.z,
+				stationSide);
+
+		if (station == null || station == robot.getDockingStation()) {
 			terminate();
 		} else {
-			if (robot.reserveStation(station)) {
+			if (station.take(robot)) {
 				startDelegateAI(new AIRobotGotoBlock(robot,
 						station.x() + station.side().offsetX * 2,
 						station.y() + station.side().offsetY * 2,
@@ -43,41 +54,35 @@ public class AIRobotGotoStation extends AIRobot {
 	}
 
 	@Override
-	public void update() {
-		// this should not happen, always terminate in this situation
-		terminate();
-	}
-
-	@Override
 	public void delegateAIEnded(AIRobot ai) {
-		if (ai instanceof AIRobotGotoBlock) {
-			if (station == null) {
-				// in case of a load from disk
-				station = robot.getReservedStation();
-			}
+		DockingStation station =
+				robot.getRegistry().getStation(stationIndex.x, stationIndex.y, stationIndex.z,
+						stationSide);
 
+		if (station == null) {
+			terminate();
+		} else if (ai instanceof AIRobotGotoBlock) {
 			startDelegateAI(new AIRobotStraightMoveTo(robot,
-					station.x() + 0.5F + station.side().offsetX * 0.5F,
-					station.y() + 0.5F + station.side().offsetY * 0.5F,
-					station.z() + 0.5F + station.side().offsetZ * 0.5F));
+					stationIndex.x + 0.5F + stationSide.offsetX * 0.5F,
+					stationIndex.y + 0.5F + stationSide.offsetY * 0.5F,
+					stationIndex.z + 0.5F + stationSide.offsetZ * 0.5F));
 		} else {
-			if (station == null) {
-				// in case of a load from disk
-				station = robot.getReservedStation();
-			}
-
 			robot.dock(station);
-			station = null;
 			terminate();
 		}
 	}
 
 	@Override
-	public void end() {
-		// If there's still a station targeted, it was not reached. The AI has
-		// probably been interrupted. Cancel reservation.
-		if (station != null) {
-			robot.reserveStation(null);
-		}
+	public void writeSelfToNBT(NBTTagCompound nbt) {
+		NBTTagCompound indexNBT = new NBTTagCompound();
+		stationIndex.writeTo(indexNBT);
+		nbt.setTag("stationIndex", indexNBT);
+		nbt.setByte("stationSide", (byte) stationSide.ordinal());
+	}
+
+	@Override
+	public void loadSelfFromNBT(NBTTagCompound nbt) {
+		stationIndex = new BlockIndex(nbt.getCompoundTag("stationIndex"));
+		stationSide = ForgeDirection.values()[nbt.getByte("stationSide")];
 	}
 }

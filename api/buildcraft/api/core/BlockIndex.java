@@ -50,7 +50,7 @@ public class BlockIndex implements Comparable<BlockIndex> {
 	}
 
 	public BlockIndex(TileEntity entity) {
-		this(entity.xCoord, entity.yCoord, entity.xCoord);
+		this(entity.xCoord, entity.yCoord, entity.zCoord);
 	}
 
 	/**

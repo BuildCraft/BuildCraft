@@ -64,9 +64,9 @@ public class AIRobotLoad extends AIRobot {
 			DockingStation station = (DockingStation) robot.getDockingStation();
 
 			for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
-				TileEntity nearbyTile = robot.worldObj.getTileEntity(station.pipe.xCoord + dir.offsetX,
-						station.pipe.yCoord
-								+ dir.offsetY, station.pipe.zCoord + dir.offsetZ);
+				TileEntity nearbyTile = robot.worldObj.getTileEntity(station.x() + dir.offsetX,
+						station.y()
+								+ dir.offsetY, station.z() + dir.offsetZ);
 
 				if (nearbyTile != null && nearbyTile instanceof IInventory) {
 					IInventory tileInventory = (IInventory) nearbyTile;
@@ -78,7 +78,7 @@ public class AIRobotLoad extends AIRobot {
 						if (stack != null) {
 							boolean allowed = false;
 
-							for (ActionSlot s : new ActionIterator(station.pipe.pipe)) {
+							for (ActionSlot s : new ActionIterator(station.getPipe().pipe)) {
 								if (s.action instanceof ActionStationProvideItems) {
 									StatementParameterStackFilter param = new StatementParameterStackFilter(
 											s.parameters);

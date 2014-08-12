@@ -67,9 +67,9 @@ public class AIRobotGotoStationToLoad extends AIRobot {
 		public boolean matches(DockingStation station) {
 			boolean actionFound = false;
 
-			Pipe pipe = station.pipe.pipe;
+			Pipe pipe = station.getPipe().pipe;
 
-			for (ActionSlot s : new ActionIterator(station.pipe.pipe)) {
+			for (ActionSlot s : new ActionIterator(pipe)) {
 				if (s.action instanceof ActionStationProvideItems) {
 					StatementParameterStackFilter param = new StatementParameterStackFilter(s.parameters);
 

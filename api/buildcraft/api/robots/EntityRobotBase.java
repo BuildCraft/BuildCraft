@@ -16,11 +16,13 @@ import net.minecraft.world.World;
 
 import buildcraft.api.boards.RedstoneBoardRobot;
 import buildcraft.api.core.IZone;
+import buildcraft.core.robots.RobotRegistry;
 
 public abstract class EntityRobotBase extends EntityLiving implements IInventory {
 
 	public static final double MAX_ENERGY = 10000;
 	public static final double SAFETY_ENERGY = MAX_ENERGY / 4;
+	public static final long NULL_ROBOT_ID = Long.MAX_VALUE;
 
 	public EntityRobotBase(World par1World) {
 		super(par1World);
@@ -33,8 +35,6 @@ public abstract class EntityRobotBase extends EntityLiving implements IInventory
 	public abstract boolean isMoving();
 
 	public abstract IDockingStation getLinkedStation();
-
-	public abstract IDockingStation getReservedStation();
 
 	public abstract RedstoneBoardRobot getBoard();
 
@@ -50,16 +50,19 @@ public abstract class EntityRobotBase extends EntityLiving implements IInventory
 
 	public abstract void undock();
 
-	public abstract boolean reserveStation(IDockingStation station);
-
-	public abstract boolean linkToStation(IDockingStation station);
-
 	public abstract IZone getZoneToWork();
 
 	public abstract boolean containsItems();
+
+	public abstract boolean hasFreeSlot();
 
 	public abstract void unreachableEntityDetected(Entity entity);
 
 	public abstract boolean isKnownUnreachable(Entity entity);
 
+	public abstract long getRobotId();
+
+	public abstract RobotRegistry getRegistry();
+
+	public abstract void releaseResources();
 }

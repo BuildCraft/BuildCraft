@@ -31,12 +31,14 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.BuildCraftSilicon;
 import buildcraft.api.boards.RedstoneBoardNBT;
 import buildcraft.api.boards.RedstoneBoardRegistry;
 import buildcraft.api.boards.RedstoneBoardRobot;
 import buildcraft.api.boards.RedstoneBoardRobotNBT;
+import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.IZone;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.mj.MjBattery;
@@ -72,8 +74,13 @@ public class EntityRobot extends EntityRobotBase implements
 	public SafeTimeTracker scanForTasks = new SafeTimeTracker (40, 10);
 
 	public LaserData laser = new LaserData();
-	public IDockingStation reservedDockingStation;
 	public IDockingStation linkedDockingStation;
+	public BlockIndex linkedDockingStationIndex;
+	public ForgeDirection linkedDockingStationSide;
+
+	public BlockIndex currentDockingStationIndex;
+	public ForgeDirection currentDockingStationSide;
+
 	public boolean isDocked = false;
 
 	public NBTTagCompound originalBoardNBT;
@@ -87,11 +94,13 @@ public class EntityRobot extends EntityRobotBase implements
 	public float itemActiveStage = 0;
 	public long lastUpdateTime = 0;
 
+	private DockingStation currentDockingStation;
+
 	private boolean needsUpdate = false;
 	private ItemStack[] inv = new ItemStack[4];
 	private String boardID;
 	private ResourceLocation texture;
-	private IDockingStation currentDockingStation;
+
 	private WeakHashMap<Entity, Boolean> unreachableEntities = new WeakHashMap<Entity, Boolean>();
 
 	private NBTTagList stackRequestNBT;
@@ -101,6 +110,8 @@ public class EntityRobot extends EntityRobotBase implements
 	private double mjStored;
 
 	private boolean firstUpdateDone = false;
+
+	private long robotId = EntityRobotBase.NULL_ROBOT_ID;
 
 	public EntityRobot(World world, NBTTagCompound boardNBT) {
 		this(world);
@@ -209,10 +220,14 @@ public class EntityRobot extends EntityRobotBase implements
 		if (stackRequestNBT != null) {
 
 		}
+
+		if (!worldObj.isRemote) {
+			getRegistry().registerRobot(this);
+		}
 	}
 
 	@Override
-	public void onUpdate() {
+	public void onEntityUpdate() {
 		if (!firstUpdateDone) {
 			firstUpdate();
 			firstUpdateDone = true;
@@ -237,29 +252,32 @@ public class EntityRobot extends EntityRobotBase implements
 		}
 
 		if (!worldObj.isRemote) {
-			if (linkedDockingStation instanceof FakeDockingStation) {
-				// try to load the docking station. If the chunk can be loaded
-				// but not the docking station, then the expecting docking
-				// station is not around, kill the robot.
-				IDockingStation station = ((FakeDockingStation) linkedDockingStation).getRealStation(worldObj);
+			if (linkedDockingStation == null) {
+				linkedDockingStation = RobotRegistry.getRegistry(worldObj).getStation(
+						linkedDockingStationIndex.x,
+						linkedDockingStationIndex.y,
+						linkedDockingStationIndex.z,
+						linkedDockingStationSide);
 
-				if (station != null) {
-					linkToStation(station);
-				} else {
+				linkedDockingStationIndex = null;
+
+				if (linkedDockingStation.robotTaking() != this) {
+					// Error at load time, the expected linked stations is not
+					// properly set, kill this robot.
+
 					setDead();
+					return;
 				}
 			}
 
-			if (reservedDockingStation instanceof FakeDockingStation) {
-				IDockingStation station = ((FakeDockingStation) reservedDockingStation).getRealStation(worldObj);
+			if (currentDockingStationIndex != null) {
+				currentDockingStation = RobotRegistry.getRegistry(worldObj).getStation(
+						currentDockingStationIndex.x,
+						currentDockingStationIndex.y,
+						currentDockingStationIndex.z,
+						currentDockingStationSide);
 
-				if (station != null) {
-					reserveStation(station);
-				}
-			}
-
-			if (currentDockingStation instanceof FakeDockingStation) {
-				currentDockingStation = ((FakeDockingStation) currentDockingStation).getRealStation(worldObj);
+				currentDockingStationIndex = null;
 			}
 
 			if (linkedDockingStation != null) {
@@ -271,7 +289,7 @@ public class EntityRobot extends EntityRobotBase implements
 			}
 		}
 
-		super.onUpdate();
+		super.onEntityUpdate();
 	}
 
 	public void setRegularBoundingBox() {
@@ -375,19 +393,19 @@ public class EntityRobot extends EntityRobotBase implements
 		super.writeEntityToNBT(nbt);
 
 		NBTTagCompound linkedStationNBT = new NBTTagCompound();
-		linkedDockingStation.writeToNBT(linkedStationNBT);
+		NBTTagCompound linkedStationIndexNBT = new NBTTagCompound();
+		linkedDockingStation.index().writeTo(linkedStationIndexNBT);
+		linkedStationNBT.setTag("index", linkedStationIndexNBT);
+		linkedStationNBT.setByte("side", (byte) linkedDockingStation.side().ordinal());
 		nbt.setTag("linkedStation", linkedStationNBT);
 
-		if (reservedDockingStation != null) {
-			NBTTagCompound stationNBT = new NBTTagCompound();
-			reservedDockingStation.writeToNBT(stationNBT);
-			nbt.setTag("reservedStation", stationNBT);
-		}
-
 		if (currentDockingStation != null) {
-			NBTTagCompound stationNBT = new NBTTagCompound();
-			currentDockingStation.writeToNBT(stationNBT);
-			nbt.setTag("currentStation", stationNBT);
+			NBTTagCompound currentStationNBT = new NBTTagCompound();
+			NBTTagCompound currentStationIndexNBT = new NBTTagCompound();
+			currentDockingStation.index().writeTo(currentStationIndexNBT);
+			currentStationNBT.setTag("index", currentStationIndexNBT);
+			currentStationNBT.setByte("side", (byte) currentDockingStation.side().ordinal());
+			nbt.setTag("currentStation", currentStationNBT);
 		}
 
 		NBTTagCompound nbtLaser = new NBTTagCompound();
@@ -438,23 +456,23 @@ public class EntityRobot extends EntityRobotBase implements
 		}
 
 		nbt.setTag("stackRequests", requestsNBT);
+
+		nbt.setLong("robotId", robotId);
     }
 
 	@Override
 	public void readEntityFromNBT(NBTTagCompound nbt) {
 		super.readEntityFromNBT(nbt);
 
-		linkedDockingStation = new FakeDockingStation();
-		linkedDockingStation.readFromNBT(nbt.getCompoundTag("linkedStation"));
-
-		if (nbt.hasKey("reservedStation")) {
-			reservedDockingStation = new FakeDockingStation();
-			reservedDockingStation.readFromNBT(nbt.getCompoundTag("reservedStation"));
-		}
+		NBTTagCompound linkedStationNBT = nbt.getCompoundTag("linkedStation");
+		linkedDockingStationIndex = new BlockIndex(linkedStationNBT.getCompoundTag("index"));
+		linkedDockingStationSide = ForgeDirection.values()[linkedStationNBT.getByte("side")];
 
 		if (nbt.hasKey("currentStation")) {
-			currentDockingStation = new FakeDockingStation();
-			currentDockingStation.readFromNBT(nbt.getCompoundTag("currentStation"));
+			NBTTagCompound currentStationNBT = nbt.getCompoundTag("currentStation");
+			currentDockingStationIndex = new BlockIndex(currentStationNBT.getCompoundTag("index"));
+			currentDockingStationSide = ForgeDirection.values()[currentStationNBT.getByte("side")];
+
 		}
 
 		laser.readFromNBT(nbt.getCompoundTag("laser"));
@@ -484,77 +502,43 @@ public class EntityRobot extends EntityRobotBase implements
 		dataWatcher.updateObject(16, board.getNBTHandler().getID());
 
 		stackRequestNBT = nbt.getTagList("stackRequests", Constants.NBT.TAG_COMPOUND);
+
+		if (nbt.hasKey("robotId")) {
+			robotId = nbt.getLong("robotId");
+		}
     }
 
 	@Override
 	public void dock(IDockingStation station) {
-		currentDockingStation = station;
+		currentDockingStation = (DockingStation) station;
 	}
 
 	@Override
 	public void undock() {
-		if (currentDockingStation != null && currentDockingStation instanceof DockingStation) {
-			((DockingStation) currentDockingStation).unreserve(this);
+		if (currentDockingStation != null) {
+			currentDockingStation.release(this);
 			currentDockingStation = null;
 		}
 	}
 
 	@Override
 	public DockingStation getDockingStation() {
-		return (DockingStation) currentDockingStation;
+		return currentDockingStation;
 	}
 
-	@Override
-	public boolean reserveStation(IDockingStation iStation) {
+	public void setMainStation(IDockingStation iStation) {
 		DockingStation station = (DockingStation) iStation;
 
-		if (station == null) {
-			if (reservedDockingStation != null && reservedDockingStation instanceof DockingStation) {
-				((DockingStation) reservedDockingStation).unreserve(this);
-			}
-
-			reservedDockingStation = null;
-
-			return true;
-		} else if (station.reserved() == this) {
-			return true;
-		} else if (station.reserve(this)) {
-			if (reservedDockingStation != null && reservedDockingStation instanceof DockingStation) {
-				((DockingStation) reservedDockingStation).unreserve(this);
-			}
-
-			reservedDockingStation = station;
-			return true;
-		} else {
-			return false;
+		if (linkedDockingStation != null && linkedDockingStation != station) {
+			((DockingStation) linkedDockingStation).release(this);
 		}
-	}
 
-	@Override
-	public boolean linkToStation(IDockingStation iStation) {
-		DockingStation station = (DockingStation) iStation;
-
-		if (station.linked() == this) {
-			return true;
-		} else if (station.link(this)) {
-			if (linkedDockingStation != null && linkedDockingStation instanceof DockingStation) {
-				((DockingStation) linkedDockingStation).unlink(this);
-			}
-
-			linkedDockingStation = station;
-			return true;
-		} else {
-			return false;
-		}
+		linkedDockingStation = station;
 	}
 
 	@Override
 	public ItemStack getEquipmentInSlot(int var1) {
 		return null;
-	}
-
-	public boolean acceptTask (IRobotTask task) {
-		return false;
 	}
 
 	@Override
@@ -708,11 +692,6 @@ public class EntityRobot extends EntityRobotBase implements
 		return linkedDockingStation;
 	}
 
-	@Override
-	public IDockingStation getReservedStation() {
-		return reservedDockingStation;
-	}
-
 	@SideOnly(Side.CLIENT)
 	@Override
 	public boolean isInRangeToRenderDist(double par1) {
@@ -769,7 +748,7 @@ public class EntityRobot extends EntityRobotBase implements
 	@Override
 	public IZone getZoneToWork() {
 		if (linkedDockingStation instanceof DockingStation) {
-			for (ActionSlot s : new ActionIterator(((DockingStation) linkedDockingStation).pipe.pipe)) {
+			for (ActionSlot s : new ActionIterator(((DockingStation) linkedDockingStation).getPipe().pipe)) {
 				if (s.action instanceof ActionRobotWorkInArea) {
 					IZone zone = ActionRobotWorkInArea.getArea(s);
 
@@ -795,6 +774,17 @@ public class EntityRobot extends EntityRobotBase implements
 	}
 
 	@Override
+	public boolean hasFreeSlot() {
+		for (ItemStack element : inv) {
+			if (element == null) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	@Override
 	public void unreachableEntityDetected(Entity entity) {
 		unreachableEntities.put(entity, true);
 	}
@@ -812,19 +802,15 @@ public class EntityRobot extends EntityRobotBase implements
 			// some other way to cope with that problem - such as a manual
 			// charger?
 
-			mainAI.abort();
+			if (mainAI != null) {
+				mainAI.abort();
+			}
 
 			ItemStack robotStack = new ItemStack (BuildCraftSilicon.robotItem);
 			NBTUtils.getItemData(robotStack).setTag("board", originalBoardNBT);
 			entityDropItem(robotStack, 0);
 
-			if (linkedDockingStation != null && linkedDockingStation instanceof DockingStation) {
-				((DockingStation) linkedDockingStation).unlink(this);
-			}
-
-			if (reservedDockingStation != null && reservedDockingStation instanceof DockingStation) {
-				((DockingStation) reservedDockingStation).unreserve(this);
-			}
+			getRegistry().killRobot(this);
 		}
 
 		super.setDead();
@@ -843,5 +829,24 @@ public class EntityRobot extends EntityRobotBase implements
 	@Override
 	public void applyEntityCollision(Entity par1Entity) {
 
+	}
+
+	public void setUniqueRobotId(long iRobotId) {
+		robotId = iRobotId;
+	}
+
+	@Override
+	public long getRobotId() {
+		return robotId;
+	}
+
+	@Override
+	public RobotRegistry getRegistry() {
+		return RobotRegistry.getRegistry(worldObj);
+	}
+
+	@Override
+	public void releaseResources() {
+		getRegistry().releaseResources(this);
 	}
 }

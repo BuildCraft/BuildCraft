@@ -9,7 +9,6 @@
 package buildcraft.builders.urbanism;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EntityLivingBase;
@@ -28,12 +27,8 @@ import buildcraft.core.TileBuildCraft;
 import buildcraft.core.network.RPC;
 import buildcraft.core.network.RPCHandler;
 import buildcraft.core.network.RPCSide;
-import buildcraft.core.robots.EntityRobot;
-import buildcraft.core.robots.IRobotTask;
-import buildcraft.core.robots.IRobotTaskProvider;
-import buildcraft.core.robots.RobotTaskProviderRegistry;
 
-public class TileUrbanist extends TileBuildCraft implements IInventory, IRobotTaskProvider, IBoxesProvider {
+public class TileUrbanist extends TileBuildCraft implements IInventory, IBoxesProvider {
 
 	public EntityUrbanist urbanist;
 
@@ -48,7 +43,8 @@ public class TileUrbanist extends TileBuildCraft implements IInventory, IRobotTa
 	private int p2y = 0;
 	private int p2z = 0;
 	private boolean isCreatingFrame = false;
-	private LinkedList<IRobotTask> tasks = new LinkedList<IRobotTask>();
+
+	// private LinkedList<IRobotTask> tasks = new LinkedList<IRobotTask>();
 
 	public void createUrbanistEntity() {
 		if (worldObj.isRemote) {
@@ -92,7 +88,7 @@ public class TileUrbanist extends TileBuildCraft implements IInventory, IRobotTa
 
 	@RPC (RPCSide.SERVER)
 	public void eraseBlock (int x, int y, int z) {
-		tasks.add(new UrbanistTaskErase(this, x, y, z));
+		// tasks.add(new UrbanistTaskErase(this, x, y, z));
 	}
 
 	public void rpcEraseBlock (int x, int y, int z) {
@@ -299,45 +295,8 @@ public class TileUrbanist extends TileBuildCraft implements IInventory, IRobotTa
 	}
 
 	@Override
-	public double getX() {
-		return xCoord;
-	}
-
-	@Override
-	public double getY() {
-		return yCoord;
-	}
-
-	@Override
-	public double getZ() {
-		return zCoord;
-	}
-
-	@Override
-	public boolean isActive() {
-		return !isInvalid();
-	}
-
-	@Override
-	public IRobotTask getNextTask(EntityRobot robot) {
-		if (tasks.size() > 0) {
-			return tasks.getFirst();
-		} else {
-			return null;
-		}
-	}
-
-	@Override
-	public void popNextTask() {
-		tasks.removeFirst();
-	}
-
-
-	@Override
 	public void initialize () {
-		if (!worldObj.isRemote) {
-			RobotTaskProviderRegistry.registerProvider(this);
-		}
+
 	}
 
 	@Override

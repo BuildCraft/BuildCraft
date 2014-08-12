@@ -46,8 +46,8 @@ public class TriggerRobotSleep extends BCTrigger {
 		for (ForgeDirection d : ForgeDirection.VALID_DIRECTIONS) {
 			DockingStation station = tile.getStation(d);
 
-			if (station != null && station.linked() != null) {
-				EntityRobot robot = (EntityRobot) station.linked();
+			if (station != null && station.robotTaking() != null) {
+				EntityRobot robot = (EntityRobot) station.robotTaking();
 
 				if (robot.mainAI.getActiveAI() instanceof AIRobotSleep) {
 					return true;

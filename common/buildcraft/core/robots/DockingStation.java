@@ -9,40 +9,73 @@
 package buildcraft.core.robots;
 
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.world.World;
 
 import net.minecraftforge.common.util.ForgeDirection;
 
+import buildcraft.api.core.BlockIndex;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.api.robots.IDockingStation;
 import buildcraft.transport.TileGenericPipe;
 
 public class DockingStation implements IDockingStation {
-	public TileGenericPipe pipe;
 	public ForgeDirection side;
-	private EntityRobotBase linked;
-	private EntityRobotBase reserved;
+	public World world;
+
+	private long robotTakingId = EntityRobotBase.NULL_ROBOT_ID;
+	private EntityRobotBase robotTaking;
+
+	private boolean linkIsMain = false;
+
+	private BlockIndex index;
+	private TileGenericPipe pipe;
+
+	public DockingStation(BlockIndex iIndex, ForgeDirection iSide) {
+		index = iIndex;
+		side = iSide;
+	}
 
 	public DockingStation(TileGenericPipe iPipe, ForgeDirection iSide) {
+		index = new BlockIndex(iPipe);
 		pipe = iPipe;
 		side = iSide;
+		world = iPipe.getWorld();
 	}
 
 	public DockingStation() {
 	}
 
+	public boolean isMainStation() {
+		return linkIsMain;
+	}
+
+	public TileGenericPipe getPipe() {
+		if (pipe == null) {
+			pipe = (TileGenericPipe) world.getTileEntity(index.x, index.y, index.z);
+		}
+
+		if (pipe == null || pipe.isInvalid()) {
+			// Inconsistency - remove this pipe from the registry.
+			RobotRegistry.getRegistry(world).removeStation(this);
+			pipe = null;
+		}
+
+		return pipe;
+	}
+
 	@Override
 	public int x() {
-		return pipe.xCoord;
+		return index.x;
 	}
 
 	@Override
 	public int y() {
-		return pipe.yCoord;
+		return index.y;
 	}
 
 	@Override
 	public int z() {
-		return pipe.zCoord;
+		return index.z;
 	}
 
 	@Override
@@ -51,60 +84,123 @@ public class DockingStation implements IDockingStation {
 	}
 
 	@Override
-	public EntityRobotBase reserved() {
-		return reserved;
+	public EntityRobotBase robotTaking() {
+		if (robotTakingId == EntityRobotBase.NULL_ROBOT_ID) {
+			return null;
+		} else if (robotTaking == null) {
+			robotTaking = RobotRegistry.getRegistry(world).getLoadedRobot(robotTakingId);
+		}
+
+		return robotTaking;
 	}
 
 	@Override
-	public EntityRobotBase linked() {
-		return linked;
+	public long linkedId() {
+		return robotTakingId;
 	}
 
-	public boolean reserve(EntityRobotBase robot) {
-		if ((linked == null || linked == robot) && reserved == null) {
-			reserved = robot;
-			pipe.scheduleRenderUpdate();
+	public boolean takeAsMain(EntityRobotBase robot) {
+		if (robotTaking == null) {
+			linkIsMain = true;
+			robotTaking = robot;
+			robotTakingId = robot.getRobotId();
+			getPipe().scheduleRenderUpdate();
+			RobotRegistry.getRegistry(world).markDirty();
+			((EntityRobot) robot).setMainStation(this);
+			RobotRegistry.getRegistry(world).take(this, robot.getRobotId());
+
 			return true;
 		} else {
 			return false;
 		}
 	}
 
-	public boolean link(EntityRobotBase robot) {
-		if (linked == null) {
-			linked = robot;
-			pipe.scheduleRenderUpdate();
+	public boolean take(EntityRobotBase robot) {
+		if (robotTaking == null) {
+			linkIsMain = false;
+			robotTaking = robot;
+			robotTakingId = robot.getRobotId();
+			getPipe().scheduleRenderUpdate();
+			RobotRegistry.getRegistry(world).markDirty();
+			RobotRegistry.getRegistry(world).take(this, robot.getRobotId());
+
 			return true;
 		} else {
-			return false;
+			return robot.getRobotId() == robotTakingId;
 		}
 	}
 
-	public void unreserve(EntityRobotBase robot) {
-		if (reserved == robot) {
-			reserved = null;
-			pipe.scheduleRenderUpdate();
+	public void release(EntityRobotBase robot) {
+		if (robotTaking == robot && !linkIsMain) {
+			linkIsMain = false;
+			robotTaking = null;
+			robotTakingId = EntityRobotBase.NULL_ROBOT_ID;
+			getPipe().scheduleRenderUpdate();
+			RobotRegistry.getRegistry(world).markDirty();
+			RobotRegistry.getRegistry(world).release(this, robot.getRobotId());
 		}
 	}
 
-	public void unlink(EntityRobotBase robot) {
-		if (linked == robot) {
-			linked = null;
-			pipe.scheduleRenderUpdate();
+	/**
+	 * Same a release but doesn't clear the registry (presumably called from the
+	 * registry).
+	 */
+	public void unsafeRelease(EntityRobotBase robot) {
+		if (robotTaking == robot) {
+			robotTaking = null;
+			robotTakingId = EntityRobotBase.NULL_ROBOT_ID;
+			getPipe().scheduleRenderUpdate();
 		}
 	}
 
 	@Override
 	public void writeToNBT(NBTTagCompound nbt) {
-		nbt.setInteger("x", pipe.xCoord);
-		nbt.setInteger("y", pipe.yCoord);
-		nbt.setInteger("z", pipe.zCoord);
-		nbt.setInteger("side", side.ordinal());
+		NBTTagCompound indexNBT = new NBTTagCompound();
+		index.writeTo(indexNBT);
+		nbt.setTag("index", indexNBT);
+		nbt.setByte("side", (byte) side.ordinal());
+		nbt.setBoolean("isMain", linkIsMain);
+		nbt.setLong("robotId", robotTakingId);
 	}
 
 	@Override
 	public void readFromNBT(NBTTagCompound nbt) {
+		index = new BlockIndex (nbt.getCompoundTag("index"));
+		side = ForgeDirection.values()[nbt.getByte("side")];
+		linkIsMain = nbt.getBoolean("isMain");
+		robotTakingId = nbt.getLong("robotId");
+	}
 
+	@Override
+	public boolean isTaken() {
+		return robotTakingId != EntityRobotBase.NULL_ROBOT_ID;
+	}
+
+	@Override
+	public long robotIdTaking() {
+		return robotTakingId;
+	}
+
+	@Override
+	public BlockIndex index() {
+		return index;
+	}
+
+	@Override
+	public String toString () {
+		return "{" + index.x + ", " + index.y + ", " + index.z + ", " + side + " :" + robotTakingId + "}";
+	}
+
+	public boolean linkIsDocked() {
+		if (isTaken()) {
+			return robotTaking().getDockingStation() == this;
+		} else {
+			return false;
+		}
+	}
+
+	public boolean canRelease() {
+		return !isMainStation() && !linkIsDocked();
 	}
 }
 

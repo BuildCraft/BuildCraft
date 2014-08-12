@@ -37,6 +37,7 @@ import buildcraft.core.robots.AIRobotGotoSleep;
 import buildcraft.core.robots.AIRobotSearchBlock;
 import buildcraft.core.robots.AIRobotUseToolOnBlock;
 import buildcraft.core.robots.IBlockFilter;
+import buildcraft.core.robots.ResourceIdBlock;
 import buildcraft.silicon.statements.ActionRobotFilter;
 
 public class BoardRobotPlanter extends RedstoneBoardRobot {
@@ -85,7 +86,7 @@ public class BoardRobotPlanter extends RedstoneBoardRobot {
 					@Override
 					public boolean matches(World world, int x, int y, int z) {
 						return BuildCraftAPI.isFarmlandProperty.get(world, x, y, z)
-								&& RedstoneBoardRobot.isFreeBlock(new BlockIndex(x, y, z))
+								&& robot.getRegistry().isTaken(new ResourceIdBlock(x, y, z))
 								&& isAirAbove(world, x, y, z);
 					}
 				}));
@@ -115,9 +116,11 @@ public class BoardRobotPlanter extends RedstoneBoardRobot {
 		} else if (ai instanceof AIRobotSearchBlock) {
 			AIRobotSearchBlock gotoBlock = (AIRobotSearchBlock) ai;
 
-			if (gotoBlock.blockFound != null && RedstoneBoardRobot.reserveBlock(gotoBlock.blockFound)) {
+			if (gotoBlock.blockFound != null
+					&& robot.getRegistry().take(new ResourceIdBlock(gotoBlock.blockFound), robot)) {
+
 				if (blockFound != null) {
-					RedstoneBoardRobot.releaseBlock(blockFound);
+					robot.getRegistry().release(new ResourceIdBlock(blockFound));
 				}
 
 				blockFound = gotoBlock.blockFound;
@@ -171,10 +174,6 @@ public class BoardRobotPlanter extends RedstoneBoardRobot {
 
 		if (nbt.hasKey("blockFound")) {
 			blockFound = new BlockIndex(nbt.getCompoundTag("blockFound"));
-
-			if (!RedstoneBoardRobot.reserveBlock(blockFound)) {
-				blockFound = null;
-			}
 		}
 	}
 }

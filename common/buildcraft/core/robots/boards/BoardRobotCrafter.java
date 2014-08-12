@@ -35,7 +35,6 @@ import buildcraft.core.robots.AIRobotCraftGeneric;
 import buildcraft.core.robots.AIRobotCraftWorkbench;
 import buildcraft.core.robots.AIRobotGotoSleep;
 import buildcraft.core.robots.AIRobotGotoStationToUnload;
-import buildcraft.core.robots.AIRobotSleep;
 import buildcraft.core.robots.AIRobotUnload;
 import buildcraft.core.robots.DockingStation;
 import buildcraft.silicon.statements.ActionRobotCraft;
@@ -73,7 +72,7 @@ public class BoardRobotCrafter extends RedstoneBoardRobot {
 
 		if (order == null) {
 			craftingBlacklist.clear();
-			startDelegateAI(new AIRobotSleep(robot));
+			startDelegateAI(new AIRobotGotoSleep(robot));
 			return;
 		}
 
@@ -169,7 +168,7 @@ public class BoardRobotCrafter extends RedstoneBoardRobot {
 
 		DockingStation s = (DockingStation) robot.getLinkedStation();
 
-		for (ActionSlot slot : new ActionIterator(s.pipe.pipe)) {
+		for (ActionSlot slot : new ActionIterator(s.getPipe().pipe)) {
 			if (slot.action instanceof ActionRobotCraft) {
 				for (IActionParameter p : slot.parameters) {
 					if (p != null && p instanceof ActionParameterItemStack) {

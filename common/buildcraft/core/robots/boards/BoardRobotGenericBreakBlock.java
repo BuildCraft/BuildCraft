@@ -31,6 +31,7 @@ import buildcraft.core.robots.AIRobotGotoSleep;
 import buildcraft.core.robots.AIRobotSearchBlock;
 import buildcraft.core.robots.DockingStation;
 import buildcraft.core.robots.IBlockFilter;
+import buildcraft.core.robots.ResourceIdBlock;
 import buildcraft.silicon.statements.ActionRobotFilter;
 import buildcraft.transport.gates.ActionIterator;
 import buildcraft.transport.gates.ActionSlot;
@@ -58,7 +59,7 @@ public abstract class BoardRobotGenericBreakBlock extends RedstoneBoardRobot {
 	public final void start() {
 		DockingStation station = (DockingStation) robot.getLinkedStation();
 
-		for (ActionSlot slot : new ActionIterator(station.pipe.pipe)) {
+		for (ActionSlot slot : new ActionIterator(station.getPipe().pipe)) {
 			if (slot.action instanceof ActionRobotFilter) {
 				for (IActionParameter p : slot.parameters) {
 					if (p != null && p instanceof ActionParameterItemStack) {
@@ -79,7 +80,7 @@ public abstract class BoardRobotGenericBreakBlock extends RedstoneBoardRobot {
 		if (ai instanceof AIRobotSearchBlock) {
 			BlockIndex index = ((AIRobotSearchBlock) ai).blockFound;
 
-			if (!RedstoneBoardRobot.isFreeBlock(index)) {
+			if (!robot.getRegistry().isTaken(new ResourceIdBlock(index))) {
 				abortDelegateAI();
 			}
 		}
@@ -99,7 +100,7 @@ public abstract class BoardRobotGenericBreakBlock extends RedstoneBoardRobot {
 				@Override
 				public boolean matches(World world, int x, int y, int z) {
 					if (isExpectedBlock(world, x, y, z) && matchesGateFilter(world, x, y, z)) {
-						return RedstoneBoardRobot.isFreeBlock(new BlockIndex(x, y, z));
+						return robot.getRegistry().isTaken(new ResourceIdBlock(x, y, z));
 					} else {
 						return false;
 					}
@@ -112,7 +113,7 @@ public abstract class BoardRobotGenericBreakBlock extends RedstoneBoardRobot {
 	public void delegateAIEnded(AIRobot ai) {
 		if (ai instanceof AIRobotSearchBlock) {
 			if (indexStored != null) {
-				RedstoneBoardRobot.releaseBlock(indexStored);
+				robot.getRegistry().release(new ResourceIdBlock(indexStored));
 			}
 
 			indexStored = ((AIRobotSearchBlock) ai).blockFound;
@@ -120,14 +121,14 @@ public abstract class BoardRobotGenericBreakBlock extends RedstoneBoardRobot {
 			if (indexStored == null) {
 				startDelegateAI(new AIRobotGotoSleep(robot));
 			} else {
-				if (reserveBlock(indexStored)) {
+				if (robot.getRegistry().take(new ResourceIdBlock(indexStored), robot)) {
 					startDelegateAI(new AIRobotGotoBlock(robot, ((AIRobotSearchBlock) ai).path));
 				}
 			}
 		} else if (ai instanceof AIRobotGotoBlock) {
 			startDelegateAI(new AIRobotBreak(robot, indexStored));
 		} else if (ai instanceof AIRobotBreak) {
-			releaseBlock(indexStored);
+			robot.getRegistry().release(new ResourceIdBlock(indexStored));
 			indexStored = null;
 		}
 	}
@@ -135,7 +136,7 @@ public abstract class BoardRobotGenericBreakBlock extends RedstoneBoardRobot {
 	@Override
 	public void end() {
 		if (indexStored != null) {
-			releaseBlock(indexStored);
+			robot.getRegistry().release(new ResourceIdBlock(indexStored));
 		}
 	}
 
@@ -182,10 +183,6 @@ public abstract class BoardRobotGenericBreakBlock extends RedstoneBoardRobot {
 
 		if (nbt.hasKey("indexStored")) {
 			indexStored = new BlockIndex (nbt.getCompoundTag("indexStored"));
-
-			if (!reserveBlock(indexStored)) {
-				indexStored = null;
-			}
 		}
 	}
 }
