@@ -45,9 +45,9 @@ public class AIRobotGotoStation extends AIRobot {
 		} else {
 			if (station.take(robot)) {
 				startDelegateAI(new AIRobotGotoBlock(robot,
-						station.x() + station.side().offsetX * 2,
-						station.y() + station.side().offsetY * 2,
-						station.z() + station.side().offsetZ * 2));
+						station.x() + station.side().offsetX,
+						station.y() + station.side().offsetY,
+						station.z() + station.side().offsetZ));
 			} else {
 				terminate();
 			}
