@@ -193,13 +193,18 @@ public class ItemFacade extends ItemBuildCraft {
 			}
 		}
 	}
-	
+
 	private static boolean hasNoNullIcons(Block block, int meta) {
-	    for (int i = 0; i < 6; i++) {
-	        if (block.getIcon(i, meta) == null) {
-	            return false;
-	        }
-	    }
+		try {
+			for (int i = 0; i < 6; i++) {
+				if (block.getIcon(i, meta) == null) {
+					return false;
+				}
+			}
+		} catch (Throwable t) {
+			return false;
+		}
+
 	    return true;
 	}
 
