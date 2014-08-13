@@ -157,7 +157,13 @@ public class FacadeItemRenderer implements IItemRenderer {
 
 	private IIcon tryGetBlockIcon(Block block, int side, int decodedMeta) {
 		try {
-			return block.getIcon(side, decodedMeta);
+			IIcon icon = block.getIcon(side, decodedMeta);
+
+			if (icon != null) {
+				return icon;
+			} else {
+				return Blocks.cobblestone.getIcon(0, 0);
+			}
 		} catch (Throwable t) {
 			try {
 				return block.getBlockTextureFromSide(side);
