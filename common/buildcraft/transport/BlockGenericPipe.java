@@ -832,7 +832,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 				}
 			}
 		}
-		if (rayTraceResult != null && (rayTraceResult.hitPart != Part.Facade)) {
+		if (rayTraceResult != null && rayTraceResult.hitPart == Part.Pipe) {
 			if (!pipe.hasGate(side) && addGate(player, pipe, rayTraceResult.sideHit != null && rayTraceResult.sideHit != ForgeDirection.UNKNOWN ? rayTraceResult.sideHit : side)) {
 				return true;
 			}
@@ -906,7 +906,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 				}
 			}
 		}
-		if (rayTraceResult != null && (rayTraceResult.hitPart != Part.Facade)) {
+		if (rayTraceResult != null && rayTraceResult.hitPart == Part.Pipe) {
 			if (addFacade(player, pipe, rayTraceResult.sideHit != null && rayTraceResult.sideHit != ForgeDirection.UNKNOWN ? rayTraceResult.sideHit : side)) {
 				return true;
 			}
@@ -934,7 +934,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 				}
 			}
 		}
-		if (rayTraceResult != null && (rayTraceResult.hitPart == Part.Pipe || rayTraceResult.hitPart == Part.Gate)) {
+		if (rayTraceResult != null && rayTraceResult.hitPart == Part.Pipe) {
 			if (addPlug(player, pipe, rayTraceResult.sideHit != null && rayTraceResult.sideHit != ForgeDirection.UNKNOWN ? rayTraceResult.sideHit : side)) {
 				return true;
 			}
@@ -951,7 +951,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 				}
 			}
 		}
-		if (rayTraceResult != null && (rayTraceResult.hitPart == Part.Pipe || rayTraceResult.hitPart == Part.Gate)) {
+		if (rayTraceResult != null && rayTraceResult.hitPart == Part.Pipe) {
 			if (addRobotStation(player, pipe, rayTraceResult.sideHit != null && rayTraceResult.sideHit != ForgeDirection.UNKNOWN ? rayTraceResult.sideHit : side)) {
 				return true;
 			}
