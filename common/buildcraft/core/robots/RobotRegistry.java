@@ -32,14 +32,6 @@ public class RobotRegistry extends WorldSavedData {
 
 	private long nextRobotID = Long.MIN_VALUE;
 
-	// TODO: we'll need a way to release resources from "lost robots" at some
-	// point - one possibility:
-	// when asking if a resource is available, look for the robot
-	// if the robot is loaded, ok, keep the resource
-	// if not, then release the resource automatically
-	// don't do this for stations, only for resources (stations can be manually
-	// freed from in-game)
-
 	private HashMap<Long, EntityRobot> robotsLoaded = new HashMap<Long, EntityRobot>();
 	private HashMap<ResourceId, Long> resourcesTaken = new HashMap<ResourceId, Long>();
 	private HashMap<Long, HashSet<ResourceId>> resourcesTakenByRobot = new HashMap<Long, HashSet<ResourceId>>();
@@ -85,13 +77,22 @@ public class RobotRegistry extends WorldSavedData {
 	}
 
 	public boolean isTaken(ResourceId resourceId) {
-		return resourcesTaken.containsKey(resourceId);
+		return robotTaking(resourceId) != EntityRobotBase.NULL_ROBOT_ID;
 	}
 
 	public long robotTaking(ResourceId resourceId) {
-		if (resourcesTaken.containsKey(resourceId)) {
-			return resourcesTaken.get(resourceId);
+		if (!resourcesTaken.containsKey(resourceId)) {
+			return EntityRobotBase.NULL_ROBOT_ID;
+		}
+
+		long robotId = resourcesTaken.get(resourceId);
+
+		if (robotsLoaded.containsKey(robotId) && !robotsLoaded.get(robotId).isDead) {
+			return robotId;
 		} else {
+			// If the robot is either not loaded or dead, the resource is not
+			// actively used anymore. Release it.
+			release(resourceId);
 			return EntityRobotBase.NULL_ROBOT_ID;
 		}
 	}
