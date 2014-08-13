@@ -41,4 +41,9 @@ public class BoardRecipe extends FlexibleRecipe {
 			return null;
 		}
 	}
+
+	@Override
+	public CraftingResult canCraft(ItemStack expectedOutput) {
+		return null;
+	}
 }

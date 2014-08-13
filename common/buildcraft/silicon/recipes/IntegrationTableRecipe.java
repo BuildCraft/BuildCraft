@@ -48,4 +48,9 @@ public abstract class IntegrationTableRecipe extends FlexibleRecipe<ItemStack> i
 			ItemStack inputB) {
 		return super.craft(crafter, preview);
 	}
+
+	@Override
+	public CraftingResult canCraft(ItemStack expectedOutput) {
+		return null;
+	}
 }

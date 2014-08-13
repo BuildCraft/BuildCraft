@@ -6,17 +6,19 @@
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-package buildcraft.api.recipes;
+package buildcraft.core.robots;
 
-import net.minecraft.item.ItemStack;
+import buildcraft.api.core.BlockIndex;
+import buildcraft.silicon.TileAssemblyTable;
 
-public interface IFlexibleRecipe<T> {
+public class ResourceIdAssemblyTable extends ResourceId {
 
-	boolean canBeCrafted(IFlexibleCrafter crafter);
+	public ResourceIdAssemblyTable() {
 
-	CraftingResult<T> craft(IFlexibleCrafter crafter, boolean preview);
+	}
 
-	CraftingResult<T> canCraft(ItemStack expectedOutput);
+	public ResourceIdAssemblyTable(TileAssemblyTable tile) {
+		index = new BlockIndex(tile);
+	}
 
-	String getId();
 }

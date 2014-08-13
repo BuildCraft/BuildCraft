@@ -22,6 +22,7 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EntityDamageSource;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
@@ -848,5 +849,20 @@ public class EntityRobot extends EntityRobotBase implements
 	@Override
 	public void releaseResources() {
 		getRegistry().releaseResources(this);
+	}
+
+	/**
+	 * Tries to receive items in parameters, return items that are left after
+	 * the operation.
+	 */
+	public ItemStack receiveItem(TileEntity tile, ItemStack stack) {
+		if (currentDockingStation != null
+				&& currentDockingStation.index().nextTo(new BlockIndex(tile))
+				&& mainAI != null) {
+
+			return mainAI.getActiveAI().receiveItem(stack);
+		} else {
+			return stack;
+		}
 	}
 }

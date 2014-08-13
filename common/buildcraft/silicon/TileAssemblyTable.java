@@ -35,6 +35,9 @@ import buildcraft.core.network.RPC;
 import buildcraft.core.network.RPCHandler;
 import buildcraft.core.network.RPCSide;
 import buildcraft.core.recipes.AssemblyRecipeManager;
+import buildcraft.core.robots.EntityRobot;
+import buildcraft.core.robots.ResourceIdAssemblyTable;
+import buildcraft.core.robots.RobotRegistry;
 import buildcraft.core.triggers.ActionMachineControl;
 import buildcraft.core.utils.StringUtils;
 import buildcraft.core.utils.Utils;
@@ -90,13 +93,24 @@ public class TileAssemblyTable extends TileLaserTableBase implements IMachine, I
 
 			if (currentRecipe.canBeCrafted(this)) {
 				ItemStack remaining = currentRecipe.craft(this, false).crafted.copy();
-				remaining.stackSize -= Utils.addToRandomInventoryAround(worldObj, xCoord, yCoord, zCoord, remaining);
 
-				if (remaining.stackSize > 0) {
+				EntityRobot robot = RobotRegistry.getRegistry(worldObj)
+						.robotTaking(new ResourceIdAssemblyTable(this));
+
+				if (robot != null) {
+					remaining = robot.receiveItem(this, remaining);
+				}
+
+				if (remaining != null && remaining.stackSize > 0) {
+					remaining.stackSize -= Utils
+							.addToRandomInventoryAround(worldObj, xCoord, yCoord, zCoord, remaining);
+				}
+
+				if (remaining != null && remaining.stackSize > 0) {
 					remaining.stackSize -= Utils.addToRandomPipeAround(worldObj, xCoord, yCoord, zCoord, ForgeDirection.UNKNOWN, remaining);
 				}
 
-				if (remaining.stackSize > 0) {
+				if (remaining != null && remaining.stackSize > 0) {
 					EntityItem entityitem = new EntityItem(worldObj, xCoord + 0.5, yCoord + 0.7, zCoord + 0.5,
 							remaining);
 

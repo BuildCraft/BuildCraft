@@ -26,10 +26,14 @@ import buildcraft.api.boards.RedstoneBoardRobot;
 import buildcraft.api.boards.RedstoneBoardRobotNBT;
 import buildcraft.api.gates.ActionParameterItemStack;
 import buildcraft.api.gates.IActionParameter;
+import buildcraft.api.recipes.CraftingResult;
+import buildcraft.api.recipes.IFlexibleRecipe;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.api.robots.IDockingStation;
 import buildcraft.core.inventory.StackHelper;
+import buildcraft.core.recipes.AssemblyRecipeManager;
+import buildcraft.core.robots.AIRobotCraftAssemblyTable;
 import buildcraft.core.robots.AIRobotCraftFurnace;
 import buildcraft.core.robots.AIRobotCraftGeneric;
 import buildcraft.core.robots.AIRobotCraftWorkbench;
@@ -69,6 +73,7 @@ public class BoardRobotCrafter extends RedstoneBoardRobot {
 		}
 
 		order = getCraftingOrder();
+		robot.releaseResources();
 
 		if (order == null) {
 			craftingBlacklist.clear();
@@ -87,19 +92,15 @@ public class BoardRobotCrafter extends RedstoneBoardRobot {
 
 		if (furnaceInput != null) {
 			startDelegateAI(new AIRobotCraftFurnace(robot, furnaceInput));
+			return;
 		}
 
-		/*
-		 * recipe = lookForAssemblyTableRecipe(order);
-		 *
-		 * if (recipe != null) { startDelegateAI(new
-		 * AIRobotCraftAssemblyTable(robot)); }
-		 *
-		 * recipe = lookForIntegrationTableRecipe(order);
-		 *
-		 * if (recipe != null) { startDelegateAI(new
-		 * AIRobotCraftIntegrationTable(robot)); }
-		 */
+		CraftingResult craftingResult = lookForAssemblyTableRecipe(order);
+
+		if (craftingResult != null) {
+			startDelegateAI(new AIRobotCraftAssemblyTable(robot, craftingResult));
+			return;
+		}
 
 		craftingBlacklist.add(order);
 	}
@@ -147,6 +148,18 @@ public class BoardRobotCrafter extends RedstoneBoardRobot {
 
 			if (StackHelper.isMatchingItem(output, order)) {
 				return input;
+			}
+		}
+
+		return null;
+	}
+
+	private CraftingResult<?> lookForAssemblyTableRecipe(ItemStack order) {
+		for (IFlexibleRecipe r : AssemblyRecipeManager.INSTANCE.getRecipes()) {
+			CraftingResult<?> result = r.canCraft(order);
+
+			if (result != null) {
+				return result;
 			}
 		}
 

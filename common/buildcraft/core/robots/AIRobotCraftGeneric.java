@@ -23,8 +23,6 @@ public abstract class AIRobotCraftGeneric extends AIRobot {
 		super(iRobot);
 	}
 
-	protected abstract ArrayList<ArrayStackFilter> tryCraft(boolean doRemove);
-
 	@Override
 	public void end() {
 		robot.releaseResources();

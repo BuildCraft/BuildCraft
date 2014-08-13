@@ -8,8 +8,6 @@
  */
 package buildcraft.core.robots;
 
-import java.util.ArrayList;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFurnace;
 import net.minecraft.item.ItemStack;
@@ -138,19 +136,14 @@ public class AIRobotCraftFurnace extends AIRobotCraftGeneric {
 					terminate();
 				}
 
-				stationFound.take(robot);
+				if (!stationFound.take(robot)) {
+					terminate();
+				}
 			}
 		} else if (ai instanceof AIRobotGotoStationAndLoad) {
 
 		}
 	}
-
-	@Override
-	protected ArrayList<ArrayStackFilter> tryCraft(boolean doRemove) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 
 	// How to operate furnaces
 	// [1] identify a furnace
@@ -159,8 +152,6 @@ public class AIRobotCraftFurnace extends AIRobotCraftGeneric {
 	// [3] bring proper item and put in
 	// [4] as soon as output contains expected item, get it and place it
 	// somewhere
-
-	// How to operate assembly tables
 
 	private class StationFurnaceFilter implements IStationFilter {
 

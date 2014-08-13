@@ -77,10 +77,10 @@ public class RobotRegistry extends WorldSavedData {
 	}
 
 	public boolean isTaken(ResourceId resourceId) {
-		return robotTaking(resourceId) != EntityRobotBase.NULL_ROBOT_ID;
+		return robotIdTaking(resourceId) != EntityRobotBase.NULL_ROBOT_ID;
 	}
 
-	public long robotTaking(ResourceId resourceId) {
+	public long robotIdTaking(ResourceId resourceId) {
 		if (!resourcesTaken.containsKey(resourceId)) {
 			return EntityRobotBase.NULL_ROBOT_ID;
 		}
@@ -94,6 +94,16 @@ public class RobotRegistry extends WorldSavedData {
 			// actively used anymore. Release it.
 			release(resourceId);
 			return EntityRobotBase.NULL_ROBOT_ID;
+		}
+	}
+
+	public EntityRobot robotTaking(ResourceId resourceId) {
+		long robotId = robotIdTaking(resourceId);
+
+		if (robotId == EntityRobotBase.NULL_ROBOT_ID || !robotsLoaded.containsKey(robotId)) {
+			return null;
+		} else {
+			return robotsLoaded.get(robotId);
 		}
 	}
 
@@ -151,7 +161,8 @@ public class RobotRegistry extends WorldSavedData {
 		markDirty();
 
 		if (resourcesTakenByRobot.containsKey(robot.getRobotId())) {
-			HashSet<ResourceId> resourceSet = resourcesTakenByRobot.get(robot.getRobotId());
+			HashSet<ResourceId> resourceSet = (HashSet<ResourceId>) resourcesTakenByRobot.get(robot.getRobotId())
+					.clone();
 
 			ResourceId mainId = null;
 

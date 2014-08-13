@@ -20,6 +20,7 @@ import net.minecraftforge.fluids.FluidStack;
 import buildcraft.api.recipes.CraftingResult;
 import buildcraft.api.recipes.IFlexibleCrafter;
 import buildcraft.api.recipes.IFlexibleRecipe;
+import buildcraft.core.inventory.StackHelper;
 import buildcraft.core.inventory.filters.ArrayStackFilter;
 import buildcraft.core.inventory.filters.IStackFilter;
 
@@ -208,5 +209,22 @@ public class FlexibleRecipe<T> implements IFlexibleRecipe<T> {
 		}
 
 		return amount;
+	}
+
+	@Override
+	public CraftingResult<T> canCraft(ItemStack expectedOutput) {
+		if (output instanceof ItemStack
+				&& StackHelper.isMatchingItem(expectedOutput, (ItemStack) output)) {
+			CraftingResult<T> result = new CraftingResult<T>();
+
+			result.recipe = this;
+			result.usedFluids = inputFluids;
+			result.usedItems = inputItems;
+			result.crafted = output;
+
+			return result;
+		} else {
+			return null;
+		}
 	}
 }

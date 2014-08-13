@@ -8,6 +8,7 @@
  */
 package buildcraft.api.robots;
 
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
 public class AIRobot {
@@ -61,6 +62,14 @@ public class AIRobot {
 
 	public double getEnergyCost() {
 		return 0.1;
+	}
+
+	/**
+	 * Tries to receive items in parameters, return items that are left after
+	 * the operation.
+	 */
+	public ItemStack receiveItem(ItemStack stack) {
+		return stack;
 	}
 
 	public final void terminate() {

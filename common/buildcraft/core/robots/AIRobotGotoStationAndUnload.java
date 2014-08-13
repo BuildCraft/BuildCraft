@@ -16,6 +16,7 @@ public class AIRobotGotoStationAndUnload extends AIRobot {
 
 	private boolean found = false;
 	private IZone zone;
+	private DockingStation station;
 
 	public AIRobotGotoStationAndUnload(EntityRobotBase iRobot) {
 		super(iRobot);
@@ -27,14 +28,31 @@ public class AIRobotGotoStationAndUnload extends AIRobot {
 		zone = iZone;
 	}
 
+	public AIRobotGotoStationAndUnload(EntityRobotBase iRobot, DockingStation iStation) {
+		super(iRobot);
+
+		station = iStation;
+	}
+
 	@Override
 	public void start() {
-		startDelegateAI(new AIRobotGotoStationToUnload(robot, zone));
+		if (station == null) {
+			startDelegateAI(new AIRobotGotoStationToUnload(robot, zone));
+		} else {
+			startDelegateAI(new AIRobotGotoStation(robot, station));
+		}
 	}
 
 	@Override
 	public void delegateAIEnded(AIRobot ai) {
 		if (ai instanceof AIRobotGotoStationToUnload) {
+			if (ai.success()) {
+				found = true;
+				startDelegateAI(new AIRobotUnload(robot));
+			} else {
+				terminate();
+			}
+		} else if (ai instanceof AIRobotGotoStation) {
 			if (ai.success()) {
 				found = true;
 				startDelegateAI(new AIRobotUnload(robot));

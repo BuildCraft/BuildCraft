@@ -106,4 +106,10 @@ public class BlockIndex implements Comparable<BlockIndex> {
 	public int hashCode() {
 		return (x * 37 + y) * 37 + z;
 	}
+
+	public boolean nextTo(BlockIndex blockIndex) {
+		return (Math.abs(blockIndex.x - x) <= 1 && blockIndex.y == y && blockIndex.z == z)
+				|| (blockIndex.x == x && Math.abs(blockIndex.y - y) <= 1 && blockIndex.z == z)
+				|| (blockIndex.x == x && blockIndex.y == y && Math.abs(blockIndex.z - z) <= 1);
+	}
 }

@@ -104,7 +104,6 @@ public class AIRobotCraftWorkbench extends AIRobotCraftGeneric {
 		}
 	}
 
-	@Override
 	protected ArrayList<ArrayStackFilter> tryCraft(boolean doRemove) {
 		Object[] items = new Object[0];
 
