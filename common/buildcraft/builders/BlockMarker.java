@@ -36,6 +36,11 @@ public class BlockMarker extends BlockContainer {
 		setCreativeTab(CreativeTabBuildCraft.ITEMS.get());
 	}
 
+	public static boolean canPlaceTorch(World world, int x, int y, int z, ForgeDirection side) {
+		Block block = world.getBlock(x, y, z);
+		return block != null && (block.renderAsNormalBlock() && block.isOpaqueCube() || block.isSideSolid(world, x, y, z, side));
+	}
+
 	private AxisAlignedBB getBoundingBox(int meta) {
 		double w = 0.15;
 		double h = 0.65;
@@ -128,7 +133,7 @@ public class BlockMarker extends BlockContainer {
 	@Override
 	public boolean canPlaceBlockOnSide(World world, int x, int y, int z, int side) {
 		ForgeDirection dir = ForgeDirection.getOrientation(side);
-		return BuildersProxy.canPlaceTorch(world, x - dir.offsetX, y - dir.offsetY, z - dir.offsetZ);
+		return canPlaceTorch(world, x - dir.offsetX, y - dir.offsetY, z - dir.offsetZ, dir);
 	}
 
 	@Override
