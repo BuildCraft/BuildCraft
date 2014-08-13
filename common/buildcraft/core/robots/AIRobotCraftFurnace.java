@@ -111,8 +111,9 @@ public class AIRobotCraftFurnace extends AIRobotCraftGeneric {
 					terminate();
 				}
 			}
+		} else {
+			terminate();
 		}
-
 	}
 
 	@Override

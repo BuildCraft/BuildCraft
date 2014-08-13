@@ -104,8 +104,9 @@ public class AIRobotCraftAssemblyTable extends AIRobotCraftGeneric {
 					terminate();
 				}
 			}
+		} else {
+			terminate();
 		}
-
 	}
 
 	@Override
