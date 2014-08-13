@@ -149,7 +149,7 @@ public class FacadeItemRenderer implements IItemRenderer {
 			if (icon != null) {
 				return icon;
 			} else {
-				return Blocks.cobblestone.getIcon(0, 0);
+				return PipeIconProvider.TYPE.TransparentFacade.getIcon();
 			}
 		} catch (Throwable t) {
 			try {
