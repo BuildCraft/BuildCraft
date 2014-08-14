@@ -25,6 +25,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.api.robots.IDockingStation;
 import buildcraft.api.robots.IRobotRegistry;
+import buildcraft.api.robots.ResourceId;
 
 public class RobotRegistry extends WorldSavedData implements IRobotRegistry {
 

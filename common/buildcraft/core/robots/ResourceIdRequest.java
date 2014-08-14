@@ -11,6 +11,7 @@ package buildcraft.core.robots;
 import net.minecraft.tileentity.TileEntity;
 
 import buildcraft.api.core.BlockIndex;
+import buildcraft.api.robots.ResourceId;
 
 public class ResourceIdRequest extends ResourceId {
 

@@ -14,8 +14,6 @@ import net.minecraft.nbt.NBTTagCompound;
 
 import net.minecraftforge.common.util.ForgeDirection;
 
-import buildcraft.core.robots.ResourceId;
-
 public interface IRobotRegistry {
 
 	long getNextRobotId();

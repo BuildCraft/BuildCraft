@@ -9,6 +9,7 @@
 package buildcraft.core.robots;
 
 import buildcraft.api.core.BlockIndex;
+import buildcraft.api.robots.ResourceId;
 import buildcraft.silicon.TileAssemblyTable;
 
 public class ResourceIdAssemblyTable extends ResourceId {
