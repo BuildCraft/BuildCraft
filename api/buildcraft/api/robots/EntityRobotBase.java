@@ -16,7 +16,6 @@ import net.minecraft.world.World;
 
 import buildcraft.api.boards.RedstoneBoardRobot;
 import buildcraft.api.core.IZone;
-import buildcraft.core.robots.RobotRegistry;
 
 public abstract class EntityRobotBase extends EntityLiving implements IInventory {
 
@@ -62,7 +61,7 @@ public abstract class EntityRobotBase extends EntityLiving implements IInventory
 
 	public abstract long getRobotId();
 
-	public abstract RobotRegistry getRegistry();
+	public abstract IRobotRegistry getRegistry();
 
 	public abstract void releaseResources();
 }

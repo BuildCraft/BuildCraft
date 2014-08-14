@@ -23,8 +23,9 @@ import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.api.robots.EntityRobotBase;
+import buildcraft.api.robots.IRobotRegistry;
 
-public class RobotRegistry extends WorldSavedData {
+public class RobotRegistry extends WorldSavedData implements IRobotRegistry {
 
 	public static RobotRegistry[] registries = new RobotRegistry[256];
 
@@ -43,6 +44,7 @@ public class RobotRegistry extends WorldSavedData {
 		super(id);
 	}
 
+	@Override
 	public long getNextRobotId() {
 		long result = nextRobotID;
 
@@ -51,23 +53,26 @@ public class RobotRegistry extends WorldSavedData {
 		return result;
 	}
 
-	public void registerRobot(EntityRobot robot) {
+	@Override
+	public void registerRobot(EntityRobotBase robot) {
 		markDirty();
 
 		if (robot.getRobotId() == EntityRobotBase.NULL_ROBOT_ID) {
-			robot.setUniqueRobotId(getNextRobotId());
+			((EntityRobot) robot).setUniqueRobotId(getNextRobotId());
 		}
 
-		robotsLoaded.put(robot.getRobotId(), robot);
+		robotsLoaded.put(robot.getRobotId(), (EntityRobot) robot);
 	}
 
-	public void killRobot(EntityRobot robot) {
+	@Override
+	public void killRobot(EntityRobotBase robot) {
 		markDirty();
 
 		releaseResources(robot, true);
 		robotsLoaded.remove(robot.getRobotId());
 	}
 
+	@Override
 	public EntityRobot getLoadedRobot(long id) {
 		if (robotsLoaded.containsKey(id)) {
 			return robotsLoaded.get(id);
@@ -76,10 +81,12 @@ public class RobotRegistry extends WorldSavedData {
 		}
 	}
 
+	@Override
 	public boolean isTaken(ResourceId resourceId) {
 		return robotIdTaking(resourceId) != EntityRobotBase.NULL_ROBOT_ID;
 	}
 
+	@Override
 	public long robotIdTaking(ResourceId resourceId) {
 		if (!resourcesTaken.containsKey(resourceId)) {
 			return EntityRobotBase.NULL_ROBOT_ID;
@@ -97,6 +104,7 @@ public class RobotRegistry extends WorldSavedData {
 		}
 	}
 
+	@Override
 	public EntityRobot robotTaking(ResourceId resourceId) {
 		long robotId = robotIdTaking(resourceId);
 
@@ -107,12 +115,14 @@ public class RobotRegistry extends WorldSavedData {
 		}
 	}
 
+	@Override
 	public boolean take(ResourceId resourceId, EntityRobotBase robot) {
 		markDirty();
 
 		return take(resourceId, robot.getRobotId());
 	}
 
+	@Override
 	public boolean take(ResourceId resourceId, long robotId) {
 		if (resourceId == null) {
 			return false;
@@ -137,6 +147,7 @@ public class RobotRegistry extends WorldSavedData {
 		}
 	}
 
+	@Override
 	public void release(ResourceId resourceId) {
 		if (resourceId == null) {
 			return;
@@ -153,6 +164,7 @@ public class RobotRegistry extends WorldSavedData {
 		}
 	}
 
+	@Override
 	public void releaseResources(EntityRobotBase robot) {
 		releaseResources(robot, false);
 	}
@@ -195,6 +207,7 @@ public class RobotRegistry extends WorldSavedData {
 		}
 	}
 
+	@Override
 	public DockingStation getStation(int x, int y, int z, ForgeDirection side) {
 		StationIndex index = new StationIndex(side, x, y, z);
 
@@ -205,10 +218,12 @@ public class RobotRegistry extends WorldSavedData {
 		}
 	}
 
+	@Override
 	public Collection<DockingStation> getStations() {
 		return stations.values();
 	}
 
+	@Override
 	public void registerStation(DockingStation station) {
 		markDirty();
 
@@ -221,6 +236,7 @@ public class RobotRegistry extends WorldSavedData {
 		}
 	}
 
+	@Override
 	public void removeStation(DockingStation station) {
 		markDirty();
 
@@ -235,6 +251,7 @@ public class RobotRegistry extends WorldSavedData {
 		}
 	}
 
+	@Override
 	public void take(DockingStation station, long robotId) {
 		if (!stationsTakenByRobot.containsKey(robotId)) {
 			stationsTakenByRobot.put(robotId, new HashSet<StationIndex>());
@@ -243,6 +260,7 @@ public class RobotRegistry extends WorldSavedData {
 		stationsTakenByRobot.get(robotId).add(new StationIndex(station));
 	}
 
+	@Override
 	public void release(DockingStation station, long robotId) {
 		if (stationsTakenByRobot.containsKey(robotId)) {
 			stationsTakenByRobot.get(robotId).remove(new StationIndex(station));

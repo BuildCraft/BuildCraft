@@ -18,7 +18,9 @@ import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.ShapedRecipes;
 import net.minecraft.item.crafting.ShapelessRecipes;
+import net.minecraft.tileentity.TileEntity;
 
+import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
 
@@ -31,17 +33,24 @@ import buildcraft.api.recipes.IFlexibleRecipe;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.api.robots.IDockingStation;
+import buildcraft.api.robots.IRequestProvider;
+import buildcraft.api.robots.StackRequest;
 import buildcraft.core.inventory.StackHelper;
 import buildcraft.core.recipes.AssemblyRecipeManager;
 import buildcraft.core.robots.AIRobotCraftAssemblyTable;
 import buildcraft.core.robots.AIRobotCraftFurnace;
 import buildcraft.core.robots.AIRobotCraftGeneric;
 import buildcraft.core.robots.AIRobotCraftWorkbench;
+import buildcraft.core.robots.AIRobotDeliverRequested;
 import buildcraft.core.robots.AIRobotGotoSleep;
 import buildcraft.core.robots.AIRobotGotoStationToUnload;
+import buildcraft.core.robots.AIRobotSearchStation;
 import buildcraft.core.robots.AIRobotUnload;
 import buildcraft.core.robots.DockingStation;
+import buildcraft.core.robots.IStationFilter;
 import buildcraft.silicon.statements.ActionRobotCraft;
+import buildcraft.silicon.statements.ActionStationRequestItemsMachine;
+import buildcraft.transport.Pipe;
 import buildcraft.transport.gates.ActionIterator;
 import buildcraft.transport.gates.ActionSlot;
 
@@ -50,6 +59,7 @@ public class BoardRobotCrafter extends RedstoneBoardRobot {
 	private ItemStack order;
 	private ArrayList<ItemStack> craftingBlacklist = new ArrayList<ItemStack>();
 	private HashSet<IDockingStation> reservedStations = new HashSet<IDockingStation>();
+	private StackRequest currentRequest = null;
 
 	public BoardRobotCrafter(EntityRobotBase iRobot) {
 		super(iRobot);
@@ -72,12 +82,14 @@ public class BoardRobotCrafter extends RedstoneBoardRobot {
 			return;
 		}
 
-		order = getCraftingOrder();
-		robot.releaseResources();
+		if (currentRequest == null) {
+			order = getOrderFromHomeStation();
+		} else {
+			order = currentRequest.stack;
+		}
 
 		if (order == null) {
-			craftingBlacklist.clear();
-			startDelegateAI(new AIRobotGotoSleep(robot));
+			startDelegateAI(new AIRobotSearchStation(robot, new StationProviderFilter(), robot.getZoneToWork()));
 			return;
 		}
 
@@ -109,10 +121,17 @@ public class BoardRobotCrafter extends RedstoneBoardRobot {
 	public void delegateAIEnded(AIRobot ai) {
 		if (ai instanceof AIRobotCraftGeneric) {
 			if (!ai.success()) {
+				robot.releaseResources();
+				currentRequest = null;
 				craftingBlacklist.add(order);
 			} else {
-				// The extra crafted items may make some crafting possible
-				craftingBlacklist.clear();
+				if (currentRequest != null) {
+					startDelegateAI(new AIRobotDeliverRequested(robot, currentRequest));
+				} else {
+					robot.releaseResources();
+					// The extra crafted items may make some crafting possible
+					craftingBlacklist.clear();
+				}
 			}
 		} else if (ai instanceof AIRobotGotoStationToUnload) {
 			if (ai.success()) {
@@ -120,6 +139,18 @@ public class BoardRobotCrafter extends RedstoneBoardRobot {
 			} else {
 				startDelegateAI(new AIRobotGotoSleep(robot));
 			}
+		} else if (ai instanceof AIRobotSearchStation) {
+			if (!ai.success()) {
+				craftingBlacklist.clear();
+				startDelegateAI(new AIRobotGotoSleep(robot));
+			} else {
+				currentRequest = getOrderFromRequestingStation(((AIRobotSearchStation) ai).targetStation, true);
+			}
+		} else if (ai instanceof AIRobotDeliverRequested) {
+			currentRequest = null;
+			robot.releaseResources();
+			// The extra crafted items may make some crafting possible
+			craftingBlacklist.clear();
 		}
 	}
 
@@ -176,9 +207,7 @@ public class BoardRobotCrafter extends RedstoneBoardRobot {
 		return false;
 	}
 
-	private ItemStack getCraftingOrder() {
-		// [1] priority from the current station order
-
+	private ItemStack getOrderFromHomeStation() {
 		DockingStation s = (DockingStation) robot.getLinkedStation();
 
 		for (ActionSlot slot : new ActionIterator(s.getPipe().pipe)) {
@@ -196,11 +225,56 @@ public class BoardRobotCrafter extends RedstoneBoardRobot {
 			}
 		}
 
-		// [2] if no order, will look at the "request" stations (either from
-		// inventories or machines).
-		// when taking a "request" order, lock the target station
+		return null;
+	}
+
+	private StackRequest getOrderFromRequestingStation(DockingStation station, boolean take) {
+		boolean actionFound = false;
+
+		Pipe pipe = station.getPipe().pipe;
+
+		for (ActionSlot s : new ActionIterator(pipe)) {
+			if (s.action instanceof ActionStationRequestItemsMachine) {
+				actionFound = true;
+			}
+		}
+
+		if (!actionFound) {
+			return null;
+		}
+
+		for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
+			TileEntity nearbyTile = robot.worldObj.getTileEntity(station.x() + dir.offsetX, station.y()
+					+ dir.offsetY, station.z()
+					+ dir.offsetZ);
+
+			if (nearbyTile instanceof IRequestProvider) {
+				IRequestProvider provider = (IRequestProvider) nearbyTile;
+
+				for (int i = 0; i < provider.getNumberOfRequests(); ++i) {
+					StackRequest request = provider.getAvailableRequest(i);
+
+					if (request != null && !isBlacklisted(request.stack)) {
+						if (take) {
+							if (provider.takeRequest(i, robot)) {
+								return request;
+							}
+						} else {
+							return request;
+						}
+					}
+				}
+			}
+		}
 
 		return null;
 	}
 
+	private class StationProviderFilter implements IStationFilter {
+
+		@Override
+		public boolean matches(DockingStation station) {
+			return getOrderFromRequestingStation(station, false) != null;
+		}
+	}
 }

@@ -22,6 +22,7 @@ import buildcraft.api.recipes.CraftingResult;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.inventory.ITransactor;
+import buildcraft.core.inventory.InvUtils;
 import buildcraft.core.inventory.InventoryCopy;
 import buildcraft.core.inventory.InventoryIterator;
 import buildcraft.core.inventory.StackHelper;
@@ -97,7 +98,7 @@ public class AIRobotCraftAssemblyTable extends AIRobotCraftGeneric {
 			} else {
 				waitedTime++;
 
-				if (getItem(new ArrayStackFilter(expectedResult.crafted)) != null) {
+				if (InvUtils.getItem(robot, new ArrayStackFilter(expectedResult.crafted)) != null) {
 					crafted = true;
 					terminate();
 				} else if (waitedTime > 120 * 60) {
@@ -236,16 +237,6 @@ public class AIRobotCraftAssemblyTable extends AIRobotCraftGeneric {
 				// TODO: check if assembly table has some empty slots
 
 				return f;
-			}
-		}
-
-		return null;
-	}
-
-	private IInvSlot getItem(IStackFilter filter) {
-		for (IInvSlot s : InventoryIterator.getIterable(robot)) {
-			if (s.getStackInSlot() != null && filter.matches(s.getStackInSlot())) {
-				return s;
 			}
 		}
 

@@ -8,58 +8,51 @@
  */
 package buildcraft.commander;
 
-import java.util.ArrayList;
-
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
-import buildcraft.api.core.WorldBlockIndex;
+import buildcraft.api.robots.EntityRobotBase;
+import buildcraft.api.robots.IRequestProvider;
+import buildcraft.api.robots.StackRequest;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.inventory.SimpleInventory;
 import buildcraft.core.inventory.StackHelper;
+import buildcraft.core.network.RPC;
+import buildcraft.core.network.RPCHandler;
+import buildcraft.core.network.RPCSide;
+import buildcraft.core.robots.ResourceIdRequest;
+import buildcraft.core.robots.RobotRegistry;
 
-public class TileRequester extends TileBuildCraft implements IInventory {
+public class TileRequester extends TileBuildCraft implements IInventory, IRequestProvider {
 
 	public static final int NB_ITEMS = 20;
 
 	private SimpleInventory inv = new SimpleInventory(NB_ITEMS, "items", 64);
-
-	private ArrayList<StackRequest> requirements = new ArrayList<StackRequest>();
+	private SimpleInventory requests = new SimpleInventory(NB_ITEMS, "requests", 64);
 
 	public TileRequester() {
-		for (int i = 0; i < NB_ITEMS; ++i) {
-			requirements.add(null);
-		}
+
 	}
 
-	public boolean addRequest(ItemStack stack, Entity from) {
-		for (int i = 0; i < NB_ITEMS; ++i) {
-			if (requirements.get(i) == null) {
-				StackRequest r = new StackRequest();
-
-				r.fulfilled = false;
-				r.holder = new WorldBlockIndex(worldObj, xCoord, yCoord, zCoord);
-				r.indexInHolder = i;
-				r.loadDate = worldObj.getTotalWorldTime();
-				r.requestDate = worldObj.getTotalWorldTime();
-				r.requester = from;
-				r.stack = stack;
-
-				requirements.set(i, r);
-
-				return true;
-			}
+	@RPC(RPCSide.SERVER)
+	public void setRequest(int index, ItemStack stack) {
+		if (worldObj.isRemote) {
+			RPCHandler.rpcServer(this, "setRequest", index, stack);
+			return;
 		}
 
-		return false;
+		requests.setInventorySlotContents(index, stack);
+	}
+
+	public ItemStack getRequest(int index) {
+		return requests.getStackInSlot(index);
 	}
 
 	@Override
 	public int getSizeInventory() {
-		return inv.getInventoryStackLimit();
+		return inv.getSizeInventory();
 	}
 
 	@Override
@@ -114,11 +107,9 @@ public class TileRequester extends TileBuildCraft implements IInventory {
 
 	@Override
 	public boolean isItemValidForSlot(int i, ItemStack itemStack) {
-		StackRequest req = requirements.get(i);
-
-		if (req == null) {
+		if (requests.getStackInSlot(i) == null) {
 			return false;
-		} else if (!StackHelper.isMatchingItem(req.stack, itemStack)) {
+		} else if (!StackHelper.isMatchingItem(requests.getStackInSlot(i), itemStack)) {
 			return false;
 		} else {
 			return inv.isItemValidForSlot(i, itemStack);
@@ -132,15 +123,103 @@ public class TileRequester extends TileBuildCraft implements IInventory {
 		NBTTagCompound invNBT = new NBTTagCompound();
 		inv.writeToNBT(invNBT);
 		nbt.setTag("inv", invNBT);
+
+		NBTTagCompound reqNBT = new NBTTagCompound();
+		requests.writeToNBT(reqNBT);
+		nbt.setTag("req", reqNBT);
 	}
 
 	@Override
 	public void readFromNBT(NBTTagCompound nbt) {
 		super.readFromNBT(nbt);
 
-		System.out.println("READ");
-
 		inv.readFromNBT(nbt.getCompoundTag("inv"));
+		requests.readFromNBT(nbt.getCompoundTag("req"));
+	}
 
+	public boolean isFulfilled(int i) {
+		if (requests.getStackInSlot(i) == null) {
+			return true;
+		} else if (inv.getStackInSlot(i) == null) {
+			return false;
+		} else {
+			return StackHelper.isMatchingItem(requests.getStackInSlot(i), inv.getStackInSlot(i))
+					&& inv.getStackInSlot(i).stackSize >= requests.getStackInSlot(i).stackSize;
+		}
+	}
+
+	@Override
+	public int getNumberOfRequests() {
+		return NB_ITEMS;
+	}
+
+	@Override
+	public StackRequest getAvailableRequest(int i) {
+		if (requests.getStackInSlot(i) == null) {
+			return null;
+		} else if (isFulfilled(i)) {
+			return null;
+		} else if (RobotRegistry.getRegistry(worldObj).isTaken(new ResourceIdRequest(this, i))) {
+			return null;
+		} else {
+			StackRequest r = new StackRequest();
+
+			r.index = i;
+			r.stack = requests.getStackInSlot(i);
+			r.requester = this;
+
+			return r;
+		}
+	}
+
+	@Override
+	public boolean takeRequest(int i, EntityRobotBase robot) {
+		if (requests.getStackInSlot(i) == null) {
+			return false;
+		} else if (isFulfilled(i)) {
+			return false;
+		} else {
+			return RobotRegistry.getRegistry(worldObj).take(new ResourceIdRequest(this, i), robot);
+		}
+	}
+
+	@Override
+	public ItemStack provideItemsForRequest(int i, ItemStack stack) {
+		ItemStack existingStack = inv.getStackInSlot(i);
+
+		if (requests.getStackInSlot(i) == null) {
+			return stack;
+		} else if (existingStack == null) {
+			int maxQty = requests.getStackInSlot(i).stackSize;
+
+			if (stack.stackSize <= maxQty) {
+				inv.setInventorySlotContents(i, stack);
+
+				return null;
+			} else {
+				ItemStack newStack = stack.copy();
+				newStack.stackSize = maxQty;
+				stack.stackSize -= maxQty;
+
+				inv.setInventorySlotContents(i, newStack);
+
+				return stack;
+			}
+		} else if (!StackHelper.isMatchingItem(stack, existingStack)) {
+			return stack;
+		} else if (existingStack == null || StackHelper.isMatchingItem(stack, requests.getStackInSlot(i))) {
+			int maxQty = requests.getStackInSlot(i).stackSize;
+
+			if (existingStack.stackSize + stack.stackSize <= maxQty) {
+				existingStack.stackSize += stack.stackSize;
+				return null;
+			} else {
+				stack.stackSize -= maxQty - existingStack.stackSize;
+				existingStack.stackSize = maxQty;
+				return stack;
+			}
+		} else {
+			return stack;
+		}
 	}
 }

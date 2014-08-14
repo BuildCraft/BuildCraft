@@ -37,6 +37,7 @@ import buildcraft.api.transport.PipeWire;
 import buildcraft.builders.schematics.SchematicRotateMeta;
 import buildcraft.commander.BlockRequester;
 import buildcraft.commander.BlockZonePlan;
+import buildcraft.commander.TileRequester;
 import buildcraft.commander.TileZonePlan;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.InterModComms;
@@ -90,6 +91,7 @@ import buildcraft.silicon.statements.ActionRobotWorkInArea;
 import buildcraft.silicon.statements.ActionStationForbidRobot;
 import buildcraft.silicon.statements.ActionStationProvideItems;
 import buildcraft.silicon.statements.ActionStationRequestItemsInv;
+import buildcraft.silicon.statements.ActionStationRequestItemsMachine;
 import buildcraft.silicon.statements.ActionStationRequestItemsPipe;
 import buildcraft.silicon.statements.RobotsActionProvider;
 import buildcraft.silicon.statements.RobotsTriggerProvider;
@@ -129,6 +131,7 @@ public class BuildCraftSilicon extends BuildCraftMod {
 	public static IAction actionStationProvideItems = new ActionStationProvideItems();
 	public static IAction actionStationForbidRobot = new ActionStationForbidRobot();
 	public static IAction actionStationDropInPipe = new ActionStationRequestItemsPipe();
+	public static IAction actionStationMachineRequestItems = new ActionStationRequestItemsMachine();
 
 	public static TechnoSimpleItem technoRedstoneBoard = new TechnoSimpleItem();
 	public static TechnoSimpleItem technoLaserBlock = new TechnoSimpleItem();
@@ -231,6 +234,7 @@ public class BuildCraftSilicon extends BuildCraftMod {
 		CoreProxy.proxy.registerTileEntity(TileAdvancedCraftingTable.class, "net.minecraft.src.buildcraft.factory.TileAssemblyAdvancedWorkbench");
 		CoreProxy.proxy.registerTileEntity(TileIntegrationTable.class, "net.minecraft.src.buildcraft.factory.TileIntegrationTable");
 		CoreProxy.proxy.registerTileEntity(TileZonePlan.class, "net.minecraft.src.buildcraft.commander.TileZonePlan");
+		CoreProxy.proxy.registerTileEntity(TileRequester.class, "net.minecraft.src.buildcraft.commander.TileRequester");
 
 		SchematicRegistry.registerSchematicBlock(laserBlock, SchematicRotateMeta.class, new int[]{2, 5, 3, 4}, true);
 

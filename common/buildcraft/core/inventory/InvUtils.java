@@ -79,7 +79,7 @@ public final class InvUtils {
 
 	/**
 	 * Attempts to move a single item from one inventory to another.
-	 * 
+	 *
 	 * @param source
 	 * @param dest
 	 * @param filter
@@ -258,5 +258,15 @@ public final class InvUtils {
 			return inv;
 		}
 		return inv;
+	}
+
+	public static IInvSlot getItem(IInventory inv, IStackFilter filter) {
+		for (IInvSlot s : InventoryIterator.getIterable(inv)) {
+			if (s.getStackInSlot() != null && filter.matches(s.getStackInSlot())) {
+				return s;
+			}
+		}
+
+		return null;
 	}
 }

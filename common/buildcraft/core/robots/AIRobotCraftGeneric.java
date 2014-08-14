@@ -33,9 +33,4 @@ public abstract class AIRobotCraftGeneric extends AIRobot {
 		return crafted;
 	}
 
-	@Override
-	public double getEnergyCost() {
-		return 3;
-	}
-
 }

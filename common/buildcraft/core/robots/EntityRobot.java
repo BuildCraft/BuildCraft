@@ -9,7 +9,6 @@
 package buildcraft.core.robots;
 
 import java.util.Date;
-import java.util.LinkedList;
 import java.util.WeakHashMap;
 
 import io.netty.buffer.ByteBuf;
@@ -46,7 +45,6 @@ import buildcraft.api.mj.MjBattery;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.api.robots.IDockingStation;
-import buildcraft.commander.StackRequest;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.LaserData;
 import buildcraft.core.network.RPC;
@@ -105,7 +103,6 @@ public class EntityRobot extends EntityRobotBase implements
 	private WeakHashMap<Entity, Boolean> unreachableEntities = new WeakHashMap<Entity, Boolean>();
 
 	private NBTTagList stackRequestNBT;
-	private LinkedList<StackRequest> stackRequests = new LinkedList<StackRequest>();
 
 	@MjBattery
 	private double mjStored;
@@ -441,22 +438,6 @@ public class EntityRobot extends EntityRobotBase implements
 			board.writeToNBT(boardNBT);
 			nbt.setTag("board", boardNBT);
 		}
-
-		NBTTagList requestsNBT = new NBTTagList();
-
-		for (StackRequest r : stackRequests) {
-			NBTTagCompound cpt = new NBTTagCompound();
-
-			NBTTagCompound index = new NBTTagCompound();
-			r.holder.writeTo(index);
-			cpt.setTag("index", index);
-
-			cpt.setInteger("indexInHolder", r.indexInHolder);
-
-			requestsNBT.appendTag(cpt);
-		}
-
-		nbt.setTag("stackRequests", requestsNBT);
 
 		nbt.setLong("robotId", robotId);
     }

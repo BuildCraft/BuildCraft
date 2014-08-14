@@ -66,6 +66,7 @@ gate.action.station.provide_items=Provide Items
 gate.action.station.request_items=Request Items
 gate.action.station.drop_items_in_pipe=Drop Items In Pipe
 gate.action.station.craft=Craft
+gate.action.station.provide_machine_request=Provide Computed Items
 gate.action.robot.work_in_area=Work in Area
 gate.action.robot.wakeup=Wake Up
 gate.action.station.forbid_robot=Robot Forbidden

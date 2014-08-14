@@ -28,18 +28,32 @@ public class GuiRequester extends GuiAdvancedInterface {
 	private static class RequestSlot extends AdvancedSlot {
 
 		private ItemStack item;
+		private int index;
 
-		public RequestSlot(GuiAdvancedInterface gui, int x, int y) {
+		public RequestSlot(GuiAdvancedInterface gui, int iIndex, int x, int y) {
 			super(gui, x, y);
+
+			index = iIndex;
 		}
 
 		public void setItem(ItemStack itemStack) {
-			item = itemStack.copy();
+			TileRequester requester = ((GuiRequester) gui).requester;
+
+			if (itemStack != null) {
+				item = itemStack.copy();
+			} else {
+				item = null;
+			}
+
+			requester.setRequest(index, itemStack);
+			((GuiRequester) gui).getContainer().getRequestList();
 		}
 
 		@Override
 		public ItemStack getItemStack() {
-			return item;
+			ContainerRequester requester = ((GuiRequester) gui).getContainer();
+
+			return requester.requests[index];
 		}
 	}
 
@@ -47,6 +61,7 @@ public class GuiRequester extends GuiAdvancedInterface {
 		super(new ContainerRequester(iPlayerInventory, iRequester), iPlayerInventory, TEXTURE);
 
 		getContainer().gui = this;
+		getContainer().getRequestList();
 
 		xSize = 256;
 		ySize = 220;
@@ -56,8 +71,7 @@ public class GuiRequester extends GuiAdvancedInterface {
 
 		for (int x = 0; x < 4; ++x) {
 			for (int y = 0; y < 5; ++y) {
-
-				slots.add(new RequestSlot(this, 9 + 18 * x, 7 + 18 * y));
+				slots.add(new RequestSlot(this, x * 5 + y, 9 + 18 * x, 7 + 18 * y));
 			}
 		}
 	}

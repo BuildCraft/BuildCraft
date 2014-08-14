@@ -94,6 +94,7 @@ public class ClassMapping extends ClassSerializer {
 		Double,
 		Short,
 		Int,
+		Char,
 		Boolean,
 		Enum,
 		Object
@@ -124,6 +125,8 @@ public class ClassMapping extends ClassSerializer {
 					cptType = CptType.Int;
 				} else if (boolean.class.equals(cptClass)) {
 					cptType = CptType.Byte;
+				} else if (char.class.equals(cptClass)) {
+					cptType = CptType.Char;
 				} else if (Enum.class.isAssignableFrom(cptClass)) {
 					cptType = CptType.Enum;
 				} else {
@@ -156,6 +159,8 @@ public class ClassMapping extends ClassSerializer {
 						} else if (float.class.equals(fieldClass)) {
 							floatFields.add(f);
 						} else if (double.class.equals(fieldClass)) {
+							doubleFields.add(f);
+						} else if (char.class.equals(fieldClass)) {
 							doubleFields.add(f);
 						} else {
 							FieldObject obj = new FieldObject();
@@ -417,6 +422,16 @@ public class ClassMapping extends ClassSerializer {
 
 				break;
 			}
+			case Char: {
+				char[] arr = (char[]) obj;
+				data.writeInt (arr.length);
+
+				for (char element : arr) {
+					data.writeChar(element);
+				}
+
+				break;
+			}
 			case Enum: {
 				Enum<?>[] arr = (Enum[]) obj;
 				data.writeInt (arr.length);
@@ -553,6 +568,23 @@ public class ClassMapping extends ClassSerializer {
 
 				break;
 			}
+			case Char: {
+				char[] arr;
+
+				if (obj == null) {
+					arr = new char[size];
+				} else {
+					arr = (char[]) obj;
+				}
+
+				for (int i = 0; i < arr.length; ++i) {
+					arr[i] = data.readChar();
+				}
+
+				obj = arr;
+
+				break;
+			}
 			case Enum: {
 				Enum<?>[] arr;
 
@@ -619,8 +651,10 @@ public class ClassMapping extends ClassSerializer {
 			mapping = new ClassMapping ();
 			registerSerializer(clas, mapping);
 			((ClassMapping) mapping).analyzeClass(clas);
-		} else {
+		} else if (classes.containsKey(clas.getCanonicalName())) {
 			mapping = classes.get(clas.getCanonicalName());
+		} else {
+			mapping = null;
 		}
 
 		return mapping;

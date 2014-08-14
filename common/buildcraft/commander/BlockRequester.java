@@ -29,8 +29,8 @@ import buildcraft.core.utils.Utils;
 
 public class BlockRequester extends BlockBuildCraft {
 
+	private IIcon blockTextureDefault;
 	private IIcon blockTextureSide;
-	private IIcon blockTextureFront;
 
 	public BlockRequester() {
 		super(Material.iron);
@@ -65,21 +65,17 @@ public class BlockRequester extends BlockBuildCraft {
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void registerBlockIcons(IIconRegister par1IconRegister) {
-		blockTextureSide = par1IconRegister.registerIcon("buildcraft:commander_side");
-		blockTextureFront = par1IconRegister.registerIcon("buildcraft:requester_front");
+		blockTextureDefault = par1IconRegister.registerIcon("buildcraft:commander_side");
+		blockTextureSide = par1IconRegister.registerIcon("buildcraft:requester_side");
 	}
 
 	@Override
 	public IIcon getIcon(int i, int j) {
-		if (j == 0 && i == 3) {
-			return blockTextureFront;
+		if (i == 0 || i == 1) {
+			return blockTextureDefault;
+		} else {
+			return blockTextureSide;
 		}
-
-		if (i == j) {
-			return blockTextureFront;
-		}
-
-		return blockTextureSide;
 	}
 
 }

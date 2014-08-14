@@ -9,7 +9,6 @@
 package buildcraft.core.network;
 
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -90,13 +89,7 @@ public final class RPCHandler {
 				mapping.mappings = new ClassSerializer[mapping.parameters.length];
 
 				for (int j = 0; j < mapping.parameters.length; ++j) {
-					if (int.class.equals(mapping.parameters[j])) {
-						// accepted
-					} else if (char.class.equals(mapping.parameters[j])) {
-						// accepted
-					} else if (float.class.equals(mapping.parameters[j])) {
-						// accepted
-					} else if (mapping.parameters [j].equals(RPCMessageInfo.class)) {
+					if (mapping.parameters[j].equals(RPCMessageInfo.class)) {
 						mapping.hasInfo = true;
 					} else {
 						mapping.mappings [j] = ClassMapping.get(mapping.parameters [j]);
@@ -332,26 +325,6 @@ public final class RPCHandler {
 			data.writeBoolean((Boolean) actual);
 		} else if (String.class.equals(formal)) {
 			Utils.writeUTF(data, (String) actual);
-		} else if (formal.isArray()) {
-			if (formal.getComponentType() == byte.class) {
-				byte[] array = (byte[]) actual;
-				data.writeInt(array.length);
-				data.writeBytes(array);
-			} else if (formal.getComponentType() == int.class) {
-				int[] array = (int[]) actual;
-				data.writeInt(array.length);
-
-				for (int element : array) {
-					data.writeInt(element);
-				}
-			} else {
-				Object[] array = (Object[]) actual;
-				Class<?> componentType = formal.getComponentType();
-				data.writeInt(array.length);
-				for (Object element : array) {
-					writePrimitive(data, componentType, element);
-				}
-			}
 		} else {
 			return false;
 		}
@@ -409,29 +382,6 @@ public final class RPCHandler {
 			actuals[i] = data.readBoolean();
 		} else if (String.class.equals(formal)) {
 			actuals[i] = Utils.readUTF(data);
-		} else if (formal.isArray()) {
-			final int size = data.readInt();
-
-			if (formal.getComponentType() == byte.class) {
-				byte[] array = new byte[size];
-				data.readBytes(array);
-				actuals[i] = array;
-			} else if (formal.getComponentType() == int.class) {
-				int[] array = new int[size];
-
-				for (int ind = 0; ind < size; ++ind) {
-					array[ind] = data.readInt();
-				}
-
-				actuals[i] = array;
-			} else {
-				Class<?> componentType = formal.getComponentType();
-				Object[] a = (Object[]) Array.newInstance(componentType, size);
-				for (int z = 0; z < size; z++) {
-					readPrimitive(data, componentType, a, z);
-				}
-				actuals[i] = a;
-			}
 		} else {
 			return false;
 		}

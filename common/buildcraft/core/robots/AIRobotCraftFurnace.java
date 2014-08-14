@@ -20,7 +20,7 @@ import buildcraft.api.core.IInvSlot;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.inventory.ITransactor;
-import buildcraft.core.inventory.InventoryIterator;
+import buildcraft.core.inventory.InvUtils;
 import buildcraft.core.inventory.StackHelper;
 import buildcraft.core.inventory.Transactor;
 import buildcraft.core.inventory.filters.ArrayStackFilter;
@@ -58,13 +58,13 @@ public class AIRobotCraftFurnace extends AIRobotCraftGeneric {
 	public void update() {
 		if (furnace != null) {
 			if (!craftStarted) {
-				if (furnace.getStackInSlot(FUEL_SLOT) == null && getItem(new FuelFilter()) == null) {
+				if (furnace.getStackInSlot(FUEL_SLOT) == null && InvUtils.getItem(robot, new FuelFilter()) == null) {
 					startDelegateAI(new AIRobotGotoStationAndLoad(robot, new FuelFilter(), robot.getZoneToWork()));
 
 					return;
 				}
 
-				if (getItem(new ArrayStackFilter(input)) == null) {
+				if (InvUtils.getItem(robot, new ArrayStackFilter(input)) == null) {
 					startDelegateAI(new AIRobotGotoStationAndLoad(robot, new ArrayStackFilter(input),
 							robot.getZoneToWork()));
 
@@ -78,12 +78,12 @@ public class AIRobotCraftFurnace extends AIRobotCraftGeneric {
 				}
 
 				if (furnace.getStackInSlot(FUEL_SLOT) == null) {
-					IInvSlot s = getItem(new FuelFilter());
+					IInvSlot s = InvUtils.getItem(robot, new FuelFilter());
 					furnace.setInventorySlotContents(FUEL_SLOT, s.decreaseStackInSlot(1));
 				}
 
 				if (furnace.getStackInSlot(INPUT_SLOT) == null) {
-					IInvSlot s = getItem(new ArrayStackFilter(input));
+					IInvSlot s = InvUtils.getItem(robot, new ArrayStackFilter(input));
 					furnace.setInventorySlotContents(INPUT_SLOT, s.decreaseStackInSlot(1));
 				}
 
@@ -205,15 +205,4 @@ public class AIRobotCraftFurnace extends AIRobotCraftGeneric {
 
 		return null;
 	}
-
-	private IInvSlot getItem(IStackFilter filter) {
-		for (IInvSlot s : InventoryIterator.getIterable(robot)) {
-			if (s.getStackInSlot() != null && filter.matches(s.getStackInSlot())) {
-				return s;
-			}
-		}
-
-		return null;
-	}
-
 }

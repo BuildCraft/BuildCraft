@@ -21,6 +21,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.BuildCraftSilicon;
 import buildcraft.api.gates.IAction;
 import buildcraft.api.gates.IActionProvider;
+import buildcraft.api.robots.IRequestProvider;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.core.robots.DockingStation;
 import buildcraft.core.robots.boards.BoardRobotCrafter;
@@ -57,14 +58,18 @@ public class RobotsActionProvider implements IActionProvider {
 			}
 		}
 
+		if (((TileGenericPipe) pipe).pipe.transport instanceof PipeTransportItems) {
+			result.add(BuildCraftSilicon.actionStationDropInPipe);
+		}
+
 		for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
 			if (((TileGenericPipe) pipe).getTile(dir) instanceof IInventory) {
 				result.add(BuildCraftSilicon.actionStationProvideItems);
 				result.add(BuildCraftSilicon.actionStationRequestItems);
 			}
 
-			if (((TileGenericPipe) pipe).pipe.transport instanceof PipeTransportItems) {
-				result.add(BuildCraftSilicon.actionStationDropInPipe);
+			if (((TileGenericPipe) pipe).getTile(dir) instanceof IRequestProvider) {
+				result.add(BuildCraftSilicon.actionStationMachineRequestItems);
 			}
 		}
 
