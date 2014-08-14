@@ -63,6 +63,7 @@ gate.action.pipe.wire=%s Pipe Signal
 gate.action.robot.goto_station=Goto Station
 gate.action.pipe.close=Close Pipe
 gate.action.station.provide_items=Provide Items
+gate.action.station.accept_items=Accept Items
 gate.action.station.request_items=Request Items
 gate.action.station.drop_items_in_pipe=Drop Items In Pipe
 gate.action.station.craft=Craft

@@ -28,6 +28,7 @@ import buildcraft.api.boards.RedstoneBoardRobot;
 import buildcraft.api.boards.RedstoneBoardRobotNBT;
 import buildcraft.api.gates.ActionParameterItemStack;
 import buildcraft.api.gates.IActionParameter;
+import buildcraft.api.gates.IStatementParameter;
 import buildcraft.api.recipes.CraftingResult;
 import buildcraft.api.recipes.IFlexibleRecipe;
 import buildcraft.api.robots.AIRobot;
@@ -49,6 +50,7 @@ import buildcraft.core.robots.AIRobotUnload;
 import buildcraft.core.robots.DockingStation;
 import buildcraft.core.robots.IStationFilter;
 import buildcraft.silicon.statements.ActionRobotCraft;
+import buildcraft.silicon.statements.ActionStationRequestItems;
 import buildcraft.silicon.statements.ActionStationRequestItemsMachine;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.gates.ActionIterator;
@@ -144,7 +146,15 @@ public class BoardRobotCrafter extends RedstoneBoardRobot {
 				craftingBlacklist.clear();
 				startDelegateAI(new AIRobotGotoSleep(robot));
 			} else {
-				currentRequest = getOrderFromRequestingStation(((AIRobotSearchStation) ai).targetStation, true);
+				currentRequest = getOrderFromRequestingAction(((AIRobotSearchStation) ai).targetStation);
+
+				if (currentRequest == null) {
+					currentRequest = getOrderFromRequestingStation(((AIRobotSearchStation) ai).targetStation, true);
+				}
+
+				if (!currentRequest.station.take(robot)) {
+					currentRequest = null;
+				}
 			}
 		} else if (ai instanceof AIRobotDeliverRequested) {
 			currentRequest = null;
@@ -255,6 +265,8 @@ public class BoardRobotCrafter extends RedstoneBoardRobot {
 					StackRequest request = provider.getAvailableRequest(i);
 
 					if (request != null && !isBlacklisted(request.stack)) {
+						request.station = station;
+
 						if (take) {
 							if (provider.takeRequest(i, robot)) {
 								return request;
@@ -270,11 +282,36 @@ public class BoardRobotCrafter extends RedstoneBoardRobot {
 		return null;
 	}
 
+	private StackRequest getOrderFromRequestingAction(DockingStation station) {
+		boolean actionFound = false;
+
+		Pipe pipe = station.getPipe().pipe;
+
+		for (ActionSlot s : new ActionIterator(pipe)) {
+			if (s.action instanceof ActionStationRequestItems) {
+				for (IStatementParameter p : s.parameters) {
+					ActionParameterItemStack param = (ActionParameterItemStack) p;
+
+					if (param != null && !isBlacklisted(param.getItemStackToDraw())) {
+						StackRequest req = new StackRequest();
+						req.station = station;
+						req.stack = param.getItemStackToDraw();
+
+						return req;
+					}
+				}
+			}
+		}
+
+		return null;
+	}
+
 	private class StationProviderFilter implements IStationFilter {
 
 		@Override
 		public boolean matches(DockingStation station) {
-			return getOrderFromRequestingStation(station, false) != null;
+			return getOrderFromRequestingAction(station) != null
+					|| getOrderFromRequestingStation(station, false) != null;
 		}
 	}
 }

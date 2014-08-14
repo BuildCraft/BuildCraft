@@ -23,6 +23,7 @@ import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.api.robots.EntityRobotBase;
+import buildcraft.api.robots.IDockingStation;
 import buildcraft.api.robots.IRobotRegistry;
 
 public class RobotRegistry extends WorldSavedData implements IRobotRegistry {
@@ -37,7 +38,7 @@ public class RobotRegistry extends WorldSavedData implements IRobotRegistry {
 	private HashMap<ResourceId, Long> resourcesTaken = new HashMap<ResourceId, Long>();
 	private HashMap<Long, HashSet<ResourceId>> resourcesTakenByRobot = new HashMap<Long, HashSet<ResourceId>>();
 
-	private HashMap<StationIndex, DockingStation> stations = new HashMap<StationIndex, DockingStation>();
+	private HashMap<StationIndex, IDockingStation> stations = new HashMap<StationIndex, IDockingStation>();
 	private HashMap<Long, HashSet<StationIndex>> stationsTakenByRobot = new HashMap<Long, HashSet<StationIndex>>();
 
 	public RobotRegistry(String id) {
@@ -190,7 +191,7 @@ public class RobotRegistry extends WorldSavedData implements IRobotRegistry {
 					.clone();
 
 			for (StationIndex s : stationSet) {
-				DockingStation d = stations.get(s);
+				DockingStation d = (DockingStation) stations.get(s);
 
 				if (!d.canRelease()) {
 					if (forceAll) {
@@ -208,7 +209,7 @@ public class RobotRegistry extends WorldSavedData implements IRobotRegistry {
 	}
 
 	@Override
-	public DockingStation getStation(int x, int y, int z, ForgeDirection side) {
+	public IDockingStation getStation(int x, int y, int z, ForgeDirection side) {
 		StationIndex index = new StationIndex(side, x, y, z);
 
 		if (stations.containsKey(index)) {
@@ -219,12 +220,12 @@ public class RobotRegistry extends WorldSavedData implements IRobotRegistry {
 	}
 
 	@Override
-	public Collection<DockingStation> getStations() {
+	public Collection<IDockingStation> getStations() {
 		return stations.values();
 	}
 
 	@Override
-	public void registerStation(DockingStation station) {
+	public void registerStation(IDockingStation station) {
 		markDirty();
 
 		StationIndex index = new StationIndex(station);
@@ -237,7 +238,7 @@ public class RobotRegistry extends WorldSavedData implements IRobotRegistry {
 	}
 
 	@Override
-	public void removeStation(DockingStation station) {
+	public void removeStation(IDockingStation station) {
 		markDirty();
 
 		StationIndex index = new StationIndex(station);
@@ -252,7 +253,7 @@ public class RobotRegistry extends WorldSavedData implements IRobotRegistry {
 	}
 
 	@Override
-	public void take(DockingStation station, long robotId) {
+	public void take(IDockingStation station, long robotId) {
 		if (!stationsTakenByRobot.containsKey(robotId)) {
 			stationsTakenByRobot.put(robotId, new HashSet<StationIndex>());
 		}
@@ -261,7 +262,7 @@ public class RobotRegistry extends WorldSavedData implements IRobotRegistry {
 	}
 
 	@Override
-	public void release(DockingStation station, long robotId) {
+	public void release(IDockingStation station, long robotId) {
 		if (stationsTakenByRobot.containsKey(robotId)) {
 			stationsTakenByRobot.get(robotId).remove(new StationIndex(station));
 		}
@@ -280,8 +281,8 @@ public class RobotRegistry extends WorldSavedData implements IRobotRegistry {
 
 			newRegistry.world = world;
 
-			for (DockingStation d : newRegistry.stations.values()) {
-				d.world = world;
+			for (IDockingStation d : newRegistry.stations.values()) {
+				((DockingStation) d).world = world;
 			}
 
 			registries[world.provider.dimensionId] = newRegistry;
@@ -310,7 +311,7 @@ public class RobotRegistry extends WorldSavedData implements IRobotRegistry {
 
 		NBTTagList stationList = new NBTTagList();
 
-		for (Map.Entry<StationIndex, DockingStation> e : stations.entrySet()) {
+		for (Map.Entry<StationIndex, IDockingStation> e : stations.entrySet()) {
 			NBTTagCompound cpt = new NBTTagCompound();
 			e.getValue().writeToNBT(cpt);
 			stationList.appendTag(cpt);

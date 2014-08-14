@@ -40,7 +40,7 @@ public class AIRobotDeliverRequested extends AIRobot {
 
 	@Override
 	public void start() {
-		startDelegateAI(new AIRobotSearchAndGotoStation(robot, new StationProviderFilter(), robot.getZoneToWork()));
+		startDelegateAI(new AIRobotGotoStation(robot, requested.station));
 	}
 
 	@Override
@@ -58,18 +58,27 @@ public class AIRobotDeliverRequested extends AIRobot {
 				return;
 			}
 
-			ItemStack newStack = ((IRequestProvider)
+			if (requested.requester != null) {
+				ItemStack newStack = ((IRequestProvider)
 					requested.requester).provideItemsForRequest(requested.index,
 							slot.getStackInSlot().copy());
 
-			if (newStack == null || newStack.stackSize != slot.getStackInSlot().stackSize) {
-				delivered = true;
-				slot.setStackInSlot(newStack);
-			}
+				if (newStack == null || newStack.stackSize != slot.getStackInSlot().stackSize) {
+					delivered = true;
+					slot.setStackInSlot(newStack);
+				}
 
+				terminate();
+			} else {
+				startDelegateAI(new AIRobotUnload(robot));
+				return;
+			}
+		} else if (ai instanceof AIRobotUnload) {
+			delivered = ai.success();
 			terminate();
 		}
 	}
+
 
 	@Override
 	public boolean success() {

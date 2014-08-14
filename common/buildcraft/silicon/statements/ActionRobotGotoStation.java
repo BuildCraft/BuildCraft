@@ -72,7 +72,8 @@ public class ActionRobotGotoStation extends BCActionActive {
 
 						if (index != null) {
 							ForgeDirection side = ItemMapLocation.getSide(item);
-							DockingStation paramStation = registry.getStation(index.x,
+							DockingStation paramStation = (DockingStation)
+									registry.getStation(index.x,
 									index.y, index.z, side);
 
 							if (paramStation != null) {

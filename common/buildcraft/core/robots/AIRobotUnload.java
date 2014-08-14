@@ -14,7 +14,7 @@ import buildcraft.api.core.IInvSlot;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.inventory.InventoryIterator;
-import buildcraft.silicon.statements.ActionStationRequestItems;
+import buildcraft.silicon.statements.ActionStationInputItems;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.gates.ActionIterator;
 import buildcraft.transport.gates.ActionSlot;
@@ -22,6 +22,7 @@ import buildcraft.transport.gates.ActionSlot;
 public class AIRobotUnload extends AIRobot {
 
 	private int waitedCycles = 0;
+	private boolean delivered = false;
 
 	public AIRobotUnload(EntityRobotBase iRobot) {
 		super(iRobot);
@@ -55,9 +56,12 @@ public class AIRobotUnload extends AIRobot {
 			}
 
 			for (ActionSlot s : new ActionIterator(pipe)) {
-				if (s.action instanceof ActionStationRequestItems) {
-					if (((ActionStationRequestItems) s.action)
+				if (s.action instanceof ActionStationInputItems) {
+					if (((ActionStationInputItems) s.action)
 							.insert(station, (EntityRobot) robot, s, robotSlot, true)) {
+
+						delivered = true;
+
 						return true;
 					}
 				}
@@ -70,5 +74,10 @@ public class AIRobotUnload extends AIRobot {
 	@Override
 	public double getEnergyCost() {
 		return 2;
+	}
+
+	@Override
+	public boolean success() {
+		return delivered;
 	}
 }

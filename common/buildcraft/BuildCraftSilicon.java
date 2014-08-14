@@ -88,11 +88,12 @@ import buildcraft.silicon.statements.ActionRobotFilter;
 import buildcraft.silicon.statements.ActionRobotGotoStation;
 import buildcraft.silicon.statements.ActionRobotWakeUp;
 import buildcraft.silicon.statements.ActionRobotWorkInArea;
+import buildcraft.silicon.statements.ActionStationAcceptItemsInv;
+import buildcraft.silicon.statements.ActionStationAcceptItemsPipe;
 import buildcraft.silicon.statements.ActionStationForbidRobot;
 import buildcraft.silicon.statements.ActionStationProvideItems;
-import buildcraft.silicon.statements.ActionStationRequestItemsInv;
+import buildcraft.silicon.statements.ActionStationRequestItems;
 import buildcraft.silicon.statements.ActionStationRequestItemsMachine;
-import buildcraft.silicon.statements.ActionStationRequestItemsPipe;
 import buildcraft.silicon.statements.RobotsActionProvider;
 import buildcraft.silicon.statements.RobotsTriggerProvider;
 import buildcraft.silicon.statements.TriggerRobotSleep;
@@ -127,10 +128,11 @@ public class BuildCraftSilicon extends BuildCraftMod {
 	public static IAction actionRobotWorkInArea = new ActionRobotWorkInArea();
 	public static IAction actionRobotFilter = new ActionRobotFilter();
 	public static IAction actionRobotCraft = new ActionRobotCraft();
-	public static IAction actionStationRequestItems = new ActionStationRequestItemsInv();
+	public static IAction actionStationRequestItems = new ActionStationRequestItems();
+	public static IAction actionStationAcceptItems = new ActionStationAcceptItemsInv();
 	public static IAction actionStationProvideItems = new ActionStationProvideItems();
 	public static IAction actionStationForbidRobot = new ActionStationForbidRobot();
-	public static IAction actionStationDropInPipe = new ActionStationRequestItemsPipe();
+	public static IAction actionStationDropInPipe = new ActionStationAcceptItemsPipe();
 	public static IAction actionStationMachineRequestItems = new ActionStationRequestItemsMachine();
 
 	public static TechnoSimpleItem technoRedstoneBoard = new TechnoSimpleItem();

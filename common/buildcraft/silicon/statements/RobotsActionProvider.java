@@ -66,6 +66,7 @@ public class RobotsActionProvider implements IActionProvider {
 			if (((TileGenericPipe) pipe).getTile(dir) instanceof IInventory) {
 				result.add(BuildCraftSilicon.actionStationProvideItems);
 				result.add(BuildCraftSilicon.actionStationRequestItems);
+				result.add(BuildCraftSilicon.actionStationAcceptItems);
 			}
 
 			if (((TileGenericPipe) pipe).getTile(dir) instanceof IRequestProvider) {

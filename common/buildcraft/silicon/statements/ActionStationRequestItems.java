@@ -9,21 +9,26 @@
 package buildcraft.silicon.statements;
 
 import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
+
+import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.api.core.IInvSlot;
 import buildcraft.api.gates.ActionParameterItemStack;
 import buildcraft.api.gates.IActionParameter;
-import buildcraft.core.inventory.filters.StatementParameterStackFilter;
+import buildcraft.core.inventory.ITransactor;
+import buildcraft.core.inventory.Transactor;
 import buildcraft.core.robots.DockingStation;
 import buildcraft.core.robots.EntityRobot;
-import buildcraft.core.triggers.BCActionPassive;
 import buildcraft.core.utils.StringUtils;
 import buildcraft.transport.gates.ActionSlot;
 
-public abstract class ActionStationRequestItems extends BCActionPassive {
+public class ActionStationRequestItems extends ActionStationInputItems {
 
-	public ActionStationRequestItems(String name) {
-		super(name);
+	public ActionStationRequestItems() {
+		super("buildcraft:station.request_items");
 	}
 
 	@Override
@@ -46,10 +51,32 @@ public abstract class ActionStationRequestItems extends BCActionPassive {
 		return new ActionParameterItemStack();
 	}
 
+	@Override
 	public boolean insert(DockingStation station, EntityRobot robot, ActionSlot actionSlot, IInvSlot invSlot,
 			boolean doInsert) {
-		StatementParameterStackFilter param = new StatementParameterStackFilter(actionSlot.parameters);
+		if (!super.insert(station, robot, actionSlot, invSlot, doInsert)) {
+			return false;
+		}
 
-		return !param.hasFilter() || param.matches(invSlot.getStackInSlot());
+		for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
+			TileEntity nearbyTile = robot.worldObj.getTileEntity(station.x() + dir.offsetX, station.y()
+					+ dir.offsetY, station.z()
+					+ dir.offsetZ);
+
+			if (nearbyTile != null && nearbyTile instanceof IInventory) {
+				ITransactor trans = Transactor.getTransactorFor(nearbyTile);
+
+				ItemStack added = trans.add(invSlot.getStackInSlot(), dir.getOpposite(), doInsert);
+
+				if (doInsert) {
+					invSlot.decreaseStackInSlot(added.stackSize);
+				}
+
+				return true;
+
+			}
+		}
+
+		return false;
 	}
 }

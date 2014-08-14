@@ -269,7 +269,8 @@ public class EntityRobot extends EntityRobotBase implements
 			}
 
 			if (currentDockingStationIndex != null) {
-				currentDockingStation = RobotRegistry.getRegistry(worldObj).getStation(
+				currentDockingStation = (DockingStation)
+						RobotRegistry.getRegistry(worldObj).getStation(
 						currentDockingStationIndex.x,
 						currentDockingStationIndex.y,
 						currentDockingStationIndex.z,

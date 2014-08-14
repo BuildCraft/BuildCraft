@@ -25,20 +25,20 @@ import buildcraft.core.robots.EntityRobot;
 import buildcraft.core.utils.StringUtils;
 import buildcraft.transport.gates.ActionSlot;
 
-public class ActionStationRequestItemsInv extends ActionStationRequestItems {
+public class ActionStationAcceptItemsInv extends ActionStationInputItems {
 
-	public ActionStationRequestItemsInv() {
-		super("buildcraft:station.request_items");
+	public ActionStationAcceptItemsInv() {
+		super("buildcraft:station.accept_items");
 	}
 
 	@Override
 	public String getDescription() {
-		return StringUtils.localize("gate.action.station.request_items");
+		return StringUtils.localize("gate.action.station.accept_items");
 	}
 
 	@Override
 	public void registerIcons(IIconRegister iconRegister) {
-		icon = iconRegister.registerIcon("buildcraft:triggers/action_station_request_items");
+		icon = iconRegister.registerIcon("buildcraft:triggers/action_station_accept_items");
 	}
 
 	@Override

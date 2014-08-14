@@ -15,7 +15,7 @@ import buildcraft.api.core.IZone;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.inventory.InventoryIterator;
-import buildcraft.silicon.statements.ActionStationRequestItems;
+import buildcraft.silicon.statements.ActionStationInputItems;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.gates.ActionIterator;
 import buildcraft.transport.gates.ActionSlot;
@@ -66,8 +66,8 @@ public class AIRobotGotoStationToUnload extends AIRobot {
 				}
 
 				for (ActionSlot s : new ActionIterator(pipe)) {
-					if (s.action instanceof ActionStationRequestItems) {
-						if (((ActionStationRequestItems) s.action).insert(station, (EntityRobot) robot, s, robotSlot, false)) {
+					if (s.action instanceof ActionStationInputItems) {
+						if (((ActionStationInputItems) s.action).insert(station, (EntityRobot) robot, s, robotSlot, false)) {
 							return true;
 						}
 					}

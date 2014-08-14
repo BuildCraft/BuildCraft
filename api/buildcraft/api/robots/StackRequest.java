@@ -15,4 +15,5 @@ public class StackRequest {
 	public ItemStack stack;
 	public int index;
 	public TileEntity requester;
+	public IDockingStation station;
 }

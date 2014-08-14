@@ -13,6 +13,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.api.core.BlockIndex;
+import buildcraft.api.robots.IDockingStation;
 
 public class StationIndex {
 
@@ -27,8 +28,8 @@ public class StationIndex {
 		index = new BlockIndex(x, y, z);
 	}
 
-	public StationIndex(DockingStation station) {
-		side = station.side;
+	public StationIndex(IDockingStation station) {
+		side = station.side();
 		index = station.index();
 	}
 

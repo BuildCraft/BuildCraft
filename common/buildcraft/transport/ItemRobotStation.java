@@ -109,7 +109,8 @@ public class ItemRobotStation extends ItemBuildCraft {
 		public void validate(IPipeTile pipe, ForgeDirection direction) {
 			TileGenericPipe gPipe = (TileGenericPipe) pipe;
 			if (!isValid && !gPipe.getWorld().isRemote) {
-				station = RobotRegistry.getRegistry(gPipe.getWorld()).getStation(
+				station = (DockingStation)
+						RobotRegistry.getRegistry(gPipe.getWorld()).getStation(
 						gPipe.xCoord,
 						gPipe.yCoord,
 						gPipe.zCoord,

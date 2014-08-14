@@ -36,7 +36,7 @@ public class AIRobotGotoStation extends AIRobot {
 
 	@Override
 	public void start() {
-		DockingStation station =
+		DockingStation station = (DockingStation)
 				robot.getRegistry().getStation(stationIndex.x, stationIndex.y, stationIndex.z,
 				stationSide);
 
@@ -56,7 +56,7 @@ public class AIRobotGotoStation extends AIRobot {
 
 	@Override
 	public void delegateAIEnded(AIRobot ai) {
-		DockingStation station =
+		DockingStation station = (DockingStation)
 				robot.getRegistry().getStation(stationIndex.x, stationIndex.y, stationIndex.z,
 						stationSide);
 

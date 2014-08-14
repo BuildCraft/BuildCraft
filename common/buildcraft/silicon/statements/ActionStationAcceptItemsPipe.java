@@ -20,9 +20,9 @@ import buildcraft.transport.PipeTransportItems;
 import buildcraft.transport.TravelingItem;
 import buildcraft.transport.gates.ActionSlot;
 
-public class ActionStationRequestItemsPipe extends ActionStationRequestItems {
+public class ActionStationAcceptItemsPipe extends ActionStationInputItems {
 
-	public ActionStationRequestItemsPipe() {
+	public ActionStationAcceptItemsPipe() {
 		super("buildcraft:station.drop_in_pipe");
 	}
 

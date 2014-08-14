@@ -37,4 +37,6 @@ public interface IDockingStation {
 	void readFromNBT(NBTTagCompound nbt);
 
 	BlockIndex index();
+
+	boolean take(EntityRobotBase robot);
 }

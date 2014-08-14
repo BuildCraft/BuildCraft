@@ -115,6 +115,7 @@ public class DockingStation implements IDockingStation {
 		}
 	}
 
+	@Override
 	public boolean take(EntityRobotBase robot) {
 		if (robotTaking == null) {
 			linkIsMain = false;
