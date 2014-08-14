@@ -45,7 +45,7 @@ public class AIRobotDeliverRequested extends AIRobot {
 
 	@Override
 	public void delegateAIEnded(AIRobot ai) {
-		if (ai instanceof AIRobotSearchAndGotoStation) {
+		if (ai instanceof AIRobotGotoStation) {
 			if (!ai.success()) {
 				terminate();
 				return;

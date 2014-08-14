@@ -8,6 +8,7 @@
  */
 package buildcraft.core.blueprints;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -52,7 +53,7 @@ import buildcraft.core.utils.BlockUtil;
 
 public class BptBuilderBlueprint extends BptBuilderBase {
 
-	public LinkedList<ItemStack> neededItems = new LinkedList<ItemStack>();
+	public ArrayList<ItemStack> neededItems = new ArrayList<ItemStack>();
 
 	protected TreeSet<Integer> builtEntities = new TreeSet<Integer>();
 
@@ -675,8 +676,6 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 		for (Entry<StackKey, Integer> e : computeStacks.entrySet()) {
 			ItemStack newStack = e.getKey().stack.copy();
 			newStack.stackSize = e.getValue();
-
-
 
 			neededItems.add(newStack);
 		}

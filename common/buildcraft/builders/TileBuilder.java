@@ -8,6 +8,7 @@
  */
 package buildcraft.builders;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -32,9 +33,13 @@ import buildcraft.BuildCraftBuilders;
 import buildcraft.api.blueprints.BuildingPermission;
 import buildcraft.api.blueprints.Translation;
 import buildcraft.api.core.BlockIndex;
+import buildcraft.api.core.IInvSlot;
 import buildcraft.api.core.NetworkData;
 import buildcraft.api.core.Position;
 import buildcraft.api.gates.IAction;
+import buildcraft.api.robots.EntityRobotBase;
+import buildcraft.api.robots.IRequestProvider;
+import buildcraft.api.robots.StackRequest;
 import buildcraft.core.Box;
 import buildcraft.core.Box.Kind;
 import buildcraft.core.IMachine;
@@ -47,14 +52,20 @@ import buildcraft.core.blueprints.BptBuilderTemplate;
 import buildcraft.core.blueprints.BptContext;
 import buildcraft.core.fluids.Tank;
 import buildcraft.core.fluids.TankManager;
+import buildcraft.core.inventory.ITransactor;
 import buildcraft.core.inventory.InvUtils;
+import buildcraft.core.inventory.InventoryIterator;
 import buildcraft.core.inventory.SimpleInventory;
+import buildcraft.core.inventory.StackHelper;
+import buildcraft.core.inventory.Transactor;
 import buildcraft.core.network.RPC;
 import buildcraft.core.network.RPCHandler;
 import buildcraft.core.network.RPCMessageInfo;
 import buildcraft.core.network.RPCSide;
+import buildcraft.core.robots.ResourceIdRequest;
+import buildcraft.core.robots.RobotRegistry;
 
-public class TileBuilder extends TileAbstractBuilder implements IMachine, IFluidHandler {
+public class TileBuilder extends TileAbstractBuilder implements IMachine, IFluidHandler, IRequestProvider {
 
 	private static int POWER_ACTIVATION = 50;
 
@@ -73,7 +84,7 @@ public class TileBuilder extends TileAbstractBuilder implements IMachine, IFluid
 	private SimpleInventory inv = new SimpleInventory(28, "Builder", 64);
 	private BptBuilderBase bluePrintBuilder;
 	private LinkedList<BlockIndex> path;
-	private LinkedList<ItemStack> requiredToBuild;
+	private ArrayList<ItemStack> requiredToBuild;
 	private NBTTagCompound initNBT = null;
 	private boolean done = true;
 
@@ -638,7 +649,7 @@ public class TileBuilder extends TileAbstractBuilder implements IMachine, IFluid
 	}
 
 	@RPC (RPCSide.CLIENT)
-	public void setItemRequirements(LinkedList<ItemStack> rq, LinkedList<Integer> realSizes) {
+	public void setItemRequirements(ArrayList<ItemStack> rq, ArrayList<Integer> realSizes) {
 		// Item stack serialized are represented through bytes, so 0-255. In
 		// order to get the real amounts, we need to pass the real sizes of the
 		// stacks as a separate list.
@@ -719,15 +730,17 @@ public class TileBuilder extends TileAbstractBuilder implements IMachine, IFluid
 
 	public void updateRequirements () {
 		if (bluePrintBuilder instanceof BptBuilderBlueprint) {
-			LinkedList<Integer> realSize = new LinkedList<Integer>();
+			ArrayList<ItemStack> reqCopy = new ArrayList<ItemStack>();
+			ArrayList<Integer> realSize = new ArrayList<Integer>();
 
 			for (ItemStack stack : ((BptBuilderBlueprint) bluePrintBuilder).neededItems) {
 				realSize.add(stack.stackSize);
-				stack.stackSize = 0;
+				ItemStack newStack = stack.copy();
+				newStack.stackSize = 0;
+				reqCopy.add(newStack);
 			}
 
-			RPCHandler.rpcBroadcastWorldPlayers(worldObj, this, "setItemRequirements",
-					((BptBuilderBlueprint) bluePrintBuilder).neededItems, realSize);
+			RPCHandler.rpcBroadcastWorldPlayers(worldObj, this, "setItemRequirements", reqCopy, realSize);
 		} else {
 			RPCHandler.rpcBroadcastWorldPlayers(worldObj, this, "setItemRequirements", null, null);
 		}
@@ -820,5 +833,117 @@ public class TileBuilder extends TileAbstractBuilder implements IMachine, IFluid
 			fluidTanks[id].setFluid(null);
 			sendNetworkUpdate();
 		}
+	}
+
+	@Override
+	public int getNumberOfRequests() {
+		if (bluePrintBuilder == null) {
+			return 0;
+		} else if (!(bluePrintBuilder instanceof BptBuilderBlueprint)) {
+			return 0;
+		} else {
+			BptBuilderBlueprint bpt = (BptBuilderBlueprint) bluePrintBuilder;
+
+			return bpt.neededItems.size();
+		}
+	}
+
+	@Override
+	public StackRequest getAvailableRequest(int i) {
+		if (bluePrintBuilder == null) {
+			return null;
+		} else if (!(bluePrintBuilder instanceof BptBuilderBlueprint)) {
+			return null;
+		} else {
+			BptBuilderBlueprint bpt = (BptBuilderBlueprint) bluePrintBuilder;
+
+			if (bpt.neededItems.size() <= i) {
+				return null;
+			}
+
+			ItemStack requirement = bpt.neededItems.get(i);
+
+			int qty = quantityMissing(requirement);
+
+			if (qty <= 0) {
+				return null;
+			}
+
+			StackRequest request = new StackRequest();
+
+			request.index = i;
+			request.requester = this;
+			request.stack = requirement;
+
+			return request;
+		}
+	}
+
+	@Override
+	public boolean takeRequest(int i, EntityRobotBase robot) {
+		if (bluePrintBuilder == null) {
+			return false;
+		} else if (!(bluePrintBuilder instanceof BptBuilderBlueprint)) {
+			return false;
+		} else {
+			return RobotRegistry.getRegistry(worldObj).take(new ResourceIdRequest(this, i), robot);
+		}
+	}
+
+	@Override
+	public ItemStack provideItemsForRequest(int i, ItemStack stack) {
+		if (bluePrintBuilder == null) {
+			return stack;
+		} else if (!(bluePrintBuilder instanceof BptBuilderBlueprint)) {
+			return stack;
+		} else {
+			BptBuilderBlueprint bpt = (BptBuilderBlueprint) bluePrintBuilder;
+
+			if (bpt.neededItems.size() <= i) {
+				return stack;
+			}
+
+			ItemStack requirement = bpt.neededItems.get(i);
+
+			int qty = quantityMissing(requirement);
+
+			if (qty <= 0) {
+				return stack;
+			}
+
+			ItemStack toAdd = stack.copy();
+
+			if (qty < toAdd.stackSize) {
+				toAdd.stackSize = qty;
+			}
+
+			ITransactor t = Transactor.getTransactorFor(this);
+			ItemStack added = t.add(toAdd, ForgeDirection.UNKNOWN, true);
+
+			if (added.stackSize >= stack.stackSize) {
+				return null;
+			} else {
+				stack.stackSize -= added.stackSize;
+				return stack;
+			}
+		}
+	}
+
+	private int quantityMissing(ItemStack requirement) {
+		int left = requirement.stackSize;
+
+		for (IInvSlot slot : InventoryIterator.getIterable(this)) {
+			if (slot.getStackInSlot() != null) {
+				if (StackHelper.isMatchingItem(requirement, slot.getStackInSlot())) {
+					if (slot.getStackInSlot().stackSize >= left) {
+						return 0;
+					} else {
+						left -= slot.getStackInSlot().stackSize;
+					}
+				}
+			}
+		}
+
+		return left;
 	}
 }
