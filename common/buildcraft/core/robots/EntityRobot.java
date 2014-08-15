@@ -251,7 +251,7 @@ public class EntityRobot extends EntityRobotBase implements
 			if (energyFX >= 10) {
 				energyFX = 0;
 				ForgeDirection dir = ForgeDirection.values()[worldObj.rand.nextInt(6)];
-				dir = ForgeDirection.UP;
+				dir = ForgeDirection.DOWN;
 				Minecraft.getMinecraft().effectRenderer.addEffect(new EntityRobotEnergyFX(
 						worldObj,
 						posX + dir.offsetX * 0.25, posY + dir.offsetY * 0.25, posZ + dir.offsetZ * 0.25,
@@ -567,6 +567,8 @@ public class EntityRobot extends EntityRobotBase implements
 			inv[var1] = null;
 		}
 
+		RPCHandler.rpcBroadcastAllPlayers(this, "rpcClientSetInventory", var1, inv[var1]);
+
 		return result;
 	}
 
@@ -578,6 +580,8 @@ public class EntityRobot extends EntityRobotBase implements
 	@Override
 	public void setInventorySlotContents(int var1, ItemStack var2) {
 		inv[var1] = var2;
+
+		RPCHandler.rpcBroadcastAllPlayers(this, "rpcClientSetInventory", var1, inv[var1]);
 	}
 
 	@Override
@@ -635,9 +639,18 @@ public class EntityRobot extends EntityRobotBase implements
 		itemInUse = stack;
 	}
 
+	@RPC(RPCSide.CLIENT)
+	private void rpcClientSetInventory(int i, ItemStack stack) {
+		inv[i] = stack;
+	}
+
 	@RPC(RPCSide.SERVER)
 	public void requestInitialization(RPCMessageInfo info) {
 		RPCHandler.rpcPlayer(info.sender, this, "rpcInitialize", itemInUse, itemActive);
+
+		for (int i = 0; i < inv.length; ++i) {
+			RPCHandler.rpcPlayer(info.sender, this, "rpcClientSetInventory", i, inv[i]);
+		}
 	}
 
 	@RPC(RPCSide.CLIENT)

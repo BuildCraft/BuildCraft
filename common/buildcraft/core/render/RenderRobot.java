@@ -17,8 +17,10 @@ import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.entity.Render;
+import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.init.Items;
 import net.minecraft.item.EnumAction;
 import net.minecraft.item.ItemBlock;
@@ -35,11 +37,27 @@ import buildcraft.core.robots.EntityRobot;
 
 public class RenderRobot extends Render implements IItemRenderer {
 
+	private final EntityItem dummyEntityItem = new EntityItem(null);
+	private final RenderItem customRenderItem;
+
 	protected ModelBase model = new ModelBase() {
 	};
 	private ModelRenderer box;
 
 	public RenderRobot() {
+		customRenderItem = new RenderItem() {
+			@Override
+			public boolean shouldBob() {
+				return false;
+			}
+
+			@Override
+			public boolean shouldSpreadItems() {
+				return false;
+			}
+		};
+		customRenderItem.setRenderManager(RenderManager.instance);
+
 		box = new ModelRenderer(model, 0, 0);
 		box.addBox(-4F, -4F, -4F, 8, 8, 8);
 		box.rotationPointX = 0;
@@ -62,6 +80,34 @@ public class RenderRobot extends Render implements IItemRenderer {
 		float factor = (float) (1.0 / 16.0);
 
 		box.render(factor);
+
+		if (robot.getStackInSlot(0) != null) {
+			GL11.glPushMatrix();
+			GL11.glTranslatef(-0.125F, 0, -0.125F);
+			doRenderItem(robot.getStackInSlot(0), 1.0F);
+			GL11.glPopMatrix();
+		}
+
+		if (robot.getStackInSlot(1) != null) {
+			GL11.glPushMatrix();
+			GL11.glTranslatef(+0.125F, 0, -0.125F);
+			doRenderItem(robot.getStackInSlot(1), 1.0F);
+			GL11.glPopMatrix();
+		}
+
+		if (robot.getStackInSlot(2) != null) {
+			GL11.glPushMatrix();
+			GL11.glTranslatef(+0.125F, 0, +0.125F);
+			doRenderItem(robot.getStackInSlot(2), 1.0F);
+			GL11.glPopMatrix();
+		}
+
+		if (robot.getStackInSlot(3) != null) {
+			GL11.glPushMatrix();
+			GL11.glTranslatef(-0.125F, 0, +0.125F);
+			doRenderItem(robot.getStackInSlot(3), 1.0F);
+			GL11.glPopMatrix();
+		}
 
 		if (robot.itemInUse != null) {
 			GL11.glPushMatrix();
@@ -265,6 +311,18 @@ public class RenderRobot extends Render implements IItemRenderer {
 
 			GL11.glPopMatrix();
 		}
+	}
+
+	private void doRenderItem(ItemStack stack, float light) {
+		float renderScale = 0.5f;
+		GL11.glPushMatrix();
+		GL11.glTranslatef(0, 0.28F, 0);
+		GL11.glScalef(renderScale, renderScale, renderScale);
+		dummyEntityItem.setEntityItemStack(stack);
+		customRenderItem.doRender(dummyEntityItem, 0, 0, 0, 0, 0);
+
+		GL11.glPopMatrix();
+
 	}
 
 }
