@@ -20,9 +20,9 @@ import buildcraft.api.robots.StackRequest;
 import buildcraft.core.inventory.StackHelper;
 import buildcraft.core.inventory.filters.IStackFilter;
 import buildcraft.core.robots.AIRobotDeliverRequested;
+import buildcraft.core.robots.AIRobotDisposeItems;
 import buildcraft.core.robots.AIRobotGotoSleep;
 import buildcraft.core.robots.AIRobotGotoStationAndLoad;
-import buildcraft.core.robots.AIRobotGotoStationAndUnload;
 import buildcraft.core.robots.AIRobotSearchStackRequest;
 
 public class BoardRobotDelivery extends RedstoneBoardRobot {
@@ -46,9 +46,7 @@ public class BoardRobotDelivery extends RedstoneBoardRobot {
 			// Always makes sure that when starting a craft, the inventory is
 			// clean.
 
-			// TODO: We should call load or drop, in order to clean items even
-			// if no destination is to be found
-			startDelegateAI(new AIRobotGotoStationAndUnload(robot, robot.getZoneToWork()));
+			startDelegateAI(new AIRobotDisposeItems(robot));
 			return;
 		}
 

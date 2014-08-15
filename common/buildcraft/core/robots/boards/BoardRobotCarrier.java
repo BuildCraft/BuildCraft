@@ -13,10 +13,9 @@ import buildcraft.api.boards.RedstoneBoardRobotNBT;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.robots.AIRobotGotoSleep;
+import buildcraft.core.robots.AIRobotGotoStationAndUnload;
 import buildcraft.core.robots.AIRobotGotoStationToLoad;
-import buildcraft.core.robots.AIRobotGotoStationToUnload;
 import buildcraft.core.robots.AIRobotLoad;
-import buildcraft.core.robots.AIRobotUnload;
 import buildcraft.silicon.statements.ActionRobotFilter;
 
 public class BoardRobotCarrier extends RedstoneBoardRobot {
@@ -39,7 +38,7 @@ public class BoardRobotCarrier extends RedstoneBoardRobot {
 			startDelegateAI(new AIRobotGotoStationToLoad(robot, ActionRobotFilter.getGateFilter(robot
 					.getLinkedStation()), robot.getZoneToWork()));
 		} else {
-			startDelegateAI(new AIRobotGotoStationToUnload(robot, robot.getZoneToWork()));
+			startDelegateAI(new AIRobotGotoStationAndUnload(robot, robot.getZoneToWork()));
 		}
 	}
 
@@ -54,15 +53,14 @@ public class BoardRobotCarrier extends RedstoneBoardRobot {
 				loadFound = false;
 
 				if (robot.containsItems()) {
-					startDelegateAI(new AIRobotGotoStationToUnload(robot, robot.getZoneToWork()));
+					startDelegateAI(new AIRobotGotoStationAndUnload(robot, robot.getZoneToWork()));
 				} else {
 					unloadFound = false;
 				}
 			}
-		} else if (ai instanceof AIRobotGotoStationToUnload) {
+		} else if (ai instanceof AIRobotGotoStationAndUnload) {
 			if (ai.success()) {
 				unloadFound = true;
-				startDelegateAI(new AIRobotUnload(robot));
 			} else {
 				unloadFound = false;
 				startDelegateAI(new AIRobotGotoStationToLoad(robot, ActionRobotFilter.getGateFilter(robot

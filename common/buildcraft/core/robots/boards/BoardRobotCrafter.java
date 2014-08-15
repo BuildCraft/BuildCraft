@@ -39,8 +39,8 @@ import buildcraft.core.robots.AIRobotCraftFurnace;
 import buildcraft.core.robots.AIRobotCraftGeneric;
 import buildcraft.core.robots.AIRobotCraftWorkbench;
 import buildcraft.core.robots.AIRobotDeliverRequested;
+import buildcraft.core.robots.AIRobotDisposeItems;
 import buildcraft.core.robots.AIRobotGotoSleep;
-import buildcraft.core.robots.AIRobotGotoStationAndUnload;
 import buildcraft.core.robots.AIRobotGotoStationToUnload;
 import buildcraft.core.robots.AIRobotSearchStackRequest;
 import buildcraft.core.robots.AIRobotUnload;
@@ -71,9 +71,7 @@ public class BoardRobotCrafter extends RedstoneBoardRobot {
 			// Always makes sure that when starting a craft, the inventory is
 			// clean.
 
-			// TODO: We should call load or drop, in order to clean items even
-			// if no destination is to be found
-			startDelegateAI(new AIRobotGotoStationAndUnload(robot, robot.getZoneToWork()));
+			startDelegateAI(new AIRobotDisposeItems(robot));
 			return;
 		}
 

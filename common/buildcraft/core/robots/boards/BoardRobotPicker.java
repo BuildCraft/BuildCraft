@@ -19,10 +19,7 @@ import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.robots.AIRobotFetchItem;
 import buildcraft.core.robots.AIRobotGotoSleep;
-import buildcraft.core.robots.AIRobotGotoStationToUnload;
-import buildcraft.core.robots.AIRobotSleep;
-import buildcraft.core.robots.AIRobotUnload;
-import buildcraft.core.robots.DockingStation;
+import buildcraft.core.robots.AIRobotGotoStationAndUnload;
 import buildcraft.silicon.statements.ActionRobotFilter;
 
 public class BoardRobotPicker extends RedstoneBoardRobot {
@@ -58,17 +55,13 @@ public class BoardRobotPicker extends RedstoneBoardRobot {
 				startDelegateAI(new AIRobotFetchItem(robot, 250, ActionRobotFilter.getGateFilter(robot
 						.getLinkedStation()), robot.getZoneToWork()));
 			} else if (robot.containsItems()) {
-				startDelegateAI(new AIRobotGotoStationToUnload(robot, null));
+				startDelegateAI(new AIRobotGotoStationAndUnload(robot, robot.getZoneToWork()));
 			} else {
 				startDelegateAI(new AIRobotGotoSleep(robot));
 			}
-		} else if (ai instanceof AIRobotGotoStationToUnload) {
-			DockingStation station = (DockingStation) robot.getDockingStation();
-
-			if (station != null) {
-				startDelegateAI(new AIRobotUnload(robot));
-			} else {
-				startDelegateAI(new AIRobotSleep(robot));
+		} else if (ai instanceof AIRobotGotoStationAndUnload) {
+			if (!ai.success()) {
+				startDelegateAI(new AIRobotGotoSleep(robot));
 			}
 		}
 	}
