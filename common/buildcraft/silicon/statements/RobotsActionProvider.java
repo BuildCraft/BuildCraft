@@ -17,6 +17,7 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.tileentity.TileEntity;
 
 import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraftforge.fluids.IFluidHandler;
 
 import buildcraft.BuildCraftSilicon;
 import buildcraft.api.gates.IAction;
@@ -67,6 +68,11 @@ public class RobotsActionProvider implements IActionProvider {
 				result.add(BuildCraftSilicon.actionStationProvideItems);
 				result.add(BuildCraftSilicon.actionStationRequestItems);
 				result.add(BuildCraftSilicon.actionStationAcceptItems);
+			}
+
+			if (((TileGenericPipe) pipe).getTile(dir) instanceof IFluidHandler) {
+				result.add(BuildCraftSilicon.actionStationAcceptFluids);
+				result.add(BuildCraftSilicon.actionStationProvideFluids);
 			}
 
 			if (((TileGenericPipe) pipe).getTile(dir) instanceof IRequestProvider) {

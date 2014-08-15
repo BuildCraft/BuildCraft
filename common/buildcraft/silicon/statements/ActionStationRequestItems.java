@@ -47,6 +47,11 @@ public class ActionStationRequestItems extends ActionStationInputItems {
 	}
 
 	@Override
+	public int minParameters() {
+		return 1;
+	}
+
+	@Override
 	public IActionParameter createParameter(int index) {
 		return new ActionParameterItemStack();
 	}
