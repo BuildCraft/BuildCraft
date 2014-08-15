@@ -52,6 +52,7 @@ import buildcraft.core.robots.boards.BoardRobotBuilderNBT;
 import buildcraft.core.robots.boards.BoardRobotButcherNBT;
 import buildcraft.core.robots.boards.BoardRobotCarrierNBT;
 import buildcraft.core.robots.boards.BoardRobotCrafterNBT;
+import buildcraft.core.robots.boards.BoardRobotDeliveryNBT;
 import buildcraft.core.robots.boards.BoardRobotFarmerNBT;
 import buildcraft.core.robots.boards.BoardRobotHarvesterNBT;
 import buildcraft.core.robots.boards.BoardRobotKnightNBT;
@@ -217,6 +218,7 @@ public class BuildCraftSilicon extends BuildCraftMod {
 		RedstoneBoardRegistry.instance.registerBoardClass(BoardRobotButcherNBT.instance, 5);
 		RedstoneBoardRegistry.instance.registerBoardClass(BoardRobotShovelmanNBT.instance, 5);
 		RedstoneBoardRegistry.instance.registerBoardClass(BoardRobotCrafterNBT.instance, 5);
+		RedstoneBoardRegistry.instance.registerBoardClass(BoardRobotDeliveryNBT.instance, 5);
 		RedstoneBoardRegistry.instance.registerBoardClass(BoardRobotKnightNBT.instance, 1);
 		RedstoneBoardRegistry.instance.registerBoardClass(BoardRobotBomberNBT.instance, 1);
 		RedstoneBoardRegistry.instance.registerBoardClass(BoardRobotBuilderNBT.instance, 0.5F);
@@ -227,18 +229,22 @@ public class BuildCraftSilicon extends BuildCraftMod {
 
 	@Mod.EventHandler
 	public void init(FMLInitializationEvent evt) {
-		channels = NetworkRegistry.INSTANCE.newChannel
+		channels = NetworkRegistry.INSTANCE
+				.newChannel
 				(DefaultProps.NET_CHANNEL_NAME + "-SILICON", new BuildCraftChannelHandler(), new PacketHandlerSilicon());
 
 		NetworkRegistry.INSTANCE.registerGuiHandler(instance, new GuiHandler());
 		CoreProxy.proxy.registerTileEntity(TileLaser.class, "net.minecraft.src.buildcraft.factory.TileLaser");
-		CoreProxy.proxy.registerTileEntity(TileAssemblyTable.class, "net.minecraft.src.buildcraft.factory.TileAssemblyTable");
-		CoreProxy.proxy.registerTileEntity(TileAdvancedCraftingTable.class, "net.minecraft.src.buildcraft.factory.TileAssemblyAdvancedWorkbench");
-		CoreProxy.proxy.registerTileEntity(TileIntegrationTable.class, "net.minecraft.src.buildcraft.factory.TileIntegrationTable");
+		CoreProxy.proxy.registerTileEntity(TileAssemblyTable.class,
+				"net.minecraft.src.buildcraft.factory.TileAssemblyTable");
+		CoreProxy.proxy.registerTileEntity(TileAdvancedCraftingTable.class,
+				"net.minecraft.src.buildcraft.factory.TileAssemblyAdvancedWorkbench");
+		CoreProxy.proxy.registerTileEntity(TileIntegrationTable.class,
+				"net.minecraft.src.buildcraft.factory.TileIntegrationTable");
 		CoreProxy.proxy.registerTileEntity(TileZonePlan.class, "net.minecraft.src.buildcraft.commander.TileZonePlan");
 		CoreProxy.proxy.registerTileEntity(TileRequester.class, "net.minecraft.src.buildcraft.commander.TileRequester");
 
-		SchematicRegistry.registerSchematicBlock(laserBlock, SchematicRotateMeta.class, new int[]{2, 5, 3, 4}, true);
+		SchematicRegistry.registerSchematicBlock(laserBlock, SchematicRotateMeta.class, new int[] {2, 5, 3, 4}, true);
 
 		if (BuildCraftCore.loadDefaultRecipes) {
 			loadRecipes();

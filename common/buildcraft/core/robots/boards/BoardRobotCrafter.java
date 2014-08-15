@@ -18,9 +18,7 @@ import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.ShapedRecipes;
 import net.minecraft.item.crafting.ShapelessRecipes;
-import net.minecraft.tileentity.TileEntity;
 
-import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
 
@@ -28,13 +26,11 @@ import buildcraft.api.boards.RedstoneBoardRobot;
 import buildcraft.api.boards.RedstoneBoardRobotNBT;
 import buildcraft.api.gates.ActionParameterItemStack;
 import buildcraft.api.gates.IActionParameter;
-import buildcraft.api.gates.IStatementParameter;
 import buildcraft.api.recipes.CraftingResult;
 import buildcraft.api.recipes.IFlexibleRecipe;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.api.robots.IDockingStation;
-import buildcraft.api.robots.IRequestProvider;
 import buildcraft.api.robots.StackRequest;
 import buildcraft.core.inventory.StackHelper;
 import buildcraft.core.recipes.AssemblyRecipeManager;
@@ -44,15 +40,12 @@ import buildcraft.core.robots.AIRobotCraftGeneric;
 import buildcraft.core.robots.AIRobotCraftWorkbench;
 import buildcraft.core.robots.AIRobotDeliverRequested;
 import buildcraft.core.robots.AIRobotGotoSleep;
+import buildcraft.core.robots.AIRobotGotoStationAndUnload;
 import buildcraft.core.robots.AIRobotGotoStationToUnload;
-import buildcraft.core.robots.AIRobotSearchStation;
+import buildcraft.core.robots.AIRobotSearchStackRequest;
 import buildcraft.core.robots.AIRobotUnload;
 import buildcraft.core.robots.DockingStation;
-import buildcraft.core.robots.IStationFilter;
 import buildcraft.silicon.statements.ActionRobotCraft;
-import buildcraft.silicon.statements.ActionStationRequestItems;
-import buildcraft.silicon.statements.ActionStationRequestItemsMachine;
-import buildcraft.transport.Pipe;
 import buildcraft.transport.gates.ActionIterator;
 import buildcraft.transport.gates.ActionSlot;
 
@@ -80,7 +73,7 @@ public class BoardRobotCrafter extends RedstoneBoardRobot {
 
 			// TODO: We should call load or drop, in order to clean items even
 			// if no destination is to be found
-			startDelegateAI(new AIRobotGotoStationToUnload(robot, robot.getZoneToWork()));
+			startDelegateAI(new AIRobotGotoStationAndUnload(robot, robot.getZoneToWork()));
 			return;
 		}
 
@@ -91,7 +84,7 @@ public class BoardRobotCrafter extends RedstoneBoardRobot {
 		}
 
 		if (order == null) {
-			startDelegateAI(new AIRobotSearchStation(robot, new StationProviderFilter(), robot.getZoneToWork()));
+			startDelegateAI(new AIRobotSearchStackRequest(robot, craftingBlacklist));
 			return;
 		}
 
@@ -141,16 +134,12 @@ public class BoardRobotCrafter extends RedstoneBoardRobot {
 			} else {
 				startDelegateAI(new AIRobotGotoSleep(robot));
 			}
-		} else if (ai instanceof AIRobotSearchStation) {
+		} else if (ai instanceof AIRobotSearchStackRequest) {
 			if (!ai.success()) {
 				craftingBlacklist.clear();
 				startDelegateAI(new AIRobotGotoSleep(robot));
 			} else {
-				currentRequest = getOrderFromRequestingAction(((AIRobotSearchStation) ai).targetStation);
-
-				if (currentRequest == null) {
-					currentRequest = getOrderFromRequestingStation(((AIRobotSearchStation) ai).targetStation, true);
-				}
+				currentRequest = ((AIRobotSearchStackRequest) ai).request;
 
 				if (!currentRequest.station.take(robot)) {
 					currentRequest = null;
@@ -236,82 +225,5 @@ public class BoardRobotCrafter extends RedstoneBoardRobot {
 		}
 
 		return null;
-	}
-
-	private StackRequest getOrderFromRequestingStation(DockingStation station, boolean take) {
-		boolean actionFound = false;
-
-		Pipe pipe = station.getPipe().pipe;
-
-		for (ActionSlot s : new ActionIterator(pipe)) {
-			if (s.action instanceof ActionStationRequestItemsMachine) {
-				actionFound = true;
-			}
-		}
-
-		if (!actionFound) {
-			return null;
-		}
-
-		for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
-			TileEntity nearbyTile = robot.worldObj.getTileEntity(station.x() + dir.offsetX, station.y()
-					+ dir.offsetY, station.z()
-					+ dir.offsetZ);
-
-			if (nearbyTile instanceof IRequestProvider) {
-				IRequestProvider provider = (IRequestProvider) nearbyTile;
-
-				for (int i = 0; i < provider.getNumberOfRequests(); ++i) {
-					StackRequest request = provider.getAvailableRequest(i);
-
-					if (request != null && !isBlacklisted(request.stack)) {
-						request.station = station;
-
-						if (take) {
-							if (provider.takeRequest(i, robot)) {
-								return request;
-							}
-						} else {
-							return request;
-						}
-					}
-				}
-			}
-		}
-
-		return null;
-	}
-
-	private StackRequest getOrderFromRequestingAction(DockingStation station) {
-		boolean actionFound = false;
-
-		Pipe pipe = station.getPipe().pipe;
-
-		for (ActionSlot s : new ActionIterator(pipe)) {
-			if (s.action instanceof ActionStationRequestItems) {
-				for (IStatementParameter p : s.parameters) {
-					ActionParameterItemStack param = (ActionParameterItemStack) p;
-
-					if (param != null && !isBlacklisted(param.getItemStackToDraw())) {
-						StackRequest req = new StackRequest();
-						req.station = station;
-						req.stack = param.getItemStackToDraw();
-
-						return req;
-					}
-				}
-			}
-		}
-
-		return null;
-	}
-
-	private class StationProviderFilter implements IStationFilter {
-
-		@Override
-		public boolean matches(DockingStation station) {
-			return getOrderFromRequestingAction(station) != null
-					|| getOrderFromRequestingStation(station, false) != null;
-		}
 	}
 }
