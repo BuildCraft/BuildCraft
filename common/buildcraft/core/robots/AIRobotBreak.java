@@ -55,6 +55,12 @@ public class AIRobotBreak extends AIRobot {
 
 	@Override
 	public void update() {
+		if (hardness == 0) {
+			// defensive code
+			terminate();
+			return;
+		}
+
 		blockDamage += speed / hardness / 30F;
 
 		if (blockDamage > 1.0F) {

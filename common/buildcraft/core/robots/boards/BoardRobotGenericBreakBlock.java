@@ -100,7 +100,7 @@ public abstract class BoardRobotGenericBreakBlock extends RedstoneBoardRobot {
 				@Override
 				public boolean matches(World world, int x, int y, int z) {
 					if (isExpectedBlock(world, x, y, z) && matchesGateFilter(world, x, y, z)) {
-						return robot.getRegistry().isTaken(new ResourceIdBlock(x, y, z));
+						return !robot.getRegistry().isTaken(new ResourceIdBlock(x, y, z));
 					} else {
 						return false;
 					}

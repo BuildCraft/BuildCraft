@@ -13,6 +13,7 @@ import java.util.WeakHashMap;
 
 import io.netty.buffer.ByteBuf;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -111,6 +112,9 @@ public class EntityRobot extends EntityRobotBase implements
 
 	private long robotId = EntityRobotBase.NULL_ROBOT_ID;
 
+	private float energySpendPerCycle = 0;
+	private float energyFX = 0;
+
 	public EntityRobot(World world, NBTTagCompound boardNBT) {
 		this(world);
 
@@ -156,6 +160,7 @@ public class EntityRobot extends EntityRobotBase implements
 		dataWatcher.addObject(16, "");
 		dataWatcher.addObject(17, Float.valueOf(0));
 		dataWatcher.addObject(18, Float.valueOf(0));
+		dataWatcher.addObject(19, Float.valueOf(0));
 	}
 
 	protected void updateDataClient() {
@@ -173,6 +178,7 @@ public class EntityRobot extends EntityRobotBase implements
 
 		itemAngle1 = dataWatcher.getWatchableObjectFloat(17);
 		itemAngle2 = dataWatcher.getWatchableObjectFloat(18);
+		energySpendPerCycle = dataWatcher.getWatchableObjectFloat(19);
 	}
 
 	protected void updateDataServer() {
@@ -182,6 +188,7 @@ public class EntityRobot extends EntityRobotBase implements
 		dataWatcher.updateObject(15, Byte.valueOf((byte) (laser.isVisible ? 1 : 0)));
 		dataWatcher.updateObject(17, Float.valueOf(itemAngle1));
 		dataWatcher.updateObject(18, Float.valueOf(itemAngle2));
+		dataWatcher.updateObject(19, energySpendPerCycle);
 	}
 
 	protected void init() {
@@ -238,6 +245,19 @@ public class EntityRobot extends EntityRobotBase implements
 
 		if (worldObj.isRemote) {
 			updateDataClient();
+
+			energyFX += energySpendPerCycle;
+
+			if (energyFX >= 10) {
+				energyFX = 0;
+				ForgeDirection dir = ForgeDirection.values()[worldObj.rand.nextInt(6)];
+				dir = ForgeDirection.UP;
+				Minecraft.getMinecraft().effectRenderer.addEffect(new EntityRobotEnergyFX(
+						worldObj,
+						posX + dir.offsetX * 0.25, posY + dir.offsetY * 0.25, posZ + dir.offsetZ * 0.25,
+						dir.offsetX * 0.05, dir.offsetY * 0.05, dir.offsetZ * 0.05,
+						energySpendPerCycle < 1 ? 1 : energySpendPerCycle));
+			}
 		}
 
 		if (currentDockingStation != null) {
@@ -281,6 +301,11 @@ public class EntityRobot extends EntityRobotBase implements
 
 			if (linkedDockingStation != null) {
 				mainAI.cycle();
+
+				if (energySpendPerCycle != (float) mainAI.getActiveAI().getEnergyCost()) {
+					energySpendPerCycle = (float) mainAI.getActiveAI().getEnergyCost();
+					needsUpdate = true;
+				}
 
 				if (mjStored <= 0) {
 					setDead();
