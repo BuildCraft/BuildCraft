@@ -25,6 +25,7 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EntityDamageSource;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 
 import cpw.mods.fml.common.registry.IEntityAdditionalSpawnData;
@@ -114,6 +115,9 @@ public class EntityRobot extends EntityRobotBase implements
 
 	private float energySpendPerCycle = 0;
 	private float energyFX = 0;
+	private int steamDx = 0;
+	private int steamDy = -1;
+	private int steamDz = 0;
 
 	public EntityRobot(World world, NBTTagCompound boardNBT) {
 		this(world);
@@ -250,12 +254,10 @@ public class EntityRobot extends EntityRobotBase implements
 
 			if (energyFX >= 10) {
 				energyFX = 0;
-				ForgeDirection dir = ForgeDirection.values()[worldObj.rand.nextInt(6)];
-				dir = ForgeDirection.DOWN;
 				Minecraft.getMinecraft().effectRenderer.addEffect(new EntityRobotEnergyFX(
 						worldObj,
-						posX + dir.offsetX * 0.25, posY + dir.offsetY * 0.25, posZ + dir.offsetZ * 0.25,
-						dir.offsetX * 0.05, dir.offsetY * 0.05, dir.offsetZ * 0.05,
+						posX + steamDx * 0.25, posY + steamDy * 0.25, posZ + steamDz * 0.25,
+						steamDx * 0.05, steamDy * 0.05, steamDz * 0.05,
 						energySpendPerCycle < 1 ? 1 : energySpendPerCycle));
 			}
 		}
@@ -519,6 +521,11 @@ public class EntityRobot extends EntityRobotBase implements
 	@Override
 	public void dock(IDockingStation station) {
 		currentDockingStation = (DockingStation) station;
+
+		setSteamDirection(
+				currentDockingStation.side.offsetX,
+				currentDockingStation.side.offsetY,
+				currentDockingStation.side.offsetZ);
 	}
 
 	@Override
@@ -526,6 +533,8 @@ public class EntityRobot extends EntityRobotBase implements
 		if (currentDockingStation != null) {
 			currentDockingStation.release(this);
 			currentDockingStation = null;
+
+			setSteamDirection(0, -1, 0);
 		}
 	}
 
@@ -651,6 +660,15 @@ public class EntityRobot extends EntityRobotBase implements
 		for (int i = 0; i < inv.length; ++i) {
 			RPCHandler.rpcPlayer(info.sender, this, "rpcClientSetInventory", i, inv[i]);
 		}
+
+		if (currentDockingStation != null) {
+			setSteamDirection(
+					currentDockingStation.side.offsetX,
+					currentDockingStation.side.offsetY,
+					currentDockingStation.side.offsetZ);
+		} else {
+			setSteamDirection(0, -1, 0);
+		}
 	}
 
 	@RPC(RPCSide.CLIENT)
@@ -685,6 +703,12 @@ public class EntityRobot extends EntityRobotBase implements
 			}
 		}
 
+		int xComp = (int) Math.floor(posX);
+		int yComp = (int) Math.floor(posY);
+		int zComp = (int) Math.floor(posZ);
+
+		setSteamDirection(xComp - x, yComp - y, zComp - z);
+
 		updateDataServer();
 	}
 
@@ -701,6 +725,24 @@ public class EntityRobot extends EntityRobotBase implements
 		itemActive = isActive;
 		itemActiveStage = 0;
 		lastUpdateTime = new Date().getTime();
+
+		if (!isActive) {
+			setSteamDirection(0, -1, 0);
+		}
+	}
+
+	@RPC(RPCSide.CLIENT)
+	private void setSteamDirection(int x, int y, int z) {
+		if (!worldObj.isRemote) {
+			RPCHandler.rpcBroadcastAllPlayers(this, "setSteamDirection", x, y, z);
+		} else {
+			Vec3 v = Vec3.createVectorHelper(x, y, z);
+			v.normalize();
+
+			steamDx = (int) v.xCoord;
+			steamDy = (int) v.yCoord;
+			steamDz = (int) v.zCoord;
+		}
 	}
 
 	@Override

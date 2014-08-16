@@ -325,6 +325,8 @@ public final class RPCHandler {
 			data.writeBoolean((Boolean) actual);
 		} else if (String.class.equals(formal)) {
 			Utils.writeUTF(data, (String) actual);
+		} else if (Enum.class.isAssignableFrom(formal)) {
+			data.writeByte((byte) ((Enum) (actual)).ordinal());
 		} else {
 			return false;
 		}
@@ -382,6 +384,8 @@ public final class RPCHandler {
 			actuals[i] = data.readBoolean();
 		} else if (String.class.equals(formal)) {
 			actuals[i] = Utils.readUTF(data);
+		} else if (Enum.class.isAssignableFrom(formal)) {
+			actuals[i] = ((Class) formal).getEnumConstants()[data.readByte()];
 		} else {
 			return false;
 		}
