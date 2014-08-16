@@ -34,6 +34,11 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidContainerRegistry;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidTankInfo;
+import net.minecraftforge.fluids.IFluidHandler;
 
 import buildcraft.BuildCraftSilicon;
 import buildcraft.api.boards.RedstoneBoardNBT;
@@ -59,7 +64,7 @@ import buildcraft.transport.gates.ActionIterator;
 import buildcraft.transport.gates.ActionSlot;
 
 public class EntityRobot extends EntityRobotBase implements
-		IEntityAdditionalSpawnData, IInventory {
+		IEntityAdditionalSpawnData, IInventory, IFluidHandler {
 
 	public static final ResourceLocation ROBOT_BASE = new ResourceLocation("buildcraft",
 			DefaultProps.TEXTURE_PATH_ENTITIES + "/robot_base.png");
@@ -99,6 +104,8 @@ public class EntityRobot extends EntityRobotBase implements
 
 	private boolean needsUpdate = false;
 	private ItemStack[] inv = new ItemStack[4];
+	private FluidStack tank;
+	private int maxFluid = FluidContainerRegistry.BUCKET_VOLUME * 4;
 	private String boardID;
 	private ResourceLocation texture;
 
@@ -258,7 +265,7 @@ public class EntityRobot extends EntityRobotBase implements
 						worldObj,
 						posX + steamDx * 0.25, posY + steamDy * 0.25, posZ + steamDz * 0.25,
 						steamDx * 0.05, steamDy * 0.05, steamDz * 0.05,
-						energySpendPerCycle < 1 ? 1 : energySpendPerCycle));
+						energySpendPerCycle * 0.75F < 1 ? 1 : energySpendPerCycle * 0.75F));
 			}
 		}
 
@@ -468,6 +475,14 @@ public class EntityRobot extends EntityRobotBase implements
 		}
 
 		nbt.setLong("robotId", robotId);
+
+		if (tank != null) {
+			NBTTagCompound tankNBT = new NBTTagCompound();
+
+			tank.writeToNBT(tankNBT);
+
+			nbt.setTag("tank", tankNBT);
+		}
     }
 
 	@Override
@@ -515,6 +530,12 @@ public class EntityRobot extends EntityRobotBase implements
 
 		if (nbt.hasKey("robotId")) {
 			robotId = nbt.getLong("robotId");
+		}
+
+		if (nbt.hasKey("tank")) {
+			tank = FluidStack.loadFluidStackFromNBT(nbt.getCompoundTag("tank"));
+		} else {
+			tank = null;
 		}
     }
 
@@ -926,5 +947,91 @@ public class EntityRobot extends EntityRobotBase implements
 		} else {
 			return stack;
 		}
+	}
+
+	@Override
+	public int fill(ForgeDirection from, FluidStack resource, boolean doFill) {
+		int result = 0;
+
+		if (tank == null) {
+			tank = new FluidStack(resource.getFluid(), 0);
+		}
+
+		if (tank.amount + resource.amount <= maxFluid) {
+			result = resource.amount;
+
+			if (doFill) {
+				tank.amount += resource.amount;
+			}
+		} else {
+			result = maxFluid - tank.amount;
+
+			if (doFill) {
+				tank.amount = maxFluid;
+			}
+		}
+
+		if (tank != null && tank.amount == 0) {
+			tank = null;
+		}
+
+		return result;
+	}
+
+	@Override
+	public FluidStack drain(ForgeDirection from, FluidStack resource, boolean doDrain) {
+		if (tank != null && tank.fluidID == resource.fluidID) {
+			return drain(from, resource.amount, doDrain);
+		} else {
+			return null;
+		}
+	}
+
+	@Override
+	public FluidStack drain(ForgeDirection from, int maxDrain, boolean doDrain) {
+		FluidStack result = null;
+
+		if (tank == null) {
+			result = null;
+		} else if (tank.amount <= maxDrain) {
+			result = tank.copy();
+
+			if (doDrain) {
+				tank = null;
+			}
+		} else {
+			result = tank.copy();
+			result.amount = maxDrain;
+
+			if (doDrain) {
+				tank.amount -= maxDrain;
+			}
+		}
+
+		if (tank != null && tank.amount == 0) {
+			tank = null;
+		}
+
+		return result;
+	}
+
+	@Override
+	public boolean canFill(ForgeDirection from, Fluid fluid) {
+		return tank == null
+				|| tank.amount == 0
+				|| (tank.amount < maxFluid
+				&& tank.fluidID == fluid.getID());
+	}
+
+	@Override
+	public boolean canDrain(ForgeDirection from, Fluid fluid) {
+		return tank != null
+				&& tank.amount != 0
+				&& tank.fluidID == fluid.getID();
+	}
+
+	@Override
+	public FluidTankInfo[] getTankInfo(ForgeDirection from) {
+		return new FluidTankInfo[] {new FluidTankInfo(tank, maxFluid)};
 	}
 }

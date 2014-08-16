@@ -14,10 +14,12 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
+import net.minecraftforge.fluids.IFluidHandler;
+
 import buildcraft.api.boards.RedstoneBoardRobot;
 import buildcraft.api.core.IZone;
 
-public abstract class EntityRobotBase extends EntityLiving implements IInventory {
+public abstract class EntityRobotBase extends EntityLiving implements IInventory, IFluidHandler {
 
 	public static final double MAX_ENERGY = 10000;
 	public static final double SAFETY_ENERGY = MAX_ENERGY / 4;

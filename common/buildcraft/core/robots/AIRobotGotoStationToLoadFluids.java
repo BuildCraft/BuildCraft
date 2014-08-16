@@ -1,5 +1,5 @@
 /**
-drainable * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
+ * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
  *
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
@@ -8,37 +8,33 @@ drainable * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
  */
 package buildcraft.core.robots;
 
-import net.minecraft.inventory.IInventory;
 import net.minecraft.tileentity.TileEntity;
 
 import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.IFluidHandler;
 
 import buildcraft.api.core.IZone;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
-import buildcraft.core.inventory.ITransactor;
-import buildcraft.core.inventory.Transactor;
-import buildcraft.core.inventory.filters.IStackFilter;
 import buildcraft.core.inventory.filters.StatementParameterStackFilter;
-import buildcraft.silicon.statements.ActionStationProvideItems;
+import buildcraft.silicon.statements.ActionStationProvideFluids;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.gates.ActionIterator;
 import buildcraft.transport.gates.ActionSlot;
 
-public class AIRobotGotoStationToLoad extends AIRobot {
+public class AIRobotGotoStationToLoadFluids extends AIRobot {
 
 	private boolean found = false;
-	private IStackFilter filter;
 	private IZone zone;
 
-	public AIRobotGotoStationToLoad(EntityRobotBase iRobot) {
+	public AIRobotGotoStationToLoadFluids(EntityRobotBase iRobot) {
 		super(iRobot);
 	}
 
-	public AIRobotGotoStationToLoad(EntityRobotBase iRobot, IStackFilter iFilter, IZone iZone) {
+	public AIRobotGotoStationToLoadFluids(EntityRobotBase iRobot, IZone iZone) {
 		super(iRobot);
 
-		filter = iFilter;
 		zone = iZone;
 	}
 
@@ -50,7 +46,7 @@ public class AIRobotGotoStationToLoad extends AIRobot {
 	@Override
 	public void delegateAIEnded(AIRobot ai) {
 		if (ai instanceof AIRobotSearchAndGotoStation) {
-			found = ((AIRobotSearchAndGotoStation) ai).targetStation != null;
+			found = ai.success();
 
 			terminate();
 		}
@@ -70,13 +66,16 @@ public class AIRobotGotoStationToLoad extends AIRobot {
 			Pipe pipe = station.getPipe().pipe;
 
 			for (ActionSlot s : new ActionIterator(pipe)) {
-				if (s.action instanceof ActionStationProvideItems) {
+				if (s.action instanceof ActionStationProvideFluids) {
 					StatementParameterStackFilter param = new StatementParameterStackFilter(s.parameters);
 
-					if (!param.hasFilter() || param.matches(filter)) {
-						actionFound = true;
-						break;
-					}
+					/*
+					 * if (!param.hasFilter() || param.matches(filter)) {
+					 * actionFound = true; break; }
+					 */
+
+					actionFound = true;
+					break;
 				}
 			}
 
@@ -89,10 +88,11 @@ public class AIRobotGotoStationToLoad extends AIRobot {
 						+ dir.offsetY, station.z()
 						+ dir.offsetZ);
 
-				if (nearbyTile != null && nearbyTile instanceof IInventory) {
-					ITransactor trans = Transactor.getTransactorFor(nearbyTile);
+				if (nearbyTile != null && nearbyTile instanceof IFluidHandler) {
+					IFluidHandler handler = (IFluidHandler) nearbyTile;
+					FluidStack drainable = handler.drain(station.side, 1, false);
 
-					if (trans.remove(filter, dir.getOpposite(), false) != null) {
+					if (robot.canFill(ForgeDirection.UNKNOWN, drainable.getFluid())) {
 						return true;
 					}
 				}
