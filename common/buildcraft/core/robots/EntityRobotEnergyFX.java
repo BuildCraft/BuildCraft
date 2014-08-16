@@ -16,10 +16,8 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
-public class EntityRobotEnergyFX extends EntityFX
-{
-	float smokeParticleScale;
-	private static final String __OBFID = "CL_00000924";
+public class EntityRobotEnergyFX extends EntityFX {
+	private float smokeParticleScale;
 
 	public EntityRobotEnergyFX(World world, double x, double y, double z,
 			double vx,
@@ -49,9 +47,9 @@ public class EntityRobotEnergyFX extends EntityFX
 	}
 
 	@Override
-	public void renderParticle(Tessellator p_70539_1_, float p_70539_2_, float p_70539_3_, float p_70539_4_,
-			float p_70539_5_, float p_70539_6_, float p_70539_7_) {
-		float f6 = (this.particleAge + p_70539_2_) / this.particleMaxAge * 32.0F;
+	public void renderParticle(Tessellator tesslator, float p2, float p3, float p4,
+			float p5, float p6, float p7) {
+		float f6 = (this.particleAge + p2) / this.particleMaxAge * 32.0F;
 
 		if (f6 < 0.0F) {
 			f6 = 0.0F;
@@ -62,15 +60,14 @@ public class EntityRobotEnergyFX extends EntityFX
 		}
 
 		this.particleScale = this.smokeParticleScale * f6;
-		super.renderParticle(p_70539_1_, p_70539_2_, p_70539_3_, p_70539_4_, p_70539_5_, p_70539_6_, p_70539_7_);
+		super.renderParticle(tesslator, p2, p3, p4, p5, p6, p7);
 	}
 
 	/**
 	 * Called to update the entity's position/logic.
 	 */
 	@Override
-	public void onUpdate()
-	{
+	public void onUpdate() {
 		this.prevPosX = this.posX;
 		this.prevPosY = this.posY;
 		this.prevPosZ = this.posZ;

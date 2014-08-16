@@ -40,7 +40,7 @@ public class RenderRobot extends Render implements IItemRenderer {
 	private final EntityItem dummyEntityItem = new EntityItem(null);
 	private final RenderItem customRenderItem;
 
-	protected ModelBase model = new ModelBase() {
+	private ModelBase model = new ModelBase() {
 	};
 	private ModelRenderer box;
 

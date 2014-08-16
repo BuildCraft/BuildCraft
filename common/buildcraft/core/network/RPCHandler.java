@@ -326,7 +326,7 @@ public final class RPCHandler {
 		} else if (String.class.equals(formal)) {
 			Utils.writeUTF(data, (String) actual);
 		} else if (Enum.class.isAssignableFrom(formal)) {
-			data.writeByte((byte) ((Enum) (actual)).ordinal());
+			data.writeByte((byte) ((Enum) actual).ordinal());
 		} else {
 			return false;
 		}
