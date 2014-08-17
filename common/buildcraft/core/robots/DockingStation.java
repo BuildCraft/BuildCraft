@@ -100,7 +100,7 @@ public class DockingStation implements IDockingStation {
 	}
 
 	public boolean takeAsMain(EntityRobotBase robot) {
-		if (robotTaking == null) {
+		if (robotTakingId == EntityRobotBase.NULL_ROBOT_ID) {
 			linkIsMain = true;
 			robotTaking = robot;
 			robotTakingId = robot.getRobotId();
@@ -111,7 +111,7 @@ public class DockingStation implements IDockingStation {
 
 			return true;
 		} else {
-			return false;
+			return robotTakingId == robot.getRobotId();
 		}
 	}
 

@@ -66,6 +66,11 @@ public class AIRobotCraftWorkbench extends AIRobotCraftGeneric {
 
 	@Override
 	public void update() {
+		if (recipe == null) {
+			// loading error
+			terminate();
+			return;
+		}
 
 		// [1] look for a crafting order
 		// -- if none, clear temporary item blacklist and sleep

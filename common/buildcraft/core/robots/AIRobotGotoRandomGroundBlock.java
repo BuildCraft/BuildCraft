@@ -46,8 +46,12 @@ public class AIRobotGotoRandomGroundBlock extends AIRobot {
 		} else {
 			if (!pathFindingJob.isAlive()) {
 				LinkedList<BlockIndex> path = pathFinding.getResult();
-				path.removeLast();
-				startDelegateAI(new AIRobotGotoBlock(robot, path));
+				if (path.size() == 0) {
+					terminate();
+				} else {
+					path.removeLast();
+					startDelegateAI(new AIRobotGotoBlock(robot, path));
+				}
 			}
 		}
 	}

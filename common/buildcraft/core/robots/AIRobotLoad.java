@@ -49,6 +49,12 @@ public class AIRobotLoad extends AIRobot {
 
 	@Override
 	public void update() {
+		if (filter == null) {
+			// loading error
+			terminate();
+			return;
+		}
+
 		waitedCycles++;
 
 		if (waitedCycles > 40) {
