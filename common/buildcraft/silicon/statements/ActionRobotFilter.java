@@ -106,6 +106,25 @@ public class ActionRobotFilter extends BCActionPassive {
 		}
 	}
 
+	public static boolean canInteractWithItem(DockingStation station, IStackFilter filter, Class<?> actionClass) {
+		boolean actionFound = false;
+
+		Pipe pipe = station.getPipe().pipe;
+
+		for (ActionSlot s : new ActionIterator(pipe)) {
+			if (actionClass.isAssignableFrom(s.action.getClass())) {
+				StatementParameterStackFilter param = new StatementParameterStackFilter(s.parameters);
+
+				if (!param.hasFilter() || param.matches(filter)) {
+					actionFound = true;
+					break;
+				}
+			}
+		}
+
+		return actionFound;
+	}
+
 	public static boolean canInteractWithFluid(DockingStation station, IFluidFilter filter, Class<?> actionClass) {
 		boolean actionFound = false;
 		Pipe pipe = station.getPipe().pipe;

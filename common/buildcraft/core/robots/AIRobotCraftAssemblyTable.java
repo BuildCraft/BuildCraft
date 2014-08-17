@@ -31,6 +31,8 @@ import buildcraft.core.inventory.filters.ArrayStackFilter;
 import buildcraft.core.inventory.filters.IStackFilter;
 import buildcraft.silicon.BlockLaserTable;
 import buildcraft.silicon.TileAssemblyTable;
+import buildcraft.silicon.statements.ActionRobotFilter;
+import buildcraft.silicon.statements.ActionStationAllowCraft;
 
 public class AIRobotCraftAssemblyTable extends AIRobotCraftGeneric {
 
@@ -207,6 +209,11 @@ public class AIRobotCraftAssemblyTable extends AIRobotCraftGeneric {
 
 		@Override
 		public boolean matches(DockingStation station) {
+			if (!ActionRobotFilter.canInteractWithItem(station, new ArrayStackFilter(expectedResult.crafted),
+					ActionStationAllowCraft.class)) {
+				return false;
+			}
+
 			for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
 				if (getUsableAssemblyTable(new BlockIndex(station.x(), station.y(), station.z())) != null) {
 					return true;

@@ -25,6 +25,8 @@ import buildcraft.core.inventory.StackHelper;
 import buildcraft.core.inventory.Transactor;
 import buildcraft.core.inventory.filters.ArrayStackFilter;
 import buildcraft.core.inventory.filters.IStackFilter;
+import buildcraft.silicon.statements.ActionRobotFilter;
+import buildcraft.silicon.statements.ActionStationAllowCraft;
 
 public class AIRobotCraftFurnace extends AIRobotCraftGeneric {
 
@@ -38,15 +40,17 @@ public class AIRobotCraftFurnace extends AIRobotCraftGeneric {
 	private boolean craftStarted = false;
 
 	private int waitedTime = 0;
+	private ItemStack expectedOutput;
 
 	public AIRobotCraftFurnace(EntityRobotBase iRobot) {
 		super(iRobot);
 	}
 
-	public AIRobotCraftFurnace(EntityRobotBase iRobot, ItemStack iInput) {
+	public AIRobotCraftFurnace(EntityRobotBase iRobot, ItemStack iInput, ItemStack iOutput) {
 		super(iRobot);
 
 		input = iInput;
+		expectedOutput = iOutput;
 	}
 
 	@Override
@@ -158,6 +162,11 @@ public class AIRobotCraftFurnace extends AIRobotCraftGeneric {
 
 		@Override
 		public boolean matches(DockingStation station) {
+			if (!ActionRobotFilter.canInteractWithItem(station, new ArrayStackFilter(expectedOutput),
+					ActionStationAllowCraft.class)) {
+				return false;
+			}
+
 			for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
 				if (getUsableFurnace(new BlockIndex(station.x(), station.y(), station.z())) != null) {
 					return true;

@@ -15,20 +15,20 @@ import buildcraft.api.gates.IActionParameter;
 import buildcraft.core.triggers.BCActionPassive;
 import buildcraft.core.utils.StringUtils;
 
-public class ActionRobotCraft extends BCActionPassive {
+public class ActionStationAllowCraft extends BCActionPassive {
 
-	public ActionRobotCraft() {
-		super("buildcraft:station.craft");
+	public ActionStationAllowCraft() {
+		super("buildcraft:robot.allow_craft");
 	}
 
 	@Override
 	public String getDescription() {
-		return StringUtils.localize("gate.action.station.craft");
+		return StringUtils.localize("gate.action.station.allow_craft");
 	}
 
 	@Override
 	public void registerIcons(IIconRegister iconRegister) {
-		icon = iconRegister.registerIcon("buildcraft:triggers/action_robot_craft");
+		icon = iconRegister.registerIcon("buildcraft:triggers/action_station_allow_craft");
 	}
 
 	@Override

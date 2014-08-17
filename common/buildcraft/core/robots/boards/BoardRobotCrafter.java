@@ -24,8 +24,6 @@ import net.minecraftforge.oredict.ShapelessOreRecipe;
 
 import buildcraft.api.boards.RedstoneBoardRobot;
 import buildcraft.api.boards.RedstoneBoardRobotNBT;
-import buildcraft.api.gates.ActionParameterItemStack;
-import buildcraft.api.gates.IActionParameter;
 import buildcraft.api.recipes.CraftingResult;
 import buildcraft.api.recipes.IFlexibleRecipe;
 import buildcraft.api.robots.AIRobot;
@@ -44,10 +42,7 @@ import buildcraft.core.robots.AIRobotGotoSleep;
 import buildcraft.core.robots.AIRobotGotoStationToUnload;
 import buildcraft.core.robots.AIRobotSearchStackRequest;
 import buildcraft.core.robots.AIRobotUnload;
-import buildcraft.core.robots.DockingStation;
-import buildcraft.silicon.statements.ActionRobotCraft;
-import buildcraft.transport.gates.ActionIterator;
-import buildcraft.transport.gates.ActionSlot;
+import buildcraft.silicon.statements.ActionRobotFilter;
 
 public class BoardRobotCrafter extends RedstoneBoardRobot {
 
@@ -75,14 +70,15 @@ public class BoardRobotCrafter extends RedstoneBoardRobot {
 			return;
 		}
 
-		if (currentRequest == null) {
-			order = getOrderFromHomeStation();
-		} else {
+		if (currentRequest != null) {
 			order = currentRequest.stack;
+		} else {
+			order = null;
 		}
 
 		if (order == null) {
-			startDelegateAI(new AIRobotSearchStackRequest(robot, craftingBlacklist));
+			startDelegateAI(new AIRobotSearchStackRequest(robot, ActionRobotFilter.getGateFilter(robot
+					.getLinkedStation()), craftingBlacklist));
 			return;
 		}
 
@@ -96,7 +92,7 @@ public class BoardRobotCrafter extends RedstoneBoardRobot {
 		ItemStack furnaceInput = lookForFurnaceRecipe(order);
 
 		if (furnaceInput != null) {
-			startDelegateAI(new AIRobotCraftFurnace(robot, furnaceInput));
+			startDelegateAI(new AIRobotCraftFurnace(robot, furnaceInput, order));
 			return;
 		}
 
@@ -202,26 +198,5 @@ public class BoardRobotCrafter extends RedstoneBoardRobot {
 		}
 
 		return false;
-	}
-
-	private ItemStack getOrderFromHomeStation() {
-		DockingStation s = (DockingStation) robot.getLinkedStation();
-
-		for (ActionSlot slot : new ActionIterator(s.getPipe().pipe)) {
-			if (slot.action instanceof ActionRobotCraft) {
-				for (IActionParameter p : slot.parameters) {
-					if (p != null && p instanceof ActionParameterItemStack) {
-						ActionParameterItemStack param = (ActionParameterItemStack) p;
-						ItemStack stack = param.getItemStackToDraw();
-
-						if (stack != null && !isBlacklisted(stack)) {
-							return stack;
-						}
-					}
-				}
-			}
-		}
-
-		return null;
 	}
 }

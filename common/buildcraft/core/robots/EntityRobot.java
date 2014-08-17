@@ -288,7 +288,8 @@ public class EntityRobot extends EntityRobotBase implements
 
 				linkedDockingStationIndex = null;
 
-				if (linkedDockingStation.robotTaking() != this) {
+				if (linkedDockingStation == null
+						|| linkedDockingStation.robotTaking() != this) {
 					// Error at load time, the expected linked stations is not
 					// properly set, kill this robot.
 

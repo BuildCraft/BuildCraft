@@ -24,6 +24,7 @@ import buildcraft.core.robots.AIRobotDisposeItems;
 import buildcraft.core.robots.AIRobotGotoSleep;
 import buildcraft.core.robots.AIRobotGotoStationAndLoad;
 import buildcraft.core.robots.AIRobotSearchStackRequest;
+import buildcraft.silicon.statements.ActionRobotFilter;
 
 public class BoardRobotDelivery extends RedstoneBoardRobot {
 
@@ -51,7 +52,8 @@ public class BoardRobotDelivery extends RedstoneBoardRobot {
 		}
 
 		if (currentRequest == null) {
-			startDelegateAI(new AIRobotSearchStackRequest(robot, deliveryBlacklist));
+			startDelegateAI(new AIRobotSearchStackRequest(robot, ActionRobotFilter.getGateFilter(robot
+					.getLinkedStation()), deliveryBlacklist));
 		} else {
 			startDelegateAI(new AIRobotGotoStationAndLoad(robot, new ReqFilter(), robot.getZoneToWork()));
 		}

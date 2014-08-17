@@ -44,10 +44,10 @@ public final class TileBuffer {
 			return;
 		}
 
-		block = world.getBlock(this.x, this.y, this.z);
+		block = world.getBlock(x, y, z);
 
-		if (block != null && block.hasTileEntity(world.getBlockMetadata(this.x, this.y, this.z))) {
-			tile = world.getTileEntity(this.x, this.y, this.z);
+		if (block != null && block.hasTileEntity(world.getBlockMetadata(x, y, z))) {
+			tile = world.getTileEntity(x, y, z);
 		}
 	}
 
@@ -59,19 +59,11 @@ public final class TileBuffer {
 
 
 	public Block getBlock() {
-		if (tile != null && !tile.isInvalid()) {
-			return block;
-		}
-
-		if (tracker.markTimeIfDelay(world)) {
+		if ((tile != null && tile.isInvalid()) || (tile == null && tracker.markTimeIfDelay(world))) {
 			refresh();
-
-			if (tile != null && !tile.isInvalid()) {
-				return block;
-			}
 		}
 
-		return null;
+		return block;
 	}
 
 	public TileEntity getTile() {

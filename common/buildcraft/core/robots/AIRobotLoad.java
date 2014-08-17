@@ -21,10 +21,8 @@ import buildcraft.core.inventory.ITransactor;
 import buildcraft.core.inventory.InventoryIterator;
 import buildcraft.core.inventory.Transactor;
 import buildcraft.core.inventory.filters.IStackFilter;
-import buildcraft.core.inventory.filters.StatementParameterStackFilter;
+import buildcraft.silicon.statements.ActionRobotFilter;
 import buildcraft.silicon.statements.ActionStationProvideItems;
-import buildcraft.transport.gates.ActionIterator;
-import buildcraft.transport.gates.ActionSlot;
 
 public class AIRobotLoad extends AIRobot {
 
@@ -76,21 +74,9 @@ public class AIRobotLoad extends AIRobot {
 						ItemStack stack = slot.getStackInSlot();
 
 						if (stack != null) {
-							boolean allowed = false;
+							if (ActionRobotFilter.canInteractWithItem(station, filter, ActionStationProvideItems.class)
+									&& filter.matches(stack)) {
 
-							for (ActionSlot s : new ActionIterator(station.getPipe().pipe)) {
-								if (s.action instanceof ActionStationProvideItems) {
-									StatementParameterStackFilter param = new StatementParameterStackFilter(
-											s.parameters);
-
-									if (!param.hasFilter() || param.matches(stack)) {
-										allowed = true;
-										break;
-									}
-								}
-							}
-
-							if (allowed && filter.matches(stack)) {
 								ITransactor t = Transactor.getTransactorFor(robot);
 
 								if (quantity == -1) {

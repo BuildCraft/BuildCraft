@@ -22,6 +22,8 @@ import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.api.robots.IRequestProvider;
 import buildcraft.api.robots.StackRequest;
 import buildcraft.core.inventory.StackHelper;
+import buildcraft.core.inventory.filters.IStackFilter;
+import buildcraft.silicon.statements.ActionRobotFilter;
 import buildcraft.silicon.statements.ActionStationRequestItems;
 import buildcraft.silicon.statements.ActionStationRequestItemsMachine;
 import buildcraft.transport.Pipe;
@@ -34,14 +36,17 @@ public class AIRobotSearchStackRequest extends AIRobot {
 
 	private Collection<ItemStack> blackList;
 
+	private IStackFilter filter;
+
 	public AIRobotSearchStackRequest(EntityRobotBase iRobot) {
 		super(iRobot);
 	}
 
-	public AIRobotSearchStackRequest(EntityRobotBase iRobot, Collection<ItemStack> iBlackList) {
+	public AIRobotSearchStackRequest(EntityRobotBase iRobot, IStackFilter iFilter, Collection<ItemStack> iBlackList) {
 		super(iRobot);
 
 		blackList = iBlackList;
+		filter = iFilter;
 	}
 
 	@Override
@@ -82,17 +87,7 @@ public class AIRobotSearchStackRequest extends AIRobot {
 	}
 
 	private StackRequest getOrderFromRequestingStation(DockingStation station, boolean take) {
-		boolean actionFound = false;
-
-		Pipe pipe = station.getPipe().pipe;
-
-		for (ActionSlot s : new ActionIterator(pipe)) {
-			if (s.action instanceof ActionStationRequestItemsMachine) {
-				actionFound = true;
-			}
-		}
-
-		if (!actionFound) {
+		if (!ActionRobotFilter.canInteractWithItem(station, filter, ActionStationRequestItemsMachine.class)) {
 			return null;
 		}
 
@@ -107,7 +102,9 @@ public class AIRobotSearchStackRequest extends AIRobot {
 				for (int i = 0; i < provider.getNumberOfRequests(); ++i) {
 					StackRequest requestFound = provider.getAvailableRequest(i);
 
-					if (requestFound != null && !isBlacklisted(requestFound.stack)) {
+					if (requestFound != null
+							&& !isBlacklisted(requestFound.stack)
+							&& filter.matches(requestFound.stack)) {
 						requestFound.station = station;
 
 						if (take) {

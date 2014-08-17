@@ -99,7 +99,9 @@ public class ItemRobotStation extends ItemBuildCraft {
 
 		@Override
 		public void invalidate() {
-			if (station != null && !station.getPipe().getWorld().isRemote) {
+			if (station != null
+					&& station.getPipe() != null
+					&& !station.getPipe().getWorld().isRemote) {
 				RobotRegistry.getRegistry(station.world).removeStation(station);
 				isValid = false;
 			}

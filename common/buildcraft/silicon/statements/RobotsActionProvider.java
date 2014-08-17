@@ -13,8 +13,10 @@ import java.util.Collection;
 import java.util.LinkedList;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockWorkbench;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.TileEntityFurnace;
 
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.IFluidHandler;
@@ -25,7 +27,7 @@ import buildcraft.api.gates.IActionProvider;
 import buildcraft.api.robots.IRequestProvider;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.core.robots.DockingStation;
-import buildcraft.core.robots.boards.BoardRobotCrafter;
+import buildcraft.silicon.TileAssemblyTable;
 import buildcraft.transport.PipeTransportItems;
 import buildcraft.transport.TileGenericPipe;
 
@@ -53,30 +55,33 @@ public class RobotsActionProvider implements IActionProvider {
 		result.add(BuildCraftSilicon.actionRobotFilter);
 		result.add(BuildCraftSilicon.actionStationForbidRobot);
 
-		for (DockingStation s : stations) {
-			if (s.robotTaking() != null && s.robotTaking().getBoard() instanceof BoardRobotCrafter) {
-				result.add(BuildCraftSilicon.actionRobotCraft);
-			}
-		}
-
 		if (((TileGenericPipe) pipe).pipe.transport instanceof PipeTransportItems) {
 			result.add(BuildCraftSilicon.actionStationDropInPipe);
 		}
 
 		for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
-			if (((TileGenericPipe) pipe).getTile(dir) instanceof IInventory) {
+			TileEntity tile = ((TileGenericPipe) pipe).getTile(dir);
+			Block block = ((TileGenericPipe) pipe).getBlock(dir);
+
+			if (tile instanceof IInventory) {
 				result.add(BuildCraftSilicon.actionStationProvideItems);
 				result.add(BuildCraftSilicon.actionStationRequestItems);
 				result.add(BuildCraftSilicon.actionStationAcceptItems);
 			}
 
-			if (((TileGenericPipe) pipe).getTile(dir) instanceof IFluidHandler) {
+			if (tile instanceof IFluidHandler) {
 				result.add(BuildCraftSilicon.actionStationAcceptFluids);
 				result.add(BuildCraftSilicon.actionStationProvideFluids);
 			}
 
-			if (((TileGenericPipe) pipe).getTile(dir) instanceof IRequestProvider) {
+			if (tile instanceof IRequestProvider) {
 				result.add(BuildCraftSilicon.actionStationMachineRequestItems);
+			}
+
+			if (tile instanceof TileEntityFurnace
+					|| tile instanceof TileAssemblyTable
+					|| block instanceof BlockWorkbench) {
+				result.add(BuildCraftSilicon.actionRobotAllowCraft);
 			}
 		}
 

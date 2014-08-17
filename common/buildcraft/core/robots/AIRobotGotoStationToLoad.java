@@ -19,11 +19,8 @@ import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.inventory.ITransactor;
 import buildcraft.core.inventory.Transactor;
 import buildcraft.core.inventory.filters.IStackFilter;
-import buildcraft.core.inventory.filters.StatementParameterStackFilter;
+import buildcraft.silicon.statements.ActionRobotFilter;
 import buildcraft.silicon.statements.ActionStationProvideItems;
-import buildcraft.transport.Pipe;
-import buildcraft.transport.gates.ActionIterator;
-import buildcraft.transport.gates.ActionSlot;
 
 public class AIRobotGotoStationToLoad extends AIRobot {
 
@@ -65,22 +62,7 @@ public class AIRobotGotoStationToLoad extends AIRobot {
 
 		@Override
 		public boolean matches(DockingStation station) {
-			boolean actionFound = false;
-
-			Pipe pipe = station.getPipe().pipe;
-
-			for (ActionSlot s : new ActionIterator(pipe)) {
-				if (s.action instanceof ActionStationProvideItems) {
-					StatementParameterStackFilter param = new StatementParameterStackFilter(s.parameters);
-
-					if (!param.hasFilter() || param.matches(filter)) {
-						actionFound = true;
-						break;
-					}
-				}
-			}
-
-			if (!actionFound) {
+			if (!ActionRobotFilter.canInteractWithItem(station, filter, ActionStationProvideItems.class)) {
 				return false;
 			}
 
