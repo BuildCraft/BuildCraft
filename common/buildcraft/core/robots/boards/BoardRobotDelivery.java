@@ -82,6 +82,7 @@ public class BoardRobotDelivery extends RedstoneBoardRobot {
 			}
 		} else if (ai instanceof AIRobotDeliverRequested) {
 			robot.releaseResources();
+			currentRequest = null;
 		}
 	}
 

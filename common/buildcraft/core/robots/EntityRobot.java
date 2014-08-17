@@ -286,8 +286,6 @@ public class EntityRobot extends EntityRobotBase implements
 						linkedDockingStationIndex.z,
 						linkedDockingStationSide);
 
-				linkedDockingStationIndex = null;
-
 				if (linkedDockingStation == null
 						|| linkedDockingStation.robotTaking() != this) {
 					// Error at load time, the expected linked stations is not
@@ -298,15 +296,13 @@ public class EntityRobot extends EntityRobotBase implements
 				}
 			}
 
-			if (currentDockingStationIndex != null) {
+			if (currentDockingStationIndex != null && currentDockingStation == null) {
 				currentDockingStation = (DockingStation)
 						RobotRegistry.getRegistry(worldObj).getStation(
 						currentDockingStationIndex.x,
 						currentDockingStationIndex.y,
 						currentDockingStationIndex.z,
 						currentDockingStationSide);
-
-				currentDockingStationIndex = null;
 			}
 
 			if (linkedDockingStation != null) {
@@ -428,17 +424,17 @@ public class EntityRobot extends EntityRobotBase implements
 
 		NBTTagCompound linkedStationNBT = new NBTTagCompound();
 		NBTTagCompound linkedStationIndexNBT = new NBTTagCompound();
-		linkedDockingStation.index().writeTo(linkedStationIndexNBT);
+		linkedDockingStationIndex.writeTo(linkedStationIndexNBT);
 		linkedStationNBT.setTag("index", linkedStationIndexNBT);
-		linkedStationNBT.setByte("side", (byte) linkedDockingStation.side().ordinal());
+		linkedStationNBT.setByte("side", (byte) linkedDockingStationSide.ordinal());
 		nbt.setTag("linkedStation", linkedStationNBT);
 
-		if (currentDockingStation != null) {
+		if (currentDockingStationIndex != null) {
 			NBTTagCompound currentStationNBT = new NBTTagCompound();
 			NBTTagCompound currentStationIndexNBT = new NBTTagCompound();
-			currentDockingStation.index().writeTo(currentStationIndexNBT);
+			currentDockingStationIndex.writeTo(currentStationIndexNBT);
 			currentStationNBT.setTag("index", currentStationIndexNBT);
-			currentStationNBT.setByte("side", (byte) currentDockingStation.side().ordinal());
+			currentStationNBT.setByte("side", (byte) currentDockingStationSide.ordinal());
 			nbt.setTag("currentStation", currentStationNBT);
 		}
 
@@ -548,6 +544,9 @@ public class EntityRobot extends EntityRobotBase implements
 				currentDockingStation.side.offsetX,
 				currentDockingStation.side.offsetY,
 				currentDockingStation.side.offsetZ);
+
+		currentDockingStationIndex = currentDockingStation.index();
+		currentDockingStationSide = currentDockingStation.side();
 	}
 
 	@Override
@@ -557,6 +556,9 @@ public class EntityRobot extends EntityRobotBase implements
 			currentDockingStation = null;
 
 			setSteamDirection(0, -1, 0);
+
+			currentDockingStationIndex = null;
+			currentDockingStationSide = null;
 		}
 	}
 
@@ -573,6 +575,8 @@ public class EntityRobot extends EntityRobotBase implements
 		}
 
 		linkedDockingStation = station;
+		linkedDockingStationIndex = linkedDockingStation.index();
+		linkedDockingStationSide = linkedDockingStation.side();
 	}
 
 	@Override
