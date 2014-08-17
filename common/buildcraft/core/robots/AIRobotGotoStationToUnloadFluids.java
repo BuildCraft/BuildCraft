@@ -17,25 +17,25 @@ import net.minecraftforge.fluids.IFluidHandler;
 import buildcraft.api.core.IZone;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
-import buildcraft.core.inventory.filters.StatementParameterStackFilter;
+import buildcraft.core.inventory.filters.IFluidFilter;
+import buildcraft.silicon.statements.ActionRobotFilter;
 import buildcraft.silicon.statements.ActionStationAcceptFluids;
-import buildcraft.transport.Pipe;
-import buildcraft.transport.gates.ActionIterator;
-import buildcraft.transport.gates.ActionSlot;
 
 public class AIRobotGotoStationToUnloadFluids extends AIRobot {
 
 	private boolean found = false;
 	private IZone zone;
+	private IFluidFilter filter;
 
 	public AIRobotGotoStationToUnloadFluids(EntityRobotBase iRobot) {
 		super(iRobot);
 	}
 
-	public AIRobotGotoStationToUnloadFluids(EntityRobotBase iRobot, IZone iZone) {
+	public AIRobotGotoStationToUnloadFluids(EntityRobotBase iRobot, IFluidFilter iFilter, IZone iZone) {
 		super(iRobot);
 
 		zone = iZone;
+		filter = iFilter;
 	}
 
 	@Override
@@ -61,25 +61,7 @@ public class AIRobotGotoStationToUnloadFluids extends AIRobot {
 
 		@Override
 		public boolean matches(DockingStation station) {
-			boolean actionFound = false;
-
-			Pipe pipe = station.getPipe().pipe;
-
-			for (ActionSlot s : new ActionIterator(pipe)) {
-				if (s.action instanceof ActionStationAcceptFluids) {
-					StatementParameterStackFilter param = new StatementParameterStackFilter(s.parameters);
-
-					/*
-					 * if (!param.hasFilter() || param.matches(filter)) {
-					 * actionFound = true; break; }
-					 */
-
-					actionFound = true;
-					break;
-				}
-			}
-
-			if (!actionFound) {
+			if (!ActionRobotFilter.canInteractWithFluid(station, filter, ActionStationAcceptFluids.class)) {
 				return false;
 			}
 
@@ -93,7 +75,9 @@ public class AIRobotGotoStationToUnloadFluids extends AIRobot {
 
 					FluidStack drainable = robot.drain(ForgeDirection.UNKNOWN, 1, false);
 
-					if (handler.canFill(station.side, drainable.getFluid())) {
+					int filledAmount = handler.fill(station.side, drainable, false);
+
+					if (filledAmount > 0) {
 						return true;
 					}
 				}

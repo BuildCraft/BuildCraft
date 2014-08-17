@@ -17,24 +17,24 @@ import net.minecraftforge.fluids.IFluidHandler;
 
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
-import buildcraft.core.inventory.filters.IStackFilter;
-import buildcraft.core.inventory.filters.StatementParameterStackFilter;
+import buildcraft.core.inventory.filters.IFluidFilter;
+import buildcraft.silicon.statements.ActionRobotFilter;
 import buildcraft.silicon.statements.ActionStationProvideFluids;
-import buildcraft.transport.Pipe;
-import buildcraft.transport.gates.ActionIterator;
-import buildcraft.transport.gates.ActionSlot;
 
 public class AIRobotLoadFluids extends AIRobot {
 
 	private int loaded = 0;
 	private int waitedCycles = 0;
+	private IFluidFilter filter;
 
 	public AIRobotLoadFluids(EntityRobotBase iRobot) {
 		super(iRobot);
 	}
 
-	public AIRobotLoadFluids(EntityRobotBase iRobot, IStackFilter iFilter) {
+	public AIRobotLoadFluids(EntityRobotBase iRobot, IFluidFilter iFilter) {
 		super(iRobot);
+
+		filter = iFilter;
 	}
 
 	@Override
@@ -55,27 +55,9 @@ public class AIRobotLoadFluids extends AIRobot {
 
 	private void doLoad() {
 		if (robot.getDockingStation() != null) {
-			boolean actionFound = false;
-
 			DockingStation station = (DockingStation) robot.getDockingStation();
 
-			Pipe pipe = station.getPipe().pipe;
-
-			for (ActionSlot s : new ActionIterator(pipe)) {
-				if (s.action instanceof ActionStationProvideFluids) {
-					StatementParameterStackFilter param = new StatementParameterStackFilter(s.parameters);
-
-					/*
-					 * if (!param.hasFilter() || param.matches(filter)) {
-					 * actionFound = true; break; }
-					 */
-
-					actionFound = true;
-					break;
-				}
-			}
-
-			if (!actionFound) {
+			if (!ActionRobotFilter.canInteractWithFluid(station, filter, ActionStationProvideFluids.class)) {
 				return;
 			}
 
@@ -86,16 +68,21 @@ public class AIRobotLoadFluids extends AIRobot {
 
 				if (nearbyTile != null && nearbyTile instanceof IFluidHandler) {
 					IFluidHandler handler = (IFluidHandler) nearbyTile;
-					FluidStack drainable = handler.drain(station.side, FluidContainerRegistry.BUCKET_VOLUME, false)
-							.copy();
+					FluidStack drainable = handler.drain(station.side, FluidContainerRegistry.BUCKET_VOLUME, false);
 
-					int filled = robot.fill(ForgeDirection.UNKNOWN, drainable, true);
+					if (drainable != null
+							&& filter.matches(drainable.getFluid())) {
 
-					if (filled > 0) {
-						drainable.amount = filled;
-						handler.drain(station.side, drainable, true);
-						loaded += filled;
-						return;
+						drainable = drainable.copy();
+
+						int filled = robot.fill(ForgeDirection.UNKNOWN, drainable, true);
+
+						if (filled > 0) {
+							drainable.amount = filled;
+							handler.drain(station.side, drainable, true);
+							loaded += filled;
+							return;
+						}
 					}
 				}
 			}

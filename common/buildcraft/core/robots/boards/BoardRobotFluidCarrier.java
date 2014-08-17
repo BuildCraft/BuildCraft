@@ -15,6 +15,7 @@ import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.robots.AIRobotGotoSleep;
 import buildcraft.core.robots.AIRobotGotoStationAndLoadFluids;
 import buildcraft.core.robots.AIRobotGotoStationAndUnloadFluids;
+import buildcraft.silicon.statements.ActionRobotFilter;
 
 public class BoardRobotFluidCarrier extends RedstoneBoardRobot {
 
@@ -29,13 +30,15 @@ public class BoardRobotFluidCarrier extends RedstoneBoardRobot {
 
 	@Override
 	public void update() {
-		startDelegateAI(new AIRobotGotoStationAndLoadFluids(robot, robot.getZoneToWork()));
+		startDelegateAI(new AIRobotGotoStationAndLoadFluids(robot, ActionRobotFilter.getGateFluidFilter(robot
+				.getLinkedStation()), robot.getZoneToWork()));
 	}
 
 	@Override
 	public void delegateAIEnded(AIRobot ai) {
 		if (ai instanceof AIRobotGotoStationAndLoadFluids) {
-			startDelegateAI(new AIRobotGotoStationAndUnloadFluids(robot, robot.getZoneToWork()));
+			startDelegateAI(new AIRobotGotoStationAndUnloadFluids(robot, ActionRobotFilter.getGateFluidFilter(robot
+					.getLinkedStation()), robot.getZoneToWork()));
 		} else if (ai instanceof AIRobotGotoStationAndUnloadFluids) {
 			if (!ai.success()) {
 				startDelegateAI(new AIRobotGotoSleep(robot));

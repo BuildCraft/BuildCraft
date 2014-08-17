@@ -11,25 +11,28 @@ package buildcraft.core.robots;
 import buildcraft.api.core.IZone;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
+import buildcraft.core.inventory.filters.IFluidFilter;
 
 public class AIRobotGotoStationAndLoadFluids extends AIRobot {
 
 	private boolean found = false;
 	private IZone zone;
+	private IFluidFilter filter;
 
 	public AIRobotGotoStationAndLoadFluids(EntityRobotBase iRobot) {
 		super(iRobot);
 	}
 
-	public AIRobotGotoStationAndLoadFluids(EntityRobotBase iRobot, IZone iZone) {
+	public AIRobotGotoStationAndLoadFluids(EntityRobotBase iRobot, IFluidFilter iFilter, IZone iZone) {
 		super(iRobot);
 
 		zone = iZone;
+		filter = iFilter;
 	}
 
 	@Override
 	public void start() {
-		startDelegateAI(new AIRobotGotoStationToLoadFluids(robot, zone));
+		startDelegateAI(new AIRobotGotoStationToLoadFluids(robot, filter, zone));
 	}
 
 	@Override
@@ -37,7 +40,7 @@ public class AIRobotGotoStationAndLoadFluids extends AIRobot {
 		if (ai instanceof AIRobotGotoStationToLoadFluids) {
 			if (ai.success()) {
 				found = true;
-				startDelegateAI(new AIRobotLoadFluids(robot));
+				startDelegateAI(new AIRobotLoadFluids(robot, filter));
 			} else {
 				terminate();
 			}

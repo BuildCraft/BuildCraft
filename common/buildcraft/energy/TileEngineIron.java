@@ -364,6 +364,9 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
 
 	@Override
 	public int fill(ForgeDirection from, FluidStack resource, boolean doFill) {
+		if (resource == null) {
+			return 0;
+		}
 
 		// Handle coolant
 		if (IronEngineCoolant.getCoolant(resource) != null) {

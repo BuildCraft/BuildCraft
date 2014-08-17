@@ -14,15 +14,23 @@ import java.util.Collection;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.item.ItemStack;
 
+import net.minecraftforge.fluids.FluidContainerRegistry;
+import net.minecraftforge.fluids.FluidStack;
+
 import buildcraft.api.gates.ActionParameterItemStack;
 import buildcraft.api.gates.IActionParameter;
 import buildcraft.api.robots.IDockingStation;
+import buildcraft.core.inventory.filters.ArrayFluidFilter;
 import buildcraft.core.inventory.filters.ArrayStackFilter;
+import buildcraft.core.inventory.filters.IFluidFilter;
 import buildcraft.core.inventory.filters.IStackFilter;
+import buildcraft.core.inventory.filters.PassThroughFluidFilter;
 import buildcraft.core.inventory.filters.PassThroughStackFilter;
+import buildcraft.core.inventory.filters.StatementParameterStackFilter;
 import buildcraft.core.robots.DockingStation;
 import buildcraft.core.triggers.BCActionPassive;
 import buildcraft.core.utils.StringUtils;
+import buildcraft.transport.Pipe;
 import buildcraft.transport.gates.ActionIterator;
 import buildcraft.transport.gates.ActionSlot;
 
@@ -86,5 +94,45 @@ public class ActionRobotFilter extends BCActionPassive {
 		} else {
 			return new ArrayStackFilter(stacks.toArray(new ItemStack[stacks.size()]));
 		}
+	}
+
+	public static IFluidFilter getGateFluidFilter(IDockingStation station) {
+		Collection<ItemStack> stacks = getGateFilterStacks(station);
+
+		if (stacks.size() == 0) {
+			return new PassThroughFluidFilter();
+		} else {
+			return new ArrayFluidFilter(stacks.toArray(new ItemStack[stacks.size()]));
+		}
+	}
+
+	public static boolean canInteractWithFluid(DockingStation station, IFluidFilter filter, Class<?> actionClass) {
+		boolean actionFound = false;
+		Pipe pipe = station.getPipe().pipe;
+
+		for (ActionSlot s : new ActionIterator(pipe)) {
+			if (actionClass.isAssignableFrom(s.action.getClass())) {
+				StatementParameterStackFilter param = new StatementParameterStackFilter(s.parameters);
+
+				if (!param.hasFilter()) {
+					actionFound = true;
+					break;
+				} else {
+					for (ItemStack stack : param.getStacks()) {
+						if (stack != null) {
+							FluidStack fluid = FluidContainerRegistry.getFluidForFilledItem(stack);
+
+							if (fluid != null && filter.matches(fluid.getFluid())) {
+								actionFound = true;
+								break;
+							}
+						}
+					}
+				}
+			}
+		}
+
+		return actionFound;
+
 	}
 }

@@ -17,24 +17,24 @@ import net.minecraftforge.fluids.IFluidHandler;
 
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
-import buildcraft.core.inventory.filters.IStackFilter;
-import buildcraft.core.inventory.filters.StatementParameterStackFilter;
+import buildcraft.core.inventory.filters.IFluidFilter;
+import buildcraft.silicon.statements.ActionRobotFilter;
 import buildcraft.silicon.statements.ActionStationAcceptFluids;
-import buildcraft.transport.Pipe;
-import buildcraft.transport.gates.ActionIterator;
-import buildcraft.transport.gates.ActionSlot;
 
 public class AIRobotUnloadFluids extends AIRobot {
 
 	private int unloaded = 0;
 	private int waitedCycles = 0;
+	private IFluidFilter filter;
 
 	public AIRobotUnloadFluids(EntityRobotBase iRobot) {
 		super(iRobot);
 	}
 
-	public AIRobotUnloadFluids(EntityRobotBase iRobot, IStackFilter iFilter) {
+	public AIRobotUnloadFluids(EntityRobotBase iRobot, IFluidFilter iFilter) {
 		super(iRobot);
+
+		filter = iFilter;
 	}
 
 	@Override
@@ -55,27 +55,9 @@ public class AIRobotUnloadFluids extends AIRobot {
 
 	private void doLoad() {
 		if (robot.getDockingStation() != null) {
-			boolean actionFound = false;
-
 			DockingStation station = (DockingStation) robot.getDockingStation();
 
-			Pipe pipe = station.getPipe().pipe;
-
-			for (ActionSlot s : new ActionIterator(pipe)) {
-				if (s.action instanceof ActionStationAcceptFluids) {
-					StatementParameterStackFilter param = new StatementParameterStackFilter(s.parameters);
-
-					/*
-					 * if (!param.hasFilter() || param.matches(filter)) {
-					 * actionFound = true; break; }
-					 */
-
-					actionFound = true;
-					break;
-				}
-			}
-
-			if (!actionFound) {
+			if (!ActionRobotFilter.canInteractWithFluid(station, filter, ActionStationAcceptFluids.class)) {
 				return;
 			}
 
@@ -90,19 +72,17 @@ public class AIRobotUnloadFluids extends AIRobot {
 					FluidStack drainable = robot.drain(ForgeDirection.UNKNOWN, FluidContainerRegistry.BUCKET_VOLUME,
 							false);
 
-					if (drainable == null) {
-						return;
-					}
+					if (drainable != null && filter.matches(drainable.getFluid())) {
+						drainable = drainable.copy();
 
-					drainable = drainable.copy();
+						int filled = handler.fill(station.side, drainable, true);
 
-					int filled = handler.fill(station.side, drainable, true);
-
-					if (filled > 0) {
-						drainable.amount = filled;
-						robot.drain(ForgeDirection.UNKNOWN, drainable, true);
-						unloaded += filled;
-						return;
+						if (filled > 0) {
+							drainable.amount = filled;
+							robot.drain(ForgeDirection.UNKNOWN, drainable, true);
+							unloaded += filled;
+							return;
+						}
 					}
 				}
 			}

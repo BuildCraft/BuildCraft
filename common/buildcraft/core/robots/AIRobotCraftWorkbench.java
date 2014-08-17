@@ -42,6 +42,10 @@ public class AIRobotCraftWorkbench extends AIRobotCraftGeneric {
 	private ArrayList<ArrayStackFilter> requirements;
 	private ItemStack output;
 
+	public AIRobotCraftWorkbench(EntityRobotBase iRobot) {
+		super(iRobot);
+	}
+
 	public AIRobotCraftWorkbench(EntityRobotBase iRobot, IRecipe iRecipe) {
 		super(iRobot);
 

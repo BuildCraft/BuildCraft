@@ -17,25 +17,25 @@ import net.minecraftforge.fluids.IFluidHandler;
 import buildcraft.api.core.IZone;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
-import buildcraft.core.inventory.filters.StatementParameterStackFilter;
+import buildcraft.core.inventory.filters.IFluidFilter;
+import buildcraft.silicon.statements.ActionRobotFilter;
 import buildcraft.silicon.statements.ActionStationProvideFluids;
-import buildcraft.transport.Pipe;
-import buildcraft.transport.gates.ActionIterator;
-import buildcraft.transport.gates.ActionSlot;
 
 public class AIRobotGotoStationToLoadFluids extends AIRobot {
 
 	private boolean found = false;
 	private IZone zone;
+	private IFluidFilter filter;
 
 	public AIRobotGotoStationToLoadFluids(EntityRobotBase iRobot) {
 		super(iRobot);
 	}
 
-	public AIRobotGotoStationToLoadFluids(EntityRobotBase iRobot, IZone iZone) {
+	public AIRobotGotoStationToLoadFluids(EntityRobotBase iRobot, IFluidFilter iFiler, IZone iZone) {
 		super(iRobot);
 
 		zone = iZone;
+		filter = iFiler;
 	}
 
 	@Override
@@ -61,25 +61,7 @@ public class AIRobotGotoStationToLoadFluids extends AIRobot {
 
 		@Override
 		public boolean matches(DockingStation station) {
-			boolean actionFound = false;
-
-			Pipe pipe = station.getPipe().pipe;
-
-			for (ActionSlot s : new ActionIterator(pipe)) {
-				if (s.action instanceof ActionStationProvideFluids) {
-					StatementParameterStackFilter param = new StatementParameterStackFilter(s.parameters);
-
-					/*
-					 * if (!param.hasFilter() || param.matches(filter)) {
-					 * actionFound = true; break; }
-					 */
-
-					actionFound = true;
-					break;
-				}
-			}
-
-			if (!actionFound) {
+			if (!ActionRobotFilter.canInteractWithFluid(station, filter, ActionStationProvideFluids.class)) {
 				return false;
 			}
 
@@ -92,7 +74,12 @@ public class AIRobotGotoStationToLoadFluids extends AIRobot {
 					IFluidHandler handler = (IFluidHandler) nearbyTile;
 					FluidStack drainable = handler.drain(station.side, 1, false);
 
-					if (robot.canFill(ForgeDirection.UNKNOWN, drainable.getFluid())) {
+					// TODO: there is no account taken for the filter on the
+					// gate here. See LoadFluid, GotoStationToLoad and Load for
+					// items as well.
+					if (drainable != null
+							&& filter.matches(drainable.getFluid())
+							&& robot.canFill(ForgeDirection.UNKNOWN, drainable.getFluid())) {
 						return true;
 					}
 				}
