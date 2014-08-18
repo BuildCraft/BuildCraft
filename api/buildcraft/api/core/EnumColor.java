@@ -107,7 +107,7 @@ public enum EnumColor {
 		0xe4e4e4};
 
 	@SideOnly(Side.CLIENT)
-	private static IIcon[] brushIcons = new IIcon[16];
+	private static IIcon[] brushIcons;
 
 	public int getDarkHex() {
 		return DARK_HEX[ordinal()];
@@ -193,6 +193,7 @@ public enum EnumColor {
 
 	@SideOnly(Side.CLIENT)
 	public static void registerIcons(IIconRegister iconRegister) {
+		brushIcons = new IIcon[16];
 		for (EnumColor c : values()) {
 			brushIcons[c.ordinal()] = iconRegister.registerIcon("buildcraft:triggers/color_"
 					+ c.name().toLowerCase(Locale.ENGLISH));
