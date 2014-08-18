@@ -29,6 +29,7 @@ public final class BuildCraftAPI {
 	public static IWorldProperty isFarmlandProperty;
 	public static IWorldProperty isDirtProperty;
 	public static IWorldProperty isShoveled;
+	public static IWorldProperty isFluidSource;
 
 	/**
 	 * Deactivate constructor
