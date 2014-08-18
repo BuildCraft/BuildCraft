@@ -17,7 +17,7 @@ import net.minecraftforge.fluids.IFluidHandler;
 
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
-import buildcraft.core.inventory.filters.IFluidFilter;
+import buildcraft.core.inventory.filters.SimpleFluidFilter;
 import buildcraft.silicon.statements.ActionRobotFilter;
 import buildcraft.silicon.statements.ActionStationAcceptFluids;
 
@@ -25,16 +25,9 @@ public class AIRobotUnloadFluids extends AIRobot {
 
 	private int unloaded = 0;
 	private int waitedCycles = 0;
-	private IFluidFilter filter;
 
 	public AIRobotUnloadFluids(EntityRobotBase iRobot) {
 		super(iRobot);
-	}
-
-	public AIRobotUnloadFluids(EntityRobotBase iRobot, IFluidFilter iFilter) {
-		super(iRobot);
-
-		filter = iFilter;
 	}
 
 	@Override
@@ -57,7 +50,9 @@ public class AIRobotUnloadFluids extends AIRobot {
 		if (robot.getDockingStation() != null) {
 			DockingStation station = (DockingStation) robot.getDockingStation();
 
-			if (!ActionRobotFilter.canInteractWithFluid(station, filter, ActionStationAcceptFluids.class)) {
+			if (!ActionRobotFilter.canInteractWithFluid(station,
+					new SimpleFluidFilter(robot.getTankInfo(ForgeDirection.UNKNOWN)[0].fluid),
+					ActionStationAcceptFluids.class)) {
 				return;
 			}
 
@@ -72,7 +67,7 @@ public class AIRobotUnloadFluids extends AIRobot {
 					FluidStack drainable = robot.drain(ForgeDirection.UNKNOWN, FluidContainerRegistry.BUCKET_VOLUME,
 							false);
 
-					if (drainable != null && filter.matches(drainable.getFluid())) {
+					if (drainable != null) {
 						drainable = drainable.copy();
 
 						int filled = handler.fill(station.side, drainable, true);

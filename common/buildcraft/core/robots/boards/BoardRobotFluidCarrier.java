@@ -37,8 +37,7 @@ public class BoardRobotFluidCarrier extends RedstoneBoardRobot {
 	@Override
 	public void delegateAIEnded(AIRobot ai) {
 		if (ai instanceof AIRobotGotoStationAndLoadFluids) {
-			startDelegateAI(new AIRobotGotoStationAndUnloadFluids(robot, ActionRobotFilter.getGateFluidFilter(robot
-					.getLinkedStation()), robot.getZoneToWork()));
+			startDelegateAI(new AIRobotGotoStationAndUnloadFluids(robot, robot.getZoneToWork()));
 		} else if (ai instanceof AIRobotGotoStationAndUnloadFluids) {
 			if (!ai.success()) {
 				startDelegateAI(new AIRobotGotoSleep(robot));

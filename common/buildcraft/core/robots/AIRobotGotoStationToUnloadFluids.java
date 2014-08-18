@@ -17,7 +17,7 @@ import net.minecraftforge.fluids.IFluidHandler;
 import buildcraft.api.core.IZone;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
-import buildcraft.core.inventory.filters.IFluidFilter;
+import buildcraft.core.inventory.filters.SimpleFluidFilter;
 import buildcraft.silicon.statements.ActionRobotFilter;
 import buildcraft.silicon.statements.ActionStationAcceptFluids;
 
@@ -25,17 +25,15 @@ public class AIRobotGotoStationToUnloadFluids extends AIRobot {
 
 	private boolean found = false;
 	private IZone zone;
-	private IFluidFilter filter;
 
 	public AIRobotGotoStationToUnloadFluids(EntityRobotBase iRobot) {
 		super(iRobot);
 	}
 
-	public AIRobotGotoStationToUnloadFluids(EntityRobotBase iRobot, IFluidFilter iFilter, IZone iZone) {
+	public AIRobotGotoStationToUnloadFluids(EntityRobotBase iRobot, IZone iZone) {
 		super(iRobot);
 
 		zone = iZone;
-		filter = iFilter;
 	}
 
 	@Override
@@ -61,7 +59,9 @@ public class AIRobotGotoStationToUnloadFluids extends AIRobot {
 
 		@Override
 		public boolean matches(DockingStation station) {
-			if (!ActionRobotFilter.canInteractWithFluid(station, filter, ActionStationAcceptFluids.class)) {
+			if (!ActionRobotFilter.canInteractWithFluid(station,
+					new SimpleFluidFilter(robot.getTankInfo(ForgeDirection.UNKNOWN)[0].fluid),
+					ActionStationAcceptFluids.class)) {
 				return false;
 			}
 
