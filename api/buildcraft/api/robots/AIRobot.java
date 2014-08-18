@@ -64,6 +64,10 @@ public class AIRobot {
 		return 0.1;
 	}
 
+	public boolean canLoadFromNBT() {
+		return false;
+	}
+
 	/**
 	 * Tries to receive items in parameters, return items that are left after
 	 * the operation.
@@ -150,7 +154,7 @@ public class AIRobot {
 		writeSelfToNBT(data);
 		nbt.setTag("data", data);
 
-		if (delegateAI != null) {
+		if (delegateAI != null && delegateAI.canLoadFromNBT()) {
 			NBTTagCompound sub = new NBTTagCompound();
 
 			delegateAI.writeToNBT(sub);
@@ -167,8 +171,11 @@ public class AIRobot {
 			try {
 				delegateAI = (AIRobot) Class.forName(sub.getString("class")).getConstructor(EntityRobotBase.class)
 						.newInstance(robot);
-				delegateAI.parentAI = this;
-				delegateAI.loadFromNBT(sub);
+
+				if (delegateAI.canLoadFromNBT()) {
+					delegateAI.parentAI = this;
+					delegateAI.loadFromNBT(sub);
+				}
 			} catch (Throwable e) {
 				e.printStackTrace();
 			}

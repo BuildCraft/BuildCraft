@@ -80,6 +80,11 @@ public class AIRobotGotoStation extends AIRobot {
 	}
 
 	@Override
+	public boolean canLoadFromNBT() {
+		return true;
+	}
+
+	@Override
 	public void writeSelfToNBT(NBTTagCompound nbt) {
 		NBTTagCompound indexNBT = new NBTTagCompound();
 		stationIndex.writeTo(indexNBT);

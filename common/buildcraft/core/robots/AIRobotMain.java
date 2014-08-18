@@ -55,4 +55,9 @@ public class AIRobotMain extends AIRobot {
 	public AIRobot getOverridingAI() {
 		return overridingAI;
 	}
+
+	@Override
+	public boolean canLoadFromNBT() {
+		return true;
+	}
 }

@@ -25,4 +25,9 @@ public abstract class RedstoneBoardRobot extends AIRobot implements IRedstoneBoa
 
 	}
 
+	@Override
+	public boolean canLoadFromNBT() {
+		return true;
+	}
+
 }

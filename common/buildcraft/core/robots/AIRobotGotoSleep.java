@@ -31,4 +31,9 @@ public class AIRobotGotoSleep extends AIRobot {
 			terminate();
 		}
 	}
+
+	@Override
+	public boolean canLoadFromNBT() {
+		return true;
+	}
 }
