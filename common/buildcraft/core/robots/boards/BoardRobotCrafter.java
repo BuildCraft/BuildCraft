@@ -126,11 +126,14 @@ public class BoardRobotCrafter extends RedstoneBoardRobot {
 			if (ai.success()) {
 				startDelegateAI(new AIRobotUnload(robot));
 			} else {
+				robot.releaseResources();
+				currentRequest = null;
 				startDelegateAI(new AIRobotGotoSleep(robot));
 			}
 		} else if (ai instanceof AIRobotSearchStackRequest) {
 			if (!ai.success()) {
 				craftingBlacklist.clear();
+				currentRequest = null;
 				startDelegateAI(new AIRobotGotoSleep(robot));
 			} else {
 				currentRequest = ((AIRobotSearchStackRequest) ai).request;
