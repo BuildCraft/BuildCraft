@@ -52,7 +52,6 @@ import net.minecraftforge.common.AchievementPage;
 import net.minecraftforge.common.IPlantable;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
-import net.minecraftforge.common.config.Property;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fluids.BlockFluidBase;
 import net.minecraftforge.oredict.OreDictionary;
@@ -69,8 +68,9 @@ import buildcraft.api.gates.ITrigger;
 import buildcraft.api.gates.StatementManager;
 import buildcraft.api.recipes.BuildcraftRecipeRegistry;
 import buildcraft.core.BlockSpring;
-import buildcraft.core.BuildCraftConfiguration;
+import buildcraft.core.configuration.BuildCraftConfiguration;
 import buildcraft.core.CommandBuildCraft;
+import buildcraft.core.configuration.ConfigHandeler;
 import buildcraft.core.CoreIconProvider;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.GuiHandler;
@@ -112,7 +112,7 @@ import buildcraft.core.triggers.TriggerInventory;
 import buildcraft.core.triggers.TriggerInventoryLevel;
 import buildcraft.core.triggers.TriggerMachine;
 import buildcraft.core.triggers.TriggerRedstoneInput;
-import buildcraft.core.utils.CraftingHandler;
+import buildcraft.core.utils.EventHandeler;
 import buildcraft.core.utils.WorldPropertyIsDirt;
 import buildcraft.core.utils.WorldPropertyIsFarmland;
 import buildcraft.core.utils.WorldPropertyIsFluidSource;
@@ -124,7 +124,7 @@ import buildcraft.core.utils.WorldPropertyIsSoft;
 import buildcraft.core.utils.WorldPropertyIsWood;
 import buildcraft.silicon.ItemRedstoneChipset.Chipset;
 
-@Mod(name = "BuildCraft", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Core", acceptedMinecraftVersions = "[1.7.10,1.8)", dependencies = "required-after:Forge@[10.13.0.1179,)")
+@Mod(name = "BuildCraft", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Core", acceptedMinecraftVersions = "[1.7.10,1.8)", dependencies = "required-after:Forge@[10.13.0.1179,)", guiFactory = "buildcraft.core.configuration.GuiFactory")
 public class BuildCraftCore extends BuildCraftMod {
 
 	@Mod.Instance("BuildCraft|Core")
@@ -270,53 +270,20 @@ public class BuildCraftCore extends BuildCraftMod {
 		BuildcraftRecipeRegistry.refinery = RefineryRecipeManager.INSTANCE;
 
 		mainConfiguration = new BuildCraftConfiguration(new File(evt.getModConfigurationDirectory(), "buildcraft/main.conf"));
-		try {
-			mainConfiguration.load();
 
-			Property updateCheck = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "update.check", true);
-			updateCheck.comment = "set to true for version check on startup";
-			if (updateCheck.getBoolean(true)) {
-				Version.check();
-			}
+        ConfigHandeler.readConfiguration();
 
-			Property dropBlock = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "dropBrokenBlocks", true);
-			dropBlock.comment = "set to false to prevent fillers from dropping blocks.";
-			dropBrokenBlocks = dropBlock.getBoolean(true);
+        if (BuildCraftCore.modifyWorld) {
+            BlockSpring.EnumSpring.WATER.canGen = BuildCraftCore.mainConfiguration.get("worldgen", "waterSpring", true).getBoolean(true);
+            BuildCraftCore.springBlock = new BlockSpring().setBlockName("eternalSpring");
+            CoreProxy.proxy.registerBlock(BuildCraftCore.springBlock, ItemSpring.class);
+        }
 
-			Property lifespan = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "itemLifespan", itemLifespan);
-			lifespan.comment = "the lifespan in ticks of items dropped on the ground by pipes and machines, vanilla = 6000, default = 1200";
-			itemLifespan = lifespan.getInt(itemLifespan);
-			if (itemLifespan < 100) {
-				itemLifespan = 100;
-			}
+        wrenchItem = (new ItemWrench()).setUnlocalizedName("wrenchItem");
+        CoreProxy.proxy.registerItem(wrenchItem);
 
-			Property factor = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "network.updateFactor", 10);
-			factor.comment = "increasing this number will decrease network update frequency, useful for overloaded servers";
-			updateFactor = factor.getInt(10);
-
-			Property longFactor = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "network.stateRefreshPeriod", 40);
-			longFactor.comment = "delay between full client sync packets, increasing it saves bandwidth, decreasing makes for better client syncronization.";
-			longUpdateFactor = longFactor.getInt(40);
-
-			wrenchItem = (new ItemWrench()).setUnlocalizedName("wrenchItem");
-			CoreProxy.proxy.registerItem(wrenchItem);
-
-			mapLocationItem = (new ItemMapLocation()).setUnlocalizedName("mapLocation");
-			CoreProxy.proxy.registerItem(mapLocationItem);
-
-			Property modifyWorldProp = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "modifyWorld", true);
-			modifyWorldProp.comment = "set to false if BuildCraft should not generate custom blocks (e.g. oil)";
-			modifyWorld = modifyWorldProp.getBoolean(true);
-
-			if (BuildCraftCore.modifyWorld) {
-				BlockSpring.EnumSpring.WATER.canGen = BuildCraftCore.mainConfiguration.get("worldgen", "waterSpring", true).getBoolean(true);
-				springBlock = new BlockSpring().setBlockName("eternalSpring");
-				CoreProxy.proxy.registerBlock(springBlock, ItemSpring.class);
-			}
-
-			Property consumeWater = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "consumeWater", consumeWaterSources);
-			consumeWaterSources = consumeWater.getBoolean(consumeWaterSources);
-			consumeWater.comment = "set to true if the Pump should consume water";
+        mapLocationItem = (new ItemMapLocation()).setUnlocalizedName("mapLocation");
+        CoreProxy.proxy.registerItem(mapLocationItem);
 
 			if (!NONRELEASED_BLOCKS) {
 				scienceBookItem = (new ItemScienceBook()).setUnlocalizedName("scienceBook");
@@ -345,11 +312,8 @@ public class BuildCraftCore extends BuildCraftMod {
 
 			MinecraftForge.EVENT_BUS.register(this);
 			MinecraftForge.EVENT_BUS.register(new BlockHighlightHandler());
-		} finally {
-			if (mainConfiguration.hasChanged()) {
-				mainConfiguration.save();
-			}
-		}
+
+
 
 	}
 
@@ -385,7 +349,7 @@ public class BuildCraftCore extends BuildCraftMod {
 		EntityList.stringToClassMapping.remove("BuildCraft|Core.bcLaser");
 		EntityList.stringToClassMapping.remove("BuildCraft|Core.bcEnergyLaser");
 
-		FMLCommonHandler.instance().bus().register(new CraftingHandler());
+		FMLCommonHandler.instance().bus().register(new EventHandeler());
 
 		CoreProxy.proxy.initializeRendering();
 		CoreProxy.proxy.initializeEntityRendering();
