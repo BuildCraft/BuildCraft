@@ -42,7 +42,6 @@ public class SchematicDoor extends SchematicBlock {
 	@Override
 	public void rotateLeft(IBuilderContext context) {
 		meta = rotateMeta(meta);
-		upperMeta = rotateMeta(upperMeta);
 	}
 
 	private int rotateMeta (int meta) {
