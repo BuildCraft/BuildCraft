@@ -156,20 +156,20 @@ public class BuildCraftBuilders extends BuildCraftMod {
 
 		String blueprintServerDir = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL,
 				"blueprints.serverDir",
-				"\"$MINECRAFT" + File.separator + "config" + File.separator + "buildcraft" + File.separator
-						+ "blueprints" + File.separator + "server\"").getString();
+				"\"$MINECRAFT" + File.separatorChar + "config" + File.separatorChar + "buildcraft" + File.separatorChar
+						+ "blueprints" + File.separatorChar + "server\"").getString();
 
 		String blueprintLibraryOutput = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL,
-				"blueprints.libraryOutput", "\"$MINECRAFT" + File.separator + "blueprints\"").getString();
+				"blueprints.libraryOutput", "\"$MINECRAFT" + File.separatorChar + "blueprints\"").getString();
 
 		String [] blueprintLibraryInput = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL,
 				"blueprints.libraryInput", new String []
 				{
 						// expected location
-						"\"$MINECRAFT" + File.separator + "blueprints\"",
+						"\"$MINECRAFT" + File.separatorChar + "blueprints\"",
 						// legacy beta BuildCraft
-						"\"$MINECRAFT" + File.separator + "config" + File.separator + "buildcraft" + File.separator
-								+ "blueprints" + File.separator + "client\"",
+						"\"$MINECRAFT" + File.separatorChar + "config" + File.separatorChar + "buildcraft" + File.separatorChar
+								+ "blueprints" + File.separatorChar + "client\"",
 						// infered used download location
 						"\"" + getDownloadsDir() + "\""
 				}
