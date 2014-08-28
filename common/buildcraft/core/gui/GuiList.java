@@ -18,11 +18,11 @@ import buildcraft.core.ItemList;
 
 public class GuiList extends GuiAdvancedInterface {
 
-	private GuiTextField textField;
-	private EntityPlayer player;
-
 	private static final ResourceLocation TEXTURE_BASE = new ResourceLocation(
 			"buildcraft", DefaultProps.TEXTURE_PATH_GUI + "/list.png");
+
+	private GuiTextField textField;
+	private EntityPlayer player;
 
 	private static class MainSlot extends AdvancedSlot {
 		public int lineIndex;

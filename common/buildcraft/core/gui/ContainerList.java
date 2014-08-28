@@ -19,8 +19,8 @@ import buildcraft.core.network.RPCSide;
 
 public class ContainerList extends BuildCraftContainer {
 
+	public ItemList.StackLine[] lines;
 	private EntityPlayer player;
-	public ItemList.StackLine lines[];
 
 	public ContainerList(EntityPlayer iPlayer) {
 		super(iPlayer.inventory.getSizeInventory());
@@ -41,7 +41,7 @@ public class ContainerList extends BuildCraftContainer {
 	}
 
 	@Override
-	public boolean canInteractWith(EntityPlayer p_75145_1_) {
+	public boolean canInteractWith(EntityPlayer player) {
 		return true;
 	}
 
