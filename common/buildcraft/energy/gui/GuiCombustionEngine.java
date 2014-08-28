@@ -34,13 +34,11 @@ public class GuiCombustionEngine extends GuiEngine {
 	@Override
 	protected void drawGuiContainerBackgroundLayer(float f, int x, int y) {
 		super.drawGuiContainerBackgroundLayer(f, x, y);
-		int j = (width - xSize) / 2;
-		int k = (height - ySize) / 2;
 		TileEngineIron engine = (TileEngineIron) tile;
-        drawFluid(engine.getFuel(), j + 104, k + 19, 16, 58, TileEngineIron.MAX_LIQUID);
-        drawFluid(engine.getCoolant(), j + 122, k + 19, 16, 58, TileEngineIron.MAX_LIQUID);
+		drawFluid(engine.getFuel(), guiLeft + 104, guiTop + 19, 16, 58, TileEngineIron.MAX_LIQUID);
+		drawFluid(engine.getCoolant(), guiLeft + 122, guiTop + 19, 16, 58, TileEngineIron.MAX_LIQUID);
         mc.renderEngine.bindTexture(TEXTURE);
-        drawTexturedModalRect(j + 104, k + 19, 176, 0, 16, 60);
-        drawTexturedModalRect(j + 122, k + 19, 176, 0, 16, 60);
+		drawTexturedModalRect(guiLeft + 104, guiTop + 19, 176, 0, 16, 60);
+		drawTexturedModalRect(guiLeft + 122, guiTop + 19, 176, 0, 16, 60);
 	}
 }

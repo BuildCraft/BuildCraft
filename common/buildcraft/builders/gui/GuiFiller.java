@@ -11,6 +11,7 @@ package buildcraft.builders.gui;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.util.ResourceLocation;
+
 import buildcraft.api.filler.FillerManager;
 import buildcraft.builders.TileFiller;
 import buildcraft.builders.filler.pattern.FillerPattern;
@@ -39,11 +40,11 @@ public class GuiFiller extends GuiBuildCraft {
 	public void initGui() {
 		super.initGui();
 		buttonList.clear();
-		int w = (width - xSize) / 2;
-		int h = (height - ySize) / 2;
 
-		buttonList.add(new GuiBetterButton(0, w + 80 - 18, h + 30, 10, StandardButtonTextureSets.LEFT_BUTTON, ""));
-		buttonList.add(new GuiBetterButton(1, w + 80 + 16 + 8, h + 30, 10, StandardButtonTextureSets.RIGHT_BUTTON, ""));
+		buttonList.add(new GuiBetterButton(0, guiLeft + 80 - 18, guiTop + 30, 10,
+				StandardButtonTextureSets.LEFT_BUTTON, ""));
+		buttonList.add(new GuiBetterButton(1, guiLeft + 80 + 16 + 8, guiTop + 30, 10,
+				StandardButtonTextureSets.RIGHT_BUTTON, ""));
 	}
 
 	@Override

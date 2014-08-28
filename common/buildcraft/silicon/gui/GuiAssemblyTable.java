@@ -133,9 +133,7 @@ public class GuiAssemblyTable extends GuiAdvancedInterface {
 	protected void drawGuiContainerBackgroundLayer(float f, int x, int y) {
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 		mc.renderEngine.bindTexture(TEXTURE);
-		int cornerX = (width - xSize) / 2;
-		int cornerY = (height - ySize) / 2;
-		drawTexturedModalRect(cornerX, cornerY, 0, 0, xSize, ySize);
+		drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
 
 		updateRecipes();
 
@@ -144,16 +142,16 @@ public class GuiAssemblyTable extends GuiAdvancedInterface {
 
 			if (slot.crafting != null) {
 				if (table.isAssembling(slot.crafting.recipe)) {
-					drawTexturedModalRect(cornerX + slot.x, cornerY + slot.y, 196, 1, 16, 16);
+					drawTexturedModalRect(guiLeft + slot.x, guiTop + slot.y, 196, 1, 16, 16);
 				} else if (table.isPlanned(slot.crafting.recipe)) {
-					drawTexturedModalRect(cornerX + slot.x, cornerY + slot.y, 177, 1, 16, 16);
+					drawTexturedModalRect(guiLeft + slot.x, guiTop + slot.y, 177, 1, 16, 16);
 				}
 			}
 		}
 
 		int h = table.getProgressScaled(70);
 
-		drawTexturedModalRect(cornerX + 95, cornerY + 36 + 70 - h, 176, 18, 4, h);
+		drawTexturedModalRect(guiLeft + 95, guiTop + 36 + 70 - h, 176, 18, 4, h);
 
 		drawBackgroundSlots();
 	}

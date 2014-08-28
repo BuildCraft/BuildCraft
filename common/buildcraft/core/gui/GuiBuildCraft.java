@@ -165,9 +165,7 @@ public abstract class GuiBuildCraft extends GuiContainer {
 	protected void drawGuiContainerBackgroundLayer(float f, int mouseX, int mouseY) {
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 		bindTexture(texture);
-		int x = (width - xSize) / 2;
-		int y = (height - ySize) / 2;
-		drawTexturedModalRect(x, y, 0, 0, xSize, ySize);
+		drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
 
 		int mX = mouseX - guiLeft;
 		int mY = mouseY - guiTop;
@@ -177,7 +175,7 @@ public abstract class GuiBuildCraft extends GuiContainer {
 				continue;
 			}
 			bindTexture(texture);
-			widget.draw(this, x, y, mX, mY);
+			widget.draw(this, guiLeft, guiTop, mX, mY);
 		}
 	}
 

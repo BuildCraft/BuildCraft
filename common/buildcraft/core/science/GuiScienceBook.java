@@ -172,31 +172,26 @@ public class GuiScienceBook extends GuiAdvancedInterface {
 	public void initGui() {
 		super.initGui();
 
-		int j = (width - xSize) / 2;
-		int k = (height - ySize) / 2;
-		startResearch = new GuiButton(0, j + 10, k + 145, 70, 20, "Start");
-		wiki = new GuiButton(0, j + 115, k + 145, 70, 20, "Wiki");
+		startResearch = new GuiButton(0, guiLeft + 10, guiTop + 145, 70, 20, "Start");
+		wiki = new GuiButton(0, guiLeft + 115, guiTop + 145, 70, 20, "Wiki");
 	}
 
 	@Override
 	protected void drawGuiContainerBackgroundLayer(float f, int mouseX, int mouseY) {
-		int cornerX = (width - xSize) / 2;
-		int cornerY = (height - ySize) / 2;
-
 		bindTexture(TEXTURE_ICONS);
 
 		for (int i = 0; i < 7; ++i) {
 			if (inFocus != null || currentTier.ordinal() != i) {
-				drawTexturedModalRect(cornerX + 28 * i, cornerY - 28, 28 * i, 1, 29, 32);
+				drawTexturedModalRect(guiLeft + 28 * i, guiTop - 28, 28 * i, 1, 29, 32);
 			}
 
 			if (inFocus != null || currentTier.ordinal() != i + 7) {
-				drawTexturedModalRect(cornerX + 28 * i, cornerY + ySize - 4, 28 * i, 62, 29, 32);
+				drawTexturedModalRect(guiLeft + 28 * i, guiTop + ySize - 4, 28 * i, 62, 29, 32);
 			}
 		}
 
 		bindTexture(TEXTURE_TAB);
-		drawTexturedModalRect(cornerX, cornerY, 0, 0, xSize, ySize);
+		drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
 
 		super.drawGuiContainerBackgroundLayer(f, mouseX, mouseY);
 
@@ -204,27 +199,27 @@ public class GuiScienceBook extends GuiAdvancedInterface {
 
 		for (int i = 0; i < 7; ++i) {
 			if (inFocus == null && currentTier.ordinal() == i) {
-				drawTexturedModalRect(cornerX + 28 * i, cornerY - 28, 28 * i, 32, 29, 32);
+				drawTexturedModalRect(guiLeft + 28 * i, guiTop - 28, 28 * i, 32, 29, 32);
 			}
 
 			if (inFocus == null && currentTier.ordinal() == i + 7) {
-				drawTexturedModalRect(cornerX + 28 * i, cornerY + ySize - 4, 28 * i, 96, 29, 32);
+				drawTexturedModalRect(guiLeft + 28 * i, guiTop + ySize - 4, 28 * i, 96, 29, 32);
 			}
 		}
 
 		int arrowHeight = (int) (22 * getContainer().progress);
 		drawTexturedModalRect(
-				cornerX + 215,
-				cornerY + 73 + (22 - arrowHeight),
+				guiLeft + 215,
+				guiTop + 73 + (22 - arrowHeight),
 				0,
 				128 + (22 - arrowHeight),
 				16,
 				arrowHeight);
 
 		for (int i = 0; i < 7; ++i) {
-			drawStack(Tier.values()[i].getStackToDisplay(), cornerX + 28 * i + 6, cornerY - 28 + 9);
+			drawStack(Tier.values()[i].getStackToDisplay(), guiLeft + 28 * i + 6, guiTop - 28 + 9);
 
-			drawStack(Tier.values()[i + 7].getStackToDisplay(), cornerX + 28 * i + 6, cornerY + ySize - 4 + 7);
+			drawStack(Tier.values()[i + 7].getStackToDisplay(), guiLeft + 28 * i + 6, guiTop + ySize - 4 + 7);
 		}
 
 		drawBackgroundSlots();
@@ -261,13 +256,10 @@ public class GuiScienceBook extends GuiAdvancedInterface {
 	protected void mouseClicked(int mouseX, int mouseY, int mouseButton) {
 		super.mouseClicked(mouseX, mouseY, mouseButton);
 
-		int cornerX = (width - xSize) / 2;
-		int cornerY = (height - ySize) / 2;
-
 		for (int i = 0; i < 7; ++i) {
-			int x1 = cornerX + 28 * i;
+			int x1 = guiLeft + 28 * i;
 			int x2 = x1 + 29;
-			int y1 = cornerY - 30;
+			int y1 = guiTop - 30;
 			int y2 = y1 + 32;
 
 			if (mouseX >= x1 && mouseX <= x2 && mouseY >= y1 && mouseY <= y2) {
@@ -275,7 +267,7 @@ public class GuiScienceBook extends GuiAdvancedInterface {
 				return;
 			}
 
-			y1 = cornerY + ySize - 2;
+			y1 = guiTop + ySize - 2;
 			y2 = y1 + 32;
 
 			if (mouseX >= x1 && mouseX <= x2 && mouseY >= y1 && mouseY <= y2) {

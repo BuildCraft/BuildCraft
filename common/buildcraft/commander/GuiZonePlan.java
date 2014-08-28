@@ -129,10 +129,8 @@ public class GuiZonePlan extends GuiAdvancedInterface {
 	@Override
 	public void initGui() {
 		super.initGui();
-		int x = (width - xSize) / 2;
-		int y = (height - ySize) / 2;
 
-		tool = new GuiButton(0, x + 5, y + 20, 20, 20, "+");
+		tool = new GuiButton(0, guiLeft + 5, guiTop + 20, 20, 20, "+");
 		buttonList.add(tool);
 
 		savedButtonList = buttonList;
@@ -148,13 +146,10 @@ public class GuiZonePlan extends GuiAdvancedInterface {
 	protected void drawGuiContainerBackgroundLayer(float f, int x, int y) {
 		super.drawGuiContainerBackgroundLayer(f, x, y);
 
-		int cornerX = (width - xSize) / 2;
-		int cornerY = (height - ySize) / 2;
-
 		mapXMin = (width - getContainer().mapTexture.width) / 2;
 
 		if (getContainer().mapTexture.height <= 200) {
-			mapYMin = cornerY + 20;
+			mapYMin = guiTop + 20;
 		} else {
 			mapYMin = (height - getContainer().mapTexture.height) / 2;
 		}
@@ -187,8 +182,8 @@ public class GuiZonePlan extends GuiAdvancedInterface {
 			drawBackgroundSlots();
 
 			bindTexture(texture);
-			drawTexturedModalRect(cornerX + colorSelected.x, cornerY + colorSelected.y, 0, 220, 16, 16);
-			drawTexturedModalRect(cornerX + 236, cornerY + 38, 16, 220, 8,
+			drawTexturedModalRect(guiLeft + colorSelected.x, guiTop + colorSelected.y, 0, 220, 16, 16);
+			drawTexturedModalRect(guiLeft + 236, guiTop + 38, 16, 220, 8,
 					(int) ((zonePlan.progress / (float) TileZonePlan.CRAFT_TIME) * 27));
 		}
 	}

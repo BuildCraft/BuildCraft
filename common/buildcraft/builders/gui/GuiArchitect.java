@@ -55,21 +55,19 @@ public class GuiArchitect extends GuiBuildCraft {
 	@Override
 	public void initGui() {
 		super.initGui();
-		int x = (width - xSize) / 2;
-		int y = (height - ySize) / 2;
 
 		Keyboard.enableRepeatEvents(true);
 
-		optionRotate = new GuiButton(0, x + 5, y + 30, 77, 20, "");
+		optionRotate = new GuiButton(0, guiLeft + 5, guiTop + 30, 77, 20, "");
 		buttonList.add(optionRotate);
 
-		optionReadBlocks = new GuiButton(1, x + 5, y + 55, 77, 20, "");
+		optionReadBlocks = new GuiButton(1, guiLeft + 5, guiTop + 55, 77, 20, "");
 		buttonList.add(optionReadBlocks);
 
-		optionExcavate = new GuiButton(2, x + 5, y + 80, 77, 20, "");
+		optionExcavate = new GuiButton(2, guiLeft + 5, guiTop + 80, 77, 20, "");
 		buttonList.add(optionExcavate);
 
-		optionExplicit = new GuiButton(3, x + 5, y + 105, 77, 20, "");
+		optionExplicit = new GuiButton(3, guiLeft + 5, guiTop + 105, 77, 20, "");
 		buttonList.add(optionExplicit);
 
 		textField = new GuiTextField(this.fontRendererObj, TEXT_X, TEXT_Y, TEXT_WIDTH, TEXT_HEIGHT);
@@ -151,28 +149,16 @@ public class GuiArchitect extends GuiBuildCraft {
 	protected void drawGuiContainerBackgroundLayer(float f, int x, int y) {
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 		mc.renderEngine.bindTexture(TEXTURE);
-		int j = (width - xSize) / 2;
-		int k = (height - ySize) / 2;
-		drawTexturedModalRect(j, k, 0, 0, xSize, ySize);
+		drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
 		int i1 = architect.getComputingProgressScaled(24);
-		drawTexturedModalRect(j + 159, k + 34, 0, 166, i1 + 1, 16);
+		drawTexturedModalRect(guiLeft + 159, guiTop + 34, 0, 166, i1 + 1, 16);
 	}
 
 	@Override
 	protected void mouseClicked(int i, int j, int k) {
 		super.mouseClicked(i, j, k);
 
-		int xMin = (width - xSize) / 2;
-		int yMin = (height - ySize) / 2;
-		int x = i - xMin;
-		int y = j - yMin;
-
-		if (x >= TEXT_X && y >= TEXT_Y
-				&& x <= TEXT_X + TEXT_WIDTH && y <= TEXT_Y + TEXT_HEIGHT) {
-			textField.setFocused(true);
-		} else {
-			textField.setFocused(false);
-		}
+		textField.mouseClicked(i - guiLeft, j - guiTop, k);
 	}
 
 	@Override

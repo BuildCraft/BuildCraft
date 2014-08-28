@@ -43,15 +43,13 @@ public class GuiBlueprintLibrary extends GuiBuildCraft {
 	public void initGui() {
 		super.initGui();
 
-		int j = (width - xSize) / 2;
-		int k = (height - ySize) / 2;
-		prevPageButton = new GuiButton(0, j + 158, k + 23, 20, 20, "<");
-		nextPageButton = new GuiButton(1, j + 180, k + 23, 20, 20, ">");
+		prevPageButton = new GuiButton(0, guiLeft + 158, guiTop + 23, 20, 20, "<");
+		nextPageButton = new GuiButton(1, guiLeft + 180, guiTop + 23, 20, 20, ">");
 
 		buttonList.add(prevPageButton);
 		buttonList.add(nextPageButton);
 
-		deleteButton = new GuiButton(2, j + 158, k + 114, 25, 20, StringUtils.localize("gui.del"));
+		deleteButton = new GuiButton(2, guiLeft + 158, guiTop + 114, 25, 20, StringUtils.localize("gui.del"));
 		buttonList.add(deleteButton);
 
 		checkDelete();
@@ -97,15 +95,13 @@ public class GuiBlueprintLibrary extends GuiBuildCraft {
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 		mc.renderEngine.bindTexture(TEXTURE);
 
-		int j = (width - xSize) / 2;
-		int k = (height - ySize) / 2;
-		drawTexturedModalRect(j, k, 0, 0, xSize, ySize);
+		drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
 
 		int inP = (int) (library.progressIn / 100.0 * 22.0);
 		int outP = (int) (library.progressOut / 100.0 * 22.0);
 
-		drawTexturedModalRect(j + 186 + 22 - inP, k + 61, 234 + 22 - inP, 16, inP, 16);
-		drawTexturedModalRect(j + 186, k + 78, 234, 0, outP, 16);
+		drawTexturedModalRect(guiLeft + 186 + 22 - inP, guiTop + 61, 234 + 22 - inP, 16, inP, 16);
+		drawTexturedModalRect(guiLeft + 186, guiTop + 78, 234, 0, outP, 16);
 	}
 
 	@Override
@@ -123,11 +119,8 @@ public class GuiBlueprintLibrary extends GuiBuildCraft {
 	protected void mouseClicked(int i, int j, int k) {
 		super.mouseClicked(i, j, k);
 
-		int xMin = (width - xSize) / 2;
-		int yMin = (height - ySize) / 2;
-
-		int x = i - xMin;
-		int y = j - yMin;
+		int x = i - guiLeft;
+		int y = j - guiTop;
 
 		if (x >= 8 && x <= 88) {
 			int ySlot = (y - 24) / 9;

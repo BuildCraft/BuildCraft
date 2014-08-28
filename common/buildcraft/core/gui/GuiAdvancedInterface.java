@@ -29,8 +29,8 @@ public abstract class GuiAdvancedInterface extends GuiBuildCraft {
 	}
 
 	public int getSlotIndexAtLocation(int i, int j) {
-		int x = i - (width - xSize) / 2;
-		int y = j - (height - ySize) / 2;
+		int x = i - guiLeft;
+		int y = j - guiTop;
 
 		for (int position = 0; position < slots.size(); ++position) {
 			AdvancedSlot s = slots.get(position);
@@ -53,9 +53,6 @@ public abstract class GuiAdvancedInterface extends GuiBuildCraft {
 	}
 
 	protected void drawBackgroundSlots() {
-		int cornerX = (width - xSize) / 2;
-		int cornerY = (height - ySize) / 2;
-
 		RenderHelper.enableGUIStandardItemLighting();
 		GL11.glPushMatrix();
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
@@ -68,7 +65,7 @@ public abstract class GuiAdvancedInterface extends GuiBuildCraft {
 		if (slots != null) {
 			for (AdvancedSlot slot : slots) {
 				if (slot != null) {
-					slot.drawSprite(cornerX, cornerY);
+					slot.drawSprite(guiLeft, guiTop);
 				}
 			}
 		}
@@ -85,12 +82,9 @@ public abstract class GuiAdvancedInterface extends GuiBuildCraft {
 	}
 
 	public void drawTooltip(String caption, int mouseX, int mouseY) {
-		int cornerX = (width - xSize) / 2;
-		int cornerY = (height - ySize) / 2;
-
 		if (caption.length() > 0) {
-			int i2 = mouseX - cornerX;
-			int k2 = mouseY - cornerY;
+			int i2 = mouseX - guiLeft;
+			int k2 = mouseY - guiTop;
 			drawCreativeTabHoveringText(caption, i2, k2);
 			RenderHelper.enableGUIStandardItemLighting();
 		}

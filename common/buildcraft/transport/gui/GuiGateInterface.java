@@ -325,9 +325,7 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 		mc.renderEngine.bindTexture(texture);
 
-		int cornerX = (width - xSize) / 2;
-		int cornerY = (height - ySize) / 2;
-		drawTexturedModalRect(cornerX, cornerY, 0, 0, xSize, ySize);
+		drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
 
 		int actionTracker = 0;
 
@@ -339,7 +337,7 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 				if (container.actionsState[actionTracker] != ActionActiveState.Deactivated) {
 					mc.renderEngine.bindTexture(texture);
 
-					drawTexturedModalRect(cornerX + slot.x + 17 + 18 * gate.material.numTriggerParameters, cornerY
+					drawTexturedModalRect(guiLeft + slot.x + 17 + 18 * gate.material.numTriggerParameters, guiTop
 							+ slot.y + 6, 176, 18, halfWidth ? 9 : 18, 4);
 				}
 
@@ -352,12 +350,12 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 
 				if (statement.isDefined()) {
 					if (!paramSlot.isAllowed()) {
-						drawTexturedModalRect(cornerX + slot.x - 1, cornerY + slot.y - 1, 176, 0, 18, 18);
+						drawTexturedModalRect(guiLeft + slot.x - 1, guiTop + slot.y - 1, 176, 0, 18, 18);
 					} else if (paramSlot.isRequired() && paramSlot.getItemStack() == null) {
-						drawTexturedModalRect(cornerX + slot.x - 1, cornerY + slot.y - 1, 176, 22, 18, 18);
+						drawTexturedModalRect(guiLeft + slot.x - 1, guiTop + slot.y - 1, 176, 22, 18, 18);
 					}
 				} else {
-					drawTexturedModalRect(cornerX + slot.x - 1, cornerY + slot.y - 1, 176, 0, 18, 18);
+					drawTexturedModalRect(guiLeft + slot.x - 1, guiTop + slot.y - 1, 176, 0, 18, 18);
 				}
 			}
 		}

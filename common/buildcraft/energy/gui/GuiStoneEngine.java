@@ -37,15 +37,13 @@ public class GuiStoneEngine extends GuiEngine {
 	protected void drawGuiContainerBackgroundLayer(float f, int x, int y) {
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 		mc.renderEngine.bindTexture(TEXTURE);
-		int j = (width - xSize) / 2;
-		int k = (height - ySize) / 2;
-		drawTexturedModalRect(j, k, 0, 0, xSize, ySize);
+		drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
 
 		TileEngineStone engine = (TileEngineStone) tile;
 		if (engine.getScaledBurnTime(12) > 0) {
 			int l = engine.getScaledBurnTime(12);
 
-			drawTexturedModalRect(j + 80, (k + 24 + 12) - l, 176, 12 - l, 14, l + 2);
+			drawTexturedModalRect(guiLeft + 80, (guiTop + 24 + 12) - l, 176, 12 - l, 14, l + 2);
 		}
 	}
 }

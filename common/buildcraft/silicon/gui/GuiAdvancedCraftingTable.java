@@ -33,11 +33,9 @@ public class GuiAdvancedCraftingTable extends GuiLaserTable {
 		super.drawGuiContainerBackgroundLayer(f, mouseX, mouseY);
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 		mc.renderEngine.bindTexture(TEXTURE);
-		int cornerX = (width - xSize) / 2;
-		int cornerY = (height - ySize) / 2;
 		if (workbench.getEnergy() > 0) {
 			int progress = workbench.getProgressScaled(24);
-			drawTexturedModalRect(cornerX + 93, cornerY + 32, 176, 0, progress + 1, 18);
+			drawTexturedModalRect(guiLeft + 93, guiTop + 32, 176, 0, progress + 1, 18);
 		}
 	}
 }

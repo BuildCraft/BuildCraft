@@ -39,16 +39,14 @@ public class GuiFilteredBuffer extends GuiContainer {
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 
 		mc.renderEngine.bindTexture(TEXTURE);
-		int cornerX = (width - xSize) / 2;
-		int cornerY = (height - ySize) / 2;
 
-		drawTexturedModalRect(cornerX, cornerY, 0, 0, xSize, ySize);
+		drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
 
 		IInventory filters = filteredBuffer.getFilters();
 
 		for (int col = 0; col < filters.getSizeInventory(); col++) {
 			if (filters.getStackInSlot(col) == null) {
-				drawTexturedModalRect(cornerX + 7 + col * 18, cornerY + 60, 176, 0, 18, 18);
+				drawTexturedModalRect(guiLeft + 7 + col * 18, guiTop + 60, 176, 0, 18, 18);
 			}
 		}
 	}
