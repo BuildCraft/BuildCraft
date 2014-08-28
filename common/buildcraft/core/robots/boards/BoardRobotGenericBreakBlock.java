@@ -55,27 +55,6 @@ public abstract class BoardRobotGenericBreakBlock extends RedstoneBoardRobot {
 	 */
 	public abstract boolean isExpectedBlock(World world, int x, int y, int z);
 
-	@Override
-	public final void start() {
-		DockingStation station = (DockingStation) robot.getLinkedStation();
-
-		for (ActionSlot slot : new ActionIterator(station.getPipe().pipe)) {
-			if (slot.action instanceof ActionRobotFilter) {
-				for (IActionParameter p : slot.parameters) {
-					if (p != null && p instanceof ActionParameterItemStack) {
-						ActionParameterItemStack param = (ActionParameterItemStack) p;
-						ItemStack stack = param.getItemStackToDraw();
-
-						if (stack != null && stack.getItem() instanceof ItemBlock) {
-							blockFilter.add(((ItemBlock) stack.getItem()).field_150939_a);
-							metaFilter.add(stack.getItemDamage());
-						}
-					}
-				}
-			}
-		}
-	}
-
 	public final void preemt(AIRobot ai) {
 		if (ai instanceof AIRobotSearchBlock) {
 			BlockIndex index = ((AIRobotSearchBlock) ai).blockFound;
@@ -96,11 +75,13 @@ public abstract class BoardRobotGenericBreakBlock extends RedstoneBoardRobot {
 				}
 			}));
 		} else {
+			updateFilter();
+
 			startDelegateAI(new AIRobotSearchBlock(robot, new IBlockFilter() {
 				@Override
 				public boolean matches(World world, int x, int y, int z) {
-					if (isExpectedBlock(world, x, y, z) && matchesGateFilter(world, x, y, z)) {
-						return !robot.getRegistry().isTaken(new ResourceIdBlock(x, y, z));
+					if (isExpectedBlock(world, x, y, z) && !robot.getRegistry().isTaken(new ResourceIdBlock(x, y, z))) {
+						return matchesGateFilter(world, x, y, z);
 					} else {
 						return false;
 					}
@@ -137,6 +118,29 @@ public abstract class BoardRobotGenericBreakBlock extends RedstoneBoardRobot {
 	public void end() {
 		if (indexStored != null) {
 			robot.getRegistry().release(new ResourceIdBlock(indexStored));
+		}
+	}
+
+	public final void updateFilter() {
+		blockFilter.clear();
+		metaFilter.clear();
+
+		DockingStation station = (DockingStation) robot.getLinkedStation();
+
+		for (ActionSlot slot : new ActionIterator(station.getPipe().pipe)) {
+			if (slot.action instanceof ActionRobotFilter) {
+				for (IActionParameter p : slot.parameters) {
+					if (p != null && p instanceof ActionParameterItemStack) {
+						ActionParameterItemStack param = (ActionParameterItemStack) p;
+						ItemStack stack = param.getItemStackToDraw();
+
+						if (stack != null && stack.getItem() instanceof ItemBlock) {
+							blockFilter.add(((ItemBlock) stack.getItem()).field_150939_a);
+							metaFilter.add(stack.getItemDamage());
+						}
+					}
+				}
+			}
 		}
 	}
 

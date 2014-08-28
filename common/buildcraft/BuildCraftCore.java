@@ -116,6 +116,7 @@ import buildcraft.core.triggers.TriggerRedstoneInput;
 import buildcraft.core.utils.CraftingHandler;
 import buildcraft.core.utils.WorldPropertyIsDirt;
 import buildcraft.core.utils.WorldPropertyIsFarmland;
+import buildcraft.core.utils.WorldPropertyIsFluidSource;
 import buildcraft.core.utils.WorldPropertyIsHarvestable;
 import buildcraft.core.utils.WorldPropertyIsLeave;
 import buildcraft.core.utils.WorldPropertyIsOre;
@@ -423,6 +424,7 @@ public class BuildCraftCore extends BuildCraftMod {
 		BuildCraftAPI.isFarmlandProperty = new WorldPropertyIsFarmland();
 		BuildCraftAPI.isShoveled = new WorldPropertyIsShoveled();
 		BuildCraftAPI.isDirtProperty = new WorldPropertyIsDirt();
+		BuildCraftAPI.isFluidSource = new WorldPropertyIsFluidSource();
 	}
 
 	@Mod.EventHandler

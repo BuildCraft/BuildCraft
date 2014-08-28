@@ -16,6 +16,7 @@ buildcraft.boardRobotButcher=Butcher
 buildcraft.boardRobotBuilder=Builder
 buildcraft.boardRobotCrafter=Crafter
 buildcraft.boardRobotDelivery=Delivery
+buildcraft.boardRobotPump=Pump
 
 chat.pipe.power.iron.mode=Switched to %d MJ/t limit
 chat.pipe.power.energyConverter=Energy conversion: %s

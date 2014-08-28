@@ -84,12 +84,12 @@ public class RobotRegistry extends WorldSavedData implements IRobotRegistry {
 	}
 
 	@Override
-	public boolean isTaken(ResourceId resourceId) {
+	public synchronized boolean isTaken(ResourceId resourceId) {
 		return robotIdTaking(resourceId) != EntityRobotBase.NULL_ROBOT_ID;
 	}
 
 	@Override
-	public long robotIdTaking(ResourceId resourceId) {
+	public synchronized long robotIdTaking(ResourceId resourceId) {
 		if (!resourcesTaken.containsKey(resourceId)) {
 			return EntityRobotBase.NULL_ROBOT_ID;
 		}
@@ -107,7 +107,7 @@ public class RobotRegistry extends WorldSavedData implements IRobotRegistry {
 	}
 
 	@Override
-	public EntityRobot robotTaking(ResourceId resourceId) {
+	public synchronized EntityRobot robotTaking(ResourceId resourceId) {
 		long robotId = robotIdTaking(resourceId);
 
 		if (robotId == EntityRobotBase.NULL_ROBOT_ID || !robotsLoaded.containsKey(robotId)) {
@@ -118,14 +118,14 @@ public class RobotRegistry extends WorldSavedData implements IRobotRegistry {
 	}
 
 	@Override
-	public boolean take(ResourceId resourceId, EntityRobotBase robot) {
+	public synchronized boolean take(ResourceId resourceId, EntityRobotBase robot) {
 		markDirty();
 
 		return take(resourceId, robot.getRobotId());
 	}
 
 	@Override
-	public boolean take(ResourceId resourceId, long robotId) {
+	public synchronized boolean take(ResourceId resourceId, long robotId) {
 		if (resourceId == null) {
 			return false;
 		}
@@ -150,7 +150,7 @@ public class RobotRegistry extends WorldSavedData implements IRobotRegistry {
 	}
 
 	@Override
-	public void release(ResourceId resourceId) {
+	public synchronized void release(ResourceId resourceId) {
 		if (resourceId == null) {
 			return;
 		}
@@ -167,11 +167,11 @@ public class RobotRegistry extends WorldSavedData implements IRobotRegistry {
 	}
 
 	@Override
-	public void releaseResources(EntityRobotBase robot) {
+	public synchronized void releaseResources(EntityRobotBase robot) {
 		releaseResources(robot, false);
 	}
 
-	private void releaseResources(EntityRobotBase robot, boolean forceAll) {
+	private synchronized void releaseResources(EntityRobotBase robot, boolean forceAll) {
 		markDirty();
 
 		if (resourcesTakenByRobot.containsKey(robot.getRobotId())) {
@@ -210,7 +210,7 @@ public class RobotRegistry extends WorldSavedData implements IRobotRegistry {
 	}
 
 	@Override
-	public IDockingStation getStation(int x, int y, int z, ForgeDirection side) {
+	public synchronized IDockingStation getStation(int x, int y, int z, ForgeDirection side) {
 		StationIndex index = new StationIndex(side, x, y, z);
 
 		if (stations.containsKey(index)) {
@@ -221,12 +221,12 @@ public class RobotRegistry extends WorldSavedData implements IRobotRegistry {
 	}
 
 	@Override
-	public Collection<IDockingStation> getStations() {
+	public synchronized Collection<IDockingStation> getStations() {
 		return stations.values();
 	}
 
 	@Override
-	public void registerStation(IDockingStation station) {
+	public synchronized void registerStation(IDockingStation station) {
 		markDirty();
 
 		StationIndex index = new StationIndex(station);
@@ -239,7 +239,7 @@ public class RobotRegistry extends WorldSavedData implements IRobotRegistry {
 	}
 
 	@Override
-	public void removeStation(IDockingStation station) {
+	public synchronized void removeStation(IDockingStation station) {
 		markDirty();
 
 		StationIndex index = new StationIndex(station);
@@ -254,7 +254,7 @@ public class RobotRegistry extends WorldSavedData implements IRobotRegistry {
 	}
 
 	@Override
-	public void take(IDockingStation station, long robotId) {
+	public synchronized void take(IDockingStation station, long robotId) {
 		if (!stationsTakenByRobot.containsKey(robotId)) {
 			stationsTakenByRobot.put(robotId, new HashSet<StationIndex>());
 		}
@@ -263,13 +263,13 @@ public class RobotRegistry extends WorldSavedData implements IRobotRegistry {
 	}
 
 	@Override
-	public void release(IDockingStation station, long robotId) {
+	public synchronized void release(IDockingStation station, long robotId) {
 		if (stationsTakenByRobot.containsKey(robotId)) {
 			stationsTakenByRobot.get(robotId).remove(new StationIndex(station));
 		}
 	}
 
-	public static RobotRegistry getRegistry (World world) {
+	public static synchronized RobotRegistry getRegistry(World world) {
 		if (registries[world.provider.dimensionId] == null
 				|| registries[world.provider.dimensionId].world != world) {
 
@@ -293,7 +293,7 @@ public class RobotRegistry extends WorldSavedData implements IRobotRegistry {
 	}
 
 	@Override
-	public void writeToNBT(NBTTagCompound nbt) {
+	public synchronized void writeToNBT(NBTTagCompound nbt) {
 		nbt.setLong("nextRobotID", nextRobotID);
 
 		NBTTagList resourceList = new NBTTagList();
@@ -322,7 +322,7 @@ public class RobotRegistry extends WorldSavedData implements IRobotRegistry {
 	}
 
 	@Override
-	public void readFromNBT(NBTTagCompound nbt) {
+	public synchronized void readFromNBT(NBTTagCompound nbt) {
 		nextRobotID = nbt.getLong("nextRobotID");
 
 		NBTTagList resourceList = nbt.getTagList("resourceList", Constants.NBT.TAG_COMPOUND);
