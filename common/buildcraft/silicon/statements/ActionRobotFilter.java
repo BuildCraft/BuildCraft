@@ -21,7 +21,7 @@ import buildcraft.api.gates.ActionParameterItemStack;
 import buildcraft.api.gates.IActionParameter;
 import buildcraft.api.robots.IDockingStation;
 import buildcraft.core.inventory.filters.ArrayFluidFilter;
-import buildcraft.core.inventory.filters.ArrayStackFilter;
+import buildcraft.core.inventory.filters.ArrayStackOrListFilter;
 import buildcraft.core.inventory.filters.IFluidFilter;
 import buildcraft.core.inventory.filters.IStackFilter;
 import buildcraft.core.inventory.filters.PassThroughFluidFilter;
@@ -92,7 +92,7 @@ public class ActionRobotFilter extends BCActionPassive {
 		if (stacks.size() == 0) {
 			return new PassThroughStackFilter();
 		} else {
-			return new ArrayStackFilter(stacks.toArray(new ItemStack[stacks.size()]));
+			return new ArrayStackOrListFilter(stacks.toArray(new ItemStack[stacks.size()]));
 		}
 	}
 

@@ -22,6 +22,7 @@ import net.minecraftforge.fluids.FluidTankInfo;
 
 import buildcraft.api.gates.IGate;
 import buildcraft.api.gates.ITriggerParameter;
+import buildcraft.core.inventory.StackHelper;
 import buildcraft.core.triggers.BCTrigger;
 import buildcraft.core.utils.StringUtils;
 import buildcraft.transport.Pipe;
@@ -77,9 +78,7 @@ public class TriggerPipeContents extends BCTrigger {
 			} else if (kind == PipeContents.containsItems) {
 				if (parameter != null && parameter.getItemStackToDraw() != null) {
 					for (TravelingItem item : transportItems.items) {
-						if (item.getItemStack().getItem() == parameter.getItemStackToDraw().getItem()
-								&& item.getItemStack().getItemDamage() == parameter.getItemStackToDraw()
-										.getItemDamage()) {
+						if (StackHelper.isMatchingItemOrList(parameter.getItemStackToDraw(), item.getItemStack())) {
 							return true;
 						}
 					}

@@ -22,7 +22,6 @@ import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.api.core.IInvSlot;
-import buildcraft.core.inventory.filters.ArrayStackFilter;
 import buildcraft.core.inventory.filters.IStackFilter;
 
 public final class InvUtils {
@@ -31,10 +30,6 @@ public final class InvUtils {
 	 * Deactivate constructor
 	 */
 	private InvUtils() {
-	}
-
-	public static int countItems(IInventory inv, ForgeDirection side, ItemStack... filter) {
-		return countItems(inv, side, new ArrayStackFilter(filter));
 	}
 
 	public static int countItems(IInventory inv, ForgeDirection side, IStackFilter filter) {
@@ -46,10 +41,6 @@ public final class InvUtils {
 			}
 		}
 		return count;
-	}
-
-	public static boolean containsItem(IInventory inv, ForgeDirection side, ItemStack... filter) {
-		return containsItem(inv, side, new ArrayStackFilter(filter));
 	}
 
 	public static boolean containsItem(IInventory inv, ForgeDirection side, IStackFilter filter) {
@@ -98,10 +89,6 @@ public final class InvUtils {
 			}
 		}
 		return null;
-	}
-
-	public static ItemStack moveOneItem(IInventory source, ForgeDirection output, IInventory dest, ForgeDirection intput, ItemStack... filter) {
-		return moveOneItem(source, output, dest, intput, new ArrayStackFilter(filter));
 	}
 
 	/* STACK DROPS */

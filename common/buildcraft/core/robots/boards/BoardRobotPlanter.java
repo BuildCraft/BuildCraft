@@ -27,6 +27,7 @@ import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.TickHandlerCore;
 import buildcraft.core.inventory.filters.ArrayStackFilter;
+import buildcraft.core.inventory.filters.ArrayStackOrListFilter;
 import buildcraft.core.inventory.filters.CompositeFilter;
 import buildcraft.core.inventory.filters.IStackFilter;
 import buildcraft.core.inventory.filters.OreStackFilter;
@@ -70,7 +71,7 @@ public class BoardRobotPlanter extends RedstoneBoardRobot {
 				}
 
 				if (filteredFilter.size() > 0) {
-					ArrayStackFilter arrayFilter = new ArrayStackFilter(
+					ArrayStackFilter arrayFilter = new ArrayStackOrListFilter(
 							filteredFilter.toArray(new ItemStack[filteredFilter.size()]));
 
 					startDelegateAI(new AIRobotFetchAndEquipItemStack(robot, arrayFilter));

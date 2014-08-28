@@ -18,6 +18,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.api.core.IInvSlot;
 import buildcraft.api.gates.ITriggerParameter;
+import buildcraft.core.ItemList;
 import buildcraft.core.inventory.InventoryIterator;
 import buildcraft.core.inventory.StackHelper;
 import buildcraft.core.utils.StringUtils;
@@ -63,9 +64,18 @@ public class TriggerInventory extends BCTrigger {
 				hasSlots = true;
 				ItemStack stack = slot.getStackInSlot();
 
-				foundItems |= stack != null && (searchedStack == null || StackHelper.canStacksMerge(stack, searchedStack));
-				foundSpace |= (stack == null || (StackHelper.canStacksMerge(stack, searchedStack) && stack.stackSize < stack.getMaxStackSize()))
-						&& (searchedStack == null || slot.canPutStackInSlot(searchedStack));
+				foundItems |= stack != null
+						&& (searchedStack == null || StackHelper.canStacksOrListsMerge(stack, searchedStack));
+
+				foundSpace |= (stack == null
+						|| (StackHelper.canStacksOrListsMerge(stack, searchedStack) && stack.stackSize < stack
+						.getMaxStackSize()))
+						&& (searchedStack == null || searchedStack.getItem() instanceof ItemList || slot
+								.canPutStackInSlot(searchedStack));
+				// On the test above, we deactivate item list as inventories
+				// typically don't check for lists possibility. This is a
+				// heuristic which is more desirable than expensive computation
+				// of list components or possibility of extension
 			}
 
 			if (!hasSlots) {

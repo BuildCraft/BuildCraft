@@ -13,7 +13,9 @@ import net.minecraft.world.World;
 
 import cpw.mods.fml.common.network.IGuiHandler;
 
+import buildcraft.core.gui.ContainerList;
 import buildcraft.core.gui.ContainerScienceBook;
+import buildcraft.core.gui.GuiList;
 import buildcraft.core.science.GuiScienceBook;
 
 public class GuiHandler implements IGuiHandler {
@@ -22,6 +24,8 @@ public class GuiHandler implements IGuiHandler {
 	public Object getClientGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
 		if (id == GuiIds.SCIENCE_BOOK) {
 			return new GuiScienceBook(player);
+		} else if (id == GuiIds.LIST) {
+			return new GuiList(player);
 		}
 
 		return null;
@@ -31,6 +35,8 @@ public class GuiHandler implements IGuiHandler {
 	public Object getServerGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
 		if (id == GuiIds.SCIENCE_BOOK) {
 			return new ContainerScienceBook(player);
+		} else if (id == GuiIds.LIST) {
+			return new ContainerList(player);
 		}
 
 		return null;

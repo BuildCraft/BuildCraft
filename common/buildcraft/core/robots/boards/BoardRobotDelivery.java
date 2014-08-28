@@ -93,7 +93,7 @@ public class BoardRobotDelivery extends RedstoneBoardRobot {
 			if (currentRequest == null) {
 				return false;
 			} else {
-				return StackHelper.isMatchingItem(stack, currentRequest.stack);
+				return StackHelper.isMatchingItemOrList(stack, currentRequest.stack);
 			}
 		}
 	}

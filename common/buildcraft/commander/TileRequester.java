@@ -109,7 +109,7 @@ public class TileRequester extends TileBuildCraft implements IInventory, IReques
 	public boolean isItemValidForSlot(int i, ItemStack itemStack) {
 		if (requests.getStackInSlot(i) == null) {
 			return false;
-		} else if (!StackHelper.isMatchingItem(requests.getStackInSlot(i), itemStack)) {
+		} else if (!StackHelper.isMatchingItemOrList(requests.getStackInSlot(i), itemStack)) {
 			return false;
 		} else {
 			return inv.isItemValidForSlot(i, itemStack);
@@ -143,7 +143,7 @@ public class TileRequester extends TileBuildCraft implements IInventory, IReques
 		} else if (inv.getStackInSlot(i) == null) {
 			return false;
 		} else {
-			return StackHelper.isMatchingItem(requests.getStackInSlot(i), inv.getStackInSlot(i))
+			return StackHelper.isMatchingItemOrList(requests.getStackInSlot(i), inv.getStackInSlot(i))
 					&& inv.getStackInSlot(i).stackSize >= requests.getStackInSlot(i).stackSize;
 		}
 	}
@@ -205,9 +205,9 @@ public class TileRequester extends TileBuildCraft implements IInventory, IReques
 
 				return stack;
 			}
-		} else if (!StackHelper.isMatchingItem(stack, existingStack)) {
+		} else if (!StackHelper.isMatchingItemOrList(stack, existingStack)) {
 			return stack;
-		} else if (existingStack == null || StackHelper.isMatchingItem(stack, requests.getStackInSlot(i))) {
+		} else if (existingStack == null || StackHelper.isMatchingItemOrList(stack, requests.getStackInSlot(i))) {
 			int maxQty = requests.getStackInSlot(i).stackSize;
 
 			if (existingStack.stackSize + stack.stackSize <= maxQty) {

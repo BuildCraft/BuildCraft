@@ -76,6 +76,7 @@ import buildcraft.core.DefaultProps;
 import buildcraft.core.GuiHandler;
 import buildcraft.core.InterModComms;
 import buildcraft.core.ItemGear;
+import buildcraft.core.ItemList;
 import buildcraft.core.ItemMapLocation;
 import buildcraft.core.ItemScienceBook;
 import buildcraft.core.ItemSpring;
@@ -157,6 +158,7 @@ public class BuildCraftCore extends BuildCraftMod {
 	public static Item diamondGearItem;
 	public static Item wrenchItem;
 	public static Item mapLocationItem;
+	public static Item listItem;
 	@SideOnly(Side.CLIENT)
 	public static IIcon redLaserTexture;
 	@SideOnly(Side.CLIENT)
@@ -302,6 +304,9 @@ public class BuildCraftCore extends BuildCraftMod {
 
 			mapLocationItem = (new ItemMapLocation()).setUnlocalizedName("mapLocation");
 			CoreProxy.proxy.registerItem(mapLocationItem);
+
+			listItem = (new ItemList()).setUnlocalizedName("list");
+			CoreProxy.proxy.registerItem(listItem);
 
 			Property modifyWorldProp = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "modifyWorld", true);
 			modifyWorldProp.comment = "set to false if BuildCraft should not generate custom blocks (e.g. oil)";
@@ -608,6 +613,8 @@ public class BuildCraftCore extends BuildCraftMod {
 		CoreProxy.proxy.addCraftingRecipe(Tier.DiamondGear.getTechnology(),
 				new ItemStack(diamondGearItem), " I ", "IGI", " I ", 'I', Items.diamond, 'G', goldGearItem);
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(mapLocationItem), "ppp", "pYp", "ppp", 'p', Items.paper, 'Y', new ItemStack(Items.dye, 1, 11));
+		CoreProxy.proxy.addCraftingRecipe(new ItemStack(listItem), "ppp", "pYp", "ppp", 'p', Items.paper, 'Y',
+				new ItemStack(Items.dye, 1, 2));
 	}
 
 	@Mod.EventHandler

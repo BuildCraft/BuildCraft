@@ -173,6 +173,7 @@ item.redstone_comp_chipset.name=Redstone Comp Chipset
 item.redstone_board.name=Redstone Board
 item.robot.name=Robot
 item.blueprintItem.name=Blueprint
+item.list.name=List
 item.blueprint.unnamed=<unnamed>
 item.blueprint.author=by
 item.blueprint.blank=Blank

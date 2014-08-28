@@ -17,7 +17,7 @@ import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.api.robots.IRequestProvider;
 import buildcraft.api.robots.StackRequest;
 import buildcraft.core.inventory.InvUtils;
-import buildcraft.core.inventory.filters.ArrayStackFilter;
+import buildcraft.core.inventory.filters.ArrayStackOrListFilter;
 import buildcraft.silicon.statements.ActionStationRequestItemsMachine;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.gates.ActionIterator;
@@ -51,7 +51,7 @@ public class AIRobotDeliverRequested extends AIRobot {
 				return;
 			}
 
-			IInvSlot slot = InvUtils.getItem(robot, new ArrayStackFilter(requested.stack));
+			IInvSlot slot = InvUtils.getItem(robot, new ArrayStackOrListFilter(requested.stack));
 
 			if (slot == null) {
 				terminate();

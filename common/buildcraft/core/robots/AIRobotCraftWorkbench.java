@@ -33,6 +33,7 @@ import buildcraft.core.inventory.InventoryCopy;
 import buildcraft.core.inventory.InventoryIterator;
 import buildcraft.core.inventory.Transactor;
 import buildcraft.core.inventory.filters.ArrayStackFilter;
+import buildcraft.core.inventory.filters.ArrayStackOrListFilter;
 import buildcraft.core.inventory.filters.IStackFilter;
 import buildcraft.silicon.statements.ActionRobotFilter;
 import buildcraft.silicon.statements.ActionStationAllowCraft;
@@ -224,7 +225,7 @@ public class AIRobotCraftWorkbench extends AIRobotCraftGeneric {
 
 		@Override
 		public boolean matches(DockingStation station) {
-			if (!ActionRobotFilter.canInteractWithItem(station, new ArrayStackFilter(recipe.getRecipeOutput()),
+			if (!ActionRobotFilter.canInteractWithItem(station, new ArrayStackOrListFilter(recipe.getRecipeOutput()),
 					ActionStationAllowCraft.class)) {
 				return false;
 			}

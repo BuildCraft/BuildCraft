@@ -19,7 +19,7 @@ import buildcraft.api.gates.TriggerParameterItemStack;
 /**
  * Returns true if the stack matches any one one of the filter stacks.
  */
-public class StatementParameterStackFilter extends ArrayStackFilter {
+public class StatementParameterStackFilter extends ArrayStackOrListFilter {
 
 	public StatementParameterStackFilter(IStatementParameter... parameters) {
 		ArrayList<ItemStack> tmp = new ArrayList<ItemStack>();

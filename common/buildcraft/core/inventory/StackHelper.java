@@ -9,7 +9,10 @@
 package buildcraft.core.inventory;
 
 import net.minecraft.item.ItemStack;
+
 import net.minecraftforge.oredict.OreDictionary;
+
+import buildcraft.core.ItemList;
 
 public class StackHelper {
 
@@ -28,6 +31,27 @@ public class StackHelper {
 		if (stack1 == null || stack2 == null) {
 			return false;
 		}
+		if (!stack1.isItemEqual(stack2)) {
+			return false;
+		}
+		if (!ItemStack.areItemStackTagsEqual(stack1, stack2)) {
+			return false;
+		}
+		return true;
+
+	}
+
+	public static boolean canStacksOrListsMerge(ItemStack stack1, ItemStack stack2) {
+		if (stack1 == null || stack2 == null) {
+			return false;
+		}
+
+		if (stack1.getItem() instanceof ItemList) {
+			return ItemList.matches(stack1, stack2);
+		} else if (stack2.getItem() instanceof ItemList) {
+			return ItemList.matches(stack2, stack1);
+		}
+
 		if (!stack1.isItemEqual(stack2)) {
 			return false;
 		}
@@ -108,6 +132,20 @@ public class StackHelper {
 		return false;
 	}
 
+	public static boolean isMatchingItemOrList(ItemStack a, ItemStack b) {
+		if (a == null || b == null) {
+			return false;
+		}
+
+		if (a.getItem() instanceof ItemList) {
+			return ItemList.matches(a, b);
+		} else if (b.getItem() instanceof ItemList) {
+			return ItemList.matches(b, a);
+		}
+
+		return isMatchingItem(a, b, true, false);
+	}
+
 	/**
 	 * Compares item id, damage and NBT. Accepts wildcard damage. Ignores damage
 	 * entirely if the item doesn't have subtypes.
@@ -130,10 +168,12 @@ public class StackHelper {
 	 * @param matchNBT
 	 * @return true if matches
 	 */
-	public static boolean isMatchingItem(final ItemStack a, final ItemStack b, final boolean matchDamage, final boolean matchNBT) {
+	public static boolean isMatchingItem(final ItemStack a, final ItemStack b, final boolean matchDamage,
+			final boolean matchNBT) {
 		if (a == null || b == null) {
 			return false;
 		}
+
 		if (a.getItem() != b.getItem()) {
 			return false;
 		}
