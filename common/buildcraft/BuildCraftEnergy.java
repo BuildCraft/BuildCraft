@@ -47,8 +47,8 @@ import buildcraft.api.blueprints.SchematicRegistry;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.JavaTools;
-import buildcraft.api.fuels.IronEngineCoolant;
-import buildcraft.api.fuels.IronEngineFuel;
+import buildcraft.api.core.StackKey;
+import buildcraft.api.fuels.BuildcraftFuelRegistry;
 import buildcraft.api.gates.ITrigger;
 import buildcraft.api.recipes.BuildcraftRecipeRegistry;
 import buildcraft.core.BlockSpring;
@@ -162,6 +162,7 @@ public class BuildCraftEnergy extends BuildCraftMod {
 						new String[] {BiomeGenBase.sky.biomeName, BiomeGenBase.hell.biomeName},
 						"IDs or Biome Types (e.g. SANDY,OCEAN) of biomes that are excluded from generating oil."));
 
+		double fuelLavaMultiplier = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "fuel.lava.combustion", 1.0F, "adjust energy value of Lava in Combustion Engines").getDouble(1.0F);
 		double fuelOilMultiplier = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "fuel.oil.combustion", 1.0F, "adjust energy value of Oil in Combustion Engines").getDouble(1.0F);
 		double fuelFuelMultiplier = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "fuel.fuel.combustion", 1.0F, "adjust energy value of Fuel in Combustion Engines").getDouble(1.0F);
 		BuildCraftCore.mainConfiguration.save();
@@ -276,14 +277,12 @@ public class BuildCraftEnergy extends BuildCraftMod {
 		BuildcraftRecipeRegistry.refinery.addRecipe("buildcraft:fuel", new FluidStack(fluidOil, 1), new FluidStack(
 				fluidFuel, 1), 12, 1);
 
-		// Iron Engine Fuels
-//		IronEngineFuel.addFuel("lava", 1, 20000);
-		IronEngineFuel.addFuel("oil", 3, (int) (5000 * fuelOilMultiplier));
-		IronEngineFuel.addFuel("fuel", 6, (int) (25000 * fuelFuelMultiplier));
+		BuildcraftFuelRegistry.fuel.addFuel(FluidRegistry.LAVA, 2, (int) (6000 * fuelLavaMultiplier));
+		BuildcraftFuelRegistry.fuel.addFuel(fluidOil, 3, (int) (5000 * fuelOilMultiplier));
+		BuildcraftFuelRegistry.fuel.addFuel(fluidFuel, 6, (int) (25000 * fuelFuelMultiplier));
 
-		// Iron Engine Coolants
-		IronEngineCoolant.addCoolant(FluidRegistry.getFluid("water"), 0.0023F);
-		IronEngineCoolant.addCoolant(Blocks.ice, 0, FluidRegistry.getFluidStack("water", FluidContainerRegistry.BUCKET_VOLUME * 2));
+		BuildcraftFuelRegistry.coolant.addCoolant(FluidRegistry.WATER, 0.0023f);
+		BuildcraftFuelRegistry.coolant.addSolidCoolant(StackKey.stack(Blocks.ice), StackKey.fluid(FluidRegistry.WATER), 2f);
 
 		// Receiver / emitter
 
