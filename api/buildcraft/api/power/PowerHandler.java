@@ -13,7 +13,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.api.core.SafeTimeTracker;
-import buildcraft.api.mj.BatteryObject;
 import buildcraft.api.mj.IBatteryObject;
 import buildcraft.api.mj.IBatteryProvider;
 import buildcraft.api.mj.IOMode;
@@ -150,7 +149,7 @@ public final class PowerHandler implements IBatteryProvider {
 
 		boolean created = false;
 		if (battery instanceof IBatteryObject) {
-			this.battery = (BatteryObject) battery;
+			this.battery = (IBatteryObject) battery;
 		} else if (battery != null) {
 			this.battery = MjAPI.createBattery(battery, MjAPI.DEFAULT_POWER_FRAMEWORK, ForgeDirection.UNKNOWN);
 			created = true;
