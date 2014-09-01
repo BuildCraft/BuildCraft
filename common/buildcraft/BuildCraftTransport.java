@@ -80,6 +80,7 @@ import buildcraft.transport.pipes.PipeFluidsCobblestone;
 import buildcraft.transport.pipes.PipeFluidsEmerald;
 import buildcraft.transport.pipes.PipeFluidsGold;
 import buildcraft.transport.pipes.PipeFluidsIron;
+import buildcraft.transport.pipes.PipeFluidsQuartz;
 import buildcraft.transport.pipes.PipeFluidsSandstone;
 import buildcraft.transport.pipes.PipeFluidsStone;
 import buildcraft.transport.pipes.PipeFluidsVoid;
@@ -164,6 +165,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 	public static Item pipeFluidsWood;
 	public static Item pipeFluidsCobblestone;
 	public static Item pipeFluidsStone;
+	public static Item pipeFluidsQuartz;
 	public static Item pipeFluidsIron;
 	public static Item pipeFluidsGold;
 	public static Item pipeFluidsVoid;
@@ -218,6 +220,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 	public static TechnoSimpleItem technoPipeFluidsWood = new TechnoSimpleItem();
 	public static TechnoSimpleItem technoPipeFluidsCobblestone = new TechnoSimpleItem();
 	public static TechnoSimpleItem technoPipeFluidsStone = new TechnoSimpleItem();
+	public static TechnoSimpleItem technoPipeFluidsQuartz = new TechnoSimpleItem();
 	public static TechnoSimpleItem technoPipeFluidsIron = new TechnoSimpleItem();
 	public static TechnoSimpleItem technoPipeFluidsGold = new TechnoSimpleItem();
 	public static TechnoSimpleItem technoPipeFluidsVoid = new TechnoSimpleItem();
@@ -397,6 +400,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 			pipeFluidsWood = buildPipe(PipeFluidsWood.class, "Wooden Waterproof Pipe", CreativeTabBuildCraft.PIPES, pipeWaterproof, pipeItemsWood);
 			pipeFluidsCobblestone = buildPipe(PipeFluidsCobblestone.class, "Cobblestone Waterproof Pipe", CreativeTabBuildCraft.PIPES, pipeWaterproof, pipeItemsCobblestone);
 			pipeFluidsStone = buildPipe(PipeFluidsStone.class, "Stone Waterproof Pipe", CreativeTabBuildCraft.PIPES, pipeWaterproof, pipeItemsStone);
+			pipeFluidsQuartz = buildPipe(PipeFluidsQuartz.class, "Quartz Waterproof Pipe", CreativeTabBuildCraft.PIPES, pipeWaterproof, pipeItemsQuartz);
 			pipeFluidsIron = buildPipe(PipeFluidsIron.class, "Iron Waterproof Pipe", CreativeTabBuildCraft.PIPES, pipeWaterproof, pipeItemsIron);
 			pipeFluidsGold = buildPipe(PipeFluidsGold.class, "Golden Waterproof Pipe", CreativeTabBuildCraft.PIPES, pipeWaterproof, pipeItemsGold);
 			pipeFluidsEmerald = buildPipe(PipeFluidsEmerald.class, "Emerald Waterproof Pipe", CreativeTabBuildCraft.PIPES, pipeWaterproof, pipeItemsEmerald);
@@ -638,6 +642,13 @@ public class BuildCraftTransport extends BuildCraftMod {
 				new ItemStack(BuildCraftCore.woodenGearItem, 5),
 				technoPipeItemsSandstone,
 				technoPipeFluidsWood);
+
+		technoPipeFluidsQuartz.initialize(
+				Tier.StoneGear,
+				pipeFluidsQuartz,
+				new ItemStack(BuildCraftCore.stoneGearItem, 5),
+				technoPipeItemsQuartz,
+				technoPipeFluidsStone);
 
 		technoPipeFluidsIron.initialize(
 				Tier.StoneGear,
