@@ -123,7 +123,7 @@ public class TileEnergyEmitter extends TileBuildCraft {
 				}
 			}
 		} else {
-			int perTargetEnergy = (int)Math.floor(getBattery().useEnergy(targets.size(), targets.size() * 100, false));
+			int perTargetEnergy = (int)Math.floor(getBattery().useEnergy(targets.size(), targets.size() * 100, false) / targets.size());
 
 			for (Target t : targets.values()) {
 				if (!t.data.isVisible) {
