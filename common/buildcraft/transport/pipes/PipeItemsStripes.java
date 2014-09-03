@@ -10,6 +10,7 @@ package buildcraft.transport.pipes;
 
 import java.util.ArrayList;
 
+import cofh.api.energy.IEnergyHandler;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLeavesBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -23,13 +24,10 @@ import net.minecraft.item.ItemPotion;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.WorldServer;
-
 import net.minecraftforge.common.util.ForgeDirection;
-
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.core.Position;
-import buildcraft.api.mj.MjBattery;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.BlockUtil;
 import buildcraft.transport.BlockGenericPipe;
@@ -42,11 +40,7 @@ import buildcraft.transport.TravelingItem;
 import buildcraft.transport.pipes.events.PipeEventItem;
 import buildcraft.transport.utils.TransportUtils;
 
-public class PipeItemsStripes extends Pipe<PipeTransportItems> {
-
-	@MjBattery(maxCapacity = 1, maxReceivedPerCycle = 1, minimumConsumption = 0)
-	private double mjStored = 0;
-
+public class PipeItemsStripes extends Pipe<PipeTransportItems> implements IEnergyHandler {
 	public PipeItemsStripes(Item item) {
 		super(new PipeTransportItems(), item);
 	}
@@ -58,40 +52,6 @@ public class PipeItemsStripes extends Pipe<PipeTransportItems> {
 		if (container.getWorldObj().isRemote) {
 			return;
 		}
-
-		if (mjStored > 0) {
-			ForgeDirection o = getOpenOrientation();
-
-			if (o != ForgeDirection.UNKNOWN) {
-				Position p = new Position(container.xCoord, container.yCoord,
-						container.zCoord, o);
-				p.moveForwards(1.0);
-
-				if (!BlockUtil.isUnbreakableBlock(getWorld(), (int) p.x, (int) p.y, (int) p.z)) {
-					ArrayList<ItemStack> stacks = getWorld().getBlock(
-							(int) p.x, (int) p.y, (int) p.z).getDrops(
-							getWorld(),
-							(int) p.x,
-							(int) p.y,
-							(int) p.z,
-							getWorld().getBlockMetadata((int) p.x, (int) p.y,
-									(int) p.z), 0
-					);
-
-					if (stacks != null) {
-						for (ItemStack s : stacks) {
-							if (s != null) {
-								rollbackItem(s, o);
-							}
-						}
-					}
-
-					getWorld().setBlockToAir((int) p.x, (int) p.y, (int) p.z);
-				}
-			}
-		}
-
-		mjStored = 0;
 	}
 
 	public void eventHandler(PipeEventItem.DropItem event) {
@@ -268,5 +228,65 @@ public class PipeItemsStripes extends Pipe<PipeTransportItems> {
 		}
 
 		return super.canPipeConnect(tile, side);
+	}
+
+	@Override
+	public boolean canConnectEnergy(ForgeDirection from) {
+		return true;
+	}
+
+	@Override
+	public int receiveEnergy(ForgeDirection from, int maxReceive,
+			boolean simulate) {
+		if(maxReceive == 0) return 0;
+		else if(simulate) return 10;
+		
+		ForgeDirection o = getOpenOrientation();
+
+		if (o != ForgeDirection.UNKNOWN) {
+			Position p = new Position(container.xCoord, container.yCoord,
+					container.zCoord, o);
+			p.moveForwards(1.0);
+
+			if (!BlockUtil.isUnbreakableBlock(getWorld(), (int) p.x, (int) p.y, (int) p.z)) {
+				ArrayList<ItemStack> stacks = getWorld().getBlock(
+						(int) p.x, (int) p.y, (int) p.z).getDrops(
+						getWorld(),
+						(int) p.x,
+						(int) p.y,
+						(int) p.z,
+						getWorld().getBlockMetadata((int) p.x, (int) p.y,
+								(int) p.z), 0
+				);
+
+				if (stacks != null) {
+					for (ItemStack s : stacks) {
+						if (s != null) {
+							rollbackItem(s, o);
+						}
+					}
+				}
+
+				getWorld().setBlockToAir((int) p.x, (int) p.y, (int) p.z);
+			}
+		}
+		
+		return maxReceive;
+	}
+
+	@Override
+	public int extractEnergy(ForgeDirection from, int maxExtract,
+			boolean simulate) {
+		return 0;
+	}
+
+	@Override
+	public int getEnergyStored(ForgeDirection from) {
+		return 0;
+	}
+
+	@Override
+	public int getMaxEnergyStored(ForgeDirection from) {
+		return 10;
 	}
 }
