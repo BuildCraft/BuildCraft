@@ -42,7 +42,7 @@ import buildcraft.core.utils.Utils;
 
 public class TileFiller extends TileAbstractBuilder implements IMachine, IActionReceptor {
 
-	private static int POWER_ACTIVATION = 50;
+	private static int POWER_ACTIVATION = 500;
 
 	public FillerPattern currentPattern = PatternFill.INSTANCE;
 
@@ -112,7 +112,7 @@ public class TileFiller extends TileAbstractBuilder implements IMachine, IAction
 			return;
 		}
 
-		if (mjStored < POWER_ACTIVATION || !buildTracker.markTimeIfDelay(worldObj)) {
+		if (getBattery().getEnergyStored() < POWER_ACTIVATION || !buildTracker.markTimeIfDelay(worldObj)) {
 			return;
 		}
 

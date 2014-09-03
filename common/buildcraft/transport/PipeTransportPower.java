@@ -499,9 +499,11 @@ public class PipeTransportPower extends PipeTransport {
 		return amount;
 	}
 
-	public double consumePower(ForgeDirection dir, double max) {
+	// TODO - fully port to RF
+	public int consumePower(ForgeDirection dir, int rfMax) {
 		double result;
-
+		double max = rfMax / 10.0;
+		
 		if (externalPower[dir.ordinal()] < max) {
 			result = externalPower[dir.ordinal()];
 		} else {
@@ -509,7 +511,7 @@ public class PipeTransportPower extends PipeTransport {
 			externalPower[dir.ordinal()] -= max;
 		}
 
-		return result;
+		return (int)Math.floor(result * 10.0);
 	}
 
 	public boolean isQueryingPower() {

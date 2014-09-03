@@ -25,7 +25,7 @@ public class AssemblyRecipeManager implements IAssemblyRecipeManager {
 	private Map<String, IFlexibleRecipe<ItemStack>> assemblyRecipes = new HashMap<String, IFlexibleRecipe<ItemStack>>();
 
 	@Override
-	public void addRecipe(String id, double energyCost, ItemStack output, Object... input) {
+	public void addRecipe(String id, int energyCost, ItemStack output, Object... input) {
 		String name = Item.itemRegistry.getNameForObject(output.getItem());
 
 		if (BuildCraftCore.recipesBlacklist.contains(name)) {

@@ -79,7 +79,7 @@ public class BuildCraftFactory extends BuildCraftMod {
 	@Mod.Instance("BuildCraft|Factory")
 	public static BuildCraftFactory instance;
 
-	public static final int MINING_MJ_COST_PER_BLOCK = 64;
+	public static final int MINING_RF_COST_PER_BLOCK = 640;
 	public static BlockQuarry quarryBlock;
 	public static BlockMiningWell miningWellBlock;
 	public static BlockAutoWorkbench autoWorkbenchBlock;

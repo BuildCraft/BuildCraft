@@ -16,12 +16,10 @@ import java.util.Set;
 import java.util.TreeMap;
 
 import io.netty.buffer.ByteBuf;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
@@ -29,16 +27,15 @@ import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
-
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftFactory;
 import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.gates.IAction;
-import buildcraft.api.mj.MjBattery;
 import buildcraft.core.CoreConstants;
 import buildcraft.core.EntityBlock;
 import buildcraft.core.IMachine;
+import buildcraft.core.RFBattery;
 import buildcraft.core.TileBuffer;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.fluids.FluidUtils;
@@ -66,9 +63,11 @@ public class TilePump extends TileBuildCraft implements IMachine, IFluidHandler 
 	private int numFluidBlocksFound = 0;
 	private boolean powered = false;
 
-	@MjBattery(maxCapacity = 100, maxReceivedPerCycle = 15, minimumConsumption = 1)
-	private double mjStored = 0;
-
+	public TilePump() {
+		super();
+		this.setBattery(new RFBattery(1000, 150, 0));
+	}
+	
 	@Override
 	public void updateEntity() {
 		super.updateEntity();
@@ -112,9 +111,7 @@ public class TilePump extends TileBuildCraft implements IMachine, IFluidHandler 
 		FluidStack fluidToPump = index != null ? BlockUtil.drainBlock(worldObj, index.x, index.y, index.z, false) : null;
 		if (fluidToPump != null) {
 			if (isFluidAllowed(fluidToPump.getFluid()) && tank.fill(fluidToPump, false) == fluidToPump.amount) {
-				if (mjStored > 10) {
-					mjStored -= 10;
-
+				if (getBattery().useEnergy(100, 100, false) > 0) {
 					if (fluidToPump.getFluid() != FluidRegistry.WATER || BuildCraftCore.consumeWaterSources || numFluidBlocksFound < 9) {
 						index = getNextIndexToPump(true);
 						BlockUtil.drainBlock(worldObj, index.x, index.y, index.z, true);
@@ -355,8 +352,6 @@ public class TilePump extends TileBuildCraft implements IMachine, IFluidHandler 
 
 		aimY = data.getInteger("aimY");
 		tubeY = data.getFloat("tubeY");
-
-		mjStored = data.getDouble("mjStored");
 	}
 
 	@Override
@@ -374,8 +369,6 @@ public class TilePump extends TileBuildCraft implements IMachine, IFluidHandler 
 		} else {
 			data.setFloat("tubeY", yCoord);
 		}
-
-		data.setDouble("mjStored", mjStored);
 	}
 
 	@Override

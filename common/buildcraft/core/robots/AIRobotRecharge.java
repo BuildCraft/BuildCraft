@@ -37,9 +37,12 @@ public class AIRobotRecharge extends AIRobot {
 	public void update() {
 		PipeTransportPower powerProvider = (PipeTransportPower) ((DockingStation) robot.getDockingStation()).getPipe().pipe.transport;
 
-		powerProvider.requestEnergy(robot.getDockingStation().side(), 100);
-		robot.setEnergy(robot.getEnergy()
-				+ powerProvider.consumePower(robot.getDockingStation().side(), 100));
+		int amount = robot.getBattery().addEnergy(0, 1000, true);
+		
+		// TODO RF
+		powerProvider.requestEnergy(robot.getDockingStation().side(), (double)amount / 10.0);
+		
+		robot.getBattery().addEnergy(0, powerProvider.consumePower(robot.getDockingStation().side(), amount), false);
 
 		if (robot.getEnergy() >= EntityRobotBase.MAX_ENERGY) {
 			terminate();

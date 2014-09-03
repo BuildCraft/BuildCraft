@@ -13,11 +13,10 @@ import java.util.TreeMap;
 
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.World;
-
 import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.SafeTimeTracker;
-import buildcraft.api.mj.MjBattery;
 import buildcraft.core.LaserData;
+import buildcraft.core.RFBattery;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.network.RPC;
 import buildcraft.core.network.RPCHandler;
@@ -25,13 +24,9 @@ import buildcraft.core.network.RPCMessageInfo;
 import buildcraft.core.network.RPCSide;
 
 public class TileEnergyEmitter extends TileBuildCraft {
-
-	@MjBattery (maxCapacity = 1024, maxReceivedPerCycle = 1204, minimumConsumption = 0)
-	public double mjStored;
-
 	public Map<BlockIndex, Target> targets = new TreeMap<BlockIndex, Target>();
 
-	public float mjAcc = 0;
+	public int rfAcc = 0;
 	public int accumulated = 0;
 
 	private SafeTimeTracker syncMJ = new SafeTimeTracker(20, 5);
@@ -43,7 +38,8 @@ public class TileEnergyEmitter extends TileBuildCraft {
 	}
 
 	public TileEnergyEmitter () {
-
+		super();
+		this.setBattery(new RFBattery(10240, 10240, 0));
 	}
 
 	@Override
@@ -67,7 +63,7 @@ public class TileEnergyEmitter extends TileBuildCraft {
 
 					if (t.data.wavePosition > t.data.renderSize) {
 						t.data.wavePosition = 0;
-						t.data.waveSize = (float) (mjStored / targets.size() / 10F);
+						t.data.waveSize = (float) (getBattery().getEnergyStored() / targets.size() / 100F);
 
 						if (t.data.waveSize > 1) {
 							t.data.waveSize = 1F;
@@ -107,17 +103,17 @@ public class TileEnergyEmitter extends TileBuildCraft {
 		// synchronize regularly with the client an average of the energy in
 		// the emitter
 
-		mjAcc += mjStored;
+		rfAcc += getBattery().getEnergyStored();
 		accumulated++;
 
 		if (syncMJ.markTimeIfDelay(worldObj)) {
-			RPCHandler.rpcBroadcastWorldPlayers(worldObj, this, "synchronizeMJ", mjAcc
+			RPCHandler.rpcBroadcastWorldPlayers(worldObj, this, "synchronizeMJ", rfAcc
 					/ accumulated);
-			mjAcc = 0;
+			rfAcc = 0;
 			accumulated = 0;
 		}
 
-		if (mjStored == 0) {
+		if (getBattery().getEnergyStored() == 0) {
 			for (Target t : targets.values()) {
 				if (t.data.isVisible) {
 					t.data.isVisible = false;
@@ -127,14 +123,7 @@ public class TileEnergyEmitter extends TileBuildCraft {
 				}
 			}
 		} else {
-			double perTargetEnergy = 10;
-
-			if (mjStored > targets.size() * 10) {
-				mjStored -= targets.size() * 10;
-			} else {
-				perTargetEnergy = mjStored / targets.size();
-				mjStored = 0;
-			}
+			int perTargetEnergy = (int)Math.floor(getBattery().useEnergy(targets.size(), targets.size() * 100, false));
 
 			for (Target t : targets.values()) {
 				if (!t.data.isVisible) {
@@ -152,8 +141,8 @@ public class TileEnergyEmitter extends TileBuildCraft {
 	}
 
 	@RPC (RPCSide.CLIENT)
-	public void synchronizeMJ (float val) {
-		mjStored = val;
+	public void synchronizeMJ (int val) {
+		this.getBattery().setEnergy(val);
 	}
 
 	@RPC (RPCSide.CLIENT)

@@ -76,7 +76,7 @@ public class SchematicFluid extends SchematicBlock {
 	}
 
 	@Override
-	public double getEnergyRequirement(LinkedList<ItemStack> stacksUsed) {
+	public int getEnergyRequirement(LinkedList<ItemStack> stacksUsed) {
 		return 1 * SchematicRegistry.BUILD_ENERGY;
 	}
 }

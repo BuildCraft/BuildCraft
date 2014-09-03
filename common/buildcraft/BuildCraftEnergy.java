@@ -264,7 +264,7 @@ public class BuildCraftEnergy extends BuildCraftMod {
 		MinecraftForge.EVENT_BUS.register(BucketHandler.INSTANCE);
 
 		BuildcraftRecipeRegistry.refinery.addRecipe("buildcraft:fuel", new FluidStack(fluidOil, 1), new FluidStack(
-				fluidFuel, 1), 12, 1);
+				fluidFuel, 1), 120, 1);
 
 		// Iron Engine Fuels
 //		IronEngineFuel.addFuel("lava", 1, 20000);

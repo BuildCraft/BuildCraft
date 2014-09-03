@@ -187,9 +187,7 @@ public class BptBuilderTemplate extends BptBuilderBase {
 					iterator.remove();
 					builtLocations.add(new BlockIndex(slot.x, slot.y, slot.z));
 				} else {
-					if (builder.energyAvailable() > SchematicRegistry.BUILD_ENERGY && firstSlotToConsume != null) {
-						builder.consumeEnergy(SchematicRegistry.BUILD_ENERGY);
-
+					if (builder.consumeEnergy(SchematicRegistry.BUILD_ENERGY) && firstSlotToConsume != null) {
 						slot.addStackConsumed(firstSlotToConsume.decreaseStackInSlot(1));
 						result = slot;
 						iterator.remove();

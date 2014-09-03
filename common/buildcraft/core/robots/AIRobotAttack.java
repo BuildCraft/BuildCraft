@@ -85,7 +85,7 @@ public class AIRobotAttack extends AIRobot {
 	}
 
 	@Override
-	public double getEnergyCost() {
-		return 5;
+	public int getEnergyCost() {
+		return 50;
 	}
 }

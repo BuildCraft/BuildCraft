@@ -26,7 +26,7 @@ public class GateExpansionRecipe extends IntegrationTableRecipe {
 		this.expansion = expansion;
 		this.chipset = chipset.copy();
 
-		setContents(id, BuildCraftTransport.pipeGate, 10000, 0);
+		setContents(id, BuildCraftTransport.pipeGate, 100000, 0);
 	}
 
 	@Override

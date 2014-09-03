@@ -143,7 +143,7 @@ public class BoardRobotBuilder extends RedstoneBoardRobot {
 				return;
 			}
 
-			robot.setEnergy(robot.getEnergy() - currentBuildingSlot.getEnergyRequirement());
+			robot.getBattery().useEnergy(0, currentBuildingSlot.getEnergyRequirement(), false);
 			launchingDelay = currentBuildingSlot.getStacksToDisplay().size() * BuildingItem.ITEMS_SPACE;
 			markerToBuild.bluePrintBuilder.buildSlot
 					(robot.worldObj, markerToBuild, currentBuildingSlot,

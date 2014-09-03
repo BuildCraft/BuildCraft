@@ -24,7 +24,7 @@ import buildcraft.transport.ItemPipeWire;
 public class AdvancedFacadeRecipe extends IntegrationTableRecipe {
 
 	public AdvancedFacadeRecipe(String id) {
-		setContents(id, new ItemFacade(), 5000, 0,
+		setContents(id, new ItemFacade(), 50000, 0,
 				new ItemStack(BuildCraftTransport.pipeWire, 1, OreDictionary.WILDCARD_VALUE),
 				ItemRedstoneChipset.Chipset.RED.getStack());
 	}
@@ -74,14 +74,14 @@ public class AdvancedFacadeRecipe extends IntegrationTableRecipe {
 				if (states[i].wire == wire) {
 					states[i] = additionalState;
 
-					result.energyCost = 2000;
+					result.energyCost = 20000;
 					result.crafted = ItemFacade.getFacade(states);
 
 					return result;
 				}
 			}
 
-			result.energyCost = 5000;
+			result.energyCost = 50000;
 			result.crafted = ItemFacade.getFacade(JavaTools.concat(states,
 					new ItemFacade.FacadeState[] {additionalState}));
 

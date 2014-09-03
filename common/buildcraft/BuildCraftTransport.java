@@ -800,7 +800,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 		GameRegistry.addRecipe(facadeItem.new FacadeRecipe());
 		RecipeSorter.register("facadeTurningHelper", ItemFacade.FacadeRecipe.class, RecipeSorter.Category.SHAPELESS, "");
 
-		BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:pipePlug", 1000, new ItemStack(plugItem, 8),
+		BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:pipePlug", 10000, new ItemStack(plugItem, 8),
 				new ItemStack(pipeStructureCobblestone));
 
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(robotStationItem), "   ", " I ", "ICI",

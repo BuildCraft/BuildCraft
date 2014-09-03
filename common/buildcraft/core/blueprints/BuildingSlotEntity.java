@@ -82,7 +82,7 @@ public class BuildingSlotEntity extends BuildingSlot {
 	}
 
 	@Override
-	public double getEnergyRequirement() {
+	public int getEnergyRequirement() {
 		return schematic.getEnergyRequirement(stackConsumed);
 	}
 }

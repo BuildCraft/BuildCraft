@@ -13,16 +13,15 @@ import net.minecraft.entity.EntityLiving;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
-
 import net.minecraftforge.fluids.IFluidHandler;
-
 import buildcraft.api.boards.RedstoneBoardRobot;
 import buildcraft.api.core.IZone;
+import buildcraft.core.RFBattery;
 
 public abstract class EntityRobotBase extends EntityLiving implements IInventory, IFluidHandler {
 
-	public static final double MAX_ENERGY = 10000;
-	public static final double SAFETY_ENERGY = MAX_ENERGY / 4;
+	public static final int MAX_ENERGY = 100000;
+	public static final int SAFETY_ENERGY = MAX_ENERGY / 4;
 	public static final long NULL_ROBOT_ID = Long.MAX_VALUE;
 
 	public EntityRobotBase(World par1World) {
@@ -41,9 +40,9 @@ public abstract class EntityRobotBase extends EntityLiving implements IInventory
 
 	public abstract void aimItemAt(int x, int y, int z);
 
-	public abstract double getEnergy();
+	public abstract int getEnergy();
 
-	public abstract void setEnergy(double energy);
+	public abstract RFBattery getBattery();
 
 	public abstract IDockingStation getDockingStation();
 

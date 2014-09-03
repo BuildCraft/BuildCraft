@@ -27,10 +27,10 @@ import buildcraft.core.utils.AverageUtil;
 
 public abstract class TileLaserTableBase extends TileBuildCraft implements ILaserTarget, IInventory, IActionReceptor, IMachine {
 
-	public double clientRequiredEnergy = 0;
+	public int clientRequiredEnergy = 0;
 	protected SimpleInventory inv = new SimpleInventory(getSizeInventory(), "inv", 64);
 	protected ActionMachineControl.Mode lastMode = ActionMachineControl.Mode.Unknown;
-	private double energy = 0;
+	private int energy = 0;
 	private int recentEnergyAverage;
 	private AverageUtil recentEnergyAverageUtil = new AverageUtil(20);
 
@@ -44,22 +44,22 @@ public abstract class TileLaserTableBase extends TileBuildCraft implements ILase
 		return energy;
 	}
 
-	public void setEnergy(double energy) {
+	public void setEnergy(int energy) {
 		this.energy = energy;
 	}
 
-	public void addEnergy(double energy) {
+	public void addEnergy(int energy) {
 		this.energy += energy;
 	}
 
-	public void subtractEnergy(double energy) {
+	public void subtractEnergy(int energy) {
 		this.energy -= energy;
 	}
 
-	public abstract double getRequiredEnergy();
+	public abstract int getRequiredEnergy();
 
 	public int getProgressScaled(int ratio) {
-		if (clientRequiredEnergy == 0.0) {
+		if (clientRequiredEnergy == 0) {
 			return 0;
 		} else if (energy >= clientRequiredEnergy) {
 			return ratio;
@@ -80,7 +80,7 @@ public abstract class TileLaserTableBase extends TileBuildCraft implements ILase
 	}
 
 	@Override
-	public void receiveLaserEnergy(double energy) {
+	public void receiveLaserEnergy(int energy) {
 		this.energy += energy;
 		recentEnergyAverageUtil.push(energy);
 	}
@@ -147,36 +147,36 @@ public abstract class TileLaserTableBase extends TileBuildCraft implements ILase
 	public void writeToNBT(NBTTagCompound nbt) {
 		super.writeToNBT(nbt);
 		inv.writeToNBT(nbt, "inv");
-		nbt.setDouble("energy", energy);
+		nbt.setInteger("energy", energy);
 	}
 
 	@Override
 	public void readFromNBT(NBTTagCompound nbt) {
 		super.readFromNBT(nbt);
 		inv.readFromNBT(nbt, "inv");
-		energy = nbt.getDouble("energy");
+		energy = nbt.getInteger("energy");
 	}
 
 	public void getGUINetworkData(int id, int data) {
-		int currentStored = (int) (energy * 100.0);
-		int requiredEnergy = (int) (clientRequiredEnergy * 100.0);
+		int currentStored = energy;
+		int requiredEnergy = clientRequiredEnergy;
 
 		switch (id) {
 		case 0:
 			requiredEnergy = (requiredEnergy & 0xFFFF0000) | (data & 0xFFFF);
-			clientRequiredEnergy = requiredEnergy / 100.0f;
+			clientRequiredEnergy = requiredEnergy;
 			break;
 		case 1:
 			currentStored = (currentStored & 0xFFFF0000) | (data & 0xFFFF);
-			energy = currentStored / 100.0f;
+			energy = currentStored;
 			break;
 		case 2:
 			requiredEnergy = (requiredEnergy & 0xFFFF) | ((data & 0xFFFF) << 16);
-			clientRequiredEnergy = requiredEnergy / 100.0f;
+			clientRequiredEnergy = requiredEnergy;
 			break;
 		case 3:
 			currentStored = (currentStored & 0xFFFF) | ((data & 0xFFFF) << 16);
-			energy = currentStored / 100.0f;
+			energy = currentStored;
 			break;
 		case 4:
 			recentEnergyAverage = recentEnergyAverage & 0xFFFF0000 | (data & 0xFFFF);
@@ -188,8 +188,8 @@ public abstract class TileLaserTableBase extends TileBuildCraft implements ILase
 	}
 
 	public void sendGUINetworkData(Container container, ICrafting iCrafting) {
-		int requiredEnergy = (int) (getRequiredEnergy() * 100.0);
-		int currentStored = (int) (energy * 100.0);
+		int requiredEnergy = getRequiredEnergy();
+		int currentStored = energy;
 		int lRecentEnergy = (int) (recentEnergyAverageUtil.getAverage() * 100f);
 		iCrafting.sendProgressBarUpdate(container, 0, requiredEnergy & 0xFFFF);
 		iCrafting.sendProgressBarUpdate(container, 1, currentStored & 0xFFFF);

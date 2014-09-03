@@ -57,7 +57,7 @@ public class TileAdvancedCraftingTable extends TileLaserTableBase implements IIn
 	private static final int[] SLOTS = Utils.createSlotArray(0, 24);
 	private static final EnumSet<ForgeDirection> SEARCH_SIDES = EnumSet.of(ForgeDirection.DOWN, ForgeDirection.NORTH, ForgeDirection.SOUTH,
 			ForgeDirection.EAST, ForgeDirection.WEST);
-	private static final float REQUIRED_POWER = 500F;
+	private static final int REQUIRED_POWER = 5000;
 	private final CraftingGrid craftingSlots;
 	private final InventoryMapper invInput;
 	private final InventoryMapper invOutput;
@@ -212,8 +212,8 @@ public class TileAdvancedCraftingTable extends TileLaserTableBase implements IIn
 	}
 
 	@Override
-	public double getRequiredEnergy() {
-		return craftResult.getStackInSlot(0) != null ? REQUIRED_POWER : 0f;
+	public int getRequiredEnergy() {
+		return craftResult.getStackInSlot(0) != null ? REQUIRED_POWER : 0;
 	}
 
 	@Override

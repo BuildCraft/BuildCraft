@@ -10,16 +10,15 @@ package buildcraft.transport.gates;
 
 import java.util.List;
 
+import cofh.api.energy.IEnergyHandler;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-
+import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.gates.GateExpansionController;
 import buildcraft.api.gates.IAction;
 import buildcraft.api.gates.IGate;
 import buildcraft.api.gates.IGateExpansion;
-import buildcraft.api.mj.IBatteryObject;
-import buildcraft.api.mj.MjAPI;
 import buildcraft.transport.triggers.ActionEnergyPulsar;
 import buildcraft.transport.triggers.ActionSingleEnergyPulse;
 
@@ -96,14 +95,12 @@ public final class GateExpansionPulsar extends GateExpansionBuildcraft implement
 				return;
 			}
 
-			IBatteryObject battery = MjAPI.getMjBattery(pipeTile);
-
-			if (battery != null && (!singlePulse || !hasPulsed)) {
+			if (pipeTile instanceof IEnergyHandler && (!singlePulse || !hasPulsed)) {
 				gate.setPulsing(true);
 				// TODO: (1 - 1) is coming from pulse count, which has been
 				// removed. The add energy algorithm probably needs to be
 				// reviewed altogether.
-				battery.addEnergy(Math.min(1 << (1 - 1), 64) * 1.01f);
+				((IEnergyHandler)pipeTile).receiveEnergy(ForgeDirection.UNKNOWN, Math.min(1 << (1 - 1), 64) * 10, false);
 				hasPulsed = true;
 			} else {
 				gate.setPulsing(true);

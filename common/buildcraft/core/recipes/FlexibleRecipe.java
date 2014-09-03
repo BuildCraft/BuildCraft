@@ -25,7 +25,7 @@ import buildcraft.core.inventory.filters.ArrayStackFilter;
 import buildcraft.core.inventory.filters.IStackFilter;
 
 public class FlexibleRecipe<T> implements IFlexibleRecipe<T> {
-	public double energyCost = 0;
+	public int energyCost = 0;
 	public long craftingTime = 0;
 	public String id;
 
@@ -40,11 +40,11 @@ public class FlexibleRecipe<T> implements IFlexibleRecipe<T> {
 
 	}
 
-	public FlexibleRecipe(String id, T output, double iEnergyCost, long craftingTime, Object... input) {
+	public FlexibleRecipe(String id, T output, int iEnergyCost, long craftingTime, Object... input) {
 		setContents(id, output, iEnergyCost, craftingTime, input);
 	}
 
-	public void setContents(String iid, Object ioutput, double iEnergyCost, long iCraftingTime, Object... input) {
+	public void setContents(String iid, Object ioutput, int iEnergyCost, long iCraftingTime, Object... input) {
 		id = iid;
 
 		if (ioutput instanceof ItemStack) {
