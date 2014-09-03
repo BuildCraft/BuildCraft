@@ -8,10 +8,12 @@
  */
 package buildcraft.factory;
 
+import eureka.api.EurekaKnowledge;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
@@ -63,6 +65,7 @@ public class BlockMiningWell extends BlockBuildCraft {
 	public void onBlockPlacedBy(World world, int i, int j, int k, EntityLivingBase entityliving, ItemStack stack) {
 		ForgeDirection orientation = Utils.get2dOrientation(entityliving);
 		world.setBlockMetadataWithNotify(i, j, k, orientation.getOpposite().ordinal(), 1);
+		EurekaKnowledge.makeProgress((EntityPlayer) entityliving, "quarry");
 	}
 
 	@Override
