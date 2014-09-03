@@ -17,5 +17,6 @@ import net.minecraftforge.common.util.ForgeDirection;
  * from a specific side.
  */
 public interface IPowerEmitter {
-	boolean canEmitPowerFrom(ForgeDirection side);
+
+	public boolean canEmitPowerFrom(ForgeDirection side);
 }

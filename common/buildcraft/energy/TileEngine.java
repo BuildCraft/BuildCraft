@@ -10,22 +10,17 @@ package buildcraft.energy;
 
 import java.util.LinkedList;
 
+import cofh.api.energy.IEnergyHandler;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ICrafting;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
-
 import net.minecraftforge.common.util.ForgeDirection;
-
 import buildcraft.BuildCraftEnergy;
 import buildcraft.api.core.NetworkData;
 import buildcraft.api.gates.IOverrideDefaultTriggers;
 import buildcraft.api.gates.ITrigger;
-import buildcraft.api.mj.IBatteryIOObject;
-import buildcraft.api.mj.IBatteryObject;
-import buildcraft.api.mj.ISidedBatteryProvider;
-import buildcraft.api.mj.MjAPI;
 import buildcraft.api.power.IPowerEmitter;
 import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.power.PowerHandler;
@@ -37,11 +32,11 @@ import buildcraft.api.transport.IPipeTile.PipeType;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.TileBuffer;
 import buildcraft.core.TileBuildCraft;
-import buildcraft.core.utils.AverageUtil;
 import buildcraft.energy.gui.ContainerEngine;
 
-public abstract class TileEngine extends TileBuildCraft implements ISidedBatteryProvider, IPowerReceptor, IPowerEmitter, IOverrideDefaultTriggers, IPipeConnection {
-
+public abstract class TileEngine extends TileBuildCraft implements IPowerReceptor, IPowerEmitter, IOverrideDefaultTriggers, IPipeConnection, IEnergyHandler {
+	protected boolean constantPower = false;
+	
 	// Index corresponds to metadata
 	public static final ResourceLocation[] BASE_TEXTURES = new ResourceLocation[]{
 			new ResourceLocation(DefaultProps.TEXTURE_PATH_BLOCKS + "/base_wood.png"),
@@ -79,8 +74,10 @@ public abstract class TileEngine extends TileBuildCraft implements ISidedBattery
 	public static final float MIN_HEAT = 20;
 	public static final float IDEAL_HEAT = 100;
 	public static final float MAX_HEAT = 250;
+	public double currentOutput = 0;
 	public boolean isRedstonePowered = false;
 	public float progress;
+	public double energy;
 	public float heat = MIN_HEAT;
 	@NetworkData
 	public EnergyStage energyStage = EnergyStage.BLUE;
@@ -90,9 +87,6 @@ public abstract class TileEngine extends TileBuildCraft implements ISidedBattery
 	protected int progressPart = 0;
 	protected boolean lastPower = false;
 	protected PowerHandler powerHandler;
-	protected IBatteryIOObject mjStoredBattery;
-	protected AverageUtil currentOutputAverage = new AverageUtil(20);
-	protected double currentOutput = -1;
 
 	private boolean checkOrienation = false;
 	private TileBuffer[] tileCache;
@@ -101,32 +95,14 @@ public abstract class TileEngine extends TileBuildCraft implements ISidedBattery
 	private boolean isPumping = false; // Used for SMP synch
 
 	public TileEngine() {
-		mjStoredBattery = (IBatteryIOObject) MjAPI.createBattery(this, MjAPI.DEFAULT_POWER_FRAMEWORK, ForgeDirection.UNKNOWN);
-		if (mjStoredBattery == null) {
-			throw new NullPointerException("Engine " + this + " doesn't has a battery!");
-		}
-		powerHandler = new PowerHandler(this, Type.ENGINE, mjStoredBattery);
-		powerHandler.configurePowerPerdition(0, 0);
-	}
-
-	public double getCurrentOutputAverage() {
-		if (currentOutput != -1) {
-			return currentOutput;
-		}
-		return currentOutputAverage.getAverage();
-	}
-
-	@Override
-	public IBatteryObject getMjBattery(String kind, ForgeDirection direction) {
-		if (mjStoredBattery.kind().equals(kind) && direction == orientation) {
-			return mjStoredBattery;
-		}
-		return null;
+		powerHandler = new PowerHandler(this, Type.ENGINE);
+		powerHandler.configurePowerPerdition(1, 100);
 	}
 
 	@Override
 	public void initialize() {
 		if (!worldObj.isRemote) {
+			powerHandler.configure(minEnergyReceived(), maxEnergyReceived(), 1, getMaxEnergy());
 			checkRedstonePower();
 		}
 	}
@@ -155,7 +131,7 @@ public abstract class TileEngine extends TileBuildCraft implements ISidedBattery
 	}
 
 	public double getEnergyLevel() {
-		return mjStoredBattery.getEnergyStored() / mjStoredBattery.maxCapacity() + .01d;
+		return energy / getMaxEnergy();
 	}
 
 	protected EnergyStage computeEnergyStage() {
@@ -228,7 +204,6 @@ public abstract class TileEngine extends TileBuildCraft implements ISidedBattery
 	@Override
 	public void updateEntity() {
 		super.updateEntity();
-		MjAPI.updateEntity(this);
 
 		if (worldObj.isRemote) {
 			if (progressPart != 0) {
@@ -253,9 +228,6 @@ public abstract class TileEngine extends TileBuildCraft implements ISidedBattery
 			}
 		}
 
-		currentOutputAverage.tick();
-
-		burn();
 		updateHeatLevel();
 		getEnergyStage();
 		engineUpdate();
@@ -267,29 +239,107 @@ public abstract class TileEngine extends TileBuildCraft implements ISidedBattery
 
 			if (progress > 0.5 && progressPart == 1) {
 				progressPart = 2;
+				if(!constantPower)
+					sendPower();
 			} else if (progress >= 1) {
 				progress = 0;
 				progressPart = 0;
 			}
 		} else if (isRedstonePowered && isActive()) {
 			if (isPoweredTile(tile, orientation)) {
-				progressPart = 1;
+				/*progressPart = 1;
 				setPumping(true);
+				if (getPowerToExtract() > 0) {
+					progressPart = 1;
+					setPumping(true);
+				} else {
+					setPumping(false);
+				}*/
 			} else {
 				setPumping(false);
 			}
 		} else {
-			progressPart = 0;
 			setPumping(false);
+		}
+
+		// Uncomment for constant power
+		if(constantPower) {
+			if (isRedstonePowered && isActive()) {
+				sendPower();
+			} else currentOutput = 0;
+		}
+		
+		burn();
+	}
+
+	private double getPowerToExtract() {
+		TileEntity tile = getTileBuffer(orientation).getTile();
+
+		if(tile instanceof IEnergyHandler) {
+			IEnergyHandler handler = ((IEnergyHandler)tile);
+			
+			int minEnergy = 0;
+			int maxEnergy = handler.receiveEnergy(
+					orientation.getOpposite(),
+					(int)Math.round(this.energy * 10), true);
+			return extractEnergy((double)minEnergy / 10.0, (double)maxEnergy / 10.0, false);
+		} else if (tile instanceof IPowerReceptor) {
+			PowerReceiver receptor = ((IPowerReceptor) tile)
+					.getPowerReceiver(orientation.getOpposite());
+
+			return extractEnergy(receptor.getMinEnergyReceived(),
+					receptor.getMaxEnergyReceived(), false);
+		} else {
+			return 0;
 		}
 	}
 
+	protected void sendPower() {
+		TileEntity tile = getTileBuffer(orientation).getTile();
+		if (isPoweredTile(tile, orientation)) {
+			double extracted = getPowerToExtract();
+			if(extracted > 0) setPumping(true);
+			else setPumping(false);
+			
+			if (tile instanceof IEnergyHandler) {
+				IEnergyHandler handler = ((IEnergyHandler) tile);
+				if (Math.round(extracted * 10) > 0) {
+					int neededRF = handler.receiveEnergy(
+							orientation.getOpposite(),
+							(int)Math.round(extracted * 10), false);
+					
+					extractEnergy(0.0, (double)neededRF / 10.0, true);
+				}
+			} else if (tile instanceof IPowerReceptor) {
+				PowerReceiver receptor = ((IPowerReceptor) tile)
+						.getPowerReceiver(orientation.getOpposite());
+
+				if (extracted > 0) {
+					double needed = receptor.receiveEnergy(
+							PowerHandler.Type.ENGINE, extracted,
+							orientation.getOpposite());
+
+					extractEnergy(receptor.getMinEnergyReceived(), needed, true);
+				}
+			}
+		}
+	}
+
+	// Uncomment out for constant power
+//	public float getActualOutput() {
+//		float heatLevel = getIdealHeatLevel();
+//		return getCurrentOutput() * heatLevel;
+//	}
 	protected void burn() {
 	}
 
 	protected void engineUpdate() {
 		if (!isRedstonePowered) {
-			mjStoredBattery.extractEnergy(1);
+			if (energy >= 1) {
+				energy -= 1;
+			} else if (energy < 1) {
+				energy = 0;
+			}
 		}
 	}
 
@@ -327,6 +377,11 @@ public abstract class TileEngine extends TileBuildCraft implements ISidedBattery
 			TileEntity tile = getTileBuffer(o).getTile();
 
 			if ((!pipesOnly || tile instanceof IPipeTile) && isPoweredTile(tile, o)) {
+				if((tile instanceof IPipeTile) && (((IPipeTile)tile).getPipeType() != PipeType.POWER))
+						constantPower = false;
+				else if(tile instanceof IEnergyHandler) constantPower = true;
+				else constantPower = false;
+				
 				orientation = o;
 				worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
 				worldObj.notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord, worldObj.getBlock(xCoord, yCoord, zCoord));
@@ -366,8 +421,10 @@ public abstract class TileEngine extends TileBuildCraft implements ISidedBattery
 
 		orientation = ForgeDirection.getOrientation(data.getInteger("orientation"));
 		progress = data.getFloat("progress");
-		mjStoredBattery.setEnergyStored(data.getDouble("energy"));
+		energy = data.getDouble("energy");
 		heat = data.getFloat("heat");
+		if(data.hasKey("constantPower"))
+			constantPower = data.getBoolean("constantPower");
 	}
 
 	@Override
@@ -376,21 +433,22 @@ public abstract class TileEngine extends TileBuildCraft implements ISidedBattery
 
 		data.setInteger("orientation", orientation.ordinal());
 		data.setFloat("progress", progress);
-		data.setDouble("energy", mjStoredBattery.getEnergyStored());
+		data.setDouble("energy", energy);
 		data.setFloat("heat", heat);
+		data.setBoolean("constantPower", constantPower);
 	}
 
 	public void getGUINetworkData(int id, int value) {
 		switch (id) {
 			case 0:
-				int iEnergy = (int) Math.round(mjStoredBattery.getEnergyStored() * 10);
+				int iEnergy = (int) Math.round(energy * 10);
 				iEnergy = (iEnergy & 0xffff0000) | (value & 0xffff);
-				mjStoredBattery.setEnergyStored(iEnergy / 10);
+				energy = iEnergy / 10;
 				break;
 			case 1:
-				iEnergy = (int) Math.round(mjStoredBattery.getEnergyStored() * 10);
+				iEnergy = (int) Math.round(energy * 10);
 				iEnergy = (iEnergy & 0xffff) | ((value & 0xffff) << 16);
-				mjStoredBattery.setEnergyStored(iEnergy / 10);
+				energy = iEnergy / 10;
 				break;
 			case 2:
 				currentOutput = value / 10F;
@@ -402,9 +460,9 @@ public abstract class TileEngine extends TileBuildCraft implements ISidedBattery
 	}
 
 	public void sendGUINetworkData(ContainerEngine containerEngine, ICrafting iCrafting) {
-		iCrafting.sendProgressBarUpdate(containerEngine, 0, (int) Math.round(mjStoredBattery.getEnergyStored() * 10) & 0xffff);
-		iCrafting.sendProgressBarUpdate(containerEngine, 1, (int) (Math.round(mjStoredBattery.getEnergyStored() * 10) & 0xffff0000) >> 16);
-		iCrafting.sendProgressBarUpdate(containerEngine, 2, (int) Math.round(currentOutputAverage.getAverage() * 10));
+		iCrafting.sendProgressBarUpdate(containerEngine, 0, (int) Math.round(energy * 10) & 0xffff);
+		iCrafting.sendProgressBarUpdate(containerEngine, 1, (int) (Math.round(energy * 10) & 0xffff0000) >> 16);
+		iCrafting.sendProgressBarUpdate(containerEngine, 2, (int) Math.round(currentOutput * 10));
 		iCrafting.sendProgressBarUpdate(containerEngine, 3, Math.round(heat * 100));
 	}
 
@@ -418,33 +476,91 @@ public abstract class TileEngine extends TileBuildCraft implements ISidedBattery
 
 	@Override
 	public void doWork(PowerHandler workProvider) {
+		if (worldObj.isRemote) {
+			return;
+		}
 
+		addEnergy(powerHandler.useEnergy(1, maxEnergyReceived(), true) * 0.95F);
 	}
 
 	public void addEnergy(double addition) {
-		double stored = mjStoredBattery.getEnergyStored();
-		double used = Math.min(addition, mjStoredBattery.maxReceivedPerCycle());
-		used = Math.min(used, mjStoredBattery.maxCapacity() - stored);
-		if (used > 0) {
-			currentOutputAverage.push(used);
-			mjStoredBattery.addEnergy(used);
-		}
+		energy += addition;
 
 		if (getEnergyStage() == EnergyStage.OVERHEAT) {
 			worldObj.createExplosion(null, xCoord, yCoord, zCoord, explosionRange(), true);
 			worldObj.setBlockToAir(xCoord, yCoord, zCoord);
 		}
+
+		if (energy > getMaxEnergy()) {
+			energy = getMaxEnergy();
+		}
+	}
+
+	public double extractEnergy(double min, double max, boolean doExtract) {
+		if (energy < min) {
+			return 0;
+		}
+
+		double actualMax;
+
+		if (max > maxEnergyExtracted()) {
+			actualMax = maxEnergyExtracted();
+		} else {
+			actualMax = max;
+		}
+
+		if (actualMax < min) {
+			return 0;
+		}
+
+		double extracted;
+
+		if (energy >= actualMax) {
+			extracted = actualMax;
+
+			if (doExtract) {
+				energy -= actualMax;
+			}
+		} else {
+			extracted = energy;
+
+			if (doExtract) {
+				energy = 0;
+			}
+		}
+
+		return extracted;
 	}
 
 	public boolean isPoweredTile(TileEntity tile, ForgeDirection side) {
-		return MjAPI.getMjBattery(tile, MjAPI.DEFAULT_POWER_FRAMEWORK, side.getOpposite()) != null;
+		if (tile == null) {
+			return false;
+		} else if (tile instanceof IPowerReceptor) {
+			return ((IPowerReceptor) tile).getPowerReceiver(side.getOpposite()) != null;
+		} else if (tile instanceof IEnergyHandler){
+			return ((IEnergyHandler) tile).canConnectEnergy(side.getOpposite());
+		} else {
+			return false;
+		}
 	}
+
+	public abstract double getMaxEnergy();
+
+	public double minEnergyReceived() {
+		return 2;
+	}
+
+	public abstract double maxEnergyReceived();
+
+	public abstract double maxEnergyExtracted();
 
 	public abstract float explosionRange();
 
 	public double getEnergyStored() {
-		return mjStoredBattery.getEnergyStored();
+		return energy;
 	}
+
+	public abstract double getCurrentOutput();
 
 	@Override
 	public LinkedList<ITrigger> getTriggers() {
@@ -476,5 +592,46 @@ public abstract class TileEngine extends TileBuildCraft implements ISidedBattery
 
 	public void checkRedstonePower() {
 		isRedstonePowered = worldObj.isBlockIndirectlyGettingPowered(xCoord, yCoord, zCoord);
+	}
+	
+	// RF support
+
+	@Override
+	public int receiveEnergy(ForgeDirection from, int maxReceive,
+			boolean simulate) {
+		return 0;
+	}
+
+	@Override
+	public int extractEnergy(ForgeDirection from, int maxExtract,
+			boolean simulate) {
+		return 0;
+		
+		/*if(!(from == orientation)) return 0;
+		
+		int energyRF = (int)Math.round(10 * energy);
+		int energyExtracted = Math.min(maxExtract, energyRF);
+		if(!simulate) {
+			if(energyExtracted == energyRF) energy = 0;
+			else energy -= (double)energyExtracted / 10.0;
+		}
+		return energyExtracted;*/
+	}
+
+	@Override
+	public int getEnergyStored(ForgeDirection from) {
+		if(!(from == orientation)) return 0;
+		
+		return (int)Math.round(10 * energy);
+	}
+
+	@Override
+	public int getMaxEnergyStored(ForgeDirection from) {
+		return getEnergyStored(from);
+	}
+
+	@Override
+	public boolean canConnectEnergy(ForgeDirection from) {
+		return from == orientation;
 	}
 }

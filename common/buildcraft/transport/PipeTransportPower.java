@@ -21,8 +21,6 @@ import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.gates.ITrigger;
-import buildcraft.api.mj.IBatteryObject;
-import buildcraft.api.mj.MjAPI;
 import buildcraft.api.power.IPowerEmitter;
 import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.power.PowerHandler.PowerReceiver;
@@ -110,10 +108,6 @@ public class PipeTransportPower extends PipeTransport {
 			if (emitter.canEmitPowerFrom(side.getOpposite())) {
 				return true;
 			}
-		}
-
-		if (MjAPI.canReceive(MjAPI.getMjBattery(tile, MjAPI.DEFAULT_POWER_FRAMEWORK, side.getOpposite()))) {
-			return true;
 		}
 
 		return false;
@@ -208,23 +202,14 @@ public class PipeTransportPower extends PipeTransport {
 								powerConsumed);
 						tilePowered = true;
 					} else {
-						IBatteryObject battery = MjAPI.getMjBattery(tiles[out], MjAPI.DEFAULT_POWER_FRAMEWORK,
-								ForgeDirection.VALID_DIRECTIONS[out].getOpposite());
+						PowerReceiver prov = getReceiverOnSide(ForgeDirection.VALID_DIRECTIONS[out]);
 
-						if (battery != null) {
-							// Transmit power to the simplified power framework
-							powerConsumed = battery.addEnergy(powerConsumed);
+						if (prov != null) {
+							// Transmit power to the legacy power framework
+
+							powerConsumed = prov.receiveEnergy(Type.PIPE, powerConsumed,
+									ForgeDirection.VALID_DIRECTIONS[out].getOpposite());
 							tilePowered = true;
-						} else {
-							PowerReceiver prov = getReceiverOnSide(ForgeDirection.VALID_DIRECTIONS[out]);
-
-							if (prov != null) {
-								// Transmit power to the legacy power framework
-
-								powerConsumed = prov.receiveEnergy(Type.PIPE, powerConsumed,
-										ForgeDirection.VALID_DIRECTIONS[out].getOpposite());
-								tilePowered = true;
-							}
 						}
 					}
 
@@ -283,14 +268,6 @@ public class PipeTransportPower extends PipeTransport {
 
 					if (request > 0) {
 						requestEnergy(dir, request);
-					}
-				}
-
-				if (tile != null) {
-					IBatteryObject battery = MjAPI.getMjBattery(tile, MjAPI.DEFAULT_POWER_FRAMEWORK, dir.getOpposite());
-
-					if (battery != null) {
-						requestEnergy(dir, battery.getEnergyRequested());
 					}
 				}
 			}

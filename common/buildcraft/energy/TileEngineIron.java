@@ -26,14 +26,11 @@ import net.minecraftforge.fluids.IFluidHandler;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftEnergy;
-import buildcraft.api.core.NetworkData;
 import buildcraft.api.fuels.IronEngineCoolant;
 import buildcraft.api.fuels.IronEngineCoolant.Coolant;
 import buildcraft.api.fuels.IronEngineFuel;
 import buildcraft.api.fuels.IronEngineFuel.Fuel;
 import buildcraft.api.gates.ITrigger;
-import buildcraft.api.mj.IOMode;
-import buildcraft.api.mj.MjBattery;
 import buildcraft.core.GuiIds;
 import buildcraft.core.IItemPipe;
 import buildcraft.core.fluids.FluidUtils;
@@ -53,15 +50,11 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
 	public Tank tankCoolant = new Tank("tankCoolant", MAX_LIQUID, this);
 
 	private int burnTime = 0;
-	private TankManager<Tank> tankManager = new TankManager<Tank>();
+	private TankManager tankManager = new TankManager();
 	private Fuel currentFuel = null;
 	private int penaltyCooling = 0;
 	private boolean lastPowered = false;
 	private BiomeGenBase biomeCache;
-
-	@MjBattery(mode = IOMode.SendActive, maxCapacity = 10000, maxSendedPerCycle = 500, minimumConsumption = 0)
-	@NetworkData
-	private double mjStored;
 
 	public TileEngineIron() {
 		super(1);
@@ -180,6 +173,7 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
 						return;
 					}
 				}
+				if(!this.constantPower) currentOutput = currentFuel.powerPerCycle;
 				addEnergy(currentFuel.powerPerCycle);
 				heat += currentFuel.powerPerCycle * HEAT_PER_MJ * getBiomeTempScalar();
 			}
@@ -334,7 +328,7 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
 
 	@Override
 	public boolean isActive() {
-		return currentFuel != null && penaltyCooling <= 0;
+		return penaltyCooling <= 0;
 	}
 
 	/* ITANKCONTAINER */
@@ -364,9 +358,6 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
 
 	@Override
 	public int fill(ForgeDirection from, FluidStack resource, boolean doFill) {
-		if (resource == null) {
-			return 0;
-		}
 
 		// Handle coolant
 		if (IronEngineCoolant.getCoolant(resource) != null) {
@@ -409,6 +400,29 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
 
 	public FluidStack getCoolant() {
 		return tankCoolant.getFluid();
+	}
+
+	@Override
+	public double maxEnergyReceived() {
+		return 2000;
+	}
+
+	@Override
+	public double maxEnergyExtracted() {
+		return 500;
+	}
+
+	@Override
+	public double getMaxEnergy() {
+		return 10000;
+	}
+
+	@Override
+	public double getCurrentOutput() {
+		if (currentFuel == null) {
+			return 0;
+		}
+		return currentFuel.powerPerCycle;
 	}
 
 	@Override

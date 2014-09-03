@@ -61,7 +61,6 @@ import buildcraft.core.science.TechnoSimpleItem;
 import buildcraft.core.science.TechnoStatement;
 import buildcraft.core.science.Tier;
 import buildcraft.energy.BlockBuildcraftFluid;
-import buildcraft.energy.BlockEnergyConverter;
 import buildcraft.energy.BlockEnergyEmitter;
 import buildcraft.energy.BlockEnergyReceiver;
 import buildcraft.energy.BlockEngine;
@@ -69,10 +68,8 @@ import buildcraft.energy.BucketHandler;
 import buildcraft.energy.EnergyProxy;
 import buildcraft.energy.GuiHandler;
 import buildcraft.energy.ItemBucketBuildcraft;
-import buildcraft.energy.ItemEnergyConverter;
 import buildcraft.energy.ItemEngine;
 import buildcraft.energy.SchematicEngine;
-import buildcraft.energy.TileEnergyConverter;
 import buildcraft.energy.TileEnergyEmitter;
 import buildcraft.energy.TileEnergyReceiver;
 import buildcraft.energy.TileEngine;
@@ -188,13 +185,6 @@ public class BuildCraftEnergy extends BuildCraftMod {
 
 		engineBlock = new BlockEngine();
 		CoreProxy.proxy.registerBlock(engineBlock, ItemEngine.class);
-
-		if (BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "energyConverter", true,
-				"Set true for enable energy converter").getBoolean(true)) {
-			blockEnergyConverter = new BlockEnergyConverter();
-			CoreProxy.proxy.registerBlock(blockEnergyConverter, ItemEnergyConverter.class);
-			CoreProxy.proxy.registerTileEntity(TileEnergyConverter.class, "EnergyConverter");
-		}
 
 		// Oil and fuel
 		buildcraftFluidOil = new Fluid("oil").setDensity(800).setViscosity(1500);

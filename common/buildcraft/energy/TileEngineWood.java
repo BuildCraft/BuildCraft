@@ -8,19 +8,16 @@
  */
 package buildcraft.energy;
 
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
-
 import net.minecraftforge.common.util.ForgeDirection;
-
-import buildcraft.api.core.NetworkData;
-import buildcraft.api.mj.IOMode;
-import buildcraft.api.mj.MjBattery;
+import buildcraft.api.power.PowerHandler;
 import buildcraft.api.transport.IPipeTile.PipeType;
+import buildcraft.transport.TileGenericPipe;
 
 public class TileEngineWood extends TileEngine {
-	@MjBattery(mode = IOMode.SendActive, maxCapacity = 100, maxSendedPerCycle = 1, minimumConsumption = 0)
-	@NetworkData
-	private double mjStored;
+
+	public static final float OUTPUT = 0.1F;
 
 	@Override
 	public ResourceLocation getBaseTexture() {
@@ -35,6 +32,16 @@ public class TileEngineWood extends TileEngine {
 	@Override
 	public float explosionRange() {
 		return 1;
+	}
+
+	@Override
+	public double minEnergyReceived() {
+		return 0;
+	}
+
+	@Override
+	public double maxEnergyReceived() {
+		return 50;
 	}
 
 	@Override
@@ -73,8 +80,10 @@ public class TileEngineWood extends TileEngine {
 	public void engineUpdate() {
 		super.engineUpdate();
 
-		if (isRedstonePowered && worldObj.getTotalWorldTime() % 16 == 0) {
-			addEnergy(1);
+		if (isRedstonePowered) {
+			if (worldObj.getTotalWorldTime() % 16 == 0) {
+				addEnergy(1);
+			}
 		}
 	}
 
@@ -86,5 +95,35 @@ public class TileEngineWood extends TileEngine {
 	@Override
 	public boolean isBurning() {
 		return isRedstonePowered;
+	}
+	
+	@Override
+	public double getMaxEnergy() {
+		return 100;
+	}
+
+	@Override
+	public double getCurrentOutput() {
+		return OUTPUT;
+	}
+
+	@Override
+	public double maxEnergyExtracted() {
+		return 1 + PowerHandler.PerditionCalculator.MIN_POWERLOSS;
+	}
+	
+	// TODO: HACK
+	@Override
+	public boolean canConnectEnergy(ForgeDirection from) {
+		return false;
+	}
+	
+	@Override
+	protected void sendPower() {
+		TileEntity tile = getTileBuffer(orientation).getTile();
+		if(tile instanceof TileGenericPipe && ((TileGenericPipe)tile).getPipeType() != PipeType.POWER)
+			super.sendPower();
+		else // pretend we're sending out our powers
+			this.energy = 0.0;
 	}
 }
