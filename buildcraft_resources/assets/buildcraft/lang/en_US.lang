@@ -18,10 +18,7 @@ buildcraft.boardRobotCrafter=Crafter
 buildcraft.boardRobotDelivery=Delivery
 buildcraft.boardRobotPump=Pump
 
-chat.pipe.power.iron.mode=Switched to %d MJ/t limit
-chat.pipe.power.energyConverter=Energy conversion: %s
-chat.pipe.power.energyConverter.from_old_to_new=From old API to new API
-chat.pipe.power.energyConverter.from_new_to_old=From new API to old API
+chat.pipe.power.iron.mode=Switched to %d RF/t limit
 
 color.black=Black
 color.blue=Blue
