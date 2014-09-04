@@ -194,7 +194,7 @@ public class PipeTransportPower extends PipeTransport {
 				externalPower[out] = 0;
 
 				if (powerQuery[out] > 0 && internalPower[out] == 0) {
-					int powerConsumed = (int)Math.round((double)(powerQuery[out] * totalPowerContained) / totalPowerQuery);
+					int powerConsumed = (int)Math.floor((double)(powerQuery[out] * totalPowerContained) / totalPowerQuery);
 					boolean tilePowered = false;
 
 					if (tiles[out] instanceof TileGenericPipe) {
@@ -243,7 +243,7 @@ public class PipeTransportPower extends PipeTransport {
 
 		if (totalPowerConsumed > 0) {
 			for (int in = 0; in < 6; ++in) {
-				int powerConsumed = (int)Math.round(internalPower[in] / totalPowerContained * totalPowerConsumed);
+				int powerConsumed = (int)Math.floor(internalPower[in] / totalPowerContained * totalPowerConsumed);
 				displayPower[in] += powerConsumed;
 			}
 		}
