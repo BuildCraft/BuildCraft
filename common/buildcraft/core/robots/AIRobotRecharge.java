@@ -39,8 +39,7 @@ public class AIRobotRecharge extends AIRobot {
 
 		int amount = robot.getBattery().addEnergy(0, 1000, true);
 		
-		// TODO RF
-		powerProvider.requestEnergy(robot.getDockingStation().side(), (double)amount / 10.0);
+		powerProvider.requestEnergy(robot.getDockingStation().side(), amount);
 		
 		robot.getBattery().addEnergy(0, powerProvider.consumePower(robot.getDockingStation().side(), amount), false);
 
