@@ -40,7 +40,7 @@ public abstract class TileLaserTableBase extends TileBuildCraft implements ILase
 		recentEnergyAverageUtil.tick();
 	}
 
-	public double getEnergy() {
+	public int getEnergy() {
 		return energy;
 	}
 
