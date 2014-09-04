@@ -13,6 +13,7 @@ import java.util.TreeMap;
 
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.World;
+
 import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.core.LaserData;
@@ -63,7 +64,7 @@ public class TileEnergyEmitter extends TileBuildCraft {
 
 					if (t.data.wavePosition > t.data.renderSize) {
 						t.data.wavePosition = 0;
-						t.data.waveSize = (float) (getBattery().getEnergyStored() / targets.size() / 100F);
+						t.data.waveSize = getBattery().getEnergyStored() / targets.size() / 100F;
 
 						if (t.data.waveSize > 1) {
 							t.data.waveSize = 1F;
@@ -123,7 +124,8 @@ public class TileEnergyEmitter extends TileBuildCraft {
 				}
 			}
 		} else {
-			int perTargetEnergy = (int)Math.floor(getBattery().useEnergy(targets.size(), targets.size() * 100, false) / targets.size());
+			int perTargetEnergy = (int) Math.floor(getBattery().useEnergy(targets.size(), targets.size() * 100, false)
+					/ targets.size());
 
 			for (Target t : targets.values()) {
 				if (!t.data.isVisible) {

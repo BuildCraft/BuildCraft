@@ -8,9 +8,11 @@
  */
 package buildcraft.api.power;
 
-import buildcraft.api.core.SafeTimeTracker;
 import net.minecraft.nbt.NBTTagCompound;
+
 import net.minecraftforge.common.util.ForgeDirection;
+
+import buildcraft.api.core.SafeTimeTracker;
 
 /**
  * The PowerHandler is similar to FluidTank in that it holds your power and
@@ -28,6 +30,7 @@ import net.minecraftforge.common.util.ForgeDirection;
  * @see IPowerReceptor
  * @see IPowerEmitter
  */
+@Deprecated
 public final class PowerHandler {
 
 	public static enum Type {
@@ -75,11 +78,12 @@ public final class PowerHandler {
 		 *
 		 * @param powerLoss power loss per tick
 		 */
-		public PerditionCalculator(double powerLoss) {
-			if (powerLoss < MIN_POWERLOSS) {
+		public PerditionCalculator(double iPowerLoss) {
+			if (iPowerLoss < MIN_POWERLOSS) {
+				powerLoss = iPowerLoss;
+			} else {
 				powerLoss = MIN_POWERLOSS;
 			}
-			this.powerLoss = powerLoss;
 		}
 
 		/**
@@ -93,11 +97,14 @@ public final class PowerHandler {
 		 * @return
 		 */
 		public double applyPerdition(PowerHandler powerHandler, double current, long ticksPassed) {
-			current -= powerLoss * ticksPassed;
-			if (current < 0) {
-				current = 0;
+			double result = current;
+
+			result -= powerLoss * ticksPassed;
+			if (result < 0) {
+				result = 0;
 			}
-			return current;
+
+			return result;
 		}
 
 		/**
@@ -115,6 +122,8 @@ public final class PowerHandler {
 	public static final double ROLLING_AVERAGE_WEIGHT = 100.0;
 	public static final double ROLLING_AVERAGE_NUMERATOR = ROLLING_AVERAGE_WEIGHT - 1;
 	public static final double ROLLING_AVERAGE_DENOMINATOR  = 1.0 / ROLLING_AVERAGE_WEIGHT;
+	public final int[] powerSources = new int[6];
+	public final IPowerReceptor receptor;
 	private double minEnergyReceived;
 	private double maxEnergyReceived;
 	private double maxEnergyStored;
@@ -123,8 +132,6 @@ public final class PowerHandler {
 	private final SafeTimeTracker doWorkTracker = new SafeTimeTracker();
 	private final SafeTimeTracker sourcesTracker = new SafeTimeTracker();
 	private final SafeTimeTracker perditionTracker = new SafeTimeTracker();
-	public final int[] powerSources = new int[6];
-	public final IPowerReceptor receptor;
 	private PerditionCalculator perdition;
 	private final PowerReceiver receiver;
 	private final Type type;
@@ -167,29 +174,38 @@ public final class PowerHandler {
 	/**
 	 * Setup your PowerHandler's settings.
 	 *
-	 * @param minEnergyReceived This is the minimum about of power that will be
-	 * accepted by the PowerHandler. This should generally be greater than the
-	 * activationEnergy if you plan to use the doWork() callback. Anything
-	 * greater than 1 will prevent Redstone Engines from powering this Provider.
-	 * @param maxEnergyReceived The maximum amount of power accepted by the
-	 * PowerHandler. This should generally be less than 500. Too low and larger
-	 * engines will overheat while trying to power the machine. Too high, and
-	 * the engines will never warm up. Greater values also place greater strain
-	 * on the power net.
-	 * @param activationEnergy If the stored energy is greater than this value,
-	 * the doWork() callback is called (once per tick).
-	 * @param maxStoredEnergy The maximum amount of power this PowerHandler can
-	 * store. Values tend to range between 100 and 5000. With 1000 and 1500
-	 * being common.
+	 * @param minEnergyReceived
+	 *            This is the minimum about of power that will be accepted by
+	 *            the PowerHandler. This should generally be greater than the
+	 *            activationEnergy if you plan to use the doWork() callback.
+	 *            Anything greater than 1 will prevent Redstone Engines from
+	 *            powering this Provider.
+	 * @param iMaxEnergyReceived
+	 *            The maximum amount of power accepted by the PowerHandler. This
+	 *            should generally be less than 500. Too low and larger engines
+	 *            will overheat while trying to power the machine. Too high, and
+	 *            the engines will never warm up. Greater values also place
+	 *            greater strain on the power net.
+	 * @param activationEnergy
+	 *            If the stored energy is greater than this value, the doWork()
+	 *            callback is called (once per tick).
+	 * @param maxStoredEnergy
+	 *            The maximum amount of power this PowerHandler can store.
+	 *            Values tend to range between 100 and 5000. With 1000 and 1500
+	 *            being common.
 	 */
-	public void configure(double minEnergyReceived, double maxEnergyReceived, double activationEnergy, double maxStoredEnergy) {
-		if (minEnergyReceived > maxEnergyReceived) {
-			maxEnergyReceived = minEnergyReceived;
+	public void configure(double iMinEnergyReceived, double iMaxEnergyReceived, double iActivationEnergy,
+			double iMaxStoredEnergy) {
+
+		if (iMinEnergyReceived > maxEnergyReceived) {
+			maxEnergyReceived = iMinEnergyReceived;
+		} else {
+			maxEnergyReceived = iMaxEnergyReceived;
 		}
-		this.minEnergyReceived = minEnergyReceived;
-		this.maxEnergyReceived = maxEnergyReceived;
-		this.maxEnergyStored = maxStoredEnergy;
-		this.activationEnergy = activationEnergy;
+
+		minEnergyReceived = iMinEnergyReceived;
+		maxEnergyStored = iMaxStoredEnergy;
+		activationEnergy = iActivationEnergy;
 	}
 
 	/**
@@ -217,17 +233,20 @@ public final class PowerHandler {
 	 * For example if you want exponentially increasing loss based on amount
 	 * stored.
 	 *
-	 * @param perdition
+	 * @param iPerdition
 	 */
-	public void setPerdition(PerditionCalculator perdition) {
-		if (perdition == null)
+	public void setPerdition(PerditionCalculator iPerdition) {
+		if (iPerdition == null) {
 			perdition = DEFAULT_PERDITION;
-		this.perdition = perdition;
+		} else {
+			perdition = iPerdition;
+		}
 	}
 
 	public PerditionCalculator getPerdition() {
-		if (perdition == null)
+		if (perdition == null) {
 			return DEFAULT_PERDITION;
+		}
 		return perdition;
 	}
 
@@ -250,10 +269,11 @@ public final class PowerHandler {
 		if (perditionTracker.markTimeIfDelay(receptor.getWorld(), 1) && energyStored > 0) {
 			double prev = energyStored;
 			double newEnergy = getPerdition().applyPerdition(this, energyStored, perditionTracker.durationOfLastDelay());
-			if (newEnergy == 0 || newEnergy < energyStored)
+			if (newEnergy == 0 || newEnergy < energyStored) {
 				energyStored = newEnergy;
-			else
+			} else {
 				energyStored = DEFAULT_PERDITION.applyPerdition(this, energyStored, perditionTracker.durationOfLastDelay());
+			}
 			validateEnergy();
 
 			averageLostPower = (averageLostPower * ROLLING_AVERAGE_NUMERATOR + (prev - energyStored)) * ROLLING_AVERAGE_DENOMINATOR;
@@ -278,8 +298,9 @@ public final class PowerHandler {
 			}
 		}
 
-		if (source != null)
+		if (source != null) {
 			powerSources[source.ordinal()] = 10;
+		}
 	}
 
 	/**
@@ -312,8 +333,9 @@ public final class PowerHandler {
 
 		validateEnergy();
 
-		if (doUse)
+		if (doUse) {
 			averageUsedPower = (averageUsedPower * ROLLING_AVERAGE_NUMERATOR + result) * ROLLING_AVERAGE_DENOMINATOR;
+		}
 
 		return result;
 	}
@@ -433,20 +455,22 @@ public final class PowerHandler {
 	 *
 	 * @return the amount the power changed by
 	 */
-	public double addEnergy(double quantity) {
-		energyStored += quantity;
+	public double addEnergy(double iQuantity) {
+		energyStored += iQuantity;
+
+		double added = iQuantity;
 
 		if (energyStored > maxEnergyStored) {
-			quantity -= energyStored - maxEnergyStored;
+			added -= energyStored - maxEnergyStored;
 			energyStored = maxEnergyStored;
 		} else if (energyStored < 0) {
-			quantity -= energyStored;
+			added -= energyStored;
 			energyStored = 0;
 		}
 
 		applyPerdition();
 
-		return quantity;
+		return added;
 	}
 
 	public void setEnergy(double quantity) {

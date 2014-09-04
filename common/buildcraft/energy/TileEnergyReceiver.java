@@ -10,9 +10,12 @@ package buildcraft.energy;
 
 import java.util.LinkedList;
 
-import cofh.api.energy.IEnergyHandler;
 import net.minecraft.tileentity.TileEntity;
+
 import net.minecraftforge.common.util.ForgeDirection;
+
+import cofh.api.energy.IEnergyHandler;
+
 import buildcraft.api.power.IPowerEmitter;
 import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.power.PowerHandler;
@@ -71,7 +74,7 @@ public class TileEnergyReceiver extends TileBuildCraft implements IPipeConnectio
 					energyStored = 0;
 				}
 			} else if (tile instanceof IEnergyHandler) {
-				int energyUsed = ((IEnergyHandler)tile).receiveEnergy(s.getOpposite(), energyStored, false);
+				int energyUsed = ((IEnergyHandler) tile).receiveEnergy(s.getOpposite(), energyStored, false);
 				energyStored -= energyUsed;
 			}
 		}

@@ -173,7 +173,11 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
 						return;
 					}
 				}
-				if(!this.constantPower) currentOutput = currentFuel.powerPerCycle;
+
+				if (!this.constantPower) {
+					currentOutput = currentFuel.powerPerCycle;
+				}
+
 				addEnergy(currentFuel.powerPerCycle);
 				heat += currentFuel.powerPerCycle * HEAT_PER_MJ * getBiomeTempScalar();
 			}

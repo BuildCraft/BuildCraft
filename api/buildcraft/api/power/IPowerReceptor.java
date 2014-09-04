@@ -9,12 +9,14 @@
 package buildcraft.api.power;
 
 import net.minecraft.world.World;
+
 import net.minecraftforge.common.util.ForgeDirection;
 
 /**
  * This interface should be implemented by any Tile Entity that wishes to be
  * able to receive power.
  */
+@Deprecated
 public interface IPowerReceptor {
 
 	/**
@@ -29,7 +31,7 @@ public interface IPowerReceptor {
 	 * @param side
 	 * @return
 	 */
-	public PowerHandler.PowerReceiver getPowerReceiver(ForgeDirection side);
+	PowerHandler.PowerReceiver getPowerReceiver(ForgeDirection side);
 
 	/**
 	 * Call back from the PowerHandler that is called when the stored power
@@ -39,7 +41,7 @@ public interface IPowerReceptor {
 	 *
 	 * @param workProvider
 	 */
-	public void doWork(PowerHandler workProvider);
+	void doWork(PowerHandler workProvider);
 
-	public World getWorld();
+	World getWorld();
 }

@@ -176,7 +176,7 @@ public class TileQuarry extends TileAbstractBuilder implements IMachine {
 		} else if (stage == Stage.IDLE) {
 			dig();
 		} else if (stage == Stage.DIGGING) {
-			int energyToUse = 20 + (int)Math.round(getBattery().getEnergyStored() / 500);
+			int energyToUse = 20 + Math.round(getBattery().getEnergyStored() / 500);
 
 			if (this.consumeEnergy(energyToUse)) {
 				speed = 0.1 + energyToUse / 200F;
@@ -192,7 +192,7 @@ public class TileQuarry extends TileAbstractBuilder implements IMachine {
 	}
 
 	protected void dig() {
-		int rf = (int)Math.ceil(BuildCraftFactory.MINING_RF_COST_PER_BLOCK * BuildCraftFactory.miningMultiplier);
+		int rf = (int) Math.ceil(BuildCraftFactory.MINING_RF_COST_PER_BLOCK * BuildCraftFactory.miningMultiplier);
 
 		if (!consumeEnergy(rf)) {
 			return;

@@ -10,7 +10,6 @@ package buildcraft.transport.pipes;
 
 import java.util.ArrayList;
 
-import cofh.api.energy.IEnergyHandler;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLeavesBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -24,7 +23,11 @@ import net.minecraft.item.ItemPotion;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.WorldServer;
+
 import net.minecraftforge.common.util.ForgeDirection;
+
+import cofh.api.energy.IEnergyHandler;
+
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.core.Position;
@@ -238,9 +241,12 @@ public class PipeItemsStripes extends Pipe<PipeTransportItems> implements IEnerg
 	@Override
 	public int receiveEnergy(ForgeDirection from, int maxReceive,
 			boolean simulate) {
-		if(maxReceive == 0) return 0;
-		else if(simulate) return 10;
-		
+		if (maxReceive == 0) {
+			return 0;
+		} else if (simulate) {
+			return 10;
+		}
+
 		ForgeDirection o = getOpenOrientation();
 
 		if (o != ForgeDirection.UNKNOWN) {
@@ -270,7 +276,7 @@ public class PipeItemsStripes extends Pipe<PipeTransportItems> implements IEnerg
 				getWorld().setBlockToAir((int) p.x, (int) p.y, (int) p.z);
 			}
 		}
-		
+
 		return maxReceive;
 	}
 

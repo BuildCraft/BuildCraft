@@ -11,7 +11,6 @@ package buildcraft.transport.pipes;
 import java.util.Arrays;
 import java.util.List;
 
-import cofh.api.energy.IEnergyHandler;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.item.EntityMinecartChest;
@@ -20,9 +19,14 @@ import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.AxisAlignedBB;
+
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+
 import net.minecraftforge.common.util.ForgeDirection;
+
+import cofh.api.energy.IEnergyHandler;
+
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.core.Position;
@@ -214,7 +218,7 @@ public class PipeItemsObsidian extends Pipe<PipeTransportItems> implements IEner
 
 				CoreProxy.proxy.obsidianPipePickup(container.getWorldObj(), item, this.container);
 
-				int energyUsed = (int)Math.min(10 * contained.stackSize * distance, battery.getEnergyStored());
+				int energyUsed = Math.min(10 * contained.stackSize * distance, battery.getEnergyStored());
 
 				// TODO: Why is energyUsed never used here?
 				
@@ -222,7 +226,7 @@ public class PipeItemsObsidian extends Pipe<PipeTransportItems> implements IEner
 					stack = contained;
 					CoreProxy.proxy.removeEntity(entity);
 				} else {
-					stack = contained.splitStack((int) (energyUsed / distance));
+					stack = contained.splitStack(energyUsed / distance);
 				}
 
 				speed = Math.sqrt(item.motionX * item.motionX + item.motionY * item.motionY + item.motionZ * item.motionZ);

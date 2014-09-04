@@ -14,7 +14,9 @@ import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
+
 import net.minecraftforge.common.util.ForgeDirection;
+
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftFactory;
 import buildcraft.api.gates.IAction;
@@ -43,7 +45,8 @@ public class TileMiningWell extends TileBuildCraft implements IMachine {
 			return;
 		}
 
-		int miningCost = (int)Math.ceil(BuildCraftFactory.MINING_RF_COST_PER_BLOCK * BuildCraftFactory.miningMultiplier);
+		int miningCost = (int) Math.ceil(BuildCraftFactory.MINING_RF_COST_PER_BLOCK
+				* BuildCraftFactory.miningMultiplier);
 
 		if (getBattery().useEnergy(miningCost, miningCost, false) == 0) {
 			return;

@@ -8,13 +8,17 @@
  */
 package buildcraft.core.triggers;
 
-import cofh.api.energy.IEnergyHandler;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
+
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+
 import net.minecraftforge.common.util.ForgeDirection;
+
+import cofh.api.energy.IEnergyHandler;
+
 import buildcraft.api.gates.IGate;
 import buildcraft.api.gates.ITriggerParameter;
 import buildcraft.core.utils.StringUtils;
@@ -39,11 +43,11 @@ public class TriggerEnergy extends BCTrigger {
 	private boolean isValidEnergyHandler(IEnergyHandler handler) {
 		return handler.getMaxEnergyStored(ForgeDirection.UNKNOWN) > 0;
 	}
-	
+
 	private boolean isTriggeredEnergyHandler(IEnergyHandler handler) {
 		int energyStored = handler.getEnergyStored(ForgeDirection.UNKNOWN);
 		int energyMaxStored = handler.getMaxEnergyStored(ForgeDirection.UNKNOWN);
-		
+
 		if (energyMaxStored > 0) {
 			if (high) {
 				return (energyStored / energyMaxStored) > 0.95;
@@ -56,8 +60,9 @@ public class TriggerEnergy extends BCTrigger {
 	@Override
 	public boolean isTriggerActive(IGate gate, ITriggerParameter[] parameters) {
 		if (gate.getPipe() instanceof IEnergyHandler) {
-			if(isValidEnergyHandler((IEnergyHandler)gate.getPipe()))
-				return isTriggeredEnergyHandler((IEnergyHandler)gate.getPipe());
+			if (isValidEnergyHandler((IEnergyHandler) gate.getPipe())) {
+				return isTriggeredEnergyHandler((IEnergyHandler) gate.getPipe());
+			}
 		}
 
 		// if the pipe can't set the trigger one way or the other, then look
@@ -68,10 +73,10 @@ public class TriggerEnergy extends BCTrigger {
 
 	@Override
 	public boolean isTriggerActive(ForgeDirection side, TileEntity tile, ITriggerParameter parameter) {
-		if(tile instanceof IEnergyHandler) {
+		if (tile instanceof IEnergyHandler) {
 			// Since we return false upon the trigger being invalid anyway,
 			// we can skip the isValidEnergyHandler(...) check.
-			return isTriggeredEnergyHandler((IEnergyHandler)tile);
+			return isTriggeredEnergyHandler((IEnergyHandler) tile);
 		}
 
 		return false;

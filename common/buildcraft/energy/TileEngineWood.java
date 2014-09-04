@@ -10,7 +10,9 @@ package buildcraft.energy;
 
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
+
 import net.minecraftforge.common.util.ForgeDirection;
+
 import buildcraft.api.power.PowerHandler;
 import buildcraft.api.transport.IPipeTile.PipeType;
 import buildcraft.transport.TileGenericPipe;
@@ -96,7 +98,7 @@ public class TileEngineWood extends TileEngine {
 	public boolean isBurning() {
 		return isRedstonePowered;
 	}
-	
+
 	@Override
 	public double getMaxEnergy() {
 		return 100;
@@ -111,19 +113,20 @@ public class TileEngineWood extends TileEngine {
 	public double maxEnergyExtracted() {
 		return 1 + PowerHandler.PerditionCalculator.MIN_POWERLOSS;
 	}
-	
+
 	// TODO: HACK
 	@Override
 	public boolean canConnectEnergy(ForgeDirection from) {
 		return false;
 	}
-	
+
 	@Override
 	protected void sendPower() {
 		TileEntity tile = getTileBuffer(orientation).getTile();
-		if(tile instanceof TileGenericPipe && ((TileGenericPipe)tile).getPipeType() != PipeType.POWER)
+		if (tile instanceof TileGenericPipe && ((TileGenericPipe) tile).getPipeType() != PipeType.POWER) {
 			super.sendPower();
-		else // pretend we're sending out our powers
+		} else { // pretend we're sending out our powers
 			this.energy = 0.0;
+		}
 	}
 }

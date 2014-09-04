@@ -10,13 +10,16 @@ package buildcraft.core.triggers;
 
 import java.util.LinkedList;
 
-import cofh.api.energy.IEnergyHandler;
 import net.minecraft.block.Block;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.tileentity.TileEntity;
+
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
+
+import cofh.api.energy.IEnergyHandler;
+
 import buildcraft.BuildCraftCore;
 import buildcraft.api.gates.IOverrideDefaultTriggers;
 import buildcraft.api.gates.ITrigger;
@@ -61,8 +64,8 @@ public class DefaultTriggerProvider implements ITriggerProvider {
 			res.add(BuildCraftCore.triggerMachineActive);
 			res.add(BuildCraftCore.triggerMachineInactive);
 		}
-		
-		if (tile instanceof IEnergyHandler && ((IEnergyHandler)tile).getMaxEnergyStored(ForgeDirection.UNKNOWN) > 0) {
+
+		if (tile instanceof IEnergyHandler && ((IEnergyHandler) tile).getMaxEnergyStored(ForgeDirection.UNKNOWN) > 0) {
 			res.add(BuildCraftCore.triggerEnergyHigh);
 			res.add(BuildCraftCore.triggerEnergyLow);
 		}

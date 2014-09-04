@@ -10,13 +10,16 @@ package buildcraft.energy;
 
 import java.util.LinkedList;
 
-import cofh.api.energy.IEnergyHandler;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ICrafting;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
+
 import net.minecraftforge.common.util.ForgeDirection;
+
+import cofh.api.energy.IEnergyHandler;
+
 import buildcraft.BuildCraftEnergy;
 import buildcraft.api.core.NetworkData;
 import buildcraft.api.gates.IOverrideDefaultTriggers;
@@ -34,9 +37,8 @@ import buildcraft.core.TileBuffer;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.energy.gui.ContainerEngine;
 
-public abstract class TileEngine extends TileBuildCraft implements IPowerReceptor, IPowerEmitter, IOverrideDefaultTriggers, IPipeConnection, IEnergyHandler {
-	protected boolean constantPower = false;
-	
+public abstract class TileEngine extends TileBuildCraft implements IPowerReceptor, IPowerEmitter,
+		IOverrideDefaultTriggers, IPipeConnection, IEnergyHandler {
 	// Index corresponds to metadata
 	public static final ResourceLocation[] BASE_TEXTURES = new ResourceLocation[]{
 			new ResourceLocation(DefaultProps.TEXTURE_PATH_BLOCKS + "/base_wood.png"),
@@ -84,6 +86,7 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 	@NetworkData
 	public ForgeDirection orientation = ForgeDirection.UP;
 
+	protected boolean constantPower = false;
 	protected int progressPart = 0;
 	protected boolean lastPower = false;
 	protected PowerHandler powerHandler;
@@ -239,8 +242,9 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 
 			if (progress > 0.5 && progressPart == 1) {
 				progressPart = 2;
-				if(!constantPower)
+				if (!constantPower) {
 					sendPower();
+				}
 			} else if (progress >= 1) {
 				progress = 0;
 				progressPart = 0;
@@ -263,26 +267,28 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 		}
 
 		// Uncomment for constant power
-		if(constantPower) {
+		if (constantPower) {
 			if (isRedstonePowered && isActive()) {
 				sendPower();
-			} else currentOutput = 0;
+			} else {
+				currentOutput = 0;
+			}
 		}
-		
+
 		burn();
 	}
 
 	private double getPowerToExtract() {
 		TileEntity tile = getTileBuffer(orientation).getTile();
 
-		if(tile instanceof IEnergyHandler) {
-			IEnergyHandler handler = ((IEnergyHandler)tile);
-			
+		if (tile instanceof IEnergyHandler) {
+			IEnergyHandler handler = (IEnergyHandler) tile;
+
 			int minEnergy = 0;
 			int maxEnergy = handler.receiveEnergy(
 					orientation.getOpposite(),
-					(int)Math.round(this.energy * 10), true);
-			return extractEnergy((double)minEnergy / 10.0, (double)maxEnergy / 10.0, false);
+					(int) Math.round(this.energy * 10), true);
+			return extractEnergy(minEnergy / 10.0, maxEnergy / 10.0, false);
 		} else if (tile instanceof IPowerReceptor) {
 			PowerReceiver receptor = ((IPowerReceptor) tile)
 					.getPowerReceiver(orientation.getOpposite());
@@ -298,17 +304,20 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 		TileEntity tile = getTileBuffer(orientation).getTile();
 		if (isPoweredTile(tile, orientation)) {
 			double extracted = getPowerToExtract();
-			if(extracted > 0) setPumping(true);
-			else setPumping(false);
-			
+			if (extracted > 0) {
+				setPumping(true);
+			} else {
+				setPumping(false);
+			}
+
 			if (tile instanceof IEnergyHandler) {
-				IEnergyHandler handler = ((IEnergyHandler) tile);
+				IEnergyHandler handler = (IEnergyHandler) tile;
 				if (Math.round(extracted * 10) > 0) {
 					int neededRF = handler.receiveEnergy(
 							orientation.getOpposite(),
-							(int)Math.round(extracted * 10), false);
-					
-					extractEnergy(0.0, (double)neededRF / 10.0, true);
+							(int) Math.round(extracted * 10), false);
+
+					extractEnergy(0.0, neededRF / 10.0, true);
 				}
 			} else if (tile instanceof IPowerReceptor) {
 				PowerReceiver receptor = ((IPowerReceptor) tile)
@@ -377,11 +386,14 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 			TileEntity tile = getTileBuffer(o).getTile();
 
 			if ((!pipesOnly || tile instanceof IPipeTile) && isPoweredTile(tile, o)) {
-				if((tile instanceof IPipeTile) && (((IPipeTile)tile).getPipeType() != PipeType.POWER))
-						constantPower = false;
-				else if(tile instanceof IEnergyHandler) constantPower = true;
-				else constantPower = false;
-				
+				if ((tile instanceof IPipeTile) && (((IPipeTile) tile).getPipeType() != PipeType.POWER)) {
+					constantPower = false;
+				} else if (tile instanceof IEnergyHandler) {
+					constantPower = true;
+				} else {
+					constantPower = false;
+				}
+
 				orientation = o;
 				worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
 				worldObj.notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord, worldObj.getBlock(xCoord, yCoord, zCoord));
@@ -423,8 +435,9 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 		progress = data.getFloat("progress");
 		energy = data.getDouble("energy");
 		heat = data.getFloat("heat");
-		if(data.hasKey("constantPower"))
+		if (data.hasKey("constantPower")) {
 			constantPower = data.getBoolean("constantPower");
+		}
 	}
 
 	@Override
@@ -537,7 +550,7 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 			return false;
 		} else if (tile instanceof IPowerReceptor) {
 			return ((IPowerReceptor) tile).getPowerReceiver(side.getOpposite()) != null;
-		} else if (tile instanceof IEnergyHandler){
+		} else if (tile instanceof IEnergyHandler) {
 			return ((IEnergyHandler) tile).canConnectEnergy(side.getOpposite());
 		} else {
 			return false;
@@ -593,7 +606,7 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 	public void checkRedstonePower() {
 		isRedstonePowered = worldObj.isBlockIndirectlyGettingPowered(xCoord, yCoord, zCoord);
 	}
-	
+
 	// RF support
 
 	@Override
@@ -606,9 +619,9 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 	public int extractEnergy(ForgeDirection from, int maxExtract,
 			boolean simulate) {
 		return 0;
-		
+
 		/*if(!(from == orientation)) return 0;
-		
+
 		int energyRF = (int)Math.round(10 * energy);
 		int energyExtracted = Math.min(maxExtract, energyRF);
 		if(!simulate) {
@@ -620,9 +633,11 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 
 	@Override
 	public int getEnergyStored(ForgeDirection from) {
-		if(!(from == orientation)) return 0;
-		
-		return (int)Math.round(10 * energy);
+		if (!(from == orientation)) {
+			return 0;
+		}
+
+		return (int) Math.round(10 * energy);
 	}
 
 	@Override

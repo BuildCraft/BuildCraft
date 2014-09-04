@@ -13,6 +13,7 @@ import java.util.LinkedList;
 
 import net.minecraft.inventory.IInventory;
 import net.minecraft.nbt.NBTTagCompound;
+
 import buildcraft.api.blueprints.ITileBuilder;
 import buildcraft.api.blueprints.SchematicRegistry;
 import buildcraft.api.core.NetworkData;
@@ -71,7 +72,7 @@ public abstract class TileAbstractBuilder extends TileBuildCraft implements ITil
 		super.updateEntity();
 
 		RFBattery battery = this.getBattery();
-		
+
 		if (rfPrev != battery.getEnergyStored()) {
 			rfPrev = battery.getEnergyStored();
 			rfUnchangedCycles = 0;
@@ -123,6 +124,7 @@ public abstract class TileAbstractBuilder extends TileBuildCraft implements ITil
 		buildersInAction.add(item);
 	}
 
+	@Override
 	public void addAndLaunchBuildingItem(BuildingItem item) {
 		buildersInAction.add(item);
 		RPCHandler.rpcBroadcastWorldPlayers(worldObj, this, "launchItem", item);
@@ -133,7 +135,7 @@ public abstract class TileAbstractBuilder extends TileBuildCraft implements ITil
 	}
 
 	public final boolean consumeEnergy(int quantity) {
-		return (getBattery().useEnergy(quantity, quantity, false) > 0);
+		return getBattery().useEnergy(quantity, quantity, false) > 0;
 	}
 
 	@Override
@@ -144,11 +146,11 @@ public abstract class TileAbstractBuilder extends TileBuildCraft implements ITil
 	@Override
 	public void readFromNBT(NBTTagCompound nbttagcompound) {
 		super.readFromNBT(nbttagcompound);
-		
+
 		rfPrev = getBattery().getEnergyStored();
 		rfUnchangedCycles = 0;
 	}
-	
+
 	@Override
 	public double getMaxRenderDistanceSquared() {
 		return Double.MAX_VALUE;

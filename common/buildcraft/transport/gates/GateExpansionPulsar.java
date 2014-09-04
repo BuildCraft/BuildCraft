@@ -10,10 +10,13 @@ package buildcraft.transport.gates;
 
 import java.util.List;
 
-import cofh.api.energy.IEnergyHandler;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+
 import net.minecraftforge.common.util.ForgeDirection;
+
+import cofh.api.energy.IEnergyHandler;
+
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.gates.GateExpansionController;
 import buildcraft.api.gates.IAction;
@@ -100,7 +103,8 @@ public final class GateExpansionPulsar extends GateExpansionBuildcraft implement
 				// TODO: (1 - 1) is coming from pulse count, which has been
 				// removed. The add energy algorithm probably needs to be
 				// reviewed altogether.
-				((IEnergyHandler)pipeTile).receiveEnergy(ForgeDirection.UNKNOWN, Math.min(1 << (1 - 1), 64) * 10, false);
+				((IEnergyHandler) pipeTile).receiveEnergy(ForgeDirection.UNKNOWN, Math.min(1 << (1 - 1), 64) * 10,
+						false);
 				hasPulsed = true;
 			} else {
 				gate.setPulsing(true);

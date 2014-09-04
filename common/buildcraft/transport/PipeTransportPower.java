@@ -12,10 +12,13 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-import cofh.api.energy.IEnergyHandler;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+
 import net.minecraftforge.common.util.ForgeDirection;
+
+import cofh.api.energy.IEnergyHandler;
+
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.SafeTimeTracker;
@@ -100,9 +103,9 @@ public class PipeTransportPower extends PipeTransport {
 				return true;
 			}
 		}
-		
+
 		if (tile instanceof IEnergyHandler) {
-			IEnergyHandler handler = (IEnergyHandler)tile;
+			IEnergyHandler handler = (IEnergyHandler) tile;
 			if (handler != null && handler.canConnectEnergy(side.getOpposite())) {
 				return true;
 			}
@@ -165,7 +168,7 @@ public class PipeTransportPower extends PipeTransport {
 		// Send the power to nearby pipes who requested it
 
 		System.arraycopy(displayPower, 0, prevDisplayPower, 0, 6);
-		Arrays.fill(displayPower, (short)0);
+		Arrays.fill(displayPower, (short) 0);
 
 		// STEP 1 - computes the total amount of power contained and total
 		// amount of power queried
@@ -194,7 +197,8 @@ public class PipeTransportPower extends PipeTransport {
 				externalPower[out] = 0;
 
 				if (powerQuery[out] > 0 && internalPower[out] == 0) {
-					int powerConsumed = (int)Math.floor((double)(powerQuery[out] * totalPowerContained) / totalPowerQuery);
+					int powerConsumed = (int) Math.floor((double) (powerQuery[out] * totalPowerContained)
+							/ totalPowerQuery);
 					boolean tilePowered = false;
 
 					if (tiles[out] instanceof TileGenericPipe) {
@@ -207,11 +211,11 @@ public class PipeTransportPower extends PipeTransport {
 								powerConsumed);
 						tilePowered = true;
 					} else if (tiles[out] instanceof IEnergyHandler) {
-						IEnergyHandler handler = (IEnergyHandler)tiles[out];
-						
+						IEnergyHandler handler = (IEnergyHandler) tiles[out];
+
 						if (handler.canConnectEnergy(ForgeDirection.VALID_DIRECTIONS[out].getOpposite())) {
 							// Transmit power to an RF energy handler
-							
+
 							powerConsumed = handler.receiveEnergy(ForgeDirection.VALID_DIRECTIONS[out].getOpposite(),
 									powerConsumed, false);
 							tilePowered = true;
@@ -222,7 +226,7 @@ public class PipeTransportPower extends PipeTransport {
 						if (prov != null) {
 							// Transmit power to the legacy power framework
 
-							powerConsumed = (int)Math.ceil(prov.receiveEnergy(Type.PIPE, (double)powerConsumed / 10.0,
+							powerConsumed = (int) Math.ceil(prov.receiveEnergy(Type.PIPE, powerConsumed / 10.0,
 									ForgeDirection.VALID_DIRECTIONS[out].getOpposite()) * 10);
 							tilePowered = true;
 						}
@@ -243,7 +247,7 @@ public class PipeTransportPower extends PipeTransport {
 
 		if (totalPowerConsumed > 0) {
 			for (int in = 0; in < 6; ++in) {
-				int powerConsumed = (int)Math.floor(internalPower[in] / totalPowerContained * totalPowerConsumed);
+				int powerConsumed = (int) Math.floor(internalPower[in] / totalPowerContained * totalPowerConsumed);
 				displayPower[in] += powerConsumed;
 			}
 		}
@@ -252,7 +256,7 @@ public class PipeTransportPower extends PipeTransport {
 
 		highestPower = 0;
 		for (int i = 0; i < 6; i++) {
-			displayPower[i] = (short)((prevDisplayPower[i] * (DISPLAY_SMOOTHING - 1.0F) + displayPower[i]) / DISPLAY_SMOOTHING);
+			displayPower[i] = (short) ((prevDisplayPower[i] * (DISPLAY_SMOOTHING - 1.0F) + displayPower[i]) / DISPLAY_SMOOTHING);
 
 			if (displayPower[i] > highestPower) {
 				highestPower = displayPower[i];
@@ -276,10 +280,10 @@ public class PipeTransportPower extends PipeTransport {
 		for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
 			TileEntity tile = tiles [dir.ordinal()];
 			if (tile instanceof IEnergyHandler) {
-				IEnergyHandler handler = (IEnergyHandler)tile;
-				if(handler.canConnectEnergy(dir.getOpposite())) {
+				IEnergyHandler handler = (IEnergyHandler) tile;
+				if (handler.canConnectEnergy(dir.getOpposite())) {
 					int request = handler.receiveEnergy(dir.getOpposite(), this.maxPower, true);
-					
+
 					if (request > 0) {
 						requestEnergy(dir, request);
 					}
@@ -287,7 +291,7 @@ public class PipeTransportPower extends PipeTransport {
 			} else if (!(tile instanceof TileGenericPipe && ((TileGenericPipe) tile).pipe.transport instanceof PipeTransportPower)) {
 				PowerReceiver prov = getReceiverOnSide(dir);
 				if (prov != null) {
-					int request = (int)Math.floor(prov.powerRequest() * 10);
+					int request = (int) Math.floor(prov.powerRequest() * 10);
 
 					if (request > 0) {
 						requestEnergy(dir, request);
@@ -297,7 +301,7 @@ public class PipeTransportPower extends PipeTransport {
 		}
 
 		// Sum the amount of energy requested on each side
-		
+
 		int[] transferQuery = new int[6];
 
 		for (int i = 0; i < 6; ++i) {
@@ -519,7 +523,7 @@ public class PipeTransportPower extends PipeTransport {
 
 	public int consumePower(ForgeDirection dir, int max) {
 		int result;
-		
+
 		if (externalPower[dir.ordinal()] < max) {
 			result = externalPower[dir.ordinal()];
 		} else {

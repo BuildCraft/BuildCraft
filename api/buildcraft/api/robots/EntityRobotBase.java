@@ -8,13 +8,16 @@
  */
 package buildcraft.api.robots;
 
-import cofh.api.energy.IEnergyStorage;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
+
 import net.minecraftforge.fluids.IFluidHandler;
+
+import cofh.api.energy.IEnergyStorage;
+
 import buildcraft.api.boards.RedstoneBoardRobot;
 import buildcraft.api.core.IZone;
 

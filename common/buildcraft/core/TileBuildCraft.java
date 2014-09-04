@@ -12,7 +12,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import cofh.api.energy.IEnergyHandler;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -20,7 +19,11 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.Packet;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+
 import net.minecraftforge.common.util.ForgeDirection;
+
+import cofh.api.energy.IEnergyHandler;
+
 import buildcraft.BuildCraftCore;
 import buildcraft.api.power.IPowerReceptor;
 import buildcraft.core.network.BuildCraftPacket;
@@ -41,7 +44,7 @@ public abstract class TileBuildCraft extends TileEntity implements ISynchronized
 	private boolean init = false;
 	private String owner = "[BuildCraft]";
 	private RFBattery battery;
-	
+
 	public TileBuildCraft() {
 		if (!updateWrappers.containsKey(this.getClass())) {
 			updateWrappers.put(this.getClass(), new TilePacketWrapper(this.getClass()));
@@ -54,7 +57,7 @@ public abstract class TileBuildCraft extends TileEntity implements ISynchronized
 		updatePacket = updateWrappers.get(this.getClass());
 		descriptionPacket = descriptionWrappers.get(this.getClass());
 	}
-	
+
 	public String getOwner() {
 		return owner;
 	}
@@ -160,41 +163,54 @@ public abstract class TileBuildCraft extends TileEntity implements ISynchronized
 	public boolean equals(Object cmp) {
 		return this == cmp;
 	}
-	
+
+	@Override
 	public boolean canConnectEnergy(ForgeDirection from) {
-		return (battery != null);
+		return battery != null;
 	}
 
+	@Override
 	public int receiveEnergy(ForgeDirection from, int maxReceive,
 			boolean simulate) {
-		if(battery != null && this.canConnectEnergy(from))
+		if (battery != null && this.canConnectEnergy(from)) {
 			return battery.receiveEnergy(maxReceive, simulate);
-		else return 0;
+		} else {
+			return 0;
+		}
 	}
 
+	@Override
 	public int extractEnergy(ForgeDirection from, int maxExtract,
 			boolean simulate) {
-		if(battery != null && this.canConnectEnergy(from))
+		if (battery != null && this.canConnectEnergy(from)) {
 			return battery.extractEnergy(maxExtract, simulate);
-		else return 0;
+		} else {
+			return 0;
+		}
 	}
 
+	@Override
 	public int getEnergyStored(ForgeDirection from) {
-		if(battery != null && this.canConnectEnergy(from))
+		if (battery != null && this.canConnectEnergy(from)) {
 			return battery.getEnergyStored();
-		else return 0;
+		} else {
+			return 0;
+		}
 	}
 
+	@Override
 	public int getMaxEnergyStored(ForgeDirection from) {
-		if(battery != null && this.canConnectEnergy(from))
+		if (battery != null && this.canConnectEnergy(from)) {
 			return battery.getMaxEnergyStored();
-		else return 0;
+		} else {
+			return 0;
+		}
 	}
-	
+
 	public RFBattery getBattery() {
 		return battery;
 	}
-	
+
 	protected void setBattery(RFBattery battery) {
 		this.battery = battery;
 	}
