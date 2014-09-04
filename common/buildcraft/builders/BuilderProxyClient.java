@@ -11,7 +11,6 @@ package buildcraft.builders;
 import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 
-import buildcraft.builders.urbanism.RenderBoxProvider;
 import buildcraft.core.render.RenderBlockMultiTexture;
 
 public class BuilderProxyClient extends BuilderProxy {
@@ -27,7 +26,7 @@ public class BuilderProxyClient extends BuilderProxy {
 
 		RenderingRegistry.registerBlockHandler(new RenderBlockMultiTexture());
 
-		ClientRegistry.bindTileEntitySpecialRenderer(TileArchitect.class, new RenderBoxProvider());
+		ClientRegistry.bindTileEntitySpecialRenderer(TileArchitect.class, new RenderArchitect());
 		ClientRegistry.bindTileEntitySpecialRenderer(TileFiller.class, new RenderBuilder());
 		ClientRegistry.bindTileEntitySpecialRenderer(TileBuilder.class, new RenderBuilder());
 		ClientRegistry.bindTileEntitySpecialRenderer(TilePathMarker.class, new RenderPathMarker());

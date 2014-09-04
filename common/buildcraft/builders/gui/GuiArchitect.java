@@ -150,7 +150,7 @@ public class GuiArchitect extends GuiBuildCraft {
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 		mc.renderEngine.bindTexture(TEXTURE);
 		drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
-		int i1 = architect.getComputingProgressScaled(24);
+		int i1 = ((ContainerArchitect) container).computingTime;
 		drawTexturedModalRect(guiLeft + 159, guiTop + 34, 0, 166, i1 + 1, 16);
 	}
 

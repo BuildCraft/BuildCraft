@@ -25,6 +25,7 @@ import buildcraft.core.IBoxProvider;
 import buildcraft.core.LaserData;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.blueprints.Blueprint;
+import buildcraft.core.blueprints.BlueprintBase;
 import buildcraft.core.blueprints.BptBuilderBase;
 import buildcraft.core.blueprints.BptBuilderBlueprint;
 import buildcraft.core.blueprints.BptContext;
@@ -86,8 +87,9 @@ public class TileConstructionMarker extends TileBuildCraft implements IBuildingI
 		}
 
 		if (itemBlueprint != null && ItemBlueprint.getId(itemBlueprint) != null && bluePrintBuilder == null) {
-			bluePrintBuilder = new BptBuilderBlueprint((Blueprint) ItemBlueprint.loadBlueprint(itemBlueprint),
-					worldObj, xCoord, yCoord, zCoord);
+			BlueprintBase bpt = BlueprintBase.instantiate(itemBlueprint, worldObj, xCoord, yCoord, zCoord, direction);
+
+			bluePrintBuilder = new BptBuilderBlueprint((Blueprint) bpt, worldObj, xCoord, yCoord, zCoord);
 			bptContext = bluePrintBuilder.getContext();
 			box.initialize(bluePrintBuilder);
 			sendNetworkUpdate();
