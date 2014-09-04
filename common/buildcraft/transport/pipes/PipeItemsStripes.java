@@ -8,18 +8,14 @@
  */
 package buildcraft.transport.pipes;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockLeavesBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
-import net.minecraft.item.ItemBucket;
-import net.minecraft.item.ItemPotion;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.WorldServer;
@@ -30,221 +26,36 @@ import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.core.Position;
 import buildcraft.api.mj.MjBattery;
+import buildcraft.api.transport.IStripesHandler;
+import buildcraft.api.transport.IStripesHandler.StripesAction;
+import buildcraft.api.transport.IStripesHandler.StripesBehavior;
+import buildcraft.api.transport.IStripesPipe;
+import buildcraft.api.transport.PipeManager;
 import buildcraft.core.proxy.CoreProxy;
-import buildcraft.core.utils.BlockUtil;
-import buildcraft.transport.BlockGenericPipe;
-import buildcraft.transport.ItemPipe;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportItems;
 import buildcraft.transport.TileGenericPipe;
 import buildcraft.transport.TravelingItem;
 import buildcraft.transport.pipes.events.PipeEventItem;
+import buildcraft.transport.stripes.DefaultHandler;
 import buildcraft.transport.utils.TransportUtils;
 
-public class PipeItemsStripes extends Pipe<PipeTransportItems> {
+
+public class PipeItemsStripes extends Pipe<PipeTransportItems> implements IStripesPipe {
+
+	// A lot excluded due to right-click functionality, already doing the thing
+	public static final Item[] DISPENCER_EXCLUSIONS = {
+		Item.getItemFromBlock(Blocks.tnt), Items.dye/*Bonemeal*/,
+		Items.boat, Items.minecart, Items.chest_minecart, Items.hopper_minecart,
+		Items.tnt_minecart, Items.furnace_minecart, Items.command_block_minecart
+	};
 
 	@MjBattery(maxCapacity = 1, maxReceivedPerCycle = 1, minimumConsumption = 0)
 	private double mjStored = 0;
 
-	public PipeItemsStripes(Item item) {
-		super(new PipeTransportItems(), item);
-	}
-
-	@Override
-	public void updateEntity() {
-		super.updateEntity();
-
-		if (container.getWorldObj().isRemote) {
-			return;
-		}
-
-		if (mjStored > 0) {
-			ForgeDirection o = getOpenOrientation();
-
-			if (o != ForgeDirection.UNKNOWN) {
-				Position p = new Position(container.xCoord, container.yCoord,
-						container.zCoord, o);
-				p.moveForwards(1.0);
-
-				if (!BlockUtil.isUnbreakableBlock(getWorld(), (int) p.x, (int) p.y, (int) p.z)) {
-					ArrayList<ItemStack> stacks = getWorld().getBlock(
-							(int) p.x, (int) p.y, (int) p.z).getDrops(
-							getWorld(),
-							(int) p.x,
-							(int) p.y,
-							(int) p.z,
-							getWorld().getBlockMetadata((int) p.x, (int) p.y,
-									(int) p.z), 0
-					);
-
-					if (stacks != null) {
-						for (ItemStack s : stacks) {
-							if (s != null) {
-								rollbackItem(s, o);
-							}
-						}
-					}
-
-					getWorld().setBlockToAir((int) p.x, (int) p.y, (int) p.z);
-				}
-			}
-		}
-
-		mjStored = 0;
-	}
-
-	public void eventHandler(PipeEventItem.DropItem event) {
-		Position p = new Position(container.xCoord, container.yCoord,
-				container.zCoord, event.direction);
-		p.moveForwards(1.0);
-
-		ItemStack stack = event.entity.getEntityItem();
-
-		if (convertPipe(transport, event.item)) {
-			BuildCraftTransport.pipeItemsStripes.onItemUse(new ItemStack(
-							BuildCraftTransport.pipeItemsStripes), CoreProxy
-					.proxy.getBuildCraftPlayer((WorldServer) getWorld()).get(), getWorld(), (int) p.x,
-					(int) p.y, (int) p.z, 1, 0, 0, 0
-			);
-		} else if (stack.getItem() instanceof ItemBlock) {
-			if (getWorld().getBlock((int) p.x, (int) p.y, (int) p.z) == Blocks.air) {
-				stack.tryPlaceItemIntoWorld(
-						CoreProxy.proxy.getBuildCraftPlayer((WorldServer) getWorld()).get(),
-					getWorld(), (int) p.x, (int) p.y, (int) p.z, 1, 0.0f, 0.0f,
-					0.0f);
-			}
-		} else if (stack.getItem() == Items.shears) {
-			Block block = getWorld().getBlock((int) p.x, (int) p.y, (int) p.z);
-
-			if (block instanceof BlockLeavesBase) {
-				getWorld().playSoundEffect((int) p.x, (int) p.y, (int) p.z, Block.soundTypeGrass.getBreakSound(), 1, 1);
-				getWorld().setBlockToAir((int) p.x, (int) p.y, (int) p.z);
-				stack.damageItem(1, CoreProxy.proxy.getBuildCraftPlayer((WorldServer) getWorld()).get());
-			}
-		} else if (stack.getItem() == Items.arrow) {
-			stack.stackSize--;
-
-			ForgeDirection direction = event.direction;
-			EntityArrow entityArrow = new EntityArrow(getWorld(),
-					CoreProxy.proxy.getBuildCraftPlayer((WorldServer) getWorld()).get(), 0);
-			entityArrow.setPosition(p.x + 0.5d, p.y + 0.5d, p.z + 0.5d);
-			entityArrow.setDamage(3);
-			entityArrow.setKnockbackStrength(1);
-			entityArrow.motionX = direction.offsetX * 1.8d + getWorld().rand.nextGaussian() * 0.007499999832361937D;
-			entityArrow.motionY = direction.offsetY * 1.8d + getWorld().rand.nextGaussian() * 0.007499999832361937D;
-			entityArrow.motionZ = direction.offsetZ * 1.8d + getWorld().rand.nextGaussian() * 0.007499999832361937D;
-			getWorld().spawnEntityInWorld(entityArrow);
-		} else if ((stack.getItem() == Items.potionitem && ItemPotion.isSplash(stack.getItemDamage()))
-				   || stack.getItem() == Items.egg
-				   || stack.getItem() == Items.snowball) {
-			EntityPlayer player = CoreProxy.proxy.getBuildCraftPlayer((WorldServer) getWorld(),
-					(int) p.x, (int) p.y, (int) p.z).get();
-
-			switch (event.direction) {
-			case DOWN:
-				player.rotationPitch = 90;
-				player.rotationYaw = 0;
-				break;
-			case UP:
-				player.rotationPitch = 270;
-				player.rotationYaw = 0;
-				break;
-			case NORTH:
-				player.rotationPitch = 0;
-				player.rotationYaw = 180;
-				break;
-			case SOUTH:
-				player.rotationPitch = 0;
-				player.rotationYaw = 0;
-				break;
-			case WEST:
-				player.rotationPitch = 0;
-				player.rotationYaw = 90;
-				break;
-			case EAST:
-				player.rotationPitch = 0;
-				player.rotationYaw = 270;
-				break;
-			case UNKNOWN:
-				break;
-			}
-
-			stack.getItem().onItemRightClick(
-					stack,
-					getWorld(),
-					CoreProxy.proxy.getBuildCraftPlayer((WorldServer) getWorld(),
-							(int) p.x, (int) p.y, (int) p.z).get());
-		} else if (getWorld().getBlock((int) p.x, (int) p.y, (int) p.z) == Blocks.air) {
-			if (stack.getItem() instanceof ItemBucket) {
-				Block underblock = getWorld().getBlock((int) p.x, (int) p.y - 1, (int) p.z);
-				Item newBucket = Items.bucket;
-
-				if (underblock == Blocks.water) {
-					newBucket = Items.water_bucket;
-				}
-
-				if (underblock == Blocks.lava) {
-					newBucket = Items.lava_bucket;
-				}
-
-				boolean rollback = false;
-
-				if (((ItemBucket) stack.getItem()).tryPlaceContainedLiquid(getWorld(),
-						(int) p.x, (int) p.y - 1, (int) p.z)) {
-					rollback = true;
-				} else if (newBucket != Items.bucket) {
-					getWorld().setBlockToAir((int) p.x, (int) p.y - 1, (int) p.z);
-					rollback = true;
-				}
-
-				if (rollback) {
-					stack.stackSize = 0;
-					rollbackItem(newBucket, 1, event.direction);
-				}
-			} else {
-				stack.tryPlaceItemIntoWorld(
-						CoreProxy.proxy.getBuildCraftPlayer((WorldServer) getWorld()).get(),
-					getWorld(), (int) p.x, (int) p.y - 1, (int) p.z, 1, 0.0f, 0.0f, 0.0f);
-			}
-		} else {
-			stack.tryPlaceItemIntoWorld(
-					CoreProxy.proxy.getBuildCraftPlayer((WorldServer) getWorld()).get(),
-					getWorld(), (int) p.x, (int) p.y, (int) p.z, 1, 0.0f, 0.0f,
-					0.0f);
-		}
-	}
-
-	private void rollbackItem(Item item, int quantity, ForgeDirection direction) {
-		rollbackItem(new ItemStack(item, quantity), direction);
-	}
-
-	private void rollbackItem(ItemStack itemStack, ForgeDirection direction) {
-		TravelingItem newItem = TravelingItem.make(
-				container.xCoord + 0.5,
-				container.yCoord + TransportUtils.getPipeFloorOf(itemStack),
-				container.zCoord + 0.5, itemStack);
-		transport.injectItem(newItem, direction.getOpposite());
-	}
-
-	public boolean convertPipe(PipeTransportItems pipe, TravelingItem item) {
-		if (item.getItemStack().getItem() instanceof ItemPipe) {
-			if (!(item.getItemStack().getItem() == BuildCraftTransport.pipeItemsStripes)) {
-				Pipe<?> newPipe = BlockGenericPipe.createPipe(item.getItemStack().getItem());
-				newPipe.setTile(this.container);
-				this.container.pipe = newPipe;
-
-				item.getItemStack().stackSize--;
-
-				if (item.getItemStack().stackSize <= 0) {
-					((PipeTransportItems) newPipe.transport).items.remove(item);
-				}
-
-				return true;
-			}
-		}
-
-		return false;
+	public PipeItemsStripes(Item pipeItem) {
+		super(new PipeTransportItems(), pipeItem);
 	}
 
 	@Override
@@ -258,15 +69,121 @@ public class PipeItemsStripes extends Pipe<PipeTransportItems> {
 	}
 
 	@Override
-	public boolean canPipeConnect(TileEntity tile, ForgeDirection side) {
-		if (tile instanceof TileGenericPipe) {
-			TileGenericPipe tilePipe = (TileGenericPipe) tile;
+	public void updateEntity() {
+		super.updateEntity();
+		if (!getWorld().isRemote && mjStored > 0) {
+			ForgeDirection dir = getOpenOrientation();
+			if (dir != ForgeDirection.UNKNOWN) {
+				Position loc = getPosition().shift(dir);
+				Block block = loc.getBlock(getWorld());
+				float h = block.getBlockHardness(getWorld(), (int) loc.x, (int) loc.y, (int) loc.z);
+				if (loc.blockExists(getWorld()) && h > 0.0F && h < 100.0F) {
+					IStripesHandler handler = new DefaultHandler();
+					Item blockItem = Item.getItemFromBlock(block);
+					if (PipeManager.stripesHandlers.containsKey(blockItem)) {
+						handler = PipeManager.stripesHandlers.get(blockItem);
+					} else if (blockItem instanceof IStripesHandler) {
+						handler = (IStripesHandler) blockItem;
+					} else if (block instanceof IStripesHandler) {
+						handler = (IStripesHandler) block;
+					}
+					if (handler.behave(this, StripesAction.DESTROY, new ItemStack(block, 0, loc.getMeta(getWorld()))) ==
+							StripesBehavior.DEFAULT) {
+						List<ItemStack> drops = block.getDrops(getWorld(), (int) loc.x, (int) loc.y, (int) loc.z, loc.getMeta(getWorld()), 0);
+						loc.destroyBlock(getWorld(), false);
+						for (ItemStack drop : drops) {
+							if (drop != null) {
+								sendItem(drop, dir.getOpposite());
+							}
+						}
+					}
+				}
+			}
+			mjStored = 0;
+		}
+	}
 
-			if (tilePipe.pipe instanceof PipeItemsStripes) {
-				return false;
+	public void eventHandler(PipeEventItem.DropItem e) {
+		ItemStack is = e.item.getItemStack();
+		ForgeDirection dir = e.direction;
+		Position pipe = getPosition();
+		Position loc = pipe.copy().shift(dir);
+		ForgeDirection temp = ForgeDirection.DOWN;
+		if (dir == ForgeDirection.UP) {
+			temp = ForgeDirection.UP;
+		}
+		IStripesHandler handler = new DefaultHandler();
+		if (PipeManager.stripesHandlers.containsKey(is.getItem())) {
+			handler = PipeManager.stripesHandlers.get(is.getItem());
+		} else if (is.getItem() instanceof IStripesHandler) {
+			handler = (IStripesHandler) is.getItem();
+		} else if (is.getItem() instanceof ItemBlock) {
+			Block block = Block.getBlockFromItem(is.getItem());
+			if (block instanceof IStripesHandler) {
+				handler = (IStripesHandler) block;
 			}
 		}
+		StripesBehavior behavior = handler.behave(this, StripesAction.PLACE, is);
+		switch (behavior) {
+			case DEFAULT:
+				if (!loc.blockExists(getWorld())) {
+					if (loc.shift(temp).blockExists(getWorld()) && activate(is, loc, pipe, temp.getOpposite(), dir)) {
+						break;
+					}
+					if (loc.shift(temp.getOpposite()).shift(dir).blockExists(getWorld()) && activate(is, loc, pipe, dir.getOpposite(), dir)) {
+						break;
+					}
+					activate(is, loc.shift(dir.getOpposite(), 2), pipe, dir, dir);
+				} else {
+					activate(is, loc, pipe, dir.getOpposite(), dir);
+				}
+				break;
+			case NONE:
+				is.stackSize = 0;
+		}
+	}
 
-		return super.canPipeConnect(tile, side);
+	private boolean activate(ItemStack is, Position loc, Position player, ForgeDirection clickOn, ForgeDirection pipe) {
+		if (getWorld().isRemote) {
+			return false;
+		}
+		int offset = 0;
+		switch (pipe) {
+			case DOWN:
+				offset = -1;
+				break;
+			case UP:
+				offset = 1;
+		}
+		EntityPlayer fake = CoreProxy.proxy.getBuildCraftPlayer((WorldServer) getWorld(), (int) player.x, (int) player.y + offset, (int) player.z).get();
+		fake.rotationYaw = new float[]{0.0F, 0.0F, -180.0F, 0.0F, 90.0F, -90.0F}[pipe.ordinal()];
+		fake.rotationPitch = offset * 90.0F;
+		fake.inventory.currentItem = 0;
+		fake.inventory.setInventorySlotContents(0, is);
+		return loc.getBlock(getWorld()).onBlockActivated(getWorld(), (int) loc.x, (int) loc.y, (int) loc.z, fake, clickOn.ordinal(), 0.5F, 0.5F, 0.5F)
+				|| is.tryPlaceItemIntoWorld(fake, getWorld(), (int) loc.x, (int) loc.y, (int) loc.z, clickOn.ordinal(), 0.5F, 0.5F, 0.5F);
+	}
+
+	@Override
+	public boolean canPipeConnect(TileEntity tile, ForgeDirection side) {
+		if (tile instanceof TileGenericPipe) {
+			Pipe pipe = ((TileGenericPipe) tile).pipe;
+			return !(pipe instanceof PipeItemsStripes) && pipe.transport instanceof PipeTransportItems;
+		}
+		return false;
+	}
+
+	@Override
+	public Position getPosition() {
+		return new Position(getContainer());
+	}
+
+	@Override
+	public void sendItem(ItemStack itemStack, ForgeDirection direction) {
+		TravelingItem newItem = TravelingItem.make(
+			container.xCoord + 0.5,
+			container.yCoord + TransportUtils.getPipeFloorOf(itemStack),
+			container.zCoord + 0.5, itemStack);
+		transport.injectItem(newItem, direction);
 	}
 }

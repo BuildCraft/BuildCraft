@@ -8,9 +8,12 @@
  */
 package buildcraft.api.core;
 
+import net.minecraft.block.Block;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 
+import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
 public class Position {
@@ -149,9 +152,75 @@ public class Position {
 		orientation = ForgeDirection.values() [nbttagcompound.getByte("orientation")];
 	}
 
+	public Position shift(int dir) {
+		return shift(dir, 1.0);
+	}
+
+	public Position shift(ForgeDirection dir) {
+		return shift(dir, 1.0);
+	}
+
+	public Position shift(int dir, double steps) {
+		return shift(ForgeDirection.getOrientation(dir), steps);
+	}
+
+	public Position shift(ForgeDirection dir, double steps) {
+		return offset(dir.offsetX * steps, dir.offsetY * steps, dir.offsetZ * steps);
+	}
+
+	public Position offset(double x, double y, double z) {
+		this.x += x;
+		this.y += y;
+		this.z += z;
+		return this;
+	}
+
+	public Position offset(Position pos) {
+		return offset(pos.x, pos.y, pos.z);
+	}
+
+	public Block getBlock(IBlockAccess iba) {
+		return iba.getBlock((int) x, (int) y, (int) z);
+	}
+
+	public int getMeta(IBlockAccess iba) {
+		return iba.getBlockMetadata((int) x, (int) y, (int) z);
+	}
+
+	public TileEntity getTile(IBlockAccess iba) {
+		return iba.getTileEntity((int) x, (int) y, (int) z);
+	}
+
+	public boolean blockExists(IBlockAccess wrd) {
+		return !getBlock(wrd).isAir(wrd, (int) x, (int) y, (int) z);
+	}
+
+	public Position setBlock(World wrd, Block block) {
+		wrd.setBlock((int) x, (int) y, (int) z, block);
+		return this;
+	}
+
+	public Position setBlock(World wrd, Block block, int meta) {
+		wrd.setBlock((int) x, (int) y, (int) z, block, meta, 3);
+		return this;
+	}
+
+	public Position setMeta(World wrd, int meta) {
+		wrd.setBlockMetadataWithNotify((int) x, (int) y, (int) z, meta, 3);
+		return this;
+	}
+
+	public boolean destroyBlock(World wrd, boolean doDrop) {
+		return wrd.func_147480_a((int) x, (int) y, (int) z, doDrop);
+	}
+
 	@Override
 	public String toString() {
 		return "{" + x + ", " + y + ", " + z + "}";
+	}
+
+	public Position copy() {
+		return new Position(x, y, z, orientation);
 	}
 
 	public Position min(Position p) {
@@ -171,5 +240,4 @@ public class Position {
 
 		return !(sqrDis > f * f);
 	}
-
 }
