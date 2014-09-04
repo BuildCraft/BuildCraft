@@ -170,13 +170,13 @@ public class PipeTransportPower extends PipeTransport {
 		// STEP 1 - computes the total amount of power contained and total
 		// amount of power queried
 
-		double totalPowerContained = 0;
+		int totalPowerContained = 0;
 
 		for (int in = 0; in < 6; ++in) {
 			totalPowerContained += internalPower[in];
 		}
 
-		double totalPowerQuery = 0;
+		int totalPowerQuery = 0;
 
 		for (int out = 0; out < 6; ++out) {
 			if (internalPower[out] == 0) {
@@ -187,14 +187,14 @@ public class PipeTransportPower extends PipeTransport {
 		// STEP 2 - sends the power to all directions and computes the actual
 		// amount of power that was consumed
 
-		double totalPowerConsumed = 0;
+		int totalPowerConsumed = 0;
 
 		if (totalPowerContained > 0) {
 			for (int out = 0; out < 6; ++out) {
 				externalPower[out] = 0;
 
 				if (powerQuery[out] > 0 && internalPower[out] == 0) {
-					int powerConsumed = (int)Math.floor(powerQuery[out] / totalPowerQuery * totalPowerContained);
+					int powerConsumed = (int)Math.round((double)(powerQuery[out] * totalPowerContained) / totalPowerQuery);
 					boolean tilePowered = false;
 
 					if (tiles[out] instanceof TileGenericPipe) {
@@ -208,7 +208,10 @@ public class PipeTransportPower extends PipeTransport {
 						tilePowered = true;
 					} else if (tiles[out] instanceof IEnergyHandler) {
 						IEnergyHandler handler = (IEnergyHandler)tiles[out];
+						
 						if (handler.canConnectEnergy(ForgeDirection.VALID_DIRECTIONS[out].getOpposite())) {
+							// Transmit power to an RF energy handler
+							
 							powerConsumed = handler.receiveEnergy(ForgeDirection.VALID_DIRECTIONS[out].getOpposite(),
 									powerConsumed, false);
 							tilePowered = true;
@@ -240,7 +243,7 @@ public class PipeTransportPower extends PipeTransport {
 
 		if (totalPowerConsumed > 0) {
 			for (int in = 0; in < 6; ++in) {
-				int powerConsumed = (int)Math.floor(internalPower[in] / totalPowerContained * totalPowerConsumed);
+				int powerConsumed = (int)Math.round(internalPower[in] / totalPowerContained * totalPowerConsumed);
 				displayPower[in] += powerConsumed;
 			}
 		}
@@ -503,8 +506,8 @@ public class PipeTransportPower extends PipeTransport {
 		}
 	}
 
-	public double clearInstantPower() {
-		double amount = 0.0;
+	public int clearInstantPower() {
+		int amount = 0;
 
 		for (int i = 0; i < internalPower.length; ++i) {
 			amount += internalPower [i];
@@ -528,8 +531,8 @@ public class PipeTransportPower extends PipeTransport {
 	}
 
 	public boolean isQueryingPower() {
-		for (double d : powerQuery) {
-			if (d > 1e-4) {
+		for (int d : powerQuery) {
+			if (d > 0) {
 				return true;
 			}
 		}

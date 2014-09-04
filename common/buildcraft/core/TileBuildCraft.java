@@ -31,7 +31,7 @@ import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.network.TilePacketWrapper;
 import buildcraft.core.utils.Utils;
 
-public abstract class TileBuildCraft extends TileEntity implements ISynchronizedTile {
+public abstract class TileBuildCraft extends TileEntity implements ISynchronizedTile, IEnergyHandler {
 	@SuppressWarnings("rawtypes")
 	private static Map<Class, TilePacketWrapper> updateWrappers = new HashMap<Class, TilePacketWrapper>();
 	@SuppressWarnings("rawtypes")
