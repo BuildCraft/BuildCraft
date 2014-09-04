@@ -11,13 +11,11 @@ package buildcraft.factory;
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftFactory;
 import buildcraft.api.tools.IToolWrench;
-import buildcraft.core.BlockBuildCraft;
+import buildcraft.core.BlockBuildcraftEureka;
 import buildcraft.core.Box;
 import buildcraft.core.utils.Utils;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import eureka.api.EurekaKnowledge;
-import eureka.api.interfaces.IEurekaBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
@@ -34,14 +32,14 @@ import net.minecraftforge.common.util.ForgeDirection;
 
 import java.util.ArrayList;
 
-public class BlockQuarry extends BlockBuildCraft implements IEurekaBlock {
+public class BlockQuarry extends BlockBuildcraftEureka{
 
 	IIcon textureTop;
 	IIcon textureFront;
 	IIcon textureSide;
 
 	public BlockQuarry() {
-		super(Material.iron);
+		super(Material.iron, "quarry");
 
 		setHardness(10F);
 		setResistance(10F);
@@ -52,7 +50,6 @@ public class BlockQuarry extends BlockBuildCraft implements IEurekaBlock {
 	@Override
 	public void onBlockPlacedBy(World world, int i, int j, int k, EntityLivingBase entityliving, ItemStack stack) {
 		super.onBlockPlacedBy(world, i, j, k, entityliving, stack);
-		EurekaKnowledge.eurekaBlockEvent(world, this, i, j, k, (EntityPlayer) entityliving, false);
 		ForgeDirection orientation = Utils.get2dOrientation(entityliving);
 
 		world.setBlockMetadataWithNotify(i, j, k, orientation.getOpposite().ordinal(), 1);
@@ -235,22 +232,7 @@ public class BlockQuarry extends BlockBuildCraft implements IEurekaBlock {
 	}
 
 	@Override
-	public boolean isAllowed(EntityPlayer player) {
-		return EurekaKnowledge.isFinished(player, "quarry");
-	}
-
-	@Override
 	public ItemStack[] getComponents() {
 		return new ItemStack[]{new ItemStack(BuildCraftCore.ironGearItem, 3), new ItemStack(BuildCraftCore.goldGearItem, 2), new ItemStack(BuildCraftCore.diamondGearItem, 2), new ItemStack(Items.redstone), new ItemStack(Items.diamond_pickaxe)};
-	}
-
-	@Override
-	public String getMessage() {
-		return "DENIED";
-	}
-
-	@Override
-	public boolean breakOnInteraction() {
-		return false;
 	}
 }
