@@ -207,6 +207,7 @@ item.PipePowerQuartz.name=Quartz Kinesis Pipe
 item.PipePowerIron.name=Iron Kinesis Pipe
 item.PipePowerGold.name=Golden Kinesis Pipe
 item.PipePowerDiamond.name=Diamond Kinesis Pipe
+item.PipePowerEmerald.name=Emerald Kinesis Pipe
 item.PipeItemsStripes.name=Stripes Transport Pipe
 item.PipeStructureCobblestone.name=Cobblestone Structure Pipe
 item.PipeItemsVoid.name=Void Transport Pipe
@@ -298,6 +299,7 @@ tip.PipeItemsVoid=Destroys items
 tip.PipeItemsWood=Extraction pipe
 tip.PipeItemsEmzuli=Gate controlled extraction pipe
 tip.PipePowerWood=Power Input Pipe
+tip.PipePowerEmerald=Power Input Pipe
 tip.PipePowerIron=Selectable Limiter Pipe
 tip.PipeStructureCobblestone=Support pipe
 

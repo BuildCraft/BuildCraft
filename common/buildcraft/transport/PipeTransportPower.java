@@ -29,6 +29,7 @@ import buildcraft.core.DefaultProps;
 import buildcraft.transport.network.PacketPowerUpdate;
 import buildcraft.transport.pipes.PipePowerCobblestone;
 import buildcraft.transport.pipes.PipePowerDiamond;
+import buildcraft.transport.pipes.PipePowerEmerald;
 import buildcraft.transport.pipes.PipePowerGold;
 import buildcraft.transport.pipes.PipePowerIron;
 import buildcraft.transport.pipes.PipePowerQuartz;
@@ -293,7 +294,7 @@ public class PipeTransportPower extends PipeTransport {
 		}
 
 		// Sum the amount of energy requested on each side
-
+		
 		int[] transferQuery = new int[6];
 
 		for (int i = 0; i < 6; ++i) {
@@ -543,6 +544,7 @@ public class PipeTransportPower extends PipeTransport {
 		powerCapacities.put(PipePowerQuartz.class, 640);
 		powerCapacities.put(PipePowerIron.class, 1280);
 		powerCapacities.put(PipePowerGold.class, 2560);
+		powerCapacities.put(PipePowerEmerald.class, 2560);
 		powerCapacities.put(PipePowerDiamond.class, 10240);
 	}
 }

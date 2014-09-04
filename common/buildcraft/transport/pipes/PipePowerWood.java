@@ -36,16 +36,16 @@ public class PipePowerWood extends Pipe<PipeTransportPower> implements IPowerRec
 
 	protected int standardIconIndex = PipeIconProvider.TYPE.PipePowerWood_Standard.ordinal();
 	protected int solidIconIndex = PipeIconProvider.TYPE.PipeAllWood_Solid.ordinal();
+	protected RFBattery battery;
 
 	private boolean full;
 	private int requestedEnergy, sources;
-	private RFBattery battery;
 	private PowerHandler powerHandler;
 	
 	public PipePowerWood(Item item) {
 		super(new PipeTransportPower(), item);
 		
-		battery = new RFBattery(15000, PipeTransportPower.powerCapacities.get(this.getClass()), 0);
+		battery = new RFBattery(320 * 50, 320, 0);
 		
 		powerHandler = new PowerHandler(this, Type.PIPE);
 		powerHandler.configure(0, 500, 1, 1500);
