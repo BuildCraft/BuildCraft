@@ -11,14 +11,12 @@ package buildcraft.factory;
 import java.io.IOException;
 
 import io.netty.buffer.ByteBuf;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.ICrafting;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
@@ -26,16 +24,15 @@ import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
-
 import buildcraft.BuildCraftCore;
 import buildcraft.api.core.NetworkData;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.gates.IAction;
-import buildcraft.api.mj.MjBattery;
 import buildcraft.api.recipes.CraftingResult;
 import buildcraft.api.recipes.IFlexibleCrafter;
 import buildcraft.api.recipes.IFlexibleRecipe;
 import buildcraft.core.IMachine;
+import buildcraft.core.RFBattery;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.fluids.SingleUseTank;
 import buildcraft.core.fluids.TankManager;
@@ -65,9 +62,11 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IInve
 	@NetworkData
 	private String currentRecipeId = "";
 
-	@MjBattery(maxCapacity = 1000, maxReceivedPerCycle = 150, minimumConsumption = 1)
-	private double mjStored = 0;
-
+	public TileRefinery() {
+		super();
+		this.setBattery(new RFBattery(10000, 1500, 0));
+	}
+	
 	@Override
 	public int getSizeInventory() {
 		return 0;
@@ -137,7 +136,7 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IInve
 
 		isActive = true;
 
-		if (mjStored >= craftingResult.energyCost) {
+		if (getBattery().getEnergyStored() >= craftingResult.energyCost) {
 			increaseAnimation();
 		} else {
 			decreaseAnimation();
@@ -147,8 +146,7 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IInve
 			return;
 		}
 
-		if (mjStored >= craftingResult.energyCost) {
-			mjStored -= craftingResult.energyCost;
+		if (getBattery().useEnergy(craftingResult.energyCost, craftingResult.energyCost, false) > 0) {
 			CraftingResult<FluidStack> r = currentRecipe.craft(this, false);
 			result.fill(r.crafted.copy(), true);
 		}
@@ -203,8 +201,6 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IInve
 		animationStage = data.getInteger("animationStage");
 		animationSpeed = data.getFloat("animationSpeed");
 
-		mjStored = data.getDouble("mjStored");
-
 		updateRecipe();
 	}
 
@@ -216,8 +212,6 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IInve
 
 		data.setInteger("animationStage", animationStage);
 		data.setFloat("animationSpeed", animationSpeed);
-
-		data.setDouble("mjStored", mjStored);
 	}
 
 	public int getAnimationStage() {

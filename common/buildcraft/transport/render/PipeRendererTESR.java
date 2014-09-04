@@ -59,12 +59,13 @@ import buildcraft.transport.TileGenericPipe;
 import buildcraft.transport.TravelingItem;
 
 public class PipeRendererTESR extends TileEntitySpecialRenderer {
+	public static final float DISPLAY_MULTIPLIER = 0.1f;
+	public static final int POWER_STAGES = 100;
 
 	public static final ResourceLocation STRIPES_TEXTURE = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_ENTITIES + "/stripes.png");
 
 	private static final int LIQUID_STAGES = 40;
 	private static final int MAX_ITEMS_TO_RENDER = 10;
-	private static final int POWER_STAGES = 100;
 
 	public int[] displayPowerList = new int[POWER_STAGES];
 	public int[] displayPowerListOverload = new int[POWER_STAGES];
@@ -631,7 +632,7 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 			GL11.glScalef(scale, scale, scale);
 			GL11.glTranslatef(-0.5F, -0.5F, -0.5F);
 
-			short stage = pow.clientDisplayPower[side];
+			short stage = pow.displayPower[side];
 			if (stage >= 1) {
 				if (stage < displayList.length) {
 					GL11.glCallList(displayList[stage]);

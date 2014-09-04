@@ -86,7 +86,7 @@ public final class InterModComms {
 				}
 				ItemStack is = ItemStack.loadItemStackFromNBT(recipe.getCompoundTag("output"));
 				if (is != null && !input.isEmpty()) {
-					AssemblyRecipeManager.INSTANCE.addRecipe(recipe.getString("id"), recipe.getDouble("energy"), is,
+					AssemblyRecipeManager.INSTANCE.addRecipe(recipe.getString("id"), recipe.getInteger("energy"), is,
 							(Object[]) input.toArray(new ItemStack[input.size()]));
 				} else {
 					failed = true;

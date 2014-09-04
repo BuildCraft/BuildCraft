@@ -52,9 +52,9 @@ public abstract class GuiEngine extends GuiBuildCraft {
 
 			fontRendererObj.drawStringWithShadow(StringUtils.localize("gui.energy"), x + 22, y + 8, headerColour);
 			fontRendererObj.drawStringWithShadow(StringUtils.localize("gui.currentOutput") + ":", x + 22, y + 20, subheaderColour);
-			fontRendererObj.drawString(String.format("%.1f MJ/t", engine.getCurrentOutputAverage()), x + 22, y + 32, textColour);
+			fontRendererObj.drawString(String.format("%d RF/t", (int)Math.round(engine.getCurrentOutput() * 10)), x + 22, y + 32, textColour);
 			fontRendererObj.drawStringWithShadow(StringUtils.localize("gui.stored") + ":", x + 22, y + 44, subheaderColour);
-			fontRendererObj.drawString(String.format("%.1f MJ", engine.getEnergyStored()), x + 22, y + 56, textColour);
+			fontRendererObj.drawString(String.format("%d RF", (int)Math.round(engine.getEnergyStored() * 10)), x + 22, y + 56, textColour);
 			fontRendererObj.drawStringWithShadow(StringUtils.localize("gui.heat") + ":", x + 22, y + 68, subheaderColour);
 			fontRendererObj.drawString(String.format("%.2f \u00B0C", engine.getHeat()), x + 22, y + 80, textColour);
 
@@ -62,7 +62,7 @@ public abstract class GuiEngine extends GuiBuildCraft {
 
 		@Override
 		public String getTooltip() {
-			return String.format("%.1f MJ/t", engine.getCurrentOutputAverage());
+			return String.format("%d RF/t", (int)Math.round(engine.getCurrentOutput() * 10));
 		}
 	}
 

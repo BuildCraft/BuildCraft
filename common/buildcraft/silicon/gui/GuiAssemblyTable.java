@@ -59,17 +59,17 @@ public class GuiAssemblyTable extends GuiAdvancedInterface {
 
 			fontRendererObj.drawStringWithShadow(StringUtils.localize("gui.energy"), x + 22, y + 8, headerColour);
 			fontRendererObj.drawStringWithShadow(StringUtils.localize("gui.assemblyCurrentRequired") + ":", x + 22, y + 20, subheaderColour);
-			fontRendererObj.drawString(String.format("%2.1f MJ", table.clientRequiredEnergy), x + 22, y + 32, textColour);
+			fontRendererObj.drawString(String.format("%d RF", table.clientRequiredEnergy), x + 22, y + 32, textColour);
 			fontRendererObj.drawStringWithShadow(StringUtils.localize("gui.stored") + ":", x + 22, y + 44, subheaderColour);
-			fontRendererObj.drawString(String.format("%2.1f MJ", table.getEnergy()), x + 22, y + 56, textColour);
+			fontRendererObj.drawString(String.format("%d RF", table.getEnergy()), x + 22, y + 56, textColour);
 			fontRendererObj.drawStringWithShadow(StringUtils.localize("gui.assemblyRate") + ":", x + 22, y + 68, subheaderColour);
-			fontRendererObj.drawString(String.format("%3.2f MJ/t", table.getRecentEnergyAverage() / 100.0f), x + 22, y + 80, textColour);
+			fontRendererObj.drawString(String.format("%.1f RF/t", table.getRecentEnergyAverage() / 100.0f), x + 22, y + 80, textColour);
 
 		}
 
 		@Override
 		public String getTooltip() {
-			return String.format("%3.2f MJ/t", table.getRecentEnergyAverage() / 100.0f);
+			return String.format("%.1f RF/t", table.getRecentEnergyAverage() / 100.0f);
 		}
 	}
 	private final TileAssemblyTable table;

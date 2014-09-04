@@ -22,7 +22,7 @@ import buildcraft.transport.gates.ItemGate;
 public class GateLogicSwapRecipe extends IntegrationTableRecipe {
 
 	public GateLogicSwapRecipe(String id) {
-		setContents(id, BuildCraftTransport.pipeGate, 2000, 0);
+		setContents(id, BuildCraftTransport.pipeGate, 20000, 0);
 	}
 
 	@Override

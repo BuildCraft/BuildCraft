@@ -21,11 +21,11 @@ public interface IAssemblyRecipeManager {
 	 *            Object... containing either an ItemStack, or a paired string
 	 *            and integer(ex: "dyeBlue", 1)
 	 * @param energyCost
-	 *            MJ cost to produce
+	 *            RF cost to produce
 	 * @param output
 	 *            resulting ItemStack
 	 */
-	void addRecipe(String id, double energyCost, ItemStack output, Object... input);
+	void addRecipe(String id, int energyCost, ItemStack output, Object... input);
 
 	void addRecipe(IFlexibleRecipe<ItemStack> recipe);
 

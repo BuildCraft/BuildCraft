@@ -184,8 +184,8 @@ public abstract class Schematic {
 	 * Returns the amount of energy required to build this slot, depends on the
 	 * stacks selected for the build.
 	 */
-	public double getEnergyRequirement(LinkedList<ItemStack> stacksUsed) {
-		double result = 0;
+	public int getEnergyRequirement(LinkedList<ItemStack> stacksUsed) {
+		int result = 0;
 
 		if (stacksUsed != null) {
 			for (ItemStack s : stacksUsed) {

@@ -12,7 +12,6 @@ import java.util.Date;
 import java.util.WeakHashMap;
 
 import io.netty.buffer.ByteBuf;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
@@ -27,11 +26,9 @@ import net.minecraft.util.EntityDamageSource;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
-
 import cpw.mods.fml.common.registry.IEntityAdditionalSpawnData;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
@@ -39,7 +36,6 @@ import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
-
 import buildcraft.BuildCraftSilicon;
 import buildcraft.api.boards.RedstoneBoardNBT;
 import buildcraft.api.boards.RedstoneBoardRegistry;
@@ -48,12 +44,12 @@ import buildcraft.api.boards.RedstoneBoardRobotNBT;
 import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.IZone;
 import buildcraft.api.core.SafeTimeTracker;
-import buildcraft.api.mj.MjBattery;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.api.robots.IDockingStation;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.LaserData;
+import buildcraft.core.RFBattery;
 import buildcraft.core.network.RPC;
 import buildcraft.core.network.RPCHandler;
 import buildcraft.core.network.RPCMessageInfo;
@@ -113,14 +109,13 @@ public class EntityRobot extends EntityRobotBase implements
 
 	private NBTTagList stackRequestNBT;
 
-	@MjBattery
-	private double mjStored;
+	private RFBattery battery = new RFBattery(MAX_ENERGY, MAX_ENERGY, 0);
 
 	private boolean firstUpdateDone = false;
 
 	private long robotId = EntityRobotBase.NULL_ROBOT_ID;
 
-	private float energySpendPerCycle = 0;
+	private int energySpendPerCycle = 0;
 	private float energyFX = 0;
 	private int steamDx = 0;
 	private int steamDy = -1;
@@ -189,7 +184,7 @@ public class EntityRobot extends EntityRobotBase implements
 
 		itemAngle1 = dataWatcher.getWatchableObjectFloat(17);
 		itemAngle2 = dataWatcher.getWatchableObjectFloat(18);
-		energySpendPerCycle = dataWatcher.getWatchableObjectFloat(19);
+		energySpendPerCycle = dataWatcher.getWatchableObjectInt(19);
 	}
 
 	protected void updateDataServer() {
@@ -308,12 +303,12 @@ public class EntityRobot extends EntityRobotBase implements
 			if (linkedDockingStation != null) {
 				mainAI.cycle();
 
-				if (energySpendPerCycle != (float) mainAI.getActiveAI().getEnergyCost()) {
-					energySpendPerCycle = (float) mainAI.getActiveAI().getEnergyCost();
+				if (energySpendPerCycle != mainAI.getActiveAI().getEnergyCost()) {
+					energySpendPerCycle = mainAI.getActiveAI().getEnergyCost();
 					needsUpdate = true;
 				}
 
-				if (mjStored <= 0) {
+				if (this.battery.getEnergyStored() <= 0) {
 					setDead();
 				}
 			}
@@ -442,8 +437,8 @@ public class EntityRobot extends EntityRobotBase implements
 		laser.writeToNBT(nbtLaser);
 		nbt.setTag("laser", nbtLaser);
 
-		nbt.setDouble("mjStored", mjStored);
-
+		battery.writeToNBT(nbt);
+		
 		if (itemInUse != null) {
 			NBTTagCompound itemNBT = new NBTTagCompound();
 			itemInUse.writeToNBT(itemNBT);
@@ -499,8 +494,8 @@ public class EntityRobot extends EntityRobotBase implements
 
 		laser.readFromNBT(nbt.getCompoundTag("laser"));
 
-		mjStored = nbt.getDouble("mjStored");
-
+		battery.readFromNBT(nbt);
+		
 		if (nbt.hasKey("itemInUse")) {
 			itemInUse = ItemStack.loadItemStackFromNBT(nbt.getCompoundTag("itemInUse"));
 			itemActive = nbt.getBoolean("itemActive");
@@ -788,17 +783,13 @@ public class EntityRobot extends EntityRobotBase implements
     }
 
 	@Override
-	public double getEnergy() {
-		return mjStored;
+	public int getEnergy() {
+		return battery.getEnergyStored();
 	}
-
+	
 	@Override
-	public void setEnergy(double energy) {
-		mjStored = energy;
-
-		if (mjStored > MAX_ENERGY) {
-			mjStored = MAX_ENERGY;
-		}
+	public RFBattery getBattery() {
+		return battery;
 	}
 
 	@Override

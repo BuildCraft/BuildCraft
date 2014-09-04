@@ -124,7 +124,7 @@ public class TileIntegrationTable extends TileLaserTableBase implements IFlexibl
 	}
 
 	@Override
-	public double getRequiredEnergy() {
+	public int getRequiredEnergy() {
 		if (craftingPreview != null) {
 			return craftingPreview.energyCost;
 		} else {

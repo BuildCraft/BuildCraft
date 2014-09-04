@@ -28,8 +28,8 @@ import buildcraft.api.core.JavaTools;
 
 public final class SchematicRegistry {
 
-	public static double BREAK_ENERGY = 10;
-	public static final double BUILD_ENERGY = 20;
+	public static int BREAK_ENERGY = 100;
+	public static final int BUILD_ENERGY = 200;
 
 	private static final HashSet<Block> explicitSchematicBlocks = new HashSet<Block>();
 

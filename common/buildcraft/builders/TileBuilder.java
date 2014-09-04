@@ -65,7 +65,7 @@ import buildcraft.core.robots.RobotRegistry;
 
 public class TileBuilder extends TileAbstractBuilder implements IMachine, IFluidHandler, IRequestProvider {
 
-	private static int POWER_ACTIVATION = 50;
+	private static int POWER_ACTIVATION = 500;
 
 	@NetworkData
 	public Box box = new Box();
@@ -591,7 +591,7 @@ public class TileBuilder extends TileAbstractBuilder implements IMachine, IFluid
 		if (getWorld().getWorldInfo().getGameType() == GameType.CREATIVE) {
 			build();
 		} else {
-			if (mjStored > POWER_ACTIVATION) {
+			if (getBattery().getEnergyStored() > POWER_ACTIVATION) {
 				build();
 			}
 		}
@@ -599,7 +599,7 @@ public class TileBuilder extends TileAbstractBuilder implements IMachine, IFluid
 
 		if (done) {
 			return;
-		} else if (mjStored < 25) {
+		} else if (getBattery().getEnergyStored() < 25) {
 			return;
 		}
 	}

@@ -60,8 +60,8 @@ public class AIRobot {
 		return true;
 	}
 
-	public double getEnergyCost() {
-		return 0.1;
+	public int getEnergyCost() {
+		return 1;
 	}
 
 	public boolean canLoadFromNBT() {
@@ -113,7 +113,7 @@ public class AIRobot {
 			if (delegateAI != null) {
 				delegateAI.cycle();
 			} else {
-				robot.setEnergy(robot.getEnergy() - getEnergyCost());
+				robot.getBattery().extractEnergy(getEnergyCost(), false);
 				update();
 			}
 		} catch (Throwable e) {
