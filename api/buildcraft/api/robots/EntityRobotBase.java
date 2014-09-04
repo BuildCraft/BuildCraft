@@ -8,6 +8,7 @@
  */
 package buildcraft.api.robots;
 
+import cofh.api.energy.IEnergyStorage;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.inventory.IInventory;
@@ -16,7 +17,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.fluids.IFluidHandler;
 import buildcraft.api.boards.RedstoneBoardRobot;
 import buildcraft.api.core.IZone;
-import buildcraft.core.RFBattery;
 
 public abstract class EntityRobotBase extends EntityLiving implements IInventory, IFluidHandler {
 
@@ -42,7 +42,7 @@ public abstract class EntityRobotBase extends EntityLiving implements IInventory
 
 	public abstract int getEnergy();
 
-	public abstract RFBattery getBattery();
+	public abstract IEnergyStorage getBattery();
 
 	public abstract IDockingStation getDockingStation();
 

@@ -113,7 +113,7 @@ public class AIRobot {
 			if (delegateAI != null) {
 				delegateAI.cycle();
 			} else {
-				robot.getBattery().useEnergy(0, getEnergyCost(), false);
+				robot.getBattery().extractEnergy(getEnergyCost(), false);
 				update();
 			}
 		} catch (Throwable e) {
