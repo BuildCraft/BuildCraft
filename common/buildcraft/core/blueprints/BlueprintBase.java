@@ -9,12 +9,18 @@
 package buildcraft.core.blueprints;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldSettings.GameType;
+
+import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.api.blueprints.BuildingPermission;
 import buildcraft.api.blueprints.IBuilderContext;
@@ -22,11 +28,14 @@ import buildcraft.api.blueprints.MappingRegistry;
 import buildcraft.api.blueprints.SchematicBlockBase;
 import buildcraft.api.blueprints.Translation;
 import buildcraft.api.core.BCLog;
+import buildcraft.builders.ItemBlueprint;
 import buildcraft.builders.blueprints.BlueprintId;
 import buildcraft.core.Box;
 import buildcraft.core.Version;
 
 public abstract class BlueprintBase {
+
+	public ArrayList<NBTTagCompound> subBlueprintsNBT = new ArrayList<NBTTagCompound>();
 
 	public SchematicBlockBase[][][] contents;
 	public int anchorX, anchorY, anchorZ;
@@ -42,6 +51,7 @@ public abstract class BlueprintBase {
 
 	private ComputeDataThread computeData;
 	private byte [] data;
+	private ForgeDirection mainDir = ForgeDirection.EAST;
 
 	public BlueprintBase() {
 	}
@@ -119,6 +129,8 @@ public abstract class BlueprintBase {
 		anchorZ = newAnchorZ;
 
 		context.rotateLeft();
+
+		mainDir = mainDir.getRotation(ForgeDirection.UP);
 	}
 
 	public void writeToNBT(NBTTagCompound nbt) {
@@ -144,6 +156,14 @@ public abstract class BlueprintBase {
 		}
 
 		saveContents(nbt);
+
+		NBTTagList subBptList = new NBTTagList();
+
+		for (NBTTagCompound subBpt : subBlueprintsNBT) {
+			subBptList.appendTag(subBpt);
+		}
+
+		nbt.setTag("subBpt", subBptList);
 	}
 
 	public static BlueprintBase loadBluePrint(NBTTagCompound nbt) {
@@ -191,10 +211,14 @@ public abstract class BlueprintBase {
 		} catch (BptError e) {
 			e.printStackTrace();
 		}
-	}
 
-	protected void copyTo(BlueprintBase base) {
+		if (nbt.hasKey("subBpt")) {
+			NBTTagList subBptList = nbt.getTagList("subBpt", Constants.NBT.TAG_COMPOUND);
 
+			for (int i = 0; i < subBptList.tagCount(); ++i) {
+				subBlueprintsNBT.add(subBptList.getCompoundTagAt(i));
+			}
+		}
 	}
 
 	public Box getBoxForPos(int x, int y, int z) {
@@ -214,6 +238,21 @@ public abstract class BlueprintBase {
 
 	public BptContext getContext(World world, Box box) {
 		return new BptContext(world, box, mapping);
+	}
+
+	public void addSubBlueprint(BlueprintBase bpt, int x, int y, int z, ForgeDirection dir) {
+		NBTTagCompound nbt = new NBTTagCompound();
+
+		nbt.setInteger("x", x - anchorX);
+		nbt.setInteger("y", y - anchorX);
+		nbt.setInteger("z", z - anchorX);
+		nbt.setByte("dir", (byte) dir.ordinal());
+
+		NBTTagCompound bptNBT = new NBTTagCompound();
+		bpt.writeToNBT(bptNBT);
+		nbt.setTag("bpt", bptNBT);
+
+		subBlueprintsNBT.add(nbt);
 	}
 
 	class ComputeDataThread extends Thread {
@@ -248,7 +287,52 @@ public abstract class BlueprintBase {
 		return null;
 	}
 
-	public synchronized void setData (byte [] b) {
+	public static BlueprintBase instantiate(ItemStack stack, World world, int x, int y, int z, ForgeDirection o) {
+		BlueprintBase bpt = ItemBlueprint.loadBlueprint(stack);
+
+		if (bpt == null) {
+			return null;
+		}
+
+		return bpt.adjustToWorld(world, x, y, z, o);
+	}
+
+	public BlueprintBase adjustToWorld(World world, int x, int y, int z, ForgeDirection o) {
+		if (buildingPermission == BuildingPermission.NONE
+				|| (buildingPermission == BuildingPermission.CREATIVE_ONLY && world
+						.getWorldInfo().getGameType() != GameType.CREATIVE)) {
+			return null;
+		}
+
+		BptContext context = getContext(world, getBoxForPos(x, y, z));
+
+		if (rotate) {
+			if (o == ForgeDirection.EAST) {
+				// Do nothing
+			} else if (o == ForgeDirection.SOUTH) {
+				rotateLeft(context);
+			} else if (o == ForgeDirection.WEST) {
+				rotateLeft(context);
+				rotateLeft(context);
+			} else if (o == ForgeDirection.NORTH) {
+				rotateLeft(context);
+				rotateLeft(context);
+				rotateLeft(context);
+			}
+		}
+
+		Translation transform = new Translation();
+
+		transform.x = x - anchorX;
+		transform.y = y - anchorY;
+		transform.z = z - anchorZ;
+
+		translateToWorld(transform);
+
+		return this;
+	}
+
+	public synchronized void setData(byte[] b) {
 		data = b;
 	}
 

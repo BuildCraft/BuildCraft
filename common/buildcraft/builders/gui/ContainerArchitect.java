@@ -49,7 +49,7 @@ public class ContainerArchitect extends BuildCraftContainer {
 	@Override
 	public void addCraftingToCrafters(ICrafting icrafting) {
 		super.addCraftingToCrafters(icrafting);
-		icrafting.sendProgressBarUpdate(this, 0, architect.computingTime);
+		icrafting.sendProgressBarUpdate(this, 0, architect.getComputingProgressScaled(24));
 	}
 
 
@@ -59,18 +59,18 @@ public class ContainerArchitect extends BuildCraftContainer {
 
 		for (int i = 0; i < crafters.size(); i++) {
 			ICrafting icrafting = (ICrafting) crafters.get(i);
-			if (computingTime != architect.computingTime) {
-				icrafting.sendProgressBarUpdate(this, 0, architect.computingTime);
+			if (computingTime != architect.getComputingProgressScaled(24)) {
+				icrafting.sendProgressBarUpdate(this, 0, architect.getComputingProgressScaled(24));
 			}
 		}
 
-		computingTime = architect.computingTime;
+		computingTime = architect.getComputingProgressScaled(24);
 	}
 
 	@Override
 	public void updateProgressBar(int i, int j) {
 		if (i == 0) {
-			architect.computingTime = j;
+			computingTime = j;
 		}
 	}
 
