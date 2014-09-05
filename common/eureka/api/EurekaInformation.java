@@ -3,6 +3,8 @@ package eureka.api;
 import eureka.api.client.gui.EurekaChapter;
 import net.minecraft.item.ItemStack;
 
+import java.util.ArrayList;
+
 /**
  * Copyright (c) 2014, AEnterprise
  * http://buildcraftadditions.wordpress.com/
@@ -22,5 +24,7 @@ public abstract class EurekaInformation {
 
 	public abstract String getCategory();
 
-	public abstract  EurekaChapter getGui();
+	public abstract EurekaChapter getGui();
+
+	public abstract ArrayList<String> getRequiredResearch();
 }

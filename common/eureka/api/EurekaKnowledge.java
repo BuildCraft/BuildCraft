@@ -41,28 +41,20 @@ public class EurekaKnowledge {
         return getTag(player).getInteger(key + "Progress");
     }
 
-	public static int getProgress(ItemStack stack, String key){
-		if (stack.stackTagCompound != null && stack.stackTagCompound.hasKey("info"))
-			return ((NBTTagCompound)stack.stackTagCompound.getTag("info")).getInteger(key + "Progress");
-		return 0;
-	}
 
     public static boolean isFinished(EntityPlayer player, String key){
-	    if (player == null)
-		    return false;
         initKey(getTag(player), key);
         return player.capabilities.isCreativeMode || getTag(player).getBoolean(key + "Finished");
     }
 
-	public static boolean isFinished (ItemStack stack, String key){
-		if (stack.stackTagCompound != null && stack.stackTagCompound.hasKey("info"))
-			return ((NBTTagCompound)stack.stackTagCompound.getTag("info")).getBoolean(key + "Finished");
-		return false;
-	}
-
     public static void makeProgress (EntityPlayer player, String key){
         if (player.worldObj.isRemote)
             return;
+	    if (!(EurekaRegistry.getRequiredReserch(key) == null))
+		    for (String requiredResearchKey: EurekaRegistry.getRequiredReserch(key)){
+			    if (!isFinished(player, requiredResearchKey))
+				    return;
+		    }
         int progress = getProgress(player, key);
         NBTTagCompound tag = getTag(player);
         if (progress < EurekaRegistry.getMaxValue(key)){
@@ -98,7 +90,7 @@ public class EurekaKnowledge {
     public static void eurekaBlockEvent(World world, IEurekaBlock block, int x, int y, int z, EntityPlayer player, boolean interaction){
         if (block == null)
             return;
-        if (!world.isRemote && (player == null || (!block.isAllowed(player) && !player.capabilities.isCreativeMode)) && (block.breakOnInteraction() || !interaction)){
+        if (!world.isRemote && !block.isAllowed(player) && !player.capabilities.isCreativeMode && (block.breakOnInteraction() || !interaction)){
             ItemStack[] stackArray = block.getComponents();
             for (ItemStack stack : stackArray)
                 dropItemstack(world, x, y, z, stack);

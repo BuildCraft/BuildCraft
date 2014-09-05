@@ -3,6 +3,8 @@ package eureka.api;
 import eureka.api.client.gui.EurekaChapter;
 import net.minecraft.item.ItemStack;
 
+import java.util.ArrayList;
+
 /**
  * Copyright (c) 2014, AEnterprise
  * http://buildcraftadditions.wordpress.com/
@@ -15,6 +17,17 @@ public class EurekaInfo extends EurekaInformation {
 	public int increment, maxValue;
 	public ItemStack stack;
 	public EurekaChapter gui;
+	public ArrayList<String> requiredResearch;
+
+	public EurekaInfo(String key, String category, int increment, int maxValue, ItemStack stack, EurekaChapter gui, ArrayList<String> requiredResearch){
+		this.key = key;
+		this.category = category;
+		this.increment = increment;
+		this.maxValue = maxValue;
+		this.stack = stack;
+		this.gui = gui;
+		this.requiredResearch = requiredResearch;
+	}
 
 	public EurekaInfo(String key, String category, int increment, int maxValue, ItemStack stack, EurekaChapter gui){
 		this.key = key;
@@ -23,6 +36,7 @@ public class EurekaInfo extends EurekaInformation {
 		this.maxValue = maxValue;
 		this.stack = stack;
 		this.gui = gui;
+		this.requiredResearch =new  ArrayList<String>();
 	}
 
 	@Override
@@ -53,5 +67,10 @@ public class EurekaInfo extends EurekaInformation {
 	@Override
 	public EurekaChapter getGui() {
 		return gui;
+	}
+
+	@Override
+	public ArrayList<String> getRequiredResearch() {
+		return requiredResearch;
 	}
 }

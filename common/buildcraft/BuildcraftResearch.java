@@ -1,7 +1,7 @@
 package buildcraft;
 
 import buildcraft.core.Version;
-import buildcraft.research.quarryEurekaGui;
+import buildcraft.research.BasicEurekaChapter;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import eureka.api.EurekaInfo;
@@ -21,6 +21,7 @@ public class BuildcraftResearch extends BuildCraftMod {
 	@Mod.EventHandler
 	public void load(FMLInitializationEvent event) {
 		EurekaRegistry.registerCategory("Buildcraft", new ItemStack(BuildCraftCore.wrenchItem));
-		EurekaRegistry.registerKey(new EurekaInfo("quarry", "Buildcraft", 1, 5, new ItemStack(BuildCraftFactory.quarryBlock), new quarryEurekaGui()));
+		EurekaRegistry.register(new EurekaInfo("quarry", "Buildcraft", 1, 5, new ItemStack(BuildCraftFactory.quarryBlock), new BasicEurekaChapter("quarry", true)));
+		EurekaRegistry.register(new EurekaInfo("tank", "Buildcraft", 1, 10, new ItemStack(BuildCraftFactory.tankBlock), new BasicEurekaChapter("tank", false)));
 	}
 }

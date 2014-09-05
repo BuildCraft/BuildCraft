@@ -22,7 +22,7 @@ public class EurekaRegistry {
     /**
      * Register your keys here for the EUREKA system
      */
-    public static void registerKey(EurekaInformation information){
+    public static void register(EurekaInformation information){
 		    chapters.put(information.getKey(), information);
 		    keys.add(information.getKey());
 	    }
@@ -73,5 +73,8 @@ public class EurekaRegistry {
 		return categories.get(category);
 	}
 
+	public static ArrayList<String> getRequiredReserch(String key){
+		return chapters.get(key).getRequiredResearch();
+	}
 
 }
