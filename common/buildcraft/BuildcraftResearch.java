@@ -2,11 +2,15 @@ package buildcraft;
 
 import buildcraft.core.Version;
 import buildcraft.research.BasicEurekaChapter;
+import buildcraft.research.CraftingHandler;
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import eureka.api.EurekaInfo;
 import eureka.api.EurekaRegistry;
 import net.minecraft.item.ItemStack;
+
+import java.util.ArrayList;
 
 /**
  * Copyright (c) 2014, AEnterprise
@@ -20,8 +24,36 @@ public class BuildcraftResearch extends BuildCraftMod {
 
 	@Mod.EventHandler
 	public void load(FMLInitializationEvent event) {
-		EurekaRegistry.registerCategory("Buildcraft", new ItemStack(BuildCraftCore.wrenchItem));
-		EurekaRegistry.register(new EurekaInfo("quarry", "Buildcraft", 1, 5, new ItemStack(BuildCraftFactory.quarryBlock), new BasicEurekaChapter("quarry", true)));
-		EurekaRegistry.register(new EurekaInfo("tank", "Buildcraft", 1, 10, new ItemStack(BuildCraftFactory.tankBlock), new BasicEurekaChapter("tank", false)));
+		FMLCommonHandler.instance().bus().register(new CraftingHandler());
+
+		EurekaRegistry.registerCategory("Buildcraft|Automatization", new ItemStack(BuildCraftFactory.quarryBlock));
+
+		EurekaRegistry.register(new EurekaInfo("autoWorkbench", "Buildcraft|Automatization", 1, 50, new ItemStack(BuildCraftFactory.autoWorkbenchBlock), new BasicEurekaChapter("autoWorkbench", false)));
+
+		EurekaRegistry.register(new EurekaInfo("tank", "Buildcraft|Automatization", 1, 10, new ItemStack(BuildCraftFactory.tankBlock), new BasicEurekaChapter("tank", false)));
+
+		ArrayList<String> requiredResearch = new ArrayList<String>();
+
+		EurekaRegistry.register(new EurekaInfo("miningWell", "Buildcraft|Automatization", 1, 200, new ItemStack(BuildCraftFactory.miningWellBlock), new BasicEurekaChapter("miningWell", false)));
+
+		requiredResearch.add("tank");
+		requiredResearch.add("miningWell");
+		EurekaRegistry.register(new EurekaInfo("pump", "Buildcraft|Automatization", 1, 6, new ItemStack(BuildCraftFactory.pumpBlock), new BasicEurekaChapter("pump", true), requiredResearch));
+		requiredResearch.clear();
+
+		requiredResearch.add("tank");
+		requiredResearch.add("pump");
+		EurekaRegistry.register(new EurekaInfo("floodgate", "Buildcraft|Automatization", 1, 6, new ItemStack(BuildCraftFactory.floodGateBlock), new BasicEurekaChapter("floodgate", true), requiredResearch));
+		requiredResearch.clear();
+
+		requiredResearch.add("miningWell");
+		EurekaRegistry.register(new EurekaInfo("quarry", "Buildcraft|Automatization", 1, 5, new ItemStack(BuildCraftFactory.quarryBlock), new BasicEurekaChapter("quarry", true), requiredResearch));
+		requiredResearch.clear();
+
+		EurekaRegistry.register(new EurekaInfo("refinery", "Buildcraft|Automatization", 1, 1, new ItemStack(BuildCraftFactory.refineryBlock), new BasicEurekaChapter("refinery", false)));
+
+		EurekaRegistry.register(new EurekaInfo("filteredBuffer", "Buildcraft|Automatization", 1, 1, new ItemStack(BuildCraftTransport.filteredBufferBlock), new BasicEurekaChapter("filteredBuffer", false)));
+
+
 	}
 }

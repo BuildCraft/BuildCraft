@@ -42,6 +42,6 @@ public class BasicEurekaChapter extends EurekaChapter{
 
 	@Override
 	public String howToMakeProgress() {
-		return Utils.localize("engineeringDiary." + key + "howToMakeProgress");
+		return Utils.localize("engineeringDiary." + key + ".howToMakeProgress");
 	}
 }

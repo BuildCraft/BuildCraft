@@ -348,3 +348,14 @@ bc_update.new_version=§cNew version of BuildCraft available: %s for Minecraft %
 bc_update.download=§cDownload from http://www.mod-buildcraft.com/download
 bc_update.once=This message only displays once
 bc_update.again=Type '/buildcraft version' if you want to see it again
+
+engineeringDiary.autoWorkbench.title=Auto Workbench
+engineeringDiary.autoWorkbench.howToMakeProgress=Craft items
+engineeringDiary.autoWorkbench.page0=Automatic crafting
+engineeringDiary.autoWorkbench.page1=After your discovery on the upgradability of the Wooden Gear, you have a crazy thought: what if I can upgrade something with a Gear? You pick the first thing you have in hand (in this case a Crafting Table) and surround it with Wooden Gears.
+engineeringDiary.autoWorkbench.page2=The new block can actually hold the items on top of it, instead of just getting dropped on the ground. At first this makes you think the grid actually turned into an inventory, but the reality is so much better.
+engineeringDiary.autoWorkbench.page3=When you try to extract some planks out of the table using a Wooden Transport Pipe, they actually come out as a formed Chest! Obviously, you’ve crafted the world’s first Auto Workbench
+engineeringDiary.autoWorkbench.page4=After some experimentation you discover that recipes which involve non stackable items cannot be automated, presumably due to the mechanical nature of Gears.
+
+
+engineeringDiary.noRequiredResearch=No Research Required
