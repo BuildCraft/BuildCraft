@@ -10,10 +10,13 @@ package buildcraft.core.blueprints;
 
 import java.util.ArrayList;
 
+import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 
 import net.minecraftforge.common.util.ForgeDirection;
+
+import buildcraft.core.Box;
 
 public class RecursiveBlueprintBuilder {
 
@@ -25,8 +28,10 @@ public class RecursiveBlueprintBuilder {
 	private int x, y, z;
 	private ForgeDirection dir;
 	private World world;
+	private Box box = new Box();
 
-	public RecursiveBlueprintBuilder(BlueprintBase iBlueprint, World iWorld, int iX, int iY, int iZ, ForgeDirection iDir) {
+	public RecursiveBlueprintBuilder(BlueprintBase iBlueprint, World iWorld, int iX, int iY, int iZ,
+			ForgeDirection iDir) {
 		blueprint = iBlueprint;
 		subBlueprints = iBlueprint.subBlueprintsNBT;
 		world = iWorld;
@@ -42,13 +47,19 @@ public class RecursiveBlueprintBuilder {
 
 			returnedThis = true;
 
+			BptBuilderBase builder;
+
 			if (blueprint instanceof Blueprint) {
-				return new BptBuilderBlueprint((Blueprint) blueprint, world, x, y, z);
+				builder = new BptBuilderBlueprint((Blueprint) blueprint, world, x, y, z);
 			} else if (blueprint instanceof Template) {
-				return new BptBuilderTemplate(blueprint, world, x, y, z);
+				builder = new BptBuilderTemplate(blueprint, world, x, y, z);
 			} else {
 				return null;
 			}
+
+			box.initialize(builder);
+
+			return builder;
 		}
 
 		blueprint = null;
@@ -68,11 +79,14 @@ public class RecursiveBlueprintBuilder {
 		NBTTagCompound nbt = subBlueprints.get(nextSubBlueprint);
 		BlueprintBase bpt = BlueprintBase.loadBluePrint(nbt.getCompoundTag("bpt"));
 
-		int nx = x + nbt.getInteger("x");
-		int ny = y + nbt.getInteger("y");
-		int nz = z + nbt.getInteger("z");
+		int nx = box.xMin + nbt.getInteger("x");
+		int ny = box.yMin + nbt.getInteger("y");
+		int nz = box.zMin + nbt.getInteger("z");
 
 		ForgeDirection nbtDir = ForgeDirection.values()[nbt.getByte("dir")];
+
+		// TODO: this is just here for debug, to be removed
+		world.setBlock(nx, ny, nz, Blocks.sponge);
 
 		current = new RecursiveBlueprintBuilder(bpt, world, nx, ny, nz, nbtDir);
 		nextSubBlueprint++;

@@ -128,8 +128,8 @@ public abstract class BlueprintBase {
 			Position pos = new Position(sub.getInteger("x"), sub.getInteger("y"), sub.getInteger("z"));
 			Position np = context.rotatePositionLeft(pos);
 
-			sub.setInteger("x", (int) pos.x);
-			sub.setInteger("z", (int) pos.z);
+			sub.setInteger("x", (int) np.x);
+			sub.setInteger("z", (int) np.z);
 			sub.setByte("dir", (byte) dir.ordinal());
 
 			NBTTagCompound bpt = sub.getCompoundTag("bpt");
