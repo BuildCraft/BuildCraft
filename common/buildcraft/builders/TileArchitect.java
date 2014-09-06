@@ -55,7 +55,7 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 	private RecursiveBlueprintReader reader;
 
 	public TileArchitect() {
-		box.kind = Kind.STRIPES;
+		box.kind = Kind.BLUE_STRIPES;
 	}
 
 	@Override
@@ -260,7 +260,7 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 	public void addSubBlueprint(TileEntity sub) {
 		subBlueprints.add(new BlockIndex(sub));
 
-		LaserData laser = new LaserData(new Position(this), new Position(sub));
+		LaserData laser = new LaserData(new Position(sub), new Position(this));
 
 		laser.head.x += 0.5F;
 		laser.head.y += 0.5F;

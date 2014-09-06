@@ -123,6 +123,7 @@ public class RenderLaser extends Render {
 
 		GL11.glPushMatrix();
 
+		GL11.glTranslated(laser.head.x, laser.head.y, laser.head.z);
 		laser.update();
 
 		GL11.glRotatef((float) laser.angleZ, 0, 1, 0);
@@ -172,12 +173,12 @@ public class RenderLaser extends Render {
 
 		initScaledBoxes();
 
-		doRenderLaserLine (laser.renderSize, laser.laserTexAnimation);
+		doRenderLaserLine(laser.renderSize, laser.laserTexAnimation);
 
 		GL11.glPopMatrix();
 	}
 
-	private static void doRenderLaserLine (double len, int texId) {
+	private static void doRenderLaserLine(double len, int texId) {
 		float lasti = 0;
 
 		if (len - 1 > 0) {

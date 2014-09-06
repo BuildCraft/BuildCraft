@@ -32,7 +32,8 @@ public class Box implements IBox {
 		LASER_YELLOW,
 		LASER_GREEN,
 		LASER_BLUE,
-		STRIPES
+		STRIPES,
+		BLUE_STRIPES,
 	}
 
 	@NetworkData

@@ -22,7 +22,8 @@ public abstract class EntityLaser extends Entity {
 		new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_ENTITIES + "/laser_2.png"),
 		new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_ENTITIES + "/laser_3.png"),
 		new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_ENTITIES + "/laser_4.png"),
-		new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_ENTITIES + "/stripes.png")};
+		new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_ENTITIES + "/stripes.png"),
+		new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_ENTITIES + "/blue_stripes.png")};
 
 	public LaserData data = new LaserData();
 
