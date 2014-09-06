@@ -357,5 +357,70 @@ engineeringDiary.autoWorkbench.page2=The new block can actually hold the items o
 engineeringDiary.autoWorkbench.page3=When you try to extract some planks out of the table using a Wooden Transport Pipe, they actually come out as a formed Chest! Obviously, you’ve crafted the world’s first Auto Workbench
 engineeringDiary.autoWorkbench.page4=After some experimentation you discover that recipes which involve non stackable items cannot be automated, presumably due to the mechanical nature of Gears.
 
+engineeringDiary.Buildcraft|TransportPipes.title=Buildcraft Transport Pipes
+engineeringDiary.Buildcraft|TransportPipes.page0=Here you find all the transport pipes
+
+engineeringDiary.woodItems.title=Wooden Transport Pipe
+engineeringDiary.woodItems.howToMakeProgress=Not decided yet
+engineeringDiary.woodItems.page0=Extracting items
+
+engineeringDiary.cobblestoneItems.title=Cobblestone Transport Pipe
+engineeringDiary.cobblestoneItems.howToMakeProgress=Not decided yet
+engineeringDiary.cobblestoneItems.page0=Basic item transport
+
+engineeringDiary.stoneItems.title=Stone Transport Pipe
+engineeringDiary.stoneItems.howToMakeProgress=not decided yet
+engineeringDiary.stoneItems.requiredResearch=Cobblestone Transport Pipe
+engineeringDiary.stoneItems.page0=Smooth item transport
+
+engineeringDiary.quartzItems.title=Quartz Transport Pipe
+engineeringDiary.quartzItems.howToMakeProgress=Not decided yet
+engineeringDiary.quartzItems.requiredResearch=Cobblestone Transport Pipe
+engineeringDiary.quartzItems.page0=Even smoother item transport
+
+engineeringDiary.sandstoneItems.title=Sandstone Transport Pipe
+engineeringDiary.sandstoneItems.howToMakeProgress=Not decided yet
+engineeringDiary.sandstoneItems.requiredResearch=Cobblestone Transport Pipe
+engineeringDiary.sandstoneItems.page0=Compact building pipe
+
+engineeringDiary.goldItems.title=Gold Transport Pipe
+engineeringDiary.goldItems.howToMakeProgress=Not decided yet
+engineeringDiary.goldItems.requiredResearch=Stone Transport Pipe
+engineeringDiary.goldItems.page0=Faster item transport
+
+engineeringDiary.ironItems.title=Iron Transport Pipe
+engineeringDiary.ironItems.howToMakeProgress=Not decided yet
+engineeringDiary.ironItems.requiredResearch=Stone Transport Pipe
+engineeringDiary.ironItems.page0=Simple item routing
+
+engineeringDiary.voidItems.title=Void Transport Pipe
+engineeringDiary.voidItems.howToMakeProgress=Not decided yet
+engineeringDiary.voidItems.requiredResearch=Stone Transport Pipe
+engineeringDiary.voidItems.page0=To much items? No problem
+
+engineeringDiary.obsidianItems.title=Obsidian Transport Pipe
+engineeringDiary.obsidianItems.howToMakeProgress=Not decided yet
+engineeringDiary.obsidianItems.requiredResearch=Wooden Transport Pipe
+engineeringDiary.obsidianItems.page0=Picking up items
+
+engineeringDiary.emeraldItems.title=Emerald Transport Pipe
+engineeringDiary.emeraldItems.howToMakeProgress=Not decided yet
+engineeringDiary.emeraldItems.requiredResearch=Wooden Transport Pipe
+engineeringDiary.emeraldItems.page0=Advanced item extraction
+
+engineeringDiary.diamondItems.title=Diamond Transport Pipe
+engineeringDiary.diamondItems.howToMakeProgress=Not decided yet
+engineeringDiary.diamondItems.requiredResearch=Iron Transport Pipe
+engineeringDiary.diamondItems.page0=Item sorting
+
+engineeringDiary.lazuliItems.title=Lazuli Transport Pipe
+engineeringDiary.lazuliItems.howToMakeProgress=Not decided yet
+engineeringDiary.lazuliItems.requiredResearch=Diamond Transport Pipe
+engineeringDiary.lazuliItems.page0=Coloring items
+
+engineeringDiary.diazuliItems.title=Diazuli Transport Pipe
+engineeringDiary.diazuliItems.howToMakeProgress=Not decided yet
+engineeringDiary.diazuliItems.requiredResearch=Diamond Transport Pipe
+engineeringDiary.diazuliItems.page0=Colored item routing
 
 engineeringDiary.noRequiredResearch=No Research Required
