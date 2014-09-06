@@ -24,10 +24,10 @@ import buildcraft.transport.PipeTransportFluids;
 public class PipeFluidsQuartz extends Pipe<PipeTransportFluids> {
 
 	public PipeFluidsQuartz(Item item) {
-		super(new PipeTransportFluids(), item);
+	    super(new PipeTransportFluids(), item);
 
-		transport.flowRate = 20;
-		transport.travelDelay = 8;
+	    transport.flowRate = 2 * BuildCraftTransport.pipeFluidsBaseFlowRate;
+	    transport.travelDelay = 8;
 	}
 
 	@Override

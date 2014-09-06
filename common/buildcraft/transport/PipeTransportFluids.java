@@ -36,11 +36,12 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 
 		private short currentTime = 0;
 		// Tracks how much of the liquid is inbound in timeslots
-		private short[] incomming = new short[travelDelay];
+	        private short[] incomming;
 
 		// Tracks how much is currently available (has spent it's inbound delaytime)
 		public PipeSection(int capacity) {
 			super(null, capacity);
+			incomming = new short[travelDelay];
 		}
 
 		@Override
@@ -143,8 +144,8 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 	private static final ForgeDirection[] directions = ForgeDirection.VALID_DIRECTIONS;
 	private static final ForgeDirection[] orientations = ForgeDirection.values();
 	public byte initClient = 0;
-	public short travelDelay = 12;
-	public short flowRate = 10;
+	public int travelDelay = 12;
+	public int flowRate;
 	public FluidStack[] renderCache = new FluidStack[orientations.length];
 	public int[] colorRenderCache = new int[orientations.length];
 	public final PipeSection[] internalTanks = new PipeSection[orientations.length];
@@ -156,7 +157,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 	private final SafeTimeTracker tracker = new SafeTimeTracker(BuildCraftCore.updateFactor);
 	private int clientSyncCounter = 0;
 
-	public PipeTransportFluids() {
+        public PipeTransportFluids() {
 		for (ForgeDirection direction : orientations) {
 			internalTanks[direction.ordinal()] = new PipeSection(getCapacity());
 			if (direction != ForgeDirection.UNKNOWN) {

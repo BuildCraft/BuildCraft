@@ -23,10 +23,13 @@ import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportFluids;
 
-public class PipeFluidsVoid extends Pipe implements IPipeTransportFluidsHook {
+public class PipeFluidsVoid extends Pipe<PipeTransportFluids> implements IPipeTransportFluidsHook {
 
 	public PipeFluidsVoid(Item item) {
 		super(new PipeTransportFluids(), item);
+
+		transport.flowRate = BuildCraftTransport.pipeFluidsBaseFlowRate;
+		transport.travelDelay = 12;
 	}
 
 	@Override

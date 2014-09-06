@@ -9,6 +9,8 @@
 package buildcraft.transport.pipes;
 
 import net.minecraft.item.Item;
+
+import buildcraft.BuildCraftTransport;
 import buildcraft.transport.PipeIconProvider;
 
 public class PipeFluidsEmerald extends PipeFluidsWood {
@@ -19,7 +21,7 @@ public class PipeFluidsEmerald extends PipeFluidsWood {
 		standardIconIndex = PipeIconProvider.TYPE.PipeFluidsEmerald_Standard.ordinal();
 		solidIconIndex = PipeIconProvider.TYPE.PipeAllEmerald_Solid.ordinal();
 
-		transport.flowRate = 40;
+		transport.flowRate = 4 * BuildCraftTransport.pipeFluidsBaseFlowRate;
 		transport.travelDelay = 4;
 	}
 }

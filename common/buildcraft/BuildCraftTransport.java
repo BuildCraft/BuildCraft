@@ -135,6 +135,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 	public static BuildCraftTransport instance;
 
 	public static float pipeDurability;
+        public static int pipeFluidsBaseFlowRate;
 
 	public static BlockGenericPipe genericPipeBlock;
 	public static BlockFilteredBuffer filteredBufferBlock;
@@ -307,6 +308,10 @@ public class BuildCraftTransport extends BuildCraftMod {
 			Property durability = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "pipes.durability", DefaultProps.PIPES_DURABILITY);
 			durability.comment = "How long a pipe will take to break";
 			pipeDurability = (float) durability.getDouble(DefaultProps.PIPES_DURABILITY);
+
+			Property baseFlowRate = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "pipes.fluids.baseFlowRate", DefaultProps.PIPES_FLUIDS_BASE_FLOW_RATE);
+			pipeFluidsBaseFlowRate = baseFlowRate.getInt();
+
 
 			Property exclusionItemList = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "woodenPipe.item.exclusion", new String[0]);
 

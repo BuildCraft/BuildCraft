@@ -21,10 +21,13 @@ import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportFluids;
 
-public class PipeFluidsCobblestone extends Pipe {
+public class PipeFluidsCobblestone extends Pipe<PipeTransportFluids> {
 
 	public PipeFluidsCobblestone(Item item) {
-		super(new PipeTransportFluids(), item);
+	        super(new PipeTransportFluids(), item);
+
+		transport.flowRate = BuildCraftTransport.pipeFluidsBaseFlowRate;
+		transport.travelDelay = 12;
 	}
 
 	@Override
