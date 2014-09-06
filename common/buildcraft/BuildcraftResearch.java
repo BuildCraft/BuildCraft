@@ -54,6 +54,39 @@ public class BuildcraftResearch extends BuildCraftMod {
 
 		EurekaRegistry.register(new EurekaInfo("filteredBuffer", "Buildcraft|Automatization", 1, 1, new ItemStack(BuildCraftTransport.filteredBufferBlock), new BasicEurekaChapter("filteredBuffer", false)));
 
+		EurekaRegistry.registerCategory("Buildcraft|Pipes", new ItemStack(BuildCraftTransport.pipeItemsDiamond));
 
+		EurekaRegistry.register(new EurekaInfo("woodItems", "Buildcraft|Pipes", 1, 1, new ItemStack(BuildCraftTransport.pipeItemsWood), new BasicEurekaChapter("woodItems", false)));
+
+		EurekaRegistry.register(new EurekaInfo("cobblestoneItems", "Buildcraft|Pipes", 1, 1, new ItemStack(BuildCraftTransport.pipeItemsCobblestone), new BasicEurekaChapter("cobblestoneItems", false)));
+
+		requiredResearch.add("cobbleStoneItems");
+		EurekaRegistry.register(new EurekaInfo ("stoneItems", "Buildcraft|Pipes", 1, 1, new ItemStack(BuildCraftTransport.pipeItemsStone), new BasicEurekaChapter("stoneItems", true), requiredResearch));
+
+		EurekaRegistry.register(new EurekaInfo("quartzItems", "Buildcraft|Pipes", 1, 1, new ItemStack(BuildCraftTransport.pipeItemsQuartz), new BasicEurekaChapter("quartzItems", true), requiredResearch));
+
+		EurekaRegistry.register(new EurekaInfo("sandstoneItems", "Buildcraft|Pipes", 1, 1, new ItemStack(BuildCraftTransport.pipeItemsSandstone), new BasicEurekaChapter("sandstoneItems", true), requiredResearch));
+		requiredResearch.clear();
+
+		requiredResearch.add("stoneItems");
+		EurekaRegistry.register(new EurekaInfo("goldItems", "Buildcraft|Pipes", 1, 1, new ItemStack(BuildCraftTransport.pipeItemsGold), new BasicEurekaChapter("goldItems", true), requiredResearch));
+
+		EurekaRegistry.register(new EurekaInfo("ironItems", "Buildcraft|Pipes", 1, 1, new ItemStack(BuildCraftTransport.pipeItemsIron), new BasicEurekaChapter("ironItems", true), requiredResearch));
+
+		EurekaRegistry.register(new EurekaInfo("voidItems", "Buildcraft|Pipes", 1, 1, new ItemStack(BuildCraftTransport.pipeItemsVoid), new BasicEurekaChapter("voidItems", true), requiredResearch));
+		requiredResearch.clear();
+
+		requiredResearch.add("woodItems");
+		EurekaRegistry.register(new EurekaInfo("obsidianItems", "Buildcraft|Pipes", 1, 1, new ItemStack(BuildCraftTransport.pipeItemsObsidian), new BasicEurekaChapter("obsidianItems", true), requiredResearch));
+
+		requiredResearch.add("ironItems");
+		EurekaRegistry.register(new EurekaInfo("diamondItems", "Buildcraft|Pipes", 1, 1, new ItemStack(BuildCraftTransport.pipeItemsDiamond), new BasicEurekaChapter("diamondItems", true), requiredResearch));
+		requiredResearch.clear();
+
+		requiredResearch.add("diamondItems");
+		EurekaRegistry.register(new EurekaInfo("lazuliItems", "Buildcraft|Pipes", 1, 1, new ItemStack(BuildCraftTransport.pipeItemsLapis), new BasicEurekaChapter("lazuliItems", true), requiredResearch));
+
+		EurekaRegistry.register(new EurekaInfo("diazuliItems", "Buildcraft|Pipes", 1, 1, new ItemStack(BuildCraftTransport.pipeItemsDaizuli), new BasicEurekaChapter("diazuliItems", true), requiredResearch));
+		requiredResearch.clear();
 	}
 }
