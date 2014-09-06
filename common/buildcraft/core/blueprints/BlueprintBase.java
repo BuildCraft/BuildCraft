@@ -28,6 +28,7 @@ import buildcraft.api.blueprints.MappingRegistry;
 import buildcraft.api.blueprints.SchematicBlockBase;
 import buildcraft.api.blueprints.Translation;
 import buildcraft.api.core.BCLog;
+import buildcraft.api.core.Position;
 import buildcraft.builders.ItemBlueprint;
 import buildcraft.builders.blueprints.BlueprintId;
 import buildcraft.core.Box;
@@ -119,16 +120,31 @@ public abstract class BlueprintBase {
 		newAnchorY = anchorY;
 		newAnchorZ = anchorX;
 
-		contents = newContents;
-		int tmp = sizeX;
-		sizeX = sizeZ;
-		sizeZ = tmp;
+		for (NBTTagCompound sub : subBlueprintsNBT) {
+			ForgeDirection dir = ForgeDirection.values()[sub.getByte("dir")];
+
+			dir = dir.getRotation(ForgeDirection.UP);
+
+			Position pos = new Position(sub.getInteger("x"), sub.getInteger("y"), sub.getInteger("z"));
+			Position np = context.rotatePositionLeft(pos);
+
+			sub.setInteger("x", (int) pos.x);
+			sub.setInteger("z", (int) pos.z);
+			sub.setByte("dir", (byte) dir.ordinal());
+
+			NBTTagCompound bpt = sub.getCompoundTag("bpt");
+		}
+
+		context.rotateLeft();
 
 		anchorX = newAnchorX;
 		anchorY = newAnchorY;
 		anchorZ = newAnchorZ;
 
-		context.rotateLeft();
+		contents = newContents;
+		int tmp = sizeX;
+		sizeX = sizeZ;
+		sizeZ = tmp;
 
 		mainDir = mainDir.getRotation(ForgeDirection.UP);
 	}
@@ -243,9 +259,9 @@ public abstract class BlueprintBase {
 	public void addSubBlueprint(BlueprintBase bpt, int x, int y, int z, ForgeDirection dir) {
 		NBTTagCompound nbt = new NBTTagCompound();
 
-		nbt.setInteger("x", x - anchorX);
-		nbt.setInteger("y", y - anchorX);
-		nbt.setInteger("z", z - anchorX);
+		nbt.setInteger("x", x);
+		nbt.setInteger("y", y);
+		nbt.setInteger("z", z);
 		nbt.setByte("dir", (byte) dir.ordinal());
 
 		NBTTagCompound bptNBT = new NBTTagCompound();

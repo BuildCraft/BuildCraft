@@ -73,22 +73,8 @@ public class RecursiveBlueprintBuilder {
 		int nz = z + nbt.getInteger("z");
 
 		ForgeDirection nbtDir = ForgeDirection.values()[nbt.getByte("dir")];
-		ForgeDirection ndir = dir;
 
-		if (nbtDir == ForgeDirection.EAST) {
-			// Do nothing
-		} else if (nbtDir == ForgeDirection.SOUTH) {
-			ndir = ndir.getRotation(ForgeDirection.UP);
-		} else if (nbtDir == ForgeDirection.WEST) {
-			ndir = ndir.getRotation(ForgeDirection.UP);
-			ndir = ndir.getRotation(ForgeDirection.UP);
-		} else if (nbtDir == ForgeDirection.NORTH) {
-			ndir = ndir.getRotation(ForgeDirection.UP);
-			ndir = ndir.getRotation(ForgeDirection.UP);
-			ndir = ndir.getRotation(ForgeDirection.UP);
-		}
-
-		current = new RecursiveBlueprintBuilder(bpt, world, nx, ny, nz, ndir);
+		current = new RecursiveBlueprintBuilder(bpt, world, nx, ny, nz, nbtDir);
 		nextSubBlueprint++;
 
 		return current.nextBuilder();

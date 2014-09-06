@@ -358,7 +358,6 @@ public class TileBuilder extends TileAbstractBuilder implements IMachine, IFluid
 					currentBuilder.postProcessing(worldObj);
 				}
 
-				// TODO: add support for composite blueprints here
 				currentBuilder = currentPathIterator.next();
 
 				if (currentBuilder != null) {
@@ -379,8 +378,6 @@ public class TileBuilder extends TileAbstractBuilder implements IMachine, IFluid
 			} else {
 				if (currentBuilder != null && currentBuilder.isDone(this)) {
 					currentBuilder.postProcessing(worldObj);
-
-					done = true;
 					currentBuilder = recursiveBuilder.nextBuilder();
 				} else {
 					BlueprintBase bpt = instanciateBlueprint();
@@ -390,13 +387,15 @@ public class TileBuilder extends TileAbstractBuilder implements IMachine, IFluid
 								ForgeDirection.values()[worldObj.getBlockMetadata(xCoord, yCoord, zCoord)].getOpposite());
 
 						currentBuilder = recursiveBuilder.nextBuilder();
-
-						if (currentBuilder != null) {
-							box.initialize(currentBuilder);
-							sendNetworkUpdate();
-							done = false;
-						}
 					}
+				}
+
+				if (currentBuilder == null) {
+					done = true;
+				} else {
+					box.initialize(currentBuilder);
+					sendNetworkUpdate();
+					done = false;
 				}
 			}
 
