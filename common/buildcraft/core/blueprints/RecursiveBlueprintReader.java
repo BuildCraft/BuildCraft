@@ -107,8 +107,11 @@ public class RecursiveBlueprintReader {
 								currentSubReader.architect.xCoord - architect.getBox().xMin,
 								currentSubReader.architect.yCoord - architect.getBox().yMin,
 								currentSubReader.architect.zCoord - architect.getBox().zMin,
-								ForgeDirection.values()[architect.getWorld().getBlockMetadata(
-										architect.xCoord, architect.yCoord, architect.zCoord)].getOpposite());
+								ForgeDirection.values()[
+								currentSubReader.architect.getWorld().getBlockMetadata(
+										currentSubReader.architect.xCoord,
+										currentSubReader.architect.yCoord,
+										currentSubReader.architect.zCoord)].getOpposite());
 
 				currentSubReader = null;
 				subIndex++;
