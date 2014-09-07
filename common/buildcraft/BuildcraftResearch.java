@@ -54,6 +54,8 @@ public class BuildcraftResearch extends BuildCraftMod {
 
 		EurekaRegistry.register(new EurekaInfo("filteredBuffer", "Buildcraft|Automatization", 1, 1, new ItemStack(BuildCraftTransport.filteredBufferBlock), new BasicEurekaChapter("filteredBuffer", false)));
 
+		EurekaRegistry.register(new EurekaInfo("chute", "Buildcraft|Automatization", 1, 1, new ItemStack(BuildCraftFactory.hopperBlock), new BasicEurekaChapter("chute", false)));
+
 		EurekaRegistry.registerCategory("Buildcraft|TransportPipes", new ItemStack(BuildCraftTransport.pipeItemsDiamond));
 
 		EurekaRegistry.register(new EurekaInfo("woodItems", "Buildcraft|TransportPipes", 1, 1, new ItemStack(BuildCraftTransport.pipeItemsWood), new BasicEurekaChapter("woodItems", false)));
@@ -91,5 +93,6 @@ public class BuildcraftResearch extends BuildCraftMod {
 
 		EurekaRegistry.register(new EurekaInfo("diazuliItems", "Buildcraft|TransportPipes", 1, 1, new ItemStack(BuildCraftTransport.pipeItemsDaizuli), new BasicEurekaChapter("diazuliItems", true), requiredResearch));
 		requiredResearch.clear();
+
 	}
 }
