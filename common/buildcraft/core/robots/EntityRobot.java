@@ -12,6 +12,7 @@ import java.util.Date;
 import java.util.WeakHashMap;
 
 import io.netty.buffer.ByteBuf;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
@@ -26,9 +27,11 @@ import net.minecraft.util.EntityDamageSource;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
+
 import cpw.mods.fml.common.registry.IEntityAdditionalSpawnData;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
@@ -36,6 +39,7 @@ import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
+
 import buildcraft.BuildCraftSilicon;
 import buildcraft.api.boards.RedstoneBoardNBT;
 import buildcraft.api.boards.RedstoneBoardRegistry;
@@ -166,7 +170,7 @@ public class EntityRobot extends EntityRobotBase implements
 		dataWatcher.addObject(16, "");
 		dataWatcher.addObject(17, Float.valueOf(0));
 		dataWatcher.addObject(18, Float.valueOf(0));
-		dataWatcher.addObject(19, Float.valueOf(0));
+		dataWatcher.addObject(19, Integer.valueOf(0));
 	}
 
 	protected void updateDataClient() {
@@ -254,13 +258,13 @@ public class EntityRobot extends EntityRobotBase implements
 
 			energyFX += energySpendPerCycle;
 
-			if (energyFX >= 10) {
+			if (energyFX >= 100) {
 				energyFX = 0;
 				Minecraft.getMinecraft().effectRenderer.addEffect(new EntityRobotEnergyFX(
 						worldObj,
 						posX + steamDx * 0.25, posY + steamDy * 0.25, posZ + steamDz * 0.25,
 						steamDx * 0.05, steamDy * 0.05, steamDz * 0.05,
-						energySpendPerCycle * 0.75F < 1 ? 1 : energySpendPerCycle * 0.75F));
+						energySpendPerCycle * 0.075F < 1 ? 1 : energySpendPerCycle * 0.075F));
 			}
 		}
 
@@ -438,7 +442,7 @@ public class EntityRobot extends EntityRobotBase implements
 		nbt.setTag("laser", nbtLaser);
 
 		battery.writeToNBT(nbt);
-		
+
 		if (itemInUse != null) {
 			NBTTagCompound itemNBT = new NBTTagCompound();
 			itemInUse.writeToNBT(itemNBT);
@@ -495,7 +499,7 @@ public class EntityRobot extends EntityRobotBase implements
 		laser.readFromNBT(nbt.getCompoundTag("laser"));
 
 		battery.readFromNBT(nbt);
-		
+
 		if (nbt.hasKey("itemInUse")) {
 			itemInUse = ItemStack.loadItemStackFromNBT(nbt.getCompoundTag("itemInUse"));
 			itemActive = nbt.getBoolean("itemActive");
@@ -786,7 +790,7 @@ public class EntityRobot extends EntityRobotBase implements
 	public int getEnergy() {
 		return battery.getEnergyStored();
 	}
-	
+
 	@Override
 	public RFBattery getBattery() {
 		return battery;
