@@ -19,14 +19,32 @@ public class EurekaInfo extends EurekaInformation {
 	public EurekaChapter gui;
 	public ArrayList<String> requiredResearch;
 
-	public EurekaInfo(String key, String category, int increment, int maxValue, ItemStack stack, EurekaChapter gui, ArrayList<String> requiredResearch){
+	public EurekaInfo(String key, String category, int increment, int maxValue, ItemStack stack, EurekaChapter gui, String...researches){
 		this.key = key;
 		this.category = category;
 		this.increment = increment;
 		this.maxValue = maxValue;
 		this.stack = stack;
 		this.gui = gui;
-		this.requiredResearch = requiredResearch;
+		requiredResearch = new ArrayList<String>(researches.length);
+		for (String research: researches)
+			requiredResearch.add(research);
+	}
+
+	public EurekaInfo(String key, String category, int increment, int maxValue, ItemStack stack, String...researches){
+		this.key = key;
+		this.category = category;
+		this.increment = increment;
+		this.maxValue = maxValue;
+		this.stack = stack;
+		if (researches.length > 0) {
+			gui = new BasicEurekaChapter(key, true);
+		} else {
+			gui = new BasicEurekaChapter(key, false);
+		}
+		requiredResearch = new ArrayList<String>(researches.length);
+		for (String research: researches)
+			requiredResearch.add(research);
 	}
 
 	public EurekaInfo(String key, String category, int increment, int maxValue, ItemStack stack, EurekaChapter gui){
@@ -36,7 +54,17 @@ public class EurekaInfo extends EurekaInformation {
 		this.maxValue = maxValue;
 		this.stack = stack;
 		this.gui = gui;
-		this.requiredResearch =new  ArrayList<String>();
+		this.requiredResearch = new  ArrayList<String>();
+	}
+
+	public EurekaInfo(String key, String category, int increment, int maxValue, ItemStack stack){
+		this.key = key;
+		this.category = category;
+		this.increment = increment;
+		this.maxValue = maxValue;
+		this.stack = stack;
+		gui = new BasicEurekaChapter(key, false);
+		this.requiredResearch = new  ArrayList<String>();
 	}
 
 	@Override

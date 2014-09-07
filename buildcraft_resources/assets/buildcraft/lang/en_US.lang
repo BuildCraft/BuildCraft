@@ -414,9 +414,9 @@ engineeringDiary.filteredBuffer.howToMakeProgress=Not decided yet
 engineeringDiary.filteredBuffer.requiredResearch=UNKNOWN
 engineeringDiary.filteredBuffer.page0=NO IDEA
 engineeringDiary.filteredBuffer.page1=While working on a new factory, you come across a complex problem that requires you to rethink your entire knowledge of Redstone. You need to somehow store a certain amount of items nd hold them for a determined period of time
-engineeringDiary.filteredBuffer.page1=until they reach the required sum, but simply can’t work it in a compact manner. Even after trying some alternatives with Gates, you’re still not satisfied, so using the Diamond Transport Pipe’s filtering capabilities,
-engineeringDiary.filteredBuffer.page2=a buffer chest and a piston (sealed in some wood), you create the Filtered Buffer. The block can filter any item coming to it, and combined with Gates can allow to buffer large flow of items coming in and delay their arrival.
-engineeringDiary.filteredBuffer.page3=Surely it’ll come in handy on other builds.
+engineeringDiary.filteredBuffer.page2=until they reach the required sum, but simply can’t work it in a compact manner. Even after trying some alternatives with Gates, you’re still not satisfied, so using the Diamond Transport Pipe’s filtering capabilities,
+engineeringDiary.filteredBuffer.page3=a buffer chest and a piston (sealed in some wood), you create the Filtered Buffer. The block can filter any item coming to it, and combined with Gates can allow to buffer large flow of items coming in and delay their arrival.
+engineeringDiary.filteredBuffer.page4=Surely it’ll come in handy on other builds.
 
 engineeringDiary.chute.title=Chute
 engineeringDiary.chute.howToMakeProgress=Not decided yet

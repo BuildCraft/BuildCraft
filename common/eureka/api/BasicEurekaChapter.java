@@ -1,5 +1,6 @@
-package buildcraft.research;
+package eureka.api;
 
+import buildcraft.research.Utils;
 import eureka.api.client.gui.EurekaChapter;
 
 /**
