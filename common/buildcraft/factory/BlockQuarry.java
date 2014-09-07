@@ -8,39 +8,38 @@
  */
 package buildcraft.factory;
 
-import java.util.ArrayList;
-
+import buildcraft.BuildCraftCore;
+import buildcraft.BuildCraftFactory;
+import buildcraft.api.tools.IToolWrench;
+import buildcraft.core.BlockBuildcraftEureka;
+import buildcraft.core.Box;
+import buildcraft.core.utils.Utils;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-
 import net.minecraftforge.common.util.ForgeDirection;
 
-import buildcraft.BuildCraftFactory;
-import buildcraft.api.tools.IToolWrench;
-import buildcraft.core.BlockBuildCraft;
-import buildcraft.core.Box;
-import buildcraft.core.utils.Utils;
+import java.util.ArrayList;
 
-public class BlockQuarry extends BlockBuildCraft {
+public class BlockQuarry extends BlockBuildcraftEureka{
 
 	IIcon textureTop;
 	IIcon textureFront;
 	IIcon textureSide;
 
 	public BlockQuarry() {
-		super(Material.iron);
+		super(Material.iron, "quarry");
 
 		setHardness(10F);
 		setResistance(10F);
@@ -51,7 +50,6 @@ public class BlockQuarry extends BlockBuildCraft {
 	@Override
 	public void onBlockPlacedBy(World world, int i, int j, int k, EntityLivingBase entityliving, ItemStack stack) {
 		super.onBlockPlacedBy(world, i, j, k, entityliving, stack);
-
 		ForgeDirection orientation = Utils.get2dOrientation(entityliving);
 
 		world.setBlockMetadataWithNotify(i, j, k, orientation.getOpposite().ordinal(), 1);
@@ -231,5 +229,10 @@ public class BlockQuarry extends BlockBuildCraft {
 	@Override
 	public int getLightValue(IBlockAccess world, int x, int y, int z) {
 		return 1;
+	}
+
+	@Override
+	public ItemStack[] getComponents() {
+		return new ItemStack[]{new ItemStack(BuildCraftCore.ironGearItem, 3), new ItemStack(BuildCraftCore.goldGearItem, 2), new ItemStack(BuildCraftCore.diamondGearItem, 2), new ItemStack(Items.redstone), new ItemStack(Items.diamond_pickaxe)};
 	}
 }
