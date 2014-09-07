@@ -15,8 +15,11 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
+
+import net.minecraftforge.common.util.Constants;
 
 import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.IAreaProvider;
@@ -153,41 +156,59 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 	}
 
 	@Override
-	public void readFromNBT(NBTTagCompound nbttagcompound) {
-		super.readFromNBT(nbttagcompound);
+	public void readFromNBT(NBTTagCompound nbt) {
+		super.readFromNBT(nbt);
 
-		if (nbttagcompound.hasKey("box")) {
-			box.initialize(nbttagcompound.getCompoundTag("box"));
+		if (nbt.hasKey("box")) {
+			box.initialize(nbt.getCompoundTag("box"));
 		}
 
-		inv.readFromNBT(nbttagcompound);
+		inv.readFromNBT(nbt);
 
-		name = nbttagcompound.getString("name");
-		currentAuthorName = nbttagcompound.getString("lastAuthor");
+		name = nbt.getString("name");
+		currentAuthorName = nbt.getString("lastAuthor");
 
-		if (nbttagcompound.hasKey("readConfiguration")) {
-			readConfiguration.readFromNBT(nbttagcompound.getCompoundTag("readConfiguration"));
+		if (nbt.hasKey("readConfiguration")) {
+			readConfiguration.readFromNBT(nbt.getCompoundTag("readConfiguration"));
+		}
+
+		NBTTagList subBptList = nbt.getTagList("subBlueprints", Constants.NBT.TAG_COMPOUND);
+
+		for (int i = 0; i < subBptList.tagCount(); ++i) {
+			BlockIndex index = new BlockIndex(subBptList.getCompoundTagAt(i));
+
+			addSubBlueprint(index);
 		}
 	}
 
 	@Override
-	public void writeToNBT(NBTTagCompound nbttagcompound) {
-		super.writeToNBT(nbttagcompound);
+	public void writeToNBT(NBTTagCompound nbt) {
+		super.writeToNBT(nbt);
 
 		if (box.isInitialized()) {
 			NBTTagCompound boxStore = new NBTTagCompound();
 			box.writeToNBT(boxStore);
-			nbttagcompound.setTag("box", boxStore);
+			nbt.setTag("box", boxStore);
 		}
 
-		inv.writeToNBT(nbttagcompound);
+		inv.writeToNBT(nbt);
 
-		nbttagcompound.setString("name", name);
-		nbttagcompound.setString("lastAuthor", currentAuthorName);
+		nbt.setString("name", name);
+		nbt.setString("lastAuthor", currentAuthorName);
 
 		NBTTagCompound readConf = new NBTTagCompound();
 		readConfiguration.writeToNBT(readConf);
-		nbttagcompound.setTag("readConfiguration", readConf);
+		nbt.setTag("readConfiguration", readConf);
+
+		NBTTagList subBptList = new NBTTagList();
+
+		for (BlockIndex b : subBlueprints) {
+			NBTTagCompound subBpt = new NBTTagCompound();
+			b.writeTo(subBpt);
+			subBptList.appendTag(subBpt);
+		}
+
+		nbt.setTag("subBlueprints", subBptList);
 	}
 
 	@Override
@@ -239,8 +260,8 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 	public AxisAlignedBB getRenderBoundingBox() {
 		Box completeBox = new Box(this).extendToEncompass(box);
 
-		for (BlockIndex b : subBlueprints) {
-			completeBox.extendToEncompass(b);
+		for (LaserData d : subLasers) {
+			completeBox.extendToEncompass(d.tail);
 		}
 
 		return completeBox.getBoundingBox();
@@ -258,9 +279,15 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 	}
 
 	public void addSubBlueprint(TileEntity sub) {
-		subBlueprints.add(new BlockIndex(sub));
+		addSubBlueprint(new BlockIndex(sub));
 
-		LaserData laser = new LaserData(new Position(sub), new Position(this));
+		sendNetworkUpdate();
+	}
+
+	private void addSubBlueprint(BlockIndex index) {
+		subBlueprints.add(index);
+
+		LaserData laser = new LaserData(new Position(index), new Position(this));
 
 		laser.head.x += 0.5F;
 		laser.head.y += 0.5F;
@@ -271,7 +298,5 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 		laser.tail.z += 0.5F;
 
 		subLasers.add(laser);
-
-		sendNetworkUpdate();
 	}
 }
