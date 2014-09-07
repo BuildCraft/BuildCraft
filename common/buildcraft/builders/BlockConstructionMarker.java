@@ -12,6 +12,7 @@ import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
@@ -58,14 +59,20 @@ public class BlockConstructionMarker extends BlockMarker {
 
 		TileConstructionMarker marker = (TileConstructionMarker) world.getTileEntity(x, y, z);
 
-		if (marker.itemBlueprint == null
-				&& entityplayer.inventory.getCurrentItem() != null
-				&& entityplayer.inventory.getCurrentItem().getItem() instanceof ItemBlueprint) {
+		Item equipped = entityplayer.getCurrentEquippedItem() != null ? entityplayer.getCurrentEquippedItem().getItem()
+				: null;
 
-			marker.setBlueprint(entityplayer.inventory.getCurrentItem().copy());
-			entityplayer.inventory.setInventorySlotContents(entityplayer.inventory.currentItem, null);
+		if (equipped instanceof ItemBlueprint) {
+			if (marker.itemBlueprint == null) {
+				marker.setBlueprint(entityplayer.inventory.getCurrentItem().copy());
+				entityplayer.inventory.setInventorySlotContents(entityplayer.inventory.currentItem, null);
 
-			return false;
+				return true;
+			}
+		} else if (equipped instanceof ItemConstructionMarker) {
+			if (ItemConstructionMarker.linkStarted(entityplayer.getCurrentEquippedItem())) {
+				ItemConstructionMarker.link(entityplayer.getCurrentEquippedItem(), world, x, y, z);
+			}
 		}
 
 		return true;

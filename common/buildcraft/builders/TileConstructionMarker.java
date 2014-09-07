@@ -57,7 +57,7 @@ public class TileConstructionMarker extends TileBuildCraft implements IBuildingI
 
 	@Override
 	public void initialize() {
-		box.kind = Kind.STRIPES;
+		box.kind = Kind.BLUE_STRIPES;
 
 		if (worldObj.isRemote) {
 			RPCHandler.rpcServer(this, "uploadBuildersInAction");

@@ -10,7 +10,6 @@ package buildcraft.core.blueprints;
 
 import java.util.ArrayList;
 
-import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 
@@ -62,11 +61,8 @@ public class RecursiveBlueprintBuilder {
 			return builder;
 		}
 
+		// Free memory associated with this blueprint
 		blueprint = null;
-
-		if (nextSubBlueprint >= subBlueprints.size()) {
-			return null;
-		}
 
 		if (current != null) {
 			BptBuilderBase builder = current.nextBuilder();
@@ -74,6 +70,10 @@ public class RecursiveBlueprintBuilder {
 			if (builder != null) {
 				return builder;
 			}
+		}
+
+		if (nextSubBlueprint >= subBlueprints.size()) {
+			return null;
 		}
 
 		NBTTagCompound nbt = subBlueprints.get(nextSubBlueprint);
@@ -84,9 +84,6 @@ public class RecursiveBlueprintBuilder {
 		int nz = box.zMin + nbt.getInteger("z");
 
 		ForgeDirection nbtDir = ForgeDirection.values()[nbt.getByte("dir")];
-
-		// TODO: this is just here for debug, to be removed
-		world.setBlock(nx, ny, nz, Blocks.sponge);
 
 		current = new RecursiveBlueprintBuilder(bpt, world, nx, ny, nz, nbtDir);
 		nextSubBlueprint++;

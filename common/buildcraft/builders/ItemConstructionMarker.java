@@ -23,6 +23,10 @@ public class ItemConstructionMarker extends ItemBlock {
 		super(block);
 	}
 
+	public static boolean linkStarted(ItemStack marker) {
+		return NBTUtils.getItemData(marker).hasKey("x");
+	}
+
 	public static void link(ItemStack marker, World world, int x, int y, int z) {
 		NBTTagCompound nbt = NBTUtils.getItemData(marker);
 
@@ -37,12 +41,16 @@ public class ItemConstructionMarker extends ItemBlock {
 				TileArchitect architect = (TileArchitect) tile1;
 				TileEntity tile2 = world.getTileEntity(x, y, z);
 
-				if (tile1 != tile2 && tile2 != null && (tile2 instanceof TileArchitect)) {
-					architect.addSubBlueprint(tile2);
+				if (tile1 != tile2 && tile2 != null) {
+					if (tile2 instanceof TileArchitect
+							|| tile2 instanceof TileConstructionMarker
+							|| tile2 instanceof TileBuilder) {
+						architect.addSubBlueprint(tile2);
 
-					nbt.removeTag("x");
-					nbt.removeTag("y");
-					nbt.removeTag("z");
+						nbt.removeTag("x");
+						nbt.removeTag("y");
+						nbt.removeTag("z");
+					}
 				}
 
 				return;

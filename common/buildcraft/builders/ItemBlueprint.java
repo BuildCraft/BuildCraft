@@ -87,6 +87,6 @@ public abstract class ItemBlueprint extends ItemBuildCraft {
 	}
 
 	public static BlueprintBase loadBlueprint(ItemStack stack) {
-		return BuildCraftBuilders.serverDB.load (getId (stack));
+		return BuildCraftBuilders.serverDB.load(getId(stack));
 	}
 }

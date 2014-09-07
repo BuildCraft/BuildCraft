@@ -9,6 +9,7 @@
 package buildcraft.core.blueprints;
 
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 
 import net.minecraftforge.common.util.ForgeDirection;
 
@@ -19,6 +20,8 @@ import buildcraft.builders.ItemBlueprint;
 import buildcraft.builders.ItemBlueprintStandard;
 import buildcraft.builders.ItemBlueprintTemplate;
 import buildcraft.builders.TileArchitect;
+import buildcraft.builders.TileBuilder;
+import buildcraft.builders.TileConstructionMarker;
 import buildcraft.core.BlockScanner;
 
 public class RecursiveBlueprintReader {
@@ -95,9 +98,41 @@ public class RecursiveBlueprintReader {
 			return;
 		} else if (currentSubReader == null && subIndex < architect.subBlueprints.size()) {
 			BlockIndex subBlock = architect.subBlueprints.get(subIndex);
-			TileArchitect subArchitect = (TileArchitect) architect.getWorld().getTileEntity(subBlock.x, subBlock.y,
+
+			TileEntity subTile = architect.getWorld().getTileEntity(subBlock.x, subBlock.y,
 					subBlock.z);
-			currentSubReader = new RecursiveBlueprintReader(subArchitect, writingBlueprint);
+
+			if (subTile instanceof TileArchitect) {
+				TileArchitect subArchitect = (TileArchitect) subTile;
+				currentSubReader = new RecursiveBlueprintReader(subArchitect, writingBlueprint);
+			} else if (subTile instanceof TileConstructionMarker || subTile instanceof TileBuilder) {
+				BlueprintBase blueprint = null;
+				ForgeDirection orientation = ForgeDirection.EAST;
+
+				if (subTile instanceof TileConstructionMarker) {
+					TileConstructionMarker marker = (TileConstructionMarker) subTile;
+					blueprint = ItemBlueprint.loadBlueprint(marker.itemBlueprint);
+					orientation = marker.direction;
+				} else if (subTile instanceof TileBuilder) {
+					TileBuilder builder = (TileBuilder) subTile;
+					blueprint = ItemBlueprint.loadBlueprint(builder.getStackInSlot(0));
+					orientation = ForgeDirection.values()[architect.getWorld().getBlockMetadata(subBlock.x, subBlock.y,
+							subBlock.z)].getOpposite();
+				}
+
+				if (blueprint != null) {
+					writingBlueprint.addSubBlueprint(
+							blueprint,
+							subTile.xCoord - architect.getBox().xMin,
+							subTile.yCoord - architect.getBox().yMin,
+							subTile.zCoord - architect.getBox().zMin,
+							orientation);
+				}
+
+				subIndex++;
+			} else {
+				subIndex++;
+			}
 		} else if (currentSubReader != null) {
 			currentSubReader.iterate();
 

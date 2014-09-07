@@ -69,46 +69,51 @@ public class BlockBuilder extends BlockContainer {
 	}
 
 	@Override
-	public boolean onBlockActivated(World world, int i, int j, int k, EntityPlayer entityplayer, int par6, float par7, float par8, float par9) {
+	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer entityplayer, int par6, float par7, float par8, float par9) {
 
 		// Drop through if the player is sneaking
 		if (entityplayer.isSneaking()) {
 			return false;
 		}
 
-		TileEntity tile = world.getTileEntity(i, j, k);
+		TileEntity tile = world.getTileEntity(x, y, z);
 		TileBuilder builder = tile instanceof TileBuilder ? (TileBuilder) tile : null;
 
 		Item equipped = entityplayer.getCurrentEquippedItem() != null ? entityplayer.getCurrentEquippedItem().getItem() : null;
-		if (equipped instanceof IToolWrench && ((IToolWrench) equipped).canWrench(entityplayer, i, j, k)) {
-
-			int meta = world.getBlockMetadata(i, j, k);
+		if (equipped instanceof IToolWrench && ((IToolWrench) equipped).canWrench(entityplayer, x, y, z)) {
+			int meta = world.getBlockMetadata(x, y, z);
 
 			switch (ForgeDirection.values()[meta]) {
 				case WEST:
-					world.setBlockMetadataWithNotify(i, j, k, ForgeDirection.SOUTH.ordinal(), 0);
+					world.setBlockMetadataWithNotify(x, y, z, ForgeDirection.SOUTH.ordinal(), 0);
 					break;
 				case EAST:
-					world.setBlockMetadataWithNotify(i, j, k, ForgeDirection.NORTH.ordinal(), 0);
+					world.setBlockMetadataWithNotify(x, y, z, ForgeDirection.NORTH.ordinal(), 0);
 					break;
 				case NORTH:
-					world.setBlockMetadataWithNotify(i, j, k, ForgeDirection.WEST.ordinal(), 0);
+					world.setBlockMetadataWithNotify(x, y, z, ForgeDirection.WEST.ordinal(), 0);
 					break;
 				case SOUTH:
 				default:
-					world.setBlockMetadataWithNotify(i, j, k, ForgeDirection.EAST.ordinal(), 0);
+					world.setBlockMetadataWithNotify(x, y, z, ForgeDirection.EAST.ordinal(), 0);
 					break;
 			}
 
-			world.markBlockForUpdate(i, j, k);
-			((IToolWrench) equipped).wrenchUsed(entityplayer, i, j, k);
+			world.markBlockForUpdate(x, y, z);
+			((IToolWrench) equipped).wrenchUsed(entityplayer, x, y, z);
+
+			return true;
+		} else if (equipped instanceof ItemConstructionMarker) {
+			if (ItemConstructionMarker.linkStarted(entityplayer.getCurrentEquippedItem())) {
+				ItemConstructionMarker.link(entityplayer.getCurrentEquippedItem(), world, x, y, z);
+			}
 
 			return true;
 		} else if (builder != null && FluidUtils.handleRightClick(builder, ForgeDirection.UNKNOWN, entityplayer, true, false)) {
 			return true;
 		} else {
 			if (!world.isRemote) {
-				entityplayer.openGui(BuildCraftBuilders.instance, GuiIds.BUILDER, world, i, j, k);
+				entityplayer.openGui(BuildCraftBuilders.instance, GuiIds.BUILDER, world, x, y, z);
 			}
 
 			return true;
