@@ -17,10 +17,10 @@ public interface IPipeTransportPowerHook {
 	 *
 	 * @return The amount of power used, or -1 for default behavior.
 	 */
-	double receiveEnergy(ForgeDirection from, double val);
+	int receiveEnergy(ForgeDirection from, int val);
 
 	/**
 	 * Override default requested power.
 	 */
-	double requestEnergy(ForgeDirection from, double amount);
+	int requestEnergy(ForgeDirection from, int amount);
 }

@@ -17,10 +17,10 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 import net.minecraftforge.common.util.ForgeDirection;
 
+import cofh.api.energy.IEnergyHandler;
+
 import buildcraft.api.gates.IGate;
 import buildcraft.api.gates.ITriggerParameter;
-import buildcraft.api.mj.IBatteryObject;
-import buildcraft.api.mj.MjAPI;
 import buildcraft.core.utils.StringUtils;
 
 public class TriggerEnergy extends BCTrigger {
@@ -40,19 +40,28 @@ public class TriggerEnergy extends BCTrigger {
 		return StringUtils.localize("gate.trigger.machine.energyStored" + (high ? "High" : "Low"));
 	}
 
+	private boolean isValidEnergyHandler(IEnergyHandler handler) {
+		return handler.getMaxEnergyStored(ForgeDirection.UNKNOWN) > 0;
+	}
+
+	private boolean isTriggeredEnergyHandler(IEnergyHandler handler) {
+		int energyStored = handler.getEnergyStored(ForgeDirection.UNKNOWN);
+		int energyMaxStored = handler.getMaxEnergyStored(ForgeDirection.UNKNOWN);
+
+		if (energyMaxStored > 0) {
+			if (high) {
+				return (energyStored / energyMaxStored) > 0.95;
+			} else {
+				return (energyStored / energyMaxStored) < 0.05;
+			}
+		}
+		return false;
+	}
 	@Override
 	public boolean isTriggerActive(IGate gate, ITriggerParameter[] parameters) {
-		IBatteryObject battery = MjAPI.getMjBattery(gate.getPipe());
-
-		if (battery != null) {
-			double maxCapacity = battery.maxCapacity();
-
-			if (maxCapacity > 0) {
-				if (high) {
-					return battery.getEnergyStored() / maxCapacity > 0.95;
-				} else {
-					return battery.getEnergyStored() / maxCapacity < 0.05;
-				}
+		if (gate.getPipe() instanceof IEnergyHandler) {
+			if (isValidEnergyHandler((IEnergyHandler) gate.getPipe())) {
+				return isTriggeredEnergyHandler((IEnergyHandler) gate.getPipe());
 			}
 		}
 
@@ -64,18 +73,10 @@ public class TriggerEnergy extends BCTrigger {
 
 	@Override
 	public boolean isTriggerActive(ForgeDirection side, TileEntity tile, ITriggerParameter parameter) {
-		IBatteryObject battery = MjAPI.getMjBattery(tile);
-
-		if (battery != null) {
-			double maxCapacity = battery.maxCapacity();
-
-			if (maxCapacity > 0) {
-				if (high) {
-					return battery.getEnergyStored() / maxCapacity > 0.95;
-				} else {
-					return battery.getEnergyStored() / maxCapacity < 0.05;
-				}
-			}
+		if (tile instanceof IEnergyHandler) {
+			// Since we return false upon the trigger being invalid anyway,
+			// we can skip the isValidEnergyHandler(...) check.
+			return isTriggeredEnergyHandler((IEnergyHandler) tile);
 		}
 
 		return false;

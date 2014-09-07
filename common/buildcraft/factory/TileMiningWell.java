@@ -20,8 +20,8 @@ import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftFactory;
 import buildcraft.api.gates.IAction;
-import buildcraft.api.mj.MjBattery;
 import buildcraft.core.IMachine;
+import buildcraft.core.RFBattery;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.utils.BlockUtil;
 import buildcraft.core.utils.Utils;
@@ -30,8 +30,10 @@ public class TileMiningWell extends TileBuildCraft implements IMachine {
 
 	boolean isDigging = true;
 
-	@MjBattery(maxCapacity = 1000, maxReceivedPerCycle = BuildCraftFactory.MINING_MJ_COST_PER_BLOCK, minimumConsumption = 1)
-	private double mjStored = 0;
+	public TileMiningWell() {
+		super();
+		this.setBattery(new RFBattery(10000, BuildCraftFactory.MINING_RF_COST_PER_BLOCK, 0));
+	}
 
 	/**
 	 * Dig the next available piece of land if not done. As soon as it reaches
@@ -43,12 +45,11 @@ public class TileMiningWell extends TileBuildCraft implements IMachine {
 			return;
 		}
 
-		float mj = BuildCraftFactory.MINING_MJ_COST_PER_BLOCK * BuildCraftFactory.miningMultiplier;
+		int miningCost = (int) Math.ceil(BuildCraftFactory.MINING_RF_COST_PER_BLOCK
+				* BuildCraftFactory.miningMultiplier);
 
-		if (mjStored < mj) {
+		if (getBattery().useEnergy(miningCost, miningCost, false) == 0) {
 			return;
-		} else {
-			mjStored -= mj;
 		}
 
 		World world = worldObj;

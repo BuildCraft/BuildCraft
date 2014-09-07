@@ -17,17 +17,11 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.api.core.NetworkData;
-import buildcraft.api.mj.IOMode;
-import buildcraft.api.mj.MjAPI;
-import buildcraft.api.mj.MjBattery;
 import buildcraft.api.tools.IToolWrench;
 import buildcraft.core.utils.StringUtils;
 import buildcraft.transport.pipes.PipePowerIron;
 
 public class TileEngineCreative extends TileEngine {
-	@MjBattery(mode = IOMode.SendActive, maxCapacity = 10000, maxReceivedPerCycle = 2, minimumConsumption = 0)
-	@NetworkData
-	private double mjStored;
 
 	@NetworkData
 	private PipePowerIron.PowerMode powerMode = PipePowerIron.PowerMode.M2;
@@ -59,8 +53,7 @@ public class TileEngineCreative extends TileEngine {
 
 			if (equipped instanceof IToolWrench && ((IToolWrench) equipped).canWrench(player, xCoord, yCoord, zCoord)) {
 				powerMode = powerMode.getNext();
-				reconfigure();
-				mjStored = 0;
+				energy = 0;
 
 				player.addChatMessage(new ChatComponentText(String.format(StringUtils.localize("chat.pipe.power.iron.mode"), powerMode.maxPower)));
 
@@ -79,11 +72,6 @@ public class TileEngineCreative extends TileEngine {
 		super.readFromNBT(data);
 
 		powerMode = PipePowerIron.PowerMode.fromId(data.getByte("mode"));
-		reconfigure();
-	}
-
-	private void reconfigure() {
-		MjAPI.reconfigure().maxReceivedPerCycle(mjStoredBattery, powerMode.maxPower);
 	}
 
 	@Override
@@ -101,8 +89,9 @@ public class TileEngineCreative extends TileEngine {
 	@Override
 	public void engineUpdate() {
 		super.engineUpdate();
+
 		if (isRedstonePowered) {
-			mjStored = Math.min(mjStored + powerMode.maxPower, mjStoredBattery.maxCapacity());
+			addEnergy(getCurrentOutput());
 		}
 	}
 
@@ -110,10 +99,29 @@ public class TileEngineCreative extends TileEngine {
 	public boolean isBurning() {
 		return isRedstonePowered;
 	}
+	
+	@Override
+	public double maxEnergyReceived() {
+		return getCurrentOutput();
+	}
+
+	@Override
+	public double maxEnergyExtracted() {
+		return getCurrentOutput();
+	}
+
+	@Override
+	public double getMaxEnergy() {
+		return getCurrentOutput();
+	}
+
+	@Override
+	public double getCurrentOutput() {
+		return powerMode.maxPower / 10.0;
+	}
 
 	@Override
 	public float explosionRange() {
 		return 0;
 	}
-
 }

@@ -35,6 +35,8 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
 
+import cofh.api.energy.IEnergyHandler;
+
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.BCLog;
@@ -44,7 +46,6 @@ import buildcraft.api.core.Position;
 import buildcraft.api.gates.IGateExpansion;
 import buildcraft.api.gates.IOverrideDefaultTriggers;
 import buildcraft.api.gates.ITrigger;
-import buildcraft.api.mj.MjBattery;
 import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.power.PowerHandler;
 import buildcraft.api.power.PowerHandler.PowerReceiver;
@@ -69,7 +70,7 @@ import buildcraft.transport.gates.ItemGate;
 import buildcraft.transport.utils.RobotStationState;
 
 public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFluidHandler,
-		IPipeTile, IOverrideDefaultTriggers, ITileBufferHolder,
+		IPipeTile, IOverrideDefaultTriggers, ITileBufferHolder, IEnergyHandler,
 		IDropControlInventory, ISyncedTile, ISolidSideTile, IGuiReturnHandler {
 
 	public boolean initialized = false;
@@ -77,7 +78,6 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 	public final CoreState coreState = new CoreState();
 	public boolean[] pipeConnectionsBuffer = new boolean[6];
 
-	@MjBattery
 	public Pipe pipe;
 	public int redstoneInput;
 	public int[] redstoneInputSide = new int[ForgeDirection.VALID_DIRECTIONS.length];
@@ -1114,6 +1114,53 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 	public void doWork(PowerHandler workProvider) {
 		if (BlockGenericPipe.isValid(pipe) && pipe instanceof IPowerReceptor) {
 			((IPowerReceptor) pipe).doWork(workProvider);
+		}
+	}
+
+	@Override
+	public boolean canConnectEnergy(ForgeDirection from) {
+		if (pipe instanceof IEnergyHandler) {
+			return ((IEnergyHandler) pipe).canConnectEnergy(from);
+		} else {
+			return false;
+		}
+	}
+
+	@Override
+	public int receiveEnergy(ForgeDirection from, int maxReceive,
+			boolean simulate) {
+		if (pipe instanceof IEnergyHandler) {
+			return ((IEnergyHandler) pipe).receiveEnergy(from, maxReceive, simulate);
+		} else {
+			return 0;
+		}
+	}
+
+	@Override
+	public int extractEnergy(ForgeDirection from, int maxExtract,
+			boolean simulate) {
+		if (pipe instanceof IEnergyHandler) {
+			return ((IEnergyHandler) pipe).extractEnergy(from, maxExtract, simulate);
+		} else {
+			return 0;
+		}
+	}
+
+	@Override
+	public int getEnergyStored(ForgeDirection from) {
+		if (pipe instanceof IEnergyHandler) {
+			return ((IEnergyHandler) pipe).getEnergyStored(from);
+		} else {
+			return 0;
+		}
+	}
+
+	@Override
+	public int getMaxEnergyStored(ForgeDirection from) {
+		if (pipe instanceof IEnergyHandler) {
+			return ((IEnergyHandler) pipe).getMaxEnergyStored(from);
+		} else {
+			return 0;
 		}
 	}
 }

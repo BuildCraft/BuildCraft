@@ -17,7 +17,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
-
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLInterModComms;
@@ -26,12 +25,10 @@ import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
-
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.oredict.RecipeSorter;
-
 import buildcraft.api.blueprints.SchematicRegistry;
 import buildcraft.api.core.EnumColor;
 import buildcraft.api.core.IIconProvider;
@@ -102,6 +99,7 @@ import buildcraft.transport.pipes.PipeItemsVoid;
 import buildcraft.transport.pipes.PipeItemsWood;
 import buildcraft.transport.pipes.PipePowerCobblestone;
 import buildcraft.transport.pipes.PipePowerDiamond;
+import buildcraft.transport.pipes.PipePowerEmerald;
 import buildcraft.transport.pipes.PipePowerGold;
 import buildcraft.transport.pipes.PipePowerIron;
 import buildcraft.transport.pipes.PipePowerIron.PowerMode;
@@ -179,7 +177,8 @@ public class BuildCraftTransport extends BuildCraftMod {
 	public static Item pipePowerIron;
 	public static Item pipePowerGold;
 	public static Item pipePowerDiamond;
-
+	public static Item pipePowerEmerald;
+	
 	public static int groupItemsTrigger;
 	public static String[] facadeBlacklist;
 
@@ -235,6 +234,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 	public static TechnoSimpleItem technoPipePowerIron = new TechnoSimpleItem();
 	public static TechnoSimpleItem technoPipePowerGold = new TechnoSimpleItem();
 	public static TechnoSimpleItem technoPipePowerDiamond = new TechnoSimpleItem();
+	public static TechnoSimpleItem technoPipePowerEmerald = new TechnoSimpleItem();
 
 	public static TechnoStatement technoTriggerPipe = new TechnoStatement();
 	public static TechnoStatement technoTriggerPipeWireActive = new TechnoStatement();
@@ -419,7 +419,8 @@ public class BuildCraftTransport extends BuildCraftMod {
 			pipePowerIron = buildPipe(PipePowerIron.class, "Iron Kinesis Pipe", CreativeTabBuildCraft.PIPES, Items.redstone, pipeItemsIron);
 			pipePowerGold = buildPipe(PipePowerGold.class, "Golden Kinesis Pipe", CreativeTabBuildCraft.PIPES, Items.redstone, pipeItemsGold);
 			pipePowerDiamond = buildPipe(PipePowerDiamond.class, "Diamond Kinesis Pipe", CreativeTabBuildCraft.PIPES, Items.redstone, pipeItemsDiamond);
-
+			pipePowerEmerald = buildPipe(PipePowerEmerald.class, "Emerald Kinesis Pipe", CreativeTabBuildCraft.PIPES, Items.redstone, pipeItemsEmerald);
+			
 			pipeStructureCobblestone = buildPipe(PipeStructureCobblestone.class, "Cobblestone Structure Pipe", CreativeTabBuildCraft.PIPES, Blocks.gravel, pipeItemsCobblestone);
 
 			pipeWire = new ItemPipeWire();
@@ -733,6 +734,13 @@ public class BuildCraftTransport extends BuildCraftMod {
 				technoPipeItemsDiamond,
 				technoPipePowerWood);
 
+		technoPipePowerEmerald.initialize(
+				Tier.GoldenGear,
+				pipePowerEmerald,
+				new ItemStack(BuildCraftCore.goldGearItem, 5),
+				technoPipeItemsEmerald,
+				technoPipePowerWood);
+		
 		// Statements
 
 		technoTriggerPipe.initialize(
@@ -816,7 +824,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 		GameRegistry.addRecipe(facadeItem.new FacadeRecipe());
 		RecipeSorter.register("facadeTurningHelper", ItemFacade.FacadeRecipe.class, RecipeSorter.Category.SHAPELESS, "");
 
-		BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:pipePlug", 1000, new ItemStack(plugItem, 8),
+		BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:pipePlug", 10000, new ItemStack(plugItem, 8),
 				new ItemStack(pipeStructureCobblestone));
 
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(robotStationItem), "   ", " I ", "ICI",

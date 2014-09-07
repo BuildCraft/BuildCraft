@@ -6,10 +6,14 @@
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-package buildcraft.api.mj;
+package buildcraft.api.fuels;
 
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraftforge.fluids.Fluid;
 
-public interface ISidedBatteryProvider {
-	IBatteryObject getMjBattery(String kind, ForgeDirection direction);
+public interface IFuel {
+	Fluid getFluid();
+
+	int getTotalBurningTime();
+
+	float getPowerPerCycle();
 }

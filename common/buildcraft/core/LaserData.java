@@ -22,7 +22,7 @@ public class LaserData {
 	@NetworkData
 	public boolean isVisible = true;
 
-	public double renderSize = 0;
+	public double renderSize = 1.0 / 16.0;
 	public double angleY = 0;
 	public double angleZ = 0;
 

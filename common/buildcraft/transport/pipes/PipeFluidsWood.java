@@ -20,18 +20,19 @@ import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidHandler;
 
+import cofh.api.energy.IEnergyHandler;
+
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.core.NetworkData;
-import buildcraft.api.mj.MjBattery;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.PipeManager;
+import buildcraft.core.RFBattery;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportFluids;
 
-public class PipeFluidsWood extends Pipe<PipeTransportFluids> {
-
+public class PipeFluidsWood extends Pipe<PipeTransportFluids> implements IEnergyHandler {
 	@NetworkData
 	public int liquidToExtract;
 
@@ -40,8 +41,7 @@ public class PipeFluidsWood extends Pipe<PipeTransportFluids> {
 
 	private long lastMining = 0;
 	private boolean lastPower = false;
-	@MjBattery(maxCapacity = 250, maxReceivedPerCycle = 100, minimumConsumption = 0)
-	private double mjStored = 0;
+	private RFBattery battery = new RFBattery(2500, 1000, 0);
 
 	private PipeLogicWood logic = new PipeLogicWood(this) {
 		@Override
@@ -111,7 +111,7 @@ public class PipeFluidsWood extends Pipe<PipeTransportFluids> {
 			}
 		}
 
-		if (mjStored >= 1) {
+		if (battery.useEnergy(10, 10, false) > 0) {
 			if (meta > 5) {
 				return;
 			}
@@ -129,7 +129,6 @@ public class PipeFluidsWood extends Pipe<PipeTransportFluids> {
 					liquidToExtract += FluidContainerRegistry.BUCKET_VOLUME;
 				}
 			}
-			mjStored -= 1;
 		}
 	}
 
@@ -158,5 +157,32 @@ public class PipeFluidsWood extends Pipe<PipeTransportFluids> {
 	public boolean outputOpen(ForgeDirection to) {
 		int meta = container.getBlockMetadata();
 		return super.outputOpen(to) && meta != to.ordinal();
+	}
+
+	@Override
+	public boolean canConnectEnergy(ForgeDirection from) {
+		return true;
+	}
+
+	@Override
+	public int receiveEnergy(ForgeDirection from, int maxReceive,
+			boolean simulate) {
+		return battery.receiveEnergy(maxReceive, simulate);
+	}
+
+	@Override
+	public int extractEnergy(ForgeDirection from, int maxExtract,
+			boolean simulate) {
+		return 0;
+	}
+
+	@Override
+	public int getEnergyStored(ForgeDirection from) {
+		return battery.getEnergyStored();
+	}
+
+	@Override
+	public int getMaxEnergyStored(ForgeDirection from) {
+		return battery.getMaxEnergyStored();
 	}
 }

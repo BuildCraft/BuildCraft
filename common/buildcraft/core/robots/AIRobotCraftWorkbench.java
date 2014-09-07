@@ -245,7 +245,7 @@ public class AIRobotCraftWorkbench extends AIRobotCraftGeneric {
 	}
 
 	@Override
-	public double getEnergyCost() {
-		return 3;
+	public int getEnergyCost() {
+		return 30;
 	}
 }

@@ -64,6 +64,7 @@ import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.core.EnumColor;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.core.JavaTools;
+import buildcraft.api.fuels.BuildcraftFuelRegistry;
 import buildcraft.api.gates.IAction;
 import buildcraft.api.gates.ITrigger;
 import buildcraft.api.gates.StatementManager;
@@ -123,6 +124,8 @@ import buildcraft.core.utils.WorldPropertyIsOre;
 import buildcraft.core.utils.WorldPropertyIsShoveled;
 import buildcraft.core.utils.WorldPropertyIsSoft;
 import buildcraft.core.utils.WorldPropertyIsWood;
+import buildcraft.energy.fuels.CoolantManager;
+import buildcraft.energy.fuels.FuelManager;
 import buildcraft.silicon.ItemRedstoneChipset.Chipset;
 
 @Mod(name = "BuildCraft", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Core", acceptedMinecraftVersions = "[1.7.10,1.8)", dependencies = "required-after:Forge@[10.13.0.1179,)")
@@ -270,6 +273,9 @@ public class BuildCraftCore extends BuildCraftMod {
 		BuildcraftRecipeRegistry.assemblyTable = AssemblyRecipeManager.INSTANCE;
 		BuildcraftRecipeRegistry.integrationTable = IntegrationRecipeManager.INSTANCE;
 		BuildcraftRecipeRegistry.refinery = RefineryRecipeManager.INSTANCE;
+
+		BuildcraftFuelRegistry.fuel = FuelManager.INSTANCE;
+		BuildcraftFuelRegistry.coolant = CoolantManager.INSTANCE;
 
 		mainConfiguration = new BuildCraftConfiguration(new File(evt.getModConfigurationDirectory(), "buildcraft/main.conf"));
 		try {

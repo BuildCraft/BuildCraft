@@ -32,7 +32,8 @@ public class Box implements IBox {
 		LASER_YELLOW,
 		LASER_GREEN,
 		LASER_BLUE,
-		STRIPES
+		STRIPES,
+		BLUE_STRIPES,
 	}
 
 	@NetworkData
@@ -350,6 +351,34 @@ public class Box implements IBox {
 
 		if (toBeContained.z > zMax) {
 			zMax = (int) toBeContained.z + 1;
+		}
+
+		return this;
+	}
+
+	public Box extendToEncompass(BlockIndex toBeContained) {
+		if (toBeContained.x < xMin) {
+			xMin = toBeContained.x - 1;
+		}
+
+		if (toBeContained.y < yMin) {
+			yMin = toBeContained.y - 1;
+		}
+
+		if (toBeContained.z < zMin) {
+			zMin = toBeContained.z - 1;
+		}
+
+		if (toBeContained.x > xMax) {
+			xMax = toBeContained.x + 1;
+		}
+
+		if (toBeContained.y > yMax) {
+			yMax = toBeContained.y + 1;
+		}
+
+		if (toBeContained.z > zMax) {
+			zMax = toBeContained.z + 1;
 		}
 
 		return this;

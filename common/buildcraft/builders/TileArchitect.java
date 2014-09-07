@@ -8,29 +8,27 @@
  */
 package buildcraft.builders;
 
+import java.util.ArrayList;
+import java.util.LinkedList;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 
-import net.minecraftforge.common.util.ForgeDirection;
-
-import buildcraft.BuildCraftBuilders;
-import buildcraft.api.blueprints.Translation;
 import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.core.NetworkData;
-import buildcraft.core.BlockScanner;
+import buildcraft.api.core.Position;
 import buildcraft.core.Box;
 import buildcraft.core.Box.Kind;
 import buildcraft.core.IBoxProvider;
+import buildcraft.core.LaserData;
 import buildcraft.core.TileBuildCraft;
-import buildcraft.core.blueprints.Blueprint;
-import buildcraft.core.blueprints.BlueprintBase;
 import buildcraft.core.blueprints.BlueprintReadConfiguration;
-import buildcraft.core.blueprints.BptContext;
-import buildcraft.core.blueprints.Template;
+import buildcraft.core.blueprints.RecursiveBlueprintReader;
 import buildcraft.core.inventory.SimpleInventory;
 import buildcraft.core.network.RPC;
 import buildcraft.core.network.RPCHandler;
@@ -39,9 +37,6 @@ import buildcraft.core.utils.Utils;
 
 public class TileArchitect extends TileBuildCraft implements IInventory, IBoxProvider {
 
-	private static final int SCANNER_ITERATION = 100;
-
-	public int computingTime = 0;
 	public String currentAuthorName = "";
 	@NetworkData
 	public Box box = new Box();
@@ -50,65 +45,30 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 	@NetworkData
 	public BlueprintReadConfiguration readConfiguration = new BlueprintReadConfiguration();
 
+	@NetworkData
+	public LinkedList<LaserData> subLasers = new LinkedList<LaserData>();
+
+	public ArrayList<BlockIndex> subBlueprints = new ArrayList<BlockIndex>();
+
 	private SimpleInventory inv = new SimpleInventory(2, "Architect", 1);
-	private BlueprintBase writingBlueprint;
-	private BptContext writingContext;
-	private BlockScanner blockScanner;
+
+	private RecursiveBlueprintReader reader;
 
 	public TileArchitect() {
-		box.kind = Kind.STRIPES;
+		box.kind = Kind.BLUE_STRIPES;
 	}
 
 	@Override
 	public void updateEntity() {
 		super.updateEntity();
 
-		if (!worldObj.isRemote && blockScanner != null) {
-			if (blockScanner.blocksLeft() != 0) {
-				for (BlockIndex index : blockScanner) {
-					writingBlueprint.readFromWorld(writingContext, this,
-							index.x, index.y, index.z);
+		if (!worldObj.isRemote) {
+			if (reader != null) {
+				reader.iterate();
+
+				if (reader.isDone()) {
+					reader = null;
 				}
-
-				computingTime = (int) ((1 - (float) blockScanner.blocksLeft()
-						/ (float) blockScanner.totalBlocks()) * 100);
-
-				if (blockScanner.blocksLeft() == 0) {
-					writingBlueprint.readEntitiesFromWorld (writingContext, this);
-
-					Translation transform = new Translation();
-
-					transform.x = -writingContext.surroundingBox().pMin().x;
-					transform.y = -writingContext.surroundingBox().pMin().y;
-					transform.z = -writingContext.surroundingBox().pMin().z;
-
-					writingBlueprint.translateToBlueprint(transform);
-
-					ForgeDirection o = ForgeDirection.values()[worldObj.getBlockMetadata(
-							xCoord, yCoord, zCoord)].getOpposite();
-
-					writingBlueprint.rotate = readConfiguration.rotate;
-					writingBlueprint.excavate = readConfiguration.excavate;
-
-					if (writingBlueprint.rotate) {
-						if (o == ForgeDirection.EAST) {
-							// Do nothing
-						} else if (o == ForgeDirection.SOUTH) {
-							writingBlueprint.rotateLeft(writingContext);
-							writingBlueprint.rotateLeft(writingContext);
-							writingBlueprint.rotateLeft(writingContext);
-						} else if (o == ForgeDirection.WEST) {
-							writingBlueprint.rotateLeft(writingContext);
-							writingBlueprint.rotateLeft(writingContext);
-						} else if (o == ForgeDirection.NORTH) {
-							writingBlueprint.rotateLeft(writingContext);
-						}
-					}
-				}
-			} else if (writingBlueprint.getData() != null) {
-				createBlueprint();
-
-				computingTime = 0;
 			}
 		}
 	}
@@ -129,18 +89,6 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 				}
 			}
 		}
-	}
-
-	public void createBlueprint() {
-		writingBlueprint.id.name = name;
-		BuildCraftBuilders.serverDB.add(writingBlueprint);
-
-		setInventorySlotContents(1, writingBlueprint.getStack());
-		setInventorySlotContents(0, null);
-
-		writingBlueprint = null;
-		writingContext = null;
-		blockScanner = null;
 	}
 
 	@RPC (RPCSide.SERVER)
@@ -208,13 +156,6 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 	public void readFromNBT(NBTTagCompound nbttagcompound) {
 		super.readFromNBT(nbttagcompound);
 
-		// For now, scan states don't get saved. Would need to save
-		// blueprints too.
-		/*if (nbttagcompound.hasKey("scanner")) {
-			blockScanner = new BlockScanner();
-			blockScanner.readFromNBT(nbttagcompound.getCompoundTag("scanner"));
-		}*/
-
 		if (nbttagcompound.hasKey("box")) {
 			box.initialize(nbttagcompound.getCompoundTag("box"));
 		}
@@ -232,14 +173,6 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 	@Override
 	public void writeToNBT(NBTTagCompound nbttagcompound) {
 		super.writeToNBT(nbttagcompound);
-
-		// For now, scan states don't get saved. Would need to save
-		// blueprints too.
-		/*if (blockScanner != null) {
-			NBTTagCompound scanner = new NBTTagCompound();
-			blockScanner.writeToNBT(scanner);
-			nbttagcompound.setTag("scanner", scanner);
-		}*/
 
 		if (box.isInitialized()) {
 			NBTTagCompound boxStore = new NBTTagCompound();
@@ -268,41 +201,15 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 			return;
 		}
 
-		if (!box.isInitialized()) {
-			return;
-		} else if (blockScanner == null) {
-			if (getStackInSlot(0) != null && getStackInSlot(0).getItem() instanceof ItemBlueprint
-					&& getStackInSlot(1) == null) {
-				if (!box.isInitialized() || getStackInSlot(1) != null) {
-					return;
-				}
-
-				blockScanner = new BlockScanner(box, getWorld(), SCANNER_ITERATION);
-
-				if (getStackInSlot(0).getItem() instanceof ItemBlueprintStandard) {
-					writingBlueprint = new Blueprint(box.sizeX(), box.sizeY(), box.sizeZ());
-				} else if (getStackInSlot(0).getItem() instanceof ItemBlueprintTemplate) {
-					writingBlueprint = new Template(box.sizeX(), box.sizeY(), box.sizeZ());
-				}
-
-				writingContext = writingBlueprint.getContext(worldObj, box);
-				writingContext.readConfiguration = readConfiguration;
-
-				writingBlueprint.id.name = name;
-				writingBlueprint.author = currentAuthorName;
-				writingBlueprint.anchorX = xCoord - box.xMin;
-				writingBlueprint.anchorY = yCoord - box.yMin;
-				writingBlueprint.anchorZ = zCoord - box.zMin;
-			}
-		} else {
-			blockScanner = null;
-			writingBlueprint = null;
-			writingContext = null;
-		}
+		reader = new RecursiveBlueprintReader(this);
 	}
 
 	public int getComputingProgressScaled(int scale) {
-		return (int) ((float) computingTime / (float) 100 * scale);
+		if (reader != null) {
+			return (int) (reader.getComputingProgressScaled() * scale);
+		} else {
+			return 0;
+		}
 	}
 
 	@Override
@@ -330,7 +237,13 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 
 	@Override
 	public AxisAlignedBB getRenderBoundingBox() {
-		return new Box (this).extendToEncompass(box).getBoundingBox();
+		Box completeBox = new Box(this).extendToEncompass(box);
+
+		for (BlockIndex b : subBlueprints) {
+			completeBox.extendToEncompass(b);
+		}
+
+		return completeBox.getBoundingBox();
 	}
 
 	@RPC (RPCSide.SERVER)
@@ -342,5 +255,23 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 	public void rpcSetConfiguration (BlueprintReadConfiguration conf) {
 		readConfiguration = conf;
 		RPCHandler.rpcServer(this, "setReadConfiguration", conf);
+	}
+
+	public void addSubBlueprint(TileEntity sub) {
+		subBlueprints.add(new BlockIndex(sub));
+
+		LaserData laser = new LaserData(new Position(sub), new Position(this));
+
+		laser.head.x += 0.5F;
+		laser.head.y += 0.5F;
+		laser.head.z += 0.5F;
+
+		laser.tail.x += 0.5F;
+		laser.tail.y += 0.5F;
+		laser.tail.z += 0.5F;
+
+		subLasers.add(laser);
+
+		sendNetworkUpdate();
 	}
 }

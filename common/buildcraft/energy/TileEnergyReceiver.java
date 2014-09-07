@@ -14,8 +14,8 @@ import net.minecraft.tileentity.TileEntity;
 
 import net.minecraftforge.common.util.ForgeDirection;
 
-import buildcraft.api.mj.IBatteryObject;
-import buildcraft.api.mj.MjAPI;
+import cofh.api.energy.IEnergyHandler;
+
 import buildcraft.api.power.IPowerEmitter;
 import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.power.PowerHandler;
@@ -28,7 +28,7 @@ import buildcraft.core.TileBuildCraft;
 public class TileEnergyReceiver extends TileBuildCraft implements IPipeConnection, IPowerEmitter {
 	public static LinkedList<TileEnergyReceiver> knownReceivers = new LinkedList<TileEnergyReceiver>();
 
-	public float energyStored = 0;
+	public int energyStored = 0;
 
 	private TileBuffer[] tileCache;
 
@@ -52,8 +52,8 @@ public class TileEnergyReceiver extends TileBuildCraft implements IPipeConnectio
 	public boolean isPoweredTile(TileEntity tile, ForgeDirection side) {
 		if (tile instanceof IPowerReceptor) {
 			return ((IPowerReceptor) tile).getPowerReceiver(side.getOpposite()) != null;
-		} else if (MjAPI.getMjBattery(tile) != null) {
-			return true;
+		} else if (tile instanceof IEnergyHandler) {
+			return ((IEnergyHandler) tile).canConnectEnergy(side.getOpposite());
 		}
 
 		return false;
@@ -68,18 +68,14 @@ public class TileEnergyReceiver extends TileBuildCraft implements IPipeConnectio
 						.getPowerReceiver(s.getOpposite());
 
 				if (receptor != null) {
-					receptor.receiveEnergy(PowerHandler.Type.ENGINE, energyStored,
+					receptor.receiveEnergy(PowerHandler.Type.ENGINE, energyStored / 10.0,
 							s.getOpposite());
 
 					energyStored = 0;
 				}
-			} else if (tile != null) {
-				IBatteryObject battery = MjAPI.getMjBattery(tile);
-
-				if (battery != null) {
-					battery.addEnergy(energyStored);
-					energyStored = 0;
-				}
+			} else if (tile instanceof IEnergyHandler) {
+				int energyUsed = ((IEnergyHandler) tile).receiveEnergy(s.getOpposite(), energyStored, false);
+				energyStored -= energyUsed;
 			}
 		}
 	}

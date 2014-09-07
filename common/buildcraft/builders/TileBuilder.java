@@ -30,8 +30,6 @@ import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
 
 import buildcraft.BuildCraftBuilders;
-import buildcraft.api.blueprints.BuildingPermission;
-import buildcraft.api.blueprints.Translation;
 import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.IInvSlot;
 import buildcraft.api.core.NetworkData;
@@ -49,7 +47,7 @@ import buildcraft.core.blueprints.BlueprintBase;
 import buildcraft.core.blueprints.BptBuilderBase;
 import buildcraft.core.blueprints.BptBuilderBlueprint;
 import buildcraft.core.blueprints.BptBuilderTemplate;
-import buildcraft.core.blueprints.BptContext;
+import buildcraft.core.blueprints.RecursiveBlueprintBuilder;
 import buildcraft.core.fluids.Tank;
 import buildcraft.core.fluids.TankManager;
 import buildcraft.core.inventory.ITransactor;
@@ -67,7 +65,7 @@ import buildcraft.core.robots.RobotRegistry;
 
 public class TileBuilder extends TileAbstractBuilder implements IMachine, IFluidHandler, IRequestProvider {
 
-	private static int POWER_ACTIVATION = 50;
+	private static int POWER_ACTIVATION = 500;
 
 	@NetworkData
 	public Box box = new Box();
@@ -82,7 +80,8 @@ public class TileBuilder extends TileAbstractBuilder implements IMachine, IFluid
 	public TankManager<Tank> fluidTank = new TankManager<Tank>(fluidTanks);
 
 	private SimpleInventory inv = new SimpleInventory(28, "Builder", 64);
-	private BptBuilderBase bluePrintBuilder;
+	private BptBuilderBase currentBuilder;
+	private RecursiveBlueprintBuilder recursiveBuilder;
 	private LinkedList<BlockIndex> path;
 	private ArrayList<ItemStack> requiredToBuild;
 	private NBTTagCompound initNBT = null;
@@ -148,7 +147,7 @@ public class TileBuilder extends TileAbstractBuilder implements IMachine, IFluid
 				int newY = Math.round(iy);
 				int newZ = Math.round(iz);
 
-				bpt = instanciateBluePrint(newX, newY, newZ, o);
+				bpt = instanciateBluePrintBuilder(newX, newY, newZ, o);
 
 				if (bpt == null) {
 					return null;
@@ -226,7 +225,7 @@ public class TileBuilder extends TileAbstractBuilder implements IMachine, IFluid
 			if (initNBT.hasKey("iterator")) {
 				BlockIndex expectedTo = new BlockIndex(initNBT.getCompoundTag("iterator"));
 
-				while (!done && bluePrintBuilder != null && currentPathIterator != null) {
+				while (!done && currentBuilder != null && currentPathIterator != null) {
 					BlockIndex bi = new BlockIndex((int) currentPathIterator.ix,
 							(int) currentPathIterator.iy, (int) currentPathIterator.iz);
 
@@ -238,8 +237,8 @@ public class TileBuilder extends TileAbstractBuilder implements IMachine, IFluid
 				}
 			}
 
-			if (bluePrintBuilder != null) {
-				bluePrintBuilder.loadBuildStateToNBT(
+			if (currentBuilder != null) {
+				currentBuilder.loadBuildStateToNBT(
 						initNBT.getCompoundTag("builderState"), this);
 			}
 
@@ -296,7 +295,7 @@ public class TileBuilder extends TileAbstractBuilder implements IMachine, IFluid
 		}
 	}
 
-	public BptBuilderBase instanciateBluePrint(int x, int y, int z, ForgeDirection o) {
+	public BlueprintBase instanciateBlueprint() {
 		BlueprintBase bpt = null;
 
 		try {
@@ -307,40 +306,13 @@ public class TileBuilder extends TileAbstractBuilder implements IMachine, IFluid
 			return null;
 		}
 
-		if (bpt == null) {
-			return null;
-		}
+		return bpt;
+	}
 
-		if (bpt.buildingPermission == BuildingPermission.NONE
-				|| (bpt.buildingPermission == BuildingPermission.CREATIVE_ONLY && worldObj
-						.getWorldInfo().getGameType() != GameType.CREATIVE)) {
-			return null;
-		}
-
-		BptContext context = bpt.getContext(worldObj, bpt.getBoxForPos(x, y, z));
-
-		if (bpt.rotate) {
-			if (o == ForgeDirection.EAST) {
-				// Do nothing
-			} else if (o == ForgeDirection.SOUTH) {
-				bpt.rotateLeft(context);
-			} else if (o == ForgeDirection.WEST) {
-				bpt.rotateLeft(context);
-				bpt.rotateLeft(context);
-			} else if (o == ForgeDirection.NORTH) {
-				bpt.rotateLeft(context);
-				bpt.rotateLeft(context);
-				bpt.rotateLeft(context);
-			}
-		}
-
-		Translation transform = new Translation();
-
-		transform.x = x - bpt.anchorX;
-		transform.y = y - bpt.anchorY;
-		transform.z = z - bpt.anchorZ;
-
-		bpt.translateToWorld(transform);
+	@Deprecated
+	public BptBuilderBase instanciateBluePrintBuilder(int x, int y, int z, ForgeDirection o) {
+		BlueprintBase bpt = instanciateBlueprint();
+		bpt = bpt.adjustToWorld(worldObj, x, y, z, o);
 
 		if (getStackInSlot(0).getItem() instanceof ItemBlueprintStandard) {
 			return new BptBuilderBlueprint((Blueprint) bpt, worldObj, x, y, z);
@@ -353,8 +325,8 @@ public class TileBuilder extends TileAbstractBuilder implements IMachine, IFluid
 
 	public void iterateBpt(boolean forceIterate) {
 		if (getStackInSlot(0) == null || !(getStackInSlot(0).getItem() instanceof ItemBlueprint)) {
-			if (bluePrintBuilder != null) {
-				bluePrintBuilder = null;
+			if (currentBuilder != null) {
+				currentBuilder = null;
 			}
 
 			if (box.isInitialized()) {
@@ -372,7 +344,7 @@ public class TileBuilder extends TileAbstractBuilder implements IMachine, IFluid
 			return;
 		}
 
-		if (bluePrintBuilder == null || (bluePrintBuilder.isDone(this) || forceIterate)) {
+		if (currentBuilder == null || (currentBuilder.isDone(this) || forceIterate)) {
 			if (path != null && path.size() > 1) {
 				if (currentPathIterator == null) {
 					Iterator<BlockIndex> it = path.iterator();
@@ -382,19 +354,19 @@ public class TileBuilder extends TileAbstractBuilder implements IMachine, IFluid
 									xCoord, yCoord, zCoord)].getOpposite());
 				}
 
-				if (bluePrintBuilder != null && bluePrintBuilder.isDone(this)) {
-					bluePrintBuilder.postProcessing(worldObj);
+				if (currentBuilder != null && currentBuilder.isDone(this)) {
+					currentBuilder.postProcessing(worldObj);
 				}
 
-				bluePrintBuilder = currentPathIterator.next();
+				currentBuilder = currentPathIterator.next();
 
-				if (bluePrintBuilder != null) {
+				if (currentBuilder != null) {
 					box.reset();
-					box.initialize(bluePrintBuilder);
+					box.initialize(currentBuilder);
 					sendNetworkUpdate();
 				}
 
-				if (bluePrintBuilder == null) {
+				if (currentBuilder == null) {
 					currentPathIterator = currentPathIterator.iterate();
 				}
 
@@ -404,20 +376,26 @@ public class TileBuilder extends TileAbstractBuilder implements IMachine, IFluid
 					done = false;
 				}
 			} else {
-				if (bluePrintBuilder != null && bluePrintBuilder.isDone(this)) {
-					bluePrintBuilder.postProcessing(worldObj);
-
-					done = true;
-					bluePrintBuilder = null;
+				if (currentBuilder != null && currentBuilder.isDone(this)) {
+					currentBuilder.postProcessing(worldObj);
+					currentBuilder = recursiveBuilder.nextBuilder();
 				} else {
-					bluePrintBuilder = instanciateBluePrint(xCoord, yCoord, zCoord,
-							ForgeDirection.values()[worldObj.getBlockMetadata(xCoord, yCoord, zCoord)].getOpposite());
+					BlueprintBase bpt = instanciateBlueprint();
 
-					if (bluePrintBuilder != null) {
-						box.initialize(bluePrintBuilder);
-						sendNetworkUpdate();
-						done = false;
+					if (bpt != null) {
+						recursiveBuilder = new RecursiveBlueprintBuilder(bpt, worldObj, xCoord, yCoord, zCoord,
+								ForgeDirection.values()[worldObj.getBlockMetadata(xCoord, yCoord, zCoord)].getOpposite());
+
+						currentBuilder = recursiveBuilder.nextBuilder();
 					}
+				}
+
+				if (currentBuilder == null) {
+					done = true;
+				} else {
+					box.initialize(currentBuilder);
+					sendNetworkUpdate();
+					done = false;
 				}
 			}
 
@@ -555,9 +533,9 @@ public class TileBuilder extends TileAbstractBuilder implements IMachine, IFluid
 
 		NBTTagCompound bptNBT = new NBTTagCompound();
 
-		if (bluePrintBuilder != null) {
+		if (currentBuilder != null) {
 			NBTTagCompound builderCpt = new NBTTagCompound();
-			bluePrintBuilder.saveBuildStateToNBT(builderCpt, this);
+			currentBuilder.saveBuildStateToNBT(builderCpt, this);
 			bptNBT.setTag("builderState", builderCpt);
 		}
 
@@ -594,11 +572,11 @@ public class TileBuilder extends TileAbstractBuilder implements IMachine, IFluid
 			return;
 		}
 
-		if (bluePrintBuilder != null) {
-			bluePrintBuilder.removeDoneBuilders(this);
+		if (currentBuilder != null) {
+			currentBuilder.removeDoneBuilders(this);
 		}
 
-		if ((bluePrintBuilder == null || bluePrintBuilder.isDone(this))
+		if ((currentBuilder == null || currentBuilder.isDone(this))
 				&& box.isInitialized()) {
 			box.reset();
 
@@ -612,7 +590,7 @@ public class TileBuilder extends TileAbstractBuilder implements IMachine, IFluid
 		if (getWorld().getWorldInfo().getGameType() == GameType.CREATIVE) {
 			build();
 		} else {
-			if (mjStored > POWER_ACTIVATION) {
+			if (getBattery().getEnergyStored() > POWER_ACTIVATION) {
 				build();
 			}
 		}
@@ -620,7 +598,7 @@ public class TileBuilder extends TileAbstractBuilder implements IMachine, IFluid
 
 		if (done) {
 			return;
-		} else if (mjStored < 25) {
+		} else if (getBattery().getEnergyStored() < 25) {
 			return;
 		}
 	}
@@ -721,19 +699,19 @@ public class TileBuilder extends TileAbstractBuilder implements IMachine, IFluid
 			return;
 		}
 
-		if (bluePrintBuilder != null) {
-			bluePrintBuilder.buildNextSlot(worldObj, this, xCoord, yCoord, zCoord);
+		if (currentBuilder != null) {
+			currentBuilder.buildNextSlot(worldObj, this, xCoord, yCoord, zCoord);
 
 			updateRequirements();
 		}
 	}
 
 	public void updateRequirements () {
-		if (bluePrintBuilder instanceof BptBuilderBlueprint) {
+		if (currentBuilder instanceof BptBuilderBlueprint) {
 			ArrayList<ItemStack> reqCopy = new ArrayList<ItemStack>();
 			ArrayList<Integer> realSize = new ArrayList<Integer>();
 
-			for (ItemStack stack : ((BptBuilderBlueprint) bluePrintBuilder).neededItems) {
+			for (ItemStack stack : ((BptBuilderBlueprint) currentBuilder).neededItems) {
 				realSize.add(stack.stackSize);
 				ItemStack newStack = stack.copy();
 				newStack.stackSize = 0;
@@ -748,8 +726,8 @@ public class TileBuilder extends TileAbstractBuilder implements IMachine, IFluid
 	}
 
 	public BptBuilderBase getBlueprint () {
-		if (bluePrintBuilder != null) {
-			return bluePrintBuilder;
+		if (currentBuilder != null) {
+			return currentBuilder;
 		} else {
 			return null;
 		}
@@ -837,12 +815,12 @@ public class TileBuilder extends TileAbstractBuilder implements IMachine, IFluid
 
 	@Override
 	public int getNumberOfRequests() {
-		if (bluePrintBuilder == null) {
+		if (currentBuilder == null) {
 			return 0;
-		} else if (!(bluePrintBuilder instanceof BptBuilderBlueprint)) {
+		} else if (!(currentBuilder instanceof BptBuilderBlueprint)) {
 			return 0;
 		} else {
-			BptBuilderBlueprint bpt = (BptBuilderBlueprint) bluePrintBuilder;
+			BptBuilderBlueprint bpt = (BptBuilderBlueprint) currentBuilder;
 
 			return bpt.neededItems.size();
 		}
@@ -850,12 +828,12 @@ public class TileBuilder extends TileAbstractBuilder implements IMachine, IFluid
 
 	@Override
 	public StackRequest getAvailableRequest(int i) {
-		if (bluePrintBuilder == null) {
+		if (currentBuilder == null) {
 			return null;
-		} else if (!(bluePrintBuilder instanceof BptBuilderBlueprint)) {
+		} else if (!(currentBuilder instanceof BptBuilderBlueprint)) {
 			return null;
 		} else {
-			BptBuilderBlueprint bpt = (BptBuilderBlueprint) bluePrintBuilder;
+			BptBuilderBlueprint bpt = (BptBuilderBlueprint) currentBuilder;
 
 			if (bpt.neededItems.size() <= i) {
 				return null;
@@ -881,9 +859,9 @@ public class TileBuilder extends TileAbstractBuilder implements IMachine, IFluid
 
 	@Override
 	public boolean takeRequest(int i, EntityRobotBase robot) {
-		if (bluePrintBuilder == null) {
+		if (currentBuilder == null) {
 			return false;
-		} else if (!(bluePrintBuilder instanceof BptBuilderBlueprint)) {
+		} else if (!(currentBuilder instanceof BptBuilderBlueprint)) {
 			return false;
 		} else {
 			return RobotRegistry.getRegistry(worldObj).take(new ResourceIdRequest(this, i), robot);
@@ -892,12 +870,12 @@ public class TileBuilder extends TileAbstractBuilder implements IMachine, IFluid
 
 	@Override
 	public ItemStack provideItemsForRequest(int i, ItemStack stack) {
-		if (bluePrintBuilder == null) {
+		if (currentBuilder == null) {
 			return stack;
-		} else if (!(bluePrintBuilder instanceof BptBuilderBlueprint)) {
+		} else if (!(currentBuilder instanceof BptBuilderBlueprint)) {
 			return stack;
 		} else {
-			BptBuilderBlueprint bpt = (BptBuilderBlueprint) bluePrintBuilder;
+			BptBuilderBlueprint bpt = (BptBuilderBlueprint) currentBuilder;
 
 			if (bpt.neededItems.size() <= i) {
 				return stack;

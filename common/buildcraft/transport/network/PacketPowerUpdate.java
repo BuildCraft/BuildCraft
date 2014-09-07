@@ -12,6 +12,7 @@ import io.netty.buffer.ByteBuf;
 
 import buildcraft.core.network.PacketCoordinates;
 import buildcraft.core.network.PacketIds;
+import buildcraft.transport.render.PipeRendererTESR;
 
 public class PacketPowerUpdate extends PacketCoordinates {
 
@@ -26,7 +27,7 @@ public class PacketPowerUpdate extends PacketCoordinates {
 	}
 
 	@Override
-	public void readData(ByteBuf data) {		
+	public void readData(ByteBuf data) {
 		super.readData(data);
 		displayPower = new short[] { 0, 0, 0, 0, 0, 0 };
 		overload = data.readBoolean();
@@ -40,7 +41,8 @@ public class PacketPowerUpdate extends PacketCoordinates {
 		super.writeData(data);
 		data.writeBoolean(overload);
 		for (short element : displayPower) {
-			data.writeByte(element);
+			data.writeByte(Math.min(PipeRendererTESR.POWER_STAGES,
+					(int) Math.ceil(element * PipeRendererTESR.DISPLAY_MULTIPLIER)));
 		}
 	}
 }

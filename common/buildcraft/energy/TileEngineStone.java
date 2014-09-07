@@ -21,10 +21,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftEnergy;
-import buildcraft.api.core.NetworkData;
 import buildcraft.api.gates.ITrigger;
-import buildcraft.api.mj.IOMode;
-import buildcraft.api.mj.MjBattery;
 import buildcraft.core.GuiIds;
 import buildcraft.core.inventory.InvUtils;
 import buildcraft.core.utils.MathUtils;
@@ -42,17 +39,8 @@ public class TileEngineStone extends TileEngineWithInventory {
 	int totalBurnTime = 0;
 	double esum = 0;
 
-	@MjBattery(mode = IOMode.SendActive, maxCapacity = 1000, maxSendedPerCycle = 500, minimumConsumption = 0)
-	@NetworkData
-	private double mjStored;
-
 	public TileEngineStone() {
 		super(1);
-	}
-
-	@Override
-	public boolean isActive() {
-		return isBurning();
 	}
 
 	@Override
@@ -88,11 +76,13 @@ public class TileEngineStone extends TileEngineWithInventory {
 		if (burnTime > 0) {
 			burnTime--;
 
-			double output = TARGET_OUTPUT * mjStoredBattery.maxCapacity() - mjStored;
-			esum = MathUtils.clamp(esum + output, -eLimit, eLimit);
-			addEnergy(MathUtils.clamp(output * kp + esum * ki, MIN_OUTPUT, MAX_OUTPUT));
-		} else {
-			totalBurnTime = 0;
+			double output = getCurrentOutput();
+
+			if (!constantPower) {
+				currentOutput = output; // Comment out for constant power
+			}
+
+			addEnergy(output);
 		}
 
 		if (burnTime == 0 && isRedstonePowered) {
@@ -149,6 +139,28 @@ public class TileEngineStone extends TileEngineWithInventory {
 		super.sendGUINetworkData(containerEngine, iCrafting);
 		iCrafting.sendProgressBarUpdate(containerEngine, 15, burnTime);
 		iCrafting.sendProgressBarUpdate(containerEngine, 16, totalBurnTime);
+	}
+
+	@Override
+	public double maxEnergyReceived() {
+		return 200;
+	}
+
+	@Override
+	public double maxEnergyExtracted() {
+		return 100;
+	}
+
+	@Override
+	public double getMaxEnergy() {
+		return 1000;
+	}
+
+	@Override
+	public double getCurrentOutput() {
+		double e = TARGET_OUTPUT * getMaxEnergy() - energy;
+		esum = MathUtils.clamp(esum + e, -eLimit, eLimit);
+		return MathUtils.clamp(e * kp + esum * ki, MIN_OUTPUT, MAX_OUTPUT);
 	}
 
 	@Override

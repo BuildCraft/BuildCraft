@@ -35,7 +35,7 @@ public class PipePowerIron extends Pipe<PipeTransportPower> {
 
 	public static enum PowerMode {
 
-		M2(2), M4(4), M8(8), M16(16), M32(32), M64(64), M128(128);
+		M2(20), M4(40), M8(80), M16(160), M32(320), M64(640), M128(1280);
 		public static final PowerMode[] VALUES = values();
 		public final int maxPower;
 

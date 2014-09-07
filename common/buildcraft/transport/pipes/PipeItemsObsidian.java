@@ -25,10 +25,12 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 import net.minecraftforge.common.util.ForgeDirection;
 
+import cofh.api.energy.IEnergyHandler;
+
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.core.Position;
-import buildcraft.api.mj.MjBattery;
+import buildcraft.core.RFBattery;
 import buildcraft.core.inventory.ITransactor;
 import buildcraft.core.inventory.Transactor;
 import buildcraft.core.inventory.filters.StackFilter;
@@ -40,10 +42,8 @@ import buildcraft.transport.TravelingItem;
 import buildcraft.transport.pipes.events.PipeEventItem;
 import buildcraft.transport.utils.TransportUtils;
 
-public class PipeItemsObsidian extends Pipe<PipeTransportItems> {
-
-	@MjBattery (maxCapacity = 256, maxReceivedPerCycle = 64, minimumConsumption = 0)
-	private double mjStored = 0;
+public class PipeItemsObsidian extends Pipe<PipeTransportItems> implements IEnergyHandler {
+	private RFBattery battery = new RFBattery(2560, 640, 0);
 
 	private int[] entitiesDropped;
 	private int entitiesDroppedIndex = 0;
@@ -149,14 +149,14 @@ public class PipeItemsObsidian extends Pipe<PipeTransportItems> {
 	public void updateEntity () {
 		super.updateEntity();
 
-		if (mjStored > 0) {
+		if (battery.getEnergyStored() > 0) {
 			for (int j = 1; j < 5; ++j) {
 				if (suckItem(j)) {
 					return;
 				}
 			}
 
-			mjStored = mjStored > 0.5 ? mjStored - 0.5 : 0;
+			battery.useEnergy(0, 5, false);
 		}
 	}
 
@@ -182,8 +182,7 @@ public class PipeItemsObsidian extends Pipe<PipeTransportItems> {
 					ForgeDirection openOrientation = getOpenOrientation();
 					ItemStack stack = trans.remove(StackFilter.ALL, openOrientation, false);
 
-					if (stack != null && mjStored >= 1) {
-						mjStored -= 1;
+					if (stack != null && battery.useEnergy(10, 10, false) > 0) {
 						trans.remove(StackFilter.ALL, openOrientation, true);
 						EntityItem entityitem = new EntityItem(container.getWorldObj(), cart.posX, cart.posY + 0.3F, cart.posZ, stack);
 						entityitem.delayBeforeCanPickup = 10;
@@ -219,13 +218,15 @@ public class PipeItemsObsidian extends Pipe<PipeTransportItems> {
 
 				CoreProxy.proxy.obsidianPipePickup(container.getWorldObj(), item, this.container);
 
-				double energyUsed = mjStored > contained.stackSize * distance ? contained.stackSize * distance : mjStored;
+				int energyUsed = Math.min(10 * contained.stackSize * distance, battery.getEnergyStored());
 
+				// TODO: Why is energyUsed never used here?
+				
 				if (distance == 0 || energyUsed / distance == contained.stackSize) {
 					stack = contained;
 					CoreProxy.proxy.removeEntity(entity);
 				} else {
-					stack = contained.splitStack((int) (energyUsed / distance));
+					stack = contained.splitStack(energyUsed / distance);
 				}
 
 				speed = Math.sqrt(item.motionX * item.motionX + item.motionY * item.motionY + item.motionZ * item.motionZ);
@@ -234,8 +235,7 @@ public class PipeItemsObsidian extends Pipe<PipeTransportItems> {
 				if (speed < 0.01) {
 					speed = 0.01;
 				}
-			} else if (entity instanceof EntityArrow) {
-				mjStored -= distance;
+			} else if (entity instanceof EntityArrow && battery.useEnergy(distance * 10, distance * 10, false) > 0) {
 				stack = new ItemStack(Items.arrow, 1);
 				CoreProxy.proxy.removeEntity(entity);
 			}
@@ -274,11 +274,38 @@ public class PipeItemsObsidian extends Pipe<PipeTransportItems> {
 				}
 			}
 
-			return mjStored >= distance;
+			return battery.getEnergyStored() >= distance * 10;
 		} else if (entity instanceof EntityArrow) {
 			EntityArrow arrow = (EntityArrow) entity;
-			return arrow.canBePickedUp == 1 && mjStored >= distance;
+			return arrow.canBePickedUp == 1 && battery.getEnergyStored() >= distance * 10;
 		}
 		return false;
+	}
+
+	@Override
+	public boolean canConnectEnergy(ForgeDirection from) {
+		return true;
+	}
+
+	@Override
+	public int receiveEnergy(ForgeDirection from, int maxReceive,
+			boolean simulate) {
+		return battery.receiveEnergy(maxReceive, simulate);
+	}
+
+	@Override
+	public int extractEnergy(ForgeDirection from, int maxExtract,
+			boolean simulate) {
+		return 0;
+	}
+
+	@Override
+	public int getEnergyStored(ForgeDirection from) {
+		return battery.getEnergyStored();
+	}
+
+	@Override
+	public int getMaxEnergyStored(ForgeDirection from) {
+		return battery.getMaxEnergyStored();
 	}
 }

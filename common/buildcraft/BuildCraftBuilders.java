@@ -64,6 +64,7 @@ import buildcraft.builders.EventHandlerBuilders;
 import buildcraft.builders.GuiHandler;
 import buildcraft.builders.ItemBlueprintStandard;
 import buildcraft.builders.ItemBlueprintTemplate;
+import buildcraft.builders.ItemConstructionMarker;
 import buildcraft.builders.TileArchitect;
 import buildcraft.builders.TileBlueprintLibrary;
 import buildcraft.builders.TileBuilder;
@@ -441,7 +442,8 @@ public class BuildCraftBuilders extends BuildCraftMod {
 		CoreProxy.proxy.registerBlock(pathMarkerBlock.setBlockName("pathMarkerBlock"));
 
 		constructionMarkerBlock = new BlockConstructionMarker();
-		CoreProxy.proxy.registerBlock(constructionMarkerBlock.setBlockName("constructionMarkerBlock"));
+		CoreProxy.proxy.registerBlock(constructionMarkerBlock.setBlockName("constructionMarkerBlock"),
+				ItemConstructionMarker.class);
 
 		fillerBlock = new BlockFiller();
 		CoreProxy.proxy.registerBlock(fillerBlock.setBlockName("fillerBlock"));

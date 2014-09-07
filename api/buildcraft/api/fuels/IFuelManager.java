@@ -6,8 +6,18 @@
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-package buildcraft.api.mj;
+package buildcraft.api.fuels;
 
-public interface IBatteryProvider {
-	IBatteryObject getMjBattery(String kind);
+import java.util.Collection;
+
+import net.minecraftforge.fluids.Fluid;
+
+public interface IFuelManager {
+	IFuel addFuel(IFuel fuel);
+
+	IFuel addFuel(Fluid fluid, float powerPerCycle, int totalBurningTime);
+
+	Collection<IFuel> getFuels();
+
+	IFuel getFuel(Fluid fluid);
 }

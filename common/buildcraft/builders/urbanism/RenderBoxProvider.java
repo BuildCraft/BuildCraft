@@ -28,6 +28,8 @@ public class RenderBoxProvider extends TileEntitySpecialRenderer {
 	private static final ResourceLocation LASER_GREEN = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_ENTITIES + "/laser_3.png");
 	private static final ResourceLocation LASER_BLUE = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_ENTITIES + "/laser_4.png");
 	private static final ResourceLocation STRIPES = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_ENTITIES + "/stripes.png");
+	private static final ResourceLocation BLUE_STRIPES = new ResourceLocation("buildcraft",
+			DefaultProps.TEXTURE_PATH_ENTITIES + "/blue_stripes.png");
 
 	public RenderBoxProvider() {
 	}
@@ -81,6 +83,8 @@ public class RenderBoxProvider extends TileEntitySpecialRenderer {
 			return LASER_BLUE;
 		case STRIPES:
 			return STRIPES;
+		case BLUE_STRIPES:
+			return BLUE_STRIPES;
 		}
 
 		return null;

@@ -20,12 +20,14 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 import net.minecraftforge.common.util.ForgeDirection;
 
+import cofh.api.energy.IEnergyHandler;
+
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.core.Position;
-import buildcraft.api.mj.MjBattery;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.PipeManager;
+import buildcraft.core.RFBattery;
 import buildcraft.core.inventory.InvUtils;
 import buildcraft.core.inventory.InventoryWrapper;
 import buildcraft.transport.Pipe;
@@ -33,11 +35,9 @@ import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportItems;
 import buildcraft.transport.TravelingItem;
 
-public class PipeItemsWood extends Pipe<PipeTransportItems> {
-
-	@MjBattery (maxCapacity = 64, maxReceivedPerCycle = 64, minimumConsumption = 0)
-	public double mjStored = 0;
-
+public class PipeItemsWood extends Pipe<PipeTransportItems> implements IEnergyHandler {
+	protected RFBattery battery = new RFBattery(640, 640, 0);
+	
 	protected int standardIconIndex = PipeIconProvider.TYPE.PipeItemsWood_Standard.ordinal();
 	protected int solidIconIndex = PipeIconProvider.TYPE.PipeAllWood_Solid.ordinal();
 
@@ -107,12 +107,12 @@ public class PipeItemsWood extends Pipe<PipeTransportItems> {
 			return;
 		}
 
-		if (mjStored > 0) {
+		if (battery.getEnergyStored() > 0) {
 			if (transport.getNumberOfStacks() < PipeTransportItems.MAX_PIPE_STACKS) {
 				extractItems();
 			}
 
-			mjStored = 0;
+			battery.setEnergy(0);
 		}
 	}
 
@@ -142,7 +142,7 @@ public class PipeItemsWood extends Pipe<PipeTransportItems> {
 
 			for (ItemStack stack : extracted) {
 				if (stack == null || stack.stackSize == 0) {
-					mjStored = mjStored > 1 ? mjStored - 1 : 0;
+					battery.useEnergy(1, 1, false);
 
 					continue;
 				}
@@ -192,10 +192,9 @@ public class PipeItemsWood extends Pipe<PipeTransportItems> {
 
 			if (slot != null && slot.stackSize > 0 && inventory.canExtractItem(k, slot, from.ordinal())) {
 				if (doRemove) {
-					double energyUsed =  mjStored > slot.stackSize ? slot.stackSize : mjStored;
-					mjStored -= energyUsed;
-
-					return inventory.decrStackSize(k, (int) energyUsed);
+					int stackSize = battery.useEnergy(1, slot.stackSize, false);
+					
+					return inventory.decrStackSize(k, stackSize);
 				} else {
 					return slot;
 				}
@@ -203,5 +202,32 @@ public class PipeItemsWood extends Pipe<PipeTransportItems> {
 		}
 
 		return null;
+	}
+
+	@Override
+	public boolean canConnectEnergy(ForgeDirection from) {
+		return true;
+	}
+
+	@Override
+	public int receiveEnergy(ForgeDirection from, int maxReceive,
+			boolean simulate) {
+		return battery.receiveEnergy(maxReceive, simulate);
+	}
+
+	@Override
+	public int extractEnergy(ForgeDirection from, int maxExtract,
+			boolean simulate) {
+		return 0;
+	}
+
+	@Override
+	public int getEnergyStored(ForgeDirection from) {
+		return battery.getEnergyStored();
+	}
+
+	@Override
+	public int getMaxEnergyStored(ForgeDirection from) {
+		return battery.getMaxEnergyStored();
 	}
 }

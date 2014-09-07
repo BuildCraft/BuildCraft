@@ -143,21 +143,22 @@ public class FacadeItemRenderer implements IItemRenderer {
 	}
 
 	private IIcon tryGetBlockIcon(Block block, int side, int decodedMeta) {
-		try {
-			IIcon icon = block.getIcon(side, decodedMeta);
+		IIcon icon = null;
 
-			if (icon != null) {
-				return icon;
-			} else {
-				return PipeIconProvider.TYPE.TransparentFacade.getIcon();
-			}
+		try {
+			icon = block.getIcon(side, decodedMeta);
 		} catch (Throwable t) {
 			try {
-				return block.getBlockTextureFromSide(side);
-			} catch (Throwable t2) {
-				return PipeIconProvider.TYPE.TransparentFacade.getIcon();
+				icon = block.getBlockTextureFromSide(side);
+			} catch (Throwable ignored) {
+			}
+		} finally {
+			if (icon == null) {
+				icon = PipeIconProvider.TYPE.TransparentFacade.getIcon();
 			}
 		}
+
+		return icon;
 	}
 
 	@Override

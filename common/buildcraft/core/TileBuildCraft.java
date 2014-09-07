@@ -20,6 +20,10 @@ import net.minecraft.network.Packet;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 
+import net.minecraftforge.common.util.ForgeDirection;
+
+import cofh.api.energy.IEnergyHandler;
+
 import buildcraft.BuildCraftCore;
 import buildcraft.api.power.IPowerReceptor;
 import buildcraft.core.network.BuildCraftPacket;
@@ -30,8 +34,7 @@ import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.network.TilePacketWrapper;
 import buildcraft.core.utils.Utils;
 
-public abstract class TileBuildCraft extends TileEntity implements ISynchronizedTile {
-
+public abstract class TileBuildCraft extends TileEntity implements ISynchronizedTile, IEnergyHandler {
 	@SuppressWarnings("rawtypes")
 	private static Map<Class, TilePacketWrapper> updateWrappers = new HashMap<Class, TilePacketWrapper>();
 	@SuppressWarnings("rawtypes")
@@ -40,6 +43,7 @@ public abstract class TileBuildCraft extends TileEntity implements ISynchronized
 	private final TilePacketWrapper updatePacket;
 	private boolean init = false;
 	private String owner = "[BuildCraft]";
+	private RFBattery battery;
 
 	public TileBuildCraft() {
 		if (!updateWrappers.containsKey(this.getClass())) {
@@ -52,7 +56,6 @@ public abstract class TileBuildCraft extends TileEntity implements ISynchronized
 
 		updatePacket = updateWrappers.get(this.getClass());
 		descriptionPacket = descriptionWrappers.get(this.getClass());
-
 	}
 
 	public String getOwner() {
@@ -131,6 +134,9 @@ public abstract class TileBuildCraft extends TileEntity implements ISynchronized
 	public void writeToNBT(NBTTagCompound nbt) {
 		super.writeToNBT(nbt);
 		nbt.setString("owner", owner);
+		if (battery != null) {
+			battery.writeToNBT(nbt);
+		}
 	}
 
 	@Override
@@ -138,6 +144,9 @@ public abstract class TileBuildCraft extends TileEntity implements ISynchronized
 		super.readFromNBT(nbt);
 		if (nbt.hasKey("owner")) {
 			owner = nbt.getString("owner");
+		}
+		if (battery != null) {
+			battery.readFromNBT(nbt);
 		}
 	}
 
@@ -153,5 +162,56 @@ public abstract class TileBuildCraft extends TileEntity implements ISynchronized
 	@Override
 	public boolean equals(Object cmp) {
 		return this == cmp;
+	}
+
+	@Override
+	public boolean canConnectEnergy(ForgeDirection from) {
+		return battery != null;
+	}
+
+	@Override
+	public int receiveEnergy(ForgeDirection from, int maxReceive,
+			boolean simulate) {
+		if (battery != null && this.canConnectEnergy(from)) {
+			return battery.receiveEnergy(maxReceive, simulate);
+		} else {
+			return 0;
+		}
+	}
+
+	@Override
+	public int extractEnergy(ForgeDirection from, int maxExtract,
+			boolean simulate) {
+		if (battery != null && this.canConnectEnergy(from)) {
+			return battery.extractEnergy(maxExtract, simulate);
+		} else {
+			return 0;
+		}
+	}
+
+	@Override
+	public int getEnergyStored(ForgeDirection from) {
+		if (battery != null && this.canConnectEnergy(from)) {
+			return battery.getEnergyStored();
+		} else {
+			return 0;
+		}
+	}
+
+	@Override
+	public int getMaxEnergyStored(ForgeDirection from) {
+		if (battery != null && this.canConnectEnergy(from)) {
+			return battery.getMaxEnergyStored();
+		} else {
+			return 0;
+		}
+	}
+
+	public RFBattery getBattery() {
+		return battery;
+	}
+
+	protected void setBattery(RFBattery battery) {
+		this.battery = battery;
 	}
 }

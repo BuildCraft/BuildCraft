@@ -165,14 +165,6 @@ public class TileQuarry extends TileAbstractBuilder implements IMachine {
 			return;
 		}
 
-		double energyToUse = 2 + mjStored / 500;
-
-		if (mjStored > energyToUse) {
-			mjStored -= energyToUse;
-			speed = 0.1 + energyToUse / 200F;
-			moveHead(speed);
-		}
-
 		if (stage == Stage.BUILDING) {
 			if (builder != null && !builder.isDone(this)) {
 				if (buildTracker.markTimeIfDelay(worldObj)) {
@@ -183,6 +175,13 @@ public class TileQuarry extends TileAbstractBuilder implements IMachine {
 			}
 		} else if (stage == Stage.IDLE) {
 			dig();
+		} else if (stage == Stage.DIGGING) {
+			int energyToUse = 20 + Math.round(getBattery().getEnergyStored() / 500);
+
+			if (this.consumeEnergy(energyToUse)) {
+				speed = 0.1 + energyToUse / 200F;
+				moveHead(speed);
+			}
 		}
 
 		createUtilsIfNeeded();
@@ -193,12 +192,10 @@ public class TileQuarry extends TileAbstractBuilder implements IMachine {
 	}
 
 	protected void dig() {
-		float mj = BuildCraftFactory.MINING_MJ_COST_PER_BLOCK * BuildCraftFactory.miningMultiplier;
+		int rf = (int) Math.ceil(BuildCraftFactory.MINING_RF_COST_PER_BLOCK * BuildCraftFactory.miningMultiplier);
 
-		if (mjStored < mj) {
+		if (!consumeEnergy(rf)) {
 			return;
-		} else {
-			mjStored -= mj;
 		}
 
 		if (!findTarget(true)) {

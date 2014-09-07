@@ -209,7 +209,7 @@ public class TileAssemblyTable extends TileLaserTableBase implements IMachine, I
 	}
 
 	@Override
-	public double getRequiredEnergy() {
+	public int getRequiredEnergy() {
 		if (currentRecipe != null) {
 			CraftingResult<ItemStack> result = currentRecipe.craft(this, true);
 

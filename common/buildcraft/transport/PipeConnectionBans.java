@@ -22,6 +22,7 @@ import buildcraft.transport.pipes.PipeItemsObsidian;
 import buildcraft.transport.pipes.PipeItemsQuartz;
 import buildcraft.transport.pipes.PipeItemsStone;
 import buildcraft.transport.pipes.PipeItemsWood;
+import buildcraft.transport.pipes.PipePowerEmerald;
 import buildcraft.transport.pipes.PipePowerWood;
 
 /**
@@ -49,6 +50,7 @@ public final class PipeConnectionBans {
 		
 		// Power Pipes
 		banConnection(PipePowerWood.class);
+		banConnection(PipePowerEmerald.class);
 	}
 
 	private PipeConnectionBans() {
