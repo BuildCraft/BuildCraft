@@ -51,7 +51,6 @@ import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.science.TechnoSimpleItem;
 import buildcraft.core.science.TechnoStatement;
 import buildcraft.core.science.Tier;
-import buildcraft.core.triggers.ActionPipeClose;
 import buildcraft.silicon.ItemRedstoneChipset.Chipset;
 import buildcraft.transport.BlockFilteredBuffer;
 import buildcraft.transport.BlockGenericPipe;
@@ -119,6 +118,8 @@ import buildcraft.transport.triggers.ActionPowerLimiter;
 import buildcraft.transport.triggers.ActionRedstoneFaderOutput;
 import buildcraft.transport.triggers.ActionSignalOutput;
 import buildcraft.transport.triggers.ActionSingleEnergyPulse;
+import buildcraft.transport.triggers.ActionValve;
+import buildcraft.transport.triggers.ActionValve.ValveState;
 import buildcraft.transport.triggers.TriggerClockTimer;
 import buildcraft.transport.triggers.TriggerClockTimer.Time;
 import buildcraft.transport.triggers.TriggerPipeContents;
@@ -188,7 +189,6 @@ public class BuildCraftTransport extends BuildCraftMod {
 	public static ITrigger[] triggerTimer = new ITrigger[TriggerClockTimer.Time.VALUES.length];
 	public static ITrigger[] triggerRedstoneLevel = new ITrigger[15];
 	public static IAction[] actionPipeWire = new ActionSignalOutput[PipeWire.values().length];
-	public static IAction actionPipeClose = new ActionPipeClose();
 	public static IAction actionEnergyPulser = new ActionEnergyPulsar();
 	public static IAction actionSingleEnergyPulse = new ActionSingleEnergyPulse();
 	public static IAction[] actionPipeColor = new IAction[16];
@@ -199,6 +199,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 	public static IAction actionExtractionPresetBlue = new ActionExtractionPreset(EnumColor.BLUE);
 	public static IAction actionExtractionPresetGreen = new ActionExtractionPreset(EnumColor.GREEN);
 	public static IAction actionExtractionPresetYellow = new ActionExtractionPreset(EnumColor.YELLOW);
+        public static IAction[] actionValve = new IAction[4];
 
 	public static TechnoSimpleItem technoPipeItemsWood = new TechnoSimpleItem();
 	public static TechnoSimpleItem technoPipeItemsEmerald = new TechnoSimpleItem();
@@ -239,7 +240,6 @@ public class BuildCraftTransport extends BuildCraftMod {
 	public static TechnoStatement technoTriggerPipe = new TechnoStatement();
 	public static TechnoStatement technoTriggerPipeWireActive = new TechnoStatement();
 	public static TechnoStatement technoActionPipeWire = new TechnoStatement();
-	public static TechnoStatement technoActionPipeClose = new TechnoStatement();
 	public static TechnoStatement technoActionPipeColor = new TechnoStatement();
 	public static TechnoStatement technoActionPipeDirection = new TechnoStatement();
 	public static TechnoStatement technoActionPowerLimiter = new TechnoStatement();
@@ -469,6 +469,10 @@ public class BuildCraftTransport extends BuildCraftMod {
 
 			for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
 				actionPipeDirection[direction.ordinal()] = new ActionPipeDirection(direction);
+			}
+
+			for (ValveState state : ValveState.VALUES) {
+			    actionValve[state.ordinal()] = new ActionValve(state);
 			}
 
 			for (PowerMode limit : PowerMode.VALUES) {
@@ -760,13 +764,6 @@ public class BuildCraftTransport extends BuildCraftMod {
 		technoActionPipeWire.initialize(
 				Tier.Chipset,
 				actionPipeWire[0],
-				"",
-				Chipset.RED.getStack(5),
-				BuildCraftCore.technoSilicon);
-
-		technoActionPipeClose.initialize(
-				Tier.IronChipset,
-				actionPipeClose,
 				"",
 				Chipset.RED.getStack(5),
 				BuildCraftCore.technoSilicon);

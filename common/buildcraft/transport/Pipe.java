@@ -46,6 +46,7 @@ import buildcraft.core.utils.Utils;
 import buildcraft.transport.gates.ActionSlot;
 import buildcraft.transport.gates.GateFactory;
 import buildcraft.transport.pipes.events.PipeEvent;
+import buildcraft.transport.triggers.ActionValve.ValveState;
 
 public abstract class Pipe<T extends PipeTransport> implements IDropControlInventory, IPipe {
 
@@ -62,7 +63,6 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 
 	private boolean internalUpdateScheduled = false;
 	private boolean initialized = false;
-	private boolean closed = false;
 
 	private ArrayList<ActionState> actionStates = new ArrayList<ActionState>();
 
@@ -212,7 +212,6 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 			internalUpdateScheduled = false;
 		}
 
-		closed = false;
 		actionStates.clear();
 
 		// Update the gate if we have any
@@ -535,7 +534,9 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 	public LinkedList<IAction> getActions() {
 		LinkedList<IAction> result = new LinkedList<IAction>();
 
-		result.add(BuildCraftTransport.actionPipeClose);
+		for (ValveState state : ValveState.VALUES) {
+		    result.add(BuildCraftTransport.actionValve[state.ordinal()]);
+		}
 
 		return result;
 	}
@@ -660,14 +661,6 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 	@Override
 	public TileEntity getAdjacentTile(ForgeDirection dir) {
 		return container.getTile(dir);
-	}
-
-	public void close() {
-		closed = true;
-	}
-
-	public boolean isClosed() {
-		return closed;
 	}
 
 	private void pushActionState(ActionState state) {

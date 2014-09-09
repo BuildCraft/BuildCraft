@@ -584,7 +584,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 	/* IPIPEENTRY */
 	@Override
 	public int injectItem(ItemStack payload, boolean doAdd, ForgeDirection from, EnumColor color) {
-		if (pipe.isClosed()) {
+		if (!pipe.inputOpen(from)) {
 			return 0;
 		}
 

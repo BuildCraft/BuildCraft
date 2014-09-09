@@ -278,6 +278,10 @@ public class PipeTransportPower extends PipeTransport {
 		// Compute the tiles requesting energy that are not power pipes
 
 		for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
+		        if (!outputOpen(dir)) {
+			    continue;
+			}
+
 			TileEntity tile = tiles [dir.ordinal()];
 			if (tile instanceof IEnergyHandler) {
 				IEnergyHandler handler = (IEnergyHandler) tile;
@@ -306,6 +310,10 @@ public class PipeTransportPower extends PipeTransport {
 
 		for (int i = 0; i < 6; ++i) {
 			transferQuery[i] = 0;
+
+			if (!inputOpen(ForgeDirection.getOrientation(i))) {
+			    continue;
+			}
 
 			for (int j = 0; j < 6; ++j) {
 				if (j != i) {
@@ -419,13 +427,10 @@ public class PipeTransportPower extends PipeTransport {
 	public void requestEnergy(ForgeDirection from, int amount) {
 		step();
 
-		if (!container.pipe.isClosed()) {
-			if (this.container.pipe instanceof IPipeTransportPowerHook) {
-				nextPowerQuery[from.ordinal()] += ((IPipeTransportPowerHook) this.container.pipe).requestEnergy(from,
-						amount);
-			} else {
-				nextPowerQuery[from.ordinal()] += amount;
-			}
+		if (this.container.pipe instanceof IPipeTransportPowerHook) {
+		    nextPowerQuery[from.ordinal()] += ((IPipeTransportPowerHook) this.container.pipe).requestEnergy(from, amount);
+		} else {
+		    nextPowerQuery[from.ordinal()] += amount;
 		}
 	}
 

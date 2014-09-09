@@ -185,7 +185,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 		if (entity instanceof TileGenericPipe) {
 			Pipe<?> pipe = ((TileGenericPipe) entity).pipe;
 
-			if (pipe == null || !pipe.inputOpen(o.getOpposite()) || pipe.isClosed()) {
+			if (pipe == null || !inputOpen(o.getOpposite())) {
 				return false;
 			}
 		}
@@ -487,7 +487,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 				outputTTL[direction.ordinal()] = OUTPUT_TTL;
 				continue;
 			}
-			if (canReceiveFluid(direction)) {
+			if (canReceiveFluid(direction) && outputOpen(direction)) {
 				transferState[direction.ordinal()] = TransferState.Output;
 				outputCount++;
 			}
@@ -543,7 +543,8 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 	}
 
 	private int fill(int tankIndex, FluidStack resource, boolean doFill) {
-		if (container.pipe.isClosed()) {
+	        ForgeDirection d = ForgeDirection.getOrientation(tankIndex);
+		if (d != ForgeDirection.UNKNOWN && !inputOpen(d)) {
 			return 0;
 		}
 
@@ -575,7 +576,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 
 	@Override
 	public boolean canFill(ForgeDirection from, Fluid fluid) {
-		return true;
+	        return inputOpen(from);
 	}
 
 	@Override
