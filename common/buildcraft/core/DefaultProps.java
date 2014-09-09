@@ -29,6 +29,7 @@ public final class DefaultProps {
 
 	public static boolean CURRENT_CONTINUOUS = false;
 	public static double PIPES_DURABILITY = 0.25D;
+        public static int PIPES_FLUIDS_BASE_FLOW_RATE = 10;
 	public static boolean FILLER_DESTROY = false;
 
 	public static final int FILLER_LIFESPAN_TOUGH = 20;

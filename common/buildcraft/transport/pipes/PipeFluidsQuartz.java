@@ -21,13 +21,13 @@ import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportFluids;
 
-public class PipeFluidsCobblestone extends Pipe<PipeTransportFluids> {
+public class PipeFluidsQuartz extends Pipe<PipeTransportFluids> {
 
-	public PipeFluidsCobblestone(Item item) {
-	        super(new PipeTransportFluids(), item);
+	public PipeFluidsQuartz(Item item) {
+	    super(new PipeTransportFluids(), item);
 
-		transport.flowRate = BuildCraftTransport.pipeFluidsBaseFlowRate;
-		transport.travelDelay = 12;
+	    transport.flowRate = 2 * BuildCraftTransport.pipeFluidsBaseFlowRate;
+	    transport.travelDelay = 8;
 	}
 
 	@Override
@@ -38,6 +38,6 @@ public class PipeFluidsCobblestone extends Pipe<PipeTransportFluids> {
 
 	@Override
 	public int getIconIndex(ForgeDirection direction) {
-		return PipeIconProvider.TYPE.PipeFluidsCobblestone.ordinal();
+		return PipeIconProvider.TYPE.PipeFluidsQuartz.ordinal();
 	}
 }

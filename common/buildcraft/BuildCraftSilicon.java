@@ -108,6 +108,7 @@ import buildcraft.transport.gates.GateExpansionPulsar;
 import buildcraft.transport.gates.GateExpansionRedstoneFader;
 import buildcraft.transport.gates.GateExpansionTimer;
 import buildcraft.transport.gates.ItemGate;
+import buildcraft.transport.triggers.ActionParameterDirection;
 import buildcraft.transport.triggers.ActionParameterSignal;
 import buildcraft.transport.triggers.TriggerParameterSignal;
 
@@ -267,6 +268,7 @@ public class BuildCraftSilicon extends BuildCraftMod {
 		StatementManager.registerParameterClass("buildcraft:pipeWireTrigger", TriggerParameterSignal.class);
 		StatementManager.registerParameterClass("buildcraft:stackAction", ActionParameterItemStack.class);
 		StatementManager.registerParameterClass("buildcraft:pipeWireAction", ActionParameterSignal.class);
+		StatementManager.registerParameterClass("buildcraft:pipeActionDirection", ActionParameterDirection.class);
 	}
 
 	@Mod.EventHandler

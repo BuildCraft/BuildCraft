@@ -51,7 +51,6 @@ import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.science.TechnoSimpleItem;
 import buildcraft.core.science.TechnoStatement;
 import buildcraft.core.science.Tier;
-import buildcraft.core.triggers.ActionPipeClose;
 import buildcraft.silicon.ItemRedstoneChipset.Chipset;
 import buildcraft.transport.BlockFilteredBuffer;
 import buildcraft.transport.BlockGenericPipe;
@@ -77,6 +76,7 @@ import buildcraft.transport.pipes.PipeFluidsCobblestone;
 import buildcraft.transport.pipes.PipeFluidsEmerald;
 import buildcraft.transport.pipes.PipeFluidsGold;
 import buildcraft.transport.pipes.PipeFluidsIron;
+import buildcraft.transport.pipes.PipeFluidsQuartz;
 import buildcraft.transport.pipes.PipeFluidsSandstone;
 import buildcraft.transport.pipes.PipeFluidsStone;
 import buildcraft.transport.pipes.PipeFluidsVoid;
@@ -118,6 +118,8 @@ import buildcraft.transport.triggers.ActionPowerLimiter;
 import buildcraft.transport.triggers.ActionRedstoneFaderOutput;
 import buildcraft.transport.triggers.ActionSignalOutput;
 import buildcraft.transport.triggers.ActionSingleEnergyPulse;
+import buildcraft.transport.triggers.ActionValve;
+import buildcraft.transport.triggers.ActionValve.ValveState;
 import buildcraft.transport.triggers.TriggerClockTimer;
 import buildcraft.transport.triggers.TriggerClockTimer.Time;
 import buildcraft.transport.triggers.TriggerPipeContents;
@@ -132,6 +134,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 	public static BuildCraftTransport instance;
 
 	public static float pipeDurability;
+        public static int pipeFluidsBaseFlowRate;
 
 	public static BlockGenericPipe genericPipeBlock;
 	public static BlockFilteredBuffer filteredBufferBlock;
@@ -162,6 +165,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 	public static Item pipeFluidsWood;
 	public static Item pipeFluidsCobblestone;
 	public static Item pipeFluidsStone;
+	public static Item pipeFluidsQuartz;
 	public static Item pipeFluidsIron;
 	public static Item pipeFluidsGold;
 	public static Item pipeFluidsVoid;
@@ -185,7 +189,6 @@ public class BuildCraftTransport extends BuildCraftMod {
 	public static ITrigger[] triggerTimer = new ITrigger[TriggerClockTimer.Time.VALUES.length];
 	public static ITrigger[] triggerRedstoneLevel = new ITrigger[15];
 	public static IAction[] actionPipeWire = new ActionSignalOutput[PipeWire.values().length];
-	public static IAction actionPipeClose = new ActionPipeClose();
 	public static IAction actionEnergyPulser = new ActionEnergyPulsar();
 	public static IAction actionSingleEnergyPulse = new ActionSingleEnergyPulse();
 	public static IAction[] actionPipeColor = new IAction[16];
@@ -196,6 +199,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 	public static IAction actionExtractionPresetBlue = new ActionExtractionPreset(EnumColor.BLUE);
 	public static IAction actionExtractionPresetGreen = new ActionExtractionPreset(EnumColor.GREEN);
 	public static IAction actionExtractionPresetYellow = new ActionExtractionPreset(EnumColor.YELLOW);
+        public static IAction[] actionValve = new IAction[4];
 
 	public static TechnoSimpleItem technoPipeItemsWood = new TechnoSimpleItem();
 	public static TechnoSimpleItem technoPipeItemsEmerald = new TechnoSimpleItem();
@@ -217,6 +221,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 	public static TechnoSimpleItem technoPipeFluidsWood = new TechnoSimpleItem();
 	public static TechnoSimpleItem technoPipeFluidsCobblestone = new TechnoSimpleItem();
 	public static TechnoSimpleItem technoPipeFluidsStone = new TechnoSimpleItem();
+	public static TechnoSimpleItem technoPipeFluidsQuartz = new TechnoSimpleItem();
 	public static TechnoSimpleItem technoPipeFluidsIron = new TechnoSimpleItem();
 	public static TechnoSimpleItem technoPipeFluidsGold = new TechnoSimpleItem();
 	public static TechnoSimpleItem technoPipeFluidsVoid = new TechnoSimpleItem();
@@ -235,7 +240,6 @@ public class BuildCraftTransport extends BuildCraftMod {
 	public static TechnoStatement technoTriggerPipe = new TechnoStatement();
 	public static TechnoStatement technoTriggerPipeWireActive = new TechnoStatement();
 	public static TechnoStatement technoActionPipeWire = new TechnoStatement();
-	public static TechnoStatement technoActionPipeClose = new TechnoStatement();
 	public static TechnoStatement technoActionPipeColor = new TechnoStatement();
 	public static TechnoStatement technoActionPipeDirection = new TechnoStatement();
 	public static TechnoStatement technoActionPowerLimiter = new TechnoStatement();
@@ -304,6 +308,10 @@ public class BuildCraftTransport extends BuildCraftMod {
 			Property durability = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "pipes.durability", DefaultProps.PIPES_DURABILITY);
 			durability.comment = "How long a pipe will take to break";
 			pipeDurability = (float) durability.getDouble(DefaultProps.PIPES_DURABILITY);
+
+			Property baseFlowRate = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "pipes.fluids.baseFlowRate", DefaultProps.PIPES_FLUIDS_BASE_FLOW_RATE);
+			pipeFluidsBaseFlowRate = baseFlowRate.getInt();
+
 
 			Property exclusionItemList = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "woodenPipe.item.exclusion", new String[0]);
 
@@ -397,6 +405,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 			pipeFluidsWood = buildPipe(PipeFluidsWood.class, "Wooden Waterproof Pipe", CreativeTabBuildCraft.PIPES, pipeWaterproof, pipeItemsWood);
 			pipeFluidsCobblestone = buildPipe(PipeFluidsCobblestone.class, "Cobblestone Waterproof Pipe", CreativeTabBuildCraft.PIPES, pipeWaterproof, pipeItemsCobblestone);
 			pipeFluidsStone = buildPipe(PipeFluidsStone.class, "Stone Waterproof Pipe", CreativeTabBuildCraft.PIPES, pipeWaterproof, pipeItemsStone);
+			pipeFluidsQuartz = buildPipe(PipeFluidsQuartz.class, "Quartz Waterproof Pipe", CreativeTabBuildCraft.PIPES, pipeWaterproof, pipeItemsQuartz);
 			pipeFluidsIron = buildPipe(PipeFluidsIron.class, "Iron Waterproof Pipe", CreativeTabBuildCraft.PIPES, pipeWaterproof, pipeItemsIron);
 			pipeFluidsGold = buildPipe(PipeFluidsGold.class, "Golden Waterproof Pipe", CreativeTabBuildCraft.PIPES, pipeWaterproof, pipeItemsGold);
 			pipeFluidsEmerald = buildPipe(PipeFluidsEmerald.class, "Emerald Waterproof Pipe", CreativeTabBuildCraft.PIPES, pipeWaterproof, pipeItemsEmerald);
@@ -460,6 +469,10 @@ public class BuildCraftTransport extends BuildCraftMod {
 
 			for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
 				actionPipeDirection[direction.ordinal()] = new ActionPipeDirection(direction);
+			}
+
+			for (ValveState state : ValveState.VALUES) {
+			    actionValve[state.ordinal()] = new ActionValve(state);
 			}
 
 			for (PowerMode limit : PowerMode.VALUES) {
@@ -640,6 +653,13 @@ public class BuildCraftTransport extends BuildCraftMod {
 				technoPipeItemsSandstone,
 				technoPipeFluidsWood);
 
+		technoPipeFluidsQuartz.initialize(
+				Tier.StoneGear,
+				pipeFluidsQuartz,
+				new ItemStack(BuildCraftCore.stoneGearItem, 5),
+				technoPipeItemsQuartz,
+				technoPipeFluidsStone);
+
 		technoPipeFluidsIron.initialize(
 				Tier.StoneGear,
 				pipeFluidsIron,
@@ -744,13 +764,6 @@ public class BuildCraftTransport extends BuildCraftMod {
 		technoActionPipeWire.initialize(
 				Tier.Chipset,
 				actionPipeWire[0],
-				"",
-				Chipset.RED.getStack(5),
-				BuildCraftCore.technoSilicon);
-
-		technoActionPipeClose.initialize(
-				Tier.IronChipset,
-				actionPipeClose,
 				"",
 				Chipset.RED.getStack(5),
 				BuildCraftCore.technoSilicon);

@@ -63,6 +63,14 @@ public final class StatementIconProvider implements IIconProvider {
 	public static final int Trigger_FluidContainer_Below50 = 37;
 	public static final int Trigger_FluidContainer_Below75 = 38;
 
+    public static final int Action_Parameter_Direction_Down = 39;
+    public static final int Action_Parameter_Direction_Up = 40;
+    public static final int Action_Parameter_Direction_North = 41;
+    public static final int Action_Parameter_Direction_South = 42;
+    public static final int Action_Parameter_Direction_West = 43;
+    public static final int Action_Parameter_Direction_East = 44;
+
+
 	public static final int MAX = 45;
 
 	@SideOnly(Side.CLIENT)
@@ -120,5 +128,12 @@ public final class StatementIconProvider implements IIconProvider {
 		icons[StatementIconProvider.Trigger_FluidContainer_Below25] = iconRegister.registerIcon("buildcraft:triggers/trigger_liquidcontainer_below25");
 		icons[StatementIconProvider.Trigger_FluidContainer_Below50] = iconRegister.registerIcon("buildcraft:triggers/trigger_liquidcontainer_below50");
 		icons[StatementIconProvider.Trigger_FluidContainer_Below75] = iconRegister.registerIcon("buildcraft:triggers/trigger_liquidcontainer_below75");
+
+		icons[StatementIconProvider.Action_Parameter_Direction_Down] = iconRegister.registerIcon("buildcraft:triggers/trigger_dir_down");
+		icons[StatementIconProvider.Action_Parameter_Direction_Up] = iconRegister.registerIcon("buildcraft:triggers/trigger_dir_up");
+		icons[StatementIconProvider.Action_Parameter_Direction_North] = iconRegister.registerIcon("buildcraft:triggers/trigger_dir_north");
+		icons[StatementIconProvider.Action_Parameter_Direction_South] = iconRegister.registerIcon("buildcraft:triggers/trigger_dir_south");
+		icons[StatementIconProvider.Action_Parameter_Direction_West] = iconRegister.registerIcon("buildcraft:triggers/trigger_dir_west");
+		icons[StatementIconProvider.Action_Parameter_Direction_East] = iconRegister.registerIcon("buildcraft:triggers/trigger_dir_east");
 	}
 }

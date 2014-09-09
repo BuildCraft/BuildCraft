@@ -206,8 +206,7 @@ public final class Gate implements IGate {
 			for (int j = 0; j < MAX_PARAMETERS; ++j) {
 				if (data.hasKey("triggerParameters[" + i + "][" + j + "]")) {
 					NBTTagCompound cpt = data.getCompoundTag("triggerParameters[" + i + "][" + j + "]");
-					triggerParameters[i][j] = (ITriggerParameter) StatementManager.createParameter(cpt
-							.getString("kind"));
+					triggerParameters[i][j] = (ITriggerParameter) StatementManager.createParameter(cpt.getString("kind"));
 					triggerParameters[i][j].readFromNBT(cpt);
 				}
 			}

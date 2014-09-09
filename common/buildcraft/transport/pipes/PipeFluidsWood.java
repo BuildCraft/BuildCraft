@@ -57,10 +57,13 @@ public class PipeFluidsWood extends Pipe<PipeTransportFluids> implements IEnergy
 			}
 			return true;
 		}
-	};
+	    };
 
 	public PipeFluidsWood(Item item) {
-		super(new PipeTransportFluids(), item);
+	        super(new PipeTransportFluids(), item);
+
+		transport.flowRate = BuildCraftTransport.pipeFluidsBaseFlowRate;
+		transport.travelDelay = 12;
 	}
 
 	@Override
