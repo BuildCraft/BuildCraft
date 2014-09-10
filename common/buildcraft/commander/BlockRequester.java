@@ -8,8 +8,6 @@
  */
 package buildcraft.commander;
 
-import buildcraft.api.events.BlockInteractionEvent;
-import cpw.mods.fml.common.FMLCommonHandler;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.EntityLivingBase;
@@ -19,12 +17,14 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
 
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.BuildCraftBuilders;
+import buildcraft.api.events.BlockInteractionEvent;
 import buildcraft.core.BlockBuildCraft;
 import buildcraft.core.GuiIds;
 import buildcraft.core.utils.Utils;
@@ -49,8 +49,9 @@ public class BlockRequester extends BlockBuildCraft {
 
 		BlockInteractionEvent event = new BlockInteractionEvent(entityplayer, this);
 		FMLCommonHandler.instance().bus().post(event);
-		if (event.isCanceled())
-			return false;
+        if (event.isCanceled()) {
+            return false;
+        }
 
 		if (!world.isRemote) {
 			entityplayer.openGui(BuildCraftBuilders.instance, GuiIds.REQUESTER,

@@ -8,33 +8,8 @@
  */
 package buildcraft.transport;
 
-import buildcraft.BuildCraftTransport;
-import buildcraft.api.core.BCLog;
-import buildcraft.api.core.BlockIndex;
-import buildcraft.api.events.PipePlacedEvent;
-import buildcraft.api.gates.GateExpansions;
-import buildcraft.api.gates.IGateExpansion;
-import buildcraft.api.tools.IToolWrench;
-import buildcraft.api.transport.PipeWire;
-import buildcraft.core.BlockBuildCraft;
-import buildcraft.core.CoreConstants;
-import buildcraft.core.CreativeTabBuildCraft;
-import buildcraft.core.ItemMapLocation;
-import buildcraft.core.ItemRobot;
-import buildcraft.core.TileBuffer;
-import buildcraft.core.robots.DockingStation;
-import buildcraft.core.robots.EntityRobot;
-import buildcraft.core.utils.MatrixTranformations;
-import buildcraft.core.utils.Utils;
-import buildcraft.transport.gates.GateDefinition;
-import buildcraft.transport.gates.GateFactory;
-import buildcraft.transport.gates.ItemGate;
-import buildcraft.transport.render.PipeRendererWorld;
-import buildcraft.transport.utils.FacadeMatrix;
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.registry.GameRegistry;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import java.util.*;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
@@ -55,15 +30,32 @@ import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.registry.GameRegistry;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
 import net.minecraftforge.common.util.ForgeDirection;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Random;
+import buildcraft.BuildCraftTransport;
+import buildcraft.api.core.BCLog;
+import buildcraft.api.core.BlockIndex;
+import buildcraft.api.events.PipePlacedEvent;
+import buildcraft.api.gates.GateExpansions;
+import buildcraft.api.gates.IGateExpansion;
+import buildcraft.api.tools.IToolWrench;
+import buildcraft.api.transport.PipeWire;
+import buildcraft.core.*;
+import buildcraft.core.robots.DockingStation;
+import buildcraft.core.robots.EntityRobot;
+import buildcraft.core.utils.MatrixTranformations;
+import buildcraft.core.utils.Utils;
+import buildcraft.transport.gates.GateDefinition;
+import buildcraft.transport.gates.GateFactory;
+import buildcraft.transport.gates.ItemGate;
+import buildcraft.transport.render.PipeRendererWorld;
+import buildcraft.transport.utils.FacadeMatrix;
 
 
 public class BlockGenericPipe extends BlockBuildCraft {

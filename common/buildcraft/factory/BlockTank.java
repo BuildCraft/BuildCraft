@@ -8,8 +8,6 @@
  */
 package buildcraft.factory;
 
-import buildcraft.api.events.BlockInteractionEvent;
-import cpw.mods.fml.common.FMLCommonHandler;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
@@ -20,6 +18,7 @@ import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -28,6 +27,7 @@ import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
 
 import buildcraft.BuildCraftCore;
+import buildcraft.api.events.BlockInteractionEvent;
 import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.inventory.InvUtils;
 
@@ -93,8 +93,9 @@ public class BlockTank extends BlockContainer {
 
 		BlockInteractionEvent event = new BlockInteractionEvent(entityplayer, this);
 		FMLCommonHandler.instance().bus().post(event);
-		if (event.isCanceled())
-			return false;
+        if (event.isCanceled()) {
+            return false;
+        }
 
 		if (current != null) {
 			FluidStack liquid = FluidContainerRegistry.getFluidForFilledItem(current);

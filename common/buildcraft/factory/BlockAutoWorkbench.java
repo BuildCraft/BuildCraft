@@ -8,8 +8,6 @@
  */
 package buildcraft.factory;
 
-import buildcraft.api.events.BlockInteractionEvent;
-import cpw.mods.fml.common.FMLCommonHandler;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
@@ -17,10 +15,12 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
 
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 import buildcraft.BuildCraftFactory;
+import buildcraft.api.events.BlockInteractionEvent;
 import buildcraft.core.BlockBuildCraft;
 import buildcraft.core.GuiIds;
 import buildcraft.core.IItemPipe;
@@ -49,8 +49,9 @@ public class BlockAutoWorkbench extends BlockBuildCraft {
 		super.onBlockActivated(world, i, j, k, entityplayer, par6, par7, par8, par9);
 		BlockInteractionEvent event = new BlockInteractionEvent(entityplayer, this);
 		FMLCommonHandler.instance().bus().post(event);
-		if (event.isCanceled())
-			return false;
+        if (event.isCanceled()) {
+            return false;
+        }
 
 		// Drop through if the player is sneaking
 		if (entityplayer.isSneaking()) {

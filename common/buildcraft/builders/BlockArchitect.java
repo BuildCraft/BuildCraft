@@ -8,8 +8,6 @@
  */
 package buildcraft.builders;
 
-import buildcraft.api.events.BlockInteractionEvent;
-import cpw.mods.fml.common.FMLCommonHandler;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.EntityLivingBase;
@@ -20,9 +18,12 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
+import cpw.mods.fml.common.FMLCommonHandler;
+
 import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.BuildCraftBuilders;
+import buildcraft.api.events.BlockInteractionEvent;
 import buildcraft.api.tools.IToolWrench;
 import buildcraft.core.BlockMultiTexture;
 import buildcraft.core.CreativeTabBuildCraft;
@@ -31,107 +32,108 @@ import buildcraft.core.utils.Utils;
 
 public class BlockArchitect extends BlockMultiTexture {
 
-	public BlockArchitect() {
-		super(Material.iron, CreativeTabBuildCraft.BLOCKS);
-	}
+    public BlockArchitect() {
+        super(Material.iron, CreativeTabBuildCraft.BLOCKS);
+    }
 
-	@Override
-	public TileEntity createNewTileEntity(World world, int metadata) {
-		return new TileArchitect();
-	}
+    @Override
+    public TileEntity createNewTileEntity(World world, int metadata) {
+        return new TileArchitect();
+    }
 
-	@Override
-	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer entityplayer, int par6, float par7,
-			float par8, float par9) {
+    @Override
+    public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer entityplayer, int par6, float par7,
+                                    float par8, float par9) {
 
-		// Drop through if the player is sneaking
-		if (entityplayer.isSneaking()) {
-			return false;
-		}
+        // Drop through if the player is sneaking
+        if (entityplayer.isSneaking()) {
+            return false;
+        }
 
-		BlockInteractionEvent event = new BlockInteractionEvent(entityplayer, this);
-		FMLCommonHandler.instance().bus().post(event);
-		if (event.isCanceled())
-			return false;
+        BlockInteractionEvent event = new BlockInteractionEvent(entityplayer, this);
+        FMLCommonHandler.instance().bus().post(event);
+        if (event.isCanceled()) {
+            return false;
+        }
 
-		Item equipped = entityplayer.getCurrentEquippedItem() != null ? entityplayer.getCurrentEquippedItem().getItem() : null;
-		if (equipped instanceof IToolWrench && ((IToolWrench) equipped).canWrench(entityplayer, x, y, z)) {
+        Item equipped = entityplayer.getCurrentEquippedItem() != null ? entityplayer.getCurrentEquippedItem().getItem() : null;
+        if (equipped instanceof IToolWrench && ((IToolWrench) equipped).canWrench(entityplayer, x, y, z)) {
 
-			int meta = world.getBlockMetadata(x, y, z);
+            int meta = world.getBlockMetadata(x, y, z);
 
-			switch (ForgeDirection.values()[meta]) {
-			case WEST:
-				world.setBlockMetadataWithNotify(x, y, z, ForgeDirection.SOUTH.ordinal(), 0);
-				break;
-			case EAST:
-				world.setBlockMetadataWithNotify(x, y, z, ForgeDirection.NORTH.ordinal(), 0);
-				break;
-			case NORTH:
-				world.setBlockMetadataWithNotify(x, y, z, ForgeDirection.WEST.ordinal(), 0);
-				break;
-			case SOUTH:
-			default:
-				world.setBlockMetadataWithNotify(x, y, z, ForgeDirection.EAST.ordinal(), 0);
-				break;
-			}
+            switch (ForgeDirection.values()[meta]) {
+                case WEST:
+                    world.setBlockMetadataWithNotify(x, y, z, ForgeDirection.SOUTH.ordinal(), 0);
+                    break;
+                case EAST:
+                    world.setBlockMetadataWithNotify(x, y, z, ForgeDirection.NORTH.ordinal(), 0);
+                    break;
+                case NORTH:
+                    world.setBlockMetadataWithNotify(x, y, z, ForgeDirection.WEST.ordinal(), 0);
+                    break;
+                case SOUTH:
+                default:
+                    world.setBlockMetadataWithNotify(x, y, z, ForgeDirection.EAST.ordinal(), 0);
+                    break;
+            }
 
-			world.markBlockForUpdate(x, y, z);
-			((IToolWrench) equipped).wrenchUsed(entityplayer, x, y, z);
-			return true;
-		} else if (equipped instanceof ItemConstructionMarker) {
-			ItemConstructionMarker.link(entityplayer.getCurrentEquippedItem(), world, x, y, z);
+            world.markBlockForUpdate(x, y, z);
+            ((IToolWrench) equipped).wrenchUsed(entityplayer, x, y, z);
+            return true;
+        } else if (equipped instanceof ItemConstructionMarker) {
+            ItemConstructionMarker.link(entityplayer.getCurrentEquippedItem(), world, x, y, z);
 
-			return true;
-		} else {
+            return true;
+        } else {
 
-			if (!world.isRemote) {
-				entityplayer.openGui(BuildCraftBuilders.instance, GuiIds.ARCHITECT_TABLE, world, x, y, z);
-			}
-			return true;
+            if (!world.isRemote) {
+                entityplayer.openGui(BuildCraftBuilders.instance, GuiIds.ARCHITECT_TABLE, world, x, y, z);
+            }
+            return true;
 
-		}
-	}
+        }
+    }
 
-	@Override
-	public void breakBlock(World world, int i, int j, int k, Block block, int par6) {
-		Utils.preDestroyBlock(world, i, j, k);
+    @Override
+    public void breakBlock(World world, int i, int j, int k, Block block, int par6) {
+        Utils.preDestroyBlock(world, i, j, k);
 
-		super.breakBlock(world, i, j, k, block, par6);
-	}
+        super.breakBlock(world, i, j, k, block, par6);
+    }
 
-	@Override
-	public void onBlockPlacedBy(World world, int i, int j, int k, EntityLivingBase entityliving, ItemStack stack) {
-		super.onBlockPlacedBy(world, i, j, k, entityliving, stack);
+    @Override
+    public void onBlockPlacedBy(World world, int i, int j, int k, EntityLivingBase entityliving, ItemStack stack) {
+        super.onBlockPlacedBy(world, i, j, k, entityliving, stack);
 
-		ForgeDirection orientation = Utils.get2dOrientation(entityliving);
+        ForgeDirection orientation = Utils.get2dOrientation(entityliving);
 
-		world.setBlockMetadataWithNotify(i, j, k, orientation.getOpposite().ordinal(), 1);
-	}
+        world.setBlockMetadataWithNotify(i, j, k, orientation.getOpposite().ordinal(), 1);
+    }
 
-	@Override
-	public boolean renderAsNormalBlock() {
-		return false;
-	}
+    @Override
+    public boolean renderAsNormalBlock() {
+        return false;
+    }
 
-	@Override
-	public boolean isSideSolid(IBlockAccess world, int x, int y, int z, ForgeDirection side) {
-		return false;
-	}
+    @Override
+    public boolean isSideSolid(IBlockAccess world, int x, int y, int z, ForgeDirection side) {
+        return false;
+    }
 
-	@Override
-	public int getLightValue(IBlockAccess world, int x, int y, int z) {
-		return 1;
-	}
+    @Override
+    public int getLightValue(IBlockAccess world, int x, int y, int z) {
+        return 1;
+    }
 
-	/* MULTI TEXTURE */
-	@Override
-	public String getIconPrefix() {
-		return "architect_";
-	}
+    /* MULTI TEXTURE */
+    @Override
+    public String getIconPrefix() {
+        return "architect_";
+    }
 
-	@Override
-	public int getFrontSide(IBlockAccess world, int x, int y, int z) {
-		return world.getBlockMetadata(x, y, z);
-	}
+    @Override
+    public int getFrontSide(IBlockAccess world, int x, int y, int z) {
+        return world.getBlockMetadata(x, y, z);
+    }
 
 }

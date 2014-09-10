@@ -8,14 +8,9 @@
  */
 package buildcraft.energy;
 
-import buildcraft.BuildCraftCore;
-import buildcraft.api.events.BlockInteractionEvent;
-import buildcraft.core.BlockBuildCraft;
-import buildcraft.core.ICustomHighlight;
-import buildcraft.core.IItemPipe;
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import java.util.List;
+import java.util.Random;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
@@ -31,10 +26,18 @@ import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
 import net.minecraftforge.common.util.ForgeDirection;
 
-import java.util.List;
-import java.util.Random;
+import buildcraft.BuildCraftCore;
+import buildcraft.api.events.BlockInteractionEvent;
+import buildcraft.core.BlockBuildCraft;
+import buildcraft.core.ICustomHighlight;
+import buildcraft.core.IItemPipe;
 
 public class BlockEngine extends BlockBuildCraft implements ICustomHighlight {
 
@@ -130,8 +133,9 @@ public class BlockEngine extends BlockBuildCraft implements ICustomHighlight {
 
 		BlockInteractionEvent event = new BlockInteractionEvent(player, this);
 		FMLCommonHandler.instance().bus().post(event);
-		if (event.isCanceled())
-			return false;
+        if (event.isCanceled()) {
+            return false;
+        }
 
 		// Do not open guis when having a pipe in hand
 		if (player.getCurrentEquippedItem() != null) {

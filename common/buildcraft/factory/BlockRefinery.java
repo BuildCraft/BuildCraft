@@ -8,8 +8,6 @@
  */
 package buildcraft.factory;
 
-import buildcraft.api.events.BlockInteractionEvent;
-import cpw.mods.fml.common.FMLCommonHandler;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
@@ -22,6 +20,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
 
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -30,6 +29,7 @@ import net.minecraftforge.fluids.FluidContainerRegistry;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftFactory;
+import buildcraft.api.events.BlockInteractionEvent;
 import buildcraft.api.tools.IToolWrench;
 import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.GuiIds;
@@ -112,8 +112,9 @@ public class BlockRefinery extends BlockContainer {
 		}
 		BlockInteractionEvent event = new BlockInteractionEvent(player, this);
 		FMLCommonHandler.instance().bus().post(event);
-		if (event.isCanceled())
-			return false;
+        if (event.isCanceled()) {
+            return false;
+        }
 
 		ItemStack current = player.getCurrentEquippedItem();
 		Item equipped = current != null ? current.getItem() : null;

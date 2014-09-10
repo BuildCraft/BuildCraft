@@ -8,8 +8,6 @@
  */
 package buildcraft.builders;
 
-import buildcraft.api.events.BlockInteractionEvent;
-import cpw.mods.fml.common.FMLCommonHandler;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.EntityLivingBase;
@@ -19,9 +17,11 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
+import buildcraft.api.events.BlockInteractionEvent;
 import buildcraft.core.utils.Utils;
 
 public class BlockConstructionMarker extends BlockMarker {
@@ -61,8 +61,9 @@ public class BlockConstructionMarker extends BlockMarker {
 
 		BlockInteractionEvent event = new BlockInteractionEvent(entityplayer, this);
 		FMLCommonHandler.instance().bus().post(event);
-		if (event.isCanceled())
-			return false;
+        if (event.isCanceled()) {
+            return false;
+        }
 
 		TileConstructionMarker marker = (TileConstructionMarker) world.getTileEntity(x, y, z);
 

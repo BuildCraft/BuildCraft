@@ -8,9 +8,8 @@
  */
 package buildcraft.core;
 
-import buildcraft.api.events.BlockPlacedDownEvent;
-import buildcraft.core.utils.Utils;
-import cpw.mods.fml.common.FMLCommonHandler;
+import java.util.Random;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
@@ -21,7 +20,10 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
-import java.util.Random;
+import cpw.mods.fml.common.FMLCommonHandler;
+
+import buildcraft.api.events.BlockPlacedDownEvent;
+import buildcraft.core.utils.Utils;
 
 public abstract class BlockBuildCraft extends BlockContainer {
 
