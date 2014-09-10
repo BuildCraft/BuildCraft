@@ -8,6 +8,8 @@
  */
 package buildcraft.builders;
 
+import buildcraft.api.events.BlockInteractionEvent;
+import cpw.mods.fml.common.FMLCommonHandler;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.EntityLivingBase;
@@ -46,6 +48,11 @@ public class BlockArchitect extends BlockMultiTexture {
 		if (entityplayer.isSneaking()) {
 			return false;
 		}
+
+		BlockInteractionEvent event = new BlockInteractionEvent(entityplayer, this);
+		FMLCommonHandler.instance().bus().post(event);
+		if (event.isCanceled())
+			return false;
 
 		Item equipped = entityplayer.getCurrentEquippedItem() != null ? entityplayer.getCurrentEquippedItem().getItem() : null;
 		if (equipped instanceof IToolWrench && ((IToolWrench) equipped).canWrench(entityplayer, x, y, z)) {

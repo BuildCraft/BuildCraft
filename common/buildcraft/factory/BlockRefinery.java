@@ -8,6 +8,8 @@
  */
 package buildcraft.factory;
 
+import buildcraft.api.events.BlockInteractionEvent;
+import cpw.mods.fml.common.FMLCommonHandler;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
@@ -108,6 +110,10 @@ public class BlockRefinery extends BlockContainer {
 		if (!(tile instanceof TileRefinery)) {
 			return false;
 		}
+		BlockInteractionEvent event = new BlockInteractionEvent(player, this);
+		FMLCommonHandler.instance().bus().post(event);
+		if (event.isCanceled())
+			return false;
 
 		ItemStack current = player.getCurrentEquippedItem();
 		Item equipped = current != null ? current.getItem() : null;
@@ -126,6 +132,7 @@ public class BlockRefinery extends BlockContainer {
 				return true;
 			}
 		}
+
 
 		if (!world.isRemote) {
 			player.openGui(BuildCraftFactory.instance, GuiIds.REFINERY, world, x, y, z);

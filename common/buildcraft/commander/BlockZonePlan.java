@@ -8,6 +8,8 @@
  */
 package buildcraft.commander;
 
+import buildcraft.api.events.BlockInteractionEvent;
+import cpw.mods.fml.common.FMLCommonHandler;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.EntityLivingBase;
@@ -44,6 +46,11 @@ public class BlockZonePlan extends BlockBuildCraft {
 	@Override
 	public boolean onBlockActivated(World world, int i, int j, int k, EntityPlayer entityplayer, int par6, float par7,
 			float par8, float par9) {
+
+		BlockInteractionEvent event = new BlockInteractionEvent(entityplayer, this);
+		FMLCommonHandler.instance().bus().post(event);
+		if (event.isCanceled())
+			return false;
 
 		if (!world.isRemote) {
 			entityplayer.openGui(BuildCraftBuilders.instance, GuiIds.MAP,

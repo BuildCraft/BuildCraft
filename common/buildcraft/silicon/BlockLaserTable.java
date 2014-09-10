@@ -8,10 +8,15 @@
  */
 package buildcraft.silicon;
 
-import java.util.List;
-
+import buildcraft.BuildCraftSilicon;
+import buildcraft.api.events.BlockInteractionEvent;
+import buildcraft.core.BlockBuildCraft;
+import buildcraft.core.CreativeTabBuildCraft;
+import buildcraft.core.utils.Utils;
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
@@ -22,14 +27,9 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import java.util.List;
 
-import buildcraft.BuildCraftSilicon;
-import buildcraft.core.CreativeTabBuildCraft;
-import buildcraft.core.utils.Utils;
-
-public class BlockLaserTable extends BlockContainer {
+public class BlockLaserTable extends BlockBuildCraft {
 
 	@SideOnly(Side.CLIENT)
 	private IIcon[][] icons;
@@ -62,6 +62,11 @@ public class BlockLaserTable extends BlockContainer {
 		if (entityplayer.isSneaking()) {
 			return false;
 		}
+
+		BlockInteractionEvent event = new BlockInteractionEvent(entityplayer, this);
+		FMLCommonHandler.instance().bus().post(event);
+		if (event.isCanceled())
+			return false;
 
 		if (!world.isRemote) {
 			int meta = world.getBlockMetadata(i, j, k);

@@ -8,6 +8,8 @@
  */
 package buildcraft.factory;
 
+import buildcraft.api.events.BlockInteractionEvent;
+import cpw.mods.fml.common.FMLCommonHandler;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
@@ -60,6 +62,11 @@ public class BlockHopper extends BlockBuildCraft {
 		if (entityplayer.isSneaking()) {
 			return false;
 		}
+
+		BlockInteractionEvent event = new BlockInteractionEvent(entityplayer, this);
+		FMLCommonHandler.instance().bus().post(event);
+		if (event.isCanceled())
+			return false;
 
 		if (entityplayer.getCurrentEquippedItem() != null) {
 			if (entityplayer.getCurrentEquippedItem().getItem() instanceof IItemPipe) {

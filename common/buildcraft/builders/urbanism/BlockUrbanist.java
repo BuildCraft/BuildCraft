@@ -8,6 +8,8 @@
  */
 package buildcraft.builders.urbanism;
 
+import buildcraft.api.events.BlockInteractionEvent;
+import cpw.mods.fml.common.FMLCommonHandler;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
@@ -36,6 +38,11 @@ public class BlockUrbanist extends BlockBuildCraft {
 			entityplayer.openGui(BuildCraftBuilders.instance, GuiIds.URBANIST,
 					world, i, j, k);
 		}
+
+		BlockInteractionEvent event = new BlockInteractionEvent(entityplayer, this);
+		FMLCommonHandler.instance().bus().post(event);
+		if (event.isCanceled())
+			return false;
 
 		return true;
 

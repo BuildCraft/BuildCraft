@@ -8,6 +8,8 @@
  */
 package buildcraft.builders;
 
+import buildcraft.api.events.BlockInteractionEvent;
+import cpw.mods.fml.common.FMLCommonHandler;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
@@ -75,6 +77,10 @@ public class BlockBuilder extends BlockContainer {
 		if (entityplayer.isSneaking()) {
 			return false;
 		}
+		BlockInteractionEvent event = new BlockInteractionEvent(entityplayer, this);
+		FMLCommonHandler.instance().bus().post(event);
+		if (event.isCanceled())
+			return false;
 
 		TileEntity tile = world.getTileEntity(x, y, z);
 		TileBuilder builder = tile instanceof TileBuilder ? (TileBuilder) tile : null;
