@@ -8,7 +8,14 @@
  */
 package buildcraft.transport;
 
-import java.util.*;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Random;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -46,7 +53,12 @@ import buildcraft.api.gates.GateExpansions;
 import buildcraft.api.gates.IGateExpansion;
 import buildcraft.api.tools.IToolWrench;
 import buildcraft.api.transport.PipeWire;
-import buildcraft.core.*;
+import buildcraft.core.BlockBuildCraft;
+import buildcraft.core.CoreConstants;
+import buildcraft.core.CreativeTabBuildCraft;
+import buildcraft.core.ItemMapLocation;
+import buildcraft.core.ItemRobot;
+import buildcraft.core.TileBuffer;
 import buildcraft.core.robots.DockingStation;
 import buildcraft.core.robots.EntityRobot;
 import buildcraft.core.utils.MatrixTranformations;

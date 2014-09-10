@@ -10,6 +10,8 @@ package buildcraft.transport;
 
 import java.util.List;
 
+import org.apache.logging.log4j.Level;
+
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
@@ -27,8 +29,6 @@ import buildcraft.api.core.IIconProvider;
 import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.IItemPipe;
 import buildcraft.core.ItemBuildCraft;
-
-import org.apache.logging.log4j.Level;
 
 public class ItemPipe extends ItemBuildCraft implements IItemPipe {
 
