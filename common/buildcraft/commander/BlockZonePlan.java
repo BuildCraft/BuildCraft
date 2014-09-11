@@ -49,9 +49,9 @@ public class BlockZonePlan extends BlockBuildCraft {
 
 		BlockInteractionEvent event = new BlockInteractionEvent(entityplayer, this);
 		FMLCommonHandler.instance().bus().post(event);
-        if (event.isCanceled()) {
-            return false;
-        }
+		if (event.isCanceled()) {
+			return false;
+		}
 
 		if (!world.isRemote) {
 			entityplayer.openGui(BuildCraftBuilders.instance, GuiIds.MAP,

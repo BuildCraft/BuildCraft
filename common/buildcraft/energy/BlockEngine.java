@@ -133,9 +133,9 @@ public class BlockEngine extends BlockBuildCraft implements ICustomHighlight {
 
 		BlockInteractionEvent event = new BlockInteractionEvent(player, this);
 		FMLCommonHandler.instance().bus().post(event);
-        if (event.isCanceled()) {
-            return false;
-        }
+		if (event.isCanceled()) {
+			return false;
+		}
 
 		// Do not open guis when having a pipe in hand
 		if (player.getCurrentEquippedItem() != null) {

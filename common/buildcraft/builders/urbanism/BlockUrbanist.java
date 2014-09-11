@@ -42,9 +42,9 @@ public class BlockUrbanist extends BlockBuildCraft {
 
 		BlockInteractionEvent event = new BlockInteractionEvent(entityplayer, this);
 		FMLCommonHandler.instance().bus().post(event);
-        if (event.isCanceled()) {
-            return false;
-        }
+		if (event.isCanceled()) {
+			return false;
+		}
 
 		return true;
 

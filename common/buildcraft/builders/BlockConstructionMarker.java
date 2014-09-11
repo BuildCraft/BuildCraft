@@ -61,9 +61,9 @@ public class BlockConstructionMarker extends BlockMarker {
 
 		BlockInteractionEvent event = new BlockInteractionEvent(entityplayer, this);
 		FMLCommonHandler.instance().bus().post(event);
-        if (event.isCanceled()) {
-            return false;
-        }
+		if (event.isCanceled()) {
+			return false;
+		}
 
 		TileConstructionMarker marker = (TileConstructionMarker) world.getTileEntity(x, y, z);
 

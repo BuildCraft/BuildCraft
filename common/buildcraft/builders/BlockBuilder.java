@@ -79,9 +79,9 @@ public class BlockBuilder extends BlockContainer {
 		}
 		BlockInteractionEvent event = new BlockInteractionEvent(entityplayer, this);
 		FMLCommonHandler.instance().bus().post(event);
-        if (event.isCanceled()) {
-            return false;
-        }
+		if (event.isCanceled()) {
+			return false;
+		}
 
 		TileEntity tile = world.getTileEntity(x, y, z);
 		TileBuilder builder = tile instanceof TileBuilder ? (TileBuilder) tile : null;

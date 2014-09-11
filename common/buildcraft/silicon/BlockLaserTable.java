@@ -68,8 +68,8 @@ public class BlockLaserTable extends BlockBuildCraft {
 		BlockInteractionEvent event = new BlockInteractionEvent(entityplayer, this);
 		FMLCommonHandler.instance().bus().post(event);
 		if (event.isCanceled()) {
-            return false;
-        }
+			return false;
+		}
 
 		if (!world.isRemote) {
 			int meta = world.getBlockMetadata(i, j, k);

@@ -49,9 +49,9 @@ public class BlockAutoWorkbench extends BlockBuildCraft {
 		super.onBlockActivated(world, i, j, k, entityplayer, par6, par7, par8, par9);
 		BlockInteractionEvent event = new BlockInteractionEvent(entityplayer, this);
 		FMLCommonHandler.instance().bus().post(event);
-        if (event.isCanceled()) {
-            return false;
-        }
+		if (event.isCanceled()) {
+			return false;
+		}
 
 		// Drop through if the player is sneaking
 		if (entityplayer.isSneaking()) {

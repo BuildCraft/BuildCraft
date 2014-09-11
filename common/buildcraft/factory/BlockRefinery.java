@@ -112,9 +112,9 @@ public class BlockRefinery extends BlockContainer {
 		}
 		BlockInteractionEvent event = new BlockInteractionEvent(player, this);
 		FMLCommonHandler.instance().bus().post(event);
-        if (event.isCanceled()) {
-            return false;
-        }
+		if (event.isCanceled()) {
+			 return false;
+		}
 
 		ItemStack current = player.getCurrentEquippedItem();
 		Item equipped = current != null ? current.getItem() : null;
