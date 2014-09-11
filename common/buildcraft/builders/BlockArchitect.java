@@ -43,7 +43,7 @@ public class BlockArchitect extends BlockMultiTexture {
 
 	@Override
 	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer entityplayer, int par6, float par7,
-									float par8, float par9) {
+	                                float par8, float par9) {
 
 		// Drop through if the player is sneaking
 		if (entityplayer.isSneaking()) {
