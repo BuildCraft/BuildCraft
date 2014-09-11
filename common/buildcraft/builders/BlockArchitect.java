@@ -43,7 +43,7 @@ public class BlockArchitect extends BlockMultiTexture {
 
 	@Override
 	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer entityplayer, int par6, float par7,
-	                                float par8, float par9) {
+			float par8, float par9) {
 
 		// Drop through if the player is sneaking
 		if (entityplayer.isSneaking()) {
@@ -62,19 +62,19 @@ public class BlockArchitect extends BlockMultiTexture {
 			int meta = world.getBlockMetadata(x, y, z);
 
 			switch (ForgeDirection.values()[meta]) {
-				case WEST:
-					world.setBlockMetadataWithNotify(x, y, z, ForgeDirection.SOUTH.ordinal(), 0);
-					break;
-				case EAST:
-					world.setBlockMetadataWithNotify(x, y, z, ForgeDirection.NORTH.ordinal(), 0);
-					break;
-				case NORTH:
-					world.setBlockMetadataWithNotify(x, y, z, ForgeDirection.WEST.ordinal(), 0);
-					break;
-				case SOUTH:
-				default:
-					world.setBlockMetadataWithNotify(x, y, z, ForgeDirection.EAST.ordinal(), 0);
-					break;
+			case WEST:
+				world.setBlockMetadataWithNotify(x, y, z, ForgeDirection.SOUTH.ordinal(), 0);
+				break;
+			case EAST:
+				world.setBlockMetadataWithNotify(x, y, z, ForgeDirection.NORTH.ordinal(), 0);
+				break;
+			case NORTH:
+				world.setBlockMetadataWithNotify(x, y, z, ForgeDirection.WEST.ordinal(), 0);
+				break;
+			case SOUTH:
+			default:
+				world.setBlockMetadataWithNotify(x, y, z, ForgeDirection.EAST.ordinal(), 0);
+				break;
 			}
 
 			world.markBlockForUpdate(x, y, z);
