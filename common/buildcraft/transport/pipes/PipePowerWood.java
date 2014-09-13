@@ -175,7 +175,10 @@ public class PipePowerWood extends Pipe<PipeTransportPower> implements IPowerRec
 	@Override
 	public void writeToNBT(NBTTagCompound data) {
 		super.writeToNBT(data);
-		battery.writeToNBT(data);
+
+		NBTTagCompound batteryNBT = new NBTTagCompound();
+		battery.writeToNBT(batteryNBT);
+		data.setTag("battery", batteryNBT);
 
 		for (int i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
 			data.setBoolean("powerSources[" + i + "]", powerSources[i]);
@@ -185,7 +188,7 @@ public class PipePowerWood extends Pipe<PipeTransportPower> implements IPowerRec
 	@Override
 	public void readFromNBT(NBTTagCompound data) {
 		super.readFromNBT(data);
-		battery.readFromNBT(data);
+		battery.readFromNBT(data.getCompoundTag("battery"));
 
 		for (int i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
 			powerSources[i] = data.getBoolean("powerSources[" + i + "]");

@@ -441,7 +441,9 @@ public class EntityRobot extends EntityRobotBase implements
 		laser.writeToNBT(nbtLaser);
 		nbt.setTag("laser", nbtLaser);
 
-		battery.writeToNBT(nbt);
+		NBTTagCompound batteryNBT = new NBTTagCompound();
+		battery.writeToNBT(batteryNBT);
+		nbt.setTag("battery", batteryNBT);
 
 		if (itemInUse != null) {
 			NBTTagCompound itemNBT = new NBTTagCompound();
@@ -498,7 +500,7 @@ public class EntityRobot extends EntityRobotBase implements
 
 		laser.readFromNBT(nbt.getCompoundTag("laser"));
 
-		battery.readFromNBT(nbt);
+		battery.readFromNBT(nbt.getCompoundTag("battery"));
 
 		if (nbt.hasKey("itemInUse")) {
 			itemInUse = ItemStack.loadItemStackFromNBT(nbt.getCompoundTag("itemInUse"));

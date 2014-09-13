@@ -135,7 +135,9 @@ public abstract class TileBuildCraft extends TileEntity implements ISynchronized
 		super.writeToNBT(nbt);
 		nbt.setString("owner", owner);
 		if (battery != null) {
-			battery.writeToNBT(nbt);
+			NBTTagCompound batteryNBT = new NBTTagCompound();
+			battery.writeToNBT(batteryNBT);
+			nbt.setTag("battery", batteryNBT);
 		}
 	}
 
@@ -146,7 +148,7 @@ public abstract class TileBuildCraft extends TileEntity implements ISynchronized
 			owner = nbt.getString("owner");
 		}
 		if (battery != null) {
-			battery.readFromNBT(nbt);
+			battery.readFromNBT(nbt.getCompoundTag("battery"));
 		}
 	}
 
