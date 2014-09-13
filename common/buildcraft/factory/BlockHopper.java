@@ -15,11 +15,13 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
 
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftFactory;
+import buildcraft.api.events.BlockInteractionEvent;
 import buildcraft.core.BlockBuildCraft;
 import buildcraft.core.GuiIds;
 import buildcraft.core.IItemPipe;
@@ -58,6 +60,12 @@ public class BlockHopper extends BlockBuildCraft {
 
 		// Drop through if the player is sneaking
 		if (entityplayer.isSneaking()) {
+			return false;
+		}
+
+		BlockInteractionEvent event = new BlockInteractionEvent(entityplayer, this);
+		FMLCommonHandler.instance().bus().post(event);
+		if (event.isCanceled()) {
 			return false;
 		}
 

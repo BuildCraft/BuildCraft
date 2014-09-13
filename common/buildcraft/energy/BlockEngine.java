@@ -27,12 +27,14 @@ import net.minecraft.util.Vec3;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.BuildCraftCore;
+import buildcraft.api.events.BlockInteractionEvent;
 import buildcraft.core.BlockBuildCraft;
 import buildcraft.core.ICustomHighlight;
 import buildcraft.core.IItemPipe;
@@ -128,6 +130,12 @@ public class BlockEngine extends BlockBuildCraft implements ICustomHighlight {
 //		if (player.isSneaking()) {
 //			return false;
 //		}
+
+		BlockInteractionEvent event = new BlockInteractionEvent(player, this);
+		FMLCommonHandler.instance().bus().post(event);
+		if (event.isCanceled()) {
+			return false;
+		}
 
 		// Do not open guis when having a pipe in hand
 		if (player.getCurrentEquippedItem() != null) {

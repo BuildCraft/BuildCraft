@@ -18,10 +18,12 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
 
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 import buildcraft.BuildCraftBuilders;
+import buildcraft.api.events.BlockInteractionEvent;
 import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.GuiIds;
 
@@ -42,6 +44,11 @@ public class BlockBlueprintLibrary extends BlockContainer {
 
 		// Drop through if the player is sneaking
 		if (entityplayer.isSneaking()) {
+			return false;
+		}
+		BlockInteractionEvent event = new BlockInteractionEvent(entityplayer, this);
+		FMLCommonHandler.instance().bus().post(event);
+		if (event.isCanceled()) {
 			return false;
 		}
 

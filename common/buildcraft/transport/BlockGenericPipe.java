@@ -8,6 +8,7 @@
  */
 package buildcraft.transport;
 
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -37,6 +38,7 @@ import net.minecraft.util.Vec3;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -46,6 +48,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.BlockIndex;
+import buildcraft.api.events.PipePlacedEvent;
 import buildcraft.api.gates.GateExpansions;
 import buildcraft.api.gates.IGateExpansion;
 import buildcraft.api.tools.IToolWrench;
@@ -1108,7 +1111,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 		return null;
 	}
 
-	public static boolean placePipe(Pipe<?> pipe, World world, int i, int j, int k, Block block, int meta) {
+	public static boolean placePipe(Pipe<?> pipe, World world, int i, int j, int k, Block block, int meta, EntityPlayer player) {
 		if (world.isRemote) {
 			return true;
 		}
@@ -1121,6 +1124,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 				TileGenericPipe tilePipe = (TileGenericPipe) tile;
 				tilePipe.initialize(pipe);
 				tilePipe.sendUpdateToClient();
+				FMLCommonHandler.instance().bus().post(new PipePlacedEvent(player, pipe.item.getUnlocalizedName()));
 			}
 		}
 

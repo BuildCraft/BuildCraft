@@ -10,7 +10,6 @@ package buildcraft.silicon;
 
 import java.util.List;
 
-import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.Entity;
@@ -28,10 +27,11 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 import net.minecraftforge.common.util.ForgeDirection;
 
+import buildcraft.core.BlockBuildCraft;
 import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.ICustomHighlight;
 
-public class BlockLaser extends BlockContainer implements ICustomHighlight {
+public class BlockLaser extends BlockBuildCraft implements ICustomHighlight {
 
 	private static final AxisAlignedBB[][] boxes = {
 			{AxisAlignedBB.getBoundingBox(0.0, 0.75, 0.0, 1.0, 1.0, 1.0), AxisAlignedBB.getBoundingBox(0.3125, 0.1875, 0.3125, 0.6875, 0.75, 0.6875)}, // -Y

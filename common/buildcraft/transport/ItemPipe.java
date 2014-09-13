@@ -88,7 +88,7 @@ public class ItemPipe extends ItemBuildCraft implements IItemPipe {
 				return true;
 			}
 
-			if (BlockGenericPipe.placePipe(pipe, world, i, j, k, block, 0)) {
+			if (BlockGenericPipe.placePipe(pipe, world, i, j, k, block, 0, entityplayer)) {
 				block.onBlockPlacedBy(world, i, j, k, entityplayer, itemstack);
 
 				// TODO: Fix sound

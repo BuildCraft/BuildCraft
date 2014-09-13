@@ -17,9 +17,11 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
+import buildcraft.api.events.BlockInteractionEvent;
 import buildcraft.core.utils.Utils;
 
 public class BlockConstructionMarker extends BlockMarker {
@@ -56,6 +58,12 @@ public class BlockConstructionMarker extends BlockMarker {
 	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer entityplayer, int par6, float par7,
 			float par8, float par9) {
 		super.onBlockActivated(world, x, y, z, entityplayer, par6, par7, par8, par9);
+
+		BlockInteractionEvent event = new BlockInteractionEvent(entityplayer, this);
+		FMLCommonHandler.instance().bus().post(event);
+		if (event.isCanceled()) {
+			return false;
+		}
 
 		TileConstructionMarker marker = (TileConstructionMarker) world.getTileEntity(x, y, z);
 

@@ -14,11 +14,15 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
+import cpw.mods.fml.common.FMLCommonHandler;
+
+import buildcraft.api.events.BlockPlacedDownEvent;
 import buildcraft.core.utils.Utils;
 
 public abstract class BlockBuildCraft extends BlockContainer {
@@ -36,9 +40,11 @@ public abstract class BlockBuildCraft extends BlockContainer {
 		setHardness(5F);
 	}
 
+
 	@Override
 	public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase entity, ItemStack stack) {
 		super.onBlockPlacedBy(world, x, y, z, entity, stack);
+		FMLCommonHandler.instance().bus().post(new BlockPlacedDownEvent((EntityPlayer) entity, world.getBlock(x, y, z)));
 		TileEntity tile = world.getTileEntity(x, y, z);
 		if (tile instanceof TileBuildCraft) {
 			((TileBuildCraft) tile).onBlockPlacedBy(entity, stack);
