@@ -14,6 +14,8 @@ features or change existing behaviour or balance, please discuss it on the featu
 Do not submit pull requests which solely "fix" formatting. As these kinds of changes are usually very intrusive in commit history and everyone has their own idea what "proper formatting" is, they should be done by one of the main contributors. 
 Please only submit "code cleanup", if the changes actually have a substantial impact on readability.
 
+PR implementing new features or changing large portions of code are helpful. But if you're doing such a change and if it gets accepted, please don't "fire and forget". Complex changes are introducing bugs, and as thourough as testing and peer review may be, there will be bugs. Please carry on playing your changes after initial commit and fix residual issues. It is extremely frustrating for others to spend days fixing regressions introduced by unmaintained submissions.
+
 ### Reporting issues
 * Do not open an issue if you're not planning to fix it, instead open a thread on http://mod-buildcraft.com/forums/index.php?board=2.0
 * Before reporting an issue, please check that it has not been reported before.
