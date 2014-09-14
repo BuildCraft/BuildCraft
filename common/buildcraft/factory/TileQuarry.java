@@ -18,6 +18,7 @@ import com.google.common.collect.Sets;
 import net.minecraft.block.Block;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
@@ -53,7 +54,7 @@ import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.BlockUtil;
 import buildcraft.core.utils.Utils;
 
-public class TileQuarry extends TileAbstractBuilder implements IMachine {
+public class TileQuarry extends TileAbstractBuilder implements IMachine, ISidedInventory {
 
 	private static enum Stage {
 		BUILDING,
@@ -856,5 +857,20 @@ public class TileQuarry extends TileAbstractBuilder implements IMachine {
 	@Override
 	public Box getBox() {
 		return box;
+	}
+
+	@Override
+	public int[] getAccessibleSlotsFromSide(int side) {
+		return new int[] {0};
+	}
+
+	@Override
+	public boolean canInsertItem(int p1, ItemStack p2, int p3) {
+		return true;
+	}
+
+	@Override
+	public boolean canExtractItem(int p1, ItemStack p2, int p3) {
+		return false;
 	}
 }
