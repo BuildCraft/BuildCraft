@@ -214,4 +214,8 @@ public class SchematicEntity extends Schematic {
 		return false;
 	}
 
+	@Override
+	public int buildTime() {
+		return 5;
+	}
 }

@@ -46,6 +46,8 @@ public abstract class BptBuilderBase implements IAreaProvider {
 	protected int x, y, z;
 	protected boolean initialized = false;
 
+	private long nextBuildDate = 0;
+
 	public BptBuilderBase(BlueprintBase bluePrint, World world, int x, int y, int z) {
 		this.blueprint = bluePrint;
 		this.x = x;
@@ -71,13 +73,23 @@ public abstract class BptBuilderBase implements IAreaProvider {
 			initialized = true;
 		}
 
+		if (world.getTotalWorldTime() < nextBuildDate) {
+			return false;
+		}
+
 		BuildingSlot slot = getNextBlock(world, builder);
 
-		return buildSlot(world, builder, slot, x + 0.5F, y + 0.5F, z + 0.5F);
+		if (buildSlot(world, builder, slot, x + 0.5F, y + 0.5F, z + 0.5F)) {
+			nextBuildDate = world.getTotalWorldTime() + slot.buildTime();
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	public boolean buildSlot(World world, IBuildingItemsProvider builder, BuildingSlot slot, double x, double y,
 			double z) {
+
 		if (!initialized) {
 			initialize();
 			initialized = true;

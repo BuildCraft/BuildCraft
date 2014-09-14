@@ -67,4 +67,6 @@ public abstract class BuildingSlot {
 
 	public abstract int getEnergyRequirement();
 
+	public abstract int buildTime();
+
 }

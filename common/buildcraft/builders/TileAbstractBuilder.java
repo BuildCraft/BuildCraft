@@ -17,7 +17,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import buildcraft.api.blueprints.ITileBuilder;
 import buildcraft.api.blueprints.SchematicRegistry;
 import buildcraft.api.core.NetworkData;
-import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.core.IBoxProvider;
 import buildcraft.core.LaserData;
 import buildcraft.core.RFBattery;
@@ -41,8 +40,6 @@ public abstract class TileAbstractBuilder extends TileBuildCraft implements ITil
 	public LinkedList<LaserData> pathLasers = new LinkedList<LaserData> ();
 
 	public ArrayList<BuildingItem> buildersInAction = new ArrayList<BuildingItem>();
-
-	protected SafeTimeTracker buildTracker = new SafeTimeTracker(5);
 
 	private int rfPrev = 0;
 	private int rfUnchangedCycles = 0;

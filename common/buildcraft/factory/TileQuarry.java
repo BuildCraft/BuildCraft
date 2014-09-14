@@ -167,9 +167,7 @@ public class TileQuarry extends TileAbstractBuilder implements IMachine {
 
 		if (stage == Stage.BUILDING) {
 			if (builder != null && !builder.isDone(this)) {
-				if (buildTracker.markTimeIfDelay(worldObj)) {
-					builder.buildNextSlot(worldObj, this, xCoord, yCoord, zCoord);
-				}
+				builder.buildNextSlot(worldObj, this, xCoord, yCoord, zCoord);
 			} else {
 				stage = Stage.IDLE;
 			}

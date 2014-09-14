@@ -695,14 +695,10 @@ public class TileBuilder extends TileAbstractBuilder implements IMachine, IFluid
 	}
 
 	public void build () {
-		if (!buildTracker.markTimeIfDelay(worldObj)) {
-			return;
-		}
-
 		if (currentBuilder != null) {
-			currentBuilder.buildNextSlot(worldObj, this, xCoord, yCoord, zCoord);
-
-			updateRequirements();
+			if (currentBuilder.buildNextSlot(worldObj, this, xCoord, yCoord, zCoord)) {
+				updateRequirements();
+			}
 		}
 	}
 

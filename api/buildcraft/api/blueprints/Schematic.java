@@ -275,4 +275,12 @@ public abstract class Schematic {
 	public void readFromNBT(NBTTagCompound nbt, MappingRegistry registry) {
 
 	}
+
+	/**
+	 * Returns the number of cycles to wait after building this schematic. Tiles
+	 * and entities typically require more wait, around 5 cycles.
+	 */
+	public int buildTime() {
+		return 1;
+	}
 }

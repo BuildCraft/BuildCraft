@@ -176,4 +176,13 @@ public class BuildingSlotBlock extends BuildingSlot {
 		return schematic.getEnergyRequirement(stackConsumed);
 	}
 
+	@Override
+	public int buildTime() {
+		if (schematic == null) {
+			return 1;
+		} else {
+			return schematic.buildTime();
+		}
+	}
+
 }

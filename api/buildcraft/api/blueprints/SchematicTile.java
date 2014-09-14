@@ -112,4 +112,9 @@ public class SchematicTile extends SchematicBlock {
 
 		tileNBT = nbt.getCompoundTag("blockCpt");
 	}
+
+	@Override
+	public int buildTime() {
+		return 5;
+	}
 }
