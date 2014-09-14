@@ -548,10 +548,10 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 	public boolean isPoweredTile(TileEntity tile, ForgeDirection side) {
 		if (tile == null) {
 			return false;
-		} else if (tile instanceof IPowerReceptor) {
-			return ((IPowerReceptor) tile).getPowerReceiver(side.getOpposite()) != null;
 		} else if (tile instanceof IEnergyHandler) {
 			return ((IEnergyHandler) tile).canConnectEnergy(side.getOpposite());
+		} else if (tile instanceof IPowerReceptor) {
+			return ((IPowerReceptor) tile).getPowerReceiver(side.getOpposite()) != null;
 		} else {
 			return false;
 		}
