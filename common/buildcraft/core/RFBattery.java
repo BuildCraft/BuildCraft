@@ -14,10 +14,12 @@ public class RFBattery implements IEnergyStorage {
 	}
 
 	public void readFromNBT(NBTTagCompound tag) {
-		this.energy = tag.getInteger("energy");
-		this.maxEnergy = tag.getInteger("maxEnergy");
-		this.maxReceive = tag.getInteger("maxReceive");
-		this.maxExtract = tag.getInteger("maxExtract");
+		if (tag.hasKey("energy") && tag.hasKey("maxEnergy") && tag.hasKey("maxReceive") && tag.hasKey("maxExtract")) {
+			this.energy = tag.getInteger("energy");
+			this.maxEnergy = tag.getInteger("maxEnergy");
+			this.maxReceive = tag.getInteger("maxReceive");
+			this.maxExtract = tag.getInteger("maxExtract");
+		}
 	}
 
 	public void writeToNBT(NBTTagCompound tag) {
