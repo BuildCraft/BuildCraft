@@ -8,6 +8,8 @@
  */
 package buildcraft.transport;
 
+import java.util.BitSet;
+
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
@@ -17,8 +19,6 @@ import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.api.transport.IPipeTile.PipeType;
 
 public abstract class PipeTransport {
-
-	public static final String PIPE_IO_SETTINGS = "iosetting";
 
 	public TileGenericPipe container;
 
@@ -39,29 +39,37 @@ public abstract class PipeTransport {
 	}
 
 	public void readFromNBT(NBTTagCompound nbt) {
-	    if (nbt.hasKey(PIPE_IO_SETTINGS)) {
-			int iosettings = nbt.getInteger(PIPE_IO_SETTINGS);
+	    if (nbt.hasKey("inputOpen")) {
+			BitSet inputBuf = BitSet.valueOf(new byte [] {nbt.getByte("inputOpen")});
+			BitSet outputBuf = BitSet.valueOf(new byte[] {nbt.getByte("outputOpen")});
+
 			for (int b = 0; b < ForgeDirection.VALID_DIRECTIONS.length; b++) {
-				inputsOpen[b] = (iosettings & (1 << b)) == 1;
-				outputsOpen[b] = (iosettings & (1 << (b + 8))) == 1;
+				inputsOpen[b] = inputBuf.get(b);
+				outputsOpen[b] = outputBuf.get(b);
 			}
 	    }
 	}
 
 	public void writeToNBT(NBTTagCompound nbt) {
-	    int iosettings = 0;
+		BitSet inputBuf = new BitSet();
+		BitSet outputBuf = new BitSet();
 
 	    for (int b = 0; b < ForgeDirection.VALID_DIRECTIONS.length; b++) {
 			if (inputsOpen[b]) {
-				iosettings |= 1 << b;
+				inputBuf.set(b, true);
+			} else {
+				inputBuf.set(b, false);
 			}
 
 			if (outputsOpen[b]) {
-				iosettings |= 1 << (b + 8);
+				outputBuf.set(b, true);
+			} else {
+				outputBuf.set(b, false);
 			}
 	    }
 
-	    nbt.setInteger(PIPE_IO_SETTINGS, iosettings);
+		nbt.setByte("inputOpen", inputBuf.toByteArray()[0]);
+		nbt.setByte("outputOpen", outputBuf.toByteArray()[0]);
 	}
 
 	public void updateEntity() {
