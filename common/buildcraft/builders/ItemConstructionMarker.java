@@ -84,10 +84,12 @@ public class ItemConstructionMarker extends ItemBlock {
 		NBTTagCompound nbt = NBTUtils.getItemData(marker);
 
 		if (nbt.hasKey("x")) {
-			return iconRecording;
+			itemIcon = iconRecording;
 		} else {
-			return iconBase;
+			itemIcon = iconBase;
 		}
+
+		return itemIcon;
 	}
 
 	@Override
