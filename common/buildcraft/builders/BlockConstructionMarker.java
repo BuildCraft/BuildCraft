@@ -11,6 +11,7 @@ package buildcraft.builders;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -37,6 +38,16 @@ public class BlockConstructionMarker extends BlockMarker {
 	@Override
 	public void breakBlock(World world, int x, int y, int z, Block block, int par6) {
 		Utils.preDestroyBlock(world, x, y, z);
+		TileConstructionMarker marker = (TileConstructionMarker) world.getTileEntity(x, y, z);
+		if (marker != null && marker.itemBlueprint != null && !world.isRemote) {
+			float f1 = 0.7F;
+			double d = (world.rand.nextFloat() * f1) + (1.0F - f1) * 0.5D;
+			double d1 = (world.rand.nextFloat() * f1) + (1.0F - f1) * 0.5D;
+			double d2 = (world.rand.nextFloat() * f1) + (1.0F - f1) * 0.5D;
+			EntityItem itemToDrop = new EntityItem(world, x + d, y + d1, z + d2, marker.itemBlueprint);
+			itemToDrop.delayBeforeCanPickup = 10;
+			world.spawnEntityInWorld(itemToDrop);
+		}
 		super.breakBlock(world, x, y, z, block, par6);
 	}
 
@@ -72,8 +83,15 @@ public class BlockConstructionMarker extends BlockMarker {
 
 		if (equipped instanceof ItemBlueprint) {
 			if (marker.itemBlueprint == null) {
-				marker.setBlueprint(entityplayer.inventory.getCurrentItem().copy());
-				entityplayer.inventory.setInventorySlotContents(entityplayer.inventory.currentItem, null);
+				ItemStack stack = entityplayer.inventory.getCurrentItem().copy();
+				stack.stackSize = 1;
+				marker.setBlueprint(stack);
+				stack = null;
+				if (entityplayer.inventory.getCurrentItem().stackSize > 1) {
+					stack = entityplayer.getCurrentEquippedItem().copy();
+					stack.stackSize = entityplayer.getCurrentEquippedItem().stackSize - 1;
+				}
+				entityplayer.inventory.setInventorySlotContents(entityplayer.inventory.currentItem, stack);
 
 				return true;
 			}
