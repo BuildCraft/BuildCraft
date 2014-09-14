@@ -267,9 +267,9 @@ public class BuildCraftEnergy extends BuildCraftMod {
 		BuildcraftRecipeRegistry.refinery.addRecipe("buildcraft:fuel", new FluidStack(fluidOil, 1), new FluidStack(
 				fluidFuel, 1), 120, 1);
 
-		BuildcraftFuelRegistry.fuel.addFuel(FluidRegistry.LAVA, 2, (int) (6000 * fuelLavaMultiplier));
-		BuildcraftFuelRegistry.fuel.addFuel(fluidOil, 3, (int) (5000 * fuelOilMultiplier));
-		BuildcraftFuelRegistry.fuel.addFuel(fluidFuel, 6, (int) (25000 * fuelFuelMultiplier));
+		BuildcraftFuelRegistry.fuel.addFuel(FluidRegistry.LAVA, 20, (int) (6000 * fuelLavaMultiplier));
+		BuildcraftFuelRegistry.fuel.addFuel(fluidOil, 30, (int) (5000 * fuelOilMultiplier));
+		BuildcraftFuelRegistry.fuel.addFuel(fluidFuel, 60, (int) (25000 * fuelFuelMultiplier));
 
 		BuildcraftFuelRegistry.coolant.addCoolant(FluidRegistry.WATER, 0.0023f);
 		BuildcraftFuelRegistry.coolant.addSolidCoolant(StackKey.stack(Blocks.ice), StackKey.fluid(FluidRegistry.WATER), 2f);

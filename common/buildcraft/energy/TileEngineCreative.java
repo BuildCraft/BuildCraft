@@ -99,7 +99,7 @@ public class TileEngineCreative extends TileEngine {
 	public boolean isBurning() {
 		return isRedstonePowered;
 	}
-	
+
 	@Override
 	public double maxEnergyReceived() {
 		return getCurrentOutput();
@@ -117,7 +117,7 @@ public class TileEngineCreative extends TileEngine {
 
 	@Override
 	public double getCurrentOutput() {
-		return powerMode.maxPower / 10.0;
+		return powerMode.maxPower;
 	}
 
 	@Override

@@ -42,7 +42,7 @@ import buildcraft.energy.gui.ContainerEngine;
 public class TileEngineIron extends TileEngineWithInventory implements IFluidHandler {
 
 	public static int MAX_LIQUID = FluidContainerRegistry.BUCKET_VOLUME * 10;
-	public static float HEAT_PER_MJ = 0.0023F;
+	public static float HEAT_PER_RF = 0.00023F;
 	public static float COOLDOWN_RATE = 0.05F;
 	public static int MAX_COOLANT_PER_TICK = 40;
 
@@ -178,7 +178,7 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
 				}
 
 				addEnergy(currentFuel.getPowerPerCycle());
-				heat += currentFuel.getPowerPerCycle() * HEAT_PER_MJ * getBiomeTempScalar();
+				heat += currentFuel.getPowerPerCycle() * HEAT_PER_RF * getBiomeTempScalar();
 			}
 		} else if (penaltyCooling <= 0) {
 			if (lastPowered) {
@@ -404,17 +404,17 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
 
 	@Override
 	public double maxEnergyReceived() {
-		return 2000;
+		return 20000;
 	}
 
 	@Override
 	public double maxEnergyExtracted() {
-		return 500;
+		return 5000;
 	}
 
 	@Override
 	public double getMaxEnergy() {
-		return 10000;
+		return 100000;
 	}
 
 	@Override

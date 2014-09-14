@@ -19,7 +19,7 @@ import buildcraft.transport.TileGenericPipe;
 
 public class TileEngineWood extends TileEngine {
 
-	public static final float OUTPUT = 0.1F;
+	public static final float OUTPUT = 1;
 
 	@Override
 	public ResourceLocation getBaseTexture() {
@@ -43,7 +43,7 @@ public class TileEngineWood extends TileEngine {
 
 	@Override
 	public double maxEnergyReceived() {
-		return 50;
+		return 500;
 	}
 
 	@Override
@@ -101,7 +101,7 @@ public class TileEngineWood extends TileEngine {
 
 	@Override
 	public double getMaxEnergy() {
-		return 100;
+		return 1000;
 	}
 
 	@Override

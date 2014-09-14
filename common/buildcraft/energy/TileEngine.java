@@ -105,7 +105,7 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 	@Override
 	public void initialize() {
 		if (!worldObj.isRemote) {
-			powerHandler.configure(minEnergyReceived(), maxEnergyReceived(), 1, getMaxEnergy());
+			powerHandler.configure(minEnergyReceived() / 10, maxEnergyReceived() / 10, 1, getMaxEnergy() / 10);
 			checkRedstonePower();
 		}
 	}
@@ -287,14 +287,14 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 			int minEnergy = 0;
 			int maxEnergy = handler.receiveEnergy(
 					orientation.getOpposite(),
-					(int) Math.round(this.energy * 10), true);
-			return extractEnergy(minEnergy / 10.0, maxEnergy / 10.0, false);
+					(int) Math.round(this.energy), true);
+			return extractEnergy(minEnergy, maxEnergy, false);
 		} else if (tile instanceof IPowerReceptor) {
 			PowerReceiver receptor = ((IPowerReceptor) tile)
 					.getPowerReceiver(orientation.getOpposite());
 
-			return extractEnergy(receptor.getMinEnergyReceived(),
-					receptor.getMaxEnergyReceived(), false);
+			return extractEnergy(receptor.getMinEnergyReceived() * 10,
+					receptor.getMaxEnergyReceived() * 10, false);
 		} else {
 			return 0;
 		}
@@ -312,23 +312,23 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 
 			if (tile instanceof IEnergyHandler) {
 				IEnergyHandler handler = (IEnergyHandler) tile;
-				if (Math.round(extracted * 10) > 0) {
+				if (Math.round(extracted) > 0) {
 					int neededRF = handler.receiveEnergy(
 							orientation.getOpposite(),
-							(int) Math.round(extracted * 10), false);
+							(int) Math.round(extracted), false);
 
-					extractEnergy(0.0, neededRF / 10.0, true);
+					extractEnergy(0.0, neededRF, true);
 				}
 			} else if (tile instanceof IPowerReceptor) {
 				PowerReceiver receptor = ((IPowerReceptor) tile)
 						.getPowerReceiver(orientation.getOpposite());
 
 				if (extracted > 0) {
-					double needed = receptor.receiveEnergy(
+					double neededMJ = receptor.receiveEnergy(
 							PowerHandler.Type.ENGINE, extracted,
 							orientation.getOpposite());
 
-					extractEnergy(receptor.getMinEnergyReceived(), needed, true);
+					extractEnergy(receptor.getMinEnergyReceived(), neededMJ * 10, true);
 				}
 			}
 		}
@@ -454,17 +454,17 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 	public void getGUINetworkData(int id, int value) {
 		switch (id) {
 			case 0:
-				int iEnergy = (int) Math.round(energy * 10);
+				int iEnergy = (int) Math.round(energy);
 				iEnergy = (iEnergy & 0xffff0000) | (value & 0xffff);
-				energy = iEnergy / 10;
+				energy = iEnergy;
 				break;
 			case 1:
-				iEnergy = (int) Math.round(energy * 10);
+				iEnergy = (int) Math.round(energy );
 				iEnergy = (iEnergy & 0xffff) | ((value & 0xffff) << 16);
-				energy = iEnergy / 10;
+				energy = iEnergy;
 				break;
 			case 2:
-				currentOutput = value / 10F;
+				currentOutput = value;
 				break;
 			case 3:
 				heat = value / 100F;
@@ -473,9 +473,9 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 	}
 
 	public void sendGUINetworkData(ContainerEngine containerEngine, ICrafting iCrafting) {
-		iCrafting.sendProgressBarUpdate(containerEngine, 0, (int) Math.round(energy * 10) & 0xffff);
-		iCrafting.sendProgressBarUpdate(containerEngine, 1, (int) (Math.round(energy * 10) & 0xffff0000) >> 16);
-		iCrafting.sendProgressBarUpdate(containerEngine, 2, (int) Math.round(currentOutput * 10));
+		iCrafting.sendProgressBarUpdate(containerEngine, 0, (int) Math.round(energy) & 0xffff);
+		iCrafting.sendProgressBarUpdate(containerEngine, 1, (int) (Math.round(energy) & 0xffff0000) >> 16);
+		iCrafting.sendProgressBarUpdate(containerEngine, 2, (int) Math.round(currentOutput));
 		iCrafting.sendProgressBarUpdate(containerEngine, 3, Math.round(heat * 100));
 	}
 
@@ -560,7 +560,7 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 	public abstract double getMaxEnergy();
 
 	public double minEnergyReceived() {
-		return 2;
+		return 20;
 	}
 
 	public abstract double maxEnergyReceived();
@@ -637,7 +637,7 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 			return 0;
 		}
 
-		return (int) Math.round(10 * energy);
+		return (int) Math.round(energy);
 	}
 
 	@Override

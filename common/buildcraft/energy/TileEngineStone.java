@@ -29,9 +29,9 @@ import buildcraft.energy.gui.ContainerEngine;
 
 public class TileEngineStone extends TileEngineWithInventory {
 
-	static final float MAX_OUTPUT = 1f;
+	static final float MAX_OUTPUT = 10;
 	static final float MIN_OUTPUT = MAX_OUTPUT / 3;
-	static final float TARGET_OUTPUT = 0.375f;
+	static final float TARGET_OUTPUT = 3.75f;
 	final float kp = 1f;
 	final float ki = 0.05f;
 	final double eLimit = (MAX_OUTPUT - MIN_OUTPUT) / ki;
@@ -143,17 +143,17 @@ public class TileEngineStone extends TileEngineWithInventory {
 
 	@Override
 	public double maxEnergyReceived() {
-		return 200;
+		return 2000;
 	}
 
 	@Override
 	public double maxEnergyExtracted() {
-		return 100;
+		return 1000;
 	}
 
 	@Override
 	public double getMaxEnergy() {
-		return 1000;
+		return 10000;
 	}
 
 	@Override
