@@ -237,7 +237,11 @@ public class PipePowerWood extends Pipe<PipeTransportPower> implements IPowerRec
 	@Override
 	public int receiveEnergy(ForgeDirection from, int maxReceive,
 			boolean simulate) {
-		return battery.receiveEnergy(maxReceive, simulate);
+		if (powerSources[from.ordinal()]) {
+			return battery.receiveEnergy(maxReceive, simulate);
+		} else {
+			return 0;
+		}
 	}
 
 	@Override
