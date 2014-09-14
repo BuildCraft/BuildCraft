@@ -64,7 +64,7 @@ public abstract class TileLaserTableBase extends TileBuildCraft implements ILase
 		} else if (energy >= clientRequiredEnergy) {
 			return ratio;
 		} else {
-			return (int) (energy / clientRequiredEnergy * ratio);
+			return (int) ((double) energy / (double) clientRequiredEnergy * ratio);
 		}
 	}
 
