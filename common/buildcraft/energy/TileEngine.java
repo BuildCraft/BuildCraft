@@ -459,7 +459,7 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 				energy = iEnergy;
 				break;
 			case 1:
-				iEnergy = (int) Math.round(energy );
+				iEnergy = (int) Math.round(energy);
 				iEnergy = (iEnergy & 0xffff) | ((value & 0xffff) << 16);
 				energy = iEnergy;
 				break;
