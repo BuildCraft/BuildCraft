@@ -22,6 +22,8 @@ import net.minecraft.world.World;
 
 import net.minecraftforge.common.util.ForgeDirection;
 
+import cofh.api.energy.IEnergyHandler;
+
 import buildcraft.BuildCraftCore;
 import buildcraft.api.power.IPowerReceptor;
 import buildcraft.core.network.BuildCraftPacket;
@@ -31,8 +33,6 @@ import buildcraft.core.network.PacketTileUpdate;
 import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.network.TilePacketWrapper;
 import buildcraft.core.utils.Utils;
-
-import cofh.api.energy.IEnergyHandler;
 
 public abstract class TileBuildCraft extends TileEntity implements ISynchronizedTile, IEnergyHandler {
 	@SuppressWarnings("rawtypes")
@@ -147,7 +147,7 @@ public abstract class TileBuildCraft extends TileEntity implements ISynchronized
 		if (nbt.hasKey("owner")) {
 			owner = nbt.getString("owner");
 		}
-		if (battery != null && nbt.hasKey("battery")) {
+		if (battery != null) {
 			battery.readFromNBT(nbt.getCompoundTag("battery"));
 		}
 	}
