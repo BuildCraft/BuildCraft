@@ -247,7 +247,7 @@ public class PipeTransportPower extends PipeTransport {
 
 		if (totalPowerConsumed > 0) {
 			for (int in = 0; in < 6; ++in) {
-				int powerConsumed = internalPower[in] * totalPowerConsumed / totalPowerContained;
+				int powerConsumed = (int) ((double) internalPower[in] * (double) totalPowerConsumed / totalPowerContained);
 				displayPower[in] += powerConsumed;
 			}
 		}
