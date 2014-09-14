@@ -18,18 +18,18 @@ import buildcraft.api.transport.IPipeTile.PipeType;
 
 public abstract class PipeTransport {
 
-        public static final String PIPE_IO_SETTINGS = "iosetting";
+	public static final String PIPE_IO_SETTINGS = "iosetting";
 
 	public TileGenericPipe container;
 
-        protected boolean[] inputsOpen = new boolean[ForgeDirection.VALID_DIRECTIONS.length];
-        protected boolean[] outputsOpen = new boolean[ForgeDirection.VALID_DIRECTIONS.length];
+	protected boolean[] inputsOpen = new boolean[ForgeDirection.VALID_DIRECTIONS.length];
+	protected boolean[] outputsOpen = new boolean[ForgeDirection.VALID_DIRECTIONS.length];
 
-        public PipeTransport() {
-	    for (int b = 0; b < ForgeDirection.VALID_DIRECTIONS.length; b++) {
-		inputsOpen[b] = true;
-		outputsOpen[b] = true;
-	    }
+	public PipeTransport() {
+		for (int b = 0; b < ForgeDirection.VALID_DIRECTIONS.length; b++) {
+			inputsOpen[b] = true;
+			outputsOpen[b] = true;
+		}
 	}
 
 	public abstract PipeType getPipeType();
@@ -40,24 +40,27 @@ public abstract class PipeTransport {
 
 	public void readFromNBT(NBTTagCompound nbt) {
 	    if (nbt.hasKey(PIPE_IO_SETTINGS)) {
-		int iosettings = nbt.getInteger(PIPE_IO_SETTINGS);
-		for (int b = 0; b < ForgeDirection.VALID_DIRECTIONS.length; b++) {
-		    inputsOpen[b] = (iosettings & (1 << b)) == 1;
-		    outputsOpen[b] = (iosettings & (1 << (b + 8))) == 1;
-		}
+			int iosettings = nbt.getInteger(PIPE_IO_SETTINGS);
+			for (int b = 0; b < ForgeDirection.VALID_DIRECTIONS.length; b++) {
+				inputsOpen[b] = (iosettings & (1 << b)) == 1;
+				outputsOpen[b] = (iosettings & (1 << (b + 8))) == 1;
+			}
 	    }
 	}
 
 	public void writeToNBT(NBTTagCompound nbt) {
 	    int iosettings = 0;
+
 	    for (int b = 0; b < ForgeDirection.VALID_DIRECTIONS.length; b++) {
-		if (inputsOpen[b]) {
-		    iosettings |= 1 << b;
-		}
-		if (outputsOpen[b]) {
-		    iosettings |= 1 << (b + 8);
-		}
+			if (inputsOpen[b]) {
+				iosettings |= 1 << b;
+			}
+
+			if (outputsOpen[b]) {
+				iosettings |= 1 << (b + 8);
+			}
 	    }
+
 	    nbt.setInteger(PIPE_IO_SETTINGS, iosettings);
 	}
 
@@ -89,16 +92,16 @@ public abstract class PipeTransport {
 	    return outputsOpen[to.ordinal()];
 	}
 
-        public void allowInput(ForgeDirection from, boolean allow) {
-	    if (from != ForgeDirection.UNKNOWN) {
-		inputsOpen[from.ordinal()] = allow;
-	    }
+	public void allowInput(ForgeDirection from, boolean allow) {
+		if (from != ForgeDirection.UNKNOWN) {
+			inputsOpen[from.ordinal()] = allow;
+		}
 	}
 
-        public void allowOutput(ForgeDirection to, boolean allow) {
-	    if (to != ForgeDirection.UNKNOWN) {
-		outputsOpen[to.ordinal()] = allow;
-	    }
+	public void allowOutput(ForgeDirection to, boolean allow) {
+		if (to != ForgeDirection.UNKNOWN) {
+			outputsOpen[to.ordinal()] = allow;
+		}
 	}
 
 	public void dropContents() {
