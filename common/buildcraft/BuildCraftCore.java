@@ -264,6 +264,8 @@ public class BuildCraftCore extends BuildCraftMod {
 
 	private static FloatBuffer pos = ByteBuffer.allocateDirect(3 * 4).asFloatBuffer();
 
+	public Thread serverThread;
+
 	@Mod.EventHandler
 	public void loadConfiguration(FMLPreInitializationEvent evt) {
 		SchematicRegistry.declareBlueprintSupport("BuildCraft|Core");
@@ -435,6 +437,7 @@ public class BuildCraftCore extends BuildCraftMod {
 
 	@Mod.EventHandler
 	public void serverStarting(FMLServerStartingEvent event) {
+		serverThread = Thread.currentThread();
 		event.registerServerCommand(new CommandBuildCraft());
 	}
 
