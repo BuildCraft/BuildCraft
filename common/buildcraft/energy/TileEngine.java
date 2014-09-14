@@ -251,14 +251,14 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 			}
 		} else if (isRedstonePowered && isActive()) {
 			if (isPoweredTile(tile, orientation)) {
-				/*progressPart = 1;
+				progressPart = 1;
 				setPumping(true);
 				if (getPowerToExtract() > 0) {
 					progressPart = 1;
 					setPumping(true);
 				} else {
 					setPumping(false);
-				}*/
+				}
 			} else {
 				setPumping(false);
 			}
