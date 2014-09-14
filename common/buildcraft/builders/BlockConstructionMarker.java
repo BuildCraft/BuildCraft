@@ -39,15 +39,14 @@ public class BlockConstructionMarker extends BlockMarker {
 	public void breakBlock(World world, int x, int y, int z, Block block, int par6) {
 		Utils.preDestroyBlock(world, x, y, z);
 		TileConstructionMarker marker = (TileConstructionMarker) world.getTileEntity(x, y, z);
-		if (marker != null && marker.itemBlueprint != null) {
+		if (marker != null && marker.itemBlueprint != null && !world.isRemote) {
 			float f1 = 0.7F;
 			double d = (world.rand.nextFloat() * f1) + (1.0F - f1) * 0.5D;
 			double d1 = (world.rand.nextFloat() * f1) + (1.0F - f1) * 0.5D;
 			double d2 = (world.rand.nextFloat() * f1) + (1.0F - f1) * 0.5D;
 			EntityItem itemToDrop = new EntityItem(world, x + d, y + d1, z + d2, marker.itemBlueprint);
 			itemToDrop.delayBeforeCanPickup = 10;
-			if (!world.isRemote)
-				world.spawnEntityInWorld(itemToDrop);
+			world.spawnEntityInWorld(itemToDrop);
 		}
 		super.breakBlock(world, x, y, z, block, par6);
 	}
