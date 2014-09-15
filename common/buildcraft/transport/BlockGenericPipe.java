@@ -783,8 +783,9 @@ public class BlockGenericPipe extends BlockBuildCraft {
 						DockingStation station = pipe.container.getStation(rayTraceResult.sideHit);
 
 						if (!station.isTaken()) {
-							if (((ItemRobot) currentItem.getItem()).getRobotNBT(currentItem) == null )
+							if (((ItemRobot) currentItem.getItem()).getRobotNBT(currentItem) == null) {
 								return true;
+							}
 							EntityRobot robot = ((ItemRobot) currentItem.getItem())
 									.createRobot(currentItem, world);
 							robot.setUniqueRobotId(robot.getRegistry().getNextRobotId());
