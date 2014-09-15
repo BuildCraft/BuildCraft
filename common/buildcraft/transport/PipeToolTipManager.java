@@ -25,7 +25,7 @@ public final class PipeToolTipManager {
 
 	static {
 		for (Map.Entry<Class<? extends Pipe<?>>, Integer> pipe : PipeTransportPower.powerCapacities.entrySet()) {
-			PipeToolTipManager.addToolTip(pipe.getKey(), String.format("%d MJ/t", pipe.getValue()));
+			PipeToolTipManager.addToolTip(pipe.getKey(), String.format("%d RF/t", pipe.getValue()));
 		}
 	}
 
