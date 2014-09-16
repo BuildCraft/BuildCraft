@@ -18,7 +18,7 @@ public class RobotPlacementEvent extends Event {
 	public EntityPlayer player;
 	public String robotProgram;
 
-	public RobotPlacementEvent(EntityPlayer player, String robotProgram){
+	public RobotPlacementEvent(EntityPlayer player, String robotProgram) {
 		this.player = player;
 		this.robotProgram = robotProgram;
 	}
