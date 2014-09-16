@@ -31,12 +31,13 @@ import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftFactory;
 import buildcraft.api.events.BlockInteractionEvent;
 import buildcraft.api.tools.IToolWrench;
+import buildcraft.core.BlockBuildCraft;
 import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.GuiIds;
 import buildcraft.core.fluids.FluidUtils;
 import buildcraft.core.utils.Utils;
 
-public class BlockRefinery extends BlockContainer {
+public class BlockRefinery extends BlockBuildCraft {
 
 	private static IIcon icon;
 
