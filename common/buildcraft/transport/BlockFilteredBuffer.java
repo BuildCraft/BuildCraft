@@ -15,10 +15,12 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
 
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 import buildcraft.BuildCraftTransport;
+import buildcraft.api.events.BlockInteractionEvent;
 import buildcraft.core.BlockBuildCraft;
 import buildcraft.core.GuiIds;
 import buildcraft.core.IItemPipe;
@@ -42,6 +44,12 @@ public class BlockFilteredBuffer extends BlockBuildCraft {
 			int par6, float par7, float par8, float par9) {
 
 		super.onBlockActivated(world, x, y, z, entityplayer, par6, par7, par8, par9);
+		
+		BlockInteractionEvent event = new BlockInteractionEvent(entityplayer, this);
+		FMLCommonHandler.instance().bus().post(event);
+		if (event.isCanceled()) {
+			return false;
+		}
 
 		if (entityplayer.isSneaking()) {
 			return false;
