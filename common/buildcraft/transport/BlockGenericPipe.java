@@ -48,6 +48,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.BlockIndex;
+import buildcraft.api.events.BlockInteractionEvent;
 import buildcraft.api.events.PipePlacedEvent;
 import buildcraft.api.gates.GateExpansions;
 import buildcraft.api.gates.IGateExpansion;
@@ -714,6 +715,11 @@ public class BlockGenericPipe extends BlockBuildCraft {
 	@Override
 	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float xOffset, float yOffset, float zOffset) {
 		super.onBlockActivated(world, x, y, z, player, side, xOffset, yOffset, zOffset);
+		BlockInteractionEvent event = new BlockInteractionEvent(player, this);
+		FMLCommonHandler.instance().bus().post(event);
+		if (event.isCanceled()) {
+			return true;
+		}
 
 		world.notifyBlocksOfNeighborChange(x, y, z, BuildCraftTransport.genericPipeBlock);
 
