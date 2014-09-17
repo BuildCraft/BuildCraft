@@ -11,9 +11,11 @@ import cpw.mods.fml.common.eventhandler.Event;
 public class BlockPlacedDownEvent extends Event {
 	public EntityPlayer player;
 	public Block block;
+	public int meta;
 
-	public BlockPlacedDownEvent(EntityPlayer player, Block block) {
+	public BlockPlacedDownEvent(EntityPlayer player, Block block, int meta) {
 		this.player = player;
 		this.block = block;
+		this.meta = meta;
 	}
 }

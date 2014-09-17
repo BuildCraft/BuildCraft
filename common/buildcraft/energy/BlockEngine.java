@@ -131,7 +131,7 @@ public class BlockEngine extends BlockBuildCraft implements ICustomHighlight {
 //			return false;
 //		}
 
-		BlockInteractionEvent event = new BlockInteractionEvent(player, this);
+		BlockInteractionEvent event = new BlockInteractionEvent(player, this, world.getBlockMetadata(i, j, k));
 		FMLCommonHandler.instance().bus().post(event);
 		if (event.isCanceled()) {
 			return false;

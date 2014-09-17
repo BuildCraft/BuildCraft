@@ -65,7 +65,7 @@ public class BlockLaserTable extends BlockBuildCraft {
 			return false;
 		}
 
-		BlockInteractionEvent event = new BlockInteractionEvent(entityplayer, this);
+		BlockInteractionEvent event = new BlockInteractionEvent(entityplayer, this, world.getBlockMetadata(i, j, k));
 		FMLCommonHandler.instance().bus().post(event);
 		if (event.isCanceled()) {
 			return false;
