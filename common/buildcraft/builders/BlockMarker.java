@@ -9,7 +9,6 @@
 package buildcraft.builders;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
@@ -26,11 +25,12 @@ import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.api.events.BlockInteractionEvent;
+import buildcraft.core.BlockBuildCraft;
 import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.ItemMapLocation;
 import buildcraft.core.utils.Utils;
 
-public class BlockMarker extends BlockContainer {
+public class BlockMarker extends BlockBuildCraft {
 
 	public BlockMarker() {
 		super(Material.circuits);
