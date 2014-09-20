@@ -30,6 +30,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.IIcon;
@@ -49,6 +50,7 @@ import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.BlockIndex;
 import buildcraft.api.events.PipePlacedEvent;
+import buildcraft.api.events.RobotPlacementEvent;
 import buildcraft.api.gates.GateExpansions;
 import buildcraft.api.gates.IGateExpansion;
 import buildcraft.api.tools.IToolWrench;
@@ -784,6 +786,11 @@ public class BlockGenericPipe extends BlockBuildCraft {
 
 						if (!station.isTaken()) {
 							if (((ItemRobot) currentItem.getItem()).getRobotNBT(currentItem) == null) {
+								return true;
+							}
+							RobotPlacementEvent event = new RobotPlacementEvent(player, ((NBTTagCompound) currentItem.stackTagCompound.getTag("board")).getString("id"));
+							FMLCommonHandler.instance().bus().post(event);
+							if (event.isCanceled()) {
 								return true;
 							}
 							EntityRobot robot = ((ItemRobot) currentItem.getItem())
