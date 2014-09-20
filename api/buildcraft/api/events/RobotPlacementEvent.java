@@ -1,3 +1,11 @@
+/**
+ * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
+ * http://www.mod-buildcraft.com
+ *
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
+ * License 1.0, or MMPL. Please check the contents of the license located in
+ * http://www.mod-buildcraft.com/MMPL-1.0.txt
+ */
 package buildcraft.api.events;
 
 
@@ -6,13 +14,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import cpw.mods.fml.common.eventhandler.Cancelable;
 import cpw.mods.fml.common.eventhandler.Event;
 
-/**
- * Copyright (c) 2014, AEnterprise
- * http://buildcraftadditions.wordpress.com/
- * Buildcraft Additions is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
- * http://buildcraftadditions.wordpress.com/wiki/licensing-stuff/
- */
 @Cancelable
 public class RobotPlacementEvent extends Event {
 	public EntityPlayer player;
