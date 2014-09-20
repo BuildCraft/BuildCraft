@@ -794,9 +794,9 @@ public class BlockGenericPipe extends BlockBuildCraft {
 							if (((ItemRobot) currentItem.getItem()).getRobotNBT(currentItem) == null) {
 								return true;
 							}
-							RobotPlacementEvent event = new RobotPlacementEvent(player, ((NBTTagCompound) currentItem.stackTagCompound.getTag("board")).getString("id"));
-							FMLCommonHandler.instance().bus().post(event);
-							if (event.isCanceled()) {
+							RobotPlacementEvent robotEvent = new RobotPlacementEvent(player, ((NBTTagCompound) currentItem.stackTagCompound.getTag("board")).getString("id"));
+							FMLCommonHandler.instance().bus().post(robotEvent);
+							if (robotEvent.isCanceled()) {
 								return true;
 							}
 							EntityRobot robot = ((ItemRobot) currentItem.getItem())
