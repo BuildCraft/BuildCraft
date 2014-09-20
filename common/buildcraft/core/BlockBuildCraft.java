@@ -44,7 +44,7 @@ public abstract class BlockBuildCraft extends BlockContainer {
 	@Override
 	public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase entity, ItemStack stack) {
 		super.onBlockPlacedBy(world, x, y, z, entity, stack);
-		FMLCommonHandler.instance().bus().post(new BlockPlacedDownEvent((EntityPlayer) entity, world.getBlock(x, y, z)));
+		FMLCommonHandler.instance().bus().post(new BlockPlacedDownEvent((EntityPlayer) entity, world.getBlock(x, y, z), world.getBlockMetadata(x, y, z), x, y, z));
 		TileEntity tile = world.getTileEntity(x, y, z);
 		if (tile instanceof TileBuildCraft) {
 			((TileBuildCraft) tile).onBlockPlacedBy(entity, stack);

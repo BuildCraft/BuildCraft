@@ -49,6 +49,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.BlockIndex;
+import buildcraft.api.events.BlockInteractionEvent;
 import buildcraft.api.events.PipePlacedEvent;
 import buildcraft.api.events.RobotPlacementEvent;
 import buildcraft.api.gates.GateExpansions;
@@ -716,6 +717,11 @@ public class BlockGenericPipe extends BlockBuildCraft {
 	@Override
 	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float xOffset, float yOffset, float zOffset) {
 		super.onBlockActivated(world, x, y, z, player, side, xOffset, yOffset, zOffset);
+		BlockInteractionEvent event = new BlockInteractionEvent(player, this);
+		FMLCommonHandler.instance().bus().post(event);
+		if (event.isCanceled()) {
+			return true;
+		}
 
 		world.notifyBlocksOfNeighborChange(x, y, z, BuildCraftTransport.genericPipeBlock);
 
@@ -788,9 +794,9 @@ public class BlockGenericPipe extends BlockBuildCraft {
 							if (((ItemRobot) currentItem.getItem()).getRobotNBT(currentItem) == null) {
 								return true;
 							}
-							RobotPlacementEvent event = new RobotPlacementEvent(player, ((NBTTagCompound) currentItem.stackTagCompound.getTag("board")).getString("id"));
-							FMLCommonHandler.instance().bus().post(event);
-							if (event.isCanceled()) {
+							RobotPlacementEvent robotEvent = new RobotPlacementEvent(player, ((NBTTagCompound) currentItem.stackTagCompound.getTag("board")).getString("id"));
+							FMLCommonHandler.instance().bus().post(robotEvent);
+							if (robotEvent.isCanceled()) {
 								return true;
 							}
 							EntityRobot robot = ((ItemRobot) currentItem.getItem())
@@ -1134,7 +1140,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 				TileGenericPipe tilePipe = (TileGenericPipe) tile;
 				tilePipe.initialize(pipe);
 				tilePipe.sendUpdateToClient();
-				FMLCommonHandler.instance().bus().post(new PipePlacedEvent(player, pipe.item.getUnlocalizedName()));
+				FMLCommonHandler.instance().bus().post(new PipePlacedEvent(player, pipe.item.getUnlocalizedName(), i, j, k));
 			}
 		}
 

@@ -8,7 +8,6 @@
  */
 package buildcraft.factory;
 
-import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
@@ -28,10 +27,11 @@ import net.minecraftforge.fluids.FluidStack;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.api.events.BlockInteractionEvent;
+import buildcraft.core.BlockBuildCraft;
 import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.inventory.InvUtils;
 
-public class BlockTank extends BlockContainer {
+public class BlockTank extends BlockBuildCraft {
 
 	private IIcon textureStackedSide;
 	private IIcon textureBottomSide;

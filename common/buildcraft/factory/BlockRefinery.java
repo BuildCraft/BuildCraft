@@ -8,7 +8,6 @@
  */
 package buildcraft.factory;
 
-import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.EntityLivingBase;
@@ -31,12 +30,13 @@ import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftFactory;
 import buildcraft.api.events.BlockInteractionEvent;
 import buildcraft.api.tools.IToolWrench;
+import buildcraft.core.BlockBuildCraft;
 import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.GuiIds;
 import buildcraft.core.fluids.FluidUtils;
 import buildcraft.core.utils.Utils;
 
-public class BlockRefinery extends BlockContainer {
+public class BlockRefinery extends BlockBuildCraft {
 
 	private static IIcon icon;
 

@@ -9,7 +9,6 @@
 package buildcraft.builders;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
@@ -27,11 +26,12 @@ import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.BuildCraftBuilders;
 import buildcraft.api.events.BlockInteractionEvent;
 import buildcraft.api.filler.IFillerPattern;
+import buildcraft.core.BlockBuildCraft;
 import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.GuiIds;
 import buildcraft.core.utils.Utils;
 
-public class BlockFiller extends BlockContainer {
+public class BlockFiller extends BlockBuildCraft {
 
 	public IFillerPattern currentPattern;
 	private IIcon textureSides;
