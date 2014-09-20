@@ -35,6 +35,7 @@ public class ItemWrench extends ItemBuildCraft implements IToolWrench {
 		shiftRotations.add(BlockLever.class);
 		shiftRotations.add(BlockButton.class);
 		shiftRotations.add(BlockChest.class);
+		setHarvestLevel("wrench", 0);
 	}
 
 	private boolean isShiftRotation(Class<? extends Block> cls) {
