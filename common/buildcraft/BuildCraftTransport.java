@@ -250,12 +250,12 @@ public class BuildCraftTransport extends BuildCraftMod {
 	public static TechnoStatement technoActionPowerLimiter = new TechnoStatement();
 	public static TechnoStatement technoActionExtractionPresetRed = new TechnoStatement();
 
+	public static boolean secondSealantRecepie;
+
 	private static LinkedList<PipeRecipe> pipeRecipes = new LinkedList<PipeRecipe>();
 
 	public IIconProvider pipeIconProvider = new PipeIconProvider();
 	public IIconProvider wireIconProvider = new WireIconProvider();
-
-	public static boolean secondSealantRecepie;
 
 	private static class PipeRecipe {
 
