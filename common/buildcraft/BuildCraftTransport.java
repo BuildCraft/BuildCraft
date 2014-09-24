@@ -30,6 +30,8 @@ import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
 import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraftforge.fluids.FluidContainerRegistry;
+import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.oredict.RecipeSorter;
 
 import buildcraft.api.blueprints.SchematicRegistry;
@@ -253,6 +255,8 @@ public class BuildCraftTransport extends BuildCraftMod {
 	public IIconProvider pipeIconProvider = new PipeIconProvider();
 	public IIconProvider wireIconProvider = new WireIconProvider();
 
+	public static boolean secondSealantRecepie;
+
 	private static class PipeRecipe {
 
 		boolean isShapeless = false; // pipe recipes come shaped and unshaped.
@@ -337,6 +341,10 @@ public class BuildCraftTransport extends BuildCraftMod {
 			} else {
 				excludedFluidBlocks = new String[0];
 			}
+
+			Property secondSealantCraftingRecepie = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "secondSealantCraftingRecepie", true);
+			secondSealantCraftingRecepie.comment = "enable or dissable the crafting recepie to craft pipe sealant with 8 seeds and 1 water bucket";
+			secondSealantRecepie = secondSealantCraftingRecepie.getBoolean();
 
 			filteredBufferBlock = new BlockFilteredBuffer();
 			CoreProxy.proxy.registerBlock(filteredBufferBlock.setBlockName("filteredBufferBlock"));
@@ -805,7 +813,13 @@ public class BuildCraftTransport extends BuildCraftMod {
 	public void loadRecipes() {
 		// Add base recipe for pipe waterproof.
 		GameRegistry.addShapelessRecipe(new ItemStack(pipeWaterproof, 1), new ItemStack(Items.dye, 1, 2));
-		GameRegistry.addRecipe(new ItemStack(pipeWaterproof), "SSS", "SWS", "SSS", 'S', Items.wheat_seeds, 'W', Items.water_bucket);
+		if (secondSealantRecepie) {
+			for (FluidContainerRegistry.FluidContainerData data: FluidContainerRegistry.getRegisteredFluidContainerData()) {
+				if (data.fluid.fluidID == FluidRegistry.WATER.getID()) {
+					GameRegistry.addRecipe(new ItemStack(pipeWaterproof, 1), "SSS", "SWS", "SSS", 'S', Items.wheat_seeds, 'W', data.filledContainer);
+				}
+			}
+		}
 
 		// Add pipe recipes
 		for (PipeRecipe pipe : pipeRecipes) {
