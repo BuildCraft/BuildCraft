@@ -61,7 +61,7 @@ public final class OilPopulate {
 
 	@SubscribeEvent
 	public void populate(PopulateChunkEvent.Pre event) {
-		boolean doGen = TerrainGen.populate(event.chunkProvider, event.world, event.rand, event.chunkX, event.chunkX, event.hasVillageGenerated, EVENT_TYPE);
+		boolean doGen = TerrainGen.populate(event.chunkProvider, event.world, event.rand, event.chunkX, event.chunkZ, event.hasVillageGenerated, EVENT_TYPE);
 
 		if (!doGen) {
 			event.setResult(Result.ALLOW);
