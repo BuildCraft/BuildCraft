@@ -122,6 +122,7 @@ checkstyle {
 }
 
 checkstyleApi.exclude 'cofh/**'
+checkstyleApi.exclude 'codechicken/**'
 
 // make sure all of these happen when we run build
 build.dependsOn sourceJar, javadocJar, deobfJar, apiJar
