@@ -14,10 +14,6 @@ import java.util.List;
 
 import org.lwjgl.opengl.GL11;
 
-import codechicken.nei.INEIGuiHandler;
-import codechicken.nei.TaggedInventoryArea;
-import codechicken.nei.VisiblityData;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.inventory.GuiContainer;
@@ -42,6 +38,10 @@ import buildcraft.core.gui.tooltips.ToolTipLine;
 import buildcraft.core.gui.widgets.Widget;
 import buildcraft.core.render.RenderUtils;
 import buildcraft.core.utils.SessionVars;
+
+import codechicken.nei.INEIGuiHandler;
+import codechicken.nei.TaggedInventoryArea;
+import codechicken.nei.VisiblityData;
 
 public abstract class GuiBuildCraft extends GuiContainer implements INEIGuiHandler {
 
