@@ -12,7 +12,10 @@ import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
+import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.BuildCraftTransport;
@@ -22,6 +25,8 @@ import buildcraft.transport.BlockGenericPipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeRenderState;
 import buildcraft.transport.TransportConstants;
+
+import info.jbcs.minecraft.chisel.api.IFacade;
 
 public final class FacadeRenderHelper {
 
@@ -92,7 +97,7 @@ public final class FacadeRenderHelper {
 				rotated[2][1] - zOffsets[side.ordinal()]);
 	}
 
-	public static void pipeFacadeRenderer(RenderBlocks renderblocks, ITextureStates blockStateMachine, PipeRenderState state, int x, int y, int z) {
+	public static void pipeFacadeRenderer(RenderBlocks renderblocks, ITextureStates blockStateMachine, PipeRenderState state, IBlockAccess blockAccess, int x, int y, int z) {
 		ITextureStates textureManager = (ITextureStates) blockStateMachine;
 		IIcon[] textures = textureManager.getTextureState().popArray();
 
@@ -106,8 +111,12 @@ public final class FacadeRenderHelper {
 				if (renderBlock.canRenderInPass(PipeRendererWorld.renderPass)) {
 					int renderMeta = state.facadeMatrix.getFacadeMetaId(direction);
 
+					// Create the IBlockAccess wrapper
+					FacadeAccessWrapper facadeAccessWrapper = new FacadeAccessWrapper(blockAccess);
 					for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
-						textures[side.ordinal()] = renderBlock.getIcon(side.ordinal(), renderMeta);
+						facadeAccessWrapper.setCurrentSide(side);
+						int ordinal = side.ordinal();
+						textures[ordinal] = renderBlock.getIcon(facadeAccessWrapper, x, y, z, ordinal);
 						if (side == direction || side == direction.getOpposite()) {
 							blockStateMachine.setRenderSide(side, true);
 						} else {
@@ -201,6 +210,84 @@ public final class FacadeRenderHelper {
 					renderblocks.renderStandardBlock(blockStateMachine.getBlock(), x, y, z);
 				}
 			}
+		}
+	}
+
+
+	// An IBlockAccess wrapper that returns IFacade-aware results from getBlock and getBlockMetadata
+	// Passed to Block#getBlockIcon(blockAccess, x, y, z, side)
+	private static class FacadeAccessWrapper implements IBlockAccess {
+		private IBlockAccess wrapped;
+		private ForgeDirection currentSide;
+
+		public FacadeAccessWrapper(IBlockAccess wrapped) {
+			this.wrapped = wrapped;
+		}
+
+		public void setCurrentSide(ForgeDirection currentSide) {
+			this.currentSide = currentSide;
+		}
+
+		@Override
+		public Block getBlock(int x, int y, int z) {
+			Block block = wrapped.getBlock(x, y, z);
+
+			if (block instanceof IFacade) {
+				block = ((IFacade) block).getFacade(wrapped, x, y, z, currentSide.ordinal());
+			}
+
+			return block;
+		}
+
+		@Override
+		public int getBlockMetadata(int x, int y, int z) {
+			Block block = wrapped.getBlock(x, y, z);
+
+			if (block instanceof IFacade) {
+				return ((IFacade) block).getFacadeMetadata(wrapped, x, y, z, currentSide.ordinal());
+			}
+
+			return wrapped.getBlockMetadata(x, y, z);
+		}
+
+		@Override
+		public TileEntity getTileEntity(int x, int y, int z) {
+			return wrapped.getTileEntity(x, y, z);
+		}
+
+		@Override
+		public int getLightBrightnessForSkyBlocks(int x, int y, int z, int lightValue) {
+			return wrapped.getLightBrightnessForSkyBlocks(x, y, z, lightValue);
+		}
+
+		@Override
+		public int isBlockProvidingPowerTo(int x, int y, int z, int direction) {
+			return wrapped.isBlockProvidingPowerTo(x, y, z, direction);
+		}
+
+		@Override
+		public boolean isAirBlock(int x, int y, int z) {
+			return wrapped.isAirBlock(x, y, z);
+		}
+
+		@Override
+		public BiomeGenBase getBiomeGenForCoords(int x, int z) {
+			return wrapped.getBiomeGenForCoords(x, z);
+		}
+
+		@Override
+		public int getHeight() {
+			return wrapped.getHeight();
+		}
+
+		@Override
+		public boolean extendedLevelsInChunkCache() {
+			return wrapped.extendedLevelsInChunkCache();
+		}
+
+		@Override
+		public boolean isSideSolid(int x, int y, int z, ForgeDirection side, boolean defaultValue) {
+			return wrapped.isSideSolid(x, y, z, side, defaultValue);
 		}
 	}
 }
