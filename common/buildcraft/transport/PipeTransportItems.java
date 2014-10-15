@@ -204,8 +204,7 @@ public class PipeTransportItems extends PipeTransport {
 		sides.remove(ForgeDirection.UNKNOWN);
 
 		for (ForgeDirection o : sides) {
-		        //if (container.pipe.outputOpen(o) && canReceivePipeObjects(o, item)) {
-			if (outputOpen(o) && canReceivePipeObjects(o, item)) {
+			if (container.pipe.outputOpen(o) && canReceivePipeObjects(o, item)) {
 				result.add(o);
 			}
 		}
