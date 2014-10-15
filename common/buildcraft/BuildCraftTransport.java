@@ -17,6 +17,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
+
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLInterModComms;
@@ -25,10 +26,14 @@ import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
+
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
 import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraftforge.fluids.FluidContainerRegistry;
+import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.oredict.RecipeSorter;
+
 import buildcraft.api.blueprints.SchematicRegistry;
 import buildcraft.api.core.EnumColor;
 import buildcraft.api.core.IIconProvider;
@@ -245,6 +250,8 @@ public class BuildCraftTransport extends BuildCraftMod {
 	public static TechnoStatement technoActionPowerLimiter = new TechnoStatement();
 	public static TechnoStatement technoActionExtractionPresetRed = new TechnoStatement();
 
+	public static boolean secondSealantRecipe;
+
 	private static LinkedList<PipeRecipe> pipeRecipes = new LinkedList<PipeRecipe>();
 
 	public IIconProvider pipeIconProvider = new PipeIconProvider();
@@ -334,6 +341,10 @@ public class BuildCraftTransport extends BuildCraftMod {
 			} else {
 				excludedFluidBlocks = new String[0];
 			}
+
+			Property secondSealantCraftingRecipe = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "secondSealantCraftingRecipe", true);
+			secondSealantCraftingRecipe.comment = "enable or disable the crafting Recipe to craft pipe sealant with 8 seeds and 1 water bucket";
+			secondSealantRecipe = secondSealantCraftingRecipe.getBoolean();
 
 			filteredBufferBlock = new BlockFilteredBuffer();
 			CoreProxy.proxy.registerBlock(filteredBufferBlock.setBlockName("filteredBufferBlock"));
@@ -802,6 +813,13 @@ public class BuildCraftTransport extends BuildCraftMod {
 	public void loadRecipes() {
 		// Add base recipe for pipe waterproof.
 		GameRegistry.addShapelessRecipe(new ItemStack(pipeWaterproof, 1), new ItemStack(Items.dye, 1, 2));
+		if (secondSealantRecipe) {
+			for (FluidContainerRegistry.FluidContainerData data: FluidContainerRegistry.getRegisteredFluidContainerData()) {
+				if (data.fluid.fluidID == FluidRegistry.WATER.getID()) {
+					GameRegistry.addRecipe(new ItemStack(pipeWaterproof, 1), "SSS", "SWS", "SSS", 'S', Items.wheat_seeds, 'W', data.filledContainer);
+				}
+			}
+		}
 
 		// Add pipe recipes
 		for (PipeRecipe pipe : pipeRecipes) {
