@@ -103,7 +103,7 @@ public class PipePowerWood extends Pipe<PipeTransportPower> implements IPowerRec
 			return;
 		}
 
-		if (battery.getEnergyStored() == 0 || sources == 0) {
+		if (sources == 0) {
 			return;
 		}
 
@@ -141,15 +141,17 @@ public class PipePowerWood extends Pipe<PipeTransportPower> implements IPowerRec
 			}
 		}
 
-		for (ForgeDirection o : ForgeDirection.VALID_DIRECTIONS) {
-			if (!powerSources[o.ordinal()]) {
-				continue;
-			}
-
-			int energyUsable = Math.min(battery.getEnergyStored(), energyToRemove);
-
-			if (energyUsable > 0) {
-				battery.setEnergy(battery.getEnergyStored() - transport.receiveEnergy(o, energyUsable));
+		if (battery.getEnergyStored() > 0) {
+			for (ForgeDirection o : ForgeDirection.VALID_DIRECTIONS) {
+				if (!powerSources[o.ordinal()]) {
+					continue;
+				}
+	
+				int energyUsable = Math.min(battery.getEnergyStored(), energyToRemove);
+	
+				if (energyUsable > 0) {
+					battery.setEnergy(battery.getEnergyStored() - transport.receiveEnergy(o, energyUsable));
+				}
 			}
 		}
 
