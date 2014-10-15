@@ -8,7 +8,6 @@
  */
 package buildcraft.api.power;
 
-@Deprecated
 public interface ILaserTarget {
 
 	/**
