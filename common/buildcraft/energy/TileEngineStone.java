@@ -76,7 +76,7 @@ public class TileEngineStone extends TileEngineWithInventory {
 		if (burnTime > 0) {
 			burnTime--;
 
-			double output = getCurrentOutput();
+			int output = getCurrentOutput();
 
 			if (!constantPower) {
 				currentOutput = output; // Comment out for constant power
@@ -142,25 +142,25 @@ public class TileEngineStone extends TileEngineWithInventory {
 	}
 
 	@Override
-	public double maxEnergyReceived() {
+	public int maxEnergyReceived() {
 		return 2000;
 	}
 
 	@Override
-	public double maxEnergyExtracted() {
+	public int maxEnergyExtracted() {
 		return 1000;
 	}
 
 	@Override
-	public double getMaxEnergy() {
+	public int getMaxEnergy() {
 		return 10000;
 	}
 
 	@Override
-	public double getCurrentOutput() {
+	public int getCurrentOutput() {
 		double e = TARGET_OUTPUT * getMaxEnergy() - energy;
 		esum = MathUtils.clamp(esum + e, -eLimit, eLimit);
-		return MathUtils.clamp(e * kp + esum * ki, MIN_OUTPUT, MAX_OUTPUT);
+		return (int)Math.round(MathUtils.clamp(e * kp + esum * ki, MIN_OUTPUT, MAX_OUTPUT));
 	}
 
 	@Override

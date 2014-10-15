@@ -15,7 +15,7 @@ import net.minecraftforge.fluids.Fluid;
 public interface IFuelManager {
 	IFuel addFuel(IFuel fuel);
 
-	IFuel addFuel(Fluid fluid, float powerPerCycle, int totalBurningTime);
+	IFuel addFuel(Fluid fluid, int powerPerCycle, int totalBurningTime);
 
 	Collection<IFuel> getFuels();
 

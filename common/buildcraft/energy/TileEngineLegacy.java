@@ -51,12 +51,12 @@ public class TileEngineLegacy extends TileEngine {
 	}
 
 	@Override
-	public double getMaxEnergy() {
+	public int getMaxEnergy() {
 		return 1;
 	}
 
 	@Override
-	public double maxEnergyReceived() {
+	public int maxEnergyReceived() {
 		return 0;
 	}
 
@@ -71,12 +71,12 @@ public class TileEngineLegacy extends TileEngine {
 	}
 
 	@Override
-	public double getCurrentOutput() {
+	public int getCurrentOutput() {
 		return 1;
 	}
 
 	@Override
-	public double maxEnergyExtracted() {
+	public int maxEnergyExtracted() {
 		return 1;
 	}
 }

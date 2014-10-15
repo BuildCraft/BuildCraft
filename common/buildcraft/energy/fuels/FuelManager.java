@@ -32,7 +32,7 @@ public final class FuelManager implements IFuelManager {
 	}
 
 	@Override
-	public IFuel addFuel(Fluid fluid, float powerPerCycle, int totalBurningTime) {
+	public IFuel addFuel(Fluid fluid, int powerPerCycle, int totalBurningTime) {
 		return addFuel(new BCFuel(fluid, powerPerCycle, totalBurningTime));
 	}
 
@@ -53,10 +53,10 @@ public final class FuelManager implements IFuelManager {
 
 	private static final class BCFuel implements IFuel {
 		private final Fluid fluid;
-		private final float powerPerCycle;
+		private final int powerPerCycle;
 		private final int totalBurningTime;
 
-		public BCFuel(Fluid fluid, float powerPerCycle, int totalBurningTime) {
+		public BCFuel(Fluid fluid, int powerPerCycle, int totalBurningTime) {
 			this.fluid = fluid;
 			this.powerPerCycle = powerPerCycle;
 			this.totalBurningTime = totalBurningTime;
@@ -73,7 +73,7 @@ public final class FuelManager implements IFuelManager {
 		}
 
 		@Override
-		public float getPowerPerCycle() {
+		public int getPowerPerCycle() {
 			return powerPerCycle;
 		}
 	}

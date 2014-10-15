@@ -76,10 +76,10 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 	public static final float MIN_HEAT = 20;
 	public static final float IDEAL_HEAT = 100;
 	public static final float MAX_HEAT = 250;
-	public double currentOutput = 0;
+	public int currentOutput = 0;
 	public boolean isRedstonePowered = false;
 	public float progress;
-	public double energy;
+	public int energy;
 	public float heat = MIN_HEAT;
 	@NetworkData
 	public EnergyStage energyStage = EnergyStage.BLUE;
@@ -433,7 +433,7 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 
 		orientation = ForgeDirection.getOrientation(data.getInteger("orientation"));
 		progress = data.getFloat("progress");
-		energy = data.getDouble("energy");
+		energy = data.getInteger("energy");
 		heat = data.getFloat("heat");
 		if (data.hasKey("constantPower")) {
 			constantPower = data.getBoolean("constantPower");
@@ -446,7 +446,7 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 
 		data.setInteger("orientation", orientation.ordinal());
 		data.setFloat("progress", progress);
-		data.setDouble("energy", energy);
+		data.setInteger("energy", energy);
 		data.setFloat("heat", heat);
 		data.setBoolean("constantPower", constantPower);
 	}
@@ -489,14 +489,10 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 
 	@Override
 	public void doWork(PowerHandler workProvider) {
-		if (worldObj.isRemote) {
-			return;
-		}
-
-		addEnergy(powerHandler.useEnergy(1, maxEnergyReceived(), true) * 0.95F);
+		
 	}
 
-	public void addEnergy(double addition) {
+	public void addEnergy(int addition) {
 		energy += addition;
 
 		if (getEnergyStage() == EnergyStage.OVERHEAT) {
@@ -557,23 +553,23 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 		}
 	}
 
-	public abstract double getMaxEnergy();
+	public abstract int getMaxEnergy();
 
-	public double minEnergyReceived() {
+	public int minEnergyReceived() {
 		return 20;
 	}
 
-	public abstract double maxEnergyReceived();
+	public abstract int maxEnergyReceived();
 
-	public abstract double maxEnergyExtracted();
+	public abstract int maxEnergyExtracted();
 
 	public abstract float explosionRange();
 
-	public double getEnergyStored() {
+	public int getEnergyStored() {
 		return energy;
 	}
 
-	public abstract double getCurrentOutput();
+	public abstract int getCurrentOutput();
 
 	@Override
 	public LinkedList<ITrigger> getTriggers() {
@@ -619,16 +615,6 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 	public int extractEnergy(ForgeDirection from, int maxExtract,
 			boolean simulate) {
 		return 0;
-
-		/*if(!(from == orientation)) return 0;
-
-		int energyRF = (int)Math.round(10 * energy);
-		int energyExtracted = Math.min(maxExtract, energyRF);
-		if(!simulate) {
-			if(energyExtracted == energyRF) energy = 0;
-			else energy -= (double)energyExtracted / 10.0;
-		}
-		return energyExtracted;*/
 	}
 
 	@Override

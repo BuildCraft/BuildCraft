@@ -101,22 +101,22 @@ public class TileEngineCreative extends TileEngine {
 	}
 
 	@Override
-	public double maxEnergyReceived() {
+	public int maxEnergyReceived() {
 		return getCurrentOutput();
 	}
 
 	@Override
-	public double maxEnergyExtracted() {
+	public int maxEnergyExtracted() {
 		return getCurrentOutput();
 	}
 
 	@Override
-	public double getMaxEnergy() {
+	public int getMaxEnergy() {
 		return getCurrentOutput();
 	}
 
 	@Override
-	public double getCurrentOutput() {
+	public int getCurrentOutput() {
 		return powerMode.maxPower;
 	}
 

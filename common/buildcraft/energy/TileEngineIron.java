@@ -403,22 +403,22 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
 	}
 
 	@Override
-	public double maxEnergyReceived() {
+	public int maxEnergyReceived() {
 		return 20000;
 	}
 
 	@Override
-	public double maxEnergyExtracted() {
+	public int maxEnergyExtracted() {
 		return 5000;
 	}
 
 	@Override
-	public double getMaxEnergy() {
+	public int getMaxEnergy() {
 		return 100000;
 	}
 
 	@Override
-	public double getCurrentOutput() {
+	public int getCurrentOutput() {
 		if (currentFuel == null) {
 			return 0;
 		} else {

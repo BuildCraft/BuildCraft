@@ -19,7 +19,7 @@ import buildcraft.transport.TileGenericPipe;
 
 public class TileEngineWood extends TileEngine {
 
-	public static final float OUTPUT = 1;
+	public static final int OUTPUT = 1;
 
 	@Override
 	public ResourceLocation getBaseTexture() {
@@ -37,12 +37,12 @@ public class TileEngineWood extends TileEngine {
 	}
 
 	@Override
-	public double minEnergyReceived() {
+	public int minEnergyReceived() {
 		return 0;
 	}
 
 	@Override
-	public double maxEnergyReceived() {
+	public int maxEnergyReceived() {
 		return 500;
 	}
 
@@ -100,18 +100,18 @@ public class TileEngineWood extends TileEngine {
 	}
 
 	@Override
-	public double getMaxEnergy() {
+	public int getMaxEnergy() {
 		return 1000;
 	}
 
 	@Override
-	public double getCurrentOutput() {
+	public int getCurrentOutput() {
 		return OUTPUT;
 	}
 
 	@Override
-	public double maxEnergyExtracted() {
-		return 1 + PowerHandler.PerditionCalculator.MIN_POWERLOSS;
+	public int maxEnergyExtracted() {
+		return 1;
 	}
 
 	// TODO: HACK
@@ -126,7 +126,7 @@ public class TileEngineWood extends TileEngine {
 		if (tile instanceof TileGenericPipe && ((TileGenericPipe) tile).getPipeType() != PipeType.POWER) {
 			super.sendPower();
 		} else { // pretend we're sending out our powers
-			this.energy = 0.0;
+			this.energy = 0;
 		}
 	}
 }
