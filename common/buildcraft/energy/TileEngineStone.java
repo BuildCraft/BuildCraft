@@ -160,7 +160,7 @@ public class TileEngineStone extends TileEngineWithInventory {
 	public int getCurrentOutput() {
 		double e = TARGET_OUTPUT * getMaxEnergy() - energy;
 		esum = MathUtils.clamp(esum + e, -eLimit, eLimit);
-		return (int)Math.round(MathUtils.clamp(e * kp + esum * ki, MIN_OUTPUT, MAX_OUTPUT));
+		return (int) Math.round(MathUtils.clamp(e * kp + esum * ki, MIN_OUTPUT, MAX_OUTPUT));
 	}
 
 	@Override

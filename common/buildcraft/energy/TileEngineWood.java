@@ -13,7 +13,6 @@ import net.minecraft.util.ResourceLocation;
 
 import net.minecraftforge.common.util.ForgeDirection;
 
-import buildcraft.api.power.PowerHandler;
 import buildcraft.api.transport.IPipeTile.PipeType;
 import buildcraft.transport.TileGenericPipe;
 
