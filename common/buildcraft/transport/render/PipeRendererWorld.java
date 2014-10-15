@@ -83,7 +83,7 @@ public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
 		renderblocks.setRenderBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
 
 		// Facade renderer handles rendering in both passes
-		pipeFacadeRenderer(renderblocks, fakeBlock, state, x, y, z);
+		pipeFacadeRenderer(renderblocks, fakeBlock, state, iblockaccess, x, y, z);
 		//block.setRenderAllSides();//Start fresh
 
 		// Force other opaque renders into pass 0
@@ -118,8 +118,8 @@ public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
 		renderblocks.renderStandardBlock(stateHost, x, y, z);
 	}
 
-	private void pipeFacadeRenderer(RenderBlocks renderblocks, ITextureStates blockStateMachine, PipeRenderState state, int x, int y, int z) {
-		FacadeRenderHelper.pipeFacadeRenderer(renderblocks, blockStateMachine, state, x, y, z);
+	private void pipeFacadeRenderer(RenderBlocks renderblocks, ITextureStates blockStateMachine, PipeRenderState state, IBlockAccess blockAccess, int x, int y, int z) {
+		FacadeRenderHelper.pipeFacadeRenderer(renderblocks, blockStateMachine, state, blockAccess, x, y, z);
 	}
 
 	private void pipePlugRenderer(RenderBlocks renderblocks, ITextureStates blockStateMachine, PipeRenderState state, int x, int y, int z) {

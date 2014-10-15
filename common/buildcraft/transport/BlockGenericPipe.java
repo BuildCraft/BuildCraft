@@ -72,8 +72,9 @@ import buildcraft.transport.gates.ItemGate;
 import buildcraft.transport.render.PipeRendererWorld;
 import buildcraft.transport.utils.FacadeMatrix;
 
+import info.jbcs.minecraft.chisel.api.IFacade;
 
-public class BlockGenericPipe extends BlockBuildCraft {
+public class BlockGenericPipe extends BlockBuildCraft implements IFacade {
 
 	public static int facadeRenderColor = -1;
 	public static Map<Item, Class<? extends Pipe>> pipes = new HashMap<Item, Class<? extends Pipe>>();
@@ -1163,6 +1164,29 @@ public class BlockGenericPipe extends BlockBuildCraft {
 
 	public static boolean isValid(Pipe<?> pipe) {
 		return isFullyDefined(pipe);
+	}
+
+	@Override
+	public int getFacadeMetadata(IBlockAccess world, int x, int y, int z, int side) {
+		Pipe<?> pipe = getPipe(world, x, y, z);
+
+		if (pipe == null) {
+			return 0;
+		}
+
+		return pipe.container.getFacadeMetadata(ForgeDirection.getOrientation(side));
+	}
+
+	@Override
+	public Block getFacade(IBlockAccess world, int x, int y, int z, int side) {
+		Pipe<?> pipe = getPipe(world, x, y, z);
+
+		if (pipe == null) {
+			return this;
+		}
+
+		Block facadeBlock = pipe.container.getFacadeBlock(ForgeDirection.getOrientation(side));
+		return facadeBlock != null ? facadeBlock : this;
 	}
 
 	@Override

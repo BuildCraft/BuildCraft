@@ -919,6 +919,14 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 				ItemFacade.getFacade(((ItemFacade.FacadePluggable) pluggable).states) : null;
 	}
 
+	public int getFacadeMetadata(ForgeDirection direction) {
+		return renderState.facadeMatrix.getFacadeMetaId(direction);
+	}
+
+	public Block getFacadeBlock(ForgeDirection direction) {
+		return renderState.facadeMatrix.getFacadeBlock(direction);
+	}
+
 	public Gate getGate(ForgeDirection direction) {
 		return pipe.gates[direction.ordinal()];
 	}
