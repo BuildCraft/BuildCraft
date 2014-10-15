@@ -49,7 +49,9 @@ public abstract class WorldProperty implements IWorldProperty {
 	@Override
 	public void clear() {
 		for (DimensionProperty p : properties) {
-			p.clear();
+			if (p != null) {
+				p.clear();
+			}
 		}
 
 		properties.clear();
