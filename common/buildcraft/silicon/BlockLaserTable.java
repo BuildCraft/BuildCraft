@@ -20,18 +20,17 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
-
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-
 import buildcraft.BuildCraftSilicon;
 import buildcraft.api.events.BlockInteractionEvent;
+import buildcraft.api.power.ILaserTargetBlock;
 import buildcraft.core.BlockBuildCraft;
 import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.utils.Utils;
 
-public class BlockLaserTable extends BlockBuildCraft {
+public class BlockLaserTable extends BlockBuildCraft implements ILaserTargetBlock {
 
 	@SideOnly(Side.CLIENT)
 	private IIcon[][] icons;

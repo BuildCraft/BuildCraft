@@ -23,6 +23,7 @@ import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.gates.IAction;
 import buildcraft.api.gates.IActionReceptor;
 import buildcraft.api.power.ILaserTarget;
+import buildcraft.api.power.ILaserTargetBlock;
 import buildcraft.core.Box;
 import buildcraft.core.EntityLaser;
 import buildcraft.core.IMachine;
@@ -184,16 +185,17 @@ public class TileLaser extends TileBuildCraft implements IActionReceptor, IMachi
 		for (int x = minX; x <= maxX; ++x) {
 			for (int y = minY; y <= maxY; ++y) {
 				for (int z = minZ; z <= maxZ; ++z) {
-
-					TileEntity tile = worldObj.getTileEntity(x, y, z);
-					if (tile instanceof ILaserTarget) {
-
-						ILaserTarget table = (ILaserTarget) tile;
-						if (table.requiresLaserEnergy()) {
-							targets.add(table);
+					if (worldObj.getBlock(x, y, z) instanceof ILaserTargetBlock) {
+						TileEntity tile = worldObj.getTileEntity(x, y, z);
+						
+						if (tile instanceof ILaserTarget) {
+							ILaserTarget table = (ILaserTarget) tile;
+							
+							if (table.requiresLaserEnergy()) {
+								targets.add(table);
+							}
 						}
 					}
-
 				}
 			}
 		}
