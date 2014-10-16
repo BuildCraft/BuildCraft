@@ -82,14 +82,15 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 	public int redstoneInput;
 	public int[] redstoneInputSide = new int[ForgeDirection.VALID_DIRECTIONS.length];
 
-	private boolean deletePipe = false;
+	protected boolean deletePipe = false;
+	protected boolean sendClientUpdate = false;
+	protected boolean blockNeighborChange = false;
+	protected boolean refreshRenderState = false;
+	protected boolean pipeBound = false;
+	protected boolean resyncGateExpansions = false;
+	protected boolean attachPluggables = false;
+
 	private TileBuffer[] tileBuffer;
-	private boolean sendClientUpdate = false;
-	private boolean blockNeighborChange = false;
-	private boolean refreshRenderState = false;
-	private boolean pipeBound = false;
-	private boolean resyncGateExpansions = false;
-	private boolean attachPluggables = false;
 
 	public static class CoreState implements IClientState {
 		public int pipeId = -1;
@@ -339,7 +340,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 		sideProperties.validate(this);
 	}
 
-	private void notifyBlockChanged() {
+	protected void notifyBlockChanged() {
 		worldObj.notifyBlockOfNeighborChange(xCoord, yCoord, zCoord, getBlock());
 		scheduleRenderUpdate();
 		sendUpdateToClient();
@@ -416,8 +417,10 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 		}
 	}
 
-	// PRECONDITION: worldObj must not be null
-	private void refreshRenderState() {
+	/**
+	 *  PRECONDITION: worldObj must not be null
+	 */
+	protected void refreshRenderState() {
 		// Pipe connections;
 		for (ForgeDirection o : ForgeDirection.VALID_DIRECTIONS) {
 			renderState.pipeConnectionMatrix.setConnected(o, this.pipeConnectionsBuffer[o.ordinal()]);
@@ -698,27 +701,8 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 			return null;
 		}
 	}
-
-	/**
-	 * Checks if this tile can connect to another tile
-	 *
-	 * @param with - The other Tile
-	 * @param side - The orientation to get to the other tile ('with')
-	 * @return true if pipes are considered connected
-	 */
-	protected boolean canPipeConnect(TileEntity with, ForgeDirection side) {
-		if (with == null) {
-			return false;
-		}
-
-		if (hasBlockingPluggable(side)) {
-			return false;
-		}
-
-		if (!BlockGenericPipe.isValid(pipe)) {
-			return false;
-		}
-
+	
+	protected boolean canPipeConnect_internal(TileEntity with, ForgeDirection side) {
 		if (!(pipe instanceof IPipeConnectionForced) || !((IPipeConnectionForced) pipe).ignoreConnectionOverrides(side)) {
 			if (with instanceof IPipeConnection) {
 				IPipeConnection.ConnectOverride override = ((IPipeConnection) with).overridePipeConnection(pipe.transport.getPipeType(), side.getOpposite());
@@ -746,7 +730,30 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 		return pipe.canPipeConnect(with, side);
 	}
 
-	private boolean hasBlockingPluggable(ForgeDirection side) {
+	/**
+	 * Checks if this tile can connect to another tile
+	 *
+	 * @param with - The other Tile
+	 * @param side - The orientation to get to the other tile ('with')
+	 * @return true if pipes are considered connected
+	 */
+	protected boolean canPipeConnect(TileEntity with, ForgeDirection side) {
+		if (with == null) {
+			return false;
+		}
+
+		if (hasBlockingPluggable(side)) {
+			return false;
+		}
+
+		if (!BlockGenericPipe.isValid(pipe)) {
+			return false;
+		}
+
+		return canPipeConnect_internal(with, side);
+	}
+
+	protected boolean hasBlockingPluggable(ForgeDirection side) {
 		IPipePluggable pluggable = sideProperties.pluggables[side.ordinal()];
 		return pluggable != null && pluggable.blocking(this, side);
 	}

@@ -17,6 +17,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
+import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLInterModComms;
@@ -383,7 +384,17 @@ public class BuildCraftTransport extends BuildCraftMod {
 			pipeWaterproof.setUnlocalizedName("pipeWaterproof");
 			CoreProxy.proxy.registerItem(pipeWaterproof);
 
-			genericPipeBlock = new BlockGenericPipe();
+			if (Loader.isModLoaded("BuildCraft|Compat")) {
+				try {
+					genericPipeBlock = (BlockGenericPipe) this.getClass().getClassLoader().loadClass("buildcraft.transport.BlockGenericPipeCompat").newInstance();
+				} catch (Exception e) {
+					e.printStackTrace();
+					genericPipeBlock = new BlockGenericPipe();
+				}
+			} else {
+				genericPipeBlock = new BlockGenericPipe();
+			}
+			
 			CoreProxy.proxy.registerBlock(genericPipeBlock.setBlockName("pipeBlock"), ItemBlock.class);
 
 			pipeItemsWood = buildPipe(PipeItemsWood.class, "Wooden Transport Pipe", CreativeTabBuildCraft.PIPES, "plankWood", Blocks.glass, "plankWood");
