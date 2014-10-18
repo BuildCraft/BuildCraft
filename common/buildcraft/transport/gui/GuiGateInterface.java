@@ -364,12 +364,13 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 	}
 
 	@Override
-	protected void slotClicked(AdvancedSlot slot, int mouseButton) {
+	protected void mouseClicked(int i, int j, int k) {
 		if (gate == null) {
 			return;
 		}
+		super.mouseClicked(i, j, k);
 
-		super.slotClicked(slot, mouseButton);
+		AdvancedSlot slot = getSlotAtLocation(i, j);
 
 		if (slot instanceof TriggerSlot && container.hasTriggers()) {
 			TriggerSlot triggerSlot = (TriggerSlot) slot;
@@ -378,14 +379,14 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 
 			if (triggerSlot.getStatement() == null) {
 
-				if (mouseButton == 0) {
+				if (k == 0) {
 					changed = container.getFirstTrigger();
 				} else {
 					changed = container.getLastTrigger();
 				}
 
 			} else {
-				Iterator<ITrigger> it = container.getTriggerIterator(mouseButton != 0);
+				Iterator<ITrigger> it = container.getTriggerIterator(k != 0);
 
 				for (; it.hasNext();) {
 					ITrigger trigger = it.next();
@@ -417,14 +418,14 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 			IAction changed = null;
 			if (actionSlot.getStatement() == null) {
 
-				if (mouseButton == 0) {
+				if (k == 0) {
 					changed = container.getFirstAction();
 				} else {
 					changed = container.getLastAction();
 				}
 
 			} else {
-				Iterator<IAction> it = container.getActionIterator(mouseButton != 0);
+				Iterator<IAction> it = container.getActionIterator(k != 0);
 
 				for (; it.hasNext();) {
 					IAction action = it.next();

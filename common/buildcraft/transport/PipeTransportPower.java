@@ -427,6 +427,10 @@ public class PipeTransportPower extends PipeTransport {
 	public void requestEnergy(ForgeDirection from, int amount) {
 		step();
 
+		if (!outputsOpen[from.ordinal()]) {
+			return;
+		}
+		
 		if (this.container.pipe instanceof IPipeTransportPowerHook) {
 		    nextPowerQuery[from.ordinal()] += ((IPipeTransportPowerHook) this.container.pipe).requestEnergy(from, amount);
 		} else {

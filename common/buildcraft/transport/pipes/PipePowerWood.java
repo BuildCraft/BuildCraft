@@ -213,7 +213,9 @@ public class PipePowerWood extends Pipe<PipeTransportPower> implements IPowerRec
 	}
 
 	public boolean isPowerSource(TileEntity tile, ForgeDirection from) {
-		if (tile instanceof IPowerEmitter && ((IPowerEmitter) tile).canEmitPowerFrom(from.getOpposite())) {
+		if (!transport.inputOpen(from)) {
+			return false;
+		} else if (tile instanceof IPowerEmitter && ((IPowerEmitter) tile).canEmitPowerFrom(from.getOpposite())) {
 			return true;
 		} else {
 			return tile instanceof IEnergyHandler && ((IEnergyHandler) tile).canConnectEnergy(from.getOpposite());
