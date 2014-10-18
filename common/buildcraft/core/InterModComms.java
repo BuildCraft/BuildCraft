@@ -61,7 +61,7 @@ public final class InterModComms {
 			} else if (m.key.equals("remove-refinery-recipe")) {
 				processRefineryRecipeRemoveIMC(event, m);
 			} else {
-				Logger.getLogger("Buildcraft").log(Level.WARNING, "Received IMC message with unknown key('%s') from %s!", new Object[]{m.key, m.getSender()});
+				Logger.getLogger("Buildcraft").log(Level.WARNING, "Received an IMC message with unknown key ('%s') from %s!", new Object[]{m.key, m.getSender()});
 			}
 		}
 	}
@@ -69,12 +69,16 @@ public final class InterModComms {
 	public static void processAssemblyRecipeRemoveIMC(IMCEvent event, IMCMessage msg) {
 		if (msg.isStringMessage()) {
 			AssemblyRecipeManager.INSTANCE.removeRecipe(msg.getStringValue());
+
+			Logger.getLogger("Buildcraft").log(Level.INFO, String.format("Received an assembly recipe '%s' removal request from mod %s", msg.getStringValue(), msg.getSender()));
 		}
 	}
 
 	public static void processRefineryRecipeRemoveIMC(IMCEvent event, IMCMessage msg) {
 		if (msg.isStringMessage()) {
 			RefineryRecipeManager.INSTANCE.removeRecipe(msg.getStringValue());
+
+			Logger.getLogger("Buildcraft").log(Level.INFO, String.format("Received a refinery recipe '%s' removal request from mod %s", msg.getStringValue(), msg.getSender()));
 		}
 	}
 
@@ -106,7 +110,7 @@ public final class InterModComms {
 			}
 		}
 		if (failed) {
-			Logger.getLogger("Buildcraft").log(Level.WARNING, "Received invalid assembly recipe IMC message from %s!", msg.getSender());
+			Logger.getLogger("Buildcraft").log(Level.WARNING, "Received invalid assembly recipe IMC message from mod %s!", msg.getSender());
 		}
 	}
 
@@ -136,7 +140,7 @@ public final class InterModComms {
 			}
 		}
 		if (failed) {
-			Logger.getLogger("Buildcraft").log(Level.WARNING, "Received invalid refinery recipe IMC message from %s!", msg.getSender());
+			Logger.getLogger("Buildcraft").log(Level.WARNING, "Received invalid refinery recipe IMC message from mod %s!", msg.getSender());
 		}
 	}
 
@@ -198,7 +202,7 @@ public final class InterModComms {
 
 	private static void logRedundantAddFacadeMessage(IMCMessage m, String blockName)
 	{
-		Logger.getLogger("Buildcraft").log(Level.WARNING, String.format("%s is trying to add %s a facade that Buildcraft will add later. Facade not added.", m.getSender(), blockName));
+		Logger.getLogger("Buildcraft").log(Level.WARNING, String.format("%s is trying to add %s - a facade that BuildCraft will add later. Facade addition not necessary.", m.getSender(), blockName));
 	}
 
 	public static void processOilLakeBiomeIMC(IMCEvent event, IMCMessage m) {
@@ -212,7 +216,7 @@ public final class InterModComms {
 		} catch (Exception ex) {
 			Logger.getLogger("Buildcraft").log(Level.WARNING, String.format("Received an invalid oil-lake-biome request %s from mod %s", m.getStringValue(), m.getSender()));
 		}
-		Logger.getLogger("Buildcraft").log(Level.INFO, String.format("Received an successfull oil-lake-biome request %s from mod %s", m.getStringValue(), m.getSender()));
+		Logger.getLogger("Buildcraft").log(Level.INFO, String.format("Received a successful oil-lake-biome request %s from mod %s", m.getStringValue(), m.getSender()));
 	}
 
 	public static void processOilGenExcludeIMC(IMCEvent event, IMCMessage m) {
@@ -226,6 +230,6 @@ public final class InterModComms {
 		} catch (Exception ex) {
 			Logger.getLogger("Buildcraft").log(Level.WARNING, String.format("Received an invalid oil-gen-exclude request %s from mod %s", m.getStringValue(), m.getSender()));
 		}
-		Logger.getLogger("Buildcraft").log(Level.INFO, String.format("Received an successfull oil-gen-exclude request %s from mod %s", m.getStringValue(), m.getSender()));
+		Logger.getLogger("Buildcraft").log(Level.INFO, String.format("Received a successful oil-gen-exclude request %s from mod %s", m.getStringValue(), m.getSender()));
 	}
 }
