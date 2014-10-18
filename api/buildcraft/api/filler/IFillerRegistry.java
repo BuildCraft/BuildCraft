@@ -8,12 +8,9 @@
  */
 package buildcraft.api.filler;
 
-import java.util.Set;
-
-import buildcraft.api.gates.IAction;
+import java.util.Collection;
 
 public interface IFillerRegistry {
-
 	void addPattern(IFillerPattern pattern);
 
 	IFillerPattern getPattern(String patternName);
@@ -21,6 +18,6 @@ public interface IFillerRegistry {
 	IFillerPattern getNextPattern(IFillerPattern currentPattern);
 
 	IFillerPattern getPreviousPattern(IFillerPattern currentPattern);
-
-	Set<? extends IAction> getActions();
+	
+	Collection<IFillerPattern> getPatterns();
 }

@@ -34,7 +34,7 @@ public class BuildersActionProvider implements IActionProvider {
 	public Collection<IAction> getNeighborActions(Block block, TileEntity tile) {
 		LinkedList<IAction> actions = new LinkedList<IAction>();
 		if (tile instanceof TileFiller) {
-			for(IFillerPattern p : FillerManager.registry.getPatterns()) {
+			for (IFillerPattern p : FillerManager.registry.getPatterns()) {
 				if (p instanceof FillerPattern) {
 					if (!actionMap.containsKey(p.getUniqueTag())) {
 						actionMap.put(p.getUniqueTag(), new ActionFiller((FillerPattern) p));

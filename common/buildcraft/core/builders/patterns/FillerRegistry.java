@@ -10,16 +10,11 @@ package buildcraft.core.builders.patterns;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.TreeMap;
-
-import com.google.common.collect.Sets;
 
 import buildcraft.api.filler.IFillerPattern;
 import buildcraft.api.filler.IFillerRegistry;
-import buildcraft.builders.triggers.ActionFiller;
 
 public class FillerRegistry implements IFillerRegistry {
 

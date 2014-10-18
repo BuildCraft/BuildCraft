@@ -10,13 +10,13 @@ package buildcraft.core.render;
 
 import org.lwjgl.opengl.GL11;
 
-import buildcraft.core.StackAtPosition;
-import buildcraft.core.builders.BuildingItem;
-import buildcraft.core.builders.IBuildingItemsProvider;
 import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.tileentity.TileEntity;
+import buildcraft.core.StackAtPosition;
+import buildcraft.core.builders.BuildingItem;
+import buildcraft.core.builders.IBuildingItemsProvider;
 
 public class RenderBuildingItems {
 

@@ -12,7 +12,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 
-import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 import buildcraft.BuildCraftCore;
 import buildcraft.api.recipes.IFlexibleRecipe;
