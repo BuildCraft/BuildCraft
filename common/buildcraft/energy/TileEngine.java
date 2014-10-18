@@ -231,12 +231,6 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 			}
 		}
 
-		if (!isRedstonePowered) {
-			if (energy > 10) {
-				energy -= 10;
-			}
-		}
-
 		updateHeatLevel();
 		getEnergyStage();
 		engineUpdate();
