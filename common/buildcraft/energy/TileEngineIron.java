@@ -173,9 +173,7 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
 					}
 				}
 
-				if (!this.constantPower) {
-					currentOutput = currentFuel.getPowerPerCycle();
-				}
+				currentOutput = currentFuel.getPowerPerCycle();
 
 				addEnergy(currentFuel.getPowerPerCycle());
 				heat += currentFuel.getPowerPerCycle() * HEAT_PER_RF * getBiomeTempScalar();
@@ -418,7 +416,7 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
 	}
 
 	@Override
-	public int getCurrentOutput() {
+	public int calculateCurrentOutput() {
 		if (currentFuel == null) {
 			return 0;
 		} else {

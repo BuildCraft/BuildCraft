@@ -134,7 +134,7 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 	}
 
 	public double getEnergyLevel() {
-		return energy / getMaxEnergy();
+		return (double)energy / getMaxEnergy();
 	}
 
 	protected EnergyStage computeEnergyStage() {
@@ -266,19 +266,16 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 			setPumping(false);
 		}
 
-		// Uncomment for constant power
-		if (constantPower) {
-			if (isRedstonePowered && isActive()) {
-				sendPower();
-			} else {
-				currentOutput = 0;
-			}
-		}
-
 		burn();
+		
+		if (!isRedstonePowered) {
+			currentOutput = 0;
+		} else if (constantPower && isRedstonePowered && isActive()) {
+			sendPower();
+		}
 	}
 
-	private double getPowerToExtract() {
+	private int getPowerToExtract() {
 		TileEntity tile = getTileBuffer(orientation).getTile();
 
 		if (tile instanceof IEnergyHandler) {
@@ -293,8 +290,8 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 			PowerReceiver receptor = ((IPowerReceptor) tile)
 					.getPowerReceiver(orientation.getOpposite());
 
-			return extractEnergy(receptor.getMinEnergyReceived() * 10,
-					receptor.getMaxEnergyReceived() * 10, false);
+			return extractEnergy((int) Math.floor(receptor.getMinEnergyReceived() * 10),
+					(int) Math.ceil(receptor.getMaxEnergyReceived() * 10), false);
 		} else {
 			return 0;
 		}
@@ -317,7 +314,7 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 							orientation.getOpposite(),
 							(int) Math.round(extracted), false);
 
-					extractEnergy(0.0, neededRF, true);
+					extractEnergy(0, neededRF, true);
 				}
 			} else if (tile instanceof IPowerReceptor) {
 				PowerReceiver receptor = ((IPowerReceptor) tile)
@@ -325,10 +322,10 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 
 				if (extracted > 0) {
 					double neededMJ = receptor.receiveEnergy(
-							PowerHandler.Type.ENGINE, extracted,
+							PowerHandler.Type.ENGINE, extracted / 10.0,
 							orientation.getOpposite());
 
-					extractEnergy(receptor.getMinEnergyReceived(), neededMJ * 10, true);
+					extractEnergy((int) Math.floor(receptor.getMinEnergyReceived() * 10), (int) Math.ceil(neededMJ * 10), true);
 				}
 			}
 		}
@@ -388,10 +385,8 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 			if ((!pipesOnly || tile instanceof IPipeTile) && isPoweredTile(tile, o)) {
 				if ((tile instanceof IPipeTile) && (((IPipeTile) tile).getPipeType() != PipeType.POWER)) {
 					constantPower = false;
-				} else if (tile instanceof IEnergyHandler) {
-					constantPower = true;
 				} else {
-					constantPower = false;
+					constantPower = true;
 				}
 
 				orientation = o;
@@ -505,30 +500,20 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 		}
 	}
 
-	public double extractEnergy(double min, double max, boolean doExtract) {
-		if (energy < min) {
+	public int extractEnergy(int min, int max, boolean doExtract) {
+		max = Math.min(max, maxEnergyExtracted());
+		
+		if (max < min || energy < min) {
 			return 0;
 		}
 
-		double actualMax;
+		int extracted;
 
-		if (max > maxEnergyExtracted()) {
-			actualMax = maxEnergyExtracted();
-		} else {
-			actualMax = max;
-		}
-
-		if (actualMax < min) {
-			return 0;
-		}
-
-		double extracted;
-
-		if (energy >= actualMax) {
-			extracted = actualMax;
+		if (energy >= max) {
+			extracted = max;
 
 			if (doExtract) {
-				energy -= actualMax;
+				energy -= max;
 			}
 		} else {
 			extracted = energy;
@@ -569,7 +554,7 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 		return energy;
 	}
 
-	public abstract int getCurrentOutput();
+	public abstract int calculateCurrentOutput();
 
 	@Override
 	public LinkedList<ITrigger> getTriggers() {
@@ -623,12 +608,12 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 			return 0;
 		}
 
-		return (int) Math.round(energy);
+		return energy;
 	}
 
 	@Override
 	public int getMaxEnergyStored(ForgeDirection from) {
-		return getEnergyStored(from);
+		return this.getMaxEnergy();
 	}
 
 	@Override

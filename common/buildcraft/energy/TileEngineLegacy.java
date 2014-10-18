@@ -71,7 +71,7 @@ public class TileEngineLegacy extends TileEngine {
 	}
 
 	@Override
-	public int getCurrentOutput() {
+	public int calculateCurrentOutput() {
 		return 1;
 	}
 

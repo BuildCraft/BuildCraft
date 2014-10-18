@@ -91,7 +91,7 @@ public class TileEngineCreative extends TileEngine {
 		super.engineUpdate();
 
 		if (isRedstonePowered) {
-			addEnergy(getCurrentOutput());
+			addEnergy(calculateCurrentOutput());
 		}
 	}
 
@@ -102,21 +102,21 @@ public class TileEngineCreative extends TileEngine {
 
 	@Override
 	public int maxEnergyReceived() {
-		return getCurrentOutput();
+		return calculateCurrentOutput();
 	}
 
 	@Override
 	public int maxEnergyExtracted() {
-		return getCurrentOutput();
+		return calculateCurrentOutput();
 	}
 
 	@Override
 	public int getMaxEnergy() {
-		return getCurrentOutput();
+		return calculateCurrentOutput();
 	}
 
 	@Override
-	public int getCurrentOutput() {
+	public int calculateCurrentOutput() {
 		return powerMode.maxPower;
 	}
 

@@ -104,7 +104,7 @@ public class TileEngineWood extends TileEngine {
 	}
 
 	@Override
-	public int getCurrentOutput() {
+	public int calculateCurrentOutput() {
 		return OUTPUT;
 	}
 

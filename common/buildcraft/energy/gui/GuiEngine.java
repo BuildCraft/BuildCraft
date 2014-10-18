@@ -53,7 +53,7 @@ public abstract class GuiEngine extends GuiBuildCraft {
 
 			fontRendererObj.drawStringWithShadow(StringUtils.localize("gui.energy"), x + 22, y + 8, headerColour);
 			fontRendererObj.drawStringWithShadow(StringUtils.localize("gui.currentOutput") + ":", x + 22, y + 20, subheaderColour);
-			fontRendererObj.drawString(String.format("%d RF/t", engine.getCurrentOutput()),
+			fontRendererObj.drawString(String.format("%d RF/t", engine.currentOutput),
 					x + 22, y + 32, textColour);
 			fontRendererObj.drawStringWithShadow(StringUtils.localize("gui.stored") + ":", x + 22, y + 44, subheaderColour);
 			fontRendererObj.drawString(String.format("%d RF", engine.getEnergyStored()), x + 22,
@@ -65,7 +65,7 @@ public abstract class GuiEngine extends GuiBuildCraft {
 
 		@Override
 		public String getTooltip() {
-			return String.format("%d RF/t", engine.getCurrentOutput());
+			return String.format("%d RF/t", engine.currentOutput);
 		}
 	}
 

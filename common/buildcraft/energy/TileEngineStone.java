@@ -76,13 +76,11 @@ public class TileEngineStone extends TileEngineWithInventory {
 		if (burnTime > 0) {
 			burnTime--;
 
-			int output = getCurrentOutput();
+			currentOutput = calculateCurrentOutput();
 
-			if (!constantPower) {
-				currentOutput = output; // Comment out for constant power
-			}
-
-			addEnergy(output);
+			addEnergy(currentOutput);
+		} else {
+			currentOutput = 0;
 		}
 
 		if (burnTime == 0 && isRedstonePowered) {
@@ -157,7 +155,7 @@ public class TileEngineStone extends TileEngineWithInventory {
 	}
 
 	@Override
-	public int getCurrentOutput() {
+	public int calculateCurrentOutput() {
 		double e = TARGET_OUTPUT * getMaxEnergy() - energy;
 		esum = MathUtils.clamp(esum + e, -eLimit, eLimit);
 		return (int) Math.round(MathUtils.clamp(e * kp + esum * ki, MIN_OUTPUT, MAX_OUTPUT));
