@@ -28,6 +28,10 @@ public interface IAssemblyRecipeManager {
 	void addRecipe(String id, int energyCost, ItemStack output, Object... input);
 
 	void addRecipe(IFlexibleRecipe<ItemStack> recipe);
+	
+	void removeRecipe(String id);
+
+	void removeRecipe(IFlexibleRecipe<ItemStack> recipe);
 
 	Collection<IFlexibleRecipe<ItemStack>> getRecipes();
 }
