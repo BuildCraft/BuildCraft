@@ -6,16 +6,13 @@
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-package buildcraft.builders;
+package buildcraft.core.blueprints;
 
-import net.minecraft.item.ItemStack;
-import buildcraft.api.core.NetworkData;
-import buildcraft.api.core.Position;
+import java.util.ArrayList;
 
-public class StackAtPosition {
-	@NetworkData
-	public ItemStack stack;
-	public Position pos;
-	public boolean display;
+public interface IBuildingItemsProvider {
 
+	ArrayList<BuildingItem> getBuilders();
+
+	void addAndLaunchBuildingItem(BuildingItem item);
 }

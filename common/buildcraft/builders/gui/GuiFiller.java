@@ -11,11 +11,10 @@ package buildcraft.builders.gui;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.util.ResourceLocation;
-
 import buildcraft.api.filler.FillerManager;
 import buildcraft.builders.TileFiller;
-import buildcraft.builders.filler.pattern.FillerPattern;
 import buildcraft.core.DefaultProps;
+import buildcraft.core.blueprints.patterns.FillerPattern;
 import buildcraft.core.gui.GuiBuildCraft;
 import buildcraft.core.gui.GuiTools;
 import buildcraft.core.gui.buttons.GuiBetterButton;

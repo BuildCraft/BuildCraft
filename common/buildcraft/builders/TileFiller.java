@@ -11,25 +11,24 @@ package buildcraft.builders;
 import java.io.IOException;
 
 import io.netty.buffer.ByteBuf;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
-
 import buildcraft.BuildCraftCore;
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.filler.FillerManager;
 import buildcraft.api.gates.IAction;
 import buildcraft.api.gates.IActionReceptor;
-import buildcraft.builders.filler.pattern.FillerPattern;
-import buildcraft.builders.filler.pattern.PatternFill;
 import buildcraft.builders.triggers.ActionFiller;
 import buildcraft.core.Box;
 import buildcraft.core.Box.Kind;
 import buildcraft.core.IMachine;
 import buildcraft.core.blueprints.BptBuilderTemplate;
 import buildcraft.core.blueprints.BptContext;
+import buildcraft.core.blueprints.TileAbstractBuilder;
+import buildcraft.core.blueprints.patterns.FillerPattern;
+import buildcraft.core.blueprints.patterns.PatternFill;
 import buildcraft.core.inventory.SimpleInventory;
 import buildcraft.core.network.PacketPayload;
 import buildcraft.core.network.PacketUpdate;

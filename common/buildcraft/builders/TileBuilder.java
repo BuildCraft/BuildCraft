@@ -20,7 +20,6 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.WorldSettings.GameType;
-
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
@@ -28,7 +27,6 @@ import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
-
 import buildcraft.BuildCraftBuilders;
 import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.IInvSlot;
@@ -48,6 +46,7 @@ import buildcraft.core.blueprints.BptBuilderBase;
 import buildcraft.core.blueprints.BptBuilderBlueprint;
 import buildcraft.core.blueprints.BptBuilderTemplate;
 import buildcraft.core.blueprints.RecursiveBlueprintBuilder;
+import buildcraft.core.blueprints.TileAbstractBuilder;
 import buildcraft.core.fluids.Tank;
 import buildcraft.core.fluids.TankManager;
 import buildcraft.core.inventory.ITransactor;

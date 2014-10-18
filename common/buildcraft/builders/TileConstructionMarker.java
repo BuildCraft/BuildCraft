@@ -14,9 +14,7 @@ import java.util.HashSet;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
-
 import net.minecraftforge.common.util.ForgeDirection;
-
 import buildcraft.api.core.NetworkData;
 import buildcraft.api.core.Position;
 import buildcraft.core.Box;
@@ -29,6 +27,8 @@ import buildcraft.core.blueprints.BlueprintBase;
 import buildcraft.core.blueprints.BptBuilderBase;
 import buildcraft.core.blueprints.BptBuilderBlueprint;
 import buildcraft.core.blueprints.BptContext;
+import buildcraft.core.blueprints.BuildingItem;
+import buildcraft.core.blueprints.IBuildingItemsProvider;
 import buildcraft.core.network.RPC;
 import buildcraft.core.network.RPCHandler;
 import buildcraft.core.network.RPCMessageInfo;

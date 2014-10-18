@@ -10,8 +10,8 @@ package buildcraft.builders;
 
 import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.client.registry.RenderingRegistry;
-
 import buildcraft.core.render.RenderBlockMultiTexture;
+import buildcraft.core.render.RenderBuilder;
 
 public class BuilderProxyClient extends BuilderProxy {
 

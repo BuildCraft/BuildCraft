@@ -6,7 +6,7 @@
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-package buildcraft.builders.filler;
+package buildcraft.core.blueprints.patterns;
 
 import java.util.HashSet;
 import java.util.Map.Entry;
@@ -15,7 +15,6 @@ import java.util.TreeMap;
 
 import buildcraft.api.filler.IFillerPattern;
 import buildcraft.api.filler.IFillerRegistry;
-import buildcraft.builders.filler.pattern.FillerPattern;
 import buildcraft.builders.triggers.ActionFiller;
 
 public class FillerRegistry implements IFillerRegistry {

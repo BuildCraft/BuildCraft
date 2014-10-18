@@ -6,7 +6,7 @@
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-package buildcraft.builders.filler.pattern;
+package buildcraft.core.blueprints.patterns;
 
 import net.minecraft.world.World;
 import buildcraft.api.blueprints.SchematicMask;
@@ -14,10 +14,10 @@ import buildcraft.core.Box;
 import buildcraft.core.blueprints.BptBuilderTemplate;
 import buildcraft.core.blueprints.Template;
 
-public class PatternFlatten extends FillerPattern {
+public class PatternHorizon extends FillerPattern {
 
-	public PatternFlatten() {
-		super("flatten");
+	public PatternHorizon() {
+		super("horizon");
 	}
 
 	@Override
@@ -27,7 +27,7 @@ public class PatternFlatten extends FillerPattern {
 		int zMin = (int) box.pMin().z;
 
 		int xMax = (int) box.pMax().x;
-		int yMax = (int) box.pMax().y;
+		int yMax = world.getActualHeight();
 		int zMax = (int) box.pMax().z;
 
 		Template bpt = new Template(box.sizeX(), yMax - yMin + 1, box.sizeZ());

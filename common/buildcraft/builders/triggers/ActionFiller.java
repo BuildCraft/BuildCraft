@@ -9,8 +9,7 @@
 package buildcraft.builders.triggers;
 
 import net.minecraft.util.IIcon;
-
-import buildcraft.builders.filler.pattern.FillerPattern;
+import buildcraft.core.blueprints.patterns.FillerPattern;
 import buildcraft.core.triggers.BCActionPassive;
 
 public class ActionFiller extends BCActionPassive {

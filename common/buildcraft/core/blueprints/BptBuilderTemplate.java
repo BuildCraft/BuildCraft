@@ -12,15 +12,12 @@ import java.util.LinkedList;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
-
 import net.minecraftforge.common.util.ForgeDirection;
-
 import buildcraft.api.blueprints.SchematicBlockBase;
 import buildcraft.api.blueprints.SchematicRegistry;
 import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.core.IInvSlot;
-import buildcraft.builders.TileAbstractBuilder;
 import buildcraft.core.blueprints.BuildingSlotBlock.Mode;
 import buildcraft.core.inventory.InventoryIterator;
 import buildcraft.core.utils.BlockUtil;

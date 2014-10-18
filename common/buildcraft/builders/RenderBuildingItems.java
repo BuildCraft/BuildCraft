@@ -10,6 +10,9 @@ package buildcraft.builders;
 
 import org.lwjgl.opengl.GL11;
 
+import buildcraft.core.StackAtPosition;
+import buildcraft.core.blueprints.BuildingItem;
+import buildcraft.core.blueprints.IBuildingItemsProvider;
 import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.item.EntityItem;

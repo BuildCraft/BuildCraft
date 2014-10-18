@@ -12,13 +12,12 @@ import java.util.LinkedList;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-
 import buildcraft.api.boards.RedstoneBoardRobot;
 import buildcraft.api.boards.RedstoneBoardRobotNBT;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
-import buildcraft.builders.BuildingItem;
 import buildcraft.builders.TileConstructionMarker;
+import buildcraft.core.blueprints.BuildingItem;
 import buildcraft.core.blueprints.BuildingSlot;
 import buildcraft.core.inventory.filters.ArrayStackFilter;
 import buildcraft.core.robots.AIRobotGotoBlock;

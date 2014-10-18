@@ -6,7 +6,7 @@
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-package buildcraft.builders;
+package buildcraft.core.blueprints;
 
 import java.util.Date;
 import java.util.LinkedList;
@@ -15,21 +15,16 @@ import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-
 import net.minecraftforge.common.util.Constants;
-
 import buildcraft.BuildCraftBuilders;
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.MappingNotFoundException;
 import buildcraft.api.blueprints.MappingRegistry;
 import buildcraft.api.core.NetworkData;
 import buildcraft.api.core.Position;
-import buildcraft.core.blueprints.BuildingSlot;
-import buildcraft.core.blueprints.BuildingSlotBlock;
-import buildcraft.core.blueprints.BuildingSlotEntity;
-import buildcraft.core.blueprints.IBuilingItem;
+import buildcraft.core.StackAtPosition;
 
-public class BuildingItem implements IBuilingItem {
+public class BuildingItem implements IBuildingItem {
 
 	public static int ITEMS_SPACE = 2;
 

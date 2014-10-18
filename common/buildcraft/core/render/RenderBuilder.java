@@ -6,17 +6,16 @@
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-package buildcraft.builders;
+package buildcraft.core.render;
 
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.tileentity.TileEntity;
-
-import buildcraft.builders.urbanism.RenderBoxProvider;
+import buildcraft.builders.RenderBuildingItems;
 import buildcraft.core.EntityLaser;
 import buildcraft.core.LaserData;
-import buildcraft.core.render.RenderLaser;
+import buildcraft.core.blueprints.TileAbstractBuilder;
 
 public class RenderBuilder extends RenderBoxProvider {
 

@@ -15,14 +15,12 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
-
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-
 import buildcraft.api.filler.IFillerPattern;
-import buildcraft.builders.filler.pattern.FillerPattern;
 import buildcraft.core.Box;
 import buildcraft.core.DefaultProps;
+import buildcraft.core.blueprints.patterns.FillerPattern;
 import buildcraft.core.gui.AdvancedSlot;
 import buildcraft.core.gui.GuiAdvancedInterface;
 
