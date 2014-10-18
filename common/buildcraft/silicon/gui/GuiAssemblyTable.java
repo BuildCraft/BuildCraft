@@ -157,12 +157,12 @@ public class GuiAssemblyTable extends GuiAdvancedInterface {
 	}
 
 	@Override
-	protected void mouseClicked(int i, int j, int k) {
-		super.mouseClicked(i, j, k);
-
-		RecipeSlot slot = (RecipeSlot) getSlotAtLocation(i, j);
-
-		if (slot != null) {
+	protected void slotClicked(AdvancedSlot aslot, int mouseButton) {
+		super.slotClicked(aslot, mouseButton);
+		
+		if (aslot instanceof RecipeSlot) {
+			RecipeSlot slot = (RecipeSlot) aslot;
+			
 			if (slot.crafting == null) {
 				return;
 			}

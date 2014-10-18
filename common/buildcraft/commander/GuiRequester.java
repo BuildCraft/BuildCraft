@@ -85,13 +85,11 @@ public class GuiRequester extends GuiAdvancedInterface {
 	}
 
 	@Override
-	protected void mouseClicked(int mouseX, int mouseY, int mouseButton) {
-		super.mouseClicked(mouseX, mouseY, mouseButton);
+	protected void slotClicked(AdvancedSlot slot, int mouseButton) {
+		super.slotClicked(slot, mouseButton);
 
-		RequestSlot slot = (RequestSlot) getSlotAtLocation(mouseX, mouseY);
-
-		if (slot != null) {
-			slot.setItem(mc.thePlayer.inventory.getItemStack());
+		if (slot instanceof RequestSlot) {
+			((RequestSlot) slot).setItem(mc.thePlayer.inventory.getItemStack());
 		}
 	}
 

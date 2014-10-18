@@ -12,8 +12,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
-
 import buildcraft.BuildCraftCore;
 import buildcraft.api.recipes.IFlexibleRecipe;
 import buildcraft.api.recipes.IRefineryRecipeManager;
@@ -61,5 +61,15 @@ public final class RefineryRecipeManager implements IRefineryRecipeManager {
 	@Override
 	public IFlexibleRecipe<FluidStack> getRecipe(String id) {
 		return recipes.get(id);
+	}
+	
+	@Override
+	public void removeRecipe(IFlexibleRecipe<FluidStack> recipe) {
+		removeRecipe(recipe.getId());
+	}
+
+	@Override
+	public void removeRecipe(String id) {
+		recipes.remove(id);
 	}
 }

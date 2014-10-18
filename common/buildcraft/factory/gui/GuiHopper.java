@@ -23,7 +23,6 @@ public class GuiHopper extends GuiContainer {
 
 	public GuiHopper(InventoryPlayer inventory, TileHopper tile) {
 		super(new ContainerHopper(inventory, tile));
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override

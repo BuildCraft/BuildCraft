@@ -53,20 +53,32 @@ public final class InterModComms {
 			} else if (m.key.equals("oil-gen-exclude")) {
 				processOilGenExcludeIMC(event, m);
 			} else if (m.key.equals("add-assembly-recipe")) {
-				processAssemblyRecipeIMC(event, m);
+				processAssemblyRecipeAddIMC(event, m);
 			} else if (m.key.equals("add-refinery-recipe")) {
-				processRefineryRecipeIMC(event, m);
+				processRefineryRecipeAddIMC(event, m);
 			} else if (m.key.equals("remove-assembly-recipe")) {
-				//TODO
+				processAssemblyRecipeRemoveIMC(event, m);
 			} else if (m.key.equals("remove-refinery-recipe")) {
-				//TODO
+				processRefineryRecipeRemoveIMC(event, m);
 			} else {
 				Logger.getLogger("Buildcraft").log(Level.WARNING, "Received IMC message with unknown key('%s') from %s!", new Object[]{m.key, m.getSender()});
 			}
 		}
 	}
+	
+	public static void processAssemblyRecipeRemoveIMC(IMCEvent event, IMCMessage msg) {
+		if (msg.isStringMessage()) {
+			AssemblyRecipeManager.INSTANCE.removeRecipe(msg.getStringValue());
+		}
+	}
 
-	public static void processAssemblyRecipeIMC(IMCEvent event, IMCMessage msg) {
+	public static void processRefineryRecipeRemoveIMC(IMCEvent event, IMCMessage msg) {
+		if (msg.isStringMessage()) {
+			RefineryRecipeManager.INSTANCE.removeRecipe(msg.getStringValue());
+		}
+	}
+
+	public static void processAssemblyRecipeAddIMC(IMCEvent event, IMCMessage msg) {
 		boolean failed = false;
 		if (!msg.isNBTMessage()) {
 			failed = true;
@@ -98,7 +110,7 @@ public final class InterModComms {
 		}
 	}
 
-	public static void processRefineryRecipeIMC(IMCEvent event, IMCMessage msg) {
+	public static void processRefineryRecipeAddIMC(IMCEvent event, IMCMessage msg) {
 		boolean failed = false;
 		if (!msg.isNBTMessage()) {
 			failed = true;

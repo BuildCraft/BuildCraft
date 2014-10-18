@@ -14,7 +14,6 @@ import java.util.Map;
 
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-
 import buildcraft.BuildCraftCore;
 import buildcraft.api.recipes.IAssemblyRecipeManager;
 import buildcraft.api.recipes.IFlexibleRecipe;
@@ -55,5 +54,15 @@ public class AssemblyRecipeManager implements IAssemblyRecipeManager {
 
 	public IFlexibleRecipe getRecipe(String id) {
 		return assemblyRecipes.get(id);
+	}
+
+	@Override
+	public void removeRecipe(IFlexibleRecipe<ItemStack> recipe) {
+		removeRecipe(recipe.getId());
+	}
+
+	@Override
+	public void removeRecipe(String id) {
+		assemblyRecipes.remove(id);
 	}
 }

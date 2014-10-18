@@ -278,8 +278,8 @@ public class GuiScienceBook extends GuiAdvancedInterface {
 	}
 
 	@Override
-	protected void slotClicked(AdvancedSlot slot) {
-		super.slotClicked(slot);
+	protected void slotClicked(AdvancedSlot slot, int mouseButton) {
+		super.slotClicked(slot, mouseButton);
 
 		if (slot instanceof TechnologySlot) {
 			setFocus(((TechnologySlot) slot).techno);

@@ -128,7 +128,7 @@ public abstract class GuiAdvancedInterface extends GuiBuildCraft {
 		AdvancedSlot slot = getSlotAtLocation(mouseX, mouseY);
 
 		if (slot != null && slot.isDefined()) {
-			slotClicked(slot);
+			slotClicked(slot, mouseButton);
 		}
 	}
 
@@ -141,7 +141,7 @@ public abstract class GuiAdvancedInterface extends GuiBuildCraft {
 	}
 
 	// TODO: Use this for all children of this class
-	protected void slotClicked(AdvancedSlot slot) {
+	protected void slotClicked(AdvancedSlot slot, int mouseButton) {
 
 	}
 }
