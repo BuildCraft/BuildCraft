@@ -128,7 +128,7 @@ import buildcraft.energy.fuels.CoolantManager;
 import buildcraft.energy.fuels.FuelManager;
 import buildcraft.silicon.ItemRedstoneChipset.Chipset;
 
-@Mod(name = "BuildCraft", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Core", acceptedMinecraftVersions = "[1.7.10,1.8)", dependencies = "required-after:Forge@[10.13.0.1179,)")
+@Mod(name = "BuildCraft", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Core", acceptedMinecraftVersions = "[1.7.10,1.8)", dependencies = "required-after:Forge@[10.13.0.1207,)")
 public class BuildCraftCore extends BuildCraftMod {
 
 	@Mod.Instance("BuildCraft|Core")
