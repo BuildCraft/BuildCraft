@@ -30,6 +30,11 @@ import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.core.Position;
 import buildcraft.core.Box;
+import buildcraft.core.builders.BuildingItem;
+import buildcraft.core.builders.BuildingSlot;
+import buildcraft.core.builders.BuildingSlotBlock;
+import buildcraft.core.builders.IBuildingItemsProvider;
+import buildcraft.core.builders.TileAbstractBuilder;
 
 public abstract class BptBuilderBase implements IAreaProvider {
 

@@ -6,12 +6,16 @@
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-package buildcraft.core.blueprints.patterns;
+package buildcraft.core.builders.patterns;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
+
+import com.google.common.collect.Sets;
 
 import buildcraft.api.filler.IFillerPattern;
 import buildcraft.api.filler.IFillerRegistry;
@@ -20,12 +24,10 @@ import buildcraft.builders.triggers.ActionFiller;
 public class FillerRegistry implements IFillerRegistry {
 
 	private TreeMap<String, IFillerPattern> patterns = new TreeMap<String, IFillerPattern>();
-	private Set<ActionFiller> patternActions = new HashSet<ActionFiller>();
 
 	@Override
 	public void addPattern(IFillerPattern pattern) {
 		patterns.put(pattern.getUniqueTag(), pattern);
-		patternActions.add(new ActionFiller((FillerPattern) pattern));
 	}
 
 	@Override
@@ -52,7 +54,7 @@ public class FillerRegistry implements IFillerRegistry {
 	}
 
 	@Override
-	public Set<ActionFiller> getActions() {
-		return patternActions;
+	public Collection<IFillerPattern> getPatterns() {
+		return Collections.unmodifiableCollection(patterns.values());
 	}
 }

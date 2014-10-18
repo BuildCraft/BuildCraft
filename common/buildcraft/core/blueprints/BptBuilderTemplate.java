@@ -18,7 +18,11 @@ import buildcraft.api.blueprints.SchematicRegistry;
 import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.core.IInvSlot;
-import buildcraft.core.blueprints.BuildingSlotBlock.Mode;
+import buildcraft.core.builders.BuildingSlot;
+import buildcraft.core.builders.BuildingSlotBlock;
+import buildcraft.core.builders.BuildingSlotIterator;
+import buildcraft.core.builders.TileAbstractBuilder;
+import buildcraft.core.builders.BuildingSlotBlock.Mode;
 import buildcraft.core.inventory.InventoryIterator;
 import buildcraft.core.utils.BlockUtil;
 

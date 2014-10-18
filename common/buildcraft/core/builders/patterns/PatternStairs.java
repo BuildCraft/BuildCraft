@@ -6,7 +6,7 @@
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-package buildcraft.core.blueprints.patterns;
+package buildcraft.core.builders.patterns;
 
 import net.minecraft.world.World;
 

@@ -9,19 +9,22 @@
 package buildcraft.builders.triggers;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedList;
 
 import net.minecraft.block.Block;
 import net.minecraft.tileentity.TileEntity;
-
 import buildcraft.api.filler.FillerManager;
+import buildcraft.api.filler.IFillerPattern;
 import buildcraft.api.gates.IAction;
 import buildcraft.api.gates.IActionProvider;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.builders.TileFiller;
+import buildcraft.core.builders.patterns.FillerPattern;
 
 public class BuildersActionProvider implements IActionProvider {
-
+	private final HashMap<String, ActionFiller> actionMap = new HashMap<String, ActionFiller>();
+	
 	@Override
 	public Collection<IAction> getPipeActions(IPipeTile pipe) {
 		return null;
@@ -31,7 +34,14 @@ public class BuildersActionProvider implements IActionProvider {
 	public Collection<IAction> getNeighborActions(Block block, TileEntity tile) {
 		LinkedList<IAction> actions = new LinkedList<IAction>();
 		if (tile instanceof TileFiller) {
-			actions.addAll(FillerManager.registry.getActions());
+			for(IFillerPattern p : FillerManager.registry.getPatterns()) {
+				if (p instanceof FillerPattern) {
+					if (!actionMap.containsKey(p.getUniqueTag())) {
+						actionMap.put(p.getUniqueTag(), new ActionFiller((FillerPattern) p));
+					}
+					actions.add(actionMap.get(p.getUniqueTag()));
+				}
+			}
 		}
 		return actions;
 	}

@@ -6,8 +6,13 @@
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-package buildcraft.core.blueprints;
+package buildcraft.core.builders;
 
-public interface IBuildingItem {
-	boolean isDone();
+import java.util.ArrayList;
+
+public interface IBuildingItemsProvider {
+
+	ArrayList<BuildingItem> getBuilders();
+
+	void addAndLaunchBuildingItem(BuildingItem item);
 }

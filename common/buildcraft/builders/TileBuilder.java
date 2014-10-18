@@ -46,7 +46,7 @@ import buildcraft.core.blueprints.BptBuilderBase;
 import buildcraft.core.blueprints.BptBuilderBlueprint;
 import buildcraft.core.blueprints.BptBuilderTemplate;
 import buildcraft.core.blueprints.RecursiveBlueprintBuilder;
-import buildcraft.core.blueprints.TileAbstractBuilder;
+import buildcraft.core.builders.TileAbstractBuilder;
 import buildcraft.core.fluids.Tank;
 import buildcraft.core.fluids.TankManager;
 import buildcraft.core.inventory.ITransactor;

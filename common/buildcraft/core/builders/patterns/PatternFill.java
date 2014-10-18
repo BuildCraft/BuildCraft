@@ -6,29 +6,26 @@
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-package buildcraft.core.blueprints.patterns;
+package buildcraft.core.builders.patterns;
 
 import net.minecraft.world.World;
+
 import buildcraft.core.Box;
 import buildcraft.core.blueprints.Template;
 
-public class PatternClear extends FillerPattern {
+public final class PatternFill extends FillerPattern {
 
-	public PatternClear() {
-		super("clear");
+	public static final PatternFill INSTANCE = new PatternFill();
+
+	private PatternFill() {
+		super("fill");
 	}
 
 	@Override
 	public Template getTemplate (Box box, World world) {
-		int xMin = (int) box.pMin().x;
-		int yMin = (int) box.pMin().y;
-		int zMin = (int) box.pMin().z;
+		Template bpt = new Template(box.sizeX(), box.sizeY(), box.sizeZ());
 
-		int xMax = (int) box.pMax().x;
-		int yMax = (int) box.pMax().y;
-		int zMax = (int) box.pMax().z;
-
-		Template bpt = new Template(xMax - xMin + 1, yMax - yMin + 1, zMax - zMin + 1);
+		fill (0, 0, 0, box.sizeX() - 1, box.sizeY() - 1, box.sizeZ() - 1, bpt);
 
 		return bpt;
 	}

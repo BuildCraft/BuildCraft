@@ -14,7 +14,7 @@ import net.minecraft.util.ResourceLocation;
 import buildcraft.api.filler.FillerManager;
 import buildcraft.builders.TileFiller;
 import buildcraft.core.DefaultProps;
-import buildcraft.core.blueprints.patterns.FillerPattern;
+import buildcraft.core.builders.patterns.FillerPattern;
 import buildcraft.core.gui.GuiBuildCraft;
 import buildcraft.core.gui.GuiTools;
 import buildcraft.core.gui.buttons.GuiBetterButton;

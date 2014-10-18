@@ -20,6 +20,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import buildcraft.core.EntityLaser;
 import buildcraft.core.render.RenderBoxProvider;
+import buildcraft.core.render.RenderBuildingItems;
 import buildcraft.core.render.RenderLaser;
 
 public class RenderConstructionMarker extends RenderBoxProvider {

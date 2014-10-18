@@ -12,10 +12,9 @@ import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.tileentity.TileEntity;
-import buildcraft.builders.RenderBuildingItems;
 import buildcraft.core.EntityLaser;
 import buildcraft.core.LaserData;
-import buildcraft.core.blueprints.TileAbstractBuilder;
+import buildcraft.core.builders.TileAbstractBuilder;
 
 public class RenderBuilder extends RenderBoxProvider {
 

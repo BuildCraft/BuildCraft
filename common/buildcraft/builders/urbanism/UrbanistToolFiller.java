@@ -20,7 +20,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 import buildcraft.api.filler.IFillerPattern;
 import buildcraft.core.Box;
 import buildcraft.core.DefaultProps;
-import buildcraft.core.blueprints.patterns.FillerPattern;
+import buildcraft.core.builders.patterns.FillerPattern;
 import buildcraft.core.gui.AdvancedSlot;
 import buildcraft.core.gui.GuiAdvancedInterface;
 

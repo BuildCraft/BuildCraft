@@ -6,13 +6,13 @@
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-package buildcraft.builders;
+package buildcraft.core.render;
 
 import org.lwjgl.opengl.GL11;
 
 import buildcraft.core.StackAtPosition;
-import buildcraft.core.blueprints.BuildingItem;
-import buildcraft.core.blueprints.IBuildingItemsProvider;
+import buildcraft.core.builders.BuildingItem;
+import buildcraft.core.builders.IBuildingItemsProvider;
 import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.item.EntityItem;
