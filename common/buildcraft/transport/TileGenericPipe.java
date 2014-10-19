@@ -66,8 +66,8 @@ import buildcraft.transport.gates.ItemGate;
 import buildcraft.transport.utils.RobotStationState;
 
 public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFluidHandler,
-		IPipeTile, IOverrideDefaultTriggers, ITileBufferHolder, IEnergyHandler,
-		IDropControlInventory, ISyncedTile, ISolidSideTile, IGuiReturnHandler {
+		IPipeTile, ITileBufferHolder, IEnergyHandler, IDropControlInventory,
+		ISyncedTile, ISolidSideTile, IGuiReturnHandler {
 
 	public boolean initialized = false;
 	public final PipeRenderState renderState = new PipeRenderState();
@@ -647,18 +647,6 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 	}
 
 	@Override
-	public LinkedList<ITrigger> getTriggers() {
-		LinkedList<ITrigger> result = new LinkedList<ITrigger>();
-
-		if (BlockGenericPipe.isFullyDefined(pipe) && pipe.hasGate()) {
-			result.add(BuildCraftCore.triggerRedstoneActive);
-			result.add(BuildCraftCore.triggerRedstoneInactive);
-		}
-
-		return result;
-	}
-
-	@Override
 	public void blockRemoved(ForgeDirection from) {
 
 	}
@@ -871,6 +859,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 
 	public boolean addGate(ForgeDirection direction, Gate gate) {
 		gate.setDirection(direction);
+		pipe.gates[direction.ordinal()] = gate;
 		return setPluggable(direction, new ItemGate.GatePluggable(gate));
 	}
 

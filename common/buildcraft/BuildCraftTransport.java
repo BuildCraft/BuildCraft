@@ -66,6 +66,7 @@ import buildcraft.transport.ItemPipeWire;
 import buildcraft.transport.ItemPlug;
 import buildcraft.transport.ItemRobotStation;
 import buildcraft.transport.Pipe;
+import buildcraft.transport.PipeActionProvider;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTriggerProvider;
 import buildcraft.transport.TileFilteredBuffer;
@@ -533,7 +534,8 @@ public class BuildCraftTransport extends BuildCraftMod {
 		StatementManager.registerParameterClass("buildcraft:pipeWireTrigger", TriggerParameterSignal.class);
 		StatementManager.registerParameterClass("buildcraft:pipeWireAction", ActionParameterSignal.class);
 		StatementManager.registerTriggerProvider(new PipeTriggerProvider());
-
+		StatementManager.registerActionProvider(new PipeActionProvider());
+		
 		if (BuildCraftCore.loadDefaultRecipes) {
 			loadRecipes();
 		}

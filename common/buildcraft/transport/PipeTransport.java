@@ -39,8 +39,8 @@ public abstract class PipeTransport {
 	}
 
 	public void readFromNBT(NBTTagCompound nbt) {
-	    if (nbt.hasKey("inputOpen")) {
-			BitSet inputBuf = BitSet.valueOf(new byte [] {nbt.getByte("inputOpen")});
+	    if (nbt.hasKey("inputOpen") && nbt.hasKey("outputOpen")) {
+			BitSet inputBuf = BitSet.valueOf(new byte[] {nbt.getByte("inputOpen")});
 			BitSet outputBuf = BitSet.valueOf(new byte[] {nbt.getByte("outputOpen")});
 
 			for (int b = 0; b < ForgeDirection.VALID_DIRECTIONS.length; b++) {
@@ -51,8 +51,8 @@ public abstract class PipeTransport {
 	}
 
 	public void writeToNBT(NBTTagCompound nbt) {
-		BitSet inputBuf = new BitSet();
-		BitSet outputBuf = new BitSet();
+		BitSet inputBuf = new BitSet(ForgeDirection.VALID_DIRECTIONS.length);
+		BitSet outputBuf = new BitSet(ForgeDirection.VALID_DIRECTIONS.length);
 
 	    for (int b = 0; b < ForgeDirection.VALID_DIRECTIONS.length; b++) {
 			if (inputsOpen[b]) {

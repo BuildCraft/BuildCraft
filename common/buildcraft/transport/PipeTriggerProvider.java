@@ -36,15 +36,19 @@ public class PipeTriggerProvider implements ITriggerProvider {
 
 		if (pipe == null) {
 			return result;
-		} else if (pipe instanceof IOverrideDefaultTriggers) {
-			return ((IOverrideDefaultTriggers) pipe).getTriggers();
 		}
+		
+		boolean containsGate = false;
 
 		for (Gate gate : pipe.gates) {
 			if (gate != null) {
-				gate.addTrigger(result);
+				containsGate = true;
+				gate.addTriggers(result);
 			}
 		}
+		
+		result.add(BuildCraftCore.triggerRedstoneActive);
+		result.add(BuildCraftCore.triggerRedstoneInactive);
 
 		switch (tile.getPipeType()) {
 			case ITEM:
@@ -59,11 +63,10 @@ public class PipeTriggerProvider implements ITriggerProvider {
 				result.add(TriggerPipeContents.PipeContents.empty.trigger);
 				result.add(TriggerPipeContents.PipeContents.containsEnergy.trigger);
 				result.add(TriggerPipeContents.PipeContents.tooMuchEnergy.trigger);
-			result.add(TriggerPipeContents.PipeContents.requestsEnergy.trigger);
-
+				result.add(TriggerPipeContents.PipeContents.requestsEnergy.trigger);
 				break;
-		case STRUCTURE:
-			break;
+			case STRUCTURE:
+				break;
 		}
 
 		if (tile instanceof IEnergyHandler && ((IEnergyHandler) tile).getMaxEnergyStored(ForgeDirection.UNKNOWN) > 0) {

@@ -21,9 +21,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
-
 import net.minecraftforge.common.util.ForgeDirection;
-
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.gates.GateExpansionController;
 import buildcraft.api.gates.IAction;
@@ -465,8 +463,7 @@ public final class Gate implements IGate {
 	}
 
 	// TRIGGERS
-	public void addTrigger(List<ITrigger> list) {
-
+	public void addTriggers(List<ITrigger> list) {
 		for (PipeWire wire : PipeWire.VALUES) {
 			if (pipe.wireSet[wire.ordinal()] && material.ordinal() >= wire.ordinal()) {
 				list.add(BuildCraftTransport.triggerPipeWireActive[wire.ordinal()]);

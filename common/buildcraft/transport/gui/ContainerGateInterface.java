@@ -105,11 +105,8 @@ public class ContainerGateInterface extends BuildCraftContainer {
 		// Do not attempt to create a list of potential actions and triggers on
 		// the client.
 		if (!pipe.container.getWorldObj().isRemote) {
-			potentialActions.addAll(gate.getActions());
-			potentialActions.addAll(pipe.getActions());
 			potentialTriggers.addAll(StatementManager.getPipeTriggers(pipe.container));
 			potentialActions.addAll(StatementManager.getPipeActions(pipe.container));
-			potentialTriggers.addAll(pipe.container.getTriggers());
 
 			for (ForgeDirection o : ForgeDirection.VALID_DIRECTIONS) {
 				TileEntity tile = pipe.container.getTile(o);
