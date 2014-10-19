@@ -16,20 +16,19 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.biome.BiomeGenBase;
-
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
-
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftEnergy;
 import buildcraft.api.core.StackKey;
 import buildcraft.api.fuels.BuildcraftFuelRegistry;
 import buildcraft.api.fuels.ICoolant;
 import buildcraft.api.fuels.IFuel;
+import buildcraft.api.fuels.ISolidCoolant;
 import buildcraft.api.gates.ITrigger;
 import buildcraft.core.GuiIds;
 import buildcraft.core.IItemPipe;
@@ -199,7 +198,10 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
 		if (stack != null) {
 			FluidStack liquid = FluidContainerRegistry.getFluidForFilledItem(stack);
 			if (liquid == null && heat > MIN_HEAT * 2) {
-				liquid = BuildcraftFuelRegistry.coolant.getSolidCoolant(StackKey.stack(stack)).getFluidFromSolidCoolant(stack);
+				ISolidCoolant coolant = BuildcraftFuelRegistry.coolant.getSolidCoolant(StackKey.stack(stack));
+				if (coolant != null) {
+					liquid = coolant.getFluidFromSolidCoolant(stack);
+				}
 			}
 
 			if (liquid != null) {
