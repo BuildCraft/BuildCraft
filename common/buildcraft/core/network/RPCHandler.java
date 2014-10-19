@@ -334,6 +334,13 @@ public final class RPCHandler {
 	}
 
 	private void internalRpcReceive (Object o, RPCMessageInfo info, ByteBuf data) {
+		if (data.readableBytes() <= 0) {
+			// This seems to happen from time to time on the client side.
+			// TODO: Find out why. (Someone suggests WAILA might have something to do
+			// with it)
+			return;
+		}
+		
 		try {
 			short methodIndex = data.readShort();
 
