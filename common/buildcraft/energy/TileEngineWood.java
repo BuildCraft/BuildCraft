@@ -83,7 +83,7 @@ public class TileEngineWood extends TileEngine {
 
 		if (isRedstonePowered) {
 			if (worldObj.getTotalWorldTime() % 16 == 0) {
-				addEnergy(1);
+				addEnergy(10);
 			}
 		}
 	}
@@ -110,7 +110,7 @@ public class TileEngineWood extends TileEngine {
 
 	@Override
 	public int maxEnergyExtracted() {
-		return 1;
+		return 10;
 	}
 
 	// TODO: HACK
