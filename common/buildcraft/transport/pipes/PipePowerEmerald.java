@@ -20,8 +20,10 @@ public class PipePowerEmerald extends PipePowerWood {
 	public PipePowerEmerald(Item item) {
 		super(item);
 		
-		battery = new RFBattery(2560 * 50, 2560, 0);
-		
+		for (ForgeDirection o : ForgeDirection.VALID_DIRECTIONS) {
+			batteries[o.ordinal()] = new RFBattery(2560 * 50, 320, 0);
+		}
+
 		transport.initFromPipe(this.getClass());
 	}
 
