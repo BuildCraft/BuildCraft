@@ -13,7 +13,6 @@ import java.util.LinkedList;
 import org.apache.logging.log4j.Level;
 
 import io.netty.buffer.ByteBuf;
-
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -24,19 +23,15 @@ import net.minecraft.network.Packet;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
-
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
-
 import cofh.api.energy.IEnergyHandler;
-
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.BCLog;
@@ -65,6 +60,7 @@ import buildcraft.core.network.ISyncedTile;
 import buildcraft.core.network.PacketTileState;
 import buildcraft.core.robots.DockingStation;
 import buildcraft.core.utils.Utils;
+import buildcraft.transport.ItemFacade.FacadeState;
 import buildcraft.transport.gates.GateFactory;
 import buildcraft.transport.gates.ItemGate;
 import buildcraft.transport.utils.RobotStationState;
@@ -171,7 +167,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 			for (int i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
 				IPipePluggable pluggable = null;
 				if (nbt.hasKey("facadeState[" + i + "]")) {
-					pluggable = new ItemFacade.FacadePluggable(ItemFacade.FacadeState.readArray(nbt.getTagList("facadeState[" + i + "]", Constants.NBT.TAG_COMPOUND)));
+					pluggable = new ItemFacade.FacadePluggable(FacadeState.readArray(nbt.getTagList("facadeState[" + i + "]", Constants.NBT.TAG_COMPOUND)));
 				} else {
 					// Migration support for 5.0.x and 6.0.x
 					if (nbt.hasKey("facadeBlocks[" + i + "]")) {
@@ -181,23 +177,23 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 
 						if (blockId != 0) {
 							int metadata = nbt.getInteger("facadeMeta[" + i + "]");
-							pluggable = new ItemFacade.FacadePluggable(new ItemFacade.FacadeState[]{ItemFacade.FacadeState.create(block, metadata)});
+							pluggable = new ItemFacade.FacadePluggable(new FacadeState[]{FacadeState.create(block, metadata)});
 						}
 					} else if (nbt.hasKey("facadeBlocksStr[" + i + "][0]")) {
 						// 6.0.x
-						ItemFacade.FacadeState mainState = ItemFacade.FacadeState.create(
+						FacadeState mainState = FacadeState.create(
 								(Block) Block.blockRegistry.getObject(nbt.getString("facadeBlocksStr[" + i + "][0]")),
 								nbt.getInteger("facadeMeta[" + i + "][0]")
 						);
 						if (nbt.hasKey("facadeBlocksStr[" + i + "][1]")) {
-							ItemFacade.FacadeState phasedState = ItemFacade.FacadeState.create(
+							FacadeState phasedState = FacadeState.create(
 									(Block) Block.blockRegistry.getObject(nbt.getString("facadeBlocksStr[" + i + "][1]")),
 									nbt.getInteger("facadeMeta[" + i + "][1]"),
 									PipeWire.fromOrdinal(nbt.getInteger("facadeWires[" + i + "]"))
 							);
-							pluggable = new ItemFacade.FacadePluggable(new ItemFacade.FacadeState[]{mainState, phasedState});
+							pluggable = new ItemFacade.FacadePluggable(new FacadeState[]{mainState, phasedState});
 						} else {
-							pluggable = new ItemFacade.FacadePluggable(new ItemFacade.FacadeState[]{mainState});
+							pluggable = new ItemFacade.FacadePluggable(new FacadeState[]{mainState});
 						}
 					}
 				}
@@ -476,14 +472,14 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 				renderState.facadeMatrix.setFacade(direction, null, 0, true);
 				continue;
 			}
-			ItemFacade.FacadeState[] states = ((ItemFacade.FacadePluggable) pluggable).states;
+			FacadeState[] states = ((ItemFacade.FacadePluggable) pluggable).states;
 			if (states == null) {
 				renderState.facadeMatrix.setFacade(direction, null, 0, true);
 				continue;
 			}
 			// Iterate over all states and activate first proper
-			ItemFacade.FacadeState defaultState = null, activeState = null;
-			for (ItemFacade.FacadeState state : states) {
+			FacadeState defaultState = null, activeState = null;
+			for (FacadeState state : states) {
 				if (state.wire == null) {
 					defaultState = state;
 					continue;
@@ -861,7 +857,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 		refreshRenderState = true;
 	}
 
-	public boolean addFacade(ForgeDirection direction, ItemFacade.FacadeState[] states) {
+	public boolean addFacade(ForgeDirection direction, FacadeState[] states) {
 		return setPluggable(direction, new ItemFacade.FacadePluggable(states));
 	}
 

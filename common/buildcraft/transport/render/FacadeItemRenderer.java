@@ -16,13 +16,14 @@ import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
-
 import net.minecraftforge.client.IItemRenderer;
-
 import buildcraft.BuildCraftTransport;
+import buildcraft.api.facades.FacadeType;
+import buildcraft.api.facades.IFacadeItem;
 import buildcraft.core.CoreConstants;
 import buildcraft.core.render.RenderUtils;
 import buildcraft.transport.ItemFacade;
+import buildcraft.transport.ItemFacade.FacadeState;
 import buildcraft.transport.PipeIconProvider;
 
 public class FacadeItemRenderer implements IItemRenderer {
@@ -38,12 +39,12 @@ public class FacadeItemRenderer implements IItemRenderer {
 			lastTime = System.currentTimeMillis() + 1000L;
 		}
 
-		ItemFacade.FacadeType type = ItemFacade.getType(item);
-		ItemFacade.FacadeState[] states = ItemFacade.getFacadeStates(item);
-		ItemFacade.FacadeState activeState = null;
-		if (type == ItemFacade.FacadeType.Basic) {
+		FacadeType type = ((IFacadeItem) item.getItem()).getFacadeType(item);
+		FacadeState[] states = ItemFacade.getFacadeStates(item);
+		FacadeState activeState = null;
+		if (type == FacadeType.Basic) {
 			activeState = states[0];
-		} else if (type == ItemFacade.FacadeType.Phased) {
+		} else if (type == FacadeType.Phased) {
 			activeState = states[renderState % states.length];
 		}
 		Block block = activeState != null ? activeState.block : null;

@@ -663,7 +663,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 				FacadeMatrix matrix = getPipe(world, x, y, z).container.renderState.facadeMatrix;
 				Block block = matrix.getFacadeBlock(dir);
 				if (block != null) {
-					return ItemFacade.getFacade(block,
+					return BuildCraftTransport.facadeItem.getFacadeForBlock(block,
 							matrix.getFacadeMetaId(dir));
 				}
 			}

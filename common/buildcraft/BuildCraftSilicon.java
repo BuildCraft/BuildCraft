@@ -607,9 +607,9 @@ public class BuildCraftSilicon extends BuildCraftMod {
 	@Mod.EventHandler
 	public void remap(FMLMissingMappingsEvent event) {
 		for (FMLMissingMappingsEvent.MissingMapping mapping: event.get()) {
-			if (mapping.name.equals("BuildCraft|Silicon:null"))
+			if (mapping.name.equals("BuildCraft|Silicon:null")) {
 					mapping.remap(laserBlock);
-
+			}
 		}
 	}
 }

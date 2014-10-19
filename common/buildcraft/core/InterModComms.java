@@ -23,12 +23,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.world.biome.BiomeGenBase;
-
 import cpw.mods.fml.common.event.FMLInterModComms.IMCEvent;
 import cpw.mods.fml.common.event.FMLInterModComms.IMCMessage;
-
 import net.minecraftforge.fluids.FluidStack;
-
+import buildcraft.BuildCraftTransport;
 import buildcraft.core.recipes.AssemblyRecipeManager;
 import buildcraft.core.recipes.RefineryRecipeManager;
 import buildcraft.energy.worldgen.OilPopulate;
@@ -161,7 +159,8 @@ public final class InterModComms {
 					} else {
 						Block block = (Block) Block.blockRegistry.getObject(blockName);
 						if (block.getRenderType() != 0 && block.getRenderType() != 31) {
-							ItemFacade.addFacade("buildcraft:facade{" + blockName + "}",
+							BuildCraftTransport.facadeItem.addFacade(
+									"buildcraft:facade{" + blockName + "}",
 									new ItemStack(block, 1, metaId));
 						} else {
 							logRedundantAddFacadeMessage(m, block.toString());
@@ -173,7 +172,8 @@ public final class InterModComms {
 
 				Block block = Block.getBlockFromItem(modItemStack.getItem());
 				if (block != null && block.getRenderType() != 0 && block.getRenderType() != 31) {
-					ItemFacade.addFacade("buildcraft:facade{" + Block.blockRegistry.getNameForObject(block) + "}",
+					BuildCraftTransport.facadeItem.addFacade(
+							"buildcraft:facade{" + Block.blockRegistry.getNameForObject(block) + "}",
 							modItemStack);
 				} else {
 					logRedundantAddFacadeMessage(m, block.toString());

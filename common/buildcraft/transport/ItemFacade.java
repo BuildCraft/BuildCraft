@@ -27,16 +27,15 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
-
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.ForgeDirection;
-
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.JavaTools;
 import buildcraft.api.core.Position;
+import buildcraft.api.facades.FacadeType;
+import buildcraft.api.facades.IFacadeItem;
 import buildcraft.api.recipes.BuildcraftRecipeRegistry;
 import buildcraft.api.transport.IPipePluggable;
 import buildcraft.api.transport.IPipeTile;
@@ -47,7 +46,7 @@ import buildcraft.core.ItemBuildCraft;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.StringUtils;
 
-public class ItemFacade extends ItemBuildCraft {
+public class ItemFacade extends ItemBuildCraft implements IFacadeItem {
 	public static class FacadeState {
 		public final Block block;
 		public final int metadata;
@@ -124,14 +123,6 @@ public class ItemFacade extends ItemBuildCraft {
 		}
 	}
 
-	public static enum FacadeType {
-		Basic, Phased;
-
-		public static FacadeType fromOrdinal(int ordinal) {
-			return ordinal == 1 ? Phased : Basic;
-		}
-	}
-
 	public static final LinkedList<ItemStack> allFacades = new LinkedList<ItemStack>();
 	public static final LinkedList<String> blacklistedFacades = new LinkedList<String>();
 
@@ -147,7 +138,7 @@ public class ItemFacade extends ItemBuildCraft {
 
 	@Override
 	public String getItemStackDisplayName(ItemStack itemstack) {
-		switch (getType(itemstack)) {
+		switch (getFacadeType(itemstack)) {
 			case Basic:
 				return super.getItemStackDisplayName(itemstack) + ": " + getFacadeStateDisplayName(getFacadeStates(itemstack)[0]);
 			case Phased:
@@ -164,7 +155,7 @@ public class ItemFacade extends ItemBuildCraft {
 
 	@Override
 	public void addInformation(ItemStack stack, EntityPlayer player, List list, boolean debug) {
-		if (getType(stack) == FacadeType.Phased) {
+		if (getFacadeType(stack) == FacadeType.Phased) {
 			String stateString = StringUtils.localize("item.FacadePhased.state");
 			FacadeState defaultState = null;
 			for (FacadeState state : getFacadeStates(stack)) {
@@ -224,7 +215,7 @@ public class ItemFacade extends ItemBuildCraft {
 		return false;
 	}
 
-	public static void initialize() {
+	public void initialize() {
 		for (Object o : Block.blockRegistry) {
 			Block b = (Block) o;
 
@@ -246,7 +237,7 @@ public class ItemFacade extends ItemBuildCraft {
 		}
 	}
 
-	private static void registerValidFacades(Block block, Item item) {
+	private void registerValidFacades(Block block, Item item) {
 		Set<String> names = Sets.newHashSet();
 
 		for (int i = 0; i <= 15; i++) {
@@ -255,8 +246,7 @@ public class ItemFacade extends ItemBuildCraft {
 
 				if (!Strings.isNullOrEmpty(stack.getUnlocalizedName())
 						&& names.add(stack.getUnlocalizedName())) {
-					ItemFacade.addFacade(
-							"buildcraft:facade{" + Block.blockRegistry.getNameForObject(block) + "#"
+					addFacade("buildcraft:facade{" + Block.blockRegistry.getNameForObject(block) + "#"
 									+ stack.getItemDamage() + "}", stack);
 
 					// prevent adding multiple facades if it's a rotatable block
@@ -365,7 +355,7 @@ public class ItemFacade extends ItemBuildCraft {
 		return nbt;
 	}
 
-	public static Block[] getBlocks(ItemStack stack) {
+	public Block[] getBlocksForFacade(ItemStack stack) {
 		FacadeState[] states = getFacadeStates(stack);
 		Block[] blocks = new Block[states.length];
 		for (int i = 0; i < states.length; i++) {
@@ -374,7 +364,7 @@ public class ItemFacade extends ItemBuildCraft {
 		return blocks;
 	}
 
-	public static int[] getMetaValues(ItemStack stack) {
+	public int[] getMetaValuesForFacade(ItemStack stack) {
 		FacadeState[] states = getFacadeStates(stack);
 		int[] meta = new int[states.length];
 		for (int i = 0; i < states.length; i++) {
@@ -384,7 +374,8 @@ public class ItemFacade extends ItemBuildCraft {
 	}
 
 	// GETTERS FOR FACADE DATA
-	public static FacadeType getType(ItemStack stack) {
+	@Override
+	public FacadeType getFacadeType(ItemStack stack) {
 		if (!stack.hasTagCompound()) {
 			return FacadeType.Basic;
 		}
@@ -401,12 +392,12 @@ public class ItemFacade extends ItemBuildCraft {
 		return true;
 	}
 
-	public static void addFacade(String id, ItemStack itemStack) {
+	public void addFacade(String id, ItemStack itemStack) {
 		if (itemStack.stackSize == 0) {
 			itemStack.stackSize = 1;
 		}
 
-		ItemStack facade = getFacade(Block.getBlockFromItem(itemStack.getItem()), itemStack.getItemDamage());
+		ItemStack facade = getFacadeForBlock(Block.getBlockFromItem(itemStack.getItem()), itemStack.getItemDamage());
 		if (!allFacades.contains(facade)) {
 			allFacades.add(facade);
 
@@ -525,14 +516,14 @@ public class ItemFacade extends ItemBuildCraft {
 			}
 
 			if (slotmatch != null && slotmatch != NO_MATCH) {
-				return new Object[]{ItemFacade.getBlocks(slotmatch), slotmatch};
+				return new Object[]{getBlocksForFacade(slotmatch), slotmatch};
 			}
 
 			return null;
 		}
 
 		private ItemStack getNextFacadeItemStack(Block block, ItemStack originalFacade) {
-			int blockMeta = ItemFacade.getMetaValues(originalFacade)[0];
+			int blockMeta = getMetaValuesForFacade(originalFacade)[0];
 			int stackMeta = 0;
 
 			switch (block.getRenderType()) {
@@ -559,7 +550,7 @@ public class ItemFacade extends ItemBuildCraft {
 					stackMeta = blockMeta;
 			}
 
-			return getFacade(block, stackMeta);
+			return getFacadeForBlock(block, stackMeta);
 		}
 
 		@Override
@@ -584,8 +575,9 @@ public class ItemFacade extends ItemBuildCraft {
 	public int getSpriteNumber() {
 		return 0;
 	}
-
-	public static ItemStack getFacade(Block block, int metadata) {
+	
+	@Override
+	public ItemStack getFacadeForBlock(Block block, int metadata) {
 		return getFacade(FacadeState.create(block, metadata));
 	}
 

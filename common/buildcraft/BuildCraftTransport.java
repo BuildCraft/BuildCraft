@@ -532,7 +532,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 
 	@Mod.EventHandler
 	public void postInit(FMLPostInitializationEvent evt) {
-		ItemFacade.initialize();
+		facadeItem.initialize();
 	}
 
 	@Mod.EventHandler

@@ -9,16 +9,17 @@
 package buildcraft.silicon.recipes;
 
 import net.minecraft.item.ItemStack;
-
 import net.minecraftforge.oredict.OreDictionary;
-
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.JavaTools;
+import buildcraft.api.facades.FacadeType;
+import buildcraft.api.facades.IFacadeItem;
 import buildcraft.api.recipes.CraftingResult;
 import buildcraft.api.transport.PipeWire;
 import buildcraft.silicon.ItemRedstoneChipset;
 import buildcraft.silicon.TileIntegrationTable;
 import buildcraft.transport.ItemFacade;
+import buildcraft.transport.ItemFacade.FacadeState;
 import buildcraft.transport.ItemPipeWire;
 
 public class AdvancedFacadeRecipe extends IntegrationTableRecipe {
@@ -36,7 +37,8 @@ public class AdvancedFacadeRecipe extends IntegrationTableRecipe {
 
 	@Override
 	public boolean isValidInputB(ItemStack inputB) {
-		return inputB != null && (inputB.getItem() instanceof ItemFacade && ItemFacade.getType(inputB) == ItemFacade.FacadeType.Basic ||
+		return inputB != null && (inputB.getItem() instanceof ItemFacade &&
+				((IFacadeItem) inputB.getItem()).getFacadeType(inputB) == FacadeType.Basic ||
 				inputB.getItem() == BuildCraftTransport.plugItem);
 	}
 
@@ -59,14 +61,14 @@ public class AdvancedFacadeRecipe extends IntegrationTableRecipe {
 		}
 
 		if (wire != null) {
-			ItemFacade.FacadeState[] states = ItemFacade.getFacadeStates(inputA);
-			ItemFacade.FacadeState additionalState;
+			FacadeState[] states = ItemFacade.getFacadeStates(inputA);
+			FacadeState additionalState;
 
 			if (inputB.getItem() == BuildCraftTransport.plugItem) {
-				additionalState = ItemFacade.FacadeState.createTransparent(wire);
+				additionalState = FacadeState.createTransparent(wire);
 			} else {
 				additionalState = ItemFacade.getFacadeStates(inputB)[0];
-				additionalState = ItemFacade.FacadeState.create(additionalState.block, additionalState.metadata, wire);
+				additionalState = FacadeState.create(additionalState.block, additionalState.metadata, wire);
 			}
 
 			// if in states array exists state with the same wire just override it
@@ -83,7 +85,7 @@ public class AdvancedFacadeRecipe extends IntegrationTableRecipe {
 
 			result.energyCost = 50000;
 			result.crafted = ItemFacade.getFacade(JavaTools.concat(states,
-					new ItemFacade.FacadeState[] {additionalState}));
+					new FacadeState[] {additionalState}));
 
 			return result;
 		} else {

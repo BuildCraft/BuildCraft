@@ -19,7 +19,6 @@ import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftFactory;
 import buildcraft.BuildCraftSilicon;
 import buildcraft.BuildCraftTransport;
-import buildcraft.transport.ItemFacade;
 
 public enum CreativeTabBuildCraft {
 
@@ -51,12 +50,12 @@ public enum CreativeTabBuildCraft {
 		case PIPES:
 			return new ItemStack (BuildCraftTransport.pipeItemsDiamond, 1);
 		case FACADES:
-			return ItemFacade.getFacade(Blocks.brick_block, 0);
+			return BuildCraftTransport.facadeItem.getFacadeForBlock(Blocks.brick_block, 0);
 		case BOARDS:
 			return new ItemStack(BuildCraftSilicon.redstoneBoard, 1);
 		}
 
-		return ItemFacade.getFacade(Blocks.brick_block, 0);
+		return BuildCraftTransport.facadeItem.getFacadeForBlock(Blocks.brick_block, 0);
 	}
 
 	private final class Tab extends CreativeTabs {
