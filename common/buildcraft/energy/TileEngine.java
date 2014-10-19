@@ -228,6 +228,16 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 
 			if (!isOrientationValid()) {
 				switchOrientation(true);
+			}else{
+				TileEntity tile = getTileBuffer(orientation).getTile();
+
+				if(isPoweredTile(tile, orientation)){
+					if((tile instanceof IPipeTile) && (((IPipeTile) tile).getPipeType() != PipeType.POWER)){
+						constantPower = false;
+					}else{
+						constantPower = true;
+					}
+				}
 			}
 		}
 
