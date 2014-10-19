@@ -19,6 +19,7 @@ import net.minecraft.item.ItemStack;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLInterModComms;
+import cpw.mods.fml.common.event.FMLMissingMappingsEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
@@ -186,7 +187,7 @@ public class BuildCraftSilicon extends BuildCraftMod {
 		CoreProxy.proxy.registerBlock(laserBlock);
 
 		assemblyTableBlock = new BlockLaserTable();
-		CoreProxy.proxy.registerBlock(assemblyTableBlock, ItemLaserTable.class);
+		CoreProxy.proxy.registerBlock(assemblyTableBlock.setBlockName("laserTableBlock"), ItemLaserTable.class);
 
 		zonePlanBlock = new BlockZonePlan();
 		zonePlanBlock.setBlockName("zonePlan");
@@ -600,5 +601,14 @@ public class BuildCraftSilicon extends BuildCraftMod {
 				TileAdvancedCraftingTable.class.getCanonicalName());
 		FMLInterModComms.sendMessage("appliedenergistics2", "whitelist-spatial",
 				TileIntegrationTable.class.getCanonicalName());
+	}
+
+	@Mod.EventHandler
+	public void remap(FMLMissingMappingsEvent event){
+		for (FMLMissingMappingsEvent.MissingMapping mapping: event.get()){
+			if (mapping.name.equals("BuildCraft|Silicon:null"))
+					mapping.remap(laserBlock);
+
+		}
 	}
 }
