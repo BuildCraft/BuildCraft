@@ -56,9 +56,7 @@ public class SchematicBlock extends SchematicBlockBase {
 	public void writeToWorld(IBuilderContext context, int x, int y, int z, LinkedList<ItemStack> stacks) {
 		super.writeToWorld(context, x, y, z, stacks);
 
-		// Meta needs to be specified twice, depending on the block behavior
-		context.world().setBlock(x, y, z, block, meta, 3);
-		context.world().setBlockMetadataWithNotify(x, y, z, meta, 3);
+		this.setBlockInWorld(context, x, y, z);
 	}
 
 	@Override
@@ -80,37 +78,53 @@ public class SchematicBlock extends SchematicBlockBase {
 	public void writeToNBT(NBTTagCompound nbt, MappingRegistry registry) {
 		super.writeToNBT(nbt, registry);
 
-		nbt.setInteger("blockId", registry.getIdForBlock(block));
-		nbt.setInteger("blockMeta", meta);
-
-		if (storedRequirements.length > 0) {
-			NBTTagList rq = new NBTTagList();
-
-			for (ItemStack stack : storedRequirements) {
-				NBTTagCompound sub = new NBTTagCompound();
-				stack.writeToNBT(sub);
-				registry.stackToRegistry(sub);
-				rq.appendTag(sub);
-			}
-
-			nbt.setTag("rq", rq);
-		}
+		writeBlockToNBT(nbt, registry);
+		writeRequirementsToNBT(nbt, registry);
 	}
 
 	@Override
 	public void readFromNBT(NBTTagCompound nbt,	MappingRegistry registry) {
 		super.readFromNBT(nbt, registry);
 
+		readBlockFromNBT(nbt, registry);
+		readRequirementsFromNBT(nbt, registry);
+	}
+
+	@Override
+	public BuildingStage getBuildStage () {
+		if (block instanceof BlockFalling) {
+			return BuildingStage.SUPPORTED;
+		} else if (block instanceof BlockFluidBase || block instanceof BlockLiquid) {
+			return BuildingStage.EXPANDING;
+		} else if (block.isOpaqueCube()) {
+			return BuildingStage.STANDALONE;
+		} else {
+			return BuildingStage.SUPPORTED;
+		}
+	}
+
+	@Override
+	public BuildingPermission getBuildingPermission() {
+		return defaultPermission;
+	}
+	
+	// Utility functions
+	protected void setBlockInWorld(IBuilderContext context, int x, int y, int z) {
+		// Meta needs to be specified twice, depending on the block behavior
+		context.world().setBlock(x, y, z, block, meta, 3);
+		context.world().setBlockMetadataWithNotify(x, y, z, meta, 3);
+	}
+	
+	protected void readBlockFromNBT(NBTTagCompound nbt, MappingRegistry registry) {
 		try {
 			block = registry.getBlockForId(nbt.getInteger("blockId"));
+			meta = nbt.getInteger("blockMeta");
 		} catch (MappingNotFoundException e) {
 			defaultPermission = BuildingPermission.CREATIVE_ONLY;
-
-			return;
 		}
-
-		meta = nbt.getInteger("blockMeta");
-
+	}
+	
+	protected void readRequirementsFromNBT(NBTTagCompound nbt, MappingRegistry registry) {
 		if (nbt.hasKey("rq")) {
 			NBTTagList rq = nbt.getTagList("rq", Constants.NBT.TAG_COMPOUND);
 
@@ -139,22 +153,24 @@ public class SchematicBlock extends SchematicBlockBase {
 			storedRequirements = new ItemStack[0];
 		}
 	}
-
-	@Override
-	public BuildingStage getBuildStage () {
-		if (block instanceof BlockFalling) {
-			return BuildingStage.SUPPORTED;
-		} else if (block instanceof BlockFluidBase || block instanceof BlockLiquid) {
-			return BuildingStage.EXPANDING;
-		} else if (block.isOpaqueCube()) {
-			return BuildingStage.STANDALONE;
-		} else {
-			return BuildingStage.SUPPORTED;
-		}
+	
+	protected void writeBlockToNBT(NBTTagCompound nbt, MappingRegistry registry) {
+		nbt.setInteger("blockId", registry.getIdForBlock(block));
+		nbt.setInteger("blockMeta", meta);
 	}
+	
+	protected void writeRequirementsToNBT(NBTTagCompound nbt, MappingRegistry registry) {
+		if (storedRequirements.length > 0) {
+			NBTTagList rq = new NBTTagList();
 
-	@Override
-	public BuildingPermission getBuildingPermission() {
-		return defaultPermission;
+			for (ItemStack stack : storedRequirements) {
+				NBTTagCompound sub = new NBTTagCompound();
+				stack.writeToNBT(sub);
+				registry.stackToRegistry(sub);
+				rq.appendTag(sub);
+			}
+
+			nbt.setTag("rq", rq);
+		}
 	}
 }
