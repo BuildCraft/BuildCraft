@@ -79,18 +79,23 @@ public class PipePowerWood extends Pipe<PipeTransportPower> implements IPowerRec
 		sources = 0;
 
 		for (ForgeDirection o : ForgeDirection.VALID_DIRECTIONS) {
+			boolean oldPowerSource = powerSources[o.ordinal()];
+					
 			if (!container.isPipeConnected(o)) {
 				powerSources[o.ordinal()] = false;
-				continue;
+			} else {
+				TileEntity tile = container.getTile(o);
+			
+				if (powerSources[o.ordinal()] = isPowerSource(tile, o)) {
+					sources++;
+				}
 			}
-
-			TileEntity tile = container.getTile(o);
-
-			if (powerSources[o.ordinal()] = isPowerSource(tile, o)) {
-				sources++;
+			
+			if (oldPowerSource != powerSources[o.ordinal()]) {
+				container.scheduleRenderUpdate();
 			}
 		}
-
+		
 		if (container.getWorldObj().isRemote) {
 			// We only do the isRemote check now to get a list
 			// of power sources for client-side rendering.
