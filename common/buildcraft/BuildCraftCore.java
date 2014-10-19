@@ -32,7 +32,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.stats.Achievement;
 import net.minecraft.util.IIcon;
-
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
@@ -45,7 +44,6 @@ import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.AchievementPage;
@@ -56,7 +54,6 @@ import net.minecraftforge.common.config.Property;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fluids.BlockFluidBase;
 import net.minecraftforge.oredict.OreDictionary;
-
 import buildcraft.api.blueprints.SchematicRegistry;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.BlockIndex;
@@ -65,9 +62,11 @@ import buildcraft.api.core.EnumColor;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.core.JavaTools;
 import buildcraft.api.fuels.BuildcraftFuelRegistry;
+import buildcraft.api.gates.ActionParameterItemStack;
 import buildcraft.api.gates.IAction;
 import buildcraft.api.gates.ITrigger;
 import buildcraft.api.gates.StatementManager;
+import buildcraft.api.gates.TriggerParameterItemStack;
 import buildcraft.api.recipes.BuildcraftRecipeRegistry;
 import buildcraft.core.BlockSpring;
 import buildcraft.core.BuildCraftConfiguration;
@@ -103,6 +102,7 @@ import buildcraft.core.science.Technology;
 import buildcraft.core.science.Tier;
 import buildcraft.core.triggers.ActionMachineControl;
 import buildcraft.core.triggers.ActionMachineControl.Mode;
+import buildcraft.core.triggers.ActionParameterDirection;
 import buildcraft.core.triggers.ActionRedstoneOutput;
 import buildcraft.core.triggers.DefaultActionProvider;
 import buildcraft.core.triggers.DefaultTriggerProvider;
@@ -367,7 +367,7 @@ public class BuildCraftCore extends BuildCraftMod {
 	}
 
 	@Mod.EventHandler
-	public void initialize(FMLInitializationEvent evt) {
+	public void init(FMLInitializationEvent evt) {
 		BuildCraftAPI.proxy = CoreProxy.proxy;
 
 		channels = NetworkRegistry.INSTANCE.newChannel
@@ -375,6 +375,9 @@ public class BuildCraftCore extends BuildCraftMod {
 
 		NetworkIdRegistry.instance = new NetworkIdRegistry();
 
+		StatementManager.registerParameterClass("buildcraft:stackTrigger", TriggerParameterItemStack.class);
+		StatementManager.registerParameterClass("buildcraft:stackAction", ActionParameterItemStack.class);
+		StatementManager.registerParameterClass("buildcraft:pipeActionDirection", ActionParameterDirection.class);
 		StatementManager.registerTriggerProvider(new DefaultTriggerProvider());
 		StatementManager.registerActionProvider(new DefaultActionProvider());
 

@@ -6,21 +6,18 @@
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-package buildcraft.transport.triggers;
+package buildcraft.core.triggers;
 
 
 //import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.IIcon;
-
 import net.minecraftforge.common.util.ForgeDirection;
-
 import buildcraft.api.core.NetworkData;
 import buildcraft.api.gates.IActionParameter;
 import buildcraft.api.gates.IStatement;
 import buildcraft.api.transport.IPipeTile;
-import buildcraft.core.triggers.StatementIconProvider;
 
 public class ActionParameterDirection implements IActionParameter {
 

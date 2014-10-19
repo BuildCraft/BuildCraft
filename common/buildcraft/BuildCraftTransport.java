@@ -8,7 +8,9 @@
  */
 package buildcraft;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
@@ -29,6 +31,7 @@ import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
 import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.RecipeSorter;
 import buildcraft.api.blueprints.SchematicRegistry;
 import buildcraft.api.core.EnumColor;
@@ -72,6 +75,8 @@ import buildcraft.transport.gates.GateExpansionPulsar;
 import buildcraft.transport.gates.GateExpansionRedstoneFader;
 import buildcraft.transport.gates.GateExpansionTimer;
 import buildcraft.transport.gates.ItemGate;
+import buildcraft.transport.gates.GateDefinition.GateLogic;
+import buildcraft.transport.gates.GateDefinition.GateMaterial;
 import buildcraft.transport.network.PacketHandlerTransport;
 import buildcraft.transport.pipes.PipeFluidsCobblestone;
 import buildcraft.transport.pipes.PipeFluidsEmerald;
@@ -107,12 +112,16 @@ import buildcraft.transport.pipes.PipePowerQuartz;
 import buildcraft.transport.pipes.PipePowerStone;
 import buildcraft.transport.pipes.PipePowerWood;
 import buildcraft.transport.pipes.PipeStructureCobblestone;
+import buildcraft.transport.recipes.AdvancedFacadeRecipe;
+import buildcraft.transport.recipes.GateExpansionRecipe;
+import buildcraft.transport.recipes.GateLogicSwapRecipe;
 import buildcraft.transport.schematics.BptItemPipeFilters;
 import buildcraft.transport.schematics.BptPipeIron;
 import buildcraft.transport.schematics.BptPipeWooden;
 import buildcraft.transport.schematics.SchematicPipe;
 import buildcraft.transport.triggers.ActionEnergyPulsar;
 import buildcraft.transport.triggers.ActionExtractionPreset;
+import buildcraft.transport.triggers.ActionParameterSignal;
 import buildcraft.transport.triggers.ActionPipeColor;
 import buildcraft.transport.triggers.ActionPipeDirection;
 import buildcraft.transport.triggers.ActionPowerLimiter;
@@ -120,6 +129,7 @@ import buildcraft.transport.triggers.ActionRedstoneFaderOutput;
 import buildcraft.transport.triggers.ActionSignalOutput;
 import buildcraft.transport.triggers.ActionSingleEnergyPulse;
 import buildcraft.transport.triggers.ActionValve;
+import buildcraft.transport.triggers.TriggerParameterSignal;
 import buildcraft.transport.triggers.ActionValve.ValveState;
 import buildcraft.transport.triggers.TriggerClockTimer;
 import buildcraft.transport.triggers.TriggerClockTimer.Time;
@@ -520,6 +530,8 @@ public class BuildCraftTransport extends BuildCraftMod {
 
 		new BptItemPipeFilters(pipeItemsDiamond);
 
+		StatementManager.registerParameterClass("buildcraft:pipeWireTrigger", TriggerParameterSignal.class);
+		StatementManager.registerParameterClass("buildcraft:pipeWireAction", ActionParameterSignal.class);
 		StatementManager.registerTriggerProvider(new PipeTriggerProvider());
 
 		if (BuildCraftCore.loadDefaultRecipes) {
@@ -838,8 +850,62 @@ public class BuildCraftTransport extends BuildCraftMod {
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(robotStationItem), "   ", " I ", "ICI",
 				'I', Items.iron_ingot,
 				'C', Chipset.GOLD.getStack());
+
+		// Assembly Table recipes
+		if (Loader.isModLoaded("BuildCraft|Silicon")) {
+			// PIPE WIRE
+			BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:redWire", 5000, PipeWire.RED.getStack(8),
+					OreDictionary.getOres("dyeRed"), Items.redstone, Items.iron_ingot);
+			BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:blueWire", 5000, PipeWire.BLUE.getStack(8),
+					OreDictionary.getOres("dyeBlue"), Items.redstone, Items.iron_ingot);
+			BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:greenWire", 5000, PipeWire.GREEN.getStack(8),
+					OreDictionary.getOres("dyeGreen"), Items.redstone, Items.iron_ingot);
+			BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:yellowWire", 5000, PipeWire.YELLOW.getStack(8),
+					OreDictionary.getOres("dyeYellow"), Items.redstone, Items.iron_ingot);			
+
+			// GATES
+			BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:simpleGate", 100000,
+					ItemGate.makeGateItem(GateMaterial.REDSTONE, GateLogic.AND), Chipset.RED.getStack(),
+					PipeWire.RED.getStack());
+
+			addGateRecipe("Iron", 200000, GateMaterial.IRON, Chipset.IRON, PipeWire.RED, PipeWire.BLUE);
+			addGateRecipe("Gold", 400000, GateMaterial.GOLD, Chipset.GOLD, PipeWire.RED, PipeWire.BLUE, PipeWire.GREEN);
+			addGateRecipe("Diamond", 800000, GateMaterial.DIAMOND, Chipset.DIAMOND, PipeWire.RED, PipeWire.BLUE,
+					PipeWire.GREEN, PipeWire.YELLOW);
+			addGateRecipe("Emerald", 1200000, GateMaterial.EMERALD, Chipset.DIAMOND, PipeWire.RED, PipeWire.BLUE,
+					PipeWire.GREEN, PipeWire.YELLOW);
+
+
+			// REVERSAL RECIPE
+			BuildcraftRecipeRegistry.integrationTable.addRecipe(new GateLogicSwapRecipe("buildcraft:gateSwap"));
+
+			// EXPANSIONS
+			BuildcraftRecipeRegistry.integrationTable.addRecipe(new GateExpansionRecipe("buildcraft:expansionPulsar",
+					GateExpansionPulsar.INSTANCE, Chipset.PULSATING.getStack()));
+			BuildcraftRecipeRegistry.integrationTable.addRecipe(new GateExpansionRecipe("buildcraft:expansionQuartz",
+					GateExpansionTimer.INSTANCE, Chipset.QUARTZ.getStack()));
+			BuildcraftRecipeRegistry.integrationTable.addRecipe(new GateExpansionRecipe("buildcraft:expansionComp",
+					GateExpansionRedstoneFader.INSTANCE, Chipset.COMP.getStack()));
+
+			// FACADE
+			BuildcraftRecipeRegistry.integrationTable.addRecipe(new AdvancedFacadeRecipe("buildcraft:advancedFacade"));
+		}
 	}
 
+	private static void addGateRecipe(String materialName, int energyCost, GateMaterial material, Chipset chipset,
+			PipeWire... pipeWire) {
+		List<ItemStack> temp = new ArrayList<ItemStack>();
+		temp.add(chipset.getStack());
+		for (PipeWire wire : pipeWire) {
+			temp.add(wire.getStack());
+		}
+		Object[] inputs = temp.toArray();
+		BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:andGate" + materialName, energyCost,
+				ItemGate.makeGateItem(material, GateLogic.AND), inputs);
+		BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:orGate" + materialName, energyCost,
+				ItemGate.makeGateItem(material, GateLogic.OR), inputs);
+	}
+	
 	@Mod.EventHandler
 	public void processIMCRequests(IMCEvent event) {
 		InterModComms.processIMC(event);

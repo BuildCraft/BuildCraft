@@ -9,13 +9,12 @@
 package buildcraft.core.robots;
 
 import net.minecraft.item.ItemStack;
-
 import buildcraft.BuildCraftSilicon;
 import buildcraft.api.recipes.CraftingResult;
 import buildcraft.core.ItemRobot;
 import buildcraft.silicon.ItemRedstoneBoard;
 import buildcraft.silicon.TileIntegrationTable;
-import buildcraft.silicon.recipes.IntegrationTableRecipe;
+import buildcraft.transport.recipes.IntegrationTableRecipe;
 
 public class RobotIntegrationRecipe extends IntegrationTableRecipe {
 

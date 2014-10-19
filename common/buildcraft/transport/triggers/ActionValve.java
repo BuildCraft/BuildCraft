@@ -11,12 +11,11 @@ package buildcraft.transport.triggers;
 import java.util.Locale;
 
 import net.minecraft.client.renderer.texture.IIconRegister;
-
 import net.minecraftforge.common.util.ForgeDirection;
-
 import buildcraft.api.gates.IActionParameter;
 import buildcraft.api.gates.IGate;
 import buildcraft.api.transport.IPipe;
+import buildcraft.core.triggers.ActionParameterDirection;
 import buildcraft.core.triggers.BCActionActive;
 import buildcraft.core.utils.StringUtils;
 import buildcraft.transport.Pipe;

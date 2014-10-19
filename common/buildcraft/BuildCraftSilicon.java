@@ -8,14 +8,10 @@
  */
 package buildcraft;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLInterModComms;
@@ -23,9 +19,7 @@ import cpw.mods.fml.common.event.FMLMissingMappingsEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
-
 import net.minecraftforge.oredict.OreDictionary;
-
 import buildcraft.api.blueprints.SchematicRegistry;
 import buildcraft.api.boards.RedstoneBoardRegistry;
 import buildcraft.api.gates.ActionParameterItemStack;
@@ -34,7 +28,6 @@ import buildcraft.api.gates.ITrigger;
 import buildcraft.api.gates.StatementManager;
 import buildcraft.api.gates.TriggerParameterItemStack;
 import buildcraft.api.recipes.BuildcraftRecipeRegistry;
-import buildcraft.api.transport.PipeWire;
 import buildcraft.builders.schematics.SchematicRotateMeta;
 import buildcraft.commander.BlockRequester;
 import buildcraft.commander.BlockZonePlan;
@@ -69,6 +62,7 @@ import buildcraft.core.science.TechnoRobot;
 import buildcraft.core.science.TechnoSimpleItem;
 import buildcraft.core.science.TechnoStatement;
 import buildcraft.core.science.Tier;
+import buildcraft.core.triggers.ActionParameterDirection;
 import buildcraft.silicon.BlockLaser;
 import buildcraft.silicon.BlockLaserTable;
 import buildcraft.silicon.GuiHandler;
@@ -84,9 +78,6 @@ import buildcraft.silicon.TileLaser;
 import buildcraft.silicon.boards.BoardRecipe;
 import buildcraft.silicon.boards.ImplRedstoneBoardRegistry;
 import buildcraft.silicon.network.PacketHandlerSilicon;
-import buildcraft.silicon.recipes.AdvancedFacadeRecipe;
-import buildcraft.silicon.recipes.GateExpansionRecipe;
-import buildcraft.silicon.recipes.GateLogicSwapRecipe;
 import buildcraft.silicon.statements.ActionRobotFilter;
 import buildcraft.silicon.statements.ActionRobotGotoStation;
 import buildcraft.silicon.statements.ActionRobotWakeUp;
@@ -103,13 +94,6 @@ import buildcraft.silicon.statements.ActionStationRequestItemsMachine;
 import buildcraft.silicon.statements.RobotsActionProvider;
 import buildcraft.silicon.statements.RobotsTriggerProvider;
 import buildcraft.silicon.statements.TriggerRobotSleep;
-import buildcraft.transport.gates.GateDefinition.GateLogic;
-import buildcraft.transport.gates.GateDefinition.GateMaterial;
-import buildcraft.transport.gates.GateExpansionPulsar;
-import buildcraft.transport.gates.GateExpansionRedstoneFader;
-import buildcraft.transport.gates.GateExpansionTimer;
-import buildcraft.transport.gates.ItemGate;
-import buildcraft.transport.triggers.ActionParameterDirection;
 import buildcraft.transport.triggers.ActionParameterSignal;
 import buildcraft.transport.triggers.TriggerParameterSignal;
 
@@ -265,12 +249,6 @@ public class BuildCraftSilicon extends BuildCraftMod {
 		}
 
 		SiliconProxy.proxy.registerRenderers();
-
-		StatementManager.registerParameterClass("buildcraft:stackTrigger", TriggerParameterItemStack.class);
-		StatementManager.registerParameterClass("buildcraft:pipeWireTrigger", TriggerParameterSignal.class);
-		StatementManager.registerParameterClass("buildcraft:stackAction", ActionParameterItemStack.class);
-		StatementManager.registerParameterClass("buildcraft:pipeWireAction", ActionParameterSignal.class);
-		StatementManager.registerParameterClass("buildcraft:pipeActionDirection", ActionParameterDirection.class);
 	}
 
 	@Mod.EventHandler
@@ -495,16 +473,6 @@ public class BuildCraftSilicon extends BuildCraftMod {
 				'C', new ItemStack(redstoneChipset, 1, 0),
 				'G', BuildCraftCore.diamondGearItem);
 
-		// PIPE WIRE
-		BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:redWire", 5000, PipeWire.RED.getStack(8),
-				OreDictionary.getOres("dyeRed"), Items.redstone, Items.iron_ingot);
-		BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:blueWire", 5000, PipeWire.BLUE.getStack(8),
-				OreDictionary.getOres("dyeBlue"), Items.redstone, Items.iron_ingot);
-		BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:greenWire", 5000, PipeWire.GREEN.getStack(8),
-				OreDictionary.getOres("dyeGreen"), Items.redstone, Items.iron_ingot);
-		BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:yellowWire", 5000, PipeWire.YELLOW.getStack(8),
-				OreDictionary.getOres("dyeYellow"), Items.redstone, Items.iron_ingot);
-
 		// CHIPSETS
 		BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:redstoneChipset", 100000, Chipset.RED.getStack(),
 				Items.redstone);
@@ -522,18 +490,6 @@ public class BuildCraftSilicon extends BuildCraftMod {
 				Items.redstone, Items.comparator);
 		BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:emeraldChipset", 1200000,
 				Chipset.EMERALD.getStack(), Items.redstone, Items.emerald);
-
-		// GATES
-		BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:simpleGate", 100000,
-				ItemGate.makeGateItem(GateMaterial.REDSTONE, GateLogic.AND), Chipset.RED.getStack(),
-				PipeWire.RED.getStack());
-
-		addGateRecipe("Iron", 200000, GateMaterial.IRON, Chipset.IRON, PipeWire.RED, PipeWire.BLUE);
-		addGateRecipe("Gold", 400000, GateMaterial.GOLD, Chipset.GOLD, PipeWire.RED, PipeWire.BLUE, PipeWire.GREEN);
-		addGateRecipe("Diamond", 800000, GateMaterial.DIAMOND, Chipset.DIAMOND, PipeWire.RED, PipeWire.BLUE,
-				PipeWire.GREEN, PipeWire.YELLOW);
-		addGateRecipe("Emerald", 1200000, GateMaterial.EMERALD, Chipset.DIAMOND, PipeWire.RED, PipeWire.BLUE,
-				PipeWire.GREEN, PipeWire.YELLOW);
 
 		// ROBOTS AND BOARDS
 		BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:redstoneCrystal", 10000000, new ItemStack(
@@ -557,34 +513,6 @@ public class BuildCraftSilicon extends BuildCraftMod {
 
 		BuildcraftRecipeRegistry.assemblyTable.addRecipe(new BoardRecipe("buildcraft:redstoneBoard"));
 		BuildcraftRecipeRegistry.integrationTable.addRecipe(new RobotIntegrationRecipe("buildcraft:robotIntegration"));
-
-		// REVERSAL RECIPE
-		BuildcraftRecipeRegistry.integrationTable.addRecipe(new GateLogicSwapRecipe("buildcraft:gateSwap"));
-
-		// EXPANSIONS
-		BuildcraftRecipeRegistry.integrationTable.addRecipe(new GateExpansionRecipe("buildcraft:expansionPulsar",
-				GateExpansionPulsar.INSTANCE, Chipset.PULSATING.getStack()));
-		BuildcraftRecipeRegistry.integrationTable.addRecipe(new GateExpansionRecipe("buildcraft:expansionQuartz",
-				GateExpansionTimer.INSTANCE, Chipset.QUARTZ.getStack()));
-		BuildcraftRecipeRegistry.integrationTable.addRecipe(new GateExpansionRecipe("buildcraft:expansionComp",
-				GateExpansionRedstoneFader.INSTANCE, Chipset.COMP.getStack()));
-
-		// FACADE
-		BuildcraftRecipeRegistry.integrationTable.addRecipe(new AdvancedFacadeRecipe("buildcraft:advancedFacade"));
-	}
-
-	private static void addGateRecipe(String materialName, int energyCost, GateMaterial material, Chipset chipset,
-			PipeWire... pipeWire) {
-		List<ItemStack> temp = new ArrayList<ItemStack>();
-		temp.add(chipset.getStack());
-		for (PipeWire wire : pipeWire) {
-			temp.add(wire.getStack());
-		}
-		Object[] inputs = temp.toArray();
-		BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:andGate" + materialName, energyCost,
-				ItemGate.makeGateItem(material, GateLogic.AND), inputs);
-		BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:orGate" + materialName, energyCost,
-				ItemGate.makeGateItem(material, GateLogic.OR), inputs);
 	}
 
 	@Mod.EventHandler
