@@ -13,18 +13,16 @@ import net.minecraft.item.Item;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ResourceLocation;
-
 import net.minecraftforge.common.util.ForgeDirection;
-
 import buildcraft.api.core.NetworkData;
 import buildcraft.api.tools.IToolWrench;
+import buildcraft.core.PowerMode;
 import buildcraft.core.utils.StringUtils;
-import buildcraft.transport.pipes.PipePowerIron;
 
 public class TileEngineCreative extends TileEngine {
 
 	@NetworkData
-	private PipePowerIron.PowerMode powerMode = PipePowerIron.PowerMode.M2;
+	private PowerMode powerMode = PowerMode.M2;
 
 	@Override
 	public ResourceLocation getBaseTexture() {
@@ -71,7 +69,7 @@ public class TileEngineCreative extends TileEngine {
 	public void readFromNBT(NBTTagCompound data) {
 		super.readFromNBT(data);
 
-		powerMode = PipePowerIron.PowerMode.fromId(data.getByte("mode"));
+		powerMode = PowerMode.fromId(data.getByte("mode"));
 	}
 
 	@Override

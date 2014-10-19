@@ -14,16 +14,14 @@ import java.util.LinkedList;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.util.ChatComponentText;
-
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-
 import net.minecraftforge.common.util.ForgeDirection;
-
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.gates.IAction;
 import buildcraft.api.tools.IToolWrench;
+import buildcraft.core.PowerMode;
 import buildcraft.core.utils.StringUtils;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
@@ -32,34 +30,6 @@ import buildcraft.transport.gates.ActionSlot;
 import buildcraft.transport.triggers.ActionPowerLimiter;
 
 public class PipePowerIron extends Pipe<PipeTransportPower> {
-
-	public static enum PowerMode {
-
-		M2(20), M4(40), M8(80), M16(160), M32(320), M64(640), M128(1280);
-		public static final PowerMode[] VALUES = values();
-		public final int maxPower;
-
-		private PowerMode(int max) {
-			this.maxPower = max;
-		}
-
-		public PowerMode getNext() {
-			PowerMode next = VALUES[(ordinal() + 1) % VALUES.length];
-			return next;
-		}
-
-		public PowerMode getPrevious() {
-			PowerMode previous = VALUES[(ordinal() + VALUES.length - 1) % VALUES.length];
-			return previous;
-		}
-
-		public static PowerMode fromId(int id) {
-			if (id < 0 || id >= VALUES.length) {
-				return M128;
-			}
-			return VALUES[id];
-		}
-	}
 
 	public PipePowerIron(Item item) {
 		super(new PipeTransportPower(), item);
