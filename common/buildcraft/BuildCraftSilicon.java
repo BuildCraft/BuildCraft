@@ -22,11 +22,9 @@ import cpw.mods.fml.common.network.NetworkRegistry;
 import net.minecraftforge.oredict.OreDictionary;
 import buildcraft.api.blueprints.SchematicRegistry;
 import buildcraft.api.boards.RedstoneBoardRegistry;
-import buildcraft.api.gates.ActionParameterItemStack;
 import buildcraft.api.gates.IAction;
 import buildcraft.api.gates.ITrigger;
 import buildcraft.api.gates.StatementManager;
-import buildcraft.api.gates.TriggerParameterItemStack;
 import buildcraft.api.recipes.BuildcraftRecipeRegistry;
 import buildcraft.builders.schematics.SchematicRotateMeta;
 import buildcraft.commander.BlockRequester;
@@ -62,7 +60,6 @@ import buildcraft.core.science.TechnoRobot;
 import buildcraft.core.science.TechnoSimpleItem;
 import buildcraft.core.science.TechnoStatement;
 import buildcraft.core.science.Tier;
-import buildcraft.core.triggers.ActionParameterDirection;
 import buildcraft.silicon.BlockLaser;
 import buildcraft.silicon.BlockLaserTable;
 import buildcraft.silicon.GuiHandler;
@@ -94,8 +91,6 @@ import buildcraft.silicon.statements.ActionStationRequestItemsMachine;
 import buildcraft.silicon.statements.RobotsActionProvider;
 import buildcraft.silicon.statements.RobotsTriggerProvider;
 import buildcraft.silicon.statements.TriggerRobotSleep;
-import buildcraft.transport.triggers.ActionParameterSignal;
-import buildcraft.transport.triggers.TriggerParameterSignal;
 
 @Mod(name = "BuildCraft Silicon", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Silicon", dependencies = DefaultProps.DEPENDENCY_TRANSPORT)
 public class BuildCraftSilicon extends BuildCraftMod {

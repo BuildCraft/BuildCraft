@@ -8,8 +8,6 @@
  */
 package buildcraft.transport;
 
-import java.util.LinkedList;
-
 import org.apache.logging.log4j.Level;
 
 import io.netty.buffer.ByteBuf;
@@ -39,8 +37,6 @@ import buildcraft.api.core.EnumColor;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.core.Position;
 import buildcraft.api.gates.IGateExpansion;
-import buildcraft.api.gates.IOverrideDefaultTriggers;
-import buildcraft.api.gates.ITrigger;
 import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.power.PowerHandler;
 import buildcraft.api.power.PowerHandler.PowerReceiver;
