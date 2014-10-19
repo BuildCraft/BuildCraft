@@ -193,6 +193,7 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
 
 	@Override
 	public void engineUpdate() {
+		super.engineUpdate();
 
 		final ItemStack stack = getStackInSlot(0);
 		if (stack != null) {
