@@ -192,7 +192,7 @@ public class PipeItemsWood extends Pipe<PipeTransportItems> implements IEnergyHa
 
 			if (slot != null && slot.stackSize > 0 && inventory.canExtractItem(k, slot, from.ordinal())) {
 				if (doRemove) {
-					int stackSize = battery.useEnergy(10, slot.stackSize*10, false)/10;
+					int stackSize = battery.useEnergy(10, slot.stackSize * 10, false) / 10;
 					
 					return inventory.decrStackSize(k, stackSize);
 				} else {

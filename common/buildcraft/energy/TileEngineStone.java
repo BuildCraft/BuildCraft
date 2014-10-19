@@ -75,9 +75,8 @@ public class TileEngineStone extends TileEngineWithInventory {
 	public void burn() {
 		if (burnTime > 0) {
 			burnTime--;
-			if(isRedstonePowered){
+			if (isRedstonePowered) {
 				currentOutput = calculateCurrentOutput();
-
 				addEnergy(currentOutput);
 			}
 		} else {

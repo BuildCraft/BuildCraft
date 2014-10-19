@@ -134,7 +134,7 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 	}
 
 	public double getEnergyLevel() {
-		return (double)energy / getMaxEnergy();
+		return ((double) energy) / getMaxEnergy();
 	}
 
 	protected EnergyStage computeEnergyStage() {
@@ -228,13 +228,13 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 
 			if (!isOrientationValid()) {
 				switchOrientation(true);
-			}else{
+			} else {
 				TileEntity tile = getTileBuffer(orientation).getTile();
 
-				if(isPoweredTile(tile, orientation)){
-					if((tile instanceof IPipeTile) && (((IPipeTile) tile).getPipeType() != PipeType.POWER)){
+				if (isPoweredTile(tile, orientation)) {
+					if ((tile instanceof IPipeTile) && (((IPipeTile) tile).getPipeType() != PipeType.POWER)) {
 						constantPower = false;
-					}else{
+					} else {
 						constantPower = true;
 					}
 				}
@@ -510,8 +510,8 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 		}
 	}
 
-	public int extractEnergy(int min, int max, boolean doExtract) {
-		max = Math.min(max, maxEnergyExtracted());
+	public int extractEnergy(int min, int energyMax, boolean doExtract) {
+		int max = Math.min(energyMax, maxEnergyExtracted());
 		
 		if (max < min || energy < min) {
 			return 0;
