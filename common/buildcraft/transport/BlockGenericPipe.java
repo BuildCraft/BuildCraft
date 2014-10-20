@@ -1313,7 +1313,9 @@ public class BlockGenericPipe extends BlockBuildCraft {
 
 		if (neighbours != null) {
 			for (int i = 0; i < 6; i++) {
-				if (neighbours[i] != null && neighbours[i].getTile() instanceof TileGenericPipe && !neighbours[i].getTile().isInvalid()) {
+				if (neighbours[i] != null && neighbours[i].getTile() instanceof TileGenericPipe &&
+						!neighbours[i].getTile().isInvalid() &&
+						((TileGenericPipe) neighbours[i].getTile()).pipe != null) {
 					((TileGenericPipe) neighbours[i].getTile()).pipe.updateSignalState();
 				}
 			}

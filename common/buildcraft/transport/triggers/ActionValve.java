@@ -84,7 +84,7 @@ public class ActionValve extends BCActionActive {
 		
 	    if (pipe != null && pipe instanceof Pipe) {
 			PipeTransport transport = ((Pipe) pipe).transport;
-			if (parameters[0] != null) {
+			if (parameters[0] != null && parameters[0] instanceof ActionParameterDirection) {
 				ForgeDirection side = ((ActionParameterDirection) parameters[0]).direction;
 		
 				if (side != ForgeDirection.UNKNOWN) {
