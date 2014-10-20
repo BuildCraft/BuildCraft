@@ -40,7 +40,7 @@ public class PipePowerWood extends Pipe<PipeTransportPower> implements IPowerRec
 
 	protected int standardIconIndex = PipeIconProvider.TYPE.PipePowerWood_Standard.ordinal();
 	protected int solidIconIndex = PipeIconProvider.TYPE.PipeAllWood_Solid.ordinal();
-	protected RFBattery battery;
+	protected RFBattery[] batteries = new RFBattery[6];
 
 	private boolean full;
 	private int requestedEnergy, sources;
@@ -49,7 +49,9 @@ public class PipePowerWood extends Pipe<PipeTransportPower> implements IPowerRec
 	public PipePowerWood(Item item) {
 		super(new PipeTransportPower(), item);
 
-		battery = new RFBattery(320 * 50, 320, 0);
+		for (ForgeDirection o : ForgeDirection.VALID_DIRECTIONS) {
+			batteries[o.ordinal()] = new RFBattery(320 * 50, 320, 0);
+		}
 
 		powerHandler = new PowerHandler(this, Type.PIPE);
 		powerHandler.configure(0, 500, 1, 1500);
@@ -103,12 +105,10 @@ public class PipePowerWood extends Pipe<PipeTransportPower> implements IPowerRec
 		}
 
 		if (sources <= 0) {
-			battery.useEnergy(0, 50, false);
+			for (ForgeDirection o : ForgeDirection.VALID_DIRECTIONS) {
+				batteries[o.ordinal()].useEnergy(0, 50, false);
+			}
 			requestedEnergy = 0;
-			return;
-		}
-
-		if (sources == 0) {
 			return;
 		}
 
@@ -127,7 +127,9 @@ public class PipePowerWood extends Pipe<PipeTransportPower> implements IPowerRec
 			energyToRemove = 1;
 		} */
 
-		energyToRemove /= sources;
+		//energyToRemove /= sources;
+
+		int totalEnergy = 0;
 
 		// Extract power from RF sources.
 		// While we send power to receivers and so does TE4,
@@ -141,64 +143,43 @@ public class PipePowerWood extends Pipe<PipeTransportPower> implements IPowerRec
 			TileEntity tile = container.getTile(o);
 
 			if (tile instanceof IEnergyHandler) {
-				battery.addEnergy(0, ((IEnergyHandler) tile).extractEnergy(o.getOpposite(), energyToRemove, false),
-						false);
+				((IEnergyHandler) tile).extractEnergy(o.getOpposite(), batteries[o.ordinal()].addEnergy(0, ((IEnergyHandler) tile).extractEnergy(o.getOpposite(), energyToRemove, true), false), false);
 			}
+			totalEnergy += batteries[o.ordinal()].getEnergyStored();
 		}
 
-		if (battery.getEnergyStored() > 0) {
-			for (ForgeDirection o : ForgeDirection.VALID_DIRECTIONS) {
-				if (!powerSources[o.ordinal()]) {
-					continue;
-				}
-	
-				int energyUsable = Math.min(battery.getEnergyStored(), energyToRemove);
-	
-				if (energyUsable > 0) {
-					battery.setEnergy(battery.getEnergyStored() - transport.receiveEnergy(o, energyUsable));
-				}
+		for (ForgeDirection o : ForgeDirection.VALID_DIRECTIONS) {
+			if (!powerSources[o.ordinal()]) {
+				continue;
 			}
+
+			int energyToAdd = batteries[o.ordinal()].getEnergyStored() / totalEnergy * energyToRemove; //Load balance using percentage of energy stored in each side
+			batteries[o.ordinal()].setEnergy(batteries[o.ordinal()].getEnergyStored() - transport.receiveEnergy(o, energyToAdd));
 		}
 
 		requestedEnergy = 0;
-	}
-
-	public boolean requestsPower() {
-		if (full) {
-			boolean request = battery.getEnergyStored() < battery.getMaxEnergyStored() / 2;
-
-			if (request) {
-				full = false;
-			}
-
-			return request;
-		}
-
-		full = battery.getEnergyStored() >= battery.getMaxEnergyStored() - 100;
-
-		return !full;
 	}
 
 	@Override
 	public void writeToNBT(NBTTagCompound data) {
 		super.writeToNBT(data);
 
-		NBTTagCompound batteryNBT = new NBTTagCompound();
-		battery.writeToNBT(batteryNBT);
-		data.setTag("battery", batteryNBT);
-
 		for (int i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
 			data.setBoolean("powerSources[" + i + "]", powerSources[i]);
+
+			NBTTagCompound batteryNBT = new NBTTagCompound();
+			batteries[i].writeToNBT(batteryNBT);
+			data.setTag("battery[" + i + "]", batteryNBT);
 		}
 	}
 
 	@Override
 	public void readFromNBT(NBTTagCompound data) {
 		super.readFromNBT(data);
-		battery.readFromNBT(data.getCompoundTag("battery"));
 
 		for (int i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
 			powerSources[i] = data.getBoolean("powerSources[" + i + "]");
+			batteries[i].readFromNBT(data.getCompoundTag("battery[" + i + "]"));
 		}
 	}
 
@@ -234,8 +215,8 @@ public class PipePowerWood extends Pipe<PipeTransportPower> implements IPowerRec
 
 	@Override
 	public void doWork(PowerHandler workProvider) {
-		battery.addEnergy(0, (int) Math.round(this.powerHandler.getEnergyStored() * 10), true);
-		this.powerHandler.setEnergy(0.0);
+		//battery.addEnergy(0, (int) Math.round(this.powerHandler.getEnergyStored() * 10), true);
+		//this.powerHandler.setEnergy(0.0);
 	}
 
 	@Override
@@ -247,7 +228,7 @@ public class PipePowerWood extends Pipe<PipeTransportPower> implements IPowerRec
 	public int receiveEnergy(ForgeDirection from, int maxReceive,
 			boolean simulate) {
 		if (powerSources[from.ordinal()]) {
-			return battery.receiveEnergy(maxReceive, simulate);
+			return batteries[from.ordinal()].receiveEnergy(maxReceive, simulate);
 		} else {
 			return 0;
 		}
@@ -261,11 +242,17 @@ public class PipePowerWood extends Pipe<PipeTransportPower> implements IPowerRec
 
 	@Override
 	public int getEnergyStored(ForgeDirection from) {
-		return battery.getEnergyStored();
+		if(from == ForgeDirection.UNKNOWN){
+			return 0;
+		}
+		return batteries[from.ordinal()].getEnergyStored();
 	}
 
 	@Override
 	public int getMaxEnergyStored(ForgeDirection from) {
-		return battery.getMaxEnergyStored();
+		if(from == ForgeDirection.UNKNOWN){
+			return 0;
+		}
+		return batteries[from.ordinal()].getMaxEnergyStored();
 	}
 }
