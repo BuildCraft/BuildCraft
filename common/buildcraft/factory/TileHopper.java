@@ -8,14 +8,13 @@
  */
 package buildcraft.factory;
 
+import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-
 import net.minecraftforge.common.util.ForgeDirection;
-
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.inventory.ITransactor;
 import buildcraft.core.inventory.SimpleInventory;
@@ -24,7 +23,9 @@ import buildcraft.core.inventory.Transactor;
 public class TileHopper extends TileBuildCraft implements IInventory {
 
 	private final SimpleInventory inventory = new SimpleInventory(4, "Hopper", 64);
-
+	private boolean isEmpty;
+	private TileEntity outputTile;
+	
 	@Override
 	public void readFromNBT(NBTTagCompound nbtTagCompound) {
 		super.readFromNBT(nbtTagCompound);
@@ -37,6 +38,8 @@ public class TileHopper extends TileBuildCraft implements IInventory {
 		}
 
 		inventory.readFromNBT(p);
+		
+		refreshInventoryFlags();
 	}
 
 	@Override
@@ -49,28 +52,36 @@ public class TileHopper extends TileBuildCraft implements IInventory {
 	@Override
 	public void updateEntity() {
 		super.updateEntity();
-		if (worldObj.isRemote || worldObj.getTotalWorldTime() % 2 != 0) {
+		if (worldObj.isRemote || isEmpty ||
+				worldObj.getTotalWorldTime() % 2 != 0) {
 			return;
 		}
 
-		TileEntity tile = this.getWorldObj().getTileEntity(xCoord, yCoord - 1, zCoord);
-
-		if (tile == null) {
-			return;
+		if (outputTile == null || outputTile.isInvalid()) {
+			Block block = worldObj.getBlock(xCoord, yCoord - 1, zCoord);
+			outputTile = null;
+			
+			if (block.hasTileEntity(worldObj.getBlockMetadata(xCoord, yCoord - 1, zCoord))) {
+				outputTile = worldObj.getTileEntity(xCoord, yCoord - 1, zCoord);
+			}
+			
+			if (outputTile == null) {
+				return;
+			}
 		}
 
-		ITransactor transactor = Transactor.getTransactorFor(tile);
-
+		ITransactor transactor = Transactor.getTransactorFor(outputTile);
+		
 		if (transactor == null) {
 			return;
 		}
-
+		
 		for (int internalSlot = 0; internalSlot < inventory.getSizeInventory(); internalSlot++) {
 			ItemStack stackInSlot = inventory.getStackInSlot(internalSlot);
-			if (stackInSlot == null) {
+			if (stackInSlot == null || stackInSlot.stackSize == 0) {
 				continue;
 			}
-
+			
 			ItemStack clonedStack = stackInSlot.copy().splitStack(1);
 			if (transactor.add(clonedStack, ForgeDirection.UP, true).stackSize > 0) {
 				inventory.decrStackSize(internalSlot, 1);
@@ -79,6 +90,18 @@ public class TileHopper extends TileBuildCraft implements IInventory {
 		}
 	}
 
+	private void refreshInventoryFlags() {
+		isEmpty = true;
+		
+		for (int internalSlot = 0; internalSlot < inventory.getSizeInventory(); internalSlot++) {
+			ItemStack stackInSlot = inventory.getStackInSlot(internalSlot);
+			if (stackInSlot != null && stackInSlot.stackSize > 0) {
+				isEmpty = false;
+				return;
+			}
+		}
+	}
+	
 	/**
 	 * IInventory Implementation *
 	 */
@@ -94,17 +117,22 @@ public class TileHopper extends TileBuildCraft implements IInventory {
 
 	@Override
 	public ItemStack decrStackSize(int slotId, int count) {
-		return inventory.decrStackSize(slotId, count);
+		ItemStack output = inventory.decrStackSize(slotId, count);
+		refreshInventoryFlags();
+		return output;
 	}
 
 	@Override
 	public ItemStack getStackInSlotOnClosing(int slotId) {
-		return inventory.getStackInSlotOnClosing(slotId);
+		ItemStack output = inventory.getStackInSlotOnClosing(slotId);
+		refreshInventoryFlags();
+		return output;
 	}
 
 	@Override
 	public void setInventorySlotContents(int slotId, ItemStack itemStack) {
 		inventory.setInventorySlotContents(slotId, itemStack);
+		refreshInventoryFlags();
 	}
 
 	@Override

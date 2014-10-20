@@ -406,9 +406,9 @@ public class TileQuarry extends TileAbstractBuilder implements IMachine, ISidedI
 		int k = targetZ;
 
 		Block block = worldObj.getBlock(i, j, k);
-
+		int meta = worldObj.getBlockMetadata(i, j, k);
+		
 		if (isQuarriableBlock(i, j, k)) {
-
 			// Share this with mining well!
 
 			List<ItemStack> stacks = BlockUtil.getItemStackFromBlock((WorldServer) worldObj, i, j, k);
@@ -428,7 +428,12 @@ public class TileQuarry extends TileAbstractBuilder implements IMachine, ISidedI
 					j,
 					k,
 					Block.getIdFromBlock(block)
-							+ (worldObj.getBlockMetadata(i, j, k) << 12));
+							+ (meta << 12));
+			
+			if (block.hasTileEntity(meta)) {
+				worldObj.removeTileEntity(i, j, k);
+			}
+			
 			worldObj.setBlockToAir(i, j, k);
 		}
 

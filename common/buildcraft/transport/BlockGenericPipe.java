@@ -38,14 +38,11 @@ import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-
 import net.minecraftforge.common.util.ForgeDirection;
-
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.BlockIndex;
@@ -54,6 +51,7 @@ import buildcraft.api.events.PipePlacedEvent;
 import buildcraft.api.events.RobotPlacementEvent;
 import buildcraft.api.gates.GateExpansions;
 import buildcraft.api.gates.IGateExpansion;
+import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.api.tools.IToolWrench;
 import buildcraft.api.transport.PipeWire;
 import buildcraft.core.BlockBuildCraft;
@@ -791,7 +789,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 						DockingStation station = pipe.container.getStation(rayTraceResult.sideHit);
 
 						if (!station.isTaken()) {
-							if (((ItemRobot) currentItem.getItem()).getRobotNBT(currentItem) == null) {
+							if (ItemRobot.getRobotNBT(currentItem) == null) {
 								return true;
 							}
 							RobotPlacementEvent robotEvent = new RobotPlacementEvent(player, ((NBTTagCompound) currentItem.stackTagCompound.getTag("board")).getString("id"));
@@ -802,7 +800,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 							EntityRobot robot = ((ItemRobot) currentItem.getItem())
 									.createRobot(currentItem, world);
 							robot.setUniqueRobotId(robot.getRegistry().getNextRobotId());
-							robot.getBattery().setEnergy(EntityRobot.MAX_ENERGY);
+							robot.getBattery().setEnergy(EntityRobotBase.MAX_ENERGY);
 
 							float px = x + 0.5F + rayTraceResult.sideHit.offsetX * 0.5F;
 							float py = y + 0.5F + rayTraceResult.sideHit.offsetY * 0.5F;
@@ -1313,7 +1311,9 @@ public class BlockGenericPipe extends BlockBuildCraft {
 
 		if (neighbours != null) {
 			for (int i = 0; i < 6; i++) {
-				if (neighbours[i] != null && neighbours[i].getTile() instanceof TileGenericPipe && !neighbours[i].getTile().isInvalid()) {
+				if (neighbours[i] != null && neighbours[i].getTile() instanceof TileGenericPipe &&
+						!neighbours[i].getTile().isInvalid() &&
+						((TileGenericPipe) neighbours[i].getTile()).pipe != null) {
 					((TileGenericPipe) neighbours[i].getTile()).pipe.updateSignalState();
 				}
 			}

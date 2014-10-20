@@ -19,6 +19,7 @@ import cpw.mods.fml.common.event.FMLMissingMappingsEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
+import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraftforge.oredict.OreDictionary;
 import buildcraft.api.blueprints.SchematicRegistry;
 import buildcraft.api.boards.RedstoneBoardRegistry;
@@ -531,7 +532,11 @@ public class BuildCraftSilicon extends BuildCraftMod {
 	public void remap(FMLMissingMappingsEvent event) {
 		for (FMLMissingMappingsEvent.MissingMapping mapping: event.get()) {
 			if (mapping.name.equals("BuildCraft|Silicon:null")) {
+				if (mapping.type == GameRegistry.Type.ITEM) {
 					mapping.remap(Item.getItemFromBlock(laserBlock));
+				} else {
+					mapping.remap(laserBlock);
+				}
 			}
 		}
 	}
