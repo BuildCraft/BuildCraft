@@ -8,14 +8,13 @@
  */
 package buildcraft.factory;
 
+import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-
 import net.minecraftforge.common.util.ForgeDirection;
-
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.inventory.ITransactor;
 import buildcraft.core.inventory.SimpleInventory;
@@ -24,7 +23,8 @@ import buildcraft.core.inventory.Transactor;
 public class TileHopper extends TileBuildCraft implements IInventory {
 
 	private final SimpleInventory inventory = new SimpleInventory(4, "Hopper", 64);
-
+	private TileEntity outputTile;
+	
 	@Override
 	public void readFromNBT(NBTTagCompound nbtTagCompound) {
 		super.readFromNBT(nbtTagCompound);
@@ -53,22 +53,32 @@ public class TileHopper extends TileBuildCraft implements IInventory {
 			return;
 		}
 
-		TileEntity tile = this.getWorldObj().getTileEntity(xCoord, yCoord - 1, zCoord);
-
-		if (tile == null) {
-			return;
+		if (outputTile == null || outputTile.isInvalid()) {
+			Block block = worldObj.getBlock(xCoord, yCoord - 1, zCoord);
+			outputTile = null;
+			
+			if (block.hasTileEntity(worldObj.getBlockMetadata(xCoord, yCoord - 1, zCoord))) {
+				outputTile = worldObj.getTileEntity(xCoord, yCoord - 1, zCoord);
+			}
+			
+			if (outputTile == null) {
+				return;
+			}
 		}
 
-		ITransactor transactor = Transactor.getTransactorFor(tile);
-
-		if (transactor == null) {
-			return;
-		}
+		ITransactor transactor = null;
 
 		for (int internalSlot = 0; internalSlot < inventory.getSizeInventory(); internalSlot++) {
 			ItemStack stackInSlot = inventory.getStackInSlot(internalSlot);
-			if (stackInSlot == null) {
+			if (stackInSlot == null || stackInSlot.stackSize == 0) {
 				continue;
+			}
+			
+			if (transactor == null) {
+				transactor = Transactor.getTransactorFor(outputTile);
+				if (transactor == null) {
+					return;
+				}
 			}
 
 			ItemStack clonedStack = stackInSlot.copy().splitStack(1);
