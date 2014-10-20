@@ -112,10 +112,6 @@ public class PipePowerWood extends Pipe<PipeTransportPower> implements IPowerRec
 			return;
 		}
 
-		if (sources == 0) {
-			return;
-		}
-
 		int energyToRemove = requestedEnergy;
 
 		// TODO: Have energyToRemove be precalculated
@@ -133,6 +129,8 @@ public class PipePowerWood extends Pipe<PipeTransportPower> implements IPowerRec
 
 		//energyToRemove /= sources;
 
+		int sourceCount = 0;
+
 		// Extract power from RF sources.
 		// While we send power to receivers and so does TE4,
 		// Extra Utilities generators (as an example) depend
@@ -145,11 +143,13 @@ public class PipePowerWood extends Pipe<PipeTransportPower> implements IPowerRec
 			TileEntity tile = container.getTile(o);
 
 			if (tile instanceof IEnergyHandler) {
-				batteries[o.ordinal()].addEnergy(0, ((IEnergyHandler) tile).extractEnergy(o.getOpposite(), energyToRemove, false), false);
+				((IEnergyHandler) tile).extractEnergy(o.getOpposite(), batteries[o.ordinal()].addEnergy(0, ((IEnergyHandler) tile).extractEnergy(o.getOpposite(), energyToRemove, true), false), false);
+			}
+			if (batteries[o.ordinal()].getEnergyStored() != 0) {
+				sourceCount++;
 			}
 		}
 
-		int sourceCount = sources;
 		for (ForgeDirection o : ForgeDirection.VALID_DIRECTIONS) {
 			if (!powerSources[o.ordinal()]) {
 				continue;
