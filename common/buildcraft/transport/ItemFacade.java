@@ -355,6 +355,7 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem {
 		return nbt;
 	}
 
+	@Override
 	public Block[] getBlocksForFacade(ItemStack stack) {
 		FacadeState[] states = getFacadeStates(stack);
 		Block[] blocks = new Block[states.length];
@@ -364,6 +365,7 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem {
 		return blocks;
 	}
 
+	@Override
 	public int[] getMetaValuesForFacade(ItemStack stack) {
 		FacadeState[] states = getFacadeStates(stack);
 		int[] meta = new int[states.length];

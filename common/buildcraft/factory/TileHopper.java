@@ -23,6 +23,7 @@ import buildcraft.core.inventory.Transactor;
 public class TileHopper extends TileBuildCraft implements IInventory {
 
 	private final SimpleInventory inventory = new SimpleInventory(4, "Hopper", 64);
+	private boolean isEmpty;
 	private TileEntity outputTile;
 	
 	@Override
@@ -37,6 +38,8 @@ public class TileHopper extends TileBuildCraft implements IInventory {
 		}
 
 		inventory.readFromNBT(p);
+		
+		refreshInventoryFlags();
 	}
 
 	@Override
@@ -49,7 +52,8 @@ public class TileHopper extends TileBuildCraft implements IInventory {
 	@Override
 	public void updateEntity() {
 		super.updateEntity();
-		if (worldObj.isRemote || worldObj.getTotalWorldTime() % 2 != 0) {
+		if (worldObj.isRemote || isEmpty ||
+				worldObj.getTotalWorldTime() % 2 != 0) {
 			return;
 		}
 
@@ -66,21 +70,18 @@ public class TileHopper extends TileBuildCraft implements IInventory {
 			}
 		}
 
-		ITransactor transactor = null;
-
+		ITransactor transactor = Transactor.getTransactorFor(outputTile);
+		
+		if (transactor == null) {
+			return;
+		}
+		
 		for (int internalSlot = 0; internalSlot < inventory.getSizeInventory(); internalSlot++) {
 			ItemStack stackInSlot = inventory.getStackInSlot(internalSlot);
 			if (stackInSlot == null || stackInSlot.stackSize == 0) {
 				continue;
 			}
 			
-			if (transactor == null) {
-				transactor = Transactor.getTransactorFor(outputTile);
-				if (transactor == null) {
-					return;
-				}
-			}
-
 			ItemStack clonedStack = stackInSlot.copy().splitStack(1);
 			if (transactor.add(clonedStack, ForgeDirection.UP, true).stackSize > 0) {
 				inventory.decrStackSize(internalSlot, 1);
@@ -89,6 +90,18 @@ public class TileHopper extends TileBuildCraft implements IInventory {
 		}
 	}
 
+	private void refreshInventoryFlags() {
+		isEmpty = true;
+		
+		for (int internalSlot = 0; internalSlot < inventory.getSizeInventory(); internalSlot++) {
+			ItemStack stackInSlot = inventory.getStackInSlot(internalSlot);
+			if (stackInSlot != null && stackInSlot.stackSize > 0) {
+				isEmpty = false;
+				return;
+			}
+		}
+	}
+	
 	/**
 	 * IInventory Implementation *
 	 */
@@ -104,17 +117,22 @@ public class TileHopper extends TileBuildCraft implements IInventory {
 
 	@Override
 	public ItemStack decrStackSize(int slotId, int count) {
-		return inventory.decrStackSize(slotId, count);
+		ItemStack output = inventory.decrStackSize(slotId, count);
+		refreshInventoryFlags();
+		return output;
 	}
 
 	@Override
 	public ItemStack getStackInSlotOnClosing(int slotId) {
-		return inventory.getStackInSlotOnClosing(slotId);
+		ItemStack output = inventory.getStackInSlotOnClosing(slotId);
+		refreshInventoryFlags();
+		return output;
 	}
 
 	@Override
 	public void setInventorySlotContents(int slotId, ItemStack itemStack) {
 		inventory.setInventorySlotContents(slotId, itemStack);
+		refreshInventoryFlags();
 	}
 
 	@Override
