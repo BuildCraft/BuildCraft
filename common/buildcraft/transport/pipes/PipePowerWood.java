@@ -129,23 +129,6 @@ public class PipePowerWood extends Pipe<PipeTransportPower> implements IPowerRec
 
 		energyToRemove /= sources;
 
-		// Extract power from RF sources.
-		// While we send power to receivers and so does TE4,
-		// Extra Utilities generators (as an example) depend
-		// on extracting energy from them manually.
-		for (ForgeDirection o : ForgeDirection.VALID_DIRECTIONS) {
-			if (!powerSources[o.ordinal()]) {
-				continue;
-			}
-
-			TileEntity tile = container.getTile(o);
-
-			if (tile instanceof IEnergyHandler) {
-				battery.addEnergy(0, ((IEnergyHandler) tile).extractEnergy(o.getOpposite(), energyToRemove, false),
-						false);
-			}
-		}
-
 		if (battery.getEnergyStored() > 0) {
 			for (ForgeDirection o : ForgeDirection.VALID_DIRECTIONS) {
 				if (!powerSources[o.ordinal()]) {
