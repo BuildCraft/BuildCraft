@@ -533,9 +533,9 @@ public class BuildCraftSilicon extends BuildCraftMod {
 		for (FMLMissingMappingsEvent.MissingMapping mapping: event.get()) {
 			if (mapping.name.equals("BuildCraft|Silicon:null")) {
 				if (mapping.type == GameRegistry.Type.ITEM) {
-					mapping.remap(Item.getItemFromBlock(laserBlock));
+					mapping.remap(Item.getItemFromBlock(assemblyTableBlock));
 				} else {
-					mapping.remap(laserBlock);
+					mapping.remap(assemblyTableBlock);
 				}
 			}
 		}

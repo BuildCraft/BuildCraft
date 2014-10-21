@@ -12,6 +12,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
 
+import cpw.mods.fml.common.event.*;
 import net.minecraft.entity.item.EntityItemFrame;
 import net.minecraft.entity.item.EntityMinecartChest;
 import net.minecraft.entity.item.EntityMinecartEmpty;
@@ -21,14 +22,10 @@ import net.minecraft.entity.item.EntityMinecartTNT;
 import net.minecraft.entity.item.EntityPainting;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.launchwrapper.Launch;
 import cpw.mods.fml.common.Mod;
-import cpw.mods.fml.common.event.FMLInitializationEvent;
-import cpw.mods.fml.common.event.FMLInterModComms;
-import cpw.mods.fml.common.event.FMLPostInitializationEvent;
-import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.common.event.FMLServerStoppingEvent;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
@@ -430,6 +427,7 @@ public class BuildCraftBuilders extends BuildCraftMod {
 		CoreProxy.proxy.registerItem(blueprintItem);
 
 		buildToolBlock = new BlockBuildTool ();
+		buildToolBlock.setBlockName("buildToolBlock");
 		CoreProxy.proxy.registerBlock(buildToolBlock);
 
 		markerBlock = new BlockMarker();
@@ -627,5 +625,18 @@ public class BuildCraftBuilders extends BuildCraftMod {
 		//		TilePathMarker.class.getCanonicalName());
 		FMLInterModComms.sendMessage("appliedenergistics2", "whitelist-spatial",
 				TileBlueprintLibrary.class.getCanonicalName());
+	}
+
+	@Mod.EventHandler
+	public void remap(FMLMissingMappingsEvent event) {
+		for (FMLMissingMappingsEvent.MissingMapping mapping: event.get()) {
+			if (mapping.name.equals("BuildCraft|Builders:null")) {
+				if (mapping.type == GameRegistry.Type.ITEM) {
+					mapping.remap(Item.getItemFromBlock(buildToolBlock));
+				} else {
+					mapping.remap(buildToolBlock);
+				}
+			}
+		}
 	}
 }
