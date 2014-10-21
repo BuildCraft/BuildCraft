@@ -11,6 +11,7 @@ package buildcraft.core.recipes;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.logging.Logger;
 
 import net.minecraftforge.fluids.FluidStack;
 import buildcraft.BuildCraftCore;
@@ -45,6 +46,10 @@ public final class RefineryRecipeManager implements IRefineryRecipeManager {
 
 		if (BuildCraftCore.recipesBlacklist.contains(name)) {
 			return;
+		}
+		
+		if (ingredient1 == null || ingredient2 == null || result == null) {
+			Logger.getLogger("Buildcraft").warning("Rejected refinery recipe " + id + " due to a null FluidStack!");
 		}
 
 		FlexibleRecipe<FluidStack> recipe = new FlexibleRecipe<FluidStack>(id, result, energy, delay, ingredient1,

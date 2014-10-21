@@ -14,9 +14,7 @@ import java.util.List;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-
 import net.minecraftforge.fluids.FluidStack;
-
 import buildcraft.api.recipes.CraftingResult;
 import buildcraft.api.recipes.IFlexibleCrafter;
 import buildcraft.api.recipes.IFlexibleRecipe;
@@ -47,7 +45,9 @@ public class FlexibleRecipe<T> implements IFlexibleRecipe<T> {
 	public void setContents(String iid, Object ioutput, int iEnergyCost, long iCraftingTime, Object... input) {
 		id = iid;
 
-		if (ioutput instanceof ItemStack) {
+		if (ioutput == null) {
+			throw new IllegalArgumentException("The output of FlexibleRecipe " + iid + " is null! Rejecting recipe.");
+		} else if (ioutput instanceof ItemStack) {
 			output = (T) ioutput;
 		} else if (ioutput instanceof Item) {
 			output = (T) new ItemStack((Item) ioutput);
@@ -56,14 +56,16 @@ public class FlexibleRecipe<T> implements IFlexibleRecipe<T> {
 		} else if (ioutput instanceof FluidStack) {
 			output = (T) ioutput;
 		} else {
-			throw new IllegalArgumentException("Unknown Object passed to recipe!");
+			throw new IllegalArgumentException("An unknown object passed to recipe " + iid + " as output! (" + ioutput.getClass() + ")");
 		}
 
 		energyCost = iEnergyCost;
 		craftingTime = iCraftingTime;
 
 		for (Object i : input) {
-			if (i instanceof ItemStack) {
+			if (i == null) {
+				throw new IllegalArgumentException("An input of FlexibleRecipe " + iid + " is null! Rejecting recipe.");
+			} else if (i instanceof ItemStack) {
 				inputItems.add((ItemStack) i);
 			} else if (i instanceof Item) {
 				inputItems.add(new ItemStack((Item) i));
@@ -74,7 +76,7 @@ public class FlexibleRecipe<T> implements IFlexibleRecipe<T> {
 			} else if (i instanceof List) {
 				inputItemsWithAlternatives.add((List) i);
 			} else {
-				throw new IllegalArgumentException("Unknown Object passed to recipe (" + i.getClass() + ")");
+				throw new IllegalArgumentException("An unknown object passed to recipe " + iid + " as input! (" + i.getClass() + ")");
 			}
 		}
 	}
