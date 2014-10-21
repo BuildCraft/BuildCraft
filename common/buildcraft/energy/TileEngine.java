@@ -596,6 +596,8 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 
 	public void checkRedstonePower() {
 		isRedstonePowered = worldObj.isBlockIndirectlyGettingPowered(xCoord, yCoord, zCoord);
+		tileCache = null;
+		checkOrienation = true;
 	}
 
 	// RF support
