@@ -98,9 +98,10 @@ public final class InterModComms {
 						input.add(is);
 					}
 				}
+				String id = recipe.getString("id");
 				ItemStack is = ItemStack.loadItemStackFromNBT(recipe.getCompoundTag("output"));
-				if (is != null && !input.isEmpty()) {
-					AssemblyRecipeManager.INSTANCE.addRecipe(recipe.getString("id"), recipe.getInteger("energy"), is,
+				if (is != null && !input.isEmpty() && id.length() > 0) {
+					AssemblyRecipeManager.INSTANCE.addRecipe(id, recipe.getInteger("energy"), is,
 							(Object[]) input.toArray(new ItemStack[input.size()]));
 				} else {
 					failed = true;
@@ -129,7 +130,7 @@ public final class InterModComms {
 				if (recipe.hasKey("input_2", 10)) {
 					input2 = FluidStack.loadFluidStackFromNBT(recipe.getCompoundTag("input_2"));
 				}
-				if (input != null && output != null) {
+				if (input != null && output != null && id.length() > 0) {
 					RefineryRecipeManager.INSTANCE.addRecipe(id, input, input2, output, recipe.getInteger("energy"),
 							recipe.getInteger("delay"));
 				} else {
