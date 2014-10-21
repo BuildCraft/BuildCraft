@@ -11,14 +11,11 @@ package buildcraft.transport.pipes;
 import net.minecraft.item.Item;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-
 import net.minecraftforge.common.util.ForgeDirection;
-
+import cofh.api.energy.IEnergyConnection;
 import cofh.api.energy.IEnergyHandler;
-
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.power.IPowerEmitter;
@@ -134,6 +131,8 @@ public class PipePowerWood extends Pipe<PipeTransportPower> implements IPowerRec
 				if (!powerSources[o.ordinal()]) {
 					continue;
 				}
+
+				System.out.println("Sent " + energyToRemove + " energy to " + o.name());
 	
 				int energyUsable = Math.min(battery.getEnergyStored(), energyToRemove);
 	
@@ -193,6 +192,7 @@ public class PipePowerWood extends Pipe<PipeTransportPower> implements IPowerRec
 	@Override
 	public int requestEnergy(ForgeDirection from, int amount) {
 		if (container.getTile(from) instanceof IPipeTile) {
+			System.out.println("Requested " + amount + " energy from " + from.name());
 			requestedEnergy += amount;
 			return amount;
 		} else {
@@ -206,7 +206,7 @@ public class PipePowerWood extends Pipe<PipeTransportPower> implements IPowerRec
 		} else if (tile instanceof IPowerEmitter && ((IPowerEmitter) tile).canEmitPowerFrom(from.getOpposite())) {
 			return true;
 		} else {
-			return tile instanceof IEnergyHandler && ((IEnergyHandler) tile).canConnectEnergy(from.getOpposite());
+			return tile instanceof IEnergyConnection && ((IEnergyConnection) tile).canConnectEnergy(from.getOpposite());
 		}
 	}
 

@@ -14,11 +14,9 @@ import java.util.Map;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-
 import net.minecraftforge.common.util.ForgeDirection;
-
+import cofh.api.energy.IEnergyConnection;
 import cofh.api.energy.IEnergyHandler;
-
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.SafeTimeTracker;
@@ -104,8 +102,8 @@ public class PipeTransportPower extends PipeTransport {
 			}
 		}
 
-		if (tile instanceof IEnergyHandler) {
-			IEnergyHandler handler = (IEnergyHandler) tile;
+		if (tile instanceof IEnergyConnection) {
+			IEnergyConnection handler = (IEnergyConnection) tile;
 			if (handler != null && handler.canConnectEnergy(side.getOpposite())) {
 				return true;
 			}
