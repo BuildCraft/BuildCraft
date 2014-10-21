@@ -172,16 +172,12 @@ public class PipeTransportPower extends PipeTransport {
 		// amount of power queried
 
 		int totalPowerContained = 0;
-
-		for (int in = 0; in < 6; ++in) {
-			totalPowerContained += internalPower[in];
-		}
-
 		int totalPowerQuery = 0;
 
-		for (int out = 0; out < 6; ++out) {
-			if (internalPower[out] == 0) {
-				totalPowerQuery += powerQuery[out];
+		for (int dir = 0; dir < 6; ++dir) {
+			totalPowerContained += internalPower[dir];
+			if (internalPower[dir] == 0) {
+				totalPowerQuery += powerQuery[dir];
 			}
 		}
 
@@ -195,8 +191,7 @@ public class PipeTransportPower extends PipeTransport {
 				externalPower[out] = 0;
 
 				if (powerQuery[out] > 0 && internalPower[out] == 0) {
-					int powerConsumed = (int) Math.floor((double) (powerQuery[out] * totalPowerContained)
-							/ totalPowerQuery);
+					int powerConsumed = powerQuery[out] * totalPowerContained / totalPowerQuery;
 					boolean tilePowered = false;
 
 					if (tiles[out] instanceof TileGenericPipe) {
@@ -245,7 +240,7 @@ public class PipeTransportPower extends PipeTransport {
 
 		if (totalPowerConsumed > 0) {
 			for (int in = 0; in < 6; ++in) {
-				int powerConsumed = (int) ((double) internalPower[in] * (double) totalPowerConsumed / totalPowerContained);
+				int powerConsumed = internalPower[in] * totalPowerConsumed / totalPowerContained;
 				displayPower[in] += powerConsumed;
 			}
 		}
@@ -260,7 +255,7 @@ public class PipeTransportPower extends PipeTransport {
 				highestPower = displayPower[i];
 			}
 
-			if (displayPower[i] < 0.01) {
+			if (displayPower[i] < 0) {
 				displayPower[i] = 0;
 			}
 		}
