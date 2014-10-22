@@ -8,7 +8,6 @@
  */
 package buildcraft.energy;
 
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.util.ForgeDirection;
@@ -17,6 +16,8 @@ import buildcraft.api.transport.IPipeTile.PipeType;
 
 public class TileEngineWood extends TileEngine {
 
+	private boolean hasSent = false;
+	
 	@Override
 	public ResourceLocation getBaseTexture() {
 		return BASE_TEXTURES[0];
@@ -116,8 +117,6 @@ public class TileEngineWood extends TileEngine {
 		return false;
 	}
 
-	private boolean hasSent = false;
-	
 	@Override
 	protected void sendPower() {
 		if (progressPart == 2 && !hasSent) {

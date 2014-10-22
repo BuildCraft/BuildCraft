@@ -41,7 +41,6 @@ public class PipeItemsWood extends Pipe<PipeTransportItems> implements IEnergyHa
 	protected int standardIconIndex = PipeIconProvider.TYPE.PipeItemsWood_Standard.ordinal();
 	protected int solidIconIndex = PipeIconProvider.TYPE.PipeAllWood_Solid.ordinal();
 
-	private static final int RF_PER_ITEM = 10;
 	private int ticks = 0;
 	
 	private PipeLogicWood logic = new PipeLogicWood(this) {
@@ -122,10 +121,10 @@ public class PipeItemsWood extends Pipe<PipeTransportItems> implements IEnergyHa
 	}
 	
 	private boolean shouldTick() {
-		if (battery.getEnergyStored() >= 64 * RF_PER_ITEM) {
+		if (battery.getEnergyStored() >= 64 * 10) {
 			return true;
 		} else {
-			return (ticks % 16) == 0 && battery.getEnergyStored() >= RF_PER_ITEM;
+			return (ticks % 16) == 0 && battery.getEnergyStored() >= 10;
 		}
 	}
 
@@ -155,7 +154,7 @@ public class PipeItemsWood extends Pipe<PipeTransportItems> implements IEnergyHa
 
 			for (ItemStack stack : extracted) {
 				if (stack == null || stack.stackSize == 0) {
-					battery.useEnergy(RF_PER_ITEM, RF_PER_ITEM, false);
+					battery.useEnergy(10, 10, false);
 
 					continue;
 				}
@@ -205,7 +204,7 @@ public class PipeItemsWood extends Pipe<PipeTransportItems> implements IEnergyHa
 
 			if (slot != null && slot.stackSize > 0 && inventory.canExtractItem(k, slot, from.ordinal())) {
 				if (doRemove) {
-					int stackSize = battery.useEnergy(RF_PER_ITEM, slot.stackSize * RF_PER_ITEM, false) / RF_PER_ITEM;
+					int stackSize = battery.useEnergy(10, slot.stackSize * 10, false) / 10;
 					
 					return inventory.decrStackSize(k, stackSize);
 				} else {
