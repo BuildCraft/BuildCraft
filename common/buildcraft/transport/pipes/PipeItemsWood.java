@@ -41,7 +41,7 @@ public class PipeItemsWood extends Pipe<PipeTransportItems> implements IEnergyHa
 	protected int standardIconIndex = PipeIconProvider.TYPE.PipeItemsWood_Standard.ordinal();
 	protected int solidIconIndex = PipeIconProvider.TYPE.PipeAllWood_Solid.ordinal();
 
-	private int ticks = 0;
+	private int ticksSincePull = 0;
 	
 	private PipeLogicWood logic = new PipeLogicWood(this) {
 		@Override
@@ -109,7 +109,7 @@ public class PipeItemsWood extends Pipe<PipeTransportItems> implements IEnergyHa
 			return;
 		}
 
-		ticks++;
+		ticksSincePull++;
 		
 		if (shouldTick()) {
 			if (transport.getNumberOfStacks() < PipeTransportItems.MAX_PIPE_STACKS) {
@@ -117,6 +117,7 @@ public class PipeItemsWood extends Pipe<PipeTransportItems> implements IEnergyHa
 			}
 
 			battery.setEnergy(0);
+			ticksSincePull = 0;
 		}
 	}
 	
@@ -124,7 +125,7 @@ public class PipeItemsWood extends Pipe<PipeTransportItems> implements IEnergyHa
 		if (battery.getEnergyStored() >= 64 * 10) {
 			return true;
 		} else {
-			return (ticks % 16) == 0 && battery.getEnergyStored() >= 10;
+			return ticksSincePull >= 16 && battery.getEnergyStored() >= 10;
 		}
 	}
 

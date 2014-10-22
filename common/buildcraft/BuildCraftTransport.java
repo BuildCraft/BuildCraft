@@ -42,6 +42,7 @@ import buildcraft.api.gates.IAction;
 import buildcraft.api.gates.ITrigger;
 import buildcraft.api.gates.StatementManager;
 import buildcraft.api.recipes.BuildcraftRecipeRegistry;
+import buildcraft.api.stripes.StripesPipeAPI;
 import buildcraft.api.transport.IExtractionHandler;
 import buildcraft.api.transport.PipeManager;
 import buildcraft.api.transport.PipeWire;
@@ -120,6 +121,10 @@ import buildcraft.transport.schematics.BptItemPipeFilters;
 import buildcraft.transport.schematics.BptPipeIron;
 import buildcraft.transport.schematics.BptPipeWooden;
 import buildcraft.transport.schematics.SchematicPipe;
+import buildcraft.transport.stripes.StripesHandlerArrow;
+import buildcraft.transport.stripes.StripesHandlerBucket;
+import buildcraft.transport.stripes.StripesHandlerRightClick;
+import buildcraft.transport.stripes.StripesHandlerShears;
 import buildcraft.transport.triggers.ActionEnergyPulsar;
 import buildcraft.transport.triggers.ActionExtractionPreset;
 import buildcraft.transport.triggers.ActionParameterSignal;
@@ -535,6 +540,11 @@ public class BuildCraftTransport extends BuildCraftMod {
 		StatementManager.registerParameterClass("buildcraft:pipeWireAction", ActionParameterSignal.class);
 		StatementManager.registerTriggerProvider(new PipeTriggerProvider());
 		StatementManager.registerActionProvider(new PipeActionProvider());
+		
+		StripesPipeAPI.registerHandler(new StripesHandlerRightClick());
+		StripesPipeAPI.registerHandler(new StripesHandlerBucket());
+		StripesPipeAPI.registerHandler(new StripesHandlerArrow());
+		StripesPipeAPI.registerHandler(new StripesHandlerShears());
 		
 		if (BuildCraftCore.loadDefaultRecipes) {
 			loadRecipes();

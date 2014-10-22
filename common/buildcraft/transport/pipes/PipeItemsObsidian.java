@@ -47,7 +47,6 @@ public class PipeItemsObsidian extends Pipe<PipeTransportItems> implements IEner
 
 	private int[] entitiesDropped;
 	private int entitiesDroppedIndex = 0;
-	private int ticks = 0;
 	
 	public PipeItemsObsidian(Item item) {
 		super(new PipeTransportItems(), item);
@@ -150,9 +149,7 @@ public class PipeItemsObsidian extends Pipe<PipeTransportItems> implements IEner
 	public void updateEntity () {
 		super.updateEntity();
 
-		ticks++;
-		
-		if ((ticks % 16) == 0 && battery.getEnergyStored() > 0) {
+		if (battery.getEnergyStored() > 0) {
 			for (int j = 1; j < 5; ++j) {
 				if (suckItem(j)) {
 					return;
