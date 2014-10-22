@@ -109,7 +109,7 @@ public class PipePowerWood extends Pipe<PipeTransportPower> implements IPowerRec
 			return;
 		}
 
-		int energyToRemove = requestedEnergy;
+		int energyToRemove = Math.min(battery.getEnergyStored(), requestedEnergy);
 
 		// TODO: Have energyToRemove be precalculated
 		// and used in receiveEnergy and extractEnergy.
@@ -133,12 +133,8 @@ public class PipePowerWood extends Pipe<PipeTransportPower> implements IPowerRec
 				}
 
 				System.out.println("Sent " + energyToRemove + " energy to " + o.name());
-	
-				int energyUsable = Math.min(battery.getEnergyStored(), energyToRemove);
-	
-				if (energyUsable > 0) {
-					battery.setEnergy(battery.getEnergyStored() - transport.receiveEnergy(o, energyUsable));
-				}
+
+				battery.setEnergy(battery.getEnergyStored() - transport.receiveEnergy(o, energyToRemove));
 			}
 		}
 
