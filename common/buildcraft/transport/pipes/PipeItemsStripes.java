@@ -54,6 +54,10 @@ public class PipeItemsStripes extends Pipe<PipeTransportItems> implements IEnerg
 	}
 
 	public void eventHandler(PipeEventItem.DropItem event) {
+		if (container.getWorldObj().isRemote) {
+			return;
+		}
+		
 		Position p = new Position(container.xCoord, container.yCoord,
 				container.zCoord, event.direction);
 		p.moveForwards(1.0);
@@ -91,6 +95,10 @@ public class PipeItemsStripes extends Pipe<PipeTransportItems> implements IEnerg
 				break;
 		}
 		
+		/**
+		 * Check if there's a handler for this item type.
+		 */
+		
 		for (IStripesHandler handler : PipeManager.stripesHandlers) {
 			if (handler.getType() == StripesHandlerType.ITEM_USE
 					&& handler.shouldHandle(stack)) {
@@ -100,7 +108,7 @@ public class PipeItemsStripes extends Pipe<PipeTransportItems> implements IEnerg
 				}
 			}
 		}
-		
+
 		/**
 		 * Special, generic actions not handled by the handler.
 		 */

@@ -9,6 +9,7 @@
 package buildcraft.core.recipes;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import net.minecraft.block.Block;
@@ -18,11 +19,12 @@ import net.minecraftforge.fluids.FluidStack;
 import buildcraft.api.recipes.CraftingResult;
 import buildcraft.api.recipes.IFlexibleCrafter;
 import buildcraft.api.recipes.IFlexibleRecipe;
+import buildcraft.api.recipes.IFlexibleRecipeViewable;
 import buildcraft.core.inventory.StackHelper;
 import buildcraft.core.inventory.filters.ArrayStackFilter;
 import buildcraft.core.inventory.filters.IStackFilter;
 
-public class FlexibleRecipe<T> implements IFlexibleRecipe<T> {
+public class FlexibleRecipe<T> implements IFlexibleRecipe<T>, IFlexibleRecipeViewable {
 	public int energyCost = 0;
 	public long craftingTime = 0;
 	public String id;
@@ -228,5 +230,31 @@ public class FlexibleRecipe<T> implements IFlexibleRecipe<T> {
 		} else {
 			return null;
 		}
+	}
+
+	@Override
+	public Object getOutput() {
+		return output;
+	}
+
+	@Override
+	public Collection<Object> getInputs() {
+		ArrayList<Object> inputs = new ArrayList<Object>();
+		
+		inputs.addAll(inputItems);
+		inputs.addAll(inputItemsWithAlternatives);
+		inputs.addAll(inputFluids);
+		
+		return inputs;
+	}
+
+	@Override
+	public int getEnergyCost() {
+		return energyCost;
+	}
+
+	@Override
+	public long getCraftingTime() {
+		return craftingTime;
 	}
 }
