@@ -25,8 +25,8 @@ import java.util.logging.Logger;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTSizeTracker;
 import net.minecraft.nbt.NBTTagCompound;
-
 import buildcraft.BuildCraftBuilders;
+import buildcraft.api.core.BCLog;
 import buildcraft.builders.blueprints.BlueprintId.Kind;
 import buildcraft.core.blueprints.BlueprintBase;
 
@@ -104,7 +104,7 @@ public class BlueprintDatabase {
 				f.write(blueprint.getData());
 				f.close();
 			} catch (IOException ex) {
-				Logger.getLogger("Buildcraft").log(Level.SEVERE, String.format("Failed to save Blueprint file: %s %s", blueprintFile.getName(), ex.getMessage()));
+				BCLog.logger.error(String.format("Failed to save Blueprint file: %s %s", blueprintFile.getName(), ex.getMessage()));
 			} finally {
 				try {
 					if (gzOs != null) {
