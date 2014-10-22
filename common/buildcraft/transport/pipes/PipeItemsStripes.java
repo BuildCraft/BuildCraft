@@ -106,10 +106,41 @@ public class PipeItemsStripes extends Pipe<PipeTransportItems> implements IEnerg
 		 */
 		
 		if (convertPipe(transport, event.item)) {
+			int moves = 0;
+			while (stack.stackSize > 0) {
+				if (getWorld().getBlock((int) p.x, (int) p.y, (int) p.z) != Blocks.air) {
+					break;
+				}
+				stack.getItem().onItemUse(new ItemStack(stack.getItem(), 1, stack.getItemDamage()),
+						player, getWorld(), (int) p.x, (int) p.y, (int) p.z, 1, 0, 0, 0
+					);
+				stack.stackSize--;
+				p.moveForwards(1.0);
+				moves++;
+			}
+			if (getWorld().getBlock((int) p.x, (int) p.y, (int) p.z) != Blocks.air) {
+				p.moveBackwards(1.0);
+				stack.stackSize++;
+				getWorld().setBlockToAir((int) p.x, (int) p.y, (int) p.z);
+			}
 			BuildCraftTransport.pipeItemsStripes.onItemUse(new ItemStack(
-							BuildCraftTransport.pipeItemsStripes), player, getWorld(), (int) p.x,
+					BuildCraftTransport.pipeItemsStripes), player, getWorld(), (int) p.x,
 					(int) p.y, (int) p.z, 1, 0, 0, 0
-			);
+				);
+			
+			if (stack.stackSize > 0) {
+				TileEntity targetTile = getWorld().getTileEntity((int) p.x, (int) p.y, (int) p.z);
+				if (targetTile instanceof TileGenericPipe) {
+					TravelingItem newItem = TravelingItem.make(
+							container.xCoord + 0.5,
+							container.yCoord + TransportUtils.getPipeFloorOf(
+									new ItemStack(BuildCraftTransport.pipeItemsStripes)),
+							container.zCoord + 0.5, stack.copy());
+					((PipeTransportItems) ((TileGenericPipe) targetTile).pipe.transport).injectItem(newItem, event.direction.getOpposite());
+					
+					stack.stackSize = 0;
+				}
+			}
 		} else if (stack.getItem() instanceof ItemBlock) {
 			if (getWorld().getBlock((int) p.x, (int) p.y, (int) p.z) == Blocks.air) {
 				stack.tryPlaceItemIntoWorld(

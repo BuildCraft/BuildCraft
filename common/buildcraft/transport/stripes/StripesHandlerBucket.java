@@ -26,13 +26,7 @@ public class StripesHandlerBucket implements IStripesHandler {
 	
 	@Override
 	public boolean shouldHandle(ItemStack stack) {
-		if (stack.getItem() instanceof ItemBucket) {
-			return true;
-		}
-		
-		ItemStack emptyContainer = FluidContainerRegistry.drainFluidContainer(stack);
-		
-		return emptyContainer != null && emptyContainer.getItem() instanceof ItemBucket;
+		return stack.getItem() instanceof ItemBucket;
 	}
 
 	@Override
