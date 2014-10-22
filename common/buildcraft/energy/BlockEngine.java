@@ -262,7 +262,7 @@ public class BlockEngine extends BlockBuildCraft implements ICustomHighlight {
 		TileEntity tile = world.getTileEntity(x, y, z);
 
 		if (tile instanceof TileEngine) {
-			((TileEngine) tile).checkRedstonePower();
+			((TileEngine) tile).onNeighborUpdate();
 		}
 	}
 

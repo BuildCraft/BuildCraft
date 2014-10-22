@@ -91,7 +91,7 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 	protected boolean lastPower = false;
 	protected PowerHandler powerHandler;
 
-	private boolean checkOrienation = false;
+	private boolean checkOrientation = false;
 	private TileBuffer[] tileCache;
 
 	@NetworkData
@@ -203,6 +203,16 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 				return 0;
 		}
 	}
+	
+	private void refreshPowerMode(TileEntity tile, ForgeDirection orientation) {
+		if (isPoweredTile(tile, orientation)) {
+			if ((tile instanceof IPipeTile) && (((IPipeTile) tile).getPipeType() != PipeType.POWER)) {
+				constantPower = false;
+			} else {
+				constantPower = true;
+			}
+		}
+	}
 
 	@Override
 	public void updateEntity() {
@@ -223,21 +233,15 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 			return;
 		}
 
-		if (checkOrienation) {
-			checkOrienation = false;
+		if (checkOrientation) {
+			checkOrientation = false;
 
 			if (!isOrientationValid()) {
 				switchOrientation(true);
 			} else {
 				TileEntity tile = getTileBuffer(orientation).getTile();
 
-				if (isPoweredTile(tile, orientation)) {
-					if ((tile instanceof IPipeTile) && (((IPipeTile) tile).getPipeType() != PipeType.POWER)) {
-						constantPower = false;
-					} else {
-						constantPower = true;
-					}
-				}
+				refreshPowerMode(tile, orientation);
 			}
 		}
 
@@ -393,11 +397,7 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 			TileEntity tile = getTileBuffer(o).getTile();
 
 			if ((!pipesOnly || tile instanceof IPipeTile) && isPoweredTile(tile, o)) {
-				if ((tile instanceof IPipeTile) && (((IPipeTile) tile).getPipeType() != PipeType.POWER)) {
-					constantPower = false;
-				} else {
-					constantPower = true;
-				}
+				refreshPowerMode(tile, o);
 
 				orientation = o;
 				worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
@@ -422,14 +422,14 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 	public void invalidate() {
 		super.invalidate();
 		tileCache = null;
-		checkOrienation = true;
+		checkOrientation = true;
 	}
 
 	@Override
 	public void validate() {
 		super.validate();
 		tileCache = null;
-		checkOrienation = true;
+		checkOrientation = true;
 	}
 
 	@Override
@@ -598,6 +598,11 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 		isRedstonePowered = worldObj.isBlockIndirectlyGettingPowered(xCoord, yCoord, zCoord);
 	}
 
+	public void onNeighborUpdate() {
+		checkRedstonePower();
+		checkOrientation = true;
+		tileCache = null;
+	}
 	// RF support
 
 	@Override
