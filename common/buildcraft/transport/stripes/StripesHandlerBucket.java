@@ -4,17 +4,21 @@ import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemBucket;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidContainerRegistry;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.IFluidBlock;
 import buildcraft.api.transport.IStripesHandler;
 import buildcraft.api.transport.IStripesHandler.StripesHandlerType;
 import buildcraft.api.transport.IStripesPipe;
 
 public class StripesHandlerBucket implements IStripesHandler {
-
+	private static final ItemStack emptyBucket = new ItemStack(Items.bucket, 1);
+	
 	@Override
 	public StripesHandlerType getType() {
 		return StripesHandlerType.ITEM_USE;
@@ -22,7 +26,13 @@ public class StripesHandlerBucket implements IStripesHandler {
 	
 	@Override
 	public boolean shouldHandle(ItemStack stack) {
-		return stack.getItem() instanceof ItemBucket;
+		if (stack.getItem() instanceof ItemBucket) {
+			return true;
+		}
+		
+		ItemStack emptyContainer = FluidContainerRegistry.drainFluidContainer(stack);
+		
+		return emptyContainer != null && emptyContainer.getItem() instanceof ItemBucket;
 	}
 
 	@Override
@@ -31,32 +41,29 @@ public class StripesHandlerBucket implements IStripesHandler {
 			IStripesPipe pipe) {
 		if (world.getBlock(x, y, z) == Blocks.air) {
 			Block underblock = world.getBlock(x, y - 1, z);
-			Item newBucket = Items.bucket;
-
-			if (underblock == Blocks.water) {
-				newBucket = Items.water_bucket;
-			}
-
-			if (underblock == Blocks.lava) {
-				newBucket = Items.lava_bucket;
-			}
 			
 			boolean rollback = false;
 
-			if (((ItemBucket) stack.getItem()).tryPlaceContainedLiquid(world,
-					x, y - 1, z)) {
-				rollback = true;
-			} else if (newBucket != Items.bucket) {
-				world.setBlockToAir(x, y - 1, z);
-				rollback = true;
+			if (((ItemBucket) stack.getItem()).tryPlaceContainedLiquid(world, x, y - 1, z)) {
+				stack.stackSize = 0;
+				pipe.sendItem(emptyBucket, direction.getOpposite());
+				
+				return true;
+			} else if (underblock instanceof IFluidBlock) {
+				Fluid fluid = ((IFluidBlock) underblock).getFluid();
+				FluidStack fluidStack = new FluidStack(fluid, 1000);
+				ItemStack filledBucket = FluidContainerRegistry.fillFluidContainer(fluidStack, emptyBucket);
+				if (filledBucket != null) {
+					world.setBlockToAir(x, y - 1, z);
+				
+					stack.stackSize = 0;
+					pipe.sendItem(filledBucket, direction.getOpposite());
+				}
+				
+				return true;
 			}
 
-			if (rollback) {
-				stack.stackSize = 0;
-				pipe.sendItem(new ItemStack(newBucket, 1), direction.getOpposite());
-			}
-			
-			return true;
+			return false;
 		}
 		return false;
 	}
