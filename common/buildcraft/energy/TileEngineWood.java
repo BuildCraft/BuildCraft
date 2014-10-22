@@ -8,6 +8,7 @@
  */
 package buildcraft.energy;
 
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.util.ForgeDirection;
@@ -15,8 +16,6 @@ import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.IPipeTile.PipeType;
 
 public class TileEngineWood extends TileEngine {
-
-	public static final int OUTPUT = 1;
 
 	@Override
 	public ResourceLocation getBaseTexture() {
@@ -103,7 +102,7 @@ public class TileEngineWood extends TileEngine {
 
 	@Override
 	public int calculateCurrentOutput() {
-		return OUTPUT;
+		return 10;
 	}
 
 	@Override
@@ -117,13 +116,22 @@ public class TileEngineWood extends TileEngine {
 		return false;
 	}
 
+	private boolean hasSent = false;
+	
 	@Override
 	protected void sendPower() {
-		TileEntity tile = getTileBuffer(orientation).getTile();
-		if (tile instanceof IPipeTile && ((IPipeTile) tile).getPipeType() != PipeType.POWER) {
-			super.sendPower();
-		} else { // pretend we're sending out our powers
-			this.energy = 0;
+		if (progressPart == 2 && !hasSent) {
+			hasSent = true;
+			
+			TileEntity tile = getTileBuffer(orientation).getTile();
+			
+			if (tile instanceof IPipeTile && ((IPipeTile) tile).getPipeType() != PipeType.POWER) {
+				super.sendPower();
+			} else {
+				this.energy = 0;
+			}
+		} else if (progressPart != 2) {
+			hasSent = false;
 		}
 	}
 }

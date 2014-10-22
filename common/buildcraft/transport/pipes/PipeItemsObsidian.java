@@ -47,7 +47,8 @@ public class PipeItemsObsidian extends Pipe<PipeTransportItems> implements IEner
 
 	private int[] entitiesDropped;
 	private int entitiesDroppedIndex = 0;
-
+	private int ticks = 0;
+	
 	public PipeItemsObsidian(Item item) {
 		super(new PipeTransportItems(), item);
 
@@ -149,7 +150,9 @@ public class PipeItemsObsidian extends Pipe<PipeTransportItems> implements IEner
 	public void updateEntity () {
 		super.updateEntity();
 
-		if (battery.getEnergyStored() > 0) {
+		ticks++;
+		
+		if ((ticks % 16) == 0 && battery.getEnergyStored() > 0) {
 			for (int j = 1; j < 5; ++j) {
 				if (suckItem(j)) {
 					return;
@@ -220,13 +223,11 @@ public class PipeItemsObsidian extends Pipe<PipeTransportItems> implements IEner
 
 				int energyUsed = Math.min(10 * contained.stackSize * distance, battery.getEnergyStored());
 
-				// TODO: Why is energyUsed never used here?
-				
-				if (distance == 0 || energyUsed / distance == contained.stackSize) {
+				if (distance == 0 || energyUsed / distance / 10 == contained.stackSize) {
 					stack = contained;
 					CoreProxy.proxy.removeEntity(entity);
 				} else {
-					stack = contained.splitStack(energyUsed / distance);
+					stack = contained.splitStack(energyUsed / distance / 10);
 				}
 
 				speed = Math.sqrt(item.motionX * item.motionX + item.motionY * item.motionY + item.motionZ * item.motionZ);

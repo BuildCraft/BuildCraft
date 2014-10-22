@@ -93,7 +93,7 @@ public final class FacadeRenderHelper {
 	}
 
 	public static void pipeFacadeRenderer(RenderBlocks renderblocks, ITextureStates blockStateMachine, PipeRenderState state, int x, int y, int z) {
-		ITextureStates textureManager = (ITextureStates) blockStateMachine;
+		ITextureStates textureManager = blockStateMachine;
 		IIcon[] textures = textureManager.getTextureState().popArray();
 
 		//block_statemachine.setRenderAllSides();

@@ -37,6 +37,7 @@ public final class FakeBlock extends Block implements ITextureStates {
 		textureState = new TextureStateManager(null); //Always Clientside
 	}	
 		
+	@Override
 	public TextureStateManager getTextureState() {
 		return textureState;
 	}

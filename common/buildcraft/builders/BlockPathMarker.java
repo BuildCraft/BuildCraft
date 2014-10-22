@@ -38,6 +38,7 @@ public class BlockPathMarker extends BlockMarker {
 		super.breakBlock(world, x, y, z, block, par6);
 	}
 
+	@Override
 	@SuppressWarnings({ "all" })
 	// @Override (client only)
 	public IIcon getIcon(IBlockAccess iblockaccess, int i, int j, int k, int l) {

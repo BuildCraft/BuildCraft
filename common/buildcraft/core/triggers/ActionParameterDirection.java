@@ -54,7 +54,7 @@ public class ActionParameterDirection implements IActionParameter {
 	    if (direction == ForgeDirection.UNKNOWN) {
 		return null;
 	    } else {
-		return StatementIconProvider.INSTANCE.getIcon(StatementIconProvider.INSTANCE.Action_Parameter_Direction_Down + direction.ordinal());
+		return StatementIconProvider.INSTANCE.getIcon(StatementIconProvider.Action_Parameter_Direction_Down + direction.ordinal());
 	    }
 	}
 

@@ -11,8 +11,6 @@ package buildcraft.core.recipes;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.logging.Logger;
-
 import net.minecraftforge.fluids.FluidStack;
 import buildcraft.BuildCraftCore;
 import buildcraft.api.core.BCLog;

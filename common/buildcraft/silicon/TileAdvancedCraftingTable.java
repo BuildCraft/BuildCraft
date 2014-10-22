@@ -218,7 +218,7 @@ public class TileAdvancedCraftingTable extends TileLaserTableBase implements IIn
 
 	@Override
 	public int getProgressScaled(int i) {
-		return (int) ((getEnergy() * i) / REQUIRED_POWER);
+		return (getEnergy() * i) / REQUIRED_POWER;
 	}
 
 	@Override

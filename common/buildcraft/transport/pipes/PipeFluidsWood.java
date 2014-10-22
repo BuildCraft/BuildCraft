@@ -88,7 +88,7 @@ public class PipeFluidsWood extends Pipe<PipeTransportFluids> implements IEnergy
 		super.updateEntity();
 
 		int meta = container.getBlockMetadata();
-
+		
 		if (liquidToExtract > 0 && meta < 6) {
 			ForgeDirection side = ForgeDirection.getOrientation(meta);
 			TileEntity tile = container.getTile(side);
@@ -131,7 +131,7 @@ public class PipeFluidsWood extends Pipe<PipeTransportFluids> implements IEnergy
 			}
 		}
 	}
-
+	
 	@Override
 	@SideOnly(Side.CLIENT)
 	public IIconProvider getIconProvider() {
