@@ -42,7 +42,6 @@ import buildcraft.api.gates.IAction;
 import buildcraft.api.gates.ITrigger;
 import buildcraft.api.gates.StatementManager;
 import buildcraft.api.recipes.BuildcraftRecipeRegistry;
-import buildcraft.api.stripes.StripesPipeAPI;
 import buildcraft.api.transport.IExtractionHandler;
 import buildcraft.api.transport.PipeManager;
 import buildcraft.api.transport.PipeWire;
@@ -541,10 +540,10 @@ public class BuildCraftTransport extends BuildCraftMod {
 		StatementManager.registerTriggerProvider(new PipeTriggerProvider());
 		StatementManager.registerActionProvider(new PipeActionProvider());
 		
-		StripesPipeAPI.registerHandler(new StripesHandlerRightClick());
-		StripesPipeAPI.registerHandler(new StripesHandlerBucket());
-		StripesPipeAPI.registerHandler(new StripesHandlerArrow());
-		StripesPipeAPI.registerHandler(new StripesHandlerShears());
+		PipeManager.registerStripesHandler(new StripesHandlerRightClick());
+		PipeManager.registerStripesHandler(new StripesHandlerBucket());
+		PipeManager.registerStripesHandler(new StripesHandlerArrow());
+		PipeManager.registerStripesHandler(new StripesHandlerShears());
 		
 		if (BuildCraftCore.loadDefaultRecipes) {
 			loadRecipes();

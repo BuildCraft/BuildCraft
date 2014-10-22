@@ -9,11 +9,17 @@ import net.minecraft.item.ItemBucket;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
-import buildcraft.api.stripes.IStripesItemHandler;
-import buildcraft.api.stripes.IStripesPipe;
+import buildcraft.api.transport.IStripesHandler;
+import buildcraft.api.transport.IStripesHandler.StripesHandlerType;
+import buildcraft.api.transport.IStripesPipe;
 
-public class StripesHandlerBucket implements IStripesItemHandler {
+public class StripesHandlerBucket implements IStripesHandler {
 
+	@Override
+	public StripesHandlerType getType() {
+		return StripesHandlerType.ITEM_USE;
+	}
+	
 	@Override
 	public boolean shouldHandle(ItemStack stack) {
 		return stack.getItem() instanceof ItemBucket;
@@ -47,7 +53,7 @@ public class StripesHandlerBucket implements IStripesItemHandler {
 
 			if (rollback) {
 				stack.stackSize = 0;
-				pipe.rollbackItem(new ItemStack(newBucket, 1), direction);
+				pipe.sendItem(new ItemStack(newBucket, 1), direction.getOpposite());
 			}
 			
 			return true;

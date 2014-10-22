@@ -10,6 +10,7 @@ package buildcraft.transport.pipes;
 
 import java.util.ArrayList;
 
+import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
@@ -22,9 +23,10 @@ import cofh.api.energy.IEnergyHandler;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.core.Position;
-import buildcraft.api.stripes.IStripesItemHandler;
-import buildcraft.api.stripes.IStripesPipe;
-import buildcraft.api.stripes.StripesPipeAPI;
+import buildcraft.api.transport.IStripesHandler;
+import buildcraft.api.transport.IStripesHandler.StripesHandlerType;
+import buildcraft.api.transport.IStripesPipe;
+import buildcraft.api.transport.PipeManager;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.BlockUtil;
 import buildcraft.transport.BlockGenericPipe;
@@ -89,8 +91,9 @@ public class PipeItemsStripes extends Pipe<PipeTransportItems> implements IEnerg
 				break;
 		}
 		
-		for (IStripesItemHandler handler : StripesPipeAPI.getHandlerList()) {
-			if (handler.shouldHandle(stack)) {
+		for (IStripesHandler handler : PipeManager.stripesHandlers) {
+			if (handler.getType() == StripesHandlerType.ITEM_USE
+					&& handler.shouldHandle(stack)) {
 				if (handler.handle(getWorld(), (int) p.x, (int) p.y, (int) p.z,
 						event.direction, stack, player, this)) {
 					return;
@@ -123,12 +126,23 @@ public class PipeItemsStripes extends Pipe<PipeTransportItems> implements IEnerg
 	}
 	
 	@Override
-	public void rollbackItem(ItemStack itemStack, ForgeDirection direction) {
+	public void dropItem(ItemStack itemStack, ForgeDirection direction) {
+		Position p = new Position(container.xCoord, container.yCoord,
+				container.zCoord, direction);
+		p.moveForwards(1.0);
+
+		itemStack.tryPlaceItemIntoWorld(CoreProxy.proxy.getBuildCraftPlayer((WorldServer) getWorld()).get(),
+				getWorld(), (int) p.x, (int) p.y, (int) p.z, 1, 0.0f, 0.0f,
+				0.0f);
+	}
+	
+	@Override
+	public void sendItem(ItemStack itemStack, ForgeDirection direction) {
 		TravelingItem newItem = TravelingItem.make(
 				container.xCoord + 0.5,
 				container.yCoord + TransportUtils.getPipeFloorOf(itemStack),
 				container.zCoord + 0.5, itemStack);
-		transport.injectItem(newItem, direction.getOpposite());
+		transport.injectItem(newItem, direction);
 	}
 
 	private boolean convertPipe(PipeTransportItems pipe, TravelingItem item) {
@@ -185,7 +199,7 @@ public class PipeItemsStripes extends Pipe<PipeTransportItems> implements IEnerg
 		if (maxReceive == 0) {
 			return 0;
 		} else if (simulate) {
-			return Math.min(maxReceive, 10);
+			return maxReceive;
 		}
 
 		ForgeDirection o = getOpenOrientation();
@@ -196,20 +210,32 @@ public class PipeItemsStripes extends Pipe<PipeTransportItems> implements IEnerg
 			p.moveForwards(1.0);
 
 			if (!BlockUtil.isUnbreakableBlock(getWorld(), (int) p.x, (int) p.y, (int) p.z)) {
-				ArrayList<ItemStack> stacks = getWorld().getBlock(
-						(int) p.x, (int) p.y, (int) p.z).getDrops(
-						getWorld(),
-						(int) p.x,
-						(int) p.y,
-						(int) p.z,
-						getWorld().getBlockMetadata((int) p.x, (int) p.y,
-								(int) p.z), 0
+				Block block = getWorld().getBlock((int) p.x, (int) p.y, (int) p.z);
+				int metadata = getWorld().getBlockMetadata((int) p.x, (int) p.y, (int) p.z);
+				
+				ItemStack stack = new ItemStack(block, 1, metadata);
+				EntityPlayer player = CoreProxy.proxy.getBuildCraftPlayer((WorldServer) getWorld(),
+						(int) p.x, (int) p.y, (int) p.z).get();
+				
+				for (IStripesHandler handler : PipeManager.stripesHandlers) {
+					if (handler.getType() == StripesHandlerType.BLOCK_BREAK
+							&& handler.shouldHandle(stack)) {
+						if (handler.handle(getWorld(), (int) p.x, (int) p.y, (int) p.z,
+								o, stack, player, this)) {
+							return maxReceive;
+						}
+					}
+				}
+				
+				ArrayList<ItemStack> stacks = block.getDrops(
+						getWorld(), (int) p.x, (int) p.y, (int) p.z,
+						metadata, 0
 				);
 
 				if (stacks != null) {
 					for (ItemStack s : stacks) {
 						if (s != null) {
-							rollbackItem(s, o);
+							sendItem(s, o.getOpposite());
 						}
 					}
 				}

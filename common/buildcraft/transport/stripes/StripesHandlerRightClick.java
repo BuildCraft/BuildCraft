@@ -6,11 +6,17 @@ import net.minecraft.item.ItemPotion;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
-import buildcraft.api.stripes.IStripesItemHandler;
-import buildcraft.api.stripes.IStripesPipe;
+import buildcraft.api.transport.IStripesHandler;
+import buildcraft.api.transport.IStripesHandler.StripesHandlerType;
+import buildcraft.api.transport.IStripesPipe;
 
-public class StripesHandlerRightClick implements IStripesItemHandler {
+public class StripesHandlerRightClick implements IStripesHandler {
 
+	@Override
+	public StripesHandlerType getType() {
+		return StripesHandlerType.ITEM_USE;
+	}
+	
 	@Override
 	public boolean shouldHandle(ItemStack stack) {
 		return (stack.getItem() == Items.potionitem && ItemPotion.isSplash(stack.getItemDamage()))
