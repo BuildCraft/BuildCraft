@@ -18,17 +18,17 @@ import com.google.common.collect.Sets;
 import net.minecraft.block.Block;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.world.ChunkCoordIntPair;
-import net.minecraft.world.WorldServer;
+
 import net.minecraftforge.common.ForgeChunkManager;
 import net.minecraftforge.common.ForgeChunkManager.Ticket;
 import net.minecraftforge.common.ForgeChunkManager.Type;
 import net.minecraftforge.common.util.ForgeDirection;
+
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftFactory;
 import buildcraft.api.core.BuildCraftAPI;
@@ -37,6 +37,8 @@ import buildcraft.api.core.NetworkData;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.filler.FillerManager;
 import buildcraft.api.gates.IAction;
+import buildcraft.builders.TileAbstractBuilder;
+import buildcraft.builders.filler.pattern.FillerPattern;
 import buildcraft.core.Box;
 import buildcraft.core.Box.Kind;
 import buildcraft.core.CoreConstants;
@@ -45,14 +47,12 @@ import buildcraft.core.IMachine;
 import buildcraft.core.blueprints.Blueprint;
 import buildcraft.core.blueprints.BptBuilderBase;
 import buildcraft.core.blueprints.BptBuilderBlueprint;
-import buildcraft.core.builders.TileAbstractBuilder;
-import buildcraft.core.builders.patterns.FillerPattern;
 import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.BlockUtil;
 import buildcraft.core.utils.Utils;
 
-public class TileQuarry extends TileAbstractBuilder implements IMachine, ISidedInventory {
+public class TileQuarry extends TileAbstractBuilder implements IMachine {
 
 	private static enum Stage {
 		BUILDING,
@@ -61,6 +61,12 @@ public class TileQuarry extends TileAbstractBuilder implements IMachine, ISidedI
 		DONE
 	}
 
+	public static final int MAX_BREAK_HARDNESS = 700;
+
+	public static final double CREATE_ARM_ENERGY = 7.0D;
+	public static final double DIG_BASE_REQUIRED_ENERGY = 11.5D;
+	public static final double DIG_HARDNESS_ENERGY_MULTIPLIER = 35.0D;
+
 	public EntityMechanicalArm arm;
 	public EntityPlayer placedBy;
 
@@ -68,6 +74,9 @@ public class TileQuarry extends TileAbstractBuilder implements IMachine, ISidedI
 	protected Box box = new Box();
 	@NetworkData
 	private int targetX, targetY, targetZ;
+	private double nextDigRequiredEnergy = 1.0D;
+	private boolean armCreated = false;
+	private boolean execPosReachedCall = false; //call the position reached method if this is true
 	@NetworkData
 	private double headPosX, headPosY, headPosZ;
 	@NetworkData
@@ -100,7 +109,9 @@ public class TileQuarry extends TileAbstractBuilder implements IMachine, ISidedI
 		box.kind = Kind.STRIPES;
 	}
 
-	public void createUtilsIfNeeded() {
+	public boolean createUtilsIfNeeded() {
+		boolean result = true;
+
 		if (!worldObj.isRemote) {
 			if (builder == null) {
 				if (!box.isInitialized()) {
@@ -115,20 +126,34 @@ public class TileQuarry extends TileAbstractBuilder implements IMachine, ISidedI
 			box.isVisible = false;
 
 			if (arm == null) {
+				armCreated = false;
 				createArm();
 			}
 
+			if (!armCreated) {
+				//allow the arm to be created first
+				//then collect the energy
+				if (mjStored > CREATE_ARM_ENERGY) {
+					mjStored -= CREATE_ARM_ENERGY;
+				} else {
+					result = false; //do not return here
+				}
+			}
+
 			if (findTarget(false)) {
-				if (box != null && ((headPosX < box.xMin || headPosX > box.xMax) || (headPosZ < box.zMin || headPosZ > box.zMax))) {
+				if (box != null && arm != null && ((headPosX < box.xMin || headPosX > box.xMax) || (headPosZ < box.zMin || headPosZ > box.zMax))) {
 					setHead(box.xMin + 1, yCoord + 2, box.zMin + 1);
 				}
 			}
 		} else {
 			box.isVisible = true;
 		}
+
+		return result;
 	}
 
 	private void createArm() {
+		armCreated = true;
 		worldObj.spawnEntityInWorld
 		(new EntityMechanicalArm(worldObj,
 				box.xMin + CoreConstants.PIPE_MAX_POS,
@@ -164,37 +189,36 @@ public class TileQuarry extends TileAbstractBuilder implements IMachine, ISidedI
 			return;
 		}
 
+		if (!createUtilsIfNeeded()) {
+			return;
+		}
+
+		double energyToUse = 2 + mjStored / 500;
+
+		if (mjStored > energyToUse) {
+			mjStored -= energyToUse;
+			speed = 0.1 + energyToUse / 200F;
+			moveHead(speed);
+		}
+
 		if (stage == Stage.BUILDING) {
 			if (builder != null && !builder.isDone(this)) {
-				builder.buildNextSlot(worldObj, this, xCoord, yCoord, zCoord);
+				if (buildTracker.markTimeIfDelay(worldObj)) {
+					builder.buildNextSlot(worldObj, this, xCoord, yCoord, zCoord);
+				}
 			} else {
 				stage = Stage.IDLE;
 			}
 		} else if (stage == Stage.IDLE) {
-			dig();
-		} else if (stage == Stage.DIGGING) {
-			int energyToUse = 20 + Math.round(getBattery().getEnergyStored() / 500);
-
-			if (this.consumeEnergy(energyToUse)) {
-				speed = 0.1 + energyToUse / 200F;
-				moveHead(speed);
-			}
+			prepareNextDig();
 		}
-
-		createUtilsIfNeeded();
 
 		if (updateTracker.markTimeIfDelay(worldObj)) {
 			sendNetworkUpdate();
 		}
 	}
 
-	protected void dig() {
-		int rf = (int) Math.ceil(BuildCraftFactory.MINING_RF_COST_PER_BLOCK * BuildCraftFactory.miningMultiplier);
-
-		if (!consumeEnergy(rf)) {
-			return;
-		}
-
+	protected void prepareNextDig() {
 		if (!findTarget(true)) {
 			// I believe the issue is box going null becuase of bad chunkloader positioning
 			if (arm != null && box != null) {
@@ -211,6 +235,7 @@ public class TileQuarry extends TileAbstractBuilder implements IMachine, ISidedI
 		double[] head = getHead();
 		int[] target = getTarget();
 		headTrajectory = Math.atan2(target[2] - head[2], target[0] - head[0]);
+
 		sendNetworkUpdate();
 	}
 
@@ -220,6 +245,8 @@ public class TileQuarry extends TileAbstractBuilder implements IMachine, ISidedI
 		}
 
 		boolean columnVisitListIsUpdated = false;
+
+		visitList.clear(); //fix quarry ignoring blocks being added
 
 		if (visitList.isEmpty()) {
 			createColumnVisitList();
@@ -239,8 +266,7 @@ public class TileQuarry extends TileAbstractBuilder implements IMachine, ISidedI
 		if (!columnVisitListIsUpdated) { // nextTarget may not be accurate, at least search the target column for changes
 			for (int y = nextTarget[1] + 1; y < yCoord + 3; y++) {
 				Block block = worldObj.getBlock(nextTarget[0], y, nextTarget[2]);
-				if (BlockUtil.isAnObstructingBlock(block, worldObj, nextTarget[0], y, nextTarget[2])
-						|| !BuildCraftAPI.isSoftBlock(worldObj, nextTarget[0], y, nextTarget[2])) {
+				if (BlockUtil.isAnObstructingBlock(block, worldObj, nextTarget[0], y, nextTarget[2]) || !BuildCraftAPI.isSoftBlock(block, worldObj, nextTarget[0], y, nextTarget[2])) {
 					createColumnVisitList();
 					columnVisitListIsUpdated = true;
 					nextTarget = null;
@@ -312,7 +338,7 @@ public class TileQuarry extends TileAbstractBuilder implements IMachine, ISidedI
 
 						if (!BlockUtil.canChangeBlock(block, worldObj, bx, by, bz)) {
 							blockedColumns[searchX][searchZ] = true;
-						} else if (!BuildCraftAPI.isSoftBlock(worldObj, bx, by, bz)) {
+						} else if (!BuildCraftAPI.isSoftBlock(block, worldObj, bx, by, bz)) {
 							visitList.add(new int[]{bx, by, bz});
 						}
 
@@ -367,6 +393,9 @@ public class TileQuarry extends TileAbstractBuilder implements IMachine, ISidedI
 
 		// The rest of load has to be done upon initialize.
 		initNBT = (NBTTagCompound) nbttagcompound.getCompoundTag("bpt").copy();
+
+		nextDigRequiredEnergy = nbttagcompound.getDouble("nextDigEnergy");
+		execPosReachedCall = nbttagcompound.getBoolean("checkBlockReachedCallNextTick");
 	}
 
 	@Override
@@ -393,12 +422,21 @@ public class TileQuarry extends TileAbstractBuilder implements IMachine, ISidedI
 		}
 
 		nbttagcompound.setTag("bpt", bptNBT);
+
+		nbttagcompound.setDouble("nextDigEnergy", nextDigRequiredEnergy);
+		nbttagcompound.setBoolean("checkBlockReachedCallNextTick", execPosReachedCall);
 	}
 
 	@SuppressWarnings("rawtypes")
-	public void positionReached() {
+	public boolean onPositionReached() {
 		if (worldObj.isRemote) {
-			return;
+			return true;
+		}
+
+		if (mjStored > nextDigRequiredEnergy) {
+			mjStored -= nextDigRequiredEnergy;
+		} else {
+			return false;
 		}
 
 		int i = targetX;
@@ -406,12 +444,12 @@ public class TileQuarry extends TileAbstractBuilder implements IMachine, ISidedI
 		int k = targetZ;
 
 		Block block = worldObj.getBlock(i, j, k);
-		int meta = worldObj.getBlockMetadata(i, j, k);
-		
+
 		if (isQuarriableBlock(i, j, k)) {
+
 			// Share this with mining well!
 
-			List<ItemStack> stacks = BlockUtil.getItemStackFromBlock((WorldServer) worldObj, i, j, k);
+			List<ItemStack> stacks = BlockUtil.getItemStackFromBlock(worldObj, i, j, k);
 
 			if (stacks != null) {
 				for (ItemStack s : stacks) {
@@ -428,12 +466,7 @@ public class TileQuarry extends TileAbstractBuilder implements IMachine, ISidedI
 					j,
 					k,
 					Block.getIdFromBlock(block)
-							+ (meta << 12));
-			
-			if (block.hasTileEntity(meta)) {
-				worldObj.removeTileEntity(i, j, k);
-			}
-			
+							+ (worldObj.getBlockMetadata(i, j, k) << 12));
 			worldObj.setBlockToAir(i, j, k);
 		}
 
@@ -458,6 +491,8 @@ public class TileQuarry extends TileAbstractBuilder implements IMachine, ISidedI
 		}
 
 		stage = Stage.IDLE;
+
+		return true;
 	}
 
 	private void mineStack(ItemStack stack) {
@@ -490,8 +525,9 @@ public class TileQuarry extends TileAbstractBuilder implements IMachine, ISidedI
 
 	private boolean isQuarriableBlock(int bx, int by, int bz) {
 		Block block = worldObj.getBlock(bx, by, bz);
-		return BlockUtil.canChangeBlock(block, worldObj, bx, by, bz)
-				&& !BuildCraftAPI.isSoftBlock(worldObj, bx, by, bz);
+		return BlockUtil.canChangeBlock(block, worldObj, bx, by, bz) &&
+			!BuildCraftAPI.isSoftBlock(block, worldObj, bx, by, bz) &&
+			(block.getBlockHardness(worldObj, bx, by, bz) < MAX_BREAK_HARDNESS);
 	}
 
 	@Override
@@ -758,8 +794,7 @@ public class TileQuarry extends TileAbstractBuilder implements IMachine, ISidedI
 				movingHorizontally = false;
 
 				if (!movingVertically) {
-					positionReached();
-					head[1] = target[1];
+					execPosReachedCall = true;
 				}
 			} else {
 				head[0] += Math.cos(headTrajectory) * instantSpeed;
@@ -773,10 +808,9 @@ public class TileQuarry extends TileAbstractBuilder implements IMachine, ISidedI
 				head[1] = target[1];
 
 				movingVertically = false;
+
 				if (!movingHorizontally) {
-					positionReached();
-					head[0] = target[0];
-					head[2] = target[2];
+					execPosReachedCall = true;
 				}
 			} else {
 				if (target[1] > head[1]) {
@@ -786,6 +820,15 @@ public class TileQuarry extends TileAbstractBuilder implements IMachine, ISidedI
 				}
 			}
 			setHead(head[0], head[1], head[2]);
+		}
+
+		if (execPosReachedCall) {
+			if (onPositionReached()) {
+				head[0] = target[0];
+				head[1] = target[1];
+				head[2] = target[2];
+				execPosReachedCall = false;
+			}
 		}
 
 		updatePosition();
@@ -816,6 +859,9 @@ public class TileQuarry extends TileAbstractBuilder implements IMachine, ISidedI
 		this.targetX = x;
 		this.targetY = y;
 		this.targetZ = z;
+		Block b = worldObj.getBlock(x, y - 1, z);
+		this.nextDigRequiredEnergy = DIG_BASE_REQUIRED_ENERGY +
+			(b.getBlockHardness(worldObj, x, y - 1, z) * DIG_HARDNESS_ENERGY_MULTIPLIER);
 	}
 
 	public void forceChunkLoading(Ticket ticket) {
@@ -860,20 +906,5 @@ public class TileQuarry extends TileAbstractBuilder implements IMachine, ISidedI
 	@Override
 	public Box getBox() {
 		return box;
-	}
-
-	@Override
-	public int[] getAccessibleSlotsFromSide(int side) {
-		return new int[] {0};
-	}
-
-	@Override
-	public boolean canInsertItem(int p1, ItemStack p2, int p3) {
-		return true;
-	}
-
-	@Override
-	public boolean canExtractItem(int p1, ItemStack p2, int p3) {
-		return false;
 	}
 }
