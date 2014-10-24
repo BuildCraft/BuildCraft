@@ -11,11 +11,9 @@ package buildcraft.transport.triggers;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import buildcraft.api.gates.IActionParameter;
 import buildcraft.api.gates.IGate;
 import buildcraft.api.gates.ITriggerParameter;
 import buildcraft.core.triggers.BCTrigger;
-import buildcraft.core.triggers.StatementParameterDirection;
 import buildcraft.core.utils.StringUtils;
 import buildcraft.transport.TileGenericPipe;
 
@@ -36,7 +34,7 @@ public class TriggerRedstoneFaderInput extends BCTrigger {
 
 	@Override
 	public boolean isTriggerActive(IGate gate, ITriggerParameter[] parameter) {
-		TileGenericPipe tile = ((TileGenericPipe) gate.getPipe().getTile());
+		TileGenericPipe tile = (TileGenericPipe) gate.getPipe().getTile();
 
 		return tile.redstoneInputSide[gate.getSide().ordinal()] == level;
 	}

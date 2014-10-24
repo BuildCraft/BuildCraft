@@ -32,6 +32,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.stats.Achievement;
 import net.minecraft.util.IIcon;
+
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
@@ -44,6 +45,7 @@ import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.AchievementPage;
@@ -54,6 +56,7 @@ import net.minecraftforge.common.config.Property;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fluids.BlockFluidBase;
 import net.minecraftforge.oredict.OreDictionary;
+
 import buildcraft.api.blueprints.SchematicRegistry;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.BlockIndex;
@@ -96,11 +99,11 @@ import buildcraft.core.render.BlockHighlightHandler;
 import buildcraft.core.robots.EntityRobot;
 import buildcraft.core.triggers.ActionMachineControl;
 import buildcraft.core.triggers.ActionMachineControl.Mode;
-import buildcraft.core.triggers.StatementParameterDirection;
 import buildcraft.core.triggers.ActionRedstoneOutput;
 import buildcraft.core.triggers.DefaultActionProvider;
 import buildcraft.core.triggers.DefaultTriggerProvider;
 import buildcraft.core.triggers.StatementIconProvider;
+import buildcraft.core.triggers.StatementParameterDirection;
 import buildcraft.core.triggers.TriggerEnergy;
 import buildcraft.core.triggers.TriggerFluidContainer;
 import buildcraft.core.triggers.TriggerFluidContainerLevel;
@@ -120,7 +123,6 @@ import buildcraft.core.utils.WorldPropertyIsSoft;
 import buildcraft.core.utils.WorldPropertyIsWood;
 import buildcraft.energy.fuels.CoolantManager;
 import buildcraft.energy.fuels.FuelManager;
-import buildcraft.silicon.ItemRedstoneChipset.Chipset;
 
 @Mod(name = "BuildCraft", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Core", acceptedMinecraftVersions = "[1.7.10,1.8)", dependencies = "required-after:Forge@[10.13.0.1207,)")
 public class BuildCraftCore extends BuildCraftMod {

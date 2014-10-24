@@ -11,7 +11,6 @@ package buildcraft.core.triggers;
 import buildcraft.api.gates.IGate;
 import buildcraft.api.gates.ITriggerParameter;
 import buildcraft.core.utils.StringUtils;
-import buildcraft.transport.Pipe;
 import buildcraft.transport.TileGenericPipe;
 
 public class TriggerRedstoneInput extends BCTrigger {
@@ -30,10 +29,10 @@ public class TriggerRedstoneInput extends BCTrigger {
 
 	@Override
 	public boolean isTriggerActive(IGate gate, ITriggerParameter[] parameters) {
-		TileGenericPipe tile = ((TileGenericPipe) gate.getPipe().getTile());
+		TileGenericPipe tile = (TileGenericPipe) gate.getPipe().getTile();
 		int level = tile.redstoneInputSide[gate.getSide().ordinal()];
 		
-		return (active ? level > 0 : level == 0);
+		return active ? level > 0 : level == 0;
 	}
 
 	@Override
