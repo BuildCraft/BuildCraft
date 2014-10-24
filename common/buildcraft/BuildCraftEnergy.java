@@ -57,9 +57,6 @@ import buildcraft.core.InterModComms;
 import buildcraft.core.Version;
 import buildcraft.core.network.BuildCraftChannelHandler;
 import buildcraft.core.proxy.CoreProxy;
-import buildcraft.core.science.TechnoSimpleItem;
-import buildcraft.core.science.TechnoStatement;
-import buildcraft.core.science.Tier;
 import buildcraft.energy.BlockBuildcraftFluid;
 import buildcraft.energy.BlockEnergyEmitter;
 import buildcraft.energy.BlockEnergyReceiver;
@@ -118,12 +115,6 @@ public class BuildCraftEnergy extends BuildCraftMod {
 	public static ITrigger triggerGreenEngineHeat = new TriggerEngineHeat(EnergyStage.GREEN);
 	public static ITrigger triggerYellowEngineHeat = new TriggerEngineHeat(EnergyStage.YELLOW);
 	public static ITrigger triggerRedEngineHeat = new TriggerEngineHeat(EnergyStage.RED);
-
-	public static TechnoSimpleItem technoRedstoneEngine = new TechnoSimpleItem();
-	public static TechnoSimpleItem technoStoneEngine = new TechnoSimpleItem();
-	public static TechnoSimpleItem technoIronEngine = new TechnoSimpleItem();
-
-	public static TechnoStatement technologyTriggerRedEngineHeat = new TechnoStatement();
 
 	private static Fluid buildcraftFluidOil;
 	private static Fluid buildcraftFluidFuel;
@@ -366,35 +357,15 @@ public class BuildCraftEnergy extends BuildCraftMod {
 		}
 	}
 
-	@Mod.EventHandler
-	public void loadTechnology(FMLPostInitializationEvent evt) {
-		technoRedstoneEngine.initialize(Tier.WoodenGear, new ItemStack(engineBlock, 1, 0),
-				new ItemStack(BuildCraftCore.woodenGearItem, 5));
-
-		technoStoneEngine.initialize(Tier.StoneGear, new ItemStack(engineBlock, 1, 1),
-				new ItemStack(BuildCraftCore.stoneGearItem, 10), technoRedstoneEngine);
-
-		technoIronEngine.initialize(Tier.IronGear, new ItemStack(engineBlock, 1, 2),
-				new ItemStack(BuildCraftCore.ironGearItem, 20), technoStoneEngine);
-
-		technologyTriggerRedEngineHeat.initialize(
-				Tier.IronChipset,
-				triggerRedEngineHeat,
-				"",
-				Chipset.IRON.getStack(5),
-				BuildCraftCore.technoSilicon);
-	}
-
 	public static void loadRecipes() {
-		CoreProxy.proxy.addCraftingRecipe(technoRedstoneEngine,
-				new ItemStack(engineBlock, 1, 0),
+		CoreProxy.proxy.addCraftingRecipe(new ItemStack(engineBlock, 1, 0),
 				"www", " g ", "GpG", 'w', "plankWood", 'g', Blocks.glass, 'G',
 				BuildCraftCore.woodenGearItem, 'p', Blocks.piston);
-		CoreProxy.proxy.addCraftingRecipe(technoStoneEngine,
-				new ItemStack(engineBlock, 1, 1), "www", " g ", "GpG", 'w', "cobblestone",
+		CoreProxy.proxy.addCraftingRecipe(new ItemStack(engineBlock, 1, 1),
+				"www", " g ", "GpG", 'w', "cobblestone",
 				'g', Blocks.glass, 'G', BuildCraftCore.stoneGearItem, 'p', Blocks.piston);
-		CoreProxy.proxy.addCraftingRecipe(technoIronEngine,
-				new ItemStack(engineBlock, 1, 2), "www", " g ", "GpG", 'w', Items.iron_ingot,
+		CoreProxy.proxy.addCraftingRecipe(new ItemStack(engineBlock, 1, 2),
+				"www", " g ", "GpG", 'w', Items.iron_ingot,
 				'g', Blocks.glass, 'G', BuildCraftCore.ironGearItem, 'p', Blocks.piston);
 
 		if (blockEnergyConverter != null) {

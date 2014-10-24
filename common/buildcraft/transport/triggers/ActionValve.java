@@ -15,7 +15,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.api.gates.IActionParameter;
 import buildcraft.api.gates.IGate;
 import buildcraft.api.transport.IPipe;
-import buildcraft.core.triggers.ActionParameterDirection;
+import buildcraft.core.triggers.StatementParameterDirection;
 import buildcraft.core.triggers.BCActionActive;
 import buildcraft.core.utils.StringUtils;
 import buildcraft.transport.Pipe;
@@ -72,7 +72,7 @@ public class ActionValve extends BCActionActive {
 		IActionParameter param = null;
 	
 		if (index == 0) {
-		    param = new ActionParameterDirection();
+		    param = new StatementParameterDirection();
 		}
 	
 		return param;
@@ -84,8 +84,8 @@ public class ActionValve extends BCActionActive {
 		
 	    if (pipe != null && pipe instanceof Pipe) {
 			PipeTransport transport = ((Pipe) pipe).transport;
-			if (parameters[0] != null && parameters[0] instanceof ActionParameterDirection) {
-				ForgeDirection side = ((ActionParameterDirection) parameters[0]).direction;
+			if (parameters[0] != null && parameters[0] instanceof StatementParameterDirection) {
+				ForgeDirection side = ((StatementParameterDirection) parameters[0]).direction;
 		
 				if (side != ForgeDirection.UNKNOWN) {
 				    transport.allowInput(side, state.inputOpen);

@@ -20,7 +20,6 @@ import cpw.mods.fml.relauncher.SideOnly;
 import buildcraft.api.core.IInvSlot;
 import buildcraft.core.inventory.InventoryIterator;
 import buildcraft.core.proxy.CoreProxy;
-import buildcraft.core.science.TechnologyNBT;
 import buildcraft.core.utils.NBTUtils;
 
 public class TickHandlerCore {
@@ -53,7 +52,7 @@ public class TickHandlerCore {
 							CoreProxy.proxy.getMinecraftVersion()));
 			player.addChatMessage(new ChatComponentTranslation("bc_update.download"));
 
-			// TODD This takes too much realstate. See how to improve
+			// TODO: This takes too much realstate. See how to improve
 			// Version.displayChangelog(player);
 
 			player.addChatMessage(new ChatComponentTranslation("bc_update.once"));
@@ -63,24 +62,5 @@ public class TickHandlerCore {
 		// }
 
 		nagged = true;
-	}
-
-	@SubscribeEvent
-	public void updateScienceBooks(PlayerTickEvent evt) {
-		if (evt.player.worldObj.isRemote) {
-			return;
-		}
-
-		for (IInvSlot slot : InventoryIterator.getIterable(evt.player.inventory)) {
-			if (slot.getStackInSlot() != null
-					&& slot.getStackInSlot().getItem() instanceof ItemScienceBook) {
-
-				ItemStack stack = slot.getStackInSlot();
-
-				TechnologyNBT techno = TechnologyNBT.getTechnology(evt.player, stack);
-				techno.update();
-				techno.writeToNBT(NBTUtils.getItemData(stack));
-			}
-		}
 	}
 }

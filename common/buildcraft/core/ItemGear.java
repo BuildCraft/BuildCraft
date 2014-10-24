@@ -8,19 +8,10 @@
  */
 package buildcraft.core;
 
-import buildcraft.core.science.IItemTechnologyProvider;
+public class ItemGear extends ItemBuildCraft {
 
-public class ItemGear extends ItemBuildCraft implements IItemTechnologyProvider {
-
-	private int processTime;
-
-	public ItemGear(int iProcessTime) {
-		processTime = iProcessTime;
-	}
-
-	@Override
-	public int timeToProcess() {
-		return processTime;
+	public ItemGear() {
+		
 	}
 
 }

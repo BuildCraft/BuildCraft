@@ -128,8 +128,6 @@ import buildcraft.core.builders.patterns.PatternHorizon;
 import buildcraft.core.builders.patterns.PatternPyramid;
 import buildcraft.core.builders.patterns.PatternStairs;
 import buildcraft.core.proxy.CoreProxy;
-import buildcraft.core.science.TechnoSimpleItem;
-import buildcraft.core.science.Tier;
 
 @Mod(name = "BuildCraft Builders", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Builders", dependencies = DefaultProps.DEPENDENCY_CORE)
 public class BuildCraftBuilders extends BuildCraftMod {
@@ -151,17 +149,6 @@ public class BuildCraftBuilders extends BuildCraftMod {
 	public static BlockUrbanist urbanistBlock;
 	public static ItemBlueprintTemplate templateItem;
 	public static ItemBlueprintStandard blueprintItem;
-
-	public static TechnoSimpleItem technoMarkerBlock = new TechnoSimpleItem();
-	public static TechnoSimpleItem technoPathMarkerBlock = new TechnoSimpleItem();
-	public static TechnoSimpleItem technoConstructionMarkerBlock = new TechnoSimpleItem();
-	public static TechnoSimpleItem technoFillerBlock = new TechnoSimpleItem();
-	public static TechnoSimpleItem technoBuilderBlock = new TechnoSimpleItem();
-	public static TechnoSimpleItem technoArchitectBlock = new TechnoSimpleItem();
-	public static TechnoSimpleItem technoLibraryBlock = new TechnoSimpleItem();
-	public static TechnoSimpleItem technoUrbanistBlock = new TechnoSimpleItem();
-	public static TechnoSimpleItem technoTemplateItem = new TechnoSimpleItem();
-	public static TechnoSimpleItem technoBlueprintItem = new TechnoSimpleItem();
 
 	public static ActionFiller[] fillerActions;
 
@@ -499,63 +486,6 @@ public class BuildCraftBuilders extends BuildCraftMod {
 		}
 
 		StatementManager.registerActionProvider(new BuildersActionProvider());
-	}
-
-	@Mod.EventHandler
-	public void loadTechnology(FMLPostInitializationEvent evt) {
-		// technoBuildToolBlock
-
-		technoFillerBlock.initialize(
-				Tier.GoldenGear,
-				fillerBlock,
-				new ItemStack(BuildCraftCore.goldGearItem, 10)
-				/* Machines Technology */
-				/* Building Technology */);
-
-		technoMarkerBlock.initialize(
-				Tier.GoldenGear,
-				markerBlock,
-				new ItemStack(BuildCraftCore.goldGearItem, 5)
-				/* Localisation Technology */);
-
-		technoPathMarkerBlock.initialize(
-				Tier.DiamondGear,
-				pathMarkerBlock,
-				new ItemStack(BuildCraftCore.diamondGearItem, 2),
-				technoMarkerBlock
-				/* Localisation Technology */);
-
-		// technoConstructionMarkerBlock;
-
-		technoBuilderBlock.initialize(
-				Tier.DiamondGear,
-				builderBlock,
-				new ItemStack(BuildCraftCore.diamondGearItem, 5),
-				technoFillerBlock);
-
-		technoTemplateItem.initialize(
-				Tier.DiamondGear,
-				templateItem,
-				new ItemStack(BuildCraftCore.diamondGearItem, 2),
-				technoBuilderBlock);
-
-		technoBlueprintItem.initialize(
-				Tier.DiamondGear,
-				blueprintItem,
-				new ItemStack(BuildCraftCore.diamondGearItem, 5),
-				technoTemplateItem);
-
-		technoArchitectBlock.initialize(
-				Tier.EmeraldGear,
-				architectBlock,
-				new ItemStack(BuildCraftCore.diamondGearItem /* emerald gear */, 8),
-				technoBuilderBlock);
-
-		technoLibraryBlock.initialize(
-				Tier.RedstoneCrystalGear,
-				libraryBlock,
-				new ItemStack(BuildCraftCore.diamondGearItem /* redstone gear */, 2),
-				technoArchitectBlock);
 	}
 
 	public static void loadRecipes() {

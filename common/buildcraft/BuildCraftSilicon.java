@@ -57,10 +57,6 @@ import buildcraft.core.robots.boards.BoardRobotPickerNBT;
 import buildcraft.core.robots.boards.BoardRobotPlanterNBT;
 import buildcraft.core.robots.boards.BoardRobotPumpNBT;
 import buildcraft.core.robots.boards.BoardRobotShovelmanNBT;
-import buildcraft.core.science.TechnoRobot;
-import buildcraft.core.science.TechnoSimpleItem;
-import buildcraft.core.science.TechnoStatement;
-import buildcraft.core.science.Tier;
 import buildcraft.silicon.BlockLaser;
 import buildcraft.silicon.BlockLaserTable;
 import buildcraft.silicon.GuiHandler;
@@ -123,38 +119,6 @@ public class BuildCraftSilicon extends BuildCraftMod {
 	public static IAction actionStationForbidRobot = new ActionStationForbidRobot();
 	public static IAction actionStationDropInPipe = new ActionStationAcceptItemsPipe();
 	public static IAction actionStationMachineRequestItems = new ActionStationRequestItemsMachine();
-
-	public static TechnoSimpleItem technoRedstoneBoard = new TechnoSimpleItem();
-	public static TechnoSimpleItem technoLaserBlock = new TechnoSimpleItem();
-	public static TechnoSimpleItem technoAssemblyTableBlock = new TechnoSimpleItem();
-	public static TechnoSimpleItem technoAdvancedCraftingTableBlock = new TechnoSimpleItem();
-	public static TechnoSimpleItem technoIntegrationTableBlock = new TechnoSimpleItem();
-	public static TechnoSimpleItem technoZonePlanBlock = new TechnoSimpleItem();
-	public static TechnoSimpleItem technoRedstoneCrystal = new TechnoSimpleItem();
-	public static TechnoSimpleItem technoRobotItem = new TechnoSimpleItem();
-
-	public static TechnoStatement technoTriggerRobotSleep = new TechnoStatement();
-	public static TechnoStatement technoActionRobotGotoStation = new TechnoStatement();
-	public static TechnoStatement technoActionRobotWakeUp = new TechnoStatement();
-	public static TechnoStatement technoActionRobotWorkInArea = new TechnoStatement();
-	public static TechnoStatement technoActionRobotFilter = new TechnoStatement();
-	public static TechnoStatement technoActionStationRequestItems = new TechnoStatement();
-	public static TechnoStatement technoActionStationForbidRobot = new TechnoStatement();
-	public static TechnoStatement technoActionStationDropInPipe = new TechnoStatement();
-
-	public static TechnoRobot technoRobotPicker = new TechnoRobot();
-	public static TechnoRobot technoRobotCarrier = new TechnoRobot();
-	public static TechnoRobot technoRobotLumberjack = new TechnoRobot();
-	public static TechnoRobot technoRobotHarvester = new TechnoRobot();
-	public static TechnoRobot technoRobotMiner = new TechnoRobot();
-	public static TechnoRobot technoRobotPlanter = new TechnoRobot();
-	public static TechnoRobot technoRobotFarmer = new TechnoRobot();
-	public static TechnoRobot technoRobotLeaveCutter = new TechnoRobot();
-	public static TechnoRobot technoRobotButcher = new TechnoRobot();
-	public static TechnoRobot technoRobotShovelman = new TechnoRobot();
-	public static TechnoRobot technoRobotKnight = new TechnoRobot();
-	public static TechnoRobot technoRobotBomber = new TechnoRobot();
-	public static TechnoRobot technoRobotBuilder = new TechnoRobot();
 
 	@Mod.EventHandler
 	public void preInit(FMLPreInitializationEvent evt) {
@@ -247,190 +211,6 @@ public class BuildCraftSilicon extends BuildCraftMod {
 		SiliconProxy.proxy.registerRenderers();
 	}
 
-	@Mod.EventHandler
-	public void loadTechnology(FMLPostInitializationEvent evt) {
-		// Items and blocks
-
-		technoLaserBlock.initialize(
-				Tier.EmeraldGear,
-				laserBlock,
-				new ItemStack(BuildCraftCore.diamondGearItem /* emerald */, 5));
-
-		technoAssemblyTableBlock.initialize(
-				Tier.EmeraldGear,
-				new ItemStack(assemblyTableBlock, 1, 0),
-				new ItemStack(BuildCraftCore.diamondGearItem /* emerald */, 5));
-
-		technoRedstoneCrystal.initialize(
-				Tier.EmeraldGear,
-				redstoneCrystal,
-				new ItemStack(BuildCraftCore.diamondGearItem /* emerald */, 10));
-
-		technoAdvancedCraftingTableBlock.initialize(
-				Tier.RedstoneCrystalGear,
-				new ItemStack(assemblyTableBlock, 1, 1),
-				new ItemStack(BuildCraftCore.diamondGearItem /* emerald */, 5));
-
-		technoIntegrationTableBlock.initialize(
-				Tier.RedstoneCrystalGear,
-				new ItemStack(assemblyTableBlock, 1, 2),
-				new ItemStack(BuildCraftCore.diamondGearItem /* emerald */, 5));
-
-		technoRedstoneBoard.initialize(
-				Tier.DiamondChipset,
-				redstoneBoard,
-				new ItemStack(BuildCraftCore.diamondGearItem /* */, 5));
-
-		technoRobotItem.initialize(
-				Tier.DiamondChipset,
-				robotItem,
-				new ItemStack(BuildCraftCore.diamondGearItem /* */, 5));
-
-		technoZonePlanBlock.initialize(
-				Tier.RedstoneCrystalChipset,
-				zonePlanBlock,
-				new ItemStack(BuildCraftCore.diamondGearItem /* */, 5));
-
-		// Statements
-
-		technoTriggerRobotSleep.initialize(
-				Tier.DiamondChipset,
-				triggerRobotSleep,
-				"",
-				Chipset.RED.getStack(5),
-				BuildCraftCore.technoRobotics);
-
-		technoActionRobotGotoStation.initialize(
-				Tier.DiamondChipset,
-				actionRobotGotoStation,
-				"",
-				Chipset.RED.getStack(5),
-				BuildCraftCore.technoRobotics);
-
-		technoActionRobotWakeUp.initialize(
-				Tier.DiamondChipset,
-				actionRobotWakeUp,
-				"",
-				Chipset.RED.getStack(5),
-				BuildCraftCore.technoRobotics);
-
-		technoActionRobotWorkInArea.initialize(
-				Tier.EmeraldChipset,
-				actionRobotWorkInArea,
-				"",
-				Chipset.RED.getStack(5),
-				BuildCraftCore.technoRobotics);
-
-		technoActionRobotFilter.initialize(
-				Tier.EmeraldChipset,
-				actionRobotFilter,
-				"",
-				Chipset.RED.getStack(5),
-				BuildCraftCore.technoRobotics);
-
-		technoActionStationRequestItems.initialize(
-				Tier.DiamondChipset,
-				actionStationRequestItems,
-				"",
-				Chipset.RED.getStack(5),
-				BuildCraftCore.technoRobotics);
-
-		technoActionStationForbidRobot.initialize(
-				Tier.EmeraldChipset,
-				actionStationForbidRobot,
-				"",
-				Chipset.RED.getStack(5),
-				BuildCraftCore.technoRobotics);
-
-		technoActionStationDropInPipe.initialize(
-				Tier.DiamondChipset,
-				actionStationDropInPipe,
-				"",
-				Chipset.RED.getStack(5),
-				BuildCraftCore.technoRobotics);
-
-		// Robots
-
-		technoRobotPicker.initialize(
-				Tier.DiamondChipset,
-				BoardRobotPickerNBT.instance,
-				Chipset.RED.getStack(5),
-				BuildCraftCore.technoRobotics);
-
-		technoRobotCarrier.initialize(
-				Tier.DiamondChipset,
-				BoardRobotCarrierNBT.instance,
-				Chipset.RED.getStack(5),
-				BuildCraftCore.technoRobotics);
-
-		technoRobotLumberjack.initialize(
-				Tier.DiamondChipset,
-				BoardRobotLumberjackNBT.instance,
-				Chipset.RED.getStack(5),
-				BuildCraftCore.technoRobotics);
-
-		technoRobotHarvester.initialize(
-				Tier.DiamondChipset,
-				BoardRobotHarvesterNBT.instance,
-				Chipset.RED.getStack(5),
-				BuildCraftCore.technoRobotics);
-
-		technoRobotMiner.initialize(
-				Tier.DiamondChipset,
-				BoardRobotMinerNBT.instance,
-				Chipset.RED.getStack(5),
-				BuildCraftCore.technoRobotics);
-
-		technoRobotPlanter.initialize(
-				Tier.DiamondChipset,
-				BoardRobotPlanterNBT.instance,
-				Chipset.RED.getStack(5),
-				BuildCraftCore.technoRobotics);
-
-		technoRobotFarmer.initialize(
-				Tier.DiamondChipset,
-				BoardRobotFarmerNBT.instance,
-				Chipset.RED.getStack(5),
-				BuildCraftCore.technoRobotics);
-
-		technoRobotLeaveCutter.initialize(
-				Tier.DiamondChipset,
-				BoardRobotLeaveCutterNBT.instance,
-				Chipset.RED.getStack(5),
-				BuildCraftCore.technoRobotics);
-
-		technoRobotButcher.initialize(
-				Tier.DiamondChipset,
-				BoardRobotButcherNBT.instance,
-				Chipset.RED.getStack(5),
-				BuildCraftCore.technoRobotics);
-
-		technoRobotShovelman.initialize(
-				Tier.DiamondChipset,
-				BoardRobotShovelmanNBT.instance,
-				Chipset.RED.getStack(5),
-				BuildCraftCore.technoRobotics);
-
-		technoRobotBuilder.initialize(
-				Tier.EmeraldChipset,
-				BoardRobotBuilderNBT.instance,
-				Chipset.RED.getStack(5),
-				BuildCraftCore.technoRobotics);
-
-		technoRobotKnight.initialize(
-				Tier.EmeraldChipset,
-				BoardRobotKnightNBT.instance,
-				Chipset.RED.getStack(5),
-				BuildCraftCore.technoRobotics);
-
-		technoRobotBomber.initialize(
-				Tier.EmeraldChipset,
-				BoardRobotBomberNBT.instance,
-				Chipset.RED.getStack(5),
-				BuildCraftCore.technoRobotics);
-
-	}
-
 	public static void loadRecipes() {
 
 		// TABLES
@@ -512,7 +292,7 @@ public class BuildCraftSilicon extends BuildCraftMod {
 	}
 
 	@Mod.EventHandler
-	public void processIMCRequests(FMLInterModComms.IMCEvent event) {
+	public void processRequests(FMLInterModComms.IMCEvent event) {
 		InterModComms.processIMC(event);
 	}
 

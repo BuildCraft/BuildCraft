@@ -78,7 +78,6 @@ import buildcraft.core.InterModComms;
 import buildcraft.core.ItemGear;
 import buildcraft.core.ItemList;
 import buildcraft.core.ItemMapLocation;
-import buildcraft.core.ItemScienceBook;
 import buildcraft.core.ItemSpring;
 import buildcraft.core.ItemWrench;
 import buildcraft.core.SpringPopulate;
@@ -95,14 +94,9 @@ import buildcraft.core.recipes.IntegrationRecipeManager;
 import buildcraft.core.recipes.RefineryRecipeManager;
 import buildcraft.core.render.BlockHighlightHandler;
 import buildcraft.core.robots.EntityRobot;
-import buildcraft.core.science.TechnoField;
-import buildcraft.core.science.TechnoSimpleItem;
-import buildcraft.core.science.TechnoStatement;
-import buildcraft.core.science.Technology;
-import buildcraft.core.science.Tier;
 import buildcraft.core.triggers.ActionMachineControl;
 import buildcraft.core.triggers.ActionMachineControl.Mode;
-import buildcraft.core.triggers.ActionParameterDirection;
+import buildcraft.core.triggers.StatementParameterDirection;
 import buildcraft.core.triggers.ActionRedstoneOutput;
 import buildcraft.core.triggers.DefaultActionProvider;
 import buildcraft.core.triggers.DefaultTriggerProvider;
@@ -235,29 +229,6 @@ public class BuildCraftCore extends BuildCraftMod {
 
 	public static GameProfile gameProfile = new GameProfile(UUID.nameUUIDFromBytes("buildcraft.core".getBytes()), "[BuildCraft]");
 
-	public static TechnoField technoTransport = new TechnoField();
-	public static TechnoField technoEnergy = new TechnoField();
-	public static TechnoField technoLiquid = new TechnoField();
-	public static TechnoField technoCrafting = new TechnoField();
-	public static TechnoField technoMining = new TechnoField();
-	public static TechnoField technoBuilding = new TechnoField();
-	public static TechnoField technoSilicon = new TechnoField();
-	public static TechnoField technoRobotics = new TechnoField();
-	public static TechnoField technoCommander = new TechnoField();
-
-	public static TechnoSimpleItem technoWrenchItem = new TechnoSimpleItem();
-	public static TechnoSimpleItem technoMapLocation = new TechnoSimpleItem();
-
-	public static TechnoStatement technoTriggerMachineActive = new TechnoStatement();
-	public static TechnoStatement technoTriggerEnergyHigh = new TechnoStatement();
-	public static TechnoStatement technoTriggerContainsInventory = new TechnoStatement();
-	public static TechnoStatement technoTriggerContainsFluid = new TechnoStatement();
-	public static TechnoStatement technoTriggerRedstoneActive = new TechnoStatement();
-	public static TechnoStatement technoTriggerInventoryBelow25 = new TechnoStatement();
-	public static TechnoStatement technoTriggerFluidContainerBelow25 = new TechnoStatement();
-	public static TechnoStatement technoActionRedstone = new TechnoStatement();
-	public static TechnoStatement technoActionOn = new TechnoStatement();
-
 	private static FloatBuffer modelviewF;
 	private static FloatBuffer projectionF;
 	private static IntBuffer viewport;
@@ -331,28 +302,23 @@ public class BuildCraftCore extends BuildCraftMod {
 			consumeWaterSources = consumeWater.getBoolean(consumeWaterSources);
 			consumeWater.comment = "set to true if the Pump should consume water";
 
-			if (!NONRELEASED_BLOCKS) {
-				scienceBookItem = (new ItemScienceBook()).setUnlocalizedName("scienceBook");
-				CoreProxy.proxy.registerItem(scienceBookItem);
-			}
-
-			woodenGearItem = (new ItemGear(10 * 20)).setUnlocalizedName("woodenGearItem");
+			woodenGearItem = (new ItemGear()).setUnlocalizedName("woodenGearItem");
 			CoreProxy.proxy.registerItem(woodenGearItem);
 			OreDictionary.registerOre("gearWood", new ItemStack(woodenGearItem));
 
-			stoneGearItem = (new ItemGear(20 * 20)).setUnlocalizedName("stoneGearItem");
+			stoneGearItem = (new ItemGear()).setUnlocalizedName("stoneGearItem");
 			CoreProxy.proxy.registerItem(stoneGearItem);
 			OreDictionary.registerOre("gearStone", new ItemStack(stoneGearItem));
 
-			ironGearItem = (new ItemGear(40 * 20)).setUnlocalizedName("ironGearItem");
+			ironGearItem = (new ItemGear()).setUnlocalizedName("ironGearItem");
 			CoreProxy.proxy.registerItem(ironGearItem);
 			OreDictionary.registerOre("gearIron", new ItemStack(ironGearItem));
 
-			goldGearItem = (new ItemGear(80 * 20)).setUnlocalizedName("goldGearItem");
+			goldGearItem = (new ItemGear()).setUnlocalizedName("goldGearItem");
 			CoreProxy.proxy.registerItem(goldGearItem);
 			OreDictionary.registerOre("gearGold", new ItemStack(goldGearItem));
 
-			diamondGearItem = (new ItemGear(160 * 20)).setUnlocalizedName("diamondGearItem");
+			diamondGearItem = (new ItemGear()).setUnlocalizedName("diamondGearItem");
 			CoreProxy.proxy.registerItem(diamondGearItem);
 			OreDictionary.registerOre("gearDiamond", new ItemStack(diamondGearItem));
 
@@ -377,7 +343,7 @@ public class BuildCraftCore extends BuildCraftMod {
 
 		StatementManager.registerParameterClass("buildcraft:stackTrigger", TriggerParameterItemStack.class);
 		StatementManager.registerParameterClass("buildcraft:stackAction", ActionParameterItemStack.class);
-		StatementManager.registerParameterClass("buildcraft:pipeActionDirection", ActionParameterDirection.class);
+		StatementManager.registerParameterClass("buildcraft:pipeActionDirection", StatementParameterDirection.class);
 		StatementManager.registerTriggerProvider(new DefaultTriggerProvider());
 		StatementManager.registerActionProvider(new DefaultActionProvider());
 
@@ -452,10 +418,6 @@ public class BuildCraftCore extends BuildCraftMod {
 			iconProvider.registerIcons(event.map);
 			StatementIconProvider.INSTANCE.registerIcons(event.map);
 			EnumColor.registerIcons(event.map);
-
-			for (Technology t : Technology.technologies.values()) {
-				t.registerIcons(event.map);
-			}
 		} else if (event.map.getTextureType() == 0) {
 			BuildCraftCore.redLaserTexture = event.map.registerIcon("buildcraft:blockRedLaser");
 			BuildCraftCore.blueLaserTexture = event.map.registerIcon("buildcraft:blockBlueLaser");
@@ -465,145 +427,6 @@ public class BuildCraftCore extends BuildCraftMod {
 
 	}
 
-	@Mod.EventHandler
-	public void loadTechnology(FMLPostInitializationEvent evt) {
-		Tier.initializeTechnologies();
-
-		// Technology Clusters
-
-		technoTransport.initialize(
-				Tier.WoodenGear,
-				"buildcraft:unknown",
-				"technology.field.Transport",
-				new ItemStack(woodenGearItem, 15));
-
-		technoEnergy.initialize(
-				Tier.WoodenGear,
-				"buildcraft:unknown",
-				"technology.field.Energy",
-				new ItemStack(woodenGearItem, 15));
-
-		technoLiquid.initialize(
-				Tier.WoodenGear,
-				"buildcraft:unknown",
-				"technology.field.Liquid",
-				new ItemStack(woodenGearItem, 15));
-
-		technoCrafting.initialize(
-				Tier.WoodenGear,
-				"buildcraft:unknown",
-				"technology.field.Crafting",
-				new ItemStack(woodenGearItem, 15));
-
-		technoMining.initialize(
-				Tier.IronGear,
-				"buildcraft:unknown",
-				"technology.field.Mining",
-				new ItemStack(woodenGearItem, 15));
-
-		technoBuilding.initialize(
-				Tier.GoldenGear,
-				"buildcraft:unknown",
-				"technology.field.Building",
-				new ItemStack(woodenGearItem, 15));
-
-		technoSilicon.initialize(
-				Tier.RedstoneCrystalGear,
-				"buildcraft:unknown",
-				"technology.field.Silicon",
-				new ItemStack(woodenGearItem, 15));
-
-		technoRobotics.initialize(
-				Tier.DiamondChipset,
-				"buildcraft:unknown",
-				"technology.field.Robotics",
-				new ItemStack(woodenGearItem, 15));
-
-		technoCommander.initialize(
-				Tier.RedstoneCrystalChipset,
-				"buildcraft:unknown",
-				"technology.field.Commander",
-				new ItemStack(woodenGearItem, 15));
-
-		// Items
-
-		technoWrenchItem.initialize(
-				Tier.StoneGear,
-				wrenchItem,
-				new ItemStack(stoneGearItem, 10));
-
-		technoMapLocation.initialize(
-				Tier.DiamondChipset,
-				mapLocationItem,
-				new ItemStack(stoneGearItem, 10),
-				technoRobotics);
-
-		// Statements
-
-		technoTriggerMachineActive.initialize(
-				Tier.Chipset,
-				triggerMachineActive,
-				"",
-				Chipset.RED.getStack(5),
-				technoSilicon);
-
-		technoTriggerEnergyHigh.initialize(
-				Tier.Chipset,
-				triggerEnergyHigh,
-				"",
-				Chipset.RED.getStack(5),
-				technoSilicon);
-
-		technoTriggerContainsInventory.initialize(
-				Tier.Chipset,
-				triggerContainsInventory,
-				"",
-				Chipset.RED.getStack(5),
-				technoSilicon);
-
-		technoTriggerContainsFluid.initialize(
-				Tier.Chipset,
-				triggerContainsFluid,
-				"",
-				Chipset.RED.getStack(5),
-				technoSilicon);
-
-		technoTriggerRedstoneActive.initialize(
-				Tier.Chipset,
-				triggerRedstoneActive,
-				"",
-				Chipset.RED.getStack(5),
-				technoSilicon);
-
-		technoTriggerInventoryBelow25.initialize(
-				Tier.Chipset,
-				triggerInventoryBelow25,
-				"",
-				Chipset.RED.getStack(5),
-				technoSilicon);
-
-		technoTriggerFluidContainerBelow25.initialize(
-				Tier.Chipset,
-				triggerFluidContainerBelow25,
-				"",
-				Chipset.RED.getStack(5),
-				technoSilicon);
-
-		technoActionRedstone.initialize(
-				Tier.Chipset,
-				actionRedstone,
-				"",
-				Chipset.RED.getStack(5),
-				technoSilicon);
-
-		technoActionOn.initialize(
-				Tier.Chipset,
-				actionOn,
-				"",
-				Chipset.RED.getStack(5),
-				technoSilicon);
-	}
-
 	public void loadRecipes() {
 		if (!NONRELEASED_BLOCKS) {
 			CoreProxy.proxy.addCraftingRecipe(new ItemStack(scienceBookItem), "R ", "B ", 'R', Blocks.redstone_torch, 'B',
@@ -611,20 +434,20 @@ public class BuildCraftCore extends BuildCraftMod {
 		}
 
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(wrenchItem), "I I", " G ", " I ", 'I', Items.iron_ingot, 'G', stoneGearItem);
-		CoreProxy.proxy.addCraftingRecipe(Tier.WoodenGear.getTechnology(), new ItemStack(woodenGearItem), " S ", "S S",
+		CoreProxy.proxy.addCraftingRecipe(new ItemStack(woodenGearItem), " S ", "S S",
 				" S ", 'S',
 				"stickWood");
-		CoreProxy.proxy.addCraftingRecipe(Tier.StoneGear.getTechnology(), new ItemStack(stoneGearItem), " I ", "IGI",
+		CoreProxy.proxy.addCraftingRecipe(new ItemStack(stoneGearItem), " I ", "IGI",
 				" I ", 'I',
 				"cobblestone", 'G',
 				woodenGearItem);
-		CoreProxy.proxy.addCraftingRecipe(Tier.IronGear.getTechnology(), new ItemStack(ironGearItem), " I ", "IGI",
+		CoreProxy.proxy.addCraftingRecipe(new ItemStack(ironGearItem), " I ", "IGI",
 				" I ", 'I',
 				Items.iron_ingot, 'G', stoneGearItem);
-		CoreProxy.proxy.addCraftingRecipe(Tier.GoldenGear.getTechnology(), new ItemStack(goldGearItem), " I ", "IGI",
+		CoreProxy.proxy.addCraftingRecipe(new ItemStack(goldGearItem), " I ", "IGI",
 				" I ", 'I',
 				Items.gold_ingot, 'G', ironGearItem);
-		CoreProxy.proxy.addCraftingRecipe(Tier.DiamondGear.getTechnology(),
+		CoreProxy.proxy.addCraftingRecipe(
 				new ItemStack(diamondGearItem), " I ", "IGI", " I ", 'I', Items.diamond, 'G', goldGearItem);
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(mapLocationItem), "ppp", "pYp", "ppp", 'p', Items.paper, 'Y', new ItemStack(Items.dye, 1, 11));
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(listItem), "ppp", "pYp", "ppp", 'p', Items.paper, 'Y',

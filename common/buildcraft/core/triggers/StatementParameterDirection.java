@@ -17,16 +17,17 @@ import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.api.core.NetworkData;
 import buildcraft.api.gates.IActionParameter;
 import buildcraft.api.gates.IStatement;
+import buildcraft.api.gates.ITriggerParameter;
 import buildcraft.api.transport.IPipeTile;
 
-public class ActionParameterDirection implements IActionParameter {
+public class StatementParameterDirection implements IActionParameter, ITriggerParameter {
 
     //        static IIcon[] icons = new IIcon[ForgeDirection.values().length];
 
     	@NetworkData
 	public ForgeDirection direction = ForgeDirection.UNKNOWN;
 
-	public ActionParameterDirection() {
+	public StatementParameterDirection() {
 	}
 
     /*
@@ -81,8 +82,8 @@ public class ActionParameterDirection implements IActionParameter {
 
 	@Override
 	public boolean equals(Object object) {
-	    if (object instanceof ActionParameterDirection) {
-		ActionParameterDirection param = (ActionParameterDirection) object;
+	    if (object instanceof StatementParameterDirection) {
+		StatementParameterDirection param = (StatementParameterDirection) object;
 		return param.direction == this.direction;
 	    }
 	    return false;

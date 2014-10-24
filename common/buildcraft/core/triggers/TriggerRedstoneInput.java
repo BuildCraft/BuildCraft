@@ -29,10 +29,10 @@ public class TriggerRedstoneInput extends BCTrigger {
 
 	@Override
 	public boolean isTriggerActive(IGate gate, ITriggerParameter[] parameters) {
-		return !(active ^ isBeingPowered((Pipe<?>) gate.getPipe()));
+		return !(active ^ isBeingPowered(parameters, (Pipe<?>) gate.getPipe()));
 	}
 
-	private boolean isBeingPowered(Pipe<?> pipe) {
+	private boolean isBeingPowered(ITriggerParameter[] parameters, Pipe<?> pipe) {
 		return pipe.container.redstoneInput > 0;
 	}
 
