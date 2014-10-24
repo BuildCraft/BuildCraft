@@ -298,10 +298,10 @@ public final class Gate implements IGate {
 		int oldRedstoneOutput = redstoneOutput;
 		redstoneOutput = 0;
 
-		for (ForgeDirection ioSide : ForgeDirection.VALID_DIRECTIONS) {
+		/* for (ForgeDirection ioSide : ForgeDirection.VALID_DIRECTIONS) {
 			pipe.transport.allowInput(ioSide, true);
 			pipe.transport.allowOutput(ioSide, true);
-		}
+		} */
 		
 		boolean wasActive = activeActions.size() > 0;
 
