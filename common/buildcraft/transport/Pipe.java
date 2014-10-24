@@ -406,6 +406,16 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 		}
 		return false;
 	}
+	
+	private int getMaxRedstoneOutput() {
+		int output = 0;
+		
+		for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
+			output = Math.max(output, getRedstoneOutput(dir));
+		}
+		
+		return output;
+	}
 
 	private int getRedstoneOutput(ForgeDirection dir) {
 		Gate gate = gates[dir.ordinal()];
@@ -420,6 +430,8 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 
 		if (tile instanceof TileGenericPipe && container.isPipeConnected(o)) {
 			return 0;
+		} else if (tile != null && container.isPipeConnected(o)) {
+			return getMaxRedstoneOutput();
 		} else {
 			return getRedstoneOutput(o);
 		}
