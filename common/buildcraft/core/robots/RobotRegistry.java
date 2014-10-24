@@ -29,7 +29,7 @@ import buildcraft.api.robots.ResourceId;
 
 public class RobotRegistry extends WorldSavedData implements IRobotRegistry {
 
-	public static RobotRegistry[] registries = new RobotRegistry[256];
+	public static HashMap<Integer, RobotRegistry> registries = new HashMap<Integer, RobotRegistry>();
 
 	protected World world;
 
@@ -270,8 +270,8 @@ public class RobotRegistry extends WorldSavedData implements IRobotRegistry {
 	}
 
 	public static synchronized RobotRegistry getRegistry(World world) {
-		if (registries[world.provider.dimensionId] == null
-				|| registries[world.provider.dimensionId].world != world) {
+		if (!registries.containsKey(world.provider.dimensionId)
+				|| registries.get(world.provider.dimensionId).world != world) {
 
 			RobotRegistry newRegistry = (RobotRegistry) world.perWorldStorage.loadData(RobotRegistry.class, "robotRegistry");
 
@@ -286,10 +286,12 @@ public class RobotRegistry extends WorldSavedData implements IRobotRegistry {
 				((DockingStation) d).world = world;
 			}
 
-			registries[world.provider.dimensionId] = newRegistry;
+			registries.put(world.provider.dimensionId, newRegistry);
+			
+			return newRegistry;
 		}
 
-		return registries[world.provider.dimensionId];
+		return registries.get(world.provider.dimensionId);
 	}
 
 	@Override
