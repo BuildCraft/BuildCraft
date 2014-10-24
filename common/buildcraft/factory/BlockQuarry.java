@@ -132,12 +132,6 @@ public class BlockQuarry extends BlockBuildCraft {
 		}
 	}
 
-	private void markFrameForDecay(World world, int x, int y, int z) {
-		if (world.getBlock(x, y, z) == BuildCraftFactory.frameBlock) {
-			world.setBlockMetadataWithNotify(x, y, z, 1, 0);
-		}
-	}
-
 	@Override
 	public ArrayList<ItemStack> getDrops(World world, int x, int y, int z, int metadata, int fortune) {
 		if (BuildCraftFactory.quarryOneTimeUse) {
@@ -147,45 +141,14 @@ public class BlockQuarry extends BlockBuildCraft {
 	}
 
 	@Override
-	public void breakBlock(World world, int i, int j, int k, Block block, int par6) {
+	public void breakBlock(World world, int i, int j, int k, Block block, int metadata) {
 		if (world.isRemote) {
 			return;
 		}
 
-		TileEntity tile = world.getTileEntity(i, j, k);
-		if (tile instanceof TileQuarry) {
-			TileQuarry quarry = (TileQuarry) tile;
-			Box box = quarry.box;
-			if (box.isInitialized() && Integer.MAX_VALUE != box.xMax) {
-				// X - Axis
-				for (int x = box.xMin; x <= box.xMax; x++) {
-					markFrameForDecay(world, x, box.yMin, box.zMin);
-					markFrameForDecay(world, x, box.yMax, box.zMin);
-					markFrameForDecay(world, x, box.yMin, box.zMax);
-					markFrameForDecay(world, x, box.yMax, box.zMax);
-				}
+		BuildCraftFactory.frameBlock.breakBlock(world, i, j, k, block, metadata);
 
-				// Z - Axis
-				for (int z = box.zMin + 1; z <= box.zMax - 1; z++) {
-					markFrameForDecay(world, box.xMin, box.yMin, z);
-					markFrameForDecay(world, box.xMax, box.yMin, z);
-					markFrameForDecay(world, box.xMin, box.yMax, z);
-					markFrameForDecay(world, box.xMax, box.yMax, z);
-				}
-
-				// Y - Axis
-				for (int y = box.yMin + 1; y <= box.yMax - 1; y++) {
-
-					markFrameForDecay(world, box.xMin, y, box.zMin);
-					markFrameForDecay(world, box.xMax, y, box.zMin);
-					markFrameForDecay(world, box.xMin, y, box.zMax);
-					markFrameForDecay(world, box.xMax, y, box.zMax);
-				}
-			}
-			quarry.destroy();
-		}
-
-		super.breakBlock(world, i, j, k, block, par6);
+		super.breakBlock(world, i, j, k, block, metadata);
 	}
 
 	@Override

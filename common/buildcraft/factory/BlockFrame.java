@@ -8,6 +8,7 @@
  */
 package buildcraft.factory;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -23,11 +24,11 @@ import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-
+import net.minecraftforge.common.util.ForgeDirection;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-
 import buildcraft.BuildCraftCore;
+import buildcraft.BuildCraftFactory;
 import buildcraft.core.CoreConstants;
 import buildcraft.core.IFramePipeConnection;
 import buildcraft.core.utils.Utils;
@@ -39,6 +40,19 @@ public class BlockFrame extends Block implements IFramePipeConnection {
 		setHardness(0.5F);
 	}
 
+	@Override
+	public void breakBlock(World world, int x, int y, int z, Block block, int meta) {
+		if (world.isRemote) {
+			return;
+		}
+		
+		for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
+			Block nBlock = world.getBlock(x + dir.offsetX, y + dir.offsetY, z + dir.offsetZ);
+			if (nBlock == this) {
+				world.setBlockToAir(x + dir.offsetX, y + dir.offsetY, z + dir.offsetZ);
+			}
+		}
+	}
 	@Override
 	public boolean isOpaqueCube() {
 		return false;
@@ -54,6 +68,11 @@ public class BlockFrame extends Block implements IFramePipeConnection {
 		return null;
 	}
 
+	@Override
+	public ArrayList<ItemStack> getDrops(World world, int x, int y, int z, int metadata, int fortune) {
+		return new ArrayList<ItemStack>();
+	}
+	
 	@Override
 	public int getRenderType() {
 		return BuildCraftCore.legacyPipeModel;
