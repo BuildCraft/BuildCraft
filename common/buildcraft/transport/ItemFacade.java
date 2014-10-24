@@ -178,6 +178,8 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem {
 		int meta = state.metadata;
 		if (state.block.getRenderType() == 31) {
 			meta &= 0x3;
+		} else if (state.block.getRenderType() == 39 && meta > 2) {
+			meta = 2;
 		}
 		return CoreProxy.proxy.getItemDisplayName(new ItemStack(state.block, 1, meta));
 	}
@@ -250,7 +252,7 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem {
 									+ stack.getItemDamage() + "}", stack);
 
 					// prevent adding multiple facades if it's a rotatable block
-					if (block.getRenderType() == 31) {
+					if (block.getRenderType() == 31 || (block.getRenderType() == 39 && i == 2)) {
 						break;
 					}
 				}
@@ -286,7 +288,7 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem {
 
 	private static boolean isBlockValidForFacade(Block block) {
 		try {
-			if (block.getRenderType() != 0 && block.getRenderType() != 31) {
+			if (block.getRenderType() != 0 && block.getRenderType() != 31 && block.getRenderType() != 39) {
 				return false;
 			}
 
@@ -479,17 +481,17 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem {
 		public boolean matches(InventoryCrafting inventorycrafting, World world) {
 			Object[] facade = getFacadeBlockFromCraftingGrid(inventorycrafting);
 
-			return facade != null && facade[0] != null;
+			return facade != null && facade[0] != null && ((Block[]) facade[0]).length == 1;
 		}
 
 		@Override
 		public ItemStack getCraftingResult(InventoryCrafting inventorycrafting) {
 			Object[] facade = getFacadeBlockFromCraftingGrid(inventorycrafting);
-			if (facade == null) {
+			if (facade == null || ((Block[]) facade[0]).length != 1) {
 				return null;
 			}
 
-			Block block = (Block) facade[0];
+			Block block = ((Block[]) facade[0])[0];
 			ItemStack originalFacade = (ItemStack) facade[1];
 
 			if (block == null) {
@@ -526,16 +528,12 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem {
 
 		private ItemStack getNextFacadeItemStack(Block block, ItemStack originalFacade) {
 			int blockMeta = getMetaValuesForFacade(originalFacade)[0];
-			int stackMeta = 0;
+			int stackMeta = blockMeta;
 
 			switch (block.getRenderType()) {
-				case 1:
-					//supports cycling through variants (wool, planks, etc)
-					if (blockMeta >= 15) {
-						stackMeta = 0;
-					} else {
-						stackMeta = blockMeta + 1;
-					}
+				case 0:
+					// supports cycling through variants (wool, planks, etc)
+					stackMeta = (blockMeta + 1) & 15;
 					break;
 				case 31:
 					if ((blockMeta & 0xC) == 0) {
@@ -548,8 +546,13 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem {
 						stackMeta = blockMeta & 0x3;
 					}
 					break;
-				default:
-					stackMeta = blockMeta;
+				case 39:
+					if (blockMeta >= 2 && blockMeta < 4) {
+						stackMeta = blockMeta + 1;
+					} else if (blockMeta == 4) {
+						stackMeta = 2;
+					}
+					break;
 			}
 
 			return getFacadeForBlock(block, stackMeta);
