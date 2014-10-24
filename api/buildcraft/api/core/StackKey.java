@@ -8,8 +8,6 @@
  */
 package buildcraft.api.core;
 
-import java.util.Objects;
-
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -84,14 +82,14 @@ public final class StackKey {
 		if (stack != null) {
 			if (stack.getItem() != k.stack.getItem() ||
 					stack.getHasSubtypes() && stack.getItemDamage() != k.stack.getItemDamage() ||
-					!Objects.equals(stack.getTagCompound(), k.stack.getTagCompound())) {
+					!stack.getTagCompound().equals(k.stack.getTagCompound())) {
 				return false;
 			}
 		}
 		if (fluidStack != null) {
 			if (fluidStack.fluidID != k.fluidStack.fluidID ||
 					fluidStack.amount != k.fluidStack.amount ||
-					!Objects.equals(fluidStack.tag, k.fluidStack.tag)) {
+					!fluidStack.tag.equals(k.fluidStack.tag)) {
 				return false;
 			}
 		}
@@ -104,13 +102,13 @@ public final class StackKey {
 		if (stack != null) {
 			result = 31 * result + stack.getItem().hashCode();
 			result = 31 * result + stack.getItemDamage();
-			result = 31 * result + Objects.hashCode(stack.getTagCompound());
+			result = 31 * result + stack.getTagCompound().hashCode();
 		}
 		result = 31 * result + 7;
 		if (fluidStack != null) {
 			result = 31 * result + fluidStack.fluidID;
 			result = 31 * result + fluidStack.amount;
-			result = 31 * result + Objects.hashCode(fluidStack.tag);
+			result = 31 * result + fluidStack.tag.hashCode();
 		}
 		return result;
 	}
