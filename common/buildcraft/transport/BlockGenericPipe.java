@@ -679,15 +679,12 @@ public class BlockGenericPipe extends BlockBuildCraft {
 		if (isValid(pipe)) {
 			pipe.container.scheduleNeighborChange();
 
-			pipe.container.redstoneInput = world.getBlockPowerInput(x, y, z);
-			if (pipe.container.redstoneInput == 0) {
-				pipe.container.redstoneInput = world.isBlockIndirectlyGettingPowered(x, y, z) ? 15 : 0;
-			}
-
 			for (int i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
 				ForgeDirection d = ForgeDirection.getOrientation(i);
-				pipe.container.redstoneInputSide[i] = world.isBlockProvidingPowerTo(x + d.offsetX, y + d.offsetY, z
-						+ d.offsetZ, i);
+				pipe.container.redstoneInputSide[i] = Math.max(
+						world.isBlockProvidingPowerTo(x + d.offsetX, y + d.offsetY, z + d.offsetZ, i),
+						world.getIndirectPowerLevelTo(x + d.offsetX, y + d.offsetY, z + d.offsetZ, i)
+					);
 			}
 		}
 	}

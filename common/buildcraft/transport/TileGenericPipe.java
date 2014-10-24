@@ -71,7 +71,6 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 	public boolean[] pipeConnectionsBuffer = new boolean[6];
 
 	public Pipe pipe;
-	public int redstoneInput;
 	public int[] redstoneInputSide = new int[ForgeDirection.VALID_DIRECTIONS.length];
 
 	protected boolean deletePipe = false;
@@ -266,8 +265,6 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 			nbt.setInteger(key, redstoneInputSide[i]);
 		}
 
-		nbt.setInteger("redstoneInput", redstoneInput);
-
 		if (pipe != null) {
 			nbt.setInteger("pipeId", Item.itemRegistry.getIDForObject(pipe.item));
 			pipe.writeToNBT(nbt);
@@ -281,8 +278,6 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 	@Override
 	public void readFromNBT(NBTTagCompound nbt) {
 		super.readFromNBT(nbt);
-
-		redstoneInput = nbt.getInteger("redstoneInput");
 
 		for (int i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
 			final String key = "redstoneInputSide[" + i + "]";

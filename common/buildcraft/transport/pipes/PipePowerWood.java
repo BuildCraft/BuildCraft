@@ -132,8 +132,6 @@ public class PipePowerWood extends Pipe<PipeTransportPower> implements IPowerRec
 					continue;
 				}
 
-				System.out.println("Sent " + energyToRemove + " energy to " + o.name());
-
 				battery.setEnergy(battery.getEnergyStored() - transport.receiveEnergy(o, energyToRemove));
 			}
 		}
@@ -188,7 +186,6 @@ public class PipePowerWood extends Pipe<PipeTransportPower> implements IPowerRec
 	@Override
 	public int requestEnergy(ForgeDirection from, int amount) {
 		if (container.getTile(from) instanceof IPipeTile) {
-			System.out.println("Requested " + amount + " energy from " + from.name());
 			requestedEnergy += amount;
 			return amount;
 		} else {
