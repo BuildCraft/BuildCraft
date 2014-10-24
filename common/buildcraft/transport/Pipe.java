@@ -407,18 +407,10 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 		return false;
 	}
 
-	private int getMaxRedstoneOutput() {
-		int max = 0;
+	private int getRedstoneOutput(ForgeDirection dir) {
+		Gate gate = gates[dir.ordinal()];
 
-		for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
-			Gate gate = gates[dir.ordinal()];
-
-			if (gate != null && gate.getRedstoneOutput() > max) {
-				max = gate.getRedstoneOutput();
-			}
-		}
-
-		return max;
+		return gate != null ? gate.getRedstoneOutput() : 0;
 	}
 
 	public int isPoweringTo(int side) {
@@ -429,7 +421,7 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 		if (tile instanceof TileGenericPipe && container.isPipeConnected(o)) {
 			return 0;
 		} else {
-			return getMaxRedstoneOutput();
+			return getRedstoneOutput(o);
 		}
 	}
 
