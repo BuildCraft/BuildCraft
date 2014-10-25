@@ -35,8 +35,10 @@ public class TriggerRedstoneFaderInput extends BCTrigger {
 	@Override
 	public boolean isTriggerActive(IGate gate, ITriggerParameter[] parameter) {
 		TileGenericPipe tile = (TileGenericPipe) gate.getPipe().getTile();
-
-		return tile.redstoneInputSide[gate.getSide().ordinal()] == level;
+		// int inputLevel = tile.redstoneInputSide[gate.getSide().ordinal()];
+		int inputLevel = tile.redstoneInput;
+		
+		return inputLevel == level;
 	}
 
 	@Override
