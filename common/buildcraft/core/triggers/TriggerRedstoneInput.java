@@ -30,7 +30,8 @@ public class TriggerRedstoneInput extends BCTrigger {
 	@Override
 	public boolean isTriggerActive(IGate gate, ITriggerParameter[] parameters) {
 		TileGenericPipe tile = (TileGenericPipe) gate.getPipe().getTile();
-		int level = tile.redstoneInputSide[gate.getSide().ordinal()];
+		//int level = tile.redstoneInputSide[gate.getSide().ordinal()];
+		int level = tile.redstoneInput;
 		
 		return active ? level > 0 : level == 0;
 	}
