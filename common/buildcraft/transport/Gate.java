@@ -133,6 +133,36 @@ public final class Gate implements IGate {
 			expansions.put(expansion, expansion.makeController(pipe.container));
 		}
 	}
+	
+	public void writeStatementsToNBT(NBTTagCompound data) {
+		for (int i = 0; i < material.numSlots; ++i) {
+			if (triggers[i] != null) {
+				data.setString("trigger[" + i + "]", triggers[i].getUniqueTag());
+			}
+
+			if (actions[i] != null) {
+				data.setString("action[" + i + "]", actions[i].getUniqueTag());
+			}
+
+			for (int j = 0; j < material.numTriggerParameters; ++j) {
+				if (triggerParameters[i][j] != null) {
+					NBTTagCompound cpt = new NBTTagCompound();
+					cpt.setString("kind", StatementManager.getParameterKind(triggerParameters[i][j]));
+					triggerParameters[i][j].writeToNBT(cpt);
+					data.setTag("triggerParameters[" + i + "][" + j + "]", cpt);
+				}
+			}
+
+			for (int j = 0; j < material.numActionParameters; ++j) {
+				if (actionParameters[i][j] != null) {
+					NBTTagCompound cpt = new NBTTagCompound();
+					cpt.setString("kind", StatementManager.getParameterKind(actionParameters[i][j]));
+					actionParameters[i][j].writeToNBT(cpt);
+					data.setTag("actionParameters[" + i + "][" + j + "]", cpt);
+				}
+			}
+		}
+	}
 
 	// / SAVING & LOADING
 	public void writeToNBT(NBTTagCompound data) {
@@ -150,33 +180,7 @@ public final class Gate implements IGate {
 		}
 		data.setTag("expansions", exList);
 
-		for (int i = 0; i < MAX_STATEMENTS; ++i) {
-			if (triggers[i] != null) {
-				data.setString("trigger[" + i + "]", triggers[i].getUniqueTag());
-			}
-
-			if (actions[i] != null) {
-				data.setString("action[" + i + "]", actions[i].getUniqueTag());
-			}
-
-			for (int j = 0; j < MAX_PARAMETERS; ++j) {
-				if (triggerParameters[i][j] != null) {
-					NBTTagCompound cpt = new NBTTagCompound();
-					cpt.setString("kind", StatementManager.getParameterKind(triggerParameters[i][j]));
-					triggerParameters[i][j].writeToNBT(cpt);
-					data.setTag("triggerParameters[" + i + "][" + j + "]", cpt);
-				}
-			}
-
-			for (int j = 0; j < MAX_PARAMETERS; ++j) {
-				if (actionParameters[i][j] != null) {
-					NBTTagCompound cpt = new NBTTagCompound();
-					cpt.setString("kind", StatementManager.getParameterKind(actionParameters[i][j]));
-					actionParameters[i][j].writeToNBT(cpt);
-					data.setTag("actionParameters[" + i + "][" + j + "]", cpt);
-				}
-			}
-		}
+		writeStatementsToNBT(data);
 
 		for (PipeWire wire : PipeWire.VALUES) {
 			data.setBoolean("wireState[" + wire.ordinal() + "]", broadcastSignal.get(wire.ordinal()));
@@ -185,8 +189,8 @@ public final class Gate implements IGate {
 		data.setByte("redstoneOutput", (byte) redstoneOutput);
 	}
 
-	public void readFromNBT(NBTTagCompound data) {
-		for (int i = 0; i < MAX_STATEMENTS; ++i) {
+	public void readStatementsFromNBT(NBTTagCompound data) {
+		for (int i = 0; i < material.numSlots; ++i) {
 			if (data.hasKey("trigger[" + i + "]")) {
 				triggers[i] = (ITrigger) StatementManager.statements.get(data.getString("trigger[" + i + "]"));
 			}
@@ -201,7 +205,7 @@ public final class Gate implements IGate {
 				triggerParameters[i][0].readFromNBT(data.getCompoundTag("triggerParameters[" + i + "]"));
 			}
 
-			for (int j = 0; j < MAX_PARAMETERS; ++j) {
+			for (int j = 0; j < material.numTriggerParameters; ++j) {
 				if (data.hasKey("triggerParameters[" + i + "][" + j + "]")) {
 					NBTTagCompound cpt = data.getCompoundTag("triggerParameters[" + i + "][" + j + "]");
 					triggerParameters[i][j] = (ITriggerParameter) StatementManager.createParameter(cpt.getString("kind"));
@@ -209,7 +213,7 @@ public final class Gate implements IGate {
 				}
 			}
 
-			for (int j = 0; j < MAX_PARAMETERS; ++j) {
+			for (int j = 0; j < material.numActionParameters; ++j) {
 				if (data.hasKey("actionParameters[" + i + "][" + j + "]")) {
 					NBTTagCompound cpt = data.getCompoundTag("actionParameters[" + i + "][" + j + "]");
 					actionParameters[i][j] = (IActionParameter) StatementManager.createParameter(cpt.getString("kind"));
@@ -217,6 +221,10 @@ public final class Gate implements IGate {
 				}
 			}
 		}
+	}
+	
+	public void readFromNBT(NBTTagCompound data) {
+		readStatementsFromNBT(data);
 
 		for (PipeWire wire : PipeWire.VALUES) {
 			broadcastSignal.set(wire.ordinal(), data.getBoolean("wireState[" + wire.ordinal() + "]"));

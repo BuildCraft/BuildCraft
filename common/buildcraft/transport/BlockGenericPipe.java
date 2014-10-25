@@ -734,6 +734,8 @@ public class BlockGenericPipe extends BlockBuildCraft {
 				return false;
 			} else if (currentItem.getItem() instanceof ItemPipe) {
 				return false;
+			} else if (currentItem.getItem() instanceof ItemGateCopier) {
+				return false;
 			} else if (currentItem.getItem() instanceof IToolWrench) {
 				// Only check the instance at this point. Call the IToolWrench
 				// interface callbacks for the individual pipe/logic calls

@@ -19,7 +19,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
-
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
@@ -29,13 +28,11 @@ import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
-
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.RecipeSorter;
-
 import buildcraft.api.blueprints.SchematicRegistry;
 import buildcraft.api.core.EnumColor;
 import buildcraft.api.core.IIconProvider;
@@ -61,6 +58,7 @@ import buildcraft.transport.BlockFilteredBuffer;
 import buildcraft.transport.BlockGenericPipe;
 import buildcraft.transport.GuiHandler;
 import buildcraft.transport.ItemFacade;
+import buildcraft.transport.ItemGateCopier;
 import buildcraft.transport.ItemPipe;
 import buildcraft.transport.ItemPipeWire;
 import buildcraft.transport.ItemPlug;
@@ -161,6 +159,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 	public static Item plugItem;
 	public static Item robotStationItem;
 	public static Item pipeStructureCobblestone;
+	public static Item gateCopier;
 	public static ItemFacade facadeItem;
 
 	public static Item pipeItemsWood;
@@ -420,11 +419,13 @@ public class BuildCraftTransport extends BuildCraftMod {
 			plugItem.setUnlocalizedName("pipePlug");
 			CoreProxy.proxy.registerItem(plugItem);
 
-
 			robotStationItem = new ItemRobotStation();
 			robotStationItem.setUnlocalizedName("robotStation");
 			CoreProxy.proxy.registerItem(robotStationItem);
 
+			gateCopier = new ItemGateCopier();
+			CoreProxy.proxy.registerItem(gateCopier);
+			
 			for (PipeContents kind : PipeContents.values()) {
 				triggerPipe[kind.ordinal()] = new TriggerPipeContents(kind);
 			}
