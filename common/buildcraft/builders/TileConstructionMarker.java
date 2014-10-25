@@ -118,7 +118,7 @@ public class TileConstructionMarker extends TileBuildCraft implements IBuildingI
 	public void writeToNBT(NBTTagCompound nbt) {
 		super.writeToNBT(nbt);
 
-		nbt.setInteger("direction", direction.ordinal());
+		nbt.setByte("direction", (byte) direction.ordinal());
 
 		if (itemBlueprint != null) {
 			NBTTagCompound bptNBT = new NBTTagCompound();
@@ -141,7 +141,7 @@ public class TileConstructionMarker extends TileBuildCraft implements IBuildingI
 	public void readFromNBT(NBTTagCompound nbt) {
 		super.readFromNBT(nbt);
 
-		direction = ForgeDirection.values()[nbt.getInteger("direction")];
+		direction = ForgeDirection.getOrientation(nbt.getByte("direction"));
 
 		if (nbt.hasKey("itemBlueprint")) {
 			itemBlueprint = ItemStack.loadItemStackFromNBT(nbt.getCompoundTag("itemBlueprint"));

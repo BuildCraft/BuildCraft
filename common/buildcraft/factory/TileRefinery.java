@@ -53,7 +53,7 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IInve
 	public SingleUseTank result = new SingleUseTank("result", LIQUID_PER_SLOT, this);
 	public TankManager<SingleUseTank> tankManager = new TankManager<SingleUseTank>(tanks[0], tanks[1], result);
 	public float animationSpeed = 1;
-	private int animationStage = 0;
+	private short animationStage = 0;
 	private SafeTimeTracker time = new SafeTimeTracker();
 
 	private SafeTimeTracker updateNetworkTime = new SafeTimeTracker(BuildCraftCore.updateFactor);
@@ -198,7 +198,7 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IInve
 
 		tankManager.readFromNBT(data);
 
-		animationStage = data.getInteger("animationStage");
+		animationStage = data.getShort("animationStage");
 		animationSpeed = data.getFloat("animationSpeed");
 
 		updateRecipe();
@@ -210,7 +210,7 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IInve
 
 		tankManager.writeToNBT(data);
 
-		data.setInteger("animationStage", animationStage);
+		data.setShort("animationStage", animationStage);
 		data.setFloat("animationSpeed", animationSpeed);
 	}
 

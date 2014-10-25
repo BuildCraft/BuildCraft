@@ -62,8 +62,8 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem {
 
 		public FacadeState(NBTTagCompound nbt) {
 			this.block = nbt.hasKey("block") ? (Block) Block.blockRegistry.getObject(nbt.getString("block")) : null;
-			this.metadata = nbt.getInteger("metadata");
-			this.wire = nbt.hasKey("wire") ? PipeWire.fromOrdinal(nbt.getInteger("wire")) : null;
+			this.metadata = nbt.getByte("metadata");
+			this.wire = nbt.hasKey("wire") ? PipeWire.fromOrdinal(nbt.getByte("wire")) : null;
 			this.transparent = nbt.hasKey("transparent") && nbt.getBoolean("transparent");
 		}
 
@@ -90,9 +90,9 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem {
 			if (block != null) {
 				nbt.setString("block", Block.blockRegistry.getNameForObject(block));
 			}
-			nbt.setInteger("metadata", metadata);
+			nbt.setByte("metadata", (byte) metadata);
 			if (wire != null) {
-				nbt.setInteger("wire", wire.ordinal());
+				nbt.setByte("wire", (byte) wire.ordinal());
 			}
 			nbt.setBoolean("transparent", transparent);
 		}
@@ -599,7 +599,7 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem {
 		ItemStack stack = new ItemStack(BuildCraftTransport.facadeItem, 1, 0);
 
 		NBTTagCompound nbt = new NBTTagCompound();
-		nbt.setInteger("type", (basic ? FacadeType.Basic : FacadeType.Phased).ordinal());
+		nbt.setByte("type", (byte) (basic ? FacadeType.Basic : FacadeType.Phased).ordinal());
 		nbt.setTag("states", FacadeState.writeArray(states));
 
 		stack.setTagCompound(nbt);

@@ -172,8 +172,8 @@ public class TravelingItem {
 		setItemStack(ItemStack.loadItemStackFromNBT(data.getCompoundTag("Item")));
 
 		toCenter = data.getBoolean("toCenter");
-		input = ForgeDirection.getOrientation(data.getInteger("input"));
-		output = ForgeDirection.getOrientation(data.getInteger("output"));
+		input = ForgeDirection.getOrientation(data.getByte("input"));
+		output = ForgeDirection.getOrientation(data.getByte("output"));
 
 		byte c = data.getByte("color");
 		if (c != -1) {
@@ -195,8 +195,8 @@ public class TravelingItem {
 		data.setTag("Item", itemStackTag);
 
 		data.setBoolean("toCenter", toCenter);
-		data.setInteger("input", input.ordinal());
-		data.setInteger("output", output.ordinal());
+		data.setByte("input", (byte) input.ordinal());
+		data.setByte("output", (byte) output.ordinal());
 
 		data.setByte("color", color != null ? (byte) color.ordinal() : -1);
 

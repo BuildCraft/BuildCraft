@@ -121,7 +121,7 @@ public class BlockLaser extends BlockBuildCraft implements ICustomHighlight {
 
 	@Override
 	public IIcon getIcon(int i, int j) {
-		if (i == ForgeDirection.values()[j].getOpposite().ordinal()) {
+		if (i == (j ^ 1)) {
 			return textureBottom;
 		} else if (i == j) {
 			return textureTop;

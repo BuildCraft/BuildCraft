@@ -418,7 +418,7 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 	public void readFromNBT(NBTTagCompound data) {
 		super.readFromNBT(data);
 
-		orientation = ForgeDirection.getOrientation(data.getInteger("orientation"));
+		orientation = ForgeDirection.getOrientation(data.getByte("orientation"));
 		progress = data.getFloat("progress");
 		energy = data.getInteger("energy");
 		heat = data.getFloat("heat");
@@ -428,7 +428,7 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 	public void writeToNBT(NBTTagCompound data) {
 		super.writeToNBT(data);
 
-		data.setInteger("orientation", orientation.ordinal());
+		data.setByte("orientation", (byte) orientation.ordinal());
 		data.setFloat("progress", progress);
 		data.setInteger("energy", energy);
 		data.setFloat("heat", heat);
