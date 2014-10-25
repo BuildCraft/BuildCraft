@@ -85,7 +85,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 	protected boolean attachPluggables = false;
 
 	private TileBuffer[] tileBuffer;
-
+	
 	public static class CoreState implements IClientState {
 		public int pipeId = -1;
 		public ItemGate.GatePluggable[] gates = new ItemGate.GatePluggable[ForgeDirection.VALID_DIRECTIONS.length];
@@ -580,6 +580,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 		bindPipe();
 
 		computeConnections();
+		scheduleNeighborChange();
 		scheduleRenderUpdate();
 
 		if (pipe.needsInit()) {
