@@ -265,8 +265,12 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 
 		// Legacy support
 		if (data.hasKey("Gate")) {
-			for (int i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
-				transport.container.setGate(GateFactory.makeGate(this, data.getCompoundTag("Gate")), i);
+			int[] legacyDirectionOrder = new int[]{2, 3, 4, 5, 1, 0};
+			for (int i : legacyDirectionOrder) {
+				if (!transport.container.isPipeConnected(ForgeDirection.getOrientation(i))) {
+					transport.container.setGate(GateFactory.makeGate(this, data.getCompoundTag("Gate")), i);
+					break;
+				}
 			}
 			data.removeTag("Gate");
 		}
@@ -418,6 +422,7 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 	}
 
 	private int getRedstoneOutput(ForgeDirection dir) {
+		
 		Gate gate = gates[dir.ordinal()];
 
 		return gate != null ? gate.getRedstoneOutput() : 0;
