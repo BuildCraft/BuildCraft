@@ -266,12 +266,20 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 		// Legacy support
 		if (data.hasKey("Gate")) {
 			int[] legacyDirectionOrder = new int[]{2, 3, 4, 5, 1, 0};
+			boolean hasRestoredGate = false;
+			
 			for (int i : legacyDirectionOrder) {
 				if (!transport.container.isPipeConnected(ForgeDirection.getOrientation(i))) {
 					transport.container.setGate(GateFactory.makeGate(this, data.getCompoundTag("Gate")), i);
+					hasRestoredGate = true;
 					break;
 				}
 			}
+			
+			if (!hasRestoredGate) {
+				transport.container.setGate(GateFactory.makeGate(this, data.getCompoundTag("Gate")), 0);
+			}
+			
 			data.removeTag("Gate");
 		}
 
