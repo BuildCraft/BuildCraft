@@ -27,7 +27,8 @@ public class PipeRenderState implements IClientState {
 	public final RobotStationMatrix robotStationMatrix = new RobotStationMatrix();
 	public final FacadeMatrix facadeMatrix = new FacadeMatrix();
 	public final GateMatrix gateMatrix = new GateMatrix();
-
+	public byte glassColor = -1;
+	
 	private boolean dirty = true;
 
 	public void clean() {
@@ -56,6 +57,7 @@ public class PipeRenderState implements IClientState {
 
 	@Override
 	public void writeData(ByteBuf data) {
+		data.writeByte(glassColor);
 		pipeConnectionMatrix.writeData(data);
 		textureMatrix.writeData(data);
 		wireMatrix.writeData(data);
@@ -67,6 +69,7 @@ public class PipeRenderState implements IClientState {
 
 	@Override
 	public void readData(ByteBuf data) {
+		glassColor = data.readByte();
 		pipeConnectionMatrix.readData(data);
 		textureMatrix.readData(data);
 		wireMatrix.readData(data);

@@ -8,16 +8,15 @@
  */
 package buildcraft.transport.render;
 
+import org.lwjgl.opengl.GL11;
+
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.IBlockAccess;
-
 import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
-
 import net.minecraftforge.common.util.ForgeDirection;
-
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.core.CoreConstants;
@@ -30,54 +29,74 @@ import buildcraft.transport.TransportProxy;
 public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
 	
 	public static int renderPass = -1;	
+	public static float zFightOffset = 1F / 4096F;
 	
 	public void renderPipe(RenderBlocks renderblocks, IBlockAccess iblockaccess, TileGenericPipe tile, int x, int y, int z) {
 		PipeRenderState state = tile.renderState;
 		IIconProvider icons = tile.getPipeIcons();
 		FakeBlock fakeBlock = FakeBlock.INSTANCE;
+		int glassColorMultiplier = tile.getStainedColorMultiplier();
 		
 		if (icons == null) {
 			return;
 		}	
 
-		// Force pipe render into pass 0
-		if (renderPass == 0) {
+		if (renderPass == 0 || glassColorMultiplier >= 0) {
+			// Pass 0 handles the pipe texture, pass 1 handles the transparent stained glass
 			int connectivity = state.pipeConnectionMatrix.getMask();
 			float[] dim = new float[6];
-
+			
+			if (renderPass == 1) {
+				fakeBlock.setColor(glassColorMultiplier);
+			}
+	
 			// render the unconnected pipe faces of the center block (if any)
-
+	
 			if (connectivity != 0x3f) { // note: 0x3f = 0x111111 = all sides
 				resetToCenterDimensions(dim);
 				
-				fakeBlock.getTextureState().set(icons.getIcon(state.textureMatrix.getTextureIndex(ForgeDirection.UNKNOWN)));
+				if (renderPass == 0) {
+					fakeBlock.getTextureState().set(icons.getIcon(state.textureMatrix.getTextureIndex(ForgeDirection.UNKNOWN)));
+				} else {
+					fakeBlock.getTextureState().set(PipeIconProvider.TYPE.PipeStainedOverlay.getIcon());
+				}
+				
+				fixForRenderPass(dim);
+				
 				renderTwoWayBlock(renderblocks, fakeBlock, x, y, z, dim, connectivity ^ 0x3f);
 			}
-
+	
 			// render the connecting pipe faces
-
 			for (int dir = 0; dir < 6; dir++) {
 				int mask = 1 << dir;
-
+	
 				if ((connectivity & mask) == 0) {
 					continue; // no connection towards dir
 				}
-
+	
 				// center piece offsets
 				resetToCenterDimensions(dim);
-
+	
 				// extend block towards dir as it's connected to there
 				dim[dir / 2] = dir % 2 == 0 ? 0 : CoreConstants.PIPE_MAX_POS;
 				dim[dir / 2 + 3] = dir % 2 == 0 ? CoreConstants.PIPE_MIN_POS : 1;
-
+	
 				// the mask points to all faces perpendicular to dir, i.e. dirs 0+1 -> mask 111100, 1+2 -> 110011, 3+5 -> 001111
 				int renderMask = (3 << (dir / 2 * 2)) ^ 0x3f;
-
+	
+				fixForRenderPass(dim);
+				
 				// render sub block
-				fakeBlock.getTextureState().set(icons.getIcon(state.textureMatrix.getTextureIndex(ForgeDirection.VALID_DIRECTIONS[dir])));
-
+				if (renderPass == 0) {
+					fakeBlock.getTextureState().set(icons.getIcon(state.textureMatrix.getTextureIndex(ForgeDirection.VALID_DIRECTIONS[dir])));
+				} else {
+					fakeBlock.getTextureState().set(PipeIconProvider.TYPE.PipeStainedOverlay.getIcon());
+				}
+				
 				renderTwoWayBlock(renderblocks, fakeBlock, x, y, z, dim, renderMask);
 			}
+			
+			fakeBlock.setColor(0xFFFFFF);
 		}
 
 		renderblocks.setRenderBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
@@ -93,6 +112,18 @@ public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
 		}
 	}
 
+	private void fixForRenderPass(float[] dim) {
+		if (renderPass == 1) {
+			for (int i = 0; i < 3; i++) {
+				dim[i] += zFightOffset;
+			}
+
+			for (int i = 3; i < 6; i++) {
+				dim[i] -= zFightOffset;
+			}
+		}
+	}
+	
 	private void resetToCenterDimensions(float[] dim) {
 		for (int i = 0; i < 3; i++) {
 			dim[i] = CoreConstants.PIPE_MIN_POS;
@@ -123,7 +154,6 @@ public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
 	}
 
 	private void pipePlugRenderer(RenderBlocks renderblocks, ITextureStates blockStateMachine, PipeRenderState state, int x, int y, int z) {
-		float zFightOffset = 1F / 4096F;
 		float[][] zeroState = new float[3][2];
 
 		// X START - END
@@ -176,8 +206,6 @@ public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
 			ITextureStates blockStateMachine, PipeRenderState state, int x, int y, int z,
 			float xStart, float xEnd, float yStart, float yEnd, float zStart,
 			float zEnd) {
-
-		float zFightOffset = 1F / 4096F;
 
 		float[][] zeroState = new float[3][2];
 		// X START - END
@@ -248,8 +276,6 @@ public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
 				0.75F - width, 0.75F,
 				0.025F, 0.224F,
 				0.25F + width, 0.75F - width);*/
-
-		float zFightOffset = 1F / 4096F;
 
 		float[][] zeroState = new float[3][2];
 

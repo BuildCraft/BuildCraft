@@ -123,6 +123,8 @@ public class PipeIconProvider implements IIconProvider {
 		Power_Overload("texture_red_lit"),
 		Stripes("pipeStripes"),
 		//
+		PipeStainedOverlay("pipeStainedOverlay"),
+		//
 		TransparentFacade("transparent_facade"),
 		//
 		ItemBox("itemBox");

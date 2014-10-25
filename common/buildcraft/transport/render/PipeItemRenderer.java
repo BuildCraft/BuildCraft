@@ -17,14 +17,15 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
-
 import net.minecraftforge.client.IItemRenderer;
-
 import buildcraft.BuildCraftTransport;
 import buildcraft.core.CoreConstants;
+import buildcraft.core.utils.ColorUtils;
+import buildcraft.transport.PipeIconProvider;
 
 public class PipeItemRenderer implements IItemRenderer {
-
+	private static final float zFightOffset = 1 / 4096.0F;
+	
 	private void renderPipeItem(RenderBlocks render, ItemStack item, float translateX, float translateY, float translateZ) {
 		GL11.glPushAttrib(GL11.GL_COLOR_BUFFER_BIT); //don't break other mods' guis when holding a pipe
 		//force transparency
@@ -34,8 +35,26 @@ public class PipeItemRenderer implements IItemRenderer {
 		// GL11.glBindTexture(GL11.GL_TEXTURE_2D, 10);
 		Tessellator tessellator = Tessellator.instance;
 
-		Block block = BuildCraftTransport.genericPipeBlock;
-		IIcon icon = item.getItem().getIconFromDamage(0);
+		Block block = FakeBlock.INSTANCE;
+		IIcon icon = PipeIconProvider.TYPE.PipeStainedOverlay.getIcon();
+				
+		if (item.getItemDamage() >= 1) {
+			GL11.glPushMatrix();
+			
+			int c = ColorUtils.WOOL_TO_RGB[(item.getItemDamage() - 1) & 15];
+			GL11.glColor3ub((byte) (c >> 16), (byte) ((c >> 8) & 0xFF), (byte) (c & 0xFF));
+			block.setBlockBounds(CoreConstants.PIPE_MIN_POS + zFightOffset, 0.0F + zFightOffset, CoreConstants.PIPE_MIN_POS + zFightOffset, CoreConstants.PIPE_MAX_POS - zFightOffset, 1.0F - zFightOffset, CoreConstants.PIPE_MAX_POS - zFightOffset);
+			block.setBlockBoundsForItemRender();
+			render.setRenderBoundsFromBlock(block);
+
+			drawBlock(render, tessellator, block, icon, translateX, translateY, translateZ);
+			block.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
+			GL11.glColor3ub((byte) 255, (byte) 255, (byte) 255);
+			GL11.glPopMatrix();	
+		}
+		
+		block = BuildCraftTransport.genericPipeBlock;
+		icon = item.getItem().getIconFromDamage(0);
 
 		if (icon == null) {
 			icon = ((TextureMap) Minecraft.getMinecraft().getTextureManager().getTexture(TextureMap.locationBlocksTexture)).getAtlasSprite("missingno");
@@ -45,6 +64,14 @@ public class PipeItemRenderer implements IItemRenderer {
 		block.setBlockBoundsForItemRender();
 		render.setRenderBoundsFromBlock(block);
 
+		drawBlock(render, tessellator, block, icon, translateX, translateY, translateZ);
+		GL11.glTranslatef(0.5F, 0.5F, 0.5F);
+		block.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
+
+		GL11.glPopAttrib(); // nicely leave the rendering how it was
+	}
+	
+	private void drawBlock(RenderBlocks render, Tessellator tessellator, Block block, IIcon icon, float translateX, float translateY, float translateZ) {
 		GL11.glTranslatef(translateX, translateY, translateZ);
 		tessellator.startDrawingQuads();
 		tessellator.setNormal(0.0F, -1F, 0.0F);
@@ -70,10 +97,6 @@ public class PipeItemRenderer implements IItemRenderer {
 		tessellator.setNormal(1.0F, 0.0F, 0.0F);
 		render.renderFaceXPos(block, 0.0D, 0.0D, 0.0D, icon);
 		tessellator.draw();
-		GL11.glTranslatef(0.5F, 0.5F, 0.5F);
-		block.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
-
-		GL11.glPopAttrib(); // nicely leave the rendering how it was
 	}
 
 	/**

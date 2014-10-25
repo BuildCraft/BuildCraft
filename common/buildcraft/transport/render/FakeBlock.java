@@ -28,7 +28,7 @@ public final class FakeBlock extends Block implements ITextureStates {
 	
 	public static final FakeBlock INSTANCE = new FakeBlock();
 	
-	private int renderMask = 0;	
+	private int renderMask = 0, colorMultiplier = 0xFFFFFF;
 	
 	private TextureStateManager textureState;
 	
@@ -36,6 +36,15 @@ public final class FakeBlock extends Block implements ITextureStates {
 		super(Material.glass);
 		textureState = new TextureStateManager(null); //Always Clientside
 	}	
+	
+	@Override
+	public int colorMultiplier(IBlockAccess blockAccess, int x, int y, int z) {
+		return colorMultiplier;
+	}
+	
+	public void setColor(int color) {
+		this.colorMultiplier = color;
+	}
 		
 	@Override
 	public TextureStateManager getTextureState() {

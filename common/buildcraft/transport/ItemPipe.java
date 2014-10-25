@@ -17,12 +17,12 @@ import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
-
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.IIconProvider;
@@ -38,6 +38,8 @@ public class ItemPipe extends ItemBuildCraft implements IItemPipe {
 
 	protected ItemPipe(CreativeTabBuildCraft creativeTab) {
 		super(creativeTab);
+        this.setMaxDamage(0);
+        this.setHasSubtypes(true);
 	}
 
 	@Override
@@ -87,10 +89,15 @@ public class ItemPipe extends ItemBuildCraft implements IItemPipe {
 				BCLog.logger.log(Level.WARN, "Pipe failed to create during placement at {0},{1},{2}", new Object[]{i, j, k});
 				return true;
 			}
-
+			
 			if (BlockGenericPipe.placePipe(pipe, world, i, j, k, block, 0, entityplayer)) {
 				block.onBlockPlacedBy(world, i, j, k, entityplayer, itemstack);
 
+				if (!world.isRemote && itemstack.getItemDamage() >= 1) {
+					TileEntity tile = world.getTileEntity(i, j, k);
+					((TileGenericPipe) tile).glassColor = (itemstack.getItemDamage() - 1) & 15;
+				}
+				
 				// TODO: Fix sound
 				//world.playSoundEffect(i + 0.5F, j + 0.5F, k + 0.5F,
 				//		block.stepSound.getPlaceSound(),

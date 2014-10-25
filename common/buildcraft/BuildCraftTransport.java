@@ -223,10 +223,17 @@ public class BuildCraftTransport extends BuildCraftMod {
 	public IIconProvider wireIconProvider = new WireIconProvider();
 
 	private static class PipeRecipe {
-
 		boolean isShapeless = false; // pipe recipes come shaped and unshaped.
 		ItemStack result;
 		Object[] input;
+		
+		protected PipeRecipe clone() {
+			PipeRecipe p = new PipeRecipe();
+			p.isShapeless = this.isShapeless;
+			p.result = this.result;
+			p.input = this.input;
+			return p;
+		}
 	}
 
 	private static class ExtractionHandler implements IExtractionHandler {
@@ -608,28 +615,48 @@ public class BuildCraftTransport extends BuildCraftMod {
 			Object... ingredients) {
 		ItemPipe res = BlockGenericPipe.registerPipe(clas, creativeTab);
 		res.setUnlocalizedName(clas.getSimpleName());
-
-		// Add appropriate recipe to temporary list
-		PipeRecipe recipe = new PipeRecipe();
-
+		
+		// Add appropriate recipes to temporary list
 		if (ingredients.length == 3) {
-			recipe.result = new ItemStack(res, 8);
-			recipe.input = new Object[]{"ABC", 'A', ingredients[0], 'B', ingredients[1], 'C', ingredients[2]};
+			for (int i = 0; i < 17; i++) {
+				PipeRecipe recipe = new PipeRecipe();
+				ItemStack glass;
+				
+				if (i == 0) {
+					glass = new ItemStack(Blocks.glass);
+				} else {
+					glass = new ItemStack(Blocks.stained_glass, 1, i - 1);
+				}
+				
+				recipe.result = new ItemStack(res, 8, i);
+				recipe.input = new Object[]{"ABC", 'A', ingredients[0], 'B', glass, 'C', ingredients[2]};
 
-			pipeRecipes.add(recipe);
+				pipeRecipes.add(recipe);
+			}
 		} else if (ingredients.length == 2) {
-			recipe.isShapeless = true;
-			recipe.result = new ItemStack(res, 1);
-			recipe.input = new Object[]{ingredients[0], ingredients[1]};
+			for (int i = 0; i < 17; i++) {
+				PipeRecipe recipe = new PipeRecipe();
+				
+				Object left = ingredients[0];
+				Object right = ingredients[1];
 
-			pipeRecipes.add(recipe);
+				if (ingredients[1] instanceof ItemPipe) {
+					right = new ItemStack((Item) right, 1, i);
+				}
+				
+				recipe.isShapeless = true;
+				recipe.result = new ItemStack(res, 1, i);
+				recipe.input = new Object[]{left, right};
 
-			if (ingredients[1] instanceof ItemPipe) {
-				PipeRecipe uncraft = new PipeRecipe();
-				uncraft.isShapeless = true;
-				uncraft.input = new Object[]{new ItemStack(res)};
-				uncraft.result = new ItemStack((Item) ingredients[1]);
-				pipeRecipes.add(uncraft);
+				pipeRecipes.add(recipe);
+	
+				if (ingredients[1] instanceof ItemPipe) {
+					PipeRecipe uncraft = new PipeRecipe();
+					uncraft.isShapeless = true;
+					uncraft.input = new Object[]{recipe.result};
+					uncraft.result = (ItemStack) right;
+					pipeRecipes.add(uncraft);
+				}
 			}
 		}
 

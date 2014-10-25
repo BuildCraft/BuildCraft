@@ -580,7 +580,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 			if (pipe != null) {
 				if (pipe.item != null) {
 					pipe.dropContents();
-					list.add(new ItemStack(pipe.item, 1, damageDropped(metadata)));
+					list.add(new ItemStack(pipe.item, 1, pipe.container.getItemMetadata()));
 				}
 			}
 		}
@@ -615,7 +615,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 
 				if (k1 != null) {
 					pipe.dropContents();
-					dropBlockAsItem(world, i, j, k, new ItemStack(k1, 1, damageDropped(l)));
+					dropBlockAsItem(world, i, j, k, new ItemStack(k1, 1, pipe.container.getItemMetadata()));
 				}
 			}
 		}
@@ -626,17 +626,6 @@ public class BlockGenericPipe extends BlockBuildCraft {
 		// Returns null to be safe - the id does not depend on the meta
 		return null;
 	}
-
-	/*@SideOnly(Side.CLIENT)
-	@Override
-	public int idPicked(World world, int i, int j, int k) {
-		Pipe pipe = getPipe(world, i, j, k);
-
-		if (pipe == null)
-			return 0;
-		else
-			return pipe.itemID;
-	}*/
 
 	@SideOnly(Side.CLIENT)
 	@Override
@@ -654,7 +643,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 			case RobotStation:
 				return new ItemStack(BuildCraftTransport.robotStationItem);
 			case Pipe:
-				return new ItemStack(getPipe(world, x, y, z).item);
+				return new ItemStack(getPipe(world, x, y, z).item, 1, getPipe(world, x, y, z).container.getItemMetadata());
 			case Facade:
 				ForgeDirection dir = ForgeDirection
 						.getOrientation(target.sideHit);

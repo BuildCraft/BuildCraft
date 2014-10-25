@@ -55,6 +55,7 @@ import buildcraft.core.network.IGuiReturnHandler;
 import buildcraft.core.network.ISyncedTile;
 import buildcraft.core.network.PacketTileState;
 import buildcraft.core.robots.DockingStation;
+import buildcraft.core.utils.ColorUtils;
 import buildcraft.core.utils.Utils;
 import buildcraft.transport.ItemFacade.FacadeState;
 import buildcraft.transport.gates.GateFactory;
@@ -73,7 +74,8 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 	public Pipe pipe;
 	public int redstoneInput;
 	public int[] redstoneInputSide = new int[ForgeDirection.VALID_DIRECTIONS.length];
-
+	public int glassColor = -1;
+	
 	protected boolean deletePipe = false;
 	protected boolean sendClientUpdate = false;
 	protected boolean blockNeighborChange = false;
@@ -261,6 +263,9 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 	public void writeToNBT(NBTTagCompound nbt) {
 		super.writeToNBT(nbt);
 
+		if (glassColor >= 0) {
+			nbt.setByte("stainedColor", (byte) glassColor);
+		}
 		for (int i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
 			final String key = "redstoneInputSide[" + i + "]";
 			nbt.setByte(key, (byte) redstoneInputSide[i]);
@@ -280,6 +285,8 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 	public void readFromNBT(NBTTagCompound nbt) {
 		super.readFromNBT(nbt);
 
+		glassColor = nbt.hasKey("stainedColor") ? nbt.getByte("stainedColor") : -1;
+		
 		redstoneInput = 0;
 		
 		for (int i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
@@ -415,10 +422,26 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 		}
 	}
 
+	public int getItemMetadata() {
+		return 1 + (worldObj.isRemote ? renderState.glassColor : glassColor);
+	}
+	
+	public int getStainedColorMultiplier() {
+		int glassColor = this.glassColor;
+		
+		if (worldObj.isRemote) {
+			glassColor = renderState.glassColor;
+		}
+		
+		return glassColor >= 0 && glassColor < 16 ? ColorUtils.WOOL_TO_RGB[glassColor] : -1;
+	}
+	
 	/**
 	 *  PRECONDITION: worldObj must not be null
 	 */
 	protected void refreshRenderState() {
+		renderState.glassColor = (byte) glassColor;
+		
 		// Pipe connections;
 		for (ForgeDirection o : ForgeDirection.VALID_DIRECTIONS) {
 			renderState.pipeConnectionMatrix.setConnected(o, this.pipeConnectionsBuffer[o.ordinal()]);
@@ -699,9 +722,16 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 		}
 
 		if (with instanceof TileGenericPipe) {
-			if (((TileGenericPipe) with).hasBlockingPluggable(side.getOpposite())) {
+			TileGenericPipe other = ((TileGenericPipe) with);
+			
+			if (other.hasBlockingPluggable(side.getOpposite())) {
 				return false;
 			}
+			
+			if (other.glassColor >= 0 && glassColor >= 0 && other.glassColor != glassColor) {
+				return false;
+			}
+			
 			Pipe<?> otherPipe = ((TileGenericPipe) with).pipe;
 
 			if (!BlockGenericPipe.isValid(otherPipe)) {
