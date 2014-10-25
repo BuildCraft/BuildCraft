@@ -12,14 +12,11 @@ import java.util.List;
 
 import org.apache.logging.log4j.Level;
 
-import com.sun.xml.internal.ws.util.StringUtils;
-
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.IIcon;
@@ -33,6 +30,7 @@ import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.IItemPipe;
 import buildcraft.core.ItemBuildCraft;
 import buildcraft.core.utils.ColorUtils;
+import buildcraft.core.utils.StringUtils;
 
 public class ItemPipe extends ItemBuildCraft implements IItemPipe {
 
@@ -153,7 +151,8 @@ public class ItemPipe extends ItemBuildCraft implements IItemPipe {
 	public void addInformation(ItemStack stack, EntityPlayer player, List list, boolean advanced) {
 		super.addInformation(stack, player, list, advanced);
 		if (stack.getItemDamage() >= 1) {
-			list.add(EnumChatFormatting.WHITE + "" + EnumChatFormatting.ITALIC + StringUtils.capitalize(ColorUtils.WOOL_TO_NAME[(stack.getItemDamage() - 1) & 15].replace('.', ' ')));
+			int color = (stack.getItemDamage() - 1) & 15;
+			list.add(ColorUtils.getFormattingTooltip(color) + EnumChatFormatting.ITALIC + StringUtils.localize("color." + ColorUtils.getName(color)));
 		}
 		Class<? extends Pipe> pipe = BlockGenericPipe.pipes.get(this);
 		List<String> toolTip = PipeToolTipManager.getToolTip(pipe);

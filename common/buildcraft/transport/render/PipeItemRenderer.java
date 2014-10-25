@@ -41,7 +41,7 @@ public class PipeItemRenderer implements IItemRenderer {
 		if (item.getItemDamage() >= 1) {
 			GL11.glPushMatrix();
 			
-			int c = ColorUtils.WOOL_TO_RGB[(item.getItemDamage() - 1) & 15];
+			int c = ColorUtils.getRGBColor(item.getItemDamage() - 1);
 			GL11.glColor3ub((byte) (c >> 16), (byte) ((c >> 8) & 0xFF), (byte) (c & 0xFF));
 			block.setBlockBounds(CoreConstants.PIPE_MIN_POS + zFightOffset, 0.0F + zFightOffset, CoreConstants.PIPE_MIN_POS + zFightOffset, CoreConstants.PIPE_MAX_POS - zFightOffset, 1.0F - zFightOffset, CoreConstants.PIPE_MAX_POS - zFightOffset);
 			block.setBlockBoundsForItemRender();

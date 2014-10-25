@@ -427,13 +427,15 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 	}
 	
 	public int getStainedColorMultiplier() {
-		int glassColor = this.glassColor;
+		int color;
 		
 		if (worldObj.isRemote) {
-			glassColor = renderState.glassColor;
+			color = renderState.glassColor;
+		} else {
+			color = this.glassColor;
 		}
 		
-		return glassColor >= 0 && glassColor < 16 ? ColorUtils.WOOL_TO_RGB[glassColor] : -1;
+		return color >= 0 ? ColorUtils.getRGBColor(color) : -1;
 	}
 	
 	/**
@@ -723,7 +725,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 		}
 
 		if (with instanceof TileGenericPipe) {
-			TileGenericPipe other = ((TileGenericPipe) with);
+			TileGenericPipe other = (TileGenericPipe) with;
 			
 			if (other.hasBlockingPluggable(side.getOpposite())) {
 				return false;

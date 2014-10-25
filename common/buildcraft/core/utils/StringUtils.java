@@ -29,8 +29,4 @@ public final class StringUtils {
 	public static boolean canLocalize(String key) {
 		return StatCollector.canTranslate(key);
 	}
-	
-	public static String capitalize(String key) {
-		return key.toUpperCase().substring(0, 1) + key.substring(1);
-	}
 }

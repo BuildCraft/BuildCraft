@@ -28,7 +28,8 @@ public final class FakeBlock extends Block implements ITextureStates {
 	
 	public static final FakeBlock INSTANCE = new FakeBlock();
 	
-	private int renderMask = 0, colorMultiplier = 0xFFFFFF;
+	private int renderMask = 0;
+	private int colorMultiplier = 0xFFFFFF;
 	
 	private TextureStateManager textureState;
 	

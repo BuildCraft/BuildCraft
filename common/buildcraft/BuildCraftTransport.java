@@ -226,14 +226,6 @@ public class BuildCraftTransport extends BuildCraftMod {
 		boolean isShapeless = false; // pipe recipes come shaped and unshaped.
 		ItemStack result;
 		Object[] input;
-		
-		protected PipeRecipe clone() {
-			PipeRecipe p = new PipeRecipe();
-			p.isShapeless = this.isShapeless;
-			p.result = this.result;
-			p.input = this.input;
-			return p;
-		}
 	}
 
 	private static class ExtractionHandler implements IExtractionHandler {
