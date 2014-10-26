@@ -77,7 +77,8 @@ public class Blueprint extends BlueprintBase {
 	public void readFromWorld(IBuilderContext context, TileEntity anchorTile, int x, int y, int z) {
 		BptContext bptContext = (BptContext) context;
 		Block block = anchorTile.getWorldObj().getBlock(x, y, z);
-
+		int meta = anchorTile.getWorldObj().getBlockMetadata(x, y, z);
+		
 		if (context.world().isAirBlock(x, y, z)) {
 			// Although no schematic will be returned for the block "air" by
 			// the registry, there can be other blocks considered as air. This
@@ -85,7 +86,7 @@ public class Blueprint extends BlueprintBase {
 			return;
 		}
 
-		SchematicBlock slot = SchematicRegistry.newSchematicBlock(block);
+		SchematicBlock slot = SchematicRegistry.newSchematicBlock(block, meta);
 
 		if (slot == null) {
 			return;
@@ -96,9 +97,9 @@ public class Blueprint extends BlueprintBase {
 		int posZ = (int) (z - context.surroundingBox().pMin().z);
 
 		slot.block = block;
-		slot.meta = anchorTile.getWorldObj().getBlockMetadata(x, y, z);
+		slot.meta = meta;
 
-		if (!SchematicRegistry.isSupported(block)) {
+		if (!SchematicRegistry.isSupported(block, meta)) {
 			return;
 		}
 
@@ -212,7 +213,7 @@ public class Blueprint extends BlueprintBase {
 						}
 
 						if (block != null) {
-							contents[x][y][z] = SchematicRegistry.newSchematicBlock(block);
+							contents[x][y][z] = SchematicRegistry.newSchematicBlock(block, cpt.getInteger("blockMeta"));
 							contents[x][y][z].readFromNBT(cpt, mapping);
 
 							if (!contents[x][y][z].doNotUse()) {

@@ -34,7 +34,6 @@ import buildcraft.api.core.IInvSlot;
  * buildcraft.core.schematics.
  */
 public abstract class Schematic {
-
 	/**
 	 * Blocks are build in various stages, in order to make sure that a block
 	 * can indeed be placed, and that it's unlikely to disturb other blocks.

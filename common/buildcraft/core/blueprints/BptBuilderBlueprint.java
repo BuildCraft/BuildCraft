@@ -95,7 +95,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 							slot.block = Blocks.air;
 						}
 
-						if (!SchematicRegistry.isAllowedForBuilding(slot.block)) {
+						if (!SchematicRegistry.isAllowedForBuilding(slot.block, slot.meta)) {
 							continue;
 						}
 
@@ -131,7 +131,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 						continue;
 					}
 
-					if (!SchematicRegistry.isAllowedForBuilding(slot.block)) {
+					if (!SchematicRegistry.isAllowedForBuilding(slot.block, slot.meta)) {
 						continue;
 					}
 

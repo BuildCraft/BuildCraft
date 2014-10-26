@@ -28,6 +28,7 @@ import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLInterModComms;
 import cpw.mods.fml.common.event.FMLMissingMappingsEvent;
+import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerStoppingEvent;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
@@ -60,6 +61,7 @@ import buildcraft.builders.BlockPathMarker;
 import buildcraft.builders.BuilderProxy;
 import buildcraft.builders.EventHandlerBuilders;
 import buildcraft.builders.GuiHandler;
+import buildcraft.builders.HeuristicBlockDetection;
 import buildcraft.builders.ItemBlueprintStandard;
 import buildcraft.builders.ItemBlueprintTemplate;
 import buildcraft.builders.ItemConstructionMarker;
@@ -233,6 +235,11 @@ public class BuildCraftBuilders extends BuildCraftMod {
 
 		return result;
 	}
+	
+	@Mod.EventHandler
+	public void postInit(FMLPostInitializationEvent evt) {
+		HeuristicBlockDetection.start();
+	}
 
 	@Mod.EventHandler
 	public void init(FMLInitializationEvent evt) {
@@ -243,7 +250,6 @@ public class BuildCraftBuilders extends BuildCraftMod {
 		MinecraftForge.EVENT_BUS.register(new EventHandlerBuilders());
 
 		// Standard blocks
-
 		SchematicRegistry.registerSchematicBlock(Blocks.snow, SchematicIgnore.class);
 		SchematicRegistry.registerSchematicBlock(Blocks.tallgrass, SchematicIgnore.class);
 		SchematicRegistry.registerSchematicBlock(Blocks.double_plant, SchematicIgnore.class);

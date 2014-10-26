@@ -113,7 +113,7 @@ public abstract class FillerPattern implements IFillerPattern {
 
 	public abstract Template getTemplate (Box box, World world);
 
-	public Blueprint getBlueprint (Box box, World world, Block block) {
+	public Blueprint getBlueprint (Box box, World world, Block block, int meta) {
 		Blueprint result = new Blueprint (box.sizeX(), box.sizeY(), box.sizeZ());
 
 		Template tmpl = getTemplate(box, world);
@@ -123,7 +123,7 @@ public abstract class FillerPattern implements IFillerPattern {
 				for (int z = 0; z < box.sizeZ(); ++z) {
 					if (tmpl.contents[x][y][z] != null) {
 						result.contents[x][y][z] = SchematicRegistry
-								.newSchematicBlock(block);
+								.newSchematicBlock(block, meta);
 					}
 
 				}

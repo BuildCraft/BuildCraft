@@ -23,7 +23,8 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
-
+import net.minecraftforge.oredict.OreDictionary;
+import buildcraft.api.core.BlockMetaPair;
 import buildcraft.api.core.JavaTools;
 
 public final class SchematicRegistry {
@@ -31,8 +32,8 @@ public final class SchematicRegistry {
 	public static int BREAK_ENERGY = 100;
 	public static final int BUILD_ENERGY = 200;
 
-	private static final HashMap<Block, SchematicConstructor> schematicBlocks =
-			new HashMap<Block, SchematicConstructor>();
+	private static final HashMap<BlockMetaPair, SchematicConstructor> schematicBlocks =
+			new HashMap<BlockMetaPair, SchematicConstructor>();
 
 	private static final HashMap<Class<? extends Entity>, SchematicConstructor> schematicEntities = new HashMap<Class<? extends Entity>, SchematicConstructor>();
 
@@ -92,12 +93,16 @@ public final class SchematicRegistry {
 			throw new IllegalArgumentException("Could not find matching constructor for class " + clazz);
 		}
 	}
-
+	
 	public static void registerSchematicBlock(Block block, Class<? extends Schematic> clazz, Object... params) {
-		if (schematicBlocks.containsKey(block)) {
+		registerSchematicBlock(block, OreDictionary.WILDCARD_VALUE, clazz, params);
+	}
+	
+	public static void registerSchematicBlock(Block block, int meta, Class<? extends Schematic> clazz, Object... params) {
+		if (schematicBlocks.containsKey(new BlockMetaPair(block, meta))) {
 			throw new RuntimeException("Block " + Block.blockRegistry.getNameForObject(block) + " is already associated with a schematic.");
 		}
-		schematicBlocks.put(block, new SchematicConstructor(clazz, params));
+		schematicBlocks.put(new BlockMetaPair(block, meta), new SchematicConstructor(clazz, params));
 	}
 
 	public static void registerSchematicEntity(
@@ -109,17 +114,27 @@ public final class SchematicRegistry {
 		schematicEntities.put(entityClass, new SchematicConstructor(schematicClass, params));
 	}
 
-	public static SchematicBlock newSchematicBlock(Block block) {
+	public static SchematicBlock newSchematicBlock(Block block, int metadata) {
 		if (block == Blocks.air) {
 			return null;
 		}
 
-		if (!schematicBlocks.containsKey(block)) {
-			return null;
+		BlockMetaPair pairWildcard = new BlockMetaPair(block, OreDictionary.WILDCARD_VALUE);
+		BlockMetaPair pair = new BlockMetaPair(block, metadata);
+
+		SchematicConstructor c = null;
+		
+		if (schematicBlocks.containsKey(pair)) {
+			c = schematicBlocks.get(pair);
+		} else if (schematicBlocks.containsKey(pairWildcard)) {
+			c = schematicBlocks.get(pairWildcard);
 		}
 
+		if (c == null) {
+			return null;
+		}
+		
 		try {
-			SchematicConstructor c = schematicBlocks.get(block);
 			SchematicBlock s = (SchematicBlock) c.newInstance();
 			s.block = block;
 			return s;
@@ -159,13 +174,14 @@ public final class SchematicRegistry {
 		return null;
 	}
 
-	public static boolean isSupported(Block block) {
-		return schematicBlocks.containsKey(block);
+	public static boolean isSupported(Block block, int metadata) {
+		return schematicBlocks.containsKey(new BlockMetaPair(block, OreDictionary.WILDCARD_VALUE))
+				|| schematicBlocks.containsKey(new BlockMetaPair(block, metadata));
 	}
 
-	public static boolean isAllowedForBuilding(Block block) {
+	public static boolean isAllowedForBuilding(Block block, int metadata) {
 		String name = Block.blockRegistry.getNameForObject(block);
-		return isSupported(block) && !blocksForbidden.contains(name) && !modsForbidden.contains(name.split(":", 2)[0]);
+		return isSupported(block, metadata) && !blocksForbidden.contains(name) && !modsForbidden.contains(name.split(":", 2)[0]);
 	}
 
 	public static void readConfiguration(Configuration conf) {
