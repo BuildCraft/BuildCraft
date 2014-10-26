@@ -10,8 +10,6 @@ package buildcraft.transport;
 
 import java.util.ArrayList;
 import java.util.BitSet;
-import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 
 import com.google.common.collect.BiMap;
@@ -525,16 +523,16 @@ public final class Gate implements IGate {
 	}
 	
 	public List<ITrigger> getAllValidTriggers() {
-		ArrayList<ITrigger> triggers = new ArrayList<ITrigger>(64);
-		triggers.addAll(StatementManager.getPipeTriggers(pipe.container));
+		ArrayList<ITrigger> allTriggers = new ArrayList<ITrigger>(64);
+		allTriggers.addAll(StatementManager.getPipeTriggers(pipe.container));
 		
 		for (ForgeDirection o : ForgeDirection.VALID_DIRECTIONS) {
 			TileEntity tile = pipe.container.getTile(o);
 			Block block = pipe.container.getBlock(o);
-			triggers.addAll(StatementManager.getNeighborTriggers(block, tile));
+			allTriggers.addAll(StatementManager.getNeighborTriggers(block, tile));
 		}
 		
-		return triggers;
+		return allTriggers;
 	}
 
 	// ACTIONS
@@ -551,16 +549,16 @@ public final class Gate implements IGate {
 	}
 	
 	public List<IAction> getAllValidActions() {
-		ArrayList<IAction> actions = new ArrayList<IAction>(64);
-		actions.addAll(StatementManager.getPipeActions(pipe.container));
+		ArrayList<IAction> allActions = new ArrayList<IAction>(64);
+		allActions.addAll(StatementManager.getPipeActions(pipe.container));
 		
 		for (ForgeDirection o : ForgeDirection.VALID_DIRECTIONS) {
 			TileEntity tile = pipe.container.getTile(o);
 			Block block = pipe.container.getBlock(o);
-			actions.addAll(StatementManager.getNeighborActions(block, tile));
+			allActions.addAll(StatementManager.getNeighborActions(block, tile));
 		}
 		
-		return actions;
+		return allActions;
 	}
 	
 	@Override
