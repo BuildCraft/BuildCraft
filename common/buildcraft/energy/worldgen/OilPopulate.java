@@ -185,15 +185,15 @@ public final class OilPopulate {
 				world.setBlock(wellX, baseY, wellZ, BuildCraftCore.springBlock, 1, 3);
 			}
 			for (int y = baseY + 1; y <= maxHeight; ++y) {
-				world.setBlock(wellX, y, wellZ, BuildCraftEnergy.blockOil);
+				world.setBlock(wellX, y, wellZ, BuildCraftEnergy.blockOil, 0, 3);
 			}
 
 			if (type == GenType.LARGE) {
 				for (int y = wellY; y <= maxHeight - wellHeight / 2; ++y) {
-					world.setBlock(wellX + 1, y, wellZ, BuildCraftEnergy.blockOil);
-					world.setBlock(wellX - 1, y, wellZ, BuildCraftEnergy.blockOil);
-					world.setBlock(wellX, y, wellZ + 1, BuildCraftEnergy.blockOil);
-					world.setBlock(wellX, y, wellZ - 1, BuildCraftEnergy.blockOil);
+					world.setBlock(wellX + 1, y, wellZ, BuildCraftEnergy.blockOil, 0, 3);
+					world.setBlock(wellX - 1, y, wellZ, BuildCraftEnergy.blockOil, 0, 3);
+					world.setBlock(wellX, y, wellZ + 1, BuildCraftEnergy.blockOil, 0, 3);
+					world.setBlock(wellX, y, wellZ - 1, BuildCraftEnergy.blockOil, 0, 3);
 				}
 			}
 

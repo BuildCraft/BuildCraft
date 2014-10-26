@@ -51,7 +51,7 @@ public class PipeColoringRecipe implements IRecipe {
 		
 		if (isBleach && dye != null) {
 			return null;
-		} else if ((isBleach || (dye != null && pipeStack.stackSize == 8)) && !hasDifferentPipes) {
+		} else if (pipeStack != null && (isBleach || (dye != null && pipeStack.stackSize == 8)) && !hasDifferentPipes) {
 			ItemStack result = pipeStack;
 			if (dye != null) {
 				result.setItemDamage(ColorUtils.getColorIDFromDye(dye) + 1);
