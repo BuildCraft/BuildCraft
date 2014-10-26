@@ -8,6 +8,10 @@
  */
 package buildcraft.core.utils;
 
+import net.minecraft.init.Items;
+import net.minecraft.item.ItemStack;
+import net.minecraftforge.oredict.OreDictionary;
+
 public final class ColorUtils {
 	
 	private static final int[] WOOL_TO_RGB = new int[] {
@@ -24,6 +28,15 @@ public final class ColorUtils {
 		"brown", "green", "red", "black"
 	};
 	
+	private static final String[] OREDICT_DYE_NAMES = new String[] {
+		"dyeWhite", "dyeOrange", "dyeMagenta", "dyeLightBlue",
+		"dyeYellow", "dyeLime", "dyePink", "dyeGray",
+		"dyeLightGray", "dyeCyan", "dyePurple", "dyeBlue",
+		"dyeBrown", "dyeGreen", "dyeRed", "dyeBlack"
+	};
+	
+	private static final int[] OREDICT_DYE_IDS = new int[16];
+	
 	private static final char[] WOOL_TO_CHAT = new char[] {
 		'f', '6', 'd', '9', 'e', 'a', 'd', '8',
 		'7', '3', '5', '1', '6', '2', '4', '0'
@@ -31,6 +44,33 @@ public final class ColorUtils {
 	
 	private ColorUtils() {
 		
+	}
+	
+	public static void initialize() {
+		for (int i = 0; i < 16; i++) {
+			OREDICT_DYE_IDS[i] = OreDictionary.getOreID(OREDICT_DYE_NAMES[i]);
+		}
+	}
+	
+	public static int getColorIDFromDye(ItemStack stack) {
+		if (stack.getItem() == Items.dye) {
+			return 15 - stack.getItemDamage();
+		}
+		
+		int[] itemOreIDs = OreDictionary.getOreIDs(stack);
+		for (int i = 0; i < 16; i++) {
+			for (int id : itemOreIDs) {
+				if (i == id) {
+					return i;
+				}
+			}
+		}
+		
+		return -1;
+	}
+	
+	public static boolean isDye(ItemStack stack) {
+		return getColorIDFromDye(stack) >= 0;
 	}
 	
 	public static int getRGBColor(int wool) {

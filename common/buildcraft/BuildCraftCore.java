@@ -109,6 +109,7 @@ import buildcraft.core.statements.TriggerInventoryLevel;
 import buildcraft.core.statements.TriggerMachine;
 import buildcraft.core.statements.TriggerRedstoneInput;
 import buildcraft.core.statements.ActionMachineControl.Mode;
+import buildcraft.core.utils.ColorUtils;
 import buildcraft.core.utils.CraftingHandler;
 import buildcraft.core.utils.WorldPropertyIsDirt;
 import buildcraft.core.utils.WorldPropertyIsFarmland;
@@ -402,6 +403,8 @@ public class BuildCraftCore extends BuildCraftMod {
 		BuildCraftAPI.isShoveled = new WorldPropertyIsShoveled();
 		BuildCraftAPI.isDirtProperty = new WorldPropertyIsDirt();
 		BuildCraftAPI.isFluidSource = new WorldPropertyIsFluidSource();
+		
+		ColorUtils.initialize();
 	}
 
 	@Mod.EventHandler

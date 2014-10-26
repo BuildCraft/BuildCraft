@@ -489,15 +489,6 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 		InvUtils.dropItems(container.getWorldObj(), stack, container.xCoord, container.yCoord, container.zCoord);
 	}
 
-	public void onBlockRemoval() {
-
-		if (getWorld().getWorldInfo().getGameType() != GameType.CREATIVE) {
-			for (ItemStack stack : computeItemDrop()) {
-				dropItem(stack);
-			}
-		}
-	}
-
 	public ArrayList<ItemStack> computeItemDrop() {
 		ArrayList<ItemStack> result = new ArrayList<ItemStack>();
 

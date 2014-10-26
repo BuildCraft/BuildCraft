@@ -65,6 +65,7 @@ import buildcraft.transport.ItemPlug;
 import buildcraft.transport.ItemRobotStation;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeActionProvider;
+import buildcraft.transport.PipeColoringRecipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTriggerProvider;
 import buildcraft.transport.TileFilteredBuffer;
@@ -525,6 +526,8 @@ public class BuildCraftTransport extends BuildCraftMod {
 			}
 		}
 
+		GameRegistry.addRecipe(new PipeColoringRecipe());
+		
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(filteredBufferBlock, 1),
 				"wdw", "wcw", "wpw", 'w', "plankWood", 'd',
 			BuildCraftTransport.pipeItemsDiamond, 'c', Blocks.chest, 'p',

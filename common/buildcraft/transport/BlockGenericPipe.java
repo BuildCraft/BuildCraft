@@ -530,8 +530,6 @@ public class BlockGenericPipe extends BlockBuildCraft {
 			return;
 		}
 
-		pipe.onBlockRemoval();
-
 		World world = pipe.container.getWorldObj();
 
 		if (world == null) {
@@ -568,20 +566,17 @@ public class BlockGenericPipe extends BlockBuildCraft {
 		}
 
 		ArrayList<ItemStack> list = new ArrayList<ItemStack>();
+		Pipe<?> pipe = getPipe(world, x, y, z);
 
-		int count = quantityDropped(metadata, fortune, world.rand);
-		for (int i = 0; i < count; i++) {
-			Pipe<?> pipe = getPipe(world, x, y, z);
-
-			if (pipe == null) {
-				pipe = pipeRemoved.get(new BlockIndex(x, y, z));
-			}
-
-			if (pipe != null) {
-				if (pipe.item != null) {
-					list.add(new ItemStack(pipe.item, 1, pipe.container.getItemMetadata()));
-					list.addAll(pipe.getDroppedItems());
-				}
+		if (pipe == null) {
+			pipe = pipeRemoved.get(new BlockIndex(x, y, z));
+		}
+		
+		if (pipe != null) {
+			if (pipe.item != null) {
+				list.add(new ItemStack(pipe.item, 1, pipe.container.getItemMetadata()));
+				list.addAll(pipe.computeItemDrop());
+				list.addAll(pipe.getDroppedItems());
 			}
 		}
 		return list;
@@ -597,26 +592,21 @@ public class BlockGenericPipe extends BlockBuildCraft {
 		if (world.isRemote) {
 			return;
 		}
+		Pipe<?> pipe = getPipe(world, i, j, k);
 
-		int i1 = quantityDropped(world.rand);
-		for (int j1 = 0; j1 < i1; j1++) {
-			if (world.rand.nextFloat() > f) {
-				continue;
-			}
+		if (pipe == null) {
+			pipe = pipeRemoved.get(new BlockIndex(i, j, k));
+		}
 
-			Pipe<?> pipe = getPipe(world, i, j, k);
+		if (pipe != null) {
+			Item k1 = pipe.item;
 
-			if (pipe == null) {
-				pipe = pipeRemoved.get(new BlockIndex(i, j, k));
-			}
-
-			if (pipe != null) {
-				Item k1 = pipe.item;
-
-				if (k1 != null) {
-					pipe.dropContents();
-					dropBlockAsItem(world, i, j, k, new ItemStack(k1, 1, pipe.container.getItemMetadata()));
+			if (k1 != null) {
+				pipe.dropContents();
+				for (ItemStack is: pipe.computeItemDrop()) {
+					dropBlockAsItem(world, i, j, k, is);
 				}
+				dropBlockAsItem(world, i, j, k, new ItemStack(k1, 1, pipe.container.getItemMetadata()));
 			}
 		}
 	}
