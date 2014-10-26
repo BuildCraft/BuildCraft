@@ -14,7 +14,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.api.blueprints.BuilderAPI;
-import buildcraft.api.blueprints.SchematicBlockShaped;
+import buildcraft.api.blueprints.SchematicBlockBase;
 import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.core.IInvSlot;
@@ -49,7 +49,7 @@ public class BptBuilderTemplate extends BptBuilderBase {
 							continue;
 						}
 
-						SchematicBlockShaped slot = blueprint.contents[i][j][k];
+						SchematicBlockBase slot = blueprint.contents[i][j][k];
 
 						if (slot == null
 								&& !clearedLocations.contains(new BlockIndex(
@@ -81,7 +81,7 @@ public class BptBuilderTemplate extends BptBuilderBase {
 						continue;
 					}
 
-					SchematicBlockShaped slot = blueprint.contents[i][j][k];
+					SchematicBlockBase slot = blueprint.contents[i][j][k];
 
 					if (slot != null && !builtLocations.contains(new BlockIndex(xCoord, yCoord, zCoord))) {
 						BuildingSlotBlock b = new BuildingSlotBlock();
