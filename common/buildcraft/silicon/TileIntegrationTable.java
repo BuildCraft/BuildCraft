@@ -10,10 +10,8 @@ package buildcraft.silicon;
 
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
-
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.FluidStack;
-
 import buildcraft.api.recipes.BuildcraftRecipeRegistry;
 import buildcraft.api.recipes.CraftingResult;
 import buildcraft.api.recipes.IFlexibleCrafter;
@@ -24,7 +22,7 @@ import buildcraft.core.inventory.InventoryMapper;
 import buildcraft.core.inventory.SimpleInventory;
 import buildcraft.core.inventory.StackHelper;
 import buildcraft.core.inventory.Transactor;
-import buildcraft.core.triggers.ActionMachineControl;
+import buildcraft.core.statements.ActionMachineControl;
 import buildcraft.core.utils.StringUtils;
 
 public class TileIntegrationTable extends TileLaserTableBase implements IFlexibleCrafter {

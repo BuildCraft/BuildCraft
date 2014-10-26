@@ -14,7 +14,6 @@ import net.minecraft.inventory.ICrafting;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-
 import buildcraft.BuildCraftCore;
 import buildcraft.api.gates.IAction;
 import buildcraft.api.gates.IActionReceptor;
@@ -22,7 +21,7 @@ import buildcraft.api.power.ILaserTarget;
 import buildcraft.core.IMachine;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.inventory.SimpleInventory;
-import buildcraft.core.triggers.ActionMachineControl;
+import buildcraft.core.statements.ActionMachineControl;
 import buildcraft.core.utils.AverageUtil;
 
 public abstract class TileLaserTableBase extends TileBuildCraft implements ILaserTarget, IInventory, IActionReceptor, IMachine {

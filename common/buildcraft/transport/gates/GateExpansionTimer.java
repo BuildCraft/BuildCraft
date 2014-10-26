@@ -11,15 +11,14 @@ package buildcraft.transport.gates;
 import java.util.List;
 
 import net.minecraft.tileentity.TileEntity;
-
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.gates.GateExpansionController;
 import buildcraft.api.gates.IGate;
 import buildcraft.api.gates.IGateExpansion;
 import buildcraft.api.gates.ITrigger;
 import buildcraft.api.gates.ITriggerParameter;
-import buildcraft.transport.triggers.TriggerClockTimer;
-import buildcraft.transport.triggers.TriggerClockTimer.Time;
+import buildcraft.transport.statements.TriggerClockTimer;
+import buildcraft.transport.statements.TriggerClockTimer.Time;
 
 public final class GateExpansionTimer extends GateExpansionBuildcraft implements IGateExpansion {
 

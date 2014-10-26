@@ -23,7 +23,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.api.blueprints.BuildingPermission;
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.MappingRegistry;
-import buildcraft.api.blueprints.SchematicBlockBase;
+import buildcraft.api.blueprints.SchematicBlockShaped;
 import buildcraft.api.blueprints.Translation;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.Position;
@@ -36,7 +36,7 @@ public abstract class BlueprintBase {
 
 	public ArrayList<NBTTagCompound> subBlueprintsNBT = new ArrayList<NBTTagCompound>();
 
-	public SchematicBlockBase[][][] contents;
+	public SchematicBlockShaped[][][] contents;
 	public int anchorX, anchorY, anchorZ;
 	public int sizeX, sizeY, sizeZ;
 	public BlueprintId id = new BlueprintId();
@@ -56,7 +56,7 @@ public abstract class BlueprintBase {
 	}
 
 	public BlueprintBase(int sizeX, int sizeY, int sizeZ) {
-		contents = new SchematicBlockBase[sizeX][sizeY][sizeZ];
+		contents = new SchematicBlockShaped[sizeX][sizeY][sizeZ];
 
 		this.sizeX = sizeX;
 		this.sizeY = sizeY;
@@ -92,7 +92,7 @@ public abstract class BlueprintBase {
 	}
 
 	public void rotateLeft(BptContext context) {
-		SchematicBlockBase[][][] newContents = new SchematicBlockBase[sizeZ][sizeY][sizeX];
+		SchematicBlockShaped[][][] newContents = new SchematicBlockShaped[sizeZ][sizeY][sizeX];
 
 		for (int x = 0; x < sizeZ; ++x) {
 			for (int y = 0; y < sizeY; ++y) {
@@ -218,7 +218,7 @@ public abstract class BlueprintBase {
 			excavate = true;
 		}
 
-		contents = new SchematicBlockBase[sizeX][sizeY][sizeZ];
+		contents = new SchematicBlockShaped[sizeX][sizeY][sizeZ];
 
 		try {
 			loadContents(nbt);

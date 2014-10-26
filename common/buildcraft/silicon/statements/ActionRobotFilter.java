@@ -13,10 +13,8 @@ import java.util.Collection;
 
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.item.ItemStack;
-
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
-
 import buildcraft.api.gates.ActionParameterItemStack;
 import buildcraft.api.gates.IActionParameter;
 import buildcraft.api.robots.IDockingStation;
@@ -28,7 +26,7 @@ import buildcraft.core.inventory.filters.PassThroughFluidFilter;
 import buildcraft.core.inventory.filters.PassThroughStackFilter;
 import buildcraft.core.inventory.filters.StatementParameterStackFilter;
 import buildcraft.core.robots.DockingStation;
-import buildcraft.core.triggers.BCActionPassive;
+import buildcraft.core.statements.BCActionPassive;
 import buildcraft.core.utils.StringUtils;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.gates.ActionIterator;

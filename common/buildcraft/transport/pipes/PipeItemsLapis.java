@@ -14,12 +14,9 @@ import java.util.LinkedList;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
-
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-
 import net.minecraftforge.common.util.ForgeDirection;
-
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.EnumColor;
 import buildcraft.api.core.IIconProvider;
@@ -32,7 +29,7 @@ import buildcraft.transport.TransportConstants;
 import buildcraft.transport.TravelingItem;
 import buildcraft.transport.gates.ActionSlot;
 import buildcraft.transport.pipes.events.PipeEventItem;
-import buildcraft.transport.triggers.ActionPipeColor;
+import buildcraft.transport.statements.ActionPipeColor;
 
 public class PipeItemsLapis extends Pipe<PipeTransportItems> {
 

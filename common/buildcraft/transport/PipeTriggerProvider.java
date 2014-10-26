@@ -12,16 +12,13 @@ import java.util.LinkedList;
 
 import net.minecraft.block.Block;
 import net.minecraft.tileentity.TileEntity;
-
 import net.minecraftforge.common.util.ForgeDirection;
-
 import cofh.api.energy.IEnergyHandler;
-
 import buildcraft.BuildCraftCore;
 import buildcraft.api.gates.ITrigger;
 import buildcraft.api.gates.ITriggerProvider;
 import buildcraft.api.transport.IPipeTile;
-import buildcraft.transport.triggers.TriggerPipeContents;
+import buildcraft.transport.statements.TriggerPipeContents;
 
 public class PipeTriggerProvider implements ITriggerProvider {
 

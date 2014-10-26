@@ -44,7 +44,7 @@ import buildcraft.core.utils.Utils;
 import buildcraft.transport.gates.ActionSlot;
 import buildcraft.transport.gates.GateFactory;
 import buildcraft.transport.pipes.events.PipeEvent;
-import buildcraft.transport.triggers.ActionValve.ValveState;
+import buildcraft.transport.statements.ActionValve.ValveState;
 
 public abstract class Pipe<T extends PipeTransport> implements IDropControlInventory, IPipe {
 

@@ -20,7 +20,7 @@ import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.filler.FillerManager;
 import buildcraft.api.gates.IAction;
 import buildcraft.api.gates.IActionReceptor;
-import buildcraft.builders.triggers.ActionFiller;
+import buildcraft.builders.statements.ActionFiller;
 import buildcraft.core.Box;
 import buildcraft.core.Box.Kind;
 import buildcraft.core.IMachine;
@@ -35,8 +35,8 @@ import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.network.RPC;
 import buildcraft.core.network.RPCHandler;
 import buildcraft.core.network.RPCSide;
-import buildcraft.core.triggers.ActionMachineControl;
-import buildcraft.core.triggers.ActionMachineControl.Mode;
+import buildcraft.core.statements.ActionMachineControl;
+import buildcraft.core.statements.ActionMachineControl.Mode;
 import buildcraft.core.utils.Utils;
 
 public class TileFiller extends TileAbstractBuilder implements IMachine, IActionReceptor {

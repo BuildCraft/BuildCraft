@@ -12,7 +12,7 @@ import buildcraft.api.core.IInvSlot;
 import buildcraft.core.inventory.filters.StatementParameterStackFilter;
 import buildcraft.core.robots.DockingStation;
 import buildcraft.core.robots.EntityRobot;
-import buildcraft.core.triggers.BCActionPassive;
+import buildcraft.core.statements.BCActionPassive;
 import buildcraft.transport.gates.ActionSlot;
 
 public abstract class ActionStationInputItems extends BCActionPassive {

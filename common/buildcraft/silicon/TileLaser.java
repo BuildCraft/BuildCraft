@@ -30,7 +30,7 @@ import buildcraft.core.IMachine;
 import buildcraft.core.LaserData;
 import buildcraft.core.RFBattery;
 import buildcraft.core.TileBuildCraft;
-import buildcraft.core.triggers.ActionMachineControl;
+import buildcraft.core.statements.ActionMachineControl;
 
 public class TileLaser extends TileBuildCraft implements IActionReceptor, IMachine {
 

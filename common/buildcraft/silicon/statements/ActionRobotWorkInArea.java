@@ -10,12 +10,11 @@ package buildcraft.silicon.statements;
 
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.item.ItemStack;
-
 import buildcraft.api.core.IZone;
 import buildcraft.api.gates.ActionParameterItemStack;
 import buildcraft.api.gates.IActionParameter;
 import buildcraft.core.ItemMapLocation;
-import buildcraft.core.triggers.BCActionPassive;
+import buildcraft.core.statements.BCActionPassive;
 import buildcraft.core.utils.StringUtils;
 import buildcraft.transport.gates.ActionSlot;
 

@@ -9,15 +9,13 @@
 package buildcraft.silicon.statements;
 
 import net.minecraft.client.renderer.texture.IIconRegister;
-
 import net.minecraftforge.common.util.ForgeDirection;
-
 import buildcraft.api.gates.IGate;
 import buildcraft.api.gates.ITriggerParameter;
 import buildcraft.core.robots.AIRobotSleep;
 import buildcraft.core.robots.DockingStation;
 import buildcraft.core.robots.EntityRobot;
-import buildcraft.core.triggers.BCTrigger;
+import buildcraft.core.statements.BCTrigger;
 import buildcraft.core.utils.StringUtils;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.TileGenericPipe;

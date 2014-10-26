@@ -9,10 +9,9 @@
 package buildcraft.silicon.statements;
 
 import net.minecraft.client.renderer.texture.IIconRegister;
-
 import buildcraft.api.gates.ActionParameterItemStack;
 import buildcraft.api.gates.IActionParameter;
-import buildcraft.core.triggers.BCActionPassive;
+import buildcraft.core.statements.BCActionPassive;
 import buildcraft.core.utils.StringUtils;
 
 public class ActionStationAllowCraft extends BCActionPassive {

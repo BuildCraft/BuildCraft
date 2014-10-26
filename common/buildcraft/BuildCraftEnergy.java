@@ -68,7 +68,7 @@ import buildcraft.energy.TileEnergyEmitter;
 import buildcraft.energy.TileEnergyReceiver;
 import buildcraft.energy.TileEngine;
 import buildcraft.energy.TileEngine.EnergyStage;
-import buildcraft.energy.triggers.TriggerEngineHeat;
+import buildcraft.energy.statements.TriggerEngineHeat;
 import buildcraft.energy.worldgen.BiomeGenOilDesert;
 import buildcraft.energy.worldgen.BiomeGenOilOcean;
 import buildcraft.energy.worldgen.BiomeInitializer;

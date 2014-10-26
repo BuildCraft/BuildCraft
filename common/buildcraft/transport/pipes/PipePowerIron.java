@@ -27,7 +27,7 @@ import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportPower;
 import buildcraft.transport.gates.ActionSlot;
-import buildcraft.transport.triggers.ActionPowerLimiter;
+import buildcraft.transport.statements.ActionPowerLimiter;
 
 public class PipePowerIron extends Pipe<PipeTransportPower> {
 

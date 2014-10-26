@@ -18,7 +18,7 @@ import net.minecraftforge.common.util.Constants;
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.MappingNotFoundException;
 import buildcraft.api.blueprints.MappingRegistry;
-import buildcraft.api.blueprints.SchematicBlockBase;
+import buildcraft.api.blueprints.SchematicBlockShaped;
 import buildcraft.api.blueprints.SchematicFactory;
 import buildcraft.api.blueprints.SchematicMask;
 import buildcraft.api.core.Position;
@@ -26,7 +26,7 @@ import buildcraft.api.core.Position;
 public class BuildingSlotBlock extends BuildingSlot {
 
 	public int x, y, z;
-	public SchematicBlockBase schematic;
+	public SchematicBlockShaped schematic;
 
 	public enum Mode {
 		ClearIfInvalid, Build
@@ -37,7 +37,7 @@ public class BuildingSlotBlock extends BuildingSlot {
 	public int buildStage = 0;
 
 	@Override
-	public SchematicBlockBase getSchematic () {
+	public SchematicBlockShaped getSchematic () {
 		if (schematic == null) {
 			return new SchematicMask(false);
 		} else {
@@ -145,7 +145,7 @@ public class BuildingSlotBlock extends BuildingSlot {
 		z = nbt.getInteger("z");
 
 		if (nbt.hasKey("schematic")) {
-			schematic = (SchematicBlockBase) SchematicFactory
+			schematic = (SchematicBlockShaped) SchematicFactory
 				.createSchematicFromWorldNBT(nbt.getCompoundTag("schematic"), registry);
 		}
 

@@ -10,9 +10,7 @@ package buildcraft.silicon.statements;
 
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.item.ItemStack;
-
 import net.minecraftforge.common.util.ForgeDirection;
-
 import buildcraft.api.core.BlockIndex;
 import buildcraft.api.gates.ActionParameterItemStack;
 import buildcraft.api.gates.IActionParameter;
@@ -23,7 +21,7 @@ import buildcraft.core.robots.AIRobotGoAndLinkToDock;
 import buildcraft.core.robots.DockingStation;
 import buildcraft.core.robots.EntityRobot;
 import buildcraft.core.robots.RobotRegistry;
-import buildcraft.core.triggers.BCActionActive;
+import buildcraft.core.statements.BCActionActive;
 import buildcraft.core.utils.StringUtils;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.TileGenericPipe;

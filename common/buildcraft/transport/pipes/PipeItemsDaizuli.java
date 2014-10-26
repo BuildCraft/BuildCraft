@@ -17,12 +17,9 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-
 import net.minecraftforge.common.util.ForgeDirection;
-
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.EnumColor;
 import buildcraft.api.core.IIconProvider;
@@ -37,8 +34,8 @@ import buildcraft.transport.TransportConstants;
 import buildcraft.transport.TravelingItem;
 import buildcraft.transport.gates.ActionSlot;
 import buildcraft.transport.pipes.events.PipeEventItem;
-import buildcraft.transport.triggers.ActionPipeColor;
-import buildcraft.transport.triggers.ActionPipeDirection;
+import buildcraft.transport.statements.ActionPipeColor;
+import buildcraft.transport.statements.ActionPipeDirection;
 
 public class PipeItemsDaizuli extends Pipe<PipeTransportItems> {
 

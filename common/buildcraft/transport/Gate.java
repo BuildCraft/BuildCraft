@@ -36,13 +36,13 @@ import buildcraft.api.gates.TriggerParameterItemStack;
 import buildcraft.api.transport.IPipe;
 import buildcraft.api.transport.PipeWire;
 import buildcraft.core.GuiIds;
-import buildcraft.core.triggers.ActionRedstoneOutput;
+import buildcraft.core.statements.ActionRedstoneOutput;
 import buildcraft.transport.gates.ActionSlot;
 import buildcraft.transport.gates.GateDefinition.GateLogic;
 import buildcraft.transport.gates.GateDefinition.GateMaterial;
 import buildcraft.transport.gates.ItemGate;
 import buildcraft.transport.gui.ContainerGateInterface;
-import buildcraft.transport.triggers.ActionRedstoneFaderOutput;
+import buildcraft.transport.statements.ActionRedstoneFaderOutput;
 
 public final class Gate implements IGate {
 

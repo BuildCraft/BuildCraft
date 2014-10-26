@@ -9,8 +9,7 @@
 package buildcraft.silicon.statements;
 
 import net.minecraft.client.renderer.texture.IIconRegister;
-
-import buildcraft.core.triggers.BCActionPassive;
+import buildcraft.core.statements.BCActionPassive;
 import buildcraft.core.utils.StringUtils;
 
 public class ActionRobotWakeUp extends BCActionPassive {

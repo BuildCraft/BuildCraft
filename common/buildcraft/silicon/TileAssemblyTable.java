@@ -18,13 +18,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
-
 import cpw.mods.fml.common.FMLCommonHandler;
-
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.FluidStack;
-
 import buildcraft.api.core.NetworkData;
 import buildcraft.api.recipes.CraftingResult;
 import buildcraft.api.recipes.IFlexibleCrafter;
@@ -38,7 +35,7 @@ import buildcraft.core.recipes.AssemblyRecipeManager;
 import buildcraft.core.robots.EntityRobot;
 import buildcraft.core.robots.ResourceIdAssemblyTable;
 import buildcraft.core.robots.RobotRegistry;
-import buildcraft.core.triggers.ActionMachineControl;
+import buildcraft.core.statements.ActionMachineControl;
 import buildcraft.core.utils.StringUtils;
 import buildcraft.core.utils.Utils;
 
