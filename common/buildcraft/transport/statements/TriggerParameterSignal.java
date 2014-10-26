@@ -8,6 +8,8 @@
  */
 package buildcraft.transport.statements;
 
+import java.util.Locale;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.IIcon;
@@ -17,6 +19,7 @@ import buildcraft.api.gates.ITriggerParameter;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.PipeWire;
 import buildcraft.core.statements.StatementIconProvider;
+import buildcraft.core.utils.StringUtils;
 
 public class TriggerParameterSignal implements ITriggerParameter {
 
@@ -79,17 +82,31 @@ public class TriggerParameterSignal implements ITriggerParameter {
 	}
 
 	@Override
-	public void clicked(IPipeTile pipe, IStatement stmt, ItemStack stack) {
-		if (color == null) {
-			active = true;
-			color = PipeWire.RED;
-		} else if (active) {
-			active = false;
-		} else if (color == PipeWire.YELLOW) {
-			color = null;
+	public void clicked(IPipeTile pipe, IStatement stmt, ItemStack stack, int mouseButton) {
+		if (mouseButton == 0) {
+			if (color == null) {
+				active = true;
+				color = PipeWire.RED;
+			} else if (active) {
+				active = false;
+			} else if (color == PipeWire.YELLOW) {
+				color = null;
+			} else {
+				color = PipeWire.values()[color.ordinal() + 1];
+				active = true;
+			}
 		} else {
-			color = PipeWire.values()[color.ordinal() + 1];
-			active = true;
+			if (color == null) {
+				active = false;
+				color = PipeWire.YELLOW;
+			} else if (!active) {
+				active = true;
+			} else if (color == PipeWire.RED) {
+				color = null;
+			} else {
+				color = PipeWire.values()[color.ordinal() - 1];
+				active = false;
+			}
 		}
 	}
 
@@ -110,5 +127,10 @@ public class TriggerParameterSignal implements ITriggerParameter {
 		if (nbt.hasKey("color")) {
 			color = PipeWire.values()[nbt.getByte("color")];
 		}
+	}
+
+	@Override
+	public String getDescription() {
+		return String.format(StringUtils.localize("gate.trigger.pipe.wire." + (active ? "active" : "inactive")), StringUtils.localize("color." + color.name().toLowerCase(Locale.ENGLISH)));
 	}
 }

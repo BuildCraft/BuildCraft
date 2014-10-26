@@ -25,7 +25,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldSettings.GameType;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraftforge.common.util.ForgeDirection;
@@ -404,11 +403,14 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 		return false;
 	}
 	
-	private int getMaxRedstoneOutput() {
+	public int getMaxRedstoneOutput(ForgeDirection dir) {
 		int output = 0;
 		
-		for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
-			output = Math.max(output, getRedstoneOutput(dir));
+		for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
+			output = Math.max(output, getRedstoneOutput(side));
+			if (side == dir) {
+				output = Math.max(output, getRedstoneOutputSide(side));
+			}
 		}
 		
 		return output;
@@ -420,6 +422,12 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 		return gate != null ? gate.getRedstoneOutput() : 0;
 	}
 
+	private int getRedstoneOutputSide(ForgeDirection dir) {
+		Gate gate = gates[dir.ordinal()];
+
+		return gate != null ? gate.getSidedRedstoneOutput() : 0;
+	}
+
 	public int isPoweringTo(int side) {
 		ForgeDirection o = ForgeDirection.getOrientation(side).getOpposite();
 
@@ -427,12 +435,8 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 
 		if (tile instanceof TileGenericPipe && container.isPipeConnected(o)) {
 			return 0;
-		/* } else if (tile != null && container.isPipeConnected(o)) {
-			return getMaxRedstoneOutput();
 		} else {
-			return getRedstoneOutput(o); */
-		} else {
-			return getMaxRedstoneOutput();
+			return getMaxRedstoneOutput(o);
 		}
 	}
 

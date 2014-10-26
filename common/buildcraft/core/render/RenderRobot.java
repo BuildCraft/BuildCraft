@@ -77,7 +77,7 @@ public class RenderRobot extends Render implements IItemRenderer {
 		
 		try {
 			renderManager.renderEngine.bindTexture(robot.getTexture());
-		} catch(Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 			// TODO: Figure out why the NPE inside Minecraft happens.
 			GL11.glEnable(GL11.GL_LIGHTING);

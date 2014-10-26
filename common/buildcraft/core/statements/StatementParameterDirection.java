@@ -17,6 +17,7 @@ import buildcraft.api.gates.IActionParameter;
 import buildcraft.api.gates.IStatement;
 import buildcraft.api.gates.ITriggerParameter;
 import buildcraft.api.transport.IPipeTile;
+import buildcraft.core.utils.StringUtils;
 
 public class StatementParameterDirection implements IActionParameter, ITriggerParameter {
 
@@ -42,9 +43,9 @@ public class StatementParameterDirection implements IActionParameter, ITriggerPa
 	}
 
 	@Override
-	public void clicked(IPipeTile pipe, IStatement stmt, ItemStack stack) {
+	public void clicked(IPipeTile pipe, IStatement stmt, ItemStack stack, int mouseButton) {
 	    do {
-	    	direction = ForgeDirection.getOrientation((direction.ordinal() + 1) % 6);
+	    	direction = ForgeDirection.getOrientation((direction.ordinal() + (mouseButton > 0 ? -1 : 1)) % 6);
 	    } while (!pipe.isPipeConnected(direction));
 	}
 
@@ -69,5 +70,14 @@ public class StatementParameterDirection implements IActionParameter, ITriggerPa
 	    	return param.direction == this.direction;
 	    }
 	    return false;
+	}
+
+	@Override
+	public String getDescription() {
+		if (direction == ForgeDirection.UNKNOWN) {
+			return "";
+		} else {
+			return StringUtils.localize("direction." + direction.name().toLowerCase());
+		}
 	}
 }

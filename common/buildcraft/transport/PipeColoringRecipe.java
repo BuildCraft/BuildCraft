@@ -1,12 +1,11 @@
 package buildcraft.transport;
 
-import buildcraft.core.utils.ColorUtils;
 import net.minecraft.init.Items;
-import net.minecraft.inventory.ICrafting;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.world.World;
+import buildcraft.core.utils.ColorUtils;
 
 public class PipeColoringRecipe implements IRecipe {
 

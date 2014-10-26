@@ -69,9 +69,9 @@ public final class StatementIconProvider implements IIconProvider {
     public static final int Action_Parameter_Direction_South = 42;
     public static final int Action_Parameter_Direction_West = 43;
     public static final int Action_Parameter_Direction_East = 44;
+    public static final int Action_Parameter_RedstoneGateSideOnly = 45;
 
-
-	public static final int MAX = 45;
+	public static final int MAX = 46;
 
 	@SideOnly(Side.CLIENT)
 	private final IIcon[] icons = new IIcon[MAX];
@@ -135,5 +135,7 @@ public final class StatementIconProvider implements IIconProvider {
 		icons[StatementIconProvider.Action_Parameter_Direction_South] = iconRegister.registerIcon("buildcraft:triggers/trigger_dir_south");
 		icons[StatementIconProvider.Action_Parameter_Direction_West] = iconRegister.registerIcon("buildcraft:triggers/trigger_dir_west");
 		icons[StatementIconProvider.Action_Parameter_Direction_East] = iconRegister.registerIcon("buildcraft:triggers/trigger_dir_east");
+		
+		icons[StatementIconProvider.Action_Parameter_RedstoneGateSideOnly] = iconRegister.registerIcon("buildcraft:triggers/redstone_gate_side_only");
 	}
 }

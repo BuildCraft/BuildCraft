@@ -37,6 +37,7 @@ import buildcraft.api.transport.IPipe;
 import buildcraft.api.transport.PipeWire;
 import buildcraft.core.GuiIds;
 import buildcraft.core.statements.ActionRedstoneOutput;
+import buildcraft.core.statements.StatementParameterRedstoneGateSideOnly;
 import buildcraft.transport.gates.ActionSlot;
 import buildcraft.transport.gates.GateDefinition.GateLogic;
 import buildcraft.transport.gates.GateDefinition.GateMaterial;
@@ -66,7 +67,8 @@ public final class Gate implements IGate {
 	public BitSet broadcastSignal = new BitSet(PipeWire.VALUES.length);
 	public BitSet prevBroadcastSignal = new BitSet(PipeWire.VALUES.length);
 	public int redstoneOutput = 0;
-
+	public int redstoneOutputSide = 0;
+	
 	/**
 	 * this is the internal pulsing state of the gate. Intended to be managed
 	 * by the server side only, the client is supposed to be referring to the
@@ -329,6 +331,10 @@ public final class Gate implements IGate {
 		return redstoneOutput;
 	}
 
+	public int getSidedRedstoneOutput() {
+		return redstoneOutputSide;
+	}
+	
 	public void startResolution() {
 		for (GateExpansionController expansion : expansions.values()) {
 			expansion.startResolution();
@@ -338,6 +344,9 @@ public final class Gate implements IGate {
 	public void resolveActions() {
 		int oldRedstoneOutput = redstoneOutput;
 		redstoneOutput = 0;
+		
+		int oldRedstoneOutputSide = redstoneOutputSide;
+		redstoneOutputSide = 0;
 
 		/* for (ForgeDirection ioSide : ForgeDirection.VALID_DIRECTIONS) {
 			pipe.transport.allowInput(ioSide, true);
@@ -447,10 +456,17 @@ public final class Gate implements IGate {
 				continue;
 			}
 
-			if (action instanceof ActionRedstoneOutput) {
-				redstoneOutput = 15;
-			} else if (action instanceof ActionRedstoneFaderOutput) {
-				redstoneOutput = ((ActionRedstoneFaderOutput) action).level;
+			if (action instanceof ActionRedstoneOutput || action instanceof ActionRedstoneFaderOutput) {
+				if (slot.parameters != null && slot.parameters.length >= 1 &&
+						slot.parameters[0] instanceof StatementParameterRedstoneGateSideOnly &&
+						((StatementParameterRedstoneGateSideOnly) slot.parameters[0]).isOn) {
+					redstoneOutputSide = (action instanceof ActionRedstoneFaderOutput) ? ((ActionRedstoneFaderOutput) action).level : 15;
+				} else {
+					redstoneOutput = (action instanceof ActionRedstoneFaderOutput) ? ((ActionRedstoneFaderOutput) action).level : 15;
+					if (redstoneOutput > redstoneOutputSide) {
+						redstoneOutputSide = redstoneOutput;
+					}
+				}
 			} else {
 				for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
 					TileEntity tile = pipe.container.getTile(side);
@@ -464,7 +480,7 @@ public final class Gate implements IGate {
 
 		pipe.actionsActivated(activeActions);
 
-		if (oldRedstoneOutput != redstoneOutput) {
+		if (oldRedstoneOutput != redstoneOutput || oldRedstoneOutputSide != redstoneOutputSide) {
 			pipe.updateNeighbors(true);
 		}
 

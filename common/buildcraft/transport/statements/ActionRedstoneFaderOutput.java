@@ -12,7 +12,9 @@ import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.util.IIcon;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import buildcraft.api.gates.IActionParameter;
 import buildcraft.core.statements.BCActionPassive;
+import buildcraft.core.statements.StatementParameterRedstoneGateSideOnly;
 import buildcraft.core.utils.StringUtils;
 
 public class ActionRedstoneFaderOutput extends BCActionPassive {
@@ -40,5 +42,21 @@ public class ActionRedstoneFaderOutput extends BCActionPassive {
 	@SideOnly(Side.CLIENT)
 	public void registerIcons(IIconRegister iconRegister) {
 		icon = iconRegister.registerIcon(String.format("buildcraft:triggers/redstone_%02d", level));
+	}
+	
+    @Override
+    public IActionParameter createParameter(int index) {
+		IActionParameter param = null;
+	
+		if (index == 0) {
+		    param = new StatementParameterRedstoneGateSideOnly();
+		}
+	
+		return param;
+    }
+	
+	@Override
+	public int maxParameters() {
+		return 1;
 	}
 }

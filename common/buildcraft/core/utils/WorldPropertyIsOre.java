@@ -34,7 +34,7 @@ public class WorldPropertyIsOre extends WorldProperty {
 		}
 		
 		for (String oreName : OreDictionary.getOreNames()) {
-			if(oreName.startsWith("ore")) {
+			if (oreName.startsWith("ore")) {
 				ArrayList<ItemStack> oreStacks = OreDictionary.getOres(oreName);
 				if (oreStacks.size() > 0) {
 					Block block = Block.getBlockFromItem(oreStacks.get(0).getItem());

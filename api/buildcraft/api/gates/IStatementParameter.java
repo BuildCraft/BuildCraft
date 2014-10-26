@@ -19,8 +19,10 @@ public interface IStatementParameter {
 	ItemStack getItemStackToDraw();
 
 	IIcon getIconToDraw();
+	
+	String getDescription();
 
-	void clicked(IPipeTile pipe, IStatement stmt, ItemStack stack);
+	void clicked(IPipeTile pipe, IStatement stmt, ItemStack stack, int mouseButton);
 
 	void writeToNBT(NBTTagCompound compound);
 

@@ -11,7 +11,6 @@ package buildcraft.api.gates;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.IIcon;
-
 import buildcraft.api.core.NetworkData;
 import buildcraft.api.transport.IPipeTile;
 
@@ -31,7 +30,7 @@ public class ActionParameterItemStack implements IActionParameter {
 	}
 
 	@Override
-	public void clicked(IPipeTile pipe, IStatement stmt, ItemStack stack) {
+	public void clicked(IPipeTile pipe, IStatement stmt, ItemStack stack, int mouseButton) {
 		if (stack != null) {
 			this.stack = stack.copy();
 			this.stack.stackSize = 1;
@@ -62,5 +61,10 @@ public class ActionParameterItemStack implements IActionParameter {
 		} else {
 			return false;
 		}
+	}
+
+	@Override
+	public String getDescription() {
+		return stack.getDisplayName();
 	}
 }

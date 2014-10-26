@@ -8,6 +8,8 @@
  */
 package buildcraft.transport.statements;
 
+import java.util.Locale;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.IIcon;
@@ -17,6 +19,7 @@ import buildcraft.api.gates.IStatement;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.PipeWire;
 import buildcraft.core.statements.StatementIconProvider;
+import buildcraft.core.utils.StringUtils;
 
 public class ActionParameterSignal implements IActionParameter {
 
@@ -59,13 +62,13 @@ public class ActionParameterSignal implements IActionParameter {
 	}
 
 	@Override
-	public void clicked(IPipeTile pipe, IStatement stmt, ItemStack stack) {
+	public void clicked(IPipeTile pipe, IStatement stmt, ItemStack stack, int mouseButton) {
 		if (color == null) {
-			color = PipeWire.RED;
-		} else if (color == PipeWire.YELLOW) {
+			color = mouseButton == 0 ? PipeWire.RED : PipeWire.YELLOW;
+		} else if (color == (mouseButton == 0 ? PipeWire.YELLOW : PipeWire.RED)) {
 			color = null;
 		} else {
-			color = PipeWire.values()[color.ordinal() + 1];
+			color = PipeWire.values()[mouseButton == 0 ? color.ordinal() + 1 : color.ordinal() - 1];
 		}
 	}
 
@@ -92,5 +95,10 @@ public class ActionParameterSignal implements IActionParameter {
 		} else {
 			return false;
 		}
+	}
+	
+	@Override
+	public String getDescription() {
+		return String.format(StringUtils.localize("gate.action.pipe.wire"), StringUtils.localize("color." + color.name().toLowerCase(Locale.ENGLISH)));
 	}
 }

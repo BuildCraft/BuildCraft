@@ -14,6 +14,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 import buildcraft.api.gates.IGate;
 import buildcraft.api.gates.ITriggerParameter;
 import buildcraft.core.statements.BCTrigger;
+import buildcraft.core.statements.StatementParameterRedstoneGateSideOnly;
 import buildcraft.core.utils.StringUtils;
 import buildcraft.transport.TileGenericPipe;
 
@@ -33,10 +34,13 @@ public class TriggerRedstoneFaderInput extends BCTrigger {
 	}
 
 	@Override
-	public boolean isTriggerActive(IGate gate, ITriggerParameter[] parameter) {
+	public boolean isTriggerActive(IGate gate, ITriggerParameter[] parameters) {
 		TileGenericPipe tile = (TileGenericPipe) gate.getPipe().getTile();
-		// int inputLevel = tile.redstoneInputSide[gate.getSide().ordinal()];
 		int inputLevel = tile.redstoneInput;
+		if (parameters.length > 0 && parameters[0] instanceof StatementParameterRedstoneGateSideOnly &&
+				((StatementParameterRedstoneGateSideOnly) parameters[0]).isOn) {
+			inputLevel = tile.redstoneInputSide[gate.getSide().ordinal()];
+		}
 		
 		return inputLevel == level;
 	}
@@ -45,5 +49,21 @@ public class TriggerRedstoneFaderInput extends BCTrigger {
 	@SideOnly(Side.CLIENT)
 	public void registerIcons(IIconRegister iconRegister) {
 		icon = iconRegister.registerIcon(String.format("buildcraft:triggers/redstone_%02d", level));
+	}
+	
+    @Override
+    public ITriggerParameter createParameter(int index) {
+		ITriggerParameter param = null;
+	
+		if (index == 0) {
+		    param = new StatementParameterRedstoneGateSideOnly();
+		}
+	
+		return param;
+    }
+	
+	@Override
+	public int maxParameters() {
+		return 1;
 	}
 }

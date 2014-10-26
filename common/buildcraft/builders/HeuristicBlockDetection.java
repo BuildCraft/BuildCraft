@@ -55,7 +55,7 @@ public final class HeuristicBlockDetection {
 						} else {
 							SchematicRegistry.INSTANCE.registerSchematicBlock(block, meta, SchematicBlockCreative.class);
 						}
-					} catch(Exception e) {
+					} catch (Exception e) {
 						e.printStackTrace();
 					}
 				}

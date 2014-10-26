@@ -129,12 +129,12 @@ import buildcraft.transport.statements.ActionRedstoneFaderOutput;
 import buildcraft.transport.statements.ActionSignalOutput;
 import buildcraft.transport.statements.ActionSingleEnergyPulse;
 import buildcraft.transport.statements.ActionValve;
+import buildcraft.transport.statements.ActionValve.ValveState;
 import buildcraft.transport.statements.TriggerClockTimer;
 import buildcraft.transport.statements.TriggerParameterSignal;
 import buildcraft.transport.statements.TriggerPipeContents;
 import buildcraft.transport.statements.TriggerPipeSignal;
 import buildcraft.transport.statements.TriggerRedstoneFaderInput;
-import buildcraft.transport.statements.ActionValve.ValveState;
 import buildcraft.transport.statements.TriggerClockTimer.Time;
 import buildcraft.transport.statements.TriggerPipeContents.PipeContents;
 import buildcraft.transport.stripes.StripesHandlerArrow;
@@ -468,12 +468,6 @@ public class BuildCraftTransport extends BuildCraftMod {
 	public void init(FMLInitializationEvent evt) {
 		channels = NetworkRegistry.INSTANCE.newChannel
 				(DefaultProps.NET_CHANNEL_NAME + "-TRANSPORT", new BuildCraftChannelHandler(), new PacketHandlerTransport());
-
-		// Register connection handler
-		// MinecraftForge.registerConnectionHandler(new ConnectionHandler());
-
-		// Register GUI handler
-		// MinecraftForge.setGuiHandler(mod_BuildCraftTransport.instance, new GuiHandler());
 
 		TransportProxy.proxy.registerTileEntities();
 

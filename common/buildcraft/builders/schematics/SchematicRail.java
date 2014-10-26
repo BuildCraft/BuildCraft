@@ -41,13 +41,9 @@ public class SchematicRail extends SchematicBlock {
 			break;
 
 		case 6:
-			meta = 7;
-			break;
 		case 7:
-			meta = 8;
-			break;
 		case 8:
-			meta = 9;
+			meta++;
 			break;
 		case 9:
 			meta = 6;

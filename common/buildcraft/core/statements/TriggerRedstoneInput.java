@@ -26,12 +26,31 @@ public class TriggerRedstoneInput extends BCTrigger {
 	public String getDescription() {
 		return StringUtils.localize("gate.trigger.redstone.input." + (active ? "active" : "inactive"));
 	}
+	
+    @Override
+    public ITriggerParameter createParameter(int index) {
+		ITriggerParameter param = null;
+	
+		if (index == 0) {
+		    param = new StatementParameterRedstoneGateSideOnly();
+		}
+	
+		return param;
+    }
+	
+	@Override
+	public int maxParameters() {
+		return 1;
+	}
 
 	@Override
 	public boolean isTriggerActive(IGate gate, ITriggerParameter[] parameters) {
 		TileGenericPipe tile = (TileGenericPipe) gate.getPipe().getTile();
-		//int level = tile.redstoneInputSide[gate.getSide().ordinal()];
 		int level = tile.redstoneInput;
+		if (parameters.length > 0 && parameters[0] instanceof StatementParameterRedstoneGateSideOnly &&
+				((StatementParameterRedstoneGateSideOnly) parameters[0]).isOn) {
+			level = tile.redstoneInputSide[gate.getSide().ordinal()];
+		}
 		
 		return active ? level > 0 : level == 0;
 	}

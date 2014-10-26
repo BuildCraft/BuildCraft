@@ -95,7 +95,7 @@ public final class SchematicRegistry implements ISchematicRegistry {
 	}
 	
 	public void registerSchematicBlock(Block block, int meta, Class<? extends Schematic> clazz, Object... params) {
-		if (block == null || Block.blockRegistry.getNameForObject(block) == null || Block.blockRegistry.getNameForObject(block).equals("null")) {
+		if (block == null || Block.blockRegistry.getNameForObject(block) == null || "null".equals(Block.blockRegistry.getNameForObject(block))) {
 			BCLog.logger.warn("Mod tried to register block with null name! Ignoring.");
 			return;
 		}

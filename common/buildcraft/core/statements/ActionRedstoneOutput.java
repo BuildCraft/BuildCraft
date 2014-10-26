@@ -8,6 +8,7 @@
  */
 package buildcraft.core.statements;
 
+import buildcraft.api.gates.IActionParameter;
 
 public class ActionRedstoneOutput extends BCActionPassive {
 
@@ -23,5 +24,21 @@ public class ActionRedstoneOutput extends BCActionPassive {
 	@Override
 	public int getIconIndex() {
 		return StatementIconProvider.Trigger_RedstoneInput_Active;
+	}
+	
+    @Override
+    public IActionParameter createParameter(int index) {
+		IActionParameter param = null;
+	
+		if (index == 0) {
+		    param = new StatementParameterRedstoneGateSideOnly();
+		}
+	
+		return param;
+    }
+	
+	@Override
+	public int maxParameters() {
+		return 1;
 	}
 }
