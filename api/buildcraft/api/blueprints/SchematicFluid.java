@@ -11,7 +11,6 @@ package buildcraft.api.blueprints;
 import java.util.LinkedList;
 
 import net.minecraft.item.ItemStack;
-
 import net.minecraftforge.fluids.FluidStack;
 
 public class SchematicFluid extends SchematicBlock {
@@ -77,6 +76,6 @@ public class SchematicFluid extends SchematicBlock {
 
 	@Override
 	public int getEnergyRequirement(LinkedList<ItemStack> stacksUsed) {
-		return 1 * SchematicRegistry.BUILD_ENERGY;
+		return 1 * BuilderAPI.BUILD_ENERGY;
 	}
 }

@@ -9,7 +9,6 @@
 package buildcraft.api.blueprints;
 
 import net.minecraft.world.World;
-
 import buildcraft.api.core.IBox;
 import buildcraft.api.core.Position;
 

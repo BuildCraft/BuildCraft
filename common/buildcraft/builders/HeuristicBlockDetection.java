@@ -2,7 +2,7 @@ package buildcraft.builders;
 
 import buildcraft.api.blueprints.SchematicBlock;
 import buildcraft.api.blueprints.SchematicFluid;
-import buildcraft.api.blueprints.SchematicRegistry;
+import buildcraft.core.blueprints.SchematicRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraftforge.fluids.Fluid;
@@ -17,7 +17,7 @@ public final class HeuristicBlockDetection {
 	public static void start() {
 		// Register fluids
 		for (Fluid f : FluidRegistry.getRegisteredFluids().values()) {
-			SchematicRegistry.registerSchematicBlock(f.getBlock(), SchematicFluid.class, new FluidStack(f, 1000));
+			SchematicRegistry.INSTANCE.registerSchematicBlock(f.getBlock(), SchematicFluid.class, new FluidStack(f, 1000));
 		}
 		
 		// Register blocks
@@ -28,7 +28,7 @@ public final class HeuristicBlockDetection {
 			}
 			
 			for (int meta = 0; meta < 16; meta++) {
-				if (!SchematicRegistry.isSupported(block, meta)) {
+				if (!SchematicRegistry.INSTANCE.isSupported(block, meta)) {
 					// Stops dupes with (for instance) ore blocks
 					try {
 						if (block.getItemDropped(meta, null, 0) != Item.getItemFromBlock(block)) {
@@ -43,7 +43,7 @@ public final class HeuristicBlockDetection {
 						continue;
 					}
 				
-					SchematicRegistry.registerSchematicBlock(block, meta, SchematicBlock.class);
+					SchematicRegistry.INSTANCE.registerSchematicBlock(block, meta, SchematicBlock.class);
 				}
 			}
 		}

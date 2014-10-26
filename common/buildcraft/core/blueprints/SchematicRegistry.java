@@ -6,7 +6,7 @@
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-package buildcraft.api.blueprints;
+package buildcraft.core.blueprints;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -24,29 +24,29 @@ import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.oredict.OreDictionary;
+import buildcraft.api.blueprints.ISchematicRegistry;
+import buildcraft.api.blueprints.Schematic;
+import buildcraft.api.blueprints.SchematicBlock;
+import buildcraft.api.blueprints.SchematicEntity;
 import buildcraft.api.core.BlockMetaPair;
 import buildcraft.api.core.JavaTools;
 
-public final class SchematicRegistry {
+public class SchematicRegistry implements ISchematicRegistry {
 
-	public static int BREAK_ENERGY = 100;
-	public static final int BUILD_ENERGY = 200;
-
-	private static final HashMap<BlockMetaPair, SchematicConstructor> schematicBlocks =
+	public static SchematicRegistry INSTANCE = new SchematicRegistry();
+	
+	private final HashMap<BlockMetaPair, SchematicConstructor> schematicBlocks =
 			new HashMap<BlockMetaPair, SchematicConstructor>();
 
-	private static final HashMap<Class<? extends Entity>, SchematicConstructor> schematicEntities = new HashMap<Class<? extends Entity>, SchematicConstructor>();
+	private final HashMap<Class<? extends Entity>, SchematicConstructor> schematicEntities = new HashMap<Class<? extends Entity>, SchematicConstructor>();
 
-	private static final HashSet<String> modsForbidden = new HashSet<String>();
-	private static final HashSet<String> blocksForbidden = new HashSet<String>();
+	private final HashSet<String> modsForbidden = new HashSet<String>();
+	private final HashSet<String> blocksForbidden = new HashSet<String>();
 
-	/**
-	 * Deactivate constructor
-	 */
 	private SchematicRegistry() {
 	}
 
-	private static class SchematicConstructor {
+	private class SchematicConstructor {
 		public final Class<? extends Schematic> clazz;
 		public final Object[] params;
 
@@ -94,18 +94,18 @@ public final class SchematicRegistry {
 		}
 	}
 	
-	public static void registerSchematicBlock(Block block, Class<? extends Schematic> clazz, Object... params) {
+	public void registerSchematicBlock(Block block, Class<? extends Schematic> clazz, Object... params) {
 		registerSchematicBlock(block, OreDictionary.WILDCARD_VALUE, clazz, params);
 	}
 	
-	public static void registerSchematicBlock(Block block, int meta, Class<? extends Schematic> clazz, Object... params) {
+	public void registerSchematicBlock(Block block, int meta, Class<? extends Schematic> clazz, Object... params) {
 		if (schematicBlocks.containsKey(new BlockMetaPair(block, meta))) {
 			throw new RuntimeException("Block " + Block.blockRegistry.getNameForObject(block) + " is already associated with a schematic.");
 		}
 		schematicBlocks.put(new BlockMetaPair(block, meta), new SchematicConstructor(clazz, params));
 	}
 
-	public static void registerSchematicEntity(
+	public void registerSchematicEntity(
 			Class<? extends Entity> entityClass,
 			Class<? extends SchematicEntity> schematicClass, Object... params) {
 		if (schematicEntities.containsKey(entityClass)) {
@@ -114,7 +114,7 @@ public final class SchematicRegistry {
 		schematicEntities.put(entityClass, new SchematicConstructor(schematicClass, params));
 	}
 
-	public static SchematicBlock newSchematicBlock(Block block, int metadata) {
+	public SchematicBlock createSchematicBlock(Block block, int metadata) {
 		if (block == Blocks.air) {
 			return null;
 		}
@@ -151,7 +151,7 @@ public final class SchematicRegistry {
 		return null;
 	}
 
-	public static SchematicEntity newSchematicEntity(Class<? extends Entity> entityClass) {
+	public SchematicEntity createSchematicEntity(Class<? extends Entity> entityClass) {
 		if (!schematicEntities.containsKey(entityClass)) {
 			return null;
 		}
@@ -174,17 +174,17 @@ public final class SchematicRegistry {
 		return null;
 	}
 
-	public static boolean isSupported(Block block, int metadata) {
+	public boolean isSupported(Block block, int metadata) {
 		return schematicBlocks.containsKey(new BlockMetaPair(block, OreDictionary.WILDCARD_VALUE))
 				|| schematicBlocks.containsKey(new BlockMetaPair(block, metadata));
 	}
 
-	public static boolean isAllowedForBuilding(Block block, int metadata) {
+	public boolean isAllowedForBuilding(Block block, int metadata) {
 		String name = Block.blockRegistry.getNameForObject(block);
 		return isSupported(block, metadata) && !blocksForbidden.contains(name) && !modsForbidden.contains(name.split(":", 2)[0]);
 	}
 
-	public static void readConfiguration(Configuration conf) {
+	public void readConfiguration(Configuration conf) {
 		Property excludedMods = conf.get(Configuration.CATEGORY_GENERAL, "builder.excludedMods", new String[0],
 				"mods that should be excluded from the builder.");
 		Property excludedBlocks = conf.get(Configuration.CATEGORY_GENERAL, "builder.excludedBlocks", new String[0],

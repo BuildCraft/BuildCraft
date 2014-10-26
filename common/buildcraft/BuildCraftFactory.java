@@ -18,7 +18,6 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
-
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLInterModComms;
@@ -28,19 +27,18 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.ForgeChunkManager;
 import net.minecraftforge.common.ForgeChunkManager.Ticket;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
-
-import buildcraft.api.blueprints.SchematicRegistry;
+import buildcraft.api.blueprints.BuilderAPI;
 import buildcraft.builders.schematics.SchematicIgnoreMeta;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.InterModComms;
 import buildcraft.core.Version;
+import buildcraft.core.blueprints.SchematicRegistry;
 import buildcraft.core.network.BuildCraftChannelHandler;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.ConfigUtils;
@@ -149,10 +147,10 @@ public class BuildCraftFactory extends BuildCraftMod {
 
 		FactoryProxy.proxy.initializeTileEntities();
 
-		SchematicRegistry.registerSchematicBlock(refineryBlock, SchematicRefinery.class);
-		SchematicRegistry.registerSchematicBlock(tankBlock, SchematicTank.class);
-		SchematicRegistry.registerSchematicBlock(frameBlock, SchematicIgnoreMeta.class);
-		SchematicRegistry.registerSchematicBlock(pumpBlock, SchematicPump.class);
+		BuilderAPI.schematicRegistry.registerSchematicBlock(refineryBlock, SchematicRefinery.class);
+		BuilderAPI.schematicRegistry.registerSchematicBlock(tankBlock, SchematicTank.class);
+		BuilderAPI.schematicRegistry.registerSchematicBlock(frameBlock, SchematicIgnoreMeta.class);
+		BuilderAPI.schematicRegistry.registerSchematicBlock(pumpBlock, SchematicPump.class);
 
 		if (BuildCraftCore.loadDefaultRecipes) {
 			loadRecipes();

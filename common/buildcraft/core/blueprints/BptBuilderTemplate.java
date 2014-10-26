@@ -13,8 +13,8 @@ import java.util.LinkedList;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
+import buildcraft.api.blueprints.BuilderAPI;
 import buildcraft.api.blueprints.SchematicBlockBase;
-import buildcraft.api.blueprints.SchematicRegistry;
 import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.core.IInvSlot;
@@ -188,7 +188,7 @@ public class BptBuilderTemplate extends BptBuilderBase {
 					iterator.remove();
 					builtLocations.add(new BlockIndex(slot.x, slot.y, slot.z));
 				} else {
-					if (builder.consumeEnergy(SchematicRegistry.BUILD_ENERGY) && firstSlotToConsume != null) {
+					if (builder.consumeEnergy(BuilderAPI.BUILD_ENERGY) && firstSlotToConsume != null) {
 						slot.addStackConsumed(firstSlotToConsume.decreaseStackInSlot(1));
 						result = slot;
 						iterator.remove();

@@ -31,10 +31,10 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
+import buildcraft.api.blueprints.BuilderAPI;
 import buildcraft.api.blueprints.Schematic;
 import buildcraft.api.blueprints.SchematicBlock;
 import buildcraft.api.blueprints.SchematicEntity;
-import buildcraft.api.blueprints.SchematicRegistry;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.BuildCraftAPI;
@@ -95,7 +95,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 							slot.block = Blocks.air;
 						}
 
-						if (!SchematicRegistry.isAllowedForBuilding(slot.block, slot.meta)) {
+						if (!SchematicRegistry.INSTANCE.isAllowedForBuilding(slot.block, slot.meta)) {
 							continue;
 						}
 
@@ -131,7 +131,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 						continue;
 					}
 
-					if (!SchematicRegistry.isAllowedForBuilding(slot.block, slot.meta)) {
+					if (!SchematicRegistry.INSTANCE.isAllowedForBuilding(slot.block, slot.meta)) {
 						continue;
 					}
 
@@ -308,7 +308,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 	 * returned, possibly for reservation, with no building.
 	 */
 	private BuildingSlot internalGetNextBlock(World world, TileAbstractBuilder builder) {
-		if (builder != null && builder.energyAvailable() < SchematicRegistry.BREAK_ENERGY) {
+		if (builder != null && builder.energyAvailable() < BuilderAPI.BREAK_ENERGY) {
 			// If there's no more energy available, then set reset the list and
 			// quit. This will avoid situations where energy is given at a
 			// random point in time, and therefore builder doesn't start from

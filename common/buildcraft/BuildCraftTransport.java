@@ -33,7 +33,7 @@ import net.minecraftforge.common.config.Property;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.RecipeSorter;
-import buildcraft.api.blueprints.SchematicRegistry;
+import buildcraft.api.blueprints.BuilderAPI;
 import buildcraft.api.core.EnumColor;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.core.JavaTools;
@@ -51,6 +51,7 @@ import buildcraft.core.InterModComms;
 import buildcraft.core.ItemBuildCraft;
 import buildcraft.core.PowerMode;
 import buildcraft.core.Version;
+import buildcraft.core.blueprints.SchematicRegistry;
 import buildcraft.core.network.BuildCraftChannelHandler;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.silicon.ItemRedstoneChipset.Chipset;
@@ -476,7 +477,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 
 		TransportProxy.proxy.registerTileEntities();
 
-		SchematicRegistry.registerSchematicBlock(genericPipeBlock, SchematicPipe.class);
+		BuilderAPI.schematicRegistry.registerSchematicBlock(genericPipeBlock, SchematicPipe.class);
 
 		new BptPipeIron(pipeItemsIron);
 		new BptPipeIron(pipeFluidsIron);

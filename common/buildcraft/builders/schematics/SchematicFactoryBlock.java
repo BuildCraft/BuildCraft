@@ -11,12 +11,11 @@ package buildcraft.builders.schematics;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
-
 import buildcraft.api.blueprints.MappingNotFoundException;
 import buildcraft.api.blueprints.MappingRegistry;
 import buildcraft.api.blueprints.SchematicBlock;
 import buildcraft.api.blueprints.SchematicFactory;
-import buildcraft.api.blueprints.SchematicRegistry;
+import buildcraft.core.blueprints.SchematicRegistry;
 
 public class SchematicFactoryBlock extends SchematicFactory<SchematicBlock> {
 
@@ -33,7 +32,7 @@ public class SchematicFactoryBlock extends SchematicFactory<SchematicBlock> {
 
 			return s;
 		} else {
-			SchematicBlock s = SchematicRegistry.newSchematicBlock(b, nbt.getInteger("blockMeta"));
+			SchematicBlock s = SchematicRegistry.INSTANCE.createSchematicBlock(b, nbt.getInteger("blockMeta"));
 
 			if (s != null) {
 				s.readFromNBT(nbt, registry);

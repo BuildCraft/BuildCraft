@@ -22,9 +22,9 @@ import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import buildcraft.BuildCraftBuilders;
+import buildcraft.api.blueprints.BuilderAPI;
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.MappingNotFoundException;
-import buildcraft.api.blueprints.SchematicRegistry;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.IAreaProvider;
@@ -198,13 +198,13 @@ public abstract class BptBuilderBase implements IAreaProvider {
 
 		int hardness = getHardness(slot);
 
-		return builder.energyAvailable() >= hardness * SchematicRegistry.BREAK_ENERGY;
+		return builder.energyAvailable() >= hardness * BuilderAPI.BREAK_ENERGY;
 	}
 
 	public void consumeEnergyToDestroy(TileAbstractBuilder builder, BuildingSlotBlock slot) {
 		int hardness = getHardness(slot);
 
-		builder.consumeEnergy(hardness * SchematicRegistry.BREAK_ENERGY);
+		builder.consumeEnergy(hardness * BuilderAPI.BREAK_ENERGY);
 	}
 
 	public void createDestroyItems(BuildingSlotBlock slot) {

@@ -13,7 +13,6 @@ import java.util.LinkedList;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-
 import buildcraft.api.core.IInvSlot;
 
 /**
@@ -188,7 +187,7 @@ public abstract class Schematic {
 
 		if (stacksUsed != null) {
 			for (ItemStack s : stacksUsed) {
-				result += s.stackSize * SchematicRegistry.BUILD_ENERGY;
+				result += s.stackSize * BuilderAPI.BUILD_ENERGY;
 			}
 		}
 

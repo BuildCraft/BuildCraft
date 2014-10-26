@@ -16,16 +16,13 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
-
 import net.minecraftforge.common.util.Constants;
-
 import buildcraft.BuildCraftBuilders;
 import buildcraft.api.blueprints.BuildingPermission;
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.MappingNotFoundException;
 import buildcraft.api.blueprints.SchematicBlock;
 import buildcraft.api.blueprints.SchematicEntity;
-import buildcraft.api.blueprints.SchematicRegistry;
 import buildcraft.api.blueprints.Translation;
 import buildcraft.api.core.BCLog;
 import buildcraft.builders.blueprints.BlueprintId.Kind;
@@ -86,7 +83,7 @@ public class Blueprint extends BlueprintBase {
 			return;
 		}
 
-		SchematicBlock slot = SchematicRegistry.newSchematicBlock(block, meta);
+		SchematicBlock slot = SchematicRegistry.INSTANCE.createSchematicBlock(block, meta);
 
 		if (slot == null) {
 			return;
@@ -99,7 +96,7 @@ public class Blueprint extends BlueprintBase {
 		slot.block = block;
 		slot.meta = meta;
 
-		if (!SchematicRegistry.isSupported(block, meta)) {
+		if (!SchematicRegistry.INSTANCE.isSupported(block, meta)) {
 			return;
 		}
 
@@ -139,7 +136,7 @@ public class Blueprint extends BlueprintBase {
 			Entity e = (Entity) o;
 
 			if (context.surroundingBox().contains(e.posX, e.posY, e.posZ)) {
-				SchematicEntity s = SchematicRegistry.newSchematicEntity(e.getClass());
+				SchematicEntity s = SchematicRegistry.INSTANCE.createSchematicEntity(e.getClass());
 
 				if (s != null) {
 					s.readFromWorld(context, e);
@@ -213,7 +210,7 @@ public class Blueprint extends BlueprintBase {
 						}
 
 						if (block != null) {
-							contents[x][y][z] = SchematicRegistry.newSchematicBlock(block, cpt.getInteger("blockMeta"));
+							contents[x][y][z] = SchematicRegistry.INSTANCE.createSchematicBlock(block, cpt.getInteger("blockMeta"));
 							contents[x][y][z].readFromNBT(cpt, mapping);
 
 							if (!contents[x][y][z].doNotUse()) {
@@ -263,7 +260,7 @@ public class Blueprint extends BlueprintBase {
 				}
 
 				if (entity != null) {
-					SchematicEntity s = SchematicRegistry.newSchematicEntity(entity);
+					SchematicEntity s = SchematicRegistry.INSTANCE.createSchematicEntity(entity);
 					s.readFromNBT(cpt, mapping);
 					s.idsToWorld(mapping);
 					entities.add(s);

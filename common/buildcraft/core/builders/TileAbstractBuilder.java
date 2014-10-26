@@ -13,13 +13,14 @@ import java.util.LinkedList;
 
 import net.minecraft.inventory.IInventory;
 import net.minecraft.nbt.NBTTagCompound;
+import buildcraft.api.blueprints.BuilderAPI;
 import buildcraft.api.blueprints.ITileBuilder;
-import buildcraft.api.blueprints.SchematicRegistry;
 import buildcraft.api.core.NetworkData;
 import buildcraft.core.IBoxProvider;
 import buildcraft.core.LaserData;
 import buildcraft.core.RFBattery;
 import buildcraft.core.TileBuildCraft;
+import buildcraft.core.blueprints.SchematicRegistry;
 import buildcraft.core.network.RPC;
 import buildcraft.core.network.RPCHandler;
 import buildcraft.core.network.RPCMessageInfo;
@@ -33,7 +34,7 @@ public abstract class TileAbstractBuilder extends TileBuildCraft implements ITil
 	 * plus a safeguard. That's a nice way to evaluate maximum amount of energy
 	 * that need to be in a builder.
 	 */
-	private static final int FULL_CHEST_ENERGY = 9 * 3 * 64 * SchematicRegistry.BUILD_ENERGY + 10000;
+	private static final int FULL_CHEST_ENERGY = 9 * 3 * 64 * BuilderAPI.BUILD_ENERGY + 10000;
 
 	@NetworkData
 	public LinkedList<LaserData> pathLasers = new LinkedList<LaserData> ();

@@ -16,12 +16,12 @@ import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
 import buildcraft.api.blueprints.SchematicMask;
-import buildcraft.api.blueprints.SchematicRegistry;
 import buildcraft.api.filler.IFillerPattern;
 import buildcraft.core.Box;
 import buildcraft.core.blueprints.Blueprint;
 import buildcraft.core.blueprints.BlueprintBase;
 import buildcraft.core.blueprints.BptBuilderTemplate;
+import buildcraft.core.blueprints.SchematicRegistry;
 import buildcraft.core.blueprints.Template;
 import buildcraft.core.utils.StringUtils;
 
@@ -122,8 +122,8 @@ public abstract class FillerPattern implements IFillerPattern {
 			for (int y = 0; y < box.sizeY(); ++y) {
 				for (int z = 0; z < box.sizeZ(); ++z) {
 					if (tmpl.contents[x][y][z] != null) {
-						result.contents[x][y][z] = SchematicRegistry
-								.newSchematicBlock(block, meta);
+						result.contents[x][y][z] = SchematicRegistry.INSTANCE
+								.createSchematicBlock(block, meta);
 					}
 
 				}
