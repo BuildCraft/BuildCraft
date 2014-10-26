@@ -191,6 +191,7 @@ item.blueprint.creative_only=Creative Only
 item.blueprint.no_build=No Building
 item.blueprint.incomplete=Incomplete
 item.mapLocation.name=Map Location
+item.gateCopier.name=Gate Copier
 item.PipeItemsWood.name=Wooden Transport Pipe
 item.PipeItemsCobblestone.name=Cobblestone Transport Pipe
 item.PipeItemsStone.name=Stone Transport Pipe

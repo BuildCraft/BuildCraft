@@ -543,8 +543,9 @@ public class BuildCraftTransport extends BuildCraftMod {
 				'I', Items.iron_ingot,
 				'C', Chipset.GOLD.getStack());
 
-		// Assembly Table recipes
 		if (Loader.isModLoaded("BuildCraft|Silicon")) {
+			GameRegistry.addShapelessRecipe(new ItemStack(gateCopier, 1), new ItemStack(BuildCraftCore.wrenchItem), Chipset.RED.getStack(1));
+					
 			// PIPE WIRE
 			BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:redWire", 5000, PipeWire.RED.getStack(8),
 					OreDictionary.getOres("dyeRed"), Items.redstone, Items.iron_ingot);

@@ -1,5 +1,7 @@
 package buildcraft.transport;
 
+import net.minecraft.block.Block;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -13,6 +15,8 @@ import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.core.ItemBuildCraft;
 import buildcraft.core.utils.NBTUtils;
+import buildcraft.transport.BlockGenericPipe.Part;
+import buildcraft.transport.BlockGenericPipe.RaytraceResult;
 import buildcraft.transport.gates.GateDefinition.GateMaterial;
 
 public class ItemGateCopier extends ItemBuildCraft {
@@ -21,17 +25,18 @@ public class ItemGateCopier extends ItemBuildCraft {
 
 	public ItemGateCopier() {
 		super();
-		setMaxDamage(0);
 		setMaxStackSize(1);
-		setHasSubtypes(true);
 		setUnlocalizedName("gateCopier");
 	}
 	
 	@Override
-	public IIcon getIconFromDamage(int damage) {
-		return icons[damage];
+	@SideOnly(Side.CLIENT)
+	public IIcon getIconIndex(ItemStack i) {
+		NBTTagCompound cpt = NBTUtils.getItemData(i);
+		this.itemIcon = cpt.hasKey("logic") ? icons[1] : icons[0];
+		return this.itemIcon;
 	}
-	
+
 	@Override
 	public boolean onItemUse(ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int side, float hitX, float hitY, float hitZ) {
 		if (world.isRemote) {
@@ -39,18 +44,23 @@ public class ItemGateCopier extends ItemBuildCraft {
 		}
 		
 		boolean isCopying = !player.isSneaking();
+		Block block = world.getBlock(x, y, z);
 		TileEntity tile = world.getTileEntity(x, y, z);
 		NBTTagCompound data = NBTUtils.getItemData(stack);
+		Gate gate = null;
 		
-		if (tile == null || !(tile instanceof TileGenericPipe)) {
+		if (tile == null || !(tile instanceof TileGenericPipe) || !(block instanceof BlockGenericPipe)) {
 			return false;
 		}
 		
-		Gate gate = ((TileGenericPipe) tile).getGate(ForgeDirection.getOrientation(side));
+		RaytraceResult rayTraceResult = ((BlockGenericPipe) block).doRayTrace(world, x, y, z, player);
+
+		if (rayTraceResult != null && rayTraceResult.boundingBox != null && rayTraceResult.hitPart == Part.Gate) {
+			gate = ((TileGenericPipe) tile).pipe.gates[rayTraceResult.sideHit.ordinal()];
+		}
 		
 		if (isCopying) {
 			if (gate == null) {
-				stack.setItemDamage(0);
 				stack.setTagCompound(null);
 				player.addChatMessage(new ChatComponentTranslation("chat.gateCopier.clear"));
 				return true;
@@ -59,7 +69,6 @@ public class ItemGateCopier extends ItemBuildCraft {
 			gate.writeStatementsToNBT(data);
 			data.setByte("material", (byte) gate.material.ordinal());
 			data.setByte("logic", (byte) gate.logic.ordinal());
-			stack.setItemDamage(1);
 			player.addChatMessage(new ChatComponentTranslation("chat.gateCopier.gateCopied"));
 		} else {
 			if (!data.hasKey("logic")) {
@@ -95,16 +104,14 @@ public class ItemGateCopier extends ItemBuildCraft {
 			player.addChatMessage(new ChatComponentTranslation("chat.gateCopier.gatePasted"));	
 			return true;
 		}
-		
+
 		return true;
 	}
 	
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void registerIcons(IIconRegister register) {
-		icons = new IIcon[2];
-		icons[0] = register.registerIcon("buildcraft:gate_copier_off");
-		icons[1] = register.registerIcon("buildcraft:gate_copier_on");
+		icons = new IIcon[]{register.registerIcon("buildcraft:gateCopierOff"), register.registerIcon("buildcraft:gateCopierOn")};
 	}
 	
 }

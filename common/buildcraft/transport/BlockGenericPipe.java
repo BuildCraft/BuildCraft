@@ -283,7 +283,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 		}
 	}
 
-	private RaytraceResult doRayTrace(World world, int x, int y, int z, EntityPlayer player) {
+	public RaytraceResult doRayTrace(World world, int x, int y, int z, EntityPlayer player) {
 		double reachDistance = 5;
 
 		if (player instanceof EntityPlayerMP) {
