@@ -27,12 +27,12 @@ public class SchematicSign extends SchematicTile {
 	}
 
 	@Override
-	public void writeRequirementsToWorld(IBuilderContext context, LinkedList<ItemStack> requirements) {
+	public void getRequirementsForPlacement(IBuilderContext context, LinkedList<ItemStack> requirements) {
 		requirements.add(new ItemStack(Items.sign));
 	}
 
 	@Override
-	public void writeRequirementsToBlueprint(IBuilderContext context, int x, int y, int z) {
+	public void storeRequirements(IBuilderContext context, int x, int y, int z) {
 		// cancel requirements reading
 	}
 

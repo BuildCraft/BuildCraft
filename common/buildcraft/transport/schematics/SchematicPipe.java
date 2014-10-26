@@ -110,7 +110,7 @@ public class SchematicPipe extends SchematicTile {
 	}
 
 	@Override
-	public void writeToWorld(IBuilderContext context, int x, int y, int z, LinkedList<ItemStack> stacks) {
+	public void placeInWorld(IBuilderContext context, int x, int y, int z, LinkedList<ItemStack> stacks) {
 		tileNBT.setInteger("x", x);
 		tileNBT.setInteger("y", y);
 		tileNBT.setInteger("z", z);
@@ -122,7 +122,7 @@ public class SchematicPipe extends SchematicTile {
 	}
 
 	@Override
-	public void writeToBlueprint(IBuilderContext context, int x, int y, int z) {
+	public void initializeFromObjectAt(IBuilderContext context, int x, int y, int z) {
 		TileEntity tile = context.world().getTileEntity(x, y, z);
 		Pipe<?> pipe = BlockGenericPipe.getPipe(context.world(), x, y, z);
 
@@ -148,7 +148,7 @@ public class SchematicPipe extends SchematicTile {
 	}
 
 	@Override
-	public void writeRequirementsToBlueprint(IBuilderContext context, int x, int y, int z) {
+	public void storeRequirements(IBuilderContext context, int x, int y, int z) {
 		Pipe<?> pipe = BlockGenericPipe.getPipe(context.world(), x, y, z);
 
 		if (BlockGenericPipe.isValid(pipe)) {
@@ -201,14 +201,14 @@ public class SchematicPipe extends SchematicTile {
 	}
 
 	@Override
-	public void writeToNBT(NBTTagCompound nbt, MappingRegistry registry) {
-		super.writeToNBT(nbt, registry);
+	public void writeSchematicToNBT(NBTTagCompound nbt, MappingRegistry registry) {
+		super.writeSchematicToNBT(nbt, registry);
 		nbt.setInteger("version", 2);
 	}
 
 	@Override
-	public void readFromNBT(NBTTagCompound nbt, MappingRegistry registry) {
-		super.readFromNBT(nbt, registry);
+	public void readSchematicFromNBT(NBTTagCompound nbt, MappingRegistry registry) {
+		super.readSchematicFromNBT(nbt, registry);
 
 		if (!nbt.hasKey("version") || nbt.getInteger("version") < 2) {
 			// Schematics previous to the fixes in version 2 had item id

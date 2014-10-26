@@ -19,25 +19,25 @@ import buildcraft.api.blueprints.SchematicTile;
 public class SchematicPump extends SchematicTile {
 
 	@Override
-	public void writeRequirementsToWorld(IBuilderContext context, LinkedList<ItemStack> requirements) {
+	public void getRequirementsForPlacement(IBuilderContext context, LinkedList<ItemStack> requirements) {
 		requirements.add(new ItemStack(BuildCraftFactory.pumpBlock));
 	}
 
 	@Override
-	public void writeRequirementsToBlueprint(IBuilderContext context, int x, int y, int z) {
+	public void storeRequirements(IBuilderContext context, int x, int y, int z) {
 
 	}
 
 	@Override
-	public void writeToBlueprint(IBuilderContext context, int x, int y, int z) {
-		super.writeToBlueprint(context, x, y, z);
+	public void initializeFromObjectAt(IBuilderContext context, int x, int y, int z) {
+		super.initializeFromObjectAt(context, x, y, z);
 
 		tileNBT.removeTag("tank");
 		tileNBT.removeTag("mjStored");
 	}
 
 	@Override
-	public void writeToWorld(IBuilderContext context, int x, int y, int z, LinkedList<ItemStack> stacks) {
+	public void placeInWorld(IBuilderContext context, int x, int y, int z, LinkedList<ItemStack> stacks) {
 		context.world().setBlock(x, y, z, block, 0, 3);
 	}
 

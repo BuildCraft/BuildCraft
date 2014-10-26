@@ -53,7 +53,7 @@ public class BuildingSlotBlock extends BuildingSlot {
 			}
 		} else {
 			try {
-				getSchematic().writeToWorld(context, x, y, z, stackConsumed);
+				getSchematic().placeInWorld(context, x, y, z, stackConsumed);
 
 				// Once the schematic has been written, we're going to issue
 				// calls
@@ -86,7 +86,7 @@ public class BuildingSlotBlock extends BuildingSlot {
 		} else {
 			LinkedList<ItemStack> req = new LinkedList<ItemStack>();
 
-			getSchematic().writeRequirementsToWorld(context, req);
+			getSchematic().getRequirementsForPlacement(context, req);
 
 			return req;
 		}

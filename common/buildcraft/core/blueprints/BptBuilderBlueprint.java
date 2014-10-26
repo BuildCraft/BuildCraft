@@ -457,7 +457,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 		try {
 			LinkedList<ItemStack> req = new LinkedList<ItemStack>();
 
-			slot.writeRequirementsToWorld(context, req);
+			slot.getRequirementsForPlacement(context, req);
 
 			for (ItemStack stk : req) {
 				if (stk != null) {

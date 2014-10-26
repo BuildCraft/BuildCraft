@@ -150,7 +150,7 @@ public abstract class Schematic {
 	 * y, z} on the world. For blocks, block and meta fields will be initialized
 	 * automatically.
 	 */
-	public void writeToBlueprint(IBuilderContext context, int x, int y, int z) {
+	public void initializeFromObjectAt(IBuilderContext context, int x, int y, int z) {
 
 	}
 
@@ -158,14 +158,14 @@ public abstract class Schematic {
 	 * Places the block in the world, at the location specified in the slot,
 	 * using the stack in parameters
 	 */
-	public void writeToWorld(IBuilderContext context, int x, int y, int z, LinkedList<ItemStack> stacks) {
+	public void placeInWorld(IBuilderContext context, int x, int y, int z, LinkedList<ItemStack> stacks) {
 
 	}
 
 	/**
 	 * Write specific requirements coming from the world to the blueprint.
 	 */
-	public void writeRequirementsToBlueprint(IBuilderContext context, int x, int y, int z) {
+	public void storeRequirements(IBuilderContext context, int x, int y, int z) {
 
 	}
 
@@ -174,7 +174,7 @@ public abstract class Schematic {
 	 * requirements are met, they will be removed all at once from the builder,
 	 * before calling writeToWorld.
 	 */
-	public void writeRequirementsToWorld(IBuilderContext context, LinkedList<ItemStack> requirements) {
+	public void getRequirementsForPlacement(IBuilderContext context, LinkedList<ItemStack> requirements) {
 
 	}
 
@@ -263,14 +263,14 @@ public abstract class Schematic {
 	/**
 	 * Saves this schematic to the blueprint NBT.
 	 */
-	public void writeToNBT(NBTTagCompound nbt, MappingRegistry registry) {
+	public void writeSchematicToNBT(NBTTagCompound nbt, MappingRegistry registry) {
 
 	}
 
 	/**
 	 * Loads this schematic from the blueprint NBT.
 	 */
-	public void readFromNBT(NBTTagCompound nbt, MappingRegistry registry) {
+	public void readSchematicFromNBT(NBTTagCompound nbt, MappingRegistry registry) {
 
 	}
 

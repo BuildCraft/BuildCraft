@@ -23,13 +23,13 @@ public class SchematicEnderChest extends SchematicRotateMeta {
 	}
 
 	@Override
-	public void writeRequirementsToWorld(IBuilderContext context, LinkedList<ItemStack> requirements) {
+	public void getRequirementsForPlacement(IBuilderContext context, LinkedList<ItemStack> requirements) {
 		requirements.add(new ItemStack(Blocks.obsidian, 8));
 		requirements.add(new ItemStack(Items.ender_eye, 1));
 	}
 
 	@Override
-	public void writeRequirementsToBlueprint(IBuilderContext context, int x, int y, int z) {
+	public void storeRequirements(IBuilderContext context, int x, int y, int z) {
 		// cancel requirements reading
 	}
 

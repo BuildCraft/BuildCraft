@@ -34,7 +34,7 @@ public class SchematicBlock extends SchematicBlockBase {
 	public ItemStack [] storedRequirements = new ItemStack [0];
 
 	@Override
-	public void writeRequirementsToWorld(IBuilderContext context, LinkedList<ItemStack> requirements) {
+	public void getRequirementsForPlacement(IBuilderContext context, LinkedList<ItemStack> requirements) {
 		if (block != null) {
 			if (storedRequirements.length != 0) {
 				for (ItemStack s : storedRequirements) {
@@ -52,15 +52,15 @@ public class SchematicBlock extends SchematicBlockBase {
 	}
 
 	@Override
-	public void writeToWorld(IBuilderContext context, int x, int y, int z, LinkedList<ItemStack> stacks) {
-		super.writeToWorld(context, x, y, z, stacks);
+	public void placeInWorld(IBuilderContext context, int x, int y, int z, LinkedList<ItemStack> stacks) {
+		super.placeInWorld(context, x, y, z, stacks);
 
 		this.setBlockInWorld(context, x, y, z);
 	}
 
 	@Override
-	public void writeRequirementsToBlueprint(IBuilderContext context, int x, int y, int z) {
-		super.writeRequirementsToBlueprint(context, x, y, z);
+	public void storeRequirements(IBuilderContext context, int x, int y, int z) {
+		super.storeRequirements(context, x, y, z);
 
 		if (block != null) {
 			ArrayList<ItemStack> req = block.getDrops(context.world(), x,
@@ -74,16 +74,16 @@ public class SchematicBlock extends SchematicBlockBase {
 	}
 
 	@Override
-	public void writeToNBT(NBTTagCompound nbt, MappingRegistry registry) {
-		super.writeToNBT(nbt, registry);
+	public void writeSchematicToNBT(NBTTagCompound nbt, MappingRegistry registry) {
+		super.writeSchematicToNBT(nbt, registry);
 
 		writeBlockToNBT(nbt, registry);
 		writeRequirementsToNBT(nbt, registry);
 	}
 
 	@Override
-	public void readFromNBT(NBTTagCompound nbt,	MappingRegistry registry) {
-		super.readFromNBT(nbt, registry);
+	public void readSchematicFromNBT(NBTTagCompound nbt,	MappingRegistry registry) {
+		super.readSchematicFromNBT(nbt, registry);
 
 		readBlockFromNBT(nbt, registry);
 		readRequirementsFromNBT(nbt, registry);

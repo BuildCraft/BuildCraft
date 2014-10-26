@@ -29,7 +29,7 @@ public class SchematicMask extends SchematicBlockBase {
 	}
 
 	@Override
-	public void writeToWorld(IBuilderContext context, int x, int y, int z, LinkedList<ItemStack> stacks) {
+	public void placeInWorld(IBuilderContext context, int x, int y, int z, LinkedList<ItemStack> stacks) {
 		if (isConcrete) {
 			if (stacks.size() == 0 || !BuildCraftAPI.isSoftBlock(context.world(), x, y, z)) {
 				return;
@@ -59,12 +59,12 @@ public class SchematicMask extends SchematicBlockBase {
 	}
 
 	@Override
-	public void writeToNBT(NBTTagCompound nbt, MappingRegistry registry) {
+	public void writeSchematicToNBT(NBTTagCompound nbt, MappingRegistry registry) {
 		nbt.setBoolean("isConcrete", isConcrete);
 	}
 
 	@Override
-	public void readFromNBT(NBTTagCompound nbt,	MappingRegistry registry) {
+	public void readSchematicFromNBT(NBTTagCompound nbt,	MappingRegistry registry) {
 		isConcrete = nbt.getBoolean("isConcrete");
 	}
 }

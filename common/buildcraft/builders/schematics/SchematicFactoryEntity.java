@@ -24,7 +24,7 @@ public class SchematicFactoryEntity extends SchematicFactory<SchematicEntity> {
 		SchematicEntity s = SchematicRegistry.INSTANCE.createSchematicEntity(registry.getEntityForId(entityId));
 
 		if (s != null) {
-			s.readFromNBT(nbt, registry);
+			s.readSchematicFromNBT(nbt, registry);
 		} else {
 			return null;
 		}
@@ -37,7 +37,7 @@ public class SchematicFactoryEntity extends SchematicFactory<SchematicEntity> {
 		super.saveSchematicToWorldNBT(nbt, object, registry);
 
 		nbt.setInteger("entityId", registry.getIdForEntity(object.entity));
-		object.writeToNBT(nbt, registry);
+		object.writeSchematicToNBT(nbt, registry);
 	}
 
 }

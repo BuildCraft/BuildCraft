@@ -35,7 +35,7 @@ public class SchematicFactoryBlock extends SchematicFactory<SchematicBlock> {
 			SchematicBlock s = SchematicRegistry.INSTANCE.createSchematicBlock(b, nbt.getInteger("blockMeta"));
 
 			if (s != null) {
-				s.readFromNBT(nbt, registry);
+				s.readSchematicFromNBT(nbt, registry);
 				return s;
 			}
 		}
@@ -48,7 +48,7 @@ public class SchematicFactoryBlock extends SchematicFactory<SchematicBlock> {
 		super.saveSchematicToWorldNBT(nbt, object, registry);
 
 		nbt.setInteger("blockId", registry.getIdForBlock(object.block));
-		object.writeToNBT(nbt, registry);
+		object.writeSchematicToNBT(nbt, registry);
 	}
 
 }

@@ -27,14 +27,14 @@ public class SchematicDoor extends SchematicBlock {
 	}
 
 	@Override
-	public void writeRequirementsToWorld(IBuilderContext context, LinkedList<ItemStack> requirements) {
+	public void getRequirementsForPlacement(IBuilderContext context, LinkedList<ItemStack> requirements) {
 		if ((meta & 8) == 0) {
 			requirements.add(stack.copy());
 		}
 	}
 
 	@Override
-	public void writeRequirementsToBlueprint(IBuilderContext context, int x, int y, int z) {
+	public void storeRequirements(IBuilderContext context, int x, int y, int z) {
 		// cancel requirements reading
 	}
 
@@ -72,7 +72,7 @@ public class SchematicDoor extends SchematicBlock {
 	}
 
 	@Override
-	public void writeToWorld(IBuilderContext context, int x, int y, int z, LinkedList<ItemStack> stacks) {
+	public void placeInWorld(IBuilderContext context, int x, int y, int z, LinkedList<ItemStack> stacks) {
 		context.world().setBlock(x, y, z, block, meta, 3);
 		context.world().setBlock(x, y + 1, z, block, upperMeta, 3);
 
@@ -81,8 +81,8 @@ public class SchematicDoor extends SchematicBlock {
 	}
 
 	@Override
-	public void writeToBlueprint(IBuilderContext context, int x, int y, int z) {
-		super.writeToBlueprint(context, x, y, z);
+	public void initializeFromObjectAt(IBuilderContext context, int x, int y, int z) {
+		super.initializeFromObjectAt(context, x, y, z);
 
 		if ((meta & 8) == 0) {
 			upperMeta = context.world().getBlockMetadata(x, y + 1, z);
@@ -90,15 +90,15 @@ public class SchematicDoor extends SchematicBlock {
 	}
 
 	@Override
-	public void writeToNBT(NBTTagCompound nbt, MappingRegistry registry) {
-		super.writeToNBT(nbt, registry);
+	public void writeSchematicToNBT(NBTTagCompound nbt, MappingRegistry registry) {
+		super.writeSchematicToNBT(nbt, registry);
 
 		nbt.setByte("upperMeta", (byte) upperMeta);
 	}
 
 	@Override
-	public void readFromNBT(NBTTagCompound nbt,	MappingRegistry registry) {
-		super.readFromNBT(nbt, registry);
+	public void readSchematicFromNBT(NBTTagCompound nbt,	MappingRegistry registry) {
+		super.readSchematicFromNBT(nbt, registry);
 
 		upperMeta = nbt.getByte("upperMeta");
 	}

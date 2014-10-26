@@ -21,7 +21,7 @@ public class SchematicPiston extends SchematicRotateMeta {
 	}
 
 	@Override
-	public void writeToWorld(IBuilderContext context, int x, int y, int z, LinkedList<ItemStack> stacks) {
+	public void placeInWorld(IBuilderContext context, int x, int y, int z, LinkedList<ItemStack> stacks) {
 		int localMeta = meta & 7;
 
 		context.world().setBlock(x, y, z, block, localMeta, 3);

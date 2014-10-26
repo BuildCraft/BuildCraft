@@ -29,8 +29,8 @@ public class SchematicEngine extends SchematicTile {
 	}
 
 	@Override
-	public void writeToBlueprint(IBuilderContext context, int x, int y, int z) {
-		super.writeToBlueprint(context, x, y, z);
+	public void initializeFromObjectAt(IBuilderContext context, int x, int y, int z) {
+		super.initializeFromObjectAt(context, x, y, z);
 
 		TileEngine engine = (TileEngine) context.world().getTileEntity(x, y, z);
 
@@ -43,8 +43,8 @@ public class SchematicEngine extends SchematicTile {
 	}
 
 	@Override
-	public void writeToWorld(IBuilderContext context, int x, int y, int z, LinkedList<ItemStack> stacks) {
-		super.writeToWorld(context, x, y, z, stacks);
+	public void placeInWorld(IBuilderContext context, int x, int y, int z, LinkedList<ItemStack> stacks) {
+		super.placeInWorld(context, x, y, z, stacks);
 
 		TileEngine engine = (TileEngine) context.world().getTileEntity(x, y, z);
 

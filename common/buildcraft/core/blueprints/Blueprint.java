@@ -101,8 +101,8 @@ public class Blueprint extends BlueprintBase {
 		}
 
 		try {
-			slot.writeToBlueprint(context, x, y, z);
-			slot.writeRequirementsToBlueprint(context, x, y, z);
+			slot.initializeFromObjectAt(context, x, y, z);
+			slot.storeRequirements(context, x, y, z);
 			contents[posX][posY][posZ] = slot;
 		} catch (Throwable t) {
 			// Defensive code against errors in implementers
@@ -158,7 +158,7 @@ public class Blueprint extends BlueprintBase {
 
 					if (contents [x][y][z] != null) {
 						contents[x][y][z].idsToBlueprint(mapping);
-						contents[x][y][z].writeToNBT(cpt, mapping);
+						contents[x][y][z].writeSchematicToNBT(cpt, mapping);
 					}
 
 					nbtContents.appendTag(cpt);
@@ -173,7 +173,7 @@ public class Blueprint extends BlueprintBase {
 		for (SchematicEntity s : entities) {
 			NBTTagCompound subNBT = new NBTTagCompound();
 			s.idsToBlueprint(mapping);
-			s.writeToNBT(subNBT, mapping);
+			s.writeSchematicToNBT(subNBT, mapping);
 			entitiesNBT.appendTag(subNBT);
 		}
 
@@ -211,7 +211,7 @@ public class Blueprint extends BlueprintBase {
 
 						if (block != null) {
 							contents[x][y][z] = SchematicRegistry.INSTANCE.createSchematicBlock(block, cpt.getInteger("blockMeta"));
-							contents[x][y][z].readFromNBT(cpt, mapping);
+							contents[x][y][z].readSchematicFromNBT(cpt, mapping);
 
 							if (!contents[x][y][z].doNotUse()) {
 								contents[x][y][z].idsToWorld(mapping);
@@ -261,7 +261,7 @@ public class Blueprint extends BlueprintBase {
 
 				if (entity != null) {
 					SchematicEntity s = SchematicRegistry.INSTANCE.createSchematicEntity(entity);
-					s.readFromNBT(cpt, mapping);
+					s.readSchematicFromNBT(cpt, mapping);
 					s.idsToWorld(mapping);
 					entities.add(s);
 				} else {

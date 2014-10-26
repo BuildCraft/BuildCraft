@@ -21,12 +21,12 @@ import buildcraft.api.blueprints.SchematicTile;
 public class SchematicRefinery extends SchematicTile {
 
 	@Override
-	public void writeRequirementsToWorld(IBuilderContext context, LinkedList<ItemStack> requirements) {
+	public void getRequirementsForPlacement(IBuilderContext context, LinkedList<ItemStack> requirements) {
 		requirements.add(new ItemStack(BuildCraftFactory.refineryBlock));
 	}
 
 	@Override
-	public void writeRequirementsToBlueprint(IBuilderContext context, int x, int y, int z) {
+	public void storeRequirements(IBuilderContext context, int x, int y, int z) {
 
 	}
 
@@ -36,8 +36,8 @@ public class SchematicRefinery extends SchematicTile {
 	}
 
 	@Override
-	public void writeToBlueprint(IBuilderContext context, int x, int y, int z) {
-		super.writeToBlueprint(context, x, y, z);
+	public void initializeFromObjectAt(IBuilderContext context, int x, int y, int z) {
+		super.initializeFromObjectAt(context, x, y, z);
 
 		tileNBT.removeTag("tank1");
 		tileNBT.removeTag("tank2");
@@ -46,14 +46,14 @@ public class SchematicRefinery extends SchematicTile {
 	}
 
 	@Override
-	public void writeToWorld(IBuilderContext context, int x, int y, int z, LinkedList<ItemStack> stacks) {
+	public void placeInWorld(IBuilderContext context, int x, int y, int z, LinkedList<ItemStack> stacks) {
 		// to support refineries coming from older blueprints
 		tileNBT.removeTag("tank1");
 		tileNBT.removeTag("tank2");
 		tileNBT.removeTag("result");
 		tileNBT.removeTag("mjStored");
 
-		super.writeToWorld(context, x, y, z, stacks);
+		super.placeInWorld(context, x, y, z, stacks);
 	}
 
 }

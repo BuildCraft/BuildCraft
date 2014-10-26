@@ -45,8 +45,8 @@ public class SchematicTile extends SchematicBlock {
 	 * Places the block in the world, at the location specified in the slot.
 	 */
 	@Override
-	public void writeToWorld(IBuilderContext context, int x, int y, int z, LinkedList<ItemStack> stacks) {
-		super.writeToWorld(context, x, y, z, stacks);
+	public void placeInWorld(IBuilderContext context, int x, int y, int z, LinkedList<ItemStack> stacks) {
+		super.placeInWorld(context, x, y, z, stacks);
 
 		if (block.hasTileEntity(meta)) {
 			TileEntity tile = context.world().getTileEntity(x, y, z);
@@ -62,8 +62,8 @@ public class SchematicTile extends SchematicBlock {
 	}
 
 	@Override
-	public void writeToBlueprint(IBuilderContext context, int x, int y, int z) {
-		super.writeToBlueprint(context, x, y, z);
+	public void initializeFromObjectAt(IBuilderContext context, int x, int y, int z) {
+		super.initializeFromObjectAt(context, x, y, z);
 
 		if (block.hasTileEntity(meta)) {
 			TileEntity tile = context.world().getTileEntity(x, y, z);
@@ -75,8 +75,8 @@ public class SchematicTile extends SchematicBlock {
 	}
 
 	@Override
-	public void writeRequirementsToBlueprint(IBuilderContext context, int x, int y, int z) {
-		super.writeRequirementsToBlueprint(context, x, y, z);
+	public void storeRequirements(IBuilderContext context, int x, int y, int z) {
+		super.storeRequirements(context, x, y, z);
 
 		if (block.hasTileEntity(meta)) {
 			TileEntity tile = context.world().getTileEntity(x, y, z);
@@ -99,15 +99,15 @@ public class SchematicTile extends SchematicBlock {
 	}
 
 	@Override
-	public void writeToNBT(NBTTagCompound nbt, MappingRegistry registry) {
-		super.writeToNBT(nbt, registry);
+	public void writeSchematicToNBT(NBTTagCompound nbt, MappingRegistry registry) {
+		super.writeSchematicToNBT(nbt, registry);
 
 		nbt.setTag("blockCpt", tileNBT);
 	}
 
 	@Override
-	public void readFromNBT(NBTTagCompound nbt,	MappingRegistry registry) {
-		super.readFromNBT(nbt, registry);
+	public void readSchematicFromNBT(NBTTagCompound nbt,	MappingRegistry registry) {
+		super.readSchematicFromNBT(nbt, registry);
 
 		tileNBT = nbt.getCompoundTag("blockCpt");
 	}

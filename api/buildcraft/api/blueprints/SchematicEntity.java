@@ -42,7 +42,7 @@ public class SchematicEntity extends Schematic {
 	public ItemStack[] storedRequirements = new ItemStack[0];
 
 	@Override
-	public void writeRequirementsToWorld(IBuilderContext context, LinkedList<ItemStack> requirements) {
+	public void getRequirementsForPlacement(IBuilderContext context, LinkedList<ItemStack> requirements) {
 		for (ItemStack s : storedRequirements) {
 			requirements.add(s);
 		}
@@ -112,8 +112,8 @@ public class SchematicEntity extends Schematic {
 	}
 
 	@Override
-	public void writeToNBT(NBTTagCompound nbt, MappingRegistry registry) {
-		super.writeToNBT(nbt, registry);
+	public void writeSchematicToNBT(NBTTagCompound nbt, MappingRegistry registry) {
+		super.writeSchematicToNBT(nbt, registry);
 
 		NBTTagList nbttaglist = entityNBT.getTagList("Pos", 6);
 
@@ -133,8 +133,8 @@ public class SchematicEntity extends Schematic {
 	}
 
 	@Override
-	public void readFromNBT(NBTTagCompound nbt, MappingRegistry registry) {
-		super.readFromNBT(nbt, registry);
+	public void readSchematicFromNBT(NBTTagCompound nbt, MappingRegistry registry) {
+		super.readSchematicFromNBT(nbt, registry);
 
 		entityNBT = nbt.getCompoundTag("entity");
 

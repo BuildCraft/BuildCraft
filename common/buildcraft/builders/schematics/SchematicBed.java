@@ -19,14 +19,14 @@ import buildcraft.api.blueprints.SchematicBlock;
 public class SchematicBed extends SchematicBlock {
 
 	@Override
-	public void writeRequirementsToWorld(IBuilderContext context, LinkedList<ItemStack> requirements) {
+	public void getRequirementsForPlacement(IBuilderContext context, LinkedList<ItemStack> requirements) {
 		if ((meta & 8) == 0) {
 			requirements.add(new ItemStack(Items.bed));
 		}
 	}
 
 	@Override
-	public void writeRequirementsToBlueprint(IBuilderContext context, int x, int y, int z) {
+	public void storeRequirements(IBuilderContext context, int x, int y, int z) {
 		// cancel requirements reading
 	}
 
@@ -52,7 +52,7 @@ public class SchematicBed extends SchematicBlock {
 	}
 
 	@Override
-	public void writeToWorld(IBuilderContext context, int x, int y, int z, LinkedList<ItemStack> stacks) {
+	public void placeInWorld(IBuilderContext context, int x, int y, int z, LinkedList<ItemStack> stacks) {
 		if ((meta & 8) != 0) {
 			return;
 		}
