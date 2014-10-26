@@ -9,6 +9,7 @@
 package buildcraft.core.statements;
 
 import buildcraft.api.gates.IActionParameter;
+import buildcraft.core.utils.StringUtils;
 
 public class ActionRedstoneOutput extends BCActionPassive {
 
@@ -18,7 +19,7 @@ public class ActionRedstoneOutput extends BCActionPassive {
 
 	@Override
 	public String getDescription() {
-		return "Redstone Signal";
+		return StringUtils.localize("gate.action.redstone.signal");
 	}
 
 	@Override

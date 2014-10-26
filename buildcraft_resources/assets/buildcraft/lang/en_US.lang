@@ -47,6 +47,13 @@ color.red=Red
 color.white=White
 color.yellow=Yellow
 
+direction.north=North
+direction.west=West
+direction.east=East
+direction.south=South
+direction.up=Top
+direction.down=Bottom
+
 fillerpattern.clear=Clear
 fillerpattern.fill=Fill
 fillerpattern.flatten=Flatten
@@ -68,6 +75,7 @@ gate.action.machine.loop=Loop
 gate.action.pulsar.constant=Energy Pulsar
 gate.action.pulsar.single=Single Energy Pulse
 gate.action.pipe.wire=%s Pipe Signal
+gate.action.redstone.signal=Redstone Signal
 gate.action.robot.goto_station=Goto Station
 gate.action.pipe.valve.open=Open
 gate.action.pipe.valve.input_only=Input Only
@@ -100,6 +108,8 @@ gate.material.emerald=Emerald
 
 gate.name=%s %s Gate
 gate.name.basic=Basic Gate
+
+gate.parameter.redstone.gateSideOnly=Gate Side Only
 
 gate.trigger.engine.blue=Engine Blue
 gate.trigger.engine.green=Engine Green
