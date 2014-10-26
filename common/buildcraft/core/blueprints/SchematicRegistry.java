@@ -14,15 +14,10 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
-import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidContainerRegistry;
-import net.minecraftforge.fluids.FluidRegistry;
-import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.oredict.OreDictionary;
 import buildcraft.api.blueprints.ISchematicRegistry;
 import buildcraft.api.blueprints.Schematic;
@@ -31,7 +26,7 @@ import buildcraft.api.blueprints.SchematicEntity;
 import buildcraft.api.core.BlockMetaPair;
 import buildcraft.api.core.JavaTools;
 
-public class SchematicRegistry implements ISchematicRegistry {
+public final class SchematicRegistry implements ISchematicRegistry {
 
 	public static SchematicRegistry INSTANCE = new SchematicRegistry();
 	

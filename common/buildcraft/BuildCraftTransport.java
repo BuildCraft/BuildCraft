@@ -51,7 +51,6 @@ import buildcraft.core.InterModComms;
 import buildcraft.core.ItemBuildCraft;
 import buildcraft.core.PowerMode;
 import buildcraft.core.Version;
-import buildcraft.core.blueprints.SchematicRegistry;
 import buildcraft.core.network.BuildCraftChannelHandler;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.silicon.ItemRedstoneChipset.Chipset;

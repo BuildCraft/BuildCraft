@@ -20,7 +20,6 @@ import buildcraft.core.IBoxProvider;
 import buildcraft.core.LaserData;
 import buildcraft.core.RFBattery;
 import buildcraft.core.TileBuildCraft;
-import buildcraft.core.blueprints.SchematicRegistry;
 import buildcraft.core.network.RPC;
 import buildcraft.core.network.RPCHandler;
 import buildcraft.core.network.RPCMessageInfo;

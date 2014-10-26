@@ -37,7 +37,7 @@ public class BlockMetaPair implements Comparable<BlockMetaPair> {
 		if (arg.id != id) {
 			return (id - arg.id) * 16;
 		} else {
-			return (meta - arg.meta);
+			return meta - arg.meta;
 		}
 	}
 }
