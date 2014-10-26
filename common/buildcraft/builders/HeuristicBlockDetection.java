@@ -49,10 +49,14 @@ public final class HeuristicBlockDetection {
 						continue;
 					}
 				
-					if (creativeOnly) {
-						SchematicRegistry.INSTANCE.registerSchematicBlock(block, meta, SchematicBlock.class);
-					} else {
-						SchematicRegistry.INSTANCE.registerSchematicBlock(block, meta, SchematicBlockCreative.class);
+					try {
+						if (creativeOnly) {
+							SchematicRegistry.INSTANCE.registerSchematicBlock(block, meta, SchematicBlock.class);
+						} else {
+							SchematicRegistry.INSTANCE.registerSchematicBlock(block, meta, SchematicBlockCreative.class);
+						}
+					} catch(Exception e) {
+						e.printStackTrace();
 					}
 				}
 			}

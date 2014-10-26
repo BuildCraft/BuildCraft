@@ -74,9 +74,16 @@ public class RenderRobot extends Render implements IItemRenderer {
 		GL11.glPushMatrix();
 		GL11.glDisable(GL11.GL_LIGHTING);
 		GL11.glTranslated(x, y, z);
-
-		renderManager.renderEngine.bindTexture(robot.getTexture());
-
+		
+		try {
+			renderManager.renderEngine.bindTexture(robot.getTexture());
+		} catch(Exception e) {
+			e.printStackTrace();
+			// TODO: Figure out why the NPE inside Minecraft happens.
+			GL11.glEnable(GL11.GL_LIGHTING);
+			GL11.glPopMatrix();
+			return;
+		}
 		float factor = (float) (1.0 / 16.0);
 
 		box.render(factor);

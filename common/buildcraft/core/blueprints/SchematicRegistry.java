@@ -23,6 +23,7 @@ import buildcraft.api.blueprints.ISchematicRegistry;
 import buildcraft.api.blueprints.Schematic;
 import buildcraft.api.blueprints.SchematicBlock;
 import buildcraft.api.blueprints.SchematicEntity;
+import buildcraft.api.core.BCLog;
 import buildcraft.api.core.BlockMetaPair;
 import buildcraft.api.core.JavaTools;
 
@@ -94,6 +95,10 @@ public final class SchematicRegistry implements ISchematicRegistry {
 	}
 	
 	public void registerSchematicBlock(Block block, int meta, Class<? extends Schematic> clazz, Object... params) {
+		if (block == null || Block.blockRegistry.getNameForObject(block) == null || Block.blockRegistry.getNameForObject(block).equals("null")) {
+			BCLog.logger.warn("Mod tried to register block with null name! Ignoring.");
+			return;
+		}
 		if (schematicBlocks.containsKey(new BlockMetaPair(block, meta))) {
 			throw new RuntimeException("Block " + Block.blockRegistry.getNameForObject(block) + " is already associated with a schematic.");
 		}

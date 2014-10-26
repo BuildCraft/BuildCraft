@@ -9,16 +9,16 @@
 package buildcraft.core.utils;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.IBlockAccess;
-
 import net.minecraftforge.oredict.OreDictionary;
 
 public class WorldPropertyIsOre extends WorldProperty {
 
-	public ArrayList<Integer> ores = new ArrayList<Integer>();
+	public HashSet<Integer> ores = new HashSet<Integer>();
 
 	public WorldPropertyIsOre(boolean extendedHarvest) {
 		ores.add(OreDictionary.getOreID("oreCoal"));
@@ -32,6 +32,25 @@ public class WorldPropertyIsOre extends WorldProperty {
 			ores.add(OreDictionary.getOreID("oreLapis"));
 			ores.add(OreDictionary.getOreID("oreRedstone"));
 		}
+		
+		for (String oreName : OreDictionary.getOreNames()) {
+			if(oreName.startsWith("ore")) {
+				ArrayList<ItemStack> oreStacks = OreDictionary.getOres(oreName);
+				if (oreStacks.size() > 0) {
+					Block block = Block.getBlockFromItem(oreStacks.get(0).getItem());
+					int meta = oreStacks.get(0).getItemDamage();
+					if (meta == OreDictionary.WILDCARD_VALUE) {
+						meta = 0;
+					}
+					if (block == null) {
+						continue;
+					}
+					if (extendedHarvest) {
+						ores.add(OreDictionary.getOreID(oreName));
+					}
+				}
+			}
+		}
 	}
 
 	@Override
@@ -39,7 +58,7 @@ public class WorldPropertyIsOre extends WorldProperty {
 		if (block == null) {
 			return false;
 		} else {
-			ItemStack stack = new ItemStack(block);
+			ItemStack stack = new ItemStack(block, 1, meta);
 
 			if (stack.getItem() != null) {
 				for (int id : OreDictionary.getOreIDs(stack)) {
