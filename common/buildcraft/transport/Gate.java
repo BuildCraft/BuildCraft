@@ -10,12 +10,14 @@ package buildcraft.transport;
 
 import java.util.ArrayList;
 import java.util.BitSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 
+import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -221,6 +223,39 @@ public final class Gate implements IGate {
 				}
 			}
 		}
+	}
+	
+	public boolean verifyGateStatements() {
+		List<ITrigger> triggerList = getAllValidTriggers();
+		List<IAction> actionList = getAllValidActions();
+		boolean warning = false;
+		
+		for (int i = 0; i < MAX_STATEMENTS; ++i) {
+			if ((triggers[i] != null || actions[i] != null) && i >= material.numSlots) {
+				triggers[i] = null;
+				actions[i] = null;
+				warning = true;
+				continue;
+			}
+			
+			if (triggers[i] != null) {
+				if (!triggerList.contains(triggers[i]) ||
+						triggers[i].minParameters() > material.numTriggerParameters) {
+					triggers[i] = null;
+					warning = true;
+				}
+			}
+			
+			if (actions[i] != null) {
+				if (!actionList.contains(actions[i]) ||
+						actions[i].minParameters() > material.numActionParameters) {
+					actions[i] = null;
+					warning = true;
+				}
+			}
+		}
+		
+		return !warning;
 	}
 	
 	public void readFromNBT(NBTTagCompound data) {
@@ -488,6 +523,19 @@ public final class Gate implements IGate {
 			expansion.addTriggers(list);
 		}
 	}
+	
+	public List<ITrigger> getAllValidTriggers() {
+		ArrayList<ITrigger> triggers = new ArrayList<ITrigger>(64);
+		triggers.addAll(StatementManager.getPipeTriggers(pipe.container));
+		
+		for (ForgeDirection o : ForgeDirection.VALID_DIRECTIONS) {
+			TileEntity tile = pipe.container.getTile(o);
+			Block block = pipe.container.getBlock(o);
+			triggers.addAll(StatementManager.getNeighborTriggers(block, tile));
+		}
+		
+		return triggers;
+	}
 
 	// ACTIONS
 	public void addActions(List<IAction> list) {
@@ -501,15 +549,20 @@ public final class Gate implements IGate {
 			expansion.addActions(list);
 		}
 	}
-
-	public LinkedList<IAction> getActions() {
-		LinkedList<IAction> result = new LinkedList<IAction>();
-
-		addActions(result);
-
-		return result;
+	
+	public List<IAction> getAllValidActions() {
+		ArrayList<IAction> actions = new ArrayList<IAction>(64);
+		actions.addAll(StatementManager.getPipeActions(pipe.container));
+		
+		for (ForgeDirection o : ForgeDirection.VALID_DIRECTIONS) {
+			TileEntity tile = pipe.container.getTile(o);
+			Block block = pipe.container.getBlock(o);
+			actions.addAll(StatementManager.getNeighborActions(block, tile));
+		}
+		
+		return actions;
 	}
-
+	
 	@Override
 	public void setPulsing(boolean pulsing) {
 		if (pulsing != isPulsing) {

@@ -18,6 +18,16 @@ buildcraft.boardRobotCrafter=Crafter
 buildcraft.boardRobotDelivery=Delivery
 buildcraft.boardRobotPump=Pump
 
+chat.gateCopier.clear=Gate information cleared.
+chat.gateCopier.gateCopied=Copied gate information to copier.
+chat.gateCopier.gatePasted=Pasted copied data to gate.
+chat.gateCopier.noGate=No gate found on this side!
+chat.gateCopier.noInformation=No gate information stored!
+chat.gateCopier.warning.actionParameters=§6Warning: Target has less action parameters!
+chat.gateCopier.warning.logic=§6Warning: Target has different logic type!
+chat.gateCopier.warning.load=§6Warning: Gate triggers/actions might be missing!
+chat.gateCopier.warning.slots=§6Warning: Target has less slots!
+chat.gateCopier.warning.triggerParameters=§6Warning: Target has less trigger parameters!
 chat.pipe.power.iron.mode=Switched to %d RF/t limit
 
 color.black=Black
@@ -147,7 +157,6 @@ gui.pipes.emzuli.title=Extraction Presets
 gui.pipes.emzuli.paint=Paint Items %s
 gui.pipes.emzuli.nopaint=Don't Paint Items
 
-item.scienceBook.name=Engineering Science Book
 item.bucketFuel.name=Fuel Bucket
 item.bucketOil.name=Oil Bucket
 item.woodenGearItem.name=Wood Gear
@@ -259,8 +268,6 @@ tile.refineryBlock.name=Refinery
 tile.spring.oil.name=Oil Spring
 tile.spring.water.name=Water Spring
 tile.tankBlock.name=Tank
-tile.energyConverter.name=Energy Converter
-tile.energyConverter.tooltip=Convert BC energy between old and new power API|Added for compatibility with other mods|while they are not migrated to the new power API.|Could be removed in the future.
 tile.zonePlan.name=Zone Planner
 
 tile.architect.rotate=Rotate: On
