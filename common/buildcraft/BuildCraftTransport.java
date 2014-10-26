@@ -272,8 +272,6 @@ public class BuildCraftTransport extends BuildCraftMod {
 
 	@Mod.EventHandler
 	public void preInit(FMLPreInitializationEvent evt) {
-		SchematicRegistry.declareBlueprintSupport("BuildCraft|Transport");
-
 		try {
 			Property durability = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "pipes.durability", DefaultProps.PIPES_DURABILITY);
 			durability.comment = "How long a pipe will take to break";

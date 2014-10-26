@@ -131,10 +131,12 @@ public class PipeItemsStripes extends Pipe<PipeTransportItems> implements IEnerg
 				stack.stackSize++;
 				getWorld().setBlockToAir((int) p.x, (int) p.y, (int) p.z);
 			}
+			
 			BuildCraftTransport.pipeItemsStripes.onItemUse(new ItemStack(
-					BuildCraftTransport.pipeItemsStripes), player, getWorld(), (int) p.x,
+					BuildCraftTransport.pipeItemsStripes, 1, this.container.glassColor), player, getWorld(), (int) p.x,
 					(int) p.y, (int) p.z, 1, 0, 0, 0
 				);
+			this.container.glassColor = stack.getItemDamage() - 1;
 			
 			if (stack.stackSize > 0) {
 				TileEntity targetTile = getWorld().getTileEntity((int) p.x, (int) p.y, (int) p.z);
@@ -145,7 +147,7 @@ public class PipeItemsStripes extends Pipe<PipeTransportItems> implements IEnerg
 									new ItemStack(BuildCraftTransport.pipeItemsStripes)),
 							container.zCoord + 0.5, stack.copy());
 					((PipeTransportItems) ((TileGenericPipe) targetTile).pipe.transport).injectItem(newItem, event.direction.getOpposite());
-					
+
 					stack.stackSize = 0;
 				}
 			}
@@ -190,7 +192,7 @@ public class PipeItemsStripes extends Pipe<PipeTransportItems> implements IEnerg
 				Pipe<?> newPipe = BlockGenericPipe.createPipe(item.getItemStack().getItem());
 				newPipe.setTile(this.container);
 				this.container.pipe = newPipe;
-
+				
 				item.getItemStack().stackSize--;
 
 				if (item.getItemStack().stackSize <= 0) {

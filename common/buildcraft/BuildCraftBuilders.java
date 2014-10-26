@@ -236,8 +236,6 @@ public class BuildCraftBuilders extends BuildCraftMod {
 
 	@Mod.EventHandler
 	public void init(FMLInitializationEvent evt) {
-		SchematicRegistry.declareBlueprintSupport("BuildCraft|Builders");
-
 		// Register gui handler
 		NetworkRegistry.INSTANCE.registerGuiHandler(instance, new GuiHandler());
 

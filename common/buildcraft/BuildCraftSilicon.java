@@ -124,8 +124,6 @@ public class BuildCraftSilicon extends BuildCraftMod {
 
 	@Mod.EventHandler
 	public void preInit(FMLPreInitializationEvent evt) {
-		SchematicRegistry.declareBlueprintSupport("BuildCraft|Silicon");
-
 		BuildCraftCore.mainConfiguration.save();
 
 		laserBlock = new BlockLaser();

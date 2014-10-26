@@ -241,8 +241,6 @@ public class BuildCraftCore extends BuildCraftMod {
 
 	@Mod.EventHandler
 	public void loadConfiguration(FMLPreInitializationEvent evt) {
-		SchematicRegistry.declareBlueprintSupport("BuildCraft|Core");
-
 		BCLog.initLog();
 
 		BuildcraftRecipeRegistry.assemblyTable = AssemblyRecipeManager.INSTANCE;

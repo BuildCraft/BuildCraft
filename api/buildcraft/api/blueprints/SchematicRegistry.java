@@ -31,14 +31,11 @@ public final class SchematicRegistry {
 	public static int BREAK_ENERGY = 100;
 	public static final int BUILD_ENERGY = 200;
 
-	private static final HashSet<Block> explicitSchematicBlocks = new HashSet<Block>();
-
 	private static final HashMap<Block, SchematicConstructor> schematicBlocks =
 			new HashMap<Block, SchematicConstructor>();
 
 	private static final HashMap<Class<? extends Entity>, SchematicConstructor> schematicEntities = new HashMap<Class<? extends Entity>, SchematicConstructor>();
 
-	private static final HashSet<String> modsSupporting = new HashSet<String>();
 	private static final HashSet<String> modsForbidden = new HashSet<String>();
 	private static final HashSet<String> blocksForbidden = new HashSet<String>();
 
@@ -97,11 +94,6 @@ public final class SchematicRegistry {
 	}
 
 	public static void registerSchematicBlock(Block block, Class<? extends Schematic> clazz, Object... params) {
-		explicitSchematicBlocks.add(block);
-		internalRegisterSchematicBlock(block, clazz, params);
-	}
-
-	private static void internalRegisterSchematicBlock(Block block, Class<? extends Schematic> clazz, Object... params) {
 		if (schematicBlocks.containsKey(block)) {
 			throw new RuntimeException("Block " + Block.blockRegistry.getNameForObject(block) + " is already associated with a schematic.");
 		}
@@ -123,16 +115,7 @@ public final class SchematicRegistry {
 		}
 
 		if (!schematicBlocks.containsKey(block)) {
-			if (block instanceof ITileEntityProvider) {
-				internalRegisterSchematicBlock(block, SchematicTile.class);
-			} else {
-				Fluid fluid = FluidRegistry.lookupFluidForBlock(block);
-				if (fluid != null) {
-					internalRegisterSchematicBlock(block, SchematicFluid.class, new FluidStack(fluid, FluidContainerRegistry.BUCKET_VOLUME));
-				} else {
-					internalRegisterSchematicBlock(block, SchematicBlock.class);
-				}
-			}
+			return null;
 		}
 
 		try {
@@ -176,17 +159,13 @@ public final class SchematicRegistry {
 		return null;
 	}
 
-	public static void declareBlueprintSupport(String modid) {
-		modsSupporting.add(modid);
-	}
-
-	public static boolean isExplicitlySupported(Block block) {
-		return explicitSchematicBlocks.contains(block) || modsSupporting.contains(Block.blockRegistry.getNameForObject(block).split(":", 2)[0]);
+	public static boolean isSupported(Block block) {
+		return schematicBlocks.containsKey(block);
 	}
 
 	public static boolean isAllowedForBuilding(Block block) {
 		String name = Block.blockRegistry.getNameForObject(block);
-		return !blocksForbidden.contains(name) && !modsForbidden.contains(name.split(":", 2)[0]);
+		return isSupported(block) && !blocksForbidden.contains(name) && !modsForbidden.contains(name.split(":", 2)[0]);
 	}
 
 	public static void readConfiguration(Configuration conf) {
@@ -210,9 +189,5 @@ public final class SchematicRegistry {
 				blocksForbidden.add(strippedId);
 			}
 		}
-	}
-
-	static {
-		modsSupporting.add("minecraft");
 	}
 }

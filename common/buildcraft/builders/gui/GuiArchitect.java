@@ -37,10 +37,7 @@ public class GuiArchitect extends GuiBuildCraft {
 	private TileArchitect architect;
 
 	private GuiButton optionRotate;
-	private GuiButton optionReadMods;
-	private GuiButton optionReadBlocks;
 	private GuiButton optionExcavate;
-	private GuiButton optionExplicit;
 
 	private GuiTextField textField;
 
@@ -61,14 +58,8 @@ public class GuiArchitect extends GuiBuildCraft {
 		optionRotate = new GuiButton(0, guiLeft + 5, guiTop + 30, 77, 20, "");
 		buttonList.add(optionRotate);
 
-		optionReadBlocks = new GuiButton(1, guiLeft + 5, guiTop + 55, 77, 20, "");
-		buttonList.add(optionReadBlocks);
-
-		optionExcavate = new GuiButton(2, guiLeft + 5, guiTop + 80, 77, 20, "");
+		optionExcavate = new GuiButton(1, guiLeft + 5, guiTop + 55, 77, 20, "");
 		buttonList.add(optionExcavate);
-
-		optionExplicit = new GuiButton(3, guiLeft + 5, guiTop + 105, 77, 20, "");
-		buttonList.add(optionExplicit);
 
 		textField = new GuiTextField(this.fontRendererObj, TEXT_X, TEXT_Y, TEXT_WIDTH, TEXT_HEIGHT);
 		textField.setMaxStringLength(BuildCraftBuilders.MAX_BLUEPRINTS_NAME_SIZE);
@@ -89,12 +80,8 @@ public class GuiArchitect extends GuiBuildCraft {
 
 		if (button == optionRotate) {
 			conf.rotate = !conf.rotate;
-		} else if (button == optionReadBlocks) {
-			conf.readTiles = !conf.readTiles;
 		} else if (button == optionExcavate) {
 			conf.excavate = !conf.excavate;
-		} else if (button == optionExplicit) {
-			conf.explicitOnly = !conf.explicitOnly;
 		}
 
 		architect.rpcSetConfiguration(conf);
@@ -111,22 +98,10 @@ public class GuiArchitect extends GuiBuildCraft {
 			optionRotate.displayString =  StringUtils.localize("tile.architect.norotate");
 		}
 
-		if (conf.readTiles) {
-			optionReadBlocks.displayString = StringUtils.localize("tile.architect.allblocks");
-		} else {
-			optionReadBlocks.displayString = StringUtils.localize("tile.architect.simpleblocks");
-		}
-
 		if (conf.excavate) {
 			optionExcavate.displayString = StringUtils.localize("tile.architect.excavate");
 		} else {
 			optionExcavate.displayString =  StringUtils.localize("tile.architect.noexcavate");
-		}
-
-		if (conf.explicitOnly) {
-			optionExplicit.displayString =  StringUtils.localize("tile.architect.supportmods");
-		} else {
-			optionExplicit.displayString =  StringUtils.localize("tile.architect.allmods");
 		}
 	}
 
