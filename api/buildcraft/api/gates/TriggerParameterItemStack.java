@@ -61,6 +61,10 @@ public class TriggerParameterItemStack implements ITriggerParameter {
 
 	@Override
 	public String getDescription() {
-		return stack.getDisplayName();
+		if (stack != null) {
+			return stack.getDisplayName();
+		} else {
+			return "";
+		}
 	}
 }
