@@ -579,8 +579,8 @@ public class BlockGenericPipe extends BlockBuildCraft {
 
 			if (pipe != null) {
 				if (pipe.item != null) {
-					pipe.dropContents();
 					list.add(new ItemStack(pipe.item, 1, pipe.container.getItemMetadata()));
+					list.addAll(pipe.getDroppedItems());
 				}
 			}
 		}

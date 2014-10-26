@@ -8,14 +8,15 @@
  */
 package buildcraft.transport;
 
+import java.util.ArrayList;
 import java.util.BitSet;
+import java.util.List;
 
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
-
 import net.minecraftforge.common.util.ForgeDirection;
-
 import buildcraft.api.transport.IPipeTile.PipeType;
 
 public abstract class PipeTransport {
@@ -113,6 +114,10 @@ public abstract class PipeTransport {
 	}
 
 	public void dropContents() {
+	}
+	
+	public List<ItemStack> getDroppedItems() {
+		return new ArrayList<ItemStack>();
 	}
 
 	public void sendDescriptionPacket() {

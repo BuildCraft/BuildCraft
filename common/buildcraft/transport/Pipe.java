@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
@@ -25,12 +26,9 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldSettings.GameType;
-
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-
 import net.minecraftforge.common.util.ForgeDirection;
-
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.gates.ActionState;
@@ -588,6 +586,10 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 
 	public void dropContents() {
 		transport.dropContents();
+	}
+
+	public List<ItemStack> getDroppedItems() {
+		return transport.getDroppedItems();
 	}
 
 	/**
