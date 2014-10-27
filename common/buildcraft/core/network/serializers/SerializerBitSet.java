@@ -9,8 +9,9 @@
 package buildcraft.core.network.serializers;
 
 import java.util.BitSet;
-
 import io.netty.buffer.ByteBuf;
+
+import buildcraft.core.utils.BitSetUtils;
 
 public class SerializerBitSet extends ClassSerializer {
 
@@ -22,7 +23,7 @@ public class SerializerBitSet extends ClassSerializer {
 			data.writeBoolean(true);
 
 			BitSet set = (BitSet) o;
-			byte[] bytes = set.toByteArray();
+			byte[] bytes = BitSetUtils.toByteArray(set);
 			data.writeInt(bytes.length);
 			data.writeBytes(bytes);
 		}
@@ -38,8 +39,7 @@ public class SerializerBitSet extends ClassSerializer {
 		byte[] bytes = new byte[actualSize];
 		data.readBytes(bytes);
 
-		BitSet set = new BitSet();
-		set = BitSet.valueOf(bytes);
+		BitSet set = BitSetUtils.fromByteArray(bytes);
 
 		return set;
 	}

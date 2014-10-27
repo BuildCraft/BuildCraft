@@ -11,16 +11,14 @@ package buildcraft.transport.network;
 import java.util.BitSet;
 
 import io.netty.buffer.ByteBuf;
-
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
-
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.FluidStack;
-
 import buildcraft.core.network.PacketCoordinates;
 import buildcraft.core.network.PacketIds;
 import buildcraft.core.proxy.CoreProxy;
+import buildcraft.core.utils.BitSetUtils;
 import buildcraft.transport.PipeTransportFluids;
 import buildcraft.transport.TileGenericPipe;
 
@@ -76,7 +74,7 @@ public class PacketFluidUpdate extends PacketCoordinates {
 
 		byte[] dBytes = new byte[2];
 		data.readBytes(dBytes);
-		delta = fromByteArray(dBytes);
+		delta = BitSetUtils.fromByteArray(dBytes);
 
 		// System.out.printf("read %d, %d, %d = %s, %s%n", posX, posY, posZ, Arrays.toString(dBytes), delta);
 
@@ -99,7 +97,7 @@ public class PacketFluidUpdate extends PacketCoordinates {
 	public void writeData(ByteBuf data) {
 		super.writeData(data);
 
-		byte[] dBytes = toByteArray(delta);
+		byte[] dBytes = BitSetUtils.toByteArray(delta);
 		// System.out.printf("write %d, %d, %d = %s, %s%n", posX, posY, posZ, Arrays.toString(dBytes), delta);
 		data.writeBytes(dBytes);
 
@@ -123,26 +121,6 @@ public class PacketFluidUpdate extends PacketCoordinates {
 				}
 			}
 		}
-	}
-
-	public static BitSet fromByteArray(byte[] bytes) {
-		BitSet bits = new BitSet();
-		for (int i = 0; i < bytes.length * 8; i++) {
-			if ((bytes[bytes.length - i / 8 - 1] & (1 << (i % 8))) > 0) {
-				bits.set(i);
-			}
-		}
-		return bits;
-	}
-
-	public static byte[] toByteArray(BitSet bits) {
-		byte[] bytes = new byte[2];
-		for (int i = 0; i < bits.length(); i++) {
-			if (bits.get(i)) {
-				bytes[bytes.length - i / 8 - 1] |= 1 << (i % 8);
-			}
-		}
-		return bytes;
 	}
 
 	@Override

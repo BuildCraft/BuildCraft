@@ -12,9 +12,9 @@ import java.util.BitSet;
 import java.util.Random;
 
 import net.minecraft.nbt.NBTTagCompound;
-
 import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.NetworkData;
+import buildcraft.core.utils.BitSetUtils;
 
 public class ZoneChunk {
 
@@ -71,7 +71,7 @@ public class ZoneChunk {
 		nbt.setBoolean("fullSet", fullSet);
 
 		if (property != null) {
-			nbt.setByteArray("bits", property.toByteArray());
+			nbt.setByteArray("bits", BitSetUtils.toByteArray(property));
 		}
 	}
 
@@ -79,7 +79,7 @@ public class ZoneChunk {
 		fullSet = nbt.getBoolean("fullSet");
 
 		if (nbt.hasKey("bits")) {
-			property = BitSet.valueOf(nbt.getByteArray("bits"));
+			property = BitSetUtils.fromByteArray(nbt.getByteArray("bits"));
 		}
 	}
 
