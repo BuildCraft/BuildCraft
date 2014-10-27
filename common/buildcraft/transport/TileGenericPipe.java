@@ -272,7 +272,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 		}
 
 		if (pipe != null) {
-			nbt.setInteger("pipeId", Item.itemRegistry.getIDForObject(pipe.item));
+			nbt.setInteger("pipeId", Item.getIdFromItem(pipe.item));
 			pipe.writeToNBT(nbt);
 		} else {
 			nbt.setInteger("pipeId", coreState.pipeId);
@@ -303,7 +303,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 		}
 		
 		coreState.pipeId = nbt.getInteger("pipeId");
-		pipe = BlockGenericPipe.createPipe((Item) Item.itemRegistry.getObjectById(coreState.pipeId));
+		pipe = BlockGenericPipe.createPipe((Item) Item.getItemById(coreState.pipeId));
 		bindPipe();
 
 		if (pipe != null) {

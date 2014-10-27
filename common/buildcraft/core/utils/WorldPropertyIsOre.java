@@ -20,32 +20,21 @@ public class WorldPropertyIsOre extends WorldProperty {
 
 	public HashSet<Integer> ores = new HashSet<Integer>();
 
-	public WorldPropertyIsOre(boolean extendedHarvest) {
-		ores.add(OreDictionary.getOreID("oreCoal"));
-		ores.add(OreDictionary.getOreID("oreIron"));
-		ores.add(OreDictionary.getOreID("oreQuartz"));
-
-		if (extendedHarvest) {
-			ores.add(OreDictionary.getOreID("oreGold"));
-			ores.add(OreDictionary.getOreID("oreDiamond"));
-			ores.add(OreDictionary.getOreID("oreEmerald"));
-			ores.add(OreDictionary.getOreID("oreLapis"));
-			ores.add(OreDictionary.getOreID("oreRedstone"));
-		}
-		
+	public WorldPropertyIsOre(int harvestLevel) {
 		for (String oreName : OreDictionary.getOreNames()) {
 			if (oreName.startsWith("ore")) {
 				ArrayList<ItemStack> oreStacks = OreDictionary.getOres(oreName);
 				if (oreStacks.size() > 0) {
 					Block block = Block.getBlockFromItem(oreStacks.get(0).getItem());
 					int meta = oreStacks.get(0).getItemDamage();
-					if (meta == OreDictionary.WILDCARD_VALUE) {
+					if (meta >= 16 || meta < 0) {
 						meta = 0;
 					}
 					if (block == null) {
 						continue;
 					}
-					if (extendedHarvest) {
+					if ("pickaxe".equals(block.getHarvestTool(meta)) &&
+							block.getHarvestLevel(meta) <= harvestLevel) {
 						ores.add(OreDictionary.getOreID(oreName));
 					}
 				}

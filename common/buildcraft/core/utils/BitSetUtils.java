@@ -19,7 +19,7 @@ public final class BitSetUtils {
 	}
 
 	public static byte[] toByteArray(BitSet bits) {
-		byte[] bytes = new byte[(int) Math.ceil(bits.length() / 8)];
+		byte[] bytes = new byte[(bits.length() >> 3) + (bits.length() & 7) == 0 ? 0 : 1];
 		for (int i = 0; i < bits.length(); i++) {
 			if (bits.get(i)) {
 				bytes[bytes.length - (i >> 3) - 1] |= 1 << (i & 7);

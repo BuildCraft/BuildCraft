@@ -60,6 +60,7 @@ import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.core.EnumColor;
 import buildcraft.api.core.IIconProvider;
+import buildcraft.api.core.IWorldProperty;
 import buildcraft.api.core.JavaTools;
 import buildcraft.api.fuels.BuildcraftFuelRegistry;
 import buildcraft.api.gates.ActionParameterItemStack;
@@ -116,7 +117,7 @@ import buildcraft.core.utils.WorldPropertyIsDirt;
 import buildcraft.core.utils.WorldPropertyIsFarmland;
 import buildcraft.core.utils.WorldPropertyIsFluidSource;
 import buildcraft.core.utils.WorldPropertyIsHarvestable;
-import buildcraft.core.utils.WorldPropertyIsLeave;
+import buildcraft.core.utils.WorldPropertyIsLeaf;
 import buildcraft.core.utils.WorldPropertyIsOre;
 import buildcraft.core.utils.WorldPropertyIsShoveled;
 import buildcraft.core.utils.WorldPropertyIsSoft;
@@ -397,9 +398,11 @@ public class BuildCraftCore extends BuildCraftMod {
 
 		BuildCraftAPI.isSoftProperty = new WorldPropertyIsSoft();
 		BuildCraftAPI.isWoodProperty = new WorldPropertyIsWood();
-		BuildCraftAPI.isLeavesProperty = new WorldPropertyIsLeave();
-		BuildCraftAPI.isBasicOreProperty = new WorldPropertyIsOre(false);
-		BuildCraftAPI.isExtendedOreProperty = new WorldPropertyIsOre(true);
+		BuildCraftAPI.isLeavesProperty = new WorldPropertyIsLeaf();
+		BuildCraftAPI.isOreProperty = new IWorldProperty[4];
+		for (int i = 0; i < BuildCraftAPI.isOreProperty.length; i++) {
+			BuildCraftAPI.isOreProperty[i] = new WorldPropertyIsOre(i);
+		}
 		BuildCraftAPI.isHarvestableProperty = new WorldPropertyIsHarvestable();
 		BuildCraftAPI.isFarmlandProperty = new WorldPropertyIsFarmland();
 		BuildCraftAPI.isShoveled = new WorldPropertyIsShoveled();
@@ -527,8 +530,9 @@ public class BuildCraftCore extends BuildCraftMod {
 		BuildCraftAPI.isSoftProperty.clear();
 		BuildCraftAPI.isWoodProperty.clear();
 		BuildCraftAPI.isLeavesProperty.clear();
-		BuildCraftAPI.isBasicOreProperty.clear();
-		BuildCraftAPI.isExtendedOreProperty.clear();
+		for (int i = 0; i < BuildCraftAPI.isOreProperty.length; i++) {
+			BuildCraftAPI.isOreProperty[i].clear();
+		}
 		BuildCraftAPI.isHarvestableProperty.clear();
 		BuildCraftAPI.isFarmlandProperty.clear();
 		BuildCraftAPI.isShoveled.clear();

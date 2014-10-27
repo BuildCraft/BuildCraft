@@ -21,7 +21,7 @@ import buildcraft.core.robots.AIRobotFetchAndEquipItemStack;
 
 public class BoardRobotMiner extends BoardRobotGenericBreakBlock {
 
-	private boolean extendedOre = false;
+	private int harvestLevel = 0;
 
 	public BoardRobotMiner(EntityRobotBase iRobot) {
 		super(iRobot);
@@ -37,8 +37,7 @@ public class BoardRobotMiner extends BoardRobotGenericBreakBlock {
 			if (stack != null && stack.getItem() instanceof ItemPickaxe) {
 				ItemPickaxe pickaxe = (ItemPickaxe) stack.getItem();
 
-				extendedOre = pickaxe.func_150913_i() == Item.ToolMaterial.EMERALD
-						|| pickaxe.func_150913_i() == Item.ToolMaterial.IRON;
+				harvestLevel = pickaxe.getHarvestLevel(stack, "pickaxe");
 			}
 		}
 	}
@@ -55,11 +54,8 @@ public class BoardRobotMiner extends BoardRobotGenericBreakBlock {
 
 	@Override
 	public boolean isExpectedBlock(World world, int x, int y, int z) {
-		if (!extendedOre) {
-			return BuildCraftAPI.isBasicOreProperty.get(world, x, y, z);
-		} else {
-			return BuildCraftAPI.isExtendedOreProperty.get(world, x, y, z);
-		}
+		return BuildCraftAPI.isOreProperty[Math.min(BuildCraftAPI.isOreProperty.length, harvestLevel)]
+				.get(world, x, y, z);
 	}
 
 }

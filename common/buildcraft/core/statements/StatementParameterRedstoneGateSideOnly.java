@@ -15,6 +15,10 @@ public class StatementParameterRedstoneGateSideOnly implements
 	@NetworkData
 	public boolean isOn = false;
 	
+	public StatementParameterRedstoneGateSideOnly() {
+		
+	}
+	
 	@Override
 	public ItemStack getItemStackToDraw() {
 		return null;

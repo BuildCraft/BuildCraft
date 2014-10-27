@@ -14,11 +14,11 @@ import net.minecraft.world.IBlockAccess;
 
 import net.minecraftforge.oredict.OreDictionary;
 
-public class WorldPropertyIsLeave extends WorldProperty {
+public class WorldPropertyIsLeaf extends WorldProperty {
 
 	private int leavesId = 0;
 
-	public WorldPropertyIsLeave() {
+	public WorldPropertyIsLeaf() {
 		leavesId = OreDictionary.getOreID("treeLeaves");
 	}
 
