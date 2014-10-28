@@ -662,8 +662,8 @@ public class BlockGenericPipe extends BlockBuildCraft {
 			for (int i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
 				ForgeDirection d = ForgeDirection.getOrientation(i);
 				pipe.container.redstoneInputSide[i] = Math.max(
-						world.isBlockProvidingPowerTo(x + d.offsetX, y + d.offsetY, z + d.offsetZ, i),
-						world.getIndirectPowerLevelTo(x + d.offsetX, y + d.offsetY, z + d.offsetZ, i)
+						world.isBlockProvidingPowerTo(x + d.offsetX, y + d.offsetY, z + d.offsetZ, i ^ 1),
+						world.getIndirectPowerLevelTo(x + d.offsetX, y + d.offsetY, z + d.offsetZ, i ^ 1)
 					);
 				
 				if (pipe.container.redstoneInput < pipe.container.redstoneInputSide[i]) {
