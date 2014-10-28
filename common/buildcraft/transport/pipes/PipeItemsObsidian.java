@@ -216,6 +216,10 @@ public class PipeItemsObsidian extends Pipe<PipeTransportItems> implements IEner
 				EntityItem item = (EntityItem) entity;
 				ItemStack contained = item.getEntityItem();
 
+				if (contained == null) {
+					return;
+				}
+				
 				CoreProxy.proxy.obsidianPipePickup(container.getWorldObj(), item, this.container);
 
 				int energyUsed = Math.min(10 * contained.stackSize * distance, battery.getEnergyStored());
@@ -236,8 +240,14 @@ public class PipeItemsObsidian extends Pipe<PipeTransportItems> implements IEner
 			} else if (entity instanceof EntityArrow && battery.useEnergy(distance * 10, distance * 10, false) > 0) {
 				stack = new ItemStack(Items.arrow, 1);
 				CoreProxy.proxy.removeEntity(entity);
+			} else {
+				return;
 			}
 
+			if (stack == null) {
+				return;
+			}
+			
 			TravelingItem item = TravelingItem.make(container.xCoord + 0.5, container.yCoord + TransportUtils.getPipeFloorOf(stack), container.zCoord + 0.5, stack);
 
 			item.setSpeed((float) speed);
