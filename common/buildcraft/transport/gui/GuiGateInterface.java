@@ -220,6 +220,8 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 
 		int position = 0;
 
+		slots.clear();
+		
 		if (gate.material == GateMaterial.REDSTONE) {
 			slots.add(new TriggerSlot(62, 26, pipe, 0));
 			slots.add(new ActionSlot(98, 26, pipe, 0));
@@ -261,10 +263,10 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 
 			for (int k = 0; k < 4; ++k) {
 				slots.add(new TriggerParameterSlot(26, 26 + 18 * k, pipe, 0,
-						(TriggerSlot) slots.get(k)));
+						(TriggerSlot) slots.get(position - 16)));
 				position++;
 				slots.add(new TriggerParameterSlot(116, 26 + 18 * k, pipe, 0,
-						(TriggerSlot) slots.get(k + 4)));
+						(TriggerSlot) slots.get(position - 16)));
 				position++;
 			}
 		} else if (gate.material == GateMaterial.EMERALD) {
@@ -332,21 +334,16 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 
 		drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
 
-		int actionTracker = 0;
-
-		actionTracker = 0;
 		for (AdvancedSlot slot : slots) {
 			if (slot instanceof TriggerSlot) {
-				boolean halfWidth = container.actionsState[actionTracker] == ActionActiveState.Partial;
+				boolean halfWidth = container.actionsState[((TriggerSlot) slot).slot] == ActionActiveState.Partial;
 
-				if (container.actionsState[actionTracker] != ActionActiveState.Deactivated) {
+				if (container.actionsState[((TriggerSlot) slot).slot] != ActionActiveState.Deactivated) {
 					mc.renderEngine.bindTexture(texture);
 
 					drawTexturedModalRect(guiLeft + slot.x + 17 + 18 * gate.material.numTriggerParameters, guiTop
 							+ slot.y + 6, 176, 18, halfWidth ? 9 : 18, 4);
 				}
-
-				actionTracker++;
 			} else if (slot instanceof StatementParameterSlot) {
 				StatementParameterSlot paramSlot = (StatementParameterSlot) slot;
 				StatementSlot statement = paramSlot.statementSlot;
